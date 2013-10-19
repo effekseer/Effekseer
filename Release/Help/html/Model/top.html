@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8>
+	<title>組み込み</title>
+	<link href="../base.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<div class="main">
+		<h1>3Dモデルの生成</h1>
+		
+		<h2>概要</h2>
+		<p>
+ここでは、Effekseer用の3Dモデルの生成方法を説明します。
+		</p>
+
+		<h2>Metasequoia</h2>
+<p>
+「Tool/mqoToEffekseerModelConverter.exe」を使用します。<br>
+コマンドラインから引数にファイル名を書くことで、.mqoから.efkmodelに変換します。
+</p>
+<p>
+mqoToEffekseerModelConverter InputFile(*.mqo) {OutputFile(*.efkmodel)} {options}
+</p>
+<p>
+というように、入力元、出力先、オプションを指定して使用します。<br>
+出力先、オプションは省略可能です。
+</p>
+
+<br>
+
+<p>
+オプションには以下のオプションが使用できます。<br>
+-modelcount 最大同時描画数。大きくするとメモリは大量に使用しますが、同じモデルを高速に描画できます。<br>
+-scale 拡大率。元のモデルから拡大して表示します。
+</p>
+
+<br>
+
+<p>
+例：mqoToEffekseerModelConverter foo.mqo -scale 0.1
+</p>
+
+<br>
+
+<p>
+mqoの素材情報は一切使用されません。表示されるモデルは1番目のオブジェクトのみです。
+</p>
+
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8>
+	<title>Seleneとの連携</title>
+	<link href="../base.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<div class="main">
+		<h1>Seleneとの連携</h1>
+		
+		<h2>概要</h2>
+		<p>
+Seleneとの連携について説明します。なお、Seleneとこのツールは特に提携しているというわけではないため、バージョンや状況によっては失敗する可能性があります。
+		</p>
+		<p>
+サンプル：なし
+		</p>
+
+		<h2>初めに</h2>
+		<p>
+Seleneの最新版をご利用するようお願いします。
+		</p>
+
+		<h2>グラフィックスマネージャーの生成</h2>
+<p>
+Effekseerは現在、DirectX9のみしか対応していないため、グラフィックスにはDirectX9を使用するよう指定します。
+</p>
+
+<pre>
+<code>
+Selene::Engine::Graphics::eGraphicsAPI apiTable[] = {
+	Selene::Engine::Graphics::GRAPHICS_API_DIRECTX_09,
+	Selene::Engine::Graphics::GRAPHICS_API_UNKNOWN
+};
+
+if ( !core->CreateGraphicsManager(apiTable) )
+{
+	return NULL;
+}
+</code>
+</pre>
+
+		<h2>描画</h2>
+<p>
+GetDevicePointerという関数を使用し、デバイスを取得します。
+</p>
+<pre>
+<code>
+::EffekseerRenderer::Renderer* renderer 
+ = ::EffekseerRenderer::Renderer::Create( (LPDIRECT3DDEVICE9)core->GetManager()->GetDevicePointer(), 最大スプライト数 );
+</code>
+</pre>
+
+<p>
+SpriteRenderer::CacheDrawの後等に描画するようにします。Seleneは描画のタイミングがシビアなため、注意しましょう。
+</p>
+
+	</div>
+</body>
+
+</html>

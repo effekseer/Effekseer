@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E2495770-1734-4C77-8028-92040A1D36CB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Effekseer</RootNamespace>
+    <AssemblyName>EffekseerCore</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\release\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;_FCURVE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>..\..\release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IronPython">
+      <HintPath>.\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.Modules">
+      <HintPath>.\IronPython.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dynamic">
+      <HintPath>.\Microsoft.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting">
+      <HintPath>.\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Binary\CommonValues.cs" />
+    <Compile Include="Binary\GenerationLocationValues.cs" />
+    <Compile Include="Binary\RendererValues.cs" />
+    <Compile Include="Binary\Exporter.cs" />
+    <Compile Include="Binary\RotationValues.cs" />
+    <Compile Include="Binary\ScaleValues.cs" />
+    <Compile Include="Binary\LocationAbsValues.cs" />
+    <Compile Include="Binary\LocationValues.cs" />
+    <Compile Include="Binary\Define.cs" />
+    <Compile Include="Binary\SoundValues.cs" />
+    <Compile Include="Binary\RendererCommonValues.cs" />
+    <Compile Include="Command\CommandManager.cs" />
+    <Compile Include="Command\DelegateCommand.cs" />
+    <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Core.cs" />
+    <Compile Include="Data\EffectBehaviorValues.cs" />
+    <Compile Include="Data\OptionValues.cs" />
+    <Compile Include="Data\RendererCommonValues.cs" />
+    <Compile Include="Data\CommonValues.cs" />
+    <Compile Include="Data\Define.cs" />
+    <Compile Include="Data\GenerationLocationValues.cs" />
+    <Compile Include="Data\RendererValues.cs" />
+    <Compile Include="Data\IO.cs" />
+    <Compile Include="Data\Node.cs" />
+    <Compile Include="Data\NodeBase.cs" />
+    <Compile Include="Data\NodeRoot.cs" />
+    <Compile Include="Data\RotationValues.cs" />
+    <Compile Include="Data\ScaleValues.cs" />
+    <Compile Include="Data\LocationAbsValues.cs" />
+    <Compile Include="Data\LocationValues.cs" />
+    <Compile Include="Data\SoundValues.cs" />
+    <Compile Include="Data\Value\Boolean.cs" />
+    <Compile Include="Data\Value\Color.cs" />
+    <Compile Include="Data\Value\ColorWithRandom.cs" />
+    <Compile Include="Data\Value\Enum.cs" />
+    <Compile Include="Data\Value\EnumBase.cs" />
+    <Compile Include="Data\Value\FCurve.cs" />
+    <Compile Include="Data\Value\FCurveColor.cs" />
+    <Compile Include="Data\Value\FCurveVector2D.cs" />
+    <Compile Include="Data\Value\FCurveVector3D.cs" />
+    <Compile Include="Data\Value\Float.cs" />
+    <Compile Include="Data\Value\FloatWithRandom.cs" />
+    <Compile Include="Data\Value\PathForImage.cs" />
+    <Compile Include="Data\Value\Int.cs" />
+    <Compile Include="Data\Value\IntWithInifinite.cs" />
+    <Compile Include="Data\Value\IntWithRandom.cs" />
+    <Compile Include="Data\Value\Path.cs" />
+    <Compile Include="Data\Value\PathForSound.cs" />
+    <Compile Include="Data\Value\String.cs" />
+    <Compile Include="Data\Value\Vector2D.cs" />
+    <Compile Include="Data\Value\Vector2DWithRandom.cs" />
+    <Compile Include="Data\Value\Vector3D.cs" />
+    <Compile Include="Data\Value\Vector3DWithRandom.cs" />
+    <Compile Include="Define.cs" />
+    <Compile Include="Utl\ParamaterTreeNode.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Script\CommandScript.cs" />
+    <Compile Include="Script\Define.cs" />
+    <Compile Include="Script\ExportScript.cs" />
+    <Compile Include="Script\ImportScript.cs" />
+    <Compile Include="Script\ScriptCollection.cs" />
+    <Compile Include="Script\Compiler.cs" />
+    <Compile Include="Script\ScriptBase.cs" />
+    <Compile Include="Script\SelectedScript.cs" />
+    <Compile Include="Utl\ArrayExtensions.cs" />
+    <Compile Include="Utl\BitConverterExtensions.cs" />
+    <Compile Include="Utl\Math.cs" />
+    <Compile Include="Utl\MathExtensions.cs" />
+    <Compile Include="Utl\TextureInformation.cs" />
+    <Compile Include="Utl\XmlDocumentExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EffekseerInterface\EffekseerInterface.csproj">
+      <Project>{11D889E1-56E6-4050-9244-1629A55D6641}</Project>
+      <Name>EffekseerInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

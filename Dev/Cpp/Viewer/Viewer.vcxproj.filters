@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="EffekseerTool">
+      <UniqueIdentifier>{56a0c8a1-3e92-4c87-8a86-63666a1c34ec}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h">
+      <Filter>EffekseerTool</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerTool\EffekseerTool.Base.h">
+      <Filter>EffekseerTool</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerTool\EffekseerTool.Guide.h">
+      <Filter>EffekseerTool</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerTool\EffekseerTool.Grid.h">
+      <Filter>EffekseerTool</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerTool\EffekseerTool.Sound.h">
+      <Filter>EffekseerTool</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerTool\EffekseerTool.Background.h">
+      <Filter>EffekseerTool</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dll.cpp" />
+    <ClCompile Include="dll_cs.cxx" />
+    <ClCompile Include="test.cpp" />
+    <ClCompile Include="EffekseerTool\EffekseerTool.Renderer.cpp">
+      <Filter>EffekseerTool</Filter>
+    </ClCompile>
+    <ClCompile Include="EffekseerTool\EffekseerTool.Grid.cpp">
+      <Filter>EffekseerTool</Filter>
+    </ClCompile>
+    <ClCompile Include="EffekseerTool\EffekseerTool.Guide.cpp">
+      <Filter>EffekseerTool</Filter>
+    </ClCompile>
+    <ClCompile Include="EffekseerTool\EffekseerTool.Sound.cpp">
+      <Filter>EffekseerTool</Filter>
+    </ClCompile>
+    <ClCompile Include="EffekseerTool\EffekseerTool.Background.cpp">
+      <Filter>EffekseerTool</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuildStep Include="dll.h" />
+  </ItemGroup>
+</Project>

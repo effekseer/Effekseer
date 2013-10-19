@@ -1,0 +1,502 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DAEF7573-3BF4-4457-BF8D-9A1138B3BDBE}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Effekseer</RootNamespace>
+    <AssemblyName>Effekseer</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\release\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;_FCURVE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Reactive.Core, Version=2.0.20823.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=2.0.20823.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=2.0.20823.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>.\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Define.cs" />
+    <Compile Include="GUI\AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\AboutForm.Designer.cs">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Commands.cs" />
+    <Compile Include="GUI\Component\Boolean.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\Boolean.Designer.cs">
+      <DependentUpon>Boolean.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\ColorCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\ColorCtrl.Designer.cs">
+      <DependentUpon>ColorCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\ColorWithRandom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\ColorWithRandom.Designer.cs">
+      <DependentUpon>ColorWithRandom.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\Define.cs" />
+    <Compile Include="GUI\Component\DelegateFloatTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\DelegateIntTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\DelegateStringTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\Enum.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\Enum.Designer.cs">
+      <DependentUpon>Enum.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\FCurveButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\FCurveButton.Designer.cs">
+      <DependentUpon>FCurveButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\FCurves.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\FCurves.Designer.cs">
+      <DependentUpon>FCurves.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\Float.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\Float.Designer.cs">
+      <DependentUpon>Float.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\FloatWithRandom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\FloatWithRandom.Designer.cs">
+      <DependentUpon>FloatWithRandom.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\PathForImage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\PathForImage.designer.cs">
+      <DependentUpon>PathForImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\Int.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\Int.Designer.cs">
+      <DependentUpon>Int.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\IntWithInifinite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\IntWithInifinite.Designer.cs">
+      <DependentUpon>IntWithInifinite.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\IntWithRandom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\IntWithRandom.Designer.cs">
+      <DependentUpon>IntWithRandom.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\LayoutPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\LayoutPanel.Designer.cs">
+      <DependentUpon>LayoutPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\NodeTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\NodeTreeView.Designer.cs">
+      <DependentUpon>NodeTreeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\Path.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\Path.Designer.cs">
+      <DependentUpon>Path.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\PathForSound.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\PathForSound.designer.cs">
+      <DependentUpon>PathForSound.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\String.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\String.Designer.cs">
+      <DependentUpon>String.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\Vector2D.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\Vector2D.Designer.cs">
+      <DependentUpon>Vector2D.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\Vector2DWithRandom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\Vector2DWithRandom.Designer.cs">
+      <DependentUpon>Vector2DWithRandom.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\Vector3D.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\Vector3D.Designer.cs">
+      <DependentUpon>Vector3D.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Component\Vector3DWithRandom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\Vector3DWithRandom.Designer.cs">
+      <DependentUpon>Vector3DWithRandom.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockContent.Designer.cs">
+      <DependentUpon>DockContent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockEffectBehavior.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockEffectBehavior.Designer.cs">
+      <DependentUpon>DockEffectBehavior.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockFCurves.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockFCurves.Designer.cs">
+      <DependentUpon>DockFCurves.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockNetwork.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockNetwork.Designer.cs">
+      <DependentUpon>DockNetwork.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockNodeCommonValues.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockNodeCommonValues.Designer.cs">
+      <DependentUpon>DockNodeCommonValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockNodeRendererValues.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockNodeRendererValues.Designer.cs">
+      <DependentUpon>DockNodeRendererValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockNodeGenerationLocationValues.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockNodeGenerationLocationValues.Designer.cs">
+      <DependentUpon>DockNodeGenerationLocationValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockNodeRotationValues.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockNodeRotationValues.Designer.cs">
+      <DependentUpon>DockNodeRotationValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockNodeScaleValues.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockNodeScaleValues.Designer.cs">
+      <DependentUpon>DockNodeScaleValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockNodeLocationAbsValues.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockNodeLocationAbsValues.Designer.cs">
+      <DependentUpon>DockNodeLocationAbsValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockNodeLocationValues.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockNodeLocationValues.Designer.cs">
+      <DependentUpon>DockNodeLocationValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockNodeSoundValues.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockNodeSoundValues.Designer.cs">
+      <DependentUpon>DockNodeSoundValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockNodeRendererCommonValues.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockNodeRendererCommonValues.Designer.cs">
+      <DependentUpon>DockNodeRendererCommonValues.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockNodeTreeView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockNodeTreeView.Designer.cs">
+      <DependentUpon>DockNodeTreeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockOption.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockOption.Designer.cs">
+      <DependentUpon>DockOption.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\DockPanel.Designer.cs">
+      <DependentUpon>DockPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockRecorder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockRecorder.Designer.cs">
+      <DependentUpon>DockRecorder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockViewer.Designer.cs">
+      <DependentUpon>DockViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockViewPoint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockViewPoint.Designer.cs">
+      <DependentUpon>DockViewPoint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\GUIManager.cs" />
+    <Compile Include="GUI\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\DockViewerController.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockViewerController.Designer.cs">
+      <DependentUpon>DockViewerController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Network.cs" />
+    <Compile Include="GUI\Shortcuts.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUI\AboutForm.resx">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\Boolean.resx">
+      <DependentUpon>Boolean.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\ColorCtrl.resx">
+      <DependentUpon>ColorCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\ColorWithRandom.resx">
+      <DependentUpon>ColorWithRandom.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\Enum.resx">
+      <DependentUpon>Enum.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\FCurves.resx">
+      <DependentUpon>FCurves.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\Float.resx">
+      <DependentUpon>Float.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\FloatWithRandom.resx">
+      <DependentUpon>FloatWithRandom.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\PathForImage.resx">
+      <DependentUpon>PathForImage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\Int.resx">
+      <DependentUpon>Int.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\IntWithInifinite.resx">
+      <DependentUpon>IntWithInifinite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\LayoutPanel.resx">
+      <DependentUpon>LayoutPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\NodeTreeView.resx">
+      <DependentUpon>NodeTreeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\Path.resx">
+      <DependentUpon>Path.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\PathForSound.resx">
+      <DependentUpon>PathForSound.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\String.resx">
+      <DependentUpon>String.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\Vector2D.resx">
+      <DependentUpon>Vector2D.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\Vector2DWithRandom.resx">
+      <DependentUpon>Vector2DWithRandom.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\Vector3D.resx">
+      <DependentUpon>Vector3D.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\Vector3DWithRandom.resx">
+      <DependentUpon>Vector3DWithRandom.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockFCurves.resx">
+      <DependentUpon>DockFCurves.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockNetwork.resx">
+      <DependentUpon>DockNetwork.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockNodeCommonValues.resx">
+      <DependentUpon>DockNodeCommonValues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockNodeRendererValues.resx">
+      <DependentUpon>DockNodeRendererValues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockNodeGenerationLocationValues.resx">
+      <DependentUpon>DockNodeGenerationLocationValues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockNodeRotationValues.resx">
+      <DependentUpon>DockNodeRotationValues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockNodeScaleValues.resx">
+      <DependentUpon>DockNodeScaleValues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockNodeLocationAbsValues.resx">
+      <DependentUpon>DockNodeLocationAbsValues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockNodeLocationValues.resx">
+      <DependentUpon>DockNodeLocationValues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockNodeSoundValues.resx">
+      <DependentUpon>DockNodeSoundValues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockNodeRendererCommonValues.resx">
+      <DependentUpon>DockNodeRendererCommonValues.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockNodeTreeView.resx">
+      <DependentUpon>DockNodeTreeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockOption.resx">
+      <DependentUpon>DockOption.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockPanel.resx">
+      <DependentUpon>DockPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockRecorder.resx">
+      <DependentUpon>DockRecorder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockViewer.resx">
+      <DependentUpon>DockViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockViewerController.resx">
+      <DependentUpon>DockViewerController.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EffekseerCore\EffekseerCore.csproj">
+      <Project>{E2495770-1734-4C77-8028-92040A1D36CB}</Project>
+      <Name>EffekseerCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EffekseerInterface\EffekseerInterface.csproj">
+      <Project>{11D889E1-56E6-4050-9244-1629A55D6641}</Project>
+      <Name>EffekseerInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EffekseerViewer\EffekseerViewer.csproj">
+      <Project>{38CBEECD-CE84-4AEE-BF7B-7DB89CC6827F}</Project>
+      <Name>EffekseerViewer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

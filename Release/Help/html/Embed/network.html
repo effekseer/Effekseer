@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8>
+	<title>ネットワーク</title>
+	<link href="../base.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<div class="main">
+		<h1>ネットワーク</h1>
+		
+		<h2>概要</h2>
+		<p>
+Effekseerはアプリケーション側にサーバー機能を組み込むことによって、アプリケーションが起動中にEffekseerからアプリケーションで使用しているエフェクトをリアルタイムに変更することができます。
+		</p>
+
+		<h2>サーバー機能の設定</h2>
+		<p>
+「Runtime/NetworkServer.sln」を参照してください。
+		</p>
+		<p>
+サーバーを生成するには「::Effekseer::Server::Create」関数を使用します。サーバーを開始するには「::Effekseer::Server::Start」関数を使用します。開始するときにポート番号を設定することができ、そこにEffekseerが接続することにより、リアルタイムの変更を行います。
+		</p>
+
+<pre>
+<code>
+static ::Effekseer::Server* g_server = NULL;
+
+// サーバーの生成
+g_server = Effekseer::Server::Create();
+
+// サーバーをポート60000で開始
+g_server->Start( 60000 );
+
+</code>
+</pre>
+
+		<h2>エフェクトの登録</h2>
+<p>
+Effekseerから変更したいエフェクトをサーバーに登録する必要があります。「Effekseeer::Server::Regist」にて登録します。登録する際に文字列を設定する必要があります。この文字列には、編集したいエフェクトの元ファイルの拡張子を入れない名称を指定してください。例えば「test.efkproj」の変更を送る対象には「test」という文字列を設定してください。すなわち、ディレクトリだけ違ってファイル名が一緒の場合は、正しく変更が適用されない可能性があります。
+</p>
+
+<pre>
+<code>
+g_server->Regist( (const EFK_CHAR*)L"test", g_effect );
+</code>
+</pre>
+
+		<h2>サーバーの更新</h2>
+<p>
+サーバーは「Effekseer::Manager」を更新する前に毎フレームアップデートする必要があります。
+</p>
+
+<pre>
+<code>
+g_server->Update();
+</code>
+</pre>
+
+<p>
+例えば、「test」という名称でエフェクトをサーバーに登録し、「test.efkproj」というファイルを編集すると、Effekseerの設定に応じてリアルタイムにアプリケーションで表示されているエフェクトが変わります。なお、テクスチャの変更は、アプリケーション側にもテクスチャが存在していれば可能となっています。
+</p>
+
+		<h2>クライアント機能の設定</h2>
+		<p>
+「Runtime/NetworkClient.sln」を参照してください。
+		</p>
+
+		<p>
+滅多に使うことはありませんが、Effekseerからだけでなく、クライアント機能を用いてもエフェクトを変更することができます。
+「Effekseer::Client::Create」を用い、クライアントを生成し、「Effekseer::Client::Start」を用いて接続を行います。
+データの送信にはEffekseer::Client::Reload」を使用します。
+		</p>
+
+<pre>
+<code>
+
+static ::Effekseer::Client*　g_client = NULL;
+
+// クライアントの生成
+g_client = Effekseer::Client::Create();
+
+// クライアントをポート60000で接続
+g_client->Start( "127.0.0.1", 60000 );
+
+// 送信
+g_client->Reload( g_manager, (const EFK_CHAR*)L"test_reload.efk", (const EFK_CHAR*)L"test" );
+</code>
+</pre>
+
+	</div>
+</body>
+
+</html>
