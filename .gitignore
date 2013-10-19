@@ -13,3 +13,5 @@
 *.a
 
 [Oo]bj/
+
+Release/RuntimeSample/lib/*.lib
