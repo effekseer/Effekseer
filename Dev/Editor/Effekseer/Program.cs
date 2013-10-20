@@ -26,7 +26,7 @@ namespace Effekseer
 			string input = string.Empty;
 			string output = string.Empty;
 			string export = string.Empty;
-			float magnification = 1.0f;
+			float magnification = 0.0f;
 
 			for (int i = 0; i < args.Length; i++)
 			{
@@ -113,6 +113,11 @@ namespace Effekseer
 
 				if (export != string.Empty)
 				{
+					if (magnification == 0.0f)
+					{
+						magnification = Core.ExportMagnification;
+					}
+
 					var binary = Binary.Exporter.Export(magnification);
 					System.IO.File.WriteAllBytes(export, binary);
 				}

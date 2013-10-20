@@ -83,7 +83,7 @@ public class Script
 			this.txt_magnification.Name = "txt_magnification";
 			this.txt_magnification.Size = new System.Drawing.Size(100, 19);
 			this.txt_magnification.TabIndex = 1;
-			this.txt_magnification.Text = "1.0";
+			this.txt_magnification.Text = Effekseer.Core.ExportMagnification.ToString();
 			// 
 			// btn_ok
 			// 
@@ -143,6 +143,7 @@ public class Script
 			{
 				var binary = Effekseer.Binary.Exporter.Export(mag);
 				System.IO.File.WriteAllBytes(path, binary);
+				Effekseer.Core.ExportMagnification = mag;
 				Close();
 			}
 		}

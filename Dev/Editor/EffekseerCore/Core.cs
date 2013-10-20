@@ -58,6 +58,12 @@ namespace Effekseer
 			private set;
 		}
 
+		public static float ExportMagnification
+		{
+			get;
+			set;
+		}
+
 		/// <summary>
 		/// 再生開始フレーム
 		/// </summary>
@@ -437,6 +443,8 @@ namespace Effekseer
 			EndFrame = 120;
 			IsLoop = false;
 
+			ExportMagnification = 1.0f;
+
 			SelectedNode = null;
 			Command.CommandManager.Clear();
 			Root = new Data.NodeRoot();
@@ -477,6 +485,7 @@ namespace Effekseer
 			project_root.AppendChild(doc.CreateTextElement("StartFrame", StartFrame));
 			project_root.AppendChild(doc.CreateTextElement("EndFrame", EndFrame));
 			project_root.AppendChild(doc.CreateTextElement("IsLoop", IsLoop.ToString()));
+			project_root.AppendChild(doc.CreateTextElement("ExportMagnification", ExportMagnification.ToString()));
 
 			doc.AppendChild(project_root);
 
@@ -552,6 +561,8 @@ namespace Effekseer
 			EndFrame = doc["EffekseerProject"]["EndFrame"].GetTextAsInt();
 			StartFrame = doc["EffekseerProject"]["StartFrame"].GetTextAsInt();
 			IsLoop = bool.Parse(doc["EffekseerProject"]["IsLoop"].GetText());
+			ExportMagnification = doc["EffekseerProject"]["ExportMagnification"].GetTextAsFloat();
+			if (ExportMagnification == 0.0f) ExportMagnification = 1.0f;
 
 			int version = 0;
 			if (doc["EffekseerProject"]["Version"] != null)
