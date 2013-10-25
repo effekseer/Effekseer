@@ -67,6 +67,13 @@ robocopy Dev\Cpp\EffekseerSoundAL %RDIR%\Runtime\EffekseerSoundAL *.h *.cpp *.fi
 
 
 echo ランタイム組み込みサンプル
+robocopy Release\RuntimeSample %RDIR%\RuntimeSample\ *.h *.cpp *.filters *.vcxproj *.fx *.efk *.wav *.png *.sln /mir /S
+rmdir %RDIR%\RuntimeSample\include /S /Q
+rmdir %RDIR%\RuntimeSample\lib /S /Q
+
+mkdir %RDIR%\RuntimeSample\include
+mkdir %RDIR%\RuntimeSample\lib
+
 copy Dev\Cpp\Effekseer\Effekseer.h %RDIR%\RuntimeSample\include\.
 copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX9.h %RDIR%\RuntimeSample\include\.
 copy Dev\Cpp\EffekseerRendererDX11\EffekseerRendererDX11.h %RDIR%\RuntimeSample\include\.
@@ -96,6 +103,15 @@ mkdir %RDIR%\Sample
 robocopy Release\Sample %RDIR%\Sample *.efkproj *.efkmodel *.txt *.png /mir /S
 
 cp Release/MIT-LICENSE.txt %RDIR%/MIT-LICENSE.txt
+
+mkdir %RDIR%\Help
+robocopy Release\Help %RDIR%\Help *.html *.css *.efkproj *.png /mir /S
+
+mkdir %RDIR%\Tool
+robocopy Release\Tool %RDIR%\Tool *.exe /mir /S
+
+mkdir %RDIR%\GameEngine
+robocopy Release\GameEngine %RDIR%\GameEngine *.unitypackage *.zip /mir /S
 
 pause
 
