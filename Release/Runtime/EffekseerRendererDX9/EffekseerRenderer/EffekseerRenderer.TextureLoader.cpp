@@ -47,8 +47,12 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 		char* data_texture = new char[size_texture];
 		reader->Read( data_texture, size_texture );
 
+#ifdef __EFFEKSEER_RENDERER_DIRECTXTEX
+		return NULL;
+#else
 		D3DXCreateTextureFromFileInMemory( m_renderer->GetDevice(), data_texture, size_texture, &texture );
-
+#endif
+		
 		delete [] data_texture;
 
 		return (void*)texture;

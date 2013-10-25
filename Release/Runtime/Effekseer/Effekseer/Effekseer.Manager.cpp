@@ -1110,14 +1110,7 @@ void ManagerImplemented::Flip()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::Update( float deltaFrame )
 {
-	m_renderingSession.Enter();
-
-	if( m_autoFlip )
-	{
-		Flip();
-	}
-
-	m_sequenceNumber++;
+	BeginUpdate();
 
 	// 開始時間を記録
 	int64_t beginTime = ::Effekseer::GetTime();
@@ -1126,25 +1119,70 @@ void ManagerImplemented::Update( float deltaFrame )
 	{
 		DrawSet& drawSet = m_renderingDrawSets[i];
 		
-		if( !drawSet.IsPaused )
-		{
-			float df = deltaFrame * drawSet.Speed;
-
-			drawSet.InstanceContainerPointer->Update( true, df, drawSet.IsShown );
-
-			if( drawSet.DoUseBaseMatrix )
-			{
-				drawSet.InstanceContainerPointer->SetBaseMatrix( true, drawSet.BaseMatrix );
-			}
-
-			drawSet.GlobalPointer->AddUpdatedFrame( df );
-		}
+		UpdateHandle( drawSet, deltaFrame );
 	}
 
 	// 経過時間を計算
 	m_updateTime = (int)(Effekseer::GetTime() - beginTime);
 
+	EndUpdate();
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void ManagerImplemented::BeginUpdate()
+{
+	m_renderingSession.Enter();
+
+	if( m_autoFlip )
+	{
+		Flip();
+	}
+
+	m_sequenceNumber++;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void ManagerImplemented::EndUpdate()
+{
 	m_renderingSession.Leave();
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void ManagerImplemented::UpdateHandle( Handle handle, float deltaFrame )
+{
+	std::map<Handle,DrawSet>::iterator it = m_DrawSets.find( handle );
+	if( it != m_DrawSets.end() )
+	{
+		DrawSet& drawSet = it->second;
+
+		UpdateHandle( drawSet, deltaFrame );
+	}
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void ManagerImplemented::UpdateHandle( DrawSet& drawSet, float deltaFrame )
+{
+	if( !drawSet.IsPaused )
+	{
+		float df = deltaFrame * drawSet.Speed;
+
+		drawSet.InstanceContainerPointer->Update( true, df, drawSet.IsShown );
+
+		if( drawSet.DoUseBaseMatrix )
+		{
+			drawSet.InstanceContainerPointer->SetBaseMatrix( true, drawSet.BaseMatrix );
+		}
+
+		drawSet.GlobalPointer->AddUpdatedFrame( df );
+	}
 }
 
 //----------------------------------------------------------------------------------

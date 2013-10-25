@@ -47,6 +47,27 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 		char* data_texture = new char[size_texture];
 		reader->Read( data_texture, size_texture );
 
+		
+#ifdef __EFFEKSEER_RENDERER_DIRECTXTEX
+		::DirectX::ScratchImage img;
+		::DirectX::TexMetadata metadata;
+
+		::DirectX::LoadFromWICMemory(
+			data_texture,
+			size_texture,
+			0,
+			&metadata,
+			img );
+
+		::DirectX::CreateShaderResourceView(
+			m_renderer->GetDevice(),
+			img.GetImages(),
+			1,
+			metadata,
+			&texture );
+
+		img.Release();
+#else
 		D3DX11CreateShaderResourceViewFromMemory(
 			m_renderer->GetDevice(), 
 			data_texture, 
@@ -55,6 +76,8 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 			NULL,
 			&texture,
 			NULL );
+#endif
+
 
 		delete [] data_texture;
 

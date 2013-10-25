@@ -10,6 +10,7 @@ cmake_minimum_required(VERSION 2.8)
 # MSVCå¸ÇØê›íË
 if (MSVC)
 	option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
+	option(USE_DIRECTXTEX "Use DirectXTex" OFF)
 endif()
 
 option(USE_GLEW_STATIC "Use Glew static library" ON)
@@ -157,6 +158,13 @@ endif()
 if (USE_OPENGLES2)
 	add_definitions(-D__EFFEKSEER_RENDERER_GLES2__)
 endif()
+
+if (MSVC)
+if (USE_DIRECTXTEX)
+	add_definitions(-D__EFFEKSEER_RENDERER_DIRECTXTEX)
+endif()
+endif()
+
 
 # èoóÕêÊÇÃê›íË
 if (MSVC)

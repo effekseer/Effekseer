@@ -7,6 +7,30 @@
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
 
+#if defined(__EFFEKSEER_RENDERER_GL_GLEW__)
+
+#include <GL/glew.h>
+
+#elif defined(__EFFEKSEER_RENDERER_GL_GLEW_S__)
+#define GLEW_STATIC
+#include <GL/glew.h>
+
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+
+#if defined(__APPLE__)
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
+
+#else
+
+#include <GL/gl.h>
+
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -32,30 +56,6 @@ class Renderer;
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-
-#if defined(__EFFEKSEER_RENDERER_GL_GLEW__)
-
-#include <GL/glew.h>
-
-#elif defined(__EFFEKSEER_RENDERER_GL_GLEW_S__)
-#define GLEW_STATIC
-#include <GL/glew.h>
-
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
-
-#if defined(__APPLE__)
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
-#else
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#endif
-
-#else
-
-#include <GL/gl.h>
-
-#endif
 
 //----------------------------------------------------------------------------------
 // Lib

@@ -471,6 +471,34 @@ public:
 	void Update( float deltaFrame );
 
 	/**
+		@brief	更新処理を開始する。
+		@note
+		Updateを実行する際は、実行する必要はない。
+	*/
+	void BeginUpdate();
+
+	/**
+		@brief	更新処理を終了する。
+		@note
+		Updateを実行する際は、実行する必要はない。
+	*/
+	void EndUpdate();
+
+	/**
+		@brief	ハンドル単位の更新を行う。
+		@param	handle		[in]	ハンドル
+		@param	deltaFrame	[in]	更新するフレーム数(60fps基準)
+		@note
+		更新する前にBeginUpdate、更新し終わった後にEndUpdateを実行する必要がある。
+	*/
+	void UpdateHandle( Handle handle, float deltaFrame = 1.0f );
+
+private:
+	void UpdateHandle( DrawSet& drawSet, float deltaFrame );
+
+public:
+
+	/**
 		@brief	描画処理
 	*/
 	void Draw();

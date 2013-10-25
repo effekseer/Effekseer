@@ -8,7 +8,7 @@ namespace Effekseer
 {
 	public class Core
 	{
-        public const string Version = "0.50";
+        public const string Version = "0.50.1";
 
 		static Data.NodeBase selected_node = null;
 
