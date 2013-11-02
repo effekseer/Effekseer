@@ -485,7 +485,7 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetVertexBuffer(ID3D11Buffer* vertexBuffer, int32_t size)
 {
-	auto vBuf = vertexBuffer;
+	ID3D11Buffer* vBuf = vertexBuffer;
 	uint32_t vertexSize = size;
 	uint32_t offset = 0;
 	GetContext()->IASetVertexBuffers( 0, 1, &vBuf, &vertexSize, &offset ); 
@@ -496,7 +496,7 @@ void RendererImplemented::SetVertexBuffer(ID3D11Buffer* vertexBuffer, int32_t si
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size )
 {
-	auto vBuf = vertexBuffer->GetInterface();
+	ID3D11Buffer* vBuf = vertexBuffer->GetInterface();
 	uint32_t vertexSize = size;
 	uint32_t offset = 0;
 	GetContext()->IASetVertexBuffers( 0, 1, &vBuf, &vertexSize, &offset ); 

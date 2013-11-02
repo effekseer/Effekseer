@@ -8,6 +8,11 @@
 #include "EffekseerRenderer.Base.h"
 #include "EffekseerRenderer.Renderer.h"
 
+/* Visual Studio 2008 */
+#if _MSC_VER == 1500
+#include <xmmintrin.h>
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
