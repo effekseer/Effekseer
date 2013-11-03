@@ -12,6 +12,13 @@
 *.la
 *.a
 
+*.suo
+*.tlog
+*.obj
+*.ipch
+*.idb
+*.log
+
 [Oo]bj/
 
 Release/RuntimeSample/lib/*.lib
