@@ -10,6 +10,8 @@ namespace Effekseer
 	{
         public const string Version = "0.50.1";
 
+		public const string OptionFilePath = "config.option.xml";
+
 		static Data.NodeBase selected_node = null;
 
 		static Data.OptionValues option = new Data.OptionValues();
@@ -382,11 +384,15 @@ namespace Effekseer
 					}
 				}
 			}
+
+			LoadOption();
 		}
 
 		public static void Dispose()
 		{
 			Script.Compiler.Dispose();
+
+			SaveOption();
 		}
 
 		/// <summary>
@@ -471,21 +477,17 @@ namespace Effekseer
 
 			var element = Data.IO.SaveObjectToElement(doc, "Root", Core.Root);
 
-			var optionElement = Data.IO.SaveObjectToElement(doc, "Option", Option);
-
 			var behaviorElement = Data.IO.SaveObjectToElement(doc, "Behavior", EffectBehavior);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 
 			project_root.AppendChild(element);
-			project_root.AppendChild(optionElement);
 			project_root.AppendChild(behaviorElement);
 			project_root.AppendChild(doc.CreateTextElement("ToolVersion", Core.Version));
 			project_root.AppendChild(doc.CreateTextElement("Version", 3));
 			project_root.AppendChild(doc.CreateTextElement("StartFrame", StartFrame));
 			project_root.AppendChild(doc.CreateTextElement("EndFrame", EndFrame));
 			project_root.AppendChild(doc.CreateTextElement("IsLoop", IsLoop.ToString()));
-			project_root.AppendChild(doc.CreateTextElement("ExportMagnification", ExportMagnification.ToString()));
 
 			doc.AppendChild(project_root);
 
@@ -543,13 +545,6 @@ namespace Effekseer
 			var root = doc["EffekseerProject"]["Root"];
 			if (root == null) return false;
 
-			var optionElement = doc["EffekseerProject"]["Option"];
-			if (optionElement != null)
-			{
-				var o = option as object;
-				Data.IO.LoadObjectFromElement(optionElement as System.Xml.XmlElement, ref o);
-			}
-
 			var behaviorElement = doc["EffekseerProject"]["Behavior"];
 			if (behaviorElement != null)
 			{
@@ -561,8 +556,6 @@ namespace Effekseer
 			EndFrame = doc["EffekseerProject"]["EndFrame"].GetTextAsInt();
 			StartFrame = doc["EffekseerProject"]["StartFrame"].GetTextAsInt();
 			IsLoop = bool.Parse(doc["EffekseerProject"]["IsLoop"].GetText());
-			ExportMagnification = doc["EffekseerProject"]["ExportMagnification"].GetTextAsFloat();
-			if (ExportMagnification == 0.0f) ExportMagnification = 1.0f;
 
 			int version = 0;
 			if (doc["EffekseerProject"]["Version"] != null)
@@ -619,6 +612,55 @@ namespace Effekseer
 			}
 
 			return true;
+		}
+
+		static public bool LoadOption()
+		{
+			var path = System.IO.Path.GetFullPath(OptionFilePath);
+
+			if (!System.IO.File.Exists(path)) return false;
+
+			var doc = new System.Xml.XmlDocument();
+
+			doc.Load(path);
+
+			if (doc.ChildNodes.Count != 2) return false;
+			if (doc.ChildNodes[1].Name != "EffekseerProject") return false;
+
+			var optionElement = doc["EffekseerProject"]["Option"];
+			if (optionElement != null)
+			{
+				var o = option as object;
+				Data.IO.LoadObjectFromElement(optionElement as System.Xml.XmlElement, ref o);
+			}
+
+			ExportMagnification = doc["EffekseerProject"]["ExportMagnification"].GetTextAsFloat();
+			if (ExportMagnification == 0.0f) ExportMagnification = 1.0f;
+
+			IsChanged = false;
+
+			return true;
+		}
+
+		static public void SaveOption()
+		{
+			var path = System.IO.Path.GetFullPath(OptionFilePath);
+
+			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+
+			var optionElement = Data.IO.SaveObjectToElement(doc, "Option", Option);
+
+			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
+
+			project_root.AppendChild(optionElement);
+			project_root.AppendChild(doc.CreateTextElement("ExportMagnification", ExportMagnification.ToString()));
+
+			doc.AppendChild(project_root);
+
+			var dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
+			doc.InsertBefore(dec, project_root);
+			doc.Save(path);
+			IsChanged = false;
 		}
 
 		static uint ParseVersion(string versionText)
