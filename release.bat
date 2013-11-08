@@ -1,4 +1,4 @@
-SET RDIR=Effekseer0501
+SET RDIR=Effekseer0502
 
 rmdir %RDIR%
 mkdir %RDIR%
@@ -20,6 +20,9 @@ copy Dev\release\Microsoft.Dynamic.dll %RDIR%\Bin\.
 copy Dev\release\Microsoft.Scripting.dll %RDIR%\Bin\.
 copy Dev\release\Viewer.dll %RDIR%\Bin\.
 copy Dev\release\WeifenLuo.WinFormsUI.Docking.dll %RDIR%\Bin\.
+copy Dev\release\System.Reactive.Core.dll %RDIR%\Bin\.
+copy Dev\release\System.Reactive.Interfaces.dll %RDIR%\Bin\.
+copy Dev\release\System.Reactive.Linq.dll %RDIR%\Bin\.
 
 mkdir %RDIR%\Bin\scripts
 mkdir %RDIR%\Bin\scripts\command
