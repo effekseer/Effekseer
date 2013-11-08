@@ -67,7 +67,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 //----------------------------------------------------------------------------------
 void InitWindow()
 {
-	WNDCLASS wndClass;
+	WNDCLASSW wndClass;
 	wchar_t szClassNme[]      =  L"Effekseer";
 	wndClass.style         = CS_HREDRAW | CS_VREDRAW;
 	wndClass.lpfnWndProc   = WndProc;
@@ -79,8 +79,8 @@ void InitWindow()
 	wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 	wndClass.lpszMenuName  = NULL;
 	wndClass.lpszClassName = szClassNme;
-	RegisterClass(&wndClass);
-	g_window_handle = CreateWindow(
+	RegisterClassW(&wndClass);
+	g_window_handle = CreateWindowW(
 		szClassNme,
 		L"Effekseer Test Program (ÉNÉäÉbÉNÇ∑ÇÈÇ∆çƒê∂)",
 		WS_SYSMENU,
