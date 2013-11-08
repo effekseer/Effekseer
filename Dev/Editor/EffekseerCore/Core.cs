@@ -60,12 +60,6 @@ namespace Effekseer
 			private set;
 		}
 
-		public static float ExportMagnification
-		{
-			get;
-			set;
-		}
-
 		/// <summary>
 		/// 再生開始フレーム
 		/// </summary>
@@ -449,8 +443,6 @@ namespace Effekseer
 			EndFrame = 120;
 			IsLoop = false;
 
-			ExportMagnification = 1.0f;
-
 			SelectedNode = null;
 			Command.CommandManager.Clear();
 			Root = new Data.NodeRoot();
@@ -634,9 +626,6 @@ namespace Effekseer
 				Data.IO.LoadObjectFromElement(optionElement as System.Xml.XmlElement, ref o);
 			}
 
-			ExportMagnification = doc["EffekseerProject"]["ExportMagnification"].GetTextAsFloat();
-			if (ExportMagnification == 0.0f) ExportMagnification = 1.0f;
-
 			IsChanged = false;
 
 			return true;
@@ -653,8 +642,6 @@ namespace Effekseer
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 
 			project_root.AppendChild(optionElement);
-			project_root.AppendChild(doc.CreateTextElement("ExportMagnification", ExportMagnification.ToString()));
-
 			doc.AppendChild(project_root);
 
 			var dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);

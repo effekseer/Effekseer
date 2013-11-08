@@ -115,7 +115,7 @@ namespace Effekseer
 				{
 					if (magnification == 0.0f)
 					{
-						magnification = Core.ExportMagnification;
+						magnification = Core.Option.Magnification;
 					}
 
 					var binary = Binary.Exporter.Export(magnification);
