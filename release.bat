@@ -116,5 +116,10 @@ robocopy Release\Tool %RDIR%\Tool *.exe /mir /S
 mkdir %RDIR%\GameEngine
 robocopy Release\GameEngine %RDIR%\GameEngine *.unitypackage *.zip /mir /S
 
+echo doxygen
+doxygen doxygen.template
+mkdir %RDIR%\Help\html\doxygen
+robocopy html %RDIR%\Help\html\doxygen /mir /S
+
 pause
 
