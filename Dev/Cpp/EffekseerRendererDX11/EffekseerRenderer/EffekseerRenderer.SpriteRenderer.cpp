@@ -112,7 +112,7 @@ SpriteRenderer* SpriteRenderer::Create( RendererImplemented* renderer )
 //----------------------------------------------------------------------------------
 void SpriteRenderer::BeginRendering( const efkSpriteNodeParam& parameter, int32_t count, void* userData )
 {
-	BeginRendering_(m_renderer, count);
+	BeginRendering_<RendererImplemented, Vertex>(m_renderer, count);
 }
 
 //----------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ void SpriteRenderer::EndRendering( const efkSpriteNodeParam& parameter, void* us
 
 	if( m_spriteCount == 0 ) return;
 	
-	EndRendering_<RendererImplemented, Shader, ID3D11ShaderResourceView*>(m_renderer, m_shader, m_shader_no_texture, parameter);
+	EndRendering_<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex>(m_renderer, m_shader, m_shader_no_texture, parameter);
 }
 
 //----------------------------------------------------------------------------------

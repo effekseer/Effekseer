@@ -245,6 +245,7 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		RendererImplemented,
 		Shader,
 		ID3D11ShaderResourceView*,
+		Model,
 		true,
 		40>(
 		m_renderer,

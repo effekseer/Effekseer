@@ -243,6 +243,7 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		RendererImplemented,
 		Shader,
 		IDirect3DTexture9*,
+		Model,
 		true,
 		40>(
 		m_renderer,
