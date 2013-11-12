@@ -875,11 +875,6 @@ public:
 	Matrix44& PerspectiveFovLH_OpenGL( float ovY, float aspect, float zn, float zf );
 	
 	/**
-	@brief	OpenGL—pË‰es—ñ‰»(¶èŒn)
-	*/
-	Matrix44& PerspectiveFovLH_OpenGL(float ovY, float aspect, float zn, float zf);
-
-	/**
 		@brief	³Ë‰es—ñ‰»(‰EèŒn)
 	*/
 	Matrix44& OrthographicRH( float width, float height, float zn, float zf );
