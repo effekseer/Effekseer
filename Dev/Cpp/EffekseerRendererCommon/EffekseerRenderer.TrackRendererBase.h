@@ -9,6 +9,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.IndexBufferBase.h"
 
@@ -65,7 +66,7 @@ protected:
 		bool isFirst = param.InstanceIndex == 0;
 		bool isLast = param.InstanceIndex == (param.InstanceCount - 1);
 
-		Vertex* verteies = (Vertex*)m_ringBufferData;
+		VERTEX* verteies = (VERTEX*)m_ringBufferData;
 
 		float size = 0.0f;
 		::Effekseer::Color leftColor;
@@ -115,7 +116,7 @@ protected:
 			rightColor.A = (uint8_t)Effekseer::Clamp( param.ColorRight.A + (param.ColorRightMiddle.A-param.ColorRight.A) * l, 255, 0 );
 		}
 
-		Vertex v[3];
+		VERTEX v[3];
 
 		v[0].Pos.X = - size / 2.0f;
 		v[0].Pos.Y = 0.0f;
@@ -151,7 +152,7 @@ protected:
 			verteies[1] = v[1];
 			verteies[4] = v[1];
 			verteies[5] = v[2];
-			m_ringBufferData += sizeof(Vertex) * 2;
+			m_ringBufferData += sizeof(VERTEX) * 2;
 			
 		}
 		else if( isLast )
@@ -160,7 +161,7 @@ protected:
 			verteies[1] = v[1];
 			verteies[4] = v[1];
 			verteies[5] = v[2];
-			m_ringBufferData += sizeof(Vertex) * 6;
+			m_ringBufferData += sizeof(VERTEX) * 6;
 			m_ribbonCount += 2;
 		}
 		else
@@ -175,14 +176,14 @@ protected:
 			verteies[10] = v[1];
 			verteies[11] = v[2];
 
-			m_ringBufferData += sizeof(Vertex) * 8;
+			m_ringBufferData += sizeof(VERTEX) * 8;
 			m_ribbonCount += 2;
 		}
 
 		/* ç¿ïWïœä∑ */
 		if( isLast )
 		{
-			Vertex* vs_ = (Vertex*)(m_ringBufferData - sizeof(Vertex) * 8 * (param.InstanceCount-1) );
+			VERTEX* vs_ = (VERTEX*)(m_ringBufferData - sizeof(VERTEX) * 8 * (param.InstanceCount-1) );
 			
 			Effekseer::Vector3D axisBefore;
 
@@ -215,9 +216,9 @@ protected:
 
 				pos = vs_[1].Pos;
 
-				Vertex vl = vs_[0];
-				Vertex vm = vs_[1];
-				Vertex vr = vs_[5];
+				VERTEX vl = vs_[0];
+				VERTEX vm = vs_[1];
+				VERTEX vr = vs_[5];
 
 				vm.Pos.X = 0.0f;
 				vm.Pos.Y = 0.0f;
@@ -300,7 +301,7 @@ protected:
 		}
 	}
 
-	template<typename RENDERER, typename SHADER, typename TEXTURE>
+	template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
 	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkTrackNodeParam& param)
 	{
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
@@ -341,10 +342,10 @@ protected:
 
 		renderer->GetRenderState()->Update(false);
 
-		renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(Vertex));
+		renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(VERTEX));
 		renderer->SetIndexBuffer(renderer->GetIndexBuffer());
 		renderer->SetLayout(shader_);
-		renderer->DrawSprites(m_ribbonCount, m_ringBufferOffset / sizeof(Vertex));
+		renderer->DrawSprites(m_ribbonCount, m_ringBufferOffset / sizeof(VERTEX));
 
 		renderer->EndShader(shader_);
 

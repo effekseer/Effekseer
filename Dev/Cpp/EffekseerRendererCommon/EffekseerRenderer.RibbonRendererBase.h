@@ -9,6 +9,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.IndexBufferBase.h"
 
@@ -127,13 +128,13 @@ protected:
 	
 		if( isFirst || isLast )
 		{
-			m_ringBufferData += sizeof(Vertex) * 2;
+			m_ringBufferData += sizeof(VERTEX) * 2;
 		}
 		else
 		{
 			verteies[2] = verteies[0];
 			verteies[3] = verteies[1];
-			m_ringBufferData += sizeof(Vertex) * 4;
+			m_ringBufferData += sizeof(VERTEX) * 4;
 		}
 	
 		if( !isFirst )
@@ -142,7 +143,7 @@ protected:
 		}
 	}
 
-	template<typename RENDERER, typename SHADER, typename TEXTURE>
+	template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
 	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkRibbonNodeParam& param)
 	{
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
@@ -164,7 +165,7 @@ protected:
 
 		if (param.ColorTextureIndex >= 0)
 		{
-			TEXTURE texture = (TEXTURE) param.EffectPointer->GetImage(param.ColorTextureIndex);
+			TEXTURE texture = reinterpret_cast<TEXTURE>(param.EffectPointer->GetImage(param.ColorTextureIndex));
 			renderer->SetTextures(shader_, &texture, 1);
 		}
 		else
@@ -183,10 +184,10 @@ protected:
 
 		renderer->GetRenderState()->Update(false);
 
-		renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(Vertex));
+		renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(VERTEX));
 		renderer->SetIndexBuffer(renderer->GetIndexBuffer());
 		renderer->SetLayout(shader_);
-		renderer->DrawSprites(m_ribbonCount, m_ringBufferOffset / sizeof(Vertex));
+		renderer->DrawSprites(m_ribbonCount, m_ringBufferOffset / sizeof(VERTEX));
 
 		renderer->EndShader(shader_);
 

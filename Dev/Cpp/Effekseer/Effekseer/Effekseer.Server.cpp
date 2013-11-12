@@ -187,7 +187,7 @@ void ServerImplemented::AcceptAsync( void* data )
 		EfkSocket socket_ = ::accept( 
 			server->m_socket, 
 			(SOCKADDR*)(&socketAddrIn),
-			(int*)(&Size) );
+			(SOCKLEN*)(&Size) );
 
 		if ( server->m_socket == InvalidSocket || socket_ == InvalidSocket )
 		{

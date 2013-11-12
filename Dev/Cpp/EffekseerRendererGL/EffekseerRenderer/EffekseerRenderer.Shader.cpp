@@ -9,7 +9,7 @@
 #include <windows.h>
 #define LOG(s)	OutputDebugStringA(s)
 #else
-#define LOG(s)	printf(s)
+#define LOG(s)	printf("%s", s)
 #endif
 
 //-----------------------------------------------------------------------------------
@@ -71,17 +71,20 @@ bool Shader::CompileShader(
 		int32_t log_size;
 		glGetShaderInfoLog(vert_shader, sizeof(log), &log_size, log);
 		if (log_size > 0) {
-			LOG("Vertex Shader:\n");
+			LOG(name);
+			LOG(": Vertex Shader error.\n");
 			LOG(log);
 		}
 		glGetShaderInfoLog(frag_shader, sizeof(log), &log_size, log);
 		if (log_size > 0) {
-			LOG("Fragment Shader:\n");
+			LOG(name);
+			LOG(": Fragment Shader error.\n");
 			LOG(log);
 		}
 		glGetProgramInfoLog(program, sizeof(log), &log_size, log);
 		if (log_size > 0) {
-			LOG("Shader Link:\n");
+			LOG(name);
+			LOG(": Shader Link error.\n");
 			LOG(log);
 		}
 	}
@@ -89,7 +92,6 @@ bool Shader::CompileShader(
 
 	if (res_link == GL_FALSE) {
 		glDeleteProgram(program);
-		printf("Failed to compile shader \"\".", name);
 		return false;
 	}
 

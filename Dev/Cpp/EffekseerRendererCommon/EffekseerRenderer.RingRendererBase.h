@@ -8,7 +8,9 @@
 #include <Effekseer.h>
 #include <assert.h>
 #include <string.h>
+#include <math.h>
 
+#include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.IndexBufferBase.h"
 
@@ -49,8 +51,8 @@ protected:
 		int32_t vertexCount = parameter.VertexCount * 8;
 		//Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * vertexCount );
 		
-		Vertex* verteies = (Vertex*)m_ringBufferData;
-		m_ringBufferData += sizeof(Vertex) * vertexCount;
+		VERTEX* verteies = (VERTEX*)m_ringBufferData;
+		m_ringBufferData += sizeof(VERTEX) * vertexCount;
 
 		const float radian = instanceParameter.ViewingAngle / 180.0f * 3.141592f;
 		const float stepAngle = radian / (parameter.VertexCount);
@@ -103,7 +105,7 @@ protected:
 
 			texNext = texCurrent + texStep;
 			
-			Vertex* v = &verteies[i];
+			VERTEX* v = &verteies[i];
 			v[0].Pos = outerCurrent;
 			v[0].SetColor( outerColor );
 			v[0].UV[0] = texCurrent;
@@ -278,7 +280,7 @@ protected:
 		m_spriteCount += 2 * parameter.VertexCount;
 	}
 
-	template<typename RENDERER, typename SHADER, typename TEXTURE>
+	template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
 	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkRingNodeParam& param)
 	{
 		SHADER* shader_ = NULL;
@@ -300,7 +302,7 @@ protected:
 
 		if (param.ColorTextureIndex >= 0)
 		{
-			TEXTURE texture = (TEXTURE) param.EffectPointer->GetImage(param.ColorTextureIndex);
+			TEXTURE texture = reinterpret_cast<TEXTURE>(param.EffectPointer->GetImage(param.ColorTextureIndex));
 			renderer->SetTextures(shader_, &texture, 1);
 		}
 		else
@@ -327,10 +329,10 @@ protected:
 
 		renderer->GetRenderState()->Update(false);
 
-		renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(Vertex));
+		renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(VERTEX));
 		renderer->SetIndexBuffer(renderer->GetIndexBuffer());
 		renderer->SetLayout(shader_);
-		renderer->DrawSprites(m_spriteCount, m_ringBufferOffset / sizeof(Vertex));
+		renderer->DrawSprites(m_spriteCount, m_ringBufferOffset / sizeof(VERTEX));
 
 		renderer->EndShader(shader_);
 

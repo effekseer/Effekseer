@@ -167,7 +167,7 @@ void TrackRenderer::EndRendering(const efkTrackNodeParam& parameter, void* userD
 
 	if (m_ribbonCount <= 1) return;
 
-	EndRendering_<RendererImplemented, Shader, GLuint>(m_renderer, m_shader, m_shader_no_texture, parameter);
+	EndRendering_<RendererImplemented, Shader, GLuint, Vertex>(m_renderer, m_shader, m_shader_no_texture, parameter);
 }
 
 //----------------------------------------------------------------------------------

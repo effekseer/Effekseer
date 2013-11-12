@@ -78,8 +78,8 @@ private:
 
 	int32_t					m_vertexSize;
 
-	void*					m_vertexConstantBuffer;
-	void*					m_pixelConstantBuffer;
+	uint8_t*					m_vertexConstantBuffer;
+	uint8_t*					m_pixelConstantBuffer;
 
 	std::vector<ConstantLayout>	m_vertexConstantLayout;
 	std::vector<ConstantLayout>	m_pixelConstantLayout;
