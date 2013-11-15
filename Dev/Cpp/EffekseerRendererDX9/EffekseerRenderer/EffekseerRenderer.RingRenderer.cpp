@@ -150,7 +150,7 @@ void RingRenderer::EndRendering( const efkRingNodeParam& parameter, void* userDa
 
 	if( m_spriteCount == 0 ) return;
 
-	EndRendering_<RendererImplemented, Shader, IDirect3DTexture9*>(m_renderer, m_shader, m_shader_no_texture, parameter);
+	EndRendering_<RendererImplemented, Shader, IDirect3DTexture9*, Vertex>(m_renderer, m_shader, m_shader_no_texture, parameter);
 }
 
 //----------------------------------------------------------------------------------

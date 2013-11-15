@@ -192,6 +192,36 @@ Matrix44& Matrix44::PerspectiveFovLH( float ovY, float aspect, float zn, float z
 	Values[3][3] = 0;
 	return *this;
 }
+	
+//----------------------------------------------------------------------------------
+//
+//---------------------------------------------------------------------------------
+Matrix44& Matrix44::PerspectiveFovLH_OpenGL( float ovY, float aspect, float zn, float zf )
+{
+	float yScale = 1 / tanf( ovY / 2 );
+	float xScale = yScale / aspect;
+		
+	Values[0][0] = xScale;
+	Values[0][1] = 0;
+	Values[0][2] = 0;
+	Values[0][3] = 0;
+		
+	Values[1][0] = 0;
+	Values[1][1] = yScale;
+	Values[1][2] = 0;
+	Values[1][3] = 0;
+		
+	Values[2][0] = 0;
+	Values[2][1] = 0;
+	Values[2][2] = zf / (zf-zn);
+	Values[2][3] = 1;
+		
+	Values[3][0] = 0;
+	Values[3][1] = 0;
+	Values[3][2] = -2.0f * zn * zf / (zf-zn);
+	Values[3][3] = 0;
+	return *this;
+}
 
 //----------------------------------------------------------------------------------
 //

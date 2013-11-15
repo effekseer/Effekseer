@@ -148,7 +148,7 @@ void RibbonRenderer::EndRendering( const efkRibbonNodeParam& parameter, void* us
 
 	if( m_ribbonCount <= 1 ) return;
 
-	EndRendering_<RendererImplemented, Shader, IDirect3DTexture9*>(m_renderer, m_shader, m_shader_no_texture, parameter);
+	EndRendering_<RendererImplemented, Shader, IDirect3DTexture9*, Vertex>(m_renderer, m_shader, m_shader_no_texture, parameter);
 }
 
 //----------------------------------------------------------------------------------

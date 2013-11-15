@@ -8,7 +8,9 @@
 #include <Effekseer.h>
 #include <assert.h>
 #include <string.h>
+#include <math.h>
 
+#include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.IndexBufferBase.h"
 
@@ -40,13 +42,13 @@ public:
 
 protected:
 
-	template<typename RENDERER>
+	template<typename RENDERER, typename VERTEX>
 	void BeginRendering_(RENDERER* renderer, int32_t count)
 	{
 		m_spriteCount = 0;
 
 		if (!renderer->GetVertexBuffer()->RingBufferLock(
-			count * sizeof(Vertex) * 4,
+			count * sizeof(VERTEX) * 4,
 			m_ringBufferOffset,
 			(void*&) m_ringBufferData))
 		{
@@ -192,7 +194,7 @@ protected:
 		m_spriteCount++;
 	}
 
-	template<typename RENDERER,typename SHADER, typename TEXTURE>
+	template<typename RENDERER,typename SHADER, typename TEXTURE, typename VERTEX>
 	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkSpriteNodeParam& param)
 	{
 		SHADER* shader_ = NULL;
@@ -214,7 +216,7 @@ protected:
 
 		if (param.ColorTextureIndex >= 0)
 		{
-			TEXTURE texture = (TEXTURE) param.EffectPointer->GetImage(param.ColorTextureIndex);
+			TEXTURE texture = reinterpret_cast<TEXTURE>(param.EffectPointer->GetImage(param.ColorTextureIndex));
 			renderer->SetTextures(shader_, &texture, 1);
 		}
 		else
@@ -232,10 +234,10 @@ protected:
 
 		renderer->GetRenderState()->Update(false);
 
-		renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(Vertex));
+		renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(VERTEX));
 		renderer->SetIndexBuffer(renderer->GetIndexBuffer());
 		renderer->SetLayout(shader_);
-		renderer->DrawSprites(m_spriteCount, m_ringBufferOffset / sizeof(Vertex));
+		renderer->DrawSprites(m_spriteCount, m_ringBufferOffset / sizeof(VERTEX));
 
 		renderer->EndShader(shader_);
 

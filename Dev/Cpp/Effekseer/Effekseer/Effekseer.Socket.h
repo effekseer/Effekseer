@@ -44,12 +44,15 @@ namespace Effekseer {
 #ifdef _WIN32
 
 typedef SOCKET	EfkSocket;
+typedef int		SOCKLEN;
 const EfkSocket InvalidSocket = INVALID_SOCKET;
 const int32_t SocketError = SOCKET_ERROR;
 const int32_t InaddrNone = INADDR_NONE;
+
 #else
 
 typedef int32_t	EfkSocket;
+typedef socklen_t SOCKLEN;
 const EfkSocket InvalidSocket = -1;
 const int32_t SocketError = -1;
 const int32_t InaddrNone = -1;

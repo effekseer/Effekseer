@@ -121,21 +121,6 @@ inline void TransformVertexes( Vertex* vertexes, int32_t count, const ::Effeksee
 	#endif
 }
 
-inline void ColorToFloat4( ::Effekseer::Color color, float fc[4] )
-{
-	fc[0] = color.R / 255.0f;
-	fc[1] = color.G / 255.0f;
-	fc[2] = color.B / 255.0f;
-	fc[3] = color.A / 255.0f;
-}
-
-inline void VectorToFloat4(::Effekseer::Vector3D v, float fc[4])
-{
-	fc[0] = v.X;
-	fc[1] = v.Y;
-	fc[2] = v.Z;
-	fc[3] = 1.0f;
-}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

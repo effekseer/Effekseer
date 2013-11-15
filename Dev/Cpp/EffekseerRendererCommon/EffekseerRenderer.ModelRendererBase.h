@@ -10,6 +10,7 @@
 #include <string.h>
 #include <vector>
 
+#include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.IndexBufferBase.h"
 
@@ -62,7 +63,7 @@ public:
 
 	void Rendering( const efkModelNodeParam& parameter, const efkModelInstanceParam& instanceParameter, void* userData );
 
-	template<typename RENDERER, typename SHADER, typename TEXTURE, bool Instancing, int InstanceCount>
+	template<typename RENDERER, typename SHADER, typename TEXTURE, typename MODEL, bool Instancing, int InstanceCount>
 	void EndRendering_(
 		RENDERER* renderer, 
 		SHADER* shader_lighting_texture_normal,
@@ -76,7 +77,7 @@ public:
 		if (m_matrixes.size() == 0) return;
 		if (param.ModelIndex < 0) return;
 
-		Model* model = (Model*) param.EffectPointer->GetModel(param.ModelIndex);
+		MODEL* model = (MODEL*) param.EffectPointer->GetModel(param.ModelIndex);
 		if (model == NULL) return;
 		
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
