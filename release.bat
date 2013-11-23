@@ -1,4 +1,4 @@
-SET RDIR=Effekseer0502
+SET RDIR=Effekseer053
 
 rmdir %RDIR%
 mkdir %RDIR%

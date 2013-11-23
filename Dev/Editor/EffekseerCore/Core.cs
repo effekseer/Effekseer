@@ -8,7 +8,7 @@ namespace Effekseer
 {
 	public class Core
 	{
-        public const string Version = "0.50.2";
+        public const string Version = "0.53";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -608,7 +608,7 @@ namespace Effekseer
 
 		static public bool LoadOption()
 		{
-			var path = System.IO.Path.GetFullPath(OptionFilePath);
+			var path = System.IO.Path.Combine(GetEntryDirectory(), OptionFilePath);
 
 			if (!System.IO.File.Exists(path)) return false;
 
@@ -633,7 +633,7 @@ namespace Effekseer
 
 		static public void SaveOption()
 		{
-			var path = System.IO.Path.GetFullPath(OptionFilePath);
+			var path = System.IO.Path.Combine(GetEntryDirectory(), OptionFilePath);
 
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
