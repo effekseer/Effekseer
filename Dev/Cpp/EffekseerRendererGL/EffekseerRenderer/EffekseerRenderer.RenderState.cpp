@@ -87,22 +87,22 @@ void RenderState::Update( bool forced )
 			if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_SUB )
 			{
 				glBlendEquationSeparate(GL_FUNC_REVERSE_SUBTRACT, GL_FUNC_ADD);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+				glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
 			}
 			else
 			{
 				glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 				if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_BLEND )
 				{
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+					glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 				}
 				else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_ADD )
 				{
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+					glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
 				}
 				else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_MUL )
 				{
-					glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+					glBlendFuncSeparate(GL_ZERO, GL_SRC_COLOR, GL_ONE, GL_ONE);
 				}
 			}
 		}
