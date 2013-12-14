@@ -46,6 +46,8 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_indexBuffer	( NULL )
 	, m_squareMaxCount	( squareMaxCount )
 	, m_coordinateSystem	( ::Effekseer::COORDINATE_SYSTEM_RH )
+	, m_state_vertexShader( NULL )
+	, m_state_pixelShader( NULL )
 	, m_state_vertexDeclaration	( NULL )
 	, m_state_streamData ( NULL )
 	, m_state_IndexData	( NULL )
@@ -228,15 +230,16 @@ bool RendererImplemented::BeginRendering()
 	GetDevice()->GetRenderState( D3DRS_LIGHTING, &m_state_D3DRS_LIGHTING );
 	GetDevice()->GetRenderState( D3DRS_SHADEMODE, &m_state_D3DRS_SHADEMODE );
 
-	
-	//GetDevice()->GetVertexDeclaration( &m_state_vertexDeclaration );
+	GetDevice()->GetVertexShader(&m_state_vertexShader);
+	GetDevice()->GetPixelShader(&m_state_pixelShader);
+	GetDevice()->GetVertexDeclaration( &m_state_vertexDeclaration );
 	//GetDevice()->GetStreamSource( 0, &m_state_streamData, &m_state_OffsetInBytes, &m_state_pStride );
 	//GetDevice()->GetIndices( &m_state_IndexData );
 	
 		
 	GetDevice()->GetTexture( 0, &m_state_pTexture );
-
 	GetDevice()->GetFVF( &m_state_FVF );
+	
 
 	// ステート初期値設定
 	GetDevice()->SetTexture( 0, NULL );
@@ -278,16 +281,21 @@ bool RendererImplemented::EndRendering()
 	GetDevice()->SetRenderState( D3DRS_LIGHTING, m_state_D3DRS_LIGHTING );
 	GetDevice()->SetRenderState( D3DRS_SHADEMODE, m_state_D3DRS_SHADEMODE );
 
+	GetDevice()->SetVertexShader(m_state_vertexShader);
+	ES_SAFE_RELEASE( m_state_vertexShader );
 
-	//GetDevice()->SetVertexDeclaration( m_state_vertexDeclaration );
-	//ES_SAFE_RELEASE( m_state_vertexDeclaration );
+	GetDevice()->SetPixelShader(m_state_pixelShader);
+	ES_SAFE_RELEASE( m_state_pixelShader );
+
+	GetDevice()->SetVertexDeclaration( m_state_vertexDeclaration );
+	ES_SAFE_RELEASE( m_state_vertexDeclaration );
 
 	//GetDevice()->SetStreamSource( 0, m_state_streamData, m_state_OffsetInBytes, m_state_pStride );
 	//ES_SAFE_RELEASE( m_state_streamData );
 
 	//GetDevice()->SetIndices( m_state_IndexData );
 	//ES_SAFE_RELEASE( m_state_IndexData );
-		
+
 	GetDevice()->SetTexture( 0, m_state_pTexture );
 	ES_SAFE_RELEASE( m_state_pTexture );
 

@@ -187,6 +187,8 @@ private:
 	DWORD	m_state_D3DRS_LIGHTING;
 	DWORD	m_state_D3DRS_SHADEMODE;
 
+	IDirect3DVertexShader9*			m_state_vertexShader;
+	IDirect3DPixelShader9*			m_state_pixelShader;
 	IDirect3DVertexDeclaration9*	m_state_vertexDeclaration;
 
 	IDirect3DVertexBuffer9* m_state_streamData;
