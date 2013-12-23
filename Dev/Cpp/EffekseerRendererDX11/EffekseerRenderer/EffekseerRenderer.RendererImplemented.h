@@ -201,6 +201,8 @@ private:
 	// ステート
 	OriginalState*	m_state;
 
+	bool	m_restorationOfStates;
+
 public:
 	/**
 		@brief	コンストラクタ
@@ -233,6 +235,8 @@ public:
 	int Release();
 
 	void Destory();
+
+	void SetRestorationOfStatesFlag(bool flag);
 
 	/**
 		@brief	描画開始

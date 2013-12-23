@@ -45,6 +45,7 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_indexBuffer	( NULL )
 	, m_squareMaxCount	( squareMaxCount )
 	, m_renderState		( NULL )
+	, m_restorationOfStates(true)
 {
 	::Effekseer::Vector3D direction( 1.0f, 1.0f, 1.0f );
 	SetLightDirection( direction );
@@ -188,22 +189,31 @@ void RendererImplemented::Destory()
 	Release();
 }
 
+void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
+{
+	m_restorationOfStates = flag;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 bool RendererImplemented::BeginRendering()
 {
 	::Effekseer::Matrix44::Mul( m_cameraProj, m_camera, m_proj );
+
 	// ステートを保存する
-	m_originalState.blend = glIsEnabled(GL_BLEND);
-	m_originalState.cullFace = glIsEnabled(GL_CULL_FACE);
-	m_originalState.depthTest = glIsEnabled(GL_DEPTH_TEST);
-	m_originalState.texture = glIsEnabled(GL_TEXTURE_2D);
-	glGetBooleanv(GL_DEPTH_WRITEMASK, &m_originalState.depthWrite);
-	glGetIntegerv(GL_BLEND_SRC_RGB, &m_originalState.blendSrc);
-	glGetIntegerv(GL_BLEND_DST_RGB, &m_originalState.blendDst);
-	glGetIntegerv(GL_BLEND_EQUATION, &m_originalState.blendEquation);
-	
+	if(m_restorationOfStates)
+	{
+		m_originalState.blend = glIsEnabled(GL_BLEND);
+		m_originalState.cullFace = glIsEnabled(GL_CULL_FACE);
+		m_originalState.depthTest = glIsEnabled(GL_DEPTH_TEST);
+		m_originalState.texture = glIsEnabled(GL_TEXTURE_2D);
+		glGetBooleanv(GL_DEPTH_WRITEMASK, &m_originalState.depthWrite);
+		glGetIntegerv(GL_BLEND_SRC_RGB, &m_originalState.blendSrc);
+		glGetIntegerv(GL_BLEND_DST_RGB, &m_originalState.blendDst);
+		glGetIntegerv(GL_BLEND_EQUATION, &m_originalState.blendEquation);
+	}
+
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 
@@ -219,15 +229,18 @@ bool RendererImplemented::BeginRendering()
 bool RendererImplemented::EndRendering()
 {
 	// ステートを復元する
-	if (m_originalState.blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
-	if (m_originalState.cullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
-	if (m_originalState.depthTest) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
-	if (m_originalState.texture) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
-	
-	glDepthMask(m_originalState.depthWrite);
-	glBlendFunc(m_originalState.blendSrc, m_originalState.blendDst);
-	glBlendEquation(m_originalState.blendEquation);
-	
+	if(m_restorationOfStates)
+	{
+		if (m_originalState.blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
+		if (m_originalState.cullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
+		if (m_originalState.depthTest) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
+		if (m_originalState.texture) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
+		
+		glDepthMask(m_originalState.depthWrite);
+		glBlendFunc(m_originalState.blendSrc, m_originalState.blendDst);
+		glBlendEquation(m_originalState.blendEquation);
+	}
+
 	return true;
 }
 

@@ -54,6 +54,7 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_state_pTexture	( NULL )
 	, m_renderState		( NULL )
 	, m_isChangedDevice	( false )
+	, m_restorationOfStates( true )
 {
 	SetLightDirection( ::Effekseer::Vector3D( 1.0f, 1.0f, 1.0f ) );
 	SetLightColor( ::Effekseer::Color( 255, 255, 255, 255 ) );
@@ -208,6 +209,14 @@ void RendererImplemented::Destory()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
+{
+	m_restorationOfStates = flag;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 bool RendererImplemented::BeginRendering()
 {
 	assert( m_d3d_device != NULL );
@@ -215,31 +224,33 @@ bool RendererImplemented::BeginRendering()
 	::Effekseer::Matrix44::Mul( m_cameraProj, m_camera, m_proj );
 	
 	// ステートを保存する
-	GetDevice()->GetRenderState( D3DRS_ALPHABLENDENABLE, &m_state_D3DRS_ALPHABLENDENABLE );
-	GetDevice()->GetRenderState( D3DRS_BLENDOP, &m_state_D3DRS_BLENDOP );
-	GetDevice()->GetRenderState( D3DRS_DESTBLEND, &m_state_D3DRS_DESTBLEND );
-	GetDevice()->GetRenderState( D3DRS_SRCBLEND, &m_state_D3DRS_SRCBLEND );
-	GetDevice()->GetRenderState( D3DRS_ALPHAREF, &m_state_D3DRS_ALPHAREF );
+	if(m_restorationOfStates)
+	{
+		GetDevice()->GetRenderState( D3DRS_ALPHABLENDENABLE, &m_state_D3DRS_ALPHABLENDENABLE );
+		GetDevice()->GetRenderState( D3DRS_BLENDOP, &m_state_D3DRS_BLENDOP );
+		GetDevice()->GetRenderState( D3DRS_DESTBLEND, &m_state_D3DRS_DESTBLEND );
+		GetDevice()->GetRenderState( D3DRS_SRCBLEND, &m_state_D3DRS_SRCBLEND );
+		GetDevice()->GetRenderState( D3DRS_ALPHAREF, &m_state_D3DRS_ALPHAREF );
 
-	GetDevice()->GetRenderState( D3DRS_ZENABLE, &m_state_D3DRS_ZENABLE );
-	GetDevice()->GetRenderState( D3DRS_ZWRITEENABLE, &m_state_D3DRS_ZWRITEENABLE );
-	GetDevice()->GetRenderState( D3DRS_ALPHATESTENABLE, &m_state_D3DRS_ALPHATESTENABLE );
-	GetDevice()->GetRenderState( D3DRS_CULLMODE, &m_state_D3DRS_CULLMODE );
+		GetDevice()->GetRenderState( D3DRS_ZENABLE, &m_state_D3DRS_ZENABLE );
+		GetDevice()->GetRenderState( D3DRS_ZWRITEENABLE, &m_state_D3DRS_ZWRITEENABLE );
+		GetDevice()->GetRenderState( D3DRS_ALPHATESTENABLE, &m_state_D3DRS_ALPHATESTENABLE );
+		GetDevice()->GetRenderState( D3DRS_CULLMODE, &m_state_D3DRS_CULLMODE );
 
-	GetDevice()->GetRenderState( D3DRS_COLORVERTEX, &m_state_D3DRS_COLORVERTEX );
-	GetDevice()->GetRenderState( D3DRS_LIGHTING, &m_state_D3DRS_LIGHTING );
-	GetDevice()->GetRenderState( D3DRS_SHADEMODE, &m_state_D3DRS_SHADEMODE );
+		GetDevice()->GetRenderState( D3DRS_COLORVERTEX, &m_state_D3DRS_COLORVERTEX );
+		GetDevice()->GetRenderState( D3DRS_LIGHTING, &m_state_D3DRS_LIGHTING );
+		GetDevice()->GetRenderState( D3DRS_SHADEMODE, &m_state_D3DRS_SHADEMODE );
 
-	GetDevice()->GetVertexShader(&m_state_vertexShader);
-	GetDevice()->GetPixelShader(&m_state_pixelShader);
-	GetDevice()->GetVertexDeclaration( &m_state_vertexDeclaration );
-	//GetDevice()->GetStreamSource( 0, &m_state_streamData, &m_state_OffsetInBytes, &m_state_pStride );
-	//GetDevice()->GetIndices( &m_state_IndexData );
-	
+		GetDevice()->GetVertexShader(&m_state_vertexShader);
+		GetDevice()->GetPixelShader(&m_state_pixelShader);
+		GetDevice()->GetVertexDeclaration( &m_state_vertexDeclaration );
+		//GetDevice()->GetStreamSource( 0, &m_state_streamData, &m_state_OffsetInBytes, &m_state_pStride );
+		//GetDevice()->GetIndices( &m_state_IndexData );
 		
-	GetDevice()->GetTexture( 0, &m_state_pTexture );
-	GetDevice()->GetFVF( &m_state_FVF );
-	
+			
+		GetDevice()->GetTexture( 0, &m_state_pTexture );
+		GetDevice()->GetFVF( &m_state_FVF );
+	}
 
 	// ステート初期値設定
 	GetDevice()->SetTexture( 0, NULL );
@@ -266,41 +277,44 @@ bool RendererImplemented::EndRendering()
 	assert( m_d3d_device != NULL );
 	
 	// ステートを復元する
-	GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, m_state_D3DRS_ALPHABLENDENABLE );
-	GetDevice()->SetRenderState( D3DRS_BLENDOP, m_state_D3DRS_BLENDOP );
-	GetDevice()->SetRenderState( D3DRS_DESTBLEND, m_state_D3DRS_DESTBLEND );
-	GetDevice()->SetRenderState( D3DRS_SRCBLEND, m_state_D3DRS_SRCBLEND );
-	GetDevice()->SetRenderState( D3DRS_ALPHAREF, m_state_D3DRS_ALPHAREF );
+	if(m_restorationOfStates)
+	{
+		GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, m_state_D3DRS_ALPHABLENDENABLE );
+		GetDevice()->SetRenderState( D3DRS_BLENDOP, m_state_D3DRS_BLENDOP );
+		GetDevice()->SetRenderState( D3DRS_DESTBLEND, m_state_D3DRS_DESTBLEND );
+		GetDevice()->SetRenderState( D3DRS_SRCBLEND, m_state_D3DRS_SRCBLEND );
+		GetDevice()->SetRenderState( D3DRS_ALPHAREF, m_state_D3DRS_ALPHAREF );
 
-	GetDevice()->SetRenderState( D3DRS_ZENABLE, m_state_D3DRS_ZENABLE );
-	GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, m_state_D3DRS_ZWRITEENABLE );
-	GetDevice()->SetRenderState( D3DRS_ALPHATESTENABLE, m_state_D3DRS_ALPHATESTENABLE );
-	GetDevice()->SetRenderState( D3DRS_CULLMODE, m_state_D3DRS_CULLMODE );
+		GetDevice()->SetRenderState( D3DRS_ZENABLE, m_state_D3DRS_ZENABLE );
+		GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, m_state_D3DRS_ZWRITEENABLE );
+		GetDevice()->SetRenderState( D3DRS_ALPHATESTENABLE, m_state_D3DRS_ALPHATESTENABLE );
+		GetDevice()->SetRenderState( D3DRS_CULLMODE, m_state_D3DRS_CULLMODE );
 
-	GetDevice()->SetRenderState( D3DRS_COLORVERTEX, m_state_D3DRS_COLORVERTEX );
-	GetDevice()->SetRenderState( D3DRS_LIGHTING, m_state_D3DRS_LIGHTING );
-	GetDevice()->SetRenderState( D3DRS_SHADEMODE, m_state_D3DRS_SHADEMODE );
+		GetDevice()->SetRenderState( D3DRS_COLORVERTEX, m_state_D3DRS_COLORVERTEX );
+		GetDevice()->SetRenderState( D3DRS_LIGHTING, m_state_D3DRS_LIGHTING );
+		GetDevice()->SetRenderState( D3DRS_SHADEMODE, m_state_D3DRS_SHADEMODE );
 
-	GetDevice()->SetVertexShader(m_state_vertexShader);
-	ES_SAFE_RELEASE( m_state_vertexShader );
+		GetDevice()->SetVertexShader(m_state_vertexShader);
+		ES_SAFE_RELEASE( m_state_vertexShader );
 
-	GetDevice()->SetPixelShader(m_state_pixelShader);
-	ES_SAFE_RELEASE( m_state_pixelShader );
+		GetDevice()->SetPixelShader(m_state_pixelShader);
+		ES_SAFE_RELEASE( m_state_pixelShader );
 
-	GetDevice()->SetVertexDeclaration( m_state_vertexDeclaration );
-	ES_SAFE_RELEASE( m_state_vertexDeclaration );
+		GetDevice()->SetVertexDeclaration( m_state_vertexDeclaration );
+		ES_SAFE_RELEASE( m_state_vertexDeclaration );
 
-	//GetDevice()->SetStreamSource( 0, m_state_streamData, m_state_OffsetInBytes, m_state_pStride );
-	//ES_SAFE_RELEASE( m_state_streamData );
+		//GetDevice()->SetStreamSource( 0, m_state_streamData, m_state_OffsetInBytes, m_state_pStride );
+		//ES_SAFE_RELEASE( m_state_streamData );
 
-	//GetDevice()->SetIndices( m_state_IndexData );
-	//ES_SAFE_RELEASE( m_state_IndexData );
+		//GetDevice()->SetIndices( m_state_IndexData );
+		//ES_SAFE_RELEASE( m_state_IndexData );
 
-	GetDevice()->SetTexture( 0, m_state_pTexture );
-	ES_SAFE_RELEASE( m_state_pTexture );
+		GetDevice()->SetTexture( 0, m_state_pTexture );
+		ES_SAFE_RELEASE( m_state_pTexture );
 
-	GetDevice()->SetFVF( m_state_FVF );
-	
+		GetDevice()->SetFVF( m_state_FVF );
+	}
+
 	return true;
 }
 

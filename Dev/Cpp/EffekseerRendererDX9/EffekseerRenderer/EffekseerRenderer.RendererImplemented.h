@@ -200,6 +200,9 @@ private:
 	IDirect3DBaseTexture9*	m_state_pTexture;
 
 	bool	m_isChangedDevice;
+
+	bool	m_restorationOfStates;
+
 public:
 	/**
 		@brief	コンストラクタ
@@ -232,6 +235,8 @@ public:
 	int Release();
 
 	void Destory();
+
+	void SetRestorationOfStatesFlag(bool flag);
 
 	/**
 		@brief	描画開始

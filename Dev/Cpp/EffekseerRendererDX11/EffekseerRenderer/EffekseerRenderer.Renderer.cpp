@@ -122,7 +122,7 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_squareMaxCount	( squareMaxCount )
 	, m_coordinateSystem	( ::Effekseer::COORDINATE_SYSTEM_RH )
 	, m_renderState		( NULL )
-
+	, m_restorationOfStates( true )
 {
 	SetLightDirection( ::Effekseer::Vector3D( 1.0f, 1.0f, 1.0f ) );
 	SetLightColor( ::Effekseer::Color( 255, 255, 255, 255 ) );
@@ -258,6 +258,14 @@ void RendererImplemented::Destory()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
+{
+	m_restorationOfStates = flag;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 bool RendererImplemented::BeginRendering()
 {
 	assert( m_device != NULL );
@@ -265,8 +273,11 @@ bool RendererImplemented::BeginRendering()
 	::Effekseer::Matrix44::Mul( m_cameraProj, m_camera, m_proj );
 	
 	// ステートを保存する
-	//m_state->SaveState( m_device, m_context );
-	
+	if( m_restorationOfStates )
+	{
+		//m_state->SaveState( m_device, m_context );
+	}
+
 	// ステート初期設定
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
@@ -282,9 +293,12 @@ bool RendererImplemented::EndRendering()
 	assert( m_device != NULL );
 	
 	// ステートを復元する
-	//m_state->LoadState( m_device, m_context );
-	//m_state->ReleaseState();
-	
+	if( m_restorationOfStates )
+	{
+		//m_state->LoadState( m_device, m_context );
+		//m_state->ReleaseState();
+	}
+
 	return true;
 }
 

@@ -106,6 +106,11 @@ public:
 	virtual void Destory() = 0;
 
 	/**
+		@brief	ステートを復帰するかどうかのフラグを設定する。
+	*/
+	virtual void SetRestorationOfStatesFlag(bool flag) = 0;
+
+	/**
 		@brief	描画を開始する時に実行する。
 	*/
 	virtual bool BeginRendering() = 0;
