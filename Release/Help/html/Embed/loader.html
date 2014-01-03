@@ -64,6 +64,10 @@ manager->SetEffectLoader( new EffectLoader() );
 実際に、DirectX9にて通常のファイルシステムから読み込むためのクラスを記述してみます。Load関数でテクスチャを読み込み、Unload関数でテクスチャを破棄します。
 		</p>
 
+<p>
+現在(バージョン0.54)、OpenGL版の場合、テクスチャはミップマップを持つ必要があります。
+</p>
+
 <pre>
 <code>
 class TextureLoader : public ::Effekseer::TextureLoader {

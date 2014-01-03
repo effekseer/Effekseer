@@ -90,7 +90,7 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 		uint8_t* image = new uint8_t[png_info->width * png_info->height * pixelBytes];
 		uint32_t pitch = png_info->width * pixelBytes;
 
-		// イメージデータを読み込む
+		/* イメージデータを読み込む */
 		for (uint32_t i = 0; i < png_info->height; i++) {
 			png_read_row(png, &image[i * pitch], NULL);
 		}
@@ -100,8 +100,12 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glTexImage2D(GL_TEXTURE_2D, 0, glFormat, 
 			png_info->width, png_info->height, 0, glFormat, GL_UNSIGNED_BYTE, image);
-		glBindTexture(GL_TEXTURE_2D, 0);
 		
+		/* ミップマップの生成 */
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
 		delete [] image;
 		png_destroy_read_struct(&png, &png_info, NULL);
 

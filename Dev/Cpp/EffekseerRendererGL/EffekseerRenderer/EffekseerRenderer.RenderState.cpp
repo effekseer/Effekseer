@@ -108,7 +108,7 @@ void RenderState::Update( bool forced )
 		}
 	}
 	
-	static const GLint glfilter[] = { GL_NEAREST, GL_LINEAR };
+	static const GLint glfilter[] = { GL_NEAREST, GL_LINEAR_MIPMAP_LINEAR };
 	static const GLint glwrap[] = { GL_REPEAT, GL_CLAMP_TO_EDGE };
 
 #ifdef	__USE_SAMPLERS
