@@ -444,6 +444,38 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 			}
 		}
 	}
+	else if( m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_CIRCLE )
+	{
+		m_generation_location.Indentity();
+		float radius = m_pEffectNode->GenerationLocation.circle.radius.getValue(*m_pManager);
+		float start = m_pEffectNode->GenerationLocation.circle.angle_start.getValue(*m_pManager);
+		float end = m_pEffectNode->GenerationLocation.circle.angle_end.getValue(*m_pManager);
+		int32_t div = Max(m_pEffectNode->GenerationLocation.circle.division, 1);
+
+		int32_t target = 0;
+		if(m_pEffectNode->GenerationLocation.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_ORDER)
+		{
+			target = instanceNumber % div;
+		}
+		else if(m_pEffectNode->GenerationLocation.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_REVERSE_ORDER)
+		{
+			target = div - 1 - (instanceNumber % div);
+		}
+		else if(m_pEffectNode->GenerationLocation.circle.type == ParameterGenerationLocation::CIRCLE_TYPE_RANDOM)
+		{
+			RandFunc randFunc = m_pManager->GetRandFunc();
+			int32_t randMax = m_pManager->GetRandMax();
+
+			target = (int32_t)( (div - 1) * ( (float)randFunc() / (float)randMax ) );
+		}
+
+		float angle = (end - start) * ((float)target / (float)div) + start;
+		Matrix43 mat;
+		mat.RotationZ( angle );
+
+		m_generation_location.Translation( 0, radius, 0 );
+		Matrix43::Multiple( m_generation_location, m_generation_location, mat );
+	}
 
 	if( !m_pEffectNode->GenerationLocation.EffectsRotation )
 	{

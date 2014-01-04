@@ -296,6 +296,7 @@ struct ParameterGenerationLocation
 		TYPE_POINT = 0,
 		TYPE_SPHERE = 1,
 		TYPE_MODEL = 2,
+		TYPE_CIRCLE = 3,
 
 		TYPE_DWORD = 0x7fffffff,
 	} type;
@@ -309,6 +310,13 @@ struct ParameterGenerationLocation
 		MODELTYPE_FACE_RANDOM = 4,
 
 		MODELTYPE_DWORD = 0x7fffffff,
+	};
+
+	enum eCircleType
+	{
+		CIRCLE_TYPE_RANDOM = 0,
+		CIRCLE_TYPE_ORDER = 1,
+		CIRCLE_TYPE_REVERSE_ORDER = 2,
 	};
 
 	union
@@ -330,6 +338,15 @@ struct ParameterGenerationLocation
 			int32_t		index;
 			eModelType	type;
 		} model;
+
+		struct
+		{
+			int32_t			division;
+			random_float	radius;
+			random_float	angle_start;
+			random_float	angle_end;
+			eCircleType		type;
+		} circle;
 	};
 
 	void load( uint8_t*& pos )
@@ -354,6 +371,11 @@ struct ParameterGenerationLocation
 		{
 			memcpy( &model, pos, sizeof(model) );
 			pos += sizeof(model);
+		}
+		else if( type == TYPE_CIRCLE )
+		{
+			memcpy( &circle, pos, sizeof(circle) );
+			pos += sizeof(circle);
 		}
 	}
 };

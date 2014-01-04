@@ -45,6 +45,14 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Selected(ID = 0, Value = 3)]
+		[IO(Export = true)]
+		public CircleParameter Circle
+		{
+			get;
+			private set;
+		}
+
 		internal GenerationLocationValues()
 		{
 			EffectsRotation = new Value.Boolean(false);
@@ -52,6 +60,7 @@ namespace Effekseer.Data
 			Point = new PointParameter();
 			Sphere = new SphereParameter();
 			Model = new ModelParameter();
+			Circle = new CircleParameter();
 		}
 
 		public class PointParameter
@@ -124,14 +133,64 @@ namespace Effekseer.Data
 			}
 		}
 
+		public class CircleParameter
+		{
+			[Name(value = "分割数", language = Language.Japanese)]
+			public Value.Int Division
+			{
+				get;
+				private set;
+			}
+
+			[Name(value = "半径", language = Language.Japanese)]
+			public Value.FloatWithRandom Radius
+			{
+				get;
+				private set;
+			}
+
+			[Name(value = "開始角度", language = Language.Japanese)]
+			public Value.FloatWithRandom AngleStart
+			{
+				get;
+				private set;
+			}
+
+			[Name(value = "終了角度", language = Language.Japanese)]
+			public Value.FloatWithRandom AngleEnd
+			{
+				get;
+				private set;
+			}
+
+			[Name(language = Language.Japanese, value = "生成位置種類")]
+			public Value.Enum<CircleType> Type
+			{
+				get;
+				private set;
+			}
+
+			public CircleParameter()
+			{
+				Division = new Value.Int(8, int.MaxValue, 1);
+				Radius = new Value.FloatWithRandom();
+				AngleStart = new Value.FloatWithRandom(0, float.MaxValue, float.MinValue);
+				AngleEnd = new Value.FloatWithRandom(360, float.MaxValue, float.MinValue);
+				Type = new Value.Enum<CircleType>(CircleType.Random);
+			}
+		}
+
 		public enum ParameterType : int
 		{
 			[Name(value = "点", language = Language.Japanese)]
 			Point = 0,
+			[Name(value = "円", language = Language.Japanese)]
+			Circle = 3,
 			[Name(value = "球", language = Language.Japanese)]
 			Sphere = 1,
 			[Name(value = "モデル", language = Language.Japanese)]
 			Model = 2,
+			
 		}
 
 		public enum ModelType : int
@@ -146,6 +205,16 @@ namespace Effekseer.Data
 			Face = 3,
 			[Name(value = "面(ランダム)", language = Language.Japanese)]
 			RandomFace = 4,
+		}
+
+		public enum CircleType : int
+		{
+			[Name(value = "ランダム", language = Language.Japanese)]
+			Random = 0,
+			[Name(value = "正順", language = Language.Japanese)]
+			Order = 1,
+			[Name(value = "逆順", language = Language.Japanese)]
+			ReverseOrder = 2,
 		}
 	}
 }

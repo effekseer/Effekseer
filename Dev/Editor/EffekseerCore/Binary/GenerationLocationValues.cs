@@ -49,6 +49,17 @@ namespace Effekseer.Binary
 
 				data.Add( ((int)value.Model.Type.Value).GetBytes());
 			}
+			else if (value.Type.GetValue() == Data.GenerationLocationValues.ParameterType.Circle)
+			{
+				data.Add((value.Circle.Division.Value).GetBytes());
+				data.Add((value.Circle.Radius.Max).GetBytes());
+				data.Add((value.Circle.Radius.Min).GetBytes());
+				data.Add((value.Circle.AngleStart.Max / 180.0f * (float)Math.PI).GetBytes());
+				data.Add((value.Circle.AngleStart.Min / 180.0f * (float)Math.PI).GetBytes());
+				data.Add((value.Circle.AngleEnd.Max / 180.0f * (float)Math.PI).GetBytes());
+				data.Add((value.Circle.AngleEnd.Min / 180.0f * (float)Math.PI).GetBytes());
+				data.Add(((int)value.Circle.Type.Value).GetBytes());
+			}
 
 			return data.ToArray().ToArray();
 		}
