@@ -10,10 +10,12 @@
 #include <windows.h>
 #include <d3d9.h>
 
-#ifdef __EFFEKSEER_RENDERER_DIRECTXTEX
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+#if __EFFEKSEER_RENDERER_DIRECTXTEX || __EFFEKSEER_RENDERER_DIRECTXTEX__
 #include <DirectXTex.h>
 #else
 #include <d3dx9.h>
+#endif
 #endif
 
 //----------------------------------------------------------------------------------

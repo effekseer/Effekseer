@@ -98,7 +98,7 @@ copy Dev\Cpp\lib\EffekseerRendererGL.Release.lib %RDIR%\RuntimeSample\lib\.
 copy Dev\Cpp\lib\EffekseerSoundXAudio2.Release.lib %RDIR%\RuntimeSample\lib\.
 copy Dev\Cpp\lib\EffekseerSoundAL.Release.lib %RDIR%\RuntimeSample\lib\.
 
-cp CMakeLists.txt %RDIR%/Runtime/CMakeLists.txt
+copy CMakeLists.txt %RDIR%\Runtime\.
 
 echo ƒTƒ“ƒvƒ‹
 

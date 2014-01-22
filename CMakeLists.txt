@@ -13,6 +13,8 @@ if (MSVC)
 	option(USE_DIRECTXTEX "Use DirectXTex" OFF)
 endif()
 
+option(USE_INTERNAL_LOADER "Use Internal Loader" ON)
+
 option(USE_GLEW_STATIC "Use Glew static library" ON)
 option(USE_GLEW_DLL "Use Glew DLL" OFF)
 option(USE_OPENGLES2 "Use OpenGL ES2" OFF)
@@ -114,7 +116,7 @@ list(APPEND effekseer_renderer_gl_src
 
 # インクルードの設定
 include_directories(
-	include/
+	Effekseer/
 	)
 
 # コンパイル先を追加
@@ -147,6 +149,10 @@ if (MSVC)
 	endif()
 endif()
 
+if (USE_INTERNAL_LOADER)
+	add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
+endif()
+
 if (USE_GLEW_STATIC)
 	add_definitions(-D__EFFEKSEER_RENDERER_GL_GLEW_S__)
 endif()
@@ -162,6 +168,7 @@ endif()
 if (MSVC)
 if (USE_DIRECTXTEX)
 	add_definitions(-D__EFFEKSEER_RENDERER_DIRECTXTEX)
+	add_definitions(-D__EFFEKSEER_RENDERER_DIRECTXTEX__)
 endif()
 endif()
 

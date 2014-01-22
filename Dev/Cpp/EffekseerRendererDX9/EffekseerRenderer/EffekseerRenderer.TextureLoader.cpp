@@ -1,4 +1,6 @@
 
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -47,7 +49,7 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 		char* data_texture = new char[size_texture];
 		reader->Read( data_texture, size_texture );
 
-#ifdef __EFFEKSEER_RENDERER_DIRECTXTEX
+#if __EFFEKSEER_RENDERER_DIRECTXTEX || __EFFEKSEER_RENDERER_DIRECTXTEX__
 		return NULL;
 #else
 		D3DXCreateTextureFromFileInMemory( m_renderer->GetDevice(), data_texture, size_texture, &texture );
@@ -80,3 +82,5 @@ void TextureLoader::Unload( void* data )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+#endif // __EFFEKSEER_RENDERER_INTERNAL_LOADER__
