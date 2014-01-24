@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------------
 #include "EffekseerRenderer.Shader.h"
 #include "EffekseerRenderer.Renderer.h"
+#include "EffekseerRenderer.GLExtension.h"
 
 #if _WIN32
 #include <windows.h>
@@ -38,50 +39,50 @@ bool Shader::CompileShader(
 	// バーテックスシェーダをコンパイル
 	src_data[0] = vs_src;
 	src_size[0] = (GLint)strlen(vs_src);
-	vert_shader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vert_shader, 1, src_data, src_size);
-	glCompileShader(vert_shader);
-	glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
+	vert_shader = GLExt::glCreateShader(GL_VERTEX_SHADER);
+	GLExt::glShaderSource(vert_shader, 1, src_data, src_size);
+	GLExt::glCompileShader(vert_shader);
+	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
 
 	// フラグメントシェーダをコンパイル
 	src_data[0] = fs_src;
 	src_size[0] = strlen(fs_src);
-	frag_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(frag_shader, 1, src_data, src_size);
-	glCompileShader(frag_shader);
-	glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
+	frag_shader = GLExt::glCreateShader(GL_FRAGMENT_SHADER);
+	GLExt::glShaderSource(frag_shader, 1, src_data, src_size);
+	GLExt::glCompileShader(frag_shader);
+	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
 	
 	// シェーダプログラムの作成
-	program = glCreateProgram();
-	glAttachShader(program, vert_shader);
-	glAttachShader(program, frag_shader);
+	program = GLExt::glCreateProgram();
+	GLExt::glAttachShader(program, vert_shader);
+	GLExt::glAttachShader(program, frag_shader);
 	
 	// シェーダオブジェクトの削除
-	glDeleteShader(frag_shader);
-	glDeleteShader(vert_shader);
+	GLExt::glDeleteShader(frag_shader);
+	GLExt::glDeleteShader(vert_shader);
 
 	// シェーダプログラムのリンク
-	glLinkProgram(program);
-	glGetProgramiv(program, GL_LINK_STATUS, &res_link);
+	GLExt::glLinkProgram(program);
+	GLExt::glGetProgramiv(program, GL_LINK_STATUS, &res_link);
 
 	#ifndef NDEBUG
 	{
 		// エラー出力
 		char log[512];
 		int32_t log_size;
-		glGetShaderInfoLog(vert_shader, sizeof(log), &log_size, log);
+		GLExt::glGetShaderInfoLog(vert_shader, sizeof(log), &log_size, log);
 		if (log_size > 0) {
 			LOG(name);
 			LOG(": Vertex Shader error.\n");
 			LOG(log);
 		}
-		glGetShaderInfoLog(frag_shader, sizeof(log), &log_size, log);
+		GLExt::glGetShaderInfoLog(frag_shader, sizeof(log), &log_size, log);
 		if (log_size > 0) {
 			LOG(name);
 			LOG(": Fragment Shader error.\n");
 			LOG(log);
 		}
-		glGetProgramInfoLog(program, sizeof(log), &log_size, log);
+		GLExt::glGetProgramInfoLog(program, sizeof(log), &log_size, log);
 		if (log_size > 0) {
 			LOG(name);
 			LOG(": Shader Link error.\n");
@@ -90,8 +91,9 @@ bool Shader::CompileShader(
 	}
 #endif
 
-	if (res_link == GL_FALSE) {
-		glDeleteProgram(program);
+	if (res_link == GL_FALSE)
+	{
+		GLExt::glDeleteProgram(program);
 		return false;
 	}
 
@@ -135,7 +137,7 @@ Shader::Shader(
 //-----------------------------------------------------------------------------------
 GLint Shader::GetAttribId(const char* name) const
 {
-	return glGetAttribLocation(m_program, name);
+	return GLExt::glGetAttribLocation(m_program, name);
 }
 
 //-----------------------------------------------------------------------------------
@@ -143,7 +145,7 @@ GLint Shader::GetAttribId(const char* name) const
 //-----------------------------------------------------------------------------------
 GLint Shader::GetUniformId(const char* name) const
 {
-	return glGetUniformLocation(m_program, name);
+	return GLExt::glGetUniformLocation(m_program, name);
 }
 
 //-----------------------------------------------------------------------------------
@@ -151,7 +153,7 @@ GLint Shader::GetUniformId(const char* name) const
 //-----------------------------------------------------------------------------------
 Shader::~Shader()
 {
-	glDeleteProgram(m_program);
+	GLExt::glDeleteProgram(m_program);
 	ES_SAFE_DELETE_ARRAY( m_vertexConstantBuffer );
 	ES_SAFE_DELETE_ARRAY( m_pixelConstantBuffer );
 }
@@ -199,7 +201,7 @@ Shader* Shader::Create(
 //----------------------------------------------------------------------------------
 void Shader::OnLostDevice()
 {
-	glDeleteProgram(m_program);
+	GLExt::glDeleteProgram(m_program);
 }
 
 //----------------------------------------------------------------------------------
@@ -230,7 +232,7 @@ void Shader::OnResetDevice()
 //----------------------------------------------------------------------------------
 void Shader::OnChangeDevice()
 {
-	glDeleteProgram(m_program);
+	GLExt::glDeleteProgram(m_program);
 
 	GLuint program;
 	
@@ -264,7 +266,7 @@ void Shader::GetAttribIdList(int count, const ShaderAttribInfo* info )
 
 	for (int i = 0; i < count; i++)
 	{
-		m_aid.push_back( glGetAttribLocation(m_program, info[i].name) );
+		m_aid.push_back( GLExt::glGetAttribLocation(m_program, info[i].name) );
 		Layout layout;
 
 		layout.normalized = info[i].normalized;
@@ -280,18 +282,18 @@ void Shader::GetUniformIdList(int count, const ShaderUniformInfo* info, GLint* u
 {
 	for (int i = 0; i < count; i++)
 	{
-		uid_list[i] = glGetUniformLocation(m_program, info[i].name);
+		uid_list[i] = GLExt::glGetUniformLocation(m_program, info[i].name);
 	}
 }
 
 void Shader::BeginScene()
 {
-	glUseProgram(m_program);
+	GLExt::glUseProgram(m_program);
 }
 
 void Shader::EndScene()
 {
-	glUseProgram(0);
+	GLExt::glUseProgram(0);
 }
 
 void Shader::EnableAttribs()
@@ -300,7 +302,7 @@ void Shader::EnableAttribs()
 	{
 		if ( m_aid[i] >= 0 ) 
 		{
-			glEnableVertexAttribArray( m_aid[i] );
+			GLExt::glEnableVertexAttribArray( m_aid[i] );
 		}
 	}
 }
@@ -309,7 +311,7 @@ void Shader::DisableAttribs()
 {
 	for( size_t i = 0; i < m_aid.size(); i++ )
 	{
-		glDisableVertexAttribArray( m_aid[i] );
+		GLExt::glDisableVertexAttribArray( m_aid[i] );
 	}
 }
 
@@ -321,7 +323,7 @@ void Shader::SetVertex()
 	{
 		if ( m_aid[i] >= 0) 
 		{
-			glVertexAttribPointer(m_aid[i], m_layout[i].count, m_layout[i].type, m_layout[i].normalized, m_vertexSize, (uint8_t*) vertices + m_layout[i].offset);
+			GLExt::glVertexAttribPointer(m_aid[i], m_layout[i].count, m_layout[i].type, m_layout[i].normalized, m_vertexSize, (uint8_t*) vertices + m_layout[i].offset);
 		}
 	}
 }
@@ -385,7 +387,7 @@ void Shader::SetConstantBuffer()
 		{
 			uint8_t* data = (uint8_t*) m_vertexConstantBuffer;
 			data += m_vertexConstantLayout[i].Offset;
-			glUniformMatrix4fv(
+			GLExt::glUniformMatrix4fv(
 				m_vertexConstantLayout[i].ID,
 				1,
 				GL_FALSE,
@@ -397,7 +399,7 @@ void Shader::SetConstantBuffer()
 		{
 			uint8_t* data = (uint8_t*) m_vertexConstantBuffer;
 			data += m_vertexConstantLayout[i].Offset;
-			glUniformMatrix4fv(
+			GLExt::glUniformMatrix4fv(
 				m_vertexConstantLayout[i].ID,
 				m_vertexConstantLayout[i].Type - CONSTANT_TYPE_MATRIX44_ARRAY,
 				GL_FALSE,
@@ -408,7 +410,7 @@ void Shader::SetConstantBuffer()
 		{
 			uint8_t* data = (uint8_t*) m_vertexConstantBuffer;
 			data += m_vertexConstantLayout[i].Offset;
-			glUniform4fv(
+			GLExt::glUniform4fv(
 				m_vertexConstantLayout[i].ID,
 				1,
 				(const GLfloat*)data);
@@ -419,7 +421,7 @@ void Shader::SetConstantBuffer()
 		{
 			uint8_t* data = (uint8_t*) m_vertexConstantBuffer;
 			data += m_vertexConstantLayout[i].Offset;
-			glUniform4fv(
+			GLExt::glUniform4fv(
 				m_vertexConstantLayout[i].ID,
 				m_vertexConstantLayout[i].Type - CONSTANT_TYPE_VECTOR4_ARRAY,
 				(const GLfloat*)data);
@@ -432,7 +434,7 @@ void Shader::SetConstantBuffer()
 		{
 			uint8_t* data = (uint8_t*) m_pixelConstantBuffer;
 			data += m_pixelConstantLayout[i].Offset;
-			glUniformMatrix4fv(
+			GLExt::glUniformMatrix4fv(
 				m_pixelConstantLayout[i].ID,
 				1,
 				GL_FALSE,
@@ -444,7 +446,7 @@ void Shader::SetConstantBuffer()
 		{
 			uint8_t* data = (uint8_t*) m_pixelConstantBuffer;
 			data += m_pixelConstantLayout[i].Offset;
-			glUniformMatrix4fv(
+			GLExt::glUniformMatrix4fv(
 				m_pixelConstantLayout[i].ID,
 				m_pixelConstantLayout[i].Type - CONSTANT_TYPE_MATRIX44_ARRAY,
 				GL_FALSE,
@@ -455,7 +457,7 @@ void Shader::SetConstantBuffer()
 		{
 			uint8_t* data = (uint8_t*) m_pixelConstantBuffer;
 			data += m_pixelConstantLayout[i].Offset;
-			glUniform4fv(
+			GLExt::glUniform4fv(
 				m_pixelConstantLayout[i].ID,
 				1,
 				(const GLfloat*)data);
@@ -466,7 +468,7 @@ void Shader::SetConstantBuffer()
 		{
 			uint8_t* data = (uint8_t*) m_pixelConstantBuffer;
 			data += m_pixelConstantLayout[i].Offset;
-			glUniform4fv(
+			GLExt::glUniform4fv(
 				m_pixelConstantLayout[i].ID,
 				m_pixelConstantLayout[i].Type - CONSTANT_TYPE_VECTOR4_ARRAY,
 				(const GLfloat*)data);

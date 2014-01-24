@@ -3,6 +3,7 @@
 //
 //-----------------------------------------------------------------------------------
 #include "EffekseerRenderer.VertexBuffer.h"
+#include "EffekseerRenderer.GLExtension.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -22,10 +23,10 @@ VertexBuffer::VertexBuffer( RendererImplemented* renderer, int size, bool isDyna
 	m_resource = new uint8_t[m_size];
 	memset(m_resource, 0, (size_t)m_size);
 
-	glGenBuffers(1, &m_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLExt::glGenBuffers(1, &m_buffer);
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+	GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //-----------------------------------------------------------------------------------
@@ -33,7 +34,7 @@ VertexBuffer::VertexBuffer( RendererImplemented* renderer, int size, bool isDyna
 //-----------------------------------------------------------------------------------
 VertexBuffer::~VertexBuffer()
 {
-	glDeleteBuffers(1, &m_buffer);
+	GLExt::glDeleteBuffers(1, &m_buffer);
 	delete [] m_resource;
 }
 
@@ -50,7 +51,7 @@ VertexBuffer* VertexBuffer::Create( RendererImplemented* renderer, int size, boo
 //-----------------------------------------------------------------------------------
 void VertexBuffer::OnLostDevice()
 {
-	glDeleteBuffers(1, &m_buffer);
+	GLExt::glDeleteBuffers(1, &m_buffer);
 }
 
 //-----------------------------------------------------------------------------------
@@ -58,10 +59,10 @@ void VertexBuffer::OnLostDevice()
 //-----------------------------------------------------------------------------------
 void VertexBuffer::OnResetDevice()
 {
-	glGenBuffers(1, &m_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-	glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLExt::glGenBuffers(1, &m_buffer);
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+	GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //-----------------------------------------------------------------------------------
@@ -119,9 +120,9 @@ void VertexBuffer::Unlock()
 {
 	assert( m_isLock || m_ringBufferLock );
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-	glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+	GLExt::glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	m_isLock = false;
 	m_ringBufferLock = false;

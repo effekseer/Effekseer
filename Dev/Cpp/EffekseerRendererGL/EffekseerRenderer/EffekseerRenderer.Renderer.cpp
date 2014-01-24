@@ -18,6 +18,8 @@
 #include "EffekseerRenderer.TextureLoader.h"
 #include "EffekseerRenderer.ModelLoader.h"
 
+#include "EffekseerRenderer.GLExtension.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -28,6 +30,8 @@ namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 Renderer* Renderer::Create( int32_t squareMaxCount )
 {
+	GLExt::Initialize();
+
 	RendererImplemented* renderer = new RendererImplemented( squareMaxCount );
 	if( renderer->Initialize() )
 	{
@@ -238,7 +242,7 @@ bool RendererImplemented::EndRendering()
 		
 		glDepthMask(m_originalState.depthWrite);
 		glBlendFunc(m_originalState.blendSrc, m_originalState.blendDst);
-		glBlendEquation(m_originalState.blendEquation);
+		GLExt::glBlendEquation(m_originalState.blendEquation);
 	}
 
 	return true;
@@ -433,7 +437,7 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size )
 {
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->GetInterface() );
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->GetInterface() );
 }
 
 //----------------------------------------------------------------------------------
@@ -441,7 +445,7 @@ void RendererImplemented::SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t s
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetVertexBuffer(GLuint vertexBuffer, int32_t size)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 }
 
 //----------------------------------------------------------------------------------
@@ -449,7 +453,7 @@ void RendererImplemented::SetVertexBuffer(GLuint vertexBuffer, int32_t size)
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetIndexBuffer( IndexBuffer* indexBuffer )
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->GetInterface() );
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->GetInterface() );
 }
 
 //----------------------------------------------------------------------------------
@@ -457,7 +461,7 @@ void RendererImplemented::SetIndexBuffer( IndexBuffer* indexBuffer )
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
 {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 }
 
 //----------------------------------------------------------------------------------
@@ -501,8 +505,8 @@ void RendererImplemented::EndShader(Shader* shader)
 {
 	shader->DisableAttribs();
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	shader->EndScene();
 }
@@ -514,15 +518,15 @@ void RendererImplemented::SetTextures(Shader* shader, GLuint* textures, int32_t 
 {
 	for (int32_t i = 0; i < count; i++)
 	{
-		glActiveTexture(GL_TEXTURE0 + i);
+		GLExt::glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, textures[i]);
 
 		if (shader->GetTextureSlotEnable(i))
 		{
-			glUniform1i(shader->GetTextureSlot(i), i);
+			GLExt::glUniform1i(shader->GetTextureSlot(i), i);
 		}
 	}
-	glActiveTexture(GL_TEXTURE0);
+	GLExt::glActiveTexture(GL_TEXTURE0);
 }
 
 //----------------------------------------------------------------------------------
@@ -545,17 +549,17 @@ Model::Model( ::Effekseer::Model::Vertex vertexData[], int32_t vertexCount,
 	, IndexCount	( faceCount * 3 )
 	, ModelCount	( 1 )
 {
-	glGenBuffers( 1, &VertexBuffer );
-	glBindBuffer( GL_ARRAY_BUFFER, VertexBuffer );
+	GLExt::glGenBuffers( 1, &VertexBuffer );
+	GLExt::glBindBuffer( GL_ARRAY_BUFFER, VertexBuffer );
 	size_t vertexSize = vertexCount * sizeof(::Effekseer::Model::Vertex);
-	glBufferData( GL_ARRAY_BUFFER, vertexSize, vertexData, GL_STATIC_DRAW );
+	GLExt::glBufferData( GL_ARRAY_BUFFER, vertexSize, vertexData, GL_STATIC_DRAW );
 
-	glGenBuffers( 1, &IndexBuffer );
-	glBindBuffer( GL_ARRAY_BUFFER, IndexBuffer );
+	GLExt::glGenBuffers( 1, &IndexBuffer );
+	GLExt::glBindBuffer( GL_ARRAY_BUFFER, IndexBuffer );
 	size_t indexSize = faceCount * sizeof(::Effekseer::Model::Face);
-	glBufferData( GL_ARRAY_BUFFER, indexSize, faceData, GL_STATIC_DRAW );
+	GLExt::glBufferData( GL_ARRAY_BUFFER, indexSize, faceData, GL_STATIC_DRAW );
 	
-	glBindBuffer( GL_ARRAY_BUFFER, 0 );
+	GLExt::glBindBuffer( GL_ARRAY_BUFFER, 0 );
 }
 
 //----------------------------------------------------------------------------------
@@ -563,8 +567,8 @@ Model::Model( ::Effekseer::Model::Vertex vertexData[], int32_t vertexCount,
 //----------------------------------------------------------------------------------
 Model::~Model()
 {
-	glDeleteBuffers( 1, &IndexBuffer );
-	glDeleteBuffers( 1, &VertexBuffer );
+	GLExt::glDeleteBuffers( 1, &IndexBuffer );
+	GLExt::glDeleteBuffers( 1, &VertexBuffer );
 }
 
 //----------------------------------------------------------------------------------

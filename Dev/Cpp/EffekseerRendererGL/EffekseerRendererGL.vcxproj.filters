@@ -82,6 +82,9 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RingRendererBase.h">
       <Filter>EffekseerRendererCommon</Filter>
     </ClInclude>
+    <ClInclude Include="EffekseerRenderer\EffekseerRenderer.GLExtension.h">
+      <Filter>EffekseerRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffekseerRenderer\EffekseerRenderer.DeviceObject.cpp">
@@ -146,6 +149,9 @@
     </ClCompile>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.RingRendererBase.cpp">
       <Filter>EffekseerRendererCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="EffekseerRenderer\EffekseerRenderer.GLExtension.cpp">
+      <Filter>EffekseerRenderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

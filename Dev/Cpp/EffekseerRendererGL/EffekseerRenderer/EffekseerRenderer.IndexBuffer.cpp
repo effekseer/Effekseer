@@ -3,6 +3,7 @@
 //
 //-----------------------------------------------------------------------------------
 #include "EffekseerRenderer.IndexBuffer.h"
+#include "EffekseerRenderer.GLExtension.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -26,7 +27,7 @@ IndexBuffer::IndexBuffer( RendererImplemented* renderer, GLuint buffer, int maxC
 IndexBuffer::~IndexBuffer()
 {
 	delete [] m_resource;
-	glDeleteBuffers(1, &m_buffer);
+	GLExt::glDeleteBuffers(1, &m_buffer);
 }
 
 //-----------------------------------------------------------------------------------
@@ -35,7 +36,7 @@ IndexBuffer::~IndexBuffer()
 IndexBuffer* IndexBuffer::Create( RendererImplemented* renderer, int maxCount, bool isDynamic )
 {
 	GLuint ib;
-	glGenBuffers(1, &ib);
+	GLExt::glGenBuffers(1, &ib);
 	return new IndexBuffer( renderer, ib, maxCount, isDynamic );
 }
 
@@ -44,7 +45,7 @@ IndexBuffer* IndexBuffer::Create( RendererImplemented* renderer, int maxCount, b
 //-----------------------------------------------------------------------------------
 void IndexBuffer::OnLostDevice()
 {
-	glDeleteBuffers(1, &m_buffer);
+	GLExt::glDeleteBuffers(1, &m_buffer);
 }
 
 //-----------------------------------------------------------------------------------
@@ -53,7 +54,7 @@ void IndexBuffer::OnLostDevice()
 void IndexBuffer::OnResetDevice()
 {
 	GLuint ib;
-	glGenBuffers(1, &ib);
+	GLExt::glGenBuffers(1, &ib);
 	m_buffer = ib;
 }
 
@@ -75,9 +76,9 @@ void IndexBuffer::Unlock()
 {
 	assert( m_isLock );
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexCount * sizeof(uint16_t), m_resource, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer);
+	GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexCount * sizeof(uint16_t), m_resource, GL_DYNAMIC_DRAW);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	m_isLock = false;
 }

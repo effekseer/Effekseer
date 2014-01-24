@@ -100,6 +100,7 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRenderer.Base.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRenderer.Base.Pre.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRenderer.DeviceObject.h" />
+    <ClInclude Include="EffekseerRenderer\EffekseerRenderer.GLExtension.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRenderer.IndexBuffer.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRenderer.ModelLoader.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRenderer.ModelRenderer.h" />
@@ -124,6 +125,7 @@
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.TrackRendererBase.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRenderer.DeviceObject.cpp" />
+    <ClCompile Include="EffekseerRenderer\EffekseerRenderer.GLExtension.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRenderer.IndexBuffer.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRenderer.ModelLoader.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRenderer.ModelRenderer.cpp" />

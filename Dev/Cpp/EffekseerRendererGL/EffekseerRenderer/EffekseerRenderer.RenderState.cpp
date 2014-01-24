@@ -7,6 +7,8 @@
 #include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.RendererImplemented.h"
 
+#include "EffekseerRenderer.GLExtension.h"
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -86,23 +88,23 @@ void RenderState::Update( bool forced )
 
 			if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_SUB )
 			{
-				glBlendEquationSeparate(GL_FUNC_REVERSE_SUBTRACT, GL_FUNC_ADD);
-				glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
+				GLExt::glBlendEquationSeparate(GL_FUNC_REVERSE_SUBTRACT, GL_FUNC_ADD);
+				GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
 			}
 			else
 			{
-				glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+				GLExt::glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 				if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_BLEND )
 				{
-					glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+					GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 				}
 				else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_ADD )
 				{
-					glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
+					GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
 				}
 				else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_MUL )
 				{
-					glBlendFuncSeparate(GL_ZERO, GL_SRC_COLOR, GL_ONE, GL_ONE);
+					GLExt::glBlendFuncSeparate(GL_ZERO, GL_SRC_COLOR, GL_ONE, GL_ONE);
 				}
 			}
 		}
@@ -144,7 +146,7 @@ void RenderState::Update( bool forced )
 	{
 		if( m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced )
 		{
-			glActiveTexture( GL_TEXTURE0 + i );
+			GLExt::glActiveTexture( GL_TEXTURE0 + i );
 
 			int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
 
@@ -154,7 +156,7 @@ void RenderState::Update( bool forced )
 
 		if( m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced )
 		{
-			glActiveTexture( GL_TEXTURE0 + i );
+			GLExt::glActiveTexture( GL_TEXTURE0 + i );
 
 			int32_t wrap_ = (int32_t)m_next.TextureWrapTypes[i];
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glwrap[wrap_] );
@@ -163,7 +165,7 @@ void RenderState::Update( bool forced )
 	}
 #endif
 
-	glActiveTexture( GL_TEXTURE0 );
+	GLExt::glActiveTexture( GL_TEXTURE0 );
 	
 	m_active = m_next;
 }

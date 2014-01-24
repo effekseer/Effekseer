@@ -9,7 +9,11 @@
 
 #if defined(__EFFEKSEER_RENDERER_GL_GLEW__)
 
+#if _WIN32
+#include <gl/GL.h>
+#else
 #include <GL/glew.h>
+#endif
 
 #elif defined(__EFFEKSEER_RENDERER_GL_GLEW_S__)
 #define GLEW_STATIC

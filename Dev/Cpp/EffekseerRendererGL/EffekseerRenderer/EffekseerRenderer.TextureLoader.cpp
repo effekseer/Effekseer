@@ -8,6 +8,7 @@
 #include <png.h>
 #include "EffekseerRenderer.RendererImplemented.h"
 #include "EffekseerRenderer.TextureLoader.h"
+#include "EffekseerRenderer.GLExtension.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -104,7 +105,7 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 			png_info->width, png_info->height, 0, glFormat, GL_UNSIGNED_BYTE, image);
 		
 		/* ミップマップの生成 */
-		glGenerateMipmap(GL_TEXTURE_2D);
+		GLExt::glGenerateMipmap(GL_TEXTURE_2D);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
