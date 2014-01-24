@@ -16,8 +16,14 @@
 #endif
 
 #elif defined(__EFFEKSEER_RENDERER_GL_GLEW_S__)
+
+#if _WIN32
+#include <gl/GL.h>
+#else
 #define GLEW_STATIC
 #include <GL/glew.h>
+#endif
+
 
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 

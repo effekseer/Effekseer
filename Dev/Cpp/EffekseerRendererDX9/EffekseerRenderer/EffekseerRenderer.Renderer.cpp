@@ -491,7 +491,11 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 //----------------------------------------------------------------------------------
 ::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader( ::Effekseer::FileInterface* fileInterface )
 {
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new TextureLoader( this, fileInterface );
+#else
+	return NULL;
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -499,7 +503,11 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 //----------------------------------------------------------------------------------
 ::Effekseer::ModelLoader* RendererImplemented::CreateModelLoader( ::Effekseer::FileInterface* fileInterface )
 {
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new ModelLoader( this, fileInterface );
+#else
+	return NULL;
+#endif
 }
 
 //----------------------------------------------------------------------------------
