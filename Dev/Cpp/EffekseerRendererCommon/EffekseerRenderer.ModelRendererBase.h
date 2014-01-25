@@ -54,6 +54,22 @@ protected:
 	std::vector<Effekseer::RectF>		m_uv;
 	std::vector<Effekseer::Color>		m_colors;
 
+	void ColorToFloat4(::Effekseer::Color color, float fc[4])
+	{
+		fc[0] = color.R / 255.0f;
+		fc[1] = color.G / 255.0f;
+		fc[2] = color.B / 255.0f;
+		fc[3] = color.A / 255.0f;
+	}
+	
+	void VectorToFloat4(::Effekseer::Vector3D v, float fc[4])
+	{
+		fc[0] = v.X;
+		fc[1] = v.Y;
+		fc[2] = v.Z;
+		fc[3] = 1.0f;
+	}
+
 	ModelRendererBase();
 public:
 
