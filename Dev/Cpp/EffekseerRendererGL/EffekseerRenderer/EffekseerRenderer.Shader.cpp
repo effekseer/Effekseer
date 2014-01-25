@@ -192,7 +192,7 @@ Shader* Shader::Create(
 	}
 	else
 	{
-		return nullptr;
+		return NULL;
 	}
 }
 

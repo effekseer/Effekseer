@@ -328,7 +328,7 @@ protected:
 		}
 		else
 		{
-			TEXTURE texture = NULL;
+			TEXTURE texture = (TEXTURE)NULL;
 			renderer->SetTextures(shader_, &texture, 1);
 		}
 
