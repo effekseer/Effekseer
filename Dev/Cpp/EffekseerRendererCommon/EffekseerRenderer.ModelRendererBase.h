@@ -129,8 +129,8 @@ public:
 
 		/*テクスチャ選択*/
 		TEXTURE textures[2];
-		textures[0] = NULL;
-		textures[1] = NULL;
+		textures[0] = (TEXTURE)NULL;
+		textures[1] = (TEXTURE)NULL;
 
 		if (param.ColorTextureIndex >= 0)
 		{
