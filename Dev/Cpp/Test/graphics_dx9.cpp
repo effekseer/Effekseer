@@ -57,7 +57,7 @@ void InitGraphics( HWND handle, int width, int height )
 		&d3dp,
 		&g_d3d_device );
 	
-	g_renderer = ::EffekseerRenderer::Renderer::Create( g_d3d_device, 2000 );
+	g_renderer = ::EffekseerRendererDX9::Renderer::Create( g_d3d_device, 2000 );
 	g_renderer->SetProjectionMatrix( ::Effekseer::Matrix44().PerspectiveFovRH( 90.0f / 180.0f * 3.14f, (float)width / (float)height, 1.0f, 50.0f ) );
 	
 	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );

@@ -5,9 +5,9 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <EffekseerRenderer/EffekseerRenderer.Renderer.h>
-#include <EffekseerRenderer/EffekseerRenderer.RendererImplemented.h>
-#include <EffekseerRenderer/EffekseerRenderer.DeviceObject.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.DeviceObject.h>
 
 //-----------------------------------------------------------------------------------
 //
@@ -18,7 +18,7 @@ namespace EffekseerRenderer
 //
 //----------------------------------------------------------------------------------
 class Grid
-	: public DeviceObject
+	: public EffekseerRendererDX9::DeviceObject
 {
 private:
 	
@@ -28,18 +28,18 @@ private:
 		float	Col[4];
 	};
 
-	RendererImplemented*			m_renderer;
+	EffekseerRendererDX9::RendererImplemented*			m_renderer;
 	ID3DXEffect*					m_shader;
 	IDirect3DVertexDeclaration9*	m_vertexDeclaration;
 	int32_t							m_lineCount;
 	float							m_gridLength;
 
-	Grid( RendererImplemented* renderer, ID3DXEffect* shader );
+	Grid( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* shader );
 public:
 
 	virtual ~Grid();
 
-	static Grid* Create( RendererImplemented* renderer );
+	static Grid* Create( EffekseerRendererDX9::RendererImplemented* renderer );
 
 public:	// デバイス復旧用
 	virtual void OnLostDevice();

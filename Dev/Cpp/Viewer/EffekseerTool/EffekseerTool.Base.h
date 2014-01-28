@@ -6,9 +6,9 @@
 // Include
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
-#include <EffekseerRenderer/EffekseerRenderer.Renderer.h>
-#include <EffekseerRenderer/EffekseerRenderer.SpriteRenderer.h>
-#include <EffekseerRenderer/EffekseerRenderer.RibbonRenderer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.SpriteRenderer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.RibbonRenderer.h>
 
 //----------------------------------------------------------------------------------
 //

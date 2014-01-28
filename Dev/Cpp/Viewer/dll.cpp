@@ -193,7 +193,7 @@ static ::EffekseerTool::Renderer*		g_renderer = NULL;
 static ::Effekseer::Effect*				g_effect = NULL;
 static ::EffekseerTool::Sound*			g_sound = NULL;
 static std::map<std::wstring,IDirect3DTexture9*> m_textures;
-static std::map<std::wstring,EffekseerRenderer::Model*> m_models;
+static std::map<std::wstring,EffekseerRendererDX9::Model*> m_models;
 
 static std::vector<::Effekseer::Handle>	g_handles;
 
@@ -245,7 +245,7 @@ void* Native::TextureLoader::Load( const EFK_CHAR* path )
 			fread( data_texture, 1, size_texture, fp_texture );
 			fclose( fp_texture );
 
-			D3DXCreateTextureFromFileInMemory( ((EffekseerRenderer::RendererImplemented*)m_renderer)->GetDevice(), data_texture, size_texture, &pTexture );
+			D3DXCreateTextureFromFileInMemory( ((EffekseerRendererDX9::RendererImplemented*)m_renderer)->GetDevice(), data_texture, size_texture, &pTexture );
 
 			delete [] data_texture;
 
@@ -307,7 +307,7 @@ void Native::SoundLoader::Unload( void* handle )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Native::ModelLoader::ModelLoader( EffekseerRenderer::Renderer* renderer )
+Native::ModelLoader::ModelLoader( EffekseerRendererDX9::Renderer* renderer )
 	: m_renderer	( renderer )
 {
 
@@ -330,7 +330,7 @@ void* Native::ModelLoader::Load( const EFK_CHAR* path )
 	Combine( RootPath.c_str(), (const wchar_t *)path, dst, 260 );
 
 	std::wstring key( dst );
-	EffekseerRenderer::Model* model = NULL;
+	EffekseerRendererDX9::Model* model = NULL;
 
 	if( m_models.count( key ) > 0 )
 	{
@@ -352,7 +352,7 @@ void* Native::ModelLoader::Load( const EFK_CHAR* path )
 			fread( data_model, 1, size_model, fp_model );
 			fclose( fp_model );
 
-			model = new EffekseerRenderer::Model( data_model, size_model );
+			model = new EffekseerRendererDX9::Model( data_model, size_model );
 
 			model->ModelCount = Effekseer::Min( Effekseer::Max( model->GetModelCount(), 1 ), 40);
 
@@ -526,8 +526,8 @@ bool Native::CreateWindow_Effekseer( void* pHandle, int width, int height )
 			g_manager->SetRingRenderer( ring_renderer );
 			g_manager->SetModelRenderer( model_renderer );
 			g_manager->SetTrackRenderer( track_renderer );
-			g_manager->SetTextureLoader( new TextureLoader( g_renderer->GetRenderer() ) );
-			g_manager->SetModelLoader( new ModelLoader( g_renderer->GetRenderer() ) );
+			g_manager->SetTextureLoader( new TextureLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer() ) );
+			g_manager->SetModelLoader( new ModelLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer() ) );
 		}
 	}
 	else
@@ -1099,8 +1099,8 @@ bool Native::InvalidateTextureCache()
 	}
 
 	{
-		std::map<std::wstring,EffekseerRenderer::Model*>::iterator it = m_models.begin();
-		std::map<std::wstring,EffekseerRenderer::Model*>::iterator it_end = m_models.end();
+		std::map<std::wstring,EffekseerRendererDX9::Model*>::iterator it = m_models.begin();
+		std::map<std::wstring,EffekseerRendererDX9::Model*>::iterator it_end = m_models.end();
 		while( it != it_end )
 		{
 			ES_SAFE_DELETE( (*it).second );

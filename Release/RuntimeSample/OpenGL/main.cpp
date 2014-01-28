@@ -220,7 +220,7 @@ int main()
 	InitWindow();
 	
 	// 描画用インスタンスの生成
-	g_renderer = ::EffekseerRenderer::Renderer::Create( 2000 );
+	g_renderer = ::EffekseerRendererGL::Renderer::Create( 2000 );
 	
 	// エフェクト管理用インスタンスの生成
 	g_manager = ::Effekseer::Manager::Create( 2000 );

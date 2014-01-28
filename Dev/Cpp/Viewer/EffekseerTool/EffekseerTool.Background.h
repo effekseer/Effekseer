@@ -5,9 +5,9 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <EffekseerRenderer/EffekseerRenderer.Renderer.h>
-#include <EffekseerRenderer/EffekseerRenderer.RendererImplemented.h>
-#include <EffekseerRenderer/EffekseerRenderer.DeviceObject.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.DeviceObject.h>
 
 //-----------------------------------------------------------------------------------
 //
@@ -18,7 +18,7 @@ namespace EffekseerRenderer
 //
 //----------------------------------------------------------------------------------
 class Background
-	: public DeviceObject
+	: public EffekseerRendererDX9::DeviceObject
 {
 private:
 	
@@ -28,16 +28,16 @@ private:
 		::Effekseer::Vector2D	UV;
 	};
 
-	RendererImplemented*			m_renderer;
+	EffekseerRendererDX9::RendererImplemented*			m_renderer;
 	ID3DXEffect*					m_shader;
 	IDirect3DVertexDeclaration9*	m_vertexDeclaration;
 
-	Background( RendererImplemented* renderer, ID3DXEffect* shader );
+	Background( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* shader );
 public:
 
 	virtual ~Background();
 
-	static Background* Create( RendererImplemented* renderer );
+	static Background* Create( EffekseerRendererDX9::RendererImplemented* renderer );
 
 public:	// デバイス復旧用
 	virtual void OnLostDevice();

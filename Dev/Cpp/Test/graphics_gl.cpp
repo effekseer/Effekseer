@@ -67,7 +67,7 @@ void InitGraphics( HWND handle, int width, int height )
 	wglSwapIntervalEXT(1);
 	glViewport( 0, 0, width, height );
 
-	g_renderer = ::EffekseerRenderer::Renderer::Create( 2000 );
+	g_renderer = ::EffekseerRendererGL::Renderer::Create( 2000 );
 	g_renderer->SetProjectionMatrix( ::Effekseer::Matrix44().PerspectiveFovRH_OpenGL( 90.0f / 180.0f * 3.14f, (float)width / (float)height, 1.0f, 50.0f ) );
 	
 	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );

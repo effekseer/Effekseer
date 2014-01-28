@@ -25,15 +25,15 @@ private:
 		float	y;
 	};
 
-	RendererImplemented*			m_renderer;
-	Shader*							m_shader;
+	EffekseerRendererDX9::RendererImplemented*			m_renderer;
+	EffekseerRendererDX9::Shader*							m_shader;
 
-	Guide( RendererImplemented* renderer, Shader* shader );
+	Guide( EffekseerRendererDX9::RendererImplemented* renderer, EffekseerRendererDX9::Shader* shader );
 public:
 
 	virtual ~Guide();
 
-	static Guide* Create( RendererImplemented* renderer );
+	static Guide* Create( EffekseerRendererDX9::RendererImplemented* renderer );
 
 
 public:

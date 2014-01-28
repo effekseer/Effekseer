@@ -230,7 +230,7 @@ int main()
 	InitWindow();
 	
 	// 描画用インスタンスの生成
-	g_renderer = ::EffekseerRenderer::Renderer::Create( g_d3d_device, 2000 );
+	g_renderer = ::EffekseerRendererDX9::Renderer::Create( g_d3d_device, 2000 );
 	
 	// エフェクト管理用インスタンスの生成
 	g_manager = ::Effekseer::Manager::Create( 2000 );

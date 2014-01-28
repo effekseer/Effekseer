@@ -140,7 +140,7 @@ bool Renderer::Initialize( HWND handle, int width, int height )
 	m_width = width;
 	m_height = height;
 
-	m_renderer = (::EffekseerRenderer::RendererImplemented*)::EffekseerRenderer::Renderer::Create( m_d3d_device, m_squareMaxCount );
+	m_renderer = (::EffekseerRendererDX9::RendererImplemented*)::EffekseerRendererDX9::Renderer::Create( m_d3d_device, m_squareMaxCount );
 	
 	// ƒOƒŠƒbƒh¶¬
 	m_grid = ::EffekseerRenderer::Grid::Create( m_renderer );

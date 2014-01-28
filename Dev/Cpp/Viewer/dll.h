@@ -11,8 +11,8 @@
 //
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
-#include "EffekseerRenderer/EffekseerRenderer.Renderer.h"
-#include "EffekseerRenderer/EffekseerRenderer.RendererImplemented.h"
+#include "EffekseerRenderer/EffekseerRendererDX9.Renderer.h"
+#include "EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h"
 #include "EffekseerTool/EffekseerTool.Renderer.h"
 #include "EffekseerTool/EffekseerTool.Sound.h"
 
@@ -119,10 +119,10 @@ private:
 	: public ::Effekseer::ModelLoader
 	{
 	private:
-		EffekseerRenderer::Renderer*	m_renderer;
+		EffekseerRendererDX9::Renderer*	m_renderer;
 
 	public:
-		ModelLoader( EffekseerRenderer::Renderer* renderer );
+		ModelLoader( EffekseerRendererDX9::Renderer* renderer );
 		virtual ~ModelLoader();
 
 	public:

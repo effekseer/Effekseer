@@ -2,10 +2,10 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <EffekseerRenderer/EffekseerRenderer.Renderer.h>
-#include <EffekseerRenderer/EffekseerRenderer.VertexBuffer.h>
-#include <EffekseerRenderer/EffekseerRenderer.IndexBuffer.h>
-#include <EffekseerRenderer/EffekseerRenderer.RenderState.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 
 #include "EffekseerTool.Background.h"
 
@@ -26,7 +26,7 @@ static
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Background::Background( RendererImplemented* renderer, ID3DXEffect* shader )
+Background::Background( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* shader )
 	: DeviceObject( renderer )
 	, m_renderer	( renderer )
 	, m_shader		( shader )
@@ -55,7 +55,7 @@ Background::~Background()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Background* Background::Create( RendererImplemented* renderer )
+Background* Background::Create( EffekseerRendererDX9::RendererImplemented* renderer )
 {
 	assert( renderer != NULL );
 	assert( renderer->GetDevice() != NULL );

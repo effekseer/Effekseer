@@ -3,7 +3,7 @@
 //
 //----------------------------------------------------------------------------------
 #include "Effekseer.h"
-#include "EffekseerRenderer/EffekseerRenderer.Renderer.h"
+#include "EffekseerRenderer/EffekseerRendererDX9.Renderer.h"
 #include "EffekseerTool/EffekseerTool.Renderer.h"
 
 //----------------------------------------------------------------------------------

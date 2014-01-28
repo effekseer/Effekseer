@@ -215,6 +215,8 @@ void Loop()
 //----------------------------------------------------------------------------------
 void PlayEffect()
 {
+	if(g_effects.size() == 0) return;
+
 #if __NormalMode
 	static int target = 0;
 	target = target % g_effects.size();

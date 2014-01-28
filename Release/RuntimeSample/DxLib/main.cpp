@@ -86,7 +86,7 @@ int main()
 	
 	// 描画用インスタンスの生成
 	LPDIRECT3DDEVICE9 device = (LPDIRECT3DDEVICE9)GetUseDirect3DDevice9();
-	g_renderer = ::EffekseerRenderer::Renderer::Create( device, 2000 );
+	g_renderer = ::EffekseerRendererDX9::Renderer::Create( device, 2000 );
 
 	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ
 	SetChangeScreenModeGraphicsSystemResetFlag( FALSE );

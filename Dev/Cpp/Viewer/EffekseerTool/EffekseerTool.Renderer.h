@@ -28,7 +28,7 @@ private:
 
 	eProjectionType		m_projection;
 
-	::EffekseerRenderer::RendererImplemented*	m_renderer;
+	::EffekseerRendererDX9::RendererImplemented*	m_renderer;
 
 	::EffekseerRenderer::Grid*	m_grid;
 	::EffekseerRenderer::Guide*	m_guide;

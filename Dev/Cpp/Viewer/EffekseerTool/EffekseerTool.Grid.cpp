@@ -2,10 +2,10 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <EffekseerRenderer/EffekseerRenderer.Renderer.h>
-#include <EffekseerRenderer/EffekseerRenderer.VertexBuffer.h>
-#include <EffekseerRenderer/EffekseerRenderer.IndexBuffer.h>
-#include <EffekseerRenderer/EffekseerRenderer.RenderState.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 #include "EffekseerTool.Grid.h"
 
 //-----------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ static
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Grid::Grid( RendererImplemented* renderer, ID3DXEffect* shader )
+Grid::Grid( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* shader )
 	: DeviceObject( renderer )
 	, m_renderer	( renderer )
 	, m_shader		( shader )
@@ -59,7 +59,7 @@ Grid::~Grid()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Grid* Grid::Create( RendererImplemented* renderer )
+Grid* Grid::Create( EffekseerRendererDX9::RendererImplemented* renderer )
 {
 	assert( renderer != NULL );
 	assert( renderer->GetDevice() != NULL );

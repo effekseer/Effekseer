@@ -2,11 +2,11 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <EffekseerRenderer/EffekseerRenderer.Renderer.h>
-#include <EffekseerRenderer/EffekseerRenderer.VertexBuffer.h>
-#include <EffekseerRenderer/EffekseerRenderer.IndexBuffer.h>
-#include <EffekseerRenderer/EffekseerRenderer.Shader.h>
-#include <EffekseerRenderer/EffekseerRenderer.RenderState.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.Shader.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 #include "EffekseerTool.Guide.h"
 
 //-----------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ static
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Guide::Guide( RendererImplemented* renderer, Shader* shader )
+Guide::Guide( EffekseerRendererDX9::RendererImplemented* renderer, EffekseerRendererDX9::Shader* shader )
 	: m_renderer	( renderer )
 	, m_shader		( shader )
 {
@@ -46,7 +46,7 @@ Guide::~Guide()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Guide* Guide::Create( RendererImplemented* renderer )
+Guide* Guide::Create( EffekseerRendererDX9::RendererImplemented* renderer )
 {
 	assert( renderer != NULL );
 	assert( renderer->GetDevice() != NULL );
@@ -58,7 +58,7 @@ Guide* Guide::Create( RendererImplemented* renderer )
 		D3DDECL_END()
 	};
 
-	Shader* shader = Shader::Create( renderer, Shader_::g_vs20_VS, sizeof(Shader_::g_vs20_VS), Shader_::g_ps20_PS, sizeof(Shader_::g_ps20_PS), "Guide", decl );
+	EffekseerRendererDX9::Shader* shader = EffekseerRendererDX9::Shader::Create( renderer, Shader_::g_vs20_VS, sizeof(Shader_::g_vs20_VS), Shader_::g_ps20_PS, sizeof(Shader_::g_ps20_PS), "Guide", decl );
 	
 	if( shader == NULL ) return NULL;
 
