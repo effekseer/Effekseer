@@ -93,6 +93,7 @@ set(effekseer_renderer_dx11_src
 
 set(effekseer_renderer_gl_src
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.DeviceObject.cpp
+	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.GLExtension.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.IndexBuffer.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelLoader.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelRenderer.cpp
