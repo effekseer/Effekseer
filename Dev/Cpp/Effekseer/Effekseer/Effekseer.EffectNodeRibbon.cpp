@@ -124,9 +124,9 @@ void EffectNodeRibbon::LoadRendererParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::InitializeRenderer()
+void EffectNodeRibbon::InitializeRenderer( Manager* manager )
 {
-	RibbonRenderer* renderer = GetEffect()->GetManager()->GetRibbonRenderer();
+	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if( renderer != NULL )
 	{
 		m_nodeParameter.AlphaBlend = AlphaBlend;
@@ -144,9 +144,9 @@ void EffectNodeRibbon::InitializeRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::FinalizeRenderer()
+void EffectNodeRibbon::FinalizeRenderer( Manager* manager )
 {
-	RibbonRenderer* renderer = GetEffect()->GetManager()->GetRibbonRenderer();
+	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if( renderer != NULL )
 	{
 		renderer->RemoveRenderer( m_nodeParameter, m_userData );
@@ -156,9 +156,9 @@ void EffectNodeRibbon::FinalizeRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::BeginRendering( int32_t count )
+void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 {
-	RibbonRenderer* renderer = GetEffect()->GetManager()->GetRibbonRenderer();
+	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if( renderer != NULL )
 	{
 		renderer->BeginRendering( m_nodeParameter, count, m_userData );
@@ -168,9 +168,9 @@ void EffectNodeRibbon::BeginRendering( int32_t count )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::BeginRenderingGroup( InstanceGroup* group )
+void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
 {
-	RibbonRenderer* renderer = GetEffect()->GetManager()->GetRibbonRenderer();
+	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if( renderer != NULL )
 	{
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
@@ -181,10 +181,10 @@ void EffectNodeRibbon::BeginRenderingGroup( InstanceGroup* group )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::Rendering( const Instance& instance )
+void EffectNodeRibbon::Rendering(const Instance& instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.ribbon;
-	RibbonRenderer* renderer = GetEffect()->GetManager()->GetRibbonRenderer();
+	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if( renderer != NULL )
 	{
 		instValues._color.setValueToArg( m_instanceParameter.AllColor );
@@ -235,9 +235,9 @@ void EffectNodeRibbon::Rendering( const Instance& instance )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::EndRendering()
+void EffectNodeRibbon::EndRendering(Manager* manager)
 {
-	RibbonRenderer* renderer =  GetEffect()->GetManager()->GetRibbonRenderer();
+	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if( renderer != NULL )
 	{
 		renderer->EndRendering( m_nodeParameter, m_userData );

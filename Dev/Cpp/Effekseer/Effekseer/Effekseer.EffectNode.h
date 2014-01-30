@@ -635,7 +635,7 @@ protected:
 	void LoadParameter( unsigned char*& pos );
 
 	// 初期化
-	void Initialize();
+	void Initialize(Manager* manager);
 
 public:
 
@@ -708,32 +708,32 @@ public:
 	/**
 		@brief	描画部分の初期化
 	*/
-	virtual void InitializeRenderer();
+	virtual void InitializeRenderer( Manager* manager );
 
 	/**
 		@brief	描画部分の終了
 	*/
-	virtual void FinalizeRenderer();
+	virtual void FinalizeRenderer( Manager* manager );
 
 	/**
 		@brief	描画開始
 	*/
-	virtual void BeginRendering( int32_t count );
+	virtual void BeginRendering(int32_t count, Manager* manager);
 
 	/**
 		@brief	グループ描画開始
 	*/
-	virtual void BeginRenderingGroup( InstanceGroup* group );
+	virtual void BeginRenderingGroup(InstanceGroup* group, Manager* manager);
 
 	/**
 		@brief	描画
 	*/
-	virtual void Rendering( const Instance& instance );
+	virtual void Rendering(const Instance& instance, Manager* manager);
 
 	/**
 		@brief	描画終了
 	*/
-	virtual void EndRendering();
+	virtual void EndRendering(Manager* manager);
 
 	/**
 		@brief	インスタンスグループ描画時初期化

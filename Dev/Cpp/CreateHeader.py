@@ -49,7 +49,7 @@ effekseerHeader.readLines('Effekseer/Effekseer/Sound/Effekseer.SoundPlayer.h')
 
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.SoundLoader.h')
 
-effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Loader.h')
+effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Setting.h')
 
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Server.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Client.h')

@@ -70,7 +70,7 @@ class RingRenderer;
 class ModelRenderer;
 class TrackRenderer;
 
-class Loader;
+class Setting;
 class EffectLoader;
 class TextureLoader;
 
@@ -1368,9 +1368,9 @@ public:
 	virtual void SetTrackRenderer( TrackRenderer* renderer ) = 0;
 
 	/**
-		@brief	読込クラスを取得する。
+		@brief	設定クラスを取得する。
 	*/
-	virtual Loader* GetLoader() = 0;
+	virtual Setting* GetSetting() = 0;
 
 	/**
 		@brief	エフェクト読込クラスを取得する。
@@ -2614,11 +2614,11 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ファイル読み込み方法指定クラス
+	@brief	設定クラス
 	@note
-	EffectLoader等、全てのローダーを設定することができ、Managerの代わりにエフェクト読み込み時に使用する。
+	EffectLoader等、全てのレンダラー、ローダーを設定することができ、Managerの代わりにエフェクト読み込み時に使用する。
 */
-class Loader
+class Setting
 {
 private:
 	EffectLoader*	m_effectLoader;
@@ -2630,12 +2630,12 @@ public:
 	/**
 		@brief	コンストラクタ
 	*/
-	Loader();
+	Setting();
 
 	/**
 		@brief	デストラクタ
 	*/
-	virtual ~Loader();
+	virtual ~Setting();
 
 	/**
 		@brief	エフェクトローダーを取得する。

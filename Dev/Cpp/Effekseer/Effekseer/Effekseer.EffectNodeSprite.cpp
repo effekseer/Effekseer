@@ -115,9 +115,9 @@ void EffectNodeSprite::LoadRendererParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::InitializeRenderer()
+void EffectNodeSprite::InitializeRenderer( Manager* manager )
 {
-	SpriteRenderer* renderer = GetEffect()->GetManager()->GetSpriteRenderer();
+	SpriteRenderer* renderer = manager->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -136,9 +136,9 @@ void EffectNodeSprite::InitializeRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::FinalizeRenderer()
+void EffectNodeSprite::FinalizeRenderer( Manager* manager )
 {
-	SpriteRenderer* renderer = GetEffect()->GetManager()->GetSpriteRenderer();
+	SpriteRenderer* renderer = manager->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -157,9 +157,9 @@ void EffectNodeSprite::FinalizeRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::BeginRendering( int32_t count )
+void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 {
-	SpriteRenderer* renderer =  GetEffect()->GetManager()->GetSpriteRenderer();
+	SpriteRenderer* renderer = manager->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -178,10 +178,10 @@ void EffectNodeSprite::BeginRendering( int32_t count )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::Rendering( const Instance& instance )
+void EffectNodeSprite::Rendering(const Instance& instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.sprite;
-	SpriteRenderer* renderer = GetEffect()->GetManager()->GetSpriteRenderer();
+	SpriteRenderer* renderer = manager->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -256,9 +256,9 @@ void EffectNodeSprite::Rendering( const Instance& instance )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::EndRendering()
+void EffectNodeSprite::EndRendering(Manager* manager)
 {
-	SpriteRenderer* renderer =  GetEffect()->GetManager()->GetSpriteRenderer();
+	SpriteRenderer* renderer = manager->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;

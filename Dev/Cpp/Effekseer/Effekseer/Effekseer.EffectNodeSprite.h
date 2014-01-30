@@ -139,15 +139,15 @@ public:
 
 	void LoadRendererParameter( unsigned char*& pos );
 
-	void InitializeRenderer();
+	void InitializeRenderer( Manager* manager );
 
-	void FinalizeRenderer();
+	void FinalizeRenderer( Manager* manager );
 
-	void BeginRendering( int32_t count );
+	void BeginRendering(int32_t count, Manager* manager);
 
-	void Rendering( const Instance& instance );
+	void Rendering(const Instance& instance, Manager* manager);
 
-	void EndRendering();
+	void EndRendering(Manager* manager);
 
 	void InitializeRenderedInstance( Instance& instance );
 

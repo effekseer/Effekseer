@@ -60,9 +60,9 @@ void EffectNodeModel::LoadRendererParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::InitializeRenderer()
+void EffectNodeModel::InitializeRenderer( Manager* manager )
 {
-	ModelRenderer* renderer = GetEffect()->GetManager()->GetModelRenderer();
+	ModelRenderer* renderer = manager->GetModelRenderer();
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -88,9 +88,9 @@ void EffectNodeModel::InitializeRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::FinalizeRenderer()
+void EffectNodeModel::FinalizeRenderer( Manager* manager )
 {
-	ModelRenderer* renderer = GetEffect()->GetManager()->GetModelRenderer();
+	ModelRenderer* renderer = manager->GetModelRenderer();
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -116,10 +116,10 @@ void EffectNodeModel::FinalizeRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::BeginRendering( int32_t count )
+void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 {
-	ModelRenderer* renderer = GetEffect()->GetManager()->GetModelRenderer();
-	if( renderer != NULL )
+	ModelRenderer* renderer = manager->GetModelRenderer();
+	if (renderer != NULL)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
 		nodeParameter.AlphaBlend = AlphaBlend;
@@ -134,20 +134,20 @@ void EffectNodeModel::BeginRendering( int32_t count )
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = m_effect->GetManager()->GetCoordinateSystem() == 
+		nodeParameter.IsRightHand = m_effect->GetManager()->GetCoordinateSystem() ==
 			COORDINATE_SYSTEM_RH;
 
-		renderer->BeginRendering( nodeParameter, count, m_userData );
+		renderer->BeginRendering(nodeParameter, count, m_userData);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::Rendering( const Instance& instance )
+void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.model;
-	ModelRenderer* renderer = GetEffect()->GetManager()->GetModelRenderer();
+	ModelRenderer* renderer = manager->GetModelRenderer();
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -185,9 +185,9 @@ void EffectNodeModel::Rendering( const Instance& instance )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::EndRendering()
+void EffectNodeModel::EndRendering(Manager* manager)
 {
-	ModelRenderer* renderer =  GetEffect()->GetManager()->GetModelRenderer();
+	ModelRenderer* renderer = manager->GetModelRenderer();
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;

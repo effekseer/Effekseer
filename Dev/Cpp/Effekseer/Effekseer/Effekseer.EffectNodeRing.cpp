@@ -124,9 +124,9 @@ void EffectNodeRing::LoadRendererParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeRenderer()
+void EffectNodeRing::InitializeRenderer( Manager* manager )
 {
-	RingRenderer* renderer = GetEffect()->GetManager()->GetRingRenderer();
+	RingRenderer* renderer = manager->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
@@ -145,9 +145,9 @@ void EffectNodeRing::InitializeRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::FinalizeRenderer()
+void EffectNodeRing::FinalizeRenderer( Manager* manager )
 {
-	RingRenderer* renderer = GetEffect()->GetManager()->GetRingRenderer();
+	RingRenderer* renderer = manager->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
@@ -166,9 +166,9 @@ void EffectNodeRing::FinalizeRenderer()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::BeginRendering( int32_t count )
+void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 {
-	RingRenderer* renderer =  GetEffect()->GetManager()->GetRingRenderer();
+	RingRenderer* renderer = manager->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
@@ -188,10 +188,10 @@ void EffectNodeRing::BeginRendering( int32_t count )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::Rendering( const Instance& instance )
+void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.ring;
-	RingRenderer* renderer = GetEffect()->GetManager()->GetRingRenderer();
+	RingRenderer* renderer = manager->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
@@ -235,9 +235,9 @@ void EffectNodeRing::Rendering( const Instance& instance )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::EndRendering()
+void EffectNodeRing::EndRendering(Manager* manager)
 {
-	RingRenderer* renderer =  GetEffect()->GetManager()->GetRingRenderer();
+	RingRenderer* renderer = manager->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;

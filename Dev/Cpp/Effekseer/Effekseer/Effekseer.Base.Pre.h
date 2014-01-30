@@ -70,7 +70,7 @@ class RingRenderer;
 class ModelRenderer;
 class TrackRenderer;
 
-class Loader;
+class Setting;
 class EffectLoader;
 class TextureLoader;
 

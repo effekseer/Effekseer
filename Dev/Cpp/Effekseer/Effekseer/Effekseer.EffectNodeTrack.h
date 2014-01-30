@@ -147,17 +147,17 @@ public:
 
 	void LoadRendererParameter( unsigned char*& pos );
 
-	void InitializeRenderer();
+	void InitializeRenderer( Manager* manager );
 
-	void FinalizeRenderer();
+	void FinalizeRenderer( Manager* manager );
 
-	void BeginRendering( int32_t count );
+	void BeginRendering(int32_t count, Manager* manager);
 
-	void BeginRenderingGroup( InstanceGroup* group );
+	void BeginRenderingGroup(InstanceGroup* group, Manager* manager);
 
-	void Rendering( const Instance& instance );
+	void Rendering(const Instance& instance, Manager* manager);
 
-	void EndRendering();
+	void EndRendering(Manager* manager);
 
 	void InitializeRenderedInstanceGroup( InstanceGroup& instanceGroup );
 

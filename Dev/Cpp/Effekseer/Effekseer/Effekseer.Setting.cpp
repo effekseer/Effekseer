@@ -2,7 +2,7 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include "Effekseer.Loader.h"
+#include "Effekseer.Setting.h"
 
 #include "Effekseer.EffectLoader.h"
 #include "Effekseer.TextureLoader.h"
@@ -16,7 +16,7 @@ namespace Effekseer {
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Loader::Loader()
+Setting::Setting()
 	: m_effectLoader(NULL)
 	, m_textureLoader(NULL)
 	, m_soundLoader(NULL)
@@ -27,7 +27,7 @@ Loader::Loader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Loader::~Loader()
+Setting::~Setting()
 {
 	ES_SAFE_DELETE(m_effectLoader);
 	ES_SAFE_DELETE(m_textureLoader);
@@ -38,7 +38,7 @@ Loader::~Loader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectLoader* Loader::GetEffectLoader()
+EffectLoader* Setting::GetEffectLoader()
 {
 	return m_effectLoader;
 }
@@ -46,7 +46,7 @@ EffectLoader* Loader::GetEffectLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Loader::SetEffectLoader(EffectLoader* loader)
+void Setting::SetEffectLoader(EffectLoader* loader)
 {
 	ES_SAFE_DELETE(m_effectLoader);
 	m_effectLoader = loader;
@@ -55,7 +55,7 @@ void Loader::SetEffectLoader(EffectLoader* loader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-TextureLoader* Loader::GetTextureLoader()
+TextureLoader* Setting::GetTextureLoader()
 {
 	return m_textureLoader;
 }
@@ -63,7 +63,7 @@ TextureLoader* Loader::GetTextureLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Loader::SetTextureLoader(TextureLoader* loader)
+void Setting::SetTextureLoader(TextureLoader* loader)
 {
 	ES_SAFE_DELETE(m_textureLoader);
 	m_textureLoader = loader;
@@ -72,7 +72,7 @@ void Loader::SetTextureLoader(TextureLoader* loader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader* Loader::GetModelLoader()
+ModelLoader* Setting::GetModelLoader()
 {
 	return m_modelLoader;
 }
@@ -80,7 +80,7 @@ ModelLoader* Loader::GetModelLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Loader::SetModelLoader(ModelLoader* loader)
+void Setting::SetModelLoader(ModelLoader* loader)
 {
 	ES_SAFE_DELETE(m_modelLoader);
 	m_modelLoader = loader;
@@ -89,7 +89,7 @@ void Loader::SetModelLoader(ModelLoader* loader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundLoader* Loader::GetSoundLoader()
+SoundLoader* Setting::GetSoundLoader()
 {
 	return m_soundLoader;
 }
@@ -97,7 +97,7 @@ SoundLoader* Loader::GetSoundLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Loader::SetSoundLoader(SoundLoader* loader)
+void Setting::SetSoundLoader(SoundLoader* loader)
 {
 	ES_SAFE_DELETE(m_soundLoader);
 	m_soundLoader = loader;

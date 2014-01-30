@@ -172,7 +172,7 @@
     <ClInclude Include="Effekseer\Effekseer.EffectNodeTrack.h">
       <Filter>Effekseer\EffectData</Filter>
     </ClInclude>
-    <ClInclude Include="Effekseer\Effekseer.Loader.h">
+    <ClInclude Include="Effekseer\Effekseer.Setting.h">
       <Filter>Effekseer\Loader</Filter>
     </ClInclude>
   </ItemGroup>
@@ -258,7 +258,7 @@
     <ClCompile Include="Effekseer\Effekseer.EffectNodeTrack.cpp">
       <Filter>Effekseer\EffectData</Filter>
     </ClCompile>
-    <ClCompile Include="Effekseer\Effekseer.Loader.cpp">
+    <ClCompile Include="Effekseer\Effekseer.Setting.cpp">
       <Filter>Effekseer\Loader</Filter>
     </ClCompile>
   </ItemGroup>

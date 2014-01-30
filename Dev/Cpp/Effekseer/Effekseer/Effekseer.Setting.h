@@ -15,11 +15,11 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ファイル読み込み方法指定クラス
+	@brief	設定クラス
 	@note
-	EffectLoader等、全てのローダーを設定することができ、Managerの代わりにエフェクト読み込み時に使用する。
+	EffectLoader等、全てのレンダラー、ローダーを設定することができ、Managerの代わりにエフェクト読み込み時に使用する。
 */
-class Loader
+class Setting
 {
 private:
 	EffectLoader*	m_effectLoader;
@@ -31,12 +31,12 @@ public:
 	/**
 		@brief	コンストラクタ
 	*/
-	Loader();
+	Setting();
 
 	/**
 		@brief	デストラクタ
 	*/
-	virtual ~Loader();
+	virtual ~Setting();
 
 	/**
 		@brief	エフェクトローダーを取得する。

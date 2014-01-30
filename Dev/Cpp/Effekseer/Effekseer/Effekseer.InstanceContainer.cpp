@@ -8,6 +8,8 @@
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
 #include "Effekseer.InstanceGroup.h"
+
+#include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
 
 #include "Renderer/Effekseer.SpriteRenderer.h"
@@ -259,11 +261,11 @@ void InstanceContainer::Draw( bool recursive )
 		if( count > 0 )
 		{
 			/* •`‰æ */
-			m_pEffectNode->BeginRendering( count );
+			m_pEffectNode->BeginRendering(count, m_pManager);
 
 			for( InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer )
 			{
-				m_pEffectNode->BeginRenderingGroup( group );
+				m_pEffectNode->BeginRenderingGroup(group, m_pManager);
 
 				if( m_pEffectNode->RenderingOrder == RenderingOrder_FirstCreatedInstanceIsFirst )
 				{
@@ -293,7 +295,7 @@ void InstanceContainer::Draw( bool recursive )
 				}
 			}
 
-			m_pEffectNode->EndRendering();
+			m_pEffectNode->EndRendering(m_pManager);
 		}
 	}
 

@@ -35,7 +35,6 @@ set(effekseer_src
 	Effekseer/Effekseer/Effekseer.EffectNodeSprite.cpp
 	Effekseer/Effekseer/Effekseer.EffectNodeTrack.cpp
 	Effekseer/Effekseer/Effekseer.FCurves.cpp
-	Effekseer/Effekseer/Effekseer.Loader.cpp
 	Effekseer/Effekseer/Effekseer.Instance.cpp
 	Effekseer/Effekseer/Effekseer.InstanceContainer.cpp
 	Effekseer/Effekseer/Effekseer.InstanceGlobal.cpp
@@ -44,6 +43,7 @@ set(effekseer_src
 	Effekseer/Effekseer/Effekseer.Matrix43.cpp
 	Effekseer/Effekseer/Effekseer.Matrix44.cpp
 	Effekseer/Effekseer/Effekseer.RectF.cpp
+	Effekseer/Effekseer/Effekseer.Setting.cpp
 	Effekseer/Effekseer/Effekseer.Server.cpp
 	Effekseer/Effekseer/Effekseer.Socket.cpp
 	Effekseer/Effekseer/Effekseer.Thread.cpp

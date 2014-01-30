@@ -17,7 +17,7 @@
 #include "Effekseer.DefaultEffectLoader.h"
 #include "Effekseer.TextureLoader.h"
 
-#include "Effekseer.Loader.h"
+#include "Effekseer.Setting.h"
 
 #include "Renderer/Effekseer.SpriteRenderer.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
@@ -311,7 +311,7 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 	, m_modelRenderer	( NULL )
 	, m_trackRenderer	( NULL )
 	, m_soundPlayer		( NULL )
-	, m_loader			( NULL )
+	, m_setting			( NULL )
 	, m_sequenceNumber	( 0 )
 {
 	SetMallocFunc( Malloc );
@@ -329,8 +329,8 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 		m_reserved_instances.push( &instances[i] );
 	}
 
-	m_loader = new Loader();
-	m_loader->SetEffectLoader(new DefaultEffectLoader());
+	m_setting = new Setting();
+	m_setting->SetEffectLoader(new DefaultEffectLoader());
 	EffekseerPrintDebug("*** Create : Manager\n");
 }
 
@@ -358,7 +358,7 @@ ManagerImplemented::~ManagerImplemented()
 	ES_SAFE_DELETE( m_ringRenderer );
 	ES_SAFE_DELETE( m_soundPlayer );
 
-	ES_SAFE_DELETE( m_loader );
+	ES_SAFE_DELETE( m_setting );
 }
 
 //----------------------------------------------------------------------------------
@@ -600,9 +600,9 @@ void ManagerImplemented::SetTrackRenderer( TrackRenderer* renderer )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Loader* ManagerImplemented::GetLoader()
+Setting* ManagerImplemented::GetSetting()
 {
-	return m_loader;
+	return m_setting;
 }
 
 //----------------------------------------------------------------------------------
@@ -610,7 +610,7 @@ Loader* ManagerImplemented::GetLoader()
 //----------------------------------------------------------------------------------
 EffectLoader* ManagerImplemented::GetEffectLoader()
 {
-	return m_loader->GetEffectLoader();
+	return m_setting->GetEffectLoader();
 }
 	
 //----------------------------------------------------------------------------------
@@ -618,7 +618,7 @@ EffectLoader* ManagerImplemented::GetEffectLoader()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetEffectLoader( EffectLoader* effectLoader )
 {
-	m_loader->SetEffectLoader(effectLoader);
+	m_setting->SetEffectLoader(effectLoader);
 }
 
 //----------------------------------------------------------------------------------
@@ -626,7 +626,7 @@ void ManagerImplemented::SetEffectLoader( EffectLoader* effectLoader )
 //----------------------------------------------------------------------------------
 TextureLoader* ManagerImplemented::GetTextureLoader()
 {
-	return m_loader->GetTextureLoader();
+	return m_setting->GetTextureLoader();
 }
 	
 //----------------------------------------------------------------------------------
@@ -634,7 +634,7 @@ TextureLoader* ManagerImplemented::GetTextureLoader()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetTextureLoader( TextureLoader* textureLoader )
 {
-	m_loader->SetTextureLoader(textureLoader);
+	m_setting->SetTextureLoader(textureLoader);
 }
 
 //----------------------------------------------------------------------------------
@@ -659,7 +659,7 @@ void ManagerImplemented::SetSoundPlayer( SoundPlayer* soundPlayer )
 //----------------------------------------------------------------------------------
 SoundLoader* ManagerImplemented::GetSoundLoader()
 {
-	return m_loader->GetSoundLoader();
+	return m_setting->GetSoundLoader();
 }
 
 //----------------------------------------------------------------------------------
@@ -667,7 +667,7 @@ SoundLoader* ManagerImplemented::GetSoundLoader()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetSoundLoader( SoundLoader* soundLoader )
 {
-	m_loader->SetSoundLoader(soundLoader);
+	m_setting->SetSoundLoader(soundLoader);
 }
 
 //----------------------------------------------------------------------------------
@@ -675,7 +675,7 @@ void ManagerImplemented::SetSoundLoader( SoundLoader* soundLoader )
 //----------------------------------------------------------------------------------
 ModelLoader* ManagerImplemented::GetModelLoader()
 {
-	return m_loader->GetModelLoader();
+	return m_setting->GetModelLoader();
 }
 	
 //----------------------------------------------------------------------------------
@@ -683,7 +683,7 @@ ModelLoader* ManagerImplemented::GetModelLoader()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetModelLoader( ModelLoader* modelLoader )
 {
-	m_loader->SetModelLoader(modelLoader);
+	m_setting->SetModelLoader(modelLoader);
 }
 
 //----------------------------------------------------------------------------------

@@ -149,8 +149,8 @@ private:
 	/* トラック描画機能用インスタンス */
 	TrackRenderer*				m_trackRenderer;
 
-	/* 読み込みインスタンス */
-	Loader*						m_loader;
+	/* 設定インスタンス */
+	Setting*						m_setting;
 
 	/* サウンド再生用インスタンス */
 	SoundPlayer*				m_soundPlayer;
@@ -320,9 +320,9 @@ public:
 	void SetTrackRenderer( TrackRenderer* renderer );
 
 	/**
-		@brief	読込クラスを取得する。
+		@brief	設定クラスを取得する。
 	*/
-	Loader* GetLoader();
+	Setting* GetSetting();
 
 	/**
 		@brief	エフェクト読込クラスを取得する。

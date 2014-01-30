@@ -461,7 +461,7 @@ void EffectNode::LoadParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 EffectNode::~EffectNode()
 {
-	FinalizeRenderer();
+	FinalizeRenderer( GetEffect()->GetManager() );
 
 	for( size_t i = 0; i < m_Nodes.size(); i++ )
 	{
@@ -477,14 +477,14 @@ EffectNode::~EffectNode()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::Initialize()
+void EffectNode::Initialize(Manager* manager)
 {
-	InitializeRenderer();
+	InitializeRenderer(manager);
 
 	// ‰Šú‰»
-	for( size_t i = 0; i < m_Nodes.size(); i++ )
+	for (size_t i = 0; i < m_Nodes.size(); i++)
 	{
-		m_Nodes[i]->Initialize();
+		m_Nodes[i]->Initialize(manager);
 	}
 }
 
@@ -549,42 +549,42 @@ void EffectNode::LoadRendererParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::InitializeRenderer()
+void EffectNode::InitializeRenderer( Manager* manager )
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::FinalizeRenderer()
+void EffectNode::FinalizeRenderer( Manager* manager )
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::BeginRendering( int32_t count )
+void EffectNode::BeginRendering(int32_t count, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::BeginRenderingGroup( InstanceGroup* group )
+void EffectNode::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::Rendering( const Instance& instance )
+void EffectNode::Rendering(const Instance& instance, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::EndRendering()
+void EffectNode::EndRendering(Manager* manager)
 {
 }
 

@@ -13,7 +13,7 @@
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.ModelLoader.h"
 
-#include "Effekseer.Loader.h"
+#include "Effekseer.Setting.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -71,29 +71,29 @@ Effect* Effect::Create( Manager* manager, void* data, int32_t size, float magnif
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Effect* Effect::Create( Manager* manager, const EFK_CHAR* path, float magnification, const EFK_CHAR* materialPath )
+Effect* Effect::Create(Manager* manager, const EFK_CHAR* path, float magnification, const EFK_CHAR* materialPath)
 {
-	Loader* loader = manager->GetLoader();
+	Setting* setting = manager->GetSetting();
 
-	EffectLoader* eLoader =loader->GetEffectLoader();
+	EffectLoader* eLoader = setting->GetEffectLoader();
 
-	if( loader == NULL ) return NULL;
+	if (setting == NULL) return NULL;
 
 	void* data = NULL;
 	int32_t size = 0;
 
-	if( !eLoader->Load( path, data, size ) ) return NULL;
+	if (!eLoader->Load(path, data, size)) return NULL;
 
 	EFK_CHAR parentDir[512];
-	if( materialPath == NULL )
+	if (materialPath == NULL)
 	{
 		GetParentDir(parentDir, path);
 		materialPath = parentDir;
 	}
 
-	Effect* effect = EffectImplemented::Create( manager, data, size, magnification, materialPath );
+	Effect* effect = EffectImplemented::Create(manager, data, size, magnification, materialPath);
 
-	eLoader->Unload( data, size );
+	eLoader->Unload(data, size);
 
 	return effect;
 }
@@ -285,7 +285,7 @@ void EffectImplemented::Initialize()
 {
 	m_isInitialized = true;
 
-	m_pRoot->Initialize();
+	m_pRoot->Initialize(GetManager());
 }
 
 //----------------------------------------------------------------------------------
@@ -295,7 +295,7 @@ void EffectImplemented::Reset()
 {
 	UnloadResources();
 
-	Loader* loader = m_pManager->GetLoader();
+	Setting* loader = m_pManager->GetSetting();
 
 	TextureLoader* textureLoader = loader->GetTextureLoader();
 
@@ -415,7 +415,7 @@ bool EffectImplemented::Reload( void* data, int32_t size, const EFK_CHAR* materi
 //----------------------------------------------------------------------------------
 bool EffectImplemented::Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath )
 {
-	Loader* loader = m_pManager->GetLoader();
+	Setting* loader = m_pManager->GetSetting();
 	
 	EffectLoader* eLoader = loader->GetEffectLoader();
 	if( loader == NULL ) return false;
@@ -451,7 +451,7 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 {
 	UnloadResources();
 
-	Loader* loader = m_pManager->GetLoader();
+	Setting* loader = m_pManager->GetSetting();
 
 	{
 		TextureLoader* textureLoader = loader->GetTextureLoader();
@@ -499,7 +499,7 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 //----------------------------------------------------------------------------------
 void EffectImplemented::UnloadResources()
 {
-	Loader* loader = m_pManager->GetLoader();
+	Setting* loader = m_pManager->GetSetting();
 
 	TextureLoader* textureLoader = loader->GetTextureLoader();
 	if( textureLoader != NULL )

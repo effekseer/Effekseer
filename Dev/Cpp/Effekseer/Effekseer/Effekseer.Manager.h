@@ -147,9 +147,9 @@ public:
 	virtual void SetTrackRenderer( TrackRenderer* renderer ) = 0;
 
 	/**
-		@brief	読込クラスを取得する。
+		@brief	設定クラスを取得する。
 	*/
-	virtual Loader* GetLoader() = 0;
+	virtual Setting* GetSetting() = 0;
 
 	/**
 		@brief	エフェクト読込クラスを取得する。
