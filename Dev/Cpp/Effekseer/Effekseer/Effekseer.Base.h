@@ -82,6 +82,7 @@ class RibbonRenderer;
 class ModelRenderer;
 class TrackRenderer;
 
+class Loader;
 class FileReader;
 class FileWriter;
 class FileInterface;

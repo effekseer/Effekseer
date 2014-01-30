@@ -35,6 +35,7 @@ set(effekseer_src
 	Effekseer/Effekseer/Effekseer.EffectNodeSprite.cpp
 	Effekseer/Effekseer/Effekseer.EffectNodeTrack.cpp
 	Effekseer/Effekseer/Effekseer.FCurves.cpp
+	Effekseer/Effekseer/Effekseer.Loader.cpp
 	Effekseer/Effekseer/Effekseer.Instance.cpp
 	Effekseer/Effekseer/Effekseer.InstanceContainer.cpp
 	Effekseer/Effekseer/Effekseer.InstanceGlobal.cpp

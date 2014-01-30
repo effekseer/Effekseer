@@ -13,6 +13,8 @@
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.ModelLoader.h"
 
+#include "Effekseer.Loader.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -71,13 +73,16 @@ Effect* Effect::Create( Manager* manager, void* data, int32_t size, float magnif
 //----------------------------------------------------------------------------------
 Effect* Effect::Create( Manager* manager, const EFK_CHAR* path, float magnification, const EFK_CHAR* materialPath )
 {
-	EffectLoader* loader = manager->GetEffectLoader();
+	Loader* loader = manager->GetLoader();
+
+	EffectLoader* eLoader =loader->GetEffectLoader();
+
 	if( loader == NULL ) return NULL;
 
 	void* data = NULL;
 	int32_t size = 0;
 
-	if( !loader->Load( path, data, size ) ) return NULL;
+	if( !eLoader->Load( path, data, size ) ) return NULL;
 
 	EFK_CHAR parentDir[512];
 	if( materialPath == NULL )
@@ -88,7 +93,7 @@ Effect* Effect::Create( Manager* manager, const EFK_CHAR* path, float magnificat
 
 	Effect* effect = EffectImplemented::Create( manager, data, size, magnification, materialPath );
 
-	loader->Unload( data, size );
+	eLoader->Unload( data, size );
 
 	return effect;
 }
@@ -290,7 +295,9 @@ void EffectImplemented::Reset()
 {
 	UnloadResources();
 
-	TextureLoader* textureLoader = m_pManager->GetTextureLoader();
+	Loader* loader = m_pManager->GetLoader();
+
+	TextureLoader* textureLoader = loader->GetTextureLoader();
 
 	for( int i = 0; i < m_ImageCount; i++ )
 	{
@@ -408,13 +415,15 @@ bool EffectImplemented::Reload( void* data, int32_t size, const EFK_CHAR* materi
 //----------------------------------------------------------------------------------
 bool EffectImplemented::Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath )
 {
-	EffectLoader* loader = m_pManager->GetEffectLoader();
+	Loader* loader = m_pManager->GetLoader();
+	
+	EffectLoader* eLoader = loader->GetEffectLoader();
 	if( loader == NULL ) return false;
 
 	void* data = NULL;
 	int32_t size = 0;
 
-	if( !loader->Load( path, data, size ) ) return false;
+	if( !eLoader->Load( path, data, size ) ) return false;
 
 	EFK_CHAR parentDir[512];
 	if( materialPath == NULL )
@@ -430,7 +439,7 @@ bool EffectImplemented::Reload( const EFK_CHAR* path, const EFK_CHAR* materialPa
 
 	m_pManager->EndReloadEffect( this );
 
-	loader->Unload( data, size );
+	eLoader->Unload( data, size );
 
 	return false;
 }
@@ -442,8 +451,10 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 {
 	UnloadResources();
 
+	Loader* loader = m_pManager->GetLoader();
+
 	{
-		TextureLoader* textureLoader = m_pManager->GetTextureLoader();
+		TextureLoader* textureLoader = loader->GetTextureLoader();
 		if( textureLoader != NULL )
 		{
 			for( int32_t ind = 0; ind < m_ImageCount; ind++ )
@@ -456,7 +467,7 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 	}
 
 	{
-		SoundLoader* soundLoader = m_pManager->GetSoundLoader();
+		SoundLoader* soundLoader = loader->GetSoundLoader();
 		if( soundLoader != NULL )
 		{
 			for( int32_t ind = 0; ind < m_WaveCount; ind++ )
@@ -469,7 +480,7 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 	}
 
 	{
-		ModelLoader* modelLoader = m_pManager->GetModelLoader();
+		ModelLoader* modelLoader = loader->GetModelLoader();
 		
 		if( modelLoader != NULL )
 		{
@@ -488,7 +499,9 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 //----------------------------------------------------------------------------------
 void EffectImplemented::UnloadResources()
 {
-	TextureLoader* textureLoader = m_pManager->GetTextureLoader();
+	Loader* loader = m_pManager->GetLoader();
+
+	TextureLoader* textureLoader = loader->GetTextureLoader();
 	if( textureLoader != NULL )
 	{
 		for( int32_t ind = 0; ind < m_ImageCount; ind++ )
@@ -498,7 +511,7 @@ void EffectImplemented::UnloadResources()
 		}
 	}
 
-	SoundLoader* soundLoader = m_pManager->GetSoundLoader();
+	SoundLoader* soundLoader = loader->GetSoundLoader();
 	if( soundLoader != NULL )
 	{
 		for( int32_t ind = 0; ind < m_WaveCount; ind++ )
@@ -509,7 +522,7 @@ void EffectImplemented::UnloadResources()
 	}
 
 	{
-		ModelLoader* modelLoader = m_pManager->GetModelLoader();
+		ModelLoader* modelLoader = loader->GetModelLoader();
 		if( modelLoader != NULL )
 		{
 			for( int32_t ind = 0; ind < m_modelCount; ind++ )

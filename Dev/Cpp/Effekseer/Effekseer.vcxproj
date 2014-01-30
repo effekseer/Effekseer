@@ -109,6 +109,7 @@
     <ClInclude Include="Effekseer\Effekseer.InstanceGlobal.h" />
     <ClInclude Include="Effekseer\Effekseer.InstanceGroup.h" />
     <ClInclude Include="Effekseer\Effekseer.InternalStruct.h" />
+    <ClInclude Include="Effekseer\Effekseer.Loader.h" />
     <ClInclude Include="Effekseer\Effekseer.Manager.h" />
     <ClInclude Include="Effekseer\Effekseer.ManagerImplemented.h" />
     <ClInclude Include="Effekseer\Effekseer.Matrix43.h" />
@@ -151,6 +152,7 @@
     <ClCompile Include="Effekseer\Effekseer.InstanceContainer.cpp" />
     <ClCompile Include="Effekseer\Effekseer.InstanceGlobal.cpp" />
     <ClCompile Include="Effekseer\Effekseer.InstanceGroup.cpp" />
+    <ClCompile Include="Effekseer\Effekseer.Loader.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Matrix43.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Matrix44.cpp" />

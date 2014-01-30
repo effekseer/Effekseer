@@ -149,20 +149,11 @@ private:
 	/* トラック描画機能用インスタンス */
 	TrackRenderer*				m_trackRenderer;
 
-	/* テクスチャ読込インスタンス */
-	TextureLoader*				m_textureLoader;
-
-	/* エフェクト読込インスタンス */
-	EffectLoader*				m_effectLoader;
+	/* 読み込みインスタンス */
+	Loader*						m_loader;
 
 	/* サウンド再生用インスタンス */
 	SoundPlayer*				m_soundPlayer;
-
-	/* サウンド読込インスタンス */
-	SoundLoader*				m_soundLoader;
-
-	/* モデル読込インスタンス */
-	ModelLoader*				m_modelLoader;
 
 	int							m_updateTime;
 	int							m_drawTime;
@@ -327,6 +318,11 @@ public:
 		@brief	軌跡描画機能設定
 	*/
 	void SetTrackRenderer( TrackRenderer* renderer );
+
+	/**
+		@brief	読込クラスを取得する。
+	*/
+	Loader* GetLoader();
 
 	/**
 		@brief	エフェクト読込クラスを取得する。

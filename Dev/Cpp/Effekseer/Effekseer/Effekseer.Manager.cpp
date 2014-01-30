@@ -17,6 +17,8 @@
 #include "Effekseer.DefaultEffectLoader.h"
 #include "Effekseer.TextureLoader.h"
 
+#include "Effekseer.Loader.h"
+
 #include "Renderer/Effekseer.SpriteRenderer.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
 #include "Renderer/Effekseer.RingRenderer.h"
@@ -308,11 +310,8 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 	, m_ringRenderer	( NULL )
 	, m_modelRenderer	( NULL )
 	, m_trackRenderer	( NULL )
-	, m_effectLoader	( new DefaultEffectLoader() )
-	, m_textureLoader	( NULL )
 	, m_soundPlayer		( NULL )
-	, m_soundLoader		( NULL )
-	, m_modelLoader		( NULL )
+	, m_loader			( NULL )
 	, m_sequenceNumber	( 0 )
 {
 	SetMallocFunc( Malloc );
@@ -330,6 +329,8 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 		m_reserved_instances.push( &instances[i] );
 	}
 
+	m_loader = new Loader();
+	m_loader->SetEffectLoader(new DefaultEffectLoader());
 	EffekseerPrintDebug("*** Create : Manager\n");
 }
 
@@ -349,17 +350,15 @@ ManagerImplemented::~ManagerImplemented()
 
 	assert( m_reserved_instances.size() == m_instance_max ); 
 	ES_SAFE_DELETE_ARRAY( m_reserved_instances_buffer );
-	
-	ES_SAFE_DELETE( m_effectLoader );
-	ES_SAFE_DELETE( m_textureLoader );
+
 	ES_SAFE_DELETE( m_spriteRenderer );
 	ES_SAFE_DELETE( m_ribbonRenderer );
 	ES_SAFE_DELETE( m_modelRenderer );
 	ES_SAFE_DELETE( m_trackRenderer );
 	ES_SAFE_DELETE( m_ringRenderer );
-	ES_SAFE_DELETE( m_soundLoader );
 	ES_SAFE_DELETE( m_soundPlayer );
-	ES_SAFE_DELETE( m_modelLoader );
+
+	ES_SAFE_DELETE( m_loader );
 }
 
 //----------------------------------------------------------------------------------
@@ -601,9 +600,17 @@ void ManagerImplemented::SetTrackRenderer( TrackRenderer* renderer )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+Loader* ManagerImplemented::GetLoader()
+{
+	return m_loader;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 EffectLoader* ManagerImplemented::GetEffectLoader()
 {
-	return m_effectLoader;
+	return m_loader->GetEffectLoader();
 }
 	
 //----------------------------------------------------------------------------------
@@ -611,8 +618,7 @@ EffectLoader* ManagerImplemented::GetEffectLoader()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetEffectLoader( EffectLoader* effectLoader )
 {
-	ES_SAFE_DELETE( m_effectLoader );
-	m_effectLoader = effectLoader;
+	m_loader->SetEffectLoader(effectLoader);
 }
 
 //----------------------------------------------------------------------------------
@@ -620,7 +626,7 @@ void ManagerImplemented::SetEffectLoader( EffectLoader* effectLoader )
 //----------------------------------------------------------------------------------
 TextureLoader* ManagerImplemented::GetTextureLoader()
 {
-	return m_textureLoader;
+	return m_loader->GetTextureLoader();
 }
 	
 //----------------------------------------------------------------------------------
@@ -628,8 +634,7 @@ TextureLoader* ManagerImplemented::GetTextureLoader()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetTextureLoader( TextureLoader* textureLoader )
 {
-	ES_SAFE_DELETE( m_textureLoader );
-	m_textureLoader = textureLoader;
+	m_loader->SetTextureLoader(textureLoader);
 }
 
 //----------------------------------------------------------------------------------
@@ -654,7 +659,7 @@ void ManagerImplemented::SetSoundPlayer( SoundPlayer* soundPlayer )
 //----------------------------------------------------------------------------------
 SoundLoader* ManagerImplemented::GetSoundLoader()
 {
-	return m_soundLoader;
+	return m_loader->GetSoundLoader();
 }
 
 //----------------------------------------------------------------------------------
@@ -662,8 +667,7 @@ SoundLoader* ManagerImplemented::GetSoundLoader()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetSoundLoader( SoundLoader* soundLoader )
 {
-	ES_SAFE_DELETE( m_soundLoader );
-	m_soundLoader = soundLoader;
+	m_loader->SetSoundLoader(soundLoader);
 }
 
 //----------------------------------------------------------------------------------
@@ -671,7 +675,7 @@ void ManagerImplemented::SetSoundLoader( SoundLoader* soundLoader )
 //----------------------------------------------------------------------------------
 ModelLoader* ManagerImplemented::GetModelLoader()
 {
-	return m_modelLoader;
+	return m_loader->GetModelLoader();
 }
 	
 //----------------------------------------------------------------------------------
@@ -679,8 +683,7 @@ ModelLoader* ManagerImplemented::GetModelLoader()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetModelLoader( ModelLoader* modelLoader )
 {
-	ES_SAFE_DELETE( m_modelLoader );
-	m_modelLoader = modelLoader;
+	m_loader->SetModelLoader(modelLoader);
 }
 
 //----------------------------------------------------------------------------------
