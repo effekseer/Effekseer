@@ -1162,12 +1162,6 @@ public:
 	virtual int Release() = 0;
 
 	/**
-		@brief	マネージャーを取得する。
-		@return	マネージャー
-	*/
-	virtual Manager* GetManager() const = 0;
-
-	/**
 	@brief	設定を取得する。
 	@return	設定
 	*/
@@ -2663,6 +2657,9 @@ namespace Effekseer {
 		/* トラック描画機能用インスタンス */
 		TrackRenderer*				m_trackRenderer;
 
+		/* サウンド再生用インスタンス */
+		SoundPlayer*				m_soundPlayer;
+
 	public:
 		/**
 			@brief	コンストラクタ
@@ -2826,6 +2823,16 @@ namespace Effekseer {
 		@brief	軌跡描画機能を設定する。
 		*/
 		void SetTrackRenderer(TrackRenderer* renderer);
+
+		/**
+		@brief	サウンド再生機能を取得する。
+		*/
+		SoundPlayer* GetSoundPlayer();
+
+		/**
+		@brief	サウンド再生機能を設定する。
+		*/
+		void SetSoundPlayer(SoundPlayer* soundPlayer);
 
 	};
 

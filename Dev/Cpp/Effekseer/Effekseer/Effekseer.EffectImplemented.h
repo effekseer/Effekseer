@@ -102,11 +102,13 @@ public:
 	*/
 	int Release();
 
+private:
 	/**
 		@brief	マネージャー取得
 	*/
 	Manager* GetManager() const;
 
+public:
 	/**
 	@brief	設定取得
 	*/

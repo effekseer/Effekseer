@@ -497,17 +497,17 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 //----------------------------------------------------------------------------------
 void Instance::Update( float deltaFrame, bool shown )
 {
-	if( m_stepTime && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
+	if (m_stepTime && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
 	{
 		/* ‰¹‚ÌXV(Œ»ó•ú’u) */
-		if( m_pEffectNode->SoundType == ParameterSoundType_Use )
+		if (m_pEffectNode->SoundType == ParameterSoundType_Use)
 		{
 			float living_time = m_LivingTime;
 			float living_time_p = living_time + deltaFrame;
-			
-			if( living_time <= (float)soundValues.delay && (float)soundValues.delay < living_time_p )
+
+			if (living_time <= (float) soundValues.delay && (float) soundValues.delay < living_time_p)
 			{
-				m_pEffectNode->PlaySound_( *this, m_pContainer->GetRootInstance() );
+				m_pEffectNode->PlaySound_(*this, m_pContainer->GetRootInstance(), m_pManager);
 			}
 		}
 	}

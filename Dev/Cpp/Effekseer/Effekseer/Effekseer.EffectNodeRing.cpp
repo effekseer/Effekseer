@@ -262,16 +262,16 @@ void EffectNodeRing::InitializeRenderedInstance(Instance& instance, Manager* man
 {
 	InstanceValues& instValues = instance.rendererValues.ring;
 
-	InitializeSingleValues( ViewingAngle, instValues.viewingAngle );
+	InitializeSingleValues(ViewingAngle, instValues.viewingAngle, manager);
 
-	InitializeLocationValues( OuterLocation, instValues.outerLocation );
-	InitializeLocationValues( InnerLocation, instValues.innerLocation );
+	InitializeLocationValues(OuterLocation, instValues.outerLocation, manager);
+	InitializeLocationValues(InnerLocation, instValues.innerLocation, manager);
 	
-	InitializeSingleValues( CenterRatio, instValues.centerRatio );
+	InitializeSingleValues(CenterRatio, instValues.centerRatio, manager);
 
-	InitializeColorValues( OuterColor, instValues.outerColor );
-	InitializeColorValues( CenterColor, instValues.centerColor );
-	InitializeColorValues( InnerColor, instValues.innerColor );
+	InitializeColorValues(OuterColor, instValues.outerColor, manager);
+	InitializeColorValues(CenterColor, instValues.centerColor, manager);
+	InitializeColorValues(InnerColor, instValues.innerColor, manager);
 }
 
 //----------------------------------------------------------------------------------
@@ -369,9 +369,8 @@ void EffectNodeRing::LoadColorParameter( unsigned char*& pos, RingColorParameter
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeSingleValues( const RingSingleParameter& param, RingSingleValues& values )
+void EffectNodeRing::InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager)
 {
-	Manager* manager = m_effect->GetManager();
 	switch( param.type )
 	{
 		case RingSingleParameter::Fixed:
@@ -393,9 +392,8 @@ void EffectNodeRing::InitializeSingleValues( const RingSingleParameter& param, R
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeLocationValues( const RingLocationParameter& param, RingLocationValues& values )
+void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param, RingLocationValues& values, Manager* manager)
 {
-	Manager* manager = m_effect->GetManager();
 	switch( param.type )
 	{
 		case RingLocationParameter::Fixed:
@@ -419,9 +417,8 @@ void EffectNodeRing::InitializeLocationValues( const RingLocationParameter& para
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeColorValues( const RingColorParameter& param, RingColorValues& values )
+void EffectNodeRing::InitializeColorValues(const RingColorParameter& param, RingColorValues& values, Manager* manager)
 {
-	Manager* manager = m_effect->GetManager();
 	switch( param.type )
 	{
 		case RingColorParameter::Fixed:

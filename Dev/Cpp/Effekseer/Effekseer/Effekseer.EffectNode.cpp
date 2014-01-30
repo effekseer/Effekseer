@@ -646,9 +646,9 @@ float EffectNode::GetFadeAlpha( const Instance& instance )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::PlaySound_( Instance& instance, SoundTag tag )
+void EffectNode::PlaySound_(Instance& instance, SoundTag tag, Manager* manager)
 {
-	SoundPlayer* player = m_effect->GetManager()->GetSoundPlayer();
+	SoundPlayer* player = manager->GetSoundPlayer();
 	if( player == NULL )
 	{
 		return;
@@ -656,8 +656,6 @@ void EffectNode::PlaySound_( Instance& instance, SoundTag tag )
 
 	if( Sound.WaveId >= 0 )
 	{
-		Manager* manager = m_effect->GetManager();
-
 		SoundPlayer::InstanceParameter parameter;
 		parameter.Data = m_effect->GetWave( Sound.WaveId );
 		parameter.Volume = Sound.Volume.getValue( *manager );

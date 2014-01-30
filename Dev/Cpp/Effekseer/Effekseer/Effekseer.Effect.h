@@ -63,12 +63,6 @@ public:
 	virtual int Release() = 0;
 
 	/**
-		@brief	マネージャーを取得する。
-		@return	マネージャー
-	*/
-	virtual Manager* GetManager() const = 0;
-
-	/**
 	@brief	設定を取得する。
 	@return	設定
 	*/

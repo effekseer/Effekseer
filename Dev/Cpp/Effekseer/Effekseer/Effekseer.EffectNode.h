@@ -758,7 +758,7 @@ public:
 	/**
 		@brief	サウンド再生
 	*/
-	virtual void PlaySound_( Instance& instance, SoundTag tag );
+	virtual void PlaySound_(Instance& instance, SoundTag tag, Manager* manager);
 
 	/**
 		@brief	エフェクトノード生成
