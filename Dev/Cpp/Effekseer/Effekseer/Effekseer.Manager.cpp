@@ -305,11 +305,6 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 	, m_randMax			( 0 )
 	, m_coordinateSystem	( COORDINATE_SYSTEM_RH )
 	, m_instance_max	( instance_max )
-	, m_spriteRenderer	( NULL )
-	, m_ribbonRenderer	( NULL )
-	, m_ringRenderer	( NULL )
-	, m_modelRenderer	( NULL )
-	, m_trackRenderer	( NULL )
 	, m_soundPlayer		( NULL )
 	, m_setting			( NULL )
 	, m_sequenceNumber	( 0 )
@@ -350,13 +345,6 @@ ManagerImplemented::~ManagerImplemented()
 
 	assert( m_reserved_instances.size() == m_instance_max ); 
 	ES_SAFE_DELETE_ARRAY( m_reserved_instances_buffer );
-
-	ES_SAFE_DELETE( m_spriteRenderer );
-	ES_SAFE_DELETE( m_ribbonRenderer );
-	ES_SAFE_DELETE( m_modelRenderer );
-	ES_SAFE_DELETE( m_trackRenderer );
-	ES_SAFE_DELETE( m_ringRenderer );
-	ES_SAFE_DELETE( m_soundPlayer );
 
 	ES_SAFE_DELETE( m_setting );
 }
@@ -517,7 +505,7 @@ void ManagerImplemented::SetCoordinateSystem( eCoordinateSystem coordinateSystem
 //----------------------------------------------------------------------------------
 SpriteRenderer* ManagerImplemented::GetSpriteRenderer()
 {
-	return m_spriteRenderer;
+	return m_setting->GetSpriteRenderer();
 }
 
 //----------------------------------------------------------------------------------
@@ -525,8 +513,7 @@ SpriteRenderer* ManagerImplemented::GetSpriteRenderer()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetSpriteRenderer( SpriteRenderer* renderer )
 {
-	ES_SAFE_DELETE( m_spriteRenderer );
-	m_spriteRenderer = renderer;
+	m_setting->SetSpriteRenderer(renderer);
 }
 
 //----------------------------------------------------------------------------------
@@ -534,7 +521,7 @@ void ManagerImplemented::SetSpriteRenderer( SpriteRenderer* renderer )
 //----------------------------------------------------------------------------------
 RibbonRenderer* ManagerImplemented::GetRibbonRenderer()
 {
-	return m_ribbonRenderer;
+	return m_setting->GetRibbonRenderer();
 }
 
 //----------------------------------------------------------------------------------
@@ -542,8 +529,7 @@ RibbonRenderer* ManagerImplemented::GetRibbonRenderer()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetRibbonRenderer( RibbonRenderer* renderer )
 {
-	ES_SAFE_DELETE( m_ribbonRenderer );
-	m_ribbonRenderer = renderer;
+	m_setting->SetRibbonRenderer(renderer);
 }
 
 //----------------------------------------------------------------------------------
@@ -551,7 +537,7 @@ void ManagerImplemented::SetRibbonRenderer( RibbonRenderer* renderer )
 //----------------------------------------------------------------------------------
 RingRenderer* ManagerImplemented::GetRingRenderer()
 {
-	return m_ringRenderer;
+	return m_setting->GetRingRenderer();
 }
 
 //----------------------------------------------------------------------------------
@@ -559,8 +545,7 @@ RingRenderer* ManagerImplemented::GetRingRenderer()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetRingRenderer( RingRenderer* renderer )
 {
-	ES_SAFE_DELETE( m_ringRenderer );
-	m_ringRenderer = renderer;
+	m_setting->SetRingRenderer(renderer);
 }
 
 //----------------------------------------------------------------------------------
@@ -568,7 +553,7 @@ void ManagerImplemented::SetRingRenderer( RingRenderer* renderer )
 //----------------------------------------------------------------------------------
 ModelRenderer* ManagerImplemented::GetModelRenderer()
 {
-	return m_modelRenderer;
+	return m_setting->GetModelRenderer();
 }
 
 //----------------------------------------------------------------------------------
@@ -576,8 +561,7 @@ ModelRenderer* ManagerImplemented::GetModelRenderer()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetModelRenderer( ModelRenderer* renderer )
 {
-	ES_SAFE_DELETE( m_modelRenderer );
-	m_modelRenderer = renderer;
+	m_setting->SetModelRenderer(renderer);
 }
 
 //----------------------------------------------------------------------------------
@@ -585,7 +569,7 @@ void ManagerImplemented::SetModelRenderer( ModelRenderer* renderer )
 //----------------------------------------------------------------------------------
 TrackRenderer* ManagerImplemented::GetTrackRenderer()
 {
-	return m_trackRenderer;
+	return m_setting->GetTrackRenderer();
 }
 
 //----------------------------------------------------------------------------------
@@ -593,8 +577,7 @@ TrackRenderer* ManagerImplemented::GetTrackRenderer()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetTrackRenderer( TrackRenderer* renderer )
 {
-	ES_SAFE_DELETE( m_trackRenderer );
-	m_trackRenderer = renderer;
+	m_setting->SetTrackRenderer(renderer);
 }
 
 //----------------------------------------------------------------------------------

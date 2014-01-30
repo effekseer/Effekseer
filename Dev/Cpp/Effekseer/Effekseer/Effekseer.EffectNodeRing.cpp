@@ -12,6 +12,8 @@
 
 #include "Renderer/Effekseer.RingRenderer.h"
 
+#include "Effekseer.Setting.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -124,9 +126,9 @@ void EffectNodeRing::LoadRendererParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeRenderer( Manager* manager )
+void EffectNodeRing::InitializeRenderer( Setting* setting )
 {
-	RingRenderer* renderer = manager->GetRingRenderer();
+	RingRenderer* renderer = setting->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
@@ -145,9 +147,9 @@ void EffectNodeRing::InitializeRenderer( Manager* manager )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::FinalizeRenderer( Manager* manager )
+void EffectNodeRing::FinalizeRenderer( Setting* setting )
 {
-	RingRenderer* renderer = manager->GetRingRenderer();
+	RingRenderer* renderer = setting->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
@@ -166,9 +168,9 @@ void EffectNodeRing::FinalizeRenderer( Manager* manager )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
+void EffectNodeRing::BeginRendering(int32_t count, Setting* setting)
 {
-	RingRenderer* renderer = manager->GetRingRenderer();
+	RingRenderer* renderer = setting->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
@@ -188,10 +190,10 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
+void EffectNodeRing::Rendering(const Instance& instance, Setting* setting)
 {
 	const InstanceValues& instValues = instance.rendererValues.ring;
-	RingRenderer* renderer = manager->GetRingRenderer();
+	RingRenderer* renderer = setting->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
@@ -235,9 +237,9 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::EndRendering(Manager* manager)
+void EffectNodeRing::EndRendering(Setting* setting)
 {
-	RingRenderer* renderer = manager->GetRingRenderer();
+	RingRenderer* renderer = setting->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;

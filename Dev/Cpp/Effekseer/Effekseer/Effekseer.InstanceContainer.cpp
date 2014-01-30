@@ -261,11 +261,11 @@ void InstanceContainer::Draw( bool recursive )
 		if( count > 0 )
 		{
 			/* •`‰æ */
-			m_pEffectNode->BeginRendering(count, m_pManager);
+			m_pEffectNode->BeginRendering(count, m_pManager->GetSetting());
 
 			for( InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer )
 			{
-				m_pEffectNode->BeginRenderingGroup(group, m_pManager);
+				m_pEffectNode->BeginRenderingGroup(group, m_pManager->GetSetting());
 
 				if( m_pEffectNode->RenderingOrder == RenderingOrder_FirstCreatedInstanceIsFirst )
 				{
@@ -295,7 +295,7 @@ void InstanceContainer::Draw( bool recursive )
 				}
 			}
 
-			m_pEffectNode->EndRendering(m_pManager);
+			m_pEffectNode->EndRendering(m_pManager->GetSetting());
 		}
 	}
 

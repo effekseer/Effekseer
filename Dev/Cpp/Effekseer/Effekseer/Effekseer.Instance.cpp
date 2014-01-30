@@ -1159,7 +1159,7 @@ void Instance::Draw()
 		CalculateMatrix( 0 );
 	}
 
-	m_pEffectNode->Rendering(*this, m_pManager);
+	m_pEffectNode->Rendering(*this, m_pManager->GetSetting());
 }
 
 //----------------------------------------------------------------------------------

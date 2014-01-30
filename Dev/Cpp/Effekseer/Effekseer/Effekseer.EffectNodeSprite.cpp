@@ -12,6 +12,8 @@
 
 #include "Renderer/Effekseer.SpriteRenderer.h"
 
+#include "Effekseer.Setting.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -115,9 +117,9 @@ void EffectNodeSprite::LoadRendererParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::InitializeRenderer( Manager* manager )
+void EffectNodeSprite::InitializeRenderer( Setting* setting )
 {
-	SpriteRenderer* renderer = manager->GetSpriteRenderer();
+	SpriteRenderer* renderer = setting->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -136,9 +138,9 @@ void EffectNodeSprite::InitializeRenderer( Manager* manager )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::FinalizeRenderer( Manager* manager )
+void EffectNodeSprite::FinalizeRenderer( Setting* setting )
 {
-	SpriteRenderer* renderer = manager->GetSpriteRenderer();
+	SpriteRenderer* renderer = setting->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -157,9 +159,9 @@ void EffectNodeSprite::FinalizeRenderer( Manager* manager )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
+void EffectNodeSprite::BeginRendering(int32_t count, Setting* setting)
 {
-	SpriteRenderer* renderer = manager->GetSpriteRenderer();
+	SpriteRenderer* renderer = setting->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -178,10 +180,10 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::Rendering(const Instance& instance, Manager* manager)
+void EffectNodeSprite::Rendering(const Instance& instance, Setting* setting)
 {
 	const InstanceValues& instValues = instance.rendererValues.sprite;
-	SpriteRenderer* renderer = manager->GetSpriteRenderer();
+	SpriteRenderer* renderer = setting->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -256,9 +258,9 @@ void EffectNodeSprite::Rendering(const Instance& instance, Manager* manager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::EndRendering(Manager* manager)
+void EffectNodeSprite::EndRendering(Setting* setting)
 {
-	SpriteRenderer* renderer = manager->GetSpriteRenderer();
+	SpriteRenderer* renderer = setting->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;

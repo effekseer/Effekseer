@@ -11,6 +11,8 @@
 #include "Effekseer.InstanceGroup.h"
 #include "Effekseer.EffectNodeTrack.h"
 
+#include "Effekseer.Setting.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -70,9 +72,9 @@ void EffectNodeTrack::LoadRendererParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::InitializeRenderer( Manager* manager )
+void EffectNodeTrack::InitializeRenderer( Setting* setting )
 {
-	TrackRenderer* renderer = manager->GetTrackRenderer();
+	TrackRenderer* renderer = setting->GetTrackRenderer();
 	if( renderer != NULL )
 	{
 		m_nodeParameter.AlphaBlend = AlphaBlend;
@@ -89,9 +91,9 @@ void EffectNodeTrack::InitializeRenderer( Manager* manager )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::FinalizeRenderer( Manager* manager )
+void EffectNodeTrack::FinalizeRenderer( Setting* setting )
 {
-	TrackRenderer* renderer = manager->GetTrackRenderer();
+	TrackRenderer* renderer = setting->GetTrackRenderer();
 	if( renderer != NULL )
 	{
 		renderer->RemoveRenderer( m_nodeParameter, m_userData );
@@ -101,9 +103,9 @@ void EffectNodeTrack::FinalizeRenderer( Manager* manager )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
+void EffectNodeTrack::BeginRendering(int32_t count, Setting* setting)
 {
-	TrackRenderer* renderer = manager->GetTrackRenderer();
+	TrackRenderer* renderer = setting->GetTrackRenderer();
 	if( renderer != NULL )
 	{
 		renderer->BeginRendering( m_nodeParameter, count, m_userData );
@@ -113,9 +115,9 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
+void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Setting* setting)
 {
-	TrackRenderer* renderer = manager->GetTrackRenderer();
+	TrackRenderer* renderer = setting->GetTrackRenderer();
 	if( renderer != NULL )
 	{
 		InstanceGroupValues& instValues = group->rendererValues.track;
@@ -143,11 +145,11 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::Rendering(const Instance& instance, Manager* manager)
+void EffectNodeTrack::Rendering(const Instance& instance, Setting* setting)
 {
 	const InstanceValues& instValues = instance.rendererValues.track;
 
-	TrackRenderer* renderer = manager->GetTrackRenderer();
+	TrackRenderer* renderer = setting->GetTrackRenderer();
 	if( renderer != NULL )
 	{
 		float t = (float)instance.m_LivingTime / (float)instance.m_LivedTime;
@@ -175,9 +177,9 @@ void EffectNodeTrack::Rendering(const Instance& instance, Manager* manager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::EndRendering(Manager* manager)
+void EffectNodeTrack::EndRendering(Setting* setting)
 {
-	TrackRenderer* renderer = manager->GetTrackRenderer();
+	TrackRenderer* renderer = setting->GetTrackRenderer();
 	if( renderer != NULL )
 	{
 		renderer->EndRendering( m_nodeParameter, m_userData );

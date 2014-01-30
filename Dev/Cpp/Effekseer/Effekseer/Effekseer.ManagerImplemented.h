@@ -134,21 +134,6 @@ private:
 	/* 描画セッション */
 	CriticalSection				m_renderingSession;
 
-	/* スプライト描画機能用インスタンス */
-	SpriteRenderer*				m_spriteRenderer;
-
-	/* リボン描画機能用インスタンス */
-	RibbonRenderer*				m_ribbonRenderer;
-
-	/* リング描画機能用インスタンス */
-	RingRenderer*				m_ringRenderer;
-
-	/* モデル描画機能用インスタンス */
-	ModelRenderer*				m_modelRenderer;
-
-	/* トラック描画機能用インスタンス */
-	TrackRenderer*				m_trackRenderer;
-
 	/* 設定インスタンス */
 	Setting*						m_setting;
 

@@ -12,6 +12,8 @@
 
 #include "Renderer/Effekseer.ModelRenderer.h"
 
+#include "Effekseer.Setting.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -60,9 +62,9 @@ void EffectNodeModel::LoadRendererParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::InitializeRenderer( Manager* manager )
+void EffectNodeModel::InitializeRenderer( Setting* setting )
 {
-	ModelRenderer* renderer = manager->GetModelRenderer();
+	ModelRenderer* renderer = setting->GetModelRenderer();
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -88,9 +90,9 @@ void EffectNodeModel::InitializeRenderer( Manager* manager )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::FinalizeRenderer( Manager* manager )
+void EffectNodeModel::FinalizeRenderer( Setting* setting )
 {
-	ModelRenderer* renderer = manager->GetModelRenderer();
+	ModelRenderer* renderer = setting->GetModelRenderer();
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -116,9 +118,9 @@ void EffectNodeModel::FinalizeRenderer( Manager* manager )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
+void EffectNodeModel::BeginRendering(int32_t count, Setting* setting)
 {
-	ModelRenderer* renderer = manager->GetModelRenderer();
+	ModelRenderer* renderer = setting->GetModelRenderer();
 	if (renderer != NULL)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -144,10 +146,10 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
+void EffectNodeModel::Rendering(const Instance& instance, Setting* setting)
 {
 	const InstanceValues& instValues = instance.rendererValues.model;
-	ModelRenderer* renderer = manager->GetModelRenderer();
+	ModelRenderer* renderer = setting->GetModelRenderer();
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -185,9 +187,9 @@ void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::EndRendering(Manager* manager)
+void EffectNodeModel::EndRendering(Setting* setting)
 {
-	ModelRenderer* renderer = manager->GetModelRenderer();
+	ModelRenderer* renderer = setting->GetModelRenderer();
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;

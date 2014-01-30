@@ -461,7 +461,7 @@ void EffectNode::LoadParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 EffectNode::~EffectNode()
 {
-	FinalizeRenderer( GetEffect()->GetManager() );
+	FinalizeRenderer(GetEffect()->GetManager()->GetSetting());
 
 	for( size_t i = 0; i < m_Nodes.size(); i++ )
 	{
@@ -479,7 +479,7 @@ EffectNode::~EffectNode()
 //----------------------------------------------------------------------------------
 void EffectNode::Initialize(Manager* manager)
 {
-	InitializeRenderer(manager);
+	InitializeRenderer(manager->GetSetting());
 
 	// ‰Šú‰»
 	for (size_t i = 0; i < m_Nodes.size(); i++)
@@ -549,42 +549,42 @@ void EffectNode::LoadRendererParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::InitializeRenderer( Manager* manager )
+void EffectNode::InitializeRenderer( Setting* setting )
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::FinalizeRenderer( Manager* manager )
+void EffectNode::FinalizeRenderer( Setting* setting )
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::BeginRendering(int32_t count, Manager* manager)
+void EffectNode::BeginRendering(int32_t count, Setting* setting)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
+void EffectNode::BeginRenderingGroup(InstanceGroup* group, Setting* setting)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::Rendering(const Instance& instance, Manager* manager)
+void EffectNode::Rendering(const Instance& instance, Setting* setting)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::EndRendering(Manager* manager)
+void EffectNode::EndRendering(Setting* setting)
 {
 }
 

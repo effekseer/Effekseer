@@ -708,32 +708,32 @@ public:
 	/**
 		@brief	描画部分の初期化
 	*/
-	virtual void InitializeRenderer( Manager* manager );
+	virtual void InitializeRenderer( Setting* setting );
 
 	/**
 		@brief	描画部分の終了
 	*/
-	virtual void FinalizeRenderer( Manager* manager );
+	virtual void FinalizeRenderer( Setting* setting );
 
 	/**
 		@brief	描画開始
 	*/
-	virtual void BeginRendering(int32_t count, Manager* manager);
+	virtual void BeginRendering(int32_t count, Setting* setting);
 
 	/**
 		@brief	グループ描画開始
 	*/
-	virtual void BeginRenderingGroup(InstanceGroup* group, Manager* manager);
+	virtual void BeginRenderingGroup(InstanceGroup* group, Setting* setting);
 
 	/**
 		@brief	描画
 	*/
-	virtual void Rendering(const Instance& instance, Manager* manager);
+	virtual void Rendering(const Instance& instance, Setting* setting);
 
 	/**
 		@brief	描画終了
 	*/
-	virtual void EndRendering(Manager* manager);
+	virtual void EndRendering(Setting* setting);
 
 	/**
 		@brief	インスタンスグループ描画時初期化

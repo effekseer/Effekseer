@@ -19,73 +19,139 @@ namespace Effekseer {
 	@note
 	EffectLoader等、全てのレンダラー、ローダーを設定することができ、Managerの代わりにエフェクト読み込み時に使用する。
 */
-class Setting
-{
-private:
-	EffectLoader*	m_effectLoader;
-	TextureLoader*	m_textureLoader;
-	SoundLoader*	m_soundLoader;
-	ModelLoader*	m_modelLoader;
+	class Setting
+	{
+	private:
+		EffectLoader*	m_effectLoader;
+		TextureLoader*	m_textureLoader;
+		SoundLoader*	m_soundLoader;
+		ModelLoader*	m_modelLoader;
 
-public:
-	/**
-		@brief	コンストラクタ
-	*/
-	Setting();
+		/* スプライト描画機能用インスタンス */
+		SpriteRenderer*				m_spriteRenderer;
 
-	/**
-		@brief	デストラクタ
-	*/
-	virtual ~Setting();
+		/* リボン描画機能用インスタンス */
+		RibbonRenderer*				m_ribbonRenderer;
 
-	/**
-		@brief	エフェクトローダーを取得する。
-		@return	エフェクトローダー
-	*/
-	EffectLoader* GetEffectLoader();
+		/* リング描画機能用インスタンス */
+		RingRenderer*				m_ringRenderer;
 
-	/**
-		@brief	エフェクトローダーを設定する。
-		@param	loader	[in]		ローダー
-	*/
-	void SetEffectLoader(EffectLoader* loader);
+		/* モデル描画機能用インスタンス */
+		ModelRenderer*				m_modelRenderer;
 
-	/**
-		@brief	テクスチャローダーを取得する。
-		@return	テクスチャローダー
-	*/
-	TextureLoader* GetTextureLoader();
+		/* トラック描画機能用インスタンス */
+		TrackRenderer*				m_trackRenderer;
 
-	/**
-		@brief	テクスチャローダーを設定する。
-		@param	loader	[in]		ローダー
-	*/
-	void SetTextureLoader(TextureLoader* loader);
+	public:
+		/**
+			@brief	コンストラクタ
+			*/
+		Setting();
 
-	/**
-		@brief	モデルローダーを取得する。
-		@return	モデルローダー
-	*/
-	ModelLoader* GetModelLoader();
+		/**
+			@brief	デストラクタ
+			*/
+		virtual ~Setting();
 
-	/**
-		@brief	モデルローダーを設定する。
-		@param	loader	[in]		ローダー
-	*/
-	void SetModelLoader(ModelLoader* loader);
+		/**
+			@brief	エフェクトローダーを取得する。
+			@return	エフェクトローダー
+			*/
+		EffectLoader* GetEffectLoader();
 
-	/**
-		@brief	サウンドローダーを取得する。
-		@return	サウンドローダー
-	*/
-	SoundLoader* GetSoundLoader();
+		/**
+			@brief	エフェクトローダーを設定する。
+			@param	loader	[in]		ローダー
+			*/
+		void SetEffectLoader(EffectLoader* loader);
 
-	/**
-		@brief	サウンドローダーを設定する。
-		@param	loader	[in]		ローダー
-	*/
-	void SetSoundLoader(SoundLoader* loader);
-};
+		/**
+			@brief	テクスチャローダーを取得する。
+			@return	テクスチャローダー
+			*/
+		TextureLoader* GetTextureLoader();
+
+		/**
+			@brief	テクスチャローダーを設定する。
+			@param	loader	[in]		ローダー
+			*/
+		void SetTextureLoader(TextureLoader* loader);
+
+		/**
+			@brief	モデルローダーを取得する。
+			@return	モデルローダー
+			*/
+		ModelLoader* GetModelLoader();
+
+		/**
+			@brief	モデルローダーを設定する。
+			@param	loader	[in]		ローダー
+			*/
+		void SetModelLoader(ModelLoader* loader);
+
+		/**
+			@brief	サウンドローダーを取得する。
+			@return	サウンドローダー
+			*/
+		SoundLoader* GetSoundLoader();
+
+		/**
+			@brief	サウンドローダーを設定する。
+			@param	loader	[in]		ローダー
+			*/
+		void SetSoundLoader(SoundLoader* loader);
+
+		/**
+		@brief	スプライト描画機能を取得する。
+		*/
+		SpriteRenderer* GetSpriteRenderer();
+
+		/**
+		@brief	スプライト描画機能を設定する。
+		*/
+		void SetSpriteRenderer(SpriteRenderer* renderer);
+
+		/**
+		@brief	ストライプ描画機能を取得する。
+		*/
+		RibbonRenderer* GetRibbonRenderer();
+
+		/**
+		@brief	ストライプ描画機能を設定する。
+		*/
+		void SetRibbonRenderer(RibbonRenderer* renderer);
+
+		/**
+		@brief	リング描画機能を取得する。
+		*/
+		RingRenderer* GetRingRenderer();
+
+		/**
+		@brief	リング描画機能を設定する。
+		*/
+		void SetRingRenderer(RingRenderer* renderer);
+
+		/**
+		@brief	モデル描画機能を取得する。
+		*/
+		ModelRenderer* GetModelRenderer();
+
+		/**
+		@brief	モデル描画機能を設定する。
+		*/
+		void SetModelRenderer(ModelRenderer* renderer);
+
+		/**
+		@brief	軌跡描画機能を取得する。
+		*/
+		TrackRenderer* GetTrackRenderer();
+
+		/**
+		@brief	軌跡描画機能を設定する。
+		*/
+		void SetTrackRenderer(TrackRenderer* renderer);
+
+	};
 
 //----------------------------------------------------------------------------------
 //
