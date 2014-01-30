@@ -23,7 +23,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::LoadRendererParameter( unsigned char*& pos )
+void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting)
 {
 	int32_t type = 0;
 	memcpy( &type, pos, sizeof(int) );
@@ -258,7 +258,7 @@ void EffectNodeRing::EndRendering(Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeRenderedInstance( Instance& instance )
+void EffectNodeRing::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.ring;
 
@@ -277,7 +277,7 @@ void EffectNodeRing::InitializeRenderedInstance( Instance& instance )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::UpdateRenderedInstance( Instance& instance )
+void EffectNodeRing::UpdateRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.ring;
 	

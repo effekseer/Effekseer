@@ -177,7 +177,7 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 						if( maxcreate_count == pRootInstance->m_pEffectNode->GetChildrenCount() )
 						{
 							// ‰¹‚ªÄ¶’†‚Å‚È‚¢‚Æ‚«
-							if( !m_soundPlayer || !m_soundPlayer->CheckPlayingTag( draw_set.GlobalPointer ) )
+							if (!m_setting->GetSoundPlayer() || !m_setting->GetSoundPlayer()->CheckPlayingTag(draw_set.GlobalPointer))
 							{
 								isRemoving = true;
 							}
@@ -276,9 +276,9 @@ void ManagerImplemented::ExecuteEvents()
 			InstanceContainer* pContainer = (*it).second.InstanceContainerPointer;
 			pContainer->KillAllInstances( true );
 			(*it).second.IsRemoving = true;
-			if( m_soundPlayer )
+			if (m_setting->GetSoundPlayer() != NULL)
 			{
-				m_soundPlayer->StopTag( (*it).second.GlobalPointer );
+				m_setting->GetSoundPlayer()->StopTag((*it).second.GlobalPointer);
 			}
 		}
 
@@ -299,16 +299,12 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 	: m_reference	( 1 )
 	, m_autoFlip	( autoFlip )
 	, m_NextHandle	( 0 )
-	, m_MallocFunc		( NULL )
-	, m_FreeFunc		( NULL )
-	, m_randFunc		( NULL )
-	, m_randMax			( 0 )
-	, m_coordinateSystem	( COORDINATE_SYSTEM_RH )
 	, m_instance_max	( instance_max )
-	, m_soundPlayer		( NULL )
 	, m_setting			( NULL )
 	, m_sequenceNumber	( 0 )
 {
+	m_setting = new Setting();
+
 	SetMallocFunc( Malloc );
 	SetFreeFunc( Free );
 	SetRandFunc( Rand );
@@ -324,7 +320,6 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 		m_reserved_instances.push( &instances[i] );
 	}
 
-	m_setting = new Setting();
 	m_setting->SetEffectLoader(new DefaultEffectLoader());
 	EffekseerPrintDebug("*** Create : Manager\n");
 }
@@ -425,7 +420,7 @@ uint32_t ManagerImplemented::GetSequenceNumber() const
 //----------------------------------------------------------------------------------
 MallocFunc ManagerImplemented::GetMallocFunc() const
 {
-	return m_MallocFunc;
+	return m_setting->GetMallocFunc();
 }
 
 //----------------------------------------------------------------------------------
@@ -433,7 +428,7 @@ MallocFunc ManagerImplemented::GetMallocFunc() const
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetMallocFunc( MallocFunc func )
 {
-	m_MallocFunc = func;
+	m_setting->SetMallocFunc(func);
 }
 
 //----------------------------------------------------------------------------------
@@ -441,7 +436,7 @@ void ManagerImplemented::SetMallocFunc( MallocFunc func )
 //----------------------------------------------------------------------------------
 FreeFunc ManagerImplemented::GetFreeFunc() const
 {
-	return m_FreeFunc;
+	return m_setting->GetFreeFunc();
 }
 
 //----------------------------------------------------------------------------------
@@ -449,7 +444,7 @@ FreeFunc ManagerImplemented::GetFreeFunc() const
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetFreeFunc( FreeFunc func )
 {
-	m_FreeFunc = func;
+	m_setting->SetFreeFunc(func);
 }
 
 //----------------------------------------------------------------------------------
@@ -457,7 +452,7 @@ void ManagerImplemented::SetFreeFunc( FreeFunc func )
 //----------------------------------------------------------------------------------
 RandFunc ManagerImplemented::GetRandFunc() const
 {
-	return m_randFunc;
+	return m_setting->GetRandFunc();
 }
 
 //----------------------------------------------------------------------------------
@@ -465,7 +460,7 @@ RandFunc ManagerImplemented::GetRandFunc() const
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetRandFunc( RandFunc func )
 {
-	m_randFunc = func;
+	m_setting->SetRandFunc(func);
 }
 
 //----------------------------------------------------------------------------------
@@ -473,7 +468,7 @@ void ManagerImplemented::SetRandFunc( RandFunc func )
 //----------------------------------------------------------------------------------
 int ManagerImplemented::GetRandMax() const
 {
-	return m_randMax;
+	return m_setting->GetRandMax();
 }
 
 //----------------------------------------------------------------------------------
@@ -481,7 +476,7 @@ int ManagerImplemented::GetRandMax() const
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetRandMax( int max_ )
 {
-	m_randMax = max_;
+	m_setting->SetRandMax(max_);
 }
 
 //----------------------------------------------------------------------------------
@@ -489,7 +484,7 @@ void ManagerImplemented::SetRandMax( int max_ )
 //----------------------------------------------------------------------------------
 eCoordinateSystem ManagerImplemented::GetCoordinateSystem() const
 {
-	return m_coordinateSystem;
+	return m_setting->GetCoordinateSystem();
 }
 
 //----------------------------------------------------------------------------------
@@ -497,7 +492,7 @@ eCoordinateSystem ManagerImplemented::GetCoordinateSystem() const
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetCoordinateSystem( eCoordinateSystem coordinateSystem )
 {
-	m_coordinateSystem = coordinateSystem;
+	m_setting->SetCoordinateSystem(coordinateSystem);
 }
 
 //----------------------------------------------------------------------------------
@@ -625,7 +620,7 @@ void ManagerImplemented::SetTextureLoader( TextureLoader* textureLoader )
 //----------------------------------------------------------------------------------
 SoundPlayer* ManagerImplemented::GetSoundPlayer()
 {
-	return m_soundPlayer;
+	return m_setting->GetSoundPlayer();
 }
 
 //----------------------------------------------------------------------------------
@@ -633,8 +628,7 @@ SoundPlayer* ManagerImplemented::GetSoundPlayer()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::SetSoundPlayer( SoundPlayer* soundPlayer )
 {
-	ES_SAFE_DELETE( m_soundPlayer );
-	m_soundPlayer = soundPlayer;
+	m_setting->SetSoundPlayer(soundPlayer);
 }
 
 //----------------------------------------------------------------------------------

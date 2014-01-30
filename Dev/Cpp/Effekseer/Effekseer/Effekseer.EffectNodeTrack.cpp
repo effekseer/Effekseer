@@ -21,7 +21,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::LoadRendererParameter( unsigned char*& pos )
+void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, Setting* setting)
 {
 	int32_t type = 0;
 	memcpy( &type, pos, sizeof(int) );
@@ -56,7 +56,7 @@ void EffectNodeTrack::LoadRendererParameter( unsigned char*& pos )
 	EffekseerPrintDebug("TrackColorRightMiddle : %d\n", TrackColorRightMiddle.type );
 
 	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
-	if( m_effect->GetManager()->GetCoordinateSystem() == COORDINATE_SYSTEM_LH )
+	if (setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH)
 	{
 	}
 
@@ -189,27 +189,27 @@ void EffectNodeTrack::EndRendering(Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::InitializeRenderedInstanceGroup( InstanceGroup& instanceGroup )
+void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager)
 {
 	InstanceGroupValues& instValues = instanceGroup.rendererValues.track;
 
-	InitializeValues( instValues.ColorLeft, TrackColorLeft );
-	InitializeValues( instValues.ColorCenter, TrackColorCenter );
-	InitializeValues( instValues.ColorRight, TrackColorRight );
+	InitializeValues(instValues.ColorLeft, TrackColorLeft, manager);
+	InitializeValues(instValues.ColorCenter, TrackColorCenter, manager);
+	InitializeValues(instValues.ColorRight, TrackColorRight, manager);
 
-	InitializeValues( instValues.ColorLeftMiddle, TrackColorLeftMiddle );
-	InitializeValues( instValues.ColorCenterMiddle, TrackColorCenterMiddle );
-	InitializeValues( instValues.ColorRightMiddle, TrackColorRightMiddle );
+	InitializeValues(instValues.ColorLeftMiddle, TrackColorLeftMiddle, manager);
+	InitializeValues(instValues.ColorCenterMiddle, TrackColorCenterMiddle, manager);
+	InitializeValues(instValues.ColorRightMiddle, TrackColorRightMiddle, manager);
 
-	InitializeValues( instValues.SizeFor, TrackSizeFor );
-	InitializeValues( instValues.SizeBack, TrackSizeBack );
-	InitializeValues( instValues.SizeMiddle, TrackSizeMiddle );
+	InitializeValues(instValues.SizeFor, TrackSizeFor, manager);
+	InitializeValues(instValues.SizeBack, TrackSizeBack, manager);
+	InitializeValues(instValues.SizeMiddle, TrackSizeMiddle, manager);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::InitializeRenderedInstance( Instance& instance )
+void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.track;
 }
@@ -217,7 +217,7 @@ void EffectNodeTrack::InitializeRenderedInstance( Instance& instance )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::UpdateRenderedInstance( Instance& instance )
+void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.track;
 }
@@ -225,7 +225,7 @@ void EffectNodeTrack::UpdateRenderedInstance( Instance& instance )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::InitializeValues( InstanceGroupValues::Color& value, StandardColorParameter& param )
+void EffectNodeTrack::InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, Manager* manager)
 {
 	if( param.type == StandardColorParameter::Fixed )
 	{
@@ -233,26 +233,26 @@ void EffectNodeTrack::InitializeValues( InstanceGroupValues::Color& value, Stand
 	}
 	else if( param.type == StandardColorParameter::Random )
 	{
-		value.color.random.color_ = param.random.all.getValue( *(m_effect->GetManager()) );
+		value.color.random.color_ = param.random.all.getValue(*(manager));
 	}
 	else if( param.type == StandardColorParameter::Easing )
 	{
-		value.color.easing.start = param.easing.all.getStartValue( *(m_effect->GetManager()) );
-		value.color.easing.end = param.easing.all.getEndValue( *(m_effect->GetManager()) );
+		value.color.easing.start = param.easing.all.getStartValue(*(manager));
+		value.color.easing.end = param.easing.all.getEndValue(*(manager));
 	}
 	else if( param.type == StandardColorParameter::FCurve_RGBA )
 	{
-		value.color.fcurve_rgba.offset[0] = param.fcurve_rgba.FCurve->R.GetOffset( *(m_effect->GetManager()) );
-		value.color.fcurve_rgba.offset[1] = param.fcurve_rgba.FCurve->G.GetOffset( *(m_effect->GetManager()) );
-		value.color.fcurve_rgba.offset[2] = param.fcurve_rgba.FCurve->B.GetOffset( *(m_effect->GetManager()) );
-		value.color.fcurve_rgba.offset[3] = param.fcurve_rgba.FCurve->A.GetOffset( *(m_effect->GetManager()) );
+		value.color.fcurve_rgba.offset[0] = param.fcurve_rgba.FCurve->R.GetOffset(*(manager));
+		value.color.fcurve_rgba.offset[1] = param.fcurve_rgba.FCurve->G.GetOffset(*(manager));
+		value.color.fcurve_rgba.offset[2] = param.fcurve_rgba.FCurve->B.GetOffset(*(manager));
+		value.color.fcurve_rgba.offset[3] = param.fcurve_rgba.FCurve->A.GetOffset(*(manager));
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::InitializeValues( InstanceGroupValues::Size& value, TrackSizeParameter& param )
+void EffectNodeTrack::InitializeValues(InstanceGroupValues::Size& value, TrackSizeParameter& param, Manager* manager)
 {
 	if( param.type == TrackSizeParameter::Fixed )
 	{

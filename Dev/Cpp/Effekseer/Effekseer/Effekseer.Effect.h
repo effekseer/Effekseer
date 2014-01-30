@@ -68,6 +68,12 @@ public:
 	*/
 	virtual Manager* GetManager() const = 0;
 
+	/**
+	@brief	İ’è‚ğæ“¾‚·‚éB
+	@return	İ’è
+	*/
+	virtual Setting* GetSetting() const = 0;
+
 	/* Šg‘å—¦‚ğæ“¾‚·‚éB */
 	virtual float GetMaginification() const = 0;
 	

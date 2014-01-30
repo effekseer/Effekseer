@@ -78,7 +78,7 @@ public:
 	{
 	}
 
-	void LoadRendererParameter( unsigned char*& pos );
+	void LoadRendererParameter(unsigned char*& pos, Setting* setting);
 
 	void InitializeRenderer( Setting* setting );
 
@@ -90,9 +90,9 @@ public:
 
 	void EndRendering(Setting* setting);
 
-	void InitializeRenderedInstance( Instance& instance );
+	void InitializeRenderedInstance(Instance& instance, Manager* manager);
 
-	void UpdateRenderedInstance( Instance& instance );
+	void UpdateRenderedInstance(Instance& instance, Manager* manager);
 
 	eEffectNodeType GetType() const { return EFFECT_NODE_TYPE_MODEL; }
 };

@@ -138,21 +138,21 @@ void InstanceContainer::RemoveInvalidGroups()
 //----------------------------------------------------------------------------------
 InstanceGroup* InstanceContainer::CreateGroup()
 {
-	InstanceGroup* group = new InstanceGroup( m_pManager, m_pEffectNode, this, m_pGlobal );
+	InstanceGroup* group = new InstanceGroup(m_pManager, m_pEffectNode, this, m_pGlobal);
 
-	if( m_tailGroups != NULL )
+	if (m_tailGroups != NULL)
 	{
 		m_tailGroups->NextUsedByContainer = group;
 		m_tailGroups = group;
 	}
 	else
 	{
-		assert( m_headGroups == NULL );
+		assert(m_headGroups == NULL);
 		m_headGroups = group;
 		m_tailGroups = group;
 	}
 
-	m_pEffectNode->InitializeRenderedInstanceGroup( *group );
+	m_pEffectNode->InitializeRenderedInstanceGroup(*group, m_pManager);
 
 	return group;
 }

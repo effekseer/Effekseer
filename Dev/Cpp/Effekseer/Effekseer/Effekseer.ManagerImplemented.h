@@ -98,21 +98,6 @@ private:
 	// 次のHandle
 	Handle		m_NextHandle;
 
-	// メモリ確保関数
-	MallocFunc	m_MallocFunc;
-
-	// メモリ破棄関数
-	FreeFunc	m_FreeFunc;
-
-	// ランダム関数
-	RandFunc	m_randFunc;
-
-	// ランダム関数最大値
-	int			m_randMax;
-
-	// 座標系
-	eCoordinateSystem		m_coordinateSystem;
-
 	// 確保済みインスタンス数
 	int m_instance_max;
 
@@ -137,8 +122,7 @@ private:
 	/* 設定インスタンス */
 	Setting*						m_setting;
 
-	/* サウンド再生用インスタンス */
-	SoundPlayer*				m_soundPlayer;
+
 
 	int							m_updateTime;
 	int							m_drawTime;

@@ -489,7 +489,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		soundValues.delay = m_pEffectNode->Sound.Delay.getValue( *m_pManager );
 	}
 
-	m_pEffectNode->InitializeRenderedInstance( *this );
+	m_pEffectNode->InitializeRenderedInstance( *this, m_pManager );
 }
 
 //----------------------------------------------------------------------------------
@@ -1095,7 +1095,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 
 		/* 描画部分の更新 */
-		m_pEffectNode->UpdateRenderedInstance( *this );
+		m_pEffectNode->UpdateRenderedInstance( *this, m_pManager );
 	}
 	
 	// 行列の更新

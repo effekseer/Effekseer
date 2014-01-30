@@ -22,6 +22,22 @@ namespace Effekseer {
 	class Setting
 	{
 	private:
+
+		// メモリ確保関数
+		MallocFunc	m_MallocFunc;
+
+		// メモリ破棄関数
+		FreeFunc	m_FreeFunc;
+
+		// ランダム関数
+		RandFunc	m_randFunc;
+
+		// ランダム関数最大値
+		int			m_randMax;
+
+		/* 座標系 */
+		eCoordinateSystem		m_coordinateSystem;
+
 		EffectLoader*	m_effectLoader;
 		TextureLoader*	m_textureLoader;
 		SoundLoader*	m_soundLoader;
@@ -42,6 +58,9 @@ namespace Effekseer {
 		/* トラック描画機能用インスタンス */
 		TrackRenderer*				m_trackRenderer;
 
+		/* サウンド再生用インスタンス */
+		SoundPlayer*				m_soundPlayer;
+
 	public:
 		/**
 			@brief	コンストラクタ
@@ -51,7 +70,62 @@ namespace Effekseer {
 		/**
 			@brief	デストラクタ
 			*/
-		virtual ~Setting();
+		 ~Setting();
+
+		/**
+		@brief	メモリ確保関数を取得する。
+		*/
+		 MallocFunc GetMallocFunc() const ;
+
+		/**
+		@brief	メモリ確保関数を設定する。
+		*/
+		 void SetMallocFunc(MallocFunc func) ;
+
+		/**
+		@brief	メモリ破棄関数を取得する。
+		*/
+		 FreeFunc GetFreeFunc() const ;
+
+		/**
+		@brief	メモリ破棄関数を設定する。
+		*/
+		 void SetFreeFunc(FreeFunc func) ;
+
+		/**
+		@brief	ランダム関数を取得する。
+		*/
+		 RandFunc GetRandFunc() const ;
+
+		/**
+		@brief	ランダム関数を設定する。
+		*/
+		 void SetRandFunc(RandFunc func) ;
+
+		/**
+		@brief	ランダム最大値を取得する。
+		*/
+		 int GetRandMax() const ;
+
+		/**
+		@brief	ランダム関数を設定する。
+		*/
+		 void SetRandMax(int max_) ;
+
+		/**
+		@brief	座標系を取得する。
+		@return	座標系
+		*/
+		eCoordinateSystem GetCoordinateSystem() const;
+
+		/**
+		@brief	座標系を設定する。
+		@param	coordinateSystem	[in]	座標系
+		@note
+		座標系を設定する。
+		エフェクトファイルを読み込む前に設定する必要がある。
+		*/
+		void SetCoordinateSystem(eCoordinateSystem coordinateSystem);
 
 		/**
 			@brief	エフェクトローダーを取得する。
@@ -150,6 +224,16 @@ namespace Effekseer {
 		@brief	軌跡描画機能を設定する。
 		*/
 		void SetTrackRenderer(TrackRenderer* renderer);
+
+		/**
+		@brief	サウンド再生機能を取得する。
+		*/
+		SoundPlayer* GetSoundPlayer();
+
+		/**
+		@brief	サウンド再生機能を設定する。
+		*/
+		void SetSoundPlayer(SoundPlayer* soundPlayer);
 
 	};
 

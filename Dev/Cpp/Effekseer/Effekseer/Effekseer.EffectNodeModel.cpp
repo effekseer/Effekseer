@@ -22,7 +22,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::LoadRendererParameter( unsigned char*& pos )
+	void EffectNodeModel::LoadRendererParameter(unsigned char*& pos, Setting* setting)
 {
 	int32_t type = 0;
 	memcpy( &type, pos, sizeof(int) );
@@ -80,7 +80,7 @@ void EffectNodeModel::InitializeRenderer( Setting* setting )
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = m_effect->GetManager()->GetCoordinateSystem() == 
+		nodeParameter.IsRightHand = setting->GetCoordinateSystem() ==
 			COORDINATE_SYSTEM_RH;
 
 		renderer->LoadRenderer( nodeParameter, m_userData );
@@ -108,7 +108,7 @@ void EffectNodeModel::FinalizeRenderer( Setting* setting )
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = m_effect->GetManager()->GetCoordinateSystem() == 
+		nodeParameter.IsRightHand = setting->GetCoordinateSystem() ==
 			COORDINATE_SYSTEM_RH;
 
 		renderer->RemoveRenderer( nodeParameter, m_userData );
@@ -136,7 +136,7 @@ void EffectNodeModel::BeginRendering(int32_t count, Setting* setting)
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = m_effect->GetManager()->GetCoordinateSystem() ==
+		nodeParameter.IsRightHand = setting->GetCoordinateSystem() ==
 			COORDINATE_SYSTEM_RH;
 
 		renderer->BeginRendering(nodeParameter, count, m_userData);
@@ -165,7 +165,7 @@ void EffectNodeModel::Rendering(const Instance& instance, Setting* setting)
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = m_effect->GetManager()->GetCoordinateSystem() == 
+		nodeParameter.IsRightHand = setting->GetCoordinateSystem() ==
 			COORDINATE_SYSTEM_RH;
 
 		ModelRenderer::InstanceParameter instanceParameter;
@@ -205,7 +205,7 @@ void EffectNodeModel::EndRendering(Setting* setting)
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = m_effect->GetManager()->GetCoordinateSystem() == 
+		nodeParameter.IsRightHand = setting->GetCoordinateSystem() ==
 			COORDINATE_SYSTEM_RH;
 
 		renderer->EndRendering( nodeParameter, m_userData );
@@ -215,7 +215,7 @@ void EffectNodeModel::EndRendering(Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::InitializeRenderedInstance( Instance& instance )
+void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.model;
 
@@ -225,12 +225,12 @@ void EffectNodeModel::InitializeRenderedInstance( Instance& instance )
 	}
 	else if( AllColor.type == StandardColorParameter::Random )
 	{
-		instValues._color = AllColor.random.all.getValue( *(m_effect->GetManager()) );
+		instValues._color = AllColor.random.all.getValue(*(manager));
 	}
 	else if( AllColor.type == StandardColorParameter::Easing )
 	{
-		instValues.allColorValues.easing.start = AllColor.easing.all.getStartValue( *(m_effect->GetManager()) );
-		instValues.allColorValues.easing.end = AllColor.easing.all.getEndValue( *(m_effect->GetManager()) );
+		instValues.allColorValues.easing.start = AllColor.easing.all.getStartValue(*(manager));
+		instValues.allColorValues.easing.end = AllColor.easing.all.getEndValue(*(manager));
 
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
@@ -242,10 +242,10 @@ void EffectNodeModel::InitializeRenderedInstance( Instance& instance )
 	}
 	else if( AllColor.type == StandardColorParameter::FCurve_RGBA )
 	{
-		instValues.allColorValues.fcurve_rgba.offset[0] = AllColor.fcurve_rgba.FCurve->R.GetOffset( *(m_effect->GetManager()) );
-		instValues.allColorValues.fcurve_rgba.offset[1] = AllColor.fcurve_rgba.FCurve->G.GetOffset( *(m_effect->GetManager()) );
-		instValues.allColorValues.fcurve_rgba.offset[2] = AllColor.fcurve_rgba.FCurve->B.GetOffset( *(m_effect->GetManager()) );
-		instValues.allColorValues.fcurve_rgba.offset[3] = AllColor.fcurve_rgba.FCurve->A.GetOffset( *(m_effect->GetManager()) );
+		instValues.allColorValues.fcurve_rgba.offset[0] = AllColor.fcurve_rgba.FCurve->R.GetOffset(*(manager));
+		instValues.allColorValues.fcurve_rgba.offset[1] = AllColor.fcurve_rgba.FCurve->G.GetOffset(*(manager));
+		instValues.allColorValues.fcurve_rgba.offset[2] = AllColor.fcurve_rgba.FCurve->B.GetOffset(*(manager));
+		instValues.allColorValues.fcurve_rgba.offset[3] = AllColor.fcurve_rgba.FCurve->A.GetOffset(*(manager));
 		
 		instValues._color.r = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[0] + AllColor.fcurve_rgba.FCurve->R.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 		instValues._color.g = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[1] + AllColor.fcurve_rgba.FCurve->G.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
@@ -257,7 +257,7 @@ void EffectNodeModel::InitializeRenderedInstance( Instance& instance )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::UpdateRenderedInstance( Instance& instance )
+void EffectNodeModel::UpdateRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.model;
 

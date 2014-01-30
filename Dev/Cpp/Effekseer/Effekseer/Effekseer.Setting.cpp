@@ -25,7 +25,13 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 Setting::Setting()
-	: m_effectLoader(NULL)
+	: m_MallocFunc(NULL)
+	, m_FreeFunc(NULL)
+	, m_randFunc(NULL)
+	, m_randMax(0)
+
+	, m_coordinateSystem(COORDINATE_SYSTEM_RH)
+	, m_effectLoader(NULL)
 	, m_textureLoader(NULL)
 	, m_soundLoader(NULL)
 	, m_modelLoader(NULL)
@@ -35,6 +41,8 @@ Setting::Setting()
 	, m_ringRenderer(NULL)
 	, m_modelRenderer(NULL)
 	, m_trackRenderer(NULL)
+
+	, m_soundPlayer(NULL)
 {
 }
 
@@ -53,6 +61,88 @@ Setting::~Setting()
 	ES_SAFE_DELETE(m_modelRenderer);
 	ES_SAFE_DELETE(m_trackRenderer);
 	ES_SAFE_DELETE(m_ringRenderer);
+
+	ES_SAFE_DELETE(m_soundPlayer);
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+MallocFunc Setting::GetMallocFunc() const
+{
+	return m_MallocFunc;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Setting::SetMallocFunc(MallocFunc func)
+{
+	m_MallocFunc = func;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+FreeFunc Setting::GetFreeFunc() const
+{
+	return m_FreeFunc;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Setting::SetFreeFunc(FreeFunc func)
+{
+	m_FreeFunc = func;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+RandFunc Setting::GetRandFunc() const
+{
+	return m_randFunc;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Setting::SetRandFunc(RandFunc func)
+{
+	m_randFunc = func;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+int Setting::GetRandMax() const
+{
+	return m_randMax;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Setting::SetRandMax(int max_)
+{
+	m_randMax = max_;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+eCoordinateSystem Setting::GetCoordinateSystem() const
+{
+	return m_coordinateSystem;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Setting::SetCoordinateSystem(eCoordinateSystem coordinateSystem)
+{
+	m_coordinateSystem = coordinateSystem;
 }
 
 //----------------------------------------------------------------------------------
@@ -207,6 +297,23 @@ void Setting::SetTrackRenderer(TrackRenderer* renderer)
 {
 	ES_SAFE_DELETE(m_trackRenderer);
 	m_trackRenderer = renderer;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+SoundPlayer* Setting::GetSoundPlayer()
+{
+	return m_soundPlayer;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Setting::SetSoundPlayer(SoundPlayer* soundPlayer)
+{
+	ES_SAFE_DELETE(m_soundPlayer);
+	m_soundPlayer = soundPlayer;
 }
 
 //----------------------------------------------------------------------------------

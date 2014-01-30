@@ -22,89 +22,89 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::LoadRendererParameter( unsigned char*& pos )
+	void EffectNodeSprite::LoadRendererParameter(unsigned char*& pos, Setting* setting)
 {
 	int32_t type = 0;
-	memcpy( &type, pos, sizeof(int) );
+	memcpy(&type, pos, sizeof(int));
 	pos += sizeof(int);
-	assert( type == GetType() );
+	assert(type == GetType());
 	EffekseerPrintDebug("Renderer : Sprite\n");
 
 	int32_t size = 0;
 
-	memcpy( &RenderingOrder, pos, sizeof(int) );
+	memcpy(&RenderingOrder, pos, sizeof(int));
 	pos += sizeof(int);
 
-	if( m_effect->GetVersion() >= 3)
+	if (m_effect->GetVersion() >= 3)
 	{
 		AlphaBlend = Texture.AlphaBlend;
 	}
 	else
 	{
-		memcpy( &AlphaBlend, pos, sizeof(int) );
+		memcpy(&AlphaBlend, pos, sizeof(int));
 		pos += sizeof(int);
 	}
 
-	memcpy( &Billboard, pos, sizeof(int) );
+	memcpy(&Billboard, pos, sizeof(int));
 	pos += sizeof(int);
-	
-	SpriteAllColor.load( pos, m_effect->GetVersion() );
-	EffekseerPrintDebug("SpriteColorAllType : %d\n", SpriteAllColor.type );
 
-	memcpy( &SpriteColor.type, pos, sizeof(int) );
+	SpriteAllColor.load(pos, m_effect->GetVersion());
+	EffekseerPrintDebug("SpriteColorAllType : %d\n", SpriteAllColor.type);
+
+	memcpy(&SpriteColor.type, pos, sizeof(int));
 	pos += sizeof(int);
-	EffekseerPrintDebug("SpriteColorType : %d\n", SpriteColor.type );
+	EffekseerPrintDebug("SpriteColorType : %d\n", SpriteColor.type);
 
-	if( SpriteColor.type == SpriteColor.Default )
+	if (SpriteColor.type == SpriteColor.Default)
 	{
 	}
-	else if( SpriteColor.type == SpriteColor.Fixed )
+	else if (SpriteColor.type == SpriteColor.Fixed)
 	{
-		memcpy( &SpriteColor.fixed, pos, sizeof(SpriteColor.fixed) );
+		memcpy(&SpriteColor.fixed, pos, sizeof(SpriteColor.fixed));
 		pos += sizeof(SpriteColor.fixed);
 	}
 
-	memcpy( &SpritePosition.type, pos, sizeof(int) );
+	memcpy(&SpritePosition.type, pos, sizeof(int));
 	pos += sizeof(int);
-	EffekseerPrintDebug("SpritePosition : %d\n", SpritePosition.type );
+	EffekseerPrintDebug("SpritePosition : %d\n", SpritePosition.type);
 
-	if( SpritePosition.type == SpritePosition.Default )
+	if (SpritePosition.type == SpritePosition.Default)
 	{
-		if( m_effect->GetVersion() >= 8 )
+		if (m_effect->GetVersion() >= 8)
 		{
-			memcpy( &SpritePosition.fixed, pos, sizeof(SpritePosition.fixed) );
+			memcpy(&SpritePosition.fixed, pos, sizeof(SpritePosition.fixed));
 			pos += sizeof(SpritePosition.fixed);
 			SpritePosition.type = SpritePosition.Fixed;
 		}
 	}
-	else if( SpritePosition.type == SpritePosition.Fixed )
+	else if (SpritePosition.type == SpritePosition.Fixed)
 	{
-		memcpy( &SpritePosition.fixed, pos, sizeof(SpritePosition.fixed) );
+		memcpy(&SpritePosition.fixed, pos, sizeof(SpritePosition.fixed));
 		pos += sizeof(SpritePosition.fixed);
 	}
 
-	if( m_effect->GetVersion() >= 3)
+	if (m_effect->GetVersion() >= 3)
 	{
 		SpriteTexture = Texture.ColorTextureIndex;
 	}
 	else
 	{
-		memcpy( &SpriteTexture, pos, sizeof(int) );
+		memcpy(&SpriteTexture, pos, sizeof(int));
 		pos += sizeof(int);
 	}
 
 	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
-	if( m_effect->GetManager()->GetCoordinateSystem() == COORDINATE_SYSTEM_LH )
+	if (setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH)
 	{
 	}
 
 	/* ˆÊ’uŠg‘åˆ— */
-	if( m_effect->GetVersion() >= 8 )
+	if (m_effect->GetVersion() >= 8)
 	{
-		if( SpritePosition.type == SpritePosition.Default )
+		if (SpritePosition.type == SpritePosition.Default)
 		{
 		}
-		else if( SpritePosition.type == SpritePosition.Fixed )
+		else if (SpritePosition.type == SpritePosition.Fixed)
 		{
 			SpritePosition.fixed.ll *= m_effect->GetMaginification();
 			SpritePosition.fixed.lr *= m_effect->GetMaginification();
@@ -279,7 +279,7 @@ void EffectNodeSprite::EndRendering(Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::InitializeRenderedInstance( Instance& instance )
+void EffectNodeSprite::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.sprite;
 
@@ -289,12 +289,12 @@ void EffectNodeSprite::InitializeRenderedInstance( Instance& instance )
 	}
 	else if( SpriteAllColor.type == StandardColorParameter::Random )
 	{
-		instValues._color = SpriteAllColor.random.all.getValue( *(m_effect->GetManager()) );
+		instValues._color = SpriteAllColor.random.all.getValue(*(manager));
 	}
 	else if( SpriteAllColor.type == StandardColorParameter::Easing )
 	{
-		instValues.allColorValues.easing.start = SpriteAllColor.easing.all.getStartValue( *(m_effect->GetManager()) );
-		instValues.allColorValues.easing.end = SpriteAllColor.easing.all.getEndValue( *(m_effect->GetManager()) );
+		instValues.allColorValues.easing.start = SpriteAllColor.easing.all.getStartValue(*(manager));
+		instValues.allColorValues.easing.end = SpriteAllColor.easing.all.getEndValue(*(manager));
 
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
@@ -306,10 +306,10 @@ void EffectNodeSprite::InitializeRenderedInstance( Instance& instance )
 	}
 	else if( SpriteAllColor.type == StandardColorParameter::FCurve_RGBA )
 	{
-		instValues.allColorValues.fcurve_rgba.offset[0] = SpriteAllColor.fcurve_rgba.FCurve->R.GetOffset( *(m_effect->GetManager()) );
-		instValues.allColorValues.fcurve_rgba.offset[1] = SpriteAllColor.fcurve_rgba.FCurve->G.GetOffset( *(m_effect->GetManager()) );
-		instValues.allColorValues.fcurve_rgba.offset[2] = SpriteAllColor.fcurve_rgba.FCurve->B.GetOffset( *(m_effect->GetManager()) );
-		instValues.allColorValues.fcurve_rgba.offset[3] = SpriteAllColor.fcurve_rgba.FCurve->A.GetOffset( *(m_effect->GetManager()) );
+		instValues.allColorValues.fcurve_rgba.offset[0] = SpriteAllColor.fcurve_rgba.FCurve->R.GetOffset(*(manager));
+		instValues.allColorValues.fcurve_rgba.offset[1] = SpriteAllColor.fcurve_rgba.FCurve->G.GetOffset(*(manager));
+		instValues.allColorValues.fcurve_rgba.offset[2] = SpriteAllColor.fcurve_rgba.FCurve->B.GetOffset(*(manager));
+		instValues.allColorValues.fcurve_rgba.offset[3] = SpriteAllColor.fcurve_rgba.FCurve->A.GetOffset(*(manager));
 		
 		instValues._color.r = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[0] + SpriteAllColor.fcurve_rgba.FCurve->R.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 		instValues._color.g = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[1] + SpriteAllColor.fcurve_rgba.FCurve->G.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
@@ -321,7 +321,7 @@ void EffectNodeSprite::InitializeRenderedInstance( Instance& instance )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::UpdateRenderedInstance( Instance& instance )
+void EffectNodeSprite::UpdateRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.sprite;
 

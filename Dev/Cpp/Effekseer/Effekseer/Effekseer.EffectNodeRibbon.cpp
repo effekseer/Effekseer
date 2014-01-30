@@ -21,7 +21,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::LoadRendererParameter( unsigned char*& pos )
+void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setting)
 {
 	int32_t type = 0;
 	memcpy( &type, pos, sizeof(int) );
@@ -105,7 +105,7 @@ void EffectNodeRibbon::LoadRendererParameter( unsigned char*& pos )
 	}
 
 	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
-	if( m_effect->GetManager()->GetCoordinateSystem() == COORDINATE_SYSTEM_LH )
+	if( setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH )
 	{
 	}
 
@@ -249,7 +249,7 @@ void EffectNodeRibbon::EndRendering(Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::InitializeRenderedInstance( Instance& instance )
+void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.ribbon;
 
@@ -259,19 +259,19 @@ void EffectNodeRibbon::InitializeRenderedInstance( Instance& instance )
 	}
 	else if( RibbonAllColor.type == RibbonAllColorParameter::Random )
 	{
-		instValues._color = RibbonAllColor.random.all.getValue( *(m_effect->GetManager()) );
+		instValues._color = RibbonAllColor.random.all.getValue(*(manager));
 	}
 	else if( RibbonAllColor.type == RibbonAllColorParameter::Easing )
 	{
-		instValues.allColorValues.easing.start = RibbonAllColor.easing.all.getStartValue( *(m_effect->GetManager()) );
-		instValues.allColorValues.easing.end = RibbonAllColor.easing.all.getEndValue( *(m_effect->GetManager()) );
+		instValues.allColorValues.easing.start = RibbonAllColor.easing.all.getStartValue(*(manager));
+		instValues.allColorValues.easing.end = RibbonAllColor.easing.all.getEndValue(*(manager));
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::UpdateRenderedInstance( Instance& instance )
+void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.ribbon;
 

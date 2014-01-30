@@ -16,6 +16,8 @@
 #include "Effekseer.EffectNodeRing.h"
 #include "Sound/Effekseer.SoundPlayer.h"
 
+#include "Effekseer.Setting.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -39,10 +41,8 @@ EffectNode::EffectNode( Effect* effect, unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::LoadParameter( unsigned char*& pos )
+void EffectNode::LoadParameter(unsigned char*& pos, Setting* setting)
 {
-	Manager* pManager = m_effect->GetManager();
-
 	int size = 0;
 	int node_type = 0;
 	memcpy( &node_type, pos, sizeof(int) );
@@ -322,7 +322,7 @@ void EffectNode::LoadParameter( unsigned char*& pos )
 		}
 
 		// ‰EŽèŒn¶ŽèŒn•ÏŠ·
-		if( pManager->GetCoordinateSystem() == COORDINATE_SYSTEM_LH )
+		if( setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH )
 		{
 			// Translation
 			if( TranslationType == ParameterTranslationType_Fixed )
@@ -417,7 +417,7 @@ void EffectNode::LoadParameter( unsigned char*& pos )
 			Texture.reset();
 		}
 
-		LoadRendererParameter( pos );
+		LoadRendererParameter( pos, m_effect->GetSetting() );
 		
 		if( m_effect->GetVersion() >= 1)
 		{
@@ -461,7 +461,7 @@ void EffectNode::LoadParameter( unsigned char*& pos )
 //----------------------------------------------------------------------------------
 EffectNode::~EffectNode()
 {
-	FinalizeRenderer(GetEffect()->GetManager()->GetSetting());
+	FinalizeRenderer(GetEffect()->GetSetting());
 
 	for( size_t i = 0; i < m_Nodes.size(); i++ )
 	{
@@ -537,7 +537,7 @@ EffectNode* EffectNode::GetChild( int num ) const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::LoadRendererParameter( unsigned char*& pos )
+void EffectNode::LoadRendererParameter(unsigned char*& pos, Setting* setting)
 {
 	int32_t type = 0;
 	memcpy( &type, pos, sizeof(int) );
@@ -591,21 +591,21 @@ void EffectNode::EndRendering(Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::InitializeRenderedInstanceGroup( InstanceGroup& instanceGroup )
+void EffectNode::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::InitializeRenderedInstance( Instance& instance )
+void EffectNode::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::UpdateRenderedInstance( Instance& instance )
+void EffectNode::UpdateRenderedInstance(Instance& instance, Manager* manager)
 {
 }
 
@@ -723,7 +723,7 @@ EffectNode* EffectNode::Create( Effect* effect, unsigned char*& pos )
 		assert(0);
 	}
 
-	effectnode->LoadParameter( pos );
+	effectnode->LoadParameter( pos, effect->GetSetting());
 
 	return effectnode;
 }

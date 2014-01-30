@@ -632,7 +632,7 @@ protected:
 	virtual ~EffectNode();
 
 	// 読込
-	void LoadParameter( unsigned char*& pos );
+	void LoadParameter( unsigned char*& pos, Setting* setting );
 
 	// 初期化
 	void Initialize(Manager* manager);
@@ -703,7 +703,7 @@ public:
 	/**
 		@brief	描画部分の読込
 	*/
-	virtual void LoadRendererParameter( unsigned char*& pos );
+	virtual void LoadRendererParameter(unsigned char*& pos, Setting* setting);
 
 	/**
 		@brief	描画部分の初期化
@@ -738,17 +738,17 @@ public:
 	/**
 		@brief	インスタンスグループ描画時初期化
 	*/
-	virtual void InitializeRenderedInstanceGroup( InstanceGroup& instanceGroup );
+	virtual void InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager);
 
 	/**
 		@brief	描画部分初期化
 	*/
-	virtual void InitializeRenderedInstance( Instance& instance );
+	virtual void InitializeRenderedInstance( Instance& instance, Manager* manager );
 
 	/**
 		@brief	描画部分更新
 	*/
-	virtual void UpdateRenderedInstance( Instance& instance );
+	virtual void UpdateRenderedInstance(Instance& instance, Manager* manager);
 
 	/**
 		@brief	描画部分更新

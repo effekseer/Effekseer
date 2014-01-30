@@ -106,6 +106,11 @@ public:
 		@brief	マネージャー取得
 	*/
 	Manager* GetManager() const;
+
+	/**
+	@brief	設定取得
+	*/
+	Setting* GetSetting() const;
 	
 	/**
 		@brief	エフェクトデータのバージョン取得
