@@ -635,7 +635,7 @@ protected:
 	void LoadParameter( unsigned char*& pos, Setting* setting );
 
 	// ‰Šú‰»
-	void Initialize(Manager* manager);
+	void Initialize();
 
 public:
 

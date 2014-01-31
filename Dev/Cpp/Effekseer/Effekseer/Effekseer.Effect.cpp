@@ -113,8 +113,58 @@ Effect* EffectImplemented::Create( Manager* pManager, void* pData, int size, flo
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+Effect* Effect::Create( Setting* setting, void* data, int32_t size, float magnification, const EFK_CHAR* materialPath )
+{
+	return EffectImplemented::Create(setting, data, size, magnification, materialPath );
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+Effect* Effect::Create( Setting* setting, const EFK_CHAR* path, float magnification, const EFK_CHAR* materialPath)
+{
+	if(setting == NULL) return NULL;
+	EffectLoader* eLoader = setting->GetEffectLoader();
+
+	if (setting == NULL) return NULL;
+
+	void* data = NULL;
+	int32_t size = 0;
+
+	if (!eLoader->Load(path, data, size)) return NULL;
+
+	EFK_CHAR parentDir[512];
+	if (materialPath == NULL)
+	{
+		GetParentDir(parentDir, path);
+		materialPath = parentDir;
+	}
+
+	Effect* effect = EffectImplemented::Create(setting, data, size, magnification, materialPath);
+
+	eLoader->Unload(data, size);
+
+	return effect;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+Effect* EffectImplemented::Create( Setting* setting, void* pData, int size, float magnification, const EFK_CHAR* materialPath )
+{
+	if( pData == NULL || size == 0 ) return NULL;
+
+	EffectImplemented* effect = new EffectImplemented( setting, pData, size );
+	effect->Load( pData, size, magnification, materialPath );
+	return effect;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 EffectImplemented::EffectImplemented( Manager* pManager, void* pData, int size )
 	: m_pManager		( (ManagerImplemented*)pManager )
+	, m_setting			(NULL)
 	, m_isInitialized	( false )
 	, m_reference		( 1 )
 	, m_version			( 0 )
@@ -137,10 +187,36 @@ EffectImplemented::EffectImplemented( Manager* pManager, void* pData, int size )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+EffectImplemented::EffectImplemented( Setting* setting, void* pData, int size )
+	: m_pManager		( NULL )
+	, m_setting			(setting)
+	, m_isInitialized	( false )
+	, m_reference		( 1 )
+	, m_version			( 0 )
+	, m_ImageCount		( 0 )
+	, m_ImagePaths		( NULL )
+	, m_pImages			( NULL )
+	, m_WaveCount		( 0 )
+	, m_WavePaths		( NULL )
+	, m_pWaves			( NULL )
+	, m_modelCount		( 0 )
+	, m_modelPaths		( NULL )
+	, m_pModels			( NULL )
+	, m_maginification	( 1.0f )
+	, m_maginificationExternal	( 1.0f )
+	, m_pRoot			( NULL )
+{
+	ES_SAFE_ADDREF( m_setting );
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 EffectImplemented::~EffectImplemented()
 {
 	Reset();
 
+	ES_SAFE_RELEASE( m_setting );
 	ES_SAFE_RELEASE( m_pManager );
 }
 
@@ -285,7 +361,7 @@ void EffectImplemented::Initialize()
 {
 	m_isInitialized = true;
 
-	m_pRoot->Initialize(GetManager());
+	m_pRoot->Initialize();
 }
 
 //----------------------------------------------------------------------------------
@@ -368,6 +444,7 @@ Manager* EffectImplemented::GetManager() const
 //----------------------------------------------------------------------------------
 Setting* EffectImplemented::GetSetting() const
 {
+	if(m_setting != NULL) return m_setting;
 	return m_pManager->GetSetting();
 }
 
@@ -408,14 +485,9 @@ void* EffectImplemented::GetModel( int n ) const
 //----------------------------------------------------------------------------------
 bool EffectImplemented::Reload( void* data, int32_t size, const EFK_CHAR* materialPath )
 {
-	m_pManager->BeginReloadEffect( this );
+	if(m_pManager == NULL ) return false;
 
-	Reset();
-	Load( data, size, m_maginificationExternal, materialPath );
-
-	m_pManager->EndReloadEffect( this );
-
-	return false;
+	return Reload( m_pManager, 1, data, size, materialPath );
 }
 
 //----------------------------------------------------------------------------------
@@ -423,7 +495,42 @@ bool EffectImplemented::Reload( void* data, int32_t size, const EFK_CHAR* materi
 //----------------------------------------------------------------------------------
 bool EffectImplemented::Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath )
 {
-	Setting* loader = m_pManager->GetSetting();
+	if(m_pManager == NULL ) return false;
+
+	return Reload( m_pManager, 1, path, materialPath );
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+bool EffectImplemented::Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath )
+{
+	if(m_pManager == NULL ) return false;
+
+	for( int32_t i = 0; i < managersCount; i++)
+	{
+		((ManagerImplemented*)&(managers[i]))->BeginReloadEffect( this );
+	}
+
+	Reset();
+	Load( data, size, m_maginificationExternal, materialPath );
+
+	for( int32_t i = 0; i < managersCount; i++)
+	{
+		((ManagerImplemented*)&(managers[i]))->EndReloadEffect( this );
+	}
+
+	return false;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+bool EffectImplemented::Reload( Manager* managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath )
+{
+	if(m_pManager == NULL ) return false;
+
+	Setting* loader = GetSetting();
 	
 	EffectLoader* eLoader = loader->GetEffectLoader();
 	if( loader == NULL ) return false;
@@ -440,14 +547,20 @@ bool EffectImplemented::Reload( const EFK_CHAR* path, const EFK_CHAR* materialPa
 		materialPath = parentDir;
 	}
 
-	m_pManager->BeginReloadEffect( this );
+	for( int32_t i = 0; i < managersCount; i++)
+	{
+		((ManagerImplemented*)&(managers[i]))->BeginReloadEffect( this );
+	}
 
 	Reset();
 	Load( data, size, m_maginificationExternal, materialPath );
 
 	m_pManager->EndReloadEffect( this );
 
-	eLoader->Unload( data, size );
+	for( int32_t i = 0; i < managersCount; i++)
+	{
+		((ManagerImplemented*)&(managers[i]))->EndReloadEffect( this );
+	}
 
 	return false;
 }
@@ -459,7 +572,7 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 {
 	UnloadResources();
 
-	Setting* loader = m_pManager->GetSetting();
+	Setting* loader = GetSetting();
 
 	{
 		TextureLoader* textureLoader = loader->GetTextureLoader();

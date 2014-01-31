@@ -1149,6 +1149,27 @@ public:
 	*/
 	static Effect* Create( Manager* manager, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
 
+		/**
+		@brief	エフェクトを生成する。
+		@param	setting			[in]	設定クラス
+		@param	data			[in]	データ配列の先頭のポインタ
+		@param	size			[in]	データ配列の長さ
+		@param	magnification	[in]	読み込み時の拡大率
+		@param	materialPath	[in]	素材ロード時の基準パス
+		@return	エフェクト。失敗した場合はNULLを返す。
+	*/
+	static Effect* Create( Setting*	setting, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+
+	/**
+		@brief	エフェクトを生成する。
+		@param	setting			[in]	設定クラス
+		@param	path			[in]	読込元のパス
+		@param	magnification	[in]	読み込み時の拡大率
+		@param	materialPath	[in]	素材ロード時の基準パス
+		@return	エフェクト。失敗した場合はNULLを返す。
+	*/
+	static Effect* Create( Setting*	setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+
 	/**
 		@brief	参照カウンタを加算する。
 		@return	実行後の参照カウンタの値
@@ -2621,6 +2642,7 @@ namespace Effekseer {
 	class Setting
 	{
 	private:
+		int32_t		m_ref;
 
 		// メモリ確保関数
 		MallocFunc	m_MallocFunc;
@@ -2660,7 +2682,6 @@ namespace Effekseer {
 		/* サウンド再生用インスタンス */
 		SoundPlayer*				m_soundPlayer;
 
-	public:
 		/**
 			@brief	コンストラクタ
 			*/
@@ -2670,6 +2691,24 @@ namespace Effekseer {
 			@brief	デストラクタ
 			*/
 		 ~Setting();
+	public:
+
+		/**
+			@brief	設定インスタンスを生成する。
+		*/
+		static Setting* Create();
+
+		/**
+			@brief	参照カウンタを加算する。
+			@return	参照カウンタ
+		*/
+		int32_t AddRef();
+
+		/**
+			@brief	参照カウンタを減算する。
+			@return	参照カウンタ
+		*/
+		int32_t Release();
 
 		/**
 		@brief	メモリ確保関数を取得する。

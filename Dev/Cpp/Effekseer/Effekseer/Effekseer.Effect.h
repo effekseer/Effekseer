@@ -50,6 +50,27 @@ public:
 	*/
 	static Effect* Create( Manager* manager, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
 
+		/**
+		@brief	エフェクトを生成する。
+		@param	setting			[in]	設定クラス
+		@param	data			[in]	データ配列の先頭のポインタ
+		@param	size			[in]	データ配列の長さ
+		@param	magnification	[in]	読み込み時の拡大率
+		@param	materialPath	[in]	素材ロード時の基準パス
+		@return	エフェクト。失敗した場合はNULLを返す。
+	*/
+	static Effect* Create( Setting*	setting, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+
+	/**
+		@brief	エフェクトを生成する。
+		@param	setting			[in]	設定クラス
+		@param	path			[in]	読込元のパス
+		@param	magnification	[in]	読み込み時の拡大率
+		@param	materialPath	[in]	素材ロード時の基準パス
+		@return	エフェクト。失敗した場合はNULLを返す。
+	*/
+	static Effect* Create( Setting*	setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+
 	/**
 		@brief	参照カウンタを加算する。
 		@return	実行後の参照カウンタの値
@@ -102,6 +123,16 @@ public:
 		@brief	エフェクトのリロードを行う。
 	*/
 	virtual bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
+
+	/**
+		@brief	エフェクトのリロードを行う。
+	*/
+	virtual bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) = 0;
+
+	/**
+		@brief	エフェクトのリロードを行う。
+	*/
+	virtual bool Reload( Manager* managers, int32_t managersCount,const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
 		@brief	画像等リソースの再読み込みを行う。

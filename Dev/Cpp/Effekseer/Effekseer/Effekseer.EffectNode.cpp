@@ -477,14 +477,15 @@ EffectNode::~EffectNode()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::Initialize(Manager* manager)
+void EffectNode::Initialize()
 {
-	InitializeRenderer(manager->GetSetting());
+	Setting* setting = GetEffect()->GetSetting();
+	InitializeRenderer(setting);
 
 	// ‰Šú‰»
 	for (size_t i = 0; i < m_Nodes.size(); i++)
 	{
-		m_Nodes[i]->Initialize(manager);
+		m_Nodes[i]->Initialize();
 	}
 }
 

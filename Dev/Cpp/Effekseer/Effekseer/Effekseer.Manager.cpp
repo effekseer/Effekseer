@@ -303,7 +303,7 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 	, m_setting			( NULL )
 	, m_sequenceNumber	( 0 )
 {
-	m_setting = new Setting();
+	m_setting = Setting::Create();
 
 	SetMallocFunc( Malloc );
 	SetFreeFunc( Free );
@@ -341,7 +341,7 @@ ManagerImplemented::~ManagerImplemented()
 	assert( m_reserved_instances.size() == m_instance_max ); 
 	ES_SAFE_DELETE_ARRAY( m_reserved_instances_buffer );
 
-	ES_SAFE_DELETE( m_setting );
+	ES_SAFE_RELEASE( m_setting );
 }
 
 //----------------------------------------------------------------------------------

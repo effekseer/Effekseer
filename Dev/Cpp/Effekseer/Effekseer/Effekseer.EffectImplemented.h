@@ -30,6 +30,8 @@ class EffectImplemented
 private:
 	ManagerImplemented* m_pManager;
 
+	Setting*	m_setting;
+
 	bool m_isInitialized;
 
 	int	m_reference;
@@ -62,8 +64,16 @@ public:
 	*/
 	static Effect* Create( Manager* pManager, void* pData, int size, float magnification, const EFK_CHAR* materialPath = NULL );
 
+	/**
+		@brief	生成
+	*/
+	static Effect* Create( Setting* setting, void* pData, int size, float magnification, const EFK_CHAR* materialPath = NULL );
+
 	// コンストラクタ
 	EffectImplemented( Manager* pManager, void* pData, int size );
+
+	// コンストラクタ
+	EffectImplemented( Setting* setting, void* pData, int size );
 
 	// デストラクタ
 	virtual ~EffectImplemented();
@@ -143,6 +153,16 @@ public:
 		@brief	エフェクトのリロードを行う。
 	*/
 	bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL );
+
+	/**
+		@brief	エフェクトのリロードを行う。
+	*/
+	bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL );
+
+	/**
+		@brief	エフェクトのリロードを行う。
+	*/
+	bool Reload( Manager* managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL );
 
 	/**
 		@brief	画像等リソースの再読み込みを行う。

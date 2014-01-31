@@ -22,6 +22,7 @@ namespace Effekseer {
 	class Setting
 	{
 	private:
+		int32_t		m_ref;
 
 		// メモリ確保関数
 		MallocFunc	m_MallocFunc;
@@ -61,7 +62,6 @@ namespace Effekseer {
 		/* サウンド再生用インスタンス */
 		SoundPlayer*				m_soundPlayer;
 
-	public:
 		/**
 			@brief	コンストラクタ
 			*/
@@ -71,6 +71,24 @@ namespace Effekseer {
 			@brief	デストラクタ
 			*/
 		 ~Setting();
+	public:
+
+		/**
+			@brief	設定インスタンスを生成する。
+		*/
+		static Setting* Create();
+
+		/**
+			@brief	参照カウンタを加算する。
+			@return	参照カウンタ
+		*/
+		int32_t AddRef();
+
+		/**
+			@brief	参照カウンタを減算する。
+			@return	参照カウンタ
+		*/
+		int32_t Release();
 
 		/**
 		@brief	メモリ確保関数を取得する。
