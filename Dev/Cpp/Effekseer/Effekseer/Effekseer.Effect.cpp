@@ -596,8 +596,8 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 //----------------------------------------------------------------------------------
 void EffectImplemented::UnloadResources()
 {
-	Setting* loader = m_pManager->GetSetting();
-
+	Setting* loader = GetSetting();
+	
 	TextureLoader* textureLoader = loader->GetTextureLoader();
 	if( textureLoader != NULL )
 	{
