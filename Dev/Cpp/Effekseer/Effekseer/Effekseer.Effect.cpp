@@ -349,7 +349,7 @@ void EffectImplemented::Reset()
 {
 	UnloadResources();
 
-	Setting* loader = m_pManager->GetSetting();
+	Setting* loader = GetSetting();
 
 	TextureLoader* textureLoader = loader->GetTextureLoader();
 
