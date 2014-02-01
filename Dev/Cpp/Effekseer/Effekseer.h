@@ -1224,6 +1224,16 @@ public:
 	virtual bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
+		@brief	エフェクトのリロードを行う。
+	*/
+	virtual bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) = 0;
+
+	/**
+		@brief	エフェクトのリロードを行う。
+	*/
+	virtual bool Reload( Manager* managers, int32_t managersCount,const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
+
+	/**
 		@brief	画像等リソースの再読み込みを行う。
 	*/
 	virtual void ReloadResources( const EFK_CHAR* materialPath = NULL ) = 0;
@@ -1392,6 +1402,12 @@ public:
 		@brief	設定クラスを取得する。
 	*/
 	virtual Setting* GetSetting() = 0;
+
+	/**
+		@brief	設定クラスを設定する。
+		@param	setting	[in]	設定
+	*/
+	virtual void SetSetting(Setting* setting) = 0;
 
 	/**
 		@brief	エフェクト読込クラスを取得する。

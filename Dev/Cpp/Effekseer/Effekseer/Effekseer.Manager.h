@@ -152,6 +152,12 @@ public:
 	virtual Setting* GetSetting() = 0;
 
 	/**
+		@brief	設定クラスを設定する。
+		@param	setting	[in]	設定
+	*/
+	virtual void SetSetting(Setting* setting) = 0;
+
+	/**
 		@brief	エフェクト読込クラスを取得する。
 	*/
 	virtual EffectLoader* GetEffectLoader() = 0;

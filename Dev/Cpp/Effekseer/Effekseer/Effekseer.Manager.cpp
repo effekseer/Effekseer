@@ -586,6 +586,16 @@ Setting* ManagerImplemented::GetSetting()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+void ManagerImplemented::SetSetting(Setting* setting)
+{
+	ES_SAFE_RELEASE(m_setting);
+	m_setting = setting;
+	ES_SAFE_ADDREF(m_setting);
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 EffectLoader* ManagerImplemented::GetEffectLoader()
 {
 	return m_setting->GetEffectLoader();

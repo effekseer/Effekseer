@@ -122,8 +122,6 @@ private:
 	/* 設定インスタンス */
 	Setting*						m_setting;
 
-
-
 	int							m_updateTime;
 	int							m_drawTime;
 
@@ -292,6 +290,12 @@ public:
 		@brief	設定クラスを取得する。
 	*/
 	Setting* GetSetting();
+
+	/**
+		@brief	設定クラスを設定する。
+		@param	setting	[in]	設定
+	*/
+	void SetSetting(Setting* setting);
 
 	/**
 		@brief	エフェクト読込クラスを取得する。
