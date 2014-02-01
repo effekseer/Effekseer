@@ -126,51 +126,9 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeRenderer( Setting* setting )
+void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 {
-	RingRenderer* renderer = setting->GetRingRenderer();
-	if( renderer != NULL )
-	{
-		RingRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
-		nodeParameter.Billboard = Billboard;
-		nodeParameter.ColorTextureIndex = RingTexture;
-		nodeParameter.EffectPointer = GetEffect();
-		renderer->LoadRenderer( nodeParameter, m_userData );
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeRing::FinalizeRenderer( Setting* setting )
-{
-	RingRenderer* renderer = setting->GetRingRenderer();
-	if( renderer != NULL )
-	{
-		RingRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
-		nodeParameter.Billboard = Billboard;
-		nodeParameter.ColorTextureIndex = RingTexture;
-		nodeParameter.EffectPointer = GetEffect();
-		renderer->RemoveRenderer( nodeParameter, m_userData );
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeRing::BeginRendering(int32_t count, Setting* setting)
-{
-	RingRenderer* renderer = setting->GetRingRenderer();
+	RingRenderer* renderer = manager->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
@@ -190,10 +148,10 @@ void EffectNodeRing::BeginRendering(int32_t count, Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::Rendering(const Instance& instance, Setting* setting)
+void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.ring;
-	RingRenderer* renderer = setting->GetRingRenderer();
+	RingRenderer* renderer = manager->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
@@ -237,9 +195,9 @@ void EffectNodeRing::Rendering(const Instance& instance, Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::EndRendering(Setting* setting)
+void EffectNodeRing::EndRendering(Manager* manager)
 {
-	RingRenderer* renderer = setting->GetRingRenderer();
+	RingRenderer* renderer = manager->GetRingRenderer();
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;

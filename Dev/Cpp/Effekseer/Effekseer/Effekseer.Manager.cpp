@@ -177,7 +177,7 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 						if( maxcreate_count == pRootInstance->m_pEffectNode->GetChildrenCount() )
 						{
 							// ‰¹‚ªÄ¶’†‚Å‚È‚¢‚Æ‚«
-							if (!m_setting->GetSoundPlayer() || !m_setting->GetSoundPlayer()->CheckPlayingTag(draw_set.GlobalPointer))
+							if (!GetSoundPlayer() || !GetSoundPlayer()->CheckPlayingTag(draw_set.GlobalPointer))
 							{
 								isRemoving = true;
 							}
@@ -276,9 +276,9 @@ void ManagerImplemented::ExecuteEvents()
 			InstanceContainer* pContainer = (*it).second.InstanceContainerPointer;
 			pContainer->KillAllInstances( true );
 			(*it).second.IsRemoving = true;
-			if (m_setting->GetSoundPlayer() != NULL)
+			if (GetSoundPlayer() != NULL)
 			{
-				m_setting->GetSoundPlayer()->StopTag((*it).second.GlobalPointer);
+				GetSoundPlayer()->StopTag((*it).second.GlobalPointer);
 			}
 		}
 
@@ -302,6 +302,14 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 	, m_instance_max	( instance_max )
 	, m_setting			( NULL )
 	, m_sequenceNumber	( 0 )
+
+	, m_spriteRenderer(NULL)
+	, m_ribbonRenderer(NULL)
+	, m_ringRenderer(NULL)
+	, m_modelRenderer(NULL)
+	, m_trackRenderer(NULL)
+
+	, m_soundPlayer(NULL)
 {
 	m_setting = Setting::Create();
 
@@ -340,6 +348,15 @@ ManagerImplemented::~ManagerImplemented()
 
 	assert( m_reserved_instances.size() == m_instance_max ); 
 	ES_SAFE_DELETE_ARRAY( m_reserved_instances_buffer );
+
+
+	ES_SAFE_DELETE(m_spriteRenderer);
+	ES_SAFE_DELETE(m_ribbonRenderer);
+	ES_SAFE_DELETE(m_modelRenderer);
+	ES_SAFE_DELETE(m_trackRenderer);
+	ES_SAFE_DELETE(m_ringRenderer);
+
+	ES_SAFE_DELETE(m_soundPlayer);
 
 	ES_SAFE_RELEASE( m_setting );
 }
@@ -500,15 +517,16 @@ void ManagerImplemented::SetCoordinateSystem( eCoordinateSystem coordinateSystem
 //----------------------------------------------------------------------------------
 SpriteRenderer* ManagerImplemented::GetSpriteRenderer()
 {
-	return m_setting->GetSpriteRenderer();
+	return m_spriteRenderer;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::SetSpriteRenderer( SpriteRenderer* renderer )
+void ManagerImplemented::SetSpriteRenderer(SpriteRenderer* renderer)
 {
-	m_setting->SetSpriteRenderer(renderer);
+	ES_SAFE_DELETE(m_spriteRenderer);
+	m_spriteRenderer = renderer;
 }
 
 //----------------------------------------------------------------------------------
@@ -516,15 +534,16 @@ void ManagerImplemented::SetSpriteRenderer( SpriteRenderer* renderer )
 //----------------------------------------------------------------------------------
 RibbonRenderer* ManagerImplemented::GetRibbonRenderer()
 {
-	return m_setting->GetRibbonRenderer();
+	return m_ribbonRenderer;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::SetRibbonRenderer( RibbonRenderer* renderer )
+void ManagerImplemented::SetRibbonRenderer(RibbonRenderer* renderer)
 {
-	m_setting->SetRibbonRenderer(renderer);
+	ES_SAFE_DELETE(m_ribbonRenderer);
+	m_ribbonRenderer = renderer;
 }
 
 //----------------------------------------------------------------------------------
@@ -532,15 +551,16 @@ void ManagerImplemented::SetRibbonRenderer( RibbonRenderer* renderer )
 //----------------------------------------------------------------------------------
 RingRenderer* ManagerImplemented::GetRingRenderer()
 {
-	return m_setting->GetRingRenderer();
+	return m_ringRenderer;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::SetRingRenderer( RingRenderer* renderer )
+void ManagerImplemented::SetRingRenderer(RingRenderer* renderer)
 {
-	m_setting->SetRingRenderer(renderer);
+	ES_SAFE_DELETE(m_ringRenderer);
+	m_ringRenderer = renderer;
 }
 
 //----------------------------------------------------------------------------------
@@ -548,15 +568,16 @@ void ManagerImplemented::SetRingRenderer( RingRenderer* renderer )
 //----------------------------------------------------------------------------------
 ModelRenderer* ManagerImplemented::GetModelRenderer()
 {
-	return m_setting->GetModelRenderer();
+	return m_modelRenderer;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::SetModelRenderer( ModelRenderer* renderer )
+void ManagerImplemented::SetModelRenderer(ModelRenderer* renderer)
 {
-	m_setting->SetModelRenderer(renderer);
+	ES_SAFE_DELETE(m_modelRenderer);
+	m_modelRenderer = renderer;
 }
 
 //----------------------------------------------------------------------------------
@@ -564,15 +585,33 @@ void ManagerImplemented::SetModelRenderer( ModelRenderer* renderer )
 //----------------------------------------------------------------------------------
 TrackRenderer* ManagerImplemented::GetTrackRenderer()
 {
-	return m_setting->GetTrackRenderer();
+	return m_trackRenderer;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::SetTrackRenderer( TrackRenderer* renderer )
+void ManagerImplemented::SetTrackRenderer(TrackRenderer* renderer)
 {
-	m_setting->SetTrackRenderer(renderer);
+	ES_SAFE_DELETE(m_trackRenderer);
+	m_trackRenderer = renderer;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+SoundPlayer* ManagerImplemented::GetSoundPlayer()
+{
+	return m_soundPlayer;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void ManagerImplemented::SetSoundPlayer(SoundPlayer* soundPlayer)
+{
+	ES_SAFE_DELETE(m_soundPlayer);
+	m_soundPlayer = soundPlayer;
 }
 
 //----------------------------------------------------------------------------------
@@ -623,22 +662,6 @@ TextureLoader* ManagerImplemented::GetTextureLoader()
 void ManagerImplemented::SetTextureLoader( TextureLoader* textureLoader )
 {
 	m_setting->SetTextureLoader(textureLoader);
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-SoundPlayer* ManagerImplemented::GetSoundPlayer()
-{
-	return m_setting->GetSoundPlayer();
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void ManagerImplemented::SetSoundPlayer( SoundPlayer* soundPlayer )
-{
-	m_setting->SetSoundPlayer(soundPlayer);
 }
 
 //----------------------------------------------------------------------------------

@@ -62,65 +62,9 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::InitializeRenderer( Setting* setting )
+void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 {
-	ModelRenderer* renderer = setting->GetModelRenderer();
-	if( renderer != NULL )
-	{
-		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
-		nodeParameter.EffectPointer = GetEffect();
-		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.ColorTextureIndex = Texture.ColorTextureIndex;
-		nodeParameter.Culling = Culling;
-		nodeParameter.Lighting = Lighting;
-		nodeParameter.NormalTextureIndex = NormalTextureIndex;
-		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = setting->GetCoordinateSystem() ==
-			COORDINATE_SYSTEM_RH;
-
-		renderer->LoadRenderer( nodeParameter, m_userData );
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeModel::FinalizeRenderer( Setting* setting )
-{
-	ModelRenderer* renderer = setting->GetModelRenderer();
-	if( renderer != NULL )
-	{
-		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
-		nodeParameter.EffectPointer = GetEffect();
-		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.ColorTextureIndex = Texture.ColorTextureIndex;
-		nodeParameter.Culling = Culling;
-		nodeParameter.Lighting = Lighting;
-		nodeParameter.NormalTextureIndex = NormalTextureIndex;
-		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = setting->GetCoordinateSystem() ==
-			COORDINATE_SYSTEM_RH;
-
-		renderer->RemoveRenderer( nodeParameter, m_userData );
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeModel::BeginRendering(int32_t count, Setting* setting)
-{
-	ModelRenderer* renderer = setting->GetModelRenderer();
+	ModelRenderer* renderer = manager->GetModelRenderer();
 	if (renderer != NULL)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -136,7 +80,7 @@ void EffectNodeModel::BeginRendering(int32_t count, Setting* setting)
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = setting->GetCoordinateSystem() ==
+		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
 			COORDINATE_SYSTEM_RH;
 
 		renderer->BeginRendering(nodeParameter, count, m_userData);
@@ -146,10 +90,10 @@ void EffectNodeModel::BeginRendering(int32_t count, Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::Rendering(const Instance& instance, Setting* setting)
+void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.model;
-	ModelRenderer* renderer = setting->GetModelRenderer();
+	ModelRenderer* renderer = manager->GetModelRenderer();
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -165,7 +109,7 @@ void EffectNodeModel::Rendering(const Instance& instance, Setting* setting)
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = setting->GetCoordinateSystem() ==
+		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
 			COORDINATE_SYSTEM_RH;
 
 		ModelRenderer::InstanceParameter instanceParameter;
@@ -187,9 +131,9 @@ void EffectNodeModel::Rendering(const Instance& instance, Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeModel::EndRendering(Setting* setting)
+void EffectNodeModel::EndRendering(Manager* manager)
 {
-	ModelRenderer* renderer = setting->GetModelRenderer();
+	ModelRenderer* renderer = manager->GetModelRenderer();
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
@@ -205,7 +149,7 @@ void EffectNodeModel::EndRendering(Setting* setting)
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
-		nodeParameter.IsRightHand = setting->GetCoordinateSystem() ==
+		nodeParameter.IsRightHand = manager->GetSetting()->GetCoordinateSystem() ==
 			COORDINATE_SYSTEM_RH;
 
 		renderer->EndRendering( nodeParameter, m_userData );

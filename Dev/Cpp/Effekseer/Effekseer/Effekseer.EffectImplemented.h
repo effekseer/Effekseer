@@ -32,8 +32,6 @@ private:
 
 	Setting*	m_setting;
 
-	bool m_isInitialized;
-
 	int	m_reference;
 
 	int	m_version;
@@ -84,18 +82,10 @@ public:
 	/* Šg‘å—¦‚Ìæ“¾ */
 	float GetMaginification() const;
 
-	// ‰Šú‰»‚³‚ê‚Ä‚¢‚é‚©?
-	bool IsInitialized() const;
-
 	/**
 		@brief	“Ç‚İ‚ŞB
 	*/
 	void Load( void* pData, int size, float mag, const EFK_CHAR* materialPath );
-
-	/**
-		@brief	‰Šú‰»‚ğs‚¤B
-	*/
-	void Initialize();
 
 	/**
 		@breif	‰½‚à“Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚¢ó‘Ô‚É–ß‚·

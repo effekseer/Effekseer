@@ -117,51 +117,9 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::InitializeRenderer( Setting* setting )
+void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 {
-	SpriteRenderer* renderer = setting->GetSpriteRenderer();
-	if( renderer != NULL )
-	{
-		SpriteRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
-		nodeParameter.Billboard = Billboard;
-		nodeParameter.ColorTextureIndex = SpriteTexture;
-		nodeParameter.EffectPointer = GetEffect();
-		renderer->LoadRenderer( nodeParameter, m_userData );
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeSprite::FinalizeRenderer( Setting* setting )
-{
-	SpriteRenderer* renderer = setting->GetSpriteRenderer();
-	if( renderer != NULL )
-	{
-		SpriteRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
-		nodeParameter.Billboard = Billboard;
-		nodeParameter.ColorTextureIndex = SpriteTexture;
-		nodeParameter.EffectPointer = GetEffect();
-		renderer->RemoveRenderer( nodeParameter, m_userData );
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeSprite::BeginRendering(int32_t count, Setting* setting)
-{
-	SpriteRenderer* renderer = setting->GetSpriteRenderer();
+	SpriteRenderer* renderer = manager->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -180,10 +138,10 @@ void EffectNodeSprite::BeginRendering(int32_t count, Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::Rendering(const Instance& instance, Setting* setting)
+void EffectNodeSprite::Rendering(const Instance& instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.sprite;
-	SpriteRenderer* renderer = setting->GetSpriteRenderer();
+	SpriteRenderer* renderer = manager->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
@@ -258,9 +216,9 @@ void EffectNodeSprite::Rendering(const Instance& instance, Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeSprite::EndRendering(Setting* setting)
+void EffectNodeSprite::EndRendering(Manager* manager)
 {
-	SpriteRenderer* renderer = setting->GetSpriteRenderer();
+	SpriteRenderer* renderer = manager->GetSpriteRenderer();
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;

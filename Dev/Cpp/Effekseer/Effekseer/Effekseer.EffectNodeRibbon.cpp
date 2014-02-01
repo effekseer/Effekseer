@@ -126,9 +126,9 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setti
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::InitializeRenderer( Setting* setting )
+void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 {
-	RibbonRenderer* renderer = setting->GetRibbonRenderer();
+	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if( renderer != NULL )
 	{
 		m_nodeParameter.AlphaBlend = AlphaBlend;
@@ -139,30 +139,7 @@ void EffectNodeRibbon::InitializeRenderer( Setting* setting )
 		m_nodeParameter.ViewpointDependent = ViewpointDependent != 0;
 		m_nodeParameter.ColorTextureIndex = RibbonTexture;
 		m_nodeParameter.EffectPointer = GetEffect();
-		renderer->LoadRenderer( m_nodeParameter, m_userData );
-	}
-}
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeRibbon::FinalizeRenderer( Setting* setting )
-{
-	RibbonRenderer* renderer = setting->GetRibbonRenderer();
-	if( renderer != NULL )
-	{
-		renderer->RemoveRenderer( m_nodeParameter, m_userData );
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeRibbon::BeginRendering(int32_t count, Setting* setting)
-{
-	RibbonRenderer* renderer = setting->GetRibbonRenderer();
-	if( renderer != NULL )
-	{
 		renderer->BeginRendering( m_nodeParameter, count, m_userData );
 	}
 }
@@ -170,9 +147,9 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Setting* setting)
+void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
 {
-	RibbonRenderer* renderer = setting->GetRibbonRenderer();
+	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if( renderer != NULL )
 	{
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
@@ -183,10 +160,10 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Setting* settin
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::Rendering(const Instance& instance, Setting* setting)
+void EffectNodeRibbon::Rendering(const Instance& instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.ribbon;
-	RibbonRenderer* renderer = setting->GetRibbonRenderer();
+	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if( renderer != NULL )
 	{
 		instValues._color.setValueToArg( m_instanceParameter.AllColor );
@@ -237,9 +214,9 @@ void EffectNodeRibbon::Rendering(const Instance& instance, Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRibbon::EndRendering(Setting* setting)
+void EffectNodeRibbon::EndRendering(Manager* manager)
 {
-	RibbonRenderer* renderer = setting->GetRibbonRenderer();
+	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if( renderer != NULL )
 	{
 		renderer->EndRendering( m_nodeParameter, m_userData );

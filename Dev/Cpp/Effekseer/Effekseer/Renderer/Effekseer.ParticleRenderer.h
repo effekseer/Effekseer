@@ -43,10 +43,6 @@ public:
 
 	virtual ~ParticleRenderer() {}
 
-	virtual void LoadRenderer(  const NodeParameter& parameter, void*& userData ) {}
-
-	virtual void RemoveRenderer( const NodeParameter& parameter, void*& userData ) {}
-
 	virtual void BeginRendering( const NodeParameter& parameter, void* userData ) {}
 
 	virtual void Rendering( const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData ) {}

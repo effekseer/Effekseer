@@ -165,7 +165,6 @@ Effect* EffectImplemented::Create( Setting* setting, void* pData, int size, floa
 EffectImplemented::EffectImplemented( Manager* pManager, void* pData, int size )
 	: m_pManager		( (ManagerImplemented*)pManager )
 	, m_setting			(NULL)
-	, m_isInitialized	( false )
 	, m_reference		( 1 )
 	, m_version			( 0 )
 	, m_ImageCount		( 0 )
@@ -190,7 +189,6 @@ EffectImplemented::EffectImplemented( Manager* pManager, void* pData, int size )
 EffectImplemented::EffectImplemented( Setting* setting, void* pData, int size )
 	: m_pManager		( NULL )
 	, m_setting			(setting)
-	, m_isInitialized	( false )
 	, m_reference		( 1 )
 	, m_version			( 0 )
 	, m_ImageCount		( 0 )
@@ -234,14 +232,6 @@ EffectNode* EffectImplemented::GetRoot() const
 float EffectImplemented::GetMaginification() const
 {
 	return m_maginification;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-bool EffectImplemented::IsInitialized() const
-{
-	return m_isInitialized;
 }
 
 //----------------------------------------------------------------------------------
@@ -350,18 +340,6 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	m_pRoot = EffectNode::Create( this, pos );
 
 	ReloadResources( materialPath );
-
-	Initialize();
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectImplemented::Initialize()
-{
-	m_isInitialized = true;
-
-	m_pRoot->Initialize();
 }
 
 //----------------------------------------------------------------------------------
@@ -404,8 +382,6 @@ void EffectImplemented::Reset()
 	ES_SAFE_DELETE_ARRAY( m_pModels );
 
 	ES_SAFE_DELETE( m_pRoot );
-
-	m_isInitialized = false;
 }
 
 //----------------------------------------------------------------------------------
@@ -653,8 +629,6 @@ void EffectImplemented::UnloadResources()
 			}
 		}
 	}
-
-	m_isInitialized = false;
 }
 
 //----------------------------------------------------------------------------------

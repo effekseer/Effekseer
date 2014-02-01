@@ -128,6 +128,24 @@ private:
 	/* 更新回数カウント */
 	uint32_t					m_sequenceNumber;
 	
+	/* スプライト描画機能用インスタンス */
+	SpriteRenderer*				m_spriteRenderer;
+
+	/* リボン描画機能用インスタンス */
+	RibbonRenderer*				m_ribbonRenderer;
+
+	/* リング描画機能用インスタンス */
+	RingRenderer*				m_ringRenderer;
+
+	/* モデル描画機能用インスタンス */
+	ModelRenderer*				m_modelRenderer;
+
+	/* トラック描画機能用インスタンス */
+	TrackRenderer*				m_trackRenderer;
+
+	/* サウンド再生用インスタンス */
+	SoundPlayer*				m_soundPlayer;
+
 	// 描画オブジェクト追加
 	Handle AddDrawSet( Effect* effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer );
 

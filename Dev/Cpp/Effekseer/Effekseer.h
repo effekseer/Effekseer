@@ -1742,10 +1742,6 @@ public:
 
 	virtual ~SpriteRenderer() {}
 
-	virtual void LoadRenderer(  const NodeParameter& parameter, void*& userData ) {}
-
-	virtual void RemoveRenderer( const NodeParameter& parameter, void*& userData ) {}
-
 	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
 
 	virtual void Rendering( const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData ) {}
@@ -1811,10 +1807,6 @@ public:
 	RibbonRenderer() {}
 
 	virtual ~RibbonRenderer() {}
-
-	virtual void LoadRenderer(  const NodeParameter& parameter, void*& userData ) {}
-
-	virtual void RemoveRenderer( const NodeParameter& parameter, void*& userData ) {}
 
 	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
 
@@ -1884,10 +1876,6 @@ public:
 
 	virtual ~RingRenderer() {}
 
-	virtual void LoadRenderer(  const NodeParameter& parameter, void*& userData ) {}
-
-	virtual void RemoveRenderer( const NodeParameter& parameter, void*& userData ) {}
-
 	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
 
 	virtual void Rendering( const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData ) {}
@@ -1952,10 +1940,6 @@ public:
 	ModelRenderer() {}
 
 	virtual ~ModelRenderer() {}
-
-	virtual void LoadRenderer(  const NodeParameter& parameter, void*& userData ) {}
-
-	virtual void RemoveRenderer( const NodeParameter& parameter, void*& userData ) {}
 
 	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
 
@@ -2032,10 +2016,6 @@ public:
 	TrackRenderer() {}
 
 	virtual ~TrackRenderer() {}
-
-	virtual void LoadRenderer(  const NodeParameter& parameter, void*& userData ) {}
-
-	virtual void RemoveRenderer( const NodeParameter& parameter, void*& userData ) {}
 
 	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
 
@@ -2680,24 +2660,6 @@ namespace Effekseer {
 		SoundLoader*	m_soundLoader;
 		ModelLoader*	m_modelLoader;
 
-		/* スプライト描画機能用インスタンス */
-		SpriteRenderer*				m_spriteRenderer;
-
-		/* リボン描画機能用インスタンス */
-		RibbonRenderer*				m_ribbonRenderer;
-
-		/* リング描画機能用インスタンス */
-		RingRenderer*				m_ringRenderer;
-
-		/* モデル描画機能用インスタンス */
-		ModelRenderer*				m_modelRenderer;
-
-		/* トラック描画機能用インスタンス */
-		TrackRenderer*				m_trackRenderer;
-
-		/* サウンド再生用インスタンス */
-		SoundPlayer*				m_soundPlayer;
-
 		/**
 			@brief	コンストラクタ
 			*/
@@ -2828,67 +2790,6 @@ namespace Effekseer {
 			@param	loader	[in]		ローダー
 			*/
 		void SetSoundLoader(SoundLoader* loader);
-
-		/**
-		@brief	スプライト描画機能を取得する。
-		*/
-		SpriteRenderer* GetSpriteRenderer();
-
-		/**
-		@brief	スプライト描画機能を設定する。
-		*/
-		void SetSpriteRenderer(SpriteRenderer* renderer);
-
-		/**
-		@brief	ストライプ描画機能を取得する。
-		*/
-		RibbonRenderer* GetRibbonRenderer();
-
-		/**
-		@brief	ストライプ描画機能を設定する。
-		*/
-		void SetRibbonRenderer(RibbonRenderer* renderer);
-
-		/**
-		@brief	リング描画機能を取得する。
-		*/
-		RingRenderer* GetRingRenderer();
-
-		/**
-		@brief	リング描画機能を設定する。
-		*/
-		void SetRingRenderer(RingRenderer* renderer);
-
-		/**
-		@brief	モデル描画機能を取得する。
-		*/
-		ModelRenderer* GetModelRenderer();
-
-		/**
-		@brief	モデル描画機能を設定する。
-		*/
-		void SetModelRenderer(ModelRenderer* renderer);
-
-		/**
-		@brief	軌跡描画機能を取得する。
-		*/
-		TrackRenderer* GetTrackRenderer();
-
-		/**
-		@brief	軌跡描画機能を設定する。
-		*/
-		void SetTrackRenderer(TrackRenderer* renderer);
-
-		/**
-		@brief	サウンド再生機能を取得する。
-		*/
-		SoundPlayer* GetSoundPlayer();
-
-		/**
-		@brief	サウンド再生機能を設定する。
-		*/
-		void SetSoundPlayer(SoundPlayer* soundPlayer);
-
 	};
 
 //----------------------------------------------------------------------------------
