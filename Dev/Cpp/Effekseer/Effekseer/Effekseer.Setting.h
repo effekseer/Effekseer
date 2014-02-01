@@ -44,6 +44,15 @@ namespace Effekseer {
 		SoundLoader*	m_soundLoader;
 		ModelLoader*	m_modelLoader;
 
+		// メモリ確保関数
+		static void* EFK_STDCALL Malloc(unsigned int size);
+
+		// メモリ破棄関数
+		static void EFK_STDCALL Free(void* p, unsigned int size);
+
+		// ランダム関数
+		static int EFK_STDCALL Rand();
+
 		/**
 			@brief	コンストラクタ
 			*/
