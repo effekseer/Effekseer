@@ -40,6 +40,8 @@ RenderState::~RenderState()
 //-----------------------------------------------------------------------------------
 void RenderState::Update( bool forced )
 {
+	GLCheckError();
+
 	if( m_active.DepthTest != m_next.DepthTest || forced )
 	{
 		if( m_next.DepthTest )
@@ -52,10 +54,14 @@ void RenderState::Update( bool forced )
 		}
 	}
 
+	GLCheckError();
+
 	if( m_active.DepthWrite != m_next.DepthWrite || forced )
 	{
 		glDepthMask( m_next.DepthWrite );
 	}
+
+	GLCheckError();
 
 	if( m_active.CullingType != m_next.CullingType || forced )
 	{
@@ -75,6 +81,8 @@ void RenderState::Update( bool forced )
 			glCullFace( GL_FRONT_AND_BACK );
 		}
 	}
+
+	GLCheckError();
 
 	if( m_active.AlphaBlend != m_next.AlphaBlend || forced )
 	{
@@ -109,8 +117,11 @@ void RenderState::Update( bool forced )
 			}
 		}
 	}
+
+	GLCheckError();
 	
-	static const GLint glfilter[] = { GL_NEAREST, GL_LINEAR_MIPMAP_LINEAR };
+	static const GLint glfilterMin[] = { GL_NEAREST, GL_LINEAR_MIPMAP_LINEAR };
+	static const GLint glfilterMag[] = { GL_NEAREST, GL_LINEAR };
 	static const GLint glwrap[] = { GL_REPEAT, GL_CLAMP_TO_EDGE };
 
 #ifdef	__USE_SAMPLERS
@@ -142,32 +153,50 @@ void RenderState::Update( bool forced )
 		}
 	}
 #else
-	for( int32_t i = 0; i < 4; i++ )
+
+	GLCheckError();
+	for (int32_t i = 0; i < m_renderer->GetCurrentTextures().size(); i++)
 	{
+		/* テクスチャが設定されていない場合はスキップ */
+		if (m_renderer->GetCurrentTextures()[i] == 0) continue;
+
 		if( m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced )
 		{
 			GLExt::glActiveTexture( GL_TEXTURE0 + i );
+			GLCheckError();
 
 			int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
 
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glfilter[filter_] );
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glfilter[filter_] );
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glfilterMag[filter_] );
+			GLCheckError();
+
+			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glfilterMin[filter_] );
+			GLCheckError();
 		}
 
 		if( m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced )
 		{
 			GLExt::glActiveTexture( GL_TEXTURE0 + i );
+			GLCheckError();
 
 			int32_t wrap_ = (int32_t)m_next.TextureWrapTypes[i];
+
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glwrap[wrap_] );
+			GLCheckError();
+
 			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glwrap[wrap_] );
+			GLCheckError();
 		}
 	}
+	GLCheckError();
+
 #endif
 
 	GLExt::glActiveTexture( GL_TEXTURE0 );
 	
 	m_active = m_next;
+
+	GLCheckError();
 }
 
 //-----------------------------------------------------------------------------------

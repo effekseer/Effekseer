@@ -305,14 +305,21 @@ void Shader::EnableAttribs()
 			GLExt::glEnableVertexAttribArray( m_aid[i] );
 		}
 	}
+	GLCheckError();
 }
 
 void Shader::DisableAttribs()
 {
+	GLCheckError();
+
 	for( size_t i = 0; i < m_aid.size(); i++ )
 	{
-		GLExt::glDisableVertexAttribArray( m_aid[i] );
+		if (m_aid[i] >= 0)
+		{
+			GLExt::glDisableVertexAttribArray(m_aid[i]);
+		}
 	}
+	GLCheckError();
 }
 
 void Shader::SetVertex()

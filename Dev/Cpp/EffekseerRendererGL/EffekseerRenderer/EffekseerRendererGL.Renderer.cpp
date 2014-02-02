@@ -203,6 +203,8 @@ void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 //----------------------------------------------------------------------------------
 bool RendererImplemented::BeginRendering()
 {
+	GLCheckError();
+
 	::Effekseer::Matrix44::Mul( m_cameraProj, m_camera, m_proj );
 
 	// ステートを保存する
@@ -223,6 +225,9 @@ bool RendererImplemented::BeginRendering()
 
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
+	m_currentTextures.clear();
+
+	GLCheckError();
 
 	return true;
 }
@@ -232,6 +237,8 @@ bool RendererImplemented::BeginRendering()
 //----------------------------------------------------------------------------------
 bool RendererImplemented::EndRendering()
 {
+	GLCheckError();
+
 	// ステートを復元する
 	if(m_restorationOfStates)
 	{
@@ -244,6 +251,8 @@ bool RendererImplemented::EndRendering()
 		glBlendFunc(m_originalState.blendSrc, m_originalState.blendDst);
 		GLExt::glBlendEquation(m_originalState.blendEquation);
 	}
+
+	GLCheckError();
 
 	return true;
 }
@@ -469,8 +478,12 @@ void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetLayout(Shader* shader)
 {
+	GLCheckError();
+
 	shader->EnableAttribs();
 	shader->SetVertex();
+
+	GLCheckError();
 }
 
 //----------------------------------------------------------------------------------
@@ -478,8 +491,12 @@ void RendererImplemented::SetLayout(Shader* shader)
 //----------------------------------------------------------------------------------
 void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset )
 {
+	GLCheckError();
+
 	assert( vertexOffset == 0 );
 	glDrawElements(GL_TRIANGLES, spriteCount * 6, GL_UNSIGNED_SHORT, NULL);
+
+	GLCheckError();
 }
 
 //----------------------------------------------------------------------------------
@@ -487,7 +504,11 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 //----------------------------------------------------------------------------------
 void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 {
+	GLCheckError();
+
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL);
+
+	GLCheckError();
 }
 
 //----------------------------------------------------------------------------------
@@ -495,7 +516,11 @@ void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 //----------------------------------------------------------------------------------
 void RendererImplemented::BeginShader(Shader* shader)
 {
+	GLCheckError();
+
 	shader->BeginScene();
+
+	GLCheckError();
 }
 
 //----------------------------------------------------------------------------------
@@ -503,12 +528,19 @@ void RendererImplemented::BeginShader(Shader* shader)
 //----------------------------------------------------------------------------------
 void RendererImplemented::EndShader(Shader* shader)
 {
+	GLCheckError();
+
 	shader->DisableAttribs();
+	GLCheckError();
 
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	GLCheckError();
+
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
+	GLCheckError();
 
 	shader->EndScene();
+	GLCheckError();
 }
 
 //----------------------------------------------------------------------------------
@@ -516,10 +548,17 @@ void RendererImplemented::EndShader(Shader* shader)
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetTextures(Shader* shader, GLuint* textures, int32_t count)
 {
+	GLCheckError();
+
+	m_currentTextures.clear();
+	m_currentTextures.resize(count);
+
 	for (int32_t i = 0; i < count; i++)
 	{
 		GLExt::glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, textures[i]);
+		
+		m_currentTextures[i] = textures[i];
 
 		if (shader->GetTextureSlotEnable(i))
 		{
@@ -527,6 +566,8 @@ void RendererImplemented::SetTextures(Shader* shader, GLuint* textures, int32_t 
 		}
 	}
 	GLExt::glActiveTexture(GL_TEXTURE0);
+
+	GLCheckError();
 }
 
 //----------------------------------------------------------------------------------

@@ -172,6 +172,9 @@ private:
 
 	bool	m_restorationOfStates;
 
+	/* 現在設定されているテクスチャ */
+	std::vector<GLuint>	m_currentTextures;
+
 public:
 	/**
 		@brief	コンストラクタ
@@ -338,6 +341,8 @@ public:
 	void SetTextures(Shader* shader, GLuint* textures, int32_t count);
 
 	void ResetRenderState();
+
+	std::vector<GLuint>& GetCurrentTextures() { return m_currentTextures; }
 };
 
 //----------------------------------------------------------------------------------
