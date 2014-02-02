@@ -1225,11 +1225,26 @@ public:
 
 	/**
 		@brief	エフェクトのリロードを行う。
+		@param	managers	[in]	マネージャーの配列
+		@param	managersCount	[in]	マネージャーの個数
+		@param	data	[in]	エフェクトのデータ
+		@param	size	[in]	エフェクトのデータサイズ
+		@param	materialPath	[in]	リソースの読み込み元
+		@return	成否
+		@note
+		Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 	*/
 	virtual bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
-		@brief	エフェクトのリロードを行う。
+	@brief	エフェクトのリロードを行う。
+	@param	managers	[in]	マネージャーの配列
+	@param	managersCount	[in]	マネージャーの個数
+	@param	path	[in]	エフェクトの読み込み元
+	@param	materialPath	[in]	リソースの読み込み元
+	@return	成否
+	@note
+	Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 	*/
 	virtual bool Reload( Manager* managers, int32_t managersCount,const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
 
@@ -2633,7 +2648,8 @@ namespace Effekseer {
 /**
 	@brief	設定クラス
 	@note
-	EffectLoader等、全てのレンダラー、ローダーを設定することができ、Managerの代わりにエフェクト読み込み時に使用する。
+	EffectLoader等、ファイル読み込みに関する設定することができる。
+	Managerの代わりにエフェクト読み込み時に使用することで、Managerとは独立してEffectインスタンスを生成することができる。
 */
 	class Setting
 	{
@@ -2647,15 +2663,6 @@ namespace Effekseer {
 		TextureLoader*	m_textureLoader;
 		SoundLoader*	m_soundLoader;
 		ModelLoader*	m_modelLoader;
-
-		// メモリ確保関数
-		static void* EFK_STDCALL Malloc(unsigned int size);
-
-		// メモリ破棄関数
-		static void EFK_STDCALL Free(void* p, unsigned int size);
-
-		// ランダム関数
-		static int EFK_STDCALL Rand();
 
 		/**
 			@brief	コンストラクタ

@@ -126,11 +126,26 @@ public:
 
 	/**
 		@brief	エフェクトのリロードを行う。
+		@param	managers	[in]	マネージャーの配列
+		@param	managersCount	[in]	マネージャーの個数
+		@param	data	[in]	エフェクトのデータ
+		@param	size	[in]	エフェクトのデータサイズ
+		@param	materialPath	[in]	リソースの読み込み元
+		@return	成否
+		@note
+		Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 	*/
 	virtual bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
-		@brief	エフェクトのリロードを行う。
+	@brief	エフェクトのリロードを行う。
+	@param	managers	[in]	マネージャーの配列
+	@param	managersCount	[in]	マネージャーの個数
+	@param	path	[in]	エフェクトの読み込み元
+	@param	materialPath	[in]	リソースの読み込み元
+	@return	成否
+	@note
+	Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 	*/
 	virtual bool Reload( Manager* managers, int32_t managersCount,const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
 

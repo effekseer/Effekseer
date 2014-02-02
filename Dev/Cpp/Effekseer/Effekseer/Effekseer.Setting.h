@@ -17,7 +17,8 @@ namespace Effekseer {
 /**
 	@brief	設定クラス
 	@note
-	EffectLoader等、全てのレンダラー、ローダーを設定することができ、Managerの代わりにエフェクト読み込み時に使用する。
+	EffectLoader等、ファイル読み込みに関する設定することができる。
+	Managerの代わりにエフェクト読み込み時に使用することで、Managerとは独立してEffectインスタンスを生成することができる。
 */
 	class Setting
 	{
@@ -31,15 +32,6 @@ namespace Effekseer {
 		TextureLoader*	m_textureLoader;
 		SoundLoader*	m_soundLoader;
 		ModelLoader*	m_modelLoader;
-
-		// メモリ確保関数
-		static void* EFK_STDCALL Malloc(unsigned int size);
-
-		// メモリ破棄関数
-		static void EFK_STDCALL Free(void* p, unsigned int size);
-
-		// ランダム関数
-		static int EFK_STDCALL Rand();
 
 		/**
 			@brief	コンストラクタ
