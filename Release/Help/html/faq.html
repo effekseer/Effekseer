@@ -81,6 +81,11 @@ Effekseer::Manager::DrawHandleをEffekseer::Manager::Drawの代わりに使用�
 初期化時の最大インスタンス数が小さすぎるケースが多いようです。
 		</p>
 
+		<h3>OpenGL版でテクスチャが設定されているインスタンスが描画されない。</h3>
+		<p>
+OpenGL版では、テクスチャはミップマップを持っている必要があります。「glGenerateMipmap」を使用して生成するようお願いします。
+		</p>
+
 		<h3>DXライブラリの3D表示がおかしくなる。</h3>
 		<p>
 Effekseerでエフェクトを描画した後、RefreshDxLibDirect3DSettingを呼んでください。
