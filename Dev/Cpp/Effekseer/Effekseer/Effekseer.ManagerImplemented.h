@@ -146,6 +146,18 @@ private:
 	/* サウンド再生用インスタンス */
 	SoundPlayer*				m_soundPlayer;
 
+	// メモリ確保関数
+	MallocFunc	m_MallocFunc;
+
+	// メモリ破棄関数
+	FreeFunc	m_FreeFunc;
+
+	// ランダム関数
+	RandFunc	m_randFunc;
+
+	// ランダム関数最大値
+	int			m_randMax;
+
 	// 描画オブジェクト追加
 	Handle AddDrawSet( Effect* effect, InstanceContainer* pInstanceContainer, InstanceGlobal* pGlobalPointer );
 

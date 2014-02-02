@@ -24,18 +24,6 @@ namespace Effekseer {
 	private:
 		int32_t		m_ref;
 
-		// メモリ確保関数
-		MallocFunc	m_MallocFunc;
-
-		// メモリ破棄関数
-		FreeFunc	m_FreeFunc;
-
-		// ランダム関数
-		RandFunc	m_randFunc;
-
-		// ランダム関数最大値
-		int			m_randMax;
-
 		/* 座標系 */
 		eCoordinateSystem		m_coordinateSystem;
 
@@ -80,46 +68,6 @@ namespace Effekseer {
 			@return	参照カウンタ
 		*/
 		int32_t Release();
-
-		/**
-		@brief	メモリ確保関数を取得する。
-		*/
-		 MallocFunc GetMallocFunc() const ;
-
-		/**
-		@brief	メモリ確保関数を設定する。
-		*/
-		 void SetMallocFunc(MallocFunc func) ;
-
-		/**
-		@brief	メモリ破棄関数を取得する。
-		*/
-		 FreeFunc GetFreeFunc() const ;
-
-		/**
-		@brief	メモリ破棄関数を設定する。
-		*/
-		 void SetFreeFunc(FreeFunc func) ;
-
-		/**
-		@brief	ランダム関数を取得する。
-		*/
-		 RandFunc GetRandFunc() const ;
-
-		/**
-		@brief	ランダム関数を設定する。
-		*/
-		 void SetRandFunc(RandFunc func) ;
-
-		/**
-		@brief	ランダム最大値を取得する。
-		*/
-		 int GetRandMax() const ;
-
-		/**
-		@brief	ランダム関数を設定する。
-		*/
-		 void SetRandMax(int max_) ;
 
 		/**
 		@brief	座標系を取得する。

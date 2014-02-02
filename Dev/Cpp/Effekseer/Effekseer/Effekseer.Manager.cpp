@@ -303,6 +303,11 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 	, m_setting			( NULL )
 	, m_sequenceNumber	( 0 )
 
+	, m_MallocFunc(NULL)
+	, m_FreeFunc(NULL)
+	, m_randFunc(NULL)
+	, m_randMax(0)
+
 	, m_spriteRenderer(NULL)
 	, m_ribbonRenderer(NULL)
 	, m_ringRenderer(NULL)
@@ -437,15 +442,15 @@ uint32_t ManagerImplemented::GetSequenceNumber() const
 //----------------------------------------------------------------------------------
 MallocFunc ManagerImplemented::GetMallocFunc() const
 {
-	return m_setting->GetMallocFunc();
+	return m_MallocFunc;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::SetMallocFunc( MallocFunc func )
+void ManagerImplemented::SetMallocFunc(MallocFunc func)
 {
-	m_setting->SetMallocFunc(func);
+	m_MallocFunc = func;
 }
 
 //----------------------------------------------------------------------------------
@@ -453,15 +458,15 @@ void ManagerImplemented::SetMallocFunc( MallocFunc func )
 //----------------------------------------------------------------------------------
 FreeFunc ManagerImplemented::GetFreeFunc() const
 {
-	return m_setting->GetFreeFunc();
+	return m_FreeFunc;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::SetFreeFunc( FreeFunc func )
+void ManagerImplemented::SetFreeFunc(FreeFunc func)
 {
-	m_setting->SetFreeFunc(func);
+	m_FreeFunc = func;
 }
 
 //----------------------------------------------------------------------------------
@@ -469,15 +474,15 @@ void ManagerImplemented::SetFreeFunc( FreeFunc func )
 //----------------------------------------------------------------------------------
 RandFunc ManagerImplemented::GetRandFunc() const
 {
-	return m_setting->GetRandFunc();
+	return m_randFunc;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::SetRandFunc( RandFunc func )
+void ManagerImplemented::SetRandFunc(RandFunc func)
 {
-	m_setting->SetRandFunc(func);
+	m_randFunc = func;
 }
 
 //----------------------------------------------------------------------------------
@@ -485,16 +490,17 @@ void ManagerImplemented::SetRandFunc( RandFunc func )
 //----------------------------------------------------------------------------------
 int ManagerImplemented::GetRandMax() const
 {
-	return m_setting->GetRandMax();
+	return m_randMax;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::SetRandMax( int max_ )
+void ManagerImplemented::SetRandMax(int max_)
 {
-	m_setting->SetRandMax(max_);
+	m_randMax = max_;
 }
+
 
 //----------------------------------------------------------------------------------
 //
