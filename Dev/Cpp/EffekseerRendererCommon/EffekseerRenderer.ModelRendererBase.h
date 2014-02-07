@@ -10,6 +10,7 @@
 #include <string.h>
 #include <vector>
 
+#include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.IndexBufferBase.h"
@@ -150,12 +151,12 @@ public:
 
 		if (param.ColorTextureIndex >= 0)
 		{
-			textures[0] = (TEXTURE) param.EffectPointer->GetImage(param.ColorTextureIndex);
+			textures[0] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetImage(param.ColorTextureIndex));
 		}
 
 		if (param.NormalTextureIndex >= 0)
 		{
-			textures[1] = (TEXTURE) param.EffectPointer->GetImage(param.NormalTextureIndex);
+			textures[1] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetImage(param.NormalTextureIndex));
 		}
 		
 		renderer->SetTextures(shader_, textures, 2);

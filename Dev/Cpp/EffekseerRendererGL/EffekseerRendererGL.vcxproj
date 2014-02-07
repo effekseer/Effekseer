@@ -88,6 +88,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.CommonUtils.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.ModelRendererBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.Renderer.h" />
