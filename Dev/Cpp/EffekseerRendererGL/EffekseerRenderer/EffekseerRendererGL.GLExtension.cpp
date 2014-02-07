@@ -165,7 +165,7 @@ GLuint glCreateShader(GLenum type)
 #if _WIN32
 	return g_glCreateShader(type);
 #else
-	return ::glCreateShader(n, buffers);
+	return ::glCreateShader(type);
 #endif
 }
 
