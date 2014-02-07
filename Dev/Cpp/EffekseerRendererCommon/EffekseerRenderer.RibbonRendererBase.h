@@ -166,7 +166,7 @@ protected:
 
 		if (param.ColorTextureIndex >= 0)
 		{
-			TEXTURE texture = reinterpret_cast<TEXTURE>(param.EffectPointer->GetImage(param.ColorTextureIndex));
+			TEXTURE texture = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetImage(param.ColorTextureIndex));
 			renderer->SetTextures(shader_, &texture, 1);
 		}
 		else

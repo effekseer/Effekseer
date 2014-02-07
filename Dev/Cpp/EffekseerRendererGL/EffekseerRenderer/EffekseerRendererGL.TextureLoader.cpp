@@ -9,6 +9,7 @@
 #include "EffekseerRendererGL.RendererImplemented.h"
 #include "EffekseerRendererGL.TextureLoader.h"
 #include "EffekseerRendererGL.GLExtension.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -124,7 +125,7 @@ void TextureLoader::Unload( void* data )
 {
 	if( data != NULL )
 	{
-		GLuint texture = (GLuint)data;
+		GLuint texture = EffekseerRenderer::TexturePointerToTexture <GLuint> (data);
 		glDeleteTextures(1, &texture);
 	}
 }
