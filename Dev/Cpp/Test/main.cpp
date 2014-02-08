@@ -173,15 +173,15 @@ void Init()
 
 	SetCameraMatrix( ::Effekseer::Matrix44().LookAtRH( g_position, g_focus, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
 
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Laser01.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Laser02.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Simple_Ribbon_Parent.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Simple_Ribbon_Sword.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Simple_Ring_Shape1.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Simple_Ring_Shape2.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Simple_Sprite_FixedYAxis.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Simple_Track1.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"block.efk" ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Laser01.efk" ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Laser02.efk" ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Ribbon_Parent.efk" ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Ribbon_Sword.efk" ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Ring_Shape1.efk" ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Ring_Shape2.efk" ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Sprite_FixedYAxis.efk" ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Track1.efk" ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/block.efk" ) );
 	
 	PlayEffect();
 }

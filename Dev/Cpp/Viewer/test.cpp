@@ -130,7 +130,7 @@ int main()
 	g_renderer->GuideHeight = 100;
 
 	char* pData = NULL;
-	FILE* fp = _wfopen( L"test.efk", L"rb" );
+	FILE* fp = _wfopen( L"Resource/test.efk", L"rb" );
 	fseek( fp, 0, SEEK_END );
 	size_t size = ftell( fp );
 	pData = new char[size];
