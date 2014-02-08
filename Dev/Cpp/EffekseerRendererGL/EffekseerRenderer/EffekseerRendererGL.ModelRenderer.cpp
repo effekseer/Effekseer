@@ -437,7 +437,23 @@ End:;
 //----------------------------------------------------------------------------------
 void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* userData )
 {
-	
+#if defined(MODEL_SOFTWARE_INSTANCING)
+	EndRendering_<
+		RendererImplemented,
+		Shader,
+		GLuint,
+		Model,
+		true,
+		20>(
+		m_renderer,
+		m_shader_lighting_texture_normal,
+		m_shader_lighting_normal,
+		m_shader_lighting_texture,
+		m_shader_lighting,
+		m_shader_texture,
+		m_shader,
+		parameter );
+#else
 	EndRendering_<
 		RendererImplemented,
 		Shader,
@@ -453,6 +469,8 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		m_shader_texture,
 		m_shader,
 		parameter );
+#endif
+
 	
 	/*
 	return;
