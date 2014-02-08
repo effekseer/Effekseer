@@ -4,15 +4,16 @@
 //----------------------------------------------------------------------------------
 #include <assert.h>
 #include <windows.h>
-#include <GL/glew.h>
-#include <GL/wglew.h>
+
 #include "../Effekseer/Effekseer.h"
 #include "../EffekseerRendererGL/EffekseerRendererGL.h"
 #include "graphics.h"
+#include "window.h"
+
+#if _WIN32
 
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "glew32s.lib")
 #pragma comment(lib, "libpng.lib")
 #pragma comment(lib, "zlib.lib")
 
@@ -22,23 +23,61 @@
 #pragma comment(lib, "EffekseerRendererGL.Release.lib" )
 #endif
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-static void WaitFrame();
+#else
+
+#endif
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+static int64_t GetTime()
+{
+#ifdef _WIN32
+	int64_t count, freq;
+	if (QueryPerformanceCounter((LARGE_INTEGER*)&count))
+	{
+		if (QueryPerformanceFrequency((LARGE_INTEGER*)&freq))
+		{
+			return count * 1000000 / freq;
+		}
+	}
+	return 0;
+#else
+	struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (int64_t)tv.tv_sec * 1000000 + (int64_t)tv.tv_usec;
+#endif
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#ifdef _WIN32
+static void Sleep_( int32_t ms )
+{
+	::Sleep( ms );
+}
+#else
+static void Sleep_( int32_t ms )
+{
+	usleep( 1000 * ms );
+}
+#endif
+
+#ifdef _WIN32
 static HDC					g_hDC = NULL;
 static HGLRC				g_hGLRC = NULL;
-static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
-extern ::Effekseer::Manager*			g_manager;
+#else
+static GLXContext			g_glx;
+static Display*				g_display;
+static ::Window				g_window;
+#endif
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InitGraphics(  void* handle1, void* handle2, int width, int height )
+#ifdef _WIN32
+bool InitGLWindow(void* handle1, void* handle2)
 {
 	timeBeginPeriod(1);
 
@@ -58,13 +97,115 @@ void InitGraphics(  void* handle1, void* handle2, int width, int height )
 	SetPixelFormat( g_hDC, pxfm, &pfd );
 
 	g_hGLRC = wglCreateContext( g_hDC );
+	return true;
+}
 
+#else
+bool InitGLWindow(void* handle1, void* handle2)
+{
+	Display* display_ = (Display*)handle1;
+	::Window window_ = *((::Window*)handle2);
+
+	GLint attribute[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
+	XVisualInfo* vi = glXChooseVisual(display_, DefaultScreen(display_), attribute);
+
+	if( vi == NULL )
+	{	
+		return false;
+	}
+
+	g_glx = glXCreateContext(display_, vi, 0, GL_TRUE);
+	g_display = display_;
+	g_window = window_;
+
+	XFree(vi);
+
+	return true;
+}
+#endif
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#if _WIN32
+void MakeContextCurrent()
+{
 	wglMakeCurrent( g_hDC, g_hGLRC );
+}
 
-	GLenum glewIniterr = glewInit();
-    assert ( glewIniterr == GLEW_OK );
+#else
+void MakeContextCurrent()
+{
+	glXMakeCurrent(m_display, m_window, m_glx);
+}
 
-	wglSwapIntervalEXT(1);
+#endif
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#if _WIN32
+void MakeContextNone()
+{
+	wglMakeCurrent( 0, 0 );
+}
+
+#else
+void MakeContextNone()
+{
+	glXMakeCurrent(g_display, 0, NULL);
+}
+
+#endif
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#if _WIN32
+void DestroyContext()
+{
+	wglDeleteContext( g_hGLRC );
+	timeEndPeriod(1);
+}
+
+#else
+void DestroyContext()
+{
+	glXDestroyContext(g_display, g_glx);
+}
+
+#endif
+
+#if _WIN32
+void SwapBuffers()
+{
+	SwapBuffers( g_hDC );
+}
+#else
+void SwapBuffers()
+{
+	glXSwapBuffers(g_display, g_window);
+}
+#endif
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+static void WaitFrame();
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
+extern ::Effekseer::Manager*			g_manager;
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void InitGraphics(  void* handle1, void* handle2, int width, int height )
+{
+	InitGLWindow( handle1, handle2 );
+
 	glViewport( 0, 0, width, height );
 
 	g_renderer = ::EffekseerRendererGL::Renderer::Create( 2000 );
@@ -88,10 +229,8 @@ void InitGraphics(  void* handle1, void* handle2, int width, int height )
 void TermGraphics()
 {
 	g_renderer->Destory();
-	wglMakeCurrent( 0, 0 );
-	wglDeleteContext( g_hGLRC );
-
-	timeEndPeriod(1);
+	MakeContextNone();
+	DestroyContext();
 }
 
 //----------------------------------------------------------------------------------
@@ -99,8 +238,7 @@ void TermGraphics()
 //----------------------------------------------------------------------------------
 void Rendering()
 {
-	wglMakeCurrent( g_hDC, g_hGLRC );
-	wglSwapIntervalEXT( 1 );
+	MakeContextCurrent();
 
 	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -111,10 +249,10 @@ void Rendering()
 	g_renderer->EndRendering();
 
 	glFlush();
-	wglMakeCurrent( 0, 0 );
+	MakeContextNone();
 
 	WaitFrame();
-	SwapBuffers( g_hDC );
+	SwapBuffers();
 }
 
 //----------------------------------------------------------------------------------
@@ -130,14 +268,14 @@ void SetCameraMatrix( const ::Effekseer::Matrix44& matrix )
 //----------------------------------------------------------------------------------
 static void WaitFrame()
 {
-	static DWORD beforeTime = timeGetTime();
-	DWORD currentTime = timeGetTime();
+	static uint64_t beforeTime = GetTime() / 1000;
+	DWORD currentTime = GetTime() / 1000;
 	
 	DWORD elapsedTime = currentTime - beforeTime;
 	if (elapsedTime < 16) {
-		Sleep(16 - elapsedTime);
+		Sleep_(16 - elapsedTime);
 	}
-	beforeTime = timeGetTime();
+	beforeTime = GetTime() / 1000;
 }
 
 //----------------------------------------------------------------------------------

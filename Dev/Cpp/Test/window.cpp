@@ -172,8 +172,8 @@ void InitWindow(int width, int height)
 
 	XMapRaised(g_display, g_window);
 
-	XSelectInput( g_display, g_window, StructureNotifyMask );
-
+	XSelectInput( g_display, g_window, StructureNotifyMask | ButtonPressMask );
+	
 	g_wm_delete_window = XInternAtom( g_display, "WM_DELETE_WINDOW", False );
 	XSetWMProtocols( g_display, g_window, &g_wm_delete_window, 1 );
 }
@@ -192,6 +192,12 @@ bool DoEvent()
 
 		switch ( event.type )
 		{
+			case ButtonPress:
+			{
+				PlayEffect();
+			}
+			break;
+
 			case ClientMessage :
 			{
 				if ( (Atom)event.xclient.data.l[0] == g_wm_delete_window )

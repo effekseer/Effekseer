@@ -10,6 +10,7 @@ cmake_minimum_required(VERSION 2.8)
 # ソースコード設定
 set(effekseer_src
 	graphics_gl.cpp
+	window.cpp
 	main.cpp)
 
 # インクルードの設定
