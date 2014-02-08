@@ -205,6 +205,7 @@ extern ::Effekseer::Manager*			g_manager;
 void InitGraphics(  void* handle1, void* handle2, int width, int height )
 {
 	InitGLWindow( handle1, handle2 );
+	MakeContextCurrent();
 
 	glViewport( 0, 0, width, height );
 
