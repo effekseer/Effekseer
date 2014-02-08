@@ -113,6 +113,7 @@ void ExitWindow()
 //----------------------------------------------------------------------------------
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <locale.h>
 
 static Display*	g_display;
 static Window	g_window;
@@ -142,10 +143,10 @@ Window* GetWindow()
 void InitWindow(int width, int height)
 {
 	g_display = XOpenDisplay(NULL);
-	if( g_display == nullptr ) return;
+	if( g_display == NULL ) return;
 
-	auto background = WhitePixel(g_display, 0);
-	auto foreground = BlackPixel(g_display, 0);
+	unsigned long background = WhitePixel(g_display, 0);
+	unsigned long foreground = BlackPixel(g_display, 0);
 
 	g_window = XCreateSimpleWindow(
 		g_display,
@@ -155,14 +156,15 @@ void InitWindow(int width, int height)
 
 	/* タイトルの設定を行う。 */
 
-	char* title_ptr = "EffekseerTest";
+	const char* title_ptr = "EffekseerTest";
+	char* titles_ptr[] = { (char*)title_ptr };
 
 	XTextProperty title_prop;
 	setlocale(LC_ALL,"");
-	XmbTextListToTextProperty( g_display, &(title_ptr), 1, XCompoundTextStyle, &title_prop );
+	XmbTextListToTextProperty( g_display, titles_ptr, 1, XCompoundTextStyle, &title_prop );
 	XSetWMName(g_display,g_window,&title_prop);
 
-	XmbTextListToTextProperty(g_display, &(title_ptr), 1, XCompoundTextStyle, &title_prop );
+	XmbTextListToTextProperty(g_display, titles_ptr, 1, XCompoundTextStyle, &title_prop );
 	XSetWMIconName(g_display,g_window,&title_prop);
 
 	g_gc = XCreateGC(g_display, g_window, 0, 0);

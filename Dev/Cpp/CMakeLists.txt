@@ -15,8 +15,8 @@ endif()
 
 option(USE_INTERNAL_LOADER "Use Internal Loader" ON)
 
-option(USE_GLEW_STATIC "Use Glew static library" ON)
-option(USE_GLEW_DLL "Use Glew DLL" OFF)
+option(USE_GLEW_STATIC "Use Glew static library" OFF)
+option(USE_GLEW_DLL "Use Glew DLL" ON)
 option(USE_OPENGLES2 "Use OpenGL ES2" OFF)
 
 # ソースコード設定

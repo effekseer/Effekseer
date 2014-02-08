@@ -6,10 +6,14 @@
 #include <stdio.h>
 #include <assert.h>
 #include <vector>
+#include <string>
 
 #include "window.h"
 #include "graphics.h"
+
+#if _WIN32
 #include "sound.h"
+#endif
 
 #if _WIN32
 
@@ -45,6 +49,41 @@ static ::Effekseer::Vector3D			g_focus;
 
 static std::vector < ::Effekseer::Effect *>	g_effects;
 
+#ifdef _WIN32
+typedef wchar_t efchar;
+typedef std::wstring efstring;
+#else 
+typedef uint16_t efchar;
+typedef std::basic_string<uint16_t> efstring;
+#endif
+
+static efstring ToEFString(const wchar_t* src)
+{
+	if (sizeof(wchar_t)== 2)
+	{
+#ifdef _WIN32
+		return efstring(src);
+#else
+		return efstring((uint16_t*)src);
+#endif
+	}
+	if (sizeof(wchar_t)== 4)
+	{
+#ifndef _WIN32
+		uint16_t temp[2048];
+		int32_t length = 0;
+		while (src[length] != 0 && length < 2047)
+		{
+			temp[length] = (uint16_t)src[length];
+			length++;
+		}
+		temp[length] = 0;
+		return efstring(temp);
+#endif
+	}
+	return efstring();
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -59,7 +98,7 @@ int main()
 	InitSound( GetHandle(), NULL );
 #else
 	InitGraphics( GetDisplay(), GetWindow(), g_window_width, g_window_height);
-	InitSound( GetHandle(), NULL );
+	//InitSound( GetDisplay(), GetWindow() );
 #endif
 
 	Init();
@@ -80,7 +119,7 @@ int main()
 		ES_SAFE_RELEASE(g_effects[i]);
 	}
 
-	TermSound();
+	//TermSound();
 
 	TermGraphics();
 
@@ -99,15 +138,15 @@ void Init()
 
 	SetCameraMatrix( ::Effekseer::Matrix44().LookAtRH( g_position, g_focus, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
 
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Laser01.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Laser02.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Ribbon_Parent.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Ribbon_Sword.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Ring_Shape1.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Ring_Shape2.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Sprite_FixedYAxis.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/Simple_Track1.efk" ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"Resource/block.efk" ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser01.efk").c_str() ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser02.efk").c_str() ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ribbon_Parent.efk").c_str() ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ribbon_Sword.efk").c_str() ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ring_Shape1.efk").c_str() ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ring_Shape2.efk").c_str() ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Sprite_FixedYAxis.efk").c_str() ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Track1.efk").c_str() ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block.efk").c_str() ) );
 	
 	PlayEffect();
 }

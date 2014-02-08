@@ -19,8 +19,38 @@ include_directories(
 	../EffekseerRendererGL/
 	)
 
+# 
+link_directories(${PROJECT_SOURCE_DIR}/../lib/)
+
+set(common_lib)
+set(common_inc)
+
+list(APPEND common_lib Effekseer )
+list(APPEND common_lib EffekseerRendererGL )
+
+if (MSVC)
+
+else()
+	list(APPEND common_lib GLEW )
+
+	find_package(PNG REQUIRED)
+	list(APPEND common_lib ${PNG_LIBRARY})
+
+	find_package(Threads REQUIRED)
+	list(APPEND common_lib ${CMAKE_THREAD_LIBS_INIT})
+
+	find_package(X11 REQUIRED)
+	list(APPEND common_inc ${X11_INCLUDE_DIR})
+	list(APPEND common_lib ${X11_LIBRARIES})
+
+	find_package(OpenGL)
+	list(APPEND common_inc ${OPENGL_INCLUDE_DIR})
+	list(APPEND common_lib ${OPENGL_LIBRARY})
+endif()
+
 # コンパイル先を追加
 add_executable( effekseer ${effekseer_src} )
+target_link_libraries(effekseer ${common_lib}) 
 
 # フラグ処理
 add_definitions(-D__EFFEKSEER_RENDERER_GL_GLEW__)

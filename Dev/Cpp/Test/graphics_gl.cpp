@@ -3,7 +3,6 @@
 //
 //----------------------------------------------------------------------------------
 #include <assert.h>
-#include <windows.h>
 
 #include "../Effekseer/Effekseer.h"
 #include "../EffekseerRendererGL/EffekseerRendererGL.h"
@@ -11,7 +10,7 @@
 #include "window.h"
 
 #if _WIN32
-
+#include <Windows.h>
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "libpng.lib")
@@ -24,7 +23,7 @@
 #endif
 
 #else
-
+#include<GL/glx.h>
 #endif
 
 //----------------------------------------------------------------------------------
@@ -136,7 +135,7 @@ void MakeContextCurrent()
 #else
 void MakeContextCurrent()
 {
-	glXMakeCurrent(m_display, m_window, m_glx);
+	glXMakeCurrent(g_display, g_window, g_glx);
 }
 
 #endif
@@ -207,6 +206,13 @@ void InitGraphics(  void* handle1, void* handle2, int width, int height )
 	InitGLWindow( handle1, handle2 );
 	MakeContextCurrent();
 
+#if !_WIN32
+	if( glewInit() != GLEW_OK )
+	{
+		assert(0);
+	}
+#endif
+
 	glViewport( 0, 0, width, height );
 
 	g_renderer = ::EffekseerRendererGL::Renderer::Create( 2000 );
@@ -270,9 +276,9 @@ void SetCameraMatrix( const ::Effekseer::Matrix44& matrix )
 static void WaitFrame()
 {
 	static uint64_t beforeTime = GetTime() / 1000;
-	DWORD currentTime = GetTime() / 1000;
+	uint64_t currentTime = GetTime() / 1000;
 	
-	DWORD elapsedTime = currentTime - beforeTime;
+	uint64_t elapsedTime = currentTime - beforeTime;
 	if (elapsedTime < 16) {
 		Sleep_(16 - elapsedTime);
 	}
