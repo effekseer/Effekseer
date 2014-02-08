@@ -25,7 +25,7 @@ extern ::Effekseer::Manager*	g_manager;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InitSound( HWND handle )
+void InitSound(  void* handle1, void* handle2 )
 {
 	HRESULT hr;
 	

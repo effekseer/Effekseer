@@ -29,7 +29,7 @@ extern ::Effekseer::Manager*			g_manager;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InitGraphics( HWND handle, int width, int height )
+void InitGraphics( void* handle1, void* handle2, int width, int height )
 {
 	D3DPRESENT_PARAMETERS d3dp;
 	ZeroMemory(&d3dp, sizeof(d3dp));
@@ -39,7 +39,7 @@ void InitGraphics( HWND handle, int width, int height )
     d3dp.BackBufferCount = 1;      
 	d3dp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dp.Windowed = TRUE;
-	d3dp.hDeviceWindow = handle;
+	d3dp.hDeviceWindow = (HWND)handle1;
 	d3dp.EnableAutoDepthStencil = TRUE;
     d3dp.AutoDepthStencilFormat = D3DFMT_D16;
 
@@ -52,7 +52,7 @@ void InitGraphics( HWND handle, int width, int height )
 	g_d3d->CreateDevice( 
 		D3DADAPTER_DEFAULT,
 		D3DDEVTYPE_HAL,
-		handle,
+		(HWND)handle1,
 		D3DCREATE_HARDWARE_VERTEXPROCESSING,
 		&d3dp,
 		&g_d3d_device );

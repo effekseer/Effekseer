@@ -37,7 +37,7 @@ extern ::Effekseer::Manager*			g_manager;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InitGraphics( HWND handle, int width, int height )
+void InitGraphics( void* handle1, void* handle2, int width, int height )
 {
 	UINT debugFlag = 0;
 	debugFlag = D3D11_CREATE_DEVICE_DEBUG;
@@ -87,7 +87,7 @@ void InitGraphics( HWND handle, int width, int height )
 	hDXGISwapChainDesc.SampleDesc.Quality = 0;
 	hDXGISwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	hDXGISwapChainDesc.BufferCount = 1;
-	hDXGISwapChainDesc.OutputWindow = handle;
+	hDXGISwapChainDesc.OutputWindow = (HWND)handle1;
 	hDXGISwapChainDesc.Windowed = TRUE;
 	hDXGISwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	hDXGISwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;

@@ -4,7 +4,7 @@
 
 #include "../Effekseer/Effekseer.h"
 
-void InitGraphics( HWND handle, int width, int height );
+void InitGraphics( void* handle1, void* handle2, int width, int height );
 
 void TermGraphics();
 

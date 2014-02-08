@@ -4,7 +4,7 @@
 
 #include "../Effekseer/Effekseer.h"
 
-void InitSound( HWND handle );
+void InitSound(  void* handle1, void* handle2 );
 
 void TermSound();
 

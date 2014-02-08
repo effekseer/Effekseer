@@ -3,12 +3,15 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#include <stdio.h>
 #include <assert.h>
-#include <windows.h>
 #include <vector>
 
+#include "window.h"
 #include "graphics.h"
 #include "sound.h"
+
+#if _WIN32
 
 #if _DEBUG
 #pragma comment(lib, "Effekseer.Debug.lib" )
@@ -16,12 +19,13 @@
 #pragma comment(lib, "Effekseer.Release.lib" )
 #endif
 
+#else
+
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#define __DicrectX9	1
-#define __OpenGL	0
-
 #define __NormalMode 1
 #define __PerformanceCheckMode 0
 
@@ -30,11 +34,9 @@
 //----------------------------------------------------------------------------------
 void Loop();
 void Init();
-void PlayEffect();
 
-static HWND g_window_handle = NULL;
-static int g_window_width = 800;
-static int g_window_height = 600;
+static const int g_window_width = 800;
+static const int g_window_height = 600;
 
 ::Effekseer::Manager*					g_manager = NULL;
 static ::Effekseer::Handle				g_handle = -1;
@@ -46,108 +48,30 @@ static std::vector < ::Effekseer::Effect *>	g_effects;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
-{
-	switch( msg ) 
-	{
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			break;
-		case WM_LBUTTONDOWN:
-			PlayEffect();
-			break;
-		default:
-			return DefWindowProc(hWnd, msg, wParam, lParam);
-	}
-	return 0;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void InitWindow()
-{
-	WNDCLASSW wndClass;
-	wchar_t szClassNme[]      =  L"Effekseer";
-	wndClass.style         = CS_HREDRAW | CS_VREDRAW;
-	wndClass.lpfnWndProc   = WndProc;
-	wndClass.cbClsExtra    = 0;
-	wndClass.cbWndExtra    = 0;
-	wndClass.hInstance     = GetModuleHandle(0);
-	wndClass.hIcon         = NULL;
-	wndClass.hCursor       = LoadCursor(NULL, IDC_ARROW);
-	wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-	wndClass.lpszMenuName  = NULL;
-	wndClass.lpszClassName = szClassNme;
-	RegisterClassW(&wndClass);
-	g_window_handle = CreateWindowW(
-		szClassNme,
-		L"Effekseer Test Program (ÉNÉäÉbÉNÇ∑ÇÈÇ∆çƒê∂)",
-		WS_SYSMENU,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		g_window_width,
-		g_window_height,
-		NULL,
-		NULL,
-		GetModuleHandle(0),
-		NULL);
-	ShowWindow( g_window_handle, true );
-	UpdateWindow( g_window_handle );
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void MainLoop()
-{
-	for(;;)
-	{ 
-		MSG msg;
-		if (PeekMessage (&msg,NULL,0,0,PM_NOREMOVE)) 
-		{
-			if( msg.message == WM_QUIT )
-			{
-				return ;
-			}
-			GetMessage (&msg,NULL,0,0);
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		else
-		{
-			Loop();
-
-			static int count = 0;
-
-			//if (count < 50)
-			{
-				g_manager->Update();
-			}
-
-			count++;
-
-			Rendering();
-		}
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 int main()
 {
-	InitWindow();
+	InitWindow(g_window_width, g_window_height);
 
 	g_manager = ::Effekseer::Manager::Create( 2000 );
 
-	InitGraphics( g_window_handle, g_window_width, g_window_height );
-
-	InitSound( g_window_handle );
+#if _WIN32
+	InitGraphics(GetHandle(), NULL, g_window_width, g_window_height);
+	InitSound( GetHandle(), NULL );
+#else
+	InitGraphics( GetDisplay(), GetWindow(), g_window_width, g_window_height);
+	InitSound( GetHandle(), NULL );
+#endif
 
 	Init();
 
-	MainLoop();
+	while(DoEvent())
+	{
+		Loop();
+
+		g_manager->Update();
+
+		Rendering();
+	}
 
 	g_manager->Destroy();
 
@@ -159,6 +83,8 @@ int main()
 	TermSound();
 
 	TermGraphics();
+
+	ExitWindow();
 
 	return 0;
 }

@@ -38,11 +38,11 @@ extern ::Effekseer::Manager*			g_manager;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InitGraphics( HWND handle, int width, int height )
+void InitGraphics(  void* handle1, void* handle2, int width, int height )
 {
 	timeBeginPeriod(1);
 
-	g_hDC = GetDC( handle );
+	g_hDC = GetDC( (HWND)handle1 );
 
 	PIXELFORMATDESCRIPTOR pfd =
 	{

@@ -8,9 +8,11 @@
     <ClCompile Include="sound_al.cpp" />
     <ClCompile Include="reload.cpp" />
     <ClCompile Include="graphics_dx11.cpp" />
+    <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graphics.h" />
     <ClInclude Include="sound.h" />
+    <ClInclude Include="window.h" />
   </ItemGroup>
 </Project>
