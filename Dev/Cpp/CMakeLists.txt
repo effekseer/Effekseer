@@ -117,6 +117,24 @@ list(APPEND effekseer_renderer_dx11_src
 list(APPEND effekseer_renderer_gl_src
 	${effekseer_renderer_common_src})
 
+set(effekseer_sound_al_src
+	EffekseerSoundAL/EffekseerSound/EffekseerSoundAL.Sound.cpp
+	EffekseerSoundAL/EffekseerSound/EffekseerSoundAL.SoundLoader.cpp
+	EffekseerSoundAL/EffekseerSound/EffekseerSoundAL.SoundPlayer.cpp
+	EffekseerSoundAL/EffekseerSound/EffekseerSoundAL.SoundVoice.cpp)
+
+set(effekseer_sound_dsound_src
+	EffekseerSoundDSound/EffekseerSound/EffekseerSoundDSound.Sound.cpp
+	EffekseerSoundDSound/EffekseerSound/EffekseerSoundDSound.SoundLoader.cpp
+	EffekseerSoundDSound/EffekseerSound/EffekseerSoundDSound.SoundPlayer.cpp
+	EffekseerSoundDSound/EffekseerSound/EffekseerSoundDSound.SoundVoice.cpp)
+
+set(effekseer_sound_xaudio2_src
+	EffekseerSoundXAudio2/EffekseerSound/EffekseerSoundXAudio2.Sound.cpp
+	EffekseerSoundXAudio2/EffekseerSound/EffekseerSoundXAudio2.SoundLoader.cpp
+	EffekseerSoundXAudio2/EffekseerSound/EffekseerSoundXAudio2.SoundPlayer.cpp
+	EffekseerSoundXAudio2/EffekseerSound/EffekseerSoundXAudio2.SoundVoice.cpp)
+
 # インクルードの設定
 include_directories(
 	Effekseer/
@@ -128,9 +146,12 @@ add_library( effekseer STATIC ${effekseer_src} )
 if (MSVC)
 add_library( effekseer_renderer_dx9 STATIC ${effekseer_renderer_dx9_src} )
 add_library( effekseer_renderer_dx11 STATIC ${effekseer_renderer_dx11_src} )
+add_library( effekseer_sound_dsound STATIC ${effekseer_sound_dsound_src} )
+add_library( effekseer_sound_xaudio2 STATIC ${effekseer_sound_xaudio2_src} )
 endif()
 
 add_library( effekseer_renderer_gl STATIC ${effekseer_renderer_gl_src} )
+add_library( effekseer_sound_al STATIC ${effekseer_sound_al_src} )
 
 # フラグ処理
 if (MSVC)
@@ -209,6 +230,40 @@ else()
 set_target_properties(effekseer_renderer_gl PROPERTIES OUTPUT_NAME "EffekseerRendererGL" )
 endif()
 
+if (MSVC)
+if (MSVC)
+set_target_properties(effekseer_sound_dsound PROPERTIES OUTPUT_NAME_DEBUG "EffekseerSoundDSound" )
+set_target_properties(effekseer_sound_dsound PROPERTIES OUTPUT_NAME_RELEASE "EffekseerSoundDSound" )
+else()
+set_target_properties(effekseer_sound_dsound PROPERTIES OUTPUT_NAME "EffekseerSoundDSound" )
+endif()
+endif()
+
+if (MSVC)
+if (MSVC)
+set_target_properties(effekseer_sound_dsound PROPERTIES OUTPUT_NAME_DEBUG "EffekseerSoundDSound" )
+set_target_properties(effekseer_sound_dsound PROPERTIES OUTPUT_NAME_RELEASE "EffekseerSoundDSound" )
+else()
+set_target_properties(effekseer_sound_dsound PROPERTIES OUTPUT_NAME "EffekseerSoundDSound" )
+endif()
+endif()
+
+if (MSVC)
+if (MSVC)
+set_target_properties(effekseer_sound_xaudio2 PROPERTIES OUTPUT_NAME_DEBUG "EffekseerSoundXAudio2" )
+set_target_properties(effekseer_sound_xaudio2 PROPERTIES OUTPUT_NAME_RELEASE "EffekseerSoundXAudio2" )
+else()
+set_target_properties(effekseer_sound_xaudio2 PROPERTIES OUTPUT_NAME "EffekseerSoundXAudio2" )
+endif()
+endif()
+
+if (MSVC)
+set_target_properties(effekseer_sound_al PROPERTIES OUTPUT_NAME_DEBUG "EffekseerSoundAL" )
+set_target_properties(effekseer_sound_al PROPERTIES OUTPUT_NAME_RELEASE "EffekseerSoundAL" )
+else()
+set_target_properties(effekseer_sound_al PROPERTIES OUTPUT_NAME "EffekseerSoundAL" )
+endif()
+
 
 install(
 	TARGETS effekseer
@@ -229,7 +284,26 @@ install(
 	LIBRARY DESTINATION lib)
 endif()
 
+if (MSVC)
+install(
+	TARGETS effekseer_sound_dsound
+	ARCHIVE DESTINATION lib
+	LIBRARY DESTINATION lib)
+endif()
+
+if (MSVC)
+install(
+	TARGETS effekseer_sound_xaudio2
+	ARCHIVE DESTINATION lib
+	LIBRARY DESTINATION lib)
+endif()
+
 install(
 	TARGETS effekseer_renderer_gl
+	ARCHIVE DESTINATION lib
+	LIBRARY DESTINATION lib)
+
+install(
+	TARGETS effekseer_sound_al
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib)
