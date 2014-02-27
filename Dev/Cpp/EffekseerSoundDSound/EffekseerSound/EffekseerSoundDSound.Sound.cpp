@@ -3,10 +3,10 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "../EffekseerSoundDSound.h"
-#include "EffekseerSound.SoundPlayer.h"
-#include "EffekseerSound.SoundVoice.h"
-#include "EffekseerSound.SoundLoader.h"
-#include "EffekseerSound.SoundImplemented.h"
+#include "EffekseerSoundDSound.SoundPlayer.h"
+#include "EffekseerSoundDSound.SoundVoice.h"
+#include "EffekseerSoundDSound.SoundLoader.h"
+#include "EffekseerSoundDSound.SoundImplemented.h"
 
 //----------------------------------------------------------------------------------
 //

@@ -28,6 +28,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerSoundAL", "Effekse
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerRendererDX11", "EffekseerRendererDX11\EffekseerRendererDX11.vcxproj", "{4E7A02CF-51F7-414B-9874-A34116D2B43C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerSoundDSound", "EffekseerSoundDSound\EffekseerSoundDSound.vcxproj", "{3BE4C631-D91D-492B-8E0F-4E70CAB09021}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_DX11|Win32 = Debug_DX11|Win32
@@ -152,6 +154,22 @@ Global
 		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Release_GL|Win32.Build.0 = Release|Win32
 		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Release|Win32.ActiveCfg = Release|Win32
 		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Release|Win32.Build.0 = Release|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Debug_DX11|Win32.ActiveCfg = Debug|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Debug_DX11|Win32.Build.0 = Debug|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Debug_DX9|Win32.ActiveCfg = Debug|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Debug_DX9|Win32.Build.0 = Debug|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Debug_GL|Win32.ActiveCfg = Debug|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Debug_GL|Win32.Build.0 = Debug|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Debug|Win32.Build.0 = Debug|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Release_DX11|Win32.ActiveCfg = Release|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Release_DX11|Win32.Build.0 = Release|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Release_DX9|Win32.ActiveCfg = Release|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Release_DX9|Win32.Build.0 = Release|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Release_GL|Win32.ActiveCfg = Release|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Release_GL|Win32.Build.0 = Release|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Release|Win32.ActiveCfg = Release|Win32
+		{3BE4C631-D91D-492B-8E0F-4E70CAB09021}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

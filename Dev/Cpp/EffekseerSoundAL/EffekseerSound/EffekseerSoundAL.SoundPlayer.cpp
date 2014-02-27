@@ -2,9 +2,9 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerSound.SoundImplemented.h"
-#include "EffekseerSound.SoundVoice.h"
-#include "EffekseerSound.SoundPlayer.h"
+#include "EffekseerSoundAL.SoundImplemented.h"
+#include "EffekseerSoundAL.SoundVoice.h"
+#include "EffekseerSoundAL.SoundPlayer.h"
 
 //-----------------------------------------------------------------------------------
 //

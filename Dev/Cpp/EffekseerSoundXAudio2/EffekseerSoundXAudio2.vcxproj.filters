@@ -6,31 +6,31 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundPlayer.h">
-      <Filter>EffekseerSound</Filter>
-    </ClInclude>
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundImplemented.h">
-      <Filter>EffekseerSound</Filter>
-    </ClInclude>
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundLoader.h">
-      <Filter>EffekseerSound</Filter>
-    </ClInclude>
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundVoice.h">
-      <Filter>EffekseerSound</Filter>
-    </ClInclude>
     <ClInclude Include="EffekseerSoundXAudio2.h" />
+    <ClInclude Include="EffekseerSound\EffekseerSoundXAudio2.SoundImplemented.h">
+      <Filter>EffekseerSound</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerSound\EffekseerSoundXAudio2.SoundLoader.h">
+      <Filter>EffekseerSound</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerSound\EffekseerSoundXAudio2.SoundPlayer.h">
+      <Filter>EffekseerSound</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerSound\EffekseerSoundXAudio2.SoundVoice.h">
+      <Filter>EffekseerSound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EffekseerSound\EffekseerSound.SoundPlayer.cpp">
+    <ClCompile Include="EffekseerSound\EffekseerSoundXAudio2.Sound.cpp">
       <Filter>EffekseerSound</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerSound\EffekseerSound.Sound.cpp">
+    <ClCompile Include="EffekseerSound\EffekseerSoundXAudio2.SoundLoader.cpp">
       <Filter>EffekseerSound</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerSound\EffekseerSound.SoundLoader.cpp">
+    <ClCompile Include="EffekseerSound\EffekseerSoundXAudio2.SoundPlayer.cpp">
       <Filter>EffekseerSound</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerSound\EffekseerSound.SoundVoice.cpp">
+    <ClCompile Include="EffekseerSound\EffekseerSoundXAudio2.SoundVoice.cpp">
       <Filter>EffekseerSound</Filter>
     </ClCompile>
   </ItemGroup>

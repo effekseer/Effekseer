@@ -6,31 +6,31 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundPlayer.h">
-      <Filter>EffekseerSound</Filter>
-    </ClInclude>
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundImplemented.h">
-      <Filter>EffekseerSound</Filter>
-    </ClInclude>
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundLoader.h">
-      <Filter>EffekseerSound</Filter>
-    </ClInclude>
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundVoice.h">
-      <Filter>EffekseerSound</Filter>
-    </ClInclude>
     <ClInclude Include="EffekseerSoundAL.h" />
+    <ClInclude Include="EffekseerSound\EffekseerSoundAL.SoundImplemented.h">
+      <Filter>EffekseerSound</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerSound\EffekseerSoundAL.SoundLoader.h">
+      <Filter>EffekseerSound</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerSound\EffekseerSoundAL.SoundPlayer.h">
+      <Filter>EffekseerSound</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerSound\EffekseerSoundAL.SoundVoice.h">
+      <Filter>EffekseerSound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EffekseerSound\EffekseerSound.SoundPlayer.cpp">
+    <ClCompile Include="EffekseerSound\EffekseerSoundAL.Sound.cpp">
       <Filter>EffekseerSound</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerSound\EffekseerSound.Sound.cpp">
+    <ClCompile Include="EffekseerSound\EffekseerSoundAL.SoundLoader.cpp">
       <Filter>EffekseerSound</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerSound\EffekseerSound.SoundLoader.cpp">
+    <ClCompile Include="EffekseerSound\EffekseerSoundAL.SoundPlayer.cpp">
       <Filter>EffekseerSound</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerSound\EffekseerSound.SoundVoice.cpp">
+    <ClCompile Include="EffekseerSound\EffekseerSoundAL.SoundVoice.cpp">
       <Filter>EffekseerSound</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,8 +5,8 @@
 #include <assert.h>
 #include <string.h>
 #include <memory>
-#include "EffekseerSound.SoundImplemented.h"
-#include "EffekseerSound.SoundLoader.h"
+#include "EffekseerSoundAL.SoundImplemented.h"
+#include "EffekseerSoundAL.SoundLoader.h"
 
 //-----------------------------------------------------------------------------------
 //

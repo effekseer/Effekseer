@@ -2,9 +2,8 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <math.h>
-#include "EffekseerSound.SoundImplemented.h"
-#include "EffekseerSound.SoundVoice.h"
+#include "EffekseerSoundXAudio2.SoundImplemented.h"
+#include "EffekseerSoundXAudio2.SoundVoice.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -14,10 +13,13 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundVoice::SoundVoice( ALuint source )
-	: m_source(source)
+SoundVoice::SoundVoice( SoundImplemented* sound, const WAVEFORMATEX* format )
+	: m_sound(sound)
+	, m_xavoice(NULL)
 	, m_tag(NULL)
+	, m_data(NULL)
 {
+	sound->GetDevice()->CreateSourceVoice(&m_xavoice, format);
 }
 
 //----------------------------------------------------------------------------------
@@ -25,6 +27,9 @@ SoundVoice::SoundVoice( ALuint source )
 //----------------------------------------------------------------------------------
 SoundVoice::~SoundVoice()
 {
+	if (m_xavoice) {
+		m_xavoice->DestroyVoice();
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -36,21 +41,33 @@ void SoundVoice::Play( ::Effekseer::SoundTag tag,
 	SoundData* soundData = (SoundData*)parameter.Data;
 	
 	m_tag = tag;
-	alSourcei(m_source, AL_BUFFER, soundData->buffer);
-	alSourcef(m_source, AL_PITCH, powf(2.0f, parameter.Pitch));
-	alSourcef(m_source, AL_GAIN, parameter.Volume);
+	m_data = soundData;
+	m_xavoice->SubmitSourceBuffer(&soundData->buffer);
+	m_xavoice->SetSourceSampleRate(soundData->sampleRate);
+	m_xavoice->SetVolume(parameter.Volume);
+	m_xavoice->SetFrequencyRatio(powf(2.0f, parameter.Pitch));
 	
+	float matrix[2 * 4];
 	if (parameter.Mode3D) {
-		alSourcei(m_source, AL_SOURCE_RELATIVE, AL_FALSE);
-		alSourcefv(m_source, AL_POSITION, &parameter.Position.X);
-		alSourcef(m_source, AL_MAX_DISTANCE, parameter.Distance);
+		m_sound->Calculate3DSound(parameter.Position, 
+			parameter.Distance, soundData->channels, 2, matrix);
 	} else {
-		float position[3] = {parameter.Pan, 0.0f, 0.0f};
-		alSourcei(m_source, AL_SOURCE_RELATIVE, AL_TRUE);
-		alSourcefv(m_source, AL_POSITION, position);
-		alSourcef(m_source, AL_MAX_DISTANCE, 1.0f);
+		float rad = ((parameter.Pan + 1.0f) * 0.5f) * (3.1415926f * 0.5f);
+		switch (soundData->channels) {
+		case 1:
+			matrix[0] = cosf(rad);
+			matrix[1] = sinf(rad);
+			break;
+		case 2:
+			matrix[0] = matrix[3] = 1.0f;
+			matrix[1] = matrix[2] = 0.0f;
+			break;
+		default:
+			return;
+		}
 	}
-	alSourcePlay(m_source);
+	m_xavoice->SetOutputMatrix(NULL, soundData->channels, 2, matrix);
+	m_xavoice->Start();
 }
 
 //----------------------------------------------------------------------------------
@@ -58,7 +75,8 @@ void SoundVoice::Play( ::Effekseer::SoundTag tag,
 //----------------------------------------------------------------------------------
 void SoundVoice::Stop()
 {
-	alSourceStop(m_source);
+	m_xavoice->Stop();
+	m_xavoice->FlushSourceBuffers();
 }
 
 //----------------------------------------------------------------------------------
@@ -67,9 +85,9 @@ void SoundVoice::Stop()
 void SoundVoice::Pause( bool pause )
 {
 	if (pause) {
-		alSourcePause(m_source);
+		m_xavoice->Stop();
 	} else {
-		alSourcePlay(m_source);
+		m_xavoice->Start();
 	}
 }
 
@@ -78,21 +96,18 @@ void SoundVoice::Pause( bool pause )
 //----------------------------------------------------------------------------------
 bool SoundVoice::CheckPlaying()
 {
-	ALint state = 0;
-	alGetSourcei(m_source, AL_SOURCE_STATE, &state);
-	return state == AL_PLAYING || state == AL_PAUSED;
+	XAUDIO2_VOICE_STATE state;
+	m_xavoice->GetState(&state);
+	return state.BuffersQueued > 0;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundVoiceContainer::SoundVoiceContainer( SoundImplemented* sound, int num )
+SoundVoiceContainer::SoundVoiceContainer( SoundImplemented* sound, int num, const WAVEFORMATEX* format )
 {
-	m_num = num;
-	m_sources = new ALuint[num];
-	alGenSources( (ALsizei)num, m_sources );
 	for (int i = 0; i < num; i++) {
-		m_voiceList.push_back( new SoundVoice( m_sources[i] ) );
+		m_voiceList.push_back(new SoundVoice(sound, format));
 	}
 }
 
@@ -106,9 +121,7 @@ SoundVoiceContainer::~SoundVoiceContainer()
 		SoundVoice* voice = *it;
 		delete voice;
 	}
-
-	alDeleteSources( (ALsizei)m_num, m_sources );
-	delete[] m_sources;
+	m_voiceList.clear();
 }
 
 //----------------------------------------------------------------------------------
@@ -181,6 +194,20 @@ bool SoundVoiceContainer::CheckPlayingTag( ::Effekseer::SoundTag tag )
 		}
 	}
 	return false;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void SoundVoiceContainer::StopData( SoundData* soundData )
+{
+	std::list<SoundVoice*>::iterator it;
+	for (it = m_voiceList.begin(); it != m_voiceList.end(); it++) {
+		SoundVoice* voice = *it;
+		if (soundData == voice->GetData()) {
+			voice->Stop();
+		}
+	}
 }
 
 //----------------------------------------------------------------------------------

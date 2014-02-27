@@ -1,9 +1,9 @@
 
 //----------------------------------------------------------------------------------
 // Include
-//----------------------------------------------------------------------------------#include "EffekseerSound.SoundImplemented.h"
-#include "EffekseerSound.SoundImplemented.h"
-#include "EffekseerSound.SoundVoice.h"
+//----------------------------------------------------------------------------------
+#include "EffekseerSoundDSound.SoundImplemented.h"
+#include "EffekseerSoundDSound.SoundVoice.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -13,13 +13,11 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundVoice::SoundVoice( SoundImplemented* sound, const WAVEFORMATEX* format )
+SoundVoice::SoundVoice( SoundImplemented* sound )
 	: m_sound(sound)
-	, m_xavoice(NULL)
+	, m_dsbuf(NULL)
 	, m_tag(NULL)
-	, m_data(NULL)
 {
-	sound->GetDevice()->CreateSourceVoice(&m_xavoice, format);
 }
 
 //----------------------------------------------------------------------------------
@@ -27,8 +25,10 @@ SoundVoice::SoundVoice( SoundImplemented* sound, const WAVEFORMATEX* format )
 //----------------------------------------------------------------------------------
 SoundVoice::~SoundVoice()
 {
-	if (m_xavoice) {
-		m_xavoice->DestroyVoice();
+	Stop();
+
+	if (m_dsbuf) {
+		m_dsbuf->Release();
 	}
 }
 
@@ -38,36 +38,34 @@ SoundVoice::~SoundVoice()
 void SoundVoice::Play( ::Effekseer::SoundTag tag, 
 	const ::Effekseer::SoundPlayer::InstanceParameter& parameter )
 {
-	SoundData* soundData = (SoundData*)parameter.Data;
+	Stop();
+
+	m_data = (SoundData*)parameter.Data;
 	
+	m_sound->GetDevice()->DuplicateSoundBuffer(
+		(IDirectSoundBuffer*)m_data->buffer, 
+		(IDirectSoundBuffer**)&m_dsbuf);
+
 	m_tag = tag;
-	m_data = soundData;
-	m_xavoice->SubmitSourceBuffer(&soundData->buffer);
-	m_xavoice->SetSourceSampleRate(soundData->sampleRate);
-	m_xavoice->SetVolume(parameter.Volume);
-	m_xavoice->SetFrequencyRatio(powf(2.0f, parameter.Pitch));
+
+	m_dsbuf->SetVolume((LONG)(2000.0f * log10f(parameter.Volume)));
+
+	m_dsbuf->SetFrequency((DWORD)(m_data->sampleRate * powf(2.0f, parameter.Pitch)));
 	
-	float matrix[2 * 4];
 	if (parameter.Mode3D) {
-		m_sound->Calculate3DSound(parameter.Position, 
-			parameter.Distance, soundData->channels, 2, matrix);
 	} else {
-		float rad = ((parameter.Pan + 1.0f) * 0.5f) * (3.1415926f * 0.5f);
-		switch (soundData->channels) {
-		case 1:
-			matrix[0] = cosf(rad);
-			matrix[1] = sinf(rad);
-			break;
-		case 2:
-			matrix[0] = matrix[3] = 1.0f;
-			matrix[1] = matrix[2] = 0.0f;
-			break;
-		default:
-			return;
+		float pan = m_sound->CalculatePan(parameter.Position) + parameter.Pan;
+		int32_t level = (int32_t)(2000.0f * log10f(1.0f - fabsf(pan)));
+		if (level < -10000) {
+			level = -10000;
+		}
+		if (pan > 0.0f) {
+			m_dsbuf->SetPan(-level);
+		} else {
+			m_dsbuf->SetPan(level);
 		}
 	}
-	m_xavoice->SetOutputMatrix(NULL, soundData->channels, 2, matrix);
-	m_xavoice->Start();
+	m_dsbuf->Play(0, 0, 0);
 }
 
 //----------------------------------------------------------------------------------
@@ -75,8 +73,13 @@ void SoundVoice::Play( ::Effekseer::SoundTag tag,
 //----------------------------------------------------------------------------------
 void SoundVoice::Stop()
 {
-	m_xavoice->Stop();
-	m_xavoice->FlushSourceBuffers();
+	if (m_dsbuf == NULL) {
+		return;
+	}
+	m_dsbuf->Stop();
+	m_dsbuf->Release();
+	m_dsbuf = NULL;
+	m_data = NULL;
 }
 
 //----------------------------------------------------------------------------------
@@ -84,10 +87,13 @@ void SoundVoice::Stop()
 //----------------------------------------------------------------------------------
 void SoundVoice::Pause( bool pause )
 {
+	if (m_dsbuf == NULL) {
+		return;
+	}
 	if (pause) {
-		m_xavoice->Stop();
+		m_dsbuf->Stop();
 	} else {
-		m_xavoice->Start();
+		m_dsbuf->Play(0, 0, 0);
 	}
 }
 
@@ -96,18 +102,21 @@ void SoundVoice::Pause( bool pause )
 //----------------------------------------------------------------------------------
 bool SoundVoice::CheckPlaying()
 {
-	XAUDIO2_VOICE_STATE state;
-	m_xavoice->GetState(&state);
-	return state.BuffersQueued > 0;
+	if (m_dsbuf == NULL) {
+		return false;
+	}
+	DWORD status;
+	m_dsbuf->GetStatus(&status);
+	return (status & DSBSTATUS_PLAYING) != 0;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-SoundVoiceContainer::SoundVoiceContainer( SoundImplemented* sound, int num, const WAVEFORMATEX* format )
+SoundVoiceContainer::SoundVoiceContainer( SoundImplemented* sound, int num )
 {
 	for (int i = 0; i < num; i++) {
-		m_voiceList.push_back(new SoundVoice(sound, format));
+		m_voiceList.push_back(new SoundVoice(sound));
 	}
 }
 

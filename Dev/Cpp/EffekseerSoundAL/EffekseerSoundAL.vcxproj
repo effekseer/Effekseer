@@ -12,16 +12,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffekseerSoundAL.h" />
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundImplemented.h" />
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundLoader.h" />
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundPlayer.h" />
-    <ClInclude Include="EffekseerSound\EffekseerSound.SoundVoice.h" />
+    <ClInclude Include="EffekseerSound\EffekseerSoundAL.SoundImplemented.h" />
+    <ClInclude Include="EffekseerSound\EffekseerSoundAL.SoundLoader.h" />
+    <ClInclude Include="EffekseerSound\EffekseerSoundAL.SoundPlayer.h" />
+    <ClInclude Include="EffekseerSound\EffekseerSoundAL.SoundVoice.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EffekseerSound\EffekseerSound.Sound.cpp" />
-    <ClCompile Include="EffekseerSound\EffekseerSound.SoundLoader.cpp" />
-    <ClCompile Include="EffekseerSound\EffekseerSound.SoundPlayer.cpp" />
-    <ClCompile Include="EffekseerSound\EffekseerSound.SoundVoice.cpp" />
+    <ClCompile Include="EffekseerSound\EffekseerSoundAL.Sound.cpp" />
+    <ClCompile Include="EffekseerSound\EffekseerSoundAL.SoundLoader.cpp" />
+    <ClCompile Include="EffekseerSound\EffekseerSoundAL.SoundPlayer.cpp" />
+    <ClCompile Include="EffekseerSound\EffekseerSoundAL.SoundVoice.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{814C8E73-382C-4A0F-B72F-3CB759BBD650}</ProjectGuid>
