@@ -98,7 +98,7 @@ int main()
 	InitSound( GetHandle(), NULL );
 #else
 	InitGraphics( GetDisplay(), GetWindow(), g_window_width, g_window_height);
-	//InitSound( GetDisplay(), GetWindow() );
+	InitSound( GetDisplay(), GetWindow() );
 #endif
 
 	Init();
@@ -119,7 +119,7 @@ int main()
 		ES_SAFE_RELEASE(g_effects[i]);
 	}
 
-	//TermSound();
+	TermSound();
 
 	TermGraphics();
 

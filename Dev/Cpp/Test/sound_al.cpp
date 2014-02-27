@@ -2,18 +2,26 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+#if _WIN32
 #include <windows.h>
+#endif
+
 #include <AL/alc.h>
+
 #include "../Effekseer/Effekseer.h"
 #include "../EffekseerSoundAL/EffekseerSoundAL.h"
 #include "sound.h"
 
+#if _WIN32
 #pragma comment( lib, "../EffekseerSoundAL/AL/libs/Win32/OpenAL32.lib" )
 
 #if _DEBUG
 #pragma comment( lib, "EffekseerSoundAL.Debug.lib" )
 #else
 #pragma comment( lib, "EffekseerSoundAL.Release.lib" )
+#endif
+
 #endif
 
 //----------------------------------------------------------------------------------

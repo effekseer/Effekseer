@@ -10,6 +10,7 @@ cmake_minimum_required(VERSION 2.8)
 # ソースコード設定
 set(effekseer_src
 	graphics_gl.cpp
+	sound_al.cpp
 	window.cpp
 	main.cpp)
 
@@ -17,6 +18,7 @@ set(effekseer_src
 include_directories(
 	../Effekseer/
 	../EffekseerRendererGL/
+	../EffekseerSoundAL/
 	)
 
 # 
@@ -27,6 +29,7 @@ set(common_inc)
 
 list(APPEND common_lib Effekseer )
 list(APPEND common_lib EffekseerRendererGL )
+list(APPEND common_lib EffekseerSoundAL )
 
 if (MSVC)
 
@@ -46,6 +49,11 @@ else()
 	find_package(OpenGL)
 	list(APPEND common_inc ${OPENGL_INCLUDE_DIR})
 	list(APPEND common_lib ${OPENGL_LIBRARY})
+
+	find_package(OpenAL)
+	list(APPEND common_inc ${OPENAL_INCLUDE_DIR})
+	list(APPEND common_lib ${OPENAL_LIBRARY})
+
 endif()
 
 # コンパイル先を追加
