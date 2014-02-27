@@ -10,10 +10,7 @@
 
 #include "window.h"
 #include "graphics.h"
-
-#if _WIN32
 #include "sound.h"
-#endif
 
 #if _WIN32
 
