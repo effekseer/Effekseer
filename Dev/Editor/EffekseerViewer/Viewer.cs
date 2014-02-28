@@ -8,6 +8,7 @@ namespace Effekseer
 	public class Viewer : IViewer
 	{
 		Native native = null;
+		string backgroundImagePath = string.Empty;
 
 		public Viewer()
 		{
@@ -209,7 +210,10 @@ namespace Effekseer
 
 		public void SetBackgroundImage(string path)
 		{
+			if (backgroundImagePath == path) return;
+
 			native.SetBackgroundImage(path);
+			backgroundImagePath = path;
 		}
 
 		public void SetGridColor(byte r, byte g, byte b, byte a)

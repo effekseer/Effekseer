@@ -168,7 +168,7 @@ void Background::Rendering( IDirect3DTexture9* texture )
 	shader->BeginPass(0);
 
 	shader->SetTexture( "Tex0", texture );
-	m_renderer->GetRenderState()->Update( false );
+	m_renderer->GetRenderState()->Update( true );
 	
 	shader->CommitChanges();
 
