@@ -49,7 +49,7 @@ static void InitializeEffekseer()
 {
 	g_EffekseerManager = Effekseer::Manager::Create(MAX_INSTANCES);
 
-	g_EffekseerRenderer = EffekseerRenderer::Renderer::Create(MAX_SQUARES);
+	g_EffekseerRenderer = EffekseerRendererGL::Renderer::Create(MAX_SQUARES);
 	g_EffekseerManager->SetSpriteRenderer(g_EffekseerRenderer->CreateSpriteRenderer());
 	g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
 	g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
