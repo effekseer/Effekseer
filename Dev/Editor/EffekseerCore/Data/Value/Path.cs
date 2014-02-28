@@ -91,6 +91,9 @@ namespace Effekseer.Data.Value
 			Uri basepath = new Uri(Core.FullPath);
 			Uri path = new Uri(_abspath);
 			var relative_path = basepath.MakeRelativeUri(path).ToString();
+
+			relative_path = System.Web.HttpUtility.UrlDecode(relative_path);
+
 			return relative_path;
 		}
 
