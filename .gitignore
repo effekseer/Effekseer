@@ -18,6 +18,8 @@
 *.ipch
 *.idb
 *.log
+*.cache
+*.user
 
 [Oo]bj/
 
