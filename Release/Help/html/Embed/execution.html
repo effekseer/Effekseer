@@ -30,7 +30,7 @@ DirectX、もしくはOpenGLの初期化を行った後に行う必要があり�
 <pre>
 <code>
 // 描画管理インスタンスの生成
-::EffekseerRenderer::Renderer* renderer = ::EffekseerRenderer::Renderer::Create( LPDIRECT3DDEVICE9, 最大表示スプライト数 );
+::EffekseerRenderer::Renderer* renderer = ::EffekseerRendererDX9::Renderer::Create( LPDIRECT3DDEVICE9, 最大表示スプライト数 );
 // サウンド管理インスタンスの生成
 ::EffekseerSound::Sound* sound = ::EffekseerSound::Sound::Create( IXAudio2*, モノラル再生用ボイス数, ステレオ再生用ボイス数 );
 // エフェクト管理用インスタンスの生成
@@ -42,7 +42,7 @@ DirectX、もしくはOpenGLの初期化を行った後に行う必要があり�
 <pre>
 <code>
 // 描画管理インスタンスの生成
-::EffekseerRenderer::Renderer* renderer = ::EffekseerRenderer::Renderer::Create( 最大表示スプライト数 );
+::EffekseerRenderer::Renderer* renderer = ::EffekseerRendererGL::Renderer::Create( 最大表示スプライト数 );
 // エフェクト管理用インスタンスの生成
 ::Effekseer::Manager* manager = ::Effekseer::Manager::Create( 最大表示スプライト数 );
 </code>
