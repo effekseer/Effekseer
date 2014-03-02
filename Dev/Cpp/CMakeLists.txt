@@ -19,6 +19,12 @@ option(USE_GLEW_STATIC "Use Glew static library" OFF)
 option(USE_GLEW_DLL "Use Glew DLL" ON)
 option(USE_OPENGLES2 "Use OpenGL ES2" OFF)
 
+if (MSVC)
+option(USE_OPENAL "Use OpenAL" OFF)
+else()
+option(USE_OPENAL "Use OpenAL" ON)
+endif()
+
 # ソースコード設定
 set(effekseer_src
 	Effekseer/Effekseer/Effekseer.Client.cpp
@@ -151,7 +157,10 @@ add_library( effekseer_sound_xaudio2 STATIC ${effekseer_sound_xaudio2_src} )
 endif()
 
 add_library( effekseer_renderer_gl STATIC ${effekseer_renderer_gl_src} )
+
+if (USE_OPENAL)
 add_library( effekseer_sound_al STATIC ${effekseer_sound_al_src} )
+endif()
 
 # フラグ処理
 if (MSVC)
@@ -257,13 +266,14 @@ set_target_properties(effekseer_sound_xaudio2 PROPERTIES OUTPUT_NAME "EffekseerS
 endif()
 endif()
 
+if (USE_OPENAL)
 if (MSVC)
 set_target_properties(effekseer_sound_al PROPERTIES OUTPUT_NAME_DEBUG "EffekseerSoundAL" )
 set_target_properties(effekseer_sound_al PROPERTIES OUTPUT_NAME_RELEASE "EffekseerSoundAL" )
 else()
 set_target_properties(effekseer_sound_al PROPERTIES OUTPUT_NAME "EffekseerSoundAL" )
 endif()
-
+endif()
 
 install(
 	TARGETS effekseer
@@ -303,7 +313,9 @@ install(
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib)
 
+if (USE_OPENAL)
 install(
 	TARGETS effekseer_sound_al
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib)
+endif()
