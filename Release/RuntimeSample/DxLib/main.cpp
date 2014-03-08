@@ -32,7 +32,7 @@
 static int g_window_width = 640;
 static int g_window_height = 480;
 static ::Effekseer::Manager*			g_manager = NULL;
-static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
+static ::EffekseerRendererDX9::Renderer*	g_renderer = NULL;
 static ::Effekseer::Effect*				g_effect = NULL;
 static ::Effekseer::Handle				g_handle = -1;
 

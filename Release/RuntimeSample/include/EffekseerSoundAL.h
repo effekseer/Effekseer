@@ -5,10 +5,12 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#if _WIN32
+#if defined(_WIN32)
 #include <AL/al.h>
-#else
+#elif defined(__APPLE__)
 #include <OpenAl/al.h>
+#else
+#include <AL/al.h>
 #endif
 
 #include <Effekseer.h>

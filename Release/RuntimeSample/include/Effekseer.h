@@ -70,6 +70,7 @@ class RingRenderer;
 class ModelRenderer;
 class TrackRenderer;
 
+class Setting;
 class EffectLoader;
 class TextureLoader;
 
@@ -1148,6 +1149,27 @@ public:
 	*/
 	static Effect* Create( Manager* manager, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
 
+		/**
+		@brief	エフェクトを生成する。
+		@param	setting			[in]	設定クラス
+		@param	data			[in]	データ配列の先頭のポインタ
+		@param	size			[in]	データ配列の長さ
+		@param	magnification	[in]	読み込み時の拡大率
+		@param	materialPath	[in]	素材ロード時の基準パス
+		@return	エフェクト。失敗した場合はNULLを返す。
+	*/
+	static Effect* Create( Setting*	setting, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+
+	/**
+		@brief	エフェクトを生成する。
+		@param	setting			[in]	設定クラス
+		@param	path			[in]	読込元のパス
+		@param	magnification	[in]	読み込み時の拡大率
+		@param	materialPath	[in]	素材ロード時の基準パス
+		@return	エフェクト。失敗した場合はNULLを返す。
+	*/
+	static Effect* Create( Setting*	setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+
 	/**
 		@brief	参照カウンタを加算する。
 		@return	実行後の参照カウンタの値
@@ -1161,10 +1183,10 @@ public:
 	virtual int Release() = 0;
 
 	/**
-		@brief	マネージャーを取得する。
-		@return	マネージャー
+	@brief	設定を取得する。
+	@return	設定
 	*/
-	virtual Manager* GetManager() const = 0;
+	virtual Setting* GetSetting() const = 0;
 
 	/* 拡大率を取得する。 */
 	virtual float GetMaginification() const = 0;
@@ -1200,6 +1222,31 @@ public:
 		@brief	エフェクトのリロードを行う。
 	*/
 	virtual bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
+
+	/**
+		@brief	エフェクトのリロードを行う。
+		@param	managers	[in]	マネージャーの配列
+		@param	managersCount	[in]	マネージャーの個数
+		@param	data	[in]	エフェクトのデータ
+		@param	size	[in]	エフェクトのデータサイズ
+		@param	materialPath	[in]	リソースの読み込み元
+		@return	成否
+		@note
+		Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
+	*/
+	virtual bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) = 0;
+
+	/**
+	@brief	エフェクトのリロードを行う。
+	@param	managers	[in]	マネージャーの配列
+	@param	managersCount	[in]	マネージャーの個数
+	@param	path	[in]	エフェクトの読み込み元
+	@param	materialPath	[in]	リソースの読み込み元
+	@return	成否
+	@note
+	Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
+	*/
+	virtual bool Reload( Manager* managers, int32_t managersCount,const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
 		@brief	画像等リソースの再読み込みを行う。
@@ -1365,6 +1412,17 @@ public:
 		@brief	軌跡描画機能を設定する。
 	*/
 	virtual void SetTrackRenderer( TrackRenderer* renderer ) = 0;
+
+	/**
+		@brief	設定クラスを取得する。
+	*/
+	virtual Setting* GetSetting() = 0;
+
+	/**
+		@brief	設定クラスを設定する。
+		@param	setting	[in]	設定
+	*/
+	virtual void SetSetting(Setting* setting) = 0;
 
 	/**
 		@brief	エフェクト読込クラスを取得する。
@@ -1699,10 +1757,6 @@ public:
 
 	virtual ~SpriteRenderer() {}
 
-	virtual void LoadRenderer(  const NodeParameter& parameter, void*& userData ) {}
-
-	virtual void RemoveRenderer( const NodeParameter& parameter, void*& userData ) {}
-
 	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
 
 	virtual void Rendering( const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData ) {}
@@ -1768,10 +1822,6 @@ public:
 	RibbonRenderer() {}
 
 	virtual ~RibbonRenderer() {}
-
-	virtual void LoadRenderer(  const NodeParameter& parameter, void*& userData ) {}
-
-	virtual void RemoveRenderer( const NodeParameter& parameter, void*& userData ) {}
 
 	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
 
@@ -1841,10 +1891,6 @@ public:
 
 	virtual ~RingRenderer() {}
 
-	virtual void LoadRenderer(  const NodeParameter& parameter, void*& userData ) {}
-
-	virtual void RemoveRenderer( const NodeParameter& parameter, void*& userData ) {}
-
 	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
 
 	virtual void Rendering( const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData ) {}
@@ -1909,10 +1955,6 @@ public:
 	ModelRenderer() {}
 
 	virtual ~ModelRenderer() {}
-
-	virtual void LoadRenderer(  const NodeParameter& parameter, void*& userData ) {}
-
-	virtual void RemoveRenderer( const NodeParameter& parameter, void*& userData ) {}
 
 	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
 
@@ -1989,10 +2031,6 @@ public:
 	TrackRenderer() {}
 
 	virtual ~TrackRenderer() {}
-
-	virtual void LoadRenderer(  const NodeParameter& parameter, void*& userData ) {}
-
-	virtual void RemoveRenderer( const NodeParameter& parameter, void*& userData ) {}
 
 	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
 
@@ -2592,6 +2630,140 @@ public:
 //
 //----------------------------------------------------------------------------------
 #endif	// __EFFEKSEER_SOUNDLOADER_H__
+
+#ifndef	__EFFEKSEER_LOADER_H__
+#define	__EFFEKSEER_LOADER_H__
+
+//----------------------------------------------------------------------------------
+// Include
+//----------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+namespace Effekseer { 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+/**
+	@brief	設定クラス
+	@note
+	EffectLoader等、ファイル読み込みに関する設定することができる。
+	Managerの代わりにエフェクト読み込み時に使用することで、Managerとは独立してEffectインスタンスを生成することができる。
+*/
+	class Setting
+	{
+	private:
+		int32_t		m_ref;
+
+		/* 座標系 */
+		eCoordinateSystem		m_coordinateSystem;
+
+		EffectLoader*	m_effectLoader;
+		TextureLoader*	m_textureLoader;
+		SoundLoader*	m_soundLoader;
+		ModelLoader*	m_modelLoader;
+
+		/**
+			@brief	コンストラクタ
+			*/
+		Setting();
+
+		/**
+			@brief	デストラクタ
+			*/
+		 ~Setting();
+	public:
+
+		/**
+			@brief	設定インスタンスを生成する。
+		*/
+		static Setting* Create();
+
+		/**
+			@brief	参照カウンタを加算する。
+			@return	参照カウンタ
+		*/
+		int32_t AddRef();
+
+		/**
+			@brief	参照カウンタを減算する。
+			@return	参照カウンタ
+		*/
+		int32_t Release();
+
+		/**
+		@brief	座標系を取得する。
+		@return	座標系
+		*/
+		eCoordinateSystem GetCoordinateSystem() const;
+
+		/**
+		@brief	座標系を設定する。
+		@param	coordinateSystem	[in]	座標系
+		@note
+		座標系を設定する。
+		エフェクトファイルを読み込む前に設定する必要がある。
+		*/
+		void SetCoordinateSystem(eCoordinateSystem coordinateSystem);
+
+		/**
+			@brief	エフェクトローダーを取得する。
+			@return	エフェクトローダー
+			*/
+		EffectLoader* GetEffectLoader();
+
+		/**
+			@brief	エフェクトローダーを設定する。
+			@param	loader	[in]		ローダー
+			*/
+		void SetEffectLoader(EffectLoader* loader);
+
+		/**
+			@brief	テクスチャローダーを取得する。
+			@return	テクスチャローダー
+			*/
+		TextureLoader* GetTextureLoader();
+
+		/**
+			@brief	テクスチャローダーを設定する。
+			@param	loader	[in]		ローダー
+			*/
+		void SetTextureLoader(TextureLoader* loader);
+
+		/**
+			@brief	モデルローダーを取得する。
+			@return	モデルローダー
+			*/
+		ModelLoader* GetModelLoader();
+
+		/**
+			@brief	モデルローダーを設定する。
+			@param	loader	[in]		ローダー
+			*/
+		void SetModelLoader(ModelLoader* loader);
+
+		/**
+			@brief	サウンドローダーを取得する。
+			@return	サウンドローダー
+			*/
+		SoundLoader* GetSoundLoader();
+
+		/**
+			@brief	サウンドローダーを設定する。
+			@param	loader	[in]		ローダー
+			*/
+		void SetSoundLoader(SoundLoader* loader);
+	};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+ } 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#endif	// __EFFEKSEER_LOADER_H__
 
 #ifndef	__EFFEKSEER_SERVER_H__
 #define	__EFFEKSEER_SERVER_H__
