@@ -337,7 +337,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	}
 
 	// ÉmÅ[Éh
-	m_pRoot = EffectNode::Create( this, pos );
+	m_pRoot = EffectNode::Create( this, NULL, pos );
 
 	ReloadResources( materialPath );
 }

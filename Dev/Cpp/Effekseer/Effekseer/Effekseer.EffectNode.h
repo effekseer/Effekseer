@@ -632,7 +632,7 @@ protected:
 	virtual ~EffectNode();
 
 	// 読込
-	void LoadParameter( unsigned char*& pos, Setting* setting );
+	void LoadParameter( unsigned char*& pos, EffectNode* parent, Setting* setting );
 
 	// 初期化
 	void Initialize();
@@ -753,7 +753,7 @@ public:
 	/**
 		@brief	エフェクトノード生成
 	*/
-	static EffectNode* Create( Effect* effect, unsigned char*& pos );
+	static EffectNode* Create( Effect* effect, EffectNode* parent, unsigned char*& pos );
 
 	/**
 		@brief	ノードの種類取得

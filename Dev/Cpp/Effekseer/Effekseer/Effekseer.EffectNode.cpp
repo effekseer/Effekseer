@@ -41,7 +41,7 @@ EffectNode::EffectNode( Effect* effect, unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::LoadParameter(unsigned char*& pos, Setting* setting)
+void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting* setting)
 {
 	int size = 0;
 	int node_type = 0;
@@ -307,7 +307,8 @@ void EffectNode::LoadParameter(unsigned char*& pos, Setting* setting)
 		GenerationLocation.load( pos );
 
 		/* ¶¬ˆÊ’uŠg‘åˆ—*/
-		if( m_effect->GetVersion() >= 8 && this->CommonValues.ScalingBindType == BindType_NotBind)
+		if( m_effect->GetVersion() >= 8 && 
+			(this->CommonValues.ScalingBindType == BindType_NotBind || parent->GetType() == EFFECT_NODE_TYPE_ROOT))
 		{
 			if( GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT )
 			{
@@ -318,7 +319,12 @@ void EffectNode::LoadParameter(unsigned char*& pos, Setting* setting)
 			{
 				GenerationLocation.sphere.radius.min *= m_effect->GetMaginification();
 				GenerationLocation.sphere.radius.max *= m_effect->GetMaginification();
-			}			
+			}
+			else if( GenerationLocation.type == ParameterGenerationLocation::TYPE_CIRCLE )
+			{
+				GenerationLocation.circle.radius.min *= m_effect->GetMaginification();
+				GenerationLocation.circle.radius.max *= m_effect->GetMaginification();
+			}		
 		}
 
 		// ‰EèŒn¶èŒn•ÏŠ·
@@ -452,7 +458,7 @@ void EffectNode::LoadParameter(unsigned char*& pos, Setting* setting)
 	m_Nodes.resize( nodeCount );
 	for( size_t i = 0; i < m_Nodes.size(); i++ )
 	{
-		m_Nodes[i] = EffectNode::Create( m_effect, pos );
+		m_Nodes[i] = EffectNode::Create( m_effect, this, pos );
 	}
 }
 
@@ -643,7 +649,7 @@ void EffectNode::PlaySound_(Instance& instance, SoundTag tag, Manager* manager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectNode* EffectNode::Create( Effect* effect, unsigned char*& pos )
+EffectNode* EffectNode::Create( Effect* effect, EffectNode* parent, unsigned char*& pos )
 {
 	EffectNode* effectnode = NULL;
 
@@ -690,7 +696,7 @@ EffectNode* EffectNode::Create( Effect* effect, unsigned char*& pos )
 		assert(0);
 	}
 
-	effectnode->LoadParameter( pos, effect->GetSetting());
+	effectnode->LoadParameter( pos, parent, effect->GetSetting());
 
 	return effectnode;
 }
