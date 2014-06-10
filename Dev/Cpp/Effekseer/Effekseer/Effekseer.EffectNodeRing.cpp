@@ -75,6 +75,52 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 		memcpy( &RingTexture, pos, sizeof(int) );
 		pos += sizeof(int);
 	}
+	
+	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
+	if (setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH)
+	{
+		if( OuterLocation.type == RingLocationParameter::Fixed )
+		{
+			OuterLocation.fixed.location.y *= -1;
+		}
+		else if( OuterLocation.type == RingLocationParameter::PVA )
+		{
+			OuterLocation.pva.location.min.y *= -1;
+			OuterLocation.pva.location.max.y *= -1;
+			OuterLocation.pva.velocity.min.y *= -1;
+			OuterLocation.pva.velocity.max.y *= -1;
+			OuterLocation.pva.acceleration.min.y *= -1;
+			OuterLocation.pva.acceleration.max.y *= -1;
+		}
+		else if( OuterLocation.type == RingLocationParameter::Easing )
+		{
+			OuterLocation.easing.start.min.y *= -1;
+			OuterLocation.easing.start.max.y *= -1;
+			OuterLocation.easing.end.min.y *= -1;
+			OuterLocation.easing.end.max.y *= -1;
+		}
+
+		if( InnerLocation.type == RingLocationParameter::Fixed )
+		{
+			InnerLocation.fixed.location.y *= -1;
+		}
+		else if( InnerLocation.type == RingLocationParameter::PVA )
+		{
+			InnerLocation.pva.location.min.y *= -1;
+			InnerLocation.pva.location.max.y *= -1;
+			InnerLocation.pva.velocity.min.y *= -1;
+			InnerLocation.pva.velocity.max.y *= -1;
+			InnerLocation.pva.acceleration.min.y *= -1;
+			InnerLocation.pva.acceleration.max.y *= -1;
+		}
+		else if( InnerLocation.type == RingLocationParameter::Easing )
+		{
+			InnerLocation.easing.start.min.y *= -1;
+			InnerLocation.easing.start.max.y *= -1;
+			InnerLocation.easing.end.min.y *= -1;
+			InnerLocation.easing.end.max.y *= -1;
+		}
+	}
 
 	/* ˆÊ’uŠg‘åˆ— */
 	if( m_effect->GetVersion() >= 8 )
