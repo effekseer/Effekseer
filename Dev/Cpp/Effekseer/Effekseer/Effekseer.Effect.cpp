@@ -339,6 +339,9 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	// ノード
 	m_pRoot = EffectNode::Create( this, NULL, pos );
 
+	// リロード用にmaterialPathを記録しておく
+	m_materialPath = materialPath;
+
 	ReloadResources( materialPath );
 }
 
@@ -483,13 +486,15 @@ bool EffectImplemented::Reload( Manager* managers, int32_t managersCount, void* 
 {
 	if(m_pManager == NULL ) return false;
 
+	const EFK_CHAR* matPath = materialPath != NULL ? materialPath : m_materialPath.c_str();
+	
 	for( int32_t i = 0; i < managersCount; i++)
 	{
 		((ManagerImplemented*)&(managers[i]))->BeginReloadEffect( this );
 	}
 
 	Reset();
-	Load( data, size, m_maginificationExternal, materialPath );
+	Load( data, size, m_maginificationExternal, matPath );
 
 	for( int32_t i = 0; i < managersCount; i++)
 	{
@@ -548,6 +553,8 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 {
 	UnloadResources();
 
+	const EFK_CHAR* matPath = materialPath != NULL ? materialPath : m_materialPath.c_str();
+	
 	Setting* loader = GetSetting();
 
 	{
@@ -557,7 +564,7 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 			for( int32_t ind = 0; ind < m_ImageCount; ind++ )
 			{
 				EFK_CHAR fullPath[512];
-				PathCombine( fullPath, materialPath, m_ImagePaths[ ind ] );
+				PathCombine( fullPath, matPath, m_ImagePaths[ ind ] );
 				m_pImages[ind] = textureLoader->Load( fullPath );
 			}
 		}
@@ -570,7 +577,7 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 			for( int32_t ind = 0; ind < m_WaveCount; ind++ )
 			{
 				EFK_CHAR fullPath[512];
-				PathCombine( fullPath, materialPath, m_WavePaths[ ind ] );
+				PathCombine( fullPath, matPath, m_WavePaths[ ind ] );
 				m_pWaves[ind] = soundLoader->Load( fullPath );
 			}
 		}
@@ -584,7 +591,7 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 			for( int32_t ind = 0; ind < m_modelCount; ind++ )
 			{
 				EFK_CHAR fullPath[512];
-				PathCombine( fullPath, materialPath, m_modelPaths[ ind ] );
+				PathCombine( fullPath, matPath, m_modelPaths[ ind ] );
 				m_pModels[ind] = modelLoader->Load( fullPath );
 			}
 		}

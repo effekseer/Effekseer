@@ -48,6 +48,8 @@ private:
 	EFK_CHAR**		m_modelPaths;
 	void**			m_pModels;
 
+	std::basic_string<EFK_CHAR>		m_materialPath;
+
 	/* Šg‘å—¦ */
 	float	m_maginification;
 
