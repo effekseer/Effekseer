@@ -938,9 +938,10 @@ void ManagerImplemented::SetRotation( Handle handle, float x, float y, float z )
 
 		pInstance->m_GlobalMatrix43.GetSRT( s, r, t );
 
-		Matrix43::Multiple( pInstance->m_GlobalMatrix43, pInstance->m_GlobalMatrix43, MatRotZ );
-		Matrix43::Multiple( pInstance->m_GlobalMatrix43, pInstance->m_GlobalMatrix43, MatRotX );
-		Matrix43::Multiple( pInstance->m_GlobalMatrix43, pInstance->m_GlobalMatrix43, MatRotY );
+		r.Indentity();
+		Matrix43::Multiple( r, r, MatRotZ );
+		Matrix43::Multiple( r, r, MatRotX );
+		Matrix43::Multiple( r, r, MatRotY );
 
 		pInstance->m_GlobalMatrix43.SetSRT( s, r, t );
 		
