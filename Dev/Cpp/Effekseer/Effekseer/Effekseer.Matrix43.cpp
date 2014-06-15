@@ -289,25 +289,26 @@ void Matrix43::SetSRT( const Vector3D& s, const Matrix43& r, const Vector3D& t )
 void Matrix43::Multiple( Matrix43& out, const Matrix43& in1, const Matrix43& in2 )
 {
 #if 1
-	Matrix43 temp;
-	// outとin1が共通の場合は一時変数にコピー
-	const Matrix43& s = (&out == &in1) ? (temp = in1) : in1;
+	Matrix43 temp1, temp2;
+	// 共通の場合は一時変数にコピー
+	const Matrix43& s1 = (&out == &in1) ? (temp1 = in1) : in1;
+	const Matrix43& s2 = (&out == &in2) ? (temp2 = in2) : in2;
 	
-	out.Value[0][0] = s.Value[0][0] * in2.Value[0][0] + s.Value[0][1] * in2.Value[1][0] + s.Value[0][2] * in2.Value[2][0];
-	out.Value[0][1] = s.Value[0][0] * in2.Value[0][1] + s.Value[0][1] * in2.Value[1][1] + s.Value[0][2] * in2.Value[2][1];
-	out.Value[0][2] = s.Value[0][0] * in2.Value[0][2] + s.Value[0][1] * in2.Value[1][2] + s.Value[0][2] * in2.Value[2][2];
-	
-	out.Value[1][0] = s.Value[1][0] * in2.Value[0][0] + s.Value[1][1] * in2.Value[1][0] + s.Value[1][2] * in2.Value[2][0];
-	out.Value[1][1] = s.Value[1][0] * in2.Value[0][1] + s.Value[1][1] * in2.Value[1][1] + s.Value[1][2] * in2.Value[2][1];
-	out.Value[1][2] = s.Value[1][0] * in2.Value[0][2] + s.Value[1][1] * in2.Value[1][2] + s.Value[1][2] * in2.Value[2][2];
-	
-	out.Value[2][0] = s.Value[2][0] * in2.Value[0][0] + s.Value[2][1] * in2.Value[1][0] + s.Value[2][2] * in2.Value[2][0];
-	out.Value[2][1] = s.Value[2][0] * in2.Value[0][1] + s.Value[2][1] * in2.Value[1][1] + s.Value[2][2] * in2.Value[2][1];
-	out.Value[2][2] = s.Value[2][0] * in2.Value[0][2] + s.Value[2][1] * in2.Value[1][2] + s.Value[2][2] * in2.Value[2][2];
-	
-	out.Value[3][0] = s.Value[3][0] * in2.Value[0][0] + s.Value[3][1] * in2.Value[1][0] + s.Value[3][2] * in2.Value[2][0] + in2.Value[3][0];
-	out.Value[3][1] = s.Value[3][0] * in2.Value[0][1] + s.Value[3][1] * in2.Value[1][1] + s.Value[3][2] * in2.Value[2][1] + in2.Value[3][1];
-	out.Value[3][2] = s.Value[3][0] * in2.Value[0][2] + s.Value[3][1] * in2.Value[1][2] + s.Value[3][2] * in2.Value[2][2] + in2.Value[3][2];
+	out.Value[0][0] = s1.Value[0][0] * s2.Value[0][0] + s1.Value[0][1] * s2.Value[1][0] + s1.Value[0][2] * s2.Value[2][0];
+	out.Value[0][1] = s1.Value[0][0] * s2.Value[0][1] + s1.Value[0][1] * s2.Value[1][1] + s1.Value[0][2] * s2.Value[2][1];
+	out.Value[0][2] = s1.Value[0][0] * s2.Value[0][2] + s1.Value[0][1] * s2.Value[1][2] + s1.Value[0][2] * s2.Value[2][2];
+									   					 				 				   				   
+	out.Value[1][0] = s1.Value[1][0] * s2.Value[0][0] + s1.Value[1][1] * s2.Value[1][0] + s1.Value[1][2] * s2.Value[2][0];
+	out.Value[1][1] = s1.Value[1][0] * s2.Value[0][1] + s1.Value[1][1] * s2.Value[1][1] + s1.Value[1][2] * s2.Value[2][1];
+	out.Value[1][2] = s1.Value[1][0] * s2.Value[0][2] + s1.Value[1][1] * s2.Value[1][2] + s1.Value[1][2] * s2.Value[2][2];
+									   					 				 				   				   
+	out.Value[2][0] = s1.Value[2][0] * s2.Value[0][0] + s1.Value[2][1] * s2.Value[1][0] + s1.Value[2][2] * s2.Value[2][0];
+	out.Value[2][1] = s1.Value[2][0] * s2.Value[0][1] + s1.Value[2][1] * s2.Value[1][1] + s1.Value[2][2] * s2.Value[2][1];
+	out.Value[2][2] = s1.Value[2][0] * s2.Value[0][2] + s1.Value[2][1] * s2.Value[1][2] + s1.Value[2][2] * s2.Value[2][2];
+									   					 				 				   				   
+	out.Value[3][0] = s1.Value[3][0] * s2.Value[0][0] + s1.Value[3][1] * s2.Value[1][0] + s1.Value[3][2] * s2.Value[2][0] + s2.Value[3][0];
+	out.Value[3][1] = s1.Value[3][0] * s2.Value[0][1] + s1.Value[3][1] * s2.Value[1][1] + s1.Value[3][2] * s2.Value[2][1] + s2.Value[3][1];
+	out.Value[3][2] = s1.Value[3][0] * s2.Value[0][2] + s1.Value[3][1] * s2.Value[1][2] + s1.Value[3][2] * s2.Value[2][2] + s2.Value[3][2];
 #else
 	Matrix43 temp;
 
