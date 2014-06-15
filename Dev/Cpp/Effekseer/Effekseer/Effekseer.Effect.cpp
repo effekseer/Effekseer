@@ -340,7 +340,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	m_pRoot = EffectNode::Create( this, NULL, pos );
 
 	// リロード用にmaterialPathを記録しておく
-	m_materialPath = materialPath;
+    if (materialPath) m_materialPath = materialPath;
 
 	ReloadResources( materialPath );
 }
