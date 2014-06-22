@@ -590,7 +590,8 @@ bool Native::UpdateWindow()
 			::Effekseer::Matrix44().LookAtLH( position, temp_focus, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
 	}
 
-	g_sound->GetSound()->SetListener( position, g_focus_position, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) );
+	g_sound->SetListener( position, g_focus_position, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) );
+	
 	g_renderer->BeginRendering();
 	g_manager->Draw();
 	g_renderer->EndRendering();
@@ -641,8 +642,14 @@ bool Native::LoadEffect( void* pData, int size, const wchar_t* Path )
 	g_handles.clear();
 
 	((TextureLoader*)g_manager->GetTextureLoader())->RootPath = std::wstring( Path );
-	((SoundLoader*)g_manager->GetSoundLoader())->RootPath = std::wstring( Path );
 	((ModelLoader*)g_manager->GetModelLoader())->RootPath = std::wstring( Path );
+	
+	SoundLoader* soundLoader = (SoundLoader*)g_manager->GetSoundLoader();
+	if( soundLoader )
+	{
+		soundLoader->RootPath = std::wstring( Path );
+	}
+
 	g_effect = Effekseer::Effect::Create( g_manager, pData, size );
 	assert( g_effect != NULL );
 	return true;
