@@ -40,6 +40,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#if (_MSC_VER>=1800)
+#include <algorithm>
+#endif
+
 #if defined(_MSC_VER) && (_MSC_VER<1610) && !defined(_In_reads_)
 #define _In_reads_(exp)
 #define _Out_writes_(exp)

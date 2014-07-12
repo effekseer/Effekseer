@@ -121,38 +121,6 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 
 			ES_SAFE_RELEASE(textureR);
 		}
-		else
-		{
-			#if __EFFEKSEER_RENDERER_DIRECTXTEX || __EFFEKSEER_RENDERER_DIRECTXTEX__
-					::DirectX::ScratchImage img;
-					::DirectX::TexMetadata metadata;
-			
-					::DirectX::LoadFromWICMemory(
-						data_texture,
-						size_texture,
-						0,
-						&metadata,
-						img );
-			
-					::DirectX::CreateShaderResourceView(
-						m_renderer->GetDevice(),
-						img.GetImages(),
-						1,
-						metadata,
-						&texture );
-			
-					img.Release();
-			#else
-					D3DX11CreateShaderResourceViewFromMemory(
-						m_renderer->GetDevice(), 
-						data_texture, 
-						size_texture,
-						NULL,
-						NULL,
-						&texture,
-						NULL );
-			#endif
-		}
 
 		delete [] data_texture;
 		return (void*)texture;

@@ -9,9 +9,6 @@
 #include "../EffekseerRendererDX11/EffekseerRendererDX11.h"
 #include "graphics.h"
 
-#pragma comment(lib, "d3d11.lib" )
-#pragma comment(lib, "d3dx11.lib" )
-
 #if _DEBUG
 #pragma comment(lib, "EffekseerRendererDX11.Debug.lib" )
 #else

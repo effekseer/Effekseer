@@ -136,13 +136,6 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 				size_texture,
 				texture );
 		}
-		else
-		{
-			#if __EFFEKSEER_RENDERER_DIRECTXTEX || __EFFEKSEER_RENDERER_DIRECTXTEX__
-			#else
-					D3DXCreateTextureFromFileInMemory( m_renderer->GetDevice(), data_texture, size_texture, &texture );
-			#endif
-		}
 
 		delete [] data_texture;
 		return (void*)texture;

@@ -8,6 +8,7 @@
 #include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.DeviceObject.h>
+#include <d3dx9.h>
 
 //-----------------------------------------------------------------------------------
 //
