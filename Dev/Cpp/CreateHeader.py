@@ -10,8 +10,8 @@ class CreateHeader:
 		while line:
 			if re.search('include \"', line) == None:
  	 			self.lines.append(line)
-    			line = f.readline()
-		f.close
+			line = f.readline()
+		f.close()
 
 	def output(self,path):
 		f = open(path, 'w')

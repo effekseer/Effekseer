@@ -18,6 +18,8 @@
 #include "EffekseerRendererDX9.TextureLoader.h"
 #include "EffekseerRendererDX9.ModelLoader.h"
 
+#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -59,6 +61,8 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	SetLightDirection( ::Effekseer::Vector3D( 1.0f, 1.0f, 1.0f ) );
 	SetLightColor( ::Effekseer::Color( 255, 255, 255, 255 ) );
 	SetLightAmbientColor( ::Effekseer::Color( 0, 0, 0, 0 ) );
+
+	EffekseerRenderer::PngTextureLoader::Initialize();
 }
 
 //----------------------------------------------------------------------------------
@@ -66,6 +70,8 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 //----------------------------------------------------------------------------------
 RendererImplemented::~RendererImplemented()
 {
+	EffekseerRenderer::PngTextureLoader::Finalize();
+
 	assert( m_reference == 0 );
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );

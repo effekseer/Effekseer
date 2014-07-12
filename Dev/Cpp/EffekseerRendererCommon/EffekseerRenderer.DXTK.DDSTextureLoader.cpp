@@ -1624,7 +1624,7 @@ HRESULT EffekseerDirectX::CreateDDSTextureFromMemory(
 				srcBits += rowBytes;
 			}
 
-		   tempTexture->UnlockRect( mip );
+			tempTexture->UnlockRect( mip );
 		}
 
 		width = width >> 1;

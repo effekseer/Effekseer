@@ -20,6 +20,8 @@
 
 #include "EffekseerRendererGL.GLExtension.h"
 
+#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -57,6 +59,8 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	SetLightColor( lightColor );
 	::Effekseer::Color lightAmbient( 40, 40, 40, 255 );
 	SetLightAmbientColor( lightAmbient );
+
+	EffekseerRenderer::PngTextureLoader::Initialize();
 }
 
 //----------------------------------------------------------------------------------
@@ -64,6 +68,8 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 //----------------------------------------------------------------------------------
 RendererImplemented::~RendererImplemented()
 {
+	EffekseerRenderer::PngTextureLoader::Finalize();
+
 	assert( m_reference == 0 );
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );

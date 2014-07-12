@@ -18,6 +18,7 @@
 #include "EffekseerRendererDX11.TextureLoader.h"
 #include "EffekseerRendererDX11.ModelLoader.h"
 
+#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -129,6 +130,8 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	SetLightAmbientColor( ::Effekseer::Color( 0, 0, 0, 0 ) );
 
 	m_state = new OriginalState();
+
+	EffekseerRenderer::PngTextureLoader::Initialize();
 }
 
 //----------------------------------------------------------------------------------
@@ -136,6 +139,8 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 //----------------------------------------------------------------------------------
 RendererImplemented::~RendererImplemented()
 {
+	EffekseerRenderer::PngTextureLoader::Finalize();
+
 	assert( m_reference == 0 );
 
 	ES_SAFE_DELETE( m_state );
