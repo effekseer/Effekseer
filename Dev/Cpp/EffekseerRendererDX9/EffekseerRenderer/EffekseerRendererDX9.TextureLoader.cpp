@@ -7,6 +7,8 @@
 #include "EffekseerRendererDX9.RendererImplemented.h"
 #include "EffekseerRendererDX9.TextureLoader.h"
 
+#include "../../EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.h"
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -49,14 +51,29 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 		char* data_texture = new char[size_texture];
 		reader->Read( data_texture, size_texture );
 
-#if __EFFEKSEER_RENDERER_DIRECTXTEX || __EFFEKSEER_RENDERER_DIRECTXTEX__
-		return NULL;
-#else
-		D3DXCreateTextureFromFileInMemory( m_renderer->GetDevice(), data_texture, size_texture, &texture );
-#endif
-		
-		delete [] data_texture;
+		if( size_texture < 4 )
+		{
+		}
+		else if( data_texture[0] == 'D' &&
+			data_texture[1] == 'D' &&
+			data_texture[2] == 'S' &&
+			data_texture[3] == ' ')
+		{
+			EffekseerDirectX::CreateDDSTextureFromMemory(
+				m_renderer->GetDevice(),
+				(uint8_t*)data_texture,
+				size_texture,
+				texture );
+		}
+		else
+		{
+			#if __EFFEKSEER_RENDERER_DIRECTXTEX || __EFFEKSEER_RENDERER_DIRECTXTEX__
+			#else
+					D3DXCreateTextureFromFileInMemory( m_renderer->GetDevice(), data_texture, size_texture, &texture );
+			#endif
+		}
 
+		delete [] data_texture;
 		return (void*)texture;
 	}
 

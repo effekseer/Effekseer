@@ -23,6 +23,7 @@
 
 using namespace EffekseerDirectX;
 
+/*
 // Helper sets a D3D resource name string (used by PIX and debug layer leak reporting).
 template<UINT TNameLength>
 inline void SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_z_ const char (&name)[TNameLength])
@@ -34,6 +35,7 @@ inline void SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_z_ const ch
         UNREFERENCED_PARAMETER(name);
     #endif
 }
+*/
 
 #define SAFE_RELEASE(val)					if ( (val) != NULL ) { (val)->Release(); (val) = NULL; }
 
@@ -774,7 +776,7 @@ static HRESULT CreateD3DResources( _In_ ID3D11Device* d3dDevice,
                     }
                     else
                     {
-                        SetDebugObjectName(tex, "DDSTextureLoader");
+                        //SetDebugObjectName(tex, "DDSTextureLoader");
                         tex->Release();
                     }
                 }
@@ -861,7 +863,7 @@ static HRESULT CreateD3DResources( _In_ ID3D11Device* d3dDevice,
                     }
                     else
                     {
-                        SetDebugObjectName(tex, "DDSTextureLoader");
+                        //SetDebugObjectName(tex, "DDSTextureLoader");
                         tex->Release();
                     }
                 }
@@ -914,7 +916,7 @@ static HRESULT CreateD3DResources( _In_ ID3D11Device* d3dDevice,
                     }
                     else
                     {
-                        SetDebugObjectName(tex, "DDSTextureLoader");
+                        //SetDebugObjectName(tex, "DDSTextureLoader");
                         tex->Release();
                     }
                 }
@@ -1431,12 +1433,12 @@ HRESULT EffekseerDirectX::CreateDDSTextureFromMemoryEx( ID3D11Device* d3dDevice,
     {
         if (texture != 0 && *texture != 0)
         {
-            SetDebugObjectName(*texture, "DDSTextureLoader");
+            //SetDebugObjectName(*texture, "DDSTextureLoader");
         }
 
         if (textureView != 0 && *textureView != 0)
         {
-            SetDebugObjectName(*textureView, "DDSTextureLoader");
+            //SetDebugObjectName(*textureView, "DDSTextureLoader");
         }
 
         if ( alphaMode )
@@ -1615,7 +1617,7 @@ HRESULT EffekseerDirectX::CreateDDSTextureFromMemory(
 		{
 			auto destBits = (uint8_t*)locked.pBits;
 
-			for( auto h = 0; h < numBytes; h++ )
+			for( auto h = 0; h < numBytes / rowBytes; h++ )
 			{
 				memcpy( destBits, srcBits, rowBytes );
 				destBits += locked.Pitch;
