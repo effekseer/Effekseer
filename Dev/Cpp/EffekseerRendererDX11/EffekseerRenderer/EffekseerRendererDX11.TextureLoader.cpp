@@ -80,7 +80,7 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 				data.SysMemPitch = TexDesc.Width * 4;
 				data.SysMemSlicePitch = TexDesc.Width * TexDesc.Height * 4;
 
-				auto hr = m_renderer->GetDevice()->CreateTexture2D(&TexDesc, &data, &tex);
+				HRESULT hr = m_renderer->GetDevice()->CreateTexture2D(&TexDesc, &data, &tex);
 
 				if (FAILED(hr))
 				{

@@ -39,7 +39,7 @@ void InitGraphics( void* handle1, void* handle2, int width, int height )
 	UINT debugFlag = 0;
 	debugFlag = D3D11_CREATE_DEVICE_DEBUG;
 
-	auto hr = D3D11CreateDevice(
+	HRESULT hr = D3D11CreateDevice(
 		NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,

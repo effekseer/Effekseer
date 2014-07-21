@@ -30,7 +30,7 @@ static ULONG_PTR						gdiplusToken;
 #else
 static void PngReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-	auto d = (uint8_t**) png_get_io_ptr(png_ptr);
+	(uint8_t**) d = (uint8_t**) png_get_io_ptr(png_ptr);
 	memcpy(data, *d, length);
 	(*d) += length;
 }
@@ -187,8 +187,8 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 		{
 			for (int32_t x = 0; x < png_info->width; x++)
 			{
-				auto src = (x + y * png_info->width) * 3;
-				auto dst = (x + y * png_info->width) * 4;
+				int32_t src = (x + y * png_info->width) * 3;
+				int32_t dst = (x + y * png_info->width) * 4;
 				textureData[dst + 0] = image[src + 0];
 				textureData[dst + 1] = image[src + 1];
 				textureData[dst + 2] = image[src + 2];

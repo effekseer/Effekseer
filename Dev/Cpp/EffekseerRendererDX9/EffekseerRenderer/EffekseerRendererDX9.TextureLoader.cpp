@@ -62,9 +62,9 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 			if(::EffekseerRenderer::PngTextureLoader::Load(data_texture, size_texture, false))
 			{
 				HRESULT hr;
-				auto width = ::EffekseerRenderer::PngTextureLoader::GetWidth();
-				auto height = ::EffekseerRenderer::PngTextureLoader::GetHeight();
-				auto mipMapCount = 1;
+				int32_t width = ::EffekseerRenderer::PngTextureLoader::GetWidth();
+				int32_t height = ::EffekseerRenderer::PngTextureLoader::GetHeight();
+				int32_t mipMapCount = 1;
 				hr = m_renderer->GetDevice()->CreateTexture( 
 					width,
 					height,
@@ -98,18 +98,18 @@ void* TextureLoader::Load( const EFK_CHAR* path )
 					return (void*)texture;
 				}
 
-				auto srcBits = (uint8_t*)::EffekseerRenderer::PngTextureLoader::GetData().data();
+				uint8_t* srcBits = (uint8_t*)::EffekseerRenderer::PngTextureLoader::GetData().data();
 				D3DLOCKED_RECT locked;
 				if(SUCCEEDED(tempTexture->LockRect(0,&locked,NULL,0)))
 				{
-					auto destBits = (uint8_t*)locked.pBits;
+					uint8_t* destBits = (uint8_t*)locked.pBits;
 
-					for( auto h = 0; h < height; h++ )
+					for( int32_t h = 0; h < height; h++ )
 					{
 						memcpy( destBits, srcBits, width * 4 );
 
 						// RGB“ü‚ê‘Ö‚¦
-						for( auto w = 0; w < width; w++ )
+						for( int32_t w = 0; w < width; w++ )
 						{
 							std::swap( destBits[w * 4 + 0], destBits[w * 4 + 2]);
 						}
