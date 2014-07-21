@@ -30,7 +30,7 @@ static ULONG_PTR						gdiplusToken;
 #else
 static void PngReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-	(uint8_t**) d = (uint8_t**) png_get_io_ptr(png_ptr);
+	uint8_t** d = (uint8_t**) png_get_io_ptr(png_ptr);
 	memcpy(data, *d, length);
 	(*d) += length;
 }
