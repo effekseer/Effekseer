@@ -36,12 +36,16 @@ namespace Effekseer.Data.Value
 
 		public event ChangedValueEventHandler OnChanged;
 
+		internal int DefaultValue { get; private set; }
+
 		internal Int(int value = 0, int max = int.MaxValue, int min = int.MinValue, int step = 1 )
 		{
 			_max = max;
 			_min = min;
 			_value = value.Clipping(_max, _min);
 			Step = step;
+
+			DefaultValue = value;
 		}
 
 		protected void CallChanged(object value, ChangedValueType type)

@@ -28,7 +28,11 @@ namespace Effekseer.Data
 				{
 					var property_value = property.GetValue(o, null);
 					var element = method.Invoke(null, new object[] { doc, property.Name, property_value });
-					e_o.AppendChild(element as XmlNode);
+
+					if (element != null)
+					{
+						e_o.AppendChild(element as XmlNode);
+					}
 				}
 				else
 				{
@@ -36,7 +40,11 @@ namespace Effekseer.Data
 					{
 						var property_value = property.GetValue(o, null);
 						var element = SaveObjectToElement(doc, property.Name, property_value);
-						e_o.AppendChild(element as XmlNode);
+
+						if (element.ChildNodes.Count > 0)
+						{
+							e_o.AppendChild(element as XmlNode);
+						}
 					}
 				}
 			}
@@ -75,6 +83,7 @@ namespace Effekseer.Data
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Int value)
 		{
+			if (value.Value == value.DefaultValue) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
@@ -88,8 +97,11 @@ namespace Effekseer.Data
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.IntWithInifinite value)
 		{
 			var e = doc.CreateElement(element_name);
-			e.AppendChild(SaveToElement(doc, "Value", value.Value));
-			e.AppendChild(SaveToElement(doc, "Infinite", value.Infinite));
+			var v = SaveToElement(doc, "Value", value.Value);
+			var i = SaveToElement(doc, "Infinite", value.Infinite);
+			if (v == null && i == null) return null;
+			if (v != null) e.AppendChild(v);
+			if (i != null) e.AppendChild(i);
 			return e;
 		}
 
@@ -113,10 +125,16 @@ namespace Effekseer.Data
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Color value)
 		{
 			var e = doc.CreateElement(element_name);
-			e.AppendChild(SaveToElement(doc, "R", value.R));
-			e.AppendChild(SaveToElement(doc, "G", value.G));
-			e.AppendChild(SaveToElement(doc, "B", value.B));
-			e.AppendChild(SaveToElement(doc, "A", value.A));
+			var r = SaveToElement(doc, "R", value.R);
+			var g = SaveToElement(doc, "G", value.G);
+			var b = SaveToElement(doc, "B", value.B);
+			var a = SaveToElement(doc, "A", value.A);
+
+			if (r == null && g == null && b == null && a == null) return null;
+			if (r != null) e.AppendChild(r);
+			if (g != null) e.AppendChild(g);
+			if (b != null) e.AppendChild(b);
+			if (a != null) e.AppendChild(a);
 			return e;
 		}
 
@@ -420,22 +438,18 @@ namespace Effekseer.Data
 		{
 			var e_value = e["Value"] as XmlElement;
 			var e_infinite = e["Infinite"] as XmlElement;
-			if (e_value != null && e_infinite != null)
-			{
-				LoadFromElement(e_value, value.Value);
-				LoadFromElement(e_infinite, value.Infinite);
-			}
+
+			if (e_value != null) LoadFromElement(e_value, value.Value);
+			if (e_infinite != null) LoadFromElement(e_infinite, value.Infinite);
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.Vector2D value)
 		{
 			var e_x = e["X"] as XmlElement;
 			var e_y = e["Y"] as XmlElement;
-			if (e_x != null && e_y != null)
-			{
-				LoadFromElement(e_x, value.X);
-				LoadFromElement(e_y, value.Y);
-			}
+
+			if (e_x != null) LoadFromElement(e_x, value.X);
+			if (e_y != null) LoadFromElement(e_y, value.Y);
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.Vector3D value)
@@ -443,12 +457,10 @@ namespace Effekseer.Data
 			var e_x = e["X"] as XmlElement;
 			var e_y = e["Y"] as XmlElement;
 			var e_z = e["Z"] as XmlElement;
-			if (e_x != null && e_y != null && e_z != null)
-			{
-				LoadFromElement(e_x, value.X);
-				LoadFromElement(e_y, value.Y);
-				LoadFromElement(e_z, value.Z);
-			}
+
+			if (e_x != null) LoadFromElement(e_x, value.X);
+			if (e_y != null) LoadFromElement(e_y, value.Y);
+			if (e_z != null) LoadFromElement(e_z, value.Z);
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.Color value)
@@ -457,13 +469,11 @@ namespace Effekseer.Data
 			var e_g = e["G"] as XmlElement;
 			var e_b = e["B"] as XmlElement;
 			var e_a = e["A"] as XmlElement;
-			if (e_r != null && e_g != null && e_b != null && e_a != null)
-			{
-				LoadFromElement(e_r, value.R);
-				LoadFromElement(e_g, value.G);
-				LoadFromElement(e_b, value.B);
-				LoadFromElement(e_a, value.A);
-			}
+
+			if (e_r != null) LoadFromElement(e_r, value.R);
+			if (e_g != null) LoadFromElement(e_g, value.G);
+			if (e_b != null) LoadFromElement(e_b, value.B);
+			if (e_a != null) LoadFromElement(e_a, value.A);
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.IntWithRandom value)
