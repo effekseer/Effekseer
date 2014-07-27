@@ -306,10 +306,10 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		internal Vector3DEasingParamater()
+		internal Vector3DEasingParamater(float defaultX = 0.0f, float defaultY = 0.0f, float defaultZ = 0.0f)
 		{
-			Start = new Value.Vector3DWithRandom(0, 0, 0);
-			End = new Value.Vector3DWithRandom(0, 0, 0);
+			Start = new Value.Vector3DWithRandom(defaultX, defaultY, defaultZ);
+			End = new Value.Vector3DWithRandom(defaultX, defaultY, defaultZ);
 			StartSpeed = new Value.Enum<EasingStart>(EasingStart.Start);
 			EndSpeed = new Value.Enum<EasingEnd>(EasingEnd.End);
 		}

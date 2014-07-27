@@ -31,6 +31,8 @@ namespace Effekseer.Data.Value
 			set;
 		}
 
+		internal DrawnAs DefaultDrawnAs { get; private set; }
+
 		internal Vector3DWithRandom(
 			float x = 0,
 			float y = 0,
@@ -50,6 +52,7 @@ namespace Effekseer.Data.Value
 			Y = new FloatWithRandom(y, y_max, y_min, drawnas, y_step);
 			Z = new FloatWithRandom(z, z_max, z_min, drawnas, z_step);
 			DrawnAs = drawnas;
+			DefaultDrawnAs = DrawnAs;
 		}
 
 		public byte[] GetBytes( float mul = 1.0f)

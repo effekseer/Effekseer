@@ -41,7 +41,7 @@ namespace Effekseer.Data
 						var property_value = property.GetValue(o, null);
 						var element = SaveObjectToElement(doc, property.Name, property_value);
 
-						if (element.ChildNodes.Count > 0)
+						if (element != null && element.ChildNodes.Count > 0)
 						{
 							e_o.AppendChild(element as XmlNode);
 						}
@@ -49,7 +49,8 @@ namespace Effekseer.Data
 				}
 			}
 
-			return e_o;
+			if(e_o.ChildNodes.Count > 0) return e_o;
+			return null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, NodeBase node)
@@ -90,6 +91,7 @@ namespace Effekseer.Data
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Float value)
 		{
+			if (value.Value == value.DefaultValue) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
@@ -99,27 +101,37 @@ namespace Effekseer.Data
 			var e = doc.CreateElement(element_name);
 			var v = SaveToElement(doc, "Value", value.Value);
 			var i = SaveToElement(doc, "Infinite", value.Infinite);
-			if (v == null && i == null) return null;
+			
 			if (v != null) e.AppendChild(v);
 			if (i != null) e.AppendChild(i);
-			return e;
+
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector2D value)
 		{
 			var e = doc.CreateElement(element_name);
-			e.AppendChild(SaveToElement(doc, "X", value.X));
-			e.AppendChild(SaveToElement(doc, "Y", value.Y));
-			return e;
+			var x = SaveToElement(doc, "X", value.X);
+			var y = SaveToElement(doc, "Y", value.Y);
+
+			if (x != null) e.AppendChild(x);
+			if (y != null) e.AppendChild(y);
+
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector3D value)
 		{
 			var e = doc.CreateElement(element_name);
-			e.AppendChild(SaveToElement(doc, "X", value.X));
-			e.AppendChild(SaveToElement(doc, "Y", value.Y));
-			e.AppendChild(SaveToElement(doc, "Z", value.Z));
-			return e;
+			var x = SaveToElement(doc, "X", value.X);
+			var y = SaveToElement(doc, "Y", value.Y);
+			var z = SaveToElement(doc, "Z", value.Z);
+
+			if (x != null) e.AppendChild(x);
+			if (y != null) e.AppendChild(y);
+			if (z != null) e.AppendChild(z);
+
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Color value)
@@ -130,63 +142,84 @@ namespace Effekseer.Data
 			var b = SaveToElement(doc, "B", value.B);
 			var a = SaveToElement(doc, "A", value.A);
 
-			if (r == null && g == null && b == null && a == null) return null;
 			if (r != null) e.AppendChild(r);
 			if (g != null) e.AppendChild(g);
 			if (b != null) e.AppendChild(b);
 			if (a != null) e.AppendChild(a);
-			return e;
+
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.IntWithRandom value)
 		{
 			var e = doc.CreateElement(element_name);
-			e.AppendChild(doc.CreateTextElement("Center", value.Center.ToString()));
-			e.AppendChild(doc.CreateTextElement("Max", value.Max.ToString()));
-			e.AppendChild(doc.CreateTextElement("Min", value.Min.ToString()));
-			e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
-			return e;
+			if (value.DefaultValueCenter != value.Center) e.AppendChild(doc.CreateTextElement("Center", value.Center.ToString()));
+			if (value.DefaultValueMax != value.Max) e.AppendChild(doc.CreateTextElement("Max", value.Max.ToString()));
+			if (value.DefaultValueMin != value.Min) e.AppendChild(doc.CreateTextElement("Min", value.Min.ToString()));
+			if (value.DefaultDrawnAs != value.DrawnAs) e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
+
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FloatWithRandom value)
 		{
 			var e = doc.CreateElement(element_name);
-			e.AppendChild(doc.CreateTextElement("Center", value.Center.ToString()));
-			e.AppendChild(doc.CreateTextElement("Max", value.Max.ToString()));
-			e.AppendChild(doc.CreateTextElement("Min", value.Min.ToString()));
-			e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
-			return e;
+
+			if(value.DefaultValueCenter != value.Center) e.AppendChild(doc.CreateTextElement("Center", value.Center.ToString()));
+			if(value.DefaultValueMax != value.Max) e.AppendChild(doc.CreateTextElement("Max", value.Max.ToString()));
+			if(value.DefaultValueMin != value.Min) e.AppendChild(doc.CreateTextElement("Min", value.Min.ToString()));
+			if(value.DefaultDrawnAs != value.DrawnAs) e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
+			
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector2DWithRandom value)
 		{
 			var e = doc.CreateElement(element_name);
-			e.AppendChild(SaveToElement(doc, "X", value.X));
-			e.AppendChild(SaveToElement(doc, "Y", value.Y));
-			e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
-			return e;
+			var x = SaveToElement(doc, "X", value.X);
+			var y = SaveToElement(doc, "Y", value.Y);
+			var da = value.DefaultDrawnAs != value.DrawnAs ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
+
+			if (x != null) e.AppendChild(x);
+			if (y != null) e.AppendChild(y);
+			if (da != null) e.AppendChild(da);
+
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector3DWithRandom value)
 		{
 			var e = doc.CreateElement(element_name);
-			e.AppendChild(SaveToElement(doc, "X", value.X));
-			e.AppendChild(SaveToElement(doc, "Y", value.Y));
-			e.AppendChild(SaveToElement(doc, "Z", value.Z));
-			e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
-			return e;
+			var x = SaveToElement(doc, "X", value.X);
+			var y = SaveToElement(doc, "Y", value.Y);
+			var z = SaveToElement(doc, "Z", value.Z);
+			var da = value.DefaultDrawnAs != value.DrawnAs ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
+
+			if (x != null) e.AppendChild(x);
+			if (y != null) e.AppendChild(y);
+			if (z != null) e.AppendChild(z);
+			if (da != null) e.AppendChild(da);
+
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.ColorWithRandom value)
 		{
 			var e = doc.CreateElement(element_name);
-			e.AppendChild(SaveToElement(doc, "R", value.R));
-			e.AppendChild(SaveToElement(doc, "G", value.G));
-			e.AppendChild(SaveToElement(doc, "B", value.B));
-			e.AppendChild(SaveToElement(doc, "A", value.A));
-			e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
+			var r = SaveToElement(doc, "R", value.R);
+			var g = SaveToElement(doc, "G", value.G);
+			var b = SaveToElement(doc, "B", value.B);
+			var a = SaveToElement(doc, "A", value.A);
+			var da = value.DefaultDrawnAs != value.DrawnAs ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
+
+			if (r != null) e.AppendChild(r);
+			if (g != null) e.AppendChild(g);
+			if (b != null) e.AppendChild(b);
+			if (a != null) e.AppendChild(a);
+			if (da != null) e.AppendChild(da);
 			e.AppendChild(doc.CreateTextElement("ColorSpace", (int)value.ColorSpace));
-			return e;
+
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.EnumBase value)
@@ -494,11 +527,19 @@ namespace Effekseer.Data
 				var max = e_max.GetTextAsInt();
 				value.SetMax(max);
 			}
+			else
+			{
+				value.SetMax(value.DefaultValueMax);
+			}
 
 			if (e_min != null)
 			{
 				var min = e_min.GetTextAsInt();
 				value.SetMin(min);
+			}
+			else
+			{
+				value.SetMin(value.DefaultValueMin);
 			}
 
 			if (e_da != null)
@@ -525,11 +566,19 @@ namespace Effekseer.Data
 				var max = e_max.GetTextAsFloat();
 				value.SetMax(max);
 			}
+			else
+			{
+				value.SetMax(value.DefaultValueMax);
+			}
 
 			if (e_min != null)
 			{
 				var min = e_min.GetTextAsFloat();
 				value.SetMin(min);
+			}
+			else
+			{
+				value.SetMin(value.DefaultValueMin);
 			}
 
 			if (e_da != null)

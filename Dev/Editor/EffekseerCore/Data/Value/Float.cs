@@ -34,6 +34,8 @@ namespace Effekseer.Data.Value
 			set;
 		}
 
+		internal float DefaultValue { get; private set; }
+
 		public event ChangedValueEventHandler OnChanged;
 
 		internal Float(float value = 0, float max = float.MaxValue, float min = float.MinValue, float step = 1.0f)
@@ -42,6 +44,7 @@ namespace Effekseer.Data.Value
 			_min = min;
 			_value = value.Clipping(_max, _min);
 			Step = step;
+			DefaultValue = _value;
 		}
 
 		protected void CallChanged(object value, ChangedValueType type)
