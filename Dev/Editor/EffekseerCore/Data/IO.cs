@@ -478,37 +478,78 @@ namespace Effekseer.Data
 
 		public static void LoadFromElement(XmlElement e, Value.IntWithRandom value)
 		{
-			var center = e.GetTextAsInt("Center");
-			var max = e.GetTextAsInt("Max");
-			var min = e.GetTextAsInt("Min");
+			var e_c = e["Center"];
+			var e_max = e["Max"];
+			var e_min = e["Min"];
+			var e_da = e["DrawnAs"];
 
-			value.SetCenter(center);
-			value.SetMax(max);
-			value.SetMin(min);
-			value.DrawnAs = (DrawnAs)e.GetTextAsInt("DrawnAs");
+			if (e_c != null)
+			{
+				var center = e_c.GetTextAsInt();
+				value.SetCenter(center);
+			}
+
+			if (e_max != null)
+			{
+				var max = e_max.GetTextAsInt();
+				value.SetMax(max);
+			}
+
+			if (e_min != null)
+			{
+				var min = e_min.GetTextAsInt();
+				value.SetMin(min);
+			}
+
+			if (e_da != null)
+			{
+				value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
+			}
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.FloatWithRandom value)
 		{
-			var center = e.GetTextAsFloat("Center");
-			var max = e.GetTextAsFloat("Max");
-			var min = e.GetTextAsFloat("Min");
+			var e_c = e["Center"];
+			var e_max = e["Max"];
+			var e_min = e["Min"];
+			var e_da = e["DrawnAs"];
 
-			value.SetCenter(center);
-			value.SetMax(max);
-			value.SetMin(min);
-			value.DrawnAs = (DrawnAs)e.GetTextAsInt("DrawnAs");
+			if (e_c != null)
+			{
+				var center = e_c.GetTextAsFloat();
+				value.SetCenter(center);
+			}
+
+			if (e_max != null)
+			{
+				var max = e_max.GetTextAsFloat();
+				value.SetMax(max);
+			}
+
+			if (e_min != null)
+			{
+				var min = e_min.GetTextAsFloat();
+				value.SetMin(min);
+			}
+
+			if (e_da != null)
+			{
+				value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
+			}
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.Vector2DWithRandom value)
 		{
 			var e_x = e["X"] as XmlElement;
 			var e_y = e["Y"] as XmlElement;
-			if (e_x != null && e_y != null)
+			var e_da = e["DrawnAs"];
+
+			if (e_x != null) LoadFromElement(e_x, value.X);
+			if (e_y != null) LoadFromElement(e_y, value.Y);
+
+			if (e_da != null)
 			{
-				LoadFromElement(e_x, value.X);
-				LoadFromElement(e_y, value.Y);
-				value.DrawnAs = (DrawnAs)e.GetTextAsInt("DrawnAs");
+				value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
 			}
 		}
 
@@ -517,12 +558,15 @@ namespace Effekseer.Data
 			var e_x = e["X"] as XmlElement;
 			var e_y = e["Y"] as XmlElement;
 			var e_z = e["Z"] as XmlElement;
-			if (e_x != null && e_y != null && e_z != null)
+			var e_da = e["DrawnAs"];
+
+			if (e_x != null) LoadFromElement(e_x, value.X);
+			if (e_y != null) LoadFromElement(e_y, value.Y);
+			if (e_z != null) LoadFromElement(e_z, value.Z);
+
+			if (e_da != null)
 			{
-				LoadFromElement(e_x, value.X);
-				LoadFromElement(e_y, value.Y);
-				LoadFromElement(e_z, value.Z);
-				value.DrawnAs = (DrawnAs)e.GetTextAsInt("DrawnAs");
+				value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
 			}
 		}
 
@@ -532,14 +576,22 @@ namespace Effekseer.Data
 			var e_g = e["G"] as XmlElement;
 			var e_b = e["B"] as XmlElement;
 			var e_a = e["A"] as XmlElement;
-			if (e_r != null && e_g != null && e_b != null && e_a != null)
+			var e_da = e["DrawnAs"];
+			var e_cs = e["ColorSpace"];
+
+			if (e_r != null) LoadFromElement(e_r, value.R);
+			if (e_g != null) LoadFromElement(e_g, value.G);
+			if (e_b != null) LoadFromElement(e_b, value.B);
+			if (e_a != null) LoadFromElement(e_a, value.A);
+
+			if (e_da != null)
 			{
-				LoadFromElement(e_r, value.R);
-				LoadFromElement(e_g, value.G);
-				LoadFromElement(e_b, value.B);
-				LoadFromElement(e_a, value.A);
-				value.DrawnAs = (DrawnAs)e.GetTextAsInt("DrawnAs");
-				value.ColorSpace = (ColorSpace)e.GetTextAsInt("ColorSpace");
+				value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
+			}
+
+			if (e_cs != null)
+			{
+				value.ColorSpace = (ColorSpace)e_cs.GetTextAsInt();
 			}
 		}
 
@@ -562,6 +614,8 @@ namespace Effekseer.Data
 		public static void LoadFromElement(XmlElement e, Value.FCurveVector2D value)
 		{
 			var e_keys = e["Keys"] as XmlElement;
+			if (e_keys == null) return;
+
 			var e_x = e_keys["X"] as XmlElement;
 			var e_y = e_keys["Y"] as XmlElement;
 
@@ -622,6 +676,8 @@ namespace Effekseer.Data
 		public static void LoadFromElement(XmlElement e, Value.FCurveVector3D value)
 		{
 			var e_keys = e["Keys"] as XmlElement;
+			if (e_keys == null) return;
+
 			var e_x = e_keys["X"] as XmlElement;
 			var e_y = e_keys["Y"] as XmlElement;
 			var e_z = e_keys["Z"] as XmlElement;
@@ -733,6 +789,8 @@ namespace Effekseer.Data
 
 
 			var e_keys = e["Keys"] as XmlElement;
+			if (e_keys == null) return;
+
 			var e_r = e_keys["R"] as XmlElement;
 			var e_g = e_keys["G"] as XmlElement;
 			var e_b = e_keys["B"] as XmlElement;
