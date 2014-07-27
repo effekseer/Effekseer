@@ -58,6 +58,8 @@ namespace Effekseer.Data.Value
 
 		internal DrawnAs DefaultDrawnAs { get; private set; }
 
+		internal ColorSpace DefaultColorSpace { get; private set; }
+
 		public event ChangedValueEventHandler OnChangedColorSpace;
 
 		public void SetColorSpace(ColorSpace colorSpace, bool isCombined = false)
@@ -121,6 +123,7 @@ namespace Effekseer.Data.Value
 			ColorSpace = colorSpace;
 
 			DefaultDrawnAs = DrawnAs;
+			DefaultColorSpace = ColorSpace;
 		}
 
 		public void SetMin(int r, int g, int b)

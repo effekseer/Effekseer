@@ -477,7 +477,9 @@ namespace Effekseer
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 
 			project_root.AppendChild(element);
-			project_root.AppendChild(behaviorElement);
+
+			if(behaviorElement != null) project_root.AppendChild(behaviorElement);
+
 			project_root.AppendChild(doc.CreateTextElement("ToolVersion", Core.Version));
 			project_root.AppendChild(doc.CreateTextElement("Version", 3));
 			project_root.AppendChild(doc.CreateTextElement("StartFrame", StartFrame));

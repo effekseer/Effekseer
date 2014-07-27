@@ -78,6 +78,7 @@ namespace Effekseer.Data
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Boolean value)
 		{
+			if (value.DefaultValue == value.Value) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
@@ -211,19 +212,21 @@ namespace Effekseer.Data
 			var b = SaveToElement(doc, "B", value.B);
 			var a = SaveToElement(doc, "A", value.A);
 			var da = value.DefaultDrawnAs != value.DrawnAs ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
+			var cs = value.DefaultColorSpace != value.ColorSpace ? doc.CreateTextElement("ColorSpace", (int)value.ColorSpace) : null;
 
 			if (r != null) e.AppendChild(r);
 			if (g != null) e.AppendChild(g);
 			if (b != null) e.AppendChild(b);
 			if (a != null) e.AppendChild(a);
 			if (da != null) e.AppendChild(da);
-			e.AppendChild(doc.CreateTextElement("ColorSpace", (int)value.ColorSpace));
-
+			if (cs != null) e.AppendChild(cs);
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.EnumBase value)
 		{
+			if (value.GetValueAsInt() == value.GetDefaultValueAsInt()) return null;
+
 			var text = value.GetValueAsInt().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}

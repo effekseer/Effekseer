@@ -8,6 +8,7 @@ namespace Effekseer.Data.Value
 	public abstract class EnumBase
 	{
 		public abstract int GetValueAsInt();
+		public abstract int GetDefaultValueAsInt();
 		public abstract void SetValue(int value);
 		public event ChangedValueEventHandler OnChanged;
 
