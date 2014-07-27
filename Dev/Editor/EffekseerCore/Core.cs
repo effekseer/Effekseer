@@ -645,8 +645,8 @@ namespace Effekseer
 			var optionElement = Data.IO.SaveObjectToElement(doc, "Option", Option);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
+			if(optionElement != null) project_root.AppendChild(optionElement);
 
-			project_root.AppendChild(optionElement);
 			doc.AppendChild(project_root);
 
 			var dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);

@@ -87,13 +87,14 @@ namespace Effekseer.Data
 			//Easing.End.Y.SetMinDirectly(1.0f);
 			//Easing.End.Z.SetMinDirectly(1.0f);
 			SinglePVA = new SinglePVAParamater();
-			SingleEasing = new FloatEasingParamater();
-			SingleEasing.Start.SetCenterDirectly(1.0f);
-			SingleEasing.Start.SetMaxDirectly(1.0f);
-			SingleEasing.Start.SetMinDirectly(1.0f);
-			SingleEasing.End.SetCenterDirectly(1.0f);
-			SingleEasing.End.SetMaxDirectly(1.0f);
-			SingleEasing.End.SetMinDirectly(1.0f);
+
+			SingleEasing = new FloatEasingParamater(1.0f);
+			//SingleEasing.Start.SetCenterDirectly(1.0f);
+			//SingleEasing.Start.SetMaxDirectly(1.0f);
+			//SingleEasing.Start.SetMinDirectly(1.0f);
+			//SingleEasing.End.SetCenterDirectly(1.0f);
+			//SingleEasing.End.SetMaxDirectly(1.0f);
+			//SingleEasing.End.SetMinDirectly(1.0f);
 
 			FCurve = new Vector3DFCurveParameter();
 			FCurve.FCurve.X.DefaultValue = 1.0f;

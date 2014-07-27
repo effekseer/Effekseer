@@ -72,6 +72,7 @@ namespace Effekseer.Data
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.String value)
 		{
+			if (value.DefaultValue == value.Value) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
@@ -233,6 +234,7 @@ namespace Effekseer.Data
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Path value)
 		{
+			if (value.DefaultValue == value.GetAbsolutePath()) return null;
 			var text = value.GetRelativePath();
 			return doc.CreateTextElement(element_name, text);
 		}
@@ -249,11 +251,18 @@ namespace Effekseer.Data
 			Action<Value.FCurve<float>, XmlElement> setValues = (v, xml) =>
 				{
 					index = 0;
-					xml.AppendChild(doc.CreateTextElement("StartType", v.StartType.GetValueAsInt()));
-					xml.AppendChild(doc.CreateTextElement("EndType", v.EndType.GetValueAsInt()));
-					xml.AppendChild(doc.CreateTextElement("OffsetMax", v.OffsetMax.Value.ToString()));
-					xml.AppendChild(doc.CreateTextElement("OffsetMin", v.OffsetMin.Value.ToString()));
-					xml.AppendChild(doc.CreateTextElement("Sampling", v.Sampling.Value.ToString()));
+
+					var st = SaveToElement(doc, "StartType", v.StartType);
+					var et = SaveToElement(doc, "EndType", v.EndType);
+					var omax = SaveToElement(doc, "OffsetMax", v.OffsetMax);
+					var omin = SaveToElement(doc, "OffsetMin", v.OffsetMin);
+					var s = SaveToElement(doc, "Sampling", v.Sampling);
+
+					if (st != null) xml.AppendChild(st);
+					if (et != null) xml.AppendChild(et);
+					if (omax != null) xml.AppendChild(omax);
+					if (omin != null) xml.AppendChild(omin);
+					if (s != null) xml.AppendChild(s);
 
 					foreach (var k_ in v.Keys)
 					{
@@ -275,11 +284,11 @@ namespace Effekseer.Data
 			setValues(value.X, x);
 			setValues(value.Y, y);
 
-			keys.AppendChild(x);
-			keys.AppendChild(y);
-			e.AppendChild(keys);
+			if (x.ChildNodes.Count > 0) keys.AppendChild(x);
+			if (y.ChildNodes.Count > 0) keys.AppendChild(y);
+			if (keys.ChildNodes.Count > 0) e.AppendChild(keys);
 
-			return e;
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveVector3D value)
@@ -295,11 +304,18 @@ namespace Effekseer.Data
 			Action<Value.FCurve<float>, XmlElement> setValues = (v, xml) =>
 			{
 				index = 0;
-				xml.AppendChild(doc.CreateTextElement("StartType", v.StartType.GetValueAsInt()));
-				xml.AppendChild(doc.CreateTextElement("EndType", v.EndType.GetValueAsInt()));
-				xml.AppendChild(doc.CreateTextElement("OffsetMax", v.OffsetMax.Value.ToString()));
-				xml.AppendChild(doc.CreateTextElement("OffsetMin", v.OffsetMin.Value.ToString()));
-				xml.AppendChild(doc.CreateTextElement("Sampling", v.Sampling.Value.ToString()));
+
+				var st = SaveToElement(doc, "StartType", v.StartType);
+				var et = SaveToElement(doc, "EndType", v.EndType);
+				var omax = SaveToElement(doc, "OffsetMax", v.OffsetMax);
+				var omin = SaveToElement(doc, "OffsetMin", v.OffsetMin);
+				var s = SaveToElement(doc, "Sampling", v.Sampling);
+
+				if (st != null) xml.AppendChild(st);
+				if (et != null) xml.AppendChild(et);
+				if (omax != null) xml.AppendChild(omax);
+				if (omin != null) xml.AppendChild(omin);
+				if (s != null) xml.AppendChild(s);
 
 				foreach (var k_ in v.Keys)
 				{
@@ -322,12 +338,12 @@ namespace Effekseer.Data
 			setValues(value.Y, y);
 			setValues(value.Z, z);
 
-			keys.AppendChild(x);
-			keys.AppendChild(y);
-			keys.AppendChild(z);
-			e.AppendChild(keys);
+			if (x.ChildNodes.Count > 0) keys.AppendChild(x);
+			if (y.ChildNodes.Count > 0) keys.AppendChild(y);
+			if (z.ChildNodes.Count > 0) keys.AppendChild(z);
+			if (keys.ChildNodes.Count > 0) e.AppendChild(keys);
 
-			return e;
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveColorRGBA value)
@@ -344,11 +360,18 @@ namespace Effekseer.Data
 			Action<Value.FCurve<byte>, XmlElement> setValues = (v, xml) =>
 			{
 				index = 0;
-				xml.AppendChild(doc.CreateTextElement("StartType", v.StartType.GetValueAsInt()));
-				xml.AppendChild(doc.CreateTextElement("EndType", v.EndType.GetValueAsInt()));
-				xml.AppendChild(doc.CreateTextElement("OffsetMax", v.OffsetMax.Value.ToString()));
-				xml.AppendChild(doc.CreateTextElement("OffsetMin", v.OffsetMin.Value.ToString()));
-				xml.AppendChild(doc.CreateTextElement("Sampling", v.Sampling.Value.ToString()));
+
+				var st = SaveToElement(doc, "StartType", v.StartType);
+				var et = SaveToElement(doc, "EndType", v.EndType);
+				var omax = SaveToElement(doc, "OffsetMax", v.OffsetMax);
+				var omin = SaveToElement(doc, "OffsetMin", v.OffsetMin);
+				var s = SaveToElement(doc, "Sampling", v.Sampling);
+
+				if (st != null) xml.AppendChild(st);
+				if (et != null) xml.AppendChild(et);
+				if (omax != null) xml.AppendChild(omax);
+				if (omin != null) xml.AppendChild(omin);
+				if (s != null) xml.AppendChild(s);
 
 				foreach (var k_ in v.Keys)
 				{
@@ -372,14 +395,14 @@ namespace Effekseer.Data
 			setValues(value.B, b);
 			setValues(value.A, a);
 
-			keys.AppendChild(r);
-			keys.AppendChild(g);
-			keys.AppendChild(b);
-			keys.AppendChild(a);			
+			if (r.ChildNodes.Count > 0) keys.AppendChild(r);
+			if (g.ChildNodes.Count > 0) keys.AppendChild(g);
+			if (b.ChildNodes.Count > 0) keys.AppendChild(b);
+			if (a.ChildNodes.Count > 0) keys.AppendChild(a);
 
-			e.AppendChild(keys);
+			if (keys.ChildNodes.Count > 0) e.AppendChild(keys);
 
-			return e;
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
 		public static void LoadObjectFromElement(XmlElement e, ref object o)
@@ -721,8 +744,8 @@ namespace Effekseer.Data
 				}
 			};
 
-			import(value.X, e_x);
-			import(value.Y, e_y);
+			if (e_x != null) import(value.X, e_x);
+			if (e_y != null) import(value.Y, e_y);
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.FCurveVector3D value)
@@ -783,9 +806,9 @@ namespace Effekseer.Data
 				}
 			};
 
-			import(value.X, e_x);
-			import(value.Y, e_y);
-			import(value.Z, e_z);
+			if (e_x != null) import(value.X, e_x);
+			if (e_y != null) import(value.Y, e_y);
+			if (e_z != null) import(value.Z, e_z);
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.FCurveColorRGBA value)
@@ -848,10 +871,10 @@ namespace Effekseer.Data
 			var e_b = e_keys["B"] as XmlElement;
 			var e_a = e_keys["A"] as XmlElement;
 
-			import(value.R, e_r);
-			import(value.G, e_g);
-			import(value.B, e_b);
-			import(value.A, e_a);
+			if (e_r != null) import(value.R, e_r);
+			if (e_g != null) import(value.G, e_g);
+			if (e_b != null) import(value.B, e_b);
+			if (e_a != null) import(value.A, e_a);
 		}
 	}
 }

@@ -42,10 +42,14 @@ namespace Effekseer.Data.Value
 
 		public event ChangedValueEventHandler OnChanged;
 
+		public string DefaultValue { get; private set; }
+
 		internal Path(string filter, string abspath = "")
 		{
 			Filter = filter;
 			_abspath = abspath;
+
+			DefaultValue = _abspath;
 		}
 
 		public string GetAbsolutePath()
@@ -106,10 +110,18 @@ namespace Effekseer.Data.Value
 					SetAbsolutePath(relative_path);
 					return;
 				}
-				Uri basepath = new Uri(Core.FullPath);
-				Uri path = new Uri(basepath, relative_path);
-				var absolute_path = path.LocalPath;
-				SetAbsolutePath(absolute_path);
+
+				if (relative_path == string.Empty)
+				{
+					SetAbsolutePath(string.Empty);
+				}
+				else
+				{
+					Uri basepath = new Uri(Core.FullPath);
+					Uri path = new Uri(basepath, relative_path);
+					var absolute_path = path.LocalPath;
+					SetAbsolutePath(absolute_path);
+				}
 			}
 			catch (Exception e)
 			{
