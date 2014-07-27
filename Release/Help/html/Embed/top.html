@@ -14,16 +14,24 @@
 		<h2>概要</h2>
 ここでは、Effekseerのランタイムを別のプログラムに組み込む方法を説明します。
 
-		<h2>コンパイル</h2>
+		<h3>Windows</h3>
+		<p>
+公式サイトにて、マルチスレッド設定のコンパイル済ランタイムを公開しています。それ以外の方は自分でコンパイルする必要があります。コンパイラはVisualStudio2010以降のみ対応しております。
+		</p>
 
 		<h3>DirectX9の場合</h3>
 		<p>
-「Runtime/EffekseerRendererDX9.sln」を組み込み先の設定(マルチスレッドDLL等)に合わせて設定しなおしてコンパイルしてください。現在、DirectX SDKが必須となっており、また、プロジェクトはVisualC++2010のみが存在しています。検証はしてませんが、それ以前のVisualC++でもプロジェクトを作ればコンパイルできるはずです。コンパイルが成功すると、「Runtime/include」にインクルードファイルが、「Runtime/lib」にライブラリファイルが生成されます。
+「Runtime/EffekseerRendererDX9.sln」を組み込み先の設定(マルチスレッドDLL等)に合わせて設定しなおしてコンパイルしてください。現在、DirectX SDKが必須となっており、また、プロジェクトはVisualC++2010のみが存在しています。コンパイルが成功すると、「Runtime/include」にインクルードファイルが、「Runtime/lib」にライブラリファイルが生成されます。
+		</p>
+
+		<h3>DirectX11の場合</h3>
+		<p>
+「Runtime/EffekseerRendererDX11.sln」を組み込み先の設定(マルチスレッドDLL等)に合わせて設定しなおしてコンパイルしてください。現在、DirectX SDKが必須となっており、また、プロジェクトはVisualC++2010のみが存在しています。コンパイルが成功すると、「Runtime/include」にインクルードファイルが、「Runtime/lib」にライブラリファイルが生成されます。
 		</p>
 
 		<h3>OpenGLの場合(Windows)</h3>
 		<p>
-「Runtime/EffekseerRendererDX9.sln」を組み込み先の設定(マルチスレッドDLL等)に合わせて設定しなおしてコンパイルしてください。現在、DirectX SDKが必須となっており、また、プロジェクトはVisualC++2010のみが存在しています。検証はしてませんが、それ以前のVisualC++でもプロジェクトを作ればコンパイルできるはずです。コンパイルが成功すると、「Runtime/include」にインクルードファイルが、「Runtime/lib」にライブラリファイルが生成されます。
+「Runtime/EffekseerRendererGL.sln」を組み込み先の設定(マルチスレッドDLL等)に合わせて設定しなおしてコンパイルしてください。現在、DirectX SDKが必須となっており、また、プロジェクトはVisualC++2010のみが存在しています。コンパイルが成功すると、「Runtime/include」にインクルードファイルが、「Runtime/lib」にライブラリファイルが生成されます。
 		</p>
 
 		<h4>マクロ</h4>
@@ -39,10 +47,6 @@
 <tr>
 	<td>__EFFEKSEER_RENDERER_GLES2__</td>
 	<td>OpenGL ES2.0を使用</td>
-</tr>
-<tr>
-	<td>__EFFEKSEER_RENDERER_DIRECTXTEX__</td>
-	<td>D3DXの代わりにDirectXTexを使用する。</td>
 </tr>
 <tr>
 	<td>__EFFEKSEER_RENDERER_INTERNAL_LOADER__</td>
