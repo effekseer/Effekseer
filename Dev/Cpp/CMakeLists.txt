@@ -68,9 +68,6 @@ set(effekseer_renderer_common_src
 	EffekseerRendererCommon/EffekseerRenderer.VertexBufferBase.cpp)
 
 set(effekseer_renderer_dx9_src
-	EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.cpp
-	EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
-
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.DeviceObject.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.ModelLoader.cpp
@@ -86,9 +83,6 @@ set(effekseer_renderer_dx9_src
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.cpp)
 
 set(effekseer_renderer_dx11_src
-	EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.cpp
-	EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
-
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.DeviceObject.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.IndexBuffer.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.ModelLoader.cpp
@@ -104,8 +98,6 @@ set(effekseer_renderer_dx11_src
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.VertexBuffer.cpp)
 
 set(effekseer_renderer_gl_src
-	EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
-
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.DeviceObject.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.GLExtension.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.IndexBuffer.cpp
@@ -129,6 +121,25 @@ list(APPEND effekseer_renderer_dx11_src
 
 list(APPEND effekseer_renderer_gl_src
 	${effekseer_renderer_common_src})
+
+if (USE_INTERNAL_LOADER)
+set(effekseer_renderer_dx_loader_src
+	EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.cpp
+	EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp)
+
+set(effekseer_renderer_gl_loader_src
+	EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp)
+
+list(APPEND effekseer_renderer_dx9_src
+	${effekseer_renderer_dx_loader_src})
+
+list(APPEND effekseer_renderer_dx11_src
+	${effekseer_renderer_dx_loader_src})
+
+list(APPEND effekseer_renderer_gl_src
+	${effekseer_renderer_gl_loader_src})
+
+endif()
 
 set(effekseer_sound_al_src
 	EffekseerSoundAL/EffekseerSound/EffekseerSoundAL.Sound.cpp
