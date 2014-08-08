@@ -18,7 +18,10 @@
 #include "EffekseerRendererDX11.TextureLoader.h"
 #include "EffekseerRendererDX11.ModelLoader.h"
 
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 #include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -131,7 +134,9 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 
 	m_state = new OriginalState();
 
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	EffekseerRenderer::PngTextureLoader::Initialize();
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -139,7 +144,9 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 //----------------------------------------------------------------------------------
 RendererImplemented::~RendererImplemented()
 {
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	EffekseerRenderer::PngTextureLoader::Finalize();
+#endif
 
 	assert( m_reference == 0 );
 

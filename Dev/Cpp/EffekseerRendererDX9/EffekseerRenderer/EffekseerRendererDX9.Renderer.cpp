@@ -18,7 +18,9 @@
 #include "EffekseerRendererDX9.TextureLoader.h"
 #include "EffekseerRendererDX9.ModelLoader.h"
 
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 #include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -62,7 +64,9 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	SetLightColor( ::Effekseer::Color( 255, 255, 255, 255 ) );
 	SetLightAmbientColor( ::Effekseer::Color( 0, 0, 0, 0 ) );
 
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	EffekseerRenderer::PngTextureLoader::Initialize();
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -70,7 +74,9 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 //----------------------------------------------------------------------------------
 RendererImplemented::~RendererImplemented()
 {
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	EffekseerRenderer::PngTextureLoader::Finalize();
+#endif
 
 	assert( m_reference == 0 );
 	ES_SAFE_DELETE( m_renderState );

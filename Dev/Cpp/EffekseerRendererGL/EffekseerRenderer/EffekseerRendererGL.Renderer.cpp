@@ -20,7 +20,9 @@
 
 #include "EffekseerRendererGL.GLExtension.h"
 
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 #include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -60,7 +62,9 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	::Effekseer::Color lightAmbient( 40, 40, 40, 255 );
 	SetLightAmbientColor( lightAmbient );
 
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	EffekseerRenderer::PngTextureLoader::Initialize();
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -68,7 +72,9 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 //----------------------------------------------------------------------------------
 RendererImplemented::~RendererImplemented()
 {
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	EffekseerRenderer::PngTextureLoader::Finalize();
+#endif
 
 	assert( m_reference == 0 );
 	ES_SAFE_DELETE( m_renderState );
