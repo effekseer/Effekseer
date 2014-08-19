@@ -587,6 +587,7 @@ namespace Effekseer.GUI
                 doc.Save(configRecentPath);
 			}
 
+			if (MainForm.WindowState == FormWindowState.Normal)
 			{
 				System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
