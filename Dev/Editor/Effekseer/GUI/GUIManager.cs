@@ -493,11 +493,6 @@ namespace Effekseer.GUI
 								return DockNodeRotationValues;
 							}
 
-							if (DockNodeRotationValues.GetType().FullName == s)
-							{
-								return DockNodeRotationValues;
-							}
-
 							if (DockNodeScalingValues.GetType().FullName == s)
 							{
 								return DockNodeScalingValues;
