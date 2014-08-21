@@ -587,16 +587,25 @@ namespace Effekseer.GUI
                 doc.Save(configRecentPath);
 			}
 
-			if (MainForm.WindowState == FormWindowState.Normal)
 			{
 				System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
 				System.Xml.XmlElement project_root = doc.CreateElement("GUI");
 
-				project_root.AppendChild(doc.CreateTextElement("X", MainForm.Location.X.ToString()));
-				project_root.AppendChild(doc.CreateTextElement("Y", MainForm.Location.Y.ToString()));
-				project_root.AppendChild(doc.CreateTextElement("Width", MainForm.Width.ToString()));
-				project_root.AppendChild(doc.CreateTextElement("Height", MainForm.Height.ToString()));
+				if (MainForm.WindowState == FormWindowState.Normal)
+				{
+					project_root.AppendChild(doc.CreateTextElement("X", MainForm.Location.X.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Y", MainForm.Location.Y.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Width", MainForm.Width.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Height", MainForm.Height.ToString()));
+				}
+				else // 最小化、最大化中はその前の位置とサイズを保存
+				{
+					project_root.AppendChild(doc.CreateTextElement("X", MainForm.BeforeResizeLocation.X.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Y", MainForm.BeforeResizeLocation.Y.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Width", MainForm.BeforeResizeWidth.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Height", MainForm.BeforeResizeHeight.ToString()));
+				}
 				doc.AppendChild(project_root);
 
 				var dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
