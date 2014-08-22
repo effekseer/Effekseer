@@ -12,7 +12,7 @@ namespace Effekseer.Data
 {
 	public class IO
 	{
-		public static XmlElement SaveObjectToElement(XmlDocument doc, string element_name, object o)
+		public static XmlElement SaveObjectToElement(XmlDocument doc, string element_name, object o, bool isClip)
 		{
 			XmlElement e_o = doc.CreateElement(element_name);
 
@@ -23,11 +23,11 @@ namespace Effekseer.Data
 				var io_attribute = property.GetCustomAttributes(typeof(IOAttribute), false).FirstOrDefault() as IOAttribute;
 				if (io_attribute != null && !io_attribute.Export) continue;
 
-				var method = typeof(IO).GetMethod("SaveToElement", new Type[] { typeof(XmlDocument), typeof(string), property.PropertyType });
+				var method = typeof(IO).GetMethod("SaveToElement", new Type[] { typeof(XmlDocument), typeof(string), property.PropertyType, typeof(bool) });
 				if (method != null)
 				{
 					var property_value = property.GetValue(o, null);
-					var element = method.Invoke(null, new object[] { doc, property.Name, property_value });
+					var element = method.Invoke(null, new object[] { doc, property.Name, property_value, isClip });
 
 					if (element != null)
 					{
@@ -39,7 +39,7 @@ namespace Effekseer.Data
 					if (io_attribute != null && io_attribute.Export)
 					{
 						var property_value = property.GetValue(o, null);
-						var element = SaveObjectToElement(doc, property.Name, property_value);
+						var element = SaveObjectToElement(doc, property.Name, property_value, isClip);
 
 						if (element != null && element.ChildNodes.Count > 0)
 						{
@@ -53,56 +53,56 @@ namespace Effekseer.Data
 			return null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, NodeBase node)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, NodeBase node, bool isClip)
 		{
-			return SaveObjectToElement(doc, element_name, node);
+			return SaveObjectToElement(doc, element_name, node, isClip);
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, NodeBase.ChildrenCollection children)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, NodeBase.ChildrenCollection children, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
 			for (int i = 0; i < children.Count; i++)
-			{ 
-				var e_node = SaveToElement(doc,children[i].GetType().Name,children[i]);
+			{
+				var e_node = SaveToElement(doc, children[i].GetType().Name, children[i], isClip);
 				e.AppendChild(e_node);
 			}
 
 			return e;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.String value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.String value, bool isClip)
 		{
 			if (value.DefaultValue == value.Value) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Boolean value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Boolean value, bool isClip)
 		{
 			if (value.DefaultValue == value.Value) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Int value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Int value, bool isClip)
 		{
 			if (value.Value == value.DefaultValue) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Float value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Float value, bool isClip)
 		{
 			if (value.Value == value.DefaultValue) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.IntWithInifinite value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.IntWithInifinite value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
-			var v = SaveToElement(doc, "Value", value.Value);
-			var i = SaveToElement(doc, "Infinite", value.Infinite);
+			var v = SaveToElement(doc, "Value", value.Value, isClip);
+			var i = SaveToElement(doc, "Infinite", value.Infinite, isClip);
 			
 			if (v != null) e.AppendChild(v);
 			if (i != null) e.AppendChild(i);
@@ -110,11 +110,11 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector2D value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector2D value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
-			var x = SaveToElement(doc, "X", value.X);
-			var y = SaveToElement(doc, "Y", value.Y);
+			var x = SaveToElement(doc, "X", value.X, isClip);
+			var y = SaveToElement(doc, "Y", value.Y, isClip);
 
 			if (x != null) e.AppendChild(x);
 			if (y != null) e.AppendChild(y);
@@ -122,12 +122,12 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector3D value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector3D value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
-			var x = SaveToElement(doc, "X", value.X);
-			var y = SaveToElement(doc, "Y", value.Y);
-			var z = SaveToElement(doc, "Z", value.Z);
+			var x = SaveToElement(doc, "X", value.X, isClip);
+			var y = SaveToElement(doc, "Y", value.Y, isClip);
+			var z = SaveToElement(doc, "Z", value.Z, isClip);
 
 			if (x != null) e.AppendChild(x);
 			if (y != null) e.AppendChild(y);
@@ -136,13 +136,13 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Color value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Color value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
-			var r = SaveToElement(doc, "R", value.R);
-			var g = SaveToElement(doc, "G", value.G);
-			var b = SaveToElement(doc, "B", value.B);
-			var a = SaveToElement(doc, "A", value.A);
+			var r = SaveToElement(doc, "R", value.R, isClip);
+			var g = SaveToElement(doc, "G", value.G, isClip);
+			var b = SaveToElement(doc, "B", value.B, isClip);
+			var a = SaveToElement(doc, "A", value.A, isClip);
 
 			if (r != null) e.AppendChild(r);
 			if (g != null) e.AppendChild(g);
@@ -152,7 +152,7 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.IntWithRandom value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.IntWithRandom value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
 			if (value.DefaultValueCenter != value.Center) e.AppendChild(doc.CreateTextElement("Center", value.Center.ToString()));
@@ -163,7 +163,7 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FloatWithRandom value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FloatWithRandom value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
 
@@ -175,11 +175,11 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector2DWithRandom value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector2DWithRandom value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
-			var x = SaveToElement(doc, "X", value.X);
-			var y = SaveToElement(doc, "Y", value.Y);
+			var x = SaveToElement(doc, "X", value.X, isClip);
+			var y = SaveToElement(doc, "Y", value.Y, isClip);
 			var da = value.DefaultDrawnAs != value.DrawnAs ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
 
 			if (x != null) e.AppendChild(x);
@@ -189,12 +189,12 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector3DWithRandom value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector3DWithRandom value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
-			var x = SaveToElement(doc, "X", value.X);
-			var y = SaveToElement(doc, "Y", value.Y);
-			var z = SaveToElement(doc, "Z", value.Z);
+			var x = SaveToElement(doc, "X", value.X, isClip);
+			var y = SaveToElement(doc, "Y", value.Y, isClip);
+			var z = SaveToElement(doc, "Z", value.Z, isClip);
 			var da = value.DefaultDrawnAs != value.DrawnAs ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
 
 			if (x != null) e.AppendChild(x);
@@ -205,13 +205,13 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.ColorWithRandom value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.ColorWithRandom value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
-			var r = SaveToElement(doc, "R", value.R);
-			var g = SaveToElement(doc, "G", value.G);
-			var b = SaveToElement(doc, "B", value.B);
-			var a = SaveToElement(doc, "A", value.A);
+			var r = SaveToElement(doc, "R", value.R, isClip);
+			var g = SaveToElement(doc, "G", value.G, isClip);
+			var b = SaveToElement(doc, "B", value.B, isClip);
+			var a = SaveToElement(doc, "A", value.A, isClip);
 			var da = value.DefaultDrawnAs != value.DrawnAs ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
 			var cs = value.DefaultColorSpace != value.ColorSpace ? doc.CreateTextElement("ColorSpace", (int)value.ColorSpace) : null;
 
@@ -224,7 +224,7 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.EnumBase value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.EnumBase value, bool isClip)
 		{
 			if (value.GetValueAsInt() == value.GetDefaultValueAsInt()) return null;
 
@@ -232,14 +232,20 @@ namespace Effekseer.Data
 			return doc.CreateTextElement(element_name, text);
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Path value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Path value, bool isClip)
 		{
 			if (value.DefaultValue == value.GetAbsolutePath()) return null;
-			var text = value.GetRelativePath();
+
+			var text = "";
+			if(!isClip)
+				text = value.GetRelativePath();
+			else
+				text = value.GetAbsolutePath();
+
 			return doc.CreateTextElement(element_name, text);
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveVector2D value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveVector2D value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
 			var keys = doc.CreateElement("Keys");
@@ -252,11 +258,11 @@ namespace Effekseer.Data
 				{
 					index = 0;
 
-					var st = SaveToElement(doc, "StartType", v.StartType);
-					var et = SaveToElement(doc, "EndType", v.EndType);
-					var omax = SaveToElement(doc, "OffsetMax", v.OffsetMax);
-					var omin = SaveToElement(doc, "OffsetMin", v.OffsetMin);
-					var s = SaveToElement(doc, "Sampling", v.Sampling);
+					var st = SaveToElement(doc, "StartType", v.StartType, isClip);
+					var et = SaveToElement(doc, "EndType", v.EndType, isClip);
+					var omax = SaveToElement(doc, "OffsetMax", v.OffsetMax, isClip);
+					var omin = SaveToElement(doc, "OffsetMin", v.OffsetMin, isClip);
+					var s = SaveToElement(doc, "Sampling", v.Sampling, isClip);
 
 					if (st != null) xml.AppendChild(st);
 					if (et != null) xml.AppendChild(et);
@@ -291,7 +297,7 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveVector3D value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveVector3D value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
 			var keys = doc.CreateElement("Keys");
@@ -305,11 +311,11 @@ namespace Effekseer.Data
 			{
 				index = 0;
 
-				var st = SaveToElement(doc, "StartType", v.StartType);
-				var et = SaveToElement(doc, "EndType", v.EndType);
-				var omax = SaveToElement(doc, "OffsetMax", v.OffsetMax);
-				var omin = SaveToElement(doc, "OffsetMin", v.OffsetMin);
-				var s = SaveToElement(doc, "Sampling", v.Sampling);
+				var st = SaveToElement(doc, "StartType", v.StartType, isClip);
+				var et = SaveToElement(doc, "EndType", v.EndType, isClip);
+				var omax = SaveToElement(doc, "OffsetMax", v.OffsetMax, isClip);
+				var omin = SaveToElement(doc, "OffsetMin", v.OffsetMin, isClip);
+				var s = SaveToElement(doc, "Sampling", v.Sampling, isClip);
 
 				if (st != null) xml.AppendChild(st);
 				if (et != null) xml.AppendChild(et);
@@ -346,7 +352,7 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveColorRGBA value)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveColorRGBA value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
 			var keys = doc.CreateElement("Keys");
@@ -361,11 +367,11 @@ namespace Effekseer.Data
 			{
 				index = 0;
 
-				var st = SaveToElement(doc, "StartType", v.StartType);
-				var et = SaveToElement(doc, "EndType", v.EndType);
-				var omax = SaveToElement(doc, "OffsetMax", v.OffsetMax);
-				var omin = SaveToElement(doc, "OffsetMin", v.OffsetMin);
-				var s = SaveToElement(doc, "Sampling", v.Sampling);
+				var st = SaveToElement(doc, "StartType", v.StartType, isClip);
+				var et = SaveToElement(doc, "EndType", v.EndType, isClip);
+				var omax = SaveToElement(doc, "OffsetMax", v.OffsetMax, isClip);
+				var omin = SaveToElement(doc, "OffsetMin", v.OffsetMin, isClip);
+				var s = SaveToElement(doc, "Sampling", v.Sampling, isClip);
 
 				if (st != null) xml.AppendChild(st);
 				if (et != null) xml.AppendChild(et);
@@ -405,7 +411,7 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static void LoadObjectFromElement(XmlElement e, ref object o)
+		public static void LoadObjectFromElement(XmlElement e, ref object o, bool isClip)
 		{
 			var o_type = o.GetType();
 
@@ -420,30 +426,30 @@ namespace Effekseer.Data
 				var io_attribute = property.GetCustomAttributes(typeof(IOAttribute), false).FirstOrDefault() as IOAttribute;
 				if (io_attribute != null && !io_attribute.Import) continue;
 
-				var method = typeof(IO).GetMethod("LoadFromElement", new Type[] { typeof(XmlElement), property.PropertyType });
+				var method = typeof(IO).GetMethod("LoadFromElement", new Type[] { typeof(XmlElement), property.PropertyType, typeof(bool) });
 				if (method != null)
 				{
 					var property_value = property.GetValue(o, null);
-					method.Invoke(null, new object[] { ch_node, property_value });
+					method.Invoke(null, new object[] { ch_node, property_value, isClip });
 				}
 				else
 				{
 					if (io_attribute != null && io_attribute.Import)
 					{
 						var property_value = property.GetValue(o, null);
-						LoadObjectFromElement(ch_node, ref property_value);
+						LoadObjectFromElement(ch_node, ref property_value, isClip);
 					}
 				}
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, NodeBase node)
+		public static void LoadFromElement(XmlElement e, NodeBase node, bool isClip)
 		{
 			var o = node as object;
-			LoadObjectFromElement(e, ref o);
+			LoadObjectFromElement(e, ref o, isClip);
 		}
 
-		public static void LoadFromElement(XmlElement e, NodeBase.ChildrenCollection children)
+		public static void LoadFromElement(XmlElement e, NodeBase.ChildrenCollection children, bool isClip)
 		{
 			children.Node.ClearChildren();
 
@@ -453,17 +459,17 @@ namespace Effekseer.Data
 				if (e_child.LocalName != "Node") continue;
 
 				var node = children.Node.AddChild();
-				LoadFromElement(e_child, node);
+				LoadFromElement(e_child, node, isClip);
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.String value)
+		public static void LoadFromElement(XmlElement e, Value.String value, bool isClip)
 		{
 			var text = e.GetText();
 			value.SetValue(text);
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.Boolean value)
+		public static void LoadFromElement(XmlElement e, Value.Boolean value, bool isClip)
 		{
 			var text = e.GetText();
 			var parsed = false;
@@ -473,7 +479,7 @@ namespace Effekseer.Data
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.Int value)
+		public static void LoadFromElement(XmlElement e, Value.Int value, bool isClip)
 		{
 			var text = e.GetText();
 			var parsed = 0;
@@ -483,7 +489,7 @@ namespace Effekseer.Data
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.Float value)
+		public static void LoadFromElement(XmlElement e, Value.Float value, bool isClip)
 		{
 			var text = e.GetText();
 			var parsed = 0.0f;
@@ -493,49 +499,49 @@ namespace Effekseer.Data
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.IntWithInifinite value)
+		public static void LoadFromElement(XmlElement e, Value.IntWithInifinite value, bool isClip)
 		{
 			var e_value = e["Value"] as XmlElement;
 			var e_infinite = e["Infinite"] as XmlElement;
 
-			if (e_value != null) LoadFromElement(e_value, value.Value);
-			if (e_infinite != null) LoadFromElement(e_infinite, value.Infinite);
+			if (e_value != null) LoadFromElement(e_value, value.Value, isClip);
+			if (e_infinite != null) LoadFromElement(e_infinite, value.Infinite, isClip);
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.Vector2D value)
+		public static void LoadFromElement(XmlElement e, Value.Vector2D value, bool isClip)
 		{
 			var e_x = e["X"] as XmlElement;
 			var e_y = e["Y"] as XmlElement;
 
-			if (e_x != null) LoadFromElement(e_x, value.X);
-			if (e_y != null) LoadFromElement(e_y, value.Y);
+			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
+			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.Vector3D value)
+		public static void LoadFromElement(XmlElement e, Value.Vector3D value, bool isClip)
 		{
 			var e_x = e["X"] as XmlElement;
 			var e_y = e["Y"] as XmlElement;
 			var e_z = e["Z"] as XmlElement;
 
-			if (e_x != null) LoadFromElement(e_x, value.X);
-			if (e_y != null) LoadFromElement(e_y, value.Y);
-			if (e_z != null) LoadFromElement(e_z, value.Z);
+			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
+			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
+			if (e_z != null) LoadFromElement(e_z, value.Z, isClip);
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.Color value)
+		public static void LoadFromElement(XmlElement e, Value.Color value, bool isClip)
 		{
 			var e_r = e["R"] as XmlElement;
 			var e_g = e["G"] as XmlElement;
 			var e_b = e["B"] as XmlElement;
 			var e_a = e["A"] as XmlElement;
 
-			if (e_r != null) LoadFromElement(e_r, value.R);
-			if (e_g != null) LoadFromElement(e_g, value.G);
-			if (e_b != null) LoadFromElement(e_b, value.B);
-			if (e_a != null) LoadFromElement(e_a, value.A);
+			if (e_r != null) LoadFromElement(e_r, value.R, isClip);
+			if (e_g != null) LoadFromElement(e_g, value.G, isClip);
+			if (e_b != null) LoadFromElement(e_b, value.B, isClip);
+			if (e_a != null) LoadFromElement(e_a, value.A, isClip);
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.IntWithRandom value)
+		public static void LoadFromElement(XmlElement e, Value.IntWithRandom value, bool isClip)
 		{
 			var e_c = e["Center"];
 			var e_max = e["Max"];
@@ -574,7 +580,7 @@ namespace Effekseer.Data
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.FloatWithRandom value)
+		public static void LoadFromElement(XmlElement e, Value.FloatWithRandom value, bool isClip)
 		{
 			var e_c = e["Center"];
 			var e_max = e["Max"];
@@ -613,14 +619,14 @@ namespace Effekseer.Data
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.Vector2DWithRandom value)
+		public static void LoadFromElement(XmlElement e, Value.Vector2DWithRandom value, bool isClip)
 		{
 			var e_x = e["X"] as XmlElement;
 			var e_y = e["Y"] as XmlElement;
 			var e_da = e["DrawnAs"];
 
-			if (e_x != null) LoadFromElement(e_x, value.X);
-			if (e_y != null) LoadFromElement(e_y, value.Y);
+			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
+			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
 
 			if (e_da != null)
 			{
@@ -628,16 +634,16 @@ namespace Effekseer.Data
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.Vector3DWithRandom value)
+		public static void LoadFromElement(XmlElement e, Value.Vector3DWithRandom value, bool isClip)
 		{
 			var e_x = e["X"] as XmlElement;
 			var e_y = e["Y"] as XmlElement;
 			var e_z = e["Z"] as XmlElement;
 			var e_da = e["DrawnAs"];
 
-			if (e_x != null) LoadFromElement(e_x, value.X);
-			if (e_y != null) LoadFromElement(e_y, value.Y);
-			if (e_z != null) LoadFromElement(e_z, value.Z);
+			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
+			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
+			if (e_z != null) LoadFromElement(e_z, value.Z, isClip);
 
 			if (e_da != null)
 			{
@@ -645,7 +651,7 @@ namespace Effekseer.Data
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.ColorWithRandom value)
+		public static void LoadFromElement(XmlElement e, Value.ColorWithRandom value, bool isClip)
 		{
 			var e_r = e["R"] as XmlElement;
 			var e_g = e["G"] as XmlElement;
@@ -654,10 +660,10 @@ namespace Effekseer.Data
 			var e_da = e["DrawnAs"];
 			var e_cs = e["ColorSpace"];
 
-			if (e_r != null) LoadFromElement(e_r, value.R);
-			if (e_g != null) LoadFromElement(e_g, value.G);
-			if (e_b != null) LoadFromElement(e_b, value.B);
-			if (e_a != null) LoadFromElement(e_a, value.A);
+			if (e_r != null) LoadFromElement(e_r, value.R, isClip);
+			if (e_g != null) LoadFromElement(e_g, value.G, isClip);
+			if (e_b != null) LoadFromElement(e_b, value.B, isClip);
+			if (e_a != null) LoadFromElement(e_a, value.A, isClip);
 
 			if (e_da != null)
 			{
@@ -670,13 +676,17 @@ namespace Effekseer.Data
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.Path value)
+		public static void LoadFromElement(XmlElement e, Value.Path value, bool isClip)
 		{
 			var text = e.GetText();
-			value.SetRelativePath(text);
+
+			if (!isClip)
+				value.SetRelativePath(text);
+			else
+				value.SetAbsolutePath(text);
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.EnumBase value)
+		public static void LoadFromElement(XmlElement e, Value.EnumBase value, bool isClip)
 		{
 			var text = e.GetText();
 			var parsed = 0;
@@ -686,7 +696,7 @@ namespace Effekseer.Data
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.FCurveVector2D value)
+		public static void LoadFromElement(XmlElement e, Value.FCurveVector2D value, bool isClip)
 		{
 			var e_keys = e["Keys"] as XmlElement;
 			if (e_keys == null) return;
@@ -748,7 +758,7 @@ namespace Effekseer.Data
 			if (e_y != null) import(value.Y, e_y);
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.FCurveVector3D value)
+		public static void LoadFromElement(XmlElement e, Value.FCurveVector3D value, bool isClip)
 		{
 			var e_keys = e["Keys"] as XmlElement;
 			if (e_keys == null) return;
@@ -811,7 +821,7 @@ namespace Effekseer.Data
 			if (e_z != null) import(value.Z, e_z);
 		}
 
-		public static void LoadFromElement(XmlElement e, Value.FCurveColorRGBA value)
+		public static void LoadFromElement(XmlElement e, Value.FCurveColorRGBA value, bool isClip)
 		{
 			Action<Data.Value.FCurve<byte>, XmlElement> import = (v_, e_) =>
 				{

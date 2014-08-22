@@ -410,7 +410,7 @@ namespace Effekseer
 
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
-			var element = Data.IO.SaveObjectToElement(doc, "CopiedNode", node);
+			var element = Data.IO.SaveObjectToElement(doc, "CopiedNode", node, true);
 
 			doc.AppendChild(element);
 
@@ -428,7 +428,7 @@ namespace Effekseer
 			if (doc.ChildNodes.Count == 0 || doc.ChildNodes[0].Name != "CopiedNode") return;
 
 			Command.CommandManager.StartCollection();
-			Data.IO.LoadFromElement(doc.ChildNodes[0] as System.Xml.XmlElement, node);
+			Data.IO.LoadFromElement(doc.ChildNodes[0] as System.Xml.XmlElement, node, true);
 			Command.CommandManager.EndCollection();
 		}
 
@@ -470,9 +470,9 @@ namespace Effekseer
 
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
-			var element = Data.IO.SaveObjectToElement(doc, "Root", Core.Root);
+			var element = Data.IO.SaveObjectToElement(doc, "Root", Core.Root, false);
 
-			var behaviorElement = Data.IO.SaveObjectToElement(doc, "Behavior", EffectBehavior);
+			var behaviorElement = Data.IO.SaveObjectToElement(doc, "Behavior", EffectBehavior, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 
@@ -546,7 +546,7 @@ namespace Effekseer
 			if (behaviorElement != null)
 			{
 				var o = effectBehavior as object;
-				Data.IO.LoadObjectFromElement(behaviorElement as System.Xml.XmlElement, ref o);
+				Data.IO.LoadObjectFromElement(behaviorElement as System.Xml.XmlElement, ref o, false);
 			}
 
 			StartFrame = 0;
@@ -561,7 +561,7 @@ namespace Effekseer
 			}
 
 			var root_node = new Data.NodeRoot() as object;
-			Data.IO.LoadObjectFromElement(root as System.Xml.XmlElement, ref root_node);
+			Data.IO.LoadObjectFromElement(root as System.Xml.XmlElement, ref root_node, false);
 
 			// 互換性のための変換(テクスチャ周り)
 			if (version < 3)
@@ -628,7 +628,7 @@ namespace Effekseer
 			if (optionElement != null)
 			{
 				var o = option as object;
-				Data.IO.LoadObjectFromElement(optionElement as System.Xml.XmlElement, ref o);
+				Data.IO.LoadObjectFromElement(optionElement as System.Xml.XmlElement, ref o, false);
 			}
 
 			IsChanged = false;
@@ -642,7 +642,7 @@ namespace Effekseer
 
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
-			var optionElement = Data.IO.SaveObjectToElement(doc, "Option", Option);
+			var optionElement = Data.IO.SaveObjectToElement(doc, "Option", Option, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 			if(optionElement != null) project_root.AppendChild(optionElement);
