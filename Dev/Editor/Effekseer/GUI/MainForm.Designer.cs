@@ -65,9 +65,9 @@
 			// dockPanel
 			// 
 			this.dockPanel.ActiveAutoHideContent = null;
-			this.dockPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.dockPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.dockPanel.DockBackColor = System.Drawing.SystemColors.ControlDark;
 			this.dockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
 			this.dockPanel.Location = new System.Drawing.Point(0, 27);
@@ -132,9 +132,11 @@
 			this.MainMenuStrip = this.menuStrip;
 			this.Name = "MainForm";
 			this.Text = "Effekseer";
+			this.Activated += new System.EventHandler(this.MainForm_Activated);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainForm_Load);
-			this.Activated += new System.EventHandler(this.MainForm_Activated);
+			this.Move += new System.EventHandler(this.MainForm_Move);
+			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

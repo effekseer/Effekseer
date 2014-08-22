@@ -379,5 +379,40 @@ namespace Effekseer.GUI
 			ReloadRecentFiles();
 			this.menuStrip.ResumeLayout();
 		}
+
+		public Point BeforeResizeLocation
+		{
+			get;
+			private set;
+		}
+
+		public int BeforeResizeWidth
+		{
+			get;
+			private set;
+		}
+
+		public int BeforeResizeHeight
+		{
+			get;
+			private set;
+		}
+ 
+		private void MainForm_Resize(object sender, EventArgs e)
+		{
+			// 最大化、最小化前のサイズを保存
+			if(this.WindowState != FormWindowState.Maximized && this.WindowState != FormWindowState.Minimized)
+			{
+				BeforeResizeWidth = this.Width;
+				BeforeResizeHeight = this.Height;
+			}
+		}
+
+		private void MainForm_Move(object sender, EventArgs e)
+		{
+			// 最大化、最小化前の位置を保存
+			if(this.WindowState != FormWindowState.Maximized && this.WindowState != FormWindowState.Minimized)
+				BeforeResizeLocation = this.Location;
+		}
 	}
 }

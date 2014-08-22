@@ -210,7 +210,8 @@ namespace Effekseer.GUI
 				throw new Exception("Viewerが生成されていません。");
 			}
 
-			if (viewer.CreateWindow(Handle, Width, Height))
+			// WidthかHeightが0以下だとウィンドウの作成に失敗するので、その場合はとりあえずサイズを1にして回避
+			if (viewer.CreateWindow(Handle, Width <= 0 ? 1 : Width, Height <= 0 ? 1 : Height))
 			{
 				is_shown = true;
 			}
