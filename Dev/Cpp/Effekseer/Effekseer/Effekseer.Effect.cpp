@@ -12,6 +12,7 @@
 #include "Effekseer.TextureLoader.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.ModelLoader.h"
+#include "Effekseer.DefaultEffectLoader.h"
 
 #include "Effekseer.Setting.h"
 
@@ -157,6 +158,14 @@ Effect* EffectImplemented::Create( Setting* setting, void* pData, int size, floa
 	EffectImplemented* effect = new EffectImplemented( setting, pData, size );
 	effect->Load( pData, size, magnification, materialPath );
 	return effect;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+::Effekseer::EffectLoader* Effect::CreateEffectLoader(::Effekseer::FileInterface* fileInterface)
+{
+	return new ::Effekseer::DefaultEffectLoader(fileInterface);
 }
 
 //----------------------------------------------------------------------------------

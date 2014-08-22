@@ -1171,6 +1171,11 @@ public:
 	static Effect* Create( Setting*	setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
 
 	/**
+	@brief	標準のエフェクト読込インスタンスを生成する。
+	*/
+	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
+
+	/**
 		@brief	参照カウンタを加算する。
 		@return	実行後の参照カウンタの値
 	*/
