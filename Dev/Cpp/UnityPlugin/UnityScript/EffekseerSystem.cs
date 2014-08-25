@@ -4,6 +4,8 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
+using UnityEditor;
 
 public class EffekseerSystem : MonoBehaviour
 {
@@ -39,7 +41,9 @@ public class EffekseerSystem : MonoBehaviour
 		Instance._ReleaseEffect(name);
 	}
 
+	#region Implimentation
 	private static EffekseerSystem _Instance = null;
+	
 	public static EffekseerSystem Instance
 	{
 		get {
@@ -51,15 +55,24 @@ public class EffekseerSystem : MonoBehaviour
 		}
 	}
 	
+	public bool drawInSceneView = true;
+	public int maxInstances		= 800;
+	public int maxSquares		= 1200;
+
+	private const int renderEventId = 0x2040;
 	private Dictionary<string, IntPtr> effects = null;
 	
 	private IntPtr _GetEffect(string name) {
 		if (effects.ContainsKey(name) == false) {
 			string path = Path.ChangeExtension(name, "efk");
 			string fullPath = Path.Combine(EffekseerSystem.resourcePath, path);
-			IntPtr effect = Plugin.EffekseerLoadEffect(fullPath);
+			
+			byte[] bytes = Encoding.Unicode.GetBytes(fullPath);
+			GCHandle ghc = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+			IntPtr effect = Plugin.EffekseerLoadEffect(ghc.AddrOfPinnedObject());
+			ghc.Free();
 			if (effect == IntPtr.Zero) {
-				Debug.LogError(fullPath + " is not found.");
+				Debug.LogError("[Effekseer] Error loading " + fullPath);
 				return IntPtr.Zero;
 			}
 			effects.Add(name, effect);
@@ -77,49 +90,95 @@ public class EffekseerSystem : MonoBehaviour
 		}
 	}
 	
-	void OnEnable() {
+	void Awake() {
 		effects = new Dictionary<string, IntPtr>();
+		Plugin.EffekseerInit(maxInstances, maxSquares);
 	}
 	
-	void OnDisable() {
+	void OnDestroy() {
 		foreach (var pair in effects) {
 			Plugin.EffekseerReleaseEffect(pair.Value);
 		}
 		effects = null;
+		Plugin.EffekseerTerm();
 	}
 	
 	void FixedUpdate() {
-		Plugin.EffekseerUpdate(Time.deltaTime / 0.016666666f);
+		Plugin.EffekseerUpdate(1);
 	}
 	
 	void OnRenderObject() {
-		Camera cam = Camera.current;
-		Plugin.EffekseerSetProjection(cam.fieldOfView, cam.aspect, cam.nearClipPlane, cam.farClipPlane);
+		#if UNITY_EDITOR
+			if (drawInSceneView == false && 
+				SceneView.currentDrawingSceneView != null && 
+				Camera.current == SceneView.currentDrawingSceneView.camera
+			) {
+				return;
+			}
+		#endif
 		
-		Vector3 eye = cam.transform.position;
-		Vector3 at = cam.transform.position + cam.transform.forward;
-		Vector3 up = cam.transform.up;
-		Plugin.EffekseerSetCamera(eye.x, eye.y, eye.z, at.x, at.y, at.z, up.x, up.y, up.z);
-		
-		GL.IssuePluginEvent(1);
+		{
+			float[] projectionMatrixArray = Matrix2Array(Camera.current.projectionMatrix);
+			GCHandle ghc = GCHandle.Alloc(projectionMatrixArray, GCHandleType.Pinned);
+			Plugin.EffekseerSetProjectionMatrix(ghc.AddrOfPinnedObject());
+			ghc.Free();
+		}
+		{
+			float[] cameraMatrixArray = Matrix2Array(Camera.current.worldToCameraMatrix);
+			GCHandle ghc = GCHandle.Alloc(cameraMatrixArray, GCHandleType.Pinned);
+			Plugin.EffekseerSetCameraMatrix(ghc.AddrOfPinnedObject());
+			ghc.Free();
+		}
+
+		GL.IssuePluginEvent(renderEventId);
+	}
+
+	private float[] Matrix2Array(Matrix4x4 mat) {
+		float[] res = new float[16];
+		res[ 0] = mat.m00;
+		res[ 1] = mat.m01;
+		res[ 2] = mat.m02;
+		res[ 3] = mat.m03;
+		res[ 4] = mat.m10;
+		res[ 5] = mat.m11;
+		res[ 6] = mat.m12;
+		res[ 7] = mat.m13;
+		res[ 8] = mat.m20;
+		res[ 9] = mat.m21;
+		res[10] = mat.m22;
+		res[11] = mat.m23;
+		res[12] = mat.m30;
+		res[13] = mat.m31;
+		res[14] = mat.m32;
+		res[15] = mat.m33;
+		return res;
 	}
 	
 	public static class Plugin
 	{
-		public const string pluginName = "EffekseerUnity";
-	
+		#if UNITY_IPHONE
+			public const string pluginName = "__Internal";
+		#else
+			public const string pluginName = "EffekseerUnity";
+		#endif
+		
+		[DllImport(pluginName)]
+		public static extern void EffekseerInit(int maxInstances, int maxSquares);
+		
+		[DllImport(pluginName)]
+		public static extern void EffekseerTerm();
+		
 		[DllImport(pluginName)]
 		public static extern void EffekseerUpdate(float deltaTime);
+		
+		[DllImport(pluginName)]
+		public static extern void EffekseerSetProjectionMatrix(IntPtr matrix);
 	
 		[DllImport(pluginName)]
-		public static extern void EffekseerSetProjection(float fov, float aspect, float nearZ, float farZ);
-	
+		public static extern void EffekseerSetCameraMatrix(IntPtr matrix);
+		
 		[DllImport(pluginName)]
-		public static extern void EffekseerSetCamera(float ex, float ey, float ez, 
-			float ax, float ay, float az, float ux, float uy, float uz);
-	
-		[DllImport(pluginName)]
-		public static extern IntPtr EffekseerLoadEffect(string path);
+		public static extern IntPtr EffekseerLoadEffect(IntPtr path);
 	
 		[DllImport(pluginName)]
 		public static extern void EffekseerReleaseEffect(IntPtr effect);
@@ -151,6 +210,7 @@ public class EffekseerSystem : MonoBehaviour
 		[DllImport(pluginName)]
 		public static extern void EffekseerSetScale(int handle, float x, float y, float z);
 	}
+	#endregion
 }
 
 public struct EffekseerHandle

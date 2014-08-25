@@ -12,8 +12,7 @@
 
 #pragma comment(lib, "shlwapi.lib")
 
-static const int MAX_INSTANCES	= 800;
-static const int MAX_SQUARES	= 1200;
+static const int RENDER_EVENT_ID	= 0x2040;
 
 static int					g_DeviceType = -1;
 static IDirect3DDevice9*	g_D3d9Device = NULL;
@@ -27,7 +26,7 @@ IXAudio2MasteringVoice*			g_MasteringVoice = NULL;
 
 static void InitializeXAudio2();
 static void FinalizeXAudio2();
-static void InitializeEffekseer();
+static void InitializeEffekseer(int maxInstances, int maxSquares);
 static void FinalizeEffekseer();
 
 static void InitializeXAudio2()
@@ -60,11 +59,11 @@ static void FinalizeXAudio2()
 }
 
 // Effekseer‰Šú‰»
-static void InitializeEffekseer()
+static void InitializeEffekseer(int maxInstances, int maxSquares)
 {
-	g_EffekseerManager = Effekseer::Manager::Create(MAX_INSTANCES);
+	g_EffekseerManager = Effekseer::Manager::Create(maxInstances);
 
-	g_EffekseerRenderer = EffekseerRendererDX9::Renderer::Create(g_D3d9Device, MAX_SQUARES);
+	g_EffekseerRenderer = EffekseerRendererDX9::Renderer::Create(g_D3d9Device, maxSquares);
 	g_EffekseerManager->SetSpriteRenderer(g_EffekseerRenderer->CreateSpriteRenderer());
 	g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
 	g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
@@ -74,8 +73,7 @@ static void InitializeEffekseer()
 	g_EffekseerManager->SetModelLoader(g_EffekseerRenderer->CreateModelLoader());
 
 	InitializeXAudio2();
-	if (g_XAudio2 != NULL)
-	{
+	if (g_XAudio2 != NULL) {
 		g_EffekseerSound = EffekseerSound::Sound::Create(g_XAudio2, 16, 16);
 		g_EffekseerManager->SetSoundPlayer(g_EffekseerSound->CreateSoundPlayer());
 		g_EffekseerManager->SetSoundLoader(g_EffekseerSound->CreateSoundLoader());
@@ -94,6 +92,7 @@ static void FinalizeEffekseer()
 		g_EffekseerSound = NULL;
 	}
 	FinalizeXAudio2();
+	
 	if (g_EffekseerRenderer != NULL) {
 		g_EffekseerRenderer->Destory();
 		g_EffekseerRenderer = NULL;
@@ -107,13 +106,31 @@ static void SetGraphicsDeviceD3D9(IDirect3DDevice9* device, GfxDeviceEventType e
 	switch (eventType) {
 	case kGfxDeviceEventInitialize:
 	case kGfxDeviceEventAfterReset:
-		InitializeEffekseer();
 		break;
 	case kGfxDeviceEventBeforeReset:
 	case kGfxDeviceEventShutdown:
-		FinalizeEffekseer();
 		break;
 	}
+}
+
+static void Array2Matrix(Effekseer::Matrix44& matrix, float matrixArray[])
+{
+	matrix.Values[0][0] = matrixArray[ 0];
+	matrix.Values[1][0] = matrixArray[ 1];
+	matrix.Values[2][0] = matrixArray[ 2];
+	matrix.Values[3][0] = matrixArray[ 3];
+	matrix.Values[0][1] = matrixArray[ 4];
+	matrix.Values[1][1] = matrixArray[ 5];
+	matrix.Values[2][1] = matrixArray[ 6];
+	matrix.Values[3][1] = matrixArray[ 7];
+	matrix.Values[0][2] = matrixArray[ 8];
+	matrix.Values[1][2] = matrixArray[ 9];
+	matrix.Values[2][2] = matrixArray[10];
+	matrix.Values[3][2] = matrixArray[11];
+	matrix.Values[0][3] = matrixArray[12];
+	matrix.Values[1][3] = matrixArray[13];
+	matrix.Values[2][3] = matrixArray[14];
+	matrix.Values[3][3] = matrixArray[15];
 }
 
 extern "C"
@@ -121,9 +138,8 @@ extern "C"
 	void EXPORT_API UnitySetGraphicsDevice(void* device, int deviceType, int eventType)
 	{
 		g_DeviceType = -1;
-
-		if (deviceType == kGfxRendererD3D9)
-		{
+		
+		if (deviceType == kGfxRendererD3D9) {
 			g_DeviceType = deviceType;
 			SetGraphicsDeviceD3D9((IDirect3DDevice9*)device, (GfxDeviceEventType)eventType);
 		}
@@ -131,50 +147,56 @@ extern "C"
 
 	void EXPORT_API UnityRenderEvent(int eventID)
 	{
-		if (g_DeviceType == -1)
+		if (g_DeviceType == -1) {
 			return;
-	
+		}
+		if (g_EffekseerManager == NULL || g_EffekseerRenderer == NULL) {
+			return;
+		}
+		if (eventID != RENDER_EVENT_ID) {
+			return;
+		}
+		
 		g_EffekseerRenderer->BeginRendering();
 		g_EffekseerManager->Draw();
 		g_EffekseerRenderer->EndRendering();
 	}
 
-	void EXPORT_API EffekseerUpdate(float deltaFrame)
+	void EXPORT_API EffekseerInit(int maxInstances, int maxSquares)
 	{
-		g_EffekseerManager->Update(deltaFrame);
+		InitializeEffekseer(maxInstances, maxSquares);
 	}
 
-	void EXPORT_API EffekseerSetProjection(float fov, float aspect, float nearZ, float farZ)
+	void EXPORT_API EffekseerTerm()
 	{
-		Effekseer::Matrix44 projectionMatrix;
-		projectionMatrix.PerspectiveFovLH(
-			fov * 3.1415926f / 180.0f, aspect, nearZ, farZ);
-		g_EffekseerRenderer->SetProjectionMatrix(projectionMatrix);
-	}
-
-	void EXPORT_API EffekseerSetCamera(float ex, float ey, float ez, 
-		float ax, float ay, float az, float ux, float uy, float uz)
-	{
-		Effekseer::Vector3D eye(ex, ey, ez);
-		Effekseer::Vector3D at(ax, ay, az);
-		Effekseer::Vector3D up(ux, uy, uz);
-	
-		Effekseer::Matrix44 cameraMatrix;
-		cameraMatrix.LookAtLH(eye, at, up);
-		g_EffekseerRenderer->SetCameraMatrix(cameraMatrix);
+		FinalizeEffekseer();
 	}
 	
-	Effekseer::Effect EXPORT_API *EffekseerLoadEffect(const char* path)
+	void EXPORT_API EffekseerSetProjectionMatrix(float matrixArray[])
 	{
-		EFK_CHAR path16[512];
-		MultiByteToWideChar(CP_ACP, 0, path, -1, (wchar_t*)path16, MAX_PATH);
-		return Effekseer::Effect::Create(g_EffekseerManager, path16);
-	}
-
-	void EXPORT_API EffekseerReleaseEffect(Effekseer::Effect* effect)
-	{
-		if (effect != NULL) {
-			effect->Release();
+		if (g_EffekseerRenderer == NULL) {
+			return;
 		}
+
+		Effekseer::Matrix44 matrix;
+		Array2Matrix(matrix, matrixArray);
+		
+		// Scale and bias from OpenGL -> D3D depth range
+		for (int i = 0; i < 4; i++) {
+			matrix.Values[i][2] = matrix.Values[i][2] * 0.5f + matrix.Values[i][3] * 0.5f;
+		}
+
+		g_EffekseerRenderer->SetProjectionMatrix(matrix);
+	}
+
+	void EXPORT_API EffekseerSetCameraMatrix(float matrixArray[])
+	{
+		if (g_EffekseerRenderer == NULL) {
+			return;
+		}
+
+		Effekseer::Matrix44 matrix;
+		Array2Matrix(matrix, matrixArray);
+		g_EffekseerRenderer->SetCameraMatrix(matrix);
 	}
 }
