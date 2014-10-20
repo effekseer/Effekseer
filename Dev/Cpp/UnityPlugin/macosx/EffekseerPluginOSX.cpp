@@ -43,11 +43,11 @@ static void FinalizeOpenAL()
 	}
 }
 
-static void InitializeEffekseer()
+static void InitializeEffekseer(int maxInstances, int maxSquares)
 {
-	g_EffekseerManager = Effekseer::Manager::Create(MAX_INSTANCES);
+	g_EffekseerManager = Effekseer::Manager::Create(maxInstances);
 
-	g_EffekseerRenderer = EffekseerRendererGL::Renderer::Create(MAX_SQUARES);
+	g_EffekseerRenderer = EffekseerRendererGL::Renderer::Create(maxSquares);
 	g_EffekseerManager->SetSpriteRenderer(g_EffekseerRenderer->CreateSpriteRenderer());
 	g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
 	g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
