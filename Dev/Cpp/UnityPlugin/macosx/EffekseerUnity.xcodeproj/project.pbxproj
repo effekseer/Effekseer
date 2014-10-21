@@ -45,8 +45,6 @@
 		4861A34A182F847100A8217D /* EffekseerRenderer.TrackRendererBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4861A340182F847100A8217D /* EffekseerRenderer.TrackRendererBase.cpp */; };
 		4861A34B182F847100A8217D /* EffekseerRenderer.VertexBufferBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4861A342182F847100A8217D /* EffekseerRenderer.VertexBufferBase.cpp */; };
 		4861A3B5182FB42100A8217D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4861A3B4182FB42100A8217D /* OpenGL.framework */; };
-		4861A3D2182FBAAA00A8217D /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4861A3D0182FBAAA00A8217D /* libpng.a */; settings = {ATTRIBUTES = (Weak, ); }; };
-		4861A3F2182FBB7100A8217D /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4861A3F1182FBB7100A8217D /* libz.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		48B43FE8182F76F100B849F5 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48B43FE7182F76F100B849F5 /* CoreFoundation.framework */; };
 		48B44005182F781400B849F5 /* EffekseerPluginOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48B44004182F781400B849F5 /* EffekseerPluginOSX.cpp */; };
 		682EBB9819F57670007914D7 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 682EBB9719F57670007914D7 /* libz.1.2.5.dylib */; };
@@ -59,12 +57,6 @@
 		684C1F0E19F60B9800E32FEC /* EffekseerSoundAL.SoundLoader.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F0219F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.h */; };
 		684C1F0F19F60B9800E32FEC /* EffekseerSoundAL.SoundPlayer.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F0419F60B2100E32FEC /* EffekseerSoundAL.SoundPlayer.h */; };
 		684C1F1019F60B9800E32FEC /* EffekseerSoundAL.SoundVoice.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F0619F60B2100E32FEC /* EffekseerSoundAL.SoundVoice.h */; };
-		684C1F2719F60DA300E32FEC /* EFX-Util.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F1D19F60DA300E32FEC /* EFX-Util.lib */; };
-		684C1F2819F60DA300E32FEC /* EFX-Util.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F1F19F60DA300E32FEC /* EFX-Util.lib */; };
-		684C1F2919F60DA300E32FEC /* OpenAL32.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F2019F60DA300E32FEC /* OpenAL32.lib */; };
-		684C1F2A19F60DA300E32FEC /* EFX-Util.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F2319F60DA300E32FEC /* EFX-Util.lib */; };
-		684C1F2B19F60DA300E32FEC /* EFX-Util.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F2519F60DA300E32FEC /* EFX-Util.lib */; };
-		684C1F2C19F60DA300E32FEC /* OpenAL32.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F2619F60DA300E32FEC /* OpenAL32.lib */; };
 		684C1F6219F6106D00E32FEC /* EffekseerRendererGL.DeviceObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F3019F6106D00E32FEC /* EffekseerRendererGL.DeviceObject.cpp */; };
 		684C1F6319F6106D00E32FEC /* EffekseerRendererGL.GLExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F3219F6106D00E32FEC /* EffekseerRendererGL.GLExtension.cpp */; };
 		684C1F6419F6106D00E32FEC /* EffekseerRendererGL.IndexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F3419F6106D00E32FEC /* EffekseerRendererGL.IndexBuffer.cpp */; };
@@ -79,9 +71,6 @@
 		684C1F6D19F6106D00E32FEC /* EffekseerRendererGL.TextureLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F4719F6106D00E32FEC /* EffekseerRendererGL.TextureLoader.cpp */; };
 		684C1F6E19F6106D00E32FEC /* EffekseerRendererGL.TrackRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F4919F6106D00E32FEC /* EffekseerRendererGL.TrackRenderer.cpp */; };
 		684C1F6F19F6106D00E32FEC /* EffekseerRendererGL.VertexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F4B19F6106D00E32FEC /* EffekseerRendererGL.VertexBuffer.cpp */; };
-		684C1F7019F6106D00E32FEC /* glew32s.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F5619F6106D00E32FEC /* glew32s.lib */; };
-		684C1F7119F6106D00E32FEC /* libpng.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F6019F6106D00E32FEC /* libpng.lib */; };
-		684C1F7219F6106D00E32FEC /* zlib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F6119F6106D00E32FEC /* zlib.lib */; };
 		684C1F7319F610BE00E32FEC /* EffekseerRendererGL.Base.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F2E19F6106D00E32FEC /* EffekseerRendererGL.Base.h */; };
 		684C1F7419F610BE00E32FEC /* EffekseerRendererGL.Base.Pre.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F2F19F6106D00E32FEC /* EffekseerRendererGL.Base.Pre.h */; };
 		684C1F7519F610BE00E32FEC /* EffekseerRendererGL.DeviceObject.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F3119F6106D00E32FEC /* EffekseerRendererGL.DeviceObject.h */; };
@@ -99,6 +88,9 @@
 		684C1F8119F610BE00E32FEC /* EffekseerRendererGL.TextureLoader.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F4819F6106D00E32FEC /* EffekseerRendererGL.TextureLoader.h */; };
 		684C1F8219F610BE00E32FEC /* EffekseerRendererGL.TrackRenderer.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F4A19F6106D00E32FEC /* EffekseerRendererGL.TrackRenderer.h */; };
 		684C1F8319F610BE00E32FEC /* EffekseerRendererGL.VertexBuffer.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F4C19F6106D00E32FEC /* EffekseerRendererGL.VertexBuffer.h */; };
+		684C1F8519F61A7E00E32FEC /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F8419F61A7E00E32FEC /* libz.a */; };
+		684C1F8719F620ED00E32FEC /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F8619F620ED00E32FEC /* libpng.a */; };
+		685EF97F19F6440F005A0256 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 685EF97E19F6440F005A0256 /* libz.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -197,8 +189,6 @@
 		4861A343182F847100A8217D /* EffekseerRenderer.VertexBufferBase.h */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.c.h; path = EffekseerRenderer.VertexBufferBase.h; sourceTree = "<group>"; };
 		4861A3B3182FA2A400A8217D /* EffekseerRendererGL.h */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.c.h; name = EffekseerRendererGL.h; path = ../../EffekseerRendererGL/EffekseerRendererGL.h; sourceTree = "<group>"; };
 		4861A3B4182FB42100A8217D /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		4861A3D0182FBAAA00A8217D /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../EffekseerRendererGL/libpng/lib/osx_32bit/libpng.a; sourceTree = "<group>"; };
-		4861A3F1182FBB7100A8217D /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../EffekseerRendererGL/libpng/lib/osx_32bit/libz.a; sourceTree = "<group>"; };
 		4861A3F8182FDB9300A8217D /* Effekseer.h */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.c.h; name = Effekseer.h; path = ../../Effekseer/Effekseer.h; sourceTree = "<group>"; };
 		48B43FE4182F76F100B849F5 /* EffekseerUnity.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EffekseerUnity.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		48B43FE7182F76F100B849F5 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -267,6 +257,9 @@
 		684C1F5C19F6106D00E32FEC /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
 		684C1F6019F6106D00E32FEC /* libpng.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.lib; sourceTree = "<group>"; };
 		684C1F6119F6106D00E32FEC /* zlib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = zlib.lib; sourceTree = "<group>"; };
+		684C1F8419F61A7E00E32FEC /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libz.a; sourceTree = "<group>"; };
+		684C1F8619F620ED00E32FEC /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
+		685EF97E19F6440F005A0256 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -274,21 +267,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				684C1F7019F6106D00E32FEC /* glew32s.lib in Frameworks */,
+				685EF97F19F6440F005A0256 /* libz.dylib in Frameworks */,
 				4861A2C9182F841700A8217D /* OpenAL.framework in Frameworks */,
-				684C1F2B19F60DA300E32FEC /* EFX-Util.lib in Frameworks */,
 				682EBB9819F57670007914D7 /* libz.1.2.5.dylib in Frameworks */,
 				4861A3B5182FB42100A8217D /* OpenGL.framework in Frameworks */,
+				684C1F8719F620ED00E32FEC /* libpng.a in Frameworks */,
 				48B43FE8182F76F100B849F5 /* CoreFoundation.framework in Frameworks */,
-				684C1F2C19F60DA300E32FEC /* OpenAL32.lib in Frameworks */,
-				4861A3D2182FBAAA00A8217D /* libpng.a in Frameworks */,
-				684C1F2919F60DA300E32FEC /* OpenAL32.lib in Frameworks */,
-				684C1F7219F6106D00E32FEC /* zlib.lib in Frameworks */,
-				4861A3F2182FBB7100A8217D /* libz.a in Frameworks */,
-				684C1F2719F60DA300E32FEC /* EFX-Util.lib in Frameworks */,
-				684C1F7119F6106D00E32FEC /* libpng.lib in Frameworks */,
-				684C1F2819F60DA300E32FEC /* EFX-Util.lib in Frameworks */,
-				684C1F2A19F60DA300E32FEC /* EFX-Util.lib in Frameworks */,
+				684C1F8519F61A7E00E32FEC /* libz.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,9 +441,10 @@
 		48B43FE6182F76F100B849F5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				685EF97E19F6440F005A0256 /* libz.dylib */,
+				684C1F8619F620ED00E32FEC /* libpng.a */,
+				684C1F8419F61A7E00E32FEC /* libz.a */,
 				682EBB9719F57670007914D7 /* libz.1.2.5.dylib */,
-				4861A3F1182FBB7100A8217D /* libz.a */,
-				4861A3D0182FBAAA00A8217D /* libpng.a */,
 				4861A3B4182FB42100A8217D /* OpenGL.framework */,
 				4861A2C8182F841700A8217D /* OpenAL.framework */,
 				48B43FE7182F76F100B849F5 /* CoreFoundation.framework */,
@@ -748,7 +734,7 @@
 		48B43FDC182F76F000B849F5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = ueshita;
 			};
 			buildConfigurationList = 48B43FDF182F76F000B849F5 /* Build configuration list for PBXProject "EffekseerUnity" */;
@@ -870,7 +856,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -904,7 +889,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -930,7 +914,6 @@
 		48B43FF3182F76F100B849F5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				HEADER_SEARCH_PATHS = (
@@ -942,22 +925,10 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win32/EFX-Util_MT\"",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win32/EFX-Util_MTDLL\"",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win32\"",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win64/EFX-Util_MT\"",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win64/EFX-Util_MTDLL\"",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win64\"",
-					"\"$(SRCROOT)/../../EffekseerRendererGL/libpng/lib/osx_32bit\"",
-					"/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win32/EFX-Util_MT",
-					"/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win32/EFX-Util_MTDLL",
-					/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win32,
-					"/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win64/EFX-Util_MT",
-					"/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win64/EFX-Util_MTDLL",
-					/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win64,
-					/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerRendererGL/glew/lib/win_x86,
-					/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerRendererGL/libpng/lib/win_x86,
+					"\"$(SRCROOT)/../../EffekseerRendererGL/libpng/lib/osx_32bit/\"",
+					"$(PROJECT_DIR)",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = bundle;
@@ -967,7 +938,6 @@
 		48B43FF4182F76F100B849F5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				HEADER_SEARCH_PATHS = (
@@ -979,22 +949,10 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win32/EFX-Util_MT\"",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win32/EFX-Util_MTDLL\"",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win32\"",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win64/EFX-Util_MT\"",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win64/EFX-Util_MTDLL\"",
-					"\"$(SRCROOT)/../../EffekseerSoundAL/AL/libs/Win64\"",
-					"\"$(SRCROOT)/../../EffekseerRendererGL/libpng/lib/osx_32bit\"",
-					"/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win32/EFX-Util_MT",
-					"/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win32/EFX-Util_MTDLL",
-					/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win32,
-					"/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win64/EFX-Util_MT",
-					"/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win64/EFX-Util_MTDLL",
-					/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerSoundAL/AL/libs/Win64,
-					/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerRendererGL/glew/lib/win_x86,
-					/Users/hiroto/coding/oss/Effekseer/Dev/Cpp/EffekseerRendererGL/libpng/lib/win_x86,
+					"\"$(SRCROOT)/../../EffekseerRendererGL/libpng/lib/osx_32bit/\"",
+					"$(PROJECT_DIR)",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = bundle;
@@ -1011,7 +969,7 @@
 				48B43FF1182F76F100B849F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		48B43FF2182F76F100B849F5 /* Build configuration list for PBXNativeTarget "EffekseerUnity" */ = {
 			isa = XCConfigurationList;
@@ -1020,7 +978,7 @@
 				48B43FF4182F76F100B849F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
