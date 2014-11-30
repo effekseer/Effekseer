@@ -430,6 +430,22 @@ public:
 		@brief	残りの確保したインスタンス数を取得する。
 	*/
 	virtual int32_t GetRestInstancesCount() const = 0;
+
+		/**
+		@brief	エフェクトをカリングし描画負荷を減らすための空間を生成する。
+		@param	xsize	X方向幅
+		@param	ysize	Y方向幅
+		@param	zsize	Z方向幅
+		@param	layerCount	層数(大きいほどカリングの効率は上がるがメモリも大量に使用する)
+	*/
+	virtual void CreateCullingWorld( float xsize, float ysize, float zsize, int32_t layerCount) = 0;
+
+	/**
+		@brief	カリングを行い、カリングされたオブジェクトのみを描画するようにする。
+		@param	cameraProjMat	カメラプロジェクション行列
+		@param	isOpenGL		OpenGLによる描画か?
+	*/
+	virtual void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL) = 0;
 };
 //----------------------------------------------------------------------------------
 //

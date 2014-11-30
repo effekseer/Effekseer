@@ -49,6 +49,11 @@ public:
 	Matrix44& Indentity();
 
 	/**
+	@brief	転置行列化
+	*/
+	Matrix44& Transpose();
+
+	/**
 		@brief	カメラ行列化(右手系)
 	*/
 	Matrix44& LookAtRH( const Vector3D& eye, const Vector3D& at, const Vector3D& up );

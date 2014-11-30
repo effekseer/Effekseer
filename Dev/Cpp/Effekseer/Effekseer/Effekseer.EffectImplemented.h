@@ -58,6 +58,26 @@ private:
 	// 子ノード
 	EffectNode* m_pRoot;
 
+	/* カリング */
+	struct
+	{
+		eCullingShape	Shape;
+
+		union
+		{
+			struct
+			{
+			} None;
+
+			struct
+			{
+				float Radius;
+			} Sphere;
+		};
+
+	} Culling;
+
+
 public:
 	/**
 		@brief	生成

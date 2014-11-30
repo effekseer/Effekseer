@@ -187,6 +187,13 @@ enum eCoordinateSystem
 	COORDINATE_SYSTEM_DWORD = 0x7fffffff,
 };
 
+enum eCullingShape
+{
+	CULLING_SHAPE_NONE = 0,
+	CULLING_SHAPE_SPHERE = 1,
+	CULLING_SHAPE_DWORD = 0x7fffffff,
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

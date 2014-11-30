@@ -8,7 +8,9 @@
 #include "Effekseer.Base.h"
 #include "Effekseer.Manager.h"
 #include "Effekseer.Matrix43.h"
+#include "Effekseer.Matrix44.h"
 #include "Effekseer.CriticalSection.h"
+#include "Culling/Culling3D.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -41,34 +43,41 @@ private:
 		Effect*			ParameterPointer;
 		InstanceContainer*	InstanceContainerPointer;
 		InstanceGlobal*		GlobalPointer;
+		Culling3D::Object*	CullingObjectPointer;
 		bool				IsPaused;
 		bool				IsShown;
 		bool				IsAutoDrawing;
 		bool				IsRemoving;
+		bool				IsParameterChanged;
 		bool				DoUseBaseMatrix;
 		bool				GoingToStop;
 		bool				GoingToStopRoot;
 		EffectInstanceRemovingCallback	RemovingCallback;
-
+		
 		Matrix43			BaseMatrix;
 
 		Matrix43			GlobalMatrix;
 
 		float				Speed;
 
+		Handle				Self;
+
 		DrawSet( Effect* effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal )
 			: ParameterPointer			( effect )
 			, InstanceContainerPointer	( pContainer )
 			, GlobalPointer				( pGlobal )
+			, CullingObjectPointer		( NULL )
 			, IsPaused					( false )
 			, IsShown					( true )
 			, IsAutoDrawing				( true )
 			, IsRemoving				( false )
+			, IsParameterChanged		( false )
 			, DoUseBaseMatrix			( false )
 			, GoingToStop				( false )
 			, GoingToStopRoot			( false )
 			, RemovingCallback			( NULL )
 			, Speed						( 1.0f )
+			, Self						( -1 )
 		{
 		
 		}
@@ -77,16 +86,36 @@ private:
 			: ParameterPointer			( NULL )
 			, InstanceContainerPointer	( NULL )
 			, GlobalPointer				( NULL )
+			, CullingObjectPointer		( NULL )
 			, IsPaused					( false )
 			, IsShown					( true )
 			, IsRemoving				( false )
+			, IsParameterChanged		( false )
 			, RemovingCallback			( NULL )
 			, DoUseBaseMatrix			( false )
 			, Speed						( 1.0f )
+			, Self						( -1 )
 		{
 		
 		}
 	};
+
+	struct CullingParameter
+	{
+		float		SizeX;
+		float		SizeY;
+		float		SizeZ;
+		int32_t		LayerCount;
+
+		CullingParameter()
+		{
+			SizeX = 0.0f;
+			SizeY = 0.0f;
+			SizeZ = 0.0f;
+			LayerCount = 0;
+		}
+
+	} cullingCurrent, cullingNext;
 
 private:
 	/* 参照カウンタ */
@@ -115,6 +144,7 @@ private:
 
 	/* 描画中オブジェクト */
 	std::vector<DrawSet>		m_renderingDrawSets;
+	std::map<Handle,DrawSet>	m_renderingDrawSetMaps;
 
 	/* 描画セッション */
 	CriticalSection				m_renderingSession;
@@ -128,6 +158,14 @@ private:
 	/* 更新回数カウント */
 	uint32_t					m_sequenceNumber;
 	
+	/* カリング */
+	Culling3D::World*			m_cullingWorld;
+
+	/* カリング */
+	std::vector<DrawSet*>	m_culledObjects;
+	std::set<Handle>		m_culledObjectSets;
+	bool					m_culled;
+
 	/* スプライト描画機能用インスタンス */
 	SpriteRenderer*				m_spriteRenderer;
 
@@ -536,6 +574,22 @@ public:
 		@brief	リロードを停止する。
 	*/
 	void EndReloadEffect( Effect* effect );
+
+	/**
+		@brief	エフェクトをカリングし描画負荷を減らすための空間を生成する。
+		@param	xsize	X方向幅
+		@param	ysize	Y方向幅
+		@param	zsize	Z方向幅
+		@param	layerCount	層数(大きいほどカリングの効率は上がるがメモリも大量に使用する)
+	*/
+	void CreateCullingWorld( float xsize, float ysize, float zsize, int32_t layerCount);
+
+	/**
+		@brief	カリングを行い、カリングされたオブジェクトのみを描画するようにする。
+		@param	cameraProjMat	カメラプロジェクション行列
+		@param	isOpenGL		OpenGLによる描画か?
+	*/
+	void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL);
 };
 //----------------------------------------------------------------------------------
 //
