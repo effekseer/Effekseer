@@ -100,6 +100,8 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 		}
 
 		model->FaceCount = model->GetFaceCount();
+
+		/* 0.50より追加(0.50以前から移行する時は追記する必要あり) */
 		model->IndexCount = model->FaceCount * 3;
 
 		{
