@@ -17,6 +17,7 @@ namespace EffekseerRenderer
 {
 class Grid;
 class Guide;
+class Culling;
 class Background;
 }
 

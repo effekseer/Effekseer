@@ -150,6 +150,13 @@ ViewerParamater::ViewerParamater()
 	, AngleY			( 0 )
 	, Distance			( 0 )
 	, RendersGuide		( false )
+
+	, IsCullingShown	(false)
+	, CullingRadius		( 0 )
+	, CullingX			( 0 )
+	, CullingY			( 0 )
+	, CullingZ			( 0 )
+
 {
 
 }

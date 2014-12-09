@@ -35,6 +35,12 @@ public:
 	float	Distance;
 	bool	RendersGuide;
 
+	bool	IsCullingShown;
+	float	CullingRadius;
+	float	CullingX;
+	float	CullingY;
+	float	CullingZ;
+
 	ViewerParamater();
 };
 

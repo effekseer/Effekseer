@@ -24,6 +24,9 @@
     <ClInclude Include="EffekseerTool\EffekseerTool.Background.h">
       <Filter>EffekseerTool</Filter>
     </ClInclude>
+    <ClInclude Include="EffekseerTool\EffekseerTool.Culling.h">
+      <Filter>EffekseerTool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -42,6 +45,9 @@
       <Filter>EffekseerTool</Filter>
     </ClCompile>
     <ClCompile Include="EffekseerTool\EffekseerTool.Background.cpp">
+      <Filter>EffekseerTool</Filter>
+    </ClCompile>
+    <ClCompile Include="EffekseerTool\EffekseerTool.Culling.cpp">
       <Filter>EffekseerTool</Filter>
     </ClCompile>
   </ItemGroup>
