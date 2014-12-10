@@ -37,7 +37,9 @@ namespace Culling3D
 		}
 		else
 		{
-			objects[o_->ObjectIndex] = objects[objects.size() - 1];
+			ObjectInternal* moved = (ObjectInternal*) objects[objects.size() - 1];
+			moved->ObjectIndex = o_->ObjectIndex;
+			objects[o_->ObjectIndex] = moved;
 			objects.resize(objects.size() - 1);
 		}
 

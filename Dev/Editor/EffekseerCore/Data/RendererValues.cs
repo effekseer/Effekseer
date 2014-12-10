@@ -611,14 +611,14 @@ namespace Effekseer.Data
 			public Value.Boolean Lighting { get; private set; }
 
 			[Name(language = Language.Japanese, value = "カリング")]
-			public Value.Enum<Culling> Culling { get; private set; }
+			public Value.Enum<CullingValues> Culling { get; private set; }
 
 			public ModelParamater()
 			{
 				Model = new Value.Path("モデルファイル (*.efkmodel)|*.efkmodel", "");
 				NormalTexture = new Value.PathForImage("画像ファイル (*.png)|*.png", "");
 				Lighting = new Value.Boolean(true);
-				Culling = new Value.Enum<Culling>(Data.Culling.Front);
+				Culling = new Value.Enum<CullingValues>(Data.CullingValues.Front);
 
 				Color = new Value.Enum<StandardColorType>(StandardColorType.Fixed);
 				Color_Fixed = new Value.Color(255, 255, 255, 255);

@@ -22,14 +22,13 @@ namespace Culling3D
 			{
 				if (Type == OBJECT_SHAPE_TYPE_NONE) return 0;
 				if (Type == OBJECT_SHAPE_TYPE_SPHERE) return Radius;
-				if (Type == OBJECT_SHAPE_TYPE_CUBOID) return sqrt(CuboidSize.X * CuboidSize.X + CuboidSize.Y * CuboidSize.Y * CuboidSize.Z * CuboidSize.Z) / 2.0f;
+				if (Type == OBJECT_SHAPE_TYPE_CUBOID) return sqrt(CuboidSize.X * CuboidSize.X + CuboidSize.Y * CuboidSize.Y + CuboidSize.Z * CuboidSize.Z) / 2.0f;
 				return 0.0f;
 			}
 		};
 
 	private:
 		void*		userData;
-		Vector3DF	position;
 		World*		world;
 
 		Status	currentStatus;

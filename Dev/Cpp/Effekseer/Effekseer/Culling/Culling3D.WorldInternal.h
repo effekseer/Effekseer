@@ -45,6 +45,9 @@ namespace Culling3D
 		void RemoveObjectInternal(Object* o);
 
 		void Culling(const Matrix44& cameraProjMat, bool isOpenGL);
+
+		void Dump(const char* path, const Matrix44& cameraProjMat, bool isOpenGL);
+
 		int32_t GetObjectCount() { return objs.size(); }
 		Object* GetObject(int32_t index) { return objs[index]; }
 
