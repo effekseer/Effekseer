@@ -1308,6 +1308,15 @@ void Native::SetIsRightHand( bool value )
 	}
 }
 
+void Native::SetCullingParameter( bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ)
+{
+	g_renderer->IsCullingShown = isCullingShown;
+	g_renderer->CullingRadius = cullingRadius;
+	g_renderer->CullingPosition.X = cullingX;
+	g_renderer->CullingPosition.Y = cullingY;
+	g_renderer->CullingPosition.Z = cullingZ;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

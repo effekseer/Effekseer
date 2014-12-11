@@ -467,7 +467,7 @@ class EffekseerNativePINVOKE {
   public static extern void delete_Native(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_CreateWindow_Effekseer")]
-  public static extern bool Native_CreateWindow_Effekseer(global::System.Runtime.InteropServices.HandleRef jarg1, IntPtr jarg2, int jarg3, int jarg4);
+  public static extern bool Native_CreateWindow_Effekseer(global::System.Runtime.InteropServices.HandleRef jarg1, System.IntPtr jarg2, int jarg3, int jarg4);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_UpdateWindow")]
   public static extern bool Native_UpdateWindow(global::System.Runtime.InteropServices.HandleRef jarg1);
@@ -479,7 +479,7 @@ class EffekseerNativePINVOKE {
   public static extern bool Native_DestroyWindow(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_LoadEffect")]
-  public static extern bool Native_LoadEffect(global::System.Runtime.InteropServices.HandleRef jarg1, IntPtr jarg2, int jarg3, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg4);
+  public static extern bool Native_LoadEffect(global::System.Runtime.InteropServices.HandleRef jarg1, System.IntPtr jarg2, int jarg3, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg4);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_RemoveEffect")]
   public static extern bool Native_RemoveEffect(global::System.Runtime.InteropServices.HandleRef jarg1);
@@ -563,7 +563,7 @@ class EffekseerNativePINVOKE {
   public static extern bool Native_IsConnectingNetwork(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_SendDataByNetwork")]
-  public static extern void Native_SendDataByNetwork(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, IntPtr jarg3, int jarg4, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg5);
+  public static extern void Native_SendDataByNetwork(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, System.IntPtr jarg3, int jarg4, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg5);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_SetLightDirection")]
   public static extern void Native_SetLightDirection(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, float jarg3, float jarg4);
@@ -576,6 +576,9 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_SetIsRightHand")]
   public static extern void Native_SetIsRightHand(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_SetCullingParameter")]
+  public static extern void Native_SetCullingParameter(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2, float jarg3, float jarg4, float jarg5, float jarg6);
 }
 
 }

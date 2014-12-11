@@ -140,6 +140,12 @@ namespace Effekseer.GUI
 			set;
 		}
 
+		internal static DockCulling DockCulling
+		{
+			get;
+			set;
+		}
+
 		internal static DockNetwork DockNetwork
 		{
 			get;
@@ -186,6 +192,7 @@ namespace Effekseer.GUI
 			DockOption = new GUI.DockOption();
 			DockEffectBehavior = new GUI.DockEffectBehavior();
 			DockFCurves = new GUI.DockFCurves();
+			DockCulling = new GUI.DockCulling();
 			DockNetwork = new GUI.DockNetwork();
 
 			MainForm.Show();
@@ -230,6 +237,7 @@ namespace Effekseer.GUI
 			if (DockEffectBehavior != null) DockEffectBehavior.Close();
 
 			if (DockFCurves != null) DockFCurves.Close();
+			if (DockCulling != null) DockCulling.Close();
 			if (DockNetwork != null) DockNetwork.Close();
 
 			DockViewerController = null;
@@ -248,6 +256,7 @@ namespace Effekseer.GUI
 			DockOption = null;
 			DockEffectBehavior = null;
 			DockFCurves = null;
+			DockCulling = null;
 			DockNetwork = null;
 		}
 
@@ -271,6 +280,7 @@ namespace Effekseer.GUI
 			if (DockOption == null) DockOption = new GUI.DockOption();
 			if (DockEffectBehavior == null) DockEffectBehavior = new DockEffectBehavior();
 			if (DockFCurves == null) DockFCurves = new GUI.DockFCurves();
+			if (DockCulling == null) DockCulling = new DockCulling();
 			if (DockNetwork == null) DockNetwork = new GUI.DockNetwork();
 
 			var rec = Screen.PrimaryScreen.Bounds;
@@ -528,6 +538,11 @@ namespace Effekseer.GUI
 								return DockOption;
 							}
 
+							if (DockCulling.GetType().FullName == s)
+							{
+								return DockCulling;
+							}
+
 							if (DockEffectBehavior.GetType().FullName == s)
 							{
 								return DockEffectBehavior;
@@ -630,6 +645,7 @@ namespace Effekseer.GUI
 			if (DockNodeSoundValues != null && DockNodeSoundValues.DockState == DockState.Unknown) DockNodeSoundValues = null;
 			if (DockOption != null && DockOption.DockState == DockState.Unknown) DockOption = null;
 			if (DockEffectBehavior != null && DockEffectBehavior.DockState == DockState.Unknown) DockEffectBehavior = null;
+			if (DockCulling != null && DockCulling.DockState == DockState.Unknown) DockCulling = null;
 			if (DockFCurves != null && DockFCurves.DockState == DockState.Unknown) DockFCurves = null;
 			if (DockNetwork != null && DockNetwork.DockState == DockState.Unknown) DockNetwork = null;
 		}

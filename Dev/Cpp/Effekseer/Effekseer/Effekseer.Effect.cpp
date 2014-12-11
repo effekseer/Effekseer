@@ -349,6 +349,25 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		m_maginificationExternal = mag;
 	}
 
+	// カリング
+	if( m_version >= 9 )
+	{
+		memcpy( &(Culling.Shape), pos, sizeof(int32_t) );
+		pos += sizeof(int32_t);
+		if(Culling.Shape ==	CULLING_SHAPE_SPHERE)
+		{
+			memcpy( &(Culling.Sphere.Radius), pos, sizeof(float) );
+			pos += sizeof(float);
+		
+			memcpy( &(Culling.Location.X), pos, sizeof(float) );
+			pos += sizeof(float);
+			memcpy( &(Culling.Location.Y), pos, sizeof(float) );
+			pos += sizeof(float);
+			memcpy( &(Culling.Location.Z), pos, sizeof(float) );
+			pos += sizeof(float);
+		}
+	}
+
 	// ノード
 	m_pRoot = EffectNode::Create( this, NULL, pos );
 

@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Effect.h"
+#include "Effekseer.Vector3D.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -62,6 +63,7 @@ private:
 	struct
 	{
 		eCullingShape	Shape;
+		Vector3D		Location;
 
 		union
 		{

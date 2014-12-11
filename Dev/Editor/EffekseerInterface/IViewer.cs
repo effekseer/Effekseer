@@ -234,6 +234,16 @@ namespace Effekseer
 		void SetStep(int step);
 
 		/// <summary>
+		/// カリング情報を設定する。
+		/// </summary>
+		/// <param name="isCullingShown"></param>
+		/// <param name="cullingRadius"></param>
+		/// <param name="cullingX"></param>
+		/// <param name="cullingY"></param>
+		/// <param name="cullingZ"></param>
+		void SetCullingParameter(bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ);
+
+		/// <summary>
 		/// サーバーに接続する。
 		/// </summary>
 		/// <param name="target"></param>

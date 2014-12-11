@@ -61,6 +61,13 @@ namespace Effekseer.GUI
 
 			Core.Option.BackgroundImage.OnChanged += OnChanged;
 
+			Core.Culling.IsShown.OnChanged += OnChanged;
+			Core.Culling.Type.OnChanged += OnChanged;
+			Core.Culling.Sphere.Location.X.OnChanged += OnChanged;
+			Core.Culling.Sphere.Location.Y.OnChanged += OnChanged;
+			Core.Culling.Sphere.Location.Z.OnChanged += OnChanged;
+			Core.Culling.Sphere.Radius.OnChanged += OnChanged;
+
 			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
 			Core.OnAfterNew += new EventHandler(Core_OnAfterNew);
 			Core.OnReload +=  new EventHandler(Core_OnReload);
@@ -289,6 +296,15 @@ namespace Effekseer.GUI
 					Core.Option.MouseSlideInvX,
 					Core.Option.MouseSlideInvY);
 
+				if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
+				{
+					viewer.SetCullingParameter(Core.Culling.IsShown, Core.Culling.Sphere.Radius.Value, Core.Culling.Sphere.Location.X, Core.Culling.Sphere.Location.Y, Core.Culling.Sphere.Location.Z);
+				}
+				else if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.None)
+				{
+					viewer.SetCullingParameter(false, 0.0f, 0.0f, 0.0f, 0.0f);
+				}
+
 				viewer.UpdateWindow();
 			}
 			else
@@ -406,6 +422,15 @@ namespace Effekseer.GUI
 
 			viewer.SetStep((int)Core.Option.FPS.Value);
 			viewer.SetIsRightHand(Core.Option.Coordinate.Value == Data.OptionValues.CoordinateType.Right);
+
+			if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
+			{
+				viewer.SetCullingParameter(Core.Culling.IsShown, Core.Culling.Sphere.Radius.Value, Core.Culling.Sphere.Location.X, Core.Culling.Sphere.Location.Y, Core.Culling.Sphere.Location.Z);
+			}
+			else if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.None)
+			{
+				viewer.SetCullingParameter(false, 0.0f, 0.0f, 0.0f, 0.0f);
+			}
 
 			var data = Binary.Exporter.Export(Core.Option.Magnification);
 			fixed (byte* p = &data[0])

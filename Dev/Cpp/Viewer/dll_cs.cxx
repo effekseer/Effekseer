@@ -1754,6 +1754,24 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Native_SetIsRightHand(void * jarg1, unsigned 
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Native_SetCullingParameter(void * jarg1, unsigned int jarg2, float jarg3, float jarg4, float jarg5, float jarg6) {
+  Native *arg1 = (Native *) 0 ;
+  bool arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  (arg1)->SetCullingParameter(arg2,arg3,arg4,arg5,arg6);
+}
+
+
 #ifdef __cplusplus
 }
 #endif

@@ -41,7 +41,7 @@ public class Native : global::System.IDisposable {
   public Native() : this(EffekseerNativePINVOKE.new_Native(), true) {
   }
 
-  public bool CreateWindow_Effekseer(IntPtr handle, int width, int height) {
+  public bool CreateWindow_Effekseer(System.IntPtr handle, int width, int height) {
     bool ret = EffekseerNativePINVOKE.Native_CreateWindow_Effekseer(swigCPtr, handle, width, height);
     return ret;
   }
@@ -61,7 +61,8 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
-  public bool LoadEffect(IntPtr data, int size, string path) {
+  public bool LoadEffect(System.IntPtr data, int size, string path)
+  {
     bool ret = EffekseerNativePINVOKE.Native_LoadEffect(swigCPtr, data, size, path);
     return ret;
   }
@@ -193,7 +194,7 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
-  public void SendDataByNetwork(string key, IntPtr data, int size, string path) {
+  public void SendDataByNetwork(string key, System.IntPtr data, int size, string path) {
     EffekseerNativePINVOKE.Native_SendDataByNetwork(swigCPtr, key, data, size, path);
   }
 
@@ -211,6 +212,10 @@ public class Native : global::System.IDisposable {
 
   public void SetIsRightHand(bool value) {
     EffekseerNativePINVOKE.Native_SetIsRightHand(swigCPtr, value);
+  }
+
+  public void SetCullingParameter(bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ) {
+    EffekseerNativePINVOKE.Native_SetCullingParameter(swigCPtr, isCullingShown, cullingRadius, cullingX, cullingY, cullingZ);
   }
 
 }
