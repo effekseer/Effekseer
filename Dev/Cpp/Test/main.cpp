@@ -32,6 +32,8 @@
 
 #define __DDS_TEST 0
 
+#define __CULLING_TEST 1
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -91,6 +93,10 @@ int main()
 	InitWindow(g_window_width, g_window_height);
 
 	g_manager = ::Effekseer::Manager::Create( 2000 );
+
+#if __CULLING_TEST
+	g_manager->CreateCullingWorld(200, 200, 200, 4);
+#endif
 
 #if _WIN32
 	InitGraphics(GetHandle(), NULL, g_window_width, g_window_height);

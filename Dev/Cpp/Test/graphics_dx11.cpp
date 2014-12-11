@@ -198,6 +198,9 @@ void Rendering()
 	g_renderer->SetLightDirection(::Effekseer::Vector3D(1.0f, 1.0f, 1.0f));
 	g_renderer->SetLightAmbientColor(::Effekseer::Color(40, 40, 40, 255));
 
+	auto cameraproj = g_renderer->GetCameraProjectionMatrix();
+	g_manager->CalcCulling(cameraproj, false);
+
 	g_renderer->BeginRendering();
 	g_manager->Draw();
 	g_renderer->EndRendering();

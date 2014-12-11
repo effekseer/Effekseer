@@ -1214,6 +1214,8 @@ void ManagerImplemented::Flip()
 
 						ds.CullingObjectPointer->SetRadius(radius);
 					}
+
+					m_cullingWorld->AddObject(ds.CullingObjectPointer);
 				}
 				(*it).second.IsParameterChanged = false;
 			}
@@ -1508,8 +1510,11 @@ void ManagerImplemented::CalcCulling( const Matrix44& cameraProjMat, bool isOpen
 
 	for(int32_t i = 0; i < m_cullingWorld->GetObjectCount(); i++)
 	{
-		m_culledObjects.push_back((DrawSet*)m_cullingWorld->GetObject(i));
-		m_culledObjectSets.insert(((DrawSet*)m_cullingWorld->GetObject(i))->Self);
+		Culling3D::Object* o = m_cullingWorld->GetObject(i);
+		DrawSet* ds = (DrawSet*)o->GetUserData();
+
+		m_culledObjects.push_back(ds);
+		m_culledObjectSets.insert(ds->Self);
 	}
 
 	m_culled = true;
