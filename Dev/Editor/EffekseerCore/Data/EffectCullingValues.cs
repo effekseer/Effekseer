@@ -16,6 +16,7 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "カリングの種類")]
 		[Selector(ID = 0)]
 		public Value.Enum<ParamaterType> Type
 		{
