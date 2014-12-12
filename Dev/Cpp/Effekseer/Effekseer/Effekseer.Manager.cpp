@@ -1185,10 +1185,25 @@ void ManagerImplemented::Flip()
 					InstanceContainer* pContainer = ds.InstanceContainerPointer;
 					Instance* pInstance = pContainer->GetFirstGroup()->GetFirst();
 
+					Vector3D pos(
+						ds.CullingObjectPointer->GetPosition().X,
+						ds.CullingObjectPointer->GetPosition().Y,
+						ds.CullingObjectPointer->GetPosition().Z);
+
+					Matrix43 pos_;
+					pos_.Translation(pos.X, pos.Y, pos.Z);
+
+					Matrix43::Multiple(pos_, pos_,  pInstance->m_GlobalMatrix43);
+
+					if(ds.DoUseBaseMatrix)
+					{
+						Matrix43::Multiple(pos_, pos_,  ds.BaseMatrix);
+					}
+
 					Culling3D::Vector3DF position;
-					position.X = pInstance->m_GlobalMatrix43.Value[3][0];
-					position.Y = pInstance->m_GlobalMatrix43.Value[3][1];
-					position.Z = pInstance->m_GlobalMatrix43.Value[3][2];
+					position.X = pos_.Value[3][0];
+					position.Y = pos_.Value[3][1];
+					position.Z = pos_.Value[3][2];
 					ds.CullingObjectPointer->SetPosition(position);
 
 					if(effect->Culling.Shape == CULLING_SHAPE_SPHERE)
