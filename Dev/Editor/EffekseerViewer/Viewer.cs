@@ -226,6 +226,11 @@ namespace Effekseer
 			native.SetStep(step);
 		}
 
+		public void SetCullingParameter(bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ)
+		{
+			native.SetCullingParameter(isCullingShown, cullingRadius, cullingX, cullingY, cullingZ);
+		}
+
 		public bool Connect(string target, int port)
 		{
 			return native.StartNetwork(target, (ushort)port);

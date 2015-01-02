@@ -71,6 +71,7 @@
     <Compile Include="Command\DelegateCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Core.cs" />
+    <Compile Include="Data\EffectCullingValues.cs" />
     <Compile Include="Data\EffectBehaviorValues.cs" />
     <Compile Include="Data\OptionValues.cs" />
     <Compile Include="Data\RendererCommonValues.cs" />

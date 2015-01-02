@@ -39,7 +39,7 @@ namespace Effekseer.Data
 		FirstCreatedInstanceIsLast = 1,
 	}
 
-	public enum Culling : int
+	public enum CullingValues : int
 	{
 		[Name(value = "表表示", language = Language.Japanese)]
 		Front = 0,

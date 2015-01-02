@@ -84,6 +84,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Effekseer.h" />
+    <ClInclude Include="Effekseer\Culling\Culling3D.Grid.h" />
+    <ClInclude Include="Effekseer\Culling\Culling3D.h" />
+    <ClInclude Include="Effekseer\Culling\Culling3D.Layer.h" />
+    <ClInclude Include="Effekseer\Culling\Culling3D.ObjectInternal.h" />
+    <ClInclude Include="Effekseer\Culling\Culling3D.ReferenceObject.h" />
+    <ClInclude Include="Effekseer\Culling\Culling3D.WorldInternal.h" />
     <ClInclude Include="Effekseer\Effekseer.Base.h" />
     <ClInclude Include="Effekseer\Effekseer.Base.Pre.h" />
     <ClInclude Include="Effekseer\Effekseer.Client.h" />
@@ -134,6 +140,13 @@
     <ClInclude Include="Effekseer\Sound\Effekseer.SoundPlayer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Effekseer\Culling\Culling3D.Grid.cpp" />
+    <ClCompile Include="Effekseer\Culling\Culling3D.Layer.cpp" />
+    <ClCompile Include="Effekseer\Culling\Culling3D.Matrix44.cpp" />
+    <ClCompile Include="Effekseer\Culling\Culling3D.ObjectInternal.cpp" />
+    <ClCompile Include="Effekseer\Culling\Culling3D.ReferenceObject.cpp" />
+    <ClCompile Include="Effekseer\Culling\Culling3D.Vector3DF.cpp" />
+    <ClCompile Include="Effekseer\Culling\Culling3D.WorldInternal.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Client.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Color.cpp" />
     <ClCompile Include="Effekseer\Effekseer.CriticalSection.cpp" />

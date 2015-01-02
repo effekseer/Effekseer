@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClInclude Include="EffekseerTool\EffekseerTool.Background.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Base.h" />
+    <ClInclude Include="EffekseerTool\EffekseerTool.Culling.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Grid.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Guide.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h" />
@@ -180,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffekseerTool\EffekseerTool.Background.cpp" />
+    <ClCompile Include="EffekseerTool\EffekseerTool.Culling.cpp" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Grid.cpp" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Guide.cpp" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Renderer.cpp" />

@@ -32,6 +32,7 @@ private:
 
 	::EffekseerRenderer::Grid*	m_grid;
 	::EffekseerRenderer::Guide*	m_guide;
+	::EffekseerRenderer::Culling*	m_culling;
 	::EffekseerRenderer::Background*	m_background;
 
 	bool		m_recording;
@@ -153,6 +154,12 @@ public:
 		@brief	グリッドの長さ
 	*/
 	float GridLength;
+
+	bool IsCullingShown;
+
+	float CullingRadius;
+
+	Effekseer::Vector3D CullingPosition;
 
 	/**
 		@brief	背景色

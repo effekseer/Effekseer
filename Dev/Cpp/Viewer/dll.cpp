@@ -150,6 +150,13 @@ ViewerParamater::ViewerParamater()
 	, AngleY			( 0 )
 	, Distance			( 0 )
 	, RendersGuide		( false )
+
+	, IsCullingShown	(false)
+	, CullingRadius		( 0 )
+	, CullingX			( 0 )
+	, CullingY			( 0 )
+	, CullingZ			( 0 )
+
 {
 
 }
@@ -1299,6 +1306,15 @@ void Native::SetIsRightHand( bool value )
 
 		g_renderer->GetRenderer()->SetLightDirection( temp );
 	}
+}
+
+void Native::SetCullingParameter( bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ)
+{
+	g_renderer->IsCullingShown = isCullingShown;
+	g_renderer->CullingRadius = cullingRadius;
+	g_renderer->CullingPosition.X = cullingX;
+	g_renderer->CullingPosition.Y = cullingY;
+	g_renderer->CullingPosition.Z = cullingZ;
 }
 
 //----------------------------------------------------------------------------------

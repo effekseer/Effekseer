@@ -187,6 +187,13 @@ enum eCoordinateSystem
 	COORDINATE_SYSTEM_DWORD = 0x7fffffff,
 };
 
+enum eCullingShape
+{
+	CULLING_SHAPE_NONE = 0,
+	CULLING_SHAPE_SPHERE = 1,
+	CULLING_SHAPE_DWORD = 0x7fffffff,
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -846,6 +853,11 @@ public:
 	Matrix44& Indentity();
 
 	/**
+	@brief	転置行列化
+	*/
+	Matrix44& Transpose();
+
+	/**
 		@brief	カメラ行列化(右手系)
 	*/
 	Matrix44& LookAtRH( const Vector3D& eye, const Vector3D& at, const Vector3D& up );
@@ -1169,6 +1181,11 @@ public:
 		@return	エフェクト。失敗した場合はNULLを返す。
 	*/
 	static Effect* Create( Setting*	setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
+
+	/**
+	@brief	標準のエフェクト読込インスタンスを生成する。
+	*/
+	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
 
 	/**
 		@brief	参照カウンタを加算する。
@@ -1697,6 +1714,22 @@ public:
 		@brief	残りの確保したインスタンス数を取得する。
 	*/
 	virtual int32_t GetRestInstancesCount() const = 0;
+
+		/**
+		@brief	エフェクトをカリングし描画負荷を減らすための空間を生成する。
+		@param	xsize	X方向幅
+		@param	ysize	Y方向幅
+		@param	zsize	Z方向幅
+		@param	layerCount	層数(大きいほどカリングの効率は上がるがメモリも大量に使用する)
+	*/
+	virtual void CreateCullingWorld( float xsize, float ysize, float zsize, int32_t layerCount) = 0;
+
+	/**
+		@brief	カリングを行い、カリングされたオブジェクトのみを描画するようにする。
+		@param	cameraProjMat	カメラプロジェクション行列
+		@param	isOpenGL		OpenGLによる描画か?
+	*/
+	virtual void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL) = 0;
 };
 //----------------------------------------------------------------------------------
 //

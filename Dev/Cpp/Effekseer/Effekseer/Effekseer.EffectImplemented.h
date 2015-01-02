@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Effect.h"
+#include "Effekseer.Vector3D.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -57,6 +58,27 @@ private:
 
 	// 子ノード
 	EffectNode* m_pRoot;
+
+	/* カリング */
+	struct
+	{
+		eCullingShape	Shape;
+		Vector3D		Location;
+
+		union
+		{
+			struct
+			{
+			} None;
+
+			struct
+			{
+				float Radius;
+			} Sphere;
+		};
+
+	} Culling;
+
 
 public:
 	/**

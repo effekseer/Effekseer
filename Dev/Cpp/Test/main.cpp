@@ -32,6 +32,8 @@
 
 #define __DDS_TEST 0
 
+#define __CULLING_TEST 1
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -92,6 +94,10 @@ int main()
 
 	g_manager = ::Effekseer::Manager::Create( 2000 );
 
+#if __CULLING_TEST
+	g_manager->CreateCullingWorld(200, 200, 200, 4);
+#endif
+
 #if _WIN32
 	InitGraphics(GetHandle(), NULL, g_window_width, g_window_height);
 	InitSound( GetHandle(), NULL );
@@ -139,8 +145,9 @@ void Init()
 
 #if __DDS_TEST
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser01_dds.efk").c_str() ) );
-#endif
-
+#elif __CULLING_TEST
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/culling.efk").c_str() ) );
+#else
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser01.efk").c_str() ) );
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser02.efk").c_str() ) );
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ribbon_Parent.efk").c_str() ) );
@@ -151,7 +158,7 @@ void Init()
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Track1.efk").c_str() ) );
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block.efk").c_str() ) );
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block_simple.efk").c_str() ) );
-
+#endif
 	PlayEffect();
 }
 

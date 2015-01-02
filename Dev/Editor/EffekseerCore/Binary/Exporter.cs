@@ -9,7 +9,7 @@ namespace Effekseer.Binary
 {
 	public class Exporter
 	{
-		const int Version = 8;
+		const int Version = 9;
 
 		/// <summary>
 		/// エフェクトデータの出力
@@ -213,6 +213,17 @@ namespace Effekseer.Binary
 			// 倍率を出力
 			data.Add(BitConverter.GetBytes(magnification));
 
+			// カリングを出力
+			data.Add(BitConverter.GetBytes((int)Core.Culling.Type.Value));
+
+			if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
+			{
+				data.Add(BitConverter.GetBytes(Core.Culling.Sphere.Radius));
+				data.Add(BitConverter.GetBytes(Core.Culling.Sphere.Location.X));
+				data.Add(BitConverter.GetBytes(Core.Culling.Sphere.Location.Y));
+				data.Add(BitConverter.GetBytes(Core.Culling.Sphere.Location.Z));
+			}
+			
 			// ノード情報出力
 			Action<Data.NodeRoot> outout_rootnode = null;
 			Action<Data.Node> outout_node = null;

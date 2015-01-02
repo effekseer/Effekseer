@@ -11,7 +11,7 @@ namespace Effekseer
 		/// <summary>
 		/// x.xxxであることが必須
 		/// </summary>
-        public const string Version = "0.610";
+        public const string Version = "0.620";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -20,6 +20,8 @@ namespace Effekseer
 		static Data.OptionValues option = new Data.OptionValues();
 
 		static Data.EffectBehaviorValues effectBehavior = new Data.EffectBehaviorValues();
+
+		static Data.EffectCullingValues culling = new Data.EffectCullingValues();
 
 		static int start_frame = 0;
 
@@ -177,6 +179,11 @@ namespace Effekseer
 		public static Data.EffectBehaviorValues EffectBehavior
 		{
 			get { return effectBehavior; }
+		}
+
+		public static Data.EffectCullingValues Culling
+		{
+			get { return culling; }
 		}
 
 		/// <summary>
@@ -473,12 +480,14 @@ namespace Effekseer
 			var element = Data.IO.SaveObjectToElement(doc, "Root", Core.Root, false);
 
 			var behaviorElement = Data.IO.SaveObjectToElement(doc, "Behavior", EffectBehavior, false);
+			var cullingElement = Data.IO.SaveObjectToElement(doc, "Culling", Culling, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 
 			project_root.AppendChild(element);
 
 			if(behaviorElement != null) project_root.AppendChild(behaviorElement);
+			if (cullingElement != null) project_root.AppendChild(cullingElement);
 
 			project_root.AppendChild(doc.CreateTextElement("ToolVersion", Core.Version));
 			project_root.AppendChild(doc.CreateTextElement("Version", 3));
@@ -547,6 +556,13 @@ namespace Effekseer
 			{
 				var o = effectBehavior as object;
 				Data.IO.LoadObjectFromElement(behaviorElement as System.Xml.XmlElement, ref o, false);
+			}
+
+			var cullingElement = doc["EffekseerProject"]["Culling"];
+			if (cullingElement != null)
+			{
+				var o = culling as object;
+				Data.IO.LoadObjectFromElement(cullingElement as System.Xml.XmlElement, ref o, false);
 			}
 
 			StartFrame = 0;

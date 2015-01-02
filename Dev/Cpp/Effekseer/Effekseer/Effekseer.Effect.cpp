@@ -190,6 +190,8 @@ EffectImplemented::EffectImplemented( Manager* pManager, void* pData, int size )
 	, m_pRoot			( NULL )
 {
 	ES_SAFE_ADDREF( m_pManager );
+
+	Culling.Shape = CULLING_SHAPE_NONE;
 }
 
 //----------------------------------------------------------------------------------
@@ -214,6 +216,8 @@ EffectImplemented::EffectImplemented( Setting* setting, void* pData, int size )
 	, m_pRoot			( NULL )
 {
 	ES_SAFE_ADDREF( m_setting );
+	
+	Culling.Shape = CULLING_SHAPE_NONE;
 }
 
 //----------------------------------------------------------------------------------
@@ -343,6 +347,25 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		pos += sizeof(float);
 		m_maginification *= mag;
 		m_maginificationExternal = mag;
+	}
+
+	// カリング
+	if( m_version >= 9 )
+	{
+		memcpy( &(Culling.Shape), pos, sizeof(int32_t) );
+		pos += sizeof(int32_t);
+		if(Culling.Shape ==	CULLING_SHAPE_SPHERE)
+		{
+			memcpy( &(Culling.Sphere.Radius), pos, sizeof(float) );
+			pos += sizeof(float);
+		
+			memcpy( &(Culling.Location.X), pos, sizeof(float) );
+			pos += sizeof(float);
+			memcpy( &(Culling.Location.Y), pos, sizeof(float) );
+			pos += sizeof(float);
+			memcpy( &(Culling.Location.Z), pos, sizeof(float) );
+			pos += sizeof(float);
+		}
 	}
 
 	// ノード

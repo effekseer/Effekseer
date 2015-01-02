@@ -295,6 +295,7 @@ namespace Effekseer.GUI
 				setDockWindow("録画", typeof(DockRecorder));
 				setDockWindow("オプション", typeof(DockOption));
 				setDockWindow("振る舞い", typeof(DockEffectBehavior));
+				setDockWindow("カリング", typeof(DockCulling));
 				setDockWindow("ネットワーク", typeof(DockNetwork));
 
 				menuStrip.Items.Add(menu);

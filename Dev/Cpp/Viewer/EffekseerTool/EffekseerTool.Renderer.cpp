@@ -5,6 +5,7 @@
 #include "EffekseerTool.Renderer.h"
 #include "EffekseerTool.Grid.h"
 #include "EffekseerTool.Guide.h"
+#include "EffekseerTool.Culling.h"
 #include "EffekseerTool.Background.h"
 
 //----------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ Renderer::Renderer( int32_t squareMaxCount )
 
 	, m_grid	( NULL )
 	, m_guide	( NULL )
+	, m_culling	( NULL )
 	, m_background	( NULL )
 
 	, GuideWidth	( 100 )
@@ -43,6 +45,10 @@ Renderer::Renderer( int32_t squareMaxCount )
 
 	, IsRightHand	( true )
 	, GridLength	( 2.0f )
+
+	, IsCullingShown	(false)
+	, CullingRadius		(0.0f)
+	, CullingPosition	()
 
 	, m_recording		( false )
 	, m_recordingTarget	( NULL )
@@ -71,6 +77,8 @@ Renderer::~Renderer()
 
 	ES_SAFE_DELETE( m_guide );
 	ES_SAFE_DELETE( m_grid );
+	ES_SAFE_DELETE( m_culling );
+
 	ES_SAFE_DELETE( m_background );
 
 	if( m_renderer != NULL )
@@ -147,6 +155,8 @@ bool Renderer::Initialize( HWND handle, int width, int height )
 
 	// ƒKƒCƒhì¬
 	m_guide = ::EffekseerRenderer::Guide::Create( m_renderer );
+
+	m_culling = ::EffekseerRenderer::Culling::Create( m_renderer );
 
 	// ”wŒiì¬
 	m_background = ::EffekseerRenderer::Background::Create( m_renderer );
@@ -395,6 +405,16 @@ bool Renderer::BeginRendering()
 		m_grid->IsShownYZ = IsGridYZShown;
 	}
 
+	if( !m_recording )
+	{
+		m_culling->IsShown = IsCullingShown;
+		m_culling->Radius = CullingRadius;
+		m_culling->X = CullingPosition.X;
+		m_culling->Y = CullingPosition.Y;
+		m_culling->Z = CullingPosition.Z;
+		m_culling->Rendering( IsRightHand );
+	}
+
 	m_renderer->BeginRendering();
 
 	return true;
@@ -414,7 +434,7 @@ bool Renderer::EndRendering()
 	{
 		m_guide->Rendering( m_width, m_height, GuideWidth, GuideHeight );
 	}
-
+	
 	m_d3d_device->EndScene();
 	return true;
 }

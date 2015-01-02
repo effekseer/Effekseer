@@ -9,7 +9,7 @@
 #include <Windows.h>
 #include <GL/gl.h>
 #endif
-
+#include <stddef.h>
 #include "EffekseerRendererGL.Base.Pre.h"
 
 //-----------------------------------------------------------------------------------

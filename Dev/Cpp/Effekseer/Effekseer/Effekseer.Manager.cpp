@@ -86,6 +86,7 @@ Handle ManagerImplemented::AddDrawSet( Effect* effect, InstanceContainer* pInsta
 	}
 
 	DrawSet drawset( effect, pInstanceContainer, pGlobalPointer );
+	drawset.Self = Temp;
 
 	ES_SAFE_ADDREF( effect );
 
@@ -112,6 +113,13 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 			InstanceContainer::operator delete( drawset.InstanceContainerPointer, this );
 			ES_SAFE_RELEASE( drawset.ParameterPointer );
 			ES_SAFE_DELETE( drawset.GlobalPointer );
+
+			if(m_cullingWorld != NULL)
+			{
+				m_cullingWorld->RemoveObject(drawset.CullingObjectPointer);
+				Culling3D::SafeRelease(drawset.CullingObjectPointer);
+			}
+
 			m_RemovingDrawSets[1].erase( it++ );
 		}
 		m_RemovingDrawSets[1].clear();
@@ -303,6 +311,9 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 	, m_setting			( NULL )
 	, m_sequenceNumber	( 0 )
 
+	, m_cullingWorld	(NULL)
+	, m_culled(false)
+
 	, m_MallocFunc(NULL)
 	, m_FreeFunc(NULL)
 	, m_randFunc(NULL)
@@ -354,6 +365,7 @@ ManagerImplemented::~ManagerImplemented()
 	assert( m_reserved_instances.size() == m_instance_max ); 
 	ES_SAFE_DELETE_ARRAY( m_reserved_instances_buffer );
 
+	Culling3D::SafeRelease(m_cullingWorld);
 
 	ES_SAFE_DELETE(m_spriteRenderer);
 	ES_SAFE_DELETE(m_ribbonRenderer);
@@ -832,6 +844,7 @@ void ManagerImplemented::SetMatrix( Handle handle, const Matrix43& mat )
 				instance->m_GlobalMatrix43 = mat;
 
 				drawSet.GlobalMatrix = instance->m_GlobalMatrix43;
+				drawSet.IsParameterChanged = true;
 			}
 		}
 	}
@@ -878,6 +891,7 @@ void ManagerImplemented::SetLocation( Handle handle, float x, float y, float z )
 		pInstance->m_GlobalMatrix43.Value[3][2] = z;
 
 		drawSet.GlobalMatrix = pInstance->m_GlobalMatrix43;
+		drawSet.IsParameterChanged = true;
 	}
 }
 
@@ -907,6 +921,7 @@ void ManagerImplemented::AddLocation( Handle handle, const Vector3D& location )
 		pInstance->m_GlobalMatrix43.Value[3][2] += location.Z;
 
 		drawSet.GlobalMatrix = pInstance->m_GlobalMatrix43;
+		drawSet.IsParameterChanged = true;
 	}
 }
 
@@ -946,6 +961,7 @@ void ManagerImplemented::SetRotation( Handle handle, float x, float y, float z )
 		pInstance->m_GlobalMatrix43.SetSRT( s, r, t );
 		
 		drawSet.GlobalMatrix = pInstance->m_GlobalMatrix43;
+		drawSet.IsParameterChanged = true;
 	}
 }
 
@@ -976,6 +992,7 @@ void ManagerImplemented::SetRotation( Handle handle, const Vector3D& axis, float
 		pInstance->m_GlobalMatrix43.SetSRT( s, r, t );
 		
 		drawSet.GlobalMatrix = pInstance->m_GlobalMatrix43;
+		drawSet.IsParameterChanged = true;
 	}
 }
 
@@ -1008,6 +1025,7 @@ void ManagerImplemented::SetScale( Handle handle, float x, float y, float z )
 		pInstance->m_GlobalMatrix43.SetSRT( s, r, t );
 
 		drawSet.GlobalMatrix = pInstance->m_GlobalMatrix43;
+		drawSet.IsParameterChanged = true;
 	}
 }
 
@@ -1033,6 +1051,7 @@ void ManagerImplemented::SetBaseMatrix( Handle handle, const Matrix43& mat )
 	{
 		m_DrawSets[handle].BaseMatrix = mat;
 		m_DrawSets[handle].DoUseBaseMatrix = true;
+		m_DrawSets[handle].IsParameterChanged = true;
 	}
 }
 
@@ -1077,6 +1096,7 @@ void ManagerImplemented::SetSpeed( Handle handle, float speed )
 	if( m_DrawSets.count( handle ) > 0 )
 	{
 		m_DrawSets[handle].Speed = speed;
+		m_DrawSets[handle].IsParameterChanged = true;
 	}
 }
 
@@ -1107,6 +1127,33 @@ void ManagerImplemented::Flip()
 	GCDrawSet( false );
 
 	m_renderingDrawSets.clear();
+	m_renderingDrawSetMaps.clear();
+
+	/* カリング生成 */
+	if( cullingNext.SizeX != cullingCurrent.SizeX ||
+		cullingNext.SizeY != cullingCurrent.SizeY ||
+		cullingNext.SizeZ != cullingCurrent.SizeZ ||
+		cullingNext.LayerCount != cullingCurrent.LayerCount)
+	{
+		Culling3D::SafeRelease(m_cullingWorld);
+		
+		std::map<Handle,DrawSet>::iterator it = m_DrawSets.begin();
+		std::map<Handle,DrawSet>::iterator it_end = m_DrawSets.end();
+		while( it != it_end )
+		{
+			DrawSet& ds = (*it).second;
+			Culling3D::SafeRelease(ds.CullingObjectPointer);
+			++it;
+		}
+
+		m_cullingWorld = Culling3D::World::Create(
+			cullingNext.SizeX,
+			cullingNext.SizeY,
+			cullingNext.SizeZ,
+			cullingNext.LayerCount);
+
+		cullingCurrent = cullingNext;
+	}
 
 	{
 		std::map<Handle,DrawSet>::iterator it = m_DrawSets.begin();
@@ -1114,10 +1161,97 @@ void ManagerImplemented::Flip()
 		
 		while( it != it_end )
 		{
+			DrawSet& ds = (*it).second;
+			EffectImplemented* effect = (EffectImplemented*)ds.ParameterPointer;
+
+			if(ds.IsParameterChanged)
+			{
+				if(m_cullingWorld != NULL)
+				{
+					if(ds.CullingObjectPointer == NULL)
+					{
+						ds.CullingObjectPointer = Culling3D::Object::Create();
+						if(effect->Culling.Shape == CULLING_SHAPE_SPHERE)
+						{
+							ds.CullingObjectPointer->SetShapeType(Culling3D::OBJECT_SHAPE_TYPE_SPHERE);
+						}
+
+						if(effect->Culling.Shape == CULLING_SHAPE_NONE)
+						{
+							ds.CullingObjectPointer->SetShapeType(Culling3D::OBJECT_SHAPE_TYPE_ALL);
+						}
+					}
+
+					InstanceContainer* pContainer = ds.InstanceContainerPointer;
+					Instance* pInstance = pContainer->GetFirstGroup()->GetFirst();
+
+					Vector3D pos(
+						ds.CullingObjectPointer->GetPosition().X,
+						ds.CullingObjectPointer->GetPosition().Y,
+						ds.CullingObjectPointer->GetPosition().Z);
+
+					Matrix43 pos_;
+					pos_.Translation(pos.X, pos.Y, pos.Z);
+
+					Matrix43::Multiple(pos_, pos_,  pInstance->m_GlobalMatrix43);
+
+					if(ds.DoUseBaseMatrix)
+					{
+						Matrix43::Multiple(pos_, pos_,  ds.BaseMatrix);
+					}
+
+					Culling3D::Vector3DF position;
+					position.X = pos_.Value[3][0];
+					position.Y = pos_.Value[3][1];
+					position.Z = pos_.Value[3][2];
+					ds.CullingObjectPointer->SetPosition(position);
+
+					if(effect->Culling.Shape == CULLING_SHAPE_SPHERE)
+					{
+						float radius = effect->Culling.Sphere.Radius;
+
+						{
+							Vector3D s,t;
+							Matrix43 r;
+							pInstance->GetGlobalMatrix43().GetSRT(s, r, t);
+						
+							radius = radius * sqrt(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
+						}
+
+						if(ds.DoUseBaseMatrix)
+						{
+							Vector3D s,t;
+							Matrix43 r;
+							ds.BaseMatrix.GetSRT(s, r, t);
+						
+							radius = radius * sqrt(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
+						}
+
+						ds.CullingObjectPointer->SetRadius(radius);
+					}
+
+					m_cullingWorld->AddObject(ds.CullingObjectPointer);
+				}
+				(*it).second.IsParameterChanged = false;
+			}
+
 			m_renderingDrawSets.push_back( (*it).second );
+			m_renderingDrawSetMaps[(*it).first] = (*it).second;
 			++it;
 		}
+
+		if(m_cullingWorld != NULL)
+		{
+			for(size_t i = 0; i < m_renderingDrawSets.size(); i++)
+			{
+				m_renderingDrawSets[i].CullingObjectPointer->SetUserData(&(m_renderingDrawSets[i]));
+			}
+		}
 	}
+
+	m_culledObjects.clear();
+	m_culledObjectSets.clear();
+	m_culled = false;
 
 	if( !m_autoFlip )
 	{
@@ -1215,13 +1349,28 @@ void ManagerImplemented::Draw()
 	// 開始時間を記録
 	int64_t beginTime = ::Effekseer::GetTime();
 
-	for( size_t i = 0; i < m_renderingDrawSets.size(); i++ )
+	if(m_culled)
 	{
-		DrawSet& drawSet = m_renderingDrawSets[i];
-
-		if( drawSet.IsShown && drawSet.IsAutoDrawing )
+		for( size_t i = 0; i < m_culledObjects.size(); i++ )
 		{
-			drawSet.InstanceContainerPointer->Draw( true );
+			DrawSet& drawSet = *m_culledObjects[i];
+
+			if( drawSet.IsShown && drawSet.IsAutoDrawing )
+			{
+				drawSet.InstanceContainerPointer->Draw( true );
+			}
+		}
+	}
+	else
+	{
+		for( size_t i = 0; i < m_renderingDrawSets.size(); i++ )
+		{
+			DrawSet& drawSet = m_renderingDrawSets[i];
+
+			if( drawSet.IsShown && drawSet.IsAutoDrawing )
+			{
+				drawSet.InstanceContainerPointer->Draw( true );
+			}
 		}
 	}
 
@@ -1253,6 +1402,7 @@ Handle ManagerImplemented::Play( Effect* effect, float x, float y, float z )
 	Handle handle = AddDrawSet( effect, pContainer, pGlobal );
 
 	m_DrawSets[handle].GlobalMatrix = pInstance->m_GlobalMatrix43;
+	m_DrawSets[handle].IsParameterChanged = true;
 
 	return handle;
 }
@@ -1264,14 +1414,27 @@ void ManagerImplemented::DrawHandle( Handle handle )
 {
 	m_renderingSession.Enter();
 	
-	std::map<Handle,DrawSet>::iterator it = m_DrawSets.find( handle );
-	if( it != m_DrawSets.end() )
+	std::map<Handle,DrawSet>::iterator it = m_renderingDrawSetMaps.find( handle );
+	if( it != m_renderingDrawSetMaps.end() )
 	{
 		DrawSet& drawSet = it->second;
 
-		if( drawSet.IsShown )
+		if(m_culled)
 		{
-			drawSet.InstanceContainerPointer->Draw( true );
+			if(m_culledObjectSets.find(drawSet.Self) !=m_culledObjectSets.end())
+			{
+				if( drawSet.IsShown )
+				{
+					drawSet.InstanceContainerPointer->Draw( true );
+				}
+			}
+		}
+		else
+		{
+			if( drawSet.IsShown )
+			{
+				drawSet.InstanceContainerPointer->Draw( true );
+			}
 		}
 	}
 
@@ -1297,8 +1460,6 @@ void ManagerImplemented::BeginReloadEffect( Effect* effect )
 		(*it).second.InstanceContainerPointer->~InstanceContainer();
 		InstanceContainer::operator delete( (*it).second.InstanceContainerPointer, this );
 		(*it).second.InstanceContainerPointer = NULL;
-
-
 	}
 }
 
@@ -1332,6 +1493,46 @@ void ManagerImplemented::EndReloadEffect( Effect* effect )
 	}
 
 	m_renderingSession.Leave();
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void ManagerImplemented::CreateCullingWorld( float xsize, float ysize, float zsize, int32_t layerCount)
+{
+	cullingNext.SizeX = xsize;
+	cullingNext.SizeY = ysize;
+	cullingNext.SizeZ = zsize;
+	cullingNext.LayerCount = layerCount;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void ManagerImplemented::CalcCulling( const Matrix44& cameraProjMat, bool isOpenGL)
+{
+	if(m_cullingWorld == NULL) return;
+
+	m_culledObjects.clear();
+	m_culledObjectSets.clear();
+	
+	Matrix44 mat = cameraProjMat;
+	mat.Transpose();
+
+	Culling3D::Matrix44* mat_ = (Culling3D::Matrix44*)(&mat);
+
+	m_cullingWorld->Culling(*mat_, isOpenGL);
+
+	for(int32_t i = 0; i < m_cullingWorld->GetObjectCount(); i++)
+	{
+		Culling3D::Object* o = m_cullingWorld->GetObject(i);
+		DrawSet* ds = (DrawSet*)o->GetUserData();
+
+		m_culledObjects.push_back(ds);
+		m_culledObjectSets.insert(ds->Self);
+	}
+
+	m_culled = true;
 }
 
 //----------------------------------------------------------------------------------

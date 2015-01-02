@@ -555,7 +555,8 @@ void Instance::Update( float deltaFrame, bool shown )
 	}
 
 	/* e‚ª”jŠü‚³‚ê‚éuŠÔ‚És—ñŒvŽZ(ðŒ‚ði‚ê‚ÎX‚ÉÅ“K‰»‰Â”\) */
-	if( !calculateMatrix && m_pParent != NULL && m_pParent->GetState() != INSTANCE_STATE_ACTIVE )
+	if( !calculateMatrix && m_pParent != NULL && m_pParent->GetState() != INSTANCE_STATE_ACTIVE &&
+		!(m_pEffectNode->CommonValues.RemoveWhenParentIsRemoved && m_pEffectNode->GetChildrenCount() == 0))
 	{
 		calculateMatrix = true;
 	}
@@ -656,7 +657,8 @@ void Instance::Update( float deltaFrame, bool shown )
 	if(killed)
 	{
 		/* Ž€–SŠm’èŽžAŒvŽZ‚ª•K—v‚Èê‡‚ÍŒvŽZ‚ð‚·‚éB*/
-		if( !calculateMatrix )
+		if( !calculateMatrix &&
+			m_pEffectNode->GetChildrenCount() > 0)
 		{
 			calculateMatrix = true;
 			CalculateMatrix( deltaFrame );

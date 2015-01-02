@@ -199,7 +199,12 @@ void Rendering()
 	g_renderer->SetLightAmbientColor(::Effekseer::Color(40, 40, 40, 255));
 
 	g_renderer->BeginRendering();
+
+	auto cameraproj = g_renderer->GetCameraProjectionMatrix();
+	g_manager->CalcCulling(cameraproj, false);
+
 	g_manager->Draw();
+	
 	g_renderer->EndRendering();
 
 	g_swapChain->Present(1, 0);

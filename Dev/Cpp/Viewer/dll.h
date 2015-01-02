@@ -35,6 +35,12 @@ public:
 	float	Distance;
 	bool	RendersGuide;
 
+	bool	IsCullingShown;
+	float	CullingRadius;
+	float	CullingX;
+	float	CullingY;
+	float	CullingZ;
+
 	ViewerParamater();
 };
 
@@ -220,6 +226,8 @@ public:
 	void SetLightAmbientColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a );
 
 	void SetIsRightHand( bool value );
+
+	void SetCullingParameter( bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ);
 };
 
 //----------------------------------------------------------------------------------
