@@ -5,7 +5,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 public class EffekseerSystem : MonoBehaviour
 {
@@ -48,8 +51,13 @@ public class EffekseerSystem : MonoBehaviour
 	{
 		get {
 			if (_Instance == null) {
-				var go = new GameObject("Effekseer");
-				_Instance = go.AddComponent<EffekseerSystem>();
+				var go = GameObject.Find("Effekseer");
+				if (go && go.GetComponent<EffekseerSystem>()) {
+					_Instance = go.GetComponent<EffekseerSystem>();
+				} else {
+					go = new GameObject("Effekseer");
+					_Instance = go.AddComponent<EffekseerSystem>();
+				}
 			}
 			return _Instance;
 		}
@@ -60,12 +68,29 @@ public class EffekseerSystem : MonoBehaviour
 	public int maxSquares		= 1200;
 
 	private const int renderEventId = 0x2040;
-	private Dictionary<string, IntPtr> effects = null;
 	
+	private Dictionary<string, IntPtr> effects = new Dictionary<string, IntPtr>();
+
+#if UNITY_EDITOR
+	[Serializable]
+	private struct EffectKeyValue
+	{
+		private string key;
+		private string value;
+		public EffectKeyValue(string key, IntPtr value) {
+			this.key = key;
+			this.value = value.ToString();
+		}
+		public string GetKey() {return key;}
+		public IntPtr GetValue() {return (IntPtr)ulong.Parse(value);}
+	}
+	private List<EffectKeyValue> effectKeyValues = new List<EffectKeyValue>();
+#endif
+
 	private IntPtr _GetEffect(string name) {
+		name = Path.GetFileNameWithoutExtension(name);
 		if (effects.ContainsKey(name) == false) {
-			string path = Path.ChangeExtension(name, "efk");
-			string fullPath = Path.Combine(EffekseerSystem.resourcePath, path);
+			string fullPath = Path.Combine(EffekseerSystem.resourcePath, Path.ChangeExtension(name, "efk"));
 			
 			byte[] bytes = Encoding.Unicode.GetBytes(fullPath);
 			GCHandle ghc = GCHandle.Alloc(bytes, GCHandleType.Pinned);
@@ -76,6 +101,9 @@ public class EffekseerSystem : MonoBehaviour
 				return IntPtr.Zero;
 			}
 			effects.Add(name, effect);
+#if UNITY_EDITOR
+			effectKeyValues.Add(new EffectKeyValue(name, effect));
+#endif
 			return effect;
 		} else {
 			return effects[name];
@@ -91,7 +119,6 @@ public class EffekseerSystem : MonoBehaviour
 	}
 	
 	void Awake() {
-		effects = new Dictionary<string, IntPtr>();
 		Plugin.EffekseerInit(maxInstances, maxSquares);
 	}
 	
@@ -102,35 +129,51 @@ public class EffekseerSystem : MonoBehaviour
 		effects = null;
 		Plugin.EffekseerTerm();
 	}
+
+	void OnEnable() {
+#if UNITY_EDITOR
+		if (effects.Count == 0) {
+			for (int i = 0; i < effectKeyValues.Count; i++) {
+				effects.Add(effectKeyValues[i].GetKey(), effectKeyValues[i].GetValue());
+			}
+		}
+#endif
+	}
 	
 	void FixedUpdate() {
 		Plugin.EffekseerUpdate(1);
 	}
 	
 	void OnRenderObject() {
+		int eventId = renderEventId;
 		#if UNITY_EDITOR
-			if (drawInSceneView == false && 
-				SceneView.currentDrawingSceneView != null && 
+			if (SceneView.currentDrawingSceneView != null && 
 				Camera.current == SceneView.currentDrawingSceneView.camera
 			) {
-				return;
+				if (this.drawInSceneView == false) {
+					return;
+				}
+				eventId = renderEventId + 1;
 			}
 		#endif
 		
 		{
 			float[] projectionMatrixArray = Matrix2Array(Camera.current.projectionMatrix);
+			if (RenderTexture.active) {
+				projectionMatrixArray[5] = -projectionMatrixArray[5];
+			}
 			GCHandle ghc = GCHandle.Alloc(projectionMatrixArray, GCHandleType.Pinned);
-			Plugin.EffekseerSetProjectionMatrix(ghc.AddrOfPinnedObject());
+			Plugin.EffekseerSetProjectionMatrix(eventId, ghc.AddrOfPinnedObject());
 			ghc.Free();
 		}
 		{
 			float[] cameraMatrixArray = Matrix2Array(Camera.current.worldToCameraMatrix);
 			GCHandle ghc = GCHandle.Alloc(cameraMatrixArray, GCHandleType.Pinned);
-			Plugin.EffekseerSetCameraMatrix(ghc.AddrOfPinnedObject());
+			Plugin.EffekseerSetCameraMatrix(eventId, ghc.AddrOfPinnedObject());
 			ghc.Free();
 		}
 
-		GL.IssuePluginEvent(renderEventId);
+		GL.IssuePluginEvent(eventId);
 	}
 
 	private float[] Matrix2Array(Matrix4x4 mat) {
@@ -161,7 +204,7 @@ public class EffekseerSystem : MonoBehaviour
 		#else
 			public const string pluginName = "EffekseerUnity";
 		#endif
-		
+
 		[DllImport(pluginName)]
 		public static extern void EffekseerInit(int maxInstances, int maxSquares);
 		
@@ -172,10 +215,10 @@ public class EffekseerSystem : MonoBehaviour
 		public static extern void EffekseerUpdate(float deltaTime);
 		
 		[DllImport(pluginName)]
-		public static extern void EffekseerSetProjectionMatrix(IntPtr matrix);
+		public static extern void EffekseerSetProjectionMatrix(int renderId, IntPtr matrix);
 	
 		[DllImport(pluginName)]
-		public static extern void EffekseerSetCameraMatrix(IntPtr matrix);
+		public static extern void EffekseerSetCameraMatrix(int renderId, IntPtr matrix);
 		
 		[DllImport(pluginName)]
 		public static extern IntPtr EffekseerLoadEffect(IntPtr path);
@@ -213,6 +256,7 @@ public class EffekseerSystem : MonoBehaviour
 	#endregion
 }
 
+[Serializable]
 public struct EffekseerHandle
 {
 	int handle;

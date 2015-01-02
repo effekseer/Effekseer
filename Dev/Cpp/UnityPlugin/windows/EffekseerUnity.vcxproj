@@ -54,7 +54,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;EFFEKSEERUNITY_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Effekseer;..\..\EffekseerRendererDX9;..\..\EffekseerSoundXAudio2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Effekseer;..\..\EffekseerRendererDX9;..\..\EffekseerRendererDX11;..\..\EffekseerSoundXAudio2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -71,7 +71,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;EFFEKSEERUNITY_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Effekseer;..\..\EffekseerRendererDX9;..\..\EffekseerSoundXAudio2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Effekseer;..\..\EffekseerRendererDX9;..\..\EffekseerRendererDX11;..\..\EffekseerSoundXAudio2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -82,6 +82,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\EffekseerPluginCommon.cpp" />
+    <ClCompile Include="EffekseerPluginDX9.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\UnityPluginInterface.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\EffekseerRendererDX11\EffekseerRendererDX11.vcxproj">
+      <Project>{4e7a02cf-51f7-414b-9874-a34116d2b43c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\EffekseerRendererDX9\EffekseerRendererDX9.vcxproj">
       <Project>{8145e20a-fdaa-4c69-994d-697876e61faa}</Project>
     </ProjectReference>
@@ -91,13 +101,6 @@
     <ProjectReference Include="..\..\Effekseer\Effekseer.vcxproj">
       <Project>{91e36741-5dfc-46e3-a7f3-28a67fd637c8}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\common\EffekseerPluginCommon.cpp" />
-    <ClCompile Include="EffekseerPluginDX9.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\common\UnityPluginInterface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

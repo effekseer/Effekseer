@@ -14,6 +14,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerRendererDX9", "..\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerSoundXAudio2", "..\..\EffekseerSoundXAudio2\EffekseerSoundXAudio2.vcxproj", "{5C73251F-26D7-44CF-A3D7-1E333F585D4F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerRendererDX11", "..\..\EffekseerRendererDX11\EffekseerRendererDX11.vcxproj", "{4E7A02CF-51F7-414B-9874-A34116D2B43C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -36,6 +38,10 @@ Global
 		{5C73251F-26D7-44CF-A3D7-1E333F585D4F}.Debug|Win32.Build.0 = Debug|Win32
 		{5C73251F-26D7-44CF-A3D7-1E333F585D4F}.Release|Win32.ActiveCfg = Release|Win32
 		{5C73251F-26D7-44CF-A3D7-1E333F585D4F}.Release|Win32.Build.0 = Release|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Debug|Win32.Build.0 = Debug|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Release|Win32.ActiveCfg = Release|Win32
+		{4E7A02CF-51F7-414B-9874-A34116D2B43C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

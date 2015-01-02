@@ -8,7 +8,8 @@
 #include <EffekseerRendererGL.h>
 #include <EffekseerSoundAL.h>
 
-static const int RENDER_EVENT_ID	= 0x2040;
+static const int RENDER_EVENT_ID_GAME	= 0x2040;
+static const int RENDER_EVENT_ID_EDITOR	= 0x2041;
 
 static int						g_DeviceType = -1;
 
@@ -18,6 +19,8 @@ EffekseerSound::Sound*			g_EffekseerSound = NULL;
 static ALCdevice*				g_alcdev = NULL;
 static ALCcontext*				g_alcctx = NULL;
 
+static Effekseer::Matrix44		g_cameraMatrix[2];
+static Effekseer::Matrix44		g_projectionMatrix[2];
 
 static void InitializeOpenAL();
 static void FinalizeOpenAL();
@@ -93,6 +96,11 @@ static void SetGraphicsDeviceGL(GfxDeviceEventType eventType)
 	}
 }
 
+inline bool CheckEventId(int eventId)
+{
+	return eventId >= RENDER_EVENT_ID_GAME && eventId <= RENDER_EVENT_ID_EDITOR;
+}
+
 static void Array2Matrix(Effekseer::Matrix44& matrix, float matrixArray[])
 {
 	matrix.Values[0][0] = matrixArray[ 0];
@@ -127,16 +135,14 @@ extern "C"
 
 	void EXPORT_API UnityRenderEvent(int eventID)
 	{
-		if (g_DeviceType == -1) {
-			return;
-		}
-		if (g_EffekseerManager == NULL || g_EffekseerRenderer == NULL) {
-			return;
-		}
-		if (eventID != RENDER_EVENT_ID) {
-			return;
-		}
+		if (g_DeviceType == -1) return;
+		if (!CheckEventId(eventId)) return;
+		if (g_EffekseerManager == NULL) return;
+		if (g_EffekseerRenderer == NULL) return;
 	
+		g_EffekseerRenderer->SetProjectionMatrix(g_projectionMatrix[eventId - RENDER_EVENT_ID_GAME]);
+		g_EffekseerRenderer->SetCameraMatrix(g_cameraMatrix[eventId - RENDER_EVENT_ID_GAME]);
+
 		g_EffekseerRenderer->BeginRendering();
 		g_EffekseerManager->Draw();
 		g_EffekseerRenderer->EndRendering();
@@ -152,25 +158,19 @@ extern "C"
 		FinalizeEffekseer();
 	}
 
-	void EXPORT_API EffekseerSetProjectionMatrix(float matrixArray[])
+	void EXPORT_API EffekseerSetProjectionMatrix(int eventId, float matrixArray[])
 	{
-		if (g_EffekseerRenderer == NULL) {
-			return;
-		}
-
-		Effekseer::Matrix44 matrix;
+		if (!CheckEventId(eventId)) return;
+		
+		Effekseer::Matrix44& matrix = g_projectionMatrix[eventId - RENDER_EVENT_ID_GAME];
 		Array2Matrix(matrix, matrixArray);
-		g_EffekseerRenderer->SetProjectionMatrix(matrix);
 	}
 
-	void EXPORT_API EffekseerSetCameraMatrix(float matrixArray[])
+	void EXPORT_API EffekseerSetCameraMatrix(int eventId, float matrixArray[])
 	{
-		if (g_EffekseerRenderer == NULL) {
-			return;
-		}
+		if (!CheckEventId(eventId)) return;
 
-		Effekseer::Matrix44 matrix;
+		Effekseer::Matrix44& matrix = g_cameraMatrix[eventId - RENDER_EVENT_ID_GAME];
 		Array2Matrix(matrix, matrixArray);
-		g_EffekseerRenderer->SetCameraMatrix(matrix);
 	}
 }
