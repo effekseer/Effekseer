@@ -12,6 +12,12 @@ if (MSVC)
 	option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
 endif()
 
+if (MSVC)
+
+else()
+	set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC" ${CMAKE_CXX_FLAGS})
+endif()
+
 option(USE_INTERNAL_LOADER "Use Internal Loader" ON)
 
 option(USE_GLEW_STATIC "Use Glew static library" OFF)

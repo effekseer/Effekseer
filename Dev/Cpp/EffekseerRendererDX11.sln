@@ -1,6 +1,7 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C++ Express 2010
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerRendererDX11", "EffekseerRendererDX11\EffekseerRendererDX11.vcxproj", "{4E7A02CF-51F7-414B-9874-A34116D2B43C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{91E36741-5DFC-46E3-A7F3-28A67FD637C8} = {91E36741-5DFC-46E3-A7F3-28A67FD637C8}
