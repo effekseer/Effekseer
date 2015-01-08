@@ -137,7 +137,7 @@ bool RendererImplemented::Initialize()
 	// 頂点の生成
 	{
 		// 最大でfloat * 10 と仮定
-		m_vertexBuffer = VertexBuffer::Create( this, sizeof(float) * 10 * m_squareMaxCount * 4, true );
+		m_vertexBuffer = VertexBuffer::Create( this, sizeof(Vertex) * m_squareMaxCount * 4, true );
 		if( m_vertexBuffer == NULL ) return false;
 	}
 
@@ -505,8 +505,12 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 {
 	GLCheckError();
 
-	assert( vertexOffset == 0 );
-	glDrawElements(GL_TRIANGLES, spriteCount * 6, GL_UNSIGNED_SHORT, NULL);
+	//assert( vertexOffset == 0 );
+
+	// 全てがスプライトであること前提
+	auto triangles = vertexOffset / 4 * 2;
+
+	glDrawElements(GL_TRIANGLES, spriteCount * 6, GL_UNSIGNED_SHORT, (void*) (triangles * 3 * sizeof(GLushort)));
 
 	GLCheckError();
 }
