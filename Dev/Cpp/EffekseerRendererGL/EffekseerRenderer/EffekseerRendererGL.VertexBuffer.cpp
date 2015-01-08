@@ -88,6 +88,7 @@ bool VertexBuffer::RingBufferLock( int32_t size, int32_t& offset, void*& data )
 
 	if( size > m_size ) return false;
 
+	// glDrawElementsでオフセットを指定できないため
 	//if ( m_vertexRingOffset + size > m_size )
 	if( true )
 	{
