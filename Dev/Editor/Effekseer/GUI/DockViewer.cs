@@ -405,6 +405,11 @@ namespace Effekseer.GUI
 				Core.EffectBehavior.Scale.Y,
 				Core.EffectBehavior.Scale.Z);
 
+			viewer.SetTargetLocation(
+				Core.EffectBehavior.TargetLocation.X,
+				Core.EffectBehavior.TargetLocation.Y,
+				Core.EffectBehavior.TargetLocation.Z);
+
 			viewer.SetEffectCount(
 				Core.EffectBehavior.CountX,
 				Core.EffectBehavior.CountY,

@@ -301,7 +301,7 @@ public:
 		@param	angle	[in]	角度(ラジアン)
 	*/
 	virtual void SetRotation( Handle handle, const Vector3D& axis, float angle ) = 0;
-
+	
 	/**
 		@brief	エフェクトのインスタンスの拡大率を指定する。
 		@param	handle	[in]	インスタンスのハンドル
@@ -310,6 +310,20 @@ public:
 		@param	z		[in]	Z方向拡大率
 	*/
 	virtual void SetScale( Handle handle, float x, float y, float z ) = 0;
+
+	/**
+		@brief	エフェクトのインスタンスのターゲット位置を指定する。
+		@param	x	[in]	X座標
+		@param	y	[in]	Y座標
+		@param	z	[in]	Z座標
+	*/
+	virtual void SetTargetLocation( Handle handle, float x, float y, float z ) = 0;
+
+	/**
+		@brief	エフェクトのインスタンスのターゲット位置を指定する。
+		@param	location	[in]	位置
+	*/
+	virtual void SetTargetLocation( Handle handle, const Vector3D& location ) = 0;
 
 	/**
 		@brief	エフェクトのベース行列を取得する。

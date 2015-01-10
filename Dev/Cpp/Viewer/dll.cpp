@@ -825,6 +825,12 @@ bool Native::StepEffect()
 			Effekseer::Matrix43::Multiple( mat, mat, matTra );
 
 			g_manager->SetMatrix( g_handles[index], mat );
+
+			g_manager->SetTargetLocation( g_handles[index], 
+				m_effectBehavior.TargetPositionX,
+				m_effectBehavior.TargetPositionY,
+				m_effectBehavior.TargetPositionZ );
+
 			index++;
 		}
 		}

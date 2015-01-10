@@ -485,6 +485,10 @@ public:
 	*/
 	void SetScale( Handle handle, float x, float y, float z );
 
+	// エフェクトのターゲット位置を指定する。
+	void SetTargetLocation( Handle handle, float x, float y, float z );
+	void SetTargetLocation( Handle handle, const Vector3D& location );
+
 	Matrix43 GetBaseMatrix( Handle handle );
 
 	void SetBaseMatrix( Handle handle, const Matrix43& mat );

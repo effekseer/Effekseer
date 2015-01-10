@@ -113,7 +113,25 @@ public:
 		@param	t	[out]	位置
 	*/
 	void GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const; 
+	
+	/**
+		@brief	行列から拡大ベクトルを取得する。
+		@param	s	[out]	拡大ベクトル
+	*/
+	void GetScale( Vector3D& s ) const;
+	
+	/**
+		@brief	行列から回転行列を取得する。
+		@param	s	[out]	回転行列
+	*/
+	void GetRotation( Matrix43& r ) const;
 
+	/**
+		@brief	行列から移動ベクトルを取得する。
+		@param	t	[out]	移動ベクトル
+	*/
+	void GetTranslation( Vector3D& t ) const;
+	
 	/**
 		@brief	行列の拡大、回転、移動を設定する。
 		@param	s	[in]	拡大行列

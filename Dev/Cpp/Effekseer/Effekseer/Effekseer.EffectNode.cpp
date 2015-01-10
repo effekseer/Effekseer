@@ -165,6 +165,14 @@ void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting*
 			memcpy( &LocationAbs.gravity, pos, size );
 			pos += size;
 		}
+		else if( LocationAbs.type == LocationAbsParameter::AttractiveForce )
+		{
+			memcpy( &size, pos, sizeof(int) );
+			pos += sizeof(int);
+			assert( size == sizeof(LocationAbs.attractiveForce) );
+			memcpy( &LocationAbs.attractiveForce, pos, size );
+			pos += size;
+		}
 
 		/* â‘ÎˆÊ’uŠg‘åˆ— */
 		if( m_effect->GetVersion() >= 8 )

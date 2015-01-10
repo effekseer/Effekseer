@@ -77,6 +77,10 @@ public:
 	float	ScaleVelocityX;
 	float	ScaleVelocityY;
 	float	ScaleVelocityZ;
+	
+	float	TargetPositionX;
+	float	TargetPositionY;
+	float	TargetPositionZ;
 
 	ViewerEffectBehavior();
 };

@@ -1032,6 +1032,34 @@ void ManagerImplemented::SetScale( Handle handle, float x, float y, float z )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+void ManagerImplemented::SetTargetLocation( Handle handle, float x, float y, float z )
+{
+	SetTargetLocation( handle, Vector3D( x, y, z ) );
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void ManagerImplemented::SetTargetLocation( Handle handle, const Vector3D& location )
+{
+	if( m_DrawSets.count( handle ) > 0 )
+	{
+		DrawSet& drawSet = m_DrawSets[handle];
+
+		InstanceContainer* pContainer = drawSet.InstanceContainerPointer;
+		
+		if( pContainer == NULL ) return;
+		
+		InstanceGlobal* instanceGlobal = pContainer->GetRootInstance();
+		instanceGlobal->SetTargetLocation( location );
+
+		drawSet.IsParameterChanged = true;
+	}
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 Matrix43 ManagerImplemented::GetBaseMatrix( Handle handle )
 {
 	if( m_DrawSets.count( handle ) > 0 )
@@ -1211,18 +1239,16 @@ void ManagerImplemented::Flip()
 						float radius = effect->Culling.Sphere.Radius;
 
 						{
-							Vector3D s,t;
-							Matrix43 r;
-							pInstance->GetGlobalMatrix43().GetSRT(s, r, t);
+							Vector3D s;
+							pInstance->GetGlobalMatrix43().GetScale(s);
 						
 							radius = radius * sqrt(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
 						}
 
 						if(ds.DoUseBaseMatrix)
 						{
-							Vector3D s,t;
-							Matrix43 r;
-							ds.BaseMatrix.GetSRT(s, r, t);
+							Vector3D s;
+							ds.BaseMatrix.GetScale(s);
 						
 							radius = radius * sqrt(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
 						}

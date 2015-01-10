@@ -106,6 +106,15 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "ターゲット位置")]
+		[Description(language = Language.Japanese, value = "ターゲット位置または引力位置")]
+		[Undo(Undo = false)]
+		public Value.Vector3D TargetLocation
+		{
+			get;
+			private set;
+		}
+
 		public EffectBehaviorValues()
 		{
 			Location = new Value.Vector3D();
@@ -123,6 +132,7 @@ namespace Effekseer.Data
 			CountZ = new Value.Int(1, int.MaxValue, 1);
 
 			Distance = new Value.Float(5.0f, float.MaxValue, 0.0f);
+			TargetLocation = new Value.Vector3D();
 		}
 	}
 }

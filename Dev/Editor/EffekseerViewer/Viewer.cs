@@ -169,6 +169,15 @@ namespace Effekseer
 			behavior.ScaleVelocityZ = z;
 			native.SetViewerEffectBehavior(behavior);
 		}
+		
+		public void SetTargetLocation(float x, float y, float z)
+		{
+			var behavior = native.GetEffectBehavior();
+			behavior.TargetPositionX = x;
+			behavior.TargetPositionY = y;
+			behavior.TargetPositionZ = z;
+			native.SetViewerEffectBehavior(behavior);
+		}
 
 		public void SetRemovedTime(int time)
 		{

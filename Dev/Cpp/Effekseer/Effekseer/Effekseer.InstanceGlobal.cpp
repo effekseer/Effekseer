@@ -88,6 +88,19 @@ void InstanceGlobal::SetRootContainer( InstanceContainer* container )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+const Vector3D& InstanceGlobal::GetTargetLocation() const
+{
+	return m_targetLocation;
+}
+
+void InstanceGlobal::SetTargetLocation( const Vector3D& location )
+{
+	m_targetLocation = location;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 }
 
 //----------------------------------------------------------------------------------

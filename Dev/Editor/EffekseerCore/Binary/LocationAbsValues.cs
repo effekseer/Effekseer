@@ -20,6 +20,12 @@ namespace Effekseer.Binary
 				data.Add(bytes.Count().GetBytes());
 				data.Add(bytes);
 			}
+			else if (value.Type.GetValue() == Data.LocationAbsValues.ParamaterType.AttractiveForce)
+			{
+				var bytes = TranslationAbs_AttractiveForce_Values.Create(value.AttractiveForce).GetBytes();
+				data.Add(bytes.Count().GetBytes());
+				data.Add(bytes);
+			}
 			else if (value.Type.GetValue() == Data.LocationAbsValues.ParamaterType.None)
 			{
 				data.Add(((int)0).GetBytes());
@@ -42,6 +48,27 @@ namespace Effekseer.Binary
 				value.Gravity.X,
 				value.Gravity.Y,
 				value.Gravity.Z);
+
+			return s_value;
+		}
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	struct TranslationAbs_AttractiveForce_Values
+	{
+		public float Force;
+		public float Control;
+		public float MinRange;
+		public float MaxRange;
+
+		static public TranslationAbs_AttractiveForce_Values Create(Data.LocationAbsValues.AttractiveForceParamater value)
+		{
+			var s_value = new TranslationAbs_AttractiveForce_Values();
+
+			s_value.Force = value.Force.Value;
+			s_value.Control = value.Control.Value;
+			s_value.MinRange = value.MinRange.Value;
+			s_value.MaxRange = value.MaxRange.Value;
 
 			return s_value;
 		}

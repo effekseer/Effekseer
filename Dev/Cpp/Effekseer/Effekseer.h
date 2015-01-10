@@ -776,7 +776,25 @@ public:
 		@param	t	[out]	位置
 	*/
 	void GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const; 
+	
+	/**
+		@brief	行列から拡大ベクトルを取得する。
+		@param	s	[out]	拡大ベクトル
+	*/
+	void GetScale( Vector3D& s ) const;
+	
+	/**
+		@brief	行列から回転行列を取得する。
+		@param	s	[out]	回転行列
+	*/
+	void GetRotation( Matrix43& r ) const;
 
+	/**
+		@brief	行列から移動ベクトルを取得する。
+		@param	t	[out]	移動ベクトル
+	*/
+	void GetTranslation( Vector3D& t ) const;
+	
 	/**
 		@brief	行列の拡大、回転、移動を設定する。
 		@param	s	[in]	拡大行列
@@ -1585,7 +1603,7 @@ public:
 		@param	angle	[in]	角度(ラジアン)
 	*/
 	virtual void SetRotation( Handle handle, const Vector3D& axis, float angle ) = 0;
-
+	
 	/**
 		@brief	エフェクトのインスタンスの拡大率を指定する。
 		@param	handle	[in]	インスタンスのハンドル
@@ -1594,6 +1612,20 @@ public:
 		@param	z		[in]	Z方向拡大率
 	*/
 	virtual void SetScale( Handle handle, float x, float y, float z ) = 0;
+
+	/**
+		@brief	エフェクトのインスタンスのターゲット位置を指定する。
+		@param	x	[in]	X座標
+		@param	y	[in]	Y座標
+		@param	z	[in]	Z座標
+	*/
+	virtual void SetTargetLocation( Handle handle, float x, float y, float z ) = 0;
+
+	/**
+		@brief	エフェクトのインスタンスのターゲット位置を指定する。
+		@param	location	[in]	位置
+	*/
+	virtual void SetTargetLocation( Handle handle, const Vector3D& location ) = 0;
 
 	/**
 		@brief	エフェクトのベース行列を取得する。

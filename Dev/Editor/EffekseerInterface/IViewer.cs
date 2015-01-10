@@ -170,6 +170,14 @@ namespace Effekseer
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		void SetScaleVelocity(float x, float y, float z);
+		
+		/// <summary>
+		/// ターゲットの位置を設定する。
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		void SetTargetLocation(float x, float y, float z);
 
 		/// <summary>
 		/// ルートを削除するフレームを設定する。

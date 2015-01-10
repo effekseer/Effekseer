@@ -167,7 +167,8 @@ struct LocationAbsParameter
 	{
 		None = 0,
 		Gravity = 1,
-		//AttractiveForce = 2,
+		AttractiveForce = 2,
+		
 		//UniformlyAttractiveForce = 3,
 		Parameter_DWORD = 0x7fffffff,
 	} type;
@@ -180,6 +181,13 @@ struct LocationAbsParameter
 		} none;
 
 		vector3d	gravity;
+
+		struct {
+			float	force;
+			float	control;
+			float	minRange;
+			float	maxRange;
+		} attractiveForce;
 	};
 };
 
