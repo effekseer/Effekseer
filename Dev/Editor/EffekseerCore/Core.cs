@@ -533,8 +533,9 @@ namespace Effekseer
 			if (doc["EffekseerProject"]["ToolVersion"] != null)
 			{
 				toolVersion = ParseVersion(doc["EffekseerProject"]["ToolVersion"].GetText());
-				
-				if (toolVersion > ParseVersion(Core.Version)) {
+
+				if (toolVersion > ParseVersion(Core.Version))
+				{
 					throw new Exception("Version Error : \nファイルがより新しいバージョンのツールで作成されています。\n最新バージョンのツールを使用してください。");
 				}
 			}
@@ -546,6 +547,47 @@ namespace Effekseer
 				innerText = innerText.Replace("<Stripe>", "<Ribbon>").Replace("</Stripe>", "</Ribbon>");
 				doc = new System.Xml.XmlDocument();
 				doc.LoadXml(innerText);
+			}
+
+			// 互換性のための変換
+			{
+				// GenerationTime
+				// GenerationTimeOffset
+
+				Action<System.Xml.XmlNode> replace = null;
+				replace = (node) =>
+					{
+						if ((node.Name == "GenerationTime" || node.Name == "GenerationTimeOffset") &&
+							node.ChildNodes.Count > 0 &&
+							node.ChildNodes[0] is System.Xml.XmlText)
+						{
+							var name = node.Name;
+							var value = node.ChildNodes[0].Value;
+
+							node.RemoveAll();
+
+							var center = doc.CreateElement("Center");
+							var max = doc.CreateElement("Max");
+							var min = doc.CreateElement("Min");
+
+							center.AppendChild(doc.CreateTextNode(value));
+							max.AppendChild(doc.CreateTextNode(value));
+							min.AppendChild(doc.CreateTextNode(value));
+
+							node.AppendChild(center);
+							node.AppendChild(max);
+							node.AppendChild(min);
+						}
+						else
+						{
+							for(int i = 0; i < node.ChildNodes.Count; i++)
+							{
+								replace(node.ChildNodes[i]);
+							}
+						}
+					};
+
+				replace(doc);
 			}
 
 			var root = doc["EffekseerProject"]["Root"];
