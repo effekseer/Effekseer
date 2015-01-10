@@ -40,7 +40,7 @@ bool DefaultEffectLoader::Load( const EFK_CHAR* path, void*& data, int32_t& size
 	data = NULL;
 	size = 0;
 
-	std::auto_ptr<FileReader> 
+	std::unique_ptr<FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
 	if( reader.get() == NULL ) return false;
 

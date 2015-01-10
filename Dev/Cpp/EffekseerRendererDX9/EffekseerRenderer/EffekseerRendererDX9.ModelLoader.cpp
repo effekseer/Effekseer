@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
+#include <memory>
 #include "EffekseerRendererDX9.Renderer.h"
 #include "EffekseerRendererDX9.ModelLoader.h"
 
@@ -38,7 +39,7 @@ ModelLoader::~ModelLoader()
 //----------------------------------------------------------------------------------
 void* ModelLoader::Load( const EFK_CHAR* path )
 {
-	std::auto_ptr<::Effekseer::FileReader> 
+	std::unique_ptr<::Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
 	if( reader.get() == NULL ) return false;
 
