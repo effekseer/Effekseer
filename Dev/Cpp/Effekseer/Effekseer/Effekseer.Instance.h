@@ -34,7 +34,10 @@ class Instance
 {
 	friend class Manager;
 	friend class InstanceContainer;
+
+
 public:
+	static const int32_t ChildrenMax = 16;
 
 	// マネージャ
 	Manager*	m_pManager;
@@ -216,6 +219,12 @@ public:
 
 	// 生成されてからの時間
 	float		m_LivingTime;
+
+	/* 生成された子の個数 */
+	int32_t		m_generatedChildrenCount[ChildrenMax];
+
+	/* 次に子を生成する時間 */
+	float		m_nextGenerationTime[ChildrenMax];
 
 	// 生成位置
 	Matrix43		m_generation_location;

@@ -111,7 +111,7 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-struct ParameterCommonValues
+struct ParameterCommonValues_8
 {
 	int MaxGeneration;
 	BindType TranslationBindType;
@@ -123,6 +123,20 @@ struct ParameterCommonValues
 	random_int	life;
 	float GenerationTime;
 	float GenerationTimeOffset;
+};
+
+struct ParameterCommonValues
+{
+	int MaxGeneration;
+	BindType TranslationBindType;
+	BindType RotationBindType;
+	BindType ScalingBindType;
+	int		RemoveWhenLifeIsExtinct;
+	int		RemoveWhenParentIsRemoved;
+	int		RemoveWhenChildrenIsExtinct;
+	random_int	life;
+	random_float GenerationTime;
+	random_float GenerationTimeOffset;
 };
 
 //----------------------------------------------------------------------------------

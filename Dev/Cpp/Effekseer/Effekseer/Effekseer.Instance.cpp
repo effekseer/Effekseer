@@ -88,8 +88,19 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 	// 親の設定
 	m_pParent = parent;
 
+	// 子の初期化
+	for (int32_t i = 0; i < Min(ChildrenMax, parameter->GetChildrenCount()); i++)
+	{
+		EffectNode* pNode = parameter->GetChild(i);
+
+		m_generatedChildrenCount[i] = 0;
+		m_nextGenerationTime[i] = pNode->CommonValues.GenerationTimeOffset.getValue(*m_pManager);
+	}
+
 	if( m_pParent == NULL )
 	{
+		// ROOTの場合
+
 		// 状態の初期化
 		m_State = INSTANCE_STATE_ACTIVE;
 
@@ -111,14 +122,14 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		return;
 	}
 
-
 	// 状態の初期化
 	m_State = INSTANCE_STATE_ACTIVE;
 
 	// 時間周りの初期化
 	m_LivingTime = 0.0f;
 	m_LivedTime = (float)parameter->CommonValues.life.getValue( *m_pManager );
-	
+
+
 	// SRTの初期化
 	m_LocalPosition = Vector3D( 0.0f, 0.0f, 0.0f );
 	m_globalRevisionLocation.reset();
@@ -522,30 +533,19 @@ void Instance::Update( float deltaFrame, bool shown )
 	else
 	{
 		/**
-			見えないケースで行列計算が必要なケース 
+			見えないケースで行列計算が必要なケース
 			-子が生成される。
 			-子の子が生成される。
-		*/
-		if( m_stepTime && (originalTime <= m_LivedTime || !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct) )
+			*/
+		if (m_stepTime && (originalTime <= m_LivedTime || !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct))
 		{
-			for( int i = 0; i < m_pEffectNode->GetChildrenCount(); i++ )
+			for (int i = 0; i < Min(ChildrenMax, m_pEffectNode->GetChildrenCount()); i++)
 			{
-				EffectNode* pNode = m_pEffectNode->GetChild( i );
+				EffectNode* pNode = m_pEffectNode->GetChild(i);
 
 				// インスタンス生成
-			float living_time = originalTime - pNode->CommonValues.GenerationTimeOffset + Max(0.0f,pNode->CommonValues.GenerationTime-1.0f);
-			float living_time_p = living_time + deltaFrame;
-
-			living_time = Max( 0.0f, living_time );
-			living_time_p = Max( 0.0f, living_time_p );
-
-			int generation_count = (int)(living_time / pNode->CommonValues.GenerationTime);
-			int generation_count_p = (int)(living_time_p / pNode->CommonValues.GenerationTime);
-
-			generation_count = Min( generation_count, pNode->CommonValues.MaxGeneration );
-			generation_count_p = Min( generation_count_p, pNode->CommonValues.MaxGeneration );
-
-				if( generation_count != generation_count_p )
+				if (pNode->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
+					originalTime + deltaFrame > m_nextGenerationTime[i])
 				{
 					calculateMatrix = true;
 					break;
@@ -577,32 +577,31 @@ void Instance::Update( float deltaFrame, bool shown )
 	{
 		InstanceGroup* group = m_headGroups;
 
-		for( int i = 0; i < m_pEffectNode->GetChildrenCount(); i++, group = group->NextUsedByInstance )
+		for (int i = 0; i < Min(ChildrenMax, m_pEffectNode->GetChildrenCount()); i++, group = group->NextUsedByInstance)
 		{
 			EffectNode* pNode = m_pEffectNode->GetChild( i );
 			InstanceContainer* pContainer = m_pContainer->GetChild( i );
 			assert( group != NULL );
 
 			// インスタンス生成
-			float living_time = originalTime - pNode->CommonValues.GenerationTimeOffset + Max(0.0f,pNode->CommonValues.GenerationTime-1.0f);
-			float living_time_p = living_time + deltaFrame;
-
-			living_time = Max( 0.0f, living_time );
-			living_time_p = Max( 0.0f, living_time_p );
-
-			int generation_count = (int)(living_time / pNode->CommonValues.GenerationTime);
-			int generation_count_p = (int)(living_time_p / pNode->CommonValues.GenerationTime);
-
-			generation_count = Min( generation_count, pNode->CommonValues.MaxGeneration );
-			generation_count_p = Min( generation_count_p, pNode->CommonValues.MaxGeneration );
-
-			for( int j = generation_count; j < generation_count_p; j++ )
+			while (true)
 			{
-				// 生成処理
-				Instance* pNewInstance = group->CreateInstance();
-				if( pNewInstance != NULL )
+				if (pNode->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
+					originalTime + deltaFrame > m_nextGenerationTime[i])
 				{
-					pNewInstance->Initialize(this, j );
+					// 生成処理
+					Instance* pNewInstance = group->CreateInstance();
+					if (pNewInstance != NULL)
+					{
+						pNewInstance->Initialize(this, m_generatedChildrenCount[i]);
+					}
+					else
+					{
+						break;
+					}
+
+					m_generatedChildrenCount[i]++;
+					m_nextGenerationTime[i] += Max(0.0f, pNode->CommonValues.GenerationTime.getValue(*m_pManager));
 				}
 				else
 				{
@@ -629,12 +628,13 @@ void Instance::Update( float deltaFrame, bool shown )
 			int maxcreate_count = 0;
 			InstanceGroup* group = m_headGroups;
 
-			for( int i = 0; i < m_pEffectNode->GetChildrenCount(); i++, group = group->NextUsedByInstance )
+			for (int i = 0; i < Min(ChildrenMax, m_pEffectNode->GetChildrenCount()); i++, group = group->NextUsedByInstance)
 			{
+				auto child = m_pEffectNode->GetChild(i);
 				float last_generation_time = 
-					m_pEffectNode->GetChild(i)->CommonValues.GenerationTime *
-					(m_pEffectNode->GetChild(i)->CommonValues.MaxGeneration - 1) +
-					m_pEffectNode->GetChild(i)->CommonValues.GenerationTimeOffset + 
+					child->CommonValues.GenerationTime.max *
+					(child->CommonValues.MaxGeneration - 1) +
+					child->CommonValues.GenerationTimeOffset.max +
 					1.0f;
 
 				if( m_LivingTime >= last_generation_time && group->GetInstanceCount() == 0 )

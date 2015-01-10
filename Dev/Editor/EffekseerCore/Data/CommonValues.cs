@@ -70,7 +70,7 @@ namespace Effekseer.Data
 
 		[Name(language = Language.Japanese, value = "生成時間")]
 		[Description(language = Language.Japanese, value = "1インスタンスを生成するのに必要とする時間")]
-		public Value.Float GenerationTime
+		public Value.FloatWithRandom GenerationTime
 		{
 			get;
 			private set;
@@ -78,7 +78,7 @@ namespace Effekseer.Data
 
 		[Name(language = Language.Japanese, value = "生成開始時間")]
 		[Description(language = Language.Japanese, value = "このノードのインスタンスが生成されてから生成を開始するまでの時間")]
-		public Value.Float GenerationTimeOffset
+		public Value.FloatWithRandom GenerationTimeOffset
 		{
 			get;
 			private set;
@@ -94,8 +94,8 @@ namespace Effekseer.Data
 			RemoveWhenParentIsRemoved = new Value.Boolean(false);
 			RemoveWhenAllChildrenAreRemoved = new Value.Boolean(false);
 			Life = new Value.IntWithRandom(100, int.MaxValue, 1);
-			GenerationTime = new Value.Float(1.0f, float.MaxValue, 0.00001f);
-			GenerationTimeOffset = new Value.Float(0.0f, float.MaxValue, 0.0f);
+			GenerationTime = new Value.FloatWithRandom(1.0f, float.MaxValue, 0.00001f);
+			GenerationTimeOffset = new Value.FloatWithRandom(0.0f, float.MaxValue, 0.0f);
 		}
 	}
 }
