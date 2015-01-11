@@ -78,6 +78,10 @@ void glUniform4fv(GLint location, GLsizei count, const GLfloat* value);
 void glGenerateMipmap(GLenum target);
 void glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid* data);
 
+void glGenVertexArrays(GLsizei n, GLuint *arrays);
+void glDeleteVertexArrays(GLsizei n, const GLuint *arrays);
+void glBindVertexArray(GLuint array);
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

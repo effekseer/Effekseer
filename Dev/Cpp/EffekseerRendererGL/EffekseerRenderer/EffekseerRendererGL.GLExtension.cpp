@@ -62,6 +62,10 @@ typedef void (EFK_STDCALL * FP_glUniform4fv) (GLint location, GLsizei count, con
 typedef void (EFK_STDCALL * FP_glGenerateMipmap) (GLenum target);
 typedef void (EFK_STDCALL * FP_glBufferSubData) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid* data);
 
+typedef void (EFK_STDCALL * FP_glGenVertexArrays) (GLsizei n, GLuint *arrays);
+typedef void (EFK_STDCALL * FP_glDeleteVertexArrays) (GLsizei n, const GLuint *arrays);
+typedef void (EFK_STDCALL * FP_glBindVertexArray) (GLuint array);
+
 static FP_glDeleteBuffers g_glDeleteBuffers = NULL;
 static FP_glCreateShader g_glCreateShader = NULL;
 static FP_glBindBuffer g_glBindBuffer = NULL;
@@ -93,6 +97,9 @@ static FP_glUniformMatrix4fv g_glUniformMatrix4fv = NULL;
 static FP_glUniform4fv g_glUniform4fv = NULL;
 static FP_glGenerateMipmap g_glGenerateMipmap = NULL;
 static FP_glBufferSubData g_glBufferSubData = NULL;
+static FP_glGenVertexArrays g_glGenVertexArrays = NULL;
+static FP_glDeleteVertexArrays g_glDeleteVertexArrays = NULL;
+static FP_glBindVertexArray g_glBindVertexArray = NULL;
 
 static bool g_isInitialized = false;
 
@@ -141,6 +148,10 @@ bool Initialize()
 
 	GET_PROC(glGenerateMipmap);
 	GET_PROC(glBufferSubData);
+
+	GET_PROC(glGenVertexArrays);
+	GET_PROC(glDeleteVertexArrays);
+	GET_PROC(glBindVertexArray);
 
 	g_isInitialized = true;
 	return true;
@@ -427,6 +438,33 @@ void glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLvo
 	g_glBufferSubData(target, offset, size, data);
 #else
 	::glBufferSubData(target, offset, size, data);
+#endif
+}
+
+void glGenVertexArrays(GLsizei n, GLuint *arrays)
+{
+#if _WIN32
+	g_glGenVertexArrays(n, arrays);
+#else
+	::glGenVertexArrays(n, arrays);
+#endif
+}
+
+void glDeleteVertexArrays(GLsizei n, const GLuint *arrays)
+{
+#if _WIN32
+	g_glDeleteVertexArrays(n, arrays);
+#else
+	::glDeleteVertexArrays(n, arrays);
+#endif
+}
+
+void glBindVertexArray(GLuint array)
+{
+#if _WIN32
+	g_glBindVertexArray(array);
+#else
+	::glBindVertexArray(array);
 #endif
 }
 
