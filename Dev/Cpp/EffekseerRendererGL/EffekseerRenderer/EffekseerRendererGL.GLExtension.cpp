@@ -102,6 +102,7 @@ static FP_glDeleteVertexArrays g_glDeleteVertexArrays = NULL;
 static FP_glBindVertexArray g_glBindVertexArray = NULL;
 
 static bool g_isInitialized = false;
+static bool g_isSupportedVertexArray = false;
 
 #define GET_PROC(name)	g_##name = (FP_##name)wglGetProcAddress( #name ); if(g_##name==NULL) return false;
 
@@ -152,6 +153,7 @@ bool Initialize()
 	GET_PROC(glGenVertexArrays);
 	GET_PROC(glDeleteVertexArrays);
 	GET_PROC(glBindVertexArray);
+	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
 
 	g_isInitialized = true;
 	return true;
@@ -466,6 +468,11 @@ void glBindVertexArray(GLuint array)
 #else
 	::glBindVertexArray(array);
 #endif
+}
+
+bool IsSupportedVertexArray()
+{
+	return g_isSupportedVertexArray;
 }
 
 //----------------------------------------------------------------------------------

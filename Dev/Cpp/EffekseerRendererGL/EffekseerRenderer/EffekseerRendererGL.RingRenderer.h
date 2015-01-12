@@ -5,6 +5,7 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
+#include <memory>
 #include "EffekseerRendererGL.RendererImplemented.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h"
 
@@ -27,8 +28,9 @@ private:
 	RendererImplemented*	m_renderer;
 	Shader*		m_shader;
 	Shader*		m_shader_no_texture;
-
-	GLint		m_aid[3];
+	
+	std::unique_ptr<VertexArray>	m_vao;
+	std::unique_ptr<VertexArray>	m_vao_no_texture;
 
 	RingRenderer(RendererImplemented* renderer, Shader* shader, Shader* shader_no_texture);
 

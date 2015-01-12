@@ -8,8 +8,10 @@
 
 #include "EffekseerRendererGL.VertexBuffer.h"
 #include "EffekseerRendererGL.IndexBuffer.h"
+#include "EffekseerRendererGL.VertexArray.h"
 #include "EffekseerRendererGL.SpriteRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
+#include "EffekseerRendererGL.GLExtension.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -107,6 +109,11 @@ SpriteRenderer::SpriteRenderer(RendererImplemented* renderer, Shader* shader, Sh
 		shader_no_texture->GetUniformId("uMatProjection"),
 		0
 		);
+
+	m_vao.reset(VertexArray::Create(renderer, shader,
+		renderer->GetVertexBuffer(), renderer->GetIndexBuffer()));
+	m_vao_no_texture.reset(VertexArray::Create(renderer, shader_no_texture,
+		renderer->GetVertexBuffer(), renderer->GetIndexBuffer()));
 }
 
 //----------------------------------------------------------------------------------
@@ -167,6 +174,15 @@ void SpriteRenderer::EndRendering( const efkSpriteNodeParam& parameter, void* us
 	m_renderer->GetVertexBuffer()->Unlock();
 
 	if( m_spriteCount == 0 ) return;
+
+	if( parameter.ColorTextureIndex >= 0 )
+	{
+		m_renderer->SetVertexArray(m_vao.get());
+	}
+	else
+	{
+		m_renderer->SetVertexArray(m_vao_no_texture.get());
+	}
 
 	EndRendering_<RendererImplemented, Shader, GLuint, Vertex>(
 		m_renderer, m_shader, m_shader_no_texture, parameter);

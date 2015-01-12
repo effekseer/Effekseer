@@ -175,6 +175,8 @@ private:
 	/* 現在設定されているテクスチャ */
 	std::vector<GLuint>	m_currentTextures;
 
+	VertexArray*	m_currentVertexArray;
+
 public:
 	/**
 		@brief	コンストラクタ
@@ -331,6 +333,7 @@ public:
 	void SetVertexBuffer(GLuint vertexBuffer, int32_t size);
 	void SetIndexBuffer( IndexBuffer* indexBuffer );
 	void SetIndexBuffer(GLuint indexBuffer);
+	void SetVertexArray( VertexArray* vertexArray );
 
 	void SetLayout(Shader* shader);
 	void DrawSprites( int32_t spriteCount, int32_t vertexOffset );

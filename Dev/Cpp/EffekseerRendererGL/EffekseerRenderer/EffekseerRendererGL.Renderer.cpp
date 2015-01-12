@@ -9,6 +9,7 @@
 #include "EffekseerRendererGL.Shader.h"
 #include "EffekseerRendererGL.VertexBuffer.h"
 #include "EffekseerRendererGL.IndexBuffer.h"
+#include "EffekseerRendererGL.VertexArray.h"
 #include "EffekseerRendererGL.DeviceObject.h"
 #include "EffekseerRendererGL.SpriteRenderer.h"
 #include "EffekseerRendererGL.RibbonRenderer.h"
@@ -54,6 +55,7 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_squareMaxCount	( squareMaxCount )
 	, m_renderState		( NULL )
 	, m_restorationOfStates(true)
+	, m_currentVertexArray( NULL )
 {
 	::Effekseer::Vector3D direction( 1.0f, 1.0f, 1.0f );
 	SetLightDirection( direction );
@@ -458,7 +460,10 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size )
 {
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->GetInterface() );
+	if (m_currentVertexArray == nullptr)
+	{
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->GetInterface());
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -466,7 +471,10 @@ void RendererImplemented::SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t s
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetVertexBuffer(GLuint vertexBuffer, int32_t size)
 {
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	if (m_currentVertexArray == nullptr)
+	{
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -474,7 +482,10 @@ void RendererImplemented::SetVertexBuffer(GLuint vertexBuffer, int32_t size)
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetIndexBuffer( IndexBuffer* indexBuffer )
 {
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->GetInterface() );
+	if (m_currentVertexArray == nullptr)
+	{
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->GetInterface());
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -482,7 +493,18 @@ void RendererImplemented::SetIndexBuffer( IndexBuffer* indexBuffer )
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
 {
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+	if (m_currentVertexArray == nullptr)
+	{
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+	}
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void RendererImplemented::SetVertexArray( VertexArray* vertexArray )
+{
+	m_currentVertexArray = vertexArray;
 }
 
 //----------------------------------------------------------------------------------
@@ -491,11 +513,13 @@ void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
 void RendererImplemented::SetLayout(Shader* shader)
 {
 	GLCheckError();
-
-	shader->EnableAttribs();
-	shader->SetVertex();
-
-	GLCheckError();
+	
+	if (m_currentVertexArray == nullptr)
+	{
+		shader->EnableAttribs();
+		shader->SetVertex();
+		GLCheckError();
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -511,7 +535,7 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 	auto triangles = vertexOffset / 4 * 2;
 
 	glDrawElements(GL_TRIANGLES, spriteCount * 6, GL_UNSIGNED_SHORT, (void*) (triangles * 3 * sizeof(GLushort)));
-
+	
 	GLCheckError();
 }
 
@@ -536,6 +560,11 @@ void RendererImplemented::BeginShader(Shader* shader)
 
 	shader->BeginScene();
 
+	if (m_currentVertexArray)
+	{
+		GLExt::glBindVertexArray(m_currentVertexArray->GetInterface());
+	}
+
 	GLCheckError();
 }
 
@@ -545,15 +574,24 @@ void RendererImplemented::BeginShader(Shader* shader)
 void RendererImplemented::EndShader(Shader* shader)
 {
 	GLCheckError();
+	
+	if (m_currentVertexArray)
+	{
+		GLExt::glBindVertexArray(0);
+		GLCheckError();
+		m_currentVertexArray = nullptr;
+	}
+	else
+	{
+		shader->DisableAttribs();
+		GLCheckError();
 
-	shader->DisableAttribs();
-	GLCheckError();
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		GLCheckError();
 
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	GLCheckError();
-
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
-	GLCheckError();
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
+		GLCheckError();
+	}
 
 	shader->EndScene();
 	GLCheckError();

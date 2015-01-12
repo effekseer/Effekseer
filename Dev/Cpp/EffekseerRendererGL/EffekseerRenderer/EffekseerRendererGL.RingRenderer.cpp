@@ -8,6 +8,7 @@
 
 #include "EffekseerRendererGL.VertexBuffer.h"
 #include "EffekseerRendererGL.IndexBuffer.h"
+#include "EffekseerRendererGL.VertexArray.h"
 #include "EffekseerRendererGL.RingRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
 
@@ -99,7 +100,6 @@ RingRenderer::RingRenderer(RendererImplemented* renderer, Shader* shader, Shader
 		);
 	shader->SetTextureSlot(0, shader->GetUniformId("uTexture0"));
 
-
 	shader_no_texture->GetAttribIdList(3, g_sprite_attribs);
 	shader_no_texture->SetVertexSize(sizeof(Vertex));
 	shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
@@ -108,6 +108,11 @@ RingRenderer::RingRenderer(RendererImplemented* renderer, Shader* shader, Shader
 		shader_no_texture->GetUniformId("uMatProjection"),
 		0
 		);
+	
+	m_vao.reset(VertexArray::Create(renderer, shader,
+		renderer->GetVertexBuffer(), renderer->GetIndexBuffer()));
+	m_vao_no_texture.reset(VertexArray::Create(renderer, shader_no_texture,
+		renderer->GetVertexBuffer(), renderer->GetIndexBuffer()));
 }
 
 //----------------------------------------------------------------------------------
@@ -145,12 +150,6 @@ RingRenderer* RingRenderer::Create(RendererImplemented* renderer)
 //----------------------------------------------------------------------------------
 void RingRenderer::BeginRendering( const efkRingNodeParam& parameter, int32_t count, void* userData )
 {
-	/*
-	m_spriteCount = 0;
-	m_renderer->GetVertexBuffer()->Lock();
-	m_instanceCount = count;
-	*/
-
 	m_spriteCount = 0;
 	
 	int32_t vertexCount = parameter.VertexCount * 8;
@@ -182,6 +181,15 @@ void RingRenderer::EndRendering( const efkRingNodeParam& parameter, void* userDa
 
 	if( m_spriteCount == 0 ) return;
 	
+	if (parameter.ColorTextureIndex >= 0)
+	{
+		m_renderer->SetVertexArray(m_vao.get());
+	}
+	else
+	{
+		m_renderer->SetVertexArray(m_vao_no_texture.get());
+	}
+
 	EndRendering_<RendererImplemented, Shader, GLuint, Vertex>(
 		m_renderer, m_shader, m_shader_no_texture, parameter);
 }

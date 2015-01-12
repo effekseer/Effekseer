@@ -45,6 +45,7 @@ typedef ptrdiff_t GLintptr;
 typedef char GLchar;
 
 bool Initialize();
+bool IsSupportedVertexArray();
 
 void glDeleteBuffers(GLsizei n, const GLuint* buffers);
 GLuint glCreateShader(GLenum type);

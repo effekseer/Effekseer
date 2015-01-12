@@ -118,6 +118,7 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.SpriteRenderer.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.TextureLoader.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.TrackRenderer.h" />
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.VertexArray.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +145,7 @@
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.SpriteRenderer.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.TextureLoader.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.TrackRenderer.cpp" />
+    <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.VertexArray.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.VertexBuffer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
