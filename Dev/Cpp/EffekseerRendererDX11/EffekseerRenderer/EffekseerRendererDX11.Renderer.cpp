@@ -42,6 +42,11 @@ OriginalState::OriginalState()
 	{
 		m_samplers[i] = NULL;
 	}
+
+	for (int32_t i = 0; i < 4; i++)
+	{
+		m_psSRVs[i] = nullptr;
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -60,11 +65,22 @@ void OriginalState::SaveState(ID3D11Device* device, ID3D11DeviceContext* context
 	context->PSGetSamplers( 0, 4, m_samplers );
 	context->OMGetBlendState( &m_blendState, m_blendFactor, &m_blendSampleMask );
 	context->OMGetDepthStencilState( &m_depthStencilState, &m_depthStencilStateRef );
+	context->RSGetState(&m_pRasterizerState);
 
 	context->VSGetConstantBuffers(0, 1, &m_vertexConstantBuffer);
 	context->PSGetConstantBuffers(0, 1, &m_pixelConstantBuffer);
 
+	context->VSGetShader(&m_pVS, nullptr, nullptr);
+	context->PSGetShader(&m_pPS, nullptr, nullptr);
+
 	context->IAGetInputLayout( &m_layout );
+
+	context->IAGetPrimitiveTopology(&m_topology);
+
+	context->PSGetShaderResources(0, 4, m_psSRVs);
+
+	context->IAGetVertexBuffers(0, 1, &m_pVB, &m_vbStrides, &m_vbOffset);
+	context->IAGetIndexBuffer(&m_pIB, &m_ibFormat, &m_ibOffset);
 }
 
 //----------------------------------------------------------------------------------
@@ -75,11 +91,22 @@ void OriginalState::LoadState(ID3D11Device* device, ID3D11DeviceContext* context
 	context->PSSetSamplers(0, 4, m_samplers );
 	context->OMSetBlendState( m_blendState, m_blendFactor, m_blendSampleMask );
 	context->OMSetDepthStencilState( m_depthStencilState, m_depthStencilStateRef );
+	context->RSSetState(m_pRasterizerState);
 
 	context->VSSetConstantBuffers(0, 1, &m_vertexConstantBuffer);
 	context->PSSetConstantBuffers(0, 1, &m_pixelConstantBuffer);
 
+	context->VSSetShader(m_pVS, NULL, 0);
+	context->PSSetShader(m_pPS, NULL, 0);
+
 	context->IASetInputLayout( m_layout );
+
+	context->IASetPrimitiveTopology(m_topology);
+
+	context->PSSetShaderResources(0, 4, m_psSRVs);
+
+	context->IASetVertexBuffers(0, 1, &m_pVB, &m_vbStrides, &m_vbOffset);
+	context->IASetIndexBuffer(m_pIB, m_ibFormat, m_ibOffset);
 }
 
 //----------------------------------------------------------------------------------
@@ -95,10 +122,23 @@ void OriginalState::ReleaseState()
 
 	ES_SAFE_RELEASE( m_depthStencilState );
 
+	ES_SAFE_RELEASE(m_pRasterizerState);
+
 	ES_SAFE_RELEASE( m_vertexConstantBuffer );
 	ES_SAFE_RELEASE( m_pixelConstantBuffer );
 
+	ES_SAFE_RELEASE(m_pVS);
+	ES_SAFE_RELEASE(m_pPS);
+
 	ES_SAFE_RELEASE( m_layout );
+
+	for (int32_t i = 0; i < 4; i++)
+	{
+		ES_SAFE_RELEASE(m_psSRVs[i]);
+	}
+
+	ES_SAFE_RELEASE(m_pVB);
+	ES_SAFE_RELEASE(m_pIB);
 }
 
 //----------------------------------------------------------------------------------
@@ -287,7 +327,7 @@ bool RendererImplemented::BeginRendering()
 	// ステートを保存する
 	if( m_restorationOfStates )
 	{
-		//m_state->SaveState( m_device, m_context );
+		m_state->SaveState( m_device, m_context );
 	}
 
 	// ステート初期設定
@@ -307,8 +347,8 @@ bool RendererImplemented::EndRendering()
 	// ステートを復元する
 	if( m_restorationOfStates )
 	{
-		//m_state->LoadState( m_device, m_context );
-		//m_state->ReleaseState();
+		m_state->LoadState( m_device, m_context );
+		m_state->ReleaseState();
 	}
 
 	return true;

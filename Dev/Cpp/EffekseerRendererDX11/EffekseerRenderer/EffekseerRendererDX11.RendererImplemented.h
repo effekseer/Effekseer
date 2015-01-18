@@ -132,10 +132,26 @@ private:
 	ID3D11DepthStencilState*	m_depthStencilState;
 	UINT						m_depthStencilStateRef;
 
+	ID3D11RasterizerState*		m_pRasterizerState = nullptr;
+
 	ID3D11Buffer*				m_vertexConstantBuffer;
 	ID3D11Buffer*				m_pixelConstantBuffer;
 
+	ID3D11VertexShader*			m_pVS = nullptr;
+	ID3D11PixelShader*			m_pPS = nullptr;
+
 	ID3D11InputLayout*			m_layout;
+	D3D11_PRIMITIVE_TOPOLOGY	m_topology;
+
+	ID3D11ShaderResourceView*	m_psSRVs[4];
+
+	ID3D11Buffer*				m_pVB = nullptr;
+	UINT						m_vbStrides;
+	UINT						m_vbOffset;
+
+	ID3D11Buffer*				m_pIB = nullptr;
+	DXGI_FORMAT					m_ibFormat;
+	UINT						m_ibOffset;
 
 public:
 	OriginalState();
