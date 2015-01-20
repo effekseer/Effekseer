@@ -91,6 +91,7 @@ public class EffekseerSystem : MonoBehaviour
 		name = Path.GetFileNameWithoutExtension(name);
 		if (effects.ContainsKey(name) == false) {
 			string fullPath = Path.Combine(EffekseerSystem.resourcePath, Path.ChangeExtension(name, "efk"));
+			fullPath += "\0";
 			
 			byte[] bytes = Encoding.Unicode.GetBytes(fullPath);
 			GCHandle ghc = GCHandle.Alloc(bytes, GCHandleType.Pinned);
