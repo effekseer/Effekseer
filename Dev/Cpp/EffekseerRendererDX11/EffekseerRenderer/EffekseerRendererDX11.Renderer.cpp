@@ -203,12 +203,9 @@ RendererImplemented::~RendererImplemented()
 //----------------------------------------------------------------------------------
 void RendererImplemented::OnLostDevice()
 {
-	std::set<DeviceObject*>::iterator it = m_deviceObjects.begin();
-	std::set<DeviceObject*>::iterator it_end = m_deviceObjects.end();
-	while( it != it_end )
+	for (auto& device : m_deviceObjects)
 	{
-		(*it)->OnLostDevice();
-		it++;
+		device->OnLostDevice();
 	}
 }
 
@@ -217,12 +214,9 @@ void RendererImplemented::OnLostDevice()
 //----------------------------------------------------------------------------------
 void RendererImplemented::OnResetDevice()
 {
-	std::set<DeviceObject*>::iterator it = m_deviceObjects.begin();
-	std::set<DeviceObject*>::iterator it_end = m_deviceObjects.end();
-	while( it != it_end )
+	for (auto& device : m_deviceObjects)
 	{
-		(*it)->OnResetDevice();
-		it++;
+		device->OnResetDevice();
 	}
 }
 

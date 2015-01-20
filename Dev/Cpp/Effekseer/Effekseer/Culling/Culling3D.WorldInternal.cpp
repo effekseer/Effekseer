@@ -67,9 +67,9 @@ namespace Culling3D
 
 		layers.clear();
 
-		for (std::set<Object*>::iterator it = containedObjects.begin(); it != containedObjects.end(); it++)
+		for (auto& obj : containedObjects)
 		{
-			(*it)->Release();
+			obj->Release();
 		}
 	}
 
