@@ -117,6 +117,7 @@ set(effekseer_renderer_gl_src
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.SpriteRenderer.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.TextureLoader.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.TrackRenderer.cpp
+	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexArray.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.cpp)
 
 list(APPEND effekseer_renderer_dx9_src
