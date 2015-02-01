@@ -59,8 +59,14 @@ set(effekseer_src
 	Effekseer/Effekseer/Effekseer.Socket.cpp
 	Effekseer/Effekseer/Effekseer.Thread.cpp
 	Effekseer/Effekseer/Effekseer.Vector2D.cpp
-	Effekseer/Effekseer/Effekseer.Vector3D.cpp)
-
+	Effekseer/Effekseer/Effekseer.Vector3D.cpp
+	Effekseer/Effekseer/Culling/Culling3D.Grid.cpp
+	Effekseer/Effekseer/Culling/Culling3D.Layer.cpp
+	Effekseer/Effekseer/Culling/Culling3D.Matrix44.cpp
+	Effekseer/Effekseer/Culling/Culling3D.ObjectInternal.cpp
+	Effekseer/Effekseer/Culling/Culling3D.ReferenceObject.cpp
+	Effekseer/Effekseer/Culling/Culling3D.Vector3DF.cpp
+	Effekseer/Effekseer/Culling/Culling3D.WorldInternal.cpp)
 
 set(effekseer_renderer_common_src
 	EffekseerRendererCommon/EffekseerRenderer.IndexBufferBase.cpp
