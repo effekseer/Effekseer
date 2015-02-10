@@ -13,8 +13,6 @@
 #include <Windows.h>
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "libpng.lib")
-#pragma comment(lib, "zlib.lib")
 #pragma comment(lib, "gdiplus.lib")
 
 #if _DEBUG
