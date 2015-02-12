@@ -79,7 +79,7 @@ void InitWindow(int width, int height)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool DoEvent()
+bool DoWindowEvent()
 {
 	MSG msg;
 	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
@@ -183,7 +183,7 @@ void InitWindow(int width, int height)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool DoEvent()
+bool DoWindowEvent()
 {
 	if( g_closed ) return false;
 

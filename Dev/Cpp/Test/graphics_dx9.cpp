@@ -2,9 +2,11 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include "../Effekseer/Effekseer.h"
+#include "common.h"
+
 #include "../EffekseerRendererDX9/EffekseerRendererDX9.h"
 #include "graphics.h"
+#include "window.h"
 
 #if _DEBUG
 #pragma comment(lib, "EffekseerRendererDX9.Debug.lib" )
@@ -18,13 +20,14 @@
 static LPDIRECT3D9			g_d3d = NULL;
 static LPDIRECT3DDEVICE9	g_d3d_device = NULL;
 static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
-extern ::Effekseer::Manager*			g_manager;
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InitGraphics( void* handle1, void* handle2, int width, int height )
+void InitGraphics(int width, int height )
 {
+	InitWindow(width, height);
+
 	D3DPRESENT_PARAMETERS d3dp;
 	ZeroMemory(&d3dp, sizeof(d3dp));
 	d3dp.BackBufferWidth = width;
@@ -33,7 +36,7 @@ void InitGraphics( void* handle1, void* handle2, int width, int height )
     d3dp.BackBufferCount = 1;      
 	d3dp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dp.Windowed = TRUE;
-	d3dp.hDeviceWindow = (HWND)handle1;
+	d3dp.hDeviceWindow = (HWND)GetHandle();
 	d3dp.EnableAutoDepthStencil = TRUE;
     d3dp.AutoDepthStencilFormat = D3DFMT_D16;
 
@@ -46,7 +49,7 @@ void InitGraphics( void* handle1, void* handle2, int width, int height )
 	g_d3d->CreateDevice( 
 		D3DADAPTER_DEFAULT,
 		D3DDEVTYPE_HAL,
-		(HWND)handle1,
+		(HWND) GetHandle(),
 		D3DCREATE_HARDWARE_VERTEXPROCESSING,
 		&d3dp,
 		&g_d3d_device );
@@ -74,6 +77,8 @@ void TermGraphics()
 	g_renderer->Destory();
 	ES_SAFE_RELEASE( g_d3d_device );
 	ES_SAFE_RELEASE( g_d3d );
+
+	ExitWindow();
 }
 
 //----------------------------------------------------------------------------------
@@ -93,6 +98,14 @@ void Rendering()
 
 	g_d3d_device->EndScene();
 	g_d3d_device->Present( NULL, NULL, NULL, NULL );
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+bool DoEvent()
+{
+	return DoWindowEvent();
 }
 
 //----------------------------------------------------------------------------------

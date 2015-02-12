@@ -361,6 +361,7 @@
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="common.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="window.h" />

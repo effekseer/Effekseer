@@ -8,9 +8,9 @@
 #include <vector>
 #include <string>
 
-#include "window.h"
 #include "graphics.h"
 #include "sound.h"
+#include "common.h"
 
 #if _WIN32
 
@@ -90,8 +90,6 @@ static efstring ToEFString(const wchar_t* src)
 //----------------------------------------------------------------------------------
 int main()
 {
-	InitWindow(g_window_width, g_window_height);
-
 	g_manager = ::Effekseer::Manager::Create( 2000 );
 
 #if __CULLING_TEST
@@ -99,11 +97,11 @@ int main()
 #endif
 
 #if _WIN32
-	InitGraphics(GetHandle(), NULL, g_window_width, g_window_height);
-	InitSound( GetHandle(), NULL );
+	InitGraphics(g_window_width, g_window_height);
+	InitSound();
 #else
-	InitGraphics( GetDisplay(), GetWindow(), g_window_width, g_window_height);
-	InitSound( GetDisplay(), GetWindow() );
+	InitGraphics( g_window_width, g_window_height);
+	InitSound();
 #endif
 
 	Init();
@@ -127,8 +125,6 @@ int main()
 	TermSound();
 
 	TermGraphics();
-
-	ExitWindow();
 
 	return 0;
 }

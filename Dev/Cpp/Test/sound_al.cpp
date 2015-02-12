@@ -39,7 +39,7 @@ extern ::Effekseer::Manager*	g_manager;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InitSound(  void* handle1, void* handle2 )
+void InitSound()
 {
 	// OpenALデバイスを作成
 	g_alcdev = alcOpenDevice(NULL);

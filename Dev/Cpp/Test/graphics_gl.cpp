@@ -2,9 +2,8 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include <assert.h>
+#include "common.h"
 
-#include "../Effekseer/Effekseer.h"
 #include "../EffekseerRendererGL/EffekseerRendererGL.h"
 #include "graphics.h"
 #include "window.h"
@@ -70,6 +69,8 @@ static GLXContext			g_glx;
 static Display*				g_display;
 static ::Window				g_window;
 #endif
+
+static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
 
 //----------------------------------------------------------------------------------
 //
@@ -194,15 +195,16 @@ static void WaitFrame();
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
-extern ::Effekseer::Manager*			g_manager;
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void InitGraphics(  void* handle1, void* handle2, int width, int height )
+void InitGraphics(int width, int height )
 {
-	InitGLWindow( handle1, handle2 );
+	InitWindow(width, height);
+
+#if _WIN32
+	InitGLWindow( GetHandle(), nullptr );
+#else
+	InitGLWindow( GetDisplay(), GetWindow() );
+#endif
+
 	MakeContextCurrent();
 
 #if !_WIN32
@@ -259,6 +261,14 @@ void Rendering()
 
 	WaitFrame();
 	SwapBuffers();
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+bool DoEvent()
+{
+	return DoWindowEvent();
 }
 
 //----------------------------------------------------------------------------------

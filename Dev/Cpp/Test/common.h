@@ -1,30 +1,22 @@
 
-#ifndef	__WINDOW_H__
-#define	__WINDOW_H__
+#ifndef	__COMMON_H__
+#define	__COMMON_H__
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#include "../Effekseer/Effekseer.h"
 
-#include "common.h"
+#include <assert.h>
 
-#if _WIN32
-#include <Windows.h>
-HWND GetHandle();
-
-#else
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-Display* GetDisplay();
-Window* GetWindow();
-#endif
-
-void InitWindow(int width, int height);
-bool DoWindowEvent();
-void ExitWindow();
+void PlayEffect();
+extern ::Effekseer::Manager* g_manager;
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 
 #endif
+
+
+

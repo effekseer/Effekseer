@@ -4,11 +4,13 @@
 
 #include "../Effekseer/Effekseer.h"
 
-void InitGraphics( void* handle1, void* handle2, int width, int height );
+void InitGraphics( int width, int height );
 
 void TermGraphics();
 
 void Rendering();
+
+bool DoEvent();
 
 void SetCameraMatrix( const ::Effekseer::Matrix44& matrix );
 
