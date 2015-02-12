@@ -43,3 +43,20 @@ Effekseer
 * ツールのマルチプラットフォーム化
 
 
+# 開発者向け
+
+## ランタイムテスト方法
+
+* Windows
+
+```Dev/Cpp/Test.sln``` を実行する。
+
+* Linux
+
+```Dev/Cpp/build.sh``` を実行する。
+```Dev/Cpp/Test/CMakeLists.txt``` をcmakeを使用してmakeを生成しコンパイルする。
+
+* Mac
+
+不明
+
