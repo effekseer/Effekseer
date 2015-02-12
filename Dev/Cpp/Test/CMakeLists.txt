@@ -11,7 +11,7 @@ cmake_minimum_required(VERSION 2.8)
 set(effekseer_src
 	graphics_gl.cpp
 	sound_al.cpp
-	window.cpp
+#	window.cpp
 	main.cpp)
 
 # インクルードの設定
@@ -30,6 +30,8 @@ set(common_inc)
 list(APPEND common_lib Effekseer )
 list(APPEND common_lib EffekseerRendererGL )
 list(APPEND common_lib EffekseerSoundAL )
+
+list(APPEND common_lib glfw3 )
 
 if (MSVC)
 
