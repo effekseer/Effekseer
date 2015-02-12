@@ -7,6 +7,13 @@ project(Test)
 # CMake バージョンチェック
 cmake_minimum_required(VERSION 2.8)
 
+# コンパイル設定
+if (MSVC)
+	# 特に何も
+else()
+	set(CMAKE_CXX_FLAGS "-std=c++11" ${CMAKE_CXX_FLAGS})
+endif()
+
 # ソースコード設定
 set(effekseer_src
 	graphics_gl.cpp
@@ -55,6 +62,22 @@ else()
 	find_package(OpenAL)
 	list(APPEND common_inc ${OPENAL_INCLUDE_DIR})
 	list(APPEND common_lib ${OPENAL_LIBRARY})
+
+ 	if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+		# used in GLFW
+		find_library(COCOA_FRAMEWORK Cocoa)
+		find_library(COCOA_FRAMEWORK Cocoa)
+		find_library(IOKIT_FRAMEWORK IOKit)
+		find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
+		find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
+		list(APPEND common_lib
+			${COCOA_FRAMEWORK}
+			${OPENGL_gl_LIBRARY}
+			${OPENGL_glu_LIBRARY}
+			${IOKIT_FRAMEWORK}
+			${CORE_FOUNDATION_FRAMEWORK}
+			${CORE_VIDEO_FRAMEWORK})
+	endif()
 
 endif()
 
