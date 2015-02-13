@@ -100,7 +100,7 @@ private:
 		virtual ~TextureLoader();
 
 	public:
-		void* Load( const EFK_CHAR* path );
+		void* Load( const EFK_CHAR* path, ::Effekseer::TextureLoader textureType );
 
 		void Unload( void* data );
 

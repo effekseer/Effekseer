@@ -288,6 +288,32 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		}
 	}
 
+	if (m_version >= 9)
+	{
+		// 画像
+		memcpy(&m_normalImageCount, pos, sizeof(int));
+		pos += sizeof(int);
+
+		if (m_normalImageCount > 0)
+		{
+			m_normalImagePaths = new EFK_CHAR*[m_normalImageCount];
+			m_normalImages = new void*[m_normalImageCount];
+
+			for (int i = 0; i < m_normalImageCount; i++)
+			{
+				int length = 0;
+				memcpy(&length, pos, sizeof(int));
+				pos += sizeof(int);
+
+				m_normalImagePaths[i] = new EFK_CHAR[length];
+				memcpy(m_normalImagePaths[i], pos, length * sizeof(EFK_CHAR));
+				pos += length * sizeof(EFK_CHAR);
+
+				m_normalImages[i] = NULL;
+			}
+		}
+	}
+
 	if( m_version >= 1 )
 	{
 		// ウェーブ
@@ -396,7 +422,19 @@ void EffectImplemented::Reset()
 	m_ImageCount = 0;
 
 	ES_SAFE_DELETE_ARRAY( m_ImagePaths );
-	ES_SAFE_DELETE_ARRAY( m_pImages );
+	ES_SAFE_DELETE_ARRAY(m_pImages);
+
+	{
+		for (int i = 0; i < m_normalImageCount; i++)
+		{
+			if (m_normalImagePaths[i] != NULL) delete [] m_normalImagePaths[i];
+		}
+
+		m_normalImageCount = 0;
+
+		ES_SAFE_DELETE_ARRAY(m_normalImagePaths);
+		ES_SAFE_DELETE_ARRAY(m_normalImages);
+	}
 
 	for( int i = 0; i < m_WaveCount; i++ )
 	{
@@ -470,9 +508,14 @@ int EffectImplemented::GetVersion() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void* EffectImplemented::GetImage( int n ) const
+void* EffectImplemented::GetColorImage( int n ) const
 {
 	return m_pImages[ n ];
+}
+
+void* EffectImplemented::GetNormalImage(int n) const
+{
+	return m_normalImages[n];
 }
 
 //----------------------------------------------------------------------------------
@@ -597,7 +640,20 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 			{
 				EFK_CHAR fullPath[512];
 				PathCombine( fullPath, matPath, m_ImagePaths[ ind ] );
-				m_pImages[ind] = textureLoader->Load( fullPath );
+				m_pImages[ind] = textureLoader->Load( fullPath, TextureType::Color );
+			}
+		}
+	}
+
+	{
+		TextureLoader* textureLoader = loader->GetTextureLoader();
+		if (textureLoader != NULL)
+		{
+			for (int32_t ind = 0; ind < m_normalImageCount; ind++)
+			{
+				EFK_CHAR fullPath[512];
+				PathCombine(fullPath, matPath, m_normalImagePaths[ind]);
+				m_normalImages[ind] = textureLoader->Load(fullPath, TextureType::Normal);
 			}
 		}
 	}

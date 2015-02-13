@@ -38,7 +38,7 @@ TextureLoader::~TextureLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void* TextureLoader::Load( const EFK_CHAR* path )
+void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
 	std::auto_ptr<::Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );

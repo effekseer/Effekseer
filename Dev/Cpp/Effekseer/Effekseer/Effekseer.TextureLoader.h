@@ -33,12 +33,13 @@ public:
 	/**
 		@brief	テクスチャを読み込む。
 		@param	path	[in]	読み込み元パス
+		@param	textureType	[in]	テクスチャの種類
 		@return	テクスチャのポインタ
 		@note
 		テクスチャを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load( const EFK_CHAR* path ) { return NULL; }
+	virtual void* Load( const EFK_CHAR* path, TextureType textureType ) { return NULL; }
 
 	/**
 		@brief	テクスチャを破棄する。

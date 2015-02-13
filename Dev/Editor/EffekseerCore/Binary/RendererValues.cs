@@ -8,7 +8,7 @@ namespace Effekseer.Binary
 {
 	class RendererValues
 	{
-		public static byte[] GetBytes(Data.RendererValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> model_and_index)
+		public static byte[] GetBytes(Data.RendererValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> model_and_index)
 		{
 			List<byte[]> data = new List<byte[]>();
 
@@ -412,7 +412,7 @@ namespace Effekseer.Binary
 
 				if (param.NormalTexture.RelativePath != string.Empty)
 				{
-					data.Add(texture_and_index[param.NormalTexture.RelativePath].GetBytes());
+					data.Add(normalTexture_and_index[param.NormalTexture.RelativePath].GetBytes());
 				}
 				else
 				{

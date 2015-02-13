@@ -230,7 +230,7 @@ Native::TextureLoader::~TextureLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void* Native::TextureLoader::Load( const EFK_CHAR* path )
+void* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureLoader textureType)
 {
 	wchar_t dst[260];
 	Combine( RootPath.c_str(), (const wchar_t *)path, dst, 260 );

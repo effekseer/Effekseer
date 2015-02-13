@@ -103,11 +103,18 @@ public:
 	virtual int GetVersion() const = 0;
 
 	/**
-		@brief	格納されている画像のポインタを取得する。
+		@brief	格納されている色画像のポインタを取得する。
 		@param	n	[in]	画像のインデックス
 		@return	画像のポインタ
 	*/
-	virtual void* GetImage( int n ) const = 0;
+	virtual void* GetColorImage( int n ) const = 0;
+
+	/**
+	@brief	格納されている法線画像のポインタを取得する。
+	@param	n	[in]	画像のインデックス
+	@return	画像のポインタ
+	*/
+	virtual void* GetNormalImage(int n) const = 0;
 
 	/**
 		@brief	格納されている音波形のポインタを取得する。

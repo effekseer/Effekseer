@@ -28,6 +28,8 @@ namespace Effekseer.Binary
 			// テクスチャ名称一覧取得
             SortedSet<string> textures = new SortedSet<string>();
 
+			SortedSet<string> normalTextures = new SortedSet<string>();
+
             // ウェーブ名称一覧取得
             SortedSet<string> waves = new SortedSet<string>();
 
@@ -61,9 +63,9 @@ namespace Effekseer.Binary
 								var relative_path = _node.DrawingValues.Model.NormalTexture.RelativePath;
 								if (relative_path != string.Empty)
 								{
-									if (!textures.Contains(relative_path))
+									if (!normalTextures.Contains(relative_path))
 									{
-										textures.Add(relative_path);
+										normalTextures.Add(relative_path);
 									}
 								}
 							}
@@ -87,6 +89,16 @@ namespace Effekseer.Binary
                     index++;
                 }
             }
+
+			Dictionary<string, int> normalTexture_and_index = new Dictionary<string, int>();
+			{
+				int index = 0;
+				foreach (var texture in normalTextures)
+				{
+					normalTexture_and_index.Add(texture, index);
+					index++;
+				}
+			}
 
             Action<Data.NodeBase> get_waves = null;
             get_waves = (node) =>
@@ -190,6 +202,15 @@ namespace Effekseer.Binary
 				data.Add(new byte[] { 0, 0 });
 			}
 
+			data.Add(BitConverter.GetBytes(normalTexture_and_index.Count));
+			foreach (var texture in normalTexture_and_index)
+			{
+				var path = Encoding.Unicode.GetBytes(texture.Key);
+				data.Add(((path.Count() + 2) / 2).GetBytes());
+				data.Add(path);
+				data.Add(new byte[] { 0, 0 });
+			}
+
             // ファイルにウェーブ一覧出力
             data.Add(BitConverter.GetBytes(wave_and_index.Count));
             foreach (var wave in wave_and_index)
@@ -285,11 +306,11 @@ namespace Effekseer.Binary
 
 				if (n.IsRendered)
 				{
-					node_data.Add(RendererValues.GetBytes(n.DrawingValues, texture_and_index, model_and_index));
+					node_data.Add(RendererValues.GetBytes(n.DrawingValues, texture_and_index, normalTexture_and_index, model_and_index));
 				}
 				else
 				{
-					node_data.Add(RendererValues.GetBytes(null, texture_and_index, model_and_index));
+					node_data.Add(RendererValues.GetBytes(null, texture_and_index, normalTexture_and_index, model_and_index));
 				}
 
 				data.Add(node_data.ToArray().ToArray());

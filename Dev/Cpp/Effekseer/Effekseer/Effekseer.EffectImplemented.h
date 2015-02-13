@@ -40,6 +40,10 @@ private:
 	int	m_ImageCount;
 	EFK_CHAR**		m_ImagePaths;
 	void**			m_pImages;
+
+	int	m_normalImageCount = 0;
+	EFK_CHAR**		m_normalImagePaths = nullptr;
+	void**			m_normalImages = nullptr;
 	
 	int	m_WaveCount;
 	EFK_CHAR**		m_WavePaths;
@@ -146,7 +150,12 @@ public:
 	/**
 		@brief	格納されている画像のポインタを取得する。
 	*/
-	void* GetImage( int n ) const;
+	void* GetColorImage(int n) const;
+
+	/**
+	@brief	格納されている画像のポインタを取得する。
+	*/
+	void* GetNormalImage(int n) const;
 	
 	/**
 		@brief	格納されている音波形のポインタを取得する。

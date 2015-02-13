@@ -151,12 +151,12 @@ public:
 
 		if (param.ColorTextureIndex >= 0)
 		{
-			textures[0] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetImage(param.ColorTextureIndex));
+			textures[0] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetColorImage(param.ColorTextureIndex));
 		}
 
 		if (param.NormalTextureIndex >= 0)
 		{
-			textures[1] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetImage(param.NormalTextureIndex));
+			textures[1] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetNormalImage(param.NormalTextureIndex));
 		}
 		
 		renderer->SetTextures(shader_, textures, 2);
