@@ -143,10 +143,10 @@ void Guide::Rendering( int32_t width, int32_t height, int32_t guide_width, int32
 	m_renderer->GetVertexBuffer()->Unlock();
 
 	auto& state = m_renderer->GetRenderState()->Push();
-	state.AlphaBlend = ::Effekseer::ALPHA_BLEND_BLEND;
+	state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 	state.DepthWrite = false;
 	state.DepthTest = false;
-	state.CullingType = Effekseer::CULLING_DOUBLE;
+	state.CullingType = Effekseer::CullingType::Double;
 
 	m_renderer->BeginShader(m_shader);
 

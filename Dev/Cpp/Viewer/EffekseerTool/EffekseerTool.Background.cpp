@@ -149,10 +149,10 @@ void Background::Rendering( IDirect3DTexture9* texture )
 	m_renderer->GetVertexBuffer()->Unlock();
 
 	auto& state = m_renderer->GetRenderState()->Push();
-	state.AlphaBlend = ::Effekseer::ALPHA_BLEND_BLEND;
+	state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 	state.DepthWrite = false;
 	state.DepthTest = true;
-	state.CullingType = Effekseer::CULLING_DOUBLE;
+	state.CullingType = Effekseer::CullingType::Double;
 	
 	
 	uint32_t pass;

@@ -230,7 +230,7 @@ Native::TextureLoader::~TextureLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureLoader textureType)
+void* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
 	wchar_t dst[260];
 	Combine( RootPath.c_str(), (const wchar_t *)path, dst, 260 );
@@ -1292,11 +1292,11 @@ void Native::SetIsRightHand( bool value )
 	g_renderer->IsRightHand = value;
 	if( g_renderer->IsRightHand )
 	{
-		g_manager->SetCoordinateSystem( Effekseer::COORDINATE_SYSTEM_RH );
+		g_manager->SetCoordinateSystem( Effekseer::CoordinateSystem::RH );
 	}
 	else
 	{
-		g_manager->SetCoordinateSystem( Effekseer::COORDINATE_SYSTEM_LH );
+		g_manager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
 	}
 
 	g_renderer->RecalcProjection();
