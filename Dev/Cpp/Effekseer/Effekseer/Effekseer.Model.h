@@ -122,7 +122,7 @@ public:
 		ES_SAFE_DELETE_ARRAY( m_data );
 	}
 
-	Emitter GetEmitter( Manager* manager, eCoordinateSystem coordinate, float magnification )
+	Emitter GetEmitter( Manager* manager, CoordinateSystem coordinate, float magnification )
 	{
 		RandFunc randFunc = manager->GetRandFunc();
 		int32_t randMax = manager->GetRandMax();
@@ -152,7 +152,7 @@ public:
 		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
 		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
 
-		if( coordinate == COORDINATE_SYSTEM_LH )
+		if( coordinate == CoordinateSystem::LH )
 		{
 			emitter.Position.Z = - emitter.Position.Z;
 			emitter.Normal.Z = - emitter.Normal.Z;
@@ -163,7 +163,7 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromVertex( Manager* manager, eCoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromVertex( Manager* manager, CoordinateSystem coordinate, float magnification )
 	{
 		RandFunc randFunc = manager->GetRandFunc();
 		int32_t randMax = manager->GetRandMax();
@@ -178,7 +178,7 @@ public:
 		emitter.Binormal = v.Binormal;
 		emitter.Tangent = v.Tangent;
 
-		if( coordinate == COORDINATE_SYSTEM_LH )
+		if( coordinate == CoordinateSystem::LH )
 		{
 			emitter.Position.Z = - emitter.Position.Z;
 			emitter.Normal.Z = - emitter.Normal.Z;
@@ -189,7 +189,7 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromVertex( int32_t index, eCoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromVertex( int32_t index, CoordinateSystem coordinate, float magnification )
 	{
 		int32_t vertexInd = index % GetVertexCount();
 		Vertex& v = GetVertexes()[vertexInd];
@@ -200,7 +200,7 @@ public:
 		emitter.Binormal = v.Binormal;
 		emitter.Tangent = v.Tangent;
 
-		if( coordinate == COORDINATE_SYSTEM_LH )
+		if( coordinate == CoordinateSystem::LH )
 		{
 			emitter.Position.Z = - emitter.Position.Z;
 			emitter.Normal.Z = - emitter.Normal.Z;
@@ -211,7 +211,7 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromFace( Manager* manager, eCoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromFace( Manager* manager, CoordinateSystem coordinate, float magnification )
 	{
 		RandFunc randFunc = manager->GetRandFunc();
 		int32_t randMax = manager->GetRandMax();
@@ -233,7 +233,7 @@ public:
 		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
 		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
 
-		if( coordinate == COORDINATE_SYSTEM_LH )
+		if( coordinate == CoordinateSystem::LH )
 		{
 			emitter.Position.Z = - emitter.Position.Z;
 			emitter.Normal.Z = - emitter.Normal.Z;
@@ -244,7 +244,7 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromFace( int32_t index, eCoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromFace( int32_t index, CoordinateSystem coordinate, float magnification )
 	{
 		int32_t faceInd = index % (GetFaceCount() - 1);
 		Face& face = GetFaces()[faceInd];
@@ -262,7 +262,7 @@ public:
 		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
 		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
 
-		if( coordinate == COORDINATE_SYSTEM_LH )
+		if( coordinate == CoordinateSystem::LH )
 		{
 			emitter.Position.Z = - emitter.Position.Z;
 			emitter.Normal.Z = - emitter.Normal.Z;

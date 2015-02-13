@@ -61,11 +61,11 @@ public:
 	};
 
 public:
-	eAlphaBlend		AlphaBlend;
+	AlphaBlendType		AlphaBlend;
 	int32_t			ModelIndex;
 	int32_t			NormalTextureIndex;
 	bool			Lighting;
-	eCullingType	Culling;
+	CullingType	Culling;
 
 	StandardColorParameter	AllColor;
 

@@ -192,8 +192,8 @@ public:
 
 public:
 
-	eAlphaBlend		AlphaBlend;
-	eBillboardType	Billboard;
+	AlphaBlendType		AlphaBlend;
+	BillboardType	Billboard;
 
 	int32_t	VertexCount;
 

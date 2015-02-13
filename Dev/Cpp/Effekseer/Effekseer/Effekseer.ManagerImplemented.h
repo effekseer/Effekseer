@@ -297,12 +297,12 @@ public:
 	/**
 		@brief	座標系を取得する。
 	*/
-	eCoordinateSystem GetCoordinateSystem() const;
+	CoordinateSystem GetCoordinateSystem() const;
 
 	/**
 		@brief	座標系を設定する。
 	*/
-	void SetCoordinateSystem( eCoordinateSystem coordinateSystem );
+	void SetCoordinateSystem( CoordinateSystem coordinateSystem );
 
 	/**
 		@brief	スプライト描画機能取得

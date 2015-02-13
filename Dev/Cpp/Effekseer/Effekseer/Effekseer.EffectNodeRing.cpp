@@ -77,7 +77,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 	}
 	
 	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
-	if (setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH)
+	if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 	{
 		if( OuterLocation.type == RingLocationParameter::Fixed )
 		{

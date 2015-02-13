@@ -153,9 +153,9 @@ protected:
 			texCurrent = texNext;
 		}
 
-		if( parameter.Billboard == ::Effekseer::BillboardType_Billboard ||
-			parameter.Billboard == ::Effekseer::BillboardType_RotatedBillboard ||
-			parameter.Billboard == ::Effekseer::BillboardType_YAxisFixed)
+		if( parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
+			parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard ||
+			parameter.Billboard == ::Effekseer::BillboardType::YAxisFixed)
 		{
 			const ::Effekseer::Matrix43& mat = instanceParameter.SRTMatrix43;
 			::Effekseer::Vector3D s;
@@ -169,7 +169,7 @@ protected:
 			::Effekseer::Vector3D U;
 
 			
-			if( parameter.Billboard == ::Effekseer::BillboardType_Billboard )
+			if( parameter.Billboard == ::Effekseer::BillboardType::Billboard )
 			{
 				::Effekseer::Vector3D Up( 0.0f, 1.0f, 0.0f );
 
@@ -178,7 +178,7 @@ protected:
 				::Effekseer::Vector3D::Normal( R, ::Effekseer::Vector3D::Cross( R, Up, F ) );
 				::Effekseer::Vector3D::Normal( U, ::Effekseer::Vector3D::Cross( U, F, R ) );
 			}
-			else if( parameter.Billboard == ::Effekseer::BillboardType_RotatedBillboard )
+			else if( parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard )
 			{
 				::Effekseer::Vector3D Up( 0.0f, 1.0f, 0.0f );
 
@@ -214,7 +214,7 @@ protected:
 				U.Y = u_temp.Y * c_z - r_temp.Y * s_z;
 				U.Z = u_temp.Z * c_z - r_temp.Z * s_z;
 			}
-			else if( parameter.Billboard == ::Effekseer::BillboardType_YAxisFixed )
+			else if( parameter.Billboard == ::Effekseer::BillboardType::YAxisFixed )
 			{
 				U = ::Effekseer::Vector3D( r.Value[1][0], r.Value[1][1], r.Value[1][2] );
 
@@ -261,7 +261,7 @@ protected:
 				}
 			}
 		}
-		else if( parameter.Billboard == ::Effekseer::BillboardType_Fixed )
+		else if( parameter.Billboard == ::Effekseer::BillboardType::Fixed )
 		{
 			if( m_instanceCount > 1 )
 			{
@@ -299,7 +299,7 @@ protected:
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
-		state.CullingType = ::Effekseer::CULLING_DOUBLE;
+		state.CullingType = ::Effekseer::CullingType::Double;
 
 		if (param.ColorTextureIndex >= 0)
 		{

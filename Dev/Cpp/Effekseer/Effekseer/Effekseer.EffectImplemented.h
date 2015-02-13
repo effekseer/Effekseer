@@ -66,7 +66,7 @@ private:
 	/* ƒJƒŠƒ“ƒO */
 	struct
 	{
-		eCullingShape	Shape;
+		CullingShape	Shape;
 		Vector3D		Location;
 
 		union

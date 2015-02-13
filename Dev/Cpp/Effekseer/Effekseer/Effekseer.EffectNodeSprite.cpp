@@ -94,7 +94,7 @@ namespace Effekseer
 	}
 
 	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
-	if (setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH)
+	if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 	{
 	}
 

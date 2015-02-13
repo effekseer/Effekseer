@@ -57,15 +57,15 @@ void RenderState::Update( bool forced )
 
 	if( m_active.CullingType != m_next.CullingType || forced )
 	{
-		if( m_next.CullingType == ::Effekseer::CULLING_FRONT )
+		if( m_next.CullingType == ::Effekseer::CullingType::Front )
 		{
 			m_renderer->GetDevice()->SetRenderState( D3DRS_CULLMODE, D3DCULL_CCW );
 		}
-		else if(m_next.CullingType == ::Effekseer::CULLING_BACK )
+		else if(m_next.CullingType == ::Effekseer::CullingType::Back )
 		{
 			m_renderer->GetDevice()->SetRenderState( D3DRS_CULLMODE, D3DCULL_CW );
 		}
-		else if(m_next.CullingType == ::Effekseer::CULLING_DOUBLE )
+		else if(m_next.CullingType == ::Effekseer::CullingType::Double )
 		{
 			m_renderer->GetDevice()->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
 		}
@@ -73,7 +73,7 @@ void RenderState::Update( bool forced )
 
 	if( m_active.AlphaBlend != m_next.AlphaBlend || forced )
 	{
-		if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_OPACITY )
+		if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity )
 		{
 			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
 			m_renderer->GetDevice()->SetRenderState( D3DRS_BLENDOP,   D3DBLENDOP_ADD );
@@ -81,7 +81,7 @@ void RenderState::Update( bool forced )
 			m_renderer->GetDevice()->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ONE );
 			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHAREF,  127 );
 		}
-		else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_BLEND )
+		else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend )
 		{
 			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
 			m_renderer->GetDevice()->SetRenderState( D3DRS_BLENDOP,   D3DBLENDOP_ADD );
@@ -89,7 +89,7 @@ void RenderState::Update( bool forced )
 			m_renderer->GetDevice()->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
 			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHAREF,  0 );
 		}
-		else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_ADD )
+		else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add )
 		{
 			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
 			m_renderer->GetDevice()->SetRenderState( D3DRS_BLENDOP,   D3DBLENDOP_ADD );
@@ -97,7 +97,7 @@ void RenderState::Update( bool forced )
 			m_renderer->GetDevice()->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
 			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHAREF,  0 );
 		}
-		else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_SUB )
+		else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub )
 		{
 			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
 			m_renderer->GetDevice()->SetRenderState( D3DRS_BLENDOP,   D3DBLENDOP_REVSUBTRACT );
@@ -105,7 +105,7 @@ void RenderState::Update( bool forced )
 			m_renderer->GetDevice()->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
 			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHAREF,  0 );
 		}
-		else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_MUL )
+		else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Mul )
 		{
 			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
 			m_renderer->GetDevice()->SetRenderState( D3DRS_BLENDOP,   D3DBLENDOP_ADD );
@@ -146,12 +146,12 @@ void RenderState::Update( bool forced )
 			m_renderer->GetDevice()->SetSamplerState( 
 				i, 
 				D3DSAMP_ADDRESSU, 
-				m_next.TextureWrapTypes[i] == ::Effekseer::TEXTURE_WRAP_REPEAT ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP );
+				m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP );
 
 			m_renderer->GetDevice()->SetSamplerState( 
 				i, 
 				D3DSAMP_ADDRESSV, 
-				m_next.TextureWrapTypes[i] == ::Effekseer::TEXTURE_WRAP_REPEAT ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP );
+				m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP);
 		}
 	}
 	

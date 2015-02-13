@@ -119,7 +119,7 @@ public:
 
 public:
 
-	eAlphaBlend		AlphaBlend;
+	AlphaBlendType		AlphaBlend;
 
 	StandardColorParameter	TrackColorLeft;
 	StandardColorParameter	TrackColorCenter;

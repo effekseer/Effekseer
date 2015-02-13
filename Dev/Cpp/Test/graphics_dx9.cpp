@@ -63,7 +63,7 @@ void InitGraphics(int width, int height )
 	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
 	g_manager->SetTrackRenderer( g_renderer->CreateTrackRenderer() );
 
-	g_manager->SetCoordinateSystem( ::Effekseer::COORDINATE_SYSTEM_RH );
+	g_manager->SetCoordinateSystem( ::Effekseer::CoordinateSystem::RH );
 
 	g_manager->SetTextureLoader( g_renderer->CreateTextureLoader() );
 	g_manager->SetModelLoader( g_renderer->CreateModelLoader() );

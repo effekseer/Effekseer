@@ -164,7 +164,7 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_vertexBuffer( NULL )
 	, m_indexBuffer	( NULL )
 	, m_squareMaxCount	( squareMaxCount )
-	, m_coordinateSystem	( ::Effekseer::COORDINATE_SYSTEM_RH )
+	, m_coordinateSystem	( ::Effekseer::CoordinateSystem::RH )
 	, m_renderState		( NULL )
 	, m_restorationOfStates( true )
 {

@@ -407,12 +407,12 @@ struct ParameterGenerationLocation
 //----------------------------------------------------------------------------------
 struct ParameterTexture
 {
-	int32_t			ColorTextureIndex;
-	eAlphaBlend		AlphaBlend;
+	int32_t				ColorTextureIndex;
+	AlphaBlendType	AlphaBlend;
 
-	eTextureFilterType	FilterType;
+	TextureFilterType	FilterType;
 
-	eTextureWrapType	WrapType;
+	TextureWrapType	WrapType;
 
 	bool				ZWrite;
 

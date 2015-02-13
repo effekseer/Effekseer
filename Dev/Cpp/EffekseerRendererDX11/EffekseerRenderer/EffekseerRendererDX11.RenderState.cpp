@@ -49,42 +49,44 @@ RenderState::RenderState( RendererImplemented* renderer )
 
 	for ( int32_t i = 0; i < AlphaTypeCount; i++ )
 	{
+		auto type = (::Effekseer::AlphaBlendType)i;
+
 		D3D11_BLEND_DESC Desc;
 		ZeroMemory( &Desc, sizeof(Desc) );
 		Desc.AlphaToCoverageEnable = false;
 
 		for ( int32_t k = 0; k < 8; k++ )
 		{
-			Desc.RenderTarget[k].BlendEnable			= i != ::Effekseer::ALPHA_BLEND_OPACITY;
+			Desc.RenderTarget[k].BlendEnable = type != ::Effekseer::AlphaBlendType::Opacity;
 			Desc.RenderTarget[k].RenderTargetWriteMask	= D3D11_COLOR_WRITE_ENABLE_ALL;
 			Desc.RenderTarget[k].SrcBlendAlpha  = D3D11_BLEND_ONE;
 			Desc.RenderTarget[k].DestBlendAlpha = D3D11_BLEND_ONE;
 			Desc.RenderTarget[k].BlendOpAlpha   = D3D11_BLEND_OP_MAX;
 
-			switch ( i )
+			switch (type)
 			{
-			case ::Effekseer::ALPHA_BLEND_OPACITY:
+			case ::Effekseer::AlphaBlendType::Opacity:
 				Desc.RenderTarget[k].DestBlend = D3D11_BLEND_ZERO;
 				Desc.RenderTarget[k].SrcBlend  = D3D11_BLEND_ONE;
 				Desc.RenderTarget[k].BlendOp   = D3D11_BLEND_OP_ADD;
 				break;
-			case ::Effekseer::ALPHA_BLEND_BLEND:
+			case ::Effekseer::AlphaBlendType::Blend:
 				Desc.RenderTarget[k].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 				Desc.RenderTarget[k].SrcBlend  = D3D11_BLEND_SRC_ALPHA;
 				Desc.RenderTarget[k].BlendOp   = D3D11_BLEND_OP_ADD;
 				break;
-			case ::Effekseer::ALPHA_BLEND_ADD:
+			case ::Effekseer::AlphaBlendType::Add:
 				Desc.RenderTarget[k].DestBlend = D3D11_BLEND_ONE;
 				Desc.RenderTarget[k].SrcBlend  = D3D11_BLEND_SRC_ALPHA;
 				Desc.RenderTarget[k].BlendOp   = D3D11_BLEND_OP_ADD;
 				break;
-			case ::Effekseer::ALPHA_BLEND_SUB:
+			case ::Effekseer::AlphaBlendType::Sub:
 				Desc.RenderTarget[k].DestBlend = D3D11_BLEND_ONE;
 				Desc.RenderTarget[k].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 				Desc.RenderTarget[k].BlendOp = D3D11_BLEND_OP_REV_SUBTRACT;
 				break;
 
-			case ::Effekseer::ALPHA_BLEND_MUL:
+			case ::Effekseer::AlphaBlendType::Mul:
 				Desc.RenderTarget[k].DestBlend = D3D11_BLEND_SRC_COLOR;
 				Desc.RenderTarget[k].SrcBlend  = D3D11_BLEND_ZERO;
 				Desc.RenderTarget[k].BlendOp   = D3D11_BLEND_OP_ADD;
@@ -194,7 +196,8 @@ void RenderState::Update( bool forced )
 
 	if( changeRasterizer )
 	{
-		m_renderer->GetContext()->RSSetState( m_rStates[m_next.CullingType] );
+		auto cullingType = (int32_t) m_next.CullingType;
+		m_renderer->GetContext()->RSSetState(m_rStates[cullingType]);
 	}
 
 	if( m_active.AlphaBlend != m_next.AlphaBlend || forced )
@@ -204,8 +207,9 @@ void RenderState::Update( bool forced )
 
 	if( changeBlend )
 	{
+		auto alphaBlend = (int32_t) m_next.AlphaBlend;
 		float blendFactor[] = {0, 0, 0, 0};
-		m_renderer->GetContext()->OMSetBlendState( m_bStates[m_next.AlphaBlend], blendFactor, 0xFFFFFFFF );
+		m_renderer->GetContext()->OMSetBlendState(m_bStates[alphaBlend], blendFactor, 0xFFFFFFFF);
 	}
 	
 	for( int32_t i = 0; i < 4; i++ )
@@ -224,7 +228,10 @@ void RenderState::Update( bool forced )
 
 		if( changeSampler )
 		{
-			ID3D11SamplerState* samplerTbl[] = { m_sStates[m_next.TextureFilterTypes[i]][m_next.TextureWrapTypes[i]] };
+			auto filter = (int32_t) m_next.TextureFilterTypes[i];
+			auto wrap = (int32_t) m_next.TextureWrapTypes[i];
+
+			ID3D11SamplerState* samplerTbl [] = { m_sStates[filter][wrap] };
 			m_renderer->GetContext()->PSSetSamplers( i, 1, samplerTbl );
 		}
 	}

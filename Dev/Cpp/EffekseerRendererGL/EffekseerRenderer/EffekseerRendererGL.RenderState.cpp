@@ -65,17 +65,17 @@ void RenderState::Update( bool forced )
 
 	if( m_active.CullingType != m_next.CullingType || forced )
 	{
-		if( m_next.CullingType == Effekseer::CULLING_FRONT )
+		if( m_next.CullingType == Effekseer::CullingType::Front )
 		{
 			glEnable( GL_CULL_FACE );
 			glCullFace( GL_FRONT );
 		}
-		else if( m_next.CullingType == Effekseer::CULLING_BACK )
+		else if (m_next.CullingType == Effekseer::CullingType::Back)
 		{
 			glEnable( GL_CULL_FACE );
 			glCullFace( GL_BACK );
 		}
-		else if( m_next.CullingType == Effekseer::CULLING_DOUBLE )
+		else if( m_next.CullingType == Effekseer::CullingType::Double )
 		{
 			glDisable( GL_CULL_FACE );
 			glCullFace( GL_FRONT_AND_BACK );
@@ -86,7 +86,7 @@ void RenderState::Update( bool forced )
 
 	if( m_active.AlphaBlend != m_next.AlphaBlend || forced )
 	{
-		if(  m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_OPACITY )
+		if(  m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity )
 		{
 			glDisable( GL_BLEND );
 		}
@@ -94,7 +94,7 @@ void RenderState::Update( bool forced )
 		{
 			glEnable( GL_BLEND );
 
-			if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_SUB )
+			if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub )
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_REVERSE_SUBTRACT, GL_FUNC_ADD);
 				GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
@@ -102,15 +102,15 @@ void RenderState::Update( bool forced )
 			else
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-				if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_BLEND )
+				if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend )
 				{
 					GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 				}
-				else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_ADD )
+				else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add )
 				{
 					GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
 				}
-				else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_MUL )
+				else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Mul )
 				{
 					GLExt::glBlendFuncSeparate(GL_ZERO, GL_SRC_COLOR, GL_ONE, GL_ONE);
 				}

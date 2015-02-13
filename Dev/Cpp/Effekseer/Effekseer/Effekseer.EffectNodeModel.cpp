@@ -81,7 +81,7 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
-			COORDINATE_SYSTEM_RH;
+			CoordinateSystem::RH;
 
 		renderer->BeginRendering(nodeParameter, count, m_userData);
 	}
@@ -110,7 +110,7 @@ void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
-			COORDINATE_SYSTEM_RH;
+			CoordinateSystem::RH;
 
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -150,7 +150,7 @@ void EffectNodeModel::EndRendering(Manager* manager)
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetSetting()->GetCoordinateSystem() ==
-			COORDINATE_SYSTEM_RH;
+			CoordinateSystem::RH;
 
 		renderer->EndRendering( nodeParameter, m_userData );
 	}

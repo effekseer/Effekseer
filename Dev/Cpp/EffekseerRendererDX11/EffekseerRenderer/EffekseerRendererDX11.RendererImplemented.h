@@ -194,7 +194,7 @@ private:
 	::Effekseer::Matrix44	m_cameraProj;
 
 	// ç¿ïWån
-	::Effekseer::eCoordinateSystem		m_coordinateSystem;
+	::Effekseer::CoordinateSystem		m_coordinateSystem;
 
 	::EffekseerRenderer::RenderStateBase*			m_renderState;
 

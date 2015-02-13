@@ -150,7 +150,7 @@ protected:
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
-		state.CullingType = ::Effekseer::CULLING_DOUBLE;
+		state.CullingType = ::Effekseer::CullingType::Double;
 
 		SHADER* shader_ = NULL;
 		if (param.ColorTextureIndex >= 0)

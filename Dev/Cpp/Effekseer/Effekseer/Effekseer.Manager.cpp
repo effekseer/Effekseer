@@ -518,7 +518,7 @@ void ManagerImplemented::SetRandMax(int max_)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-eCoordinateSystem ManagerImplemented::GetCoordinateSystem() const
+CoordinateSystem ManagerImplemented::GetCoordinateSystem() const
 {
 	return m_setting->GetCoordinateSystem();
 }
@@ -526,7 +526,7 @@ eCoordinateSystem ManagerImplemented::GetCoordinateSystem() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::SetCoordinateSystem( eCoordinateSystem coordinateSystem )
+void ManagerImplemented::SetCoordinateSystem( CoordinateSystem coordinateSystem )
 {
 	m_setting->SetCoordinateSystem(coordinateSystem);
 }
@@ -1200,12 +1200,12 @@ void ManagerImplemented::Flip()
 					if(ds.CullingObjectPointer == NULL)
 					{
 						ds.CullingObjectPointer = Culling3D::Object::Create();
-						if(effect->Culling.Shape == CULLING_SHAPE_SPHERE)
+						if(effect->Culling.Shape == CullingShape::Sphere)
 						{
 							ds.CullingObjectPointer->SetShapeType(Culling3D::OBJECT_SHAPE_TYPE_SPHERE);
 						}
 
-						if(effect->Culling.Shape == CULLING_SHAPE_NONE)
+						if(effect->Culling.Shape == CullingShape::None)
 						{
 							ds.CullingObjectPointer->SetShapeType(Culling3D::OBJECT_SHAPE_TYPE_ALL);
 						}
@@ -1235,7 +1235,7 @@ void ManagerImplemented::Flip()
 					position.Z = pos_.Value[3][2];
 					ds.CullingObjectPointer->SetPosition(position);
 
-					if(effect->Culling.Shape == CULLING_SHAPE_SPHERE)
+					if(effect->Culling.Shape == CullingShape::Sphere)
 					{
 						float radius = effect->Culling.Sphere.Radius;
 

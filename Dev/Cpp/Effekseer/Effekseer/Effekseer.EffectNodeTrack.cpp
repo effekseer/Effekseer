@@ -56,7 +56,7 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, Setting* settin
 	EffekseerPrintDebug("TrackColorRightMiddle : %d\n", TrackColorRightMiddle.type );
 
 	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
-	if (setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH)
+	if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 	{
 	}
 

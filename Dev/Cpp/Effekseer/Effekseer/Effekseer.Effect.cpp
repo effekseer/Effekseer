@@ -191,7 +191,7 @@ EffectImplemented::EffectImplemented( Manager* pManager, void* pData, int size )
 {
 	ES_SAFE_ADDREF( m_pManager );
 
-	Culling.Shape = CULLING_SHAPE_NONE;
+	Culling.Shape = CullingShape::None;
 }
 
 //----------------------------------------------------------------------------------
@@ -217,7 +217,7 @@ EffectImplemented::EffectImplemented( Setting* setting, void* pData, int size )
 {
 	ES_SAFE_ADDREF( m_setting );
 	
-	Culling.Shape = CULLING_SHAPE_NONE;
+	Culling.Shape = CullingShape::None;
 }
 
 //----------------------------------------------------------------------------------
@@ -380,7 +380,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	{
 		memcpy( &(Culling.Shape), pos, sizeof(int32_t) );
 		pos += sizeof(int32_t);
-		if(Culling.Shape ==	CULLING_SHAPE_SPHERE)
+		if(Culling.Shape ==	CullingShape::Sphere)
 		{
 			memcpy( &(Culling.Sphere.Radius), pos, sizeof(float) );
 			pos += sizeof(float);
@@ -515,6 +515,12 @@ void* EffectImplemented::GetColorImage( int n ) const
 
 void* EffectImplemented::GetNormalImage(int n) const
 {
+	/* ‹­§“I‚ÉŒÝŠ·‚ð‚Æ‚é */
+	if (this->m_version <= 8)
+	{
+		return m_pImages[n];
+	}
+
 	return m_normalImages[n];
 }
 

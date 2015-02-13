@@ -105,7 +105,7 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setti
 	}
 
 	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
-	if( setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH )
+	if( setting->GetCoordinateSystem() == CoordinateSystem::LH )
 	{
 	}
 

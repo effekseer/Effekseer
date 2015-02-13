@@ -122,8 +122,8 @@ public:
 
 public:
 
-	eAlphaBlend		AlphaBlend;
-	eBillboardType	Billboard;
+	AlphaBlendType		AlphaBlend;
+	BillboardType	Billboard;
 
 	StandardColorParameter	SpriteAllColor;
 

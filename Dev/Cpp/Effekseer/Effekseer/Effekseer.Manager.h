@@ -85,7 +85,7 @@ public:
 		@brief	座標系を取得する。
 		@return	座標系
 	*/
-	virtual eCoordinateSystem GetCoordinateSystem() const = 0;
+	virtual CoordinateSystem GetCoordinateSystem() const = 0;
 
 	/**
 		@brief	座標系を設定する。
@@ -94,7 +94,7 @@ public:
 		座標系を設定する。
 		エフェクトファイルを読み込む前に設定する必要がある。
 	*/
-	virtual void SetCoordinateSystem( eCoordinateSystem coordinateSystem ) = 0;
+	virtual void SetCoordinateSystem( CoordinateSystem coordinateSystem ) = 0;
 
 	/**
 		@brief	スプライト描画機能を取得する。
