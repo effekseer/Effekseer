@@ -3,42 +3,49 @@
 
 <head>
 	<meta charset=utf-8>
-	<title>Unity3Dとの連携</title>
+	<title>Unityとの連携</title>
 	<link href="../base.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
 	<div class="main">
-		<h1>Unity3Dとの連携</h1>
+		<h1>Unityとの連携</h1>
 		
 		<h2>概要</h2>
 		<p>
-ゲームエンジンUnityとの連携について説明します。<br>
-なお、Unity Technologiesとこのツールは特に提携しているというわけではないため、<br>
-バージョンや状況によっては上手く動作しない可能性があります。
+		ゲームエンジンUnityとの連携について説明します。<br>
+		なお、Unity Technologies とこのツールは特に提携しているというわけではないため、<br>
+		バージョンや状況によっては上手く動作しない可能性があります。
 		</p>
 		<br>
 		<p>
-サンプル「GameEngine/Unity/SampleProject.zip」
+		サンプル：GameEngine/Unity/SampleProject.zip
 		</p>
 
 		<h2>初めに</h2>
 		<p>
-ネイティブプラグインのため、UnityのPro版が必要です。Free版では動作しません。<br>
-Unity4で動作確認しています。Unity3でも、おそらく動作すると思います。<br>
-<br>
-<font color="red">※現時点でWindowsのDirectX9のみ対応しています。</font>
+		Effekseerの再生プログラムはC++で書かれているため、Unity上ではネイティブプラグイン扱いになります。<br>
+		<ul>
+		<li>Unity5：Personal版、Pro版どちらでも使用できます。</li>
+		<li>Unity4：Pro版が必要です。</li>
+		</ul>
+		<br>
+		<h3>動作環境</h3>
+		<ul>
+		<li>Windows Vista/7/8 (32bit,64bit) DirectX9, DirectX11</li>
+		<li>Mac OS X 10.7以降</li>
+		</ul>
 		</p>
 
 		<h2>インストール方法</h2>
 		<p>
-「GameEngine/Unity/Effekseer.unitypackage」を開いてUnityプロジェクトにインストールします。
+		GameEngine/Unity/Effekseer.unitypackage を開いてUnityプロジェクトにインストールします。
 		</p>
 
 		<h2>リソースファイルについて</h2>
 		<p>
-「StreamingAssets/Effekseer/」以下に出力済エフェクト(*.efk)やテクスチャ、サウンドを配置します。
-<img src="img/unity_resource.png">
+		StreamingAssets/Effekseer/ 以下に出力済エフェクト(*.efk)やテクスチャ、サウンドを配置します。
+		<img src="img/unity_resource.png">
 		</p>
 
 		<h2>使い方</h2>
@@ -47,16 +54,19 @@ Unity4で動作確認しています。Unity3でも、おそらく動作する�
 </p>
 		<h3>エミッタを使う方法</h3>
 <p>
-Plugin/Effekseer/EffekseerEmitter.cs(コンポーネント)をゲームオブジェクトに追加します。<br>
-インスペクタの「Effect Name」にはエフェクト名を指定します。<br>
-（エフェクト名はエフェクトファイル名から拡張子を除いた文字列です）<br>
-「Play On Start」にチェックを入れると、ゲーム開始時に自動的に再生します。<br>
+<ul>
+<li>Plugin/Effekseer/EffekseerEmitter.cs(コンポーネント)をゲームオブジェクトに追加します。</li>
+<li>インスペクタの「Effect Name」にはエフェクト名を指定します。<br>
+（エフェクト名はエフェクトファイル名から拡張子を除いた文字列です）</li>
+<li>「Play On Start」にチェックを入れると、ゲーム開始時に自動的に再生します。</li>
+</ul>
+<br>
 <img src="img/unity_emitter.png">
 </p>
 		
 		<h3>直接再生する方法</h3>
 <p>
-スクリプトからエフェクトを直接再生することもできます。
+スクリプトからエフェクトを直接再生するには、以下のスクリプトを書きます。
 </p>
 <pre>
 <code>
@@ -67,8 +77,8 @@ handle.SetRotation(transform.rotation);
 
 		<h2>Todo</h2>
 <ul>
-<li>Mac, iOS, Android対応</li>
-<li>DirectX11対応</li>
+<li>iOS, Android対応</li>
+<li>Unreal Engine 4対応</li>
 </ul>
 	</div>
 </body>
