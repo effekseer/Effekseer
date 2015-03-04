@@ -38,7 +38,7 @@ ModelLoader::~ModelLoader()
 //----------------------------------------------------------------------------------
 void* ModelLoader::Load( const EFK_CHAR* path )
 {
-	std::auto_ptr<Effekseer::FileReader> 
+	std::unique_ptr<Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
 	
 	if( reader.get() != NULL )
