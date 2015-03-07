@@ -24,12 +24,9 @@ class TrackRenderer
 	: public ::EffekseerRenderer::TrackRendererBase
 {
 private:
-
 	RendererImplemented*			m_renderer;
-	Shader*							m_shader;
-	Shader*							m_shader_no_texture;
 
-	TrackRenderer( RendererImplemented* renderer, Shader* shader, Shader* shader_no_texture );
+	TrackRenderer( RendererImplemented* renderer );
 public:
 
 	virtual ~TrackRenderer();
