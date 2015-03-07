@@ -140,6 +140,8 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.ColorTextureIndex = RibbonTexture;
 		m_nodeParameter.EffectPointer = GetEffect();
 
+		m_nodeParameter.Distortion = Texture.Distortion;
+
 		renderer->BeginRendering( m_nodeParameter, count, m_userData );
 	}
 }

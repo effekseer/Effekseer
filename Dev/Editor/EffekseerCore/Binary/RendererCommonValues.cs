@@ -121,6 +121,16 @@ namespace Effekseer.Binary
 				data.Add(((int)Data.RendererCommonValues.UVType.Default).GetBytes());
 			}
 
+			// 歪み
+			if (value.Distortion.GetValue())
+			{
+				data.Add((1).GetBytes());
+			}
+			else
+			{
+				data.Add((0).GetBytes());
+			}
+
 			return data.ToArray().ToArray();
 		}
 	}

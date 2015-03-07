@@ -34,6 +34,8 @@ public:
 		bool				ZTest;
 		bool				ZWrite;
 		BillboardType		Billboard;
+
+		bool				Distortion;
 	};
 
 	struct InstanceParameter

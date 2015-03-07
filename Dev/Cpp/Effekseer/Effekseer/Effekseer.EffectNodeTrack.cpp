@@ -84,6 +84,9 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.ZWrite = Texture.ZWrite;
 		m_nodeParameter.ColorTextureIndex = TrackTexture;
 		m_nodeParameter.EffectPointer = GetEffect();
+
+		m_nodeParameter.Distortion = Texture.Distortion;
+
 		renderer->BeginRendering( m_nodeParameter, count, m_userData );
 	}
 }

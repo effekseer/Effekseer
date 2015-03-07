@@ -35,6 +35,8 @@ public:
 		bool				ZWrite;
 		BillboardType		Billboard;
 		int32_t				VertexCount;
+
+		bool				Distortion;
 	};
 
 	struct InstanceParameter

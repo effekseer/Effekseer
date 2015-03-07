@@ -29,6 +29,8 @@ public:
 		AlphaBlendType			AlphaBlend;
 		TextureFilterType	TextureFilter;
 		TextureWrapType	TextureWrap;
+
+		bool				Distortion;
 	};
 
 	struct InstanceParameter

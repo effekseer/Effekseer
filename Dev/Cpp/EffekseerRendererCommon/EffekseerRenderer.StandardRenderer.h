@@ -22,6 +22,8 @@ struct StandardRendererState
 {
 	bool								DepthTest;
 	bool								DepthWrite;
+	bool								Distortion;
+
 	::Effekseer::AlphaBlendType			AlphaBlend;
 	::Effekseer::CullingType			CullingType;
 	::Effekseer::TextureFilterType		TextureFilterType;
@@ -32,6 +34,7 @@ struct StandardRendererState
 	{
 		DepthTest = false;
 		DepthWrite = false;
+		Distortion = false;
 		AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 		CullingType = ::Effekseer::CullingType::Front;
 		TextureFilterType = ::Effekseer::TextureFilterType::Nearest;
@@ -43,6 +46,7 @@ struct StandardRendererState
 	{
 		if (DepthTest != state.DepthTest) return true;
 		if (DepthWrite != state.DepthWrite) return true;
+		if (Distortion != state.Distortion) return true;
 		if (AlphaBlend != state.AlphaBlend) return true;
 		if (CullingType != state.CullingType) return true;
 		if (TextureFilterType != state.TextureFilterType) return true;
@@ -143,7 +147,7 @@ public:
 
 		SHADER* shader_ = nullptr;
 
-		bool distortion = false;
+		bool distortion = m_state.Distortion;
 
 		if (distortion)
 		{

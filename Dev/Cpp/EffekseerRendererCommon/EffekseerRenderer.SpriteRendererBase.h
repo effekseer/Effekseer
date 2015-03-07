@@ -54,6 +54,8 @@ protected:
 		state.TextureFilterType = param.TextureFilter;
 		state.TextureWrapType = param.TextureWrap;
 
+		state.Distortion = param.Distortion;
+
 		if (param.ColorTextureIndex >= 0)
 		{
 			state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);

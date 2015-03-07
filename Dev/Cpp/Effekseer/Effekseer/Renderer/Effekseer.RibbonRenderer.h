@@ -34,6 +34,8 @@ public:
 		bool				ZTest;
 		bool				ZWrite;
 		bool				ViewpointDependent;
+
+		bool				Distortion;
 	};
 
 	struct InstanceParameter

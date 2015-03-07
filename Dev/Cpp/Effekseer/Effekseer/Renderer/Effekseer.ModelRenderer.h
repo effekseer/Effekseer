@@ -39,6 +39,8 @@ public:
 		int32_t				NormalTextureIndex;
 		float				Magnification;
 		bool				IsRightHand;
+
+		bool				Distortion;
 	};
 
 	struct InstanceParameter

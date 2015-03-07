@@ -102,6 +102,10 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public UVScrollParamater UVScroll { get; private set; }
 
+
+		[Name(language = Language.Japanese, value = "歪み")]
+		public Value.Boolean Distortion { get; private set; }
+
 		internal RendererCommonValues()
 		{
 			ColorTexture = new Value.PathForImage("画像ファイル (*.png)|*.png", "");
@@ -126,6 +130,8 @@ namespace Effekseer.Data
 
 			ZWrite = new Value.Boolean(false);
 			ZTest = new Value.Boolean(true);
+
+			Distortion = new Value.Boolean(false);
 		}
 
 		public class NoneParamater

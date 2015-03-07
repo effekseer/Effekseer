@@ -1794,6 +1794,8 @@ public:
 		bool				ZTest;
 		bool				ZWrite;
 		BillboardType		Billboard;
+
+		bool				Distortion;
 	};
 
 	struct InstanceParameter
@@ -1860,6 +1862,8 @@ public:
 		bool				ZTest;
 		bool				ZWrite;
 		bool				ViewpointDependent;
+
+		bool				Distortion;
 	};
 
 	struct InstanceParameter
@@ -1927,6 +1931,8 @@ public:
 		bool				ZWrite;
 		BillboardType		Billboard;
 		int32_t				VertexCount;
+
+		bool				Distortion;
 	};
 
 	struct InstanceParameter
@@ -1999,6 +2005,8 @@ public:
 		int32_t				NormalTextureIndex;
 		float				Magnification;
 		bool				IsRightHand;
+
+		bool				Distortion;
 	};
 
 	struct InstanceParameter
@@ -2058,6 +2066,8 @@ public:
 		TextureWrapType		TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
+
+		bool				Distortion;
 	};
 
 	struct InstanceGroupParameter
