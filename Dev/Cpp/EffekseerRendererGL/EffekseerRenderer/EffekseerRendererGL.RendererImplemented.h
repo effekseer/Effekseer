@@ -158,10 +158,17 @@ private:
 	
 	Shader*							m_shader = nullptr;
 	Shader*							m_shader_no_texture = nullptr;
+
+	Shader*							m_shader_distortion = nullptr;
+	Shader*							m_shader_no_texture_distortion = nullptr;
+
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex>*	m_standardRenderer = nullptr;
 
 	VertexArray*			m_vao = nullptr;
 	VertexArray*			m_vao_no_texture = nullptr;
+
+	VertexArray*			m_vao_distortion = nullptr;
+	VertexArray*			m_vao_no_texture_distortion = nullptr;
 
 	::Effekseer::Vector3D	m_lightDirection;
 	::Effekseer::Color		m_lightColor;
