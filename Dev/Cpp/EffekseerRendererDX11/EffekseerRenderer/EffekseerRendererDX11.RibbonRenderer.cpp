@@ -68,7 +68,7 @@ void RibbonRenderer::EndRendering( const efkRibbonNodeParam& parameter, void* us
 
 	if( m_ribbonCount <= 1 ) return;
 
-	EndRendering_<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex>(m_renderer, parameter);
+	EndRendering_<RendererImplemented, ID3D11ShaderResourceView*, Vertex>(m_renderer, parameter);
 }
 
 //----------------------------------------------------------------------------------

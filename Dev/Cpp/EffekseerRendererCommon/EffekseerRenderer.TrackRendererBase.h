@@ -329,8 +329,8 @@ protected:
 		}
 	}
 
-	template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
-	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkTrackNodeParam& param)
+	template<typename RENDERER, typename TEXTURE, typename VERTEX>
+	void EndRendering_(RENDERER* renderer, const efkTrackNodeParam& param)
 	{
 		/*
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();

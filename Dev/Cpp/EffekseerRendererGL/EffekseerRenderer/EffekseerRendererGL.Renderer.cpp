@@ -30,6 +30,64 @@
 //----------------------------------------------------------------------------------
 namespace EffekseerRendererGL
 {
+
+	//-----------------------------------------------------------------------------------
+	//
+	//-----------------------------------------------------------------------------------
+	static const char g_sprite_vs_src[] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+#else
+		"#version 110\n"
+		"#define lowp\n"
+		"#define mediump\n"
+		"#define highp\n"
+#endif
+		"attribute vec4 atPosition;\n"
+		"attribute vec4 atColor;\n"
+		"attribute vec4 atTexCoord;\n"
+		"varying vec4 vaColor;\n"
+		"varying vec4 vaTexCoord;\n"
+		"uniform mat4 uMatProjection;\n"
+		"void main() {\n"
+		"	gl_Position = uMatProjection * atPosition;\n"
+		"	vaColor = atColor;\n"
+		"	vaTexCoord = atTexCoord;\n"
+		"}\n";
+
+	static const char g_sprite_fs_texture_src[] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+		"precision mediump float;\n"
+#else
+		"#version 110\n"
+		"#define lowp\n"
+		"#define mediump\n"
+		"#define highp\n"
+#endif
+		"varying lowp vec4 vaColor;\n"
+		"varying mediump vec4 vaTexCoord;\n"
+		"uniform sampler2D uTexture0;\n"
+		"uniform bool uTexEnable;\n"
+		"void main() {\n"
+		"gl_FragColor = vaColor * texture2D(uTexture0, vaTexCoord.xy);\n"
+		"}\n";
+
+	static const char g_sprite_fs_no_texture_src[] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+		"precision mediump float;\n"
+#else
+		"#version 110\n"
+		"#define lowp\n"
+		"#define mediump\n"
+		"#define highp\n"
+#endif
+		"varying lowp vec4 vaColor;\n"
+		"varying mediump vec4 vaTexCoord;\n"
+		"uniform sampler2D uTexture0;\n"
+		"uniform bool uTexEnable;\n"
+		"void main() {\n"
+		"gl_FragColor = vaColor;\n"
+		"}\n";
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -79,6 +137,11 @@ RendererImplemented::~RendererImplemented()
 #endif
 
 	assert( m_reference == 0 );
+
+	ES_SAFE_DELETE(m_standardRenderer);
+	ES_SAFE_DELETE(m_shader);
+	ES_SAFE_DELETE(m_shader_no_texture);
+
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
@@ -137,6 +200,10 @@ bool RendererImplemented::Initialize()
 		if( m_vertexBuffer == NULL ) return false;
 	}
 
+	// 参照カウントの調整
+	Release();
+
+
 	// インデックスの生成
 	{
 		m_indexBuffer = IndexBuffer::Create( this, m_squareMaxCount * 6, false );
@@ -159,13 +226,59 @@ bool RendererImplemented::Initialize()
 		m_indexBuffer->Unlock();
 	}
 
+	// 参照カウントの調整
+	Release();
+
 	m_renderState = new RenderState( this );
 
+	m_shader = Shader::Create(this,
+		g_sprite_vs_src, strlen(g_sprite_vs_src), g_sprite_fs_texture_src, strlen(g_sprite_fs_texture_src), "SpriteRenderer");
+	if (m_shader == nullptr) return false;
+
 	// 参照カウントの調整
-	// m_vertexBufferの参照カウンタ
 	Release();
-	// m_indexBufferの参照カウンタ
+
+	m_shader_no_texture = Shader::Create(this,
+		g_sprite_vs_src, strlen(g_sprite_vs_src), g_sprite_fs_no_texture_src, strlen(g_sprite_fs_no_texture_src), "SpriteRenderer");
+	if (m_shader_no_texture == nullptr)
+	{
+		return false;
+	}
+
+	// 参照カウントの調整
 	Release();
+
+	static ShaderAttribInfo sprite_attribs[3] = {
+		{ "atPosition", GL_FLOAT, 3, 0, false },
+		{ "atColor", GL_UNSIGNED_BYTE, 4, 12, true },
+		{ "atTexCoord", GL_FLOAT, 2, 16, false }
+	};
+
+	// 頂点属性IDを取得
+	m_shader->GetAttribIdList(3, sprite_attribs);
+	m_shader->SetVertexSize(sizeof(Vertex));
+	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
+	m_shader->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader->GetUniformId("uMatProjection"),
+		0
+		);
+
+	m_shader->SetTextureSlot(0, m_shader->GetUniformId("uTexture0"));
+
+	m_shader_no_texture->GetAttribIdList(3, sprite_attribs);
+	m_shader_no_texture->SetVertexSize(sizeof(Vertex));
+	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
+	m_shader_no_texture->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader_no_texture->GetUniformId("uMatProjection"),
+		0
+		);
+
+	m_vao.reset(VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer()));
+	m_vao_no_texture.reset(VertexArray::Create(this, m_shader_no_texture, GetVertexBuffer(), GetIndexBuffer()));
+
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, VertexBuffer>(this, m_shader, m_shader_no_texture);
 
 	return true;
 }

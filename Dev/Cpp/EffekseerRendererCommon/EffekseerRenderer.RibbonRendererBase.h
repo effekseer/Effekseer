@@ -173,7 +173,7 @@ protected:
 		}
 	}
 
-	template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
+	template<typename RENDERER, typename TEXTURE, typename VERTEX>
 	void EndRendering_(RENDERER* renderer, const efkRibbonNodeParam& param)
 	{
 		/*
