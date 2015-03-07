@@ -26,13 +26,8 @@ class RingRenderer
 {
 private:
 	RendererImplemented*	m_renderer;
-	Shader*		m_shader;
-	Shader*		m_shader_no_texture;
-	
-	std::unique_ptr<VertexArray>	m_vao;
-	std::unique_ptr<VertexArray>	m_vao_no_texture;
 
-	RingRenderer(RendererImplemented* renderer, Shader* shader, Shader* shader_no_texture);
+	RingRenderer(RendererImplemented* renderer);
 
 public:
 

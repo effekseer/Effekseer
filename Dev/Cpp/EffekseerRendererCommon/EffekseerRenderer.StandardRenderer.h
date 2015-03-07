@@ -111,7 +111,7 @@ public:
 		m_state.TexturePtr = (void*)0x1;
 	}
 
-	void Rendering()
+	void Rendering(const Effekseer::Matrix44& cvp)
 	{
 		if (vertexCaches.size() == 0) return;
 
@@ -123,7 +123,7 @@ public:
 			void* data = nullptr;
 
 			vb->RingBufferLock(vertexCaches.size(), offsetSize, data);
-			
+
 			memcpy(data, vertexCaches.data(), vertexCaches.size());
 			vertexCaches.clear();
 
@@ -158,7 +158,7 @@ public:
 			m_renderer->SetTextures(shader_, &texture, 1);
 		}
 
-		((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] = m_renderer->GetCameraProjectionMatrix();
+		((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] =cvp;
 		shader_->SetConstantBuffer();
 
 		state.AlphaBlend = m_state.AlphaBlend;
@@ -175,6 +175,11 @@ public:
 		m_renderer->EndShader(shader_);
 
 		m_renderer->GetRenderState()->Pop();
+	}
+
+	void Rendering()
+	{
+		Rendering(m_renderer->GetCameraProjectionMatrix());
 	}
 };
 
