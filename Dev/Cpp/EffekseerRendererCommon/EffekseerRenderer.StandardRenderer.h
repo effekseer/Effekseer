@@ -18,39 +18,51 @@ namespace EffekseerRenderer
 //
 //----------------------------------------------------------------------------------
 
+struct StandardRendererState
+{
+	bool								DepthTest;
+	bool								DepthWrite;
+	::Effekseer::AlphaBlendType			AlphaBlend;
+	::Effekseer::CullingType			CullingType;
+	::Effekseer::TextureFilterType		TextureFilterType;
+	::Effekseer::TextureWrapType		TextureWrapType;
+	void*								TexturePtr;
+
+	StandardRendererState()
+	{
+		DepthTest = false;
+		DepthWrite = false;
+		AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
+		CullingType = ::Effekseer::CullingType::Front;
+		TextureFilterType = ::Effekseer::TextureFilterType::Nearest;
+		TextureWrapType = ::Effekseer::TextureWrapType::Repeat;
+		TexturePtr = NULL;
+	}
+
+	bool operator != (const StandardRendererState state)
+	{
+		if (DepthTest != state.DepthTest) return false;
+		if (DepthWrite != state.DepthWrite) return false;
+		if (AlphaBlend != state.AlphaBlend) return false;
+		if (CullingType != state.CullingType) return false;
+		if (TextureFilterType != state.TextureFilterType) return false;
+		if (TextureWrapType != state.TextureWrapType) return false;
+		if (TexturePtr != state.TexturePtr) return false;
+		return true;
+	}
+};
+
 template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
 class StandardRenderer
 {
-public:
-	struct State
-	{
-		bool								DepthTest;
-		bool								DepthWrite;
-		::Effekseer::eAlphaBlend			AlphaBlend;
-		::Effekseer::eCullingType			CullingType;
-		::Effekseer::eTextureFilterType		TextureFilterType;
-		::Effekseer::eTextureWrapType		TextureWrapType;
-		void*								TexturePtr;
-
-		State()
-		{
-			DepthTest = false;
-			DepthWrite = false;
-			AlphaBlend = ALPHA_BLEND_OPACITY;
-			CullingType = CULLING_FRONT;
-			TextureFilterType = TEXTURE_FILTER_NEAREST;
-			TextureWrapType = TEXTURE_WRAP_REPEAT;
-			TexturePtr = NULL;
-		}
-	};
 
 private:
 	RENDERER*	m_renderer;
-	SHADER*		m_shader
+	SHADER*		m_shader;
 	SHADER*		m_shader_no_texture;
 	TEXTURE*	m_texture;
 
-	State		m_state;
+	StandardRendererState		m_state;
 
 	int32_t		vertexCount = 0;
 	int32_t		vertexOffsetSize = -1;
@@ -64,7 +76,7 @@ public:
 		m_shader_no_texture = shader_no_texture;
 	}
 
-	void UpdateStateAndRenderingIfRequired(State state)
+	void UpdateStateAndRenderingIfRequired(StandardRendererState state)
 	{
 		if(m_state != state)
 		{
@@ -97,7 +109,13 @@ public:
 		}
 	}
 
+	void ResetAndRenderingIfRequired()
+	{
+		Rendering();
 
+		// •K‚¸ŽŸ‚Ì•`‰æ‚Å‰Šú‰»‚³‚ê‚éB
+		m_state.TexturePtr = (void*)0x1;
+	}
 
 	void Rendering()
 	{
@@ -106,8 +124,8 @@ public:
 		m_renderer->BeginShader(m_shader);
 
 		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();
-		state.DepthTest = m_state.ZTest;
-		state.DepthWrite = m_state.ZWrite;
+		state.DepthTest = m_state.DepthTest;
+		state.DepthWrite = m_state.DepthWrite;
 		state.CullingType = m_state.CullingType;
 
 		SHADER* shader_ = nullptr;
@@ -135,8 +153,8 @@ public:
 		shader_->SetConstantBuffer();
 
 		state.AlphaBlend = m_state.AlphaBlend;
-		state.TextureFilterTypes[0] = m_state.TextureFilter;
-		state.TextureWrapTypes[0] = m_state.TextureWrap;
+		state.TextureFilterTypes[0] = m_state.TextureFilterType;
+		state.TextureWrapTypes[0] = m_state.TextureWrapType;
 
 		m_renderer->GetRenderState()->Update(false);
 

@@ -8,6 +8,7 @@
 #include "EffekseerRendererDX11.Base.h"
 #include "EffekseerRendererDX11.Renderer.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
 
 /* Visual Studio 2008 */
 #if _MSC_VER == 1500
@@ -184,6 +185,10 @@ private:
 	VertexBuffer*		m_vertexBuffer;
 	IndexBuffer*		m_indexBuffer;
 	int32_t				m_squareMaxCount;
+
+	Shader*							m_shader = nullptr;
+	Shader*							m_shader_no_texture = nullptr;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, VertexBuffer>*	m_standardRenderer = nullptr;
 
 	::Effekseer::Vector3D	m_lightDirection;
 	::Effekseer::Color		m_lightColor;
@@ -366,6 +371,8 @@ public:
 		@brief	モデル読込クラスを生成する。
 	*/
 	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, VertexBuffer>* GetStandardRenderer() { return m_standardRenderer; }
 
 	void SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size );
 	void SetVertexBuffer(ID3D11Buffer* vertexBuffer, int32_t size);
