@@ -239,6 +239,16 @@ public:
 		@brief	デバイスロストリセット間でデバイス自体を再構築する際に外部からデバイスを設定する。
 	*/
 	virtual void ChangeDevice( LPDIRECT3DDEVICE9 device ) = 0;
+
+	/**
+	@brief	背景を取得する。
+	*/
+	virtual IDirect3DTexture9* GetBackground() = 0;
+
+	/**
+	@brief	背景を設定する。
+	*/
+	virtual void SetBackground(IDirect3DTexture9* background) = 0;
 };
 
 //----------------------------------------------------------------------------------

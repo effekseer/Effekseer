@@ -208,6 +208,23 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.TextureLoader.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.TrackRenderer.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.VertexBuffer.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingNormal_PS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingNormal_VS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingTexture_PS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingTexture_VS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLighting_PS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLighting_VS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.Shader_PS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.Shader_VS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.StandardNoTexture_Distortion_PS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.StandardNoTexture_PS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.Standard_Distortion_PS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.Standard_PS.h" />
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.Standard_VS.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.DXTK.DDSTextureLoader.cpp" />
@@ -234,6 +251,25 @@
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.TextureLoader.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.TrackRenderer.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.VertexBuffer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_normal_PS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_normal_VS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_PS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_texture_normal_PS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_texture_normal_VS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_texture_PS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_texture_VS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_VS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_PS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_texture_PS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_texture_VS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_VS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\standard_renderer_distortion_PS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\standard_renderer_no_texture_distortion_PS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\standard_renderer_no_texture_PS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\standard_renderer_PS.fx" />
+    <FxCompile Include="EffekseerRenderer\Shader\standard_renderer_VS.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

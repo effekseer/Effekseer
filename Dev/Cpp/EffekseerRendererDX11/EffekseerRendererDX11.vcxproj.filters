@@ -7,6 +7,9 @@
     <Filter Include="EffekseerRendererCommon">
       <UniqueIdentifier>{78d0391b-4390-43ef-b616-5dde6c474cd3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EffekseerRenderer\Shader">
+      <UniqueIdentifier>{6c0eb3da-b732-4c42-9a9b-4e3895271ba5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.h">
@@ -97,6 +100,57 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.StandardRenderer.h">
       <Filter>EffekseerRendererCommon</Filter>
     </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.Shader_VS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLighting_PS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLighting_VS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingNormal_PS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingNormal_VS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingTexture_PS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingTexture_VS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.Standard_Distortion_PS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.Standard_PS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.Standard_VS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.StandardNoTexture_Distortion_PS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.StandardNoTexture_PS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\Shader\EffekseerRenderer.ModelRenderer.Shader_PS.h">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">
@@ -171,5 +225,58 @@
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.PngTextureLoader.cpp">
       <Filter>EffekseerRendererCommon</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_normal_PS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_normal_VS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_PS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_texture_normal_PS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_texture_normal_VS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_texture_PS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_texture_VS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_lighting_VS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_PS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_texture_PS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_texture_VS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\model_renderer_VS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\standard_renderer_distortion_PS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\standard_renderer_no_texture_distortion_PS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\standard_renderer_no_texture_PS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\standard_renderer_PS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="EffekseerRenderer\Shader\standard_renderer_VS.fx">
+      <Filter>EffekseerRenderer\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

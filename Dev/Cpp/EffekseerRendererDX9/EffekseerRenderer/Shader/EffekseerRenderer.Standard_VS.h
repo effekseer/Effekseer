@@ -25,11 +25,13 @@
     mul r0, v0.y, c1
     mad r0, c0, v0.x, r0
     mad r0, c2, v0.z, r0
-    add oPos, r0, c3
+    add r0, r0, c3
+    mov oPos, r0
+    mov oT1, r0
     mov oD0, v1
     mov oT0.xy, v2
 
-// approximately 6 instruction slots used
+// approximately 8 instruction slots used
 #endif
 
 const BYTE g_vs20_VS[] =
@@ -74,8 +76,12 @@ const BYTE g_vs20_VS[] =
      15, 128,   2,   0, 228, 160, 
       0,   0, 170, 144,   0,   0, 
     228, 128,   2,   0,   0,   3, 
-      0,   0,  15, 192,   0,   0, 
+      0,   0,  15, 128,   0,   0, 
     228, 128,   3,   0, 228, 160, 
+      1,   0,   0,   2,   0,   0, 
+     15, 192,   0,   0, 228, 128, 
+      1,   0,   0,   2,   1,   0, 
+     15, 224,   0,   0, 228, 128, 
       1,   0,   0,   2,   0,   0, 
      15, 208,   1,   0, 228, 144, 
       1,   0,   0,   2,   0,   0, 

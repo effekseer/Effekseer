@@ -9,6 +9,8 @@ struct PS_Input
 {
 	float4 Color		: COLOR;
 	float2 UV		: TEXCOORD0;
+
+	float4 Pos		: TEXCOORD1;
 };
 
 
@@ -18,7 +20,7 @@ float4 PS( const PS_Input Input ) : COLOR
 
 	if(Output.a == 0.0f) discard;
 
-	float2 uv = Output.xy;
+	float2 uv = Output.xy + Input.Pos.xy;
 	float3 color = tex2D(g_backSampler, uv);
 	Output.xyz = color;
 

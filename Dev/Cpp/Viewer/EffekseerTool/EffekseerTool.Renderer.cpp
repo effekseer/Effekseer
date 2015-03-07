@@ -525,6 +525,11 @@ void Renderer::LoadBackgroundImage( void* data, int32_t size )
 	if( data != NULL )
 	{
 		D3DXCreateTextureFromFileInMemory( m_renderer->GetDevice(), data, size, &m_backGroundTexture );
+		m_renderer->SetBackground(m_backGroundTexture);
+	}
+	else
+	{
+		m_renderer->SetBackground(nullptr);
 	}
 }
 

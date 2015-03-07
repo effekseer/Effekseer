@@ -149,22 +149,22 @@ public:
 		{
 			if (m_state.TexturePtr != nullptr)
 			{
-				shader_ = m_shader;
+				shader_ = m_shader_distortion;
 			}
 			else
 			{
-				shader_ = m_shader_no_texture;
+				shader_ = m_shader_no_texture_distortion;
 			}
 		}
 		else
 		{
 			if (m_state.TexturePtr != nullptr)
 			{
-				shader_ = m_shader_distortion;
+				shader_ = m_shader;
 			}
 			else
 			{
-				shader_ = m_shader_no_texture_distortion;
+				shader_ = m_shader_no_texture;
 			}
 		}
 

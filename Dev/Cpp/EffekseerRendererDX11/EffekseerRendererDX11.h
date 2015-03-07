@@ -234,6 +234,16 @@ public:
 		@brief	デバイスを取得する。
 	*/
 	virtual ID3D11Device* GetDevice() = 0;
+
+	/**
+	@brief	背景を取得する。
+	*/
+	virtual ID3D11ShaderResourceView* GetBackground() = 0;
+
+	/**
+	@brief	背景を設定する。
+	*/
+	virtual void SetBackground(ID3D11ShaderResourceView* background) = 0;
 };
 
 //----------------------------------------------------------------------------------

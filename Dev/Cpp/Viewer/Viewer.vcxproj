@@ -98,7 +98,7 @@
       <OutputFile>$(TargetPath)</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
       <AdditionalDependencies>Effekseer.Debug.lib;EffekseerRendererDX9.Debug.lib;EffekseerSoundXAudio2.Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -120,7 +120,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
       <AdditionalDependencies>Effekseer.Release.lib;EffekseerRendererDX9.Release.lib;EffekseerSoundXAudio2.Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -144,7 +144,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
       <AdditionalDependencies>Effekseer.Release.lib;EffekseerRendererDX9.Release.lib;EffekseerSoundXAudio2.Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -165,7 +165,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
       <AdditionalDependencies>Effekseer.Debug.lib;EffekseerRendererDX9.Debug.lib;EffekseerSoundXAudio2.Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>

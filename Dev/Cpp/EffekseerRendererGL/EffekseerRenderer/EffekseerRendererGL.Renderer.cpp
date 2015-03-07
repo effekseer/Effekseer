@@ -45,13 +45,18 @@ namespace EffekseerRendererGL
 		"attribute vec4 atPosition;\n"
 		"attribute vec4 atColor;\n"
 		"attribute vec4 atTexCoord;\n"
+
 		"varying vec4 vaColor;\n"
 		"varying vec4 vaTexCoord;\n"
+		"varying vec4 vaPos;\n"
+
 		"uniform mat4 uMatProjection;\n"
+
 		"void main() {\n"
 		"	gl_Position = uMatProjection * atPosition;\n"
 		"	vaColor = atColor;\n"
 		"	vaTexCoord = atTexCoord;\n"
+		"	vaPos = gl_Position;\n"
 		"}\n";
 
 	static const char g_sprite_fs_texture_src[] =
@@ -65,8 +70,10 @@ namespace EffekseerRendererGL
 #endif
 		"varying lowp vec4 vaColor;\n"
 		"varying mediump vec4 vaTexCoord;\n"
+		"varying mediump vec4 vaPos;\n"
+
 		"uniform sampler2D uTexture0;\n"
-		"uniform bool uTexEnable;\n"
+
 		"void main() {\n"
 		"gl_FragColor = vaColor * texture2D(uTexture0, vaTexCoord.xy);\n"
 		"}\n";
@@ -82,8 +89,8 @@ namespace EffekseerRendererGL
 #endif
 		"varying lowp vec4 vaColor;\n"
 		"varying mediump vec4 vaTexCoord;\n"
-		"uniform sampler2D uTexture0;\n"
-		"uniform bool uTexEnable;\n"
+		"varying mediump vec4 vaPos;\n"
+
 		"void main() {\n"
 		"gl_FragColor = vaColor;\n"
 		"}\n";
