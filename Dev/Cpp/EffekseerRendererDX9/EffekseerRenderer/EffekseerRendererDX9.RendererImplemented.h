@@ -143,6 +143,10 @@ private:
 
 	Shader*							m_shader = nullptr;
 	Shader*							m_shader_no_texture = nullptr;
+
+	Shader*							m_shader_distortion = nullptr;
+	Shader*							m_shader_no_texture_distortion = nullptr;
+
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex>*	m_standardRenderer = nullptr;
 
 
@@ -158,6 +162,8 @@ private:
 	::Effekseer::CoordinateSystem		m_coordinateSystem;
 
 	::EffekseerRenderer::RenderStateBase*			m_renderState;
+
+	IDirect3DTexture9*					m_background = nullptr;
 
 	std::set<DeviceObject*>	m_deviceObjects;
 
@@ -351,6 +357,16 @@ public:
 		@brief	ƒ‚ƒfƒ‹“ÇƒNƒ‰ƒX‚ğ¶¬‚·‚éB
 	*/
 	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+
+	/**
+	@brief	”wŒi‚ğæ“¾‚·‚éB
+	*/
+	IDirect3DTexture9* GetBackground() override { return m_background; }
+
+	/**
+	@brief	”wŒi‚ğİ’è‚·‚éB
+	*/
+	void SetBackground(IDirect3DTexture9* background) override;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex>* GetStandardRenderer() { return m_standardRenderer; }
 

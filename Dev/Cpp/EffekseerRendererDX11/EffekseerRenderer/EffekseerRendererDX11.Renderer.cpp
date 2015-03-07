@@ -52,6 +52,24 @@ namespace StandardNoTexture_PS
 #include "Shader/EffekseerRenderer.StandardNoTexture_PS.h"
 }
 
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+namespace Standard_Distortion_PS
+{
+	static
+#include "Shader/EffekseerRenderer.Standard_Distortion_PS.h"
+}
+
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+namespace StandardNoTexture_Distortion_PS
+{
+	static
+#include "Shader/EffekseerRenderer.StandardNoTexture_Distortion_PS.h"
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -215,9 +233,14 @@ RendererImplemented::~RendererImplemented()
 
 	assert( m_reference == 0 );
 
+	ES_SAFE_RELEASE(m_background);
+
 	ES_SAFE_DELETE(m_standardRenderer);
 	ES_SAFE_DELETE(m_shader);
 	ES_SAFE_DELETE(m_shader_no_texture);
+
+	ES_SAFE_DELETE(m_shader_distortion);
+	ES_SAFE_DELETE(m_shader_no_texture_distortion);
 
 	ES_SAFE_DELETE( m_state );
 
@@ -225,7 +248,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
 
-	assert( m_reference == -4 );
+	assert( m_reference == -6 );
 }
 
 //----------------------------------------------------------------------------------
@@ -334,12 +357,47 @@ bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext*
 	// 参照カウントの調整
 	Release();
 
+	m_shader_distortion = Shader::Create(
+		this,
+		Standard_VS::g_VS,
+		sizeof(Standard_VS::g_VS),
+		Standard_Distortion_PS::g_PS,
+		sizeof(Standard_Distortion_PS::g_PS),
+		"StandardRenderer Distortion", decl, ARRAYSIZE(decl));
+	if (m_shader_distortion == NULL) return false;
+
+	// 参照カウントの調整
+	Release();
+
+	m_shader_no_texture_distortion = Shader::Create(
+		this,
+		Standard_VS::g_VS,
+		sizeof(Standard_VS::g_VS),
+		StandardNoTexture_Distortion_PS::g_PS,
+		sizeof(StandardNoTexture_Distortion_PS::g_PS),
+		"StandardRenderer No Texture Distortion",
+		decl, ARRAYSIZE(decl));
+
+	if (m_shader_no_texture_distortion == NULL)
+	{
+		return false;
+	}
+
+	// 参照カウントの調整
+	Release();
+
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
 	m_shader->SetVertexRegisterCount(4);
 	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
 	m_shader_no_texture->SetVertexRegisterCount(4);
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex>(this, m_shader, m_shader_no_texture);
+	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
+	m_shader_distortion->SetVertexRegisterCount(4);
+	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
+	m_shader_no_texture_distortion->SetVertexRegisterCount(4);
+
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex>(
+		this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
 	return true;
 }
@@ -626,6 +684,13 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 #else
 	return NULL;
 #endif
+}
+
+void RendererImplemented::SetBackground(ID3D11ShaderResourceView* background)
+{
+	ES_SAFE_ADDREF(background);
+	ES_SAFE_RELEASE(m_background);
+	m_background = background;
 }
 
 //----------------------------------------------------------------------------------

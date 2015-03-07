@@ -188,6 +188,10 @@ private:
 
 	Shader*							m_shader = nullptr;
 	Shader*							m_shader_no_texture = nullptr;
+
+	Shader*							m_shader_distortion = nullptr;
+	Shader*							m_shader_no_texture_distortion = nullptr;
+
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex>*	m_standardRenderer = nullptr;
 
 	::Effekseer::Vector3D	m_lightDirection;
@@ -202,6 +206,8 @@ private:
 	::Effekseer::CoordinateSystem		m_coordinateSystem;
 
 	::EffekseerRenderer::RenderStateBase*			m_renderState;
+
+	ID3D11ShaderResourceView*			m_background = nullptr;
 
 	std::set<DeviceObject*>	m_deviceObjects;
 
@@ -371,6 +377,16 @@ public:
 		@brief	ƒ‚ƒfƒ‹“ÇƒNƒ‰ƒX‚ğ¶¬‚·‚éB
 	*/
 	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+
+	/**
+	@brief	”wŒi‚ğæ“¾‚·‚éB
+	*/
+	ID3D11ShaderResourceView* GetBackground() override { return m_background; }
+
+	/**
+		@brief	”wŒi‚ğİ’è‚·‚éB
+	*/
+	void SetBackground(ID3D11ShaderResourceView* background) override;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex>* GetStandardRenderer() { return m_standardRenderer; }
 

@@ -60,6 +60,10 @@ private:
 	RENDERER*	m_renderer;
 	SHADER*		m_shader;
 	SHADER*		m_shader_no_texture;
+
+	SHADER*		m_shader_distortion;
+	SHADER*		m_shader_no_texture_distortion;
+
 	TEXTURE*	m_texture;
 
 	StandardRendererState		m_state;
@@ -69,11 +73,13 @@ private:
 
 public:
 
-	StandardRenderer(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture)
+	StandardRenderer(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, SHADER* shader_distortion, SHADER* shader_no_texture_distortion)
 	{
 		m_renderer = renderer;
 		m_shader = shader;
 		m_shader_no_texture = shader_no_texture;
+		m_shader_distortion = shader_distortion;
+		m_shader_no_texture_distortion = shader_no_texture_distortion;
 
 		vertexCaches.reserve(m_renderer->GetVertexBuffer()->GetMaxSize());
 		vertexCacheMaxSize = m_renderer->GetVertexBuffer()->GetMaxSize();
@@ -136,26 +142,53 @@ public:
 		state.CullingType = m_state.CullingType;
 
 		SHADER* shader_ = nullptr;
-		if (m_state.TexturePtr != nullptr)
+
+		bool distortion = false;
+
+		if (distortion)
 		{
-			shader_ = m_shader;
+			if (m_state.TexturePtr != nullptr)
+			{
+				shader_ = m_shader;
+			}
+			else
+			{
+				shader_ = m_shader_no_texture;
+			}
 		}
 		else
 		{
-			shader_ = m_shader_no_texture;
+			if (m_state.TexturePtr != nullptr)
+			{
+				shader_ = m_shader_distortion;
+			}
+			else
+			{
+				shader_ = m_shader_no_texture_distortion;
+			}
 		}
 
 		m_renderer->BeginShader(shader_);
 
+		TEXTURE textures[2];
+
 		if (m_state.TexturePtr != nullptr)
 		{
-			TEXTURE texture = TexturePointerToTexture<TEXTURE>(m_state.TexturePtr);
-			m_renderer->SetTextures(shader_, &texture, 1);
+			textures[0] = TexturePointerToTexture<TEXTURE>(m_state.TexturePtr);
 		}
 		else
 		{
-			TEXTURE texture = 0;
-			m_renderer->SetTextures(shader_, &texture, 1);
+			textures[0] = 0;
+		}
+
+		if (distortion)
+		{
+			textures[1] = m_renderer->GetBackground();
+			m_renderer->SetTextures(shader_, textures, 2);
+		}
+		else
+		{
+			m_renderer->SetTextures(shader_, textures, 1);
 		}
 
 		((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] =cvp;

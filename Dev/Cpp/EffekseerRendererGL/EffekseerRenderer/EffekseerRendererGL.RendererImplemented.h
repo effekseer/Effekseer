@@ -173,6 +173,8 @@ private:
 
 	::EffekseerRenderer::RenderStateBase*		m_renderState;
 
+	GLuint					m_background = 0;
+
 	std::set<DeviceObject*>	m_deviceObjects;
 
 	// ステート保存用
@@ -336,6 +338,16 @@ public:
 		@brief	モデル読込クラスを生成する。
 	*/
 	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+
+	/**
+	@brief	背景を取得する。
+	*/
+	GLuint GetBackground() override { return m_background; }
+
+	/**
+	@brief	背景を設定する。
+	*/
+	void SetBackground(GLuint background) override;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex>* GetStandardRenderer() { return m_standardRenderer; }
 
