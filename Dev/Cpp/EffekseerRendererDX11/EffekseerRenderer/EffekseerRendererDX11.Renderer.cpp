@@ -233,6 +233,8 @@ RendererImplemented::~RendererImplemented()
 
 	assert( m_reference == 0 );
 
+	ES_SAFE_DELETE(m_distortingCallback);
+
 	ES_SAFE_RELEASE(m_background);
 
 	ES_SAFE_DELETE(m_standardRenderer);
@@ -691,6 +693,17 @@ void RendererImplemented::SetBackground(ID3D11ShaderResourceView* background)
 	ES_SAFE_ADDREF(background);
 	ES_SAFE_RELEASE(m_background);
 	m_background = background;
+}
+
+EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
+{
+	return m_distortingCallback;
+}
+
+void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
+{
+	ES_SAFE_DELETE(m_distortingCallback);
+	m_distortingCallback = callback;
 }
 
 //----------------------------------------------------------------------------------

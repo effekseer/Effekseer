@@ -189,6 +189,8 @@ private:
 
 	bool	m_restorationOfStates;
 
+	EffekseerRenderer::DistortingCallback* m_distortingCallback = nullptr;
+
 	/* 現在設定されているテクスチャ */
 	std::vector<GLuint>	m_currentTextures;
 
@@ -355,6 +357,10 @@ public:
 	@brief	背景を設定する。
 	*/
 	void SetBackground(GLuint background) override;
+
+	EffekseerRenderer::DistortingCallback* GetDistortingCallback() override;
+
+	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex>* GetStandardRenderer() { return m_standardRenderer; }
 

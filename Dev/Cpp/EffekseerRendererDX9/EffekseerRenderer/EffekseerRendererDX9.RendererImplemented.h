@@ -201,6 +201,8 @@ private:
 
 	bool	m_restorationOfStates;
 
+	EffekseerRenderer::DistortingCallback* m_distortingCallback = nullptr;
+
 public:
 	/**
 		@brief	コンストラクタ
@@ -367,6 +369,10 @@ public:
 	@brief	背景を設定する。
 	*/
 	void SetBackground(IDirect3DTexture9* background) override;
+
+	EffekseerRenderer::DistortingCallback* GetDistortingCallback() override;
+
+	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex>* GetStandardRenderer() { return m_standardRenderer; }
 

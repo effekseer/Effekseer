@@ -251,6 +251,8 @@ RendererImplemented::~RendererImplemented()
 
 	assert( m_reference == 0 );
 
+	ES_SAFE_DELETE(m_distortingCallback);
+
 	ES_SAFE_DELETE(m_standardRenderer);
 	ES_SAFE_DELETE(m_shader);
 	ES_SAFE_DELETE(m_shader_no_texture);
@@ -764,6 +766,17 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 void RendererImplemented::SetBackground(GLuint background)
 {
 	m_background = background;
+}
+
+EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
+{
+	return m_distortingCallback;
+}
+
+void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
+{
+	ES_SAFE_DELETE(m_distortingCallback);
+	m_distortingCallback = callback;
 }
 
 //----------------------------------------------------------------------------------

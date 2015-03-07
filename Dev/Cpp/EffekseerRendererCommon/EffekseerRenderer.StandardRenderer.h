@@ -125,6 +125,15 @@ public:
 	{
 		if (vertexCaches.size() == 0) return;
 
+		if (m_state.Distortion)
+		{
+			auto callback = m_renderer->GetDistortingCallback();
+			if (callback != nullptr)
+			{
+				callback->OnDistorting();
+			}
+		}
+
 		if (m_state.Distortion && m_renderer->GetBackground() == 0)
 		{
 			vertexCaches.clear();
