@@ -71,15 +71,6 @@ void SpriteRenderer::EndRendering( const efkSpriteNodeParam& parameter, void* us
 
 	if( m_spriteCount == 0 ) return;
 
-	if( parameter.ColorTextureIndex >= 0 )
-	{
-		m_renderer->SetVertexArray(m_vao.get());
-	}
-	else
-	{
-		m_renderer->SetVertexArray(m_vao_no_texture.get());
-	}
-
 	EndRendering_<RendererImplemented, Shader, GLuint, Vertex>(m_renderer, parameter);
 }
 

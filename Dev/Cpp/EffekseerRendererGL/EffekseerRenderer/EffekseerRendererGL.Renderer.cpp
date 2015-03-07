@@ -142,10 +142,13 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_shader);
 	ES_SAFE_DELETE(m_shader_no_texture);
 
+	ES_SAFE_DELETE(m_vao);
+	ES_SAFE_DELETE(m_vao_no_texture);
+
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
-	assert( m_reference == -2 );
+	assert( m_reference == -6 );
 }
 
 //----------------------------------------------------------------------------------
@@ -275,8 +278,8 @@ bool RendererImplemented::Initialize()
 		0
 		);
 
-	m_vao.reset(VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer()));
-	m_vao_no_texture.reset(VertexArray::Create(this, m_shader_no_texture, GetVertexBuffer(), GetIndexBuffer()));
+	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer());
+	m_vao_no_texture = VertexArray::Create(this, m_shader_no_texture, GetVertexBuffer(), GetIndexBuffer());
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, VertexBuffer>(this, m_shader, m_shader_no_texture);
 
@@ -348,6 +351,9 @@ bool RendererImplemented::BeginRendering()
 	m_renderState->Update( true );
 	m_currentTextures.clear();
 
+	// レンダラーリセット
+	m_standardRenderer->ResetAndRenderingIfRequired();
+
 	GLCheckError();
 
 	return true;
@@ -359,6 +365,9 @@ bool RendererImplemented::BeginRendering()
 bool RendererImplemented::EndRendering()
 {
 	GLCheckError();
+
+	// レンダラーリセット
+	m_standardRenderer->ResetAndRenderingIfRequired();
 
 	// ステートを復元する
 	if(m_restorationOfStates)
@@ -664,6 +673,16 @@ void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 void RendererImplemented::BeginShader(Shader* shader)
 {
 	GLCheckError();
+
+	// VAOの切り替え
+	if (shader == m_shader)
+	{
+		SetVertexArray(m_vao);
+	}
+	else if (shader == m_shader_no_texture)
+	{
+		SetVertexArray(m_vao_no_texture);
+	}
 
 	shader->BeginScene();
 

@@ -65,7 +65,7 @@ protected:
 
 		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
 
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count, m_ringBufferOffset, (void*&) m_ringBufferData);
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * 4, m_ringBufferOffset, (void*&) m_ringBufferData);
 		m_spriteCount = 0;
 	}
 

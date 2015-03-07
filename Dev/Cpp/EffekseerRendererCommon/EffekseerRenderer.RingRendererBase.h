@@ -328,6 +328,8 @@ protected:
 	{
 		if (m_instanceCount == 1)
 		{
+			renderer->GetVertexBuffer()->Unlock();
+
 			SHADER* shader_ = NULL;
 			if (param.ColorTextureIndex >= 0)
 			{

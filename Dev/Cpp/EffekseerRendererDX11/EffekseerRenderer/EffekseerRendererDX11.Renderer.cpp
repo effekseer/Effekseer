@@ -224,7 +224,8 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
-	assert( m_reference == -2 );
+
+	assert( m_reference == -4 );
 }
 
 //----------------------------------------------------------------------------------
@@ -338,7 +339,7 @@ bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext*
 	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
 	m_shader_no_texture->SetVertexRegisterCount(4);
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, VertexBuffer>(this, m_shader, m_shader_no_texture);
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex>(this, m_shader, m_shader_no_texture);
 
 	return true;
 }

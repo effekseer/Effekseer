@@ -351,6 +351,9 @@ bool RendererImplemented::BeginRendering()
 	GetDevice()->SetRenderState( D3DRS_ALPHATESTENABLE, TRUE );
 	GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
 
+	// レンダラーリセット
+	m_standardRenderer->ResetAndRenderingIfRequired();
+
 	return true;
 }
 
@@ -361,6 +364,9 @@ bool RendererImplemented::EndRendering()
 {
 	assert( m_d3d_device != NULL );
 	
+	// レンダラーリセット
+	m_standardRenderer->ResetAndRenderingIfRequired();
+
 	// ステートを復元する
 	if(m_restorationOfStates)
 	{

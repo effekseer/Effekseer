@@ -64,8 +64,6 @@ void RibbonRenderer::EndRendering( const efkRibbonNodeParam& parameter, void* us
 {
 	if( m_ringBufferData == NULL ) return;
 
-	m_renderer->GetVertexBuffer()->Unlock();
-
 	if( m_ribbonCount <= 1 ) return;
 
 	EndRendering_<RendererImplemented, ID3D11ShaderResourceView*, Vertex>(m_renderer, parameter);

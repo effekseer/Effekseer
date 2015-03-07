@@ -143,7 +143,7 @@ private:
 
 	Shader*							m_shader = nullptr;
 	Shader*							m_shader_no_texture = nullptr;
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, VertexBuffer>*	m_standardRenderer = nullptr;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex>*	m_standardRenderer = nullptr;
 
 
 	::Effekseer::Vector3D	m_lightDirection;
@@ -352,7 +352,7 @@ public:
 	*/
 	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL );
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, VertexBuffer>* GetStandardRenderer() { return m_standardRenderer; }
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex>* GetStandardRenderer() { return m_standardRenderer; }
 
 	void SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size );
 	void SetVertexBuffer(IDirect3DVertexBuffer9* vertexBuffer, int32_t size);

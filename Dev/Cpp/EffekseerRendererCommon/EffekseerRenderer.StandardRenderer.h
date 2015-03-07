@@ -64,8 +64,8 @@ private:
 
 	StandardRendererState		m_state;
 
-	int32_t		vertexCount = 0;
-	int32_t		vertexOffsetSize = -1;
+	std::vector<uint8_t>		vertexCaches;
+	int32_t						vertexCacheMaxSize = 0;
 
 public:
 
@@ -74,6 +74,9 @@ public:
 		m_renderer = renderer;
 		m_shader = shader;
 		m_shader_no_texture = shader_no_texture;
+
+		vertexCaches.reserve(m_renderer->GetVertexBuffer()->GetMaxSize());
+		vertexCacheMaxSize = m_renderer->GetVertexBuffer()->GetMaxSize();
 	}
 
 	void UpdateStateAndRenderingIfRequired(StandardRendererState state)
@@ -88,25 +91,16 @@ public:
 
 	void BeginRenderingAndRenderingIfRequired(int32_t count, int32_t& offset, void*& data)
 	{
-		VertexBufferBase* vb = m_renderer->GetVertexBuffer();
-
-		if (vb->TryRingBufferLock(count * sizeof(VERTEX), offset, data))
-		{
-			
-		}
-		else
+		if (count * sizeof(VERTEX) + vertexCaches.size() > vertexCacheMaxSize)
 		{
 			Rendering();
-
-			vb->RingBufferLock(count * sizeof(VERTEX), offset, data);
 		}
 
-		vertexCount += count;
-		
-		if (vertexOffsetSize < 0)
-		{
-			vertexOffsetSize = offset;
-		}
+		auto old = vertexCaches.size();
+		vertexCaches.resize(count * sizeof(VERTEX) + vertexCaches.size());
+
+		offset = old;
+		data = (vertexCaches.data() + old);
 	}
 
 	void ResetAndRenderingIfRequired()
@@ -119,9 +113,22 @@ public:
 
 	void Rendering()
 	{
-		if (vertexCount == 0) return;
+		if (vertexCaches.size() == 0) return;
 
-		m_renderer->BeginShader(m_shader);
+		int32_t vertexSize = vertexCaches.size();
+		int32_t offsetSize = 0;
+		{
+			VertexBufferBase* vb = m_renderer->GetVertexBuffer();
+
+			void* data = nullptr;
+
+			vb->RingBufferLock(vertexCaches.size(), offsetSize, data);
+			
+			memcpy(data, vertexCaches.data(), vertexCaches.size());
+			vertexCaches.clear();
+
+			vb->Unlock();
+		}
 
 		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();
 		state.DepthTest = m_state.DepthTest;
@@ -137,6 +144,8 @@ public:
 		{
 			shader_ = m_shader_no_texture;
 		}
+
+		m_renderer->BeginShader(shader_);
 
 		if (m_state.TexturePtr != nullptr)
 		{
@@ -161,14 +170,11 @@ public:
 		m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), sizeof(VERTEX));
 		m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
 		m_renderer->SetLayout(shader_);
-		m_renderer->DrawSprites(vertexCount, vertexOffsetSize / sizeof(VERTEX));
+		m_renderer->DrawSprites(vertexSize / sizeof(VERTEX) / 4, offsetSize / sizeof(VERTEX));
 
 		m_renderer->EndShader(shader_);
 
 		m_renderer->GetRenderState()->Pop();
-
-		vertexCount = 0;
-		vertexOffsetSize = -1;
 	}
 };
 
