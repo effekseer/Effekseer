@@ -167,8 +167,6 @@ void RingRenderer::Rendering( const efkRingNodeParam& parameter, const efkRingIn
 //----------------------------------------------------------------------------------
 void RingRenderer::EndRendering( const efkRingNodeParam& parameter, void* userData )
 {
-	m_renderer->GetVertexBuffer()->Unlock();
-
 	if( m_spriteCount == 0 ) return;
 	
 	if (parameter.ColorTextureIndex >= 0)

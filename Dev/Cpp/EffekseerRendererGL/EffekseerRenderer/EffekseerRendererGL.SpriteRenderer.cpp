@@ -67,8 +67,6 @@ void SpriteRenderer::EndRendering( const efkSpriteNodeParam& parameter, void* us
 {
 	if( m_ringBufferData == NULL ) return;
 
-	m_renderer->GetVertexBuffer()->Unlock();
-
 	if( m_spriteCount == 0 ) return;
 
 	EndRendering_<RendererImplemented, Shader, GLuint, Vertex>(m_renderer, parameter);

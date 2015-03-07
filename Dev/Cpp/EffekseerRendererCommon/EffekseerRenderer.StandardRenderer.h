@@ -41,14 +41,14 @@ struct StandardRendererState
 
 	bool operator != (const StandardRendererState state)
 	{
-		if (DepthTest != state.DepthTest) return false;
-		if (DepthWrite != state.DepthWrite) return false;
-		if (AlphaBlend != state.AlphaBlend) return false;
-		if (CullingType != state.CullingType) return false;
-		if (TextureFilterType != state.TextureFilterType) return false;
-		if (TextureWrapType != state.TextureWrapType) return false;
-		if (TexturePtr != state.TexturePtr) return false;
-		return true;
+		if (DepthTest != state.DepthTest) return true;
+		if (DepthWrite != state.DepthWrite) return true;
+		if (AlphaBlend != state.AlphaBlend) return true;
+		if (CullingType != state.CullingType) return true;
+		if (TextureFilterType != state.TextureFilterType) return true;
+		if (TextureWrapType != state.TextureWrapType) return true;
+		if (TexturePtr != state.TexturePtr) return true;
+		return false;
 	}
 };
 

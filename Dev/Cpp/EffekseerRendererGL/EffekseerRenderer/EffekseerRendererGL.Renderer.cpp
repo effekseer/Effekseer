@@ -281,7 +281,7 @@ bool RendererImplemented::Initialize()
 	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer());
 	m_vao_no_texture = VertexArray::Create(this, m_shader_no_texture, GetVertexBuffer(), GetIndexBuffer());
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, VertexBuffer>(this, m_shader, m_shader_no_texture);
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex>(this, m_shader, m_shader_no_texture);
 
 	return true;
 }

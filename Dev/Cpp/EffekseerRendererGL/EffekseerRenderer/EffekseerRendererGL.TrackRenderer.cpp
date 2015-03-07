@@ -63,8 +63,6 @@ void TrackRenderer::EndRendering(const efkTrackNodeParam& parameter, void* userD
 {
 	if (m_ringBufferData == NULL) return;
 
-	m_renderer->GetVertexBuffer()->Unlock();
-
 	if (m_ribbonCount <= 1) return;
 
 	EndRendering_<RendererImplemented, GLuint, Vertex>(m_renderer, parameter);

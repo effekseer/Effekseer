@@ -83,7 +83,7 @@ protected:
 			}
 
 			renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
-			renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
+			renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
 		}
 		
 	}

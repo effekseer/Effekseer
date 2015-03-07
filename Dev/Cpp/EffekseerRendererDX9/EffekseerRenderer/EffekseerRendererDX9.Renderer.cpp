@@ -117,7 +117,7 @@ RendererImplemented::~RendererImplemented()
 	
 	//ES_SAFE_RELEASE( m_d3d_device );
 
-	assert( m_reference == -2 );
+	assert( m_reference == -4 );
 }
 
 //----------------------------------------------------------------------------------
@@ -254,7 +254,7 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
 	m_shader_no_texture->SetVertexRegisterCount(4);
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, VertexBuffer>(this, m_shader, m_shader_no_texture);
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex>(this, m_shader, m_shader_no_texture);
 
 	//ES_SAFE_ADDREF( m_d3d_device );
 	return true;

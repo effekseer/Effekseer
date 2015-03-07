@@ -64,8 +64,6 @@ void TrackRenderer::EndRendering( const efkTrackNodeParam& parameter, void* user
 {
 	if( m_ringBufferData == NULL ) return;
 
-	m_renderer->GetVertexBuffer()->Unlock();
-
 	if( m_ribbonCount <= 1 ) return;
 
 	EndRendering_<RendererImplemented, IDirect3DTexture9*, Vertex>(m_renderer, parameter);
