@@ -322,9 +322,9 @@ protected:
 		if (m_instanceCount == 1)
 		{
 			::Effekseer::Matrix44 mat;
-			::Effekseer::Matrix44::Mul(mat, m_singleRenderingMatrix, renderer->GetCameraProjectionMatrix());
+			::Effekseer::Matrix44::Mul(mat, m_singleRenderingMatrix, renderer->GetCameraMatrix());
 
-			renderer->GetStandardRenderer()->Rendering(mat);
+			renderer->GetStandardRenderer()->Rendering(mat, renderer->GetProjectionMatrix());
 		}
 	}
 };

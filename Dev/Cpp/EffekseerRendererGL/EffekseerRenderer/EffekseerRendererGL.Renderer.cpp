@@ -34,7 +34,7 @@ namespace EffekseerRendererGL
 	//-----------------------------------------------------------------------------------
 	//
 	//-----------------------------------------------------------------------------------
-	static const char g_sprite_vs_src[] =
+	static const char g_sprite_vs_src [] =
 #if defined(__EFFEKSEER_RENDERER_GLES2__)
 #else
 		"#version 110\n"
@@ -42,22 +42,30 @@ namespace EffekseerRendererGL
 		"#define mediump\n"
 		"#define highp\n"
 #endif
-		"attribute vec4 atPosition;\n"
-		"attribute vec4 atColor;\n"
-		"attribute vec4 atTexCoord;\n"
 
-		"varying vec4 vaColor;\n"
-		"varying vec4 vaTexCoord;\n"
-		"varying vec4 vaPos;\n"
+		R"(
+attribute vec4 atPosition;
+attribute vec4 atColor;
+attribute vec4 atTexCoord;
+)"
 
-		"uniform mat4 uMatProjection;\n"
+		R"(
+varying vec4 vaColor;
+varying vec4 vaTexCoord;
+varying vec4 vaPos;
+)"
+		R"(
+uniform mat4 uMatCamera;
+uniform mat4 uMatProjection;
 
-		"void main() {\n"
-		"	gl_Position = uMatProjection * atPosition;\n"
-		"	vaColor = atColor;\n"
-		"	vaTexCoord = atTexCoord;\n"
-		"	vaPos = gl_Position;\n"
-		"}\n";
+void main() {
+	gl_Position = uMatProjection * uMatCamera * atPosition;
+	vaColor = atColor;
+	vaTexCoord = atTexCoord;
+	vaPos = gl_Position;
+}
+
+)";
 
 	static const char g_sprite_fs_texture_src[] =
 #if defined(__EFFEKSEER_RENDERER_GLES2__)
@@ -267,22 +275,36 @@ bool RendererImplemented::Initialize()
 	// ’¸“_‘®«ID‚ðŽæ“¾
 	m_shader->GetAttribIdList(3, sprite_attribs);
 	m_shader->SetVertexSize(sizeof(Vertex));
-	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
+	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	
+	m_shader->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader->GetUniformId("uMatCamera"),
+		0
+		);
+
 	m_shader->AddVertexConstantLayout(
 		CONSTANT_TYPE_MATRIX44,
 		m_shader->GetUniformId("uMatProjection"),
-		0
+		sizeof(Effekseer::Matrix44)
 		);
 
 	m_shader->SetTextureSlot(0, m_shader->GetUniformId("uTexture0"));
 
 	m_shader_no_texture->GetAttribIdList(3, sprite_attribs);
 	m_shader_no_texture->SetVertexSize(sizeof(Vertex));
-	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
+	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	
+	m_shader_no_texture->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader_no_texture->GetUniformId("uMatCamera"),
+		0
+		);
+
 	m_shader_no_texture->AddVertexConstantLayout(
 		CONSTANT_TYPE_MATRIX44,
 		m_shader_no_texture->GetUniformId("uMatProjection"),
-		0
+		sizeof(Effekseer::Matrix44)
 		);
 
 	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer());

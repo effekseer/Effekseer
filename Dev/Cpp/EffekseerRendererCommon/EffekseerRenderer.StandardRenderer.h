@@ -121,9 +121,15 @@ public:
 		m_state.TexturePtr = (void*)0x1;
 	}
 
-	void Rendering(const Effekseer::Matrix44& cvp)
+	void Rendering(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj)
 	{
 		if (vertexCaches.size() == 0) return;
+
+		if (m_state.Distortion && m_renderer->GetBackground() == 0)
+		{
+			vertexCaches.clear();
+			return;
+		}
 
 		int32_t vertexSize = vertexCaches.size();
 		int32_t offsetSize = 0;
@@ -195,7 +201,9 @@ public:
 			m_renderer->SetTextures(shader_, textures, 1);
 		}
 
-		((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] =cvp;
+		((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] = mCamera;
+		((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[1] = mProj;
+
 		shader_->SetConstantBuffer();
 
 		state.AlphaBlend = m_state.AlphaBlend;
@@ -216,7 +224,7 @@ public:
 
 	void Rendering()
 	{
-		Rendering(m_renderer->GetCameraProjectionMatrix());
+		Rendering(m_renderer->GetCameraMatrix(), m_renderer->GetProjectionMatrix());
 	}
 };
 

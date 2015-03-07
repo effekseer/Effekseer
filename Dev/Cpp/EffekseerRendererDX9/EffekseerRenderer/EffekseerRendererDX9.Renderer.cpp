@@ -301,15 +301,15 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 	// 参照カウントの調整
 	Release();
 
-	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
-	m_shader->SetVertexRegisterCount(4);
-	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
-	m_shader_no_texture->SetVertexRegisterCount(4);
+	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader->SetVertexRegisterCount(8);
+	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader_no_texture->SetVertexRegisterCount(8);
 
-	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
-	m_shader_distortion->SetVertexRegisterCount(4);
-	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
-	m_shader_no_texture_distortion->SetVertexRegisterCount(4);
+	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader_distortion->SetVertexRegisterCount(8);
+	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader_no_texture_distortion->SetVertexRegisterCount(8);
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex>(
 		this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
