@@ -95,8 +95,6 @@ public:
 	static ModelRenderer* Create( RendererImplemented* renderer );
 
 public:
-	void BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData);
-
 	void EndRendering( const efkModelNodeParam& parameter, void* userData );
 };
 //----------------------------------------------------------------------------------

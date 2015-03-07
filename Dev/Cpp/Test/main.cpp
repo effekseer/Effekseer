@@ -15,9 +15,9 @@
 #if _WIN32
 
 #if _DEBUG
-#pragma comment(lib, "x86/Effekseer.Debug.lib" )
+#pragma comment(lib, "Effekseer.Debug.lib" )
 #else
-#pragma comment(lib, "x86/Effekseer.Release.lib" )
+#pragma comment(lib, "Effekseer.Release.lib" )
 #endif
 
 #else

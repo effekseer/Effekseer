@@ -43,9 +43,8 @@ public:
 protected:
 
 	template<typename VERTEX, typename RENDERER>
-	void BeginRendering_( RENDERER* renderer, const efkTrackNodeParam& param, int32_t count, void* userData )
+	void BeginRendering_( RENDERER* renderer, const efkTrackNodeParam& parameter, int32_t count, void* userData )
 	{
-		/*
 		m_ribbonCount = 0;
 		
 		int32_t vertexCount = (count - 1) * 8;
@@ -55,32 +54,6 @@ protected:
 			m_ringBufferOffset = 0;
 			m_ringBufferData = NULL;
 		}
-		*/
-
-		m_ribbonCount = 0;
-		int32_t vertexCount = (count - 1) * 4;
-		if (vertexCount <= 0) return;
-
-		EffekseerRenderer::StandardRendererState state;
-		state.AlphaBlend = param.AlphaBlend;
-		state.CullingType = ::Effekseer::CullingType::Double;
-		state.DepthTest = param.ZTest;
-		state.DepthWrite = param.ZWrite;
-		state.TextureFilterType = param.TextureFilter;
-		state.TextureWrapType = param.TextureWrap;
-
-		if (param.ColorTextureIndex >= 0)
-		{
-			state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
-		}
-		else
-		{
-			state.TexturePtr = nullptr;
-		}
-
-		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
-
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
 	}
 
 	template<typename VERTEX>
@@ -329,10 +302,9 @@ protected:
 		}
 	}
 
-	template<typename RENDERER, typename TEXTURE, typename VERTEX>
-	void EndRendering_(RENDERER* renderer, const efkTrackNodeParam& param)
+	template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
+	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkTrackNodeParam& param)
 	{
-		/*
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
@@ -379,7 +351,6 @@ protected:
 		renderer->EndShader(shader_);
 
 		renderer->GetRenderState()->Pop();
-		*/
 	}
 };
 //----------------------------------------------------------------------------------

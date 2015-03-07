@@ -26,6 +26,16 @@ ModelRendererBase::~ModelRendererBase()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+void ModelRendererBase::BeginRendering( const efkModelNodeParam& parameter, int32_t count, void* userData )
+{
+	m_matrixes.clear();
+	m_uv.clear();
+	m_colors.clear();
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 void ModelRendererBase::Rendering( const efkModelNodeParam& parameter, const efkModelInstanceParam& instanceParameter, void* userData )
 {
 	Effekseer::Matrix44 mat;

@@ -46,48 +46,6 @@ public:
 
 protected:
 
-	template<typename RENDERER, typename VERTEX>
-	void BeginRendering_(RENDERER* renderer, int32_t count, const efkRingNodeParam& param)
-	{
-		m_spriteCount = 0;
-		int32_t vertexCount = param.VertexCount * 8;
-		m_instanceCount = count;
-
-		if (count == 1)
-		{
-			renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
-
-			if (!renderer->GetVertexBuffer()->RingBufferLock(count * sizeof(VERTEX) * vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData))
-			{
-				m_ringBufferOffset = 0;
-				m_ringBufferData = NULL;
-			}
-		}
-		else
-		{
-			EffekseerRenderer::StandardRendererState state;
-			state.AlphaBlend = param.AlphaBlend;
-			state.CullingType = ::Effekseer::CullingType::Double;
-			state.DepthTest = param.ZTest;
-			state.DepthWrite = param.ZWrite;
-			state.TextureFilterType = param.TextureFilter;
-			state.TextureWrapType = param.TextureWrap;
-
-			if (param.ColorTextureIndex >= 0)
-			{
-				state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
-			}
-			else
-			{
-				state.TexturePtr = nullptr;
-			}
-
-			renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
-			renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
-		}
-		
-	}
-
 	template<typename VERTEX>
 	void Rendering_( const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
@@ -326,65 +284,60 @@ protected:
 	template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
 	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkRingNodeParam& param)
 	{
-		if (m_instanceCount == 1)
+		SHADER* shader_ = NULL;
+		if (param.ColorTextureIndex >= 0)
 		{
-			renderer->GetVertexBuffer()->Unlock();
-
-			SHADER* shader_ = NULL;
-			if (param.ColorTextureIndex >= 0)
-			{
-				shader_ = shader;
-			}
-			else
-			{
-				shader_ = shader_no_texture;
-			}
-
-			renderer->BeginShader(shader_);
-
-			RenderStateBase::State& state = renderer->GetRenderState()->Push();
-			state.DepthTest = param.ZTest;
-			state.DepthWrite = param.ZWrite;
-			state.CullingType = ::Effekseer::CullingType::Double;
-
-			if (param.ColorTextureIndex >= 0)
-			{
-				TEXTURE texture = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetColorImage(param.ColorTextureIndex));
-				renderer->SetTextures(shader_, &texture, 1);
-			}
-			else
-			{
-				TEXTURE texture = (TEXTURE) NULL;
-				renderer->SetTextures(shader_, &texture, 1);
-			}
-
-			if (m_instanceCount > 1)
-			{
-				((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] = renderer->GetCameraProjectionMatrix();
-			}
-			else
-			{
-				::Effekseer::Matrix44 mat;
-				::Effekseer::Matrix44::Mul(mat, m_singleRenderingMatrix, renderer->GetCameraProjectionMatrix());
-				((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] = mat;
-			}
-			shader_->SetConstantBuffer();
-
-			state.AlphaBlend = param.AlphaBlend;
-			state.TextureFilterTypes[0] = param.TextureFilter;
-			state.TextureWrapTypes[0] = param.TextureWrap;
-
-			renderer->GetRenderState()->Update(false);
-
-			renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(VERTEX));
-			renderer->SetIndexBuffer(renderer->GetIndexBuffer());
-			renderer->SetLayout(shader_);
-			renderer->DrawSprites(m_spriteCount, m_ringBufferOffset / sizeof(VERTEX));
-
-			renderer->EndShader(shader_);
-
-			renderer->GetRenderState()->Pop();
+			shader_ = shader;
 		}
+		else
+		{
+			shader_ = shader_no_texture;
+		}
+
+		renderer->BeginShader(shader_);
+
+		RenderStateBase::State& state = renderer->GetRenderState()->Push();
+		state.DepthTest = param.ZTest;
+		state.DepthWrite = param.ZWrite;
+		state.CullingType = ::Effekseer::CullingType::Double;
+
+		if (param.ColorTextureIndex >= 0)
+		{
+			TEXTURE texture = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetColorImage(param.ColorTextureIndex));
+			renderer->SetTextures(shader_, &texture, 1);
+		}
+		else
+		{
+			TEXTURE texture = (TEXTURE)NULL;
+			renderer->SetTextures(shader_, &texture, 1);
+		}
+
+		if (m_instanceCount > 1)
+		{
+			((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] = renderer->GetCameraProjectionMatrix();
+		}
+		else
+		{
+			::Effekseer::Matrix44 mat;
+			::Effekseer::Matrix44::Mul(mat, m_singleRenderingMatrix, renderer->GetCameraProjectionMatrix());
+			((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] = mat;
+		}
+		shader_->SetConstantBuffer();
+
+		state.AlphaBlend = param.AlphaBlend;
+		state.TextureFilterTypes[0] = param.TextureFilter;
+		state.TextureWrapTypes[0] = param.TextureWrap;
+
+		renderer->GetRenderState()->Update(false);
+
+		renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(VERTEX));
+		renderer->SetIndexBuffer(renderer->GetIndexBuffer());
+		renderer->SetLayout(shader_);
+		renderer->DrawSprites(m_spriteCount, m_ringBufferOffset / sizeof(VERTEX));
+
+		renderer->EndShader(shader_);
+
+		renderer->GetRenderState()->Pop();
 	}
 };
 //----------------------------------------------------------------------------------

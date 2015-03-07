@@ -20,10 +20,10 @@
 #pragma comment(lib, "gdiplus.lib")
 #if _DEBUG
 #pragma comment(lib, "Debug/glfw3.lib")
-#pragma comment(lib, "x86/EffekseerRendererGL.Debug.lib" )
+#pragma comment(lib, "EffekseerRendererGL.Debug.lib" )
 #else
 #pragma comment(lib, "Release/glfw3.lib")
-#pragma comment(lib, "x86/EffekseerRendererGL.Release.lib" )
+#pragma comment(lib, "EffekseerRendererGL.Release.lib" )
 #endif
 
 #else

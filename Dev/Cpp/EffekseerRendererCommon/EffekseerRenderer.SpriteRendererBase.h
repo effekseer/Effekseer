@@ -44,29 +44,18 @@ public:
 protected:
 
 	template<typename RENDERER, typename VERTEX>
-	void BeginRendering_(RENDERER* renderer, int32_t count, const efkSpriteNodeParam& param)
+	void BeginRendering_(RENDERER* renderer, int32_t count)
 	{
-		EffekseerRenderer::StandardRendererState state;
-		state.AlphaBlend = param.AlphaBlend;
-		state.CullingType = ::Effekseer::CullingType::Double;
-		state.DepthTest = param.ZTest;
-		state.DepthWrite = param.ZWrite;
-		state.TextureFilterType = param.TextureFilter;
-		state.TextureWrapType = param.TextureWrap;
-
-		if (param.ColorTextureIndex >= 0)
-		{
-			state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
-		}
-		else
-		{
-			state.TexturePtr = nullptr;
-		}
-
-		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
-
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * 4, m_ringBufferOffset, (void*&) m_ringBufferData);
 		m_spriteCount = 0;
+
+		if (!renderer->GetVertexBuffer()->RingBufferLock(
+			count * sizeof(VERTEX) * 4,
+			m_ringBufferOffset,
+			(void*&) m_ringBufferData))
+		{
+			m_ringBufferOffset = 0;
+			m_ringBufferData = NULL;
+		}
 	}
 
 	template<typename VERTEX>
@@ -207,9 +196,8 @@ protected:
 	}
 
 	template<typename RENDERER,typename SHADER, typename TEXTURE, typename VERTEX>
-	void EndRendering_(RENDERER* renderer, const efkSpriteNodeParam& param)
+	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkSpriteNodeParam& param)
 	{
-		/*
 		SHADER* shader_ = NULL;
 		if (param.ColorTextureIndex >= 0)
 		{
@@ -255,7 +243,6 @@ protected:
 		renderer->EndShader(shader_);
 
 		renderer->GetRenderState()->Pop();
-		*/
 	}
 };
 //----------------------------------------------------------------------------------

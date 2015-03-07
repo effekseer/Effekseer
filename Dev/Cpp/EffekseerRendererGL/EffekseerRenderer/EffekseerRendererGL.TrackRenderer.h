@@ -25,8 +25,10 @@ class TrackRenderer
 {
 private:
 	RendererImplemented*	m_renderer;
-	
-	TrackRenderer(RendererImplemented* renderer);
+	Shader*		m_shader;
+	Shader*		m_shader_no_texture;
+
+	TrackRenderer(RendererImplemented* renderer, Shader* shader, Shader* shader_no_texture);
 
 public:
 

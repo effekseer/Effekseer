@@ -1,8 +1,7 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30501.0
-MinimumVisualStudioVersion = 10.0.40219.1
+
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{0B5D40A9-9B56-4E95-919B-DC8A3CABE211}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8145E20A-FDAA-4C69-994D-697876E61FAA} = {8145E20A-FDAA-4C69-994D-697876E61FAA}
@@ -61,6 +60,7 @@ Global
 		{0B5D40A9-9B56-4E95-919B-DC8A3CABE211}.Release|Win32.ActiveCfg = Release_SDL|Win32
 		{0B5D40A9-9B56-4E95-919B-DC8A3CABE211}.Release|Win32.Build.0 = Release_SDL|Win32
 		{8145E20A-FDAA-4C69-994D-697876E61FAA}.Debug_DX11|Win32.ActiveCfg = Debug|Win32
+		{8145E20A-FDAA-4C69-994D-697876E61FAA}.Debug_DX11|Win32.Build.0 = Debug|Win32
 		{8145E20A-FDAA-4C69-994D-697876E61FAA}.Debug_DX9|Win32.ActiveCfg = Debug|Win32
 		{8145E20A-FDAA-4C69-994D-697876E61FAA}.Debug_DX9|Win32.Build.0 = Debug|Win32
 		{8145E20A-FDAA-4C69-994D-697876E61FAA}.Debug_GL|Win32.ActiveCfg = Debug|Win32
@@ -74,6 +74,7 @@ Global
 		{8145E20A-FDAA-4C69-994D-697876E61FAA}.Release|Win32.ActiveCfg = Release|Win32
 		{8145E20A-FDAA-4C69-994D-697876E61FAA}.Release|Win32.Build.0 = Release|Win32
 		{50A10126-B716-4096-973B-2AD5E8904693}.Debug_DX11|Win32.ActiveCfg = Debug|Win32
+		{50A10126-B716-4096-973B-2AD5E8904693}.Debug_DX11|Win32.Build.0 = Debug|Win32
 		{50A10126-B716-4096-973B-2AD5E8904693}.Debug_DX9|Win32.ActiveCfg = Debug|Win32
 		{50A10126-B716-4096-973B-2AD5E8904693}.Debug_DX9|Win32.Build.0 = Debug|Win32
 		{50A10126-B716-4096-973B-2AD5E8904693}.Debug_GL|Win32.ActiveCfg = Debug|Win32

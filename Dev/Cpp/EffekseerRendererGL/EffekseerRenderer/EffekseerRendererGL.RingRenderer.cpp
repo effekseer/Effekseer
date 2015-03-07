@@ -150,7 +150,17 @@ RingRenderer* RingRenderer::Create(RendererImplemented* renderer)
 //----------------------------------------------------------------------------------
 void RingRenderer::BeginRendering( const efkRingNodeParam& parameter, int32_t count, void* userData )
 {
-	BeginRendering_<RendererImplemented, Vertex>(m_renderer, count, parameter);
+	m_spriteCount = 0;
+	
+	int32_t vertexCount = parameter.VertexCount * 8;
+
+	if( ! m_renderer->GetVertexBuffer()->RingBufferLock( count * sizeof(Vertex) * vertexCount, m_ringBufferOffset, (void*&)m_ringBufferData ) )
+	{
+		m_ringBufferOffset = 0;
+		m_ringBufferData = NULL;
+	}
+
+	m_instanceCount = count;
 }
 
 //----------------------------------------------------------------------------------
@@ -167,6 +177,8 @@ void RingRenderer::Rendering( const efkRingNodeParam& parameter, const efkRingIn
 //----------------------------------------------------------------------------------
 void RingRenderer::EndRendering( const efkRingNodeParam& parameter, void* userData )
 {
+	m_renderer->GetVertexBuffer()->Unlock();
+
 	if( m_spriteCount == 0 ) return;
 	
 	if (parameter.ColorTextureIndex >= 0)

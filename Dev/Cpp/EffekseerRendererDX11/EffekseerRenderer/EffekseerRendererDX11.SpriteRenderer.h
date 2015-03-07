@@ -25,8 +25,10 @@ class SpriteRenderer
 {
 private:
 	RendererImplemented*			m_renderer;
+	Shader*							m_shader;
+	Shader*							m_shader_no_texture;
 
-	SpriteRenderer(RendererImplemented* renderer);
+	SpriteRenderer( RendererImplemented* renderer, Shader* shader, Shader* shader_no_texture );
 public:
 
 	virtual ~SpriteRenderer();

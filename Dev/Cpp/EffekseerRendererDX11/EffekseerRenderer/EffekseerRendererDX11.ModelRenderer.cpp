@@ -236,11 +236,6 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 		shader );
 }
 
-void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData)
-{
-	BeginRendering_(m_renderer, parameter, count, userData);
-}
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

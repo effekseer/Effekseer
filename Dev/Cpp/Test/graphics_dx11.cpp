@@ -12,9 +12,9 @@
 #include "window.h"
 
 #if _DEBUG
-#pragma comment(lib, "x86/EffekseerRendererDX11.Debug.lib" )
+#pragma comment(lib, "EffekseerRendererDX11.Debug.lib" )
 #else
-#pragma comment(lib, "x86/EffekseerRendererDX11.Release.lib" )
+#pragma comment(lib, "EffekseerRendererDX11.Release.lib" )
 #endif
 
 //----------------------------------------------------------------------------------

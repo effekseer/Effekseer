@@ -26,7 +26,10 @@ class RibbonRenderer
 private:
 
 	RendererImplemented*			m_renderer;
-	RibbonRenderer( RendererImplemented* renderer );
+	Shader*							m_shader;
+	Shader*							m_shader_no_texture;
+
+	RibbonRenderer( RendererImplemented* renderer, Shader* shader, Shader* shader_no_texture );
 public:
 
 	virtual ~RibbonRenderer();

@@ -76,15 +76,7 @@ public:
 
 	virtual ~ModelRendererBase();
 
-	template<typename RENDERER>
-	void BeginRendering_(RENDERER* renderer, const efkModelNodeParam& parameter, int32_t count, void* userData)
-	{
-		m_matrixes.clear();
-		m_uv.clear();
-		m_colors.clear();
-
-		renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
-	}
+	void BeginRendering( const efkModelNodeParam& parameter, int32_t count, void* userData );
 
 	void Rendering( const efkModelNodeParam& parameter, const efkModelInstanceParam& instanceParameter, void* userData );
 

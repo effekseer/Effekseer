@@ -94,9 +94,6 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.PngTextureLoader.h">
       <Filter>EffekseerRendererCommon</Filter>
     </ClInclude>
-    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.StandardRenderer.h">
-      <Filter>EffekseerRendererCommon</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">
