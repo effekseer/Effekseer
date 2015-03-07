@@ -27,6 +27,31 @@
 //----------------------------------------------------------------------------------
 namespace EffekseerRendererDX11
 {
+
+namespace Standard_VS
+{
+	static
+#include "Shader/EffekseerRenderer.Standard_VS.h"
+}
+
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+namespace Standard_PS
+{
+	static
+#include "Shader/EffekseerRenderer.Standard_PS.h"
+}
+
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+namespace StandardNoTexture_PS
+{
+	static
+#include "Shader/EffekseerRenderer.StandardNoTexture_PS.h"
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -190,12 +215,17 @@ RendererImplemented::~RendererImplemented()
 
 	assert( m_reference == 0 );
 
+	ES_SAFE_DELETE(m_standardRenderer);
+	ES_SAFE_DELETE(m_shader);
+	ES_SAFE_DELETE(m_shader_no_texture);
+
 	ES_SAFE_DELETE( m_state );
 
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
-	assert( m_reference == -2 );
+
+	assert( m_reference == -4 );
 }
 
 //----------------------------------------------------------------------------------
@@ -236,6 +266,9 @@ bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext*
 		if( m_vertexBuffer == NULL ) return false;
 	}
 
+	// 参照カウントの調整
+	Release();
+
 	// インデックスの生成
 	{
 		m_indexBuffer = IndexBuffer::Create( this, m_squareMaxCount * 6, false );
@@ -258,14 +291,55 @@ bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext*
 		m_indexBuffer->Unlock();
 	}
 
+	// 参照カウントの調整
+	Release();
+
 	m_renderState = new RenderState( this );
 
 
+	// シェーダー
+	// 座標(3) 色(1) UV(2)
+	D3D11_INPUT_ELEMENT_DESC decl [] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	m_shader = Shader::Create(
+		this,
+		Standard_VS::g_VS,
+		sizeof(Standard_VS::g_VS),
+		Standard_PS::g_PS,
+		sizeof(Standard_PS::g_PS),
+		"StandardRenderer", decl, ARRAYSIZE(decl));
+	if (m_shader == NULL) return false;
+
 	// 参照カウントの調整
-	// m_vertexBufferの参照カウンタ
 	Release();
-	// m_indexBufferの参照カウンタ
+
+	m_shader_no_texture = Shader::Create(
+		this,
+		Standard_VS::g_VS,
+		sizeof(Standard_VS::g_VS),
+		StandardNoTexture_PS::g_PS,
+		sizeof(StandardNoTexture_PS::g_PS),
+		"StandardRenderer No Texture",
+		decl, ARRAYSIZE(decl));
+
+	if (m_shader_no_texture == NULL)
+	{
+		return false;
+	}
+
+	// 参照カウントの調整
 	Release();
+
+	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
+	m_shader->SetVertexRegisterCount(4);
+	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44));
+	m_shader_no_texture->SetVertexRegisterCount(4);
+
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex>(this, m_shader, m_shader_no_texture);
 
 	return true;
 }
@@ -328,6 +402,9 @@ bool RendererImplemented::BeginRendering()
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
 
+	// レンダラーリセット
+	m_standardRenderer->ResetAndRenderingIfRequired();
+
 	return true;
 }
 
@@ -338,6 +415,9 @@ bool RendererImplemented::EndRendering()
 {
 	assert( m_device != NULL );
 	
+	// レンダラーリセット
+	m_standardRenderer->ResetAndRenderingIfRequired();
+
 	// ステートを復元する
 	if( m_restorationOfStates )
 	{

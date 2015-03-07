@@ -8,6 +8,7 @@
 #include "EffekseerRendererGL.Base.h"
 #include "EffekseerRendererGL.Renderer.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
 
 #if defined(_M_IX86) || defined(__x86__)
 #define EFK_SSE2
@@ -155,6 +156,13 @@ private:
 	IndexBuffer*		m_indexBuffer;
 	int32_t				m_squareMaxCount;
 	
+	Shader*							m_shader = nullptr;
+	Shader*							m_shader_no_texture = nullptr;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex>*	m_standardRenderer = nullptr;
+
+	VertexArray*			m_vao = nullptr;
+	VertexArray*			m_vao_no_texture = nullptr;
+
 	::Effekseer::Vector3D	m_lightDirection;
 	::Effekseer::Color		m_lightColor;
 	::Effekseer::Color		m_lightAmbient;
@@ -328,6 +336,8 @@ public:
 		@brief	モデル読込クラスを生成する。
 	*/
 	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex>* GetStandardRenderer() { return m_standardRenderer; }
 
 	void SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size );
 	void SetVertexBuffer(GLuint vertexBuffer, int32_t size);

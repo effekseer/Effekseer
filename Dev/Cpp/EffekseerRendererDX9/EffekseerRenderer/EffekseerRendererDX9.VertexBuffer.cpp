@@ -158,7 +158,7 @@ bool VertexBuffer::RingBufferLock( int32_t size, int32_t& offset, void*& data )
 
 bool VertexBuffer::TryRingBufferLock(int32_t size, int32_t& offset, void*& data)
 {
-	if (!(m_vertexRingOffset + size > m_size)) return false;
+	if ((int32_t) m_vertexRingOffset + size > m_size) return false;
 
 	return RingBufferLock(size, offset, data);
 }
