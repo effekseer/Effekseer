@@ -58,7 +58,7 @@ protected:
 		*/
 
 		m_ribbonCount = 0;
-		int32_t vertexCount = (count - 1) * 4;
+		int32_t vertexCount = (count - 1) * 8;
 		if (vertexCount <= 0) return;
 
 		EffekseerRenderer::StandardRendererState state;
