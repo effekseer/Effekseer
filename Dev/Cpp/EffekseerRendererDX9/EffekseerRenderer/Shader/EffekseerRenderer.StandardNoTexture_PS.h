@@ -6,8 +6,8 @@
 //    Shader/standard_renderer_no_texture_PS.fx
 //
     ps_2_0
-    dcl v0
-    mov oC0, v0
+    dcl t0
+    mov oC0, t0
 
 // approximately 1 instruction slot used
 #endif
@@ -31,8 +31,8 @@ const BYTE g_ps20_PS[] =
      50,  57,  46,  57,  53,  50, 
      46,  51,  49,  49,  49,   0, 
      31,   0,   0,   2,   0,   0, 
-      0, 128,   0,   0,  15, 144, 
+      0, 128,   0,   0,  15, 176, 
       1,   0,   0,   2,   0,   8, 
-     15, 128,   0,   0, 228, 144, 
+     15, 128,   0,   0, 228, 176, 
     255, 255,   0,   0
 };

@@ -18,7 +18,8 @@ struct PS_Input
 
 float4 PS( const PS_Input Input ) : SV_Target
 {
-	float4 Output = Input.Color * g_texture.Sample(g_sampler, Input.UV);
+	float4 Output = g_texture.Sample(g_sampler, Input.UV);
+	Output.a = Output.a * Input.Color.a;
 
 	if(Output.a == 0.0f) discard;
 
@@ -26,7 +27,11 @@ float4 PS( const PS_Input Input ) : SV_Target
 	float2 posU = Input.PosU.xy / Input.PosU.w;
 	float2 posR = Input.PosR.xy / Input.PosR.w;
 
-	float2 uv = pos + (posR - pos) * (Output.x * 2.0 - 1.0) + (posU - pos) * (Output.y * 2.0 - 1.0);
+	float xscale = (Output.x * 2.0 - 1.0) * Input.Color.x;
+	float yscale = (Output.y * 2.0 - 1.0) * Input.Color.y;
+
+	float2 uv = pos + (posR - pos) * xscale + (posU - pos) * yscale;
+
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 

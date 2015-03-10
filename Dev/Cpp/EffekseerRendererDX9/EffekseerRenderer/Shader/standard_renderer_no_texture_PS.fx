@@ -1,8 +1,8 @@
 
 struct PS_Input
 {
-	float4 Color		: COLOR;
-	float2 UV		: TEXCOORD0;
+	float4 Color		: TEXCOORD0;
+	float2 UV		: TEXCOORD1;
 };
 
 

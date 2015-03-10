@@ -4,18 +4,19 @@ SamplerState	g_backSampler		: register( s1 );
 
 struct PS_Input
 {
-	float4 Color		: COLOR;
-	float2 UV		: TEXCOORD0;
+	float4 Color		: TEXCOORD0;
+	float2 UV		: TEXCOORD1;
 
-	float4 Pos		: TEXCOORD1;
-	float4 PosU		: TEXCOORD2;
-	float4 PosR		: TEXCOORD3;
+	float4 Pos		: TEXCOORD2;
+	float4 PosU		: TEXCOORD3;
+	float4 PosR		: TEXCOORD4;
 };
 
 
 float4 PS( const PS_Input Input ) : COLOR
 {
 	float4 Output = Input.Color;
+	Output.xyz = float3(1.0,1.0,1.0);
 
 	if(Output.a == 0.0f) discard;
 
@@ -23,7 +24,11 @@ float4 PS( const PS_Input Input ) : COLOR
 	float2 posU = Input.PosU.xy / Input.PosU.w;
 	float2 posR = Input.PosR.xy / Input.PosR.w;
 
-	float2 uv = pos + (posR - pos) * (Output.x * 2.0 - 1.0) + (posU - pos) * (Output.y * 2.0 - 1.0);
+	float xscale = (Output.x * 2.0 - 1.0) * Input.Color.x;
+	float yscale = (Output.y * 2.0 - 1.0) * Input.Color.y;
+
+	float2 uv = pos + (posR - pos) * xscale + (posU - pos) * yscale;
+
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 

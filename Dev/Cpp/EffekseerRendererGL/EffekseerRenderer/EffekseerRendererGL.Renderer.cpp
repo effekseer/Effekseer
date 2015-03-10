@@ -143,13 +143,14 @@ uniform sampler2D uBackTexture0;
 
 R"(
 void main() {
-	vec4 output = vaColor * texture2D(uTexture0, vaTexCoord.xy);
+	vec4 output = texture2D(uTexture0, vaTexCoord.xy);
+	output.w = output.w * vaColor.w;
 
 	vec2 pos = vaPos.xy / vaPos.w;
 	vec2 posU = vaPosU.xy / vaPosU.w;
 	vec2 posR = vaPosR.xy / vaPosR.w;
 
-	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) + (posU - pos) * (output.y * 2.0 - 1.0);
+	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) * vaColor.x + (posU - pos) * (output.y * 2.0 - 1.0) * vaColor.y;
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
@@ -170,7 +171,7 @@ void main() {
 		"#define highp\n"
 #endif
 
-R"(
+		R"(
 varying lowp vec4 vaColor;
 varying mediump vec4 vaTexCoord;
 varying mediump vec4 vaPos;
@@ -185,12 +186,13 @@ uniform sampler2D uBackTexture0;
 R"(
 void main() {
 	vec4 output = vaColor;
+	output.xyz = vec3(1.0,1.0,1.0);
 
 	vec2 pos = vaPos.xy / vaPos.w;
 	vec2 posU = vaPosU.xy / vaPosU.w;
 	vec2 posR = vaPosR.xy / vaPosR.w;
 
-	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) + (posU - pos) * (output.y * 2.0 - 1.0);
+	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) * vaColor.x + (posU - pos) * (output.y * 2.0 - 1.0) * vaColor.y;
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
