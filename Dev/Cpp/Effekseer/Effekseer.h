@@ -1796,6 +1796,7 @@ public:
 		BillboardType		Billboard;
 
 		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -1864,6 +1865,7 @@ public:
 		bool				ViewpointDependent;
 
 		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -1933,6 +1935,7 @@ public:
 		int32_t				VertexCount;
 
 		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -2007,6 +2010,7 @@ public:
 		bool				IsRightHand;
 
 		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -2068,6 +2072,7 @@ public:
 		bool				ZWrite;
 
 		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceGroupParameter

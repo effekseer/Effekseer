@@ -131,6 +131,8 @@ namespace Effekseer.Binary
 				data.Add((0).GetBytes());
 			}
 
+			data.Add(value.DistortionIntensity.GetBytes());
+
 			return data.ToArray().ToArray();
 		}
 	}

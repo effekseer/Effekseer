@@ -59,6 +59,7 @@ protected:
 		state.TextureWrapType = param.TextureWrap;
 
 		state.Distortion = param.Distortion;
+		state.DistortionIntensity = param.DistortionIntensity;
 
 		if (param.ColorTextureIndex >= 0)
 		{

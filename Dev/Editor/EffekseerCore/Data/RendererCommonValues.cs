@@ -106,6 +106,9 @@ namespace Effekseer.Data
 		[Name(language = Language.Japanese, value = "歪み")]
 		public Value.Boolean Distortion { get; private set; }
 
+		[Name(language = Language.Japanese, value = "歪み強度")]
+		public Value.Float DistortionIntensity { get; private set; }
+
 		internal RendererCommonValues()
 		{
 			ColorTexture = new Value.PathForImage("画像ファイル (*.png)|*.png", "");
@@ -132,6 +135,7 @@ namespace Effekseer.Data
 			ZTest = new Value.Boolean(true);
 
 			Distortion = new Value.Boolean(false);
+			DistortionIntensity = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
 		}
 
 		public class NoneParamater

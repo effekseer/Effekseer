@@ -420,6 +420,8 @@ struct ParameterTexture
 
 	bool				Distortion;
 
+	float				DistortionIntensity;
+
 	enum
 	{
 		FADEIN_ON = 1,
@@ -583,6 +585,10 @@ struct ParameterTexture
 			pos += sizeof(int32_t);
 
 			Distortion = distortion > 0;
+
+			memcpy(&DistortionIntensity, pos, sizeof(float));
+			pos += sizeof(float);
+			
 		}
 	}
 };

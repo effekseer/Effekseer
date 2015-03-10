@@ -37,6 +37,7 @@ public:
 		int32_t				VertexCount;
 
 		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter

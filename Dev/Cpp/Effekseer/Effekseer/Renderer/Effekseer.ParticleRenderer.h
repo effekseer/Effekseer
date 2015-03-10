@@ -31,6 +31,7 @@ public:
 		TextureWrapType	TextureWrap;
 
 		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter

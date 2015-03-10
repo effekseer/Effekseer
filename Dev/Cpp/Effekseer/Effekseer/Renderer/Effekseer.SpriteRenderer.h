@@ -36,6 +36,7 @@ public:
 		BillboardType		Billboard;
 
 		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter

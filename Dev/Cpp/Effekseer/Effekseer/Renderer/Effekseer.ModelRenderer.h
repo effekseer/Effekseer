@@ -41,6 +41,7 @@ public:
 		bool				IsRightHand;
 
 		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter

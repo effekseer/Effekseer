@@ -36,6 +36,7 @@ public:
 		bool				ViewpointDependent;
 
 		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter

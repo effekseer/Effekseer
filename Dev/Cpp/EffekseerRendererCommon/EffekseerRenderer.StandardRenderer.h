@@ -23,6 +23,7 @@ struct StandardRendererState
 	bool								DepthTest;
 	bool								DepthWrite;
 	bool								Distortion;
+	float								DistortionIntensity;
 
 	::Effekseer::AlphaBlendType			AlphaBlend;
 	::Effekseer::CullingType			CullingType;
@@ -35,6 +36,8 @@ struct StandardRendererState
 		DepthTest = false;
 		DepthWrite = false;
 		Distortion = false;
+		DistortionIntensity = 1.0f;
+
 		AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 		CullingType = ::Effekseer::CullingType::Front;
 		TextureFilterType = ::Effekseer::TextureFilterType::Nearest;
@@ -47,6 +50,7 @@ struct StandardRendererState
 		if (DepthTest != state.DepthTest) return true;
 		if (DepthWrite != state.DepthWrite) return true;
 		if (Distortion != state.Distortion) return true;
+		if (DistortionIntensity != state.DistortionIntensity) return true;
 		if (AlphaBlend != state.AlphaBlend) return true;
 		if (CullingType != state.CullingType) return true;
 		if (TextureFilterType != state.TextureFilterType) return true;
@@ -212,6 +216,11 @@ public:
 
 		((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] = mCamera;
 		((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[1] = mProj;
+
+		if (distortion)
+		{
+			((float*) (shader_->GetPixelConstantBuffer()))[0] = m_state.DistortionIntensity;
+		}
 
 		shader_->SetConstantBuffer();
 

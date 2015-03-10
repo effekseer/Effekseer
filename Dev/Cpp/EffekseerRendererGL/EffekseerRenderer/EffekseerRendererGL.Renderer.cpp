@@ -139,6 +139,8 @@ varying mediump vec4 vaPosU;
 R"(
 uniform sampler2D uTexture0;
 uniform sampler2D uBackTexture0;
+
+uniform	vec4	g_scale;
 )"
 
 R"(
@@ -150,7 +152,7 @@ void main() {
 	vec2 posU = vaPosU.xy / vaPosU.w;
 	vec2 posR = vaPosR.xy / vaPosR.w;
 
-	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) * vaColor.x + (posU - pos) * (output.y * 2.0 - 1.0) * vaColor.y;
+	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) * vaColor.x * g_scale.x + (posU - pos) * (output.y * 2.0 - 1.0) * vaColor.y * g_scale.x;
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
@@ -181,6 +183,9 @@ varying mediump vec4 vaPosU;
 
 R"(
 uniform sampler2D uBackTexture0;
+
+uniform	vec4	g_scale;
+
 )"
 
 R"(
@@ -192,7 +197,7 @@ void main() {
 	vec2 posU = vaPosU.xy / vaPosU.w;
 	vec2 posR = vaPosR.xy / vaPosR.w;
 
-	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) * vaColor.x + (posU - pos) * (output.y * 2.0 - 1.0) * vaColor.y;
+	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) * vaColor.x * g_scale.x + (posU - pos) * (output.y * 2.0 - 1.0) * vaColor.y * g_scale.x;
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
@@ -437,6 +442,7 @@ bool RendererImplemented::Initialize()
 	m_shader_distortion->GetAttribIdList(3, sprite_attribs);
 	m_shader_distortion->SetVertexSize(sizeof(Vertex));
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
 
 	m_shader_distortion->AddVertexConstantLayout(
 		CONSTANT_TYPE_MATRIX44,
@@ -450,12 +456,19 @@ bool RendererImplemented::Initialize()
 		sizeof(Effekseer::Matrix44)
 		);
 
+	m_shader_distortion->AddPixelConstantLayout(
+		CONSTANT_TYPE_VECTOR4,
+		m_shader_distortion->GetUniformId("g_scale"),
+		sizeof(float) * 4
+		);
+
 	m_shader_distortion->SetTextureSlot(0, m_shader_distortion->GetUniformId("uTexture0"));
 	m_shader_distortion->SetTextureSlot(1, m_shader_distortion->GetUniformId("uBackTexture0"));
 
 	m_shader_no_texture_distortion->GetAttribIdList(3, sprite_attribs);
 	m_shader_no_texture_distortion->SetVertexSize(sizeof(Vertex));
 	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
 
 	m_shader_no_texture_distortion->AddVertexConstantLayout(
 		CONSTANT_TYPE_MATRIX44,
@@ -467,6 +480,12 @@ bool RendererImplemented::Initialize()
 		CONSTANT_TYPE_MATRIX44,
 		m_shader_no_texture_distortion->GetUniformId("uMatProjection"),
 		sizeof(Effekseer::Matrix44)
+		);
+
+	m_shader_no_texture_distortion->AddPixelConstantLayout(
+		CONSTANT_TYPE_VECTOR4,
+		m_shader_distortion->GetUniformId("g_scale"),
+		sizeof(float) * 4
 		);
 
 	m_shader_no_texture_distortion->SetTextureSlot(1, m_shader_no_texture_distortion->GetUniformId("uBackTexture0"));

@@ -395,8 +395,15 @@ bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext*
 
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 	m_shader_distortion->SetVertexRegisterCount(8);
+
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
+	m_shader_distortion->SetPixelRegisterCount(1);
+
 	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 	m_shader_no_texture_distortion->SetVertexRegisterCount(8);
+
+	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
+	m_shader_no_texture_distortion->SetPixelRegisterCount(1);
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex>(
 		this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);

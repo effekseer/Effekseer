@@ -35,6 +35,7 @@ public:
 		bool				ZWrite;
 
 		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceGroupParameter

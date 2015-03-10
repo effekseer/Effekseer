@@ -189,6 +189,7 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.EffectPointer = GetEffect();
 
 		nodeParameter.Distortion = Texture.Distortion;
+		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
 
 		renderer->BeginRendering( nodeParameter, count, m_userData );
 	}
@@ -215,6 +216,7 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.ColorTextureIndex = RingTexture;
 
 		nodeParameter.Distortion = Texture.Distortion;
+		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
 
 		RingRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -262,6 +264,7 @@ void EffectNodeRing::EndRendering(Manager* manager)
 		nodeParameter.EffectPointer = GetEffect();
 
 		nodeParameter.Distortion = Texture.Distortion;
+		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
 
 		renderer->EndRendering( nodeParameter, m_userData );
 	}
