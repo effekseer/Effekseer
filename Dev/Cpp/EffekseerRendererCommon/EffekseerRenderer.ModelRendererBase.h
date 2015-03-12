@@ -97,6 +97,8 @@ public:
 		SHADER* shader_lighting,
 		SHADER* shader_texture,
 		SHADER* shader,
+		SHADER* shader_distortion_texture,
+		SHADER* shader_distortion,
 		const efkModelNodeParam& param)
 	{
 		if (m_matrixes.size() == 0) return;
@@ -105,6 +107,9 @@ public:
 		MODEL* model = (MODEL*) param.EffectPointer->GetModel(param.ModelIndex);
 		if (model == NULL) return;
 		
+		auto distortion = param.Distortion;
+		if (distortion && renderer->GetBackground() == 0) return;
+
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
@@ -113,7 +118,18 @@ public:
 
 		/*シェーダー選択*/
 		SHADER* shader_ = NULL;
-		if (param.Lighting)
+		if (distortion)
+		{
+			if (param.ColorTextureIndex >= 0)
+			{
+				shader_ = shader_distortion_texture;
+			}
+			else
+			{
+				shader_ = shader_distortion;
+			}
+		}
+		else if (param.Lighting)
 		{
 			if (param.NormalTextureIndex >= 0)
 			{
@@ -157,15 +173,28 @@ public:
 		textures[0] = (TEXTURE)NULL;
 		textures[1] = (TEXTURE)NULL;
 
-		if (param.ColorTextureIndex >= 0)
+		if (distortion)
 		{
-			textures[0] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetColorImage(param.ColorTextureIndex));
-		}
+			if (param.ColorTextureIndex >= 0)
+			{
+				textures[0] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetColorImage(param.ColorTextureIndex));
+			}
 
-		if (param.NormalTextureIndex >= 0)
-		{
-			textures[1] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetNormalImage(param.NormalTextureIndex));
+			textures[1] = renderer->GetBackground();
 		}
+		else
+		{
+			if (param.ColorTextureIndex >= 0)
+			{
+				textures[0] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetColorImage(param.ColorTextureIndex));
+			}
+
+			if (param.NormalTextureIndex >= 0)
+			{
+				textures[1] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetNormalImage(param.NormalTextureIndex));
+			}
+		}
+		
 		
 		renderer->SetTextures(shader_, textures, 2);
 
@@ -177,17 +206,25 @@ public:
 		renderer->GetRenderState()->Update(false);
 
 		ModelRendererVertexConstantBuffer<InstanceCount>* vcb = (ModelRendererVertexConstantBuffer<InstanceCount>*)shader_->GetVertexConstantBuffer();
-		ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*)shader_->GetPixelConstantBuffer();
-		
-		// 固定値設定
-		if (param.Lighting)
+
+		if (distortion)
 		{
+			float* pcb = (float*) shader_->GetPixelConstantBuffer();
+			pcb[0] = param.DistortionIntensity;
+		}
+		else
+		{
+			ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*) shader_->GetPixelConstantBuffer();
+
+			// 固定値設定
+			if (param.Lighting)
 			{
-				::Effekseer::Vector3D lightDirection = renderer->GetLightDirection();
-				::Effekseer::Vector3D::Normal(lightDirection, lightDirection);
-				VectorToFloat4(lightDirection, vcb->LightDirection);
-				VectorToFloat4(lightDirection, pcb->LightDirection);
-			}
+				{
+					::Effekseer::Vector3D lightDirection = renderer->GetLightDirection();
+					::Effekseer::Vector3D::Normal(lightDirection, lightDirection);
+					VectorToFloat4(lightDirection, vcb->LightDirection);
+					VectorToFloat4(lightDirection, pcb->LightDirection);
+				}
 
 			{
 				ColorToFloat4(renderer->GetLightColor(), vcb->LightColor);
@@ -198,7 +235,9 @@ public:
 				ColorToFloat4(renderer->GetLightAmbientColor(), vcb->LightAmbientColor);
 				ColorToFloat4(renderer->GetLightAmbientColor(), pcb->LightAmbientColor);
 			}
+			}
 		}
+		
 		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
 
 		/* バッファの設定の後にレイアウトを設定しないと無効 */

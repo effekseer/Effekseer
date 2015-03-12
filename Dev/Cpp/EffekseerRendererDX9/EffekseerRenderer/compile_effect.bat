@@ -22,4 +22,10 @@
 "%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_2_0 /EPS /Fh Shader/EffekseerRenderer.ModelRenderer.ShaderLightingNormal_PS.h Shader/model_renderer_lighting_normal_PS.fx
 "%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_2_0 /EPS /Fh Shader/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h Shader/model_renderer_lighting_texture_normal_PS.fx
 
+
+"%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tvs_2_0 /EVS /Fh Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h Shader/model_renderer_distortion_VS.fx
+"%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_2_0 /EPS /Fh Shader/EffekseerRenderer.ModelRenderer.ShaderDistortionTexture_PS.h Shader/model_renderer_distortion_texture_PS.fx
+"%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_2_0 /EPS /Fh Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h Shader/model_renderer_distortion_PS.fx
+
+
 pause

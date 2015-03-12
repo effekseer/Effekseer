@@ -58,9 +58,7 @@ public:
 		UniformLightDirection,
 		UniformLightColor,
 		UniformLightAmbient,
-		UniformTextureEnable,
-		UniformLightingEnable,
-		UniformNormalMapEnable,
+		Scale,
 		NumUniforms,
 	};
 
@@ -78,16 +76,21 @@ private:
 	Shader*								m_shader_texture;
 	Shader*								m_shader;
 
-	GLint								m_uniformLoc[6][NumUniforms];
+	Shader*								m_shader_distortion_texture;
+	Shader*								m_shader_distortion;
 
-	ModelRenderer( 
+	GLint								m_uniformLoc[8][NumUniforms];
+
+	ModelRenderer(
 		RendererImplemented* renderer,
 		Shader* shader_lighting_texture_normal,
 		Shader* shader_lighting_normal,
 		Shader* shader_lighting_texture,
 		Shader* shader_lighting,
 		Shader* shader_texture,
-		Shader* shader);
+		Shader* shader,
+		Shader* shader_distortion_texture,
+		Shader* shader_distortion);
 public:
 
 	virtual ~ModelRenderer();
