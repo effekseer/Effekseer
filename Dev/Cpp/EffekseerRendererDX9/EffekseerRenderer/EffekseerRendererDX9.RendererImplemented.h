@@ -39,6 +39,24 @@ struct Vertex
 	}
 };
 
+struct VertexDistortion
+{
+	::Effekseer::Vector3D	Pos;
+	D3DCOLOR	Col;
+	float		UV[2];
+	::Effekseer::Vector3D	Tangent;
+	::Effekseer::Vector3D	Binormal;
+
+	void SetColor(const ::Effekseer::Color& color)
+	{
+		Col = D3DCOLOR_ARGB(
+			color.A,
+			color.R,
+			color.G,
+			color.B);
+	}
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -118,6 +136,107 @@ inline void TransformVertexes( Vertex* vertexes, int32_t count, const ::Effeksee
 	#endif
 }
 
+inline void TransformVertexes(VertexDistortion* vertexes, int32_t count, const ::Effekseer::Matrix43& mat)
+{
+#if 1
+	__m128 r0 = _mm_loadu_ps(mat.Value[0]);
+	__m128 r1 = _mm_loadu_ps(mat.Value[1]);
+	__m128 r2 = _mm_loadu_ps(mat.Value[2]);
+	__m128 r3 = _mm_loadu_ps(mat.Value[3]);
+
+	float tmp_out[4];
+	::Effekseer::Vector3D* inout_prev;
+
+	// １ループ目
+	{
+		::Effekseer::Vector3D* inout_cur = &vertexes[0].Pos;
+		__m128 v = _mm_loadu_ps((const float*) inout_cur);
+
+		__m128 x = _mm_shuffle_ps(v, v, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 a0 = _mm_mul_ps(r0, x);
+		__m128 y = _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 1, 1, 1));
+		__m128 a1 = _mm_mul_ps(r1, y);
+		__m128 z = _mm_shuffle_ps(v, v, _MM_SHUFFLE(2, 2, 2, 2));
+		__m128 a2 = _mm_mul_ps(r2, z);
+
+		__m128 a01 = _mm_add_ps(a0, a1);
+		__m128 a23 = _mm_add_ps(a2, r3);
+		__m128 a = _mm_add_ps(a01, a23);
+
+		// 今回の結果をストアしておく
+		_mm_storeu_ps(tmp_out, a);
+		inout_prev = inout_cur;
+	}
+
+	for (int i = 1; i < count; i++)
+	{
+		::Effekseer::Vector3D* inout_cur = &vertexes[i].Pos;
+		__m128 v = _mm_loadu_ps((const float*) inout_cur);
+
+		__m128 x = _mm_shuffle_ps(v, v, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 a0 = _mm_mul_ps(r0, x);
+		__m128 y = _mm_shuffle_ps(v, v, _MM_SHUFFLE(1, 1, 1, 1));
+		__m128 a1 = _mm_mul_ps(r1, y);
+		__m128 z = _mm_shuffle_ps(v, v, _MM_SHUFFLE(2, 2, 2, 2));
+		__m128 a2 = _mm_mul_ps(r2, z);
+
+		__m128 a01 = _mm_add_ps(a0, a1);
+		__m128 a23 = _mm_add_ps(a2, r3);
+		__m128 a = _mm_add_ps(a01, a23);
+
+		// 直前のループの結果を書き込みます
+		inout_prev->X = tmp_out[0];
+		inout_prev->Y = tmp_out[1];
+		inout_prev->Z = tmp_out[2];
+
+		// 今回の結果をストアしておく
+		_mm_storeu_ps(tmp_out, a);
+		inout_prev = inout_cur;
+	}
+
+	// 最後のループの結果を書き込み
+		{
+			inout_prev->X = tmp_out[0];
+			inout_prev->Y = tmp_out[1];
+			inout_prev->Z = tmp_out[2];
+		}
+
+#else
+	for (int i = 0; i < count; i++)
+	{
+		::Effekseer::Vector3D::Transform(
+			vertexes[i].Pos,
+			vertexes[i].Pos,
+			mat);
+	}
+#endif
+
+	for (int i = 0; i < count; i++)
+	{
+		auto vs = &vertexes[i];
+
+		::Effekseer::Vector3D::Transform(
+			vs->Tangent,
+			vs->Tangent,
+			mat);
+
+		::Effekseer::Vector3D::Transform(
+			vs->Binormal,
+			vs->Binormal,
+			mat);
+
+		Effekseer::Vector3D zero;
+		::Effekseer::Vector3D::Transform(
+			zero,
+			zero,
+			mat);
+
+		::Effekseer::Vector3D::Normal(vs->Tangent, vs->Tangent - zero);
+		::Effekseer::Vector3D::Normal(vs->Binormal, vs->Binormal - zero);
+	}
+}
+
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -147,7 +266,7 @@ private:
 	Shader*							m_shader_distortion = nullptr;
 	Shader*							m_shader_no_texture_distortion = nullptr;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex>*	m_standardRenderer = nullptr;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex, VertexDistortion>*	m_standardRenderer = nullptr;
 
 
 	::Effekseer::Vector3D	m_lightDirection;
@@ -374,7 +493,7 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex>* GetStandardRenderer() { return m_standardRenderer; }
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex, VertexDistortion>* GetStandardRenderer() { return m_standardRenderer; }
 
 	void SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size );
 	void SetVertexBuffer(IDirect3DVertexBuffer9* vertexBuffer, int32_t size);

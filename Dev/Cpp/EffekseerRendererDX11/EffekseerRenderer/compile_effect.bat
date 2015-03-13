@@ -2,6 +2,7 @@
 "%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_4_0 /EPS /Fh Shader/EffekseerRenderer.Standard_PS.h Shader/standard_renderer_PS.fx
 "%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_4_0 /EPS /Fh Shader/EffekseerRenderer.StandardNoTexture_PS.h Shader/standard_renderer_no_texture_PS.fx
 
+"%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tvs_4_0 /EVS /Fh Shader/EffekseerRenderer.Standard_Distortion_VS.h Shader/standard_renderer_distortion_VS.fx
 "%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_4_0 /EPS /Fh Shader/EffekseerRenderer.Standard_Distortion_PS.h Shader/standard_renderer_distortion_PS.fx
 "%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_4_0 /EPS /Fh Shader/EffekseerRenderer.StandardNoTexture_Distortion_PS.h Shader/standard_renderer_no_texture_distortion_PS.fx
 

@@ -55,6 +55,15 @@ namespace StandardNoTexture_PS
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+namespace Standard_Distortion_VS
+{
+	static
+#include "Shader/EffekseerRenderer.Standard_Distortion_VS.h"
+}
+
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
 namespace Standard_Distortion_PS
 {
 	static
@@ -330,6 +339,14 @@ bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext*
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
+	D3D11_INPUT_ELEMENT_DESC decl_distortion [] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 2, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
 	m_shader = Shader::Create(
 		this,
 		Standard_VS::g_VS,
@@ -361,11 +378,11 @@ bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext*
 
 	m_shader_distortion = Shader::Create(
 		this,
-		Standard_VS::g_VS,
-		sizeof(Standard_VS::g_VS),
+		Standard_Distortion_VS::g_VS,
+		sizeof(Standard_Distortion_VS::g_VS),
 		Standard_Distortion_PS::g_PS,
 		sizeof(Standard_Distortion_PS::g_PS),
-		"StandardRenderer Distortion", decl, ARRAYSIZE(decl));
+		"StandardRenderer Distortion", decl_distortion, ARRAYSIZE(decl_distortion));
 	if (m_shader_distortion == NULL) return false;
 
 	// 参照カウントの調整
@@ -373,12 +390,12 @@ bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext*
 
 	m_shader_no_texture_distortion = Shader::Create(
 		this,
-		Standard_VS::g_VS,
-		sizeof(Standard_VS::g_VS),
+		Standard_Distortion_VS::g_VS,
+		sizeof(Standard_Distortion_VS::g_VS),
 		StandardNoTexture_Distortion_PS::g_PS,
 		sizeof(StandardNoTexture_Distortion_PS::g_PS),
 		"StandardRenderer No Texture Distortion",
-		decl, ARRAYSIZE(decl));
+		decl_distortion, ARRAYSIZE(decl_distortion));
 
 	if (m_shader_no_texture_distortion == NULL)
 	{
@@ -405,7 +422,7 @@ bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext*
 	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
 	m_shader_no_texture_distortion->SetPixelRegisterCount(1);
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex>(
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex, VertexDistortion>(
 		this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
 	return true;

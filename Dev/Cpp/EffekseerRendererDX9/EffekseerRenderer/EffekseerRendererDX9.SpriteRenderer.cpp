@@ -46,7 +46,7 @@ SpriteRenderer* SpriteRenderer::Create( RendererImplemented* renderer )
 //----------------------------------------------------------------------------------
 void SpriteRenderer::BeginRendering( const efkSpriteNodeParam& parameter, int32_t count, void* userData )
 {
-	BeginRendering_<RendererImplemented, Vertex>(m_renderer, count, parameter);
+	BeginRendering_<RendererImplemented>(m_renderer, count, parameter);
 }
 
 //----------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ void SpriteRenderer::BeginRendering( const efkSpriteNodeParam& parameter, int32_
 void SpriteRenderer::Rendering( const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData )
 {
 	if( m_spriteCount == m_renderer->GetSquareMaxCount() ) return;
-	Rendering_<Vertex>( parameter, instanceParameter, userData, m_renderer->GetCameraMatrix() );
+	Rendering_<Vertex, VertexDistortion>(parameter, instanceParameter, userData, m_renderer->GetCameraMatrix());
 }
 
 //----------------------------------------------------------------------------------

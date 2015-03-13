@@ -54,7 +54,7 @@ void TrackRenderer::BeginRendering( const efkTrackNodeParam& parameter, int32_t 
 //----------------------------------------------------------------------------------
 void TrackRenderer::Rendering( const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData )
 {
-	Rendering_<Vertex>( parameter, instanceParameter, userData, m_renderer->GetCameraMatrix() );
+	Rendering_<Vertex, VertexDistortion>(parameter, instanceParameter, userData, m_renderer->GetCameraMatrix());
 }
 
 //----------------------------------------------------------------------------------

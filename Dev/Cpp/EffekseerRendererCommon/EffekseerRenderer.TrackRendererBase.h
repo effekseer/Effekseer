@@ -86,8 +86,21 @@ protected:
 		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
 	}
 
-	template<typename VERTEX>
-	void Rendering_( const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_(const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+	{
+		if (parameter.Distortion)
+		{
+			Rendering_Internal<VERTEX_DISTORTION, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+		else
+		{
+			Rendering_Internal<VERTEX, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+	}
+
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_Internal( const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
 		if( m_ringBufferData == NULL ) return;
 		if( instanceParameter.InstanceCount < 2 ) return;
@@ -211,7 +224,7 @@ protected:
 			m_ribbonCount += 2;
 		}
 
-		/* 座標変換 */
+		/* 全ての頂点の座標を変換 */
 		if( isLast )
 		{
 			VERTEX* vs_ = (VERTEX*)(m_ringBufferData - sizeof(VERTEX) * 8 * (param.InstanceCount-1) );
@@ -296,6 +309,24 @@ protected:
 					vr.Pos,
 					mat_rot );
 
+
+				if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+				{
+					auto vl_ = (VERTEX_DISTORTION*) (&vl);
+					auto vm_ = (VERTEX_DISTORTION*) (&vm);
+					auto vr_ = (VERTEX_DISTORTION*) (&vr);
+
+					vl_->Binormal = axis;
+					vm_->Binormal = axis;
+					vr_->Binormal = axis;
+
+					::Effekseer::Vector3D tangent;
+					::Effekseer::Vector3D::Normal(tangent, vr_->Pos - vl_->Pos);
+
+					vl_->Tangent = tangent;
+					vm_->Tangent = tangent;
+					vr_->Tangent = tangent;
+				}
 
 				if( isFirst_ )
 				{

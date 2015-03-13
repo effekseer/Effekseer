@@ -82,8 +82,21 @@ protected:
 		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
 	}
 
-	template<typename VERTEX>
-	void Rendering_( const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_(const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+	{
+		if (parameter.Distortion)
+		{
+			Rendering_Internal<VERTEX_DISTORTION, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+		else
+		{
+			Rendering_Internal<VERTEX, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+	}
+
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_Internal( const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
 		int32_t vertexCount = parameter.VertexCount * 8;
 		//Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * vertexCount );
@@ -125,6 +138,9 @@ protected:
 
 		for( int i = 0; i < vertexCount; i += 8 )
 		{
+			float old_c = c;
+			float old_s = s;
+
 			float t;
 			t = c * stepC - s * stepS;
 			s = s * stepC + c * stepS;
@@ -163,26 +179,75 @@ protected:
 			v[3].UV[0] = texNext;
 			v[3].UV[1] = v2;
 
-			v[4].Pos = centerCurrent;
-			v[4].SetColor( centerColor );
-			v[4].UV[0] = texCurrent;
-			v[4].UV[1] = v2;
+			v[4] = v[1];
 
 			v[5].Pos = innerCurrent;
 			v[5].SetColor( innerColor );
 			v[5].UV[0] = texCurrent;
 			v[5].UV[1] = v3;
 
-			v[6].Pos = centerNext;
-			v[6].SetColor( centerColor );
-			v[6].UV[0] = texNext;
-			v[6].UV[1] = v2;
+			v[6] = v[3];
 
 			v[7].Pos = innerNext;
 			v[7].SetColor( innerColor );
 			v[7].UV[0] = texNext;
 			v[7].UV[1] = v3;
 
+			// ˜c‚Ýˆ—
+			if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+			{
+				auto vs = (VERTEX_DISTORTION*) &verteies[i];
+				auto binormalCurrent = v[5].Pos - v[0].Pos;
+				auto binormalNext = v[7].Pos - v[2].Pos;
+
+				// –ß‚·
+				float t_b;
+				t_b = old_c * (stepC) - old_s * (-stepS);
+				auto s_b = old_s * (stepC) + old_c * (-stepS);
+				auto c_b = t_b;
+
+				::Effekseer::Vector3D outerBefore;
+				outerBefore.X = c_b * outerRadius;
+				outerBefore.Y = s_b * outerRadius;
+				outerBefore.Z = outerHeight;
+
+				// ŽŸ
+				auto t_n = c * stepC - s * stepS;
+				auto s_n = s * stepC + c * stepS;
+				auto c_n = t_n;
+
+				::Effekseer::Vector3D outerNN;
+				outerNN.X = c_n * outerRadius;
+				outerNN.Y = s_n * outerRadius;
+				outerNN.Z = outerHeight;
+
+				::Effekseer::Vector3D tangent0, tangent1, tangent2;
+				::Effekseer::Vector3D::Normal(tangent0, outerCurrent - outerBefore);
+				::Effekseer::Vector3D::Normal(tangent1, outerNext - outerCurrent);
+				::Effekseer::Vector3D::Normal(tangent2, outerNN - outerNext);
+
+				auto tangentCurrent = (tangent0 + tangent1) / 2.0f;
+				auto tangentNext = (tangent1 + tangent2) / 2.0f;
+
+				vs[0].Tangent = tangentCurrent;
+				vs[0].Binormal = binormalCurrent;
+				vs[1].Tangent = tangentCurrent;
+				vs[1].Binormal = binormalCurrent;
+				vs[2].Tangent = tangentNext;
+				vs[2].Binormal = binormalNext;
+				vs[3].Tangent = tangentNext;
+				vs[3].Binormal = binormalNext;
+
+				vs[4].Tangent = tangentCurrent;
+				vs[4].Binormal = binormalCurrent;
+				vs[5].Tangent = tangentCurrent;
+				vs[5].Binormal = binormalCurrent;
+				vs[6].Tangent = tangentNext;
+				vs[6].Binormal = binormalNext;
+				vs[7].Tangent = tangentNext;
+				vs[7].Binormal = binormalNext;
+
+			}
 			outerCurrent = outerNext;
 			innerCurrent = innerNext;
 			centerCurrent = centerNext;

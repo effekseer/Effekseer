@@ -118,6 +118,70 @@ void main() {
 		"gl_FragColor = vaColor;\n"
 		"}\n";
 
+
+	static const char g_sprite_distortion_vs_src [] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+#else
+		"#version 110\n"
+		"#define lowp\n"
+		"#define mediump\n"
+		"#define highp\n"
+#endif
+
+		R"(
+attribute vec4 atPosition;
+attribute vec4 atColor;
+attribute vec4 atTexCoord;
+attribute vec4 atBinormal;
+attribute vec4 atTangent;
+
+)"
+
+R"(
+varying vec4 vaColor;
+varying vec4 vaTexCoord;
+varying vec4 vaPos;
+varying vec4 vaPosR;
+varying vec4 vaPosU;
+)"
+R"(
+uniform mat4 uMatCamera;
+uniform mat4 uMatProjection;
+
+void main() {
+
+	vec4 localBinormal = vec4( atPosition.x + atBinormal.x, atPosition.y + atBinormal.y, atPosition.z + atBinormal.z, 1.0 );
+	vec4 localTangent = vec4( atPosition.x + atTangent.x, atPosition.y + atTangent.y, atPosition.z + atTangent.z, 1.0 );
+	localBinormal = uMatCamera * localBinormal;
+	localTangent = uMatCamera * localTangent;
+
+	vec4 cameraPos = uMatCamera * atPosition;
+	cameraPos = cameraPos / cameraPos.w;
+
+	localBinormal = localBinormal / localBinormal.w;
+	localTangent = localTangent / localTangent.w;
+
+	localBinormal = cameraPos + normalize(localBinormal - cameraPos);
+	localTangent = cameraPos + normalize(localTangent - cameraPos);
+
+	gl_Position = uMatProjection * cameraPos;
+
+	vaPos = gl_Position;
+
+
+	vaPosR = uMatProjection * localTangent;
+	vaPosU = uMatProjection * localBinormal;
+	
+	vaPos = vaPos / vaPos.w;
+	vaPosR = vaPosR / vaPosR.w;
+	vaPosU = vaPosU / vaPosU.w;
+
+	vaColor = atColor;
+	vaTexCoord = atTexCoord;
+}
+
+)";
+
 	static const char g_sprite_fs_texture_distortion_src [] =
 #if defined(__EFFEKSEER_RENDERER_GLES2__)
 		"precision mediump float;\n"
@@ -400,6 +464,14 @@ bool RendererImplemented::Initialize()
 		{ "atTexCoord", GL_FLOAT, 2, 16, false }
 	};
 
+	static ShaderAttribInfo sprite_attribs_distortion[5] = {
+		{ "atPosition", GL_FLOAT, 3, 0, false },
+		{ "atColor", GL_UNSIGNED_BYTE, 4, 12, true },
+		{ "atTexCoord", GL_FLOAT, 2, 16, false },
+		{ "atBinormal", GL_FLOAT, 3, 24, false },
+		{ "atTangent", GL_FLOAT, 3, 36, false },
+	};
+
 	// ’¸“_‘®«ID‚ðŽæ“¾
 	m_shader->GetAttribIdList(3, sprite_attribs);
 	m_shader->SetVertexSize(sizeof(Vertex));
@@ -439,7 +511,7 @@ bool RendererImplemented::Initialize()
 	m_vao_no_texture = VertexArray::Create(this, m_shader_no_texture, GetVertexBuffer(), GetIndexBuffer());
 
 	// Distortion
-	m_shader_distortion->GetAttribIdList(3, sprite_attribs);
+	m_shader_distortion->GetAttribIdList(5, sprite_attribs_distortion);
 	m_shader_distortion->SetVertexSize(sizeof(Vertex));
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
@@ -465,7 +537,7 @@ bool RendererImplemented::Initialize()
 	m_shader_distortion->SetTextureSlot(0, m_shader_distortion->GetUniformId("uTexture0"));
 	m_shader_distortion->SetTextureSlot(1, m_shader_distortion->GetUniformId("uBackTexture0"));
 
-	m_shader_no_texture_distortion->GetAttribIdList(3, sprite_attribs);
+	m_shader_no_texture_distortion->GetAttribIdList(5, sprite_attribs_distortion);
 	m_shader_no_texture_distortion->SetVertexSize(sizeof(Vertex));
 	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
@@ -494,7 +566,7 @@ bool RendererImplemented::Initialize()
 	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer());
 	m_vao_no_texture_distortion = VertexArray::Create(this, m_shader_no_texture_distortion, GetVertexBuffer(), GetIndexBuffer());
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex, VertexDistortion>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
 	return true;
 }

@@ -60,7 +60,7 @@ struct StandardRendererState
 	}
 };
 
-template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
+template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX, typename VERTEX_DISTORTION>
 class StandardRenderer
 {
 
@@ -79,6 +79,7 @@ private:
 	std::vector<uint8_t>		vertexCaches;
 	int32_t						vertexCacheMaxSize = 0;
 
+	bool						m_isDistortionMode = false;
 public:
 
 	StandardRenderer(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, SHADER* shader_distortion, SHADER* shader_no_texture_distortion)
@@ -101,20 +102,36 @@ public:
 		}
 
 		m_state = state;
+
+		m_isDistortionMode = m_state.Distortion;
 	}
 
 	void BeginRenderingAndRenderingIfRequired(int32_t count, int32_t& offset, void*& data)
 	{
-		if (count * sizeof(VERTEX) + vertexCaches.size() > vertexCacheMaxSize)
+		if (m_isDistortionMode)
 		{
-			Rendering();
+			if (count * sizeof(VERTEX_DISTORTION) + vertexCaches.size() > vertexCacheMaxSize)
+			{
+				Rendering();
+			}
+
+			auto old = vertexCaches.size();
+			vertexCaches.resize(count * sizeof(VERTEX_DISTORTION) + vertexCaches.size());
+			offset = old;
+			data = (vertexCaches.data() + old);
 		}
+		else
+		{
+			if (count * sizeof(VERTEX) + vertexCaches.size() > vertexCacheMaxSize)
+			{
+				Rendering();
+			}
 
-		auto old = vertexCaches.size();
-		vertexCaches.resize(count * sizeof(VERTEX) + vertexCaches.size());
-
-		offset = old;
-		data = (vertexCaches.data() + old);
+			auto old = vertexCaches.size();
+			vertexCaches.resize(count * sizeof(VERTEX) + vertexCaches.size());
+			offset = old;
+			data = (vertexCaches.data() + old);
+		}
 	}
 
 	void ResetAndRenderingIfRequired()
@@ -230,10 +247,20 @@ public:
 
 		m_renderer->GetRenderState()->Update(false);
 
-		m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), sizeof(VERTEX));
-		m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
-		m_renderer->SetLayout(shader_);
-		m_renderer->DrawSprites(vertexSize / sizeof(VERTEX) / 4, offsetSize / sizeof(VERTEX));
+		if (distortion)
+		{
+			m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), sizeof(VERTEX_DISTORTION));
+			m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
+			m_renderer->SetLayout(shader_);
+			m_renderer->DrawSprites(vertexSize / sizeof(VERTEX_DISTORTION) / 4, offsetSize / sizeof(VERTEX_DISTORTION));
+		}
+		else
+		{
+			m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), sizeof(VERTEX));
+			m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
+			m_renderer->SetLayout(shader_);
+			m_renderer->DrawSprites(vertexSize / sizeof(VERTEX) / 4, offsetSize / sizeof(VERTEX));
+		}
 
 		m_renderer->EndShader(shader_);
 

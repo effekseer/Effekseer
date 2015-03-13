@@ -75,8 +75,21 @@ protected:
 		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
 	}
 
-	template<typename VERTEX>
-	void Rendering_( const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_(const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+	{
+		if (parameter.Distortion)
+		{
+			Rendering_Internal<VERTEX_DISTORTION, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+		else
+		{
+			Rendering_Internal<VERTEX, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+	}
+
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_Internal( const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
 		if( m_ringBufferData == NULL ) return;
 		if( instanceParameter.InstanceCount < 2 ) return;
@@ -173,6 +186,82 @@ protected:
 		if( !isFirst )
 		{
 			m_ribbonCount++;
+		}
+
+		/* ˜c‚Ý‚ð“K—p */
+		if (isLast && sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+		{
+			VERTEX_DISTORTION* vs_ = (VERTEX_DISTORTION*) (m_ringBufferData - sizeof(VERTEX_DISTORTION) * (instanceParameter.InstanceCount - 1) * 4);
+
+			Effekseer::Vector3D axisBefore;
+
+			for (int32_t i = 0; i < instanceParameter.InstanceCount; i++)
+			{
+				bool isFirst_ = (i == 0);
+				bool isLast_ = (i == (instanceParameter.InstanceCount - 1));
+		
+				Effekseer::Vector3D axis;
+				Effekseer::Vector3D pos;
+
+				if (isFirst_)
+				{
+					axis = (vs_[3].Pos - vs_[1].Pos);
+					Effekseer::Vector3D::Normal(axis, axis);
+					axisBefore = axis;
+				}
+				else if (isLast_)
+				{
+					axis = axisBefore;
+				}
+				else
+				{
+					Effekseer::Vector3D axisOld = axisBefore;
+					axis = (vs_[3].Pos - vs_[1].Pos);
+					Effekseer::Vector3D::Normal(axis, axis);
+					axisBefore = axis;
+
+					axis = (axisBefore + axisOld) / 2.0f;
+				}
+
+				auto tangent = vs_[1].Pos - vs_[0].Pos;
+				Effekseer::Vector3D::Normal(tangent, tangent);
+
+				if (isFirst_)
+				{
+					vs_[0].Binormal = axis;
+					vs_[1].Binormal = axis;
+
+					vs_[0].Tangent = tangent;
+					vs_[1].Tangent = tangent;
+
+					vs_ += 2;
+
+				}
+				else if (isLast_)
+				{
+					vs_[0].Binormal = axis;
+					vs_[1].Binormal = axis;
+
+					vs_[0].Tangent = tangent;
+					vs_[1].Tangent = tangent;
+
+					vs_ += 2;
+				}
+				else
+				{
+					vs_[0].Binormal = axis;
+					vs_[1].Binormal = axis;
+					vs_[2].Binormal = axis;
+					vs_[3].Binormal = axis;
+
+					vs_[0].Tangent = tangent;
+					vs_[1].Tangent = tangent;
+					vs_[2].Tangent = tangent;
+					vs_[3].Tangent = tangent;
+
+					vs_ += 4;
+				}
+			}
 		}
 	}
 

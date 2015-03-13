@@ -53,7 +53,7 @@ void RibbonRenderer::BeginRendering( const efkRibbonNodeParam& parameter, int32_
 //----------------------------------------------------------------------------------
 void RibbonRenderer::Rendering( const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData )
 {
-	Rendering_<Vertex>( parameter, instanceParameter, userData, m_renderer->GetCameraMatrix() );
+	Rendering_<Vertex, VertexDistortion>(parameter, instanceParameter, userData, m_renderer->GetCameraMatrix());
 }
 
 //----------------------------------------------------------------------------------

@@ -43,7 +43,7 @@ public:
 
 protected:
 
-	template<typename RENDERER, typename VERTEX>
+	template<typename RENDERER>
 	void BeginRendering_(RENDERER* renderer, int32_t count, const efkSpriteNodeParam& param)
 	{
 		EffekseerRenderer::StandardRendererState state;
@@ -72,8 +72,21 @@ protected:
 		m_spriteCount = 0;
 	}
 
-	template<typename VERTEX>
-	void Rendering_( const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_(const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+	{
+		if (parameter.Distortion)
+		{
+			Rendering_Internal<VERTEX_DISTORTION, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+		else
+		{
+			Rendering_Internal<VERTEX, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+	}
+
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_Internal( const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
 		if( m_ringBufferData == NULL ) return;
 		
@@ -100,6 +113,21 @@ protected:
 	
 		verteies[3].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
 		verteies[3].UV[1] = instanceParameter.UV.Y;
+
+		// òcÇ›èàóù
+		if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+		{
+			auto vs = (VERTEX_DISTORTION*) verteies;
+			for (auto i = 0; i < 4; i++)
+			{
+				vs[i].Tangent.X = 1.0f;
+				vs[i].Tangent.Y = 0.0f;
+				vs[i].Tangent.Z = 0.0f;
+				vs[i].Binormal.X = 1.0f;
+				vs[i].Binormal.Y = 0.0f;
+				vs[i].Binormal.Z = 0.0f;
+			}
+		}
 		
 		if( parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
 			parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard ||
@@ -203,6 +231,31 @@ protected:
 					verteies[i].Pos,
 					verteies[i].Pos,
 					instanceParameter.SRTMatrix43 );
+
+				// òcÇ›èàóù
+				if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+				{
+					auto vs = (VERTEX_DISTORTION*) & verteies[i];
+
+					::Effekseer::Vector3D::Transform(
+						vs->Tangent,
+						vs->Tangent,
+						instanceParameter.SRTMatrix43);
+
+					::Effekseer::Vector3D::Transform(
+						vs->Binormal,
+						vs->Binormal,
+						instanceParameter.SRTMatrix43);
+
+					Effekseer::Vector3D zero;
+					::Effekseer::Vector3D::Transform(
+						zero,
+						zero,
+						instanceParameter.SRTMatrix43);
+
+					::Effekseer::Vector3D::Normal(vs->Tangent, vs->Tangent - zero);
+					::Effekseer::Vector3D::Normal(vs->Binormal, vs->Binormal - zero);
+				}
 			}
 		}
 		

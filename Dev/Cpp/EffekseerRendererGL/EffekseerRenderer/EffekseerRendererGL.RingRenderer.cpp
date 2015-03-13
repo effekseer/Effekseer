@@ -57,7 +57,7 @@ void RingRenderer::BeginRendering( const efkRingNodeParam& parameter, int32_t co
 void RingRenderer::Rendering( const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData )
 {
 	if( m_spriteCount == m_renderer->GetSquareMaxCount() ) return;
-	Rendering_<Vertex>( parameter, instanceParameter, userData, m_renderer->GetCameraMatrix() );
+	Rendering_<Vertex, VertexDistortion>(parameter, instanceParameter, userData, m_renderer->GetCameraMatrix());
 }
 
 //----------------------------------------------------------------------------------
