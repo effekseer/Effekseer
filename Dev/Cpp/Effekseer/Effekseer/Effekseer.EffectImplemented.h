@@ -45,6 +45,10 @@ private:
 	EFK_CHAR**		m_normalImagePaths = nullptr;
 	void**			m_normalImages = nullptr;
 	
+	int	m_distortionImageCount = 0;
+	EFK_CHAR**		m_distortionImagePaths = nullptr;
+	void**			m_distortionImages = nullptr;
+
 	int	m_WaveCount;
 	EFK_CHAR**		m_WavePaths;
 	void**			m_pWaves;
@@ -156,7 +160,9 @@ public:
 	@brief	格納されている画像のポインタを取得する。
 	*/
 	void* GetNormalImage(int n) const;
-	
+
+	void* GetDistortionImage(int n) const;
+
 	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/

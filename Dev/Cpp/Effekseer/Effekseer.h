@@ -177,6 +177,7 @@ enum class TextureType : int32_t
 {
 	Color,
 	Normal,
+	Distortion,
 };
 
 //----------------------------------------------------------------------------------
@@ -1229,6 +1230,13 @@ public:
 	@return	画像のポインタ
 	*/
 	virtual void* GetNormalImage(int n) const = 0;
+
+	/**
+	@brief	格納されている歪み画像のポインタを取得する。
+	@param	n	[in]	画像のインデックス
+	@return	画像のポインタ
+	*/
+	virtual void* GetDistortionImage(int n) const = 0;
 
 	/**
 		@brief	格納されている音波形のポインタを取得する。

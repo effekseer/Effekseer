@@ -7,8 +7,8 @@ namespace Effekseer.Data
 {
 	public class RendererCommonValues
 	{
-		[Name(language = Language.Japanese, value = "色画像")]
-		[Description(language = Language.Japanese, value = "色を表す画像")]
+		[Name(language = Language.Japanese, value = "色/歪み画像")]
+		[Description(language = Language.Japanese, value = "色/歪みを表す画像")]
 		public Value.PathForImage ColorTexture
 		{
 			get;

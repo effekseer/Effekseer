@@ -110,9 +110,9 @@ public:
 		auto distortion = param.Distortion;
 		if (distortion && renderer->GetBackground() == 0) return;
 
-		if (m_state.Distortion)
+		if (distortion)
 		{
-			auto callback = m_renderer->GetDistortingCallback();
+			auto callback = renderer->GetDistortingCallback();
 			if (callback != nullptr)
 			{
 				callback->OnDistorting();
@@ -186,7 +186,7 @@ public:
 		{
 			if (param.ColorTextureIndex >= 0)
 			{
-				textures[0] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetColorImage(param.ColorTextureIndex));
+				textures[0] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetDistortionImage(param.ColorTextureIndex));
 			}
 
 			textures[1] = renderer->GetBackground();

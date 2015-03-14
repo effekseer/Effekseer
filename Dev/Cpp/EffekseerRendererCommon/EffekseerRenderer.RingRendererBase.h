@@ -71,7 +71,14 @@ protected:
 
 		if (param.ColorTextureIndex >= 0)
 		{
-			state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
+			if (state.Distortion)
+			{
+				state.TexturePtr = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
+			}
+			else
+			{
+				state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
+			}
 		}
 		else
 		{

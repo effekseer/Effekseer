@@ -9,26 +9,45 @@ namespace Effekseer.Binary
 {
 	class RendererCommonValues
 	{
-		public static byte[] GetBytes(Data.RendererCommonValues value, Dictionary<string, int> texture_and_index)
+		public static byte[] GetBytes(Data.RendererCommonValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> distortionTexture_and_index)
 		{
 			List<byte[]> data = new List<byte[]>();
 
 			var texInfo = new TextureInformation();
-			var hasColorTexture = true;
+			var hasTexture = true;
 
 			// テクスチャ番号
-			if (value.ColorTexture.RelativePath != string.Empty && 
-				texture_and_index.ContainsKey(value.ColorTexture.RelativePath) &&
-				texInfo.Load(value.ColorTexture.AbsolutePath))
+			if (value.Distortion.Value)
 			{
-				data.Add(texture_and_index[value.ColorTexture.RelativePath].GetBytes());
-				hasColorTexture = true;
+				if (value.ColorTexture.RelativePath != string.Empty &&
+				distortionTexture_and_index.ContainsKey(value.ColorTexture.RelativePath) &&
+				texInfo.Load(value.ColorTexture.AbsolutePath))
+				{
+					data.Add(distortionTexture_and_index[value.ColorTexture.RelativePath].GetBytes());
+					hasTexture = true;
+				}
+				else
+				{
+					data.Add((-1).GetBytes());
+					hasTexture = false;
+				}
 			}
 			else
 			{
-				data.Add((-1).GetBytes());
-				hasColorTexture = false;
+				if (value.ColorTexture.RelativePath != string.Empty &&
+					texture_and_index.ContainsKey(value.ColorTexture.RelativePath) &&
+					texInfo.Load(value.ColorTexture.AbsolutePath))
+				{
+					data.Add(texture_and_index[value.ColorTexture.RelativePath].GetBytes());
+					hasTexture = true;
+				}
+				else
+				{
+					data.Add((-1).GetBytes());
+					hasTexture = false;
+				}
 			}
+			
 
 			data.Add(value.AlphaBlend);
 			data.Add(value.Filter);
@@ -74,7 +93,7 @@ namespace Effekseer.Binary
 				data.Add(BitConverter.GetBytes(easing[2]));
 			}
 
-			if (hasColorTexture)
+			if (hasTexture)
 			{
 				var width = (float)texInfo.Width;
 				var height = (float)texInfo.Height;
