@@ -175,7 +175,7 @@ namespace Effekseer.Data
 		public OptionValues()
 		{
 			BackgroundColor = new Value.Color(0, 0, 0, 255);
-			BackgroundImage = new Value.PathForImage("画像ファイル (*.png)|*.png", "");
+			BackgroundImage = new Value.PathForImage("画像ファイル (*.png)|*.png", false, "");
 			GridColor = new Value.Color(255, 255, 255, 255);
 			
 			IsGridShown = new Value.Boolean(true);

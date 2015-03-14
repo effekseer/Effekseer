@@ -111,7 +111,7 @@ namespace Effekseer.Data
 
 		internal RendererCommonValues()
 		{
-			ColorTexture = new Value.PathForImage("画像ファイル (*.png)|*.png", "");
+			ColorTexture = new Value.PathForImage("画像ファイル (*.png)|*.png", true, "");
 			AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);
 			Wrap = new Value.Enum<WrapType>(WrapType.Repeat);

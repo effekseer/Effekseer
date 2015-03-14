@@ -105,7 +105,7 @@ namespace Effekseer.Data
 
             internal SoundParamater()
 			{
-                Wave = new Value.PathForSound("音声ファイル (*.wav)|*.wav", "");
+                Wave = new Value.PathForSound("音声ファイル (*.wav)|*.wav", true, "");
                 Volume = new Value.FloatWithRandom(1.0f, 1.0f, 0.0f);
                 Pitch = new Value.FloatWithRandom(0.0f, 2.0f, -2.0f);
                 PanType = new Value.Enum<ParamaterPanType>(ParamaterPanType.Sound2D);

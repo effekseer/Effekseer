@@ -9,6 +9,15 @@ namespace Effekseer.Data.Value
 	{
 		string _abspath = string.Empty;
 
+		/// <summary>
+		/// 相対パスで保存されるか?
+		/// </summary>
+		public bool IsRelativeSaved
+		{
+			get;
+			private set;
+		}
+
 		public string Filter
 		{
 			get;
@@ -44,9 +53,10 @@ namespace Effekseer.Data.Value
 
 		public string DefaultValue { get; private set; }
 
-		internal Path(string filter, string abspath = "")
+		internal Path(string filter, bool isRelativeSaved = true, string abspath = "")
 		{
 			Filter = filter;
+			IsRelativeSaved = isRelativeSaved;
 			_abspath = abspath;
 
 			DefaultValue = _abspath;

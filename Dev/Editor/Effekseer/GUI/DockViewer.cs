@@ -256,7 +256,7 @@ namespace Effekseer.GUI
 				(byte)Core.Option.BackgroundColor.G,
 				(byte)Core.Option.BackgroundColor.B);
 
-				viewer.SetBackgroundImage(Core.Option.BackgroundImage.RelativePath);
+				viewer.SetBackgroundImage(Core.Option.BackgroundImage.AbsolutePath);
 
 				viewer.SetGridColor(
 				(byte)Core.Option.GridColor.R,

@@ -170,7 +170,7 @@ namespace Effekseer.Data
 				Position_Fixed_LR = new Value.Vector2D(0.5f, -0.5f);
 				Position_Fixed_UL = new Value.Vector2D(-0.5f, 0.5f);
 				Position_Fixed_UR = new Value.Vector2D(0.5f, 0.5f);
-				ColorTexture = new Value.Path("画像ファイル (*.png)|*.png","");
+				ColorTexture = new Value.Path("画像ファイル (*.png)|*.png", true, "");
 			}
 
 			public enum BillboardType : int
@@ -278,7 +278,7 @@ namespace Effekseer.Data
 				Position_Fixed_L = new Value.Float(-0.5f);
 				Position_Fixed_R = new Value.Float(0.5f);
 			
-				ColorTexture = new Value.Path("画像ファイル (*.png)|*.png", "");
+				ColorTexture = new Value.Path("画像ファイル (*.png)|*.png", true, "");
 			}
 
             public enum ColorAllType : int
@@ -483,7 +483,7 @@ namespace Effekseer.Data
                 InnerColor_Random = new Value.ColorWithRandom(255, 255, 255, 0);
                 InnerColor_Easing = new ColorEasingParamater();
 
-                ColorTexture = new Value.Path("画像ファイル (*.png)|*.png", "");
+                ColorTexture = new Value.Path("画像ファイル (*.png)|*.png",true, "");
             }
 
             public enum BillboardType : int
@@ -615,8 +615,8 @@ namespace Effekseer.Data
 
 			public ModelParamater()
 			{
-				Model = new Value.Path("モデルファイル (*.efkmodel)|*.efkmodel", "");
-				NormalTexture = new Value.PathForImage("画像ファイル (*.png)|*.png", "");
+				Model = new Value.Path("モデルファイル (*.efkmodel)|*.efkmodel", true, "");
+				NormalTexture = new Value.PathForImage("画像ファイル (*.png)|*.png",true,  "");
 				Lighting = new Value.Boolean(true);
 				Culling = new Value.Enum<CullingValues>(Data.CullingValues.Front);
 
