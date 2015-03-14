@@ -7,7 +7,7 @@
 #include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 
-#include "EffekseerTool.Background.h"
+#include "EffekseerTool.Paste.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -20,13 +20,13 @@ namespace EffekseerRenderer
 namespace Shader_
 {
 static
-#include "EffekseerTool.Background.Shader.h"
+#include "EffekseerTool.Paste.Shader.h"
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Background::Background( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* shader )
+Paste::Paste( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* shader )
 	: DeviceObject( renderer )
 	, m_renderer	( renderer )
 	, m_shader		( shader )
@@ -46,7 +46,7 @@ Background::Background( EffekseerRendererDX9::RendererImplemented* renderer, ID3
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Background::~Background()
+Paste::~Paste()
 {
 	ES_SAFE_RELEASE( m_shader );
 	ES_SAFE_RELEASE( m_vertexDeclaration );
@@ -55,7 +55,7 @@ Background::~Background()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Background* Background::Create( EffekseerRendererDX9::RendererImplemented* renderer )
+Paste* Paste::Create( EffekseerRendererDX9::RendererImplemented* renderer )
 {
 	assert( renderer != NULL );
 	assert( renderer->GetDevice() != NULL );
@@ -93,13 +93,13 @@ Background* Background::Create( EffekseerRendererDX9::RendererImplemented* rende
 		return NULL;
 	}
 
-	return new Background( renderer, shader );
+	return new Paste( renderer, shader );
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Background::OnLostDevice()
+void Paste::OnLostDevice()
 {
 	m_shader->OnLostDevice();
 }
@@ -107,7 +107,7 @@ void Background::OnLostDevice()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Background::OnResetDevice()
+void Paste::OnResetDevice()
 {
 	m_shader->OnResetDevice();
 }
@@ -115,35 +115,38 @@ void Background::OnResetDevice()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Background::Rendering( IDirect3DTexture9* texture )
+void Paste::Rendering(IDirect3DTexture9* texture, int32_t width, int32_t height)
 {
 	m_renderer->GetVertexBuffer()->Lock();
 
 	{
+		auto offset_x = 0.5f / (float)width;
+		auto offset_y = 0.5f / (float) height;
+
 		Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * 4 );
 		verteies[0].Pos.X = -1.0f;
 		verteies[0].Pos.Y = -1.0f;
 		verteies[0].Pos.Z = 0.5f;
-		verteies[0].UV.X = 0.0f;
-		verteies[0].UV.Y = 1.0f;
+		verteies[0].UV.X = 0.0f + offset_x;
+		verteies[0].UV.Y = 1.0f + offset_y;
 
 		verteies[1].Pos.X = -1.0f;
 		verteies[1].Pos.Y = 1.0f;
 		verteies[1].Pos.Z = 0.5f;
-		verteies[1].UV.X = 0.0f;
-		verteies[1].UV.Y = 0.0f;
+		verteies[1].UV.X = 0.0f + offset_x;
+		verteies[1].UV.Y = 0.0f + offset_y;
 
 		verteies[2].Pos.X = 1.0f;
 		verteies[2].Pos.Y = -1.0f;
 		verteies[2].Pos.Z = 0.5f;
-		verteies[2].UV.X = 1.0f;
-		verteies[2].UV.Y = 1.0f;
+		verteies[2].UV.X = 1.0f + offset_x;
+		verteies[2].UV.Y = 1.0f + offset_y;
 
 		verteies[3].Pos.X = 1.0f;
 		verteies[3].Pos.Y = 1.0f;
 		verteies[3].Pos.Z = 0.5f;
-		verteies[3].UV.X = 1.0f;
-		verteies[3].UV.Y = 0.0f;
+		verteies[3].UV.X = 1.0f + offset_x;
+		verteies[3].UV.Y = 0.0f + offset_y;
 	}
 
 	m_renderer->GetVertexBuffer()->Unlock();

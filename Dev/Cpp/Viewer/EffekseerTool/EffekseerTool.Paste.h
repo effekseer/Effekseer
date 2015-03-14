@@ -1,6 +1,6 @@
 
-#ifndef	__EFFEKSEERRENDERER_BACKGROUND_H__
-#define	__EFFEKSEERRENDERER_BACKGROUND_H__
+#ifndef	__EFFEKSEERRENDERER_PASTE_H__
+#define	__EFFEKSEERRENDERER_PASTE_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -18,7 +18,7 @@ namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-class Background
+class Paste
 	: public EffekseerRendererDX9::DeviceObject
 {
 private:
@@ -33,19 +33,19 @@ private:
 	ID3DXEffect*					m_shader;
 	IDirect3DVertexDeclaration9*	m_vertexDeclaration;
 
-	Background( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* shader );
+	Paste(EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* shader);
 public:
 
-	virtual ~Background();
+	virtual ~Paste();
 
-	static Background* Create( EffekseerRendererDX9::RendererImplemented* renderer );
+	static Paste* Create(EffekseerRendererDX9::RendererImplemented* renderer);
 
 public:	// デバイス復旧用
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
 
 public:
-	void Rendering( IDirect3DTexture9* texture );
+	void Rendering(IDirect3DTexture9* texture, int32_t width, int32_t height);
 };
 //----------------------------------------------------------------------------------
 //
@@ -54,4 +54,4 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_BACKGROUND_H__
+#endif	// __EFFEKSEERRENDERER_PASTE_H__
