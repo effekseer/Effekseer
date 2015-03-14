@@ -110,6 +110,15 @@ public:
 		auto distortion = param.Distortion;
 		if (distortion && renderer->GetBackground() == 0) return;
 
+		if (m_state.Distortion)
+		{
+			auto callback = m_renderer->GetDistortingCallback();
+			if (callback != nullptr)
+			{
+				callback->OnDistorting();
+			}
+		}
+
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
@@ -203,7 +212,7 @@ public:
 		state.TextureFilterTypes[1] = param.TextureFilter;
 		state.TextureWrapTypes[1] = param.TextureWrap;
 
-		renderer->GetRenderState()->Update(false);
+		renderer->GetRenderState()->Update(distortion);
 
 		ModelRendererVertexConstantBuffer<InstanceCount>* vcb = (ModelRendererVertexConstantBuffer<InstanceCount>*)shader_->GetVertexConstantBuffer();
 

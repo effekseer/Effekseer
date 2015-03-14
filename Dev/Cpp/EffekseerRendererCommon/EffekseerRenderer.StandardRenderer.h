@@ -245,7 +245,7 @@ public:
 		state.TextureFilterTypes[0] = m_state.TextureFilterType;
 		state.TextureWrapTypes[0] = m_state.TextureWrapType;
 
-		m_renderer->GetRenderState()->Update(false);
+		m_renderer->GetRenderState()->Update(distortion);
 
 		if (distortion)
 		{
