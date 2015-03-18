@@ -146,6 +146,9 @@ public class EffekseerSystem : MonoBehaviour
 	}
 	
 	void OnRenderObject() {
+		if ((Camera.current.cullingMask & (1 << gameObject.layer)) == 0) {
+			return;
+		}
 		int eventId = renderEventId;
 		#if UNITY_EDITOR
 			if (SceneView.currentDrawingSceneView != null && 
