@@ -43,23 +43,57 @@ public:
 
 protected:
 
-	template<typename RENDERER, typename VERTEX>
-	void BeginRendering_(RENDERER* renderer, int32_t count)
+	template<typename RENDERER>
+	void BeginRendering_(RENDERER* renderer, int32_t count, const efkSpriteNodeParam& param)
 	{
-		m_spriteCount = 0;
+		EffekseerRenderer::StandardRendererState state;
+		state.AlphaBlend = param.AlphaBlend;
+		state.CullingType = ::Effekseer::CullingType::Double;
+		state.DepthTest = param.ZTest;
+		state.DepthWrite = param.ZWrite;
+		state.TextureFilterType = param.TextureFilter;
+		state.TextureWrapType = param.TextureWrap;
 
-		if (!renderer->GetVertexBuffer()->RingBufferLock(
-			count * sizeof(VERTEX) * 4,
-			m_ringBufferOffset,
-			(void*&) m_ringBufferData))
+		state.Distortion = param.Distortion;
+		state.DistortionIntensity = param.DistortionIntensity;
+
+		if (param.ColorTextureIndex >= 0)
 		{
-			m_ringBufferOffset = 0;
-			m_ringBufferData = NULL;
+			if (state.Distortion)
+			{
+				state.TexturePtr = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
+			}
+			else
+			{
+				state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
+			}
+		}
+		else
+		{
+			state.TexturePtr = nullptr;
+		}
+
+		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
+
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * 4, m_ringBufferOffset, (void*&) m_ringBufferData);
+		m_spriteCount = 0;
+	}
+
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_(const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+	{
+		if (parameter.Distortion)
+		{
+			Rendering_Internal<VERTEX_DISTORTION, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+		else
+		{
+			Rendering_Internal<VERTEX, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
 		}
 	}
 
-	template<typename VERTEX>
-	void Rendering_( const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_Internal( const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
 		if( m_ringBufferData == NULL ) return;
 		
@@ -86,6 +120,21 @@ protected:
 	
 		verteies[3].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
 		verteies[3].UV[1] = instanceParameter.UV.Y;
+
+		// òcÇ›èàóù
+		if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+		{
+			auto vs = (VERTEX_DISTORTION*) verteies;
+			for (auto i = 0; i < 4; i++)
+			{
+				vs[i].Tangent.X = 1.0f;
+				vs[i].Tangent.Y = 0.0f;
+				vs[i].Tangent.Z = 0.0f;
+				vs[i].Binormal.X = 1.0f;
+				vs[i].Binormal.Y = 0.0f;
+				vs[i].Binormal.Z = 0.0f;
+			}
+		}
 		
 		if( parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
 			parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard ||
@@ -189,6 +238,31 @@ protected:
 					verteies[i].Pos,
 					verteies[i].Pos,
 					instanceParameter.SRTMatrix43 );
+
+				// òcÇ›èàóù
+				if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+				{
+					auto vs = (VERTEX_DISTORTION*) & verteies[i];
+
+					::Effekseer::Vector3D::Transform(
+						vs->Tangent,
+						vs->Tangent,
+						instanceParameter.SRTMatrix43);
+
+					::Effekseer::Vector3D::Transform(
+						vs->Binormal,
+						vs->Binormal,
+						instanceParameter.SRTMatrix43);
+
+					Effekseer::Vector3D zero;
+					::Effekseer::Vector3D::Transform(
+						zero,
+						zero,
+						instanceParameter.SRTMatrix43);
+
+					::Effekseer::Vector3D::Normal(vs->Tangent, vs->Tangent - zero);
+					::Effekseer::Vector3D::Normal(vs->Binormal, vs->Binormal - zero);
+				}
 			}
 		}
 		
@@ -196,8 +270,9 @@ protected:
 	}
 
 	template<typename RENDERER,typename SHADER, typename TEXTURE, typename VERTEX>
-	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkSpriteNodeParam& param)
+	void EndRendering_(RENDERER* renderer, const efkSpriteNodeParam& param)
 	{
+		/*
 		SHADER* shader_ = NULL;
 		if (param.ColorTextureIndex >= 0)
 		{
@@ -243,6 +318,7 @@ protected:
 		renderer->EndShader(shader_);
 
 		renderer->GetRenderState()->Pop();
+		*/
 	}
 };
 //----------------------------------------------------------------------------------

@@ -7,8 +7,8 @@ namespace Effekseer.Data
 {
 	public class RendererCommonValues
 	{
-		[Name(language = Language.Japanese, value = "色画像")]
-		[Description(language = Language.Japanese, value = "色を表す画像")]
+		[Name(language = Language.Japanese, value = "色/歪み画像")]
+		[Description(language = Language.Japanese, value = "色/歪みを表す画像")]
 		public Value.PathForImage ColorTexture
 		{
 			get;
@@ -102,9 +102,16 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public UVScrollParamater UVScroll { get; private set; }
 
+
+		[Name(language = Language.Japanese, value = "歪み")]
+		public Value.Boolean Distortion { get; private set; }
+
+		[Name(language = Language.Japanese, value = "歪み強度")]
+		public Value.Float DistortionIntensity { get; private set; }
+
 		internal RendererCommonValues()
 		{
-			ColorTexture = new Value.PathForImage("画像ファイル (*.png)|*.png", "");
+			ColorTexture = new Value.PathForImage("画像ファイル (*.png)|*.png", true, "");
 			AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);
 			Wrap = new Value.Enum<WrapType>(WrapType.Repeat);
@@ -126,6 +133,9 @@ namespace Effekseer.Data
 
 			ZWrite = new Value.Boolean(false);
 			ZTest = new Value.Boolean(true);
+
+			Distortion = new Value.Boolean(false);
+			DistortionIntensity = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
 		}
 
 		public class NoneParamater

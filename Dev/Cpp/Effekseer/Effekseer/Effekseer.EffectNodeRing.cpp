@@ -187,6 +187,10 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.ColorTextureIndex = RingTexture;
 		nodeParameter.VertexCount = VertexCount;
 		nodeParameter.EffectPointer = GetEffect();
+
+		nodeParameter.Distortion = Texture.Distortion;
+		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+
 		renderer->BeginRendering( nodeParameter, count, m_userData );
 	}
 }
@@ -210,6 +214,9 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.VertexCount = VertexCount;
 		nodeParameter.ColorTextureIndex = RingTexture;
+
+		nodeParameter.Distortion = Texture.Distortion;
+		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
 
 		RingRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -255,6 +262,10 @@ void EffectNodeRing::EndRendering(Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.ColorTextureIndex = RingTexture;
 		nodeParameter.EffectPointer = GetEffect();
+
+		nodeParameter.Distortion = Texture.Distortion;
+		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+
 		renderer->EndRendering( nodeParameter, m_userData );
 	}
 }

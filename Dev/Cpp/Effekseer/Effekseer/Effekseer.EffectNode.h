@@ -418,6 +418,10 @@ struct ParameterTexture
 
 	bool				ZTest;
 
+	bool				Distortion;
+
+	float				DistortionIntensity;
+
 	enum
 	{
 		FADEIN_ON = 1,
@@ -571,6 +575,20 @@ struct ParameterTexture
 		{
 			memcpy( &UV.Scroll, pos, sizeof(UV.Scroll) );
 			pos += sizeof(UV.Scroll);
+		}
+
+		if (version >= 9)
+		{
+			int32_t distortion = 0;
+
+			memcpy(&distortion, pos, sizeof(int32_t));
+			pos += sizeof(int32_t);
+
+			Distortion = distortion > 0;
+
+			memcpy(&DistortionIntensity, pos, sizeof(float));
+			pos += sizeof(float);
+			
 		}
 	}
 };

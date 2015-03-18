@@ -98,7 +98,7 @@
       <OutputFile>$(TargetPath)</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
       <AdditionalDependencies>Effekseer.Debug.lib;EffekseerRendererDX9.Debug.lib;EffekseerSoundXAudio2.Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -120,7 +120,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
       <AdditionalDependencies>Effekseer.Release.lib;EffekseerRendererDX9.Release.lib;EffekseerSoundXAudio2.Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -144,7 +144,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
       <AdditionalDependencies>Effekseer.Release.lib;EffekseerRendererDX9.Release.lib;EffekseerSoundXAudio2.Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -165,7 +165,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
       <AdditionalDependencies>Effekseer.Debug.lib;EffekseerRendererDX9.Debug.lib;EffekseerSoundXAudio2.Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
@@ -174,20 +174,20 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="EffekseerTool\EffekseerTool.Background.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Base.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Culling.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Grid.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Guide.h" />
+    <ClInclude Include="EffekseerTool\EffekseerTool.Paste.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Sound.h" />
     <CustomBuildStep Include="dll.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EffekseerTool\EffekseerTool.Background.cpp" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Culling.cpp" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Grid.cpp" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Guide.cpp" />
+    <ClCompile Include="EffekseerTool\EffekseerTool.Paste.cpp" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Renderer.cpp" />
     <ClCompile Include="dll.cpp" />
     <ClCompile Include="dll_cs.cxx" />

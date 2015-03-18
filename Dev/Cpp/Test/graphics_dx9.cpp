@@ -9,9 +9,9 @@
 #include "window.h"
 
 #if _DEBUG
-#pragma comment(lib, "EffekseerRendererDX9.Debug.lib" )
+#pragma comment(lib, "x86/EffekseerRendererDX9.Debug.lib" )
 #else
-#pragma comment(lib, "EffekseerRendererDX9.Release.lib" )
+#pragma comment(lib, "x86/EffekseerRendererDX9.Release.lib" )
 #endif
 
 //----------------------------------------------------------------------------------

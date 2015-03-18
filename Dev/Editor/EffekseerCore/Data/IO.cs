@@ -237,7 +237,7 @@ namespace Effekseer.Data
 			if (value.DefaultValue == value.GetAbsolutePath()) return null;
 
 			var text = "";
-			if(!isClip)
+			if(!isClip && value.IsRelativeSaved)
 				text = value.GetRelativePath();
 			else
 				text = value.GetAbsolutePath();

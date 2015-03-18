@@ -97,6 +97,9 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.VertexArray.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.StandardRenderer.h">
+      <Filter>EffekseerRendererCommon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">

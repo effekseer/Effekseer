@@ -42,6 +42,16 @@ public:
 		@brief	最大描画スプライト数を取得する。
 	*/
 	virtual int32_t GetSquareMaxCount() const = 0;
+
+	/**
+	@brief	背景を取得する。
+	*/
+	virtual GLuint GetBackground() = 0;
+
+	/**
+	@brief	背景を設定する。
+	*/
+	virtual void SetBackground(GLuint background) = 0;
 };
 
 //----------------------------------------------------------------------------------

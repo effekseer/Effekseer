@@ -6,13 +6,58 @@
 #include "EffekseerTool.Grid.h"
 #include "EffekseerTool.Guide.h"
 #include "EffekseerTool.Culling.h"
-#include "EffekseerTool.Background.h"
+#include "EffekseerTool.Paste.h"
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 namespace EffekseerTool
 {
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+	Renderer::DistortingCallback::DistortingCallback(Renderer* renderer)
+		: renderer(renderer)
+	{
+	
+	}
+
+	Renderer::DistortingCallback::~DistortingCallback()
+	{
+	
+	}
+
+	void Renderer::DistortingCallback::OnDistorting()
+	{
+		auto texture = renderer->ExportBackground();
+		renderer->m_renderer->SetBackground(texture);
+	}
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Renderer::GenerateRenderTargets(int32_t width, int32_t height)
+{
+	ES_SAFE_RELEASE(m_renderTarget);
+	ES_SAFE_RELEASE(m_renderTargetTexture);
+	ES_SAFE_RELEASE(m_renderTargetDepth);
+
+	ES_SAFE_RELEASE(m_renderEffectBackTarget);
+	ES_SAFE_RELEASE(m_renderEffectBackTargetTexture);
+
+	HRESULT hr;
+
+	hr = GetDevice()->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_renderTargetTexture, NULL);
+	if (FAILED(hr)) return;
+
+	m_renderTargetTexture->GetSurfaceLevel(0, &m_renderTarget);
+
+	GetDevice()->CreateDepthStencilSurface(width, height, D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, TRUE, &m_renderTargetDepth, NULL);
+
+	hr = GetDevice()->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_renderEffectBackTargetTexture, NULL);
+	if (FAILED(hr)) return;
+
+	m_renderEffectBackTargetTexture->GetSurfaceLevel(0, &m_renderEffectBackTarget);
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -74,6 +119,14 @@ Renderer::~Renderer()
 	assert( !m_recording );
 
 	ES_SAFE_RELEASE( m_backGroundTexture );
+
+	ES_SAFE_RELEASE(m_renderTarget);
+	ES_SAFE_RELEASE(m_renderTargetTexture);
+	ES_SAFE_RELEASE(m_renderTargetDepth);
+
+	ES_SAFE_RELEASE(m_renderEffectBackTarget);
+	ES_SAFE_RELEASE(m_renderEffectBackTargetTexture);
+
 
 	ES_SAFE_DELETE( m_guide );
 	ES_SAFE_DELETE( m_grid );
@@ -149,7 +202,8 @@ bool Renderer::Initialize( HWND handle, int width, int height )
 	m_height = height;
 
 	m_renderer = (::EffekseerRendererDX9::RendererImplemented*)::EffekseerRendererDX9::Renderer::Create( m_d3d_device, m_squareMaxCount );
-	
+	m_renderer->SetDistortingCallback(new DistortingCallback(this));
+
 	// ƒOƒŠƒbƒh¶¬
 	m_grid = ::EffekseerRenderer::Grid::Create( m_renderer );
 
@@ -159,7 +213,7 @@ bool Renderer::Initialize( HWND handle, int width, int height )
 	m_culling = ::EffekseerRenderer::Culling::Create( m_renderer );
 
 	// ”wŒiì¬
-	m_background = ::EffekseerRenderer::Background::Create( m_renderer );
+	m_background = ::EffekseerRenderer::Paste::Create( m_renderer );
 
 
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
@@ -170,6 +224,8 @@ bool Renderer::Initialize( HWND handle, int width, int height )
 	{
 		SetOrthographic( width, height );
 	}
+
+	GenerateRenderTargets(m_width, m_height);
 
 	return true;
 }
@@ -226,6 +282,8 @@ void Renderer::ResetDevice()
 {
 	m_renderer->OnLostDevice();
 
+	GenerateRenderTargets(m_width, m_height);
+
 	HRESULT hr;
 
 	D3DPRESENT_PARAMETERS d3dp;
@@ -239,6 +297,7 @@ void Renderer::ResetDevice()
 	d3dp.hDeviceWindow = m_handle;
 	d3dp.EnableAutoDepthStencil = TRUE;
     d3dp.AutoDepthStencilFormat = D3DFMT_D16;
+
 
 	hr = m_d3d_device->Reset( &d3dp );
 
@@ -368,6 +427,15 @@ bool Renderer::BeginRendering()
 
 	HRESULT hr;
 
+	if (!m_recording)
+	{
+		GetDevice()->GetRenderTarget(0, &m_renderDefaultTarget);
+		GetDevice()->GetDepthStencilSurface(&m_renderDefaultDepth);
+		
+		GetDevice()->SetRenderTarget(0, m_renderTarget);
+		GetDevice()->SetDepthStencilSurface(m_renderTargetDepth);
+	}
+
 	if( m_recording && IsBackgroundTranslucent )
 	{
 		m_d3d_device->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(0,0,0,0), 1.0f, 0 );
@@ -393,7 +461,8 @@ bool Renderer::BeginRendering()
 	/* ”wŒi */
 	if( !m_recording && m_backGroundTexture != NULL )
 	{
-		m_background->Rendering( m_backGroundTexture );
+		// ’l‚Í“K“–(”wŒi‚Í‰æ–ÊƒTƒCƒY‚Æˆê’v‚µ‚È‚¢‚Ì‚Å–â‘è‚È‚¢)
+		m_background->Rendering(m_backGroundTexture, 1024, 1024);
 	}
 
 	if( !m_recording && IsGridShown )
@@ -434,9 +503,40 @@ bool Renderer::EndRendering()
 	{
 		m_guide->Rendering( m_width, m_height, GuideWidth, GuideHeight );
 	}
+
+	if (!m_recording)
+	{
+		GetDevice()->SetRenderTarget(0, m_renderDefaultTarget);
+		GetDevice()->SetDepthStencilSurface(m_renderDefaultDepth);
+		ES_SAFE_RELEASE(m_renderDefaultTarget);
+		ES_SAFE_RELEASE(m_renderDefaultDepth);
+		
+		m_d3d_device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
+		m_background->Rendering(m_renderTargetTexture, m_width, m_height);
+	}
 	
 	m_d3d_device->EndScene();
 	return true;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+IDirect3DTexture9* Renderer::ExportBackground()
+{
+	if (m_recording) return nullptr;
+	if (m_renderDefaultTarget == nullptr) return nullptr;
+
+	GetDevice()->SetRenderTarget(0, m_renderEffectBackTarget);
+	GetDevice()->SetDepthStencilSurface(nullptr);
+	
+	m_d3d_device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
+	m_background->Rendering(m_renderTargetTexture, m_width, m_height);
+
+	GetDevice()->SetRenderTarget(0, m_renderTarget);
+	GetDevice()->SetDepthStencilSurface(m_renderTargetDepth);
+
+	return m_renderEffectBackTargetTexture;
 }
 
 //----------------------------------------------------------------------------------
@@ -525,6 +625,9 @@ void Renderer::LoadBackgroundImage( void* data, int32_t size )
 	if( data != NULL )
 	{
 		D3DXCreateTextureFromFileInMemory( m_renderer->GetDevice(), data, size, &m_backGroundTexture );
+	}
+	else
+	{
 	}
 }
 

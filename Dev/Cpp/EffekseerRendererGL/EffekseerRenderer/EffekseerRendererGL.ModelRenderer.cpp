@@ -147,6 +147,139 @@ static const char g_model_fs_src[] =
 	"	}\n"
 	"}\n";
 
+
+static const char g_model_distortion_vs_src [] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+"precision mediump float;\n"
+#else
+"#version 110\n"
+"#define lowp\n"
+"#define mediump\n"
+"#define highp\n"
+#endif
+"attribute vec4 a_Position;\n"
+"attribute vec4 a_Normal;\n"
+"attribute vec4 a_Binormal;\n"
+"attribute vec4 a_Tangent;\n"
+"attribute vec4 a_TexCoord;\n"
+#if defined(MODEL_SOFTWARE_INSTANCING)
+"attribute float a_InstanceID;\n"
+"attribute vec4 a_UVOffset;\n"
+"attribute vec4 a_ModelColor;\n"
+#endif
+
+R"(
+varying mediump vec4 v_Normal;
+varying mediump vec4 v_Binormal;
+varying mediump vec4 v_Tangent;
+varying mediump vec4 v_TexCoord;
+varying mediump vec4 v_Pos;
+varying lowp vec4 v_Color;
+)"
+
+#if defined(MODEL_SOFTWARE_INSTANCING)
+"uniform mat4 ModelMatrix[20];\n"
+"uniform vec4 UVOffset[20];\n"
+"uniform vec4 ModelColor[20];\n"
+#else
+"uniform mat4 ModelMatrix;\n"
+"uniform vec4 UVOffset;\n"
+"uniform vec4 ModelColor;\n"
+#endif
+"uniform mat4 ProjectionMatrix;\n"
+
+
+"void main() {\n"
+#if defined(MODEL_SOFTWARE_INSTANCING)
+"	mat4 modelMatrix = ModelMatrix[int(a_InstanceID)];\n"
+"	vec4 uvOffset = a_UVOffset;\n"
+"	vec4 modelColor = a_ModelColor;\n"
+#else
+"	mat4 modelMatrix = ModelMatrix;\n"
+"	vec4 uvOffset = UVOffset;\n"
+"	vec4 modelColor = ModelColor;\n"
+#endif
+
+R"(
+	vec4 localPosition = vec4( a_Position.x, a_Position.y, a_Position.z, 1.0 );
+	vec4 localNormal = vec4( a_Position.x + a_Normal.x, a_Position.y + a_Normal.y, a_Position.z + a_Normal.z, 1.0 );
+	vec4 localBinormal = vec4( a_Position.x + a_Binormal.x, a_Position.y + a_Binormal.y, a_Position.z + a_Binormal.z, 1.0 );
+	vec4 localTangent = vec4( a_Position.x + a_Tangent.x, a_Position.y + a_Tangent.y, a_Position.z + a_Tangent.z, 1.0 );
+
+
+	localPosition = matModel * localPosition;
+	localNormal = matModel * localNormal;
+	localBinormal = matModel * localBinormal;
+	localTangent = matModel * localTangent;
+
+	localNormal = localPosition + normalize(localNormal - localPosition);
+	localBinormal = localPosition + normalize(localBinormal - localPosition);
+	localTangent = localPosition + normalize(localTangent - localPosition);
+
+	gl_Position = ProjectionMatrix * localPosition;
+
+	v_TexCoord.xy = a_TexCoord.xy + uvOffset.xy;
+
+	v_Normal = ProjectionMatrix * localNormal;
+	v_Binormal = ProjectionMatrix * localBinormal;
+	v_Tangent = ProjectionMatrix * localTangent;
+	v_Pos = gl_Position;
+
+	v_Color = modelColor;
+}
+)";
+
+static const char g_model_distortion_fs_src [] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+"precision mediump float;\n"
+#else
+"#version 110\n"
+"#define lowp\n"
+"#define mediump\n"
+"#define highp\n"
+#endif
+"varying mediump vec4 v_Normal;\n"
+"varying mediump vec4 v_Binormal;\n"
+"varying mediump vec4 v_Tangent;\n"
+"varying mediump vec4 v_TexCoord;\n"
+"varying mediump vec4 v_Pos;\n"
+"varying lowp vec4 v_Color;\n"
+
+R"(
+uniform sampler2D uTexture0;
+uniform sampler2D uBackTexture0;
+
+uniform	vec4	g_scale;
+
+
+void main() {
+if (TextureEnable)
+{
+	gl_FragColor = texture2D(uTexture0, v_TexCoord.xy);
+}
+else
+{
+	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+}
+
+	gl_FragColor.a = gl_FragColor.a * v_Color.a;
+
+	vec2 pos = v_Pos.xy / v_Pos.w;
+	vec2 posU = v_Tangent.xy / v_Tangent.w;
+	vec2 posR = v_Binormal.xy / v_Binormal.w;
+
+	float xscale = (gl_FragColor.x * 2.0 - 1.0) * v_Color.x * g_scale.x;
+	float yscale = (gl_FragColor.y * 2.0 - 1.0) * v_Color.y * g_scale.x;
+
+	vec2 uv = pos + (posR - pos) * xscale + (posU - pos) * yscale;
+
+	uv.x = (uv.x + 1.0) * 0.5;
+	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
+
+	vec3 color = texture2D(uBackTexture0, uv);
+	gl_FragColor.xyz = color;
+)";
+
 static ShaderAttribInfo g_model_attribs[ModelRenderer::NumAttribs] = {
 	{"a_Position",		GL_FLOAT,			3,  0,	false},
 	{"a_Normal",		GL_FLOAT,			3, 12,	false},
@@ -172,9 +305,7 @@ static ShaderUniformInfo g_model_uniforms[ModelRenderer::NumUniforms] = {
 	{"LightDirection"	},
 	{"LightColor"		},
 	{"LightAmbient"		},
-	{"TextureEnable"	},
-	{"LightingEnable"	},
-	{"NormalMapEnable"	},
+	{ "g_scale" },
 };
 
 //----------------------------------------------------------------------------------
@@ -187,7 +318,9 @@ ModelRenderer::ModelRenderer(
 	Shader* shader_lighting_texture,
 	Shader* shader_lighting,
 	Shader* shader_texture,
-	Shader* shader)
+	Shader* shader,
+	Shader* shader_distortion_texture,
+	Shader* shader_distortion)
 	: m_renderer(renderer)
 	, m_shader_lighting_texture_normal(shader_lighting_texture_normal)
 	, m_shader_lighting_normal(shader_lighting_normal)
@@ -195,6 +328,8 @@ ModelRenderer::ModelRenderer(
 	, m_shader_lighting(shader_lighting)
 	, m_shader_texture(shader_texture)
 	, m_shader(shader)
+	, m_shader_distortion_texture(shader_distortion_texture)
+	, m_shader_distortion(shader_distortion)
 {
 	shader_lighting_texture_normal->GetAttribIdList(NumAttribs, g_model_attribs);
 	shader_lighting_texture_normal->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[0]);
@@ -220,6 +355,16 @@ ModelRenderer::ModelRenderer(
 	
 	shader->GetAttribIdList(NumAttribs, g_model_attribs);
 	shader->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[5]);
+
+	shader_distortion_texture->GetAttribIdList(NumAttribs, g_model_attribs);
+	shader_distortion_texture->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[6]);
+	shader_distortion_texture->SetTextureSlot(0, shader_distortion_texture->GetUniformId("uTexture0"));
+	shader_distortion_texture->SetTextureSlot(1, shader_distortion_texture->GetUniformId("uBackTexture0"));
+
+	shader_distortion->GetAttribIdList(NumAttribs, g_model_attribs);
+	shader_distortion->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[7]);
+	shader_distortion->SetTextureSlot(0, shader_distortion->GetUniformId("uTexture0"));
+	shader_distortion->SetTextureSlot(1, shader_distortion->GetUniformId("uBackTexture0"));
 
 	Shader* shaders[6];
 	shaders[0] = m_shader_lighting_texture_normal;
@@ -291,6 +436,65 @@ ModelRenderer::ModelRenderer(
 			sizeof(float[4]) * 2
 			);
 	}
+
+	Shader* shaders_d[2];
+	shaders_d[0] = shader_distortion_texture;
+	shaders_d[1] = shader_distortion;
+
+	for (int32_t i = 0; i < 2; i++)
+	{
+		shaders_d[i]->SetVertexSize(sizeof(::Effekseer::Model::Vertex));
+
+		shaders_d[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
+		shaders_d[i]->AddVertexConstantLayout(
+			CONSTANT_TYPE_MATRIX44,
+			shaders_d[i]->GetUniformId("ProjectionMatrix"),
+			0
+			);
+
+		shaders_d[i]->AddVertexConstantLayout(
+			CONSTANT_TYPE_MATRIX44,
+			shaders_d[i]->GetUniformId("ModelMatrix"),
+			sizeof(Effekseer::Matrix44)
+			);
+
+		shaders_d[i]->AddVertexConstantLayout(
+			CONSTANT_TYPE_VECTOR4,
+			shaders_d[i]->GetUniformId("UVOffset"),
+			sizeof(Effekseer::Matrix44) * 2
+			);
+
+		shaders_d[i]->AddVertexConstantLayout(
+			CONSTANT_TYPE_VECTOR4,
+			shaders_d[i]->GetUniformId("ModelColor"),
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 1
+			);
+
+		shaders_d[i]->AddVertexConstantLayout(
+			CONSTANT_TYPE_VECTOR4,
+			shaders_d[i]->GetUniformId("LightDirection"),
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 0
+			);
+
+		shaders_d[i]->AddVertexConstantLayout(
+			CONSTANT_TYPE_VECTOR4,
+			shaders_d[i]->GetUniformId("LightColor"),
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 1
+			);
+
+		shaders_d[i]->AddVertexConstantLayout(
+			CONSTANT_TYPE_VECTOR4,
+			shaders_d[i]->GetUniformId("LightAmbient"),
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 2
+			);
+
+		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4);
+		shaders_d[i]->AddPixelConstantLayout(
+			CONSTANT_TYPE_VECTOR4,
+			shaders_d[i]->GetUniformId("g_scale"),
+			sizeof(float[4]) * 0
+			);
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -306,6 +510,9 @@ ModelRenderer::~ModelRenderer()
 
 	ES_SAFE_DELETE(m_shader_texture);
 	ES_SAFE_DELETE(m_shader);
+
+	ES_SAFE_DELETE(m_shader_distortion_texture);
+	ES_SAFE_DELETE(m_shader_distortion);
 }
 
 //----------------------------------------------------------------------------------
@@ -324,6 +531,9 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	Shader* shader_texture = NULL;
 	Shader* shader = NULL;
 
+	Shader* shader_distortion_texture = NULL;
+	Shader* shader_distortion = NULL;
+
 	std::string vs_ltn_src = g_model_vs_src;
 	std::string fs_ltn_src = g_model_fs_src;
 
@@ -341,6 +551,12 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 
 	std::string vs_src = g_model_vs_src;
 	std::string fs_src = g_model_fs_src;
+
+	std::string vs_d_t_src = g_model_distortion_vs_src;
+	std::string fs_d_t_src = g_model_distortion_fs_src;
+
+	std::string vs_d_src = g_model_distortion_vs_src;
+	std::string fs_d_src = g_model_distortion_fs_src;
 
 	vs_ltn_src = Replace(vs_ltn_src, "TextureEnable", "true");
 	fs_ltn_src = Replace(fs_ltn_src, "TextureEnable", "true");
@@ -384,7 +600,11 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	vs_src = Replace(vs_src, "NormalMapEnable", "false");
 	fs_src = Replace(fs_src, "NormalMapEnable", "false");
 
+	vs_d_t_src = Replace(vs_d_t_src, "TextureEnable", "true");
+	fs_d_t_src = Replace(fs_d_t_src, "TextureEnable", "true");
 
+	vs_d_src = Replace(vs_d_src, "TextureEnable", "false");
+	fs_d_src = Replace(fs_d_src, "TextureEnable", "false");
 
 	shader_lighting_texture_normal = Shader::Create(renderer,
 		vs_ltn_src.c_str(), vs_ltn_src.length(), fs_ltn_src.c_str(), fs_ltn_src.length(), "ModelRenderer");
@@ -410,6 +630,14 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 		vs_src.c_str(), vs_src.length(), fs_src.c_str(), fs_src.length(), "ModelRenderer");
 	if (shader == NULL) goto End;
 
+	shader_distortion_texture = Shader::Create(renderer,
+		vs_d_t_src.c_str(), vs_d_t_src.length(), fs_d_t_src.c_str(), fs_d_t_src.length(), "ModelRenderer");
+	if (shader_distortion_texture == NULL) goto End;
+
+	shader_distortion = Shader::Create(renderer,
+		vs_d_src.c_str(), vs_d_src.length(), fs_d_src.c_str(), fs_d_src.length(), "ModelRenderer");
+	if (shader_distortion == NULL) goto End;
+
 	return new ModelRenderer( 
 		renderer, 
 		shader_lighting_texture_normal,
@@ -417,7 +645,9 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 		shader_lighting_texture,
 		shader_lighting,
 		shader_texture,
-		shader);
+		shader,
+		shader_distortion_texture,
+		shader_distortion);
 End:;
 
 	ES_SAFE_DELETE(shader_lighting_texture_normal);
@@ -428,8 +658,16 @@ End:;
 
 	ES_SAFE_DELETE(shader_texture);
 	ES_SAFE_DELETE(shader);
+
+	ES_SAFE_DELETE(shader_distortion_texture);
+	ES_SAFE_DELETE(shader_distortion);
 	return NULL;
 
+}
+
+void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData)
+{
+	BeginRendering_(m_renderer, parameter, count, userData);
 }
 
 //----------------------------------------------------------------------------------
@@ -452,6 +690,8 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		m_shader_lighting,
 		m_shader_texture,
 		m_shader,
+		m_shader_distortion_texture,
+		m_shader_distortion,
 		parameter );
 #else
 	EndRendering_<
@@ -468,6 +708,8 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		m_shader_lighting,
 		m_shader_texture,
 		m_shader,
+		m_shader_distortion_texture,
+		m_shader_distortion,
 		parameter );
 #endif
 

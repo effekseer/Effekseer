@@ -1,5 +1,5 @@
 "%DXSDK_DIR%Utilities\\bin\x86\fxc" /Tfx_2_0 /Eeffect /Fh EffekseerTool.Grid.Shader.h grid.fx
-"%DXSDK_DIR%Utilities\\bin\x86\fxc" /Tfx_2_0 /Eeffect /Fh EffekseerTool.Background.Shader.h background.fx
+"%DXSDK_DIR%Utilities\\bin\x86\fxc" /Tfx_2_0 /Eeffect /Fh EffekseerTool.Paste.Shader.h paste.fx
 
 
 "%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tvs_2_0 /EVS /Fh EffekseerTool.Guide.Shader_VS.h guide_vs.fx

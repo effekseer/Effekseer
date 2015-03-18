@@ -312,6 +312,29 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 				m_normalImages[i] = NULL;
 			}
 		}
+
+		// ‰æ‘œ
+		memcpy(&m_distortionImageCount, pos, sizeof(int));
+		pos += sizeof(int);
+
+		if (m_distortionImageCount > 0)
+		{
+			m_distortionImagePaths = new EFK_CHAR*[m_distortionImageCount];
+			m_distortionImages = new void*[m_distortionImageCount];
+
+			for (int i = 0; i < m_distortionImageCount; i++)
+			{
+				int length = 0;
+				memcpy(&length, pos, sizeof(int));
+				pos += sizeof(int);
+
+				m_distortionImagePaths[i] = new EFK_CHAR[length];
+				memcpy(m_distortionImagePaths[i], pos, length * sizeof(EFK_CHAR));
+				pos += length * sizeof(EFK_CHAR);
+
+				m_distortionImages[i] = NULL;
+			}
+		}
 	}
 
 	if( m_version >= 1 )
@@ -436,6 +459,18 @@ void EffectImplemented::Reset()
 		ES_SAFE_DELETE_ARRAY(m_normalImages);
 	}
 
+	{
+		for (int i = 0; i < m_distortionImageCount; i++)
+		{
+			if (m_distortionImagePaths[i] != NULL) delete [] m_distortionImagePaths[i];
+		}
+
+		m_distortionImageCount = 0;
+
+		ES_SAFE_DELETE_ARRAY(m_distortionImagePaths);
+		ES_SAFE_DELETE_ARRAY(m_distortionImages);
+	}
+
 	for( int i = 0; i < m_WaveCount; i++ )
 	{
 		if( m_WavePaths[i] != NULL ) delete [] m_WavePaths[i];
@@ -522,6 +557,17 @@ void* EffectImplemented::GetNormalImage(int n) const
 	}
 
 	return m_normalImages[n];
+}
+
+void* EffectImplemented::GetDistortionImage(int n) const
+{
+	/* ‹­§“I‚ÉŒÝŠ·‚ð‚Æ‚é */
+	if (this->m_version <= 8)
+	{
+		return m_pImages[n];
+	}
+
+	return m_distortionImages[n];
 }
 
 //----------------------------------------------------------------------------------
@@ -662,7 +708,22 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 				m_normalImages[ind] = textureLoader->Load(fullPath, TextureType::Normal);
 			}
 		}
+
 	}
+		{
+			TextureLoader* textureLoader = loader->GetTextureLoader();
+			if (textureLoader != NULL)
+			{
+				for (int32_t ind = 0; ind < m_distortionImageCount; ind++)
+				{
+					EFK_CHAR fullPath[512];
+					PathCombine(fullPath, matPath, m_distortionImagePaths[ind]);
+					m_distortionImages[ind] = textureLoader->Load(fullPath, TextureType::Distortion);
+				}
+			}
+		}
+
+	
 
 	{
 		SoundLoader* soundLoader = loader->GetSoundLoader();
@@ -706,6 +767,18 @@ void EffectImplemented::UnloadResources()
 		{
 			textureLoader->Unload( m_pImages[ind] );
 			m_pImages[ind] = NULL;
+		}
+
+		for (int32_t ind = 0; ind < m_normalImageCount; ind++)
+		{
+			textureLoader->Unload(m_normalImages[ind]);
+			m_normalImages[ind] = NULL;
+		}
+
+		for (int32_t ind = 0; ind < m_distortionImageCount; ind++)
+		{
+			textureLoader->Unload(m_distortionImages[ind]);
+			m_distortionImages[ind] = NULL;
 		}
 	}
 

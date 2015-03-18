@@ -30,6 +30,8 @@ namespace Effekseer.Binary
 
 			SortedSet<string> normalTextures = new SortedSet<string>();
 
+			SortedSet<string> distortionTextures = new SortedSet<string>();
+
             // ウェーブ名称一覧取得
             SortedSet<string> waves = new SortedSet<string>();
 
@@ -52,9 +54,19 @@ namespace Effekseer.Binary
 								var relative_path = _node.RendererCommonValues.ColorTexture.RelativePath;
 								if (relative_path != string.Empty)
 								{
-									if (!textures.Contains(relative_path))
+									if(_node.RendererCommonValues.Distortion.Value)
 									{
-										textures.Add(relative_path);
+										if (!distortionTextures.Contains(relative_path))
+										{
+											distortionTextures.Add(relative_path);
+										}
+									}
+									else
+									{
+										if (!textures.Contains(relative_path))
+										{
+											textures.Add(relative_path);
+										}
 									}
 								}
 							}
@@ -96,6 +108,16 @@ namespace Effekseer.Binary
 				foreach (var texture in normalTextures)
 				{
 					normalTexture_and_index.Add(texture, index);
+					index++;
+				}
+			}
+
+			Dictionary<string, int> distortionTexture_and_index = new Dictionary<string, int>();
+			{
+				int index = 0;
+				foreach (var texture in distortionTextures)
+				{
+					distortionTexture_and_index.Add(texture, index);
 					index++;
 				}
 			}
@@ -211,6 +233,15 @@ namespace Effekseer.Binary
 				data.Add(new byte[] { 0, 0 });
 			}
 
+			data.Add(BitConverter.GetBytes(distortionTexture_and_index.Count));
+			foreach (var texture in distortionTexture_and_index)
+			{
+				var path = Encoding.Unicode.GetBytes(texture.Key);
+				data.Add(((path.Count() + 2) / 2).GetBytes());
+				data.Add(path);
+				data.Add(new byte[] { 0, 0 });
+			}
+
             // ファイルにウェーブ一覧出力
             data.Add(BitConverter.GetBytes(wave_and_index.Count));
             foreach (var wave in wave_and_index)
@@ -302,7 +333,7 @@ namespace Effekseer.Binary
 				node_data.Add(RotationValues.GetBytes(n.RotationValues));
 				node_data.Add(ScaleValues.GetBytes(n.ScalingValues,n.CommonValues.ScaleEffectType));
 				node_data.Add(GenerationLocationValues.GetBytes(n.GenerationLocationValues, n.CommonValues.ScaleEffectType, model_and_index));
-				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index));
+				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index, distortionTexture_and_index));
 
 				if (n.IsRendered)
 				{

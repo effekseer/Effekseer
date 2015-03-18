@@ -30,6 +30,248 @@
 //----------------------------------------------------------------------------------
 namespace EffekseerRendererGL
 {
+
+	//-----------------------------------------------------------------------------------
+	//
+	//-----------------------------------------------------------------------------------
+	static const char g_sprite_vs_src [] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+#else
+		"#version 110\n"
+		"#define lowp\n"
+		"#define mediump\n"
+		"#define highp\n"
+#endif
+
+		R"(
+attribute vec4 atPosition;
+attribute vec4 atColor;
+attribute vec4 atTexCoord;
+)"
+
+R"(
+varying vec4 vaColor;
+varying vec4 vaTexCoord;
+varying vec4 vaPos;
+varying vec4 vaPosR;
+varying vec4 vaPosU;
+)"
+R"(
+uniform mat4 uMatCamera;
+uniform mat4 uMatProjection;
+
+void main() {
+	vec4 cameraPos = uMatCamera * atPosition;
+	cameraPos = cameraPos / cameraPos.w;
+
+	gl_Position = uMatProjection * cameraPos;
+
+	vaPos = gl_Position;
+
+	vec4 cameraPosU = cameraPos + vec4(0.0, 1.0, 0.0, 0.0);
+	vec4 cameraPosR = cameraPos + vec4(1.0, 0.0, 0.0, 0.0);
+
+	vaPosR = uMatProjection * cameraPosR;
+	vaPosU = uMatProjection * cameraPosU;
+	
+	vaPos = vaPos / vaPos.w;
+	vaPosR = vaPosR / vaPosR.w;
+	vaPosU = vaPosU / vaPosU.w;
+
+	vaColor = atColor;
+	vaTexCoord = atTexCoord;
+}
+
+)";
+
+	static const char g_sprite_fs_texture_src[] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+		"precision mediump float;\n"
+#else
+		"#version 110\n"
+		"#define lowp\n"
+		"#define mediump\n"
+		"#define highp\n"
+#endif
+		"varying lowp vec4 vaColor;\n"
+		"varying mediump vec4 vaTexCoord;\n"
+
+		"uniform sampler2D uTexture0;\n"
+
+		"void main() {\n"
+		"gl_FragColor = vaColor * texture2D(uTexture0, vaTexCoord.xy);\n"
+		"}\n";
+
+	static const char g_sprite_fs_no_texture_src[] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+		"precision mediump float;\n"
+#else
+		"#version 110\n"
+		"#define lowp\n"
+		"#define mediump\n"
+		"#define highp\n"
+#endif
+		"varying lowp vec4 vaColor;\n"
+		"varying mediump vec4 vaTexCoord;\n"
+
+		"void main() {\n"
+		"gl_FragColor = vaColor;\n"
+		"}\n";
+
+
+	static const char g_sprite_distortion_vs_src [] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+#else
+		"#version 110\n"
+		"#define lowp\n"
+		"#define mediump\n"
+		"#define highp\n"
+#endif
+
+		R"(
+attribute vec4 atPosition;
+attribute vec4 atColor;
+attribute vec4 atTexCoord;
+attribute vec4 atBinormal;
+attribute vec4 atTangent;
+
+)"
+
+R"(
+varying vec4 vaColor;
+varying vec4 vaTexCoord;
+varying vec4 vaPos;
+varying vec4 vaPosR;
+varying vec4 vaPosU;
+)"
+R"(
+uniform mat4 uMatCamera;
+uniform mat4 uMatProjection;
+
+void main() {
+
+	vec4 localBinormal = vec4( atPosition.x + atBinormal.x, atPosition.y + atBinormal.y, atPosition.z + atBinormal.z, 1.0 );
+	vec4 localTangent = vec4( atPosition.x + atTangent.x, atPosition.y + atTangent.y, atPosition.z + atTangent.z, 1.0 );
+	localBinormal = uMatCamera * localBinormal;
+	localTangent = uMatCamera * localTangent;
+
+	vec4 cameraPos = uMatCamera * atPosition;
+	cameraPos = cameraPos / cameraPos.w;
+
+	localBinormal = localBinormal / localBinormal.w;
+	localTangent = localTangent / localTangent.w;
+
+	localBinormal = cameraPos + normalize(localBinormal - cameraPos);
+	localTangent = cameraPos + normalize(localTangent - cameraPos);
+
+	gl_Position = uMatProjection * cameraPos;
+
+	vaPos = gl_Position;
+
+
+	vaPosR = uMatProjection * localTangent;
+	vaPosU = uMatProjection * localBinormal;
+	
+	vaPos = vaPos / vaPos.w;
+	vaPosR = vaPosR / vaPosR.w;
+	vaPosU = vaPosU / vaPosU.w;
+
+	vaColor = atColor;
+	vaTexCoord = atTexCoord;
+}
+
+)";
+
+	static const char g_sprite_fs_texture_distortion_src [] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+		"precision mediump float;\n"
+#else
+		"#version 110\n"
+		"#define lowp\n"
+		"#define mediump\n"
+		"#define highp\n"
+#endif
+
+		R"(
+varying lowp vec4 vaColor;
+varying mediump vec4 vaTexCoord;
+varying mediump vec4 vaPos;
+varying mediump vec4 vaPosR;
+varying mediump vec4 vaPosU;
+)"
+
+R"(
+uniform sampler2D uTexture0;
+uniform sampler2D uBackTexture0;
+
+uniform	vec4	g_scale;
+)"
+
+R"(
+void main() {
+	vec4 output = texture2D(uTexture0, vaTexCoord.xy);
+	output.w = output.w * vaColor.w;
+
+	vec2 pos = vaPos.xy / vaPos.w;
+	vec2 posU = vaPosU.xy / vaPosU.w;
+	vec2 posR = vaPosR.xy / vaPosR.w;
+
+	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) * vaColor.x * g_scale.x + (posU - pos) * (output.y * 2.0 - 1.0) * vaColor.y * g_scale.x;
+	uv.x = (uv.x + 1.0) * 0.5;
+	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
+
+	vec3 color = texture2D(uBackTexture0, uv).xyz;
+	output.xyz = color;
+
+	gl_FragColor = output;
+}
+)";
+
+	static const char g_sprite_fs_no_texture_distortion_src [] =
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+		"precision mediump float;\n"
+#else
+		"#version 110\n"
+		"#define lowp\n"
+		"#define mediump\n"
+		"#define highp\n"
+#endif
+
+		R"(
+varying lowp vec4 vaColor;
+varying mediump vec4 vaTexCoord;
+varying mediump vec4 vaPos;
+varying mediump vec4 vaPosR;
+varying mediump vec4 vaPosU;
+)"
+
+R"(
+uniform sampler2D uBackTexture0;
+
+uniform	vec4	g_scale;
+
+)"
+
+R"(
+void main() {
+	vec4 output = vaColor;
+	output.xyz = vec3(1.0,1.0,1.0);
+
+	vec2 pos = vaPos.xy / vaPos.w;
+	vec2 posU = vaPosU.xy / vaPosU.w;
+	vec2 posR = vaPosR.xy / vaPosR.w;
+
+	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) * vaColor.x * g_scale.x + (posU - pos) * (output.y * 2.0 - 1.0) * vaColor.y * g_scale.x;
+	uv.x = (uv.x + 1.0) * 0.5;
+	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
+
+	vec3 color = texture2D(uBackTexture0, uv).xyz;
+	output.xyz = color;
+
+	gl_FragColor = output;
+}
+)";
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -79,10 +321,24 @@ RendererImplemented::~RendererImplemented()
 #endif
 
 	assert( m_reference == 0 );
+
+	ES_SAFE_DELETE(m_distortingCallback);
+
+	ES_SAFE_DELETE(m_standardRenderer);
+	ES_SAFE_DELETE(m_shader);
+	ES_SAFE_DELETE(m_shader_no_texture);
+	ES_SAFE_DELETE(m_shader_distortion);
+	ES_SAFE_DELETE(m_shader_no_texture_distortion);
+
+	ES_SAFE_DELETE(m_vao);
+	ES_SAFE_DELETE(m_vao_no_texture);
+	ES_SAFE_DELETE(m_vao_distortion);
+	ES_SAFE_DELETE(m_vao_no_texture_distortion);
+
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
-	assert( m_reference == -2 );
+	assert( m_reference == -10 );
 }
 
 //----------------------------------------------------------------------------------
@@ -137,6 +393,10 @@ bool RendererImplemented::Initialize()
 		if( m_vertexBuffer == NULL ) return false;
 	}
 
+	// 参照カウントの調整
+	Release();
+
+
 	// インデックスの生成
 	{
 		m_indexBuffer = IndexBuffer::Create( this, m_squareMaxCount * 6, false );
@@ -159,13 +419,154 @@ bool RendererImplemented::Initialize()
 		m_indexBuffer->Unlock();
 	}
 
+	// 参照カウントの調整
+	Release();
+
 	m_renderState = new RenderState( this );
 
+	m_shader = Shader::Create(this,
+		g_sprite_vs_src, strlen(g_sprite_vs_src), g_sprite_fs_texture_src, strlen(g_sprite_fs_texture_src), "SpriteRenderer");
+	if (m_shader == nullptr) return false;
+
 	// 参照カウントの調整
-	// m_vertexBufferの参照カウンタ
 	Release();
-	// m_indexBufferの参照カウンタ
+
+	m_shader_no_texture = Shader::Create(this,
+		g_sprite_vs_src, strlen(g_sprite_vs_src), g_sprite_fs_no_texture_src, strlen(g_sprite_fs_no_texture_src), "SpriteRenderer");
+	if (m_shader_no_texture == nullptr)
+	{
+		return false;
+	}
+
+	// 参照カウントの調整
 	Release();
+
+	m_shader_distortion = Shader::Create(this,
+		g_sprite_vs_src, strlen(g_sprite_vs_src), g_sprite_fs_texture_src, strlen(g_sprite_fs_texture_src), "SpriteRenderer");
+	if (m_shader_distortion == nullptr) return false;
+
+	// 参照カウントの調整
+	Release();
+
+	m_shader_no_texture_distortion = Shader::Create(this,
+		g_sprite_vs_src, strlen(g_sprite_vs_src), g_sprite_fs_no_texture_src, strlen(g_sprite_fs_no_texture_src), "SpriteRenderer");
+	if (m_shader_no_texture_distortion == nullptr)
+	{
+		return false;
+	}
+
+	// 参照カウントの調整
+	Release();
+
+	static ShaderAttribInfo sprite_attribs[3] = {
+		{ "atPosition", GL_FLOAT, 3, 0, false },
+		{ "atColor", GL_UNSIGNED_BYTE, 4, 12, true },
+		{ "atTexCoord", GL_FLOAT, 2, 16, false }
+	};
+
+	static ShaderAttribInfo sprite_attribs_distortion[5] = {
+		{ "atPosition", GL_FLOAT, 3, 0, false },
+		{ "atColor", GL_UNSIGNED_BYTE, 4, 12, true },
+		{ "atTexCoord", GL_FLOAT, 2, 16, false },
+		{ "atBinormal", GL_FLOAT, 3, 24, false },
+		{ "atTangent", GL_FLOAT, 3, 36, false },
+	};
+
+	// 頂点属性IDを取得
+	m_shader->GetAttribIdList(3, sprite_attribs);
+	m_shader->SetVertexSize(sizeof(Vertex));
+	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	
+	m_shader->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader->GetUniformId("uMatCamera"),
+		0
+		);
+
+	m_shader->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader->GetUniformId("uMatProjection"),
+		sizeof(Effekseer::Matrix44)
+		);
+
+	m_shader->SetTextureSlot(0, m_shader->GetUniformId("uTexture0"));
+
+	m_shader_no_texture->GetAttribIdList(3, sprite_attribs);
+	m_shader_no_texture->SetVertexSize(sizeof(Vertex));
+	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	
+	m_shader_no_texture->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader_no_texture->GetUniformId("uMatCamera"),
+		0
+		);
+
+	m_shader_no_texture->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader_no_texture->GetUniformId("uMatProjection"),
+		sizeof(Effekseer::Matrix44)
+		);
+
+	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer());
+	m_vao_no_texture = VertexArray::Create(this, m_shader_no_texture, GetVertexBuffer(), GetIndexBuffer());
+
+	// Distortion
+	m_shader_distortion->GetAttribIdList(5, sprite_attribs_distortion);
+	m_shader_distortion->SetVertexSize(sizeof(Vertex));
+	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
+
+	m_shader_distortion->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader_distortion->GetUniformId("uMatCamera"),
+		0
+		);
+
+	m_shader_distortion->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader_distortion->GetUniformId("uMatProjection"),
+		sizeof(Effekseer::Matrix44)
+		);
+
+	m_shader_distortion->AddPixelConstantLayout(
+		CONSTANT_TYPE_VECTOR4,
+		m_shader_distortion->GetUniformId("g_scale"),
+		sizeof(float) * 4
+		);
+
+	m_shader_distortion->SetTextureSlot(0, m_shader_distortion->GetUniformId("uTexture0"));
+	m_shader_distortion->SetTextureSlot(1, m_shader_distortion->GetUniformId("uBackTexture0"));
+
+	m_shader_no_texture_distortion->GetAttribIdList(5, sprite_attribs_distortion);
+	m_shader_no_texture_distortion->SetVertexSize(sizeof(Vertex));
+	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
+
+	m_shader_no_texture_distortion->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader_no_texture_distortion->GetUniformId("uMatCamera"),
+		0
+		);
+
+	m_shader_no_texture_distortion->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44,
+		m_shader_no_texture_distortion->GetUniformId("uMatProjection"),
+		sizeof(Effekseer::Matrix44)
+		);
+
+	m_shader_no_texture_distortion->AddPixelConstantLayout(
+		CONSTANT_TYPE_VECTOR4,
+		m_shader_distortion->GetUniformId("g_scale"),
+		sizeof(float) * 4
+		);
+
+	m_shader_no_texture_distortion->SetTextureSlot(1, m_shader_no_texture_distortion->GetUniformId("uBackTexture0"));
+
+
+	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer());
+	m_vao_no_texture_distortion = VertexArray::Create(this, m_shader_no_texture_distortion, GetVertexBuffer(), GetIndexBuffer());
+
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex, VertexDistortion>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
 	return true;
 }
@@ -235,6 +636,9 @@ bool RendererImplemented::BeginRendering()
 	m_renderState->Update( true );
 	m_currentTextures.clear();
 
+	// レンダラーリセット
+	m_standardRenderer->ResetAndRenderingIfRequired();
+
 	GLCheckError();
 
 	return true;
@@ -246,6 +650,9 @@ bool RendererImplemented::BeginRendering()
 bool RendererImplemented::EndRendering()
 {
 	GLCheckError();
+
+	// レンダラーリセット
+	m_standardRenderer->ResetAndRenderingIfRequired();
 
 	// ステートを復元する
 	if(m_restorationOfStates)
@@ -449,6 +856,22 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 #endif
 }
 
+void RendererImplemented::SetBackground(GLuint background)
+{
+	m_background = background;
+}
+
+EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
+{
+	return m_distortingCallback;
+}
+
+void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
+{
+	ES_SAFE_DELETE(m_distortingCallback);
+	m_distortingCallback = callback;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -551,6 +974,24 @@ void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 void RendererImplemented::BeginShader(Shader* shader)
 {
 	GLCheckError();
+
+	// VAOの切り替え
+	if (shader == m_shader)
+	{
+		SetVertexArray(m_vao);
+	}
+	else if (shader == m_shader_no_texture)
+	{
+		SetVertexArray(m_vao_no_texture);
+	}
+	else if (shader == m_shader_distortion)
+	{
+		SetVertexArray(m_vao_distortion);
+	}
+	else if (shader == m_shader_no_texture_distortion)
+	{
+		SetVertexArray(m_vao_no_texture_distortion);
+	}
 
 	shader->BeginScene();
 

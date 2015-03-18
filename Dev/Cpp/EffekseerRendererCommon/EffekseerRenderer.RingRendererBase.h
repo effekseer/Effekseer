@@ -46,8 +46,64 @@ public:
 
 protected:
 
-	template<typename VERTEX>
-	void Rendering_( const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
+	template<typename RENDERER, typename VERTEX>
+	void BeginRendering_(RENDERER* renderer, int32_t count, const efkRingNodeParam& param)
+	{
+		m_spriteCount = 0;
+		int32_t vertexCount = param.VertexCount * 8;
+		m_instanceCount = count;
+
+		if (count == 1)
+		{
+			renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
+		}
+		
+		EffekseerRenderer::StandardRendererState state;
+		state.AlphaBlend = param.AlphaBlend;
+		state.CullingType = ::Effekseer::CullingType::Double;
+		state.DepthTest = param.ZTest;
+		state.DepthWrite = param.ZWrite;
+		state.TextureFilterType = param.TextureFilter;
+		state.TextureWrapType = param.TextureWrap;
+
+		state.Distortion = param.Distortion;
+		state.DistortionIntensity = param.DistortionIntensity;
+
+		if (param.ColorTextureIndex >= 0)
+		{
+			if (state.Distortion)
+			{
+				state.TexturePtr = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
+			}
+			else
+			{
+				state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
+			}
+		}
+		else
+		{
+			state.TexturePtr = nullptr;
+		}
+
+		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
+	}
+
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_(const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+	{
+		if (parameter.Distortion)
+		{
+			Rendering_Internal<VERTEX_DISTORTION, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+		else
+		{
+			Rendering_Internal<VERTEX, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+	}
+
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_Internal( const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
 		int32_t vertexCount = parameter.VertexCount * 8;
 		//Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * vertexCount );
@@ -89,6 +145,9 @@ protected:
 
 		for( int i = 0; i < vertexCount; i += 8 )
 		{
+			float old_c = c;
+			float old_s = s;
+
 			float t;
 			t = c * stepC - s * stepS;
 			s = s * stepC + c * stepS;
@@ -127,26 +186,75 @@ protected:
 			v[3].UV[0] = texNext;
 			v[3].UV[1] = v2;
 
-			v[4].Pos = centerCurrent;
-			v[4].SetColor( centerColor );
-			v[4].UV[0] = texCurrent;
-			v[4].UV[1] = v2;
+			v[4] = v[1];
 
 			v[5].Pos = innerCurrent;
 			v[5].SetColor( innerColor );
 			v[5].UV[0] = texCurrent;
 			v[5].UV[1] = v3;
 
-			v[6].Pos = centerNext;
-			v[6].SetColor( centerColor );
-			v[6].UV[0] = texNext;
-			v[6].UV[1] = v2;
+			v[6] = v[3];
 
 			v[7].Pos = innerNext;
 			v[7].SetColor( innerColor );
 			v[7].UV[0] = texNext;
 			v[7].UV[1] = v3;
 
+			// ˜c‚Ýˆ—
+			if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+			{
+				auto vs = (VERTEX_DISTORTION*) &verteies[i];
+				auto binormalCurrent = v[5].Pos - v[0].Pos;
+				auto binormalNext = v[7].Pos - v[2].Pos;
+
+				// –ß‚·
+				float t_b;
+				t_b = old_c * (stepC) - old_s * (-stepS);
+				auto s_b = old_s * (stepC) + old_c * (-stepS);
+				auto c_b = t_b;
+
+				::Effekseer::Vector3D outerBefore;
+				outerBefore.X = c_b * outerRadius;
+				outerBefore.Y = s_b * outerRadius;
+				outerBefore.Z = outerHeight;
+
+				// ŽŸ
+				auto t_n = c * stepC - s * stepS;
+				auto s_n = s * stepC + c * stepS;
+				auto c_n = t_n;
+
+				::Effekseer::Vector3D outerNN;
+				outerNN.X = c_n * outerRadius;
+				outerNN.Y = s_n * outerRadius;
+				outerNN.Z = outerHeight;
+
+				::Effekseer::Vector3D tangent0, tangent1, tangent2;
+				::Effekseer::Vector3D::Normal(tangent0, outerCurrent - outerBefore);
+				::Effekseer::Vector3D::Normal(tangent1, outerNext - outerCurrent);
+				::Effekseer::Vector3D::Normal(tangent2, outerNN - outerNext);
+
+				auto tangentCurrent = (tangent0 + tangent1) / 2.0f;
+				auto tangentNext = (tangent1 + tangent2) / 2.0f;
+
+				vs[0].Tangent = tangentCurrent;
+				vs[0].Binormal = binormalCurrent;
+				vs[1].Tangent = tangentCurrent;
+				vs[1].Binormal = binormalCurrent;
+				vs[2].Tangent = tangentNext;
+				vs[2].Binormal = binormalNext;
+				vs[3].Tangent = tangentNext;
+				vs[3].Binormal = binormalNext;
+
+				vs[4].Tangent = tangentCurrent;
+				vs[4].Binormal = binormalCurrent;
+				vs[5].Tangent = tangentCurrent;
+				vs[5].Binormal = binormalCurrent;
+				vs[6].Tangent = tangentNext;
+				vs[6].Binormal = binormalNext;
+				vs[7].Tangent = tangentNext;
+				vs[7].Binormal = binormalNext;
+
+			}
 			outerCurrent = outerNext;
 			innerCurrent = innerNext;
 			centerCurrent = centerNext;
@@ -282,62 +390,15 @@ protected:
 	}
 
 	template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
-	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkRingNodeParam& param)
+	void EndRendering_(RENDERER* renderer, const efkRingNodeParam& param)
 	{
-		SHADER* shader_ = NULL;
-		if (param.ColorTextureIndex >= 0)
-		{
-			shader_ = shader;
-		}
-		else
-		{
-			shader_ = shader_no_texture;
-		}
-
-		renderer->BeginShader(shader_);
-
-		RenderStateBase::State& state = renderer->GetRenderState()->Push();
-		state.DepthTest = param.ZTest;
-		state.DepthWrite = param.ZWrite;
-		state.CullingType = ::Effekseer::CullingType::Double;
-
-		if (param.ColorTextureIndex >= 0)
-		{
-			TEXTURE texture = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetColorImage(param.ColorTextureIndex));
-			renderer->SetTextures(shader_, &texture, 1);
-		}
-		else
-		{
-			TEXTURE texture = (TEXTURE)NULL;
-			renderer->SetTextures(shader_, &texture, 1);
-		}
-
-		if (m_instanceCount > 1)
-		{
-			((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] = renderer->GetCameraProjectionMatrix();
-		}
-		else
+		if (m_instanceCount == 1)
 		{
 			::Effekseer::Matrix44 mat;
-			::Effekseer::Matrix44::Mul(mat, m_singleRenderingMatrix, renderer->GetCameraProjectionMatrix());
-			((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] = mat;
+			::Effekseer::Matrix44::Mul(mat, m_singleRenderingMatrix, renderer->GetCameraMatrix());
+
+			renderer->GetStandardRenderer()->Rendering(mat, renderer->GetProjectionMatrix());
 		}
-		shader_->SetConstantBuffer();
-
-		state.AlphaBlend = param.AlphaBlend;
-		state.TextureFilterTypes[0] = param.TextureFilter;
-		state.TextureWrapTypes[0] = param.TextureWrap;
-
-		renderer->GetRenderState()->Update(false);
-
-		renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(VERTEX));
-		renderer->SetIndexBuffer(renderer->GetIndexBuffer());
-		renderer->SetLayout(shader_);
-		renderer->DrawSprites(m_spriteCount, m_ringBufferOffset / sizeof(VERTEX));
-
-		renderer->EndShader(shader_);
-
-		renderer->GetRenderState()->Pop();
 	}
 };
 //----------------------------------------------------------------------------------

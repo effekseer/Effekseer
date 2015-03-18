@@ -128,7 +128,7 @@ namespace Effekseer.Data
 
 			public ModelParameter()
 			{
-				Model = new Value.Path("モデルファイル (*.efkmodel)|*.efkmodel", "");
+				Model = new Value.Path("モデルファイル (*.efkmodel)|*.efkmodel", true, "");
 				Type = new Value.Enum<ModelType>(ModelType.Random);
 			}
 		}

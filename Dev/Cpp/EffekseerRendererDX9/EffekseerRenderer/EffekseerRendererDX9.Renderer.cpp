@@ -27,6 +27,60 @@
 //----------------------------------------------------------------------------------
 namespace EffekseerRendererDX9
 {
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+namespace Standard_VS
+{
+	static
+#include "Shader/EffekseerRenderer.Standard_VS.h"
+}
+
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+namespace Standard_PS
+{
+	static
+#include "Shader/EffekseerRenderer.Standard_PS.h"
+}
+
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+namespace StandardNoTexture_PS
+{
+	static
+#include "Shader/EffekseerRenderer.StandardNoTexture_PS.h"
+}
+
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+namespace Standard_Distortion_VS
+{
+	static
+#include "Shader/EffekseerRenderer.Standard_Distortion_VS.h"
+}
+
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+namespace Standard_Distortion_PS
+{
+	static
+#include "Shader/EffekseerRenderer.Standard_Distortion_PS.h"
+}
+
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+namespace StandardNoTexture_Distortion_PS
+{
+	static
+#include "Shader/EffekseerRenderer.StandardNoTexture_Distortion_PS.h"
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -79,13 +133,25 @@ RendererImplemented::~RendererImplemented()
 #endif
 
 	assert( m_reference == 0 );
+
+	ES_SAFE_DELETE(m_distortingCallback);
+
+	ES_SAFE_RELEASE(m_background);
+
+	ES_SAFE_DELETE(m_standardRenderer);
+	ES_SAFE_DELETE(m_shader);
+	ES_SAFE_DELETE(m_shader_no_texture);
+
+	ES_SAFE_DELETE(m_shader_distortion);
+	ES_SAFE_DELETE(m_shader_no_texture_distortion);
+
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
 	
 	//ES_SAFE_RELEASE( m_d3d_device );
 
-	assert( m_reference == -2 );
+	assert( m_reference == -6 );
 }
 
 //----------------------------------------------------------------------------------
@@ -146,6 +212,9 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 		if( m_vertexBuffer == NULL ) return false;
 	}
 
+	// 参照カウントの調整
+	Release();
+
 	// インデックスの生成
 	{
 		m_indexBuffer = IndexBuffer::Create( this, m_squareMaxCount * 6, false );
@@ -168,14 +237,111 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 		m_indexBuffer->Unlock();
 	}
 
+	// 参照カウントの調整
+	Release();
+
 	m_renderState = new RenderState( this );
 
 
+	// 座標(3) 色(1) UV(2)
+	D3DVERTEXELEMENT9 decl[] =
+	{
+		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+		{ 0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		D3DDECL_END()
+	};
+
+	D3DVERTEXELEMENT9 decl_distortion [] =
+	{
+		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+		{ 0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		{ 0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 1 },
+		{ 0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 2 },
+		D3DDECL_END()
+	};
+
+	//ID3DXBuffer* buf = NULL;
+
+	m_shader = Shader::Create(
+		this,
+		Standard_VS::g_vs20_VS,
+		sizeof(Standard_VS::g_vs20_VS),
+		Standard_PS::g_ps20_PS,
+		sizeof(Standard_PS::g_ps20_PS),
+		"StandardRenderer", decl);
+	if (m_shader == NULL) return false;
+
 	// 参照カウントの調整
-	// m_vertexBufferの参照カウンタ
 	Release();
-	// m_indexBufferの参照カウンタ
+
+	m_shader_no_texture = Shader::Create(
+		this,
+		Standard_VS::g_vs20_VS,
+		sizeof(Standard_VS::g_vs20_VS),
+		StandardNoTexture_PS::g_ps20_PS,
+		sizeof(StandardNoTexture_PS::g_ps20_PS),
+		"StandardRenderer No Texture",
+		decl);
+
+	if (m_shader_no_texture == NULL)
+	{
+		return false;
+	}
+
+	// 参照カウントの調整
 	Release();
+
+	m_shader_distortion = Shader::Create(
+		this,
+		Standard_Distortion_VS::g_vs20_VS,
+		sizeof(Standard_Distortion_VS::g_vs20_VS),
+		Standard_Distortion_PS::g_ps20_PS,
+		sizeof(Standard_Distortion_PS::g_ps20_PS),
+		"StandardRenderer Distortion", 
+		decl_distortion);
+	if (m_shader_distortion == NULL) return false;
+
+	// 参照カウントの調整
+	Release();
+
+	m_shader_no_texture_distortion = Shader::Create(
+		this,
+		Standard_Distortion_VS::g_vs20_VS,
+		sizeof(Standard_Distortion_VS::g_vs20_VS),
+		StandardNoTexture_Distortion_PS::g_ps20_PS,
+		sizeof(StandardNoTexture_Distortion_PS::g_ps20_PS),
+		"StandardRenderer No Texture Distortion",
+		decl_distortion);
+
+	if (m_shader_no_texture_distortion == NULL)
+	{
+		return false;
+	}
+
+	// 参照カウントの調整
+	Release();
+
+	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader->SetVertexRegisterCount(8);
+	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader_no_texture->SetVertexRegisterCount(8);
+
+	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader_distortion->SetVertexRegisterCount(8);
+
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
+	m_shader_distortion->SetPixelRegisterCount(1);
+
+	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader_no_texture_distortion->SetVertexRegisterCount(8);
+
+	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
+	m_shader_no_texture_distortion->SetPixelRegisterCount(1);
+
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex, VertexDistortion>(
+		this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
 	//ES_SAFE_ADDREF( m_d3d_device );
 	return true;
@@ -272,6 +438,9 @@ bool RendererImplemented::BeginRendering()
 	GetDevice()->SetRenderState( D3DRS_ALPHATESTENABLE, TRUE );
 	GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
 
+	// レンダラーリセット
+	m_standardRenderer->ResetAndRenderingIfRequired();
+
 	return true;
 }
 
@@ -282,6 +451,9 @@ bool RendererImplemented::EndRendering()
 {
 	assert( m_d3d_device != NULL );
 	
+	// レンダラーリセット
+	m_standardRenderer->ResetAndRenderingIfRequired();
+
 	// ステートを復元する
 	if(m_restorationOfStates)
 	{
@@ -514,6 +686,24 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 #else
 	return NULL;
 #endif
+}
+
+void RendererImplemented::SetBackground(IDirect3DTexture9* background)
+{
+	ES_SAFE_ADDREF(background);
+	ES_SAFE_RELEASE(m_background);
+	m_background = background;
+}
+
+EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
+{
+	return m_distortingCallback;
+}
+
+void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback)
+{
+	ES_SAFE_DELETE(m_distortingCallback);
+	m_distortingCallback = callback;
 }
 
 //----------------------------------------------------------------------------------

@@ -18,6 +18,19 @@ namespace EffekseerTool
 class Renderer
 {
 private:
+	class DistortingCallback
+		: public EffekseerRenderer::DistortingCallback
+	{
+	private:
+		Renderer* renderer = nullptr;
+	public:
+		DistortingCallback(Renderer* renderer);
+		virtual ~DistortingCallback();
+
+		void OnDistorting();
+	};
+
+private:
 	HWND				m_handle;
 	int32_t				m_width;
 	int32_t				m_height;
@@ -33,7 +46,7 @@ private:
 	::EffekseerRenderer::Grid*	m_grid;
 	::EffekseerRenderer::Guide*	m_guide;
 	::EffekseerRenderer::Culling*	m_culling;
-	::EffekseerRenderer::Background*	m_background;
+	::EffekseerRenderer::Paste*	m_background;
 
 	bool		m_recording;
 
@@ -45,6 +58,18 @@ private:
 	IDirect3DSurface9*	m_recordingTempDepth;
 
 	IDirect3DTexture9*	m_backGroundTexture;
+
+	IDirect3DSurface9*	m_renderTarget = nullptr;
+	IDirect3DTexture9*	m_renderTargetTexture = nullptr;
+	IDirect3DSurface9*	m_renderTargetDepth = nullptr;
+
+	IDirect3DSurface9*	m_renderEffectBackTarget = nullptr;
+	IDirect3DTexture9*	m_renderEffectBackTargetTexture = nullptr;
+
+	IDirect3DSurface9*	m_renderDefaultTarget = nullptr;
+	IDirect3DSurface9*	m_renderDefaultDepth = nullptr;
+
+	void GenerateRenderTargets(int32_t width, int32_t height);
 public:
 	/**
 		@brief	コンストラクタ
@@ -185,6 +210,11 @@ public:
 		@brief	描画終了
 	*/
 	bool EndRendering();
+
+	/**
+		@brief	描画中の背景をテクスチャとして背景を出力する。
+	*/
+	IDirect3DTexture9* ExportBackground();
 
 	/**
 		@brief	録画開始

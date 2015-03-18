@@ -33,6 +33,9 @@ public:
 		TextureWrapType		TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceGroupParameter

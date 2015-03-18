@@ -43,8 +43,60 @@ public:
 
 protected:
 
-	template<typename VERTEX>
-	void Rendering_( const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
+	template<typename RENDERER, typename VERTEX>
+	void BeginRendering_(RENDERER* renderer, int32_t count, const efkRibbonNodeParam& param)
+	{
+		m_ribbonCount = 0;
+		int32_t vertexCount = (count - 1) * 4;
+		if (vertexCount <= 0) return;
+
+		EffekseerRenderer::StandardRendererState state;
+		state.AlphaBlend = param.AlphaBlend;
+		state.CullingType = ::Effekseer::CullingType::Double;
+		state.DepthTest = param.ZTest;
+		state.DepthWrite = param.ZWrite;
+		state.TextureFilterType = param.TextureFilter;
+		state.TextureWrapType = param.TextureWrap;
+
+		state.Distortion = param.Distortion;
+		state.DistortionIntensity = param.DistortionIntensity;
+
+		if (param.ColorTextureIndex >= 0)
+		{
+			if (state.Distortion)
+			{
+				state.TexturePtr = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
+			}
+			else
+			{
+				state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
+			}
+		}
+		else
+		{
+			state.TexturePtr = nullptr;
+		}
+
+		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
+
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
+	}
+
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_(const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+	{
+		if (parameter.Distortion)
+		{
+			Rendering_Internal<VERTEX_DISTORTION, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+		else
+		{
+			Rendering_Internal<VERTEX, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+	}
+
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_Internal( const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
 		if( m_ringBufferData == NULL ) return;
 		if( instanceParameter.InstanceCount < 2 ) return;
@@ -142,11 +194,88 @@ protected:
 		{
 			m_ribbonCount++;
 		}
+
+		/* ˜c‚Ý‚ð“K—p */
+		if (isLast && sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+		{
+			VERTEX_DISTORTION* vs_ = (VERTEX_DISTORTION*) (m_ringBufferData - sizeof(VERTEX_DISTORTION) * (instanceParameter.InstanceCount - 1) * 4);
+
+			Effekseer::Vector3D axisBefore;
+
+			for (int32_t i = 0; i < instanceParameter.InstanceCount; i++)
+			{
+				bool isFirst_ = (i == 0);
+				bool isLast_ = (i == (instanceParameter.InstanceCount - 1));
+		
+				Effekseer::Vector3D axis;
+				Effekseer::Vector3D pos;
+
+				if (isFirst_)
+				{
+					axis = (vs_[3].Pos - vs_[1].Pos);
+					Effekseer::Vector3D::Normal(axis, axis);
+					axisBefore = axis;
+				}
+				else if (isLast_)
+				{
+					axis = axisBefore;
+				}
+				else
+				{
+					Effekseer::Vector3D axisOld = axisBefore;
+					axis = (vs_[3].Pos - vs_[1].Pos);
+					Effekseer::Vector3D::Normal(axis, axis);
+					axisBefore = axis;
+
+					axis = (axisBefore + axisOld) / 2.0f;
+				}
+
+				auto tangent = vs_[1].Pos - vs_[0].Pos;
+				Effekseer::Vector3D::Normal(tangent, tangent);
+
+				if (isFirst_)
+				{
+					vs_[0].Binormal = axis;
+					vs_[1].Binormal = axis;
+
+					vs_[0].Tangent = tangent;
+					vs_[1].Tangent = tangent;
+
+					vs_ += 2;
+
+				}
+				else if (isLast_)
+				{
+					vs_[0].Binormal = axis;
+					vs_[1].Binormal = axis;
+
+					vs_[0].Tangent = tangent;
+					vs_[1].Tangent = tangent;
+
+					vs_ += 2;
+				}
+				else
+				{
+					vs_[0].Binormal = axis;
+					vs_[1].Binormal = axis;
+					vs_[2].Binormal = axis;
+					vs_[3].Binormal = axis;
+
+					vs_[0].Tangent = tangent;
+					vs_[1].Tangent = tangent;
+					vs_[2].Tangent = tangent;
+					vs_[3].Tangent = tangent;
+
+					vs_ += 4;
+				}
+			}
+		}
 	}
 
-	template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
-	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkRibbonNodeParam& param)
+	template<typename RENDERER, typename TEXTURE, typename VERTEX>
+	void EndRendering_(RENDERER* renderer, const efkRibbonNodeParam& param)
 	{
+		/*
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
@@ -193,6 +322,7 @@ protected:
 		renderer->EndShader(shader_);
 
 		renderer->GetRenderState()->Pop();
+		*/
 	}
 };
 //----------------------------------------------------------------------------------

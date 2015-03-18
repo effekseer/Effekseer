@@ -177,6 +177,7 @@ enum class TextureType : int32_t
 {
 	Color,
 	Normal,
+	Distortion,
 };
 
 //----------------------------------------------------------------------------------
@@ -1231,6 +1232,13 @@ public:
 	virtual void* GetNormalImage(int n) const = 0;
 
 	/**
+	@brief	格納されている歪み画像のポインタを取得する。
+	@param	n	[in]	画像のインデックス
+	@return	画像のポインタ
+	*/
+	virtual void* GetDistortionImage(int n) const = 0;
+
+	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/
 	virtual void* GetWave( int n ) const = 0;
@@ -1794,6 +1802,9 @@ public:
 		bool				ZTest;
 		bool				ZWrite;
 		BillboardType		Billboard;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -1860,6 +1871,9 @@ public:
 		bool				ZTest;
 		bool				ZWrite;
 		bool				ViewpointDependent;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -1927,6 +1941,9 @@ public:
 		bool				ZWrite;
 		BillboardType		Billboard;
 		int32_t				VertexCount;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -1999,6 +2016,9 @@ public:
 		int32_t				NormalTextureIndex;
 		float				Magnification;
 		bool				IsRightHand;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -2058,6 +2078,9 @@ public:
 		TextureWrapType		TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceGroupParameter

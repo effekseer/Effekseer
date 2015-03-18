@@ -9,9 +9,9 @@
 #include "sound.h"
 
 #if _DEBUG
-#pragma comment(lib, "EffekseerSoundXAudio2.Debug.lib" )
+#pragma comment(lib, "x86/EffekseerSoundXAudio2.Debug.lib" )
 #else
-#pragma comment(lib, "EffekseerSoundXAudio2.Release.lib" )
+#pragma comment(lib, "x86/EffekseerSoundXAudio2.Release.lib" )
 #endif
 
 //----------------------------------------------------------------------------------
