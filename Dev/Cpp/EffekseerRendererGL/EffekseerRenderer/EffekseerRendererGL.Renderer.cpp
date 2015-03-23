@@ -35,27 +35,55 @@ namespace EffekseerRendererGL
 	//
 	//-----------------------------------------------------------------------------------
 	static const char g_sprite_vs_src [] =
-#if defined(__EFFEKSEER_RENDERER_GLES2__)
+#if  defined(__EFFEKSEER_RENDERER_GL3__) 
+R"(
+#version 330
+#define lowp
+#define mediump
+#define highp
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#version 300 es
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
 #else
-		"#version 110\n"
-		"#define lowp\n"
-		"#define mediump\n"
-		"#define highp\n"
+		R"(
+#version 110
+#define lowp
+#define mediump
+#define highp
+)"
 #endif
 
-		R"(
-attribute vec4 atPosition;
-attribute vec4 atColor;
-attribute vec4 atTexCoord;
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#define IN in
+#define OUT out
+)"
+#else
+R"(
+#define IN attribute
+#define OUT varying
+)"
+#endif
+
+
+R"(
+IN vec4 atPosition;
+IN vec4 atColor;
+IN vec4 atTexCoord;
 )"
 
 R"(
-varying vec4 vaColor;
-varying vec4 vaTexCoord;
-varying vec4 vaPos;
-varying vec4 vaPosR;
-varying vec4 vaPosU;
+OUT vec4 vaColor;
+OUT vec4 vaTexCoord;
+OUT vec4 vaPos;
+OUT vec4 vaPosR;
+OUT vec4 vaPosU;
 )"
+
 R"(
 uniform mat4 uMatCamera;
 uniform mat4 uMatProjection;
@@ -85,64 +113,157 @@ void main() {
 )";
 
 	static const char g_sprite_fs_texture_src[] =
-#if defined(__EFFEKSEER_RENDERER_GLES2__)
-		"precision mediump float;\n"
+#if  defined(__EFFEKSEER_RENDERER_GL3__) 
+		R"(
+#version 330
+#define lowp
+#define mediump
+#define highp
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+		R"(
+#version 300 es
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+		R"(
+precision mediump float;
+)"
 #else
-		"#version 110\n"
-		"#define lowp\n"
-		"#define mediump\n"
-		"#define highp\n"
+		R"(
+#version 110
+#define lowp
+#define mediump
+#define highp
+)"
 #endif
-		"varying lowp vec4 vaColor;\n"
-		"varying mediump vec4 vaTexCoord;\n"
 
-		"uniform sampler2D uTexture0;\n"
 
-		"void main() {\n"
-		"gl_FragColor = vaColor * texture2D(uTexture0, vaTexCoord.xy);\n"
-		"}\n";
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+layout (location = 0) out vec4 fragColor;
+)"
+#endif
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#define IN in
+)"
+#else
+R"(
+#define IN varying
+)"
+#endif
+
+"IN lowp vec4 vaColor;\n"
+"IN mediump vec4 vaTexCoord;\n"
+
+"uniform sampler2D uTexture0;\n"
+
+"void main() {\n"
+"gl_FragColor = vaColor * texture2D(uTexture0, vaTexCoord.xy);\n"
+"}\n";
 
 	static const char g_sprite_fs_no_texture_src[] =
-#if defined(__EFFEKSEER_RENDERER_GLES2__)
-		"precision mediump float;\n"
+#if  defined(__EFFEKSEER_RENDERER_GL3__) 
+		R"(
+#version 330
+#define lowp
+#define mediump
+#define highp
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+		R"(
+#version 300 es
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+		R"(
+precision mediump float;
+)"
 #else
-		"#version 110\n"
-		"#define lowp\n"
-		"#define mediump\n"
-		"#define highp\n"
+		R"(
+#version 110
+#define lowp
+#define mediump
+#define highp
+)"
 #endif
-		"varying lowp vec4 vaColor;\n"
-		"varying mediump vec4 vaTexCoord;\n"
 
-		"void main() {\n"
-		"gl_FragColor = vaColor;\n"
-		"}\n";
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+layout (location = 0) out vec4 fragColor;
+)"
+#endif
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#define IN in
+)"
+#else
+R"(
+#define IN varying
+)"
+#endif
+
+"IN lowp vec4 vaColor;\n"
+"IN mediump vec4 vaTexCoord;\n"
+
+"void main() {\n"
+"gl_FragColor = vaColor;\n"
+"}\n";
 
 
 	static const char g_sprite_distortion_vs_src [] =
-#if defined(__EFFEKSEER_RENDERER_GLES2__)
+#if  defined(__EFFEKSEER_RENDERER_GL3__) 
+		R"(
+#version 330
+#define lowp
+#define mediump
+#define highp
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+		R"(
+#version 300 es
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
 #else
-		"#version 110\n"
-		"#define lowp\n"
-		"#define mediump\n"
-		"#define highp\n"
+		R"(
+#version 110
+#define lowp
+#define mediump
+#define highp
+)"
 #endif
 
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#define IN in
+#define OUT out
+)"
+#else
+R"(
+#define IN attribute
+#define OUT varying
+)"
+#endif
+
+
 		R"(
-attribute vec4 atPosition;
-attribute vec4 atColor;
-attribute vec4 atTexCoord;
-attribute vec4 atBinormal;
-attribute vec4 atTangent;
+IN vec4 atPosition;
+IN vec4 atColor;
+IN vec4 atTexCoord;
+IN vec4 atBinormal;
+IN vec4 atTangent;
 
 )"
 
 R"(
-varying vec4 vaColor;
-varying vec4 vaTexCoord;
-varying vec4 vaPos;
-varying vec4 vaPosR;
-varying vec4 vaPosU;
+OUT vec4 vaColor;
+OUT vec4 vaTexCoord;
+OUT vec4 vaPos;
+OUT vec4 vaPosR;
+OUT vec4 vaPosU;
 )"
 R"(
 uniform mat4 uMatCamera;
@@ -183,21 +304,54 @@ void main() {
 )";
 
 	static const char g_sprite_fs_texture_distortion_src [] =
-#if defined(__EFFEKSEER_RENDERER_GLES2__)
-		"precision mediump float;\n"
+#if  defined(__EFFEKSEER_RENDERER_GL3__) 
+		R"(
+#version 330
+#define lowp
+#define mediump
+#define highp
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+		R"(
+#version 300 es
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+		R"(
+precision mediump float;
+)"
 #else
-		"#version 110\n"
-		"#define lowp\n"
-		"#define mediump\n"
-		"#define highp\n"
+		R"(
+#version 110
+#define lowp
+#define mediump
+#define highp
+)"
+#endif
+
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+layout (location = 0) out vec4 fragColor;
+)"
+#endif
+
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#define IN in
+)"
+#else
+R"(
+#define IN varying
+)"
 #endif
 
 		R"(
-varying lowp vec4 vaColor;
-varying mediump vec4 vaTexCoord;
-varying mediump vec4 vaPos;
-varying mediump vec4 vaPosR;
-varying mediump vec4 vaPosU;
+IN lowp vec4 vaColor;
+IN mediump vec4 vaTexCoord;
+IN mediump vec4 vaPos;
+IN mediump vec4 vaPosR;
+IN mediump vec4 vaPosU;
 )"
 
 R"(
@@ -228,21 +382,54 @@ void main() {
 )";
 
 	static const char g_sprite_fs_no_texture_distortion_src [] =
-#if defined(__EFFEKSEER_RENDERER_GLES2__)
-		"precision mediump float;\n"
+#if  defined(__EFFEKSEER_RENDERER_GL3__) 
+		R"(
+#version 330
+#define lowp
+#define mediump
+#define highp
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+		R"(
+#version 300 es
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+		R"(
+precision mediump float;
+)"
 #else
-		"#version 110\n"
-		"#define lowp\n"
-		"#define mediump\n"
-		"#define highp\n"
+		R"(
+#version 110
+#define lowp
+#define mediump
+#define highp
+)"
 #endif
 
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+layout (location = 0) out vec4 fragColor;
+)"
+#endif
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#define IN in
+)"
+#else
+R"(
+#define IN varying
+)"
+#endif
+
+
 		R"(
-varying lowp vec4 vaColor;
-varying mediump vec4 vaTexCoord;
-varying mediump vec4 vaPos;
-varying mediump vec4 vaPosR;
-varying mediump vec4 vaPosU;
+IN lowp vec4 vaColor;
+IN mediump vec4 vaTexCoord;
+IN mediump vec4 vaPos;
+IN mediump vec4 vaPosR;
+IN mediump vec4 vaPosU;
 )"
 
 R"(

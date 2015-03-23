@@ -34,29 +34,59 @@ static std::string Replace( std::string target, std::string from_, std::string t
 }
 
 static const char g_model_vs_src[] = 
-#if defined(__EFFEKSEER_RENDERER_GLES2__)
-	"precision mediump float;\n"
+#if  defined(__EFFEKSEER_RENDERER_GL3__) 
+R"(
+#version 330
+#define lowp
+#define mediump
+#define highp
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#version 300 es
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+R"(
+precision mediump float;
+)"
 #else
-	"#version 110\n"
-	"#define lowp\n"
-	"#define mediump\n"
-	"#define highp\n"
+R"(
+#version 110
+#define lowp
+#define mediump
+#define highp
+)"
 #endif
-	"attribute vec4 a_Position;\n"
-	"attribute vec4 a_Normal;\n"
-	"attribute vec4 a_Binormal;\n"
-	"attribute vec4 a_Tangent;\n"
-	"attribute vec4 a_TexCoord;\n"
+
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#define IN in
+#define OUT out
+)"
+#else
+R"(
+#define IN attribute
+#define OUT varying
+)"
+#endif
+
+
+	"IN vec4 a_Position;\n"
+	"IN vec4 a_Normal;\n"
+	"IN vec4 a_Binormal;\n"
+	"IN vec4 a_Tangent;\n"
+	"IN vec4 a_TexCoord;\n"
 #if defined(MODEL_SOFTWARE_INSTANCING)
-	"attribute float a_InstanceID;\n"
-	"attribute vec4 a_UVOffset;\n"
-	"attribute vec4 a_ModelColor;\n"
+	"IN float a_InstanceID;\n"
+	"IN vec4 a_UVOffset;\n"
+	"IN vec4 a_ModelColor;\n"
 #endif
-	"varying mediump vec4 v_Normal;\n"
-	"varying mediump vec4 v_Binormal;\n"
-	"varying mediump vec4 v_Tangent;\n"
-	"varying mediump vec4 v_TexCoord;\n"
-	"varying lowp vec4 v_Color;\n"
+	"OUT mediump vec4 v_Normal;\n"
+	"OUT mediump vec4 v_Binormal;\n"
+	"OUT mediump vec4 v_Tangent;\n"
+	"OUT mediump vec4 v_TexCoord;\n"
+	"OUT lowp vec4 v_Color;\n"
 	
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	"uniform mat4 ModelMatrix[20];\n"
@@ -105,19 +135,52 @@ static const char g_model_vs_src[] =
 	"}\n";
 
 static const char g_model_fs_src[] = 
-#if defined(__EFFEKSEER_RENDERER_GLES2__)
-	"precision mediump float;\n"
+#if  defined(__EFFEKSEER_RENDERER_GL3__) 
+R"(
+#version 330
+#define lowp
+#define mediump
+#define highp
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#version 300 es
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+R"(
+precision mediump float;
+)"
 #else
-	"#version 110\n"
-	"#define lowp\n"
-	"#define mediump\n"
-	"#define highp\n"
+R"(
+#version 110
+#define lowp
+#define mediump
+#define highp
+)"
 #endif
-	"varying mediump vec4 v_Normal;\n"
-	"varying mediump vec4 v_Binormal;\n"
-	"varying mediump vec4 v_Tangent;\n"
-	"varying mediump vec4 v_TexCoord;\n"
-	"varying lowp vec4 v_Color;\n"
+
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+layout (location = 0) out vec4 fragColor;
+)"
+#endif
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#define IN in
+)"
+#else
+R"(
+#define IN varying
+)"
+#endif
+
+	"IN mediump vec4 v_Normal;\n"
+	"IN mediump vec4 v_Binormal;\n"
+	"IN mediump vec4 v_Tangent;\n"
+	"IN mediump vec4 v_TexCoord;\n"
+	"IN lowp vec4 v_Color;\n"
 
 	"uniform sampler2D ColorTexture;\n"
 	"uniform sampler2D NormalTexture;\n"
@@ -149,32 +212,60 @@ static const char g_model_fs_src[] =
 
 
 static const char g_model_distortion_vs_src [] =
-#if defined(__EFFEKSEER_RENDERER_GLES2__)
-"precision mediump float;\n"
+#if  defined(__EFFEKSEER_RENDERER_GL3__) 
+R"(
+#version 330
+#define lowp
+#define mediump
+#define highp
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#version 300 es
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+R"(
+precision mediump float;
+)"
 #else
-"#version 110\n"
-"#define lowp\n"
-"#define mediump\n"
-"#define highp\n"
+R"(
+#version 110
+#define lowp
+#define mediump
+#define highp
+)"
 #endif
-"attribute vec4 a_Position;\n"
-"attribute vec4 a_Normal;\n"
-"attribute vec4 a_Binormal;\n"
-"attribute vec4 a_Tangent;\n"
-"attribute vec4 a_TexCoord;\n"
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#define IN in
+#define OUT out
+)"
+#else
+R"(
+#define IN attribute
+#define OUT varying
+)"
+#endif
+
+"IN vec4 a_Position;\n"
+"IN vec4 a_Normal;\n"
+"IN vec4 a_Binormal;\n"
+"IN vec4 a_Tangent;\n"
+"IN vec4 a_TexCoord;\n"
 #if defined(MODEL_SOFTWARE_INSTANCING)
-"attribute float a_InstanceID;\n"
-"attribute vec4 a_UVOffset;\n"
-"attribute vec4 a_ModelColor;\n"
+"IN float a_InstanceID;\n"
+"IN vec4 a_UVOffset;\n"
+"IN vec4 a_ModelColor;\n"
 #endif
 
 R"(
-varying mediump vec4 v_Normal;
-varying mediump vec4 v_Binormal;
-varying mediump vec4 v_Tangent;
-varying mediump vec4 v_TexCoord;
-varying mediump vec4 v_Pos;
-varying lowp vec4 v_Color;
+OUT mediump vec4 v_Normal;
+OUT mediump vec4 v_Binormal;
+OUT mediump vec4 v_Tangent;
+OUT mediump vec4 v_TexCoord;
+OUT mediump vec4 v_Pos;
+OUT lowp vec4 v_Color;
 )"
 
 #if defined(MODEL_SOFTWARE_INSTANCING)
@@ -230,20 +321,53 @@ R"(
 )";
 
 static const char g_model_distortion_fs_src [] =
-#if defined(__EFFEKSEER_RENDERER_GLES2__)
-"precision mediump float;\n"
+#if  defined(__EFFEKSEER_RENDERER_GL3__) 
+R"(
+#version 330
+#define lowp
+#define mediump
+#define highp
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#version 300 es
+)"
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+R"(
+precision mediump float;
+)"
 #else
-"#version 110\n"
-"#define lowp\n"
-"#define mediump\n"
-"#define highp\n"
+R"(
+#version 110
+#define lowp
+#define mediump
+#define highp
+)"
 #endif
-"varying mediump vec4 v_Normal;\n"
-"varying mediump vec4 v_Binormal;\n"
-"varying mediump vec4 v_Tangent;\n"
-"varying mediump vec4 v_TexCoord;\n"
-"varying mediump vec4 v_Pos;\n"
-"varying lowp vec4 v_Color;\n"
+
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+layout (location = 0) out vec4 fragColor;
+)"
+#endif
+
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+R"(
+#define IN in
+)"
+#else
+R"(
+#define IN varying
+)"
+#endif
+
+"IN mediump vec4 v_Normal;\n"
+"IN mediump vec4 v_Binormal;\n"
+"IN mediump vec4 v_Tangent;\n"
+"IN mediump vec4 v_TexCoord;\n"
+"IN mediump vec4 v_Pos;\n"
+"IN lowp vec4 v_Color;\n"
 
 R"(
 uniform sampler2D uTexture0;

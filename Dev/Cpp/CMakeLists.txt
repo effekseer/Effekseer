@@ -22,7 +22,10 @@ option(USE_INTERNAL_LOADER "Use Internal Loader" ON)
 
 option(USE_GLEW_STATIC "Use Glew static library" OFF)
 option(USE_GLEW_DLL "Use Glew DLL" ON)
+
 option(USE_OPENGLES2 "Use OpenGL ES2" OFF)
+option(USE_OPENGLES3 "Use OpenGL ES3" OFF)
+option(USE_OPENGL3 "Use OpenGL 3" OFF)
 
 if (MSVC)
 option(USE_OPENAL "Use OpenAL" OFF)
@@ -227,6 +230,14 @@ endif()
 
 if (USE_OPENGLES2)
 	add_definitions(-D__EFFEKSEER_RENDERER_GLES2__)
+endif()
+
+if (USE_OPENGLES3)
+	add_definitions(-D__EFFEKSEER_RENDERER_GLES3__)
+endif()
+
+if (USE_OPENGL3)
+	add_definitions(-D__EFFEKSEER_RENDERER_GL3__)
 endif()
 
 
