@@ -13,6 +13,7 @@
 #include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.IndexBufferBase.h"
+#include "EffekseerRenderer.StandardRenderer.h"
 
 //-----------------------------------------------------------------------------------
 //

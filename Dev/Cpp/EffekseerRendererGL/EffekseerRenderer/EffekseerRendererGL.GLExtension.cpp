@@ -496,7 +496,7 @@ void glGenSamplers(GLsizei n, GLuint *samplers)
 #if _WIN32
 	g_glGenSamplers(n, samplers);
 #else
-	::glBindVertexArray(n, samplers);
+	::glGenSamplers(n, samplers);
 #endif
 }
 

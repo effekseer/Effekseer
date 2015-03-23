@@ -6,7 +6,9 @@
 // Include
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
+#include <vector>
 
+#include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 
 //-----------------------------------------------------------------------------------
