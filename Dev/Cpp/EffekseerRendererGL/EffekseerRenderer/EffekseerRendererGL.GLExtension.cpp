@@ -66,6 +66,11 @@ typedef void (EFK_STDCALL * FP_glGenVertexArrays) (GLsizei n, GLuint *arrays);
 typedef void (EFK_STDCALL * FP_glDeleteVertexArrays) (GLsizei n, const GLuint *arrays);
 typedef void (EFK_STDCALL * FP_glBindVertexArray) (GLuint array);
 
+typedef void (EFK_STDCALL * FP_glGenSamplers) (GLsizei n, GLuint *samplers);
+typedef void (EFK_STDCALL * FP_glDeleteSamplers) (GLsizei n, const GLuint * samplers);
+typedef void (EFK_STDCALL * FP_glSamplerParameteri) (GLuint sampler, GLenum pname, GLint param);
+typedef void (EFK_STDCALL * FP_glBindSampler) (GLuint unit, GLuint sampler);
+
 static FP_glDeleteBuffers g_glDeleteBuffers = NULL;
 static FP_glCreateShader g_glCreateShader = NULL;
 static FP_glBindBuffer g_glBindBuffer = NULL;
@@ -100,6 +105,11 @@ static FP_glBufferSubData g_glBufferSubData = NULL;
 static FP_glGenVertexArrays g_glGenVertexArrays = NULL;
 static FP_glDeleteVertexArrays g_glDeleteVertexArrays = NULL;
 static FP_glBindVertexArray g_glBindVertexArray = NULL;
+
+static FP_glGenSamplers g_glGenSamplers = nullptr;
+static FP_glDeleteSamplers g_glDeleteSamplers = nullptr;
+static FP_glSamplerParameteri g_glSamplerParameteri = nullptr;
+static FP_glBindSampler g_glBindSampler = nullptr;
 
 static bool g_isInitialized = false;
 static bool g_isSupportedVertexArray = false;
@@ -153,6 +163,12 @@ bool Initialize()
 	GET_PROC(glGenVertexArrays);
 	GET_PROC(glDeleteVertexArrays);
 	GET_PROC(glBindVertexArray);
+
+	GET_PROC(glGenSamplers);
+	GET_PROC(glDeleteSamplers);
+	GET_PROC(glSamplerParameteri);
+	GET_PROC(glBindSampler);
+
 	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
 
 	g_isInitialized = true;
@@ -162,6 +178,11 @@ bool Initialize()
 	g_isInitialized = true;
 	return true;
 #endif
+}
+
+bool IsSupportedVertexArray()
+{
+	return g_isSupportedVertexArray;
 }
 
 void glDeleteBuffers(GLsizei n, const GLuint* buffers)
@@ -470,9 +491,40 @@ void glBindVertexArray(GLuint array)
 #endif
 }
 
-bool IsSupportedVertexArray()
+void glGenSamplers(GLsizei n, GLuint *samplers)
 {
-	return g_isSupportedVertexArray;
+#if _WIN32
+	g_glGenSamplers(n, samplers);
+#else
+	::glBindVertexArray(n, samplers);
+#endif
+}
+
+void glDeleteSamplers(GLsizei n, const GLuint * samplers)
+{
+#if _WIN32
+	g_glDeleteSamplers(n, samplers);
+#else
+	::glDeleteSamplers(n, samplers);
+#endif
+}
+
+void glSamplerParameteri(GLuint sampler, GLenum pname, GLint param)
+{
+#if _WIN32
+	g_glSamplerParameteri(sampler, pname, param);
+#else
+	::glSamplerParameteri(sampler, pname, param);
+#endif
+}
+
+void glBindSampler(GLuint unit, GLuint sampler)
+{
+#if _WIN32
+	g_glBindSampler(unit, sampler);
+#else
+	::glBindSampler(unit, sampler);
+#endif
 }
 
 //----------------------------------------------------------------------------------

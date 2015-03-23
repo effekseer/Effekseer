@@ -207,10 +207,10 @@ R"(
 	vec4 localTangent = vec4( a_Position.x + a_Tangent.x, a_Position.y + a_Tangent.y, a_Position.z + a_Tangent.z, 1.0 );
 
 
-	localPosition = matModel * localPosition;
-	localNormal = matModel * localNormal;
-	localBinormal = matModel * localBinormal;
-	localTangent = matModel * localTangent;
+	localPosition = modelMatrix * localPosition;
+	localNormal = modelMatrix * localNormal;
+	localBinormal = modelMatrix * localBinormal;
+	localTangent = modelMatrix * localTangent;
 
 	localNormal = localPosition + normalize(localNormal - localPosition);
 	localBinormal = localPosition + normalize(localBinormal - localPosition);
@@ -253,14 +253,14 @@ uniform	vec4	g_scale;
 
 
 void main() {
-if (TextureEnable)
-{
-	gl_FragColor = texture2D(uTexture0, v_TexCoord.xy);
-}
-else
-{
-	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-}
+	if (TextureEnable)
+	{
+		gl_FragColor = texture2D(uTexture0, v_TexCoord.xy);
+	}
+	else
+	{
+		gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	}
 
 	gl_FragColor.a = gl_FragColor.a * v_Color.a;
 
@@ -276,8 +276,9 @@ else
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
-	vec3 color = texture2D(uBackTexture0, uv);
+	vec3 color = texture2D(uBackTexture0, uv).xyz;
 	gl_FragColor.xyz = color;
+}
 )";
 
 static ShaderAttribInfo g_model_attribs[ModelRenderer::NumAttribs] = {

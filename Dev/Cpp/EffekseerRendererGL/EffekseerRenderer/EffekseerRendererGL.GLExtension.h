@@ -83,6 +83,11 @@ void glGenVertexArrays(GLsizei n, GLuint *arrays);
 void glDeleteVertexArrays(GLsizei n, const GLuint *arrays);
 void glBindVertexArray(GLuint array);
 
+void glGenSamplers(GLsizei n, GLuint *samplers);
+void glDeleteSamplers(GLsizei n, const GLuint * samplers);
+void glSamplerParameteri(GLuint sampler, GLenum pname, GLint param);
+void glBindSampler(GLuint unit, GLuint sampler);
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
