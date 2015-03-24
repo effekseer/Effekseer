@@ -162,17 +162,23 @@ R"(
 
 #if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 R"(
-layout (location = 0) out vec4 fragColor;
+layout (location = 0) out vec4 FRAGCOLOR;
+)"
+#else
+R"(
+#define FRAGCOLOR gl_FragColor
 )"
 #endif
 
 #if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 R"(
 #define IN in
+#define TEX2D texture
 )"
 #else
 R"(
 #define IN varying
+#define TEX2D texture2D
 )"
 #endif
 
@@ -191,22 +197,22 @@ R"(
 	"void main() {\n"
 	"	vec4 diffuse = vec4(1.0);\n"
 	"	if (LightingEnable && NormalMapEnable) {\n"
-	"		vec3 texNormal = (texture2D(NormalTexture, v_TexCoord.xy).xyz - 0.5) * 2.0;\n"
+	"		vec3 texNormal = (TEX2D(NormalTexture, v_TexCoord.xy).xyz - 0.5) * 2.0;\n"
 	"		mat3 normalMatrix = mat3(v_Tangent.xyz, v_Binormal.xyz, v_Normal.xyz );\n"
 	"		vec3 localNormal = normalize( normalMatrix * texNormal );\n;"
-	"		//gl_FragColor.xyz = localNormal.xyz; gl_FragColor.w = 1.0; return;\n"
+	"		//FRAGCOLOR.xyz = localNormal.xyz; FRAGCOLOR.w = 1.0; return;\n"
 	"		diffuse = vec4(max(0.0, dot(localNormal, LightDirection.xyz)));\n"
 	"	}\n"
 	"	if (TextureEnable) {\n"
-	"		gl_FragColor = v_Color * texture2D(ColorTexture, v_TexCoord.xy);\n"
-	"		gl_FragColor.xyz = gl_FragColor.xyz * diffuse.xyz;\n"
+	"		FRAGCOLOR = v_Color * TEX2D(ColorTexture, v_TexCoord.xy);\n"
+	"		FRAGCOLOR.xyz = FRAGCOLOR.xyz * diffuse.xyz;\n"
 	"	} else {\n"
-	"		gl_FragColor = v_Color;\n"
-	"		gl_FragColor.xyz = gl_FragColor.xyz * diffuse.xyz;\n"
+	"		FRAGCOLOR = v_Color;\n"
+	"		FRAGCOLOR.xyz = FRAGCOLOR.xyz * diffuse.xyz;\n"
 	"	}\n"
 	"   \n"
 	"	if (LightingEnable) {\n"
-	"		gl_FragColor.xyz = gl_FragColor.xyz + LightAmbient.xyz;\n"
+	"		FRAGCOLOR.xyz = FRAGCOLOR.xyz + LightAmbient.xyz;\n"
 	"	}\n"
 	"}\n";
 
@@ -348,17 +354,23 @@ R"(
 
 #if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 R"(
-layout (location = 0) out vec4 fragColor;
+layout (location = 0) out vec4 FRAGCOLOR;
+)"
+#else
+R"(
+#define FRAGCOLOR gl_FragColor
 )"
 #endif
 
 #if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 R"(
 #define IN in
+#define TEX2D texture
 )"
 #else
 R"(
 #define IN varying
+#define TEX2D texture2D
 )"
 #endif
 
@@ -379,29 +391,29 @@ uniform	vec4	g_scale;
 void main() {
 	if (TextureEnable)
 	{
-		gl_FragColor = texture2D(uTexture0, v_TexCoord.xy);
+		FRAGCOLOR = TEX2D(uTexture0, v_TexCoord.xy);
 	}
 	else
 	{
-		gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		FRAGCOLOR = vec4(1.0, 1.0, 1.0, 1.0);
 	}
 
-	gl_FragColor.a = gl_FragColor.a * v_Color.a;
+	FRAGCOLOR.a = FRAGCOLOR.a * v_Color.a;
 
 	vec2 pos = v_Pos.xy / v_Pos.w;
 	vec2 posU = v_Tangent.xy / v_Tangent.w;
 	vec2 posR = v_Binormal.xy / v_Binormal.w;
 
-	float xscale = (gl_FragColor.x * 2.0 - 1.0) * v_Color.x * g_scale.x;
-	float yscale = (gl_FragColor.y * 2.0 - 1.0) * v_Color.y * g_scale.x;
+	float xscale = (FRAGCOLOR.x * 2.0 - 1.0) * v_Color.x * g_scale.x;
+	float yscale = (FRAGCOLOR.y * 2.0 - 1.0) * v_Color.y * g_scale.x;
 
 	vec2 uv = pos + (posR - pos) * xscale + (posU - pos) * yscale;
 
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
-	vec3 color = texture2D(uBackTexture0, uv).xyz;
-	gl_FragColor.xyz = color;
+	vec3 color = TEX2D(uBackTexture0, uv).xyz;
+	FRAGCOLOR.xyz = color;
 }
 )";
 

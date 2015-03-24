@@ -140,17 +140,23 @@ precision mediump float;
 
 #if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 R"(
-layout (location = 0) out vec4 fragColor;
+layout (location = 0) out vec4 FRAGCOLOR;
+)"
+#else
+R"(
+#define FRAGCOLOR gl_FragColor
 )"
 #endif
 
 #if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 R"(
 #define IN in
+#define TEX2D texture
 )"
 #else
 R"(
 #define IN varying
+#define TEX2D texture2D
 )"
 #endif
 
@@ -160,7 +166,7 @@ R"(
 "uniform sampler2D uTexture0;\n"
 
 "void main() {\n"
-"gl_FragColor = vaColor * texture2D(uTexture0, vaTexCoord.xy);\n"
+"FRAGCOLOR = vaColor * TEX2D(uTexture0, vaTexCoord.xy);\n"
 "}\n";
 
 	static const char g_sprite_fs_no_texture_src[] =
@@ -191,7 +197,11 @@ precision mediump float;
 
 #if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 R"(
-layout (location = 0) out vec4 fragColor;
+layout (location = 0) out vec4 FRAGCOLOR;
+)"
+#else
+R"(
+#define FRAGCOLOR gl_FragColor
 )"
 #endif
 
@@ -209,7 +219,7 @@ R"(
 "IN mediump vec4 vaTexCoord;\n"
 
 "void main() {\n"
-"gl_FragColor = vaColor;\n"
+"FRAGCOLOR = vaColor;\n"
 "}\n";
 
 
@@ -331,7 +341,11 @@ precision mediump float;
 
 #if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 R"(
-layout (location = 0) out vec4 fragColor;
+layout (location = 0) out vec4 FRAGCOLOR;
+)"
+#else
+R"(
+#define FRAGCOLOR gl_FragColor
 )"
 #endif
 
@@ -339,10 +353,12 @@ layout (location = 0) out vec4 fragColor;
 #if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 R"(
 #define IN in
+#define TEX2D texture
 )"
 #else
 R"(
 #define IN varying
+#define TEX2D texture2D
 )"
 #endif
 
@@ -363,7 +379,7 @@ uniform	vec4	g_scale;
 
 R"(
 void main() {
-	vec4 output = texture2D(uTexture0, vaTexCoord.xy);
+	vec4 output = TEX2D(uTexture0, vaTexCoord.xy);
 	output.w = output.w * vaColor.w;
 
 	vec2 pos = vaPos.xy / vaPos.w;
@@ -374,10 +390,10 @@ void main() {
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
-	vec3 color = texture2D(uBackTexture0, uv).xyz;
+	vec3 color = TEX2D(uBackTexture0, uv).xyz;
 	output.xyz = color;
 
-	gl_FragColor = output;
+	FRAGCOLOR = output;
 }
 )";
 
@@ -409,17 +425,23 @@ precision mediump float;
 
 #if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 R"(
-layout (location = 0) out vec4 fragColor;
+layout (location = 0) out vec4 FRAGCOLOR;
+)"
+#else
+R"(
+#define FRAGCOLOR gl_FragColor
 )"
 #endif
 
 #if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 R"(
 #define IN in
+#define TEX2D texture
 )"
 #else
 R"(
 #define IN varying
+#define TEX2D texture2D
 )"
 #endif
 
@@ -452,10 +474,10 @@ void main() {
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
-	vec3 color = texture2D(uBackTexture0, uv).xyz;
+	vec3 color = TEX2D(uBackTexture0, uv).xyz;
 	output.xyz = color;
 
-	gl_FragColor = output;
+	FRAGCOLOR = output;
 }
 )";
 
