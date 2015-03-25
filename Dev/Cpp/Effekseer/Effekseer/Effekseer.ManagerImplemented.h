@@ -594,6 +594,11 @@ public:
 		@param	isOpenGL		OpenGLによる描画か?
 	*/
 	void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL);
+
+	/**
+		@brief	現在存在するエフェクトのハンドルからカリングの空間を配置しなおす。
+	*/
+	void RessignCulling() override;
 };
 //----------------------------------------------------------------------------------
 //

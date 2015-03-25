@@ -6,19 +6,8 @@
 #include <math.h>
 #include <assert.h>
 #include <float.h>
-
-#ifdef _WIN32
-typedef signed char			int8_t;
-typedef unsigned char		uint8_t;
-typedef short				int16_t;
-typedef unsigned short		uint16_t;
-typedef int					int32_t;
-typedef unsigned int		uint32_t;
-typedef __int64				int64_t;
-typedef unsigned __int64	uint64_t;
-#else
 #include <stdint.h>
-#endif
+
 
 namespace Culling3D
 {
@@ -348,6 +337,8 @@ namespace Culling3D
 		virtual void Culling(const Matrix44& cameraProjMat, bool isOpenGL) = 0;
 		virtual int32_t GetObjectCount() = 0;
 		virtual Object* GetObject(int32_t index) = 0;
+
+		virtual bool Reassign() = 0;
 
 		virtual void Dump(const char* path, const Matrix44& cameraProjMat, bool isOpenGL) = 0;
 

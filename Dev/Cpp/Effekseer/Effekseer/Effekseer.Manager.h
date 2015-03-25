@@ -445,7 +445,7 @@ public:
 	*/
 	virtual int32_t GetRestInstancesCount() const = 0;
 
-		/**
+	/**
 		@brief	エフェクトをカリングし描画負荷を減らすための空間を生成する。
 		@param	xsize	X方向幅
 		@param	ysize	Y方向幅
@@ -460,6 +460,11 @@ public:
 		@param	isOpenGL		OpenGLによる描画か?
 	*/
 	virtual void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL) = 0;
+
+	/**
+		@brief	現在存在するエフェクトのハンドルからカリングの空間を配置しなおす。
+	*/
+	virtual void RessignCulling() = 0;
 };
 //----------------------------------------------------------------------------------
 //

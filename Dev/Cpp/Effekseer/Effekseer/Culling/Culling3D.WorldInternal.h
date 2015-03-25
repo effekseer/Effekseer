@@ -27,6 +27,7 @@ namespace Culling3D
 		std::vector<Layer*>	layers;
 
 		Grid	outofLayers;
+		Grid	allLayers;
 
 		std::vector<Object*> objs;
 
@@ -45,6 +46,8 @@ namespace Culling3D
 		void RemoveObjectInternal(Object* o);
 
 		void Culling(const Matrix44& cameraProjMat, bool isOpenGL);
+
+		bool Reassign() override;
 
 		void Dump(const char* path, const Matrix44& cameraProjMat, bool isOpenGL);
 

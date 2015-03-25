@@ -67,9 +67,9 @@ namespace Culling3D
 
 		layers.clear();
 
-		for (auto& obj : containedObjects)
+		for (std::set<Object*>::iterator it = containedObjects.begin(); it != containedObjects.end(); it++)
 		{
-			obj->Release();
+			(*it)->Release();
 		}
 	}
 
@@ -95,7 +95,7 @@ namespace Culling3D
 
 		if (o_->GetNextStatus().Type == OBJECT_SHAPE_TYPE_ALL)
 		{
-			outofLayers.AddObject(o);
+			allLayers.AddObject(o);
 			o_->SetWorld(this);
 			return;
 		}
@@ -153,7 +153,7 @@ namespace Culling3D
 
 		if (o_->GetCurrentStatus().Type == OBJECT_SHAPE_TYPE_ALL)
 		{
-			outofLayers.RemoveObject(o);
+			allLayers.RemoveObject(o);
 			o_->SetWorld(NULL);
 			return;
 		}
@@ -325,6 +325,7 @@ namespace Culling3D
 
 		/* 外領域追加 */
 		grids.push_back(&outofLayers);
+		grids.push_back(&allLayers);
 
 		/* グリッドからオブジェクト取得 */
 		for (size_t i = 0; i < grids.size(); i++)
@@ -350,6 +351,66 @@ namespace Culling3D
 		}
 
 		grids.clear();
+	}
+
+	bool WorldInternal::Reassign()
+	{
+		/* 数が少ない */
+		if (outofLayers.GetObjects().size() < 10) return false;
+
+		objs.clear();
+
+		for (size_t i = 0; i < layers.size(); i++)
+		{
+			delete layers[i];
+		}
+
+		layers.clear();
+		outofLayers.GetObjects().clear();
+		allLayers.GetObjects().clear();
+
+		outofLayers.IsScanned = false;
+		allLayers.IsScanned = false;
+
+		for (auto& it : containedObjects)
+		{
+			auto o = (ObjectInternal*) (it);
+			o->ObjectIndex = -1;
+		}
+
+		float xmin = FLT_MAX;
+		float xmax = -FLT_MAX;
+		float ymin = FLT_MAX;
+		float ymax = -FLT_MAX;
+		float zmin = FLT_MAX;
+		float zmax = -FLT_MAX;
+
+		for (auto& it : containedObjects)
+		{
+			ObjectInternal* o_ = (ObjectInternal*) it;
+			if (o_->GetNextStatus().Type == OBJECT_SHAPE_TYPE_ALL) continue;
+
+			if (xmin > o_->GetNextStatus().Position.X) xmin = o_->GetNextStatus().Position.X;
+			if (xmax < o_->GetNextStatus().Position.X) xmax = o_->GetNextStatus().Position.X;
+			if (ymin > o_->GetNextStatus().Position.Y) ymin = o_->GetNextStatus().Position.Y;
+			if (ymax < o_->GetNextStatus().Position.Y) ymax = o_->GetNextStatus().Position.Y;
+			if (zmin > o_->GetNextStatus().Position.Z) zmin = o_->GetNextStatus().Position.Z;
+			if (zmax < o_->GetNextStatus().Position.Z) zmax = o_->GetNextStatus().Position.Z;
+
+		}
+
+		auto xlen = Max(abs(xmax), abs(xmin)) * 2.0f;
+		auto ylen = Max(abs(ymax), abs(ymin)) * 2.0f;
+		auto zlen = Max(abs(zmax), abs(zmin)) * 2.0f;
+
+		WorldInternal(xlen, ylen, zlen, this->layerCount);
+
+		for (auto& it: containedObjects)
+		{
+			ObjectInternal* o_ = (ObjectInternal*) (it);
+			AddObjectInternal(o_);
+		}
+		return true;
 	}
 
 	void WorldInternal::Dump(const char* path, const Matrix44& cameraProjMat, bool isOpenGL)
