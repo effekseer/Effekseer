@@ -117,6 +117,8 @@ void Paste::OnResetDevice()
 //----------------------------------------------------------------------------------
 void Paste::Rendering(IDirect3DTexture9* texture, int32_t width, int32_t height)
 {
+	if (texture == nullptr) return;
+
 	m_renderer->GetVertexBuffer()->Lock();
 
 	{

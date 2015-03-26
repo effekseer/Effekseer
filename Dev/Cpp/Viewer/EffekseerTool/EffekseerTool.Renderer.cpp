@@ -44,6 +44,8 @@ void Renderer::GenerateRenderTargets(int32_t width, int32_t height)
 	ES_SAFE_RELEASE(m_renderEffectBackTarget);
 	ES_SAFE_RELEASE(m_renderEffectBackTargetTexture);
 
+	if (width == 0 || height == 0) return;
+
 	HRESULT hr;
 
 	hr = GetDevice()->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_renderTargetTexture, NULL);
@@ -280,9 +282,9 @@ bool Renderer::Present()
 //----------------------------------------------------------------------------------
 void Renderer::ResetDevice()
 {
-	m_renderer->OnLostDevice();
+	GenerateRenderTargets(0, 0);
 
-	GenerateRenderTargets(m_width, m_height);
+	m_renderer->OnLostDevice();
 
 	HRESULT hr;
 
@@ -308,6 +310,8 @@ void Renderer::ResetDevice()
 	}
 
 	m_renderer->OnResetDevice();
+
+	GenerateRenderTargets(m_width, m_height);
 }
 
 //----------------------------------------------------------------------------------
