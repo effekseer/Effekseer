@@ -415,9 +415,10 @@ void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param
 			values.current = param.fixed.location;
 			break;
 		case RingLocationParameter::PVA:
-			values.current = param.pva.location.getValue( *manager );
+			values.pva.start = param.pva.location.getValue( *manager );
 			values.pva.velocity = param.pva.velocity.getValue( *manager );
 			values.pva.acceleration = param.pva.acceleration.getValue( *manager );
+			values.current = values.pva.start;
 			break;
 		case RingLocationParameter::Easing:
 			values.easing.start = param.easing.start.getValue( *manager );
@@ -474,8 +475,9 @@ void EffectNodeRing::UpdateLocationValues( Instance& instance, const RingLocatio
 {
 	if( param.type == RingLocationParameter::PVA )
 	{
-		values.pva.velocity += values.pva.acceleration;
-		values.current += values.pva.velocity;
+		values.current = values.pva.start +
+			values.pva.velocity * instance.m_LivingTime +
+			values.pva.acceleration * instance.m_LivingTime * instance.m_LivingTime * 0.5f;
 	}
 	else if( param.type == RingLocationParameter::Easing )
 	{

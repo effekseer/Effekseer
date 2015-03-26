@@ -129,6 +129,7 @@ struct RingLocationValues
 
 		struct
 		{
+			vector2d  start;
 			vector2d  velocity;
 			vector2d  acceleration;
 		} pva;

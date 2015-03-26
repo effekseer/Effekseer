@@ -99,6 +99,14 @@ struct vector2d
 		return ret;
 	}
 
+	vector2d operator * (const float& o) const
+	{
+		vector2d ret;
+		ret.x = x * o;
+		ret.y = y * o;
+		return ret;
+	}
+
 	vector2d& operator += ( const vector2d& o )
 	{
 		x += o.x;
