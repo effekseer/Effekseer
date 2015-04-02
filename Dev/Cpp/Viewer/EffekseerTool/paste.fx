@@ -36,6 +36,8 @@ VS_Output VS( const VS_Input Input )
 float4 PS( const PS_Input Input ) : COLOR
 {
 	float4 Output = tex2D(Smp0, Input.UV);
+	Output.w = 1.0;
+
 	return Output;
 }
 

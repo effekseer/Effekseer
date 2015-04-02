@@ -29,6 +29,7 @@ namespace EffekseerTool
 
 	void Renderer::DistortingCallback::OnDistorting()
 	{
+
 		auto texture = renderer->ExportBackground();
 		renderer->m_renderer->SetBackground(texture);
 	}
@@ -438,6 +439,8 @@ bool Renderer::BeginRendering()
 		
 		GetDevice()->SetRenderTarget(0, m_renderTarget);
 		GetDevice()->SetDepthStencilSurface(m_renderTargetDepth);
+
+		m_d3d_device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
 	}
 
 	if( m_recording && IsBackgroundTranslucent )
