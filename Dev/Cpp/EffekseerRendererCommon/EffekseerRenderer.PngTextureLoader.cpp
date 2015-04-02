@@ -100,9 +100,11 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 	}
 	else
 	{
-		ES_SAFE_DELETE(bmp);
 		return false;
 	}
+	
+	ES_SAFE_DELETE(bmp);
+
 #else
 	uint8_t* data_ = (uint8_t*) data;
 
