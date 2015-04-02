@@ -72,8 +72,15 @@ void VertexArray::Init()
 
 	GLExt::glBindVertexArray(m_vertexArray);
 	
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer->GetInterface());
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer->GetInterface());
+	if (m_vertexBuffer != nullptr)
+	{
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer->GetInterface());
+	}
+	
+	if (m_indexBuffer != nullptr)
+	{
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer->GetInterface());
+	}
 
 	m_shader->EnableAttribs();
 	m_shader->SetVertex();

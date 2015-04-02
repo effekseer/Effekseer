@@ -1086,7 +1086,7 @@ void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCal
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size )
 {
-	if (m_currentVertexArray == nullptr)
+	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetVertexBuffer() == nullptr)
 	{
 		GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->GetInterface());
 	}
@@ -1097,7 +1097,7 @@ void RendererImplemented::SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t s
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetVertexBuffer(GLuint vertexBuffer, int32_t size)
 {
-	if (m_currentVertexArray == nullptr)
+	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetVertexBuffer() == nullptr)
 	{
 		GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	}
@@ -1108,7 +1108,7 @@ void RendererImplemented::SetVertexBuffer(GLuint vertexBuffer, int32_t size)
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetIndexBuffer( IndexBuffer* indexBuffer )
 {
-	if (m_currentVertexArray == nullptr)
+	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetIndexBuffer() == nullptr)
 	{
 		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->GetInterface());
 	}
@@ -1119,7 +1119,7 @@ void RendererImplemented::SetIndexBuffer( IndexBuffer* indexBuffer )
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetIndexBuffer(GLuint indexBuffer)
 {
-	if (m_currentVertexArray == nullptr)
+	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetIndexBuffer() == nullptr)
 	{
 		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 	}
@@ -1140,7 +1140,7 @@ void RendererImplemented::SetLayout(Shader* shader)
 {
 	GLCheckError();
 	
-	if (m_currentVertexArray == nullptr)
+	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetVertexBuffer() == nullptr)
 	{
 		shader->EnableAttribs();
 		shader->SetVertex();

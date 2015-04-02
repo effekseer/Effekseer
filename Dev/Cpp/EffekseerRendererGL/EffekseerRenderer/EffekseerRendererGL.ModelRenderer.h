@@ -81,6 +81,8 @@ private:
 
 	GLint								m_uniformLoc[8][NumUniforms];
 
+	VertexArray*						m_va[8];
+
 	ModelRenderer(
 		RendererImplemented* renderer,
 		Shader* shader_lighting_texture_normal,

@@ -9,6 +9,7 @@
 #include "EffekseerRendererGL.IndexBuffer.h"
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
+#include "EffekseerRendererGL.VertexArray.h"
 
 #include <string>
 
@@ -468,6 +469,11 @@ ModelRenderer::ModelRenderer(
 	, m_shader_distortion_texture(shader_distortion_texture)
 	, m_shader_distortion(shader_distortion)
 {
+	for (size_t i = 0; i < 8; i++)
+	{
+		m_va[i] = nullptr;
+	}
+
 	shader_lighting_texture_normal->GetAttribIdList(NumAttribs, g_model_attribs);
 	shader_lighting_texture_normal->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[0]);
 	shader_lighting_texture_normal->SetTextureSlot(0, shader_lighting_texture_normal->GetUniformId("ColorTexture"));
@@ -632,6 +638,19 @@ ModelRenderer::ModelRenderer(
 			sizeof(float[4]) * 0
 			);
 	}
+
+	m_va[0] = VertexArray::Create(renderer, m_shader_lighting_texture_normal, nullptr, nullptr);
+	m_va[1] = VertexArray::Create(renderer, m_shader_lighting_normal, nullptr, nullptr);
+
+	m_va[2] = VertexArray::Create(renderer, m_shader_lighting_texture, nullptr, nullptr);
+	m_va[3] = VertexArray::Create(renderer, m_shader_lighting, nullptr, nullptr);
+
+	m_va[4] = VertexArray::Create(renderer, m_shader_texture, nullptr, nullptr);
+	m_va[5] = VertexArray::Create(renderer, m_shader, nullptr, nullptr);
+
+	m_va[6] = VertexArray::Create(renderer, m_shader_distortion_texture, nullptr, nullptr);
+	m_va[7] = VertexArray::Create(renderer, m_shader_distortion, nullptr, nullptr);
+
 }
 
 //----------------------------------------------------------------------------------
@@ -639,6 +658,11 @@ ModelRenderer::ModelRenderer(
 //----------------------------------------------------------------------------------
 ModelRenderer::~ModelRenderer()
 {
+	for (size_t i = 0; i < 8; i++)
+	{
+		ES_SAFE_DELETE(m_va[i]);
+	}
+
 	ES_SAFE_DELETE(m_shader_lighting_texture_normal);
 	ES_SAFE_DELETE(m_shader_lighting_normal);
 
@@ -812,6 +836,54 @@ void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t c
 //----------------------------------------------------------------------------------
 void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* userData )
 {
+	if (parameter.Distortion)
+	{
+		if (parameter.ColorTextureIndex >= 0)
+		{
+			m_renderer->SetVertexArray(m_va[6]);
+		}
+		else
+		{
+			m_renderer->SetVertexArray(m_va[7]);
+		}
+	}
+	else if (parameter.Lighting)
+	{
+		if (parameter.NormalTextureIndex >= 0)
+		{
+			if (parameter.ColorTextureIndex >= 0)
+			{
+				m_renderer->SetVertexArray(m_va[0]);
+			}
+			else
+			{
+				m_renderer->SetVertexArray(m_va[1]);
+			}
+			}
+		else
+		{
+			if (parameter.ColorTextureIndex >= 0)
+			{
+				m_renderer->SetVertexArray(m_va[2]);
+			}
+			else
+			{
+				m_renderer->SetVertexArray(m_va[3]);
+			}
+		}
+	}
+	else
+	{
+		if (parameter.ColorTextureIndex >= 0)
+		{
+			m_renderer->SetVertexArray(m_va[4]);
+		}
+		else
+		{
+			m_renderer->SetVertexArray(m_va[5]);
+		}
+	}
+
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	EndRendering_<
 		RendererImplemented,

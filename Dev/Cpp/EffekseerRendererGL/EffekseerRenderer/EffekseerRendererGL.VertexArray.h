@@ -35,6 +35,9 @@ public:
 
 	GLuint GetInterface() const { return m_vertexArray; }
 
+	VertexBuffer* GetVertexBuffer() { return m_vertexBuffer; }
+	IndexBuffer* GetIndexBuffer() { return m_indexBuffer; }
+
 public:	// デバイス復旧用
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
