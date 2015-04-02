@@ -11,7 +11,7 @@ namespace Effekseer
 		/// <summary>
 		/// x.xxxであることが必須
 		/// </summary>
-        public const string Version = "0.620";
+        public const string Version = "0.70CTP1";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -715,6 +715,12 @@ namespace Effekseer
 
 		static uint ParseVersion(string versionText)
 		{
+			versionText = versionText.Replace("CTP1", "");
+			versionText = versionText.Replace("CTP2", "");
+			versionText = versionText.Replace("CTP3", "");
+			versionText = versionText.Replace("CTP4", "");
+			versionText = versionText.Replace("CTP5", "");
+
 			versionText = versionText.Replace("α1", "");
 			versionText = versionText.Replace("α2", "");
 			versionText = versionText.Replace("α3", "");
