@@ -1280,25 +1280,25 @@ void RendererImplemented::ResetRenderState()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Model::Model( ::Effekseer::Model::Vertex vertexData[], int32_t vertexCount, 
-	::Effekseer::Model::Face faceData[], int32_t faceCount )
-	: VertexBuffer	( 0 )
-	, IndexBuffer	( 0 )
-	, VertexCount	( vertexCount )
-	, IndexCount	( faceCount * 3 )
-	, ModelCount	( 1 )
+Model::Model(::Effekseer::Model::Vertex vertexData [], int32_t vertexCount,
+	::Effekseer::Model::Face faceData [], int32_t faceCount)
+	: VertexBuffer(0)
+	, IndexBuffer(0)
+	, VertexCount(vertexCount)
+	, IndexCount(faceCount * 3)
+	, ModelCount(1)
 {
-	GLExt::glGenBuffers( 1, &VertexBuffer );
-	GLExt::glBindBuffer( GL_ARRAY_BUFFER, VertexBuffer );
+	GLExt::glGenBuffers(1, &VertexBuffer);
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
 	size_t vertexSize = vertexCount * sizeof(::Effekseer::Model::Vertex);
-	GLExt::glBufferData( GL_ARRAY_BUFFER, vertexSize, vertexData, GL_STATIC_DRAW );
+	GLExt::glBufferData(GL_ARRAY_BUFFER, vertexSize, vertexData, GL_STATIC_DRAW);
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	GLExt::glGenBuffers( 1, &IndexBuffer );
-	GLExt::glBindBuffer( GL_ARRAY_BUFFER, IndexBuffer );
+	GLExt::glGenBuffers(1, &IndexBuffer);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBuffer);
 	size_t indexSize = faceCount * sizeof(::Effekseer::Model::Face);
-	GLExt::glBufferData( GL_ARRAY_BUFFER, indexSize, faceData, GL_STATIC_DRAW );
-	
-	GLExt::glBindBuffer( GL_ARRAY_BUFFER, 0 );
+	GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize, faceData, GL_STATIC_DRAW);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 //----------------------------------------------------------------------------------
