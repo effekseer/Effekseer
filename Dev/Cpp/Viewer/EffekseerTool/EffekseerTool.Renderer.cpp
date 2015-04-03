@@ -520,6 +520,8 @@ bool Renderer::EndRendering()
 		
 		m_d3d_device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
 		m_background->Rendering(m_renderTargetTexture, m_width, m_height);
+
+		m_renderer->SetBackground(nullptr);
 	}
 	
 	m_d3d_device->EndScene();
