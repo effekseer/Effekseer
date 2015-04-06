@@ -249,13 +249,13 @@ public:
 		
 		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
 
-		/* バッファの設定の後にレイアウトを設定しないと無効 */
-		renderer->SetVertexBuffer(model->VertexBuffer, sizeof(Effekseer::Model::VertexWithIndex));
-		renderer->SetIndexBuffer(model->IndexBuffer);
-		renderer->SetLayout(shader_);
-
 		if(Instancing)
 		{
+			/* バッファの設定の後にレイアウトを設定しないと無効 */
+			renderer->SetVertexBuffer(model->VertexBuffer, sizeof(Effekseer::Model::VertexWithIndex));
+			renderer->SetIndexBuffer(model->IndexBuffer);
+			renderer->SetLayout(shader_);
+
 			for( size_t loop = 0; loop < m_matrixes.size(); )
 			{
 				int32_t modelCount = Effekseer::Min( m_matrixes.size() - loop, model->ModelCount );
@@ -281,6 +281,11 @@ public:
 		}
 		else
 		{
+			/* バッファの設定の後にレイアウトを設定しないと無効 */
+			renderer->SetVertexBuffer(model->VertexBuffer, sizeof(Effekseer::Model::Vertex));
+			renderer->SetIndexBuffer(model->IndexBuffer);
+			renderer->SetLayout(shader_);
+
 			for( size_t loop = 0; loop < m_matrixes.size(); )
 			{
 				vcb->ModelMatrix[0] = m_matrixes[loop];

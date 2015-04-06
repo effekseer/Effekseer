@@ -869,8 +869,11 @@ bool RendererImplemented::EndRendering()
 		if (m_originalState.blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
 		if (m_originalState.cullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
 		if (m_originalState.depthTest) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
+
+#if !defined(__EFFEKSEER_RENDERER_GL3__)
 		if (m_originalState.texture) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
-		
+#endif
+
 		glDepthMask(m_originalState.depthWrite);
 		glBlendFunc(m_originalState.blendSrc, m_originalState.blendDst);
 		GLExt::glBlendEquation(m_originalState.blendEquation);
@@ -1221,6 +1224,18 @@ void RendererImplemented::EndShader(Shader* shader)
 	
 	if (m_currentVertexArray)
 	{
+		if (m_currentVertexArray->GetVertexBuffer() == nullptr)
+		{
+			shader->DisableAttribs();
+			GLCheckError();
+
+			GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			GLCheckError();
+
+			GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
+			GLCheckError();
+		}
+
 		GLExt::glBindVertexArray(0);
 		GLCheckError();
 		m_currentVertexArray = nullptr;

@@ -9,8 +9,6 @@
 #include "EffekseerRendererGL.Base.h"
 #include "EffekseerRendererGL.Renderer.h"
 
-//#define __EFFEKSEER_RENDERER_GL3__ 1
-
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
