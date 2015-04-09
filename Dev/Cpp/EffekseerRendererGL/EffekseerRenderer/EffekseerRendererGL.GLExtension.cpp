@@ -171,6 +171,10 @@ bool Initialize()
 
 	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
 
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+	g_isSupportedVertexArray = true;
+#endif
+
 	g_isInitialized = true;
 	return true;
 #else
