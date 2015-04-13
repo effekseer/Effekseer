@@ -112,6 +112,7 @@ public:
 		struct
 		{
 			float rotation;
+			vector3d axis;
 
 			union
 			{

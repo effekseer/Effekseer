@@ -244,12 +244,14 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		rotation_values.axis.random.velocity = m_pEffectNode->RotationAxisPVA.velocity.getValue( *m_pManager );
 		rotation_values.axis.random.acceleration = m_pEffectNode->RotationAxisPVA.acceleration.getValue( *m_pManager );
 		rotation_values.axis.rotation = rotation_values.axis.random.rotation;
+		rotation_values.axis.axis = m_pEffectNode->RotationAxisPVA.axis.getValue(*m_pManager);
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_AxisEasing )
 	{
 		rotation_values.axis.easing.start = m_pEffectNode->RotationAxisEasing.easing.start.getValue( *m_pManager );
 		rotation_values.axis.easing.end = m_pEffectNode->RotationAxisEasing.easing.end.getValue( *m_pManager );
 		rotation_values.axis.rotation = rotation_values.axis.easing.start;
+		rotation_values.axis.axis = m_pEffectNode->RotationAxisEasing.axis.getValue(*m_pManager);
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_FCurve )
 	{
@@ -833,7 +835,12 @@ void Instance::CalculateMatrix( float deltaFrame )
 				 m_pEffectNode->RotationType == ParameterRotationType_AxisEasing )
 		{
 			Matrix43 MatRot;
-			MatRot.RotationAxis( localAngle, rotation_values.axis.rotation );
+			Vector3D axis;
+			axis.X = rotation_values.axis.axis.x;
+			axis.Y = rotation_values.axis.axis.y;
+			axis.Z = rotation_values.axis.axis.z;
+
+			MatRot.RotationAxis( axis, rotation_values.axis.rotation );
 			Matrix43::Multiple( m_GlobalMatrix43, m_GlobalMatrix43, MatRot );
 		}
 

@@ -11,7 +11,7 @@ namespace Effekseer
 		/// <summary>
 		/// x.xxxであることが必須
 		/// </summary>
-        public const string Version = "0.70CTP1";
+        public const string Version = "0.7CTP1";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -532,9 +532,12 @@ namespace Effekseer
 			uint toolVersion = 0;
 			if (doc["EffekseerProject"]["ToolVersion"] != null)
 			{
-				toolVersion = ParseVersion(doc["EffekseerProject"]["ToolVersion"].GetText());
+				var fileVersion = doc["EffekseerProject"]["ToolVersion"].GetText();
+				var currentVersion = Core.Version;
 
-				if (toolVersion > ParseVersion(Core.Version))
+				toolVersion = ParseVersion(fileVersion);
+
+				if (toolVersion > ParseVersion(currentVersion))
 				{
 					throw new Exception("Version Error : \nファイルがより新しいバージョンのツールで作成されています。\n最新バージョンのツールを使用してください。");
 				}
@@ -738,6 +741,9 @@ namespace Effekseer
 			versionText = versionText.Replace("RC3", "");
 			versionText = versionText.Replace("RC4", "");
 			versionText = versionText.Replace("RC5", "");
+
+			if (versionText.Length == 3) versionText += "00";
+			if (versionText.Length == 4) versionText += "0";
 
 			uint version = 0;
 			string[] list = versionText.Split('.');
