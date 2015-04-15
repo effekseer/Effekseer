@@ -88,6 +88,12 @@ target_link_libraries(effekseer ${common_lib})
 # ƒtƒ‰ƒOˆ—
 add_definitions(-D__EFFEKSEER_RENDERER_GL_GLEW__)
 
+add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
+
+if (APPLE)
+	add_definitions(-D__EFFEKSEER_RENDERER_GL3__)
+endif()
+
 # o—Íæ‚Ìİ’è
 if (MSVC)
 set_target_properties(effekseer PROPERTIES OUTPUT_NAME_DEBUG "Test" )
