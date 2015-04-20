@@ -24,6 +24,11 @@ namespace Effekseer.GUI
 			Process.Start(link1.Text);
 		}
 
+		private void link2_Click(object sender, EventArgs e)
+		{
+			Process.Start(link2.Text);
+		}
+
 		private void ok_Click(object sender, EventArgs e)
 		{
 			Close();
