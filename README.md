@@ -1,62 +1,67 @@
 Effekseer
 =========
-�{�\�t�g�E�F�A�y�у����^�C���̓I�[�v���\�[�X�ɂĊJ�����Ă��郔�B�W���A���G�t�F�N�g�ҏW�c�[���E�Đ��p�����^�C���ł��B
-��ɃQ�[���ɑg�ݍ��ݎg�p���Ă���A�p�[�e�B�N�������B�W���A���G�t�F�N�g���v���O���}�łȂ��f�U�C�i���S���ł���悤�ɂ��邱�Ƒz�肵�Ă��܂��B
+本ソフトウェア及びランタイムはオープンソースにて開発しているヴィジュアルエフェクト編集ツール・再生用ランタイムです。
+主にゲームに組み込み使用しており、パーティクル等ヴィジュアルエフェクトをプログラマでなくデザイナが担当できるようにすること想定しています。
+
+**不具合情報**
+
+現状、UnityMac版は、ibpng16.16.dylibを必要としています。参照可能な位置にibpng16.16.dylibを追加するようお願いします。
+次のバージョンで不要になる予定です。
 
 **Version 0.610**
-* �����^�C���FD3DX�y��DirectXTex��s�K�v�ɂȂ�悤�ύX
+* ランタイム：D3DX及びDirectXTexを不必要になるよう変更
 
 # RoadMap
 
 **Version 0.70**
-* �v���W�F�N�g�̃t�@�C���T�C�Y���팸
-* �J�����O�@�\�̒ǉ�
-* �f�B�X�g�[�V�����@�\�̒ǉ�
-* ���͋@�\�̒ǉ�
-* ������
-* �������Ԃ̃����_���̎���(1�̃m�[�h�̎q�m�[�h�̍ő����16�ɕύX)
-* �s��C�� �E�C���h�E�ʒu�̏������ŃE�C���h�E�ʒu������������������Ȃ�
-* �s��C�� �c�[�������N�����A�c�[���Ԃ̃R�s�[�Ńe�N�X�`���̃p�X�����������Ȃ�
-* �s��C�� �ŏ������ďI���������A���N������ƃG���[
-* �s��C�� �X�e�[�g���A���s���S
-* �s��C�� ���������[�N
-* �R�[�h����
+* プロジェクトのファイルサイズを削減
+* カリング機能の追加
+* ディストーション機能の追加
+* 引力機能の追加
+* 高速化
+* 生成時間のランダムの実装(1つのノードの子ノードの最大個数が16に変更)
+* 不具合修正 ウインドウ位置の初期化でウインドウ位置が正しく初期化されない
+* 不具合修正 ツール複数起動時、ツール間のコピーでテクスチャのパスがおかしくなる
+* 不具合修正 最小化して終了した時、次起動するとエラー
+* 不具合修正 ステート復帰が不完全
+* 不具合修正 メモリリーク
+* コード整備
 
 # Todo
-�v�����N�G�X�g���҂����Ă���܂��B
+プルリクエストお待ちしております。
 
-**���K�͂Ȓǉ��E�ύX**
-* �h�L�������g�̉���
-* �����̉���
-* �e��A�C�R���̒ǉ�
-* �T���v���̒ǉ�
-* Windows�ALinux�ȊO�̃e�X�g�̍\�z
+**小規模な追加・変更**
+* ドキュメントの改良
+* 文言の改良
+* 各種アイコンの追加
+* サンプルの追加
+* Windows、Linux以外のテストの構築
 
-**���K�͂Ȓǉ��E�ύX**
-* Effect�̃p�����[�^�[�̓��I�ȕύX
-* �V���[�g�J�b�g�̌�����
-* ���f���o�̓v���O�C��(Blender��)
-
-
-**��K�͂Ȓǉ��E�ύX**
-* �c�[����GUI���C�u�����̕ύX
-* �c�[���̃}���`�v���b�g�t�H�[����
+**中規模な追加・変更**
+* Effectのパラメーターの動的な変更
+* ショートカットの見直し
+* モデル出力プラグイン(Blender等)
 
 
-# �R�~�b�^�[����
+**大規模な追加・変更**
+* ツールのGUIライブラリの変更
+* ツールのマルチプラットフォーム化
 
-## �����^�C���e�X�g���@
+
+# コミッター向け
+
+## ランタイムテスト方法
 
 * Windows
 
-```Dev/Cpp/Test.sln``` �����s����B
+```Dev/Cpp/Test.sln``` を実行する。
 
 * Linux
 
-```Dev/Cpp/build.sh``` �����s����B
-```Dev/Cpp/Test/CMakeLists.txt``` ��cmake���g�p����make�𐶐����R���p�C������B
+```Dev/Cpp/build.sh``` を実行する。
+```Dev/Cpp/Test/CMakeLists.txt``` をcmakeを使用してmakeを生成しコンパイルする。
 
 * Mac
 
-�s��
+不明
 
