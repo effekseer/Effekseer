@@ -99,7 +99,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Effekseer.Debug.lib;EffekseerRendererDX9.Debug.lib;EffekseerSoundXAudio2.Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,7 +121,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Effekseer.Release.lib;EffekseerRendererDX9.Release.lib;EffekseerSoundXAudio2.Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|Win32'">
@@ -145,7 +145,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Effekseer.Release.lib;EffekseerRendererDX9.Release.lib;EffekseerSoundXAudio2.Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_DLL|Win32'">
@@ -166,7 +166,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\lib\x86\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Effekseer.Debug.lib;EffekseerRendererDX9.Debug.lib;EffekseerSoundXAudio2.Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
       <Command>
@@ -193,6 +193,17 @@
     <ClCompile Include="dll_cs.cxx" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Sound.cpp" />
     <ClCompile Include="test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EffekseerRendererDX9\EffekseerRendererDX9.vcxproj">
+      <Project>{8145e20a-fdaa-4c69-994d-697876e61faa}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\EffekseerSoundXAudio2\EffekseerSoundXAudio2.vcxproj">
+      <Project>{5c73251f-26d7-44cf-a3d7-1e333f585d4f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Effekseer\Effekseer.vcxproj">
+      <Project>{91e36741-5dfc-46e3-a7f3-28a67fd637c8}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
