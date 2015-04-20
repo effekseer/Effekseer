@@ -219,6 +219,7 @@ namespace Effekseer.GUI
 				menuStrip.Items.Add(menu);
 			}
 
+			/*
 			{
 				var menu = new ToolStripMenuItem("全体処理");
 
@@ -253,6 +254,7 @@ namespace Effekseer.GUI
 
 				menuStrip.Items.Add(menu);
 			}
+			*/
 
 			{
 				var menu = new ToolStripMenuItem("ウインドウ");
