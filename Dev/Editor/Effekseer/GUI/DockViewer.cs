@@ -344,24 +344,29 @@ namespace Effekseer.GUI
 
 		public void StepViewer()
 		{
-            if (!IsPlaying)
-            {
-                return;
-            }
+            //if (!IsPlaying)
+            //{
+            //    return;
+            //}
 
             Step(Current + 1);
 
-            if (Core.EndFrame < current)
-            {
-                if (Core.IsLoop)
-                {
-                    PlayNew();
-                }
-                else
-                {
-                    StopViewer();
-                }
-            }
+            //if (Core.EndFrame < current)
+            //{
+            //    if (Core.IsLoop)
+            //    {
+            //        PlayNew();
+            //    }
+            //    else
+            //    {
+            //        StopViewer();
+            //    }
+            //}
+		}
+
+		public void BackStepViewer()
+		{
+			Step(Current - 1);
 		}
 
 		unsafe void Export()
@@ -496,6 +501,9 @@ namespace Effekseer.GUI
 		{
 			// 同一フレーム
 			if (current == new_frame) return;
+
+			if (new_frame < Core.StartFrame) new_frame = Core.StartFrame;
+			if (new_frame > Core.EndFrame) new_frame = Core.EndFrame;
 
 			if (is_shown)
 			{

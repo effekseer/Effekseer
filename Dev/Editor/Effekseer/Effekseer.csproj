@@ -499,6 +499,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <Content Include="Image\BackStep.png" />
+    <Content Include="Image\Pause.png" />
+    <Content Include="Image\Play.png" />
+    <Content Include="Image\Step.png" />
+    <Content Include="Image\Stop.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

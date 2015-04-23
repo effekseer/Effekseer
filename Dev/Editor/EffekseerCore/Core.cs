@@ -451,7 +451,7 @@ namespace Effekseer
 
 			StartFrame = 0;
 			EndFrame = 120;
-			IsLoop = false;
+			IsLoop = true;
 
 			SelectedNode = null;
 			Command.CommandManager.Clear();
@@ -614,6 +614,7 @@ namespace Effekseer
 			EndFrame = doc["EffekseerProject"]["EndFrame"].GetTextAsInt();
 			StartFrame = doc["EffekseerProject"]["StartFrame"].GetTextAsInt();
 			IsLoop = bool.Parse(doc["EffekseerProject"]["IsLoop"].GetText());
+			IsLoop = true;
 
 			int version = 0;
 			if (doc["EffekseerProject"]["Version"] != null)
