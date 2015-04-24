@@ -248,7 +248,7 @@ namespace Effekseer.GUI
 
 				if (IsPlaying && !IsPaused)
 				{
-                    StepViewer();
+                    StepViewer(true);
 				}
 
 				viewer.SetBackgroundColor(
@@ -342,14 +342,21 @@ namespace Effekseer.GUI
 			}
 		}
 
-		public void StepViewer()
+		public void StepViewer(bool isLooping)
 		{
             //if (!IsPlaying)
             //{
             //    return;
             //}
 
-            Step(Current + 1);
+			int next = Current + 1;
+
+			if(isLooping)
+			{
+				if (next > Core.EndFrame) next = 0;
+			}
+			
+            Step(next);
 
             //if (Core.EndFrame < current)
             //{

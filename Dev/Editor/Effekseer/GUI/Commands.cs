@@ -35,7 +35,6 @@ namespace Effekseer.GUI
 
 			regist(Play);
 			regist(Stop);
-			regist(Pause);
 			regist(Step);
 
 			regist(Undo);
@@ -174,11 +173,25 @@ namespace Effekseer.GUI
 			GUIManager.Close();
 		}
 
-		[Name(value = "再生", language = Language.Japanese)]
+		[Name(value = "再生・一時停止", language = Language.Japanese)]
 		[UniqueName(value = "Internal.PlayViewer")]
 		public static void Play()
 		{
-			GUIManager.DockViewer.PlayViewer();
+			if (GUIManager.DockViewer.IsPlaying && !GUIManager.DockViewer.IsPaused)
+			{
+				GUIManager.DockViewer.PauseAndResumeViewer();
+			}
+			else
+			{
+				if (GUIManager.DockViewer.IsPaused)
+				{
+					GUIManager.DockViewer.PauseAndResumeViewer();
+				}
+				else
+				{
+					GUIManager.DockViewer.PlayViewer();
+				}
+			}
 		}
 
 		[Name(value = "停止", language = Language.Japanese)]
@@ -188,18 +201,11 @@ namespace Effekseer.GUI
 			GUIManager.DockViewer.StopViewer();
 		}
 
-		[Name(value = "一時停止・再開", language = Language.Japanese)]
-		[UniqueName(value = "Internal.PauseAndResumeViewer")]
-		public static void Pause()
-		{
-			GUIManager.DockViewer.PauseAndResumeViewer();
-		}
-
 		[Name(value = "ステップ", language = Language.Japanese)]
 		[UniqueName(value = "Internal.StepViewer")]
 		public static void Step()
 		{
-			GUIManager.DockViewer.StepViewer();
+			GUIManager.DockViewer.StepViewer(false);
 		}
 
 		[Name(value="元に戻す", language= Language.Japanese)]

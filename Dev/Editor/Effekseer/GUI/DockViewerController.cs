@@ -57,6 +57,22 @@ namespace Effekseer.GUI
             }
 
             trackBar.Value = GUIManager.DockViewer.Current;
+
+			if (GUIManager.DockViewer.IsPlaying)
+			{
+				if(GUIManager.DockViewer.IsPaused)
+				{
+					btn_play_pause.Image = global::Effekseer.Properties.Resources.Play;
+				}
+				else
+				{
+					btn_play_pause.Image = global::Effekseer.Properties.Resources.Pause;
+				}
+			}
+			else
+			{
+				btn_play_pause.Image = global::Effekseer.Properties.Resources.Play;
+			}
 		}
 
 		private void trackBar_CursorChanged(object sender, EventArgs e)
@@ -69,7 +85,6 @@ namespace Effekseer.GUI
 			if (GUIManager.DockViewer.IsPlaying && !GUIManager.DockViewer.IsPaused)
 			{
 				GUIManager.DockViewer.PauseAndResumeViewer();
-				btn_play_pause.Image = global::Effekseer.Properties.Resources.Play;
 			}
 			else
 			{
@@ -81,8 +96,6 @@ namespace Effekseer.GUI
 				{
 					GUIManager.DockViewer.PlayViewer();
 				}
-				
-				btn_play_pause.Image = global::Effekseer.Properties.Resources.Pause;
 			}
 		}
 
@@ -99,7 +112,7 @@ namespace Effekseer.GUI
 
 		private void btn_step_Click(object sender, EventArgs e)
 		{
-			GUIManager.DockViewer.StepViewer();
+			GUIManager.DockViewer.StepViewer(false);
 		}
 
 		private void btn_backstep_Click(object sender, EventArgs e)

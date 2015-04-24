@@ -214,7 +214,6 @@ namespace Effekseer.GUI
 
 				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.Play));
 				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.Stop));
-				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.Pause));
 				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.Step));
 				menuStrip.Items.Add(menu);
 			}
