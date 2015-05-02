@@ -185,7 +185,9 @@ public:
 
 	bool SetRandomSeed( int seed );
 
-	bool Record( const wchar_t* path, int32_t xCount, int32_t yCount, int32_t offsetFrame, int32_t frameSkip, bool isTranslucent );
+	bool Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, bool isTranslucent);
+
+	bool Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, bool isTranslucent);
 
 	ViewerParamater GetViewerParamater();
 

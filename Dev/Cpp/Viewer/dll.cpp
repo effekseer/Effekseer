@@ -958,9 +958,68 @@ bool Native::SetRandomSeed( int seed )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Native::Record( const wchar_t* path, int32_t xCount, int32_t yCount, int32_t offsetFrame, int32_t frameSkip, bool isTranslucent )
+bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, bool isTranslucent)
+{
+	if (g_effect == NULL) return false;
+
+	g_renderer->IsBackgroundTranslucent = isTranslucent;
+
+	::Effekseer::Vector3D position(0, 0, g_Distance);
+	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
+	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
+	mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
+	::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
+	::Effekseer::Vector3D::Transform(position, position, mat);
+	position.X += g_focus_position.X;
+	position.Y += g_focus_position.Y;
+	position.Z += g_focus_position.Z;
+
+	g_renderer->GetRenderer()->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+	StopEffect();
+
+	::Effekseer::Handle handle = g_manager->Play(g_effect, 0, 0, 0);
+
+	for (int i = 0; i < offsetFrame; i++)
+	{
+		g_manager->Update();
+	}
+	
+	for (int32_t i = 0; i < count; i++)
+	{
+		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
+
+		g_renderer->SetRecordRect(0, 0);
+
+		g_renderer->BeginRendering();
+		g_manager->Draw();
+		g_renderer->EndRendering();
+
+		for (int j = 0; j < freq; j++)
+		{
+			g_manager->Update();
+		}
+
+		wchar_t path_[260];
+		swprintf_s(path_, L"%s.%d%s", pathWithoutExt, i, ext);
+
+		g_renderer->EndRecord(path_);
+	}
+
+	g_manager->StopEffect(handle);
+	g_manager->Update();
+	return true;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, bool isTranslucent)
 {
 	if( g_effect == NULL ) return false;
+
+	int32_t yCount = count / xCount;
+	if (count != xCount * yCount) yCount++;
 
 	if( ! g_renderer->BeginRecord( g_renderer->GuideWidth * xCount, g_renderer->GuideHeight * yCount ) ) return false;
 	g_renderer->IsBackgroundTranslucent = isTranslucent;
@@ -986,6 +1045,7 @@ bool Native::Record( const wchar_t* path, int32_t xCount, int32_t yCount, int32_
 		g_manager->Update();
 	}
 
+	int32_t count_ = 0;
 	for( int y = 0; y < yCount; y++ )
 	{
 		for( int x = 0; x < xCount; x++ )
@@ -996,14 +1056,21 @@ bool Native::Record( const wchar_t* path, int32_t xCount, int32_t yCount, int32_
 			g_manager->Draw();
 			g_renderer->EndRendering();
 
-			for( int j = 0; j < frameSkip + 1; j++ )
+			for (int j = 0; j < freq; j++)
 			{
 				g_manager->Update();
+			}
+
+			count_++;
+			if (count == count_)
+			{
+				g_manager->StopEffect(handle);
 			}
 		}
 	}
 	
-	g_manager->StopEffect( handle );
+Exit:;
+
 	g_renderer->EndRecord( path );
 	
 	g_manager->Update();

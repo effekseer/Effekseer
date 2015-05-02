@@ -119,36 +119,6 @@ namespace Effekseer.GUI
 					GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
 				}
 			};
-
-			txt_guideWidth.ReadMethod = () =>
-			{
-				if (GUIManager.DockViewer.ViewerAsDynamic != null) return GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater().GuideWidth;
-				return 0;
-			};
-			txt_guideWidth.WriteMethod = (value,wheel) =>
-			{
-				if (GUIManager.DockViewer.ViewerAsDynamic != null)
-				{
-					var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
-					param.GuideWidth = Math.Max(0, value);
-					GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
-				}
-			};
-
-			txt_guideHeight.ReadMethod = () =>
-			{
-				if (GUIManager.DockViewer.ViewerAsDynamic != null) return GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater().GuideHeight;
-				return 0;
-			};
-			txt_guideHeight.WriteMethod = (value, wheel) =>
-			{
-				if (GUIManager.DockViewer.ViewerAsDynamic != null)
-				{
-					var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
-					param.GuideHeight = Math.Max(0, value);
-					GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
-				}
-			};
 		}
 
 		bool nowReloading = false;
@@ -165,15 +135,11 @@ namespace Effekseer.GUI
 			if (!txt_angleY.Changed) txt_angleY.Reload();
 			if (!txt_distance.Changed) txt_distance.Reload();
 
-			if (!txt_guideWidth.Changed) txt_guideWidth.Reload();
-			if (!txt_guideHeight.Changed) txt_guideHeight.Reload();
-
 			if (!txt_mag.Changed) txt_mag.Reload();
 
 			if (GUIManager.DockViewer.ViewerAsDynamic != null)
 			{
 				var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
-				cb_guide.Checked = param.RendersGuide;
 
 				if (!cb_type.DroppedDown)
 				{
@@ -183,14 +149,6 @@ namespace Effekseer.GUI
 			}
 
 			nowReloading = false;
-		}
-
-		private void cb_guide_CheckedChanged(object sender, EventArgs e)
-		{
-			if (nowReloading) return;
-			var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
-			param.RendersGuide = cb_guide.Checked;
-			GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
 		}
 
 		private void cb_type_SelectedIndexChanged(object sender, EventArgs e)

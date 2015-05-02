@@ -80,9 +80,18 @@ namespace Effekseer
 			return native.SetRandomSeed(seed);
 		}
 
-		public bool Record(string path, int xCount, int yCount, int offsetFrame, int frameSkip, bool isTranslucent)
+		public bool Record(string path, int count, int offsetFrame, int freq, bool isTranslucent)
 		{
-			return native.Record(path, xCount, yCount, offsetFrame, frameSkip, isTranslucent);
+			var dir = System.IO.Path.GetDirectoryName(path);
+			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
+			var ext = System.IO.Path.GetExtension(path);
+
+			return native.Record(dir + "/" + fileWExt, ext, count, offsetFrame, freq, isTranslucent);
+		}
+
+		public bool Record(string path, int count, int xCount, int offsetFrame, int freq, bool isTranslucent)
+		{
+			return native.Record(path, count, xCount, offsetFrame, freq, isTranslucent);
 		}
 
 		public ViewerParamater GetViewerParamater()

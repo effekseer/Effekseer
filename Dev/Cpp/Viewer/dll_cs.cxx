@@ -1502,7 +1502,31 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_SetRandomSeed(void * jarg1, in
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_Record(void * jarg1, wchar_t * jarg2, int jarg3, int jarg4, int jarg5, int jarg6, unsigned int jarg7) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_Record__SWIG_0(void * jarg1, wchar_t * jarg2, wchar_t * jarg3, int jarg4, int jarg5, int jarg6, unsigned int jarg7) {
+  unsigned int jresult ;
+  Native *arg1 = (Native *) 0 ;
+  wchar_t *arg2 = (wchar_t *) 0 ;
+  wchar_t *arg3 = (wchar_t *) 0 ;
+  int32_t arg4 ;
+  int32_t arg5 ;
+  int32_t arg6 ;
+  bool arg7 ;
+  bool result;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = (wchar_t *)jarg2; 
+  arg3 = (wchar_t *)jarg3; 
+  arg4 = (int32_t)jarg4; 
+  arg5 = (int32_t)jarg5; 
+  arg6 = (int32_t)jarg6; 
+  arg7 = jarg7 ? true : false; 
+  result = (bool)(arg1)->Record((wchar_t const *)arg2,(wchar_t const *)arg3,arg4,arg5,arg6,arg7);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_Record__SWIG_1(void * jarg1, wchar_t * jarg2, int jarg3, int jarg4, int jarg5, int jarg6, unsigned int jarg7) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
   wchar_t *arg2 = (wchar_t *) 0 ;
