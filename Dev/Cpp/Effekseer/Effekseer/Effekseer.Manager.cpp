@@ -1205,7 +1205,7 @@ void ManagerImplemented::Flip()
 							ds.CullingObjectPointer->SetShapeType(Culling3D::OBJECT_SHAPE_TYPE_SPHERE);
 						}
 
-						if(effect->Culling.Shape == CullingShape::None)
+						if (effect->Culling.Shape == CullingShape::NoneShape)
 						{
 							ds.CullingObjectPointer->SetShapeType(Culling3D::OBJECT_SHAPE_TYPE_ALL);
 						}

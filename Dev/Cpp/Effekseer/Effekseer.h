@@ -169,7 +169,7 @@ enum class CoordinateSystem : int32_t
 
 enum class CullingShape : int32_t
 {
-	None = 0,
+	NoneShape = 0,
 	Sphere = 1,
 };
 

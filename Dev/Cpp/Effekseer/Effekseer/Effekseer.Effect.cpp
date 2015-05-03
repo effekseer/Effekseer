@@ -191,7 +191,7 @@ EffectImplemented::EffectImplemented( Manager* pManager, void* pData, int size )
 {
 	ES_SAFE_ADDREF( m_pManager );
 
-	Culling.Shape = CullingShape::None;
+	Culling.Shape = CullingShape::NoneShape;
 }
 
 //----------------------------------------------------------------------------------
@@ -217,7 +217,7 @@ EffectImplemented::EffectImplemented( Setting* setting, void* pData, int size )
 {
 	ES_SAFE_ADDREF( m_setting );
 	
-	Culling.Shape = CullingShape::None;
+	Culling.Shape = CullingShape::NoneShape;
 }
 
 //----------------------------------------------------------------------------------
