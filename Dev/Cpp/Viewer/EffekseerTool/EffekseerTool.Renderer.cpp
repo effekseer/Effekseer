@@ -452,15 +452,6 @@ bool Renderer::BeginRendering()
 		m_d3d_device->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(BackgroundColor.R,BackgroundColor.G,BackgroundColor.B), 1.0f, 0 );
 	}
 
-	// ƒKƒCƒh•”•ª‚ª•`‰æ‚³‚ê‚é‚æ‚¤‚ÉŠg‘å
-	if( m_recording )
-	{
-		::Effekseer::Matrix44 mat;
-		mat.Values[0][0] = (float)m_width / (float)GuideWidth;
-		mat.Values[1][1] = (float)m_height / (float)GuideHeight;
-		::Effekseer::Matrix44::Mul( m_renderer->GetCameraProjectionMatrix(), m_renderer->GetCameraProjectionMatrix(), mat );
-	}
-
 	hr = m_d3d_device->BeginScene();
 
 	if( FAILED( hr ) ) return false;
@@ -489,6 +480,21 @@ bool Renderer::BeginRendering()
 		m_culling->Y = CullingPosition.Y;
 		m_culling->Z = CullingPosition.Z;
 		m_culling->Rendering( IsRightHand );
+	}
+
+	// ƒKƒCƒh•”•ª‚ª•`‰æ‚³‚ê‚é‚æ‚¤‚ÉŠg‘å
+	if (m_recording)
+	{
+		m_cameraMatTemp = m_renderer->GetCameraMatrix();
+		m_projMatTemp = m_renderer->GetProjectionMatrix();
+		auto proj = m_projMatTemp;
+
+		::Effekseer::Matrix44 mat;
+		mat.Values[0][0] = (float) m_width / (float) GuideWidth;
+		mat.Values[1][1] = (float) m_height / (float) GuideHeight;
+		::Effekseer::Matrix44::Mul(proj, proj, mat);
+
+		m_renderer->SetProjectionMatrix(proj);
 	}
 
 	m_renderer->BeginRendering();
@@ -522,6 +528,12 @@ bool Renderer::EndRendering()
 		m_background->Rendering(m_renderTargetTexture, m_width, m_height);
 
 		m_renderer->SetBackground(nullptr);
+	}
+
+	if (m_recording)
+	{
+		m_renderer->SetCameraMatrix(m_cameraMatTemp);
+		m_renderer->SetProjectionMatrix(m_projMatTemp);
 	}
 	
 	m_d3d_device->EndScene();

@@ -69,6 +69,10 @@ private:
 	IDirect3DSurface9*	m_renderDefaultTarget = nullptr;
 	IDirect3DSurface9*	m_renderDefaultDepth = nullptr;
 
+	Effekseer::Matrix44	m_cameraMatTemp;
+	Effekseer::Matrix44	m_projMatTemp;
+
+
 	void GenerateRenderTargets(int32_t width, int32_t height);
 public:
 	/**
