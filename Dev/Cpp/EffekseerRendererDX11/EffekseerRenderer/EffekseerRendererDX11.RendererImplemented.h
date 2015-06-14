@@ -253,24 +253,24 @@ private:
 	ID3D11DepthStencilState*	m_depthStencilState;
 	UINT						m_depthStencilStateRef;
 
-	ID3D11RasterizerState*		m_pRasterizerState = nullptr;
+	ID3D11RasterizerState*		m_pRasterizerState;
 
 	ID3D11Buffer*				m_vertexConstantBuffer;
 	ID3D11Buffer*				m_pixelConstantBuffer;
 
-	ID3D11VertexShader*			m_pVS = nullptr;
-	ID3D11PixelShader*			m_pPS = nullptr;
+	ID3D11VertexShader*			m_pVS;
+	ID3D11PixelShader*			m_pPS;
 
 	ID3D11InputLayout*			m_layout;
 	D3D11_PRIMITIVE_TOPOLOGY	m_topology;
 
 	ID3D11ShaderResourceView*	m_psSRVs[4];
 
-	ID3D11Buffer*				m_pVB = nullptr;
+	ID3D11Buffer*				m_pVB;
 	UINT						m_vbStrides;
 	UINT						m_vbOffset;
 
-	ID3D11Buffer*				m_pIB = nullptr;
+	ID3D11Buffer*				m_pIB;
 	DXGI_FORMAT					m_ibFormat;
 	UINT						m_ibOffset;
 
@@ -306,13 +306,13 @@ private:
 	IndexBuffer*		m_indexBuffer;
 	int32_t				m_squareMaxCount;
 
-	Shader*							m_shader = nullptr;
-	Shader*							m_shader_no_texture = nullptr;
+	Shader*							m_shader;
+	Shader*							m_shader_no_texture;
 
-	Shader*							m_shader_distortion = nullptr;
-	Shader*							m_shader_no_texture_distortion = nullptr;
+	Shader*							m_shader_distortion;
+	Shader*							m_shader_no_texture_distortion;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex, VertexDistortion>*	m_standardRenderer = nullptr;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex, VertexDistortion>*	m_standardRenderer;
 
 	::Effekseer::Vector3D	m_lightDirection;
 	::Effekseer::Color		m_lightColor;
@@ -327,7 +327,7 @@ private:
 
 	::EffekseerRenderer::RenderStateBase*			m_renderState;
 
-	ID3D11ShaderResourceView*			m_background = nullptr;
+	ID3D11ShaderResourceView*			m_background;
 
 	std::set<DeviceObject*>	m_deviceObjects;
 
@@ -336,7 +336,7 @@ private:
 
 	bool	m_restorationOfStates;
 
-	EffekseerRenderer::DistortingCallback* m_distortingCallback = nullptr;
+	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
 public:
 	/**

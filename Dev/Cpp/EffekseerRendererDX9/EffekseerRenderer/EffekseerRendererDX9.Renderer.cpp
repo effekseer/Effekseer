@@ -113,6 +113,15 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_renderState		( NULL )
 	, m_isChangedDevice	( false )
 	, m_restorationOfStates( true )
+
+	, m_shader(nullptr)
+	, m_shader_no_texture(nullptr)
+	, m_shader_distortion(nullptr)
+	, m_shader_no_texture_distortion(nullptr)
+	, m_standardRenderer(nullptr)
+
+	, m_background(nullptr)
+	, m_distortingCallback(nullptr)
 {
 	SetLightDirection( ::Effekseer::Vector3D( 1.0f, 1.0f, 1.0f ) );
 	SetLightColor( ::Effekseer::Color( 255, 255, 255, 255 ) );

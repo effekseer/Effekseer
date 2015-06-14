@@ -41,13 +41,13 @@ private:
 	EFK_CHAR**		m_ImagePaths;
 	void**			m_pImages;
 
-	int	m_normalImageCount = 0;
-	EFK_CHAR**		m_normalImagePaths = nullptr;
-	void**			m_normalImages = nullptr;
+	int	m_normalImageCount;
+	EFK_CHAR**		m_normalImagePaths;
+	void**			m_normalImages;
 	
-	int	m_distortionImageCount = 0;
-	EFK_CHAR**		m_distortionImagePaths = nullptr;
-	void**			m_distortionImages = nullptr;
+	int	m_distortionImageCount;
+	EFK_CHAR**		m_distortionImagePaths;
+	void**			m_distortionImages;
 
 	int	m_WaveCount;
 	EFK_CHAR**		m_WavePaths;

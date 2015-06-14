@@ -188,6 +188,15 @@ EffectImplemented::EffectImplemented( Manager* pManager, void* pData, int size )
 	, m_maginification	( 1.0f )
 	, m_maginificationExternal	( 1.0f )
 	, m_pRoot			( NULL )
+
+	, m_normalImageCount(0)
+	, m_normalImagePaths(nullptr)
+	, m_normalImages(nullptr)
+
+	, m_distortionImageCount(0)
+	, m_distortionImagePaths(nullptr)
+	, m_distortionImages(nullptr)
+
 {
 	ES_SAFE_ADDREF( m_pManager );
 
@@ -214,6 +223,14 @@ EffectImplemented::EffectImplemented( Setting* setting, void* pData, int size )
 	, m_maginification	( 1.0f )
 	, m_maginificationExternal	( 1.0f )
 	, m_pRoot			( NULL )
+
+	, m_normalImageCount(0)
+	, m_normalImagePaths(nullptr)
+	, m_normalImages(nullptr)
+
+	, m_distortionImageCount(0)
+	, m_distortionImagePaths(nullptr)
+	, m_distortionImages(nullptr)
 {
 	ES_SAFE_ADDREF( m_setting );
 	

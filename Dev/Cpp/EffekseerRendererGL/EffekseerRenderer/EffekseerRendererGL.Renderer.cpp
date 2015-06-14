@@ -507,6 +507,20 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_renderState		( NULL )
 	, m_restorationOfStates(true)
 	, m_currentVertexArray( NULL )
+
+	, m_shader(nullptr)
+	, m_shader_no_texture(nullptr)
+	, m_shader_distortion(nullptr)
+	, m_shader_no_texture_distortion(nullptr)
+	, m_standardRenderer(nullptr)
+
+	, m_vao(nullptr)
+	, m_vao_no_texture(nullptr)
+	, m_vao_distortion(nullptr)
+	, m_vao_no_texture_distortion(nullptr)
+
+	, m_background(0)
+	, m_distortingCallback(nullptr)
 {
 	::Effekseer::Vector3D direction( 1.0f, 1.0f, 1.0f );
 	SetLightDirection( direction );

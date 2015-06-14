@@ -79,12 +79,14 @@ private:
 	StandardRendererState		m_state;
 
 	std::vector<uint8_t>		vertexCaches;
-	int32_t						vertexCacheMaxSize = 0;
+	int32_t						vertexCacheMaxSize;
 
-	bool						m_isDistortionMode = false;
+	bool						m_isDistortionMode;
 public:
 
 	StandardRenderer(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, SHADER* shader_distortion, SHADER* shader_no_texture_distortion)
+		: vertexCacheMaxSize(0)
+		, m_isDistortionMode(false)
 	{
 		m_renderer = renderer;
 		m_shader = shader;

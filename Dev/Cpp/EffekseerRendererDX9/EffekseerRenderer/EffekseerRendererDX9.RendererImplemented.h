@@ -260,13 +260,13 @@ private:
 	IndexBuffer*		m_indexBuffer;
 	int32_t				m_squareMaxCount;
 
-	Shader*							m_shader = nullptr;
-	Shader*							m_shader_no_texture = nullptr;
+	Shader*							m_shader;
+	Shader*							m_shader_no_texture;
 
-	Shader*							m_shader_distortion = nullptr;
-	Shader*							m_shader_no_texture_distortion = nullptr;
+	Shader*							m_shader_distortion;
+	Shader*							m_shader_no_texture_distortion;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex, VertexDistortion>*	m_standardRenderer = nullptr;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex, VertexDistortion>*	m_standardRenderer;
 
 
 	::Effekseer::Vector3D	m_lightDirection;
@@ -282,7 +282,7 @@ private:
 
 	::EffekseerRenderer::RenderStateBase*			m_renderState;
 
-	IDirect3DTexture9*					m_background = nullptr;
+	IDirect3DTexture9*					m_background;
 
 	std::set<DeviceObject*>	m_deviceObjects;
 
@@ -320,7 +320,7 @@ private:
 
 	bool	m_restorationOfStates;
 
-	EffekseerRenderer::DistortingCallback* m_distortingCallback = nullptr;
+	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
 public:
 	/**

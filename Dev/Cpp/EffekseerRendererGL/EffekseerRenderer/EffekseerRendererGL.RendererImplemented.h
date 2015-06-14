@@ -272,19 +272,19 @@ private:
 	IndexBuffer*		m_indexBuffer;
 	int32_t				m_squareMaxCount;
 	
-	Shader*							m_shader = nullptr;
-	Shader*							m_shader_no_texture = nullptr;
+	Shader*							m_shader;
+	Shader*							m_shader_no_texture;
 
-	Shader*							m_shader_distortion = nullptr;
-	Shader*							m_shader_no_texture_distortion = nullptr;
+	Shader*							m_shader_distortion;
+	Shader*							m_shader_no_texture_distortion;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex, VertexDistortion>*	m_standardRenderer = nullptr;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex, VertexDistortion>*	m_standardRenderer;
 
-	VertexArray*			m_vao = nullptr;
-	VertexArray*			m_vao_no_texture = nullptr;
+	VertexArray*			m_vao;
+	VertexArray*			m_vao_no_texture;
 
-	VertexArray*			m_vao_distortion = nullptr;
-	VertexArray*			m_vao_no_texture_distortion = nullptr;
+	VertexArray*			m_vao_distortion;
+	VertexArray*			m_vao_no_texture_distortion;
 
 	::Effekseer::Vector3D	m_lightDirection;
 	::Effekseer::Color		m_lightColor;
@@ -296,7 +296,7 @@ private:
 
 	::EffekseerRenderer::RenderStateBase*		m_renderState;
 
-	GLuint					m_background = 0;
+	GLuint					m_background;
 
 	std::set<DeviceObject*>	m_deviceObjects;
 
@@ -305,7 +305,7 @@ private:
 
 	bool	m_restorationOfStates;
 
-	EffekseerRenderer::DistortingCallback* m_distortingCallback = nullptr;
+	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
 	/* 現在設定されているテクスチャ */
 	std::vector<GLuint>	m_currentTextures;
