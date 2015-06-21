@@ -139,7 +139,19 @@ namespace Effekseer.GUI
 			{
 				var dialog = new SaveFileDialog();
 
-				dialog.Filter = "png(*.png)|*.png";
+				if(cb_type.SelectedIndex == 0)
+				{
+					dialog.Filter = "png(*.png)|*.png";
+				}
+				else if (cb_type.SelectedIndex == 1)
+				{
+					dialog.Filter = "png(*.png)|*.png";
+				}
+				else if (cb_type.SelectedIndex == 2)
+				{
+					dialog.Filter = "gif(*.gif)|*.gif";
+				}
+				
 
 				if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
 				{
@@ -167,9 +179,16 @@ namespace Effekseer.GUI
 						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 					}
 				}
-				else
+				else if (cb_type.SelectedIndex == 1)
 				{
 					if (!viewer.Record(filename, count, startingFrame, freq, cb_isTranslucent.Checked))
+					{
+						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+					}
+				}
+				else if (cb_type.SelectedIndex == 2)
+				{
+					if (!viewer.RecordAsGifAnimation(filename, count, startingFrame, freq, cb_isTranslucent.Checked))
 					{
 						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 					}
@@ -195,6 +214,10 @@ namespace Effekseer.GUI
 				txt_number_v.Enabled = true;
 			}
 			else if (cb_type.SelectedIndex == 1)
+			{
+				txt_number_v.Enabled = false;
+			}
+			else if (cb_type.SelectedIndex == 2)
 			{
 				txt_number_v.Enabled = false;
 			}

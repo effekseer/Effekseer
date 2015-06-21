@@ -94,6 +94,11 @@ namespace Effekseer
 			return native.Record(path, count, xCount, offsetFrame, freq, isTranslucent);
 		}
 
+		public bool RecordAsGifAnimation(string path, int count, int offsetFrame, int freq, bool isTranslucent)
+		{
+			return native.RecordAsGifAnimation(path, count, offsetFrame, freq, isTranslucent);
+		}
+
 		public ViewerParamater GetViewerParamater()
 		{
 			return native.GetViewerParamater();

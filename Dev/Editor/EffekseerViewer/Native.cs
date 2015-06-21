@@ -121,6 +121,11 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
+  public bool RecordAsGifAnimation(string path, int count, int offsetFrame, int freq, bool isTranslucent) {
+    bool ret = EffekseerNativePINVOKE.Native_RecordAsGifAnimation(swigCPtr, path, count, offsetFrame, freq, isTranslucent);
+    return ret;
+  }
+
   public ViewerParamater GetViewerParamater() {
     ViewerParamater ret = new ViewerParamater(EffekseerNativePINVOKE.Native_GetViewerParamater(swigCPtr), true);
     return ret;

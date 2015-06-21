@@ -532,6 +532,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_Record__SWIG_1")]
   public static extern bool Native_Record__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, int jarg3, int jarg4, int jarg5, int jarg6, bool jarg7);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_RecordAsGifAnimation")]
+  public static extern bool Native_RecordAsGifAnimation(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, int jarg3, int jarg4, int jarg5, bool jarg6);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_GetViewerParamater")]
   public static extern global::System.IntPtr Native_GetViewerParamater(global::System.Runtime.InteropServices.HandleRef jarg1);
 

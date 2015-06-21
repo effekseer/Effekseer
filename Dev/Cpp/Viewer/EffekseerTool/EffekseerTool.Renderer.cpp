@@ -569,6 +569,9 @@ bool Renderer::BeginRecord( int32_t width, int32_t height )
 	assert( m_recordingTempTarget == NULL );
 	assert( m_recordingTempDepth == NULL );
 
+	m_recordingWidth = width;
+	m_recordingHeight = height;
+
 	HRESULT hr;
 
 	hr = GetDevice()->CreateTexture( width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_recordingTargetTexture, NULL );
@@ -632,6 +635,63 @@ void Renderer::EndRecord( const wchar_t* outputPath )
 	ES_SAFE_RELEASE( m_recordingTarget );
 	ES_SAFE_RELEASE( m_recordingTargetTexture );
 	ES_SAFE_RELEASE( m_recordingDepth );
+
+	m_recording = false;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels)
+{
+	assert(m_recording);
+
+	pixels.resize(m_recordingWidth * m_recordingHeight);
+
+	GetDevice()->SetRenderTarget(0, m_recordingTempTarget);
+	GetDevice()->SetDepthStencilSurface(m_recordingTempDepth);
+	ES_SAFE_RELEASE(m_recordingTempTarget);
+	ES_SAFE_RELEASE(m_recordingTempDepth);
+
+	IDirect3DSurface9*	temp_sur = nullptr;
+	IDirect3DTexture9*	temp_tex = nullptr;
+
+	GetDevice()->CreateTexture(
+		m_recordingWidth, m_recordingHeight, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &temp_tex, NULL);
+	temp_tex->GetSurfaceLevel(0, &temp_sur);
+
+	GetDevice()->GetRenderTargetData(m_recordingTarget, temp_sur);
+
+	D3DLOCKED_RECT drect;
+	RECT rect;
+	rect.top = 0;
+	rect.left = 0;
+	rect.right = m_recordingWidth;
+	rect.bottom = m_recordingHeight;
+
+	auto hr = temp_sur->LockRect(&drect, &rect, D3DLOCK_DISCARD);
+	if (SUCCEEDED(hr))
+	{
+		for (int32_t y = 0; y < m_recordingHeight; y++)
+		{
+			for (int32_t x = 0; x < m_recordingWidth; x++)
+			{
+				auto src = &(((uint8_t*) drect.pBits)[x * 4 + drect.Pitch * y]);
+				pixels[x + m_recordingWidth * y].R = src[2];
+				pixels[x + m_recordingWidth * y].G = src[1];
+				pixels[x + m_recordingWidth * y].B = src[0];
+			}
+		}
+
+		temp_sur->UnlockRect();
+	}
+
+	ES_SAFE_RELEASE(temp_sur);
+	ES_SAFE_RELEASE(temp_tex);
+
+	ES_SAFE_RELEASE(m_recordingTarget);
+	ES_SAFE_RELEASE(m_recordingTargetTexture);
+	ES_SAFE_RELEASE(m_recordingDepth);
 
 	m_recording = false;
 }

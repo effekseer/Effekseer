@@ -24,3 +24,6 @@
 [Oo]bj/
 
 Release/RuntimeSample/lib/*.lib
+
+Dev/Cpp/include/
+Dev/Cpp/lib/

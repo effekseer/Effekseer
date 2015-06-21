@@ -53,6 +53,8 @@ private:
 	IDirect3DSurface9*	m_recordingTarget;
 	IDirect3DTexture9*	m_recordingTargetTexture;
 	IDirect3DSurface9*	m_recordingDepth;
+	int32_t				m_recordingWidth;
+	int32_t				m_recordingHeight;
 
 	IDirect3DSurface9*	m_recordingTempTarget;
 	IDirect3DSurface9*	m_recordingTempDepth;
@@ -234,6 +236,11 @@ public:
 		@brief	˜^‰æI—¹
 	*/
 	void EndRecord( const wchar_t* outputPath );
+
+	/**
+	@brief	˜^‰æI—¹
+	*/
+	void EndRecord(std::vector<Effekseer::Color>& pixels);
 
 	/**
 		@brief	”wŒi‚Ì“Ç‚İ‚İ

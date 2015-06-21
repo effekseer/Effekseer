@@ -1550,6 +1550,28 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_Record__SWIG_1(void * jarg1, w
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_RecordAsGifAnimation(void * jarg1, wchar_t * jarg2, int jarg3, int jarg4, int jarg5, unsigned int jarg6) {
+  unsigned int jresult ;
+  Native *arg1 = (Native *) 0 ;
+  wchar_t *arg2 = (wchar_t *) 0 ;
+  int32_t arg3 ;
+  int32_t arg4 ;
+  int32_t arg5 ;
+  bool arg6 ;
+  bool result;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = (wchar_t *)jarg2; 
+  arg3 = (int32_t)jarg3; 
+  arg4 = (int32_t)jarg4; 
+  arg5 = (int32_t)jarg5; 
+  arg6 = jarg6 ? true : false; 
+  result = (bool)(arg1)->RecordAsGifAnimation((wchar_t const *)arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Native_GetViewerParamater(void * jarg1) {
   void * jresult ;
   Native *arg1 = (Native *) 0 ;

@@ -189,6 +189,8 @@ public:
 
 	bool Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, bool isTranslucent);
 
+	bool RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, bool isTranslucent);
+
 	ViewerParamater GetViewerParamater();
 
 	void SetViewerParamater( ViewerParamater& paramater );
