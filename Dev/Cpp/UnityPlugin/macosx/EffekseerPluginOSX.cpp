@@ -133,7 +133,7 @@ extern "C"
 		}
 	}
 
-	void EXPORT_API UnityRenderEvent(int eventID)
+	void EXPORT_API UnityRenderEvent(int eventId)
 	{
 		if (g_DeviceType == -1) return;
 		if (!CheckEventId(eventId)) return;
