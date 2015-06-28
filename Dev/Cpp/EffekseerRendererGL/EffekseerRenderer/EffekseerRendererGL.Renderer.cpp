@@ -553,6 +553,8 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_shader_distortion);
 	ES_SAFE_DELETE(m_shader_no_texture_distortion);
 
+	auto isVaoEnabled = m_vao != nullptr;
+
 	ES_SAFE_DELETE(m_vao);
 	ES_SAFE_DELETE(m_vao_no_texture);
 	ES_SAFE_DELETE(m_vao_distortion);
@@ -561,7 +563,15 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
-	assert( m_reference == -10 );
+
+	if (isVaoEnabled)
+	{
+		assert(m_reference == -10);
+	}
+	else
+	{
+		assert(m_reference == -6);
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -732,11 +742,11 @@ bool RendererImplemented::Initialize()
 
 	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer());
 	// 参照カウントの調整
-	Release();
+	if (m_vao != nullptr) Release();
 
 	m_vao_no_texture = VertexArray::Create(this, m_shader_no_texture, GetVertexBuffer(), GetIndexBuffer());
 	// 参照カウントの調整
-	Release();
+	if (m_vao_no_texture != nullptr) Release();
 
 	// Distortion
 	m_shader_distortion->GetAttribIdList(5, sprite_attribs_distortion);
@@ -794,12 +804,12 @@ bool RendererImplemented::Initialize()
 	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer());
 	
 	// 参照カウントの調整
-	Release();
+	if (m_vao_distortion != nullptr) Release();
 
 	m_vao_no_texture_distortion = VertexArray::Create(this, m_shader_no_texture_distortion, GetVertexBuffer(), GetIndexBuffer());
 	
 	// 参照カウントの調整
-	Release();
+	if (m_vao_no_texture_distortion != nullptr) Release();
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex, VertexDistortion>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
