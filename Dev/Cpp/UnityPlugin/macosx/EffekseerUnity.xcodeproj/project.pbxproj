@@ -47,7 +47,18 @@
 		4861A3B5182FB42100A8217D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4861A3B4182FB42100A8217D /* OpenGL.framework */; };
 		48B43FE8182F76F100B849F5 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48B43FE7182F76F100B849F5 /* CoreFoundation.framework */; };
 		48B44005182F781400B849F5 /* EffekseerPluginOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48B44004182F781400B849F5 /* EffekseerPluginOSX.cpp */; };
-		682EBB9819F57670007914D7 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 682EBB9719F57670007914D7 /* libz.1.2.5.dylib */; };
+		48CF46DC1B3EF9B2005AD8C4 /* EffekseerRendererGL.VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48CF46DA1B3EF9B2005AD8C4 /* EffekseerRendererGL.VertexArray.cpp */; };
+		48CF46DF1B3EFA94005AD8C4 /* Effekseer.Setting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48CF46DD1B3EFA94005AD8C4 /* Effekseer.Setting.cpp */; };
+		48CF46EE1B3EFACB005AD8C4 /* Culling3D.Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48CF46E11B3EFACB005AD8C4 /* Culling3D.Grid.cpp */; };
+		48CF46EF1B3EFACB005AD8C4 /* Culling3D.Layer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48CF46E41B3EFACB005AD8C4 /* Culling3D.Layer.cpp */; };
+		48CF46F01B3EFACB005AD8C4 /* Culling3D.Matrix44.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48CF46E61B3EFACB005AD8C4 /* Culling3D.Matrix44.cpp */; };
+		48CF46F11B3EFACB005AD8C4 /* Culling3D.ObjectInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48CF46E71B3EFACB005AD8C4 /* Culling3D.ObjectInternal.cpp */; };
+		48CF46F21B3EFACB005AD8C4 /* Culling3D.ReferenceObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48CF46E91B3EFACB005AD8C4 /* Culling3D.ReferenceObject.cpp */; };
+		48CF46F31B3EFACB005AD8C4 /* Culling3D.Vector3DF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48CF46EB1B3EFACB005AD8C4 /* Culling3D.Vector3DF.cpp */; };
+		48CF46F41B3EFACB005AD8C4 /* Culling3D.WorldInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48CF46EC1B3EFACB005AD8C4 /* Culling3D.WorldInternal.cpp */; };
+		48CF46F71B3EFC28005AD8C4 /* EffekseerRenderer.PngTextureLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48CF46F51B3EFC28005AD8C4 /* EffekseerRenderer.PngTextureLoader.cpp */; };
+		48CF477F1B3FADEA005AD8C4 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 48CF477D1B3FADEA005AD8C4 /* libpng.a */; };
+		48CF47801B3FADEA005AD8C4 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 48CF477E1B3FADEA005AD8C4 /* libz.a */; };
 		684C1F0719F60B2100E32FEC /* EffekseerSoundAL.Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1EFF19F60B2100E32FEC /* EffekseerSoundAL.Sound.cpp */; };
 		684C1F0819F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F0119F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.cpp */; };
 		684C1F0919F60B2100E32FEC /* EffekseerSoundAL.SoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F0319F60B2100E32FEC /* EffekseerSoundAL.SoundPlayer.cpp */; };
@@ -88,9 +99,6 @@
 		684C1F8119F610BE00E32FEC /* EffekseerRendererGL.TextureLoader.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F4819F6106D00E32FEC /* EffekseerRendererGL.TextureLoader.h */; };
 		684C1F8219F610BE00E32FEC /* EffekseerRendererGL.TrackRenderer.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F4A19F6106D00E32FEC /* EffekseerRendererGL.TrackRenderer.h */; };
 		684C1F8319F610BE00E32FEC /* EffekseerRendererGL.VertexBuffer.h in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F4C19F6106D00E32FEC /* EffekseerRendererGL.VertexBuffer.h */; };
-		684C1F8519F61A7E00E32FEC /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F8419F61A7E00E32FEC /* libz.a */; };
-		684C1F8719F620ED00E32FEC /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 684C1F8619F620ED00E32FEC /* libpng.a */; };
-		685EF97F19F6440F005A0256 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 685EF97E19F6440F005A0256 /* libz.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -187,13 +195,32 @@
 		4861A341182F847100A8217D /* EffekseerRenderer.TrackRendererBase.h */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.c.h; path = EffekseerRenderer.TrackRendererBase.h; sourceTree = "<group>"; };
 		4861A342182F847100A8217D /* EffekseerRenderer.VertexBufferBase.cpp */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerRenderer.VertexBufferBase.cpp; sourceTree = "<group>"; };
 		4861A343182F847100A8217D /* EffekseerRenderer.VertexBufferBase.h */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.c.h; path = EffekseerRenderer.VertexBufferBase.h; sourceTree = "<group>"; };
-		4861A3B3182FA2A400A8217D /* EffekseerRendererGL.h */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.c.h; name = EffekseerRendererGL.h; path = ../../EffekseerRendererGL/EffekseerRendererGL.h; sourceTree = "<group>"; };
 		4861A3B4182FB42100A8217D /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		4861A3F8182FDB9300A8217D /* Effekseer.h */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.c.h; name = Effekseer.h; path = ../../Effekseer/Effekseer.h; sourceTree = "<group>"; };
+		4861A3F8182FDB9300A8217D /* Effekseer.h */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.c.h; name = Effekseer.h; path = /Users/nalto/work/Effekseer/Dev/Cpp/Effekseer/Effekseer.h; sourceTree = "<absolute>"; };
 		48B43FE4182F76F100B849F5 /* EffekseerUnity.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EffekseerUnity.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		48B43FE7182F76F100B849F5 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		48B44004182F781400B849F5 /* EffekseerPluginOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerPluginOSX.cpp; sourceTree = SOURCE_ROOT; };
-		682EBB9719F57670007914D7 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
+		48CF46DA1B3EF9B2005AD8C4 /* EffekseerRendererGL.VertexArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerRendererGL.VertexArray.cpp; sourceTree = "<group>"; };
+		48CF46DB1B3EF9B2005AD8C4 /* EffekseerRendererGL.VertexArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRendererGL.VertexArray.h; sourceTree = "<group>"; };
+		48CF46DD1B3EFA94005AD8C4 /* Effekseer.Setting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Effekseer.Setting.cpp; sourceTree = "<group>"; };
+		48CF46DE1B3EFA94005AD8C4 /* Effekseer.Setting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Effekseer.Setting.h; sourceTree = "<group>"; };
+		48CF46E11B3EFACB005AD8C4 /* Culling3D.Grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Culling3D.Grid.cpp; sourceTree = "<group>"; };
+		48CF46E21B3EFACB005AD8C4 /* Culling3D.Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Culling3D.Grid.h; sourceTree = "<group>"; };
+		48CF46E31B3EFACB005AD8C4 /* Culling3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Culling3D.h; sourceTree = "<group>"; };
+		48CF46E41B3EFACB005AD8C4 /* Culling3D.Layer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Culling3D.Layer.cpp; sourceTree = "<group>"; };
+		48CF46E51B3EFACB005AD8C4 /* Culling3D.Layer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Culling3D.Layer.h; sourceTree = "<group>"; };
+		48CF46E61B3EFACB005AD8C4 /* Culling3D.Matrix44.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Culling3D.Matrix44.cpp; sourceTree = "<group>"; };
+		48CF46E71B3EFACB005AD8C4 /* Culling3D.ObjectInternal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Culling3D.ObjectInternal.cpp; sourceTree = "<group>"; };
+		48CF46E81B3EFACB005AD8C4 /* Culling3D.ObjectInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Culling3D.ObjectInternal.h; sourceTree = "<group>"; };
+		48CF46E91B3EFACB005AD8C4 /* Culling3D.ReferenceObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Culling3D.ReferenceObject.cpp; sourceTree = "<group>"; };
+		48CF46EA1B3EFACB005AD8C4 /* Culling3D.ReferenceObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Culling3D.ReferenceObject.h; sourceTree = "<group>"; };
+		48CF46EB1B3EFACB005AD8C4 /* Culling3D.Vector3DF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Culling3D.Vector3DF.cpp; sourceTree = "<group>"; };
+		48CF46EC1B3EFACB005AD8C4 /* Culling3D.WorldInternal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Culling3D.WorldInternal.cpp; sourceTree = "<group>"; };
+		48CF46ED1B3EFACB005AD8C4 /* Culling3D.WorldInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Culling3D.WorldInternal.h; sourceTree = "<group>"; };
+		48CF46F51B3EFC28005AD8C4 /* EffekseerRenderer.PngTextureLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerRenderer.PngTextureLoader.cpp; sourceTree = "<group>"; };
+		48CF46F61B3EFC28005AD8C4 /* EffekseerRenderer.PngTextureLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRenderer.PngTextureLoader.h; sourceTree = "<group>"; };
+		48CF477D1B3FADEA005AD8C4 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../EffekseerRendererGL/libpng/lib/osx/libpng.a; sourceTree = "<group>"; };
+		48CF477E1B3FADEA005AD8C4 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../EffekseerRendererGL/libpng/lib/osx/libz.a; sourceTree = "<group>"; };
 		684C1EFF19F60B2100E32FEC /* EffekseerSoundAL.Sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerSoundAL.Sound.cpp; sourceTree = "<group>"; };
 		684C1F0019F60B2100E32FEC /* EffekseerSoundAL.SoundImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerSoundAL.SoundImplemented.h; sourceTree = "<group>"; };
 		684C1F0119F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerSoundAL.SoundLoader.cpp; sourceTree = "<group>"; };
@@ -202,19 +229,7 @@
 		684C1F0419F60B2100E32FEC /* EffekseerSoundAL.SoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerSoundAL.SoundPlayer.h; sourceTree = "<group>"; };
 		684C1F0519F60B2100E32FEC /* EffekseerSoundAL.SoundVoice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerSoundAL.SoundVoice.cpp; sourceTree = "<group>"; };
 		684C1F0619F60B2100E32FEC /* EffekseerSoundAL.SoundVoice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerSoundAL.SoundVoice.h; sourceTree = "<group>"; };
-		684C1F0B19F60B5200E32FEC /* EffekseerSoundAL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EffekseerSoundAL.h; path = ../../EffekseerSoundAL/EffekseerSoundAL.h; sourceTree = "<group>"; };
-		684C1F1419F60DA300E32FEC /* al.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = al.h; sourceTree = "<group>"; };
-		684C1F1519F60DA300E32FEC /* alc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alc.h; sourceTree = "<group>"; };
-		684C1F1619F60DA300E32FEC /* efx-creative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "efx-creative.h"; sourceTree = "<group>"; };
-		684C1F1719F60DA300E32FEC /* EFX-Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "EFX-Util.h"; sourceTree = "<group>"; };
-		684C1F1819F60DA300E32FEC /* efx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efx.h; sourceTree = "<group>"; };
-		684C1F1919F60DA300E32FEC /* xram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xram.h; sourceTree = "<group>"; };
-		684C1F1D19F60DA300E32FEC /* EFX-Util.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "EFX-Util.lib"; sourceTree = "<group>"; };
-		684C1F1F19F60DA300E32FEC /* EFX-Util.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "EFX-Util.lib"; sourceTree = "<group>"; };
-		684C1F2019F60DA300E32FEC /* OpenAL32.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OpenAL32.lib; sourceTree = "<group>"; };
-		684C1F2319F60DA300E32FEC /* EFX-Util.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "EFX-Util.lib"; sourceTree = "<group>"; };
-		684C1F2519F60DA300E32FEC /* EFX-Util.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "EFX-Util.lib"; sourceTree = "<group>"; };
-		684C1F2619F60DA300E32FEC /* OpenAL32.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = OpenAL32.lib; sourceTree = "<group>"; };
+		684C1F0B19F60B5200E32FEC /* EffekseerSoundAL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EffekseerSoundAL.h; path = /Users/nalto/work/Effekseer/Dev/Cpp/EffekseerSoundAL/EffekseerSoundAL.h; sourceTree = "<absolute>"; };
 		684C1F2E19F6106D00E32FEC /* EffekseerRendererGL.Base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRendererGL.Base.h; sourceTree = "<group>"; };
 		684C1F2F19F6106D00E32FEC /* EffekseerRendererGL.Base.Pre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRendererGL.Base.Pre.h; sourceTree = "<group>"; };
 		684C1F3019F6106D00E32FEC /* EffekseerRendererGL.DeviceObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerRendererGL.DeviceObject.cpp; sourceTree = "<group>"; };
@@ -227,7 +242,7 @@
 		684C1F3719F6106D00E32FEC /* EffekseerRendererGL.ModelLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRendererGL.ModelLoader.h; sourceTree = "<group>"; };
 		684C1F3819F6106D00E32FEC /* EffekseerRendererGL.ModelRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerRendererGL.ModelRenderer.cpp; sourceTree = "<group>"; };
 		684C1F3919F6106D00E32FEC /* EffekseerRendererGL.ModelRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRendererGL.ModelRenderer.h; sourceTree = "<group>"; };
-		684C1F3A19F6106D00E32FEC /* EffekseerRendererGL.Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerRendererGL.Renderer.cpp; sourceTree = "<group>"; };
+		684C1F3A19F6106D00E32FEC /* EffekseerRendererGL.Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerRendererGL.Renderer.cpp; sourceTree = "<group>"; };
 		684C1F3B19F6106D00E32FEC /* EffekseerRendererGL.Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRendererGL.Renderer.h; sourceTree = "<group>"; };
 		684C1F3C19F6106D00E32FEC /* EffekseerRendererGL.RendererImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRendererGL.RendererImplemented.h; sourceTree = "<group>"; };
 		684C1F3D19F6106D00E32FEC /* EffekseerRendererGL.RenderState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerRendererGL.RenderState.cpp; sourceTree = "<group>"; };
@@ -246,20 +261,11 @@
 		684C1F4A19F6106D00E32FEC /* EffekseerRendererGL.TrackRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRendererGL.TrackRenderer.h; sourceTree = "<group>"; };
 		684C1F4B19F6106D00E32FEC /* EffekseerRendererGL.VertexBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerRendererGL.VertexBuffer.cpp; sourceTree = "<group>"; };
 		684C1F4C19F6106D00E32FEC /* EffekseerRendererGL.VertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRendererGL.VertexBuffer.h; sourceTree = "<group>"; };
-		684C1F4D19F6106D00E32FEC /* EffekseerRendererGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffekseerRendererGL.h; path = ../../EffekseerRendererGL/EffekseerRendererGL.h; sourceTree = "<group>"; };
-		684C1F5119F6106D00E32FEC /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glew.h; sourceTree = "<group>"; };
-		684C1F5219F6106D00E32FEC /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glxew.h; sourceTree = "<group>"; };
-		684C1F5319F6106D00E32FEC /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wglew.h; sourceTree = "<group>"; };
-		684C1F5619F6106D00E32FEC /* glew32s.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = glew32s.lib; sourceTree = "<group>"; };
+		684C1F4D19F6106D00E32FEC /* EffekseerRendererGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffekseerRendererGL.h; path = /Users/nalto/work/Effekseer/Dev/Cpp/EffekseerRendererGL/EffekseerRendererGL.h; sourceTree = "<absolute>"; };
 		684C1F5919F6106D00E32FEC /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
 		684C1F5A19F6106D00E32FEC /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
 		684C1F5B19F6106D00E32FEC /* zconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
 		684C1F5C19F6106D00E32FEC /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
-		684C1F6019F6106D00E32FEC /* libpng.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.lib; sourceTree = "<group>"; };
-		684C1F6119F6106D00E32FEC /* zlib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = zlib.lib; sourceTree = "<group>"; };
-		684C1F8419F61A7E00E32FEC /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libz.a; sourceTree = "<group>"; };
-		684C1F8619F620ED00E32FEC /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
-		685EF97E19F6440F005A0256 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -267,13 +273,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				685EF97F19F6440F005A0256 /* libz.dylib in Frameworks */,
+				48CF47801B3FADEA005AD8C4 /* libz.a in Frameworks */,
 				4861A2C9182F841700A8217D /* OpenAL.framework in Frameworks */,
-				682EBB9819F57670007914D7 /* libz.1.2.5.dylib in Frameworks */,
 				4861A3B5182FB42100A8217D /* OpenGL.framework in Frameworks */,
-				684C1F8719F620ED00E32FEC /* libpng.a in Frameworks */,
 				48B43FE8182F76F100B849F5 /* CoreFoundation.framework in Frameworks */,
-				684C1F8519F61A7E00E32FEC /* libz.a in Frameworks */,
+				48CF477F1B3FADEA005AD8C4 /* libpng.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,17 +287,11 @@
 		4861A2CA182F845000A8217D /* Effekseer */ = {
 			isa = PBXGroup;
 			children = (
-				684C1F2D19F6106D00E32FEC /* EffekseerRenderer */,
-				684C1F4D19F6106D00E32FEC /* EffekseerRendererGL.h */,
-				684C1F4E19F6106D00E32FEC /* glew */,
-				684C1F5719F6106D00E32FEC /* libpng */,
-				684C1F1119F60DA300E32FEC /* AL */,
-				684C1F0B19F60B5200E32FEC /* EffekseerSoundAL.h */,
-				684C1EFE19F60B2100E32FEC /* EffekseerSound */,
-				4861A3F8182FDB9300A8217D /* Effekseer.h */,
-				4861A3B3182FA2A400A8217D /* EffekseerRendererGL.h */,
-				4861A333182F847100A8217D /* EffekseerRendererCommon */,
 				4861A2CB182F846200A8217D /* Effekseer */,
+				4861A333182F847100A8217D /* EffekseerRendererCommon */,
+				684C1F2D19F6106D00E32FEC /* EffekseerRenderer */,
+				684C1F5719F6106D00E32FEC /* libpng */,
+				684C1EFE19F60B2100E32FEC /* EffekseerSound */,
 			);
 			name = Effekseer;
 			sourceTree = "<group>";
@@ -301,6 +299,7 @@
 		4861A2CB182F846200A8217D /* Effekseer */ = {
 			isa = PBXGroup;
 			children = (
+				4861A3F8182FDB9300A8217D /* Effekseer.h */,
 				4861A2CC182F846200A8217D /* Effekseer.Base.h */,
 				4861A2CD182F846200A8217D /* Effekseer.Base.Pre.h */,
 				4861A2CE182F846200A8217D /* Effekseer.Client.cpp */,
@@ -358,6 +357,8 @@
 				4861A302182F846200A8217D /* Effekseer.Server.cpp */,
 				4861A303182F846200A8217D /* Effekseer.Server.h */,
 				4861A304182F846200A8217D /* Effekseer.ServerImplemented.h */,
+				48CF46DD1B3EFA94005AD8C4 /* Effekseer.Setting.cpp */,
+				48CF46DE1B3EFA94005AD8C4 /* Effekseer.Setting.h */,
 				4861A305182F846200A8217D /* Effekseer.Socket.cpp */,
 				4861A306182F846200A8217D /* Effekseer.Socket.h */,
 				4861A307182F846200A8217D /* Effekseer.SoundLoader.h */,
@@ -370,6 +371,7 @@
 				4861A30E182F846200A8217D /* Effekseer.Vector3D.h */,
 				4861A30F182F846200A8217D /* Renderer */,
 				4861A316182F846200A8217D /* Sound */,
+				48CF46E01B3EFACB005AD8C4 /* Culling */,
 			);
 			name = Effekseer;
 			path = ../../Effekseer/Effekseer;
@@ -399,6 +401,8 @@
 		4861A333182F847100A8217D /* EffekseerRendererCommon */ = {
 			isa = PBXGroup;
 			children = (
+				48CF46F51B3EFC28005AD8C4 /* EffekseerRenderer.PngTextureLoader.cpp */,
+				48CF46F61B3EFC28005AD8C4 /* EffekseerRenderer.PngTextureLoader.h */,
 				4861A334182F847100A8217D /* EffekseerRenderer.IndexBufferBase.cpp */,
 				4861A335182F847100A8217D /* EffekseerRenderer.IndexBufferBase.h */,
 				4861A336182F847100A8217D /* EffekseerRenderer.ModelRendererBase.cpp */,
@@ -441,10 +445,8 @@
 		48B43FE6182F76F100B849F5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				685EF97E19F6440F005A0256 /* libz.dylib */,
-				684C1F8619F620ED00E32FEC /* libpng.a */,
-				684C1F8419F61A7E00E32FEC /* libz.a */,
-				682EBB9719F57670007914D7 /* libz.1.2.5.dylib */,
+				48CF477D1B3FADEA005AD8C4 /* libpng.a */,
+				48CF477E1B3FADEA005AD8C4 /* libz.a */,
 				4861A3B4182FB42100A8217D /* OpenGL.framework */,
 				4861A2C8182F841700A8217D /* OpenAL.framework */,
 				48B43FE7182F76F100B849F5 /* CoreFoundation.framework */,
@@ -471,9 +473,30 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		48CF46E01B3EFACB005AD8C4 /* Culling */ = {
+			isa = PBXGroup;
+			children = (
+				48CF46E11B3EFACB005AD8C4 /* Culling3D.Grid.cpp */,
+				48CF46E21B3EFACB005AD8C4 /* Culling3D.Grid.h */,
+				48CF46E31B3EFACB005AD8C4 /* Culling3D.h */,
+				48CF46E41B3EFACB005AD8C4 /* Culling3D.Layer.cpp */,
+				48CF46E51B3EFACB005AD8C4 /* Culling3D.Layer.h */,
+				48CF46E61B3EFACB005AD8C4 /* Culling3D.Matrix44.cpp */,
+				48CF46E71B3EFACB005AD8C4 /* Culling3D.ObjectInternal.cpp */,
+				48CF46E81B3EFACB005AD8C4 /* Culling3D.ObjectInternal.h */,
+				48CF46E91B3EFACB005AD8C4 /* Culling3D.ReferenceObject.cpp */,
+				48CF46EA1B3EFACB005AD8C4 /* Culling3D.ReferenceObject.h */,
+				48CF46EB1B3EFACB005AD8C4 /* Culling3D.Vector3DF.cpp */,
+				48CF46EC1B3EFACB005AD8C4 /* Culling3D.WorldInternal.cpp */,
+				48CF46ED1B3EFACB005AD8C4 /* Culling3D.WorldInternal.h */,
+			);
+			path = Culling;
+			sourceTree = "<group>";
+		};
 		684C1EFE19F60B2100E32FEC /* EffekseerSound */ = {
 			isa = PBXGroup;
 			children = (
+				684C1F0B19F60B5200E32FEC /* EffekseerSoundAL.h */,
 				684C1EFF19F60B2100E32FEC /* EffekseerSoundAL.Sound.cpp */,
 				684C1F0019F60B2100E32FEC /* EffekseerSoundAL.SoundImplemented.h */,
 				684C1F0119F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.cpp */,
@@ -487,101 +510,10 @@
 			path = ../../EffekseerSoundAL/EffekseerSound;
 			sourceTree = "<group>";
 		};
-		684C1F1119F60DA300E32FEC /* AL */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F1219F60DA300E32FEC /* include */,
-				684C1F1A19F60DA300E32FEC /* libs */,
-			);
-			name = AL;
-			path = ../../EffekseerSoundAL/AL;
-			sourceTree = "<group>";
-		};
-		684C1F1219F60DA300E32FEC /* include */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F1319F60DA300E32FEC /* AL */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		684C1F1319F60DA300E32FEC /* AL */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F1419F60DA300E32FEC /* al.h */,
-				684C1F1519F60DA300E32FEC /* alc.h */,
-				684C1F1619F60DA300E32FEC /* efx-creative.h */,
-				684C1F1719F60DA300E32FEC /* EFX-Util.h */,
-				684C1F1819F60DA300E32FEC /* efx.h */,
-				684C1F1919F60DA300E32FEC /* xram.h */,
-			);
-			path = AL;
-			sourceTree = "<group>";
-		};
-		684C1F1A19F60DA300E32FEC /* libs */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F1B19F60DA300E32FEC /* Win32 */,
-				684C1F2119F60DA300E32FEC /* Win64 */,
-			);
-			path = libs;
-			sourceTree = "<group>";
-		};
-		684C1F1B19F60DA300E32FEC /* Win32 */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F1C19F60DA300E32FEC /* EFX-Util_MT */,
-				684C1F1E19F60DA300E32FEC /* EFX-Util_MTDLL */,
-				684C1F2019F60DA300E32FEC /* OpenAL32.lib */,
-			);
-			path = Win32;
-			sourceTree = "<group>";
-		};
-		684C1F1C19F60DA300E32FEC /* EFX-Util_MT */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F1D19F60DA300E32FEC /* EFX-Util.lib */,
-			);
-			path = "EFX-Util_MT";
-			sourceTree = "<group>";
-		};
-		684C1F1E19F60DA300E32FEC /* EFX-Util_MTDLL */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F1F19F60DA300E32FEC /* EFX-Util.lib */,
-			);
-			path = "EFX-Util_MTDLL";
-			sourceTree = "<group>";
-		};
-		684C1F2119F60DA300E32FEC /* Win64 */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F2219F60DA300E32FEC /* EFX-Util_MT */,
-				684C1F2419F60DA300E32FEC /* EFX-Util_MTDLL */,
-				684C1F2619F60DA300E32FEC /* OpenAL32.lib */,
-			);
-			path = Win64;
-			sourceTree = "<group>";
-		};
-		684C1F2219F60DA300E32FEC /* EFX-Util_MT */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F2319F60DA300E32FEC /* EFX-Util.lib */,
-			);
-			path = "EFX-Util_MT";
-			sourceTree = "<group>";
-		};
-		684C1F2419F60DA300E32FEC /* EFX-Util_MTDLL */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F2519F60DA300E32FEC /* EFX-Util.lib */,
-			);
-			path = "EFX-Util_MTDLL";
-			sourceTree = "<group>";
-		};
 		684C1F2D19F6106D00E32FEC /* EffekseerRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				684C1F4D19F6106D00E32FEC /* EffekseerRendererGL.h */,
 				684C1F2E19F6106D00E32FEC /* EffekseerRendererGL.Base.h */,
 				684C1F2F19F6106D00E32FEC /* EffekseerRendererGL.Base.Pre.h */,
 				684C1F3019F6106D00E32FEC /* EffekseerRendererGL.DeviceObject.cpp */,
@@ -611,6 +543,8 @@
 				684C1F4819F6106D00E32FEC /* EffekseerRendererGL.TextureLoader.h */,
 				684C1F4919F6106D00E32FEC /* EffekseerRendererGL.TrackRenderer.cpp */,
 				684C1F4A19F6106D00E32FEC /* EffekseerRendererGL.TrackRenderer.h */,
+				48CF46DA1B3EF9B2005AD8C4 /* EffekseerRendererGL.VertexArray.cpp */,
+				48CF46DB1B3EF9B2005AD8C4 /* EffekseerRendererGL.VertexArray.h */,
 				684C1F4B19F6106D00E32FEC /* EffekseerRendererGL.VertexBuffer.cpp */,
 				684C1F4C19F6106D00E32FEC /* EffekseerRendererGL.VertexBuffer.h */,
 			);
@@ -618,55 +552,10 @@
 			path = ../../EffekseerRendererGL/EffekseerRenderer;
 			sourceTree = "<group>";
 		};
-		684C1F4E19F6106D00E32FEC /* glew */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F4F19F6106D00E32FEC /* include */,
-				684C1F5419F6106D00E32FEC /* lib */,
-			);
-			name = glew;
-			path = ../../EffekseerRendererGL/glew;
-			sourceTree = "<group>";
-		};
-		684C1F4F19F6106D00E32FEC /* include */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F5019F6106D00E32FEC /* GL */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		684C1F5019F6106D00E32FEC /* GL */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F5119F6106D00E32FEC /* glew.h */,
-				684C1F5219F6106D00E32FEC /* glxew.h */,
-				684C1F5319F6106D00E32FEC /* wglew.h */,
-			);
-			path = GL;
-			sourceTree = "<group>";
-		};
-		684C1F5419F6106D00E32FEC /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F5519F6106D00E32FEC /* win_x86 */,
-			);
-			path = lib;
-			sourceTree = "<group>";
-		};
-		684C1F5519F6106D00E32FEC /* win_x86 */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F5619F6106D00E32FEC /* glew32s.lib */,
-			);
-			path = win_x86;
-			sourceTree = "<group>";
-		};
 		684C1F5719F6106D00E32FEC /* libpng */ = {
 			isa = PBXGroup;
 			children = (
 				684C1F5819F6106D00E32FEC /* include */,
-				684C1F5D19F6106D00E32FEC /* lib */,
 			);
 			name = libpng;
 			path = ../../EffekseerRendererGL/libpng;
@@ -681,31 +570,6 @@
 				684C1F5C19F6106D00E32FEC /* zlib.h */,
 			);
 			path = include;
-			sourceTree = "<group>";
-		};
-		684C1F5D19F6106D00E32FEC /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F5E19F6106D00E32FEC /* osx_32bit */,
-				684C1F5F19F6106D00E32FEC /* win_x86 */,
-			);
-			path = lib;
-			sourceTree = "<group>";
-		};
-		684C1F5E19F6106D00E32FEC /* osx_32bit */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = osx_32bit;
-			sourceTree = "<group>";
-		};
-		684C1F5F19F6106D00E32FEC /* win_x86 */ = {
-			isa = PBXGroup;
-			children = (
-				684C1F6019F6106D00E32FEC /* libpng.lib */,
-				684C1F6119F6106D00E32FEC /* zlib.lib */,
-			);
-			path = win_x86;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -782,13 +646,17 @@
 				684C1F6619F6106D00E32FEC /* EffekseerRendererGL.ModelRenderer.cpp in Sources */,
 				684C1F7919F610BE00E32FEC /* EffekseerRendererGL.ModelRenderer.h in Sources */,
 				684C1F6719F6106D00E32FEC /* EffekseerRendererGL.Renderer.cpp in Sources */,
+				48CF46F31B3EFACB005AD8C4 /* Culling3D.Vector3DF.cpp in Sources */,
 				684C1F7A19F610BE00E32FEC /* EffekseerRendererGL.Renderer.h in Sources */,
+				48CF46DF1B3EFA94005AD8C4 /* Effekseer.Setting.cpp in Sources */,
 				684C1F7B19F610BE00E32FEC /* EffekseerRendererGL.RendererImplemented.h in Sources */,
+				48CF46F71B3EFC28005AD8C4 /* EffekseerRenderer.PngTextureLoader.cpp in Sources */,
 				684C1F6819F6106D00E32FEC /* EffekseerRendererGL.RenderState.cpp in Sources */,
 				684C1F7C19F610BE00E32FEC /* EffekseerRendererGL.RenderState.h in Sources */,
 				684C1F6919F6106D00E32FEC /* EffekseerRendererGL.RibbonRenderer.cpp in Sources */,
 				684C1F7D19F610BE00E32FEC /* EffekseerRendererGL.RibbonRenderer.h in Sources */,
 				684C1F6A19F6106D00E32FEC /* EffekseerRendererGL.RingRenderer.cpp in Sources */,
+				48CF46F41B3EFACB005AD8C4 /* Culling3D.WorldInternal.cpp in Sources */,
 				684C1F7E19F610BE00E32FEC /* EffekseerRendererGL.RingRenderer.h in Sources */,
 				684C1F6B19F6106D00E32FEC /* EffekseerRendererGL.Shader.cpp in Sources */,
 				684C1F7F19F610BE00E32FEC /* EffekseerRendererGL.Shader.h in Sources */,
@@ -803,6 +671,8 @@
 				684C1F0C19F60B9800E32FEC /* EffekseerSoundAL.h in Sources */,
 				684C1F0719F60B2100E32FEC /* EffekseerSoundAL.Sound.cpp in Sources */,
 				684C1F0D19F60B9800E32FEC /* EffekseerSoundAL.SoundImplemented.h in Sources */,
+				48CF46F01B3EFACB005AD8C4 /* Culling3D.Matrix44.cpp in Sources */,
+				48CF46F11B3EFACB005AD8C4 /* Culling3D.ObjectInternal.cpp in Sources */,
 				684C1F0819F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.cpp in Sources */,
 				684C1F0E19F60B9800E32FEC /* EffekseerSoundAL.SoundLoader.h in Sources */,
 				684C1F0919F60B2100E32FEC /* EffekseerSoundAL.SoundPlayer.cpp in Sources */,
@@ -812,6 +682,9 @@
 				48B44005182F781400B849F5 /* EffekseerPluginOSX.cpp in Sources */,
 				4861A2C7182F822500A8217D /* EffekseerPluginCommon.cpp in Sources */,
 				4861A318182F846200A8217D /* Effekseer.Client.cpp in Sources */,
+				48CF46EE1B3EFACB005AD8C4 /* Culling3D.Grid.cpp in Sources */,
+				48CF46F21B3EFACB005AD8C4 /* Culling3D.ReferenceObject.cpp in Sources */,
+				48CF46DC1B3EF9B2005AD8C4 /* EffekseerRendererGL.VertexArray.cpp in Sources */,
 				4861A319182F846200A8217D /* Effekseer.Color.cpp in Sources */,
 				4861A31A182F846200A8217D /* Effekseer.CriticalSection.cpp in Sources */,
 				4861A31B182F846200A8217D /* Effekseer.DefaultEffectLoader.cpp in Sources */,
@@ -834,6 +707,7 @@
 				4861A32C182F846200A8217D /* Effekseer.Matrix44.cpp in Sources */,
 				4861A32D182F846200A8217D /* Effekseer.RectF.cpp in Sources */,
 				4861A32E182F846200A8217D /* Effekseer.Server.cpp in Sources */,
+				48CF46EF1B3EFACB005AD8C4 /* Culling3D.Layer.cpp in Sources */,
 				4861A32F182F846200A8217D /* Effekseer.Socket.cpp in Sources */,
 				4861A330182F846200A8217D /* Effekseer.Thread.cpp in Sources */,
 				4861A331182F846200A8217D /* Effekseer.Vector2D.cpp in Sources */,
@@ -868,10 +742,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = __EFFEKSEER_RENDERER_INTERNAL_LOADER__;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -900,6 +771,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = __EFFEKSEER_RENDERER_INTERNAL_LOADER__;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -927,6 +799,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../EffekseerRendererGL/libpng/lib/osx_32bit/\"",
 					"$(PROJECT_DIR)",
+					/Users/nalto/work/Effekseer/Dev/Cpp/EffekseerRendererGL/libpng/lib/osx,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -951,6 +824,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../EffekseerRendererGL/libpng/lib/osx_32bit/\"",
 					"$(PROJECT_DIR)",
+					/Users/nalto/work/Effekseer/Dev/Cpp/EffekseerRendererGL/libpng/lib/osx,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
