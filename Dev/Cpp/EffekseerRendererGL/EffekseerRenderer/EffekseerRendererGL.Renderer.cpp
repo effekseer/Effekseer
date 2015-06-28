@@ -731,7 +731,12 @@ bool RendererImplemented::Initialize()
 		);
 
 	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer());
+	// 参照カウントの調整
+	Release();
+
 	m_vao_no_texture = VertexArray::Create(this, m_shader_no_texture, GetVertexBuffer(), GetIndexBuffer());
+	// 参照カウントの調整
+	Release();
 
 	// Distortion
 	m_shader_distortion->GetAttribIdList(5, sprite_attribs_distortion);
@@ -787,7 +792,14 @@ bool RendererImplemented::Initialize()
 
 
 	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer());
+	
+	// 参照カウントの調整
+	Release();
+
 	m_vao_no_texture_distortion = VertexArray::Create(this, m_shader_no_texture_distortion, GetVertexBuffer(), GetIndexBuffer());
+	
+	// 参照カウントの調整
+	Release();
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex, VertexDistortion>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
