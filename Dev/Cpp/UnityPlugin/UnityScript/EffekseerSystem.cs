@@ -163,7 +163,10 @@ public class EffekseerSystem : MonoBehaviour
 		
 		{
 			float[] projectionMatrixArray = Matrix2Array(Camera.current.projectionMatrix);
-			if (RenderTexture.active) {
+			if ((Application.platform == RuntimePlatform.WindowsPlayer ||
+				 Application.platform == RuntimePlatform.WindowsEditor) &&
+				RenderTexture.active
+			) {
 				projectionMatrixArray[5] = -projectionMatrixArray[5];
 			}
 			GCHandle ghc = GCHandle.Alloc(projectionMatrixArray, GCHandleType.Pinned);
