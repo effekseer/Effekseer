@@ -115,6 +115,11 @@ echo ライセンス
 cp Release/MIT-LICENSE.txt %RDIR_R%/MIT-LICENSE.txt
 cp Release/MIT-LICENSE.txt %RDIR_U%/MIT-LICENSE.txt
 
+echo Readme
+copy readme_tool.txt %RDIR%\readme.txt
+copy readme_runtime.txt %RDIR_R%\readme.txt
+copy readme_unity.txt %RDIR_U%\readme.txt
+
 echo ヘルプ
 mkdir %RDIR%\Help
 robocopy Release\Help_Tool %RDIR%\Help *.html *.css *.efkproj *.png /mir /S
