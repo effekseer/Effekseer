@@ -64,6 +64,10 @@ div.main {
 	line-height: 140%;
 }
 
+div.main p {
+	padding: 4px;
+}
+
 div.menu {
 	background-color: #FFFFFF;
 	border-style: solid;
