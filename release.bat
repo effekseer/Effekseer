@@ -1,6 +1,6 @@
-SET RDIR=Effekseer0620
-SET RDIR_R=EffekseerRuntime0620
-SET RDIR_U=EffekseerForUnity0620
+SET RDIR=Effekseer100beta1
+SET RDIR_R=EffekseerRuntime100beta1
+SET RDIR_U=EffekseerForUnity100beta1
 
 rmdir %RDIR%
 mkdir %RDIR%
@@ -112,8 +112,8 @@ mkdir %RDIR%\Sample
 robocopy Release\Sample %RDIR%\Sample *.efkproj *.efkmodel *.txt *.png /mir /S
 
 echo ƒ‰ƒCƒZƒ“ƒX
-cp Release/MIT-LICENSE.txt %RDIR_R%/MIT-LICENSE.txt
-cp Release/MIT-LICENSE.txt %RDIR_U%/MIT-LICENSE.txt
+cp Release/LICENSE.txt %RDIR_R%/LICENSE.txt
+cp Release/LICENSE.txt %RDIR_U%/LICENSE.txt
 
 echo Readme
 copy readme_tool.txt %RDIR%\readme.txt

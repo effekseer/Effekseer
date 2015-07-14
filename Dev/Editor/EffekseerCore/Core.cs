@@ -11,7 +11,7 @@ namespace Effekseer
 		/// <summary>
 		/// x.xxxであることが必須
 		/// </summary>
-        public const string Version = "0.7CTP1";
+		public const string Version = "1.0β1";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -743,6 +743,7 @@ namespace Effekseer
 			versionText = versionText.Replace("RC4", "");
 			versionText = versionText.Replace("RC5", "");
 
+			if (versionText.Length == 2) versionText += "000";
 			if (versionText.Length == 3) versionText += "00";
 			if (versionText.Length == 4) versionText += "0";
 

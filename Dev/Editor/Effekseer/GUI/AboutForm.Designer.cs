@@ -88,9 +88,9 @@
 			this.link1.ForeColor = System.Drawing.Color.Blue;
 			this.link1.Location = new System.Drawing.Point(12, 263);
 			this.link1.Name = "link1";
-			this.link1.Size = new System.Drawing.Size(152, 14);
+			this.link1.Size = new System.Drawing.Size(176, 14);
 			this.link1.TabIndex = 5;
-			this.link1.Text = "http://effekseer.github.io";
+			this.link1.Text = "http://effekseer.github.io/jp/";
 			this.link1.Click += new System.EventHandler(this.link1_Click);
 			// 
 			// link2
