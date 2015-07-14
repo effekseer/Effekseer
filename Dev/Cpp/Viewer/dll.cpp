@@ -992,6 +992,11 @@ bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t c
 
 	::Effekseer::Handle handle = g_manager->Play(g_effect, 0, 0, 0);
 
+	g_manager->SetTargetLocation(handle,
+		m_effectBehavior.TargetPositionX,
+		m_effectBehavior.TargetPositionY,
+		m_effectBehavior.TargetPositionZ);
+
 	for (int i = 0; i < offsetFrame; i++)
 	{
 		g_manager->Update();
@@ -1052,6 +1057,11 @@ bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t 
 	
 	::Effekseer::Handle handle = g_manager->Play( g_effect, 0, 0, 0 );
 	
+	g_manager->SetTargetLocation(handle,
+		m_effectBehavior.TargetPositionX,
+		m_effectBehavior.TargetPositionY,
+		m_effectBehavior.TargetPositionZ);
+
 	for( int i = 0; i < offsetFrame; i++ )
 	{
 		g_manager->Update();
@@ -1111,6 +1121,11 @@ bool Native::RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t of
 	StopEffect();
 
 	::Effekseer::Handle handle = g_manager->Play(g_effect, 0, 0, 0);
+
+	g_manager->SetTargetLocation(handle,
+		m_effectBehavior.TargetPositionX,
+		m_effectBehavior.TargetPositionY,
+		m_effectBehavior.TargetPositionZ);
 
 	for (int i = 0; i < offsetFrame; i++)
 	{
