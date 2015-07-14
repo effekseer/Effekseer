@@ -545,17 +545,31 @@ bool Renderer::EndRendering()
 //----------------------------------------------------------------------------------
 IDirect3DTexture9* Renderer::ExportBackground()
 {
-	if (m_recording) return nullptr;
-	if (m_renderDefaultTarget == nullptr) return nullptr;
+	IDirect3DSurface9* tempRender = nullptr;
+	IDirect3DSurface9* tempDepth = nullptr;
+
+	GetDevice()->GetRenderTarget(0, &tempRender);
+	GetDevice()->GetDepthStencilSurface(&tempDepth);
 
 	GetDevice()->SetRenderTarget(0, m_renderEffectBackTarget);
 	GetDevice()->SetDepthStencilSurface(nullptr);
 	
 	m_d3d_device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
-	m_background->Rendering(m_renderTargetTexture, m_width, m_height);
 
-	GetDevice()->SetRenderTarget(0, m_renderTarget);
-	GetDevice()->SetDepthStencilSurface(m_renderTargetDepth);
+	if (m_recording)
+	{
+		m_background->Rendering(m_recordingTargetTexture, m_width, m_height);
+	}
+	else
+	{
+		m_background->Rendering(m_renderTargetTexture, m_width, m_height);
+	}
+
+	GetDevice()->SetRenderTarget(0, tempRender);
+	GetDevice()->SetDepthStencilSurface(tempDepth);
+
+	ES_SAFE_RELEASE(tempRender);
+	ES_SAFE_RELEASE(tempDepth);
 
 	return m_renderEffectBackTargetTexture;
 }
