@@ -206,151 +206,185 @@ namespace Culling3D
 	void WorldInternal::Culling(const Matrix44& cameraProjMat, bool isOpenGL)
 	{
 		objs.clear();
+	
 		
-		Matrix44 cameraProjMatInv = cameraProjMat;
-		cameraProjMatInv.SetInverted();
-
-		float maxx = 1.0f;
-		float minx = -1.0f;
-
-		float maxy = 1.0f;
-		float miny = -1.0f;
-
-		float maxz = 1.0f;
-		float minz = 0.0f;
-		if (isOpenGL) minz = -1.0f;
-
-		Vector3DF eyebox[8];
-
-		eyebox[0 + 0] = Vector3DF(minx, miny, maxz);
-		eyebox[1 + 0] = Vector3DF(maxx, miny, maxz);
-		eyebox[2 + 0] = Vector3DF(minx, maxy, maxz);
-		eyebox[3 + 0] = Vector3DF(maxx, maxy, maxz);
-
-		eyebox[0 + 4] = Vector3DF(minx, miny, minz);
-		eyebox[1 + 4] = Vector3DF(maxx, miny, minz);
-		eyebox[2 + 4] = Vector3DF(minx, maxy, minz);
-		eyebox[3 + 4] = Vector3DF(maxx, maxy, minz);
-
-		for (int32_t i = 0; i < 8; i++)
+		if (isfinite(cameraProjMat.Values[2][2]) != 0 &&
+			cameraProjMat.Values[0][0] != 0.0f &&
+			cameraProjMat.Values[1][1] != 0.0f)
 		{
-			eyebox[i] = cameraProjMatInv.Transform3D(eyebox[i]);
-		}
+			Matrix44 cameraProjMatInv = cameraProjMat;
+			cameraProjMatInv.SetInverted();
 
-		// 0-right 1-left 2-top 3-bottom 4-front 5-back
-		Vector3DF facePositions[6];
-		facePositions[0] = eyebox[5];
-		facePositions[1] = eyebox[4];
-		facePositions[2] = eyebox[6];
-		facePositions[3] = eyebox[4];
-		facePositions[4] = eyebox[4];
-		facePositions[5] = eyebox[0];
+			float maxx = 1.0f;
+			float minx = -1.0f;
 
-		Vector3DF faceDir[6];
-		faceDir[0] = Vector3DF::Cross(eyebox[1] - eyebox[5], eyebox[7] - eyebox[5]);
-		faceDir[1] = Vector3DF::Cross(eyebox[6] - eyebox[4], eyebox[0] - eyebox[4]);
+			float maxy = 1.0f;
+			float miny = -1.0f;
 
-		faceDir[2] = Vector3DF::Cross(eyebox[7] - eyebox[6], eyebox[2] - eyebox[6]);
-		faceDir[3] = Vector3DF::Cross(eyebox[0] - eyebox[4], eyebox[5] - eyebox[4]);
+			float maxz = 1.0f;
+			float minz = 0.0f;
+			if (isOpenGL) minz = -1.0f;
 
-		faceDir[4] = Vector3DF::Cross(eyebox[5] - eyebox[4], eyebox[6] - eyebox[4]);
-		faceDir[5] = Vector3DF::Cross(eyebox[2] - eyebox[0], eyebox[1] - eyebox[5]);
+			Vector3DF eyebox[8];
 
-		for (int32_t i = 0; i < 6; i++)
-		{
-			faceDir[i].Normalize();
-		}
+			eyebox[0 + 0] = Vector3DF(minx, miny, maxz);
+			eyebox[1 + 0] = Vector3DF(maxx, miny, maxz);
+			eyebox[2 + 0] = Vector3DF(minx, maxy, maxz);
+			eyebox[3 + 0] = Vector3DF(maxx, maxy, maxz);
 
-		for (int32_t z = 0; z < viewCullingZDiv; z++)
-		{
-			for (int32_t y = 0; y < viewCullingYDiv; y++)
+			eyebox[0 + 4] = Vector3DF(minx, miny, minz);
+			eyebox[1 + 4] = Vector3DF(maxx, miny, minz);
+			eyebox[2 + 4] = Vector3DF(minx, maxy, minz);
+			eyebox[3 + 4] = Vector3DF(maxx, maxy, minz);
+
+			for (int32_t i = 0; i < 8; i++)
 			{
-				for (int32_t x = 0; x < viewCullingXDiv; x++)
+				eyebox[i] = cameraProjMatInv.Transform3D(eyebox[i]);
+			}
+
+			// 0-right 1-left 2-top 3-bottom 4-front 5-back
+			Vector3DF facePositions[6];
+			facePositions[0] = eyebox[5];
+			facePositions[1] = eyebox[4];
+			facePositions[2] = eyebox[6];
+			facePositions[3] = eyebox[4];
+			facePositions[4] = eyebox[4];
+			facePositions[5] = eyebox[0];
+
+			Vector3DF faceDir[6];
+			faceDir[0] = Vector3DF::Cross(eyebox[1] - eyebox[5], eyebox[7] - eyebox[5]);
+			faceDir[1] = Vector3DF::Cross(eyebox[6] - eyebox[4], eyebox[0] - eyebox[4]);
+
+			faceDir[2] = Vector3DF::Cross(eyebox[7] - eyebox[6], eyebox[2] - eyebox[6]);
+			faceDir[3] = Vector3DF::Cross(eyebox[0] - eyebox[4], eyebox[5] - eyebox[4]);
+
+			faceDir[4] = Vector3DF::Cross(eyebox[5] - eyebox[4], eyebox[6] - eyebox[4]);
+			faceDir[5] = Vector3DF::Cross(eyebox[2] - eyebox[0], eyebox[1] - eyebox[5]);
+
+			for (int32_t i = 0; i < 6; i++)
+			{
+				faceDir[i].Normalize();
+			}
+
+			for (int32_t z = 0; z < viewCullingZDiv; z++)
+			{
+				for (int32_t y = 0; y < viewCullingYDiv; y++)
 				{
-					Vector3DF eyebox_[8];
-
-					float xsize = 1.0f / (float) viewCullingXDiv;
-					float ysize = 1.0f / (float) viewCullingYDiv;
-					float zsize = 1.0f / (float) viewCullingZDiv;
-
-					for (int32_t e = 0; e < 8; e++)
+					for (int32_t x = 0; x < viewCullingXDiv; x++)
 					{
-						float x_, y_, z_;
-						if (e == 0){ x_ = xsize * x; y_ = ysize * y; z_ = zsize * z; }
-						if (e == 1){ x_ = xsize * (x + 1); y_ = ysize * y; z_ = zsize * z; }
-						if (e == 2){ x_ = xsize * x; y_ = ysize * (y + 1); z_ = zsize * z; }
-						if (e == 3){ x_ = xsize * (x + 1); y_ = ysize * (y + 1); z_ = zsize * z; }
-						if (e == 4){ x_ = xsize * x; y_ = ysize * y; z_ = zsize * (z + 1); }
-						if (e == 5){ x_ = xsize * (x + 1); y_ = ysize * y; z_ = zsize * (z + 1); }
-						if (e == 6){ x_ = xsize * x; y_ = ysize * (y + 1); z_ = zsize * (z + 1); }
-						if (e == 7){ x_ = xsize * (x + 1); y_ = ysize * (y + 1); z_ = zsize * (z + 1); }
+						Vector3DF eyebox_[8];
 
-						Vector3DF yzMid[4];
-						yzMid[0] = eyebox[0] * x_ + eyebox[1] * (1.0f - x_);
-						yzMid[1] = eyebox[2] * x_ + eyebox[3] * (1.0f - x_);
-						yzMid[2] = eyebox[4] * x_ + eyebox[5] * (1.0f - x_);
-						yzMid[3] = eyebox[6] * x_ + eyebox[7] * (1.0f - x_);
+						float xsize = 1.0f / (float) viewCullingXDiv;
+						float ysize = 1.0f / (float) viewCullingYDiv;
+						float zsize = 1.0f / (float) viewCullingZDiv;
 
-						Vector3DF zMid[2];
-						zMid[0] = yzMid[0] * y_ + yzMid[1] * (1.0f - y_);
-						zMid[1] = yzMid[2] * y_ + yzMid[3] * (1.0f - y_);
-				
-						eyebox_[e] = zMid[0] * z_ + zMid[1] * (1.0f - z_);
-					}
-					
+						for (int32_t e = 0; e < 8; e++)
+						{
+							float x_, y_, z_;
+							if (e == 0){ x_ = xsize * x; y_ = ysize * y; z_ = zsize * z; }
+							if (e == 1){ x_ = xsize * (x + 1); y_ = ysize * y; z_ = zsize * z; }
+							if (e == 2){ x_ = xsize * x; y_ = ysize * (y + 1); z_ = zsize * z; }
+							if (e == 3){ x_ = xsize * (x + 1); y_ = ysize * (y + 1); z_ = zsize * z; }
+							if (e == 4){ x_ = xsize * x; y_ = ysize * y; z_ = zsize * (z + 1); }
+							if (e == 5){ x_ = xsize * (x + 1); y_ = ysize * y; z_ = zsize * (z + 1); }
+							if (e == 6){ x_ = xsize * x; y_ = ysize * (y + 1); z_ = zsize * (z + 1); }
+							if (e == 7){ x_ = xsize * (x + 1); y_ = ysize * (y + 1); z_ = zsize * (z + 1); }
+
+							Vector3DF yzMid[4];
+							yzMid[0] = eyebox[0] * x_ + eyebox[1] * (1.0f - x_);
+							yzMid[1] = eyebox[2] * x_ + eyebox[3] * (1.0f - x_);
+							yzMid[2] = eyebox[4] * x_ + eyebox[5] * (1.0f - x_);
+							yzMid[3] = eyebox[6] * x_ + eyebox[7] * (1.0f - x_);
+
+							Vector3DF zMid[2];
+							zMid[0] = yzMid[0] * y_ + yzMid[1] * (1.0f - y_);
+							zMid[1] = yzMid[2] * y_ + yzMid[3] * (1.0f - y_);
+
+							eyebox_[e] = zMid[0] * z_ + zMid[1] * (1.0f - z_);
+						}
 
 
-					Vector3DF max_(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-					Vector3DF min_(FLT_MAX, FLT_MAX, FLT_MAX);
 
-					for (int32_t i = 0; i < 8; i++)
-					{
-						if (eyebox_[i].X > max_.X) max_.X = eyebox_[i].X;
-						if (eyebox_[i].Y > max_.Y) max_.Y = eyebox_[i].Y;
-						if (eyebox_[i].Z > max_.Z) max_.Z = eyebox_[i].Z;
+						Vector3DF max_(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+						Vector3DF min_(FLT_MAX, FLT_MAX, FLT_MAX);
 
-						if (eyebox_[i].X < min_.X) min_.X = eyebox_[i].X;
-						if (eyebox_[i].Y < min_.Y) min_.Y = eyebox_[i].Y;
-						if (eyebox_[i].Z < min_.Z) min_.Z = eyebox_[i].Z;
-					}
+						for (int32_t i = 0; i < 8; i++)
+						{
+							if (eyebox_[i].X > max_.X) max_.X = eyebox_[i].X;
+							if (eyebox_[i].Y > max_.Y) max_.Y = eyebox_[i].Y;
+							if (eyebox_[i].Z > max_.Z) max_.Z = eyebox_[i].Z;
 
-					/* 範囲内に含まれるグリッドを取得 */
-					for (size_t i = 0; i < layers.size(); i++)
-					{
-						layers[i]->AddGrids(max_, min_, grids);
+							if (eyebox_[i].X < min_.X) min_.X = eyebox_[i].X;
+							if (eyebox_[i].Y < min_.Y) min_.Y = eyebox_[i].Y;
+							if (eyebox_[i].Z < min_.Z) min_.Z = eyebox_[i].Z;
+						}
+
+						/* 範囲内に含まれるグリッドを取得 */
+						for (size_t i = 0; i < layers.size(); i++)
+						{
+							layers[i]->AddGrids(max_, min_, grids);
+						}
 					}
 				}
 			}
-		}
 
-		/* 外領域追加 */
-		grids.push_back(&outofLayers);
-		grids.push_back(&allLayers);
+			/* 外領域追加 */
+			grids.push_back(&outofLayers);
+			grids.push_back(&allLayers);
 
-		/* グリッドからオブジェクト取得 */
-		for (size_t i = 0; i < grids.size(); i++)
-		{
-			for (size_t j = 0; j < grids[i]->GetObjects().size(); j++)
+			/* グリッドからオブジェクト取得 */
+			for (size_t i = 0; i < grids.size(); i++)
 			{
-				Object* o = grids[i]->GetObjects()[j];
-				ObjectInternal* o_ = (ObjectInternal*) o;
-
-				if (
-					o_->GetNextStatus().Type == OBJECT_SHAPE_TYPE_ALL ||
-					IsInView(o_->GetPosition(), o_->GetNextStatus().CalcRadius(), facePositions, faceDir))
+				for (size_t j = 0; j < grids[i]->GetObjects().size(); j++)
 				{
-					objs.push_back(o);
+					Object* o = grids[i]->GetObjects()[j];
+					ObjectInternal* o_ = (ObjectInternal*) o;
+
+					if (
+						o_->GetNextStatus().Type == OBJECT_SHAPE_TYPE_ALL ||
+						IsInView(o_->GetPosition(), o_->GetNextStatus().CalcRadius(), facePositions, faceDir))
+					{
+						objs.push_back(o);
+					}
 				}
 			}
-		}
 
-		/* 取得したグリッドを破棄 */
-		for (size_t i = 0; i < grids.size(); i++)
+			/* 取得したグリッドを破棄 */
+			for (size_t i = 0; i < grids.size(); i++)
+			{
+				grids[i]->IsScanned = false;
+			}
+
+			grids.clear();
+		}
+		else
 		{
-			grids[i]->IsScanned = false;
-		}
+			grids.push_back(&allLayers);
 
-		grids.clear();
+			/* グリッドからオブジェクト取得 */
+			for (size_t i = 0; i < grids.size(); i++)
+			{
+				for (size_t j = 0; j < grids[i]->GetObjects().size(); j++)
+				{
+					Object* o = grids[i]->GetObjects()[j];
+					ObjectInternal* o_ = (ObjectInternal*) o;
+
+					if (o_->GetNextStatus().Type == OBJECT_SHAPE_TYPE_ALL)
+					{
+						objs.push_back(o);
+					}
+				}
+			}
+
+			/* 取得したグリッドを破棄 */
+			for (size_t i = 0; i < grids.size(); i++)
+			{
+				grids[i]->IsScanned = false;
+			}
+
+			grids.clear();
+		}
+		
 	}
 
 	bool WorldInternal::Reassign()

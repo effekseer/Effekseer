@@ -38,6 +38,13 @@ namespace Culling3D
 
 		int32_t ind = xind + yind * this->gridXCount + zind * this->gridXCount * this->gridYCount;
 
+		if (xind < 0 ||
+			xind >= this->gridXCount ||
+			yind < 0 ||
+			yind >= this->gridYCount ||
+			zind < 0 ||
+			zind >= this->gridZCount) return false;
+
 		if (ind < 0 || ind >= (int32_t)grids.size()) return false;
 
 		grids[ind].AddObject(o);
@@ -60,6 +67,13 @@ namespace Culling3D
 		int32_t zind = (int32_t) (z / gridSize);
 
 		int32_t ind = xind + yind * this->gridXCount + zind * this->gridXCount * this->gridYCount;
+
+		if (xind < 0 ||
+			xind >= this->gridXCount ||
+			yind < 0 ||
+			yind >= this->gridYCount ||
+			zind < 0 ||
+			zind >= this->gridZCount) return false;
 
 		if (ind < 0 || ind >= (int32_t) grids.size()) return false;
 
