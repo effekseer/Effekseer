@@ -683,7 +683,7 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels)
 	rect.right = m_recordingWidth;
 	rect.bottom = m_recordingHeight;
 
-	auto hr = temp_sur->LockRect(&drect, &rect, D3DLOCK_DISCARD);
+	auto hr = temp_sur->LockRect(&drect, &rect, D3DLOCK_READONLY);
 	if (SUCCEEDED(hr))
 	{
 		for (int32_t y = 0; y < m_recordingHeight; y++)
