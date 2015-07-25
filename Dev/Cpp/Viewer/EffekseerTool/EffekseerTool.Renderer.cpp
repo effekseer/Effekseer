@@ -668,11 +668,11 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels)
 	ES_SAFE_RELEASE(m_recordingTempDepth);
 
 	IDirect3DSurface9*	temp_sur = nullptr;
-	IDirect3DTexture9*	temp_tex = nullptr;
+	//IDirect3DTexture9*	temp_tex = nullptr;
 
-	GetDevice()->CreateTexture(
-		m_recordingWidth, m_recordingHeight, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &temp_tex, NULL);
-	temp_tex->GetSurfaceLevel(0, &temp_sur);
+	GetDevice()->CreateOffscreenPlainSurface(
+		m_recordingWidth, m_recordingHeight, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &temp_sur, NULL);
+	//temp_tex->GetSurfaceLevel(0, &temp_sur);
 
 	GetDevice()->GetRenderTargetData(m_recordingTarget, temp_sur);
 
@@ -701,7 +701,7 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels)
 	}
 
 	ES_SAFE_RELEASE(temp_sur);
-	ES_SAFE_RELEASE(temp_tex);
+	//ES_SAFE_RELEASE(temp_tex);
 
 	ES_SAFE_RELEASE(m_recordingTarget);
 	ES_SAFE_RELEASE(m_recordingTargetTexture);
