@@ -284,7 +284,7 @@ void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting*
 			// –³Œø‰»
 			if( ScalingFixed.Position.X == 1.0f &&
 				ScalingFixed.Position.Y == 1.0f &&
-				ScalingFixed.Position.Z == 1.0f )
+				ScalingFixed.Position.Z == 1.0f)
 			{
 				ScalingType = ParameterScalingType_None;
 				EffekseerPrintDebug("ScalingType Change None\n");
@@ -338,8 +338,8 @@ void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting*
 		GenerationLocation.load( pos );
 
 		/* ¶¬ˆÊ’uŠg‘åˆ—*/
-		if( m_effect->GetVersion() >= 8 && 
-			(this->CommonValues.ScalingBindType == BindType_NotBind || parent->GetType() == EFFECT_NODE_TYPE_ROOT))
+		if( m_effect->GetVersion() >= 8  
+			/* && (this->CommonValues.ScalingBindType == BindType_NotBind || parent->GetType() == EFFECT_NODE_TYPE_ROOT)*/ )
 		{
 			if( GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT )
 			{
