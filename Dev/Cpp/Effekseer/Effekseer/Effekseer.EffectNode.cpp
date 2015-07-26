@@ -448,6 +448,9 @@ void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting*
 		if( m_effect->GetVersion() >= 3)
 		{
 			Texture.load( pos, m_effect->GetVersion() );
+
+			// Šg‘åˆ—
+			Texture.DistortionIntensity *= m_effect->GetMaginification();
 		}
 		else
 		{
