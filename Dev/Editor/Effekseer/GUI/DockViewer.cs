@@ -39,6 +39,10 @@ namespace Effekseer.GUI
 			Core.EffectBehavior.RemovedTime.Infinite.OnChanged += OnChanged;
 			Core.EffectBehavior.RemovedTime.Value.OnChanged += OnChanged;
 
+			Core.EffectBehavior.TargetLocation.X.OnChanged += OnChanged;
+			Core.EffectBehavior.TargetLocation.Y.OnChanged += OnChanged;
+			Core.EffectBehavior.TargetLocation.Z.OnChanged += OnChanged;
+
 			Core.EffectBehavior.CountX.OnChanged += OnChanged;
 			Core.EffectBehavior.CountY.OnChanged += OnChanged;
 			Core.EffectBehavior.CountZ.OnChanged += OnChanged;
