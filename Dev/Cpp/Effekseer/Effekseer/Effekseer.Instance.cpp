@@ -492,6 +492,12 @@ void Instance::Update( float deltaFrame, bool shown )
 		CalculateMatrix( deltaFrame );
 	}
 
+	/* e‚Ìíœˆ— */
+	if (m_pParent != NULL && m_pParent->GetState() != INSTANCE_STATE_ACTIVE)
+	{
+		m_pParent = nullptr;
+	}
+
 	/* ŠÔ‚Ìis */
 	if(  m_stepTime )
 	{
