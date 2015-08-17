@@ -405,7 +405,8 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 			RandFunc randFunc = m_pManager->GetRandFunc();
 			int32_t randMax = m_pManager->GetRandMax();
 
-			target = (int32_t)( (div - 1) * ( (float)randFunc() / (float)randMax ) );
+			target = (int32_t)( (div) * ( (float)randFunc() / (float)randMax ) );
+			if (target == div) div -= 1;
 		}
 
 		float angle = (end - start) * ((float)target / (float)div) + start;
