@@ -982,27 +982,29 @@ void Instance::ModifyMatrixFromLocationAbs( float deltaFrame )
 
 		Vector3D targetDifference = instanceGlobal->GetTargetLocation() - position;
 		float targetDistance = Vector3D::Length( targetDifference );
-		Vector3D targetDirection = targetDifference / targetDistance;
-		
-		if( minRange > 0.0f || maxRange > 0.0f )
+		if( targetDistance > 0.0f )
 		{
-			if( targetDistance >= m_pEffectNode->LocationAbs.attractiveForce.maxRange )
-			{
-				force = 0.0f;
-			}
-			else if( targetDistance > m_pEffectNode->LocationAbs.attractiveForce.minRange )
-			{
-				force *= 1.0f - (targetDistance - minRange) / (maxRange - minRange);
-			}
-		}
-
-		m_GlobalRevisionVelocity += targetDirection * force * deltaFrame;
-
-		float currentVelocity = Vector3D::Length( m_GlobalRevisionVelocity );
-		Vector3D currentDirection = m_GlobalRevisionVelocity / currentVelocity;
+			Vector3D targetDirection = targetDifference / targetDistance;
 		
-		m_GlobalRevisionVelocity = (targetDirection * control + currentDirection * (1.0f - control)) * currentVelocity;
-		m_GlobalRevisionLocation += m_GlobalRevisionVelocity * deltaFrame;
+			if( minRange > 0.0f || maxRange > 0.0f )
+			{
+				if( targetDistance >= m_pEffectNode->LocationAbs.attractiveForce.maxRange )
+				{
+					force = 0.0f;
+				}
+				else if( targetDistance > m_pEffectNode->LocationAbs.attractiveForce.minRange )
+				{
+					force *= 1.0f - (targetDistance - minRange) / (maxRange - minRange);
+				}
+			}
+
+			m_GlobalRevisionVelocity += targetDirection * force * deltaFrame;
+			float currentVelocity = Vector3D::Length( m_GlobalRevisionVelocity );
+			Vector3D currentDirection = m_GlobalRevisionVelocity / currentVelocity;
+		
+			m_GlobalRevisionVelocity = (targetDirection * control + currentDirection * (1.0f - control)) * currentVelocity;
+			m_GlobalRevisionLocation += m_GlobalRevisionVelocity * deltaFrame;
+		}
 	}
 
 	Matrix43 MatTraGlobal;
