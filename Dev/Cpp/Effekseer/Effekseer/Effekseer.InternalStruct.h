@@ -95,7 +95,7 @@ struct vector2d
 	{
 		vector2d ret;
 		ret.x = x + o.x;
-		ret.y = x + o.y;
+		ret.y = y + o.y;
 		return ret;
 	}
 
