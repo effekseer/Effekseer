@@ -11,7 +11,7 @@ namespace Effekseer
 		/// <summary>
 		/// x.xxxであることが必須
 		/// </summary>
-		public const string Version = "1.00";
+		public const string Version = "1.01";
 
 		public const string OptionFilePath = "config.option.xml";
 
