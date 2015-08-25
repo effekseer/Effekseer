@@ -57,6 +57,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "重力")]
 			[Description(language = Language.Japanese, value = "インスタンスにかかる重力")]
+			[Name(language = Language.English, value = "Gravity")]
+			[Description(language = Language.English, value = "Gravity's effect on the instance")]
 			public Value.Vector3D Gravity
 			{
 				get;
@@ -73,6 +75,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "引力")]
 			[Description(language = Language.Japanese, value = "ターゲットの引力")]
+			[Name(language = Language.English, value = "Attraction")]
+			[Description(language = Language.English, value = "Strength of the point of attraction")]
 			public Value.Float Force
 			{
 				get;
@@ -81,6 +85,8 @@ namespace Effekseer.Data
 			
 			[Name(language = Language.Japanese, value = "制御")]
 			[Description(language = Language.Japanese, value = "移動方向をターゲット方向へ補正量")]
+			[Name(language = Language.English, value = "Resistance")]
+			[Description(language = Language.English, value = "Resistance to the directional pull of the attractor")]
 			public Value.Float Control
 			{
 				get;
@@ -89,6 +95,8 @@ namespace Effekseer.Data
 			
 			[Name(language = Language.Japanese, value = "最小範囲")]
 			[Description(language = Language.Japanese, value = "この範囲以内では引力がフルに掛かります")]
+			[Name(language = Language.English, value = "Minimum Range")]
+			[Description(language = Language.English, value = "Within this range, it will be affected by the attractor")]
 			public Value.Float MinRange
 			{
 				get;
@@ -97,6 +105,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "最大範囲")]
 			[Description(language = Language.Japanese, value = "この範囲以外では引力が掛かりません")]
+			[Name(language = Language.English, value = "Maximum Range")]
+			[Description(language = Language.English, value = "Outside this range, the attractor will have no effect on the instance")]
 			public Value.Float MaxRange
 			{
 				get;
@@ -115,10 +125,13 @@ namespace Effekseer.Data
 		public enum ParamaterType : int
 		{
 			[Name(value = "無し", language = Language.Japanese)]
+			[Name(value = "None", language = Language.English)]
 			None = 0,
 			[Name(value = "重力", language = Language.Japanese)]
+			[Name(value = "Gravity", language = Language.English)]
 			Gravity = 1,
 			[Name(value = "引力(ターゲット有り)", language = Language.Japanese)]
+			[Name(value = "Attraction (if point is set)", language = Language.English)]
 			AttractiveForce = 2,
 		}
 	}

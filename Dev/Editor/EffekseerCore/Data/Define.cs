@@ -8,80 +8,108 @@ namespace Effekseer.Data
 	public enum ParentEffectType : int
 	{
 		[Name(value = "なし", language = Language.Japanese)]
+		[Name(value = "Never", language = Language.English)]
 		NotBind = 0,
 		[Name(value = "なし(Root依存)-非推奨", language = Language.Japanese)]
+		[Name(value = "Root dependent (deprecated)", language = Language.English)]
 		NotBind_Root = 3,
 		[Name(value = "生成時のみ", language = Language.Japanese)]
+		[Name(value = "Only on create", language = Language.English)]
 		WhenCreating = 1,
 		[Name(value = "常時", language = Language.Japanese)]
+		[Name(value = "Always", language = Language.English)]
 		Already = 2,
 	}
 
 	public enum AlphaBlendType : int
 	{
 		[Name(value = "不透明", language = Language.Japanese)]
+		[Name(value = "Opacity", language = Language.English)]
 		Opacity = 0,
 		[Name(value = "通常", language = Language.Japanese)]
+		[Name(value = "Blend", language = Language.English)]
 		Blend = 1,
 		[Name(value = "加算", language = Language.Japanese)]
+		[Name(value = "Additive", language = Language.English)]
 		Add = 2,
 		[Name(value = "減算", language = Language.Japanese)]
+		[Name(value = "Subtract", language = Language.English)]
 		Sub = 3,
 		[Name(value = "乗算", language = Language.Japanese)]
+		[Name(value = "Multiply", language = Language.English)]
 		Mul = 4,
 	}
 
 	public enum RenderingOrder : int
 	{
 		[Name(value = "生成順", language = Language.Japanese)]
+		[Name(value = "Order of spawn", language = Language.English)]
 		FirstCreatedInstanceIsFirst = 0,
 		[Name(value = "生成順の逆", language = Language.Japanese)]
+		[Name(value = "Reversed", language = Language.English)]
 		FirstCreatedInstanceIsLast = 1,
 	}
 
 	public enum CullingValues : int
 	{
 		[Name(value = "表表示", language = Language.Japanese)]
+		[Name(value = "Front view", language = Language.English)]
 		Front = 0,
 		[Name(value = "裏表示", language = Language.Japanese)]
+		[Name(value = "Back view", language = Language.English)]
 		Back = 1,
 		[Name(value = "両面表示", language = Language.Japanese)]
+		[Name(value = "Double-sided", language = Language.English)]
 		Double = 2,
 	}
 
 	public enum EasingStart : int
 	{
 		[Name(value = "低速3", language = Language.Japanese)]
+		[Name(value = "Slowest", language = Language.English)]
 		StartSlowly3 = -30,
 		[Name(value = "低速2", language = Language.Japanese)]
+		[Name(value = "Slower", language = Language.English)]
 		StartSlowly2 = -20,
 		[Name(value = "低速1", language = Language.Japanese)]
+		[Name(value = "Slow", language = Language.English)]
 		StartSlowly1 = -10,
 		[Name(value = "等速", language = Language.Japanese)]
+		[Name(value = "Normal", language = Language.English)]
 		Start = 0,
 		[Name(value = "高速1", language = Language.Japanese)]
+		[Name(value = "Fast", language = Language.English)]
 		StartRapidly1 = 10,
 		[Name(value = "高速2", language = Language.Japanese)]
+		[Name(value = "Faster", language = Language.English)]
 		StartRapidly2 = 20,
 		[Name(value = "高速3", language = Language.Japanese)]
+		[Name(value = "Fastest", language = Language.English)]
 		StartRapidly3 = 30,
 	}
 
 	public enum EasingEnd : int
 	{
 		[Name(value = "低速3", language = Language.Japanese)]
+		[Name(value = "Slowest", language = Language.English)]
 		EndSlowly3 = -30,
 		[Name(value = "低速2", language = Language.Japanese)]
+		[Name(value = "Slower", language = Language.English)]
 		EndSlowly2 = -20,
 		[Name(value = "低速1", language = Language.Japanese)]
+		[Name(value = "Slow", language = Language.English)]
 		EndSlowly1 = -10,
 		[Name(value = "等速", language = Language.Japanese)]
+		[Name(value = "Normal", language = Language.English)]
 		End = 0,
 		[Name(value = "高速1", language = Language.Japanese)]
+		[Name(value = "Fast", language = Language.English)]
 		EndRapidly1 = 10,
 		[Name(value = "高速2", language = Language.Japanese)]
+		[Name(value = "Faster", language = Language.English)]
 		EndRapidly2 = 20,
 		[Name(value = "高速3", language = Language.Japanese)]
+		[Name(value = "Fastest", language = Language.English)]
 		EndRapidly3 = 30,
 	}
 
@@ -100,18 +128,23 @@ namespace Effekseer.Data
 	public enum StandardColorType : int
 	{
 		[Name(value = "固定", language = Language.Japanese)]
+		[Name(value = "Fixed", language = Language.English)]
 		Fixed = 0,
 		[Name(value = "ランダム", language = Language.Japanese)]
+		[Name(value = "Random", language = Language.English)]
 		Random = 1,
 		[Name(value = "イージング", language = Language.Japanese)]
+		[Name(value = "Easing", language = Language.English)]
 		Easing = 2,
 		[Name(value = "Fカーブ(RGBA)", language = Language.Japanese)]
+		[Name(value = "F-Curve (RGBA)", language = Language.English)]
 		FCurve = 3,
 	}
 
 	public enum TrackSizeType : int
 	{
 		[Name(value = "固定", language = Language.Japanese)]
+		[Name(value = "Fixed", language = Language.English)]
 		Fixed = 0,
 	}
 
@@ -119,6 +152,8 @@ namespace Effekseer.Data
 	{ 
 		[Name(language = Language.Japanese, value = "始点")]
 		[Description(language = Language.Japanese, value = "イージングの始点")]
+		[Name(language = Language.English, value = "Start")]
+		[Description(language = Language.English, value = "Starting point of easing")]
 		public Value.ColorWithRandom Start
 		{
 			get;
@@ -127,6 +162,8 @@ namespace Effekseer.Data
 
 		[Name(language = Language.Japanese, value = "終点")]
 		[Description(language = Language.Japanese, value = "イージングの終点")]
+		[Name(language = Language.English, value = "End")]
+		[Description(language = Language.English, value = "Value of easing at end")]
 		public Value.ColorWithRandom End
 		{
 			get;
@@ -135,6 +172,8 @@ namespace Effekseer.Data
 
 		[Name(language = Language.Japanese, value = "始点速度")]
 		[Description(language = Language.Japanese, value = "始点速度")]
+		[Name(language = Language.English, value = "Ease In")]
+		[Description(language = Language.English, value = "Initial rate of easing")]
 		public Value.Enum<EasingStart> StartSpeed
 		{
 			get;
@@ -143,6 +182,8 @@ namespace Effekseer.Data
 
 		[Name(language = Language.Japanese, value = "終点速度")]
 		[Description(language = Language.Japanese, value = "終点速度")]
+		[Name(language = Language.English, value = "Ease Out")]
+		[Description(language = Language.English, value = "Rate of easing at end")]
 		public Value.Enum<EasingEnd> EndSpeed
 		{
 			get;
@@ -164,6 +205,8 @@ namespace Effekseer.Data
 	{
 		[Name(language = Language.Japanese, value = "Fカーブ")]
 		[Description(language = Language.Japanese, value = "Fカーブ")]
+		[Name(language = Language.English, value = "F-Curve")]
+		[Description(language = Language.English, value = "F-Curve")]
 		[Shown(Shown = true)]
 		public Value.FCurveColorRGBA FCurve
 		{
@@ -190,6 +233,8 @@ namespace Effekseer.Data
     {
         [Name(language = Language.Japanese, value = "始点")]
         [Description(language = Language.Japanese, value = "イージングの始点")]
+		[Name(language = Language.English, value = "Start")]
+		[Description(language = Language.English, value = "Starting point of easing")]
         public Value.FloatWithRandom Start
         {
             get;
@@ -198,6 +243,8 @@ namespace Effekseer.Data
 
         [Name(language = Language.Japanese, value = "終点")]
         [Description(language = Language.Japanese, value = "イージングの終点")]
+		[Name(language = Language.English, value = "End")]
+		[Description(language = Language.English, value = "Value of easing at end")]
         public Value.FloatWithRandom End
         {
             get;
@@ -206,6 +253,8 @@ namespace Effekseer.Data
 
         [Name(language = Language.Japanese, value = "始点速度")]
         [Description(language = Language.Japanese, value = "始点速度")]
+		[Name(language = Language.English, value = "Ease In")]
+		[Description(language = Language.English, value = "Initial rate of easing")]
         public Value.Enum<EasingStart> StartSpeed
         {
             get;
@@ -214,6 +263,8 @@ namespace Effekseer.Data
 
         [Name(language = Language.Japanese, value = "終点速度")]
         [Description(language = Language.Japanese, value = "終点速度")]
+		[Name(language = Language.English, value = "Ease Out")]
+		[Description(language = Language.English, value = "Rate of easing at end")]
         public Value.Enum<EasingEnd> EndSpeed
         {
             get;
@@ -233,6 +284,8 @@ namespace Effekseer.Data
     {
         [Name(language = Language.Japanese, value = "始点")]
         [Description(language = Language.Japanese, value = "イージングの始点")]
+		[Name(language = Language.English, value = "Start")]
+		[Description(language = Language.English, value = "Starting point of easing")]
         public Value.Vector2DWithRandom Start
         {
             get;
@@ -241,6 +294,8 @@ namespace Effekseer.Data
 
         [Name(language = Language.Japanese, value = "終点")]
         [Description(language = Language.Japanese, value = "イージングの終点")]
+		[Name(language = Language.English, value = "End")]
+		[Description(language = Language.English, value = "Value of easing at end")]
         public Value.Vector2DWithRandom End
         {
             get;
@@ -249,6 +304,8 @@ namespace Effekseer.Data
 
         [Name(language = Language.Japanese, value = "始点速度")]
         [Description(language = Language.Japanese, value = "始点速度")]
+		[Name(language = Language.English, value = "Ease In")]
+		[Description(language = Language.English, value = "Initial rate of easing")]
         public Value.Enum<EasingStart> StartSpeed
         {
             get;
@@ -257,6 +314,8 @@ namespace Effekseer.Data
 
         [Name(language = Language.Japanese, value = "終点速度")]
         [Description(language = Language.Japanese, value = "終点速度")]
+		[Name(language = Language.English, value = "Ease Out")]
+		[Description(language = Language.English, value = "Rate of easing at end")]
         public Value.Enum<EasingEnd> EndSpeed
         {
             get;
@@ -276,6 +335,8 @@ namespace Effekseer.Data
 	{
 		[Name(language = Language.Japanese, value = "始点")]
 		[Description(language = Language.Japanese, value = "イージングの始点")]
+		[Name(language = Language.English, value = "Start")]
+		[Description(language = Language.English, value = "Starting point of easing")]
 		public Value.Vector3DWithRandom Start
 		{
 			get;
@@ -284,6 +345,8 @@ namespace Effekseer.Data
 
 		[Name(language = Language.Japanese, value = "終点")]
 		[Description(language = Language.Japanese, value = "イージングの終点")]
+		[Name(language = Language.English, value = "End")]
+		[Description(language = Language.English, value = "Value of easing at end")]
 		public Value.Vector3DWithRandom End
 		{
 			get;
@@ -292,6 +355,8 @@ namespace Effekseer.Data
 
 		[Name(language = Language.Japanese, value = "始点速度")]
 		[Description(language = Language.Japanese, value = "始点速度")]
+		[Name(language = Language.English, value = "Ease In")]
+		[Description(language = Language.English, value = "Initial rate of easing")]
 		public Value.Enum<EasingStart> StartSpeed
 		{
 			get;
@@ -300,6 +365,8 @@ namespace Effekseer.Data
 
 		[Name(language = Language.Japanese, value = "終点速度")]
 		[Description(language = Language.Japanese, value = "終点速度")]
+		[Name(language = Language.English, value = "Ease Out")]
+		[Description(language = Language.English, value = "Rate of easing at end")]
 		public Value.Enum<EasingEnd> EndSpeed
 		{
 			get;
@@ -319,6 +386,8 @@ namespace Effekseer.Data
 	{
 		[Name(language = Language.Japanese, value = "Fカーブ")]
 		[Description(language = Language.Japanese, value = "Fカーブ")]
+		[Name(language = Language.English, value = "F-Curve")]
+		[Description(language = Language.English, value = "F-Curve")]
 		[Shown(Shown = true)]
 		public Value.FCurveVector3D FCurve
 		{

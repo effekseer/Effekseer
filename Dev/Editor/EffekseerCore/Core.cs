@@ -266,8 +266,18 @@ namespace Effekseer
 		static Core()
 		{
 			Command.CommandManager.Changed += new EventHandler(CommandManager_Changed);
-			Language = Language.Japanese;
 			FullPath = string.Empty;
+
+			var culture = System.Globalization.CultureInfo.CurrentCulture;
+			if (culture.Name == "ja-JP")
+			{
+				Language = Language.Japanese;
+			}
+			else
+			{
+				Language = Language.English;
+			}
+
 			New();
 
 			CommandScripts = new Script.ScriptCollection<Script.CommandScript>();

@@ -9,6 +9,8 @@ namespace Effekseer.Data
 	{
 		[Name(language = Language.Japanese, value = "カリングの表示")]
 		[Description(language = Language.Japanese, value = "カリングの表示非表示")]
+		[Name(language = Language.English, value = "Enable Culling")]
+		[Description(language = Language.English, value = "Whether to render hidden surfaces")]
 		[Undo(Undo = false)]
 		public Value.Boolean IsShown
 		{
@@ -17,6 +19,7 @@ namespace Effekseer.Data
 		}
 
 		[Name(language = Language.Japanese, value = "カリングの種類")]
+		[Name(language = Language.English, value = "Culling mode")]
 		[Selector(ID = 0)]
 		public Value.Enum<ParamaterType> Type
 		{
@@ -36,6 +39,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "半径")]
 			[Description(language = Language.Japanese, value = "カリング球の半径")]
+			[Name(language = Language.English, value = "Radius")]
+			[Description(language = Language.English, value = "Radius of spherical culling")]
 			[Undo(Undo = true)]
 			public Value.Float Radius
 			{
@@ -45,6 +50,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "位置")]
 			[Description(language = Language.Japanese, value = "中心の位置")]
+			[Name(language = Language.English, value = "Position")]
+			[Description(language = Language.English, value = "Central location")]
 			[Undo(Undo = false)]
 			public Value.Vector3D Location
 			{
@@ -69,8 +76,10 @@ namespace Effekseer.Data
 		public enum ParamaterType : int
 		{
 			[Name(value = "なし", language = Language.Japanese)]
+			[Name(value = "None", language = Language.English)]
 			None = 0,
 			[Name(value = "球", language = Language.Japanese)]
+			[Name(value = "Spherical", language = Language.English)]
 			Sphere = 1,
 		}
 	}

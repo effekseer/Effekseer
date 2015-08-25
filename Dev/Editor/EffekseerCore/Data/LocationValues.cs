@@ -59,6 +59,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "位置")]
 			[Description(language = Language.Japanese, value = "インスタンスの位置")]
+			[Name(language = Language.English, value = "Location")]
+			[Description(language = Language.English, value = "Position of the instance")]
 			public Value.Vector3D Location
 			{
 				get;
@@ -75,6 +77,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "位置")]
 			[Description(language = Language.Japanese, value = "インスタンスの初期位置")]
+			[Name(language = Language.English, value = "Pos")]
+			[Description(language = Language.English, value = "Position of the instance")]
 			public Value.Vector3DWithRandom Location
 			{
 				get;
@@ -83,6 +87,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "速度")]
 			[Description(language = Language.Japanese, value = "インスタンスの初期速度")]
+			[Name(language = Language.English, value = "Speed")]
+			[Description(language = Language.English, value = "Initial velocity of the instance")]
 			public Value.Vector3DWithRandom Velocity
 			{
 				get;
@@ -91,6 +97,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "加速度")]
 			[Description(language = Language.Japanese, value = "インスタンスの初期加速度")]
+			[Name(language = Language.English, value = "Accel")]
+			[Description(language = Language.English, value = "Acceleration of the instance")]
 			public Value.Vector3DWithRandom Acceleration
 			{
 				get;
@@ -108,12 +116,16 @@ namespace Effekseer.Data
 		public enum ParamaterType : int
 		{
 			[Name(value = "位置", language = Language.Japanese)]
+			[Name(value = "Set Position", language = Language.English)]
 			Fixed = 0,
 			[Name(value = "位置・速度・加速度", language = Language.Japanese)]
+			[Name(value = "PVA", language = Language.English)]
 			PVA = 1,
 			[Name(value = "イージング", language = Language.Japanese)]
+			[Name(value = "Easing", language = Language.English)]
 			Easing = 2,
 			[Name(value = "位置(Fカーブ)", language = Language.Japanese)]
+			[Name(value = "F-Curve", language = Language.English)]
 			LocationFCurve = 3,
 		}
 	}
