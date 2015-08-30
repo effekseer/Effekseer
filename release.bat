@@ -175,11 +175,25 @@ cd ..
 
 
 
+echo Compile VS14
+rmdir /S /Q VS14
+mkdir VS14
+
+cd VS14
+call cmake.bat -G "Visual Studio 14"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
+cmake.exe -G "Visual Studio 14"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
+
+"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Debug
+"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Release
+cd ..
+
+
 mkdir %RDIR_R%\Compiled\\include\
 mkdir %RDIR_R%\Compiled\\lib\
 
 mkdir %RDIR_R%\Compiled\\lib\VS2012\
 mkdir %RDIR_R%\Compiled\\lib\VS2013\
+mkdir %RDIR_R%\Compiled\\lib\VS2015\
 
 
 robocopy VS11\Debug %RDIR_R%\Compiled\\lib\VS2012\Debug *.lib /mir /S
@@ -187,6 +201,9 @@ robocopy VS11\Release %RDIR_R%\Compiled\\lib\VS2012\Release *.lib /mir /S
 
 robocopy VS12\Debug %RDIR_R%\Compiled\\lib\VS2013\Debug *.lib /mir /S
 robocopy VS12\Release %RDIR_R%\Compiled\\lib\VS2013\Release *.lib /mir /S
+
+robocopy VS14\Debug %RDIR_R%\Compiled\\lib\VS2015\Debug *.lib /mir /S
+robocopy VS14\Release %RDIR_R%\Compiled\\lib\VS2015\Release *.lib /mir /S
 
 copy Dev\Cpp\Effekseer\Effekseer.h %RDIR_R%\Compiled\\include\.
 copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX9.h %RDIR_R%\Compiled\\include\.
