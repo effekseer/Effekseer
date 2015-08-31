@@ -183,8 +183,8 @@ cd VS14
 call cmake.bat -G "Visual Studio 14"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
 cmake.exe -G "Visual Studio 14"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
 
-"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Debug
-"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Release
+"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Effekseer.sln /p:configuration=Debug
+"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Effekseer.sln /p:configuration=Release
 cd ..
 
 
