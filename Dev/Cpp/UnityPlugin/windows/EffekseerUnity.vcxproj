@@ -160,9 +160,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\EffekseerPluginCommon.cpp" />
-    <ClCompile Include="EffekseerPluginDX9.cpp" />
+    <ClCompile Include="EffekseerPluginWin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\EffekseerPluginCommon.h" />
     <ClInclude Include="..\common\UnityPluginInterface.h" />
   </ItemGroup>
   <ItemGroup>

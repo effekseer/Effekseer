@@ -1,19 +1,21 @@
+#pragma warning (disable : 4005)
 
-#include "../common/UnityPluginInterface.h"
 #include <windows.h>
 #include <shlwapi.h>
-
 #include "Effekseer.h"
 #include "EffekseerRendererDX9.h"
 #include "EffekseerRendererDX11.h"
 #include "EffekseerSoundXAudio2.h"
+#include "../common/EffekseerPluginCommon.h"
+#include "../common/IUnityGraphics.h"
+#include "../common/IUnityGraphicsD3D9.h"
+#include "../common/IUnityGraphicsD3D11.h"
 
 #pragma comment(lib, "shlwapi.lib")
 
-static const int RENDER_EVENT_ID_GAME	= 0x2040;
-static const int RENDER_EVENT_ID_EDITOR	= 0x2041;
-
-static int					g_DeviceType = -1;
+static IUnityInterfaces*	g_UnityInterfaces = NULL;
+static IUnityGraphics*		g_Graphics = NULL;
+static UnityGfxRenderer		g_RendererType = kUnityGfxRendererNull;
 static IDirect3DDevice9*	g_D3d9Device = NULL;
 static ID3D11Device*		g_D3d11Device = NULL;
 static ID3D11DeviceContext*	g_D3d11Context = NULL;
@@ -24,13 +26,14 @@ EffekseerSound::Sound*			g_EffekseerSound = NULL;
 IXAudio2*						g_XAudio2 = NULL;
 IXAudio2MasteringVoice*			g_MasteringVoice = NULL;
 
-static Effekseer::Matrix44		g_cameraMatrix[2];
-static Effekseer::Matrix44		g_projectionMatrix[2];
-
 static bool InitializeXAudio2();
 static void FinalizeXAudio2();
 static void InitializeEffekseer(int maxInstances, int maxSquares);
 static void FinalizeEffekseer();
+
+static void UNITY_INTERFACE_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType eventType);
+static void OnGraphicsDeviceEventD3D9(UnityGfxDeviceEventType eventType);
+static void OnGraphicsDeviceEventD3D11(UnityGfxDeviceEventType eventType);
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
@@ -85,11 +88,11 @@ static void FinalizeXAudio2()
 // Effekseer初期化
 static void InitializeEffekseer(int maxInstances, int maxSquares)
 {
-	switch (g_DeviceType) {
-	case kGfxRendererD3D9:
+	switch (g_RendererType) {
+	case kUnityGfxRendererD3D9:
 		g_EffekseerRenderer = EffekseerRendererDX9::Renderer::Create(g_D3d9Device, maxSquares);
 		break;
-	case kGfxRendererD3D11:
+	case kUnityGfxRendererD3D11:
 		g_EffekseerRenderer = EffekseerRendererDX11::Renderer::Create(g_D3d11Device, g_D3d11Context, maxSquares);
 		break;
 	}
@@ -128,31 +131,77 @@ static void FinalizeEffekseer()
 	}
 }
 
-static void SetGraphicsDeviceD3D9(IDirect3DDevice9* device, GfxDeviceEventType eventType)
+// Unity plugin load event
+extern "C" DLLEXPORT void UNITY_API UnityPluginLoad(IUnityInterfaces* unityInterfaces)
 {
-	g_D3d9Device = device;
+	g_UnityInterfaces = unityInterfaces;
+	g_Graphics = unityInterfaces->Get<IUnityGraphics>();
+	
+	g_Graphics->RegisterDeviceEventCallback(OnGraphicsDeviceEvent);
 
+	// Run OnGraphicsDeviceEvent(initialize) manually on plugin load
+	// to not miss the event in case the graphics device is already initialized
+	OnGraphicsDeviceEvent(kUnityGfxDeviceEventInitialize);
+}
+
+// Unity plugin unload event
+extern "C" DLLEXPORT void UNITY_API UnityPluginUnload()
+{
+	g_Graphics->UnregisterDeviceEventCallback(OnGraphicsDeviceEvent);
+}
+
+static void UNITY_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType eventType)
+{
 	switch (eventType) {
-	case kGfxDeviceEventInitialize:
-	case kGfxDeviceEventAfterReset:
+	case kUnityGfxDeviceEventInitialize:
+		g_RendererType = g_Graphics->GetRenderer();
 		break;
-	case kGfxDeviceEventBeforeReset:
-	case kGfxDeviceEventShutdown:
+	case kUnityGfxDeviceEventShutdown:
+		g_RendererType = kUnityGfxRendererNull;
+		break;
+	case kUnityGfxDeviceEventBeforeReset:
+		break;
+	case kUnityGfxDeviceEventAfterReset:
+		break;
+	}
+
+	switch (g_RendererType) {
+	case kUnityGfxRendererD3D9:
+		OnGraphicsDeviceEventD3D9(eventType);
+		break;
+	case kUnityGfxRendererD3D11:
+		OnGraphicsDeviceEventD3D11(eventType);
+		break;
+	default:
 		break;
 	}
 }
 
-static void SetGraphicsDeviceD3D11(ID3D11Device* device, GfxDeviceEventType eventType)
+static void OnGraphicsDeviceEventD3D9(UnityGfxDeviceEventType eventType)
 {
-	g_D3d11Device = device;
-
 	switch (eventType) {
-	case kGfxDeviceEventInitialize:
-	case kGfxDeviceEventAfterReset:
+	case kUnityGfxDeviceEventInitialize:
+		g_D3d9Device = g_UnityInterfaces->Get<IUnityGraphicsD3D9>()->GetDevice();
+		break;
+	case kUnityGfxDeviceEventAfterReset:
+		break;
+	case kUnityGfxDeviceEventBeforeReset:
+	case kUnityGfxDeviceEventShutdown:
+		break;
+	}
+}
+
+static void OnGraphicsDeviceEventD3D11(UnityGfxDeviceEventType eventType)
+{
+	switch (eventType) {
+	case kUnityGfxDeviceEventInitialize:
+		g_D3d11Device = g_UnityInterfaces->Get<IUnityGraphicsD3D11>()->GetDevice();
+		// fall throuth
+	case kUnityGfxDeviceEventAfterReset:
 		g_D3d11Device->GetImmediateContext(&g_D3d11Context);
 		break;
-	case kGfxDeviceEventBeforeReset:
-	case kGfxDeviceEventShutdown:
+	case kUnityGfxDeviceEventBeforeReset:
+	case kUnityGfxDeviceEventShutdown:
 		if (g_D3d11Context != NULL) {
 			g_D3d11Context->Release();
 			g_D3d11Context = NULL;
@@ -161,94 +210,37 @@ static void SetGraphicsDeviceD3D11(ID3D11Device* device, GfxDeviceEventType even
 	}
 }
 
-inline bool CheckEventId(int eventId)
-{
-	return eventId >= RENDER_EVENT_ID_GAME && eventId <= RENDER_EVENT_ID_EDITOR;
-}
-
-static void Array2Matrix(Effekseer::Matrix44& matrix, float matrixArray[])
-{
-	matrix.Values[0][0] = matrixArray[ 0];
-	matrix.Values[1][0] = matrixArray[ 1];
-	matrix.Values[2][0] = matrixArray[ 2];
-	matrix.Values[3][0] = matrixArray[ 3];
-	matrix.Values[0][1] = matrixArray[ 4];
-	matrix.Values[1][1] = matrixArray[ 5];
-	matrix.Values[2][1] = matrixArray[ 6];
-	matrix.Values[3][1] = matrixArray[ 7];
-	matrix.Values[0][2] = matrixArray[ 8];
-	matrix.Values[1][2] = matrixArray[ 9];
-	matrix.Values[2][2] = matrixArray[10];
-	matrix.Values[3][2] = matrixArray[11];
-	matrix.Values[0][3] = matrixArray[12];
-	matrix.Values[1][3] = matrixArray[13];
-	matrix.Values[2][3] = matrixArray[14];
-	matrix.Values[3][3] = matrixArray[15];
-}
-
 extern "C"
 {
-	void EXPORT_API UnitySetGraphicsDevice(void* device, int deviceType, int eventType)
+	void UNITY_API EffekseerRender(int renderId)
 	{
-		switch (deviceType) {
-		case kGfxRendererD3D9:
-			g_DeviceType = deviceType;
-			SetGraphicsDeviceD3D9((IDirect3DDevice9*)device, (GfxDeviceEventType)eventType);
-			break;
-		case kGfxRendererD3D11:
-			g_DeviceType = deviceType;
-			SetGraphicsDeviceD3D11((ID3D11Device*)device, (GfxDeviceEventType)eventType);
-			break;
-		default:
-			break;
-		}
-	}
-
-	void EXPORT_API UnityRenderEvent(int eventId)
-	{
-		if (g_DeviceType == -1) return;
-		if (!CheckEventId(eventId)) return;
 		if (g_EffekseerManager == NULL) return;
 		if (g_EffekseerRenderer == NULL) return;
 		
-		g_EffekseerRenderer->SetProjectionMatrix(g_projectionMatrix[eventId - RENDER_EVENT_ID_GAME]);
-		g_EffekseerRenderer->SetCameraMatrix(g_cameraMatrix[eventId - RENDER_EVENT_ID_GAME]);
+		// 行列をセット
+		g_EffekseerRenderer->SetProjectionMatrix(g_projectionMatrix[renderId]);
+		g_EffekseerRenderer->SetCameraMatrix(g_cameraMatrix[renderId]);
 
+		// 描画実行(全体)
 		g_EffekseerRenderer->BeginRendering();
 		g_EffekseerManager->Draw();
 		g_EffekseerRenderer->EndRendering();
 	}
+	
+	DLLEXPORT UnityRenderingEvent UNITY_API EffekseerGetRenderFunc(int renderId)
+	{
+		return EffekseerRender;
+	}
 
-	void EXPORT_API EffekseerInit(int maxInstances, int maxSquares)
+	DLLEXPORT void UNITY_API EffekseerInit(int maxInstances, int maxSquares)
 	{
 		InitializeXAudio2();
 		InitializeEffekseer(maxInstances, maxSquares);
 	}
 
-	void EXPORT_API EffekseerTerm()
+	DLLEXPORT void UNITY_API EffekseerTerm()
 	{
 		FinalizeEffekseer();
 		FinalizeXAudio2();
-	}
-	
-	void EXPORT_API EffekseerSetProjectionMatrix(int eventId, float matrixArray[])
-	{
-		if (!CheckEventId(eventId)) return;
-		
-		Effekseer::Matrix44& matrix = g_projectionMatrix[eventId - RENDER_EVENT_ID_GAME];
-		Array2Matrix(matrix, matrixArray);
-		
-		// Scale and bias from OpenGL -> D3D depth range
-		for (int i = 0; i < 4; i++) {
-			matrix.Values[i][2] = matrix.Values[i][2] * 0.5f + matrix.Values[i][3] * 0.5f;
-		}
-	}
-
-	void EXPORT_API EffekseerSetCameraMatrix(int eventId, float matrixArray[])
-	{
-		if (!CheckEventId(eventId)) return;
-
-		Effekseer::Matrix44& matrix = g_cameraMatrix[eventId - RENDER_EVENT_ID_GAME];
-		Array2Matrix(matrix, matrixArray);
 	}
 }

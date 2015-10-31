@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 using System;
 using System.IO;
 using System.Collections;
@@ -12,6 +13,29 @@ using UnityEditor;
 
 public class EffekseerSystem : MonoBehaviour
 {
+	/// <summary>
+	/// シーンビューに描画するかどうか
+	/// </summary>
+	public bool drawInSceneView = true;
+
+	/// <summary>
+	/// インスタンスの最大数
+	/// </summary>
+	public int maxInstances		= 800;
+
+	/// <summary>
+	/// 四角形の最大数
+	/// </summary>
+	public int maxSquares		= 1200;
+
+	/// <summary>
+	/// エフェクトの描画するタイミング
+	/// </summary>
+	public CameraEvent cameraEvent	= CameraEvent.AfterForwardAlpha;
+
+	/// <summary>
+	/// Effekseerのファイルを置く場所
+	/// </summary>
 	public static string resourcePath
 	{
 		get {
@@ -19,6 +43,12 @@ public class EffekseerSystem : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// エフェクトの再生
+	/// </summary>
+	/// <param name="name">エフェクト名</param>
+	/// <param name="location">再生開始する位置</param>
+	/// <returns>再生したエフェクトのハンドル</returns>
 	public static EffekseerHandle PlayEffect(string name, Vector3 location)
 	{
 		IntPtr effect = Instance._GetEffect(name);
@@ -29,33 +59,51 @@ public class EffekseerSystem : MonoBehaviour
 		return new EffekseerHandle(-1);
 	}
 	
+	/// <summary>
+	/// 全エフェクトの再生停止
+	/// </summary>
 	public static void StopAllEffects()
 	{
 		Plugin.EffekseerStopAllEffects();
 	}
 
+	/// <summary>
+	/// エフェクトのロード
+	/// </summary>
+	/// <param name="name">エフェクト名</param>
 	public static void LoadEffect(string name)
 	{
-		Instance._GetEffect(name);
+		Instance._LoadEffect(name);
 	}
 
+	/// <summary>
+	/// エフェクトの解放
+	/// </summary>
+	/// <param name="name">エフェクト名</param>
 	public static void ReleaseEffect(string name)
 	{
 		Instance._ReleaseEffect(name);
 	}
 
-	#region Implimentation
-	private static EffekseerSystem _Instance = null;
+	#region Internal Implimentation
 	
+	// シングルトンのインスタンス
+	private static EffekseerSystem _Instance = null;
 	public static EffekseerSystem Instance
 	{
 		get {
 			if (_Instance == null) {
-				var go = GameObject.Find("Effekseer");
-				if (go && go.GetComponent<EffekseerSystem>()) {
-					_Instance = go.GetComponent<EffekseerSystem>();
+				// staticに無ければ探す
+				var system = GameObject.FindObjectOfType<EffekseerSystem>();
+				if (system != null) {
+					// 有ればstaticにセット
+					_Instance = system;
 				} else {
-					go = new GameObject("Effekseer");
+					// 無ければ新しく作成
+					var go = GameObject.Find("Effekseer");
+					if (go == null) {
+						go = new GameObject("Effekseer");
+					}
 					_Instance = go.AddComponent<EffekseerSystem>();
 				}
 			}
@@ -63,59 +111,71 @@ public class EffekseerSystem : MonoBehaviour
 		}
 	}
 	
-	public bool drawInSceneView = true;
-	public int maxInstances		= 800;
-	public int maxSquares		= 1200;
-
-	private const int renderEventId = 0x2040;
+	// ロードしたエフェクト
+	private Dictionary<string, IntPtr> effectList = new Dictionary<string, IntPtr>();
 	
-	private Dictionary<string, IntPtr> effects = new Dictionary<string, IntPtr>();
-
 #if UNITY_EDITOR
-	[Serializable]
-	private struct EffectKeyValue
-	{
-		private string key;
-		private string value;
-		public EffectKeyValue(string key, IntPtr value) {
-			this.key = key;
-			this.value = value.ToString();
-		}
-		public string GetKey() {return key;}
-		public IntPtr GetValue() {return (IntPtr)ulong.Parse(value);}
-	}
-	private List<EffectKeyValue> effectKeyValues = new List<EffectKeyValue>();
+	// ホットリロードの退避用
+	private List<string> savedEffectList = new List<string>();
 #endif
+
+	// カメラごとのレンダーパス
+	class RenderPath {
+		public CommandBuffer commandBuffer;
+		public CameraEvent cameraEvent;
+		public int renderId;
+	};
+	private Dictionary<Camera, RenderPath> renderPaths = new Dictionary<Camera, RenderPath>();
 
 	private IntPtr _GetEffect(string name) {
+		// 拡張子を除外する
 		name = Path.GetFileNameWithoutExtension(name);
-		if (effects.ContainsKey(name) == false) {
-			string fullPath = Path.Combine(EffekseerSystem.resourcePath, Path.ChangeExtension(name, "efk"));
-			fullPath += "\0";
-			
-			byte[] bytes = Encoding.Unicode.GetBytes(fullPath);
-			GCHandle ghc = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-			IntPtr effect = Plugin.EffekseerLoadEffect(ghc.AddrOfPinnedObject());
-			ghc.Free();
-			if (effect == IntPtr.Zero) {
-				Debug.LogError("[Effekseer] Error loading " + fullPath);
-				return IntPtr.Zero;
-			}
-			effects.Add(name, effect);
-#if UNITY_EDITOR
-			effectKeyValues.Add(new EffectKeyValue(name, effect));
-#endif
-			return effect;
-		} else {
-			return effects[name];
+		
+		if (effectList.ContainsKey(name) == false) {
+			return effectList[name];
 		}
+		
+		// 存在しなかったらロード
+		return _LoadEffect(name);
+	}
+
+	private IntPtr _LoadEffect(string name) {
+		if (effectList.ContainsKey(name)) {
+			return effectList[name];
+		}
+
+		// 拡張子を除外する
+		name = Path.GetFileNameWithoutExtension(name);
+
+		// パス解決
+		string fullPath = Path.Combine(EffekseerSystem.resourcePath, Path.ChangeExtension(name, "efk"));
+		fullPath += "\0";
+		
+		// UTF16に変換
+		byte[] bytes = Encoding.Unicode.GetBytes(fullPath);
+		
+		// 文字列をメモリにマップしてロードを実行
+		GCHandle ghc = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+		IntPtr effect = Plugin.EffekseerLoadEffect(ghc.AddrOfPinnedObject());
+		ghc.Free();
+		
+		if (effect == IntPtr.Zero) {
+			Debug.LogError("[Effekseer] Loading error: " + fullPath);
+			return IntPtr.Zero;
+		}
+
+		effectList.Add(name, effect);
+		return effect;
 	}
 	
 	private void _ReleaseEffect(string name) {
-		if (effects.ContainsKey(name) == false) {
-			var effect = effects[name];
+		// 拡張子を除外する
+		name = Path.GetFileNameWithoutExtension(name);
+		
+		if (effectList.ContainsKey(name) == false) {
+			var effect = effectList[name];
 			Plugin.EffekseerReleaseEffect(effect);
-			effects.Remove(name);
+			effectList.Remove(name);
 		}
 	}
 	
@@ -124,63 +184,104 @@ public class EffekseerSystem : MonoBehaviour
 	}
 	
 	void OnDestroy() {
-		foreach (var pair in effects) {
+		foreach (var pair in effectList) {
 			Plugin.EffekseerReleaseEffect(pair.Value);
 		}
-		effects = null;
+		effectList = null;
 		Plugin.EffekseerTerm();
 	}
 
 	void OnEnable() {
 #if UNITY_EDITOR
-		if (effects.Count == 0) {
-			for (int i = 0; i < effectKeyValues.Count; i++) {
-				effects.Add(effectKeyValues[i].GetKey(), effectKeyValues[i].GetValue());
+		// ホットリロード時はリジューム処理
+		foreach (var effect in savedEffectList) {
+			string[] tokens = effect.Split(',');
+			if (tokens.Length == 2) {
+				effectList.Add(tokens[0], (IntPtr)ulong.Parse(tokens[1]));
 			}
 		}
+		savedEffectList.Clear();
 #endif
+		CleanUp();
+		Camera.onPreCull += OnPreCullEvent;
+	}
+
+	void OnDisable() {
+#if UNITY_EDITOR
+		// Dictionaryは消えるので文字列にして退避
+		foreach (var pair in effectList) {
+			savedEffectList.Add(pair.Key + "," + pair.Value.ToString());
+		}
+		effectList.Clear();
+#endif
+		Camera.onPreCull -= OnPreCullEvent;
+		CleanUp();
+	}
+
+	void CleanUp() {
+		// レンダーパスの破棄
+		foreach (var pair in renderPaths) {
+			var camera = pair.Key;
+			var path = pair.Value;
+			if (camera != null) {
+				camera.RemoveCommandBuffer(path.cameraEvent, path.commandBuffer);
+			}
+		}
+		renderPaths.Clear();
 	}
 	
 	void FixedUpdate() {
+		// 1フレーム更新
 		Plugin.EffekseerUpdate(1);
 	}
 	
-	void OnRenderObject() {
-		if ((Camera.current.cullingMask & (1 << gameObject.layer)) == 0) {
+	void OnPreCullEvent(Camera camera) {
+#if UNITY_EDITOR
+		if (Array.IndexOf<Camera>(SceneView.GetAllSceneCameras(), camera) >= 0) {
+			// シーンビューのカメラはチェック
+			if (this.drawInSceneView == false) {
+				return;
+			}
+		} else if (Camera.current.isActiveAndEnabled == false) {
+			// シーンビュー以外のエディタカメラは除外
 			return;
 		}
-		int eventId = renderEventId;
-		#if UNITY_EDITOR
-			if (SceneView.currentDrawingSceneView != null && 
-				Camera.current == SceneView.currentDrawingSceneView.camera
-			) {
-				if (this.drawInSceneView == false) {
-					return;
-				}
-				eventId = renderEventId + 1;
-			}
-		#endif
-		
-		{
-			float[] projectionMatrixArray = Matrix2Array(Camera.current.projectionMatrix);
-			if ((Application.platform == RuntimePlatform.WindowsPlayer ||
-				 Application.platform == RuntimePlatform.WindowsEditor) &&
-				RenderTexture.active
-			) {
-				projectionMatrixArray[5] = -projectionMatrixArray[5];
-			}
-			GCHandle ghc = GCHandle.Alloc(projectionMatrixArray, GCHandleType.Pinned);
-			Plugin.EffekseerSetProjectionMatrix(eventId, ghc.AddrOfPinnedObject());
-			ghc.Free();
-		}
-		{
-			float[] cameraMatrixArray = Matrix2Array(Camera.current.worldToCameraMatrix);
-			GCHandle ghc = GCHandle.Alloc(cameraMatrixArray, GCHandleType.Pinned);
-			Plugin.EffekseerSetCameraMatrix(eventId, ghc.AddrOfPinnedObject());
-			ghc.Free();
+#endif
+		RenderPath path;
+		if (renderPaths.ContainsKey(camera)) {
+			// レンダーパスが有れば使う
+			path = renderPaths[camera];
+		} else {
+			// 無ければ作成
+			path = new RenderPath();
+			path.renderId = renderPaths.Count;
+			path.cameraEvent = cameraEvent;
+			// プラグイン描画するコマンドバッファを作成
+			path.commandBuffer = new CommandBuffer();
+			path.commandBuffer.IssuePluginEvent(Plugin.EffekseerGetRenderFunc(), path.renderId);
+			// コマンドバッファをカメラに登録
+			camera.AddCommandBuffer(path.cameraEvent, path.commandBuffer);
+			renderPaths.Add(camera, path);
 		}
 
-		GL.IssuePluginEvent(eventId);
+		// ビュー関連の行列を更新
+		SetCameraMatrix(path.renderId, camera);
+		SetProjectionMatrix(path.renderId, camera);
+	}
+
+	private void SetProjectionMatrix(int renderId, Camera camera) {
+		float[] projectionMatrixArray = Matrix2Array(GL.GetGPUProjectionMatrix(
+			camera.projectionMatrix, RenderTexture.active));
+		GCHandle ghc = GCHandle.Alloc(projectionMatrixArray, GCHandleType.Pinned);
+		EffekseerSystem.Plugin.EffekseerSetProjectionMatrix(renderId, ghc.AddrOfPinnedObject());
+		ghc.Free();
+	}
+
+	private void SetCameraMatrix(int renderId, Camera camera) {
+		float[] cameraMatrixArray = Matrix2Array(camera.worldToCameraMatrix);
+		GCHandle ghc = GCHandle.Alloc(cameraMatrixArray, GCHandleType.Pinned);
+		Plugin.EffekseerSetCameraMatrix(renderId, ghc.AddrOfPinnedObject());
+		ghc.Free();
 	}
 
 	private float[] Matrix2Array(Matrix4x4 mat) {
@@ -220,6 +321,9 @@ public class EffekseerSystem : MonoBehaviour
 		
 		[DllImport(pluginName)]
 		public static extern void EffekseerUpdate(float deltaTime);
+		
+		[DllImport(pluginName)]
+		public static extern IntPtr EffekseerGetRenderFunc();
 		
 		[DllImport(pluginName)]
 		public static extern void EffekseerSetProjectionMatrix(int renderId, IntPtr matrix);
@@ -263,50 +367,109 @@ public class EffekseerSystem : MonoBehaviour
 	#endregion
 }
 
-[Serializable]
+/// <summary>
+/// 再生したエフェクトのインスタンスハンドル
+/// </summary>
 public struct EffekseerHandle
 {
-	int handle;
+	private int m_handle;
+	private bool m_paused;
+	private bool m_shown;
 
-	public EffekseerHandle(int _handle)
+	public EffekseerHandle(int handle)
 	{
-		handle = _handle;
+		m_handle = handle;
+		m_paused = false;
+		m_shown = false;
 	}
 	
+	/// <summary>
+	/// エフェクトを停止する
+	/// </summary>
 	public void Stop()
 	{
-		EffekseerSystem.Plugin.EffekseerStopEffect(handle);
+		EffekseerSystem.Plugin.EffekseerStopEffect(m_handle);
 	}
 	
+	/// <summary>
+	/// エフェクトの位置を設定
+	/// </summary>
+	/// <param name="location">位置</param>
 	public void SetLocation(Vector3 location)
 	{
-		EffekseerSystem.Plugin.EffekseerSetLocation(handle, location.x, location.y, location.z);
+		EffekseerSystem.Plugin.EffekseerSetLocation(m_handle, location.x, location.y, location.z);
 	}
 	
+	/// <summary>
+	/// エフェクトの回転を設定
+	/// </summary>
+	/// <param name="rotation">回転</param>
 	public void SetRotation(Quaternion rotation)
 	{
 		Vector3 axis;
 		float angle;
 		rotation.ToAngleAxis(out angle, out axis);
-		EffekseerSystem.Plugin.EffekseerSetRotation(handle, axis.x, axis.y, axis.z, angle * Mathf.Deg2Rad);
+		EffekseerSystem.Plugin.EffekseerSetRotation(m_handle, axis.x, axis.y, axis.z, angle * Mathf.Deg2Rad);
 	}
 	
+	/// <summary>
+	/// エフェクトの拡縮を設定
+	/// </summary>
+	/// <param name="scale">拡縮</param>
 	public void SetScale(Vector3 scale)
 	{
-		EffekseerSystem.Plugin.EffekseerSetScale(handle, scale.x, scale.y, scale.z);
+		EffekseerSystem.Plugin.EffekseerSetScale(m_handle, scale.x, scale.y, scale.z);
 	}
-	
-	public bool enable
+
+	/// <summary>
+	/// Update時に更新するか
+	/// </summary>
+	public bool paused
 	{
+		set {
+			EffekseerSystem.Plugin.EffekseerSetPaused(m_handle, value);
+			m_paused = value;
+		}
 		get {
-			return handle >= 0;
+			return m_paused;
 		}
 	}
 	
+	/// <summary>
+	/// Draw時で描画されるか
+	/// </summary>
+	public bool shown
+	{
+		set {
+			EffekseerSystem.Plugin.EffekseerSetShown(m_handle, value);
+			m_shown = value;
+		}
+		get {
+			return m_shown;
+		}
+	}
+	
+	/// <summary>
+	/// ハンドルが有効かどうか<br/>
+	/// <para>true:有効</para>
+	/// <para>false:無効</para>
+	/// </summary>
+	public bool enable
+	{
+		get {
+			return m_handle >= 0;
+		}
+	}
+	
+	/// <summary>
+	/// エフェクトのインスタンスが存在しているかどうか
+	/// <para>true:存在している</para>
+	/// <para>false:再生終了で破棄。もしくはStopで停止された</para>
+	/// </summary>
 	public bool exists
 	{
 		get {
-			return EffekseerSystem.Plugin.EffekseerExists(handle);
+			return EffekseerSystem.Plugin.EffekseerExists(m_handle);
 		}
 	}
 }
