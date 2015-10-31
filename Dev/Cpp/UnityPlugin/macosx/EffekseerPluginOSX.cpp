@@ -1,5 +1,4 @@
 
-#include "../common/UnityPluginInterface.h"
 #include <OpenGL/OpenGL.h>
 #include <OpenAl/al.h>
 #include <OpenAl/alc.h>
@@ -8,10 +7,12 @@
 #include <EffekseerRendererGL.h>
 #include <EffekseerSoundAL.h>
 
-static const int RENDER_EVENT_ID_GAME	= 0x2040;
-static const int RENDER_EVENT_ID_EDITOR	= 0x2041;
+#include "../common/EffekseerPluginCommon.h"
+#include "../common/IUnityGraphics.h"
 
-static int						g_DeviceType = -1;
+static IUnityInterfaces*	g_UnityInterfaces = NULL;
+static IUnityGraphics*		g_Graphics = NULL;
+static UnityGfxRenderer		g_RendererType = kUnityGfxRendererNull;
 
 Effekseer::Manager*				g_EffekseerManager = NULL;
 EffekseerRenderer::Renderer*	g_EffekseerRenderer = NULL;
@@ -19,13 +20,12 @@ EffekseerSound::Sound*			g_EffekseerSound = NULL;
 static ALCdevice*				g_alcdev = NULL;
 static ALCcontext*				g_alcctx = NULL;
 
-static Effekseer::Matrix44		g_cameraMatrix[2];
-static Effekseer::Matrix44		g_projectionMatrix[2];
-
 static void InitializeOpenAL();
 static void FinalizeOpenAL();
 static void InitializeEffekseer();
 static void FinalizeEffekseer();
+
+static void UNITY_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType eventType);
 
 static void InitializeOpenAL()
 {
@@ -84,93 +84,69 @@ static void FinalizeEffekseer()
 	}
 }
 
-static void SetGraphicsDeviceGL(GfxDeviceEventType eventType)
+// Unity plugin load event
+extern "C" DLLEXPORT void UNITY_API UnityPluginLoad(IUnityInterfaces* unityInterfaces)
+{
+	g_UnityInterfaces = unityInterfaces;
+	g_Graphics = unityInterfaces->Get<IUnityGraphics>();
+	
+	g_Graphics->RegisterDeviceEventCallback(OnGraphicsDeviceEvent);
+
+	// Run OnGraphicsDeviceEvent(initialize) manually on plugin load
+	// to not miss the event in case the graphics device is already initialized
+	OnGraphicsDeviceEvent(kUnityGfxDeviceEventInitialize);
+}
+
+// Unity plugin unload event
+extern "C" DLLEXPORT void UNITY_API UnityPluginUnload()
+{
+	g_Graphics->UnregisterDeviceEventCallback(OnGraphicsDeviceEvent);
+}
+
+static void UNITY_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType eventType)
 {
 	switch (eventType) {
-	case kGfxDeviceEventInitialize:
-	case kGfxDeviceEventAfterReset:
+	case kUnityGfxDeviceEventInitialize:
+		g_RendererType = g_Graphics->GetRenderer();
 		break;
-	case kGfxDeviceEventBeforeReset:
-	case kGfxDeviceEventShutdown:
+	case kUnityGfxDeviceEventShutdown:
+		g_RendererType = kUnityGfxRendererNull;
+		break;
+	case kUnityGfxDeviceEventBeforeReset:
+		break;
+	case kUnityGfxDeviceEventAfterReset:
 		break;
 	}
-}
-
-inline bool CheckEventId(int eventId)
-{
-	return eventId >= RENDER_EVENT_ID_GAME && eventId <= RENDER_EVENT_ID_EDITOR;
-}
-
-static void Array2Matrix(Effekseer::Matrix44& matrix, float matrixArray[])
-{
-	matrix.Values[0][0] = matrixArray[ 0];
-	matrix.Values[1][0] = matrixArray[ 1];
-	matrix.Values[2][0] = matrixArray[ 2];
-	matrix.Values[3][0] = matrixArray[ 3];
-	matrix.Values[0][1] = matrixArray[ 4];
-	matrix.Values[1][1] = matrixArray[ 5];
-	matrix.Values[2][1] = matrixArray[ 6];
-	matrix.Values[3][1] = matrixArray[ 7];
-	matrix.Values[0][2] = matrixArray[ 8];
-	matrix.Values[1][2] = matrixArray[ 9];
-	matrix.Values[2][2] = matrixArray[10];
-	matrix.Values[3][2] = matrixArray[11];
-	matrix.Values[0][3] = matrixArray[12];
-	matrix.Values[1][3] = matrixArray[13];
-	matrix.Values[2][3] = matrixArray[14];
-	matrix.Values[3][3] = matrixArray[15];
 }
 
 extern "C"
 {
-	void EXPORT_API UnitySetGraphicsDevice(void* device, int deviceType, int eventType)
+	void UNITY_API EffekseerRender(int renderId)
 	{
-		g_DeviceType = -1;
-
-		if (deviceType == kGfxRendererOpenGL) {
-			g_DeviceType = deviceType;
-			SetGraphicsDeviceGL((GfxDeviceEventType)eventType);
-		}
-	}
-
-	void EXPORT_API UnityRenderEvent(int eventId)
-	{
-		if (g_DeviceType == -1) return;
-		if (!CheckEventId(eventId)) return;
 		if (g_EffekseerManager == NULL) return;
 		if (g_EffekseerRenderer == NULL) return;
-	
-		g_EffekseerRenderer->SetProjectionMatrix(g_projectionMatrix[eventId - RENDER_EVENT_ID_GAME]);
-		g_EffekseerRenderer->SetCameraMatrix(g_cameraMatrix[eventId - RENDER_EVENT_ID_GAME]);
+		
+		g_EffekseerRenderer->SetProjectionMatrix(g_projectionMatrix[renderId]);
+		g_EffekseerRenderer->SetCameraMatrix(g_cameraMatrix[renderId]);
 
 		g_EffekseerRenderer->BeginRendering();
 		g_EffekseerManager->Draw();
 		g_EffekseerRenderer->EndRendering();
 	}
+	
+	
+	DLLEXPORT UnityRenderingEvent UNITY_API EffekseerGetRenderFunc(int renderId)
+	{
+		return EffekseerRender;
+	}
 
-	void EXPORT_API EffekseerInit(int maxInstances, int maxSquares)
+	DLLEXPORT void UNITY_API EffekseerInit(int maxInstances, int maxSquares)
 	{
 		InitializeEffekseer(maxInstances, maxSquares);
 	}
 
-	void EXPORT_API EffekseerTerm()
+	DLLEXPORT void UNITY_API EffekseerTerm()
 	{
 		FinalizeEffekseer();
-	}
-
-	void EXPORT_API EffekseerSetProjectionMatrix(int eventId, float matrixArray[])
-	{
-		if (!CheckEventId(eventId)) return;
-		
-		Effekseer::Matrix44& matrix = g_projectionMatrix[eventId - RENDER_EVENT_ID_GAME];
-		Array2Matrix(matrix, matrixArray);
-	}
-
-	void EXPORT_API EffekseerSetCameraMatrix(int eventId, float matrixArray[])
-	{
-		if (!CheckEventId(eventId)) return;
-
-		Effekseer::Matrix44& matrix = g_cameraMatrix[eventId - RENDER_EVENT_ID_GAME];
-		Array2Matrix(matrix, matrixArray);
 	}
 }
