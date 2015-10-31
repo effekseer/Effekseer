@@ -3,34 +3,34 @@ using System;
 using System.Collections;
 
 /// <summary>
-/// ƒGƒtƒFƒNƒg‚Ì”­¶Œ¹
+/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ç™ºç”Ÿæº
 /// </summary>
 public class EffekseerEmitter : MonoBehaviour
 {
 	/// <summary>
-	/// ƒGƒtƒFƒNƒg–¼
+	/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå
 	/// </summary>
 	public string effectName;
 
 	/// <summary>
-	/// Start‚ÉÄ¶ŠJn‚·‚é‚©‚Ç‚¤‚©
+	/// Startæ™‚ã«å†ç”Ÿé–‹å§‹ã™ã‚‹ã‹ã©ã†ã‹
 	/// </summary>
 	public bool playOnStart = false;
 
 	/// <summary>
-	/// ƒ‹[ƒvÄ¶‚·‚é‚©‚Ç‚¤‚©
+	/// ãƒ«ãƒ¼ãƒ—å†ç”Ÿã™ã‚‹ã‹ã©ã†ã‹
 	/// </summary>
 	public bool loop = false;
 
 	/// <summary>
-	/// •Û‚µ‚Ä‚¢‚éƒnƒ“ƒhƒ‹
+	/// ä¿æŒã—ã¦ã„ã‚‹ãƒãƒ³ãƒ‰ãƒ«
 	/// </summary>
 	private EffekseerHandle? handle;
 	
 	/// <summary>
-	/// ƒGƒtƒFƒNƒg‚ğÄ¶
+	/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å†ç”Ÿ
 	/// </summary>
-	/// <param name="name">ƒGƒtƒFƒNƒg–¼</param>
+	/// <param name="name">ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå</param>
 	public void Play(string name)
 	{
 		effectName = name;
@@ -38,7 +38,7 @@ public class EffekseerEmitter : MonoBehaviour
 	}
 	
 	/// <summary>
-	/// İ’è‚³‚ê‚Ä‚¢‚éƒGƒtƒFƒNƒg‚ğÄ¶
+	/// è¨­å®šã•ã‚Œã¦ã„ã‚‹ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å†ç”Ÿ
 	/// </summary>
 	public void Play()
 	{
@@ -47,7 +47,7 @@ public class EffekseerEmitter : MonoBehaviour
 	}
 	
 	/// <summary>
-	/// Ä¶’†‚ÌƒGƒtƒFƒNƒg‚Ì’â~
+	/// å†ç”Ÿä¸­ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®åœæ­¢
 	/// </summary>
 	public void Stop()
 	{
@@ -58,9 +58,9 @@ public class EffekseerEmitter : MonoBehaviour
 	}
 	
 	/// <summary>
-	/// Ä¶’†‚ÌƒGƒtƒFƒNƒg‚ğ•Û‚µ‚Ä‚¢‚é‚©
+	/// å†ç”Ÿä¸­ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãŒå­˜åœ¨ã—ã¦ã„ã‚‹ã‹
 	/// </summary>
-	public bool active
+	public bool exists
 	{
 		get {
 			return handle.HasValue && handle.Value.exists;

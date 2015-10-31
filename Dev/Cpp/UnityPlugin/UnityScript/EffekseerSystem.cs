@@ -14,27 +14,27 @@ using UnityEditor;
 public class EffekseerSystem : MonoBehaviour
 {
 	/// <summary>
-	/// ƒV[ƒ“ƒrƒ…[‚É•`‰æ‚·‚é‚©‚Ç‚¤‚©
+	/// ã‚·ãƒ¼ãƒ³ãƒ“ãƒ¥ãƒ¼ã«æç”»ã™ã‚‹ã‹ã©ã†ã‹
 	/// </summary>
 	public bool drawInSceneView = true;
 
 	/// <summary>
-	/// ƒCƒ“ƒXƒ^ƒ“ƒX‚ÌÅ‘å”
+	/// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®æœ€å¤§æ•°
 	/// </summary>
 	public int maxInstances		= 800;
 
 	/// <summary>
-	/// lŠpŒ`‚ÌÅ‘å”
+	/// å››è§’å½¢ã®æœ€å¤§æ•°
 	/// </summary>
 	public int maxSquares		= 1200;
 
 	/// <summary>
-	/// ƒGƒtƒFƒNƒg‚Ì•`‰æ‚·‚éƒ^ƒCƒ~ƒ“ƒO
+	/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»ã™ã‚‹ã‚¿ã‚¤ãƒŸãƒ³ã‚°
 	/// </summary>
 	public CameraEvent cameraEvent	= CameraEvent.AfterForwardAlpha;
 
 	/// <summary>
-	/// Effekseer‚Ìƒtƒ@ƒCƒ‹‚ğ’u‚­êŠ
+	/// Effekseerã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç½®ãå ´æ‰€
 	/// </summary>
 	public static string resourcePath
 	{
@@ -44,11 +44,11 @@ public class EffekseerSystem : MonoBehaviour
 	}
 
 	/// <summary>
-	/// ƒGƒtƒFƒNƒg‚ÌÄ¶
+	/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®å†ç”Ÿ
 	/// </summary>
-	/// <param name="name">ƒGƒtƒFƒNƒg–¼</param>
-	/// <param name="location">Ä¶ŠJn‚·‚éˆÊ’u</param>
-	/// <returns>Ä¶‚µ‚½ƒGƒtƒFƒNƒg‚Ìƒnƒ“ƒhƒ‹</returns>
+	/// <param name="name">ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå</param>
+	/// <param name="location">å†ç”Ÿé–‹å§‹ã™ã‚‹ä½ç½®</param>
+	/// <returns>å†ç”Ÿã—ãŸã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«</returns>
 	public static EffekseerHandle PlayEffect(string name, Vector3 location)
 	{
 		IntPtr effect = Instance._GetEffect(name);
@@ -60,7 +60,7 @@ public class EffekseerSystem : MonoBehaviour
 	}
 	
 	/// <summary>
-	/// ‘SƒGƒtƒFƒNƒg‚ÌÄ¶’â~
+	/// å…¨ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®å†ç”Ÿåœæ­¢
 	/// </summary>
 	public static void StopAllEffects()
 	{
@@ -68,18 +68,18 @@ public class EffekseerSystem : MonoBehaviour
 	}
 
 	/// <summary>
-	/// ƒGƒtƒFƒNƒg‚Ìƒ[ƒh
+	/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒ­ãƒ¼ãƒ‰
 	/// </summary>
-	/// <param name="name">ƒGƒtƒFƒNƒg–¼</param>
+	/// <param name="name">ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå</param>
 	public static void LoadEffect(string name)
 	{
 		Instance._LoadEffect(name);
 	}
 
 	/// <summary>
-	/// ƒGƒtƒFƒNƒg‚Ì‰ğ•ú
+	/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®è§£æ”¾
 	/// </summary>
-	/// <param name="name">ƒGƒtƒFƒNƒg–¼</param>
+	/// <param name="name">ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå</param>
 	public static void ReleaseEffect(string name)
 	{
 		Instance._ReleaseEffect(name);
@@ -87,19 +87,19 @@ public class EffekseerSystem : MonoBehaviour
 
 	#region Internal Implimentation
 	
-	// ƒVƒ“ƒOƒ‹ƒgƒ“‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
+	// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	private static EffekseerSystem _Instance = null;
 	public static EffekseerSystem Instance
 	{
 		get {
 			if (_Instance == null) {
-				// static‚É–³‚¯‚ê‚Î’T‚·
+				// staticã«ç„¡ã‘ã‚Œã°æ¢ã™
 				var system = GameObject.FindObjectOfType<EffekseerSystem>();
 				if (system != null) {
-					// —L‚ê‚Îstatic‚ÉƒZƒbƒg
+					// æœ‰ã‚Œã°staticã«ã‚»ãƒƒãƒˆ
 					_Instance = system;
 				} else {
-					// –³‚¯‚ê‚ÎV‚µ‚­ì¬
+					// ç„¡ã‘ã‚Œã°æ–°ã—ãä½œæˆ
 					var go = GameObject.Find("Effekseer");
 					if (go == null) {
 						go = new GameObject("Effekseer");
@@ -111,15 +111,15 @@ public class EffekseerSystem : MonoBehaviour
 		}
 	}
 	
-	// ƒ[ƒh‚µ‚½ƒGƒtƒFƒNƒg
+	// ãƒ­ãƒ¼ãƒ‰ã—ãŸã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
 	private Dictionary<string, IntPtr> effectList = new Dictionary<string, IntPtr>();
 	
 #if UNITY_EDITOR
-	// ƒzƒbƒgƒŠƒ[ƒh‚Ì‘Ş”ğ—p
+	// ãƒ›ãƒƒãƒˆãƒªãƒ­ãƒ¼ãƒ‰ã®é€€é¿ç”¨
 	private List<string> savedEffectList = new List<string>();
 #endif
 
-	// ƒJƒƒ‰‚²‚Æ‚ÌƒŒƒ“ƒ_[ƒpƒX
+	// ã‚«ãƒ¡ãƒ©ã”ã¨ã®ãƒ¬ãƒ³ãƒ€ãƒ¼ãƒ‘ã‚¹
 	class RenderPath {
 		public CommandBuffer commandBuffer;
 		public CameraEvent cameraEvent;
@@ -128,14 +128,14 @@ public class EffekseerSystem : MonoBehaviour
 	private Dictionary<Camera, RenderPath> renderPaths = new Dictionary<Camera, RenderPath>();
 
 	private IntPtr _GetEffect(string name) {
-		// Šg’£q‚ğœŠO‚·‚é
+		// æ‹¡å¼µå­ã‚’é™¤å¤–ã™ã‚‹
 		name = Path.GetFileNameWithoutExtension(name);
 		
 		if (effectList.ContainsKey(name) == false) {
 			return effectList[name];
 		}
 		
-		// ‘¶İ‚µ‚È‚©‚Á‚½‚çƒ[ƒh
+		// å­˜åœ¨ã—ãªã‹ã£ãŸã‚‰ãƒ­ãƒ¼ãƒ‰
 		return _LoadEffect(name);
 	}
 
@@ -144,17 +144,17 @@ public class EffekseerSystem : MonoBehaviour
 			return effectList[name];
 		}
 
-		// Šg’£q‚ğœŠO‚·‚é
+		// æ‹¡å¼µå­ã‚’é™¤å¤–ã™ã‚‹
 		name = Path.GetFileNameWithoutExtension(name);
 
-		// ƒpƒX‰ğŒˆ
+		// ãƒ‘ã‚¹è§£æ±º
 		string fullPath = Path.Combine(EffekseerSystem.resourcePath, Path.ChangeExtension(name, "efk"));
 		fullPath += "\0";
 		
-		// UTF16‚É•ÏŠ·
+		// UTF16ã«å¤‰æ›
 		byte[] bytes = Encoding.Unicode.GetBytes(fullPath);
 		
-		// •¶š—ñ‚ğƒƒ‚ƒŠ‚Éƒ}ƒbƒv‚µ‚Äƒ[ƒh‚ğÀs
+		// æ–‡å­—åˆ—ã‚’ãƒ¡ãƒ¢ãƒªã«ãƒãƒƒãƒ—ã—ã¦ãƒ­ãƒ¼ãƒ‰ã‚’å®Ÿè¡Œ
 		GCHandle ghc = GCHandle.Alloc(bytes, GCHandleType.Pinned);
 		IntPtr effect = Plugin.EffekseerLoadEffect(ghc.AddrOfPinnedObject());
 		ghc.Free();
@@ -169,7 +169,7 @@ public class EffekseerSystem : MonoBehaviour
 	}
 	
 	private void _ReleaseEffect(string name) {
-		// Šg’£q‚ğœŠO‚·‚é
+		// æ‹¡å¼µå­ã‚’é™¤å¤–ã™ã‚‹
 		name = Path.GetFileNameWithoutExtension(name);
 		
 		if (effectList.ContainsKey(name) == false) {
@@ -193,7 +193,7 @@ public class EffekseerSystem : MonoBehaviour
 
 	void OnEnable() {
 #if UNITY_EDITOR
-		// ƒzƒbƒgƒŠƒ[ƒh‚ÍƒŠƒWƒ…[ƒ€ˆ—
+		// ãƒ›ãƒƒãƒˆãƒªãƒ­ãƒ¼ãƒ‰æ™‚ã¯ãƒªã‚¸ãƒ¥ãƒ¼ãƒ å‡¦ç†
 		foreach (var effect in savedEffectList) {
 			string[] tokens = effect.Split(',');
 			if (tokens.Length == 2) {
@@ -208,7 +208,7 @@ public class EffekseerSystem : MonoBehaviour
 
 	void OnDisable() {
 #if UNITY_EDITOR
-		// Dictionary‚ÍÁ‚¦‚é‚Ì‚Å•¶š—ñ‚É‚µ‚Ä‘Ş”ğ
+		// Dictionaryã¯æ¶ˆãˆã‚‹ã®ã§æ–‡å­—åˆ—ã«ã—ã¦é€€é¿
 		foreach (var pair in effectList) {
 			savedEffectList.Add(pair.Key + "," + pair.Value.ToString());
 		}
@@ -219,7 +219,7 @@ public class EffekseerSystem : MonoBehaviour
 	}
 
 	void CleanUp() {
-		// ƒŒƒ“ƒ_[ƒpƒX‚Ì”jŠü
+		// ãƒ¬ãƒ³ãƒ€ãƒ¼ãƒ‘ã‚¹ã®ç ´æ£„
 		foreach (var pair in renderPaths) {
 			var camera = pair.Key;
 			var path = pair.Value;
@@ -231,40 +231,40 @@ public class EffekseerSystem : MonoBehaviour
 	}
 	
 	void FixedUpdate() {
-		// 1ƒtƒŒ[ƒ€XV
+		// 1ãƒ•ãƒ¬ãƒ¼ãƒ æ›´æ–°
 		Plugin.EffekseerUpdate(1);
 	}
 	
 	void OnPreCullEvent(Camera camera) {
 #if UNITY_EDITOR
 		if (Array.IndexOf<Camera>(SceneView.GetAllSceneCameras(), camera) >= 0) {
-			// ƒV[ƒ“ƒrƒ…[‚ÌƒJƒƒ‰‚Íƒ`ƒFƒbƒN
+			// ã‚·ãƒ¼ãƒ³ãƒ“ãƒ¥ãƒ¼ã®ã‚«ãƒ¡ãƒ©ã¯ãƒã‚§ãƒƒã‚¯
 			if (this.drawInSceneView == false) {
 				return;
 			}
 		} else if (Camera.current.isActiveAndEnabled == false) {
-			// ƒV[ƒ“ƒrƒ…[ˆÈŠO‚ÌƒGƒfƒBƒ^ƒJƒƒ‰‚ÍœŠO
+			// ã‚·ãƒ¼ãƒ³ãƒ“ãƒ¥ãƒ¼ä»¥å¤–ã®ã‚¨ãƒ‡ã‚£ã‚¿ã‚«ãƒ¡ãƒ©ã¯é™¤å¤–
 			return;
 		}
 #endif
 		RenderPath path;
 		if (renderPaths.ContainsKey(camera)) {
-			// ƒŒƒ“ƒ_[ƒpƒX‚ª—L‚ê‚Îg‚¤
+			// ãƒ¬ãƒ³ãƒ€ãƒ¼ãƒ‘ã‚¹ãŒæœ‰ã‚Œã°ä½¿ã†
 			path = renderPaths[camera];
 		} else {
-			// –³‚¯‚ê‚Îì¬
+			// ç„¡ã‘ã‚Œã°ä½œæˆ
 			path = new RenderPath();
 			path.renderId = renderPaths.Count;
 			path.cameraEvent = cameraEvent;
-			// ƒvƒ‰ƒOƒCƒ“•`‰æ‚·‚éƒRƒ}ƒ“ƒhƒoƒbƒtƒ@‚ğì¬
+			// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³æç”»ã™ã‚‹ã‚³ãƒãƒ³ãƒ‰ãƒãƒƒãƒ•ã‚¡ã‚’ä½œæˆ
 			path.commandBuffer = new CommandBuffer();
 			path.commandBuffer.IssuePluginEvent(Plugin.EffekseerGetRenderFunc(), path.renderId);
-			// ƒRƒ}ƒ“ƒhƒoƒbƒtƒ@‚ğƒJƒƒ‰‚É“o˜^
+			// ã‚³ãƒãƒ³ãƒ‰ãƒãƒƒãƒ•ã‚¡ã‚’ã‚«ãƒ¡ãƒ©ã«ç™»éŒ²
 			camera.AddCommandBuffer(path.cameraEvent, path.commandBuffer);
 			renderPaths.Add(camera, path);
 		}
 
-		// ƒrƒ…[ŠÖ˜A‚Ìs—ñ‚ğXV
+		// ãƒ“ãƒ¥ãƒ¼é–¢é€£ã®è¡Œåˆ—ã‚’æ›´æ–°
 		SetCameraMatrix(path.renderId, camera);
 		SetProjectionMatrix(path.renderId, camera);
 	}
@@ -368,7 +368,7 @@ public class EffekseerSystem : MonoBehaviour
 }
 
 /// <summary>
-/// Ä¶‚µ‚½ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒXƒnƒ“ƒhƒ‹
+/// å†ç”Ÿã—ãŸã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒ³ãƒ‰ãƒ«
 /// </summary>
 public struct EffekseerHandle
 {
@@ -384,7 +384,7 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// ƒGƒtƒFƒNƒg‚ğ’â~‚·‚é
+	/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’åœæ­¢ã™ã‚‹
 	/// </summary>
 	public void Stop()
 	{
@@ -392,18 +392,18 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// ƒGƒtƒFƒNƒg‚ÌˆÊ’u‚ğİ’è
+	/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ä½ç½®ã‚’è¨­å®š
 	/// </summary>
-	/// <param name="location">ˆÊ’u</param>
+	/// <param name="location">ä½ç½®</param>
 	public void SetLocation(Vector3 location)
 	{
 		EffekseerSystem.Plugin.EffekseerSetLocation(m_handle, location.x, location.y, location.z);
 	}
 	
 	/// <summary>
-	/// ƒGƒtƒFƒNƒg‚Ì‰ñ“]‚ğİ’è
+	/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®å›è»¢ã‚’è¨­å®š
 	/// </summary>
-	/// <param name="rotation">‰ñ“]</param>
+	/// <param name="rotation">å›è»¢</param>
 	public void SetRotation(Quaternion rotation)
 	{
 		Vector3 axis;
@@ -413,16 +413,16 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// ƒGƒtƒFƒNƒg‚ÌŠgk‚ğİ’è
+	/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æ‹¡ç¸®ã‚’è¨­å®š
 	/// </summary>
-	/// <param name="scale">Šgk</param>
+	/// <param name="scale">æ‹¡ç¸®</param>
 	public void SetScale(Vector3 scale)
 	{
 		EffekseerSystem.Plugin.EffekseerSetScale(m_handle, scale.x, scale.y, scale.z);
 	}
 
 	/// <summary>
-	/// Update‚ÉXV‚·‚é‚©
+	/// Updateæ™‚ã«æ›´æ–°ã™ã‚‹ã‹
 	/// </summary>
 	public bool paused
 	{
@@ -436,7 +436,7 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// Draw‚Å•`‰æ‚³‚ê‚é‚©
+	/// Drawæ™‚ã§æç”»ã•ã‚Œã‚‹ã‹
 	/// </summary>
 	public bool shown
 	{
@@ -450,9 +450,9 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// ƒnƒ“ƒhƒ‹‚ª—LŒø‚©‚Ç‚¤‚©<br/>
-	/// <para>true:—LŒø</para>
-	/// <para>false:–³Œø</para>
+	/// ãƒãƒ³ãƒ‰ãƒ«ãŒæœ‰åŠ¹ã‹ã©ã†ã‹<br/>
+	/// <para>true:æœ‰åŠ¹</para>
+	/// <para>false:ç„¡åŠ¹</para>
 	/// </summary>
 	public bool enable
 	{
@@ -462,9 +462,9 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ª‘¶İ‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
-	/// <para>true:‘¶İ‚µ‚Ä‚¢‚é</para>
-	/// <para>false:Ä¶I—¹‚Å”jŠüB‚à‚µ‚­‚ÍStop‚Å’â~‚³‚ê‚½</para>
+	/// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒå­˜åœ¨ã—ã¦ã„ã‚‹ã‹ã©ã†ã‹
+	/// <para>true:å­˜åœ¨ã—ã¦ã„ã‚‹</para>
+	/// <para>false:å†ç”Ÿçµ‚äº†ã§ç ´æ£„ã€‚ã‚‚ã—ãã¯Stopã§åœæ­¢ã•ã‚ŒãŸ</para>
 	/// </summary>
 	public bool exists
 	{
