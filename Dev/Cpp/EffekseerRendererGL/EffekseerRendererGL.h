@@ -10,7 +10,7 @@
 #if defined(__EFFEKSEER_RENDERER_GL_GLEW__)
 
 #if _WIN32
-#include <gl/GL.h>
+#include <GL/gl.h>
 #else
 #include <GL/glew.h>
 #endif
@@ -18,7 +18,7 @@
 #elif defined(__EFFEKSEER_RENDERER_GL_GLEW_S__)
 
 #if _WIN32
-#include <gl/GL.h>
+#include <GL/gl.h>
 #else
 #define GLEW_STATIC
 #include <GL/glew.h>

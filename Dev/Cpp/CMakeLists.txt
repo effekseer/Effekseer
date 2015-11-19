@@ -14,6 +14,8 @@ endif()
 
 if (MSVC)
 
+elseif (MINGW)
+	set(CMAKE_CXX_FLAGS "-std=c++11" ${CMAKE_CXX_FLAGS})
 else()
 	set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC" ${CMAKE_CXX_FLAGS})
 endif()
@@ -31,6 +33,10 @@ if (MSVC)
 option(USE_OPENAL "Use OpenAL" OFF)
 else()
 option(USE_OPENAL "Use OpenAL" ON)
+endif()
+
+if (WIN32)
+option(USE_XAUDIO2 "Use XAudio2" ON)
 endif()
 
 # ソースコード設定
@@ -183,11 +189,13 @@ include_directories(
 # コンパイル先を追加
 add_library( effekseer STATIC ${effekseer_src} )
 
-if (MSVC)
+if (WIN32)
 add_library( effekseer_renderer_dx9 STATIC ${effekseer_renderer_dx9_src} )
 add_library( effekseer_renderer_dx11 STATIC ${effekseer_renderer_dx11_src} )
 add_library( effekseer_sound_dsound STATIC ${effekseer_sound_dsound_src} )
+if (USE_XAUDIO2)
 add_library( effekseer_sound_xaudio2 STATIC ${effekseer_sound_xaudio2_src} )
+endif()
 endif()
 
 add_library( effekseer_renderer_gl STATIC ${effekseer_renderer_gl_src} )

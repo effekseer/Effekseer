@@ -36,7 +36,7 @@
 
 #include <memory>
 #include <assert.h>
-#include <Windows.h>
+#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 

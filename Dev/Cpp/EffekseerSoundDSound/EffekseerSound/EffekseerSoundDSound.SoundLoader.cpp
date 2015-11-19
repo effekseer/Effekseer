@@ -5,6 +5,7 @@
 #include <string.h>
 #include "EffekseerSoundDSound.SoundImplemented.h"
 #include "EffekseerSoundDSound.SoundLoader.h"
+#include <algorithm>
 
 //-----------------------------------------------------------------------------------
 //
@@ -60,7 +61,11 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 
 		if (memcmp(&chunkIdent, "fmt ", 4) == 0) {
 			// フォーマットチャンク
+#ifdef _MSC_VER
 			uint32_t size = min(chunkSize, sizeof(wavefmt));
+#else
+			uint32_t size = std::min( static_cast<size_t>(chunkSize), sizeof(wavefmt));
+#endif
 			fread(&wavefmt, 1, size, fp);
 			if (size < chunkSize) {
 				fseek(fp, chunkSize - size, SEEK_CUR);

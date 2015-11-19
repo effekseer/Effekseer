@@ -123,9 +123,12 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_background(nullptr)
 	, m_distortingCallback(nullptr)
 {
-	SetLightDirection( ::Effekseer::Vector3D( 1.0f, 1.0f, 1.0f ) );
-	SetLightColor( ::Effekseer::Color( 255, 255, 255, 255 ) );
-	SetLightAmbientColor( ::Effekseer::Color( 0, 0, 0, 0 ) );
+	::Effekseer::Vector3D direction( 1.0f, 1.0f, 1.0f );
+	SetLightDirection( direction );
+	::Effekseer::Color lightColor( 255, 255, 255, 255 );
+	SetLightColor( lightColor );
+	::Effekseer::Color lightAmbient( 0, 0, 0, 0 );
+	SetLightAmbientColor( lightAmbient );
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	EffekseerRenderer::PngTextureLoader::Initialize();
