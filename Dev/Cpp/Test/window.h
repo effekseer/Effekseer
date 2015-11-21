@@ -9,7 +9,7 @@
 #include "common.h"
 
 #if _WIN32
-#include <Windows.h>
+#include <windows.h>
 HWND GetHandle();
 
 #else

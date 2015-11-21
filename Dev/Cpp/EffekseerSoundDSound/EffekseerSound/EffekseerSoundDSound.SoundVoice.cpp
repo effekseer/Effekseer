@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------------------
 #include "EffekseerSoundDSound.SoundImplemented.h"
 #include "EffekseerSoundDSound.SoundVoice.h"
+#include <cmath>
 
 //-----------------------------------------------------------------------------------
 //

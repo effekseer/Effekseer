@@ -33,7 +33,7 @@
 #else
 
 #if _WIN32
-#include <Windows.h>
+#include <windows.h>
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "gdiplus.lib")

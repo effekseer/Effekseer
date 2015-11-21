@@ -207,7 +207,7 @@ namespace Culling3D
 	{
 		objs.clear();
 	
-#ifdef _WIN32
+#ifdef _MSC_VER
 		if (_finite(cameraProjMat.Values[2][2]) != 0 &&
 			cameraProjMat.Values[0][0] != 0.0f &&
 			cameraProjMat.Values[1][1] != 0.0f)

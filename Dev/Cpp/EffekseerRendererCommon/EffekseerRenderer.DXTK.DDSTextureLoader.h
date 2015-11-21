@@ -36,7 +36,7 @@
 
 #include <memory>
 #include <assert.h>
-#include <Windows.h>
+#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -44,12 +44,15 @@
 #include <algorithm>
 #endif
 
-#if defined(_MSC_VER) && (_MSC_VER<1610) && !defined(_In_reads_)
+#if (defined(_MSC_VER) && (_MSC_VER<1610) && !defined(_In_reads_)) || defined(__GNUC__)
 #define _In_reads_(exp)
 #define _Out_writes_(exp)
 #define _In_reads_bytes_(exp)
 #define _In_reads_opt_(exp)
 #define _Outptr_opt_
+#endif
+#ifdef __GNUC__
+#define _Out_opt_
 #endif
 
 namespace EffekseerDirectX
