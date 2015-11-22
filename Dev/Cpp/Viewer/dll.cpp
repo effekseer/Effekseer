@@ -800,7 +800,7 @@ bool Native::StepEffect()
 
 		m_rootRotation.X += m_effectBehavior.RotationVelocityX;
 		m_rootRotation.Y += m_effectBehavior.RotationVelocityY;
-		m_rootRotation.Z += m_effectBehavior.PositionVelocityZ;
+		m_rootRotation.Z += m_effectBehavior.RotationVelocityZ;
 		
 		m_rootScale.X += m_effectBehavior.ScaleVelocityX;
 		m_rootScale.Y += m_effectBehavior.ScaleVelocityY;
