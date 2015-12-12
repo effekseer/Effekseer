@@ -70,6 +70,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 		GLExt::glGenerateMipmap(GL_TEXTURE_2D);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
+		EffekseerRenderer::PngTextureLoader::Unload();
 
 		return (void*)texture;
 	}

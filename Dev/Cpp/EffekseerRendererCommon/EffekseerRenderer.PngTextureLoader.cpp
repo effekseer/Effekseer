@@ -96,10 +96,12 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 			}
 		}
 		
+		ES_SAFE_DELETE(bmp);
 		return true;
 	}
 	else
 	{
+		ES_SAFE_DELETE(bmp);
 		return false;
 	}
 	

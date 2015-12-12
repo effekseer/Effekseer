@@ -79,6 +79,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 				if(FAILED(hr))
 				{
 					delete [] data_texture;
+					::EffekseerRenderer::PngTextureLoader::Unload();
 					return (void*)texture;
 				}
 
@@ -96,6 +97,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 				if(FAILED(hr))
 				{
 					delete [] data_texture;
+					::EffekseerRenderer::PngTextureLoader::Unload();
 					return (void*)texture;
 				}
 
@@ -124,6 +126,8 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 
 				hr = m_renderer->GetDevice()->UpdateTexture( tempTexture, texture );
 				ES_SAFE_RELEASE( tempTexture );
+
+				::EffekseerRenderer::PngTextureLoader::Unload();
 			}
 		}
 		else if( data_texture[0] == 'D' &&
