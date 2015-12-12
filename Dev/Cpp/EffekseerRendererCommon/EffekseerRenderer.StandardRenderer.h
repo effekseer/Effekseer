@@ -172,12 +172,21 @@ public:
 
 			void* data = nullptr;
 
-			vb->RingBufferLock(vertexCaches.size(), offsetSize, data);
+			if (vb->RingBufferLock(vertexCaches.size(), offsetSize, data))
+			{
+				assert(data != nullptr);
+				memcpy(data, vertexCaches.data(), vertexCaches.size());
+				vb->Unlock();
+			}
+			else
+			{
+				// 現状、描画するインスタンス数が多すぎる場合は描画しなくしている
+				vertexCaches.clear();
+				return;
+			}
 
-			memcpy(data, vertexCaches.data(), vertexCaches.size());
 			vertexCaches.clear();
 
-			vb->Unlock();
 		}
 
 		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();
@@ -260,10 +269,11 @@ public:
 		}
 		else
 		{
+			int32_t spriteCount = vertexSize / sizeof(VERTEX) / 4;
 			m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), sizeof(VERTEX));
 			m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
 			m_renderer->SetLayout(shader_);
-			m_renderer->DrawSprites(vertexSize / sizeof(VERTEX) / 4, offsetSize / sizeof(VERTEX));
+			m_renderer->DrawSprites(spriteCount, offsetSize / sizeof(VERTEX));
 		}
 
 		m_renderer->EndShader(shader_);
