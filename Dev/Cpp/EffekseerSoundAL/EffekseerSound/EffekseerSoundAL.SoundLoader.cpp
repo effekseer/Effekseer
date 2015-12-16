@@ -114,7 +114,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 		break;
 	}
 
-	ALenum format = (wavefmt.nChannels == 16) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
+	ALenum format = (wavefmt.nChannels == 2) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
 
 	SoundData* soundData = new SoundData;
 	memset(soundData, 0, sizeof(SoundData));
