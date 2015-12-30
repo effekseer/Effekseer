@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using Effekseer;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -19,14 +20,19 @@ public class EffekseerSystem : MonoBehaviour
 	public bool drawInSceneView = true;
 
 	/// <summary>
-	/// インスタンスの最大数
+	/// エフェクトインスタンスの最大数
 	/// </summary>
-	public int maxInstances		= 800;
+	public int effectInstances	= 800;
 
 	/// <summary>
 	/// 四角形の最大数
 	/// </summary>
 	public int maxSquares		= 1200;
+	
+	/// <summary>
+	/// サウンドインスタンスの最大数
+	/// </summary>
+	public int soundInstances	= 16;
 
 	/// <summary>
 	/// エフェクトの描画するタイミング
@@ -88,31 +94,36 @@ public class EffekseerSystem : MonoBehaviour
 	#region Internal Implimentation
 	
 	// シングルトンのインスタンス
-	private static EffekseerSystem _Instance = null;
+	private static EffekseerSystem instance = null;
 	public static EffekseerSystem Instance
 	{
 		get {
-			if (_Instance == null) {
+			if (instance == null) {
 				// staticに無ければ探す
 				var system = GameObject.FindObjectOfType<EffekseerSystem>();
 				if (system != null) {
 					// 有ればstaticにセット
-					_Instance = system;
+					instance = system;
 				} else {
 					// 無ければ新しく作成
 					var go = GameObject.Find("Effekseer");
 					if (go == null) {
 						go = new GameObject("Effekseer");
 					}
-					_Instance = go.AddComponent<EffekseerSystem>();
+					instance = go.AddComponent<EffekseerSystem>();
 				}
 			}
-			return _Instance;
+			return instance;
 		}
 	}
 	
 	// ロードしたエフェクト
 	private Dictionary<string, IntPtr> effectList = new Dictionary<string, IntPtr>();
+	// ロードしたリソース
+	private List<TextureResource> textureList = new List<TextureResource>();
+	private List<ModelResource> modelList = new List<ModelResource>();
+	private List<SoundResource> soundList = new List<SoundResource>();
+	private List<SoundInstance> soundInstanceList = new List<SoundInstance>();
 	
 #if UNITY_EDITOR
 	// ホットリロードの退避用
@@ -128,10 +139,7 @@ public class EffekseerSystem : MonoBehaviour
 	private Dictionary<Camera, RenderPath> renderPaths = new Dictionary<Camera, RenderPath>();
 
 	private IntPtr _GetEffect(string name) {
-		// 拡張子を除外する
-		name = Path.GetFileNameWithoutExtension(name);
-		
-		if (effectList.ContainsKey(name) == false) {
+		if (effectList.ContainsKey(name)) {
 			return effectList[name];
 		}
 		
@@ -144,34 +152,23 @@ public class EffekseerSystem : MonoBehaviour
 			return effectList[name];
 		}
 
-		// 拡張子を除外する
-		name = Path.GetFileNameWithoutExtension(name);
-
-		// パス解決
-		string fullPath = Path.Combine(EffekseerSystem.resourcePath, Path.ChangeExtension(name, "efk"));
-		fullPath += "\0";
-		
-		// UTF16に変換
-		byte[] bytes = Encoding.Unicode.GetBytes(fullPath);
-		
-		// 文字列をメモリにマップしてロードを実行
-		GCHandle ghc = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-		IntPtr effect = Plugin.EffekseerLoadEffect(ghc.AddrOfPinnedObject());
-		ghc.Free();
-		
-		if (effect == IntPtr.Zero) {
-			Debug.LogError("[Effekseer] Loading error: " + fullPath);
+		// Resourcesから読み込む
+		var asset = Resources.Load<TextAsset>(Utility.ResourcePath(name));
+		if (asset == null) {
+			Debug.LogError("[Effekseer] Failed to load effect: " + name);
 			return IntPtr.Zero;
 		}
+		byte[] bytes = asset.bytes;
+		
+		GCHandle ghc = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+		IntPtr effect = Plugin.EffekseerLoadEffectOnMemory(ghc.AddrOfPinnedObject(), bytes.Length);
+		ghc.Free();
 
 		effectList.Add(name, effect);
 		return effect;
 	}
 	
 	private void _ReleaseEffect(string name) {
-		// 拡張子を除外する
-		name = Path.GetFileNameWithoutExtension(name);
-		
 		if (effectList.ContainsKey(name) == false) {
 			var effect = effectList[name];
 			Plugin.EffekseerReleaseEffect(effect);
@@ -180,7 +177,13 @@ public class EffekseerSystem : MonoBehaviour
 	}
 	
 	void Awake() {
-		Plugin.EffekseerInit(maxInstances, maxSquares);
+		Plugin.EffekseerInit(effectInstances, maxSquares);
+		for (int i = 0; i < soundInstances; i++) {
+			GameObject go = new GameObject();
+			go.name = "Sound Instance";
+			go.transform.parent = transform;
+			soundInstanceList.Add(go.AddComponent<SoundInstance>());
+		}
 	}
 	
 	void OnDestroy() {
@@ -193,6 +196,44 @@ public class EffekseerSystem : MonoBehaviour
 
 	void OnEnable() {
 #if UNITY_EDITOR
+		Resume();
+#endif
+		Plugin.EffekseerSetTextureLoaderEvent(
+			TextureLoaderLoad, 
+			TextureLoaderUnload);
+		Plugin.EffekseerSetModelLoaderEvent(
+			ModelLoaderLoad, 
+			ModelLoaderUnload);
+		Plugin.EffekseerSetSoundLoaderEvent(
+			SoundLoaderLoad, 
+			SoundLoaderUnload);
+		Plugin.EffekseerSetSoundPlayerEvent(
+			SoundPlayerPlay,
+			SoundPlayerStopTag, 
+			SoundPlayerPauseTag, 
+			SoundPlayerCheckPlayingTag, 
+			SoundPlayerStopAll);
+		CleanUp();
+		Camera.onPreCull += OnPreCullEvent;
+	}
+
+	void OnDisable() {
+#if UNITY_EDITOR
+		Suspend();
+#endif
+		Camera.onPreCull -= OnPreCullEvent;
+		CleanUp();
+	}
+	
+#if UNITY_EDITOR
+	void Suspend() {
+		// Dictionaryは消えるので文字列にして退避
+		foreach (var pair in effectList) {
+			savedEffectList.Add(pair.Key + "," + pair.Value.ToString());
+		}
+		effectList.Clear();
+	}
+	void Resume() {
 		// ホットリロード時はリジューム処理
 		foreach (var effect in savedEffectList) {
 			string[] tokens = effect.Split(',');
@@ -201,22 +242,8 @@ public class EffekseerSystem : MonoBehaviour
 			}
 		}
 		savedEffectList.Clear();
-#endif
-		CleanUp();
-		Camera.onPreCull += OnPreCullEvent;
 	}
-
-	void OnDisable() {
-#if UNITY_EDITOR
-		// Dictionaryは消えるので文字列にして退避
-		foreach (var pair in effectList) {
-			savedEffectList.Add(pair.Key + "," + pair.Value.ToString());
-		}
-		effectList.Clear();
 #endif
-		Camera.onPreCull -= OnPreCullEvent;
-		CleanUp();
-	}
 
 	void CleanUp() {
 		// レンダーパスの破棄
@@ -270,100 +297,151 @@ public class EffekseerSystem : MonoBehaviour
 	}
 
 	private void SetProjectionMatrix(int renderId, Camera camera) {
-		float[] projectionMatrixArray = Matrix2Array(GL.GetGPUProjectionMatrix(
+		float[] projectionMatrixArray = Utility.Matrix2Array(GL.GetGPUProjectionMatrix(
 			camera.projectionMatrix, RenderTexture.active));
 		GCHandle ghc = GCHandle.Alloc(projectionMatrixArray, GCHandleType.Pinned);
-		EffekseerSystem.Plugin.EffekseerSetProjectionMatrix(renderId, ghc.AddrOfPinnedObject());
+		Plugin.EffekseerSetProjectionMatrix(renderId, ghc.AddrOfPinnedObject());
 		ghc.Free();
 	}
 
 	private void SetCameraMatrix(int renderId, Camera camera) {
-		float[] cameraMatrixArray = Matrix2Array(camera.worldToCameraMatrix);
+		float[] cameraMatrixArray = Utility.Matrix2Array(camera.worldToCameraMatrix);
 		GCHandle ghc = GCHandle.Alloc(cameraMatrixArray, GCHandleType.Pinned);
 		Plugin.EffekseerSetCameraMatrix(renderId, ghc.AddrOfPinnedObject());
 		ghc.Free();
 	}
 
-	private float[] Matrix2Array(Matrix4x4 mat) {
-		float[] res = new float[16];
-		res[ 0] = mat.m00;
-		res[ 1] = mat.m01;
-		res[ 2] = mat.m02;
-		res[ 3] = mat.m03;
-		res[ 4] = mat.m10;
-		res[ 5] = mat.m11;
-		res[ 6] = mat.m12;
-		res[ 7] = mat.m13;
-		res[ 8] = mat.m20;
-		res[ 9] = mat.m21;
-		res[10] = mat.m22;
-		res[11] = mat.m23;
-		res[12] = mat.m30;
-		res[13] = mat.m31;
-		res[14] = mat.m32;
-		res[15] = mat.m33;
-		return res;
+	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerTextureLoaderLoad))]
+	private static IntPtr TextureLoaderLoad(IntPtr path) {
+		var pathstr = Marshal.PtrToStringUni(path);
+		var res = new TextureResource();
+		if (res.Load(pathstr)) {
+			EffekseerSystem.Instance.textureList.Add(res);
+			return res.GetNativePtr();
+		}
+		return IntPtr.Zero;
+	}
+	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerTextureLoaderUnload))]
+	private static void TextureLoaderUnload(IntPtr path) {
+		var pathstr = Marshal.PtrToStringUni(path);
+		foreach (var res in EffekseerSystem.Instance.textureList) {
+			if (res.Path == pathstr) {
+				EffekseerSystem.Instance.textureList.Remove(res);
+				return;
+			}
+		}
+	}
+	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerModelLoaderLoad))]
+	private static int ModelLoaderLoad(IntPtr path, IntPtr buffer, int bufferSize) {
+		var pathstr = Marshal.PtrToStringUni(path);
+		var res = new ModelResource();
+		if (res.Load(pathstr) && res.Copy(buffer, bufferSize)) {
+			EffekseerSystem.Instance.modelList.Add(res);
+			return res.ModelData.bytes.Length;
+		}
+		return 0;
+	}
+	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerModelLoaderUnload))]
+	private static void ModelLoaderUnload(IntPtr path) {
+		var pathstr = Marshal.PtrToStringUni(path);
+		foreach (var res in EffekseerSystem.Instance.modelList) {
+			if (res.Path == pathstr) {
+				EffekseerSystem.Instance.modelList.Remove(res);
+				return;
+			}
+		}
+	}
+	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerSoundLoaderLoad))]
+	private static int SoundLoaderLoad(IntPtr path) {
+		var pathstr = Marshal.PtrToStringUni(path);
+		var res = new SoundResource();
+		if (res.Load(pathstr)) {
+			EffekseerSystem.Instance.soundList.Add(res);
+			return EffekseerSystem.Instance.soundList.Count;
+		}
+		return 0;
+	}
+	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerSoundLoaderUnload))]
+	private static void SoundLoaderUnload(IntPtr path) {
+		var pathstr = Marshal.PtrToStringUni(path);
+		foreach (var res in EffekseerSystem.Instance.soundList) {
+			if (res.Path == pathstr) {
+				EffekseerSystem.Instance.soundList.Remove(res);
+				return;
+			}
+		}
 	}
 	
-	public static class Plugin
+	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerSoundPlayerPlay))]
+	private static void SoundPlayerPlay(IntPtr tag, 
+			int data, float volume, float pan, float pitch, 
+			bool mode3D, float x, float y, float z, float distance) {
+		EffekseerSystem.Instance.PlaySound(tag, data, volume, pan, pitch, mode3D, x, y, z, distance);
+	}
+	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerSoundPlayerStopTag))]
+	private static void SoundPlayerStopTag(IntPtr tag) {
+		EffekseerSystem.Instance.StopSound(tag);
+	}
+	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerSoundPlayerPauseTag))]
+	private static void SoundPlayerPauseTag(IntPtr tag, bool pause) {
+		EffekseerSystem.Instance.PauseSound(tag, pause);
+	}
+	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerSoundPlayerCheckPlayingTag))]
+	private static bool SoundPlayerCheckPlayingTag(IntPtr tag) {
+		return EffekseerSystem.Instance.CheckSound(tag);
+	}
+	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerSoundPlayerStopAll))]
+	private static void SoundPlayerStopAll() {
+		EffekseerSystem.Instance.StopAllSounds();
+	}
+
+	private void PlaySound(IntPtr tag, 
+		int data, float volume, float pan, float pitch, 
+		bool mode3D, float x, float y, float z, float distance)
 	{
-		#if UNITY_IPHONE
-			public const string pluginName = "__Internal";
-		#else
-			public const string pluginName = "EffekseerUnity";
-		#endif
-
-		[DllImport(pluginName)]
-		public static extern void EffekseerInit(int maxInstances, int maxSquares);
-		
-		[DllImport(pluginName)]
-		public static extern void EffekseerTerm();
-		
-		[DllImport(pluginName)]
-		public static extern void EffekseerUpdate(float deltaTime);
-		
-		[DllImport(pluginName)]
-		public static extern IntPtr EffekseerGetRenderFunc();
-		
-		[DllImport(pluginName)]
-		public static extern void EffekseerSetProjectionMatrix(int renderId, IntPtr matrix);
-	
-		[DllImport(pluginName)]
-		public static extern void EffekseerSetCameraMatrix(int renderId, IntPtr matrix);
-		
-		[DllImport(pluginName)]
-		public static extern IntPtr EffekseerLoadEffect(IntPtr path);
-	
-		[DllImport(pluginName)]
-		public static extern void EffekseerReleaseEffect(IntPtr effect);
-	
-		[DllImport(pluginName)]
-		public static extern int EffekseerPlayEffect(IntPtr effect, float x, float y, float z);
-	
-		[DllImport(pluginName)]
-		public static extern void EffekseerStopEffect(int handle);
-	
-		[DllImport(pluginName)]
-		public static extern void EffekseerStopAllEffects();
-	
-		[DllImport(pluginName)]
-		public static extern void EffekseerSetShown(int handle, bool shown);
-	
-		[DllImport(pluginName)]
-		public static extern void EffekseerSetPaused(int handle, bool paused);
-	
-		[DllImport(pluginName)]
-		public static extern bool EffekseerExists(int handle);
-
-		[DllImport(pluginName)]
-		public static extern void EffekseerSetLocation(int handle, float x, float y, float z);
-
-		[DllImport(pluginName)]
-		public static extern void EffekseerSetRotation(int handle, float x, float y, float z, float angle);
-
-		[DllImport(pluginName)]
-		public static extern void EffekseerSetScale(int handle, float x, float y, float z);
+		if (data <= 0) {
+			return;
+		}
+		SoundResource resource = soundList[data - 1];
+		if (resource == null) {
+			return;
+		}
+		foreach (var instance in soundInstanceList) {
+			if (!instance.CheckPlaying()) {
+				instance.Play(tag.ToString(), resource.Audio, volume, pan, pitch, mode3D, x, y, z, distance);
+				break;
+			}
+		}
 	}
+	private void StopSound(IntPtr tag) {
+		foreach (var sound in soundInstanceList) {
+			if (sound.AudioTag == tag.ToString()) {
+				sound.Stop();
+			}
+		}
+	}
+	private void PauseSound(IntPtr tag, bool paused) {
+		foreach (var sound in soundInstanceList) {
+			if (sound.AudioTag == tag.ToString()) {
+				sound.Pause(paused);
+			}
+		}
+	}
+	private bool CheckSound(IntPtr tag) {
+		bool playing = false;
+		foreach (var sound in soundInstanceList) {
+			if (sound.AudioTag == tag.ToString()) {
+				playing |= sound.CheckPlaying();
+			}
+		}
+		return playing;
+	}
+	private void StopAllSounds() {
+		foreach (var sound in soundInstanceList) {
+			sound.Stop();
+		}
+	}
+
 	#endregion
 }
 
@@ -388,7 +466,7 @@ public struct EffekseerHandle
 	/// </summary>
 	public void Stop()
 	{
-		EffekseerSystem.Plugin.EffekseerStopEffect(m_handle);
+		Plugin.EffekseerStopEffect(m_handle);
 	}
 	
 	/// <summary>
@@ -397,7 +475,7 @@ public struct EffekseerHandle
 	/// <param name="location">位置</param>
 	public void SetLocation(Vector3 location)
 	{
-		EffekseerSystem.Plugin.EffekseerSetLocation(m_handle, location.x, location.y, location.z);
+		Plugin.EffekseerSetLocation(m_handle, location.x, location.y, location.z);
 	}
 	
 	/// <summary>
@@ -409,7 +487,7 @@ public struct EffekseerHandle
 		Vector3 axis;
 		float angle;
 		rotation.ToAngleAxis(out angle, out axis);
-		EffekseerSystem.Plugin.EffekseerSetRotation(m_handle, axis.x, axis.y, axis.z, angle * Mathf.Deg2Rad);
+		Plugin.EffekseerSetRotation(m_handle, axis.x, axis.y, axis.z, angle * Mathf.Deg2Rad);
 	}
 	
 	/// <summary>
@@ -418,7 +496,7 @@ public struct EffekseerHandle
 	/// <param name="scale">拡縮</param>
 	public void SetScale(Vector3 scale)
 	{
-		EffekseerSystem.Plugin.EffekseerSetScale(m_handle, scale.x, scale.y, scale.z);
+		Plugin.EffekseerSetScale(m_handle, scale.x, scale.y, scale.z);
 	}
 
 	/// <summary>
@@ -427,7 +505,7 @@ public struct EffekseerHandle
 	public bool paused
 	{
 		set {
-			EffekseerSystem.Plugin.EffekseerSetPaused(m_handle, value);
+			Plugin.EffekseerSetPaused(m_handle, value);
 			m_paused = value;
 		}
 		get {
@@ -441,7 +519,7 @@ public struct EffekseerHandle
 	public bool shown
 	{
 		set {
-			EffekseerSystem.Plugin.EffekseerSetShown(m_handle, value);
+			Plugin.EffekseerSetShown(m_handle, value);
 			m_shown = value;
 		}
 		get {
@@ -469,7 +547,7 @@ public struct EffekseerHandle
 	public bool exists
 	{
 		get {
-			return EffekseerSystem.Plugin.EffekseerExists(m_handle);
+			return Plugin.EffekseerExists(m_handle);
 		}
 	}
 }

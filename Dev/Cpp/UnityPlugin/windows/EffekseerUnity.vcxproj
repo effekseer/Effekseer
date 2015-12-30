@@ -70,6 +70,8 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -80,6 +82,8 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -129,10 +133,11 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;EFFEKSEERUNITY_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\Effekseer;..\..\EffekseerRendererDX9;..\..\EffekseerRendererDX11;..\..\EffekseerSoundXAudio2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -149,10 +154,11 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;EFFEKSEERUNITY_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\Effekseer;..\..\EffekseerRendererDX9;..\..\EffekseerRendererDX11;..\..\EffekseerSoundXAudio2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -160,10 +166,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\EffekseerPluginCommon.cpp" />
+    <ClCompile Include="..\common\EffekseerPluginSound.cpp" />
+    <ClCompile Include="EffekseerPluginLoaderWin.cpp" />
     <ClCompile Include="EffekseerPluginWin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\EffekseerPluginCommon.h" />
+    <ClInclude Include="..\common\EffekseerPluginLoader.h" />
+    <ClInclude Include="..\common\EffekseerPluginSound.h" />
     <ClInclude Include="..\common\UnityPluginInterface.h" />
   </ItemGroup>
   <ItemGroup>
@@ -172,9 +182,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\EffekseerRendererDX9\EffekseerRendererDX9.vcxproj">
       <Project>{8145e20a-fdaa-4c69-994d-697876e61faa}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\EffekseerSoundXAudio2\EffekseerSoundXAudio2.vcxproj">
-      <Project>{5c73251f-26d7-44cf-a3d7-1e333f585d4f}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\Effekseer\Effekseer.vcxproj">
       <Project>{91e36741-5dfc-46e3-a7f3-28a67fd637c8}</Project>

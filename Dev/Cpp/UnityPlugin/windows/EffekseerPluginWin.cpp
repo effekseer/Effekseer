@@ -5,7 +5,6 @@
 #include "Effekseer.h"
 #include "EffekseerRendererDX9.h"
 #include "EffekseerRendererDX11.h"
-#include "EffekseerSoundXAudio2.h"
 #include "../common/EffekseerPluginCommon.h"
 #include "../common/IUnityGraphics.h"
 #include "../common/IUnityGraphicsD3D9.h"
@@ -13,21 +12,18 @@
 
 #pragma comment(lib, "shlwapi.lib")
 
-static IUnityInterfaces*	g_UnityInterfaces = NULL;
-static IUnityGraphics*		g_Graphics = NULL;
-static UnityGfxRenderer		g_RendererType = kUnityGfxRendererNull;
-static IDirect3DDevice9*	g_D3d9Device = NULL;
-static ID3D11Device*		g_D3d11Device = NULL;
-static ID3D11DeviceContext*	g_D3d11Context = NULL;
+using namespace Effekseer;
+
+IUnityInterfaces*		g_UnityInterfaces = NULL;
+IUnityGraphics*			g_Graphics = NULL;
+UnityGfxRenderer			g_RendererType = kUnityGfxRendererNull;
+IDirect3DDevice9*		g_D3d9Device = NULL;
+ID3D11Device*			g_D3d11Device = NULL;
+ID3D11DeviceContext*		g_D3d11Context = NULL;
 
 Effekseer::Manager*				g_EffekseerManager = NULL;
-EffekseerRenderer::Renderer*	g_EffekseerRenderer = NULL;
-EffekseerSound::Sound*			g_EffekseerSound = NULL;
-IXAudio2*						g_XAudio2 = NULL;
-IXAudio2MasteringVoice*			g_MasteringVoice = NULL;
+EffekseerRenderer::Renderer*		g_EffekseerRenderer = NULL;
 
-static bool InitializeXAudio2();
-static void FinalizeXAudio2();
 static void InitializeEffekseer(int maxInstances, int maxSquares);
 static void FinalizeEffekseer();
 
@@ -55,80 +51,6 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 		break;
 	}
 	return res;
-}
-
-static bool InitializeXAudio2()
-{
-	HRESULT hr;
-	hr = XAudio2Create(&g_XAudio2, 0);
-	if (FAILED(hr)) {
-		FinalizeXAudio2();
-		return false;
-	}
-	hr = g_XAudio2->CreateMasteringVoice(&g_MasteringVoice, 2, 44100);
-	if (FAILED(hr)) {
-		FinalizeXAudio2();
-		return false;
-	}
-	return true;
-}
-
-static void FinalizeXAudio2()
-{
-	if (g_MasteringVoice != NULL) {
-		g_MasteringVoice->DestroyVoice();
-		g_MasteringVoice = NULL;
-	}
-	if (g_XAudio2 != NULL) {
-		g_XAudio2->Release();
-		g_XAudio2 = NULL;
-	}
-}
-
-// Effekseer‰Šú‰»
-static void InitializeEffekseer(int maxInstances, int maxSquares)
-{
-	switch (g_RendererType) {
-	case kUnityGfxRendererD3D9:
-		g_EffekseerRenderer = EffekseerRendererDX9::Renderer::Create(g_D3d9Device, maxSquares);
-		break;
-	case kUnityGfxRendererD3D11:
-		g_EffekseerRenderer = EffekseerRendererDX11::Renderer::Create(g_D3d11Device, g_D3d11Context, maxSquares);
-		break;
-	}
-
-	g_EffekseerManager = Effekseer::Manager::Create(maxInstances);
-	g_EffekseerManager->SetSpriteRenderer(g_EffekseerRenderer->CreateSpriteRenderer());
-	g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
-	g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
-	g_EffekseerManager->SetModelRenderer(g_EffekseerRenderer->CreateModelRenderer());
-
-	g_EffekseerManager->SetTextureLoader(g_EffekseerRenderer->CreateTextureLoader());
-	g_EffekseerManager->SetModelLoader(g_EffekseerRenderer->CreateModelLoader());
-
-	if (g_XAudio2 != NULL) {
-		g_EffekseerSound = EffekseerSound::Sound::Create(g_XAudio2, 16, 16);
-		g_EffekseerManager->SetSoundPlayer(g_EffekseerSound->CreateSoundPlayer());
-		g_EffekseerManager->SetSoundLoader(g_EffekseerSound->CreateSoundLoader());
-	}
-}
-
-// EffekseerI—¹ˆ—
-static void FinalizeEffekseer()
-{
-	if (g_EffekseerManager != NULL) {
-		g_EffekseerManager->Destroy();
-		g_EffekseerManager = NULL;
-	}
-	if (g_EffekseerSound != NULL) {
-		g_EffekseerSound->Destory();
-		g_EffekseerSound = NULL;
-	}
-	
-	if (g_EffekseerRenderer != NULL) {
-		g_EffekseerRenderer->Destory();
-		g_EffekseerRenderer = NULL;
-	}
 }
 
 // Unity plugin load event
@@ -234,13 +156,35 @@ extern "C"
 
 	DLLEXPORT void UNITY_API EffekseerInit(int maxInstances, int maxSquares)
 	{
-		InitializeXAudio2();
-		InitializeEffekseer(maxInstances, maxSquares);
+		switch (g_RendererType) {
+		case kUnityGfxRendererD3D9:
+			g_EffekseerRenderer = EffekseerRendererDX9::Renderer::Create(g_D3d9Device, maxSquares);
+			break;
+		case kUnityGfxRendererD3D11:
+			g_EffekseerRenderer = EffekseerRendererDX11::Renderer::Create(g_D3d11Device, g_D3d11Context, maxSquares);
+			break;
+		}
+
+		g_EffekseerManager = Effekseer::Manager::Create(maxInstances);
+		g_EffekseerManager->SetSpriteRenderer(g_EffekseerRenderer->CreateSpriteRenderer());
+		g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
+		g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
+		g_EffekseerManager->SetModelRenderer(g_EffekseerRenderer->CreateModelRenderer());
+
+		g_EffekseerManager->SetTextureLoader(g_EffekseerRenderer->CreateTextureLoader());
+		g_EffekseerManager->SetModelLoader(g_EffekseerRenderer->CreateModelLoader());
 	}
 
 	DLLEXPORT void UNITY_API EffekseerTerm()
 	{
-		FinalizeEffekseer();
-		FinalizeXAudio2();
+		if (g_EffekseerManager != NULL) {
+			g_EffekseerManager->Destroy();
+			g_EffekseerManager = NULL;
+		}
+
+		if (g_EffekseerRenderer != NULL) {
+			g_EffekseerRenderer->Destory();
+			g_EffekseerRenderer = NULL;
+		}
 	}
 }

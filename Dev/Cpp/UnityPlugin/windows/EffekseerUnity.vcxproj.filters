@@ -7,6 +7,12 @@
     <ClCompile Include="EffekseerPluginWin.cpp">
       <Filter>windows</Filter>
     </ClCompile>
+    <ClCompile Include="EffekseerPluginLoaderWin.cpp">
+      <Filter>windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\EffekseerPluginSound.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="common">
@@ -21,6 +27,12 @@
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\common\EffekseerPluginCommon.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\EffekseerPluginLoader.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\EffekseerPluginSound.h">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
