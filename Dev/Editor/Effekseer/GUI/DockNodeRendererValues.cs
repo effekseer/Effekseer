@@ -18,6 +18,11 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockNodeDrawingValues_HandleDestroyed);
 
 			lp_Renderer.SetType(typeof(Data.RendererValues));
+
+			if (Core.Language == Language.English)
+			{
+				Text = "Render";
+			}
 		}
 
 		void Read()

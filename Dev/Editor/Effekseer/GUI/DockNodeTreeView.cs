@@ -16,6 +16,11 @@ namespace Effekseer.GUI
 			InitializeComponent();
 
 			nodeTreeView.Renew();
+
+			if (Core.Language == Language.English)
+			{
+				Text = "Node Tree";
+			}
 		}
 
 		private void DockNodeTreeView_Load(object sender, EventArgs e)

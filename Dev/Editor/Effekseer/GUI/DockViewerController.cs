@@ -15,6 +15,13 @@ namespace Effekseer.GUI
 		{
 			InitializeComponent();
 
+			if (Core.Language == Language.English)
+			{
+				Text = "Viewer Control";
+				lb_st.Text = "Start";
+				lb_end.Text = "End";
+			}
+
 			Core.OnAfterChangeStartFrame += new EventHandler(Core_OnAfterChangeStartFrame);
 			Core.OnAfterChangeEndFrame += new EventHandler(Core_OnAfterChangeEndFrame);
 			Core.OnAfterChangeIsLoop += new EventHandler(Core_OnAfterChangeIsLoop);

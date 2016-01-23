@@ -17,6 +17,11 @@ namespace Effekseer.GUI
 			InitializeComponent();
 			
 			subject.Text = "Effekseer Version " + Core.Version;
+
+			if(Core.Language == Language.English)
+			{
+				this.Text = "About Effekseer";
+			}
 		}
 
 		private void link1_Click(object sender, EventArgs e)

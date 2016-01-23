@@ -15,6 +15,11 @@ namespace Effekseer.GUI
 		{
 			InitializeComponent();
 
+			if (Core.Language == Language.English)
+			{
+				Text = "Viewer";
+			}
+
 			Command.CommandManager.Changed += OnChanged;
 
 			Core.EffectBehavior.Location.X.OnChanged += OnChanged;

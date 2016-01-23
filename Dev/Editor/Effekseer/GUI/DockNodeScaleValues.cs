@@ -19,6 +19,11 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockNodeScalingValues_HandleDestroyed);
 
 			lp_Scale.SetType(typeof(Data.ScaleValues));
+
+			if (Core.Language == Language.English)
+			{
+				Text = "Scale";
+			}
 		}
 
 		void Read()

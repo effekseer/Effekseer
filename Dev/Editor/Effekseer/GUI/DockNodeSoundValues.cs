@@ -18,6 +18,11 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockNodeSoundValues_HandleDestroyed);
 
 			lp_Sound.SetType(typeof(Data.SoundValues));
+
+			if (Core.Language == Language.English)
+			{
+				Text = "Sound";
+			}
 		}
 
 		void Read()

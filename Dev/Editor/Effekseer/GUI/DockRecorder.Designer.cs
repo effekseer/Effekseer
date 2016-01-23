@@ -28,16 +28,13 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.grp_option = new System.Windows.Forms.GroupBox();
 			this.lbl_isTranslucent = new System.Windows.Forms.Label();
 			this.cb_isTranslucent = new System.Windows.Forms.CheckBox();
-			this.btn_record = new System.Windows.Forms.Button();
-			this.grp_area = new System.Windows.Forms.GroupBox();
-			this.cb_area = new System.Windows.Forms.CheckBox();
-			this.lbl_showArea = new System.Windows.Forms.Label();
-			this.txt_areaHeight = new Effekseer.GUI.Component.DelegateIntTextBox();
-			this.lbl_h = new System.Windows.Forms.Label();
-			this.lbl_w = new System.Windows.Forms.Label();
-			this.txt_areaWidth = new Effekseer.GUI.Component.DelegateIntTextBox();
+			this.grp_type = new System.Windows.Forms.GroupBox();
+			this.txt_number_v = new Effekseer.GUI.Component.DelegateIntTextBox();
+			this.lbl_the_number_of_image_h = new System.Windows.Forms.Label();
+			this.cb_type = new System.Windows.Forms.ComboBox();
 			this.grp_frame = new System.Windows.Forms.GroupBox();
 			this.txt_freq = new Effekseer.GUI.Component.DelegateIntTextBox();
 			this.lbl_freq = new System.Windows.Forms.Label();
@@ -45,16 +42,30 @@
 			this.lbl_ending = new System.Windows.Forms.Label();
 			this.txt_startingFrame = new Effekseer.GUI.Component.DelegateIntTextBox();
 			this.lbl_starting = new System.Windows.Forms.Label();
-			this.grp_type = new System.Windows.Forms.GroupBox();
-			this.txt_number_v = new Effekseer.GUI.Component.DelegateIntTextBox();
-			this.lbl_the_number_of_image_h = new System.Windows.Forms.Label();
-			this.cb_type = new System.Windows.Forms.ComboBox();
-			this.grp_option = new System.Windows.Forms.GroupBox();
-			this.grp_area.SuspendLayout();
-			this.grp_frame.SuspendLayout();
-			this.grp_type.SuspendLayout();
+			this.grp_area = new System.Windows.Forms.GroupBox();
+			this.cb_area = new System.Windows.Forms.CheckBox();
+			this.lbl_showArea = new System.Windows.Forms.Label();
+			this.txt_areaHeight = new Effekseer.GUI.Component.DelegateIntTextBox();
+			this.lbl_h = new System.Windows.Forms.Label();
+			this.lbl_w = new System.Windows.Forms.Label();
+			this.txt_areaWidth = new Effekseer.GUI.Component.DelegateIntTextBox();
+			this.btn_record = new System.Windows.Forms.Button();
 			this.grp_option.SuspendLayout();
+			this.grp_type.SuspendLayout();
+			this.grp_frame.SuspendLayout();
+			this.grp_area.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// grp_option
+			// 
+			this.grp_option.Controls.Add(this.lbl_isTranslucent);
+			this.grp_option.Controls.Add(this.cb_isTranslucent);
+			this.grp_option.Location = new System.Drawing.Point(12, 258);
+			this.grp_option.Name = "grp_option";
+			this.grp_option.Size = new System.Drawing.Size(200, 48);
+			this.grp_option.TabIndex = 51;
+			this.grp_option.TabStop = false;
+			this.grp_option.Text = "オプション";
 			// 
 			// lbl_isTranslucent
 			// 
@@ -69,99 +80,59 @@
 			// cb_isTranslucent
 			// 
 			this.cb_isTranslucent.AutoSize = true;
-			this.cb_isTranslucent.Location = new System.Drawing.Point(122, 21);
+			this.cb_isTranslucent.Location = new System.Drawing.Point(147, 18);
 			this.cb_isTranslucent.Name = "cb_isTranslucent";
 			this.cb_isTranslucent.Size = new System.Drawing.Size(15, 14);
 			this.cb_isTranslucent.TabIndex = 60;
 			this.cb_isTranslucent.UseVisualStyleBackColor = true;
 			// 
-			// btn_record
+			// grp_type
 			// 
-			this.btn_record.Location = new System.Drawing.Point(12, 312);
-			this.btn_record.Name = "btn_record";
-			this.btn_record.Size = new System.Drawing.Size(75, 23);
-			this.btn_record.TabIndex = 50;
-			this.btn_record.Text = "録画";
-			this.btn_record.UseVisualStyleBackColor = true;
-			this.btn_record.Click += new System.EventHandler(this.btn_record_Click);
+			this.grp_type.Controls.Add(this.txt_number_v);
+			this.grp_type.Controls.Add(this.lbl_the_number_of_image_h);
+			this.grp_type.Controls.Add(this.cb_type);
+			this.grp_type.Location = new System.Drawing.Point(12, 183);
+			this.grp_type.Name = "grp_type";
+			this.grp_type.Size = new System.Drawing.Size(200, 69);
+			this.grp_type.TabIndex = 3;
+			this.grp_type.TabStop = false;
+			this.grp_type.Text = "出力形式";
 			// 
-			// grp_area
+			// txt_number_v
 			// 
-			this.grp_area.Controls.Add(this.cb_area);
-			this.grp_area.Controls.Add(this.lbl_showArea);
-			this.grp_area.Controls.Add(this.txt_areaHeight);
-			this.grp_area.Controls.Add(this.lbl_h);
-			this.grp_area.Controls.Add(this.lbl_w);
-			this.grp_area.Controls.Add(this.txt_areaWidth);
-			this.grp_area.Location = new System.Drawing.Point(12, 12);
-			this.grp_area.Name = "grp_area";
-			this.grp_area.Size = new System.Drawing.Size(174, 74);
-			this.grp_area.TabIndex = 1;
-			this.grp_area.TabStop = false;
-			this.grp_area.Text = "録画範囲(解像度)";
+			this.txt_number_v.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
+			this.txt_number_v.Enabled = false;
+			this.txt_number_v.IsEnable = null;
+			this.txt_number_v.Location = new System.Drawing.Point(122, 44);
+			this.txt_number_v.Name = "txt_number_v";
+			this.txt_number_v.ReadMethod = null;
+			this.txt_number_v.Size = new System.Drawing.Size(40, 19);
+			this.txt_number_v.TabIndex = 31;
+			this.txt_number_v.WheelStep = 1;
+			this.txt_number_v.WriteMethod = null;
 			// 
-			// cb_area
+			// lbl_the_number_of_image_h
 			// 
-			this.cb_area.AutoSize = true;
-			this.cb_area.Location = new System.Drawing.Point(122, 50);
-			this.cb_area.Name = "cb_area";
-			this.cb_area.Size = new System.Drawing.Size(15, 14);
-			this.cb_area.TabIndex = 12;
-			this.cb_area.UseVisualStyleBackColor = true;
-			this.cb_area.CheckedChanged += new System.EventHandler(this.cb_guide_CheckedChanged);
+			this.lbl_the_number_of_image_h.AutoSize = true;
+			this.lbl_the_number_of_image_h.Location = new System.Drawing.Point(7, 47);
+			this.lbl_the_number_of_image_h.Name = "lbl_the_number_of_image_h";
+			this.lbl_the_number_of_image_h.Size = new System.Drawing.Size(65, 12);
+			this.lbl_the_number_of_image_h.TabIndex = 31;
+			this.lbl_the_number_of_image_h.Text = "横方向枚数";
 			// 
-			// lbl_showArea
+			// cb_type
 			// 
-			this.lbl_showArea.AutoSize = true;
-			this.lbl_showArea.Location = new System.Drawing.Point(6, 50);
-			this.lbl_showArea.Name = "lbl_showArea";
-			this.lbl_showArea.Size = new System.Drawing.Size(86, 12);
-			this.lbl_showArea.TabIndex = 25;
-			this.lbl_showArea.Text = "録画範囲を表示";
-			// 
-			// txt_areaHeight
-			// 
-			this.txt_areaHeight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
-			this.txt_areaHeight.Enabled = false;
-			this.txt_areaHeight.IsEnable = null;
-			this.txt_areaHeight.Location = new System.Drawing.Point(122, 19);
-			this.txt_areaHeight.Name = "txt_areaHeight";
-			this.txt_areaHeight.ReadMethod = null;
-			this.txt_areaHeight.Size = new System.Drawing.Size(40, 19);
-			this.txt_areaHeight.TabIndex = 11;
-			this.txt_areaHeight.WheelStep = 1;
-			this.txt_areaHeight.WriteMethod = null;
-			// 
-			// lbl_h
-			// 
-			this.lbl_h.AutoSize = true;
-			this.lbl_h.Location = new System.Drawing.Point(87, 22);
-			this.lbl_h.Name = "lbl_h";
-			this.lbl_h.Size = new System.Drawing.Size(29, 12);
-			this.lbl_h.TabIndex = 24;
-			this.lbl_h.Text = "横幅";
-			// 
-			// lbl_w
-			// 
-			this.lbl_w.AutoSize = true;
-			this.lbl_w.Location = new System.Drawing.Point(6, 22);
-			this.lbl_w.Name = "lbl_w";
-			this.lbl_w.Size = new System.Drawing.Size(29, 12);
-			this.lbl_w.TabIndex = 23;
-			this.lbl_w.Text = "横幅";
-			// 
-			// txt_areaWidth
-			// 
-			this.txt_areaWidth.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
-			this.txt_areaWidth.Enabled = false;
-			this.txt_areaWidth.IsEnable = null;
-			this.txt_areaWidth.Location = new System.Drawing.Point(41, 19);
-			this.txt_areaWidth.Name = "txt_areaWidth";
-			this.txt_areaWidth.ReadMethod = null;
-			this.txt_areaWidth.Size = new System.Drawing.Size(40, 19);
-			this.txt_areaWidth.TabIndex = 10;
-			this.txt_areaWidth.WheelStep = 1;
-			this.txt_areaWidth.WriteMethod = null;
+			this.cb_type.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cb_type.FormattingEnabled = true;
+			this.cb_type.Items.AddRange(new object[] {
+            "1枚にまとめて出力",
+            "連番画像として出力",
+            "GIFアニメーションとして出力"});
+			this.cb_type.Location = new System.Drawing.Point(8, 18);
+			this.cb_type.Name = "cb_type";
+			this.cb_type.Size = new System.Drawing.Size(154, 20);
+			this.cb_type.TabIndex = 30;
+			this.cb_type.SelectedIndexChanged += new System.EventHandler(this.cb_type_SelectedIndexChanged);
 			// 
 			// grp_frame
 			// 
@@ -173,7 +144,7 @@
 			this.grp_frame.Controls.Add(this.lbl_starting);
 			this.grp_frame.Location = new System.Drawing.Point(12, 92);
 			this.grp_frame.Name = "grp_frame";
-			this.grp_frame.Size = new System.Drawing.Size(174, 85);
+			this.grp_frame.Size = new System.Drawing.Size(200, 85);
 			this.grp_frame.TabIndex = 2;
 			this.grp_frame.TabStop = false;
 			this.grp_frame.Text = "出力フレーム";
@@ -244,64 +215,93 @@
 			this.lbl_starting.TabIndex = 26;
 			this.lbl_starting.Text = "開始フレーム";
 			// 
-			// grp_type
+			// grp_area
 			// 
-			this.grp_type.Controls.Add(this.txt_number_v);
-			this.grp_type.Controls.Add(this.lbl_the_number_of_image_h);
-			this.grp_type.Controls.Add(this.cb_type);
-			this.grp_type.Location = new System.Drawing.Point(12, 183);
-			this.grp_type.Name = "grp_type";
-			this.grp_type.Size = new System.Drawing.Size(174, 69);
-			this.grp_type.TabIndex = 3;
-			this.grp_type.TabStop = false;
-			this.grp_type.Text = "出力形式";
+			this.grp_area.Controls.Add(this.cb_area);
+			this.grp_area.Controls.Add(this.lbl_showArea);
+			this.grp_area.Controls.Add(this.txt_areaHeight);
+			this.grp_area.Controls.Add(this.lbl_h);
+			this.grp_area.Controls.Add(this.lbl_w);
+			this.grp_area.Controls.Add(this.txt_areaWidth);
+			this.grp_area.Location = new System.Drawing.Point(12, 12);
+			this.grp_area.Name = "grp_area";
+			this.grp_area.Size = new System.Drawing.Size(200, 74);
+			this.grp_area.TabIndex = 1;
+			this.grp_area.TabStop = false;
+			this.grp_area.Text = "録画範囲(解像度)";
 			// 
-			// txt_number_v
+			// cb_area
 			// 
-			this.txt_number_v.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
-			this.txt_number_v.Enabled = false;
-			this.txt_number_v.IsEnable = null;
-			this.txt_number_v.Location = new System.Drawing.Point(122, 44);
-			this.txt_number_v.Name = "txt_number_v";
-			this.txt_number_v.ReadMethod = null;
-			this.txt_number_v.Size = new System.Drawing.Size(40, 19);
-			this.txt_number_v.TabIndex = 31;
-			this.txt_number_v.WheelStep = 1;
-			this.txt_number_v.WriteMethod = null;
+			this.cb_area.AutoSize = true;
+			this.cb_area.Location = new System.Drawing.Point(122, 50);
+			this.cb_area.Name = "cb_area";
+			this.cb_area.Size = new System.Drawing.Size(15, 14);
+			this.cb_area.TabIndex = 12;
+			this.cb_area.UseVisualStyleBackColor = true;
+			this.cb_area.CheckedChanged += new System.EventHandler(this.cb_guide_CheckedChanged);
 			// 
-			// lbl_the_number_of_image_h
+			// lbl_showArea
 			// 
-			this.lbl_the_number_of_image_h.AutoSize = true;
-			this.lbl_the_number_of_image_h.Location = new System.Drawing.Point(7, 47);
-			this.lbl_the_number_of_image_h.Name = "lbl_the_number_of_image_h";
-			this.lbl_the_number_of_image_h.Size = new System.Drawing.Size(65, 12);
-			this.lbl_the_number_of_image_h.TabIndex = 31;
-			this.lbl_the_number_of_image_h.Text = "横方向枚数";
+			this.lbl_showArea.AutoSize = true;
+			this.lbl_showArea.Location = new System.Drawing.Point(6, 50);
+			this.lbl_showArea.Name = "lbl_showArea";
+			this.lbl_showArea.Size = new System.Drawing.Size(86, 12);
+			this.lbl_showArea.TabIndex = 25;
+			this.lbl_showArea.Text = "録画範囲を表示";
 			// 
-			// cb_type
+			// txt_areaHeight
 			// 
-			this.cb_type.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cb_type.FormattingEnabled = true;
-			this.cb_type.Items.AddRange(new object[] {
-            "1枚にまとめて出力",
-            "連番画像として出力",
-            "GIFアニメーションとして出力"});
-			this.cb_type.Location = new System.Drawing.Point(8, 18);
-			this.cb_type.Name = "cb_type";
-			this.cb_type.Size = new System.Drawing.Size(154, 20);
-			this.cb_type.TabIndex = 30;
-			this.cb_type.SelectedIndexChanged += new System.EventHandler(this.cb_type_SelectedIndexChanged);
+			this.txt_areaHeight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
+			this.txt_areaHeight.Enabled = false;
+			this.txt_areaHeight.IsEnable = null;
+			this.txt_areaHeight.Location = new System.Drawing.Point(122, 19);
+			this.txt_areaHeight.Name = "txt_areaHeight";
+			this.txt_areaHeight.ReadMethod = null;
+			this.txt_areaHeight.Size = new System.Drawing.Size(40, 19);
+			this.txt_areaHeight.TabIndex = 11;
+			this.txt_areaHeight.WheelStep = 1;
+			this.txt_areaHeight.WriteMethod = null;
 			// 
-			// grp_option
+			// lbl_h
 			// 
-			this.grp_option.Controls.Add(this.lbl_isTranslucent);
-			this.grp_option.Controls.Add(this.cb_isTranslucent);
-			this.grp_option.Location = new System.Drawing.Point(12, 258);
-			this.grp_option.Name = "grp_option";
-			this.grp_option.Size = new System.Drawing.Size(174, 48);
-			this.grp_option.TabIndex = 51;
-			this.grp_option.TabStop = false;
-			this.grp_option.Text = "オプション";
+			this.lbl_h.AutoSize = true;
+			this.lbl_h.Location = new System.Drawing.Point(87, 22);
+			this.lbl_h.Name = "lbl_h";
+			this.lbl_h.Size = new System.Drawing.Size(29, 12);
+			this.lbl_h.TabIndex = 24;
+			this.lbl_h.Text = "横幅";
+			// 
+			// lbl_w
+			// 
+			this.lbl_w.AutoSize = true;
+			this.lbl_w.Location = new System.Drawing.Point(6, 22);
+			this.lbl_w.Name = "lbl_w";
+			this.lbl_w.Size = new System.Drawing.Size(29, 12);
+			this.lbl_w.TabIndex = 23;
+			this.lbl_w.Text = "横幅";
+			// 
+			// txt_areaWidth
+			// 
+			this.txt_areaWidth.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
+			this.txt_areaWidth.Enabled = false;
+			this.txt_areaWidth.IsEnable = null;
+			this.txt_areaWidth.Location = new System.Drawing.Point(41, 19);
+			this.txt_areaWidth.Name = "txt_areaWidth";
+			this.txt_areaWidth.ReadMethod = null;
+			this.txt_areaWidth.Size = new System.Drawing.Size(40, 19);
+			this.txt_areaWidth.TabIndex = 10;
+			this.txt_areaWidth.WheelStep = 1;
+			this.txt_areaWidth.WriteMethod = null;
+			// 
+			// btn_record
+			// 
+			this.btn_record.Location = new System.Drawing.Point(12, 312);
+			this.btn_record.Name = "btn_record";
+			this.btn_record.Size = new System.Drawing.Size(75, 23);
+			this.btn_record.TabIndex = 50;
+			this.btn_record.Text = "録画";
+			this.btn_record.UseVisualStyleBackColor = true;
+			this.btn_record.Click += new System.EventHandler(this.btn_record_Click);
 			// 
 			// DockRecorder
 			// 
@@ -316,14 +316,14 @@
 			this.Controls.Add(this.btn_record);
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Name = "DockRecorder";
-			this.grp_area.ResumeLayout(false);
-			this.grp_area.PerformLayout();
-			this.grp_frame.ResumeLayout(false);
-			this.grp_frame.PerformLayout();
-			this.grp_type.ResumeLayout(false);
-			this.grp_type.PerformLayout();
 			this.grp_option.ResumeLayout(false);
 			this.grp_option.PerformLayout();
+			this.grp_type.ResumeLayout(false);
+			this.grp_type.PerformLayout();
+			this.grp_frame.ResumeLayout(false);
+			this.grp_frame.PerformLayout();
+			this.grp_area.ResumeLayout(false);
+			this.grp_area.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
