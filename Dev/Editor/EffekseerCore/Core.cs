@@ -271,7 +271,7 @@ namespace Effekseer
 			var culture = System.Globalization.CultureInfo.CurrentCulture;
 			if (culture.Name == "ja-JP")
 			{
-				Language = Language.English;
+				Language = Language.Japanese;
 			}
 			else
 			{
