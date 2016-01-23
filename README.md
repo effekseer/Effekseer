@@ -12,7 +12,7 @@
 # RoadMap
 
 **Version 1.10**
-* ?
+* 英語版対応
 
 # Todo
 プルリクエストお待ちしております。
@@ -35,7 +35,6 @@
 * ツールのマルチプラットフォーム化
 
 **他**
-* 英語版対応
 * DirectX12対応
 * UnrealEngine4, Cocos2D対応
 * iPhone,Android対応
