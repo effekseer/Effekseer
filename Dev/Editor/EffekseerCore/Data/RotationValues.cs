@@ -77,6 +77,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "角度(度)")]
 			[Description(language = Language.Japanese, value = "インスタンスの角度")]
+			[Name(language = Language.English, value = "Angle")]
+			[Description(language = Language.English, value = "Rotation of the instance, in degrees")]
 			public Value.Vector3D Rotation
 			{
 				get;
@@ -93,6 +95,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "角度(度)")]
 			[Description(language = Language.Japanese, value = "インスタンスの初期角度")]
+			[Name(language = Language.English, value = "Angle")]
+			[Description(language = Language.English, value = "Initial rotation of the instance, in degrees")]
 			public Value.Vector3DWithRandom Rotation
 			{
 				get;
@@ -101,6 +105,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "角速度(度)")]
 			[Description(language = Language.Japanese, value = "インスタンスの角速度")]
+			[Name(language = Language.English, value = "Angular\nVelocity")]
+			[Description(language = Language.English, value = "Initial angular velocity of the instance, in degrees")]
 			public Value.Vector3DWithRandom Velocity
 			{
 				get;
@@ -109,6 +115,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "角加速度(度)")]
 			[Description(language = Language.Japanese, value = "インスタンスの初期角加速度")]
+			[Name(language = Language.English, value = "Angular\nAccel")]
+			[Description(language = Language.English, value = "Acceleration of the instance's angular velocity, in degrees")]
 			public Value.Vector3DWithRandom Acceleration
 			{
 				get;
@@ -127,6 +135,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "回転軸")]
 			[Description(language = Language.Japanese, value = "インスタンスの回転軸")]
+			[Name(language = Language.English, value = "Axis of\nRotation")]
+			[Description(language = Language.English, value = "Axis of rotation of the instance")]
 			public Value.Vector3DWithRandom Axis
 			{
 				get;
@@ -135,6 +145,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "角度(度)")]
 			[Description(language = Language.Japanese, value = "インスタンスの初期角度")]
+			[Name(language = Language.English, value = "Angle")]
+			[Description(language = Language.English, value = "Initial rotation of the instance, in degrees")]
 			public Value.FloatWithRandom Rotation
 			{
 				get;
@@ -143,6 +155,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "角速度(度)")]
 			[Description(language = Language.Japanese, value = "インスタンスの角速度")]
+			[Name(language = Language.English, value = "Angular\nVelocity")]
+			[Description(language = Language.English, value = "Initial angular velocity of the instance, in degrees")]
 			public Value.FloatWithRandom Velocity
 			{
 				get;
@@ -151,6 +165,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "角加速度(度)")]
 			[Description(language = Language.Japanese, value = "インスタンスの初期角加速度")]
+			[Name(language = Language.English, value = "Angular\nAccel")]
+			[Description(language = Language.English, value = "Acceleration of the instance's angular velocity, in degrees")]
 			public Value.FloatWithRandom Acceleration
 			{
 				get;
@@ -171,6 +187,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "回転軸")]
 			[Description(language = Language.Japanese, value = "インスタンスの回転軸")]
+			[Name(language = Language.English, value = "Axis of\nRotation")]
+			[Description(language = Language.English, value = "Axis of rotation of the instance")]
 			public Value.Vector3DWithRandom Axis
 			{
 				get;
@@ -194,6 +212,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "Fカーブ")]
 			[Description(language = Language.Japanese, value = "Fカーブ")]
+			[Name(language = Language.English, value = "F-Curve")]
+			[Description(language = Language.English, value = "F-Curve")]
 			[Shown(Shown = true)]
 			public Value.FCurveVector3D FCurve
 			{
@@ -217,16 +237,22 @@ namespace Effekseer.Data
 		public enum ParamaterType : int
 		{
 			[Name(value = "角度", language = Language.Japanese)]
+			[Name(value = "Fixed Angle", language = Language.English)]
 			Fixed = 0,
 			[Name(value = "角度・速度・加速度", language = Language.Japanese)]
+			[Name(value = "PVA", language = Language.English)]
 			PVA = 1,
 			[Name(value = "イージング", language = Language.Japanese)]
+			[Name(value = "Easing", language = Language.English)]
 			Easing = 2,
 			[Name(value = "任意軸 角度・速度・加速度", language = Language.Japanese)]
+			[Name(value = "PVA (Arbitrary Axis)", language = Language.English)]
 			AxisPVA = 3,
 			[Name(value = "任意軸 イージング", language = Language.Japanese)]
+			[Name(value = "Easing (Arbitrary Axis)", language = Language.English)]
 			AxisEasing = 4,
 			[Name(value = "角度(Fカーブ)", language = Language.Japanese)]
+			[Name(value = "Rotation (F-Curve)", language = Language.English)]
 			RotationFCurve = 5,
 		}
 	}

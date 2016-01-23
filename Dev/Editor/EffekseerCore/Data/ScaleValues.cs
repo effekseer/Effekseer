@@ -106,6 +106,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "拡大率")]
 			[Description(language = Language.Japanese, value = "インスタンスの拡大率")]
+			[Name(language = Language.English, value = "Scaling Factor")]
+			[Description(language = Language.English, value = "Magnification of the instance")]
 			public Value.Vector3D Scale
 			{
 				get;
@@ -122,6 +124,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "拡大率")]
 			[Description(language = Language.Japanese, value = "インスタンスの拡大率")]
+			[Name(language = Language.English, value = "Scaling Factor")]
+			[Description(language = Language.English, value = "Magnification of the instance")]
 			public Value.Vector3DWithRandom Scale
 			{
 				get;
@@ -130,6 +134,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "拡大速度")]
 			[Description(language = Language.Japanese, value = "インスタンスの拡大速度")]
+			[Name(language = Language.English, value = "Expansion\nSpeed")]
+			[Description(language = Language.English, value = "The instance's initial rate of expansion")]
 			public Value.Vector3DWithRandom Velocity
 			{
 				get;
@@ -138,6 +144,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "拡大加速度")]
 			[Description(language = Language.Japanese, value = "インスタンスの初期拡大加速度")]
+			[Name(language = Language.English, value = "Expansion\nAccel")]
+			[Description(language = Language.English, value = "Acceleration of the instance's expansion rate")]
 			public Value.Vector3DWithRandom Acceleration
 			{
 				get;
@@ -156,6 +164,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "拡大率")]
 			[Description(language = Language.Japanese, value = "インスタンスの拡大率")]
+			[Name(language = Language.English, value = "Scaling Factor")]
+			[Description(language = Language.English, value = "Magnification of the instance")]
 			public Value.FloatWithRandom Scale
 			{
 				get;
@@ -164,6 +174,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "拡大速度")]
 			[Description(language = Language.Japanese, value = "インスタンスの拡大速度")]
+			[Name(language = Language.English, value = "Expansion\nSpeed")]
+			[Description(language = Language.English, value = "The instance's initial rate of expansion")]
 			public Value.FloatWithRandom Velocity
 			{
 				get;
@@ -172,6 +184,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "拡大加速度")]
 			[Description(language = Language.Japanese, value = "インスタンスの初期拡大加速度")]
+			[Name(language = Language.English, value = "Expansion\nAccel")]
+			[Description(language = Language.English, value = "Acceleration of the instance's expansion rat")]
 			public Value.FloatWithRandom Acceleration
 			{
 				get;
@@ -189,16 +203,22 @@ namespace Effekseer.Data
 		public enum ParamaterType : int
 		{
 			[Name(value = "拡大率", language = Language.Japanese)]
+			[Name(value = "Fixed Scale", language = Language.English)]
 			Fixed = 0,
 			[Name(value = "拡大率・速度・加速度", language = Language.Japanese)]
+			[Name(value = "PVA", language = Language.English)]
 			PVA = 1,
 			[Name(value = "イージング", language = Language.Japanese)]
+			[Name(value = "Easing", language = Language.English)]
 			Easing = 2,
 			[Name(value = "単一 拡大率・速度・加速度", language = Language.Japanese)]
+			[Name(value = "PVA (Single)", language = Language.English)]
 			SinglePVA = 3,
 			[Name(value = "単一 イージング", language = Language.Japanese)]
+			[Name(value = "Easing (Single)", language = Language.English)]
 			SingleEasing = 4,
 			[Name(value = "拡大率(Fカーブ)", language = Language.Japanese)]
+			[Name(value = "F-Curve", language = Language.English)]
 			FCurve = 5,
 		}
 	}
