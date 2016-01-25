@@ -15,9 +15,9 @@ namespace Effekseer
 			native = new Native();
 		}
 
-		public bool CreateWindow(IntPtr handle, int width, int height)
+		public bool CreateWindow(IntPtr handle, int width, int height, bool isLinearMode)
 		{
-			return native.CreateWindow_Effekseer(handle, width, height);
+			return native.CreateWindow_Effekseer(handle, width, height, isLinearMode);
 		}
 
 		public bool UpdateWindow()

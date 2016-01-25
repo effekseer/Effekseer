@@ -41,8 +41,8 @@ public class Native : global::System.IDisposable {
   public Native() : this(EffekseerNativePINVOKE.new_Native(), true) {
   }
 
-  public bool CreateWindow_Effekseer(System.IntPtr handle, int width, int height) {
-    bool ret = EffekseerNativePINVOKE.Native_CreateWindow_Effekseer(swigCPtr, handle, width, height);
+  public bool CreateWindow_Effekseer(System.IntPtr handle, int width, int height, bool isSRGBMode) {
+    bool ret = EffekseerNativePINVOKE.Native_CreateWindow_Effekseer(swigCPtr, handle, width, height, isSRGBMode);
     return ret;
   }
 

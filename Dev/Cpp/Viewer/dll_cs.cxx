@@ -1300,12 +1300,13 @@ SWIGEXPORT void SWIGSTDCALL CSharp_delete_Native(void * jarg1) {
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_CreateWindow_Effekseer(void * jarg1, void * jarg2, int jarg3, int jarg4) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_CreateWindow_Effekseer(void * jarg1, void * jarg2, int jarg3, int jarg4, unsigned int jarg5) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
   void *arg2 = (void *) 0 ;
   int arg3 ;
   int arg4 ;
+  bool arg5 ;
   bool result;
   
   arg1 = (Native *)jarg1; 
@@ -1314,7 +1315,8 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_CreateWindow_Effekseer(void * 
   }
   arg3 = (int)jarg3; 
   arg4 = (int)jarg4; 
-  result = (bool)(arg1)->CreateWindow_Effekseer(arg2,arg3,arg4);
+  arg5 = jarg5 ? true : false; 
+  result = (bool)(arg1)->CreateWindow_Effekseer(arg2,arg3,arg4,arg5);
   jresult = result; 
   return jresult;
 }

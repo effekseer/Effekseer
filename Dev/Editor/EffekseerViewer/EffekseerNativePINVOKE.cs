@@ -485,7 +485,7 @@ class EffekseerNativePINVOKE {
   public static extern void delete_Native(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_CreateWindow_Effekseer")]
-  public static extern bool Native_CreateWindow_Effekseer(global::System.Runtime.InteropServices.HandleRef jarg1, System.IntPtr jarg2, int jarg3, int jarg4);
+  public static extern bool Native_CreateWindow_Effekseer(global::System.Runtime.InteropServices.HandleRef jarg1, System.IntPtr jarg2, int jarg3, int jarg4, bool jarg5);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Native_UpdateWindow")]
   public static extern bool Native_UpdateWindow(global::System.Runtime.InteropServices.HandleRef jarg1);

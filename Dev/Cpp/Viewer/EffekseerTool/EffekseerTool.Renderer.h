@@ -74,13 +74,14 @@ private:
 	Effekseer::Matrix44	m_cameraMatTemp;
 	Effekseer::Matrix44	m_projMatTemp;
 
+	bool				m_isSRGBMode = false;
 
 	void GenerateRenderTargets(int32_t width, int32_t height);
 public:
 	/**
 		@brief	コンストラクタ
 	*/
-	Renderer( int32_t squareMaxCount );
+	Renderer(int32_t squareMaxCount, bool isSRGBMode);
 
 	/**
 		@brief	デストラクタ

@@ -64,7 +64,7 @@ void Renderer::GenerateRenderTargets(int32_t width, int32_t height)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Renderer::Renderer( int32_t squareMaxCount )
+Renderer::Renderer(int32_t squareMaxCount, bool isSRGBMode)
 	: m_handle		( NULL )
 	, m_width		( 0 )
 	, m_height		( 0 )
@@ -106,6 +106,8 @@ Renderer::Renderer( int32_t squareMaxCount )
 	, m_recordingTempDepth	( NULL )
 
 	, m_backGroundTexture	( NULL )
+
+	, m_isSRGBMode(isSRGBMode)
 
 	, BackgroundColor		( 0, 0, 0, 255 )
 	, GridColor				( 255, 255, 255, 255 )
@@ -248,7 +250,20 @@ bool Renderer::Present()
 {
 	HRESULT hr;
 
-	hr = m_d3d_device->Present( NULL, NULL, NULL, NULL );
+	// ƒKƒ“ƒ}
+	if (m_isSRGBMode)
+	{
+		IDirect3DSwapChain9* swapChain = nullptr;
+		m_d3d_device->GetSwapChain(0, &swapChain);
+		
+		hr = swapChain->Present(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_LINEAR_CONTENT);
+		
+		ES_SAFE_RELEASE(swapChain);
+	}
+	else
+	{
+		hr = m_d3d_device->Present(NULL, NULL, NULL, NULL);
+	}
 
 	switch ( hr )
 	{
@@ -499,6 +514,11 @@ bool Renderer::BeginRendering()
 
 	m_renderer->BeginRendering();
 
+	if (m_isSRGBMode)
+	{
+		GetDevice()->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
+	}
+	
 	return true;
 }
 
@@ -509,6 +529,11 @@ bool Renderer::EndRendering()
 {
 	assert( m_d3d != NULL );
 	assert( m_d3d_device != NULL );
+
+	if (m_isSRGBMode)
+	{
+		GetDevice()->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
+	}
 
 	m_renderer->EndRendering();
 

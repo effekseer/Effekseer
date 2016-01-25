@@ -113,7 +113,7 @@ int main()
 {
 	InitWindow();
 	
-	g_renderer = new ::EffekseerTool::Renderer( 2000 );
+	g_renderer = new ::EffekseerTool::Renderer( 2000, false );
 	g_renderer->Initialize( g_window_handle, g_window_width, g_window_height );
 	
 	g_manager = ::Effekseer::Manager::Create( 2000 );

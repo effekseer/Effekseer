@@ -18,8 +18,9 @@ namespace Effekseer
 		/// <param name="handle"></param>
 		/// <param name="width"></param>
 		/// <param name="height"></param>
+		/// <param name="isLinearMode"></param>
 		/// <returns></returns>
-		bool CreateWindow(IntPtr handle, int width, int height);
+		bool CreateWindow(IntPtr handle, int width, int height, bool isLinearMode);
 
 		/// <summary>
 		/// 描画画面を更新する。

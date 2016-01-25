@@ -94,9 +94,9 @@ private:
 	{
 	private:
 		EffekseerRenderer::Renderer*	m_renderer;
-
+		bool							m_isSRGBMode = false;
 	public:
-		TextureLoader( EffekseerRenderer::Renderer* renderer );
+		TextureLoader( EffekseerRenderer::Renderer* renderer, bool isSRGBMode );
 		virtual ~TextureLoader();
 
 	public:
@@ -149,6 +149,8 @@ private:
 	
 	int					m_step;
 
+	bool				m_isSRGBMode = false;
+
 	::Effekseer::Vector3D m_rootLocation;
 	::Effekseer::Vector3D m_rootRotation;
 	::Effekseer::Vector3D m_rootScale;
@@ -157,7 +159,7 @@ public:
 
 	~Native();
 
-	bool CreateWindow_Effekseer( void* handle, int width, int height );
+	bool CreateWindow_Effekseer( void* handle, int width, int height, bool isSRGBMode );
 
 	bool UpdateWindow();
 

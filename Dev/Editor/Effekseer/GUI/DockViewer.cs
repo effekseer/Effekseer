@@ -227,7 +227,7 @@ namespace Effekseer.GUI
 			}
 
 			// WidthかHeightが0以下だとウィンドウの作成に失敗するので、その場合はとりあえずサイズを1にして回避
-			if (viewer.CreateWindow(Handle, Width <= 0 ? 1 : Width, Height <= 0 ? 1 : Height))
+			if (viewer.CreateWindow(Handle, Width <= 0 ? 1 : Width, Height <= 0 ? 1 : Height, false))
 			{
 				is_shown = true;
 			}

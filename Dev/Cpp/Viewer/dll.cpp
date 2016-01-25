@@ -225,8 +225,9 @@ static ::Effekseer::Client*		g_client = NULL;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Native::TextureLoader::TextureLoader( EffekseerRenderer::Renderer* renderer )
+Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer, bool isSRGBMode)
 	: m_renderer	( renderer )
+	, m_isSRGBMode(isSRGBMode)
 {
 
 }
@@ -266,7 +267,30 @@ void* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType
 			fread( data_texture, 1, size_texture, fp_texture );
 			fclose( fp_texture );
 
-			D3DXCreateTextureFromFileInMemory( ((EffekseerRendererDX9::RendererImplemented*)m_renderer)->GetDevice(), data_texture, size_texture, &pTexture );
+			//D3DXCreateTextureFromFileInMemory( ((EffekseerRendererDX9::RendererImplemented*)m_renderer)->GetDevice(), data_texture, size_texture, &pTexture );
+
+			DWORD usage = 0;
+			if (m_isSRGBMode)
+			{
+				usage = D3DUSAGE_QUERY_SRGBREAD;
+			}
+			
+			D3DXCreateTextureFromFileInMemoryEx(
+				((EffekseerRendererDX9::RendererImplemented*)m_renderer)->GetDevice(),
+				data_texture,
+				size_texture,
+				D3DX_DEFAULT,
+				D3DX_DEFAULT,
+				D3DX_DEFAULT,
+				usage,
+				D3DFMT_UNKNOWN,
+				D3DPOOL_MANAGED,
+				D3DX_DEFAULT,
+				D3DX_DEFAULT,
+				0,
+				NULL,
+				NULL,
+				&pTexture);
 
 			delete [] data_texture;
 
@@ -517,9 +541,11 @@ Native::~Native()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Native::CreateWindow_Effekseer( void* pHandle, int width, int height )
+bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode)
 {
-	g_renderer = new ::EffekseerTool::Renderer( 20000 );
+	m_isSRGBMode = isSRGBMode;
+
+	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode );
 	if( g_renderer->Initialize( (HWND)pHandle, width, height ) )
 	{
 		// ŠÖ”’Ç‰Á
@@ -547,7 +573,7 @@ bool Native::CreateWindow_Effekseer( void* pHandle, int width, int height )
 			g_manager->SetRingRenderer( ring_renderer );
 			g_manager->SetModelRenderer( model_renderer );
 			g_manager->SetTrackRenderer( track_renderer );
-			g_manager->SetTextureLoader( new TextureLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer() ) );
+			g_manager->SetTextureLoader( new TextureLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer(), isSRGBMode ) );
 			g_manager->SetModelLoader( new ModelLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer() ) );
 		}
 	}
