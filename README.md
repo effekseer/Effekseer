@@ -13,6 +13,7 @@
 
 **Version 1.10**
 * 英語版対応
+* ガンマスペースオプション
 
 # Todo
 プルリクエストお待ちしております。
@@ -38,7 +39,6 @@
 * DirectX12対応
 * UnrealEngine4, Cocos2D対応
 * iPhone,Android対応
-* ガンマ表示オプション
 
 # コミッター向け
 

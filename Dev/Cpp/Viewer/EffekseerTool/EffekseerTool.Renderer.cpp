@@ -512,12 +512,12 @@ bool Renderer::BeginRendering()
 		m_renderer->SetProjectionMatrix(proj);
 	}
 
-	m_renderer->BeginRendering();
-
 	if (m_isSRGBMode)
 	{
 		GetDevice()->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
 	}
+
+	m_renderer->BeginRendering();
 	
 	return true;
 }
@@ -530,12 +530,12 @@ bool Renderer::EndRendering()
 	assert( m_d3d != NULL );
 	assert( m_d3d_device != NULL );
 
+	m_renderer->EndRendering();
+
 	if (m_isSRGBMode)
 	{
 		GetDevice()->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
 	}
-
-	m_renderer->EndRendering();
 
 	if( RendersGuide && !m_recording )
 	{

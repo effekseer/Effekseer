@@ -272,7 +272,7 @@ void* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType
 			DWORD usage = 0;
 			if (m_isSRGBMode)
 			{
-				usage = D3DUSAGE_QUERY_SRGBREAD;
+				usage = 0;
 			}
 			
 			D3DXCreateTextureFromFileInMemoryEx(

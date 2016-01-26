@@ -164,6 +164,17 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "カラースペース")]
+		[Description(language = Language.Japanese, value = "カラースペース(再起動後に有効になります。)")]
+		[Name(language = Language.English, value = "Color Space")]
+		[Description(language = Language.English, value = "Color Space")]
+		[Undo(Undo = false)]
+		public Value.Enum<ColorSpaceType> ColorSpace
+		{
+			get;
+			private set;
+		}
+
 		[Name(language = Language.Japanese, value = "マウスの回転方向(X)")]
 		[Description(language = Language.Japanese, value = "マウスの回転方向を逆にする。")]
 		[Name(language = Language.English, value = "Mouse Rotation (X)")]
@@ -227,6 +238,8 @@ namespace Effekseer.Data
 			FPS = new Value.Enum<FPSType>(FPSType._60FPS);
 			Coordinate = new Value.Enum<CoordinateType>(CoordinateType.Right);
 
+			ColorSpace = new Value.Enum<ColorSpaceType>(ColorSpaceType.GammaSpace);
+
 			MouseRotInvX = new Value.Boolean(false);
 			MouseRotInvY = new Value.Boolean(false);
 			MouseSlideInvX = new Value.Boolean(false);
@@ -257,6 +270,16 @@ namespace Effekseer.Data
 			[Name(value = "左手系", language = Language.Japanese)]
 			[Name(value = "Left-Handed", language = Language.English)]
 			Left = 1,
+		}
+
+		public enum ColorSpaceType : int
+		{
+			[Name(value = "ガンマスペース", language = Language.Japanese)]
+			[Name(value = "GammaSpace", language = Language.English)]
+			GammaSpace = 0,
+			[Name(value = "リニアスペース", language = Language.Japanese)]
+			[Name(value = "LinearSpace", language = Language.English)]
+			LinearSpace = 1,
 		}
 	}
 }
