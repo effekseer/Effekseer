@@ -50,6 +50,21 @@ namespace EffekseerRenderer
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+
+/**
+	@brief	背景を歪ませるエフェクトを描画する前に実行されるコールバック
+*/
+class DistortingCallback
+{
+public:
+	DistortingCallback() {}
+	virtual ~DistortingCallback() {}
+
+	virtual void OnDistorting() {}
+};
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
 class Renderer
 {
 protected:
@@ -186,6 +201,16 @@ public:
 		@brief	レンダーステートを強制的にリセットする。
 	*/
 	virtual void ResetRenderState() = 0;
+
+	/**
+	@brief	背景を歪ませるエフェクトが描画される前に呼ばれるコールバックを取得する。
+	*/
+	virtual DistortingCallback* GetDistortingCallback() = 0;
+
+	/**
+	@brief	背景を歪ませるエフェクトが描画される前に呼ばれるコールバックを設定する。
+	*/
+	virtual void SetDistortingCallback(DistortingCallback* callback) = 0;
 };
 
 //----------------------------------------------------------------------------------
@@ -239,6 +264,16 @@ public:
 		@brief	デバイスロストリセット間でデバイス自体を再構築する際に外部からデバイスを設定する。
 	*/
 	virtual void ChangeDevice( LPDIRECT3DDEVICE9 device ) = 0;
+
+	/**
+	@brief	背景を取得する。
+	*/
+	virtual IDirect3DTexture9* GetBackground() = 0;
+
+	/**
+	@brief	背景を設定する。
+	*/
+	virtual void SetBackground(IDirect3DTexture9* background) = 0;
 };
 
 //----------------------------------------------------------------------------------

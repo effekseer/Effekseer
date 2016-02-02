@@ -9,10 +9,8 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include <GL/glew.h>
-#include <GL/wglew.h>
-
 #include <AL/alc.h>
+#include <Wingdi.h>
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glew32s.lib")
@@ -28,14 +26,16 @@
 #include <EffekseerSoundAL.h>
 
 #if _DEBUG
-#pragma comment(lib, "Effekseer.Debug.lib" )
-#pragma comment(lib, "EffekseerRendererGL.Debug.lib" )
-#pragma comment(lib, "EffekseerSoundAL.Debug.lib" )
+#pragma comment(lib, "VS2013/Debug/Effekseer.lib" )
+#pragma comment(lib, "VS2013/Debug/EffekseerRendererGL.lib" )
+#pragma comment(lib, "VS2013/Debug/EffekseerSoundAL.lib" )
 #else
-#pragma comment(lib, "Effekseer.Release.lib" )
-#pragma comment(lib, "EffekseerRendererGL.Release.lib" )
-#pragma comment(lib, "EffekseerSoundAL.Release.lib" )
+#pragma comment(lib, "VS2013/Release/Effekseer.lib" )
+#pragma comment(lib, "VS2013/Release/EffekseerRendererGL.lib" )
+#pragma comment(lib, "VS2013/Release/EffekseerSoundAL.lib" )
 #endif
+
+typedef int (APIENTRY * PFNWGLSWAPINTERVALEXTPROC)(int);
 
 //----------------------------------------------------------------------------------
 //
@@ -143,10 +143,9 @@ void InitWindow()
 
 	wglMakeCurrent( g_hDC, g_hGLRC );
 
-	GLenum glewIniterr = glewInit();
-    assert ( glewIniterr == GLEW_OK );
-
+	auto wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC) wglGetProcAddress("wglSwapIntervalEXT");
 	wglSwapIntervalEXT(1);
+
 	glViewport( 0, 0, g_window_width, g_window_height );
 	
 	// OpenALデバイスを作成
@@ -186,7 +185,6 @@ void MainLoop()
 			
 			
 			wglMakeCurrent( g_hDC, g_hGLRC );
-			wglSwapIntervalEXT( 1 );
 
 			glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
 			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

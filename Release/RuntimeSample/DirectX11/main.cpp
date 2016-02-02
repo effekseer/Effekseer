@@ -20,13 +20,13 @@
 #include <EffekseerSoundXAudio2.h>
 
 #if _DEBUG
-#pragma comment(lib, "Effekseer.Debug.lib" )
-#pragma comment(lib, "EffekseerRendererDX11.Debug.lib" )
-#pragma comment(lib, "EffekseerSoundXAudio2.Debug.lib" )
+#pragma comment(lib, "VS2013/Debug/Effekseer.lib" )
+#pragma comment(lib, "VS2013/Debug/EffekseerRendererDX11.lib" )
+#pragma comment(lib, "VS2013/Debug/EffekseerSoundXAudio2.lib" )
 #else
-#pragma comment(lib, "Effekseer.Release.lib" )
-#pragma comment(lib, "EffekseerRendererDX11.Release.lib" )
-#pragma comment(lib, "EffekseerSoundXAudio2.Release.lib" )
+#pragma comment(lib, "VS2013/Release/Effekseer.lib" )
+#pragma comment(lib, "VS2013/Release/EffekseerRendererDX11.lib" )
+#pragma comment(lib, "VS2013/Release/EffekseerSoundXAudio2.lib" )
 #endif
 
 //----------------------------------------------------------------------------------

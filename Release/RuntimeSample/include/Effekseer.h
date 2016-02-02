@@ -20,18 +20,8 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#ifdef _WIN32
-typedef signed char			int8_t;
-typedef unsigned char		uint8_t;
-typedef short				int16_t;
-typedef unsigned short		uint16_t;
-typedef int					int32_t;
-typedef unsigned int		uint32_t;
-typedef __int64				int64_t;
-typedef unsigned __int64	uint64_t;
-#else
 #include <stdint.h>
-#endif
+
 
 #ifdef _WIN32
 #include <windows.h>
@@ -117,81 +107,77 @@ typedef	void ( EFK_STDCALL *EffectInstanceRemovingCallback ) ( Manager* manager,
 /**
 	@brief	アルファブレンド
 */
-enum eAlphaBlend
+enum class AlphaBlendType : int32_t
 {
 	/// <summary>
 	/// 不透明
 	/// </summary>
-	ALPHA_BLEND_OPACITY = 0,
+	Opacity = 0,
 	/// <summary>
 	/// 透明
 	/// </summary>
-	ALPHA_BLEND_BLEND = 1,
+	Blend = 1,
 	/// <summary>
 	/// 加算
 	/// </summary>
-	ALPHA_BLEND_ADD = 2,
+	Add = 2,
 	/// <summary>
 	/// 減算
 	/// </summary>
-	ALPHA_BLEND_SUB = 3,
+	Sub = 3,
 	/// <summary>
 	/// 乗算
 	/// </summary>
-	ALPHA_BLEND_MUL = 4,
-
-	ALPHA_BLEND_DWORD = 0x7fffffff,
+	Mul = 4,
 };
 
-enum eTextureFilterType
+enum class TextureFilterType : int32_t
 {
-	TEXTURE_FILTER_NEAREST = 0,
-	TEXTURE_FILTER_LINEAR = 1,
-	TEXTURE_FILTER_DWORD = 0x7fffffff,
+	Nearest = 0,
+	Linear = 1,
 };
 
-enum eTextureWrapType
+enum class TextureWrapType : int32_t
 {
-	TEXTURE_WRAP_REPEAT = 0,
-	TEXTURE_WRAP_CLAMP = 1,
-
-	TEXTURE_WRAP_DWORD = 0x7fffffff,
+	Repeat = 0,
+	Clamp = 1,
 };
 
-enum eCullingType
+enum class CullingType : int32_t
 {
-	CULLING_FRONT = 0,
-	CULLING_BACK = 1,
-	CULLING_DOUBLE = 2,
-
-	CULLING_DWORD = 0x7fffffff,
+	Front = 0,
+	Back = 1,
+	Double = 2,
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-enum eBillboardType
+enum class BillboardType : int32_t
 {
-	BillboardType_Billboard = 0,
-	BillboardType_YAxisFixed = 1,
-	BillboardType_Fixed = 2,
-	BillboardType_RotatedBillboard = 3,
-
-	BillboardType_DWORD = 0x7fffffff,
+	Billboard = 0,
+	YAxisFixed = 1,
+	Fixed = 2,
+	RotatedBillboard = 3,
 };
 
-enum eCoordinateSystem
+enum class CoordinateSystem : int32_t
 {
-	COORDINATE_SYSTEM_LH,
-	COORDINATE_SYSTEM_RH,
-	COORDINATE_SYSTEM_DWORD = 0x7fffffff,
+	LH,
+	RH,
 };
 
-enum eCullingShape
+enum class CullingShape : int32_t
 {
-	CULLING_SHAPE_NONE = 0,
-	CULLING_SHAPE_SPHERE = 1,
-	CULLING_SHAPE_DWORD = 0x7fffffff,
+	NoneShape = 0,
+	Sphere = 1,
+};
+
+enum class TextureType : int32_t
+{
+	Color,
+	Normal,
+	Distortion,
 };
 
 //----------------------------------------------------------------------------------
@@ -776,7 +762,25 @@ public:
 		@param	t	[out]	位置
 	*/
 	void GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const; 
+	
+	/**
+		@brief	行列から拡大ベクトルを取得する。
+		@param	s	[out]	拡大ベクトル
+	*/
+	void GetScale( Vector3D& s ) const;
+	
+	/**
+		@brief	行列から回転行列を取得する。
+		@param	s	[out]	回転行列
+	*/
+	void GetRotation( Matrix43& r ) const;
 
+	/**
+		@brief	行列から移動ベクトルを取得する。
+		@param	t	[out]	移動ベクトル
+	*/
+	void GetTranslation( Vector3D& t ) const;
+	
 	/**
 		@brief	行列の拡大、回転、移動を設定する。
 		@param	s	[in]	拡大行列
@@ -1214,11 +1218,25 @@ public:
 	virtual int GetVersion() const = 0;
 
 	/**
-		@brief	格納されている画像のポインタを取得する。
+		@brief	格納されている色画像のポインタを取得する。
 		@param	n	[in]	画像のインデックス
 		@return	画像のポインタ
 	*/
-	virtual void* GetImage( int n ) const = 0;
+	virtual void* GetColorImage( int n ) const = 0;
+
+	/**
+	@brief	格納されている法線画像のポインタを取得する。
+	@param	n	[in]	画像のインデックス
+	@return	画像のポインタ
+	*/
+	virtual void* GetNormalImage(int n) const = 0;
+
+	/**
+	@brief	格納されている歪み画像のポインタを取得する。
+	@param	n	[in]	画像のインデックス
+	@return	画像のポインタ
+	*/
+	virtual void* GetDistortionImage(int n) const = 0;
 
 	/**
 		@brief	格納されている音波形のポインタを取得する。
@@ -1369,7 +1387,7 @@ public:
 		@brief	座標系を取得する。
 		@return	座標系
 	*/
-	virtual eCoordinateSystem GetCoordinateSystem() const = 0;
+	virtual CoordinateSystem GetCoordinateSystem() const = 0;
 
 	/**
 		@brief	座標系を設定する。
@@ -1378,7 +1396,7 @@ public:
 		座標系を設定する。
 		エフェクトファイルを読み込む前に設定する必要がある。
 	*/
-	virtual void SetCoordinateSystem( eCoordinateSystem coordinateSystem ) = 0;
+	virtual void SetCoordinateSystem( CoordinateSystem coordinateSystem ) = 0;
 
 	/**
 		@brief	スプライト描画機能を取得する。
@@ -1585,7 +1603,7 @@ public:
 		@param	angle	[in]	角度(ラジアン)
 	*/
 	virtual void SetRotation( Handle handle, const Vector3D& axis, float angle ) = 0;
-
+	
 	/**
 		@brief	エフェクトのインスタンスの拡大率を指定する。
 		@param	handle	[in]	インスタンスのハンドル
@@ -1594,6 +1612,20 @@ public:
 		@param	z		[in]	Z方向拡大率
 	*/
 	virtual void SetScale( Handle handle, float x, float y, float z ) = 0;
+
+	/**
+		@brief	エフェクトのインスタンスのターゲット位置を指定する。
+		@param	x	[in]	X座標
+		@param	y	[in]	Y座標
+		@param	z	[in]	Z座標
+	*/
+	virtual void SetTargetLocation( Handle handle, float x, float y, float z ) = 0;
+
+	/**
+		@brief	エフェクトのインスタンスのターゲット位置を指定する。
+		@param	location	[in]	位置
+	*/
+	virtual void SetTargetLocation( Handle handle, const Vector3D& location ) = 0;
 
 	/**
 		@brief	エフェクトのベース行列を取得する。
@@ -1764,12 +1796,15 @@ public:
 	{
 		Effect*				EffectPointer;
 		int32_t				ColorTextureIndex;
-		eAlphaBlend			AlphaBlend;
-		eTextureFilterType	TextureFilter;
-		eTextureWrapType	TextureWrap;
+		AlphaBlendType			AlphaBlend;
+		TextureFilterType	TextureFilter;
+		TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
-		eBillboardType		Billboard;
+		BillboardType		Billboard;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -1830,12 +1865,15 @@ public:
 	{
 		Effect*				EffectPointer;
 		int32_t				ColorTextureIndex;
-		eAlphaBlend			AlphaBlend;
-		eTextureFilterType	TextureFilter;
-		eTextureWrapType	TextureWrap;
+		AlphaBlendType			AlphaBlend;
+		TextureFilterType	TextureFilter;
+		TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
 		bool				ViewpointDependent;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -1896,13 +1934,16 @@ public:
 	{
 		Effect*				EffectPointer;
 		int32_t				ColorTextureIndex;
-		eAlphaBlend			AlphaBlend;
-		eTextureFilterType	TextureFilter;
-		eTextureWrapType	TextureWrap;
+		AlphaBlendType			AlphaBlend;
+		TextureFilterType	TextureFilter;
+		TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
-		eBillboardType		Billboard;
+		BillboardType		Billboard;
 		int32_t				VertexCount;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -1963,18 +2004,21 @@ public:
 	struct NodeParameter
 	{
 		Effect*				EffectPointer;
-		eAlphaBlend			AlphaBlend;
-		eTextureFilterType	TextureFilter;
-		eTextureWrapType	TextureWrap;
+		AlphaBlendType		AlphaBlend;
+		TextureFilterType	TextureFilter;
+		TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
 		bool				Lighting;
-		eCullingType		Culling;
+		CullingType		Culling;
 		int32_t				ModelIndex;
 		int32_t				ColorTextureIndex;
 		int32_t				NormalTextureIndex;
 		float				Magnification;
 		bool				IsRightHand;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter
@@ -2029,11 +2073,14 @@ public:
 	{
 		Effect*				EffectPointer;
 		int32_t				ColorTextureIndex;
-		eAlphaBlend			AlphaBlend;
-		eTextureFilterType	TextureFilter;
-		eTextureWrapType	TextureWrap;
+		AlphaBlendType			AlphaBlend;
+		TextureFilterType	TextureFilter;
+		TextureWrapType		TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceGroupParameter
@@ -2176,12 +2223,13 @@ public:
 	/**
 		@brief	テクスチャを読み込む。
 		@param	path	[in]	読み込み元パス
+		@param	textureType	[in]	テクスチャの種類
 		@return	テクスチャのポインタ
 		@note
 		テクスチャを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load( const EFK_CHAR* path ) { return NULL; }
+	virtual void* Load( const EFK_CHAR* path, TextureType textureType ) { return NULL; }
 
 	/**
 		@brief	テクスチャを破棄する。
@@ -2380,7 +2428,7 @@ public:
 		ES_SAFE_DELETE_ARRAY( m_data );
 	}
 
-	Emitter GetEmitter( Manager* manager, eCoordinateSystem coordinate, float magnification )
+	Emitter GetEmitter( Manager* manager, CoordinateSystem coordinate, float magnification )
 	{
 		RandFunc randFunc = manager->GetRandFunc();
 		int32_t randMax = manager->GetRandMax();
@@ -2410,7 +2458,7 @@ public:
 		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
 		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
 
-		if( coordinate == COORDINATE_SYSTEM_LH )
+		if( coordinate == CoordinateSystem::LH )
 		{
 			emitter.Position.Z = - emitter.Position.Z;
 			emitter.Normal.Z = - emitter.Normal.Z;
@@ -2421,7 +2469,7 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromVertex( Manager* manager, eCoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromVertex( Manager* manager, CoordinateSystem coordinate, float magnification )
 	{
 		RandFunc randFunc = manager->GetRandFunc();
 		int32_t randMax = manager->GetRandMax();
@@ -2436,7 +2484,7 @@ public:
 		emitter.Binormal = v.Binormal;
 		emitter.Tangent = v.Tangent;
 
-		if( coordinate == COORDINATE_SYSTEM_LH )
+		if( coordinate == CoordinateSystem::LH )
 		{
 			emitter.Position.Z = - emitter.Position.Z;
 			emitter.Normal.Z = - emitter.Normal.Z;
@@ -2447,7 +2495,7 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromVertex( int32_t index, eCoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromVertex( int32_t index, CoordinateSystem coordinate, float magnification )
 	{
 		int32_t vertexInd = index % GetVertexCount();
 		Vertex& v = GetVertexes()[vertexInd];
@@ -2458,7 +2506,7 @@ public:
 		emitter.Binormal = v.Binormal;
 		emitter.Tangent = v.Tangent;
 
-		if( coordinate == COORDINATE_SYSTEM_LH )
+		if( coordinate == CoordinateSystem::LH )
 		{
 			emitter.Position.Z = - emitter.Position.Z;
 			emitter.Normal.Z = - emitter.Normal.Z;
@@ -2469,7 +2517,7 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromFace( Manager* manager, eCoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromFace( Manager* manager, CoordinateSystem coordinate, float magnification )
 	{
 		RandFunc randFunc = manager->GetRandFunc();
 		int32_t randMax = manager->GetRandMax();
@@ -2491,7 +2539,7 @@ public:
 		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
 		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
 
-		if( coordinate == COORDINATE_SYSTEM_LH )
+		if( coordinate == CoordinateSystem::LH )
 		{
 			emitter.Position.Z = - emitter.Position.Z;
 			emitter.Normal.Z = - emitter.Normal.Z;
@@ -2502,7 +2550,7 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromFace( int32_t index, eCoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromFace( int32_t index, CoordinateSystem coordinate, float magnification )
 	{
 		int32_t faceInd = index % (GetFaceCount() - 1);
 		Face& face = GetFaces()[faceInd];
@@ -2520,7 +2568,7 @@ public:
 		emitter.Binormal = v0.Binormal * p0 + v1.Binormal * p1 + v2.Binormal * p2;
 		emitter.Tangent = v0.Tangent * p0 + v1.Tangent * p1 + v2.Tangent * p2;
 
-		if( coordinate == COORDINATE_SYSTEM_LH )
+		if( coordinate == CoordinateSystem::LH )
 		{
 			emitter.Position.Z = - emitter.Position.Z;
 			emitter.Normal.Z = - emitter.Normal.Z;
@@ -2690,7 +2738,7 @@ namespace Effekseer {
 		int32_t		m_ref;
 
 		/* 座標系 */
-		eCoordinateSystem		m_coordinateSystem;
+		CoordinateSystem		m_coordinateSystem;
 
 		EffectLoader*	m_effectLoader;
 		TextureLoader*	m_textureLoader;
@@ -2729,7 +2777,7 @@ namespace Effekseer {
 		@brief	座標系を取得する。
 		@return	座標系
 		*/
-		eCoordinateSystem GetCoordinateSystem() const;
+		CoordinateSystem GetCoordinateSystem() const;
 
 		/**
 		@brief	座標系を設定する。
@@ -2738,7 +2786,7 @@ namespace Effekseer {
 		座標系を設定する。
 		エフェクトファイルを読み込む前に設定する必要がある。
 		*/
-		void SetCoordinateSystem(eCoordinateSystem coordinateSystem);
+		void SetCoordinateSystem(CoordinateSystem coordinateSystem);
 
 		/**
 			@brief	エフェクトローダーを取得する。

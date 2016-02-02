@@ -10,7 +10,7 @@
 #if defined(__EFFEKSEER_RENDERER_GL_GLEW__)
 
 #if _WIN32
-#include <gl/GL.h>
+#include <GL/gl.h>
 #else
 #include <GL/glew.h>
 #endif
@@ -18,7 +18,7 @@
 #elif defined(__EFFEKSEER_RENDERER_GL_GLEW_S__)
 
 #if _WIN32
-#include <gl/GL.h>
+#include <GL/gl.h>
 #else
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -81,6 +81,21 @@ class Renderer;
 //-----------------------------------------------------------------------------------
 namespace EffekseerRenderer
 {
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+
+/**
+	@brief	背景を歪ませるエフェクトを描画する前に実行されるコールバック
+*/
+class DistortingCallback
+{
+public:
+	DistortingCallback() {}
+	virtual ~DistortingCallback() {}
+
+	virtual void OnDistorting() {}
+};
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -220,6 +235,16 @@ public:
 		@brief	レンダーステートを強制的にリセットする。
 	*/
 	virtual void ResetRenderState() = 0;
+
+	/**
+	@brief	背景を歪ませるエフェクトが描画される前に呼ばれるコールバックを取得する。
+	*/
+	virtual DistortingCallback* GetDistortingCallback() = 0;
+
+	/**
+	@brief	背景を歪ませるエフェクトが描画される前に呼ばれるコールバックを設定する。
+	*/
+	virtual void SetDistortingCallback(DistortingCallback* callback) = 0;
 };
 
 //----------------------------------------------------------------------------------
@@ -271,6 +296,16 @@ public:
 		@brief	最大描画スプライト数を取得する。
 	*/
 	virtual int32_t GetSquareMaxCount() const = 0;
+
+	/**
+	@brief	背景を取得する。
+	*/
+	virtual GLuint GetBackground() = 0;
+
+	/**
+	@brief	背景を設定する。
+	*/
+	virtual void SetBackground(GLuint background) = 0;
 };
 
 //----------------------------------------------------------------------------------

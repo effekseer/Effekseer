@@ -38,14 +38,19 @@ static int g_window_height = 600;
 static ::Effekseer::Manager*			g_manager = NULL;
 static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
 static ::EffekseerSound::Sound*			g_sound = NULL;
+static ::Effekseer::Vector3D			g_position;
 static ::Effekseer::Effect*				g_effect = NULL;
 static ::Effekseer::Handle				g_handle = -1;
-static ::Effekseer::Vector3D			g_position;
 
 static LPDIRECT3D9						g_d3d = NULL;
 static LPDIRECT3DDEVICE9				g_d3d_device = NULL;
 static IXAudio2*						g_xa2 = NULL;
 static IXAudio2MasteringVoice*			g_xa2_master = NULL;
+
+static int32_t							g_timer = 0;
+
+static IDirect3DSurface9*				g_backgroundSurface = nullptr;
+static IDirect3DTexture9*				g_backgroundTexture = nullptr;
 
 //----------------------------------------------------------------------------------
 //
@@ -62,6 +67,86 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	}
 	return 0;
 }
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+static bool CopyRenderTargetToBackground()
+{
+	bool ret = false;
+
+	HRESULT hr;
+	IDirect3DSurface9* tempRender = nullptr;
+	IDirect3DSurface9* tempDepth = nullptr;
+
+	hr = g_d3d_device->GetRenderTarget(0, &tempRender);
+	if (FAILED(hr))
+	{
+		goto Exit;
+	}
+
+	hr = g_d3d_device->GetDepthStencilSurface(&tempDepth);
+	if (FAILED(hr))
+	{
+		goto Exit;
+	}
+
+	g_d3d_device->SetRenderTarget(0, g_backgroundSurface);
+	g_d3d_device->SetDepthStencilSurface(nullptr);
+
+	D3DSURFACE_DESC desc;
+	tempRender->GetDesc(&desc);
+	
+	g_d3d_device->StretchRect(
+		tempRender,
+		nullptr,
+		g_backgroundSurface,
+		nullptr,
+		D3DTEXF_POINT
+		);
+
+	g_d3d_device->SetRenderTarget(0, tempRender);
+	g_d3d_device->SetDepthStencilSurface(tempDepth);
+	
+	ret = true;
+
+Exit:;
+	ES_SAFE_RELEASE(tempRender);
+	ES_SAFE_RELEASE(tempDepth);
+
+	return ret;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+class DistortingCallback
+	: public EffekseerRenderer::DistortingCallback
+{
+public:
+	DistortingCallback()
+	{
+
+	}
+
+	virtual ~DistortingCallback()
+	{
+
+	}
+
+	void OnDistorting()
+	{
+		if (g_backgroundTexture == NULL)
+		{
+			((EffekseerRendererDX9::Renderer*)g_renderer)->SetBackground(NULL);
+			return;
+		}
+
+		CopyRenderTargetToBackground();
+		((EffekseerRendererDX9::Renderer*)g_renderer)->SetBackground(g_backgroundTexture);
+	}
+};
+
 
 //----------------------------------------------------------------------------------
 //
@@ -148,13 +233,9 @@ void MainLoop()
 		}
 		else
 		{
-			// エフェクトの移動処理を行う
-			g_manager->AddLocation( g_handle, ::Effekseer::Vector3D( 0.2f, 0.0f, 0.0f ) );
-
-			// エフェクトの更新処理を行う
+			// エフェクトの更新処理を行う。
 			g_manager->Update();
-			
-			
+		
 			g_d3d_device->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0 );
 			g_d3d_device->BeginScene();
 
@@ -168,6 +249,8 @@ void MainLoop()
 			g_renderer->EndRendering();
 
 			g_d3d_device->EndScene();
+
+			g_timer++;
 
 			{
 				HRESULT hr;
@@ -226,10 +309,27 @@ void MainLoop()
 int main()
 {
 	InitWindow();
-	
+
 	// 描画用インスタンスの生成
 	g_renderer = ::EffekseerRendererDX9::Renderer::Create( g_d3d_device, 2000 );
 	
+	// 歪み機能を設定
+	g_renderer->SetDistortingCallback(new DistortingCallback());
+
+	// 背景バッファの生成
+	g_d3d_device->CreateTexture(
+		640,
+		480,
+		1,
+		D3DUSAGE_RENDERTARGET,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_DEFAULT,
+		&g_backgroundTexture,
+		NULL
+		);
+
+	g_backgroundTexture->GetSurfaceLevel(0, &g_backgroundSurface);
+
 	// エフェクト管理用インスタンスの生成
 	g_manager = ::Effekseer::Manager::Create( 2000 );
 
@@ -237,7 +337,6 @@ int main()
 	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
 	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
 	g_manager->SetRingRenderer( g_renderer->CreateRingRenderer() );
-	g_manager->SetTrackRenderer( g_renderer->CreateTrackRenderer() );
 	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
 
 	// 描画用インスタンスからテクスチャの読込機能を設定
@@ -256,29 +355,29 @@ int main()
 	g_manager->SetSoundLoader( g_sound->CreateSoundLoader() );
 
 	// 視点位置を確定
-	g_position = ::Effekseer::Vector3D( 10.0f, 5.0f, 20.0f );
+	g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
 
 	// 投影行列を設定
 	g_renderer->SetProjectionMatrix(
-		::Effekseer::Matrix44().PerspectiveFovRH( 90.0f / 180.0f * 3.14f, (float)g_window_width / (float)g_window_height, 1.0f, 50.0f ) );
+		::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)g_window_width / (float)g_window_height, 1.0f, 50.0f));
 
 	// カメラ行列を設定
 	g_renderer->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH( g_position, ::Effekseer::Vector3D( 0.0f, 0.0f, 0.0f ), ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
-	
+		::Effekseer::Matrix44().LookAtRH(g_position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
 	// エフェクトの読込
-	g_effect = Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"test.efk" );
+	g_effect = Effekseer::Effect::Create(g_manager, (const EFK_CHAR*)L"distortion.efk");
 
 	// エフェクトの再生
-	g_handle = g_manager->Play( g_effect, 0, 0, 0 );
-
-	MainLoop();
+	g_handle = g_manager->Play(g_effect, 0, 0, 0);
 	
+	MainLoop();
+
 	// エフェクトの停止
-	g_manager->StopEffect( g_handle );
+	g_manager->StopEffect(g_handle);
 
 	// エフェクトの破棄
-	ES_SAFE_RELEASE( g_effect );
+	ES_SAFE_RELEASE(g_effect);
 
 	// 先にエフェクト管理用インスタンスを破棄
 	g_manager->Destroy();
@@ -296,6 +395,10 @@ int main()
 		g_xa2_master = NULL;
 	}
 	ES_SAFE_RELEASE( g_xa2 );
+
+	// バックバッファの破棄
+	ES_SAFE_RELEASE( g_backgroundTexture );
+	ES_SAFE_RELEASE( g_backgroundSurface );
 
 	// DirectXの解放
 	ES_SAFE_RELEASE( g_d3d_device );
