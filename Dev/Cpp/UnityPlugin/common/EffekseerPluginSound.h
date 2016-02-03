@@ -22,7 +22,7 @@ namespace EffekseerPlugin
 		
 		struct SoundResource {
 			int referenceCount = 1;
-			int soundID = 0;
+			uintptr_t soundID = 0;
 		};
 		std::map<std::u16string, SoundResource> resources;
 
@@ -72,7 +72,7 @@ namespace EffekseerPlugin
 			checkPlayingTag(checkPlayingTag), stopAll(stopAll) {}
 		virtual ~SoundPlayer() {}
 		virtual SoundHandle Play( SoundTag tag, const InstanceParameter& parameter ){
-			play( tag, (int)parameter.Data, parameter.Volume, parameter.Pan, parameter.Pitch, 
+			play( tag, (int)(uintptr_t)parameter.Data, parameter.Volume, parameter.Pan, parameter.Pitch, 
 				parameter.Mode3D, parameter.Position.X, parameter.Position.Y, 
 				parameter.Position.Z, parameter.Distance );
 			return 0;

@@ -20,7 +20,7 @@ namespace EffekseerPlugin
 	}
 
 	void SoundLoader::Unload( void* source ){
-		int soundID = (int)source;
+		uintptr_t soundID = (uintptr_t)source;
 		for (auto it = resources.begin(); it != resources.end(); it++) {
 			if (it->second.soundID == soundID) {
 				it->second.referenceCount--;

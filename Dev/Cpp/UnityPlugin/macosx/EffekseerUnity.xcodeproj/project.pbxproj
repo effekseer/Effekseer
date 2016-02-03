@@ -59,6 +59,8 @@
 		48CF46F71B3EFC28005AD8C4 /* EffekseerRenderer.PngTextureLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48CF46F51B3EFC28005AD8C4 /* EffekseerRenderer.PngTextureLoader.cpp */; };
 		48CF477F1B3FADEA005AD8C4 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 48CF477D1B3FADEA005AD8C4 /* libpng.a */; };
 		48CF47801B3FADEA005AD8C4 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 48CF477E1B3FADEA005AD8C4 /* libz.a */; };
+		48DA21511C623ABD00CAA811 /* EffekseerPluginSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48DA214F1C623ABD00CAA811 /* EffekseerPluginSound.cpp */; };
+		48DA21531C62436300CAA811 /* EffekseerPluginLoaderOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48DA21521C62436300CAA811 /* EffekseerPluginLoaderOSX.cpp */; };
 		684C1F0719F60B2100E32FEC /* EffekseerSoundAL.Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1EFF19F60B2100E32FEC /* EffekseerSoundAL.Sound.cpp */; };
 		684C1F0819F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F0119F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.cpp */; };
 		684C1F0919F60B2100E32FEC /* EffekseerSoundAL.SoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F0319F60B2100E32FEC /* EffekseerSoundAL.SoundPlayer.cpp */; };
@@ -103,7 +105,7 @@
 
 /* Begin PBXFileReference section */
 		48383A861BE47C020019B4FF /* EffekseerPluginOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerPluginOSX.cpp; sourceTree = "<group>"; };
-		48383A881BE47C0B0019B4FF /* EffekseerPluginCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EffekseerPluginCommon.cpp; path = ../common/EffekseerPluginCommon.cpp; sourceTree = "<group>"; };
+		48383A881BE47C0B0019B4FF /* EffekseerPluginCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.cpp.cpp; name = EffekseerPluginCommon.cpp; path = ../common/EffekseerPluginCommon.cpp; sourceTree = "<group>"; };
 		48383A891BE47C0B0019B4FF /* EffekseerPluginCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffekseerPluginCommon.h; path = ../common/EffekseerPluginCommon.h; sourceTree = "<group>"; };
 		48383A8A1BE47C0B0019B4FF /* IUnityApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IUnityApplication.h; path = ../common/IUnityApplication.h; sourceTree = "<group>"; };
 		48383A8B1BE47C0B0019B4FF /* IUnityGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IUnityGraphics.h; path = ../common/IUnityGraphics.h; sourceTree = "<group>"; };
@@ -227,6 +229,10 @@
 		48CF46F61B3EFC28005AD8C4 /* EffekseerRenderer.PngTextureLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRenderer.PngTextureLoader.h; sourceTree = "<group>"; };
 		48CF477D1B3FADEA005AD8C4 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../EffekseerRendererGL/libpng/lib/osx/libpng.a; sourceTree = "<group>"; };
 		48CF477E1B3FADEA005AD8C4 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../EffekseerRendererGL/libpng/lib/osx/libz.a; sourceTree = "<group>"; };
+		48DA214E1C623ABD00CAA811 /* EffekseerPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffekseerPluginLoader.h; path = ../common/EffekseerPluginLoader.h; sourceTree = "<group>"; };
+		48DA214F1C623ABD00CAA811 /* EffekseerPluginSound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EffekseerPluginSound.cpp; path = ../common/EffekseerPluginSound.cpp; sourceTree = "<group>"; };
+		48DA21501C623ABD00CAA811 /* EffekseerPluginSound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffekseerPluginSound.h; path = ../common/EffekseerPluginSound.h; sourceTree = "<group>"; };
+		48DA21521C62436300CAA811 /* EffekseerPluginLoaderOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerPluginLoaderOSX.cpp; sourceTree = "<group>"; };
 		684C1EFF19F60B2100E32FEC /* EffekseerSoundAL.Sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerSoundAL.Sound.cpp; sourceTree = "<group>"; };
 		684C1F0019F60B2100E32FEC /* EffekseerSoundAL.SoundImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerSoundAL.SoundImplemented.h; sourceTree = "<group>"; };
 		684C1F0119F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerSoundAL.SoundLoader.cpp; sourceTree = "<group>"; };
@@ -293,15 +299,14 @@
 		48383A851BE47BEF0019B4FF /* UnityPlugin */ = {
 			isa = PBXGroup;
 			children = (
+				48DA214D1C6233E300CAA811 /* UnityInterface */,
 				48383A881BE47C0B0019B4FF /* EffekseerPluginCommon.cpp */,
 				48383A891BE47C0B0019B4FF /* EffekseerPluginCommon.h */,
-				48383A8A1BE47C0B0019B4FF /* IUnityApplication.h */,
-				48383A8B1BE47C0B0019B4FF /* IUnityGraphics.h */,
-				48383A8C1BE47C0B0019B4FF /* IUnityGraphicsD3D9.h */,
-				48383A8D1BE47C0B0019B4FF /* IUnityGraphicsD3D11.h */,
-				48383A8E1BE47C0B0019B4FF /* IUnityGraphicsD3D12.h */,
-				48383A8F1BE47C0B0019B4FF /* IUnityInterface.h */,
 				48383A861BE47C020019B4FF /* EffekseerPluginOSX.cpp */,
+				48DA21521C62436300CAA811 /* EffekseerPluginLoaderOSX.cpp */,
+				48DA214E1C623ABD00CAA811 /* EffekseerPluginLoader.h */,
+				48DA214F1C623ABD00CAA811 /* EffekseerPluginSound.cpp */,
+				48DA21501C623ABD00CAA811 /* EffekseerPluginSound.h */,
 			);
 			name = UnityPlugin;
 			sourceTree = "<group>";
@@ -496,6 +501,19 @@
 			path = Culling;
 			sourceTree = "<group>";
 		};
+		48DA214D1C6233E300CAA811 /* UnityInterface */ = {
+			isa = PBXGroup;
+			children = (
+				48383A8A1BE47C0B0019B4FF /* IUnityApplication.h */,
+				48383A8B1BE47C0B0019B4FF /* IUnityGraphics.h */,
+				48383A8C1BE47C0B0019B4FF /* IUnityGraphicsD3D9.h */,
+				48383A8D1BE47C0B0019B4FF /* IUnityGraphicsD3D11.h */,
+				48383A8E1BE47C0B0019B4FF /* IUnityGraphicsD3D12.h */,
+				48383A8F1BE47C0B0019B4FF /* IUnityInterface.h */,
+			);
+			name = UnityInterface;
+			sourceTree = "<group>";
+		};
 		684C1EFE19F60B2100E32FEC /* EffekseerSound */ = {
 			isa = PBXGroup;
 			children = (
@@ -645,9 +663,11 @@
 				684C1F7619F610BE00E32FEC /* EffekseerRendererGL.GLExtension.h in Sources */,
 				684C1F6419F6106D00E32FEC /* EffekseerRendererGL.IndexBuffer.cpp in Sources */,
 				684C1F7719F610BE00E32FEC /* EffekseerRendererGL.IndexBuffer.h in Sources */,
+				48DA21511C623ABD00CAA811 /* EffekseerPluginSound.cpp in Sources */,
 				684C1F6519F6106D00E32FEC /* EffekseerRendererGL.ModelLoader.cpp in Sources */,
 				684C1F7819F610BE00E32FEC /* EffekseerRendererGL.ModelLoader.h in Sources */,
 				684C1F6619F6106D00E32FEC /* EffekseerRendererGL.ModelRenderer.cpp in Sources */,
+				48DA21531C62436300CAA811 /* EffekseerPluginLoaderOSX.cpp in Sources */,
 				684C1F7919F610BE00E32FEC /* EffekseerRendererGL.ModelRenderer.h in Sources */,
 				684C1F6719F6106D00E32FEC /* EffekseerRendererGL.Renderer.cpp in Sources */,
 				48CF46F31B3EFACB005AD8C4 /* Culling3D.Vector3DF.cpp in Sources */,
