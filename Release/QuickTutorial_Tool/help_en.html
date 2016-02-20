@@ -1,0 +1,463 @@
+
+<html>
+<head>
+<style type="text/css">
+.td1 {
+	padding-left:10px;
+	vertical-align:top;
+}
+body {
+      font-family: "Calibri","sans-serif";
+      font-size:12pt;
+    }
+td {
+  font-size:12pt;
+}
+p {
+  margin-bottom:0in;
+  line-height:normal;
+  font-size:14pt;
+  font-style: italic;
+  margin-top:0px;
+}
+table.center {
+    margin-left:auto; 
+    margin-right:auto;
+}
+img {
+	border:solid black 1pt;
+}
+h2 {
+  border:solid #C0504D 1pt;
+  background:#F2DBDB;
+  color:#622423;
+  font-family:"Calibri","sans-serif";
+  font-style:italic;
+  margin:0in;
+  line-height: normal;
+  font-size:22.0pt;
+  padding-left:16px;
+  margin-bottom:10px;
+  margin-top:64px;
+  padding-top:4px;
+  padding-bottom:4px;
+}
+h1 {
+  font-size:28pt;
+  font-style:italic;
+  text-align:center;
+  margin-top:32px;
+}
+h3 {
+  font-size:18pt;
+  font-style:italic;
+  /*text-align:center;*/
+  margin:12px;
+  border-bottom: 1px dashed #888;
+}
+h4 {
+  font-size:12pt;
+  font-style:italic;
+  /*text-align:center;*/
+  margin:12px;
+  margin-bottom:70px;
+}
+img {
+  margin-bottom:16px;
+}
+li {
+  padding-left:8px;
+}
+div.title {
+  padding: 8px 0px 8px 0px;
+  background: #C0504D;
+  text-align: center;
+  margin: 0in;
+  margin-bottom: 32px;
+  margin-top: 24px;
+  font-size: 25pt;
+  font-family: "Cambria","serif";
+  color:white;
+  font-style:italic;
+}
+.tos {
+	/*float:right;*/
+	font-size:14px;
+	width:296px;
+	border:2px solid #C0504D;
+	background:white;
+	margin-top:-32px;
+	margin-left:auto;
+	margin-right:auto;
+	margin-bottom:-32px;
+}
+.tos_head {
+  border-bottom:solid #C0504D 2pt;
+  background:#F2DBDB;
+  font-family:"Calibri","sans-serif";
+  font-style:italic;
+  margin:0in;
+  line-height: normal;
+  font-size:20.0pt;
+  text-align:center; 
+  font-size:20px; 
+  color:#622423;
+}
+</style>
+</head>
+<body>
+<h1><img style="border: none;" src="effektut-files/Effekseer.png" /></h1>
+<div style="text-align:center; font-size:18pt; padding-bottom:32px; margin-top:-24px"><b>A tutorial by <a href="http://eggzero.tumblr.com" target="_blank">AndrewFM</a></b></div><br><br>
+<div class="tos">
+<div class="tos_head"><b>Contents</b></div>
+	<ul>
+	<li><a href='#introduction'>Introduction</a></li>
+	<li><a href='#general_interface'>General Interface</a></li>
+		<ul>
+		<li><a href='#viewer'>Viewer</a></li>
+		<li><a href='#node_tree'>Node Tree</a></li>
+		<li><a href='#random_fields'>Random Fields</a></li>
+		</ul>
+	<li><a href='#particle_emitters'>Particle Emitters</a></li>
+		<ul>
+		<li><a href='#basic_settings'>Basic Settings</a></li>
+		<li><a href='#inheritance'>Inheritance</a></li>
+		<li><a href='#spawn_method_circular'>Spawn Method (Circular)</a></li>
+		<li><a href='#spawn_method_spherical'>Spawn Method (Spherical)</a></li>
+		</ul>
+	<li><a href='#particles_behavior'>Particles (Behavior)</a></li>
+		<ul>
+		<li><a href='#position_rotation_scale'>Position/Rotation/Scale</a></li>
+		<li><a href='#pva'>PVA</a></li>
+		<li><a href='#easing'>Easing</a></li>
+		<li><a href='#fcurve'>F-Curve</a></li>
+		<li><a href='#point_of_attraction'>Point of Attraction</a></li>
+		</ul>
+	<li><a href='#particles_appearance'>Particles (Appearance)</a></li>
+		<ul>
+		<li><a href='#basic_render_settings'>Basic Render Settings</a></li>
+		<li><a href='#sprites'>Sprites</a></li>
+		<li><a href='#rings'>Rings</a></li>
+		<li><a href='#ribbons_tracks'>Ribbons/Tracks</a></li>
+		</ul>
+	<li><a href='#exporting'>Exporting</a></li>
+		<ul>
+		<li><a href='#to_2d'>To 2D Sprite Sheets</a></li>
+		<li><a href='#to_3d'>To 3D Models</a></li>
+		</ul>
+	</ul>
+</div>
+<a name="introduction"></a>
+<h2>Introduction</h2>
+<a href="https://sites.google.com/site/effekseer/" target="_blank">Effekseer</a> is a free, open-source program for making particle effects for games. The effects made with the program can be exported as 2D sprite sheets, or as a special proprietary filetype for 3D. The program comes with a unitypackage for using these 3D files in Unity, and also comes with a C++ runtime for using them with DirectX or OpenGL. Effekseer's interface and features have been heavily influenced by <a href="http://www.matchlock.co.jp/english/" target="_blank">BISHAMON</a>, and in a sense Effekseer is just a simpler, less feature rich version of it. Effekseer is natively a Japanese program, but Effekseer is translated into English after v100:
+<br><br>
+This document is an overview of the program, organized in a fashion similar to a tutorial. It covers many of the features of the program, but it is not an exhaustive manual. However, you can view the original, official Japanese manual for the program <a href="index-jp.html" target="_blank">here</a>.
+<br><br>
+The Effekseer project files used to generate the illustrations in this tutorial can be found in <b>"Effekseer/Sample/01_AndrewFM Tutorial"</b>.
+
+<a name="general_interface"></a>
+<h2>General Interface</h2>
+Basically all of the program's features are contained under the 'Window' menu at the top of the screen. Effekseer's layout is fully customizable; any of the windows can be added/removed, resized, repositioned, tabulated, etc... This is all done simply by dragging and dropping them. 
+
+<a name="viewer"></a>
+<h3>Viewer</h3>
+
+<table><tr><td>
+<img src="effektut-files/viewer.png" />
+</td><td class='td1'>
+The <b>Viewer</b> is where you can preview the particle effect you have created. The viewer can be panned with the <b>middle mouse button</b>, can be rotated with the <b>right mouse button</b>, and can be zoomed with the <b>scroll wheel</b>.
+<br><br>
+The <b>End</b> field controls how long the particle effect animation lasts. It is measured (as is every timing related thing in this program) in frames (60 frames = 1 second). 
+<br><br>
+The <b>Step</b> button allows you to walk through the animation one frame at a time.
+<br><br>
+The <b>Loop</b> checkmark is by default unchecked, so the viewer will automatically stop the playback once the end is reached. (I personally like having looping enabled)
+<br><br>
+<i>The grid visibility, color, and other settings can be configured in the program's preferences (Window &rarr; Options). Other settings such as background color/image, scene lighting, etc, can also be configured in the preferences.</i>
+</td></tr></table>
+
+<a name="node_tree"></a>
+<h3>Node Tree</h3>
+<table>
+<tr><td style="width:432px; text-align:center"><img src="effektut-files/nodetree.png" /></td><td class='td1'>
+This is the overview of your project's structure, containing all of your particle emitters. Clicking on a node in the tree brings up all of its properties in the various program windows, allowing you to edit anything about it. Right clicking in the node tree brings up a context menu that includes the option to add a new node. The new node will be added as a child of the currently selected node. There is the concept of inheritance in this program (ie: child nodes inherit some properties from their parent nodes), which will be talked about in more detail later. Nodes can also be copy and pasted, which is very useful.
+</td></tr></table>
+
+<a name="random_fields"></a>
+<h3>Random Fields</h3>
+<table>
+<tr><td style="width:432px; text-align:center"><img src="effektut-files/random.png" /></td><td class='td1'>
+Many numeric fields in the program take on an appearance like the image on the left. These types of fields indicate that they are capable of taking on randomly assigned values. There's two options for input, both of which are functionally equivalent:<br><br>
+<ul>
+<li><b>Range:</b> You specify a minimum and maximum value, and the assigned value will be any random (real) number that falls between those two extremes.</li>
+<li><b>Gauss:</b> You specify the range instead using a mean and deviation. For example, with {Mean=5, Deviation=2}, the randomly assigned value will fall between 3 and 7.</li>
+</ul>
+</td></tr></table>
+
+<a name="particle_emitters"></a>
+<h2>Particle Emitters (aka, Nodes)</h2>
+
+Nodes are the core of this program; they are what actually spawn the particles that make up the particle effects. This section deals with how to modify the ways in which the nodes spawn the particles, but not how to edit the particles themselves. (<i>Editing the behavior and appearances of the particles that have been spawned will be the topic of the proceeding sections</i>)
+
+<a name="basic_settings"></a>
+<h3>Basic Settings</h3>
+<table>
+<tr><td style="width:432px; text-align:center"><img src="effektut-files/basic.png" /></td><td class='td1'>
+The <b>Basic Settings</b> window contains all of the standard parameters for tweaking the way in which a node spawns its particles. Starting from the top, the <b>Visibility</b> checkmark enables/disables the display of this node's particles in the Viewer. Note this is purely for editing convenience, as the particles will still appear in the final export regardless of the visibility settings.
+<br><br>
+<b>Name</b> serves no purpose other than your own convenience. Once you start getting many nodes in your node tree, you'll want to give descriptive names to them.
+<br><br>
+<b>Spawn Count</b> sets the maximum number of particles this node is allowed to spawn. The <b>Infinite</b> checkmark overrides this, and allows the node to spawn particles without limit.
+<br><br>
+<b>Time to Live</b> sets the lifetime of each spawned particle (in frames). This is local to each particle, and begins counting down as soon as the particle is spawned. Once that duration of time has passed, the particle will automatically be destroyed. This is ignored if <b>Destroy after time</b> is unchecked.
+<br><br>
+<b>Spawn Rate</b> determines how quickly the node emits particles. A value of 1 means it will spawn one particle per frame. A value of 10 means it will spawn one particle every 10 frames. This can be a decimal number; for example, a value of 0.1 will mean the node will emit 10 particles per frame.
+<br><br>
+<b>Initial Delay</b> makes the node wait a certain duration of time before emitting its first particle. This is useful for sequential effects where not all of the emitters are immediately active.
+</td></tr></table>
+
+<a name="inheritance"></a>
+<h3>Inheritance</h3>
+
+As mentioned earlier, inheritance is a feature of this program. If for example, Node A is a parent of Node B, then every single particle that Node A spawns will have an instance of Node B attached to it (so you can have particles that emit other particles). The Basic Settings window has a few parameters I purposely skipped over, that apply to inheritance.
+<br><br>
+<b>Inherit Position/Rotation/Scale</b> are self-explanitory in what they do, but the drop-down options may be less clear. There are the following three options:<br><br>
+<ul>
+<li><b>Always:</b> As long as the parent particle exists, this child particle will constantly update its inherited values to match that of the parent particle.</li>
+<li><b>Only on Create:</b> This child particle will inherit the value from the parent particle on spawn, but will then act on its own, ignoring any further updates to the parent particle's values.</li>
+<li><b>Never:</b> The child particle will not inherit the value from the parent particle.</li>
+</ul>If <b>Destroy with parent</b> is checked, then the particle will be automatically destroyed if the parent particle it was spawned from gets destroyed.
+<br><br>
+<b>Destroy when no more children</b> is the inverse of the above. If a parent node spawns a finite number of child particles, it will be automatically destroyed as soon as all of those child particles have finished despawning.
+<br><br>
+<table>
+<tr><td style="width:432px; text-align:center"><img src="effektut-files/inheritance_example.png" /></td><td class='td1'>
+Sample Project "<i>00_Basic/Laser03.efkproj</i>" is a good example of inheritance. Invisible "Core" particles guide the position and rotation of the "Track" particles that inherit them -- this gives the tracks that distinctive zig-zag shape. At the same time, the "Particle" node inherits "Track", using the track's position to allow it to emit tiny particles along the trajectory of the zig-zags.
+</td></tr></table>
+
+<a name="spawn_method_circular"></a>
+<h3>Spawn Method (Circular)</h3>
+
+<table>
+<tr><td style="width:432px; text-align:center"><img src="effektut-files/circle_spawn.png" /></td><td class='td1'>
+A separate window from the Basic Settings window is the <b>Spawn Method</b> window. By default, nodes emit their particles relative to a single isolated point in space. There are two other spawn methods, however. The first is <b>Circle</b>.
+<br><br>
+In Circle spawn mode, particles will be spawned relative to the circumference along a circle. <b>Radius</b> sets the size of that figurative circle.
+<br><br>
+<b>Init Angle</b> and <b>Final Angle</b> allow you to specify the range over the circle in which to spawn particles. By default this goes from 0 to 360, resulting in particles spawning over the whole circumference. However, this can be reduced to allow spawning only over a specific arc of the circle.
+<br><br>
+There are a few different modes of spawning along the circle. There is <b>Clockwise</b> and <b>Counter-clockwise</b>, which result in each successive particle spawning in an orderly sequential fashion along the circle (ie: think of clock hands). <b>Random</b> results in each successive particle choosing randomly among any of the available verticies to spawn on.
+<br><br>
+<b>Verticies</b> control the number of spawning angles the circle supports. For example, if it was 8, then it would take 8 particles in Clockwise/Counter mode to do a full rotation around the circle. Likewise, it if was 8, then there would only be 8 possible angles that Random mode could choose from. If you're using Random mode, you'd probably want to increase the verticies to a high number, like 360, to increase the diversity of the random spawn.
+<br><br>
+<b>Set angle on spawn</b> has the interesting effect of orienting the Y-axis of each spawned particle to be normal to the surface of the circle at the place where it spawned. The figure below illustrates that functionality.
+</td></tr></table>
+<br><br>
+<table class=center style="width:550px">
+<tr>
+<td style='text-align:center'><img src="effektut-files/set_angle_false.png" /></td>
+<td style='text-align:center'><img src="effektut-files/set_angle_true.png" /></td>
+</tr>
+<tr>
+<td style='text-align:center'><i>Particles streched along the Y-Axis, being spawned along a circle.</i></td>
+<td style='text-align:center'><i>The effect of enabling "Set angle on spawn" on those particles.</i></td>
+</tr>
+</table>
+
+<a name="spawn_method_spherical"></a>
+<h3>Spawn Method (Spherical)</h3>
+
+<table>
+<tr><td style="width:432px; text-align:center"><img src="effektut-files/sphere_spawn.png" /></td><td class='td1'>
+In many ways, this is very similar to the circular spawn method (except adding a third dimension). Note, however, that sequential spawning does not exist here. It is only possible to spawn particles randomly across the spherical surface.<br><br>
+<b>X Rotation</b> and <b>Y Rotation</b> control the "span" over the sphere's surface in which the particles spawn. By default it is 0, which will not allow any particles to spawn. To have particles spawn over the entire sphere, set the deviation to 180, so you get full 360&deg; rotation over each axis. However, like how you could choose to spawn only along an arc of a circle in the section above, you can utilize localized wedges of the sphere's surface for spawning. See the figures below.
+</td></tr></table>
+
+<table class=center style="width:550px">
+<tr>
+<td style='text-align:center'><img src="effektut-files/sphere_ani.gif" /></td>
+<td style='text-align:center'><img src="effektut-files/wedge_ani.gif" /></td>
+</tr>
+<tr>
+<td style='text-align:center'><i>Particles spawned on a sphere, with a full 360&deg; span.</i></td>
+<td style='text-align:center'><i>Shrinking rotation to only 60&deg; along each axis. A "spherical wedge".</i></td>
+</tr>
+</table>
+
+<a name="particles_behavior"></a>
+<h2>Particles (Behavior)</h2>
+
+<a name="position_rotation_scale"></a>
+<h3>Position/Rotation/Scale</h3>
+The three most important windows for modifying the behavior of emitted particles are the Position, Rotation, and Scale windows. Their names are self-explanitory. The <b>Position</b> windows lets you control how the particles move through space over time. The <b>Rotation</b> window lets you control the orientation and angular velocity of the particles. The <b>Scale</b> window lets you modify the size of the particle over its lifetime.
+<br><br>
+Each of these windows allows you to choose among different methods of modifying these values over time. By default, the mode is set to <b>Fixed</b>, meaning the emitted particles will take on a static value for that attribute, and stay at that value for the entire duration of its existance. The other modes are explained below. 
+
+<a name="pva"></a>
+<h3>PVA</h3>
+
+PVA stands for Position, Velocity, Acceleration. This is likely the mode you will use most of the time. <b>Position</b> sets the initial values on spawn, <b>Velocity</b> sets the rate of change of the initial values over time, and <b>Acceleration</b> sets the rate of change of the velocity over time. 
+<br><br>
+The default setting of Fixed for position/rotation/scale does not allow you to randomize the initial values. Thus, even disregarding velocity and acceleration, PVA can be used as a randomized variant of Fixed.
+
+<a name="easing"></a>
+<h3>Easing</h3>
+
+If you know specifically what values the particle will start and end with, Easing is an ideal mode to use. It will gradually transition from the start to the end value over the entire lifetime of the particle. <br><br>
+
+<table>
+<tr>
+<td style='text-align:center'><img src="effektut-files/easing.gif" /></td>
+<td  class='td1'>The <b>Ease In</b> and <b>Ease Out</b> dropdown boxes change the style in which the particle transitions between the two values over time. The illustration to the left shows different combinations of easing speeds. The examples respectively refer to the following combinations of {Ease In - Ease Out} pairs:<br><br>
+<table class=center cellpadding="30">
+<tr><td>Slowest-Slowest</td><td>Slowest-Normal</td><td>Slowest-Fastest</td></tr>
+<tr><td>Normal-Slowest</td><td>Normal-Normal</td><td>Normal-Fastest</td></tr>
+<tr><td>Fastest-Slowest</td><td>Fastest-Normal</td><td>Fastest-Fastest</td></tr>
+</table></td>
+</tr>
+</table>
+
+<a name="fcurve"></a>
+<h3>F-Curve</h3>
+If Easing and PVA don't do the job, and you need more fine control over how your particle transitions through values over time, F-Curve is the mode you will want to use. The screenshot below shows two F-Curve graphs, the top one showing how the graph initially looks before you touch it, the bottom one showing an example of a graph with values initialized.
+<br><br>
+The Y-axis of the graph represents value, and the X-axis of the graph represents time. 0 is the time when the particle spawns, and the dark-grey area at the right side of the graph is the time when the particle will die. Like the Viewer, the graphs can be panned with the <b>middle mouse button</b>, and can be zoomed with the <b>scroll wheel</b>. You can also choose the axis of zoom by holding down the <b>Ctrl</b> or <b>Shift</b> button while scrolling the mouse wheel.
+<br><br>
+<div style="text-align:center;"><img src="effektut-files/fcurve.png" /></div>
+<br>
+To actually add points to the graph, you use the <b>X/Y/Z</b> keys on your keyboard (which intuitively coorespond with the setting of values for the X/Y/Z fields, respectively). Clicking on a point will select it, and you can drag it to reposition it. Dragging straight up or down from a point will create a pivot for a Bezier curve (if the point is set to Bezier mode, which is the default).
+<br><br>
+<b>Type</b> sets the style of line that connects to and from the selected point. The <b>Linear</b> option will force the lines to be straight, while the <b>Bezier</b> option will allow the lines to be curved.
+<br><br>
+<b>Max Offset</b> and <b>Min Offset</b> allow you to apply randomization to the F-Curve values. Note that these deviations apply to the whole selected line (ie: it deviates all points on the line by the same random amount), and not to the selected point. It's not possible to randomize on a point-by-point basis.
+<br><br>
+<b>Start</b> and <b>End</b> also refer to the whole selected line, rather than the currently selected point. They determine the behavior to be taken for defining the values that extend before the first defined point, and after the last defined point. By default they remain at a constant value that matches the first/last point. However, the other options allow you to loop the values over from the beginning. This is particuarly useful if the values have a repetitious nature; you then only have to define the first instance of the pattern, and then let the loop fill in the rest for you. The illustration below shows this applied in order to easily make a sine-wave pattern.
+<br><br>
+<div style="text-align:center;"><img src="effektut-files/floop.png" /></div>
+
+<a name="point_of_attraction"></a>
+<h3>Point of Attraction</h3>
+Effekseer allows you define an attraction point for a particle emitter, which acts like a magnet, drawing the spawned particles into it. Sample Project "<i>00_Basic/Homing_Laser01.efkproj</i>", shown below, uses this feature in order to create "homing lasers". They shoot out from a central firing point and home into the attraction point. At the very bottom of the <b>Behavior</b> window, you can define the location of the emitter's Point of Attraction. 
+<br><br>
+<table>
+<tr><td style="width:300px; text-align:center"><img src="effektut-files/homing.png" /></td><td class='td1'>
+By default the point of attraction is not active, so changing its position will not initially have any visible effect. Enabling the attraction point can be done through the <b>Attraction Forces</b> window, by choosing <b>Attraction</b> from the dropdown list.
+<br><br>
+The <b>Attraction</b> parameter controls how quickly (forcefully) the particles are pulled into the attractor. The <b>Resistance</b> parameter controls how much the particles can resist being pulled directly into the attraction point. For high numbers, the particles will get stuck directly at the point of attraction once being pulled in. For low numbers, the particles will get into an eliptical orbit around the point of attraction (the lower the number, the larger the radius of the orbit). Resistance can also be negative, in which case the point of attraction will actually push the particles away, instead of pulling them in.
+<br><br>
+<i>(Note: There is a minor bug, where changing the position of the attraction point will not immediately reflect in the preview. This can be resolved by changing the value of either Attraction or Resistance after changing the position, which will refresh the system.)</i>
+</td></tr></table>
+
+<a name="particles_appearance"></a>
+<h2>Particles (Appearance)</h2>
+
+<a name="basic_render_settings"></a>
+<h3>Basic Render Settings</h3>
+The <b>Basic Render Settings</b> window lets you set some important, general use attributes about a particle's appearance. First and foremost, the <b>Texture</b> field lets you load in any image from your hard-drive to use as the particle's base appearance. Everything else will revolve around altering how this texture gets drawn in the scene.
+<br><br>
+<b>Blend</b> lets you adjust how the texture responds when other particles overlap with it. The image below shows an example of the different blending types. From left to right: Opacity, Blend, Additive, Subtract, and Multiply.
+<br><br>
+<div style="text-align:center;"><img style="border: none;" src="effektut-files/blendmodes.png" /></div>
+
+<b>Filter</b> adjusts the method that's used to resize the particle when it is being scaled. There are only two options... the default, <b>Linear Interpolation</b> attempts to blend the colors of neighboring pixels together. <b>Nearest-Neighbor</b> on the other hand leaves the texture pixelated when it is upscaled.
+<br><br>
+<b>Fade-In</b> and <b>Fade-Out</b> do exactly as their name implies. The duration specified for these is always relative to the beginning and end of the particle's lifetime. For example, assume Fade-In was set to a duration of 10 frames, and Fade-Out was set to a duration of 20 frames. Then, if the particle was set to live for 100 frames, it would fade in during frames 1-10 after spawning, and would fade out during frames 80-100.
+<br><br>
+<table>
+<tr><td style="width:300px; text-align:center"><img style="border: 20px solid black;" src="effektut-files/uvscroll.gif" /></td><td class='td1'>
+<b>UV</b> lets you draw only a portion of the texture image, rather than the whole thing. This has a variety of uses, and particuarly we'll talk about the <b>Scroll</b> and <b>Animation</b> settings:
+<ul>
+<li><b>UV Scroll</b> lets you scroll over the surface of the texture at some fixed X/Y speed. The image to the left shows a smoke texture being UV scrolled over the surface of a conical shape. You'll generally want to make sure that <b>Wrap</b> is set to Repeat, so the texture wraps around as it scrolls.</li>
+<li><b>UV Animation</b> lets you use a sprite sheet as a texture, and play it as an animation. <b>Start</b> should be the coordinate of the top-left of the first frame in the sprite sheet. <b>Size</b> should be the size in pixels of each frame in the animation. <b>X-Count</b> and <b>Y-Count</b> are the number of rows/columns in the sprite sheet that comprise the animation to play. <b>Frame Length</b> is the speed at which the animation will be played.</li>
+</ul>
+</td></tr></table>
+<br>
+<b>Distortion</b> allows the texture to be used as a transparent distortion map to affect the appearance of other particles that pass behind it. The brightness of the pixels in the texture affect the areas of distortion. The animations below show this effect in action. Note that it's not the particles that have distortion applied on them, but rather another texture that is sitting in front.
+<br><br>
+<table class=center style="width:550px">
+<tr>
+<td style='text-align:center'><img src="effektut-files/nodistort.gif" /></td>
+<td style='text-align:center'><img src="effektut-files/distort.gif" /></td>
+</tr>
+<tr>
+<td style='text-align:center'><i>Particles moving back and forth with no distortion.</i></td>
+<td style='text-align:center'><i>Those same particles, passing behind a texture with distortion applied.</i></td>
+</tr>
+</table>
+
+<a name="sprites"></a>
+<h3>Sprites</h3>
+
+In the <b>Render</b> window, you can choose the method of drawing the texture to the scene. The default method is <b>Sprite</b>, which is where it just draws the texture onto a flat, square surface. 
+<br><br>
+<b>Configuration</b> sets the behavior of the surface, particuarly in terms of rotation. By default it is set to <b>Billboard</b>, which means the surface will always automatically rotate to face the camera. This also means it will completely ignore the rotation values set for the particle. The opposite of this is <b>Fixed</b>, in which it uses the particle's rotation values to set the orientation of the surface. The illustration below shows three different configuration settings, applied to particles whose rotation values are assigned randomly. From left to right: Billboard, Fixed (Y-Axis), and Fixed. 
+<br><br>
+<div style="text-align:center;"><img src="effektut-files/billboards.png" /></div>
+
+<b>Color All</b> blends a solid color over top the entirety of the texture image. <b>Vertex Color</b> on the other hand lets you specify up to four different colors, each cooresponding to a corner of the surface. These colors will blend together by creating a gradient over the surface of the sprite. 
+<br><br>
+Color All offers the ability to randomize the RGBA/HSVA components of the blending color, or offers the ability to gradually ease from one color to another over the lifetime of the particle. You can also use F-Curves for setting the color. This works the same way as the F-Curves for position, except you use the R/G/B/A keys on your keyboard to set waypoints. The F-Curves only offer RGBA mode, and not HSVA mode. However, Hue and Value are fairly easy to replicate using RGB components, as in the images below:
+<br><br>
+<div style="text-align:center;"><img src="effektut-files/hue.png" /></div>
+<br><br>
+<b>Vertex Coords</b> allow you to edit the relative coordinates of the corner points used by the surface. This allows you to do a few things, the obvious one being to change the shape of the surface to a rectangle, triangle, or other non-square shape. With this you can warp, strech, skew, and crop the texture in various ways. A less obvious use of this is to change the origin of the surface (the point about which the surface rotates and scales). By default the origin point is in the direct center of the surface, but this can be moved by offsetting the values of the vertex coords without actually changing the shape of the surface.
+<a name="rings"></a>
+<h3>Rings</h3>
+<table>
+<tr><td style="width:300px; text-align:center"><img style="border: 20px solid black;" src="effektut-files/ring_vertex.png" /></td><td class='td1'>
+Rings are a powerful option, allowing you to map textures to shapes other than simple flat squares. Despite their name, rings can be used to generate many different geometric shapes, including circles, triangles, cones, cylinders, pyramids, cubes, etc.
+<br><br>
+<b>Vertex Count</b> allows you to set the number of points that compose the N-sided polygon. By default it is 16, which creates a circular shape (although you can get an even smoother circle by setting it to a higher value like 36). However, this can be set to low values to create other shapes. As seen in the image to the left, 3 vertices creates a triangle, 4 creates a square/diamond, 5 creates a pentagon, etc.
+<br><br>
+<b>Viewing Angle</b> lets you change the amount of the circle (circumference-wise) to draw... this is very much like the setting used in the circular/spherical spawn methods. The image to the left shows different settings of this value for different shapes. From left to right, it shows 360, 270, and 180 degrees.
+<br><br>
+<b>Outer</b> and <b>Inner</b> adjust the size/position of the ring's outer and inner radii. With creative settings of these values, you can create a large assortment of shapes. Setting the inner radius to 0, for example, converts the ring to a circle. Additionally, the radius can be adjusted on two different axes, allowing you to have the outer radius be higher up than the inner radius, or vice verse. This allows the creation of 3D shapes, like cones or cylinders. Combining this with the vertex count, you can make even more 3D shapes. For example, a cone with 3 vertices makes a pyramid, and a cylinder with 4 vertices makes a cube.
+<br><br>
+In terms of color blending, rings support a gradient of up to 3 colors. There's one color for the area closest to the outer radius, one color for the area closest to the inner radius, and a transition color in-between those two. The <b>Center Ratio</b> parameter adjusts the position of the intermediate transition color. A smaller number brings it closer to the inner radius, while a larger number brings it closer to the outer radius.
+</td></tr></table>
+<br><br>
+<table class=center style="width:1000px">
+<tr>
+<td style='text-align:center'><img src="effektut-files/ring_examples.png" /></td>
+<td style='text-align:center'><img style='border-top:30px solid black; border-bottom:30px solid black;' src="effektut-files/ring_3d.png" /></td>
+</tr>
+<tr>
+<td style='text-align:center'><i>Rings with different opacity, radius, and center ratio settings.</i></td>
+<td style='text-align:center'><i>3D shapes made by extending the outer radius in the Y direction.</i></td>
+</tr>
+</table>
+
+<a name="ribbons_tracks"></a>
+<h3>Ribbons/Tracks</h3>
+
+<b>Ribbons</b> allow you to create lines. A few images shown so far in this tutorial have featured ribbons. Particuarly, the lines in the Easing animation, and the trails behind the orbs in the "homing missile" example.
+<br><br>
+They way they work is that each time a ribbon emitter spawns a particle, a line is drawn between it and the previously spawned ribbon segment. By varying the position and velocity of the spawned segments, you can create different shaped line-strips. A common usage of ribbons is to set a ribbon emitter as the child of some other particle, and then have the ribbon emitter's particles inherit the position of the parent on spawn. This will result in a trail being drawn behind the parent particle as it moves.
+<br><br>
+<b>Tracks</b> are more or less the same as ribbons, except they also incorporate the color features of Rings. A track can define different colors and sizes for the outer, inner, and center points of the line.
+
+<a name="exporting"></a>
+<h2>Exporting</h2>
+
+<a name="to_2d"></a>
+<h3>To 2D Sprite Sheets</h3>
+Outputting to a 2D sprite sheet is done through the <b>Recorder</b> window. The <b>X/Y Count</b> determine the layout of the sprite sheet, particuarly how many frames each row and column has. Subsequently, this also determines the total number of frames your sprite sheet will contain. For example, {X=4, Y=6} will produce a sprite sheet that has 24 frames, arranged into 4 columns and 6 rows.
+<br><br>
+<b>Start Frame</b> is the frame in the animation the recording should start at. (A small caveat: If you leave this at the default value of 1, your first frame will always be blank. It takes at least one frame for any particles to spawn)
+<br><br>
+<b>Frame Skip</b> determines the interval at which frames are recorded. For example, if this is set to 2, then only frames {1, 4, 7, 10, ...} will be included in the recording. This is useful for reducing the size of the output, but obviously also results in choppier animations.
+<br><br>
+When exporting to a 2D sprite sheet, the animation will be exported exactly as it it seen in the Viewer. So you need to make sure to orient it in the view exactly as you want it to look in the final output. Changing the output resultion is done through the <b>Camera Settings</b> window... the resolution is the same as the <b>Guide Width</b> and <b>Guide Height</b> parameters.
+<br><br>
+<i>(A note about the <b>Guide Image</b> option: When this is checked, the viewer will show a black square matching the size of the output, with red everywhere else. This is misleading -- you would think the recording would just capture anything in that square, but that's not the case. It still uses the entire viewer for recording, which I'm assuming is probably a bug. You can however shrink the size of the application window so the viewer matches the size of the square... but that's kind of silly.)</i>
+
+<a name="to_3d"></a>
+<h3>To 3D Models</h3>
+
+<b>File -> Export</b> allows you to export to a *.efk format, which is a proprietary filetype only used by Effekseer. These files can be used by special Effekseer plugins and such to integrate them into your games.
+<br><br>
+For Unity, the <b>"Effekseer/GameEngine/Unity"</b> folder contains a Unity plugin to use the *.efk files in your project. It also contains a sample project showing this plugin in action. For Unity 4, this requires the Pro version, but for Unity 5 the plugin can be used in the free version as well. I'm not entirely sure how it works -- any attempts I've made to try to use *.efk files in Unity with the plugin have resulted in Unity crashing (although the sample project works, so I'm wondering if it has something to do with how I'm exporting/importing the files?). If you figure it out, send me a message! You can check the original documentation on the Unity plugin <a href="html/Embed/unity.html" target="_blank">here</a>.
+<br><br>
+If you're coding a custom C++ engine using OpenGL/DirectX, you can use the Effekseer runtime located in <b>"Effekseer/Runtime"</b>. Documentation on this is located in the "ëgÇ›çûÇ›" section of the <a href="index-jp.html" target="_blank">original manual</a>.
+</body>
+</html>
