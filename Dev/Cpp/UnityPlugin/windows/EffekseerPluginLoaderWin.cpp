@@ -43,6 +43,10 @@ namespace EffekseerPlugin
 			} else {
 				TextureResource res;
 				res.texture = load( (const char16_t*)path );
+				if (res.texture == nullptr)
+				{
+					return nullptr;
+				}
 				if (g_RendererType == kUnityGfxRendererD3D11)
 				{
 					// UnityÇ™ÉçÅ[ÉhÇ∑ÇÈÇÃÇÕID3D11Texture2DÇ»ÇÃÇ≈ÅA
@@ -124,7 +128,7 @@ namespace EffekseerPlugin
 					size = length - position;
 				}
 				memcpy(buffer, &data[position], size);
-				position += size;
+				position += (int)size;
 				return size;
 			}
 			void Seek(int position) {
