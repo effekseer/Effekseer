@@ -5,15 +5,16 @@
 
 * [公式ウェブサイト](http://effekseer.github.io/jp/)
 
+[![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
+
 **不具合情報**
 
 現在、UnityMac版ではLegacyDefferedとForwardのみ描画対応しています。不具合の原因は現在調査中です。
 
 # RoadMap
 
-**Version 1.10**
-* 英語版対応
-* ガンマスペースオプション
+**Version 1.20**
+* ?
 
 # Todo
 プルリクエストお待ちしております。

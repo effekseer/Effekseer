@@ -1,6 +1,6 @@
-SET RDIR=Effekseer101
-SET RDIR_R=EffekseerRuntime101
-SET RDIR_U=EffekseerForUnity101
+SET RDIR=Effekseer110
+SET RDIR_R=EffekseerRuntime110
+SET RDIR_U=EffekseerForUnity110
 
 rmdir %RDIR%
 mkdir %RDIR%
@@ -121,8 +121,11 @@ copy readme_runtime.txt %RDIR_R%\readme.txt
 copy readme_unity.txt %RDIR_U%\readme.txt
 
 echo ƒwƒ‹ƒv
-mkdir %RDIR%\Help
-robocopy Release\Help_Tool %RDIR%\Help *.html *.css *.efkproj *.png /mir /S
+mkdir %RDIR%\Help_Jp
+mkdir %RDIR%\QuickTutorial_En
+
+robocopy Release\Help_Tool %RDIR%\Help_Jp *.html *.css *.efkproj *.png /mir /S
+robocopy Release\QuickTutorial_Tool %RDIR%\QuickTutorial_En *.html *.css *.efkproj *.png /mir /S
 
 mkdir %RDIR_R%\Help
 robocopy Release\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S
