@@ -14,16 +14,36 @@ namespace Culling3D
 		struct Status
 		{
 			Vector3DF	Position;
-			float		Radius;
-			Vector3DF	CuboidSize;
+
+			union
+			{
+				struct
+				{
+					float Radius;
+				} Sphere;
+
+				struct
+				{
+					float X;
+					float Y;
+					float Z;
+				} Cuboid;
+			} Data;
+
+			float		radius;
 			eObjectShapeType	Type;
 
-			float CalcRadius()
+			void CalcRadius()
 			{
-				if (Type == OBJECT_SHAPE_TYPE_NONE) return 0;
-				if (Type == OBJECT_SHAPE_TYPE_SPHERE) return Radius;
-				if (Type == OBJECT_SHAPE_TYPE_CUBOID) return sqrt(CuboidSize.X * CuboidSize.X + CuboidSize.Y * CuboidSize.Y + CuboidSize.Z * CuboidSize.Z) / 2.0f;
-				return 0.0f;
+				radius = 0.0f;
+				if (Type == OBJECT_SHAPE_TYPE_NONE) radius = 0.0f;
+				if (Type == OBJECT_SHAPE_TYPE_SPHERE) radius = Data.Sphere.Radius;
+				if (Type == OBJECT_SHAPE_TYPE_CUBOID) radius = sqrt(Data.Cuboid.X * Data.Cuboid.X + Data.Cuboid.Y * Data.Cuboid.Y + Data.Cuboid.Z * Data.Cuboid.Z) / 2.0f;
+			}
+
+			float GetRadius()
+			{
+				return radius;
 			}
 		};
 
@@ -38,17 +58,17 @@ namespace Culling3D
 		ObjectInternal();
 		virtual ~ObjectInternal();
 
-		void SetShapeType(eObjectShapeType type);
+		Vector3DF GetPosition() override;
+		void SetPosition(Vector3DF pos) override;
 
-		Vector3DF GetPosition();
-		void SetPosition(Vector3DF pos);
+		void ChangeIntoAll() override;
 
-		void SetRadius(float radius);
+		void ChangeIntoSphere(float radius) override;
 
-		void SetCuboidSize(Vector3DF size);
+		void ChangeIntoCuboid(Vector3DF size) override;
 
-		void* GetUserData();
-		void SetUserData(void* userData);
+		void* GetUserData() override;
+		void SetUserData(void* userData) override;
 
 		void SetWorld(World* world);
 

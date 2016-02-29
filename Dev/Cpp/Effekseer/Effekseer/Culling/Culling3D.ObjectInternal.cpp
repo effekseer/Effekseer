@@ -15,32 +15,16 @@ namespace Culling3D
 		, ObjectIndex(-1)
 	{
 		currentStatus.Position = Vector3DF();
-		currentStatus.Radius = 0.0f;
+		currentStatus.radius = 0.0f;
 		currentStatus.Type = OBJECT_SHAPE_TYPE_NONE;
-		currentStatus.CuboidSize = Vector3DF();
 
 		nextStatus.Position = Vector3DF();
-		nextStatus.Radius = 0.0f;
+		nextStatus.radius = 0.0f;
 		nextStatus.Type = OBJECT_SHAPE_TYPE_NONE;
-		nextStatus.CuboidSize = Vector3DF();
 	}
 
 	ObjectInternal::~ObjectInternal()
 	{
-	}
-
-	void ObjectInternal::SetShapeType(eObjectShapeType type)
-	{
-		nextStatus.Type = type;
-
-		if (world != NULL)
-		{
-			WorldInternal* w = (WorldInternal*) world;
-			w->RemoveObjectInternal(this);
-			w->AddObjectInternal(this);
-		}
-
-		currentStatus = nextStatus;
 	}
 
 	Vector3DF ObjectInternal::GetPosition()
@@ -62,9 +46,10 @@ namespace Culling3D
 		currentStatus = nextStatus;
 	}
 
-	void ObjectInternal::SetRadius(float radius)
+	void ObjectInternal::ChangeIntoAll()
 	{
-		nextStatus.Radius = radius;
+		nextStatus.Type = OBJECT_SHAPE_TYPE_ALL;
+		nextStatus.CalcRadius();
 
 		if (world != NULL)
 		{
@@ -76,9 +61,29 @@ namespace Culling3D
 		currentStatus = nextStatus;
 	}
 
-	void ObjectInternal::SetCuboidSize(Vector3DF size)
+	void ObjectInternal::ChangeIntoSphere(float radius)
 	{
-		nextStatus.CuboidSize = size;
+		nextStatus.Data.Sphere.Radius = radius;
+		nextStatus.Type = OBJECT_SHAPE_TYPE_SPHERE;
+		nextStatus.CalcRadius();
+
+		if (world != NULL)
+		{
+			WorldInternal* w = (WorldInternal*) world;
+			w->RemoveObjectInternal(this);
+			w->AddObjectInternal(this);
+		}
+
+		currentStatus = nextStatus;
+	}
+
+	void ObjectInternal::ChangeIntoCuboid(Vector3DF size)
+	{
+		nextStatus.Data.Cuboid.X = size.X;
+		nextStatus.Data.Cuboid.Y = size.Y;
+		nextStatus.Data.Cuboid.Z = size.Z;
+		nextStatus.Type = OBJECT_SHAPE_TYPE_CUBOID;
+		nextStatus.CalcRadius();
 
 		if (world != NULL)
 		{

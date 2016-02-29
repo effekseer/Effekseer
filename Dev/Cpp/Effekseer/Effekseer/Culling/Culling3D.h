@@ -334,6 +334,8 @@ namespace Culling3D
 		virtual void AddObject(Object* o) = 0;
 		virtual void RemoveObject(Object* o) = 0;
 
+		virtual void CastRay(Vector3DF from, Vector3DF to) = 0;
+
 		virtual void Culling(const Matrix44& cameraProjMat, bool isOpenGL) = 0;
 		virtual int32_t GetObjectCount() = 0;
 		virtual Object* GetObject(int32_t index) = 0;
@@ -349,12 +351,11 @@ namespace Culling3D
 		: public IReference
 	{
 	public:
-		virtual void SetShapeType(eObjectShapeType type) = 0;
-
 		virtual Vector3DF GetPosition() = 0;
 		virtual void SetPosition(Vector3DF pos) = 0;
-		virtual void SetRadius(float radius) = 0;
-		virtual void SetCuboidSize(Vector3DF size) = 0;
+		virtual void ChangeIntoAll() = 0;
+		virtual void ChangeIntoSphere(float radius) = 0;
+		virtual void ChangeIntoCuboid(Vector3DF size) = 0;
 
 		virtual void* GetUserData() = 0;
 		virtual void SetUserData(void* data) = 0;

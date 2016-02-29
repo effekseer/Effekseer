@@ -45,6 +45,8 @@ namespace Culling3D
 		void AddObjectInternal(Object* o);
 		void RemoveObjectInternal(Object* o);
 
+		void CastRay(Vector3DF from, Vector3DF to) override;
+
 		void Culling(const Matrix44& cameraProjMat, bool isOpenGL);
 
 		bool Reassign() override;

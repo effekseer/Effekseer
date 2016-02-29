@@ -1202,12 +1202,12 @@ void ManagerImplemented::Flip()
 						ds.CullingObjectPointer = Culling3D::Object::Create();
 						if(effect->Culling.Shape == CullingShape::Sphere)
 						{
-							ds.CullingObjectPointer->SetShapeType(Culling3D::OBJECT_SHAPE_TYPE_SPHERE);
+							ds.CullingObjectPointer->ChangeIntoSphere(0.0f);
 						}
 
 						if (effect->Culling.Shape == CullingShape::NoneShape)
 						{
-							ds.CullingObjectPointer->SetShapeType(Culling3D::OBJECT_SHAPE_TYPE_ALL);
+							ds.CullingObjectPointer->ChangeIntoAll();
 						}
 					}
 
@@ -1254,7 +1254,7 @@ void ManagerImplemented::Flip()
 							radius = radius * sqrt(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
 						}
 
-						ds.CullingObjectPointer->SetRadius(radius);
+						ds.CullingObjectPointer->ChangeIntoSphere(radius);
 					}
 
 					m_cullingWorld->AddObject(ds.CullingObjectPointer);

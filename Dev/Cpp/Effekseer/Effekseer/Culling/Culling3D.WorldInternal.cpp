@@ -100,7 +100,7 @@ namespace Culling3D
 			return;
 		}
 
-		float radius = o_->GetNextStatus().CalcRadius();
+		float radius = o_->GetNextStatus().GetRadius();
 		if (o_->GetNextStatus().Type == OBJECT_SHAPE_TYPE_NONE || radius <= minGridSize)
 		{
 			if (layers[layers.size() - 1]->AddObject(o))
@@ -158,7 +158,7 @@ namespace Culling3D
 			return;
 		}
 
-		float radius = o_->GetCurrentStatus().CalcRadius();
+		float radius = o_->GetCurrentStatus().GetRadius();
 		if (o_->GetCurrentStatus().Type == OBJECT_SHAPE_TYPE_NONE || radius <= minGridSize)
 		{
 			if (layers[layers.size() - 1]->RemoveObject(o))
@@ -203,22 +203,156 @@ namespace Culling3D
 		}
 	}
 
+	void WorldInternal::CastRay(Vector3DF from, Vector3DF to)
+	{
+		objs.clear();
+
+		Vector3DF aabb_max;
+		Vector3DF aabb_min;
+
+		aabb_max.X = Max(from.X, to.X);
+		aabb_max.Y = Max(from.Y, to.Y);
+		aabb_max.Z = Max(from.Z, to.Z);
+
+		aabb_min.X = Min(from.X, to.X);
+		aabb_min.Y = Min(from.Y, to.Y);
+		aabb_min.Z = Min(from.Z, to.Z);
+
+		/* 範囲内に含まれるグリッドを取得 */
+		for (size_t i = 0; i < layers.size(); i++)
+		{
+			layers[i]->AddGrids(aabb_max, aabb_min, grids);
+		}
+
+		/* 外領域追加 */
+		grids.push_back(&outofLayers);
+		grids.push_back(&allLayers);
+
+		/* グリッドからオブジェクト取得 */
+		
+		/* 初期計算 */
+		auto ray_dir = (to - from);
+		auto ray_len = ray_dir.GetLength();
+		ray_dir.Normalize();
+
+		for (size_t i = 0; i < grids.size(); i++)
+		{
+			for (size_t j = 0; j < grids[i]->GetObjects().size(); j++)
+			{
+				Object* o = grids[i]->GetObjects()[j];
+				ObjectInternal* o_ = (ObjectInternal*) o;
+
+				if (o_->GetNextStatus().Type == OBJECT_SHAPE_TYPE_ALL)
+				{
+					objs.push_back(o);
+					continue;
+				}
+
+				// 球線分判定
+				{
+					auto radius = o_->GetNextStatus().GetRadius();
+					auto pos = o_->GetNextStatus().Position;
+
+					auto from2pos = pos - from;
+					auto from2nearLen = Vector3DF::Dot(from2pos, ray_dir);
+					auto pos2ray = from2pos - ray_dir * from2nearLen;
+
+					if (pos2ray.GetLength() > radius) continue;
+					if (from2nearLen < 0 || from2nearLen > ray_len) continue;
+				}
+
+				if (o_->GetNextStatus().Type == OBJECT_SHAPE_TYPE_SPHERE)
+				{
+					objs.push_back(o);
+					continue;
+				}
+
+				// AABB判定
+				// 参考：http://marupeke296.com/COL_3D_No18_LineAndAABB.html
+
+				if (o_->GetNextStatus().Type == OBJECT_SHAPE_TYPE_CUBOID)
+				{
+					// 交差判定
+					float p[3], d[3], min[3], max[3];
+					auto pos = o_->GetCurrentStatus().Position;
+					memcpy(p, &from, sizeof(Vector3DF));
+					memcpy(d, &ray_dir, sizeof(Vector3DF));
+					memcpy(min, &pos, sizeof(Vector3DF));
+					memcpy(max, &pos, sizeof(Vector3DF));
+
+					min[0] -= o_->GetNextStatus().Data.Cuboid.X / 2.0f;
+					min[1] -= o_->GetNextStatus().Data.Cuboid.Y / 2.0f;
+					min[2] -= o_->GetNextStatus().Data.Cuboid.Z / 2.0f;
+
+					max[0] += o_->GetNextStatus().Data.Cuboid.X / 2.0f;
+					max[1] += o_->GetNextStatus().Data.Cuboid.Y / 2.0f;
+					max[2] += o_->GetNextStatus().Data.Cuboid.Z / 2.0f;
+
+					float t = -FLT_MAX;
+					float t_max = FLT_MAX;
+
+					for (int i = 0; i < 3; ++i)
+					{
+						if (abs(d[i]) < FLT_EPSILON)
+						{
+							if (p[i] < min[i] || p[i] > max[i])
+							{
+								// 交差していない
+								continue;
+							}
+						}
+						else
+						{
+							// スラブとの距離を算出
+							// t1が近スラブ、t2が遠スラブとの距離
+							float odd = 1.0f / d[i];
+							float t1 = (min[i] - p[i]) * odd;
+							float t2 = (max[i] - p[i]) * odd;
+							if (t1 > t2)
+							{
+								float tmp = t1; t1 = t2; t2 = tmp;
+							}
+
+							if (t1 > t) t = t1;
+							if (t2 < t_max) t_max = t2;
+
+							// スラブ交差チェック
+							if (t >= t_max)
+							{
+								// 交差していない
+								continue;
+							}
+						}
+					}
+
+					// 交差している
+					if (0 <= t  && t <= ray_len)
+					{
+						objs.push_back(o);
+						continue;
+					}
+				}
+			}
+		}
+
+		/* 取得したグリッドを破棄 */
+		for (size_t i = 0; i < grids.size(); i++)
+		{
+			grids[i]->IsScanned = false;
+		}
+
+		grids.clear();
+	}
+
 	void WorldInternal::Culling(const Matrix44& cameraProjMat, bool isOpenGL)
 	{
 		objs.clear();
 	
-#ifdef _MSC_VER
-		if (_finite(cameraProjMat.Values[2][2]) != 0 &&
-			cameraProjMat.Values[0][0] != 0.0f &&
-			cameraProjMat.Values[1][1] != 0.0f)
-		{
-#else
 		
 		if (isfinite(cameraProjMat.Values[2][2]) != 0 &&
 			cameraProjMat.Values[0][0] != 0.0f &&
 			cameraProjMat.Values[1][1] != 0.0f)
 		{
-#endif
 			Matrix44 cameraProjMatInv = cameraProjMat;
 			cameraProjMatInv.SetInverted();
 
@@ -349,7 +483,7 @@ namespace Culling3D
 
 					if (
 						o_->GetNextStatus().Type == OBJECT_SHAPE_TYPE_ALL ||
-						IsInView(o_->GetPosition(), o_->GetNextStatus().CalcRadius(), facePositions, faceDir))
+						IsInView(o_->GetPosition(), o_->GetNextStatus().GetRadius(), facePositions, faceDir))
 					{
 						objs.push_back(o);
 					}
