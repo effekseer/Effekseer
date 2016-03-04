@@ -61,6 +61,7 @@
 		48CF47801B3FADEA005AD8C4 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 48CF477E1B3FADEA005AD8C4 /* libz.a */; };
 		48DA21511C623ABD00CAA811 /* EffekseerPluginSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48DA214F1C623ABD00CAA811 /* EffekseerPluginSound.cpp */; };
 		48DA21531C62436300CAA811 /* EffekseerPluginLoaderOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48DA21521C62436300CAA811 /* EffekseerPluginLoaderOSX.cpp */; };
+		48DA21571C89661900CAA811 /* EffekseerPluginModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48DA21541C89661900CAA811 /* EffekseerPluginModel.cpp */; };
 		684C1F0719F60B2100E32FEC /* EffekseerSoundAL.Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1EFF19F60B2100E32FEC /* EffekseerSoundAL.Sound.cpp */; };
 		684C1F0819F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F0119F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.cpp */; };
 		684C1F0919F60B2100E32FEC /* EffekseerSoundAL.SoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 684C1F0319F60B2100E32FEC /* EffekseerSoundAL.SoundPlayer.cpp */; };
@@ -229,10 +230,12 @@
 		48CF46F61B3EFC28005AD8C4 /* EffekseerRenderer.PngTextureLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerRenderer.PngTextureLoader.h; sourceTree = "<group>"; };
 		48CF477D1B3FADEA005AD8C4 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = ../../EffekseerRendererGL/libpng/lib/osx/libpng.a; sourceTree = "<group>"; };
 		48CF477E1B3FADEA005AD8C4 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../EffekseerRendererGL/libpng/lib/osx/libz.a; sourceTree = "<group>"; };
-		48DA214E1C623ABD00CAA811 /* EffekseerPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffekseerPluginLoader.h; path = ../common/EffekseerPluginLoader.h; sourceTree = "<group>"; };
 		48DA214F1C623ABD00CAA811 /* EffekseerPluginSound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EffekseerPluginSound.cpp; path = ../common/EffekseerPluginSound.cpp; sourceTree = "<group>"; };
 		48DA21501C623ABD00CAA811 /* EffekseerPluginSound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffekseerPluginSound.h; path = ../common/EffekseerPluginSound.h; sourceTree = "<group>"; };
 		48DA21521C62436300CAA811 /* EffekseerPluginLoaderOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerPluginLoaderOSX.cpp; sourceTree = "<group>"; };
+		48DA21541C89661900CAA811 /* EffekseerPluginModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EffekseerPluginModel.cpp; path = ../common/EffekseerPluginModel.cpp; sourceTree = "<group>"; };
+		48DA21551C89661900CAA811 /* EffekseerPluginModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffekseerPluginModel.h; path = ../common/EffekseerPluginModel.h; sourceTree = "<group>"; };
+		48DA21561C89661900CAA811 /* EffekseerPluginTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffekseerPluginTexture.h; path = ../common/EffekseerPluginTexture.h; sourceTree = "<group>"; };
 		684C1EFF19F60B2100E32FEC /* EffekseerSoundAL.Sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerSoundAL.Sound.cpp; sourceTree = "<group>"; };
 		684C1F0019F60B2100E32FEC /* EffekseerSoundAL.SoundImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffekseerSoundAL.SoundImplemented.h; sourceTree = "<group>"; };
 		684C1F0119F60B2100E32FEC /* EffekseerSoundAL.SoundLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffekseerSoundAL.SoundLoader.cpp; sourceTree = "<group>"; };
@@ -304,7 +307,9 @@
 				48383A891BE47C0B0019B4FF /* EffekseerPluginCommon.h */,
 				48383A861BE47C020019B4FF /* EffekseerPluginOSX.cpp */,
 				48DA21521C62436300CAA811 /* EffekseerPluginLoaderOSX.cpp */,
-				48DA214E1C623ABD00CAA811 /* EffekseerPluginLoader.h */,
+				48DA21561C89661900CAA811 /* EffekseerPluginTexture.h */,
+				48DA21541C89661900CAA811 /* EffekseerPluginModel.cpp */,
+				48DA21551C89661900CAA811 /* EffekseerPluginModel.h */,
 				48DA214F1C623ABD00CAA811 /* EffekseerPluginSound.cpp */,
 				48DA21501C623ABD00CAA811 /* EffekseerPluginSound.h */,
 			);
@@ -655,6 +660,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				684C1F7319F610BE00E32FEC /* EffekseerRendererGL.Base.h in Sources */,
+				48DA21571C89661900CAA811 /* EffekseerPluginModel.cpp in Sources */,
 				684C1F7419F610BE00E32FEC /* EffekseerRendererGL.Base.Pre.h in Sources */,
 				684C1F6219F6106D00E32FEC /* EffekseerRendererGL.DeviceObject.cpp in Sources */,
 				48383A901BE47C0B0019B4FF /* EffekseerPluginCommon.cpp in Sources */,

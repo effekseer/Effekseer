@@ -8,7 +8,8 @@
 #include "EffekseerRendererGL.h"
 
 #include "../common/IUnityGraphics.h"
-#include "../common/EffekseerPluginLoader.h"
+#include "../common/EffekseerPluginTexture.h"
+#include "../common/EffekseerPluginModel.h"
 
 using namespace Effekseer;
 
@@ -31,31 +32,45 @@ namespace EffekseerPlugin
 			: TextureLoader(load, unload) {}
 		virtual ~TextureLoaderOSX() {}
 		virtual void* Load( const EFK_CHAR* path, Effekseer::TextureType textureType ){
+			// リソーステーブルを検索して存在したらそれを使う
 			auto it = resources.find((const char16_t*)path);
 			if (it != resources.end()) {
 				it->second.referenceCount++;
 				return it->second.texture;
-			} else {
-				TextureResource res;
-				res.texture = load( (const char16_t*)path );
-				resources.insert( std::make_pair(
-					(const char16_t*)path, res ) );
-				return res.texture;
 			}
-			return nullptr;
+
+			// Unityでテクスチャをロード
+			TextureResource res;
+			res.texture = load( (const char16_t*)path );
+			if (res.texture == nullptr)
+			{
+				return nullptr;
+			}
+			// リソーステーブルに追加
+			resources.insert( std::make_pair((const char16_t*)path, res ) );
+
+			return res.texture;
 		}
 		virtual void Unload( void* source ){
 			if (source == nullptr) {
 				return;
 			}
-			for (auto it = resources.begin(); it != resources.end(); it++) {
-				if (it->second.texture == source) {
-					it->second.referenceCount--;
-					if (it->second.referenceCount <= 0) {
-						unload( it->first.c_str() );
-						resources.erase(it);
-					}
-				}
+
+			// アンロードするテクスチャを検索
+			auto it = std::find_if(resources.begin(), resources.end(), 
+				[source](const std::pair<std::u16string, TextureResource>& pair){
+					return pair.second.texture == source;
+				});
+			if (it == resources.end()) {
+				return;
+			}
+
+			// 参照カウンタが0になったら実際にアンロード
+			it->second.referenceCount--;
+			if (it->second.referenceCount <= 0) {
+				// Unity側でアンロード
+				unload(it->first.c_str());
+				resources.erase(it);
 			}
 		}
 	};
@@ -66,101 +81,14 @@ namespace EffekseerPlugin
 	{
 		return new TextureLoaderOSX( load, unload );
 	}
-
-	class ModelLoaderOSX : public ModelLoader
-	{
-		ModelLoaderLoad load;
-		ModelLoaderUnload unload;
-		
-		struct ModelResource {
-			int referenceCount = 1;
-			void* internalData;
-		};
-		std::map<std::u16string, ModelResource> resources;
-		
-		class MemoryFileReader : public Effekseer::FileReader {
-			uint8_t* data;
-			size_t length;
-			int position;
-		public:
-			MemoryFileReader(uint8_t* data, size_t length): data(data), length(length) {}
-			size_t Read( void* buffer, size_t size ) {
-				if (size >= length - position) {
-					size = length - position;
-				}
-				memcpy(buffer, &data[position], size);
-				position += size;
-				return size;
-			}
-			void Seek(int position) {
-				this->position = position;
-			}
-			int GetPosition() {
-				return position;
-			}
-			size_t GetLength() {
-				return length;
-			}
-		};
-		class MemoryFile : public Effekseer::FileInterface {
-		public:
-			std::vector<uint8_t> loadbuffer;
-			size_t loadsize;
-			FileReader* OpenRead( const EFK_CHAR* path ) {
-				return new MemoryFileReader(&loadbuffer[0], loadsize);
-			}
-			FileWriter* OpenWrite( const EFK_CHAR* path ) {
-				return nullptr;
-			}
-		};
-
-		MemoryFile memoryFile;
-		std::unique_ptr<Effekseer::ModelLoader> internalLoader;
-
-	public:
-		ModelLoaderOSX(
-			ModelLoaderLoad load,
-			ModelLoaderUnload unload ) 
-			: ModelLoader( load, unload )
-			, internalLoader( g_EffekseerRenderer->CreateModelLoader( &memoryFile ) ) {}
-		virtual ~ModelLoaderOSX() {}
-		virtual void* Load( const EFK_CHAR* path ){
-			auto it = resources.find((const char16_t*)path);
-			if (it != resources.end()) {
-				it->second.referenceCount++;
-				return it->second.internalData;
-			} else {
-				ModelResource res;
-				int size = load( (const char16_t*)path, 
-					&memoryFile.loadbuffer[0], (int)memoryFile.loadbuffer.size() );
-				if (size <= 0) {
-					return nullptr;
-				}
-				memoryFile.loadsize = (size_t)size;
-				res.internalData = internalLoader->Load( path );
-				resources.insert( std::make_pair(
-					(const char16_t*)path, res ) );
-				return res.internalData;
-			}
-			return nullptr;
-		}
-		virtual void Unload( void* source ){
-			for (auto it = resources.begin(); it != resources.end(); it++) {
-				if (it->second.internalData == source) {
-					it->second.referenceCount--;
-					if (it->second.referenceCount <= 0) {
-						unload( it->first.c_str() );
-						resources.erase(it);
-					}
-				}
-			}
-		}
-	};
 	
 	ModelLoader* ModelLoader::Create(
 		ModelLoaderLoad load,
 		ModelLoaderUnload unload)
 	{
-		return new ModelLoaderOSX( load, unload );
+		auto loader = new ModelLoader( load, unload );
+		loader->SetInternalLoader( 
+			g_EffekseerRenderer->CreateModelLoader( loader->GetFileInterface() ) );
+		return loader;
 	}
 };
