@@ -1,5 +1,6 @@
 #include "EffekseerPluginCommon.h"
-#include "EffekseerPluginLoader.h"
+#include "EffekseerPluginTexture.h"
+#include "EffekseerPluginModel.h"
 #include "EffekseerPluginSound.h"
 #include "Effekseer.h"
 
@@ -212,11 +213,11 @@ extern "C"
 	}
 
 	DLLEXPORT void UNITY_API EffekseerSetSoundPlayerEvent(
-			SoundPlayerPlay play,
-			SoundPlayerStopTag stopTag,
-			SoundPlayerPauseTag pauseTag,
-			SoundPlayerCheckPlayingTag checkPlayingTag,
-			SoundPlayerStopAll stopAll)
+		SoundPlayerPlay play,
+		SoundPlayerStopTag stopTag,
+		SoundPlayerPauseTag pauseTag,
+		SoundPlayerCheckPlayingTag checkPlayingTag,
+		SoundPlayerStopAll stopAll)
 	{
 		g_EffekseerManager->SetSoundPlayer(EffekseerPlugin::SoundPlayer::Create(play, stopTag, pauseTag, checkPlayingTag, stopAll ));
 	}

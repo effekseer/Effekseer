@@ -16,13 +16,13 @@ using namespace Effekseer;
 
 IUnityInterfaces*		g_UnityInterfaces = NULL;
 IUnityGraphics*			g_Graphics = NULL;
-UnityGfxRenderer			g_RendererType = kUnityGfxRendererNull;
+UnityGfxRenderer		g_RendererType = kUnityGfxRendererNull;
 IDirect3DDevice9*		g_D3d9Device = NULL;
 ID3D11Device*			g_D3d11Device = NULL;
-ID3D11DeviceContext*		g_D3d11Context = NULL;
+ID3D11DeviceContext*	g_D3d11Context = NULL;
 
 Effekseer::Manager*				g_EffekseerManager = NULL;
-EffekseerRenderer::Renderer*		g_EffekseerRenderer = NULL;
+EffekseerRenderer::Renderer*	g_EffekseerRenderer = NULL;
 
 static void InitializeEffekseer(int maxInstances, int maxSquares);
 static void FinalizeEffekseer();
@@ -163,6 +163,8 @@ extern "C"
 		case kUnityGfxRendererD3D11:
 			g_EffekseerRenderer = EffekseerRendererDX11::Renderer::Create(g_D3d11Device, g_D3d11Context, maxSquares);
 			break;
+		default:
+			return;
 		}
 
 		g_EffekseerManager = Effekseer::Manager::Create(maxInstances);
