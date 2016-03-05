@@ -41,6 +41,10 @@
 * UnrealEngine4, Cocos2D対応
 * iPhone,Android対応
 
+**候補**
+* HDRレンダリング
+* タービュランスノイズ ( https://ics.media/entry/10921 )
+
 # コミッター向け
 
 ## ランタイムテスト方法
