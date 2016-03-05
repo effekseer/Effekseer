@@ -269,7 +269,7 @@
 			this.lbl_h.Name = "lbl_h";
 			this.lbl_h.Size = new System.Drawing.Size(29, 12);
 			this.lbl_h.TabIndex = 24;
-			this.lbl_h.Text = "横幅";
+			this.lbl_h.Text = "縦幅";
 			// 
 			// lbl_w
 			// 
