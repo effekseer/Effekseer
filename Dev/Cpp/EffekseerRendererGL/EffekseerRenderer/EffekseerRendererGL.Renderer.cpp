@@ -869,11 +869,13 @@ bool RendererImplemented::BeginRendering()
 		m_originalState.depthTest = glIsEnabled(GL_DEPTH_TEST);
 		m_originalState.texture = glIsEnabled(GL_TEXTURE_2D);
 		glGetBooleanv(GL_DEPTH_WRITEMASK, &m_originalState.depthWrite);
+		glGetIntegerv(GL_DEPTH_FUNC, &m_originalState.depthFunc);
 		glGetIntegerv(GL_BLEND_SRC_RGB, &m_originalState.blendSrc);
 		glGetIntegerv(GL_BLEND_DST_RGB, &m_originalState.blendDst);
 		glGetIntegerv(GL_BLEND_EQUATION, &m_originalState.blendEquation);
 	}
 
+	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 
@@ -909,7 +911,8 @@ bool RendererImplemented::EndRendering()
 #if !defined(__EFFEKSEER_RENDERER_GL3__)
 		if (m_originalState.texture) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
 #endif
-
+		
+		glDepthFunc(m_originalState.depthFunc);
 		glDepthMask(m_originalState.depthWrite);
 		glBlendFunc(m_originalState.blendSrc, m_originalState.blendDst);
 		GLExt::glBlendEquation(m_originalState.blendEquation);

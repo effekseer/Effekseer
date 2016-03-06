@@ -249,6 +249,7 @@ struct RenderStateSet
 	GLboolean	depthTest;
 	GLboolean	depthWrite;
 	GLboolean	texture;
+	GLint		depthFunc;
 	GLint		blendSrc;
 	GLint		blendDst;
 	GLint		blendEquation;
