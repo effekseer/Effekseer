@@ -1,9 +1,16 @@
 ﻿Effekseer
 =========
-本ソフトウェア及びランタイムはオープンソースにて開発しているヴィジュアルエフェクト編集ツール・再生用ランタイムです。
-主にゲームに組み込み使用しており、パーティクル等ヴィジュアルエフェクトをプログラマでなくデザイナが担当できるようにすること想定しています。
+本ソフトウェアはヴィジュアルエフェクト編集ツールです。
+ランタイムやプラグインを組み込むことで、アプリケーション中で作成されたエフェクトを再生できるようになります。
+主にゲームで使用することを想定しており、ヴィジュアルエフェクトの編集をプログラマでなくデザイナーが担当できるようにします。
 
 * [公式ウェブサイト](http://effekseer.github.io/jp/)
+
+This software is a visual effects editing tool.
+By incorporating a runtime and plug-ins, you will be able to play the effect that was created in the application.
+It is assumed to be used mainly in the game, and the editing of visual effects rather than the programmer so designers can be in charge.
+
+* [Official website](http://effekseer.github.io/en/)
 
 [![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
 
