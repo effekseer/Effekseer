@@ -20,7 +20,7 @@ namespace Effekseer.Utl
 			System.IO.FileStream fs = null;
 			try
 			{
-				fs = System.IO.File.Open(path, System.IO.FileMode.Open);
+				fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
 			}
 			catch(System.IO.FileNotFoundException e)
 			{

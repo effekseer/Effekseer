@@ -91,6 +91,15 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.CommonUtils.h">
       <Filter>EffekseerRendererCommon</Filter>
     </ClInclude>
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.PngTextureLoader.h">
+      <Filter>EffekseerRendererCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.VertexArray.h">
+      <Filter>EffekseerRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.StandardRenderer.h">
+      <Filter>EffekseerRendererCommon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">
@@ -161,6 +170,12 @@
     </ClCompile>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.Renderer.cpp">
       <Filter>EffekseerRendererCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.PngTextureLoader.cpp">
+      <Filter>EffekseerRendererCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.VertexArray.cpp">
+      <Filter>EffekseerRenderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

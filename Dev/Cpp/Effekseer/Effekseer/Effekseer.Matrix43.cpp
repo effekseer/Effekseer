@@ -240,21 +240,55 @@ void Matrix43::GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const
 	t.X = Value[3][0];
 	t.Y = Value[3][1];
 	t.Z = Value[3][2];
-
+	
 	float sc[3];
 	for( int m = 0; m < 3; m++ )
 	{
-		sc[m] = 0;
-		for( int n = 0; n < 3; n++ )
-		{
-			sc[m] += Value[m][n] * Value[m][n];
-		}
-		sc[m] = sqrt( sc[m] );
+		sc[m] = sqrt( Value[m][0] * Value[m][0] + Value[m][1] * Value[m][1] + Value[m][2] * Value[m][2] );
 	}
 	
 	s.X = sc[0];
 	s.Y = sc[1];
 	s.Z = sc[2];
+	
+	for( int m = 0; m < 3; m++ )
+	{
+		for( int n = 0; n < 3; n++ )
+		{
+			r.Value[m][n] = Value[m][n] / sc[m];
+		}
+	}
+	r.Value[3][0] = 0.0f;
+	r.Value[3][1] = 0.0f;
+	r.Value[3][2] = 0.0f;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Matrix43::GetScale( Vector3D& s ) const
+{
+	float sc[3];
+	for( int m = 0; m < 3; m++ )
+	{
+		sc[m] = sqrt( Value[m][0] * Value[m][0] + Value[m][1] * Value[m][1] + Value[m][2] * Value[m][2] );
+	}
+	
+	s.X = sc[0];
+	s.Y = sc[1];
+	s.Z = sc[2];
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Matrix43::GetRotation( Matrix43& r ) const
+{
+	float sc[3];
+	for( int m = 0; m < 3; m++ )
+	{
+		sc[m] = sqrt( Value[m][0] * Value[m][0] + Value[m][1] * Value[m][1] + Value[m][2] * Value[m][2] );
+	}
 
 	for( int m = 0; m < 3; m++ )
 	{
@@ -266,6 +300,16 @@ void Matrix43::GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const
 	r.Value[3][0] = 0.0f;
 	r.Value[3][1] = 0.0f;
 	r.Value[3][2] = 0.0f;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Matrix43::GetTranslation( Vector3D& t ) const
+{
+	t.X = Value[3][0];
+	t.Y = Value[3][1];
+	t.Z = Value[3][2];
 }
 
 //----------------------------------------------------------------------------------

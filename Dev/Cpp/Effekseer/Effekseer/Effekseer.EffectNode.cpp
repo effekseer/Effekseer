@@ -64,11 +64,34 @@ void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting*
 	{
 		memcpy( &size, pos, sizeof(int) );
 		pos += sizeof(int);
-		assert( size == sizeof(ParameterCommonValues) );
-		memcpy( &CommonValues, pos, size );
-		pos += size;
-		
 
+		if (m_effect->GetVersion() >= 9)
+		{
+			assert(size == sizeof(ParameterCommonValues));
+			memcpy(&CommonValues, pos, size);
+			pos += size;
+		}
+		else
+		{
+			assert(size == sizeof(ParameterCommonValues_8));
+			ParameterCommonValues_8 param_8;
+			memcpy(&param_8, pos, size);
+			pos += size;
+
+			CommonValues.MaxGeneration = param_8.MaxGeneration;
+			CommonValues.TranslationBindType = param_8.TranslationBindType;
+			CommonValues.RotationBindType = param_8.RotationBindType;
+			CommonValues.ScalingBindType = param_8.ScalingBindType;
+			CommonValues.RemoveWhenLifeIsExtinct = param_8.RemoveWhenLifeIsExtinct;
+			CommonValues.RemoveWhenParentIsRemoved = param_8.RemoveWhenParentIsRemoved;
+			CommonValues.RemoveWhenChildrenIsExtinct = param_8.RemoveWhenChildrenIsExtinct;
+			CommonValues.life = param_8.life;
+			CommonValues.GenerationTime.max = param_8.GenerationTime;
+			CommonValues.GenerationTime.min = param_8.GenerationTime;
+			CommonValues.GenerationTimeOffset.max = param_8.GenerationTimeOffset;
+			CommonValues.GenerationTimeOffset.min = param_8.GenerationTimeOffset;
+		}
+		
 		memcpy( &TranslationType, pos, sizeof(int) );
 		pos += sizeof(int);
 
@@ -165,6 +188,14 @@ void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting*
 			memcpy( &LocationAbs.gravity, pos, size );
 			pos += size;
 		}
+		else if( LocationAbs.type == LocationAbsParameter::AttractiveForce )
+		{
+			memcpy( &size, pos, sizeof(int) );
+			pos += sizeof(int);
+			assert( size == sizeof(LocationAbs.attractiveForce) );
+			memcpy( &LocationAbs.attractiveForce, pos, size );
+			pos += size;
+		}
 
 		/* â‘ÎˆÊ’uŠg‘åˆ— */
 		if( m_effect->GetVersion() >= 8 )
@@ -253,7 +284,7 @@ void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting*
 			// –³Œø‰»
 			if( ScalingFixed.Position.X == 1.0f &&
 				ScalingFixed.Position.Y == 1.0f &&
-				ScalingFixed.Position.Z == 1.0f )
+				ScalingFixed.Position.Z == 1.0f)
 			{
 				ScalingType = ParameterScalingType_None;
 				EffekseerPrintDebug("ScalingType Change None\n");
@@ -307,8 +338,8 @@ void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting*
 		GenerationLocation.load( pos );
 
 		/* ¶¬ˆÊ’uŠg‘åˆ—*/
-		if( m_effect->GetVersion() >= 8 && 
-			(this->CommonValues.ScalingBindType == BindType_NotBind || parent->GetType() == EFFECT_NODE_TYPE_ROOT))
+		if( m_effect->GetVersion() >= 8  
+			/* && (this->CommonValues.ScalingBindType == BindType_NotBind || parent->GetType() == EFFECT_NODE_TYPE_ROOT)*/ )
 		{
 			if( GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT )
 			{
@@ -328,7 +359,7 @@ void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting*
 		}
 
 		// ‰EŽèŒn¶ŽèŒn•ÏŠ·
-		if( setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH )
+		if( setting->GetCoordinateSystem() == CoordinateSystem::LH )
 		{
 			// Translation
 			if( TranslationType == ParameterTranslationType_Fixed )
@@ -417,6 +448,9 @@ void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting*
 		if( m_effect->GetVersion() >= 3)
 		{
 			Texture.load( pos, m_effect->GetVersion() );
+
+			// Šg‘åˆ—
+			Texture.DistortionIntensity *= m_effect->GetMaginification();
 		}
 		else
 		{

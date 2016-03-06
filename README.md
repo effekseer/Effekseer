@@ -1,43 +1,71 @@
-Effekseer
+ï»¿Effekseer
 =========
-–{ƒ\ƒtƒgƒEƒFƒA‹y‚Ñƒ‰ƒ“ƒ^ƒCƒ€‚ÍƒI[ƒvƒ“ƒ\[ƒX‚É‚ÄŠJ”­‚µ‚Ä‚¢‚éƒ”ƒBƒWƒ…ƒAƒ‹ƒGƒtƒFƒNƒg•ÒWƒc[ƒ‹EÄ¶—pƒ‰ƒ“ƒ^ƒCƒ€‚Å‚·B
-Žå‚ÉƒQ[ƒ€‚É‘g‚Ýž‚ÝŽg—p‚µ‚Ä‚¨‚èAƒp[ƒeƒBƒNƒ‹“™ƒ”ƒBƒWƒ…ƒAƒ‹ƒGƒtƒFƒNƒg‚ðƒvƒƒOƒ‰ƒ}‚Å‚È‚­ƒfƒUƒCƒi‚ª’S“–‚Å‚«‚é‚æ‚¤‚É‚·‚é‚±‚Æ‘z’è‚µ‚Ä‚¢‚Ü‚·B
+æœ¬ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã¯ãƒ´ã‚£ã‚¸ãƒ¥ã‚¢ãƒ«ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç·¨é›†ãƒ„ãƒ¼ãƒ«ã§ã™ã€‚
+ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã‚„ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’çµ„ã¿è¾¼ã‚€ã“ã¨ã§ã€ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ä¸­ã§ä½œæˆã•ã‚ŒãŸã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å†ç”Ÿã§ãã‚‹ã‚ˆã†ã«ãªã‚Šã¾ã™ã€‚
+ä¸»ã«ã‚²ãƒ¼ãƒ ã§ä½¿ç”¨ã™ã‚‹ã“ã¨ã‚’æƒ³å®šã—ã¦ãŠã‚Šã€ãƒ´ã‚£ã‚¸ãƒ¥ã‚¢ãƒ«ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ç·¨é›†ã‚’ãƒ—ãƒ­ã‚°ãƒ©ãƒžã§ãªããƒ‡ã‚¶ã‚¤ãƒŠãƒ¼ãŒæ‹…å½“ã§ãã‚‹ã‚ˆã†ã«ã—ã¾ã™ã€‚
 
-**Version 0.601**
-* ˆê•”‚ÌƒGƒtƒFƒNƒgƒtƒ@ƒCƒ‹‚ð“Ç‚Ýž‚ß‚È‚©‚Á‚½•s‹ï‡‚ðC³
+* [å…¬å¼ã‚¦ã‚§ãƒ–ã‚µã‚¤ãƒˆ](http://effekseer.github.io/jp/)
+
+This software is a visual effects editing tool.
+By incorporating a runtime and plug-ins, you will be able to play the effect that was created in the application.
+It is assumed to be used mainly in the game, and the editing of visual effects rather than the programmer so designers can be in charge.
+
+* [Official website](http://effekseer.github.io/en/)
+
+[![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
+
+**ä¸å…·åˆæƒ…å ±**
+
+ç¾åœ¨ã€UnityMacç‰ˆã§ã¯LegacyDefferedã¨Forwardã®ã¿æç”»å¯¾å¿œã—ã¦ã„ã¾ã™ã€‚ä¸å…·åˆã®åŽŸå› ã¯ç¾åœ¨èª¿æŸ»ä¸­ã§ã™ã€‚
 
 # RoadMap
-**Version 0.7(—\’è)**
-* ƒ^[ƒQƒbƒg‚ÉŒü‚©‚¤‚æ‚¤‚ÈƒGƒtƒFƒNƒgiƒ^[ƒQƒbƒgˆÊ’u‚©‚ç‚Ì‘Š‘ÎˆÊ’ux,y,z,I“_‘¬“xj
-* ‘ÎÛŽw’è d—Í@•—@ˆø—Í@ƒS[ƒ‹
+
+**Version 1.20**
+* ?
 
 # Todo
-ƒvƒ‹ƒŠƒNƒGƒXƒg‚¨‘Ò‚¿‚µ‚Ä‚¨‚è‚Ü‚·B
+ãƒ—ãƒ«ãƒªã‚¯ã‚¨ã‚¹ãƒˆãŠå¾…ã¡ã—ã¦ãŠã‚Šã¾ã™ã€‚
 
-**¬‹K–Í‚È’Ç‰ÁE•ÏX**
-* ƒhƒLƒ…ƒƒ“ƒg‚Ì‰ü—Ç
-* •¶Œ¾‚Ì‰ü—Ç
-* ŠeŽíƒAƒCƒRƒ“‚Ì’Ç‰Á
-* ƒTƒ“ƒvƒ‹‚Ì’Ç‰Á
-* WindowsALinuxˆÈŠO‚ÌƒeƒXƒg‚Ì\’z
-* ‚‘¬‰»
+**å°è¦æ¨¡ãªè¿½åŠ ãƒ»å¤‰æ›´**
+* ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã®æ”¹è‰¯
+* æ–‡è¨€ã®æ”¹è‰¯
+* å„ç¨®ã‚¢ã‚¤ã‚³ãƒ³ã®è¿½åŠ 
+* ã‚µãƒ³ãƒ—ãƒ«ã®è¿½åŠ 
+* Windowsã€Linuxä»¥å¤–ã®ãƒ†ã‚¹ãƒˆã®æ§‹ç¯‰
 
-**’†‹K–Í‚È’Ç‰ÁE•ÏX**
-* Effect‚Ìƒpƒ‰ƒ[ƒ^[‚Ì“®“I‚È•ÏX
-* ƒVƒ‡[ƒgƒJƒbƒg‚ÌŒ©’¼‚µ
-* Ž©“®ƒJƒŠƒ“ƒO
-* ƒ‚ƒfƒ‹o—Íƒvƒ‰ƒOƒCƒ“(Blender“™)
-* ¶¬ŽžŠÔ‚Ìƒ‰ƒ“ƒ_ƒ€(Œ»Ý‚ÌÝŒv‚ÅŽÀ‘•‰Â”\‚È‚Ì‚©—vŒŸØ)
-* ƒR[ƒh®”õ
-* D3DXƒŒƒX‰»(ŽÀ‘•‰Â”\‚È‚Ì‚©—vŒŸØ)
+**ä¸­è¦æ¨¡ãªè¿½åŠ ãƒ»å¤‰æ›´**
+* Effectã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã®å‹•çš„ãªå¤‰æ›´
+* ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆã®è¦‹ç›´ã—
+* ãƒ¢ãƒ‡ãƒ«å‡ºåŠ›ãƒ—ãƒ©ã‚°ã‚¤ãƒ³(Blenderç­‰)
 
-**‘å‹K–Í‚È’Ç‰ÁE•ÏX**
-* ƒc[ƒ‹‚ÌGUIƒ‰ƒCƒuƒ‰ƒŠ‚Ì•ÏX
-* ƒc[ƒ‹‚Ìƒ}ƒ‹ƒ`ƒvƒ‰ƒbƒgƒtƒH[ƒ€‰»
 
-# Šù‘¶‚Ì•s‹ï‡
-* ƒXƒe[ƒg•œ‹A‚ª•sŠ®‘S
-* ƒEƒCƒ“ƒhƒEˆÊ’u‚Ì‰Šú‰»‚ÅƒEƒCƒ“ƒhƒEˆÊ’u‚ª³‚µ‚­‰Šú‰»‚³‚ê‚È‚¢
-* ƒc[ƒ‹•¡”‹N“®ŽžAƒc[ƒ‹ŠÔ‚ÌƒRƒs[‚ÅƒeƒNƒXƒ`ƒƒ‚ÌƒpƒX‚ª‚¨‚©‚µ‚­‚È‚é
-* Å¬‰»‚µ‚ÄI—¹‚µ‚½ŽžAŽŸ‹N“®‚·‚é‚ÆƒGƒ‰[
+**å¤§è¦æ¨¡ãªè¿½åŠ ãƒ»å¤‰æ›´**
+* ãƒ„ãƒ¼ãƒ«ã®GUIãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®å¤‰æ›´
+* ãƒ„ãƒ¼ãƒ«ã®ãƒžãƒ«ãƒãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ åŒ–
+
+**ä»–**
+* DirectX12å¯¾å¿œ
+* UnrealEngine4, Cocos2Då¯¾å¿œ
+* iPhone,Androidå¯¾å¿œ
+
+**å€™è£œ**
+* HDRãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°
+* ã‚¿ãƒ¼ãƒ“ãƒ¥ãƒ©ãƒ³ã‚¹ãƒŽã‚¤ã‚º ( https://ics.media/entry/10921 )
+
+# ã‚³ãƒŸãƒƒã‚¿ãƒ¼å‘ã‘
+
+## ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ãƒ†ã‚¹ãƒˆæ–¹æ³•
+
+* Windows
+
+```Dev/Cpp/Test.sln``` ã‚’å®Ÿè¡Œã™ã‚‹ã€‚
+
+* Linux
+
+```Dev/Cpp/build.sh``` ã‚’å®Ÿè¡Œã™ã‚‹ã€‚
+```Dev/Cpp/Test/CMakeLists.txt``` ã‚’cmakeã‚’ä½¿ç”¨ã—ã¦makeã‚’ç”Ÿæˆã—ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹ã€‚
+
+* Mac
+
+ä¸æ˜Ž
 

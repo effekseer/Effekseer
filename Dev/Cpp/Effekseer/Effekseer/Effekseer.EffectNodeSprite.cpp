@@ -94,7 +94,7 @@ namespace Effekseer
 	}
 
 	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
-	if (setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH)
+	if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 	{
 	}
 
@@ -131,6 +131,10 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.ColorTextureIndex = SpriteTexture;
 		nodeParameter.EffectPointer = GetEffect();
+		
+		nodeParameter.Distortion = Texture.Distortion;
+		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+
 		renderer->BeginRendering( nodeParameter, count, m_userData );
 	}
 }
@@ -153,6 +157,9 @@ void EffectNodeSprite::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.ColorTextureIndex = SpriteTexture;
 		nodeParameter.EffectPointer = GetEffect();
+
+		nodeParameter.Distortion = Texture.Distortion;
+		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
 
 		SpriteRenderer::InstanceParameter instanceParameter;
 		instValues._color.setValueToArg( instanceParameter.AllColor );
@@ -230,6 +237,10 @@ void EffectNodeSprite::EndRendering(Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.ColorTextureIndex = SpriteTexture;
 		nodeParameter.EffectPointer = GetEffect();
+
+		nodeParameter.Distortion = Texture.Distortion;
+		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+
 		renderer->EndRendering( nodeParameter, m_userData );
 	}
 }

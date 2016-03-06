@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
+#include "Effekseer.Vector3D.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -33,6 +34,7 @@ private:
 	float		m_updatedFrame;
 
 	InstanceContainer*	m_rootContainer;
+	Vector3D			m_targetLocation;
 
 	InstanceGlobal();
 
@@ -57,6 +59,9 @@ public:
 
 	InstanceContainer* GetRootContainer() const;
 	void SetRootContainer( InstanceContainer* container );
+
+	const Vector3D& GetTargetLocation() const;
+	void SetTargetLocation( const Vector3D& location );
 };
 //----------------------------------------------------------------------------------
 //

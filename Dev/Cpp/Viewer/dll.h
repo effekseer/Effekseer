@@ -35,6 +35,12 @@ public:
 	float	Distance;
 	bool	RendersGuide;
 
+	bool	IsCullingShown;
+	float	CullingRadius;
+	float	CullingX;
+	float	CullingY;
+	float	CullingZ;
+
 	ViewerParamater();
 };
 
@@ -71,6 +77,10 @@ public:
 	float	ScaleVelocityX;
 	float	ScaleVelocityY;
 	float	ScaleVelocityZ;
+	
+	float	TargetPositionX;
+	float	TargetPositionY;
+	float	TargetPositionZ;
 
 	ViewerEffectBehavior();
 };
@@ -84,13 +94,13 @@ private:
 	{
 	private:
 		EffekseerRenderer::Renderer*	m_renderer;
-
+		bool							m_isSRGBMode = false;
 	public:
-		TextureLoader( EffekseerRenderer::Renderer* renderer );
+		TextureLoader( EffekseerRenderer::Renderer* renderer, bool isSRGBMode );
 		virtual ~TextureLoader();
 
 	public:
-		void* Load( const EFK_CHAR* path );
+		void* Load( const EFK_CHAR* path, ::Effekseer::TextureType textureType ) override;
 
 		void Unload( void* data );
 
@@ -139,6 +149,8 @@ private:
 	
 	int					m_step;
 
+	bool				m_isSRGBMode = false;
+
 	::Effekseer::Vector3D m_rootLocation;
 	::Effekseer::Vector3D m_rootRotation;
 	::Effekseer::Vector3D m_rootScale;
@@ -147,7 +159,7 @@ public:
 
 	~Native();
 
-	bool CreateWindow_Effekseer( void* handle, int width, int height );
+	bool CreateWindow_Effekseer( void* handle, int width, int height, bool isSRGBMode );
 
 	bool UpdateWindow();
 
@@ -175,7 +187,11 @@ public:
 
 	bool SetRandomSeed( int seed );
 
-	bool Record( const wchar_t* path, int32_t xCount, int32_t yCount, int32_t offsetFrame, int32_t frameSkip, bool isTranslucent );
+	bool Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, bool isTranslucent);
+
+	bool Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, bool isTranslucent);
+
+	bool RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, bool isTranslucent);
 
 	ViewerParamater GetViewerParamater();
 
@@ -220,6 +236,8 @@ public:
 	void SetLightAmbientColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a );
 
 	void SetIsRightHand( bool value );
+
+	void SetCullingParameter( bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ);
 };
 
 //----------------------------------------------------------------------------------

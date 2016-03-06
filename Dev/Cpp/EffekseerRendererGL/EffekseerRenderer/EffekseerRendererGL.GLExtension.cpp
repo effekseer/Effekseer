@@ -62,6 +62,15 @@ typedef void (EFK_STDCALL * FP_glUniform4fv) (GLint location, GLsizei count, con
 typedef void (EFK_STDCALL * FP_glGenerateMipmap) (GLenum target);
 typedef void (EFK_STDCALL * FP_glBufferSubData) (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid* data);
 
+typedef void (EFK_STDCALL * FP_glGenVertexArrays) (GLsizei n, GLuint *arrays);
+typedef void (EFK_STDCALL * FP_glDeleteVertexArrays) (GLsizei n, const GLuint *arrays);
+typedef void (EFK_STDCALL * FP_glBindVertexArray) (GLuint array);
+
+typedef void (EFK_STDCALL * FP_glGenSamplers) (GLsizei n, GLuint *samplers);
+typedef void (EFK_STDCALL * FP_glDeleteSamplers) (GLsizei n, const GLuint * samplers);
+typedef void (EFK_STDCALL * FP_glSamplerParameteri) (GLuint sampler, GLenum pname, GLint param);
+typedef void (EFK_STDCALL * FP_glBindSampler) (GLuint unit, GLuint sampler);
+
 static FP_glDeleteBuffers g_glDeleteBuffers = NULL;
 static FP_glCreateShader g_glCreateShader = NULL;
 static FP_glBindBuffer g_glBindBuffer = NULL;
@@ -93,8 +102,17 @@ static FP_glUniformMatrix4fv g_glUniformMatrix4fv = NULL;
 static FP_glUniform4fv g_glUniform4fv = NULL;
 static FP_glGenerateMipmap g_glGenerateMipmap = NULL;
 static FP_glBufferSubData g_glBufferSubData = NULL;
+static FP_glGenVertexArrays g_glGenVertexArrays = NULL;
+static FP_glDeleteVertexArrays g_glDeleteVertexArrays = NULL;
+static FP_glBindVertexArray g_glBindVertexArray = NULL;
+
+static FP_glGenSamplers g_glGenSamplers = nullptr;
+static FP_glDeleteSamplers g_glDeleteSamplers = nullptr;
+static FP_glSamplerParameteri g_glSamplerParameteri = nullptr;
+static FP_glBindSampler g_glBindSampler = nullptr;
 
 static bool g_isInitialized = false;
+static bool g_isSupportedVertexArray = false;
 
 #define GET_PROC(name)	g_##name = (FP_##name)wglGetProcAddress( #name ); if(g_##name==NULL) return false;
 
@@ -142,13 +160,33 @@ bool Initialize()
 	GET_PROC(glGenerateMipmap);
 	GET_PROC(glBufferSubData);
 
+	GET_PROC(glGenVertexArrays);
+	GET_PROC(glDeleteVertexArrays);
+	GET_PROC(glBindVertexArray);
+
+	GET_PROC(glGenSamplers);
+	GET_PROC(glDeleteSamplers);
+	GET_PROC(glSamplerParameteri);
+	GET_PROC(glBindSampler);
+
+	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
+
 	g_isInitialized = true;
 	return true;
 #else
 
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+	g_isSupportedVertexArray = true;
+#endif
+
 	g_isInitialized = true;
 	return true;
 #endif
+}
+
+bool IsSupportedVertexArray()
+{
+	return g_isSupportedVertexArray;
 }
 
 void glDeleteBuffers(GLsizei n, const GLuint* buffers)
@@ -427,6 +465,69 @@ void glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLvo
 	g_glBufferSubData(target, offset, size, data);
 #else
 	::glBufferSubData(target, offset, size, data);
+#endif
+}
+
+void glGenVertexArrays(GLsizei n, GLuint *arrays)
+{
+#if _WIN32
+	g_glGenVertexArrays(n, arrays);
+#else
+	::glGenVertexArrays(n, arrays);
+#endif
+}
+
+void glDeleteVertexArrays(GLsizei n, const GLuint *arrays)
+{
+#if _WIN32
+	g_glDeleteVertexArrays(n, arrays);
+#else
+	::glDeleteVertexArrays(n, arrays);
+#endif
+}
+
+void glBindVertexArray(GLuint array)
+{
+#if _WIN32
+	g_glBindVertexArray(array);
+#else
+	::glBindVertexArray(array);
+#endif
+}
+
+void glGenSamplers(GLsizei n, GLuint *samplers)
+{
+#if _WIN32
+	g_glGenSamplers(n, samplers);
+#else
+	::glGenSamplers(n, samplers);
+#endif
+}
+
+void glDeleteSamplers(GLsizei n, const GLuint * samplers)
+{
+#if _WIN32
+	g_glDeleteSamplers(n, samplers);
+#else
+	::glDeleteSamplers(n, samplers);
+#endif
+}
+
+void glSamplerParameteri(GLuint sampler, GLenum pname, GLint param)
+{
+#if _WIN32
+	g_glSamplerParameteri(sampler, pname, param);
+#else
+	::glSamplerParameteri(sampler, pname, param);
+#endif
+}
+
+void glBindSampler(GLuint unit, GLuint sampler)
+{
+#if _WIN32
+	g_glBindSampler(unit, sampler);
+#else
+	::glBindSampler(unit, sampler);
 #endif
 }
 

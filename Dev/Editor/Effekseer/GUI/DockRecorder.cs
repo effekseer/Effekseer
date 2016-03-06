@@ -12,97 +12,242 @@ namespace Effekseer.GUI
 {
 	public partial class DockRecorder : DockContent
 	{
-		int xCount = 1;
-		int yCount = 1;
-		int offset = 1;
-		int frameskip = 0;
-
 		public DockRecorder()
 		{
 			InitializeComponent();
 
-			txt_xCount.ReadMethod = () =>
+			if(Core.Language == Language.English)
 			{
-				return xCount;
-			};
-			txt_xCount.WriteMethod = (value, wheel) =>
+				grp_area.Text = "Resolution";
+				lbl_w.Text = "Width";
+				lbl_h.Text = "Height";
+				lbl_showArea.Text = "Show guide";
+
+				grp_frame.Text = "Exported frame";
+				lbl_starting.Text = "Start Frame";
+				lbl_ending.Text = "End Frame";
+				lbl_freq.Text = "Frequency(Frame)";
+
+				grp_type.Text = "Format";
+				lbl_the_number_of_image_h.Text = "X Count";
+
+				grp_option.Text = "Options";
+				lbl_isTranslucent.Text = "Transparent Background";
+
+				btn_record.Text = "Record";
+
+				cb_type.Items.Clear();
+				this.cb_type.Items.AddRange(new object[] {
+		            "Export as a single image.",
+		            "Export as images",
+		            "Export as a gif animation"});
+				cb_type.SelectedIndex = 0;
+			}
+
+			txt_startingFrame.ReadMethod = () =>
+				{
+					return startingFrame;
+				};
+
+			txt_startingFrame.WriteMethod = (value, wheel) =>
+				{
+					startingFrame = Math.Max(value, 1);
+				};
+
+			txt_endingFrame.ReadMethod = () =>
 			{
-				xCount = Math.Max(value, 1);
+				return endingFrame;
 			};
 
-			txt_yCount.ReadMethod = () =>
+			txt_endingFrame.WriteMethod = (value, wheel) =>
 			{
-				return yCount;
-			};
-			txt_yCount.WriteMethod = (value, wheel) =>
-			{
-				yCount = Math.Max(value, 1);
+				endingFrame = Math.Max(value, 1);
 			};
 
-			txt_offset.ReadMethod = () =>
+			txt_freq.ReadMethod = () =>
 			{
-				return offset;
-			};
-			txt_offset.WriteMethod = (value, wheel) =>
-			{
-				offset = Math.Max(value, 1);
+				return freq;
 			};
 
-			txt_frameskip.ReadMethod = () =>
+			txt_freq.WriteMethod = (value, wheel) =>
 			{
-				return frameskip;
+				freq = Math.Max(value, 1);
 			};
-			txt_frameskip.WriteMethod = (value, wheel) =>
+
+			txt_number_v.ReadMethod = () =>
+				{
+					return theNumberOfImageV;
+				};
+
+			txt_number_v.WriteMethod = (value, wheel) =>
 			{
-				frameskip = Math.Max(value, 0);
+				theNumberOfImageV = Math.Max(value, 1);
 			};
+
+			txt_areaWidth.ReadMethod = () =>
+			{
+				if (GUIManager.DockViewer.ViewerAsDynamic != null) return GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater().GuideWidth;
+				return 0;
+			};
+			txt_areaWidth.WriteMethod = (value, wheel) =>
+			{
+				if (GUIManager.DockViewer.ViewerAsDynamic != null)
+				{
+					var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
+					param.GuideWidth = Math.Max(0, value);
+					GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
+				}
+			};
+
+			txt_areaHeight.ReadMethod = () =>
+			{
+				if (GUIManager.DockViewer.ViewerAsDynamic != null) return GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater().GuideHeight;
+				return 0;
+			};
+			txt_areaHeight.WriteMethod = (value, wheel) =>
+			{
+				if (GUIManager.DockViewer.ViewerAsDynamic != null)
+				{
+					var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
+					param.GuideHeight = Math.Max(0, value);
+					GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
+				}
+			};
+
+			cb_type.SelectedIndex = 0;
+			txt_areaWidth.Reload();
+			txt_areaHeight.Reload();
+			txt_startingFrame.Reload();
+			txt_endingFrame.Reload();
+			txt_number_v.Reload();
+			txt_freq.Reload();
 		}
+
+		int startingFrame = 1;
+		int endingFrame = 16;
+		int freq = 1;
+		int theNumberOfImageV = 4;
+
+		bool nowReloading = false;
 
 		public void UpdateRecorder()
 		{
-			if (!txt_xCount.Changed) txt_xCount.Reload();
-			if (!txt_yCount.Changed) txt_yCount.Reload();
-			if (!txt_offset.Changed) txt_offset.Reload();
-			if (!txt_frameskip.Changed) txt_frameskip.Reload();
+			nowReloading = true;
+
+			if (!txt_areaWidth.Changed) txt_areaWidth.Reload();
+			if (!txt_areaHeight.Changed) txt_areaHeight.Reload();
+			
+			if (!txt_startingFrame.Changed) txt_startingFrame.Reload();
+			if (!txt_endingFrame.Changed) txt_endingFrame.Reload();
+			if (!txt_freq.Changed) txt_freq.Reload();
+
+			if (GUIManager.DockViewer.ViewerAsDynamic != null)
+			{
+				var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
+				cb_area.Checked = param.RendersGuide;
+			}
+
+			nowReloading = false;
 		}
 
 		private void btn_record_Click(object sender, EventArgs e)
 		{
+			var during = endingFrame - startingFrame;
+			if (during < 0)
+			{
+				MessageBox.Show("出力フレームが存在しません。");
+			}
+
+			var count = during / freq + 1;
+			var width = theNumberOfImageV;
+			var height = count / width;
+			if (height * width != count) height++;
+
 			if (GUIManager.DockViewer.ViewerAsDynamic != null)
 			{
+				var dialog = new SaveFileDialog();
+
+				if(cb_type.SelectedIndex == 0)
+				{
+					dialog.Filter = "png(*.png)|*.png";
+				}
+				else if (cb_type.SelectedIndex == 1)
+				{
+					dialog.Filter = "png(*.png)|*.png";
+				}
+				else if (cb_type.SelectedIndex == 2)
+				{
+					dialog.Filter = "gif(*.gif)|*.gif";
+				}
+				
+
+				if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+				{
+					return;
+				}
+
+				var filename = dialog.FileName;
+
 				var viewer = GUIManager.DockViewer.ViewerAsDynamic;
 				var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
-
-				DateTime time = DateTime.Now;
-				string path = "";
-				path += time.Year.ToString();
-				path += time.Month.ToString("D2");
-				path += time.Day.ToString("D2");
-				path += time.Hour.ToString("D2");
-				path += time.Minute.ToString("D2");
-				path += time.Second.ToString("D2") + "_";
-				path += param.GuideWidth.ToString() + "_";
-				path += param.GuideHeight.ToString() + "_";
-				path += xCount.ToString() + "_";
-				path += yCount.ToString() + "_";
-				path += offset.ToString() + "_";
-				path += frameskip.ToString() + ".png";
 
 				if (viewer.LoadEffectFunc != null)
 				{
 					viewer.LoadEffectFunc();
 				}
 
+				
 				var tempDirectory = System.IO.Directory.GetCurrentDirectory();
 				System.IO.Directory.SetCurrentDirectory(Program.StartDirectory);
 
-				if (!viewer.Record(path, xCount, yCount, offset, frameskip, cb_isTranslucent.Checked))
+				if (cb_type.SelectedIndex == 0)
 				{
-					MessageBox.Show("録画に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+					if (!viewer.Record(filename, count, width, startingFrame, freq, cb_isTranslucent.Checked))
+					{
+						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+					}
+				}
+				else if (cb_type.SelectedIndex == 1)
+				{
+					if (!viewer.Record(filename, count, startingFrame, freq, cb_isTranslucent.Checked))
+					{
+						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+					}
+				}
+				else if (cb_type.SelectedIndex == 2)
+				{
+					if (!viewer.RecordAsGifAnimation(filename, count, startingFrame, freq, cb_isTranslucent.Checked))
+					{
+						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+					}
 				}
 
 				System.IO.Directory.SetCurrentDirectory(tempDirectory);
 
+			}
+		}
+
+		private void cb_guide_CheckedChanged(object sender, EventArgs e)
+		{
+			if (nowReloading) return;
+			var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
+			param.RendersGuide = cb_area.Checked;
+			GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
+		}
+
+		private void cb_type_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if(cb_type.SelectedIndex == 0)
+			{
+				txt_number_v.Enabled = true;
+			}
+			else if (cb_type.SelectedIndex == 1)
+			{
+				txt_number_v.Enabled = false;
+			}
+			else if (cb_type.SelectedIndex == 2)
+			{
+				txt_number_v.Enabled = false;
 			}
 		}
 	}

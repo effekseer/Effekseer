@@ -26,7 +26,7 @@ namespace Effekseer {
 		int32_t		m_ref;
 
 		/* 座標系 */
-		eCoordinateSystem		m_coordinateSystem;
+		CoordinateSystem		m_coordinateSystem;
 
 		EffectLoader*	m_effectLoader;
 		TextureLoader*	m_textureLoader;
@@ -65,7 +65,7 @@ namespace Effekseer {
 		@brief	座標系を取得する。
 		@return	座標系
 		*/
-		eCoordinateSystem GetCoordinateSystem() const;
+		CoordinateSystem GetCoordinateSystem() const;
 
 		/**
 		@brief	座標系を設定する。
@@ -74,7 +74,7 @@ namespace Effekseer {
 		座標系を設定する。
 		エフェクトファイルを読み込む前に設定する必要がある。
 		*/
-		void SetCoordinateSystem(eCoordinateSystem coordinateSystem);
+		void SetCoordinateSystem(CoordinateSystem coordinateSystem);
 
 		/**
 			@brief	エフェクトローダーを取得する。

@@ -132,6 +132,7 @@ public class Script
 		{
 			InitializeComponent();
 			this.path = path;
+			this.Size = new System.Drawing.Size(220, 120);
 		}
 
 		string path;

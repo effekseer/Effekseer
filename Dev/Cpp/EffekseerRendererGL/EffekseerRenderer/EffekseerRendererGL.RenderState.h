@@ -9,7 +9,6 @@
 #include "EffekseerRendererGL.Base.h"
 #include "EffekseerRendererGL.Renderer.h"
 
-//#define __USE_SAMPLERS	1
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -24,7 +23,7 @@ class RenderState
 private:
 	RendererImplemented*	m_renderer;
 
-#ifdef	__USE_SAMPLERS
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 	GLuint					m_samplers[4];
 #endif
 

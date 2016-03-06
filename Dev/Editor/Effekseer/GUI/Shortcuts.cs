@@ -37,6 +37,7 @@ namespace Effekseer.GUI
 				AddShortcut(new Shortcut("Internal.Copy", true, false, true, (int)Keys.C, null));
 				AddShortcut(new Shortcut("Internal.Paste", true, false, true, (int)Keys.V, null));
 				AddShortcut(new Shortcut("Internal.AddNode", true, false, false, (int)Keys.A, null));
+				AddShortcut(new Shortcut("Internal.InsertNode", true, false, false, (int)Keys.I, null));
 				AddShortcut(new Shortcut("Internal.RemoveNode", true, false, false, (int)Keys.R, null));
 			}
 		}

@@ -32,6 +32,12 @@ public:
 
 	virtual void Lock() = 0;
 	virtual bool RingBufferLock( int32_t size, int32_t& offset, void*& data ) = 0;
+
+	/**
+		@brief	バッファ全体を再確保せずに、試しに一部をロックしてみる。
+	*/
+	virtual bool TryRingBufferLock(int32_t size, int32_t& offset, void*& data) = 0;
+
 	virtual void Unlock() = 0;
 	virtual void Push( const void* buffer, int size );
 	virtual int GetMaxSize() const;

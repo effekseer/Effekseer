@@ -2,19 +2,41 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include <assert.h>
+#include "common.h"
 
-#include "../Effekseer/Effekseer.h"
 #include "../EffekseerRendererGL/EffekseerRendererGL.h"
 #include "graphics.h"
 #include "window.h"
 
+#define _GLFW 1
+
+#if _GLFW
+#include <GLFW/glfw3.h>
+
 #if _WIN32
-#include <Windows.h>
+
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "libpng.lib")
-#pragma comment(lib, "zlib.lib")
+#pragma comment(lib, "gdiplus.lib")
+#if _DEBUG
+#pragma comment(lib, "Debug/glfw3.lib")
+#pragma comment(lib, "x86/EffekseerRendererGL.Debug.lib" )
+#else
+#pragma comment(lib, "Release/glfw3.lib")
+#pragma comment(lib, "x86/EffekseerRendererGL.Release.lib" )
+#endif
+
+#else
+
+#endif
+
+#else
+
+#if _WIN32
+#include <windows.h>
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "gdiplus.lib")
 
 #if _DEBUG
 #pragma comment(lib, "EffekseerRendererGL.Debug.lib" )
@@ -24,6 +46,8 @@
 
 #else
 #include<GL/glx.h>
+#endif
+
 #endif
 
 //----------------------------------------------------------------------------------
@@ -63,6 +87,12 @@ static void Sleep_( int32_t ms )
 }
 #endif
 
+#if _GLFW
+
+static GLFWwindow* window = nullptr;
+
+#else
+
 #ifdef _WIN32
 static HDC					g_hDC = NULL;
 static HGLRC				g_hGLRC = NULL;
@@ -72,9 +102,18 @@ static Display*				g_display;
 static ::Window				g_window;
 #endif
 
+#endif
+
+static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+#if _GLFW
+
+#else
+
 #ifdef _WIN32
 bool InitGLWindow(void* handle1, void* handle2)
 {
@@ -123,9 +162,20 @@ bool InitGLWindow(void* handle1, void* handle2)
 }
 #endif
 
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#if _GLFW
+
+void MakeContextCurrent()
+{
+	glfwMakeContextCurrent(window);
+}
+
+#else
+
 #if _WIN32
 void MakeContextCurrent()
 {
@@ -140,9 +190,20 @@ void MakeContextCurrent()
 
 #endif
 
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#if _GLFW
+
+void MakeContextNone()
+{
+	glfwMakeContextCurrent(nullptr);
+}
+
+#else
+
 #if _WIN32
 void MakeContextNone()
 {
@@ -157,9 +218,15 @@ void MakeContextNone()
 
 #endif
 
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#if _GLFW
+
+#else
+
 #if _WIN32
 void DestroyContext()
 {
@@ -175,6 +242,21 @@ void DestroyContext()
 
 #endif
 
+#endif
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#if _GLFW
+
+void SwapBuffers()
+{
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
+
+#else
+
 #if _WIN32
 void SwapBuffers()
 {
@@ -187,23 +269,52 @@ void SwapBuffers()
 }
 #endif
 
+#endif
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-static void WaitFrame();
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
-extern ::Effekseer::Manager*			g_manager;
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void InitGraphics(  void* handle1, void* handle2, int width, int height )
+static void WaitFrame()
 {
-	InitGLWindow( handle1, handle2 );
+	static uint64_t beforeTime = GetTime() / 1000;
+	uint64_t currentTime = GetTime() / 1000;
+
+	uint64_t elapsedTime = currentTime - beforeTime;
+	if (elapsedTime < 16) {
+		Sleep_(16 - elapsedTime);
+	}
+	beforeTime = GetTime() / 1000;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void InitGraphics(int width, int height )
+{
+#if _GLFW
+	if (!glfwInit()) return;
+	
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	
+
+	window = glfwCreateWindow(width, height, "Effekseer(GLFW)", NULL, NULL);
+	if (!window)
+	{
+		glfwTerminate();
+		return;
+	}
+#else
+	InitWindow(width, height);
+
+#if _WIN32
+	InitGLWindow( GetHandle(), nullptr );
+#else
+	InitGLWindow( GetDisplay(), GetWindow() );
+#endif
+
+#endif
+
 	MakeContextCurrent();
 
 #if !_WIN32
@@ -224,7 +335,7 @@ void InitGraphics(  void* handle1, void* handle2, int width, int height )
 	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
 	g_manager->SetTrackRenderer( g_renderer->CreateTrackRenderer() );
 
-	g_manager->SetCoordinateSystem( ::Effekseer::COORDINATE_SYSTEM_RH );
+	g_manager->SetCoordinateSystem( ::Effekseer::CoordinateSystem::RH );
 
 	g_manager->SetTextureLoader( g_renderer->CreateTextureLoader() );
 	g_manager->SetModelLoader( g_renderer->CreateModelLoader() );
@@ -237,7 +348,13 @@ void TermGraphics()
 {
 	g_renderer->Destory();
 	MakeContextNone();
+
+#if _GLFW
+	glfwTerminate();
+#elif
 	DestroyContext();
+	ExitWindow();
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -265,24 +382,50 @@ void Rendering()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SetCameraMatrix( const ::Effekseer::Matrix44& matrix )
+#if _GLFW
+
+bool DoEvent()
 {
-	g_renderer->SetCameraMatrix( matrix );
+	if (!glfwWindowShouldClose(window))
+	{
+		static bool pressed = true;
+
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
+		{
+			if (!pressed)
+			{
+				PlayEffect();
+			}
+			pressed = true;
+		}
+		else
+		{
+			pressed = false;
+		}
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
+
+#else
+
+bool DoEvent()
+{
+	return DoWindowEvent();
+}
+
+#endif
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-static void WaitFrame()
+void SetCameraMatrix( const ::Effekseer::Matrix44& matrix )
 {
-	static uint64_t beforeTime = GetTime() / 1000;
-	uint64_t currentTime = GetTime() / 1000;
-	
-	uint64_t elapsedTime = currentTime - beforeTime;
-	if (elapsedTime < 16) {
-		Sleep_(16 - elapsedTime);
-	}
-	beforeTime = GetTime() / 1000;
+	g_renderer->SetCameraMatrix( matrix );
 }
 
 //----------------------------------------------------------------------------------

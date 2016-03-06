@@ -12,6 +12,7 @@
 #include "Effekseer.TextureLoader.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.ModelLoader.h"
+#include "Effekseer.DefaultEffectLoader.h"
 
 #include "Effekseer.Setting.h"
 
@@ -162,6 +163,14 @@ Effect* EffectImplemented::Create( Setting* setting, void* pData, int size, floa
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+::Effekseer::EffectLoader* Effect::CreateEffectLoader(::Effekseer::FileInterface* fileInterface)
+{
+	return new ::Effekseer::DefaultEffectLoader(fileInterface);
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 EffectImplemented::EffectImplemented( Manager* pManager, void* pData, int size )
 	: m_pManager		( (ManagerImplemented*)pManager )
 	, m_setting			(NULL)
@@ -179,8 +188,19 @@ EffectImplemented::EffectImplemented( Manager* pManager, void* pData, int size )
 	, m_maginification	( 1.0f )
 	, m_maginificationExternal	( 1.0f )
 	, m_pRoot			( NULL )
+
+	, m_normalImageCount(0)
+	, m_normalImagePaths(nullptr)
+	, m_normalImages(nullptr)
+
+	, m_distortionImageCount(0)
+	, m_distortionImagePaths(nullptr)
+	, m_distortionImages(nullptr)
+
 {
 	ES_SAFE_ADDREF( m_pManager );
+
+	Culling.Shape = CullingShape::NoneShape;
 }
 
 //----------------------------------------------------------------------------------
@@ -203,8 +223,18 @@ EffectImplemented::EffectImplemented( Setting* setting, void* pData, int size )
 	, m_maginification	( 1.0f )
 	, m_maginificationExternal	( 1.0f )
 	, m_pRoot			( NULL )
+
+	, m_normalImageCount(0)
+	, m_normalImagePaths(nullptr)
+	, m_normalImages(nullptr)
+
+	, m_distortionImageCount(0)
+	, m_distortionImagePaths(nullptr)
+	, m_distortionImages(nullptr)
 {
 	ES_SAFE_ADDREF( m_setting );
+	
+	Culling.Shape = CullingShape::NoneShape;
 }
 
 //----------------------------------------------------------------------------------
@@ -275,6 +305,55 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		}
 	}
 
+	if (m_version >= 9)
+	{
+		// 画像
+		memcpy(&m_normalImageCount, pos, sizeof(int));
+		pos += sizeof(int);
+
+		if (m_normalImageCount > 0)
+		{
+			m_normalImagePaths = new EFK_CHAR*[m_normalImageCount];
+			m_normalImages = new void*[m_normalImageCount];
+
+			for (int i = 0; i < m_normalImageCount; i++)
+			{
+				int length = 0;
+				memcpy(&length, pos, sizeof(int));
+				pos += sizeof(int);
+
+				m_normalImagePaths[i] = new EFK_CHAR[length];
+				memcpy(m_normalImagePaths[i], pos, length * sizeof(EFK_CHAR));
+				pos += length * sizeof(EFK_CHAR);
+
+				m_normalImages[i] = NULL;
+			}
+		}
+
+		// 画像
+		memcpy(&m_distortionImageCount, pos, sizeof(int));
+		pos += sizeof(int);
+
+		if (m_distortionImageCount > 0)
+		{
+			m_distortionImagePaths = new EFK_CHAR*[m_distortionImageCount];
+			m_distortionImages = new void*[m_distortionImageCount];
+
+			for (int i = 0; i < m_distortionImageCount; i++)
+			{
+				int length = 0;
+				memcpy(&length, pos, sizeof(int));
+				pos += sizeof(int);
+
+				m_distortionImagePaths[i] = new EFK_CHAR[length];
+				memcpy(m_distortionImagePaths[i], pos, length * sizeof(EFK_CHAR));
+				pos += length * sizeof(EFK_CHAR);
+
+				m_distortionImages[i] = NULL;
+			}
+		}
+	}
+
 	if( m_version >= 1 )
 	{
 		// ウェーブ
@@ -336,6 +415,25 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		m_maginificationExternal = mag;
 	}
 
+	// カリング
+	if( m_version >= 9 )
+	{
+		memcpy( &(Culling.Shape), pos, sizeof(int32_t) );
+		pos += sizeof(int32_t);
+		if(Culling.Shape ==	CullingShape::Sphere)
+		{
+			memcpy( &(Culling.Sphere.Radius), pos, sizeof(float) );
+			pos += sizeof(float);
+		
+			memcpy( &(Culling.Location.X), pos, sizeof(float) );
+			pos += sizeof(float);
+			memcpy( &(Culling.Location.Y), pos, sizeof(float) );
+			pos += sizeof(float);
+			memcpy( &(Culling.Location.Z), pos, sizeof(float) );
+			pos += sizeof(float);
+		}
+	}
+
 	// ノード
 	m_pRoot = EffectNode::Create( this, NULL, pos );
 
@@ -364,7 +462,31 @@ void EffectImplemented::Reset()
 	m_ImageCount = 0;
 
 	ES_SAFE_DELETE_ARRAY( m_ImagePaths );
-	ES_SAFE_DELETE_ARRAY( m_pImages );
+	ES_SAFE_DELETE_ARRAY(m_pImages);
+
+	{
+		for (int i = 0; i < m_normalImageCount; i++)
+		{
+			if (m_normalImagePaths[i] != NULL) delete [] m_normalImagePaths[i];
+		}
+
+		m_normalImageCount = 0;
+
+		ES_SAFE_DELETE_ARRAY(m_normalImagePaths);
+		ES_SAFE_DELETE_ARRAY(m_normalImages);
+	}
+
+	{
+		for (int i = 0; i < m_distortionImageCount; i++)
+		{
+			if (m_distortionImagePaths[i] != NULL) delete [] m_distortionImagePaths[i];
+		}
+
+		m_distortionImageCount = 0;
+
+		ES_SAFE_DELETE_ARRAY(m_distortionImagePaths);
+		ES_SAFE_DELETE_ARRAY(m_distortionImages);
+	}
 
 	for( int i = 0; i < m_WaveCount; i++ )
 	{
@@ -438,9 +560,31 @@ int EffectImplemented::GetVersion() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void* EffectImplemented::GetImage( int n ) const
+void* EffectImplemented::GetColorImage( int n ) const
 {
 	return m_pImages[ n ];
+}
+
+void* EffectImplemented::GetNormalImage(int n) const
+{
+	/* 強制的に互換をとる */
+	if (this->m_version <= 8)
+	{
+		return m_pImages[n];
+	}
+
+	return m_normalImages[n];
+}
+
+void* EffectImplemented::GetDistortionImage(int n) const
+{
+	/* 強制的に互換をとる */
+	if (this->m_version <= 8)
+	{
+		return m_pImages[n];
+	}
+
+	return m_distortionImages[n];
 }
 
 //----------------------------------------------------------------------------------
@@ -565,10 +709,38 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 			{
 				EFK_CHAR fullPath[512];
 				PathCombine( fullPath, matPath, m_ImagePaths[ ind ] );
-				m_pImages[ind] = textureLoader->Load( fullPath );
+				m_pImages[ind] = textureLoader->Load( fullPath, TextureType::Color );
 			}
 		}
 	}
+
+	{
+		TextureLoader* textureLoader = loader->GetTextureLoader();
+		if (textureLoader != NULL)
+		{
+			for (int32_t ind = 0; ind < m_normalImageCount; ind++)
+			{
+				EFK_CHAR fullPath[512];
+				PathCombine(fullPath, matPath, m_normalImagePaths[ind]);
+				m_normalImages[ind] = textureLoader->Load(fullPath, TextureType::Normal);
+			}
+		}
+
+	}
+		{
+			TextureLoader* textureLoader = loader->GetTextureLoader();
+			if (textureLoader != NULL)
+			{
+				for (int32_t ind = 0; ind < m_distortionImageCount; ind++)
+				{
+					EFK_CHAR fullPath[512];
+					PathCombine(fullPath, matPath, m_distortionImagePaths[ind]);
+					m_distortionImages[ind] = textureLoader->Load(fullPath, TextureType::Distortion);
+				}
+			}
+		}
+
+	
 
 	{
 		SoundLoader* soundLoader = loader->GetSoundLoader();
@@ -612,6 +784,18 @@ void EffectImplemented::UnloadResources()
 		{
 			textureLoader->Unload( m_pImages[ind] );
 			m_pImages[ind] = NULL;
+		}
+
+		for (int32_t ind = 0; ind < m_normalImageCount; ind++)
+		{
+			textureLoader->Unload(m_normalImages[ind]);
+			m_normalImages[ind] = NULL;
+		}
+
+		for (int32_t ind = 0; ind < m_distortionImageCount; ind++)
+		{
+			textureLoader->Unload(m_distortionImages[ind]);
+			m_distortionImages[ind] = NULL;
 		}
 	}
 

@@ -140,6 +140,12 @@ namespace Effekseer.GUI
 			set;
 		}
 
+		internal static DockCulling DockCulling
+		{
+			get;
+			set;
+		}
+
 		internal static DockNetwork DockNetwork
 		{
 			get;
@@ -186,6 +192,7 @@ namespace Effekseer.GUI
 			DockOption = new GUI.DockOption();
 			DockEffectBehavior = new GUI.DockEffectBehavior();
 			DockFCurves = new GUI.DockFCurves();
+			DockCulling = new GUI.DockCulling();
 			DockNetwork = new GUI.DockNetwork();
 
 			MainForm.Show();
@@ -230,6 +237,7 @@ namespace Effekseer.GUI
 			if (DockEffectBehavior != null) DockEffectBehavior.Close();
 
 			if (DockFCurves != null) DockFCurves.Close();
+			if (DockCulling != null) DockCulling.Close();
 			if (DockNetwork != null) DockNetwork.Close();
 
 			DockViewerController = null;
@@ -248,6 +256,7 @@ namespace Effekseer.GUI
 			DockOption = null;
 			DockEffectBehavior = null;
 			DockFCurves = null;
+			DockCulling = null;
 			DockNetwork = null;
 		}
 
@@ -271,6 +280,7 @@ namespace Effekseer.GUI
 			if (DockOption == null) DockOption = new GUI.DockOption();
 			if (DockEffectBehavior == null) DockEffectBehavior = new DockEffectBehavior();
 			if (DockFCurves == null) DockFCurves = new GUI.DockFCurves();
+			if (DockCulling == null) DockCulling = new DockCulling();
 			if (DockNetwork == null) DockNetwork = new GUI.DockNetwork();
 
 			var rec = Screen.PrimaryScreen.Bounds;
@@ -493,11 +503,6 @@ namespace Effekseer.GUI
 								return DockNodeRotationValues;
 							}
 
-							if (DockNodeRotationValues.GetType().FullName == s)
-							{
-								return DockNodeRotationValues;
-							}
-
 							if (DockNodeScalingValues.GetType().FullName == s)
 							{
 								return DockNodeScalingValues;
@@ -531,6 +536,11 @@ namespace Effekseer.GUI
 							if (DockOption.GetType().FullName == s)
 							{
 								return DockOption;
+							}
+
+							if (DockCulling.GetType().FullName == s)
+							{
+								return DockCulling;
 							}
 
 							if (DockEffectBehavior.GetType().FullName == s)
@@ -592,10 +602,20 @@ namespace Effekseer.GUI
 
 				System.Xml.XmlElement project_root = doc.CreateElement("GUI");
 
-				project_root.AppendChild(doc.CreateTextElement("X", MainForm.Location.X.ToString()));
-				project_root.AppendChild(doc.CreateTextElement("Y", MainForm.Location.Y.ToString()));
-				project_root.AppendChild(doc.CreateTextElement("Width", MainForm.Width.ToString()));
-				project_root.AppendChild(doc.CreateTextElement("Height", MainForm.Height.ToString()));
+				if (MainForm.WindowState == FormWindowState.Normal)
+				{
+					project_root.AppendChild(doc.CreateTextElement("X", MainForm.Location.X.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Y", MainForm.Location.Y.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Width", MainForm.Width.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Height", MainForm.Height.ToString()));
+				}
+				else // 最小化、最大化中はその前の位置とサイズを保存
+				{
+					project_root.AppendChild(doc.CreateTextElement("X", MainForm.BeforeResizeLocation.X.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Y", MainForm.BeforeResizeLocation.Y.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Width", MainForm.BeforeResizeWidth.ToString()));
+					project_root.AppendChild(doc.CreateTextElement("Height", MainForm.BeforeResizeHeight.ToString()));
+				}
 				doc.AppendChild(project_root);
 
 				var dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
@@ -610,23 +630,24 @@ namespace Effekseer.GUI
 
 		static void CheckDockWindowClosed()
 		{
-			if (DockViewerController != null && !DockViewerController.Created) DockViewerController = null;
-			if (DockViewPoint != null && !DockViewPoint.Created) DockViewPoint = null;
-			if (DockRecorder != null && !DockRecorder.Created) DockRecorder = null;
-			if (DockNodeTreeView != null && !DockNodeTreeView.Created) DockNodeTreeView = null;
-			if (DockNodeCommonValues != null && !DockNodeCommonValues.Created) DockNodeCommonValues = null;
-			if (DockNodeLocationValues != null && !DockNodeLocationValues.Created) DockNodeLocationValues = null;
-			if (DockNodeRotationValues != null && !DockNodeRotationValues.Created) DockNodeRotationValues = null;
-			if (DockNodeScalingValues != null && !DockNodeScalingValues.Created) DockNodeScalingValues = null;
-			if (DockNodeLocationAbsValues != null && !DockNodeLocationAbsValues.Created) DockNodeLocationAbsValues = null;
-			if (DockNodeGenerationLocationValues != null && !DockNodeGenerationLocationValues.Created) DockNodeGenerationLocationValues = null;
-			if (DockNodeRendererCommonValues != null && !DockNodeRendererCommonValues.Created) DockNodeRendererCommonValues = null;
-			if (DockNodeDrawingValues != null && !DockNodeDrawingValues.Created) DockNodeDrawingValues = null;
-            if (DockNodeSoundValues != null && !DockNodeSoundValues.Created) DockNodeSoundValues = null;
-			if (DockOption != null && !DockOption.Created) DockOption = null;
-			if (DockEffectBehavior != null && !DockEffectBehavior.Created) DockEffectBehavior = null;
-			if (DockFCurves != null && !DockFCurves.Created) DockFCurves = null;
-			if (DockNetwork != null && !DockNetwork.Created) DockNetwork = null;
+			if (DockViewerController != null && DockViewerController.DockState == DockState.Unknown) DockViewerController = null;
+			if (DockViewPoint != null && DockViewPoint.DockState == DockState.Unknown) DockViewPoint = null;
+			if (DockRecorder != null && DockRecorder.DockState == DockState.Unknown) DockRecorder = null;
+			if (DockNodeTreeView != null && DockNodeTreeView.DockState == DockState.Unknown) DockNodeTreeView = null;
+			if (DockNodeCommonValues != null && DockNodeCommonValues.DockState == DockState.Unknown) DockNodeCommonValues = null;
+			if (DockNodeLocationValues != null && DockNodeLocationValues.DockState == DockState.Unknown) DockNodeLocationValues = null;
+			if (DockNodeRotationValues != null && DockNodeRotationValues.DockState == DockState.Unknown) DockNodeRotationValues = null;
+			if (DockNodeScalingValues != null && DockNodeScalingValues.DockState == DockState.Unknown) DockNodeScalingValues = null;
+			if (DockNodeLocationAbsValues != null && DockNodeLocationAbsValues.DockState == DockState.Unknown) DockNodeLocationAbsValues = null;
+			if (DockNodeGenerationLocationValues != null && DockNodeGenerationLocationValues.DockState == DockState.Unknown) DockNodeGenerationLocationValues = null;
+			if (DockNodeRendererCommonValues != null && DockNodeRendererCommonValues.DockState == DockState.Unknown) DockNodeRendererCommonValues = null;
+			if (DockNodeDrawingValues != null && DockNodeDrawingValues.DockState == DockState.Unknown) DockNodeDrawingValues = null;
+			if (DockNodeSoundValues != null && DockNodeSoundValues.DockState == DockState.Unknown) DockNodeSoundValues = null;
+			if (DockOption != null && DockOption.DockState == DockState.Unknown) DockOption = null;
+			if (DockEffectBehavior != null && DockEffectBehavior.DockState == DockState.Unknown) DockEffectBehavior = null;
+			if (DockCulling != null && DockCulling.DockState == DockState.Unknown) DockCulling = null;
+			if (DockFCurves != null && DockFCurves.DockState == DockState.Unknown) DockFCurves = null;
+			if (DockNetwork != null && DockNetwork.DockState == DockState.Unknown) DockNetwork = null;
 		}
 
 		public static bool Update()
@@ -663,7 +684,17 @@ namespace Effekseer.GUI
 		/// <param name="fullPath">絶対パス</param>
 		public static void AddRecentFile(string fullPath)
 		{
-			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception("絶対パスでありません。");
+			var errorText = string.Empty;
+			if (Core.Language == Language.Japanese)
+			{
+				errorText = "絶対パスでありません。";
+			}
+			else if (Core.Language == Language.English)
+			{
+				errorText = "This is not an absolute path.";
+			}
+
+			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception(errorText);
 
 			recentFiles.Remove(fullPath);
 			recentFiles.AddFirst(fullPath);

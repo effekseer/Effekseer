@@ -22,9 +22,12 @@ namespace Effekseer.Data.Value
 			}
 		}
 
+		internal T DefaultValue { get; private set; }
+
 		internal Enum(T value = default(T))
 		{
 			_value = value;
+			DefaultValue = value;
 		}
 
 		public T GetValue()
@@ -35,6 +38,12 @@ namespace Effekseer.Data.Value
 		public override int GetValueAsInt()
 		{
 			dynamic v = _value;
+			return (int)v;
+		}
+
+		public override int GetDefaultValueAsInt()
+		{
+			dynamic v = DefaultValue;
 			return (int)v;
 		}
 

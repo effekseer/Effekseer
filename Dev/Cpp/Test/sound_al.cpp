@@ -7,7 +7,11 @@
 #include <windows.h>
 #endif
 
+#if __APPLE__
+#include <OpenAl/alc.h>
+#else
 #include <AL/alc.h>
+#endif
 
 #include "../Effekseer/Effekseer.h"
 #include "../EffekseerSoundAL/EffekseerSoundAL.h"
@@ -35,7 +39,7 @@ extern ::Effekseer::Manager*	g_manager;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InitSound(  void* handle1, void* handle2 )
+void InitSound()
 {
 	// OpenALデバイスを作成
 	g_alcdev = alcOpenDevice(NULL);

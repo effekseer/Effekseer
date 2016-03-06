@@ -15,6 +15,11 @@ namespace Effekseer.GUI.Component
 		{
 			InitializeComponent();
 
+			if(Core.Language == Language.English)
+			{
+				cb_infinite.Text = "Infinite";
+			}
+
 			EnableUndo = true;
 
 			this.SuspendLayout();

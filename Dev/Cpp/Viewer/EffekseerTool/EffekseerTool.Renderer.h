@@ -18,6 +18,19 @@ namespace EffekseerTool
 class Renderer
 {
 private:
+	class DistortingCallback
+		: public EffekseerRenderer::DistortingCallback
+	{
+	private:
+		Renderer* renderer = nullptr;
+	public:
+		DistortingCallback(Renderer* renderer);
+		virtual ~DistortingCallback();
+
+		void OnDistorting();
+	};
+
+private:
 	HWND				m_handle;
 	int32_t				m_width;
 	int32_t				m_height;
@@ -32,23 +45,43 @@ private:
 
 	::EffekseerRenderer::Grid*	m_grid;
 	::EffekseerRenderer::Guide*	m_guide;
-	::EffekseerRenderer::Background*	m_background;
+	::EffekseerRenderer::Culling*	m_culling;
+	::EffekseerRenderer::Paste*	m_background;
 
 	bool		m_recording;
 
 	IDirect3DSurface9*	m_recordingTarget;
 	IDirect3DTexture9*	m_recordingTargetTexture;
 	IDirect3DSurface9*	m_recordingDepth;
+	int32_t				m_recordingWidth;
+	int32_t				m_recordingHeight;
 
 	IDirect3DSurface9*	m_recordingTempTarget;
 	IDirect3DSurface9*	m_recordingTempDepth;
 
 	IDirect3DTexture9*	m_backGroundTexture;
+
+	IDirect3DSurface9*	m_renderTarget = nullptr;
+	IDirect3DTexture9*	m_renderTargetTexture = nullptr;
+	IDirect3DSurface9*	m_renderTargetDepth = nullptr;
+
+	IDirect3DSurface9*	m_renderEffectBackTarget = nullptr;
+	IDirect3DTexture9*	m_renderEffectBackTargetTexture = nullptr;
+
+	IDirect3DSurface9*	m_renderDefaultTarget = nullptr;
+	IDirect3DSurface9*	m_renderDefaultDepth = nullptr;
+
+	Effekseer::Matrix44	m_cameraMatTemp;
+	Effekseer::Matrix44	m_projMatTemp;
+
+	bool				m_isSRGBMode = false;
+
+	void GenerateRenderTargets(int32_t width, int32_t height);
 public:
 	/**
 		@brief	コンストラクタ
 	*/
-	Renderer( int32_t squareMaxCount );
+	Renderer(int32_t squareMaxCount, bool isSRGBMode);
 
 	/**
 		@brief	デストラクタ
@@ -154,6 +187,12 @@ public:
 	*/
 	float GridLength;
 
+	bool IsCullingShown;
+
+	float CullingRadius;
+
+	Effekseer::Vector3D CullingPosition;
+
 	/**
 		@brief	背景色
 	*/
@@ -180,6 +219,11 @@ public:
 	bool EndRendering();
 
 	/**
+		@brief	描画中の背景をテクスチャとして背景を出力する。
+	*/
+	IDirect3DTexture9* ExportBackground();
+
+	/**
 		@brief	録画開始
 	*/
 	bool BeginRecord( int32_t width, int32_t height );
@@ -193,6 +237,11 @@ public:
 		@brief	録画終了
 	*/
 	void EndRecord( const wchar_t* outputPath );
+
+	/**
+	@brief	録画終了
+	*/
+	void EndRecord(std::vector<Effekseer::Color>& pixels);
 
 	/**
 		@brief	背景の読み込み

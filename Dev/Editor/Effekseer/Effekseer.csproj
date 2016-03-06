@@ -220,6 +220,12 @@
     <Compile Include="GUI\DockContent.Designer.cs">
       <DependentUpon>DockContent.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\DockCulling.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockCulling.Designer.cs">
+      <DependentUpon>DockCulling.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\DockEffectBehavior.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -412,6 +418,9 @@
     <EmbeddedResource Include="GUI\Component\Vector3DWithRandom.resx">
       <DependentUpon>Vector3DWithRandom.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockCulling.resx">
+      <DependentUpon>DockCulling.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\DockFCurves.resx">
       <DependentUpon>DockFCurves.cs</DependentUpon>
     </EmbeddedResource>
@@ -490,6 +499,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <Content Include="Image\BackStep.png" />
+    <Content Include="Image\Pause.png" />
+    <Content Include="Image\Play.png" />
+    <Content Include="Image\Step.png" />
+    <Content Include="Image\Stop.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -24,18 +24,18 @@ void RenderStateBase::State::Reset()
 {
 	DepthTest = false;
 	DepthWrite = false;
-	AlphaBlend = ::Effekseer::ALPHA_BLEND_BLEND;
-	CullingType = ::Effekseer::CULLING_DOUBLE;
+	AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
+	CullingType = ::Effekseer::CullingType::Double;
 
-	TextureFilterTypes[0] = ::Effekseer::TEXTURE_FILTER_NEAREST;
-	TextureFilterTypes[1] = ::Effekseer::TEXTURE_FILTER_NEAREST;
-	TextureFilterTypes[2] = ::Effekseer::TEXTURE_FILTER_NEAREST;
-	TextureFilterTypes[3] = ::Effekseer::TEXTURE_FILTER_NEAREST;
+	TextureFilterTypes[0] = ::Effekseer::TextureFilterType::Nearest;
+	TextureFilterTypes[1] = ::Effekseer::TextureFilterType::Nearest;
+	TextureFilterTypes[2] = ::Effekseer::TextureFilterType::Nearest;
+	TextureFilterTypes[3] = ::Effekseer::TextureFilterType::Nearest;
 	
-	TextureWrapTypes[0] = ::Effekseer::TEXTURE_WRAP_CLAMP;
-	TextureWrapTypes[1] = ::Effekseer::TEXTURE_WRAP_CLAMP;
-	TextureWrapTypes[2] = ::Effekseer::TEXTURE_WRAP_CLAMP;
-	TextureWrapTypes[3] = ::Effekseer::TEXTURE_WRAP_CLAMP;	
+	TextureWrapTypes[0] = ::Effekseer::TextureWrapType::Clamp;
+	TextureWrapTypes[1] = ::Effekseer::TextureWrapType::Clamp;
+	TextureWrapTypes[2] = ::Effekseer::TextureWrapType::Clamp;
+	TextureWrapTypes[3] = ::Effekseer::TextureWrapType::Clamp;	
 }
 
 //-----------------------------------------------------------------------------------

@@ -34,15 +34,15 @@
 			this.subject = new System.Windows.Forms.Label();
 			this.licence = new System.Windows.Forms.TextBox();
 			this.link1 = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
+			this.link2 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.icon)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// ok
 			// 
-			this.ok.Location = new System.Drawing.Point(346, 256);
+			this.ok.Location = new System.Drawing.Point(354, 263);
 			this.ok.Name = "ok";
-			this.ok.Size = new System.Drawing.Size(100, 28);
+			this.ok.Size = new System.Drawing.Size(94, 39);
 			this.ok.TabIndex = 0;
 			this.ok.Text = "OK";
 			this.ok.UseVisualStyleBackColor = true;
@@ -50,8 +50,8 @@
 			// 
 			// icon
 			// 
-			this.icon.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-			this.icon.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.icon.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("icon.BackgroundImage")));
+			this.icon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 			this.icon.Location = new System.Drawing.Point(12, 12);
 			this.icon.Name = "icon";
 			this.icon.Size = new System.Drawing.Size(48, 48);
@@ -62,7 +62,7 @@
 			// 
 			this.subject.AutoSize = true;
 			this.subject.Font = new System.Drawing.Font("MS UI Gothic", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-			this.subject.Location = new System.Drawing.Point(85, 24);
+			this.subject.Location = new System.Drawing.Point(77, 24);
 			this.subject.Name = "subject";
 			this.subject.Size = new System.Drawing.Size(232, 24);
 			this.subject.TabIndex = 2;
@@ -86,29 +86,32 @@
 			this.link1.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.link1.Font = new System.Drawing.Font("MS UI Gothic", 10F, System.Drawing.FontStyle.Underline);
 			this.link1.ForeColor = System.Drawing.Color.Blue;
-			this.link1.Location = new System.Drawing.Point(14, 263);
+			this.link1.Location = new System.Drawing.Point(12, 263);
 			this.link1.Name = "link1";
-			this.link1.Size = new System.Drawing.Size(223, 14);
+			this.link1.Size = new System.Drawing.Size(176, 14);
 			this.link1.TabIndex = 5;
-			this.link1.Text = "http://code.google.com/p/effekseer/";
+			this.link1.Text = "http://effekseer.github.io/jp/";
 			this.link1.Click += new System.EventHandler(this.link1_Click);
 			// 
-			// label1
+			// link2
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Font = new System.Drawing.Font("MS UI Gothic", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-			this.label1.Location = new System.Drawing.Point(13, 63);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(81, 11);
-			this.label1.TabIndex = 6;
-			this.label1.Text = "アイコン募集中！";
+			this.link2.AutoSize = true;
+			this.link2.Cursor = System.Windows.Forms.Cursors.Hand;
+			this.link2.Font = new System.Drawing.Font("MS UI Gothic", 10F, System.Drawing.FontStyle.Underline);
+			this.link2.ForeColor = System.Drawing.Color.Blue;
+			this.link2.Location = new System.Drawing.Point(12, 288);
+			this.link2.Name = "link2";
+			this.link2.Size = new System.Drawing.Size(237, 14);
+			this.link2.TabIndex = 6;
+			this.link2.Text = "https://github.com/effekseer/Effekseer";
+			this.link2.Click += new System.EventHandler(this.link2_Click);
 			// 
 			// AboutForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(458, 294);
-			this.Controls.Add(this.label1);
+			this.ClientSize = new System.Drawing.Size(458, 315);
+			this.Controls.Add(this.link2);
 			this.Controls.Add(this.link1);
 			this.Controls.Add(this.licence);
 			this.Controls.Add(this.subject);
@@ -133,6 +136,6 @@
 		private System.Windows.Forms.Label subject;
 		private System.Windows.Forms.TextBox licence;
 		private System.Windows.Forms.Label link1;
-		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label link2;
 	}
 }

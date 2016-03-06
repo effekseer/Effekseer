@@ -39,7 +39,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 {
 	assert( path != NULL );
 	
-	std::auto_ptr<Effekseer::FileReader> 
+	std::unique_ptr<Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
 	if( reader.get() == NULL ) return NULL;
 
@@ -114,7 +114,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 		break;
 	}
 
-	ALenum format = (wavefmt.nChannels == 16) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
+	ALenum format = (wavefmt.nChannels == 2) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
 
 	SoundData* soundData = new SoundData;
 	memset(soundData, 0, sizeof(SoundData));

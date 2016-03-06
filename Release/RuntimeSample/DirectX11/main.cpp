@@ -9,10 +9,8 @@
 //
 //----------------------------------------------------------------------------------
 #include <d3d11.h>
-#include <d3dx11.h>
 #include <XAudio2.h>
 #pragma comment(lib, "d3d11.lib" )
-#pragma comment(lib, "d3dx11.lib" )
 
 //----------------------------------------------------------------------------------
 //
@@ -22,13 +20,13 @@
 #include <EffekseerSoundXAudio2.h>
 
 #if _DEBUG
-#pragma comment(lib, "Effekseer.Debug.lib" )
-#pragma comment(lib, "EffekseerRendererDX11.Debug.lib" )
-#pragma comment(lib, "EffekseerSoundXAudio2.Debug.lib" )
+#pragma comment(lib, "VS2013/Debug/Effekseer.lib" )
+#pragma comment(lib, "VS2013/Debug/EffekseerRendererDX11.lib" )
+#pragma comment(lib, "VS2013/Debug/EffekseerSoundXAudio2.lib" )
 #else
-#pragma comment(lib, "Effekseer.Release.lib" )
-#pragma comment(lib, "EffekseerRendererDX11.Release.lib" )
-#pragma comment(lib, "EffekseerSoundXAudio2.Release.lib" )
+#pragma comment(lib, "VS2013/Release/Effekseer.lib" )
+#pragma comment(lib, "VS2013/Release/EffekseerRendererDX11.lib" )
+#pragma comment(lib, "VS2013/Release/EffekseerSoundXAudio2.lib" )
 #endif
 
 //----------------------------------------------------------------------------------
@@ -296,6 +294,7 @@ int main()
 	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
 	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
 	g_manager->SetRingRenderer( g_renderer->CreateRingRenderer() );
+	g_manager->SetTrackRenderer( g_renderer->CreateTrackRenderer() );
 	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
 
 	// 描画用インスタンスからテクスチャの読込機能を設定

@@ -21,7 +21,10 @@
     <ClInclude Include="EffekseerTool\EffekseerTool.Sound.h">
       <Filter>EffekseerTool</Filter>
     </ClInclude>
-    <ClInclude Include="EffekseerTool\EffekseerTool.Background.h">
+    <ClInclude Include="EffekseerTool\EffekseerTool.Culling.h">
+      <Filter>EffekseerTool</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerTool\EffekseerTool.Paste.h">
       <Filter>EffekseerTool</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,7 +44,10 @@
     <ClCompile Include="EffekseerTool\EffekseerTool.Sound.cpp">
       <Filter>EffekseerTool</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerTool\EffekseerTool.Background.cpp">
+    <ClCompile Include="EffekseerTool\EffekseerTool.Culling.cpp">
+      <Filter>EffekseerTool</Filter>
+    </ClCompile>
+    <ClCompile Include="EffekseerTool\EffekseerTool.Paste.cpp">
       <Filter>EffekseerTool</Filter>
     </ClCompile>
   </ItemGroup>

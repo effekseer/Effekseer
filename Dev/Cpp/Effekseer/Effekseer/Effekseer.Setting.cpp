@@ -28,7 +28,7 @@ namespace Effekseer {
 Setting::Setting()
 	: m_ref(1)
 
-	, m_coordinateSystem(COORDINATE_SYSTEM_RH)
+	, m_coordinateSystem(CoordinateSystem::RH)
 	, m_effectLoader(NULL)
 	, m_textureLoader(NULL)
 	, m_soundLoader(NULL)
@@ -83,7 +83,7 @@ int32_t Setting::Release()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-eCoordinateSystem Setting::GetCoordinateSystem() const
+CoordinateSystem Setting::GetCoordinateSystem() const
 {
 	return m_coordinateSystem;
 }
@@ -91,7 +91,7 @@ eCoordinateSystem Setting::GetCoordinateSystem() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Setting::SetCoordinateSystem(eCoordinateSystem coordinateSystem)
+void Setting::SetCoordinateSystem(CoordinateSystem coordinateSystem)
 {
 	m_coordinateSystem = coordinateSystem;
 }

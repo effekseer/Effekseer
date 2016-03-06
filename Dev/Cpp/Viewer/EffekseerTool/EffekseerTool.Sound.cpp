@@ -52,11 +52,25 @@ bool Sound::Initialize( int32_t voiceCount1ch, int32_t voiceCount2ch )
 {
 	HRESULT hr;
 	
-	hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+	hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+	if (FAILED(hr)) {
+		return false;
+	}
+	
 	hr = XAudio2Create(&m_xaudio, 0);
+	if (FAILED(hr)) {
+		return false;
+	}
+	
 	hr = m_xaudio->CreateMasteringVoice(&m_masteringVoice, 2, 44100);
+	if (FAILED(hr)) {
+		return false;
+	}
 
 	m_sound = EffekseerSound::Sound::Create(m_xaudio, voiceCount1ch, voiceCount2ch);
+	if (m_sound == NULL) {
+		return false;
+	}
 
 	return true;
 }
@@ -75,7 +89,11 @@ IXAudio2* Sound::GetDevice()
 void Sound::SetVolume( float volume )
 {
 	m_volume = volume;
-	m_masteringVoice->SetVolume((m_mute) ? 0.0f : m_volume);
+
+	if( m_masteringVoice )
+	{
+		m_masteringVoice->SetVolume((m_mute) ? 0.0f : m_volume);
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -84,8 +102,27 @@ void Sound::SetVolume( float volume )
 void Sound::SetMute( bool mute )
 {
 	m_mute = mute;
-	m_masteringVoice->SetVolume((m_mute) ? 0.0f : m_volume);
-	m_sound->SetMute(mute);
+
+	if( m_masteringVoice )
+	{
+		m_masteringVoice->SetVolume((m_mute) ? 0.0f : m_volume);
+	}
+
+	if( m_sound )
+	{
+		m_sound->SetMute(mute);
+	}
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void Sound::SetListener( const Effekseer::Vector3D& pos, const Effekseer::Vector3D& at, const Effekseer::Vector3D& up )
+{
+	if( m_sound )
+	{
+		m_sound->SetListener( pos, at, up );
+	}
 }
 
 //----------------------------------------------------------------------------------

@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8>
+	<title>Effekseer Unityプラグイン マニュアル</title>
+	<link href="base.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div class="main">
+<h1>Effekseer Unityプラグイン マニュアル</h1>
+
+<ul>
+<li><a href="#introduction">概要</a></li>
+<li><a href="#environment">動作環境</a></li>
+<li><a href="#how_to_install">インストール方法</a></li>
+<li><a href="#example_program">サンプルプロジェクト</a></li>
+<li><a href="#resource_files">リソースファイルについて</a></li>
+<li><a href="#emitter_playback">エミッタを使って再生する方法</a></li>
+<li><a href="#direct_playback">スクリプトから直接再生する方法</a></li>
+<li><a href="#issues">既知の問題</a></li>
+<li><a href="#history">更新履歴</a></li>
+<li><a href="#todo">Todo</a></li>
+</ul>
+
+<a name="introduction"></a>
+<h2>概要</h2>
+<p>
+ゲームエンジンUnityとの連携について説明します。<br>
+なお、Unity Technologies社とこのツールは特に提携しているというわけではないため、<br>
+バージョンや状況によっては上手く動作しない可能性があります。
+</p>
+<p>
+Effekseerの再生プログラムはC++で書かれているため、Unity上ではネイティブプラグイン扱いになります。<br>
+
+<a name="environment"></a>
+<h2>動作環境</h2>
+<h3>Unityバージョン</h3>
+Unity 5.2以降。<br>
+PersonalでもProでも使えます。<br>
+
+<h3>プラットフォーム</h3>
+<p>
+<table class="stdtable">
+<tr>
+	<th>プラットフォーム</th>
+	<th>対応状況</th>
+	<th>備考</th>
+</tr>
+<tr>
+	<td>Windows</td>
+	<td align="center">○</td>
+	<td>CPUはx86,x64に対応。GraphicsはDX9,DX11に対応</td>
+</tr>
+<tr>
+	<td>Mac OS X</td>
+	<td align="center">○</td>
+	<td>GraphicsはOpenGLに対応。Metalは非対応</td>
+</tr>
+<tr>
+	<td>Android</td>
+	<td align="center">×</td>
+	<td>今後対応予定</td>
+</tr>
+<tr>
+	<td>iOS</td>
+	<td align="center">×</td>
+	<td>今後対応予定</td>
+</tr>
+<tr>
+	<td>WebGL</td>
+	<td align="center">×</td>
+	<td>今後できるかも</td>
+</tr>
+</table>
+<br>
+</p>
+
+<a name="how_to_install"></a>
+<h2>インストール方法</h2>
+<p>
+GameEngine/Unity/Effekseer.unitypackage を開いてUnityプロジェクトにインストールします。
+</p>
+
+<a name="how_to_use"></a>
+<h2>使い方</h2>
+
+<a name="example_program"></a>
+<h3>サンプルプロジェクト</h3>
+<p>
+下記の場所にEffekseerプラグインを使用したサンプルプロジェクトがあります。
+<br><br>
+GameEngine/Unity/SampleProject.zip<br>
+</p>
+
+<a name="resource_files"></a>
+<h3>リソースファイルについて</h3>
+<p>
+<font color="red">1.10から変更になりました。</font>
+</p>
+<p>
+Resources/Effekseer/ 以下に出力済エフェクト(*.efk)やテクスチャ、サウンドを配置します。<br>
+*.efkファイルをインポートすると、*.bytesにリネームされます。<br>
+<img src="img/unity_resource.png">
+</p>
+
+<a name="emitter_playback"></a>
+<h3>エミッタを使って再生する方法</h3>
+<p>
+エフェクトのエミッタコンポーネントをGameObjectにAddすることで、<br>
+GameObjectを中心としたエフェクトの再生を行うことができます。<br>
+
+<ul>
+<li>Plugin/Effekseer/EffekseerEmitter.cs(コンポーネント)をゲームオブジェクトに追加します。</li>
+<li>インスペクタの「Effect Name」にはエフェクト名を指定します。<br>
+（エフェクト名はエフェクトファイル名から拡張子を除いた文字列です）</li>
+<li>「Play On Start」にチェックを入れると、ゲーム開始時に自動的に再生します。</li>
+</ul>
+<br>
+<img src="img/unity_emitter.png">
+</p>
+
+<a name="direct_playback"></a>
+<h3>スクリプトから直接再生する方法</h3>
+<p>
+スクリプトからエフェクトを直接再生するには、以下のスクリプトを書きます。
+</p>
+<pre>
+<code>
+EffekseerHandle handle = Effekseer.PlayEffect("Laser01", transform.position);
+handle.SetRotation(transform.rotation);
+</code>
+</pre>
+
+<a name="issues"></a>
+<h2>既知の問題</h2>
+<ul>
+<li>現在、UnityMac版のエディタはLegacyDefferedとForwardのみ描画対応しています。不具合の原因は現在調査中です。</li>
+</ul>
+
+<a name="history"></a>
+<h2>更新履歴</h2>
+
+<p>
+1.10a
+<ul>
+<li>x86ビルドで落ちる不具合修正</li>
+</ul>
+</p>
+
+<p>
+1.10
+<ul>
+<li>リソースの配置場所を StreamingAssets/Effekseer から Resources/Effekseer に変更</li>
+<li>ファイル読み込みにResources.Loadを使用するように変更</li>
+<li>サウンド再生にUnity標準のAudioSourceを使うように変更</li>
+<li>テクスチャロードにUnity標準のTexture2Dを使うように変更</li>
+</ul>
+</p>
+
+<p>
+1.01
+<ul>
+<li>Unity5.2の新しいネイティブプラグイン仕様に対応</li>
+</ul>
+</p>
+
+<a name="todo"></a>
+<h2>Todo</h2>
+<ul>
+<li>iOS, Android対応</li>
+<li>AssetsBundle対応</li>
+</ul>
+
+</div>
+</body>
+
+</html>

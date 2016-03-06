@@ -72,6 +72,11 @@ public:
 	static Effect* Create( Setting*	setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
 
 	/**
+	@brief	標準のエフェクト読込インスタンスを生成する。
+	*/
+	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
+
+	/**
 		@brief	参照カウンタを加算する。
 		@return	実行後の参照カウンタの値
 	*/
@@ -98,11 +103,25 @@ public:
 	virtual int GetVersion() const = 0;
 
 	/**
-		@brief	格納されている画像のポインタを取得する。
+		@brief	格納されている色画像のポインタを取得する。
 		@param	n	[in]	画像のインデックス
 		@return	画像のポインタ
 	*/
-	virtual void* GetImage( int n ) const = 0;
+	virtual void* GetColorImage( int n ) const = 0;
+
+	/**
+	@brief	格納されている法線画像のポインタを取得する。
+	@param	n	[in]	画像のインデックス
+	@return	画像のポインタ
+	*/
+	virtual void* GetNormalImage(int n) const = 0;
+
+	/**
+	@brief	格納されている歪み画像のポインタを取得する。
+	@param	n	[in]	画像のインデックス
+	@return	画像のポインタ
+	*/
+	virtual void* GetDistortionImage(int n) const = 0;
 
 	/**
 		@brief	格納されている音波形のポインタを取得する。

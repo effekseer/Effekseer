@@ -15,9 +15,9 @@ namespace Effekseer
 			native = new Native();
 		}
 
-		public bool CreateWindow(IntPtr handle, int width, int height)
+		public bool CreateWindow(IntPtr handle, int width, int height, bool isLinearMode)
 		{
-			return native.CreateWindow_Effekseer(handle, width, height);
+			return native.CreateWindow_Effekseer(handle, width, height, isLinearMode);
 		}
 
 		public bool UpdateWindow()
@@ -80,9 +80,23 @@ namespace Effekseer
 			return native.SetRandomSeed(seed);
 		}
 
-		public bool Record(string path, int xCount, int yCount, int offsetFrame, int frameSkip, bool isTranslucent)
+		public bool Record(string path, int count, int offsetFrame, int freq, bool isTranslucent)
 		{
-			return native.Record(path, xCount, yCount, offsetFrame, frameSkip, isTranslucent);
+			var dir = System.IO.Path.GetDirectoryName(path);
+			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
+			var ext = System.IO.Path.GetExtension(path);
+
+			return native.Record(dir + "/" + fileWExt, ext, count, offsetFrame, freq, isTranslucent);
+		}
+
+		public bool Record(string path, int count, int xCount, int offsetFrame, int freq, bool isTranslucent)
+		{
+			return native.Record(path, count, xCount, offsetFrame, freq, isTranslucent);
+		}
+
+		public bool RecordAsGifAnimation(string path, int count, int offsetFrame, int freq, bool isTranslucent)
+		{
+			return native.RecordAsGifAnimation(path, count, offsetFrame, freq, isTranslucent);
 		}
 
 		public ViewerParamater GetViewerParamater()
@@ -169,6 +183,15 @@ namespace Effekseer
 			behavior.ScaleVelocityZ = z;
 			native.SetViewerEffectBehavior(behavior);
 		}
+		
+		public void SetTargetLocation(float x, float y, float z)
+		{
+			var behavior = native.GetEffectBehavior();
+			behavior.TargetPositionX = x;
+			behavior.TargetPositionY = y;
+			behavior.TargetPositionZ = z;
+			native.SetViewerEffectBehavior(behavior);
+		}
 
 		public void SetRemovedTime(int time)
 		{
@@ -224,6 +247,11 @@ namespace Effekseer
 		public void SetStep(int step)
 		{
 			native.SetStep(step);
+		}
+
+		public void SetCullingParameter(bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ)
+		{
+			native.SetCullingParameter(isCullingShown, cullingRadius, cullingX, cullingY, cullingZ);
 		}
 
 		public bool Connect(string target, int port)

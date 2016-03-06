@@ -27,18 +27,21 @@ public:
 	struct NodeParameter
 	{
 		Effect*				EffectPointer;
-		eAlphaBlend			AlphaBlend;
-		eTextureFilterType	TextureFilter;
-		eTextureWrapType	TextureWrap;
+		AlphaBlendType		AlphaBlend;
+		TextureFilterType	TextureFilter;
+		TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
 		bool				Lighting;
-		eCullingType		Culling;
+		CullingType		Culling;
 		int32_t				ModelIndex;
 		int32_t				ColorTextureIndex;
 		int32_t				NormalTextureIndex;
 		float				Magnification;
 		bool				IsRightHand;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter

@@ -28,6 +28,9 @@
     <Filter Include="Effekseer\Network">
       <UniqueIdentifier>{a6874a5c-de4f-490a-b4e5-653985b433ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effekseer\Culling">
+      <UniqueIdentifier>{e8a8875a-4164-4bbe-8d86-08471e19742f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effekseer\Effekseer.Base.h">
@@ -175,6 +178,24 @@
     <ClInclude Include="Effekseer\Effekseer.Setting.h">
       <Filter>Effekseer\Loader</Filter>
     </ClInclude>
+    <ClInclude Include="Effekseer\Culling\Culling3D.Grid.h">
+      <Filter>Effekseer\Culling</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Culling\Culling3D.h">
+      <Filter>Effekseer\Culling</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Culling\Culling3D.Layer.h">
+      <Filter>Effekseer\Culling</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Culling\Culling3D.ObjectInternal.h">
+      <Filter>Effekseer\Culling</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Culling\Culling3D.ReferenceObject.h">
+      <Filter>Effekseer\Culling</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Culling\Culling3D.WorldInternal.h">
+      <Filter>Effekseer\Culling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp">
@@ -260,6 +281,27 @@
     </ClCompile>
     <ClCompile Include="Effekseer\Effekseer.Setting.cpp">
       <Filter>Effekseer\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Culling\Culling3D.Layer.cpp">
+      <Filter>Effekseer\Culling</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Culling\Culling3D.Matrix44.cpp">
+      <Filter>Effekseer\Culling</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Culling\Culling3D.ObjectInternal.cpp">
+      <Filter>Effekseer\Culling</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Culling\Culling3D.ReferenceObject.cpp">
+      <Filter>Effekseer\Culling</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Culling\Culling3D.Vector3DF.cpp">
+      <Filter>Effekseer\Culling</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Culling\Culling3D.WorldInternal.cpp">
+      <Filter>Effekseer\Culling</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Culling\Culling3D.Grid.cpp">
+      <Filter>Effekseer\Culling</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

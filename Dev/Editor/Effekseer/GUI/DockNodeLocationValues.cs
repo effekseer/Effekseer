@@ -19,6 +19,11 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockNodeTranslationValues_HandleDestroyed);
 
 			lp_Translation.SetType(typeof(Data.LocationValues));
+
+			if (Core.Language == Language.English)
+			{
+				Text = "Position";
+			}
 		}
 
 		void Read()

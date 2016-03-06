@@ -6,10 +6,10 @@
 // Include
 //----------------------------------------------------------------------------------
 #if _WIN32
-#include <Windows.h>
+#include <windows.h>
 #include <GL/gl.h>
 #endif
-
+#include <stddef.h>
 #include "EffekseerRendererGL.Base.Pre.h"
 
 //-----------------------------------------------------------------------------------
@@ -45,6 +45,7 @@ typedef ptrdiff_t GLintptr;
 typedef char GLchar;
 
 bool Initialize();
+bool IsSupportedVertexArray();
 
 void glDeleteBuffers(GLsizei n, const GLuint* buffers);
 GLuint glCreateShader(GLenum type);
@@ -77,6 +78,15 @@ void glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, cons
 void glUniform4fv(GLint location, GLsizei count, const GLfloat* value);
 void glGenerateMipmap(GLenum target);
 void glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid* data);
+
+void glGenVertexArrays(GLsizei n, GLuint *arrays);
+void glDeleteVertexArrays(GLsizei n, const GLuint *arrays);
+void glBindVertexArray(GLuint array);
+
+void glGenSamplers(GLsizei n, GLuint *samplers);
+void glDeleteSamplers(GLsizei n, const GLuint * samplers);
+void glSamplerParameteri(GLuint sampler, GLenum pname, GLint param);
+void glBindSampler(GLuint unit, GLuint sampler);
 
 //----------------------------------------------------------------------------------
 //

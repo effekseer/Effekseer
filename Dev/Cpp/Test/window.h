@@ -6,8 +6,10 @@
 //
 //----------------------------------------------------------------------------------
 
+#include "common.h"
+
 #if _WIN32
-#include <Windows.h>
+#include <windows.h>
 HWND GetHandle();
 
 #else
@@ -18,10 +20,8 @@ Window* GetWindow();
 #endif
 
 void InitWindow(int width, int height);
-bool DoEvent();
+bool DoWindowEvent();
 void ExitWindow();
-
-void PlayEffect();
 
 //----------------------------------------------------------------------------------
 //

@@ -56,7 +56,7 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, Setting* settin
 	EffekseerPrintDebug("TrackColorRightMiddle : %d\n", TrackColorRightMiddle.type );
 
 	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
-	if (setting->GetCoordinateSystem() == COORDINATE_SYSTEM_LH)
+	if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 	{
 	}
 
@@ -84,6 +84,10 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.ZWrite = Texture.ZWrite;
 		m_nodeParameter.ColorTextureIndex = TrackTexture;
 		m_nodeParameter.EffectPointer = GetEffect();
+
+		m_nodeParameter.Distortion = Texture.Distortion;
+		m_nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+
 		renderer->BeginRendering( m_nodeParameter, count, m_userData );
 	}
 }

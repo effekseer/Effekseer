@@ -8,16 +8,16 @@
 #include <vector>
 #include <string>
 
-#include "window.h"
 #include "graphics.h"
 #include "sound.h"
+#include "common.h"
 
 #if _WIN32
 
 #if _DEBUG
-#pragma comment(lib, "Effekseer.Debug.lib" )
+#pragma comment(lib, "x86/Effekseer.Debug.lib" )
 #else
-#pragma comment(lib, "Effekseer.Release.lib" )
+#pragma comment(lib, "x86/Effekseer.Release.lib" )
 #endif
 
 #else
@@ -29,6 +29,10 @@
 //----------------------------------------------------------------------------------
 #define __NormalMode 1
 #define __PerformanceCheckMode 0
+
+#define __DDS_TEST 0
+
+#define __CULLING_TEST 0
 
 //----------------------------------------------------------------------------------
 //
@@ -86,16 +90,18 @@ static efstring ToEFString(const wchar_t* src)
 //----------------------------------------------------------------------------------
 int main()
 {
-	InitWindow(g_window_width, g_window_height);
-
 	g_manager = ::Effekseer::Manager::Create( 2000 );
 
+#if __CULLING_TEST
+	g_manager->CreateCullingWorld(200, 200, 200, 4);
+#endif
+
 #if _WIN32
-	InitGraphics(GetHandle(), NULL, g_window_width, g_window_height);
-	InitSound( GetHandle(), NULL );
+	InitGraphics(g_window_width, g_window_height);
+	InitSound();
 #else
-	InitGraphics( GetDisplay(), GetWindow(), g_window_width, g_window_height);
-	InitSound( GetDisplay(), GetWindow() );
+	InitGraphics( g_window_width, g_window_height);
+	InitSound();
 #endif
 
 	Init();
@@ -120,8 +126,6 @@ int main()
 
 	TermGraphics();
 
-	ExitWindow();
-
 	return 0;
 }
 
@@ -135,6 +139,11 @@ void Init()
 
 	SetCameraMatrix( ::Effekseer::Matrix44().LookAtRH( g_position, g_focus, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
 
+#if __DDS_TEST
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser01_dds.efk").c_str() ) );
+#elif __CULLING_TEST
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/culling.efk").c_str() ) );
+#else
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser01.efk").c_str() ) );
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser02.efk").c_str() ) );
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ribbon_Parent.efk").c_str() ) );
@@ -145,7 +154,7 @@ void Init()
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Track1.efk").c_str() ) );
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block.efk").c_str() ) );
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block_simple.efk").c_str() ) );
-	
+#endif
 	PlayEffect();
 }
 

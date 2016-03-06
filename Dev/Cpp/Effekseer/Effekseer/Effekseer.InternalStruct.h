@@ -95,7 +95,15 @@ struct vector2d
 	{
 		vector2d ret;
 		ret.x = x + o.x;
-		ret.y = x + o.y;
+		ret.y = y + o.y;
+		return ret;
+	}
+
+	vector2d operator * (const float& o) const
+	{
+		vector2d ret;
+		ret.x = x * o;
+		ret.y = y * o;
 		return ret;
 	}
 
@@ -246,6 +254,15 @@ struct vector3d
 		return ret;
 	}
 
+	vector3d operator - ( const vector3d& o ) const
+	{
+		vector3d ret;
+		ret.x = x - o.x;
+		ret.y = y - o.y;
+		ret.z = z - o.z;
+		return ret;
+	}
+
 	vector3d operator * ( const float& o ) const
 	{
 		vector3d ret;
@@ -260,6 +277,14 @@ struct vector3d
 		x += o.x;
 		y += o.y;
 		z += o.z;
+		return *this;
+	}
+
+	vector3d& operator -= ( const vector3d& o )
+	{
+		x -= o.x;
+		y -= o.y;
+		z -= o.z;
 		return *this;
 	}
 

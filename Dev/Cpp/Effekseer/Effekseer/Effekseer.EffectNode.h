@@ -111,7 +111,7 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-struct ParameterCommonValues
+struct ParameterCommonValues_8
 {
 	int MaxGeneration;
 	BindType TranslationBindType;
@@ -123,6 +123,20 @@ struct ParameterCommonValues
 	random_int	life;
 	float GenerationTime;
 	float GenerationTimeOffset;
+};
+
+struct ParameterCommonValues
+{
+	int MaxGeneration;
+	BindType TranslationBindType;
+	BindType RotationBindType;
+	BindType ScalingBindType;
+	int		RemoveWhenLifeIsExtinct;
+	int		RemoveWhenParentIsRemoved;
+	int		RemoveWhenChildrenIsExtinct;
+	random_int	life;
+	random_float GenerationTime;
+	random_float GenerationTimeOffset;
 };
 
 //----------------------------------------------------------------------------------
@@ -167,7 +181,8 @@ struct LocationAbsParameter
 	{
 		None = 0,
 		Gravity = 1,
-		//AttractiveForce = 2,
+		AttractiveForce = 2,
+		
 		//UniformlyAttractiveForce = 3,
 		Parameter_DWORD = 0x7fffffff,
 	} type;
@@ -180,6 +195,13 @@ struct LocationAbsParameter
 		} none;
 
 		vector3d	gravity;
+
+		struct {
+			float	force;
+			float	control;
+			float	minRange;
+			float	maxRange;
+		} attractiveForce;
 	};
 };
 
@@ -385,16 +407,20 @@ struct ParameterGenerationLocation
 //----------------------------------------------------------------------------------
 struct ParameterTexture
 {
-	int32_t			ColorTextureIndex;
-	eAlphaBlend		AlphaBlend;
+	int32_t				ColorTextureIndex;
+	AlphaBlendType	AlphaBlend;
 
-	eTextureFilterType	FilterType;
+	TextureFilterType	FilterType;
 
-	eTextureWrapType	WrapType;
+	TextureWrapType	WrapType;
 
 	bool				ZWrite;
 
 	bool				ZTest;
+
+	bool				Distortion;
+
+	float				DistortionIntensity;
 
 	enum
 	{
@@ -549,6 +575,20 @@ struct ParameterTexture
 		{
 			memcpy( &UV.Scroll, pos, sizeof(UV.Scroll) );
 			pos += sizeof(UV.Scroll);
+		}
+
+		if (version >= 9)
+		{
+			int32_t distortion = 0;
+
+			memcpy(&distortion, pos, sizeof(int32_t));
+			pos += sizeof(int32_t);
+
+			Distortion = distortion > 0;
+
+			memcpy(&DistortionIntensity, pos, sizeof(float));
+			pos += sizeof(float);
+			
 		}
 	}
 };

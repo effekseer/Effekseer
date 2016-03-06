@@ -10,19 +10,33 @@ cmake_minimum_required(VERSION 2.8)
 # MSVC向け設定
 if (MSVC)
 	option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
-	option(USE_DIRECTXTEX "Use DirectXTex" OFF)
+endif()
+
+if (MSVC)
+
+elseif (MINGW)
+	set(CMAKE_CXX_FLAGS "-std=c++11" ${CMAKE_CXX_FLAGS})
+else()
+	set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC" ${CMAKE_CXX_FLAGS})
 endif()
 
 option(USE_INTERNAL_LOADER "Use Internal Loader" ON)
 
 option(USE_GLEW_STATIC "Use Glew static library" OFF)
 option(USE_GLEW_DLL "Use Glew DLL" ON)
+
 option(USE_OPENGLES2 "Use OpenGL ES2" OFF)
+option(USE_OPENGLES3 "Use OpenGL ES3" OFF)
+option(USE_OPENGL3 "Use OpenGL 3" OFF)
 
 if (MSVC)
 option(USE_OPENAL "Use OpenAL" OFF)
 else()
 option(USE_OPENAL "Use OpenAL" ON)
+endif()
+
+if (WIN32)
+option(USE_XAUDIO2 "Use XAudio2" ON)
 endif()
 
 # ソースコード設定
@@ -54,8 +68,14 @@ set(effekseer_src
 	Effekseer/Effekseer/Effekseer.Socket.cpp
 	Effekseer/Effekseer/Effekseer.Thread.cpp
 	Effekseer/Effekseer/Effekseer.Vector2D.cpp
-	Effekseer/Effekseer/Effekseer.Vector3D.cpp)
-
+	Effekseer/Effekseer/Effekseer.Vector3D.cpp
+	Effekseer/Effekseer/Culling/Culling3D.Grid.cpp
+	Effekseer/Effekseer/Culling/Culling3D.Layer.cpp
+	Effekseer/Effekseer/Culling/Culling3D.Matrix44.cpp
+	Effekseer/Effekseer/Culling/Culling3D.ObjectInternal.cpp
+	Effekseer/Effekseer/Culling/Culling3D.ReferenceObject.cpp
+	Effekseer/Effekseer/Culling/Culling3D.Vector3DF.cpp
+	Effekseer/Effekseer/Culling/Culling3D.WorldInternal.cpp)
 
 set(effekseer_renderer_common_src
 	EffekseerRendererCommon/EffekseerRenderer.IndexBufferBase.cpp
@@ -112,6 +132,7 @@ set(effekseer_renderer_gl_src
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.SpriteRenderer.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.TextureLoader.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.TrackRenderer.cpp
+	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexArray.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.cpp)
 
 list(APPEND effekseer_renderer_dx9_src
@@ -122,6 +143,25 @@ list(APPEND effekseer_renderer_dx11_src
 
 list(APPEND effekseer_renderer_gl_src
 	${effekseer_renderer_common_src})
+
+if (USE_INTERNAL_LOADER)
+set(effekseer_renderer_dx_loader_src
+	EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.cpp
+	EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp)
+
+set(effekseer_renderer_gl_loader_src
+	EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp)
+
+list(APPEND effekseer_renderer_dx9_src
+	${effekseer_renderer_dx_loader_src})
+
+list(APPEND effekseer_renderer_dx11_src
+	${effekseer_renderer_dx_loader_src})
+
+list(APPEND effekseer_renderer_gl_src
+	${effekseer_renderer_gl_loader_src})
+
+endif()
 
 set(effekseer_sound_al_src
 	EffekseerSoundAL/EffekseerSound/EffekseerSoundAL.Sound.cpp
@@ -149,11 +189,13 @@ include_directories(
 # コンパイル先を追加
 add_library( effekseer STATIC ${effekseer_src} )
 
-if (MSVC)
+if (WIN32)
 add_library( effekseer_renderer_dx9 STATIC ${effekseer_renderer_dx9_src} )
 add_library( effekseer_renderer_dx11 STATIC ${effekseer_renderer_dx11_src} )
 add_library( effekseer_sound_dsound STATIC ${effekseer_sound_dsound_src} )
+if (USE_XAUDIO2)
 add_library( effekseer_sound_xaudio2 STATIC ${effekseer_sound_xaudio2_src} )
+endif()
 endif()
 
 add_library( effekseer_renderer_gl STATIC ${effekseer_renderer_gl_src} )
@@ -198,11 +240,12 @@ if (USE_OPENGLES2)
 	add_definitions(-D__EFFEKSEER_RENDERER_GLES2__)
 endif()
 
-if (MSVC)
-if (USE_DIRECTXTEX)
-	add_definitions(-D__EFFEKSEER_RENDERER_DIRECTXTEX)
-	add_definitions(-D__EFFEKSEER_RENDERER_DIRECTXTEX__)
+if (USE_OPENGLES3)
+	add_definitions(-D__EFFEKSEER_RENDERER_GLES3__)
 endif()
+
+if (USE_OPENGL3)
+	add_definitions(-D__EFFEKSEER_RENDERER_GL3__)
 endif()
 
 

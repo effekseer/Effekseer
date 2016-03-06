@@ -20,6 +20,11 @@ namespace Effekseer.GUI
 
 			lp_Common.SetType(typeof(Data.CommonValues));
 			lp_Node.SetType(typeof(Data.NodeBase));
+
+			if (Core.Language == Language.English)
+			{
+				Text = "Basic Settings";
+			}
 		}
 
 		void Read()

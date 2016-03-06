@@ -67,33 +67,34 @@ namespace Effekseer.Data
 			Type = new Value.Enum<ParamaterType>(ParamaterType.Fixed);
 			Fixed = new FixedParamater();
 			PVA = new PVAParamater();
-			Easing = new Vector3DEasingParamater();
-			Easing.Start.X.SetCenterDirectly(1.0f);
-			Easing.Start.Y.SetCenterDirectly(1.0f);
-			Easing.Start.Z.SetCenterDirectly(1.0f);
-			Easing.Start.X.SetMaxDirectly(1.0f);
-			Easing.Start.Y.SetMaxDirectly(1.0f);
-			Easing.Start.Z.SetMaxDirectly(1.0f);
-			Easing.Start.X.SetMinDirectly(1.0f);
-			Easing.Start.Y.SetMinDirectly(1.0f);
-			Easing.Start.Z.SetMinDirectly(1.0f);
-			Easing.End.X.SetCenterDirectly(1.0f);
-			Easing.End.Y.SetCenterDirectly(1.0f);
-			Easing.End.Z.SetCenterDirectly(1.0f);
-			Easing.End.X.SetMaxDirectly(1.0f);
-			Easing.End.Y.SetMaxDirectly(1.0f);
-			Easing.End.Z.SetMaxDirectly(1.0f);
-			Easing.End.X.SetMinDirectly(1.0f);
-			Easing.End.Y.SetMinDirectly(1.0f);
-			Easing.End.Z.SetMinDirectly(1.0f);
+			Easing = new Vector3DEasingParamater(1.0f, 1.0f, 1.0f);
+			//Easing.Start.X.SetCenterDirectly(1.0f);
+			//Easing.Start.Y.SetCenterDirectly(1.0f);
+			//Easing.Start.Z.SetCenterDirectly(1.0f);
+			//Easing.Start.X.SetMaxDirectly(1.0f);
+			//Easing.Start.Y.SetMaxDirectly(1.0f);
+			//Easing.Start.Z.SetMaxDirectly(1.0f);
+			//Easing.Start.X.SetMinDirectly(1.0f);
+			//Easing.Start.Y.SetMinDirectly(1.0f);
+			//Easing.Start.Z.SetMinDirectly(1.0f);
+			//Easing.End.X.SetCenterDirectly(1.0f);
+			//Easing.End.Y.SetCenterDirectly(1.0f);
+			//Easing.End.Z.SetCenterDirectly(1.0f);
+			//Easing.End.X.SetMaxDirectly(1.0f);
+			//Easing.End.Y.SetMaxDirectly(1.0f);
+			//Easing.End.Z.SetMaxDirectly(1.0f);
+			//Easing.End.X.SetMinDirectly(1.0f);
+			//Easing.End.Y.SetMinDirectly(1.0f);
+			//Easing.End.Z.SetMinDirectly(1.0f);
 			SinglePVA = new SinglePVAParamater();
-			SingleEasing = new FloatEasingParamater();
-			SingleEasing.Start.SetCenterDirectly(1.0f);
-			SingleEasing.Start.SetMaxDirectly(1.0f);
-			SingleEasing.Start.SetMinDirectly(1.0f);
-			SingleEasing.End.SetCenterDirectly(1.0f);
-			SingleEasing.End.SetMaxDirectly(1.0f);
-			SingleEasing.End.SetMinDirectly(1.0f);
+
+			SingleEasing = new FloatEasingParamater(1.0f);
+			//SingleEasing.Start.SetCenterDirectly(1.0f);
+			//SingleEasing.Start.SetMaxDirectly(1.0f);
+			//SingleEasing.Start.SetMinDirectly(1.0f);
+			//SingleEasing.End.SetCenterDirectly(1.0f);
+			//SingleEasing.End.SetMaxDirectly(1.0f);
+			//SingleEasing.End.SetMinDirectly(1.0f);
 
 			FCurve = new Vector3DFCurveParameter();
 			FCurve.FCurve.X.DefaultValue = 1.0f;
@@ -105,6 +106,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "拡大率")]
 			[Description(language = Language.Japanese, value = "インスタンスの拡大率")]
+			[Name(language = Language.English, value = "Scaling Factor")]
+			[Description(language = Language.English, value = "Magnification of the instance")]
 			public Value.Vector3D Scale
 			{
 				get;
@@ -121,6 +124,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "拡大率")]
 			[Description(language = Language.Japanese, value = "インスタンスの拡大率")]
+			[Name(language = Language.English, value = "Scaling Factor")]
+			[Description(language = Language.English, value = "Magnification of the instance")]
 			public Value.Vector3DWithRandom Scale
 			{
 				get;
@@ -129,6 +134,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "拡大速度")]
 			[Description(language = Language.Japanese, value = "インスタンスの拡大速度")]
+			[Name(language = Language.English, value = "Expansion\nSpeed")]
+			[Description(language = Language.English, value = "The instance's initial rate of expansion")]
 			public Value.Vector3DWithRandom Velocity
 			{
 				get;
@@ -137,6 +144,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "拡大加速度")]
 			[Description(language = Language.Japanese, value = "インスタンスの初期拡大加速度")]
+			[Name(language = Language.English, value = "Expansion\nAccel")]
+			[Description(language = Language.English, value = "Acceleration of the instance's expansion rate")]
 			public Value.Vector3DWithRandom Acceleration
 			{
 				get;
@@ -155,6 +164,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "拡大率")]
 			[Description(language = Language.Japanese, value = "インスタンスの拡大率")]
+			[Name(language = Language.English, value = "Scaling Factor")]
+			[Description(language = Language.English, value = "Magnification of the instance")]
 			public Value.FloatWithRandom Scale
 			{
 				get;
@@ -163,6 +174,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "拡大速度")]
 			[Description(language = Language.Japanese, value = "インスタンスの拡大速度")]
+			[Name(language = Language.English, value = "Expansion\nSpeed")]
+			[Description(language = Language.English, value = "The instance's initial rate of expansion")]
 			public Value.FloatWithRandom Velocity
 			{
 				get;
@@ -171,6 +184,8 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "拡大加速度")]
 			[Description(language = Language.Japanese, value = "インスタンスの初期拡大加速度")]
+			[Name(language = Language.English, value = "Expansion\nAccel")]
+			[Description(language = Language.English, value = "Acceleration of the instance's expansion rat")]
 			public Value.FloatWithRandom Acceleration
 			{
 				get;
@@ -188,16 +203,22 @@ namespace Effekseer.Data
 		public enum ParamaterType : int
 		{
 			[Name(value = "拡大率", language = Language.Japanese)]
+			[Name(value = "Fixed Scale", language = Language.English)]
 			Fixed = 0,
 			[Name(value = "拡大率・速度・加速度", language = Language.Japanese)]
+			[Name(value = "PVA", language = Language.English)]
 			PVA = 1,
 			[Name(value = "イージング", language = Language.Japanese)]
+			[Name(value = "Easing", language = Language.English)]
 			Easing = 2,
 			[Name(value = "単一 拡大率・速度・加速度", language = Language.Japanese)]
+			[Name(value = "PVA (Single)", language = Language.English)]
 			SinglePVA = 3,
 			[Name(value = "単一 イージング", language = Language.Japanese)]
+			[Name(value = "Easing (Single)", language = Language.English)]
 			SingleEasing = 4,
 			[Name(value = "拡大率(Fカーブ)", language = Language.Japanese)]
+			[Name(value = "F-Curve", language = Language.English)]
 			FCurve = 5,
 		}
 	}

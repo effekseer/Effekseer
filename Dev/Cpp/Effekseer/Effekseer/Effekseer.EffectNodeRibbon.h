@@ -145,7 +145,7 @@ public:
 	RibbonRenderer::InstanceParameter m_instanceParameter;
 public:
 
-	eAlphaBlend		AlphaBlend;
+	AlphaBlendType		AlphaBlend;
 
 	int				ViewpointDependent;
 

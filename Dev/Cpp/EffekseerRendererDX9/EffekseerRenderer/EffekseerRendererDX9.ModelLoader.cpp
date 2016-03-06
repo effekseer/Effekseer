@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
+#include <memory>
 #include "EffekseerRendererDX9.Renderer.h"
 #include "EffekseerRendererDX9.ModelLoader.h"
 
@@ -38,7 +39,7 @@ ModelLoader::~ModelLoader()
 //----------------------------------------------------------------------------------
 void* ModelLoader::Load( const EFK_CHAR* path )
 {
-	std::auto_ptr<::Effekseer::FileReader> 
+	std::unique_ptr<::Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
 	if( reader.get() == NULL ) return false;
 
@@ -105,7 +106,10 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 		model->VertexBuffer = vb;
 
 		model->FaceCount = model->GetFaceCount();
+
+		/* 0.50より追加(0.50以前から移行する時は追記する必要あり) */
 		model->IndexCount = model->FaceCount * 3;
+
 		IDirect3DIndexBuffer9* ib = NULL;
 		hr = m_renderer->GetDevice()->CreateIndexBuffer( 
 			sizeof(Effekseer::Model::Face) * model->FaceCount * model->ModelCount,

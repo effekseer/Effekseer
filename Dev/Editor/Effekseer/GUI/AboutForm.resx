@@ -117,10 +117,87 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="icon.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+        YII=
+</value>
+  </data>
   <data name="licence.Text" xml:space="preserve">
     <value>The MIT License
 
-Copyright (c) 2011-2013 Shimpei Sawada
+Copyright (c) 2011-2015 Effekseer Project 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -149,6 +226,7 @@ Dock Panel Suite
 
  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: 
  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</value>
   </data>
 </root>

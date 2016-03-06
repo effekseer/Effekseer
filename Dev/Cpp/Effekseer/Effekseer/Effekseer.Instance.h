@@ -34,7 +34,10 @@ class Instance
 {
 	friend class Manager;
 	friend class InstanceContainer;
+
+
 public:
+	static const int32_t ChildrenMax = 16;
 
 	// マネージャ
 	Manager*	m_pManager;
@@ -50,10 +53,15 @@ public:
 
 	// 親
 	Instance*	m_pParent;
-
-	// 位置
-	Vector3D	m_LocalPosition;
-
+	
+	// グローバル位置
+	Vector3D	m_GlobalPosition;
+	Vector3D	m_GlobalVelocity;
+	
+	// グローバル位置補正
+	Vector3D	m_GlobalRevisionLocation;
+	Vector3D	m_GlobalRevisionVelocity;
+	
 	union 
 	{
 		struct
@@ -79,27 +87,7 @@ public:
 			vector3d	offset;
 		} fcruve;
 
-	} translation_values;	
-
-	// 補正位置
-	vector3d	m_globalRevisionLocation;
-
-	union 
-	{
-		struct
-		{
-		
-		} none;
-
-		struct
-		{
-			vector3d	velocity;
-		} gravity;
-
-	} translation_abs_values;
-
-	// 回転
-	Vector3D	m_LocalAngle;
+	} translation_values;
 
 	union 
 	{
@@ -124,6 +112,7 @@ public:
 		struct
 		{
 			float rotation;
+			vector3d axis;
 
 			union
 			{
@@ -148,9 +137,6 @@ public:
 		} fcruve;
 
 	} rotation_values;
-
-	// 拡大縮小
-	Vector3D	m_LocalScaling;
 
 	union 
 	{
@@ -217,8 +203,14 @@ public:
 	// 生成されてからの時間
 	float		m_LivingTime;
 
+	/* 生成された子の個数 */
+	int32_t		m_generatedChildrenCount[ChildrenMax];
+
+	/* 次に子を生成する時間 */
+	float		m_nextGenerationTime[ChildrenMax];
+
 	// 生成位置
-	Matrix43		m_generation_location;
+	Matrix43		m_GenerationLocation;
 
 	// 変換用行列
 	Matrix43		m_GlobalMatrix43;
@@ -237,8 +229,8 @@ public:
 
 	// デストラクタ
 	virtual ~Instance();
-public:
 
+public:
 	/**
 		@brief	状態の取得
 	*/
@@ -260,11 +252,6 @@ public:
 	void Update( float deltaFrame, bool shown );
 
 	/**
-		@brief	行列の更新
-	*/
-	void CalculateMatrix( float deltaFrame );
-
-	/**
 		@brief	描画
 	*/
 	void Draw();
@@ -278,6 +265,23 @@ public:
 		@brief	UVの位置取得
 	*/
 	RectF GetUV() const;
+
+private:
+	/**
+		@brief	行列の更新
+	*/
+	void CalculateMatrix( float deltaFrame );
+	
+	/**
+		@brief	行列の更新
+	*/
+	void CalculateParentMatrix();
+	
+	/**
+		@brief	絶対パラメータの反映
+	*/
+	void ModifyMatrixFromLocationAbs( float deltaFrame );
+	
 };
 
 //----------------------------------------------------------------------------------

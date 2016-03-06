@@ -10,12 +10,9 @@
 #include <windows.h>
 #include <d3d11.h>
 
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-#if __EFFEKSEER_RENDERER_DIRECTXTEX || __EFFEKSEER_RENDERER_DIRECTXTEX__
-#include <DirectXTex.h>
-#else
-#include <d3dx11.h>
-#endif
+#if _WIN32
+#pragma comment(lib, "gdiplus.lib")
+#pragma comment(lib, "d3d11.lib" )
 #endif
 
 //----------------------------------------------------------------------------------
@@ -50,6 +47,21 @@ class Renderer;
 //-----------------------------------------------------------------------------------
 namespace EffekseerRenderer
 {
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+
+/**
+	@brief	背景を歪ませるエフェクトを描画する前に実行されるコールバック
+*/
+class DistortingCallback
+{
+public:
+	DistortingCallback() {}
+	virtual ~DistortingCallback() {}
+
+	virtual void OnDistorting() {}
+};
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -189,6 +201,16 @@ public:
 		@brief	レンダーステートを強制的にリセットする。
 	*/
 	virtual void ResetRenderState() = 0;
+
+	/**
+	@brief	背景を歪ませるエフェクトが描画される前に呼ばれるコールバックを取得する。
+	*/
+	virtual DistortingCallback* GetDistortingCallback() = 0;
+
+	/**
+	@brief	背景を歪ませるエフェクトが描画される前に呼ばれるコールバックを設定する。
+	*/
+	virtual void SetDistortingCallback(DistortingCallback* callback) = 0;
 };
 
 //----------------------------------------------------------------------------------
@@ -237,6 +259,16 @@ public:
 		@brief	デバイスを取得する。
 	*/
 	virtual ID3D11Device* GetDevice() = 0;
+
+	/**
+	@brief	背景を取得する。
+	*/
+	virtual ID3D11ShaderResourceView* GetBackground() = 0;
+
+	/**
+	@brief	背景を設定する。
+	*/
+	virtual void SetBackground(ID3D11ShaderResourceView* background) = 0;
 };
 
 //----------------------------------------------------------------------------------

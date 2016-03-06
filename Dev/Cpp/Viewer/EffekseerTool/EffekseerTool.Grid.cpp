@@ -194,10 +194,10 @@ void Grid::Rendering( ::Effekseer::Color& gridColor, bool isRightHand )
 	if( m_lineCount == 0 ) return;
 
 	auto& state = m_renderer->GetRenderState()->Push();
-	state.AlphaBlend = ::Effekseer::ALPHA_BLEND_BLEND;
+	state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 	state.DepthWrite = true;
 	state.DepthTest = true;
-	state.CullingType = Effekseer::CULLING_DOUBLE;
+	state.CullingType = Effekseer::CullingType::Double;
 	
 	
 	uint32_t pass;

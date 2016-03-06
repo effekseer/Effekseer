@@ -26,8 +26,8 @@ class"
 
 // csharp void ‚Ì’è‹`
 %typemap(ctype) void * "void *"
-%typemap(imtype) void * "IntPtr"
-%typemap(cstype) void * "IntPtr"
+%typemap(imtype) void * "System.IntPtr"
+%typemap(cstype) void * "System.IntPtr"
 %typemap(in) void * { $1 = $input; }
 %typemap(out) void * { $result = $1; }
 %typemap(csin) void * "$csinput"

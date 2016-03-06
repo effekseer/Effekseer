@@ -4,8 +4,22 @@
 //----------------------------------------------------------------------------------
 #include "dll.h"
 
+#include <d3dx9.h>
+
 #pragma comment(lib, "d3d9.lib" )
 #pragma comment(lib, "d3dx9.lib" )
+
+#define NONDLL	1
+#define MSWIN32 1
+#define BGDWIN32 1
+#include <gd/gd.h>
+#include <gd/gdfontmb.h>
+
+#if _DEBUG
+#pragma comment(lib,"Debug/libgd_static.lib")
+#else
+#pragma comment(lib,"Release/libgd_static.lib")
+#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -148,6 +162,13 @@ ViewerParamater::ViewerParamater()
 	, AngleY			( 0 )
 	, Distance			( 0 )
 	, RendersGuide		( false )
+
+	, IsCullingShown	(false)
+	, CullingRadius		( 0 )
+	, CullingX			( 0 )
+	, CullingY			( 0 )
+	, CullingZ			( 0 )
+
 {
 
 }
@@ -204,8 +225,9 @@ static ::Effekseer::Client*		g_client = NULL;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Native::TextureLoader::TextureLoader( EffekseerRenderer::Renderer* renderer )
+Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer, bool isSRGBMode)
 	: m_renderer	( renderer )
+	, m_isSRGBMode(isSRGBMode)
 {
 
 }
@@ -221,7 +243,7 @@ Native::TextureLoader::~TextureLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void* Native::TextureLoader::Load( const EFK_CHAR* path )
+void* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
 	wchar_t dst[260];
 	Combine( RootPath.c_str(), (const wchar_t *)path, dst, 260 );
@@ -245,7 +267,30 @@ void* Native::TextureLoader::Load( const EFK_CHAR* path )
 			fread( data_texture, 1, size_texture, fp_texture );
 			fclose( fp_texture );
 
-			D3DXCreateTextureFromFileInMemory( ((EffekseerRendererDX9::RendererImplemented*)m_renderer)->GetDevice(), data_texture, size_texture, &pTexture );
+			//D3DXCreateTextureFromFileInMemory( ((EffekseerRendererDX9::RendererImplemented*)m_renderer)->GetDevice(), data_texture, size_texture, &pTexture );
+
+			DWORD usage = 0;
+			if (m_isSRGBMode)
+			{
+				usage = 0;
+			}
+			
+			D3DXCreateTextureFromFileInMemoryEx(
+				((EffekseerRendererDX9::RendererImplemented*)m_renderer)->GetDevice(),
+				data_texture,
+				size_texture,
+				D3DX_DEFAULT,
+				D3DX_DEFAULT,
+				D3DX_DEFAULT,
+				usage,
+				D3DFMT_UNKNOWN,
+				D3DPOOL_MANAGED,
+				D3DX_DEFAULT,
+				D3DX_DEFAULT,
+				0,
+				NULL,
+				NULL,
+				&pTexture);
 
 			delete [] data_texture;
 
@@ -496,9 +541,11 @@ Native::~Native()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Native::CreateWindow_Effekseer( void* pHandle, int width, int height )
+bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode)
 {
-	g_renderer = new ::EffekseerTool::Renderer( 20000 );
+	m_isSRGBMode = isSRGBMode;
+
+	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode );
 	if( g_renderer->Initialize( (HWND)pHandle, width, height ) )
 	{
 		// ŠÖ”’Ç‰Á
@@ -526,7 +573,7 @@ bool Native::CreateWindow_Effekseer( void* pHandle, int width, int height )
 			g_manager->SetRingRenderer( ring_renderer );
 			g_manager->SetModelRenderer( model_renderer );
 			g_manager->SetTrackRenderer( track_renderer );
-			g_manager->SetTextureLoader( new TextureLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer() ) );
+			g_manager->SetTextureLoader( new TextureLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer(), isSRGBMode ) );
 			g_manager->SetModelLoader( new ModelLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer() ) );
 		}
 	}
@@ -590,7 +637,8 @@ bool Native::UpdateWindow()
 			::Effekseer::Matrix44().LookAtLH( position, temp_focus, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
 	}
 
-	g_sound->GetSound()->SetListener( position, g_focus_position, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) );
+	g_sound->SetListener( position, g_focus_position, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) );
+	
 	g_renderer->BeginRendering();
 	g_manager->Draw();
 	g_renderer->EndRendering();
@@ -641,8 +689,14 @@ bool Native::LoadEffect( void* pData, int size, const wchar_t* Path )
 	g_handles.clear();
 
 	((TextureLoader*)g_manager->GetTextureLoader())->RootPath = std::wstring( Path );
-	((SoundLoader*)g_manager->GetSoundLoader())->RootPath = std::wstring( Path );
 	((ModelLoader*)g_manager->GetModelLoader())->RootPath = std::wstring( Path );
+	
+	SoundLoader* soundLoader = (SoundLoader*)g_manager->GetSoundLoader();
+	if( soundLoader )
+	{
+		soundLoader->RootPath = std::wstring( Path );
+	}
+
 	g_effect = Effekseer::Effect::Create( g_manager, pData, size );
 	assert( g_effect != NULL );
 	return true;
@@ -772,7 +826,7 @@ bool Native::StepEffect()
 
 		m_rootRotation.X += m_effectBehavior.RotationVelocityX;
 		m_rootRotation.Y += m_effectBehavior.RotationVelocityY;
-		m_rootRotation.Z += m_effectBehavior.PositionVelocityZ;
+		m_rootRotation.Z += m_effectBehavior.RotationVelocityZ;
 		
 		m_rootScale.X += m_effectBehavior.ScaleVelocityX;
 		m_rootScale.Y += m_effectBehavior.ScaleVelocityY;
@@ -809,6 +863,12 @@ bool Native::StepEffect()
 			Effekseer::Matrix43::Multiple( mat, mat, matTra );
 
 			g_manager->SetMatrix( g_handles[index], mat );
+
+			g_manager->SetTargetLocation( g_handles[index], 
+				m_effectBehavior.TargetPositionX,
+				m_effectBehavior.TargetPositionY,
+				m_effectBehavior.TargetPositionZ );
+
 			index++;
 		}
 		}
@@ -936,9 +996,73 @@ bool Native::SetRandomSeed( int seed )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Native::Record( const wchar_t* path, int32_t xCount, int32_t yCount, int32_t offsetFrame, int32_t frameSkip, bool isTranslucent )
+bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, bool isTranslucent)
+{
+	if (g_effect == NULL) return false;
+
+	g_renderer->IsBackgroundTranslucent = isTranslucent;
+
+	::Effekseer::Vector3D position(0, 0, g_Distance);
+	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
+	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
+	mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
+	::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
+	::Effekseer::Vector3D::Transform(position, position, mat);
+	position.X += g_focus_position.X;
+	position.Y += g_focus_position.Y;
+	position.Z += g_focus_position.Z;
+
+	g_renderer->GetRenderer()->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+	StopEffect();
+
+	::Effekseer::Handle handle = g_manager->Play(g_effect, 0, 0, 0);
+
+	g_manager->SetTargetLocation(handle,
+		m_effectBehavior.TargetPositionX,
+		m_effectBehavior.TargetPositionY,
+		m_effectBehavior.TargetPositionZ);
+
+	for (int i = 0; i < offsetFrame; i++)
+	{
+		g_manager->Update();
+	}
+	
+	for (int32_t i = 0; i < count; i++)
+	{
+		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
+
+		g_renderer->SetRecordRect(0, 0);
+
+		g_renderer->BeginRendering();
+		g_manager->Draw();
+		g_renderer->EndRendering();
+
+		for (int j = 0; j < freq; j++)
+		{
+			g_manager->Update();
+		}
+
+		wchar_t path_[260];
+		swprintf_s(path_, L"%s.%d%s", pathWithoutExt, i, ext);
+
+		g_renderer->EndRecord(path_);
+	}
+
+	g_manager->StopEffect(handle);
+	g_manager->Update();
+	return true;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, bool isTranslucent)
 {
 	if( g_effect == NULL ) return false;
+
+	int32_t yCount = count / xCount;
+	if (count != xCount * yCount) yCount++;
 
 	if( ! g_renderer->BeginRecord( g_renderer->GuideWidth * xCount, g_renderer->GuideHeight * yCount ) ) return false;
 	g_renderer->IsBackgroundTranslucent = isTranslucent;
@@ -959,11 +1083,17 @@ bool Native::Record( const wchar_t* path, int32_t xCount, int32_t yCount, int32_
 	
 	::Effekseer::Handle handle = g_manager->Play( g_effect, 0, 0, 0 );
 	
+	g_manager->SetTargetLocation(handle,
+		m_effectBehavior.TargetPositionX,
+		m_effectBehavior.TargetPositionY,
+		m_effectBehavior.TargetPositionZ);
+
 	for( int i = 0; i < offsetFrame; i++ )
 	{
 		g_manager->Update();
 	}
 
+	int32_t count_ = 0;
 	for( int y = 0; y < yCount; y++ )
 	{
 		for( int x = 0; x < xCount; x++ )
@@ -974,18 +1104,107 @@ bool Native::Record( const wchar_t* path, int32_t xCount, int32_t yCount, int32_
 			g_manager->Draw();
 			g_renderer->EndRendering();
 
-			for( int j = 0; j < frameSkip + 1; j++ )
+			for (int j = 0; j < freq; j++)
 			{
 				g_manager->Update();
+			}
+
+			count_++;
+			if (count == count_)
+			{
+				g_manager->StopEffect(handle);
 			}
 		}
 	}
 	
-	g_manager->StopEffect( handle );
+Exit:;
+
 	g_renderer->EndRecord( path );
 	
 	g_manager->Update();
 
+	return true;
+}
+
+bool Native::RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, bool isTranslucent)
+{
+	if (g_effect == NULL) return false;
+
+	g_renderer->IsBackgroundTranslucent = isTranslucent;
+
+	::Effekseer::Vector3D position(0, 0, g_Distance);
+	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
+	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
+	mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
+	::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
+	::Effekseer::Vector3D::Transform(position, position, mat);
+	position.X += g_focus_position.X;
+	position.Y += g_focus_position.Y;
+	position.Z += g_focus_position.Z;
+
+	g_renderer->GetRenderer()->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+	StopEffect();
+
+	::Effekseer::Handle handle = g_manager->Play(g_effect, 0, 0, 0);
+
+	g_manager->SetTargetLocation(handle,
+		m_effectBehavior.TargetPositionX,
+		m_effectBehavior.TargetPositionY,
+		m_effectBehavior.TargetPositionZ);
+
+	for (int i = 0; i < offsetFrame; i++)
+	{
+		g_manager->Update();
+	}
+
+	FILE*		fp = nullptr;
+	gdImagePtr	img = nullptr;
+
+	img = gdImageCreate(g_renderer->GuideWidth, g_renderer->GuideHeight);
+	fp =  _wfopen(path, L"wb");
+	gdImageGifAnimBegin(img, fp, false, 0);
+
+	for (int32_t i = 0; i < count; i++)
+	{
+		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
+
+		g_renderer->SetRecordRect(0, 0);
+
+		g_renderer->BeginRendering();
+		g_manager->Draw();
+		g_renderer->EndRendering();
+
+		for (int j = 0; j < freq; j++)
+		{
+			g_manager->Update();
+		}
+
+		std::vector<Effekseer::Color> pixels;
+		g_renderer->EndRecord(pixels);
+
+		int delay = (int) round((1.0 / (double) 60.0 * freq) * 100.0);
+		gdImagePtr frameImage = gdImageCreateTrueColor(g_renderer->GuideWidth, g_renderer->GuideHeight);
+
+		for (int32_t y = 0; y < g_renderer->GuideHeight; y++)
+		{
+			for (int32_t x = 0; x < g_renderer->GuideWidth; x++)
+			{
+				auto c = pixels[x + y * g_renderer->GuideWidth];
+				gdImageSetPixel(frameImage, x, y, gdTrueColor(c.R, c.G, c.B));
+			}
+		}
+		gdImageTrueColorToPalette(frameImage, true, gdMaxColors);
+		gdImageGifAnimAdd(frameImage, fp, true, 0, 0, delay, gdDisposalNone, NULL);
+		gdImageDestroy(frameImage);
+	}
+
+	gdImageGifAnimEnd(fp);
+	fclose(fp);
+	gdImageDestroy(img);
+
+	g_manager->StopEffect(handle);
+	g_manager->Update();
 	return true;
 }
 
@@ -1270,11 +1489,11 @@ void Native::SetIsRightHand( bool value )
 	g_renderer->IsRightHand = value;
 	if( g_renderer->IsRightHand )
 	{
-		g_manager->SetCoordinateSystem( Effekseer::COORDINATE_SYSTEM_RH );
+		g_manager->SetCoordinateSystem( Effekseer::CoordinateSystem::RH );
 	}
 	else
 	{
-		g_manager->SetCoordinateSystem( Effekseer::COORDINATE_SYSTEM_LH );
+		g_manager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
 	}
 
 	g_renderer->RecalcProjection();
@@ -1290,6 +1509,15 @@ void Native::SetIsRightHand( bool value )
 
 		g_renderer->GetRenderer()->SetLightDirection( temp );
 	}
+}
+
+void Native::SetCullingParameter( bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ)
+{
+	g_renderer->IsCullingShown = isCullingShown;
+	g_renderer->CullingRadius = cullingRadius;
+	g_renderer->CullingPosition.X = cullingX;
+	g_renderer->CullingPosition.Y = cullingY;
+	g_renderer->CullingPosition.Z = cullingZ;
 }
 
 //----------------------------------------------------------------------------------

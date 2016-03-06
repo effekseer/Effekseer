@@ -18,8 +18,9 @@ namespace Effekseer
 		/// <param name="handle"></param>
 		/// <param name="width"></param>
 		/// <param name="height"></param>
+		/// <param name="isLinearMode"></param>
 		/// <returns></returns>
-		bool CreateWindow(IntPtr handle, int width, int height);
+		bool CreateWindow(IntPtr handle, int width, int height, bool isLinearMode);
 
 		/// <summary>
 		/// 描画画面を更新する。
@@ -170,6 +171,14 @@ namespace Effekseer
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		void SetScaleVelocity(float x, float y, float z);
+		
+		/// <summary>
+		/// ターゲットの位置を設定する。
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		void SetTargetLocation(float x, float y, float z);
 
 		/// <summary>
 		/// ルートを削除するフレームを設定する。
@@ -232,6 +241,16 @@ namespace Effekseer
 		/// </summary>
 		/// <param name="step"></param>
 		void SetStep(int step);
+
+		/// <summary>
+		/// カリング情報を設定する。
+		/// </summary>
+		/// <param name="isCullingShown"></param>
+		/// <param name="cullingRadius"></param>
+		/// <param name="cullingX"></param>
+		/// <param name="cullingY"></param>
+		/// <param name="cullingZ"></param>
+		void SetCullingParameter(bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ);
 
 		/// <summary>
 		/// サーバーに接続する。

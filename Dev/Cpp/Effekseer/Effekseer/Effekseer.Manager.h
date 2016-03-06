@@ -85,7 +85,7 @@ public:
 		@brief	座標系を取得する。
 		@return	座標系
 	*/
-	virtual eCoordinateSystem GetCoordinateSystem() const = 0;
+	virtual CoordinateSystem GetCoordinateSystem() const = 0;
 
 	/**
 		@brief	座標系を設定する。
@@ -94,7 +94,7 @@ public:
 		座標系を設定する。
 		エフェクトファイルを読み込む前に設定する必要がある。
 	*/
-	virtual void SetCoordinateSystem( eCoordinateSystem coordinateSystem ) = 0;
+	virtual void SetCoordinateSystem( CoordinateSystem coordinateSystem ) = 0;
 
 	/**
 		@brief	スプライト描画機能を取得する。
@@ -301,7 +301,7 @@ public:
 		@param	angle	[in]	角度(ラジアン)
 	*/
 	virtual void SetRotation( Handle handle, const Vector3D& axis, float angle ) = 0;
-
+	
 	/**
 		@brief	エフェクトのインスタンスの拡大率を指定する。
 		@param	handle	[in]	インスタンスのハンドル
@@ -310,6 +310,20 @@ public:
 		@param	z		[in]	Z方向拡大率
 	*/
 	virtual void SetScale( Handle handle, float x, float y, float z ) = 0;
+
+	/**
+		@brief	エフェクトのインスタンスのターゲット位置を指定する。
+		@param	x	[in]	X座標
+		@param	y	[in]	Y座標
+		@param	z	[in]	Z座標
+	*/
+	virtual void SetTargetLocation( Handle handle, float x, float y, float z ) = 0;
+
+	/**
+		@brief	エフェクトのインスタンスのターゲット位置を指定する。
+		@param	location	[in]	位置
+	*/
+	virtual void SetTargetLocation( Handle handle, const Vector3D& location ) = 0;
 
 	/**
 		@brief	エフェクトのベース行列を取得する。
@@ -430,6 +444,27 @@ public:
 		@brief	残りの確保したインスタンス数を取得する。
 	*/
 	virtual int32_t GetRestInstancesCount() const = 0;
+
+	/**
+		@brief	エフェクトをカリングし描画負荷を減らすための空間を生成する。
+		@param	xsize	X方向幅
+		@param	ysize	Y方向幅
+		@param	zsize	Z方向幅
+		@param	layerCount	層数(大きいほどカリングの効率は上がるがメモリも大量に使用する)
+	*/
+	virtual void CreateCullingWorld( float xsize, float ysize, float zsize, int32_t layerCount) = 0;
+
+	/**
+		@brief	カリングを行い、カリングされたオブジェクトのみを描画するようにする。
+		@param	cameraProjMat	カメラプロジェクション行列
+		@param	isOpenGL		OpenGLによる描画か?
+	*/
+	virtual void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL) = 0;
+
+	/**
+		@brief	現在存在するエフェクトのハンドルからカリングの空間を配置しなおす。
+	*/
+	virtual void RessignCulling() = 0;
 };
 //----------------------------------------------------------------------------------
 //

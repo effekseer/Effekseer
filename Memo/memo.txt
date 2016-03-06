@@ -6,12 +6,6 @@ it = std::map<>.erase( it );
 　→ 
 std::map<>.erase( it++ );
 
-・enum : int
-gccでは通らない。
-中身の数値を表す最小の型というケースがあるので
-XXX_DWORD=0x7fffffff
-というのを追加する。
-
 ・Shift-JIS対策
 /*(スペース) 内容 (スペース)*/
 とやると、駄目文字が入っていてもコメントアウトされる。

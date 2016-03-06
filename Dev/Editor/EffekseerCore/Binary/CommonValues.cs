@@ -19,8 +19,10 @@ namespace Effekseer.Binary
 		public int RemoveWhenChildrenIsExtinct;
 		public int Life_Max;
 		public int Life_Min;
-		public float CreationTime;
-		public float CreationTimeOffset;
+		public float CreationTime_Max;
+		public float CreationTime_Min;
+		public float CreationTimeOffset_Max;
+		public float CreationTimeOffset_Min;
 
 		public static byte[] GetBytes(Data.CommonValues value)
 		{
@@ -76,8 +78,10 @@ namespace Effekseer.Binary
 
 			s_value.Life_Max = value.Life.Max;
 			s_value.Life_Min = value.Life.Min;
-			s_value.CreationTime = value.GenerationTime;
-			s_value.CreationTimeOffset = value.GenerationTimeOffset;
+			s_value.CreationTime_Max = value.GenerationTime.Max;
+			s_value.CreationTime_Min = value.GenerationTime.Min;
+			s_value.CreationTimeOffset_Max = value.GenerationTimeOffset.Max;
+			s_value.CreationTimeOffset_Min = value.GenerationTimeOffset.Min;
 
 			return s_value;
 		}

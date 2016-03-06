@@ -14,6 +14,11 @@ namespace Effekseer.GUI
 		public DockFCurves()
 		{
 			InitializeComponent();
+
+			if (Core.Language == Language.English)
+			{
+				this.Text = "F-Curve";
+			}
 		}
 
 		public void ScrollPosition(object o)

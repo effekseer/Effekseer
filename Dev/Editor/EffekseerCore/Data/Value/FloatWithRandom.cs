@@ -81,6 +81,11 @@ namespace Effekseer.Data.Value
 
 		public event ChangedValueEventHandler OnChanged;
 
+		internal float DefaultValueCenter { get; private set; }
+		internal float DefaultValueMax { get; private set; }
+		internal float DefaultValueMin { get; private set; }
+		internal DrawnAs DefaultDrawnAs { get; private set; }
+
 		internal FloatWithRandom(float value = 0, float max = float.MaxValue, float min = float.MinValue, DrawnAs drawnas = Data.DrawnAs.CenterAndAmplitude, float step = 1.0f)
 		{
 			_max = max;
@@ -91,6 +96,11 @@ namespace Effekseer.Data.Value
 			
 			DrawnAs = drawnas;
 			Step = step;
+
+			DefaultValueCenter = _value_center;
+			DefaultValueMax = _value_max;
+			DefaultValueMin = _value_min;
+			DefaultDrawnAs = DrawnAs;
 		}
 
 		protected void CallChanged(object value, ChangedValueType type)

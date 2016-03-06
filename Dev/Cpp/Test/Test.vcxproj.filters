@@ -14,5 +14,6 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="window.h" />
+    <ClInclude Include="common.h" />
   </ItemGroup>
 </Project>

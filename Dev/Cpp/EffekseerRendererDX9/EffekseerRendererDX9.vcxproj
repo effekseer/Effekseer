@@ -1,13 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -19,12 +27,27 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -32,23 +55,59 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\lib\</OutDir>
+    <OutDir>..\lib\x86\</OutDir>
     <TargetName>$(ProjectName).$(Configuration)</TargetName>
     <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName).$(Configuration)</TargetName>
+    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <OutDir>..\lib\x64\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\lib\</OutDir>
+    <OutDir>..\lib\x86\</OutDir>
     <TargetName>$(ProjectName).$(Configuration)</TargetName>
     <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>$(ProjectName).$(Configuration)</TargetName>
+    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <OutDir>..\lib\x64\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>..\Effekseer\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;DEBUG;WIN32;_WINDOWS;_DEBUG_EFFEKSEER;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>..\lib\</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
@@ -92,14 +151,44 @@
       <AdditionalLibraryDirectories>..\lib\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>..\Effekseer\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_NDEBUG;_WINDOWS;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>..\lib\</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.DXTK.dds.h" />
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.DXTK.DDSTextureLoader.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.ModelRendererBase.h" />
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.PngTextureLoader.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.Renderer.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RenderStateBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RibbonRendererBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RingRendererBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.SpriteRendererBase.h" />
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.StandardRenderer.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.TrackRendererBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.h" />
     <ClInclude Include="EffekseerRendererDX9.h" />
@@ -121,8 +210,10 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX9.VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.DXTK.DDSTextureLoader.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.ModelRendererBase.cpp" />
+    <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.PngTextureLoader.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.Renderer.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.RenderStateBase.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.RibbonRendererBase.cpp" />

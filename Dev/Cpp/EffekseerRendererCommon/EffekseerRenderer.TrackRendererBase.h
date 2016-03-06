@@ -13,6 +13,7 @@
 #include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 #include "EffekseerRenderer.IndexBufferBase.h"
+#include "EffekseerRenderer.StandardRenderer.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -43,8 +44,9 @@ public:
 protected:
 
 	template<typename VERTEX, typename RENDERER>
-	void BeginRendering_( RENDERER* renderer, const efkTrackNodeParam& parameter, int32_t count, void* userData )
+	void BeginRendering_( RENDERER* renderer, const efkTrackNodeParam& param, int32_t count, void* userData )
 	{
+		/*
 		m_ribbonCount = 0;
 		
 		int32_t vertexCount = (count - 1) * 8;
@@ -54,10 +56,59 @@ protected:
 			m_ringBufferOffset = 0;
 			m_ringBufferData = NULL;
 		}
+		*/
+
+		m_ribbonCount = 0;
+		int32_t vertexCount = (count - 1) * 8;
+		if (vertexCount <= 0) return;
+
+		EffekseerRenderer::StandardRendererState state;
+		state.AlphaBlend = param.AlphaBlend;
+		state.CullingType = ::Effekseer::CullingType::Double;
+		state.DepthTest = param.ZTest;
+		state.DepthWrite = param.ZWrite;
+		state.TextureFilterType = param.TextureFilter;
+		state.TextureWrapType = param.TextureWrap;
+
+		state.Distortion = param.Distortion;
+		state.DistortionIntensity = param.DistortionIntensity;
+
+		if (param.ColorTextureIndex >= 0)
+		{
+			if (state.Distortion)
+			{
+				state.TexturePtr = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
+			}
+			else
+			{
+				state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
+			}
+		}
+		else
+		{
+			state.TexturePtr = nullptr;
+		}
+
+		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
+
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
 	}
 
-	template<typename VERTEX>
-	void Rendering_( const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_(const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+	{
+		if (parameter.Distortion)
+		{
+			Rendering_Internal<VERTEX_DISTORTION, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+		else
+		{
+			Rendering_Internal<VERTEX, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+		}
+	}
+
+	template<typename VERTEX, typename VERTEX_DISTORTION>
+	void Rendering_Internal( const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
 		if( m_ringBufferData == NULL ) return;
 		if( instanceParameter.InstanceCount < 2 ) return;
@@ -181,7 +232,7 @@ protected:
 			m_ribbonCount += 2;
 		}
 
-		/* 座標変換 */
+		/* 全ての頂点の座標を変換 */
 		if( isLast )
 		{
 			VERTEX* vs_ = (VERTEX*)(m_ringBufferData - sizeof(VERTEX) * 8 * (param.InstanceCount-1) );
@@ -267,6 +318,24 @@ protected:
 					mat_rot );
 
 
+				if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+				{
+					auto vl_ = (VERTEX_DISTORTION*) (&vl);
+					auto vm_ = (VERTEX_DISTORTION*) (&vm);
+					auto vr_ = (VERTEX_DISTORTION*) (&vr);
+
+					vl_->Binormal = axis;
+					vm_->Binormal = axis;
+					vr_->Binormal = axis;
+
+					::Effekseer::Vector3D tangent;
+					::Effekseer::Vector3D::Normal(tangent, vr_->Pos - vl_->Pos);
+
+					vl_->Tangent = tangent;
+					vm_->Tangent = tangent;
+					vr_->Tangent = tangent;
+				}
+
 				if( isFirst_ )
 				{
 					vs_[0] = vl;
@@ -302,13 +371,14 @@ protected:
 		}
 	}
 
-	template<typename RENDERER, typename SHADER, typename TEXTURE, typename VERTEX>
-	void EndRendering_(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, const efkTrackNodeParam& param)
+	template<typename RENDERER, typename TEXTURE, typename VERTEX>
+	void EndRendering_(RENDERER* renderer, const efkTrackNodeParam& param)
 	{
+		/*
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
-		state.CullingType = ::Effekseer::CULLING_DOUBLE;
+		state.CullingType = ::Effekseer::CullingType::Double;
 
 		SHADER* shader_ = NULL;
 		if (param.ColorTextureIndex >= 0)
@@ -324,7 +394,7 @@ protected:
 
 		if (param.ColorTextureIndex >= 0)
 		{
-			TEXTURE texture = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetImage(param.ColorTextureIndex));
+			TEXTURE texture = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetColorImage(param.ColorTextureIndex));
 			renderer->SetTextures(shader_, &texture, 1);
 		}
 		else
@@ -351,6 +421,7 @@ protected:
 		renderer->EndShader(shader_);
 
 		renderer->GetRenderState()->Pop();
+		*/
 	}
 };
 //----------------------------------------------------------------------------------

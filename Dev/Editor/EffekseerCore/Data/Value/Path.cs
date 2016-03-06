@@ -9,6 +9,15 @@ namespace Effekseer.Data.Value
 	{
 		string _abspath = string.Empty;
 
+		/// <summary>
+		/// 相対パスで保存されるか?
+		/// </summary>
+		public bool IsRelativeSaved
+		{
+			get;
+			private set;
+		}
+
 		public string Filter
 		{
 			get;
@@ -42,10 +51,15 @@ namespace Effekseer.Data.Value
 
 		public event ChangedValueEventHandler OnChanged;
 
-		internal Path(string filter, string abspath = "")
+		public string DefaultValue { get; private set; }
+
+		internal Path(string filter, bool isRelativeSaved = true, string abspath = "")
 		{
 			Filter = filter;
+			IsRelativeSaved = isRelativeSaved;
 			_abspath = abspath;
+
+			DefaultValue = _abspath;
 		}
 
 		public string GetAbsolutePath()
@@ -106,10 +120,18 @@ namespace Effekseer.Data.Value
 					SetAbsolutePath(relative_path);
 					return;
 				}
-				Uri basepath = new Uri(Core.FullPath);
-				Uri path = new Uri(basepath, relative_path);
-				var absolute_path = path.LocalPath;
-				SetAbsolutePath(absolute_path);
+
+				if (relative_path == string.Empty)
+				{
+					SetAbsolutePath(string.Empty);
+				}
+				else
+				{
+					Uri basepath = new Uri(Core.FullPath);
+					Uri path = new Uri(basepath, relative_path);
+					var absolute_path = path.LocalPath;
+					SetAbsolutePath(absolute_path);
+				}
 			}
 			catch (Exception e)
 			{

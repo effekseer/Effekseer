@@ -25,10 +25,10 @@ public:
 	{
 		bool								DepthTest				: 1;
 		bool								DepthWrite				: 1;
-		::Effekseer::eAlphaBlend			AlphaBlend;
-		::Effekseer::eCullingType			CullingType;
-		::Effekseer::eTextureFilterType		TextureFilterTypes[4];
-		::Effekseer::eTextureWrapType		TextureWrapTypes[4];
+		::Effekseer::AlphaBlendType			AlphaBlend;
+		::Effekseer::CullingType			CullingType;
+		::Effekseer::TextureFilterType		TextureFilterTypes[4];
+		::Effekseer::TextureWrapType		TextureWrapTypes[4];
 
 		State();
 

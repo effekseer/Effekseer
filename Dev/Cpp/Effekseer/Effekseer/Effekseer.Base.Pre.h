@@ -20,18 +20,8 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#ifdef _WIN32
-typedef signed char			int8_t;
-typedef unsigned char		uint8_t;
-typedef short				int16_t;
-typedef unsigned short		uint16_t;
-typedef int					int32_t;
-typedef unsigned int		uint32_t;
-typedef __int64				int64_t;
-typedef unsigned __int64	uint64_t;
-#else
 #include <stdint.h>
-#endif
+
 
 #ifdef _WIN32
 #include <windows.h>
@@ -117,74 +107,77 @@ typedef	void ( EFK_STDCALL *EffectInstanceRemovingCallback ) ( Manager* manager,
 /**
 	@brief	アルファブレンド
 */
-enum eAlphaBlend
+enum class AlphaBlendType : int32_t
 {
 	/// <summary>
 	/// 不透明
 	/// </summary>
-	ALPHA_BLEND_OPACITY = 0,
+	Opacity = 0,
 	/// <summary>
 	/// 透明
 	/// </summary>
-	ALPHA_BLEND_BLEND = 1,
+	Blend = 1,
 	/// <summary>
 	/// 加算
 	/// </summary>
-	ALPHA_BLEND_ADD = 2,
+	Add = 2,
 	/// <summary>
 	/// 減算
 	/// </summary>
-	ALPHA_BLEND_SUB = 3,
+	Sub = 3,
 	/// <summary>
 	/// 乗算
 	/// </summary>
-	ALPHA_BLEND_MUL = 4,
-
-	ALPHA_BLEND_DWORD = 0x7fffffff,
+	Mul = 4,
 };
 
-enum eTextureFilterType
+enum class TextureFilterType : int32_t
 {
-	TEXTURE_FILTER_NEAREST = 0,
-	TEXTURE_FILTER_LINEAR = 1,
-	TEXTURE_FILTER_DWORD = 0x7fffffff,
+	Nearest = 0,
+	Linear = 1,
 };
 
-enum eTextureWrapType
+enum class TextureWrapType : int32_t
 {
-	TEXTURE_WRAP_REPEAT = 0,
-	TEXTURE_WRAP_CLAMP = 1,
-
-	TEXTURE_WRAP_DWORD = 0x7fffffff,
+	Repeat = 0,
+	Clamp = 1,
 };
 
-enum eCullingType
+enum class CullingType : int32_t
 {
-	CULLING_FRONT = 0,
-	CULLING_BACK = 1,
-	CULLING_DOUBLE = 2,
-
-	CULLING_DWORD = 0x7fffffff,
+	Front = 0,
+	Back = 1,
+	Double = 2,
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-enum eBillboardType
+enum class BillboardType : int32_t
 {
-	BillboardType_Billboard = 0,
-	BillboardType_YAxisFixed = 1,
-	BillboardType_Fixed = 2,
-	BillboardType_RotatedBillboard = 3,
-
-	BillboardType_DWORD = 0x7fffffff,
+	Billboard = 0,
+	YAxisFixed = 1,
+	Fixed = 2,
+	RotatedBillboard = 3,
 };
 
-enum eCoordinateSystem
+enum class CoordinateSystem : int32_t
 {
-	COORDINATE_SYSTEM_LH,
-	COORDINATE_SYSTEM_RH,
-	COORDINATE_SYSTEM_DWORD = 0x7fffffff,
+	LH,
+	RH,
+};
+
+enum class CullingShape : int32_t
+{
+	NoneShape = 0,
+	Sphere = 1,
+};
+
+enum class TextureType : int32_t
+{
+	Color,
+	Normal,
+	Distortion,
 };
 
 //----------------------------------------------------------------------------------

@@ -15,6 +15,11 @@ namespace Effekseer.GUI
 		{
 			InitializeComponent();
 
+			if (Core.Language == Language.English)
+			{
+				Text = "Viewer";
+			}
+
 			Command.CommandManager.Changed += OnChanged;
 
 			Core.EffectBehavior.Location.X.OnChanged += OnChanged;
@@ -39,6 +44,10 @@ namespace Effekseer.GUI
 			Core.EffectBehavior.RemovedTime.Infinite.OnChanged += OnChanged;
 			Core.EffectBehavior.RemovedTime.Value.OnChanged += OnChanged;
 
+			Core.EffectBehavior.TargetLocation.X.OnChanged += OnChanged;
+			Core.EffectBehavior.TargetLocation.Y.OnChanged += OnChanged;
+			Core.EffectBehavior.TargetLocation.Z.OnChanged += OnChanged;
+
 			Core.EffectBehavior.CountX.OnChanged += OnChanged;
 			Core.EffectBehavior.CountY.OnChanged += OnChanged;
 			Core.EffectBehavior.CountZ.OnChanged += OnChanged;
@@ -60,6 +69,13 @@ namespace Effekseer.GUI
 			Core.Option.Coordinate.OnChanged += OnChanged;
 
 			Core.Option.BackgroundImage.OnChanged += OnChanged;
+
+			Core.Culling.IsShown.OnChanged += OnChanged;
+			Core.Culling.Type.OnChanged += OnChanged;
+			Core.Culling.Sphere.Location.X.OnChanged += OnChanged;
+			Core.Culling.Sphere.Location.Y.OnChanged += OnChanged;
+			Core.Culling.Sphere.Location.Z.OnChanged += OnChanged;
+			Core.Culling.Sphere.Radius.OnChanged += OnChanged;
 
 			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
 			Core.OnAfterNew += new EventHandler(Core_OnAfterNew);
@@ -210,7 +226,8 @@ namespace Effekseer.GUI
 				throw new Exception("Viewerが生成されていません。");
 			}
 
-			if (viewer.CreateWindow(Handle, Width, Height))
+			// WidthかHeightが0以下だとウィンドウの作成に失敗するので、その場合はとりあえずサイズを1にして回避
+			if (viewer.CreateWindow(Handle, Width <= 0 ? 1 : Width, Height <= 0 ? 1 : Height, Core.Option.ColorSpace.Value == Data.OptionValues.ColorSpaceType.LinearSpace))
 			{
 				is_shown = true;
 			}
@@ -240,7 +257,7 @@ namespace Effekseer.GUI
 
 				if (IsPlaying && !IsPaused)
 				{
-                    StepViewer();
+                    StepViewer(true);
 				}
 
 				viewer.SetBackgroundColor(
@@ -248,7 +265,7 @@ namespace Effekseer.GUI
 				(byte)Core.Option.BackgroundColor.G,
 				(byte)Core.Option.BackgroundColor.B);
 
-				viewer.SetBackgroundImage(Core.Option.BackgroundImage.RelativePath);
+				viewer.SetBackgroundImage(Core.Option.BackgroundImage.AbsolutePath);
 
 				viewer.SetGridColor(
 				(byte)Core.Option.GridColor.R,
@@ -288,6 +305,15 @@ namespace Effekseer.GUI
 					Core.Option.MouseSlideInvX,
 					Core.Option.MouseSlideInvY);
 
+				if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
+				{
+					viewer.SetCullingParameter(Core.Culling.IsShown, Core.Culling.Sphere.Radius.Value, Core.Culling.Sphere.Location.X, Core.Culling.Sphere.Location.Y, Core.Culling.Sphere.Location.Z);
+				}
+				else if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.None)
+				{
+					viewer.SetCullingParameter(false, 0.0f, 0.0f, 0.0f, 0.0f);
+				}
+
 				viewer.UpdateWindow();
 			}
 			else
@@ -325,26 +351,38 @@ namespace Effekseer.GUI
 			}
 		}
 
-		public void StepViewer()
+		public void StepViewer(bool isLooping)
 		{
-            if (!IsPlaying)
-            {
-                return;
-            }
+            //if (!IsPlaying)
+            //{
+            //    return;
+            //}
 
-            Step(Current + 1);
+			int next = Current + 1;
 
-            if (Core.EndFrame < current)
-            {
-                if (Core.IsLoop)
-                {
-                    PlayNew();
-                }
-                else
-                {
-                    StopViewer();
-                }
-            }
+			if(isLooping)
+			{
+				if (next > Core.EndFrame) next = 0;
+			}
+			
+            Step(next);
+
+            //if (Core.EndFrame < current)
+            //{
+            //    if (Core.IsLoop)
+            //    {
+            //        PlayNew();
+            //    }
+            //    else
+            //    {
+            //        StopViewer();
+            //    }
+            //}
+		}
+
+		public void BackStepViewer()
+		{
+			Step(Current - 1);
 		}
 
 		unsafe void Export()
@@ -388,6 +426,11 @@ namespace Effekseer.GUI
 				Core.EffectBehavior.Scale.Y,
 				Core.EffectBehavior.Scale.Z);
 
+			viewer.SetTargetLocation(
+				Core.EffectBehavior.TargetLocation.X,
+				Core.EffectBehavior.TargetLocation.Y,
+				Core.EffectBehavior.TargetLocation.Z);
+
 			viewer.SetEffectCount(
 				Core.EffectBehavior.CountX,
 				Core.EffectBehavior.CountY,
@@ -405,6 +448,15 @@ namespace Effekseer.GUI
 
 			viewer.SetStep((int)Core.Option.FPS.Value);
 			viewer.SetIsRightHand(Core.Option.Coordinate.Value == Data.OptionValues.CoordinateType.Right);
+
+			if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
+			{
+				viewer.SetCullingParameter(Core.Culling.IsShown, Core.Culling.Sphere.Radius.Value, Core.Culling.Sphere.Location.X, Core.Culling.Sphere.Location.Y, Core.Culling.Sphere.Location.Z);
+			}
+			else if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.None)
+			{
+				viewer.SetCullingParameter(false, 0.0f, 0.0f, 0.0f, 0.0f);
+			}
 
 			var data = Binary.Exporter.Export(Core.Option.Magnification);
 			fixed (byte* p = &data[0])
@@ -465,6 +517,9 @@ namespace Effekseer.GUI
 		{
 			// 同一フレーム
 			if (current == new_frame) return;
+
+			if (new_frame < Core.StartFrame) new_frame = Core.StartFrame;
+			if (new_frame > Core.EndFrame) new_frame = Core.EndFrame;
 
 			if (is_shown)
 			{

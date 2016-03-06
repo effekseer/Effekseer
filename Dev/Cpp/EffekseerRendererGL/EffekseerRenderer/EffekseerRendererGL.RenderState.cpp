@@ -20,8 +20,8 @@ namespace EffekseerRendererGL
 RenderState::RenderState( RendererImplemented* renderer )
 	: m_renderer	( renderer )
 {
-#ifdef	__USE_SAMPLERS
-	glGenSamplers( 4, m_samplers );
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+	GLExt::glGenSamplers(4, m_samplers);
 #endif
 }
 
@@ -30,8 +30,8 @@ RenderState::RenderState( RendererImplemented* renderer )
 //-----------------------------------------------------------------------------------
 RenderState::~RenderState()
 {
-#ifdef	__USE_SAMPLERS
-	glDeleteSamplers( 4, m_samplers );
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+	GLExt::glDeleteSamplers(4, m_samplers);
 #endif
 }
 
@@ -65,17 +65,17 @@ void RenderState::Update( bool forced )
 
 	if( m_active.CullingType != m_next.CullingType || forced )
 	{
-		if( m_next.CullingType == Effekseer::CULLING_FRONT )
+		if( m_next.CullingType == Effekseer::CullingType::Front )
 		{
 			glEnable( GL_CULL_FACE );
 			glCullFace( GL_FRONT );
 		}
-		else if( m_next.CullingType == Effekseer::CULLING_BACK )
+		else if (m_next.CullingType == Effekseer::CullingType::Back)
 		{
 			glEnable( GL_CULL_FACE );
 			glCullFace( GL_BACK );
 		}
-		else if( m_next.CullingType == Effekseer::CULLING_DOUBLE )
+		else if( m_next.CullingType == Effekseer::CullingType::Double )
 		{
 			glDisable( GL_CULL_FACE );
 			glCullFace( GL_FRONT_AND_BACK );
@@ -86,7 +86,7 @@ void RenderState::Update( bool forced )
 
 	if( m_active.AlphaBlend != m_next.AlphaBlend || forced )
 	{
-		if(  m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_OPACITY )
+		if(  m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity )
 		{
 			glDisable( GL_BLEND );
 		}
@@ -94,7 +94,7 @@ void RenderState::Update( bool forced )
 		{
 			glEnable( GL_BLEND );
 
-			if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_SUB )
+			if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub )
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_REVERSE_SUBTRACT, GL_FUNC_ADD);
 				GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
@@ -102,15 +102,15 @@ void RenderState::Update( bool forced )
 			else
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-				if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_BLEND )
+				if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend )
 				{
 					GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 				}
-				else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_ADD )
+				else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add )
 				{
 					GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
 				}
-				else if( m_next.AlphaBlend == ::Effekseer::ALPHA_BLEND_MUL )
+				else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Mul )
 				{
 					GLExt::glBlendFuncSeparate(GL_ZERO, GL_SRC_COLOR, GL_ONE, GL_ONE);
 				}
@@ -124,32 +124,32 @@ void RenderState::Update( bool forced )
 	static const GLint glfilterMag[] = { GL_NEAREST, GL_LINEAR };
 	static const GLint glwrap[] = { GL_REPEAT, GL_CLAMP_TO_EDGE };
 
-#ifdef	__USE_SAMPLERS
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
 	for( int32_t i = 0; i < 4; i++ )
 	{
 		if( m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced )
 		{
-			glActiveTexture( GL_TEXTURE0 + i );
+			GLExt::glActiveTexture(GL_TEXTURE0 + i);
 
 			int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
 
-			glSamplerParameteri( m_samplers[i], GL_TEXTURE_MAG_FILTER, glfilter[filter_] );
-			glSamplerParameteri( m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilter[filter_] );
+			GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
+			GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
 			//glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			//glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-			glBindSampler(i, m_samplers[i]);
+			GLExt::glBindSampler(i, m_samplers[i]);
 		}
 
 		if( m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced )
 		{
-			glActiveTexture( GL_TEXTURE0 + i );
+			GLExt::glActiveTexture(GL_TEXTURE0 + i);
 
 			int32_t wrap_ = (int32_t)m_next.TextureWrapTypes[i];
-			glSamplerParameteri( m_samplers[i], GL_TEXTURE_WRAP_S, glwrap[wrap_] );
-			glSamplerParameteri( m_samplers[i], GL_TEXTURE_WRAP_T, glwrap[wrap_] );
+			GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_S, glwrap[wrap_]);
+			GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_T, glwrap[wrap_]);
 
-			glBindSampler( i, m_samplers[i] );
+			GLExt::glBindSampler(i, m_samplers[i]);
 		}
 	}
 #else

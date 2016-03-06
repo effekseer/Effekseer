@@ -26,9 +26,12 @@ public:
 	{
 		Effect*				EffectPointer;
 		int32_t				TextureIndex;
-		eAlphaBlend			AlphaBlend;
-		eTextureFilterType	TextureFilter;
-		eTextureWrapType	TextureWrap;
+		AlphaBlendType			AlphaBlend;
+		TextureFilterType	TextureFilter;
+		TextureWrapType	TextureWrap;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter

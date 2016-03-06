@@ -15,6 +15,13 @@ namespace Effekseer.GUI
 		{
 			InitializeComponent();
 
+			if (Core.Language == Language.English)
+			{
+				Text = "Viewer Control";
+				lb_st.Text = "Start";
+				lb_end.Text = "End";
+			}
+
 			Core.OnAfterChangeStartFrame += new EventHandler(Core_OnAfterChangeStartFrame);
 			Core.OnAfterChangeEndFrame += new EventHandler(Core_OnAfterChangeEndFrame);
 			Core.OnAfterChangeIsLoop += new EventHandler(Core_OnAfterChangeIsLoop);
@@ -49,13 +56,30 @@ namespace Effekseer.GUI
 
 			if (GUIManager.DockViewer.IsPaused)
 			{
-				btn_pause.Text = "resume";
+				//btn_pause.Text = "resume";
 			}
 			else
 			{
-				btn_pause.Text = "pause";
+				//btn_pause.Text = "pause";
             }
+
             trackBar.Value = GUIManager.DockViewer.Current;
+
+			if (GUIManager.DockViewer.IsPlaying)
+			{
+				if(GUIManager.DockViewer.IsPaused)
+				{
+					btn_play_pause.Image = global::Effekseer.Properties.Resources.Play;
+				}
+				else
+				{
+					btn_play_pause.Image = global::Effekseer.Properties.Resources.Pause;
+				}
+			}
+			else
+			{
+				btn_play_pause.Image = global::Effekseer.Properties.Resources.Play;
+			}
 		}
 
 		private void trackBar_CursorChanged(object sender, EventArgs e)
@@ -65,27 +89,47 @@ namespace Effekseer.GUI
 
 		private void btn_play_Click(object sender, EventArgs e)
 		{
-			GUIManager.DockViewer.PlayViewer();
+			if (GUIManager.DockViewer.IsPlaying && !GUIManager.DockViewer.IsPaused)
+			{
+				GUIManager.DockViewer.PauseAndResumeViewer();
+			}
+			else
+			{
+				if(GUIManager.DockViewer.IsPaused)
+				{
+					GUIManager.DockViewer.PauseAndResumeViewer();
+				}
+				else
+				{
+					GUIManager.DockViewer.PlayViewer();
+				}
+			}
 		}
 
 		private void btn_stop_Click(object sender, EventArgs e)
 		{
 			GUIManager.DockViewer.StopViewer();
+			btn_play_pause.Image = global::Effekseer.Properties.Resources.Play;
 		}
 
 		private void btn_pause_Click(object sender, EventArgs e)
 		{
-			GUIManager.DockViewer.PauseAndResumeViewer();
+			//GUIManager.DockViewer.PauseAndResumeViewer();
 		}
 
 		private void btn_step_Click(object sender, EventArgs e)
 		{
-			GUIManager.DockViewer.StepViewer();
+			GUIManager.DockViewer.StepViewer(false);
+		}
+
+		private void btn_backstep_Click(object sender, EventArgs e)
+		{
+			GUIManager.DockViewer.BackStepViewer();
 		}
 
 		private void cb_loop_CheckedChanged(object sender, EventArgs e)
 		{
-			Core.IsLoop = cb_loop.Checked;
+			//Core.IsLoop = cb_loop.Checked;
 		}
 
 		void Core_OnAfterChangeStartFrame(object sender, EventArgs e)
@@ -110,7 +154,7 @@ namespace Effekseer.GUI
 
 		void Core_OnAfterChangeIsLoop(object sender, EventArgs e)
 		{
-			cb_loop.Checked = Core.IsLoop;
+			//cb_loop.Checked = Core.IsLoop;
 		}
 
 		private void trackBar_ValueChanged(object sender, EventArgs e)

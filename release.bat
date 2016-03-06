@@ -1,125 +1,221 @@
-SET RDIR=Effekseer0601
+SET RDIR=Effekseer110
+SET RDIR_R=EffekseerRuntime110
+SET RDIR_U=EffekseerForUnity110
 
 rmdir %RDIR%
 mkdir %RDIR%
 
-mkdir %RDIR%\RuntimeSample\lib
-mkdir %RDIR%\RuntimeSample\include
-mkdir %RDIR%\Runtime\
+rmdir %RDIR_R%
+mkdir %RDIR_R%
+
+rmdir %RDIR_U%
+mkdir %RDIR_U%
+
 
 echo アプリケーションコピー
-mkdir %RDIR%\Bin
-copy Dev\release\Effekseer.exe %RDIR%\Bin\.
-copy Dev\release\Effekseer.exe.config %RDIR%\Bin\.
-copy Dev\release\EffekseerCore.dll %RDIR%\Bin\.
-copy Dev\release\EffekseerInterface.dll %RDIR%\Bin\.
-copy Dev\release\EffekseerViewer.dll %RDIR%\Bin\.
-copy Dev\release\IronPython.dll %RDIR%\Bin\.
-copy Dev\release\IronPython.Modules.dll %RDIR%\Bin\.
-copy Dev\release\Microsoft.Dynamic.dll %RDIR%\Bin\.
-copy Dev\release\Microsoft.Scripting.dll %RDIR%\Bin\.
-copy Dev\release\Viewer.dll %RDIR%\Bin\.
-copy Dev\release\WeifenLuo.WinFormsUI.Docking.dll %RDIR%\Bin\.
-copy Dev\release\System.Reactive.Core.dll %RDIR%\Bin\.
-copy Dev\release\System.Reactive.Interfaces.dll %RDIR%\Bin\.
-copy Dev\release\System.Reactive.Linq.dll %RDIR%\Bin\.
+mkdir %RDIR%\Tool
+copy Dev\release\Effekseer.exe %RDIR%\Tool\.
+copy Dev\release\Effekseer.exe.config %RDIR%\Tool\.
+copy Dev\release\EffekseerCore.dll %RDIR%\Tool\.
+copy Dev\release\EffekseerInterface.dll %RDIR%\Tool\.
+copy Dev\release\EffekseerViewer.dll %RDIR%\Tool\.
+copy Dev\release\IronPython.dll %RDIR%\Tool\.
+copy Dev\release\IronPython.Modules.dll %RDIR%\Tool\.
+copy Dev\release\Microsoft.Dynamic.dll %RDIR%\Tool\.
+copy Dev\release\Microsoft.Scripting.dll %RDIR%\Tool\.
+copy Dev\release\Viewer.dll %RDIR%\Tool\.
+copy Dev\release\WeifenLuo.WinFormsUI.Docking.dll %RDIR%\Tool\.
+copy Dev\release\System.Reactive.Core.dll %RDIR%\Tool\.
+copy Dev\release\System.Reactive.Interfaces.dll %RDIR%\Tool\.
+copy Dev\release\System.Reactive.Linq.dll %RDIR%\Tool\.
 
-mkdir %RDIR%\Bin\scripts
-mkdir %RDIR%\Bin\scripts\command
-mkdir %RDIR%\Bin\scripts\export
-mkdir %RDIR%\Bin\scripts\import
-mkdir %RDIR%\Bin\scripts\selected
-copy Dev\release\scripts\export\Default.cs %RDIR%\Bin\scripts\export\.
+mkdir %RDIR%\Tool\scripts
+mkdir %RDIR%\Tool\scripts\export
+copy Dev\release\scripts\export\Default.cs %RDIR%\Tool\scripts\export\.
 
 echo ランタイムコピー
-mkdir %RDIR%\Runtime
-mkdir %RDIR%\Runtime\include
-mkdir %RDIR%\Runtime\lib
+mkdir %RDIR_R%\RuntimeSample\
+mkdir %RDIR_R%\RuntimeSample\lib
+mkdir %RDIR_R%\RuntimeSample\include
 
-copy Dev\Cpp\Effekseer\Effekseer.h %RDIR%\Runtime\include\.
-copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX9.h %RDIR%\Runtime\include\.
-copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX11.h %RDIR%\Runtime\include\.
-copy Dev\Cpp\EffekseerRendererGL\EffekseerRendererGL.h %RDIR%\Runtime\include\.
-copy Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h %RDIR%\Runtime\include\.
-copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR%\Runtime\include\.
+mkdir %RDIR_R%\src
+mkdir %RDIR_R%\src\include
+mkdir %RDIR_R%\src\lib
 
-copy Dev\Cpp\EffekseerRendererDX9.sln %RDIR%\Runtime\.
-copy Dev\Cpp\EffekseerRendererDX11.sln %RDIR%\Runtime\.
-copy Dev\Cpp\EffekseerRendererGL.sln %RDIR%\Runtime\.
+copy Dev\Cpp\Effekseer\Effekseer.h %RDIR_R%\src\include\.
+copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX9.h %RDIR_R%\src\include\.
+copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX11.h %RDIR_R%\src\include\.
+copy Dev\Cpp\EffekseerRendererGL\EffekseerRendererGL.h %RDIR_R%\src\include\.
+copy Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h %RDIR_R%\src\include\.
+copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR_R%\src\include\.
 
-mkdir %RDIR%\Runtime\Effekseer
-robocopy Dev\Cpp\Effekseer %RDIR%\Runtime\Effekseer *.h *.cpp *.filters *.vcxproj *.fx /mir /S
+copy Dev\Cpp\EffekseerRendererDX9.sln %RDIR_R%\src\.
+copy Dev\Cpp\EffekseerRendererDX11.sln %RDIR_R%\src\.
+copy Dev\Cpp\EffekseerRendererGL.sln %RDIR_R%\src\.
 
-mkdir %RDIR%\Runtime\EffekseerRendererDX9
-robocopy Dev\Cpp\EffekseerRendererDX9 %RDIR%\Runtime\EffekseerRendererDX9 *.h *.cpp *.filters *.vcxproj *.fx /mir /S
+mkdir %RDIR_R%\src\Effekseer
+robocopy Dev\Cpp\Effekseer %RDIR_R%\src\Effekseer *.h *.cpp *.filters *.vcxproj *.fx /mir /S
 
-mkdir %RDIR%\Runtime\EffekseerRendererDX11
-robocopy Dev\Cpp\EffekseerRendererDX11 %RDIR%\Runtime\EffekseerRendererDX11 *.h *.cpp *.filters *.vcxproj *.fx /mir /S
+mkdir %RDIR_R%\src\EffekseerRendererDX9
+robocopy Dev\Cpp\EffekseerRendererDX9 %RDIR_R%\src\EffekseerRendererDX9 *.h *.cpp *.filters *.vcxproj *.fx /mir /S
 
-mkdir %RDIR%\Runtime\EffekseerRendererGL
-robocopy Dev\Cpp\EffekseerRendererGL %RDIR%\Runtime\EffekseerRendererGL *.h *.cpp *.filters *.vcxproj *.fx /mir /S
+mkdir %RDIR_R%\src\EffekseerRendererDX11
+robocopy Dev\Cpp\EffekseerRendererDX11 %RDIR_R%\src\EffekseerRendererDX11 *.h *.cpp *.filters *.vcxproj *.fx /mir /S
 
-mkdir %RDIR%\Runtime\EffekseerRendererCommon
-robocopy Dev\Cpp\EffekseerRendererCommon %RDIR%\Runtime\EffekseerRendererCommon *.h *.cpp *.filters *.vcxproj *.fx /mir /S
+mkdir %RDIR_R%\src\EffekseerRendererGL
+robocopy Dev\Cpp\EffekseerRendererGL %RDIR_R%\src\EffekseerRendererGL *.h *.cpp *.filters *.vcxproj *.fx /mir /S
 
-mkdir %RDIR%\Runtime\EffekseerSoundXAudio2
-robocopy Dev\Cpp\EffekseerSoundXAudio2 %RDIR%\Runtime\EffekseerSoundXAudio2 *.h *.cpp *.filters *.vcxproj *.fx /mir /S
+mkdir %RDIR_R%\src\EffekseerRendererCommon
+robocopy Dev\Cpp\EffekseerRendererCommon %RDIR_R%\src\EffekseerRendererCommon *.h *.cpp *.filters *.vcxproj *.fx /mir /S
 
-mkdir %RDIR%\Runtime\EffekseerSoundAL
-robocopy Dev\Cpp\EffekseerSoundAL %RDIR%\Runtime\EffekseerSoundAL *.h *.cpp *.filters *.vcxproj *.fx /mir /S
+mkdir %RDIR_R%\src\EffekseerSoundXAudio2
+robocopy Dev\Cpp\EffekseerSoundXAudio2 %RDIR_R%\src\EffekseerSoundXAudio2 *.h *.cpp *.filters *.vcxproj *.fx /mir /S
+
+mkdir %RDIR_R%\src\EffekseerSoundAL
+robocopy Dev\Cpp\EffekseerSoundAL %RDIR_R%\src\EffekseerSoundAL *.h *.cpp *.filters *.vcxproj *.fx /mir /S
 
 
 echo ランタイム組み込みサンプル
-robocopy Release\RuntimeSample %RDIR%\RuntimeSample\ *.h *.cpp *.filters *.vcxproj *.fx *.efk *.wav *.png *.sln /mir /S
-rmdir %RDIR%\RuntimeSample\include /S /Q
-rmdir %RDIR%\RuntimeSample\lib /S /Q
+robocopy Release\RuntimeSample %RDIR_R%\RuntimeSample\ *.h *.cpp *.filters *.vcxproj *.fx *.efk *.wav *.png *.sln /mir /S
+rmdir %RDIR_R%\RuntimeSample\include /S /Q
+rmdir %RDIR_R%\RuntimeSample\lib /S /Q
 
-mkdir %RDIR%\RuntimeSample\include
-mkdir %RDIR%\RuntimeSample\lib
+mkdir %RDIR_R%\RuntimeSample\include
+mkdir %RDIR_R%\RuntimeSample\lib
 
-copy Dev\Cpp\Effekseer\Effekseer.h %RDIR%\RuntimeSample\include\.
-copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX9.h %RDIR%\RuntimeSample\include\.
-copy Dev\Cpp\EffekseerRendererDX11\EffekseerRendererDX11.h %RDIR%\RuntimeSample\include\.
-copy Dev\Cpp\EffekseerRendererGL\EffekseerRendererGL.h %RDIR%\RuntimeSample\include\.
-copy Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h %RDIR%\RuntimeSample\include\.
-copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR%\RuntimeSample\include\.
+copy Dev\Cpp\Effekseer\Effekseer.h %RDIR_R%\RuntimeSample\include\.
+copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX9.h %RDIR_R%\RuntimeSample\include\.
+copy Dev\Cpp\EffekseerRendererDX11\EffekseerRendererDX11.h %RDIR_R%\RuntimeSample\include\.
+copy Dev\Cpp\EffekseerRendererGL\EffekseerRendererGL.h %RDIR_R%\RuntimeSample\include\.
+copy Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h %RDIR_R%\RuntimeSample\include\.
+copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR_R%\RuntimeSample\include\.
 
-copy Dev\Cpp\lib\Effekseer.Debug.lib %RDIR%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\EffekseerRendererDX9.Debug.lib %RDIR%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\EffekseerRendererDX11.Debug.lib %RDIR%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\EffekseerRendererGL.Debug.lib %RDIR%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\EffekseerSoundXAudio2.Debug.lib %RDIR%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\EffekseerSoundAL.Debug.lib %RDIR%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\Effekseer.Debug.lib %RDIR_R%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\EffekseerRendererDX9.Debug.lib %RDIR_R%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\EffekseerRendererDX11.Debug.lib %RDIR_R%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\EffekseerRendererGL.Debug.lib %RDIR_R%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\EffekseerSoundXAudio2.Debug.lib %RDIR_R%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\EffekseerSoundAL.Debug.lib %RDIR_R%\RuntimeSample\lib\.
 
-copy Dev\Cpp\lib\Effekseer.Release.lib %RDIR%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\EffekseerRendererDX9.Release.lib %RDIR%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\EffekseerRendererDX11.Release.lib %RDIR%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\EffekseerRendererGL.Release.lib %RDIR%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\EffekseerSoundXAudio2.Release.lib %RDIR%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\EffekseerSoundAL.Release.lib %RDIR%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\Effekseer.Release.lib %RDIR_R%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\EffekseerRendererDX9.Release.lib %RDIR_R%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\EffekseerRendererDX11.Release.lib %RDIR_R%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\EffekseerRendererGL.Release.lib %RDIR_R%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\EffekseerSoundXAudio2.Release.lib %RDIR_R%\RuntimeSample\lib\.
+copy Dev\Cpp\lib\EffekseerSoundAL.Release.lib %RDIR_R%\RuntimeSample\lib\.
 
-copy Dev\Cpp\CMakeLists.txt %RDIR%\Runtime\.
+copy Dev\Cpp\CMakeLists.txt %RDIR_R%\src\.
 
 echo サンプル
 
 mkdir %RDIR%\Sample
 robocopy Release\Sample %RDIR%\Sample *.efkproj *.efkmodel *.txt *.png /mir /S
 
-cp Release/MIT-LICENSE.txt %RDIR%/MIT-LICENSE.txt
+echo ライセンス
+cp Release/LICENSE.txt %RDIR_R%/LICENSE.txt
+cp Release/LICENSE.txt %RDIR_U%/LICENSE.txt
 
-mkdir %RDIR%\Help
-robocopy Release\Help %RDIR%\Help *.html *.css *.efkproj *.png /mir /S
+echo Readme
+copy readme_tool.txt %RDIR%\readme.txt
+copy readme_runtime.txt %RDIR_R%\readme.txt
+copy readme_unity.txt %RDIR_U%\readme.txt
 
+echo ヘルプ
+mkdir %RDIR%\Help_Jp
+mkdir %RDIR%\QuickTutorial_En
+
+robocopy Release\Help_Tool %RDIR%\Help_Jp *.html *.css *.efkproj *.png /mir /S
+robocopy Release\QuickTutorial_Tool %RDIR%\QuickTutorial_En *.html *.css *.efkproj *.png /mir /S
+
+mkdir %RDIR_R%\Help
+robocopy Release\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S
+
+mkdir %RDIR_U%\Help
+robocopy Release\Help_Unity %RDIR_U%\Help *.html *.css *.efkproj *.png /mir /S
+
+echo ツール
 mkdir %RDIR%\Tool
-robocopy Release\Tool %RDIR%\Tool *.exe /mir /S
+copy Release\Tool\mqoToEffekseerModelConverter.exe %RDIR%\Tool\.
 
-mkdir %RDIR%\GameEngine
-robocopy Release\GameEngine %RDIR%\GameEngine *.unitypackage *.zip /mir /S
+echo Unity
+mkdir %RDIR_U%\GameEngine
+robocopy Release\GameEngine %RDIR_U%\GameEngine *.unitypackage *.zip /mir /S
 
 echo doxygen
 doxygen doxygen.template
-mkdir %RDIR%\Help\html\doxygen
-robocopy html %RDIR%\Help\html\doxygen /mir /S
+mkdir %RDIR_R%\Help\html\doxygen
+robocopy html %RDIR_R%\Help\html\doxygen /mir /S
+
+echo VS
+
+mkdir %RDIR_R%\Compiled\
+
+echo Compile VS11
+rmdir /S /Q VS11
+mkdir VS11
+
+cd VS11
+call cmake.bat -G "Visual Studio 11"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
+cmake.exe -G "Visual Studio 11"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
+
+"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Debug
+"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Release
+cd ..
+
+
+
+echo Compile VS12
+rmdir /S /Q VS12
+mkdir VS12
+
+cd VS12
+call cmake.bat -G "Visual Studio 12"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
+cmake.exe -G "Visual Studio 12"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
+
+"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Debug
+"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Release
+cd ..
+
+
+
+echo Compile VS14
+rmdir /S /Q VS14
+mkdir VS14
+
+cd VS14
+call cmake.bat -G "Visual Studio 14"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
+cmake.exe -G "Visual Studio 14"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
+
+"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Effekseer.sln /p:configuration=Debug
+"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Effekseer.sln /p:configuration=Release
+cd ..
+
+
+mkdir %RDIR_R%\Compiled\\include\
+mkdir %RDIR_R%\Compiled\\lib\
+
+mkdir %RDIR_R%\Compiled\\lib\VS2012\
+mkdir %RDIR_R%\Compiled\\lib\VS2013\
+mkdir %RDIR_R%\Compiled\\lib\VS2015\
+
+
+robocopy VS11\Debug %RDIR_R%\Compiled\\lib\VS2012\Debug *.lib /mir /S
+robocopy VS11\Release %RDIR_R%\Compiled\\lib\VS2012\Release *.lib /mir /S
+
+robocopy VS12\Debug %RDIR_R%\Compiled\\lib\VS2013\Debug *.lib /mir /S
+robocopy VS12\Release %RDIR_R%\Compiled\\lib\VS2013\Release *.lib /mir /S
+
+robocopy VS14\Debug %RDIR_R%\Compiled\\lib\VS2015\Debug *.lib /mir /S
+robocopy VS14\Release %RDIR_R%\Compiled\\lib\VS2015\Release *.lib /mir /S
+
+copy Dev\Cpp\Effekseer\Effekseer.h %RDIR_R%\Compiled\\include\.
+copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX9.h %RDIR_R%\Compiled\\include\.
+copy Dev\Cpp\EffekseerRendererDX11\EffekseerRendererDX11.h %RDIR_R%\Compiled\include\.
+copy Dev\Cpp\EffekseerRendererGL\EffekseerRendererGL.h %RDIR_R%\Compiled\\include\.
+copy Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h %RDIR_R%\Compiled\\include\.
+copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR_R%\Compiled\\include\.
+
+pause
 
 pause
 

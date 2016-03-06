@@ -164,16 +164,12 @@ void InstanceGroup::Update( float deltaFrame, bool shown )
 //----------------------------------------------------------------------------------
 void InstanceGroup::SetBaseMatrix( const Matrix43& mat )
 {
-	std::list<Instance*>::iterator it = m_instances.begin();
-
-	while( it != m_instances.end() )
+	for (auto& instance : m_instances)
 	{
-		if( (*it)->m_State == INSTANCE_STATE_ACTIVE )
+		if (instance->m_State == INSTANCE_STATE_ACTIVE)
 		{
-			Matrix43::Multiple( (*it)->m_GlobalMatrix43, (*it)->m_GlobalMatrix43, mat );
+			Matrix43::Multiple(instance->m_GlobalMatrix43, instance->m_GlobalMatrix43, mat);
 		}
-
-		it++;
 	}
 }
 
@@ -193,18 +189,13 @@ void InstanceGroup::RemoveForcibly()
 //----------------------------------------------------------------------------------
 void InstanceGroup::KillAllInstances()
 {
-	std::list<Instance*>::iterator it = m_instances.begin();
-	std::list<Instance*>::iterator it_end = m_instances.end();
-
-	while( it != it_end )
+	for (auto& instance : m_instances)
 	{
-		if( (*it)->GetState() == INSTANCE_STATE_ACTIVE )
+		if (instance->GetState() == INSTANCE_STATE_ACTIVE)
 		{
-			(*it)->Kill();
-			m_removingInstances.push_back( (*it) );
+			instance->Kill();
+			m_removingInstances.push_back(instance);
 		}
-
-		it++;
 	}
 
 	m_instances.clear();

@@ -28,13 +28,16 @@ public:
 	{
 		Effect*				EffectPointer;
 		int32_t				ColorTextureIndex;
-		eAlphaBlend			AlphaBlend;
-		eTextureFilterType	TextureFilter;
-		eTextureWrapType	TextureWrap;
+		AlphaBlendType			AlphaBlend;
+		TextureFilterType	TextureFilter;
+		TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
-		eBillboardType		Billboard;
+		BillboardType		Billboard;
 		int32_t				VertexCount;
+
+		bool				Distortion;
+		float				DistortionIntensity;
 	};
 
 	struct InstanceParameter

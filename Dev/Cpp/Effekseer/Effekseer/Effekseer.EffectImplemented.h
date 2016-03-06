@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Effect.h"
+#include "Effekseer.Vector3D.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -39,7 +40,15 @@ private:
 	int	m_ImageCount;
 	EFK_CHAR**		m_ImagePaths;
 	void**			m_pImages;
+
+	int	m_normalImageCount;
+	EFK_CHAR**		m_normalImagePaths;
+	void**			m_normalImages;
 	
+	int	m_distortionImageCount;
+	EFK_CHAR**		m_distortionImagePaths;
+	void**			m_distortionImages;
+
 	int	m_WaveCount;
 	EFK_CHAR**		m_WavePaths;
 	void**			m_pWaves;
@@ -57,6 +66,27 @@ private:
 
 	// 子ノード
 	EffectNode* m_pRoot;
+
+	/* カリング */
+	struct
+	{
+		CullingShape	Shape;
+		Vector3D		Location;
+
+		union
+		{
+			struct
+			{
+			} None;
+
+			struct
+			{
+				float Radius;
+			} Sphere;
+		};
+
+	} Culling;
+
 
 public:
 	/**
@@ -124,8 +154,15 @@ public:
 	/**
 		@brief	格納されている画像のポインタを取得する。
 	*/
-	void* GetImage( int n ) const;
-	
+	void* GetColorImage(int n) const;
+
+	/**
+	@brief	格納されている画像のポインタを取得する。
+	*/
+	void* GetNormalImage(int n) const;
+
+	void* GetDistortionImage(int n) const;
+
 	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/

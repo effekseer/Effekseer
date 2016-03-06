@@ -8,6 +8,7 @@ namespace Effekseer.Data
 	public class GenerationLocationValues
 	{
 		[Name(value = "生成角度に影響", language = Language.Japanese)]
+		[Name(value = "Set angle on spawn", language = Language.English)]
 		public Value.Boolean EffectsRotation
 		{
 			get;
@@ -66,6 +67,7 @@ namespace Effekseer.Data
 		public class PointParameter
 		{
 			[Name(value = "生成位置", language = Language.Japanese)]
+			[Name(value = "Spawn location", language = Language.English)]
 			public Value.Vector3DWithRandom Location
 			{
 				get;
@@ -81,6 +83,7 @@ namespace Effekseer.Data
 		public class SphereParameter
 		{
 			[Name(value = "半径", language = Language.Japanese)]
+			[Name(value = "Radius", language = Language.English)]
 			public Value.FloatWithRandom Radius
 			{
 				get;
@@ -88,6 +91,7 @@ namespace Effekseer.Data
 			}
 
 			[Name(value = "X軸角度(度)", language = Language.Japanese)]
+			[Name(value = "X Rotation", language = Language.English)]
 			public Value.FloatWithRandom RotationX
 			{
 				get;
@@ -95,6 +99,7 @@ namespace Effekseer.Data
 			}
 
 			[Name(value = "Y軸角度(度)", language = Language.Japanese)]
+			[Name(value = "Y Rotation", language = Language.English)]
 			public Value.FloatWithRandom RotationY
 			{
 				get;
@@ -113,6 +118,8 @@ namespace Effekseer.Data
 		{
 			[Name(language = Language.Japanese, value = "モデル")]
 			[Description(language = Language.Japanese, value = "モデルファイル")]
+			[Name(language = Language.English, value = "Model")]
+			[Description(language = Language.English, value = "Model File")]
 			public Value.Path Model
 			{
 				get;
@@ -120,6 +127,7 @@ namespace Effekseer.Data
 			}
 
 			[Name(language = Language.Japanese, value = "生成位置種類")]
+			[Name(language = Language.English, value = "Method of Spawning")]
 			public Value.Enum<ModelType> Type
 			{
 				get;
@@ -128,7 +136,15 @@ namespace Effekseer.Data
 
 			public ModelParameter()
 			{
-				Model = new Value.Path("モデルファイル (*.efkmodel)|*.efkmodel", "");
+				if(Core.Language == Language.Japanese)
+				{
+					Model = new Value.Path("モデルファイル (*.efkmodel)|*.efkmodel", true, "");
+				}
+				else
+				{
+					Model = new Value.Path("Model File (*.efkmodel)|*.efkmodel", true, "");
+				}
+				
 				Type = new Value.Enum<ModelType>(ModelType.Random);
 			}
 		}
@@ -136,6 +152,7 @@ namespace Effekseer.Data
 		public class CircleParameter
 		{
 			[Name(value = "分割数", language = Language.Japanese)]
+			[Name(value = "Verticies", language = Language.English)]
 			public Value.Int Division
 			{
 				get;
@@ -143,6 +160,7 @@ namespace Effekseer.Data
 			}
 
 			[Name(value = "半径", language = Language.Japanese)]
+			[Name(value = "Radius", language = Language.English)]
 			public Value.FloatWithRandom Radius
 			{
 				get;
@@ -150,6 +168,7 @@ namespace Effekseer.Data
 			}
 
 			[Name(value = "開始角度", language = Language.Japanese)]
+			[Name(value = "Init Angle", language = Language.English)]
 			public Value.FloatWithRandom AngleStart
 			{
 				get;
@@ -157,6 +176,7 @@ namespace Effekseer.Data
 			}
 
 			[Name(value = "終了角度", language = Language.Japanese)]
+			[Name(value = "Final Angle", language = Language.English)]
 			public Value.FloatWithRandom AngleEnd
 			{
 				get;
@@ -164,6 +184,7 @@ namespace Effekseer.Data
 			}
 
 			[Name(language = Language.Japanese, value = "生成位置種類")]
+			[Name(language = Language.English, value = "Spawn Mode")]
 			public Value.Enum<CircleType> Type
 			{
 				get;
@@ -183,12 +204,16 @@ namespace Effekseer.Data
 		public enum ParameterType : int
 		{
 			[Name(value = "点", language = Language.Japanese)]
+			[Name(value = "Point", language = Language.English)]
 			Point = 0,
 			[Name(value = "円", language = Language.Japanese)]
+			[Name(value = "Circle", language = Language.English)]
 			Circle = 3,
 			[Name(value = "球", language = Language.Japanese)]
+			[Name(value = "Sphere", language = Language.English)]
 			Sphere = 1,
 			[Name(value = "モデル", language = Language.Japanese)]
+			[Name(value = "Model", language = Language.English)]
 			Model = 2,
 			
 		}
@@ -196,24 +221,32 @@ namespace Effekseer.Data
 		public enum ModelType : int
 		{
 			[Name(value = "ランダム", language = Language.Japanese)]
+			[Name(value = "Random", language = Language.English)]
 			Random = 0,
 			[Name(value = "頂点", language = Language.Japanese)]
+			[Name(value = "Vertex", language = Language.English)]
 			Vertex = 1,
 			[Name(value = "頂点(ランダム)", language = Language.Japanese)]
+			[Name(value = "Random Vertex", language = Language.English)]
 			RandomVertex = 2,
 			[Name(value = "面", language = Language.Japanese)]
+			[Name(value = "Surface", language = Language.English)]
 			Face = 3,
 			[Name(value = "面(ランダム)", language = Language.Japanese)]
+			[Name(value = "Random Surface", language = Language.English)]
 			RandomFace = 4,
 		}
 
 		public enum CircleType : int
 		{
 			[Name(value = "ランダム", language = Language.Japanese)]
+			[Name(value = "Random", language = Language.English)]
 			Random = 0,
 			[Name(value = "正順", language = Language.Japanese)]
+			[Name(value = "Clockwise", language = Language.English)]
 			Order = 1,
 			[Name(value = "逆順", language = Language.Japanese)]
+			[Name(value = "Counter", language = Language.English)]
 			ReverseOrder = 2,
 		}
 	}
