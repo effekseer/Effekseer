@@ -10,6 +10,7 @@
 #include "../common/IUnityGraphics.h"
 #include "../common/EffekseerPluginTexture.h"
 #include "../common/EffekseerPluginModel.h"
+#include "../../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelLoader.h"
 
 using namespace Effekseer;
 
@@ -87,8 +88,8 @@ namespace EffekseerPlugin
 		ModelLoaderUnload unload)
 	{
 		auto loader = new ModelLoader( load, unload );
-		loader->SetInternalLoader( 
-			g_EffekseerRenderer->CreateModelLoader( loader->GetFileInterface() ) );
+		auto internalLoader = new EffekseerRendererGL::ModelLoader(loader->GetFileInterface());
+		loader->SetInternalLoader( internalLoader );
 		return loader;
 	}
 };

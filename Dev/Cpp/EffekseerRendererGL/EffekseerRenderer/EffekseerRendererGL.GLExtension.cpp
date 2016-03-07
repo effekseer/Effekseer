@@ -14,6 +14,8 @@ namespace GLExt
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+#if _WIN32
+
 typedef void (EFK_STDCALL * FP_glDeleteBuffers) (GLsizei n, const GLuint* buffers);
 typedef GLuint (EFK_STDCALL * FP_glCreateShader) (GLenum type);
 typedef void (EFK_STDCALL * FP_glBindBuffer) (GLenum target, GLuint buffer);
@@ -111,6 +113,8 @@ static FP_glDeleteSamplers g_glDeleteSamplers = nullptr;
 static FP_glSamplerParameteri g_glSamplerParameteri = nullptr;
 static FP_glBindSampler g_glBindSampler = nullptr;
 
+#endif
+
 static bool g_isInitialized = false;
 static bool g_isSupportedVertexArray = false;
 
@@ -175,7 +179,9 @@ bool Initialize()
 	return true;
 #else
 
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || \
+	 defined(__EFFEKSEER_RENDERER_GLES3__) || \
+	 defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_isSupportedVertexArray = true;
 #endif
 
@@ -472,6 +478,8 @@ void glGenVertexArrays(GLsizei n, GLuint *arrays)
 {
 #if _WIN32
 	g_glGenVertexArrays(n, arrays);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+	::glGenVertexArraysOES(n, arrays);
 #else
 	::glGenVertexArrays(n, arrays);
 #endif
@@ -481,6 +489,8 @@ void glDeleteVertexArrays(GLsizei n, const GLuint *arrays)
 {
 #if _WIN32
 	g_glDeleteVertexArrays(n, arrays);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+	::glDeleteVertexArraysOES(n, arrays);
 #else
 	::glDeleteVertexArrays(n, arrays);
 #endif
@@ -490,6 +500,8 @@ void glBindVertexArray(GLuint array)
 {
 #if _WIN32
 	g_glBindVertexArray(array);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+	::glBindVertexArrayOES(array);
 #else
 	::glBindVertexArray(array);
 #endif
@@ -499,6 +511,7 @@ void glGenSamplers(GLsizei n, GLuint *samplers)
 {
 #if _WIN32
 	g_glGenSamplers(n, samplers);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
 #else
 	::glGenSamplers(n, samplers);
 #endif
@@ -508,6 +521,7 @@ void glDeleteSamplers(GLsizei n, const GLuint * samplers)
 {
 #if _WIN32
 	g_glDeleteSamplers(n, samplers);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
 #else
 	::glDeleteSamplers(n, samplers);
 #endif
@@ -517,6 +531,7 @@ void glSamplerParameteri(GLuint sampler, GLenum pname, GLint param)
 {
 #if _WIN32
 	g_glSamplerParameteri(sampler, pname, param);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
 #else
 	::glSamplerParameteri(sampler, pname, param);
 #endif
@@ -526,6 +541,7 @@ void glBindSampler(GLuint unit, GLuint sampler)
 {
 #if _WIN32
 	g_glBindSampler(unit, sampler);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
 #else
 	::glBindSampler(unit, sampler);
 #endif

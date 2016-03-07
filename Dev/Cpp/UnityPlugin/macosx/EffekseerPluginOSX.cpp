@@ -1,5 +1,4 @@
 
-#include <OpenGL/OpenGL.h>
 #include <Effekseer.h>
 #include <EffekseerRendererGL.h>
 #include "../common/EffekseerPluginCommon.h"
@@ -79,9 +78,6 @@ extern "C"
 		g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
 		g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
 		g_EffekseerManager->SetModelRenderer(g_EffekseerRenderer->CreateModelRenderer());
-
-		g_EffekseerManager->SetTextureLoader(g_EffekseerRenderer->CreateTextureLoader());
-		g_EffekseerManager->SetModelLoader(g_EffekseerRenderer->CreateModelLoader());
 	}
 
 	DLLEXPORT void UNITY_API EffekseerTerm()
