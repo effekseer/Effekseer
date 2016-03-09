@@ -122,11 +122,14 @@ namespace Effekseer
 		public static extern IntPtr EffekseerGetRenderFunc();
 		
 		[DllImport(pluginName)]
-		public static extern void EffekseerSetProjectionMatrix(int renderId, IntPtr matrix);
+		public static extern void EffekseerSetProjectionMatrix(int renderId, float[] matrix);
 	
 		[DllImport(pluginName)]
-		public static extern void EffekseerSetCameraMatrix(int renderId, IntPtr matrix);
+		public static extern void EffekseerSetCameraMatrix(int renderId, float[] matrix);
 		
+		[DllImport(pluginName)]
+		public static extern void EffekseerSetRenderSettings(int renderId, bool renderIntoTexture);
+
 		[DllImport(pluginName)]
 		public static extern IntPtr EffekseerLoadEffect(IntPtr path);
 		

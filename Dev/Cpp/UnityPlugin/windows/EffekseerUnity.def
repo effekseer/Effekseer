@@ -12,6 +12,7 @@ EXPORTS
   EffekseerReleaseEffect
   EffekseerSetProjectionMatrix
   EffekseerSetCameraMatrix
+  EffekseerSetRenderSettings
   EffekseerPlayEffect
   EffekseerStopAllEffects
   EffekseerStopEffect

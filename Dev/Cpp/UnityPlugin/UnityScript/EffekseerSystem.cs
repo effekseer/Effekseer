@@ -290,25 +290,20 @@ public class EffekseerSystem : MonoBehaviour
 			camera.AddCommandBuffer(path.cameraEvent, path.commandBuffer);
 			renderPaths.Add(camera, path);
 		}
-
+		
 		// ビュー関連の行列を更新
-		SetCameraMatrix(path.renderId, camera);
-		SetProjectionMatrix(path.renderId, camera);
+		Plugin.EffekseerSetProjectionMatrix(path.renderId, Utility.Matrix2Array(
+			GL.GetGPUProjectionMatrix(camera.projectionMatrix, false)));
+		Plugin.EffekseerSetCameraMatrix(path.renderId, Utility.Matrix2Array(
+			camera.worldToCameraMatrix));
 	}
-
-	private void SetProjectionMatrix(int renderId, Camera camera) {
-		float[] projectionMatrixArray = Utility.Matrix2Array(GL.GetGPUProjectionMatrix(
-			camera.projectionMatrix, RenderTexture.active));
-		GCHandle ghc = GCHandle.Alloc(projectionMatrixArray, GCHandleType.Pinned);
-		Plugin.EffekseerSetProjectionMatrix(renderId, ghc.AddrOfPinnedObject());
-		ghc.Free();
-	}
-
-	private void SetCameraMatrix(int renderId, Camera camera) {
-		float[] cameraMatrixArray = Utility.Matrix2Array(camera.worldToCameraMatrix);
-		GCHandle ghc = GCHandle.Alloc(cameraMatrixArray, GCHandleType.Pinned);
-		Plugin.EffekseerSetCameraMatrix(renderId, ghc.AddrOfPinnedObject());
-		ghc.Free();
+	
+	void OnRenderObject() {
+		if (renderPaths.ContainsKey(Camera.current)) {
+			RenderPath path = renderPaths[Camera.current];
+			Plugin.EffekseerSetRenderSettings(path.renderId, 
+				(RenderTexture.active != null));
+		}
 	}
 
 	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerTextureLoaderLoad))]

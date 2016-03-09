@@ -15,14 +15,12 @@
 
 using namespace Effekseer;
 
-extern UnityGfxRenderer					g_RendererType;
-extern IDirect3DDevice9*				g_D3d9Device;
-extern ID3D11Device*					g_D3d11Device;
-extern ID3D11DeviceContext*				g_D3d11Context;
-extern EffekseerRenderer::Renderer*		g_EffekseerRenderer;
-
 namespace EffekseerPlugin
 {
+	extern UnityGfxRenderer					g_UnityRendererType;
+	extern ID3D11Device*					g_D3d11Device;
+	extern EffekseerRenderer::Renderer*		g_EffekseerRenderer;
+
 	class TextureLoaderWin : public TextureLoader
 	{
 		struct TextureResource {
@@ -51,7 +49,7 @@ namespace EffekseerPlugin
 			{
 				return nullptr;
 			}
-			if (g_RendererType == kUnityGfxRendererD3D11)
+			if (g_UnityRendererType == kUnityGfxRendererD3D11)
 			{
 				// DX11の場合、UnityがロードするのはID3D11Texture2Dなので、
 				// ID3D11ShaderResourceViewに変換する
@@ -98,7 +96,7 @@ namespace EffekseerPlugin
 			// 参照カウンタが0になったら実際にアンロード
 			it->second.referenceCount--;
 			if (it->second.referenceCount <= 0) {
-				if (g_RendererType == kUnityGfxRendererD3D11)
+				if (g_UnityRendererType == kUnityGfxRendererD3D11)
 				{
 					// ID3D11ShaderResourceViewをID3D11Texture2Dに
 					// 戻してUnityにアンロードしてもらう
@@ -126,8 +124,8 @@ namespace EffekseerPlugin
 		ModelLoaderUnload unload)
 	{
 		auto loader = new ModelLoader( load, unload );
-		loader->SetInternalLoader( 
-			g_EffekseerRenderer->CreateModelLoader( loader->GetFileInterface() ) );
+		auto internalLoader = g_EffekseerRenderer->CreateModelLoader( loader->GetFileInterface() );
+		loader->SetInternalLoader( internalLoader );
 		return loader;
 	}
 };

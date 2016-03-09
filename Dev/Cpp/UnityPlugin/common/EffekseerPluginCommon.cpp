@@ -7,36 +7,29 @@
 using namespace Effekseer;
 using namespace EffekseerPlugin;
 
-Matrix44				g_cameraMatrix[MAX_RENDER_PATH];
-Matrix44				g_projectionMatrix[MAX_RENDER_PATH];
-
-void Array2Matrix(Matrix44& matrix, float matrixArray[])
+namespace EffekseerPlugin
 {
-	matrix.Values[0][0] = matrixArray[ 0];
-	matrix.Values[1][0] = matrixArray[ 1];
-	matrix.Values[2][0] = matrixArray[ 2];
-	matrix.Values[3][0] = matrixArray[ 3];
-	matrix.Values[0][1] = matrixArray[ 4];
-	matrix.Values[1][1] = matrixArray[ 5];
-	matrix.Values[2][1] = matrixArray[ 6];
-	matrix.Values[3][1] = matrixArray[ 7];
-	matrix.Values[0][2] = matrixArray[ 8];
-	matrix.Values[1][2] = matrixArray[ 9];
-	matrix.Values[2][2] = matrixArray[10];
-	matrix.Values[3][2] = matrixArray[11];
-	matrix.Values[0][3] = matrixArray[12];
-	matrix.Values[1][3] = matrixArray[13];
-	matrix.Values[2][3] = matrixArray[14];
-	matrix.Values[3][3] = matrixArray[15];
-}
+	RenderSettings renderSettings[MAX_RENDER_PATH];
 
-int32_t EfkStrLen(const EFK_CHAR *str)
-{
-	int32_t len = 0;
-	while (str[len] != 0) {
-		len++;
+	void Array2Matrix(Matrix44& matrix, float matrixArray[])
+	{
+		matrix.Values[0][0] = matrixArray[ 0];
+		matrix.Values[1][0] = matrixArray[ 1];
+		matrix.Values[2][0] = matrixArray[ 2];
+		matrix.Values[3][0] = matrixArray[ 3];
+		matrix.Values[0][1] = matrixArray[ 4];
+		matrix.Values[1][1] = matrixArray[ 5];
+		matrix.Values[2][1] = matrixArray[ 6];
+		matrix.Values[3][1] = matrixArray[ 7];
+		matrix.Values[0][2] = matrixArray[ 8];
+		matrix.Values[1][2] = matrixArray[ 9];
+		matrix.Values[2][2] = matrixArray[10];
+		matrix.Values[3][2] = matrixArray[11];
+		matrix.Values[0][3] = matrixArray[12];
+		matrix.Values[1][3] = matrixArray[13];
+		matrix.Values[2][3] = matrixArray[14];
+		matrix.Values[3][3] = matrixArray[15];
 	}
-	return len;
 }
 
 extern "C"
@@ -177,8 +170,7 @@ extern "C"
 	DLLEXPORT void UNITY_API EffekseerSetProjectionMatrix(int renderId, float matrixArray[])
 	{
 		if (renderId >= 0 && renderId < MAX_RENDER_PATH) {
-			Matrix44& matrix = g_projectionMatrix[renderId];
-			Array2Matrix(matrix, matrixArray);
+			Array2Matrix(renderSettings[renderId].projectionMatrix, matrixArray);
 		}
 	}
 	
@@ -186,11 +178,18 @@ extern "C"
 	DLLEXPORT void UNITY_API EffekseerSetCameraMatrix(int renderId, float matrixArray[])
 	{
 		if (renderId >= 0 && renderId < MAX_RENDER_PATH) {
-			Matrix44& matrix = g_cameraMatrix[renderId];
-			Array2Matrix(matrix, matrixArray);
+			Array2Matrix(renderSettings[renderId].cameraMatrix, matrixArray);
 		}
 	}
 	
+	// •`‰æİ’è
+	DLLEXPORT void UNITY_API EffekseerSetRenderSettings(int renderId, bool renderIntoTexture)
+	{
+		if (renderId >= 0 && renderId < MAX_RENDER_PATH) {
+			renderSettings[renderId].renderIntoTexture = renderIntoTexture;
+		}
+	}
+
 	DLLEXPORT void UNITY_API EffekseerSetTextureLoaderEvent(
 		TextureLoaderLoad load,
 		TextureLoaderUnload unload)
