@@ -60,14 +60,9 @@ extern "C"
 		if (g_EffekseerRenderer == NULL) return;
 		
 		const RenderSettings& settings = renderSettings[renderId];
-		Effekseer::Matrix44 projectionMatrix = settings.projectionMatrix;
-		if (settings.renderIntoTexture) {
-			// テクスチャに対してレンダリングするときは上下反転させる
-			projectionMatrix.Values[1][1] = -projectionMatrix.Values[1][1];
-		}
-
+		
 		// 行列をセット
-		g_EffekseerRenderer->SetProjectionMatrix(projectionMatrix);
+		g_EffekseerRenderer->SetProjectionMatrix(settings.projectionMatrix);
 		g_EffekseerRenderer->SetCameraMatrix(settings.cameraMatrix);
 
 		// 描画実行(全体)

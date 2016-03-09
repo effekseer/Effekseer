@@ -9,7 +9,7 @@ using namespace EffekseerPlugin;
 
 namespace EffekseerPlugin
 {
-	RenderSettings renderSettings[MAX_RENDER_PATH];
+	RenderSettings renderSettings[MAX_RENDER_PATH] = {};
 
 	void Array2Matrix(Matrix44& matrix, float matrixArray[])
 	{
