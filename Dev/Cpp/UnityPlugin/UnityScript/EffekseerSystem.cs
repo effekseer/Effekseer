@@ -37,7 +37,7 @@ public class EffekseerSystem : MonoBehaviour
 	/// <summary>
 	/// エフェクトの描画するタイミング
 	/// </summary>
-	public CameraEvent cameraEvent	= CameraEvent.AfterForwardAlpha;
+	const CameraEvent cameraEvent	= CameraEvent.BeforeImageEffects;
 
 	/// <summary>
 	/// Effekseerのファイルを置く場所
