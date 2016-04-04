@@ -153,7 +153,7 @@ public class EffekseerSystem : MonoBehaviour
 		}
 
 		// Resourcesから読み込む
-		var asset = Resources.Load<TextAsset>(Utility.ResourcePath(name));
+		var asset = Resources.Load<TextAsset>(Utility.ResourcePath(name, true));
 		if (asset == null) {
 			Debug.LogError("[Effekseer] Failed to load effect: " + name);
 			return IntPtr.Zero;

@@ -13,9 +13,9 @@ namespace Effekseer
 	class TextureResource
 	{
 		public string Path = "";
-		public Texture Texture;
+		public Texture2D Texture;
 		public bool Load(string path) {
-			Texture = Resources.Load<Texture>(Utility.ResourcePath(path));
+			Texture = Resources.Load<Texture2D>(Utility.ResourcePath(path, true));
 			if (Texture == null) {
 				return false;
 			}
@@ -37,7 +37,7 @@ namespace Effekseer
 		public string Path = "";
 		public TextAsset ModelData;
 		public bool Load(string path) {
-			ModelData = Resources.Load<TextAsset>(Utility.ResourcePath(path));
+			ModelData = Resources.Load<TextAsset>(Utility.ResourcePath(path, false));
 			if (ModelData == null) {
 				return false;
 			}
@@ -50,7 +50,7 @@ namespace Effekseer
 			}
 		}
 		public bool Copy(IntPtr buffer, int bufferSize) {
-			if (bufferSize < ModelData.bytes.Length) {
+			if (ModelData.bytes.Length < bufferSize) {
 				Marshal.Copy(ModelData.bytes, 0, buffer, ModelData.bytes.Length);
 				return true;
 			}
@@ -63,7 +63,7 @@ namespace Effekseer
 		public string Path = "";
 		public AudioClip Audio;
 		public bool Load(string path) {
-			Audio = Resources.Load<AudioClip>(Utility.ResourcePath(path));
+			Audio = Resources.Load<AudioClip>(Utility.ResourcePath(path, true));
 			if (Audio == null) {
 				return false;
 			}
@@ -94,9 +94,11 @@ namespace Effekseer
 			return Encoding.Unicode.GetString(strarray);
 		}
 
-		public static string ResourcePath(string path) {
+		public static string ResourcePath(string path, bool removeExtension) {
 			string dir = Path.GetDirectoryName(path);
-			string file = Path.GetFileNameWithoutExtension(path);
+			string file = (removeExtension) ? 
+				Path.GetFileNameWithoutExtension(path) : 
+				Path.GetFileName(path);
 			return "Effekseer/" + ((dir == String.Empty) ? file : dir + "/" + file);
 		}
 	}
