@@ -14,4 +14,6 @@ bool DoEvent();
 
 void SetCameraMatrix( const ::Effekseer::Matrix44& matrix );
 
+void CreateCheckeredPattern( int width, int height, uint32_t* pixels );
+
 #endif

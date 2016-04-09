@@ -14,15 +14,14 @@
 #include <GLFW/glfw3.h>
 
 #if _WIN32
-
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "gdiplus.lib")
 #if _DEBUG
-#pragma comment(lib, "Debug/glfw3.lib")
+#pragma comment(lib, "Debug/glfw3dll.lib")
 #pragma comment(lib, "x86/EffekseerRendererGL.Debug.lib" )
 #else
-#pragma comment(lib, "Release/glfw3.lib")
+#pragma comment(lib, "Release/glfw3dll.lib")
 #pragma comment(lib, "x86/EffekseerRendererGL.Release.lib" )
 #endif
 
@@ -105,6 +104,42 @@ static ::Window				g_window;
 #endif
 
 static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
+static uint32_t* g_clearing_image = NULL;
+static int g_width = 0, g_height = 0;
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+class DistortingCallback : public EffekseerRenderer::DistortingCallback
+{
+	::EffekseerRendererGL::Renderer* renderer = nullptr;
+	GLuint texture = 0;
+
+public:
+	DistortingCallback( ::EffekseerRendererGL::Renderer* renderer, 
+		int texWidth, int texHeight )
+		: renderer( renderer )
+	{
+		glGenTextures( 1, &texture );
+		glBindTexture( GL_TEXTURE_2D, texture );
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, g_width, g_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 );
+		glBindTexture( GL_TEXTURE_2D, 0 );
+	}
+
+	virtual ~DistortingCallback()
+	{
+		glDeleteTextures( 1, &texture );
+	}
+
+	virtual void OnDistorting()
+	{
+		glBindTexture( GL_TEXTURE_2D, texture );
+		glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, g_width, g_height );
+		glBindTexture( GL_TEXTURE_2D, 0 );
+
+		renderer->SetBackground( texture );
+	}
+};
 
 //----------------------------------------------------------------------------------
 //
@@ -293,10 +328,12 @@ void InitGraphics(int width, int height )
 #if _GLFW
 	if (!glfwInit()) return;
 	
+#if !_WIN32
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	
+#endif
 
 	window = glfwCreateWindow(width, height, "Effekseer(GLFW)", NULL, NULL);
 	if (!window)
@@ -324,10 +361,18 @@ void InitGraphics(int width, int height )
 	}
 #endif
 
+	g_width = width;
+	g_height = height;
+
+	g_clearing_image = new uint32_t[width * height];
+	CreateCheckeredPattern( width, height, g_clearing_image );
+	
 	glViewport( 0, 0, width, height );
 
 	g_renderer = ::EffekseerRendererGL::Renderer::Create( 2000 );
 	g_renderer->SetProjectionMatrix( ::Effekseer::Matrix44().PerspectiveFovRH_OpenGL( 90.0f / 180.0f * 3.14f, (float)width / (float)height, 1.0f, 50.0f ) );
+	g_renderer->SetDistortingCallback( new DistortingCallback( 
+		(EffekseerRendererGL::Renderer*)g_renderer, width, height ) );
 	
 	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
 	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
@@ -366,7 +411,7 @@ void Rendering()
 
 	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+	glDrawPixels( g_width, g_height, GL_RGBA, GL_UNSIGNED_BYTE, g_clearing_image );
 
 	g_renderer->BeginRendering();
 	g_manager->Draw();

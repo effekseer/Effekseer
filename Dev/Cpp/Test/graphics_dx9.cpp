@@ -2,6 +2,7 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#include <assert.h>
 #include "common.h"
 
 #include "../EffekseerRendererDX9/EffekseerRendererDX9.h"
@@ -17,8 +18,54 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+class DistortingCallback : public EffekseerRenderer::DistortingCallback
+{
+	::EffekseerRendererDX9::Renderer* renderer = nullptr;
+	LPDIRECT3DDEVICE9 device = nullptr;
+	LPDIRECT3DTEXTURE9 texture = nullptr;
+
+public:
+	DistortingCallback( ::EffekseerRendererDX9::Renderer* renderer, 
+		LPDIRECT3DDEVICE9 device, int texWidth, int texHeight )
+		: renderer( renderer ), device( device )
+	{
+		device->CreateTexture( texWidth, texHeight, 1, D3DUSAGE_RENDERTARGET, 
+			D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL );
+	}
+
+	virtual ~DistortingCallback()
+	{
+		ES_SAFE_RELEASE( texture );
+	}
+
+	virtual void OnDistorting()
+	{
+		IDirect3DSurface9* targetSurface = nullptr;
+		IDirect3DSurface9* texSurface = nullptr;
+		HRESULT hr = S_OK;
+
+		hr = texture->GetSurfaceLevel( 0, &texSurface );
+		assert(SUCCEEDED(hr));
+
+		hr = device->GetRenderTarget( 0, &targetSurface );
+		assert(SUCCEEDED(hr));
+
+		hr = device->StretchRect( targetSurface, NULL, texSurface, NULL, D3DTEXF_NONE);
+		assert(SUCCEEDED(hr));
+		
+		ES_SAFE_RELEASE( texSurface );
+		ES_SAFE_RELEASE( targetSurface );
+
+		renderer->SetBackground( texture );
+	}
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 static LPDIRECT3D9			g_d3d = NULL;
 static LPDIRECT3DDEVICE9	g_d3d_device = NULL;
+static LPDIRECT3DSURFACE9	g_d3d_clearing_image = NULL;
 static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
 
 //----------------------------------------------------------------------------------
@@ -53,9 +100,21 @@ void InitGraphics(int width, int height )
 		D3DCREATE_HARDWARE_VERTEXPROCESSING,
 		&d3dp,
 		&g_d3d_device );
+
 	
+	{// Žs¼–Í—l‚Ì”wŒi‰æ‘œ‚ðì‚é
+		g_d3d_device->CreateOffscreenPlainSurface( width, height, 
+			D3DFMT_X8R8G8B8, D3DPOOL_SYSTEMMEM, &g_d3d_clearing_image, NULL );
+		D3DLOCKED_RECT lockedRect;
+		g_d3d_clearing_image->LockRect( &lockedRect, NULL, 0 );
+		CreateCheckeredPattern( width, height, (uint32_t*)lockedRect.pBits );
+		g_d3d_clearing_image->UnlockRect();
+	}
+
 	g_renderer = ::EffekseerRendererDX9::Renderer::Create( g_d3d_device, 2000 );
 	g_renderer->SetProjectionMatrix( ::Effekseer::Matrix44().PerspectiveFovRH( 90.0f / 180.0f * 3.14f, (float)width / (float)height, 1.0f, 50.0f ) );
+	g_renderer->SetDistortingCallback( new DistortingCallback( 
+		(EffekseerRendererDX9::Renderer*)g_renderer, g_d3d_device, width, height ) );
 	
 	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
 	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
@@ -75,6 +134,8 @@ void InitGraphics(int width, int height )
 void TermGraphics()
 {
 	g_renderer->Destory();
+	
+	ES_SAFE_RELEASE( g_d3d_clearing_image );
 	ES_SAFE_RELEASE( g_d3d_device );
 	ES_SAFE_RELEASE( g_d3d );
 
@@ -87,6 +148,12 @@ void TermGraphics()
 void Rendering()
 {
 	g_d3d_device->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0 );
+	
+	LPDIRECT3DSURFACE9 targetSurface = NULL;
+	g_d3d_device->GetRenderTarget( 0, &targetSurface );
+	g_d3d_device->UpdateSurface( g_d3d_clearing_image, NULL, targetSurface, NULL );
+	ES_SAFE_RELEASE( targetSurface );
+
 	g_d3d_device->BeginScene();
 	
 	g_renderer->SetLightDirection(::Effekseer::Vector3D(1.0f, 1.0f, 1.0f));

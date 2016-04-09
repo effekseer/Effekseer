@@ -154,6 +154,7 @@ void Init()
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Track1.efk").c_str() ) );
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block.efk").c_str() ) );
 	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block_simple.efk").c_str() ) );
+	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Distortion.efk").c_str() ) );
 #endif
 	PlayEffect();
 }
@@ -213,6 +214,22 @@ void PlayEffect()
 	}
 	//g_manager->Play( g_effect, 0, 0, 0 );
 #endif
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void CreateCheckeredPattern( int width, int height, uint32_t* pixels )
+{
+	const uint32_t color[2]= { 0x00202020, 0x00808080 };
+
+	for( int y = 0; y < height; y++ )
+	{
+		for( int x = 0; x < width; x++ )
+		{
+			*pixels++ = color[(x / 20 % 2) ^ (y / 20 % 2)];
+		}
+	}
 }
 
 //----------------------------------------------------------------------------------
