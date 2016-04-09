@@ -128,10 +128,10 @@ namespace Effekseer.Data
 					Wave = new Value.PathForSound("Sound File (*.wav)|*.wav", true, "");
 				}
 
-                Volume = new Value.FloatWithRandom(1.0f, 1.0f, 0.0f);
-                Pitch = new Value.FloatWithRandom(0.0f, 2.0f, -2.0f);
+                Volume = new Value.FloatWithRandom(1.0f, 1.0f, 0.0f, DrawnAs.CenterAndAmplitude, 0.1f);
+                Pitch = new Value.FloatWithRandom(0.0f, 2.0f, -2.0f, DrawnAs.CenterAndAmplitude, 0.1f);
                 PanType = new Value.Enum<ParamaterPanType>(ParamaterPanType.Sound2D);
-                Pan = new Value.FloatWithRandom(0.0f, 1.0f, -1.0f);
+                Pan = new Value.FloatWithRandom(0.0f, 1.0f, -1.0f, DrawnAs.CenterAndAmplitude, 0.1f);
                 Distance = new Value.Float(10.0f);
                 Delay = new Value.IntWithRandom(0, int.MaxValue, 0);
 			}

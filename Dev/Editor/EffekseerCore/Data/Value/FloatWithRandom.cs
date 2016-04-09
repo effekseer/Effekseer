@@ -261,7 +261,7 @@ namespace Effekseer.Data.Value
 
 		public void SetAmplitude(float value, bool isCombined = false)
 		{
-			value = Math.Abs(value);
+			value = Math.Max(value, 0);
 
 			float old_center = _value_center;
 			float new_center = _value_center;

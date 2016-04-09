@@ -201,6 +201,7 @@ namespace Effekseer.GUI.Component
 		{
 			int wheel = (delta / 120);
 			WriteMethod(ReadMethod() + wheel * WheelStep, true);
+			this.Text = ReadMethod().ToString();
 			this.SelectAll();
 			Changed = true;
 		}

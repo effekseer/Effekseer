@@ -93,7 +93,7 @@ namespace Effekseer.Data.Value
 			_max = max;
 			_min = min;
 			DrawnAs = drawnas;
-			Step = Step;
+			Step = step;
 
 			DefaultValueCenter = _value_center;
 			DefaultValueMax = _value_max;
@@ -259,7 +259,7 @@ namespace Effekseer.Data.Value
 
 		public void SetAmplitude(int value, bool isCombined = false)
 		{
-			value = Math.Abs(value);
+			value = Math.Max(value, 0);
 
 			int old_center = _value_center;
 			int new_center = _value_center;
