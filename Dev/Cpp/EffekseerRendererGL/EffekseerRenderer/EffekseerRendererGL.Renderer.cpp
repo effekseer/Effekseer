@@ -769,7 +769,7 @@ bool RendererImplemented::Initialize()
 	m_shader_distortion->AddPixelConstantLayout(
 		CONSTANT_TYPE_VECTOR4,
 		m_shader_distortion->GetUniformId("g_scale"),
-		sizeof(float) * 4
+		0
 		);
 
 	m_shader_distortion->SetTextureSlot(0, m_shader_distortion->GetUniformId("uTexture0"));
@@ -795,7 +795,7 @@ bool RendererImplemented::Initialize()
 	m_shader_no_texture_distortion->AddPixelConstantLayout(
 		CONSTANT_TYPE_VECTOR4,
 		m_shader_distortion->GetUniformId("g_scale"),
-		sizeof(float) * 4
+		0
 		);
 
 	m_shader_no_texture_distortion->SetTextureSlot(1, m_shader_no_texture_distortion->GetUniformId("uBackTexture0"));

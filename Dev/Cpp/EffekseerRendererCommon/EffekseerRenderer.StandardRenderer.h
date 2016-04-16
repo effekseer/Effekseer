@@ -172,7 +172,20 @@ public:
 
 			void* data = nullptr;
 
-			if (vb->RingBufferLock(vertexCaches.size(), offsetSize, data))
+			if (m_state.Distortion)
+			{
+				// OpenGL ES対策(OpenGL ES3.2以降でしか、頂点レイアウト可変のリングバッファを実現できないため)
+				vb->Lock();
+				data = vb->GetBufferDirect(vertexCaches.size());
+				if (data == nullptr)
+				{
+					vertexCaches.clear();
+					return;
+				}
+				memcpy(data, vertexCaches.data(), vertexCaches.size());
+				vb->Unlock();
+			}
+			else if (vb->RingBufferLock(vertexCaches.size(), offsetSize, data))
 			{
 				assert(data != nullptr);
 				memcpy(data, vertexCaches.data(), vertexCaches.size());
