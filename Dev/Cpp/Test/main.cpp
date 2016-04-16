@@ -134,7 +134,7 @@ int main()
 //----------------------------------------------------------------------------------
 void Init()
 {
-	g_position = ::Effekseer::Vector3D( 10.0f, 5.0f, 10.0f );
+	g_position = ::Effekseer::Vector3D( 10.0f, 5.0f, 10.0f ) / 1.0f;
 	g_focus = ::Effekseer::Vector3D( 0.0f, 0.0f, 0.0f );
 
 	SetCameraMatrix( ::Effekseer::Matrix44().LookAtRH( g_position, g_focus, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );

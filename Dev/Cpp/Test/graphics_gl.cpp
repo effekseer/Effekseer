@@ -18,10 +18,10 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "gdiplus.lib")
 #if _DEBUG
-#pragma comment(lib, "Debug/glfw3dll.lib")
+#pragma comment(lib, "Debug/glfw3.lib")
 #pragma comment(lib, "x86/EffekseerRendererGL.Debug.lib" )
 #else
-#pragma comment(lib, "Release/glfw3dll.lib")
+#pragma comment(lib, "Release/glfw3.lib")
 #pragma comment(lib, "x86/EffekseerRendererGL.Release.lib" )
 #endif
 

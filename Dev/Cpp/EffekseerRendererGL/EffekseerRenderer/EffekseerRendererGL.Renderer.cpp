@@ -675,14 +675,14 @@ bool RendererImplemented::Initialize()
 	Release();
 
 	m_shader_distortion = Shader::Create(this,
-		g_sprite_vs_src, strlen(g_sprite_vs_src), g_sprite_fs_texture_src, strlen(g_sprite_fs_texture_src), "SpriteRenderer");
+		g_sprite_distortion_vs_src, strlen(g_sprite_distortion_vs_src), g_sprite_fs_texture_distortion_src, strlen(g_sprite_fs_texture_distortion_src), "SpriteRenderer");
 	if (m_shader_distortion == nullptr) return false;
 
 	// 参照カウントの調整
 	Release();
 
 	m_shader_no_texture_distortion = Shader::Create(this,
-		g_sprite_vs_src, strlen(g_sprite_vs_src), g_sprite_fs_no_texture_src, strlen(g_sprite_fs_no_texture_src), "SpriteRenderer");
+		g_sprite_distortion_vs_src, strlen(g_sprite_distortion_vs_src), g_sprite_fs_no_texture_distortion_src, strlen(g_sprite_fs_no_texture_distortion_src), "SpriteRenderer");
 	if (m_shader_no_texture_distortion == nullptr)
 	{
 		return false;
@@ -750,7 +750,7 @@ bool RendererImplemented::Initialize()
 
 	// Distortion
 	m_shader_distortion->GetAttribIdList(5, sprite_attribs_distortion);
-	m_shader_distortion->SetVertexSize(sizeof(Vertex));
+	m_shader_distortion->SetVertexSize(sizeof(VertexDistortion));
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
 
@@ -776,7 +776,7 @@ bool RendererImplemented::Initialize()
 	m_shader_distortion->SetTextureSlot(1, m_shader_distortion->GetUniformId("uBackTexture0"));
 
 	m_shader_no_texture_distortion->GetAttribIdList(5, sprite_attribs_distortion);
-	m_shader_no_texture_distortion->SetVertexSize(sizeof(Vertex));
+	m_shader_no_texture_distortion->SetVertexSize(sizeof(VertexDistortion));
 	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
 	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
 
