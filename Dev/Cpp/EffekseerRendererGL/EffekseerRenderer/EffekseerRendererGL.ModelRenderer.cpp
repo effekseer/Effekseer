@@ -116,7 +116,7 @@ R"(
 	"	vec4 localPosition = modelMatrix * a_Position;\n"
 	"	gl_Position = ProjectionMatrix * localPosition;\n"
 	
-	"	v_TexCoord.xy = a_TexCoord.xy + uvOffset.xy;\n"
+	"	v_TexCoord.xy = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;\n"
 
 	"	if (LightingEnable) {\n"
 	"		mat3 lightMatrix = mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz);"

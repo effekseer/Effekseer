@@ -45,8 +45,8 @@ VS_Output VS( const VS_Input Input )
 	localPosition = mul( matModel, localPosition );
 	Output.Pos = mul( mCameraProj, localPosition );
 
-	Output.UV.x = Input.UV.x + uv.x;
-	Output.UV.y = Input.UV.y + uv.y;
+	Output.UV.x = Input.UV.x * uv.z + uv.x;
+	Output.UV.y = Input.UV.y * uv.w + uv.y;
 
 #if ENABLE_LIGHTING
 	float3x3 lightMat = (float3x3)matModel;
