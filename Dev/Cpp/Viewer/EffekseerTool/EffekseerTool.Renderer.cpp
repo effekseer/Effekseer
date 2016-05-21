@@ -583,7 +583,7 @@ IDirect3DTexture9* Renderer::ExportBackground()
 
 	if (m_recording)
 	{
-		m_background->Rendering(m_recordingTargetTexture, m_width, m_height);
+		m_background->Rendering(m_recordingTargetTexture, m_recordingWidth, m_recordingHeight);
 	}
 	else
 	{
@@ -610,6 +610,8 @@ bool Renderer::BeginRecord( int32_t width, int32_t height )
 
 	m_recordingWidth = width;
 	m_recordingHeight = height;
+
+	GenerateRenderTargets(m_recordingWidth, m_recordingHeight);
 
 	HRESULT hr;
 
@@ -692,6 +694,8 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels)
 	ES_SAFE_RELEASE(m_recordingTarget);
 	ES_SAFE_RELEASE(m_recordingTargetTexture);
 	ES_SAFE_RELEASE(m_recordingDepth);
+
+	GenerateRenderTargets(m_width, m_height);
 
 	m_recording = false;
 }
