@@ -6,6 +6,7 @@ float4		g_scale			: register(c0);
 
 struct PS_Input
 {
+	float4 Position		: SV_POSITION;
 	float4 Color		: COLOR;
 	float2 UV		: TEXCOORD0;
 
