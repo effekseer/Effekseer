@@ -229,16 +229,6 @@ public:
 	bool BeginRecord( int32_t width, int32_t height );
 
 	/**
-		@brief	˜^‰æˆÊ’u•ÏX
-	*/
-	void SetRecordRect( int32_t x, int32_t y );
-
-	/**
-		@brief	˜^‰æI—¹
-	*/
-	void EndRecord( const wchar_t* outputPath );
-
-	/**
 	@brief	˜^‰æI—¹
 	*/
 	void EndRecord(std::vector<Effekseer::Color>& pixels);

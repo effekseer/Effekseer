@@ -642,45 +642,6 @@ bool Renderer::BeginRecord( int32_t width, int32_t height )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Renderer::SetRecordRect( int32_t x, int32_t y )
-{
-	assert( m_recording );
-
-	D3DVIEWPORT9 vp;
-	vp.X = x;
-	vp.Y = y;
-	vp.Width = GuideWidth;
-	vp.Height = GuideHeight;
-	vp.MinZ = 0.0f;
-	vp.MaxZ = 1.0f;
-		
-	GetDevice()->SetViewport( &vp );
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Renderer::EndRecord( const wchar_t* outputPath )
-{
-	assert( m_recording );
-
-	GetDevice()->SetRenderTarget( 0, m_recordingTempTarget );
-	GetDevice()->SetDepthStencilSurface( m_recordingTempDepth );
-	ES_SAFE_RELEASE( m_recordingTempTarget );
-	ES_SAFE_RELEASE( m_recordingTempDepth );
-
-	D3DXSaveSurfaceToFileW( outputPath, D3DXIFF_PNG, m_recordingTarget, NULL, NULL );
-
-	ES_SAFE_RELEASE( m_recordingTarget );
-	ES_SAFE_RELEASE( m_recordingTargetTexture );
-	ES_SAFE_RELEASE( m_recordingDepth );
-
-	m_recording = false;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels)
 {
 	assert(m_recording);

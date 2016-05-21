@@ -21,6 +21,18 @@
 #pragma comment(lib,"Release/libgd_static.lib")
 #endif
 
+#define Z_SOLO
+#include <png.h>
+#include <pngstruct.h>
+#include <pnginfo.h>
+#if _DEBUG
+#pragma comment(lib,"Debug/libpng16.lib")
+#pragma comment(lib,"Debug/zlib.lib")
+#else
+#pragma comment(lib,"Release/libpng16.lib")
+#pragma comment(lib,"Release/zlib.lib")
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -35,6 +47,61 @@ static bool									g_mouseRotDirectionInvY = false;
 
 static bool									g_mouseSlideDirectionInvX = false;
 static bool									g_mouseSlideDirectionInvY = false;
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void SavePNGImage(const wchar_t* filepath, int32_t width, int32_t height, void* data, bool rev)
+{
+	/* 構造体確保 */
+#if _WIN32
+	FILE *fp = _wfopen(filepath, L"wb");
+#else
+	FILE *fp = fopen(ToUtf8String(filepath).c_str(), "wb");
+#endif
+
+	if (fp == nullptr) return;
+
+	png_structp pp = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	png_infop ip = png_create_info_struct(pp);
+
+	/* 書き込み準備 */
+	png_init_io(pp, fp);
+	png_set_IHDR(pp, ip, width, height,
+		8, /* 8bit以外にするなら変える */
+		PNG_COLOR_TYPE_RGBA, /* RGBA以外にするなら変える */
+		PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+	/* ピクセル領域確保 */
+	std::vector<png_byte>  raw1D(height * png_get_rowbytes(pp, ip));
+	std::vector<png_bytep> raw2D(height * sizeof(png_bytep));
+	for (int32_t i = 0; i < height; i++)
+	{
+		raw2D[i] = &raw1D[i*png_get_rowbytes(pp, ip)];
+	}
+
+	memcpy((void*) raw1D.data(), data, width * height * 4);
+
+	/* 上下反転 */
+	if (rev)
+	{
+		for (int32_t i = 0; i < height / 2; i++)
+		{
+			png_bytep swp = raw2D[i];
+			raw2D[i] = raw2D[height - i - 1];
+			raw2D[height - i - 1] = swp;
+		}
+	}
+
+	/* 書き込み */
+	png_write_info(pp, ip);
+	png_write_image(pp, raw2D.data());
+	png_write_end(pp, ip);
+
+	/* 解放 */
+	png_destroy_write_struct(&pp, &ip);
+	fclose(fp);
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -1032,8 +1099,6 @@ bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t c
 	{
 		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
 
-		g_renderer->SetRecordRect(0, 0);
-
 		g_renderer->BeginRendering();
 		g_manager->Draw();
 		g_renderer->EndRendering();
@@ -1043,10 +1108,13 @@ bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t c
 			g_manager->Update();
 		}
 
+		std::vector<Effekseer::Color> pixels;
+		g_renderer->EndRecord(pixels);
+
 		wchar_t path_[260];
 		swprintf_s(path_, L"%s.%d%s", pathWithoutExt, i, ext);
 
-		g_renderer->EndRecord(path_);
+		SavePNGImage(path_, g_renderer->GuideWidth, g_renderer->GuideHeight, pixels.data(), false);
 	}
 
 	g_manager->StopEffect(handle);
@@ -1064,7 +1132,9 @@ bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t 
 	int32_t yCount = count / xCount;
 	if (count != xCount * yCount) yCount++;
 
-	if( ! g_renderer->BeginRecord( g_renderer->GuideWidth * xCount, g_renderer->GuideHeight * yCount ) ) return false;
+	std::vector<Effekseer::Color> pixels_out;
+	pixels_out.resize((g_renderer->GuideWidth * xCount) * (g_renderer->GuideHeight * yCount));
+
 	g_renderer->IsBackgroundTranslucent = isTranslucent;
 
 	::Effekseer::Vector3D position( 0, 0, g_Distance );
@@ -1098,7 +1168,7 @@ bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t 
 	{
 		for( int x = 0; x < xCount; x++ )
 		{
-			g_renderer->SetRecordRect( g_renderer->GuideWidth * x, g_renderer->GuideHeight * y );
+			if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
 
 			g_renderer->BeginRendering();
 			g_manager->Draw();
@@ -1114,12 +1184,23 @@ bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t 
 			{
 				g_manager->StopEffect(handle);
 			}
+
+			std::vector<Effekseer::Color> pixels;
+			g_renderer->EndRecord(pixels);
+
+			for (int32_t y_ = 0; y_ < g_renderer->GuideHeight; y_++)
+			{
+				for (int32_t x_ = 0; x_ < g_renderer->GuideWidth; x_++)
+				{
+					pixels_out[x * g_renderer->GuideWidth + x_ + (g_renderer->GuideWidth * xCount) * (g_renderer->GuideHeight * y + y_)] = pixels[x_ + y_ * g_renderer->GuideWidth];
+				}
+			}
 		}
 	}
 	
 Exit:;
 
-	g_renderer->EndRecord( path );
+	SavePNGImage(path, g_renderer->GuideWidth * xCount, g_renderer->GuideHeight * yCount, pixels_out.data(), false);
 	
 	g_manager->Update();
 
@@ -1168,8 +1249,6 @@ bool Native::RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t of
 	for (int32_t i = 0; i < count; i++)
 	{
 		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
-
-		g_renderer->SetRecordRect(0, 0);
 
 		g_renderer->BeginRendering();
 		g_manager->Draw();
