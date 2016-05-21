@@ -42,7 +42,6 @@ It is assumed to be used mainly in the game, and the editing of visual effects r
 **他**
 * DirectX12対応
 * UnrealEngine4, Cocos2D対応
-* iPhone,Android対応
 
 **候補**
 * HDRレンダリング
