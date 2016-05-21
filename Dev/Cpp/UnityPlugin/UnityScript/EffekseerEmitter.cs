@@ -58,6 +58,17 @@ public class EffekseerEmitter : MonoBehaviour
 	}
 	
 	/// <summary>
+	/// 再生中のエフェクトのルートだけを停止
+	/// </summary>
+	public void StopRoot()
+	{
+		if (handle.HasValue) {
+			handle.Value.StopRoot();
+			handle = null;
+		}
+	}
+	
+	/// <summary>
 	/// 再生中のエフェクトが存在しているか
 	/// </summary>
 	public bool exists

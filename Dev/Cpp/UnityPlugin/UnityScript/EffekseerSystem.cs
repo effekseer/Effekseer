@@ -257,7 +257,7 @@ public class EffekseerSystem : MonoBehaviour
 		renderPaths.Clear();
 	}
 	
-	void FixedUpdate() {
+	void LateUpdate() {
 		// 1フレーム更新
 		Plugin.EffekseerUpdate(1);
 	}
@@ -462,6 +462,14 @@ public struct EffekseerHandle
 	public void Stop()
 	{
 		Plugin.EffekseerStopEffect(m_handle);
+	}
+	
+	/// <summary>
+	/// エフェクトをルートだけ停止する
+	/// </summary>
+	public void StopRoot()
+	{
+		Plugin.EffekseerStopRoot(m_handle);
 	}
 	
 	/// <summary>
