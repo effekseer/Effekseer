@@ -1,5 +1,6 @@
 #pragma warning (disable : 4005)
 
+#include <assert.h>
 #include <windows.h>
 #include <shlwapi.h>
 #include "Effekseer.h"
@@ -86,6 +87,198 @@ namespace EffekseerPlugin
 			break;
 		}
 	}
+	
+	// DirectX9のEffekseerレンダラを作成
+	EffekseerRenderer::Renderer* CreateRendererDX9(int squareMaxCount)
+	{
+		class DistortingCallback : public EffekseerRenderer::DistortingCallback
+		{
+			::EffekseerRendererDX9::Renderer* renderer = nullptr;
+			IDirect3DTexture9* backGroundTexture = nullptr;
+			uint32_t backGroundTextureWidth = 0, backGroundTextureHeight = 0;
+			D3DFORMAT backGroundTextureFormat;
+
+		public:
+			DistortingCallback( ::EffekseerRendererDX9::Renderer* renderer )
+				: renderer( renderer )
+			{
+			}
+
+			virtual ~DistortingCallback()
+			{
+				ReleaseTexture();
+			}
+
+			void ReleaseTexture()
+			{
+				ES_SAFE_RELEASE( backGroundTexture );
+			}
+
+			// コピー先のテクスチャを準備
+			void PrepareTexture( uint32_t width, uint32_t height, D3DFORMAT format )
+			{
+				ReleaseTexture();
+
+				backGroundTextureWidth = width;
+				backGroundTextureHeight = height;
+				backGroundTextureFormat = format;
+				HRESULT hr = S_OK;
+				hr = g_D3d9Device->CreateTexture( width, height, 0, D3DUSAGE_RENDERTARGET, format, D3DPOOL_DEFAULT, &backGroundTexture, nullptr );
+				if( FAILED( hr ) ){
+					return;
+				}
+			}
+
+			virtual void OnDistorting()
+			{
+				IDirect3DSurface9* targetSurface = nullptr;
+				IDirect3DSurface9* texSurface = nullptr;
+				HRESULT hr = S_OK;
+
+				hr = g_D3d9Device->GetRenderTarget( 0, &targetSurface );
+				if( FAILED( hr ) ){
+					return;
+				}
+				
+				D3DSURFACE_DESC targetSurfaceDesc;
+				targetSurface->GetDesc( &targetSurfaceDesc );
+				
+				if( backGroundTexture == nullptr || 
+					backGroundTextureWidth == targetSurfaceDesc.Width || 
+					backGroundTextureHeight == targetSurfaceDesc.Height || 
+					backGroundTextureFormat == targetSurfaceDesc.Format )
+				{
+					PrepareTexture( targetSurfaceDesc.Width, targetSurfaceDesc.Height, targetSurfaceDesc.Format );
+				}
+				
+				hr = backGroundTexture->GetSurfaceLevel( 0, &texSurface );
+				if( FAILED( hr ) ){
+					return;
+				}
+				
+				hr = g_D3d9Device->StretchRect( targetSurface, NULL, texSurface, NULL, D3DTEXF_NONE);
+				if( FAILED( hr ) ){
+					return;
+				}
+				
+				ES_SAFE_RELEASE( texSurface );
+				ES_SAFE_RELEASE( targetSurface );
+
+				renderer->SetBackground( backGroundTexture );
+			}
+		};
+		
+		auto renderer = EffekseerRendererDX9::Renderer::Create(g_D3d9Device, squareMaxCount);
+		renderer->SetDistortingCallback( new DistortingCallback( renderer ) );
+		return renderer;
+	}
+
+	// DirectX11のEffekseerレンダラを作成
+	EffekseerRenderer::Renderer* CreateRendererDX11(int squareMaxCount)
+	{
+		class DistortingCallback : public EffekseerRenderer::DistortingCallback
+		{
+			::EffekseerRendererDX11::Renderer* renderer = nullptr;
+			ID3D11Texture2D* backGroundTexture = nullptr;
+			ID3D11ShaderResourceView* backGroundTextureSRV = nullptr;
+			D3D11_TEXTURE2D_DESC backGroundTextureDesc;
+
+		public:
+			DistortingCallback( ::EffekseerRendererDX11::Renderer* renderer )
+				: renderer( renderer )
+			{
+			}
+
+			virtual ~DistortingCallback()
+			{
+				ReleaseTexture();
+			}
+
+			void ReleaseTexture()
+			{
+				ES_SAFE_RELEASE( backGroundTextureSRV );
+				ES_SAFE_RELEASE( backGroundTexture );
+			}
+
+			// コピー先のテクスチャを準備
+			void PrepareTexture( uint32_t width, uint32_t height, DXGI_FORMAT format )
+			{
+				ReleaseTexture();
+
+				ZeroMemory( &backGroundTextureDesc, sizeof(backGroundTextureDesc) );
+				backGroundTextureDesc.Usage              = D3D11_USAGE_DEFAULT;
+				backGroundTextureDesc.Format             = format;
+				backGroundTextureDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
+				backGroundTextureDesc.Width              = width;
+				backGroundTextureDesc.Height             = height;
+				backGroundTextureDesc.CPUAccessFlags     = 0;
+				backGroundTextureDesc.MipLevels          = 1;
+				backGroundTextureDesc.ArraySize          = 1;
+				backGroundTextureDesc.SampleDesc.Count   = 1;
+				backGroundTextureDesc.SampleDesc.Quality = 0;
+				
+				HRESULT hr = S_OK;
+				hr = g_D3d11Device->CreateTexture2D( &backGroundTextureDesc, nullptr, &backGroundTexture );
+				if( FAILED( hr ) ){
+					return;
+				}
+
+				D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+				ZeroMemory(&srvDesc, sizeof(srvDesc));
+				switch( format )
+				{
+					case DXGI_FORMAT_R8G8B8A8_TYPELESS:
+						srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+						break;
+					case DXGI_FORMAT_R16G16B16A16_TYPELESS:
+						srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+						break;
+					default:
+						srvDesc.Format = format;
+						break;
+				}
+				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+				srvDesc.Texture2D.MipLevels = 1;
+				hr = g_D3d11Device->CreateShaderResourceView( backGroundTexture, &srvDesc, &backGroundTextureSRV );
+				if( FAILED( hr ) ){
+					return;
+				}
+			}
+
+			virtual void OnDistorting()
+			{
+				HRESULT hr = S_OK;
+
+				ID3D11RenderTargetView* renderTargetView = nullptr;
+				ID3D11Texture2D* renderTexture = nullptr;
+				
+				g_D3d11Context->OMGetRenderTargets( 1, &renderTargetView, nullptr );
+				renderTargetView->GetResource( reinterpret_cast<ID3D11Resource**>( &renderTexture ) );
+
+				D3D11_TEXTURE2D_DESC renderTextureDesc;
+				renderTexture->GetDesc( &renderTextureDesc );
+				
+				if( backGroundTextureSRV == nullptr || 
+					backGroundTextureDesc.Width == renderTextureDesc.Width || 
+					backGroundTextureDesc.Height == renderTextureDesc.Height || 
+					backGroundTextureDesc.Format == renderTextureDesc.Format )
+				{
+					PrepareTexture( renderTextureDesc.Width, renderTextureDesc.Height, renderTextureDesc.Format );
+				}
+
+				g_D3d11Context->CopyResource( backGroundTexture, renderTexture );
+				Sleep(4);
+				ES_SAFE_RELEASE( renderTexture );
+				ES_SAFE_RELEASE( renderTargetView );
+				
+				renderer->SetBackground( backGroundTextureSRV );
+			}
+		};
+		
+		auto renderer = EffekseerRendererDX11::Renderer::Create( g_D3d11Device, g_D3d11Context, squareMaxCount );
+		renderer->SetDistortingCallback( new DistortingCallback( renderer ) );
+		return renderer;
+	}
 }
 
 extern "C"
@@ -140,10 +333,10 @@ extern "C"
 	{
 		switch (g_UnityRendererType) {
 		case kUnityGfxRendererD3D9:
-			g_EffekseerRenderer = EffekseerRendererDX9::Renderer::Create(g_D3d9Device, maxSquares);
+			g_EffekseerRenderer = EffekseerPlugin::CreateRendererDX9( maxSquares );
 			break;
 		case kUnityGfxRendererD3D11:
-			g_EffekseerRenderer = EffekseerRendererDX11::Renderer::Create(g_D3d11Device, g_D3d11Context, maxSquares);
+			g_EffekseerRenderer = EffekseerPlugin::CreateRendererDX11( maxSquares );
 			break;
 		default:
 			return;

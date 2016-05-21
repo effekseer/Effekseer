@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 namespace Effekseer
 {
 	[Serializable]
-	class TextureResource
+	internal class TextureResource
 	{
 		public string Path = "";
 		public Texture2D Texture;
@@ -32,7 +32,7 @@ namespace Effekseer
 		}
 	}
 	[Serializable]
-	class ModelResource
+	internal class ModelResource
 	{
 		public string Path = "";
 		public TextAsset ModelData;
@@ -58,7 +58,7 @@ namespace Effekseer
 		}
 	}
 	[Serializable]
-	class SoundResource
+	internal class SoundResource
 	{
 		public string Path = "";
 		public AudioClip Audio;
@@ -77,7 +77,7 @@ namespace Effekseer
 		}
 	}
 
-	public static class Utility
+	internal static class Utility
 	{
 		public static float[] Matrix2Array(Matrix4x4 mat) {
 			float[] res = new float[16];
@@ -103,7 +103,7 @@ namespace Effekseer
 		}
 	}
 	
-	public static class Plugin
+	internal static class Plugin
 	{
 		#if UNITY_IPHONE
 			public const string pluginName = "__Internal";
@@ -146,6 +146,9 @@ namespace Effekseer
 	
 		[DllImport(pluginName)]
 		public static extern void EffekseerStopEffect(int handle);
+	
+		[DllImport(pluginName)]
+		public static extern void EffekseerStopRoot(int handle);
 	
 		[DllImport(pluginName)]
 		public static extern void EffekseerStopAllEffects();

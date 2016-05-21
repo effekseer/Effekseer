@@ -9,7 +9,7 @@ using namespace EffekseerPlugin;
 
 namespace EffekseerPlugin
 {
-	RenderSettings renderSettings[MAX_RENDER_PATH] = {};
+	RenderSettings renderSettings[MAX_RENDER_PATH] = {{}};
 
 	void Array2Matrix(Matrix44& matrix, float matrixArray[])
 	{
@@ -93,6 +93,16 @@ extern "C"
 		}
 
 		g_EffekseerManager->StopEffect(handle);
+	}
+	
+	// エフェクトのルートだけを停止
+	DLLEXPORT void UNITY_API EffekseerStopRoot(int handle)
+	{
+		if (g_EffekseerManager == NULL) {
+			return;
+		}
+
+		g_EffekseerManager->StopRoot(handle);
 	}
 	
 	// 全てのエフェクト再生
