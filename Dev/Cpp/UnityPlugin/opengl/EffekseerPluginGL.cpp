@@ -14,7 +14,7 @@ namespace EffekseerPlugin
 	UnityGfxRenderer		g_UnityRendererType = kUnityGfxRendererNull;
 
 	Effekseer::Manager*				g_EffekseerManager = NULL;
-	EffekseerRenderer::Renderer*	g_EffekseerRenderer = NULL;
+	EffekseerRendererGL::Renderer*	g_EffekseerRenderer = NULL;
 
 	void UNITY_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType eventType)
 	{
@@ -31,6 +31,80 @@ namespace EffekseerPlugin
 			break;
 		}
 	}
+	
+	class DistortingCallback : public EffekseerRenderer::DistortingCallback
+	{
+		GLuint backGroundTexture = 0;
+		uint32_t backGroundTextureWidth = 0;
+		uint32_t backGroundTextureHeight = 0;
+		GLuint backGroundTextureInternalFormat = 0;
+		
+	public:
+		DistortingCallback() {
+			glGenTextures( 1, &backGroundTexture );
+		}
+		
+		virtual ~DistortingCallback()
+		{
+			ReleaseTexture();
+		}
+		
+		void ReleaseTexture()
+		{
+			glDeleteTextures( 1, &backGroundTexture );
+		}
+		
+		// コピー先のテクスチャを準備
+		void PrepareTexture( uint32_t width, uint32_t height, GLint internalFormat )
+		{
+			ReleaseTexture();
+			
+			backGroundTextureWidth = width;
+			backGroundTextureHeight = height;
+			backGroundTextureInternalFormat = internalFormat;
+			
+			GLenum format, type;
+			switch (internalFormat) {
+				case GL_RGBA8:
+					format = GL_RGBA;
+					type = GL_UNSIGNED_BYTE;
+					break;
+				case GL_RGBA16F:
+					format = GL_RGBA;
+					type = GL_UNSIGNED_SHORT;
+					break;
+				default:
+					return;
+			}
+			glBindTexture( GL_TEXTURE_2D, backGroundTexture );
+			glTexImage2D( GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, 0 );
+		}
+		
+		virtual void OnDistorting()
+		{
+			uint32_t width;
+			uint32_t height;
+			GLint internalFormat;
+			
+			glGetRenderbufferParameteriv( GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, (GLint*)&width );
+			glGetRenderbufferParameteriv( GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, (GLint*)&height );
+			glGetRenderbufferParameteriv( GL_RENDERBUFFER, GL_RENDERBUFFER_INTERNAL_FORMAT, &internalFormat);
+			
+			if( backGroundTexture == 0 ||
+			   backGroundTextureWidth != width ||
+			   backGroundTextureHeight != height ||
+			   backGroundTextureInternalFormat != internalFormat )
+			{
+				PrepareTexture( width, height, internalFormat );
+			}
+			
+			glBindTexture( GL_TEXTURE_2D, backGroundTexture );
+			glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height );
+			glBindTexture( GL_TEXTURE_2D, 0 );
+			
+			g_EffekseerRenderer->SetBackground( backGroundTexture );
+		}
+	};
 }
 
 extern "C"
@@ -82,6 +156,7 @@ extern "C"
 		g_EffekseerManager = Effekseer::Manager::Create(maxInstances);
 
 		g_EffekseerRenderer = EffekseerRendererGL::Renderer::Create(maxSquares);
+		g_EffekseerRenderer->SetDistortingCallback(new DistortingCallback());
 		g_EffekseerManager->SetSpriteRenderer(g_EffekseerRenderer->CreateSpriteRenderer());
 		g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
 		g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
