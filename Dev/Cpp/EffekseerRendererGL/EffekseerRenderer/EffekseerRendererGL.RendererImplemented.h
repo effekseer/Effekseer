@@ -250,6 +250,7 @@ struct RenderStateSet
 	GLboolean	depthWrite;
 	GLboolean	texture;
 	GLint		depthFunc;
+	GLint		cullFaceMode;
 	GLint		blendSrc;
 	GLint		blendDst;
 	GLint		blendEquation;

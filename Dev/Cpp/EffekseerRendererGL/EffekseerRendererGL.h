@@ -35,6 +35,15 @@
 #include <GLES2/gl2ext.h>
 #endif
 
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+
+#if defined(__APPLE__)
+#include <OpenGLES/ES3/gl.h>
+#else
+#define GL_GLEXT_PROTOTYPES
+#include <GLES3/gl3.h>
+#endif
+
 #else
 
 #if defined(__APPLE__)

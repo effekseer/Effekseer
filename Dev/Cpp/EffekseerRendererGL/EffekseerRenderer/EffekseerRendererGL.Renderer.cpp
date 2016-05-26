@@ -31,44 +31,11 @@
 namespace EffekseerRendererGL
 {
 
-	//-----------------------------------------------------------------------------------
-	//
-	//-----------------------------------------------------------------------------------
-	static const char g_sprite_vs_src [] =
-#if  defined(__EFFEKSEER_RENDERER_GL3__) 
-R"(
-#version 330
-#define lowp
-#define mediump
-#define highp
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#version 300 es
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
-#else
-		R"(
-#version 110
-#define lowp
-#define mediump
-#define highp
-)"
-#endif
-
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#define IN in
-#define OUT out
-)"
-#else
-R"(
-#define IN attribute
-#define OUT varying
-)"
-#endif
-
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+static const char g_sprite_vs_src [] =
+	EFFEKSEER_VERTEX_SHADER_HEADER
 
 R"(
 IN vec4 atPosition;
@@ -112,54 +79,8 @@ void main() {
 
 )";
 
-	static const char g_sprite_fs_texture_src[] =
-#if  defined(__EFFEKSEER_RENDERER_GL3__) 
-		R"(
-#version 330
-#define lowp
-#define mediump
-#define highp
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES3__)
-		R"(
-#version 300 es
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
-		R"(
-precision mediump float;
-)"
-#else
-		R"(
-#version 110
-#define lowp
-#define mediump
-#define highp
-)"
-#endif
-
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-layout (location = 0) out vec4 FRAGCOLOR;
-)"
-#else
-R"(
-#define FRAGCOLOR gl_FragColor
-)"
-#endif
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#define IN in
-#define TEX2D texture
-)"
-#else
-R"(
-#define IN varying
-#define TEX2D texture2D
-)"
-#endif
-
+static const char g_sprite_fs_texture_src[] =
+	EFFEKSEER_FRAGMENT_SHADER_HEADER
 "IN lowp vec4 vaColor;\n"
 "IN mediump vec4 vaTexCoord;\n"
 
@@ -169,52 +90,8 @@ R"(
 "FRAGCOLOR = vaColor * TEX2D(uTexture0, vaTexCoord.xy);\n"
 "}\n";
 
-	static const char g_sprite_fs_no_texture_src[] =
-#if  defined(__EFFEKSEER_RENDERER_GL3__) 
-		R"(
-#version 330
-#define lowp
-#define mediump
-#define highp
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES3__)
-		R"(
-#version 300 es
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
-		R"(
-precision mediump float;
-)"
-#else
-		R"(
-#version 110
-#define lowp
-#define mediump
-#define highp
-)"
-#endif
-
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-layout (location = 0) out vec4 FRAGCOLOR;
-)"
-#else
-R"(
-#define FRAGCOLOR gl_FragColor
-)"
-#endif
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#define IN in
-)"
-#else
-R"(
-#define IN varying
-)"
-#endif
-
+static const char g_sprite_fs_no_texture_src[] =
+	EFFEKSEER_FRAGMENT_SHADER_HEADER
 "IN lowp vec4 vaColor;\n"
 "IN mediump vec4 vaTexCoord;\n"
 
@@ -223,43 +100,9 @@ R"(
 "}\n";
 
 
-	static const char g_sprite_distortion_vs_src [] =
-#if  defined(__EFFEKSEER_RENDERER_GL3__) 
-		R"(
-#version 330
-#define lowp
-#define mediump
-#define highp
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES3__)
-		R"(
-#version 300 es
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
-#else
-		R"(
-#version 110
-#define lowp
-#define mediump
-#define highp
-)"
-#endif
-
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+static const char g_sprite_distortion_vs_src [] =
+	EFFEKSEER_VERTEX_SHADER_HEADER
 R"(
-#define IN in
-#define OUT out
-)"
-#else
-R"(
-#define IN attribute
-#define OUT varying
-)"
-#endif
-
-
-		R"(
 IN vec4 atPosition;
 IN vec4 atColor;
 IN vec4 atTexCoord;
@@ -313,56 +156,9 @@ void main() {
 
 )";
 
-	static const char g_sprite_fs_texture_distortion_src [] =
-#if  defined(__EFFEKSEER_RENDERER_GL3__) 
-		R"(
-#version 330
-#define lowp
-#define mediump
-#define highp
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES3__)
-		R"(
-#version 300 es
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
-		R"(
-precision mediump float;
-)"
-#else
-		R"(
-#version 110
-#define lowp
-#define mediump
-#define highp
-)"
-#endif
-
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+static const char g_sprite_fs_texture_distortion_src [] =
+	EFFEKSEER_FRAGMENT_SHADER_HEADER
 R"(
-layout (location = 0) out vec4 FRAGCOLOR;
-)"
-#else
-R"(
-#define FRAGCOLOR gl_FragColor
-)"
-#endif
-
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#define IN in
-#define TEX2D texture
-)"
-#else
-R"(
-#define IN varying
-#define TEX2D texture2D
-)"
-#endif
-
-		R"(
 IN lowp vec4 vaColor;
 IN mediump vec4 vaTexCoord;
 IN mediump vec4 vaPos;
@@ -379,74 +175,26 @@ uniform	vec4	g_scale;
 
 R"(
 void main() {
-	vec4 output = TEX2D(uTexture0, vaTexCoord.xy);
-	output.w = output.w * vaColor.w;
+	vec4 color = TEX2D(uTexture0, vaTexCoord.xy);
+	color.w = color.w * vaColor.w;
 
 	vec2 pos = vaPos.xy / vaPos.w;
 	vec2 posU = vaPosU.xy / vaPosU.w;
 	vec2 posR = vaPosR.xy / vaPosR.w;
 
-	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) * vaColor.x * g_scale.x + (posU - pos) * (output.y * 2.0 - 1.0) * vaColor.y * g_scale.x;
+	vec2 uv = pos + (posR - pos) * (color.x * 2.0 - 1.0) * vaColor.x * g_scale.x + (posU - pos) * (color.y * 2.0 - 1.0) * vaColor.y * g_scale.x;
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
-	vec3 color = TEX2D(uBackTexture0, uv).xyz;
-	output.xyz = color;
-
-	FRAGCOLOR = output;
+	color.xyz = TEX2D(uBackTexture0, uv).xyz;
+	
+	FRAGCOLOR = color;
 }
 )";
 
-	static const char g_sprite_fs_no_texture_distortion_src [] =
-#if  defined(__EFFEKSEER_RENDERER_GL3__) 
-		R"(
-#version 330
-#define lowp
-#define mediump
-#define highp
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES3__)
-		R"(
-#version 300 es
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
-		R"(
-precision mediump float;
-)"
-#else
-		R"(
-#version 110
-#define lowp
-#define mediump
-#define highp
-)"
-#endif
-
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+static const char g_sprite_fs_no_texture_distortion_src [] =
+	EFFEKSEER_FRAGMENT_SHADER_HEADER
 R"(
-layout (location = 0) out vec4 FRAGCOLOR;
-)"
-#else
-R"(
-#define FRAGCOLOR gl_FragColor
-)"
-#endif
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#define IN in
-#define TEX2D texture
-)"
-#else
-R"(
-#define IN varying
-#define TEX2D texture2D
-)"
-#endif
-
-
-		R"(
 IN lowp vec4 vaColor;
 IN mediump vec4 vaTexCoord;
 IN mediump vec4 vaPos;
@@ -463,21 +211,20 @@ uniform	vec4	g_scale;
 
 R"(
 void main() {
-	vec4 output = vaColor;
-	output.xyz = vec3(1.0,1.0,1.0);
+	vec4 color = vaColor;
+	color.xyz = vec3(1.0,1.0,1.0);
 
 	vec2 pos = vaPos.xy / vaPos.w;
 	vec2 posU = vaPosU.xy / vaPosU.w;
 	vec2 posR = vaPosR.xy / vaPosR.w;
 
-	vec2 uv = pos + (posR - pos) * (output.x * 2.0 - 1.0) * vaColor.x * g_scale.x + (posU - pos) * (output.y * 2.0 - 1.0) * vaColor.y * g_scale.x;
+	vec2 uv = pos + (posR - pos) * (color.x * 2.0 - 1.0) * vaColor.x * g_scale.x + (posU - pos) * (color.y * 2.0 - 1.0) * vaColor.y * g_scale.x;
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
-	vec3 color = TEX2D(uBackTexture0, uv).xyz;
-	output.xyz = color;
-
-	FRAGCOLOR = output;
+	color.xyz = TEX2D(uBackTexture0, uv).xyz;
+	
+	FRAGCOLOR = color;
 }
 )";
 
@@ -658,14 +405,18 @@ bool RendererImplemented::Initialize()
 	m_renderState = new RenderState( this );
 
 	m_shader = Shader::Create(this,
-		g_sprite_vs_src, strlen(g_sprite_vs_src), g_sprite_fs_texture_src, strlen(g_sprite_fs_texture_src), "SpriteRenderer");
+		g_sprite_vs_src, sizeof(g_sprite_vs_src), 
+		g_sprite_fs_texture_src, sizeof(g_sprite_fs_texture_src), 
+		"Standard Tex");
 	if (m_shader == nullptr) return false;
 
 	// 参照カウントの調整
 	Release();
 
 	m_shader_no_texture = Shader::Create(this,
-		g_sprite_vs_src, strlen(g_sprite_vs_src), g_sprite_fs_no_texture_src, strlen(g_sprite_fs_no_texture_src), "SpriteRenderer");
+		g_sprite_vs_src, sizeof(g_sprite_vs_src), 
+		g_sprite_fs_no_texture_src, sizeof(g_sprite_fs_no_texture_src), 
+		"Standard NoTex");
 	if (m_shader_no_texture == nullptr)
 	{
 		return false;
@@ -675,14 +426,18 @@ bool RendererImplemented::Initialize()
 	Release();
 
 	m_shader_distortion = Shader::Create(this,
-		g_sprite_distortion_vs_src, strlen(g_sprite_distortion_vs_src), g_sprite_fs_texture_distortion_src, strlen(g_sprite_fs_texture_distortion_src), "SpriteRenderer");
+		g_sprite_distortion_vs_src, sizeof(g_sprite_distortion_vs_src), 
+		g_sprite_fs_texture_distortion_src, sizeof(g_sprite_fs_texture_distortion_src), 
+		"Standard Distortion Tex");
 	if (m_shader_distortion == nullptr) return false;
 
 	// 参照カウントの調整
 	Release();
 
 	m_shader_no_texture_distortion = Shader::Create(this,
-		g_sprite_distortion_vs_src, strlen(g_sprite_distortion_vs_src), g_sprite_fs_no_texture_distortion_src, strlen(g_sprite_fs_no_texture_distortion_src), "SpriteRenderer");
+		g_sprite_distortion_vs_src, sizeof(g_sprite_distortion_vs_src), 
+		g_sprite_fs_no_texture_distortion_src, sizeof(g_sprite_fs_no_texture_distortion_src), 
+		"Standard Distortion NoTex");
 	if (m_shader_no_texture_distortion == nullptr)
 	{
 		return false;
@@ -870,6 +625,7 @@ bool RendererImplemented::BeginRendering()
 		m_originalState.texture = glIsEnabled(GL_TEXTURE_2D);
 		glGetBooleanv(GL_DEPTH_WRITEMASK, &m_originalState.depthWrite);
 		glGetIntegerv(GL_DEPTH_FUNC, &m_originalState.depthFunc);
+		glGetIntegerv(GL_CULL_FACE_MODE, &m_originalState.cullFaceMode);
 		glGetIntegerv(GL_BLEND_SRC_RGB, &m_originalState.blendSrc);
 		glGetIntegerv(GL_BLEND_DST_RGB, &m_originalState.blendDst);
 		glGetIntegerv(GL_BLEND_EQUATION, &m_originalState.blendEquation);
@@ -907,15 +663,23 @@ bool RendererImplemented::EndRendering()
 		if (m_originalState.blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
 		if (m_originalState.cullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
 		if (m_originalState.depthTest) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
-
-#if !defined(__EFFEKSEER_RENDERER_GL3__)
+		
+#if !defined(__EFFEKSEER_RENDERER_GL3__) && !defined(__EFFEKSEER_RENDERER_GLES3__)
 		if (m_originalState.texture) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
 #endif
 		
 		glDepthFunc(m_originalState.depthFunc);
 		glDepthMask(m_originalState.depthWrite);
+		glCullFace(m_originalState.cullFaceMode);
 		glBlendFunc(m_originalState.blendSrc, m_originalState.blendDst);
 		GLExt::glBlendEquation(m_originalState.blendEquation);
+
+#if defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+		for( int32_t i = 0; i < 4; i++ )
+		{
+			GLExt::glBindSampler(i, 0);
+		}
+#endif
 	}
 
 	GLCheckError();
