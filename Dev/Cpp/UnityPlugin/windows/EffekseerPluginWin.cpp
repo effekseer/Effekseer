@@ -3,13 +3,19 @@
 #include <assert.h>
 #include <windows.h>
 #include <shlwapi.h>
+
 #include "Effekseer.h"
+
+#include "EffekseerRendererGL.h"
 #include "EffekseerRendererDX9.h"
 #include "EffekseerRendererDX11.h"
+
 #include "../common/EffekseerPluginCommon.h"
 #include "../common/IUnityGraphics.h"
 #include "../common/IUnityGraphicsD3D9.h"
 #include "../common/IUnityGraphicsD3D11.h"
+
+#include "../opengl/EffekseerPluginGL.h"
 
 #pragma comment(lib, "shlwapi.lib")
 
@@ -61,6 +67,18 @@ namespace EffekseerPlugin
 		}
 	}
 
+	void OnGraphicsDeviceEventOpenGL(UnityGfxDeviceEventType eventType)
+	{
+		switch (eventType) {
+		case kUnityGfxDeviceEventInitialize:
+			g_UnityRendererType = g_UnityGraphics->GetRenderer();
+			break;
+		case kUnityGfxDeviceEventShutdown:
+			g_UnityRendererType = kUnityGfxRendererNull;
+			break;
+		}
+	}
+
 	void UNITY_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType eventType)
 	{
 		switch (eventType) {
@@ -83,11 +101,23 @@ namespace EffekseerPlugin
 		case kUnityGfxRendererD3D11:
 			OnGraphicsDeviceEventD3D11(eventType);
 			break;
+		case kUnityGfxRendererOpenGL:
+			OnGraphicsDeviceEventOpenGL(eventType);
+			break;
 		default:
 			break;
 		}
 	}
 	
+	// DirectX9‚ÌEffekseerƒŒƒ“ƒ_ƒ‰‚ğì¬
+	EffekseerRenderer::Renderer* CreateRendererOpenGL(int squareMaxCount)
+	{
+		auto renderer = EffekseerRendererGL::Renderer::Create(squareMaxCount);
+		renderer->SetDistortingCallback(new DistortingCallbackGL(renderer));
+		return renderer;
+	}
+
+
 	// DirectX9‚ÌEffekseerƒŒƒ“ƒ_ƒ‰‚ğì¬
 	EffekseerRenderer::Renderer* CreateRendererDX9(int squareMaxCount)
 	{
@@ -337,6 +367,9 @@ extern "C"
 			break;
 		case kUnityGfxRendererD3D11:
 			g_EffekseerRenderer = EffekseerPlugin::CreateRendererDX11( maxSquares );
+			break;
+		case kUnityGfxRendererOpenGL:
+			g_EffekseerRenderer = EffekseerPlugin::CreateRendererOpenGL(maxSquares);
 			break;
 		default:
 			return;

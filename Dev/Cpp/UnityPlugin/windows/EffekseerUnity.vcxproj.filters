@@ -16,6 +16,12 @@
     <ClCompile Include="..\common\EffekseerPluginModel.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\opengl\EffekseerPluginLoaderGL.cpp">
+      <Filter>opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\opengl\EffekseerPluginGL.cpp">
+      <Filter>opengl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="common">
@@ -23,6 +29,9 @@
     </Filter>
     <Filter Include="windows">
       <UniqueIdentifier>{b9878b58-31ae-47b0-a182-5ee813e5e702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="opengl">
+      <UniqueIdentifier>{b1942cf8-d895-48b7-8ab9-e05dfd8f39f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +49,12 @@
     </ClInclude>
     <ClInclude Include="..\common\EffekseerPluginTexture.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\opengl\EffekseerPluginLoaderGL.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\opengl\EffekseerPluginGL.h">
+      <Filter>opengl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

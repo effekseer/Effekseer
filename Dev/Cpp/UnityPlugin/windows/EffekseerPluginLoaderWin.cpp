@@ -6,12 +6,16 @@
 
 #pragma warning (disable : 4005)
 #include "Effekseer.h"
+
+#include "EffekseerRendererGL.h"
 #include "EffekseerRendererDX9.h"
 #include "EffekseerRendererDX11.h"
 
 #include "../common/IUnityGraphics.h"
 #include "../common/EffekseerPluginTexture.h"
 #include "../common/EffekseerPluginModel.h"
+
+#include "../opengl/EffekseerPluginLoaderGL.h"
 
 using namespace Effekseer;
 
