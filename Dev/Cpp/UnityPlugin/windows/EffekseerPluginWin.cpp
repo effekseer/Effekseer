@@ -101,7 +101,7 @@ namespace EffekseerPlugin
 		case kUnityGfxRendererD3D11:
 			OnGraphicsDeviceEventD3D11(eventType);
 			break;
-		case kUnityGfxRendererOpenGL:
+		case kUnityGfxRendererOpenGLCore:
 			OnGraphicsDeviceEventOpenGL(eventType);
 			break;
 		default:
@@ -368,7 +368,7 @@ extern "C"
 		case kUnityGfxRendererD3D11:
 			g_EffekseerRenderer = EffekseerPlugin::CreateRendererDX11( maxSquares );
 			break;
-		case kUnityGfxRendererOpenGL:
+		case kUnityGfxRendererOpenGLCore:
 			g_EffekseerRenderer = EffekseerPlugin::CreateRendererOpenGL(maxSquares);
 			break;
 		default:
