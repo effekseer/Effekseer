@@ -714,6 +714,56 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+void RendererImplemented::SetSquareMaxCount(int32_t count)
+{
+	if (m_squareMaxCount == count) return;
+	m_squareMaxCount = count;
+
+	if (m_vertexBuffer != nullptr) AddRef();
+	if (m_indexBuffer != nullptr) AddRef();
+	ES_SAFE_DELETE(m_vertexBuffer);
+	ES_SAFE_DELETE(m_indexBuffer);
+
+	// 頂点の生成
+	{
+		// 最大でfloat * 10 と仮定
+		m_vertexBuffer = VertexBuffer::Create(this, sizeof(Vertex) * m_squareMaxCount * 4, true);
+		if (m_vertexBuffer == NULL) return;
+	}
+
+	// 参照カウントの調整
+	Release();
+
+
+	// インデックスの生成
+	{
+		m_indexBuffer = IndexBuffer::Create(this, m_squareMaxCount * 6, false);
+		if (m_indexBuffer == NULL) return;
+
+		m_indexBuffer->Lock();
+
+		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
+		for (int i = 0; i < m_squareMaxCount; i++)
+		{
+			uint16_t* buf = (uint16_t*) m_indexBuffer->GetBufferDirect(6);
+			buf[0] = (uint16_t) (3 + 4 * i);
+			buf[1] = (uint16_t) (1 + 4 * i);
+			buf[2] = (uint16_t) (0 + 4 * i);
+			buf[3] = (uint16_t) (3 + 4 * i);
+			buf[4] = (uint16_t) (0 + 4 * i);
+			buf[5] = (uint16_t) (2 + 4 * i);
+		}
+
+		m_indexBuffer->Unlock();
+	}
+
+	// 参照カウントの調整
+	Release();
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 ::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState()
 {
 	return m_renderState;

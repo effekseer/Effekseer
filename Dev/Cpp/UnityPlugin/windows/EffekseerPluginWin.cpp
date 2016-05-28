@@ -24,6 +24,9 @@ using namespace EffekseerPlugin;
 
 namespace EffekseerPlugin
 {
+	int32_t	g_maxInstances = 0;
+	int32_t	g_maxSquares = 0;
+
 	IUnityInterfaces*		g_UnityInterfaces = NULL;
 	IUnityGraphics*			g_UnityGraphics = NULL;
 	UnityGfxRenderer		g_UnityRendererType = kUnityGfxRendererNull;
@@ -33,6 +36,17 @@ namespace EffekseerPlugin
 
 	Effekseer::Manager*				g_EffekseerManager = NULL;
 	EffekseerRenderer::Renderer*	g_EffekseerRenderer = NULL;
+
+	// OpenGLモード(contextの問題で処理フローが変化する)
+	bool					g_isOpenGLMode = false;
+	bool					g_isOpenGLInitialized = false;
+
+	EffekseerRenderer::Renderer* CreateRendererOpenGL(int squareMaxCount)
+	{
+		auto renderer = EffekseerRendererGL::Renderer::Create(squareMaxCount);
+		renderer->SetDistortingCallback(new DistortingCallbackGL(renderer));
+		return renderer;
+	}
 
 	void OnGraphicsDeviceEventD3D9(UnityGfxDeviceEventType eventType)
 	{
@@ -69,12 +83,24 @@ namespace EffekseerPlugin
 
 	void OnGraphicsDeviceEventOpenGL(UnityGfxDeviceEventType eventType)
 	{
-		switch (eventType) {
+		switch (eventType)
+		{
 		case kUnityGfxDeviceEventInitialize:
 			g_UnityRendererType = g_UnityGraphics->GetRenderer();
+			g_isOpenGLMode = true;
+			g_isOpenGLInitialized = false;
+			g_EffekseerRenderer = EffekseerPlugin::CreateRendererOpenGL(200);
 			break;
 		case kUnityGfxDeviceEventShutdown:
 			g_UnityRendererType = kUnityGfxRendererNull;
+
+			if (g_EffekseerRenderer != NULL)
+			{
+				g_EffekseerRenderer->Destory();
+				g_EffekseerRenderer = NULL;
+			}
+			g_isOpenGLMode = false;
+			g_isOpenGLInitialized = false;
 			break;
 		}
 	}
@@ -94,7 +120,8 @@ namespace EffekseerPlugin
 			break;
 		}
 
-		switch (g_UnityRendererType) {
+		switch (g_UnityRendererType)
+		{
 		case kUnityGfxRendererD3D9:
 			OnGraphicsDeviceEventD3D9(eventType);
 			break;
@@ -109,15 +136,6 @@ namespace EffekseerPlugin
 		}
 	}
 	
-	// DirectX9のEffekseerレンダラを作成
-	EffekseerRenderer::Renderer* CreateRendererOpenGL(int squareMaxCount)
-	{
-		auto renderer = EffekseerRendererGL::Renderer::Create(squareMaxCount);
-		renderer->SetDistortingCallback(new DistortingCallbackGL(renderer));
-		return renderer;
-	}
-
-
 	// DirectX9のEffekseerレンダラを作成
 	EffekseerRenderer::Renderer* CreateRendererDX9(int squareMaxCount)
 	{
@@ -336,10 +354,26 @@ extern "C"
 	{
 		if (g_EffekseerManager == NULL) return;
 		if (g_EffekseerRenderer == NULL) return;
-		
+
+		// 遅延処理
+		if (g_isOpenGLMode && !g_isOpenGLInitialized)
+		{
+			auto rendererOpenGL = (EffekseerRendererGL::Renderer*)g_EffekseerRenderer;
+			rendererOpenGL->SetSquareMaxCount(g_maxSquares);
+
+			g_EffekseerRenderer->SetDistortingCallback(new DistortingCallbackGL(rendererOpenGL));
+			g_EffekseerManager->SetSpriteRenderer(g_EffekseerRenderer->CreateSpriteRenderer());
+			g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
+			g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
+			g_EffekseerManager->SetModelRenderer(g_EffekseerRenderer->CreateModelRenderer());
+
+			g_isOpenGLInitialized = true;
+		}
+
 		const RenderSettings& settings = renderSettings[renderId];
 		Effekseer::Matrix44 projectionMatrix = settings.projectionMatrix;
-		if (settings.renderIntoTexture) {
+		if (settings.renderIntoTexture && !g_isOpenGLMode)
+		{
 			// テクスチャに対してレンダリングするときは上下反転させる
 			projectionMatrix.Values[1][1] = -projectionMatrix.Values[1][1];
 		}
@@ -361,6 +395,9 @@ extern "C"
 
 	DLLEXPORT void UNITY_API EffekseerInit(int maxInstances, int maxSquares)
 	{
+		g_maxInstances = maxInstances;
+		g_maxSquares = maxSquares;
+
 		switch (g_UnityRendererType) {
 		case kUnityGfxRendererD3D9:
 			g_EffekseerRenderer = EffekseerPlugin::CreateRendererDX9( maxSquares );
@@ -369,17 +406,21 @@ extern "C"
 			g_EffekseerRenderer = EffekseerPlugin::CreateRendererDX11( maxSquares );
 			break;
 		case kUnityGfxRendererOpenGLCore:
-			g_EffekseerRenderer = EffekseerPlugin::CreateRendererOpenGL(maxSquares);
+			assert(g_EffekseerRenderer != nullptr);
 			break;
 		default:
 			return;
 		}
 
 		g_EffekseerManager = Effekseer::Manager::Create(maxInstances);
-		g_EffekseerManager->SetSpriteRenderer(g_EffekseerRenderer->CreateSpriteRenderer());
-		g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
-		g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
-		g_EffekseerManager->SetModelRenderer(g_EffekseerRenderer->CreateModelRenderer());
+
+		if (!g_isOpenGLMode)
+		{
+			g_EffekseerManager->SetSpriteRenderer(g_EffekseerRenderer->CreateSpriteRenderer());
+			g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
+			g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
+			g_EffekseerManager->SetModelRenderer(g_EffekseerRenderer->CreateModelRenderer());
+		}
 	}
 
 	DLLEXPORT void UNITY_API EffekseerTerm()
@@ -389,9 +430,13 @@ extern "C"
 			g_EffekseerManager = NULL;
 		}
 
-		if (g_EffekseerRenderer != NULL) {
-			g_EffekseerRenderer->Destory();
-			g_EffekseerRenderer = NULL;
+		if (!g_isOpenGLMode)
+		{
+			if (g_EffekseerRenderer != NULL)
+			{
+				g_EffekseerRenderer->Destory();
+				g_EffekseerRenderer = NULL;
+			}
 		}
 	}
 }

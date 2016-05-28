@@ -374,6 +374,8 @@ public:
 	*/
 	int32_t GetSquareMaxCount() const;
 
+	void SetSquareMaxCount(int32_t count) override;
+
 	::EffekseerRenderer::RenderStateBase* GetRenderState();
 	
 	/**
