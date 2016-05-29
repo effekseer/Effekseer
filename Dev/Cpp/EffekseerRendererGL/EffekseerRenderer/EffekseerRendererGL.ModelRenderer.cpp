@@ -248,7 +248,8 @@ void main() {
 	vec2 uv = pos + (posR - pos) * xscale + (posU - pos) * yscale;
 
 	uv.x = (uv.x + 1.0) * 0.5;
-	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
+	uv.y = (uv.y + 1.0) * 0.5;
+//	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
 	vec3 color = TEX2D(uBackTexture0, uv).xyz;
 	FRAGCOLOR.xyz = color;
