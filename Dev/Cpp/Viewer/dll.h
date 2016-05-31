@@ -85,6 +85,13 @@ public:
 	ViewerEffectBehavior();
 };
 
+enum class TransparenceType
+{
+	None = 0,
+	Original = 1,
+	Generate = 2,
+};
+
 class Native
 {
 private:
@@ -187,11 +194,11 @@ public:
 
 	bool SetRandomSeed( int seed );
 
-	bool Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, bool isTranslucent);
+	bool Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
 
-	bool Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, bool isTranslucent);
+	bool Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
 
-	bool RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, bool isTranslucent);
+	bool RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
 
 	ViewerParamater GetViewerParamater();
 

@@ -80,23 +80,23 @@ namespace Effekseer
 			return native.SetRandomSeed(seed);
 		}
 
-		public bool Record(string path, int count, int offsetFrame, int freq, bool isTranslucent)
+		public bool Record(string path, int count, int offsetFrame, int freq, TransparenceType transparenceType)
 		{
 			var dir = System.IO.Path.GetDirectoryName(path);
 			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
 			var ext = System.IO.Path.GetExtension(path);
 
-			return native.Record(dir + "/" + fileWExt, ext, count, offsetFrame, freq, isTranslucent);
+			return native.Record(dir + "/" + fileWExt, ext, count, offsetFrame, freq, transparenceType);
 		}
 
-		public bool Record(string path, int count, int xCount, int offsetFrame, int freq, bool isTranslucent)
+		public bool Record(string path, int count, int xCount, int offsetFrame, int freq, TransparenceType transparenceType)
 		{
-			return native.Record(path, count, xCount, offsetFrame, freq, isTranslucent);
+			return native.Record(path, count, xCount, offsetFrame, freq, transparenceType);
 		}
 
-		public bool RecordAsGifAnimation(string path, int count, int offsetFrame, int freq, bool isTranslucent)
+		public bool RecordAsGifAnimation(string path, int count, int offsetFrame, int freq, TransparenceType transparenceType)
 		{
-			return native.RecordAsGifAnimation(path, count, offsetFrame, freq, isTranslucent);
+			return native.RecordAsGifAnimation(path, count, offsetFrame, freq, transparenceType);
 		}
 
 		public ViewerParamater GetViewerParamater()

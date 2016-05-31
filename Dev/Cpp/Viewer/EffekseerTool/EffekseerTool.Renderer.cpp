@@ -644,7 +644,7 @@ bool Renderer::BeginRecord( int32_t width, int32_t height )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels)
+void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlpha)
 {
 	assert(m_recording);
 
@@ -674,14 +674,55 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels)
 	auto hr = temp_sur->LockRect(&drect, &rect, D3DLOCK_READONLY);
 	if (SUCCEEDED(hr))
 	{
+		auto f2b = [](float v) -> uint8_t
+		{
+			auto v_ = v * 255;
+			if (v_ > 255) v_ = 255;
+			if (v_ < 0) v_ = 0;
+			return v_;
+		};
+
+		auto b2f = [](uint8_t v) -> float
+		{
+			auto v_ = (float)v / 255.0f;
+			return v_;
+		};
+
+		// ã≠êßìßñæâª
 		for (int32_t y = 0; y < m_recordingHeight; y++)
 		{
 			for (int32_t x = 0; x < m_recordingWidth; x++)
 			{
 				auto src = &(((uint8_t*) drect.pBits)[x * 4 + drect.Pitch * y]);
+				pixels[x + m_recordingWidth * y].A = src[3];
 				pixels[x + m_recordingWidth * y].R = src[2];
 				pixels[x + m_recordingWidth * y].G = src[1];
 				pixels[x + m_recordingWidth * y].B = src[0];
+				
+				if (generateAlpha)
+				{
+					auto rf = b2f(pixels[x + m_recordingWidth * y].R);
+					auto gf = b2f(pixels[x + m_recordingWidth * y].G);
+					auto bf = b2f(pixels[x + m_recordingWidth * y].B);
+					auto oaf = b2f(pixels[x + m_recordingWidth * y].A);
+
+					rf = rf * oaf;
+					gf = gf * oaf;
+					bf = bf * oaf;
+
+					auto af = rf;
+					af = Effekseer::Max(af, gf);
+					af = Effekseer::Max(af, bf);
+
+					if (af > 0.0f)
+					{
+						pixels[x + m_recordingWidth * y].R = f2b(rf / af);
+						pixels[x + m_recordingWidth * y].G = f2b(gf / af);
+						pixels[x + m_recordingWidth * y].B = f2b(bf / af);
+					}
+
+					pixels[x + m_recordingWidth * y].A = f2b(af);
+				}
 			}
 		}
 

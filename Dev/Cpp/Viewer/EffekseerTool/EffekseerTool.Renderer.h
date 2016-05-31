@@ -231,7 +231,7 @@ public:
 	/**
 	@brief	˜^‰æI—¹
 	*/
-	void EndRecord(std::vector<Effekseer::Color>& pixels);
+	void EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlpha);
 
 	/**
 		@brief	”wŒi‚Ì“Ç‚İ‚İ

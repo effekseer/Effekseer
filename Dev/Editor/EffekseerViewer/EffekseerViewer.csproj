@@ -48,6 +48,7 @@
     <Compile Include="EffekseerNativePINVOKE.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TransparenceType.cs" />
     <Compile Include="Viewer.cs" />
     <Compile Include="ViewerEffectBehavior.cs" />
     <Compile Include="ViewerParamater.cs" />
