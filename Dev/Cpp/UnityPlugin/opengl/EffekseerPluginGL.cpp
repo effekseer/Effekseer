@@ -117,6 +117,7 @@ namespace EffekseerPlugin
 	{
 		this->renderer = renderer;
 		glGenTextures( 1, &backGroundTexture );
+		glGenFramebuffers( 1, &framebufferForCopy );
 	}
 		
 	DistortingCallbackGL::~DistortingCallbackGL()
@@ -126,7 +127,18 @@ namespace EffekseerPlugin
 		
 	void DistortingCallbackGL::ReleaseTexture()
 	{
+		glDeleteFramebuffers( 1, &framebufferForCopy );
 		glDeleteTextures( 1, &backGroundTexture );
+	}
+	
+	void DistortingCallbackGL::PrepareTexture( uint32_t width, uint32_t height, GLint internalFormat )
+	{
+		glBindTexture( GL_TEXTURE_2D, backGroundTexture );
+		glTexImage2D( GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 );
+		
+		backGroundTextureWidth = width;
+		backGroundTextureHeight = height;
+		backGroundTextureInternalFormat = internalFormat;
 	}
 	
 	void DistortingCallbackGL::OnDistorting()
@@ -136,10 +148,41 @@ namespace EffekseerPlugin
 		uint32_t width = viewport[2];
 		uint32_t height = viewport[3];
 		
+		GLint backupFramebuffer;
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
+		
+		if( backGroundTextureWidth != width ||
+			backGroundTextureHeight != height )
+		{
+			PrepareTexture( width, height, GL_RGBA );
+		}
+		
+		GLint rbtype;
+		glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+			GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &rbtype);
+		
+		if( rbtype == GL_RENDERBUFFER ){
+			GLint renderbuffer;
+			glGetFramebufferAttachmentParameteriv( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &renderbuffer );
+			
+			glBindFramebuffer( GL_FRAMEBUFFER, framebufferForCopy );
+			glFramebufferRenderbuffer( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer );
+		}else if( rbtype == GL_TEXTURE_2D ){
+			GLint renderTexture;
+			glGetFramebufferAttachmentParameteriv( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &renderTexture );
+			
+			glBindFramebuffer( GL_FRAMEBUFFER, framebufferForCopy );
+			glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0 );
+		}
+		
 		glBindTexture( GL_TEXTURE_2D, backGroundTexture );
 		//glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height );
-		glCopyTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, width, height, 0 );
+		glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, viewport[0], viewport[1], width, height );
 		glBindTexture( GL_TEXTURE_2D, 0 );
+		
+		glBindFramebuffer( GL_FRAMEBUFFER, backupFramebuffer );
 		
 		renderer->SetBackground(backGroundTexture);
 	}

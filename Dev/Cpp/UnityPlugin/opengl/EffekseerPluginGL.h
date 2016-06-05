@@ -9,6 +9,7 @@ namespace EffekseerPlugin
 	class DistortingCallbackGL
 		: public EffekseerRenderer::DistortingCallback
 	{
+		GLuint framebufferForCopy = 0;
 		GLuint backGroundTexture = 0;
 		uint32_t backGroundTextureWidth = 0;
 		uint32_t backGroundTextureHeight = 0;
