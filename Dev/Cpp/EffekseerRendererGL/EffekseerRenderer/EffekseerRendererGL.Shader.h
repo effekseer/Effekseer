@@ -169,22 +169,20 @@ public:
 
 #if  defined(__EFFEKSEER_RENDERER_GL3__) 
 #define EFFEKSEER_VERTEX_SHADER_HEADER \
-R"(#version 330
-#define lowp
-#define mediump
-#define highp
-#define IN in
-#define OUT out
-)"
+"#version 330\n" \
+"#define lowp\n" \
+"#define mediump\n" \
+"#define highp\n" \
+"#define IN in\n" \
+"#define OUT out\n"
 #define EFFEKSEER_FRAGMENT_SHADER_HEADER \
-R"(#version 330
-#define lowp
-#define mediump
-#define highp
-#define IN in
-#define TEX2D texture
-layout (location = 0) out vec4 FRAGCOLOR;
-)"
+"#version 330\n" \
+"#define lowp\n" \
+"#define mediump\n" \
+"#define highp\n" \
+"#define IN in\n" \
+"#define TEX2D texture\n" \
+"layout (location = 0) out vec4 FRAGCOLOR;\n"
 #elif defined(__EFFEKSEER_RENDERER_GLES3__)
 #define EFFEKSEER_VERTEX_SHADER_HEADER \
 "#version 300 es\n" \
@@ -199,36 +197,30 @@ layout (location = 0) out vec4 FRAGCOLOR;
 "layout (location = 0) out vec4 FRAGCOLOR;\n"
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 #define EFFEKSEER_VERTEX_SHADER_HEADER \
-R"(
-precision mediump float;
-#define IN attribute
-#define OUT varying
-)"
+"precision mediump float;\n" \
+"#define IN attribute\n" \
+"#define OUT varying\n"
 #define EFFEKSEER_FRAGMENT_SHADER_HEADER \
-R"(
-precision mediump float;
-#define IN varying
-#define TEX2D texture2D
-#define FRAGCOLOR gl_FragColor
-)"
+"precision mediump float;\n" \
+"#define IN varying\n" \
+"#define TEX2D texture2D\n" \
+"#define FRAGCOLOR gl_FragColor\n"
 #else
 #define EFFEKSEER_VERTEX_SHADER_HEADER \
-R"(#version 110
-#define lowp
-#define mediump
-#define highp
-#define IN attribute
-#define OUT varying
-)"
+"#version 110\n" \
+"#define lowp\n" \
+"#define mediump\n" \
+"#define highp\n" \
+"#define IN attribute\n" \
+"#define OUT varying\n"
 #define EFFEKSEER_FRAGMENT_SHADER_HEADER \
-R"(#version 110
-#define lowp
-#define mediump
-#define highp
-#define IN varying
-#define TEX2D texture2D
-#define FRAGCOLOR gl_FragColor
-)"
+"#version 110\n" \
+"#define lowp\n" \
+"#define mediump\n" \
+"#define highp\n" \
+"#define IN varying\n" \
+"#define TEX2D texture2D\n" \
+"#define FRAGCOLOR gl_FragColor\n"
 #endif
 
 //----------------------------------------------------------------------------------
