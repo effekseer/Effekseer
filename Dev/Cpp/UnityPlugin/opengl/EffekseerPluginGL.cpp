@@ -9,55 +9,11 @@
 #pragma comment(lib, "opengl32.lib")
 #endif
 
-
 using namespace Effekseer;
 using namespace EffekseerPlugin;
 
+#ifndef _WIN32
 
-
-#pragma region FuncEx
-static bool g_isInitialized = false;
-
-#if _WIN32
-#define GET_PROC(name)	g_##name = (FP_##name)wglGetProcAddress( #name ); if(g_##name==NULL) return false;
-#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-#define GET_PROC(name)	g_##name = (FP_##name)eglGetProcAddress( #name ); if(g_##name==NULL) return false;
-#endif
-
-typedef void (EFK_STDCALL * FP_glGetRenderbufferParameteriv) (GLenum target, GLenum pname, GLint * params);
-static FP_glGetRenderbufferParameteriv g_glGetRenderbufferParameteriv = nullptr;
-
-static bool Initialize()
-{
-	if (g_isInitialized) return true;
-
-#if _WIN32
-	GET_PROC(glGetRenderbufferParameteriv);
-#endif
-}
-
-void glGetRenderbufferParameteriv(GLenum target, GLenum pname, GLint * params)
-{
-#if _WIN32
-	return g_glGetRenderbufferParameteriv(target, pname, params);
-#else
-	return ::glGetRenderbufferParameteriv(target, pname, params);
-#endif
-}
-
-#pragma endregion
-
-
-
-#ifdef _WIN32
-
-#define GL_RGBA16F                        0x881A
-#define GL_RENDERBUFFER                   0x8D41
-#define GL_RENDERBUFFER_WIDTH             0x8D42
-#define GL_RENDERBUFFER_HEIGHT            0x8D43
-#define GL_RENDERBUFFER_INTERNAL_FORMAT   0x8D44
-
-#else
 namespace EffekseerPlugin
 {
 	IUnityInterfaces*		g_UnityInterfaces = NULL;
@@ -152,14 +108,13 @@ extern "C"
 		}
 	}
 }
+
 #endif
 
 namespace EffekseerPlugin
 {
 	DistortingCallbackGL::DistortingCallbackGL(EffekseerRendererGL::Renderer* renderer)
 	{
-		Initialize();
-
 		this->renderer = renderer;
 		glGenTextures( 1, &backGroundTexture );
 	}
@@ -173,53 +128,17 @@ namespace EffekseerPlugin
 	{
 		glDeleteTextures( 1, &backGroundTexture );
 	}
-		
-	// コピー先のテクスチャを準備
-	void DistortingCallbackGL::PrepareTexture(uint32_t width, uint32_t height, GLint internalFormat)
-	{
-		ReleaseTexture();
-		
-		backGroundTextureWidth = width;
-		backGroundTextureHeight = height;
-		backGroundTextureInternalFormat = internalFormat;
-		
-		GLenum format, type;
-		switch (internalFormat) {
-			case GL_RGBA8:
-				format = GL_RGBA;
-				type = GL_UNSIGNED_BYTE;
-				break;
-			case GL_RGBA16F:
-				format = GL_RGBA;
-				type = GL_UNSIGNED_SHORT;
-				break;
-			default:
-				return;
-		}
-		glBindTexture( GL_TEXTURE_2D, backGroundTexture );
-		glTexImage2D( GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, 0 );
-	}
-		
+	
 	void DistortingCallbackGL::OnDistorting()
 	{
-		uint32_t width;
-		uint32_t height;
-		GLint internalFormat;
-		
-		glGetRenderbufferParameteriv( GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, (GLint*)&width );
-		glGetRenderbufferParameteriv( GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, (GLint*)&height );
-		glGetRenderbufferParameteriv( GL_RENDERBUFFER, GL_RENDERBUFFER_INTERNAL_FORMAT, &internalFormat);
-		
-		if( backGroundTexture == 0 ||
-		   backGroundTextureWidth != width ||
-		   backGroundTextureHeight != height ||
-		   backGroundTextureInternalFormat != internalFormat )
-		{
-			PrepareTexture( width, height, internalFormat );
-		}
+		GLint viewport[4];
+		glGetIntegerv( GL_VIEWPORT, viewport );
+		uint32_t width = viewport[2];
+		uint32_t height = viewport[3];
 		
 		glBindTexture( GL_TEXTURE_2D, backGroundTexture );
-		glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height );
+		//glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height );
+		glCopyTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, width, height, 0 );
 		glBindTexture( GL_TEXTURE_2D, 0 );
 		
 		renderer->SetBackground(backGroundTexture);
