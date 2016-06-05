@@ -10,7 +10,10 @@
 
 namespace Effekseer {
 
-public class EffekseerNative {
+public enum TransparenceType {
+  None = 0,
+  Original = 1,
+  Generate = 2
 }
 
 }

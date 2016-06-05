@@ -29,8 +29,8 @@
 		private void InitializeComponent()
 		{
 			this.grp_option = new System.Windows.Forms.GroupBox();
-			this.lbl_isTranslucent = new System.Windows.Forms.Label();
-			this.cb_isTranslucent = new System.Windows.Forms.CheckBox();
+			this.cb_tranceparence = new System.Windows.Forms.ComboBox();
+			this.lbl_translucent = new System.Windows.Forms.Label();
 			this.grp_type = new System.Windows.Forms.GroupBox();
 			this.txt_number_v = new Effekseer.GUI.Component.DelegateIntTextBox();
 			this.lbl_the_number_of_image_h = new System.Windows.Forms.Label();
@@ -58,8 +58,8 @@
 			// 
 			// grp_option
 			// 
-			this.grp_option.Controls.Add(this.lbl_isTranslucent);
-			this.grp_option.Controls.Add(this.cb_isTranslucent);
+			this.grp_option.Controls.Add(this.cb_tranceparence);
+			this.grp_option.Controls.Add(this.lbl_translucent);
 			this.grp_option.Location = new System.Drawing.Point(12, 258);
 			this.grp_option.Name = "grp_option";
 			this.grp_option.Size = new System.Drawing.Size(200, 48);
@@ -67,24 +67,28 @@
 			this.grp_option.TabStop = false;
 			this.grp_option.Text = "オプション";
 			// 
-			// lbl_isTranslucent
+			// cb_tranceparence
 			// 
-			this.lbl_isTranslucent.AutoSize = true;
-			this.lbl_isTranslucent.Location = new System.Drawing.Point(6, 21);
-			this.lbl_isTranslucent.Margin = new System.Windows.Forms.Padding(3, 6, 3, 0);
-			this.lbl_isTranslucent.Name = "lbl_isTranslucent";
-			this.lbl_isTranslucent.Size = new System.Drawing.Size(102, 12);
-			this.lbl_isTranslucent.TabIndex = 60;
-			this.lbl_isTranslucent.Text = "背景色を透明にする";
+			this.cb_tranceparence.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.cb_tranceparence.FormattingEnabled = true;
+			this.cb_tranceparence.Items.AddRange(new object[] {
+            "なし",
+            "元の画像",
+            "生成"});
+			this.cb_tranceparence.Location = new System.Drawing.Point(111, 18);
+			this.cb_tranceparence.Name = "cb_tranceparence";
+			this.cb_tranceparence.Size = new System.Drawing.Size(83, 20);
+			this.cb_tranceparence.TabIndex = 61;
 			// 
-			// cb_isTranslucent
+			// lbl_translucent
 			// 
-			this.cb_isTranslucent.AutoSize = true;
-			this.cb_isTranslucent.Location = new System.Drawing.Point(147, 18);
-			this.cb_isTranslucent.Name = "cb_isTranslucent";
-			this.cb_isTranslucent.Size = new System.Drawing.Size(15, 14);
-			this.cb_isTranslucent.TabIndex = 60;
-			this.cb_isTranslucent.UseVisualStyleBackColor = true;
+			this.lbl_translucent.AutoSize = true;
+			this.lbl_translucent.Location = new System.Drawing.Point(6, 21);
+			this.lbl_translucent.Margin = new System.Windows.Forms.Padding(3, 6, 3, 0);
+			this.lbl_translucent.Name = "lbl_translucent";
+			this.lbl_translucent.Size = new System.Drawing.Size(99, 12);
+			this.lbl_translucent.TabIndex = 60;
+			this.lbl_translucent.Text = "背景透明化の方法";
 			// 
 			// grp_type
 			// 
@@ -330,8 +334,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.Label lbl_isTranslucent;
-		private System.Windows.Forms.CheckBox cb_isTranslucent;
+		private System.Windows.Forms.Label lbl_translucent;
 		private System.Windows.Forms.Button btn_record;
 		private System.Windows.Forms.GroupBox grp_area;
 		private System.Windows.Forms.CheckBox cb_area;
@@ -352,5 +355,6 @@
 		private Component.DelegateIntTextBox txt_number_v;
 		private System.Windows.Forms.Label lbl_the_number_of_image_h;
 		private System.Windows.Forms.GroupBox grp_option;
+		private System.Windows.Forms.ComboBox cb_tranceparence;
 	}
 }

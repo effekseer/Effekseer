@@ -1063,11 +1063,11 @@ bool Native::SetRandomSeed( int seed )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, bool isTranslucent)
+bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
 	if (g_effect == NULL) return false;
 
-	g_renderer->IsBackgroundTranslucent = isTranslucent;
+	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
 
 	::Effekseer::Vector3D position(0, 0, g_Distance);
 	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
@@ -1109,7 +1109,7 @@ bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t c
 		}
 
 		std::vector<Effekseer::Color> pixels;
-		g_renderer->EndRecord(pixels);
+		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate);
 
 		wchar_t path_[260];
 		swprintf_s(path_, L"%s.%d%s", pathWithoutExt, i, ext);
@@ -1125,7 +1125,7 @@ bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t c
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, bool isTranslucent)
+bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
 	if( g_effect == NULL ) return false;
 
@@ -1135,7 +1135,7 @@ bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t 
 	std::vector<Effekseer::Color> pixels_out;
 	pixels_out.resize((g_renderer->GuideWidth * xCount) * (g_renderer->GuideHeight * yCount));
 
-	g_renderer->IsBackgroundTranslucent = isTranslucent;
+	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
 
 	::Effekseer::Vector3D position( 0, 0, g_Distance );
 	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
@@ -1186,7 +1186,7 @@ bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t 
 			}
 
 			std::vector<Effekseer::Color> pixels;
-			g_renderer->EndRecord(pixels);
+			g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate);
 
 			for (int32_t y_ = 0; y_ < g_renderer->GuideHeight; y_++)
 			{
@@ -1207,11 +1207,11 @@ Exit:;
 	return true;
 }
 
-bool Native::RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, bool isTranslucent)
+bool Native::RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
 	if (g_effect == NULL) return false;
 
-	g_renderer->IsBackgroundTranslucent = isTranslucent;
+	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
 
 	::Effekseer::Vector3D position(0, 0, g_Distance);
 	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
@@ -1260,7 +1260,7 @@ bool Native::RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t of
 		}
 
 		std::vector<Effekseer::Color> pixels;
-		g_renderer->EndRecord(pixels);
+		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate);
 
 		int delay = (int) round((1.0 / (double) 60.0 * freq) * 100.0);
 		gdImagePtr frameImage = gdImageCreateTrueColor(g_renderer->GuideWidth, g_renderer->GuideHeight);

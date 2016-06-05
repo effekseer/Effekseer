@@ -184,7 +184,8 @@ void main() {
 
 	vec2 uv = pos + (posR - pos) * (color.x * 2.0 - 1.0) * vaColor.x * g_scale.x + (posU - pos) * (color.y * 2.0 - 1.0) * vaColor.y * g_scale.x;
 	uv.x = (uv.x + 1.0) * 0.5;
-	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
+	uv.y = (uv.y + 1.0) * 0.5;
+	//uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
 	color.xyz = TEX2D(uBackTexture0, uv).xyz;
 	
@@ -220,7 +221,8 @@ void main() {
 
 	vec2 uv = pos + (posR - pos) * (color.x * 2.0 - 1.0) * vaColor.x * g_scale.x + (posU - pos) * (color.y * 2.0 - 1.0) * vaColor.y * g_scale.x;
 	uv.x = (uv.x + 1.0) * 0.5;
-	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
+	uv.y = (uv.y + 1.0) * 0.5;
+	//uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
 	color.xyz = TEX2D(uBackTexture0, uv).xyz;
 	
