@@ -622,7 +622,11 @@ bool RendererImplemented::BeginRendering()
 		m_originalState.blend = glIsEnabled(GL_BLEND);
 		m_originalState.cullFace = glIsEnabled(GL_CULL_FACE);
 		m_originalState.depthTest = glIsEnabled(GL_DEPTH_TEST);
+#if !defined(__EFFEKSEER_RENDERER_GL3__) && \
+	!defined(__EFFEKSEER_RENDERER_GLES3__) && \
+	!defined(__EFFEKSEER_RENDERER_GLES2__)
 		m_originalState.texture = glIsEnabled(GL_TEXTURE_2D);
+#endif
 		glGetBooleanv(GL_DEPTH_WRITEMASK, &m_originalState.depthWrite);
 		glGetIntegerv(GL_DEPTH_FUNC, &m_originalState.depthFunc);
 		glGetIntegerv(GL_CULL_FACE_MODE, &m_originalState.cullFaceMode);
@@ -664,7 +668,9 @@ bool RendererImplemented::EndRendering()
 		if (m_originalState.cullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
 		if (m_originalState.depthTest) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
 		
-#if !defined(__EFFEKSEER_RENDERER_GL3__) && !defined(__EFFEKSEER_RENDERER_GLES3__)
+#if !defined(__EFFEKSEER_RENDERER_GL3__) && \
+	!defined(__EFFEKSEER_RENDERER_GLES3__) && \
+	!defined(__EFFEKSEER_RENDERER_GLES2__)
 		if (m_originalState.texture) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
 #endif
 		
