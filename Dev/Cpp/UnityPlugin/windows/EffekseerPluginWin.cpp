@@ -170,6 +170,7 @@ namespace EffekseerPlugin
 				backGroundTextureWidth = width;
 				backGroundTextureHeight = height;
 				backGroundTextureFormat = format;
+
 				HRESULT hr = S_OK;
 				hr = g_D3d9Device->CreateTexture( width, height, 0, D3DUSAGE_RENDERTARGET, format, D3DPOOL_DEFAULT, &backGroundTexture, nullptr );
 				if( FAILED( hr ) ){
@@ -183,32 +184,46 @@ namespace EffekseerPlugin
 				IDirect3DSurface9* texSurface = nullptr;
 				HRESULT hr = S_OK;
 
+				// レンダーターゲットを取得
 				hr = g_D3d9Device->GetRenderTarget( 0, &targetSurface );
 				if( FAILED( hr ) ){
 					return;
 				}
 				
+				// レンダーターゲットの情報を取得
 				D3DSURFACE_DESC targetSurfaceDesc;
 				targetSurface->GetDesc( &targetSurfaceDesc );
 				
+				// シザリング範囲を取得
+				RECT scissorRect;
+				g_D3d9Device->GetScissorRect( &scissorRect );
+				
+				// 描画範囲を計算
+				uint32_t width = scissorRect.right - scissorRect.left;
+				uint32_t height = scissorRect.bottom - scissorRect.top;
+
+				// 保持テクスチャとフォーマットが異なればテクスチャを作り直す
 				if( backGroundTexture == nullptr || 
-					backGroundTextureWidth == targetSurfaceDesc.Width || 
-					backGroundTextureHeight == targetSurfaceDesc.Height || 
-					backGroundTextureFormat == targetSurfaceDesc.Format )
+					backGroundTextureWidth != width || 
+					backGroundTextureHeight != height || 
+					backGroundTextureFormat != targetSurfaceDesc.Format )
 				{
-					PrepareTexture( targetSurfaceDesc.Width, targetSurfaceDesc.Height, targetSurfaceDesc.Format );
+					PrepareTexture( width, height, targetSurfaceDesc.Format );
 				}
 				
+				// コピーするためのサーフェスを取得
 				hr = backGroundTexture->GetSurfaceLevel( 0, &texSurface );
 				if( FAILED( hr ) ){
 					return;
 				}
 				
-				hr = g_D3d9Device->StretchRect( targetSurface, NULL, texSurface, NULL, D3DTEXF_NONE);
+				// サーフェス間コピー
+				hr = g_D3d9Device->StretchRect( targetSurface, &scissorRect, texSurface, NULL, D3DTEXF_NONE);
 				if( FAILED( hr ) ){
 					return;
 				}
 				
+				// 取得したサーフェスの参照カウンタを下げる
 				ES_SAFE_RELEASE( texSurface );
 				ES_SAFE_RELEASE( targetSurface );
 
@@ -229,7 +244,7 @@ namespace EffekseerPlugin
 			::EffekseerRendererDX11::Renderer* renderer = nullptr;
 			ID3D11Texture2D* backGroundTexture = nullptr;
 			ID3D11ShaderResourceView* backGroundTextureSRV = nullptr;
-			D3D11_TEXTURE2D_DESC backGroundTextureDesc;
+			D3D11_TEXTURE2D_DESC backGroundTextureDesc = {};
 
 		public:
 			DistortingCallback( ::EffekseerRendererDX11::Renderer* renderer )
@@ -303,19 +318,53 @@ namespace EffekseerPlugin
 				g_D3d11Context->OMGetRenderTargets( 1, &renderTargetView, nullptr );
 				renderTargetView->GetResource( reinterpret_cast<ID3D11Resource**>( &renderTexture ) );
 
+				// レンダーターゲット情報を取得
 				D3D11_TEXTURE2D_DESC renderTextureDesc;
 				renderTexture->GetDesc( &renderTextureDesc );
 				
+				// シザリング範囲を取得
+				UINT numScissorRects = 1;
+				D3D11_RECT scissorRect;
+				g_D3d11Context->RSGetScissorRects( &numScissorRects, &scissorRect );
+				
+				// 描画範囲を計算
+				uint32_t width = renderTextureDesc.Width;
+				uint32_t height = renderTextureDesc.Height;
+				if( numScissorRects > 0 ){
+					width = scissorRect.right - scissorRect.left;
+					height = scissorRect.bottom - scissorRect.top;
+				}
+				
+				// 保持テクスチャとフォーマットが異なればテクスチャを作り直す
 				if( backGroundTextureSRV == nullptr || 
-					backGroundTextureDesc.Width == renderTextureDesc.Width || 
-					backGroundTextureDesc.Height == renderTextureDesc.Height || 
-					backGroundTextureDesc.Format == renderTextureDesc.Format )
+					backGroundTextureDesc.Width != width || 
+					backGroundTextureDesc.Height != height || 
+					backGroundTextureDesc.Format != renderTextureDesc.Format )
 				{
-					PrepareTexture( renderTextureDesc.Width, renderTextureDesc.Height, renderTextureDesc.Format );
+					PrepareTexture( width, height, renderTextureDesc.Format );
+				}
+				
+				if( width == renderTextureDesc.Width &&
+					height == renderTextureDesc.Height )
+				{
+					// 背景テクスチャへコピー
+					g_D3d11Context->CopyResource( backGroundTexture, renderTexture );
+				}
+				else
+				{
+					// 背景テクスチャへ部分的コピー
+					D3D11_BOX srcBox;
+					srcBox.left = scissorRect.left;
+					srcBox.top = scissorRect.top;
+					srcBox.right = scissorRect.right;
+					srcBox.bottom = scissorRect.bottom;
+					srcBox.front = 0;
+					srcBox.back = 1;
+					g_D3d11Context->CopySubresourceRegion( backGroundTexture, 0, 
+						0, 0, 0, renderTexture, 0, &srcBox );
 				}
 
-				g_D3d11Context->CopyResource( backGroundTexture, renderTexture );
-				Sleep(4);
+				// 取得したリソースの参照カウンタを下げる
 				ES_SAFE_RELEASE( renderTexture );
 				ES_SAFE_RELEASE( renderTargetView );
 				
