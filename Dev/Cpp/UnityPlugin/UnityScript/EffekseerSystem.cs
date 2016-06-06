@@ -177,7 +177,15 @@ public class EffekseerSystem : MonoBehaviour
 	}
 	
 	void Awake() {
+#if UNITY_IOS
+		if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Metal) {
+			Debug.LogError("[Effekseer] Metal is not supported.");
+		}
+#endif
+		// Effekseerライブラリの初期化
 		Plugin.EffekseerInit(effectInstances, maxSquares);
+
+		// サウンドインスタンスを作る
 		for (int i = 0; i < soundInstances; i++) {
 			GameObject go = new GameObject();
 			go.name = "Sound Instance";
@@ -191,6 +199,7 @@ public class EffekseerSystem : MonoBehaviour
 			Plugin.EffekseerReleaseEffect(pair.Value);
 		}
 		effectList = null;
+		// Effekseerライブラリの終了処理
 		Plugin.EffekseerTerm();
 	}
 
@@ -259,7 +268,7 @@ public class EffekseerSystem : MonoBehaviour
 	
 	void LateUpdate() {
 		// 1フレーム更新
-		Plugin.EffekseerUpdate(1);
+		Plugin.EffekseerUpdate(Time.deltaTime * 60.0f);
 	}
 	
 	void OnPreCullEvent(Camera camera) {
