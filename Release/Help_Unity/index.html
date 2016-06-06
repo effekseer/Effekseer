@@ -40,7 +40,7 @@ Effekseerの再生プログラムはC++で書かれているため、Unity上で
 <a name="environment"></a>
 <h2>動作環境</h2>
 <h3>Unityバージョン</h3>
-Unity 5.2以降。<br>
+Unity 5.2以降必須。<br>
 PersonalでもProでも使えます。<br>
 
 <h3>プラットフォーム</h3>
@@ -146,11 +146,26 @@ handle.SetRotation(transform.rotation);
 <a name="issues"></a>
 <h2>既知の問題</h2>
 <ul>
-<li>歪み機能が使えません。今後対応する予定です。</li>
+<li>[iOS] Metalグラフィックス環境では使用できません。<br>
+EffekseerをiOS環境で使用するには<br>
+Build Settings -> Player Settings -> Other Settings -> Auto Graphics API のチェックを外し、<br>
+Metalを削除する必要があります。<br>
+</li>
 </ul>
 
 <a name="history"></a>
 <h2>更新履歴</h2>
+
+<p>
+1.20
+<ul>
+<li>歪みエフェクトに対応</li>
+<li>EffekseerEmitterにStopRoot()を追加</li>
+<li>更新処理をLateUpdateで行うように変更</li>
+<li>テクスチャ解放時の不具合を修正</li>
+<li>[iOS] Metal環境で実行したときにエラーを出力するように変更</li>
+</ul>
+</p>
 
 <p>
 1.10b
@@ -189,8 +204,8 @@ handle.SetRotation(transform.rotation);
 <a name="todo"></a>
 <h2>Todo</h2>
 <ul>
-<li>iOS, Android対応</li>
 <li>AssetsBundle対応</li>
+<li>Metal? Vulkan?</li>
 </ul>
 
 </div>
