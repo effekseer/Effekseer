@@ -644,7 +644,7 @@ bool Renderer::BeginRecord( int32_t width, int32_t height )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlpha)
+void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlpha, bool removeAlpha)
 {
 	assert(m_recording);
 
@@ -722,6 +722,11 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlp
 					}
 
 					pixels[x + m_recordingWidth * y].A = f2b(af);
+				}
+
+				if (removeAlpha)
+				{
+					pixels[x + m_recordingWidth * y].A = 255;
 				}
 			}
 		}

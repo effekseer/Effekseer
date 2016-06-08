@@ -1109,7 +1109,7 @@ bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t c
 		}
 
 		std::vector<Effekseer::Color> pixels;
-		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate);
+		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
 
 		wchar_t path_[260];
 		swprintf_s(path_, L"%s.%d%s", pathWithoutExt, i, ext);
@@ -1186,7 +1186,7 @@ bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t 
 			}
 
 			std::vector<Effekseer::Color> pixels;
-			g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate);
+			g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
 
 			for (int32_t y_ = 0; y_ < g_renderer->GuideHeight; y_++)
 			{
@@ -1260,7 +1260,7 @@ bool Native::RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t of
 		}
 
 		std::vector<Effekseer::Color> pixels;
-		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate);
+		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
 
 		int delay = (int) round((1.0 / (double) 60.0 * freq) * 100.0);
 		gdImagePtr frameImage = gdImageCreateTrueColor(g_renderer->GuideWidth, g_renderer->GuideHeight);
