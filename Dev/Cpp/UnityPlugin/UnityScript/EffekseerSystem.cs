@@ -37,7 +37,7 @@ public class EffekseerSystem : MonoBehaviour
 	/// <summary>
 	/// エフェクトの描画するタイミング
 	/// </summary>
-	public CameraEvent cameraEvent	= CameraEvent.AfterForwardAlpha;
+	const CameraEvent cameraEvent	= CameraEvent.BeforeImageEffects;
 
 	/// <summary>
 	/// Effekseerのファイルを置く場所
@@ -153,7 +153,7 @@ public class EffekseerSystem : MonoBehaviour
 		}
 
 		// Resourcesから読み込む
-		var asset = Resources.Load<TextAsset>(Utility.ResourcePath(name));
+		var asset = Resources.Load<TextAsset>(Utility.ResourcePath(name, true));
 		if (asset == null) {
 			Debug.LogError("[Effekseer] Failed to load effect: " + name);
 			return IntPtr.Zero;
@@ -177,7 +177,15 @@ public class EffekseerSystem : MonoBehaviour
 	}
 	
 	void Awake() {
+#if UNITY_IOS
+		if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Metal) {
+			Debug.LogError("[Effekseer] Metal is not supported.");
+		}
+#endif
+		// Effekseerライブラリの初期化
 		Plugin.EffekseerInit(effectInstances, maxSquares);
+
+		// サウンドインスタンスを作る
 		for (int i = 0; i < soundInstances; i++) {
 			GameObject go = new GameObject();
 			go.name = "Sound Instance";
@@ -191,6 +199,7 @@ public class EffekseerSystem : MonoBehaviour
 			Plugin.EffekseerReleaseEffect(pair.Value);
 		}
 		effectList = null;
+		// Effekseerライブラリの終了処理
 		Plugin.EffekseerTerm();
 	}
 
@@ -257,9 +266,9 @@ public class EffekseerSystem : MonoBehaviour
 		renderPaths.Clear();
 	}
 	
-	void FixedUpdate() {
+	void LateUpdate() {
 		// 1フレーム更新
-		Plugin.EffekseerUpdate(1);
+		Plugin.EffekseerUpdate(Time.deltaTime * 60.0f);
 	}
 	
 	void OnPreCullEvent(Camera camera) {
@@ -290,25 +299,20 @@ public class EffekseerSystem : MonoBehaviour
 			camera.AddCommandBuffer(path.cameraEvent, path.commandBuffer);
 			renderPaths.Add(camera, path);
 		}
-
+		
 		// ビュー関連の行列を更新
-		SetCameraMatrix(path.renderId, camera);
-		SetProjectionMatrix(path.renderId, camera);
+		Plugin.EffekseerSetProjectionMatrix(path.renderId, Utility.Matrix2Array(
+			GL.GetGPUProjectionMatrix(camera.projectionMatrix, false)));
+		Plugin.EffekseerSetCameraMatrix(path.renderId, Utility.Matrix2Array(
+			camera.worldToCameraMatrix));
 	}
-
-	private void SetProjectionMatrix(int renderId, Camera camera) {
-		float[] projectionMatrixArray = Utility.Matrix2Array(GL.GetGPUProjectionMatrix(
-			camera.projectionMatrix, RenderTexture.active));
-		GCHandle ghc = GCHandle.Alloc(projectionMatrixArray, GCHandleType.Pinned);
-		Plugin.EffekseerSetProjectionMatrix(renderId, ghc.AddrOfPinnedObject());
-		ghc.Free();
-	}
-
-	private void SetCameraMatrix(int renderId, Camera camera) {
-		float[] cameraMatrixArray = Utility.Matrix2Array(camera.worldToCameraMatrix);
-		GCHandle ghc = GCHandle.Alloc(cameraMatrixArray, GCHandleType.Pinned);
-		Plugin.EffekseerSetCameraMatrix(renderId, ghc.AddrOfPinnedObject());
-		ghc.Free();
+	
+	void OnRenderObject() {
+		if (renderPaths.ContainsKey(Camera.current)) {
+			RenderPath path = renderPaths[Camera.current];
+			Plugin.EffekseerSetRenderSettings(path.renderId, 
+				(RenderTexture.active != null));
+		}
 	}
 
 	[AOT.MonoPInvokeCallbackAttribute(typeof(Plugin.EffekseerTextureLoaderLoad))]
@@ -467,6 +471,14 @@ public struct EffekseerHandle
 	public void Stop()
 	{
 		Plugin.EffekseerStopEffect(m_handle);
+	}
+	
+	/// <summary>
+	/// エフェクトをルートだけ停止する
+	/// </summary>
+	public void StopRoot()
+	{
+		Plugin.EffekseerStopRoot(m_handle);
 	}
 	
 	/// <summary>

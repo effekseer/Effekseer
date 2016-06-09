@@ -4,6 +4,10 @@
 //----------------------------------------------------------------------------------
 #include "EffekseerRendererGL.GLExtension.h"
 
+#ifdef __ANDROID__
+#include <EGL/egl.h>
+#endif
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -14,6 +18,8 @@ namespace GLExt
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+#if _WIN32
+
 typedef void (EFK_STDCALL * FP_glDeleteBuffers) (GLsizei n, const GLuint* buffers);
 typedef GLuint (EFK_STDCALL * FP_glCreateShader) (GLenum type);
 typedef void (EFK_STDCALL * FP_glBindBuffer) (GLenum target, GLuint buffer);
@@ -105,16 +111,33 @@ static FP_glBufferSubData g_glBufferSubData = NULL;
 static FP_glGenVertexArrays g_glGenVertexArrays = NULL;
 static FP_glDeleteVertexArrays g_glDeleteVertexArrays = NULL;
 static FP_glBindVertexArray g_glBindVertexArray = NULL;
-
 static FP_glGenSamplers g_glGenSamplers = nullptr;
 static FP_glDeleteSamplers g_glDeleteSamplers = nullptr;
 static FP_glSamplerParameteri g_glSamplerParameteri = nullptr;
 static FP_glBindSampler g_glBindSampler = nullptr;
 
+#endif
+
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+
+typedef void (* FP_glGenVertexArraysOES) (GLsizei n, GLuint *arrays);
+typedef void (* FP_glDeleteVertexArraysOES) (GLsizei n, const GLuint *arrays);
+typedef void (* FP_glBindVertexArrayOES) (GLuint array);
+
+static FP_glGenVertexArraysOES g_glGenVertexArraysOES = NULL;
+static FP_glDeleteVertexArraysOES g_glDeleteVertexArraysOES = NULL;
+static FP_glBindVertexArrayOES g_glBindVertexArrayOES = NULL;
+
+#endif
+
 static bool g_isInitialized = false;
 static bool g_isSupportedVertexArray = false;
 
+#if _WIN32
 #define GET_PROC(name)	g_##name = (FP_##name)wglGetProcAddress( #name ); if(g_##name==NULL) return false;
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+#define GET_PROC(name)	g_##name = (FP_##name)eglGetProcAddress( #name ); if(g_##name==NULL) return false;
+#endif
 
 bool Initialize()
 {
@@ -170,18 +193,28 @@ bool Initialize()
 	GET_PROC(glBindSampler);
 
 	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
+#endif
 
-	g_isInitialized = true;
-	return true;
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
+#if defined(__APPLE__)
+	g_isSupportedVertexArray = true;
 #else
+	g_isSupportedVertexArray = strstr((const char*)glGetString(GL_EXTENSIONS), "GL_OES_vertex_array_object") != NULL;
+	if (g_isSupportedVertexArray) {
+		GET_PROC(glGenVertexArraysOES);
+		GET_PROC(glDeleteVertexArraysOES);
+		GET_PROC(glBindVertexArrayOES);
+	}
+#endif
+#endif
 
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
+#if  defined(__EFFEKSEER_RENDERER_GL3__) || \
+	 defined(__EFFEKSEER_RENDERER_GLES3__)
 	g_isSupportedVertexArray = true;
 #endif
 
 	g_isInitialized = true;
 	return true;
-#endif
 }
 
 bool IsSupportedVertexArray()
@@ -472,6 +505,10 @@ void glGenVertexArrays(GLsizei n, GLuint *arrays)
 {
 #if _WIN32
 	g_glGenVertexArrays(n, arrays);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) && defined(__APPLE__)
+	::glGenVertexArraysOES(n, arrays);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+	g_glGenVertexArraysOES(n, arrays);
 #else
 	::glGenVertexArrays(n, arrays);
 #endif
@@ -481,6 +518,10 @@ void glDeleteVertexArrays(GLsizei n, const GLuint *arrays)
 {
 #if _WIN32
 	g_glDeleteVertexArrays(n, arrays);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) && defined(__APPLE__)
+	::glDeleteVertexArraysOES(n, arrays);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+	g_glDeleteVertexArraysOES(n, arrays);
 #else
 	::glDeleteVertexArrays(n, arrays);
 #endif
@@ -490,6 +531,10 @@ void glBindVertexArray(GLuint array)
 {
 #if _WIN32
 	g_glBindVertexArray(array);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) && defined(__APPLE__)
+	::glBindVertexArrayOES(array);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+	g_glBindVertexArrayOES(array);
 #else
 	::glBindVertexArray(array);
 #endif
@@ -499,6 +544,7 @@ void glGenSamplers(GLsizei n, GLuint *samplers)
 {
 #if _WIN32
 	g_glGenSamplers(n, samplers);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
 #else
 	::glGenSamplers(n, samplers);
 #endif
@@ -508,6 +554,7 @@ void glDeleteSamplers(GLsizei n, const GLuint * samplers)
 {
 #if _WIN32
 	g_glDeleteSamplers(n, samplers);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
 #else
 	::glDeleteSamplers(n, samplers);
 #endif
@@ -517,6 +564,7 @@ void glSamplerParameteri(GLuint sampler, GLenum pname, GLint param)
 {
 #if _WIN32
 	g_glSamplerParameteri(sampler, pname, param);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
 #else
 	::glSamplerParameteri(sampler, pname, param);
 #endif
@@ -526,6 +574,7 @@ void glBindSampler(GLuint unit, GLuint sampler)
 {
 #if _WIN32
 	g_glBindSampler(unit, sampler);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
 #else
 	::glBindSampler(unit, sampler);
 #endif

@@ -223,7 +223,7 @@ namespace Effekseer.GUI.Component
 			}
 			else
 			{
-				Binding.SetValueDirectly(Binding.GetValue() + Binding.Step);
+				Binding.SetValueDirectly(Binding.GetValue() + wheel * Binding.Step);
 			}
 
 			Reload();

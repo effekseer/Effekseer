@@ -35,6 +35,15 @@
 #include <GLES2/gl2ext.h>
 #endif
 
+#elif defined(__EFFEKSEER_RENDERER_GLES3__)
+
+#if defined(__APPLE__)
+#include <OpenGLES/ES3/gl.h>
+#else
+#define GL_GLEXT_PROTOTYPES
+#include <GLES3/gl3.h>
+#endif
+
 #else
 
 #if defined(__APPLE__)
@@ -296,6 +305,13 @@ public:
 		@brief	最大描画スプライト数を取得する。
 	*/
 	virtual int32_t GetSquareMaxCount() const = 0;
+
+	/**
+		@brief	最大描画スプライト数を設定する。
+		@note
+		描画している時は使用できない。
+	*/
+	virtual void SetSquareMaxCount(int32_t count) = 0;
 
 	/**
 	@brief	背景を取得する。

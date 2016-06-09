@@ -16,6 +16,9 @@ namespace Effekseer.GUI
 		{
 			InitializeComponent();
 
+			cb_type.SelectedIndex = 0;
+			cb_tranceparence.SelectedIndex = 0;
+
 			if(Core.Language == Language.English)
 			{
 				grp_area.Text = "Resolution";
@@ -32,7 +35,7 @@ namespace Effekseer.GUI
 				lbl_the_number_of_image_h.Text = "X Count";
 
 				grp_option.Text = "Options";
-				lbl_isTranslucent.Text = "Transparent Background";
+				lbl_translucent.Text = "Make transparent";
 
 				btn_record.Text = "Record";
 
@@ -42,6 +45,14 @@ namespace Effekseer.GUI
 		            "Export as images",
 		            "Export as a gif animation"});
 				cb_type.SelectedIndex = 0;
+
+				cb_tranceparence.Items.Clear();
+				this.cb_tranceparence.Items.AddRange(new object[] {
+		            "None",
+		            "Use original image",
+		            "Generate alpha"});
+				cb_tranceparence.SelectedIndex = 0;
+
 			}
 
 			txt_startingFrame.ReadMethod = () =>
@@ -202,21 +213,21 @@ namespace Effekseer.GUI
 
 				if (cb_type.SelectedIndex == 0)
 				{
-					if (!viewer.Record(filename, count, width, startingFrame, freq, cb_isTranslucent.Checked))
+					if (!viewer.Record(filename, count, width, startingFrame, freq, (TransparenceType)cb_tranceparence.SelectedIndex))
 					{
 						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 					}
 				}
 				else if (cb_type.SelectedIndex == 1)
 				{
-					if (!viewer.Record(filename, count, startingFrame, freq, cb_isTranslucent.Checked))
+					if (!viewer.Record(filename, count, startingFrame, freq, (TransparenceType)cb_tranceparence.SelectedIndex))
 					{
 						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 					}
 				}
 				else if (cb_type.SelectedIndex == 2)
 				{
-					if (!viewer.RecordAsGifAnimation(filename, count, startingFrame, freq, cb_isTranslucent.Checked))
+					if (!viewer.RecordAsGifAnimation(filename, count, startingFrame, freq, (TransparenceType)cb_tranceparence.SelectedIndex))
 					{
 						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 					}

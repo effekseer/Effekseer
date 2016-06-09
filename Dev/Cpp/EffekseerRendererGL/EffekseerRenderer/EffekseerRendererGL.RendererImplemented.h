@@ -250,6 +250,7 @@ struct RenderStateSet
 	GLboolean	depthWrite;
 	GLboolean	texture;
 	GLint		depthFunc;
+	GLint		cullFaceMode;
 	GLint		blendSrc;
 	GLint		blendDst;
 	GLint		blendEquation;
@@ -372,6 +373,8 @@ public:
 		@brief	最大描画スプライト数
 	*/
 	int32_t GetSquareMaxCount() const;
+
+	void SetSquareMaxCount(int32_t count) override;
 
 	::EffekseerRenderer::RenderStateBase* GetRenderState();
 	

@@ -57,15 +57,11 @@ bool Shader::CompileShader(
 	GLExt::glAttachShader(program, vert_shader);
 	GLExt::glAttachShader(program, frag_shader);
 	
-	// シェーダオブジェクトの削除
-	GLExt::glDeleteShader(frag_shader);
-	GLExt::glDeleteShader(vert_shader);
-
 	// シェーダプログラムのリンク
 	GLExt::glLinkProgram(program);
 	GLExt::glGetProgramiv(program, GL_LINK_STATUS, &res_link);
 
-	#ifndef NDEBUG
+#ifndef NDEBUG
 	{
 		// エラー出力
 		char log[512];
@@ -90,6 +86,9 @@ bool Shader::CompileShader(
 		}
 	}
 #endif
+	// シェーダオブジェクトの削除
+	GLExt::glDeleteShader(frag_shader);
+	GLExt::glDeleteShader(vert_shader);
 
 	if (res_link == GL_FALSE)
 	{

@@ -35,44 +35,7 @@ static std::string Replace( std::string target, std::string from_, std::string t
 }
 
 static const char g_model_vs_src[] = 
-#if  defined(__EFFEKSEER_RENDERER_GL3__) 
-R"(
-#version 330
-#define lowp
-#define mediump
-#define highp
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#version 300 es
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
-R"(
-precision mediump float;
-)"
-#else
-R"(
-#version 110
-#define lowp
-#define mediump
-#define highp
-)"
-#endif
-
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#define IN in
-#define OUT out
-)"
-#else
-R"(
-#define IN attribute
-#define OUT varying
-)"
-#endif
-
-
+	EFFEKSEER_VERTEX_SHADER_HEADER
 	"IN vec4 a_Position;\n"
 	"IN vec4 a_Normal;\n"
 	"IN vec4 a_Binormal;\n"
@@ -116,7 +79,7 @@ R"(
 	"	vec4 localPosition = modelMatrix * a_Position;\n"
 	"	gl_Position = ProjectionMatrix * localPosition;\n"
 	
-	"	v_TexCoord.xy = a_TexCoord.xy + uvOffset.xy;\n"
+	"	v_TexCoord.xy = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;\n"
 
 	"	if (LightingEnable) {\n"
 	"		mat3 lightMatrix = mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz);"
@@ -136,53 +99,7 @@ R"(
 	"}\n";
 
 static const char g_model_fs_src[] = 
-#if  defined(__EFFEKSEER_RENDERER_GL3__) 
-R"(
-#version 330
-#define lowp
-#define mediump
-#define highp
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#version 300 es
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
-R"(
-precision mediump float;
-)"
-#else
-R"(
-#version 110
-#define lowp
-#define mediump
-#define highp
-)"
-#endif
-
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-layout (location = 0) out vec4 FRAGCOLOR;
-)"
-#else
-R"(
-#define FRAGCOLOR gl_FragColor
-)"
-#endif
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#define IN in
-#define TEX2D texture
-)"
-#else
-R"(
-#define IN varying
-#define TEX2D texture2D
-)"
-#endif
-
+	EFFEKSEER_FRAGMENT_SHADER_HEADER
 	"IN mediump vec4 v_Normal;\n"
 	"IN mediump vec4 v_Binormal;\n"
 	"IN mediump vec4 v_Tangent;\n"
@@ -219,42 +136,7 @@ R"(
 
 
 static const char g_model_distortion_vs_src [] =
-#if  defined(__EFFEKSEER_RENDERER_GL3__) 
-R"(
-#version 330
-#define lowp
-#define mediump
-#define highp
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#version 300 es
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
-R"(
-precision mediump float;
-)"
-#else
-R"(
-#version 110
-#define lowp
-#define mediump
-#define highp
-)"
-#endif
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#define IN in
-#define OUT out
-)"
-#else
-R"(
-#define IN attribute
-#define OUT varying
-)"
-#endif
-
+	EFFEKSEER_VERTEX_SHADER_HEADER
 "IN vec4 a_Position;\n"
 "IN vec4 a_Normal;\n"
 "IN vec4 a_Binormal;\n"
@@ -328,52 +210,7 @@ R"(
 )";
 
 static const char g_model_distortion_fs_src [] =
-#if  defined(__EFFEKSEER_RENDERER_GL3__) 
-R"(
-#version 330
-#define lowp
-#define mediump
-#define highp
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#version 300 es
-)"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
-R"(
-precision mediump float;
-)"
-#else
-R"(
-#version 110
-#define lowp
-#define mediump
-#define highp
-)"
-#endif
-
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-layout (location = 0) out vec4 FRAGCOLOR;
-)"
-#else
-R"(
-#define FRAGCOLOR gl_FragColor
-)"
-#endif
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-R"(
-#define IN in
-#define TEX2D texture
-)"
-#else
-R"(
-#define IN varying
-#define TEX2D texture2D
-)"
-#endif
+	EFFEKSEER_FRAGMENT_SHADER_HEADER
 
 "IN mediump vec4 v_Normal;\n"
 "IN mediump vec4 v_Binormal;\n"
@@ -411,7 +248,8 @@ void main() {
 	vec2 uv = pos + (posR - pos) * xscale + (posU - pos) * yscale;
 
 	uv.x = (uv.x + 1.0) * 0.5;
-	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
+	uv.y = (uv.y + 1.0) * 0.5;
+//	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
 
 	vec3 color = TEX2D(uBackTexture0, uv).xyz;
 	FRAGCOLOR.xyz = color;

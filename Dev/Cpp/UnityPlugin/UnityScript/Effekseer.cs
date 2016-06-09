@@ -10,12 +10,12 @@ using System.Runtime.Serialization;
 namespace Effekseer
 {
 	[Serializable]
-	class TextureResource
+	internal class TextureResource
 	{
 		public string Path = "";
-		public Texture Texture;
+		public Texture2D Texture;
 		public bool Load(string path) {
-			Texture = Resources.Load<Texture>(Utility.ResourcePath(path));
+			Texture = Resources.Load<Texture2D>(Utility.ResourcePath(path, true));
 			if (Texture == null) {
 				return false;
 			}
@@ -32,12 +32,12 @@ namespace Effekseer
 		}
 	}
 	[Serializable]
-	class ModelResource
+	internal class ModelResource
 	{
 		public string Path = "";
 		public TextAsset ModelData;
 		public bool Load(string path) {
-			ModelData = Resources.Load<TextAsset>(Utility.ResourcePath(path));
+			ModelData = Resources.Load<TextAsset>(Utility.ResourcePath(path, false));
 			if (ModelData == null) {
 				return false;
 			}
@@ -50,7 +50,7 @@ namespace Effekseer
 			}
 		}
 		public bool Copy(IntPtr buffer, int bufferSize) {
-			if (bufferSize < ModelData.bytes.Length) {
+			if (ModelData.bytes.Length < bufferSize) {
 				Marshal.Copy(ModelData.bytes, 0, buffer, ModelData.bytes.Length);
 				return true;
 			}
@@ -58,12 +58,12 @@ namespace Effekseer
 		}
 	}
 	[Serializable]
-	class SoundResource
+	internal class SoundResource
 	{
 		public string Path = "";
 		public AudioClip Audio;
 		public bool Load(string path) {
-			Audio = Resources.Load<AudioClip>(Utility.ResourcePath(path));
+			Audio = Resources.Load<AudioClip>(Utility.ResourcePath(path, true));
 			if (Audio == null) {
 				return false;
 			}
@@ -77,7 +77,7 @@ namespace Effekseer
 		}
 	}
 
-	public static class Utility
+	internal static class Utility
 	{
 		public static float[] Matrix2Array(Matrix4x4 mat) {
 			float[] res = new float[16];
@@ -94,14 +94,16 @@ namespace Effekseer
 			return Encoding.Unicode.GetString(strarray);
 		}
 
-		public static string ResourcePath(string path) {
+		public static string ResourcePath(string path, bool removeExtension) {
 			string dir = Path.GetDirectoryName(path);
-			string file = Path.GetFileNameWithoutExtension(path);
+			string file = (removeExtension) ? 
+				Path.GetFileNameWithoutExtension(path) : 
+				Path.GetFileName(path);
 			return "Effekseer/" + ((dir == String.Empty) ? file : dir + "/" + file);
 		}
 	}
 	
-	public static class Plugin
+	internal static class Plugin
 	{
 		#if UNITY_IPHONE
 			public const string pluginName = "__Internal";
@@ -122,11 +124,14 @@ namespace Effekseer
 		public static extern IntPtr EffekseerGetRenderFunc();
 		
 		[DllImport(pluginName)]
-		public static extern void EffekseerSetProjectionMatrix(int renderId, IntPtr matrix);
+		public static extern void EffekseerSetProjectionMatrix(int renderId, float[] matrix);
 	
 		[DllImport(pluginName)]
-		public static extern void EffekseerSetCameraMatrix(int renderId, IntPtr matrix);
+		public static extern void EffekseerSetCameraMatrix(int renderId, float[] matrix);
 		
+		[DllImport(pluginName)]
+		public static extern void EffekseerSetRenderSettings(int renderId, bool renderIntoTexture);
+
 		[DllImport(pluginName)]
 		public static extern IntPtr EffekseerLoadEffect(IntPtr path);
 		
@@ -141,6 +146,9 @@ namespace Effekseer
 	
 		[DllImport(pluginName)]
 		public static extern void EffekseerStopEffect(int handle);
+	
+		[DllImport(pluginName)]
+		public static extern void EffekseerStopRoot(int handle);
 	
 		[DllImport(pluginName)]
 		public static extern void EffekseerStopAllEffects();

@@ -6,6 +6,8 @@
 
 #pragma warning (disable : 4005)
 #include "Effekseer.h"
+
+#include "EffekseerRendererGL.h"
 #include "EffekseerRendererDX9.h"
 #include "EffekseerRendererDX11.h"
 
@@ -13,16 +15,16 @@
 #include "../common/EffekseerPluginTexture.h"
 #include "../common/EffekseerPluginModel.h"
 
-using namespace Effekseer;
+#include "../opengl/EffekseerPluginLoaderGL.h"
 
-extern UnityGfxRenderer					g_RendererType;
-extern IDirect3DDevice9*				g_D3d9Device;
-extern ID3D11Device*					g_D3d11Device;
-extern ID3D11DeviceContext*				g_D3d11Context;
-extern EffekseerRenderer::Renderer*		g_EffekseerRenderer;
+using namespace Effekseer;
 
 namespace EffekseerPlugin
 {
+	extern UnityGfxRenderer					g_UnityRendererType;
+	extern ID3D11Device*					g_D3d11Device;
+	extern EffekseerRenderer::Renderer*		g_EffekseerRenderer;
+
 	class TextureLoaderWin : public TextureLoader
 	{
 		struct TextureResource {
@@ -51,30 +53,30 @@ namespace EffekseerPlugin
 			{
 				return nullptr;
 			}
-			if (g_RendererType == kUnityGfxRendererD3D11)
+			if (g_UnityRendererType == kUnityGfxRendererD3D11)
 			{
 				// DX11の場合、UnityがロードするのはID3D11Texture2Dなので、
-				// ID3D11ShaderResourceViewに変換する
+				// ID3D11ShaderResourceViewを作成する
 				HRESULT hr;
 				ID3D11Texture2D* textureDX11 = (ID3D11Texture2D*)res.texture;
 			
 				D3D11_TEXTURE2D_DESC texDesc;
 				textureDX11->GetDesc(&texDesc);
 			
-				ID3D11ShaderResourceView* resView = nullptr;
+				ID3D11ShaderResourceView* srv = nullptr;
 				D3D11_SHADER_RESOURCE_VIEW_DESC desc;
 				ZeroMemory(&desc, sizeof(desc));
 				desc.Format = texDesc.Format;
 				desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 				desc.Texture2D.MostDetailedMip = 0;
 				desc.Texture2D.MipLevels = texDesc.MipLevels;
-				hr = g_D3d11Device->CreateShaderResourceView(textureDX11, &desc, &resView);
+				hr = g_D3d11Device->CreateShaderResourceView(textureDX11, &desc, &srv);
 				if (FAILED(hr))
 				{
 					return nullptr;
 				}
 
-				res.texture = resView;
+				res.texture = srv;
 			}
 			// リソーステーブルに追加
 			resources.insert( std::make_pair((const char16_t*)path, res ) );
@@ -98,14 +100,11 @@ namespace EffekseerPlugin
 			// 参照カウンタが0になったら実際にアンロード
 			it->second.referenceCount--;
 			if (it->second.referenceCount <= 0) {
-				if (g_RendererType == kUnityGfxRendererD3D11)
+				if (g_UnityRendererType == kUnityGfxRendererD3D11)
 				{
-					// ID3D11ShaderResourceViewをID3D11Texture2Dに
-					// 戻してUnityにアンロードしてもらう
-					ID3D11Resource* resourceDX11 = nullptr;
-					ID3D11ShaderResourceView* resView = (ID3D11ShaderResourceView*)source;
-					resView->GetResource(&resourceDX11);
-					resView->Release();
+					// 作成したID3D11ShaderResourceViewを解放する
+					ID3D11ShaderResourceView* srv = (ID3D11ShaderResourceView*)source;
+					srv->Release();
 				}
 				// Unity側でアンロード
 				unload(it->first.c_str());
@@ -126,8 +125,8 @@ namespace EffekseerPlugin
 		ModelLoaderUnload unload)
 	{
 		auto loader = new ModelLoader( load, unload );
-		loader->SetInternalLoader( 
-			g_EffekseerRenderer->CreateModelLoader( loader->GetFileInterface() ) );
+		auto internalLoader = g_EffekseerRenderer->CreateModelLoader( loader->GetFileInterface() );
+		loader->SetInternalLoader( internalLoader );
 		return loader;
 	}
 };

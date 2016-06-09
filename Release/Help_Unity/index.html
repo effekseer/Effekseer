@@ -14,11 +14,14 @@
 <ul>
 <li><a href="#introduction">概要</a></li>
 <li><a href="#environment">動作環境</a></li>
-<li><a href="#how_to_install">インストール方法</a></li>
-<li><a href="#example_program">サンプルプロジェクト</a></li>
-<li><a href="#resource_files">リソースファイルについて</a></li>
-<li><a href="#emitter_playback">エミッタを使って再生する方法</a></li>
-<li><a href="#direct_playback">スクリプトから直接再生する方法</a></li>
+<li><a href="#how_to_install">インポート方法</a></li>
+<li><a href="#how_to_use">使い方</a></li>
+	<ul>
+	<li><a href="#example_program">サンプルプロジェクト</a></li>
+	<li><a href="#resource_files">リソースファイルについて</a></li>
+	<li><a href="#emitter_playback">エミッタを使って再生する方法</a></li>
+	<li><a href="#direct_playback">スクリプトから直接再生する方法</a></li>
+	</ul>
 <li><a href="#issues">既知の問題</a></li>
 <li><a href="#history">更新履歴</a></li>
 <li><a href="#todo">Todo</a></li>
@@ -37,7 +40,7 @@ Effekseerの再生プログラムはC++で書かれているため、Unity上で
 <a name="environment"></a>
 <h2>動作環境</h2>
 <h3>Unityバージョン</h3>
-Unity 5.2以降。<br>
+Unity 5.2以降必須。<br>
 PersonalでもProでも使えます。<br>
 
 <h3>プラットフォーム</h3>
@@ -46,32 +49,38 @@ PersonalでもProでも使えます。<br>
 <tr>
 	<th>プラットフォーム</th>
 	<th>対応状況</th>
+	<th>CPU</th>
 	<th>備考</th>
 </tr>
 <tr>
 	<td>Windows</td>
 	<td align="center">○</td>
-	<td>CPUはx86,x64に対応。GraphicsはDX9,DX11に対応</td>
+	<td align="center">x86/x64</td>
+	<td>DX9,DX11で動作可能。DX12は不可。</td>
 </tr>
 <tr>
 	<td>Mac OS X</td>
 	<td align="center">○</td>
-	<td>GraphicsはOpenGLに対応。Metalは非対応</td>
+	<td align="center">x86/x64</td>
+	<td>OpenGLで動作可能。Metalは不可。</td>
 </tr>
 <tr>
 	<td>Android</td>
-	<td align="center">×</td>
-	<td>今後対応予定</td>
+	<td align="center">β</td>
+	<td align="center">ARMv7/x86</td>
+	<td>OpenGLで動作可能。Vulkanは不可。</td>
 </tr>
 <tr>
 	<td>iOS</td>
-	<td align="center">×</td>
-	<td>今後対応予定</td>
+	<td align="center">β</td>
+	<td align="center">ARMv7/ARM64</td>
+	<td>OpenGLで動作可能。Metalは不可。</td>
 </tr>
 <tr>
 	<td>WebGL</td>
 	<td align="center">×</td>
-	<td>今後できるかも</td>
+	<td align="center">-</td>
+	<td>今後動くようになるかも</td>
 </tr>
 </table>
 <br>
@@ -80,7 +89,7 @@ PersonalでもProでも使えます。<br>
 <a name="how_to_install"></a>
 <h2>インストール方法</h2>
 <p>
-GameEngine/Unity/Effekseer.unitypackage を開いてUnityプロジェクトにインストールします。
+GameEngine/Unity/Effekseer.unitypackage を開いてUnityプロジェクトにインポートします。
 </p>
 
 <a name="how_to_use"></a>
@@ -102,6 +111,7 @@ GameEngine/Unity/SampleProject.zip<br>
 <p>
 Resources/Effekseer/ 以下に出力済エフェクト(*.efk)やテクスチャ、サウンドを配置します。<br>
 *.efkファイルをインポートすると、*.bytesにリネームされます。<br>
+上手くいかないときは、Reimportを試してください。<br>
 <img src="img/unity_resource.png">
 </p>
 
@@ -136,16 +146,41 @@ handle.SetRotation(transform.rotation);
 <a name="issues"></a>
 <h2>既知の問題</h2>
 <ul>
-<li>現在、UnityMac版のエディタはLegacyDefferedとForwardのみ描画対応しています。不具合の原因は現在調査中です。</li>
+<li>[iOS] Metalグラフィックス環境では使用できません。<br>
+EffekseerをiOS環境で使用するには<br>
+Build Settings -> Player Settings -> Other Settings -> Auto Graphics API のチェックを外し、<br>
+Metalを削除する必要があります。<br>
+</li>
 </ul>
 
 <a name="history"></a>
 <h2>更新履歴</h2>
 
 <p>
+1.20
+<ul>
+<li>歪みエフェクトに対応</li>
+<li>EffekseerEmitterにStopRoot()を追加</li>
+<li>更新処理をLateUpdateで行うように変更</li>
+<li>テクスチャ解放時の不具合を修正</li>
+<li>[iOS] Metal環境で実行したときにエラーを出力するように変更</li>
+</ul>
+</p>
+
+<p>
+1.10b
+<ul>
+<li>[Windows] Deferred Renderingで正常に描画できるように修正</li>
+<li>[Mac] Deferred Renderingで正常に描画できるように修正</li>
+<li>[Android] β版追加</li>
+<li>[iOS] β版追加</li>
+</ul>
+</p>
+
+<p>
 1.10a
 <ul>
-<li>x86ビルドで落ちる不具合修正</li>
+<li>[Windows] x86ビルドで落ちる不具合修正</li>
 </ul>
 </p>
 
@@ -169,8 +204,8 @@ handle.SetRotation(transform.rotation);
 <a name="todo"></a>
 <h2>Todo</h2>
 <ul>
-<li>iOS, Android対応</li>
 <li>AssetsBundle対応</li>
+<li>Metal? Vulkan?</li>
 </ul>
 
 </div>

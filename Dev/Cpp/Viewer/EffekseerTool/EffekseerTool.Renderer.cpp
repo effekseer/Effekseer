@@ -583,7 +583,7 @@ IDirect3DTexture9* Renderer::ExportBackground()
 
 	if (m_recording)
 	{
-		m_background->Rendering(m_recordingTargetTexture, m_width, m_height);
+		m_background->Rendering(m_recordingTargetTexture, m_recordingWidth, m_recordingHeight);
 	}
 	else
 	{
@@ -610,6 +610,8 @@ bool Renderer::BeginRecord( int32_t width, int32_t height )
 
 	m_recordingWidth = width;
 	m_recordingHeight = height;
+
+	GenerateRenderTargets(m_recordingWidth, m_recordingHeight);
 
 	HRESULT hr;
 
@@ -642,46 +644,7 @@ bool Renderer::BeginRecord( int32_t width, int32_t height )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Renderer::SetRecordRect( int32_t x, int32_t y )
-{
-	assert( m_recording );
-
-	D3DVIEWPORT9 vp;
-	vp.X = x;
-	vp.Y = y;
-	vp.Width = GuideWidth;
-	vp.Height = GuideHeight;
-	vp.MinZ = 0.0f;
-	vp.MaxZ = 1.0f;
-		
-	GetDevice()->SetViewport( &vp );
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Renderer::EndRecord( const wchar_t* outputPath )
-{
-	assert( m_recording );
-
-	GetDevice()->SetRenderTarget( 0, m_recordingTempTarget );
-	GetDevice()->SetDepthStencilSurface( m_recordingTempDepth );
-	ES_SAFE_RELEASE( m_recordingTempTarget );
-	ES_SAFE_RELEASE( m_recordingTempDepth );
-
-	D3DXSaveSurfaceToFileW( outputPath, D3DXIFF_PNG, m_recordingTarget, NULL, NULL );
-
-	ES_SAFE_RELEASE( m_recordingTarget );
-	ES_SAFE_RELEASE( m_recordingTargetTexture );
-	ES_SAFE_RELEASE( m_recordingDepth );
-
-	m_recording = false;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels)
+void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlpha, bool removeAlpha)
 {
 	assert(m_recording);
 
@@ -711,14 +674,60 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels)
 	auto hr = temp_sur->LockRect(&drect, &rect, D3DLOCK_READONLY);
 	if (SUCCEEDED(hr))
 	{
+		auto f2b = [](float v) -> uint8_t
+		{
+			auto v_ = v * 255;
+			if (v_ > 255) v_ = 255;
+			if (v_ < 0) v_ = 0;
+			return v_;
+		};
+
+		auto b2f = [](uint8_t v) -> float
+		{
+			auto v_ = (float)v / 255.0f;
+			return v_;
+		};
+
+		// ã≠êßìßñæâª
 		for (int32_t y = 0; y < m_recordingHeight; y++)
 		{
 			for (int32_t x = 0; x < m_recordingWidth; x++)
 			{
 				auto src = &(((uint8_t*) drect.pBits)[x * 4 + drect.Pitch * y]);
+				pixels[x + m_recordingWidth * y].A = src[3];
 				pixels[x + m_recordingWidth * y].R = src[2];
 				pixels[x + m_recordingWidth * y].G = src[1];
 				pixels[x + m_recordingWidth * y].B = src[0];
+				
+				if (generateAlpha)
+				{
+					auto rf = b2f(pixels[x + m_recordingWidth * y].R);
+					auto gf = b2f(pixels[x + m_recordingWidth * y].G);
+					auto bf = b2f(pixels[x + m_recordingWidth * y].B);
+					auto oaf = b2f(pixels[x + m_recordingWidth * y].A);
+
+					rf = rf * oaf;
+					gf = gf * oaf;
+					bf = bf * oaf;
+
+					auto af = rf;
+					af = Effekseer::Max(af, gf);
+					af = Effekseer::Max(af, bf);
+
+					if (af > 0.0f)
+					{
+						pixels[x + m_recordingWidth * y].R = f2b(rf / af);
+						pixels[x + m_recordingWidth * y].G = f2b(gf / af);
+						pixels[x + m_recordingWidth * y].B = f2b(bf / af);
+					}
+
+					pixels[x + m_recordingWidth * y].A = f2b(af);
+				}
+
+				if (removeAlpha)
+				{
+					pixels[x + m_recordingWidth * y].A = 255;
+				}
 			}
 		}
 
@@ -731,6 +740,8 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels)
 	ES_SAFE_RELEASE(m_recordingTarget);
 	ES_SAFE_RELEASE(m_recordingTargetTexture);
 	ES_SAFE_RELEASE(m_recordingDepth);
+
+	GenerateRenderTargets(m_width, m_height);
 
 	m_recording = false;
 }

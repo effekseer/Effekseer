@@ -14,10 +14,6 @@ It is assumed to be used mainly in the game, and the editing of visual effects r
 
 [![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
 
-**不具合情報**
-
-現在、UnityMac版ではLegacyDefferedとForwardのみ描画対応しています。不具合の原因は現在調査中です。
-
 # RoadMap
 
 **Version 1.20**
@@ -46,7 +42,6 @@ It is assumed to be used mainly in the game, and the editing of visual effects r
 **他**
 * DirectX12対応
 * UnrealEngine4, Cocos2D対応
-* iPhone,Android対応
 
 **候補**
 * HDRレンダリング

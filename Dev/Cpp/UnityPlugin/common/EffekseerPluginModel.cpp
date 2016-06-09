@@ -4,7 +4,7 @@
 namespace EffekseerPlugin
 {
 	ModelLoader::MemoryFileReader::MemoryFileReader(uint8_t* data, size_t length)
-		: data(data), length(length)
+		: data(data), length(length), position(0)
 	{
 	}
 
