@@ -9,6 +9,12 @@
 #include <windows.h>
 #include <GL/gl.h>
 #endif
+
+#ifdef EMSCRIPTEN
+#define		GL_GLEXT_PROTOTYPES
+#define		EGL_EGLEXT_PROTOTYPES
+#endif	// EMSCRIPTEN
+
 #include <stddef.h>
 #include "EffekseerRendererGL.Base.Pre.h"
 
