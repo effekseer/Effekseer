@@ -128,6 +128,11 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
+  public bool RecordAsAVI(string path, int count, int offsetFrame, int freq, TransparenceType transparenceType) {
+    bool ret = EffekseerNativePINVOKE.Native_RecordAsAVI(swigCPtr, path, count, offsetFrame, freq, (int)transparenceType);
+    return ret;
+  }
+
   public ViewerParamater GetViewerParamater() {
     ViewerParamater ret = new ViewerParamater(EffekseerNativePINVOKE.Native_GetViewerParamater(swigCPtr), true);
     return ret;
