@@ -1,5 +1,14 @@
 ﻿# =========================
 # Effekseer UnityPlugin for WebGL
+# 
+# ■ Emscripten と CMake のセットアップ＆ビルド方法について
+# 参考 : https://gist.github.com/faithandbrave/9b3d439d135e63abdbe7
+#
+# ■ Unity WebGLプラグインから C++ 関数を呼び出す
+# 参考 : http://docs.unity3d.com/ja/current/Manual/webgl-interactingwithbrowserscripting.html
+#
+# ■ 適用方法
+# ビルドした EffekseerUnity.bc ファイルを "Assets\Plugins\WebGL" に追加する
 # =========================
 
 # プロジェクト名
@@ -38,4 +47,4 @@ list(REMOVE_ITEM effekseer_src "${PROJECT_SOURCE_DIR}./../../EffekseerRendererCo
 set(CMAKE_SHARED_LIBRARY_SUFFIX ".bc")
 
 # コンパイル先を追加
-add_library(libEffekseerUnity SHARED ${effekseer_src} )
+add_library(EffekseerUnity SHARED ${effekseer_src} )
