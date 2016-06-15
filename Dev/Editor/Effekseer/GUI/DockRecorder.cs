@@ -43,7 +43,9 @@ namespace Effekseer.GUI
 				this.cb_type.Items.AddRange(new object[] {
 		            "Export as a single image.",
 		            "Export as images",
-		            "Export as a gif animation"});
+		            "Export as a gif animation",
+					"Export as a AVI",
+				});
 				cb_type.SelectedIndex = 0;
 
 				cb_tranceparence.Items.Clear();
@@ -190,7 +192,10 @@ namespace Effekseer.GUI
 				{
 					dialog.Filter = "gif(*.gif)|*.gif";
 				}
-				
+				else if (cb_type.SelectedIndex == 3)
+				{
+					dialog.Filter = "AVI(*.avi)|*.avi";
+				}
 
 				if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
 				{
@@ -228,6 +233,13 @@ namespace Effekseer.GUI
 				else if (cb_type.SelectedIndex == 2)
 				{
 					if (!viewer.RecordAsGifAnimation(filename, count, startingFrame, freq, (TransparenceType)cb_tranceparence.SelectedIndex))
+					{
+						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+					}
+				}
+				else if (cb_type.SelectedIndex == 3)
+				{
+					if (!viewer.RecordAsAVI(filename, count, startingFrame, freq, (TransparenceType)cb_tranceparence.SelectedIndex))
 					{
 						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 					}

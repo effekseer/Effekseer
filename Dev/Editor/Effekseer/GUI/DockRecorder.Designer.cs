@@ -131,7 +131,8 @@
 			this.cb_type.Items.AddRange(new object[] {
             "1枚にまとめて出力",
             "連番画像として出力",
-            "GIFアニメーションとして出力"});
+            "GIFアニメーションとして出力",
+			"AVIとして出力"});
 			this.cb_type.Location = new System.Drawing.Point(8, 18);
 			this.cb_type.Name = "cb_type";
 			this.cb_type.Size = new System.Drawing.Size(154, 20);

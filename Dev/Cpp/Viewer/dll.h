@@ -200,6 +200,8 @@ public:
 
 	bool RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
 
+	bool RecordAsAVI(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
+
 	ViewerParamater GetViewerParamater();
 
 	void SetViewerParamater( ViewerParamater& paramater );
