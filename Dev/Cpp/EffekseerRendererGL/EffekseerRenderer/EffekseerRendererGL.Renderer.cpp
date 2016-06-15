@@ -626,7 +626,8 @@ bool RendererImplemented::BeginRendering()
 		m_originalState.depthTest = glIsEnabled(GL_DEPTH_TEST);
 #if !defined(__EFFEKSEER_RENDERER_GL3__) && \
 	!defined(__EFFEKSEER_RENDERER_GLES3__) && \
-	!defined(__EFFEKSEER_RENDERER_GLES2__)
+	!defined(__EFFEKSEER_RENDERER_GLES2__) && \
+	!defined(EMSCRIPTEN)
 		m_originalState.texture = glIsEnabled(GL_TEXTURE_2D);
 #endif
 		glGetBooleanv(GL_DEPTH_WRITEMASK, &m_originalState.depthWrite);
@@ -672,7 +673,8 @@ bool RendererImplemented::EndRendering()
 		
 #if !defined(__EFFEKSEER_RENDERER_GL3__) && \
 	!defined(__EFFEKSEER_RENDERER_GLES3__) && \
-	!defined(__EFFEKSEER_RENDERER_GLES2__)
+	!defined(__EFFEKSEER_RENDERER_GLES2__) && \
+	!defined(EMSCRIPTEN)
 		if (m_originalState.texture) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
 #endif
 		
