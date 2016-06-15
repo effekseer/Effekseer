@@ -59,6 +59,13 @@ class TextureLoader;
 #else
 #define GLCheckError()
 #endif
+#elif EMSCRIPTEN
+#ifdef _DEBUG
+#include  <emscripten.h>
+#define GLCheckError()		{ int __code = glGetError(); if(__code != GL_NO_ERROR) { EM_ASM_ARGS({console.log("GLError filename = " + Pointer_stringify($0) + " , line = " + $1);}, __FILE__, __LINE__); } }
+#else
+#define GLCheckError()
+#endif
 #else
 #define GLCheckError()
 #endif
