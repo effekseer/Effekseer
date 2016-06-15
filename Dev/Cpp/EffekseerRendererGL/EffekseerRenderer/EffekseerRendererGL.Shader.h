@@ -195,7 +195,7 @@ public:
 "#define IN in\n" \
 "#define TEX2D texture\n" \
 "layout (location = 0) out vec4 FRAGCOLOR;\n"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(EMSCRIPTEN)
 #define EFFEKSEER_VERTEX_SHADER_HEADER \
 "precision mediump float;\n" \
 "#define IN attribute\n" \
