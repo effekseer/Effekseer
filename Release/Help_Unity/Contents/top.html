@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../base.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<section class="level1">
+<h1>Effekseer UnityPlugin Manual</h1>
+<figure>
+<img src="img/plugin_logo.png" />
+</figure>
+<section id="overview" class="level2">
+<h2>概要</h2>
+<p>ゲームエンジンUnityとの連携について説明します。<br />
+なお、Unity Technologies社とこのツールは特に提携しているというわけではないため、<br />
+バージョンや状況によっては上手く動作しない可能性があります。</p>
+<p>Effekseerの再生プログラムはC++で書かれているため、Unity上ではネイティブプラグイン扱いになります。<br></p>
+</section>
+<section id="environment" class="level2">
+<h2>動作環境</h2>
+<section class="level3">
+<h3>Unityバージョン</h3>
+<p>Unity 5.2以降必須。<br />
+PersonalでもProでも使えます。</p>
+</section>
+<section class="level3">
+<h3>プラットフォーム</h3>
+<table>
+<thead>
+<tr class="header">
+<th>プラットフォーム</th>
+<th style="text-align: center;">対応状況</th>
+<th style="text-align: center;">CPU</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Windows</td>
+<td style="text-align: center;">○</td>
+<td style="text-align: center;">x86/x64</td>
+<td>DX9,DX11で動作可能。DX12は不可。</td>
+</tr>
+<tr class="even">
+<td>Mac OS X</td>
+<td style="text-align: center;">○</td>
+<td style="text-align: center;">x86/x64</td>
+<td>OpenGLで動作可能。Metalは不可。</td>
+</tr>
+<tr class="odd">
+<td>Android</td>
+<td style="text-align: center;">β</td>
+<td style="text-align: center;">ARMv7/x86</td>
+<td>OpenGLで動作可能。Vulkanは不可。</td>
+</tr>
+<tr class="even">
+<td>iOS</td>
+<td style="text-align: center;">β</td>
+<td style="text-align: center;">ARMv7/ARM64</td>
+<td>OpenGLで動作可能。Metalは不可。</td>
+</tr>
+<tr class="odd">
+<td>WebGL</td>
+<td style="text-align: center;">○</td>
+<td style="text-align: center;">-</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="how-to-install" class="level2">
+<h2>インストール方法</h2>
+<p>Effekseer.unitypackage を開いてUnityプロジェクトにインポートします。</p>
+<figure>
+<img src="img/unity_import.png" />
+</figure>
+</section>
+<section id="issues" class="level2">
+<h2>既知の問題</h2>
+<ul>
+<li>[iOS] Metalグラフィックス環境では使用できません。 EffekseerをiOS環境で使用するには<br />
+Build Settings -&gt; Player Settings -&gt; Other Settings -&gt; Auto Graphics API のチェックを外し、<br />
+Metalを削除する必要があります。</li>
+</ul>
+</section>
+<section id="todo" class="level2">
+<h2>Todo</h2>
+<ul>
+<li>Metal? Vulkan?</li>
+</ul>
+</section>
+</section>
+</body>
+</html>
