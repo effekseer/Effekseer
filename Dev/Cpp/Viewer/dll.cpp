@@ -96,10 +96,11 @@ private:
 
 public:
 
-	void Initialize(int32_t width, int32_t height)
+	void Initialize(int32_t width, int32_t height, int32_t framerate)
 	{
 		this->width = width;
 		this->height = height;
+		this->framerate = framerate;
 	}
 
 	void AddFrame(std::vector<Effekseer::Color> frame)
@@ -1537,7 +1538,7 @@ bool Native::RecordAsAVI(const wchar_t* path, int32_t count, int32_t offsetFrame
 	fp = _wfopen(path, L"wb");
 
 	AVIExporter exporter;
-	exporter.Initialize(g_renderer->GuideWidth, g_renderer->GuideHeight);
+	exporter.Initialize(g_renderer->GuideWidth, g_renderer->GuideHeight, (int32_t)(60.0f / (float)freq));
 
 	for (int32_t i = 0; i < count; i++)
 	{
