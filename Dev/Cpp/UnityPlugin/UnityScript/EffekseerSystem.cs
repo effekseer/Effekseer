@@ -74,12 +74,21 @@ public class EffekseerSystem : MonoBehaviour
 	}
 
 	/// <summary>
-	/// エフェクトのロード
+	/// エフェクトのロード(Resourcesから)
 	/// </summary>
 	/// <param name="name">エフェクト名</param>
 	public static void LoadEffect(string name)
 	{
-		Instance._LoadEffect(name);
+		Instance._LoadEffect(name, null);
+	}
+	
+	/// <summary>
+	/// エフェクトのロード(AssetBundleから)
+	/// </summary>
+	/// <param name="name">エフェクト名</param>
+	public static void LoadEffect(string name, AssetBundle assetBundle)
+	{
+		Instance._LoadEffect(name, assetBundle);
 	}
 
 	/// <summary>
@@ -125,6 +134,9 @@ public class EffekseerSystem : MonoBehaviour
 	private List<SoundResource> soundList = new List<SoundResource>();
 	private List<SoundInstance> soundInstanceList = new List<SoundInstance>();
 	
+	// 現在のロード中のアセットバンドル
+	private AssetBundle assetBundle;
+
 #if UNITY_EDITOR
 	// ホットリロードの退避用
 	private List<string> savedEffectList = new List<string>();
@@ -144,27 +156,36 @@ public class EffekseerSystem : MonoBehaviour
 		}
 		
 		// 存在しなかったらロード
-		return _LoadEffect(name);
+		return _LoadEffect(name, null);
 	}
 
-	private IntPtr _LoadEffect(string name) {
+	private IntPtr _LoadEffect(string name, AssetBundle assetBundle) {
 		if (effectList.ContainsKey(name)) {
 			return effectList[name];
 		}
 
-		// Resourcesから読み込む
-		var asset = Resources.Load<TextAsset>(Utility.ResourcePath(name, true));
-		if (asset == null) {
-			Debug.LogError("[Effekseer] Failed to load effect: " + name);
-			return IntPtr.Zero;
+		byte[] bytes;
+		if (assetBundle != null) {
+			var asset = assetBundle.LoadAsset<TextAsset>(name);
+			bytes = asset.bytes;
+		} else {
+			// Resourcesから読み込む
+			var asset = Resources.Load<TextAsset>(Utility.ResourcePath(name, true));
+			if (asset == null) {
+				Debug.LogError("[Effekseer] Failed to load effect: " + name);
+				return IntPtr.Zero;
+			}
+			bytes = asset.bytes;
 		}
-		byte[] bytes = asset.bytes;
-		
+
+		this.assetBundle = assetBundle;
 		GCHandle ghc = GCHandle.Alloc(bytes, GCHandleType.Pinned);
 		IntPtr effect = Plugin.EffekseerLoadEffectOnMemory(ghc.AddrOfPinnedObject(), bytes.Length);
 		ghc.Free();
-
+		this.assetBundle = null;
+		
 		effectList.Add(name, effect);
+
 		return effect;
 	}
 	
@@ -319,7 +340,7 @@ public class EffekseerSystem : MonoBehaviour
 	private static IntPtr TextureLoaderLoad(IntPtr path) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		var res = new TextureResource();
-		if (res.Load(pathstr)) {
+		if (res.Load(pathstr, EffekseerSystem.Instance.assetBundle)) {
 			EffekseerSystem.Instance.textureList.Add(res);
 			return res.GetNativePtr();
 		}
@@ -329,7 +350,7 @@ public class EffekseerSystem : MonoBehaviour
 	private static void TextureLoaderUnload(IntPtr path) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		foreach (var res in EffekseerSystem.Instance.textureList) {
-			if (res.Path == pathstr) {
+			if (res.path == pathstr) {
 				EffekseerSystem.Instance.textureList.Remove(res);
 				return;
 			}
@@ -339,9 +360,9 @@ public class EffekseerSystem : MonoBehaviour
 	private static int ModelLoaderLoad(IntPtr path, IntPtr buffer, int bufferSize) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		var res = new ModelResource();
-		if (res.Load(pathstr) && res.Copy(buffer, bufferSize)) {
+		if (res.Load(pathstr, EffekseerSystem.Instance.assetBundle) && res.Copy(buffer, bufferSize)) {
 			EffekseerSystem.Instance.modelList.Add(res);
-			return res.ModelData.bytes.Length;
+			return res.modelData.bytes.Length;
 		}
 		return 0;
 	}
@@ -349,7 +370,7 @@ public class EffekseerSystem : MonoBehaviour
 	private static void ModelLoaderUnload(IntPtr path) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		foreach (var res in EffekseerSystem.Instance.modelList) {
-			if (res.Path == pathstr) {
+			if (res.path == pathstr) {
 				EffekseerSystem.Instance.modelList.Remove(res);
 				return;
 			}
@@ -359,7 +380,7 @@ public class EffekseerSystem : MonoBehaviour
 	private static int SoundLoaderLoad(IntPtr path) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		var res = new SoundResource();
-		if (res.Load(pathstr)) {
+		if (res.Load(pathstr, EffekseerSystem.Instance.assetBundle)) {
 			EffekseerSystem.Instance.soundList.Add(res);
 			return EffekseerSystem.Instance.soundList.Count;
 		}
@@ -369,7 +390,7 @@ public class EffekseerSystem : MonoBehaviour
 	private static void SoundLoaderUnload(IntPtr path) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		foreach (var res in EffekseerSystem.Instance.soundList) {
-			if (res.Path == pathstr) {
+			if (res.path == pathstr) {
 				EffekseerSystem.Instance.soundList.Remove(res);
 				return;
 			}
@@ -412,7 +433,7 @@ public class EffekseerSystem : MonoBehaviour
 		}
 		foreach (var instance in soundInstanceList) {
 			if (!instance.CheckPlaying()) {
-				instance.Play(tag.ToString(), resource.Audio, volume, pan, pitch, mode3D, x, y, z, distance);
+				instance.Play(tag.ToString(), resource.audio, volume, pan, pitch, mode3D, x, y, z, distance);
 				break;
 			}
 		}

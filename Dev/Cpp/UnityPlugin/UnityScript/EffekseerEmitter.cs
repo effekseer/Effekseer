@@ -82,9 +82,11 @@ public class EffekseerEmitter : MonoBehaviour
 
 	void Start()
 	{
-		EffekseerSystem.LoadEffect(effectName);
-		if (playOnStart) {
-			Play();
+		if (!String.IsNullOrEmpty(effectName)) {
+			EffekseerSystem.LoadEffect(effectName);
+			if (playOnStart) {
+				Play();
+			}
 		}
 	}
 	
