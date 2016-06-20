@@ -1,23 +1,25 @@
 ﻿Effekseer
 =========
-本ソフトウェアはヴィジュアルエフェクト編集ツールです。
-ランタイムやプラグインを組み込むことで、アプリケーション中で作成されたエフェクトを再生できるようになります。
-主にゲームで使用することを想定しており、ヴィジュアルエフェクトの編集をプログラマでなくデザイナーが担当できるようにします。
-
-* [公式ウェブサイト](http://effekseer.github.io/jp/)
-
 This software is a visual effects editing tool.
 By incorporating a runtime and plug-ins, you will be able to play the effect that was created in the application.
 It is assumed to be used mainly in the game, and the editing of visual effects rather than the programmer so designers can be in charge.
 
 * [Official website](http://effekseer.github.io/en/)
 
+本ソフトウェアはヴィジュアルエフェクト編集ツールです。
+ランタイムやプラグインを組み込むことで、アプリケーション中で作成されたエフェクトを再生できるようになります。
+主にゲームで使用することを想定しており、ヴィジュアルエフェクトの編集をプログラマでなくデザイナーが担当できるようにします。
+
+* [公式ウェブサイト](http://effekseer.github.io/jp/)
+
 [![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
 
 # RoadMap
 
 **Version 1.20**
-* ?
+* Unity対応強化
+* 連番画像出力強化
+* 動画出力機能
 
 # Todo
 プルリクエストお待ちしております。
@@ -59,8 +61,3 @@ It is assumed to be used mainly in the game, and the editing of visual effects r
 
 ```Dev/Cpp/build.sh``` を実行する。
 ```Dev/Cpp/Test/CMakeLists.txt``` をcmakeを使用してmakeを生成しコンパイルする。
-
-* Mac
-
-不明
-

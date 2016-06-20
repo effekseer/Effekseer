@@ -1,6 +1,6 @@
-SET RDIR=Effekseer110
-SET RDIR_R=EffekseerRuntime110
-SET RDIR_U=EffekseerForUnity110b
+SET RDIR=Effekseer120
+SET RDIR_R=EffekseerRuntime120
+SET RDIR_U=EffekseerForUnity120
 
 rmdir %RDIR%
 mkdir %RDIR%
