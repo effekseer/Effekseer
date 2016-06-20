@@ -4,7 +4,7 @@
 //----------------------------------------------------------------------------------
 #include "EffekseerRendererGL.GLExtension.h"
 
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(__EMSCRIPTEN__)
 #include <EGL/egl.h>
 #endif
 
