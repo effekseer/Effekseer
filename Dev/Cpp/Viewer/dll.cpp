@@ -223,9 +223,9 @@ public:
 				for (auto w = 0; w < width; w++)
 				{
 					auto c = frame[w + (height - h - 1) * width];
-					dst.push_back(c.R);
-					dst.push_back(c.G);
 					dst.push_back(c.B);
+					dst.push_back(c.G);
+					dst.push_back(c.R);
 					dst.push_back(c.A);
 				}
 			}
