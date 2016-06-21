@@ -196,6 +196,9 @@ namespace Effekseer
 		public static extern void EffekseerSetScale(int handle, float x, float y, float z);
 
 		[DllImport(pluginName)]
+		public static extern void EffekseerSetTargetLocation(int handle, float x, float y, float z);
+
+		[DllImport(pluginName)]
 		public static extern void EffekseerSetTextureLoaderEvent(
 			EffekseerTextureLoaderLoad load,
 			EffekseerTextureLoaderUnload unload);

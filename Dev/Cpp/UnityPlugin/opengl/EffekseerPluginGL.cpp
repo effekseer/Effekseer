@@ -93,6 +93,7 @@ extern "C"
 		g_EffekseerManager->SetSpriteRenderer(g_EffekseerRenderer->CreateSpriteRenderer());
 		g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
 		g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
+		g_EffekseerManager->SetTrackRenderer(g_EffekseerRenderer->CreateTrackRenderer());
 		g_EffekseerManager->SetModelRenderer(g_EffekseerRenderer->CreateModelRenderer());
 	}
 

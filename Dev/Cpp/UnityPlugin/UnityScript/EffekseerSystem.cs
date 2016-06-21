@@ -25,7 +25,7 @@ public class EffekseerSystem : MonoBehaviour
 	public int effectInstances	= 800;
 
 	/// <summary>
-	/// 四角形の最大数
+	/// 描画できる四角形の最大数
 	/// </summary>
 	public int maxSquares		= 1200;
 	
@@ -38,16 +38,6 @@ public class EffekseerSystem : MonoBehaviour
 	/// エフェクトの描画するタイミング
 	/// </summary>
 	const CameraEvent cameraEvent	= CameraEvent.BeforeImageEffects;
-
-	/// <summary>
-	/// Effekseerのファイルを置く場所
-	/// </summary>
-	public static string resourcePath
-	{
-		get {
-			return Path.Combine(Application.streamingAssetsPath, "Effekseer");
-		}
-	}
 
 	/// <summary>
 	/// エフェクトの再生
@@ -76,7 +66,7 @@ public class EffekseerSystem : MonoBehaviour
 	/// <summary>
 	/// エフェクトのロード(Resourcesから)
 	/// </summary>
-	/// <param name="name">エフェクト名</param>
+	/// <param name="name">エフェクト名(efkファイルの名前から".efk"を取り除いたもの)</param>
 	public static void LoadEffect(string name)
 	{
 		Instance._LoadEffect(name, null);
@@ -85,7 +75,7 @@ public class EffekseerSystem : MonoBehaviour
 	/// <summary>
 	/// エフェクトのロード(AssetBundleから)
 	/// </summary>
-	/// <param name="name">エフェクト名</param>
+	/// <param name="name">エフェクト名(efkファイルの名前から".efk"を取り除いたもの)</param>
 	public static void LoadEffect(string name, AssetBundle assetBundle)
 	{
 		Instance._LoadEffect(name, assetBundle);
@@ -94,7 +84,7 @@ public class EffekseerSystem : MonoBehaviour
 	/// <summary>
 	/// エフェクトの解放
 	/// </summary>
-	/// <param name="name">エフェクト名</param>
+	/// <param name="name">エフェクト名(efkファイルの名前から".efk"を取り除いたもの)</param>
 	public static void ReleaseEffect(string name)
 	{
 		Instance._ReleaseEffect(name);
@@ -488,6 +478,7 @@ public struct EffekseerHandle
 	
 	/// <summary>
 	/// エフェクトを停止する
+	/// 全てのエフェクトが瞬時に消える
 	/// </summary>
 	public void Stop()
 	{
@@ -495,7 +486,8 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// エフェクトをルートだけ停止する
+	/// 再生中のエフェクトのルートノードだけを停止
+	/// ルートノードを削除したことで子ノード生成が停止され寿命で徐々に消える
 	/// </summary>
 	public void StopRoot()
 	{
@@ -531,9 +523,20 @@ public struct EffekseerHandle
 	{
 		Plugin.EffekseerSetScale(m_handle, scale.x, scale.y, scale.z);
 	}
+	
+	/// <summary>
+	/// エフェクトのターゲット位置を設定
+	/// </summary>
+	/// <param name="targetLocation">ターゲット位置</param>
+	public void SetTargetLocation(Vector3 targetLocation)
+	{
+		Plugin.EffekseerSetTargetLocation(m_handle, targetLocation.x, targetLocation.y, targetLocation.z);
+	}
 
 	/// <summary>
-	/// Update時に更新するか
+	/// ポーズ設定
+	/// <para>true:  停止中。Updateで更新しない</para>
+	/// <para>false: 再生中。Updateで更新する</para>
 	/// </summary>
 	public bool paused
 	{
@@ -547,7 +550,9 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// Draw時で描画されるか
+	/// 表示設定
+	/// <para>true:  表示ON。Drawで描画する</para>
+	/// <para>false: 表示OFF。Drawで描画しない</para>
 	/// </summary>
 	public bool shown
 	{
@@ -561,9 +566,9 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// ハンドルが有効かどうか<br/>
-	/// <para>true:有効</para>
-	/// <para>false:無効</para>
+	/// インスタンスハンドルが有効かどうか<br/>
+	/// <para>true:  有効</para>
+	/// <para>false: 無効</para>
 	/// </summary>
 	public bool enable
 	{
@@ -574,8 +579,8 @@ public struct EffekseerHandle
 	
 	/// <summary>
 	/// エフェクトのインスタンスが存在しているかどうか
-	/// <para>true:存在している</para>
-	/// <para>false:再生終了で破棄。もしくはStopで停止された</para>
+	/// <para>true:  存在している</para>
+	/// <para>false: 再生終了で破棄。もしくはStopで停止された</para>
 	/// </summary>
 	public bool exists
 	{
