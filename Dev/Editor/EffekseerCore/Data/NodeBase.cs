@@ -11,6 +11,8 @@ namespace Effekseer.Data
 
 		[Name(language = Language.Japanese, value = "描画")]
 		[Description(language = Language.Japanese, value = "編集画面にインスタンスを描画するかどうか。\n最終的に出力される結果には関係ない。")]
+		[Name(language = Language.English, value = "Visibility")]
+		[Description(language = Language.English, value = "Whether to draw the instance to the viewport.\nHas nothing to do with the final output.")]
 		public Value.Boolean IsRendered
 		{
 			get;
@@ -19,6 +21,8 @@ namespace Effekseer.Data
 
 		[Name(language=Language.Japanese, value="名称")]
 		[Description(language=Language.Japanese, value="ノードの名称。\n描画には関係ない。")]
+		[Name(language = Language.English, value = "Name")]
+		[Description(language = Language.English, value = "The name of the node.")]
 		public Value.String Name
 		{
 			get;
