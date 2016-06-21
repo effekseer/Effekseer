@@ -36,11 +36,13 @@ namespace Effekseer.GUI
 			regist(Play);
 			regist(Stop);
 			regist(Step);
+			regist(BackStep);
 
 			regist(Undo);
 			regist(Redo);
 			regist(Copy);
 			regist(Paste);
+			regist(PasteInfo);
 			regist(AddNode);
 			regist(InsertNode);
 			regist(RemoveNode);
@@ -226,6 +228,14 @@ namespace Effekseer.GUI
 			GUIManager.DockViewer.StepViewer(false);
 		}
 
+		[Name(value = "ステップ(後)", language = Language.Japanese)]
+		[Name(value = "Step(Back)", language = Language.English)]
+		[UniqueName(value = "Internal.BackStepViewer")]
+		public static void BackStep()
+		{
+			GUIManager.DockViewer.BackStepViewer();
+		}
+
 		[Name(value="元に戻す", language= Language.Japanese)]
 		[Name(value = "Undo", language = Language.English)]
 		[UniqueName(value="Internal.Undo")]
@@ -242,8 +252,8 @@ namespace Effekseer.GUI
 			Command.CommandManager.Redo();
 		}
 
-		[Name(value = "ノード情報のコピー", language = Language.Japanese)]
-		[Name(value = "Copy Node Info", language = Language.English)]
+		[Name(value = "ノードのコピー", language = Language.Japanese)]
+		[Name(value = "Copy Node", language = Language.English)]
 		[UniqueName(value = "Internal.Copy")]
 		public static void Copy()
 		{
@@ -255,15 +265,36 @@ namespace Effekseer.GUI
 			}
 		}
 
-		[Name(value = "ノード情報の貼り付け", language = Language.Japanese)]
-		[Name(value = "Paste Node Info", language = Language.English)]
+		[Name(value = "ノードの貼り付け", language = Language.Japanese)]
+		[Name(value = "Paste Node", language = Language.English)]
 		[UniqueName(value = "Internal.Paste")]
 		public static void Paste()
 		{
 			if (Core.SelectedNode != null)
 			{
 				var data = System.Windows.Forms.Clipboard.GetText();
-				Core.Paste(Core.SelectedNode,data);
+
+				var selected = Core.SelectedNode;
+
+				if (selected != null)
+				{
+					Command.CommandManager.StartCollection();
+					var node = selected.AddChild();
+					Core.Paste(node, data);
+					Command.CommandManager.EndCollection();
+				}
+			}
+		}
+
+		[Name(value = "ノード情報の貼り付け", language = Language.Japanese)]
+		[Name(value = "Paste Node Info", language = Language.English)]
+		[UniqueName(value = "Internal.PasteInfo")]
+		public static void PasteInfo()
+		{
+			if (Core.SelectedNode != null)
+			{
+				var data = System.Windows.Forms.Clipboard.GetText();
+				Core.Paste(Core.SelectedNode, data);
 			}
 		}
 

@@ -33,7 +33,6 @@ It is assumed to be used mainly in the game, and the editing of visual effects r
 
 **中規模な追加・変更**
 * Effectのパラメーターの動的な変更
-* ショートカットの見直し
 * モデル出力プラグイン(Blender等)
 
 
