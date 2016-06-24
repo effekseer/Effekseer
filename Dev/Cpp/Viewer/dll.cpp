@@ -44,7 +44,7 @@ private:
 	int32_t	width;
 	int32_t	height;
 	int32_t framerate = 60;
-	std::vector<std::vector<Effekseer::Color>>	frames;
+	int32_t frameCount = 0;
 
 	struct ChunkList
 	{
@@ -96,19 +96,15 @@ private:
 
 public:
 
-	void Initialize(int32_t width, int32_t height, int32_t framerate)
+	void Initialize(int32_t width, int32_t height, int32_t framerate, int32_t frameCount)
 	{
 		this->width = width;
 		this->height = height;
 		this->framerate = framerate;
+		this->frameCount = frameCount;
 	}
 
-	void AddFrame(std::vector<Effekseer::Color> frame)
-	{
-		frames.push_back(frame);
-	}
-
-	void ExportAVI(std::vector<uint8_t>& dst)
+	void BeginToExportAVI(std::vector<uint8_t>& dst)
 	{
 		dst.clear();
 
@@ -133,7 +129,7 @@ public:
 		Chunk idx1Chunk;
 
 		aviChunkList.Name = mmioFOURCC('R', 'I', 'F', 'F');
-		aviChunkList.Size = 2048 - 8 + (sizeof(Chunk) + width * height * 4) * frames.size() + sizeof(idx1Chunk) + sizeof(AVIINDEXENTRY) * frames.size();
+		aviChunkList.Size = 2048 - 8 + (sizeof(Chunk) + width * height * 4) * frameCount + sizeof(idx1Chunk) + sizeof(AVIINDEXENTRY) * frameCount;
 		aviChunkList.ID = mmioFOURCC('A', 'V', 'I', ' ');
 		ExportData(dst, &aviChunkList);
 	
@@ -154,7 +150,7 @@ public:
 		mainAVIHeader.dwMaxBytesPerSec = width * height * 4 * framerate;
 		mainAVIHeader.dwPaddingGranularity = 0;
 		mainAVIHeader.dwFlags = 2064;
-		mainAVIHeader.dwTotalFrames = frames.size();
+		mainAVIHeader.dwTotalFrames = frameCount;
 		mainAVIHeader.dwInitialFrames = 0;
 		mainAVIHeader.dwStreams = 1;
 		mainAVIHeader.dwSuggestedBufferSize = width * height * 4;
@@ -179,7 +175,7 @@ public:
 		aviStreamHeader.dwScale = 1;
 		aviStreamHeader.dwRate = framerate;
 		aviStreamHeader.dwStart = 0;
-		aviStreamHeader.dwLength = frames.size();
+		aviStreamHeader.dwLength = frameCount;
 		aviStreamHeader.dwSuggestedBufferSize = width * height * 4;
 		aviStreamHeader.dwQuality = -1;
 		aviStreamHeader.dwSampleSize = width * height * 4;
@@ -207,44 +203,52 @@ public:
 		ExportData(dst, junk);
 
 		moviChunkList.Name = mmioFOURCC('L', 'I', 'S', 'T');
-		moviChunkList.Size = sizeof(moviChunkList) - 8 + (sizeof(Chunk) + width * height * 4) * frames.size();
+		moviChunkList.Size = sizeof(moviChunkList) - 8 + (sizeof(Chunk) + width * height * 4) * frameCount;
 		moviChunkList.ID = mmioFOURCC('m', 'o', 'v', 'i');
 		ExportData(dst, &moviChunkList);
+	}
 
-		for (auto& frame : frames)
+	void ExportFrame(std::vector<uint8_t>& dst, std::vector<Effekseer::Color> frame)
+	{
+		dst.clear();
+
+		Chunk chunk;
+		chunk.ID = mmioFOURCC('0', '0', 'd', 'b');
+		chunk.Size = width * height * 4;
+		ExportData(dst, &chunk);
+
+		for (auto h = 0; h < height; h++)
 		{
-			Chunk chunk;
-			chunk.ID = mmioFOURCC('0', '0', 'd', 'b');
-			chunk.Size = width * height * 4;
-			ExportData(dst, &chunk);
-
-			for (auto h = 0; h < height; h++)
+			for (auto w = 0; w < width; w++)
 			{
-				for (auto w = 0; w < width; w++)
-				{
-					auto c = frame[w + (height - h - 1) * width];
-					dst.push_back(c.B);
-					dst.push_back(c.G);
-					dst.push_back(c.R);
-					dst.push_back(c.A);
-				}
+				auto c = frame[w + (height - h - 1) * width];
+				dst.push_back(c.B);
+				dst.push_back(c.G);
+				dst.push_back(c.R);
+				dst.push_back(c.A);
 			}
 		}
+	}
 
-		idx1Chunk = Chunk(mmioFOURCC('i', 'd', 'x', '1'), sizeof(AVIINDEXENTRY) * frames.size());
+	void FinishToExportAVI(std::vector<uint8_t>& dst)
+	{
+		dst.clear();
+
+		Chunk idx1Chunk;
+
+		idx1Chunk = Chunk(mmioFOURCC('i', 'd', 'x', '1'), sizeof(AVIINDEXENTRY) * frameCount);
 		ExportData(dst, &idx1Chunk);
 
 		AVIINDEXENTRY entry;
 		entry.ckid = mmioFOURCC('0', '0', 'd', 'b');
 		entry.dwFlags = AVIIF_KEYFRAME;
 		entry.dwChunkLength = width * height * 4;
-		for (size_t i = 0; i < frames.size(); i++)
+		for (size_t i = 0; i < frameCount; i++)
 		{
 			entry.dwChunkOffset = 4 + sizeof(Chunk) * i + width * height * 4 * i;
 			ExportData(dst, &entry);
 		}
-	};
-
+	}
 };
 
 //----------------------------------------------------------------------------------
@@ -1538,7 +1542,11 @@ bool Native::RecordAsAVI(const wchar_t* path, int32_t count, int32_t offsetFrame
 	fp = _wfopen(path, L"wb");
 
 	AVIExporter exporter;
-	exporter.Initialize(g_renderer->GuideWidth, g_renderer->GuideHeight, (int32_t)(60.0f / (float)freq));
+	exporter.Initialize(g_renderer->GuideWidth, g_renderer->GuideHeight, (int32_t)(60.0f / (float)freq), count);
+
+	std::vector<uint8_t> d;
+	exporter.BeginToExportAVI(d);
+	fwrite(d.data(), 1, d.size(), fp);
 
 	for (int32_t i = 0; i < count; i++)
 	{
@@ -1556,13 +1564,13 @@ bool Native::RecordAsAVI(const wchar_t* path, int32_t count, int32_t offsetFrame
 		std::vector<Effekseer::Color> pixels;
 		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
 
-		exporter.AddFrame(pixels);
+		exporter.ExportFrame(d, pixels);
+		fwrite(d.data(), 1, d.size(), fp);
 	}
 
-	std::vector<uint8_t> d;
-	exporter.ExportAVI(d);
-
+	exporter.FinishToExportAVI(d);
 	fwrite(d.data(), 1, d.size(), fp);
+
 	fclose(fp);
 
 	g_manager->StopEffect(handle);
