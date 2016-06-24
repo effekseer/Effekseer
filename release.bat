@@ -146,6 +146,9 @@ doxygen doxygen.template
 mkdir %RDIR_R%\Help\html\doxygen
 robocopy html %RDIR_R%\Help\html\doxygen /mir /S
 
+doxygen Release\Help_Unity\Doxyfile
+robocopy UnityAPIRef %RDIR_U%\Help\APIRef /mir /S
+
 echo VS
 
 mkdir %RDIR_R%\Compiled\
