@@ -50,6 +50,8 @@ public:
 		Color		Colors[2];
 
 		float	Positions[2];
+
+		RectF	UV;
 	};
 
 public:

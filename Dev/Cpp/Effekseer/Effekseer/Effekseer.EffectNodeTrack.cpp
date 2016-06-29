@@ -106,6 +106,8 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
 		m_instanceParameter.InstanceIndex = 0;
 
+		m_instanceParameter.UV = group->GetFirst()->GetUV();
+
 		/*
 		SetValues( m_instanceParameter.ColorLeft, instValues.ColorLeft, TrackColorLeft, group->GetTime() );
 		SetValues( m_instanceParameter.ColorCenter,instValues.ColorCenter, TrackColorCenter, group->GetTime() );
@@ -149,6 +151,7 @@ void EffectNodeTrack::Rendering(const Instance& instance, Manager* manager)
 		SetValues( m_instanceParameter.SizeBack, m_currentGroupValues.SizeBack, TrackSizeBack, t );
 
 		m_instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
+
 		renderer->Rendering( m_nodeParameter, m_instanceParameter, m_userData );
 		m_instanceParameter.InstanceIndex++;
 	}

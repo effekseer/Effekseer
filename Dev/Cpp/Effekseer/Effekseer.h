@@ -1892,6 +1892,8 @@ public:
 		Color		Colors[2];
 
 		float	Positions[2];
+
+		RectF	UV;
 	};
 
 public:
@@ -2110,6 +2112,8 @@ public:
 		float	SizeFor;
 		float	SizeMiddle;
 		float	SizeBack;
+
+		RectF	UV;
 	};
 
 public:

@@ -185,14 +185,14 @@ protected:
 		v[2].Pos.Z = 0.0f;
 		v[2].SetColor( rightColor );
 
-		v[0].UV[0] = 0.0f;
-		v[0].UV[1] = (float)param.InstanceIndex / (float)param.InstanceCount;
+		v[0].UV[0] = instanceParameter.UV.X;
+		v[0].UV[1] = instanceParameter.UV.Y + (float) param.InstanceIndex / (float) param.InstanceCount * instanceParameter.UV.Height;
 
-		v[1].UV[0] = 0.5f;
-		v[1].UV[1] = (float)( param.InstanceIndex ) / (float)param.InstanceCount;
+		v[1].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width * 0.5f;
+		v[1].UV[1] = instanceParameter.UV.Y + (float) (param.InstanceIndex) / (float) param.InstanceCount * instanceParameter.UV.Height;
 
-		v[2].UV[0] = 1.0f;
-		v[2].UV[1] = (float)( param.InstanceIndex ) / (float)param.InstanceCount;
+		v[2].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
+		v[2].UV[1] = instanceParameter.UV.Y + (float) (param.InstanceIndex) / (float) param.InstanceCount * instanceParameter.UV.Height;
 
 		v[1].Pos.X = param.SRTMatrix43.Value[3][0];
 		v[1].Pos.Y = param.SRTMatrix43.Value[3][1];
