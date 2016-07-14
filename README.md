@@ -14,12 +14,15 @@ Effekseer is useful in developing game software especially. Not only programmers
 
 [![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
 
+Todo
+=========
+
+Please read issues.
+
+[https://github.com/effekseer/Effekseer/issues](Issues)
+
 # RoadMap
 
-**Version 1.20**
-* Unity対応強化
-* 連番画像出力強化
-* 動画出力機能
 
 # Todo
 プルリクエストお待ちしております。
@@ -28,7 +31,6 @@ Effekseer is useful in developing game software especially. Not only programmers
 * ドキュメントの改良
 * 文言の改良
 * 各種アイコンの追加
-* サンプルの追加
 * Windows、Linux以外のテストの構築
 
 **中規模な追加・変更**
