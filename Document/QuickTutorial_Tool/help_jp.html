@@ -180,40 +180,41 @@ div.title {
 <h3>Node Tree</h3>
 <table>
 <tr><td style="width:432px; text-align:center"><img src="effektut-files/nodetree.png" /></td><td class='td1'>
-This is the overview of your project's structure, containing all of your particle emitters. Clicking on a node in the tree brings up all of its properties in the various program windows, allowing you to edit anything about it. Right clicking in the node tree brings up a context menu that includes the option to add a new node. The new node will be added as a child of the currently selected node. There is the concept of inheritance in this program (ie: child nodes inherit some properties from their parent nodes), which will be talked about in more detail later. Nodes can also be copy and pasted, which is very useful.
+これは作成中の全てのパーティクルエミッターを格納しているプロジェクトの構造の概要です。ツリーのノードをクリックすると様々なウインドウにプロパティが表示され、そのプロパティを編集できるようになります。ノードツリーを右クリックすると新しいノードを追加するオプションを含むメニューが表示されます。この新しいノードは現在選択されているノードの子に追加されます。プログラム内の引き継ぎのコンセプト（子のノードは親のノードのプロパティを一部引き継ぐ）があり、詳細は後で記載します。ノードはコピーや貼り付けができ、これらの機能はとても便利です。
 </td></tr></table>
+
 
 <a name="random_fields"></a>
 <h3>Random Fields</h3>
 <table>
 <tr><td style="width:432px; text-align:center"><img src="effektut-files/random.png" /></td><td class='td1'>
-Many numeric fields in the program take on an appearance like the image on the left. These types of fields indicate that they are capable of taking on randomly assigned values. There's two options for input, both of which are functionally equivalent:<br><br>
+このプログラム内のたくさんの数値入力欄は左の画像で示すような見た目になっています。これらの入力欄の種類はランダムな値をとることができることを示しています。入力のための2つのオプションがあり、機能的には二つとも等しくなっています。<br><br>
 <ul>
-<li><b>Range:</b> You specify a minimum and maximum value, and the assigned value will be any random (real) number that falls between those two extremes.</li>
-<li><b>Gauss:</b> You specify the range instead using a mean and deviation. For example, with {Mean=5, Deviation=2}, the randomly assigned value will fall between 3 and 7.</li>
+<li><b>範囲</b> 最小と最大を指定し、２つの値の間の少数が適用されます。</li>
+<li><b>ガウス</b> 範囲の代わりに中央値と広がり幅を指定します。例えば、中央５、広がり幅２で、３から７の間の値がランダムに適用されます。</li>
 </ul>
 </td></tr></table>
 
 <a name="particle_emitters"></a>
 <h2>Particle Emitters (aka, Nodes)</h2>
 
-Nodes are the core of this program; they are what actually spawn the particles that make up the particle effects. This section deals with how to modify the ways in which the nodes spawn the particles, but not how to edit the particles themselves. (<i>Editing the behavior and appearances of the particles that have been spawned will be the topic of the proceeding sections</i>)
+ノードはこのプログラムのコアです。これらは実際にパーティクルエフェクトを表示するパーティクルを出現させます。この章ではパーティクル自身でなく、ノードがパーティクルを出現させる手段の変更の仕方について説明します。(<i>E出現したパーティクルの振る舞いと見た目を編集することは後の章のトピックです。</i>)
 
 <a name="basic_settings"></a>
 <h3>Basic Settings</h3>
 <table>
 <tr><td style="width:432px; text-align:center"><img src="effektut-files/basic.png" /></td><td class='td1'>
-The <b>Basic Settings</b> window contains all of the standard parameters for tweaking the way in which a node spawns its particles. Starting from the top, the <b>Visibility</b> checkmark enables/disables the display of this node's particles in the Viewer. Note this is purely for editing convenience, as the particles will still appear in the final export regardless of the visibility settings.
+<b>共通</b>ウインドウはノードがパーティクルを出現させる方法を調節するための標準的なパラメーターの全てを格納しています。上から順に説明します。<b>表示</b>はビューワーにこのノードのパーティクルの表示/非表示を設定します。これは純粋に編集を楽にするためであって、表示の設定を無視して、最終的な出力では表示されます。
 <br><br>
-<b>Name</b> serves no purpose other than your own convenience. Once you start getting many nodes in your node tree, you'll want to give descriptive names to them.
+<b>名前</b>は、便利にする以外の目的には使用されません。一度、ノードツリーでたくさんのノードを使用し始めると、それらを説明する名称をつけたくなるでしょう。
 <br><br>
-<b>Spawn Count</b> sets the maximum number of particles this node is allowed to spawn. The <b>Infinite</b> checkmark overrides this, and allows the node to spawn particles without limit.
+<b>生成数</b>は、ノードが出現させるパーティクルの最大数を設定します。<b>無限</b>チェックマークはそれを上書きして、制限なくノードがパーティクルを出現させるようになります。
 <br><br>
-<b>Time to Live</b> sets the lifetime of each spawned particle (in frames). This is local to each particle, and begins counting down as soon as the particle is spawned. Once that duration of time has passed, the particle will automatically be destroyed. This is ignored if <b>Destroy after time</b> is unchecked.
+<b>生存時間</b>はフレーム単位でそれぞれのパーティクルが出現してからの生存時間を設定します。これは各パーティクルでローカルな値で、パーティクルが出現してからすぐにカウントが始まります。一度、時間が過ぎるとパーティクルは自動的に消滅します。 これは<b>寿命により削除</b>がチェックされてないと無視されます。
 <br><br>
-<b>Spawn Rate</b> determines how quickly the node emits particles. A value of 1 means it will spawn one particle per frame. A value of 10 means it will spawn one particle every 10 frames. This can be a decimal number; for example, a value of 0.1 will mean the node will emit 10 particles per frame.
+<b>生成時間</b>はどの程度早く、ノードがパーティクルを生成するかを決定します。1の値は1フレームに1つパーティクルを生成することを意味します。10の値は10フレームに1回、パーティクルを生成することを意味します。少数を指定することができ、例えば0.1を指定すると1フレームに10個パーティクルが生成されます。 
 <br><br>
-<b>Initial Delay</b> makes the node wait a certain duration of time before emitting its first particle. This is useful for sequential effects where not all of the emitters are immediately active.
+<b>生成開始時間</b>は最初のパーティクルが表示する前の待機時間を指定します。これは全てのエミッターが即座に動作するわけではない連続的なエフェクトに便利です。 
 </td></tr></table>
 
 <a name="inheritance"></a>
