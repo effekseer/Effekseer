@@ -219,7 +219,18 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		public OptionValues()
+        [Name(language = Language.Japanese, value = "言語設定")]
+        [Description(language = Language.Japanese, value = "言語設定")]
+        [Name(language = Language.English, value = "Language")]
+        [Description(language = Language.English, value = "Langueage")]
+        [Undo(Undo = false)]
+        public Value.Enum<Language> GuiLanguage
+        {
+            get;
+            private set;
+        }
+        
+        public OptionValues()
 		{
 			BackgroundColor = new Value.Color(0, 0, 0, 255);
 			BackgroundImage = new Value.PathForImage("画像ファイル (*.png)|*.png", false, "");
@@ -244,6 +255,9 @@ namespace Effekseer.Data
 			MouseRotInvY = new Value.Boolean(false);
 			MouseSlideInvX = new Value.Boolean(false);
 			MouseSlideInvY = new Value.Boolean(false);
+
+            GuiLanguage = new Value.Enum<Language>(Core.Language);
+
 		}
 
 		public enum FPSType : int

@@ -463,6 +463,10 @@ namespace Effekseer.GUI.Component
 					gui = null;
 					return;
 				}
+                else if (p.PropertyType == typeof(Data.Value.Enum<Language>))
+                {
+                    gui = new GuiLanguage();
+                }
 				else if (p.PropertyType.IsGenericType)
 				{
 					var types = p.PropertyType.GetGenericArguments();
