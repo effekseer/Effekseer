@@ -136,6 +136,12 @@
     <Compile Include="GUI\Component\FloatWithRandom.Designer.cs">
       <DependentUpon>FloatWithRandom.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\Component\GuiLanguage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\GuiLanguage.Designer.cs">
+      <DependentUpon>GuiLanguage.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\Component\PathForImage.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -397,6 +397,8 @@ namespace Effekseer
 			}
 
 			LoadOption();
+
+            Language = Option.GuiLanguage;
 		}
 
 		public static void Dispose()
