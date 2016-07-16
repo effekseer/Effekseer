@@ -110,19 +110,19 @@ div.title {
 <h1><img style="border: none;" src="effektut-files/Effekseer.png" /></h1>
 <div style="text-align:center; font-size:18pt; padding-bottom:32px; margin-top:-24px"><b>A tutorial by <a href="http://eggzero.tumblr.com" target="_blank">AndrewFM</a></b><br>(v1.20)</div><br><br>
 <div class="tos">
-<div class="tos_head"><b>Contents</b></div>
+<div class="tos_head"><b>目次</b></div>
 	<ul>
-	<li><a href='#introduction'>Introduction</a></li>
-	<li><a href='#general_interface'>General Interface</a></li>
+	<li><a href='#introduction'>はじめに</a></li>
+	<li><a href='#general_interface'>インタフェース</a></li>
 		<ul>
-		<li><a href='#viewer'>Viewer</a></li>
-		<li><a href='#node_tree'>Node Tree</a></li>
-		<li><a href='#random_fields'>Random Fields</a></li>
+		<li><a href='#viewer'>ビュワー</a></li>
+		<li><a href='#node_tree'>ノードツリー</a></li>
+		<li><a href='#random_fields'>ランダム値入力欄</a></li>
 		</ul>
-	<li><a href='#particle_emitters'>Particle Emitters</a></li>
+	<li><a href='#particle_emitters'>パーティクルエミッタ（ノード）</a></li>
 		<ul>
-		<li><a href='#basic_settings'>Basic Settings</a></li>
-		<li><a href='#inheritance'>Inheritance</a></li>
+		<li><a href='#basic_settings'>共通</a></li>
+		<li><a href='#inheritance'>継承</a></li>
 		<li><a href='#spawn_method_circular'>Spawn Method (Circular)</a></li>
 		<li><a href='#spawn_method_spherical'>Spawn Method (Spherical)</a></li>
 		</ul>
@@ -149,78 +149,78 @@ div.title {
 	</ul>
 </div>
 <a name="introduction"></a>
-<h2>Introduction</h2>
-<a href="http://effekseer.github.io/en/" target="_blank">Effekseer</a>はゲーム向けのパーティクルエフェクトを作成するためのオープンソースのフリーのプログラムです。このプログラムで作成されたエフェクトは2Dのスプライトシート、AVIファイル、専用の3Dファイル形式で出力できます。このプログラムにはこれらの3DファイルをUnityで再生するためのUnityパッケージが同梱されており、同様にDirectXやOpenGLで使用するためのC++のランタイムが同梱されてます。Effekseerのインターフェースと特徴は<a href="http://www.matchlock.co.jp/" target="_blank">BISHAMON</a>の影響を強く受けており、Effekseerは簡易版ともいえます。
+<h2>はじめに</h2>
+<a href="http://effekseer.github.io/en/" target="_blank">Effekseer</a>はゲーム向けのパーティクルエフェクトを作成するためのオープンソースのフリーのプログラムです。このプログラムで作成されたエフェクトは2Dのスプライトシート、AVIファイル、専用の3Dファイル形式で出力できます。このプログラムにはこれらの3DファイルをUnityで再生するためのUnityパッケージが用意されています。同様にDirectXやOpenGLで使用するためのC++のランタイムもあります。Effekseerのインターフェースと特徴は<a href="http://www.matchlock.co.jp/" target="_blank">BISHAMON</a>の影響を強く受けており、Effekseerはこれをシンプルにしたものとも言えます。
 <br><br>
-このドキュメントはプログラムの概要で、チュートリアルと似た構成をしています。プログラムの特徴の多くをカバーしていますが、マニュアルの全てをカバーしているわけではありません。マニュアルは<a href="http://effekseer.github.io/Help_Tool/index.html" target="_blank">こちら</a>で見られます。
+このドキュメントはプログラムの概要で、チュートリアルと似た構成をしています。プログラムの特徴の多くをカバーしていますが、完全なマニュアルではありません。マニュアルは<a href="http://effekseer.github.io/Help_Tool/index.html" target="_blank">こちら</a>で見られます。
 <br><br>
-このチュートリアルのイラストを生成するのに使用したEffekseerのプロジェクトファイルは<a href="https://www.dropbox.com/s/go9vgel40esf1mb/01_AndrewFM%20Tutorial.zip?dl=0">ここから</a>ダウンロードできます。
+このチュートリアルのイラストを生成するのに使用したEffekseerのプロジェクトファイルは<a href="https://www.dropbox.com/s/go9vgel40esf1mb/01_AndrewFM%20Tutorial.zip?dl=0">ここ</a>からダウンロードできます。
 
 <a name="general_interface"></a>
-<h2>General Interface</h2>
-基本的にこのプログラムの機能はスクリーン上部の「ウインドウ」メニューに含まれています。Effekseerのレイアウトは完全にカスタマイズでき、ウインドウを加えたり、取り外したり、大きさを変更したり、再配置したり、タブ化したりできます。これは全てドラッグ＆ドロップで簡単に行えます。
+<h2>インタフェース</h2>
+基本的にこのプログラムの機能はスクリーン上部の「ウインドウ」メニューに含まれています。Effekseerのレイアウトは全てカスタマイズでき、ウインドウを加えたり、取り外したり、大きさを変更したり、再配置したり、タブ化したりできます。これは全てドラッグ＆ドロップで簡単に行えます。
 
 <a name="viewer"></a>
-<h3>Viewer</h3>
+<h3>ビュワー</h3>
 
 <table><tr><td>
 <img src="effektut-files/viewer.png" />
 </td><td class='td1'>
-<b>ビューワー</b>では作成されたパーティクルエフェクトをプレビューできます。ビューワーは<b>中央ボタン</b>で平行移動でき、マウスの<b>右ボタン</b>で回転でき、<b>スクロールホイール</b>で拡大できます。
+<b>ビューワー</b>では作成されたパーティクルエフェクトをプレビューできます。ビューワーは<b>中央ボタン</b>で平行移動でき、マウスの<b>右ボタン</b>で回転でき、<b>スクロールホイール</b>で拡大・縮小ができます。
 <br><br>
 <b>スタート</b>と<b>エンド</b>の入力欄は
-再生ボタンを押したときのプレビューの間隔を制御します。(このプログラムに関係するすべてのタイミングと同じように)この数値はフレーム(60フレーム=1秒)で換算されます。例えば、間隔を[120,180]と設定した場合、再生ボタンを押すと2秒目から再生され、1秒後の3秒目で停止する。
+再生ボタンを押したときのプレビューの間隔を制御します。(このプログラムに関係するすべてのタイミングと同じように)この数値はフレーム(60フレーム=1秒)で換算されます。例えば、間隔を[120,180]と設定した場合、再生ボタンを押すと2秒目からアニメーションが再生され、1秒後の3秒目で停止します。
 <br><br>
- <b>ステップ</b>ボタンは1回に1フレームアニメーションを進めます。この数値はビューワーで表示している現在のフレームです。
+ <b>ステップ</b>ボタン(二つの三角形)を1回押すとアニメーションを1フレーム進めます。この数値はビューワーで表示している現在のフレームです。
 <br><br>
-<i>グリッドの表示、色、他の設定はオプションで変更できます。背景色/画像、光源等といった他の設定も同様に変更できます。</i>
+<i>グリッドの表示、色、その他の設定はオプションで変更できます。背景色/画像、光源等といった他の設定も同様に変更できます。</i>
 </td></tr></table>
 
 <a name="node_tree"></a>
-<h3>Node Tree</h3>
+<h3>ノードツリー</h3>
 <table>
 <tr><td style="width:432px; text-align:center"><img src="effektut-files/nodetree.png" /></td><td class='td1'>
-これは作成中の全てのパーティクルエミッターを格納しているプロジェクトの構造の概要です。ツリーのノードをクリックすると様々なウインドウにプロパティが表示され、そのプロパティを編集できるようになります。ノードツリーを右クリックすると新しいノードを追加するオプションを含むメニューが表示されます。この新しいノードは現在選択されているノードの子に追加されます。プログラム内の引き継ぎのコンセプト（子のノードは親のノードのプロパティを一部引き継ぐ）があり、詳細は後で記載します。ノードはコピーや貼り付けができ、これらの機能はとても便利です。
+これは作成中の全てのパーティクルエミッターを格納しているプロジェクトの構造の概要です。ツリーのノードをクリックすると様々なウインドウにプロパティが表示され、そのプロパティを編集できるようになります。ノードツリーを右クリックすると新しいノードを追加するオプションを含むメニューが表示されます。この新しいノードは現在選択されているノードの子に追加されます。Effekseerの継承の考え方（子のノードが親のノードのプロパティを一部引き継ぐというもの）があります。継承については詳細は後で記載します。また、ノードはコピーや貼り付けができてとても便利です。
 </td></tr></table>
 
 
 <a name="random_fields"></a>
-<h3>Random Fields</h3>
+<h3>ランダム値入力欄</h3>
 <table>
 <tr><td style="width:432px; text-align:center"><img src="effektut-files/random.png" /></td><td class='td1'>
-このプログラム内のたくさんの数値入力欄は左の画像で示すような見た目になっています。これらの入力欄の種類はランダムな値をとることができることを示しています。入力のための2つのオプションがあり、機能的には二つとも等しくなっています。<br><br>
+Effekseer内のたくさんの数値入力欄は左の画像のような見た目になっています。このような入力欄は、その値がランダムな値をとることができることを示しています。入力のための2つのオプションがあり、機能的には二つとも等しくなっています。<br><br>
 <ul>
-<li><b>範囲</b> 最小と最大を指定し、２つの値の間の少数が適用されます。</li>
-<li><b>ガウス</b> 範囲の代わりに中央値と広がり幅を指定します。例えば、中央５、広がり幅２で、３から７の間の値がランダムに適用されます。</li>
+<li><b>最大・最小</b> 最大値と最小値を指定し、2つの値の間の値がランダムに適用されます。</li>
+<li><b>中心・振幅</b> 中央値と広がり幅を指定します。例えば、中央5、広がり幅2であれば、3から7の間の値がランダムに適用されます。</li>
 </ul>
 </td></tr></table>
 
 <a name="particle_emitters"></a>
-<h2>Particle Emitters (aka, Nodes)</h2>
+<h2>パーティクルエミッタ（ノード）</h2>
 
-ノードはこのプログラムのコアです。これらは実際にパーティクルエフェクトを表示するパーティクルを出現させます。この章ではパーティクル自身でなく、ノードがパーティクルを出現させる手段の変更の仕方について説明します。(<i>E出現したパーティクルの振る舞いと見た目を編集することは後の章のトピックです。</i>)
+ノードはEffekseerのコアです。これらは実際にパーティクルエフェクトを構成するパーティクルを出現させます。この章ではパーティクル自身でなく、ノードがパーティクルを出現させる方法の調節の仕方について説明します。(<i>出現したパーティクルの振る舞いと見た目の編集については後の章で扱います。</i>)
 
 <a name="basic_settings"></a>
-<h3>Basic Settings</h3>
+<h3>共通</h3>
 <table>
 <tr><td style="width:432px; text-align:center"><img src="effektut-files/basic.png" /></td><td class='td1'>
-<b>共通</b>ウインドウはノードがパーティクルを出現させる方法を調節するための標準的なパラメーターの全てを格納しています。上から順に説明します。<b>表示</b>はビューワーにこのノードのパーティクルの表示/非表示を設定します。これは純粋に編集を楽にするためであって、表示の設定を無視して、最終的な出力では表示されます。
+<b>共通</b>ウインドウにはノードがパーティクルを出現させる方法を調節するための標準的なパラメーターが全てあります。上から順に説明します。<b>表示</b>はビューワーにこのノードのパーティクルの表示/非表示を設定します。註：これは単に編集を楽にするためのものであって、表示の設定によらず最終的な出力では表示されます。
 <br><br>
 <b>名前</b>は、便利にする以外の目的には使用されません。一度、ノードツリーでたくさんのノードを使用し始めると、それらを説明する名称をつけたくなるでしょう。
 <br><br>
-<b>生成数</b>は、ノードが出現させるパーティクルの最大数を設定します。<b>無限</b>チェックマークはそれを上書きして、制限なくノードがパーティクルを出現させるようになります。
+<b>生成数</b>は、ノードが出現させるパーティクルの最大数を設定します。<b>無限</b>チェックマークはそれを上書きして、ノードは制限なくパーティクルを出現させるようになります。
 <br><br>
-<b>生存時間</b>はフレーム単位でそれぞれのパーティクルが出現してからの生存時間を設定します。これは各パーティクルでローカルな値で、パーティクルが出現してからすぐにカウントが始まります。一度、時間が過ぎるとパーティクルは自動的に消滅します。 これは<b>寿命により削除</b>がチェックされてないと無視されます。
+<b>生存時間</b>はフレーム単位でそれぞれのパーティクルが出現してからの生存時間を設定します。これは各パーティクルごとの独自の値で、パーティクルが出現してからすぐにカウントが始まります。指定した時間が過ぎるとパーティクルは自動的に消滅します。 これは<b>寿命により削除</b>がチェックされてないと無視されます。
 <br><br>
-<b>生成時間</b>はどの程度早く、ノードがパーティクルを生成するかを決定します。1の値は1フレームに1つパーティクルを生成することを意味します。10の値は10フレームに1回、パーティクルを生成することを意味します。少数を指定することができ、例えば0.1を指定すると1フレームに10個パーティクルが生成されます。 
+<b>生成時間</b>はノードがどの程度早くパーティクルを生成するかを設定します。1の値は1フレームに1つパーティクルを生成することを意味します。10の値は10フレームに1回、パーティクルを生成することを意味します。小数も指定することができ、例えば0.1を指定すると1フレームに10個パーティクルが生成されます。 
 <br><br>
-<b>生成開始時間</b>は最初のパーティクルが表示する前の待機時間を指定します。これは全てのエミッターが即座に動作するわけではない連続的なエフェクトに便利です。 
+<b>生成開始時間</b>はパーティクルを生成し始めるまでの待機時間を設定します。これは全てのエミッターが同時に動作し始めるするわけではない連続的なエフェクトに便利です。 
 </td></tr></table>
 
 <a name="inheritance"></a>
-<h3>Inheritance</h3>
+<h3>継承</h3>
 
-As mentioned earlier, inheritance is a feature of this program. If for example, Node A is a parent of Node B, then every single particle that Node A spawns will have an instance of Node B attached to it (so you can have particles that emit other particles). The Basic Settings window has a few parameters I purposely skipped over, that apply to inheritance.
+既に触れたように、継承はEffekseerの特徴の一つです。.例えばノードAがノードBの親ノードである場合、ノードAが生成する全てのパーティクルは、ノードBの生成するパーティクルと紐づきます (つまり、パーティクルを生成するようなパーティクルを作成することができます)。 共通 ウインドウにある設定には、意図的に変更しない限り、継承が適用されます。
 <br><br>
 <b>Inherit Position/Rotation/Scale</b> are self-explanitory in what they do, but the drop-down options may be less clear. There are the following three options:<br><br>
 <ul>
