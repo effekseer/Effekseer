@@ -302,6 +302,7 @@ public class EffekseerSystem : MonoBehaviour
 				// レンダーパスが存在すればコマンドバッファを解除
 				path = renderPaths[camera];
 				camera.RemoveCommandBuffer(path.cameraEvent, path.commandBuffer);
+				renderPaths.Remove(camera);
 			}
 			return;
 		}
