@@ -295,6 +295,17 @@ public class EffekseerSystem : MonoBehaviour
 		}
 #endif
 		RenderPath path;
+		
+		// カリングマスクをチェック
+		if ((Camera.current.cullingMask & (1 << gameObject.layer)) == 0) {
+			if (renderPaths.ContainsKey(camera)) {
+				// レンダーパスが存在すればコマンドバッファを解除
+				path = renderPaths[camera];
+				camera.RemoveCommandBuffer(path.cameraEvent, path.commandBuffer);
+			}
+			return;
+		}
+
 		if (renderPaths.ContainsKey(camera)) {
 			// レンダーパスが有れば使う
 			path = renderPaths[camera];
