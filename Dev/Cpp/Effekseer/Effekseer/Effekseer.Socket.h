@@ -64,6 +64,19 @@ typedef struct sockaddr SOCKADDR;
 
 #endif
 
+#ifdef _WIN32
+static void Sleep_(int32_t ms)
+{
+	Sleep(ms);
+}
+#else
+static void Sleep_(int32_t ms)
+{
+	usleep(1000 * ms);
+}
+#endif
+
+
 class Socket
 {
 private:
