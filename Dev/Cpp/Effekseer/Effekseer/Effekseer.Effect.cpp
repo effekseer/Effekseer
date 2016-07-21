@@ -565,6 +565,11 @@ void* EffectImplemented::GetColorImage( int n ) const
 	return m_pImages[ n ];
 }
 
+int32_t EffectImplemented::GetColorImageCount() const
+{
+	return m_ImageCount;
+}
+
 void* EffectImplemented::GetNormalImage(int n) const
 {
 	/* ã≠êßìIÇ…å›ä∑ÇÇ∆ÇÈ */
@@ -574,6 +579,11 @@ void* EffectImplemented::GetNormalImage(int n) const
 	}
 
 	return m_normalImages[n];
+}
+
+int32_t EffectImplemented::GetNormalImageCount() const
+{
+	return m_normalImageCount;
 }
 
 void* EffectImplemented::GetDistortionImage(int n) const
@@ -587,12 +597,22 @@ void* EffectImplemented::GetDistortionImage(int n) const
 	return m_distortionImages[n];
 }
 
+int32_t EffectImplemented::GetDistortionImageCount() const
+{
+	return m_distortionImageCount;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 void* EffectImplemented::GetWave( int n ) const
 {
 	return m_pWaves[ n ];
+}
+
+int32_t EffectImplemented::GetWaveCount() const
+{
+	return m_WaveCount;
 }
 
 //----------------------------------------------------------------------------------
@@ -603,6 +623,10 @@ void* EffectImplemented::GetModel( int n ) const
 	return m_pModels[ n ];
 }
 
+int32_t EffectImplemented::GetModelCount() const
+{
+	return m_modelCount;
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

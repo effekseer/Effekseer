@@ -1225,11 +1225,21 @@ public:
 	virtual void* GetColorImage( int n ) const = 0;
 
 	/**
+	@brief	格納されている画像のポインタの個数を取得する。
+	*/
+	virtual int32_t GetColorImageCount() const = 0;
+
+	/**
 	@brief	格納されている法線画像のポインタを取得する。
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
 	*/
 	virtual void* GetNormalImage(int n) const = 0;
+
+	/**
+	@brief	格納されている法線画像のポインタの個数を取得する。
+	*/
+	virtual int32_t GetNormalImageCount() const = 0;
 
 	/**
 	@brief	格納されている歪み画像のポインタを取得する。
@@ -1239,14 +1249,29 @@ public:
 	virtual void* GetDistortionImage(int n) const = 0;
 
 	/**
+	@brief	格納されている歪み画像のポインタの個数を取得する。
+	*/
+	virtual int32_t GetDistortionImageCount() const = 0;
+
+	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/
 	virtual void* GetWave( int n ) const = 0;
 
 	/**
+	@brief	格納されている音波形のポインタの個数を取得する。
+	*/
+	virtual int32_t GetWaveCount() const = 0;
+
+	/**
 		@brief	格納されているモデルのポインタを取得する。
 	*/
 	virtual void* GetModel( int n ) const = 0;
+
+	/**
+	@brief	格納されているモデルのポインタの個数を取得する。
+	*/
+	virtual int32_t GetModelCount() const = 0;
 
 	/**
 		@brief	エフェクトのリロードを行う。
@@ -3031,7 +3056,8 @@ class Thread
 {
 private:
 #ifdef _WIN32
-	static DWORD EFK_STDCALL ThreadProc( void* arguments );
+	/* DWORDを置きかえ */
+	static unsigned long EFK_STDCALL ThreadProc(void* arguments);
 #else
 	static void* ThreadProc( void* arguments );
 #endif

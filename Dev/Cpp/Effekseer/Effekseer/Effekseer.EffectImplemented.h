@@ -157,21 +157,34 @@ public:
 	void* GetColorImage(int n) const;
 
 	/**
+		@brief	格納されている画像のポインタの個数を取得する。
+	*/
+	int32_t GetColorImageCount() const;
+
+	/**
 	@brief	格納されている画像のポインタを取得する。
 	*/
 	void* GetNormalImage(int n) const;
 
+	int32_t GetNormalImageCount() const;
+
 	void* GetDistortionImage(int n) const;
+
+	int32_t GetDistortionImageCount() const;
 
 	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/
 	void* GetWave( int n ) const;
 
+	int32_t GetWaveCount() const;
+
 	/**
 		@brief	格納されているモデルのポインタを取得する。
 	*/
 	void* GetModel( int n ) const;
+
+	int32_t GetModelCount() const;
 
 	/**
 		@brief	エフェクトのリロードを行う。
