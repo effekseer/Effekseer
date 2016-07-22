@@ -106,8 +106,11 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
 		m_instanceParameter.InstanceIndex = 0;
 
-		m_instanceParameter.UV = group->GetFirst()->GetUV();
-
+		if (group->GetFirst() != nullptr)
+		{
+			m_instanceParameter.UV = group->GetFirst()->GetUV();
+		}
+		
 		/*
 		SetValues( m_instanceParameter.ColorLeft, instValues.ColorLeft, TrackColorLeft, group->GetTime() );
 		SetValues( m_instanceParameter.ColorCenter,instValues.ColorCenter, TrackColorCenter, group->GetTime() );
