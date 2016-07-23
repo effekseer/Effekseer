@@ -172,7 +172,7 @@ struct RingColorValues
 //
 //----------------------------------------------------------------------------------
 class EffectNodeRing
-	: public EffectNode
+	: public EffectNodeImplemented
 {
 	friend class Manager;
 	friend class Effect;
@@ -212,7 +212,7 @@ public:
 	int RingTexture;
 
 	EffectNodeRing( Effect* effect, unsigned char*& pos )
-		: EffectNode( effect, pos )
+		: EffectNodeImplemented(effect, pos)
 	{
 	}
 

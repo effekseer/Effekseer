@@ -10,8 +10,10 @@
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.RectF.h"
 #include "Effekseer.InternalStruct.h"
-#include "Sound/Effekseer.SoundPlayer.h"
 #include "Effekseer.FCurves.h"
+#include "Sound/Effekseer.SoundPlayer.h"
+
+#include "Effekseer.Effect.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -649,7 +651,8 @@ enum eRenderingOrder
 	@note
 	エフェクトのノードの実体を生成する。
 */
-class EffectNode
+class EffectNodeImplemented
+	: public EffectNode
 {
 	friend class Manager;
 	friend class EffectImplemented;
@@ -660,16 +663,16 @@ protected:
 	Effect*	m_effect;
 
 	// 子ノード
-	std::vector<EffectNode*>	m_Nodes;
+	std::vector<EffectNodeImplemented*>	m_Nodes;
 
 	// ユーザーデータ
 	void* m_userData;
 
 	// コンストラクタ
-	EffectNode( Effect* effect, unsigned char*& pos );
+	EffectNodeImplemented(Effect* effect, unsigned char*& pos);
 
 	// デストラクタ
-	virtual ~EffectNode();
+	virtual ~EffectNodeImplemented();
 
 	// 読込
 	void LoadParameter( unsigned char*& pos, EffectNode* parent, Setting* setting );
@@ -725,20 +728,11 @@ public:
 	*/
 	void LoadOption( uint8_t*& pos );
 
-	/**
-		@brief	所属しているエフェクトの取得
-	*/
-	Effect* GetEffect() const;
+	Effect* GetEffect() const override;
 
-	/**
-		@brief	子の数取得
-	*/
-	int GetChildrenCount() const;
+	int GetChildrenCount() const override;
 
-	/**
-		@brief	子の取得
-	*/
-	EffectNode* GetChild( int num ) const;
+	EffectNode* GetChild( int index ) const override;
 
 	/**
 		@brief	描画部分の読込
@@ -793,7 +787,7 @@ public:
 	/**
 		@brief	エフェクトノード生成
 	*/
-	static EffectNode* Create( Effect* effect, EffectNode* parent, unsigned char*& pos );
+	static EffectNodeImplemented* Create(Effect* effect, EffectNode* parent, unsigned char*& pos);
 
 	/**
 		@brief	ノードの種類取得

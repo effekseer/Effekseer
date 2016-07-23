@@ -192,6 +192,35 @@ public:
 	*/
 	virtual void UnloadResources() = 0;
 };
+
+/**
+@brief	ノードインスタンス生成クラス
+@note
+エフェクトのノードの実体を生成する。
+*/
+class EffectNode
+{
+public:
+	EffectNode() {}
+	virtual ~EffectNode(){}
+
+	/**
+	@brief	ノードが所属しているエフェクトを取得する。
+	*/
+	virtual Effect* GetEffect() const = 0;
+
+	/**
+	@brief	子のノードの数を取得する。
+	*/
+	virtual int GetChildrenCount() const = 0;
+
+	/**
+	@brief	子のノードを取得する。
+	*/
+	virtual EffectNode* GetChild(int index) const = 0;
+
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

@@ -53,6 +53,7 @@ struct RectF;
 
 class Manager;
 class Effect;
+class EffectNode;
 
 class ParticleRenderer;
 class SpriteRenderer;
@@ -1381,6 +1382,30 @@ public:
 	*/
 	virtual void UnloadResources() = 0;
 };
+
+/**
+@brief	ノードインスタンス生成クラス
+@note
+エフェクトのノードの実体を生成する。
+*/
+class EffectNode
+{
+public:
+	EffectNode() {}
+	virtual ~EffectNode(){}
+
+	/**
+	@brief	子のノードの数を取得する。
+	*/
+	virtual int GetChildrenCount() const = 0;
+
+	/**
+	@brief	子のノードを取得する。
+	*/
+	virtual EffectNode* GetChild(int num) const = 0;
+
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

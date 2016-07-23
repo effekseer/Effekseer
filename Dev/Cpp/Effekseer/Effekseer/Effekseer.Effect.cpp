@@ -435,7 +435,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	}
 
 	// ノード
-	m_pRoot = EffectNode::Create( this, NULL, pos );
+	m_pRoot = EffectNodeImplemented::Create( this, NULL, pos );
 
 	// リロード用にmaterialPathを記録しておく
     if (materialPath) m_materialPath = materialPath;

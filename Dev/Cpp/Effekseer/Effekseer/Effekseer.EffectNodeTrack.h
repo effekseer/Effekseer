@@ -38,7 +38,7 @@ struct TrackSizeParameter
 //
 //----------------------------------------------------------------------------------
 class EffectNodeTrack
-	: public EffectNode
+	: public EffectNodeImplemented
 {
 public:
 
@@ -136,7 +136,7 @@ public:
 	int TrackTexture;
 
 	EffectNodeTrack( Effect* effect, unsigned char*& pos )
-		: EffectNode( effect, pos )
+		: EffectNodeImplemented(effect, pos)
 		, TrackTexture	( -1 )
 	{
 	}

@@ -53,6 +53,7 @@ struct RectF;
 
 class Manager;
 class Effect;
+class EffectNode;
 
 class ParticleRenderer;
 class SpriteRenderer;

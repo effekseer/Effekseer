@@ -31,7 +31,7 @@ private:
 	Manager*	m_pManager;
 
 	// パラメーター
-	EffectNode* m_pEffectNode;
+	EffectNodeImplemented* m_pEffectNode;
 
 	// グローバル
 	InstanceGlobal*	m_pGlobal;

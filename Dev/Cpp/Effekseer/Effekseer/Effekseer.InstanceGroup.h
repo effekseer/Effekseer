@@ -28,7 +28,7 @@ friend class InstanceContainer;
 
 private:
 	ManagerImplemented*		m_manager;
-	EffectNode*			m_effectNode;
+	EffectNodeImplemented*	m_effectNode;
 	InstanceContainer*	m_container;
 	InstanceGlobal*		m_global;
 	int32_t				m_time;

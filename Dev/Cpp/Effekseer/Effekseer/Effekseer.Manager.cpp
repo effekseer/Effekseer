@@ -166,7 +166,8 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 						int maxcreate_count = 0;
 						for( int i = 0; i < Min(pRootInstance->m_pEffectNode->GetChildrenCount(), Instance::ChildrenMax); i++ )
 						{
-							auto child = pRootInstance->m_pEffectNode->GetChild(i);
+							auto child = (EffectNodeImplemented*) pRootInstance->m_pEffectNode->GetChild(i);
+
 							float last_generation_time = 
 								child->CommonValues.GenerationTime.max *
 								(child->CommonValues.MaxGeneration - 1) +
