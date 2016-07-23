@@ -734,6 +734,10 @@ public:
 
 	EffectNode* GetChild( int index ) const override;
 
+	EffectBasicRenderParameter GetBasicRenderParameter() override;
+
+	void SetBasicRenderParameter(EffectBasicRenderParameter param) override;
+
 	/**
 		@brief	•`‰æ•”•ª‚Ì“Ç
 	*/

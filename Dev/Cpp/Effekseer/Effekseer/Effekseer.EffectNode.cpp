@@ -557,6 +557,33 @@ EffectNode* EffectNodeImplemented::GetChild(int index) const
 	return m_Nodes[index];
 }
 
+
+EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
+{
+	EffectBasicRenderParameter param;
+	param.ColorTextureIndex = Texture.ColorTextureIndex;
+	param.AlphaBlend = Texture.AlphaBlend;
+	param.Distortion = Texture.Distortion;
+	param.DistortionIntensity = Texture.DistortionIntensity;
+	param.FilterType = Texture.FilterType;
+	param.WrapType = Texture.WrapType;
+	param.ZTest = Texture.ZTest;
+	param.ZWrite = Texture.ZWrite;
+	return param;
+}
+
+void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter param)
+{
+	Texture.ColorTextureIndex = param.ColorTextureIndex;
+	Texture.AlphaBlend = param.AlphaBlend;
+	Texture.Distortion = param.Distortion;
+	Texture.DistortionIntensity = param.DistortionIntensity;
+	Texture.FilterType = param.FilterType;
+	Texture.WrapType = param.WrapType;
+	Texture.ZTest = param.ZTest;
+	Texture.ZWrite = param.ZWrite;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

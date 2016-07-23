@@ -1384,6 +1384,23 @@ public:
 };
 
 /**
+@brief	共通描画パラメーター
+@note
+大きく変更される可能性があります。
+*/
+struct EffectBasicRenderParameter
+{
+	int32_t				ColorTextureIndex;
+	AlphaBlendType		AlphaBlend;
+	TextureFilterType	FilterType;
+	TextureWrapType		WrapType;
+	bool				ZWrite;
+	bool				ZTest;
+	bool				Distortion;
+	float				DistortionIntensity;
+};
+
+/**
 @brief	ノードインスタンス生成クラス
 @note
 エフェクトのノードの実体を生成する。
@@ -1395,6 +1412,11 @@ public:
 	virtual ~EffectNode(){}
 
 	/**
+	@brief	ノードが所属しているエフェクトを取得する。
+	*/
+	virtual Effect* GetEffect() const = 0;
+
+	/**
 	@brief	子のノードの数を取得する。
 	*/
 	virtual int GetChildrenCount() const = 0;
@@ -1402,7 +1424,17 @@ public:
 	/**
 	@brief	子のノードを取得する。
 	*/
-	virtual EffectNode* GetChild(int num) const = 0;
+	virtual EffectNode* GetChild(int index) const = 0;
+
+	/**
+	@brief	共通描画パラメーターを取得する。
+	*/
+	virtual EffectBasicRenderParameter GetBasicRenderParameter() = 0;
+
+	/**
+	@brief	共通描画パラメーターを設定する。
+	*/
+	virtual void SetBasicRenderParameter(EffectBasicRenderParameter param) = 0;
 
 };
 
