@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include <stdio.h>
 #include <string.h>
+#include <atomic>
 
 //----------------------------------------------------------------------------------
 //
@@ -355,6 +356,79 @@ inline int32_t ConvertUtf8ToUtf16( int16_t* dst, int32_t dst_size, const int8_t*
 }
 
 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+/**
+@brief	参照カウンタのインターフェース
+*/
+class IReference
+{
+public:
+	/**
+	@brief	参照カウンタを加算する。
+	@return	加算後の参照カウンタ
+	*/
+	virtual int AddRef() = 0;
+
+	/**
+	@brief	参照カウンタを取得する。
+	@return	参照カウンタ
+	*/
+	virtual int GetRef() = 0;
+
+	/**
+	@brief	参照カウンタを減算する。0になった時、インスタンスを削除する。
+	@return	減算後の参照カウンタ
+	*/
+	virtual int Release() = 0;
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+/**
+@brief	参照カウンタオブジェクト
+*/
+class ReferenceObject
+	: public IReference
+{
+private:
+	mutable std::atomic<int32_t> m_reference;
+
+public:
+	ReferenceObject()
+		: m_reference(1)
+	{
+	}
+
+	virtual ~ReferenceObject()
+	{}
+
+	virtual int AddRef()
+	{
+		std::atomic_fetch_add_explicit(&m_reference, 1, std::memory_order_consume);
+
+		return m_reference;
+	}
+
+	virtual int GetRef()
+	{
+		return m_reference;
+	}
+
+	virtual int Release()
+	{
+		bool destroy = std::atomic_fetch_sub_explicit(&m_reference, 1, std::memory_order_consume) == 1;
+		if (destroy)
+		{
+			delete this;
+			return 0;
+		}
+
+		return m_reference;
+	}
+};
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1137,6 +1211,7 @@ namespace Effekseer
 	エフェクトに設定されたパラメーター。
 */
 class Effect
+	: public IReference
 {
 protected:
 	Effect() {}
@@ -1190,18 +1265,6 @@ public:
 	@brief	標準のエフェクト読込インスタンスを生成する。
 	*/
 	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
-
-	/**
-		@brief	参照カウンタを加算する。
-		@return	実行後の参照カウンタの値
-	*/
-	virtual int AddRef() = 0;
-
-	/**
-		@brief	参照カウンタを減算する。
-		@return	実行後の参照カウンタの値
-	*/
-	virtual int Release() = 0;
 
 	/**
 	@brief	設定を取得する。
@@ -1347,6 +1410,7 @@ namespace Effekseer
 	@brief エフェクト管理クラス
 */
 class Manager
+	: public IReference
 {
 protected:
 	Manager() {}
@@ -2767,10 +2831,9 @@ namespace Effekseer {
 	Managerの代わりにエフェクト読み込み時に使用することで、Managerとは独立してEffectインスタンスを生成することができる。
 */
 	class Setting
+		: public ReferenceObject
 	{
 	private:
-		int32_t		m_ref;
-
 		/* 座標系 */
 		CoordinateSystem		m_coordinateSystem;
 
@@ -2794,18 +2857,6 @@ namespace Effekseer {
 			@brief	設定インスタンスを生成する。
 		*/
 		static Setting* Create();
-
-		/**
-			@brief	参照カウンタを加算する。
-			@return	参照カウンタ
-		*/
-		int32_t AddRef();
-
-		/**
-			@brief	参照カウンタを減算する。
-			@return	参照カウンタ
-		*/
-		int32_t Release();
 
 		/**
 		@brief	座標系を取得する。

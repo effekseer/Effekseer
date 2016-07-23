@@ -98,8 +98,7 @@ Renderer* Renderer::Create( LPDIRECT3DDEVICE9 device, int32_t squareMaxCount )
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented( int32_t squareMaxCount )
-	: m_reference	( 1 )
-	, m_d3d_device	( NULL )
+	: m_d3d_device	( NULL )
 	, m_vertexBuffer( NULL )
 	, m_indexBuffer	( NULL )
 	, m_squareMaxCount	( squareMaxCount )
@@ -144,7 +143,7 @@ RendererImplemented::~RendererImplemented()
 	EffekseerRenderer::PngTextureLoader::Finalize();
 #endif
 
-	assert( m_reference == 0 );
+	assert(GetRef() == 0);
 
 	ES_SAFE_DELETE(m_distortingCallback);
 
@@ -163,7 +162,7 @@ RendererImplemented::~RendererImplemented()
 	
 	//ES_SAFE_RELEASE( m_d3d_device );
 
-	assert( m_reference == -6 );
+	assert(GetRef() == -6);
 }
 
 //----------------------------------------------------------------------------------
@@ -357,29 +356,6 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 
 	//ES_SAFE_ADDREF( m_d3d_device );
 	return true;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int RendererImplemented::AddRef()
-{
-	m_reference++;
-	return m_reference;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int RendererImplemented::Release()
-{
-	m_reference--;
-	int count = m_reference;
-	if ( count == 0 )
-	{
-		delete this;
-	}
-	return count;
 }
 
 //----------------------------------------------------------------------------------

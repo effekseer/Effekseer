@@ -22,6 +22,7 @@ namespace Effekseer
 	エフェクトに設定されたパラメーター。
 */
 class Effect
+	: public IReference
 {
 protected:
 	Effect() {}
@@ -75,18 +76,6 @@ public:
 	@brief	標準のエフェクト読込インスタンスを生成する。
 	*/
 	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
-
-	/**
-		@brief	参照カウンタを加算する。
-		@return	実行後の参照カウンタの値
-	*/
-	virtual int AddRef() = 0;
-
-	/**
-		@brief	参照カウンタを減算する。
-		@return	実行後の参照カウンタの値
-	*/
-	virtual int Release() = 0;
 
 	/**
 	@brief	設定を取得する。

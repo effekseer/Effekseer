@@ -26,6 +26,7 @@ namespace Effekseer
 
 class EffectImplemented
 	: public Effect
+	, public ReferenceObject
 {
 	friend class ManagerImplemented;
 private:
@@ -33,7 +34,7 @@ private:
 
 	Setting*	m_setting;
 
-	int	m_reference;
+	mutable std::atomic<int32_t> m_reference;
 
 	int	m_version;
 
@@ -124,16 +125,6 @@ public:
 	*/
 	void Reset();
 
-	/**
-		@brief	参照カウンタ加算
-	*/
-	int AddRef();
-
-	/**
-		@brief	参照カウンタ減算
-	*/
-	int Release();
-
 private:
 	/**
 		@brief	マネージャー取得
@@ -215,6 +206,10 @@ public:
 		@brief	画像等リソースの破棄を行う。
 	*/
 	void UnloadResources();
+
+	virtual int GetRef() { return ReferenceObject::GetRef(); }
+	virtual int AddRef() { return ReferenceObject::AddRef(); }
+	virtual int Release() { return ReferenceObject::Release(); }
 };
 //----------------------------------------------------------------------------------
 //

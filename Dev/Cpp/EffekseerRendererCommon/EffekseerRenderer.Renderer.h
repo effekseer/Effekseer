@@ -31,6 +31,7 @@ public:
 //
 //-----------------------------------------------------------------------------------
 class Renderer
+	: ::Effekseer::IReference
 {
 protected:
 	Renderer() {}

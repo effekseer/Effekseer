@@ -305,8 +305,7 @@ void ManagerImplemented::ExecuteEvents()
 //
 //----------------------------------------------------------------------------------
 ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
-	: m_reference	( 1 )
-	, m_autoFlip	( autoFlip )
+	: m_autoFlip	( autoFlip )
 	, m_NextHandle	( 0 )
 	, m_instance_max	( instance_max )
 	, m_setting			( NULL )
@@ -400,29 +399,6 @@ Instance* ManagerImplemented::PopInstance()
 	Instance* ret = m_reserved_instances.front();
 	m_reserved_instances.pop();
 	return ret;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int ManagerImplemented::AddRef()
-{
-	m_reference++;
-	return m_reference;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int ManagerImplemented::Release()
-{
-	m_reference--;
-	int count = m_reference;
-	if ( count == 0 )
-	{
-		delete this;
-	}
-	return count;
 }
 
 //----------------------------------------------------------------------------------
