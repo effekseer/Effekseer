@@ -2899,6 +2899,7 @@ namespace Effekseer {
 		SoundLoader*	m_soundLoader;
 		ModelLoader*	m_modelLoader;
 
+	protected:
 		/**
 			@brief	コンストラクタ
 			*/
