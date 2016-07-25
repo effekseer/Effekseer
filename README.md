@@ -16,6 +16,8 @@ Effekseer is useful in developing game software especially. Not only programmers
 
 [![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
 
+[![Slack Status](https://effekseer-slackin.herokuapp.com/badge.svg)](https://effekseer-slackin.herokuapp.com/)
+
 Todo
 =========
 
