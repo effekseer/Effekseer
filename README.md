@@ -6,17 +6,15 @@ Effekseer is useful in developing game software especially. Not only programmers
 
 * [Official website](http://effekseer.github.io/en/)
 
-[![Slack Status](https://effekseer-slackin.herokuapp.com/badge.svg)](https://effekseer-slackin.herokuapp.com/)
-
 本ソフトウェアはヴィジュアルエフェクト編集ツールです。
 ランタイムやプラグインを組み込むことで、Effekseerで作成されたエフェクトをアプリケーション中で再生できるようになります。
 主にゲームで使用することを想定しており、ヴィジュアルエフェクトの編集をプログラマでなくデザイナーが担当できるようにします。
 
 * [公式ウェブサイト](http://effekseer.github.io/jp/)
 
-[![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
-
 [![Slack Status](https://effekseer-slackin.herokuapp.com/badge.svg)](https://effekseer-slackin.herokuapp.com/)
+
+[![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
 
 Todo
 =========
