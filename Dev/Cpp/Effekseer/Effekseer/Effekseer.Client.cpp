@@ -14,62 +14,6 @@ namespace Effekseer {
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#ifdef _WIN32
-static void Sleep_( int32_t ms )
-{
-	Sleep( ms );
-}
-#else
-static void Sleep_( int32_t ms )
-{
-	usleep( 1000 * ms );
-}
-#endif
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-static void PathCombine(EFK_CHAR* dst, const EFK_CHAR* src1, const EFK_CHAR* src2)
-{
-	int len1 = 0, len2 = 0;
-	if( src1 != NULL )
-	{
-		for( len1 = 0; src1[len1] != L'\0'; len1++ ) {}
-		memcpy( dst, src1, len1 * sizeof(EFK_CHAR) );
-		if( len1 > 0 && src1[len1 - 1] != L'/' && src1[len1 - 1] != L'\\' )
-		{
-			dst[len1++] = L'/';
-		}
-	}
-	if( src2 != NULL)
-	{
-		for( len2 = 0; src2[len2] != L'\0'; len2++ ) {}
-		memcpy( &dst[len1], src2, len2 * sizeof(EFK_CHAR) );
-	}
-	dst[len1 + len2] = L'\0';
-}
-
-static void GetParentDir(EFK_CHAR* dst, const EFK_CHAR* src)
-{
-	int i, last = -1;
-	for( i = 0; src[i] != L'\0'; i++ )
-	{
-		if( src[i] == L'/' || src[i] == L'\\' )
-			last = i;
-	}
-	if( last >= 0 )
-	{
-		memcpy( dst, src, last * sizeof(EFK_CHAR) );
-		dst[last] = L'\0';
-	}
-	else
-	{
-		dst[0] = L'\0';
-	}
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ClientImplemented::RecvAsync( void* data )
 {
 	ClientImplemented* client = (ClientImplemented*)data;

@@ -1,28 +1,63 @@
-¡@ŠT—v
-Effekseer‚ğƒ_ƒEƒ“ƒ[ƒh‚µ‚Ä‚¢‚½‚¾‚«‚ ‚è‚ª‚Æ‚¤‚²‚´‚¢‚Ü‚·B
-–{ƒpƒbƒP[ƒW‚ÍDirectX‚âOpenGL‚ğg—p‚µ‚Ä‚¢‚éƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÅAƒGƒtƒFƒNƒg‚ğÄ¶‚Å‚«‚é‚æ‚¤‚É‚·‚éƒ‰ƒ“ƒ^ƒCƒ€‚ª•Û‘¶‚³‚ê‚Ä‚¢‚Ü‚·B
 
-ƒfƒUƒCƒi[Œü‚¯‚ÌƒGƒtƒFƒNƒg‚ğì¬‚·‚é‚½‚ß‚Ìƒc[ƒ‹‚âƒGƒtƒFƒNƒg‚ÌƒTƒ“ƒvƒ‹‚Í•Û‘¶‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ‚Ì‚ÅA
-‚»‚ê‚ç‚ª•K—v‚È•û‚Íƒc[ƒ‹‚ÌƒpƒbƒP[ƒW‚ğƒ_ƒEƒ“ƒ[ƒh‚·‚é‚æ‚¤‚¨Šè‚¢‚µ‚Ü‚·B
+This readme is available in English and Japanese.
+
+ã“ã®èª¬æ˜ã¯æ—¥æœ¬èªã¨è‹±èªã§è¨˜è¿°ã•ã‚Œã¦ã„ã¾ã™ã€‚
+
+English
+==========================
+
+Overview
+=============
+Thank you for downloading Effekseer.
+This package contains a runtime for showing visual effects on applications using DirectX or OpenGL.
+The package does not contain tools or samples to create visual effects.
+If you want these, please download a package of tools.
 
 
-¡@ƒfƒBƒŒƒNƒgƒŠ\¬
+Directory structure
+=============
 -Compiled
-ƒRƒ“ƒpƒCƒ‹Ï‚İ‚Ìlibƒtƒ@ƒCƒ‹‚ª•Û‘¶‚³‚ê‚Ä‚¢‚Ü‚·B
-VisualStudio2012A2013‚Ì‚İ‘Î‰‚µ‚Ä‚¢‚Ü‚·B
-‚½‚¾‚µAOpenGL”Å‚Í2012‚É‚Í‘Î‰‚µ‚Ä‚¢‚Ü‚¹‚ñB
+This directory contains compiled lib files.
+You can use these on VisualStudio 2012, 2013 or 2015.
+OpenGL version, however, is NOT available on VisualStudio 2012.
 
-ƒRƒ“ƒpƒCƒ‹ƒIƒvƒVƒ‡ƒ“‚Í
-ƒfƒoƒbƒO‚ÍAƒ}ƒ‹ƒ`ƒXƒŒƒbƒhƒfƒoƒbƒO
-ƒŠƒŠ[ƒX‚ÍAƒ}ƒ‹ƒ`ƒXƒŒƒbƒh
-
-‚É‚È‚Á‚Ä‚¢‚Ü‚·B
+Compiler Options are Multithread debug for Debug build and Multithread for Release one.
 
 -src
-ƒ‰ƒ“ƒ^ƒCƒ€‚Ìƒ\[ƒXƒR[ƒh‚ª•Û‘¶‚³‚ê‚Ä‚¢‚Ü‚·B
+This directory contains source code of the runtime.
 
 -RuntimeSample
-ƒ‰ƒ“ƒ^ƒCƒ€‚ğ‘g‚İ‚ñ‚¾ƒTƒ“ƒvƒ‹‚ª•Û‘¶‚³‚ê‚Ä‚¢‚Ü‚·B
+This directory contains embedding samples of the runtime.
 
 -Help
-‘g‚İ•û–@‚É‚Â‚¢‚Ä‹Lq‚³‚ê‚Ä‚¢‚éƒwƒ‹ƒv‚ª•Û‘¶‚³‚ê‚Ä‚¢‚Ü‚·B
+This directory contains a help for embedding the runtime.
+
+æ—¥æœ¬èª
+==========================
+â– ã€€æ¦‚è¦
+Effekseerã‚’ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã—ã¦ã„ãŸã ãã‚ã‚ŠãŒã¨ã†ã”ã–ã„ã¾ã™ã€‚
+æœ¬ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã¯DirectXã‚„OpenGLã‚’ä½¿ç”¨ã—ã¦ã„ã‚‹ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã§ã€ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å†ç”Ÿã§ãã‚‹ã‚ˆã†ã«ã™ã‚‹ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ãŒå«ã¾ã‚Œã¦ã„ã¾ã™ã€‚
+
+ãƒ‡ã‚¶ã‚¤ãƒŠãƒ¼å‘ã‘ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ä½œæˆã™ã‚‹ãŸã‚ã®ãƒ„ãƒ¼ãƒ«ã‚„ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚µãƒ³ãƒ—ãƒ«ã¯å«ã¾ã‚Œã¦ã„ã¾ã›ã‚“ã®ã§ã€
+ãã‚Œã‚‰ãŒå¿…è¦ãªæ–¹ã¯ãƒ„ãƒ¼ãƒ«ã®ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã‚’ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã™ã‚‹ã‚ˆã†ãŠé¡˜ã„ã—ã¾ã™ã€‚
+
+â– ã€€ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªæ§‹æˆ
+-Compiled
+ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ¸ˆã¿ã®libãƒ•ã‚¡ã‚¤ãƒ«ãŒä¿å­˜ã•ã‚Œã¦ã„ã¾ã™ã€‚
+VisualStudio2012ã€2013ã€2015ã«å¯¾å¿œã—ã¦ã„ã¾ã™ã€‚
+ãŸã ã—ã€OpenGLç‰ˆã¯2012ã«ã¯å¯¾å¿œã—ã¦ã„ã¾ã›ã‚“ã€‚
+
+ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯
+ãƒ‡ãƒãƒƒã‚°ã¯ã€ãƒãƒ«ãƒã‚¹ãƒ¬ãƒƒãƒ‰ãƒ‡ãƒãƒƒã‚°
+ãƒªãƒªãƒ¼ã‚¹ã¯ã€ãƒãƒ«ãƒã‚¹ãƒ¬ãƒƒãƒ‰
+
+ã«ãªã£ã¦ã„ã¾ã™ã€‚
+
+-src
+ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã®ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ãŒä¿å­˜ã•ã‚Œã¦ã„ã¾ã™ã€‚
+
+-RuntimeSample
+ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã‚’çµ„ã¿è¾¼ã‚“ã ã‚µãƒ³ãƒ—ãƒ«ãŒä¿å­˜ã•ã‚Œã¦ã„ã¾ã™ã€‚
+
+-Help
+çµ„è¾¼ã¿æ–¹æ³•ã«ã¤ã„ã¦è¨˜è¿°ã•ã‚Œã¦ã„ã‚‹ãƒ˜ãƒ«ãƒ—ãŒä¿å­˜ã•ã‚Œã¦ã„ã¾ã™ã€‚

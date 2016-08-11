@@ -292,13 +292,11 @@ public:
 */
 class RendererImplemented
 	: public Renderer
+	, public ::Effekseer::ReferenceObject
 {
 friend class DeviceObject;
 
 private:
-	/* 参照カウンタ */
-	int	m_reference;
-
 	ID3D11Device*			m_device;
 	ID3D11DeviceContext*	m_context;
 
@@ -356,18 +354,6 @@ public:
 		@brief	初期化
 	*/
 	bool Initialize( ID3D11Device* device, ID3D11DeviceContext* context );
-
-	/**
-		@brief	参照カウンタを加算する。
-		@return	実行後の参照カウンタの値
-	*/
-	int AddRef();
-
-	/**
-		@brief	参照カウンタを減算する。
-		@return	実行後の参照カウンタの値
-	*/
-	int Release();
 
 	void Destory();
 
@@ -531,6 +517,10 @@ public:
 	void SetTextures(Shader* shader, ID3D11ShaderResourceView** textures, int32_t count);
 
 	void ResetRenderState();
+
+	virtual int GetRef() { return ::Effekseer::ReferenceObject::GetRef(); }
+	virtual int AddRef() { return ::Effekseer::ReferenceObject::AddRef(); }
+	virtual int Release() { return ::Effekseer::ReferenceObject::Release(); }
 };
 
 //----------------------------------------------------------------------------------

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../base.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<section class="level1">
+<h1>使い方</h1>
+<section id="example_program" class="level2">
+<h2>サンプルプロジェクト</h2>
+<p>下記の場所にEffekseerプラグインを使用したサンプルプロジェクトがあります。</p>
+<ul>
+<li>GameEngine/Unity/SampleProject.zip</li>
+</ul>
+<figure>
+<img src="img/unity_example.png" />
+</figure>
+</section>
+<section id="resource_files" class="level2">
+<h2>リソースファイルについて</h2>
+<p><font color="red">1.10から変更になりました。</font></p>
+<p>Resources/Effekseer/ 以下に出力済エフェクト(<em>.efk)やテクスチャ、サウンドを配置します。<br />
+*.efkファイルをインポートすると、</em>.bytesにリネームされます。<br />
+上手くいかないときは、Reimportを試してください。</p>
+<figure>
+<img src="img/unity_resource.png" />
+</figure>
+</section>
+<section id="emitter_playback" class="level2">
+<h2>エミッタを使って再生する方法</h2>
+<section class="level3">
+<h3>準備</h3>
+<p>エフェクトのエミッタコンポーネントをGameObjectにAddすることで、<br />
+GameObjectに連動したエフェクトの再生を行うことができます。</p>
+<p>Plugin/Effekseer/EffekseerEmitter.csをGameObjectに追加します。</p>
+<figure>
+<img src="img/unity_emitter.png" />
+</figure>
+</section>
+<section class="level3">
+<h3>インスペクタのプロパティ</h3>
+<ul>
+<li>Effect Name: エフェクト名を指定します。<br />
+（エフェクト名はエフェクトファイル名(*.efk)から拡張子を除いた文字列です）</li>
+<li>Play On Start: チェックを入れると、シーン開始時(Start()のタイミング)に自動的に再生します。</li>
+<li>Loop: 再生終了したら自動的に再生をリクエストします。</li>
+</ul>
+</section>
+<section class="level3">
+<h3>特徴</h3>
+<p>設置するエフェクトやキャラクターに追従するようなエフェクトに適しています。</p>
+</section>
+</section>
+<section id="direct_playback" class="level2">
+<h2>スクリプトから直接再生する方法</h2>
+<section class="level3">
+<h3>スクリプト</h3>
+<p>EffekseerSystem.PlayEffect()を使うことで、スクリプトからエフェクトを再生することができます。</p>
+<p>以下サンプルコードです。</p>
+<div class="sourceCode"><pre class="sourceCode cs"><code class="sourceCode cs"><span class="dt">void</span> <span class="fu">Start</span>()
+{
+    <span class="co">// transformの位置でエフェクトを再生する</span>
+    EffekseerHandle handle = EffekseerSystem.<span class="fu">PlayEffect</span>(<span class="st">&quot;Laser01&quot;</span>, transform.<span class="fu">position</span>);
+    <span class="co">// transformの回転を設定する。</span>
+    handle.<span class="fu">SetRotation</span>(transform.<span class="fu">rotation</span>);
+}</code></pre></div>
+</section>
+<section class="level3">
+<h3>特徴</h3>
+<p>PlayEffect()で再生した場合は自動で位置回転は変わりません。<br />
+もし動かしたいときは手動で設定してやる必要があります。</p>
+<p>ヒットエフェクトや爆発エフェクトなど、シンプルに使いたいときに適しています。</p>
+</section>
+</section>
+<section id="preload" class="level2">
+<h2>事前にリソースをロードする</h2>
+<section class="level3">
+<h3>自動でロードされるタイミング</h3>
+<p>エフェクトに必要なリソースファイルがロードされるのは以下のタイミングです。</p>
+<ul>
+<li>EffekseerEmitter.Start()</li>
+<li>EffekseerSystem.PlayEffect()</li>
+</ul>
+<p>いずれも指定されたエフェクトのリソースのみがロードされます。<br />
+ロードされたエフェクトは保持され、次回の再生タイミングではロードされません。</p>
+<p>自動ロードはお手軽ですが、ロードするタイミングによってはゲームがフレーム落ちする可能性があります。</p>
+</section>
+<section class="level3">
+<h3>事前に明示的にロードする</h3>
+<p>事前にLoadEffect()することで、ロードの負荷でフレーム落ちすることを防ぐことができます。</p>
+<div class="sourceCode"><pre class="sourceCode cs"><code class="sourceCode cs"><span class="dt">void</span> <span class="fu">Start</span>()
+{
+    <span class="co">// エフェクト&quot;Laser01&quot;をロードする。</span>
+    EffekseerSystem.<span class="fu">LoadEffect</span>(<span class="st">&quot;Laser01&quot;</span>);
+}</code></pre></div>
+<p>ロードされたエフェクトはEffekseerSystemのDestroy時に自動解放されますが、<br />
+不要になったエフェクトをReleaseEffect()で明示的に解放することもできます。</p>
+<div class="sourceCode"><pre class="sourceCode cs"><code class="sourceCode cs"><span class="dt">void</span> <span class="fu">OnDestroy</span>()
+{
+    <span class="co">// エフェクト&quot;Laser01&quot;を解放する</span>
+    EffekseerSystem.<span class="fu">ReleaseEffect</span>(<span class="st">&quot;Laser01&quot;</span>);
+}</code></pre></div>
+</section>
+</section>
+<section id="assetbundle" class="level2">
+<h2>アセットバンドルからロードする</h2>
+<p>アセットバンドルからエフェクトリソースをロードすることができます。<br />
+なお、アセットバンドルを使う場合は自動ロードすることはできません。</p>
+<div class="sourceCode"><pre class="sourceCode cs"><code class="sourceCode cs">IEnumerator <span class="fu">Load</span>() {
+    <span class="dt">string</span> url = <span class="st">&quot;file:///&quot;</span> + Application.<span class="fu">streamingAssetsPath</span> + <span class="st">&quot;/effects&quot;</span>;
+    WWW www = <span class="kw">new</span> <span class="fu">WWW</span>(url);
+    <span class="kw">yield</span> <span class="kw">return</span> www;
+    <span class="dt">var</span> assetBundle = www.<span class="fu">assetBundle</span>;
+    EffekseerSystem.<span class="fu">LoadEffect</span>(<span class="st">&quot;Laser01&quot;</span>, assetBundle);
+}</code></pre></div>
+<p>通常のロードと同じようにReleaseEffect()してください。</p>
+<p>全てのエフェクトのリリースが終わる前にAssetBundleのリリースを行わないでください。</p>
+</section>
+</section>
+</body>
+</html>

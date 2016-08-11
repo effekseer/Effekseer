@@ -115,11 +115,11 @@ protected:
 			verteies[i].SetColor( instanceParameter.Colors[i] );
 		}
 		
-		verteies[0].UV[0] = 0.0f;
-		verteies[0].UV[1] = (float)instanceParameter.InstanceIndex / (float)instanceParameter.InstanceCount;
+		verteies[0].UV[0] = instanceParameter.UV.X;
+		verteies[0].UV[1] = instanceParameter.UV.Y + (float) instanceParameter.InstanceIndex / (float) instanceParameter.InstanceCount * instanceParameter.UV.Height;
 	
-		verteies[1].UV[0] = 1.0f;
-		verteies[1].UV[1] = (float)( instanceParameter.InstanceIndex + 1 ) / (float)instanceParameter.InstanceCount;
+		verteies[1].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
+		verteies[1].UV[1] = instanceParameter.UV.Y + (float) (instanceParameter.InstanceIndex + 1) / (float) instanceParameter.InstanceCount * instanceParameter.UV.Height;
 		
 		if( parameter.ViewpointDependent)
 		{

@@ -1,23 +1,34 @@
 ﻿Effekseer
 =========
+This software is a tool editing visual effects.
+By incorporating a runtime and plug-ins, you will be able to show the effects that was created with Effekseer.
+Effekseer is useful in developing game software especially. Not only programmers but also designers take charge of visual effects.
+
+* [Official website](http://effekseer.github.io/en/)
+
 本ソフトウェアはヴィジュアルエフェクト編集ツールです。
-ランタイムやプラグインを組み込むことで、アプリケーション中で作成されたエフェクトを再生できるようになります。
+ランタイムやプラグインを組み込むことで、Effekseerで作成されたエフェクトをアプリケーション中で再生できるようになります。
 主にゲームで使用することを想定しており、ヴィジュアルエフェクトの編集をプログラマでなくデザイナーが担当できるようにします。
 
 * [公式ウェブサイト](http://effekseer.github.io/jp/)
 
-This software is a visual effects editing tool.
-By incorporating a runtime and plug-ins, you will be able to play the effect that was created in the application.
-It is assumed to be used mainly in the game, and the editing of visual effects rather than the programmer so designers can be in charge.
-
-* [Official website](http://effekseer.github.io/en/)
+[![Slack Status](https://effekseer-slackin.herokuapp.com/badge.svg)](https://effekseer-slackin.herokuapp.com/)
 
 [![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
 
+Todo
+=========
+
+Please read issues.
+
+[Issues](https://github.com/effekseer/Effekseer/issues)
+
 # RoadMap
 
-**Version 1.20**
-* ?
+## 1.3
+
+* For UnrealEngine4
+* For Cocos2d-x
 
 # Todo
 プルリクエストお待ちしております。
@@ -26,12 +37,10 @@ It is assumed to be used mainly in the game, and the editing of visual effects r
 * ドキュメントの改良
 * 文言の改良
 * 各種アイコンの追加
-* サンプルの追加
 * Windows、Linux以外のテストの構築
 
 **中規模な追加・変更**
 * Effectのパラメーターの動的な変更
-* ショートカットの見直し
 * モデル出力プラグイン(Blender等)
 
 
@@ -41,7 +50,6 @@ It is assumed to be used mainly in the game, and the editing of visual effects r
 
 **他**
 * DirectX12対応
-* UnrealEngine4, Cocos2D対応
 
 **候補**
 * HDRレンダリング
@@ -59,8 +67,3 @@ It is assumed to be used mainly in the game, and the editing of visual effects r
 
 ```Dev/Cpp/build.sh``` を実行する。
 ```Dev/Cpp/Test/CMakeLists.txt``` をcmakeを使用してmakeを生成しコンパイルする。
-
-* Mac
-
-不明
-

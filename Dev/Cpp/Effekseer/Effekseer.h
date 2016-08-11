@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include <stdio.h>
 #include <string.h>
+#include <atomic>
 
 //----------------------------------------------------------------------------------
 //
@@ -52,6 +53,7 @@ struct RectF;
 
 class Manager;
 class Effect;
+class EffectNode;
 
 class ParticleRenderer;
 class SpriteRenderer;
@@ -355,6 +357,79 @@ inline int32_t ConvertUtf8ToUtf16( int16_t* dst, int32_t dst_size, const int8_t*
 }
 
 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+/**
+@brief	参照カウンタのインターフェース
+*/
+class IReference
+{
+public:
+	/**
+	@brief	参照カウンタを加算する。
+	@return	加算後の参照カウンタ
+	*/
+	virtual int AddRef() = 0;
+
+	/**
+	@brief	参照カウンタを取得する。
+	@return	参照カウンタ
+	*/
+	virtual int GetRef() = 0;
+
+	/**
+	@brief	参照カウンタを減算する。0になった時、インスタンスを削除する。
+	@return	減算後の参照カウンタ
+	*/
+	virtual int Release() = 0;
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+/**
+@brief	参照カウンタオブジェクト
+*/
+class ReferenceObject
+	: public IReference
+{
+private:
+	mutable std::atomic<int32_t> m_reference;
+
+public:
+	ReferenceObject()
+		: m_reference(1)
+	{
+	}
+
+	virtual ~ReferenceObject()
+	{}
+
+	virtual int AddRef()
+	{
+		std::atomic_fetch_add_explicit(&m_reference, 1, std::memory_order_consume);
+
+		return m_reference;
+	}
+
+	virtual int GetRef()
+	{
+		return m_reference;
+	}
+
+	virtual int Release()
+	{
+		bool destroy = std::atomic_fetch_sub_explicit(&m_reference, 1, std::memory_order_consume) == 1;
+		if (destroy)
+		{
+			delete this;
+			return 0;
+		}
+
+		return m_reference;
+	}
+};
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1137,6 +1212,7 @@ namespace Effekseer
 	エフェクトに設定されたパラメーター。
 */
 class Effect
+	: public IReference
 {
 protected:
 	Effect() {}
@@ -1192,18 +1268,6 @@ public:
 	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
 
 	/**
-		@brief	参照カウンタを加算する。
-		@return	実行後の参照カウンタの値
-	*/
-	virtual int AddRef() = 0;
-
-	/**
-		@brief	参照カウンタを減算する。
-		@return	実行後の参照カウンタの値
-	*/
-	virtual int Release() = 0;
-
-	/**
 	@brief	設定を取得する。
 	@return	設定
 	*/
@@ -1225,11 +1289,21 @@ public:
 	virtual void* GetColorImage( int n ) const = 0;
 
 	/**
+	@brief	格納されている画像のポインタの個数を取得する。
+	*/
+	virtual int32_t GetColorImageCount() const = 0;
+
+	/**
 	@brief	格納されている法線画像のポインタを取得する。
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
 	*/
 	virtual void* GetNormalImage(int n) const = 0;
+
+	/**
+	@brief	格納されている法線画像のポインタの個数を取得する。
+	*/
+	virtual int32_t GetNormalImageCount() const = 0;
 
 	/**
 	@brief	格納されている歪み画像のポインタを取得する。
@@ -1239,14 +1313,29 @@ public:
 	virtual void* GetDistortionImage(int n) const = 0;
 
 	/**
+	@brief	格納されている歪み画像のポインタの個数を取得する。
+	*/
+	virtual int32_t GetDistortionImageCount() const = 0;
+
+	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/
 	virtual void* GetWave( int n ) const = 0;
 
 	/**
+	@brief	格納されている音波形のポインタの個数を取得する。
+	*/
+	virtual int32_t GetWaveCount() const = 0;
+
+	/**
 		@brief	格納されているモデルのポインタを取得する。
 	*/
 	virtual void* GetModel( int n ) const = 0;
+
+	/**
+	@brief	格納されているモデルのポインタの個数を取得する。
+	*/
+	virtual int32_t GetModelCount() const = 0;
 
 	/**
 		@brief	エフェクトのリロードを行う。
@@ -1293,6 +1382,62 @@ public:
 	*/
 	virtual void UnloadResources() = 0;
 };
+
+/**
+@brief	共通描画パラメーター
+@note
+大きく変更される可能性があります。
+*/
+struct EffectBasicRenderParameter
+{
+	int32_t				ColorTextureIndex;
+	AlphaBlendType		AlphaBlend;
+	TextureFilterType	FilterType;
+	TextureWrapType		WrapType;
+	bool				ZWrite;
+	bool				ZTest;
+	bool				Distortion;
+	float				DistortionIntensity;
+};
+
+/**
+@brief	ノードインスタンス生成クラス
+@note
+エフェクトのノードの実体を生成する。
+*/
+class EffectNode
+{
+public:
+	EffectNode() {}
+	virtual ~EffectNode(){}
+
+	/**
+	@brief	ノードが所属しているエフェクトを取得する。
+	*/
+	virtual Effect* GetEffect() const = 0;
+
+	/**
+	@brief	子のノードの数を取得する。
+	*/
+	virtual int GetChildrenCount() const = 0;
+
+	/**
+	@brief	子のノードを取得する。
+	*/
+	virtual EffectNode* GetChild(int index) const = 0;
+
+	/**
+	@brief	共通描画パラメーターを取得する。
+	*/
+	virtual EffectBasicRenderParameter GetBasicRenderParameter() = 0;
+
+	/**
+	@brief	共通描画パラメーターを設定する。
+	*/
+	virtual void SetBasicRenderParameter(EffectBasicRenderParameter param) = 0;
+
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1322,6 +1467,7 @@ namespace Effekseer
 	@brief エフェクト管理クラス
 */
 class Manager
+	: public IReference
 {
 protected:
 	Manager() {}
@@ -1892,6 +2038,8 @@ public:
 		Color		Colors[2];
 
 		float	Positions[2];
+
+		RectF	UV;
 	};
 
 public:
@@ -2110,6 +2258,8 @@ public:
 		float	SizeFor;
 		float	SizeMiddle;
 		float	SizeBack;
+
+		RectF	UV;
 	};
 
 public:
@@ -2738,10 +2888,9 @@ namespace Effekseer {
 	Managerの代わりにエフェクト読み込み時に使用することで、Managerとは独立してEffectインスタンスを生成することができる。
 */
 	class Setting
+		: public ReferenceObject
 	{
 	private:
-		int32_t		m_ref;
-
 		/* 座標系 */
 		CoordinateSystem		m_coordinateSystem;
 
@@ -2750,6 +2899,7 @@ namespace Effekseer {
 		SoundLoader*	m_soundLoader;
 		ModelLoader*	m_modelLoader;
 
+	protected:
 		/**
 			@brief	コンストラクタ
 			*/
@@ -2765,18 +2915,6 @@ namespace Effekseer {
 			@brief	設定インスタンスを生成する。
 		*/
 		static Setting* Create();
-
-		/**
-			@brief	参照カウンタを加算する。
-			@return	参照カウンタ
-		*/
-		int32_t AddRef();
-
-		/**
-			@brief	参照カウンタを減算する。
-			@return	参照カウンタ
-		*/
-		int32_t Release();
 
 		/**
 		@brief	座標系を取得する。
@@ -3027,7 +3165,8 @@ class Thread
 {
 private:
 #ifdef _WIN32
-	static DWORD EFK_STDCALL ThreadProc( void* arguments );
+	/* DWORDを置きかえ */
+	static unsigned long EFK_STDCALL ThreadProc(void* arguments);
 #else
 	static void* ThreadProc( void* arguments );
 #endif

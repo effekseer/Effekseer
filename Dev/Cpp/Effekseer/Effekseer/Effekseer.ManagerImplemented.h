@@ -26,6 +26,7 @@ namespace Effekseer
 */
 class ManagerImplemented
 	: public Manager
+	, public ReferenceObject
 {
 	friend class Effect;
 	friend class EffectNode;
@@ -118,9 +119,6 @@ private:
 	} cullingCurrent, cullingNext;
 
 private:
-	/* 参照カウンタ */
-	int	m_reference;
-
 	/* 自動データ入れ替えフラグ */
 	bool m_autoFlip;
 
@@ -150,7 +148,7 @@ private:
 	CriticalSection				m_renderingSession;
 
 	/* 設定インスタンス */
-	Setting*						m_setting;
+	Setting*					m_setting;
 
 	int							m_updateTime;
 	int							m_drawTime;
@@ -229,18 +227,6 @@ public:
 
 	/* Root以外のインスタンスバッファ取得(Flip,Update,終了時からのみ呼ばれる) */
 	Instance* PopInstance();
-
-	/**
-		@brief	参照カウンタを加算する。
-		@return	実行後の参照カウンタの値
-	*/
-	int AddRef();
-
-	/**
-		@brief	参照カウンタを減算する。
-		@return	実行後の参照カウンタの値
-	*/
-	int Release();
 
 	/**
 		@brief マネージャー破棄
@@ -599,6 +585,10 @@ public:
 		@brief	現在存在するエフェクトのハンドルからカリングの空間を配置しなおす。
 	*/
 	void RessignCulling() override;
+
+	virtual int GetRef() { return ReferenceObject::GetRef(); }
+	virtual int AddRef() { return ReferenceObject::AddRef(); }
+	virtual int Release() { return ReferenceObject::Release(); }
 };
 //----------------------------------------------------------------------------------
 //

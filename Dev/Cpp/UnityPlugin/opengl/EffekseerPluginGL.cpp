@@ -93,6 +93,7 @@ extern "C"
 		g_EffekseerManager->SetSpriteRenderer(g_EffekseerRenderer->CreateSpriteRenderer());
 		g_EffekseerManager->SetRibbonRenderer(g_EffekseerRenderer->CreateRibbonRenderer());
 		g_EffekseerManager->SetRingRenderer(g_EffekseerRenderer->CreateRingRenderer());
+		g_EffekseerManager->SetTrackRenderer(g_EffekseerRenderer->CreateTrackRenderer());
 		g_EffekseerManager->SetModelRenderer(g_EffekseerRenderer->CreateModelRenderer());
 	}
 
@@ -117,7 +118,9 @@ namespace EffekseerPlugin
 	{
 		this->renderer = renderer;
 		glGenTextures( 1, &backGroundTexture );
+#ifndef _WIN32
 		glGenFramebuffers( 1, &framebufferForCopy );
+#endif
 	}
 		
 	DistortingCallbackGL::~DistortingCallbackGL()
@@ -127,7 +130,9 @@ namespace EffekseerPlugin
 		
 	void DistortingCallbackGL::ReleaseTexture()
 	{
+#ifndef _WIN32
 		glDeleteFramebuffers( 1, &framebufferForCopy );
+#endif
 		glDeleteTextures( 1, &backGroundTexture );
 	}
 	
@@ -148,14 +153,15 @@ namespace EffekseerPlugin
 		uint32_t width = viewport[2];
 		uint32_t height = viewport[3];
 		
-		GLint backupFramebuffer;
-		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
-		
 		if( backGroundTextureWidth != width ||
 			backGroundTextureHeight != height )
 		{
 			PrepareTexture( width, height, GL_RGBA );
 		}
+		
+#ifndef _WIN32
+		GLint backupFramebuffer;
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
 		
 		GLint rbtype;
 		glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -176,14 +182,17 @@ namespace EffekseerPlugin
 			glBindFramebuffer( GL_FRAMEBUFFER, framebufferForCopy );
 			glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0 );
 		}
+#endif
 		
 		glBindTexture( GL_TEXTURE_2D, backGroundTexture );
 		//glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height );
 		glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, viewport[0], viewport[1], width, height );
 		glBindTexture( GL_TEXTURE_2D, 0 );
 		
+#ifndef _WIN32
 		glBindFramebuffer( GL_FRAMEBUFFER, backupFramebuffer );
-		
+#endif
+
 		renderer->SetBackground(backGroundTexture);
 	}
 	

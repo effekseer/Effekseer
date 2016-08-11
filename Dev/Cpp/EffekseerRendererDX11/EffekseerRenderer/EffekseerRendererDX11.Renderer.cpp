@@ -217,8 +217,7 @@ Renderer* Renderer::Create( ID3D11Device* device, ID3D11DeviceContext* context, 
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented( int32_t squareMaxCount )
-	: m_reference	( 1 )
-	, m_device	( NULL )
+	: m_device	( NULL )
 	, m_context	( NULL )
 	, m_vertexBuffer( NULL )
 	, m_indexBuffer	( NULL )
@@ -259,7 +258,7 @@ RendererImplemented::~RendererImplemented()
 	EffekseerRenderer::PngTextureLoader::Finalize();
 #endif
 
-	assert( m_reference == 0 );
+	assert(GetRef() == 0);
 
 	ES_SAFE_DELETE(m_distortingCallback);
 
@@ -278,7 +277,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
 
-	assert( m_reference == -6 );
+	assert(GetRef() == -6);
 }
 
 //----------------------------------------------------------------------------------
@@ -445,29 +444,6 @@ bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext*
 		this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
 	return true;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int RendererImplemented::AddRef()
-{
-	m_reference++;
-	return m_reference;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int RendererImplemented::Release()
-{
-	m_reference--;
-	int count = m_reference;
-	if ( count == 0 )
-	{
-		delete this;
-	}
-	return count;
 }
 
 //----------------------------------------------------------------------------------

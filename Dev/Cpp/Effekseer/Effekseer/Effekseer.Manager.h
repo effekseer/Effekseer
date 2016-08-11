@@ -20,6 +20,7 @@ namespace Effekseer
 	@brief エフェクト管理クラス
 */
 class Manager
+	: public IReference
 {
 protected:
 	Manager() {}

@@ -176,6 +176,16 @@ extern "C"
 		g_EffekseerManager->SetScale(handle, x, y, z);
 	}
 	
+	// エフェクトのターゲット位置設定
+	DLLEXPORT void UNITY_API EffekseerSetTargetLocation(int handle, float x, float y, float z)
+	{
+		if (g_EffekseerManager == NULL) {
+			return;
+		}
+
+		g_EffekseerManager->SetTargetLocation(handle, x, y, z);
+	}
+	
 	// プロジェクション行列設定
 	DLLEXPORT void UNITY_API EffekseerSetProjectionMatrix(int renderId, float matrixArray[])
 	{

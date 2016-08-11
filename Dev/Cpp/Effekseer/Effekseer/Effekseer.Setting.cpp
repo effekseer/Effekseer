@@ -26,9 +26,7 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 Setting::Setting()
-	: m_ref(1)
-
-	, m_coordinateSystem(CoordinateSystem::RH)
+	: m_coordinateSystem(CoordinateSystem::RH)
 	, m_effectLoader(NULL)
 	, m_textureLoader(NULL)
 	, m_soundLoader(NULL)
@@ -54,30 +52,6 @@ Setting::~Setting()
 Setting* Setting::Create()
 {
 	return new Setting();
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int32_t Setting::AddRef()
-{
-	m_ref++;
-	return m_ref;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int32_t Setting::Release()
-{
-	m_ref--;
-	if(m_ref==0)
-	{
-		delete this;
-		return 0;
-	}
-
-	return m_ref;
 }
 
 //----------------------------------------------------------------------------------

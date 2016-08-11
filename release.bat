@@ -1,6 +1,6 @@
-SET RDIR=Effekseer110
-SET RDIR_R=EffekseerRuntime110
-SET RDIR_U=EffekseerForUnity110b
+SET RDIR=Effekseer120
+SET RDIR_R=EffekseerRuntime120
+SET RDIR_U=EffekseerForUnity120
 
 rmdir %RDIR%
 mkdir %RDIR%
@@ -125,7 +125,7 @@ mkdir %RDIR%\Help_Jp
 mkdir %RDIR%\QuickTutorial_En
 
 robocopy Release\Help_Tool %RDIR%\Help_Jp *.html *.css *.efkproj *.png /mir /S
-robocopy Release\QuickTutorial_Tool %RDIR%\QuickTutorial_En *.html *.css *.efkproj *.png /mir /S
+robocopy Document\QuickTutorial_Tool %RDIR%\QuickTutorial_En *.html *.css *.efkproj *.png /mir /S
 
 mkdir %RDIR_R%\Help
 robocopy Release\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S
@@ -145,6 +145,12 @@ echo doxygen
 doxygen doxygen.template
 mkdir %RDIR_R%\Help\html\doxygen
 robocopy html %RDIR_R%\Help\html\doxygen /mir /S
+
+doxygen Release\Help_Unity\Doxyfile
+robocopy UnityAPIRef %RDIR_U%\Help\APIRef /mir /S
+
+echo Readme2
+copy Document\readme_sample.txt %RDIR%\Sample\readme.txt
 
 echo VS
 

@@ -247,13 +247,11 @@ inline void TransformVertexes(VertexDistortion* vertexes, int32_t count, const :
 */
 class RendererImplemented
 	: public Renderer
+	, public ::Effekseer::ReferenceObject
 {
 friend class DeviceObject;
 
 private:
-	/* 参照カウンタ */
-	int	m_reference;
-
 	LPDIRECT3DDEVICE9	m_d3d_device;
 
 	VertexBuffer*		m_vertexBuffer;
@@ -340,18 +338,6 @@ public:
 		@brief	初期化
 	*/
 	bool Initialize( LPDIRECT3DDEVICE9 device );
-
-	/**
-		@brief	参照カウンタを加算する。
-		@return	実行後の参照カウンタの値
-	*/
-	int AddRef();
-
-	/**
-		@brief	参照カウンタを減算する。
-		@return	実行後の参照カウンタの値
-	*/
-	int Release();
 
 	void Destory();
 
@@ -512,6 +498,10 @@ public:
 	void ChangeDevice( LPDIRECT3DDEVICE9 device );
 
 	void ResetRenderState();
+
+	virtual int GetRef() { return ::Effekseer::ReferenceObject::GetRef(); }
+	virtual int AddRef() { return ::Effekseer::ReferenceObject::AddRef(); }
+	virtual int Release() { return ::Effekseer::ReferenceObject::Release(); }
 };
 
 //----------------------------------------------------------------------------------

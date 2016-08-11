@@ -39,6 +39,14 @@ namespace EffekseerPlugin
 		// リソーステーブルに追加
 		resources.insert(std::make_pair((const char16_t*) path, res));
 
+#ifdef __EMSCRIPTEN__
+		if (res.texture) {
+			glBindTexture(GL_TEXTURE_2D, (GLuint)res.texture);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+#endif
+
 		return res.texture;
 	}
 

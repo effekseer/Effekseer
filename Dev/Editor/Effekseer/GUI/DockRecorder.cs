@@ -272,6 +272,10 @@ namespace Effekseer.GUI
 			{
 				txt_number_v.Enabled = false;
 			}
+			else if (cb_type.SelectedIndex == 3)
+			{
+				txt_number_v.Enabled = false;
+			}
 		}
 	}
 }

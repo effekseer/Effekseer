@@ -18,21 +18,6 @@ namespace Effekseer {
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#ifdef _WIN32
-static void Sleep_( int32_t ms )
-{
-	Sleep( ms );
-}
-#else
-static void Sleep_( int32_t ms )
-{
-	usleep( 1000 * ms );
-}
-#endif
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ServerImplemented::InternalClient::RecvAsync( void* data )
 {
 	InternalClient* client = (InternalClient*)data;

@@ -52,6 +52,7 @@ namespace Effekseer.GUI
 
 			items.Add(create_menu_item_from_commands(Commands.Copy));
 			items.Add(create_menu_item_from_commands(Commands.Paste));
+			items.Add(create_menu_item_from_commands(Commands.PasteInfo));
 
 			items.Add(new ToolStripSeparator());
 

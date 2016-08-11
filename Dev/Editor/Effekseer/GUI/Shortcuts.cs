@@ -27,15 +27,18 @@ namespace Effekseer.GUI
 				AddShortcut(new Shortcut("Internal.SaveAs", true, false, false, 0, null));
 				AddShortcut(new Shortcut("Internal.Exit", false, false, true, (int)Keys.F4, null));
 
-				AddShortcut(new Shortcut("Internal.PlayViewer", true, false, false, (int)Keys.Space, null));
-				AddShortcut(new Shortcut("Internal.StopViewer", true, true, false, (int)Keys.Space, null));
-				AddShortcut(new Shortcut("Internal.PauseAndResumeViewer", false, false, true, (int)Keys.Space, null));
-				AddShortcut(new Shortcut("Internal.StepViewer", false, true, false, (int)Keys.Space, null));
+				AddShortcut(new Shortcut("Internal.PlayViewer", false, false, false, (int)Keys.Space, null));
+				AddShortcut(new Shortcut("Internal.StopViewer", true, false, true, (int)Keys.Left, null));
+
+				AddShortcut(new Shortcut("Internal.StepViewer", true, false, false, (int)Keys.Right, null));
+				AddShortcut(new Shortcut("Internal.BackStepViewer", true, false, false, (int)Keys.Left, null));
 
 				AddShortcut(new Shortcut("Internal.Undo", true, false, false, (int)Keys.Z, null));
 				AddShortcut(new Shortcut("Internal.Redo", true, false, false, (int)Keys.Y, null));
-				AddShortcut(new Shortcut("Internal.Copy", true, false, true, (int)Keys.C, null));
-				AddShortcut(new Shortcut("Internal.Paste", true, false, true, (int)Keys.V, null));
+				AddShortcut(new Shortcut("Internal.Copy", true, false, false, (int)Keys.C, null));
+				AddShortcut(new Shortcut("Internal.Paste", true, false, false, (int)Keys.V, null));
+				AddShortcut(new Shortcut("Internal.PasteInfo", true, false, true, (int)Keys.V, null));
+
 				AddShortcut(new Shortcut("Internal.AddNode", true, false, false, (int)Keys.A, null));
 				AddShortcut(new Shortcut("Internal.InsertNode", true, false, false, (int)Keys.I, null));
 				AddShortcut(new Shortcut("Internal.RemoveNode", true, false, false, (int)Keys.R, null));

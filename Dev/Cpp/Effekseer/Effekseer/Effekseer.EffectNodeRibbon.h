@@ -100,7 +100,7 @@ struct RibbonPositionParameter
 //
 //----------------------------------------------------------------------------------
 class EffectNodeRibbon
-	: public EffectNode
+	: public EffectNodeImplemented
 {
 public:
 
@@ -157,7 +157,7 @@ public:
 	int RibbonTexture;
 
 	EffectNodeRibbon( Effect* effect, unsigned char*& pos )
-		: EffectNode( effect, pos )
+		: EffectNodeImplemented(effect, pos)
 	{
 	}
 
