@@ -23,9 +23,17 @@ namespace Effekseer.GUI
 			}
 		}
 
+		internal Component.NodeTreeView NodeTreeView
+		{
+			get
+			{
+				return nodeTreeView;
+			}
+		}
+
 		private void DockNodeTreeView_Load(object sender, EventArgs e)
 		{
-			Func<Action, ToolStripMenuItem> create_menu_item_from_commands = (a) =>
+			Func<Func<bool>, ToolStripMenuItem> create_menu_item_from_commands = (a) =>
 			{
 				var item = new ToolStripMenuItem();
 				var attributes = a.Method.GetCustomAttributes(false);

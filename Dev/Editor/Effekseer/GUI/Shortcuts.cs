@@ -59,7 +59,7 @@ namespace Effekseer.GUI
 			return string.Empty;
 		}
 
-		public static void SetFunction(string uniquename, Action function)
+		public static void SetFunction(string uniquename, Func<bool> function)
 		{
 			if (shortcuts.ContainsKey(uniquename))
 			{
@@ -76,8 +76,10 @@ namespace Effekseer.GUI
 				var keys = shortcut.Value.GetKeys();
 				if (keys == (int)keyData)
 				{
-					shortcut.Value.Function();
-					return;
+					if(shortcut.Value.Function())
+					{
+						return;
+					}
 				}
 			}
 
@@ -124,13 +126,13 @@ namespace Effekseer.GUI
 				private set;
 			}
 
-			public Action Function
+			public Func<bool> Function
 			{
 				get;
 				private set;
 			}
 
-			public Shortcut(string uniquename, bool ctrl, bool shift, bool alt, int key, Action function)
+			public Shortcut(string uniquename, bool ctrl, bool shift, bool alt, int key, Func<bool> function)
 			{
 				UniqueName = uniquename;
 				Control = ctrl;
@@ -140,7 +142,7 @@ namespace Effekseer.GUI
 				Function = function;
 			}
 
-			public void SetFunction(Action function)
+			public void SetFunction(Func<bool> function)
 			{
 				Function = function;
 			}
