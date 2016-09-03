@@ -20,7 +20,8 @@ class Thread
 {
 private:
 #ifdef _WIN32
-	static DWORD EFK_STDCALL ThreadProc( void* arguments );
+	/* DWORD‚ð’u‚«‚©‚¦ */
+	static unsigned long EFK_STDCALL ThreadProc(void* arguments);
 #else
 	static void* ThreadProc( void* arguments );
 #endif

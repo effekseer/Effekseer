@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include <stdio.h>
 #include <string.h>
+#include <atomic>
 
 //----------------------------------------------------------------------------------
 //
@@ -52,6 +53,7 @@ struct RectF;
 
 class Manager;
 class Effect;
+class EffectNode;
 
 class ParticleRenderer;
 class SpriteRenderer;
@@ -355,6 +357,79 @@ inline int32_t ConvertUtf8ToUtf16( int16_t* dst, int32_t dst_size, const int8_t*
 }
 
 
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+/**
+@brief	参照カウンタのインターフェース
+*/
+class IReference
+{
+public:
+	/**
+	@brief	参照カウンタを加算する。
+	@return	加算後の参照カウンタ
+	*/
+	virtual int AddRef() = 0;
+
+	/**
+	@brief	参照カウンタを取得する。
+	@return	参照カウンタ
+	*/
+	virtual int GetRef() = 0;
+
+	/**
+	@brief	参照カウンタを減算する。0になった時、インスタンスを削除する。
+	@return	減算後の参照カウンタ
+	*/
+	virtual int Release() = 0;
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+/**
+@brief	参照カウンタオブジェクト
+*/
+class ReferenceObject
+	: public IReference
+{
+private:
+	mutable std::atomic<int32_t> m_reference;
+
+public:
+	ReferenceObject()
+		: m_reference(1)
+	{
+	}
+
+	virtual ~ReferenceObject()
+	{}
+
+	virtual int AddRef()
+	{
+		std::atomic_fetch_add_explicit(&m_reference, 1, std::memory_order_consume);
+
+		return m_reference;
+	}
+
+	virtual int GetRef()
+	{
+		return m_reference;
+	}
+
+	virtual int Release()
+	{
+		bool destroy = std::atomic_fetch_sub_explicit(&m_reference, 1, std::memory_order_consume) == 1;
+		if (destroy)
+		{
+			delete this;
+			return 0;
+		}
+
+		return m_reference;
+	}
+};
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

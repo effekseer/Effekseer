@@ -10,70 +10,94 @@ using System.Runtime.Serialization;
 namespace Effekseer
 {
 	[Serializable]
-	internal class TextureResource
+	internal abstract class Resource
 	{
-		public string Path = "";
-		public Texture2D Texture;
-		public bool Load(string path) {
-			Texture = Resources.Load<Texture2D>(Utility.ResourcePath(path, true));
-			if (Texture == null) {
+		public string path {get; protected set;}
+		public AssetBundle assetBundle {get; protected set;}
+		
+		public abstract bool Load(string path, AssetBundle assetBundle);
+		public abstract void Unload();
+
+		protected T LoadAsset<T>(string path, bool removeExtension, AssetBundle assetBundle) where T : UnityEngine.Object {
+			this.path = path;
+			this.assetBundle = assetBundle;
+			if (assetBundle != null) {
+				return assetBundle.LoadAsset<T>(
+					Utility.ResourcePath(path, removeExtension));
+			} else {
+				return Resources.Load<T>(
+					Utility.ResourcePath(path, removeExtension));
+			}
+		}
+		protected void UnloadAsset(UnityEngine.Object asset) {
+			if (asset != null) {
+				if (assetBundle != null) {
+				} else {
+					Resources.UnloadAsset(asset);
+				}
+			}
+		}
+	}
+
+	[Serializable]
+	internal class TextureResource : Resource
+	{
+		public Texture2D texture;
+		public override bool Load(string path, AssetBundle assetBundle) {
+			texture = LoadAsset<Texture2D>(path, true, assetBundle);
+			if (texture == null) {
+				Debug.LogError("[Effekseer] Failed to load Texture: " + path);
 				return false;
 			}
 			return true;
 		}
-		public void Unload() {
-			if (Texture != null) {
-				Resources.UnloadAsset(Texture);
-				Texture = null;
-			}
+		public override void Unload() {
+			UnloadAsset(texture);
+			texture = null;
 		}
 		public IntPtr GetNativePtr() {
-			return Texture.GetNativeTexturePtr();
+			return texture.GetNativeTexturePtr();
 		}
 	}
 	[Serializable]
-	internal class ModelResource
+	internal class ModelResource : Resource
 	{
-		public string Path = "";
-		public TextAsset ModelData;
-		public bool Load(string path) {
-			ModelData = Resources.Load<TextAsset>(Utility.ResourcePath(path, false));
-			if (ModelData == null) {
+		public TextAsset modelData;
+		public override bool Load(string path, AssetBundle assetBundle) {
+			modelData = LoadAsset<TextAsset>(path, false, assetBundle);
+			if (modelData == null) {
+				Debug.LogError("[Effekseer] Failed to load Model: " + path);
 				return false;
 			}
 			return true;
 		}
-		public void Unload() {
-			if (ModelData != null) {
-				Resources.UnloadAsset(ModelData);
-				ModelData = null;
-			}
+		public override void Unload() {
+			UnloadAsset(modelData);
+			modelData = null;
 		}
 		public bool Copy(IntPtr buffer, int bufferSize) {
-			if (ModelData.bytes.Length < bufferSize) {
-				Marshal.Copy(ModelData.bytes, 0, buffer, ModelData.bytes.Length);
+			if (modelData.bytes.Length < bufferSize) {
+				Marshal.Copy(modelData.bytes, 0, buffer, modelData.bytes.Length);
 				return true;
 			}
 			return false;
 		}
 	}
 	[Serializable]
-	internal class SoundResource
+	internal class SoundResource : Resource
 	{
-		public string Path = "";
-		public AudioClip Audio;
-		public bool Load(string path) {
-			Audio = Resources.Load<AudioClip>(Utility.ResourcePath(path, true));
-			if (Audio == null) {
+		public AudioClip audio;
+		public override bool Load(string path, AssetBundle assetBundle) {
+			audio = LoadAsset<AudioClip>(path, true, assetBundle);
+			if (audio == null) {
+				Debug.LogError("[Effekseer] Failed to load Sound: " + path);
 				return false;
 			}
 			return true;
 		}
-		public void Unload() {
-			if (Audio != null) {
-				Resources.UnloadAsset(Audio);
-				Audio = null;
-			}
+		public override void Unload() {
+			UnloadAsset(audio);
+			audio = null;
 		}
 	}
 
@@ -105,7 +129,7 @@ namespace Effekseer
 	
 	internal static class Plugin
 	{
-		#if UNITY_IPHONE || (UNITY_WEBGL && !UNITY_EDITOR)
+		#if !UNITY_EDITOR && (UNITY_IPHONE || UNITY_WEBGL)
 			public const string pluginName = "__Internal";
 		#else
 			public const string pluginName = "EffekseerUnity";
@@ -170,6 +194,9 @@ namespace Effekseer
 
 		[DllImport(pluginName)]
 		public static extern void EffekseerSetScale(int handle, float x, float y, float z);
+
+		[DllImport(pluginName)]
+		public static extern void EffekseerSetTargetLocation(int handle, float x, float y, float z);
 
 		[DllImport(pluginName)]
 		public static extern void EffekseerSetTextureLoaderEvent(

@@ -60,6 +60,8 @@ public:
 		float	SizeFor;
 		float	SizeMiddle;
 		float	SizeBack;
+
+		RectF	UV;
 	};
 
 public:

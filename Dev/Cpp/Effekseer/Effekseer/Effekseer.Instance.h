@@ -43,7 +43,7 @@ public:
 	Manager*	m_pManager;
 
 	// パラメーター
-	EffectNode* m_pEffectNode;
+	EffectNodeImplemented* m_pEffectNode;
 
 	// コンテナ
 	InstanceContainer*	m_pContainer;

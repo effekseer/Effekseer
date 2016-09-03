@@ -18,10 +18,26 @@ body {
 	font-family: sans-serif;
 }
 
+section.level1 {
+	background-color: #FFFFFF;
+	width: 900px;
+	border-style: solid;
+	border-color: #333333;
+	border-width: 1px;
+	margin: 8px;
+	line-height: 160%;
+}
+
+section.level2 {
+	margin: 16px;
+	line-height: 160%;
+}
+
 h1 {
-	font-weight: normal;
-	color:#333333;
-	padding:20px 10px 10px 10px;
+	background-color: #808080;
+	font-weight: bold;
+	color:#f0f0f0;
+	padding: 20px 20px 20px 20px;
 }
 
 h2 {
@@ -64,7 +80,7 @@ div.main {
 	line-height: 140%;
 }
 
-div.main p {
+p {
 	padding: 4px;
 }
 
@@ -111,10 +127,10 @@ td {
 	border-style: solid
 }
 
-.stdtable {
+table {
 	border-collapse: collapse;
 }
-.stdtable th {
+table th {
 	padding: 6px;
 	text-align: center;
 	vertical-align: top;
@@ -122,8 +138,23 @@ td {
 	background-color: #eee;
 	border: 1px solid #b9b9b9;
 }
-.stdtable td {
+table td {
 	padding: 6px;
 	background-color: #fff;
 	border: 1px solid #b9b9b9;
+}
+
+img {
+	margin-top: 10pt;
+	margin-bottom: 10pt;
+}
+
+code {
+	display: block;
+	margin-top: 10pt;
+	margin-bottom: 10pt;
+	padding: 6px 6px 10px 10px;
+	border: 1px solid #606060;
+	background-color: #eee;
+	line-height: 1.5;
 }

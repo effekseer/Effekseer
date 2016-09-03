@@ -26,6 +26,7 @@ namespace Effekseer
 
 class EffectImplemented
 	: public Effect
+	, public ReferenceObject
 {
 	friend class ManagerImplemented;
 private:
@@ -33,7 +34,7 @@ private:
 
 	Setting*	m_setting;
 
-	int	m_reference;
+	mutable std::atomic<int32_t> m_reference;
 
 	int	m_version;
 
@@ -124,16 +125,6 @@ public:
 	*/
 	void Reset();
 
-	/**
-		@brief	参照カウンタ加算
-	*/
-	int AddRef();
-
-	/**
-		@brief	参照カウンタ減算
-	*/
-	int Release();
-
 private:
 	/**
 		@brief	マネージャー取得
@@ -157,21 +148,34 @@ public:
 	void* GetColorImage(int n) const;
 
 	/**
+		@brief	格納されている画像のポインタの個数を取得する。
+	*/
+	int32_t GetColorImageCount() const;
+
+	/**
 	@brief	格納されている画像のポインタを取得する。
 	*/
 	void* GetNormalImage(int n) const;
 
+	int32_t GetNormalImageCount() const;
+
 	void* GetDistortionImage(int n) const;
+
+	int32_t GetDistortionImageCount() const;
 
 	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/
 	void* GetWave( int n ) const;
 
+	int32_t GetWaveCount() const;
+
 	/**
 		@brief	格納されているモデルのポインタを取得する。
 	*/
 	void* GetModel( int n ) const;
+
+	int32_t GetModelCount() const;
 
 	/**
 		@brief	エフェクトのリロードを行う。
@@ -202,6 +206,10 @@ public:
 		@brief	画像等リソースの破棄を行う。
 	*/
 	void UnloadResources();
+
+	virtual int GetRef() { return ReferenceObject::GetRef(); }
+	virtual int AddRef() { return ReferenceObject::AddRef(); }
+	virtual int Release() { return ReferenceObject::Release(); }
 };
 //----------------------------------------------------------------------------------
 //

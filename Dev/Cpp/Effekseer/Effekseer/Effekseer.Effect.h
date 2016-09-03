@@ -22,6 +22,7 @@ namespace Effekseer
 	エフェクトに設定されたパラメーター。
 */
 class Effect
+	: public IReference
 {
 protected:
 	Effect() {}
@@ -77,18 +78,6 @@ public:
 	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
 
 	/**
-		@brief	参照カウンタを加算する。
-		@return	実行後の参照カウンタの値
-	*/
-	virtual int AddRef() = 0;
-
-	/**
-		@brief	参照カウンタを減算する。
-		@return	実行後の参照カウンタの値
-	*/
-	virtual int Release() = 0;
-
-	/**
 	@brief	設定を取得する。
 	@return	設定
 	*/
@@ -110,11 +99,21 @@ public:
 	virtual void* GetColorImage( int n ) const = 0;
 
 	/**
+	@brief	格納されている画像のポインタの個数を取得する。
+	*/
+	virtual int32_t GetColorImageCount() const = 0;
+
+	/**
 	@brief	格納されている法線画像のポインタを取得する。
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
 	*/
 	virtual void* GetNormalImage(int n) const = 0;
+
+	/**
+	@brief	格納されている法線画像のポインタの個数を取得する。
+	*/
+	virtual int32_t GetNormalImageCount() const = 0;
 
 	/**
 	@brief	格納されている歪み画像のポインタを取得する。
@@ -124,14 +123,29 @@ public:
 	virtual void* GetDistortionImage(int n) const = 0;
 
 	/**
+	@brief	格納されている歪み画像のポインタの個数を取得する。
+	*/
+	virtual int32_t GetDistortionImageCount() const = 0;
+
+	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/
 	virtual void* GetWave( int n ) const = 0;
 
 	/**
+	@brief	格納されている音波形のポインタの個数を取得する。
+	*/
+	virtual int32_t GetWaveCount() const = 0;
+
+	/**
 		@brief	格納されているモデルのポインタを取得する。
 	*/
 	virtual void* GetModel( int n ) const = 0;
+
+	/**
+	@brief	格納されているモデルのポインタの個数を取得する。
+	*/
+	virtual int32_t GetModelCount() const = 0;
 
 	/**
 		@brief	エフェクトのリロードを行う。
@@ -177,7 +191,68 @@ public:
 		@brief	画像等リソースの破棄を行う。
 	*/
 	virtual void UnloadResources() = 0;
+
+	/**
+	@brief	Rootを取得する。
+	*/
+	virtual EffectNode* GetRoot() const = 0;
 };
+
+/**
+@brief	共通描画パラメーター
+@note
+大きく変更される可能性があります。
+*/
+struct EffectBasicRenderParameter
+{
+	int32_t				ColorTextureIndex;
+	AlphaBlendType		AlphaBlend;
+	TextureFilterType	FilterType;
+	TextureWrapType		WrapType;
+	bool				ZWrite;
+	bool				ZTest;
+	bool				Distortion;
+	float				DistortionIntensity;
+};
+
+/**
+@brief	ノードインスタンス生成クラス
+@note
+エフェクトのノードの実体を生成する。
+*/
+class EffectNode
+{
+public:
+	EffectNode() {}
+	virtual ~EffectNode(){}
+
+	/**
+	@brief	ノードが所属しているエフェクトを取得する。
+	*/
+	virtual Effect* GetEffect() const = 0;
+
+	/**
+	@brief	子のノードの数を取得する。
+	*/
+	virtual int GetChildrenCount() const = 0;
+
+	/**
+	@brief	子のノードを取得する。
+	*/
+	virtual EffectNode* GetChild(int index) const = 0;
+
+	/**
+	@brief	共通描画パラメーターを取得する。
+	*/
+	virtual EffectBasicRenderParameter GetBasicRenderParameter() = 0;
+
+	/**
+	@brief	共通描画パラメーターを設定する。
+	*/
+	virtual void SetBasicRenderParameter(EffectBasicRenderParameter param) = 0;
+
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

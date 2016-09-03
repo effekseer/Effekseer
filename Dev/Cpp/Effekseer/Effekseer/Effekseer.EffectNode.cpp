@@ -26,7 +26,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectNode::EffectNode( Effect* effect, unsigned char*& pos )
+EffectNodeImplemented::EffectNodeImplemented(Effect* effect, unsigned char*& pos)
 	: m_effect		( effect )
 	, IsRendered		( true )
 	, SoundType			( ParameterSoundType_None )
@@ -41,7 +41,7 @@ EffectNode::EffectNode( Effect* effect, unsigned char*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting* setting)
+void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting* setting)
 {
 	int size = 0;
 	int node_type = 0;
@@ -492,14 +492,14 @@ void EffectNode::LoadParameter(unsigned char*& pos, EffectNode* parent, Setting*
 	m_Nodes.resize( nodeCount );
 	for( size_t i = 0; i < m_Nodes.size(); i++ )
 	{
-		m_Nodes[i] = EffectNode::Create( m_effect, this, pos );
+		m_Nodes[i] = EffectNodeImplemented::Create(m_effect, this, pos);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectNode::~EffectNode()
+EffectNodeImplemented::~EffectNodeImplemented()
 {
 	for( size_t i = 0; i < m_Nodes.size(); i++ )
 	{
@@ -514,7 +514,7 @@ EffectNode::~EffectNode()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::LoadOption( uint8_t*& pos )
+void EffectNodeImplemented::LoadOption(uint8_t*& pos)
 {
 	int is_rendered = 0;
 	memcpy( &is_rendered, pos, sizeof(int) );
@@ -535,7 +535,7 @@ void EffectNode::LoadOption( uint8_t*& pos )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Effect* EffectNode::GetEffect() const
+Effect* EffectNodeImplemented::GetEffect() const
 {
 	return m_effect;
 }
@@ -543,7 +543,7 @@ Effect* EffectNode::GetEffect() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int EffectNode::GetChildrenCount() const
+int EffectNodeImplemented::GetChildrenCount() const
 {
 	return (int)m_Nodes.size();
 }
@@ -551,16 +551,43 @@ int EffectNode::GetChildrenCount() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectNode* EffectNode::GetChild( int num ) const
+EffectNode* EffectNodeImplemented::GetChild(int index) const
 {
-	if( num >= GetChildrenCount() ) return NULL;
-	return m_Nodes[ num ];
+	if (index >= GetChildrenCount()) return NULL;
+	return m_Nodes[index];
+}
+
+
+EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
+{
+	EffectBasicRenderParameter param;
+	param.ColorTextureIndex = Texture.ColorTextureIndex;
+	param.AlphaBlend = Texture.AlphaBlend;
+	param.Distortion = Texture.Distortion;
+	param.DistortionIntensity = Texture.DistortionIntensity;
+	param.FilterType = Texture.FilterType;
+	param.WrapType = Texture.WrapType;
+	param.ZTest = Texture.ZTest;
+	param.ZWrite = Texture.ZWrite;
+	return param;
+}
+
+void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter param)
+{
+	Texture.ColorTextureIndex = param.ColorTextureIndex;
+	Texture.AlphaBlend = param.AlphaBlend;
+	Texture.Distortion = param.Distortion;
+	Texture.DistortionIntensity = param.DistortionIntensity;
+	Texture.FilterType = param.FilterType;
+	Texture.WrapType = param.WrapType;
+	Texture.ZTest = param.ZTest;
+	Texture.ZWrite = param.ZWrite;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::LoadRendererParameter(unsigned char*& pos, Setting* setting)
+void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, Setting* setting)
 {
 	int32_t type = 0;
 	memcpy( &type, pos, sizeof(int) );
@@ -572,56 +599,56 @@ void EffectNode::LoadRendererParameter(unsigned char*& pos, Setting* setting)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::BeginRendering(int32_t count, Manager* manager)
+void EffectNodeImplemented::BeginRendering(int32_t count, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
+void EffectNodeImplemented::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::Rendering(const Instance& instance, Manager* manager)
+void EffectNodeImplemented::Rendering(const Instance& instance, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::EndRendering(Manager* manager)
+void EffectNodeImplemented::EndRendering(Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager)
+void EffectNodeImplemented::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::InitializeRenderedInstance(Instance& instance, Manager* manager)
+void EffectNodeImplemented::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::UpdateRenderedInstance(Instance& instance, Manager* manager)
+void EffectNodeImplemented::UpdateRenderedInstance(Instance& instance, Manager* manager)
 {
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-float EffectNode::GetFadeAlpha( const Instance& instance )
+float EffectNodeImplemented::GetFadeAlpha(const Instance& instance)
 {
 	float alpha = 1.0f;
 
@@ -655,7 +682,7 @@ float EffectNode::GetFadeAlpha( const Instance& instance )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNode::PlaySound_(Instance& instance, SoundTag tag, Manager* manager)
+void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, Manager* manager)
 {
 	SoundPlayer* player = manager->GetSoundPlayer();
 	if( player == NULL )
@@ -683,9 +710,9 @@ void EffectNode::PlaySound_(Instance& instance, SoundTag tag, Manager* manager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-EffectNode* EffectNode::Create( Effect* effect, EffectNode* parent, unsigned char*& pos )
+EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode* parent, unsigned char*& pos)
 {
-	EffectNode* effectnode = NULL;
+	EffectNodeImplemented* effectnode = NULL;
 
 	int node_type = 0;
 	memcpy( &node_type, pos, sizeof(int) );
@@ -698,7 +725,7 @@ EffectNode* EffectNode::Create( Effect* effect, EffectNode* parent, unsigned cha
 	else if( node_type == EFFECT_NODE_TYPE_NONE )
 	{
 		EffekseerPrintDebug("* Create : EffectNodeNone\n");
-		effectnode = new EffectNode( effect, pos );
+		effectnode = new EffectNodeImplemented(effect, pos);
 	}
 	else if( node_type == EFFECT_NODE_TYPE_SPRITE )
 	{

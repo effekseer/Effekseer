@@ -42,12 +42,15 @@ public class EffekseerEmitter : MonoBehaviour
 	/// </summary>
 	public void Play()
 	{
-		handle = EffekseerSystem.PlayEffect(effectName, transform.position);
-		UpdateTransform();
+		var h = EffekseerSystem.PlayEffect(effectName, transform.position);
+		h.SetRotation(transform.rotation);
+		h.SetScale(transform.localScale);
+		handle = h;
 	}
 	
 	/// <summary>
-	/// 再生中のエフェクトの停止
+	/// 再生中のエフェクトを停止
+	/// 全てのエフェクトが瞬時に消える
 	/// </summary>
 	public void Stop()
 	{
@@ -58,7 +61,8 @@ public class EffekseerEmitter : MonoBehaviour
 	}
 	
 	/// <summary>
-	/// 再生中のエフェクトのルートだけを停止
+	/// 再生中のエフェクトのルートノードだけを停止
+	/// ルートノードを削除したことで子ノード生成が停止され寿命で徐々に消える
 	/// </summary>
 	public void StopRoot()
 	{
@@ -69,7 +73,56 @@ public class EffekseerEmitter : MonoBehaviour
 	}
 	
 	/// <summary>
+	/// 再生中のエフェクトのターゲット位置を設定
+	/// </summary>
+	/// <param name="targetLocation">ターゲット位置</param>
+	public void SetTargetLocation(Vector3 targetLocation)
+	{
+		if (handle.HasValue) {
+			handle.Value.SetTargetLocation(targetLocation);
+		}
+	}
+	
+	/// <summary>
+	/// ポーズ設定
+	/// <para>true:  停止中。Updateで更新しない</para>
+	/// <para>false: 再生中。Updateで更新する</para>
+	/// </summary>
+	public bool paused
+	{
+		set {
+			if (handle.HasValue) {
+				var h = handle.Value;
+				h.paused = value;
+			}
+		}
+		get {
+			return handle.HasValue && handle.Value.paused;
+		}
+	}
+	
+	/// <summary>
+	/// 表示設定
+	/// <para>true:  表示ON。Drawで描画する</para>
+	/// <para>false: 表示OFF。Drawで描画しない</para>
+	/// </summary>
+	public bool shown
+	{
+		set {
+			if (handle.HasValue) {
+				var h = handle.Value;
+				h.shown = value;
+			}
+		}
+		get {
+			return handle.HasValue && handle.Value.shown;
+		}
+	}
+	
+	/// <summary>
 	/// 再生中のエフェクトが存在しているか
+	/// <para>true:  存在している</para>
+	/// <para>false: 再生終了で破棄。もしくはStopで停止された</para>
 	/// </summary>
 	public bool exists
 	{
@@ -82,9 +135,11 @@ public class EffekseerEmitter : MonoBehaviour
 
 	void Start()
 	{
-		EffekseerSystem.LoadEffect(effectName);
-		if (playOnStart) {
-			Play();
+		if (!String.IsNullOrEmpty(effectName)) {
+			EffekseerSystem.LoadEffect(effectName);
+			if (playOnStart) {
+				Play();
+			}
 		}
 	}
 	
@@ -96,21 +151,16 @@ public class EffekseerEmitter : MonoBehaviour
 	void Update()
 	{
 		if (handle.HasValue) {
-			if (handle.Value.exists) {
-				UpdateTransform();
+			var h = handle.Value;
+			if (h.exists) {
+				h.SetLocation(transform.position);
+				h.SetRotation(transform.rotation);
+				h.SetScale(transform.localScale);
 			} else if (loop) {
 				Play();
 			} else {
 				Stop();
 			}
-		}
-	}
-
-	void UpdateTransform() {
-		if (handle.HasValue) {
-			handle.Value.SetLocation(transform.position);
-			handle.Value.SetRotation(transform.rotation);
-			handle.Value.SetScale(transform.localScale);
 		}
 	}
 

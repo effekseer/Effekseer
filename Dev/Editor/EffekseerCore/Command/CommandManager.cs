@@ -239,7 +239,7 @@ namespace Effekseer.Command
 		/// <summary>
 		/// コマンドのグループ化開始
 		/// </summary>
-		internal static void StartCollection()
+		public static void StartCollection()
 		{
 			cmd_collections_count++;
 		}
@@ -247,7 +247,7 @@ namespace Effekseer.Command
 		/// <summary>
 		/// コマンドのグループ化終了
 		/// </summary>
-		internal static void EndCollection()
+		public static void EndCollection()
 		{
 			if (cmd_collections_count == 0) throw new InvalidOperationException("Collection has not yet start.");
 			cmd_collections_count--;

@@ -20,7 +20,7 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 class EffectNodeModel
-	: public EffectNode
+	: public EffectNodeImplemented
 {
 	friend class Manager;
 	friend class Effect;
@@ -70,7 +70,7 @@ public:
 	StandardColorParameter	AllColor;
 
 	EffectNodeModel( Effect* effect, unsigned char*& pos )
-		: EffectNode( effect, pos )
+		: EffectNodeImplemented(effect, pos)
 	{
 	}
 

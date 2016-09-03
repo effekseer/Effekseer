@@ -93,7 +93,7 @@ namespace Effekseer.GUI
 		void ReloadMenu()
 		{
 			
-			Func<Action, ToolStripMenuItem> create_menu_item_from_commands = (a) =>
+			Func<Func<bool>, ToolStripMenuItem> create_menu_item_from_commands = (a) =>
 			{
 				var item = new ToolStripMenuItem();
 				var attributes = a.Method.GetCustomAttributes(false);
@@ -244,6 +244,7 @@ namespace Effekseer.GUI
 
 				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.Copy));
 				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.Paste));
+				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.PasteInfo));
 
 				menu.DropDownItems.Add(new ToolStripSeparator());
 
@@ -273,6 +274,8 @@ namespace Effekseer.GUI
 				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.Play));
 				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.Stop));
 				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.Step));
+				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.BackStep));
+
 				menuStrip.Items.Add(menu);
 			}
 

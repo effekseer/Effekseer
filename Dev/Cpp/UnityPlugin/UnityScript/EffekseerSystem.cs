@@ -25,7 +25,7 @@ public class EffekseerSystem : MonoBehaviour
 	public int effectInstances	= 800;
 
 	/// <summary>
-	/// 四角形の最大数
+	/// 描画できる四角形の最大数
 	/// </summary>
 	public int maxSquares		= 1200;
 	
@@ -38,16 +38,6 @@ public class EffekseerSystem : MonoBehaviour
 	/// エフェクトの描画するタイミング
 	/// </summary>
 	const CameraEvent cameraEvent	= CameraEvent.BeforeImageEffects;
-
-	/// <summary>
-	/// Effekseerのファイルを置く場所
-	/// </summary>
-	public static string resourcePath
-	{
-		get {
-			return Path.Combine(Application.streamingAssetsPath, "Effekseer");
-		}
-	}
 
 	/// <summary>
 	/// エフェクトの再生
@@ -74,18 +64,27 @@ public class EffekseerSystem : MonoBehaviour
 	}
 
 	/// <summary>
-	/// エフェクトのロード
+	/// エフェクトのロード(Resourcesから)
 	/// </summary>
-	/// <param name="name">エフェクト名</param>
+	/// <param name="name">エフェクト名(efkファイルの名前から".efk"を取り除いたもの)</param>
 	public static void LoadEffect(string name)
 	{
-		Instance._LoadEffect(name);
+		Instance._LoadEffect(name, null);
+	}
+	
+	/// <summary>
+	/// エフェクトのロード(AssetBundleから)
+	/// </summary>
+	/// <param name="name">エフェクト名(efkファイルの名前から".efk"を取り除いたもの)</param>
+	public static void LoadEffect(string name, AssetBundle assetBundle)
+	{
+		Instance._LoadEffect(name, assetBundle);
 	}
 
 	/// <summary>
 	/// エフェクトの解放
 	/// </summary>
-	/// <param name="name">エフェクト名</param>
+	/// <param name="name">エフェクト名(efkファイルの名前から".efk"を取り除いたもの)</param>
 	public static void ReleaseEffect(string name)
 	{
 		Instance._ReleaseEffect(name);
@@ -125,6 +124,9 @@ public class EffekseerSystem : MonoBehaviour
 	private List<SoundResource> soundList = new List<SoundResource>();
 	private List<SoundInstance> soundInstanceList = new List<SoundInstance>();
 	
+	// 現在のロード中のアセットバンドル
+	private AssetBundle assetBundle;
+
 #if UNITY_EDITOR
 	// ホットリロードの退避用
 	private List<string> savedEffectList = new List<string>();
@@ -144,27 +146,36 @@ public class EffekseerSystem : MonoBehaviour
 		}
 		
 		// 存在しなかったらロード
-		return _LoadEffect(name);
+		return _LoadEffect(name, null);
 	}
 
-	private IntPtr _LoadEffect(string name) {
+	private IntPtr _LoadEffect(string name, AssetBundle assetBundle) {
 		if (effectList.ContainsKey(name)) {
 			return effectList[name];
 		}
 
-		// Resourcesから読み込む
-		var asset = Resources.Load<TextAsset>(Utility.ResourcePath(name, true));
-		if (asset == null) {
-			Debug.LogError("[Effekseer] Failed to load effect: " + name);
-			return IntPtr.Zero;
+		byte[] bytes;
+		if (assetBundle != null) {
+			var asset = assetBundle.LoadAsset<TextAsset>(name);
+			bytes = asset.bytes;
+		} else {
+			// Resourcesから読み込む
+			var asset = Resources.Load<TextAsset>(Utility.ResourcePath(name, true));
+			if (asset == null) {
+				Debug.LogError("[Effekseer] Failed to load effect: " + name);
+				return IntPtr.Zero;
+			}
+			bytes = asset.bytes;
 		}
-		byte[] bytes = asset.bytes;
-		
+
+		this.assetBundle = assetBundle;
 		GCHandle ghc = GCHandle.Alloc(bytes, GCHandleType.Pinned);
 		IntPtr effect = Plugin.EffekseerLoadEffectOnMemory(ghc.AddrOfPinnedObject(), bytes.Length);
 		ghc.Free();
-
+		this.assetBundle = null;
+		
 		effectList.Add(name, effect);
+
 		return effect;
 	}
 	
@@ -284,6 +295,18 @@ public class EffekseerSystem : MonoBehaviour
 		}
 #endif
 		RenderPath path;
+		
+		// カリングマスクをチェック
+		if ((Camera.current.cullingMask & (1 << gameObject.layer)) == 0) {
+			if (renderPaths.ContainsKey(camera)) {
+				// レンダーパスが存在すればコマンドバッファを解除
+				path = renderPaths[camera];
+				camera.RemoveCommandBuffer(path.cameraEvent, path.commandBuffer);
+				renderPaths.Remove(camera);
+			}
+			return;
+		}
+
 		if (renderPaths.ContainsKey(camera)) {
 			// レンダーパスが有れば使う
 			path = renderPaths[camera];
@@ -319,7 +342,7 @@ public class EffekseerSystem : MonoBehaviour
 	private static IntPtr TextureLoaderLoad(IntPtr path) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		var res = new TextureResource();
-		if (res.Load(pathstr)) {
+		if (res.Load(pathstr, EffekseerSystem.Instance.assetBundle)) {
 			EffekseerSystem.Instance.textureList.Add(res);
 			return res.GetNativePtr();
 		}
@@ -329,7 +352,7 @@ public class EffekseerSystem : MonoBehaviour
 	private static void TextureLoaderUnload(IntPtr path) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		foreach (var res in EffekseerSystem.Instance.textureList) {
-			if (res.Path == pathstr) {
+			if (res.path == pathstr) {
 				EffekseerSystem.Instance.textureList.Remove(res);
 				return;
 			}
@@ -339,9 +362,9 @@ public class EffekseerSystem : MonoBehaviour
 	private static int ModelLoaderLoad(IntPtr path, IntPtr buffer, int bufferSize) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		var res = new ModelResource();
-		if (res.Load(pathstr) && res.Copy(buffer, bufferSize)) {
+		if (res.Load(pathstr, EffekseerSystem.Instance.assetBundle) && res.Copy(buffer, bufferSize)) {
 			EffekseerSystem.Instance.modelList.Add(res);
-			return res.ModelData.bytes.Length;
+			return res.modelData.bytes.Length;
 		}
 		return 0;
 	}
@@ -349,7 +372,7 @@ public class EffekseerSystem : MonoBehaviour
 	private static void ModelLoaderUnload(IntPtr path) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		foreach (var res in EffekseerSystem.Instance.modelList) {
-			if (res.Path == pathstr) {
+			if (res.path == pathstr) {
 				EffekseerSystem.Instance.modelList.Remove(res);
 				return;
 			}
@@ -359,7 +382,7 @@ public class EffekseerSystem : MonoBehaviour
 	private static int SoundLoaderLoad(IntPtr path) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		var res = new SoundResource();
-		if (res.Load(pathstr)) {
+		if (res.Load(pathstr, EffekseerSystem.Instance.assetBundle)) {
 			EffekseerSystem.Instance.soundList.Add(res);
 			return EffekseerSystem.Instance.soundList.Count;
 		}
@@ -369,7 +392,7 @@ public class EffekseerSystem : MonoBehaviour
 	private static void SoundLoaderUnload(IntPtr path) {
 		var pathstr = Marshal.PtrToStringUni(path);
 		foreach (var res in EffekseerSystem.Instance.soundList) {
-			if (res.Path == pathstr) {
+			if (res.path == pathstr) {
 				EffekseerSystem.Instance.soundList.Remove(res);
 				return;
 			}
@@ -412,7 +435,7 @@ public class EffekseerSystem : MonoBehaviour
 		}
 		foreach (var instance in soundInstanceList) {
 			if (!instance.CheckPlaying()) {
-				instance.Play(tag.ToString(), resource.Audio, volume, pan, pitch, mode3D, x, y, z, distance);
+				instance.Play(tag.ToString(), resource.audio, volume, pan, pitch, mode3D, x, y, z, distance);
 				break;
 			}
 		}
@@ -467,6 +490,7 @@ public struct EffekseerHandle
 	
 	/// <summary>
 	/// エフェクトを停止する
+	/// 全てのエフェクトが瞬時に消える
 	/// </summary>
 	public void Stop()
 	{
@@ -474,7 +498,8 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// エフェクトをルートだけ停止する
+	/// 再生中のエフェクトのルートノードだけを停止
+	/// ルートノードを削除したことで子ノード生成が停止され寿命で徐々に消える
 	/// </summary>
 	public void StopRoot()
 	{
@@ -510,9 +535,20 @@ public struct EffekseerHandle
 	{
 		Plugin.EffekseerSetScale(m_handle, scale.x, scale.y, scale.z);
 	}
+	
+	/// <summary>
+	/// エフェクトのターゲット位置を設定
+	/// </summary>
+	/// <param name="targetLocation">ターゲット位置</param>
+	public void SetTargetLocation(Vector3 targetLocation)
+	{
+		Plugin.EffekseerSetTargetLocation(m_handle, targetLocation.x, targetLocation.y, targetLocation.z);
+	}
 
 	/// <summary>
-	/// Update時に更新するか
+	/// ポーズ設定
+	/// <para>true:  停止中。Updateで更新しない</para>
+	/// <para>false: 再生中。Updateで更新する</para>
 	/// </summary>
 	public bool paused
 	{
@@ -526,7 +562,9 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// Draw時で描画されるか
+	/// 表示設定
+	/// <para>true:  表示ON。Drawで描画する</para>
+	/// <para>false: 表示OFF。Drawで描画しない</para>
 	/// </summary>
 	public bool shown
 	{
@@ -540,9 +578,9 @@ public struct EffekseerHandle
 	}
 	
 	/// <summary>
-	/// ハンドルが有効かどうか<br/>
-	/// <para>true:有効</para>
-	/// <para>false:無効</para>
+	/// インスタンスハンドルが有効かどうか<br/>
+	/// <para>true:  有効</para>
+	/// <para>false: 無効</para>
 	/// </summary>
 	public bool enable
 	{
@@ -553,8 +591,8 @@ public struct EffekseerHandle
 	
 	/// <summary>
 	/// エフェクトのインスタンスが存在しているかどうか
-	/// <para>true:存在している</para>
-	/// <para>false:再生終了で破棄。もしくはStopで停止された</para>
+	/// <para>true:  存在している</para>
+	/// <para>false: 再生終了で破棄。もしくはStopで停止された</para>
 	/// </summary>
 	public bool exists
 	{

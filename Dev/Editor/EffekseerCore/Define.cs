@@ -47,7 +47,11 @@ namespace Effekseer
 	/// </summary>
 	public enum Language
 	{
+        [Name(value = "日本語", language = Language.Japanese)]
+        [Name(value = "Japanese", language = Language.English)]
 		Japanese,
+        [Name(value = "英語", language = Language.Japanese)]
+        [Name(value = "English", language = Language.English)]
 		English,
 	}
 

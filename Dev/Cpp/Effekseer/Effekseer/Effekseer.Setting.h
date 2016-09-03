@@ -21,10 +21,9 @@ namespace Effekseer {
 	Managerの代わりにエフェクト読み込み時に使用することで、Managerとは独立してEffectインスタンスを生成することができる。
 */
 	class Setting
+		: public ReferenceObject
 	{
 	private:
-		int32_t		m_ref;
-
 		/* 座標系 */
 		CoordinateSystem		m_coordinateSystem;
 
@@ -33,6 +32,7 @@ namespace Effekseer {
 		SoundLoader*	m_soundLoader;
 		ModelLoader*	m_modelLoader;
 
+	protected:
 		/**
 			@brief	コンストラクタ
 			*/
@@ -48,18 +48,6 @@ namespace Effekseer {
 			@brief	設定インスタンスを生成する。
 		*/
 		static Setting* Create();
-
-		/**
-			@brief	参照カウンタを加算する。
-			@return	参照カウンタ
-		*/
-		int32_t AddRef();
-
-		/**
-			@brief	参照カウンタを減算する。
-			@return	参照カウンタ
-		*/
-		int32_t Release();
 
 		/**
 		@brief	座標系を取得する。

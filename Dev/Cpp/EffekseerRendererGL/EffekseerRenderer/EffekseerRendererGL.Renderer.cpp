@@ -249,8 +249,7 @@ Renderer* Renderer::Create( int32_t squareMaxCount )
 //
 //----------------------------------------------------------------------------------
 RendererImplemented::RendererImplemented( int32_t squareMaxCount )
-	: m_reference	( 1 )
-	, m_vertexBuffer( NULL )
+	: m_vertexBuffer( NULL )
 	, m_indexBuffer	( NULL )
 	, m_squareMaxCount	( squareMaxCount )
 	, m_renderState		( NULL )
@@ -292,7 +291,7 @@ RendererImplemented::~RendererImplemented()
 	EffekseerRenderer::PngTextureLoader::Finalize();
 #endif
 
-	assert( m_reference == 0 );
+	assert( GetRef() == 0 );
 
 	ES_SAFE_DELETE(m_distortingCallback);
 
@@ -315,11 +314,11 @@ RendererImplemented::~RendererImplemented()
 
 	if (isVaoEnabled)
 	{
-		assert(m_reference == -10);
+		assert(GetRef() == -10);
 	}
 	else
 	{
-		assert(m_reference == -6);
+		assert(GetRef() == -6);
 	}
 }
 
@@ -571,29 +570,6 @@ bool RendererImplemented::Initialize()
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex, VertexDistortion>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
 	return true;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int RendererImplemented::AddRef()
-{
-	m_reference++;
-	return m_reference;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int RendererImplemented::Release()
-{
-	m_reference--;
-	int count = m_reference;
-	if ( count == 0 )
-	{
-		delete this;
-	}
-	return count;
 }
 
 //----------------------------------------------------------------------------------

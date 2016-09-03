@@ -435,7 +435,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	}
 
 	// ノード
-	m_pRoot = EffectNode::Create( this, NULL, pos );
+	m_pRoot = EffectNodeImplemented::Create( this, NULL, pos );
 
 	// リロード用にmaterialPathを記録しておく
     if (materialPath) m_materialPath = materialPath;
@@ -512,29 +512,6 @@ void EffectImplemented::Reset()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int EffectImplemented::AddRef()
-{
-	m_reference++;
-	return m_reference;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int EffectImplemented::Release()
-{
-	m_reference--;
-	int count = m_reference;
-	if ( count == 0 )
-	{
-		delete this;
-	}
-	return count;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Manager* EffectImplemented::GetManager() const
 {
 	return m_pManager;	
@@ -565,6 +542,11 @@ void* EffectImplemented::GetColorImage( int n ) const
 	return m_pImages[ n ];
 }
 
+int32_t EffectImplemented::GetColorImageCount() const
+{
+	return m_ImageCount;
+}
+
 void* EffectImplemented::GetNormalImage(int n) const
 {
 	/* 強制的に互換をとる */
@@ -574,6 +556,11 @@ void* EffectImplemented::GetNormalImage(int n) const
 	}
 
 	return m_normalImages[n];
+}
+
+int32_t EffectImplemented::GetNormalImageCount() const
+{
+	return m_normalImageCount;
 }
 
 void* EffectImplemented::GetDistortionImage(int n) const
@@ -587,12 +574,22 @@ void* EffectImplemented::GetDistortionImage(int n) const
 	return m_distortionImages[n];
 }
 
+int32_t EffectImplemented::GetDistortionImageCount() const
+{
+	return m_distortionImageCount;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 void* EffectImplemented::GetWave( int n ) const
 {
 	return m_pWaves[ n ];
+}
+
+int32_t EffectImplemented::GetWaveCount() const
+{
+	return m_WaveCount;
 }
 
 //----------------------------------------------------------------------------------
@@ -603,6 +600,10 @@ void* EffectImplemented::GetModel( int n ) const
 	return m_pModels[ n ];
 }
 
+int32_t EffectImplemented::GetModelCount() const
+{
+	return m_modelCount;
+}
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

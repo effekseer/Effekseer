@@ -1,0 +1,3 @@
+System.ArgumentException: 使用されたパラメーターが有効ではありません。
+   場所 System.Drawing.Bitmap..ctor(String filename)
+   場所 Effekseer.GUI.Component.PathForImage.UpdatePreview(String path)

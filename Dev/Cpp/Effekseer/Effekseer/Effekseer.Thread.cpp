@@ -14,7 +14,8 @@ namespace Effekseer {
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-DWORD EFK_STDCALL Thread::ThreadProc( void* arguments )
+/* DWORD‚ð’u‚«‚©‚¦ */
+unsigned long EFK_STDCALL Thread::ThreadProc(void* arguments)
 {
 	Thread* thread = (Thread*)(arguments);
 

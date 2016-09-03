@@ -70,7 +70,7 @@ struct SpritePositionParameter
 //
 //----------------------------------------------------------------------------------
 class EffectNodeSprite
-	: public EffectNode
+	: public EffectNodeImplemented
 {
 	friend class Manager;
 	friend class Effect;
@@ -133,7 +133,7 @@ public:
 	int SpriteTexture;
 
 	EffectNodeSprite( Effect* effect, unsigned char*& pos )
-		: EffectNode( effect, pos )
+		: EffectNodeImplemented(effect, pos)
 	{
 	}
 

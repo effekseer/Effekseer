@@ -8,7 +8,7 @@ namespace Effekseer
 {
 	public class Core
 	{
-		public const string Version = "1.10";
+		public const string Version = "1.22";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -397,6 +397,8 @@ namespace Effekseer
 			}
 
 			LoadOption();
+
+            Language = Option.GuiLanguage;
 		}
 
 		public static void Dispose()

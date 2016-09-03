@@ -158,6 +158,11 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 	{
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
 		m_instanceParameter.InstanceIndex = 0;
+
+		if (group->GetFirst() != nullptr)
+		{
+			m_instanceParameter.UV = group->GetFirst()->GetUV();
+		}
 	}
 }
 

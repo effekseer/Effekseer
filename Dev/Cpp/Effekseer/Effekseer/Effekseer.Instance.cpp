@@ -23,7 +23,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 Instance::Instance( Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer )
 	: m_pManager			( pManager )
-	, m_pEffectNode		( pEffectNode )
+	, m_pEffectNode((EffectNodeImplemented*) pEffectNode)
 	, m_pContainer			( pContainer )
 	, m_headGroups		( NULL )
 	, m_pParent			( NULL )
@@ -82,7 +82,7 @@ const Matrix43& Instance::GetGlobalMatrix43() const
 //----------------------------------------------------------------------------------
 void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 {
-	EffectNode* parameter = m_pEffectNode;
+	auto parameter = (EffectNodeImplemented*) m_pEffectNode;
 
 	// 親の設定
 	m_pParent = parent;
@@ -90,7 +90,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 	// 子の初期化
 	for (int32_t i = 0; i < Min(ChildrenMax, parameter->GetChildrenCount()); i++)
 	{
-		EffectNode* pNode = parameter->GetChild(i);
+		auto pNode = (EffectNodeImplemented*) parameter->GetChild(i);
 
 		m_generatedChildrenCount[i] = 0;
 		m_nextGenerationTime[i] = pNode->CommonValues.GenerationTimeOffset.getValue(*m_pManager);
@@ -468,7 +468,7 @@ void Instance::Update( float deltaFrame, bool shown )
 		{
 			for (int i = 0; i < Min(ChildrenMax, m_pEffectNode->GetChildrenCount()); i++)
 			{
-				EffectNode* pNode = m_pEffectNode->GetChild(i);
+				auto pNode = (EffectNodeImplemented*) m_pEffectNode->GetChild(i);
 
 				// インスタンス生成
 				if (pNode->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
@@ -512,8 +512,8 @@ void Instance::Update( float deltaFrame, bool shown )
 
 		for (int i = 0; i < Min(ChildrenMax, m_pEffectNode->GetChildrenCount()); i++, group = group->NextUsedByInstance)
 		{
-			EffectNode* pNode = m_pEffectNode->GetChild( i );
-			InstanceContainer* pContainer = m_pContainer->GetChild( i );
+			auto pNode = (EffectNodeImplemented*) m_pEffectNode->GetChild(i);
+			auto pContainer = m_pContainer->GetChild( i );
 			assert( group != NULL );
 
 			// インスタンス生成
@@ -575,7 +575,8 @@ void Instance::Update( float deltaFrame, bool shown )
 
 			for (int i = 0; i < Min(ChildrenMax, m_pEffectNode->GetChildrenCount()); i++, group = group->NextUsedByInstance)
 			{
-				auto child = m_pEffectNode->GetChild(i);
+				auto child = (EffectNodeImplemented*) m_pEffectNode->GetChild(i);
+
 				float last_generation_time = 
 					child->CommonValues.GenerationTime.max *
 					(child->CommonValues.MaxGeneration - 1) +

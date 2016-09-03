@@ -1,4 +1,4 @@
-﻿# =========================
+# =========================
 # Effekseer UnityPlugin for WebGL
 # 
 # ■ Emscripten と CMake のセットアップ＆ビルド方法について
@@ -28,6 +28,9 @@ set(
 	"${PROJECT_SOURCE_DIR}./../../EffekseerRendererGL")
 	
 include_directories (${INCLUDE_DIR}) 
+
+# OpenGL ES 2.0を有効にする
+add_definitions(-D__EFFEKSEER_RENDERER_GLES2__)
 
 # ソースファイル一覧を指定する
 file(GLOB effekseer_src

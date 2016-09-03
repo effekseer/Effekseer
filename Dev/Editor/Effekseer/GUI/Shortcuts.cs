@@ -27,15 +27,18 @@ namespace Effekseer.GUI
 				AddShortcut(new Shortcut("Internal.SaveAs", true, false, false, 0, null));
 				AddShortcut(new Shortcut("Internal.Exit", false, false, true, (int)Keys.F4, null));
 
-				AddShortcut(new Shortcut("Internal.PlayViewer", true, false, false, (int)Keys.Space, null));
-				AddShortcut(new Shortcut("Internal.StopViewer", true, true, false, (int)Keys.Space, null));
-				AddShortcut(new Shortcut("Internal.PauseAndResumeViewer", false, false, true, (int)Keys.Space, null));
-				AddShortcut(new Shortcut("Internal.StepViewer", false, true, false, (int)Keys.Space, null));
+				AddShortcut(new Shortcut("Internal.PlayViewer", false, false, false, (int)Keys.Space, null));
+				AddShortcut(new Shortcut("Internal.StopViewer", true, false, true, (int)Keys.Left, null));
+
+				AddShortcut(new Shortcut("Internal.StepViewer", true, false, false, (int)Keys.Right, null));
+				AddShortcut(new Shortcut("Internal.BackStepViewer", true, false, false, (int)Keys.Left, null));
 
 				AddShortcut(new Shortcut("Internal.Undo", true, false, false, (int)Keys.Z, null));
 				AddShortcut(new Shortcut("Internal.Redo", true, false, false, (int)Keys.Y, null));
-				AddShortcut(new Shortcut("Internal.Copy", true, false, true, (int)Keys.C, null));
-				AddShortcut(new Shortcut("Internal.Paste", true, false, true, (int)Keys.V, null));
+				AddShortcut(new Shortcut("Internal.Copy", true, false, false, (int)Keys.C, null));
+				AddShortcut(new Shortcut("Internal.Paste", true, false, false, (int)Keys.V, null));
+				AddShortcut(new Shortcut("Internal.PasteInfo", true, false, true, (int)Keys.V, null));
+
 				AddShortcut(new Shortcut("Internal.AddNode", true, false, false, (int)Keys.A, null));
 				AddShortcut(new Shortcut("Internal.InsertNode", true, false, false, (int)Keys.I, null));
 				AddShortcut(new Shortcut("Internal.RemoveNode", true, false, false, (int)Keys.R, null));
@@ -56,7 +59,7 @@ namespace Effekseer.GUI
 			return string.Empty;
 		}
 
-		public static void SetFunction(string uniquename, Action function)
+		public static void SetFunction(string uniquename, Func<bool> function)
 		{
 			if (shortcuts.ContainsKey(uniquename))
 			{
@@ -73,8 +76,10 @@ namespace Effekseer.GUI
 				var keys = shortcut.Value.GetKeys();
 				if (keys == (int)keyData)
 				{
-					shortcut.Value.Function();
-					return;
+					if(shortcut.Value.Function())
+					{
+						return;
+					}
 				}
 			}
 
@@ -121,13 +126,13 @@ namespace Effekseer.GUI
 				private set;
 			}
 
-			public Action Function
+			public Func<bool> Function
 			{
 				get;
 				private set;
 			}
 
-			public Shortcut(string uniquename, bool ctrl, bool shift, bool alt, int key, Action function)
+			public Shortcut(string uniquename, bool ctrl, bool shift, bool alt, int key, Func<bool> function)
 			{
 				UniqueName = uniquename;
 				Control = ctrl;
@@ -137,7 +142,7 @@ namespace Effekseer.GUI
 				Function = function;
 			}
 
-			public void SetFunction(Action function)
+			public void SetFunction(Func<bool> function)
 			{
 				Function = function;
 			}
