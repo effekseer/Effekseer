@@ -300,6 +300,8 @@ private:
 
 	std::set<DeviceObject*>	m_deviceObjects;
 
+	OpenGLDeviceType		m_deviceType;
+
 	// ステート保存用
 	RenderStateSet m_originalState;
 
@@ -316,7 +318,7 @@ public:
 	/**
 		@brief	コンストラクタ
 	*/
-	RendererImplemented( int32_t squareMaxCount );
+	RendererImplemented(int32_t squareMaxCount, OpenGLDeviceType deviceType);
 
 	/**
 		@brief	デストラクタ
@@ -487,6 +489,8 @@ public:
 	void ResetRenderState();
 
 	std::vector<GLuint>& GetCurrentTextures() { return m_currentTextures; }
+
+	OpenGLDeviceType GetDeviceType() { return m_deviceType; }
 
 	virtual int GetRef() { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() { return ::Effekseer::ReferenceObject::AddRef(); }
