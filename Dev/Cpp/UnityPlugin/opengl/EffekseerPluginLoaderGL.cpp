@@ -39,9 +39,10 @@ namespace EffekseerPlugin
 		// リソーステーブルに追加
 		resources.insert(std::make_pair((const char16_t*) path, res));
 
-#ifdef __EMSCRIPTEN__
+#if !defined(_WIN32)
+		// テクスチャのミップマップを生成する
 		if (res.texture) {
-			glBindTexture(GL_TEXTURE_2D, (GLuint)res.texture);
+			glBindTexture(GL_TEXTURE_2D, (GLuint)(uintptr_t)res.texture);
 			glGenerateMipmap(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}

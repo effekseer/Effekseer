@@ -93,7 +93,7 @@ namespace Effekseer.GUI
 		void ReloadMenu()
 		{
 			
-			Func<Action, ToolStripMenuItem> create_menu_item_from_commands = (a) =>
+			Func<Func<bool>, ToolStripMenuItem> create_menu_item_from_commands = (a) =>
 			{
 				var item = new ToolStripMenuItem();
 				var attributes = a.Method.GetCustomAttributes(false);
