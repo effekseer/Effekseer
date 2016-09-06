@@ -92,6 +92,7 @@ private:
 	std::string				m_name;
 
 	static bool CompileShader(
+		RendererImplemented* renderer,
 		GLuint& program,
 		const char* vs_src,
 		int32_t vertexShaderSize,
@@ -163,65 +164,6 @@ public:
 //
 //----------------------------------------------------------------------------------
 }
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-
-#if  defined(__EFFEKSEER_RENDERER_GL3__) 
-#define EFFEKSEER_VERTEX_SHADER_HEADER \
-"#version 330\n" \
-"#define lowp\n" \
-"#define mediump\n" \
-"#define highp\n" \
-"#define IN in\n" \
-"#define OUT out\n"
-#define EFFEKSEER_FRAGMENT_SHADER_HEADER \
-"#version 330\n" \
-"#define lowp\n" \
-"#define mediump\n" \
-"#define highp\n" \
-"#define IN in\n" \
-"#define TEX2D texture\n" \
-"layout (location = 0) out vec4 FRAGCOLOR;\n"
-#elif defined(__EFFEKSEER_RENDERER_GLES3__)
-#define EFFEKSEER_VERTEX_SHADER_HEADER \
-"#version 300 es\n" \
-"precision mediump float;\n" \
-"#define IN in\n" \
-"#define OUT out\n"
-#define EFFEKSEER_FRAGMENT_SHADER_HEADER \
-"#version 300 es\n" \
-"precision mediump float;\n" \
-"#define IN in\n" \
-"#define TEX2D texture\n" \
-"layout (location = 0) out vec4 FRAGCOLOR;\n"
-#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(EMSCRIPTEN)
-#define EFFEKSEER_VERTEX_SHADER_HEADER \
-"precision mediump float;\n" \
-"#define IN attribute\n" \
-"#define OUT varying\n"
-#define EFFEKSEER_FRAGMENT_SHADER_HEADER \
-"precision mediump float;\n" \
-"#define IN varying\n" \
-"#define TEX2D texture2D\n" \
-"#define FRAGCOLOR gl_FragColor\n"
-#else
-#define EFFEKSEER_VERTEX_SHADER_HEADER \
-"#version 110\n" \
-"#define lowp\n" \
-"#define mediump\n" \
-"#define highp\n" \
-"#define IN attribute\n" \
-"#define OUT varying\n"
-#define EFFEKSEER_FRAGMENT_SHADER_HEADER \
-"#version 110\n" \
-"#define lowp\n" \
-"#define mediump\n" \
-"#define highp\n" \
-"#define IN varying\n" \
-"#define TEX2D texture2D\n" \
-"#define FRAGCOLOR gl_FragColor\n"
-#endif
 
 //----------------------------------------------------------------------------------
 //

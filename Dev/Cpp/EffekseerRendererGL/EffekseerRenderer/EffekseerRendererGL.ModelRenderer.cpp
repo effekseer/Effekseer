@@ -35,7 +35,6 @@ static std::string Replace( std::string target, std::string from_, std::string t
 }
 
 static const char g_model_vs_src[] = 
-	EFFEKSEER_VERTEX_SHADER_HEADER
 	"IN vec4 a_Position;\n"
 	"IN vec4 a_Normal;\n"
 	"IN vec4 a_Binormal;\n"
@@ -99,7 +98,6 @@ static const char g_model_vs_src[] =
 	"}\n";
 
 static const char g_model_fs_src[] = 
-	EFFEKSEER_FRAGMENT_SHADER_HEADER
 	"IN mediump vec4 v_Normal;\n"
 	"IN mediump vec4 v_Binormal;\n"
 	"IN mediump vec4 v_Tangent;\n"
@@ -136,7 +134,6 @@ static const char g_model_fs_src[] =
 
 
 static const char g_model_distortion_vs_src [] =
-	EFFEKSEER_VERTEX_SHADER_HEADER
 "IN vec4 a_Position;\n"
 "IN vec4 a_Normal;\n"
 "IN vec4 a_Binormal;\n"
@@ -210,8 +207,6 @@ R"(
 )";
 
 static const char g_model_distortion_fs_src [] =
-	EFFEKSEER_FRAGMENT_SHADER_HEADER
-
 "IN mediump vec4 v_Normal;\n"
 "IN mediump vec4 v_Binormal;\n"
 "IN mediump vec4 v_Tangent;\n"

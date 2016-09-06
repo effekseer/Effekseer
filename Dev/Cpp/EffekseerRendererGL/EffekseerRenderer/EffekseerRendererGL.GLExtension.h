@@ -50,7 +50,7 @@ typedef ptrdiff_t GLsizeiptr;
 typedef ptrdiff_t GLintptr;
 typedef char GLchar;
 
-bool Initialize();
+bool Initialize(OpenGLDeviceType deviceType);
 bool IsSupportedVertexArray();
 
 void glDeleteBuffers(GLsizei n, const GLuint* buffers);
