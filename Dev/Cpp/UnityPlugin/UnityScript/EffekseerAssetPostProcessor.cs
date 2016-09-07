@@ -50,17 +50,9 @@ public class EffekseerAssetPostProcessor : AssetPostprocessor
 			return;
 		}
 
-		// 上下反転させる
-		Color32[] srcPixels = texture.GetPixels32();
-		Color32[] dstPixels = new Color32[srcPixels.Length];
-		int width = texture.width, height = texture.height;
-		int srcIndex = 0, dstIndex = dstPixels.Length - width;
-		for (int i = 0; i < height; i++) {
-			Array.Copy(srcPixels, srcIndex, dstPixels, dstIndex, width);
-			srcIndex += width;
-			dstIndex -= width;
-		}
-		texture.SetPixels32(dstPixels);
-		texture.Apply();
-	}
+        // 対角反転させる
+        Color32[] srcPixels = texture.GetPixels32();
+        texture.SetPixels32(srcPixels.Reverse().ToArray());
+        texture.Apply();
+    }
 }
