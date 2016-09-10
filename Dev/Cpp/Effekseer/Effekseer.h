@@ -1381,6 +1381,11 @@ public:
 		@brief	画像等リソースの破棄を行う。
 	*/
 	virtual void UnloadResources() = 0;
+
+	/**
+	@brief	Rootを取得する。
+	*/
+	virtual EffectNode* GetRoot() const = 0;
 };
 
 /**

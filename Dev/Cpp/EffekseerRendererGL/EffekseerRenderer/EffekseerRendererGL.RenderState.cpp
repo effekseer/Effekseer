@@ -20,9 +20,10 @@ namespace EffekseerRendererGL
 RenderState::RenderState( RendererImplemented* renderer )
 	: m_renderer	( renderer )
 {
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-	GLExt::glGenSamplers(4, m_samplers);
-#endif
+	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+	{
+		GLExt::glGenSamplers(4, m_samplers);
+	}
 }
 
 //-----------------------------------------------------------------------------------
@@ -30,9 +31,10 @@ RenderState::RenderState( RendererImplemented* renderer )
 //-----------------------------------------------------------------------------------
 RenderState::~RenderState()
 {
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-	GLExt::glDeleteSamplers(4, m_samplers);
-#endif
+	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+	{
+		GLExt::glDeleteSamplers(4, m_samplers);
+	}
 }
 
 //-----------------------------------------------------------------------------------
@@ -124,73 +126,74 @@ void RenderState::Update( bool forced )
 	static const GLint glfilterMag[] = { GL_NEAREST, GL_LINEAR };
 	static const GLint glwrap[] = { GL_REPEAT, GL_CLAMP_TO_EDGE };
 
-#if  defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-	for( int32_t i = 0; i < 4; i++ )
+	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
-		if( m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced )
+		for (int32_t i = 0; i < 4; i++)
 		{
-			GLExt::glActiveTexture(GL_TEXTURE0 + i);
+			if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
+			{
+				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 
-			int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
+				int32_t filter_ = (int32_t) m_next.TextureFilterTypes[i];
 
-			GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
-			GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
-			//glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			//glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
+				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
+				//glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				//glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-			GLExt::glBindSampler(i, m_samplers[i]);
-		}
+				GLExt::glBindSampler(i, m_samplers[i]);
+			}
 
-		if( m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced )
-		{
-			GLExt::glActiveTexture(GL_TEXTURE0 + i);
+			if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced)
+			{
+				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 
-			int32_t wrap_ = (int32_t)m_next.TextureWrapTypes[i];
-			GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_S, glwrap[wrap_]);
-			GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_T, glwrap[wrap_]);
+				int32_t wrap_ = (int32_t) m_next.TextureWrapTypes[i];
+				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_S, glwrap[wrap_]);
+				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_WRAP_T, glwrap[wrap_]);
 
-			GLExt::glBindSampler(i, m_samplers[i]);
+				GLExt::glBindSampler(i, m_samplers[i]);
+			}
 		}
 	}
-#else
-
-	GLCheckError();
-	for (int32_t i = 0; i < m_renderer->GetCurrentTextures().size(); i++)
+	else
 	{
-		/* テクスチャが設定されていない場合はスキップ */
-		if (m_renderer->GetCurrentTextures()[i] == 0) continue;
-
-		if( m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced )
+		GLCheckError();
+		for (int32_t i = 0; i < m_renderer->GetCurrentTextures().size(); i++)
 		{
-			GLExt::glActiveTexture( GL_TEXTURE0 + i );
-			GLCheckError();
+			/* テクスチャが設定されていない場合はスキップ */
+			if (m_renderer->GetCurrentTextures()[i] == 0) continue;
 
-			int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
+			if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
+			{
+				GLExt::glActiveTexture(GL_TEXTURE0 + i);
+				GLCheckError();
 
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glfilterMag[filter_] );
-			GLCheckError();
+				int32_t filter_ = (int32_t) m_next.TextureFilterTypes[i];
 
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glfilterMin[filter_] );
-			GLCheckError();
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
+				GLCheckError();
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
+				GLCheckError();
+			}
+
+			if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced)
+			{
+				GLExt::glActiveTexture(GL_TEXTURE0 + i);
+				GLCheckError();
+
+				int32_t wrap_ = (int32_t) m_next.TextureWrapTypes[i];
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glwrap[wrap_]);
+				GLCheckError();
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glwrap[wrap_]);
+				GLCheckError();
+			}
 		}
-
-		if( m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced )
-		{
-			GLExt::glActiveTexture( GL_TEXTURE0 + i );
-			GLCheckError();
-
-			int32_t wrap_ = (int32_t)m_next.TextureWrapTypes[i];
-
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glwrap[wrap_] );
-			GLCheckError();
-
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glwrap[wrap_] );
-			GLCheckError();
-		}
+		GLCheckError();
 	}
-	GLCheckError();
-
-#endif
 
 	GLExt::glActiveTexture( GL_TEXTURE0 );
 	

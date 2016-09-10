@@ -35,8 +35,6 @@ namespace EffekseerRendererGL
 //
 //-----------------------------------------------------------------------------------
 static const char g_sprite_vs_src [] =
-	EFFEKSEER_VERTEX_SHADER_HEADER
-
 R"(
 IN vec4 atPosition;
 IN vec4 atColor;
@@ -80,7 +78,6 @@ void main() {
 )";
 
 static const char g_sprite_fs_texture_src[] =
-	EFFEKSEER_FRAGMENT_SHADER_HEADER
 "IN lowp vec4 vaColor;\n"
 "IN mediump vec4 vaTexCoord;\n"
 
@@ -91,7 +88,6 @@ static const char g_sprite_fs_texture_src[] =
 "}\n";
 
 static const char g_sprite_fs_no_texture_src[] =
-	EFFEKSEER_FRAGMENT_SHADER_HEADER
 "IN lowp vec4 vaColor;\n"
 "IN mediump vec4 vaTexCoord;\n"
 
@@ -101,7 +97,6 @@ static const char g_sprite_fs_no_texture_src[] =
 
 
 static const char g_sprite_distortion_vs_src [] =
-	EFFEKSEER_VERTEX_SHADER_HEADER
 R"(
 IN vec4 atPosition;
 IN vec4 atColor;
@@ -157,7 +152,6 @@ void main() {
 )";
 
 static const char g_sprite_fs_texture_distortion_src [] =
-	EFFEKSEER_FRAGMENT_SHADER_HEADER
 R"(
 IN lowp vec4 vaColor;
 IN mediump vec4 vaTexCoord;
@@ -194,7 +188,6 @@ void main() {
 )";
 
 static const char g_sprite_fs_no_texture_distortion_src [] =
-	EFFEKSEER_FRAGMENT_SHADER_HEADER
 R"(
 IN lowp vec4 vaColor;
 IN mediump vec4 vaTexCoord;
@@ -233,11 +226,11 @@ void main() {
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Renderer* Renderer::Create( int32_t squareMaxCount )
+Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
 {
-	GLExt::Initialize();
+	GLExt::Initialize(deviceType);
 
-	RendererImplemented* renderer = new RendererImplemented( squareMaxCount );
+	RendererImplemented* renderer = new RendererImplemented( squareMaxCount, deviceType );
 	if( renderer->Initialize() )
 	{
 		return renderer;
@@ -248,7 +241,7 @@ Renderer* Renderer::Create( int32_t squareMaxCount )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-RendererImplemented::RendererImplemented( int32_t squareMaxCount )
+RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceType deviceType)
 	: m_vertexBuffer( NULL )
 	, m_indexBuffer	( NULL )
 	, m_squareMaxCount	( squareMaxCount )
@@ -269,6 +262,8 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 
 	, m_background(0)
 	, m_distortingCallback(nullptr)
+
+	, m_deviceType(deviceType)
 {
 	::Effekseer::Vector3D direction( 1.0f, 1.0f, 1.0f );
 	SetLightDirection( direction );
@@ -600,12 +595,12 @@ bool RendererImplemented::BeginRendering()
 		m_originalState.blend = glIsEnabled(GL_BLEND);
 		m_originalState.cullFace = glIsEnabled(GL_CULL_FACE);
 		m_originalState.depthTest = glIsEnabled(GL_DEPTH_TEST);
-#if !defined(__EFFEKSEER_RENDERER_GL3__) && \
-	!defined(__EFFEKSEER_RENDERER_GLES3__) && \
-	!defined(__EFFEKSEER_RENDERER_GLES2__) && \
-	!defined(EMSCRIPTEN)
-		m_originalState.texture = glIsEnabled(GL_TEXTURE_2D);
-#endif
+
+		if (GetDeviceType() == OpenGLDeviceType::OpenGL2)
+		{
+			m_originalState.texture = glIsEnabled(GL_TEXTURE_2D);
+		}
+
 		glGetBooleanv(GL_DEPTH_WRITEMASK, &m_originalState.depthWrite);
 		glGetIntegerv(GL_DEPTH_FUNC, &m_originalState.depthFunc);
 		glGetIntegerv(GL_CULL_FACE_MODE, &m_originalState.cullFaceMode);
@@ -647,12 +642,10 @@ bool RendererImplemented::EndRendering()
 		if (m_originalState.cullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
 		if (m_originalState.depthTest) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
 		
-#if !defined(__EFFEKSEER_RENDERER_GL3__) && \
-	!defined(__EFFEKSEER_RENDERER_GLES3__) && \
-	!defined(__EFFEKSEER_RENDERER_GLES2__) && \
-	!defined(EMSCRIPTEN)
-		if (m_originalState.texture) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
-#endif
+		if (GetDeviceType() == OpenGLDeviceType::OpenGL2)
+		{
+			if (m_originalState.texture) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
+		}
 		
 		glDepthFunc(m_originalState.depthFunc);
 		glDepthMask(m_originalState.depthWrite);
@@ -660,12 +653,13 @@ bool RendererImplemented::EndRendering()
 		glBlendFunc(m_originalState.blendSrc, m_originalState.blendDst);
 		GLExt::glBlendEquation(m_originalState.blendEquation);
 
-#if defined(__EFFEKSEER_RENDERER_GL3__) || defined(__EFFEKSEER_RENDERER_GLES3__)
-		for( int32_t i = 0; i < 4; i++ )
+		if (GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 		{
-			GLExt::glBindSampler(i, 0);
+			for( int32_t i = 0; i < 4; i++ )
+			{
+				GLExt::glBindSampler(i, 0);
+			}
 		}
-#endif
 	}
 
 	GLCheckError();

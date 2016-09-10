@@ -33,10 +33,11 @@ protected:
 public:
 	/**
 		@brief	インスタンスを生成する。
-		@param	squareMaxCount	[in]	最大描画スプライト数
+		@param	squareMaxCount		最大描画スプライト数
+		@param	OpenGLDeviceType	デバイスの種類
 		@return	インスタンス
 	*/
-	static Renderer* Create( int32_t squareMaxCount );
+	static Renderer* Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
 	/**
 		@brief	最大描画スプライト数を取得する。
