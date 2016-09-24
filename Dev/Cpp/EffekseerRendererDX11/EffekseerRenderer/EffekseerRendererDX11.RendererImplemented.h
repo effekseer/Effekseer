@@ -334,6 +334,8 @@ private:
 
 	bool	m_restorationOfStates;
 
+	D3D11_COMPARISON_FUNC	m_depthFunc;
+
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
 public:
@@ -353,7 +355,7 @@ public:
 	/**
 		@brief	èâä˙âª
 	*/
-	bool Initialize( ID3D11Device* device, ID3D11DeviceContext* context );
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_COMPARISON_FUNC depthFunc);
 
 	void Destory();
 

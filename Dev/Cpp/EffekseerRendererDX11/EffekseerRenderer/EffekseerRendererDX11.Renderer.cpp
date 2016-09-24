@@ -203,10 +203,10 @@ void OriginalState::ReleaseState()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Renderer* Renderer::Create( ID3D11Device* device, ID3D11DeviceContext* context, int32_t squareMaxCount )
+Renderer* Renderer::Create(ID3D11Device* device, ID3D11DeviceContext* context, int32_t squareMaxCount, D3D11_COMPARISON_FUNC depthFunc)
 {
 	RendererImplemented* renderer = new RendererImplemented( squareMaxCount );
-	if( renderer->Initialize( device, context ) )
+	if( renderer->Initialize( device, context, depthFunc) )
 	{
 		return renderer;
 	}
@@ -306,10 +306,11 @@ void RendererImplemented::OnResetDevice()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext* context )
+bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_COMPARISON_FUNC depthFunc)
 {
 	m_device = device;
 	m_context = context;
+	m_depthFunc = depthFunc;
 
 	// 頂点の生成
 	{
@@ -346,7 +347,7 @@ bool RendererImplemented::Initialize( ID3D11Device* device, ID3D11DeviceContext*
 	// 参照カウントの調整
 	Release();
 
-	m_renderState = new RenderState( this );
+	m_renderState = new RenderState(this, m_depthFunc);
 
 
 	// シェーダー

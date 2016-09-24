@@ -35,7 +35,7 @@ private:
 	ID3D11SamplerState*			m_sStates[TextureFilterCount][TextureWrapCount];
 
 public:
-	RenderState( RendererImplemented* renderer );
+	RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC depthFunc);
 	virtual ~RenderState();
 
 	void Update( bool forced );
