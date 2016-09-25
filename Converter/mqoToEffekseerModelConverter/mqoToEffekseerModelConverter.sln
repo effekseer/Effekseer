@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual C# Express 2013
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mqoToEffekseerModelConverter", "mqoToEffekseerModelConverter\mqoToEffekseerModelConverter.csproj", "{7B73D3E9-6BE5-4115-8EF4-A7D8277128BE}"
 EndProject
 Global

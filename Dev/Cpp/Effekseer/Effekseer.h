@@ -2489,6 +2489,8 @@ namespace Effekseer {
 class Model
 {
 public:
+	static const int32_t	Version = 1;
+
 	struct Vertex
 	{
 		Vector3D Position;
@@ -2496,6 +2498,7 @@ public:
 		Vector3D Binormal;
 		Vector3D Tangent;
 		Vector2D UV;
+		Color VColor;
 	};
 
 	struct VertexWithIndex
@@ -2505,6 +2508,7 @@ public:
 		Vector3D Binormal;
 		Vector3D Tangent;
 		Vector2D UV;
+		Color VColor;
 		uint8_t Index[4];
 	};
 
@@ -2562,9 +2566,25 @@ public:
 		memcpy( &m_vertexCount, p, sizeof(int32_t) );
 		p += sizeof(int32_t);
 
-		m_vertexes = (Vertex*)p;
-		p += ( sizeof(Vertex) * m_vertexCount );
+		if (m_version >= 1)
+		{
+			m_vertexes = (Vertex*) p;
+			p += (sizeof(Vertex) * m_vertexCount);
+		}
+		else
+		{
+			// 新規バッファ確保
+			m_vertexes = new Vertex[m_vertexCount];
 
+			for (int32_t i = 0; i < m_vertexCount; i++)
+			{
+				memcpy(&m_vertexes[i], p, sizeof(Vertex) - sizeof(Color));
+				m_vertexes[i].VColor = Color(255, 255, 255, 255);
+
+				p += sizeof(Vertex) - sizeof(Color);
+			}
+		}
+		
 		memcpy( &m_faceCount, p, sizeof(int32_t) );
 		p += sizeof(int32_t);
 
@@ -2585,6 +2605,11 @@ public:
 	*/
 	virtual ~Model()
 	{
+		if (m_version == 0)
+		{
+			ES_SAFE_DELETE_ARRAY(m_vertexes);
+		}
+
 		ES_SAFE_DELETE_ARRAY( m_data );
 	}
 

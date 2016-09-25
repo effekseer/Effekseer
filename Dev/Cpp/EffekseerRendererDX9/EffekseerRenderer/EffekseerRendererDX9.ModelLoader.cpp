@@ -93,6 +93,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 					v.Binormal = model->GetVertexes()[i].Binormal;
 					v.Tangent = model->GetVertexes()[i].Tangent;
 					v.UV = model->GetVertexes()[i].UV;
+					v.VColor = model->GetVertexes()[i].VColor;
 					v.Index[0] = m;
 
 					memcpy( resource, &v, sizeof(Effekseer::Model::VertexWithIndex) );

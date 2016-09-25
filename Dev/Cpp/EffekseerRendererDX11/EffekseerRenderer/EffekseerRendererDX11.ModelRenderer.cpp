@@ -188,7 +188,8 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 			{ "NORMAL", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "NORMAL", 2, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "BLENDINDICES",  0, DXGI_FORMAT_R8G8B8A8_UINT,  0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 3, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "BLENDINDICES",  0, DXGI_FORMAT_R8G8B8A8_UINT,  0, sizeof(float) * 15, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
 	Shader* shader_lighting_texture_normal = Shader::Create( 
