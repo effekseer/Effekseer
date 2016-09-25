@@ -94,6 +94,9 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 					v.Tangent = model->GetVertexes()[i].Tangent;
 					v.UV = model->GetVertexes()[i].UV;
 					v.VColor = model->GetVertexes()[i].VColor;
+
+					std::swap(v.VColor.R, v.VColor.B);
+
 					v.Index[0] = m;
 
 					memcpy( resource, &v, sizeof(Effekseer::Model::VertexWithIndex) );

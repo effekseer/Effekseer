@@ -74,7 +74,7 @@ static const char g_model_vs_src[] =
 #else
 	"	mat4 modelMatrix = ModelMatrix;\n"
 	"	vec4 uvOffset = UVOffset;\n"
-	"	vec4 modelColor = ModelColor;\n"
+	"	vec4 modelColor = ModelColor * a_Color;\n"
 #endif
 	"	vec4 localPosition = modelMatrix * a_Position;\n"
 	"	gl_Position = ProjectionMatrix * localPosition;\n"

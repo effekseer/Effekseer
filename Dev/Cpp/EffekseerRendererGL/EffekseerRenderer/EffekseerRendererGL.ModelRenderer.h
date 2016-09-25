@@ -36,7 +36,7 @@ public:
 		AttribBinormal,
 		AttribTangent,
 		AttribTexCoord,
-		
+		AttribColor,
 #if defined(MODEL_SOFTWARE_INSTANCING)
 		AttribInstanceID,
 		AttribUVOffset,
