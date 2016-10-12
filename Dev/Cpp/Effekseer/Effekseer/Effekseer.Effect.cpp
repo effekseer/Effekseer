@@ -107,7 +107,11 @@ Effect* EffectImplemented::Create( Manager* pManager, void* pData, int size, flo
 	if( pData == NULL || size == 0 ) return NULL;
 
 	EffectImplemented* effect = new EffectImplemented( pManager, pData, size );
-	effect->Load( pData, size, magnification, materialPath );
+	if ( !effect->Load( pData, size, magnification, materialPath ) )
+	{
+		effect->Release();
+		effect = NULL;
+	}
 	return effect;
 }
 
@@ -156,7 +160,11 @@ Effect* EffectImplemented::Create( Setting* setting, void* pData, int size, floa
 	if( pData == NULL || size == 0 ) return NULL;
 
 	EffectImplemented* effect = new EffectImplemented( setting, pData, size );
-	effect->Load( pData, size, magnification, materialPath );
+	if ( !effect->Load( pData, size, magnification, materialPath ) )
+	{
+		effect->Release();
+		effect = NULL;
+	}
 	return effect;
 }
 
@@ -267,7 +275,7 @@ float EffectImplemented::GetMaginification() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* materialPath )
+bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* materialPath )
 {
 	EffekseerPrintDebug("** Create : Effect\n");
 
@@ -276,7 +284,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	// EFKS
 	int head = 0;
 	memcpy( &head, pos, sizeof(int) );
-	if( memcmp( &head, "SKFE", 4 ) != 0 ) return;
+	if( memcmp( &head, "SKFE", 4 ) != 0 ) return false;
 	pos += sizeof( int );
 
 	memcpy( &m_version, pos, sizeof(int) );
@@ -441,6 +449,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
     if (materialPath) m_materialPath = materialPath;
 
 	ReloadResources( materialPath );
+	return true;
 }
 
 //----------------------------------------------------------------------------------

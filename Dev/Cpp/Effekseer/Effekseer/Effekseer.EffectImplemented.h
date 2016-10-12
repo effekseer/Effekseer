@@ -118,7 +118,7 @@ public:
 	/**
 		@brief	“Ç‚İ‚ŞB
 	*/
-	void Load( void* pData, int size, float mag, const EFK_CHAR* materialPath );
+	bool Load( void* pData, int size, float mag, const EFK_CHAR* materialPath );
 
 	/**
 		@breif	‰½‚à“Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚¢ó‘Ô‚É–ß‚·
