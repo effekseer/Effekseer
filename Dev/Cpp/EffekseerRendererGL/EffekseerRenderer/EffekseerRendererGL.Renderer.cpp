@@ -1128,14 +1128,20 @@ void RendererImplemented::ResetRenderState()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Model::Model(::Effekseer::Model::Vertex vertexData [], int32_t vertexCount,
-	::Effekseer::Model::Face faceData [], int32_t faceCount)
-	: VertexBuffer(0)
+Model::Model(void* data, int32_t size)
+	: ::Effekseer::Model(data, size)
+	, VertexBuffer(0)
 	, IndexBuffer(0)
-	, VertexCount(vertexCount)
-	, IndexCount(faceCount * 3)
 	, ModelCount(1)
 {
+	auto vertexData = GetVertexes();
+	auto vertexCount = GetVertexCount();
+	auto faceData = GetFaces();
+	auto faceCount = GetFaceCount();
+
+	VertexCount = vertexCount;
+	IndexCount = faceCount * 3;
+
 	GLExt::glGenBuffers(1, &VertexBuffer);
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
 	size_t vertexSize = vertexCount * sizeof(::Effekseer::Model::Vertex);

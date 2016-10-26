@@ -69,6 +69,7 @@ public:
 	@brief	ƒ‚ƒfƒ‹
 */
 class Model
+	: public Effekseer::Model
 {
 private:
 
@@ -79,8 +80,7 @@ public:
 	int32_t		IndexCount;
 	int32_t		ModelCount;
 
-	Model( ::Effekseer::Model::Vertex vertexData[], int32_t vertexCount, 
-		::Effekseer::Model::Face faceData[], int32_t faceCount );
+	Model(void* data, int32_t size);
 	~Model();
 };
 

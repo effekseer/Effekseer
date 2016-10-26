@@ -45,11 +45,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 		char* data_model = new char[size_model];
 		reader->Read( data_model, size_model );
 
-		Effekseer::Model model_main( data_model, size_model );
-		
-		Model* model = new Model( 
-			model_main.GetVertexes(), model_main.GetVertexCount(),
-			model_main.GetFaces(), model_main.GetFaceCount());
+		Model* model = new Model(data_model, size_model);
 
 		delete [] data_model;
 
