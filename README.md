@@ -16,6 +16,8 @@ Effekseer is useful in developing game software especially. Not only programmers
 透過組合 runtime 和插件,由Effekseer制作而成的效果便可以在應用程式內播放。
 Effekseer主要用作遊戲開發,不僅是程序員而且設計師也可進行粒子效果的編輯。
 
+* [Official website](http://effekseer.github.io/en/)
+
 [![Slack Status](https://effekseer-slackin.herokuapp.com/badge.svg)](https://effekseer-slackin.herokuapp.com/)
 
 [![](http://img.youtube.com/vi/WwNX9TO7guA/0.jpg)](https://www.youtube.com/watch?v=WwNX9TO7guA)
