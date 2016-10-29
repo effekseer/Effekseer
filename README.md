@@ -1,12 +1,12 @@
 ﻿Effekseer
 =========
-This software is a tool editing visual effects.
+This software is a tool editing particle effects.
 By incorporating a runtime and plug-ins, you will be able to show the effects that was created with Effekseer.
 Effekseer is useful in developing game software especially. Not only programmers but also designers take charge of visual effects.
 
 * [Official website](http://effekseer.github.io/en/)
 
-本ソフトウェアはヴィジュアルエフェクト編集ツールです。
+本ソフトウェアはパーティクルエフェクト編集ツールです。
 ランタイムやプラグインを組み込むことで、Effekseerで作成されたエフェクトをアプリケーション中で再生できるようになります。
 主にゲームで使用することを想定しており、ヴィジュアルエフェクトの編集をプログラマでなくデザイナーが担当できるようにします。
 
