@@ -14,6 +14,12 @@ namespace Effekseer.GUI.Component
 		public ColorWithRandom()
 		{
 			InitializeComponent();
+			
+			if (Core.Language == Language.English)
+			{
+				drawnas_1.Text = "Range";
+				drawnas_2.Text = "Gauss";
+			}
 
 			EnableUndo = true;
 
@@ -385,14 +391,30 @@ namespace Effekseer.GUI.Component
 
 				if (drawnas_1.Checked)
 				{
-					lb_v1.Text = "最大";
-					lb_v2.Text = "最小";
+					if (Core.Language == Language.English)
+					{
+						lb_v1.Text = "Max";
+						lb_v2.Text = "Min";
+					}
+					else if (Core.Language == Language.Japanese)
+					{
+						lb_v1.Text = "最大";
+						lb_v2.Text = "最小";
+					}
 				}
 
 				if (drawnas_2.Checked)
 				{
-					lb_v1.Text = "中心";
-					lb_v2.Text = "振幅";
+					if (Core.Language == Language.English)
+					{
+						lb_v1.Text = "Mean";
+						lb_v2.Text = "Deviation";
+					}
+					else if (Core.Language == Language.Japanese)
+					{
+						lb_v1.Text = "中心";
+						lb_v2.Text = "振幅";
+					}
 				}
 				
 				if (colorSpace_1.Checked)

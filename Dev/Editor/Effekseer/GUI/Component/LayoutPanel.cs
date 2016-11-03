@@ -439,13 +439,11 @@ namespace Effekseer.GUI.Component
 				else if (p.PropertyType == typeof(Data.Value.FCurveVector3D))
 				{
 					FCurveButton button = new FCurveButton();
-					button.Text = "Fカーブ";
 					gui = button;
 				}
 				else if (p.PropertyType == typeof(Data.Value.FCurveColorRGBA))
 				{
 					FCurveButton button = new FCurveButton();
-					button.Text = "Fカーブ";
 					gui = button;
 				}
 				else if (p.PropertyType == typeof(Data.Value.FCurve<float>))

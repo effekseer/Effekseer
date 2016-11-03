@@ -75,7 +75,16 @@ namespace Effekseer.GUI
 			OpenFileDialog ofd = new OpenFileDialog();
 
 			ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-			ofd.Filter = "エフェクトプロジェクト (*.efkproj)|*.efkproj";
+			
+			if(Core.Language == Language.Japanese)
+			{
+				ofd.Filter = "エフェクトプロジェクト (*.efkproj)|*.efkproj";
+			}
+			else if (Core.Language == Language.English)
+			{
+				ofd.Filter = "Effekseer Project (*.efkproj)|*.efkproj";
+			}
+			
 			ofd.FilterIndex = 2;
 			ofd.Multiselect = false;
 
@@ -161,7 +170,14 @@ namespace Effekseer.GUI
 			SaveFileDialog ofd = new SaveFileDialog();
 
 			ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-			ofd.Filter = "エフェクトプロジェクト (*.efkproj)|*.efkproj";
+			if (Core.Language == Language.Japanese)
+			{
+				ofd.Filter = "エフェクトプロジェクト (*.efkproj)|*.efkproj";
+			}
+			else if (Core.Language == Language.English)
+			{
+				ofd.Filter = "Effekseer Project (*.efkproj)|*.efkproj";
+			}
 			ofd.FilterIndex = 2;
 			ofd.OverwritePrompt = true;
 
@@ -472,7 +488,14 @@ namespace Effekseer.GUI
 			OpenFileDialog ofd = new OpenFileDialog();
 
 			ofd.InitialDirectory = Path.Combine(rootDir, @"Sample");
-			ofd.Filter = "エフェクトプロジェクト (*.efkproj)|*.efkproj";
+			if (Core.Language == Language.Japanese)
+			{
+				ofd.Filter = "エフェクトプロジェクト (*.efkproj)|*.efkproj";
+			}
+			else if (Core.Language == Language.English)
+			{
+				ofd.Filter = "Effekseer Project (*.efkproj)|*.efkproj";
+			}
 			ofd.FilterIndex = 2;
 			ofd.Multiselect = false;
 
