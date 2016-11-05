@@ -1,4 +1,4 @@
-
+ï»¿
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 
 //----------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 			GL_UNSIGNED_BYTE,
 			EffekseerRenderer::PngTextureLoader::GetData().data());
 		
-		/* ƒ~ƒbƒvƒ}ƒbƒv‚Ì¶¬ */
+		/* ãƒŸãƒƒãƒ—ãƒãƒƒãƒ—ã®ç”Ÿæˆ */
 		GLExt::glGenerateMipmap(GL_TEXTURE_2D);
 
 		glBindTexture(GL_TEXTURE_2D, 0);

@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_DX9_SHADER_H__
 #define	__EFFEKSEERRENDERER_DX9_SHADER_H__
 
@@ -20,7 +20,7 @@ class Shader
 	: public DeviceObject
 {
 private:
-	/* Ä\¬‚ÌŒ³ƒf[ƒ^•Û‘¶—p */
+	/* å†æ§‹æˆæ™‚ã®å…ƒãƒ‡ãƒ¼ã‚¿ä¿å­˜ç”¨ */
 	std::vector<uint8_t>			m_vertexShaderData;
 	std::vector<uint8_t>			m_pixelShaderData;
 	std::vector<D3DVERTEXELEMENT9>	m_elements;
@@ -58,7 +58,7 @@ public:
 		const char* name, 
 		D3DVERTEXELEMENT9 decl[] );
 
-public:	// ƒfƒoƒCƒX•œ‹Œ—p
+public:	// ãƒ‡ãƒã‚¤ã‚¹å¾©æ—§ç”¨
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
 	virtual void OnChangeDevice();

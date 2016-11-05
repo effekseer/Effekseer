@@ -1,4 +1,4 @@
-
+ï»¿
 
 //----------------------------------------------------------------------------------
 //
@@ -104,12 +104,12 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setti
 		pos += sizeof(int);
 	}
 
-	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
+	// å³æ‰‹ç³»å·¦æ‰‹ç³»å¤‰æ›
 	if( setting->GetCoordinateSystem() == CoordinateSystem::LH )
 	{
 	}
 
-	/* ˆÊ’uŠg‘åˆ— */
+	/* ä½ç½®æ‹¡å¤§å‡¦ç† */
 	if( m_effect->GetVersion() >= 8 )
 	{
 		if( RibbonPosition.type == RibbonPosition.Default )

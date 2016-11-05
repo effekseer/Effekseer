@@ -1,4 +1,4 @@
-//--------------------------------------------------------------------------------------
+ï»¿//--------------------------------------------------------------------------------------
 // File: DDSTextureLoader.cpp
 //
 // Functions for loading a DDS texture and creating a Direct3D 11 runtime resource for it
@@ -1543,7 +1543,7 @@ HRESULT EffekseerDirectX::CreateDDSTextureFromMemory(
 		return E_FAIL;
 	}
 	
-	// ƒLƒ…[ƒuƒ}ƒbƒvƒTƒ|[ƒg‚È‚µ
+	// ã‚­ãƒ¥ãƒ¼ãƒ–ãƒžãƒƒãƒ—ã‚µãƒãƒ¼ãƒˆãªã—
 	if (header->caps2 & DDS_CUBEMAP)
 	{
 		return E_FAIL;

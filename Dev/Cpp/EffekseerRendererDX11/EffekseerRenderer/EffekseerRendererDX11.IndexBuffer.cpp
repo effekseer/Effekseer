@@ -1,4 +1,4 @@
-
+ï»¿
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ IndexBuffer* IndexBuffer::Create( RendererImplemented* renderer, int maxCount, b
 	hSubResourceData.SysMemPitch = 0;
 	hSubResourceData.SysMemSlicePitch = 0;
 	
-	// ¶¬
+	// ç”Ÿæˆ
 	ID3D11Buffer* ib = NULL;
 	if( FAILED( renderer->GetDevice()->CreateBuffer(&hBufferDesc, NULL, &ib) ) )
 	{

@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ namespace Effekseer {
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-/* DWORD‚ğ’u‚«‚©‚¦ */
+/* DWORDã‚’ç½®ãã‹ãˆ */
 unsigned long EFK_STDCALL Thread::ThreadProc(void* arguments)
 {
 	Thread* thread = (Thread*)(arguments);
@@ -64,7 +64,7 @@ bool Thread::Create( void (*threadFunc)( void* ), void* data )
 		m_mainProc	= threadFunc;
 		m_thread	= ::CreateThread( NULL, 0, ThreadProc, this, CREATE_SUSPENDED, NULL );
 
-		// ƒXƒŒƒbƒhŠJn
+		// ã‚¹ãƒ¬ãƒƒãƒ‰é–‹å§‹
 		::SetThreadPriority( m_thread, THREAD_PRIORITY_NORMAL );
 		::ResumeThread( m_thread );
 
@@ -155,7 +155,7 @@ bool Thread::Create( void (*threadFunc)( void* ), void* data )
 		pthread_attr_t attr;
 		pthread_attr_init( &attr );
 
-		// ƒXƒŒƒbƒhŠJn
+		// ã‚¹ãƒ¬ãƒƒãƒ‰é–‹å§‹
 		m_running = true;
 		pthread_create( &m_thread, &attr, ThreadProc, this );
 		

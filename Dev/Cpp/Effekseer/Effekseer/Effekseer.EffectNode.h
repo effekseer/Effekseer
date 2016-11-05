@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_EFFECTNODE_H__
 #define	__EFFEKSEER_EFFECTNODE_H__
 
@@ -647,9 +647,9 @@ enum eRenderingOrder
 //----------------------------------------------------------------------------------
 
 /**
-	@brief	ƒm[ƒhƒCƒ“ƒXƒ^ƒ“ƒX¶¬ƒNƒ‰ƒX
+	@brief	ãƒãƒ¼ãƒ‰ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆã‚¯ãƒ©ã‚¹
 	@note
-	ƒGƒtƒFƒNƒg‚Ìƒm[ƒh‚ÌÀ‘Ì‚ğ¶¬‚·‚éB
+	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒãƒ¼ãƒ‰ã®å®Ÿä½“ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 */
 class EffectNodeImplemented
 	: public EffectNode
@@ -659,31 +659,31 @@ class EffectNodeImplemented
 	friend class Instance;
 
 protected:
-	// Š‘®‚µ‚Ä‚¢‚éƒpƒ‰ƒ[ƒ^[
+	// æ‰€å±ã—ã¦ã„ã‚‹ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼
 	Effect*	m_effect;
 
-	// qƒm[ƒh
+	// å­ãƒãƒ¼ãƒ‰
 	std::vector<EffectNodeImplemented*>	m_Nodes;
 
-	// ƒ†[ƒU[ƒf[ƒ^
+	// ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ‡ãƒ¼ã‚¿
 	void* m_userData;
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	EffectNodeImplemented(Effect* effect, unsigned char*& pos);
 
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	virtual ~EffectNodeImplemented();
 
-	// “Ç
+	// èª­è¾¼
 	void LoadParameter( unsigned char*& pos, EffectNode* parent, Setting* setting );
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Initialize();
 
 public:
 
 	/**
-		@brief	•`‰æ‚·‚é‚©?
+		@brief	æç”»ã™ã‚‹ã‹?
 	*/
 	bool IsRendered;
 
@@ -724,7 +724,7 @@ public:
 	eRenderingOrder				RenderingOrder;
 
 	/**
-		@biref	ƒIƒvƒVƒ‡ƒ““Ç‚İ‚İ
+		@biref	ã‚ªãƒ—ã‚·ãƒ§ãƒ³èª­ã¿è¾¼ã¿
 	*/
 	void LoadOption( uint8_t*& pos );
 
@@ -739,62 +739,62 @@ public:
 	void SetBasicRenderParameter(EffectBasicRenderParameter param) override;
 
 	/**
-		@brief	•`‰æ•”•ª‚Ì“Ç
+		@brief	æç”»éƒ¨åˆ†ã®èª­è¾¼
 	*/
 	virtual void LoadRendererParameter(unsigned char*& pos, Setting* setting);
 
 	/**
-		@brief	•`‰æŠJn
+		@brief	æç”»é–‹å§‹
 	*/
 	virtual void BeginRendering(int32_t count, Manager* manager);
 
 	/**
-		@brief	ƒOƒ‹[ƒv•`‰æŠJn
+		@brief	ã‚°ãƒ«ãƒ¼ãƒ—æç”»é–‹å§‹
 	*/
 	virtual void BeginRenderingGroup(InstanceGroup* group, Manager* manager);
 
 	/**
-		@brief	•`‰æ
+		@brief	æç”»
 	*/
 	virtual void Rendering(const Instance& instance, Manager* manager);
 
 	/**
-		@brief	•`‰æI—¹
+		@brief	æç”»çµ‚äº†
 	*/
 	virtual void EndRendering(Manager* manager);
 
 	/**
-		@brief	ƒCƒ“ƒXƒ^ƒ“ƒXƒOƒ‹[ƒv•`‰æ‰Šú‰»
+		@brief	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚°ãƒ«ãƒ¼ãƒ—æç”»æ™‚åˆæœŸåŒ–
 	*/
 	virtual void InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager);
 
 	/**
-		@brief	•`‰æ•”•ª‰Šú‰»
+		@brief	æç”»éƒ¨åˆ†åˆæœŸåŒ–
 	*/
 	virtual void InitializeRenderedInstance( Instance& instance, Manager* manager );
 
 	/**
-		@brief	•`‰æ•”•ªXV
+		@brief	æç”»éƒ¨åˆ†æ›´æ–°
 	*/
 	virtual void UpdateRenderedInstance(Instance& instance, Manager* manager);
 
 	/**
-		@brief	•`‰æ•”•ªXV
+		@brief	æç”»éƒ¨åˆ†æ›´æ–°
 	*/
 	virtual float GetFadeAlpha( const Instance& instance );
 
 	/**
-		@brief	ƒTƒEƒ“ƒhÄ¶
+		@brief	ã‚µã‚¦ãƒ³ãƒ‰å†ç”Ÿ
 	*/
 	virtual void PlaySound_(Instance& instance, SoundTag tag, Manager* manager);
 
 	/**
-		@brief	ƒGƒtƒFƒNƒgƒm[ƒh¶¬
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒãƒ¼ãƒ‰ç”Ÿæˆ
 	*/
 	static EffectNodeImplemented* Create(Effect* effect, EffectNode* parent, unsigned char*& pos);
 
 	/**
-		@brief	ƒm[ƒh‚Ìí—Şæ“¾
+		@brief	ãƒãƒ¼ãƒ‰ã®ç¨®é¡å–å¾—
 	*/
 	virtual eEffectNodeType GetType() const { return EFFECT_NODE_TYPE_NONE; }
 };

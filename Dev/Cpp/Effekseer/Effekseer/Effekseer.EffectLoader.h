@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_EFFECTLOADER_H__
 #define	__EFFEKSEER_EFFECTLOADER_H__
 
@@ -15,40 +15,40 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒGƒtƒFƒNƒgƒtƒ@ƒCƒ‹“Ç‚İ‚İ”jŠüŠÖ”w’èƒNƒ‰ƒX
+	@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ç ´æ£„é–¢æ•°æŒ‡å®šã‚¯ãƒ©ã‚¹
 */
 class EffectLoader
 {
 public:
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	EffectLoader() {}
 
 	/**
-		@brief	ƒfƒXƒgƒ‰ƒNƒ^
+		@brief	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	virtual ~EffectLoader() {}
 
 	/**
-		@brief	ƒGƒtƒFƒNƒgƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚ŞB
-		@param	path	[in]	“Ç‚İ‚İŒ³ƒpƒX
-		@param	data	[out]	ƒf[ƒ^”z—ñ‚Ìæ“ª‚Ìƒ|ƒCƒ“ƒ^‚ğo—Í‚·‚éæ
-		@param	size	[out]	ƒf[ƒ^”z—ñ‚Ì’·‚³‚ğo—Í‚·‚éæ
-		@return	¬”Û
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€ã€‚
+		@param	path	[in]	èª­ã¿è¾¼ã¿å…ƒãƒ‘ã‚¹
+		@param	data	[out]	ãƒ‡ãƒ¼ã‚¿é…åˆ—ã®å…ˆé ­ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å‡ºåŠ›ã™ã‚‹å…ˆ
+		@param	size	[out]	ãƒ‡ãƒ¼ã‚¿é…åˆ—ã®é•·ã•ã‚’å‡ºåŠ›ã™ã‚‹å…ˆ
+		@return	æˆå¦
 		@note
-		ƒGƒtƒFƒNƒgƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚ŞB
-		::Effekseer::Effect::CreateÀs‚Ég—p‚³‚ê‚éB
+		ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€ã€‚
+		::Effekseer::Effect::Createå®Ÿè¡Œæ™‚ã«ä½¿ç”¨ã•ã‚Œã‚‹ã€‚
 	*/
 	virtual bool Load( const EFK_CHAR* path, void*& data, int32_t& size ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒgƒtƒ@ƒCƒ‹‚ğ”jŠü‚·‚éB
-		@param	data	[in]	ƒf[ƒ^”z—ñ‚Ìæ“ª‚Ìƒ|ƒCƒ“ƒ^
-		@param	size	[int]	ƒf[ƒ^”z—ñ‚Ì’·‚³
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç ´æ£„ã™ã‚‹ã€‚
+		@param	data	[in]	ãƒ‡ãƒ¼ã‚¿é…åˆ—ã®å…ˆé ­ã®ãƒã‚¤ãƒ³ã‚¿
+		@param	size	[int]	ãƒ‡ãƒ¼ã‚¿é…åˆ—ã®é•·ã•
 		@note
-		ƒGƒtƒFƒNƒgƒtƒ@ƒCƒ‹‚ğ”jŠü‚·‚éB
-		::Effekseer::Effect::CreateÀsI—¹‚Ég—p‚³‚ê‚éB
+		ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç ´æ£„ã™ã‚‹ã€‚
+		::Effekseer::Effect::Createå®Ÿè¡Œçµ‚äº†æ™‚ã«ä½¿ç”¨ã•ã‚Œã‚‹ã€‚
 	*/
 	virtual void Unload( void* data, int32_t size ) = 0;
 };

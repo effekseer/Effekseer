@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEER_MODEL_RENDERER_H__
 #define	__EFFEKSEER_MODEL_RENDERER_H__
 

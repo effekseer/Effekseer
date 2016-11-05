@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -823,7 +823,7 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 
 	if( parameter.ColorTextureIndex >= 0 )
 	{
-		// ƒeƒNƒXƒ`ƒƒ—L‚è
+		// ãƒ†ã‚¯ã‚¹ãƒãƒ£æœ‰ã‚Š
 		textures[0] = (GLuint) parameter.EffectPointer->GetImage(parameter.ColorTextureIndex);
 	}
 	
@@ -841,7 +841,7 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 
 	m_renderer->GetRenderState()->Update( false );
 	
-	// ‚±‚±‚©‚ç
+	// ã“ã“ã‹ã‚‰
 	ModelRendererVertexConstantBuffer<1>* vcb = (ModelRendererVertexConstantBuffer<1>*)shader_->GetVertexConstantBuffer();
 	ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*)shader_->GetPixelConstantBuffer();
 	

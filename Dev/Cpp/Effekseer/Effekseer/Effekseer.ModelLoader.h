@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_MODELLOADER_H__
 #define	__EFFEKSEER_MODELLOADER_H__
 
@@ -15,37 +15,37 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒ‚ƒfƒ‹“Ç‚İ‚İ”jŠüŠÖ”w’èƒNƒ‰ƒX
+	@brief	ãƒ¢ãƒ‡ãƒ«èª­ã¿è¾¼ã¿ç ´æ£„é–¢æ•°æŒ‡å®šã‚¯ãƒ©ã‚¹
 */
 class ModelLoader
 {
 public:
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	ModelLoader() {}
 
 	/**
-		@brief	ƒfƒXƒgƒ‰ƒNƒ^
+		@brief	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	virtual ~ModelLoader() {}
 
 	/**
-		@brief	ƒ‚ƒfƒ‹‚ğ“Ç‚İ‚ŞB
-		@param	path	[in]	“Ç‚İ‚İŒ³ƒpƒX
-		@return	ƒ‚ƒfƒ‹‚Ìƒ|ƒCƒ“ƒ^
+		@brief	ãƒ¢ãƒ‡ãƒ«ã‚’èª­ã¿è¾¼ã‚€ã€‚
+		@param	path	[in]	èª­ã¿è¾¼ã¿å…ƒãƒ‘ã‚¹
+		@return	ãƒ¢ãƒ‡ãƒ«ã®ãƒã‚¤ãƒ³ã‚¿
 		@note
-		ƒ‚ƒfƒ‹‚ğ“Ç‚İ‚ŞB
-		::Effekseer::Effect::CreateÀs‚Ég—p‚³‚ê‚éB
+		ãƒ¢ãƒ‡ãƒ«ã‚’èª­ã¿è¾¼ã‚€ã€‚
+		::Effekseer::Effect::Createå®Ÿè¡Œæ™‚ã«ä½¿ç”¨ã•ã‚Œã‚‹ã€‚
 	*/
 	virtual void* Load( const EFK_CHAR* path ) { return NULL; }
 
 	/**
-		@brief	ƒ‚ƒfƒ‹‚ğ”jŠü‚·‚éB
-		@param	data	[in]	ƒ‚ƒfƒ‹
+		@brief	ãƒ¢ãƒ‡ãƒ«ã‚’ç ´æ£„ã™ã‚‹ã€‚
+		@param	data	[in]	ãƒ¢ãƒ‡ãƒ«
 		@note
-		ƒ‚ƒfƒ‹‚ğ”jŠü‚·‚éB
-		::Effekseer::Effect‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ª”jŠü‚³‚ê‚½‚Ég—p‚³‚ê‚éB
+		ãƒ¢ãƒ‡ãƒ«ã‚’ç ´æ£„ã™ã‚‹ã€‚
+		::Effekseer::Effectã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒç ´æ£„ã•ã‚ŒãŸæ™‚ã«ä½¿ç”¨ã•ã‚Œã‚‹ã€‚
 	*/
 	virtual void Unload( void* data ) {}
 };

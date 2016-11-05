@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -209,15 +209,15 @@ bool Renderer::Initialize( HWND handle, int width, int height )
 	m_renderer = (::EffekseerRendererDX9::RendererImplemented*)::EffekseerRendererDX9::Renderer::Create( m_d3d_device, m_squareMaxCount );
 	m_renderer->SetDistortingCallback(new DistortingCallback(this));
 
-	// ƒOƒŠƒbƒh¶¬
+	// ã‚°ãƒªãƒƒãƒ‰ç”Ÿæˆ
 	m_grid = ::EffekseerRenderer::Grid::Create( m_renderer );
 
-	// ƒKƒCƒhì¬
+	// ã‚¬ã‚¤ãƒ‰ä½œæˆ
 	m_guide = ::EffekseerRenderer::Guide::Create( m_renderer );
 
 	m_culling = ::EffekseerRenderer::Culling::Create( m_renderer );
 
-	// ”wŒiì¬
+	// èƒŒæ™¯ä½œæˆ
 	m_background = ::EffekseerRenderer::Paste::Create( m_renderer );
 
 
@@ -250,7 +250,7 @@ bool Renderer::Present()
 {
 	HRESULT hr;
 
-	// ƒKƒ“ƒ}
+	// ã‚¬ãƒ³ãƒ
 	if (m_isSRGBMode)
 	{
 		IDirect3DSwapChain9* swapChain = nullptr;
@@ -267,21 +267,21 @@ bool Renderer::Present()
 
 	switch ( hr )
 	{
-		// ƒhƒ‰ƒCƒo“à•”‚ÌˆÓ–¡•s–¾‚ÈƒGƒ‰[
+		// ãƒ‰ãƒ©ã‚¤ãƒå†…éƒ¨ã®æ„å‘³ä¸æ˜ãªã‚¨ãƒ©ãƒ¼
 	case D3DERR_DRIVERINTERNALERROR:
 		return false;
 
-		// ƒfƒoƒCƒXƒƒXƒg
+		// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆ
 	case D3DERR_DEVICELOST:
 		while ( FAILED( hr = m_d3d_device->TestCooperativeLevel() ) )
 		{
 			switch ( hr )
 			{
-				// ƒfƒoƒCƒXƒƒXƒg
+				// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆ
 			case D3DERR_DEVICELOST:
 				::SleepEx( 1000, true );
 				break;
-				// ƒfƒoƒCƒXƒƒXƒgFƒŠƒZƒbƒg‰Â
+				// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆï¼šãƒªã‚»ãƒƒãƒˆå¯
 			case D3DERR_DEVICENOTRESET:
 				ResetDevice();
 				break;
@@ -364,12 +364,12 @@ void Renderer::SetPerspectiveFov( int width, int height )
 
 	if( IsRightHand )
 	{
-		// ‰Eè
+		// å³æ‰‹
 		proj.PerspectiveFovRH( 60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f );
 	}
 	else
 	{
-		// ¶è
+		// å·¦æ‰‹
 		proj.PerspectiveFovLH( 60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f );
 	}
 
@@ -388,12 +388,12 @@ void Renderer::SetOrthographic( int width, int height )
 
 	if( IsRightHand )
 	{
-		// ‰Eè
+		// å³æ‰‹
 		proj.OrthographicRH( (float)width / 16.0f / RateOfMagnification, (float)height / 16.0f / RateOfMagnification, 1.0f, 300.0f );
 	}
 	else
 	{
-		// ¶è
+		// å·¦æ‰‹
 		proj.OrthographicLH( (float)width / 16.0f / RateOfMagnification, (float)height / 16.0f / RateOfMagnification, 1.0f, 300.0f );
 	}
 
@@ -471,10 +471,10 @@ bool Renderer::BeginRendering()
 
 	if( FAILED( hr ) ) return false;
 
-	/* ”wŒi */
+	/* èƒŒæ™¯ */
 	if( !m_recording && m_backGroundTexture != NULL )
 	{
-		// ’l‚Í“K“–(”wŒi‚Í‰æ–ÊƒTƒCƒY‚Æˆê’v‚µ‚È‚¢‚Ì‚Å–â‘è‚È‚¢)
+		// å€¤ã¯é©å½“(èƒŒæ™¯ã¯ç”»é¢ã‚µã‚¤ã‚ºã¨ä¸€è‡´ã—ãªã„ã®ã§å•é¡Œãªã„)
 		m_background->Rendering(m_backGroundTexture, 1024, 1024);
 	}
 
@@ -497,7 +497,7 @@ bool Renderer::BeginRendering()
 		m_culling->Rendering( IsRightHand );
 	}
 
-	// ƒKƒCƒh•”•ª‚ª•`‰æ‚³‚ê‚é‚æ‚¤‚ÉŠg‘å
+	// ã‚¬ã‚¤ãƒ‰éƒ¨åˆ†ãŒæç”»ã•ã‚Œã‚‹ã‚ˆã†ã«æ‹¡å¤§
 	if (m_recording)
 	{
 		m_cameraMatTemp = m_renderer->GetCameraMatrix();
@@ -688,7 +688,7 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlp
 			return v_;
 		};
 
-		// ‹­§“§–¾‰»
+		// å¼·åˆ¶é€æ˜åŒ–
 		for (int32_t y = 0; y < m_recordingHeight; y++)
 		{
 			for (int32_t x = 0; x < m_recordingWidth; x++)

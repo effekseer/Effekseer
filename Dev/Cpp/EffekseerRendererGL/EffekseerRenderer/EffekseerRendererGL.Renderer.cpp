@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -341,7 +341,7 @@ void RendererImplemented::OnResetDevice()
 	{
 		m_indexBuffer->Lock();
 
-		// ( •W€İ’è‚Å@DirectX Œvü‚è‚ª•\, OpenGL‚Í”½Œv‰ñ‚è‚ª•\ )
+		// ( æ¨™æº–è¨­å®šã§ã€€DirectX æ™‚è¨ˆå‘¨ã‚ŠãŒè¡¨, OpenGLã¯åæ™‚è¨ˆå›ã‚ŠãŒè¡¨ )
 		for( int i = 0; i < m_squareMaxCount; i++ )
 		{
 			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect( 6 );
@@ -362,25 +362,25 @@ void RendererImplemented::OnResetDevice()
 //----------------------------------------------------------------------------------
 bool RendererImplemented::Initialize()
 {
-	// ’¸“_‚Ì¶¬
+	// é ‚ç‚¹ã®ç”Ÿæˆ
 	{
-		// Å‘å‚Åfloat * 10 ‚Æ‰¼’è
+		// æœ€å¤§ã§float * 10 ã¨ä»®å®š
 		m_vertexBuffer = VertexBuffer::Create( this, sizeof(Vertex) * m_squareMaxCount * 4, true );
 		if( m_vertexBuffer == NULL ) return false;
 	}
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 
-	// ƒCƒ“ƒfƒbƒNƒX‚Ì¶¬
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®ç”Ÿæˆ
 	{
 		m_indexBuffer = IndexBuffer::Create( this, m_squareMaxCount * 6, false );
 		if( m_indexBuffer == NULL ) return false;
 
 		m_indexBuffer->Lock();
 
-		// ( •W€İ’è‚Å@DirectX Œvü‚è‚ª•\, OpenGL‚Í”½Œv‰ñ‚è‚ª•\ )
+		// ( æ¨™æº–è¨­å®šã§ã€€DirectX æ™‚è¨ˆå‘¨ã‚ŠãŒè¡¨, OpenGLã¯åæ™‚è¨ˆå›ã‚ŠãŒè¡¨ )
 		for( int i = 0; i < m_squareMaxCount; i++ )
 		{
 			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect( 6 );
@@ -395,7 +395,7 @@ bool RendererImplemented::Initialize()
 		m_indexBuffer->Unlock();
 	}
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 	m_renderState = new RenderState( this );
@@ -406,7 +406,7 @@ bool RendererImplemented::Initialize()
 		"Standard Tex");
 	if (m_shader == nullptr) return false;
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 	m_shader_no_texture = Shader::Create(this,
@@ -418,7 +418,7 @@ bool RendererImplemented::Initialize()
 		return false;
 	}
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 	m_shader_distortion = Shader::Create(this,
@@ -427,7 +427,7 @@ bool RendererImplemented::Initialize()
 		"Standard Distortion Tex");
 	if (m_shader_distortion == nullptr) return false;
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 	m_shader_no_texture_distortion = Shader::Create(this,
@@ -439,7 +439,7 @@ bool RendererImplemented::Initialize()
 		return false;
 	}
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 	static ShaderAttribInfo sprite_attribs[3] = {
@@ -456,7 +456,7 @@ bool RendererImplemented::Initialize()
 		{ "atTangent", GL_FLOAT, 3, 36, false },
 	};
 
-	// ’¸“_‘®«ID‚ğæ“¾
+	// é ‚ç‚¹å±æ€§IDã‚’å–å¾—
 	m_shader->GetAttribIdList(3, sprite_attribs);
 	m_shader->SetVertexSize(sizeof(Vertex));
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
@@ -492,11 +492,11 @@ bool RendererImplemented::Initialize()
 		);
 
 	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer());
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	if (m_vao != nullptr) Release();
 
 	m_vao_no_texture = VertexArray::Create(this, m_shader_no_texture, GetVertexBuffer(), GetIndexBuffer());
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	if (m_vao_no_texture != nullptr) Release();
 
 	// Distortion
@@ -554,12 +554,12 @@ bool RendererImplemented::Initialize()
 
 	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer());
 	
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	if (m_vao_distortion != nullptr) Release();
 
 	m_vao_no_texture_distortion = VertexArray::Create(this, m_shader_no_texture_distortion, GetVertexBuffer(), GetIndexBuffer());
 	
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	if (m_vao_no_texture_distortion != nullptr) Release();
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex, VertexDistortion>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
@@ -589,7 +589,7 @@ bool RendererImplemented::BeginRendering()
 
 	::Effekseer::Matrix44::Mul( m_cameraProj, m_camera, m_proj );
 
-	// ƒXƒe[ƒg‚ğ•Û‘¶‚·‚é
+	// ã‚¹ãƒ†ãƒ¼ãƒˆã‚’ä¿å­˜ã™ã‚‹
 	if(m_restorationOfStates)
 	{
 		m_originalState.blend = glIsEnabled(GL_BLEND);
@@ -617,7 +617,7 @@ bool RendererImplemented::BeginRendering()
 	m_renderState->Update( true );
 	m_currentTextures.clear();
 
-	// ƒŒƒ“ƒ_ƒ‰[ƒŠƒZƒbƒg
+	// ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ãƒªã‚»ãƒƒãƒˆ
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
 	GLCheckError();
@@ -632,10 +632,10 @@ bool RendererImplemented::EndRendering()
 {
 	GLCheckError();
 
-	// ƒŒƒ“ƒ_ƒ‰[ƒŠƒZƒbƒg
+	// ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ãƒªã‚»ãƒƒãƒˆ
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
-	// ƒXƒe[ƒg‚ğ•œŒ³‚·‚é
+	// ã‚¹ãƒ†ãƒ¼ãƒˆã‚’å¾©å…ƒã™ã‚‹
 	if(m_restorationOfStates)
 	{
 		if (m_originalState.blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
@@ -704,25 +704,25 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 	ES_SAFE_DELETE(m_vertexBuffer);
 	ES_SAFE_DELETE(m_indexBuffer);
 
-	// ’¸“_‚Ì¶¬
+	// é ‚ç‚¹ã®ç”Ÿæˆ
 	{
-		// Å‘å‚Åfloat * 10 ‚Æ‰¼’è
+		// æœ€å¤§ã§float * 10 ã¨ä»®å®š
 		m_vertexBuffer = VertexBuffer::Create(this, sizeof(Vertex) * m_squareMaxCount * 4, true);
 		if (m_vertexBuffer == NULL) return;
 	}
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 
-	// ƒCƒ“ƒfƒbƒNƒX‚Ì¶¬
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®ç”Ÿæˆ
 	{
 		m_indexBuffer = IndexBuffer::Create(this, m_squareMaxCount * 6, false);
 		if (m_indexBuffer == NULL) return;
 
 		m_indexBuffer->Lock();
 
-		// ( •W€İ’è‚Å@DirectX Œvü‚è‚ª•\, OpenGL‚Í”½Œv‰ñ‚è‚ª•\ )
+		// ( æ¨™æº–è¨­å®šã§ã€€DirectX æ™‚è¨ˆå‘¨ã‚ŠãŒè¡¨, OpenGLã¯åæ™‚è¨ˆå›ã‚ŠãŒè¡¨ )
 		for (int i = 0; i < m_squareMaxCount; i++)
 		{
 			uint16_t* buf = (uint16_t*) m_indexBuffer->GetBufferDirect(6);
@@ -737,7 +737,7 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 		m_indexBuffer->Unlock();
 	}
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 }
 
@@ -993,7 +993,7 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 
 	//assert( vertexOffset == 0 );
 
-	// ‘S‚Ä‚ªƒXƒvƒ‰ƒCƒg‚Å‚ ‚é‚±‚Æ‘O’ñ
+	// å…¨ã¦ãŒã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã§ã‚ã‚‹ã“ã¨å‰æ
 	auto triangles = vertexOffset / 4 * 2;
 
 	glDrawElements(GL_TRIANGLES, spriteCount * 6, GL_UNSIGNED_SHORT, (void*) (triangles * 3 * sizeof(GLushort)));
@@ -1020,7 +1020,7 @@ void RendererImplemented::BeginShader(Shader* shader)
 {
 	GLCheckError();
 
-	// VAO‚ÌØ‚è‘Ö‚¦
+	// VAOã®åˆ‡ã‚Šæ›¿ãˆ
 	if (shader == m_shader)
 	{
 		SetVertexArray(m_vao);

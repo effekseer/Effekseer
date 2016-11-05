@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEER_CLIENT_H__
 #define	__EFFEKSEER_CLIENT_H__
 

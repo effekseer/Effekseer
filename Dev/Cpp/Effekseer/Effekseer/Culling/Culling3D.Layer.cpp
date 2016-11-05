@@ -1,4 +1,4 @@
-
+﻿
 #include "Culling3D.Layer.h"
 #include "Culling3D.ObjectInternal.h"
 

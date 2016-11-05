@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -44,14 +44,14 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 	if( reader.get() == NULL ) return NULL;
 
 	uint32_t chunkIdent, chunkSize;
-	// RIFFƒ`ƒƒƒ“ƒN‚ğƒ`ƒFƒbƒN
+	// RIFFãƒãƒ£ãƒ³ã‚¯ã‚’ãƒã‚§ãƒƒã‚¯
 	reader->Read(&chunkIdent, 4);
 	reader->Read(&chunkSize, 4);
 	if (memcmp(&chunkIdent, "RIFF", 4) != 0) {
 		return NULL;
 	}
 
-	// WAVEƒVƒ“ƒ{ƒ‹‚ğƒ`ƒFƒbƒN
+	// WAVEã‚·ãƒ³ãƒœãƒ«ã‚’ãƒã‚§ãƒƒã‚¯
 	reader->Read(&chunkIdent, 4);
 	if (memcmp(&chunkIdent, "WAVE", 4) != 0) {
 		return NULL;
@@ -71,22 +71,22 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 		reader->Read(&chunkSize, 4);
 
 		if (memcmp(&chunkIdent, "fmt ", 4) == 0) {
-			// ƒtƒH[ƒ}ƒbƒgƒ`ƒƒƒ“ƒN
+			// ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆãƒãƒ£ãƒ³ã‚¯
 			uint32_t size = (chunkSize < sizeof(wavefmt)) ? chunkSize : sizeof(wavefmt);
 			reader->Read(&wavefmt, size);
 			if (size < chunkSize) {
 				reader->Seek(reader->GetPosition() + chunkSize - size);
 			}
 		} else if (memcmp(&chunkIdent, "data", 4) == 0) {
-			// ƒf[ƒ^ƒ`ƒƒƒ“ƒN
+			// ãƒ‡ãƒ¼ã‚¿ãƒãƒ£ãƒ³ã‚¯
 			break;
 		} else {
-			// •s–¾‚Èƒ`ƒƒƒ“ƒN‚ÍƒXƒLƒbƒv
+			// ä¸æ˜ãªãƒãƒ£ãƒ³ã‚¯ã¯ã‚¹ã‚­ãƒƒãƒ—
 			reader->Seek(reader->GetPosition() + chunkSize);
 		}
 	}
 	
-	// ƒtƒH[ƒ}ƒbƒgƒ`ƒFƒbƒN
+	// ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆãƒã‚§ãƒƒã‚¯
 	if (wavefmt.wFormatTag != 1 || wavefmt.nChannels > 2 || wavefmt.wBitsPerSample > 16) {
 		return NULL;
 	}
@@ -95,7 +95,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 	uint32_t size;
 	switch (wavefmt.wBitsPerSample) {
 	case 8:
-		// 16bitPCM‚É•ÏŠ·
+		// 16bitPCMã«å¤‰æ›
 		size = chunkSize * 2;
 		buffer = new uint8_t[size];
 		reader->Read(&buffer[size / 2], chunkSize);
@@ -108,7 +108,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 		}
 		break;
 	case 16:
-		// ‚»‚Ì‚Ü‚Ü“Ç‚İ‚İ
+		// ãã®ã¾ã¾èª­ã¿è¾¼ã¿
 		buffer = new uint8_t[chunkSize];
 		size = reader->Read(buffer, chunkSize);
 		break;

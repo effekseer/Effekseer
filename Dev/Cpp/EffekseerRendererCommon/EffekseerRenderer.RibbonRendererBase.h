@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_RIBBON_RENDERER_BASE_H__
 #define	__EFFEKSEERRENDERER_RIBBON_RENDERER_BASE_H__
 
@@ -129,7 +129,7 @@ protected:
 			::Effekseer::Vector3D t;
 			mat.GetSRT( s, r, t );
 	
-			// Šg‘å
+			// æ‹¡å¤§
 			for( int i = 0; i < 2; i++ )
 			{
 				verteies[i].Pos.X = verteies[i].Pos.X * s.X;
@@ -196,7 +196,7 @@ protected:
 			m_ribbonCount++;
 		}
 
-		/* ˜c‚Ý‚ð“K—p */
+		/* æ­ªã¿ã‚’é©ç”¨ */
 		if (isLast && sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
 		{
 			VERTEX_DISTORTION* vs_ = (VERTEX_DISTORTION*) (m_ringBufferData - sizeof(VERTEX_DISTORTION) * (instanceParameter.InstanceCount - 1) * 4);

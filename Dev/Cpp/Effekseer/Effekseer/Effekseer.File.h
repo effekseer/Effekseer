@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_FILE_H__
 #define	__EFFEKSEER_FILE_H__
 
@@ -15,7 +15,7 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒtƒ@ƒCƒ‹“Ç‚İ‚İƒNƒ‰ƒX
+	@brief	ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ã‚¯ãƒ©ã‚¹
 */
 class FileReader
 {
@@ -36,7 +36,7 @@ public:
 };
 
 /**
-	@brief	ƒtƒ@ƒCƒ‹‘‚«‚İƒNƒ‰ƒX
+	@brief	ãƒ•ã‚¡ã‚¤ãƒ«æ›¸ãè¾¼ã¿ã‚¯ãƒ©ã‚¹
 */
 class FileWriter
 {
@@ -59,7 +59,7 @@ public:
 };
 
 /**
-	@brief	ƒtƒ@ƒCƒ‹ƒAƒNƒZƒX—p‚Ìƒtƒ@ƒNƒgƒŠƒNƒ‰ƒX
+	@brief	ãƒ•ã‚¡ã‚¤ãƒ«ã‚¢ã‚¯ã‚»ã‚¹ç”¨ã®ãƒ•ã‚¡ã‚¯ãƒˆãƒªã‚¯ãƒ©ã‚¹
 */
 class FileInterface
 {

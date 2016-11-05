@@ -1,4 +1,4 @@
-
+ï»¿
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 
 //----------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 
 		if( FAILED( hr ) )
 		{
-			/* DirectX9Ex‚Å‚ÍD3DPOOL_MANAGEDŽg—p•s‰Â */
+			/* DirectX9Exã§ã¯D3DPOOL_MANAGEDä½¿ç”¨ä¸å¯ */
 			hr = m_renderer->GetDevice()->CreateVertexBuffer(
 				sizeof(Effekseer::Model::VertexWithIndex) * model->VertexCount * model->ModelCount,
 				D3DUSAGE_WRITEONLY,
@@ -111,7 +111,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 
 		model->FaceCount = model->GetFaceCount();
 
-		/* 0.50‚æ‚è’Ç‰Á(0.50ˆÈ‘O‚©‚çˆÚs‚·‚éŽž‚Í’Ç‹L‚·‚é•K—v‚ ‚è) */
+		/* 0.50ã‚ˆã‚Šè¿½åŠ (0.50ä»¥å‰ã‹ã‚‰ç§»è¡Œã™ã‚‹æ™‚ã¯è¿½è¨˜ã™ã‚‹å¿…è¦ã‚ã‚Š) */
 		model->IndexCount = model->FaceCount * 3;
 
 		IDirect3DIndexBuffer9* ib = NULL;

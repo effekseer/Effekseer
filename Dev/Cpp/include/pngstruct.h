@@ -1,4 +1,4 @@
-
+﻿
 /* pngstruct.h - header file for PNG reference library
  *
  * Last changed in libpng 1.6.18 [July 23, 2015]

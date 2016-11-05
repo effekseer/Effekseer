@@ -1,4 +1,4 @@
-
+ï»¿
 #include "Culling3D.WorldInternal.h"
 #include "Culling3D.ObjectInternal.h"
 
@@ -218,19 +218,19 @@ namespace Culling3D
 		aabb_min.Y = Min(from.Y, to.Y);
 		aabb_min.Z = Min(from.Z, to.Z);
 
-		/* ”ÍˆÍ“à‚ÉŠÜ‚Ü‚ê‚éƒOƒŠƒbƒh‚ğæ“¾ */
+		/* ç¯„å›²å†…ã«å«ã¾ã‚Œã‚‹ã‚°ãƒªãƒƒãƒ‰ã‚’å–å¾— */
 		for (size_t i = 0; i < layers.size(); i++)
 		{
 			layers[i]->AddGrids(aabb_max, aabb_min, grids);
 		}
 
-		/* ŠO—Ìˆæ’Ç‰Á */
+		/* å¤–é ˜åŸŸè¿½åŠ  */
 		grids.push_back(&outofLayers);
 		grids.push_back(&allLayers);
 
-		/* ƒOƒŠƒbƒh‚©‚çƒIƒuƒWƒFƒNƒgæ“¾ */
+		/* ã‚°ãƒªãƒƒãƒ‰ã‹ã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾— */
 		
-		/* ‰ŠúŒvZ */
+		/* åˆæœŸè¨ˆç®— */
 		auto ray_dir = (to - from);
 		auto ray_len = ray_dir.GetLength();
 		ray_dir.Normalize();
@@ -248,7 +248,7 @@ namespace Culling3D
 					continue;
 				}
 
-				// ‹…ü•ª”»’è
+				// çƒç·šåˆ†åˆ¤å®š
 				{
 					auto radius = o_->GetNextStatus().GetRadius();
 					auto pos = o_->GetNextStatus().Position;
@@ -267,12 +267,12 @@ namespace Culling3D
 					continue;
 				}
 
-				// AABB”»’è
-				// QlFhttp://marupeke296.com/COL_3D_No18_LineAndAABB.html
+				// AABBåˆ¤å®š
+				// å‚è€ƒï¼šhttp://marupeke296.com/COL_3D_No18_LineAndAABB.html
 
 				if (o_->GetNextStatus().Type == OBJECT_SHAPE_TYPE_CUBOID)
 				{
-					// Œğ·”»’è
+					// äº¤å·®åˆ¤å®š
 					float p[3], d[3], min[3], max[3];
 					auto pos = o_->GetCurrentStatus().Position;
 					memcpy(p, &from, sizeof(Vector3DF));
@@ -297,14 +297,14 @@ namespace Culling3D
 						{
 							if (p[i] < min[i] || p[i] > max[i])
 							{
-								// Œğ·‚µ‚Ä‚¢‚È‚¢
+								// äº¤å·®ã—ã¦ã„ãªã„
 								continue;
 							}
 						}
 						else
 						{
-							// ƒXƒ‰ƒu‚Æ‚Ì‹——£‚ğZo
-							// t1‚ª‹ßƒXƒ‰ƒuAt2‚ª‰“ƒXƒ‰ƒu‚Æ‚Ì‹——£
+							// ã‚¹ãƒ©ãƒ–ã¨ã®è·é›¢ã‚’ç®—å‡º
+							// t1ãŒè¿‘ã‚¹ãƒ©ãƒ–ã€t2ãŒé ã‚¹ãƒ©ãƒ–ã¨ã®è·é›¢
 							float odd = 1.0f / d[i];
 							float t1 = (min[i] - p[i]) * odd;
 							float t2 = (max[i] - p[i]) * odd;
@@ -316,16 +316,16 @@ namespace Culling3D
 							if (t1 > t) t = t1;
 							if (t2 < t_max) t_max = t2;
 
-							// ƒXƒ‰ƒuŒğ·ƒ`ƒFƒbƒN
+							// ã‚¹ãƒ©ãƒ–äº¤å·®ãƒã‚§ãƒƒã‚¯
 							if (t >= t_max)
 							{
-								// Œğ·‚µ‚Ä‚¢‚È‚¢
+								// äº¤å·®ã—ã¦ã„ãªã„
 								continue;
 							}
 						}
 					}
 
-					// Œğ·‚µ‚Ä‚¢‚é
+					// äº¤å·®ã—ã¦ã„ã‚‹
 					if (0 <= t  && t <= ray_len)
 					{
 						objs.push_back(o);
@@ -335,7 +335,7 @@ namespace Culling3D
 			}
 		}
 
-		/* æ“¾‚µ‚½ƒOƒŠƒbƒh‚ğ”jŠü */
+		/* å–å¾—ã—ãŸã‚°ãƒªãƒƒãƒ‰ã‚’ç ´æ£„ */
 		for (size_t i = 0; i < grids.size(); i++)
 		{
 			grids[i]->IsScanned = false;
@@ -467,7 +467,7 @@ namespace Culling3D
 							if (eyebox_[i].Z < min_.Z) min_.Z = eyebox_[i].Z;
 						}
 
-						/* ”ÍˆÍ“à‚ÉŠÜ‚Ü‚ê‚éƒOƒŠƒbƒh‚ğæ“¾ */
+						/* ç¯„å›²å†…ã«å«ã¾ã‚Œã‚‹ã‚°ãƒªãƒƒãƒ‰ã‚’å–å¾— */
 						for (size_t i = 0; i < layers.size(); i++)
 						{
 							layers[i]->AddGrids(max_, min_, grids);
@@ -476,11 +476,11 @@ namespace Culling3D
 				}
 			}
 
-			/* ŠO—Ìˆæ’Ç‰Á */
+			/* å¤–é ˜åŸŸè¿½åŠ  */
 			grids.push_back(&outofLayers);
 			grids.push_back(&allLayers);
 
-			/* ƒOƒŠƒbƒh‚©‚çƒIƒuƒWƒFƒNƒgæ“¾ */
+			/* ã‚°ãƒªãƒƒãƒ‰ã‹ã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾— */
 			for (size_t i = 0; i < grids.size(); i++)
 			{
 				for (size_t j = 0; j < grids[i]->GetObjects().size(); j++)
@@ -497,7 +497,7 @@ namespace Culling3D
 				}
 			}
 
-			/* æ“¾‚µ‚½ƒOƒŠƒbƒh‚ğ”jŠü */
+			/* å–å¾—ã—ãŸã‚°ãƒªãƒƒãƒ‰ã‚’ç ´æ£„ */
 			for (size_t i = 0; i < grids.size(); i++)
 			{
 				grids[i]->IsScanned = false;
@@ -509,7 +509,7 @@ namespace Culling3D
 		{
 			grids.push_back(&allLayers);
 
-			/* ƒOƒŠƒbƒh‚©‚çƒIƒuƒWƒFƒNƒgæ“¾ */
+			/* ã‚°ãƒªãƒƒãƒ‰ã‹ã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå–å¾— */
 			for (size_t i = 0; i < grids.size(); i++)
 			{
 				for (size_t j = 0; j < grids[i]->GetObjects().size(); j++)
@@ -524,7 +524,7 @@ namespace Culling3D
 				}
 			}
 
-			/* æ“¾‚µ‚½ƒOƒŠƒbƒh‚ğ”jŠü */
+			/* å–å¾—ã—ãŸã‚°ãƒªãƒƒãƒ‰ã‚’ç ´æ£„ */
 			for (size_t i = 0; i < grids.size(); i++)
 			{
 				grids[i]->IsScanned = false;
@@ -537,7 +537,7 @@ namespace Culling3D
 
 	bool WorldInternal::Reassign()
 	{
-		/* ”‚ª­‚È‚¢ */
+		/* æ•°ãŒå°‘ãªã„ */
 		if (outofLayers.GetObjects().size() < 10) return false;
 
 		objs.clear();
@@ -599,7 +599,7 @@ namespace Culling3D
 	{
 		std::ofstream ofs(path);
 
-		/* ƒJƒƒ‰î•ño—Í */
+		/* ã‚«ãƒ¡ãƒ©æƒ…å ±å‡ºåŠ› */
 		Matrix44 cameraProjMatInv = cameraProjMat;
 		cameraProjMatInv.SetInverted();
 
@@ -702,7 +702,7 @@ namespace Culling3D
 
 		ofs << std::endl;
 	
-		/* ƒŒƒCƒ„[î•ñ */
+		/* ãƒ¬ã‚¤ãƒ¤ãƒ¼æƒ…å ± */
 		ofs << layers.size() << std::endl;
 
 		for (size_t i = 0; i < layers.size(); i++)

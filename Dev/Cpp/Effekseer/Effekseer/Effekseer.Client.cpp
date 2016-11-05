@@ -1,4 +1,4 @@
-
+Ôªø
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ void ClientImplemented::RecvAsync( void* data )
 
 			if( recvSize == 0 || recvSize == -1 )
 			{
-				/* é∏îs */
+				/* Â§±Êïó */
 				client->Stop();
 				return;
 			}
@@ -73,7 +73,7 @@ HOSTENT* ClientImplemented::GetHostEntry( const char* host )
 	HOSTENT* hostEntry = NULL;
 	IN_ADDR InAddrHost;
 
-	/* IPÉAÉhÉåÉXÇ©DNSÇ©í≤Ç◊ÇÈ */
+	/* IP„Ç¢„Éâ„É¨„Çπ„ÅãDNS„ÅãË™ø„Åπ„Çã */
 	InAddrHost.s_addr = ::inet_addr( host );
 	if ( InAddrHost.s_addr == InaddrNone )
 	{
@@ -86,7 +86,7 @@ HOSTENT* ClientImplemented::GetHostEntry( const char* host )
 	}
 	else
 	{
-		/* IPÉAÉhÉåÉX */
+		/* IP„Ç¢„Éâ„É¨„Çπ */
 		hostEntry = ::gethostbyaddr( (const char*)(&InAddrHost), sizeof(IN_ADDR), AF_INET );
 		if ( hostEntry == NULL )
 		{
@@ -107,7 +107,7 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 	SOCKADDR_IN sockAddr;
 	HOSTENT* hostEntry= NULL;
 	
-	/* É\ÉPÉbÉgê∂ê¨ */
+	/* „ÇΩ„Ç±„ÉÉ„ÉàÁîüÊàê */
 	EfkSocket socket_ = Socket::GenSocket();
 	if ( socket_ == InvalidSocket )
 	{
@@ -115,7 +115,7 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 		return false;
 	}
 
-	/* ÉzÉXÉgèÓïÒéÊìæ */
+	/* „Éõ„Çπ„ÉàÊÉÖÂ†±ÂèñÂæó */
 	hostEntry = GetHostEntry( host );
 	if ( hostEntry == NULL )
 	{
@@ -123,13 +123,13 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 		return false;
 	}
 
-	/* ê⁄ë±ópÉfÅ[É^ê∂ê¨ */
+	/* Êé•Á∂öÁî®„Éá„Éº„ÇøÁîüÊàê */
 	memset( &sockAddr, 0, sizeof(SOCKADDR_IN) );
 	sockAddr.sin_family	= AF_INET;
 	sockAddr.sin_port	= htons( port );
 	sockAddr.sin_addr	= *(IN_ADDR*)(hostEntry->h_addr_list[0]);
 
-	/* ê⁄ë± */
+	/* Êé•Á∂ö */
 	int32_t ret = ::connect( socket_, (SOCKADDR*)(&sockAddr), sizeof(SOCKADDR_IN) );
 	if ( ret == SocketError )
 	{

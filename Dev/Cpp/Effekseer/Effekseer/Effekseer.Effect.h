@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_EFFECT_H__
 #define	__EFFEKSEER_EFFECT_H__
 
@@ -17,9 +17,9 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
-	@brief	ƒGƒtƒFƒNƒgƒpƒ‰ƒ[ƒ^[ƒNƒ‰ƒX
+	@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã‚¯ãƒ©ã‚¹
 	@note
-	ƒGƒtƒFƒNƒg‚Éİ’è‚³‚ê‚½ƒpƒ‰ƒ[ƒ^[B
+	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã«è¨­å®šã•ã‚ŒãŸãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã€‚
 */
 class Effect
 	: public IReference
@@ -31,177 +31,177 @@ protected:
 public:
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ğ¶¬‚·‚éB
-		@param	manager			[in]	ŠÇ—ƒNƒ‰ƒX
-		@param	data			[in]	ƒf[ƒ^”z—ñ‚Ìæ“ª‚Ìƒ|ƒCƒ“ƒ^
-		@param	size			[in]	ƒf[ƒ^”z—ñ‚Ì’·‚³
-		@param	magnification	[in]	“Ç‚İ‚İ‚ÌŠg‘å—¦
-		@param	materialPath	[in]	‘fŞƒ[ƒh‚ÌŠî€ƒpƒX
-		@return	ƒGƒtƒFƒNƒgB¸”s‚µ‚½ê‡‚ÍNULL‚ğ•Ô‚·B
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	manager			[in]	ç®¡ç†ã‚¯ãƒ©ã‚¹
+		@param	data			[in]	ãƒ‡ãƒ¼ã‚¿é…åˆ—ã®å…ˆé ­ã®ãƒã‚¤ãƒ³ã‚¿
+		@param	size			[in]	ãƒ‡ãƒ¼ã‚¿é…åˆ—ã®é•·ã•
+		@param	magnification	[in]	èª­ã¿è¾¼ã¿æ™‚ã®æ‹¡å¤§ç‡
+		@param	materialPath	[in]	ç´ æãƒ­ãƒ¼ãƒ‰æ™‚ã®åŸºæº–ãƒ‘ã‚¹
+		@return	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã€‚å¤±æ•—ã—ãŸå ´åˆã¯NULLã‚’è¿”ã™ã€‚
 	*/
 	static Effect* Create( Manager* manager, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ğ¶¬‚·‚éB
-		@param	manager			[in]	ŠÇ—ƒNƒ‰ƒX
-		@param	path			[in]	“ÇŒ³‚ÌƒpƒX
-		@param	magnification	[in]	“Ç‚İ‚İ‚ÌŠg‘å—¦
-		@param	materialPath	[in]	‘fŞƒ[ƒh‚ÌŠî€ƒpƒX
-		@return	ƒGƒtƒFƒNƒgB¸”s‚µ‚½ê‡‚ÍNULL‚ğ•Ô‚·B
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	manager			[in]	ç®¡ç†ã‚¯ãƒ©ã‚¹
+		@param	path			[in]	èª­è¾¼å…ƒã®ãƒ‘ã‚¹
+		@param	magnification	[in]	èª­ã¿è¾¼ã¿æ™‚ã®æ‹¡å¤§ç‡
+		@param	materialPath	[in]	ç´ æãƒ­ãƒ¼ãƒ‰æ™‚ã®åŸºæº–ãƒ‘ã‚¹
+		@return	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã€‚å¤±æ•—ã—ãŸå ´åˆã¯NULLã‚’è¿”ã™ã€‚
 	*/
 	static Effect* Create( Manager* manager, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
 
 		/**
-		@brief	ƒGƒtƒFƒNƒg‚ğ¶¬‚·‚éB
-		@param	setting			[in]	İ’èƒNƒ‰ƒX
-		@param	data			[in]	ƒf[ƒ^”z—ñ‚Ìæ“ª‚Ìƒ|ƒCƒ“ƒ^
-		@param	size			[in]	ƒf[ƒ^”z—ñ‚Ì’·‚³
-		@param	magnification	[in]	“Ç‚İ‚İ‚ÌŠg‘å—¦
-		@param	materialPath	[in]	‘fŞƒ[ƒh‚ÌŠî€ƒpƒX
-		@return	ƒGƒtƒFƒNƒgB¸”s‚µ‚½ê‡‚ÍNULL‚ğ•Ô‚·B
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	setting			[in]	è¨­å®šã‚¯ãƒ©ã‚¹
+		@param	data			[in]	ãƒ‡ãƒ¼ã‚¿é…åˆ—ã®å…ˆé ­ã®ãƒã‚¤ãƒ³ã‚¿
+		@param	size			[in]	ãƒ‡ãƒ¼ã‚¿é…åˆ—ã®é•·ã•
+		@param	magnification	[in]	èª­ã¿è¾¼ã¿æ™‚ã®æ‹¡å¤§ç‡
+		@param	materialPath	[in]	ç´ æãƒ­ãƒ¼ãƒ‰æ™‚ã®åŸºæº–ãƒ‘ã‚¹
+		@return	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã€‚å¤±æ•—ã—ãŸå ´åˆã¯NULLã‚’è¿”ã™ã€‚
 	*/
 	static Effect* Create( Setting*	setting, void* data, int32_t size, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ğ¶¬‚·‚éB
-		@param	setting			[in]	İ’èƒNƒ‰ƒX
-		@param	path			[in]	“ÇŒ³‚ÌƒpƒX
-		@param	magnification	[in]	“Ç‚İ‚İ‚ÌŠg‘å—¦
-		@param	materialPath	[in]	‘fŞƒ[ƒh‚ÌŠî€ƒpƒX
-		@return	ƒGƒtƒFƒNƒgB¸”s‚µ‚½ê‡‚ÍNULL‚ğ•Ô‚·B
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	setting			[in]	è¨­å®šã‚¯ãƒ©ã‚¹
+		@param	path			[in]	èª­è¾¼å…ƒã®ãƒ‘ã‚¹
+		@param	magnification	[in]	èª­ã¿è¾¼ã¿æ™‚ã®æ‹¡å¤§ç‡
+		@param	materialPath	[in]	ç´ æãƒ­ãƒ¼ãƒ‰æ™‚ã®åŸºæº–ãƒ‘ã‚¹
+		@return	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã€‚å¤±æ•—ã—ãŸå ´åˆã¯NULLã‚’è¿”ã™ã€‚
 	*/
 	static Effect* Create( Setting*	setting, const EFK_CHAR* path, float magnification = 1.0f, const EFK_CHAR* materialPath = NULL );
 
 	/**
-	@brief	•W€‚ÌƒGƒtƒFƒNƒg“ÇƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éB
+	@brief	æ¨™æº–ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆèª­è¾¼ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
 
 	/**
-	@brief	İ’è‚ğæ“¾‚·‚éB
-	@return	İ’è
+	@brief	è¨­å®šã‚’å–å¾—ã™ã‚‹ã€‚
+	@return	è¨­å®š
 	*/
 	virtual Setting* GetSetting() const = 0;
 
-	/* Šg‘å—¦‚ğæ“¾‚·‚éB */
+	/* æ‹¡å¤§ç‡ã‚’å–å¾—ã™ã‚‹ã€‚ */
 	virtual float GetMaginification() const = 0;
 	
 	/**
-		@brief	ƒGƒtƒFƒNƒgƒf[ƒ^‚Ìƒo[ƒWƒ‡ƒ“æ“¾
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ‡ãƒ¼ã‚¿ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³å–å¾—
 	*/
 	virtual int GetVersion() const = 0;
 
 	/**
-		@brief	Ši”[‚³‚ê‚Ä‚¢‚éF‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾‚·‚éB
-		@param	n	[in]	‰æ‘œ‚ÌƒCƒ“ƒfƒbƒNƒX
-		@return	‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^
+		@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹è‰²ç”»åƒã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
+		@param	n	[in]	ç”»åƒã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+		@return	ç”»åƒã®ãƒã‚¤ãƒ³ã‚¿
 	*/
 	virtual void* GetColorImage( int n ) const = 0;
 
 	/**
-	@brief	Ši”[‚³‚ê‚Ä‚¢‚é‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^‚ÌŒÂ”‚ğæ“¾‚·‚éB
+	@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ç”»åƒã®ãƒã‚¤ãƒ³ã‚¿ã®å€‹æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual int32_t GetColorImageCount() const = 0;
 
 	/**
-	@brief	Ši”[‚³‚ê‚Ä‚¢‚é–@ü‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾‚·‚éB
-	@param	n	[in]	‰æ‘œ‚ÌƒCƒ“ƒfƒbƒNƒX
-	@return	‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^
+	@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹æ³•ç·šç”»åƒã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
+	@param	n	[in]	ç”»åƒã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	@return	ç”»åƒã®ãƒã‚¤ãƒ³ã‚¿
 	*/
 	virtual void* GetNormalImage(int n) const = 0;
 
 	/**
-	@brief	Ši”[‚³‚ê‚Ä‚¢‚é–@ü‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^‚ÌŒÂ”‚ğæ“¾‚·‚éB
+	@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹æ³•ç·šç”»åƒã®ãƒã‚¤ãƒ³ã‚¿ã®å€‹æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual int32_t GetNormalImageCount() const = 0;
 
 	/**
-	@brief	Ši”[‚³‚ê‚Ä‚¢‚é˜c‚İ‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾‚·‚éB
-	@param	n	[in]	‰æ‘œ‚ÌƒCƒ“ƒfƒbƒNƒX
-	@return	‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^
+	@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹æ­ªã¿ç”»åƒã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
+	@param	n	[in]	ç”»åƒã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	@return	ç”»åƒã®ãƒã‚¤ãƒ³ã‚¿
 	*/
 	virtual void* GetDistortionImage(int n) const = 0;
 
 	/**
-	@brief	Ši”[‚³‚ê‚Ä‚¢‚é˜c‚İ‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^‚ÌŒÂ”‚ğæ“¾‚·‚éB
+	@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹æ­ªã¿ç”»åƒã®ãƒã‚¤ãƒ³ã‚¿ã®å€‹æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual int32_t GetDistortionImageCount() const = 0;
 
 	/**
-		@brief	Ši”[‚³‚ê‚Ä‚¢‚é‰¹”gŒ`‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾‚·‚éB
+		@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹éŸ³æ³¢å½¢ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual void* GetWave( int n ) const = 0;
 
 	/**
-	@brief	Ši”[‚³‚ê‚Ä‚¢‚é‰¹”gŒ`‚Ìƒ|ƒCƒ“ƒ^‚ÌŒÂ”‚ğæ“¾‚·‚éB
+	@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹éŸ³æ³¢å½¢ã®ãƒã‚¤ãƒ³ã‚¿ã®å€‹æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual int32_t GetWaveCount() const = 0;
 
 	/**
-		@brief	Ši”[‚³‚ê‚Ä‚¢‚éƒ‚ƒfƒ‹‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾‚·‚éB
+		@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual void* GetModel( int n ) const = 0;
 
 	/**
-	@brief	Ši”[‚³‚ê‚Ä‚¢‚éƒ‚ƒfƒ‹‚Ìƒ|ƒCƒ“ƒ^‚ÌŒÂ”‚ğæ“¾‚·‚éB
+	@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒã‚¤ãƒ³ã‚¿ã®å€‹æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual int32_t GetModelCount() const = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒŠƒ[ƒh‚ğs‚¤B
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒªãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ã€‚
 	*/
 	virtual bool Reload( void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒŠƒ[ƒh‚ğs‚¤B
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒªãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ã€‚
 	*/
 	virtual bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒŠƒ[ƒh‚ğs‚¤B
-		@param	managers	[in]	ƒ}ƒl[ƒWƒƒ[‚Ì”z—ñ
-		@param	managersCount	[in]	ƒ}ƒl[ƒWƒƒ[‚ÌŒÂ”
-		@param	data	[in]	ƒGƒtƒFƒNƒg‚Ìƒf[ƒ^
-		@param	size	[in]	ƒGƒtƒFƒNƒg‚Ìƒf[ƒ^ƒTƒCƒY
-		@param	materialPath	[in]	ƒŠƒ\[ƒX‚Ì“Ç‚İ‚İŒ³
-		@return	¬”Û
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒªãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ã€‚
+		@param	managers	[in]	ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã®é…åˆ—
+		@param	managersCount	[in]	ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã®å€‹æ•°
+		@param	data	[in]	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒ‡ãƒ¼ã‚¿
+		@param	size	[in]	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚º
+		@param	materialPath	[in]	ãƒªã‚½ãƒ¼ã‚¹ã®èª­ã¿è¾¼ã¿å…ƒ
+		@return	æˆå¦
 		@note
-		Setting‚ğ—p‚¢‚ÄƒGƒtƒFƒNƒg‚ğ¶¬‚µ‚½‚Æ‚«‚ÉAManager‚ğw’è‚·‚é‚±‚Æ‚Å‘ÎÛ‚ÌManager“à‚ÌƒGƒtƒFƒNƒg‚ÌƒŠƒ[ƒh‚ğs‚¤B
+		Settingã‚’ç”¨ã„ã¦ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã—ãŸã¨ãã«ã€Managerã‚’æŒ‡å®šã™ã‚‹ã“ã¨ã§å¯¾è±¡ã®Managerå†…ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒªãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ã€‚
 	*/
 	virtual bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
-	@brief	ƒGƒtƒFƒNƒg‚ÌƒŠƒ[ƒh‚ğs‚¤B
-	@param	managers	[in]	ƒ}ƒl[ƒWƒƒ[‚Ì”z—ñ
-	@param	managersCount	[in]	ƒ}ƒl[ƒWƒƒ[‚ÌŒÂ”
-	@param	path	[in]	ƒGƒtƒFƒNƒg‚Ì“Ç‚İ‚İŒ³
-	@param	materialPath	[in]	ƒŠƒ\[ƒX‚Ì“Ç‚İ‚İŒ³
-	@return	¬”Û
+	@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒªãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ã€‚
+	@param	managers	[in]	ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã®é…åˆ—
+	@param	managersCount	[in]	ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã®å€‹æ•°
+	@param	path	[in]	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®èª­ã¿è¾¼ã¿å…ƒ
+	@param	materialPath	[in]	ãƒªã‚½ãƒ¼ã‚¹ã®èª­ã¿è¾¼ã¿å…ƒ
+	@return	æˆå¦
 	@note
-	Setting‚ğ—p‚¢‚ÄƒGƒtƒFƒNƒg‚ğ¶¬‚µ‚½‚Æ‚«‚ÉAManager‚ğw’è‚·‚é‚±‚Æ‚Å‘ÎÛ‚ÌManager“à‚ÌƒGƒtƒFƒNƒg‚ÌƒŠƒ[ƒh‚ğs‚¤B
+	Settingã‚’ç”¨ã„ã¦ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã—ãŸã¨ãã«ã€Managerã‚’æŒ‡å®šã™ã‚‹ã“ã¨ã§å¯¾è±¡ã®Managerå†…ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒªãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ã€‚
 	*/
 	virtual bool Reload( Manager* managers, int32_t managersCount,const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
-		@brief	‰æ‘œ“™ƒŠƒ\[ƒX‚ÌÄ“Ç‚İ‚İ‚ğs‚¤B
+		@brief	ç”»åƒç­‰ãƒªã‚½ãƒ¼ã‚¹ã®å†èª­ã¿è¾¼ã¿ã‚’è¡Œã†ã€‚
 	*/
 	virtual void ReloadResources( const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
-		@brief	‰æ‘œ“™ƒŠƒ\[ƒX‚Ì”jŠü‚ğs‚¤B
+		@brief	ç”»åƒç­‰ãƒªã‚½ãƒ¼ã‚¹ã®ç ´æ£„ã‚’è¡Œã†ã€‚
 	*/
 	virtual void UnloadResources() = 0;
 
 	/**
-	@brief	Root‚ğæ“¾‚·‚éB
+	@brief	Rootã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual EffectNode* GetRoot() const = 0;
 };
 
 /**
-@brief	‹¤’Ê•`‰æƒpƒ‰ƒ[ƒ^[
+@brief	å…±é€šæç”»ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼
 @note
-‘å‚«‚­•ÏX‚³‚ê‚é‰Â”\«‚ª‚ ‚è‚Ü‚·B
+å¤§ããå¤‰æ›´ã•ã‚Œã‚‹å¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™ã€‚
 */
 struct EffectBasicRenderParameter
 {
@@ -216,9 +216,9 @@ struct EffectBasicRenderParameter
 };
 
 /**
-@brief	ƒm[ƒhƒCƒ“ƒXƒ^ƒ“ƒX¶¬ƒNƒ‰ƒX
+@brief	ãƒãƒ¼ãƒ‰ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆã‚¯ãƒ©ã‚¹
 @note
-ƒGƒtƒFƒNƒg‚Ìƒm[ƒh‚ÌÀ‘Ì‚ğ¶¬‚·‚éB
+ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒãƒ¼ãƒ‰ã®å®Ÿä½“ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 */
 class EffectNode
 {
@@ -227,27 +227,27 @@ public:
 	virtual ~EffectNode(){}
 
 	/**
-	@brief	ƒm[ƒh‚ªŠ‘®‚µ‚Ä‚¢‚éƒGƒtƒFƒNƒg‚ğæ“¾‚·‚éB
+	@brief	ãƒãƒ¼ãƒ‰ãŒæ‰€å±ã—ã¦ã„ã‚‹ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual Effect* GetEffect() const = 0;
 
 	/**
-	@brief	q‚Ìƒm[ƒh‚Ì”‚ğæ“¾‚·‚éB
+	@brief	å­ã®ãƒãƒ¼ãƒ‰ã®æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual int GetChildrenCount() const = 0;
 
 	/**
-	@brief	q‚Ìƒm[ƒh‚ğæ“¾‚·‚éB
+	@brief	å­ã®ãƒãƒ¼ãƒ‰ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual EffectNode* GetChild(int index) const = 0;
 
 	/**
-	@brief	‹¤’Ê•`‰æƒpƒ‰ƒ[ƒ^[‚ğæ“¾‚·‚éB
+	@brief	å…±é€šæç”»ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual EffectBasicRenderParameter GetBasicRenderParameter() = 0;
 
 	/**
-	@brief	‹¤’Ê•`‰æƒpƒ‰ƒ[ƒ^[‚ğİ’è‚·‚éB
+	@brief	å…±é€šæç”»ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetBasicRenderParameter(EffectBasicRenderParameter param) = 0;
 

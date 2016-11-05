@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEER_RING_RENDERER_H__
 #define	__EFFEKSEER_RING_RENDERER_H__
 

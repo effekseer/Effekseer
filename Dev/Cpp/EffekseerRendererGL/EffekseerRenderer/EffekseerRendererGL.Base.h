@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEERRENDERER_GL_BASE_H__
 #define	__EFFEKSEERRENDERER_GL_BASE_H__
 

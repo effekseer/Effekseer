@@ -1,4 +1,4 @@
-#ifndef AL_AL_H
+﻿#ifndef AL_AL_H
 #define AL_AL_H
 
 

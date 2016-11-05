@@ -1,4 +1,4 @@
-
+Ôªø
 
 //----------------------------------------------------------------------------------
 //
@@ -103,7 +103,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			memcpy( &TranslationFixed, pos, size );
 			pos += size;
 
-			// ñ≥å¯âª
+			// ÁÑ°ÂäπÂåñ
 			if( TranslationFixed.Position.X == 0.0f &&
 				TranslationFixed.Position.Y == 0.0f &&
 				TranslationFixed.Position.Z == 0.0f )
@@ -137,7 +137,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			pos += TranslationFCurve->Load( pos, m_effect->GetVersion() );
 		}
 
-		/* à íuägëÂèàóù */
+		/* ‰ΩçÁΩÆÊã°Â§ßÂá¶ÁêÜ */
 		if( m_effect->GetVersion() >= 8 )
 		{
 			if( TranslationType == ParameterTranslationType_Fixed )
@@ -171,7 +171,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		memcpy( &LocationAbs.type, pos, sizeof(int) );
 		pos += sizeof(int);
 
-		/* ê‚ëŒà íu */
+		/* Áµ∂ÂØæ‰ΩçÁΩÆ */
 		if( LocationAbs.type == LocationAbsParameter::None )
 		{
 			memcpy( &size, pos, sizeof(int) );
@@ -197,7 +197,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			pos += size;
 		}
 
-		/* ê‚ëŒà íuägëÂèàóù */
+		/* Áµ∂ÂØæ‰ΩçÁΩÆÊã°Â§ßÂá¶ÁêÜ */
 		if( m_effect->GetVersion() >= 8 )
 		{
 			if( LocationAbs.type == LocationAbsParameter::None )
@@ -220,7 +220,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			memcpy( &RotationFixed, pos, size );
 			pos += size;
 
-			// ñ≥å¯âª
+			// ÁÑ°ÂäπÂåñ
 			if( RotationFixed.Position.X == 0.0f &&
 				RotationFixed.Position.Y == 0.0f &&
 				RotationFixed.Position.Z == 0.0f )
@@ -281,7 +281,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			memcpy( &ScalingFixed, pos, size );
 			pos += size;
 
-			// ñ≥å¯âª
+			// ÁÑ°ÂäπÂåñ
 			if( ScalingFixed.Position.X == 1.0f &&
 				ScalingFixed.Position.Y == 1.0f &&
 				ScalingFixed.Position.Z == 1.0f)
@@ -334,10 +334,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			ScalingFCurve->Z.SetDefaultValue( 1.0f );
 		}
 
-		/* ê∂ê¨à íu */
+		/* ÁîüÊàê‰ΩçÁΩÆ */
 		GenerationLocation.load( pos );
 
-		/* ê∂ê¨à íuägëÂèàóù*/
+		/* ÁîüÊàê‰ΩçÁΩÆÊã°Â§ßÂá¶ÁêÜ*/
 		if( m_effect->GetVersion() >= 8  
 			/* && (this->CommonValues.ScalingBindType == BindType_NotBind || parent->GetType() == EFFECT_NODE_TYPE_ROOT)*/ )
 		{
@@ -358,7 +358,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}		
 		}
 
-		// âEéËånç∂éËånïœä∑
+		// Âè≥ÊâãÁ≥ªÂ∑¶ÊâãÁ≥ªÂ§âÊèõ
 		if( setting->GetCoordinateSystem() == CoordinateSystem::LH )
 		{
 			// Translation
@@ -449,7 +449,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			Texture.load( pos, m_effect->GetVersion() );
 
-			// ägëÂèàóù
+			// Êã°Â§ßÂá¶ÁêÜ
 			Texture.DistortionIntensity *= m_effect->GetMaginification();
 		}
 		else
@@ -461,7 +461,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		
 		if( m_effect->GetVersion() >= 1)
 		{
-			// ÉTÉEÉìÉh
+			// „Çµ„Ç¶„É≥„Éâ
 			memcpy( &SoundType, pos, sizeof(int) );
 			pos += sizeof(int);
 			if( SoundType == ParameterSoundType_Use )
@@ -484,7 +484,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 	}
 
-	// ÉmÅ[Éh
+	// „Éé„Éº„Éâ
 	int nodeCount = 0;
 	memcpy( &nodeCount, pos, sizeof(int) );
 	pos += sizeof( int );

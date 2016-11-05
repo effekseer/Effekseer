@@ -1,4 +1,4 @@
-
+ï»¿
 
 //----------------------------------------------------------------------------------
 //
@@ -76,7 +76,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 		pos += sizeof(int);
 	}
 	
-	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
+	// å³æ‰‹ç³»å·¦æ‰‹ç³»å¤‰æ›
 	if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 	{
 		if( OuterLocation.type == RingLocationParameter::Fixed )
@@ -122,7 +122,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 		}
 	}
 
-	/* ˆÊ’uŠg‘åˆ— */
+	/* ä½ç½®æ‹¡å¤§å‡¦ç† */
 	if( m_effect->GetVersion() >= 8 )
 	{
 		if( OuterLocation.type == RingLocationParameter::Fixed )

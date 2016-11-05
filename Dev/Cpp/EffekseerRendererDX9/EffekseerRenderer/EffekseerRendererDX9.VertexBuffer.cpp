@@ -1,4 +1,4 @@
-
+ï»¿
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ VertexBuffer::~VertexBuffer()
 //-----------------------------------------------------------------------------------
 VertexBuffer* VertexBuffer::Create( RendererImplemented* renderer, int size, bool isDynamic )
 {
-	// ƒtƒ‰ƒO
+	// ãƒ•ãƒ©ã‚°
 	D3DPOOL pool = D3DPOOL_MANAGED;
 	int usage = D3DUSAGE_WRITEONLY;
 
@@ -49,7 +49,7 @@ VertexBuffer* VertexBuffer::Create( RendererImplemented* renderer, int size, boo
 
 	if( FAILED( hr ) )
 	{
-		// DirectX9Ex‚Å‚ÍD3DPOOL_MANAGEDg—p•s‰Â
+		// DirectX9Exã§ã¯D3DPOOL_MANAGEDä½¿ç”¨ä¸å¯
 		pool = D3DPOOL_DEFAULT;
 		hr = renderer->GetDevice()->CreateVertexBuffer( size, usage, 0, pool, &vb, NULL );
 	}
@@ -83,7 +83,7 @@ void VertexBuffer::OnChangeDevice()
 //-----------------------------------------------------------------------------------
 void VertexBuffer::OnResetDevice()
 {
-	// ƒoƒbƒtƒ@¶¬
+	// ãƒãƒƒãƒ•ã‚¡ç”Ÿæˆ
 	if ( m_buffer == NULL )
 	{
 		D3DPOOL pool = D3DPOOL_MANAGED;
@@ -102,7 +102,7 @@ void VertexBuffer::OnResetDevice()
 		
 		if( FAILED( hr ) )
 		{
-			// DirectX9Ex‚Å‚ÍD3DPOOL_MANAGEDg—p•s‰Â
+			// DirectX9Exã§ã¯D3DPOOL_MANAGEDä½¿ç”¨ä¸å¯
 			pool = D3DPOOL_DEFAULT;
 			hr = device->CreateVertexBuffer( m_size, usage, 0, pool, &m_buffer, NULL );
 		}
@@ -123,7 +123,7 @@ void VertexBuffer::Lock()
 
 	m_buffer->Lock( 0, 0, (void**)&m_resource, m_isDynamic ? D3DLOCK_DISCARD : 0 );
 
-	/* Ÿ‚ÌRingBufferLock‚Í‹­§“I‚ÉDiscard */
+	/* æ¬¡ã®RingBufferLockã¯å¼·åˆ¶çš„ã«Discard */
 	m_vertexRingOffset = m_size;
 }
 

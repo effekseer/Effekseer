@@ -1,4 +1,4 @@
-#ifndef GD_ERRORS_H
+﻿#ifndef GD_ERRORS_H
 #define GD_ERRORS_H
 
 #ifndef _WIN32

@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_MODEL_H__
 #define	__EFFEKSEER_MODEL_H__
 
@@ -18,7 +18,7 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒ‚ƒfƒ‹ƒNƒ‰ƒX
+	@brief	ãƒ¢ãƒ‡ãƒ«ã‚¯ãƒ©ã‚¹
 */
 class Model
 {
@@ -75,7 +75,7 @@ private:
 
 public:
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	Model( void* data, int32_t size ) 
 		: m_data	( NULL )
@@ -107,7 +107,7 @@ public:
 		}
 		else
 		{
-			// V‹Kƒoƒbƒtƒ@Šm•Û
+			// æ–°è¦ãƒãƒƒãƒ•ã‚¡ç¢ºä¿
 			m_vertexes = new Vertex[m_vertexCount];
 
 			for (int32_t i = 0; i < m_vertexCount; i++)
@@ -135,7 +135,7 @@ public:
 	int32_t GetModelCount() { return m_modelCount; }
 
 	/**
-		@brief	ƒfƒXƒgƒ‰ƒNƒ^
+		@brief	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	virtual ~Model()
 	{
@@ -162,7 +162,7 @@ public:
 		float p1 = ( (float)randFunc() / (float)randMax );
 		float p2 = ( (float)randFunc() / (float)randMax );
 
-		/* –Ê“à‚Éû‚ß‚é */
+		/* é¢å†…ã«åã‚ã‚‹ */
 		if( p1 + p2 > 1.0f )
 		{
 			p1 = 1.0f - p1;

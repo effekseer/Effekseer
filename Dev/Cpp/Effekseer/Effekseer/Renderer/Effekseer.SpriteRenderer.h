@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_SPRITE_RENDERER_H__
 #define	__EFFEKSEER_SPRITE_RENDERER_H__
 
@@ -44,7 +44,7 @@ public:
 		Matrix43		SRTMatrix43;
 		Color		AllColor;
 
-		// ¶‰ºA‰E‰ºA¶ãA‰Eã
+		// å·¦ä¸‹ã€å³ä¸‹ã€å·¦ä¸Šã€å³ä¸Š
 		Color		Colors[4];
 
 		Vector2D	Positions[4];

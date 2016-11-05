@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_DEFAULT_FILE_H__
 #define	__EFFEKSEER_DEFAULT_FILE_H__
 
@@ -16,7 +16,7 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	•W€‚Ìƒtƒ@ƒCƒ‹“Ç‚İ‚İƒNƒ‰ƒX
+	@brief	æ¨™æº–ã®ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ã‚¯ãƒ©ã‚¹
 */
 
 class DefaultFileReader : public FileReader

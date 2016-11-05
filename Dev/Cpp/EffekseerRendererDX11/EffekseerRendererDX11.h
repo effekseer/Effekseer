@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_DX11_BASE_PRE_H__
 #define	__EFFEKSEERRENDERER_DX11_BASE_PRE_H__
 
@@ -52,7 +52,7 @@ namespace EffekseerRenderer
 //-----------------------------------------------------------------------------------
 
 /**
-	@brief	”wŒi‚ğ˜c‚Ü‚¹‚éƒGƒtƒFƒNƒg‚ğ•`‰æ‚·‚é‘O‚ÉÀs‚³‚ê‚éƒR[ƒ‹ƒoƒbƒN
+	@brief	èƒŒæ™¯ã‚’æ­ªã¾ã›ã‚‹ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’æç”»ã™ã‚‹å‰ã«å®Ÿè¡Œã•ã‚Œã‚‹ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯
 */
 class DistortingCallback
 {
@@ -74,142 +74,142 @@ protected:
 
 public:
 	/**
-		@brief	ƒfƒoƒCƒXƒƒXƒg‚ª”­¶‚µ‚½‚ÉÀs‚·‚éB
+		@brief	ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆãŒç™ºç”Ÿã—ãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹ã€‚
 	*/
 	virtual void OnLostDevice() = 0;
 
 	/**
-		@brief	ƒfƒoƒCƒX‚ªƒŠƒZƒbƒg‚³‚ê‚½‚ÉÀs‚·‚éB
+		@brief	ãƒ‡ãƒã‚¤ã‚¹ãŒãƒªã‚»ãƒƒãƒˆã•ã‚ŒãŸæ™‚ã«å®Ÿè¡Œã™ã‚‹ã€‚
 	*/
 	virtual void OnResetDevice() = 0;
 
 	/**
-		@brief	‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü‚·‚éB
+		@brief	ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„ã™ã‚‹ã€‚
 	*/
 	virtual void Destory() = 0;
 
 	/**
-		@brief	ƒXƒe[ƒg‚ğ•œ‹A‚·‚é‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO‚ğİ’è‚·‚éB
+		@brief	ã‚¹ãƒ†ãƒ¼ãƒˆã‚’å¾©å¸°ã™ã‚‹ã‹ã©ã†ã‹ã®ãƒ•ãƒ©ã‚°ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetRestorationOfStatesFlag(bool flag) = 0;
 
 	/**
-		@brief	•`‰æ‚ğŠJn‚·‚é‚ÉÀs‚·‚éB
+		@brief	æç”»ã‚’é–‹å§‹ã™ã‚‹æ™‚ã«å®Ÿè¡Œã™ã‚‹ã€‚
 	*/
 	virtual bool BeginRendering() = 0;
 
 	/**
-		@brief	•`‰æ‚ğI—¹‚·‚é‚ÉÀs‚·‚éB
+		@brief	æç”»ã‚’çµ‚äº†ã™ã‚‹æ™‚ã«å®Ÿè¡Œã™ã‚‹ã€‚
 	*/
 	virtual bool EndRendering() = 0;
 
 	/**
-		@brief	ƒ‰ƒCƒg‚Ì•ûŒü‚ğæ“¾‚·‚éB
+		@brief	ãƒ©ã‚¤ãƒˆã®æ–¹å‘ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual const ::Effekseer::Vector3D& GetLightDirection() const = 0;
 
 	/**
-		@brief	ƒ‰ƒCƒg‚Ì•ûŒü‚ğİ’è‚·‚éB
+		@brief	ãƒ©ã‚¤ãƒˆã®æ–¹å‘ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetLightDirection( ::Effekseer::Vector3D& direction ) = 0;
 
 	/**
-		@brief	ƒ‰ƒCƒg‚ÌF‚ğæ“¾‚·‚éB
+		@brief	ãƒ©ã‚¤ãƒˆã®è‰²ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual const ::Effekseer::Color& GetLightColor() const = 0;
 
 	/**
-		@brief	ƒ‰ƒCƒg‚ÌF‚ğİ’è‚·‚éB
+		@brief	ãƒ©ã‚¤ãƒˆã®è‰²ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetLightColor( ::Effekseer::Color& color ) = 0;
 
 	/**
-		@brief	ƒ‰ƒCƒg‚ÌŠÂ‹«Œõ‚ÌF‚ğæ“¾‚·‚éB
+		@brief	ãƒ©ã‚¤ãƒˆã®ç’°å¢ƒå…‰ã®è‰²ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual const ::Effekseer::Color& GetLightAmbientColor() const = 0;
 
 	/**
-		@brief	ƒ‰ƒCƒg‚ÌŠÂ‹«Œõ‚ÌF‚ğİ’è‚·‚éB
+		@brief	ãƒ©ã‚¤ãƒˆã®ç’°å¢ƒå…‰ã®è‰²ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetLightAmbientColor( ::Effekseer::Color& color ) = 0;
 
 		/**
-		@brief	Å‘å•`‰æƒXƒvƒ‰ƒCƒg”‚ğæ“¾‚·‚éB
+		@brief	æœ€å¤§æç”»ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual int32_t GetSquareMaxCount() const = 0;
 
 	/**
-		@brief	“Š‰es—ñ‚ğæ“¾‚·‚éB
+		@brief	æŠ•å½±è¡Œåˆ—ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual const ::Effekseer::Matrix44& GetProjectionMatrix() const = 0;
 
 	/**
-		@brief	“Š‰es—ñ‚ğİ’è‚·‚éB
+		@brief	æŠ•å½±è¡Œåˆ—ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetProjectionMatrix( const ::Effekseer::Matrix44& mat ) = 0;
 
 	/**
-		@brief	ƒJƒƒ‰s—ñ‚ğæ“¾‚·‚éB
+		@brief	ã‚«ãƒ¡ãƒ©è¡Œåˆ—ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual const ::Effekseer::Matrix44& GetCameraMatrix() const = 0;
 
 	/**
-		@brief	ƒJƒƒ‰s—ñ‚ğİ’è‚·‚éB
+		@brief	ã‚«ãƒ¡ãƒ©è¡Œåˆ—ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetCameraMatrix( const ::Effekseer::Matrix44& mat ) = 0;
 
 	/**
-		@brief	ƒJƒƒ‰ƒvƒƒWƒFƒNƒVƒ‡ƒ“s—ñ‚ğæ“¾‚·‚éB
+		@brief	ã‚«ãƒ¡ãƒ©ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³è¡Œåˆ—ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::Matrix44& GetCameraProjectionMatrix() = 0;
 
 	/**
-		@brief	ƒXƒvƒ‰ƒCƒgƒŒƒ“ƒ_ƒ‰[‚ğ¶¬‚·‚éB
+		@brief	ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::SpriteRenderer* CreateSpriteRenderer() = 0;
 
 	/**
-		@brief	ƒŠƒ{ƒ“ƒŒƒ“ƒ_ƒ‰[‚ğ¶¬‚·‚éB
+		@brief	ãƒªãƒœãƒ³ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::RibbonRenderer* CreateRibbonRenderer() = 0;
 
 	/**
-		@brief	ƒŠƒ“ƒOƒŒƒ“ƒ_ƒ‰[‚ğ¶¬‚·‚éB
+		@brief	ãƒªãƒ³ã‚°ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::RingRenderer* CreateRingRenderer() = 0;
 
 	/**
-		@brief	ƒ‚ƒfƒ‹ƒŒƒ“ƒ_ƒ‰[‚ğ¶¬‚·‚éB
+		@brief	ãƒ¢ãƒ‡ãƒ«ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::ModelRenderer* CreateModelRenderer() = 0;
 
 	/**
-		@brief	‹OÕƒŒƒ“ƒ_ƒ‰[‚ğ¶¬‚·‚éB
+		@brief	è»Œè·¡ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::TrackRenderer* CreateTrackRenderer() = 0;
 
 	/**
-		@brief	•W€‚ÌƒeƒNƒXƒ`ƒƒ“ÇƒNƒ‰ƒX‚ğ¶¬‚·‚éB
+		@brief	æ¨™æº–ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£èª­è¾¼ã‚¯ãƒ©ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::TextureLoader* CreateTextureLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
 
 	/**
-		@brief	•W€‚Ìƒ‚ƒfƒ‹“ÇƒNƒ‰ƒX‚ğ¶¬‚·‚éB
+		@brief	æ¨™æº–ã®ãƒ¢ãƒ‡ãƒ«èª­è¾¼ã‚¯ãƒ©ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
 
 	/**
-		@brief	ƒŒƒ“ƒ_[ƒXƒe[ƒg‚ğ‹­§“I‚ÉƒŠƒZƒbƒg‚·‚éB
+		@brief	ãƒ¬ãƒ³ãƒ€ãƒ¼ã‚¹ãƒ†ãƒ¼ãƒˆã‚’å¼·åˆ¶çš„ã«ãƒªã‚»ãƒƒãƒˆã™ã‚‹ã€‚
 	*/
 	virtual void ResetRenderState() = 0;
 
 	/**
-	@brief	”wŒi‚ğ˜c‚Ü‚¹‚éƒGƒtƒFƒNƒg‚ª•`‰æ‚³‚ê‚é‘O‚ÉŒÄ‚Î‚ê‚éƒR[ƒ‹ƒoƒbƒN‚ğæ“¾‚·‚éB
+	@brief	èƒŒæ™¯ã‚’æ­ªã¾ã›ã‚‹ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãŒæç”»ã•ã‚Œã‚‹å‰ã«å‘¼ã°ã‚Œã‚‹ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual DistortingCallback* GetDistortingCallback() = 0;
 
 	/**
-	@brief	”wŒi‚ğ˜c‚Ü‚¹‚éƒGƒtƒFƒNƒg‚ª•`‰æ‚³‚ê‚é‘O‚ÉŒÄ‚Î‚ê‚éƒR[ƒ‹ƒoƒbƒN‚ğİ’è‚·‚éB
+	@brief	èƒŒæ™¯ã‚’æ­ªã¾ã›ã‚‹ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãŒæç”»ã•ã‚Œã‚‹å‰ã«å‘¼ã°ã‚Œã‚‹ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetDistortingCallback(DistortingCallback* callback) = 0;
 };
@@ -238,7 +238,7 @@ namespace EffekseerRendererDX11
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	•`‰æƒNƒ‰ƒX
+	@brief	æç”»ã‚¯ãƒ©ã‚¹
 */
 class Renderer
 	: public ::EffekseerRenderer::Renderer
@@ -249,12 +249,12 @@ protected:
 
 public:
 	/**
-		@brief	ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éB
-		@param	device		DirectX‚ÌƒfƒoƒCƒX
-		@param	context		DirectX‚ÌƒRƒ“ƒeƒLƒXƒg
-		@param	squareMaxCount	Å‘å•`‰æƒXƒvƒ‰ƒCƒg”
-		@param	depthFunc	‰œs‚«‚ÌŒvZ•û–@
-		@return	ƒCƒ“ƒXƒ^ƒ“ƒX
+		@brief	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	device		DirectXã®ãƒ‡ãƒã‚¤ã‚¹
+		@param	context		DirectXã®ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆ
+		@param	squareMaxCount	æœ€å¤§æç”»ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæ•°
+		@param	depthFunc	å¥¥è¡Œãã®è¨ˆç®—æ–¹æ³•
+		@return	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	*/
 	static Renderer* Create(
 		ID3D11Device* device, 
@@ -263,17 +263,17 @@ public:
 		D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS);
 
 	/**
-		@brief	ƒfƒoƒCƒX‚ğæ“¾‚·‚éB
+		@brief	ãƒ‡ãƒã‚¤ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual ID3D11Device* GetDevice() = 0;
 
 	/**
-	@brief	”wŒi‚ğæ“¾‚·‚éB
+	@brief	èƒŒæ™¯ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual ID3D11ShaderResourceView* GetBackground() = 0;
 
 	/**
-	@brief	”wŒi‚ğİ’è‚·‚éB
+	@brief	èƒŒæ™¯ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetBackground(ID3D11ShaderResourceView* background) = 0;
 };
@@ -282,7 +282,7 @@ public:
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒ‚ƒfƒ‹
+	@brief	ãƒ¢ãƒ‡ãƒ«
 */
 class Model : public Effekseer::Model
 {

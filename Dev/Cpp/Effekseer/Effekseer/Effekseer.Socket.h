@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEER_SOCKET_H__
 #define	__EFFEKSEER_SOCKET_H__
 

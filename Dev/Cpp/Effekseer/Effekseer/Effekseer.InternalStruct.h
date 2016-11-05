@@ -1,12 +1,12 @@
-
+﻿
 #ifndef	__EFFEKSEER_INTERNAL_STRUCT_H__
 #define	__EFFEKSEER_INTERNAL_STRUCT_H__
 
 /**
 	@file
-	@brief	�����v�Z�p�\����
+	@brief	内部計算用構造体
 	@note
-	union���Ɏg�p���邽�߂̍\���́B<BR>
+	union等に使用するための構造体。<BR>
 
 */
 

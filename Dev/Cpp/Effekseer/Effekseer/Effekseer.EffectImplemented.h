@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_EFFECT_IMPLEMENTED_H__
 #define	__EFFEKSEER_EFFECT_IMPLEMENTED_H__
 
@@ -19,9 +19,9 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
-	@brief	ƒGƒtƒFƒNƒgƒpƒ‰ƒ[ƒ^[
+	@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼
 	@note
-	ƒGƒtƒFƒNƒg‚Éİ’è‚³‚ê‚½ƒpƒ‰ƒ[ƒ^[B
+	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã«è¨­å®šã•ã‚ŒãŸãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã€‚
 */
 
 class EffectImplemented
@@ -60,15 +60,15 @@ private:
 
 	std::basic_string<EFK_CHAR>		m_materialPath;
 
-	/* Šg‘å—¦ */
+	/* æ‹¡å¤§ç‡ */
 	float	m_maginification;
 
 	float	m_maginificationExternal;
 
-	// qƒm[ƒh
+	// å­ãƒãƒ¼ãƒ‰
 	EffectNode* m_pRoot;
 
-	/* ƒJƒŠƒ“ƒO */
+	/* ã‚«ãƒªãƒ³ã‚° */
 	struct
 	{
 		CullingShape	Shape;
@@ -91,69 +91,69 @@ private:
 
 public:
 	/**
-		@brief	¶¬
+		@brief	ç”Ÿæˆ
 	*/
 	static Effect* Create( Manager* pManager, void* pData, int size, float magnification, const EFK_CHAR* materialPath = NULL );
 
 	/**
-		@brief	¶¬
+		@brief	ç”Ÿæˆ
 	*/
 	static Effect* Create( Setting* setting, void* pData, int size, float magnification, const EFK_CHAR* materialPath = NULL );
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	EffectImplemented( Manager* pManager, void* pData, int size );
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	EffectImplemented( Setting* setting, void* pData, int size );
 
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	virtual ~EffectImplemented();
 
-	// Root‚Ìæ“¾
+	// Rootã®å–å¾—
 	EffectNode* GetRoot() const;
 
-	/* Šg‘å—¦‚Ìæ“¾ */
+	/* æ‹¡å¤§ç‡ã®å–å¾— */
 	float GetMaginification() const;
 
 	/**
-		@brief	“Ç‚İ‚ŞB
+		@brief	èª­ã¿è¾¼ã‚€ã€‚
 	*/
 	bool Load( void* pData, int size, float mag, const EFK_CHAR* materialPath );
 
 	/**
-		@breif	‰½‚à“Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚¢ó‘Ô‚É–ß‚·
+		@breif	ä½•ã‚‚èª­ã¿è¾¼ã¾ã‚Œã¦ã„ãªã„çŠ¶æ…‹ã«æˆ»ã™
 	*/
 	void Reset();
 
 private:
 	/**
-		@brief	ƒ}ƒl[ƒWƒƒ[æ“¾
+		@brief	ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼å–å¾—
 	*/
 	Manager* GetManager() const;
 
 public:
 	/**
-	@brief	İ’èæ“¾
+	@brief	è¨­å®šå–å¾—
 	*/
 	Setting* GetSetting() const;
 	
 	/**
-		@brief	ƒGƒtƒFƒNƒgƒf[ƒ^‚Ìƒo[ƒWƒ‡ƒ“æ“¾
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ‡ãƒ¼ã‚¿ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³å–å¾—
 	*/
 	int GetVersion() const;
 
 	/**
-		@brief	Ši”[‚³‚ê‚Ä‚¢‚é‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾‚·‚éB
+		@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ç”»åƒã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	void* GetColorImage(int n) const;
 
 	/**
-		@brief	Ši”[‚³‚ê‚Ä‚¢‚é‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^‚ÌŒÂ”‚ğæ“¾‚·‚éB
+		@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ç”»åƒã®ãƒã‚¤ãƒ³ã‚¿ã®å€‹æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	int32_t GetColorImageCount() const;
 
 	/**
-	@brief	Ši”[‚³‚ê‚Ä‚¢‚é‰æ‘œ‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾‚·‚éB
+	@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ç”»åƒã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	void* GetNormalImage(int n) const;
 
@@ -164,46 +164,46 @@ public:
 	int32_t GetDistortionImageCount() const;
 
 	/**
-		@brief	Ši”[‚³‚ê‚Ä‚¢‚é‰¹”gŒ`‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾‚·‚éB
+		@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹éŸ³æ³¢å½¢ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	void* GetWave( int n ) const;
 
 	int32_t GetWaveCount() const;
 
 	/**
-		@brief	Ši”[‚³‚ê‚Ä‚¢‚éƒ‚ƒfƒ‹‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾‚·‚éB
+		@brief	æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ãƒ¢ãƒ‡ãƒ«ã®ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	void* GetModel( int n ) const;
 
 	int32_t GetModelCount() const;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒŠƒ[ƒh‚ğs‚¤B
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒªãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ã€‚
 	*/
 	bool Reload( void* data, int32_t size, const EFK_CHAR* materialPath = NULL );
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒŠƒ[ƒh‚ğs‚¤B
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒªãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ã€‚
 	*/
 	bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL );
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒŠƒ[ƒh‚ğs‚¤B
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒªãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ã€‚
 	*/
 	bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL );
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒŠƒ[ƒh‚ğs‚¤B
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒªãƒ­ãƒ¼ãƒ‰ã‚’è¡Œã†ã€‚
 	*/
 	bool Reload( Manager* managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL );
 
 	/**
-		@brief	‰æ‘œ“™ƒŠƒ\[ƒX‚ÌÄ“Ç‚İ‚İ‚ğs‚¤B
+		@brief	ç”»åƒç­‰ãƒªã‚½ãƒ¼ã‚¹ã®å†èª­ã¿è¾¼ã¿ã‚’è¡Œã†ã€‚
 	*/
 	void ReloadResources( const EFK_CHAR* materialPath );
 
 	/**
-		@brief	‰æ‘œ“™ƒŠƒ\[ƒX‚Ì”jŠü‚ğs‚¤B
+		@brief	ç”»åƒç­‰ãƒªã‚½ãƒ¼ã‚¹ã®ç ´æ£„ã‚’è¡Œã†ã€‚
 	*/
 	void UnloadResources();
 

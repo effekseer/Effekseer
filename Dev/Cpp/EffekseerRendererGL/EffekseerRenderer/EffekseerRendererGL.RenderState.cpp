@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -161,7 +161,7 @@ void RenderState::Update( bool forced )
 		GLCheckError();
 		for (int32_t i = 0; i < m_renderer->GetCurrentTextures().size(); i++)
 		{
-			/* ƒeƒNƒXƒ`ƒƒ‚ªÝ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡‚ÍƒXƒLƒbƒv */
+			/* ãƒ†ã‚¯ã‚¹ãƒãƒ£ãŒè¨­å®šã•ã‚Œã¦ã„ãªã„å ´åˆã¯ã‚¹ã‚­ãƒƒãƒ— */
 			if (m_renderer->GetCurrentTextures()[i] == 0) continue;
 
 			if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)

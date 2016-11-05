@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_DX9_RENDERER_H__
 #define	__EFFEKSEERRENDERER_DX9_RENDERER_H__
 
@@ -17,7 +17,7 @@ namespace EffekseerRendererDX9
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	•`‰æƒNƒ‰ƒX
+	@brief	æç”»ã‚¯ãƒ©ã‚¹
 */
 class Renderer
 	: public ::EffekseerRenderer::Renderer
@@ -28,30 +28,30 @@ protected:
 
 public:
 	/**
-		@brief	ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éB
-		@param	device	[in]	DirectX‚ÌƒfƒoƒCƒX
-		@param	squareMaxCount	[in]	Å‘å•`‰æƒXƒvƒ‰ƒCƒg”
-		@return	ƒCƒ“ƒXƒ^ƒ“ƒX
+		@brief	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	device	[in]	DirectXã®ãƒ‡ãƒã‚¤ã‚¹
+		@param	squareMaxCount	[in]	æœ€å¤§æç”»ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæ•°
+		@return	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	*/
 	static Renderer* Create( LPDIRECT3DDEVICE9 device, int32_t squareMaxCount );
 
 	/**
-		@brief	ƒfƒoƒCƒX‚ğæ“¾‚·‚éB
+		@brief	ãƒ‡ãƒã‚¤ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual LPDIRECT3DDEVICE9 GetDevice() = 0;
 
 	/**
-		@brief	ƒfƒoƒCƒXƒƒXƒgƒŠƒZƒbƒgŠÔ‚ÅƒfƒoƒCƒX©‘Ì‚ğÄ\’z‚·‚éÛ‚ÉŠO•”‚©‚çƒfƒoƒCƒX‚ğİ’è‚·‚éB
+		@brief	ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆãƒªã‚»ãƒƒãƒˆé–“ã§ãƒ‡ãƒã‚¤ã‚¹è‡ªä½“ã‚’å†æ§‹ç¯‰ã™ã‚‹éš›ã«å¤–éƒ¨ã‹ã‚‰ãƒ‡ãƒã‚¤ã‚¹ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void ChangeDevice( LPDIRECT3DDEVICE9 device ) = 0;
 
 	/**
-	@brief	”wŒi‚ğæ“¾‚·‚éB
+	@brief	èƒŒæ™¯ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual IDirect3DTexture9* GetBackground() = 0;
 
 	/**
-	@brief	”wŒi‚ğİ’è‚·‚éB
+	@brief	èƒŒæ™¯ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetBackground(IDirect3DTexture9* background) = 0;
 };
@@ -60,7 +60,7 @@ public:
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒ‚ƒfƒ‹
+	@brief	ãƒ¢ãƒ‡ãƒ«
 */
 class Model : public Effekseer::Model
 {

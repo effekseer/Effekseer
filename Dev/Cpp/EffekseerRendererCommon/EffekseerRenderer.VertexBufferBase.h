@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_VERTEXBUFFER_BASE_H__
 #define	__EFFEKSEERRENDERER_VERTEXBUFFER_BASE_H__
 
@@ -34,7 +34,7 @@ public:
 	virtual bool RingBufferLock( int32_t size, int32_t& offset, void*& data ) = 0;
 
 	/**
-		@brief	ƒoƒbƒtƒ@‘S‘Ì‚ğÄŠm•Û‚¹‚¸‚ÉA‚µ‚Éˆê•”‚ğƒƒbƒN‚µ‚Ä‚İ‚éB
+		@brief	ãƒãƒƒãƒ•ã‚¡å…¨ä½“ã‚’å†ç¢ºä¿ã›ãšã«ã€è©¦ã—ã«ä¸€éƒ¨ã‚’ãƒ­ãƒƒã‚¯ã—ã¦ã¿ã‚‹ã€‚
 	*/
 	virtual bool TryRingBufferLock(int32_t size, int32_t& offset, void*& data) = 0;
 

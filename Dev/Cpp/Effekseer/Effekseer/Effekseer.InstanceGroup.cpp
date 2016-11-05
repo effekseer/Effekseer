@@ -1,4 +1,4 @@
-
+ï»¿
 
 //----------------------------------------------------------------------------------
 //
@@ -54,13 +54,13 @@ void InstanceGroup::RemoveInvalidInstances()
 		}
 		else if( (*it)->m_State == INSTANCE_STATE_REMOVING )
 		{
-			// íœ’†ˆ—
+			// å‰Šé™¤ä¸­å‡¦ç†
 			(*it)->m_State = INSTANCE_STATE_REMOVED;
 			it++;
 		}
 		else if( (*it)->m_State == INSTANCE_STATE_REMOVED )
 		{
-			// íœˆ—
+			// å‰Šé™¤å‡¦ç†
 			if( (*it)->m_pEffectNode->GetType() == EFFECT_NODE_TYPE_ROOT )
 			{
 				delete (*it);
@@ -140,10 +140,10 @@ void InstanceGroup::Update( float deltaFrame, bool shown )
 	{
 		if( (*it)->m_State == INSTANCE_STATE_ACTIVE )
 		{
-			// XVˆ—
+			// æ›´æ–°å‡¦ç†
 			(*it)->Update( deltaFrame, shown );
 
-			// ”jŠüƒ`ƒFƒbƒN
+			// ç ´æ£„ãƒã‚§ãƒƒã‚¯
 			if( (*it)->m_State != INSTANCE_STATE_ACTIVE )
 			{
 				m_removingInstances.push_back( (*it) );
