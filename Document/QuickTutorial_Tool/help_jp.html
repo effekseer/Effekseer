@@ -118,38 +118,44 @@ Effekseer内のたくさんの数値入力欄は左の画像のような見た�
 <a name="inheritance"></a>
 <h3>継承</h3>
 
-既に触れたように、継承はEffekseerの特徴の一つです。.例えばノードAがノードBの親ノードである場合、ノードAが生成する全てのパーティクルは、ノードBの生成するパーティクルと紐づきます (つまり、パーティクルを生成するようなパーティクルを作成することができます)。 共通 ウインドウにある設定には、意図的に変更しない限り、継承が適用されます。
+既に触れたように、継承はEffekseerの特徴の一つです。例えばノードAがノードBの親ノードである場合、ノードAが生成する全てのパーティクルは、ノードBの生成するパーティクルと紐づきます (つまり、パーティクルを生成するようなパーティクルを作成することができます)。 共通 ウインドウにある設定には、意図的に変更しない限り、継承が適用されます。
 <br><br>
-<b>Inherit Position/Rotation/Scale</b> are self-explanitory in what they do, but the drop-down options may be less clear. There are the following three options:<br><br>
+<b>位置/回転/拡大の継承</b>は彼らが行うことの中では自明でありますが、ドロップダウンのオプションは不明瞭かもしれません。以下の3種類のオプションがあります。<br><br>
 <ul>
-<li><b>Always:</b> As long as the parent particle exists, this child particle will constantly update its inherited values to match that of the parent particle.</li>
-<li><b>Only on Create:</b> This child particle will inherit the value from the parent particle on spawn, but will then act on its own, ignoring any further updates to the parent particle's values.</li>
-<li><b>Never:</b> The child particle will not inherit the value from the parent particle.</li>
-</ul>If <b>Destroy with parent</b> is checked, then the particle will be automatically destroyed if the parent particle it was spawned from gets destroyed.
+<li><b>常時:</b> 親のパーティクルが存在し続ける限り, この子のパーティクルは常に親のパーティクルに対応する継承された値を更新します。</li>
+<li><b>生成時:</b> 子のパーティクルは生成された時に親のパーティクルから値を継承するが、自身が動作する時は親のパーティクルの値の更新を無視します。</li>
+<li><b>なし:</b> 子のパーティクルは親のパーティクル値を継承しません。</li>
+</ul>もし <b>親破棄時に破壊</b> がチェックされていた場合, 親のパーティクルが破壊されていたら自動的に子のパーティクルも破棄します。
 <br><br>
-<b>Destroy when no more children</b> is the inverse of the above. If a parent node spawns a finite number of child particles, it will be automatically destroyed as soon as all of those child particles have finished despawning.
+<b>子が生成されない時</b> は上記の逆です。もし、親のパーティクルが子のパーティクルをこれ以上生成しない場合、 全ての子が破棄された後のすぐに自動的にパーティクルが破棄されます。
 <br><br>
 <table>
-<tr><td style="width:432px; text-align:center"><img src="effektut-files/inheritance_example.png" /></td><td class='td1'>
-Sample Project "<i>00_Basic/Laser03.efkproj</i>" is a good example of inheritance. Invisible "Core" particles guide the position and rotation of the "Track" particles that inherit them -- this gives the tracks that distinctive zig-zag shape. At the same time, the "Particle" node inherits "Track", using the track's position to allow it to emit tiny particles along the trajectory of the zig-zags.
-</td></tr></table>
+<tr>
+<td style="width:432px; text-align:center"><img src="effektut-files/inheritance_example.png" /></td>
+<td class='td1'>
+サンプルプロジェクト "<i>00_Basic/Laser03.efkproj</i>" は継承のいいサンプルです。表示されない "Core" パーティクルは "Core"パーティクルを継承する"Track"の位置と回転を誘導し、独特のジグザグの軌跡を表現します。
+同時に、"Track"の位置を用いてジグザグの軌跡にそってパーティクルが生じるように"Particle"ノードは"Track"ノードを継承します。
+</td>
+</tr>
+</table>
 
 <a name="spawn_method_circular"></a>
-<h3>Spawn Method (Circular)</h3>
+<h3>生成方法 (円)</h3>
 
 <table>
 <tr><td style="width:432px; text-align:center"><img src="effektut-files/circle_spawn.png" /></td><td class='td1'>
-A separate window from the Basic Settings window is the <b>Spawn Method</b> window. By default, nodes emit their particles relative to a single isolated point in space. There are two other spawn methods, however. The first is <b>Circle</b>.
+標準設定のウインドウから分離されたウインドウに<b>生成方法</b>ウインドウがあります。標準設定では、空間の単独の独立した点に対して相対的な位置にパーティクルを生成します。しかし、他に2種類の生成方法があります。1つ目は<b>円</b>であります。<br><br>
 <br><br>
-In Circle spawn mode, particles will be spawned relative to the circumference along a circle. <b>Radius</b> sets the size of that figurative circle.
+<b>初期角度</b>と<b>最終角度</b>はパーティクルが生じる円の範囲を指定できます。標準値は0～360度で、結果として円周全てにパーティクルが生じます。しかし、円の特定の弧のみにパーティクルが生じるように減らすこともできます。
 <br><br>
-<b>Init Angle</b> and <b>Final Angle</b> allow you to specify the range over the circle in which to spawn particles. By default this goes from 0 to 360, resulting in particles spawning over the whole circumference. However, this can be reduced to allow spawning only over a specific arc of the circle.
+円に沿って生じさせる複数の選択肢が存在します。<b>時計回り</b>と<b>反時計回り</b>は(すなわち時計の針の方向に)円に沿って連続的に順番にパーティクルが生成される。<b>ランダム</b>はパーティクルを生じさせるために使用可能な頂点の中でランダムに選択しつつパーティクルを生成します。
 <br><br>
-There are a few different modes of spawning along the circle. There is <b>Clockwise</b> and <b>Counter-clockwise</b>, which result in each successive particle spawning in an orderly sequential fashion along the circle (ie: think of clock hands). <b>Random</b> results in each successive particle choosing randomly among any of the available verticies to spawn on.
+<b>頂点</b>は円のパーティクルを生成する角度の数を制御します。
+例えば、それが8だった場合、円の周囲を回転するための時計/反時計回りの設定に従って8か所からパーティクルが生じます。
+同様にランダムだった場合、8個の角度からランダムにパーティクルが生じます。
+もし、ランダムモードを使用している場合、ランダムの間隔の分散を増やしたいなら、360のような大きな数に頂点数を大きくします。
 <br><br>
-<b>Verticies</b> control the number of spawning angles the circle supports. For example, if it was 8, then it would take 8 particles in Clockwise/Counter mode to do a full rotation around the circle. Likewise, it if was 8, then there would only be 8 possible angles that Random mode could choose from. If you're using Random mode, you'd probably want to increase the verticies to a high number, like 360, to increase the diversity of the random spawn.
-<br><br>
-<b>Set angle on spawn</b> has the interesting effect of orienting the Y-axis of each spawned particle to be normal to the surface of the circle at the place where it spawned. The figure below illustrates that functionality.
+<b>生成時の角度</b>はパーティクルが生成された場所の円の表面に対して垂直に生成されたパーティクルのY軸が向く効果を持つ。以下の図はそれの機能を描画しています。
 </td></tr></table>
 <br><br>
 <table class=center style="width:550px">
@@ -158,8 +164,8 @@ There are a few different modes of spawning along the circle. There is <b>Clockw
 <td style='text-align:center'><img src="effektut-files/set_angle_true.png" /></td>
 </tr>
 <tr>
-<td style='text-align:center'><i>Particles streched along the Y-Axis, being spawned along a circle.</i></td>
-<td style='text-align:center'><i>The effect of enabling "Set angle on spawn" on those particles.</i></td>
+<td style='text-align:center'><i>円に沿って生成されつつ、Y軸方向に延びるパーティクル</i></td>
+<td style='text-align:center'><i>それらのパーティクルで「生成時に角度設定」を有効にした効果</i></td>
 </tr>
 </table>
 
