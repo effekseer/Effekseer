@@ -24,6 +24,8 @@ namespace Effekseer.GUI
 			{
 				Text = "Rotation";
 			}
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconRotation).GetHicon());
 		}
 
 		void Read()

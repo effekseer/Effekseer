@@ -132,6 +132,8 @@ namespace Effekseer.GUI
 					GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
 				}
 			};
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconViewPoint).GetHicon());
 		}
 
 		bool nowReloading = false;

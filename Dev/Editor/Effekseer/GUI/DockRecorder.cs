@@ -134,6 +134,8 @@ namespace Effekseer.GUI
 			txt_endingFrame.Reload();
 			txt_number_v.Reload();
 			txt_freq.Reload();
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconRecorder).GetHicon());
 		}
 
 		int startingFrame = 1;

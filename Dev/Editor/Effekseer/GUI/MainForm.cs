@@ -344,7 +344,7 @@ namespace Effekseer.GUI
 					menu.DropDownItems.Add(item);
 				}
 
-				Action<string, Type> setDockWindow = (s, t) =>
+				Action<string, Type, Image> setDockWindow = (s, t, icon) =>
 					{
 						var item = new ToolStripMenuItem();
 						item.Text = s;
@@ -352,50 +352,51 @@ namespace Effekseer.GUI
 						{
 							GUIManager.SelectOrShowWindow(t);
 						};
+						item.Image = icon;
 						menu.DropDownItems.Add(item);
 					};
 
 				if (Core.Language == Language.Japanese)
 				{
-					setDockWindow("ノードツリー", typeof(DockNodeTreeView));
-					setDockWindow("共通", typeof(DockNodeCommonValues));
-					setDockWindow("位置", typeof(DockNodeLocationValues));
-					setDockWindow("絶対位置", typeof(DockNodeLocationAbsValues));
-					setDockWindow("生成位置", typeof(DockNodeGenerationLocationValues));
-					setDockWindow("回転", typeof(DockNodeRotationValues));
-					setDockWindow("拡大", typeof(DockNodeScaleValues));
-					setDockWindow("描画共通", typeof(DockNodeRendererCommonValues));
-					setDockWindow("描画", typeof(DockNodeRendererValues));
-					setDockWindow("音", typeof(DockNodeSoundValues));
-					setDockWindow("Fカーブ", typeof(DockFCurves));
-					setDockWindow("ビュワー操作", typeof(DockViewerController));
-					setDockWindow("視点操作", typeof(DockViewPoint));
-					setDockWindow("録画", typeof(DockRecorder));
-					setDockWindow("オプション", typeof(DockOption));
-					setDockWindow("振る舞い", typeof(DockEffectBehavior));
-					setDockWindow("カリング", typeof(DockCulling));
-					setDockWindow("ネットワーク", typeof(DockNetwork));
+					setDockWindow("ノードツリー", typeof(DockNodeTreeView), null);
+					setDockWindow("共通", typeof(DockNodeCommonValues), Properties.Resources.IconCommon);
+					setDockWindow("位置", typeof(DockNodeLocationValues), Properties.Resources.IconLocation);
+					setDockWindow("絶対位置", typeof(DockNodeLocationAbsValues), Properties.Resources.IconLocationAbs);
+					setDockWindow("生成位置", typeof(DockNodeGenerationLocationValues), Properties.Resources.IconGenerationLocation);
+					setDockWindow("回転", typeof(DockNodeRotationValues), Properties.Resources.IconRotation);
+					setDockWindow("拡大", typeof(DockNodeScaleValues), Properties.Resources.IconScale);
+					setDockWindow("描画共通", typeof(DockNodeRendererCommonValues), Properties.Resources.IconRendererCommon);
+					setDockWindow("描画", typeof(DockNodeRendererValues), Properties.Resources.IconRenderer);
+					setDockWindow("音", typeof(DockNodeSoundValues), Properties.Resources.IconSound);
+					setDockWindow("Fカーブ", typeof(DockFCurves), Properties.Resources.IconFCurve);
+					setDockWindow("ビュワー操作", typeof(DockViewerController), Properties.Resources.IconViewer);
+					setDockWindow("視点操作", typeof(DockViewPoint), Properties.Resources.IconViewPoint);
+					setDockWindow("録画", typeof(DockRecorder), Properties.Resources.IconRecorder);
+					setDockWindow("オプション", typeof(DockOption), null);
+					setDockWindow("振る舞い", typeof(DockEffectBehavior), null);
+					setDockWindow("カリング", typeof(DockCulling), null);
+					setDockWindow("ネットワーク", typeof(DockNetwork), null);
 				}
 				else if (Core.Language == Language.English)
 				{
-					setDockWindow("Node Tree", typeof(DockNodeTreeView));
-					setDockWindow("Basic Settings", typeof(DockNodeCommonValues));
-					setDockWindow("Position", typeof(DockNodeLocationValues));
-					setDockWindow("Attraction Forces", typeof(DockNodeLocationAbsValues));
-					setDockWindow("Spawning Method", typeof(DockNodeGenerationLocationValues));
-					setDockWindow("Rotation", typeof(DockNodeRotationValues));
-					setDockWindow("Scale", typeof(DockNodeScaleValues));
-					setDockWindow("Basic Render Settings", typeof(DockNodeRendererCommonValues));
-					setDockWindow("Render Settings", typeof(DockNodeRendererValues));
-					setDockWindow("Sound", typeof(DockNodeSoundValues));
-					setDockWindow("F-Curves", typeof(DockFCurves));
-					setDockWindow("Viewer Controls", typeof(DockViewerController));
-					setDockWindow("Camera Settings", typeof(DockViewPoint));
-					setDockWindow("Recorder", typeof(DockRecorder));
-					setDockWindow("Options", typeof(DockOption));
-					setDockWindow("Behavior", typeof(DockEffectBehavior));
-					setDockWindow("Culling", typeof(DockCulling));
-					setDockWindow("Network", typeof(DockNetwork));
+					setDockWindow("Node Tree", typeof(DockNodeTreeView), null);
+					setDockWindow("Basic Settings", typeof(DockNodeCommonValues), Properties.Resources.IconCommon);
+					setDockWindow("Position", typeof(DockNodeLocationValues), Properties.Resources.IconLocation);
+					setDockWindow("Attraction Forces", typeof(DockNodeLocationAbsValues), Properties.Resources.IconLocationAbs);
+					setDockWindow("Spawning Method", typeof(DockNodeGenerationLocationValues), Properties.Resources.IconGenerationLocation);
+					setDockWindow("Rotation", typeof(DockNodeRotationValues), Properties.Resources.IconRotation);
+					setDockWindow("Scale", typeof(DockNodeScaleValues), Properties.Resources.IconScale);
+					setDockWindow("Basic Render Settings", typeof(DockNodeRendererCommonValues), Properties.Resources.IconRendererCommon);
+					setDockWindow("Render Settings", typeof(DockNodeRendererValues), Properties.Resources.IconRenderer);
+					setDockWindow("Sound", typeof(DockNodeSoundValues), Properties.Resources.IconSound);
+					setDockWindow("F-Curves", typeof(DockFCurves), Properties.Resources.IconFCurve);
+					setDockWindow("Viewer Controls", typeof(DockViewerController), Properties.Resources.IconViewer);
+					setDockWindow("Camera Settings", typeof(DockViewPoint), Properties.Resources.IconViewPoint);
+					setDockWindow("Recorder", typeof(DockRecorder), Properties.Resources.IconRecorder);
+					setDockWindow("Options", typeof(DockOption), null);
+					setDockWindow("Behavior", typeof(DockEffectBehavior), null);
+					setDockWindow("Culling", typeof(DockCulling), null);
+					setDockWindow("Network", typeof(DockNetwork), null);
 				}
 
 

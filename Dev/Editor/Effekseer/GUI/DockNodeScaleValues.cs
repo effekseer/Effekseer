@@ -24,6 +24,8 @@ namespace Effekseer.GUI
 			{
 				Text = "Scale";
 			}
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconScale).GetHicon());
 		}
 
 		void Read()

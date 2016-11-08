@@ -24,6 +24,8 @@ namespace Effekseer.GUI
 			{
 				Text = "Spawn Method";
 			}
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconGenerationLocation).GetHicon());
 		}
 
 		void Read()

@@ -24,6 +24,8 @@ namespace Effekseer.GUI
 			{
 				Text = "Basic Render Settings";
 			}
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconRendererCommon).GetHicon());
 		}
 
 		void Read()

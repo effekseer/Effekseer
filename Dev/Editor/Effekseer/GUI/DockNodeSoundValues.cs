@@ -23,6 +23,8 @@ namespace Effekseer.GUI
 			{
 				Text = "Sound";
 			}
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconSound).GetHicon());
 		}
 
 		void Read()
