@@ -3,6 +3,8 @@
 #include "Culling3D.ObjectInternal.h"
 
 #include <fstream>
+#include <limits>
+#include <complex>
 
 namespace Culling3D
 {
@@ -293,7 +295,7 @@ namespace Culling3D
 
 					for (int i = 0; i < 3; ++i)
 					{
-						if (abs(d[i]) < FLT_EPSILON)
+						if (std::abs(d[i]) < FLT_EPSILON)
 						{
 							if (p[i] < min[i] || p[i] > max[i])
 							{
@@ -346,9 +348,9 @@ namespace Culling3D
 
 	template<typename T> bool isfinite_(T arg)
 	{
-	    return arg == arg && 
-	           arg != std::numeric_limits<T>::infinity() &&
-	           arg != -std::numeric_limits<T>::infinity();
+		return arg == arg &&
+			arg != std::numeric_limits<T>::infinity() &&
+			arg != -std::numeric_limits<T>::infinity();
 	}
 
 	void WorldInternal::Culling(const Matrix44& cameraProjMat, bool isOpenGL)
@@ -581,9 +583,9 @@ namespace Culling3D
 
 		}
 
-		auto xlen = Max(abs(xmax), abs(xmin)) * 2.0f;
-		auto ylen = Max(abs(ymax), abs(ymin)) * 2.0f;
-		auto zlen = Max(abs(zmax), abs(zmin)) * 2.0f;
+		auto xlen = Max(std::abs(xmax), std::abs(xmin)) * 2.0f;
+		auto ylen = Max(std::abs(ymax), std::abs(ymin)) * 2.0f;
+		auto zlen = Max(std::abs(zmax), std::abs(zmin)) * 2.0f;
 
 		WorldInternal(xlen, ylen, zlen, this->layerCount);
 
