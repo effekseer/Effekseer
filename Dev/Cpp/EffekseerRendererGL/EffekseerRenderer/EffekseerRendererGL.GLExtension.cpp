@@ -118,13 +118,13 @@ static FP_glBindSampler g_glBindSampler = nullptr;
 
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 
-typedef void (EFK_STDCALL * FP_glGenVertexArrays) (GLsizei n, GLuint *arrays);
-typedef void (EFK_STDCALL * FP_glDeleteVertexArrays) (GLsizei n, const GLuint *arrays);
-typedef void (EFK_STDCALL * FP_glBindVertexArray) (GLuint array);
+typedef void (* FP_glGenVertexArraysOES) (GLsizei n, GLuint *arrays);
+typedef void (* FP_glDeleteVertexArraysOES) (GLsizei n, const GLuint *arrays);
+typedef void (* FP_glBindVertexArrayOES) (GLuint array);
 
-static FP_glGenVertexArrays g_glGenVertexArrays = NULL;
-static FP_glDeleteVertexArrays g_glDeleteVertexArrays = NULL;
-static FP_glBindVertexArray g_glBindVertexArray = NULL;
+static FP_glGenVertexArraysOES g_glGenVertexArraysOES = NULL;
+static FP_glDeleteVertexArraysOES g_glDeleteVertexArraysOES = NULL;
+static FP_glBindVertexArrayOES g_glBindVertexArrayOES = NULL;
 
 #endif
 
@@ -193,6 +193,7 @@ bool Initialize(OpenGLDeviceType deviceType)
 	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
 #endif
 
+#if defined(__EFFEKSEER_RENDERER_GLES2__)
 	if (deviceType == OpenGLDeviceType::OpenGLES2)
 	{
 #if defined(__APPLE__)
@@ -201,12 +202,13 @@ bool Initialize(OpenGLDeviceType deviceType)
 		g_isSupportedVertexArray = strstr((const char*) glGetString(GL_EXTENSIONS), "GL_OES_vertex_array_object") != NULL;
 		if (g_isSupportedVertexArray)
 		{
-			GET_PROC(glGenVertexArrays);
-			GET_PROC(glDeleteVertexArrays);
-			GET_PROC(glBindVertexArray);
+			GET_PROC(glGenVertexArraysOES);
+			GET_PROC(glDeleteVertexArraysOES);
+			GET_PROC(glBindVertexArrayOES);
 		}
 #endif
 	}
+#endif
 
 	if (deviceType == OpenGLDeviceType::OpenGL3 ||
 		deviceType == OpenGLDeviceType::OpenGLES3)
@@ -509,7 +511,7 @@ void glGenVertexArrays(GLsizei n, GLuint *arrays)
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) && defined(__APPLE__)
 	::glGenVertexArraysOES(n, arrays);
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
-	g_glGenVertexArrays(n, arrays);
+	g_glGenVertexArraysOES(n, arrays);
 #else
 	::glGenVertexArrays(n, arrays);
 #endif
@@ -522,7 +524,7 @@ void glDeleteVertexArrays(GLsizei n, const GLuint *arrays)
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) && defined(__APPLE__)
 	::glDeleteVertexArraysOES(n, arrays);
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
-	g_glDeleteVertexArrays(n, arrays);
+	g_glDeleteVertexArraysOES(n, arrays);
 #else
 	::glDeleteVertexArrays(n, arrays);
 #endif
@@ -535,7 +537,7 @@ void glBindVertexArray(GLuint array)
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) && defined(__APPLE__)
 	::glBindVertexArrayOES(array);
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
-	g_glBindVertexArray(array);
+	g_glBindVertexArrayOES(array);
 #else
 	::glBindVertexArray(array);
 #endif
