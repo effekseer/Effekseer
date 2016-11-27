@@ -33,10 +33,12 @@
 			this.btn_down = new System.Windows.Forms.Button();
 			this.btn_up = new System.Windows.Forms.Button();
 			this.nodeTreeView = new Effekseer.GUI.Component.NodeTreeView();
+			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.SuspendLayout();
 			// 
 			// contextMenuStrip
 			// 
+			this.contextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.contextMenuStrip.Name = "contextMenuStrip1";
 			this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
 			// 
@@ -44,9 +46,10 @@
 			// 
 			this.btn_down.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.btn_down.Location = new System.Drawing.Point(12, 262);
+			this.btn_down.Location = new System.Drawing.Point(16, 328);
+			this.btn_down.Margin = new System.Windows.Forms.Padding(4);
 			this.btn_down.Name = "btn_down";
-			this.btn_down.Size = new System.Drawing.Size(268, 20);
+			this.btn_down.Size = new System.Drawing.Size(357, 25);
 			this.btn_down.TabIndex = 2;
 			this.btn_down.Text = "↓";
 			this.btn_down.UseVisualStyleBackColor = true;
@@ -56,9 +59,10 @@
 			// 
 			this.btn_up.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.btn_up.Location = new System.Drawing.Point(12, 237);
+			this.btn_up.Location = new System.Drawing.Point(16, 296);
+			this.btn_up.Margin = new System.Windows.Forms.Padding(4);
 			this.btn_up.Name = "btn_up";
-			this.btn_up.Size = new System.Drawing.Size(268, 20);
+			this.btn_up.Size = new System.Drawing.Size(357, 25);
 			this.btn_up.TabIndex = 1;
 			this.btn_up.Text = "↑";
 			this.btn_up.UseVisualStyleBackColor = true;
@@ -70,16 +74,26 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.nodeTreeView.CheckBoxes = true;
-			this.nodeTreeView.Location = new System.Drawing.Point(12, 12);
+			this.nodeTreeView.ImageIndex = 0;
+			this.nodeTreeView.ImageList = this.imageList1;
+			this.nodeTreeView.Location = new System.Drawing.Point(16, 15);
+			this.nodeTreeView.Margin = new System.Windows.Forms.Padding(4);
 			this.nodeTreeView.Name = "nodeTreeView";
-			this.nodeTreeView.Size = new System.Drawing.Size(268, 219);
+			this.nodeTreeView.SelectedImageIndex = 0;
+			this.nodeTreeView.Size = new System.Drawing.Size(356, 273);
 			this.nodeTreeView.TabIndex = 0;
+			// 
+			// imageList1
+			// 
+			this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this.imageList1.ImageSize = new System.Drawing.Size(18, 18);
+			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// DockNodeTreeView
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(292, 282);
+			this.ClientSize = new System.Drawing.Size(389, 352);
 			this.ContextMenuStrip = this.contextMenuStrip;
 			this.Controls.Add(this.nodeTreeView);
 			this.Controls.Add(this.btn_down);
@@ -89,6 +103,7 @@
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop) 
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "DockNodeTreeView";
 			this.Text = "ノードツリー";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DockNodeTreeView_FormClosed);
@@ -103,5 +118,6 @@
 		private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
 		private System.Windows.Forms.Button btn_up;
 		private System.Windows.Forms.Button btn_down;
+		private System.Windows.Forms.ImageList imageList1;
 	}
 }

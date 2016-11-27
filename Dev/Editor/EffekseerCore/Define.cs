@@ -157,6 +157,48 @@ namespace Effekseer
 		}
 	}
 
+	
+	/// <summary>
+	/// アイコンを設定する属性
+	/// </summary>
+	[AttributeUsage(
+	AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method,
+	AllowMultiple = true,
+	Inherited = false)]
+	public class IconAttribute : Attribute
+	{
+		public IconAttribute()
+		{
+			resourceName = string.Empty;
+		}
+
+		public string resourceName
+		{
+			get;
+			set;
+		}
+		
+		/// <summary>
+		/// アイコン属性を探す。
+		/// </summary>
+		/// <param name="attributes"></param>
+		/// <returns></returns>
+		public static IconAttribute GetIcon(object[] attributes)
+		{
+			if (attributes != null && attributes.Length > 0)
+			{
+				foreach (var attribute in attributes)
+				{
+					if (!(attribute is IconAttribute)) continue;
+
+					return (IconAttribute)attribute;
+				}
+			}
+
+			return null;
+		}
+	}
+
 	public class Setting
 	{
 		public static System.Globalization.NumberFormatInfo NFI

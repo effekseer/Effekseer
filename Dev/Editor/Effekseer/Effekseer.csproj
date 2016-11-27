@@ -520,6 +520,12 @@
     <Content Include="Image\IconSound.png" />
     <Content Include="Image\IconViewer.png" />
     <Content Include="Image\IconViewPoint.png" />
+    <Content Include="Image\NodeEmpty.png" />
+    <Content Include="Image\NodeModel.png" />
+    <Content Include="Image\NodeRibbon.png" />
+    <Content Include="Image\NodeRing.png" />
+    <Content Include="Image\NodeSprite.png" />
+    <Content Include="Image\NodeTrack.png" />
     <Content Include="Image\Pause.png" />
     <Content Include="Image\Play.png" />
     <Content Include="Image\Step.png" />

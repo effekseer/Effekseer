@@ -949,22 +949,28 @@ namespace Effekseer.Data
 		{
 			[Name(value = "無し", language = Language.Japanese)]
 			[Name(value = "None", language = Language.English)]
+			[Icon(resourceName = "NodeEmpty")]
 			None = 0,
 			//Particle = 1,
 			[Name(value = "スプライト", language = Language.Japanese)]
 			[Name(value = "Sprite", language = Language.English)]
+			[Icon(resourceName = "NodeSprite")]
 			Sprite = 2,
 			[Name(value = "リボン", language = Language.Japanese)]
 			[Name(value = "Ribbon", language = Language.English)]
+			[Icon(resourceName = "NodeRibbon")]
             Ribbon = 3,
 			[Name(value = "軌跡", language = Language.Japanese)]
 			[Name(value = "Track", language = Language.English)]
+			[Icon(resourceName = "NodeTrack")]
 			Track = 6,
             [Name(value = "リング", language = Language.Japanese)]
 			[Name(value = "Ring", language = Language.English)]
+			[Icon(resourceName = "NodeRing")]
             Ring = 4,
 			[Name(value = "モデル", language = Language.Japanese)]
 			[Name(value = "Model", language = Language.English)]
+			[Icon(resourceName = "NodeModel")]
 			Model = 5,
 		}
 

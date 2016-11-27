@@ -21,6 +21,15 @@ namespace Effekseer.GUI
 			{
 				Text = "Node Tree";
 			}
+
+			// Add icon for each nodes
+			imageList1.Images.Add(Properties.Resources.NodeEmpty);
+			imageList1.Images.Add(Properties.Resources.NodeEmpty);	// Dummy
+			imageList1.Images.Add(Properties.Resources.NodeSprite);
+			imageList1.Images.Add(Properties.Resources.NodeRibbon);
+			imageList1.Images.Add(Properties.Resources.NodeRing);
+			imageList1.Images.Add(Properties.Resources.NodeModel);
+			imageList1.Images.Add(Properties.Resources.NodeTrack);
 		}
 
 		internal Component.NodeTreeView NodeTreeView
