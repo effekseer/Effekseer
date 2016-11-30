@@ -174,8 +174,14 @@ Effekseer内のたくさんの数値入力欄は左の画像のような見た�
 
 <table>
 <tr><td style="width:432px; text-align:center"><img src="effektut-files/sphere_spawn.png" /></td><td class='td1'>
-In many ways, this is very similar to the circular spawn method (except adding a third dimension). Note, however, that sequential spawning does not exist here. It is only possible to spawn particles randomly across the spherical surface.<br><br>
-<b>X Rotation</b> and <b>Y Rotation</b> control the "span" over the sphere's surface in which the particles spawn. By default it is 0, which will not allow any particles to spawn. To have particles spawn over the entire sphere, set the deviation to 180, so you get full 360&deg; rotation over each axis. However, like how you could choose to spawn only along an arc of a circle in the section above, you can utilize localized wedges of the sphere's surface for spawning. See the figures below.
+多くの点で、(3次元であることを除いて)生成手法(円)ととても似ています。
+しかし、連続的な生成はこれに存在しません。球の表面に沿ってランダムにパーティクルを生成するのみです。
+<b>X回転</b>と<b>Y回転</b>はパーティクルが生成される球の表面を制御します。
+標準では0に設定させており、これではパーティクルが生成されません。球の全ての表面からパーティクルが生成させるようにするために、ばらつきを180に設定することで、360度を得て、
+すなわちそれぞれの軸の回転を覆います。
+しかし、どうセクションの上の円の弧のみ生成するために選択するか、のように、
+生成のために球の表面の配置されたくさびを使用できます。
+以下の図をみてください。
 </td></tr></table>
 
 <table class=center style="width:550px">
@@ -184,36 +190,40 @@ In many ways, this is very similar to the circular spawn method (except adding a
 <td style='text-align:center'><img src="effektut-files/wedge_ani.gif" /></td>
 </tr>
 <tr>
-<td style='text-align:center'><i>Particles spawned on a sphere, with a full 360&deg; span.</i></td>
-<td style='text-align:center'><i>Shrinking rotation to only 60&deg; along each axis. A "spherical wedge".</i></td>
+<td style='text-align:center'><i>Particles spawned on a sphere, with a full 360&deg; span.360度全ての球にパーティクルが生成された場合</i></td>
+<td style='text-align:center'><i>Shrinking rotation to only 60&deg; along each axis. A "spherical wedge". 球のくさび、それぞれの軸にそって60度に小さくした場合</i></td>
 </tr>
 </table>
 
 <a name="particles_behavior"></a>
-<h2>Particles (Behavior)</h2>
+<h2>パーティクル(振る舞い)</h2>
 
 <a name="position_rotation_scale"></a>
-<h3>Position/Rotation/Scale</h3>
-The three most important windows for modifying the behavior of emitted particles are the Position, Rotation, and Scale windows. Their names are self-explanitory. The <b>Position</b> windows lets you control how the particles move through space over time. The <b>Rotation</b> window lets you control the orientation and angular velocity of the particles. The <b>Scale</b> window lets you modify the size of the particle over its lifetime.
+<h3>位置/回転/拡大率</h3>
+生成されたパーティクルの振る舞いを編集するのに重要なウインドウは位置、回転、拡大率の3つのウインドウです。これらの名称は自明です。
+<b>位置</b>ウインドウはパーティクルが時間経過で空間をどう動くかを制御します。
+<b>回転</b>ウインドウはパーティクルの回転速度と方向を制御します。
+<b>拡大率</b>ウインドウは生存時間内のパーティクルの大きさを制御します。
 <br><br>
-Each of these windows allows you to choose among different methods of modifying these values over time. By default, the mode is set to <b>Fixed</b>, meaning the emitted particles will take on a static value for that attribute, and stay at that value for the entire duration of its existance. The other modes are explained below. 
+これらそれぞれのウインドウは時間経過でこれらの値が変更される異なる手法を選択できるようにします。
+初期値では、<b>固定</b>モードに設定されており、これは、生成されたパーティクルは特性のために1つの固定値を持ち、
+パーティクルは存在するすべての時間の間、その値にとどまることを意味します。
 
 <a name="pva"></a>
 <h3>PVA</h3>
-
-PVA stands for Position, Velocity, Acceleration. This is likely the mode you will use most of the time. <b>Position</b> sets the initial values on spawn, <b>Velocity</b> sets the rate of change of the initial values over time, and <b>Acceleration</b> sets the rate of change of the velocity over time. 
+PVAはPosition、Velocity、Accelerationの略です。 これはほとんどの場合に使用するモードです。 <b>位置</b>は生成時の初期値を設定し、<b>速度</b>は時間に対する初期値の変化率を設定し、<b>加速度</b>は時間に対する速度の変化率を設定します。
 <br><br>
-The default setting of Fixed for position/rotation/scale does not allow you to randomize the initial values. Thus, even disregarding velocity and acceleration, PVA can be used as a randomized variant of Fixed.
-
+位置/回転/スケールの固定の標準設定では、初期値をランダム化することはできません。 したがって、速度と加速度を無視しても、PVAは固定のランダムな変形として使用できます。
 <a name="easing"></a>
-<h3>Easing</h3>
+<h3>イージング</h3>
 
-If you know specifically what values the particle will start and end with, Easing is an ideal mode to use. It will gradually transition from the start to the end value over the entire lifetime of the particle. <br><br>
+パーティクルの開始と終了の値がわかっている場合、イージングは理想的なモードです。 パーティクルの生存時間全体にわたって徐々に開始値から終了値に移行します。<br><br>
 
 <table>
 <tr>
 <td style='text-align:center'><img src="effektut-files/easing.gif" /></td>
-<td  class='td1'>The <b>Ease In</b> and <b>Ease Out</b> dropdown boxes change the style in which the particle transitions between the two values over time. The illustration to the left shows different combinations of easing speeds. The examples respectively refer to the following combinations of {Ease In - Ease Out} pairs:<br><br>
+<td  class='td1'>
+<b>イーズイン</b>と<b>イーズアウト</b>のドロップダウンボックスは、時間の経過とともに2つの値の間でパーティクルが遷移するスタイルを変更します。 左の図は、イージング速度のさまざまな組み合わせを示しています。 これらの例は、それぞれ{Ease In-Ease Out}の組の以下の組み合わせを参照しています。<br><br>
 <table class=center cellpadding="30">
 <tr><td>Slowest-Slowest</td><td>Slowest-Normal</td><td>Slowest-Fastest</td></tr>
 <tr><td>Normal-Slowest</td><td>Normal-Normal</td><td>Normal-Fastest</td></tr>
@@ -224,19 +234,19 @@ If you know specifically what values the particle will start and end with, Easin
 
 <a name="fcurve"></a>
 <h3>F-Curve</h3>
-If Easing and PVA don't do the job, and you need more fine control over how your particle transitions through values over time, F-Curve is the mode you will want to use. The screenshot below shows two F-Curve graphs, the top one showing how the graph initially looks before you touch it, the bottom one showing an example of a graph with values initialized.
+イージングとPVAでは性能が足りず、時間の経過と共にパーティクルが値をどのように遷移するかをより細かく制御する必要がある場合、F-Curveを使用します。下のスクリーンショットは、2つのF-Curveグラフを示しています。上のグラフは、グラフが最初にどのように表示されるかを示し、下のグラフは、値が初期化されたグラフの例を示しています。
 <br><br>
-The Y-axis of the graph represents value, and the X-axis of the graph represents time. 0 is the time when the particle spawns, and the dark-grey area at the right side of the graph is the time when the particle will die. Like the Viewer, the graphs can be panned with the <b>middle mouse button</b>, and can be zoomed with the <b>scroll wheel</b>. You can also choose the axis of zoom by holding down the <b>Ctrl</b> or <b>Shift</b> button while scrolling the mouse wheel.
+グラフのY軸は値を表し、グラフのX軸は時間を表します。 0はパーティクルが発生する時刻であり、グラフの右側の濃いグレーのエリアはパーティクルが消滅する時刻です。 ビューアと同様に、グラフは<b>マウスの中央ボタン</b>でパンすることができ、<b>スクロールホイール</b>でズームすることができます。 また、マウスホイールをスクロールしながら<b>Ctrl</b>または<b>Shift</b>キーを押しながらズームの軸を選択することもできます。
 <br><br>
 <div style="text-align:center;"><img src="effektut-files/fcurve.png" /></div>
 <br>
-To actually add points to the graph, you use the <b>X/Y/Z</b> keys on your keyboard (which intuitively coorespond with the setting of values for the X/Y/Z fields, respectively). Clicking on a point will select it, and you can drag it to reposition it. Dragging straight up or down from a point will create a pivot for a Bezier curve (if the point is set to Bezier mode, which is the default).
+グラフにポイントを実際に追加するには、キーボードの<b>X / Y / Z</b>キー（X / Y / Zフィールドの値の設定に直感的に対応しています）を使用します。 ポイントをクリックするとポイントが選択され、ドラッグするとポイントの位置を変更できます。 ポイントからまっすぐ上下にドラッグすると、ベジェ曲線のピボットが作成されます（ポイントがベジェモードに設定されている場合はデフォルトです）。
 <br><br>
-<b>Type</b> sets the style of line that connects to and from the selected point. The <b>Linear</b> option will force the lines to be straight, while the <b>Bezier</b> option will allow the lines to be curved.
+<b>種類</b>は、選択したポイントとの間で接続するラインのスタイルを設定します。 <b>線形</b>オプションは線を直線にし、<b>ベジェ</b>オプションでは線を曲線にします。
 <br><br>
-<b>Max Offset</b> and <b>Min Offset</b> allow you to apply randomization to the F-Curve values. Note that these deviations apply to the whole selected line (ie: it deviates all points on the line by the same random amount), and not to the selected point. It's not possible to randomize on a point-by-point basis.
+<b>最大オフセット</b>と<b>最小オフセット</b>を使用すると、F-Curveの値にランダム化を適用できます。 これらの偏差は、選択されたライン全体に適用されます（つまり、ライン上のすべてのポイントが同じランダム量だけ外れます）。選択されたポイントには適用されません。 ポイントごとにランダム化することはできません。
 <br><br>
-<b>Start</b> and <b>End</b> also refer to the whole selected line, rather than the currently selected point. They determine the behavior to be taken for defining the values that extend before the first defined point, and after the last defined point. By default they remain at a constant value that matches the first/last point. However, the other options allow you to loop the values over from the beginning. This is particuarly useful if the values have a repetitious nature; you then only have to define the first instance of the pattern, and then let the loop fill in the rest for you. The illustration below shows this applied in order to easily make a sine-wave pattern.
+<b>開始</b>と<b>終了</b>は、現在選択されているポイントではなく、選択したライン全体を参照します。 それらは、最初に定義されたポイントの前に、最後に定義されたポイントの後に広がる値を定義するためにとられる動作を決定します。 デフォルトでは、最初/最後の点に一致する一定の値にとどまります。 ただし、他のオプションを使用すると、最初から値をループすることができます。 値が繰り返しの性質を持つ場合、これは特に有用です。 パターンの最初のインスタンスを定義してから、残りの部分をループで埋める必要があります。 以下の図は、簡単に正弦波パターンを作るために適用されたものです。
 <br><br>
 <div style="text-align:center;"><img src="effektut-files/floop.png" /></div>
 
