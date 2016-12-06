@@ -1,4 +1,4 @@
-﻿
+
 <html>
 <head>
 <meta charset="utf-8">
@@ -251,41 +251,51 @@ PVAはPosition、Velocity、Accelerationの略です。 これはほとんどの
 <div style="text-align:center;"><img src="effektut-files/floop.png" /></div>
 
 <a name="point_of_attraction"></a>
-<h3>Point of Attraction</h3>
+<h3>引力(点)</h3>
 <table>
 <tr><td style="width:300px; text-align:center"><img src="effektut-files/homing.png" /></td><td class='td1'>
-Effekseer allows you define an attraction point for a particle emitter, which acts like a magnet, drawing the spawned particles into it. Sample Project "<i>00_Basic/Homing_Laser01.efkproj</i>", shown below, uses this feature in order to create "homing lasers". They shoot out from a central firing point and home into the attraction point. At the very bottom of the <b>Behavior</b> window, you can define the location of the emitter's Point of Attraction. 
+Effekseerでは、磁石のように作用するパーティクルエミッタの引力(点)を定義し、Effekseer内に生成されたパーティクルを描画します。以下に示すサンプルプロジェクト<i>00_Basic/Homing_Laser01.efkproj</i>は 、「ホーミングレーザー」を作成するために、この機能を使用しています。 それらは中央の発砲地点から飛び出し、引力(点)に向かいます。 <b>振る舞いウィンドウ</b>の一番下で、あなたはエミッタの引力(点)の位置を定義することができます。
 <br><br>
-By default the point of attraction is not active, so changing its position will not initially have any visible effect. Enabling the attraction point can be done through the <b>Attraction Forces</b> window, by choosing <b>Attraction</b> from the dropdown list.
+標準では、点(引力)は有効ではないため、その位置を変更しても目に見える効果はありません。 点(引力)を有効にするドロップダウンリストから<b>引力</b>を選択することにより、 <b>力の振る舞いウインドウ</b>を介して行うことができます。
 <br><br>
-The <b>Attraction</b> parameter controls how quickly (forcefully) the particles are pulled into the attractor. The <b>Resistance</b> parameter controls how much the particles can resist being pulled directly into the attraction point. For high numbers, the particles will get stuck directly at the point of attraction once being pulled in. For low numbers, the particles will get into an eliptical orbit around the point of attraction (the lower the number, the larger the radius of the orbit). Resistance can also be negative, in which case the point of attraction will actually push the particles away, instead of pulling them in.
+<b>引力</b>のパラメータは、どのように迅速に（強制的に）粒子がアトラクターに引き込まれているか、を制御します。 <b>抵抗</b>パラメータは、どの程度、パーティクルが直接引力(点)に引き込まレルことに抵抗するかを制御します。 大きい数値の場合、粒子は引っ張られた時点で引力(点)に直接詰まります。小さい数値の場合、粒子は引力(点)の周りの楕円軌道に入ります（数値が小さいほど軌道の半径が大きくなります）。 抵抗は負の場合もあります。この場合、引力のポイントは実際に粒子を引っ張るのではなく、押し退けます。
+
+<br><br>
+
+<i>
+（注意：アトラクションポイントの位置を変更するとプレビューにすぐに反映されない小さなバグがあります。位置を変更した後にアトラクションまたはレジスターの値を変更すると、システムが更新されます）。
+</i>
+
 </td></tr></table>
 
 <a name="particles_appearance"></a>
-<h2>Particles (Appearance)</h2>
+<h2>パーティクル (外観)</h2>
 
 <a name="basic_render_settings"></a>
-<h3>Basic Render Settings</h3>
+<h3>基本描画設定</h3>
 <b>基本描画設定</b>ウィンドウでは、パーティクルの見た目に関する重要で一般的に使用される属性を設定できます。何よりもまず、<b>テクスチャ</b>の入力欄では、ハードディスクの任意のイメージを読み込んで、パーティクルの基本的な見た目として使用できます。他のすべては、このテクスチャがシーン内でどのように描画されるかを変えることを中心に行います。 
 <br><br>
 <b>ブレンド</b>を使用すると、他のパーティクルが重なっているときのテクスチャの表示を調整できます。下の画像は、異なるブレンドタイプの例を示しています。 左から右へ：不透明、ブレンド、加算、減算、および乗算となっています。
 <br><br>
 <div style="text-align:center;"><img style="border: none;" src="effektut-files/blendmodes.png" /></div>
 
-<b>Filter</b> adjusts the method that's used to resize the particle when it is being scaled. There are only two options... the default, <b>Linear Interpolation</b> attempts to blend the colors of neighboring pixels together. <b>Nearest-Neighbor</b> on the other hand leaves the texture pixelated when it is upscaled.
+<b>フィルタ</b>は、それが拡大されているときに、粒子の大きさを変更するために使用される方法を設定します。 2つのオプションしかなく...標準設定の、 <b>線形補間</b>は、一緒に隣接する画素の色をブレンドしようとします。 一方、 <b>最近傍</b>は、それが拡大されたときに画像の画素の雰囲気を残します。
+
 <br><br>
-<b>Fade-In</b> and <b>Fade-Out</b> do exactly as their name implies. The duration specified for these is always relative to the beginning and end of the particle's lifetime. For example, assume Fade-In was set to a duration of 10 frames, and Fade-Out was set to a duration of 20 frames. Then, if the particle was set to live for 100 frames, it would fade in during frames 1-10 after spawning, and would fade out during frames 80-100.
+<b>フェードイン</b>、<b>フェードアウト</b>はその名前が示すように正しくフェードを行います。これらのために指定された持続時間は、常にパーティクルの寿命の始めと終わりを基準にしています。例えば、フェードインが10フレームの期間に設定され、フェードアウトが20フレームの期間に設定されているとします。その後、パーティクルが100フレームの間、生存するように設定されていた場合、パーティクルは生成後、1〜10フレームでフェードインし、80〜100フレームでフェードアウトします。
 <br><br>
 <table>
 <tr><td style="width:300px; text-align:center"><img style="border: 20px solid black;" src="effektut-files/uvscroll.gif" /></td><td class='td1'>
-<b>UV</b> lets you draw only a portion of the texture image, rather than the whole thing. This has a variety of uses, and particuarly we'll talk about the <b>Scroll</b> and <b>Animation</b> settings:
+<b>UV</b>は、あなただけのテクスチャ画像の全てではなく、一部を描画できます。 これには、さまざまな用途があり、特に、我々は<b>スクロール</b>と<b>アニメーション</b>の設定について説明します：
 <ul>
-<li><b>UV Scroll</b> lets you scroll over the surface of the texture at some fixed X/Y speed. The image to the left shows a smoke texture being UV scrolled over the surface of a conical shape. You'll generally want to make sure that <b>Wrap</b> is set to Repeat, so the texture wraps around as it scrolls.</li>
-<li><b>UV Animation</b> lets you use a sprite sheet as a texture, and play it as an animation. <b>Start</b> should be the coordinate of the top-left of the first frame in the sprite sheet. <b>Size</b> should be the size in pixels of each frame in the animation. <b>X-Count</b> and <b>Y-Count</b> are the number of rows/columns in the sprite sheet that comprise the animation to play. <b>Frame Length</b> is the speed at which the animation will be played.</li>
+<li><b>UVスクロール</b>では、ある固定されたX/Y速度でテクスチャの表面上をスクロールすることができます。 左のイメージは、円錐形の表面上でUVスクロールされた煙テクスチャを示しています。 あなたは、一般的に<b>ラップ</b>が繰り返しに設定されていることを確認したいと思うので、それがスクロールするようにテクスチャが周囲を包みます。</li>
+<li><b>UVアニメーション</b>では 、テクスチャとしてスプライトシートを使用して、アニメーションとして再生することができます。 スタートは、スプライトシートの最初のフレームの左上の座標でなければなりません。 サイズは 、アニメーションの各フレームのピクセル単位のサイズである必要があります。 <b>Xカウント</b>及び<b>Yカウント</b>は再生するアニメーションを構成するスプライトシート内の行/列の数です。 フレーム長は、アニメーションが再生される速度です。</li>
 </ul>
 </td></tr></table>
+
 <br>
-<b>Distortion</b> allows the texture to be used as a transparent distortion map to affect the appearance of other particles that pass behind it. The brightness of the pixels in the texture affect the areas of distortion. The animations below show this effect in action. Note that it's not the particles that have distortion applied on them, but rather another texture that is sitting in front.
+
+<b>歪み</b>は、テクスチャがその背後に存在する他のパーティクルの外観に影響を与えるために透明な歪みマップとして使用することが可能になります。 テクスチャ内の画素の輝度は、歪みの領域に影響します。 以下のアニメーションでは、この効果を実際に表示しています。 表示されているパーティクルは、歪みが適用されたパーティクルではなく、むしろ前方に配置されている別のテクスチャです。
 <br><br>
 <table class=center style="width:550px">
 <tr>
@@ -293,13 +303,13 @@ The <b>Attraction</b> parameter controls how quickly (forcefully) the particles 
 <td style='text-align:center'><img src="effektut-files/distort.gif" /></td>
 </tr>
 <tr>
-<td style='text-align:center'><i>Particles moving back and forth with no distortion.</i></td>
-<td style='text-align:center'><i>Those same particles, passing behind a texture with distortion applied.</i></td>
+<td style='text-align:center'><i>パーティクルは歪みのない状態で前後に移動します。</i></td>
+<td style='text-align:center'><i>それらの同じパーティクルは、歪みが加えられたテクスチャの後を通過します。</i></td>
 </tr>
 </table>
 
 <a name="sprites"></a>
-<h3>Sprites</h3>
+<h3>スプライト</h3>
 
 In the <b>Render</b> window, you can choose the method of drawing the texture to the scene. The default method is <b>Sprite</b>, which is where it just draws the texture onto a flat, square surface. 
 <br><br>
