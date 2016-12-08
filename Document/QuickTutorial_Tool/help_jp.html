@@ -260,12 +260,6 @@ Effekseerでは、磁石のように作用するパーティクルエミッタ�
 <br><br>
 <b>引力</b>のパラメータは、どのように迅速に（強制的に）粒子がアトラクターに引き込まれているか、を制御します。 <b>抵抗</b>パラメータは、どの程度、パーティクルが直接引力(点)に引き込まレルことに抵抗するかを制御します。 大きい数値の場合、粒子は引っ張られた時点で引力(点)に直接詰まります。小さい数値の場合、粒子は引力(点)の周りの楕円軌道に入ります（数値が小さいほど軌道の半径が大きくなります）。 抵抗は負の場合もあります。この場合、引力のポイントは実際に粒子を引っ張るのではなく、押し退けます。
 
-<br><br>
-
-<i>
-（注意：アトラクションポイントの位置を変更するとプレビューにすぐに反映されない小さなバグがあります。位置を変更した後にアトラクションまたはレジスターの値を変更すると、システムが更新されます）。
-</i>
-
 </td></tr></table>
 
 <a name="particles_appearance"></a>
@@ -357,24 +351,24 @@ Effekseerでは、磁石のように作用するパーティクルエミッタ�
 <h3>リボン/軌跡</h3>
 <b>リボン</b>を使用すると 、線を作成することができます。 これまでにこのチュートリアルで示したいくつかの画像にはリボンを使用しています。 特に、イージングアニメーションの線、および "ホーミングミサイル"の例のオーブの後ろの軌跡に使用されています。
 <br><br>
-They way they work is that each time a ribbon emitter spawns a particle, a line is drawn between it and the previously spawned ribbon segment. By varying the position and velocity of the spawned segments, you can create different shaped line-strips. A common usage of ribbons is to set a ribbon emitter as the child of some other particle, and then have the ribbon emitter's particles inherit the position of the parent on spawn. This will result in a trail being drawn behind the parent particle as it moves.
+リボンエミッタがパーティクルを生成するたびに、そのパーティクルと以前に生成されたリボンの領域との間に線が引かれます。 生成された領域の位置と速度を変えることによって、異なる形状の線を作成することができます。 リボンの一般的な使い方は、リボンエミッタを他のパーティクルの子として設定し、リボンエミッタのパーティクルを生成時に親の位置を継承させることです。 これにより、親パーティクルが移動する際に、後ろに軌跡が描かれます。
 <br><br>
-<b>Tracks</b> are more or less the same as ribbons, except they also incorporate the color features of Rings. A track can define different colors and sizes for the outer, inner, and center points of the line.
+<b>軌跡</b>は、リングの色の特徴が組み込まれていること以外は、多かれ少なかれリボンと同じです。軌跡は、線の外側、内側、および中心点に異なる色と大きさを定義できます。
 
 <a name="exporting"></a>
-<h2>Exporting</h2>
+<h2>出力</h2>
 
 <a name="to_2d"></a>
-<h3>To 2D Sprite Sheets or Animations</h3>
-Outputting to a 2D sprite sheet is done through the <b>Recorder</b> window. The <b>X/Y Count</b> determine the layout of the sprite sheet, particuarly how many frames each row and column has. Subsequently, this also determines the total number of frames your sprite sheet will contain. For example, {X=4, Y=6} will produce a sprite sheet that has 24 frames, arranged into 4 columns and 6 rows. In addition to exporting as a sprite sheet, you can export directly to a GIF or AVI file, via the format dropdown box.
+<h3>2Dスプライトへ、もしくはアニメーションへ</h3>
+2Dスプライトシートへの出力は、<b>録画</b>ウィンドウから行います。<b>X/Y Count</b>は、スプライトシートのレイアウト、特に各行と列のフレーム数を決定します。 その後、スプライトシートに含めるフレームの総数も決まります。 たとえば、{X = 4、Y = 6}は、4列6行に配置された24フレームのスプライトシートを生成します。 スプライトシートとしてエクスポートするだけでなく、形式のドロップダウンボックスからGIFまたはAVIファイルに直接書き出すことができます。
 <br><br>
-<b>Start Frame</b> is the frame in the animation the recording should start at. (A small caveat: If you leave this at the default value of 1, your first frame will always be blank. It takes at least one frame for any particles to spawn)
+<b>開始フレーム</b>は、録画を開始するアニメーションのフレームです。 （小さな警告：これをデフォルト値の1にしておくと、最初のフレームは常に空白になります。パーティクルが発生するには少なくとも1つのフレームが必要です）
 <br><br>
-<b>Frame Skip</b> determines the interval at which frames are recorded. For example, if this is set to 2, then only frames {1, 4, 7, 10, ...} will be included in the recording. This is useful for reducing the size of the output, but obviously also results in choppier animations.
+<b>フレームスキップ</b>は、フレームが記録される間隔を決定します。 たとえば、これが2に設定されている場合、フレーム{1,4,7,10、...}のみが記録に含まれます。 これは出力のサイズを小さくするのに便利ですが、明らかにより断片的なアニメーションにもなります。
 <br><br>
-Clicking the "Show guide" checkmark will display a black box in the viewer. When exporting to a 2D sprite sheet, the animation will be exported exactly as it it seen within that black box. So you need to make sure to zoom/orient it in the view exactly as you want it to look in the final output.
+「ガイド表示」チェックマークをクリックすると、ビューアーに黒いボックスが表示されます。 2Dスプライトシートを出力すると、そのブラックボックス内に表示されたとおりにアニメーションが出力されます。 したがって、最終出力を見たいのと同じように、ビュー内でズーム/方向の設定を確実に行う必要があります。
 <br><br>
-By default the sprites will export with the black background included. This may make it difficult to use in practice, as you'll always need to use Additive blending to get rid of the background. You can choose "Use original image alpha" from the transparency dropdown to ignore the background, but you have to make sure all the textures you used have transparency/alpha channels of their own. Otherwise, you can try using "Generate alpha" in which Effekseer will automatically try to make the exported sprites transparent for you. (Note that transparency works with the AVI output option as well, so you can easily use the exported AVIs as transparent layers in video editing software)
+デフォルトでは、スプライトは黒い背景を含めてエクスポートされます。 背景を取り除くためには常に加算ブレンドを使用する必要があるため、実際には使用するのが難しくなります。 透明部分のドロップダウンメニューから「オリジナル画像アルファを使用」を選択すると、背景は無視されますが、使用したテクスチャのすべてに独自の透明/アルファチャンネルがあることを確認する必要があります。 さもなければ、Effekseerが自動的にエクスポートされたスプライトを透明にしようとする "Generate alpha"を試すことができます。 （透明度はAVI出力オプションでも機能するので、ビデオ編集ソフトウェアで透明なレイヤーとしてエクスポートされたAVIを簡単に使用できます）
 <br><br>
 <table class=center style="width:1000px">
 <tr>
@@ -382,22 +376,24 @@ By default the sprites will export with the black background included. This may 
 <td style='text-align:center'><img src="effektut-files/alphaestimation_on.png" /></td>
 </tr>
 <tr>
-<td style='text-align:center'><i>Exported spritesheet without transparency.</i></td>
-<td style='text-align:center'><i>Same spritesheet exported using the "Generate alpha" option.</i></td>
+<td style='text-align:center'><i>透過性なしで出力されたスプライトシート</i></td>
+<td style='text-align:center'><i>「Generate alpha」オプションを使用して出力された同じスプライトシート</i></td>
 </tr>
 </table>
 
 <a name="to_3d"></a>
-<h3>To 3D Effects</h3>
+<h3>3Dエフェクトへ</h3>
 
-<b>File -> Export</b> allows you to export to a *.efk format, which is a proprietary filetype only used by Effekseer. These files can be used by special Effekseer plugins and such to integrate them into your games.
+<b>「ファイル」->「書き出し」</b>を選択すると、Effekseerのみが使用する独自のファイル形式である *.efk 形式に書き出すことができます。 これらのファイルは特別なEffekseerプラグインなどで使用してゲームに組み込むことができます。
+
 <br><br>
-For Unity, the <b>"Effekseer/GameEngine/Unity"</b> folder contains a plugin (for Unity 5) to use the *.efk files in your project. It also contains a sample project showing this plugin in action. After importing the unitypackage, in your project's asset folder, you want to set up the following directory structure:
+Unityの場合、<b>「Effekseer/GameEngine/Unity」</b>フォルダには、プロジェクト内の *.efkファイルを使用するプラグイン（Unity5用）が含まれています。また、このプラグインの動作を示すサンプルプロジェクトも含まれています。 ユニティパッケージをインポートした後、プロジェクトのアセットフォルダに、次のディレクトリ構造を設定します。
 <br><br>
 <img src="effektut-files/unity_resource.png" />
 <br>
-The exported *.efk files go into the StreamingAssets/Effekseer folder, including any textures the effects use (this is because the textures are not saved in the *.efk file, only references to the textures... thus, the texture files should be named the same, and placed relatively to the *.efk file the same way they were with your original *.efkproj). Then you can add a new Effekseer Emitter to your scene, referencing your effect by name (omitting the efk file extension):
+エクスポートされた* .efkファイルは、エフェクトが使用するテクスチャを含め、StreamingAssets/Effekseerフォルダに保存されます（これはテクスチャが *.efk ファイルに保存されず、テクスチャへの参照のみであるためです） 同じ名前が付けられ、元の *.efkproj と同じ方法で *.efk ファイルに相対的に配置されます）。 次に、新しい Effekseer Emitter をシーンに追加して、エフェクトを名前で参照できます（efkファイル拡張子を省略）。
 <br><br>
+
 <img src="effektut-files/unity_emitter.png" />
 </body>
 </html>
