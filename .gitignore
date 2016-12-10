@@ -20,6 +20,7 @@
 *.log
 *.cache
 *.user
+.DS_Store
 
 [Oo]bj/
 
