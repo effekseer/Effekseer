@@ -194,67 +194,67 @@
     <value>..\image\nodetrack.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="AttractionForces" xml:space="preserve">
-    <value>絶対位置</value>
+    <value>Attraction Forces</value>
   </data>
   <data name="BasicRenderSettings" xml:space="preserve">
-    <value>描画共通</value>
+    <value>Basic Render Settings</value>
   </data>
   <data name="BasicSettings" xml:space="preserve">
-    <value>共通</value>
+    <value>Basic Settings</value>
   </data>
   <data name="Behavior" xml:space="preserve">
-    <value>振る舞い</value>
+    <value>Behavior</value>
   </data>
   <data name="CameraSettings" xml:space="preserve">
-    <value>視点操作</value>
+    <value>Camera Settings</value>
   </data>
   <data name="Culling" xml:space="preserve">
-    <value>カリング</value>
+    <value>Culling</value>
   </data>
   <data name="FCurves" xml:space="preserve">
-    <value>Fカーブ</value>
+    <value>F-Curves</value>
   </data>
   <data name="Help" xml:space="preserve">
-    <value>ヘルプ</value>
+    <value>Help</value>
   </data>
   <data name="Network" xml:space="preserve">
-    <value>ネットワーク</value>
+    <value>Network</value>
   </data>
   <data name="NodeTree" xml:space="preserve">
-    <value>ノードツリー</value>
+    <value>Node Tree</value>
     <comment>MainFrom:ReloadMenu</comment>
   </data>
   <data name="Options" xml:space="preserve">
-    <value>オプション</value>
+    <value>Options</value>
   </data>
   <data name="Position" xml:space="preserve">
-    <value>位置</value>
+    <value>Position</value>
   </data>
   <data name="Recorder" xml:space="preserve">
-    <value>録画</value>
+    <value>Recorder</value>
   </data>
   <data name="RenderSettings" xml:space="preserve">
-    <value>描画</value>
+    <value>Render Settings</value>
   </data>
   <data name="ResetWindow" xml:space="preserve">
-    <value>ウインドウ位置を初期化</value>
+    <value>Reset Window Position</value>
   </data>
   <data name="Rotation" xml:space="preserve">
-    <value>回転</value>
+    <value>Rotation</value>
   </data>
   <data name="Scale" xml:space="preserve">
-    <value>拡大</value>
+    <value>Scale</value>
   </data>
   <data name="Sound" xml:space="preserve">
-    <value>音</value>
+    <value>Sound</value>
   </data>
   <data name="SpawningMethod" xml:space="preserve">
-    <value>生成位置</value>
+    <value>Spawning Method</value>
   </data>
   <data name="ViewerControls" xml:space="preserve">
-    <value>ビュワー操作</value>
+    <value>Viewer Controls</value>
   </data>
   <data name="Window" xml:space="preserve">
-    <value>ウインドウ</value>
+    <value>Window</value>
   </data>
 </root>
