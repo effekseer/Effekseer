@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERTOOL_SOUND_H__
 #define	__EFFEKSEERTOOL_SOUND_H__
 
@@ -27,32 +27,32 @@ private:
 
 public:
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	Sound();
 
 	/**
-		@brief	ƒfƒXƒgƒ‰ƒNƒ^
+		@brief	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	~Sound();
 
 	/**
-		@brief	‰Šú‰»‚ğs‚¤B
+		@brief	åˆæœŸåŒ–ã‚’è¡Œã†ã€‚
 	*/
 	bool Initialize( int32_t voiceCount1ch, int32_t voiceCount2ch );
 
 	/**
-		@brief	ƒfƒoƒCƒX‚ğæ“¾‚·‚éB
+		@brief	ãƒ‡ãƒã‚¤ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	IXAudio2* GetDevice();
 	
 	/**
-		@brief	ƒ{ƒŠƒ…[ƒ€İ’èB
+		@brief	ãƒœãƒªãƒ¥ãƒ¼ãƒ è¨­å®šã€‚
 	*/
 	void SetVolume( float volume );
 
 	/**
-		@brief	–³‰¹İ’èB
+		@brief	ç„¡éŸ³è¨­å®šã€‚
 	*/
 	void SetMute( bool mute );
 	
@@ -60,7 +60,7 @@ public:
 	bool GetMute()		{return m_mute;}
 	
 	/**
-		@brief	ƒŠƒXƒi[ˆÊ’uİ’èB
+		@brief	ãƒªã‚¹ãƒŠãƒ¼ä½ç½®è¨­å®šã€‚
 	*/
 	void SetListener( const Effekseer::Vector3D& pos, const Effekseer::Vector3D& at, const Effekseer::Vector3D& up );
 

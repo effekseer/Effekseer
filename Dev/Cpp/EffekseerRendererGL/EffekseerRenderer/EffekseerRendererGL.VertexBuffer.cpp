@@ -1,4 +1,4 @@
-
+ï»¿
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ bool VertexBuffer::RingBufferLock( int32_t size, int32_t& offset, void*& data )
 
 	if( size > m_size ) return false;
 
-	// glDrawElements‚ÅƒIƒtƒZƒbƒg‚ðŽw’è‚Å‚«‚È‚¢‚½‚ß
+	// glDrawElementsã§ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’æŒ‡å®šã§ããªã„ãŸã‚
 	if ( m_vertexRingOffset + size > m_size )
 	//if( true )
 	{

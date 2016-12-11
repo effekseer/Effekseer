@@ -1,4 +1,4 @@
-#ifndef __TGA_H
+﻿#ifndef __TGA_H
 #define __TGA_H	1
 
 #include "gd.h"

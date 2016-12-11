@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEER_ParameterNODE_ROOT_H__
 #define	__EFFEKSEER_ParameterNODE_ROOT_H__
 

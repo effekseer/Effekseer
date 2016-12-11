@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERSOUND_BASE_PRE_H__
 #define	__EFFEKSEERSOUND_BASE_PRE_H__
 
@@ -55,28 +55,28 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 	
 /**
-	@brief	ƒTƒEƒ“ƒhƒf[ƒ^
+	@brief	ã‚µã‚¦ãƒ³ãƒ‰ãƒ‡ãƒ¼ã‚¿
 */
 struct SoundData
 {	
 	/**
-		@brief	ƒ`ƒƒƒ“ƒlƒ‹”B
+		@brief	ãƒãƒ£ãƒ³ãƒãƒ«æ•°ã€‚
 	*/
 	int32_t			channels;
 	
 	/**
-		@brief	ƒTƒ“ƒvƒŠƒ“ƒOü”g”B
+		@brief	ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å‘¨æ³¢æ•°ã€‚
 	*/
 	int32_t			sampleRate;
 
 	/**
-		@brief	OpenALƒoƒbƒtƒ@B
+		@brief	OpenALãƒãƒƒãƒ•ã‚¡ã€‚
 	*/
 	ALuint			buffer;
 };
 
 /**
-	@brief	ƒTƒEƒ“ƒhƒNƒ‰ƒX
+	@brief	ã‚µã‚¦ãƒ³ãƒ‰ã‚¯ãƒ©ã‚¹
 */
 class Sound
 {
@@ -86,42 +86,42 @@ protected:
 
 public:
 	/**
-		@brief	ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éB
-		@param	device	[in]	XAudio2‚ÌƒfƒoƒCƒX
-		@param	voiceCount1ch	[in]	ƒ‚ƒmƒ‰ƒ‹ƒ{ƒCƒX”
-		@param	voiceCount2ch	[in]	ƒXƒeƒŒƒIƒ{ƒCƒX”
-		@return	ƒCƒ“ƒXƒ^ƒ“ƒX
+		@brief	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	device	[in]	XAudio2ã®ãƒ‡ãƒã‚¤ã‚¹
+		@param	voiceCount1ch	[in]	ãƒ¢ãƒãƒ©ãƒ«ãƒœã‚¤ã‚¹æ•°
+		@param	voiceCount2ch	[in]	ã‚¹ãƒ†ãƒ¬ã‚ªãƒœã‚¤ã‚¹æ•°
+		@return	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	*/
 	static Sound* Create( int32_t numVoices );
 	
 	/**
-		@brief	‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü‚·‚éB
+		@brief	ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„ã™ã‚‹ã€‚
 	*/
 	virtual void Destory() = 0;
 	
 	/**
-		@brief	ƒŠƒXƒi[İ’è
+		@brief	ãƒªã‚¹ãƒŠãƒ¼è¨­å®š
 	*/
 	virtual void SetListener( const ::Effekseer::Vector3D& pos, 
 		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up ) = 0;
 	
 	/**
-		@brief	ƒTƒEƒ“ƒhƒvƒŒƒCƒ„‚ğ¶¬‚·‚éB
+		@brief	ã‚µã‚¦ãƒ³ãƒ‰ãƒ—ãƒ¬ã‚¤ãƒ¤ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::SoundPlayer* CreateSoundPlayer() = 0;
 
 	/**
-		@brief	•W€‚ÌƒTƒEƒ“ƒh“ÇƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éB
+		@brief	æ¨™æº–ã®ã‚µã‚¦ãƒ³ãƒ‰èª­è¾¼ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::SoundLoader* CreateSoundLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
 	
 	/**
-		@brief	‘S”­‰¹‚ğ’â~
+		@brief	å…¨ç™ºéŸ³ã‚’åœæ­¢
 	*/
 	virtual void StopAllVoices() = 0;
 
 	/**
-		@brief	ƒ~ƒ…[ƒgİ’è
+		@brief	ãƒŸãƒ¥ãƒ¼ãƒˆè¨­å®š
 	*/
 	virtual void SetMute( bool mute ) = 0;
 

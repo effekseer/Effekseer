@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEERRENDERER_GUIDE_H__
 #define	__EFFEKSEERRENDERER_GUIDE_H__
 

@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_LOADER_H__
 #define	__EFFEKSEER_LOADER_H__
 
@@ -15,16 +15,16 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	İ’èƒNƒ‰ƒX
+	@brief	è¨­å®šã‚¯ãƒ©ã‚¹
 	@note
-	EffectLoader“™Aƒtƒ@ƒCƒ‹“Ç‚İ‚İ‚ÉŠÖ‚·‚éİ’è‚·‚é‚±‚Æ‚ª‚Å‚«‚éB
-	Manager‚Ì‘ã‚í‚è‚ÉƒGƒtƒFƒNƒg“Ç‚İ‚İ‚Ég—p‚·‚é‚±‚Æ‚ÅAManager‚Æ‚Í“Æ—§‚µ‚ÄEffectƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚é‚±‚Æ‚ª‚Å‚«‚éB
+	EffectLoaderç­‰ã€ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ã«é–¢ã™ã‚‹è¨­å®šã™ã‚‹ã“ã¨ãŒã§ãã‚‹ã€‚
+	Managerã®ä»£ã‚ã‚Šã«ã‚¨ãƒ•ã‚§ã‚¯ãƒˆèª­ã¿è¾¼ã¿æ™‚ã«ä½¿ç”¨ã™ã‚‹ã“ã¨ã§ã€Managerã¨ã¯ç‹¬ç«‹ã—ã¦Effectã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã“ã¨ãŒã§ãã‚‹ã€‚
 */
 	class Setting
 		: public ReferenceObject
 	{
 	private:
-		/* À•WŒn */
+		/* åº§æ¨™ç³» */
 		CoordinateSystem		m_coordinateSystem;
 
 		EffectLoader*	m_effectLoader;
@@ -34,81 +34,81 @@ namespace Effekseer {
 
 	protected:
 		/**
-			@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+			@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 			*/
 		Setting();
 
 		/**
-			@brief	ƒfƒXƒgƒ‰ƒNƒ^
+			@brief	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 			*/
 		 ~Setting();
 	public:
 
 		/**
-			@brief	İ’èƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éB
+			@brief	è¨­å®šã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 		*/
 		static Setting* Create();
 
 		/**
-		@brief	À•WŒn‚ğæ“¾‚·‚éB
-		@return	À•WŒn
+		@brief	åº§æ¨™ç³»ã‚’å–å¾—ã™ã‚‹ã€‚
+		@return	åº§æ¨™ç³»
 		*/
 		CoordinateSystem GetCoordinateSystem() const;
 
 		/**
-		@brief	À•WŒn‚ğİ’è‚·‚éB
-		@param	coordinateSystem	[in]	À•WŒn
+		@brief	åº§æ¨™ç³»ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	coordinateSystem	[in]	åº§æ¨™ç³»
 		@note
-		À•WŒn‚ğİ’è‚·‚éB
-		ƒGƒtƒFƒNƒgƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş‘O‚Éİ’è‚·‚é•K—v‚ª‚ ‚éB
+		åº§æ¨™ç³»ã‚’è¨­å®šã™ã‚‹ã€‚
+		ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€å‰ã«è¨­å®šã™ã‚‹å¿…è¦ãŒã‚ã‚‹ã€‚
 		*/
 		void SetCoordinateSystem(CoordinateSystem coordinateSystem);
 
 		/**
-			@brief	ƒGƒtƒFƒNƒgƒ[ƒ_[‚ğæ“¾‚·‚éB
-			@return	ƒGƒtƒFƒNƒgƒ[ƒ_[
+			@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ­ãƒ¼ãƒ€ãƒ¼ã‚’å–å¾—ã™ã‚‹ã€‚
+			@return	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ­ãƒ¼ãƒ€ãƒ¼
 			*/
 		EffectLoader* GetEffectLoader();
 
 		/**
-			@brief	ƒGƒtƒFƒNƒgƒ[ƒ_[‚ğİ’è‚·‚éB
-			@param	loader	[in]		ƒ[ƒ_[
+			@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ­ãƒ¼ãƒ€ãƒ¼ã‚’è¨­å®šã™ã‚‹ã€‚
+			@param	loader	[in]		ãƒ­ãƒ¼ãƒ€ãƒ¼
 			*/
 		void SetEffectLoader(EffectLoader* loader);
 
 		/**
-			@brief	ƒeƒNƒXƒ`ƒƒƒ[ƒ_[‚ğæ“¾‚·‚éB
-			@return	ƒeƒNƒXƒ`ƒƒƒ[ƒ_[
+			@brief	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ­ãƒ¼ãƒ€ãƒ¼ã‚’å–å¾—ã™ã‚‹ã€‚
+			@return	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ­ãƒ¼ãƒ€ãƒ¼
 			*/
 		TextureLoader* GetTextureLoader();
 
 		/**
-			@brief	ƒeƒNƒXƒ`ƒƒƒ[ƒ_[‚ğİ’è‚·‚éB
-			@param	loader	[in]		ƒ[ƒ_[
+			@brief	ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ­ãƒ¼ãƒ€ãƒ¼ã‚’è¨­å®šã™ã‚‹ã€‚
+			@param	loader	[in]		ãƒ­ãƒ¼ãƒ€ãƒ¼
 			*/
 		void SetTextureLoader(TextureLoader* loader);
 
 		/**
-			@brief	ƒ‚ƒfƒ‹ƒ[ƒ_[‚ğæ“¾‚·‚éB
-			@return	ƒ‚ƒfƒ‹ƒ[ƒ_[
+			@brief	ãƒ¢ãƒ‡ãƒ«ãƒ­ãƒ¼ãƒ€ãƒ¼ã‚’å–å¾—ã™ã‚‹ã€‚
+			@return	ãƒ¢ãƒ‡ãƒ«ãƒ­ãƒ¼ãƒ€ãƒ¼
 			*/
 		ModelLoader* GetModelLoader();
 
 		/**
-			@brief	ƒ‚ƒfƒ‹ƒ[ƒ_[‚ğİ’è‚·‚éB
-			@param	loader	[in]		ƒ[ƒ_[
+			@brief	ãƒ¢ãƒ‡ãƒ«ãƒ­ãƒ¼ãƒ€ãƒ¼ã‚’è¨­å®šã™ã‚‹ã€‚
+			@param	loader	[in]		ãƒ­ãƒ¼ãƒ€ãƒ¼
 			*/
 		void SetModelLoader(ModelLoader* loader);
 
 		/**
-			@brief	ƒTƒEƒ“ƒhƒ[ƒ_[‚ğæ“¾‚·‚éB
-			@return	ƒTƒEƒ“ƒhƒ[ƒ_[
+			@brief	ã‚µã‚¦ãƒ³ãƒ‰ãƒ­ãƒ¼ãƒ€ãƒ¼ã‚’å–å¾—ã™ã‚‹ã€‚
+			@return	ã‚µã‚¦ãƒ³ãƒ‰ãƒ­ãƒ¼ãƒ€ãƒ¼
 			*/
 		SoundLoader* GetSoundLoader();
 
 		/**
-			@brief	ƒTƒEƒ“ƒhƒ[ƒ_[‚ğİ’è‚·‚éB
-			@param	loader	[in]		ƒ[ƒ_[
+			@brief	ã‚µã‚¦ãƒ³ãƒ‰ãƒ­ãƒ¼ãƒ€ãƒ¼ã‚’è¨­å®šã™ã‚‹ã€‚
+			@param	loader	[in]		ãƒ­ãƒ¼ãƒ€ãƒ¼
 			*/
 		void SetSoundLoader(SoundLoader* loader);
 	};

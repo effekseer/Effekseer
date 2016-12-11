@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -41,14 +41,14 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 	}
 
 	uint32_t chunkIdent, chunkSize;
-	// RIFFƒ`ƒƒƒ“ƒN‚ðƒ`ƒFƒbƒN
+	// RIFFãƒãƒ£ãƒ³ã‚¯ã‚’ãƒã‚§ãƒƒã‚¯
 	fread(&chunkIdent, 1, 4, fp);
 	fread(&chunkSize, 1, 4, fp);
 	if (memcmp(&chunkIdent, "RIFF", 4) != 0) {
 		return NULL;
 	}
 
-	// WAVEƒVƒ“ƒ{ƒ‹‚ðƒ`ƒFƒbƒN
+	// WAVEã‚·ãƒ³ãƒœãƒ«ã‚’ãƒã‚§ãƒƒã‚¯
 	fread(&chunkIdent, 1, 4, fp);
 	if (memcmp(&chunkIdent, "WAVE", 4) != 0) {
 		return NULL;
@@ -60,7 +60,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 		fread(&chunkSize, 1, 4, fp);
 
 		if (memcmp(&chunkIdent, "fmt ", 4) == 0) {
-			// ƒtƒH[ƒ}ƒbƒgƒ`ƒƒƒ“ƒN
+			// ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆãƒãƒ£ãƒ³ã‚¯
 #ifdef _MSC_VER
 			uint32_t size = min(chunkSize, sizeof(wavefmt));
 #else
@@ -71,20 +71,20 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 				fseek(fp, chunkSize - size, SEEK_CUR);
 			}
 		} else if (memcmp(&chunkIdent, "data", 4) == 0) {
-			// ƒf[ƒ^ƒ`ƒƒƒ“ƒN
+			// ãƒ‡ãƒ¼ã‚¿ãƒãƒ£ãƒ³ã‚¯
 			break;
 		} else {
-			// •s–¾‚Èƒ`ƒƒƒ“ƒN‚ÍƒXƒLƒbƒv
+			// ä¸æ˜Žãªãƒãƒ£ãƒ³ã‚¯ã¯ã‚¹ã‚­ãƒƒãƒ—
 			fseek(fp, chunkSize, SEEK_CUR);
 		}
 	}
 	
-	// ƒtƒH[ƒ}ƒbƒgƒ`ƒFƒbƒN
+	// ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆãƒã‚§ãƒƒã‚¯
 	if (wavefmt.wFormatTag != WAVE_FORMAT_PCM || wavefmt.nChannels > 2) {
 		return NULL;
 	}
 
-	// DirectSoundƒoƒbƒtƒ@‚ðì¬
+	// DirectSoundãƒãƒƒãƒ•ã‚¡ã‚’ä½œæˆ
 	DSBUFFERDESC dsdesc;
     ZeroMemory(&dsdesc,sizeof(DSBUFFERDESC));
     dsdesc.dwSize = sizeof(DSBUFFERDESC);
@@ -106,7 +106,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
         return FALSE;
     }
 
-    // ƒoƒbƒtƒ@‚ðƒƒbƒN‚µ‚Äƒ[ƒh
+    // ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ­ãƒƒã‚¯ã—ã¦ãƒ­ãƒ¼ãƒ‰
     LPVOID bufptr;
     DWORD bufsize;
 	hr = dsbuf->Lock(0, 0, &bufptr, &bufsize, NULL, NULL, DSBLOCK_ENTIREBUFFER);

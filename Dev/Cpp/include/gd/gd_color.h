@@ -1,4 +1,4 @@
-#ifndef GD_COLOR_H
+﻿#ifndef GD_COLOR_H
 #define GD_COLOR_H 1
 
 #ifdef __cplusplus

@@ -1,4 +1,4 @@
-#ifndef _GDFONTS_H_
+﻿#ifndef _GDFONTS_H_
 #define _GDFONTS_H_ 1
 
 #ifdef __cplusplus

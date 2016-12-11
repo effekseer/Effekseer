@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_GL_RENDERER_H__
 #define	__EFFEKSEERRENDERER_GL_RENDERER_H__
 
@@ -21,7 +21,7 @@ namespace EffekseerRendererGL
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	•`‰æƒNƒ‰ƒX
+	@brief	æç”»ã‚¯ãƒ©ã‚¹
 */
 class Renderer
 	: public ::EffekseerRenderer::Renderer
@@ -32,32 +32,32 @@ protected:
 
 public:
 	/**
-		@brief	ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éB
-		@param	squareMaxCount		Å‘å•`‰æƒXƒvƒ‰ƒCƒg”
-		@param	OpenGLDeviceType	ƒfƒoƒCƒX‚Ìí—Ş
-		@return	ƒCƒ“ƒXƒ^ƒ“ƒX
+		@brief	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	squareMaxCount		æœ€å¤§æç”»ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæ•°
+		@param	OpenGLDeviceType	ãƒ‡ãƒã‚¤ã‚¹ã®ç¨®é¡
+		@return	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	*/
 	static Renderer* Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
 
 	/**
-		@brief	Å‘å•`‰æƒXƒvƒ‰ƒCƒg”‚ğæ“¾‚·‚éB
+		@brief	æœ€å¤§æç”»ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual int32_t GetSquareMaxCount() const = 0;
 
 	/**
-		@brief	Å‘å•`‰æƒXƒvƒ‰ƒCƒg”‚ğİ’è‚·‚éB
+		@brief	æœ€å¤§æç”»ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæ•°ã‚’è¨­å®šã™ã‚‹ã€‚
 		@note
-		•`‰æ‚µ‚Ä‚¢‚é‚Íg—p‚Å‚«‚È‚¢B
+		æç”»ã—ã¦ã„ã‚‹æ™‚ã¯ä½¿ç”¨ã§ããªã„ã€‚
 	*/
 	virtual void SetSquareMaxCount(int32_t count) = 0;
 
 	/**
-	@brief	”wŒi‚ğæ“¾‚·‚éB
+	@brief	èƒŒæ™¯ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual GLuint GetBackground() = 0;
 
 	/**
-	@brief	”wŒi‚ğİ’è‚·‚éB
+	@brief	èƒŒæ™¯ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetBackground(GLuint background) = 0;
 };
@@ -66,7 +66,7 @@ public:
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒ‚ƒfƒ‹
+	@brief	ãƒ¢ãƒ‡ãƒ«
 */
 class Model
 	: public Effekseer::Model

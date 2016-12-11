@@ -1,4 +1,4 @@
-#ifndef _GDFONTT_H_
+﻿#ifndef _GDFONTT_H_
 #define _GDFONTT_H_ 1
 
 #ifdef __cplusplus

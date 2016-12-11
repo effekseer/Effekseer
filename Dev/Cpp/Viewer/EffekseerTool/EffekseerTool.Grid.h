@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_GRID_H__
 #define	__EFFEKSEERRENDERER_GRID_H__
 
@@ -42,7 +42,7 @@ public:
 
 	static Grid* Create( EffekseerRendererDX9::RendererImplemented* renderer );
 
-public:	// ƒfƒoƒCƒX•œ‹Œ—p
+public:	// ãƒ‡ãƒã‚¤ã‚¹å¾©æ—§ç”¨
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
 

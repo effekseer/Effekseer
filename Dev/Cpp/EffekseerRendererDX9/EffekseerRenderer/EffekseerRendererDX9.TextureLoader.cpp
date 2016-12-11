@@ -1,4 +1,4 @@
-
+Ôªø
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 
 //----------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 					{
 						memcpy( destBits, srcBits, width * 4 );
 
-						// RGBì¸ÇÍë÷Ç¶
+						// RGBÂÖ•„ÇåÊõø„Åà
 						for( int32_t w = 0; w < width; w++ )
 						{
 							std::swap( destBits[w * 4 + 0], destBits[w * 4 + 2]);

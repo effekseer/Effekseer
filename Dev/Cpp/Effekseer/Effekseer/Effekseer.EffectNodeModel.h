@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEER_ParameterNODE_MODEL_H__
 #define	__EFFEKSEER_ParameterNODE_MODEL_H__
 
@@ -30,7 +30,7 @@ public:
 
 	struct InstanceValues
 	{
-		// �F
+		// 色
 		color _color;
 
 		union 

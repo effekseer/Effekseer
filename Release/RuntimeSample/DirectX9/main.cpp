@@ -35,8 +35,8 @@
 static HWND g_window_handle = NULL;
 static int g_window_width = 800;
 static int g_window_height = 600;
-static ::Effekseer::Manager*			g_manager = NULL;
-static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
+static ::Effekseer::Manager*				g_manager = NULL;
+static ::EffekseerRendererDX9::Renderer*	g_renderer = NULL;
 static ::EffekseerSound::Sound*			g_sound = NULL;
 static ::Effekseer::Effect*				g_effect = NULL;
 static ::Effekseer::Handle				g_handle = -1;
@@ -61,6 +61,34 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 			return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 	return 0;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void OnLostDevice()
+{
+	// デバイスロストが発生した時に呼ぶ。
+	g_renderer->OnLostDevice();
+
+	// 読み込んだエフェクトのリソースは全て破棄する。
+	if (g_effect != nullptr)
+	{
+		g_effect->UnloadResources();
+	}
+}
+
+void OnResetDevice()
+{
+	// エフェクトのリソースを再読み込みする。
+	if (g_effect != nullptr)
+	{
+		g_effect->ReloadResources();
+	}
+
+	// デバイスが復帰するときに呼ぶ
+	g_renderer->OnResetDevice();
+
 }
 
 //----------------------------------------------------------------------------------
@@ -191,7 +219,7 @@ void MainLoop()
 							case D3DERR_DEVICENOTRESET:
 								
 								// デバイスロストの処理を行う前に実行する
-								g_renderer->OnLostDevice();
+								OnLostDevice();
 
 								D3DPRESENT_PARAMETERS d3dp;
 								ZeroMemory(&d3dp, sizeof(d3dp));
@@ -208,7 +236,7 @@ void MainLoop()
 								g_d3d_device->Reset( &d3dp );
 
 								// デバイスロストの処理の後に実行する
-								g_renderer->OnResetDevice();
+								OnResetDevice();
 
 								break;
 						}

@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERSOUND_BASE_PRE_H__
 #define	__EFFEKSEERSOUND_BASE_PRE_H__
 
@@ -48,28 +48,28 @@ namespace EffekseerSound
 //----------------------------------------------------------------------------------
 
 /**
-	@brief	ƒTƒEƒ“ƒhƒf[ƒ^
+	@brief	ã‚µã‚¦ãƒ³ãƒ‰ãƒ‡ãƒ¼ã‚¿
 */
 struct SoundData
 {	
 	/**
-		@brief	ƒ`ƒƒƒ“ƒlƒ‹”B
+		@brief	ãƒãƒ£ãƒ³ãƒãƒ«æ•°ã€‚
 	*/
 	int32_t			channels;
 	
 	/**
-		@brief	ƒTƒ“ƒvƒŠƒ“ƒOü”g”B
+		@brief	ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å‘¨æ³¢æ•°ã€‚
 	*/
 	int32_t			sampleRate;
 
 	/**
-		@brief	DirectSoundƒoƒbƒtƒ@B
+		@brief	DirectSoundãƒãƒƒãƒ•ã‚¡ã€‚
 	*/
 	IDirectSoundBuffer8* buffer;
 };
 
 /**
-	@brief	ƒTƒEƒ“ƒhƒNƒ‰ƒX
+	@brief	ã‚µã‚¦ãƒ³ãƒ‰ã‚¯ãƒ©ã‚¹
 */
 class Sound
 {
@@ -79,45 +79,45 @@ protected:
 
 public:
 	/**
-		@brief	ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éB
-		@param	dsound	[in]	DirectSound8‚ÌƒfƒoƒCƒX
-		@return	ƒCƒ“ƒXƒ^ƒ“ƒX
+		@brief	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	dsound	[in]	DirectSound8ã®ãƒ‡ãƒã‚¤ã‚¹
+		@return	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	*/
 	static Sound* Create( IDirectSound8* dsound );
 	
 	/**
-		@brief	‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü‚·‚éB
+		@brief	ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„ã™ã‚‹ã€‚
 	*/
 	virtual void Destory() = 0;
 	
 	/**
-		@brief	ƒŠƒXƒi[İ’è
+		@brief	ãƒªã‚¹ãƒŠãƒ¼è¨­å®š
 	*/
 	virtual void SetListener( const ::Effekseer::Vector3D& pos, 
 		const ::Effekseer::Vector3D& at, const ::Effekseer::Vector3D& up ) = 0;
 	
 	/**
-		@brief	ƒTƒEƒ“ƒhƒvƒŒƒCƒ„‚ğ¶¬‚·‚éB
+		@brief	ã‚µã‚¦ãƒ³ãƒ‰ãƒ—ãƒ¬ã‚¤ãƒ¤ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::SoundPlayer* CreateSoundPlayer() = 0;
 
 	/**
-		@brief	•W€‚ÌƒTƒEƒ“ƒh“ÇƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éB
+		@brief	æ¨™æº–ã®ã‚µã‚¦ãƒ³ãƒ‰èª­è¾¼ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
 	*/
 	virtual ::Effekseer::SoundLoader* CreateSoundLoader() = 0;
 	
 	/**
-		@brief	‘S”­‰¹‚ğ’â~
+		@brief	å…¨ç™ºéŸ³ã‚’åœæ­¢
 	*/
 	virtual void StopAllVoices() = 0;
 
 	/**
-		@brief	ƒ~ƒ…[ƒgİ’è
+		@brief	ãƒŸãƒ¥ãƒ¼ãƒˆè¨­å®š
 	*/
 	virtual void SetMute( bool mute ) = 0;
 
 	/**
-		@brief	2Dƒpƒ“—p‚Ì”ÍˆÍİ’è
+		@brief	2Dãƒ‘ãƒ³ç”¨ã®ç¯„å›²è¨­å®š
 	*/
 	virtual void SetPanRange( int32_t leftPos, int32_t rightPos ) = 0;
 };

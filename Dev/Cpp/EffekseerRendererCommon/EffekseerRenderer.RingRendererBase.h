@@ -1,4 +1,4 @@
-
+Ôªø
 #ifndef	__EFFEKSEERRENDERER_RING_RENDERER_BASE_H__
 #define	__EFFEKSEERRENDERER_RING_RENDERER_BASE_H__
 
@@ -201,14 +201,14 @@ protected:
 			v[7].UV[0] = texNext;
 			v[7].UV[1] = v3;
 
-			// òcÇ›èàóù
+			// Ê≠™„ÅøÂá¶ÁêÜ
 			if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
 			{
 				auto vs = (VERTEX_DISTORTION*) &verteies[i];
 				auto binormalCurrent = v[5].Pos - v[0].Pos;
 				auto binormalNext = v[7].Pos - v[2].Pos;
 
-				// ñﬂÇ∑
+				// Êàª„Åô
 				float t_b;
 				t_b = old_c * (stepC) - old_s * (-stepS);
 				auto s_b = old_s * (stepC) + old_c * (-stepS);
@@ -219,7 +219,7 @@ protected:
 				outerBefore.Y = s_b * outerRadius;
 				outerBefore.Z = outerHeight;
 
-				// éü
+				// Ê¨°
 				auto t_n = c * stepC - s * stepS;
 				auto s_n = s * stepC + c * stepS;
 				auto c_n = t_n;

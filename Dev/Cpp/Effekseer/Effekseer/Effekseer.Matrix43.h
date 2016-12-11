@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_MATRIX43_H__
 #define	__EFFEKSEER_MATRIX43_H__
 
@@ -16,10 +16,10 @@ namespace Effekseer {
 //----------------------------------------------------------------------------------
 
 /**
-	@brief	4x3s—ñ
+	@brief	4x3è¡Œåˆ—
 	@note
-	‰EèŒn(‰ñ“]:”½Œv‰ñ‚è)<BR>
-	V[x,y,z,1] * M ‚ÌŒ`‚ÅƒxƒNƒgƒ‹‚Æ‚ÌæZ‚ª‰Â”\‚Å‚ ‚éB<BR>
+	å³æ‰‹ç³»(å›è»¢:åæ™‚è¨ˆå›ã‚Š)<BR>
+	V[x,y,z,1] * M ã®å½¢ã§ãƒ™ã‚¯ãƒˆãƒ«ã¨ã®ä¹—ç®—ãŒå¯èƒ½ã§ã‚ã‚‹ã€‚<BR>
 	[0,0][0,1][0,2]<BR>
 	[1,0][1,1][1,2]<BR>
 	[2,0][2,1][2,2]<BR>
@@ -32,119 +32,119 @@ private:
 
 public:
 	/**
-		@brief	s—ñ‚Ì’l
+		@brief	è¡Œåˆ—ã®å€¤
 	*/
 	float	Value[4][3];
 	
 	/**
-		@brief	’PˆÊs—ñ‰»‚ğs‚¤B
+		@brief	å˜ä½è¡Œåˆ—åŒ–ã‚’è¡Œã†ã€‚
 	*/
 	void Indentity();
 
 	/**
-		@brief	Šg‘ås—ñ‰»‚ğs‚¤B
-		@param	x	[in]	X•ûŒüŠg‘å—¦
-		@param	y	[in]	Y•ûŒüŠg‘å—¦
-		@param	z	[in]	Z•ûŒüŠg‘å—¦
+		@brief	æ‹¡å¤§è¡Œåˆ—åŒ–ã‚’è¡Œã†ã€‚
+		@param	x	[in]	Xæ–¹å‘æ‹¡å¤§ç‡
+		@param	y	[in]	Yæ–¹å‘æ‹¡å¤§ç‡
+		@param	z	[in]	Zæ–¹å‘æ‹¡å¤§ç‡
 	*/
 	void Scaling( float x, float y, float z );
 
 	/**
-		@brief	”½Œvü‚è•ûŒü‚ÌX²‰ñ“]s—ñ‰»‚ğs‚¤B
-		@param	angle	[in]	Šp“x(ƒ‰ƒWƒAƒ“)
+		@brief	åæ™‚è¨ˆå‘¨ã‚Šæ–¹å‘ã®Xè»¸å›è»¢è¡Œåˆ—åŒ–ã‚’è¡Œã†ã€‚
+		@param	angle	[in]	è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)
 	*/
 	void RotationX( float angle );
 
 	/**
-		@brief	”½Œvü‚è•ûŒü‚ÌY²‰ñ“]s—ñ‰»‚ğs‚¤B
-		@param	angle	[in]	Šp“x(ƒ‰ƒWƒAƒ“)
+		@brief	åæ™‚è¨ˆå‘¨ã‚Šæ–¹å‘ã®Yè»¸å›è»¢è¡Œåˆ—åŒ–ã‚’è¡Œã†ã€‚
+		@param	angle	[in]	è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)
 	*/
 	void RotationY( float angle );
 
 	/**
-		@brief	”½Œvü‚è•ûŒü‚ÌZ²‰ñ“]s—ñ‰»‚ğs‚¤B
-		@param	angle	[in]	Šp“x(ƒ‰ƒWƒAƒ“)
+		@brief	åæ™‚è¨ˆå‘¨ã‚Šæ–¹å‘ã®Zè»¸å›è»¢è¡Œåˆ—åŒ–ã‚’è¡Œã†ã€‚
+		@param	angle	[in]	è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)
 	*/
 	void RotationZ( float angle );
 	
 	/**
-		@brief	”½Œvü‚è•ûŒü‚ÌXYZ²‰ñ“]s—ñ‰»‚ğs‚¤B
-		@param	rx	[in]	Šp“x(ƒ‰ƒWƒAƒ“)
-		@param	ry	[in]	Šp“x(ƒ‰ƒWƒAƒ“)
-		@param	rz	[in]	Šp“x(ƒ‰ƒWƒAƒ“)
+		@brief	åæ™‚è¨ˆå‘¨ã‚Šæ–¹å‘ã®XYZè»¸å›è»¢è¡Œåˆ—åŒ–ã‚’è¡Œã†ã€‚
+		@param	rx	[in]	è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)
+		@param	ry	[in]	è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)
+		@param	rz	[in]	è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)
 	*/
 	void RotationXYZ( float rx, float ry, float rz );
 	
 	/**
-		@brief	”½Œvü‚è•ûŒü‚ÌZXY²‰ñ“]s—ñ‰»‚ğs‚¤B
-		@param	rz	[in]	Šp“x(ƒ‰ƒWƒAƒ“)
-		@param	rx	[in]	Šp“x(ƒ‰ƒWƒAƒ“)
-		@param	ry	[in]	Šp“x(ƒ‰ƒWƒAƒ“)
+		@brief	åæ™‚è¨ˆå‘¨ã‚Šæ–¹å‘ã®ZXYè»¸å›è»¢è¡Œåˆ—åŒ–ã‚’è¡Œã†ã€‚
+		@param	rz	[in]	è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)
+		@param	rx	[in]	è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)
+		@param	ry	[in]	è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)
 	*/
 	void RotationZXY( float rz, float rx, float ry );
 
 	/**
-		@brief	”CˆÓ²‚É‘Î‚·‚é”½Œvü‚è•ûŒü‰ñ“]s—ñ‰»‚ğs‚¤B
-		@param	axis	[in]	‰ñ“]²
-		@param	angle	[in]	Šp“x(ƒ‰ƒWƒAƒ“)
+		@brief	ä»»æ„è»¸ã«å¯¾ã™ã‚‹åæ™‚è¨ˆå‘¨ã‚Šæ–¹å‘å›è»¢è¡Œåˆ—åŒ–ã‚’è¡Œã†ã€‚
+		@param	axis	[in]	å›è»¢è»¸
+		@param	angle	[in]	è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)
 	*/
 	void RotationAxis( const Vector3D& axis, float angle );
 
 	/**
-		@brief	”CˆÓ²‚É‘Î‚·‚é”½Œvü‚è•ûŒü‰ñ“]s—ñ‰»‚ğs‚¤B
-		@param	axis	[in]	‰ñ“]²
-		@param	s	[in]	ƒTƒCƒ“
-		@param	c	[in]	ƒRƒTƒCƒ“
+		@brief	ä»»æ„è»¸ã«å¯¾ã™ã‚‹åæ™‚è¨ˆå‘¨ã‚Šæ–¹å‘å›è»¢è¡Œåˆ—åŒ–ã‚’è¡Œã†ã€‚
+		@param	axis	[in]	å›è»¢è»¸
+		@param	s	[in]	ã‚µã‚¤ãƒ³
+		@param	c	[in]	ã‚³ã‚µã‚¤ãƒ³
 	*/
 	void RotationAxis( const Vector3D& axis, float s, float c );
 
 	/**
-		@brief	ˆÚ“®s—ñ‰»‚ğs‚¤B
-		@param	x	[in]	X•ûŒüˆÚ“®
-		@param	y	[in]	Y•ûŒüˆÚ“®
-		@param	z	[in]	Z•ûŒüˆÚ“®
+		@brief	ç§»å‹•è¡Œåˆ—åŒ–ã‚’è¡Œã†ã€‚
+		@param	x	[in]	Xæ–¹å‘ç§»å‹•
+		@param	y	[in]	Yæ–¹å‘ç§»å‹•
+		@param	z	[in]	Zæ–¹å‘ç§»å‹•
 	*/
 	void Translation( float x, float y, float z );
 
 	/**
-		@brief	s—ñ‚ğAŠg‘åA‰ñ“]AˆÚ“®‚Ìs—ñ‚ÆƒxƒNƒgƒ‹‚É•ª‰ğ‚·‚éB
-		@param	s	[out]	Šg‘ås—ñ
-		@param	r	[out]	‰ñ“]s—ñ
-		@param	t	[out]	ˆÊ’u
+		@brief	è¡Œåˆ—ã‚’ã€æ‹¡å¤§ã€å›è»¢ã€ç§»å‹•ã®è¡Œåˆ—ã¨ãƒ™ã‚¯ãƒˆãƒ«ã«åˆ†è§£ã™ã‚‹ã€‚
+		@param	s	[out]	æ‹¡å¤§è¡Œåˆ—
+		@param	r	[out]	å›è»¢è¡Œåˆ—
+		@param	t	[out]	ä½ç½®
 	*/
 	void GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const; 
 	
 	/**
-		@brief	s—ñ‚©‚çŠg‘åƒxƒNƒgƒ‹‚ğæ“¾‚·‚éB
-		@param	s	[out]	Šg‘åƒxƒNƒgƒ‹
+		@brief	è¡Œåˆ—ã‹ã‚‰æ‹¡å¤§ãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—ã™ã‚‹ã€‚
+		@param	s	[out]	æ‹¡å¤§ãƒ™ã‚¯ãƒˆãƒ«
 	*/
 	void GetScale( Vector3D& s ) const;
 	
 	/**
-		@brief	s—ñ‚©‚ç‰ñ“]s—ñ‚ğæ“¾‚·‚éB
-		@param	s	[out]	‰ñ“]s—ñ
+		@brief	è¡Œåˆ—ã‹ã‚‰å›è»¢è¡Œåˆ—ã‚’å–å¾—ã™ã‚‹ã€‚
+		@param	s	[out]	å›è»¢è¡Œåˆ—
 	*/
 	void GetRotation( Matrix43& r ) const;
 
 	/**
-		@brief	s—ñ‚©‚çˆÚ“®ƒxƒNƒgƒ‹‚ğæ“¾‚·‚éB
-		@param	t	[out]	ˆÚ“®ƒxƒNƒgƒ‹
+		@brief	è¡Œåˆ—ã‹ã‚‰ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—ã™ã‚‹ã€‚
+		@param	t	[out]	ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«
 	*/
 	void GetTranslation( Vector3D& t ) const;
 	
 	/**
-		@brief	s—ñ‚ÌŠg‘åA‰ñ“]AˆÚ“®‚ğİ’è‚·‚éB
-		@param	s	[in]	Šg‘ås—ñ
-		@param	r	[in]	‰ñ“]s—ñ
-		@param	t	[in]	ˆÊ’u
+		@brief	è¡Œåˆ—ã®æ‹¡å¤§ã€å›è»¢ã€ç§»å‹•ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	s	[in]	æ‹¡å¤§è¡Œåˆ—
+		@param	r	[in]	å›è»¢è¡Œåˆ—
+		@param	t	[in]	ä½ç½®
 	*/
 	void SetSRT( const Vector3D& s, const Matrix43& r, const Vector3D& t );
 
 	/**
-		@brief	s—ñ“¯m‚ÌæZ‚ğs‚¤B
-		@param	out	[out]	Œ‹‰Ê
-		@param	in1	[in]	æZ‚Ì¶‘¤
-		@param	in2	[in]	æZ‚Ì‰E‘¤
+		@brief	è¡Œåˆ—åŒå£«ã®ä¹—ç®—ã‚’è¡Œã†ã€‚
+		@param	out	[out]	çµæœ
+		@param	in1	[in]	ä¹—ç®—ã®å·¦å´
+		@param	in2	[in]	ä¹—ç®—ã®å³å´
 	*/
 	static void Multiple( Matrix43& out, const Matrix43& in1, const Matrix43& in2 );
 };

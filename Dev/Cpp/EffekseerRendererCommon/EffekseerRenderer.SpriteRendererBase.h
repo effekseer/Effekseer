@@ -1,4 +1,4 @@
-
+Ôªø
 #ifndef	__EFFEKSEERRENDERER_SPRITE_RENDERER_BASE_H__
 #define	__EFFEKSEERRENDERER_SPRITE_RENDERER_BASE_H__
 
@@ -122,7 +122,7 @@ protected:
 		verteies[3].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
 		verteies[3].UV[1] = instanceParameter.UV.Y;
 
-		// òcÇ›èàóù
+		// Ê≠™„ÅøÂá¶ÁêÜ
 		if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
 		{
 			auto vs = (VERTEX_DISTORTION*) verteies;
@@ -147,7 +147,7 @@ protected:
 			::Effekseer::Vector3D t;
 			mat.GetSRT( s, r, t );
 	
-			// ägëÂ
+			// Êã°Â§ß
 			for( int i = 0; i < 4; i++ )
 			{
 				verteies[i].Pos.X = verteies[i].Pos.X * s.X;
@@ -240,7 +240,7 @@ protected:
 					verteies[i].Pos,
 					instanceParameter.SRTMatrix43 );
 
-				// òcÇ›èàóù
+				// Ê≠™„ÅøÂá¶ÁêÜ
 				if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
 				{
 					auto vs = (VERTEX_DISTORTION*) & verteies[i];

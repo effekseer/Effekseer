@@ -1,4 +1,4 @@
-
+﻿
 /* pnginfo.h - header file for PNG reference library
  *
  * Last changed in libpng 1.6.1 [March 28, 2013]

@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -312,24 +312,24 @@ bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 	m_context = context;
 	m_depthFunc = depthFunc;
 
-	// ’¸“_‚Ì¶¬
+	// é ‚ç‚¹ã®ç”Ÿæˆ
 	{
-		// Å‘å‚Åfloat * 10 ‚Æ‰¼’è
+		// æœ€å¤§ã§float * 10 ã¨ä»®å®š
 		m_vertexBuffer = VertexBuffer::Create( this, sizeof(float) * 10 * m_squareMaxCount * 4, true );
 		if( m_vertexBuffer == NULL ) return false;
 	}
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
-	// ƒCƒ“ƒfƒbƒNƒX‚Ì¶¬
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã®ç”Ÿæˆ
 	{
 		m_indexBuffer = IndexBuffer::Create( this, m_squareMaxCount * 6, false );
 		if( m_indexBuffer == NULL ) return false;
 
 		m_indexBuffer->Lock();
 
-		// ( •W€İ’è‚Å@DirectX Œvü‚è‚ª•\, OpenGL‚Í”½Œv‰ñ‚è‚ª•\ )
+		// ( æ¨™æº–è¨­å®šã§ã€€DirectX æ™‚è¨ˆå‘¨ã‚ŠãŒè¡¨, OpenGLã¯åæ™‚è¨ˆå›ã‚ŠãŒè¡¨ )
 		for( int i = 0; i < m_squareMaxCount; i++ )
 		{
 			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect( 6 );
@@ -344,14 +344,14 @@ bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 		m_indexBuffer->Unlock();
 	}
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 	m_renderState = new RenderState(this, m_depthFunc);
 
 
-	// ƒVƒF[ƒ_[
-	// À•W(3) F(1) UV(2)
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
+	// åº§æ¨™(3) è‰²(1) UV(2)
 	D3D11_INPUT_ELEMENT_DESC decl [] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -375,7 +375,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 		"StandardRenderer", decl, ARRAYSIZE(decl));
 	if (m_shader == NULL) return false;
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 	m_shader_no_texture = Shader::Create(
@@ -392,7 +392,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 		return false;
 	}
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 	m_shader_distortion = Shader::Create(
@@ -404,7 +404,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 		"StandardRenderer Distortion", decl_distortion, ARRAYSIZE(decl_distortion));
 	if (m_shader_distortion == NULL) return false;
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 	m_shader_no_texture_distortion = Shader::Create(
@@ -421,7 +421,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 		return false;
 	}
 
-	// QÆƒJƒEƒ“ƒg‚Ì’²®
+	// å‚ç…§ã‚«ã‚¦ãƒ³ãƒˆã®èª¿æ•´
 	Release();
 
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
@@ -472,17 +472,17 @@ bool RendererImplemented::BeginRendering()
 
 	::Effekseer::Matrix44::Mul( m_cameraProj, m_camera, m_proj );
 	
-	// ƒXƒe[ƒg‚ğ•Û‘¶‚·‚é
+	// ã‚¹ãƒ†ãƒ¼ãƒˆã‚’ä¿å­˜ã™ã‚‹
 	if( m_restorationOfStates )
 	{
 		m_state->SaveState( m_device, m_context );
 	}
 
-	// ƒXƒe[ƒg‰Šúİ’è
+	// ã‚¹ãƒ†ãƒ¼ãƒˆåˆæœŸè¨­å®š
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
 
-	// ƒŒƒ“ƒ_ƒ‰[ƒŠƒZƒbƒg
+	// ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ãƒªã‚»ãƒƒãƒˆ
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
 	return true;
@@ -495,10 +495,10 @@ bool RendererImplemented::EndRendering()
 {
 	assert( m_device != NULL );
 	
-	// ƒŒƒ“ƒ_ƒ‰[ƒŠƒZƒbƒg
+	// ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ãƒªã‚»ãƒƒãƒˆ
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
-	// ƒXƒe[ƒg‚ğ•œŒ³‚·‚é
+	// ã‚¹ãƒ†ãƒ¼ãƒˆã‚’å¾©å…ƒã™ã‚‹
 	if( m_restorationOfStates )
 	{
 		m_state->LoadState( m_device, m_context );

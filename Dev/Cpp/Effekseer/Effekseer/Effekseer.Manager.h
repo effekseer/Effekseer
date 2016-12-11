@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_MANAGER_H__
 #define	__EFFEKSEER_MANAGER_H__
 
@@ -17,7 +17,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
-	@brief ƒGƒtƒFƒNƒgŠÇ—ƒNƒ‰ƒX
+	@brief ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç®¡ç†ã‚¯ãƒ©ã‚¹
 */
 class Manager
 	: public IReference
@@ -28,442 +28,442 @@ protected:
 
 public:
 	/**
-		@brief ƒ}ƒl[ƒWƒƒ[‚ğ¶¬‚·‚éB
-		@param	instance_max	[in]	Å‘åƒCƒ“ƒXƒ^ƒ“ƒX”
-		@param	autoFlip		[in]	©“®‚ÅƒXƒŒƒbƒhŠÔ‚Ìƒf[ƒ^‚ğ“ü‚ê‘Ö‚¦‚é‚©‚Ç‚¤‚©A‚ğw’è‚·‚éBtrue‚Ìê‡AUpdate‚É“ü‚ê‘Ö‚í‚éB
-		@return	ƒ}ƒl[ƒWƒƒ[
+		@brief ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	instance_max	[in]	æœ€å¤§ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ•°
+		@param	autoFlip		[in]	è‡ªå‹•ã§ã‚¹ãƒ¬ãƒƒãƒ‰é–“ã®ãƒ‡ãƒ¼ã‚¿ã‚’å…¥ã‚Œæ›¿ãˆã‚‹ã‹ã©ã†ã‹ã€ã‚’æŒ‡å®šã™ã‚‹ã€‚trueã®å ´åˆã€Updateæ™‚ã«å…¥ã‚Œæ›¿ã‚ã‚‹ã€‚
+		@return	ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼
 	*/
 	static Manager* Create( int instance_max, bool autoFlip = true );
 
 	/**
-		@brief ƒ}ƒl[ƒWƒƒ[‚ğ”jŠü‚·‚éB
+		@brief ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚’ç ´æ£„ã™ã‚‹ã€‚
 		@note
-		‚±‚Ìƒ}ƒl[ƒWƒƒ[‚©‚ç¶¬‚³‚ê‚½ƒGƒtƒFƒNƒg‚Í‘S‚Ä‹­§“I‚É”jŠü‚³‚ê‚éB
+		ã“ã®ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‹ã‚‰ç”Ÿæˆã•ã‚ŒãŸã‚¨ãƒ•ã‚§ã‚¯ãƒˆã¯å…¨ã¦å¼·åˆ¶çš„ã«ç ´æ£„ã•ã‚Œã‚‹ã€‚
 	*/
 	virtual void Destroy() = 0;
 
 	/**
-		@brief	ƒƒ‚ƒŠŠm•ÛŠÖ”‚ğæ“¾‚·‚éB
+		@brief	ãƒ¡ãƒ¢ãƒªç¢ºä¿é–¢æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual MallocFunc GetMallocFunc() const = 0;
 
 	/**
-		@brief	ƒƒ‚ƒŠŠm•ÛŠÖ”‚ğİ’è‚·‚éB
+		@brief	ãƒ¡ãƒ¢ãƒªç¢ºä¿é–¢æ•°ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetMallocFunc( MallocFunc func ) = 0;
 
 	/**
-		@brief	ƒƒ‚ƒŠ”jŠüŠÖ”‚ğæ“¾‚·‚éB
+		@brief	ãƒ¡ãƒ¢ãƒªç ´æ£„é–¢æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual FreeFunc GetFreeFunc() const = 0;
 
 	/**
-		@brief	ƒƒ‚ƒŠ”jŠüŠÖ”‚ğİ’è‚·‚éB
+		@brief	ãƒ¡ãƒ¢ãƒªç ´æ£„é–¢æ•°ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetFreeFunc( FreeFunc func ) = 0;
 
 	/**
-		@brief	ƒ‰ƒ“ƒ_ƒ€ŠÖ”‚ğæ“¾‚·‚éB
+		@brief	ãƒ©ãƒ³ãƒ€ãƒ é–¢æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual RandFunc GetRandFunc() const = 0;
 
 	/**
-		@brief	ƒ‰ƒ“ƒ_ƒ€ŠÖ”‚ğİ’è‚·‚éB
+		@brief	ãƒ©ãƒ³ãƒ€ãƒ é–¢æ•°ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetRandFunc( RandFunc func ) = 0;
 
 	/**
-		@brief	ƒ‰ƒ“ƒ_ƒ€Å‘å’l‚ğæ“¾‚·‚éB
+		@brief	ãƒ©ãƒ³ãƒ€ãƒ æœ€å¤§å€¤ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual int GetRandMax() const = 0;
 
 	/**
-		@brief	ƒ‰ƒ“ƒ_ƒ€ŠÖ”‚ğİ’è‚·‚éB
+		@brief	ãƒ©ãƒ³ãƒ€ãƒ é–¢æ•°ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetRandMax( int max_ ) = 0;
 
 	/**
-		@brief	À•WŒn‚ğæ“¾‚·‚éB
-		@return	À•WŒn
+		@brief	åº§æ¨™ç³»ã‚’å–å¾—ã™ã‚‹ã€‚
+		@return	åº§æ¨™ç³»
 	*/
 	virtual CoordinateSystem GetCoordinateSystem() const = 0;
 
 	/**
-		@brief	À•WŒn‚ğİ’è‚·‚éB
-		@param	coordinateSystem	[in]	À•WŒn
+		@brief	åº§æ¨™ç³»ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	coordinateSystem	[in]	åº§æ¨™ç³»
 		@note
-		À•WŒn‚ğİ’è‚·‚éB
-		ƒGƒtƒFƒNƒgƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş‘O‚Éİ’è‚·‚é•K—v‚ª‚ ‚éB
+		åº§æ¨™ç³»ã‚’è¨­å®šã™ã‚‹ã€‚
+		ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€å‰ã«è¨­å®šã™ã‚‹å¿…è¦ãŒã‚ã‚‹ã€‚
 	*/
 	virtual void SetCoordinateSystem( CoordinateSystem coordinateSystem ) = 0;
 
 	/**
-		@brief	ƒXƒvƒ‰ƒCƒg•`‰æ‹@”\‚ğæ“¾‚·‚éB
+		@brief	ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»æ©Ÿèƒ½ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual SpriteRenderer* GetSpriteRenderer() = 0;
 
 	/**
-		@brief	ƒXƒvƒ‰ƒCƒg•`‰æ‹@”\‚ğİ’è‚·‚éB
+		@brief	ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»æ©Ÿèƒ½ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetSpriteRenderer( SpriteRenderer* renderer ) = 0;
 
 	/**
-		@brief	ƒXƒgƒ‰ƒCƒv•`‰æ‹@”\‚ğæ“¾‚·‚éB
+		@brief	ã‚¹ãƒˆãƒ©ã‚¤ãƒ—æç”»æ©Ÿèƒ½ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual RibbonRenderer* GetRibbonRenderer() = 0;
 
 	/**
-		@brief	ƒXƒgƒ‰ƒCƒv•`‰æ‹@”\‚ğİ’è‚·‚éB
+		@brief	ã‚¹ãƒˆãƒ©ã‚¤ãƒ—æç”»æ©Ÿèƒ½ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetRibbonRenderer( RibbonRenderer* renderer ) = 0;
 
 	/**
-		@brief	ƒŠƒ“ƒO•`‰æ‹@”\‚ğæ“¾‚·‚éB
+		@brief	ãƒªãƒ³ã‚°æç”»æ©Ÿèƒ½ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual RingRenderer* GetRingRenderer() = 0;
 
 	/**
-		@brief	ƒŠƒ“ƒO•`‰æ‹@”\‚ğİ’è‚·‚éB
+		@brief	ãƒªãƒ³ã‚°æç”»æ©Ÿèƒ½ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetRingRenderer( RingRenderer* renderer ) = 0;
 
 	/**
-		@brief	ƒ‚ƒfƒ‹•`‰æ‹@”\‚ğæ“¾‚·‚éB
+		@brief	ãƒ¢ãƒ‡ãƒ«æç”»æ©Ÿèƒ½ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual ModelRenderer* GetModelRenderer() = 0;
 
 	/**
-		@brief	ƒ‚ƒfƒ‹•`‰æ‹@”\‚ğİ’è‚·‚éB
+		@brief	ãƒ¢ãƒ‡ãƒ«æç”»æ©Ÿèƒ½ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetModelRenderer( ModelRenderer* renderer ) = 0;
 
 	/**
-		@brief	‹OÕ•`‰æ‹@”\‚ğæ“¾‚·‚éB
+		@brief	è»Œè·¡æç”»æ©Ÿèƒ½ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual TrackRenderer* GetTrackRenderer() = 0;
 
 	/**
-		@brief	‹OÕ•`‰æ‹@”\‚ğİ’è‚·‚éB
+		@brief	è»Œè·¡æç”»æ©Ÿèƒ½ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetTrackRenderer( TrackRenderer* renderer ) = 0;
 
 	/**
-		@brief	İ’èƒNƒ‰ƒX‚ğæ“¾‚·‚éB
+		@brief	è¨­å®šã‚¯ãƒ©ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual Setting* GetSetting() = 0;
 
 	/**
-		@brief	İ’èƒNƒ‰ƒX‚ğİ’è‚·‚éB
-		@param	setting	[in]	İ’è
+		@brief	è¨­å®šã‚¯ãƒ©ã‚¹ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	setting	[in]	è¨­å®š
 	*/
 	virtual void SetSetting(Setting* setting) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg“ÇƒNƒ‰ƒX‚ğæ“¾‚·‚éB
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆèª­è¾¼ã‚¯ãƒ©ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual EffectLoader* GetEffectLoader() = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg“ÇƒNƒ‰ƒX‚ğİ’è‚·‚éB
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆèª­è¾¼ã‚¯ãƒ©ã‚¹ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetEffectLoader( EffectLoader* effectLoader ) = 0;
 
 	/**
-		@brief	ƒeƒNƒXƒ`ƒƒ“ÇƒNƒ‰ƒX‚ğæ“¾‚·‚éB
+		@brief	ãƒ†ã‚¯ã‚¹ãƒãƒ£èª­è¾¼ã‚¯ãƒ©ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual TextureLoader* GetTextureLoader() = 0;
 
 	/**
-		@brief	ƒeƒNƒXƒ`ƒƒ“ÇƒNƒ‰ƒX‚ğİ’è‚·‚éB
+		@brief	ãƒ†ã‚¯ã‚¹ãƒãƒ£èª­è¾¼ã‚¯ãƒ©ã‚¹ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetTextureLoader( TextureLoader* textureLoader ) = 0;
 	
 	/**
-		@brief	ƒTƒEƒ“ƒhÄ¶‹@”\‚ğæ“¾‚·‚éB
+		@brief	ã‚µã‚¦ãƒ³ãƒ‰å†ç”Ÿæ©Ÿèƒ½ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual SoundPlayer* GetSoundPlayer() = 0;
 
 	/**
-		@brief	ƒTƒEƒ“ƒhÄ¶‹@”\‚ğİ’è‚·‚éB
+		@brief	ã‚µã‚¦ãƒ³ãƒ‰å†ç”Ÿæ©Ÿèƒ½ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetSoundPlayer( SoundPlayer* soundPlayer ) = 0;
 	
 	/**
-		@brief	ƒTƒEƒ“ƒh“ÇƒNƒ‰ƒX‚ğæ“¾‚·‚é
+		@brief	ã‚µã‚¦ãƒ³ãƒ‰èª­è¾¼ã‚¯ãƒ©ã‚¹ã‚’å–å¾—ã™ã‚‹
 	*/
 	virtual SoundLoader* GetSoundLoader() = 0;
 	
 	/**
-		@brief	ƒTƒEƒ“ƒh“ÇƒNƒ‰ƒX‚ğİ’è‚·‚éB
+		@brief	ã‚µã‚¦ãƒ³ãƒ‰èª­è¾¼ã‚¯ãƒ©ã‚¹ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetSoundLoader( SoundLoader* soundLoader ) = 0;
 
 	/**
-		@brief	ƒ‚ƒfƒ‹“ÇƒNƒ‰ƒX‚ğæ“¾‚·‚éB
+		@brief	ãƒ¢ãƒ‡ãƒ«èª­è¾¼ã‚¯ãƒ©ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual ModelLoader* GetModelLoader() = 0;
 
 	/**
-		@brief	ƒ‚ƒfƒ‹“ÇƒNƒ‰ƒX‚ğİ’è‚·‚éB
+		@brief	ãƒ¢ãƒ‡ãƒ«èª­è¾¼ã‚¯ãƒ©ã‚¹ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetModelLoader( ModelLoader* modelLoader ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ğ’â~‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’åœæ­¢ã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
 	*/
 	virtual void StopEffect( Handle handle ) = 0;
 
 	/**
-		@brief	‘S‚Ä‚ÌƒGƒtƒFƒNƒg‚ğ’â~‚·‚éB
+		@brief	å…¨ã¦ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’åœæ­¢ã™ã‚‹ã€‚
 	*/
 	virtual void StopAllEffects() = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚Ìƒ‹[ƒg‚¾‚¯‚ğ’â~‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒ«ãƒ¼ãƒˆã ã‘ã‚’åœæ­¢ã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
 	*/
 	virtual void StopRoot( Handle handle ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚Ìƒ‹[ƒg‚¾‚¯‚ğ’â~‚·‚éB
-		@param	effect	[in]	ƒGƒtƒFƒNƒg
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒ«ãƒ¼ãƒˆã ã‘ã‚’åœæ­¢ã™ã‚‹ã€‚
+		@param	effect	[in]	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
 	*/
 	virtual void StopRoot( Effect* effect ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ª‘¶İ‚µ‚Ä‚¢‚é‚©æ“¾‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@return	‘¶İ‚µ‚Ä‚é‚©?
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒå­˜åœ¨ã—ã¦ã„ã‚‹ã‹å–å¾—ã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@return	å­˜åœ¨ã—ã¦ã‚‹ã‹?
 	*/
 	virtual bool Exists( Handle handle ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚Ég—p‚³‚ê‚Ä‚¢‚éƒCƒ“ƒXƒ^ƒ“ƒX”‚ğæ“¾‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@return	ƒCƒ“ƒXƒ^ƒ“ƒX”
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã«ä½¿ç”¨ã•ã‚Œã¦ã„ã‚‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@return	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ•°
 		@note
-		Root‚àŒÂ”‚ÉŠÜ‚Ü‚ê‚éB‚Â‚Ü‚èARootíœ‚ğ‚µ‚Ä‚¢‚È‚¢ŒÀ‚èA
-		Manager‚Éc‚Á‚Ä‚¢‚éƒCƒ“ƒXƒ^ƒ“ƒX”+ƒGƒtƒFƒNƒg‚Ég—p‚³‚ê‚Ä‚¢‚éƒCƒ“ƒXƒ^ƒ“ƒX”‚Í‘¶İ‚µ‚Ä‚¢‚éRoot‚Ì”‚¾‚¯
-		Å‰‚ÉŠm•Û‚µ‚½ŒÂ”‚æ‚è‚à‘½‚­‘¶İ‚·‚éB
+		Rootã‚‚å€‹æ•°ã«å«ã¾ã‚Œã‚‹ã€‚ã¤ã¾ã‚Šã€Rootå‰Šé™¤ã‚’ã—ã¦ã„ãªã„é™ã‚Šã€
+		Managerã«æ®‹ã£ã¦ã„ã‚‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ•°+ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã«ä½¿ç”¨ã•ã‚Œã¦ã„ã‚‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ•°ã¯å­˜åœ¨ã—ã¦ã„ã‚‹Rootã®æ•°ã ã‘
+		æœ€åˆã«ç¢ºä¿ã—ãŸå€‹æ•°ã‚ˆã‚Šã‚‚å¤šãå­˜åœ¨ã™ã‚‹ã€‚
 	*/
 	virtual int32_t GetInstanceCount( Handle handle ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Éİ’è‚³‚ê‚Ä‚¢‚és—ñ‚ğæ“¾‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@return	s—ñ
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«è¨­å®šã•ã‚Œã¦ã„ã‚‹è¡Œåˆ—ã‚’å–å¾—ã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@return	è¡Œåˆ—
 	*/
 	virtual Matrix43 GetMatrix( Handle handle ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚É•ÏŠ·s—ñ‚ğİ’è‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@param	mat		[in]	•ÏŠ·s—ñ
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«å¤‰æ›è¡Œåˆ—ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@param	mat		[in]	å¤‰æ›è¡Œåˆ—
 	*/
 	virtual void SetMatrix( Handle handle, const Matrix43& mat ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÌˆÊ’u‚ğæ“¾‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@return	ˆÊ’u
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ä½ç½®ã‚’å–å¾—ã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@return	ä½ç½®
 	*/
 	virtual Vector3D GetLocation( Handle handle ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÌˆÊ’u‚ğw’è‚·‚éB
-		@param	x	[in]	XÀ•W
-		@param	y	[in]	YÀ•W
-		@param	z	[in]	ZÀ•W
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ä½ç½®ã‚’æŒ‡å®šã™ã‚‹ã€‚
+		@param	x	[in]	Xåº§æ¨™
+		@param	y	[in]	Yåº§æ¨™
+		@param	z	[in]	Zåº§æ¨™
 	*/
 	virtual void SetLocation( Handle handle, float x, float y, float z ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÌˆÊ’u‚ğw’è‚·‚éB
-		@param	location	[in]	ˆÊ’u
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ä½ç½®ã‚’æŒ‡å®šã™ã‚‹ã€‚
+		@param	location	[in]	ä½ç½®
 	*/
 	virtual void SetLocation( Handle handle, const Vector3D& location ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÌˆÊ’u‚É‰ÁZ‚·‚éB
-		@param	location	[in]	‰ÁZ‚·‚é’l
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ä½ç½®ã«åŠ ç®—ã™ã‚‹ã€‚
+		@param	location	[in]	åŠ ç®—ã™ã‚‹å€¤
 	*/
 	virtual void AddLocation( Handle handle, const Vector3D& location ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ì‰ñ“]Šp“x‚ğw’è‚·‚éB(ƒ‰ƒWƒAƒ“)
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®å›è»¢è§’åº¦ã‚’æŒ‡å®šã™ã‚‹ã€‚(ãƒ©ã‚¸ã‚¢ãƒ³)
 	*/
 	virtual void SetRotation( Handle handle, float x, float y, float z ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ì”CˆÓ²ü‚è‚Ì”½Œvü‚è‚Ì‰ñ“]Šp“x‚ğw’è‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@param	axis	[in]	²
-		@param	angle	[in]	Šp“x(ƒ‰ƒWƒAƒ“)
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ä»»æ„è»¸å‘¨ã‚Šã®åæ™‚è¨ˆå‘¨ã‚Šã®å›è»¢è§’åº¦ã‚’æŒ‡å®šã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@param	axis	[in]	è»¸
+		@param	angle	[in]	è§’åº¦(ãƒ©ã‚¸ã‚¢ãƒ³)
 	*/
 	virtual void SetRotation( Handle handle, const Vector3D& axis, float angle ) = 0;
 	
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ÌŠg‘å—¦‚ğw’è‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@param	x		[in]	X•ûŒüŠg‘å—¦
-		@param	y		[in]	Y•ûŒüŠg‘å—¦
-		@param	z		[in]	Z•ûŒüŠg‘å—¦
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®æ‹¡å¤§ç‡ã‚’æŒ‡å®šã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@param	x		[in]	Xæ–¹å‘æ‹¡å¤§ç‡
+		@param	y		[in]	Yæ–¹å‘æ‹¡å¤§ç‡
+		@param	z		[in]	Zæ–¹å‘æ‹¡å¤§ç‡
 	*/
 	virtual void SetScale( Handle handle, float x, float y, float z ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒ^[ƒQƒbƒgˆÊ’u‚ğw’è‚·‚éB
-		@param	x	[in]	XÀ•W
-		@param	y	[in]	YÀ•W
-		@param	z	[in]	ZÀ•W
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®ã‚’æŒ‡å®šã™ã‚‹ã€‚
+		@param	x	[in]	Xåº§æ¨™
+		@param	y	[in]	Yåº§æ¨™
+		@param	z	[in]	Zåº§æ¨™
 	*/
 	virtual void SetTargetLocation( Handle handle, float x, float y, float z ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒ^[ƒQƒbƒgˆÊ’u‚ğw’è‚·‚éB
-		@param	location	[in]	ˆÊ’u
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆä½ç½®ã‚’æŒ‡å®šã™ã‚‹ã€‚
+		@param	location	[in]	ä½ç½®
 	*/
 	virtual void SetTargetLocation( Handle handle, const Vector3D& location ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚Ìƒx[ƒXs—ñ‚ğæ“¾‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@return	ƒx[ƒXs—ñ
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒ™ãƒ¼ã‚¹è¡Œåˆ—ã‚’å–å¾—ã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@return	ãƒ™ãƒ¼ã‚¹è¡Œåˆ—
 	*/
 	virtual Matrix43 GetBaseMatrix( Handle handle ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚Ìƒx[ƒXs—ñ‚ğİ’è‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@param	mat		[in]	İ’è‚·‚és—ñ
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒ™ãƒ¼ã‚¹è¡Œåˆ—ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@param	mat		[in]	è¨­å®šã™ã‚‹è¡Œåˆ—
 		@note
-		ƒGƒtƒFƒNƒg‘S‘Ì‚Ì•\¦ˆÊ’u‚ğw’è‚·‚és—ñ‚ğİ’è‚·‚éB
+		ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå…¨ä½“ã®è¡¨ç¤ºä½ç½®ã‚’æŒ‡å®šã™ã‚‹è¡Œåˆ—ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetBaseMatrix( Handle handle, const Matrix43& mat ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚É”pŠü‚ÌƒR[ƒ‹ƒoƒbƒN‚ğİ’è‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@param	callback	[in]	ƒR[ƒ‹ƒoƒbƒN
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«å»ƒæ£„æ™‚ã®ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@param	callback	[in]	ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯
 	*/
 	virtual void SetRemovingCallback( Handle handle, EffectInstanceRemovingCallback callback ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğDraw‚É•`‰æ‚·‚é‚©İ’è‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@param	shown	[in]	•`‰æ‚·‚é‚©?
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’Drawæ™‚ã«æç”»ã™ã‚‹ã‹è¨­å®šã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@param	shown	[in]	æç”»ã™ã‚‹ã‹?
 	*/
 	virtual void SetShown( Handle handle, bool shown ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğUpdate‚ÉXV‚·‚é‚©İ’è‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@param	paused	[in]	XV‚·‚é‚©?
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’Updateæ™‚ã«æ›´æ–°ã™ã‚‹ã‹è¨­å®šã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@param	paused	[in]	æ›´æ–°ã™ã‚‹ã‹?
 	*/
 	virtual void SetPaused( Handle handle, bool paused ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğÄ¶ƒXƒs[ƒh‚ğİ’è‚·‚éB
-		@param	handle	[in]	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
-		@param	speed	[in]	ƒXƒs[ƒh
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å†ç”Ÿã‚¹ãƒ”ãƒ¼ãƒ‰ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	handle	[in]	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
+		@param	speed	[in]	ã‚¹ãƒ”ãƒ¼ãƒ‰
 	*/
 	virtual void SetSpeed( Handle handle, float speed ) = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ªDraw‚Å•`‰æ‚³‚ê‚é‚©İ’è‚·‚éB
-				autoDraw‚ªfalse‚Ìê‡ADrawHandle‚Å•`‰æ‚·‚é•K—v‚ª‚ ‚éB
-		@param	autoDraw	[in]	©“®•`‰æƒtƒ‰ƒO
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãŒDrawã§æç”»ã•ã‚Œã‚‹ã‹è¨­å®šã™ã‚‹ã€‚
+				autoDrawãŒfalseã®å ´åˆã€DrawHandleã§æç”»ã™ã‚‹å¿…è¦ãŒã‚ã‚‹ã€‚
+		@param	autoDraw	[in]	è‡ªå‹•æç”»ãƒ•ãƒ©ã‚°
 	*/
 	virtual void SetAutoDrawing( Handle handle, bool autoDraw ) = 0;
 
 	/**
-		@brief	¡‚Ü‚Å‚ÌPlay“™‚Ìˆ—‚ğUpdateÀs‚É“K—p‚·‚é‚æ‚¤‚É‚·‚éB
+		@brief	ä»Šã¾ã§ã®Playç­‰ã®å‡¦ç†ã‚’Updateå®Ÿè¡Œæ™‚ã«é©ç”¨ã™ã‚‹ã‚ˆã†ã«ã™ã‚‹ã€‚
 	*/
 	virtual void Flip() = 0;
 
 	/**
-		@brief	XVˆ—‚ğs‚¤B
-		@param	deltaFrame	[in]	XV‚·‚éƒtƒŒ[ƒ€”(60fpsŠî€)	
+		@brief	æ›´æ–°å‡¦ç†ã‚’è¡Œã†ã€‚
+		@param	deltaFrame	[in]	æ›´æ–°ã™ã‚‹ãƒ•ãƒ¬ãƒ¼ãƒ æ•°(60fpsåŸºæº–)	
 	*/
 	virtual void Update( float deltaFrame = 1.0f ) = 0;
 
 	/**
-		@brief	XVˆ—‚ğŠJn‚·‚éB
+		@brief	æ›´æ–°å‡¦ç†ã‚’é–‹å§‹ã™ã‚‹ã€‚
 		@note
-		Update‚ğÀs‚·‚éÛ‚ÍAÀs‚·‚é•K—v‚Í‚È‚¢B
+		Updateã‚’å®Ÿè¡Œã™ã‚‹éš›ã¯ã€å®Ÿè¡Œã™ã‚‹å¿…è¦ã¯ãªã„ã€‚
 	*/
 	virtual void BeginUpdate() = 0;
 
 	/**
-		@brief	XVˆ—‚ğI—¹‚·‚éB
+		@brief	æ›´æ–°å‡¦ç†ã‚’çµ‚äº†ã™ã‚‹ã€‚
 		@note
-		Update‚ğÀs‚·‚éÛ‚ÍAÀs‚·‚é•K—v‚Í‚È‚¢B
+		Updateã‚’å®Ÿè¡Œã™ã‚‹éš›ã¯ã€å®Ÿè¡Œã™ã‚‹å¿…è¦ã¯ãªã„ã€‚
 	*/
 	virtual void EndUpdate() = 0;
 
 	/**
-		@brief	ƒnƒ“ƒhƒ‹’PˆÊ‚ÌXV‚ğs‚¤B
-		@param	handle		[in]	ƒnƒ“ƒhƒ‹
-		@param	deltaFrame	[in]	XV‚·‚éƒtƒŒ[ƒ€”(60fpsŠî€)
+		@brief	ãƒãƒ³ãƒ‰ãƒ«å˜ä½ã®æ›´æ–°ã‚’è¡Œã†ã€‚
+		@param	handle		[in]	ãƒãƒ³ãƒ‰ãƒ«
+		@param	deltaFrame	[in]	æ›´æ–°ã™ã‚‹ãƒ•ãƒ¬ãƒ¼ãƒ æ•°(60fpsåŸºæº–)
 		@note
-		XV‚·‚é‘O‚ÉBeginUpdateAXV‚µI‚í‚Á‚½Œã‚ÉEndUpdate‚ğÀs‚·‚é•K—v‚ª‚ ‚éB
+		æ›´æ–°ã™ã‚‹å‰ã«BeginUpdateã€æ›´æ–°ã—çµ‚ã‚ã£ãŸå¾Œã«EndUpdateã‚’å®Ÿè¡Œã™ã‚‹å¿…è¦ãŒã‚ã‚‹ã€‚
 	*/
 	virtual void UpdateHandle( Handle handle, float deltaFrame = 1.0f ) = 0;
 
 	/**
-		@brief	•`‰æˆ—‚ğs‚¤B
+		@brief	æç”»å‡¦ç†ã‚’è¡Œã†ã€‚
 	*/
 	virtual void Draw() = 0;
 	
 	/**
-		@brief	ƒnƒ“ƒhƒ‹’PˆÊ‚Ì•`‰æˆ—‚ğs‚¤B
+		@brief	ãƒãƒ³ãƒ‰ãƒ«å˜ä½ã®æç”»å‡¦ç†ã‚’è¡Œã†ã€‚
 	*/
 	virtual void DrawHandle( Handle handle ) = 0;
 
 	/**
-		@brief	Ä¶‚·‚éB
-		@param	effect	[in]	ƒGƒtƒFƒNƒg
-		@param	x	[in]	XÀ•W
-		@param	y	[in]	YÀ•W
-		@param	z	[in]	ZÀ•W
-		@return	ƒGƒtƒFƒNƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒnƒ“ƒhƒ‹
+		@brief	å†ç”Ÿã™ã‚‹ã€‚
+		@param	effect	[in]	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
+		@param	x	[in]	Xåº§æ¨™
+		@param	y	[in]	Yåº§æ¨™
+		@param	z	[in]	Zåº§æ¨™
+		@return	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒãƒ³ãƒ‰ãƒ«
 	*/
 	virtual Handle Play( Effect* effect, float x, float y, float z ) = 0;
 	
 	/**
-		@brief	Updateˆ—ŠÔ‚ğæ“¾B
+		@brief	Updateå‡¦ç†æ™‚é–“ã‚’å–å¾—ã€‚
 	*/
 	virtual int GetUpdateTime() const = 0;
 	
 	/**
-		@brief	Drawˆ—ŠÔ‚ğæ“¾B
+		@brief	Drawå‡¦ç†æ™‚é–“ã‚’å–å¾—ã€‚
 	*/
 	virtual int GetDrawTime() const = 0;
 
 	/**
-		@brief	c‚è‚ÌŠm•Û‚µ‚½ƒCƒ“ƒXƒ^ƒ“ƒX”‚ğæ“¾‚·‚éB
+		@brief	æ®‹ã‚Šã®ç¢ºä¿ã—ãŸã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual int32_t GetRestInstancesCount() const = 0;
 
 	/**
-		@brief	ƒGƒtƒFƒNƒg‚ğƒJƒŠƒ“ƒO‚µ•`‰æ•‰‰×‚ğŒ¸‚ç‚·‚½‚ß‚Ì‹óŠÔ‚ğ¶¬‚·‚éB
-		@param	xsize	X•ûŒü•
-		@param	ysize	Y•ûŒü•
-		@param	zsize	Z•ûŒü•
-		@param	layerCount	‘w”(‘å‚«‚¢‚Ù‚ÇƒJƒŠƒ“ƒO‚ÌŒø—¦‚Íã‚ª‚é‚ªƒƒ‚ƒŠ‚à‘å—Ê‚Ég—p‚·‚é)
+		@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ã‚«ãƒªãƒ³ã‚°ã—æç”»è² è·ã‚’æ¸›ã‚‰ã™ãŸã‚ã®ç©ºé–“ã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	xsize	Xæ–¹å‘å¹…
+		@param	ysize	Yæ–¹å‘å¹…
+		@param	zsize	Zæ–¹å‘å¹…
+		@param	layerCount	å±¤æ•°(å¤§ãã„ã»ã©ã‚«ãƒªãƒ³ã‚°ã®åŠ¹ç‡ã¯ä¸ŠãŒã‚‹ãŒãƒ¡ãƒ¢ãƒªã‚‚å¤§é‡ã«ä½¿ç”¨ã™ã‚‹)
 	*/
 	virtual void CreateCullingWorld( float xsize, float ysize, float zsize, int32_t layerCount) = 0;
 
 	/**
-		@brief	ƒJƒŠƒ“ƒO‚ğs‚¢AƒJƒŠƒ“ƒO‚³‚ê‚½ƒIƒuƒWƒFƒNƒg‚Ì‚İ‚ğ•`‰æ‚·‚é‚æ‚¤‚É‚·‚éB
-		@param	cameraProjMat	ƒJƒƒ‰ƒvƒƒWƒFƒNƒVƒ‡ƒ“s—ñ
-		@param	isOpenGL		OpenGL‚É‚æ‚é•`‰æ‚©?
+		@brief	ã‚«ãƒªãƒ³ã‚°ã‚’è¡Œã„ã€ã‚«ãƒªãƒ³ã‚°ã•ã‚ŒãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã¿ã‚’æç”»ã™ã‚‹ã‚ˆã†ã«ã™ã‚‹ã€‚
+		@param	cameraProjMat	ã‚«ãƒ¡ãƒ©ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³è¡Œåˆ—
+		@param	isOpenGL		OpenGLã«ã‚ˆã‚‹æç”»ã‹?
 	*/
 	virtual void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL) = 0;
 
 	/**
-		@brief	Œ»İ‘¶İ‚·‚éƒGƒtƒFƒNƒg‚Ìƒnƒ“ƒhƒ‹‚©‚çƒJƒŠƒ“ƒO‚Ì‹óŠÔ‚ğ”z’u‚µ‚È‚¨‚·B
+		@brief	ç¾åœ¨å­˜åœ¨ã™ã‚‹ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒãƒ³ãƒ‰ãƒ«ã‹ã‚‰ã‚«ãƒªãƒ³ã‚°ã®ç©ºé–“ã‚’é…ç½®ã—ãªãŠã™ã€‚
 	*/
 	virtual void RessignCulling() = 0;
 };

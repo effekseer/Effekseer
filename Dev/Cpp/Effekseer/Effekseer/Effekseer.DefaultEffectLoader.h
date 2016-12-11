@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_DEFAULTEFFECTLOADER_H__
 #define	__EFFEKSEER_DEFAULTEFFECTLOADER_H__
 
@@ -17,7 +17,7 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	•W€‚ÌƒGƒtƒFƒNƒgƒtƒ@ƒCƒ‹“Ç‚İ‚İ”jŠüŠÖ”w’èƒNƒ‰ƒX
+	@brief	æ¨™æº–ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ç ´æ£„é–¢æ•°æŒ‡å®šã‚¯ãƒ©ã‚¹
 */
 class DefaultEffectLoader
 	: public EffectLoader

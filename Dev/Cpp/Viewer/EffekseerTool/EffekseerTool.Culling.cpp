@@ -1,4 +1,4 @@
-
+Ôªø
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ Culling::Culling( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffe
 	, Y				(0.0f)
 	, Z				(0.0f)
 {
-	// ç¿ïW(3) êF(4)
+	// Â∫ßÊ®ô(3) Ëâ≤(4)
 	D3DVERTEXELEMENT9 decl[] =
 	{
 		{0,	0,	D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_POSITION,	0},

@@ -28,6 +28,12 @@ namespace Effekseer.GUI.Component
 			Core.OnAfterSave += Core_OnAfterSave;
 			Core.OnAfterLoad += Core_OnAfterLoad;
 			Core.OnReload += Core_OnReload;
+
+			if (Core.Language == Language.English)
+			{
+				btn_load.Text = "Load";
+				btn_delete.Text = "Del";
+			}
 		}
 
 		Data.Value.Path binding = null;
@@ -72,6 +78,7 @@ namespace Effekseer.GUI.Component
 			{
 				btn_load.Enabled = true;
 				lbl_file.Text = binding.GetRelativePath();
+                tooltip_file.SetToolTip(lbl_file, lbl_file.Text);
 				if (lbl_file.Text.Length > 0)
 				{
 					UpdatePreview(binding.GetAbsolutePath());

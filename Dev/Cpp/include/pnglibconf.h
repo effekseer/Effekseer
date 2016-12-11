@@ -1,4 +1,4 @@
-/* libpng 1.6.21 STANDARD API DEFINITION */
+﻿/* libpng 1.6.21 STANDARD API DEFINITION */
 
 /* pnglibconf.h - library build configuration */
 

@@ -1,2 +1,2 @@
-
+﻿
 #include "EffekseerRenderer.Renderer.h"

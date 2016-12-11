@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEERTOOL_BASE_H__
 #define	__EFFEKSEERTOOL_BASE_H__
 

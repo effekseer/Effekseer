@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_SERVER_IMPLEMENTED_H__
 #define	__EFFEKSEER_SERVER_IMPLEMENTED_H__
 
@@ -77,7 +77,7 @@ public:
 	virtual ~ServerImplemented();
 
 	/**
-		@brief	ƒT[ƒo[‚ğŠJn‚·‚éB
+		@brief	ã‚µãƒ¼ãƒãƒ¼ã‚’é–‹å§‹ã™ã‚‹ã€‚
 	*/
 	bool Start( uint16_t port );
 

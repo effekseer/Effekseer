@@ -307,13 +307,25 @@ namespace Effekseer.GUI.Component
 
 				Node = node;
 				Text = node.Name;
+				ImageIndex = 0;
+				SelectedImageIndex = 0;
 				Checked = node.IsRendered;
 				Node.IsRendered.OnChanged += OnChangedIsRendered;
 				Node.Name.OnChanged += OnChangedName;
 				Node.OnAfterAddNode += OnAfterAddNode;
 				Node.OnAfterRemoveNode += OnAfterRemoveNode;
 				Node.OnAfterExchangeNodes += OnAfterExchangeNodes;
+				
+				if (Node is Data.Node)
+				{
+					var realNode = (Data.Node)Node;
+					int renderType = (int)realNode.DrawingValues.Type.Value;
+					ImageIndex = renderType;
+					SelectedImageIndex = renderType;
 
+					realNode.DrawingValues.Type.OnChanged += OnChangedRenderType;
+				}
+				
 				if (create_children)
 				{
 					for (int i = 0; i < Node.Children.Count; i++)
@@ -325,6 +337,12 @@ namespace Effekseer.GUI.Component
 
 			public void RemoveEvent(bool recursion)
 			{
+				if (Node is Data.Node)
+				{
+					var realNode = (Data.Node)Node;
+					realNode.DrawingValues.Type.OnChanged -= OnChangedRenderType;
+				}
+
 				Node.IsRendered.OnChanged -= OnChangedIsRendered;
 				Node.Name.OnChanged -= OnChangedName;
 				Node.OnAfterAddNode -= OnAfterAddNode;
@@ -360,7 +378,23 @@ namespace Effekseer.GUI.Component
 			void OnChangedName(object sender, ChangedValueEventArgs e)
 			{
 				Reading = true;
+
 				Text = Node.Name;
+
+				Reading = false;
+			}
+			
+			void OnChangedRenderType(object sender, ChangedValueEventArgs e)
+			{
+				Reading = true;
+
+				if (Node is Data.Node)
+				{
+					var realNode = (Data.Node)Node;
+					int renderType = (int)realNode.DrawingValues.Type.Value;
+					ImageIndex = renderType;
+					SelectedImageIndex = renderType;
+				}
 
 				Reading = false;
 			}

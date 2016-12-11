@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_CRITICALSESSION_H__
 #define	__EFFEKSEER_CRITICALSESSION_H__
 
@@ -24,7 +24,7 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒNƒŠƒeƒBƒJƒ‹ƒZƒNƒVƒ‡ƒ“
+	@brief	ã‚¯ãƒªãƒ†ã‚£ã‚«ãƒ«ã‚»ã‚¯ã‚·ãƒ§ãƒ³
 */
 class CriticalSection
 {

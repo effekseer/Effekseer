@@ -23,6 +23,8 @@ namespace Effekseer.GUI
 			{
 				Text = "Render";
 			}
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconRenderer).GetHicon());
 		}
 
 		void Read()

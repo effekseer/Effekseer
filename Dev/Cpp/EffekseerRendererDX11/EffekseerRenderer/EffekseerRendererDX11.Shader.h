@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_DX11_SHADER_H__
 #define	__EFFEKSEERRENDERER_DX11_SHADER_H__
 
@@ -51,7 +51,7 @@ public:
 		const D3D11_INPUT_ELEMENT_DESC decl[],
 		int32_t layoutCount );
 
-public:	// ƒfƒoƒCƒX•œ‹Œ—p
+public:	// ãƒ‡ãƒã‚¤ã‚¹å¾©æ—§ç”¨
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
 

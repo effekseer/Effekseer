@@ -1,4 +1,4 @@
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+﻿#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 
 //----------------------------------------------------------------------------------
 // Include

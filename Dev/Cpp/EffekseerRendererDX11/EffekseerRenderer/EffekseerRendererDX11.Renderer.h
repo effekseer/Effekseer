@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_DX11_RENDERER_H__
 #define	__EFFEKSEERRENDERER_DX11_RENDERER_H__
 
@@ -17,7 +17,7 @@ namespace EffekseerRendererDX11
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	•`‰æƒNƒ‰ƒX
+	@brief	æç”»ã‚¯ãƒ©ã‚¹
 */
 class Renderer
 	: public ::EffekseerRenderer::Renderer
@@ -28,12 +28,12 @@ protected:
 
 public:
 	/**
-		@brief	ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éB
-		@param	device		DirectX‚ÌƒfƒoƒCƒX
-		@param	context		DirectX‚ÌƒRƒ“ƒeƒLƒXƒg
-		@param	squareMaxCount	Å‘å•`‰æƒXƒvƒ‰ƒCƒg”
-		@param	depthFunc	‰œs‚«‚ÌŒvZ•û–@
-		@return	ƒCƒ“ƒXƒ^ƒ“ƒX
+		@brief	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
+		@param	device		DirectXã®ãƒ‡ãƒã‚¤ã‚¹
+		@param	context		DirectXã®ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆ
+		@param	squareMaxCount	æœ€å¤§æç”»ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæ•°
+		@param	depthFunc	å¥¥è¡Œãã®è¨ˆç®—æ–¹æ³•
+		@return	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	*/
 	static Renderer* Create(
 		ID3D11Device* device, 
@@ -42,17 +42,17 @@ public:
 		D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS);
 
 	/**
-		@brief	ƒfƒoƒCƒX‚ğæ“¾‚·‚éB
+		@brief	ãƒ‡ãƒã‚¤ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual ID3D11Device* GetDevice() = 0;
 
 	/**
-	@brief	”wŒi‚ğæ“¾‚·‚éB
+	@brief	èƒŒæ™¯ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	virtual ID3D11ShaderResourceView* GetBackground() = 0;
 
 	/**
-	@brief	”wŒi‚ğİ’è‚·‚éB
+	@brief	èƒŒæ™¯ã‚’è¨­å®šã™ã‚‹ã€‚
 	*/
 	virtual void SetBackground(ID3D11ShaderResourceView* background) = 0;
 };
@@ -61,7 +61,7 @@ public:
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒ‚ƒfƒ‹
+	@brief	ãƒ¢ãƒ‡ãƒ«
 */
 class Model : public Effekseer::Model
 {

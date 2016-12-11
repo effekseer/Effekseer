@@ -24,6 +24,8 @@ namespace Effekseer.GUI
 			{
 				Text = "Position";
 			}
+
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconLocation).GetHicon());
 		}
 
 		void Read()

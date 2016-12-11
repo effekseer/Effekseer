@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_PASTE_H__
 #define	__EFFEKSEERRENDERER_PASTE_H__
 
@@ -40,7 +40,7 @@ public:
 
 	static Paste* Create(EffekseerRendererDX9::RendererImplemented* renderer);
 
-public:	// ƒfƒoƒCƒX•œ‹Œ—p
+public:	// ãƒ‡ãƒã‚¤ã‚¹å¾©æ—§ç”¨
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
 

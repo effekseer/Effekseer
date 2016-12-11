@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	assert( renderer != NULL );
 	assert( renderer->GetDevice() != NULL );
 
-	// À•W(3) –@ü(3)*3 UV(2)
+	// åº§æ¨™(3) æ³•ç·š(3)*3 UV(2)
 	D3DVERTEXELEMENT9 decl[] =
 	{
 		{0,	0,	D3DDECLTYPE_FLOAT3,		D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_POSITION,	0},
@@ -409,7 +409,7 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 	ModelRendererVertexConstantBuffer<40>* vcb = (ModelRendererVertexConstantBuffer<40>*)shader_->GetVertexConstantBuffer();
 	ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*)shader_->GetPixelConstantBuffer();
 	
-	// ŒÅ’è’lİ’è
+	// å›ºå®šå€¤è¨­å®š
 	if (parameter.Lighting)
 	{
 		{

@@ -24,6 +24,8 @@ namespace Effekseer.GUI
 			{
 				Text = "Attraction Forces";
 			}
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconLocationAbs).GetHicon());
 		}
 
 		void Read()

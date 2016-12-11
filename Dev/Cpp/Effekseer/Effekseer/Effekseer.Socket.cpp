@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ namespace Effekseer {
 void Socket::Initialize()
 {
 #ifdef _WIN32
-	/* Winsock‰Šú‰» */
+	/* WinsockåˆæœŸåŒ– */
 	WSADATA m_WsaData;
 	::WSAStartup( MAKEWORD(2,0), &m_WsaData );
 #endif
@@ -34,7 +34,7 @@ void Socket::Initialize()
 void Socket::Finalize()
 {
 #ifdef _WIN32
-	/* WinsockQÆƒJƒEƒ“ƒ^Œ¸­+”jŠü */
+	/* Winsockå‚ç…§ã‚«ã‚¦ãƒ³ã‚¿æ¸›å°‘+ç ´æ£„ */
 	WSACleanup();
 #endif
 }

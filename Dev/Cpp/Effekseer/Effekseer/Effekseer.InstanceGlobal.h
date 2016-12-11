@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_INSTANCEGLOBAL_H__
 #define	__EFFEKSEER_INSTANCEGLOBAL_H__
 
@@ -18,19 +18,19 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
-	@brief	ƒCƒ“ƒXƒ^ƒ“ƒX‹¤’Ê•”•ª
+	@brief	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å…±é€šéƒ¨åˆ†
 	@note
-	¶¬‚³‚ê‚½ƒCƒ“ƒXƒ^ƒ“ƒX‚Ì‘S‚Ä‚©‚çQÆ‚Å‚«‚é•”•ª
+	ç”Ÿæˆã•ã‚ŒãŸã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®å…¨ã¦ã‹ã‚‰å‚ç…§ã§ãã‚‹éƒ¨åˆ†
 */
 class InstanceGlobal
 {
 	friend class ManagerImplemented;
 
 private:
-	/* ‚±‚ÌƒGƒtƒFƒNƒg‚Åg—p‚µ‚Ä‚¢‚éƒCƒ“ƒXƒ^ƒ“ƒX” */
+	/* ã“ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã§ä½¿ç”¨ã—ã¦ã„ã‚‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ•° */
 	int			m_instanceCount;
 	
-	/* XV‚³‚ê‚½ƒtƒŒ[ƒ€” */
+	/* æ›´æ–°ã•ã‚ŒãŸãƒ•ãƒ¬ãƒ¼ãƒ æ•° */
 	float		m_updatedFrame;
 
 	InstanceContainer*	m_rootContainer;
@@ -48,12 +48,12 @@ public:
 	void AddUpdatedFrame( float frame );
 
 	/**
-		@brief	‘S‚Ä‚ÌƒCƒ“ƒXƒ^ƒ“ƒX”‚ğæ“¾
+		@brief	å…¨ã¦ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ•°ã‚’å–å¾—
 	*/
 	int GetInstanceCount();
 
 	/**
-		@brief	XV‚³‚ê‚½ƒtƒŒ[ƒ€”‚ğæ“¾‚·‚éB
+		@brief	æ›´æ–°ã•ã‚ŒãŸãƒ•ãƒ¬ãƒ¼ãƒ æ•°ã‚’å–å¾—ã™ã‚‹ã€‚
 	*/
 	float GetUpdatedFrame();
 

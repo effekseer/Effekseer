@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_VECTOR3D_H__
 #define	__EFFEKSEER_VECTOR3D_H__
 
@@ -15,7 +15,7 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	3ŸŒ³ƒxƒNƒgƒ‹
+	@brief	3æ¬¡å…ƒãƒ™ã‚¯ãƒˆãƒ«
 */
 struct Vector3D
 {
@@ -36,12 +36,12 @@ public:
 	float	Z;
 
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	Vector3D();
 
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	Vector3D( float x, float y, float z );
 
@@ -62,40 +62,40 @@ public:
 	Vector3D& operator /= ( const float& o );
 
 	/**
-		@brief	‰ÁZ
+		@brief	åŠ ç®—
 	*/
 	static void Add( Vector3D* pOut, const Vector3D* pIn1, const Vector3D* pIn2 );
 
 	/**
-		@brief	Œ¸Z
+		@brief	æ¸›ç®—
 	*/
 	static Vector3D& Sub( Vector3D& o, const Vector3D& in1, const Vector3D& in2 );
 
 	/**
-		@brief	’·‚³
+		@brief	é•·ã•
 	*/
 	static float Length( const Vector3D& in );
 
 	/**
-		@brief	’·‚³‚Ì“ñæ
+		@brief	é•·ã•ã®äºŒä¹—
 	*/
 	static float LengthSq( const Vector3D& in );
 
 	/**
-		@brief	“àÏ
+		@brief	å†…ç©
 	*/
 	static float Dot( const Vector3D& in1, const Vector3D& in2 );
 
 	/**
-		@brief	’PˆÊƒxƒNƒgƒ‹
+		@brief	å˜ä½ãƒ™ã‚¯ãƒˆãƒ«
 	*/
 	static void Normal( Vector3D& o, const Vector3D& in );
 
 	/**
-		@brief	ŠOÏ
+		@brief	å¤–ç©
 		@note
-		‰EèŒn‚Ìê‡A‰Eè‚Ìew‚ªin1Al·‚µw‚ªin2‚Æ‚µ‚½‚Æ‚«A’†w‚Ì•ûŒü‚ğ•Ô‚·B<BR>
-		¶èŒn‚Ìê‡A¶è‚Ìew‚ªin1Al·‚µw‚ªin2‚Æ‚µ‚½‚Æ‚«A’†w‚Ì•ûŒü‚ğ•Ô‚·B<BR>
+		å³æ‰‹ç³»ã®å ´åˆã€å³æ‰‹ã®è¦ªæŒ‡ãŒin1ã€äººå·®ã—æŒ‡ãŒin2ã¨ã—ãŸã¨ãã€ä¸­æŒ‡ã®æ–¹å‘ã‚’è¿”ã™ã€‚<BR>
+		å·¦æ‰‹ç³»ã®å ´åˆã€å·¦æ‰‹ã®è¦ªæŒ‡ãŒin1ã€äººå·®ã—æŒ‡ãŒin2ã¨ã—ãŸã¨ãã€ä¸­æŒ‡ã®æ–¹å‘ã‚’è¿”ã™ã€‚<BR>
 	*/
 	static Vector3D& Cross( Vector3D& o, const Vector3D& in1, const Vector3D& in2 );
 

@@ -1,4 +1,4 @@
-
+ï»¿
 
 //----------------------------------------------------------------------------------
 //
@@ -290,7 +290,7 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	memcpy( &m_version, pos, sizeof(int) );
 	pos += sizeof(int);
 
-	// ‰æ‘œ
+	// ç”»åƒ
 	memcpy( &m_ImageCount, pos, sizeof(int) );
 	pos += sizeof(int);
 
@@ -315,7 +315,7 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 
 	if (m_version >= 9)
 	{
-		// ‰æ‘œ
+		// ç”»åƒ
 		memcpy(&m_normalImageCount, pos, sizeof(int));
 		pos += sizeof(int);
 
@@ -338,7 +338,7 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 			}
 		}
 
-		// ‰æ‘œ
+		// ç”»åƒ
 		memcpy(&m_distortionImageCount, pos, sizeof(int));
 		pos += sizeof(int);
 
@@ -364,7 +364,7 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 
 	if( m_version >= 1 )
 	{
-		// ƒEƒF[ƒu
+		// ã‚¦ã‚§ãƒ¼ãƒ–
 		memcpy( &m_WaveCount, pos, sizeof(int) );
 		pos += sizeof(int);
 
@@ -390,7 +390,7 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 
 	if( m_version >= 6 )
 	{
-		/* ƒ‚ƒfƒ‹ */
+		/* ãƒ¢ãƒ‡ãƒ« */
 		memcpy( &m_modelCount, pos, sizeof(int) );
 		pos += sizeof(int);
 
@@ -414,7 +414,7 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		}
 	}
 
-	// Šg‘å—¦
+	// æ‹¡å¤§çŽ‡
 	if( m_version >= 2 )
 	{
 		memcpy( &m_maginification, pos, sizeof(float) );
@@ -423,7 +423,7 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		m_maginificationExternal = mag;
 	}
 
-	// ƒJƒŠƒ“ƒO
+	// ã‚«ãƒªãƒ³ã‚°
 	if( m_version >= 9 )
 	{
 		memcpy( &(Culling.Shape), pos, sizeof(int32_t) );
@@ -442,10 +442,10 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		}
 	}
 
-	// ƒm[ƒh
+	// ãƒŽãƒ¼ãƒ‰
 	m_pRoot = EffectNodeImplemented::Create( this, NULL, pos );
 
-	// ƒŠƒ[ƒh—p‚ÉmaterialPath‚ð‹L˜^‚µ‚Ä‚¨‚­
+	// ãƒªãƒ­ãƒ¼ãƒ‰ç”¨ã«materialPathã‚’è¨˜éŒ²ã—ã¦ãŠã
     if (materialPath) m_materialPath = materialPath;
 
 	ReloadResources( materialPath );
@@ -558,7 +558,7 @@ int32_t EffectImplemented::GetColorImageCount() const
 
 void* EffectImplemented::GetNormalImage(int n) const
 {
-	/* ‹­§“I‚ÉŒÝŠ·‚ð‚Æ‚é */
+	/* å¼·åˆ¶çš„ã«äº’æ›ã‚’ã¨ã‚‹ */
 	if (this->m_version <= 8)
 	{
 		return m_pImages[n];
@@ -574,7 +574,7 @@ int32_t EffectImplemented::GetNormalImageCount() const
 
 void* EffectImplemented::GetDistortionImage(int n) const
 {
-	/* ‹­§“I‚ÉŒÝŠ·‚ð‚Æ‚é */
+	/* å¼·åˆ¶çš„ã«äº’æ›ã‚’ã¨ã‚‹ */
 	if (this->m_version <= 8)
 	{
 		return m_pImages[n];

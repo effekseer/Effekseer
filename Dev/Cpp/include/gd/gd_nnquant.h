@@ -1,4 +1,4 @@
-
+﻿
 /* maximum number of colours that can be used.
   actual number is now passed to initcolors */
 #define MAXNETSIZE	256

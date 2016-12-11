@@ -121,6 +121,48 @@
   <data name="BackStep" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Image\BackStep.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconCommon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconcommon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconFCurve" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconfcurve.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconGenerationLocation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\icongenerationlocation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconLocation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconlocation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconLocationAbs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconlocationabs.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconRecorder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconrecorder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconRenderer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconrenderer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconRendererCommon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconrenderercommon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconRotation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconrotation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconScale" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconscale.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconSound" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconsound.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconViewer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconviewer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IconViewPoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\iconviewpoint.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Image\Pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -132,5 +174,23 @@
   </data>
   <data name="Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Image\Stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NodeEmpty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\nodeempty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NodeModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\nodemodel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NodeRibbon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\noderibbon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NodeRing" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\nodering.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NodeSprite" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\nodesprite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NodeTrack" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\image\nodetrack.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

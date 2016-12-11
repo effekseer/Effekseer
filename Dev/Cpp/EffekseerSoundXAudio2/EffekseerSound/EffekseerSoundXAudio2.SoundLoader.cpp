@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -45,14 +45,14 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 	if( reader.get() == NULL ) return false;
 
 	uint32_t chunkIdent, chunkSize;
-	// RIFFƒ`ƒƒƒ“ƒN‚ðƒ`ƒFƒbƒN
+	// RIFFãƒãƒ£ãƒ³ã‚¯ã‚’ãƒã‚§ãƒƒã‚¯
 	reader->Read(&chunkIdent, 4);
 	reader->Read(&chunkSize, 4);
 	if (memcmp(&chunkIdent, "RIFF", 4) != 0) {
 		return NULL;
 	}
 
-	// WAVEƒVƒ“ƒ{ƒ‹‚ðƒ`ƒFƒbƒN
+	// WAVEã‚·ãƒ³ãƒœãƒ«ã‚’ãƒã‚§ãƒƒã‚¯
 	reader->Read(&chunkIdent, 4);
 	if (memcmp(&chunkIdent, "WAVE", 4) != 0) {
 		return NULL;
@@ -64,22 +64,22 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 		reader->Read(&chunkSize, 4);
 
 		if (memcmp(&chunkIdent, "fmt ", 4) == 0) {
-			// ƒtƒH[ƒ}ƒbƒgƒ`ƒƒƒ“ƒN
+			// ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆãƒãƒ£ãƒ³ã‚¯
 			uint32_t size = min(chunkSize, sizeof(wavefmt));
 			reader->Read(&wavefmt, size);
 			if (size < chunkSize) {
 				reader->Seek(reader->GetPosition() + chunkSize - size);
 			}
 		} else if (memcmp(&chunkIdent, "data", 4) == 0) {
-			// ƒf[ƒ^ƒ`ƒƒƒ“ƒN
+			// ãƒ‡ãƒ¼ã‚¿ãƒãƒ£ãƒ³ã‚¯
 			break;
 		} else {
-			// •s–¾‚Èƒ`ƒƒƒ“ƒN‚ÍƒXƒLƒbƒv
+			// ä¸æ˜Žãªãƒãƒ£ãƒ³ã‚¯ã¯ã‚¹ã‚­ãƒƒãƒ—
 			reader->Seek(reader->GetPosition() + chunkSize);
 		}
 	}
 	
-	// ƒtƒH[ƒ}ƒbƒgƒ`ƒFƒbƒN
+	// ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆãƒã‚§ãƒƒã‚¯
 	if (wavefmt.wFormatTag != WAVE_FORMAT_PCM || wavefmt.nChannels > 2) {
 		return NULL;
 	}
@@ -88,7 +88,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 	uint32_t size;
 	switch (wavefmt.wBitsPerSample) {
 	case 8:
-		// 16bitPCM‚É•ÏŠ·
+		// 16bitPCMã«å¤‰æ›
 		size = chunkSize * 2;
 		buffer = new BYTE[size];
 		reader->Read(&buffer[size / 2], chunkSize);
@@ -101,7 +101,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 		}
 		break;
 	case 16:
-		// ‚»‚Ì‚Ü‚Ü“Ç‚Ýž‚Ý
+		// ãã®ã¾ã¾èª­ã¿è¾¼ã¿
 		buffer = new BYTE[chunkSize];
 		size = reader->Read(buffer, chunkSize);
 		break;
@@ -127,7 +127,7 @@ void SoundLoader::Unload( void* data )
 	if (soundData == NULL) {
 		return;
 	}
-	// ‚±‚Ìƒf[ƒ^‚ðÄ¶‚µ‚Ä‚¢‚éƒ{ƒCƒX‚ð’âŽ~‚³‚¹‚é
+	// ã“ã®ãƒ‡ãƒ¼ã‚¿ã‚’å†ç”Ÿã—ã¦ã„ã‚‹ãƒœã‚¤ã‚¹ã‚’åœæ­¢ã•ã›ã‚‹
 	m_sound->StopData( soundData );
 
 	delete[] soundData->buffer.pAudioData;

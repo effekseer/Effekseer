@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -61,23 +61,23 @@ bool SoundImplemented::Initialize( IXAudio2* xaudio2, int32_t num1chVoices, int3
 {
 	m_xaudio2 = xaudio2;
 	
-	// X3DAudio‚ğ‰Šú‰»
+	// X3DAudioã‚’åˆæœŸåŒ–
 	X3DAudioInitialize(SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT, 
 		X3DAUDIO_SPEED_OF_SOUND, m_x3daudio);
 
-	// “ü—Íƒ{ƒCƒX‚ğì¬
+	// å…¥åŠ›ãƒœã‚¤ã‚¹ã‚’ä½œæˆ
 	WAVEFORMATEX format = {0};
 	format.wFormatTag = WAVE_FORMAT_PCM;
 	format.wBitsPerSample = 16;
 	format.nSamplesPerSec = DefaultSampleRate;
 	
-	// ƒ‚ƒmƒ‰ƒ‹ƒ{ƒCƒX‚ğì¬
+	// ãƒ¢ãƒãƒ©ãƒ«ãƒœã‚¤ã‚¹ã‚’ä½œæˆ
 	format.nChannels = 1;
 	format.nBlockAlign = format.wBitsPerSample / 8 * format.nChannels;
 	format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
 	m_voiceContainer[0] = new SoundVoiceContainer(this, num1chVoices, &format);
 	
-	// ƒXƒeƒŒƒIƒ{ƒCƒX‚ğì¬
+	// ã‚¹ãƒ†ãƒ¬ã‚ªãƒœã‚¤ã‚¹ã‚’ä½œæˆ
 	format.nChannels = 2;
 	format.nBlockAlign = format.wBitsPerSample / 8 * format.nChannels;
 	format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;

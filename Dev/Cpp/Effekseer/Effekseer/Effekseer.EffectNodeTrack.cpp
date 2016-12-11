@@ -1,4 +1,4 @@
-
+ï»¿
 
 //----------------------------------------------------------------------------------
 //
@@ -55,12 +55,12 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, Setting* settin
 	EffekseerPrintDebug("TrackColorRight : %d\n", TrackColorRight.type );
 	EffekseerPrintDebug("TrackColorRightMiddle : %d\n", TrackColorRightMiddle.type );
 
-	// ‰EŽèŒn¶ŽèŒn•ÏŠ·
+	// å³æ‰‹ç³»å·¦æ‰‹ç³»å¤‰æ›
 	if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 	{
 	}
 
-	/* ˆÊ’uŠg‘åˆ— */
+	/* ä½ç½®æ‹¡å¤§å‡¦ç† */
 	if( m_effect->GetVersion() >= 8 )
 	{
 		TrackSizeFor.fixed.size *= m_effect->GetMaginification();

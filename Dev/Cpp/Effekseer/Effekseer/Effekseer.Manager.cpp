@@ -1,4 +1,4 @@
-
+ï»¿
 
 //----------------------------------------------------------------------------------
 //
@@ -81,7 +81,7 @@ Handle ManagerImplemented::AddDrawSet( Effect* effect, InstanceContainer* pInsta
 
 	if( ++m_NextHandle < 0 )
 	{
-		// ƒI[ƒo[ƒtƒ[‚µ‚½‚çƒŠƒZƒbƒg‚·‚é
+		// ã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ­ãƒ¼ã—ãŸã‚‰ãƒªã‚»ãƒƒãƒˆã™ã‚‹
 		m_NextHandle = 0;
 	}
 
@@ -100,14 +100,14 @@ Handle ManagerImplemented::AddDrawSet( Effect* effect, InstanceContainer* pInsta
 //----------------------------------------------------------------------------------
 void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 {
-	// ƒCƒ“ƒXƒ^ƒ“ƒXƒOƒ‹[ƒv©‘Ì‚Ìíœˆ—
+	// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚°ãƒ«ãƒ¼ãƒ—è‡ªä½“ã®å‰Šé™¤å‡¦ç†
 	{
 		std::map<Handle,DrawSet>::iterator it = m_RemovingDrawSets[1].begin();
 		while( it != m_RemovingDrawSets[1].end() )
 		{
 			DrawSet& drawset = (*it).second;
 
-			// ‘S”jŠüˆ—
+			// å…¨ç ´æ£„å‡¦ç†
 			drawset.InstanceContainerPointer->RemoveForcibly( true );
 			drawset.InstanceContainerPointer->~InstanceContainer();
 			InstanceContainer::operator delete( drawset.InstanceContainerPointer, this );
@@ -142,16 +142,16 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 		{
 			DrawSet& draw_set = (*it).second;
 
-			// íœƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚é
+			// å‰Šé™¤ãƒ•ãƒ©ã‚°ãŒç«‹ã£ã¦ã„ã‚‹æ™‚
 			bool isRemoving = draw_set.IsRemoving;
 
-			// ‰½‚à‘¶İ‚µ‚È‚¢
+			// ä½•ã‚‚å­˜åœ¨ã—ãªã„æ™‚
 			if( !isRemoving && draw_set.GlobalPointer->GetInstanceCount() == 0 )
 			{
 				isRemoving = true;
 			}
 
-			// ƒ‹[ƒg‚Ì‚İ‘¶İ‚µAŠù‚ÉV‚µ‚­¶¬‚·‚éŒ©‚İ‚ª‚È‚¢‚Æ‚«
+			// ãƒ«ãƒ¼ãƒˆã®ã¿å­˜åœ¨ã—ã€æ—¢ã«æ–°ã—ãç”Ÿæˆã™ã‚‹è¦‹è¾¼ã¿ãŒãªã„ã¨ã
 			if( !isRemoving && draw_set.GlobalPointer->GetInstanceCount() == 1 )
 			{
 				InstanceContainer* pRootContainer = draw_set.InstanceContainerPointer;
@@ -186,7 +186,7 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 					
 						if( maxcreate_count == pRootInstance->m_pEffectNode->GetChildrenCount() )
 						{
-							// ‰¹‚ªÄ¶’†‚Å‚È‚¢‚Æ‚«
+							// éŸ³ãŒå†ç”Ÿä¸­ã§ãªã„ã¨ã
 							if (!GetSoundPlayer() || !GetSoundPlayer()->CheckPlayingTag(draw_set.GlobalPointer))
 							{
 								isRemoving = true;
@@ -198,7 +198,7 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 
 			if( isRemoving )
 			{
-				// Á‹ˆ—
+				// æ¶ˆå»å‡¦ç†
 				StopEffect( (*it).first );
 
 				if( (*it).second.RemovingCallback != NULL )
@@ -239,7 +239,7 @@ InstanceContainer* ManagerImplemented::CreateInstanceContainer( EffectNode* pEff
 		Instance* instance = group->CreateInstance();
 		instance->Initialize( NULL, 0 );
 
-		/* ƒCƒ“ƒXƒ^ƒ“ƒX‚ª¶¬‚µ‚½‚í‚¯‚Å‚Í‚È‚¢‚½‚ßfalse‚É•ÏX */
+		/* ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒç”Ÿæˆã—ãŸã‚ã‘ã§ã¯ãªã„ãŸã‚falseã«å¤‰æ›´ */
 		group->IsReferencedFromInstance = false;
 	}
 
@@ -333,7 +333,7 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 	SetMallocFunc( Malloc );
 	SetFreeFunc( Free );
 	SetRandFunc( Rand );
-	SetRandMax( RAND_MAX );
+	SetRandMax(RAND_MAX);
 
 	m_renderingDrawSets.reserve( 64 );
 
@@ -1129,13 +1129,13 @@ void ManagerImplemented::Flip()
 
 	ExecuteEvents();
 
-	// DrawSetíœˆ—
+	// DrawSetå‰Šé™¤å‡¦ç†
 	GCDrawSet( false );
 
 	m_renderingDrawSets.clear();
 	m_renderingDrawSetMaps.clear();
 
-	/* ƒJƒŠƒ“ƒO¶¬ */
+	/* ã‚«ãƒªãƒ³ã‚°ç”Ÿæˆ */
 	if( cullingNext.SizeX != cullingCurrent.SizeX ||
 		cullingNext.SizeY != cullingCurrent.SizeY ||
 		cullingNext.SizeZ != cullingCurrent.SizeZ ||
@@ -1270,7 +1270,7 @@ void ManagerImplemented::Update( float deltaFrame )
 {
 	BeginUpdate();
 
-	// ŠJnŠÔ‚ğ‹L˜^
+	// é–‹å§‹æ™‚é–“ã‚’è¨˜éŒ²
 	int64_t beginTime = ::Effekseer::GetTime();
 
 	for( size_t i = 0; i < m_renderingDrawSets.size(); i++ )
@@ -1280,7 +1280,7 @@ void ManagerImplemented::Update( float deltaFrame )
 		UpdateHandle( drawSet, deltaFrame );
 	}
 
-	// Œo‰ßŠÔ‚ğŒvZ
+	// çµŒéæ™‚é–“ã‚’è¨ˆç®—
 	m_updateTime = (int)(Effekseer::GetTime() - beginTime);
 
 	EndUpdate();
@@ -1350,7 +1350,7 @@ void ManagerImplemented::Draw()
 {
 	m_renderingSession.Enter();
 
-	// ŠJnŠÔ‚ğ‹L˜^
+	// é–‹å§‹æ™‚é–“ã‚’è¨˜éŒ²
 	int64_t beginTime = ::Effekseer::GetTime();
 
 	if(m_culled)
@@ -1378,7 +1378,7 @@ void ManagerImplemented::Draw()
 		}
 	}
 
-	// Œo‰ßŠÔ‚ğŒvZ
+	// çµŒéæ™‚é–“ã‚’è¨ˆç®—
 	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
 
 	m_renderingSession.Leave();
@@ -1391,7 +1391,7 @@ Handle ManagerImplemented::Play( Effect* effect, float x, float y, float z )
 {
 	if( effect == NULL ) return -1;
 	
-	// ƒ‹[ƒg¶¬
+	// ãƒ«ãƒ¼ãƒˆç”Ÿæˆ
 	InstanceGlobal* pGlobal = new InstanceGlobal();
 	InstanceContainer* pContainer = CreateInstanceContainer( ((EffectImplemented*)effect)->GetRoot(), pGlobal, true, NULL );
 	
@@ -1459,7 +1459,7 @@ void ManagerImplemented::BeginReloadEffect( Effect* effect )
 	{
 		if( (*it).second.ParameterPointer != effect ) continue;
 	
-		/* ƒCƒ“ƒXƒ^ƒ“ƒXíœ */
+		/* ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å‰Šé™¤ */
 		(*it).second.InstanceContainerPointer->RemoveForcibly( true );
 		(*it).second.InstanceContainerPointer->~InstanceContainer();
 		InstanceContainer::operator delete( (*it).second.InstanceContainerPointer, this );
@@ -1479,15 +1479,15 @@ void ManagerImplemented::EndReloadEffect( Effect* effect )
 	{
 		if( (*it).second.ParameterPointer != effect ) continue;
 
-		/* ƒCƒ“ƒXƒ^ƒ“ƒX¶¬ */
+		/* ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ */
 		(*it).second.InstanceContainerPointer = CreateInstanceContainer( ((EffectImplemented*)effect)->GetRoot(), (*it).second.GlobalPointer, true, NULL );
 		(*it).second.GlobalPointer->SetRootContainer(  (*it).second.InstanceContainerPointer );
 
-		/* s—ñİ’è */
+		/* è¡Œåˆ—è¨­å®š */
 		(*it).second.InstanceContainerPointer->GetFirstGroup()->GetFirst()->m_GlobalMatrix43 = 
 			(*it).second.GlobalMatrix;
 		
-		/* ƒXƒLƒbƒv */
+		/* ã‚¹ã‚­ãƒƒãƒ— */
 		for( float f = 0; f < (*it).second.GlobalPointer->GetUpdatedFrame() - 1; f+= 1.0f )
 		{
 			(*it).second.InstanceContainerPointer->Update( true, 1.0f, false );

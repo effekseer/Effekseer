@@ -1,4 +1,4 @@
-
+Ôªø
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ Paste::Paste( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* 
 	, m_shader		( shader )
 	, m_vertexDeclaration	( NULL )
 {
-	// ç¿ïW(3) êF(4)
+	// Â∫ßÊ®ô(3) Ëâ≤(4)
 	D3DVERTEXELEMENT9 decl[] =
 	{
 		{0,	0,	D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_POSITION,	0},

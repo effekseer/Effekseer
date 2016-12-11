@@ -48,6 +48,8 @@ namespace Effekseer.GUI
 
 			trackBar.Minimum = Core.StartFrame;
 			trackBar.Maximum = Core.EndFrame;
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconViewer).GetHicon());
 		}
 
 		public void UpdateController()
