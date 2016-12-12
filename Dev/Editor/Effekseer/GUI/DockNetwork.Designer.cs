@@ -47,7 +47,7 @@
 			this.btn_connect.Name = "btn_connect";
 			this.btn_connect.Size = new System.Drawing.Size(75, 23);
 			this.btn_connect.TabIndex = 10;
-			this.btn_connect.Text = "接続";
+			this.btn_connect.Text = Properties.Resources.Connect;
 			this.btn_connect.UseVisualStyleBackColor = true;
 			this.btn_connect.Click += new System.EventHandler(this.btn_connect_Click);
 			// 
@@ -57,7 +57,7 @@
 			this.btn_send.Name = "btn_send";
 			this.btn_send.Size = new System.Drawing.Size(75, 23);
 			this.btn_send.TabIndex = 9;
-			this.btn_send.Text = "データ送信";
+			this.btn_send.Text = Properties.Resources.SendData;
 			this.btn_send.UseVisualStyleBackColor = true;
 			this.btn_send.Click += new System.EventHandler(this.btn_send_Click);
 			// 
@@ -68,7 +68,7 @@
 			this.lbl_state.Name = "lbl_state";
 			this.lbl_state.Size = new System.Drawing.Size(35, 12);
 			this.lbl_state.TabIndex = 8;
-			this.lbl_state.Text = "状態：";
+            this.lbl_state.Text = Properties.Resources.NetworkState;
 			// 
 			// cb_sendOnSave
 			// 
@@ -77,7 +77,7 @@
 			this.cb_sendOnSave.Name = "cb_sendOnSave";
 			this.cb_sendOnSave.Size = new System.Drawing.Size(149, 16);
 			this.cb_sendOnSave.TabIndex = 7;
-			this.cb_sendOnSave.Text = "保存時にデータを送信する";
+			this.cb_sendOnSave.Text = Properties.Resources.TransmitDataOnSave;
 			this.cb_sendOnSave.UseVisualStyleBackColor = true;
 			// 
 			// cb_sendOnEdit
@@ -87,7 +87,7 @@
 			this.cb_sendOnEdit.Name = "cb_sendOnEdit";
 			this.cb_sendOnEdit.Size = new System.Drawing.Size(149, 16);
 			this.cb_sendOnEdit.TabIndex = 6;
-			this.cb_sendOnEdit.Text = "編集時にデータを送信する";
+			this.cb_sendOnEdit.Text = Properties.Resources.TransmitDataOnEdit;
 			this.cb_sendOnEdit.UseVisualStyleBackColor = true;
 			// 
 			// cb_sendOnLoad
@@ -97,7 +97,7 @@
 			this.cb_sendOnLoad.Name = "cb_sendOnLoad";
 			this.cb_sendOnLoad.Size = new System.Drawing.Size(205, 16);
 			this.cb_sendOnLoad.TabIndex = 5;
-			this.cb_sendOnLoad.Text = "ファイル読み込み時にデータを送信する";
+			this.cb_sendOnLoad.Text = Properties.Resources.TransmitDataOnLoad;
 			this.cb_sendOnLoad.UseVisualStyleBackColor = true;
 			// 
 			// cb_autoConnect
@@ -107,7 +107,7 @@
 			this.cb_autoConnect.Name = "cb_autoConnect";
 			this.cb_autoConnect.Size = new System.Drawing.Size(218, 16);
 			this.cb_autoConnect.TabIndex = 4;
-			this.cb_autoConnect.Text = "切断時、自動接続を一定時間ごとに行う";
+			this.cb_autoConnect.Text = Properties.Resources.AutoConnect;
 			this.cb_autoConnect.UseVisualStyleBackColor = true;
 			// 
 			// lbl_port
@@ -117,7 +117,7 @@
 			this.lbl_port.Name = "lbl_port";
 			this.lbl_port.Size = new System.Drawing.Size(33, 12);
 			this.lbl_port.TabIndex = 3;
-			this.lbl_port.Text = "ポート";
+			this.lbl_port.Text = Properties.Resources.Port;
 			// 
 			// txt_port
 			// 
@@ -139,7 +139,7 @@
 			this.lbl_target.Name = "lbl_target";
 			this.lbl_target.Size = new System.Drawing.Size(41, 12);
 			this.lbl_target.TabIndex = 1;
-			this.lbl_target.Text = "接続先";
+			this.lbl_target.Text = Properties.Resources.NetworkAddress;
 			// 
 			// txt_target
 			// 
@@ -177,11 +177,10 @@
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Name = "DockNetwork";
-			this.Text = "ネットワーク";
+			this.Text = Properties.Resources.Network;
 			this.Load += new System.EventHandler(this.DockNetwork_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
-
 		}
 
 		#endregion

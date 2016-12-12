@@ -50,7 +50,7 @@
 			this.Controls.Add(this.lp_RendererCommon);
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Name = "DockNodeRendererCommonValues";
-			this.Text = "描画共通";
+			this.Text = Properties.Resources.BasicRenderSettings;
 			this.ResumeLayout(false);
 
 		}

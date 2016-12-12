@@ -110,7 +110,7 @@
 			this.lbl_offset_min.Name = "lbl_offset_min";
 			this.lbl_offset_min.Size = new System.Drawing.Size(29, 12);
 			this.lbl_offset_min.TabIndex = 20;
-			this.lbl_offset_min.Text = "最小";
+			this.lbl_offset_min.Text = Properties.Resources.Min;
 			// 
 			// lbl_offset_max
 			// 
@@ -119,7 +119,7 @@
 			this.lbl_offset_max.Name = "lbl_offset_max";
 			this.lbl_offset_max.Size = new System.Drawing.Size(29, 12);
 			this.lbl_offset_max.TabIndex = 19;
-			this.lbl_offset_max.Text = "最大";
+			this.lbl_offset_max.Text = Properties.Resources.Max;
 			// 
 			// lbl_offset
 			// 
@@ -128,7 +128,7 @@
 			this.lbl_offset.Name = "lbl_offset";
 			this.lbl_offset.Size = new System.Drawing.Size(47, 12);
 			this.lbl_offset.TabIndex = 18;
-			this.lbl_offset.Text = "オフセット";
+			this.lbl_offset.Text = Properties.Resources.Offset;
 			// 
 			// lbl_end
 			// 
@@ -137,7 +137,7 @@
 			this.lbl_end.Name = "lbl_end";
 			this.lbl_end.Size = new System.Drawing.Size(29, 12);
 			this.lbl_end.TabIndex = 16;
-			this.lbl_end.Text = "末尾";
+			this.lbl_end.Text = Properties.Resources.End;
 			// 
 			// lbl_start
 			// 
@@ -146,7 +146,7 @@
 			this.lbl_start.Name = "lbl_start";
 			this.lbl_start.Size = new System.Drawing.Size(29, 12);
 			this.lbl_start.TabIndex = 15;
-			this.lbl_start.Text = "先頭";
+			this.lbl_start.Text = Properties.Resources.Start;
 			// 
 			// lbl_type
 			// 
@@ -155,7 +155,7 @@
 			this.lbl_type.Name = "lbl_type";
 			this.lbl_type.Size = new System.Drawing.Size(29, 12);
 			this.lbl_type.TabIndex = 14;
-			this.lbl_type.Text = "補完";
+			this.lbl_type.Text = Properties.Resources.Complement;
 			// 
 			// lbl_value
 			// 
@@ -164,7 +164,7 @@
 			this.lbl_value.Name = "lbl_value";
 			this.lbl_value.Size = new System.Drawing.Size(17, 12);
 			this.lbl_value.TabIndex = 13;
-			this.lbl_value.Text = "値";
+			this.lbl_value.Text = Properties.Resources.Value;
 			// 
 			// lbl_frame
 			// 
@@ -173,7 +173,7 @@
 			this.lbl_frame.Name = "lbl_frame";
 			this.lbl_frame.Size = new System.Drawing.Size(42, 12);
 			this.lbl_frame.TabIndex = 12;
-			this.lbl_frame.Text = "フレーム";
+            this.lbl_frame.Text = Properties.Resources.Frame;
 			// 
 			// lbl_right_y
 			// 
@@ -182,7 +182,7 @@
 			this.lbl_right_y.Name = "lbl_right_y";
 			this.lbl_right_y.Size = new System.Drawing.Size(11, 12);
 			this.lbl_right_y.TabIndex = 11;
-			this.lbl_right_y.Text = "y";
+			this.lbl_right_y.Text = Properties.Resources.Y;
 			// 
 			// lbl_right_x
 			// 
@@ -191,7 +191,7 @@
 			this.lbl_right_x.Name = "lbl_right_x";
 			this.lbl_right_x.Size = new System.Drawing.Size(11, 12);
 			this.lbl_right_x.TabIndex = 10;
-			this.lbl_right_x.Text = "x";
+			this.lbl_right_x.Text = Properties.Resources.X;
 			// 
 			// lbl_right
 			// 
@@ -200,7 +200,7 @@
 			this.lbl_right.Name = "lbl_right";
 			this.lbl_right.Size = new System.Drawing.Size(17, 12);
 			this.lbl_right.TabIndex = 9;
-			this.lbl_right.Text = "右";
+			this.lbl_right.Text = Properties.Resources.Right;
 			// 
 			// lbl_left_y
 			// 
@@ -209,7 +209,7 @@
 			this.lbl_left_y.Name = "lbl_left_y";
 			this.lbl_left_y.Size = new System.Drawing.Size(11, 12);
 			this.lbl_left_y.TabIndex = 8;
-			this.lbl_left_y.Text = "y";
+			this.lbl_left_y.Text = Properties.Resources.Y;
 			// 
 			// lbl_left_x
 			// 
@@ -218,7 +218,7 @@
 			this.lbl_left_x.Name = "lbl_left_x";
 			this.lbl_left_x.Size = new System.Drawing.Size(11, 12);
 			this.lbl_left_x.TabIndex = 7;
-			this.lbl_left_x.Text = "x";
+			this.lbl_left_x.Text = Properties.Resources.X;
 			// 
 			// lbl_left
 			// 
@@ -227,7 +227,7 @@
 			this.lbl_left.Name = "lbl_left";
 			this.lbl_left.Size = new System.Drawing.Size(17, 12);
 			this.lbl_left.TabIndex = 6;
-			this.lbl_left.Text = "左";
+			this.lbl_left.Text = Properties.Resources.Left;
 			// 
 			// lbl_sampling
 			// 
@@ -236,7 +236,7 @@
 			this.lbl_sampling.Name = "lbl_sampling";
 			this.lbl_sampling.Size = new System.Drawing.Size(58, 12);
 			this.lbl_sampling.TabIndex = 26;
-			this.lbl_sampling.Text = "サンプリング";
+			this.lbl_sampling.Text = Properties.Resources.Sampling;
 			// 
 			// txt_sampling
 			// 

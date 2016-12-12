@@ -119,15 +119,7 @@ namespace Effekseer.Data
 
             internal SoundParamater()
 			{
-				if(Core.Language == Language.Japanese)
-				{
-					Wave = new Value.PathForSound("音声ファイル (*.wav)|*.wav", true, "");
-				}
-				else if(Core.Language == Language.English)
-				{
-					Wave = new Value.PathForSound("Sound File (*.wav)|*.wav", true, "");
-				}
-
+				Wave = new Value.PathForSound(Properties.Resources.SoundFilter, true, "");
                 Volume = new Value.FloatWithRandom(1.0f, 1.0f, 0.0f, DrawnAs.CenterAndAmplitude, 0.1f);
                 Pitch = new Value.FloatWithRandom(0.0f, 2.0f, -2.0f, DrawnAs.CenterAndAmplitude, 0.1f);
                 PanType = new Value.Enum<ParamaterPanType>(ParamaterPanType.Sound2D);

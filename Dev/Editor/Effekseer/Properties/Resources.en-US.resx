@@ -118,80 +118,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="BackStep" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Image\BackStep.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\image\icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconCommon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconcommon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconFCurve" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconfcurve.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconGenerationLocation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\icongenerationlocation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconLocation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconlocation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconLocationAbs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconlocationabs.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconRecorder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconrecorder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconRenderer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconrenderer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconRendererCommon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconrenderercommon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconRotation" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconrotation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconScale" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconscale.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconSound" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconsound.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconViewer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconviewer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IconViewPoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\iconviewpoint.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Image\Pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Play" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Image\Play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Step" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Image\Step.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Image\Stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NodeEmpty" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\nodeempty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NodeModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\nodemodel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NodeRibbon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\noderibbon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NodeRing" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\nodering.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NodeSprite" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\nodesprite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NodeTrack" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\image\nodetrack.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="AttractionForces" xml:space="preserve">
     <value>Attraction Forces</value>
@@ -256,5 +184,218 @@
   </data>
   <data name="Window" xml:space="preserve">
     <value>Window</value>
+  </data>
+  <data name="ConfirmSaveChanged" xml:space="preserve">
+    <value>[{0}] has been changed. Do you want to save?</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="Deviation" xml:space="preserve">
+    <value>Deviation</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Max</value>
+  </data>
+  <data name="Mean" xml:space="preserve">
+    <value>Mean</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Min</value>
+  </data>
+  <data name="NetworkConnected" xml:space="preserve">
+    <value>State：Connected</value>
+  </data>
+  <data name="NetworkDisconnected" xml:space="preserve">
+    <value>State：Disconnected</value>
+  </data>
+  <data name="NotAbsolutePathError" xml:space="preserve">
+    <value>This is not an absolute path.</value>
+  </data>
+  <data name="ProjectFilter" xml:space="preserve">
+    <value>Effekseer Project (*.efkproj)|*.efkproj</value>
+  </data>
+  <data name="RecentFiles" xml:space="preserve">
+    <value>Recent Files</value>
+  </data>
+  <data name="UnsavedChanges" xml:space="preserve">
+    <value> *Unsaved Changes</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="AboutEffekseer" xml:space="preserve">
+    <value>About Effekseer</value>
+  </data>
+  <data name="AutoConnect" xml:space="preserve">
+    <value>Auto-connect</value>
+  </data>
+  <data name="CameraMode" xml:space="preserve">
+    <value>Camera Mode</value>
+  </data>
+  <data name="Complement" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="EndFrame" xml:space="preserve">
+    <value>End Frame</value>
+  </data>
+  <data name="ExportAsAvi" xml:space="preserve">
+    <value>Export as a AVI</value>
+  </data>
+  <data name="ExportAsGifAnimation" xml:space="preserve">
+    <value>Export as a gif animation</value>
+  </data>
+  <data name="ExportAsImages" xml:space="preserve">
+    <value>Export as images</value>
+  </data>
+  <data name="ExportAsSingleImage" xml:space="preserve">
+    <value>Export as a single image</value>
+  </data>
+  <data name="ExportedFrame" xml:space="preserve">
+    <value>Exported frame</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Frame" xml:space="preserve">
+    <value>Frame</value>
+  </data>
+  <data name="Frequency_Frame" xml:space="preserve">
+    <value>Frequency(Frame)</value>
+  </data>
+  <data name="Gauss" xml:space="preserve">
+    <value>Gauss</value>
+  </data>
+  <data name="GenerateAlpha" xml:space="preserve">
+    <value>Generate alpha</value>
+  </data>
+  <data name="Height" xml:space="preserve">
+    <value>Height</value>
+  </data>
+  <data name="Infinite" xml:space="preserve">
+    <value>Infinite</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="Load" xml:space="preserve">
+    <value>Load</value>
+  </data>
+  <data name="MakeTransparent" xml:space="preserve">
+    <value>Make transparent</value>
+  </data>
+  <data name="NetworkAddress" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="NetworkState" xml:space="preserve">
+    <value>State：</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Offset" xml:space="preserve">
+    <value>Offset</value>
+  </data>
+  <data name="PlayString" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="Port" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="PoVDistance" xml:space="preserve">
+    <value>PoV Distance</value>
+  </data>
+  <data name="Range" xml:space="preserve">
+    <value>Range</value>
+  </data>
+  <data name="Record" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="Render" xml:space="preserve">
+    <value>Render</value>
+  </data>
+  <data name="Resolution" xml:space="preserve">
+    <value>Resolution</value>
+  </data>
+  <data name="Right" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="Sampling" xml:space="preserve">
+    <value>Sampling</value>
+  </data>
+  <data name="SendData" xml:space="preserve">
+    <value>Send Data</value>
+  </data>
+  <data name="ShowGuide" xml:space="preserve">
+    <value>Show guide</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="StartFrame" xml:space="preserve">
+    <value>Start Frame</value>
+  </data>
+  <data name="TransmitDataOnEdit" xml:space="preserve">
+    <value>Transmit data on edit</value>
+  </data>
+  <data name="TransmitDataOnLoad" xml:space="preserve">
+    <value>Transmit data on load</value>
+  </data>
+  <data name="TransmitDataOnSave" xml:space="preserve">
+    <value>Transmit data on save</value>
+  </data>
+  <data name="UseOriginalImage" xml:space="preserve">
+    <value>Use original image</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Val</value>
+  </data>
+  <data name="Viewer" xml:space="preserve">
+    <value>Viewer</value>
+  </data>
+  <data name="Viewpoint" xml:space="preserve">
+    <value>Viewpoint</value>
+  </data>
+  <data name="Width" xml:space="preserve">
+    <value>Width</value>
+  </data>
+  <data name="X" xml:space="preserve">
+    <value>x</value>
+  </data>
+  <data name="XCount" xml:space="preserve">
+    <value>X Count</value>
+  </data>
+  <data name="XRotation" xml:space="preserve">
+    <value>X Rotation</value>
+  </data>
+  <data name="Y" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="YRotation" xml:space="preserve">
+    <value>Y Rotation</value>
+  </data>
+  <data name="Zoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Del</value>
   </data>
 </root>

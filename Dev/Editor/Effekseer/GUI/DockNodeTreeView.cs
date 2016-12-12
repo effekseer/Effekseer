@@ -17,11 +17,6 @@ namespace Effekseer.GUI
 
 			nodeTreeView.Renew();
 
-			if (Core.Language == Language.English)
-			{
-				Text = "Node Tree";
-			}
-
 			// Add icon for each nodes
 			imageList1.Images.Add(Properties.Resources.NodeEmpty);
 			imageList1.Images.Add(Properties.Resources.NodeEmpty);	// Dummy

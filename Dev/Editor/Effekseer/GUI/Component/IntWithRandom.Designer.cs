@@ -45,7 +45,7 @@
 			this.drawnas_1.Size = new System.Drawing.Size(69, 15);
 			this.drawnas_1.TabIndex = 0;
 			this.drawnas_1.TabStop = true;
-			this.drawnas_1.Text = "最大,最小";
+			this.drawnas_1.Text = Properties.Resources.Range;
 			this.drawnas_1.UseVisualStyleBackColor = true;
 			this.drawnas_1.CheckedChanged += new System.EventHandler(this.drawnas_1_CheckedChanged);
 			// 
@@ -58,7 +58,7 @@
 			this.drawnas_2.Size = new System.Drawing.Size(69, 15);
 			this.drawnas_2.TabIndex = 1;
 			this.drawnas_2.TabStop = true;
-			this.drawnas_2.Text = "中心,振幅";
+			this.drawnas_2.Text = Properties.Resources.Gauss;
 			this.drawnas_2.UseVisualStyleBackColor = true;
 			this.drawnas_2.CheckedChanged += new System.EventHandler(this.drawnas_2_CheckedChanged);
 			// 

@@ -50,7 +50,7 @@
 			this.Controls.Add(this.lp_Scale);
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Name = "DockNodeScaleValues";
-			this.Text = "拡大";
+			this.Text = Properties.Resources.Scale;
 			this.Load += new System.EventHandler(this.DockNodeScalingValues_Load);
 			this.ResumeLayout(false);
 

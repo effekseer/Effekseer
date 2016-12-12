@@ -136,15 +136,7 @@ namespace Effekseer.Data
 
 			public ModelParameter()
 			{
-				if(Core.Language == Language.Japanese)
-				{
-					Model = new Value.Path("モデルファイル (*.efkmodel)|*.efkmodel", true, "");
-				}
-				else
-				{
-					Model = new Value.Path("Model File (*.efkmodel)|*.efkmodel", true, "");
-				}
-				
+                Model = new Value.Path(Properties.Resources.ModelFilter, true, "");				
 				Type = new Value.Enum<ModelType>(ModelType.Random);
 			}
 		}

@@ -45,7 +45,7 @@
             this.btn_load.Name = "btn_load";
             this.btn_load.Size = new System.Drawing.Size(40, 20);
             this.btn_load.TabIndex = 0;
-            this.btn_load.Text = "読込";
+            this.btn_load.Text = Properties.Resources.Load;
             this.btn_load.UseVisualStyleBackColor = true;
             this.btn_load.Click += new System.EventHandler(this.btn_load_Click);
             // 
@@ -84,7 +84,7 @@
             this.btn_delete.Name = "btn_delete";
             this.btn_delete.Size = new System.Drawing.Size(40, 20);
             this.btn_delete.TabIndex = 4;
-            this.btn_delete.Text = "解除";
+            this.btn_delete.Text = Properties.Resources.Delete;
             this.btn_delete.UseVisualStyleBackColor = true;
             this.btn_delete.Click += new System.EventHandler(this.btn_delete_Click);
             // 

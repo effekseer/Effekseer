@@ -75,16 +75,7 @@ namespace Effekseer.GUI
 			OpenFileDialog ofd = new OpenFileDialog();
 
 			ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-			
-			if(Core.Language == Language.Japanese)
-			{
-				ofd.Filter = "エフェクトプロジェクト (*.efkproj)|*.efkproj";
-			}
-			else if (Core.Language == Language.English)
-			{
-				ofd.Filter = "Effekseer Project (*.efkproj)|*.efkproj";
-			}
-			
+            ofd.Filter = Properties.Resources.ProjectFilter;			
 			ofd.FilterIndex = 2;
 			ofd.Multiselect = false;
 
@@ -102,17 +93,7 @@ namespace Effekseer.GUI
 		/// <param name="fullPath">絶対パス</param>
 		public static bool Open(string fullPath)
 		{
-			var errorText = string.Empty;
-			if(Core.Language == Language.Japanese)
-			{
-				errorText = "絶対パスでありません。";
-			}
-			else if (Core.Language == Language.English)
-			{
-				errorText = "This is not an absolute path.";
-			}
-
-			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception(errorText);
+			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception(Properties.Resources.NotAbsolutePathError);
 
 			if (SaveOnDisposing())
 			{
@@ -170,14 +151,7 @@ namespace Effekseer.GUI
 			SaveFileDialog ofd = new SaveFileDialog();
 
 			ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-			if (Core.Language == Language.Japanese)
-			{
-				ofd.Filter = "エフェクトプロジェクト (*.efkproj)|*.efkproj";
-			}
-			else if (Core.Language == Language.English)
-			{
-				ofd.Filter = "Effekseer Project (*.efkproj)|*.efkproj";
-			}
+            ofd.Filter = Properties.Resources.ProjectFilter;
 			ofd.FilterIndex = 2;
 			ofd.OverwritePrompt = true;
 
@@ -394,11 +368,7 @@ namespace Effekseer.GUI
 		{
 			if (Core.IsChanged)
 			{
-				var format = "[{0}] は変更されています。保存しますか？";
-				if(Core.Language == Language.English)
-				{
-					format = "[{0}] has been changed. Do you want to save?";
-				}
+                var format = Properties.Resources.ConfirmSaveChanged;
 
 				var result = MessageBox.Show(
 					string.Format(format,System.IO.Path.GetFileName(Core.FullPath)),
@@ -417,17 +387,7 @@ namespace Effekseer.GUI
 
 						ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
 
-						string filter = string.Empty;
-						if (Core.Language == Language.Japanese)
-						{
-							filter = "エフェクトプロジェクト (*.efkproj)|*.efkproj";
-						}
-						else if (Core.Language == Language.English)
-						{
-							filter = "Effekseer Project (*.efkproj)|*.efkproj";
-						}
-
-						ofd.Filter = filter;
+                        ofd.Filter = Properties.Resources.ProjectFilter;
 						ofd.FilterIndex = 2;
 						ofd.OverwritePrompt = true;
 
@@ -488,14 +448,7 @@ namespace Effekseer.GUI
 			OpenFileDialog ofd = new OpenFileDialog();
 
 			ofd.InitialDirectory = Path.Combine(rootDir, @"Sample");
-			if (Core.Language == Language.Japanese)
-			{
-				ofd.Filter = "エフェクトプロジェクト (*.efkproj)|*.efkproj";
-			}
-			else if (Core.Language == Language.English)
-			{
-				ofd.Filter = "Effekseer Project (*.efkproj)|*.efkproj";
-			}
+            ofd.Filter = Properties.Resources.ProjectFilter;
 			ofd.FilterIndex = 2;
 			ofd.Multiselect = false;
 

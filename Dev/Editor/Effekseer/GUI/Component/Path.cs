@@ -27,11 +27,6 @@ namespace Effekseer.GUI.Component
 			Core.OnAfterNew += Core_OnAfterNew;
 			Core.OnAfterSave += Core_OnAfterSave;
 			Core.OnAfterLoad += Core_OnAfterLoad;
-			
-			if (Core.Language == Language.English)
-			{
-				btn_load.Text = "Load";
-			}
 		}
 
 		Data.Value.Path binding = null;

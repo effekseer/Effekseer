@@ -89,7 +89,7 @@
 			this.lbl_type.Name = "lbl_type";
 			this.lbl_type.Size = new System.Drawing.Size(64, 12);
 			this.lbl_type.TabIndex = 12;
-			this.lbl_type.Text = "カメラの種類";
+			this.lbl_type.Text = Properties.Resources.CameraMode;
 			// 
 			// txt_mag
 			// 
@@ -112,7 +112,7 @@
 			this.lbl_mag.Name = "lbl_mag";
 			this.lbl_mag.Size = new System.Drawing.Size(65, 12);
 			this.lbl_mag.TabIndex = 10;
-			this.lbl_mag.Text = "画面拡大率";
+			this.lbl_mag.Text = Properties.Resources.Zoom;
 			// 
 			// txt_distance
 			// 
@@ -135,7 +135,7 @@
 			this.lbl_distance.Name = "lbl_distance";
 			this.lbl_distance.Size = new System.Drawing.Size(73, 12);
 			this.lbl_distance.TabIndex = 8;
-			this.lbl_distance.Text = "視点への距離";
+			this.lbl_distance.Text = Properties.Resources.PoVDistance;
 			// 
 			// txt_angleY
 			// 
@@ -171,8 +171,8 @@
 			this.lbl_angleX.Name = "lbl_angleX";
 			this.lbl_angleX.Size = new System.Drawing.Size(48, 12);
 			this.lbl_angleX.TabIndex = 4;
-			this.lbl_angleX.Text = "X軸回転";
-			// 
+			this.lbl_angleX.Text = Properties.Resources.XRotation;
+            // 
 			// txt_focusZ
 			// 
 			this.txt_focusZ.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(200)))), ((int)(((byte)(170)))));
@@ -194,8 +194,8 @@
 			this.lbl_angleY.Name = "lbl_angleY";
 			this.lbl_angleY.Size = new System.Drawing.Size(48, 12);
 			this.lbl_angleY.TabIndex = 5;
-			this.lbl_angleY.Text = "Y軸回転";
-			// 
+			this.lbl_angleY.Text = Properties.Resources.YRotation;
+            // 
 			// lbl_focus
 			// 
 			this.lbl_focus.AutoSize = true;
@@ -204,8 +204,8 @@
 			this.lbl_focus.Name = "lbl_focus";
 			this.lbl_focus.Size = new System.Drawing.Size(29, 12);
 			this.lbl_focus.TabIndex = 0;
-			this.lbl_focus.Text = "焦点";
-			// 
+			this.lbl_focus.Text = Properties.Resources.Viewpoint;
+            // 
 			// cb_type
 			// 
 			this.cb_type.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -257,8 +257,8 @@
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Name = "DockViewPoint";
-			this.Text = "視点操作";
-			this.tableLayoutPanel.ResumeLayout(false);
+			this.Text = Properties.Resources.CameraSettings;
+            this.tableLayoutPanel.ResumeLayout(false);
 			this.tableLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 

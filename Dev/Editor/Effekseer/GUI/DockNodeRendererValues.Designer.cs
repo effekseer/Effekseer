@@ -55,7 +55,7 @@
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Name = "DockNodeRendererValues";
-			this.Text = "描画";
+			this.Text = Properties.Resources.Render;
 			this.Load += new System.EventHandler(this.DockNodeDrawingValues_Load);
 			this.ResumeLayout(false);
 

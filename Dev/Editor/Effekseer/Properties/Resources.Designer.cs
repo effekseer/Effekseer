@@ -22,7 +22,7 @@ namespace Effekseer.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Effekseer.Properties {
         ///   このクラスで使用されているキャッシュされた ResourceManager インスタンスを返します。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Effekseer.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace Effekseer.Properties {
         ///   現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,18 +61,36 @@ namespace Effekseer.Properties {
         }
         
         /// <summary>
+        ///   Effekseerについて に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AboutEffekseer {
+            get {
+                return ResourceManager.GetString("AboutEffekseer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   絶対位置 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string AttractionForces {
+        public static string AttractionForces {
             get {
                 return ResourceManager.GetString("AttractionForces", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   切断時、自動接続を一定時間ごとに行う に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AutoConnect {
+            get {
+                return ResourceManager.GetString("AutoConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap BackStep {
+        public static System.Drawing.Bitmap BackStep {
             get {
                 object obj = ResourceManager.GetObject("BackStep", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -82,7 +100,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   描画共通 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string BasicRenderSettings {
+        public static string BasicRenderSettings {
             get {
                 return ResourceManager.GetString("BasicRenderSettings", resourceCulture);
             }
@@ -91,7 +109,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   共通 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string BasicSettings {
+        public static string BasicSettings {
             get {
                 return ResourceManager.GetString("BasicSettings", resourceCulture);
             }
@@ -100,43 +118,250 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   振る舞い に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Behavior {
+        public static string Behavior {
             get {
                 return ResourceManager.GetString("Behavior", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   カメラの種類&quot; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string CameraMode {
+            get {
+                return ResourceManager.GetString("CameraMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   視点操作 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string CameraSettings {
+        public static string CameraSettings {
             get {
                 return ResourceManager.GetString("CameraSettings", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   補完 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Complement {
+            get {
+                return ResourceManager.GetString("Complement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   [{0}] は変更されています。保存しますか？ に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ConfirmSaveChanged {
+            get {
+                return ResourceManager.GetString("ConfirmSaveChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   接続 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Connect {
+            get {
+                return ResourceManager.GetString("Connect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   カリング に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Culling {
+        public static string Culling {
             get {
                 return ResourceManager.GetString("Culling", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   解除 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   振幅 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Deviation {
+            get {
+                return ResourceManager.GetString("Deviation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   切断 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Disconnect {
+            get {
+                return ResourceManager.GetString("Disconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   編集 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   終了 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string End {
+            get {
+                return ResourceManager.GetString("End", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   終了フレーム に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string EndFrame {
+            get {
+                return ResourceManager.GetString("EndFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   出力 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Export {
+            get {
+                return ResourceManager.GetString("Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   AVIとして出力 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportAsAvi {
+            get {
+                return ResourceManager.GetString("ExportAsAvi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   GIFアニメーションとして出力 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportAsGifAnimation {
+            get {
+                return ResourceManager.GetString("ExportAsGifAnimation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   連番画像として出力 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportAsImages {
+            get {
+                return ResourceManager.GetString("ExportAsImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   1枚にまとめて出力 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportAsSingleImage {
+            get {
+                return ResourceManager.GetString("ExportAsSingleImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   出力フレーム に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ExportedFrame {
+            get {
+                return ResourceManager.GetString("ExportedFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Fカーブ に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string FCurves {
+        public static string FCurves {
             get {
                 return ResourceManager.GetString("FCurves", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   ファイル に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Files {
+            get {
+                return ResourceManager.GetString("Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   出力形式 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Format {
+            get {
+                return ResourceManager.GetString("Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   フレーム に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Frame {
+            get {
+                return ResourceManager.GetString("Frame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   出力頻度(フレーム毎) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Frequency_Frame {
+            get {
+                return ResourceManager.GetString("Frequency_Frame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   中心,振幅 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Gauss {
+            get {
+                return ResourceManager.GetString("Gauss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   生成 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string GenerateAlpha {
+            get {
+                return ResourceManager.GetString("GenerateAlpha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   縦幅 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Height {
+            get {
+                return ResourceManager.GetString("Height", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   ヘルプ に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Help {
+        public static string Help {
             get {
                 return ResourceManager.GetString("Help", resourceCulture);
             }
@@ -145,7 +370,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   (アイコン) に類似した型 System.Drawing.Icon のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Icon icon {
+        public static System.Drawing.Icon icon {
             get {
                 object obj = ResourceManager.GetObject("icon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -155,7 +380,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconCommon {
+        public static System.Drawing.Bitmap IconCommon {
             get {
                 object obj = ResourceManager.GetObject("IconCommon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -165,7 +390,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconFCurve {
+        public static System.Drawing.Bitmap IconFCurve {
             get {
                 object obj = ResourceManager.GetObject("IconFCurve", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -175,7 +400,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconGenerationLocation {
+        public static System.Drawing.Bitmap IconGenerationLocation {
             get {
                 object obj = ResourceManager.GetObject("IconGenerationLocation", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -185,7 +410,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconLocation {
+        public static System.Drawing.Bitmap IconLocation {
             get {
                 object obj = ResourceManager.GetObject("IconLocation", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -195,7 +420,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconLocationAbs {
+        public static System.Drawing.Bitmap IconLocationAbs {
             get {
                 object obj = ResourceManager.GetObject("IconLocationAbs", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -205,7 +430,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconRecorder {
+        public static System.Drawing.Bitmap IconRecorder {
             get {
                 object obj = ResourceManager.GetObject("IconRecorder", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -215,7 +440,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconRenderer {
+        public static System.Drawing.Bitmap IconRenderer {
             get {
                 object obj = ResourceManager.GetObject("IconRenderer", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -225,7 +450,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconRendererCommon {
+        public static System.Drawing.Bitmap IconRendererCommon {
             get {
                 object obj = ResourceManager.GetObject("IconRendererCommon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -235,7 +460,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconRotation {
+        public static System.Drawing.Bitmap IconRotation {
             get {
                 object obj = ResourceManager.GetObject("IconRotation", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -245,7 +470,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconScale {
+        public static System.Drawing.Bitmap IconScale {
             get {
                 object obj = ResourceManager.GetObject("IconScale", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -255,7 +480,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconSound {
+        public static System.Drawing.Bitmap IconSound {
             get {
                 object obj = ResourceManager.GetObject("IconSound", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -265,7 +490,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconViewer {
+        public static System.Drawing.Bitmap IconViewer {
             get {
                 object obj = ResourceManager.GetObject("IconViewer", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -275,7 +500,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap IconViewPoint {
+        public static System.Drawing.Bitmap IconViewPoint {
             get {
                 object obj = ResourceManager.GetObject("IconViewPoint", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -283,18 +508,126 @@ namespace Effekseer.Properties {
         }
         
         /// <summary>
+        ///   入力 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Import {
+            get {
+                return ResourceManager.GetString("Import", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   無限 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Infinite {
+            get {
+                return ResourceManager.GetString("Infinite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   左 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Left {
+            get {
+                return ResourceManager.GetString("Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   読込 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Load {
+            get {
+                return ResourceManager.GetString("Load", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   背景透明化の方法 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MakeTransparent {
+            get {
+                return ResourceManager.GetString("MakeTransparent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   最大 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Max {
+            get {
+                return ResourceManager.GetString("Max", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   中心 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Mean {
+            get {
+                return ResourceManager.GetString("Mean", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   最小 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Min {
+            get {
+                return ResourceManager.GetString("Min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   ネットワーク に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Network {
+        public static string Network {
             get {
                 return ResourceManager.GetString("Network", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   接続先 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string NetworkAddress {
+            get {
+                return ResourceManager.GetString("NetworkAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   状態：接続済 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string NetworkConnected {
+            get {
+                return ResourceManager.GetString("NetworkConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   状態：未接続 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string NetworkDisconnected {
+            get {
+                return ResourceManager.GetString("NetworkDisconnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   状態： に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string NetworkState {
+            get {
+                return ResourceManager.GetString("NetworkState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap NodeEmpty {
+        public static System.Drawing.Bitmap NodeEmpty {
             get {
                 object obj = ResourceManager.GetObject("NodeEmpty", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -304,7 +637,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap NodeModel {
+        public static System.Drawing.Bitmap NodeModel {
             get {
                 object obj = ResourceManager.GetObject("NodeModel", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -314,7 +647,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap NodeRibbon {
+        public static System.Drawing.Bitmap NodeRibbon {
             get {
                 object obj = ResourceManager.GetObject("NodeRibbon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -324,7 +657,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap NodeRing {
+        public static System.Drawing.Bitmap NodeRing {
             get {
                 object obj = ResourceManager.GetObject("NodeRing", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -334,7 +667,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap NodeSprite {
+        public static System.Drawing.Bitmap NodeSprite {
             get {
                 object obj = ResourceManager.GetObject("NodeSprite", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -344,7 +677,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap NodeTrack {
+        public static System.Drawing.Bitmap NodeTrack {
             get {
                 object obj = ResourceManager.GetObject("NodeTrack", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -354,16 +687,43 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   ノードツリー に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string NodeTree {
+        public static string NodeTree {
             get {
                 return ResourceManager.GetString("NodeTree", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   なし に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string None {
+            get {
+                return ResourceManager.GetString("None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   絶対パスでありません。 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string NotAbsolutePathError {
+            get {
+                return ResourceManager.GetString("NotAbsolutePathError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   オフセット に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Offset {
+            get {
+                return ResourceManager.GetString("Offset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   オプション に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Options {
+        public static string Options {
             get {
                 return ResourceManager.GetString("Options", resourceCulture);
             }
@@ -372,7 +732,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap Pause {
+        public static System.Drawing.Bitmap Pause {
             get {
                 object obj = ResourceManager.GetObject("Pause", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -382,7 +742,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap Play {
+        public static System.Drawing.Bitmap Play {
             get {
                 object obj = ResourceManager.GetObject("Play", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -390,18 +750,81 @@ namespace Effekseer.Properties {
         }
         
         /// <summary>
+        ///   再生 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PlayString {
+            get {
+                return ResourceManager.GetString("PlayString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ポート に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Port {
+            get {
+                return ResourceManager.GetString("Port", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   位置 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Position {
+        public static string Position {
             get {
                 return ResourceManager.GetString("Position", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   視点への距離 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PoVDistance {
+            get {
+                return ResourceManager.GetString("PoVDistance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   エフェクトプロジェクト (*.efkproj)|*.efkproj に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ProjectFilter {
+            get {
+                return ResourceManager.GetString("ProjectFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   最大,最小 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Range {
+            get {
+                return ResourceManager.GetString("Range", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   最近使用したファイル に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RecentFiles {
+            get {
+                return ResourceManager.GetString("RecentFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   録画 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Recorder {
+        public static string Record {
+            get {
+                return ResourceManager.GetString("Record", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   録画 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Recorder {
             get {
                 return ResourceManager.GetString("Recorder", resourceCulture);
             }
@@ -410,7 +833,16 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   描画 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string RenderSettings {
+        public static string Render {
+            get {
+                return ResourceManager.GetString("Render", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   描画 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RenderSettings {
             get {
                 return ResourceManager.GetString("RenderSettings", resourceCulture);
             }
@@ -419,34 +851,79 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   ウインドウ位置を初期化 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string ResetWindow {
+        public static string ResetWindow {
             get {
                 return ResourceManager.GetString("ResetWindow", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   録画範囲(解像度) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Resolution {
+            get {
+                return ResourceManager.GetString("Resolution", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   右 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Right {
+            get {
+                return ResourceManager.GetString("Right", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   回転 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Rotation {
+        public static string Rotation {
             get {
                 return ResourceManager.GetString("Rotation", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   サンプリング に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Sampling {
+            get {
+                return ResourceManager.GetString("Sampling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   拡大 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Scale {
+        public static string Scale {
             get {
                 return ResourceManager.GetString("Scale", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   データ送信 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SendData {
+            get {
+                return ResourceManager.GetString("SendData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   録画範囲を表示 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ShowGuide {
+            get {
+                return ResourceManager.GetString("ShowGuide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   音 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Sound {
+        public static string Sound {
             get {
                 return ResourceManager.GetString("Sound", resourceCulture);
             }
@@ -455,16 +932,34 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   生成位置 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string SpawningMethod {
+        public static string SpawningMethod {
             get {
                 return ResourceManager.GetString("SpawningMethod", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   開始 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Start {
+            get {
+                return ResourceManager.GetString("Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Start Frame に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string StartFrame {
+            get {
+                return ResourceManager.GetString("StartFrame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap Step {
+        public static System.Drawing.Bitmap Step {
             get {
                 object obj = ResourceManager.GetObject("Step", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -474,7 +969,7 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap Stop {
+        public static System.Drawing.Bitmap Stop {
             get {
                 object obj = ResourceManager.GetObject("Stop", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -482,20 +977,164 @@ namespace Effekseer.Properties {
         }
         
         /// <summary>
+        ///   編集時にデータを送信する に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TransmitDataOnEdit {
+            get {
+                return ResourceManager.GetString("TransmitDataOnEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Transmit data on load に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TransmitDataOnLoad {
+            get {
+                return ResourceManager.GetString("TransmitDataOnLoad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   保存時にデータを送信する に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TransmitDataOnSave {
+            get {
+                return ResourceManager.GetString("TransmitDataOnSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    *変更あり に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string UnsavedChanges {
+            get {
+                return ResourceManager.GetString("UnsavedChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   元の画像 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string UseOriginalImage {
+            get {
+                return ResourceManager.GetString("UseOriginalImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   値 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Value {
+            get {
+                return ResourceManager.GetString("Value", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   表示 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string View {
+            get {
+                return ResourceManager.GetString("View", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ビュワー に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Viewer {
+            get {
+                return ResourceManager.GetString("Viewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   ビュワー操作 に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string ViewerControls {
+        public static string ViewerControls {
             get {
                 return ResourceManager.GetString("ViewerControls", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   焦点 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Viewpoint {
+            get {
+                return ResourceManager.GetString("Viewpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   横幅 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Width {
+            get {
+                return ResourceManager.GetString("Width", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   ウインドウ に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        internal static string Window {
+        public static string Window {
             get {
                 return ResourceManager.GetString("Window", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   x に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string X {
+            get {
+                return ResourceManager.GetString("X", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   横方向枚数 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string XCount {
+            get {
+                return ResourceManager.GetString("XCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   X軸回転 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string XRotation {
+            get {
+                return ResourceManager.GetString("XRotation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   y に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Y {
+            get {
+                return ResourceManager.GetString("Y", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Y軸回転 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string YRotation {
+            get {
+                return ResourceManager.GetString("YRotation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   画面拡大率 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Zoom {
+            get {
+                return ResourceManager.GetString("Zoom", resourceCulture);
             }
         }
     }

@@ -42,7 +42,7 @@
 			this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Name = "DockViewer";
-			this.Text = "ビュワー";
+			this.Text = Properties.Resources.Viewer;
 			this.DragDrop += new System.Windows.Forms.DragEventHandler(this.DockViewer_DragDrop);
 			this.DragEnter += new System.Windows.Forms.DragEventHandler(this.DockViewer_DragEnter);
 			this.ResumeLayout(false);
