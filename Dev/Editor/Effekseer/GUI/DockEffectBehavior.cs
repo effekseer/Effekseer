@@ -18,11 +18,6 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockEffectBehavior_HandleDestroyed);
 
 			lp_behavior.SetType(typeof(Data.EffectBehaviorValues));
-
-			if (Core.Language == Language.English)
-			{
-				this.Text = "Behavior";
-			}
 		}
 
 		void Read()

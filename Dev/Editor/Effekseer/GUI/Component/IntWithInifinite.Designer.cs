@@ -43,7 +43,7 @@
 			this.cb_infinite.Name = "cb_infinite";
 			this.cb_infinite.Size = new System.Drawing.Size(48, 16);
 			this.cb_infinite.TabIndex = 1;
-			this.cb_infinite.Text = "無限";
+			this.cb_infinite.Text = Properties.Resources.Infinite;
 			// 
 			// tb_int
 			// 

@@ -105,7 +105,7 @@
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "DockNodeTreeView";
-			this.Text = "ノードツリー";
+			this.Text = Properties.Resources.NodeTree;
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DockNodeTreeView_FormClosed);
 			this.Load += new System.EventHandler(this.DockNodeTreeView_Load);
 			this.ResumeLayout(false);

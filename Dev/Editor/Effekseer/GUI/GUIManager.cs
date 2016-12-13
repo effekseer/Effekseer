@@ -684,15 +684,7 @@ namespace Effekseer.GUI
 		/// <param name="fullPath">絶対パス</param>
 		public static void AddRecentFile(string fullPath)
 		{
-			var errorText = string.Empty;
-			if (Core.Language == Language.Japanese)
-			{
-				errorText = "絶対パスでありません。";
-			}
-			else if (Core.Language == Language.English)
-			{
-				errorText = "This is not an absolute path.";
-			}
+            var errorText = Properties.Resources.NotAbsolutePathError;
 
 			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception(errorText);
 

@@ -19,11 +19,6 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockNodeTranslationAbsValues_HandleDestroyed);
 
 			lp_TranslationAbs.SetType(typeof(Data.LocationAbsValues));
-
-			if (Core.Language == Language.English)
-			{
-				Text = "Attraction Forces";
-			}
 			
 			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconLocationAbs).GetHicon());
 		}

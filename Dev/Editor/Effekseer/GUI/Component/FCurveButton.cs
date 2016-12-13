@@ -14,15 +14,8 @@ namespace Effekseer.GUI.Component
 		public FCurveButton()
 		{
 			InitializeComponent();
-			
-			if (Core.Language == Language.English)
-			{
-				Text = "F-Curve";
-			}
-			else
-			{
-				Text = "Fカーブ";
-			}
+
+            Text = Properties.Resources.FCurves;
 
 			Click += new EventHandler(FCurveButton_Click);
 		}

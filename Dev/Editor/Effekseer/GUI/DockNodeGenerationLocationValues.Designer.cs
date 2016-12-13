@@ -54,7 +54,7 @@
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Name = "DockNodeGenerationLocationValues";
-			this.Text = "生成位置";
+			this.Text = Properties.Resources.SpawningMethod;
 			this.Load += new System.EventHandler(this.DockNodeGenerationLocationValues_Load);
 			this.ResumeLayout(false);
 

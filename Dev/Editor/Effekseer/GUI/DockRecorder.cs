@@ -19,44 +19,6 @@ namespace Effekseer.GUI
 			cb_type.SelectedIndex = 0;
 			cb_tranceparence.SelectedIndex = 0;
 
-			if(Core.Language == Language.English)
-			{
-				grp_area.Text = "Resolution";
-				lbl_w.Text = "Width";
-				lbl_h.Text = "Height";
-				lbl_showArea.Text = "Show guide";
-
-				grp_frame.Text = "Exported frame";
-				lbl_starting.Text = "Start Frame";
-				lbl_ending.Text = "End Frame";
-				lbl_freq.Text = "Frequency(Frame)";
-
-				grp_type.Text = "Format";
-				lbl_the_number_of_image_h.Text = "X Count";
-
-				grp_option.Text = "Options";
-				lbl_translucent.Text = "Make transparent";
-
-				btn_record.Text = "Record";
-
-				cb_type.Items.Clear();
-				this.cb_type.Items.AddRange(new object[] {
-		            "Export as a single image.",
-		            "Export as images",
-		            "Export as a gif animation",
-					"Export as a AVI",
-				});
-				cb_type.SelectedIndex = 0;
-
-				cb_tranceparence.Items.Clear();
-				this.cb_tranceparence.Items.AddRange(new object[] {
-		            "None",
-		            "Use original image",
-		            "Generate alpha"});
-				cb_tranceparence.SelectedIndex = 0;
-
-			}
-
 			txt_startingFrame.ReadMethod = () =>
 				{
 					return startingFrame;

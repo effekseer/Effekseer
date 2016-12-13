@@ -23,12 +23,7 @@ namespace Effekseer.GUI
 			GUIManager.OnChangeRecentFiles += new EventHandler(GUIManager_OnChangeRecentFiles);
 
 			recentFiles = new ToolStripMenuItem();
-			recentFiles.Text = "最近使用したファイル";
-
-			if(Core.Language == Language.English)
-			{
-				recentFiles.Text = "Recent Files";
-			}
+            recentFiles.Text = Properties.Resources.RecentFiles;
 		}
 
 		public DockPanel Panel
@@ -74,14 +69,7 @@ namespace Effekseer.GUI
 			
 			if (Core.IsChanged)
 			{
-				if(Core.Language == Language.Japanese)
-				{
-					newTitle += " *変更あり";
-				}
-				else if (Core.Language == Language.English)
-				{
-					newTitle += " *Unsaved Changes";
-				}
+                newTitle += Properties.Resources.UnsavedChanges;
 			}
 
 			if (Text != newTitle)
@@ -118,18 +106,9 @@ namespace Effekseer.GUI
 				string output = string.Empty;
 
 
-				if(Core.Language == Language.Japanese)
-				{
-					file = "ファイル";
-					input = "入力";
-					output = "出力";
-				}
-				else if (Core.Language == Language.English)
-				{
-					file = "Files";
-					input = "Import";
-					output = "Export";
-				}
+				file = Properties.Resources.Files;
+				input = Properties.Resources.Import;
+				output = Properties.Resources.Export;
 
 				var menu = new ToolStripMenuItem(file);
 				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.New));
@@ -220,19 +199,8 @@ namespace Effekseer.GUI
 			}
 
 			{
-				string edit = string.Empty;
-				string view = string.Empty;
-
-				if (Core.Language == Language.Japanese)
-				{
-					edit = "編集";
-					view = "表示";
-				}
-				else if (Core.Language == Language.English)
-				{
-					edit = "Edit";
-					view = "View";
-				}
+				string edit = Properties.Resources.Edit;
+				string view = Properties.Resources.View;
 
 				var menu = new ToolStripMenuItem(edit);
 
@@ -255,19 +223,8 @@ namespace Effekseer.GUI
 			}
 
 			{
-				string edit = string.Empty;
-				string view = string.Empty;
-
-				if (Core.Language == Language.Japanese)
-				{
-					edit = "編集";
-					view = "表示";
-				}
-				else if (Core.Language == Language.English)
-				{
-					edit = "Edit";
-					view = "View";
-				}
+                string edit = Properties.Resources.Edit;
+                string view = Properties.Resources.View;
 
 				var menu = new ToolStripMenuItem(view);
 
@@ -317,25 +274,11 @@ namespace Effekseer.GUI
 			*/
 
 			{
-				string window = string.Empty;
-				string resetWindow = string.Empty;
-
-				if (Core.Language == Language.Japanese)
-				{
-					window = "ウインドウ";
-					resetWindow = "ウインドウ位置を初期化";
-				}
-				else if (Core.Language == Language.English)
-				{
-					window = "Window";
-					resetWindow = "Reset Window Position";
-				}
-
-				var menu = new ToolStripMenuItem(window);
+				var menu = new ToolStripMenuItem(Properties.Resources.Window);
 
 				{
 					var item = new ToolStripMenuItem();
-					item.Text = resetWindow;
+					item.Text = Properties.Resources.ResetWindow;
 					item.Click += (object sender, EventArgs e) =>
 					{
 						GUIManager.CloseDockWindow();
@@ -356,66 +299,31 @@ namespace Effekseer.GUI
 						menu.DropDownItems.Add(item);
 					};
 
-				if (Core.Language == Language.Japanese)
-				{
-					setDockWindow("ノードツリー", typeof(DockNodeTreeView), null);
-					setDockWindow("共通", typeof(DockNodeCommonValues), Properties.Resources.IconCommon);
-					setDockWindow("位置", typeof(DockNodeLocationValues), Properties.Resources.IconLocation);
-					setDockWindow("絶対位置", typeof(DockNodeLocationAbsValues), Properties.Resources.IconLocationAbs);
-					setDockWindow("生成位置", typeof(DockNodeGenerationLocationValues), Properties.Resources.IconGenerationLocation);
-					setDockWindow("回転", typeof(DockNodeRotationValues), Properties.Resources.IconRotation);
-					setDockWindow("拡大", typeof(DockNodeScaleValues), Properties.Resources.IconScale);
-					setDockWindow("描画共通", typeof(DockNodeRendererCommonValues), Properties.Resources.IconRendererCommon);
-					setDockWindow("描画", typeof(DockNodeRendererValues), Properties.Resources.IconRenderer);
-					setDockWindow("音", typeof(DockNodeSoundValues), Properties.Resources.IconSound);
-					setDockWindow("Fカーブ", typeof(DockFCurves), Properties.Resources.IconFCurve);
-					setDockWindow("ビュワー操作", typeof(DockViewerController), Properties.Resources.IconViewer);
-					setDockWindow("視点操作", typeof(DockViewPoint), Properties.Resources.IconViewPoint);
-					setDockWindow("録画", typeof(DockRecorder), Properties.Resources.IconRecorder);
-					setDockWindow("オプション", typeof(DockOption), null);
-					setDockWindow("振る舞い", typeof(DockEffectBehavior), null);
-					setDockWindow("カリング", typeof(DockCulling), null);
-					setDockWindow("ネットワーク", typeof(DockNetwork), null);
-				}
-				else if (Core.Language == Language.English)
-				{
-					setDockWindow("Node Tree", typeof(DockNodeTreeView), null);
-					setDockWindow("Basic Settings", typeof(DockNodeCommonValues), Properties.Resources.IconCommon);
-					setDockWindow("Position", typeof(DockNodeLocationValues), Properties.Resources.IconLocation);
-					setDockWindow("Attraction Forces", typeof(DockNodeLocationAbsValues), Properties.Resources.IconLocationAbs);
-					setDockWindow("Spawning Method", typeof(DockNodeGenerationLocationValues), Properties.Resources.IconGenerationLocation);
-					setDockWindow("Rotation", typeof(DockNodeRotationValues), Properties.Resources.IconRotation);
-					setDockWindow("Scale", typeof(DockNodeScaleValues), Properties.Resources.IconScale);
-					setDockWindow("Basic Render Settings", typeof(DockNodeRendererCommonValues), Properties.Resources.IconRendererCommon);
-					setDockWindow("Render Settings", typeof(DockNodeRendererValues), Properties.Resources.IconRenderer);
-					setDockWindow("Sound", typeof(DockNodeSoundValues), Properties.Resources.IconSound);
-					setDockWindow("F-Curves", typeof(DockFCurves), Properties.Resources.IconFCurve);
-					setDockWindow("Viewer Controls", typeof(DockViewerController), Properties.Resources.IconViewer);
-					setDockWindow("Camera Settings", typeof(DockViewPoint), Properties.Resources.IconViewPoint);
-					setDockWindow("Recorder", typeof(DockRecorder), Properties.Resources.IconRecorder);
-					setDockWindow("Options", typeof(DockOption), null);
-					setDockWindow("Behavior", typeof(DockEffectBehavior), null);
-					setDockWindow("Culling", typeof(DockCulling), null);
-					setDockWindow("Network", typeof(DockNetwork), null);
-				}
+				setDockWindow(Properties.Resources.NodeTree, typeof(DockNodeTreeView), null);
+				setDockWindow(Properties.Resources.BasicSettings, typeof(DockNodeCommonValues), Properties.Resources.IconCommon);
+				setDockWindow(Properties.Resources.Position, typeof(DockNodeLocationValues), Properties.Resources.IconLocation);
+				setDockWindow(Properties.Resources.AttractionForces, typeof(DockNodeLocationAbsValues), Properties.Resources.IconLocationAbs);
+				setDockWindow(Properties.Resources.SpawningMethod, typeof(DockNodeGenerationLocationValues), Properties.Resources.IconGenerationLocation);
+				setDockWindow(Properties.Resources.Rotation, typeof(DockNodeRotationValues), Properties.Resources.IconRotation);
+				setDockWindow(Properties.Resources.Scale, typeof(DockNodeScaleValues), Properties.Resources.IconScale);
+				setDockWindow(Properties.Resources.BasicRenderSettings, typeof(DockNodeRendererCommonValues), Properties.Resources.IconRendererCommon);
+				setDockWindow(Properties.Resources.RenderSettings, typeof(DockNodeRendererValues), Properties.Resources.IconRenderer);
+				setDockWindow(Properties.Resources.Sound, typeof(DockNodeSoundValues), Properties.Resources.IconSound);
+				setDockWindow(Properties.Resources.FCurves, typeof(DockFCurves), Properties.Resources.IconFCurve);
+				setDockWindow(Properties.Resources.ViewerControls, typeof(DockViewerController), Properties.Resources.IconViewer);
+				setDockWindow(Properties.Resources.CameraSettings, typeof(DockViewPoint), Properties.Resources.IconViewPoint);
+				setDockWindow(Properties.Resources.Recorder, typeof(DockRecorder), Properties.Resources.IconRecorder);
+				setDockWindow(Properties.Resources.Options, typeof(DockOption), null);
+				setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), null);
+				setDockWindow(Properties.Resources.Culling, typeof(DockCulling), null);
+				setDockWindow(Properties.Resources.Network, typeof(DockNetwork), null);
 
 
 				menuStrip.Items.Add(menu);
 			}
 
 			{
-				string help = string.Empty;
-				
-				if (Core.Language == Language.Japanese)
-				{
-					help = "ヘルプ";
-				}
-				else if (Core.Language == Language.English)
-				{
-					help = "Help";
-				}
-
-				var menu = new ToolStripMenuItem(help);
+                var menu = new ToolStripMenuItem(Properties.Resources.Help);
 				
 				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.ViewHelp));
 				menu.DropDownItems.Add(create_menu_item_from_commands(Commands.OpenSample));

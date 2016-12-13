@@ -313,15 +313,8 @@ namespace Effekseer.Data
 				Position = new Value.Enum<PositionType>(PositionType.Default);
 				Position_Fixed_L = new Value.Float(-0.5f);
 				Position_Fixed_R = new Value.Float(0.5f);
-			
-				if(Core.Language == Language.Japanese)
-				{
-					ColorTexture = new Value.Path("画像ファイル (*.png)|*.png", true, "");
-				}
-				else if(Core.Language == Language.English)
-				{
-					ColorTexture = new Value.Path("Image File (*.png)|*.png", true, "");
-				}
+
+                ColorTexture = new Value.Path(Properties.Resources.ImageFilter, true, "");
 			}
 
             public enum ColorAllType : int
@@ -546,14 +539,7 @@ namespace Effekseer.Data
                 InnerColor_Random = new Value.ColorWithRandom(255, 255, 255, 0);
                 InnerColor_Easing = new ColorEasingParamater();
 
-				if (Core.Language == Language.Japanese)
-				{
-					ColorTexture = new Value.Path("画像ファイル (*.png)|*.png", true, "");
-				}
-				else if (Core.Language == Language.English)
-				{
-					ColorTexture = new Value.Path("Image File (*.png)|*.png", true, "");
-				}
+                ColorTexture = new Value.Path(Properties.Resources.ImageFilter, true, "");
             }
 
             public enum BillboardType : int
@@ -715,16 +701,8 @@ namespace Effekseer.Data
 
 			public ModelParamater()
 			{
-				if (Core.Language == Language.Japanese)
-				{
-					Model = new Value.Path("モデルファイル (*.efkmodel)|*.efkmodel", true, "");
-					NormalTexture = new Value.PathForImage("画像ファイル (*.png)|*.png", true, "");
-				}
-				else if (Core.Language == Language.English)
-				{
-					Model = new Value.Path("Model File (*.efkmodel)|*.efkmodel", true, "");
-					NormalTexture = new Value.PathForImage("Image File (*.png)|*.png", true, "");
-				}
+                Model = new Value.Path(Properties.Resources.ModelFilter, true, "");
+                NormalTexture = new Value.PathForImage(Properties.Resources.ImageFilter, true, "");
 				
 				Lighting = new Value.Boolean(true);
 				Culling = new Value.Enum<CullingValues>(Data.CullingValues.Front);

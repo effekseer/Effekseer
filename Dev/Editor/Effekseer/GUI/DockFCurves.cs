@@ -15,11 +15,6 @@ namespace Effekseer.GUI
 		{
 			InitializeComponent();
 
-			if (Core.Language == Language.English)
-			{
-				this.Text = "F-Curve";
-			}
-			
 			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconFCurve).GetHicon());
 		}
 

@@ -122,7 +122,7 @@
 			this.MinimizeBox = false;
 			this.Name = "AboutForm";
 			this.ShowInTaskbar = false;
-			this.Text = "Effekseerについて";
+			this.Text = Properties.Resources.AboutEffekseer;
 			((System.ComponentModel.ISupportInitialize)(this.icon)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

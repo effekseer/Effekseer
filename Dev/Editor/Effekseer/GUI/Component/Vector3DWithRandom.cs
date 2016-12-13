@@ -15,12 +15,6 @@ namespace Effekseer.GUI.Component
 		{
 			InitializeComponent();
 
-			if (Core.Language == Language.English)
-			{
-				drawnas_1.Text = "Range";
-				drawnas_2.Text = "Gauss";
-			}
-
 			EnableUndo = true;
 
 			this.SuspendLayout();
@@ -318,33 +312,16 @@ namespace Effekseer.GUI.Component
 				drawnas_1.Checked = binding.DrawnAs == Data.DrawnAs.MaxAndMin;
 				drawnas_2.Checked = binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude;
 
-				if (Core.Language == Language.Japanese)
+				if (drawnas_1.Checked)
 				{
-					if (drawnas_1.Checked)
-					{
-						lb_v1.Text = "最大";
-						lb_v2.Text = "最小";
-					}
-
-					if (drawnas_2.Checked)
-					{
-						lb_v1.Text = "中心";
-						lb_v2.Text = "振幅";
-					}
+					lb_v1.Text = Properties.Resources.Max;
+					lb_v2.Text = Properties.Resources.Min;
 				}
-				else if (Core.Language == Language.English)
-				{
-					if (drawnas_1.Checked)
-					{
-						lb_v1.Text = "Max";
-						lb_v2.Text = "Min";
-					}
 
-					if (drawnas_2.Checked)
-					{
-						lb_v1.Text = "Mean";
-						lb_v2.Text = "Deviation";
-					}
+				if (drawnas_2.Checked)
+				{
+					lb_v1.Text = Properties.Resources.Mean;
+					lb_v2.Text = Properties.Resources.Deviation;
 				}
 			}
 			else

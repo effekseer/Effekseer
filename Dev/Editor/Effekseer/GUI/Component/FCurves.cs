@@ -18,25 +18,6 @@ namespace Effekseer.GUI.Component
 		{
 			InitializeComponent();
 
-			if(Core.Language == Language.English)
-			{
-				this.lbl_offset_min.Text = "Min";
-				this.lbl_offset_max.Text = "Max";
-				this.lbl_offset.Text = "Offset:";
-				this.lbl_end.Text = "End";
-				this.lbl_start.Text = "Start";
-				this.lbl_type.Text = "Type";
-				this.lbl_value.Text = "Val";
-				this.lbl_frame.Text = "Frame";
-				this.lbl_right_y.Text = "Y";
-				this.lbl_right_x.Text = "X";
-				this.lbl_right.Text = "Right:";
-				this.lbl_left_y.Text = "Y";
-				this.lbl_left_x.Text = "X";
-				this.lbl_left.Text = "Left:";
-				this.lbl_sampling.Text = "Sampling";
-			}
-
 			HandleCreated += new EventHandler(FCurves_HandleCreated);
 			HandleDestroyed += new EventHandler(FCurves_HandleDestroyed);
 
