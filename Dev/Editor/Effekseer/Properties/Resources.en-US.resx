@@ -398,4 +398,73 @@
   <data name="Delete" xml:space="preserve">
     <value>Del</value>
   </data>
+  <data name="ImageFilter" xml:space="preserve">
+    <value>Image File (*.png)|*.png</value>
+  </data>
+  <data name="ModelFilter" xml:space="preserve">
+    <value>Model File (*.efkmodel)|*.efkmodel</value>
+  </data>
+  <data name="SoundFilter" xml:space="preserve">
+    <value>Sound File (*.wav)|*.wav</value>
+  </data>
+  <data name="InternalNew" xml:space="preserve">
+    <value>New Project</value>
+  </data>
+  <data name="InternalAbout" xml:space="preserve">
+    <value>About Effekseer</value>
+  </data>
+  <data name="InternalAddNode" xml:space="preserve">
+    <value>Add Node</value>
+  </data>
+  <data name="InternalBaskStep" xml:space="preserve">
+    <value>Step(Back)</value>
+  </data>
+  <data name="InternalCopy" xml:space="preserve">
+    <value>Copy Node</value>
+  </data>
+  <data name="InternalExit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="InternalInsertNode" xml:space="preserve">
+    <value>Insert Node</value>
+  </data>
+  <data name="InternalOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="InternalOpenSample" xml:space="preserve">
+    <value>Open Sample Project</value>
+  </data>
+  <data name="InternalOverwrite" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="InternalPaste" xml:space="preserve">
+    <value>Paste Node</value>
+  </data>
+  <data name="InternalPasteInfo" xml:space="preserve">
+    <value>Paste Node Info</value>
+  </data>
+  <data name="InternalPauseOrResume" xml:space="preserve">
+    <value>Pause/Resume</value>
+  </data>
+  <data name="InternalRedo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="InternalRemoveNode" xml:space="preserve">
+    <value>Delete Node</value>
+  </data>
+  <data name="InternalSaveAs" xml:space="preserve">
+    <value>Save as...</value>
+  </data>
+  <data name="InternalStep" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="InternalStop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="InternalUndo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="InternalViewHelp" xml:space="preserve">
+    <value>Manual</value>
+  </data>
 </root>
