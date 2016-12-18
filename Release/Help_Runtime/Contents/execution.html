@@ -66,7 +66,7 @@ manager->SetSoundPlayer( sound->CreateSoundPlayer() );
 // サウンドデータの読込方法の指定(圧縮フォーマット、パッケージ等から読み込む場合拡張する必要があります。)
 manager->SetSoundLoader( sound->CreateSoundLoader() );
 // 座標系の指定(RHで右手系、LHで左手系)
-manager->SetCoordinateSystem( ::Effekseer::COORDINATE_SYSTEM_RH );
+manager->SetCoordinateSystem( Effekseer::CoordinateSystem::RH );
 </code>
 </pre>
 

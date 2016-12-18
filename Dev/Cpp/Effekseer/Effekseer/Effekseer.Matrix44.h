@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_MATRIX44_H__
 #define	__EFFEKSEER_MATRIX44_H__
 
@@ -16,11 +16,11 @@ namespace Effekseer {
 //----------------------------------------------------------------------------------
 
 /**
-	@brief	s—ñ
+	@brief	è¡Œåˆ—
 	@note
-	‰EèŒn<BR>
-	¶èŒn<BR>
-	V[x,y,z,1] * M ‚ÌŒ`<BR>
+	å³æ‰‹ç³»<BR>
+	å·¦æ‰‹ç³»<BR>
+	V[x,y,z,1] * M ã®å½¢<BR>
 	[0,0][0,1][0,2][0,3]
 	[1,0][1,1][1,2][1,3]
 	[2,0][2,1][2,2][2,3]
@@ -34,107 +34,107 @@ private:
 public:
 
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	Matrix44();
 
 	/**
-		@brief	s—ñ‚Ì’l
+		@brief	è¡Œåˆ—ã®å€¤
 	*/
 	float	Values[4][4];
 
 	/**
-		@brief	’PˆÊs—ñ‰»
+		@brief	å˜ä½è¡Œåˆ—åŒ–
 	*/
 	Matrix44& Indentity();
 
 	/**
-	@brief	“]’us—ñ‰»
+	@brief	è»¢ç½®è¡Œåˆ—åŒ–
 	*/
 	Matrix44& Transpose();
 
 	/**
-		@brief	ƒJƒƒ‰s—ñ‰»(‰EèŒn)
+		@brief	ã‚«ãƒ¡ãƒ©è¡Œåˆ—åŒ–(å³æ‰‹ç³»)
 	*/
 	Matrix44& LookAtRH( const Vector3D& eye, const Vector3D& at, const Vector3D& up );
 
 	/**
-		@brief	ƒJƒƒ‰s—ñ‰»(¶èŒn)
+		@brief	ã‚«ãƒ¡ãƒ©è¡Œåˆ—åŒ–(å·¦æ‰‹ç³»)
 	*/
 	Matrix44& LookAtLH( const Vector3D& eye, const Vector3D& at, const Vector3D& up );
 
 	/**
-		@brief	Ë‰es—ñ‰»(‰EèŒn)
+		@brief	å°„å½±è¡Œåˆ—åŒ–(å³æ‰‹ç³»)
 	*/
 	Matrix44& PerspectiveFovRH( float ovY, float aspect, float zn, float zf );
 
 	/**
-		@brief	OpenGL—pË‰es—ñ‰»(‰EèŒn)
+		@brief	OpenGLç”¨å°„å½±è¡Œåˆ—åŒ–(å³æ‰‹ç³»)
 	*/
 	Matrix44& PerspectiveFovRH_OpenGL( float ovY, float aspect, float zn, float zf );
 
 	/**
-		@brief	Ë‰es—ñ‰»(¶èŒn)
+		@brief	å°„å½±è¡Œåˆ—åŒ–(å·¦æ‰‹ç³»)
 	*/
 	Matrix44& PerspectiveFovLH( float ovY, float aspect, float zn, float zf );
 	
 	/**
-	 @brief	OpenGL—pË‰es—ñ‰»(¶èŒn)
+	 @brief	OpenGLç”¨å°„å½±è¡Œåˆ—åŒ–(å·¦æ‰‹ç³»)
 	 */
 	Matrix44& PerspectiveFovLH_OpenGL( float ovY, float aspect, float zn, float zf );
 	
 	/**
-		@brief	³Ë‰es—ñ‰»(‰EèŒn)
+		@brief	æ­£å°„å½±è¡Œåˆ—åŒ–(å³æ‰‹ç³»)
 	*/
 	Matrix44& OrthographicRH( float width, float height, float zn, float zf );
 
 	/**
-		@brief	³Ë‰es—ñ‰»(¶èŒn)
+		@brief	æ­£å°„å½±è¡Œåˆ—åŒ–(å·¦æ‰‹ç³»)
 	*/
 	Matrix44& OrthographicLH( float width, float height, float zn, float zf );
 
 	/**
-		@brief	Šg‘ås—ñ‰»
+		@brief	æ‹¡å¤§è¡Œåˆ—åŒ–
 	*/
 	void Scaling( float x, float y, float z );
 
 	/**
-		@brief	X²‰ñ“]s—ñ(‰Eè)
+		@brief	Xè»¸å›è»¢è¡Œåˆ—(å³æ‰‹)
 	*/
 	void RotationX( float angle );
 
 	/**
-		@brief	Y²‰ñ“]s—ñ(‰Eè)
+		@brief	Yè»¸å›è»¢è¡Œåˆ—(å³æ‰‹)
 	*/
 	void RotationY( float angle );
 
 	/**
-		@brief	Z²‰ñ“]s—ñ(‰Eè)
+		@brief	Zè»¸å›è»¢è¡Œåˆ—(å³æ‰‹)
 	*/
 	void RotationZ( float angle );
 
 	/**
-		@brief	ˆÚ“®s—ñ
+		@brief	ç§»å‹•è¡Œåˆ—
 	*/
 	void Translation( float x, float y, float z );
 
 	/**
-		@brief	”CˆÓ²”½Œv‰ñ“]s—ñ
+		@brief	ä»»æ„è»¸åæ™‚è¨ˆå›è»¢è¡Œåˆ—
 	*/
 	void RotationAxis( const Vector3D& axis, float angle );
 
 	/**
-		@brief	ƒNƒI[ƒ^ƒjƒIƒ“‚©‚çs—ñ‚É•ÏŠ·
+		@brief	ã‚¯ã‚ªãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰è¡Œåˆ—ã«å¤‰æ›
 	*/
 	void Quaternion( float x, float y, float z, float w );
 
 	/**
-		@brief	æZ
+		@brief	ä¹—ç®—
 	*/
 	static Matrix44& Mul( Matrix44& o, const Matrix44& in1, const Matrix44& in2 );
 
 	/**
-		@brief	‹ts—ñ
+		@brief	é€†è¡Œåˆ—
 	*/
 	static Matrix44& Inverse( Matrix44& o, const Matrix44& in );
 };

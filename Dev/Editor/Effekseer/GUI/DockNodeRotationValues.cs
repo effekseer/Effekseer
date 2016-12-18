@@ -19,11 +19,8 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockNodeRotationValues_HandleDestroyed);
 
 			lp_Rotation.SetType(typeof(Data.RotationValues));
-
-			if (Core.Language == Language.English)
-			{
-				Text = "Rotation";
-			}
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconRotation).GetHicon());
 		}
 
 		void Read()

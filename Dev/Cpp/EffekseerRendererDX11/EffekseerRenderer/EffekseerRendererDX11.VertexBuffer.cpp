@@ -1,4 +1,4 @@
-
+ï»¿
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ VertexBuffer* VertexBuffer::Create( RendererImplemented* renderer, int size, boo
 	hSubResourceData.SysMemSlicePitch = 0;
 
 	
-	// ¶¬
+	// ç”Ÿæˆ
 	ID3D11Buffer* vb = NULL;
 	HRESULT hr = renderer->GetDevice()->CreateBuffer(&hBufferDesc, NULL, &vb);
 	if( FAILED( hr ) )
@@ -92,7 +92,7 @@ void VertexBuffer::Lock()
 	m_offset = 0;
 
 
-	/* Ÿ‚ÌRingBufferLock‚Í‹­§“I‚ÉDiscard */
+	/* æ¬¡ã®RingBufferLockã¯å¼·åˆ¶çš„ã«Discard */
 	m_vertexRingOffset = m_size;
 }
 

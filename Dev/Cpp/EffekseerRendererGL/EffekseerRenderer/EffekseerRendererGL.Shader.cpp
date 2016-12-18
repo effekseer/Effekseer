@@ -1,4 +1,4 @@
-
+ï»¿
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ bool Shader::CompileShader(
 	GLint res_vs, res_fs, res_link;
 	
 
-	// ƒo[ƒeƒbƒNƒXƒVƒF[ƒ_‚ğƒRƒ“ƒpƒCƒ‹
+	// ãƒãƒ¼ãƒ†ãƒƒã‚¯ã‚¹ã‚·ã‚§ãƒ¼ãƒ€ã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
 	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3) src_data[0] = g_header_vs_gl3_src;
 	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL2) src_data[0] = g_header_vs_gl2_src;
 	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3) src_data[0] = g_header_vs_gles3_src;
@@ -111,7 +111,7 @@ bool Shader::CompileShader(
 	GLExt::glCompileShader(vert_shader);
 	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
 
-	// ƒtƒ‰ƒOƒƒ“ƒgƒVƒF[ƒ_‚ğƒRƒ“ƒpƒCƒ‹
+	// ãƒ•ãƒ©ã‚°ãƒ¡ãƒ³ãƒˆã‚·ã‚§ãƒ¼ãƒ€ã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
 	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3) src_data[0] = g_header_fs_gl3_src;
 	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL2) src_data[0] = g_header_fs_gl2_src;
 	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3) src_data[0] = g_header_fs_gles3_src;
@@ -126,18 +126,18 @@ bool Shader::CompileShader(
 	GLExt::glCompileShader(frag_shader);
 	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
 	
-	// ƒVƒF[ƒ_ƒvƒƒOƒ‰ƒ€‚Ìì¬
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®ä½œæˆ
 	program = GLExt::glCreateProgram();
 	GLExt::glAttachShader(program, vert_shader);
 	GLExt::glAttachShader(program, frag_shader);
 	
-	// ƒVƒF[ƒ_ƒvƒƒOƒ‰ƒ€‚ÌƒŠƒ“ƒN
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®ãƒªãƒ³ã‚¯
 	GLExt::glLinkProgram(program);
 	GLExt::glGetProgramiv(program, GL_LINK_STATUS, &res_link);
 
 #ifndef NDEBUG
 	{
-		// ƒGƒ‰[o—Í
+		// ã‚¨ãƒ©ãƒ¼å‡ºåŠ›
 		char log[512];
 		int32_t log_size;
 		GLExt::glGetShaderInfoLog(vert_shader, sizeof(log), &log_size, log);
@@ -160,7 +160,7 @@ bool Shader::CompileShader(
 		}
 	}
 #endif
-	// ƒVƒF[ƒ_ƒIƒuƒWƒFƒNƒg‚Ìíœ
+	// ã‚·ã‚§ãƒ¼ãƒ€ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‰Šé™¤
 	GLExt::glDeleteShader(frag_shader);
 	GLExt::glDeleteShader(vert_shader);
 

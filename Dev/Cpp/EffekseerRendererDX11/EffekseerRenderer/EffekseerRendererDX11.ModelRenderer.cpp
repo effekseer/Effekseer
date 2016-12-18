@@ -1,4 +1,4 @@
-
+Ôªø
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -181,14 +181,15 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	assert( renderer != NULL );
 	assert( renderer->GetDevice() != NULL );
 
-	// ç¿ïW(3) ñ@ê¸(3)*3 UV(2)
+	// Â∫ßÊ®ô(3) Ê≥ïÁ∑ö(3)*3 UV(2)
 	D3D11_INPUT_ELEMENT_DESC decl[] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "NORMAL", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "NORMAL", 2, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "BLENDINDICES",  0, DXGI_FORMAT_R8G8B8A8_UINT,  0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 3, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "BLENDINDICES",  0, DXGI_FORMAT_R8G8B8A8_UINT,  0, sizeof(float) * 15, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
 	Shader* shader_lighting_texture_normal = Shader::Create( 
@@ -409,7 +410,7 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 	ModelRendererVertexConstantBuffer<40>* vcb = (ModelRendererVertexConstantBuffer<40>*)shader_->GetVertexConstantBuffer();
 	ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*)shader_->GetPixelConstantBuffer();
 	
-	// å≈íËílê›íË
+	// Âõ∫ÂÆöÂÄ§Ë®≠ÂÆö
 	if (parameter.Lighting)
 	{
 		{

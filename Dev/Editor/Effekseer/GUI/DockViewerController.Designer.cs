@@ -70,7 +70,7 @@
 			this.lb_end.Name = "lb_end";
 			this.lb_end.Size = new System.Drawing.Size(29, 12);
 			this.lb_end.TabIndex = 6;
-			this.lb_end.Text = "終了";
+			this.lb_end.Text = Properties.Resources.End;
 			// 
 			// tb_end
 			// 
@@ -103,7 +103,7 @@
 			this.lb_st.Name = "lb_st";
 			this.lb_st.Size = new System.Drawing.Size(29, 12);
 			this.lb_st.TabIndex = 3;
-			this.lb_st.Text = "開始";
+			this.lb_st.Text = Properties.Resources.Start;
 			// 
 			// tb_start
 			// 
@@ -175,7 +175,7 @@
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.MinimumSize = new System.Drawing.Size(200, 100);
 			this.Name = "DockViewerController";
-			this.Text = "ビュワー操作";
+			this.Text = Properties.Resources.ViewerControls;
 			((System.ComponentModel.ISupportInitialize)(this.trackBar)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

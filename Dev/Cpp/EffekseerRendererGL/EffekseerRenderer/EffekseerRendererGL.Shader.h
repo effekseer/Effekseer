@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_GL_SHADER_H__
 #define	__EFFEKSEERRENDERER_GL_SHADER_H__
 
@@ -125,7 +125,7 @@ public:
 		int32_t pixelShaderSize,
 		const char* name);
 
-public:	// ƒfƒoƒCƒX•œ‹Œ—p
+public:	// ãƒ‡ãƒã‚¤ã‚¹å¾©æ—§ç”¨
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
 	virtual void OnChangeDevice();

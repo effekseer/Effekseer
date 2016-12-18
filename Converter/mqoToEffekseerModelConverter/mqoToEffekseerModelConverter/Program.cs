@@ -8,6 +8,8 @@ namespace mqoToEffekseerModelConverter
 {
 	class Program
 	{
+		const int Version = 1;
+
 		static void PrintUsage()
 		{
 			Console.WriteLine("Effekseer Model Conveter");
@@ -111,7 +113,7 @@ namespace mqoToEffekseerModelConverter
 
 			List<byte[]> data = new List<byte[]>();
 
-			data.Add(BitConverter.GetBytes(0));
+			data.Add(BitConverter.GetBytes(Version));
 
 			data.Add(BitConverter.GetBytes(modelCount));
 
@@ -139,6 +141,14 @@ namespace mqoToEffekseerModelConverter
 
 				data.Add(BitConverter.GetBytes(v.UV.X));
 				data.Add(BitConverter.GetBytes(v.UV.Y));
+
+				data.Add(
+					new byte[]
+					{
+					(byte)(v.Color.R * 255.0),
+					(byte)(v.Color.G * 255.0),
+					(byte)(v.Color.B * 255.0),
+					(byte)(v.Color.A * 255.0)});
 			}
 
 			data.Add(BitConverter.GetBytes((int)obj.Faces.Length));

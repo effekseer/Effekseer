@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_VECTOR2D_H__
 #define	__EFFEKSEER_VECTOR2D_H__
 
@@ -15,7 +15,7 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	3ŽŸŒ³ƒxƒNƒgƒ‹
+	@brief	3æ¬¡å…ƒãƒ™ã‚¯ãƒˆãƒ«
 */
 struct Vector2D
 {
@@ -31,12 +31,12 @@ public:
 	float	Y;
 
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	Vector2D();
 
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	Vector2D( float x, float y );
 

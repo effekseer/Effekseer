@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_INSTANCE_H__
 #define	__EFFEKSEER_INSTANCE_H__
 
@@ -28,7 +28,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
-	@brief	ƒGƒtƒFƒNƒg‚ÌÀ‘Ì
+	@brief	ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®å®Ÿä½“
 */
 class Instance
 {
@@ -39,26 +39,26 @@ class Instance
 public:
 	static const int32_t ChildrenMax = 16;
 
-	// ƒ}ƒl[ƒWƒƒ
+	// ãƒãƒãƒ¼ã‚¸ãƒ£
 	Manager*	m_pManager;
 
-	// ƒpƒ‰ƒ[ƒ^[
+	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼
 	EffectNodeImplemented* m_pEffectNode;
 
-	// ƒRƒ“ƒeƒi
+	// ã‚³ãƒ³ãƒ†ãƒŠ
 	InstanceContainer*	m_pContainer;
 
-	// ƒOƒ‹[ƒv‚Ì˜AŒ‹ƒŠƒXƒg‚Ìæ“ª
+	// ã‚°ãƒ«ãƒ¼ãƒ—ã®é€£çµãƒªã‚¹ãƒˆã®å…ˆé ­
 	InstanceGroup*	m_headGroups;
 
-	// e
+	// è¦ª
 	Instance*	m_pParent;
 	
-	// ƒOƒ[ƒoƒ‹ˆÊ’u
+	// ã‚°ãƒ­ãƒ¼ãƒãƒ«ä½ç½®
 	Vector3D	m_GlobalPosition;
 	Vector3D	m_GlobalVelocity;
 	
-	// ƒOƒ[ƒoƒ‹ˆÊ’u•â³
+	// ã‚°ãƒ­ãƒ¼ãƒãƒ«ä½ç½®è£œæ­£
 	Vector3D	m_GlobalRevisionLocation;
 	Vector3D	m_GlobalRevisionVelocity;
 	
@@ -178,7 +178,7 @@ public:
 
 	} scaling_values;
 
-	// •`‰æ
+	// æç”»
 	union
 	{
 		EffectNodeSprite::InstanceValues	sprite;
@@ -188,97 +188,97 @@ public:
 		EffectNodeTrack::InstanceValues		track;
 	} rendererValues;
 	
-	// ‰¹
+	// éŸ³
 	union
 	{
 		int		delay;
 	} soundValues;
 
-	// ó‘Ô
+	// çŠ¶æ…‹
 	eInstanceState	m_State;
 
-	// ¶‘¶ŠÔ
+	// ç”Ÿå­˜æ™‚é–“
 	float		m_LivedTime;
 
-	// ¶¬‚³‚ê‚Ä‚©‚ç‚ÌŠÔ
+	// ç”Ÿæˆã•ã‚Œã¦ã‹ã‚‰ã®æ™‚é–“
 	float		m_LivingTime;
 
-	/* ¶¬‚³‚ê‚½q‚ÌŒÂ” */
+	/* ç”Ÿæˆã•ã‚ŒãŸå­ã®å€‹æ•° */
 	int32_t		m_generatedChildrenCount[ChildrenMax];
 
-	/* Ÿ‚Éq‚ğ¶¬‚·‚éŠÔ */
+	/* æ¬¡ã«å­ã‚’ç”Ÿæˆã™ã‚‹æ™‚é–“ */
 	float		m_nextGenerationTime[ChildrenMax];
 
-	// ¶¬ˆÊ’u
+	// ç”Ÿæˆä½ç½®
 	Matrix43		m_GenerationLocation;
 
-	// •ÏŠ·—ps—ñ
+	// å¤‰æ›ç”¨è¡Œåˆ—
 	Matrix43		m_GlobalMatrix43;
 
-	// e‚Ì•ÏŠ·—ps—ñ
+	// è¦ªã®å¤‰æ›ç”¨è¡Œåˆ—
 	Matrix43		m_ParentMatrix43;
 
-	/* ŠÔ‚ği‚ß‚é‚©‚Ç‚¤‚©? */
+	/* æ™‚é–“ã‚’é€²ã‚ã‚‹ã‹ã©ã†ã‹? */
 	bool			m_stepTime;
 
-	/* XV”Ô† */
+	/* æ›´æ–°ç•ªå· */
 	uint32_t		m_sequenceNumber;
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	Instance( Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer );
 
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	virtual ~Instance();
 
 public:
 	/**
-		@brief	ó‘Ô‚Ìæ“¾
+		@brief	çŠ¶æ…‹ã®å–å¾—
 	*/
 	eInstanceState GetState() const;
 
 	/**
-		@brief	s—ñ‚Ìæ“¾
+		@brief	è¡Œåˆ—ã®å–å¾—
 	*/
 	const Matrix43& GetGlobalMatrix43() const;
 
 	/**
-		@brief	‰Šú‰»
+		@brief	åˆæœŸåŒ–
 	*/
 	void Initialize( Instance* parent, int32_t instanceNumber );
 
 	/**
-		@brief	XV
+		@brief	æ›´æ–°
 	*/
 	void Update( float deltaFrame, bool shown );
 
 	/**
-		@brief	•`‰æ
+		@brief	æç”»
 	*/
 	void Draw();
 
 	/**
-		@brief	”jŠü
+		@brief	ç ´æ£„
 	*/
 	void Kill();
 
 	/**
-		@brief	UV‚ÌˆÊ’uæ“¾
+		@brief	UVã®ä½ç½®å–å¾—
 	*/
 	RectF GetUV() const;
 
 private:
 	/**
-		@brief	s—ñ‚ÌXV
+		@brief	è¡Œåˆ—ã®æ›´æ–°
 	*/
 	void CalculateMatrix( float deltaFrame );
 	
 	/**
-		@brief	s—ñ‚ÌXV
+		@brief	è¡Œåˆ—ã®æ›´æ–°
 	*/
 	void CalculateParentMatrix();
 	
 	/**
-		@brief	â‘Îƒpƒ‰ƒ[ƒ^‚Ì”½‰f
+		@brief	çµ¶å¯¾ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®åæ˜ 
 	*/
 	void ModifyMatrixFromLocationAbs( float deltaFrame );
 	

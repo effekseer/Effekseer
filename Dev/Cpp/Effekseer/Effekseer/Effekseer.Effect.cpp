@@ -1,4 +1,4 @@
-
+ï»¿
 
 //----------------------------------------------------------------------------------
 //
@@ -107,7 +107,11 @@ Effect* EffectImplemented::Create( Manager* pManager, void* pData, int size, flo
 	if( pData == NULL || size == 0 ) return NULL;
 
 	EffectImplemented* effect = new EffectImplemented( pManager, pData, size );
-	effect->Load( pData, size, magnification, materialPath );
+	if ( !effect->Load( pData, size, magnification, materialPath ) )
+	{
+		effect->Release();
+		effect = NULL;
+	}
 	return effect;
 }
 
@@ -156,7 +160,11 @@ Effect* EffectImplemented::Create( Setting* setting, void* pData, int size, floa
 	if( pData == NULL || size == 0 ) return NULL;
 
 	EffectImplemented* effect = new EffectImplemented( setting, pData, size );
-	effect->Load( pData, size, magnification, materialPath );
+	if ( !effect->Load( pData, size, magnification, materialPath ) )
+	{
+		effect->Release();
+		effect = NULL;
+	}
 	return effect;
 }
 
@@ -267,7 +275,7 @@ float EffectImplemented::GetMaginification() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* materialPath )
+bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* materialPath )
 {
 	EffekseerPrintDebug("** Create : Effect\n");
 
@@ -276,13 +284,13 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	// EFKS
 	int head = 0;
 	memcpy( &head, pos, sizeof(int) );
-	if( memcmp( &head, "SKFE", 4 ) != 0 ) return;
+	if( memcmp( &head, "SKFE", 4 ) != 0 ) return false;
 	pos += sizeof( int );
 
 	memcpy( &m_version, pos, sizeof(int) );
 	pos += sizeof(int);
 
-	// ‰æ‘œ
+	// ç”»åƒ
 	memcpy( &m_ImageCount, pos, sizeof(int) );
 	pos += sizeof(int);
 
@@ -307,7 +315,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 
 	if (m_version >= 9)
 	{
-		// ‰æ‘œ
+		// ç”»åƒ
 		memcpy(&m_normalImageCount, pos, sizeof(int));
 		pos += sizeof(int);
 
@@ -330,7 +338,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 			}
 		}
 
-		// ‰æ‘œ
+		// ç”»åƒ
 		memcpy(&m_distortionImageCount, pos, sizeof(int));
 		pos += sizeof(int);
 
@@ -356,7 +364,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 
 	if( m_version >= 1 )
 	{
-		// ƒEƒF[ƒu
+		// ã‚¦ã‚§ãƒ¼ãƒ–
 		memcpy( &m_WaveCount, pos, sizeof(int) );
 		pos += sizeof(int);
 
@@ -382,7 +390,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 
 	if( m_version >= 6 )
 	{
-		/* ƒ‚ƒfƒ‹ */
+		/* ãƒ¢ãƒ‡ãƒ« */
 		memcpy( &m_modelCount, pos, sizeof(int) );
 		pos += sizeof(int);
 
@@ -406,7 +414,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		}
 	}
 
-	// Šg‘å—¦
+	// æ‹¡å¤§çŽ‡
 	if( m_version >= 2 )
 	{
 		memcpy( &m_maginification, pos, sizeof(float) );
@@ -415,7 +423,7 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		m_maginificationExternal = mag;
 	}
 
-	// ƒJƒŠƒ“ƒO
+	// ã‚«ãƒªãƒ³ã‚°
 	if( m_version >= 9 )
 	{
 		memcpy( &(Culling.Shape), pos, sizeof(int32_t) );
@@ -434,13 +442,14 @@ void EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		}
 	}
 
-	// ƒm[ƒh
+	// ãƒŽãƒ¼ãƒ‰
 	m_pRoot = EffectNodeImplemented::Create( this, NULL, pos );
 
-	// ƒŠƒ[ƒh—p‚ÉmaterialPath‚ð‹L˜^‚µ‚Ä‚¨‚­
+	// ãƒªãƒ­ãƒ¼ãƒ‰ç”¨ã«materialPathã‚’è¨˜éŒ²ã—ã¦ãŠã
     if (materialPath) m_materialPath = materialPath;
 
 	ReloadResources( materialPath );
+	return true;
 }
 
 //----------------------------------------------------------------------------------
@@ -549,7 +558,7 @@ int32_t EffectImplemented::GetColorImageCount() const
 
 void* EffectImplemented::GetNormalImage(int n) const
 {
-	/* ‹­§“I‚ÉŒÝŠ·‚ð‚Æ‚é */
+	/* å¼·åˆ¶çš„ã«äº’æ›ã‚’ã¨ã‚‹ */
 	if (this->m_version <= 8)
 	{
 		return m_pImages[n];
@@ -565,7 +574,7 @@ int32_t EffectImplemented::GetNormalImageCount() const
 
 void* EffectImplemented::GetDistortionImage(int n) const
 {
-	/* ‹­§“I‚ÉŒÝŠ·‚ð‚Æ‚é */
+	/* å¼·åˆ¶çš„ã«äº’æ›ã‚’ã¨ã‚‹ */
 	if (this->m_version <= 8)
 	{
 		return m_pImages[n];

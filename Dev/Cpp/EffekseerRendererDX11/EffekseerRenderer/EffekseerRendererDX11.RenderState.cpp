@@ -1,4 +1,4 @@
-
+﻿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ namespace EffekseerRendererDX11
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-RenderState::RenderState( RendererImplemented* renderer )
+	RenderState::RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC depthFunc)
 	: m_renderer	( renderer )
 {
 	D3D11_CULL_MODE cullTbl[] = 
@@ -41,7 +41,7 @@ RenderState::RenderState( RendererImplemented* renderer )
 		    ZeroMemory( &dsDesc, sizeof( D3D11_DEPTH_STENCIL_DESC ) );
 		    dsDesc.DepthEnable		= dt;
 		    dsDesc.DepthWriteMask	= (D3D11_DEPTH_WRITE_MASK)dw;
-		    dsDesc.DepthFunc		= D3D11_COMPARISON_LESS;
+			dsDesc.DepthFunc = depthFunc;
 		    dsDesc.StencilEnable	= FALSE;
 		    m_renderer->GetDevice()->CreateDepthStencilState( &dsDesc, &m_dStates[dt][dw] );
 		}

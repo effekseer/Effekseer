@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -84,10 +84,10 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 {
 	auto parameter = (EffectNodeImplemented*) m_pEffectNode;
 
-	// e‚Ìİ’è
+	// è¦ªã®è¨­å®š
 	m_pParent = parent;
 
-	// q‚Ì‰Šú‰»
+	// å­ã®åˆæœŸåŒ–
 	for (int32_t i = 0; i < Min(ChildrenMax, parameter->GetChildrenCount()); i++)
 	{
 		auto pNode = (EffectNodeImplemented*) parameter->GetChild(i);
@@ -98,35 +98,35 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 
 	if( m_pParent == NULL )
 	{
-		// ROOT‚Ìê‡
+		// ROOTã®å ´åˆ
 
-		// ó‘Ô‚Ì‰Šú‰»
+		// çŠ¶æ…‹ã®åˆæœŸåŒ–
 		m_State = INSTANCE_STATE_ACTIVE;
 
-		// ŠÔü‚è‚Ì‰Šú‰»
+		// æ™‚é–“å‘¨ã‚Šã®åˆæœŸåŒ–
 		m_LivingTime = 0.0f;
 		m_LivedTime = FLT_MAX;
 
-		// SRT‚Ì‰Šú‰»
+		// SRTã®åˆæœŸåŒ–
 		m_GenerationLocation.Indentity();
 		m_GlobalMatrix43.Indentity();
 		m_ParentMatrix43.Indentity();
 
-		// e‚Ì‰Šú‰»
+		// è¦ªã®åˆæœŸåŒ–
 		m_ParentMatrix43 = GetGlobalMatrix43();
 
 		return;
 	}
 
-	// ó‘Ô‚Ì‰Šú‰»
+	// çŠ¶æ…‹ã®åˆæœŸåŒ–
 	m_State = INSTANCE_STATE_ACTIVE;
 
-	// ŠÔü‚è‚Ì‰Šú‰»
+	// æ™‚é–“å‘¨ã‚Šã®åˆæœŸåŒ–
 	m_LivingTime = 0.0f;
 	m_LivedTime = (float)parameter->CommonValues.life.getValue( *m_pManager );
 
 
-	// SRT‚Ì‰Šú‰»
+	// SRTã®åˆæœŸåŒ–
 	m_pParent->GetGlobalMatrix43().GetTranslation( m_GlobalPosition );
 	m_GlobalRevisionLocation = Vector3D(0.0f, 0.0f, 0.0f);
 	m_GlobalRevisionVelocity = Vector3D(0.0f, 0.0f, 0.0f);
@@ -134,7 +134,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 	m_GlobalMatrix43.Indentity();
 	m_ParentMatrix43.Indentity();
 
-	// e‚Ì‰Šú‰»
+	// è¦ªã®åˆæœŸåŒ–
 	if( parameter->CommonValues.TranslationBindType == BindType_WhenCreating )
 	{
 		m_ParentMatrix43.Value[3][0] = m_pParent->m_GlobalMatrix43.Value[3][0];
@@ -199,7 +199,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		m_ParentMatrix43.Value[2][2] = s[2];
 	}
 	
-	/* ˆÊ’u */
+	/* ä½ç½® */
 	if( m_pEffectNode->TranslationType == ParameterTranslationType_Fixed )
 	{
 	}
@@ -223,7 +223,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		translation_values.fcruve.offset.z = m_pEffectNode->TranslationFCurve->Z.GetOffset( *m_pManager );
 	}
 	
-	/* ‰ñ“] */
+	/* å›è»¢ */
 	if( m_pEffectNode->RotationType == ParameterRotationType_Fixed )
 	{
 	}
@@ -262,7 +262,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		rotation_values.fcruve.offset.z = m_pEffectNode->RotationFCurve->Z.GetOffset( *m_pManager );
 	}
 
-	/* Šg‘åk¬ */
+	/* æ‹¡å¤§ç¸®å° */
 	if( m_pEffectNode->ScalingType == ParameterScalingType_Fixed )
 	{
 	}
@@ -297,7 +297,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		scaling_values.fcruve.offset.z = m_pEffectNode->ScalingFCurve->Z.GetOffset( *m_pManager );
 	}
 
-	/* ¶¬ˆÊ’u */
+	/* ç”Ÿæˆä½ç½® */
 	if( m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT )
 	{
 		vector3d p = m_pEffectNode->GenerationLocation.point.location.getValue( *m_pManager );
@@ -432,7 +432,7 @@ void Instance::Update( float deltaFrame, bool shown )
 {
 	if (m_stepTime && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
 	{
-		/* ‰¹‚ÌXV(Œ»ó•ú’u) */
+		/* éŸ³ã®æ›´æ–°(ç¾çŠ¶æ”¾ç½®) */
 		if (m_pEffectNode->SoundType == ParameterSoundType_Use)
 		{
 			float living_time = m_LivingTime;
@@ -454,15 +454,15 @@ void Instance::Update( float deltaFrame, bool shown )
 	}
 	else if( m_pEffectNode->LocationAbs.type != LocationAbsParameter::None )
 	{
-		// â‘ÎˆÊ’u‚ªİ’è‚³‚ê‚Ä‚¢‚éê‡‚Í–ˆ‰ñŒvZ‚ª•K—v
+		// çµ¶å¯¾ä½ç½®ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹å ´åˆã¯æ¯å›è¨ˆç®—ãŒå¿…è¦
 		calculateMatrix = true;
 	}
 	else
 	{
 		/**
-			Œ©‚¦‚È‚¢ƒP[ƒX‚Ås—ñŒvZ‚ª•K—v‚ÈƒP[ƒX
-			-q‚ª¶¬‚³‚ê‚éB
-			-q‚Ìq‚ª¶¬‚³‚ê‚éB
+			è¦‹ãˆãªã„ã‚±ãƒ¼ã‚¹ã§è¡Œåˆ—è¨ˆç®—ãŒå¿…è¦ãªã‚±ãƒ¼ã‚¹
+			-å­ãŒç”Ÿæˆã•ã‚Œã‚‹ã€‚
+			-å­ã®å­ãŒç”Ÿæˆã•ã‚Œã‚‹ã€‚
 			*/
 		if (m_stepTime && (originalTime <= m_LivedTime || !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct))
 		{
@@ -470,7 +470,7 @@ void Instance::Update( float deltaFrame, bool shown )
 			{
 				auto pNode = (EffectNodeImplemented*) m_pEffectNode->GetChild(i);
 
-				// ƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+				// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
 				if (pNode->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
 					originalTime + deltaFrame > m_nextGenerationTime[i])
 				{
@@ -481,7 +481,7 @@ void Instance::Update( float deltaFrame, bool shown )
 		}
 	}
 
-	/* e‚ª”jŠü‚³‚ê‚éuŠÔ‚És—ñŒvZ(ğŒ‚ği‚ê‚ÎX‚ÉÅ“K‰»‰Â”\) */
+	/* è¦ªãŒç ´æ£„ã•ã‚Œã‚‹ç¬é–“ã«è¡Œåˆ—è¨ˆç®—(æ¡ä»¶ã‚’çµã‚Œã°æ›´ã«æœ€é©åŒ–å¯èƒ½) */
 	if( !calculateMatrix && m_pParent != NULL && m_pParent->GetState() != INSTANCE_STATE_ACTIVE &&
 		!(m_pEffectNode->CommonValues.RemoveWhenParentIsRemoved && m_pEffectNode->GetChildrenCount() == 0))
 	{
@@ -493,19 +493,19 @@ void Instance::Update( float deltaFrame, bool shown )
 		CalculateMatrix( deltaFrame );
 	}
 
-	/* e‚Ìíœˆ— */
+	/* è¦ªã®å‰Šé™¤å‡¦ç† */
 	if (m_pParent != NULL && m_pParent->GetState() != INSTANCE_STATE_ACTIVE)
 	{
 		m_pParent = nullptr;
 	}
 
-	/* ŠÔ‚Ìis */
+	/* æ™‚é–“ã®é€²è¡Œ */
 	if(  m_stepTime )
 	{
 		m_LivingTime += deltaFrame;
 	}
 
-	// q‚Ìˆ—
+	// å­ã®å‡¦ç†
 	if( m_stepTime && (originalTime <= m_LivedTime || !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct) )
 	{
 		InstanceGroup* group = m_headGroups;
@@ -516,13 +516,13 @@ void Instance::Update( float deltaFrame, bool shown )
 			auto pContainer = m_pContainer->GetChild( i );
 			assert( group != NULL );
 
-			// ƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+			// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
 			while (true)
 			{
 				if (pNode->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
 					originalTime + deltaFrame > m_nextGenerationTime[i])
 				{
-					// ¶¬ˆ—
+					// ç”Ÿæˆå‡¦ç†
 					Instance* pNewInstance = group->CreateInstance();
 					if (pNewInstance != NULL)
 					{
@@ -544,11 +544,11 @@ void Instance::Update( float deltaFrame, bool shown )
 		}
 	}
 	
-	// €–S”»’è
+	// æ­»äº¡åˆ¤å®š
 	bool killed = false;
 	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
 	{
-		// ŠÔŒo‰ß
+		// æ™‚é–“çµŒé
 		if( m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct )
 		{
 			if( m_LivingTime > m_LivedTime )
@@ -557,7 +557,7 @@ void Instance::Update( float deltaFrame, bool shown )
 			}
 		}
 
-		// e‚ªÁ‚¦‚½ê‡
+		// è¦ªãŒæ¶ˆãˆãŸå ´åˆ
 		if( m_pEffectNode->CommonValues.RemoveWhenParentIsRemoved )
 		{
 			if( m_pParent == nullptr || m_pParent->GetState() != INSTANCE_STATE_ACTIVE )
@@ -567,7 +567,7 @@ void Instance::Update( float deltaFrame, bool shown )
 			}
 		}
 
-		// q‚ª‘S‚ÄÁ‚¦‚½ê‡
+		// å­ãŒå…¨ã¦æ¶ˆãˆãŸå ´åˆ
 		if( !killed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct )
 		{
 			int maxcreate_count = 0;
@@ -602,7 +602,7 @@ void Instance::Update( float deltaFrame, bool shown )
 
 	if(killed)
 	{
-		/* €–SŠm’èAŒvZ‚ª•K—v‚Èê‡‚ÍŒvZ‚ğ‚·‚éB*/
+		/* æ­»äº¡ç¢ºå®šæ™‚ã€è¨ˆç®—ãŒå¿…è¦ãªå ´åˆã¯è¨ˆç®—ã‚’ã™ã‚‹ã€‚*/
 		if( !calculateMatrix &&
 			m_pEffectNode->GetChildrenCount() > 0)
 		{
@@ -610,12 +610,12 @@ void Instance::Update( float deltaFrame, bool shown )
 			CalculateMatrix( deltaFrame );
 		}
 
-		/* ”jŠü */
+		/* ç ´æ£„ */
 		Kill();
 		return;
 	}
 
-	// ŠÔ‚Ìis‹–‰Â
+	// æ™‚é–“ã®é€²è¡Œè¨±å¯
 	m_stepTime = true;
 }
 
@@ -630,7 +630,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 	assert( m_pEffectNode != NULL );
 	assert( m_pContainer != NULL );
 
-	// e‚Ìˆ—
+	// è¦ªã®å‡¦ç†
 	if( m_pParent != NULL )
 	{
 		CalculateParentMatrix();
@@ -640,10 +640,10 @@ void Instance::CalculateMatrix( float deltaFrame )
 	Vector3D localAngle;
 	Vector3D localScaling;
 
-	/* XVˆ— */
+	/* æ›´æ–°å‡¦ç† */
 	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
 	{
-		/* ˆÊ’u‚ÌXV(ŠÔ‚©‚ç’¼Ú‹‚ß‚ê‚é‚æ‚¤‘Î‰Ï‚İ) */
+		/* ä½ç½®ã®æ›´æ–°(æ™‚é–“ã‹ã‚‰ç›´æ¥æ±‚ã‚ã‚Œã‚‹ã‚ˆã†å¯¾å¿œæ¸ˆã¿) */
 		if( m_pEffectNode->TranslationType == ParameterTranslationType_None )
 		{
 			localPosition.X = 0;
@@ -658,7 +658,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->TranslationType == ParameterTranslationType_PVA )
 		{
-			/* Œ»İˆÊ’u = ‰ŠúÀ•W + (‰Šú‘¬“x * t) + (‰Šú‰Á‘¬“x * t * t * 0.5)*/
+			/* ç¾åœ¨ä½ç½® = åˆæœŸåº§æ¨™ + (åˆæœŸé€Ÿåº¦ * t) + (åˆæœŸåŠ é€Ÿåº¦ * t * t * 0.5)*/
 			localPosition.X = translation_values.random.location.x +
 				(translation_values.random.velocity.x * m_LivingTime) +
 				(translation_values.random.acceleration.x * m_LivingTime * m_LivingTime * 0.5f);
@@ -695,7 +695,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 			localPosition.Z += m_GenerationLocation.Value[3][2];
 		}
 
-		/* ‰ñ“]‚ÌXV(ŠÔ‚©‚ç’¼Ú‹‚ß‚ê‚é‚æ‚¤‘Î‰Ï‚İ) */
+		/* å›è»¢ã®æ›´æ–°(æ™‚é–“ã‹ã‚‰ç›´æ¥æ±‚ã‚ã‚Œã‚‹ã‚ˆã†å¯¾å¿œæ¸ˆã¿) */
 		if( m_pEffectNode->RotationType == ParameterRotationType_None )
 		{
 			localAngle.X = 0;
@@ -710,7 +710,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->RotationType == ParameterRotationType_PVA )
 		{
-			/* Œ»İˆÊ’u = ‰ŠúÀ•W + (‰Šú‘¬“x * t) + (‰Šú‰Á‘¬“x * t * t * 0.5)*/
+			/* ç¾åœ¨ä½ç½® = åˆæœŸåº§æ¨™ + (åˆæœŸé€Ÿåº¦ * t) + (åˆæœŸåŠ é€Ÿåº¦ * t * t * 0.5)*/
 			localAngle.X = rotation_values.random.rotation.x +
 				(rotation_values.random.velocity.x * m_LivingTime) +
 				(rotation_values.random.acceleration.x * m_LivingTime * m_LivingTime * 0.5f);
@@ -755,7 +755,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 			localAngle.Z = m_pEffectNode->RotationFCurve->Z.GetValue( (int)m_LivingTime ) + rotation_values.fcruve.offset.z;
 		}
 
-		/* Šg‘å‚ÌXV(ŠÔ‚©‚ç’¼Ú‹‚ß‚ê‚é‚æ‚¤‘Î‰Ï‚İ) */
+		/* æ‹¡å¤§ã®æ›´æ–°(æ™‚é–“ã‹ã‚‰ç›´æ¥æ±‚ã‚ã‚Œã‚‹ã‚ˆã†å¯¾å¿œæ¸ˆã¿) */
 		if( m_pEffectNode->ScalingType == ParameterScalingType_None )
 		{
 			localScaling.X = 1.0f;
@@ -770,7 +770,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->ScalingType == ParameterScalingType_PVA )
 		{
-			/* Œ»İˆÊ’u = ‰ŠúÀ•W + (‰Šú‘¬“x * t) + (‰Šú‰Á‘¬“x * t * t * 0.5)*/
+			/* ç¾åœ¨ä½ç½® = åˆæœŸåº§æ¨™ + (åˆæœŸé€Ÿåº¦ * t) + (åˆæœŸåŠ é€Ÿåº¦ * t * t * 0.5)*/
 			localScaling.X = scaling_values.random.scale.x +
 				(scaling_values.random.velocity.x * m_LivingTime) +
 				(scaling_values.random.acceleration.x * m_LivingTime * m_LivingTime * 0.5f);
@@ -821,11 +821,11 @@ void Instance::CalculateMatrix( float deltaFrame )
 			localScaling.Z = m_pEffectNode->ScalingFCurve->Z.GetValue( (int32_t)m_LivingTime ) + scaling_values.fcruve.offset.z;
 		}
 
-		/* •`‰æ•”•ª‚ÌXV */
+		/* æç”»éƒ¨åˆ†ã®æ›´æ–° */
 		m_pEffectNode->UpdateRenderedInstance( *this, m_pManager );
 	}
 	
-	// s—ñ‚ÌXV
+	// è¡Œåˆ—ã®æ›´æ–°
 	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
 	{
 		m_GlobalMatrix43.Scaling( localScaling.X, localScaling.Y,  localScaling.Z );
@@ -882,7 +882,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 
 void Instance::CalculateParentMatrix()
 {
-	/* e‚Ìs—ñ‚ğXV(Œ»İ‚Í•K—v•s•K—vŠÖ‚í‚ç‚¸s‚È‚Á‚Ä‚¢‚é) */
+	/* è¦ªã®è¡Œåˆ—ã‚’æ›´æ–°(ç¾åœ¨ã¯å¿…è¦ä¸å¿…è¦é–¢ã‚ã‚‰ãšè¡Œãªã£ã¦ã„ã‚‹) */
 	//m_pParent->CalculateMatrix( deltaFrame );
 
 	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
@@ -952,7 +952,7 @@ void Instance::CalculateParentMatrix()
 	}
 	else
 	{
-		// Root‚Ìê‡
+		// Rootã®å ´åˆ
 		m_ParentMatrix43 = m_pParent->GetGlobalMatrix43();
 	}
 }
@@ -964,7 +964,7 @@ void Instance::ModifyMatrixFromLocationAbs( float deltaFrame )
 {
 	InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
 
-	/* â‘ÎˆÊ’u‚ÌXV(ŠÔ‚©‚ç’¼Ú‹‚ß‚ê‚é‚æ‚¤‘Î‰Ï‚İ) */
+	/* çµ¶å¯¾ä½ç½®ã®æ›´æ–°(æ™‚é–“ã‹ã‚‰ç›´æ¥æ±‚ã‚ã‚Œã‚‹ã‚ˆã†å¯¾å¿œæ¸ˆã¿) */
 	if( m_pEffectNode->LocationAbs.type == LocationAbsParameter::None )
 	{	
 	}

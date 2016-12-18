@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEERRENDERER_TRACK_RENDERER_BASE_H__
 #define	__EFFEKSEERRENDERER_TRACK_RENDERER_BASE_H__
 
@@ -232,7 +232,7 @@ protected:
 			m_ribbonCount += 2;
 		}
 
-		/* �S�Ă̒��_�̍��W��ϊ� */
+		/* 全ての頂点の座標を変換 */
 		if( isLast )
 		{
 			VERTEX* vs_ = (VERTEX*)(m_ringBufferData - sizeof(VERTEX) * 8 * (param.InstanceCount-1) );

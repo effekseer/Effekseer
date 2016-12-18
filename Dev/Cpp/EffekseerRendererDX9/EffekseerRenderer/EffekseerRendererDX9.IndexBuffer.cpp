@@ -1,4 +1,4 @@
-
+ï»¿
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ IndexBuffer::~IndexBuffer()
 //-----------------------------------------------------------------------------------
 IndexBuffer* IndexBuffer::Create( RendererImplemented* renderer, int maxCount, bool isDynamic )
 {
-	// ƒtƒ‰ƒO
+	// ãƒ•ãƒ©ã‚°
 	D3DPOOL pool = D3DPOOL_MANAGED;
 	int usage = D3DUSAGE_WRITEONLY;
 
@@ -42,17 +42,17 @@ IndexBuffer* IndexBuffer::Create( RendererImplemented* renderer, int maxCount, b
 		pool = D3DPOOL_DEFAULT;
 	}
 
-	// ƒtƒH[ƒ}ƒbƒg
+	// ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆ
 	D3DFORMAT format = D3DFMT_INDEX16;
 	int size = sizeof(uint16_t);
 
-	// ¶¬
+	// ç”Ÿæˆ
 	IDirect3DIndexBuffer9* ib = NULL;
 	HRESULT hr = renderer->GetDevice()->CreateIndexBuffer( maxCount * size, usage, format, pool, &ib, NULL );
 	
 	if( FAILED( hr ) )
 	{
-		// DirectX9Ex‚Å‚ÍD3DPOOL_MANAGEDŽg—p•s‰Â
+		// DirectX9Exã§ã¯D3DPOOL_MANAGEDä½¿ç”¨ä¸å¯
 		pool = D3DPOOL_DEFAULT;
 		hr = renderer->GetDevice()->CreateIndexBuffer( maxCount * size, usage, format, pool, &ib, NULL );
 	}
@@ -86,10 +86,10 @@ void IndexBuffer::OnChangeDevice()
 //-----------------------------------------------------------------------------------
 void IndexBuffer::OnResetDevice()
 {
-	// ƒoƒbƒtƒ@¶¬
+	// ãƒãƒƒãƒ•ã‚¡ç”Ÿæˆ
 	if ( m_buffer == NULL )
 	{
-		// ƒtƒ‰ƒO
+		// ãƒ•ãƒ©ã‚°
 		D3DPOOL pool = D3DPOOL_MANAGED;
 		int usage = D3DUSAGE_WRITEONLY;
 
@@ -99,7 +99,7 @@ void IndexBuffer::OnResetDevice()
 			pool = D3DPOOL_DEFAULT;
 		}
 
-		// ƒtƒH[ƒ}ƒbƒg
+		// ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆ
 		D3DFORMAT format = D3DFMT_INDEX16;
 		int size = sizeof(uint16_t);
 
@@ -107,7 +107,7 @@ void IndexBuffer::OnResetDevice()
 	
 		if( FAILED( hr ) )
 		{
-			// DirectX9Ex‚Å‚ÍD3DPOOL_MANAGEDŽg—p•s‰Â
+			// DirectX9Exã§ã¯D3DPOOL_MANAGEDä½¿ç”¨ä¸å¯
 			pool = D3DPOOL_DEFAULT;
 			hr = GetRenderer()->GetDevice()->CreateIndexBuffer( m_indexMaxCount * size, usage, format, pool, &m_buffer, NULL );
 		}

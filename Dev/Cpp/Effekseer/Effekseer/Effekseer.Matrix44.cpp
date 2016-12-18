@@ -1,4 +1,4 @@
-
+ï»¿
 
 //----------------------------------------------------------------------------------
 //
@@ -54,7 +54,7 @@ Matrix44& Matrix44::Transpose()
 //----------------------------------------------------------------------------------
 Matrix44& Matrix44::LookAtRH( const Vector3D& eye, const Vector3D& at, const Vector3D& up )
 {
-	// F=³–ÊAR=‰E•ûŒüAU=ã•ûŒü
+	// F=æ­£é¢ã€R=å³æ–¹å‘ã€U=ä¸Šæ–¹å‘
 	Vector3D F; 
 	Vector3D R;
 	Vector3D U;
@@ -89,7 +89,7 @@ Matrix44& Matrix44::LookAtRH( const Vector3D& eye, const Vector3D& at, const Vec
 //----------------------------------------------------------------------------------
 Matrix44& Matrix44::LookAtLH( const Vector3D& eye, const Vector3D& at, const Vector3D& up )
 {
-	// F=³–ÊAR=‰E•ûŒüAU=ã•ûŒü
+	// F=æ­£é¢ã€R=å³æ–¹å‘ã€U=ä¸Šæ–¹å‘
 	Vector3D F; 
 	Vector3D R;
 	Vector3D U;
@@ -512,7 +512,7 @@ Matrix44& Matrix44::Inverse(  Matrix44& o, const Matrix44& in )
 	float a43 = in.Values[3][2];
 	float a44 = in.Values[3][3];
 
-	/* s—ñ®‚ÌŒvZ */
+	/* è¡Œåˆ—å¼ã®è¨ˆç®— */
 	float b11 = + a22 * (a33 * a44 - a43 * a34) - a23 * (a32 * a44 - a42 * a34) + a24 * (a32 * a43 - a42 * a33);
 	float b12 = - a12 * (a33 * a44 - a43 * a34) + a13 * (a32 * a44 - a42 * a34) - a14 * (a32 * a43 - a42 * a33);
 	float b13 = + a12 * (a23 * a44 - a43 * a24) - a13 * (a22 * a44 - a42 * a24) + a14 * (a22 * a43 - a42 * a23);
@@ -533,7 +533,7 @@ Matrix44& Matrix44::Inverse(  Matrix44& o, const Matrix44& in )
 	float b43 = - a11 * (a22 * a43 - a42 * a23) + a12 * (a21 * a43 - a41 * a23) - a13 * (a21 * a42 - a41 * a22);
 	float b44 = + a11 * (a22 * a33 - a32 * a23) - a12 * (a21 * a33 - a31 * a23) + a13 * (a21 * a32 - a31 * a22);
 
-	// s—ñ®‚Ì‹t”‚ğ‚©‚¯‚é
+	// è¡Œåˆ—å¼ã®é€†æ•°ã‚’ã‹ã‘ã‚‹
 	float Det = (a11 * b11) + (a12 * b21) + (a13 * b31) + (a14 * b41);
 	if ( (-FLT_MIN <= Det) && (Det <= +FLT_MIN) )
 	{

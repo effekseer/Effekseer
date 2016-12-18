@@ -1,4 +1,4 @@
-
+ï»¿
 #pragma once
 
 //----------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ public:
 	VertexBuffer* GetVertexBuffer() { return m_vertexBuffer; }
 	IndexBuffer* GetIndexBuffer() { return m_indexBuffer; }
 
-public:	// ƒfƒoƒCƒX•œ‹Œ—p
+public:	// ãƒ‡ãƒã‚¤ã‚¹å¾©æ—§ç”¨
 	virtual void OnLostDevice();
 	virtual void OnResetDevice();
 

@@ -14,21 +14,6 @@ namespace Effekseer.GUI
 		public DockNetwork()
 		{
 			InitializeComponent();
-
-			if(Core.Language == Language.English)
-			{
-				Text = "Network";
-
-				btn_connect.Text = "Connect";
-				btn_send.Text = "Send Data";
-				lbl_state.Text = "State：";
-				cb_sendOnSave.Text = "Transmit data on save";
-				cb_sendOnEdit.Text = "Transmit data on edit";
-				cb_sendOnLoad.Text = "Transmit data on load";
-				cb_autoConnect.Text = "Auto-connect";
-				lbl_port.Text = "Port";
-				lbl_target.Text = "Address";
-			}
 		}
 
 		private void DockNetwork_Load(object sender, EventArgs e)
@@ -102,37 +87,18 @@ namespace Effekseer.GUI
 
 		public void Update_()
 		{
-			if(Core.Language == Language.Japanese)
+			if (Effekseer.Core.Viewer.IsConnected())
 			{
-				if (Effekseer.Core.Viewer.IsConnected())
-				{
-					lbl_state.Text = "状態：接続済";
-					btn_connect.Text = "切断";
-					btn_send.Enabled = true;
-				}
-				else
-				{
-					lbl_state.Text = "状態：未接続";
-					btn_connect.Text = "接続";
-					btn_send.Enabled = false;
-				}
+                lbl_state.Text = Properties.Resources.NetworkConnected;
+				btn_connect.Text = Properties.Resources.Disconnect;
+				btn_send.Enabled = true;
 			}
-			else if(Core.Language == Language.English)
+			else
 			{
-				if (Effekseer.Core.Viewer.IsConnected())
-				{
-					lbl_state.Text = "State: Connected";
-					btn_connect.Text = "Disconnect";
-					btn_send.Enabled = true;
-				}
-				else
-				{
-					lbl_state.Text = "State: Disconnected";
-					btn_connect.Text = "Connect";
-					btn_send.Enabled = false;
-				}
+                lbl_state.Text = Properties.Resources.NetworkDisconnected;
+                btn_connect.Text = Properties.Resources.Connect;
+				btn_send.Enabled = false;
 			}
-
 		}
 
 		private unsafe void btn_send_Click(object sender, EventArgs e)

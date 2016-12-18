@@ -15,6 +15,8 @@ namespace Effekseer.GUI.Component
 		{
 			InitializeComponent();
 
+            Text = Properties.Resources.FCurves;
+
 			Click += new EventHandler(FCurveButton_Click);
 		}
 

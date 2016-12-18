@@ -313,15 +313,8 @@ namespace Effekseer.Data
 				Position = new Value.Enum<PositionType>(PositionType.Default);
 				Position_Fixed_L = new Value.Float(-0.5f);
 				Position_Fixed_R = new Value.Float(0.5f);
-			
-				if(Core.Language == Language.Japanese)
-				{
-					ColorTexture = new Value.Path("画像ファイル (*.png)|*.png", true, "");
-				}
-				else if(Core.Language == Language.English)
-				{
-					ColorTexture = new Value.Path("Image File (*.png)|*.png", true, "");
-				}
+
+                ColorTexture = new Value.Path(Properties.Resources.ImageFilter, true, "");
 			}
 
             public enum ColorAllType : int
@@ -546,14 +539,7 @@ namespace Effekseer.Data
                 InnerColor_Random = new Value.ColorWithRandom(255, 255, 255, 0);
                 InnerColor_Easing = new ColorEasingParamater();
 
-				if (Core.Language == Language.Japanese)
-				{
-					ColorTexture = new Value.Path("画像ファイル (*.png)|*.png", true, "");
-				}
-				else if (Core.Language == Language.English)
-				{
-					ColorTexture = new Value.Path("Image File (*.png)|*.png", true, "");
-				}
+                ColorTexture = new Value.Path(Properties.Resources.ImageFilter, true, "");
             }
 
             public enum BillboardType : int
@@ -715,16 +701,8 @@ namespace Effekseer.Data
 
 			public ModelParamater()
 			{
-				if (Core.Language == Language.Japanese)
-				{
-					Model = new Value.Path("モデルファイル (*.efkmodel)|*.efkmodel", true, "");
-					NormalTexture = new Value.PathForImage("画像ファイル (*.png)|*.png", true, "");
-				}
-				else if (Core.Language == Language.English)
-				{
-					Model = new Value.Path("Model File (*.efkmodel)|*.efkmodel", true, "");
-					NormalTexture = new Value.PathForImage("Image File (*.png)|*.png", true, "");
-				}
+                Model = new Value.Path(Properties.Resources.ModelFilter, true, "");
+                NormalTexture = new Value.PathForImage(Properties.Resources.ImageFilter, true, "");
 				
 				Lighting = new Value.Boolean(true);
 				Culling = new Value.Enum<CullingValues>(Data.CullingValues.Front);
@@ -949,22 +927,28 @@ namespace Effekseer.Data
 		{
 			[Name(value = "無し", language = Language.Japanese)]
 			[Name(value = "None", language = Language.English)]
+			[Icon(resourceName = "NodeEmpty")]
 			None = 0,
 			//Particle = 1,
 			[Name(value = "スプライト", language = Language.Japanese)]
 			[Name(value = "Sprite", language = Language.English)]
+			[Icon(resourceName = "NodeSprite")]
 			Sprite = 2,
 			[Name(value = "リボン", language = Language.Japanese)]
 			[Name(value = "Ribbon", language = Language.English)]
+			[Icon(resourceName = "NodeRibbon")]
             Ribbon = 3,
 			[Name(value = "軌跡", language = Language.Japanese)]
 			[Name(value = "Track", language = Language.English)]
+			[Icon(resourceName = "NodeTrack")]
 			Track = 6,
             [Name(value = "リング", language = Language.Japanese)]
 			[Name(value = "Ring", language = Language.English)]
+			[Icon(resourceName = "NodeRing")]
             Ring = 4,
 			[Name(value = "モデル", language = Language.Japanese)]
 			[Name(value = "Model", language = Language.English)]
+			[Icon(resourceName = "NodeModel")]
 			Model = 5,
 		}
 

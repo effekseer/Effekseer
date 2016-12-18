@@ -19,11 +19,8 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockNodeGenerationLocationValues_HandleDestroyed);
 
 			lp_GenerationLocation.SetType(typeof(Data.GenerationLocationValues));
-
-			if (Core.Language == Language.English)
-			{
-				Text = "Spawn Method";
-			}
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconGenerationLocation).GetHicon());
 		}
 
 		void Read()

@@ -19,11 +19,8 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockNodeRendererCommonValues_HandleDestroyed);
 
 			lp_RendererCommon.SetType(typeof(Data.RendererCommonValues));
-
-			if (Core.Language == Language.English)
-			{
-				Text = "Basic Render Settings";
-			}
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconRendererCommon).GetHicon());
 		}
 
 		void Read()

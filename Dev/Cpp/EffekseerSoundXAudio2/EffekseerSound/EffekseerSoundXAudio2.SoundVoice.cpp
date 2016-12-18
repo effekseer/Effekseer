@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ SoundVoice* SoundVoiceContainer::GetVoice()
 		return NULL;
 	}
 
-	// ’â~ƒ{ƒCƒX‚ğ’T‚·
+	// åœæ­¢ãƒœã‚¤ã‚¹ã‚’æ¢ã™
 	std::list<SoundVoice*>::iterator it;
 	for (it = m_voiceList.begin(); it != m_voiceList.end(); it++) {
 		SoundVoice* voice = *it;
@@ -144,7 +144,7 @@ SoundVoice* SoundVoiceContainer::GetVoice()
 		}
 	}
 
-	// ’â~ƒ{ƒCƒX‚ª‚È‚¢‚Æ‚«‚ÍÅ‘Oƒ{ƒCƒX‚ğg—p
+	// åœæ­¢ãƒœã‚¤ã‚¹ãŒãªã„ã¨ãã¯æœ€å‰ãƒœã‚¤ã‚¹ã‚’ä½¿ç”¨
 	SoundVoice* voice = m_voiceList.front();
 	m_voiceList.pop_front();
 	m_voiceList.push_back(voice);

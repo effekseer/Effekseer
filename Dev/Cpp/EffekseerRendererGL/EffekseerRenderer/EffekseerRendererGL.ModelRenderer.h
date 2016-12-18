@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEERRENDERER_GL_MODEL_RENDERER_H__
 #define	__EFFEKSEERRENDERER_GL_MODEL_RENDERER_H__
 
@@ -36,7 +36,7 @@ public:
 		AttribBinormal,
 		AttribTangent,
 		AttribTexCoord,
-		
+		AttribColor,
 #if defined(MODEL_SOFTWARE_INSTANCING)
 		AttribInstanceID,
 		AttribUVOffset,

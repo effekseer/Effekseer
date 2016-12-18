@@ -1,4 +1,4 @@
-
+﻿
 #include "Culling3D.ReferenceObject.h"
 
 namespace Culling3D

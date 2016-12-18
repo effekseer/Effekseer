@@ -18,6 +18,7 @@ struct VS_Input
 	float3 Binormal		: NORMAL1;
 	float3 Tangent		: NORMAL2;
 	float2 UV		: TEXCOORD0;
+	float4 Color		: NORMAL3;
 	uint4 Index		: BLENDINDICES0;
 
 };
@@ -38,7 +39,7 @@ VS_Output VS( const VS_Input Input )
 {
 	float4x4 matModel = mModel[Input.Index.x];
 	float4 uv = fUV[Input.Index.x];
-	float4 modelColor = fModelColor[Input.Index.x];
+	float4 modelColor = fModelColor[Input.Index.x] * Input.Color;
 
 	VS_Output Output = (VS_Output)0;
 	float4 localPosition = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 }; 
@@ -78,7 +79,7 @@ VS_Output VS( const VS_Input Input )
 	Output.Color.r = diffuse;
 	Output.Color.g = diffuse;
 	Output.Color.b = diffuse;
-	Output.Color.a = 1.0 * modelColor.a;
+	Output.Color.a = 1.0;
 	Output.Color = Output.Color * fLightColor * modelColor;
 #else	
 	Output.Color = modelColor;

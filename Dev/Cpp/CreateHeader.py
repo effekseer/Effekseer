@@ -1,11 +1,12 @@
 import re
+import codecs
 
 class CreateHeader:
 	def __init__(self):
 		self.lines = []
 
 	def readLines(self,path):
-		f = open(path)
+		f = codecs.open(path, 'r','utf-8_sig')
 		line = f.readline()
 		while line:
 			if re.search('include \"', line) == None:
@@ -14,7 +15,7 @@ class CreateHeader:
 		f.close()
 
 	def output(self,path):
-		f = open(path, 'w')
+		f = codecs.open(path, 'w','utf-8_sig')
 		for line in self.lines:
 			f.write(line)
 		f.close()

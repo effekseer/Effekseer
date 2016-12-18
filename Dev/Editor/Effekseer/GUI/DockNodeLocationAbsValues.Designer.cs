@@ -55,7 +55,7 @@
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Name = "DockNodeLocationAbsValues";
-			this.Text = "絶対位置";
+			this.Text = Properties.Resources.AttractionForces;
 			this.Load += new System.EventHandler(this.DockNodeTranslationAbsValues_Load);
 			this.ResumeLayout(false);
 

@@ -19,11 +19,8 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockNodeScalingValues_HandleDestroyed);
 
 			lp_Scale.SetType(typeof(Data.ScaleValues));
-
-			if (Core.Language == Language.English)
-			{
-				Text = "Scale";
-			}
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconScale).GetHicon());
 		}
 
 		void Read()

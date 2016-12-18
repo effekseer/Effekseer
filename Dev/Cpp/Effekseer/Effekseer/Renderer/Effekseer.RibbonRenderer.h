@@ -1,4 +1,4 @@
-
+Ôªø
 #ifndef	__EFFEKSEER_RIBBON_RENDERER_H__
 #define	__EFFEKSEER_RIBBON_RENDERER_H__
 
@@ -46,7 +46,7 @@ public:
 		Matrix43		SRTMatrix43;
 		Color		AllColor;
 
-		// ç∂ÅAâE
+		// Â∑¶„ÄÅÂè≥
 		Color		Colors[2];
 
 		float	Positions[2];

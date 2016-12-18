@@ -1,4 +1,4 @@
-
+﻿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ void RendererImplemented::OnResetDevice()
 	{
 		m_indexBuffer->Lock();
 
-		// ( �W���ݒ�Ł@DirectX ���v���肪�\, OpenGL�͔����v��肪�\ )
+		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
 		for( int i = 0; i < m_squareMaxCount; i++ )
 		{
 			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect( 6 );
@@ -216,24 +216,24 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 {
 	m_d3d_device = device;
 
-	// ���_�̐���
+	// 頂点の生成
 	{
-		// �ő��float * 10 �Ɖ���
+		// 最大でfloat * 10 と仮定
 		m_vertexBuffer = VertexBuffer::Create( this, sizeof(float) * 10 * m_squareMaxCount * 4, true );
 		if( m_vertexBuffer == NULL ) return false;
 	}
 
-	// �Q�ƃJ�E���g�̒���
+	// 参照カウントの調整
 	Release();
 
-	// �C���f�b�N�X�̐���
+	// インデックスの生成
 	{
 		m_indexBuffer = IndexBuffer::Create( this, m_squareMaxCount * 6, false );
 		if( m_indexBuffer == NULL ) return false;
 
 		m_indexBuffer->Lock();
 
-		// ( �W���ݒ�Ł@DirectX ���v���肪�\, OpenGL�͔����v��肪�\ )
+		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
 		for( int i = 0; i < m_squareMaxCount; i++ )
 		{
 			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect( 6 );
@@ -248,13 +248,13 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 		m_indexBuffer->Unlock();
 	}
 
-	// �Q�ƃJ�E���g�̒���
+	// 参照カウントの調整
 	Release();
 
 	m_renderState = new RenderState( this );
 
 
-	// ���W(3) �F(1) UV(2)
+	// 座標(3) 色(1) UV(2)
 	D3DVERTEXELEMENT9 decl[] =
 	{
 		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
@@ -284,7 +284,7 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 		"StandardRenderer", decl);
 	if (m_shader == NULL) return false;
 
-	// �Q�ƃJ�E���g�̒���
+	// 参照カウントの調整
 	Release();
 
 	m_shader_no_texture = Shader::Create(
@@ -301,7 +301,7 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 		return false;
 	}
 
-	// �Q�ƃJ�E���g�̒���
+	// 参照カウントの調整
 	Release();
 
 	m_shader_distortion = Shader::Create(
@@ -314,7 +314,7 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 		decl_distortion);
 	if (m_shader_distortion == NULL) return false;
 
-	// �Q�ƃJ�E���g�̒���
+	// 参照カウントの調整
 	Release();
 
 	m_shader_no_texture_distortion = Shader::Create(
@@ -331,7 +331,7 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 		return false;
 	}
 
-	// �Q�ƃJ�E���g�̒���
+	// 参照カウントの調整
 	Release();
 
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
@@ -383,7 +383,7 @@ bool RendererImplemented::BeginRendering()
 
 	::Effekseer::Matrix44::Mul( m_cameraProj, m_camera, m_proj );
 	
-	// �X�e�[�g��ۑ�����
+	// ステートを保存する
 	if(m_restorationOfStates)
 	{
 		GetDevice()->GetRenderState( D3DRS_ALPHABLENDENABLE, &m_state_D3DRS_ALPHABLENDENABLE );
@@ -412,7 +412,7 @@ bool RendererImplemented::BeginRendering()
 		GetDevice()->GetFVF( &m_state_FVF );
 	}
 
-	// �X�e�[�g�����l�ݒ�
+	// ステート初期値設定
 	GetDevice()->SetTexture( 0, NULL );
 	GetDevice()->SetFVF( 0 );
 
@@ -426,7 +426,7 @@ bool RendererImplemented::BeginRendering()
 	GetDevice()->SetRenderState( D3DRS_ALPHATESTENABLE, TRUE );
 	GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
 
-	// �����_���[���Z�b�g
+	// レンダラーリセット
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
 	return true;
@@ -439,10 +439,10 @@ bool RendererImplemented::EndRendering()
 {
 	assert( m_d3d_device != NULL );
 	
-	// �����_���[���Z�b�g
+	// レンダラーリセット
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
-	// �X�e�[�g�𕜌�����
+	// ステートを復元する
 	if(m_restorationOfStates)
 	{
 		GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, m_state_D3DRS_ALPHABLENDENABLE );

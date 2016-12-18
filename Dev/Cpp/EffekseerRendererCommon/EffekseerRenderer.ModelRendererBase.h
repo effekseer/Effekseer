@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_MODEL_RENDERER_BASE_H__
 #define	__EFFEKSEERRENDERER_MODEL_RENDERER_BASE_H__
 
@@ -125,7 +125,7 @@ public:
 		state.AlphaBlend = param.AlphaBlend;
 		state.CullingType = param.Culling;
 
-		/*ƒVƒF[ƒ_[‘I‘ğ*/
+		/*ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼é¸æŠ*/
 		SHADER* shader_ = NULL;
 		if (distortion)
 		{
@@ -177,7 +177,7 @@ public:
 
 		renderer->BeginShader(shader_);
 
-		/*ƒeƒNƒXƒ`ƒƒ‘I‘ğ*/
+		/*ãƒ†ã‚¯ã‚¹ãƒãƒ£é¸æŠ*/
 		TEXTURE textures[2];
 		textures[0] = (TEXTURE)NULL;
 		textures[1] = (TEXTURE)NULL;
@@ -225,7 +225,7 @@ public:
 		{
 			ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*) shader_->GetPixelConstantBuffer();
 
-			// ŒÅ’è’lİ’è
+			// å›ºå®šå€¤è¨­å®š
 			if (param.Lighting)
 			{
 				{
@@ -251,7 +251,7 @@ public:
 
 		if(Instancing)
 		{
-			/* ƒoƒbƒtƒ@‚Ìİ’è‚ÌŒã‚ÉƒŒƒCƒAƒEƒg‚ğİ’è‚µ‚È‚¢‚Æ–³Œø */
+			/* ãƒãƒƒãƒ•ã‚¡ã®è¨­å®šã®å¾Œã«ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’è¨­å®šã—ãªã„ã¨ç„¡åŠ¹ */
 			renderer->SetVertexBuffer(model->VertexBuffer, sizeof(Effekseer::Model::VertexWithIndex));
 			renderer->SetIndexBuffer(model->IndexBuffer);
 			renderer->SetLayout(shader_);
@@ -281,7 +281,7 @@ public:
 		}
 		else
 		{
-			/* ƒoƒbƒtƒ@‚Ìİ’è‚ÌŒã‚ÉƒŒƒCƒAƒEƒg‚ğİ’è‚µ‚È‚¢‚Æ–³Œø */
+			/* ãƒãƒƒãƒ•ã‚¡ã®è¨­å®šã®å¾Œã«ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’è¨­å®šã—ãªã„ã¨ç„¡åŠ¹ */
 			renderer->SetVertexBuffer(model->VertexBuffer, sizeof(Effekseer::Model::Vertex));
 			renderer->SetIndexBuffer(model->IndexBuffer);
 			renderer->SetLayout(shader_);

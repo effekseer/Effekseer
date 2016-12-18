@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -271,7 +271,7 @@ static bool									g_mouseSlideDirectionInvY = false;
 //----------------------------------------------------------------------------------
 void SavePNGImage(const wchar_t* filepath, int32_t width, int32_t height, void* data, bool rev)
 {
-	/* \‘¢‘ÌŠm•Û */
+	/* æ§‹é€ ä½“ç¢ºä¿ */
 #if _WIN32
 	FILE *fp = _wfopen(filepath, L"wb");
 #else
@@ -283,14 +283,14 @@ void SavePNGImage(const wchar_t* filepath, int32_t width, int32_t height, void* 
 	png_structp pp = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	png_infop ip = png_create_info_struct(pp);
 
-	/* ‘‚«‚İ€”õ */
+	/* æ›¸ãè¾¼ã¿æº–å‚™ */
 	png_init_io(pp, fp);
 	png_set_IHDR(pp, ip, width, height,
-		8, /* 8bitˆÈŠO‚É‚·‚é‚È‚ç•Ï‚¦‚é */
-		PNG_COLOR_TYPE_RGBA, /* RGBAˆÈŠO‚É‚·‚é‚È‚ç•Ï‚¦‚é */
+		8, /* 8bitä»¥å¤–ã«ã™ã‚‹ãªã‚‰å¤‰ãˆã‚‹ */
+		PNG_COLOR_TYPE_RGBA, /* RGBAä»¥å¤–ã«ã™ã‚‹ãªã‚‰å¤‰ãˆã‚‹ */
 		PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
-	/* ƒsƒNƒZƒ‹—ÌˆæŠm•Û */
+	/* ãƒ”ã‚¯ã‚»ãƒ«é ˜åŸŸç¢ºä¿ */
 	std::vector<png_byte>  raw1D(height * png_get_rowbytes(pp, ip));
 	std::vector<png_bytep> raw2D(height * sizeof(png_bytep));
 	for (int32_t i = 0; i < height; i++)
@@ -300,7 +300,7 @@ void SavePNGImage(const wchar_t* filepath, int32_t width, int32_t height, void* 
 
 	memcpy((void*) raw1D.data(), data, width * height * 4);
 
-	/* ã‰º”½“] */
+	/* ä¸Šä¸‹åè»¢ */
 	if (rev)
 	{
 		for (int32_t i = 0; i < height / 2; i++)
@@ -311,12 +311,12 @@ void SavePNGImage(const wchar_t* filepath, int32_t width, int32_t height, void* 
 		}
 	}
 
-	/* ‘‚«‚İ */
+	/* æ›¸ãè¾¼ã¿ */
 	png_write_info(pp, ip);
 	png_write_image(pp, raw2D.data());
 	png_write_end(pp, ip);
 
-	/* ‰ğ•ú */
+	/* è§£æ”¾ */
 	png_destroy_write_struct(&pp, &ip);
 	fclose(fp);
 }
@@ -338,13 +338,13 @@ bool Combine( const wchar_t* rootPath, const wchar_t* treePath,  wchar_t* dst, i
 		treePathLength++;
 	}
 
-	// —¼•û‚Æ‚à‚È‚µ
+	// ä¸¡æ–¹ã¨ã‚‚ãªã—
 	if( rootPathLength == 0 && treePathLength == 0 )
 	{
 		return false;
 	}
 
-	// •Ğ•û‚È‚µ
+	// ç‰‡æ–¹ãªã—
 	if( rootPathLength == 0 )
 	{
 		if( treePathLength < dst_length )
@@ -371,9 +371,9 @@ bool Combine( const wchar_t* rootPath, const wchar_t* treePath,  wchar_t* dst, i
 		}
 	}
 	
-	// —¼•û‚ ‚è
+	// ä¸¡æ–¹ã‚ã‚Š
 
-	// ƒfƒBƒŒƒNƒgƒŠƒpƒX‚Ü‚Å–ß‚·B
+	// ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãƒ‘ã‚¹ã¾ã§æˆ»ã™ã€‚
 	int PathPosition = rootPathLength;
 	while( PathPosition > 0 )
 	{
@@ -384,11 +384,11 @@ bool Combine( const wchar_t* rootPath, const wchar_t* treePath,  wchar_t* dst, i
 		PathPosition--;
 	}
 
-	// ƒRƒs[‚·‚é
+	// ã‚³ãƒ”ãƒ¼ã™ã‚‹
 	memcpy( dst, rootPath, sizeof(wchar_t) * PathPosition );
 	dst[ PathPosition ] = 0;
 
-	// –³—‚â‚èŒq‚°‚é
+	// ç„¡ç†ã‚„ã‚Šç¹‹ã’ã‚‹
 	if( PathPosition + treePathLength > dst_length )
 	{
 		return false;
@@ -398,7 +398,7 @@ bool Combine( const wchar_t* rootPath, const wchar_t* treePath,  wchar_t* dst, i
 	PathPosition = PathPosition + treePathLength;
 	dst[ PathPosition ] = 0;
 
-	// ../ ..\ ‚Ìˆ—
+	// ../ ..\ ã®å‡¦ç†
 	for( int i = 0; i < PathPosition - 2; i++ )
 	{
 		if( dst[ i ] == L'.' && dst[ i + 1 ] == L'.' && ( dst[ i + 2 ] == L'/' || dst[ i + 2 ] == L'\\' ) )
@@ -699,7 +699,7 @@ void* Native::ModelLoader::Load( const EFK_CHAR* path )
 
 			if( FAILED( hr ) )
 			{
-				/* DirectX9Ex‚Å‚ÍD3DPOOL_MANAGEDg—p•s‰Â */
+				/* DirectX9Exã§ã¯D3DPOOL_MANAGEDä½¿ç”¨ä¸å¯ */
 				hr = m_renderer->GetDevice()->CreateVertexBuffer(
 					sizeof(Effekseer::Model::VertexWithIndex) * model->VertexCount * model->ModelCount,
 					D3DUSAGE_WRITEONLY,
@@ -833,7 +833,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode );
 	if( g_renderer->Initialize( (HWND)pHandle, width, height ) )
 	{
-		// ŠÖ”’Ç‰Á
+		// é–¢æ•°è¿½åŠ 
 		//::Effekseer::ScriptRegister::SetExternalFunction(0, print);
 
 		g_manager = ::Effekseer::Manager::Create( 20000 );

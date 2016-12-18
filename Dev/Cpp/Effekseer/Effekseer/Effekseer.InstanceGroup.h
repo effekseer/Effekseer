@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_INSTANCEGROUP_H__
 #define	__EFFEKSEER_INSTANCEGROUP_H__
 
@@ -18,9 +18,9 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
-	@brief	ƒCƒ“ƒXƒ^ƒ“ƒXƒOƒ‹[ƒv
+	@brief	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚°ãƒ«ãƒ¼ãƒ—
 	@note
-	ƒCƒ“ƒXƒ^ƒ“ƒXƒRƒ“ƒeƒi“à‚Å‚³‚ç‚ÉƒCƒ“ƒXƒ^ƒ“ƒX‚ğƒOƒ‹[ƒv‰»‚·‚éƒNƒ‰ƒX
+	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚³ãƒ³ãƒ†ãƒŠå†…ã§ã•ã‚‰ã«ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ã‚°ãƒ«ãƒ¼ãƒ—åŒ–ã™ã‚‹ã‚¯ãƒ©ã‚¹
 */
 class InstanceGroup
 {
@@ -33,7 +33,7 @@ private:
 	InstanceGlobal*		m_global;
 	int32_t				m_time;
 
-	// ƒCƒ“ƒXƒ^ƒ“ƒX‚ÌÀ‘Ì
+	// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®å®Ÿä½“
 	std::list<Instance*> m_instances;
 	std::list<Instance*> m_removingInstances;
 
@@ -46,7 +46,7 @@ private:
 public:
 
 	/** 
-		@brief	•`‰æ‚É•K—v‚Èƒpƒ‰ƒ[ƒ^
+		@brief	æç”»ã«å¿…è¦ãªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿
 	*/
 	union
 	{
@@ -54,7 +54,7 @@ public:
 	} rendererValues;
 
 	/**
-		@brief	ƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬
+		@brief	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
 	*/
 	Instance* CreateInstance();
 
@@ -75,17 +75,17 @@ public:
 	int32_t GetTime() const { return m_time; }
 
 	/**
-		@brief	ƒOƒ‹[ƒv‚ğ¶¬‚µ‚½ƒCƒ“ƒXƒ^ƒ“ƒX‚©‚ç‚ÌQÆ‚ªc‚Á‚Ä‚¢‚é‚©?
+		@brief	ã‚°ãƒ«ãƒ¼ãƒ—ã‚’ç”Ÿæˆã—ãŸã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰ã®å‚ç…§ãŒæ®‹ã£ã¦ã„ã‚‹ã‹?
 	*/
 	bool IsReferencedFromInstance;
 
 	/**
-		@brief	ƒCƒ“ƒXƒ^ƒ“ƒX‚©‚ç—˜—p‚·‚é˜AŒ‹ƒŠƒXƒg‚ÌŸ‚ÌƒIƒuƒWƒFƒNƒg‚Ö‚Ìƒ|ƒCƒ“ƒ^
+		@brief	ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰åˆ©ç”¨ã™ã‚‹é€£çµãƒªã‚¹ãƒˆã®æ¬¡ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¸ã®ãƒã‚¤ãƒ³ã‚¿
 	*/
 	InstanceGroup*	NextUsedByInstance;
 
 	/**
-		@brief	ƒRƒ“ƒeƒi‚©‚ç—˜—p‚·‚é˜AŒ‹ƒŠƒXƒg‚ÌŸ‚ÌƒIƒuƒWƒFƒNƒg‚Ö‚Ìƒ|ƒCƒ“ƒ^
+		@brief	ã‚³ãƒ³ãƒ†ãƒŠã‹ã‚‰åˆ©ç”¨ã™ã‚‹é€£çµãƒªã‚¹ãƒˆã®æ¬¡ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¸ã®ãƒã‚¤ãƒ³ã‚¿
 	*/
 	InstanceGroup*	NextUsedByContainer;
 

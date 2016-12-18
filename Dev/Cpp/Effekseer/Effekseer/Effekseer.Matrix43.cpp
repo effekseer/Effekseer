@@ -1,4 +1,4 @@
-
+﻿
 
 //----------------------------------------------------------------------------------
 //
@@ -334,7 +334,7 @@ void Matrix43::Multiple( Matrix43& out, const Matrix43& in1, const Matrix43& in2
 {
 #if 1
 	Matrix43 temp1, temp2;
-	// ���ʂ̏ꍇ�͈ꎞ�ϐ��ɃR�s�[
+	// 共通の場合は一時変数にコピー
 	const Matrix43& s1 = (&out == &in1) ? (temp1 = in1) : in1;
 	const Matrix43& s2 = (&out == &in2) ? (temp2 = in2) : in2;
 	

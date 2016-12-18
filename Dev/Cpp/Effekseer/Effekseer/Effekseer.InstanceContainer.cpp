@@ -1,4 +1,4 @@
-
+ï»¿
 
 //----------------------------------------------------------------------------------
 //
@@ -98,7 +98,7 @@ void InstanceContainer::SetChild( int num, InstanceContainer* pContainter )
 //----------------------------------------------------------------------------------
 void InstanceContainer::RemoveInvalidGroups()
 {
-	/* ÅŒã‚É‘¶Ý‚·‚é—LŒø‚ÈƒOƒ‹[ƒv */
+	/* æœ€å¾Œã«å­˜åœ¨ã™ã‚‹æœ‰åŠ¹ãªã‚°ãƒ«ãƒ¼ãƒ— */
 	InstanceGroup* tailGroup = NULL;
 
 	for( InstanceGroup* group = m_headGroups; group != NULL; )
@@ -170,13 +170,13 @@ InstanceGroup* InstanceContainer::GetFirstGroup() const
 //----------------------------------------------------------------------------------
 void InstanceContainer::Update( bool recursive, float deltaFrame, bool shown )
 {
-	// XV
+	// æ›´æ–°
 	for( InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer )
 	{
 		group->Update( deltaFrame, shown );
 	}
 	
-	// ”jŠü
+	// ç ´æ£„
 	RemoveInvalidGroups();
 
 	if( recursive )
@@ -240,7 +240,7 @@ void InstanceContainer::Draw( bool recursive )
 {
 	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_NONE )
 	{
-		/* ŒÂ”Œv‘ª */
+		/* å€‹æ•°è¨ˆæ¸¬ */
 		int32_t count = 0;
 		{
 			for( InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer )
@@ -257,7 +257,7 @@ void InstanceContainer::Draw( bool recursive )
 
 		if( count > 0 )
 		{
-			/* •`‰æ */
+			/* æç”» */
 			m_pEffectNode->BeginRendering(count, m_pManager);
 
 			for( InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer )

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Effekseer.Utl;
+using System.Globalization;
+using System.Threading;
 
 namespace Effekseer
 {
@@ -399,6 +401,16 @@ namespace Effekseer
 			LoadOption();
 
             Language = Option.GuiLanguage;
+
+            switch (Language)
+            {
+                case Effekseer.Language.English:
+                    Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+                    break;
+                case Effekseer.Language.Japanese:
+                    Thread.CurrentThread.CurrentUICulture = new CultureInfo("ja-JP");
+                    break;
+            }
 		}
 
 		public static void Dispose()

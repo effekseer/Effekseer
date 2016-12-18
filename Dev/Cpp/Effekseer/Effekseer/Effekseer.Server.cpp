@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ void ServerImplemented::InternalClient::RecvAsync( void* data )
 
 			if( recvSize == 0 || recvSize == -1 )
 			{
-				/* ¸”s */
+				/* å¤±æ•— */
 				client->m_server->RemoveClient( client );
 				client->ShutDown();
 				return;
@@ -54,7 +54,7 @@ void ServerImplemented::InternalClient::RecvAsync( void* data )
 
 			if( recvSize == 0 || recvSize == -1 )
 			{
-				/* ¸”s */
+				/* å¤±æ•— */
 				client->m_server->RemoveClient( client );
 				client->ShutDown();
 				return;
@@ -66,7 +66,7 @@ void ServerImplemented::InternalClient::RecvAsync( void* data )
 			}
 		}
 
-		/* óMˆ— */
+		/* å—ä¿¡å‡¦ç† */
 		client->m_ctrlRecvBuffers.Enter();
 		client->m_recvBuffers.push_back(client->m_recvBuffer);
 		client->m_ctrlRecvBuffers.Leave();
@@ -179,7 +179,7 @@ void ServerImplemented::AcceptAsync( void* data )
 			break;
 		}
 
-		/* Ú‘±’Ç‰Á */
+		/* æ¥ç¶šè¿½åŠ  */
 		server->AddClient( new InternalClient( socket_, server ) );
 
 		EffekseerPrintDebug("Server : AcceptClient\n");
@@ -200,19 +200,19 @@ bool ServerImplemented::Start( uint16_t port )
 	int32_t returnCode;
 	sockaddr_in sockAddr = { AF_INET };
 
-	/* ƒ\ƒPƒbƒg¶¬ */
+	/* ã‚½ã‚±ãƒƒãƒˆç”Ÿæˆ */
 	EfkSocket socket_ = Socket::GenSocket();
 	if ( socket_ == InvalidSocket )
 	{
 		return false;
 	}
 
-	/* Ú‘±—pƒf[ƒ^¶¬ */
+	/* æ¥ç¶šç”¨ãƒ‡ãƒ¼ã‚¿ç”Ÿæˆ */
 	memset( &sockAddr, 0, sizeof(SOCKADDR_IN));
 	sockAddr.sin_family	= AF_INET;
 	sockAddr.sin_port	= htons( port );
 
-	/* ŠÖ˜A•t‚¯ */
+	/* é–¢é€£ä»˜ã‘ */
 	returnCode = ::bind( socket_, (sockaddr*)&sockAddr, sizeof(sockaddr_in) );
 	if ( returnCode == SocketError )
 	{
@@ -223,7 +223,7 @@ bool ServerImplemented::Start( uint16_t port )
 		return false;
 	}
 
-	/* Ú‘± */
+	/* æ¥ç¶š */
 	if ( !Socket::Listen( socket_, 30 ) )
 	{
 		if ( socket_ != InvalidSocket )
@@ -258,7 +258,7 @@ void ServerImplemented::Stop()
 
 	m_thread.Wait();
 
-	/* ƒNƒ‰ƒCƒAƒ“ƒg’â~ */
+	/* ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆåœæ­¢ */
 	m_ctrlClients.Enter();
 	for( std::set<InternalClient*>::iterator it = m_clients.begin(); it != m_clients.end(); ++it )
 	{
@@ -267,7 +267,7 @@ void ServerImplemented::Stop()
 	m_ctrlClients.Leave();
 	
 
-	/* ƒNƒ‰ƒCƒAƒ“ƒg‚ÌÁ–Å‘Ò‚¿ */
+	/* ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã®æ¶ˆæ»…å¾…ã¡ */
 	while(true)
 	{
 		m_ctrlClients.Enter();
@@ -279,7 +279,7 @@ void ServerImplemented::Stop()
 		Sleep_(1);
 	}
 
-	/* ”jŠü */
+	/* ç ´æ£„ */
 	for( std::set<InternalClient*>::iterator it = m_removedClients.begin(); it != m_removedClients.end(); ++it )
 	{
 		while( (*it)->m_active )

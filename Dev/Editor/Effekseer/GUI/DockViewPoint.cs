@@ -14,19 +14,6 @@ namespace Effekseer.GUI
 		public DockViewPoint()
 		{
 			InitializeComponent();
-
-			if (Core.Language == Language.English)
-			{
-				Text = "Camera Settings";
-
-
-				this.lbl_type.Text = "Camera Mode";
-				this.lbl_mag.Text = "Zoom";
-				this.lbl_distance.Text = "PoV Distance";
-				this.lbl_angleX.Text = "X Rotation";
-				this.lbl_angleY.Text = "Y Rotation";
-				this.lbl_focus.Text = "Viewpoint";
-			}
 			
 			txt_focusX.ReadMethod = () =>
 				{
@@ -132,6 +119,8 @@ namespace Effekseer.GUI
 					GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
 				}
 			};
+			
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconViewPoint).GetHicon());
 		}
 
 		bool nowReloading = false;

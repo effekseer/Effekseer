@@ -1,4 +1,4 @@
-
+ï»¿
 #pragma once
 
 //----------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ public:
 
 	IDirect3DIndexBuffer9* GetInterface() { return m_buffer; }
 
-public:	// ƒfƒoƒCƒX•œ‹Œ—p
+public:	// ãƒ‡ãƒã‚¤ã‚¹å¾©æ—§ç”¨
 	virtual void OnLostDevice();
 	virtual void OnChangeDevice();
 	virtual void OnResetDevice();

@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_COLOR_H__
 #define	__EFFEKSEER_COLOR_H__
 
@@ -23,43 +23,43 @@ enum ColorMode
 };
 
 /**
-	@brief	F
+	@brief	è‰²
 */
 #pragma pack(push,1)
 struct Color
 {
 	/**
-		@brief	Ô
+		@brief	èµ¤
 	*/
 	uint8_t		R;
 
 	/**
-		@brief	—Î
+		@brief	ç·‘
 	*/
 	uint8_t		G;
 
 	/**
-		@brief	Â
+		@brief	é’
 	*/
 	uint8_t		B;
 	
 	/**
-		@brief	“§–¾“x
+		@brief	é€æ˜åº¦
 	*/
 	uint8_t		A;
 
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	Color();
 
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	Color( uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255 );
 
 	/**
-		@brief	æZ
+		@brief	ä¹—ç®—
 	*/
 	static void Mul( Color& o, const Color& in1, const Color& in2 );
 };

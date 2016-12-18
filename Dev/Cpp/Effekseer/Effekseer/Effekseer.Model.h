@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_MODEL_H__
 #define	__EFFEKSEER_MODEL_H__
 
@@ -18,11 +18,13 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒ‚ƒfƒ‹ƒNƒ‰ƒX
+	@brief	ãƒ¢ãƒ‡ãƒ«ã‚¯ãƒ©ã‚¹
 */
 class Model
 {
 public:
+	static const int32_t	Version = 1;
+
 	struct Vertex
 	{
 		Vector3D Position;
@@ -30,6 +32,7 @@ public:
 		Vector3D Binormal;
 		Vector3D Tangent;
 		Vector2D UV;
+		Color VColor;
 	};
 
 	struct VertexWithIndex
@@ -39,6 +42,7 @@ public:
 		Vector3D Binormal;
 		Vector3D Tangent;
 		Vector2D UV;
+		Color VColor;
 		uint8_t Index[4];
 	};
 
@@ -71,7 +75,7 @@ private:
 
 public:
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	Model( void* data, int32_t size ) 
 		: m_data	( NULL )
@@ -96,9 +100,25 @@ public:
 		memcpy( &m_vertexCount, p, sizeof(int32_t) );
 		p += sizeof(int32_t);
 
-		m_vertexes = (Vertex*)p;
-		p += ( sizeof(Vertex) * m_vertexCount );
+		if (m_version >= 1)
+		{
+			m_vertexes = (Vertex*) p;
+			p += (sizeof(Vertex) * m_vertexCount);
+		}
+		else
+		{
+			// æ–°è¦ãƒãƒƒãƒ•ã‚¡ç¢ºä¿
+			m_vertexes = new Vertex[m_vertexCount];
 
+			for (int32_t i = 0; i < m_vertexCount; i++)
+			{
+				memcpy(&m_vertexes[i], p, sizeof(Vertex) - sizeof(Color));
+				m_vertexes[i].VColor = Color(255, 255, 255, 255);
+
+				p += sizeof(Vertex) - sizeof(Color);
+			}
+		}
+		
 		memcpy( &m_faceCount, p, sizeof(int32_t) );
 		p += sizeof(int32_t);
 
@@ -115,10 +135,15 @@ public:
 	int32_t GetModelCount() { return m_modelCount; }
 
 	/**
-		@brief	ƒfƒXƒgƒ‰ƒNƒ^
+		@brief	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	virtual ~Model()
 	{
+		if (m_version == 0)
+		{
+			ES_SAFE_DELETE_ARRAY(m_vertexes);
+		}
+
 		ES_SAFE_DELETE_ARRAY( m_data );
 	}
 
@@ -137,7 +162,7 @@ public:
 		float p1 = ( (float)randFunc() / (float)randMax );
 		float p2 = ( (float)randFunc() / (float)randMax );
 
-		/* –Ê“à‚Éû‚ß‚é */
+		/* é¢å†…ã«åã‚ã‚‹ */
 		if( p1 + p2 > 1.0f )
 		{
 			p1 = 1.0f - p1;

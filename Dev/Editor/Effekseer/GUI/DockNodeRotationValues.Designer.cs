@@ -54,7 +54,7 @@
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
 			this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.Name = "DockNodeRotationValues";
-			this.Text = "回転";
+			this.Text = Properties.Resources.Rotation;
 			this.Load += new System.EventHandler(this.DockNodeRotationValues_Load);
 			this.ResumeLayout(false);
 

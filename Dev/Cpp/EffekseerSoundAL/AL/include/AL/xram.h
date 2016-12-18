@@ -1,4 +1,4 @@
-#include <al.h>
+﻿#include <al.h>
 
 // X-RAM Function pointer definitions
 typedef ALboolean (__cdecl *EAXSetBufferMode)(ALsizei n, ALuint *buffers, ALint value);

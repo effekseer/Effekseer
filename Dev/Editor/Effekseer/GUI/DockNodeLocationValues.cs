@@ -20,10 +20,7 @@ namespace Effekseer.GUI
 
 			lp_Translation.SetType(typeof(Data.LocationValues));
 
-			if (Core.Language == Language.English)
-			{
-				Text = "Position";
-			}
+			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconLocation).GetHicon());
 		}
 
 		void Read()

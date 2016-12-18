@@ -1,4 +1,4 @@
-#ifndef GD_INTERN_H
+﻿#ifndef GD_INTERN_H
 #define GD_INTERN_H
 
 #if HAVE_LIMITS_H

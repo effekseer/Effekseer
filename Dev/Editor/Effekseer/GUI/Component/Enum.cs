@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace Effekseer.GUI.Component
 {
@@ -20,20 +21,41 @@ namespace Effekseer.GUI.Component
 			// GetValuesだと順番が狂うため、GetFieldsで取得
 			var list = new List<T>();
 			var fields = typeof(T).GetFields();
-
+			var iconBitmaps = new List<Bitmap>();
+			bool hasIcon = false;
+			
 			foreach (var f in fields)
 			{
 				if (f.FieldType != typeof(T)) continue;
-
-				var name = NameAttribute.GetName(f.GetCustomAttributes(false));
+				
+				var attributes = f.GetCustomAttributes(false);
+				var name = NameAttribute.GetName(attributes);
 				if (name == string.Empty)
 				{
 					name = f.ToString();
 				}
+
+				Bitmap icon = null;
+				var iconAttribute = IconAttribute.GetIcon(attributes);
+				if (iconAttribute != null) {
+					icon = (Bitmap)Properties.Resources.ResourceManager.GetObject(iconAttribute.resourceName);
+					hasIcon = true;
+				}
+
 				Items.Add(name);
 				list.Add((T)f.GetValue(null));
+				iconBitmaps.Add(icon);
 			}
 			enums = list.ToArray();
+
+			if (hasIcon)
+			{
+				// アイコンが存在するときはカスタム描画に切り替える
+				icons = iconBitmaps.ToArray();
+				DrawMode = DrawMode.OwnerDrawFixed;
+				DrawItem += new DrawItemEventHandler(Enum_OnDrawItem);
+				ItemHeight += icons[0].Height / 2;
+			}
 
 			Reading = false;
 			Writing = false;
@@ -48,6 +70,7 @@ namespace Effekseer.GUI.Component
 		}
 
 		T[] enums = null;
+		Bitmap[] icons = null;
 		Data.Value.Enum<T> binding = null;
 
 		public bool EnableUndo { get; set; }
@@ -165,6 +188,28 @@ namespace Effekseer.GUI.Component
 				}
 				Writing = false;
 			}
+		}
+
+		void Enum_OnDrawItem(object sender, DrawItemEventArgs e)
+		{
+			if (e.Index == -1) return;
+			
+			e.DrawBackground();
+			
+			var icon = icons[e.Index];
+			e.Graphics.DrawImage(icon, e.Bounds.X, e.Bounds.Y);
+			
+			var font = this.Font;
+			using (var brush = new SolidBrush(e.ForeColor))
+			{
+				e.Graphics.DrawString(Items[e.Index].ToString(), font, brush, 
+					e.Bounds.X + icon.Width + 2, 
+					e.Bounds.Y + (icon.Height - font.Height) / 2 + 1);
+			}
+
+			e.DrawFocusRectangle();
+			
+
 		}
 	}
 }

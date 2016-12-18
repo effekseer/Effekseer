@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_INSTANCECONTAINER_H__
 #define	__EFFEKSEER_INSTANCECONTAINER_H__
 
@@ -27,25 +27,25 @@ class InstanceContainer
 
 private:
 
-	// ƒ}ƒl[ƒWƒƒ
+	// ãƒãƒãƒ¼ã‚¸ãƒ£
 	Manager*	m_pManager;
 
-	// ƒpƒ‰ƒ[ƒ^[
+	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼
 	EffectNodeImplemented* m_pEffectNode;
 
-	// ƒOƒ[ƒoƒ‹
+	// ã‚°ãƒ­ãƒ¼ãƒãƒ«
 	InstanceGlobal*	m_pGlobal;
 
-	// q‚ÌƒRƒ“ƒeƒi
+	// å­ã®ã‚³ãƒ³ãƒ†ãƒŠ
 	InstanceContainer**	m_Children;
 
-	// ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìq‚Ì”
+	// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®å­ã®æ•°
 	int	m_ChildrenCount;
 
-	// ƒOƒ‹[ƒv‚Ì˜AŒ‹ƒŠƒXƒg‚Ìæ“ª
+	// ã‚°ãƒ«ãƒ¼ãƒ—ã®é€£çµãƒªã‚¹ãƒˆã®å…ˆé ­
 	InstanceGroup*	m_headGroups;
 
-	// ƒOƒ‹[ƒv‚Ì˜AŒ‹ƒŠƒXƒg‚ÌÅŒã
+	// ã‚°ãƒ«ãƒ¼ãƒ—ã®é€£çµãƒªã‚¹ãƒˆã®æœ€å¾Œ
 	InstanceGroup*	m_tailGroups;
 
 	// placement new
@@ -57,29 +57,29 @@ private:
 	// default delete
 	static void operator delete( void* p ){}
 
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	InstanceContainer( Manager* pManager, EffectNode* pEffectNode, InstanceGlobal* pGlobal, int ChildrenCount );
 
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	virtual ~InstanceContainer();
 
-	// w’è‚µ‚½”Ô†‚ÉƒRƒ“ƒeƒi‚ğİ’è
+	// æŒ‡å®šã—ãŸç•ªå·ã«ã‚³ãƒ³ãƒ†ãƒŠã‚’è¨­å®š
 	void SetChild( int num, InstanceContainer* pContainter );
 
-	// –³Œø‚ÈƒOƒ‹[ƒv‚Ì”jŠü
+	// ç„¡åŠ¹ãªã‚°ãƒ«ãƒ¼ãƒ—ã®ç ´æ£„
 	void RemoveInvalidGroups();
 
 public:
-	// w’è‚µ‚½”Ô†‚ÌƒRƒ“ƒeƒi‚ğæ“¾
+	// æŒ‡å®šã—ãŸç•ªå·ã®ã‚³ãƒ³ãƒ†ãƒŠã‚’å–å¾—
 	InstanceContainer* GetChild( int num );
 
 	/**
-		@brief	ƒOƒ‹[ƒv‚Ìì¬
+		@brief	ã‚°ãƒ«ãƒ¼ãƒ—ã®ä½œæˆ
 	*/
 	InstanceGroup* CreateGroup();
 
 	/**
-		@brief	ƒOƒ‹[ƒv‚Ìæ“ªæ“¾
+		@brief	ã‚°ãƒ«ãƒ¼ãƒ—ã®å…ˆé ­å–å¾—
 	*/
 	InstanceGroup* GetFirstGroup() const;
 

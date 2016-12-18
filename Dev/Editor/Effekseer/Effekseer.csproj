@@ -40,7 +40,7 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>Image\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -481,9 +481,13 @@
     <EmbeddedResource Include="GUI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.en-US.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -504,8 +508,27 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="icon.ico" />
+    <Content Include="Image\icon.ico" />
     <Content Include="Image\BackStep.png" />
+    <Content Include="Image\IconCommon.png" />
+    <Content Include="Image\IconFCurve.png" />
+    <Content Include="Image\IconGenerationLocation.png" />
+    <Content Include="Image\IconLocation.png" />
+    <Content Include="Image\IconLocationAbs.png" />
+    <Content Include="Image\IconRecorder.png" />
+    <Content Include="Image\IconRenderer.png" />
+    <Content Include="Image\IconRendererCommon.png" />
+    <Content Include="Image\IconRotation.png" />
+    <Content Include="Image\IconScale.png" />
+    <Content Include="Image\IconSound.png" />
+    <Content Include="Image\IconViewer.png" />
+    <Content Include="Image\IconViewPoint.png" />
+    <Content Include="Image\NodeEmpty.png" />
+    <Content Include="Image\NodeModel.png" />
+    <Content Include="Image\NodeRibbon.png" />
+    <Content Include="Image\NodeRing.png" />
+    <Content Include="Image\NodeSprite.png" />
+    <Content Include="Image\NodeTrack.png" />
     <Content Include="Image\Pause.png" />
     <Content Include="Image\Play.png" />
     <Content Include="Image\Step.png" />

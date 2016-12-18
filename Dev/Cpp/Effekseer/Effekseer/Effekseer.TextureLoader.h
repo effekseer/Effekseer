@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_TEXTURELOADER_H__
 #define	__EFFEKSEER_TEXTURELOADER_H__
 
@@ -15,38 +15,38 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒeƒNƒXƒ`ƒƒ“Ç‚İ‚İ”jŠüŠÖ”w’èƒNƒ‰ƒX
+	@brief	ãƒ†ã‚¯ã‚¹ãƒãƒ£èª­ã¿è¾¼ã¿ç ´æ£„é–¢æ•°æŒ‡å®šã‚¯ãƒ©ã‚¹
 */
 class TextureLoader
 {
 public:
 	/**
-		@brief	ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+		@brief	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	TextureLoader() {}
 
 	/**
-		@brief	ƒfƒXƒgƒ‰ƒNƒ^
+		@brief	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	*/
 	virtual ~TextureLoader() {}
 
 	/**
-		@brief	ƒeƒNƒXƒ`ƒƒ‚ğ“Ç‚İ‚ŞB
-		@param	path	[in]	“Ç‚İ‚İŒ³ƒpƒX
-		@param	textureType	[in]	ƒeƒNƒXƒ`ƒƒ‚Ìí—Ş
-		@return	ƒeƒNƒXƒ`ƒƒ‚Ìƒ|ƒCƒ“ƒ^
+		@brief	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’èª­ã¿è¾¼ã‚€ã€‚
+		@param	path	[in]	èª­ã¿è¾¼ã¿å…ƒãƒ‘ã‚¹
+		@param	textureType	[in]	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ç¨®é¡
+		@return	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ãƒã‚¤ãƒ³ã‚¿
 		@note
-		ƒeƒNƒXƒ`ƒƒ‚ğ“Ç‚İ‚ŞB
-		::Effekseer::Effect::CreateÀs‚Ég—p‚³‚ê‚éB
+		ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’èª­ã¿è¾¼ã‚€ã€‚
+		::Effekseer::Effect::Createå®Ÿè¡Œæ™‚ã«ä½¿ç”¨ã•ã‚Œã‚‹ã€‚
 	*/
 	virtual void* Load( const EFK_CHAR* path, TextureType textureType ) { return NULL; }
 
 	/**
-		@brief	ƒeƒNƒXƒ`ƒƒ‚ğ”jŠü‚·‚éB
-		@param	data	[in]	ƒeƒNƒXƒ`ƒƒ
+		@brief	ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ç ´æ£„ã™ã‚‹ã€‚
+		@param	data	[in]	ãƒ†ã‚¯ã‚¹ãƒãƒ£
 		@note
-		ƒeƒNƒXƒ`ƒƒ‚ğ”jŠü‚·‚éB
-		::Effekseer::Effect‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ª”jŠü‚³‚ê‚½‚Ég—p‚³‚ê‚éB
+		ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ç ´æ£„ã™ã‚‹ã€‚
+		::Effekseer::Effectã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒç ´æ£„ã•ã‚ŒãŸæ™‚ã«ä½¿ç”¨ã•ã‚Œã‚‹ã€‚
 	*/
 	virtual void Unload( void* data ) {}
 };

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Generated file - do not edit directly.
  *
  * This file was generated from:

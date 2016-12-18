@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -40,6 +40,7 @@ static const char g_model_vs_src[] =
 	"IN vec4 a_Binormal;\n"
 	"IN vec4 a_Tangent;\n"
 	"IN vec4 a_TexCoord;\n"
+	"IN vec4 a_Color;\n"
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	"IN float a_InstanceID;\n"
 	"IN vec4 a_UVOffset;\n"
@@ -73,7 +74,7 @@ static const char g_model_vs_src[] =
 #else
 	"	mat4 modelMatrix = ModelMatrix;\n"
 	"	vec4 uvOffset = UVOffset;\n"
-	"	vec4 modelColor = ModelColor;\n"
+	"	vec4 modelColor = ModelColor * a_Color;\n"
 #endif
 	"	vec4 localPosition = modelMatrix * a_Position;\n"
 	"	gl_Position = ProjectionMatrix * localPosition;\n"
@@ -139,6 +140,7 @@ static const char g_model_distortion_vs_src [] =
 "IN vec4 a_Binormal;\n"
 "IN vec4 a_Tangent;\n"
 "IN vec4 a_TexCoord;\n"
+"IN vec4 a_Color;\n"
 #if defined(MODEL_SOFTWARE_INSTANCING)
 "IN float a_InstanceID;\n"
 "IN vec4 a_UVOffset;\n"
@@ -202,7 +204,7 @@ R"(
 	v_Tangent = ProjectionMatrix * localTangent;
 	v_Pos = gl_Position;
 
-	v_Color = modelColor;
+	v_Color = modelColor * a_Color;
 }
 )";
 
@@ -257,6 +259,7 @@ static ShaderAttribInfo g_model_attribs[ModelRenderer::NumAttribs] = {
 	{"a_Binormal",		GL_FLOAT,			3, 24,	false},
 	{"a_Tangent",		GL_FLOAT,			3, 36,	false},
 	{"a_TexCoord",		GL_FLOAT,			2, 48,	false},
+	{"a_Color", GL_UNSIGNED_BYTE,			4, 56,	true },
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	{"a_InstanceID",	GL_FLOAT,			1,  0,	false},
 	{"a_UVOffset",		GL_FLOAT,			4,	0,	false},
@@ -820,7 +823,7 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 
 	if( parameter.ColorTextureIndex >= 0 )
 	{
-		// ƒeƒNƒXƒ`ƒƒ—L‚è
+		// ãƒ†ã‚¯ã‚¹ãƒãƒ£æœ‰ã‚Š
 		textures[0] = (GLuint) parameter.EffectPointer->GetImage(parameter.ColorTextureIndex);
 	}
 	
@@ -838,7 +841,7 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 
 	m_renderer->GetRenderState()->Update( false );
 	
-	// ‚±‚±‚©‚ç
+	// ã“ã“ã‹ã‚‰
 	ModelRendererVertexConstantBuffer<1>* vcb = (ModelRendererVertexConstantBuffer<1>*)shader_->GetVertexConstantBuffer();
 	ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*)shader_->GetPixelConstantBuffer();
 	

@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEER_RECTF_H__
 #define	__EFFEKSEER_RECTF_H__
 
@@ -15,7 +15,7 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ŽlŠpŒ`
+	@brief	å››è§’å½¢
 */
 struct RectF
 {

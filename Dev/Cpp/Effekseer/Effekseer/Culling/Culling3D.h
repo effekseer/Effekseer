@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__CULLING3D_CULLING3D_H__
 #define	__CULLING3D_CULLING3D_H__
 
@@ -12,7 +12,7 @@
 namespace Culling3D
 {
 	/**
-	@brief	Å‘å’læ“¾
+	@brief	æœ€å¤§å€¤å–å¾—
 	*/
 	template <typename T, typename U>
 	T Max(T t, U u)
@@ -25,7 +25,7 @@ namespace Culling3D
 	}
 
 	/**
-	@brief	Å¬’læ“¾
+	@brief	æœ€å°å€¤å–å¾—
 	*/
 	template <typename T, typename U>
 	T Min(T t, U u)
@@ -38,7 +38,7 @@ namespace Culling3D
 	}
 
 	/**
-	@brief	”ÍˆÍ“à’læ“¾
+	@brief	ç¯„å›²å†…å€¤å–å¾—
 	*/
 	template <typename T, typename U, typename V>
 	T Clamp(T t, U max_, V min_)
@@ -145,7 +145,7 @@ namespace Culling3D
 		Vector3DF& operator /= (const float& o);
 
 		/**
-		@brief	‚±‚ÌƒxƒNƒgƒ‹‚Ì’·‚³‚ğæ“¾‚·‚éB
+		@brief	ã“ã®ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’å–å¾—ã™ã‚‹ã€‚
 		*/
 		float GetLength() const
 		{
@@ -153,7 +153,7 @@ namespace Culling3D
 		}
 
 		/**
-		@brief	‚±‚ÌƒxƒNƒgƒ‹‚Ì’·‚³‚Ì“ñæ‚ğæ“¾‚·‚éB
+		@brief	ã“ã®ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã®äºŒä¹—ã‚’å–å¾—ã™ã‚‹ã€‚
 		*/
 		float GetSquaredLength() const
 		{
@@ -161,7 +161,7 @@ namespace Culling3D
 		}
 
 		/**
-		@brief	‚±‚ÌƒxƒNƒgƒ‹‚Ì’·‚³‚ğİ’è‚·‚éB
+		@brief	ã“ã®ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’è¨­å®šã™ã‚‹ã€‚
 		*/
 		void SetLength(float value)
 		{
@@ -170,7 +170,7 @@ namespace Culling3D
 		}
 
 		/**
-		@brief	‚±‚ÌƒxƒNƒgƒ‹‚Ì’PˆÊƒxƒNƒgƒ‹‚ğæ“¾‚·‚éB
+		@brief	ã“ã®ãƒ™ã‚¯ãƒˆãƒ«ã®å˜ä½ãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—ã™ã‚‹ã€‚
 		*/
 		Vector3DF GetNormal()
 		{
@@ -179,7 +179,7 @@ namespace Culling3D
 		}
 
 		/**
-		@brief	‚±‚ÌƒxƒNƒgƒ‹‚Ì’PˆÊƒxƒNƒgƒ‹‰»‚·‚éB
+		@brief	ã“ã®ãƒ™ã‚¯ãƒˆãƒ«ã®å˜ä½ãƒ™ã‚¯ãƒˆãƒ«åŒ–ã™ã‚‹ã€‚
 		*/
 		void Normalize()
 		{
@@ -188,20 +188,20 @@ namespace Culling3D
 		}
 
 		/**
-		@brief	“àÏ‚ğæ“¾‚·‚éB
+		@brief	å†…ç©ã‚’å–å¾—ã™ã‚‹ã€‚
 		*/
 		static float Dot(const Vector3DF& v1, const Vector3DF& v2);
 
 		/**
-		@brief	ŠOÏ‚ğæ“¾‚·‚éB
+		@brief	å¤–ç©ã‚’å–å¾—ã™ã‚‹ã€‚
 		@note
-		‰EèŒn‚Ìê‡A‰Eè‚Ìew‚ªv1Al·‚µw‚ªv2‚Æ‚µ‚½‚Æ‚«A’†w‚Ì•ûŒü‚ğ•Ô‚·B<BR>
-		¶èŒn‚Ìê‡A¶è‚Ìew‚ªv1Al·‚µw‚ªv2‚Æ‚µ‚½‚Æ‚«A’†w‚Ì•ûŒü‚ğ•Ô‚·B<BR>
+		å³æ‰‹ç³»ã®å ´åˆã€å³æ‰‹ã®è¦ªæŒ‡ãŒv1ã€äººå·®ã—æŒ‡ãŒv2ã¨ã—ãŸã¨ãã€ä¸­æŒ‡ã®æ–¹å‘ã‚’è¿”ã™ã€‚<BR>
+		å·¦æ‰‹ç³»ã®å ´åˆã€å·¦æ‰‹ã®è¦ªæŒ‡ãŒv1ã€äººå·®ã—æŒ‡ãŒv2ã¨ã—ãŸã¨ãã€ä¸­æŒ‡ã®æ–¹å‘ã‚’è¿”ã™ã€‚<BR>
 		*/
 		static Vector3DF Cross(const Vector3DF& v1, const Vector3DF& v2);
 
 		/**
-		@brief	2“_ŠÔ‚Ì‹——£‚ğæ“¾‚·‚éB
+		@brief	2ç‚¹é–“ã®è·é›¢ã‚’å–å¾—ã™ã‚‹ã€‚
 		*/
 		static float Distance(const Vector3DF& v1, const Vector3DF& v2);
 	};
@@ -215,70 +215,70 @@ namespace Culling3D
 		Vector3DF Transform3D(const Vector3DF& in) const;
 
 		/**
-		@brief	ƒJƒƒ‰s—ñ(‰EèŒn)‚ğİ’è‚·‚éB
-		@param	eye	ƒJƒƒ‰‚ÌˆÊ’u
-		@param	at	ƒJƒƒ‰‚Ì’‹“_
-		@param	up	ƒJƒƒ‰‚Ìã•ûŒü
-		@return	‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ö‚ÌQÆ
+		@brief	ã‚«ãƒ¡ãƒ©è¡Œåˆ—(å³æ‰‹ç³»)ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	eye	ã‚«ãƒ¡ãƒ©ã®ä½ç½®
+		@param	at	ã‚«ãƒ¡ãƒ©ã®æ³¨è¦–ç‚¹
+		@param	up	ã‚«ãƒ¡ãƒ©ã®ä¸Šæ–¹å‘
+		@return	ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¸ã®å‚ç…§
 		*/
 		Matrix44& SetLookAtRH(const Vector3DF& eye, const Vector3DF& at, const Vector3DF& up);
 
 		/**
-		@brief	ƒJƒƒ‰s—ñ(¶èŒn)‚ğİ’è‚·‚éB
-		@param	eye	ƒJƒƒ‰‚ÌˆÊ’u
-		@param	at	ƒJƒƒ‰‚Ì’‹“_
-		@param	up	ƒJƒƒ‰‚Ìã•ûŒü
-		@return	‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ö‚ÌQÆ
+		@brief	ã‚«ãƒ¡ãƒ©è¡Œåˆ—(å·¦æ‰‹ç³»)ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	eye	ã‚«ãƒ¡ãƒ©ã®ä½ç½®
+		@param	at	ã‚«ãƒ¡ãƒ©ã®æ³¨è¦–ç‚¹
+		@param	up	ã‚«ãƒ¡ãƒ©ã®ä¸Šæ–¹å‘
+		@return	ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¸ã®å‚ç…§
 		*/
 		Matrix44& SetLookAtLH(const Vector3DF& eye, const Vector3DF& at, const Vector3DF& up);
 
 		/**
-		@brief	Ë‰es—ñ(‰EèŒn)‚ğİ’è‚·‚éB
-		@param	ovY	Y•ûŒü‚Ö‚Ì‹–ìŠp(ƒ‰ƒWƒAƒ“)
-		@param	aspect	‰æ–Ê‚ÌƒAƒXƒyƒNƒg”ä
-		@param	zn	Å‹ß‹——£
-		@param	zf	Å‰“‹——£
-		@return	‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ö‚ÌQÆ
+		@brief	å°„å½±è¡Œåˆ—(å³æ‰‹ç³»)ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	ovY	Yæ–¹å‘ã¸ã®è¦–é‡è§’(ãƒ©ã‚¸ã‚¢ãƒ³)
+		@param	aspect	ç”»é¢ã®ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”
+		@param	zn	æœ€è¿‘è·é›¢
+		@param	zf	æœ€é è·é›¢
+		@return	ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¸ã®å‚ç…§
 		*/
 		Matrix44& SetPerspectiveFovRH(float ovY, float aspect, float zn, float zf);
 
 		/**
-		@brief	OpenGL—pË‰es—ñ(‰EèŒn)‚ğİ’è‚·‚éB
-		@param	ovY	Y•ûŒü‚Ö‚Ì‹–ìŠp(ƒ‰ƒWƒAƒ“)
-		@param	aspect	‰æ–Ê‚ÌƒAƒXƒyƒNƒg”ä
-		@param	zn	Å‹ß‹——£
-		@param	zf	Å‰“‹——£
-		@return	‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ö‚ÌQÆ
+		@brief	OpenGLç”¨å°„å½±è¡Œåˆ—(å³æ‰‹ç³»)ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	ovY	Yæ–¹å‘ã¸ã®è¦–é‡è§’(ãƒ©ã‚¸ã‚¢ãƒ³)
+		@param	aspect	ç”»é¢ã®ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”
+		@param	zn	æœ€è¿‘è·é›¢
+		@param	zf	æœ€é è·é›¢
+		@return	ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¸ã®å‚ç…§
 		*/
 		Matrix44& SetPerspectiveFovRH_OpenGL(float ovY, float aspect, float zn, float zf);
 
 		/**
-		@brief	Ë‰es—ñ(¶èŒn)‚ğİ’è‚·‚éB
-		@param	ovY	Y•ûŒü‚Ö‚Ì‹–ìŠp(ƒ‰ƒWƒAƒ“)
-		@param	aspect	‰æ–Ê‚ÌƒAƒXƒyƒNƒg”ä
-		@param	zn	Å‹ß‹——£
-		@param	zf	Å‰“‹——£
-		@return	‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ö‚ÌQÆ
+		@brief	å°„å½±è¡Œåˆ—(å·¦æ‰‹ç³»)ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	ovY	Yæ–¹å‘ã¸ã®è¦–é‡è§’(ãƒ©ã‚¸ã‚¢ãƒ³)
+		@param	aspect	ç”»é¢ã®ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”
+		@param	zn	æœ€è¿‘è·é›¢
+		@param	zf	æœ€é è·é›¢
+		@return	ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¸ã®å‚ç…§
 		*/
 		Matrix44& SetPerspectiveFovLH(float ovY, float aspect, float zn, float zf);
 
 		/**
-		@brief	³Ë‰es—ñ(‰EèŒn)‚ğİ’è‚·‚éB
-		@param	width	‰¡•
-		@param	height	c•
-		@param	zn	Å‹ß‹——£
-		@param	zf	Å‰“‹——£
-		@return	‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ö‚ÌQÆ
+		@brief	æ­£å°„å½±è¡Œåˆ—(å³æ‰‹ç³»)ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	width	æ¨ªå¹…
+		@param	height	ç¸¦å¹…
+		@param	zn	æœ€è¿‘è·é›¢
+		@param	zf	æœ€é è·é›¢
+		@return	ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¸ã®å‚ç…§
 		*/
 		Matrix44& SetOrthographicRH(float width, float height, float zn, float zf);
 
 		/**
-		@brief	³Ë‰es—ñ(¶èŒn)‚ğİ’è‚·‚éB
-		@param	width	‰¡•
-		@param	height	c•
-		@param	zn	Å‹ß‹——£
-		@param	zf	Å‰“‹——£
-		@return	‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ö‚ÌQÆ
+		@brief	æ­£å°„å½±è¡Œåˆ—(å·¦æ‰‹ç³»)ã‚’è¨­å®šã™ã‚‹ã€‚
+		@param	width	æ¨ªå¹…
+		@param	height	ç¸¦å¹…
+		@param	zn	æœ€è¿‘è·é›¢
+		@param	zf	æœ€é è·é›¢
+		@return	ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¸ã®å‚ç…§
 		*/
 		Matrix44& SetOrthographicLH(float width, float height, float zn, float zf);
 
@@ -287,11 +287,11 @@ namespace Culling3D
 		Vector3DF operator*(const Vector3DF& right) const;
 
 		/**
-		@brief	æZ‚ğs‚¤B
-		@param	o	o—Íæ
-		@param	in1	s—ñ1
-		@param	in2	s—ñ2
-		@return	o—Íæ‚ÌQÆ
+		@brief	ä¹—ç®—ã‚’è¡Œã†ã€‚
+		@param	o	å‡ºåŠ›å…ˆ
+		@param	in1	è¡Œåˆ—1
+		@param	in2	è¡Œåˆ—2
+		@return	å‡ºåŠ›å…ˆã®å‚ç…§
 		*/
 		static Matrix44& Mul(Matrix44& o, const Matrix44& in1, const Matrix44& in2);
 	};
@@ -309,20 +309,20 @@ namespace Culling3D
 	{
 	public:
 		/**
-		@brief	QÆƒJƒEƒ“ƒ^‚ğ‰ÁZ‚·‚éB
-		@return	‰ÁZŒã‚ÌQÆƒJƒEƒ“ƒ^
+		@brief	å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿ã‚’åŠ ç®—ã™ã‚‹ã€‚
+		@return	åŠ ç®—å¾Œã®å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿
 		*/
 		virtual int AddRef() = 0;
 
 		/**
-		@brief	QÆƒJƒEƒ“ƒ^‚ğæ“¾‚·‚éB
-		@return	QÆƒJƒEƒ“ƒ^
+		@brief	å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿ã‚’å–å¾—ã™ã‚‹ã€‚
+		@return	å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿
 		*/
 		virtual int GetRef() = 0;
 
 		/**
-		@brief	QÆƒJƒEƒ“ƒ^‚ğŒ¸Z‚·‚éB0‚É‚È‚Á‚½AƒCƒ“ƒXƒ^ƒ“ƒX‚ğíœ‚·‚éB
-		@return	Œ¸ZŒã‚ÌQÆƒJƒEƒ“ƒ^
+		@brief	å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿ã‚’æ¸›ç®—ã™ã‚‹ã€‚0ã«ãªã£ãŸæ™‚ã€ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å‰Šé™¤ã™ã‚‹ã€‚
+		@return	æ¸›ç®—å¾Œã®å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿
 		*/
 		virtual int Release() = 0;
 	};

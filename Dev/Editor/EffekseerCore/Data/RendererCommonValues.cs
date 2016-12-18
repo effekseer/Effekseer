@@ -123,14 +123,7 @@ namespace Effekseer.Data
 
 		internal RendererCommonValues()
 		{
-			if(Core.Language == Language.Japanese)
-			{
-				ColorTexture = new Value.PathForImage("画像ファイル (*.png)|*.png", true, "");
-			}
-			else if(Core.Language == Language.English)
-			{
-				ColorTexture = new Value.PathForImage("Image File (*.png)|*.png", true, "");
-			}
+            ColorTexture = new Value.PathForImage(Properties.Resources.ImageFilter, true, "");
 			
 			AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);

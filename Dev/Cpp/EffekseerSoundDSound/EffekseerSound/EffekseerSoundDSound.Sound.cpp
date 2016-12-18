@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ bool SoundImplemented::Initialize( IDirectSound8* dsound )
 {
 	m_dsound = dsound;
 	
-	// ƒ{ƒCƒX‚ğì¬
+	// ãƒœã‚¤ã‚¹ã‚’ä½œæˆ
 	m_voiceContainer = new SoundVoiceContainer(this, 32);
 	
 	return true;

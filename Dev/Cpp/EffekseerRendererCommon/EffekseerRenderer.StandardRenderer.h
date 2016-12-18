@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_STANDARD_RENDERER_BASE_H__
 #define	__EFFEKSEERRENDERER_STANDARD_RENDERER_BASE_H__
 
@@ -142,7 +142,7 @@ public:
 	{
 		Rendering();
 
-		// •K‚¸Ÿ‚Ì•`‰æ‚Å‰Šú‰»‚³‚ê‚éB
+		// å¿…ãšæ¬¡ã®æç”»ã§åˆæœŸåŒ–ã•ã‚Œã‚‹ã€‚
 		m_state.TexturePtr = (void*)0x1;
 	}
 
@@ -174,7 +174,7 @@ public:
 
 			if (m_state.Distortion)
 			{
-				// OpenGL ES‘Îô(OpenGL ES3.2ˆÈ~‚Å‚µ‚©A’¸“_ƒŒƒCƒAƒEƒg‰Â•Ï‚ÌƒŠƒ“ƒOƒoƒbƒtƒ@‚ğÀŒ»‚Å‚«‚È‚¢‚½‚ß)
+				// OpenGL ESå¯¾ç­–(OpenGL ES3.2ä»¥é™ã§ã—ã‹ã€é ‚ç‚¹ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆå¯å¤‰ã®ãƒªãƒ³ã‚°ãƒãƒƒãƒ•ã‚¡ã‚’å®Ÿç¾ã§ããªã„ãŸã‚)
 				vb->Lock();
 				data = vb->GetBufferDirect(vertexCaches.size());
 				if (data == nullptr)
@@ -193,7 +193,7 @@ public:
 			}
 			else
 			{
-				// Œ»óA•`‰æ‚·‚éƒCƒ“ƒXƒ^ƒ“ƒX”‚ª‘½‚·‚¬‚éê‡‚Í•`‰æ‚µ‚È‚­‚µ‚Ä‚¢‚é
+				// ç¾çŠ¶ã€æç”»ã™ã‚‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ•°ãŒå¤šã™ãã‚‹å ´åˆã¯æç”»ã—ãªãã—ã¦ã„ã‚‹
 				vertexCaches.clear();
 				return;
 			}

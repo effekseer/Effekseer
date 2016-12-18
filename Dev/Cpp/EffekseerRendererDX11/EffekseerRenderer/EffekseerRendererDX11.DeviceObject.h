@@ -1,4 +1,4 @@
-
+ï»¿
 #ifndef	__EFFEKSEERRENDERER_DX11_DEVICEOBJECT_H__
 #define	__EFFEKSEERRENDERER_DX11_DEVICEOBJECT_H__
 
@@ -16,7 +16,7 @@ namespace EffekseerRendererDX11
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	ƒfƒoƒCƒX‚É‚æ‚Á‚Ä¶¬‚³‚ê‚éƒIƒuƒWƒFƒNƒg
+	@brief	ãƒ‡ãƒã‚¤ã‚¹ã«ã‚ˆã£ã¦ç”Ÿæˆã•ã‚Œã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 */
 class DeviceObject
 {

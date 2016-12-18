@@ -1,4 +1,4 @@
-
+﻿
 #ifndef	__EFFEKSEERRENDERER_GL_BASE_PRE_H__
 #define	__EFFEKSEERRENDERER_GL_BASE_PRE_H__
 
@@ -42,6 +42,14 @@
 #else
 #define GL_GLEXT_PROTOTYPES
 #include <GLES3/gl3.h>
+#endif
+
+#elif defined(__EFFEKSEER_RENDERER_GL2__)
+
+#if defined(__APPLE__)
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
 #endif
 
 #else

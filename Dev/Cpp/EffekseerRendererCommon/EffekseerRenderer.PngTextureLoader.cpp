@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -107,29 +107,29 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 	
 	ES_SAFE_DELETE(bmp);
 
-#elif PNG_LIBPNG_VER < 10504 /* Libpng 1.2Œn */
+#elif PNG_LIBPNG_VER < 10504 /* Libpng 1.2ç³» */
 	uint8_t* data_ = (uint8_t*) data;
 
-	/* pngƒAƒNƒZƒX\‘¢‘Ì‚ğì¬ */
+	/* pngã‚¢ã‚¯ã‚»ã‚¹æ§‹é€ ä½“ã‚’ä½œæˆ */
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	
-	/* ƒŠ[ƒhƒR[ƒ‹ƒoƒbƒNŠÖ”w’è */
+	/* ãƒªãƒ¼ãƒ‰ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•°æŒ‡å®š */
 	png_set_read_fn(png, &data_, &PngReadData);
 
-	/* png‰æ‘œî•ñ\‘¢‘Ì‚ğì¬ */
+	/* pngç”»åƒæƒ…å ±æ§‹é€ ä½“ã‚’ä½œæˆ */
 	png_infop png_info = png_create_info_struct(png);
 
-	/* ƒGƒ‰[ƒnƒ“ƒhƒŠƒ“ƒO */
+	/* ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒªãƒ³ã‚° */
 	if (setjmp(png_jmpbuf(png)))
 	{
 		png_destroy_read_struct(&png, &png_info, NULL);
 		return false;
 	}
 
-	/* IHDRƒ`ƒƒƒ“ƒNî•ñ‚ğæ“¾ */
+	/* IHDRãƒãƒ£ãƒ³ã‚¯æƒ…å ±ã‚’å–å¾— */
 	png_read_info(png, png_info);
 
-	/* RGBA8888ƒtƒH[ƒ}ƒbƒg‚É•ÏŠ·‚·‚é */
+	/* RGBA8888ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã«å¤‰æ›ã™ã‚‹ */
 	if (png_info->bit_depth < 8)
 	{
 		png_set_packing(png);
@@ -160,7 +160,7 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 	uint8_t* image = new uint8_t[png_info->width * png_info->height * pixelBytes];
 	uint32_t pitch = png_info->width * pixelBytes;
 
-	/* ƒCƒ[ƒWƒf[ƒ^‚ğ“Ç‚İ‚Ş */
+	/* ã‚¤ãƒ¡ãƒ¼ã‚¸ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€ */
 
 	textureWidth = png_info->width;
 	textureHeight = png_info->height;
@@ -205,39 +205,39 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 	png_destroy_read_struct(&png, &png_info, NULL);
 
 	return true;
-#else /* Libpng 1.6Œn */
+#else /* Libpng 1.6ç³» */
 	textureWidth = 0;
 	textureHeight = 0;
 	textureData.clear();
 
 	uint8_t* data_ = (uint8_t*) data;
 
-	/* pngƒAƒNƒZƒX\‘¢‘Ì‚ğì¬ */
+	/* pngã‚¢ã‚¯ã‚»ã‚¹æ§‹é€ ä½“ã‚’ä½œæˆ */
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
-	/* ƒŠ[ƒhƒR[ƒ‹ƒoƒbƒNŠÖ”w’è */
+	/* ãƒªãƒ¼ãƒ‰ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•°æŒ‡å®š */
 	png_set_read_fn(png, &data_, &PngReadData);
 
-	/* png‰æ‘œî•ñ\‘¢‘Ì‚ğì¬ */
+	/* pngç”»åƒæƒ…å ±æ§‹é€ ä½“ã‚’ä½œæˆ */
 	png_infop png_info = png_create_info_struct(png);
 
-	/* ƒGƒ‰[ƒnƒ“ƒhƒŠƒ“ƒO */
+	/* ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒªãƒ³ã‚° */
 	if (setjmp(png_jmpbuf(png)))
 	{
 		png_destroy_read_struct(&png, &png_info, NULL);
 
 		// if (log != nullptr)
 		// {
-		// 	log->WriteLineStrongly("pngƒtƒ@ƒCƒ‹‚Ìƒwƒbƒ_‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½B");
+		// 	log->WriteLineStrongly("pngãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ˜ãƒƒãƒ€ã®èª­ã¿è¾¼ã¿ã«å¤±æ•—ã—ã¾ã—ãŸã€‚");
 		// }
 		
 		return false;
 	}
 
-	/* IHDRƒ`ƒƒƒ“ƒNî•ñ‚ğæ“¾ */
+	/* IHDRãƒãƒ£ãƒ³ã‚¯æƒ…å ±ã‚’å–å¾— */
 	png_read_info(png, png_info);
 
-	/* RGBA8888ƒtƒH[ƒ}ƒbƒg‚É•ÏŠ·‚·‚é */
+	/* RGBA8888ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã«å¤‰æ›ã™ã‚‹ */
 	const png_byte bit_depth = png_get_bit_depth(png, png_info);
 	if (bit_depth < 8)
 	{
@@ -292,7 +292,7 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 	uint8_t* image = new uint8_t[textureWidth * textureHeight * pixelBytes];
 	uint32_t pitch = textureWidth * pixelBytes;
 
-	// “Ç‚İ‚İ
+	// èª­ã¿è¾¼ã¿
 	if (rev)
 	{
 		for (uint32_t i = 0; i < textureHeight; i++)

@@ -1,4 +1,4 @@
-#ifndef __efxcreative_h_
+﻿#ifndef __efxcreative_h_
 #define __efxcreative_h_
 
 /**

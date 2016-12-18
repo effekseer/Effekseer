@@ -1,4 +1,4 @@
-#ifndef AL_ALC_H
+﻿#ifndef AL_ALC_H
 #define AL_ALC_H
 
 #if defined(__cplusplus)
