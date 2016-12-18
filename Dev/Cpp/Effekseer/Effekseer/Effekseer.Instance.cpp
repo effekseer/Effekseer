@@ -454,7 +454,7 @@ void Instance::Update( float deltaFrame, bool shown )
 	}
 	else if( m_pEffectNode->LocationAbs.type != LocationAbsParameter::None )
 	{
-		// 絶対位置が設定されている場合は毎回計算が必要
+		// If attraction forces are not default, updating is needed in each frame.
 		calculateMatrix = true;
 	}
 	else
@@ -964,7 +964,7 @@ void Instance::ModifyMatrixFromLocationAbs( float deltaFrame )
 {
 	InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
 
-	/* 絶対位置の更新(時間から直接求めれるよう対応済み) */
+	// Update attraction forces
 	if( m_pEffectNode->LocationAbs.type == LocationAbsParameter::None )
 	{	
 	}

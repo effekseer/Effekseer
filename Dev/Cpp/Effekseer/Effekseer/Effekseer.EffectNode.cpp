@@ -171,7 +171,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		memcpy( &LocationAbs.type, pos, sizeof(int) );
 		pos += sizeof(int);
 
-		/* 絶対位置 */
+		// Calc attraction forces
 		if( LocationAbs.type == LocationAbsParameter::None )
 		{
 			memcpy( &size, pos, sizeof(int) );
@@ -197,7 +197,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			pos += size;
 		}
 
-		/* 絶対位置拡大処理 */
+		// Magnify attraction forces
 		if( m_effect->GetVersion() >= 8 )
 		{
 			if( LocationAbs.type == LocationAbsParameter::None )

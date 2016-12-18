@@ -70,7 +70,7 @@ namespace Effekseer.Properties {
         }
         
         /// <summary>
-        ///   絶対位置 に類似しているローカライズされた文字列を検索します。
+        ///   引力 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string AttractionForces {
             get {
