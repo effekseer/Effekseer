@@ -48,8 +48,7 @@ namespace Effekseer.GUI
 			regist(RemoveNode);
 		}
 
-		[Name(value = "新規", language = Language.Japanese)]
-		[Name(value = "New Project", language = Language.English)]
+        [Name(value = "InternalNew")]  // 新規
 		[UniqueName(value = "Internal.New")]
 		public static bool New()
 		{
@@ -67,8 +66,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "開く", language = Language.Japanese)]
-		[Name(value = "Open", language = Language.English)]
+        [Name(value = "InternalOpen")]  // 開く
 		[UniqueName(value = "Internal.Open")]
 		public static bool Open()
 		{
@@ -121,8 +119,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "上書き保存", language = Language.Japanese)]
-		[Name(value = "Save", language = Language.English)]
+        [Name(value = "InternalOverwrite")] // 上書き保存
 		[UniqueName(value = "Internal.Overwrite")]
 		public static bool Overwrite()
 		{
@@ -143,8 +140,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "名前をつけて保存", language = Language.Japanese)]
-		[Name(value = "Save as...", language = Language.English)]
+        [Name(value = "InternalSaveAs")] // 名前をつけて保存
 		[UniqueName(value = "Internal.SaveAs")]
 		public static bool SaveAs()
 		{
@@ -172,8 +168,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "終了", language = Language.Japanese)]
-		[Name(value = "Exit", language = Language.English)]
+        [Name(value = "InternalExit")] // 終了
 		[UniqueName(value = "Internal.Exit")]
 		public static bool Exit()
 		{
@@ -181,8 +176,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "再生・一時停止", language = Language.Japanese)]
-		[Name(value = "Pause/Resume", language = Language.English)]
+        [Name(value = "InternalPauseOrResume")] // 再生・一時停止
 		[UniqueName(value = "Internal.PlayViewer")]
 		public static bool Play()
 		{
@@ -205,8 +199,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "停止", language = Language.Japanese)]
-		[Name(value = "Stop", language = Language.English)]
+        [Name(value = "InternalStop")]  // 停止
 		[UniqueName(value = "Internal.StopViewer")]
 		public static bool Stop()
 		{
@@ -214,8 +207,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "ステップ", language = Language.Japanese)]
-		[Name(value = "Step", language = Language.English)]
+        [Name(value = "InternalStep")]  // ステップ
 		[UniqueName(value = "Internal.StepViewer")]
 		public static bool Step()
 		{
@@ -223,8 +215,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "ステップ(後)", language = Language.Japanese)]
-		[Name(value = "Step(Back)", language = Language.English)]
+        [Name(value = "InternalBaskStep")] // ステップ(後)
 		[UniqueName(value = "Internal.BackStepViewer")]
 		public static bool BackStep()
 		{
@@ -232,8 +223,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value="元に戻す", language= Language.Japanese)]
-		[Name(value = "Undo", language = Language.English)]
+        [Name(value = "InternalUndo")]  // 元に戻す
 		[UniqueName(value="Internal.Undo")]
 		public static bool Undo()
 		{
@@ -241,8 +231,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "やり直し", language = Language.Japanese)]
-		[Name(value = "Redo", language = Language.English)]
+        [Name(value = "InternalRedo")]  // やり直し
 		[UniqueName(value = "Internal.Redo")]
 		public static bool Redo()
 		{
@@ -250,8 +239,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "ノードのコピー", language = Language.Japanese)]
-		[Name(value = "Copy Node", language = Language.English)]
+        [Name(value = "InternalCopy")] // ノードのコピー
 		[UniqueName(value = "Internal.Copy")]
 		public static bool Copy()
 		{
@@ -269,8 +257,7 @@ namespace Effekseer.GUI
 			return false;
 		}
 
-		[Name(value = "ノードの貼り付け", language = Language.Japanese)]
-		[Name(value = "Paste Node", language = Language.English)]
+        [Name(value = "InternalPaste")] // ノードの貼り付け
 		[UniqueName(value = "Internal.Paste")]
 		public static bool Paste()
 		{
@@ -297,8 +284,7 @@ namespace Effekseer.GUI
 			return false;
 		}
 
-		[Name(value = "ノード情報の貼り付け", language = Language.Japanese)]
-		[Name(value = "Paste Node Info", language = Language.English)]
+        [Name(value = "InternalPasteInfo")] // ノード情報の貼り付け
 		[UniqueName(value = "Internal.PasteInfo")]
 		public static bool PasteInfo()
 		{
@@ -315,8 +301,7 @@ namespace Effekseer.GUI
 			return false;
 		}
 
-		[Name(value = "ノードの追加", language = Language.Japanese)]
-		[Name(value = "Add Node", language = Language.English)]
+        [Name(value = "InternalAddNode")] // ノードの追加
 		[UniqueName(value = "Internal.AddNode")]
 		public static bool AddNode()
 		{
@@ -330,8 +315,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "ノードの挿入", language = Language.Japanese)]
-		[Name(value = "Insert Node", language = Language.English)]
+        [Name(value = "InternalInsertNode")] // ノードの挿入
 		[UniqueName(value = "Internal.InsertNode")]
 		public static bool InsertNode()
 		{
@@ -345,8 +329,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "ノードの削除", language = Language.Japanese)]
-		[Name(value = "Delete Node", language = Language.English)]
+        [Name(value = "InternalRemoveNode")] // ノードの削除
 		[UniqueName(value = "Internal.RemoveNode")]
 		public static bool RemoveNode()
 		{
@@ -419,8 +402,7 @@ namespace Effekseer.GUI
 		/// ヘルプを表示
 		/// </summary>
 		/// <returns></returns>
-		[Name(value = "ヘルプを表示", language = Language.Japanese)]
-		[Name(value = "Manual", language = Language.English)]
+        [Name(value = "InternalViewHelp")] // ヘルプを表示
 		[UniqueName(value = "Internal.ViewHelp")]
 		static public bool ViewHelp()
 		{
@@ -438,8 +420,7 @@ namespace Effekseer.GUI
 		/// サンプルを開く
 		/// </summary>
 		/// <returns></returns>
-		[Name(value = "サンプルを開く", language = Language.Japanese)]
-		[Name(value = "Open Sample Project", language = Language.English)]
+        [Name(value = "InternalOpenSample")] // サンプルを開く
 		[UniqueName(value = "Internal.OpenSample")]
 		static public bool OpenSample()
 		{
@@ -464,8 +445,7 @@ namespace Effekseer.GUI
 		/// Effekseerについて
 		/// </summary>
 		/// <returns></returns>
-		[Name(value = "Effekseerについて", language = Language.Japanese)]
-		[Name(value = "About Effekseer", language = Language.English)]
+        [Name(value = "InternalAbout")] // Effekseerについて
 		[UniqueName(value = "Internal.About")]
 		static public bool About()
 		{

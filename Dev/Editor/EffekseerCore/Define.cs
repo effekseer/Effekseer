@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
+using System.Resources;
+using System.Threading;
 
 namespace Effekseer
 {
@@ -55,6 +58,32 @@ namespace Effekseer
 		English,
 	}
 
+    // アセンブリからリソースファイルをロードする
+    // Resources.GetString(...) に介して取得する場合、
+    // カルチャーによってローカライズ済の文字列が得られます。
+    static class Resources
+    {
+        static ResourceManager resources;
+        static Resources()
+        {
+            resources = new ResourceManager("Effekseer.Properties.Resources", Assembly.GetExecutingAssembly());
+        }
+
+        public static string GetString(string name)
+        {
+            if (resources == null) return String.Empty;
+
+            try
+            {
+                var value = resources.GetString(name);
+                if (!String.IsNullOrEmpty(value)) return value; // 発見した場合、文字列を返す
+            }
+            catch {}
+            
+            return string.Empty;
+        }
+    }
+
 	/// <summary>
 	/// 名称を設定する属性
 	/// </summary>
@@ -64,6 +93,13 @@ namespace Effekseer
 	Inherited = false)]
 	public class NameAttribute : Attribute
 	{
+        static ResourceManager resources;
+
+        static NameAttribute()
+        {
+            resources = new ResourceManager("Effekseer.Properties.Resources", Assembly.GetExecutingAssembly());
+        }
+
 		public NameAttribute()
 		{
 			language = Language.Japanese;
@@ -95,6 +131,11 @@ namespace Effekseer
 				{
 					if (!(attribute is NameAttribute)) continue;
 
+                    // 先にProperties.Resourcesから検索する
+                    var value = Resources.GetString(((NameAttribute)attribute).value);
+                    if (!String.IsNullOrEmpty(value)) return value; // 発見した場合、文字列を返す
+
+                    // なければ、既存振る舞いで返す
 					if (((NameAttribute)attribute).language == Core.Language)
 					{
 						return ((NameAttribute)attribute).value;
@@ -145,6 +186,10 @@ namespace Effekseer
 				foreach (var attribute in attributes)
 				{
 					if (!(attribute is DescriptionAttribute)) continue;
+
+                    // 先にProperties.Resourcesから検索する
+                    var value = Resources.GetString(((DescriptionAttribute)attribute).value);
+                    if (!String.IsNullOrEmpty(value)) return value; // 発見した場合、文字列を返す
 
 					if (((DescriptionAttribute)attribute).language == Core.Language)
 					{

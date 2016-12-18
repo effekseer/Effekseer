@@ -471,4 +471,73 @@
   <data name="Zoom" xml:space="preserve">
     <value>画面拡大率</value>
   </data>
+  <data name="ImageFilter" xml:space="preserve">
+    <value>画像ファイル (*.png)|*.png</value>
+  </data>
+  <data name="ModelFilter" xml:space="preserve">
+    <value>モデルファイル (*.efkmodel)|*.efkmodel</value>
+  </data>
+  <data name="SoundFilter" xml:space="preserve">
+    <value>音声ファイル (*.wav)|*.wav</value>
+  </data>
+  <data name="InternalAbout" xml:space="preserve">
+    <value>Effekseerについて</value>
+  </data>
+  <data name="InternalAddNode" xml:space="preserve">
+    <value>ノードの追加</value>
+  </data>
+  <data name="InternalBaskStep" xml:space="preserve">
+    <value>ステップ(後)</value>
+  </data>
+  <data name="InternalCopy" xml:space="preserve">
+    <value>ノードのコピー</value>
+  </data>
+  <data name="InternalExit" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="InternalInsertNode" xml:space="preserve">
+    <value>ノードの挿入</value>
+  </data>
+  <data name="InternalNew" xml:space="preserve">
+    <value>新規</value>
+  </data>
+  <data name="InternalOpen" xml:space="preserve">
+    <value>開く</value>
+  </data>
+  <data name="InternalOpenSample" xml:space="preserve">
+    <value>サンプルを開く</value>
+  </data>
+  <data name="InternalOverwrite" xml:space="preserve">
+    <value>上書き保存</value>
+  </data>
+  <data name="InternalPaste" xml:space="preserve">
+    <value>ノードの貼り付け</value>
+  </data>
+  <data name="InternalPasteInfo" xml:space="preserve">
+    <value>ノード情報の貼り付け</value>
+  </data>
+  <data name="InternalPauseOrResume" xml:space="preserve">
+    <value>再生・一時停止</value>
+  </data>
+  <data name="InternalRedo" xml:space="preserve">
+    <value>やり直し</value>
+  </data>
+  <data name="InternalRemoveNode" xml:space="preserve">
+    <value>ノードの削除</value>
+  </data>
+  <data name="InternalSaveAs" xml:space="preserve">
+    <value>名前をつけて保存</value>
+  </data>
+  <data name="InternalStep" xml:space="preserve">
+    <value>ステップ</value>
+  </data>
+  <data name="InternalStop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="InternalUndo" xml:space="preserve">
+    <value>元に戻す</value>
+  </data>
+  <data name="InternalViewHelp" xml:space="preserve">
+    <value>ヘルプを表示</value>
+  </data>
 </root>
