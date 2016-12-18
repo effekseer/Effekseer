@@ -16,7 +16,7 @@ namespace Effekseer
 
 		static Data.NodeBase selected_node = null;
 
-		static Data.OptionValues option = new Data.OptionValues();
+		static Data.OptionValues option;
 
 		static Data.EffectBehaviorValues effectBehavior = new Data.EffectBehaviorValues();
 
@@ -267,15 +267,19 @@ namespace Effekseer
 			Command.CommandManager.Changed += new EventHandler(CommandManager_Changed);
 			FullPath = string.Empty;
 
-			var culture = System.Globalization.CultureInfo.CurrentCulture;
-			if (culture.Name == "ja-JP")
-			{
-				Language = Language.Japanese;
-			}
-			else
-			{
-				Language = Language.English;
-			}
+            option = LoadOption();
+            Language = Option.GuiLanguage; // 読み込んだ設定により Core の言語を設定する
+
+            // 設定された言語によりカルチャーを切り替えます
+            switch (Language)
+            {
+                case Effekseer.Language.English:
+                    Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+                    break;
+                case Effekseer.Language.Japanese:
+                    Thread.CurrentThread.CurrentUICulture = new CultureInfo("ja-JP");
+                    break;
+            }
 
 			New();
 
@@ -397,20 +401,6 @@ namespace Effekseer
 					}
 				}
 			}
-
-			LoadOption();
-
-            Language = Option.GuiLanguage;
-
-            switch (Language)
-            {
-                case Effekseer.Language.English:
-                    Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
-                    break;
-                case Effekseer.Language.Japanese:
-                    Thread.CurrentThread.CurrentUICulture = new CultureInfo("ja-JP");
-                    break;
-            }
 		}
 
 		public static void Dispose()
@@ -694,29 +684,33 @@ namespace Effekseer
 			return true;
 		}
 
-		static public bool LoadOption()
+        // config.option.xml から読み込み
+        // 読み込み失敗したら、OptionValues のデフォ設定を返します
+        static public Data.OptionValues LoadOption()
 		{
+            Data.OptionValues res = new Data.OptionValues();
+
 			var path = System.IO.Path.Combine(GetEntryDirectory(), OptionFilePath);
 
-			if (!System.IO.File.Exists(path)) return false;
+            if (!System.IO.File.Exists(path)) return res;
 
 			var doc = new System.Xml.XmlDocument();
 
 			doc.Load(path);
 
-			if (doc.ChildNodes.Count != 2) return false;
-			if (doc.ChildNodes[1].Name != "EffekseerProject") return false;
+            if (doc.ChildNodes.Count != 2) return res;
+            if (doc.ChildNodes[1].Name != "EffekseerProject") return res;
 
 			var optionElement = doc["EffekseerProject"]["Option"];
 			if (optionElement != null)
 			{
-				var o = option as object;
+                var o = res as object;
 				Data.IO.LoadObjectFromElement(optionElement as System.Xml.XmlElement, ref o, false);
 			}
 
 			IsChanged = false;
 
-			return true;
+            return res;
 		}
 
 		static public void SaveOption()

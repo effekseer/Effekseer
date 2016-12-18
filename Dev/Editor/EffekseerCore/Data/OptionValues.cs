@@ -153,6 +153,10 @@ namespace Effekseer.Data
 			private set;
 		}
 
+
+        // コンストラクタで初期化時、使用言語がまだ決められないので遅延初期化にする
+        Lazy<Value.PathForImage> LasyBackgroundImage;
+
 		[Name(language = Language.Japanese, value = "背景画像")]
 		[Description(language = Language.Japanese, value = "背景画像")]
 		[Name(language = Language.English, value = "Background Image")]
@@ -160,8 +164,10 @@ namespace Effekseer.Data
 		[Undo(Undo = false)]
 		public Value.PathForImage BackgroundImage
 		{
-			get;
-			private set;
+            get
+            {
+                return LasyBackgroundImage.Value;
+            }
 		}
 
 		[Name(language = Language.Japanese, value = "カラースペース")]
@@ -233,7 +239,7 @@ namespace Effekseer.Data
         public OptionValues()
 		{
 			BackgroundColor = new Value.Color(0, 0, 0, 255);
-			BackgroundImage = new Value.PathForImage("画像ファイル (*.png)|*.png", false, "");
+            LasyBackgroundImage = new Lazy<Value.PathForImage>(() => { return new Value.PathForImage(Properties.Resources.ImageFilter, false, ""); });
 			GridColor = new Value.Color(255, 255, 255, 255);
 			
 			IsGridShown = new Value.Boolean(true);
@@ -256,8 +262,16 @@ namespace Effekseer.Data
 			MouseSlideInvX = new Value.Boolean(false);
 			MouseSlideInvY = new Value.Boolean(false);
 
-            GuiLanguage = new Value.Enum<Language>(Core.Language);
-
+            // OSの設定によりデフォ言語を切り替えます
+            var culture = System.Globalization.CultureInfo.CurrentCulture;
+            if (culture.Name == "ja-JP")
+            {
+                GuiLanguage = new Value.Enum<Language>(Language.Japanese);
+            }
+            else
+            {
+                GuiLanguage = new Value.Enum<Language>(Language.English);
+            }
 		}
 
 		public enum FPSType : int
