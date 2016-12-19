@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("EffekseerInterface")]
-[assembly: AssemblyCopyright("Copyright © Shimpei Sawada")]
+[assembly: AssemblyCopyright("Copyright © Effekseer Project")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
