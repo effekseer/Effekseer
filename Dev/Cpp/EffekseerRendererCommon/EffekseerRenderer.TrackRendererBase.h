@@ -125,9 +125,11 @@ protected:
 		::Effekseer::Color centerColor;
 		::Effekseer::Color rightColor;
 
+		float percent = (float) param.InstanceIndex / (float) (param.InstanceCount - 1);
+
 		if( param.InstanceIndex < param.InstanceCount / 2 )
 		{
-			float l = (float)param.InstanceIndex / (float)param.InstanceCount;
+			float l = percent;
 			l = l * 2.0f;
 			size = param.SizeFor + (param.SizeMiddle-param.SizeFor) * l;
 			
@@ -148,7 +150,7 @@ protected:
 		}
 		else
 		{
-			float l = (float)param.InstanceIndex / (float)param.InstanceCount;
+			float l = percent;
 			l = 1.0f - (l * 2.0f - 1.0f);
 			size = param.SizeBack + (param.SizeMiddle-param.SizeBack) * l;
 			
@@ -186,13 +188,13 @@ protected:
 		v[2].SetColor( rightColor );
 
 		v[0].UV[0] = instanceParameter.UV.X;
-		v[0].UV[1] = instanceParameter.UV.Y + (float) param.InstanceIndex / (float) param.InstanceCount * instanceParameter.UV.Height;
+		v[0].UV[1] = instanceParameter.UV.Y + percent * instanceParameter.UV.Height;
 
 		v[1].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width * 0.5f;
-		v[1].UV[1] = instanceParameter.UV.Y + (float) (param.InstanceIndex) / (float) param.InstanceCount * instanceParameter.UV.Height;
+		v[1].UV[1] = instanceParameter.UV.Y + percent * instanceParameter.UV.Height;
 
 		v[2].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
-		v[2].UV[1] = instanceParameter.UV.Y + (float) (param.InstanceIndex) / (float) param.InstanceCount * instanceParameter.UV.Height;
+		v[2].UV[1] = instanceParameter.UV.Y + percent * instanceParameter.UV.Height;
 
 		v[1].Pos.X = param.SRTMatrix43.Value[3][0];
 		v[1].Pos.Y = param.SRTMatrix43.Value[3][1];
