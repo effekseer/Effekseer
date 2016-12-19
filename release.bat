@@ -121,11 +121,11 @@ copy readme_runtime.txt %RDIR_R%\readme.txt
 copy readme_unity.txt %RDIR_U%\readme.txt
 
 echo ƒwƒ‹ƒv
-mkdir %RDIR%\Help_Jp
-mkdir %RDIR%\QuickTutorial_En
+mkdir %RDIR%\Help
+mkdir %RDIR%\QuickTutorial
 
-robocopy Release\Help_Tool %RDIR%\Help_Jp *.html *.css *.efkproj *.png /mir /S
-robocopy Document\QuickTutorial_Tool %RDIR%\QuickTutorial_En *.html *.css *.efkproj *.png /mir /S
+robocopy docs\Help_Tool %RDIR%\Help *.html *.css *.efkproj *.png /mir /S
+robocopy docs\QuickTutorial_Tool %RDIR%\QuickTutorial *.html *.css *.efkproj *.png /mir /S
 
 mkdir %RDIR_R%\Help
 robocopy Release\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S
@@ -150,7 +150,7 @@ doxygen Release\Help_Unity\Doxyfile
 robocopy UnityAPIRef %RDIR_U%\Help\APIRef /mir /S
 
 echo Readme2
-copy Document\readme_sample.txt %RDIR%\Sample\readme.txt
+copy docs\readme_sample.txt %RDIR%\Sample\readme.txt
 
 echo VS
 
