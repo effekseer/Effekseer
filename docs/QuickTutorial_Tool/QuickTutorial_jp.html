@@ -1,4 +1,4 @@
-
+﻿
 <html>
 <head>
 <meta charset="utf-8">
@@ -21,28 +21,28 @@
 		<ul>
 		<li><a href='#basic_settings'>共通</a></li>
 		<li><a href='#inheritance'>継承</a></li>
-		<li><a href='#spawn_method_circular'>Spawn Method (Circular)</a></li>
-		<li><a href='#spawn_method_spherical'>Spawn Method (Spherical)</a></li>
+		<li><a href='#spawn_method_circular'>生成位置 (円)</a></li>
+		<li><a href='#spawn_method_spherical'>生成位置 (球)</a></li>
 		</ul>
-	<li><a href='#particles_behavior'>Particles (Behavior)</a></li>
+	<li><a href='#particles_behavior'>パーティクル (挙動)</a></li>
 		<ul>
-		<li><a href='#position_rotation_scale'>Position/Rotation/Scale</a></li>
+		<li><a href='#position_rotation_scale'>位置/回転/拡大</a></li>
 		<li><a href='#pva'>PVA</a></li>
-		<li><a href='#easing'>Easing</a></li>
-		<li><a href='#fcurve'>F-Curve</a></li>
-		<li><a href='#point_of_attraction'>Point of Attraction</a></li>
+		<li><a href='#easing'>イージング</a></li>
+		<li><a href='#fcurve'>Fカーブ</a></li>
+		<li><a href='#point_of_attraction'>引力の点</a></li>
 		</ul>
-	<li><a href='#particles_appearance'>Particles (Appearance)</a></li>
+	<li><a href='#particles_appearance'>パーティクル (見た目)</a></li>
 		<ul>
-		<li><a href='#basic_render_settings'>Basic Render Settings</a></li>
-		<li><a href='#sprites'>Sprites</a></li>
-		<li><a href='#rings'>Rings</a></li>
-		<li><a href='#ribbons_tracks'>Ribbons/Tracks</a></li>
+		<li><a href='#basic_render_settings'>描画共通設定</a></li>
+		<li><a href='#sprites'>スプライト</a></li>
+		<li><a href='#rings'>リング</a></li>
+		<li><a href='#ribbons_tracks'>リボン/Tracks</a></li>
 		</ul>
-	<li><a href='#exporting'>Exporting</a></li>
+	<li><a href='#exporting'>出力</a></li>
 		<ul>
-		<li><a href='#to_2d'>To 2D Sprite Sheets</a></li>
-		<li><a href='#to_3d'>To 3D Models</a></li>
+		<li><a href='#to_2d'>2Dスプライトへ</a></li>
+		<li><a href='#to_3d'>3Dモデルへ</a></li>
 		</ul>
 	</ul>
 </div>
@@ -190,17 +190,17 @@ Effekseer内のたくさんの数値入力欄は左の画像のような見た�
 <td style='text-align:center'><img src="effektut-files/wedge_ani.gif" /></td>
 </tr>
 <tr>
-<td style='text-align:center'><i>Particles spawned on a sphere, with a full 360&deg; span.360度全ての球にパーティクルが生成された場合</i></td>
-<td style='text-align:center'><i>Shrinking rotation to only 60&deg; along each axis. A "spherical wedge". 球のくさび、それぞれの軸にそって60度に小さくした場合</i></td>
+<td style='text-align:center'><i>360度全ての球にパーティクルが生成された場合</i></td>
+<td style='text-align:center'><i>球のくさび、それぞれの軸にそって60度に小さくした場合</i></td>
 </tr>
 </table>
 
 <a name="particles_behavior"></a>
-<h2>パーティクル(振る舞い)</h2>
+<h2>パーティクル(挙動)</h2>
 
 <a name="position_rotation_scale"></a>
 <h3>位置/回転/拡大率</h3>
-生成されたパーティクルの振る舞いを編集するのに重要なウインドウは位置、回転、拡大率の3つのウインドウです。これらの名称は自明です。
+生成されたパーティクルの挙動を編集するのに重要なウインドウは位置、回転、拡大率の3つのウインドウです。これらの名称は自明です。
 <b>位置</b>ウインドウはパーティクルが時間経過で空間をどう動くかを制御します。
 <b>回転</b>ウインドウはパーティクルの回転速度と方向を制御します。
 <b>拡大率</b>ウインドウは生存時間内のパーティクルの大きさを制御します。
@@ -225,9 +225,9 @@ PVAはPosition、Velocity、Accelerationの略です。 これはほとんどの
 <td  class='td1'>
 <b>イーズイン</b>と<b>イーズアウト</b>のドロップダウンボックスは、時間の経過とともに2つの値の間でパーティクルが遷移するスタイルを変更します。 左の図は、イージング速度のさまざまな組み合わせを示しています。 これらの例は、それぞれ{Ease In-Ease Out}の組の以下の組み合わせを参照しています。<br><br>
 <table class=center cellpadding="30">
-<tr><td>Slowest-Slowest</td><td>Slowest-Normal</td><td>Slowest-Fastest</td></tr>
-<tr><td>Normal-Slowest</td><td>Normal-Normal</td><td>Normal-Fastest</td></tr>
-<tr><td>Fastest-Slowest</td><td>Fastest-Normal</td><td>Fastest-Fastest</td></tr>
+<tr><td>低速3-低速3</td><td>低速3-等速</td><td>低速3-高速3</td></tr>
+<tr><td>等速-低速3</td><td>等速-等速</td><td>等速-高速3</td></tr>
+<tr><td>高速3-低速3</td><td>高速3-等速/td><td>高速3-高速3</td></tr>
 </table></td>
 </tr>
 </table>
@@ -246,7 +246,7 @@ PVAはPosition、Velocity、Accelerationの略です。 これはほとんどの
 <br><br>
 <b>最大オフセット</b>と<b>最小オフセット</b>を使用すると、F-Curveの値にランダム化を適用できます。 これらの偏差は、選択されたライン全体に適用されます（つまり、ライン上のすべてのポイントが同じランダム量だけ外れます）。選択されたポイントには適用されません。 ポイントごとにランダム化することはできません。
 <br><br>
-<b>開始</b>と<b>終了</b>は、現在選択されているポイントではなく、選択したライン全体を参照します。 それらは、最初に定義されたポイントの前に、最後に定義されたポイントの後に広がる値を定義するためにとられる動作を決定します。 デフォルトでは、最初/最後の点に一致する一定の値にとどまります。 ただし、他のオプションを使用すると、最初から値をループすることができます。 値が繰り返しの性質を持つ場合、これは特に有用です。 パターンの最初のインスタンスを定義してから、残りの部分をループで埋める必要があります。 以下の図は、簡単に正弦波パターンを作るために適用されたものです。
+<b>開始</b>と<b>終了</b>は、現在選択されているポイントではなく、選択したライン全体を参照します。 それらは、最初に定義されたポイントの前に、最後に定義されたポイントの後に広がる値を定義するためにとられる動作を決定します。 デフォルトでは、最初/最後の点に一致する一定の値にとどまります。 ただし、他のオプションを使用すると、最初から値をループすることができます。 値が繰り返しの性質を持つ場合、これは特に有用です。 パターンの最初の動作を定義してから、残りの部分をループで埋める必要があります。 以下の図は、簡単に正弦波パターンを作るために適用されたものです。
 <br><br>
 <div style="text-align:center;"><img src="effektut-files/floop.png" /></div>
 
@@ -263,11 +263,11 @@ Effekseerでは、磁石のように作用するパーティクルエミッタ�
 </td></tr></table>
 
 <a name="particles_appearance"></a>
-<h2>パーティクル (外観)</h2>
+<h2>パーティクル (見た目)</h2>
 
 <a name="basic_render_settings"></a>
-<h3>基本描画設定</h3>
-<b>基本描画設定</b>ウィンドウでは、パーティクルの見た目に関する重要で一般的に使用される属性を設定できます。何よりもまず、<b>テクスチャ</b>の入力欄では、ハードディスクの任意のイメージを読み込んで、パーティクルの基本的な見た目として使用できます。他のすべては、このテクスチャがシーン内でどのように描画されるかを変えることを中心に行います。 
+<h3>描画共通設定</h3>
+<b>描画共通設定</b>ウィンドウでは、パーティクルの見た目に関する重要で一般的に使用される属性を設定できます。何よりもまず、<b>テクスチャ</b>の入力欄では、ハードディスクの任意のイメージを読み込んで、パーティクルの基本的な見た目として使用できます。他のすべては、このテクスチャがシーン内でどのように描画されるかを変えることを中心に行います。 
 <br><br>
 <b>ブレンド</b>を使用すると、他のパーティクルが重なっているときのテクスチャの表示を調整できます。下の画像は、異なるブレンドタイプの例を示しています。 左から右へ：不透明、ブレンド、加算、減算、および乗算となっています。
 <br><br>
