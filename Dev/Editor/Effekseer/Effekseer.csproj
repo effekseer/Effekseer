@@ -244,6 +244,12 @@
     <Compile Include="GUI\DockFCurves.Designer.cs">
       <DependentUpon>DockFCurves.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\DockFileViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockFileViewer.Designer.cs">
+      <DependentUpon>DockFileViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\DockNetwork.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -429,6 +435,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\DockFCurves.resx">
       <DependentUpon>DockFCurves.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockFileViewer.resx">
+      <DependentUpon>DockFileViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\DockNetwork.resx">
       <DependentUpon>DockNetwork.cs</DependentUpon>

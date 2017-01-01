@@ -220,6 +220,9 @@
   <data name="Network" xml:space="preserve">
     <value>ネットワーク</value>
   </data>
+  <data name="FileViewer" xml:space="preserve">
+    <value>ファイルビューア</value>
+  </data>
   <data name="NodeTree" xml:space="preserve">
     <value>ノードツリー</value>
     <comment>MainFrom:ReloadMenu</comment>

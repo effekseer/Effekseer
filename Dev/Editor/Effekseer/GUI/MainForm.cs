@@ -317,7 +317,7 @@ namespace Effekseer.GUI
 				setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), null);
 				setDockWindow(Properties.Resources.Culling, typeof(DockCulling), null);
 				setDockWindow(Properties.Resources.Network, typeof(DockNetwork), null);
-
+				setDockWindow(Properties.Resources.FileViewer, typeof(DockFileViewer), null);
 
 				menuStrip.Items.Add(menu);
 			}

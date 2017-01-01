@@ -151,6 +151,12 @@ namespace Effekseer.GUI
 			get;
 			set;
 		}
+		
+		internal static DockFileViewer DockFileViewer
+		{
+			get;
+			set;
+		}
 
 		/// <summary>
 		/// 最近使用したファイルが変更
@@ -194,6 +200,7 @@ namespace Effekseer.GUI
 			DockFCurves = new GUI.DockFCurves();
 			DockCulling = new GUI.DockCulling();
 			DockNetwork = new GUI.DockNetwork();
+			DockFileViewer = new GUI.DockFileViewer();
 
 			MainForm.Show();
 			
@@ -239,6 +246,7 @@ namespace Effekseer.GUI
 			if (DockFCurves != null) DockFCurves.Close();
 			if (DockCulling != null) DockCulling.Close();
 			if (DockNetwork != null) DockNetwork.Close();
+			if (DockFileViewer != null) DockFileViewer.Close();
 
 			DockViewerController = null;
 			DockViewPoint = null;
@@ -258,6 +266,7 @@ namespace Effekseer.GUI
 			DockFCurves = null;
 			DockCulling = null;
 			DockNetwork = null;
+			DockFileViewer = null;
 		}
 
 		public static void AssignDockWindowIntoDefaultPosition()
@@ -282,6 +291,7 @@ namespace Effekseer.GUI
 			if (DockFCurves == null) DockFCurves = new GUI.DockFCurves();
 			if (DockCulling == null) DockCulling = new DockCulling();
 			if (DockNetwork == null) DockNetwork = new GUI.DockNetwork();
+			if (DockFileViewer == null) DockFileViewer = new GUI.DockFileViewer();
 
 			var rec = Screen.PrimaryScreen.Bounds;
 			int _width = rec.Width;
@@ -559,6 +569,11 @@ namespace Effekseer.GUI
 								return DockNetwork;
 							}
 
+							if (DockFileViewer.GetType().FullName == s)
+							{
+								return DockFileViewer;
+							}
+
 							return null;
 						};
 
@@ -648,6 +663,7 @@ namespace Effekseer.GUI
 			if (DockCulling != null && DockCulling.DockState == DockState.Unknown) DockCulling = null;
 			if (DockFCurves != null && DockFCurves.DockState == DockState.Unknown) DockFCurves = null;
 			if (DockNetwork != null && DockNetwork.DockState == DockState.Unknown) DockNetwork = null;
+			if (DockFileViewer != null && DockFileViewer.DockState == DockState.Unknown) DockFileViewer = null;
 		}
 
 		public static bool Update()
@@ -667,7 +683,7 @@ namespace Effekseer.GUI
 				if (DockRecorder != null) DockRecorder.UpdateRecorder();
 				if (DockViewerController != null) DockViewerController.UpdateController();
 				if (DockViewer != null) DockViewer.UpdateViewer();
-				if( DockNetwork != null) DockNetwork.Update_();
+				if (DockNetwork != null) DockNetwork.Update_();
 			}
 
 			return true;

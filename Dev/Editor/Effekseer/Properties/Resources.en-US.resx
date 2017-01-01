@@ -148,6 +148,9 @@
   <data name="Network" xml:space="preserve">
     <value>Network</value>
   </data>
+  <data name="FileViewer" xml:space="preserve">
+    <value>File Viewer</value>
+  </data>
   <data name="NodeTree" xml:space="preserve">
     <value>Node Tree</value>
     <comment>MainFrom:ReloadMenu</comment>
