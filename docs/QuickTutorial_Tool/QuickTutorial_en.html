@@ -51,7 +51,7 @@
 <br><br>
 This document is an overview of the program, organized in a fashion similar to a tutorial. It covers many of the features of the program, but it is not an exhaustive manual. However, you can view the original, official Japanese manual for the program <a href="http://effekseer.github.io/Help_Tool/index.html" target="_blank">here</a>.
 <br><br>
-The Effekseer project files used to generate the illustrations in this tutorial can be downloaded <a href="https://www.dropbox.com/s/go9vgel40esf1mb/01_AndrewFM%20Tutorial.zip?dl=0">here</a>.
+The Effekseer project files used to generate the illustrations in this tutorial can be downloaded <a href="01_AndrewFM%20Tutorial.zip">here</a>.
 
 <a name="general_interface"></a>
 <h2>General Interface</h2>
@@ -227,7 +227,7 @@ To actually add points to the graph, you use the <b>X/Y/Z</b> keys on your keybo
 <br><br>
 <b>Max Offset</b> and <b>Min Offset</b> allow you to apply randomization to the F-Curve values. Note that these deviations apply to the whole selected line (ie: it deviates all points on the line by the same random amount), and not to the selected point. It's not possible to randomize on a point-by-point basis.
 <br><br>
-<b>Start</b> and <b>End</b> also refer to the whole selected line, rather than the currently selected point. They determine the behavior to be taken for defining the values that extend before the first defined point, and after the last defined point. By default they remain at a constant value that matches the first/last point. However, the other options allow you to loop the values over from the beginning. This is particuarly useful if the values have a repetitious nature; you then only have to define the first instance of the pattern, and then let the loop fill in the rest for you. The illustration below shows this applied in order to easily make a sine-wave pattern.
+<b>Start</b> and <b>End</b> also refer to the whole selected line, rather than the currently selected point. They determine the behavior to be taken for defining the values that extend before the first defined point, and after the last defined point. By default they remain at a constant value that matches the first/last point. However, the other options allow you to loop the values over from the beginning. This is particularly useful if the values have a repetitious nature; you then only have to define the first instance of the pattern, and then let the loop fill in the rest for you. The illustration below shows this applied in order to easily make a sine-wave pattern.
 <br><br>
 <div style="text-align:center;"><img src="effektut-files/floop.png" /></div>
 
@@ -259,7 +259,7 @@ The <b>Basic Render Settings</b> window lets you set some important, general use
 <br><br>
 <table>
 <tr><td style="width:300px; text-align:center"><img style="border: 20px solid black;" src="effektut-files/uvscroll.gif" /></td><td class='td1'>
-<b>UV</b> lets you draw only a portion of the texture image, rather than the whole thing. This has a variety of uses, and particuarly we'll talk about the <b>Scroll</b> and <b>Animation</b> settings:
+<b>UV</b> lets you draw only a portion of the texture image, rather than the whole thing. This has a variety of uses, and particularly we'll talk about the <b>Scroll</b> and <b>Animation</b> settings:
 <ul>
 <li><b>UV Scroll</b> lets you scroll over the surface of the texture at some fixed X/Y speed. The image to the left shows a smoke texture being UV scrolled over the surface of a conical shape. You'll generally want to make sure that <b>Wrap</b> is set to Repeat, so the texture wraps around as it scrolls.</li>
 <li><b>UV Animation</b> lets you use a sprite sheet as a texture, and play it as an animation. <b>Start</b> should be the coordinate of the top-left of the first frame in the sprite sheet. <b>Size</b> should be the size in pixels of each frame in the animation. <b>X-Count</b> and <b>Y-Count</b> are the number of rows/columns in the sprite sheet that comprise the animation to play. <b>Frame Length</b> is the speed at which the animation will be played.</li>
@@ -284,7 +284,7 @@ The <b>Basic Render Settings</b> window lets you set some important, general use
 
 In the <b>Render</b> window, you can choose the method of drawing the texture to the scene. The default method is <b>Sprite</b>, which is where it just draws the texture onto a flat, square surface. 
 <br><br>
-<b>Configuration</b> sets the behavior of the surface, particuarly in terms of rotation. By default it is set to <b>Billboard</b>, which means the surface will always automatically rotate to face the camera. This also means it will completely ignore the rotation values set for the particle. The opposite of this is <b>Fixed</b>, in which it uses the particle's rotation values to set the orientation of the surface. The illustration below shows three different configuration settings, applied to particles whose rotation values are assigned randomly. From left to right: Billboard, Fixed (Y-Axis), and Fixed. 
+<b>Configuration</b> sets the behavior of the surface, particularly in terms of rotation. By default it is set to <b>Billboard</b>, which means the surface will always automatically rotate to face the camera. This also means it will completely ignore the rotation values set for the particle. The opposite of this is <b>Fixed</b>, in which it uses the particle's rotation values to set the orientation of the surface. The illustration below shows three different configuration settings, applied to particles whose rotation values are assigned randomly. From left to right: Billboard, Fixed (Y-Axis), and Fixed. 
 <br><br>
 <div style="text-align:center;"><img src="effektut-files/billboards.png" /></div>
 
@@ -324,7 +324,7 @@ In terms of color blending, rings support a gradient of up to 3 colors. There's 
 <a name="ribbons_tracks"></a>
 <h3>Ribbons/Tracks</h3>
 
-<b>Ribbons</b> allow you to create lines. A few images shown so far in this tutorial have featured ribbons. Particuarly, the lines in the Easing animation, and the trails behind the orbs in the "homing missile" example.
+<b>Ribbons</b> allow you to create lines. A few images shown so far in this tutorial have featured ribbons. Particularly, the lines in the Easing animation, and the trails behind the orbs in the "homing missile" example.
 <br><br>
 They way they work is that each time a ribbon emitter spawns a particle, a line is drawn between it and the previously spawned ribbon segment. By varying the position and velocity of the spawned segments, you can create different shaped line-strips. A common usage of ribbons is to set a ribbon emitter as the child of some other particle, and then have the ribbon emitter's particles inherit the position of the parent on spawn. This will result in a trail being drawn behind the parent particle as it moves.
 <br><br>
@@ -335,7 +335,7 @@ They way they work is that each time a ribbon emitter spawns a particle, a line 
 
 <a name="to_2d"></a>
 <h3>To 2D Sprite Sheets or Animations</h3>
-Outputting to a 2D sprite sheet is done through the <b>Recorder</b> window. The <b>X/Y Count</b> determine the layout of the sprite sheet, particuarly how many frames each row and column has. Subsequently, this also determines the total number of frames your sprite sheet will contain. For example, {X=4, Y=6} will produce a sprite sheet that has 24 frames, arranged into 4 columns and 6 rows. In addition to exporting as a sprite sheet, you can export directly to a GIF or AVI file, via the format dropdown box.
+Outputting to a 2D sprite sheet is done through the <b>Recorder</b> window. The <b>X/Y Count</b> determine the layout of the sprite sheet, particularly how many frames each row and column has. Subsequently, this also determines the total number of frames your sprite sheet will contain. For example, {X=4, Y=6} will produce a sprite sheet that has 24 frames, arranged into 4 columns and 6 rows. In addition to exporting as a sprite sheet, you can export directly to a GIF or AVI file, via the format dropdown box.
 <br><br>
 <b>Start Frame</b> is the frame in the animation the recording should start at. (A small caveat: If you leave this at the default value of 1, your first frame will always be blank. It takes at least one frame for any particles to spawn)
 <br><br>
