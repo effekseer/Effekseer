@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8>
+	<title>Tool-Reference</title>
+	<link href="../base.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<div class="main">
+		<h1>Tool-Reference</h1>
+		
+		<h2>Overview</h2>
+		<h3>Tool</h3>
+		<p>
+This tool consists of a viewer section that displays the result of editing effects and multiple windows to edit parameters.
+By editing the parameters of each window, you can create an effect or change its appearance.
+By dragging and dropping each window, you can change the placement or change it to a tab.
+By selecting "Menu bar -> Window", you can select windows and display windows that are not arranged in the initial placement.
+Also, you can return all windows to initial placement.
+		</p>
+
+		<h3>Effect</h3>
+		<p>
+With this tool, you create an effect by editing a node. Nodes have parent-child relationships, and children are affected by parents.
+By using the parent-child relationship, it is possible to generate complicated effects.
+        </p>
+
+        <p>
+I will explain parent-child relationship using an example. In this example, node 2 exists in the child of node 1, and node 3 exists in the child of node 2.
+Effect 1 will be generated from node 1. After a few frames, several effects 2 will be generated relative to effect 1 from the effect generated from node 1. After a few more frames, effect 3 will be generated from the effect generated from node 2. This is shown in the figure below. In this way, by describing the behavior of the effect and the parent-child relationship on the node, various effects can be expressed.
+In this tool, one effect generated based on the "node" parameter is called "particle".
+		</p>
+
+		<div align="center">
+		<img src="../../img/Reference/overview.png">
+		</div>
+
+		<h3>File format</h3>
+		<p>
+There are two unique file formats for this tool.
+The first one is ".efkproj", which is a file of effects for editing with tools.
+The second is ".efk", a file of effects to play during the game.
+The ".efk" file can be output from the "menu bar -> file -> output" of the tool.
+		</p>
+
+		<h2>Each window</h2>
+		<ul class="menu">
+			<li><a href="common.html">Basic Settings</a></li>
+			<li><a href="location.html">Position</a></li>
+			<li><a href="locationAbs.html">Attraction Forces</a></li>
+			<li><a href="locationGene.html">SpawningMethod</a></li>
+			<li><a href="rotation.html">Rotation</a></li>
+			<li><a href="scale.html">Scale</a></li>
+			<li><a href="rendererCommon.html">Basic Render Settings</a></li>
+			<li><a href="rendererSprite.html">Render - Sprite</a></li>
+			<li><a href="rendererRibbon.html">Render - Ribbon</a></li>
+			<li><a href="rendererRing.html">Render - Ring</a></li>
+			<li><a href="rendererModel.html">Render - Model</a></li>
+			<li><a href="rendererTrack.html">Render - Track</a></li>
+			<li><a href="fcurve.html">F-Curves</a></li>
+			<li><a href="sound.html">Sound</a></li>
+			<li><a href="network.html">Network</a></li>
+			<li><a href="culling.html">Culling</a></li>
+			<li><a href="behavior.html">Behavior</a></li>
+			<li><a href="record.html">Recorder</a></li>
+			<li><a href="options.html">Option</a></li>
+
+		</ul>
+
+		<h2>Command line</h2>
+
+<p>
+When starting Effekseer from the command line, you can change the behavior of Effekseer by adding arguments.
+For example, you can convert ".efkproj" file to ".efk" without activating the Effekseer GUI.
+By combining this with a script, you can convert files of effects in any folder at once.
+</p>
+
+
+<table border=1>
+<tr>
+	<td nowrap>-cui</td>
+	<td>Start up in CUI mode</td>
+</tr>
+
+<tr>
+	<td nowrap>-in *</td>
+	<td>* ppen and launch</td>
+</tr>
+
+<tr>
+	<td nowrap>-o *</td>
+	<td>Save as *</td>
+</tr>
+
+<tr>
+	<td nowrap>-e *</td>
+	<td>Output in standard format to *</td>
+</tr>
+
+<tr>
+	<td nowrap>-m *</td>
+	<td>Set the magnification ratio of the effect when outputting in standard format to *</td>
+</tr>
+
+</table>
+
+	</div>
+</body>
+
+</html>

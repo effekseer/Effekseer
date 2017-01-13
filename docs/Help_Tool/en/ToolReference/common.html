@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8>
+	<title>Basic settings</title>
+	<link href="../base.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<div class="main">
+		<h1>Basic settings</h1>
+		
+		<h2>Overview</h2>
+You can set the parameters that are always used, regardless of the name of the node, the number of generations, and other particle settings.
+
+		<h2>Parameter</h2>
+		
+		<h3>Visibility</h3>
+		<p>
+Whether or not particles generated from this node are drawn on the screen. If you check this, particles will be drawn on the screen.
+When outputting for games, particles are not drawn unless this is checked.
+		</p>
+
+		<h3>Name</h3>
+		<p>
+Set the name displayed in the node tree. It does not affect the operation of the effect.
+Set it for organizing nodes when more nodes become available.
+		</p>
+
+		<h3>Spawn Count</h3>
+		<p>
+Sets the maximum number of particles generated from this node.
+You can also choose infinite to generate particles indefinitely until you can not generate particles with the setting of the conditions described later.
+However, when playing an effect from another application that incorporates Effekseer,
+please note that it will not disappear unless the function is called and the user deletes the effect.
+		</p>
+
+		<h3>Inherit Position</h3>
+		<p>
+Sets how the position of the parent particle affects the particles generated from this node.
+Please refer to the following information regarding parameter contents.
+		</p>
+
+		<h3>Inherit Rotation</h3>
+		<p>
+Sets how the rotation of parent particles affects particles generated from this node.
+Please refer to the following information regarding parameter contents.
+		</p>
+
+		<h3>Inherit Scale</h3>
+		<p>
+Sets how the enlargement of parent particles affects particles generated from this node.
+Please see the following information regarding the contents of parameters.
+		</p>
+
+		<h3>Inherit **</h3>
+
+		<h4>Always</h4>
+		<p>
+It is always affected. When the value of the parent particle is changed, the child particles are also immediately affected.
+When the parent particle disappears, the value at the time of disappearance is used without being changed even after it disappears.
+		</p>
+
+		<h4>Only on create</h4>
+		<p>
+Use the value when the child particles were generated.
+		</p>
+
+		<h4>Never</h4>
+		<p>
+It will not be affected. Whatever the value of the parent particle is, the behavior of the particle is determined only by the parameters of the child node.
+		</p>
+
+		<h3>Destroy after time</h3>
+		<p>
+When survival time passes, particles are deleted. If you do not check this, particles will not be deleted after the survival time.
+		</p>
+
+		<h3>Destroy with parent</h3>
+		<p>
+When the parent particle is deleted, it also deletes the child particles.
+		</p>
+
+		<h3>Destroy when no more children</h3>
+		<p>
+If particles of the particle are not present and it is unlikely that children will be generated in the future, delete the particles.
+		</p>
+
+		<h3>Time to live</h3>
+		<p>
+Sets the number of frames in which particles are present. If deletion is not checked due to lifetime, this parameter does not affect particle behavior.
+		</p>
+
+		<h3>Spawn Rate</h3>
+		<p>
+Sets the cycle at which particles are generated. The number of frames specified will be required from generation of particles to generation of the next particle.
+You can specify less than 1 for this generation time, and you can generate multiple particles per frame.
+		</p>
+
+		<h3>Initial Delay</h3>
+		<p>
+Specify the time from generation of parent particles to generation of child particles for the first time.
+		</p>
+
+	</div>
+</body>
+
+</html>
