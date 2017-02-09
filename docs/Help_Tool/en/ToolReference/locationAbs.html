@@ -13,7 +13,8 @@
 		
 		<h2>Overview</h2>
 <p>
-ノードの位置に関するパラメーターの中でも、特に親パーティクルに影響されない位置に関するパラメーターを設定します。
+Set parameters related to positions that are not affected by the position and angle of the parent particle.
+These parameters move the particles after the parent particle and child particle position changes have been applied.
 </p>
 
 		<h2>パラメーター</h2>
@@ -23,38 +24,41 @@
 設定しません。
 		</p>
 
-		<h3>重力</h3>
+		<h3>Gravity</h3>
 		<p>
-ある方向に加速度をかけます。下とは限らず、上や右にも適用することができます。
+Apply acceleration in one direction. It can be applied not only to the bottom but also to the top and the right.
 		</p>
 
 
-		<h3>引力</h3>
+		<h3>Attraction (if point is set)</h3>
 		<p>
-パーティクルが「振る舞い」の「ターゲット位置」に指定した位置に向かうように移動します。
+The particle moves to the position specified as "Point of Attraction" of "Behavior".
 		</p>
 
 <img src="../../img/Reference/locationAbs_attraction.gif">
 
-		<h4>引力</h4>
+		<h4>Attraction</h4>
 <p>
-1フレームにターゲット位置に向けて加速する力です。
+It is a force to accelerate towards the target position in one frame.
 </p>
 
-		<h4>制御</h4>
+		<h4>Resistance</h4>
 <p>
-1フレームにおいて移動方向をターゲット方向に補正する割合です。0.00～1.00の値をとります。
+It is the rate of correcting the moving direction to the target direction in one frame. It takes a value between 0.00 and 1.00.
 </p>
 
-		<h4>最小範囲</h4>
+		<h4>Minimum Range</h4>
 <p>
-引力の減衰開始距離です。
+It is the attenuation start distance of attraction.
 </p>
 
-		<h4>最大範囲</h4>
+		<h4>Maximum Range</h4>
 <p>
-引力の減衰終了距離です。
-パーティクルの位置が0～最少範囲の場合、引力100%になり、最大範囲～の場合、引力0%になり、最小範囲～最大範囲の場合、線形に減衰します。
+
+It is the attenuation end distance of attraction.
+When the position of the particle is in the range from 0 to the minimum range, the attraction is 100%.
+If it is farther than the maximum range, the attractive force becomes 0%.
+If it is between the minimum range and the maximum range, it attenuates linearly.
 </p>
 
 	</div>

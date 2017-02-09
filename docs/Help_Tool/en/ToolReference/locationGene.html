@@ -12,25 +12,24 @@
 		<h1>SpawningMethod</h1>
 		
 		<h2>Overview</h2>
-ノードの位置に関するパラメーターの中でも、特にパーティクルが生成される位置に関するパラメーターを設定します。
-ここで設定した値は親のパーティクルが子のパーティクルに影響をあたえる際に、さらにその間に影響を与えます。
-すなわち、親のパーティクルの位置に、この生成位置で指定した分の座標を移動・回転して、パーティクルの位置に
-影響を与えます。
+Set parameters for specifying the position where particles are generated first.
+In addition to the influence of parent particle position on child particles, the value set here affects.
+That is, particles are generated around the position moved and rotated by the value specified by this spawning method, with the position of the parent particle as the origin.
 
 <img src="../../img/Reference/locationGene.png">
 
-		<h2>パラメーター</h2>
+		<h2>Parameter</h2>
 		
-		<h3>生成角度に影響</h3>
+		<h3>Set angle on spawn</h3>
 		<p>
-生成位置のパラメーターが位置だけでなく、角度にも影響を与えるか指定します。例えば「球」を指定した場合、
-これにチェックを入れると、生成されるパーティクルのY方向が球の法線方向になります。
+Specify whether the parameter of the spawning method affects not only the position but also the angle.
+For example, if you specify "sphere", the Y direction of the generated particles will be the normal direction of the sphere.
 		</p>
 
 <table>
 <tr>
-<td>影響がある場合</td>
-<td>影響がない場合</td>
+<td>Checked</td>
+<td>Unchecked</td>
 </tr>
 <tr>
 <td><img src="../../img/Reference/affect_angle.png"></td>
@@ -38,61 +37,61 @@
 </tr>
 </table>
 
-		<h3>生成位置</h3>
+		<h3>Method of Spawning</h3>
 		<p>
-生成位置の設定方法を指定します。
+Specify how to set the generation position.
 		</p>
 
-		<h4>点</h4>
+		<h4>Point</h4>
 		<p>
-指定した位置の点を生成位置として扱います。
+Treats the point at the specified position as the generation position.
 		</p>
 
-	<h4>円</h4>
+	<h4>Circle</h4>
 		<p>
-円状にパーティクルを配置します。この時半径と回転角度を指定します。「生成角度に影響」にチェックを入れた場合、
-パーティクルの上方向は円の外周方向になります。
+Place the particles in a circle. At this time, specify the radius and rotation angle. 
+When checking "influence on generation angle" The upward direction of the particle is the circumference direction of the circle.
 		</p>
 
-		<h4>球</h4>
+		<h4>Sphere</h4>
 		<p>
-球状にパーティクルを配置します。この時半径とX軸、Y軸の回転角度を指定します。「生成角度に影響」にチェックを入れた場合、
-パーティクルのY方向は円の外周方向になります。
+Place the particles in a spherical shape. At this time, specify the radius and rotation angle of X and Y axes. When checking "influence on generation angle"
+The Y direction of the particle is the circumference direction of the circle.
 		</p>
 
-	<h4>モデル</h4>
+	<h4>Model</h4>
 	<p>
-Effekseer用モデルの形状に沿ってパーティクルを配置します。「生成角度に影響」にチェックを入れた場合、パーティクルのZ方向はモデルの法線方向になります。
+Place particles along the shape of the model for Effekseer. When checking "influence on generation angle", the Z direction of the particle is the normal direction of the model.
 	</p>
 	
-	<h5>生成位置種類</h5>
-	<h6>ランダム</h6>
+	<h5>Spawn Mode</h5>
+	<h6>Random</h6>
 	<p>
-	モデルの面上からランダムにパーティクルを配置します。
+	Place particles randomly from the surface of the model.
 	</p>
 	<img src="../../img/Reference/locationGeneModelRand.png">
 	
-	<h6>頂点</h6>
+	<h6>Vertex</h6>
 	<p>
-	モデルの頂点から、順番にパーティクルを配置します。
+	Place particles sequentially from the top of the model.
 	</p>
 	<img src="../../img/Reference/locationGeneModelVertex.png">
 
-	<h6>頂点(ランダム)</h6>
+	<h6>Random Vertex</h6>
 	<p>
-	  モデルの頂点から、ランダムにパーティクルを配置します。
+	We randomly place particles from the top of the model.
 	</p>
 	<img src="../../img/Reference/locationGeneModelVertexRand.png">
 
-	<h6>面</h6>
+	<h6>Surface</h6>
 	<p>
-	  モデルの面の中心から、順番にパーティクルを配置します。
+	Place the particles in order from the center of the model's face.
 	</p>
 	<img src="../../img/Reference/locationGeneModelFace.png">
 
-	<h6>面(ランダム)</h6>
+	<h6>Random Surface</h6>
 	<p>
-	  モデルの面の中心から、ランダムにパーティクルを配置します。
+	Place particles randomly from the center of the face of the model.
 	</p>
 	<img src="../../img/Reference/locationGeneModelFaceRand.png">
   </div>

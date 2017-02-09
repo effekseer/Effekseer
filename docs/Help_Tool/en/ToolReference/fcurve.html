@@ -13,100 +13,100 @@
 		
 		<h2>Overview</h2>
 		<p>
-グラフを用い、フレームごとに値を設定することのできる機能です。<br>
+It is a function that you can set the value for each frame by using graph.
 		</p>
 		<img src="../../img/Reference/fcurve.png">
 
-		<h2>操作方法</h2>
-		<h3>グラフの表示</h3>
+		<h2>How to use</h2>
+		<h3>Display graph</h3>
 <p>
-各項目(位置、回転等)にてFカーブを指定することにより、Fカーブウインドウにグラフが表示されます。
+By specifying the F curve with each item (position, rotation, etc.), the graph is displayed in the F curve window.
 </p>
 
-		<h3>グラフの移動・拡大縮小</h3>
+		<h3>Movement / scaling of graphs</h3>
 <table>
-	<tr><td>グラフの移動</td><td>グラフ上で、マウスホイールを押しつつ、マウスを移動</td><tr>
-	<tr><td>横方向・拡大縮小</td><td>グラフ上で、Ctrlを押しつつ、マウスホイールを回転</td><tr>
-	<tr><td>縦方向・拡大縮小</td><td>グラフ上で、Shiftを押しつつ、マウスホイールを回転</td><tr>
+	<tr><td>Move graph</td><td>On the graph, hold down the mouse wheel and move the mouse</td><tr>
+	<tr><td>Horizontal / scaling</td><td>On the graph, hold down Ctrl and rotate mouse wheel</td><tr>
+	<tr><td>Vertical / scaling</td><td>On the graph, hold down Shift and rotate mouse wheel</td><tr>
 </table>
 
-		<h3>キーの追加</h3>
-		<h4>3次元ベクトルの場合</h4>
+		<h3>Add key frame</h3>
+		<h4>In the case of a three-dimensional vector</h4>
 <table>
-	<tr><td>X</td><td>グラフ上で、Xキーを押す</td><tr>
-	<tr><td>Y</td><td>グラフ上で、Yキーを押す</td><tr>
-	<tr><td>Z</td><td>グラフ上で、Zキーを押す</td><tr>
+	<tr><td>X</td><td>On the graph, press the X key</td><tr>
+	<tr><td>Y</td><td>On the graph, press the Y key</td><tr>
+	<tr><td>Z</td><td>On the graph, press the Z key</td><tr>
 </table>
 
-		<h4>色の場合</h4>
+		<h4>In the case of a color</h4>
 <table>
-	<tr><td>赤</td><td>グラフ上で、Rキーを押す</td><tr>
-	<tr><td>緑</td><td>グラフ上で、Gキーを押す</td><tr>
-	<tr><td>青</td><td>グラフ上で、Bキーを押す</td><tr>
-	<tr><td>α</td><td>グラフ上で、Aキーを押す</td><tr>
+	<tr><td>Red</td><td>On the graph, press the R key</td><tr>
+	<tr><td>Green</td><td>On the graph, press the G key</td><tr>
+	<tr><td>Blue</td><td>On the graph, press the B key</td><tr>
+	<tr><td>Alpha</td><td>On the graph, press the A key</td><tr>
 </table>
 
-		<h3>キーの選択</h3>
+		<h3>Select key frame</h3>
 <p>
-マウスを左クリックすることで選択できます。
+You can select by left clicking the mouse.
 </p>
 
-		<h3>キーの移動</h3>	
+		<h3>Move key frame</h3>
 <p>
-キー選択した後、マウスの左ボタンを押したままマウスを移動することで移動できます。
-同じように、カーブの制御用のキーも移動させることができます。
+After selecting the key, you can move by moving the mouse while holding down the left mouse button.
+In the same way, you can also move the keys for controlling the curve.
 </p>
 
-		<h3>キーの削除</h3>
+		<h3>Delete key frame</h3>
 <p>
-キーを選択した後、Deleteを押すことにより削除できます。
+After selecting the key, you can delete it by pressing Delete.
 </p>
 
-		<h2>パラメーター</h2>
+		<h2>Parameter</h2>
 		<h3>フレーム</h3>
 		<p>
-キーごとに設定します。キーのフレームを指定します。
+Set for each key. Specify the frame of the key.
 		</p>
 
 		<h3>値</h3>
 		<p>
-キーごとに設定します。キーの値を指定します。
+Set for each key. Specify the value of the key.
 		</p>
 
 		<h3>補完</h3>
 		<p>
-キーごとに設定します。キーとキーの間の補完方法を指定します。
+Set for each key. Specify the completion method between the key and the key.
 		</p>
 
 		<h3>先頭</h3>
 		<p>
-グラフごとに設定します。グラフの左端より前のグラフの値の設定方法を指定します。
+Set it for each graph. Specify how to set the value of the graph before the left edge of the graph.
 		</p>
 
 		<h3>末尾</h3>
 		<p>
-グラフごとに設定します。グラフの右端より後のグラフの値の設定方法を指定します。
+Set it for each graph. Specify how to set the value of the graph after the right edge of the graph.
 		</p>
 
-		<h3>サンプリング</h3>
+		<h3>Sampling</h3>
 		<p>
-グラフごとに設定します。実際に再生するときに、何フレームごとの値を使用して表示するか指定します。小さいほどメモリは使いますが、グラフの形状に近い値を使用します。
+Set it for each graph. When actually playing back, specify how many frames to use to display. The smaller the memory is used, the closer the shape of the graph is used.
 		</p>
 
 		<h3>左x,y</h3>
 		<p>
-キーごとに設定します。キーのカーブ制御の左ハンドルの位置を指定します。
+Set for each key. Specify the position of the left handle of the curve control of the key.
 		</p>
 
 		<h3>右x,y</h3>
 		<p>
-キーごとに設定します。キーのカーブ制御の右ハンドルの位置を指定します。
+Set for each key. Specify the position of the right handle of the curve control of the key.
 		</p>
 
 
 		<h3>オフセット最大,最小</h3>
 		<p>
-グラフごとに設定します。値を使用するときにオフセットの範囲で、ランダムに値を上下にグラフをずらします。
+Set it for each graph. When using values, offset the range, randomly shift the value up or down the graph.
 		</p>
 
 
