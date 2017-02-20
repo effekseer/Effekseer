@@ -346,19 +346,11 @@ namespace Culling3D
 		grids.clear();
 	}
 
-	template<typename T> bool isfinite_(T arg)
-	{
-		return arg == arg &&
-			arg != std::numeric_limits<T>::infinity() &&
-			arg != -std::numeric_limits<T>::infinity();
-	}
-
 	void WorldInternal::Culling(const Matrix44& cameraProjMat, bool isOpenGL)
 	{
 		objs.clear();
 	
-		
-		if (!isfinite_(cameraProjMat.Values[2][2]) &&
+		if (!std::isinf(cameraProjMat.Values[2][2]) &&
 			cameraProjMat.Values[0][0] != 0.0f &&
 			cameraProjMat.Values[1][1] != 0.0f)
 		{
