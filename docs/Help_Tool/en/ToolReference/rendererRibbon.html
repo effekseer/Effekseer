@@ -14,16 +14,18 @@
 		<h2>Overview</h2>
 
 <p>
-描画の設定で、「リボン」を選択した場合の描画及びパラメーターについて解説します。
+Drawing and parameters when "Ribbon" is selected in drawing setting are explained.
 </p>
 
 <p>
-「モデル」を選択すると、連続的に繋がったリボン上のエフェクトが描画されます。
+When "Ribbon" is selected, effects on continuous ribbon are drawn.
 </p>
 
 <p>
-リボンはインスタンスごとで描画するのではなく、あるインスタンスの子全てを繋げて描画します。
-例えばインスタンス0の子のインスタンス1,2,3と存在すると、1,2,3の間でリボンを引いた様な形状が描画されます。リボンは各インスタンスの(-0.5,0,0)と(0.5,0,0)の間の線を繋げたような形状になります。
+Ribbon is not drawn for each particle, it connects all children of a certain particle and draws it.
+For example, if there are particles 1, 2, and 3 of the child of particle 0, a shape like a ribbon drawn between 1, 2, and 3 is drawn. 
+The ribbon is shaped like connecting the lines between (-0.5, 0, 0) and (0.5, 0, 0) of each particle.
+
 </p>
 
 <img src="../../img/Reference/renderRibbon.png">
