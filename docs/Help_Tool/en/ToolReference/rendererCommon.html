@@ -13,51 +13,49 @@
 		
 		<h2>Overview</h2>
 <p>
-This section explains about "drawing common" which sets parameters common to all drawing methods.
+This section explains about the "Basic Render Settings" window, which provides common parameters that manipulate how the current node's particles are drawn.
 </p>
 
-		<h2>パラメーター</h2>
+		<h2>Parameter</h2>
 		
 		<h3>色/歪み画像</h4>
 		<p>
-Sets the color image or distortion image to be used for particle display. As the name suggests, the color image is an image in which a pattern or the like that is almost directly displayed is drawn. In most cases, you set color images. Regarding the distorted image, we will explain with the distortion item below.
+Sets the color image or distortion image to be used for displaying the particle. As the name suggests, for the color image, the image/pattern/etc will displayed almost exactly as it appears in the source. In most cases, you will use color images. As for the distorted image, we will explain this further below in the distortion section.
 		</p>
 
-		<h3>ブレンド</h4>
+		<h3>Blend</h4>
 		<p>
-Specifies the method of alpha blending applied to particle display. Specify the composition method for already drawn images such as translucency, addition, subtraction.
+Specifies the method of alpha blending applied when displaying the particle. This controls how drawn images will be composited when they are on top of each other, such as translucency, addition, or subtraction.
 		</p>
 
-		<h3>フィルタ</h4>
+		<h3>Filter</h4>
 		<p>
-Specify the method of filter to be applied to particle display.
+Specify the filtering method to be applied when displaying the particle.
 		</p>
 
 		<h3>深度書き込み</h3>
 		<p>
-Specify whether to write depth (depth) information when displaying particles. After writing the depth information, if you draw the particles for which the depth test is enabled, if the particles are deep inside, it will not be drawn.
+Specify whether to write depth information when displaying particles. After writing the depth information, if you draw the particles for which the depth test is enabled, if the particles are deep inside, it will not be drawn.
 		</p>
 
-		<h3>深度テスト</h3>
+		<h3>Depth Test</h3>
 		<p>
 If the depth test is valid, particles will not be drawn deeper than the written depth information.
 		</p>
 
-		<h3>フェードイン</h3>
+		<h3>Fade-In</h3>
 		<p>
-When particles are displayed, they are faded in so that they are displayed.
+When a particle is first spawned, it fades in over a duration until fully visible.
 		</p>
 
-		<h3>フェードアウト</h3>
+		<h3>Fade-Out</h3>
 		<p>
-When a particle disappears, it fades out and disappears.
+When a particle is about to be despawned, it fades out over a duration and disappears.
 		</p>
 
 		<h3>UV</h4>
 		<p>
-In the color / distortion image, specify the range actually used for particle display.
-Since the range used is changed with time, you can animate the image.
-The unit of the numerical value used to specify the area is pixel.
+In the color/distortion image, this specifies the region of the image actually used when displaying the particle. The range used can be changed over time, allowing you to scroll or animate the image. The units used in these parameters for specifying the area are pixels.
 		</p>
 
 		<h3>歪み</h3>
@@ -74,13 +72,13 @@ The unit of the numerical value used to specify the area is pixel.
 		<h2>歪みについて</h2>
 
 <p>
-If the distortion setting is enabled, the particles will distort the background. 
-The way of distortion depends on the distorted image, the setting of the color of each drawing, and the distortion intensity.
+If the distortion setting is enabled, the particles will distort anything behind it. 
+The way the distortion is applied depends on the pixel data of the distorted image, and the distortion intensity.
 </p>
 
 <p>
-In the color of distortion image, red and green are used as distortion information. Both of them do not distort at all when the value is 127. When red is 127 or more, it is distorted to the right, and when it is less than 127 it distorts to the left.
-When green is 127 or more, distortion in the upward direction and distortion in the downward direction when the green is less than 127. However, this up / down / left / right direction depends on the drawing method. For example, in the case of a sprite, the top, bottom, left, and right are determined in the direction of the side of the rectangle.
+In the color of the distortion image, red and green channels are used as distortion information. Both of them do not distort at all when the value is 127. When red is 127 or more, it is distorted to the right, and when it is less than 127 it distorts to the left.
+When green is 127 or more, distortion is in the upward direction and distortion is in the downward direction when the green is less than 127. However, this up / down / left / right direction depends on the drawing method. For example, in the case of a sprite, the top, bottom, left, and right directions are those perpindicular to the sides of the image's rectangle.
 </p>
 
 
@@ -89,7 +87,7 @@ The color of each drawing weakens the strength of distortion. When 255 becomes 0
 </p>
 
 <p>
-Distortion strength adjusts the strength of all strains. When it becomes 0, it will not distort.
+Distortion strength adjusts the strength of all colors. When it reaches 0, no more distortion will be applied.
 </p>
 
 <table>

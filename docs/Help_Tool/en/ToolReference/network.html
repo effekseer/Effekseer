@@ -3,63 +3,61 @@
 
 <head>
 	<meta charset=utf-8>
-	<title>回転</title>
+	<title>Network</title>
 	<link href="../base.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
 	<div class="main">
-		<h1>ネットワーク</h1>
+		<h1>Network</h1>
 		
 		<h2>Overview</h2>
 <p>
 Set parameters related to the network.
-You can edit the effect of an application (game etc.) incorporating the running runtime via the network from the outside.
-If you would like to find out more, please read the item about the runtime network.
+You can edit the effect of an application (game etc.) incorporating the runtime via the network from the outside.
+If you would like to find out more, please read the help page about the runtime network.
 </p>
 
-		<h2>パラメーター</h2>
+		<h2>Parameters</h2>
 		
-		<h3>接続先</h3>
+		<h3>Address</h3>
 		<p>
-Write the IP address or DNS of the hardware running the application.
+Enter the IP address or DNS of the computer/server running the application.
 		</p>
 
-		<h3>ポート</h3>
+		<h3>Port</h3>
 		<p>
-Enter the port number of the server running in the application.
+Enter the port number of the computer/server running the application.
 		</p>
 
-		<h3>切断時、自動接続を一定時間ごとに行う</h3>
+		<h3>Auto-connect</h3>
 		<p>
-If it is not connected anywhere, it tries to connect to the connection destination set at a fixed time.
+If connection has not yet been established, connection to the remote application will be attempted at a fixed interval.
 		</p>
 
-		<h3>ファイル読み込み時にデータを送信する</h3>
+		<h3>Transmit data on load</h3>
 		<p>
-If the connection is established when reading the file, send the effect data to the application.
+When loading an effect file, if connection has been established, send the effect data to the application.
 		</p>
 
-		<h3>編集時にデータを送信する</h3>
+		<h3>Transmit data on edit</h3>
 		<p>
-If the connection is established when editing the effect, send effect data to the application.
+When making an edit to the effect, if connection has been established, send the effect data to the application.
 		</p>
 
-
-		<h3>保存時時にデータを送信する</h3>
+		<h3>Transmit data on save</h3>
 		<p>
-If the connection is established when saving the file, send effect data to the application.
+When saving the effect, if connection has been established, send the effect data to the application.
 		</p>
 
-
-		<h3>データ送信</h3>
+		<h3>Send</h3>
 		<p>
 Forcefully send effect data to the application.
 		</p>
 
-		<h3>接続</h3>
+		<h3>Connect</h3>
 		<p>
-Connect to the specified connection destination.
+Connect to the specified remote application.
 		</p>
 	</div>
 </body>
