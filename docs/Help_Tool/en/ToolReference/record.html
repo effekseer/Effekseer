@@ -3,18 +3,18 @@
 
 <head>
 	<meta charset=utf-8>
-	<title>録画</title>
+	<title>Recorder</title>
 	<link href="../base.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
 	<div class="main">
-		<h1>録画</h1>
+		<h1>Recorder</h1>
 		
 		<h2>Overview</h2>
 <p>
-It outputs the created effects as serial number images, images and gif animation.
-This function is very useful in situations such as when posting effects created on Twitter or Blog etc., when you can not directly play effects created with Effekseer, or when loading the effects playback is concerned.
+Allows you to output the created effect as a sprite sheet, gif animation, AVI, etc.
+This function is very useful in situations such as when posting effects on your Twitter/Blog/Website/etc., or other situations where you cannot directly play effects created with Effekseer, through the runtime or otherwise.
 
 </p>
 
@@ -25,60 +25,60 @@ This function is very useful in situations such as when posting effects created 
 	</tr>
 </table>
 
-		<h2>パラメーター</h2>
+		<h2>Parameter</h2>
 		
-		<h3>録画範囲(解像度)</h3>
-		<h4>横幅縦幅</h4>
+		<h3>Resolution</h3>
+		<h4>Width/Height</h4>
 		<p>
-Sets the size of the image per animation.
+Sets the output size for each frame of the animation.
 		</p>
 
-		<h4>録画範囲を表示</h4>
+		<h4>Show guide</h4>
 		<p>
-When checked, the recording range is displayed on the screen.
+When checked, the bounds of the recording canvas is displayed on the screen. Anything inside the guide will be recorded, anything outside the guide will be cropped out.
 		</p>
 
-		<h3>出力フレーム</h3>
+		<h3>Exported Frame</h3>
 
-		<h4>開始フレーム</h4>
+		<h4>Start Frame</h4>
 		<p>
-ファイルに出力する映像の範囲の開始フレームを設定します。
+Sets the frame to start recording from for outputting the image to a file.
 		</p>
 
-		<h4>終了フレーム</h4>
+		<h4>End Frame</h4>
 		<p>
-Sets the start frame of the range of the image output to the file.
+Sets the frame where recording will be stopped when outputting the image to a file.
 		</p>
 
-		<h4>出力頻度(フレーム毎)</h4>
+		<h4>Frequency (Frame)</h4>
 		<p>
-Sets the frequency of file output.
-For example, if 1 is set, 60 frames are recorded, 60 images will be output.
-When 2 is set, when 60 frames are recorded, 30 images are output.
-If you increase the number like this, the file size will be smaller and the image will be skipped instead.
+Sets the level of frame skipping in the file output.
+For example, for a value of 1, when 60 frames are recorded, 60 images will be output.
+For a value of 2, when 60 frames are recorded, only 30 images will be output (every other frame).
+If you increase the number like this, the file size will become smaller at the cost of choppier animations.
 		</p>
 
-		<h3>出力形式</h3>
+		<h3>Format</h3>
 		<p>
-There are 3 types of "1枚にまとめて出力" "連番画像として出力" and "Gifアニメーションとして出力".
-		</p>
-
-		<p>
-"1枚にまとめて出力" is an image with animation arranged from the upper left to the upper right. Images are arranged horizontally by the number specified in the horizontal direction number. Images in the number of recorded frames / horizontal direction are arranged in the vertical direction.
+There are 4 options: "Export as a single image", "Export images", "Export as a gif animation", and "Export as a AVI".
 		</p>
 
 		<p>
-"連番画像として出力" outputs numbers with numbers attached to shot images.
+"Export as a single image" will create a sprite-sheet image with frames arranged from the upper left to the lower right. The number of frames arranged horizontally will be number specified under "X Count". Consequently, the number of frames arranged vertically will be the total number of recorded frames / X Count.
 		</p>
 
 		<p>
-"Gifアニメーションとして出力" will output the captured image as Gif animation.
+"Export images" outputs frames as individual files with numbers attached to each filename.
+		</p>
+
+		<p>
+"Export as a gif animation" and "Export as a AVI" will output the captured effect to an uncompressed animation file.
 		</p>
 <table>
 	<tr>
-		<td>1枚にまとめて出力</td>
-		<td>連番画像として出力</td>
-		<td>Gifアニメーションとして出力</td>
+		<td>Export as a single image</td>
+		<td>Export images</td>
+		<td>Export as a gif animation</td>
 	</tr>
 	<tr>
 		<td><img src="../../img/Reference/record_single.jpg"></td>
@@ -88,10 +88,10 @@ There are 3 types of "1枚にまとめて出力" "連番画像として出力" a
 </table>
 
 
-		<h3>オプション</h3>
-		<h4>背景色を透明にする</h4>
+		<h3>Options</h3>
+		<h4>Make transparent</h4>
 		<p>
-If not checked, the background is black, but when you check it the background will be transparent and will be output. However, it is invalid for gif animation.
+If not checked, the background will be black; otherwise, the background will be transparent in the output. Transparency applies even for AVI files, but not for gif animations.
 		</p>
 
 	</div>

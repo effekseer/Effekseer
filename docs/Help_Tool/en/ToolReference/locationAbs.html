@@ -13,15 +13,15 @@
 		
 		<h2>Overview</h2>
 <p>
-Set parameters related to positions that are not affected by the position and angle of the parent particle.
+Set parameters that control forces applied to particles that are independent of the position and angle of the parent particle.
 These parameters move the particles after the parent particle and child particle position changes have been applied.
 </p>
 
-		<h2>パラメーター</h2>
+		<h2>Parameters</h2>
 
-		<h3>なし</h3>
+		<h3>None</h3>
 		<p>
-設定しません。
+No additional external forces will be applied to the particles.
 		</p>
 
 		<h3>Gravity</h3>
@@ -32,33 +32,33 @@ Apply acceleration in one direction. It can be applied not only to the bottom bu
 
 		<h3>Attraction (if point is set)</h3>
 		<p>
-The particle moves to the position specified as "Point of Attraction" of "Behavior".
+The particle moves towards the position specified under "Point of Attraction" in the "Behavior" window.
 		</p>
 
 <img src="../../img/Reference/locationAbs_attraction.gif">
 
 		<h4>Attraction</h4>
 <p>
-It is a force to accelerate towards the target position in one frame.
+This is the rate of acceleration towards the target position per frame.
 </p>
 
 		<h4>Resistance</h4>
 <p>
-It is the rate of correcting the moving direction to the target direction in one frame. It takes a value between 0.00 and 1.00.
+This is the rate that the angle of motion is adjusted towards the target direction per frame. It takes a value between 0.00 and 1.00.
 </p>
 
 		<h4>Minimum Range</h4>
 <p>
-It is the attenuation start distance of attraction.
+This is the attenuation start distance of attraction.
 </p>
 
 		<h4>Maximum Range</h4>
 <p>
+This is the attenuation end distance of attraction.
 
-It is the attenuation end distance of attraction.
 When the position of the particle is in the range from 0 to the minimum range, the attraction is 100%.
 If it is farther than the maximum range, the attractive force becomes 0%.
-If it is between the minimum range and the maximum range, it attenuates linearly.
+If it is between the minimum range and the maximum range, the attraction force interpolates linearly.
 </p>
 
 	</div>

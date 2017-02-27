@@ -3,31 +3,31 @@
 
 <head>
 	<meta charset=utf-8>
-	<title>Fカーブ</title>
+	<title>F-Curve</title>
 	<link href="../base.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
 	<div class="main">
-		<h1>Fカーブ</h1>
+		<h1>F-Curve</h1>
 		
 		<h2>Overview</h2>
 		<p>
-It is a function that you can set the value for each frame by using graph.
+This is a feature that lets you automate frame-by-frame values over time by defining curves in a graph.
 		</p>
 		<img src="../../img/Reference/fcurve.png">
 
 		<h2>How to use</h2>
-		<h3>Display graph</h3>
+		<h3>Display Graph</h3>
 <p>
-By specifying the F curve with each item (position, rotation, etc.), the graph is displayed in the F curve window.
+When you specify the F-curve for each item (position, rotation, etc.), their graphs will be displayed in the F-curve window.
 </p>
 
-		<h3>Movement / scaling of graphs</h3>
+		<h3>Movement / Scaling of Graphs</h3>
 <table>
-	<tr><td>Move graph</td><td>On the graph, hold down the mouse wheel and move the mouse</td><tr>
-	<tr><td>Horizontal / scaling</td><td>On the graph, hold down Ctrl and rotate mouse wheel</td><tr>
-	<tr><td>Vertical / scaling</td><td>On the graph, hold down Shift and rotate mouse wheel</td><tr>
+	<tr><td>Move graph</td><td>On the graph, move the mouse while middle clicking.</td><tr>
+	<tr><td>Horizontal scaling</td><td>On the graph, hold down Ctrl and scroll the mouse wheel.</td><tr>
+	<tr><td>Vertical scaling</td><td>On the graph, hold down Shift and scroll the mouse wheel.</td><tr>
 </table>
 
 		<h3>Add key frame</h3>
@@ -53,8 +53,8 @@ You can select by left clicking the mouse.
 
 		<h3>Move key frame</h3>
 <p>
-After selecting the key, you can move by moving the mouse while holding down the left mouse button.
-In the same way, you can also move the keys for controlling the curve.
+After selecting the key, you can move it by moving the mouse while holding down the left mouse button.
+In the same way, you can also move the handles that control the curves.
 </p>
 
 		<h3>Delete key frame</h3>
@@ -63,50 +63,49 @@ After selecting the key, you can delete it by pressing Delete.
 </p>
 
 		<h2>Parameter</h2>
-		<h3>フレーム</h3>
+		<h3>Frame</h3>
 		<p>
 Set for each key. Specify the frame of the key.
 		</p>
 
-		<h3>値</h3>
+		<h3>Value</h3>
 		<p>
 Set for each key. Specify the value of the key.
 		</p>
 
-		<h3>補完</h3>
+		<h3>Type</h3>
 		<p>
-Set for each key. Specify the completion method between the key and the key.
+Set for each key. Specify the interpolation method between this key and its neighboring keys.
 		</p>
 
-		<h3>先頭</h3>
+		<h3>Start</h3>
 		<p>
-Set it for each graph. Specify how to set the value of the graph before the left edge of the graph.
+Set for each graph. Specify how values before the left edge of the graph should be generated.
 		</p>
 
-		<h3>末尾</h3>
+		<h3>End</h3>
 		<p>
-Set it for each graph. Specify how to set the value of the graph after the right edge of the graph.
+Set for each graph. Specify how values after the right edge of the graph should be generated.
 		</p>
 
 		<h3>Sampling</h3>
 		<p>
-Set it for each graph. When actually playing back, specify how many frames to use to display. The smaller the memory is used, the closer the shape of the graph is used.
+Set for each graph. When actually playing back, specify how many frames to use as the resolution for interpolation. The smaller the value, the more accurate the result will be to the actual shape of the graph.
 		</p>
 
-		<h3>左x,y</h3>
+		<h3>Left X/Y</h3>
 		<p>
-Set for each key. Specify the position of the left handle of the curve control of the key.
+Set for each key. Specify the position of the left handle of the key's curve control.
 		</p>
 
-		<h3>右x,y</h3>
+		<h3>Right X/Y</h3>
 		<p>
-Set for each key. Specify the position of the right handle of the curve control of the key.
+Set for each key. Specify the position of the right handle of the key's curve control.
 		</p>
 
-
-		<h3>オフセット最大,最小</h3>
+		<h3>Max/Min Offset</h3>
 		<p>
-Set it for each graph. When using values, offset the range, randomly shift the value up or down the graph.
+Set for each graph. When using values, offset the range, randomly shift the value up or down the graph.
 		</p>
 
 

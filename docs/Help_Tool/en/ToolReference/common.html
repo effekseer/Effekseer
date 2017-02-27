@@ -12,95 +12,88 @@
 		<h1>Basic settings</h1>
 		
 		<h2>Overview</h2>
-You can set the parameters that are always used, regardless of the name of the node, the number of generations, and other particle settings.
+From here, you can set some global parameters for the particle node, such as its name, the number of particles to be generated, and other particle settings.
 
 		<h2>Parameter</h2>
 		
 		<h3>Visibility</h3>
 		<p>
-Whether or not particles generated from this node are drawn on the screen. If you check this, particles will be drawn on the screen.
-When outputting for games, particles are not drawn unless this is checked.
+Controls whether or not particles generated from this node are drawn on the screen. If you check this, particles will be visible. Note that even when outputting for games, particles will not be drawn unless this is checked.
 		</p>
 
 		<h3>Name</h3>
 		<p>
-Set the name displayed in the node tree. It does not affect the operation of the effect.
-Set it for organizing nodes when more nodes become available.
+Set the name displayed in the node tree. This is for organizational purposes only; to organize nodes when you have many nodes in your node tree. It does not affect the behavior of the particles in any way.
 		</p>
 
 		<h3>Spawn Count</h3>
 		<p>
-Sets the maximum number of particles generated from this node.
-You can also choose infinite to generate particles indefinitely until you can not generate particles with the setting of the conditions described later.
-However, when playing an effect from another application that incorporates Effekseer,
-please note that it will not disappear unless the function is called and the user deletes the effect.
+Sets the maximum number of particles that will be generated from this node. You can also choose infinite to generate particles indefinitely (or until other conditional settings described later cause the particle generation to be stopped). However, when playing an effect from another application that incorporates Effekseer, please note that the "infinite" effect will not end unless a function is manually called to stop the effect.
 		</p>
 
 		<h3>Inherit Position</h3>
 		<p>
 Sets how the position of the parent particle affects the particles generated from this node.
-Please refer to the following information regarding parameter contents.
+Please refer to the following section for information regarding inheritance options.
 		</p>
 
 		<h3>Inherit Rotation</h3>
 		<p>
 Sets how the rotation of parent particles affects particles generated from this node.
-Please refer to the following information regarding parameter contents.
+Please refer to the following section for information regarding inheritance options.
 		</p>
 
 		<h3>Inherit Scale</h3>
 		<p>
 Sets how the enlargement of parent particles affects particles generated from this node.
-Please see the following information regarding the contents of parameters.
+Please refer to the following section for information regarding inheritance options.
 		</p>
 
 		<h3>Inherit **</h3>
 
 		<h4>Always</h4>
 		<p>
-It is always affected. When the value of the parent particle is changed, the child particles are also immediately affected.
-When the parent particle disappears, the value at the time of disappearance is used without being changed even after it disappears.
+It is continuously inherited. Whenever the value of the parent particle is changed, the child particles are also immediately updated. If the parent particle despawns, the value at the time of disappearance will be what is used for inheritance from that point on.
 		</p>
 
 		<h4>Only on create</h4>
 		<p>
-Use the value when the child particles were generated.
+The inherited value is used to initialize the value for each child particle only once, when the child particle is first generatated.
 		</p>
 
 		<h4>Never</h4>
 		<p>
-It will not be affected. Whatever the value of the parent particle is, the behavior of the particle is determined only by the parameters of the child node.
+The value will not be inherited. Regardless of the value of the parent particle, the behavior of the particle will be determined only by the parameters of the child node.
 		</p>
 
 		<h3>Destroy after time</h3>
 		<p>
-When survival time passes, particles are deleted. If you do not check this, particles will not be deleted after the survival time.
+When the number of frames spcified in "Time to live" passes, the particle will be despawned. If you do not check this, particles will not be despawned after their lifetime expires.
 		</p>
 
 		<h3>Destroy with parent</h3>
 		<p>
-When the parent particle is deleted, it also deletes the child particles.
+When the parent particle despawns, the child particle(s) will be despawned as well.
 		</p>
 
 		<h3>Destroy when no more children</h3>
 		<p>
-If particles of the particle are not present and it is unlikely that children will be generated in the future, delete the particles.
+If child particles of a parent particle are not present, and it is unlikely that any more children will be generated in the future, delete the parent particle.
 		</p>
 
 		<h3>Time to live</h3>
 		<p>
-Sets the number of frames in which particles are present. If deletion is not checked due to lifetime, this parameter does not affect particle behavior.
+Sets the number of frames that should pass between the particle being spawned, and being despawned. However, if "Destroy after time" is unchecked, this parameter has no effect.
 		</p>
 
 		<h3>Spawn Rate</h3>
 		<p>
-Sets the cycle at which particles are generated. The number of frames specified will be required from generation of particles to generation of the next particle.
-You can specify less than 1 for this generation time, and you can generate multiple particles per frame.
+Sets the rate at which particles are generated. The number of frames specified will have to pass between one particle generating and the next. You can specify a value less than 1 for the spawn rate, in which case multiple particles will be generated per frame.
 		</p>
 
 		<h3>Initial Delay</h3>
 		<p>
-Specify the time from generation of parent particles to generation of child particles for the first time.
+Specify the number of frames that must pass between generation of parent particles and the initial generation of their child particles.
 		</p>
 
 	</div>
