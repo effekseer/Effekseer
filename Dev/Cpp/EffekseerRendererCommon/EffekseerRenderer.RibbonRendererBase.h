@@ -226,11 +226,12 @@ protected:
 				else
 				{
 					Effekseer::Vector3D axisOld = axisBefore;
-					axis = (vs_[3].Pos - vs_[1].Pos);
+					axis = (vs_[5].Pos - vs_[3].Pos);
 					Effekseer::Vector3D::Normal(axis, axis);
 					axisBefore = axis;
 
 					axis = (axisBefore + axisOld) / 2.0f;
+					Effekseer::Vector3D::Normal(axis, axis);
 				}
 
 				auto tangent = vs_[1].Pos - vs_[0].Pos;
