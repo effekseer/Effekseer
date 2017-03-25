@@ -23,31 +23,34 @@ When "Sprite" is selected, squares, rectangles, arbitrary squares, etc. are draw
 
 <img src="../../img/Reference/renderSprite.png">
 
-		<h2>パラメーター</h2>
+		<h2>Parameter</h2>
 		
-		<h3>描画順</h3>
+		<h3>Rendering Order</h3>
 		<p>
-同じノードから発生するスプライト間でもどのスプライトから順番に描画するか指定します。生成順の場合、最初に生成されたのが後ろの方に、生成順の逆の場合、最初に生成されたのが前に描画されます。
+Specify from which sprite to draw in order from among sprites originating from the same node.
+In the case of generation order, the first generated is the last generated, the reverse of the generation order, the first generated is drawn before.
 		</p>
 
-		<h3>配置方法</h3>
+		<h3>Configuration</h3>
 		<p>
-スプライトをパーティクルに対してどのように配置するか指定します。「ビルボード」の場合、スプライトは常に視点側を向きます。「Z軸回転ビルボード」の場合、Z軸の回転は固定しつつ視点側をむきます。「Y軸固定」の場合、Y軸の回転は固定しつつ視点側をむきます。「固定」の場合、スプライトはパーティクルの回転に従います。
+Specify how to place sprites on particles.
+In the case of "Billboard", the sprite always points to the viewpoint side. In the case of "Z axis rotating building board", peel the viewing side while fixing the Z axis rotation.
+In the case of "Y axis fixed", peel the viewing side while fixing the rotation of the Y axis. When "fixed", the sprite follows the rotation of the particle.
 		</p>
 
-		<h3>全体色</h3>
+		<h3>Color All</h3>
 		<p>
-スプライトの全体の色を指定します。
+Specify the color of the whole sprite.
 		</p>
 
-		<h3>頂点色</h3>
+		<h3>Vertex Color</h3>
 		<p>
-スプライトの各頂点の色を指定します。
+Specify the color of each vertex of the sprite.
 		</p>
 
-		<h3>頂点座標</h3>
+		<h3>Vertex Coords</h3>
 		<p>
-スプライトの各頂点の座標を指定します。
+Specify the coordinates of each vertex of the sprite.
 		</p>
 	</div>
 </body>

@@ -18,7 +18,7 @@ This section explains about the "Basic Render Settings" window, which provides c
 
 		<h2>Parameter</h2>
 		
-		<h3>色/歪み画像</h4>
+		<h3>Texture(color/distortion)</h4>
 		<p>
 Sets the color image or distortion image to be used for displaying the particle. As the name suggests, for the color image, the image/pattern/etc will displayed almost exactly as it appears in the source. In most cases, you will use color images. As for the distorted image, we will explain this further below in the distortion section.
 		</p>
@@ -33,7 +33,7 @@ Specifies the method of alpha blending applied when displaying the particle. Thi
 Specify the filtering method to be applied when displaying the particle.
 		</p>
 
-		<h3>深度書き込み</h3>
+		<h3>Depth Set</h3>
 		<p>
 Specify whether to write depth information when displaying particles. After writing the depth information, if you draw the particles for which the depth test is enabled, if the particles are deep inside, it will not be drawn.
 		</p>
@@ -58,18 +58,18 @@ When a particle is about to be despawned, it fades out over a duration and disap
 In the color/distortion image, this specifies the region of the image actually used when displaying the particle. The range used can be changed over time, allowing you to scroll or animate the image. The units used in these parameters for specifying the area are pixels.
 		</p>
 
-		<h3>歪み</h3>
+		<h3>Distortion</h3>
 		<p>
-下記の歪みの項目で説明します。
+It is explained by the distortion item below.
 		</p>
 
 
-		<h3>歪み強度</h3>
+		<h3>Distortion Intensity</h3>
 		<p>
-下記の歪みの項目で説明します。
+It is explained by the distortion item below.
 		</p>
 
-		<h2>歪みについて</h2>
+		<h2>About distortion</h2>
 
 <p>
 If the distortion setting is enabled, the particles will distort anything behind it. 

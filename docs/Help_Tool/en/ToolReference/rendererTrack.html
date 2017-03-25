@@ -3,13 +3,13 @@
 
 <head>
 	<meta charset=utf-8>
-	<title>描画-軌跡</title>
+	<title>Render - Track</title>
 	<link href="../base.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
 	<div class="main">
-		<h1>描画-軌跡</h1>
+		<h1>Render - Track</h1>
 		
 		<h2>Overview</h2>
 
@@ -22,56 +22,56 @@ When "Track" is selected, effects on continuously connected loci will be drawn.
 </p>
 
 <p>
-軌跡は、パーティクルごとで描画するのではなく、あるパーティクルの子全てを繋げて描画します。 例えばパーティクル0の子のパーティクル1,2,3と存在すると、1,2,3の間で軌跡を引いた様な形状が描画されます。軌跡は各パーティクルの間の線を繋げたような形状になります。リボンと違う点は、リボンはパーティクルの回転や拡大に影響されましたが、軌跡の場合はそれらに影響されず、常にカメラの方を向くようになっています。
+The track is drawn by connecting all the children of a certain particle instead of drawing each particle. For example, if there are particles 1, 2, and 3 of the child of particle 0, a shape is drawn with a track drawn between 1, 2, and 3. The track is shaped like connecting the lines between each particle. Unlike the ribbon, the ribbon was influenced by the rotation and enlargement of the particle, but in the case of the track it is not influenced by them and always faces the camera.
 </p>
 
 <img src="../../img/Reference/renderTrack.png">
 
-		<h2>パラメーター</h2>
+		<h2>Parameter</h2>
 		
-		<h3>幅・前方</h3>
+		<h3>Front Size</h3>
 		<p>
-軌跡の前方の幅を指定します。
+Specify the width of the front of the track.
 		</p>
 
-		<h3>幅・中間</h3>
+		<h3>Middle Size</h3>
 		<p>
-軌跡の中間の幅を指定します。
+Specify the width of the middle of the track.
 		</p>
 
-		<h3>幅・後方</h3>
+		<h3>Back Size</h3>
 		<p>
-軌跡の後方の幅を指定します。
+Specify the width behind the track.
 		</p>
 
-		<h3>色・左</h3>
+		<h3>Color, Left</h3>
 		<p>
-軌跡の左前と左後ろの色を指定します。
+Specify the color of the left front and left rear of the track.
 		</p>
 
-		<h3>色・左中間</h3>
+		<h3>Color, Left-Center</h3>
 		<p>
-軌跡の左中間の色を指定します。
+Specify the color of the left middle of the track.
 		</p>
 
-		<h3>色・中央</h3>
+		<h3>Color, Center</h3>
 		<p>
-軌跡の中央前と中央後ろの色を指定します。
+Specify the color in front of the middle of the track and the rear in the center.
 		</p>
 
-		<h3>色・中央中間</h3>
+		<h3>Color, Center-Middle</h3>
 		<p>
-軌跡の中央中間の色を指定します。
+Specify the middle middle color of the locus.
 		</p>
 
-		<h3>色・右</h3>
+		<h3>Color, Right</h3>
 		<p>
-軌跡の右前と右後ろの色を指定します。
+Specify the color to the front right and back right of the track.
 		</p>
 
-		<h3>色・右中間</h3>
+		<h3>Color, Right-Center</h3>
 		<p>
-軌跡の右中間の色を指定します。
+Specify the color of the right middle of the track.
 		</p>
 	</div>
 </body>

@@ -30,31 +30,34 @@ The ribbon is shaped like connecting the lines between (-0.5, 0, 0) and (0.5, 0,
 
 <img src="../../img/Reference/renderRibbon.png">
 
-		<h2>パラメーター</h2>
+		<h2>Parameter</h2>
 
 		<h3>描画順</h3>
 		<p>
-同じノードから発生するスプライト間でもどのスプライトから順番に描画するか指定します。生成順の場合、最初に生成されたのが後ろの方に、生成順の逆の場合、最初に生成されたのが前に描画されます。
+Specify the order in which particles are drawn among particles generated from the same node.
+In the order of generation, if the first generated particle is the first, in reverse order of generation, the first generated particle will be drawn last.
+That is, in the order of generation, the drawing of the last generated particle is given priority over the first generated particle.
 		</p>
 
 		<h3>視点追従</h3>
 		<p>
-リボンは(-0.5,0,0)と(0.5,0,0)の間の線を繋げた形状になりますが、それを回転させて視点側に向けるかどうかを指定します。
+The shape of the ribbon is a line with a thickness connecting the lines connecting (- 0.5, 0, 0) and (0.5, 0, 0) points centered on the particle.
+Normally, the direction of the line connecting the two points depends on the rotation of the particle, but it specifies whether to turn it toward the view side or not by rotating it.
 		</p>
 
 		<h3>全体色</h3>
 		<p>
-リボンの全体の色を指定します。
+Specify the overall color of the ribbon.
 		</p>
 
 		<h3>頂点色</h3>
 		<p>
-リボンの各頂点の色を指定します。
+Specify the color of each vertex of the ribbon.
 		</p>
 
 		<h3>頂点座標</h3>
 		<p>
-リボンの各頂点の座標を指定します。ここではX座標しか指定できません。
+Specify the coordinates of each vertex of the ribbon. Only X coordinates can be specified here.
 		</p>
 	</div>
 </body>
