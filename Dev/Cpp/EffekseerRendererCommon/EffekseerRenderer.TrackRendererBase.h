@@ -170,9 +170,15 @@ protected:
 			rightColor.A = (uint8_t)Effekseer::Clamp( param.ColorRight.A + (param.ColorRightMiddle.A-param.ColorRight.A) * l, 255, 0 );
 		}
 
+		const ::Effekseer::Matrix43& mat = instanceParameter.SRTMatrix43;
+		::Effekseer::Vector3D s;
+		::Effekseer::Matrix43 r;
+		::Effekseer::Vector3D t;
+		mat.GetSRT(s, r, t);
+
 		VERTEX v[3];
 
-		v[0].Pos.X = - size / 2.0f;
+		v[0].Pos.X = (- size / 2.0f) * s.X;
 		v[0].Pos.Y = 0.0f;
 		v[0].Pos.Z = 0.0f;
 		v[0].SetColor( leftColor );
@@ -182,7 +188,7 @@ protected:
 		v[1].Pos.Z = 0.0f;
 		v[1].SetColor( centerColor );
 
-		v[2].Pos.X = size / 2.0f;
+		v[2].Pos.X = (size / 2.0f) * s.X;
 		v[2].Pos.Y = 0.0f;
 		v[2].Pos.Z = 0.0f;
 		v[2].SetColor( rightColor );
