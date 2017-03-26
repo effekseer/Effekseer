@@ -14,28 +14,29 @@
 		<h2>Overview</h2>
 
 <p>
-Drawing and parameters when "Sprite" is selected in drawing setting are explained.
+Here we explain the parameters that affect the drawing when "Sprite" is selected in the Render window.
 </p>
 
 <p>
-When "Sprite" is selected, squares, rectangles, arbitrary squares, etc. are drawn.
+When "Sprite" is selected, a simple square/rectangular surface will be drawn.
 </p>
 
 <img src="../../img/Reference/renderSprite.png">
 
-		<h2>Parameter</h2>
+		<h2>Parameters</h2>
 		
 		<h3>Rendering Order</h3>
 		<p>
-Specify from which sprite to draw in order from among sprites originating from the same node.
-In the case of generation order, the first generated is the last generated, the reverse of the generation order, the first generated is drawn before.
+Specify the order in which sprites are drawn among sprites generated from the same node.
+For "Order of spawn", the first generated particle is the first drawn, while in "Reversed", the first generated particle will be drawn last.
+That is, in the order of generation, the drawing of the last generated particle is given priority over the first generated particle.
 		</p>
 
 		<h3>Configuration</h3>
 		<p>
-Specify how to place sprites on particles.
-In the case of "Billboard", the sprite always points to the viewpoint side. In the case of "Z axis rotating building board", peel the viewing side while fixing the Z axis rotation.
-In the case of "Y axis fixed", peel the viewing side while fixing the rotation of the Y axis. When "fixed", the sprite follows the rotation of the particle.
+Specify how to draw the particle's sprite.
+In the case of "Billboard", the sprite always rotates to face the camera. In the case of "Rotated Billboard", the sprite rotates to face the camera while keeping the Z axis fixed.
+In the case of "Fixed Y-axis", the sprite rotates to face the camera while keeping the Y axis fixed. For "Fixed", the sprite will match the rotation setting of the particle.
 		</p>
 
 		<h3>Color All</h3>
@@ -45,7 +46,7 @@ Specify the color of the whole sprite.
 
 		<h3>Vertex Color</h3>
 		<p>
-Specify the color of each vertex of the sprite.
+Specify the color of each vertex (corner) of the sprite.
 		</p>
 
 		<h3>Vertex Coords</h3>

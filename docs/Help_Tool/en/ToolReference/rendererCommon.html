@@ -18,7 +18,7 @@ This section explains about the "Basic Render Settings" window, which provides c
 
 		<h2>Parameter</h2>
 		
-		<h3>Texture(color/distortion)</h4>
+		<h3>Texture (color/distortion)</h4>
 		<p>
 Sets the color image or distortion image to be used for displaying the particle. As the name suggests, for the color image, the image/pattern/etc will displayed almost exactly as it appears in the source. In most cases, you will use color images. As for the distorted image, we will explain this further below in the distortion section.
 		</p>
@@ -35,7 +35,7 @@ Specify the filtering method to be applied when displaying the particle.
 
 		<h3>Depth Set</h3>
 		<p>
-Specify whether to write depth information when displaying particles. After writing the depth information, if you draw the particles for which the depth test is enabled, if the particles are deep inside, it will not be drawn.
+Specify whether to write depth information when displaying particles. After writing the depth information, if you draw the particles for which the depth test is enabled, if the particles are deep inside, they will not be drawn.
 		</p>
 
 		<h3>Depth Test</h3>
@@ -60,16 +60,16 @@ In the color/distortion image, this specifies the region of the image actually u
 
 		<h3>Distortion</h3>
 		<p>
-It is explained by the distortion item below.
+This is explained in the distortion section below.
 		</p>
 
 
 		<h3>Distortion Intensity</h3>
 		<p>
-It is explained by the distortion item below.
+This is explained in the distortion section below.
 		</p>
 
-		<h2>About distortion</h2>
+		<h2>About Distortion</h2>
 
 <p>
 If the distortion setting is enabled, the particles will distort anything behind it. 
@@ -81,9 +81,8 @@ In the color of the distortion image, red and green channels are used as distort
 When green is 127 or more, distortion is in the upward direction and distortion is in the downward direction when the green is less than 127. However, this up / down / left / right direction depends on the drawing method. For example, in the case of a sprite, the top, bottom, left, and right directions are those perpindicular to the sides of the image's rectangle.
 </p>
 
-
 <p>
-The color of each drawing weakens the strength of distortion. When 255 becomes 0 at the maximum, it will not distort. Red affects left and right, and green affects up and down.
+The color of each drawing weakens the strength of distortion. Values range between 0 and 255. Red affects left and right, and green affects up and down.
 </p>
 
 <p>
