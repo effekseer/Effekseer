@@ -18,57 +18,57 @@
 		
 		<h3>Sound Data</h3>
 		<p>
-		Specify the WAV file of the sound to be played.
+		Load the WAV file of the sound to be played.
 		</p>
 		
 		<h3>Volume</h3>
 		<p>
-		Specify the size of the sound to be played back. The size range is from 0 to 1.
+		Specify the playback volume of the sound. This is a value between 0 and 1:
 		</p>
 		
 		<ul>
-		<li>1：The size of the original sound</li>
-		<li>0：Silence</li>
+		<li>1： Equivalent to the original source audio</li>
+		<li>0： Silence</li>
 		</ul>
 		
 		<h3>Pitch</h3>
 		<p>
-		Specify the height of the sound to be played. Height range is -2 to 2.
+		Specify the pitch of the sound to be played. This is a value between -2 and 2:
 		</p>
 	
 		<ul>
-		<li>0：The height of the original sound</li>
-		<li>1：Increase by 1 octave</li>
-		<li>-1：Decrease by 1 octave</li>
+		<li>0： Equivalent to the original source audio</li>
+		<li>1： Increase the pitch by 1 octave</li>
+		<li>-1： Decrease the pitch by 1 octave</li>
 		</ul>
 
 		<h3>Panning Type</h3>
 		<p>
-		This is the type for specifying balance of sound (left / right) balance. There are 2 types, 2D mode and 3D mode.
+		This is the method for handling stereo (left / right) balance. There are 2 methods, 2D mode and 3D mode.
 		</p>
 		
 		<h4>Pan</h4>
 		<p>
-		It is a parameter of 2D mode. The range is -1 to 1.
+		This is the parameter used in 2D mode. The range is between -1 and 1:
 		</p>
 
 		<ul>
-		<li>0：Sound from the center</li>
-		<li>-1：Sound from the left</li>
-		<li>1：Sound from the right</li>
+		<li>0： Equivalent to the original source audio</li>
+		<li>-1： Audio will only play in the left speaker</li>
+		<li>1： Audio will only play in the right speaker</li>
 		</ul>
 		
 		<h4>Damping Range</h4>
 		<p>
-It is a parameter of 3D mode.
-It is natural that the sound is lost, the farther the distance is, the less heard it becomes.
-This is the distance value that begins to be smaller.
-The range is 0 ~.
+This is the parameter used in 3D mode.
+It is natural that the farther an object is, the less audible it becomes.
+This is the distance value at which the volume begins to decrease.
+It can be any positive valued number.
 		</p>
 		
 		<h3>Delay</h3>
 		<p>
-		It is the time from node creation to playback of sound. The range is 0 ~.
+		This is the time between node creation and the playback of the sound. This can be any positive valued number.
 		</p>
 	</div>
 </body>
