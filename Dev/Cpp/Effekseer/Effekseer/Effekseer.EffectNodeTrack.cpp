@@ -45,8 +45,8 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, Setting* settin
 	TrackColorRight.load( pos, m_effect->GetVersion() );
 	TrackColorRightMiddle.load( pos, m_effect->GetVersion() );
 
-	AlphaBlend = Texture.AlphaBlend;
-	TrackTexture = Texture.ColorTextureIndex;
+	AlphaBlend = RendererCommon.AlphaBlend;
+	TrackTexture = RendererCommon.ColorTextureIndex;
 
 	EffekseerPrintDebug("TrackColorLeft : %d\n", TrackColorLeft.type );
 	EffekseerPrintDebug("TrackColorLeftMiddle : %d\n", TrackColorLeftMiddle.type );
@@ -78,15 +78,15 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 	if( renderer != NULL )
 	{
 		m_nodeParameter.AlphaBlend = AlphaBlend;
-		m_nodeParameter.TextureFilter = Texture.FilterType;
-		m_nodeParameter.TextureWrap = Texture.WrapType;
-		m_nodeParameter.ZTest = Texture.ZTest;
-		m_nodeParameter.ZWrite = Texture.ZWrite;
+		m_nodeParameter.TextureFilter = RendererCommon.FilterType;
+		m_nodeParameter.TextureWrap = RendererCommon.WrapType;
+		m_nodeParameter.ZTest = RendererCommon.ZTest;
+		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
 		m_nodeParameter.ColorTextureIndex = TrackTexture;
 		m_nodeParameter.EffectPointer = GetEffect();
 
-		m_nodeParameter.Distortion = Texture.Distortion;
-		m_nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+		m_nodeParameter.Distortion = RendererCommon.Distortion;
+		m_nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 		renderer->BeginRendering( m_nodeParameter, count, m_userData );
 	}
@@ -198,6 +198,18 @@ void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGro
 void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.track;
+
+	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
+	{
+		instValues.colorCenter = color::mul(instValues.colorCenter, instance.ColorParent);
+		instValues.colorCenterMiddle = color::mul(instValues.colorCenterMiddle, instance.ColorParent);
+		instValues.colorRight = color::mul(instValues.colorRight, instance.ColorParent);
+		instValues.colorRightMiddle = color::mul(instValues.colorRightMiddle, instance.ColorParent);
+		instValues.colorLeft = color::mul(instValues.colorLeft, instance.ColorParent);
+		instValues.colorLeftMiddle = color::mul(instValues.colorLeftMiddle, instance.ColorParent);
+	}
+
+	instance.ColorInheritance = instValues.colorCenter;
 }
 
 //----------------------------------------------------------------------------------
@@ -206,6 +218,18 @@ void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, Manager* ma
 void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.track;
+
+	if (RendererCommon.ColorBindType == BindType::Always)
+	{
+		instValues.colorCenter = color::mul(instValues.colorCenter, instance.ColorParent);
+		instValues.colorCenterMiddle = color::mul(instValues.colorCenterMiddle, instance.ColorParent);
+		instValues.colorRight = color::mul(instValues.colorRight, instance.ColorParent);
+		instValues.colorRightMiddle = color::mul(instValues.colorRightMiddle, instance.ColorParent);
+		instValues.colorLeft = color::mul(instValues.colorLeft, instance.ColorParent);
+		instValues.colorLeftMiddle = color::mul(instValues.colorLeftMiddle, instance.ColorParent);
+	}
+
+	instance.ColorInheritance = instValues.colorCenter;
 }
 
 //----------------------------------------------------------------------------------

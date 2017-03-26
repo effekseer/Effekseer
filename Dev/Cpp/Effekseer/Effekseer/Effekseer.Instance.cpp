@@ -32,8 +32,17 @@ Instance::Instance( Manager* pManager, EffectNode* pEffectNode, InstanceContaine
 	, m_LivingTime		( 0 )
 	, m_stepTime		( false )
 	, m_sequenceNumber	( 0 )
-
 {
+	ColorInheritance.r = 255;
+	ColorInheritance.g = 255;
+	ColorInheritance.b = 255;
+	ColorInheritance.a = 255;
+
+	ColorParent.r = 255;
+	ColorParent.g = 255;
+	ColorParent.b = 255;
+	ColorParent.a = 255;
+
 	InstanceGroup* group = NULL;
 
 	for( int i = 0; i < m_pEffectNode->GetChildrenCount(); i++ )
@@ -135,15 +144,15 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 	m_ParentMatrix43.Indentity();
 
 	// 親の初期化
-	if( parameter->CommonValues.TranslationBindType == BindType_WhenCreating )
+	if( parameter->CommonValues.TranslationBindType == BindType::WhenCreating )
 	{
 		m_ParentMatrix43.Value[3][0] = m_pParent->m_GlobalMatrix43.Value[3][0];
 		m_ParentMatrix43.Value[3][1] = m_pParent->m_GlobalMatrix43.Value[3][1];
 		m_ParentMatrix43.Value[3][2] = m_pParent->m_GlobalMatrix43.Value[3][2];
 	}
 
-	if( parameter->CommonValues.RotationBindType == BindType_WhenCreating &&
-		parameter->CommonValues.ScalingBindType == BindType_WhenCreating )
+	if( parameter->CommonValues.RotationBindType == BindType::WhenCreating &&
+		parameter->CommonValues.ScalingBindType == BindType::WhenCreating )
 	{
 		for( int m = 0; m < 3; m++ )
 		{
@@ -153,7 +162,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 			}
 		}
 	}
-	else if ( parameter->CommonValues.RotationBindType == BindType_WhenCreating )
+	else if ( parameter->CommonValues.RotationBindType == BindType::WhenCreating )
 	{
 		for( int m = 0; m < 3; m++ )
 		{
@@ -182,7 +191,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 			}
 		}
 	}
-	else if ( parameter->CommonValues.ScalingBindType == BindType_WhenCreating )
+	else if ( parameter->CommonValues.ScalingBindType == BindType::WhenCreating )
 	{
 		float s[3];
 		for( int m = 0; m < 3; m++ )
@@ -199,6 +208,16 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		m_ParentMatrix43.Value[2][2] = s[2];
 	}
 	
+	// Initialize parent color
+	if (parameter->RendererCommon.ColorBindType == BindType::Always)
+	{
+		ColorParent = m_pParent->ColorInheritance;
+	}
+	else if (parameter->RendererCommon.ColorBindType == BindType::WhenCreating)
+	{
+		ColorParent = m_pParent->ColorInheritance;
+	}
+
 	/* 位置 */
 	if( m_pEffectNode->TranslationType == ParameterTranslationType_Fixed )
 	{
@@ -493,6 +512,15 @@ void Instance::Update( float deltaFrame, bool shown )
 		CalculateMatrix( deltaFrame );
 	}
 
+	// Get parent color.
+	if (m_pParent != NULL)
+	{
+		if (m_pEffectNode->RendererCommon.ColorBindType == BindType::Always)
+		{
+			ColorParent = m_pParent->ColorInheritance;
+		}
+	}
+
 	/* 親の削除処理 */
 	if (m_pParent != NULL && m_pParent->GetState() != INSTANCE_STATE_ACTIVE)
 	{
@@ -608,6 +636,15 @@ void Instance::Update( float deltaFrame, bool shown )
 		{
 			calculateMatrix = true;
 			CalculateMatrix( deltaFrame );
+
+			// Get parent color.
+			if (m_pParent != NULL)
+			{
+				if (m_pEffectNode->RendererCommon.ColorBindType == BindType::Always)
+				{
+					ColorParent = m_pParent->ColorInheritance;
+				}
+			}
 		}
 
 		/* 破棄 */
@@ -904,11 +941,11 @@ void Instance::CalculateParentMatrix()
 			rootInstance = NULL;
 		}
 		
-		if( (lType == BindType_Always && rType == BindType_Always && sType == BindType_Always) )
+		if( (lType == BindType::Always && rType == BindType::Always && sType == BindType::Always) )
 		{
 			m_ParentMatrix43 = m_pParent->GetGlobalMatrix43();
 		}
-		else if ( lType == BindType_NotBind_Root && rType == BindType_NotBind_Root && sType == BindType_NotBind_Root )
+		else if ( lType == BindType::NotBind_Root && rType == BindType::NotBind_Root && sType == BindType::NotBind_Root )
 		{
 			m_ParentMatrix43 = rootInstance->GetGlobalMatrix43();
 		}
@@ -919,30 +956,30 @@ void Instance::CalculateParentMatrix()
 
 			m_ParentMatrix43.GetSRT( s, r, t );
 			
-			if( lType == BindType_Always )
+			if( lType == BindType::Always )
 			{
 				m_pParent->GetGlobalMatrix43().GetTranslation( t );
 			}
-			else if( lType == BindType_NotBind_Root && rootInstance != NULL )
+			else if( lType == BindType::NotBind_Root && rootInstance != NULL )
 			{
 				rootInstance->GetGlobalMatrix43().GetTranslation( t );
 			}
 			
-			if( rType == BindType_Always )
+			if( rType == BindType::Always )
 			{
 				m_pParent->GetGlobalMatrix43().GetRotation( r );
 			}
-			else if( rType == BindType_NotBind_Root && rootInstance != NULL )
+			else if( rType == BindType::NotBind_Root && rootInstance != NULL )
 			{
 				rootInstance->GetGlobalMatrix43().GetRotation( r );
 			}
 			
 
-			if( sType == BindType_Always )
+			if( sType == BindType::Always )
 			{
 				m_pParent->GetGlobalMatrix43().GetScale( s );
 			}
-			else if( sType == BindType_NotBind_Root && rootInstance != NULL )
+			else if( sType == BindType::NotBind_Root && rootInstance != NULL )
 			{
 				rootInstance->GetGlobalMatrix43().GetScale( s );
 			}
@@ -1058,35 +1095,35 @@ void Instance::Kill()
 //----------------------------------------------------------------------------------
 RectF Instance::GetUV() const
 {
-	if( m_pEffectNode->Texture.UVType == ParameterTexture::UV_DEFAULT )
+	if( m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_DEFAULT )
 	{
 		return RectF( 0.0f, 0.0f, 1.0f, 1.0f );
 	}
-	else if( m_pEffectNode->Texture.UVType == ParameterTexture::UV_FIXED )
+	else if( m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_FIXED )
 	{
 		return RectF(
-			m_pEffectNode->Texture.UV.Fixed.Position.x,
-			m_pEffectNode->Texture.UV.Fixed.Position.y,
-			m_pEffectNode->Texture.UV.Fixed.Position.w,
-			m_pEffectNode->Texture.UV.Fixed.Position.h );
+			m_pEffectNode->RendererCommon.UV.Fixed.Position.x,
+			m_pEffectNode->RendererCommon.UV.Fixed.Position.y,
+			m_pEffectNode->RendererCommon.UV.Fixed.Position.w,
+			m_pEffectNode->RendererCommon.UV.Fixed.Position.h );
 	}
-	else if( m_pEffectNode->Texture.UVType == ParameterTexture::UV_ANIMATION )
+	else if( m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_ANIMATION )
 	{
-		int32_t frameNum = (int32_t)(m_LivingTime / m_pEffectNode->Texture.UV.Animation.FrameLength);
-		int32_t frameCount = m_pEffectNode->Texture.UV.Animation.FrameCountX * m_pEffectNode->Texture.UV.Animation.FrameCountY;
+		int32_t frameNum = (int32_t)(m_LivingTime / m_pEffectNode->RendererCommon.UV.Animation.FrameLength);
+		int32_t frameCount = m_pEffectNode->RendererCommon.UV.Animation.FrameCountX * m_pEffectNode->RendererCommon.UV.Animation.FrameCountY;
 
-		if( m_pEffectNode->Texture.UV.Animation.LoopType == m_pEffectNode->Texture.UV.Animation.LOOPTYPE_ONCE )
+		if( m_pEffectNode->RendererCommon.UV.Animation.LoopType == m_pEffectNode->RendererCommon.UV.Animation.LOOPTYPE_ONCE )
 		{
 			if( frameNum >= frameCount )
 			{
 				frameNum = frameCount - 1;
 			}
 		}
-		else if ( m_pEffectNode->Texture.UV.Animation.LoopType == m_pEffectNode->Texture.UV.Animation.LOOPTYPE_LOOP )
+		else if ( m_pEffectNode->RendererCommon.UV.Animation.LoopType == m_pEffectNode->RendererCommon.UV.Animation.LOOPTYPE_LOOP )
 		{
 			frameNum %= frameCount;
 		}
-		else if ( m_pEffectNode->Texture.UV.Animation.LoopType == m_pEffectNode->Texture.UV.Animation.LOOPTYPE_REVERSELOOP )
+		else if ( m_pEffectNode->RendererCommon.UV.Animation.LoopType == m_pEffectNode->RendererCommon.UV.Animation.LOOPTYPE_REVERSELOOP )
 		{
 			bool rev = (frameNum / frameCount) % 2 == 1;
 			frameNum %= frameCount;
@@ -1096,22 +1133,22 @@ RectF Instance::GetUV() const
 			}
 		}
 
-		int32_t frameX = frameNum % m_pEffectNode->Texture.UV.Animation.FrameCountX;
-		int32_t frameY = frameNum / m_pEffectNode->Texture.UV.Animation.FrameCountX;
+		int32_t frameX = frameNum % m_pEffectNode->RendererCommon.UV.Animation.FrameCountX;
+		int32_t frameY = frameNum / m_pEffectNode->RendererCommon.UV.Animation.FrameCountX;
 
 		return RectF(
-			m_pEffectNode->Texture.UV.Animation.Position.x + m_pEffectNode->Texture.UV.Animation.Position.w * frameX,
-			m_pEffectNode->Texture.UV.Animation.Position.y + m_pEffectNode->Texture.UV.Animation.Position.h * frameY,
-			m_pEffectNode->Texture.UV.Animation.Position.w,
-			m_pEffectNode->Texture.UV.Animation.Position.h );
+			m_pEffectNode->RendererCommon.UV.Animation.Position.x + m_pEffectNode->RendererCommon.UV.Animation.Position.w * frameX,
+			m_pEffectNode->RendererCommon.UV.Animation.Position.y + m_pEffectNode->RendererCommon.UV.Animation.Position.h * frameY,
+			m_pEffectNode->RendererCommon.UV.Animation.Position.w,
+			m_pEffectNode->RendererCommon.UV.Animation.Position.h );
 	}
-	else if( m_pEffectNode->Texture.UVType == ParameterTexture::UV_SCROLL )
+	else if( m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_SCROLL )
 	{
 		return RectF(
-			m_pEffectNode->Texture.UV.Scroll.Position.x + m_pEffectNode->Texture.UV.Scroll.Speed.x * m_LivingTime,
-			m_pEffectNode->Texture.UV.Scroll.Position.y + m_pEffectNode->Texture.UV.Scroll.Speed.y * m_LivingTime,
-			m_pEffectNode->Texture.UV.Scroll.Position.w,
-			m_pEffectNode->Texture.UV.Scroll.Position.h );
+			m_pEffectNode->RendererCommon.UV.Scroll.Position.x + m_pEffectNode->RendererCommon.UV.Scroll.Speed.x * m_LivingTime,
+			m_pEffectNode->RendererCommon.UV.Scroll.Position.y + m_pEffectNode->RendererCommon.UV.Scroll.Speed.y * m_LivingTime,
+			m_pEffectNode->RendererCommon.UV.Scroll.Position.w,
+			m_pEffectNode->RendererCommon.UV.Scroll.Position.h );
 	}
 
 	return RectF( 0.0f, 0.0f, 1.0f, 1.0f );

@@ -33,7 +33,7 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setti
 
 	if( m_effect->GetVersion() >= 3)
 	{
-		AlphaBlend = Texture.AlphaBlend;
+		AlphaBlend = RendererCommon.AlphaBlend;
 	}
 	else
 	{
@@ -96,7 +96,7 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setti
 
 	if( m_effect->GetVersion() >= 3)
 	{
-		RibbonTexture = Texture.ColorTextureIndex;
+		RibbonTexture = RendererCommon.ColorTextureIndex;
 	}
 	else
 	{
@@ -132,16 +132,16 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 	if( renderer != NULL )
 	{
 		m_nodeParameter.AlphaBlend = AlphaBlend;
-		m_nodeParameter.TextureFilter = Texture.FilterType;
-		m_nodeParameter.TextureWrap = Texture.WrapType;
-		m_nodeParameter.ZTest = Texture.ZTest;
-		m_nodeParameter.ZWrite = Texture.ZWrite;
+		m_nodeParameter.TextureFilter = RendererCommon.FilterType;
+		m_nodeParameter.TextureWrap = RendererCommon.WrapType;
+		m_nodeParameter.ZTest = RendererCommon.ZTest;
+		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
 		m_nodeParameter.ViewpointDependent = ViewpointDependent != 0;
 		m_nodeParameter.ColorTextureIndex = RibbonTexture;
 		m_nodeParameter.EffectPointer = GetEffect();
 
-		m_nodeParameter.Distortion = Texture.Distortion;
-		m_nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+		m_nodeParameter.Distortion = RendererCommon.Distortion;
+		m_nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 
 		renderer->BeginRendering( m_nodeParameter, count, m_userData );
@@ -252,6 +252,13 @@ void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, Manager* m
 		instValues.allColorValues.easing.start = RibbonAllColor.easing.all.getStartValue(*(manager));
 		instValues.allColorValues.easing.end = RibbonAllColor.easing.all.getEndValue(*(manager));
 	}
+
+	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
+	{
+		instValues._color = color::mul(instValues._color, instance.ColorParent);
+	}
+
+	instance.ColorInheritance = instValues._color;
 }
 
 //----------------------------------------------------------------------------------
@@ -271,6 +278,13 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, Manager* manag
 			instValues.allColorValues.easing.end,
 			t );
 	}
+
+	if (RendererCommon.ColorBindType == BindType::Always)
+	{
+		instValues._color = color::mul(instValues._color, instance.ColorParent);
+	}
+
+	instance.ColorInheritance = instValues._color;
 }
 
 //----------------------------------------------------------------------------------

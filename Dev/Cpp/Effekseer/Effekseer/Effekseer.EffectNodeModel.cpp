@@ -32,7 +32,7 @@ namespace Effekseer
 
 	int32_t size = 0;
 
-	AlphaBlend = Texture.AlphaBlend;
+	AlphaBlend = RendererCommon.AlphaBlend;
 
 	if( m_effect->GetVersion() >= 7 )
 	{
@@ -69,13 +69,13 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
 		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
+		nodeParameter.TextureFilter = RendererCommon.FilterType;
+		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		nodeParameter.ZTest = RendererCommon.ZTest;
+		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.ColorTextureIndex = Texture.ColorTextureIndex;
+		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
@@ -83,8 +83,8 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
 			CoordinateSystem::RH;
 
-		nodeParameter.Distortion = Texture.Distortion;
-		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+		nodeParameter.Distortion = RendererCommon.Distortion;
+		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 		renderer->BeginRendering(nodeParameter, count, m_userData);
 	}
@@ -101,13 +101,13 @@ void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
 		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
+		nodeParameter.TextureFilter = RendererCommon.FilterType;
+		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		nodeParameter.ZTest = RendererCommon.ZTest;
+		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.ColorTextureIndex = Texture.ColorTextureIndex;
+		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
@@ -115,8 +115,8 @@ void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
 			CoordinateSystem::RH;
 
-		nodeParameter.Distortion = Texture.Distortion;
-		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+		nodeParameter.Distortion = RendererCommon.Distortion;
+		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 
 		ModelRenderer::InstanceParameter instanceParameter;
@@ -145,13 +145,13 @@ void EffectNodeModel::EndRendering(Manager* manager)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
 		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
+		nodeParameter.TextureFilter = RendererCommon.FilterType;
+		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		nodeParameter.ZTest = RendererCommon.ZTest;
+		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.ColorTextureIndex = Texture.ColorTextureIndex;
+		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
@@ -159,8 +159,8 @@ void EffectNodeModel::EndRendering(Manager* manager)
 		nodeParameter.IsRightHand = manager->GetSetting()->GetCoordinateSystem() ==
 			CoordinateSystem::RH;
 
-		nodeParameter.Distortion = Texture.Distortion;
-		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+		nodeParameter.Distortion = RendererCommon.Distortion;
+		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 		renderer->EndRendering( nodeParameter, m_userData );
 	}
@@ -206,6 +206,13 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* ma
 		instValues._color.b = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[2] + AllColor.fcurve_rgba.FCurve->B.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 		instValues._color.a = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[3] + AllColor.fcurve_rgba.FCurve->A.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 	}
+
+	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
+	{
+		instValues._color = color::mul(instValues._color, instance.ColorParent);
+	}
+
+	instance.ColorInheritance = instValues._color;
 }
 
 //----------------------------------------------------------------------------------
@@ -232,6 +239,13 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, Manager* manage
 		instValues._color.b = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[2] + AllColor.fcurve_rgba.FCurve->B.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 		instValues._color.a = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[3] + AllColor.fcurve_rgba.FCurve->A.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 	}
+
+	if (RendererCommon.ColorBindType == BindType::Always)
+	{
+		instValues._color = color::mul(instValues._color, instance.ColorParent);
+	}
+
+	instance.ColorInheritance = instValues._color;
 }
 
 //----------------------------------------------------------------------------------

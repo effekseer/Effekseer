@@ -140,6 +140,9 @@ namespace Effekseer.Binary
 				data.Add(((int)Data.RendererCommonValues.UVType.Default).GetBytes());
 			}
 
+			// Inheritance
+			data.Add(value.ColorInheritType.GetValueAsInt().GetBytes());
+
 			// 歪み
 			if (value.Distortion.GetValue())
 			{

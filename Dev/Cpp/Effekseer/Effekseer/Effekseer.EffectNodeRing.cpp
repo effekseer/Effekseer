@@ -38,7 +38,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 
 	if( m_effect->GetVersion() >= 3)
 	{
-		AlphaBlend = Texture.AlphaBlend;
+		AlphaBlend = RendererCommon.AlphaBlend;
 	}
 	else
 	{
@@ -68,7 +68,7 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 
 	if( m_effect->GetVersion() >= 3)
 	{
-		RingTexture = Texture.ColorTextureIndex;
+		RingTexture = RendererCommon.ColorTextureIndex;
 	}
 	else
 	{
@@ -179,17 +179,17 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 	{
 		RingRenderer::NodeParameter nodeParameter;
 		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
+		nodeParameter.TextureFilter = RendererCommon.FilterType;
+		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		nodeParameter.ZTest = RendererCommon.ZTest;
+		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.ColorTextureIndex = RingTexture;
 		nodeParameter.VertexCount = VertexCount;
 		nodeParameter.EffectPointer = GetEffect();
 
-		nodeParameter.Distortion = Texture.Distortion;
-		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+		nodeParameter.Distortion = RendererCommon.Distortion;
+		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 		renderer->BeginRendering( nodeParameter, count, m_userData );
 	}
@@ -207,16 +207,16 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 		RingRenderer::NodeParameter nodeParameter;
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
+		nodeParameter.TextureFilter = RendererCommon.FilterType;
+		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		nodeParameter.ZTest = RendererCommon.ZTest;
+		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.VertexCount = VertexCount;
 		nodeParameter.ColorTextureIndex = RingTexture;
 
-		nodeParameter.Distortion = Texture.Distortion;
-		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+		nodeParameter.Distortion = RendererCommon.Distortion;
+		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 		RingRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -255,16 +255,16 @@ void EffectNodeRing::EndRendering(Manager* manager)
 	{
 		RingRenderer::NodeParameter nodeParameter;
 		nodeParameter.AlphaBlend = AlphaBlend;
-		nodeParameter.TextureFilter = Texture.FilterType;
-		nodeParameter.TextureWrap = Texture.WrapType;
-		nodeParameter.ZTest = Texture.ZTest;
-		nodeParameter.ZWrite = Texture.ZWrite;
+		nodeParameter.TextureFilter = RendererCommon.FilterType;
+		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		nodeParameter.ZTest = RendererCommon.ZTest;
+		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.ColorTextureIndex = RingTexture;
 		nodeParameter.EffectPointer = GetEffect();
 
-		nodeParameter.Distortion = Texture.Distortion;
-		nodeParameter.DistortionIntensity = Texture.DistortionIntensity;
+		nodeParameter.Distortion = RendererCommon.Distortion;
+		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 		renderer->EndRendering( nodeParameter, m_userData );
 	}
@@ -287,6 +287,16 @@ void EffectNodeRing::InitializeRenderedInstance(Instance& instance, Manager* man
 	InitializeColorValues(OuterColor, instValues.outerColor, manager);
 	InitializeColorValues(CenterColor, instValues.centerColor, manager);
 	InitializeColorValues(InnerColor, instValues.innerColor, manager);
+
+	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
+	{
+		instValues.outerColor.current = color::mul(instValues.outerColor.current, instance.ColorParent);
+		instValues.centerColor.current = color::mul(instValues.centerColor.current, instance.ColorParent);
+		instValues.innerColor.current = color::mul(instValues.innerColor.current, instance.ColorParent);
+
+	}
+
+	instance.ColorInheritance = instValues.centerColor.current;
 }
 
 //----------------------------------------------------------------------------------
@@ -306,6 +316,15 @@ void EffectNodeRing::UpdateRenderedInstance(Instance& instance, Manager* manager
 	UpdateColorValues( instance, OuterColor, instValues.outerColor );
 	UpdateColorValues( instance, CenterColor, instValues.centerColor );
 	UpdateColorValues( instance, InnerColor, instValues.innerColor );
+
+	if (RendererCommon.ColorBindType == BindType::Always)
+	{
+		instValues.outerColor.current = color::mul(instValues.outerColor.current, instance.ColorParent);
+		instValues.centerColor.current = color::mul(instValues.centerColor.current, instance.ColorParent);
+		instValues.innerColor.current = color::mul(instValues.innerColor.current, instance.ColorParent);
+	}
+
+	instance.ColorInheritance = instValues.centerColor.current;
 }
 
 //----------------------------------------------------------------------------------
@@ -502,6 +521,8 @@ void EffectNodeRing::UpdateColorValues( Instance& instance, const RingColorParam
 			values.easing.end,
 			instance.m_LivingTime / instance.m_LivedTime );
 	}
+
+
 }
 
 //----------------------------------------------------------------------------------

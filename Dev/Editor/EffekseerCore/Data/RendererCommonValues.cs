@@ -112,6 +112,15 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public UVScrollParamater UVScroll { get; private set; }
 
+		[Name(language = Language.Japanese, value = "色への影響")]
+		[Description(language = Language.Japanese, value = "親ノードからの色への影響")]
+		[Name(language = Language.English, value = "Inherit Color")]
+		[Description(language = Language.English, value = "When this instance should copy its parent node's color")]
+		public Value.Enum<ParentEffectType> ColorInheritType
+		{
+			get;
+			private set;
+		}
 
 		[Name(language = Language.Japanese, value = "歪み")]
 		[Name(language = Language.English, value = "Distortion")]
@@ -146,6 +155,8 @@ namespace Effekseer.Data
 
 			ZWrite = new Value.Boolean(false);
 			ZTest = new Value.Boolean(true);
+
+			ColorInheritType = new Value.Enum<ParentEffectType>(ParentEffectType.NotBind);
 
 			Distortion = new Value.Boolean(false);
 			DistortionIntensity = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);

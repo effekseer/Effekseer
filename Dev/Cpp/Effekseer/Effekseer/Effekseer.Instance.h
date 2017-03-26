@@ -62,6 +62,12 @@ public:
 	Vector3D	m_GlobalRevisionLocation;
 	Vector3D	m_GlobalRevisionVelocity;
 	
+	// Color for binding
+	color		ColorInheritance;
+
+	// Parent color
+	color		ColorParent;
+
 	union 
 	{
 		struct

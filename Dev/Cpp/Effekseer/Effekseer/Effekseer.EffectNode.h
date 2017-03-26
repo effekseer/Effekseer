@@ -23,14 +23,12 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-enum BindType
+enum class BindType : int32_t
 {
-	BindType_NotBind = 0,
-	BindType_NotBind_Root = 3,
-	BindType_WhenCreating = 1,
-	BindType_Always = 2,
-
-	BindType_DWORD = 0x7fffffff,
+	NotBind = 0,
+	NotBind_Root = 3,
+	WhenCreating = 1,
+	Always = 2,
 };
 
 //----------------------------------------------------------------------------------
@@ -404,17 +402,14 @@ struct ParameterGenerationLocation
 	}
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct ParameterTexture
+struct ParameterRendererCommon
 {
 	int32_t				ColorTextureIndex;
-	AlphaBlendType	AlphaBlend;
+	AlphaBlendType		AlphaBlend;
 
 	TextureFilterType	FilterType;
 
-	TextureWrapType	WrapType;
+	TextureWrapType		WrapType;
 
 	bool				ZWrite;
 
@@ -423,6 +418,8 @@ struct ParameterTexture
 	bool				Distortion;
 
 	float				DistortionIntensity;
+	
+	BindType			ColorBindType = BindType::NotBind;
 
 	enum
 	{
@@ -501,12 +498,12 @@ struct ParameterTexture
 
 	void reset()
 	{
-		memset( this, 0, sizeof(ParameterTexture) );
+		memset( this, 0, sizeof(ParameterRendererCommon) );
 	}
 
 	void load( uint8_t*& pos, int32_t version )
 	{
-		memset( this, 0, sizeof(ParameterTexture) );
+		memset( this, 0, sizeof(ParameterRendererCommon) );
 
 		memcpy( &ColorTextureIndex, pos, sizeof(int) );
 		pos += sizeof(int);
@@ -577,6 +574,12 @@ struct ParameterTexture
 		{
 			memcpy( &UV.Scroll, pos, sizeof(UV.Scroll) );
 			pos += sizeof(UV.Scroll);
+		}
+
+		if (version >= 10)
+		{
+			memcpy(&ColorBindType, pos, sizeof(int32_t));
+			pos += sizeof(int32_t);
 		}
 
 		if (version >= 9)
@@ -716,7 +719,7 @@ public:
 
 	ParameterGenerationLocation	GenerationLocation;
 
-	ParameterTexture			Texture;
+	ParameterRendererCommon		RendererCommon;
 
 	ParameterSoundType			SoundType;
 	ParameterSound				Sound;
