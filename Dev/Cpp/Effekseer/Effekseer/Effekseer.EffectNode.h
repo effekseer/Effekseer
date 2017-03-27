@@ -419,7 +419,7 @@ struct ParameterRendererCommon
 
 	float				DistortionIntensity;
 	
-	BindType			ColorBindType = BindType::NotBind;
+	BindType			ColorBindType;
 
 	enum
 	{
@@ -581,6 +581,10 @@ struct ParameterRendererCommon
 			memcpy(&ColorBindType, pos, sizeof(int32_t));
 			pos += sizeof(int32_t);
 		}
+		else
+		{
+			ColorBindType = BindType::NotBind;
+		}
 
 		if (version >= 9)
 		{
@@ -686,7 +690,12 @@ protected:
 public:
 
 	/**
-		@brief	描画するか?
+		@brief	\~english Whether to draw the node.
+				\~japanese このノードを描画するか?
+
+		@note
+		\~english 普通は描画されないノードは、描画の種類が変更されて、描画しないノードになる。ただし、色の継承をする場合、描画のみを行わないノードになる。
+		\~japanese For nodes that are not normally rendered, the rendering type is changed to become a node that does not render. However, when color inheritance is done, it becomes a node which does not perform drawing only.
 	*/
 	bool IsRendered;
 
@@ -725,11 +734,6 @@ public:
 	ParameterSound				Sound;
 
 	eRenderingOrder				RenderingOrder;
-
-	/**
-		@biref	オプション読み込み
-	*/
-	void LoadOption( uint8_t*& pos );
 
 	Effect* GetEffect() const override;
 

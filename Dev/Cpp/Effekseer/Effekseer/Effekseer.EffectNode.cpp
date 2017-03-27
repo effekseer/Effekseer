@@ -62,6 +62,15 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 	}
 	else
 	{
+		if (m_effect->GetVersion() >= 10)
+		{
+			int32_t rendered = 0;
+			memcpy(&rendered, pos, sizeof(int32_t));
+			pos += sizeof(int32_t);
+
+			IsRendered = rendered != 0;
+		}
+
 		memcpy( &size, pos, sizeof(int) );
 		pos += sizeof(int);
 
@@ -509,27 +518,6 @@ EffectNodeImplemented::~EffectNodeImplemented()
 	ES_SAFE_DELETE( TranslationFCurve );
 	ES_SAFE_DELETE( RotationFCurve );
 	ES_SAFE_DELETE( ScalingFCurve );
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectNodeImplemented::LoadOption(uint8_t*& pos)
-{
-	int is_rendered = 0;
-	memcpy( &is_rendered, pos, sizeof(int) );
-	pos += sizeof(int);
-
-	IsRendered = is_rendered != 0;
-
-	int count = 0;
-	memcpy( &count, pos, sizeof(int) );
-	pos += sizeof(int);
-
-	for( int i = 0; i < count; i++ )
-	{
-		m_Nodes[i]->LoadOption( pos );
-	}
 }
 
 //----------------------------------------------------------------------------------

@@ -1,16 +1,11 @@
 SET RDIR=Effekseer122
 SET RDIR_R=EffekseerRuntime122
-SET RDIR_U=EffekseerForUnity122
 
 rmdir %RDIR%
 mkdir %RDIR%
 
 rmdir %RDIR_R%
 mkdir %RDIR_R%
-
-rmdir %RDIR_U%
-mkdir %RDIR_U%
-
 
 echo アプリケーションコピー
 mkdir %RDIR%\Tool
@@ -113,12 +108,10 @@ robocopy Release\Sample %RDIR%\Sample *.efkproj *.efkmodel *.txt *.png /mir /S
 
 echo ライセンス
 cp Release/LICENSE.txt %RDIR_R%/LICENSE.txt
-cp Release/LICENSE.txt %RDIR_U%/LICENSE.txt
 
 echo Readme
 copy readme_tool.txt %RDIR%\readme.txt
 copy readme_runtime.txt %RDIR_R%\readme.txt
-copy readme_unity.txt %RDIR_U%\readme.txt
 
 echo ヘルプ
 mkdir %RDIR%\Help
@@ -130,24 +123,16 @@ robocopy docs\QuickTutorial_Tool %RDIR%\QuickTutorial *.html *.css *.efkproj *.p
 mkdir %RDIR_R%\Help
 robocopy Release\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S
 
-mkdir %RDIR_U%\Help
-robocopy Release\Help_Unity %RDIR_U%\Help *.html *.css *.efkproj *.png /mir /S
-
 echo ツール
 mkdir %RDIR%\Tool
 copy Release\Tool\mqoToEffekseerModelConverter.exe %RDIR%\Tool\.
 
-echo Unity
-mkdir %RDIR_U%\GameEngine
-robocopy Release\GameEngine %RDIR_U%\GameEngine *.unitypackage *.zip /mir /S
+echo doxygen(exe or bat)
+call doxygen.bat doxygen.template
+call doxygen.exe doxygen.template
 
-echo doxygen
-doxygen doxygen.template
 mkdir %RDIR_R%\Help\html\doxygen
 robocopy html %RDIR_R%\Help\html\doxygen /mir /S
-
-doxygen Release\Help_Unity\Doxyfile
-robocopy UnityAPIRef %RDIR_U%\Help\APIRef /mir /S
 
 echo Readme2
 copy docs\readme_sample.txt %RDIR%\Sample\readme.txt
