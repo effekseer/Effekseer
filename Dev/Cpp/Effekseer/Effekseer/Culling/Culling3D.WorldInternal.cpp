@@ -5,6 +5,7 @@
 #include <fstream>
 #include <limits>
 #include <complex>
+#include <cstring>
 
 namespace Culling3D
 {
