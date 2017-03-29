@@ -254,11 +254,11 @@ void EffectNodeSprite::InitializeRenderedInstance(Instance& instance, Manager* m
 
 	if( SpriteAllColor.type == StandardColorParameter::Fixed )
 	{
-		instValues._color = SpriteAllColor.fixed.all;
+		instValues._originalColor = SpriteAllColor.fixed.all;
 	}
 	else if( SpriteAllColor.type == StandardColorParameter::Random )
 	{
-		instValues._color = SpriteAllColor.random.all.getValue(*(manager));
+		instValues._originalColor = SpriteAllColor.random.all.getValue(*(manager));
 	}
 	else if( SpriteAllColor.type == StandardColorParameter::Easing )
 	{
@@ -268,7 +268,7 @@ void EffectNodeSprite::InitializeRenderedInstance(Instance& instance, Manager* m
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
 		SpriteAllColor.easing.all.setValueToArg(
-			instValues._color, 
+			instValues._originalColor,
 			instValues.allColorValues.easing.start,
 			instValues.allColorValues.easing.end,
 			t );
@@ -280,15 +280,19 @@ void EffectNodeSprite::InitializeRenderedInstance(Instance& instance, Manager* m
 		instValues.allColorValues.fcurve_rgba.offset[2] = SpriteAllColor.fcurve_rgba.FCurve->B.GetOffset(*(manager));
 		instValues.allColorValues.fcurve_rgba.offset[3] = SpriteAllColor.fcurve_rgba.FCurve->A.GetOffset(*(manager));
 		
-		instValues._color.r = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[0] + SpriteAllColor.fcurve_rgba.FCurve->R.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
-		instValues._color.g = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[1] + SpriteAllColor.fcurve_rgba.FCurve->G.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
-		instValues._color.b = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[2] + SpriteAllColor.fcurve_rgba.FCurve->B.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
-		instValues._color.a = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[3] + SpriteAllColor.fcurve_rgba.FCurve->A.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
+		instValues._originalColor.r = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[0] + SpriteAllColor.fcurve_rgba.FCurve->R.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
+		instValues._originalColor.g = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[1] + SpriteAllColor.fcurve_rgba.FCurve->G.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
+		instValues._originalColor.b = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[2] + SpriteAllColor.fcurve_rgba.FCurve->B.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
+		instValues._originalColor.a = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[3] + SpriteAllColor.fcurve_rgba.FCurve->A.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 	}
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		instValues._color = color::mul(instValues._color, instance.ColorParent);
+		instValues._color = color::mul(instValues._originalColor, instance.ColorParent);
+	}
+	else
+	{
+		instValues._color = instValues._originalColor;
 	}
 	
 	instance.ColorInheritance = instValues._color;
@@ -306,22 +310,26 @@ void EffectNodeSprite::UpdateRenderedInstance(Instance& instance, Manager* manag
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
 		SpriteAllColor.easing.all.setValueToArg(
-			instValues._color, 
+			instValues._originalColor, 
 			instValues.allColorValues.easing.start,
 			instValues.allColorValues.easing.end,
 			t );
 	}
 	else if( SpriteAllColor.type == StandardColorParameter::FCurve_RGBA )
 	{
-		instValues._color.r = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[0] + SpriteAllColor.fcurve_rgba.FCurve->R.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
-		instValues._color.g = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[1] + SpriteAllColor.fcurve_rgba.FCurve->G.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
-		instValues._color.b = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[2] + SpriteAllColor.fcurve_rgba.FCurve->B.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
-		instValues._color.a = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[3] + SpriteAllColor.fcurve_rgba.FCurve->A.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
+		instValues._originalColor.r = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[0] + SpriteAllColor.fcurve_rgba.FCurve->R.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
+		instValues._originalColor.g = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[1] + SpriteAllColor.fcurve_rgba.FCurve->G.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
+		instValues._originalColor.b = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[2] + SpriteAllColor.fcurve_rgba.FCurve->B.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
+		instValues._originalColor.a = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[3] + SpriteAllColor.fcurve_rgba.FCurve->A.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 	}
 
-	if (RendererCommon.ColorBindType == BindType::Always)
+	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		instValues._color = color::mul(instValues._color, instance.ColorParent);
+		instValues._color = color::mul(instValues._originalColor, instance.ColorParent);
+	}
+	else
+	{
+		instValues._color = instValues._originalColor;
 	}
 
 	instance.ColorInheritance = instValues._color;

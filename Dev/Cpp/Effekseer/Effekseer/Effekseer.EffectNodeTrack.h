@@ -107,6 +107,14 @@ public:
 		color	colorCenterMiddle;
 		color	colorRightMiddle;
 
+		color	_colorLeft;
+		color	_colorCenter;
+		color	_colorRight;
+
+		color	_colorLeftMiddle;
+		color	_colorCenterMiddle;
+		color	_colorRightMiddle;
+
 		float	SizeFor;
 		float	SizeMiddle;
 		float	SizeBack;
@@ -165,7 +173,7 @@ public:
 
 	void InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, Manager* manager);
 	void InitializeValues(InstanceGroupValues::Size& value, TrackSizeParameter& param, Manager* manager);
-	void SetValues( Color& c, InstanceGroupValues::Color& value, StandardColorParameter& param, int32_t time, int32_t livedTime );
+	void SetValues(Color& c, const Instance& instance, InstanceGroupValues::Color& value, StandardColorParameter& param, int32_t time, int32_t livedTime);
 	void SetValues( float& s, InstanceGroupValues::Size& value, TrackSizeParameter& param, float time );
 	void LoadValues( TrackSizeParameter& param, unsigned char*& pos );
 };

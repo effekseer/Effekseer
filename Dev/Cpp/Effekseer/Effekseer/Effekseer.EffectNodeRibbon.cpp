@@ -241,11 +241,11 @@ void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, Manager* m
 
 	if( RibbonAllColor.type == RibbonAllColorParameter::Fixed )
 	{
-		instValues._color = RibbonAllColor.fixed.all;
+		instValues._original = RibbonAllColor.fixed.all;
 	}
 	else if( RibbonAllColor.type == RibbonAllColorParameter::Random )
 	{
-		instValues._color = RibbonAllColor.random.all.getValue(*(manager));
+		instValues._original = RibbonAllColor.random.all.getValue(*(manager));
 	}
 	else if( RibbonAllColor.type == RibbonAllColorParameter::Easing )
 	{
@@ -255,7 +255,11 @@ void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, Manager* m
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		instValues._color = color::mul(instValues._color, instance.ColorParent);
+		instValues._color = color::mul(instValues._original, instance.ColorParent);
+	}
+	else
+	{
+		instValues._color = instValues._original;
 	}
 
 	instance.ColorInheritance = instValues._color;
@@ -273,15 +277,19 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, Manager* manag
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
 		RibbonAllColor.easing.all.setValueToArg(
-			instValues._color, 
+			instValues._original,
 			instValues.allColorValues.easing.start,
 			instValues.allColorValues.easing.end,
 			t );
 	}
 
-	if (RendererCommon.ColorBindType == BindType::Always)
+	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		instValues._color = color::mul(instValues._color, instance.ColorParent);
+		instValues._color = color::mul(instValues._original, instance.ColorParent);
+	}
+	else
+	{
+		instValues._color = instValues._original;
 	}
 
 	instance.ColorInheritance = instValues._color;

@@ -148,6 +148,8 @@ struct RingLocationValues
 struct RingColorValues
 {
 	color	current;
+	color	original;
+
 	union
 	{
 		struct

@@ -83,6 +83,8 @@ public:
 		// 色
 		color _color;
 
+		color _originalColor;
+		
 		union 
 		{
 			struct

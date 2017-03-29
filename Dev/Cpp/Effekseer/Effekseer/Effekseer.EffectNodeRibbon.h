@@ -108,6 +108,7 @@ public:
 	{
 		// 色
 		color _color;
+		color _original;
 
 		union 
 		{

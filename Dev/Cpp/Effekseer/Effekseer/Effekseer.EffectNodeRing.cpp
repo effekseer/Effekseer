@@ -290,10 +290,15 @@ void EffectNodeRing::InitializeRenderedInstance(Instance& instance, Manager* man
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		instValues.outerColor.current = color::mul(instValues.outerColor.current, instance.ColorParent);
-		instValues.centerColor.current = color::mul(instValues.centerColor.current, instance.ColorParent);
-		instValues.innerColor.current = color::mul(instValues.innerColor.current, instance.ColorParent);
-
+		instValues.outerColor.current = color::mul(instValues.outerColor.original, instance.ColorParent);
+		instValues.centerColor.current = color::mul(instValues.centerColor.original, instance.ColorParent);
+		instValues.innerColor.current = color::mul(instValues.innerColor.original, instance.ColorParent);
+	}
+	else
+	{
+		instValues.outerColor.current = instValues.outerColor.original;
+		instValues.centerColor.current = instValues.centerColor.original;
+		instValues.innerColor.current = instValues.innerColor.original;
 	}
 
 	instance.ColorInheritance = instValues.centerColor.current;
@@ -317,11 +322,17 @@ void EffectNodeRing::UpdateRenderedInstance(Instance& instance, Manager* manager
 	UpdateColorValues( instance, CenterColor, instValues.centerColor );
 	UpdateColorValues( instance, InnerColor, instValues.innerColor );
 
-	if (RendererCommon.ColorBindType == BindType::Always)
+	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		instValues.outerColor.current = color::mul(instValues.outerColor.current, instance.ColorParent);
-		instValues.centerColor.current = color::mul(instValues.centerColor.current, instance.ColorParent);
-		instValues.innerColor.current = color::mul(instValues.innerColor.current, instance.ColorParent);
+		instValues.outerColor.current = color::mul(instValues.outerColor.original, instance.ColorParent);
+		instValues.centerColor.current = color::mul(instValues.centerColor.original, instance.ColorParent);
+		instValues.innerColor.current = color::mul(instValues.innerColor.original, instance.ColorParent);
+	}
+	else
+	{
+		instValues.outerColor.current = instValues.outerColor.original;
+		instValues.centerColor.current = instValues.centerColor.original;
+		instValues.innerColor.current = instValues.innerColor.original;
 	}
 
 	instance.ColorInheritance = instValues.centerColor.current;
@@ -457,15 +468,15 @@ void EffectNodeRing::InitializeColorValues(const RingColorParameter& param, Ring
 	switch( param.type )
 	{
 		case RingColorParameter::Fixed:
-			values.current = param.fixed;
+			values.original = param.fixed;
 			break;
 		case RingColorParameter::Random:
-			values.current = param.random.getValue( *manager );
+			values.original = param.random.getValue(*manager);
 			break;
 		case RingColorParameter::Easing:
 			values.easing.start = param.easing.getStartValue( *manager );
 			values.easing.end = param.easing.getEndValue( *manager );
-			values.current = values.easing.start;
+			values.original = values.easing.start;
 			break;
 		default:
 			break;

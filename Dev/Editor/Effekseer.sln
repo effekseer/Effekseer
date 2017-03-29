@@ -17,6 +17,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EffekseerViewer", "EffekseerViewer\EffekseerViewer.csproj", "{38CBEECD-CE84-4AEE-BF7B-7DB89CC6827F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Viewer", "..\Cpp\Viewer\Viewer.vcxproj", "{BE1EFA2A-6745-4118-94C3-AA4ABBE64F06}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E2495770-1734-4C77-8028-92040A1D36CB} = {E2495770-1734-4C77-8028-92040A1D36CB}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerSoundXAudio2", "..\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.vcxproj", "{5C73251F-26D7-44CF-A3D7-1E333F585D4F}"
 EndProject
