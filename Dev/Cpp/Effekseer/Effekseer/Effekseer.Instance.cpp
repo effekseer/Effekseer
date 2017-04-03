@@ -441,7 +441,36 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		soundValues.delay = m_pEffectNode->Sound.Delay.getValue( *m_pManager );
 	}
 
-	m_pEffectNode->InitializeRenderedInstance( *this, m_pManager );
+	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
+
+	// Generate zero frame effect
+	{
+		InstanceGroup* group = m_headGroups;
+
+		for (int32_t i = 0; i < Min(ChildrenMax, parameter->GetChildrenCount()); i++, group = group->NextUsedByInstance)
+		{
+			auto node = (EffectNodeImplemented*) parameter->GetChild(i);
+			auto container = m_pContainer->GetChild(i);
+			assert(group != NULL);
+
+			if (m_nextGenerationTime[i] > 0.0f) continue;
+			if (node->CommonValues.MaxGeneration <= m_generatedChildrenCount[i]) continue;
+
+			// Create particle
+			auto newInstance = group->CreateInstance();
+			if (newInstance != nullptr)
+			{
+				newInstance->Initialize(this, m_generatedChildrenCount[i]);
+			}
+			else
+			{
+				continue;
+			}
+
+			m_generatedChildrenCount[i]++;
+			m_nextGenerationTime[i] += Max(0.0f, node->CommonValues.GenerationTime.getValue(*m_pManager));
+		}
+	}
 }
 
 //----------------------------------------------------------------------------------
