@@ -2,6 +2,9 @@
 #include "fbxToEfkMdl.Base.h"
 #include "fbxToEfkMdl.FBXConverter.h"
 
+#include <iostream>
+#include <fstream>
+
 #if _DEBUG
 #pragma comment(lib,"debug/libfbxsdk-mt.lib")
 #else
@@ -14,12 +17,12 @@ int main(int argc, char** argv)
 	if(argc == 1)
 	{
 		printf("Effekseer Model Conveter\n");
-		printf("Usage: mqoToEffekseerModelConverter InputFile(*.mqo) {OutputFile(*.efkmodel)} {options}\n");
+		printf("Usage: fbxToEffekseerModelConverter InputFile(*.fbx) {OutputFile(*.efkmodel)} {options}\n");
 		printf("");
 		printf("Options: -modelcount : Max Render Count (1 - n)\n");
 		printf("         -scale      : Scaling (ex. 0.5, 1.2)\n");
 		printf("");
-		printf("Examples: fbxToEffekseerModelConverter foo.mqo -scale 0.1\n");
+		printf("Examples: fbxToEffekseerModelConverter foo.fbx -scale 0.1\n");
 		return -1;
 	}
 
@@ -109,6 +112,60 @@ int main(int argc, char** argv)
 	sdkManager->Destroy();
 
 	// Export model.
+	const int Version = 1;
+
+	std::ofstream fout;
+	fout.open(exportPath.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
+
+	if (!fout)
+	{
+		printf("Failed to write a file..\n");
+		return -1;
+	}
+
+	fout << Version;
+
+	fout << modelCount;
+
+	fout << (int32_t)scene->Root->MeshData->Vertexes.size();
+	
+	for (auto v : scene->Root->MeshData->Vertexes)
+	{
+		fout << (float)(v.Position[0] * modelScale);
+		fout << (float)(v.Position[1] * modelScale);
+		fout << (float)(v.Position[2] * modelScale);
+
+		fout << (float)(v.Normal[0]);
+		fout << (float)(v.Normal[1]);
+		fout << (float)(v.Normal[2]);
+
+		fout << (float)(v.Binormal[0]);
+		fout << (float)(v.Binormal[1]);
+		fout << (float)(v.Binormal[2]);
+
+		fout << (float)(v.Tangent[0]);
+		fout << (float)(v.Tangent[1]);
+		fout << (float)(v.Tangent[2]);
+
+		fout << (float)(v.UV[0]);
+		fout << (float)(v.UV[1]);
+
+		fout << (uint8_t)(v.VertexColor.mRed * 255);
+		fout << (uint8_t)(v.VertexColor.mGreen * 255);
+		fout << (uint8_t)(v.VertexColor.mBlue * 255);
+		fout << (uint8_t)(v.VertexColor.mAlpha * 255);
+	}
+
+	fout << (int32_t)scene->Root->MeshData->Faces.size();
+
+	for (auto f : scene->Root->MeshData->Faces)
+	{
+		fout << f.Index[0];
+		fout << f.Index[1];
+		fout << f.Index[2];
+	}
+
+	fout.close();
 
     return 0;
 }
