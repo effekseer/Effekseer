@@ -111,58 +111,102 @@ int main(int argc, char** argv)
 	fbxImporter->Destroy();
 	sdkManager->Destroy();
 
+	// Find mesh
+	std::function<std::shared_ptr<fbxToEfkMdl::Mesh>(std::shared_ptr<fbxToEfkMdl::Node>)> findMesh = [&](std::shared_ptr<fbxToEfkMdl::Node> node) -> std::shared_ptr<fbxToEfkMdl::Mesh>
+	{
+		if (node->MeshData != nullptr) return node->MeshData;
+
+		for (auto c : node->Children)
+		{
+			auto m = findMesh(c);
+			if (m != nullptr)
+			{
+				return m;
+			}
+		}
+
+		return nullptr;
+	};
+
+	std::shared_ptr<fbxToEfkMdl::Mesh> mesh = findMesh(scene->Root);
+
+
 	// Export model.
 	const int Version = 1;
 
 	std::ofstream fout;
-	fout.open(exportPath.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
-
+	fout.open(exportPath.c_str(), std::ios::out | std::ios::binary);
+	
 	if (!fout)
 	{
 		printf("Failed to write a file..\n");
 		return -1;
 	}
 
-	fout << Version;
-
-	fout << modelCount;
-
-	fout << (int32_t)scene->Root->MeshData->Vertexes.size();
+	fout.write((const char*)&Version, sizeof(int32_t));
+	fout.write((const char*)&modelCount, sizeof(int32_t));
 	
-	for (auto v : scene->Root->MeshData->Vertexes)
+	if (mesh != nullptr)
 	{
-		fout << (float)(v.Position[0] * modelScale);
-		fout << (float)(v.Position[1] * modelScale);
-		fout << (float)(v.Position[2] * modelScale);
+		auto vsize = (int32_t)mesh->Vertexes.size();
+		fout.write((const char*)&vsize, sizeof(int32_t));
 
-		fout << (float)(v.Normal[0]);
-		fout << (float)(v.Normal[1]);
-		fout << (float)(v.Normal[2]);
+		for (auto v : mesh->Vertexes)
+		{
+			float p[3];
+			p[0] = (float)(v.Position[0] * modelScale);
+			p[1] = (float)(v.Position[1] * modelScale);
+			p[2] = (float)(v.Position[2] * modelScale);
 
-		fout << (float)(v.Binormal[0]);
-		fout << (float)(v.Binormal[1]);
-		fout << (float)(v.Binormal[2]);
+			float n[3];
+			n[0] = (float)(v.Normal[0]);
+			n[1] = (float)(v.Normal[1]);
+			n[2] = (float)(v.Normal[2]);
 
-		fout << (float)(v.Tangent[0]);
-		fout << (float)(v.Tangent[1]);
-		fout << (float)(v.Tangent[2]);
+			float b[3];
+			b[0] = (float)(v.Binormal[0]);
+			b[1] = (float)(v.Binormal[1]);
+			b[2] = (float)(v.Binormal[2]);
 
-		fout << (float)(v.UV[0]);
-		fout << (float)(v.UV[1]);
+			float t[3];
+			t[0] = (float)(v.Tangent[0]);
+			t[1] = (float)(v.Tangent[1]);
+			t[2] = (float)(v.Tangent[2]);
 
-		fout << (uint8_t)(v.VertexColor.mRed * 255);
-		fout << (uint8_t)(v.VertexColor.mGreen * 255);
-		fout << (uint8_t)(v.VertexColor.mBlue * 255);
-		fout << (uint8_t)(v.VertexColor.mAlpha * 255);
+			float uv[2];
+			uv[0] = (float)(v.UV[0]);
+			uv[1] = (float)(v.UV[1]);
+
+			uint8_t c[4];
+			c[0] = (uint8_t)(v.VertexColor.mRed * 255);
+			c[1] = (uint8_t)(v.VertexColor.mGreen * 255);
+			c[2] = (uint8_t)(v.VertexColor.mBlue * 255);
+			c[3] = (uint8_t)(v.VertexColor.mAlpha * 255);
+
+			fout.write((const char*)p, sizeof(float) * 3);
+			fout.write((const char*)n, sizeof(float) * 3);
+			fout.write((const char*)b, sizeof(float) * 3);
+			fout.write((const char*)t, sizeof(float) * 3);
+			fout.write((const char*)uv, sizeof(float) * 2);
+			fout.write((const char*)c, sizeof(uint8_t) * 4);
+		}
+
+		auto fsize = (int32_t)mesh->Faces.size();
+		fout.write((const char*)&fsize, sizeof(int32_t));
+
+		for (auto f : mesh->Faces)
+		{
+			fout.write((const char*)&f.Index[0], sizeof(int32_t));
+			fout.write((const char*)&f.Index[1], sizeof(int32_t));
+			fout.write((const char*)&f.Index[2], sizeof(int32_t));
+		}
 	}
-
-	fout << (int32_t)scene->Root->MeshData->Faces.size();
-
-	for (auto f : scene->Root->MeshData->Faces)
+	else
 	{
-		fout << f.Index[0];
-		fout << f.Index[1];
-		fout << f.Index[2];
+		auto vsize = (int32_t)0;
+		auto fsize = (int32_t)0;
+		fout.write((const char*)&vsize, sizeof(int32_t));
+		fout.write((const char*)&fsize, sizeof(int32_t));
 	}
 
 	fout.close();
