@@ -446,6 +446,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 	// Generate zero frame effect
 	{
 		InstanceGroup* group = m_headGroups;
+		bool calculateMatrix = false;
 
 		for (int32_t i = 0; i < Min(ChildrenMax, parameter->GetChildrenCount()); i++, group = group->NextUsedByInstance)
 		{
@@ -460,6 +461,12 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 			auto newInstance = group->CreateInstance();
 			if (newInstance != nullptr)
 			{
+				if (!calculateMatrix)
+				{
+					CalculateMatrix(0);
+					calculateMatrix = true;
+				}
+
 				newInstance->Initialize(this, m_generatedChildrenCount[i]);
 			}
 			else
@@ -1072,12 +1079,15 @@ void Instance::ModifyMatrixFromLocationAbs( float deltaFrame )
 				}
 			}
 
-			m_GlobalRevisionVelocity += targetDirection * force * deltaFrame;
-			float currentVelocity = Vector3D::Length( m_GlobalRevisionVelocity );
-			Vector3D currentDirection = m_GlobalRevisionVelocity / currentVelocity;
-		
-			m_GlobalRevisionVelocity = (targetDirection * control + currentDirection * (1.0f - control)) * currentVelocity;
-			m_GlobalRevisionLocation += m_GlobalRevisionVelocity * deltaFrame;
+			if (deltaFrame > 0)
+			{
+				m_GlobalRevisionVelocity += targetDirection * force * deltaFrame;
+				float currentVelocity = Vector3D::Length(m_GlobalRevisionVelocity);
+				Vector3D currentDirection = m_GlobalRevisionVelocity / currentVelocity;
+
+				m_GlobalRevisionVelocity = (targetDirection * control + currentDirection * (1.0f - control)) * currentVelocity;
+				m_GlobalRevisionLocation += m_GlobalRevisionVelocity * deltaFrame;
+			}
 		}
 	}
 
