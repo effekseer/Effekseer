@@ -527,7 +527,7 @@ void EffectNodeRing::UpdateColorValues( Instance& instance, const RingColorParam
 	if( param.type == RingColorParameter::Easing )
 	{
 		param.easing.setValueToArg(
-			values.current, 
+			values.original, 
 			values.easing.start,
 			values.easing.end,
 			instance.m_LivingTime / instance.m_LivedTime );
