@@ -7,6 +7,9 @@ mkdir %RDIR%
 rmdir %RDIR_R%
 mkdir %RDIR_R%
 
+echo コンパイル
+"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Dev\Editor\Effekseer.sln /p:configuration=Release
+
 echo アプリケーションコピー
 mkdir %RDIR%\Tool
 copy Dev\release\Effekseer.exe %RDIR%\Tool\.
