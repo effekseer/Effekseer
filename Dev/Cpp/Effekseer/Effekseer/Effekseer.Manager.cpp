@@ -30,12 +30,6 @@
 
 #include "Effekseer.ModelLoader.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <sys/time.h>
-#endif
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -57,6 +51,14 @@ static int64_t GetTime(void)
 		}
 	}
 	return 0;
+#elif defined(_PSVITA)
+	return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+#elif defined(_PS4)
+	return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+#elif defined(_SWITCH)
+	return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+#elif defined(_XBOXONE)
+	return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
 #else
 	struct timeval tv;
     gettimeofday(&tv, NULL);

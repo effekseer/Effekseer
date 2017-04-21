@@ -22,6 +22,8 @@ private:
 #ifdef _WIN32
 	/* DWORDを置きかえ */
 	static unsigned long EFK_STDCALL ThreadProc(void* arguments);
+#elif defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE)
+
 #else
 	static void* ThreadProc( void* arguments );
 #endif
@@ -29,6 +31,8 @@ private:
 private:
 #ifdef _WIN32
 	HANDLE m_thread;
+#elif defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE)
+
 #else
 	pthread_t m_thread;
 	bool m_running;

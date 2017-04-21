@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <atomic>
+#include <stdint.h>
 
 //----------------------------------------------------------------------------------
 //
@@ -21,11 +22,17 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include <stdint.h>
-
 
 #ifdef _WIN32
 #include <windows.h>
+#elif defined(_PSVITA)
+#include "Effekseer.PSVita.h"
+#elif defined(_PS4)
+#include "Effekseer.PS4.h"
+#elif defined(_SWITCH)
+#include "Effekseer.Switch.h"
+#elif defined(_XBOXONE)
+#include "Effekseer.XBoxOne.h"
 #else
 #include <unistd.h>
 #include <pthread.h>

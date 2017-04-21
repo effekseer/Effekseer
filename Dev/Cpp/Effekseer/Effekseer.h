@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <atomic>
+#include <stdint.h>
 
 //----------------------------------------------------------------------------------
 //
@@ -21,11 +22,17 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include <stdint.h>
-
 
 #ifdef _WIN32
 #include <windows.h>
+#elif defined(_PSVITA)
+#include "Effekseer.PSVita.h"
+#elif defined(_PS4)
+#include "Effekseer.PS4.h"
+#elif defined(_SWITCH)
+#include "Effekseer.Switch.h"
+#elif defined(_XBOXONE)
+#include "Effekseer.XBoxOne.h"
 #else
 #include <unistd.h>
 #include <pthread.h>
@@ -3022,6 +3029,8 @@ namespace Effekseer {
 #ifndef	__EFFEKSEER_SERVER_H__
 #define	__EFFEKSEER_SERVER_H__
 
+#if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -3080,10 +3089,15 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+#endif	// #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+
 #endif	// __EFFEKSEER_SERVER_H__
 
 #ifndef	__EFFEKSEER_CLIENT_H__
 #define	__EFFEKSEER_CLIENT_H__
+
+#if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
 
 //----------------------------------------------------------------------------------
 // Include
@@ -3119,6 +3133,9 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+#endif	// #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+
 #endif	// __EFFEKSEER_CLIENT_H__
 
 #ifndef	__EFFEKSEER_CRITICALSESSION_H__
@@ -3127,14 +3144,6 @@ public:
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
-#include <pthread.h>
-#include <sys/time.h>
-#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -3152,6 +3161,8 @@ class CriticalSection
 private:
 #ifdef _WIN32
 	mutable CRITICAL_SECTION m_criticalSection;
+#elif defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE)
+	mutable CONSOLE_GAME_MUTEX	m_mutex;
 #else
 	mutable pthread_mutex_t m_mutex;
 #endif
@@ -3197,6 +3208,8 @@ private:
 #ifdef _WIN32
 	/* DWORDを置きかえ */
 	static unsigned long EFK_STDCALL ThreadProc(void* arguments);
+#elif defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE)
+
 #else
 	static void* ThreadProc( void* arguments );
 #endif
@@ -3204,6 +3217,8 @@ private:
 private:
 #ifdef _WIN32
 	HANDLE m_thread;
+#elif defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE)
+
 #else
 	pthread_t m_thread;
 	bool m_running;

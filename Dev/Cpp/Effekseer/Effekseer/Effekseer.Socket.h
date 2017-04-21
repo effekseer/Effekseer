@@ -2,10 +2,13 @@
 #ifndef	__EFFEKSEER_SOCKET_H__
 #define	__EFFEKSEER_SOCKET_H__
 
+#if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
 #include <stdio.h>
+#include <stdint.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -18,21 +21,6 @@
 #include <unistd.h>
 #endif
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#ifdef _WIN32
-typedef signed char			int8_t;
-typedef unsigned char		uint8_t;
-typedef short				int16_t;
-typedef unsigned short		uint16_t;
-typedef int					int32_t;
-typedef unsigned int		uint32_t;
-typedef __int64				int64_t;
-typedef unsigned __int64	uint64_t;
-#else
-#include <stdint.h>
-#endif
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -100,4 +88,7 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+#endif	// #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+
 #endif	// __EFFEKSEER_SOCKET_H__

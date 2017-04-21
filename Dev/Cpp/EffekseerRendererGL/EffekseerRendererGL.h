@@ -44,6 +44,14 @@
 #include <GLES3/gl3.h>
 #endif
 
+#elif defined(__EFFEKSEER_RENDERER_GL2__)
+
+#if defined(__APPLE__)
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+
 #else
 
 #if defined(__APPLE__)

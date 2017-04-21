@@ -1,6 +1,11 @@
 import re
 import codecs
 
+def isValidLine(line):
+	if re.search('include \"', line) == None or line.find('.PSVita') != -1 or line.find('.PS4') != -1 or line.find('.Switch') != -1 or line.find('.XBoxOne') != -1:
+		return True
+	return False
+
 class CreateHeader:
 	def __init__(self):
 		self.lines = []
@@ -9,7 +14,7 @@ class CreateHeader:
 		f = codecs.open(path, 'r','utf-8_sig')
 		line = f.readline()
 		while line:
-			if re.search('include \"', line) == None:
+			if isValidLine(line):
  	 			self.lines.append(line)
 			line = f.readline()
 		f.close()
