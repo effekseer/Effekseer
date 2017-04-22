@@ -206,6 +206,7 @@ public:
 		state.DepthTest = m_state.DepthTest;
 		state.DepthWrite = m_state.DepthWrite;
 		state.CullingType = m_state.CullingType;
+		state.AlphaBlend = m_state.AlphaBlend;
 
 		SHADER* shader_ = nullptr;
 
@@ -267,7 +268,6 @@ public:
 
 		shader_->SetConstantBuffer();
 
-		state.AlphaBlend = m_state.AlphaBlend;
 		state.TextureFilterTypes[0] = m_state.TextureFilterType;
 		state.TextureWrapTypes[0] = m_state.TextureWrapType;
 
