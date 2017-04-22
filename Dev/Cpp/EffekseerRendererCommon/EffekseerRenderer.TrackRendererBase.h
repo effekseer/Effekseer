@@ -27,7 +27,7 @@ typedef ::Effekseer::TrackRenderer::NodeParameter efkTrackNodeParam;
 typedef ::Effekseer::TrackRenderer::InstanceParameter efkTrackInstanceParam;
 typedef ::Effekseer::Vector3D efkVector3D;
 
-template<typename RENDERER, typename VERTEX, typename VERTEX_DISTORTION>
+template<typename RENDERER, typename VERTEX_NORMAL, typename VERTEX_DISTORTION>
 class TrackRendererBase
 	: public ::Effekseer::TrackRenderer
 {
@@ -109,14 +109,15 @@ protected:
 	{
 		if (parameter.Distortion)
 		{
-			Rendering_Internal(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
 		}
 		else
 		{
-			Rendering_Internal(parameter, instanceParameter, userData, camera);
+			Rendering_Internal<VERTEX_NORMAL>(parameter, instanceParameter, userData, camera);
 		}
 	}
 
+	template<typename VERTEX>
 	void Rendering_Internal( const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
 		if( m_ringBufferData == NULL ) return;
