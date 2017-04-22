@@ -191,7 +191,6 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.Renderer.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.RendererImplemented.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.RenderState.h" />
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.RibbonRenderer.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.Shader.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.TextureLoader.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.VertexArray.h" />
@@ -215,7 +214,6 @@
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.ModelRenderer.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.Renderer.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.RenderState.cpp" />
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.RibbonRenderer.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.Shader.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.TextureLoader.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.VertexArray.cpp" />

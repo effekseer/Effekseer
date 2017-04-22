@@ -64,9 +64,6 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.RenderState.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.RibbonRenderer.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.Shader.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
@@ -136,9 +133,6 @@
       <Filter>EffekseerRenderer</Filter>
     </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.RenderState.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.RibbonRenderer.cpp">
       <Filter>EffekseerRenderer</Filter>
     </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.Shader.cpp">

@@ -369,92 +369,92 @@ public:
 	/**
 		@brief	ライトの方向を取得する。
 	*/
-	const ::Effekseer::Vector3D& GetLightDirection() const;
+	const ::Effekseer::Vector3D& GetLightDirection() const override;
 
 	/**
 		@brief	ライトの方向を設定する。
 	*/
-	void SetLightDirection( ::Effekseer::Vector3D& direction );
+	void SetLightDirection( ::Effekseer::Vector3D& direction ) override;
 
 	/**
 		@brief	ライトの色を取得する。
 	*/
-	const ::Effekseer::Color& GetLightColor() const;
+	const ::Effekseer::Color& GetLightColor() const override;
 
 	/**
 		@brief	ライトの色を設定する。
 	*/
-	void SetLightColor( ::Effekseer::Color& color );
+	void SetLightColor( ::Effekseer::Color& color ) override;
 
 	/**
 		@brief	ライトの環境光の色を取得する。
 	*/
-	const ::Effekseer::Color& GetLightAmbientColor() const;
+	const ::Effekseer::Color& GetLightAmbientColor() const override;
 
 	/**
 		@brief	ライトの環境光の色を設定する。
 	*/
-	void SetLightAmbientColor( ::Effekseer::Color& color );
+	void SetLightAmbientColor( ::Effekseer::Color& color ) override;
 
 	/**
 		@brief	投影行列を取得する。
 	*/
-	const ::Effekseer::Matrix44& GetProjectionMatrix() const;
+	const ::Effekseer::Matrix44& GetProjectionMatrix() const override;
 
 	/**
 		@brief	投影行列を設定する。
 	*/
-	void SetProjectionMatrix( const ::Effekseer::Matrix44& mat );
+	void SetProjectionMatrix( const ::Effekseer::Matrix44& mat ) override;
 
 	/**
 		@brief	カメラ行列を取得する。
 	*/
-	const ::Effekseer::Matrix44& GetCameraMatrix() const;
+	const ::Effekseer::Matrix44& GetCameraMatrix() const override;
 
 	/**
 		@brief	カメラ行列を設定する。
 	*/
-	void SetCameraMatrix( const ::Effekseer::Matrix44& mat );
+	void SetCameraMatrix( const ::Effekseer::Matrix44& mat ) override;
 
 	/**
 		@brief	カメラプロジェクション行列を取得する。
 	*/
-	::Effekseer::Matrix44& GetCameraProjectionMatrix();
+	::Effekseer::Matrix44& GetCameraProjectionMatrix() override;
 
 	/**
 		@brief	スプライトレンダラーを生成する。
 	*/
-	::Effekseer::SpriteRenderer* CreateSpriteRenderer();
+	::Effekseer::SpriteRenderer* CreateSpriteRenderer() override;
 
 	/**
 		@brief	リボンレンダラーを生成する。
 	*/
-	::Effekseer::RibbonRenderer* CreateRibbonRenderer();
+	::Effekseer::RibbonRenderer* CreateRibbonRenderer() override;
 	
 	/**
 		@brief	リングレンダラーを生成する。
 	*/
-	::Effekseer::RingRenderer* CreateRingRenderer();
+	::Effekseer::RingRenderer* CreateRingRenderer() override;
 	
 	/**
 		@brief	モデルレンダラーを生成する。
 	*/
-	::Effekseer::ModelRenderer* CreateModelRenderer();
+	::Effekseer::ModelRenderer* CreateModelRenderer() override;
 
 	/**
 		@brief	軌跡レンダラーを生成する。
 	*/
-	::Effekseer::TrackRenderer* CreateTrackRenderer();
+	::Effekseer::TrackRenderer* CreateTrackRenderer() override;
 
 	/**
 		@brief	テクスチャ読込クラスを生成する。
 	*/
-	::Effekseer::TextureLoader* CreateTextureLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+	::Effekseer::TextureLoader* CreateTextureLoader( ::Effekseer::FileInterface* fileInterface = NULL )override;
 	
 	/**
 		@brief	モデル読込クラスを生成する。
 	*/
-	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL )override;
 
 	/**
 	@brief	背景を取得する。

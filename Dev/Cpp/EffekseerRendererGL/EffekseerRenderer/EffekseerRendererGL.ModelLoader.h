@@ -28,9 +28,9 @@ public:
 	virtual ~ModelLoader();
 
 public:
-	void* Load( const EFK_CHAR* path );
+	void* Load( const EFK_CHAR* path ) override;
 
-	void Unload( void* data );
+	void Unload( void* data ) override;
 };
 //----------------------------------------------------------------------------------
 //

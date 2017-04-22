@@ -37,8 +37,8 @@ public:	// デバイス復旧用
 	virtual void OnResetDevice();
 
 public:
-	void Lock();
-	void Unlock();
+	void Lock() override;
+	void Unlock() override;
 };
 
 //-----------------------------------------------------------------------------------
