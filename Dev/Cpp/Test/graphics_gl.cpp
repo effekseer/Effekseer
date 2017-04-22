@@ -391,7 +391,7 @@ void InitGraphics(int width, int height )
 //----------------------------------------------------------------------------------
 void TermGraphics()
 {
-	g_renderer->Destory();
+	g_renderer->Destroy();
 	MakeContextNone();
 
 #if _GLFW

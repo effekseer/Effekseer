@@ -39,7 +39,7 @@ public:
 	SoundImplemented();
 	virtual ~SoundImplemented();
 
-	void Destory();
+	void Destroy();
 
 	bool Initialize( IXAudio2* xaudio2, int32_t num1chVoices, int32_t num2chVoices );
 	

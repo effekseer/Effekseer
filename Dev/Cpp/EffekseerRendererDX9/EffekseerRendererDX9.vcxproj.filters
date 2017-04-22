@@ -16,9 +16,6 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.h">
       <Filter>EffekseerRendererCommon</Filter>
     </ClInclude>
-    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RibbonRendererBase.h">
-      <Filter>EffekseerRendererCommon</Filter>
-    </ClInclude>
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.TrackRendererBase.h">
       <Filter>EffekseerRendererCommon</Filter>
     </ClInclude>
@@ -61,22 +58,10 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX9.RenderState.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererDX9.RibbonRenderer.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererDX9.RingRenderer.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX9.Shader.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererDX9.SpriteRenderer.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX9.TextureLoader.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererDX9.TrackRenderer.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX9.VertexBuffer.h">
@@ -103,9 +88,6 @@
       <Filter>EffekseerRendererCommon</Filter>
     </ClCompile>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.cpp">
-      <Filter>EffekseerRendererCommon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.RibbonRendererBase.cpp">
       <Filter>EffekseerRendererCommon</Filter>
     </ClCompile>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.TrackRendererBase.cpp">
@@ -141,22 +123,10 @@
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX9.RenderState.cpp">
       <Filter>EffekseerRenderer</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererDX9.RibbonRenderer.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererDX9.RingRenderer.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX9.Shader.cpp">
       <Filter>EffekseerRenderer</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererDX9.SpriteRenderer.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX9.TextureLoader.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererDX9.TrackRenderer.cpp">
       <Filter>EffekseerRenderer</Filter>
     </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX9.VertexBuffer.cpp">

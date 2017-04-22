@@ -36,7 +36,7 @@ public:
 	SoundImplemented();
 	virtual ~SoundImplemented();
 
-	void Destory();
+	void Destroy();
 
 	bool Initialize( IDirectSound8* dsound );
 	

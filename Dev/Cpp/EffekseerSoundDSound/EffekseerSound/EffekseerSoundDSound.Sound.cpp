@@ -84,7 +84,7 @@ void SoundImplemented::SetListener( const ::Effekseer::Vector3D& pos,
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void SoundImplemented::Destory()
+void SoundImplemented::Destroy()
 {
 	delete this;
 }

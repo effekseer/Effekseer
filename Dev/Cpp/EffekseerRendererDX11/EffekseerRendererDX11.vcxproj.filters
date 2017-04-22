@@ -61,22 +61,10 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.RenderState.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.RibbonRenderer.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.RingRenderer.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.Shader.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.SpriteRenderer.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.TextureLoader.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.TrackRenderer.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.VertexBuffer.h">
@@ -141,22 +129,10 @@
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.RenderState.cpp">
       <Filter>EffekseerRenderer</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.RibbonRenderer.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.RingRenderer.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.Shader.cpp">
       <Filter>EffekseerRenderer</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.SpriteRenderer.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.TextureLoader.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.TrackRenderer.cpp">
       <Filter>EffekseerRenderer</Filter>
     </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.VertexBuffer.cpp">

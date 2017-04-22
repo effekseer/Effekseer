@@ -27,23 +27,34 @@ typedef ::Effekseer::TrackRenderer::NodeParameter efkTrackNodeParam;
 typedef ::Effekseer::TrackRenderer::InstanceParameter efkTrackInstanceParam;
 typedef ::Effekseer::Vector3D efkVector3D;
 
+template<typename RENDERER, typename VERTEX, typename VERTEX_DISTORTION>
 class TrackRendererBase
 	: public ::Effekseer::TrackRenderer
 {
 protected:
+	RENDERER*						m_renderer;
 	int32_t							m_ribbonCount;
 
 	int32_t							m_ringBufferOffset;
 	uint8_t*						m_ringBufferData;
 
-	TrackRendererBase();
 public:
 
-	virtual ~TrackRendererBase();
+	TrackRendererBase(RENDERER* renderer)
+		: m_renderer(renderer)
+		, m_ribbonCount(0)
+		, m_ringBufferOffset(0)
+		, m_ringBufferData(NULL)
+	{
+	}
+
+	virtual ~TrackRendererBase()
+	{
+	}
+
 
 protected:
 
-	template<typename VERTEX, typename RENDERER>
 	void BeginRendering_( RENDERER* renderer, const efkTrackNodeParam& param, int32_t count, void* userData )
 	{
 		/*
@@ -94,20 +105,18 @@ protected:
 		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
 	}
 
-	template<typename VERTEX, typename VERTEX_DISTORTION>
 	void Rendering_(const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
 	{
 		if (parameter.Distortion)
 		{
-			Rendering_Internal<VERTEX_DISTORTION, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal(parameter, instanceParameter, userData, camera);
 		}
 		else
 		{
-			Rendering_Internal<VERTEX, VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+			Rendering_Internal(parameter, instanceParameter, userData, camera);
 		}
 	}
 
-	template<typename VERTEX, typename VERTEX_DISTORTION>
 	void Rendering_Internal( const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
 		if( m_ringBufferData == NULL ) return;
@@ -379,7 +388,6 @@ protected:
 		}
 	}
 
-	template<typename RENDERER, typename TEXTURE, typename VERTEX>
 	void EndRendering_(RENDERER* renderer, const efkTrackNodeParam& param)
 	{
 		/*
@@ -431,7 +439,29 @@ protected:
 		renderer->GetRenderState()->Pop();
 		*/
 	}
+
+public:
+
+	void BeginRendering(const efkTrackNodeParam& parameter, int32_t count, void* userData) override
+	{
+		BeginRendering_(m_renderer, parameter, count, userData);
+	}
+
+	void Rendering(const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData) override
+	{
+		Rendering_(parameter, instanceParameter, userData, m_renderer->GetCameraMatrix());
+	}
+
+	void EndRendering(const efkTrackNodeParam& parameter, void* userData) override
+	{
+		if (m_ringBufferData == NULL) return;
+
+		if (m_ribbonCount <= 1) return;
+
+		EndRendering_(m_renderer, parameter);
+	}
 };
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

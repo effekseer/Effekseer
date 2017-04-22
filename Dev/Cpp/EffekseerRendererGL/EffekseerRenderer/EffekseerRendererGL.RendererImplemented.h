@@ -333,7 +333,7 @@ public:
 	*/
 	bool Initialize();
 
-	void Destory();
+	void Destroy();
 
 	void SetRestorationOfStatesFlag(bool flag);
 

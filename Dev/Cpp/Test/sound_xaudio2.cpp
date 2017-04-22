@@ -48,7 +48,7 @@ void TermSound()
 
 	if( g_sound != NULL )
 	{
-		g_sound->Destory();
+		g_sound->Destroy();
 		g_sound = NULL;
 	}
 	if( g_masteringVoice != NULL )

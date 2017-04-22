@@ -284,7 +284,7 @@ End:
 //----------------------------------------------------------------------------------
 void TermGraphics()
 {
-	g_renderer->Destory();
+	g_renderer->Destroy();
 	ES_SAFE_RELEASE( g_renderTargetView );
 	ES_SAFE_RELEASE( g_backBuffer );
 	ES_SAFE_RELEASE( g_depthStencilView );

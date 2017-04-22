@@ -7,8 +7,7 @@
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.SpriteRenderer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.RibbonRenderer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
 
 //----------------------------------------------------------------------------------
 //

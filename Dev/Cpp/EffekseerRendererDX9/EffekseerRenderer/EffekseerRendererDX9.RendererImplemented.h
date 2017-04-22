@@ -339,7 +339,7 @@ public:
 	*/
 	bool Initialize( LPDIRECT3DDEVICE9 device );
 
-	void Destory();
+	void Destroy();
 
 	void SetRestorationOfStatesFlag(bool flag);
 

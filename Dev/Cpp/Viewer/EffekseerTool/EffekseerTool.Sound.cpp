@@ -31,7 +31,7 @@ Sound::~Sound()
 
 	if( m_sound != NULL )
 	{
-		m_sound->Destory();
+		m_sound->Destroy();
 		m_sound = NULL;
 	}
 	if( m_masteringVoice != NULL )

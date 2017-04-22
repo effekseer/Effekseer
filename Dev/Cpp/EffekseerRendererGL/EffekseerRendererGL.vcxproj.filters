@@ -67,19 +67,10 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.RibbonRenderer.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.RingRenderer.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.Shader.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.SpriteRenderer.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.TextureLoader.h">
-      <Filter>EffekseerRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.TrackRenderer.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.VertexBuffer.h">
@@ -150,19 +141,10 @@
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.RibbonRenderer.cpp">
       <Filter>EffekseerRenderer</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.RingRenderer.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.Shader.cpp">
       <Filter>EffekseerRenderer</Filter>
     </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.SpriteRenderer.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.TextureLoader.cpp">
-      <Filter>EffekseerRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.TrackRenderer.cpp">
       <Filter>EffekseerRenderer</Filter>
     </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.VertexBuffer.cpp">

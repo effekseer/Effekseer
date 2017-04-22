@@ -32,7 +32,7 @@ public:
 	SoundImplemented();
 	virtual ~SoundImplemented();
 
-	void Destory();
+	void Destroy();
 
 	bool Initialize( int32_t numVoices );
 	
