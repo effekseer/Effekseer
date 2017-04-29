@@ -17,14 +17,20 @@ namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-TextureLoader::TextureLoader( Renderer* renderer, ::Effekseer::FileInterface* fileInterface )
-	: m_renderer		( renderer )
-	, m_fileInterface	( fileInterface )
+TextureLoader::TextureLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface )
+	: m_fileInterface	(fileInterface)
+	, device			(device)
 {
-	if( m_fileInterface == NULL )
+	ES_SAFE_ADDREF(device);
+
+	if( fileInterface == NULL )
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
+
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	EffekseerRenderer::PngTextureLoader::Initialize();
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -32,7 +38,11 @@ TextureLoader::TextureLoader( Renderer* renderer, ::Effekseer::FileInterface* fi
 //----------------------------------------------------------------------------------
 TextureLoader::~TextureLoader()
 {
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	EffekseerRenderer::PngTextureLoader::Finalize();
+#endif
 
+	ES_SAFE_RELEASE(device);
 }
 
 //----------------------------------------------------------------------------------
@@ -80,7 +90,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 				data.SysMemPitch = TexDesc.Width * 4;
 				data.SysMemSlicePitch = TexDesc.Width * TexDesc.Height * 4;
 
-				HRESULT hr = m_renderer->GetDevice()->CreateTexture2D(&TexDesc, &data, &tex);
+				HRESULT hr = device->CreateTexture2D(&TexDesc, &data, &tex);
 
 				if (FAILED(hr))
 				{
@@ -95,7 +105,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 				desc.Texture2D.MostDetailedMip = 0;
 				desc.Texture2D.MipLevels = TexDesc.MipLevels;
 
-				hr = m_renderer->GetDevice()->CreateShaderResourceView(tex, &desc, &texture);
+				hr = device->CreateShaderResourceView(tex, &desc, &texture);
 				if (FAILED(hr))
 				{
 					ES_SAFE_RELEASE(texture);
@@ -113,7 +123,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 		{
 			ID3D11Resource* textureR = NULL;
 			EffekseerDirectX::CreateDDSTextureFromMemory(
-				m_renderer->GetDevice(),
+				device,
 				(uint8_t*)data_texture,
 				size_texture,
 				&textureR,

@@ -13,6 +13,17 @@
 //----------------------------------------------------------------------------------
 namespace EffekseerRendererDX9
 {
+
+/**
+@brief	テクスチャ読込クラスを生成する。
+*/
+::Effekseer::TextureLoader* CreateTextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = NULL);
+
+/**
+@brief	モデル読込クラスを生成する。
+*/
+::Effekseer::ModelLoader* CreateModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = NULL);
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

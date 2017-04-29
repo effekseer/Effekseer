@@ -16,10 +16,12 @@ namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader::ModelLoader( Renderer* renderer, ::Effekseer::FileInterface* fileInterface )
-	: m_renderer		( renderer )
+ModelLoader::ModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface )
+	: device			( device )
 	, m_fileInterface	( fileInterface )
 {
+	ES_SAFE_ADDREF(device);
+
 	if( m_fileInterface == NULL )
 	{
 		m_fileInterface = &m_defaultFileInterface;
@@ -31,7 +33,7 @@ ModelLoader::ModelLoader( Renderer* renderer, ::Effekseer::FileInterface* fileIn
 //----------------------------------------------------------------------------------
 ModelLoader::~ModelLoader()
 {
-
+	ES_SAFE_RELEASE(device);
 }
 
 //----------------------------------------------------------------------------------
@@ -93,7 +95,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 			hSubResourceData.SysMemPitch = 0;
 			hSubResourceData.SysMemSlicePitch = 0;
 
-			if( FAILED( m_renderer->GetDevice()->CreateBuffer(&hBufferDesc, &hSubResourceData, &vb) ) )
+			if( FAILED( device->CreateBuffer(&hBufferDesc, &hSubResourceData, &vb) ) )
 			{
 				return NULL;
 			}
@@ -134,7 +136,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 			hSubResourceData.SysMemPitch = 0;
 			hSubResourceData.SysMemSlicePitch = 0;
 
-			if( FAILED( m_renderer->GetDevice()->CreateBuffer(&hBufferDesc, &hSubResourceData, &ib) ) )
+			if( FAILED( device->CreateBuffer(&hBufferDesc, &hSubResourceData, &ib) ) )
 			{
 				return NULL;
 			}

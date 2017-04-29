@@ -19,14 +19,20 @@ namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-TextureLoader::TextureLoader( Renderer* renderer, ::Effekseer::FileInterface* fileInterface )
-	: m_renderer		( renderer )
+TextureLoader::TextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface )
+	: device			( device )
 	, m_fileInterface	( fileInterface )
 {
+	ES_SAFE_ADDREF(device);
+
 	if( m_fileInterface == NULL )
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
+
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	EffekseerRenderer::PngTextureLoader::Initialize();
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -34,7 +40,11 @@ TextureLoader::TextureLoader( Renderer* renderer, ::Effekseer::FileInterface* fi
 //----------------------------------------------------------------------------------
 TextureLoader::~TextureLoader()
 {
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	EffekseerRenderer::PngTextureLoader::Finalize();
+#endif
 
+	ES_SAFE_RELEASE(device);
 }
 
 //----------------------------------------------------------------------------------
@@ -66,7 +76,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 				int32_t width = ::EffekseerRenderer::PngTextureLoader::GetWidth();
 				int32_t height = ::EffekseerRenderer::PngTextureLoader::GetHeight();
 				int32_t mipMapCount = 1;
-				hr = m_renderer->GetDevice()->CreateTexture( 
+				hr = device->CreateTexture( 
 					width,
 					height,
 					mipMapCount,
@@ -84,7 +94,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 				}
 
 				LPDIRECT3DTEXTURE9 tempTexture = NULL;
-				hr = m_renderer->GetDevice()->CreateTexture( 
+				hr = device->CreateTexture( 
 					width,
 					height,
 					mipMapCount,
@@ -124,7 +134,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 					tempTexture->UnlockRect( 0 );
 				}
 
-				hr = m_renderer->GetDevice()->UpdateTexture( tempTexture, texture );
+				hr = device->UpdateTexture( tempTexture, texture );
 				ES_SAFE_RELEASE( tempTexture );
 
 				::EffekseerRenderer::PngTextureLoader::Unload();
@@ -136,7 +146,7 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 			data_texture[3] == ' ')
 		{
 			EffekseerDirectX::CreateDDSTextureFromMemory(
-				m_renderer->GetDevice(),
+				device,
 				(uint8_t*)data_texture,
 				size_texture,
 				texture );

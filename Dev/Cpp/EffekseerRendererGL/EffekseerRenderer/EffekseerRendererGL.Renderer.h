@@ -20,6 +20,17 @@ namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+/**
+@brief	テクスチャ読込クラスを生成する。
+*/
+::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL);
+
+/**
+@brief	モデル読込クラスを生成する。
+*/
+::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL);
+
 /**
 	@brief	描画クラス
 */

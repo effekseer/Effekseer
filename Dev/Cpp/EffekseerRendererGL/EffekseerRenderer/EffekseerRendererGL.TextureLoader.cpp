@@ -26,6 +26,10 @@ TextureLoader::TextureLoader( ::Effekseer::FileInterface* fileInterface )
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
+
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	EffekseerRenderer::PngTextureLoader::Initialize();
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -33,7 +37,9 @@ TextureLoader::TextureLoader( ::Effekseer::FileInterface* fileInterface )
 //----------------------------------------------------------------------------------
 TextureLoader::~TextureLoader()
 {
-
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	EffekseerRenderer::PngTextureLoader::Finalize();
+#endif
 }
 
 //----------------------------------------------------------------------------------

@@ -22,12 +22,12 @@ class TextureLoader
 	: public ::Effekseer::TextureLoader
 {
 private:
-	Renderer*	m_renderer;
+	LPDIRECT3DDEVICE9		device;
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
 
 public:
-	TextureLoader( Renderer* renderer, ::Effekseer::FileInterface* fileInterface = NULL );
+	TextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = NULL );
 	virtual ~TextureLoader();
 
 public:

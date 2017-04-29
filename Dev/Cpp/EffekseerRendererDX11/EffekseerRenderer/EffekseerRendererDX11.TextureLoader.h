@@ -21,12 +21,12 @@ class TextureLoader
 	: public ::Effekseer::TextureLoader
 {
 private:
-	Renderer*	m_renderer;
-	::Effekseer::FileInterface* m_fileInterface;
-	::Effekseer::DefaultFileInterface m_defaultFileInterface;
+	ID3D11Device*						device;
+	::Effekseer::FileInterface*			m_fileInterface;
+	::Effekseer::DefaultFileInterface	m_defaultFileInterface;
 
 public:
-	TextureLoader( Renderer* renderer, ::Effekseer::FileInterface* fileInterface = NULL );
+	TextureLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface = NULL );
 	virtual ~TextureLoader();
 
 public:

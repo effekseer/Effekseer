@@ -16,10 +16,12 @@ namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-ModelLoader::ModelLoader( Renderer* renderer, ::Effekseer::FileInterface* fileInterface )
-	: m_renderer		( renderer )
+ModelLoader::ModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface )
+	: device			(device)
 	, m_fileInterface	( fileInterface )
 {
+	ES_SAFE_ADDREF(device);
+
 	if( m_fileInterface == NULL )
 	{
 		m_fileInterface = &m_defaultFileInterface;
@@ -31,7 +33,7 @@ ModelLoader::ModelLoader( Renderer* renderer, ::Effekseer::FileInterface* fileIn
 //----------------------------------------------------------------------------------
 ModelLoader::~ModelLoader()
 {
-
+	ES_SAFE_RELEASE(device);
 }
 
 //----------------------------------------------------------------------------------
@@ -58,7 +60,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 		model->VertexCount = model->GetVertexCount();
 
 		IDirect3DVertexBuffer9* vb = NULL;
-		hr = m_renderer->GetDevice()->CreateVertexBuffer(
+		hr = device->CreateVertexBuffer(
 			sizeof(Effekseer::Model::VertexWithIndex) * model->VertexCount * model->ModelCount,
 			D3DUSAGE_WRITEONLY,
 			0,
@@ -69,7 +71,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 		if( FAILED( hr ) )
 		{
 			/* DirectX9ExではD3DPOOL_MANAGED使用不可 */
-			hr = m_renderer->GetDevice()->CreateVertexBuffer(
+			hr = device->CreateVertexBuffer(
 				sizeof(Effekseer::Model::VertexWithIndex) * model->VertexCount * model->ModelCount,
 				D3DUSAGE_WRITEONLY,
 				0,
@@ -115,7 +117,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 		model->IndexCount = model->FaceCount * 3;
 
 		IDirect3DIndexBuffer9* ib = NULL;
-		hr = m_renderer->GetDevice()->CreateIndexBuffer( 
+		hr = device->CreateIndexBuffer( 
 			sizeof(Effekseer::Model::Face) * model->FaceCount * model->ModelCount,
 			D3DUSAGE_WRITEONLY, 
 			D3DFMT_INDEX32, 
@@ -125,7 +127,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 
 		if( FAILED( hr ) )
 		{
-			hr = m_renderer->GetDevice()->CreateIndexBuffer( 
+			hr = device->CreateIndexBuffer( 
 				sizeof(Effekseer::Model::Face) * model->FaceCount * model->ModelCount,
 				D3DUSAGE_WRITEONLY, 
 				D3DFMT_INDEX32, 

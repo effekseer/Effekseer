@@ -228,6 +228,28 @@ void main() {
 }
 )";
 
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
+{
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	return new TextureLoader(fileInterface);
+#else
+	return NULL;
+#endif
+}
+
+::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface)
+{
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	return new ModelLoader(fileInterface);
+#else
+	return NULL;
+#endif
+}
+
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

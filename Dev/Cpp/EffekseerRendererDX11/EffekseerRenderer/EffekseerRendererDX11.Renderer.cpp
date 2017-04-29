@@ -84,6 +84,27 @@ namespace StandardNoTexture_Distortion_PS
 #include "Shader/EffekseerRenderer.StandardNoTexture_Distortion_PS.h"
 }
 
+//-----------------------------------------------------------------------------------
+//
+//-----------------------------------------------------------------------------------
+::Effekseer::TextureLoader* CreateTextureLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface)
+{
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	return new TextureLoader(device, fileInterface);
+#else
+	return NULL;
+#endif
+}
+
+::Effekseer::ModelLoader* CreateModelLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface)
+{
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	return new ModelLoader(device, fileInterface);
+#else
+	return NULL;
+#endif
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -695,7 +716,7 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 ::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader( ::Effekseer::FileInterface* fileInterface )
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader( this, fileInterface );
+	return new TextureLoader(this->GetDevice(), fileInterface );
 #else
 	return NULL;
 #endif
@@ -707,7 +728,7 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 ::Effekseer::ModelLoader* RendererImplemented::CreateModelLoader( ::Effekseer::FileInterface* fileInterface )
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader( this, fileInterface );
+	return new ModelLoader(this->GetDevice(), fileInterface );
 #else
 	return NULL;
 #endif
