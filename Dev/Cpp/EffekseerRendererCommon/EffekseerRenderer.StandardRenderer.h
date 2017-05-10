@@ -155,7 +155,10 @@ public:
 			auto callback = m_renderer->GetDistortingCallback();
 			if (callback != nullptr)
 			{
-				callback->OnDistorting();
+				if (!callback->OnDistorting())
+				{
+					return;
+				}
 			}
 		}
 
@@ -174,7 +177,7 @@ public:
 
 			if (m_state.Distortion)
 			{
-				// OpenGL ES対策(OpenGL ES3.2以降でしか、頂点レイアウト可変のリングバッファを実現できないため)
+				// For OpenGL ES(Because OpenGL ES 3.2 and later can only realize a vertex layout variable ring buffer)
 				vb->Lock();
 				data = vb->GetBufferDirect(vertexCaches.size());
 				if (data == nullptr)

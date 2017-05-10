@@ -25,7 +25,7 @@ public:
 	DistortingCallback() {}
 	virtual ~DistortingCallback() {}
 
-	virtual void OnDistorting() {}
+	virtual bool OnDistorting() { return false; }
 };
 //-----------------------------------------------------------------------------------
 //
