@@ -43,10 +43,16 @@ issuesとwishlistを読んでください。常時、機能追加、バグ修正
 
 # RoadMap
 
-## 1.3
+## 1.3 Finished
+* Add some icons to Editor GUI
+* File viewer
 
+## 1.3 Todo
+* Integrate FBX and mqo importer.
+* Show the number of draw call.
 * For UnrealEngine4
 * For Cocos2d-x
+* Documents
 
 # Todo
 
@@ -54,7 +60,6 @@ issuesとwishlistを読んでください。常時、機能追加、バグ修正
 * Add Samples
 * Add Documents
 * Add Tests
-* Add some icons to Editor GUI
 
 ** Medium
 * Add model exporters for 3D modeling softwares
@@ -65,7 +70,6 @@ issuesとwishlistを読んでください。常時、機能追加、バグ修正
 ** Hard
 * Support Metal
 * Support DirectX12
-* FBX Importer
 * ツールのGUIライブラリの変更
 * ツールのマルチプラットフォーム化
 
@@ -74,7 +78,9 @@ issuesとwishlistを読んでください。常時、機能追加、バグ修正
 * Support AfterEffects
 
 ** Others
+* New method of rotation to match Z and moving direction.
 * タービュランスノイズ ( https://ics.media/entry/10921 )
+* Change color on the runtime.
 
 # コミッター向け
 
