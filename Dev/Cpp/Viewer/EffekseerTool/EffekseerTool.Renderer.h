@@ -27,7 +27,7 @@ private:
 		DistortingCallback(Renderer* renderer);
 		virtual ~DistortingCallback();
 
-		void OnDistorting();
+		bool OnDistorting();
 	};
 
 private:

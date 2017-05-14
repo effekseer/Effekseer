@@ -27,11 +27,11 @@ namespace EffekseerTool
 	
 	}
 
-	void Renderer::DistortingCallback::OnDistorting()
+	bool Renderer::DistortingCallback::OnDistorting()
 	{
-
 		auto texture = renderer->ExportBackground();
 		renderer->m_renderer->SetBackground(texture);
+		return true;
 	}
 //----------------------------------------------------------------------------------
 //

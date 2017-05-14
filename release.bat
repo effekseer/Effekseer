@@ -1,5 +1,5 @@
-SET RDIR=Effekseer122
-SET RDIR_R=EffekseerRuntime122
+SET RDIR=Effekseer130
+SET RDIR_R=EffekseerRuntime130
 
 rmdir %RDIR%
 mkdir %RDIR%
@@ -7,11 +7,13 @@ mkdir %RDIR%
 rmdir %RDIR_R%
 mkdir %RDIR_R%
 
-echo コンパイル
+echo Compile Editor
 "C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Dev\Editor\Effekseer.sln /p:configuration=Release
 
-echo アプリケーションコピー
+echo Copy application
+
 mkdir %RDIR%\Tool
+
 copy Dev\release\Effekseer.exe %RDIR%\Tool\.
 copy Dev\release\Effekseer.exe.config %RDIR%\Tool\.
 copy Dev\release\EffekseerCore.dll %RDIR%\Tool\.
@@ -31,7 +33,12 @@ mkdir %RDIR%\Tool\scripts
 mkdir %RDIR%\Tool\scripts\export
 copy Dev\release\scripts\export\Default.cs %RDIR%\Tool\scripts\export\.
 
-echo ランタイムコピー
+mkdir %RDIR%\Tool\en-US
+copy Dev\release\en-US\Effekseer.resources.dll %RDIR%\Tool\en-US\.
+copy Dev\release\en-US\EffekseerCore.resources.dll %RDIR%\Tool\en-US\.
+
+
+echo Copy runtime
 mkdir %RDIR_R%\RuntimeSample\
 mkdir %RDIR_R%\RuntimeSample\lib
 mkdir %RDIR_R%\RuntimeSample\include
@@ -126,7 +133,7 @@ robocopy docs\QuickTutorial_Tool %RDIR%\QuickTutorial *.html *.css *.efkproj *.p
 mkdir %RDIR_R%\Help
 robocopy Release\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S
 
-echo ツール
+echo Tool
 mkdir %RDIR%\Tool
 copy Release\Tool\mqoToEffekseerModelConverter.exe %RDIR%\Tool\.
 
