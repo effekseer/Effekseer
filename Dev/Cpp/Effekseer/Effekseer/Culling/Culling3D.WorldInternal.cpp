@@ -351,10 +351,17 @@ namespace Culling3D
 	{
 		objs.clear();
 	
-		if (!std::isinf(cameraProjMat.Values[2][2]) &&
+#ifdef _MSC_VER == 1700
+		if (_finite(cameraProjMat.Values[2][2]) &&
 			cameraProjMat.Values[0][0] != 0.0f &&
 			cameraProjMat.Values[1][1] != 0.0f)
 		{
+#else
+				if (!std::isinf(cameraProjMat.Values[2][2]) &&
+			cameraProjMat.Values[0][0] != 0.0f &&
+			cameraProjMat.Values[1][1] != 0.0f)
+		{
+#endif
 			Matrix44 cameraProjMatInv = cameraProjMat;
 			cameraProjMatInv.SetInverted();
 

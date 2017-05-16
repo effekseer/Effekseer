@@ -95,12 +95,8 @@ set(effekseer_renderer_dx9_src
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.ModelRenderer.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.Renderer.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.RenderState.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.RibbonRenderer.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.RingRenderer.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.Shader.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.SpriteRenderer.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.TextureLoader.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.TrackRenderer.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.cpp)
 
 set(effekseer_renderer_dx11_src
@@ -110,12 +106,8 @@ set(effekseer_renderer_dx11_src
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.ModelRenderer.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Renderer.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.RenderState.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.RibbonRenderer.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.RingRenderer.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Shader.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.SpriteRenderer.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.TextureLoader.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.TrackRenderer.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.VertexBuffer.cpp)
 
 set(effekseer_renderer_gl_src
@@ -126,12 +118,8 @@ set(effekseer_renderer_gl_src
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelRenderer.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Renderer.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RenderState.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RibbonRenderer.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RingRenderer.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Shader.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.SpriteRenderer.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.TextureLoader.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.TrackRenderer.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexArray.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.cpp)
 
