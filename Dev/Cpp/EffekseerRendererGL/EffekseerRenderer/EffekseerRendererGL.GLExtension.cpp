@@ -77,6 +77,8 @@ typedef void (EFK_STDCALL * FP_glDeleteSamplers) (GLsizei n, const GLuint * samp
 typedef void (EFK_STDCALL * FP_glSamplerParameteri) (GLuint sampler, GLenum pname, GLint param);
 typedef void (EFK_STDCALL * FP_glBindSampler) (GLuint unit, GLuint sampler);
 
+typedef void (EFK_STDCALL * FP_glCompressedTexImage2D) (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void *data);
+
 static FP_glDeleteBuffers g_glDeleteBuffers = NULL;
 static FP_glCreateShader g_glCreateShader = NULL;
 static FP_glBindBuffer g_glBindBuffer = NULL;
@@ -115,6 +117,8 @@ static FP_glGenSamplers g_glGenSamplers = nullptr;
 static FP_glDeleteSamplers g_glDeleteSamplers = nullptr;
 static FP_glSamplerParameteri g_glSamplerParameteri = nullptr;
 static FP_glBindSampler g_glBindSampler = nullptr;
+
+static FP_glCompressedTexImage2D g_glCompressedTexImage2D = nullptr;
 
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 
@@ -189,6 +193,8 @@ bool Initialize(OpenGLDeviceType deviceType)
 	GET_PROC(glDeleteSamplers);
 	GET_PROC(glSamplerParameteri);
 	GET_PROC(glBindSampler);
+
+	GET_PROC(glCompressedTexImage2D);
 
 	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
 #endif
@@ -580,6 +586,16 @@ void glBindSampler(GLuint unit, GLuint sampler)
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
 #else
 	::glBindSampler(unit, sampler);
+#endif
+}
+
+void glCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void *data)
+{
+#if _WIN32
+	g_glCompressedTexImage2D(target, level,internalformat, width, height, border,imageSize, data);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
+#else
+	glCompressedTexImage2D(target, level,internalformat, width, height, border,imageSize, data);
 #endif
 }
 
