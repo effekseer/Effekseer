@@ -157,6 +157,7 @@ public:
 			{
 				if (!callback->OnDistorting())
 				{
+					vertexCaches.clear();
 					return;
 				}
 			}
