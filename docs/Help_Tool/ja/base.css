@@ -68,6 +68,10 @@ div.main p {
 	padding: 4px;
 }
 
+div.main table {
+	margin: 4px;
+}
+
 div.menu {
 	background-color: #FFFFFF;
 	border-style: solid;
