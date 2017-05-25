@@ -481,28 +481,34 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 			auto container = m_pContainer->GetChild(i);
 			assert(group != NULL);
 
-			if (m_nextGenerationTime[i] > 0.0f) continue;
-			if (node->CommonValues.MaxGeneration <= m_generatedChildrenCount[i]) continue;
 
-			// Create particle
-			auto newInstance = group->CreateInstance();
-			if (newInstance != nullptr)
+			// インスタンス生成
+			while (true)
 			{
-				if (!calculateMatrix)
+				if (node->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
+					0.5f > m_nextGenerationTime[i])
 				{
-					CalculateMatrix(0);
-					calculateMatrix = true;
+					// Create particle
+					auto newInstance = group->CreateInstance();
+					if (newInstance != nullptr)
+					{
+						if (!calculateMatrix)
+						{
+							CalculateMatrix(0);
+							calculateMatrix = true;
+						}
+
+						newInstance->Initialize(this, m_generatedChildrenCount[i]);
+					}
+
+					m_generatedChildrenCount[i]++;
+					m_nextGenerationTime[i] += Max(0.0f, node->CommonValues.GenerationTime.getValue(*m_pManager));
 				}
-
-				newInstance->Initialize(this, m_generatedChildrenCount[i]);
+				else
+				{
+					break;
+				}
 			}
-			else
-			{
-				continue;
-			}
-
-			m_generatedChildrenCount[i]++;
-			m_nextGenerationTime[i] += Max(0.0f, node->CommonValues.GenerationTime.getValue(*m_pManager));
 		}
 	}
 }
