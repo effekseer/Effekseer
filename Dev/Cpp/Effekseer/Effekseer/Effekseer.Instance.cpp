@@ -21,18 +21,23 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Instance::Instance( Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer )
-	: m_pManager			( pManager )
-	, m_pEffectNode((EffectNodeImplemented*) pEffectNode)
-	, m_pContainer			( pContainer )
-	, m_headGroups		( NULL )
-	, m_pParent			( NULL )
-	, m_State			( INSTANCE_STATE_ACTIVE )
-	, m_LivedTime		( 0 )
-	, m_LivingTime		( 0 )
-	, m_stepTime		( false )
-	, m_sequenceNumber	( 0 )
+Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer)
+	: m_pManager(pManager)
+	, m_pEffectNode((EffectNodeImplemented*)pEffectNode)
+	, m_pContainer(pContainer)
+	, m_headGroups(NULL)
+	, m_pParent(NULL)
+	, m_State(INSTANCE_STATE_ACTIVE)
+	, m_LivedTime(0)
+	, m_LivingTime(0)
+	, m_stepTime(false)
+	, m_sequenceNumber(0)
+	, m_flexibleGeneratedChildrenCount(nullptr)
+	, m_flexibleNextGenerationTime(nullptr)
 {
+	m_generatedChildrenCount = m_fixedGeneratedChildrenCount;
+	m_nextGenerationTime = m_fixedNextGenerationTime;
+	
 	ColorInheritance.r = 255;
 	ColorInheritance.g = 255;
 	ColorInheritance.b = 255;
@@ -68,6 +73,18 @@ Instance::Instance( Manager* pManager, EffectNode* pEffectNode, InstanceContaine
 Instance::~Instance()
 {
 	assert( m_State != INSTANCE_STATE_ACTIVE );
+
+	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
+
+	if (m_flexibleGeneratedChildrenCount != nullptr)
+	{
+		m_pManager->GetFreeFunc()(m_flexibleGeneratedChildrenCount, sizeof(int32_t) * parameter->GetChildrenCount());
+	}
+
+	if (m_flexibleNextGenerationTime != nullptr)
+	{
+		m_pManager->GetFreeFunc()(m_flexibleNextGenerationTime, sizeof(float) * parameter->GetChildrenCount());
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -93,11 +110,21 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 {
 	auto parameter = (EffectNodeImplemented*) m_pEffectNode;
 
+	// Extend array
+	if (parameter->GetChildrenCount() >= ChildrenMax)
+	{
+		m_flexibleGeneratedChildrenCount = (int32_t*)(m_pManager->GetMallocFunc()(sizeof(int32_t) * parameter->GetChildrenCount()));
+		m_flexibleNextGenerationTime = (float*)(m_pManager->GetMallocFunc()(sizeof(float) * parameter->GetChildrenCount()));
+
+		m_generatedChildrenCount = m_flexibleGeneratedChildrenCount;
+		m_nextGenerationTime = m_flexibleNextGenerationTime;
+	}
+
 	// 親の設定
 	m_pParent = parent;
 
 	// 子の初期化
-	for (int32_t i = 0; i < Min(ChildrenMax, parameter->GetChildrenCount()); i++)
+	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++)
 	{
 		auto pNode = (EffectNodeImplemented*) parameter->GetChild(i);
 
@@ -448,7 +475,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		InstanceGroup* group = m_headGroups;
 		bool calculateMatrix = false;
 
-		for (int32_t i = 0; i < Min(ChildrenMax, parameter->GetChildrenCount()); i++, group = group->NextUsedByInstance)
+		for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 		{
 			auto node = (EffectNodeImplemented*) parameter->GetChild(i);
 			auto container = m_pContainer->GetChild(i);
@@ -521,7 +548,7 @@ void Instance::Update( float deltaFrame, bool shown )
 			*/
 		if (m_stepTime && (originalTime <= m_LivedTime || !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct))
 		{
-			for (int i = 0; i < Min(ChildrenMax, m_pEffectNode->GetChildrenCount()); i++)
+			for (int i = 0; i < m_pEffectNode->GetChildrenCount(); i++)
 			{
 				auto pNode = (EffectNodeImplemented*) m_pEffectNode->GetChild(i);
 
@@ -574,7 +601,7 @@ void Instance::Update( float deltaFrame, bool shown )
 	{
 		InstanceGroup* group = m_headGroups;
 
-		for (int i = 0; i < Min(ChildrenMax, m_pEffectNode->GetChildrenCount()); i++, group = group->NextUsedByInstance)
+		for (int i = 0; i < m_pEffectNode->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 		{
 			auto pNode = (EffectNodeImplemented*) m_pEffectNode->GetChild(i);
 			auto pContainer = m_pContainer->GetChild( i );
@@ -637,7 +664,7 @@ void Instance::Update( float deltaFrame, bool shown )
 			int maxcreate_count = 0;
 			InstanceGroup* group = m_headGroups;
 
-			for (int i = 0; i < Min(ChildrenMax, m_pEffectNode->GetChildrenCount()); i++, group = group->NextUsedByInstance)
+			for (int i = 0; i < m_pEffectNode->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 			{
 				auto child = (EffectNodeImplemented*) m_pEffectNode->GetChild(i);
 
