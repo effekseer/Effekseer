@@ -29,9 +29,14 @@
 		private void InitializeComponent()
 		{
 			this.splitContainer = new System.Windows.Forms.SplitContainer();
+			this.lbl_sampling = new System.Windows.Forms.Label();
+			this.txt_sampling = new Effekseer.GUI.Component.Int();
+			this.txt_offset_min = new Effekseer.GUI.Component.Float();
+			this.txt_offset_max = new Effekseer.GUI.Component.Float();
 			this.lbl_offset_min = new System.Windows.Forms.Label();
 			this.lbl_offset_max = new System.Windows.Forms.Label();
 			this.lbl_offset = new System.Windows.Forms.Label();
+			this.txt_frame = new Effekseer.GUI.Component.DelegateIntTextBox();
 			this.lbl_end = new System.Windows.Forms.Label();
 			this.lbl_start = new System.Windows.Forms.Label();
 			this.lbl_type = new System.Windows.Forms.Label();
@@ -43,11 +48,6 @@
 			this.lbl_left_y = new System.Windows.Forms.Label();
 			this.lbl_left_x = new System.Windows.Forms.Label();
 			this.lbl_left = new System.Windows.Forms.Label();
-			this.lbl_sampling = new System.Windows.Forms.Label();
-			this.txt_sampling = new Effekseer.GUI.Component.Int();
-			this.txt_offset_min = new Effekseer.GUI.Component.Float();
-			this.txt_offset_max = new Effekseer.GUI.Component.Float();
-			this.txt_frame = new Effekseer.GUI.Component.DelegateIntTextBox();
 			this.txt_value = new Effekseer.GUI.Component.DelegateFloatTextBox();
 			this.txt_right_y = new Effekseer.GUI.Component.DelegateFloatTextBox();
 			this.txt_right_x = new Effekseer.GUI.Component.DelegateFloatTextBox();
@@ -98,136 +98,9 @@
 			this.splitContainer.Panel2.Controls.Add(this.txt_left_x);
 			this.splitContainer.Panel2.Controls.Add(this.txt_left_y);
 			this.splitContainer.Panel2.Scroll += new System.Windows.Forms.ScrollEventHandler(this.splitContainer_Panel2_Scroll);
-			this.splitContainer.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
 			this.splitContainer.Size = new System.Drawing.Size(875, 280);
 			this.splitContainer.SplitterDistance = 290;
 			this.splitContainer.TabIndex = 2;
-			// 
-			// lbl_offset_min
-			// 
-			this.lbl_offset_min.AutoSize = true;
-			this.lbl_offset_min.Location = new System.Drawing.Point(390, 27);
-			this.lbl_offset_min.Name = "lbl_offset_min";
-			this.lbl_offset_min.Size = new System.Drawing.Size(29, 12);
-			this.lbl_offset_min.TabIndex = 20;
-			this.lbl_offset_min.Text = Properties.Resources.Min;
-			// 
-			// lbl_offset_max
-			// 
-			this.lbl_offset_max.AutoSize = true;
-			this.lbl_offset_max.Location = new System.Drawing.Point(318, 27);
-			this.lbl_offset_max.Name = "lbl_offset_max";
-			this.lbl_offset_max.Size = new System.Drawing.Size(29, 12);
-			this.lbl_offset_max.TabIndex = 19;
-			this.lbl_offset_max.Text = Properties.Resources.Max;
-			// 
-			// lbl_offset
-			// 
-			this.lbl_offset.AutoSize = true;
-			this.lbl_offset.Location = new System.Drawing.Point(272, 27);
-			this.lbl_offset.Name = "lbl_offset";
-			this.lbl_offset.Size = new System.Drawing.Size(47, 12);
-			this.lbl_offset.TabIndex = 18;
-			this.lbl_offset.Text = Properties.Resources.Offset;
-			// 
-			// lbl_end
-			// 
-			this.lbl_end.AutoSize = true;
-			this.lbl_end.Location = new System.Drawing.Point(348, 6);
-			this.lbl_end.Name = "lbl_end";
-			this.lbl_end.Size = new System.Drawing.Size(29, 12);
-			this.lbl_end.TabIndex = 16;
-			this.lbl_end.Text = Properties.Resources.End;
-			// 
-			// lbl_start
-			// 
-			this.lbl_start.AutoSize = true;
-			this.lbl_start.Location = new System.Drawing.Point(267, 6);
-			this.lbl_start.Name = "lbl_start";
-			this.lbl_start.Size = new System.Drawing.Size(29, 12);
-			this.lbl_start.TabIndex = 15;
-			this.lbl_start.Text = Properties.Resources.Start;
-			// 
-			// lbl_type
-			// 
-			this.lbl_type.AutoSize = true;
-			this.lbl_type.Location = new System.Drawing.Point(186, 6);
-			this.lbl_type.Name = "lbl_type";
-			this.lbl_type.Size = new System.Drawing.Size(29, 12);
-			this.lbl_type.TabIndex = 14;
-			this.lbl_type.Text = Properties.Resources.Complement;
-			// 
-			// lbl_value
-			// 
-			this.lbl_value.AutoSize = true;
-			this.lbl_value.Location = new System.Drawing.Point(107, 6);
-			this.lbl_value.Name = "lbl_value";
-			this.lbl_value.Size = new System.Drawing.Size(17, 12);
-			this.lbl_value.TabIndex = 13;
-			this.lbl_value.Text = Properties.Resources.Value;
-			// 
-			// lbl_frame
-			// 
-			this.lbl_frame.AutoSize = true;
-			this.lbl_frame.Location = new System.Drawing.Point(1, 6);
-			this.lbl_frame.Name = "lbl_frame";
-			this.lbl_frame.Size = new System.Drawing.Size(42, 12);
-			this.lbl_frame.TabIndex = 12;
-            this.lbl_frame.Text = Properties.Resources.Frame;
-			// 
-			// lbl_right_y
-			// 
-			this.lbl_right_y.AutoSize = true;
-			this.lbl_right_y.Location = new System.Drawing.Point(212, 27);
-			this.lbl_right_y.Name = "lbl_right_y";
-			this.lbl_right_y.Size = new System.Drawing.Size(11, 12);
-			this.lbl_right_y.TabIndex = 11;
-			this.lbl_right_y.Text = Properties.Resources.Y;
-			// 
-			// lbl_right_x
-			// 
-			this.lbl_right_x.AutoSize = true;
-			this.lbl_right_x.Location = new System.Drawing.Point(150, 27);
-			this.lbl_right_x.Name = "lbl_right_x";
-			this.lbl_right_x.Size = new System.Drawing.Size(11, 12);
-			this.lbl_right_x.TabIndex = 10;
-			this.lbl_right_x.Text = Properties.Resources.X;
-			// 
-			// lbl_right
-			// 
-			this.lbl_right.AutoSize = true;
-			this.lbl_right.Location = new System.Drawing.Point(135, 27);
-			this.lbl_right.Name = "lbl_right";
-			this.lbl_right.Size = new System.Drawing.Size(17, 12);
-			this.lbl_right.TabIndex = 9;
-			this.lbl_right.Text = Properties.Resources.Right;
-			// 
-			// lbl_left_y
-			// 
-			this.lbl_left_y.AutoSize = true;
-			this.lbl_left_y.Location = new System.Drawing.Point(75, 27);
-			this.lbl_left_y.Name = "lbl_left_y";
-			this.lbl_left_y.Size = new System.Drawing.Size(11, 12);
-			this.lbl_left_y.TabIndex = 8;
-			this.lbl_left_y.Text = Properties.Resources.Y;
-			// 
-			// lbl_left_x
-			// 
-			this.lbl_left_x.AutoSize = true;
-			this.lbl_left_x.Location = new System.Drawing.Point(15, 27);
-			this.lbl_left_x.Name = "lbl_left_x";
-			this.lbl_left_x.Size = new System.Drawing.Size(11, 12);
-			this.lbl_left_x.TabIndex = 7;
-			this.lbl_left_x.Text = Properties.Resources.X;
-			// 
-			// lbl_left
-			// 
-			this.lbl_left.AutoSize = true;
-			this.lbl_left.Location = new System.Drawing.Point(1, 27);
-			this.lbl_left.Name = "lbl_left";
-			this.lbl_left.Size = new System.Drawing.Size(17, 12);
-			this.lbl_left.TabIndex = 6;
-			this.lbl_left.Text = Properties.Resources.Left;
 			// 
 			// lbl_sampling
 			// 
@@ -236,12 +109,15 @@
 			this.lbl_sampling.Name = "lbl_sampling";
 			this.lbl_sampling.Size = new System.Drawing.Size(58, 12);
 			this.lbl_sampling.TabIndex = 26;
-			this.lbl_sampling.Text = Properties.Resources.Sampling;
+			this.lbl_sampling.Text = "サンプリング";
 			// 
 			// txt_sampling
 			// 
+			this.txt_sampling.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.txt_sampling.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
+			this.txt_sampling.Binding = null;
 			this.txt_sampling.Enabled = false;
+			this.txt_sampling.EnableUndo = true;
 			this.txt_sampling.IsEnable = null;
 			this.txt_sampling.Location = new System.Drawing.Point(497, 2);
 			this.txt_sampling.Name = "txt_sampling";
@@ -274,6 +150,33 @@
 			this.txt_offset_max.Size = new System.Drawing.Size(45, 19);
 			this.txt_offset_max.TabIndex = 30;
 			// 
+			// lbl_offset_min
+			// 
+			this.lbl_offset_min.AutoSize = true;
+			this.lbl_offset_min.Location = new System.Drawing.Point(390, 27);
+			this.lbl_offset_min.Name = "lbl_offset_min";
+			this.lbl_offset_min.Size = new System.Drawing.Size(29, 12);
+			this.lbl_offset_min.TabIndex = 20;
+			this.lbl_offset_min.Text = "最小";
+			// 
+			// lbl_offset_max
+			// 
+			this.lbl_offset_max.AutoSize = true;
+			this.lbl_offset_max.Location = new System.Drawing.Point(318, 27);
+			this.lbl_offset_max.Name = "lbl_offset_max";
+			this.lbl_offset_max.Size = new System.Drawing.Size(29, 12);
+			this.lbl_offset_max.TabIndex = 19;
+			this.lbl_offset_max.Text = "最大";
+			// 
+			// lbl_offset
+			// 
+			this.lbl_offset.AutoSize = true;
+			this.lbl_offset.Location = new System.Drawing.Point(272, 27);
+			this.lbl_offset.Name = "lbl_offset";
+			this.lbl_offset.Size = new System.Drawing.Size(47, 12);
+			this.lbl_offset.TabIndex = 18;
+			this.lbl_offset.Text = "オフセット";
+			// 
 			// txt_frame
 			// 
 			this.txt_frame.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
@@ -286,6 +189,105 @@
 			this.txt_frame.TabIndex = 10;
 			this.txt_frame.WheelStep = 1;
 			this.txt_frame.WriteMethod = null;
+			// 
+			// lbl_end
+			// 
+			this.lbl_end.AutoSize = true;
+			this.lbl_end.Location = new System.Drawing.Point(348, 6);
+			this.lbl_end.Name = "lbl_end";
+			this.lbl_end.Size = new System.Drawing.Size(29, 12);
+			this.lbl_end.TabIndex = 16;
+			this.lbl_end.Text = "終了";
+			// 
+			// lbl_start
+			// 
+			this.lbl_start.AutoSize = true;
+			this.lbl_start.Location = new System.Drawing.Point(267, 6);
+			this.lbl_start.Name = "lbl_start";
+			this.lbl_start.Size = new System.Drawing.Size(29, 12);
+			this.lbl_start.TabIndex = 15;
+			this.lbl_start.Text = "開始";
+			// 
+			// lbl_type
+			// 
+			this.lbl_type.AutoSize = true;
+			this.lbl_type.Location = new System.Drawing.Point(186, 6);
+			this.lbl_type.Name = "lbl_type";
+			this.lbl_type.Size = new System.Drawing.Size(29, 12);
+			this.lbl_type.TabIndex = 14;
+			this.lbl_type.Text = "補完";
+			// 
+			// lbl_value
+			// 
+			this.lbl_value.AutoSize = true;
+			this.lbl_value.Location = new System.Drawing.Point(107, 6);
+			this.lbl_value.Name = "lbl_value";
+			this.lbl_value.Size = new System.Drawing.Size(17, 12);
+			this.lbl_value.TabIndex = 13;
+			this.lbl_value.Text = "値";
+			// 
+			// lbl_frame
+			// 
+			this.lbl_frame.AutoSize = true;
+			this.lbl_frame.Location = new System.Drawing.Point(1, 6);
+			this.lbl_frame.Name = "lbl_frame";
+			this.lbl_frame.Size = new System.Drawing.Size(42, 12);
+			this.lbl_frame.TabIndex = 12;
+			this.lbl_frame.Text = "フレーム";
+			// 
+			// lbl_right_y
+			// 
+			this.lbl_right_y.AutoSize = true;
+			this.lbl_right_y.Location = new System.Drawing.Point(212, 27);
+			this.lbl_right_y.Name = "lbl_right_y";
+			this.lbl_right_y.Size = new System.Drawing.Size(11, 12);
+			this.lbl_right_y.TabIndex = 11;
+			this.lbl_right_y.Text = "y";
+			// 
+			// lbl_right_x
+			// 
+			this.lbl_right_x.AutoSize = true;
+			this.lbl_right_x.Location = new System.Drawing.Point(150, 27);
+			this.lbl_right_x.Name = "lbl_right_x";
+			this.lbl_right_x.Size = new System.Drawing.Size(11, 12);
+			this.lbl_right_x.TabIndex = 10;
+			this.lbl_right_x.Text = "x";
+			// 
+			// lbl_right
+			// 
+			this.lbl_right.AutoSize = true;
+			this.lbl_right.Location = new System.Drawing.Point(135, 27);
+			this.lbl_right.Name = "lbl_right";
+			this.lbl_right.Size = new System.Drawing.Size(17, 12);
+			this.lbl_right.TabIndex = 9;
+			this.lbl_right.Text = "右";
+			// 
+			// lbl_left_y
+			// 
+			this.lbl_left_y.AutoSize = true;
+			this.lbl_left_y.Location = new System.Drawing.Point(75, 27);
+			this.lbl_left_y.Name = "lbl_left_y";
+			this.lbl_left_y.Size = new System.Drawing.Size(11, 12);
+			this.lbl_left_y.TabIndex = 8;
+			this.lbl_left_y.Text = "y";
+			// 
+			// lbl_left_x
+			// 
+			this.lbl_left_x.AutoSize = true;
+			this.lbl_left_x.Location = new System.Drawing.Point(15, 27);
+			this.lbl_left_x.Name = "lbl_left_x";
+			this.lbl_left_x.Size = new System.Drawing.Size(11, 12);
+			this.lbl_left_x.TabIndex = 7;
+			this.lbl_left_x.Text = "x";
+			// 
+			// lbl_left
+			// 
+			this.lbl_left.AutoSize = true;
+			this.lbl_left.Location = new System.Drawing.Point(1, 27);
+			this.lbl_left.Name = "lbl_left";
+			this.lbl_left.Size = new System.Drawing.Size(17, 12);
+			this.lbl_left.TabIndex = 6;
+			this.lbl_left.Text = "左";
 			// 
 			// txt_value
 			// 

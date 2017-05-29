@@ -526,11 +526,6 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
-		{
-
-		}
-
 		private void splitContainer_Panel2_Scroll(object sender, ScrollEventArgs e)
 		{
 			splitContainer.Panel1.Refresh();
@@ -793,7 +788,7 @@ namespace Effekseer.GUI.Component
 					return 0;
 				}
 			}
-			public int Width = 100;
+			public int Width = 400;
 
 			public Point Position;
 
@@ -937,7 +932,7 @@ namespace Effekseer.GUI.Component
 			public void SetSize(bool isParentExtended)
 			{
 				this.isParentExtended = isParentExtended;
-				GraphPanel.Size = new Size(400, Height);
+				GraphPanel.Size = new Size(Width, Height);
 
 				if (Height > 0)
 				{
