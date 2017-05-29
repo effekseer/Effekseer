@@ -8,7 +8,6 @@
 #include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.DeviceObject.h>
-#include <d3dx9.h>
 
 //-----------------------------------------------------------------------------------
 //
@@ -30,11 +29,10 @@ private:
 	};
 
 	EffekseerRendererDX9::RendererImplemented*			m_renderer;
-	ID3DXEffect*					m_shader;
-	IDirect3DVertexDeclaration9*	m_vertexDeclaration;
+	EffekseerRendererDX9::Shader*						m_shader;
 	int32_t							m_lineCount;
 
-	Culling( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* shader );
+	Culling( EffekseerRendererDX9::RendererImplemented* renderer, EffekseerRendererDX9::Shader*	m_shader);
 public:
 
 	virtual ~Culling();

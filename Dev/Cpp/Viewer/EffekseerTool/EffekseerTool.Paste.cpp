@@ -5,6 +5,7 @@
 #include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.Shader.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 
 #include "EffekseerTool.Paste.h"
@@ -20,27 +21,18 @@ namespace EffekseerRenderer
 namespace Shader_
 {
 static
-#include "EffekseerTool.Paste.Shader.h"
+#include "EffekseerTool.Paste.Shader_VS.h"
+#include "EffekseerTool.Paste.Shader_PS.h"
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Paste::Paste( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* shader )
+Paste::Paste( EffekseerRendererDX9::RendererImplemented* renderer, EffekseerRendererDX9::Shader* shader)
 	: DeviceObject( renderer )
 	, m_renderer	( renderer )
 	, m_shader		( shader )
-	, m_vertexDeclaration	( NULL )
 {
-	// 座標(3) 色(4)
-	D3DVERTEXELEMENT9 decl[] =
-	{
-		{0,	0,	D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_POSITION,	0},
-		{0,	12,	D3DDECLTYPE_FLOAT2,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_TEXCOORD,	0},
-		D3DDECL_END()
-	};
-
-	renderer->GetDevice()->CreateVertexDeclaration( decl, &m_vertexDeclaration );
 }
 
 //----------------------------------------------------------------------------------
@@ -48,8 +40,7 @@ Paste::Paste( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* 
 //----------------------------------------------------------------------------------
 Paste::~Paste()
 {
-	ES_SAFE_RELEASE( m_shader );
-	ES_SAFE_RELEASE( m_vertexDeclaration );
+	ES_SAFE_DELETE( m_shader );
 }
 
 //----------------------------------------------------------------------------------
@@ -60,38 +51,17 @@ Paste* Paste::Create( EffekseerRendererDX9::RendererImplemented* renderer )
 	assert( renderer != NULL );
 	assert( renderer->GetDevice() != NULL );
 
-	HRESULT hr;
-	ID3DXBuffer* buf = NULL;
-
-	ID3DXEffect* shader = NULL;
-
-	hr = D3DXCreateEffect(
-		renderer->GetDevice(),
-		Shader_::g_effect,
-		sizeof(Shader_::g_effect),
-		NULL,
-		NULL,
-		0,
-		NULL,
-		&shader,
-		&buf);
-
-	if( FAILED(hr) )
+	// 座標(3) 色(4)
+	D3DVERTEXELEMENT9 decl[] =
 	{
-		printf( "Grid Error\n");
-		if( buf != NULL )
-		{
-			printf( (char*)buf->GetBufferPointer() );
-			printf("\n");
-			buf->Release();
-		}
-		else
-		{
-			printf( "Unknown Error\n" );
-		}
+		{ 0,	0,	D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_POSITION,	0 },
+		{ 0,	12,	D3DDECLTYPE_FLOAT2,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_TEXCOORD,	0 },
+		D3DDECL_END()
+	};
 
-		return NULL;
-	}
+	EffekseerRendererDX9::Shader* shader = EffekseerRendererDX9::Shader::Create(renderer, Shader_::g_vs20_VS, sizeof(Shader_::g_vs20_VS), Shader_::g_ps20_PS, sizeof(Shader_::g_ps20_PS), "Guide", decl);
+
+	if (shader == NULL) return NULL;
 
 	return new Paste( renderer, shader );
 }
@@ -156,34 +126,24 @@ void Paste::Rendering(IDirect3DTexture9* texture, int32_t width, int32_t height)
 	auto& state = m_renderer->GetRenderState()->Push();
 	state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 	state.DepthWrite = false;
-	state.DepthTest = true;
+	state.DepthTest = false;
 	state.CullingType = Effekseer::CullingType::Double;
-	
-	
-	uint32_t pass;
+	state.TextureFilterTypes[0] = Effekseer::TextureFilterType::Nearest;
+	state.TextureWrapTypes[0] = Effekseer::TextureWrapType::Clamp;
 
-	ID3DXEffect* shader = NULL;
-	shader = m_shader;
+	m_renderer->BeginShader(m_shader);
 
-	shader->SetTechnique( "Texhnique" );
-	shader->Begin( &pass, 0 );
+	m_shader->SetConstantBuffer();
 
-	assert( pass == 1 );
+	m_renderer->GetRenderState()->Update(true);
 
-	shader->BeginPass(0);
+	m_renderer->SetLayout(m_shader);
+	m_renderer->GetDevice()->SetTexture(0, texture);
+	m_renderer->GetDevice()->SetStreamSource(0, m_renderer->GetVertexBuffer()->GetInterface(), 0, sizeof(Vertex));
+	m_renderer->GetDevice()->SetIndices(m_renderer->GetIndexBuffer()->GetInterface());
+	m_renderer->GetDevice()->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2);
 
-	shader->SetTexture( "Tex0", texture );
-	m_renderer->GetRenderState()->Update( true );
-	
-	shader->CommitChanges();
-
-	m_renderer->GetDevice()->SetVertexDeclaration( m_vertexDeclaration );
-	m_renderer->GetDevice()->SetStreamSource( 0, m_renderer->GetVertexBuffer()->GetInterface(), 0, sizeof(Vertex) );
-	m_renderer->GetDevice()->SetIndices( m_renderer->GetIndexBuffer()->GetInterface() );
-	m_renderer->GetDevice()->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2 );
-
-	shader->EndPass();
-	shader->End();
+	m_renderer->EndShader(m_shader);
 
 	m_renderer->GetRenderState()->Pop();
 }

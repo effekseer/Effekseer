@@ -13,11 +13,6 @@ struct VS_Output
     float4 Color	: COLOR;
 };
 
-struct PS_Input
-{
-    float4 Color	: COLOR;
-};
-
 VS_Output VS( const VS_Input Input )
 {
     VS_Output Output = (VS_Output)0;
@@ -25,19 +20,4 @@ VS_Output VS( const VS_Input Input )
 	Output.Pos = mul( pos4, mCameraProj );
 	Output.Color = Input.Color;
     return Output;
-}
-
-float4 PS( const PS_Input Input ) : COLOR
-{
-	float4 Output = Input.Color;
-	return Output;
-}
-
-technique Texhnique
-{
-	pass P0
-{
-		VertexShader = compile vs_2_0 VS();
-		PixelShader  = compile ps_2_0 PS();
-	}
 }

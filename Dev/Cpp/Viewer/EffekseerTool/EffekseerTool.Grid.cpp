@@ -5,6 +5,7 @@
 #include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
+#include <EffekseerRenderer/EffekseerRendererDX9.Shader.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 #include "EffekseerTool.Grid.h"
 
@@ -19,32 +20,25 @@ namespace EffekseerRenderer
 namespace Shader_
 {
 static
-#include "EffekseerTool.Grid.Shader.h"
+#include "EffekseerTool.Grid.Shader_VS.h"
+#include "EffekseerTool.Grid.Shader_PS.h"
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Grid::Grid( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* shader )
+Grid::Grid( EffekseerRendererDX9::RendererImplemented* renderer, EffekseerRendererDX9::Shader* shader)
 	: DeviceObject( renderer )
 	, m_renderer	( renderer )
 	, m_shader		( shader )
-	, m_vertexDeclaration	( NULL )
 	, m_lineCount		( 0 )
 	, m_gridLength		( 2.0f )
 	, IsShownXY	( false )
 	, IsShownXZ	( true )
 	, IsShownYZ	( false )
 {
-	// 座標(3) 色(4)
-	D3DVERTEXELEMENT9 decl[] =
-	{
-		{0,	0,	D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_POSITION,	0},
-		{0,	12,	D3DDECLTYPE_FLOAT4,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_NORMAL,	0},
-		D3DDECL_END()
-	};
-
-	renderer->GetDevice()->CreateVertexDeclaration( decl, &m_vertexDeclaration );
+	m_shader->SetVertexRegisterCount(4);
+	m_shader->SetVertexConstantBufferSize(sizeof(float) * 16);
 }
 
 //----------------------------------------------------------------------------------
@@ -52,8 +46,7 @@ Grid::Grid( EffekseerRendererDX9::RendererImplemented* renderer, ID3DXEffect* sh
 //----------------------------------------------------------------------------------
 Grid::~Grid()
 {
-	ES_SAFE_RELEASE( m_shader );
-	ES_SAFE_RELEASE( m_vertexDeclaration );
+	ES_SAFE_DELETE( m_shader );
 }
 
 //----------------------------------------------------------------------------------
@@ -64,38 +57,17 @@ Grid* Grid::Create( EffekseerRendererDX9::RendererImplemented* renderer )
 	assert( renderer != NULL );
 	assert( renderer->GetDevice() != NULL );
 
-	HRESULT hr;
-	ID3DXBuffer* buf = NULL;
-
-	ID3DXEffect* shader = NULL;
-
-	hr = D3DXCreateEffect(
-		renderer->GetDevice(),
-		Shader_::g_effect,
-		sizeof(Shader_::g_effect),
-		NULL,
-		NULL,
-		0,
-		NULL,
-		&shader,
-		&buf);
-
-	if( FAILED(hr) )
+	// 座標(3) 色(4)
+	D3DVERTEXELEMENT9 decl[] =
 	{
-		printf( "Grid Error\n");
-		if( buf != NULL )
-		{
-			printf( (char*)buf->GetBufferPointer() );
-			printf("\n");
-			buf->Release();
-		}
-		else
-		{
-			printf( "Unknown Error\n" );
-		}
+		{ 0,	0,	D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_POSITION,	0 },
+		{ 0,	12,	D3DDECLTYPE_FLOAT4,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_NORMAL,	0 },
+		D3DDECL_END()
+	};
 
-		return NULL;
-	}
+	auto shader = EffekseerRendererDX9::Shader::Create(renderer, Shader_::g_vs20_VS, sizeof(Shader_::g_vs20_VS), Shader_::g_ps20_PS, sizeof(Shader_::g_ps20_PS), "Grid", decl);
+
+	if (shader == NULL) return NULL;
 
 	return new Grid( renderer, shader );
 }
@@ -199,31 +171,22 @@ void Grid::Rendering( ::Effekseer::Color& gridColor, bool isRightHand )
 	state.DepthTest = true;
 	state.CullingType = Effekseer::CullingType::Double;
 	
-	
-	uint32_t pass;
+	m_renderer->BeginShader(m_shader);
 
-	ID3DXEffect* shader = NULL;
-	shader = m_shader;
+	auto mat = m_renderer->GetCameraProjectionMatrix();
+	mat = mat.Transpose();
+	memcpy(m_shader->GetVertexConstantBuffer(), &(mat), sizeof(float) * 16);
 
-	shader->SetTechnique( "Texhnique" );
-	shader->Begin( &pass, 0 );
+	m_shader->SetConstantBuffer();
 
-	assert( pass == 1 );
+	m_renderer->GetRenderState()->Update(false);
 
-	shader->BeginPass(0);
+	m_renderer->SetLayout(m_shader);
+	m_renderer->GetDevice()->SetStreamSource(0, m_renderer->GetVertexBuffer()->GetInterface(), 0, sizeof(Vertex));
+	m_renderer->GetDevice()->SetIndices(NULL);
+	m_renderer->GetDevice()->DrawPrimitive(D3DPT_LINELIST, 0, m_lineCount);
 
-	shader->SetMatrix( "mCameraProj", (const D3DXMATRIX *)&m_renderer->GetCameraProjectionMatrix() );
-
-	m_renderer->GetRenderState()->Update( false );
-	shader->CommitChanges();
-
-	m_renderer->GetDevice()->SetVertexDeclaration( m_vertexDeclaration );
-	m_renderer->GetDevice()->SetStreamSource( 0, m_renderer->GetVertexBuffer()->GetInterface(), 0, sizeof(Vertex) );
-	m_renderer->GetDevice()->SetIndices( NULL );
-	m_renderer->GetDevice()->DrawPrimitive( D3DPT_LINELIST, 0, m_lineCount );
-
-	shader->EndPass();
-	shader->End();
+	m_renderer->EndShader(m_shader);
 
 	m_renderer->GetRenderState()->Pop();
 }

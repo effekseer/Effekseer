@@ -26,9 +26,9 @@ private:
 	};
 
 	EffekseerRendererDX9::RendererImplemented*			m_renderer;
-	EffekseerRendererDX9::Shader*							m_shader;
+	EffekseerRendererDX9::Shader*						m_shader;
 
-	Guide( EffekseerRendererDX9::RendererImplemented* renderer, EffekseerRendererDX9::Shader* shader );
+	Guide( EffekseerRendererDX9::RendererImplemented* renderer, EffekseerRendererDX9::Shader* shader);
 public:
 
 	virtual ~Guide();

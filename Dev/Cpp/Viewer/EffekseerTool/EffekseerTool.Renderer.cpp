@@ -8,6 +8,8 @@
 #include "EffekseerTool.Culling.h"
 #include "EffekseerTool.Paste.h"
 
+#include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -753,9 +755,87 @@ void Renderer::LoadBackgroundImage( void* data, int32_t size )
 {
 	ES_SAFE_RELEASE( m_backGroundTexture );
 
-	if( data != NULL )
+	if (data != NULL && size > 4)
 	{
-		D3DXCreateTextureFromFileInMemory( m_renderer->GetDevice(), data, size, &m_backGroundTexture );
+		IDirect3DTexture9* texture = nullptr;
+
+		auto d = (uint8_t*)data;
+
+		if (d[1] == 'P' &&
+			d[2] == 'N' &&
+			d[3] == 'G')
+		{
+			if (::EffekseerRenderer::PngTextureLoader::Load(data, size, false))
+			{
+				HRESULT hr;
+				int32_t width = ::EffekseerRenderer::PngTextureLoader::GetWidth();
+				int32_t height = ::EffekseerRenderer::PngTextureLoader::GetHeight();
+				int32_t mipMapCount = 1;
+				hr = m_renderer->GetDevice()->CreateTexture(
+					width,
+					height,
+					mipMapCount,
+					0,
+					D3DFMT_A8R8G8B8,
+					D3DPOOL_DEFAULT,
+					&texture,
+					NULL);
+
+				if (FAILED(hr))
+				{
+					::EffekseerRenderer::PngTextureLoader::Unload();
+					return;
+				}
+
+				LPDIRECT3DTEXTURE9 tempTexture = NULL;
+				hr = m_renderer->GetDevice()->CreateTexture(
+					width,
+					height,
+					mipMapCount,
+					0,
+					D3DFMT_A8R8G8B8,
+					D3DPOOL_SYSTEMMEM,
+					&tempTexture,
+					NULL);
+
+				if (FAILED(hr))
+				{
+					::EffekseerRenderer::PngTextureLoader::Unload();
+					return;
+				}
+
+				uint8_t* srcBits = (uint8_t*)::EffekseerRenderer::PngTextureLoader::GetData().data();
+				D3DLOCKED_RECT locked;
+				if (SUCCEEDED(tempTexture->LockRect(0, &locked, NULL, 0)))
+				{
+					uint8_t* destBits = (uint8_t*)locked.pBits;
+
+					for (int32_t h = 0; h < height; h++)
+					{
+						memcpy(destBits, srcBits, width * 4);
+
+						// RGB入れ替え
+						for (int32_t w = 0; w < width; w++)
+						{
+							std::swap(destBits[w * 4 + 0], destBits[w * 4 + 2]);
+						}
+
+						destBits += locked.Pitch;
+						srcBits += (width * 4);
+					}
+
+					tempTexture->UnlockRect(0);
+				}
+
+				hr = m_renderer->GetDevice()->UpdateTexture(tempTexture, texture);
+				ES_SAFE_RELEASE(tempTexture);
+
+				::EffekseerRenderer::PngTextureLoader::Unload();
+
+				ES_SAFE_RELEASE(m_backGroundTexture);
+				m_backGroundTexture = texture;
+			}
+		}
 	}
 	else
 	{
