@@ -109,7 +109,7 @@ public:
 		}
 	}
 
-	virtual void OnDistorting()
+	virtual bool OnDistorting() override
 	{
 		HRESULT hr = S_OK;
 
@@ -135,6 +135,8 @@ public:
 		ES_SAFE_RELEASE(renderTargetView);
 
 		renderer->SetBackground(backGroundTextureSRV);
+
+		return true;
 	}
 };
 

@@ -144,10 +144,10 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_shader_distortion(nullptr)
 	, m_shader_no_texture_distortion(nullptr)
 	, m_standardRenderer(nullptr)
-
-	, m_background(nullptr)
 	, m_distortingCallback(nullptr)
 {
+	m_background.UserPtr = nullptr;
+
 	::Effekseer::Vector3D direction( 1.0f, 1.0f, 1.0f );
 	SetLightDirection( direction );
 	::Effekseer::Color lightColor( 255, 255, 255, 255 );
@@ -173,7 +173,8 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_DELETE(m_distortingCallback);
 
-	ES_SAFE_RELEASE(m_background);
+	auto p = (IDirect3DTexture9*)m_background.UserPtr;
+	ES_SAFE_RELEASE(p);
 
 	ES_SAFE_DELETE(m_standardRenderer);
 	ES_SAFE_DELETE(m_shader);
@@ -377,7 +378,7 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
 	m_shader_no_texture_distortion->SetPixelRegisterCount(1);
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex, VertexDistortion>(
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(
 		this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
 	//ES_SAFE_ADDREF( m_d3d_device );
@@ -705,8 +706,11 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 void RendererImplemented::SetBackground(IDirect3DTexture9* background)
 {
 	ES_SAFE_ADDREF(background);
-	ES_SAFE_RELEASE(m_background);
-	m_background = background;
+
+	auto p = (IDirect3DTexture9*)m_background.UserPtr;
+	ES_SAFE_RELEASE(p);
+
+	m_background.UserPtr = background;
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
@@ -796,11 +800,18 @@ void RendererImplemented::EndShader(Shader* shader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetTextures(Shader* shader, IDirect3DTexture9** textures, int32_t count)
+void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
 {
 	for (int32_t i = 0; i < count; i++)
 	{
-		GetDevice()->SetTexture(i, textures[i]);
+		if (textures[i] == nullptr)
+		{
+			GetDevice()->SetTexture(i, nullptr);
+		}
+		else
+		{
+			GetDevice()->SetTexture(i, (IDirect3DTexture9*)textures[i]->UserPtr);
+		}
 	}
 }
 

@@ -286,8 +286,6 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceTyp
 	, m_vao_no_texture(nullptr)
 	, m_vao_distortion(nullptr)
 	, m_vao_no_texture_distortion(nullptr)
-
-	, m_background(0)
 	, m_distortingCallback(nullptr)
 
 	, m_deviceType(deviceType)
@@ -298,6 +296,8 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceTyp
 	SetLightColor( lightColor );
 	::Effekseer::Color lightAmbient( 40, 40, 40, 255 );
 	SetLightAmbientColor( lightAmbient );
+
+	m_background.UserID = 0;
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	EffekseerRenderer::PngTextureLoader::Initialize();
@@ -589,7 +589,7 @@ bool RendererImplemented::Initialize()
 	// 参照カウントの調整
 	if (m_vao_no_texture_distortion != nullptr) Release();
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, GLuint, Vertex, VertexDistortion>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
 	return true;
 }
@@ -930,7 +930,7 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 
 void RendererImplemented::SetBackground(GLuint background)
 {
-	m_background = background;
+	m_background.UserID = background;
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
@@ -1119,7 +1119,7 @@ void RendererImplemented::EndShader(Shader* shader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetTextures(Shader* shader, GLuint* textures, int32_t count)
+void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
 {
 	GLCheckError();
 
@@ -1128,10 +1128,16 @@ void RendererImplemented::SetTextures(Shader* shader, GLuint* textures, int32_t 
 
 	for (int32_t i = 0; i < count; i++)
 	{
+		auto id = 0;
+		if (textures[i] != nullptr)
+		{
+			id = textures[i]->UserID;
+		}
+
 		GLExt::glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, textures[i]);
+		glBindTexture(GL_TEXTURE_2D, id);
 		
-		m_currentTextures[i] = textures[i];
+		m_currentTextures[i] = id;
 
 		if (shader->GetTextureSlotEnable(i))
 		{

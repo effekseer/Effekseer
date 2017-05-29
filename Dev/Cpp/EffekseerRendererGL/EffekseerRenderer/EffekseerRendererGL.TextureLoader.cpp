@@ -10,6 +10,7 @@
 #include "EffekseerRendererGL.GLExtension.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -45,7 +46,7 @@ TextureLoader::~TextureLoader()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
+Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
 	std::unique_ptr<Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
@@ -86,129 +87,104 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 			glBindTexture(GL_TEXTURE_2D, 0);
 			EffekseerRenderer::PngTextureLoader::Unload();
 
-			return (void*) texture;
+			auto textureData = new Effekseer::TextureData();
+			textureData->UserPtr = nullptr;
+			textureData->UserID = texture;
+			textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
+			textureData->Width = EffekseerRenderer::PngTextureLoader::GetWidth();
+			textureData->Height = EffekseerRenderer::PngTextureLoader::GetHeight();
+			return textureData;
 		}
 		else if (data_texture[0] == 'D' &&
 			data_texture[1] == 'D' &&
 			data_texture[2] == 'S' &&
 			data_texture[3] == ' ')
 		{
-			struct DDS_PIXELFORMAT {
-				uint32_t dwSize;
-				uint32_t dwFlags;
-				uint32_t dwFourCC;
-				uint32_t dwRGBBitCount;
-				uint32_t dwRBitMask;
-				uint32_t dwGBitMask;
-				uint32_t dwBBitMask;
-				uint32_t dwABitMask;
-			};
-
-			struct DDS_HEADER {
-				uint32_t dwSize;
-				uint32_t dwFlags;
-				uint32_t dwHeight;
-				uint32_t dwWidth;
-				uint32_t dwPitchOrLinearSize;
-				uint32_t dwDepth;
-				uint32_t dwMipMapCount;
-				uint32_t dwReserved1[11];
-				DDS_PIXELFORMAT ddspf;
-				uint32_t dwCaps1;
-				uint32_t dwCaps2;
-				uint32_t dwReserved2[3];
-			};
-
-			const uint32_t FOURCC_DXT1 = 0x31545844; //(MAKEFOURCC('D','X','T','1'))
-			const uint32_t FOURCC_DXT3 = 0x33545844; //(MAKEFOURCC('D','X','T','3'))
-			const uint32_t FOURCC_DXT5 = 0x35545844; //(MAKEFOURCC('D','X','T','5'))
-
-			uint8_t* p = (uint8_t*) data_texture;
-			p += 4;
-
-			DDS_HEADER dds;
-			memcpy(&dds, p, sizeof(DDS_HEADER));
-			p += sizeof(DDS_HEADER);
-
-			if (dds.dwMipMapCount != 0)
+			if (EffekseerRenderer::DDSTextureLoader::Load(data_texture, size_texture))
 			{
-				delete [] data_texture;
-				return nullptr;
-			}
-
-			uint32_t format = 0;
-
-			if (dds.ddspf.dwRGBBitCount == 32 &&
-				dds.ddspf.dwRBitMask == 0x000000FF &&
-				dds.ddspf.dwGBitMask == 0x0000FF00 &&
-				dds.ddspf.dwBBitMask == 0x00FF0000 &&
-				dds.ddspf.dwABitMask == 0xFF000000)
-			{
-				GLuint texture = 0;
-
-				glGenTextures(1, &texture);
-				glBindTexture(GL_TEXTURE_2D, texture);
-
-				glTexImage2D(
-					GL_TEXTURE_2D,
-					0,
-					GL_RGBA,
-					dds.dwWidth,
-					dds.dwHeight,
-					0,
-					GL_RGBA,
-					GL_UNSIGNED_BYTE,
-					p);
-
-				// Generate mipmap
-				GLExt::glGenerateMipmap(GL_TEXTURE_2D);
-
-				glBindTexture(GL_TEXTURE_2D, 0);
-
 				delete[] data_texture;
-				return (void*)texture;
-			}
 
-			if (dds.ddspf.dwFourCC == FOURCC_DXT1)
-			{
-				format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-			}
-			else if (dds.ddspf.dwFourCC == FOURCC_DXT3)
-			{
-				format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-			}
-			else if (dds.ddspf.dwFourCC == FOURCC_DXT5)
-			{
-				format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+				if (EffekseerRenderer::DDSTextureLoader::GetTextureFormat() == Effekseer::TextureFormatType::ABGR8)
+				{
+					GLuint texture = 0;
+
+					glGenTextures(1, &texture);
+					glBindTexture(GL_TEXTURE_2D, texture);
+
+					glTexImage2D(
+						GL_TEXTURE_2D,
+						0,
+						GL_RGBA,
+						EffekseerRenderer::DDSTextureLoader::GetWidth(),
+						EffekseerRenderer::DDSTextureLoader::GetHeight(),
+						0,
+						GL_RGBA,
+						GL_UNSIGNED_BYTE,
+						EffekseerRenderer::DDSTextureLoader::GetData().data());
+
+					// Generate mipmap
+					GLExt::glGenerateMipmap(GL_TEXTURE_2D);
+
+					glBindTexture(GL_TEXTURE_2D, 0);
+
+					delete[] data_texture;
+
+					auto textureData = new Effekseer::TextureData();
+					textureData->UserPtr = nullptr;
+					textureData->UserID = texture;
+					textureData->TextureFormat = EffekseerRenderer::DDSTextureLoader::GetTextureFormat();
+					textureData->Width = EffekseerRenderer::DDSTextureLoader::GetWidth();
+					textureData->Height = EffekseerRenderer::DDSTextureLoader::GetHeight();
+					return textureData;
+				}
+				else
+				{
+					uint32_t format = 0;
+
+					if (EffekseerRenderer::DDSTextureLoader::GetTextureFormat() == Effekseer::TextureFormatType::BC1)
+					{
+						format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+					}
+					else if (EffekseerRenderer::DDSTextureLoader::GetTextureFormat() == Effekseer::TextureFormatType::BC2)
+					{
+						format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+					}
+					else if (EffekseerRenderer::DDSTextureLoader::GetTextureFormat() == Effekseer::TextureFormatType::BC3)
+					{
+						format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+					}
+
+					GLuint texture = 0;
+					glGenTextures(1, &texture);
+					glBindTexture(GL_TEXTURE_2D, texture);
+
+					GLExt::glCompressedTexImage2D(
+						GL_TEXTURE_2D,
+						0,
+						format,
+						EffekseerRenderer::DDSTextureLoader::GetWidth(),
+						EffekseerRenderer::DDSTextureLoader::GetHeight(),
+						0,
+						EffekseerRenderer::DDSTextureLoader::GetData().size(),
+						EffekseerRenderer::DDSTextureLoader::GetData().data());
+
+					// Generate mipmap
+					GLExt::glGenerateMipmap(GL_TEXTURE_2D);
+
+					glBindTexture(GL_TEXTURE_2D, 0);
+
+					auto textureData = new Effekseer::TextureData();
+					textureData->UserPtr = nullptr;
+					textureData->UserID = texture;
+					textureData->TextureFormat = EffekseerRenderer::DDSTextureLoader::GetTextureFormat();
+					textureData->Width = EffekseerRenderer::DDSTextureLoader::GetWidth();
+					textureData->Height = EffekseerRenderer::DDSTextureLoader::GetHeight();
+					return textureData;
+				}
 			}
 			else
 			{
-				delete [] data_texture;
-				return nullptr;
-			}
-
-			{
-				GLuint texture = 0;
-				glGenTextures(1, &texture);
-				glBindTexture(GL_TEXTURE_2D, texture);
-
-				GLExt::glCompressedTexImage2D(
-					GL_TEXTURE_2D, 
-					0, 
-					format,
-					dds.dwWidth,
-					dds.dwHeight,
-					0, 
-					size_texture - 4 - sizeof(DDS_HEADER),
-					p);
-
-				// Generate mipmap
-				GLExt::glGenerateMipmap(GL_TEXTURE_2D);
-
-				glBindTexture(GL_TEXTURE_2D, 0);
-
-				delete [] data_texture;
-				return (void*) texture;
+				delete[] data_texture;
 			}
 		}
 	}
@@ -219,12 +195,17 @@ void* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType texture
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void TextureLoader::Unload( void* data )
+void TextureLoader::Unload(Effekseer::TextureData* data )
 {
 	if( data != NULL )
 	{
-		GLuint texture = EffekseerRenderer::TexturePointerToTexture <GLuint> (data);
+		GLuint texture = data->UserID;
 		glDeleteTextures(1, &texture);
+	}
+
+	if (data != nullptr)
+	{
+		delete data;
 	}
 }
 

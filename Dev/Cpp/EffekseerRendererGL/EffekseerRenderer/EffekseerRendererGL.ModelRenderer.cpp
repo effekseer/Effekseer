@@ -742,7 +742,6 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 	EndRendering_<
 		RendererImplemented,
 		Shader,
-		GLuint,
 		Model,
 		false,
 		1>(

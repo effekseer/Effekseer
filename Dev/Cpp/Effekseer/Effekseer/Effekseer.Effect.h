@@ -96,7 +96,7 @@ public:
 		@param	n	[in]	画像のインデックス
 		@return	画像のポインタ
 	*/
-	virtual void* GetColorImage( int n ) const = 0;
+	virtual TextureData* GetColorImage( int n ) const = 0;
 
 	/**
 	@brief	格納されている画像のポインタの個数を取得する。
@@ -108,7 +108,7 @@ public:
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
 	*/
-	virtual void* GetNormalImage(int n) const = 0;
+	virtual TextureData* GetNormalImage(int n) const = 0;
 
 	/**
 	@brief	格納されている法線画像のポインタの個数を取得する。
@@ -120,7 +120,7 @@ public:
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
 	*/
-	virtual void* GetDistortionImage(int n) const = 0;
+	virtual TextureData* GetDistortionImage(int n) const = 0;
 
 	/**
 	@brief	格納されている歪み画像のポインタの個数を取得する。

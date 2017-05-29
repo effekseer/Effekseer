@@ -27,14 +27,15 @@ private:
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
 
 public:
-	TextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = NULL );
+	TextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = NULL);
 	virtual ~TextureLoader();
 
 public:
-	void* Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override;
+	Effekseer::TextureData* Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override;
 
-	void Unload( void* data );
+	void Unload(Effekseer::TextureData* data) override;
 };
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

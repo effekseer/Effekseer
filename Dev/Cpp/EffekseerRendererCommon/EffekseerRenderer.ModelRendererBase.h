@@ -88,7 +88,7 @@ public:
 
 	void Rendering( const efkModelNodeParam& parameter, const efkModelInstanceParam& instanceParameter, void* userData );
 
-	template<typename RENDERER, typename SHADER, typename TEXTURE, typename MODEL, bool Instancing, int InstanceCount>
+	template<typename RENDERER, typename SHADER, typename MODEL, bool Instancing, int InstanceCount>
 	void EndRendering_(
 		RENDERER* renderer, 
 		SHADER* shader_lighting_texture_normal,
@@ -180,16 +180,16 @@ public:
 
 		renderer->BeginShader(shader_);
 
-		/*テクスチャ選択*/
-		TEXTURE textures[2];
-		textures[0] = (TEXTURE)NULL;
-		textures[1] = (TEXTURE)NULL;
+		// Select texture
+		Effekseer::TextureData* textures[2];
+		textures[0] = nullptr;
+		textures[1] = nullptr;
 
 		if (distortion)
 		{
 			if (param.ColorTextureIndex >= 0)
 			{
-				textures[0] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetDistortionImage(param.ColorTextureIndex));
+				textures[0] = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
 			}
 
 			textures[1] = renderer->GetBackground();
@@ -198,12 +198,12 @@ public:
 		{
 			if (param.ColorTextureIndex >= 0)
 			{
-				textures[0] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetColorImage(param.ColorTextureIndex));
+				textures[0] = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
 			}
 
 			if (param.NormalTextureIndex >= 0)
 			{
-				textures[1] = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetNormalImage(param.NormalTextureIndex));
+				textures[1] = param.EffectPointer->GetNormalImage(param.NormalTextureIndex);
 			}
 		}
 		

@@ -40,15 +40,15 @@ private:
 
 	int	m_ImageCount;
 	EFK_CHAR**		m_ImagePaths;
-	void**			m_pImages;
+	TextureData**	m_pImages;
 
 	int	m_normalImageCount;
 	EFK_CHAR**		m_normalImagePaths;
-	void**			m_normalImages;
+	TextureData**	m_normalImages;
 	
 	int	m_distortionImageCount;
 	EFK_CHAR**		m_distortionImagePaths;
-	void**			m_distortionImages;
+	TextureData**	m_distortionImages;
 
 	int	m_WaveCount;
 	EFK_CHAR**		m_WavePaths;
@@ -145,7 +145,7 @@ public:
 	/**
 		@brief	格納されている画像のポインタを取得する。
 	*/
-	void* GetColorImage(int n) const;
+	TextureData* GetColorImage(int n) const override;
 
 	/**
 		@brief	格納されている画像のポインタの個数を取得する。
@@ -155,11 +155,11 @@ public:
 	/**
 	@brief	格納されている画像のポインタを取得する。
 	*/
-	void* GetNormalImage(int n) const;
+	TextureData* GetNormalImage(int n) const override;
 
 	int32_t GetNormalImageCount() const;
 
-	void* GetDistortionImage(int n) const;
+	TextureData* GetDistortionImage(int n) const override;
 
 	int32_t GetDistortionImageCount() const;
 

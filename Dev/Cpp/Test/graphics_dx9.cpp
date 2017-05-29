@@ -38,7 +38,7 @@ public:
 		ES_SAFE_RELEASE( texture );
 	}
 
-	virtual void OnDistorting()
+	virtual bool OnDistorting() override
 	{
 		IDirect3DSurface9* targetSurface = nullptr;
 		IDirect3DSurface9* texSurface = nullptr;
@@ -57,6 +57,8 @@ public:
 		ES_SAFE_RELEASE( targetSurface );
 
 		renderer->SetBackground( texture );
+
+		return true;
 	}
 };
 

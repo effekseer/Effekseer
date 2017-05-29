@@ -18,18 +18,6 @@ namespace EffekseerRenderer
 //
 //-----------------------------------------------------------------------------------
 
-template<typename TEXTURE>
-inline TEXTURE TexturePointerToTexture(void* texture)
-{
-	return (TEXTURE)texture;
-}
-
-template <>
-inline uint32_t TexturePointerToTexture<uint32_t>(void* texture)
-{
-	uint64_t texture_ = reinterpret_cast<uint64_t>(texture);
-	return static_cast<uint32_t>(texture_);
-}
 
 //-----------------------------------------------------------------------------------
 //

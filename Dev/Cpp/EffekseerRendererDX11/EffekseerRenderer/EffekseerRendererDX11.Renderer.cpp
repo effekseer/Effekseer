@@ -257,8 +257,6 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_shader_distortion(nullptr)
 	, m_shader_no_texture_distortion(nullptr)
 	, m_standardRenderer(nullptr)
-
-	, m_background(nullptr)
 	, m_distortingCallback(nullptr)
 {
 	::Effekseer::Vector3D direction( 1.0f, 1.0f, 1.0f );
@@ -267,6 +265,8 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	SetLightColor( lightColor );
 	::Effekseer::Color lightAmbient( 0, 0, 0, 0 );
 	SetLightAmbientColor( lightAmbient );
+
+	m_background.UserPtr = nullptr;
 
 	m_state = new OriginalState();
 
@@ -288,7 +288,8 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_DELETE(m_distortingCallback);
 
-	ES_SAFE_RELEASE(m_background);
+	auto p = (ID3D11ShaderResourceView*)m_background.UserPtr;
+	ES_SAFE_RELEASE(p);
 
 	ES_SAFE_DELETE(m_standardRenderer);
 	ES_SAFE_DELETE(m_shader);
@@ -467,7 +468,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
 	m_shader_no_texture_distortion->SetPixelRegisterCount(1);
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex, VertexDistortion>(
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(
 		this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
 	return true;
@@ -737,8 +738,10 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 void RendererImplemented::SetBackground(ID3D11ShaderResourceView* background)
 {
 	ES_SAFE_ADDREF(background);
-	ES_SAFE_RELEASE(m_background);
-	m_background = background;
+
+	auto p = (ID3D11ShaderResourceView*)m_background.UserPtr;
+	ES_SAFE_RELEASE(p);
+	m_background.UserPtr = background;
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
@@ -841,9 +844,21 @@ void RendererImplemented::EndShader(Shader* shader)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetTextures(Shader* shader, ID3D11ShaderResourceView** textures, int32_t count)
+void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
 {
-	GetContext()->PSSetShaderResources(0, count, textures);
+	ID3D11ShaderResourceView* srv[3];
+	for (int32_t i = 0; i < count; i++)
+	{
+		if (textures[i] == nullptr)
+		{
+			srv[i] = nullptr;
+		}
+		else
+		{
+			srv[i] = (ID3D11ShaderResourceView*)textures[i]->UserPtr;
+		}
+	}
+	GetContext()->PSSetShaderResources(0, count, srv);
 }
 
 //----------------------------------------------------------------------------------

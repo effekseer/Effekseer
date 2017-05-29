@@ -297,7 +297,7 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	if( m_ImageCount > 0 )
 	{
 		m_ImagePaths = new EFK_CHAR*[ m_ImageCount ];
-		m_pImages = new void*[ m_ImageCount ];
+		m_pImages = new TextureData*[ m_ImageCount ];
 
 		for( int i = 0; i < m_ImageCount; i++ )
 		{
@@ -322,7 +322,7 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		if (m_normalImageCount > 0)
 		{
 			m_normalImagePaths = new EFK_CHAR*[m_normalImageCount];
-			m_normalImages = new void*[m_normalImageCount];
+			m_normalImages = new TextureData*[m_normalImageCount];
 
 			for (int i = 0; i < m_normalImageCount; i++)
 			{
@@ -345,7 +345,7 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 		if (m_distortionImageCount > 0)
 		{
 			m_distortionImagePaths = new EFK_CHAR*[m_distortionImageCount];
-			m_distortionImages = new void*[m_distortionImageCount];
+			m_distortionImages = new TextureData*[m_distortionImageCount];
 
 			for (int i = 0; i < m_distortionImageCount; i++)
 			{
@@ -546,7 +546,7 @@ int EffectImplemented::GetVersion() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void* EffectImplemented::GetColorImage( int n ) const
+TextureData* EffectImplemented::GetColorImage( int n ) const
 {
 	return m_pImages[ n ];
 }
@@ -556,7 +556,7 @@ int32_t EffectImplemented::GetColorImageCount() const
 	return m_ImageCount;
 }
 
-void* EffectImplemented::GetNormalImage(int n) const
+TextureData* EffectImplemented::GetNormalImage(int n) const
 {
 	/* 強制的に互換をとる */
 	if (this->m_version <= 8)
@@ -572,7 +572,7 @@ int32_t EffectImplemented::GetNormalImageCount() const
 	return m_normalImageCount;
 }
 
-void* EffectImplemented::GetDistortionImage(int n) const
+TextureData* EffectImplemented::GetDistortionImage(int n) const
 {
 	/* 強制的に互換をとる */
 	if (this->m_version <= 8)

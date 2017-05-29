@@ -39,7 +39,7 @@ public:
 		テクスチャを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load( const EFK_CHAR* path, TextureType textureType ) { return NULL; }
+	virtual TextureData* Load( const EFK_CHAR* path, TextureType textureType ) { return nullptr; }
 
 	/**
 		@brief	テクスチャを破棄する。
@@ -48,7 +48,7 @@ public:
 		テクスチャを破棄する。
 		::Effekseer::Effectのインスタンスが破棄された時に使用される。
 	*/
-	virtual void Unload( void* data ) {}
+	virtual void Unload(TextureData* data ) {}
 };
 
 //----------------------------------------------------------------------------------

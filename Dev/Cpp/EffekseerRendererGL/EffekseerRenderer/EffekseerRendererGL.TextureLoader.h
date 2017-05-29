@@ -26,14 +26,15 @@ private:
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
 
 public:
-	TextureLoader( ::Effekseer::FileInterface* fileInterface = NULL );
+	TextureLoader(::Effekseer::FileInterface* fileInterface = NULL);
 	virtual ~TextureLoader();
 
 public:
-	void* Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override;
+	Effekseer::TextureData* Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override;
 
-	void Unload( void* data );
+	void Unload(Effekseer::TextureData* data) override;
 };
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

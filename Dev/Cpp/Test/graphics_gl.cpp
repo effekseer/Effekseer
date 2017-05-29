@@ -131,13 +131,15 @@ public:
 		glDeleteTextures( 1, &texture );
 	}
 
-	virtual void OnDistorting()
+	virtual bool OnDistorting() override
 	{
 		glBindTexture( GL_TEXTURE_2D, texture );
 		glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, g_width, g_height );
 		glBindTexture( GL_TEXTURE_2D, 0 );
 
 		renderer->SetBackground( texture );
+
+		return true;
 	}
 };
 

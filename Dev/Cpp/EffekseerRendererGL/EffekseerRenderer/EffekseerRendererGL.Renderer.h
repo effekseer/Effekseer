@@ -65,7 +65,7 @@ public:
 	/**
 	@brief	背景を取得する。
 	*/
-	virtual GLuint GetBackground() = 0;
+	virtual Effekseer::TextureData* GetBackground() = 0;
 
 	/**
 	@brief	背景を設定する。

@@ -189,6 +189,14 @@ enum class TextureType : int32_t
 	Distortion,
 };
 
+enum class TextureFormatType : int32_t
+{
+	ABGR8,
+	BC1,
+	BC2,
+	BC3,
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -437,6 +445,22 @@ public:
 		return m_reference;
 	}
 };
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+/**
+	@brief	\~english	Texture data
+			\~japanese	テクスチャデータ
+*/
+struct TextureData
+{
+	int32_t Width;
+	int32_t Height;
+	TextureFormatType	TextureFormat;
+	void*	UserPtr;
+	int64_t	UserID;
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1293,7 +1317,7 @@ public:
 		@param	n	[in]	画像のインデックス
 		@return	画像のポインタ
 	*/
-	virtual void* GetColorImage( int n ) const = 0;
+	virtual TextureData* GetColorImage( int n ) const = 0;
 
 	/**
 	@brief	格納されている画像のポインタの個数を取得する。
@@ -1305,7 +1329,7 @@ public:
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
 	*/
-	virtual void* GetNormalImage(int n) const = 0;
+	virtual TextureData* GetNormalImage(int n) const = 0;
 
 	/**
 	@brief	格納されている法線画像のポインタの個数を取得する。
@@ -1317,7 +1341,7 @@ public:
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
 	*/
-	virtual void* GetDistortionImage(int n) const = 0;
+	virtual TextureData* GetDistortionImage(int n) const = 0;
 
 	/**
 	@brief	格納されている歪み画像のポインタの個数を取得する。
@@ -2396,7 +2420,7 @@ public:
 		テクスチャを読み込む。
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
-	virtual void* Load( const EFK_CHAR* path, TextureType textureType ) { return NULL; }
+	virtual TextureData* Load( const EFK_CHAR* path, TextureType textureType ) { return nullptr; }
 
 	/**
 		@brief	テクスチャを破棄する。
@@ -2405,7 +2429,7 @@ public:
 		テクスチャを破棄する。
 		::Effekseer::Effectのインスタンスが破棄された時に使用される。
 	*/
-	virtual void Unload( void* data ) {}
+	virtual void Unload(TextureData* data ) {}
 };
 
 //----------------------------------------------------------------------------------

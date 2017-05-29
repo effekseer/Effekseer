@@ -280,7 +280,7 @@ public:
 	/**
 	@brief	背景を取得する。
 	*/
-	virtual IDirect3DTexture9* GetBackground() = 0;
+	virtual Effekseer::TextureData* GetBackground() = 0;
 
 	/**
 	@brief	背景を設定する。

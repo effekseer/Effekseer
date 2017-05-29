@@ -310,7 +310,7 @@ private:
 	Shader*							m_shader_distortion;
 	Shader*							m_shader_no_texture_distortion;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex, VertexDistortion>*	m_standardRenderer;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>*	m_standardRenderer;
 
 	::Effekseer::Vector3D	m_lightDirection;
 	::Effekseer::Color		m_lightColor;
@@ -321,11 +321,11 @@ private:
 	::Effekseer::Matrix44	m_cameraProj;
 
 	// 座標系
-	::Effekseer::CoordinateSystem		m_coordinateSystem;
+	::Effekseer::CoordinateSystem			m_coordinateSystem;
 
-	::EffekseerRenderer::RenderStateBase*			m_renderState;
+	::EffekseerRenderer::RenderStateBase*	m_renderState;
 
-	ID3D11ShaderResourceView*			m_background;
+	Effekseer::TextureData					m_background;
 
 	std::set<DeviceObject*>	m_deviceObjects;
 
@@ -491,7 +491,7 @@ public:
 	/**
 	@brief	背景を取得する。
 	*/
-	ID3D11ShaderResourceView* GetBackground() override { return m_background; }
+	Effekseer::TextureData* GetBackground() override { return &m_background; }
 
 	/**
 		@brief	背景を設定する。
@@ -502,7 +502,7 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, ID3D11ShaderResourceView*, Vertex, VertexDistortion>* GetStandardRenderer() { return m_standardRenderer; }
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* GetStandardRenderer() { return m_standardRenderer; }
 
 	void SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size );
 	void SetVertexBuffer(ID3D11Buffer* vertexBuffer, int32_t size);
@@ -516,7 +516,7 @@ public:
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 
-	void SetTextures(Shader* shader, ID3D11ShaderResourceView** textures, int32_t count);
+	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
 
 	void ResetRenderState();
 

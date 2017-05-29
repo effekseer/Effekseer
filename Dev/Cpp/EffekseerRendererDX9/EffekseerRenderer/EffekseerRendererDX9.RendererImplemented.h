@@ -264,7 +264,7 @@ private:
 	Shader*							m_shader_distortion;
 	Shader*							m_shader_no_texture_distortion;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex, VertexDistortion>*	m_standardRenderer;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>*	m_standardRenderer;
 
 
 	::Effekseer::Vector3D	m_lightDirection;
@@ -280,7 +280,7 @@ private:
 
 	::EffekseerRenderer::RenderStateBase*			m_renderState;
 
-	IDirect3DTexture9*					m_background;
+	::Effekseer::TextureData					m_background;
 
 	std::set<DeviceObject*>	m_deviceObjects;
 
@@ -468,7 +468,7 @@ public:
 	/**
 	@brief	背景を取得する。
 	*/
-	IDirect3DTexture9* GetBackground() override { return m_background; }
+	Effekseer::TextureData* GetBackground() override { return &m_background; }
 
 	/**
 	@brief	背景を設定する。
@@ -479,7 +479,7 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, IDirect3DTexture9*, Vertex, VertexDistortion>* GetStandardRenderer() { return m_standardRenderer; }
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* GetStandardRenderer() { return m_standardRenderer; }
 
 	void SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size );
 	void SetVertexBuffer(IDirect3DVertexBuffer9* vertexBuffer, int32_t size);
@@ -493,7 +493,7 @@ public:
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 
-	void SetTextures(Shader* shader, IDirect3DTexture9** textures, int32_t count);
+	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
 
 	void ChangeDevice( LPDIRECT3DDEVICE9 device );
 
