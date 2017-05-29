@@ -86,7 +86,8 @@ set(effekseer_renderer_common_src
 	EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.cpp
 	EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.cpp
 	EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.cpp
-	EffekseerRendererCommon/EffekseerRenderer.VertexBufferBase.cpp)
+	EffekseerRendererCommon/EffekseerRenderer.VertexBufferBase.cpp
+	EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.cpp)
 
 set(effekseer_renderer_dx9_src
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.DeviceObject.cpp
