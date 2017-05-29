@@ -498,7 +498,7 @@ static ::Effekseer::Manager*			g_manager = NULL;
 static ::EffekseerTool::Renderer*		g_renderer = NULL;
 static ::Effekseer::Effect*				g_effect = NULL;
 static ::EffekseerTool::Sound*			g_sound = NULL;
-static std::map<std::wstring,IDirect3DTexture9*> m_textures;
+static std::map<std::wstring, Effekseer::TextureData*> m_textures;
 static std::map<std::wstring,EffekseerRendererDX9::Model*> m_models;
 
 static std::vector<::Effekseer::Handle>	g_handles;
@@ -510,11 +510,11 @@ static ::Effekseer::Client*		g_client = NULL;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer, bool isSRGBMode)
+Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer)
 	: m_renderer	( renderer )
-	, m_isSRGBMode(isSRGBMode)
 {
-
+	auto r = (EffekseerRendererDX9::Renderer*)m_renderer;
+	m_originalTextureLoader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
 }
 
 //----------------------------------------------------------------------------------
@@ -522,74 +522,42 @@ Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer, bool
 //----------------------------------------------------------------------------------
 Native::TextureLoader::~TextureLoader()
 {
-
+	ES_SAFE_DELETE(m_originalTextureLoader);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
+Effekseer::TextureData* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
 	wchar_t dst[260];
 	Combine( RootPath.c_str(), (const wchar_t *)path, dst, 260 );
 
 	std::wstring key( dst );
-	IDirect3DTexture9* pTexture = NULL;
 
 	if( m_textures.count( key ) > 0 )
 	{
-		pTexture = m_textures[ key ];
+		return m_textures[key];
 	}
 	else
 	{
-		FILE* fp_texture = _wfopen( dst, L"rb" );
-		if( fp_texture != NULL )
+		auto t = m_originalTextureLoader->Load(path, textureType);
+		
+		if (t != nullptr)
 		{
-			fseek( fp_texture, 0, SEEK_END );
-			size_t size_texture = ftell( fp_texture );
-			char* data_texture = new char[size_texture];
-			fseek( fp_texture, 0, SEEK_SET );
-			fread( data_texture, 1, size_texture, fp_texture );
-			fclose( fp_texture );
-
-			//D3DXCreateTextureFromFileInMemory( ((EffekseerRendererDX9::RendererImplemented*)m_renderer)->GetDevice(), data_texture, size_texture, &pTexture );
-
-			DWORD usage = 0;
-			if (m_isSRGBMode)
-			{
-				usage = 0;
-			}
-			
-			D3DXCreateTextureFromFileInMemoryEx(
-				((EffekseerRendererDX9::RendererImplemented*)m_renderer)->GetDevice(),
-				data_texture,
-				size_texture,
-				D3DX_DEFAULT,
-				D3DX_DEFAULT,
-				D3DX_DEFAULT,
-				usage,
-				D3DFMT_UNKNOWN,
-				D3DPOOL_MANAGED,
-				D3DX_DEFAULT,
-				D3DX_DEFAULT,
-				0,
-				NULL,
-				NULL,
-				&pTexture);
-
-			delete [] data_texture;
-
-			m_textures[ key ] = pTexture;
+			m_textures[key] = t;
 		}
+
+		return t;
 	}
 
-	return pTexture;
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Native::TextureLoader::Unload( void* data )
+void Native::TextureLoader::Unload(Effekseer::TextureData* data )
 {
 	/*
 	if( data != NULL )
@@ -858,7 +826,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			g_manager->SetRingRenderer( ring_renderer );
 			g_manager->SetModelRenderer( model_renderer );
 			g_manager->SetTrackRenderer( track_renderer );
-			g_manager->SetTextureLoader( new TextureLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer(), isSRGBMode ) );
+			g_manager->SetTextureLoader( new TextureLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer()) );
 			g_manager->SetModelLoader( new ModelLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer() ) );
 		}
 	}
@@ -1678,11 +1646,12 @@ bool Native::SetSoundVolume( float volume )
 bool Native::InvalidateTextureCache()
 {
 	{
-		std::map<std::wstring,IDirect3DTexture9*>::iterator it = m_textures.begin();
-		std::map<std::wstring,IDirect3DTexture9*>::iterator it_end = m_textures.end();
+		auto it = m_textures.begin();
+		auto it_end = m_textures.end();
 		while( it != it_end )
 		{
-			ES_SAFE_RELEASE( (*it).second );
+			auto p = (IDirect3DTexture9*)(*it).second->UserPtr;
+			ES_SAFE_RELEASE(p);
 			++it;
 		}
 		m_textures.clear();

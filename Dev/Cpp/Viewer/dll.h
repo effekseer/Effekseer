@@ -101,15 +101,15 @@ private:
 	{
 	private:
 		EffekseerRenderer::Renderer*	m_renderer;
-		bool							m_isSRGBMode = false;
+		Effekseer::TextureLoader*		m_originalTextureLoader;
 	public:
-		TextureLoader( EffekseerRenderer::Renderer* renderer, bool isSRGBMode );
+		TextureLoader( EffekseerRenderer::Renderer* renderer);
 		virtual ~TextureLoader();
 
 	public:
-		void* Load( const EFK_CHAR* path, ::Effekseer::TextureType textureType ) override;
+		Effekseer::TextureData* Load( const EFK_CHAR* path, ::Effekseer::TextureType textureType ) override;
 
-		void Unload( void* data );
+		void Unload(Effekseer::TextureData* data) override;
 
 		std::wstring RootPath;
 	};

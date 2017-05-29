@@ -198,8 +198,6 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 		D3DDECL_END()
 	};
 
-	//ID3DXBuffer* buf = NULL;
-
 	Shader* shader_lighting_texture_normal = Shader::Create( 
 		renderer, 
 		ShaderLightingTextureNormal_::g_vs20_VS,

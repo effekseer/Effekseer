@@ -300,8 +300,6 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 		D3DDECL_END()
 	};
 
-	//ID3DXBuffer* buf = NULL;
-
 	m_shader = Shader::Create(
 		this,
 		Standard_VS::g_vs20_VS,

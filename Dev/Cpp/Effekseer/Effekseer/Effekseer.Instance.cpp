@@ -482,11 +482,12 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 			assert(group != NULL);
 
 
-			// インスタンス生成
 			while (true)
 			{
+				// GenerationTimeOffset can be minus value.
+				// Minus frame particles is generated simultaniously at frame 0.
 				if (node->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
-					0.5f > m_nextGenerationTime[i])
+					m_nextGenerationTime[i] <= 0.0f)
 				{
 					// Create particle
 					auto newInstance = group->CreateInstance();
