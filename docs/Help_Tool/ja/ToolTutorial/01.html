@@ -19,21 +19,46 @@
 	
 		<h2>基本操作</h2>
 
-		<h2>起動</h2>
+		<h2>Effekseerの起動</h2>
+
+		<h3>起動方法</h3>
 
 		<p>
-Effekseerは「Tool/Effekseer.exe」にあります。早速、ダブルクリックして起動してみましょう。
-もしEffekseerが起動されない場合、.NetFramework4.0(Full)や最新のDirectXエンドユーザーランタイムがインストールされていない可能性があります。
+Effekseerのツールは「Tool/Effekseer.exe」にあります。早速、Tool/Effekseer.exeをダブルクリックして起動してみましょう。
+		</p>
+
+		<div align="center">
+		<img src="../../img/Tutorial/01_icon.png">
+		<p>
+		Effekseerのアイコン
+		</p>
+		</div>
+
+		<h3>Effekseerが起動しない場合</h3>
+
+		<h4>.NetFramework4.0(Full)や最新のDirectXエンドユーザーランタイムがインストールされていない</h4>
+		<p>
+以下のリンクから、それらをダウンロードしてインストールします。
 		</p>
 
 		<ul>
 <li><a href="http://www.microsoft.com/downloads/details.aspx?familyid=9CFB2D51-5FF4-4491-B0E5-B386F32C0992&displaylang=ja" target="_top">Microsoft .NET Framework 4(Full)</a></li>
 <li><a href="https://www.microsoft.com/ja-jp/download/details.aspx?id=35&" target="_top">最新のDirectX エンド ユーザー ランタイム</a></li>
 		</ul>
+
+		<h4>Effekseerをzipファイルから直接起動している</h4>
 	
 		<p>
-それでも起動しない場合、公式サイトに問い合わせてみましょう。
+ダウンロードしたzipファイルを右クリックして、「全て展開」を選択します。
+		</p>		
+
+		<h4>それでも起動しない場合</h4>
+
+		<p>
+公式サイトに問い合わせてみましょう。
 		</p>
+
+		<h3>Effekseerが起動した場合</h3>
 
 		<p>
 起動に成功した場合、以下のような画面が表示されます。
@@ -90,8 +115,9 @@ Effekseerは「Tool/Effekseer.exe」にあります。早速、ダブルクリ�
 		</div>
 
 		<p>
-そして、「Sample.efkproj」というファイルがあるので、それを開いてみてください。
-「ファイル->開く」かドラッグ＆ドロップで開けます。開いた後、再生すると、以下のような画面が表示されます。
+そして、「Sample.efkproj」というファイルがあるので、そのファイルを開いてみてください。
+メニューバーで「ファイル->開く」と選択するか、ファイルを3Dの画面にドラッグ＆ドロップすると開けます。
+ファイルを開いた後、エフェクトを再生すると、以下のような画面が表示されます。
 		</p>
 
 
@@ -120,11 +146,11 @@ Effekseerは「Tool/Effekseer.exe」にあります。早速、ダブルクリ�
 <table border=1>
 	<tr>
 		<td>回転</td>
-		<td>マウスの左ボタンを押しながら、マウスを移動</td>
+		<td>マウスの右ボタンを押しながら、マウスを移動</td>
 	</tr>
 	<tr>
 		<td>平行移動</td>
-		<td>マウスの右ボタンを押しながら、マウスを移動</td>
+		<td>マウスホイールを押しながら、マウスを移動</td>
 	</tr>
 	<tr>
 		<td>拡大</td>
@@ -185,7 +211,8 @@ Effekseerでは、一定時間ごとにエフェクトを撮影した画像が�
 
 		<p>
 Effekseerでは、一定時間ごとにエフェクトを撮影した画像が並べられているスプライトシートを出力できます。
-パラメーターを指定して、「録画」を押すことでスプライトシートを出力できます。
+スプライトシートとは、アニメーションの画像が順番に配置された画像のことです。
+パラメーターを設定して、「録画」を押すことでスプライトシートを出力できます。
 出力されたスプライトシートは、ただの画像ですので他のアプリケーションで容易に使用できます。
 		</p>
 
