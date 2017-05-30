@@ -218,6 +218,23 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
+		color _outerColor;
+		color _centerColor;
+		color _innerColor;
+
+		if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
+		{
+			_outerColor = color::mul(instValues.outerColor.original, instance.ColorParent);
+			_centerColor = color::mul(instValues.centerColor.original, instance.ColorParent);
+			_innerColor = color::mul(instValues.innerColor.original, instance.ColorParent);
+		}
+		else
+		{
+			_outerColor = instValues.outerColor.original;
+			_centerColor = instValues.centerColor.original;
+			_innerColor = instValues.innerColor.original;
+		}
+
 		RingRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 
@@ -228,9 +245,9 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 
 		instanceParameter.CenterRatio = instValues.centerRatio.current;
 
-		instValues.outerColor.current.setValueToArg( instanceParameter.OuterColor );
-		instValues.centerColor.current.setValueToArg( instanceParameter.CenterColor );
-		instValues.innerColor.current.setValueToArg( instanceParameter.InnerColor );
+		_outerColor.setValueToArg( instanceParameter.OuterColor );
+		_centerColor.setValueToArg( instanceParameter.CenterColor );
+		_innerColor.setValueToArg( instanceParameter.InnerColor );
 		
 		float fadeAlpha = GetFadeAlpha( instance );
 		if( fadeAlpha != 1.0f )

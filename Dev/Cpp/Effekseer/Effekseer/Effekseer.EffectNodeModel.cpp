@@ -124,7 +124,17 @@ void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 
 		instanceParameter.UV = instance.GetUV();
 		
-		instValues._color.setValueToArg( instanceParameter.AllColor );
+		color _color;
+		if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
+		{
+			_color = color::mul(instValues._original, instance.ColorParent);
+		}
+		else
+		{
+			_color = instValues._original;
+		}
+
+		_color.setValueToArg( instanceParameter.AllColor );
 		float fadeAlpha = GetFadeAlpha( instance );
 		if( fadeAlpha != 1.0f )
 		{

@@ -165,10 +165,21 @@ void EffectNodeSprite::Rendering(const Instance& instance, Manager* manager)
 		instValues._color.setValueToArg( instanceParameter.AllColor );
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 
-		color color_ll = instValues._color;
-		color color_lr = instValues._color;
-		color color_ul = instValues._color;
-		color color_ur = instValues._color;
+		// Inherit color
+		color _color;
+		if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
+		{
+			_color = color::mul(instValues._originalColor, instance.ColorParent);
+		}
+		else
+		{
+			_color = instValues._originalColor;
+		}
+
+		color color_ll = _color;
+		color color_lr = _color;
+		color color_ul = _color;
+		color color_ur = _color;
 
 		if( SpriteColor.type == SpriteColorParameter::Default )
 		{

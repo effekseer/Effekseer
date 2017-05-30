@@ -242,11 +242,6 @@ void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, Manager* manage
 	_c.b = c.B;
 	_c.a = c.A;
 
-	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
-	{
-		_c = color::mul(_c, instance.ColorParent);
-	}
-
 	instance.ColorInheritance = _c;
 }
 
@@ -320,7 +315,10 @@ void EffectNodeTrack::SetValues(Color& c, const Instance& instance, InstanceGrou
 		_c.a = (uint8_t)Clamp( (value.color.fcurve_rgba.offset[3] + param.fcurve_rgba.FCurve->A.GetValue( (int32_t)time )), 255, 0);
 	}
 
-	_c = color::mul(_c, instance.ColorParent);
+	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
+	{
+		_c = color::mul(_c, instance.ColorParent);
+	}
 	_c.setValueToArg(c);
 }
 
