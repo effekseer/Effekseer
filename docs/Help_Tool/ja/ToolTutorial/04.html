@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>No04. 回転、拡大してみよう！</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../base.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">No04. 回転、拡大してみよう！</h1>
+</header>
+<div class="main">
+<h1>No04. 回転、拡大してみよう！</h1>
+<h2>概要</h2>
+<p>本章では、パーティクルを回転したり、拡大したりします。 また、スプライトの形状を正方形から長方形に変えてみます。 それにより、複雑なエフェクトを作成できるようになります。</p>
+<div align="center">
+<img src="../../img/Tutorial/04_completed.gif">
+<p>
+本章で作成するエフェクト
+</p>
+</div>
+<h2>回転と拡大</h2>
+<p>あらかじめ作成途中のエフェクトを下記のリンクからダウンロードできるようにしました。</p>
+<div align="center">
+<p><a href = "../../Sample/04_01_Sample.zip">ダウンロード</a></p>
+</div>
+<h3>回転</h3>
+<p>早速、パーティクルを回転させてみましょう。 回転は「回転」ウインドウから指定できます。</p>
+<div align="center">
+<img src="../../img/Tutorial/04_rotation_ja.png">
+<p>
+「回転」ウインドウ
+</p>
+</div>
+<p>位置と同じように、回転にも複数を指定方法があります。 初期設定では、角度が選択されています。 これを、位置・速度・加速度に変更します。 そして、速度のzに5を入力します。</p>
+<p>これは、Z方向(正面方向)を軸として1フレームに5度回転することを表しています。</p>
+<div align="center">
+<img src="../../img/Tutorial/04_ratation_pva_ja.png">
+<p>
+角速度
+</p>
+</div>
+<p>入力した後、再生すると...何も変わりません！ これは、スプライトによる描画の初期設定では、パーティクルが回転しても必ず長方形が正面に向くようになっているからです。</p>
+<p>「描画」ウインドウから配置方法をZ軸回転ビルボードに変更します。 Z軸回転ビルボードは長方形は正面を向きつつも、Z軸の回転は有効になる配置方法です。</p>
+<div align="center">
+<img src="../../img/Tutorial/04_conf_ja.png">
+<p>
+配置方法
+</p>
+</div>
+<p>Z軸回転ビルボードにすると、長方形がZ方向(正面方向)を軸に回転していることがわかります。</p>
+<div align="center">
+<img src="../../img/Tutorial/04_rotate.gif">
+<p>
+回転
+</p>
+</div>
+<h3>拡大</h3>
+<p>位置、回転と同じように、パーティクルを拡大できます。 拡大は「拡大」ウインドウから指定できます。</p>
+<div align="center">
+<img src="../../img/Tutorial/04_scale_ja.png">
+<p>
+「拡大」ウインドウ
+</p>
+</div>
+<p>位置、回転と同じように、回転にも複数を指定方法があります。 初期設定では、拡大率が選択されています。 これを、単一拡大率・速度・加速度に変更します。 そして、拡大速度に0.01を入力します。</p>
+<p>拡大率もX,Y,Z方向個別に設定することはできますが、全方向に対して拡大率が同じことが多いです。 そのため、単一の拡大率を設定できるようにしています。</p>
+<div align="center">
+<img src="../../img/Tutorial/04_scale_pva_ja.png">
+<p>
+拡大速度
+</p>
+</div>
+<p>スプライトが回転しつつ、拡大していることがわかります。</p>
+<div align="center">
+<img src="../../img/Tutorial/04_scale.gif">
+<p>
+拡大
+</p>
+</div>
+<h2>スプライトの形状</h2>
+<p>スプライトは今まで正方形でしたが、これを長方形や台形等に変更できます。</p>
+<p>「描画」ウインドウから頂点座標を、標準から固定に変更します。 そうすると、長方形の頂点の座標を設定できるようになります。</p>
+<p>今回は、縦長にするために、以下のように入力しましょう。</p>
+<div align="center">
+<img src="../../img/Tutorial/04_v_ja.png">
+<p>
+頂点座標
+</p>
+</div>
+<p>パーティクルが縦長になっていることがわかります。</p>
+<div align="center">
+<img src="../../img/Tutorial/04_shape.gif">
+<p>
+頂点座標
+</p>
+</div>
+<h2>仕上げ</h2>
+<p>このままでは見栄えが良くないので、下記の変更を行いました。</p>
+<h3>「共通」ウインドウ</h3>
+<p>生成数を10に変更</p>
+<h3>「位置」ウインドウ</h3>
+<p>-位置・速度・加速度に変更 -位置の振幅を2に変更</p>
+<h3>「描画共通」ウインドウ</h3>
+<p>色/歪み画像にparticle.pngを選択</p>
+<p>ブレンドを加算に変更</p>
+<h3>「回転」ウインドウ</h3>
+<p>角度の振幅を180に変更</p>
+<h3>「拡大」ウインドウ</h3>
+<p>拡大率を0に変更</p>
+<h3>結果</h3>
+<p>これらのパラメーターの変更方法がわからない方は1～3章を復習してみてください。</p>
+<div align="center">
+<img src="../../img/Tutorial/04_completed.gif">
+<p>
+完成
+</p>
+</div>
+<p>最後に、本章で作成されたエフェクトをダウンロードできるようにしてみました。</p>
+<div align="center">
+<p><a href = "../../Sample/04_02_Sample.zip">ダウンロード</a></p>
+</div>
+<h2>まとめ</h2>
+<p>本章では、スプライトの回転や拡大について説明します。 次章では、今までの知識を生かして実践的なエフェクトを作成します。</p>
+</div>
+</body>
+</html>
