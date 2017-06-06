@@ -344,7 +344,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 
 		/* 生成位置 */
-		GenerationLocation.load( pos );
+		GenerationLocation.load( pos, m_effect->GetVersion());
 
 		/* 生成位置拡大処理*/
 		if( m_effect->GetVersion() >= 8  

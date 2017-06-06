@@ -30,6 +30,7 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	, m_State(INSTANCE_STATE_ACTIVE)
 	, m_LivedTime(0)
 	, m_LivingTime(0)
+	, uvTimeOffset(0)
 	, m_stepTime(false)
 	, m_sequenceNumber(0)
 	, m_flexibleGeneratedChildrenCount(nullptr)
@@ -349,6 +350,48 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		vector3d p = m_pEffectNode->GenerationLocation.point.location.getValue( *m_pManager );
 		m_GenerationLocation.Translation( p.x, p.y, p.z );
 	}
+	else if (m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_LINE)
+	{
+		vector3d s = m_pEffectNode->GenerationLocation.line.position_start.getValue(*m_pManager);
+		vector3d e = m_pEffectNode->GenerationLocation.line.position_end.getValue(*m_pManager);
+		auto n = Max(1, m_pEffectNode->GenerationLocation.line.position_noize.getValue(*m_pManager));
+
+		Vector3D dir;
+		(e - s).setValueToArg(dir);
+
+		if (Vector3D::LengthSq(dir) < 0.001)
+		{
+			m_GenerationLocation.Translation(0 ,0, 0);
+		}
+		else
+		{
+			auto len = Vector3D::Length(dir);
+			dir /= len;
+		
+			int32_t target = 0;
+			if (m_pEffectNode->GenerationLocation.line.type == ParameterGenerationLocation::LineType::Order)
+			{
+				target = instanceNumber % n;
+			}
+			else if (m_pEffectNode->GenerationLocation.line.type == ParameterGenerationLocation::LineType::Random)
+			{
+				RandFunc randFunc = m_pManager->GetRandFunc();
+				int32_t randMax = m_pManager->GetRandMax();
+
+				target = (int32_t)((n) * ((float)randFunc() / (float)randMax));
+				if (target == n) n -= 1;
+			}
+
+			auto d = (len / (float)n) * target;
+			d += m_pEffectNode->GenerationLocation.line.position_noize.getValue(*m_pManager);
+		
+			s.x += dir.X * d;
+			s.y += dir.Y * d;
+			s.z += dir.Z * d;
+
+			m_GenerationLocation.Translation(s.x, s.y, s.z);
+		}
+	}
 	else if( m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_SPHERE )
 	{
 		Matrix43 mat_x, mat_y;
@@ -456,8 +499,22 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		}
 
 		float angle = (end - start) * ((float)target / (float)div) + start;
+
+		angle += m_pEffectNode->GenerationLocation.circle.angle_noize.getValue(*m_pManager);
+
 		Matrix43 mat;
-		mat.RotationZ( angle );
+		if (m_pEffectNode->GenerationLocation.circle.axisDirection == ParameterGenerationLocation::AxisType::X)
+		{
+			mat.RotationX(angle);
+		}
+		if (m_pEffectNode->GenerationLocation.circle.axisDirection == ParameterGenerationLocation::AxisType::Y)
+		{
+			mat.RotationY(angle);
+		}
+		if (m_pEffectNode->GenerationLocation.circle.axisDirection == ParameterGenerationLocation::AxisType::Z)
+		{
+			mat.RotationZ(angle);
+		}
 
 		m_GenerationLocation.Translation( 0, radius, 0 );
 		Matrix43::Multiple( m_GenerationLocation, m_GenerationLocation, mat );
@@ -466,6 +523,17 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 	if( m_pEffectNode->SoundType == ParameterSoundType_Use )
 	{
 		soundValues.delay = m_pEffectNode->Sound.Delay.getValue( *m_pManager );
+	}
+
+	// UV
+	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_ANIMATION)
+	{
+		uvTimeOffset = m_pEffectNode->RendererCommon.UV.Animation.StartFrame.getValue(*m_pManager);
+	}
+	
+	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_SCROLL)
+	{
+		uvTimeOffset = m_pEffectNode->RendererCommon.UV.Scroll.StartFrame.getValue(*m_pManager);
 	}
 
 	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
@@ -1182,7 +1250,9 @@ RectF Instance::GetUV() const
 	}
 	else if( m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_ANIMATION )
 	{
-		int32_t frameNum = (int32_t)(m_LivingTime / m_pEffectNode->RendererCommon.UV.Animation.FrameLength);
+		auto time = m_LivingTime + uvTimeOffset;
+
+		int32_t frameNum = (int32_t)(time / m_pEffectNode->RendererCommon.UV.Animation.FrameLength);
 		int32_t frameCount = m_pEffectNode->RendererCommon.UV.Animation.FrameCountX * m_pEffectNode->RendererCommon.UV.Animation.FrameCountY;
 
 		if( m_pEffectNode->RendererCommon.UV.Animation.LoopType == m_pEffectNode->RendererCommon.UV.Animation.LOOPTYPE_ONCE )
@@ -1217,9 +1287,11 @@ RectF Instance::GetUV() const
 	}
 	else if( m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_SCROLL )
 	{
+		auto time = m_LivingTime + uvTimeOffset;
+
 		return RectF(
-			m_pEffectNode->RendererCommon.UV.Scroll.Position.x + m_pEffectNode->RendererCommon.UV.Scroll.Speed.x * m_LivingTime,
-			m_pEffectNode->RendererCommon.UV.Scroll.Position.y + m_pEffectNode->RendererCommon.UV.Scroll.Speed.y * m_LivingTime,
+			m_pEffectNode->RendererCommon.UV.Scroll.Position.x + m_pEffectNode->RendererCommon.UV.Scroll.Speed.x * time,
+			m_pEffectNode->RendererCommon.UV.Scroll.Position.y + m_pEffectNode->RendererCommon.UV.Scroll.Speed.y * time,
 			m_pEffectNode->RendererCommon.UV.Scroll.Position.w,
 			m_pEffectNode->RendererCommon.UV.Scroll.Position.h );
 	}

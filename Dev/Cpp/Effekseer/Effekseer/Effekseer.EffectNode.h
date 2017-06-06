@@ -313,12 +313,20 @@ struct ParameterGenerationLocation
 {
 	int	EffectsRotation;
 
+	enum class AxisType : int32_t
+	{
+		X,
+		Y,
+		Z,
+	};
+
 	enum
 	{
 		TYPE_POINT = 0,
 		TYPE_SPHERE = 1,
 		TYPE_MODEL = 2,
 		TYPE_CIRCLE = 3,
+		TYPE_LINE = 4,
 
 		TYPE_DWORD = 0x7fffffff,
 	} type;
@@ -339,6 +347,12 @@ struct ParameterGenerationLocation
 		CIRCLE_TYPE_RANDOM = 0,
 		CIRCLE_TYPE_ORDER = 1,
 		CIRCLE_TYPE_REVERSE_ORDER = 2,
+	};
+
+	enum class LineType : int32_t
+	{
+		Random = 0,
+		Order = 1,
 	};
 
 	union
@@ -368,10 +382,21 @@ struct ParameterGenerationLocation
 			random_float	angle_start;
 			random_float	angle_end;
 			eCircleType		type;
+			AxisType		axisDirection;
+			random_float	angle_noize;
 		} circle;
+
+		struct
+		{
+			int32_t			division;
+			random_vector3d	position_start;
+			random_vector3d	position_end;
+			random_float	position_noize;
+			LineType		type;
+		} line;
 	};
 
-	void load( uint8_t*& pos )
+	void load( uint8_t*& pos, int32_t version)
 	{
 		memcpy( &EffectsRotation, pos, sizeof(int) );
 		pos += sizeof(int);
@@ -396,8 +421,24 @@ struct ParameterGenerationLocation
 		}
 		else if( type == TYPE_CIRCLE )
 		{
-			memcpy( &circle, pos, sizeof(circle) );
-			pos += sizeof(circle);
+			if (version < 10)
+			{
+				memcpy(&circle, pos, sizeof(circle) - sizeof(circle.axisDirection) - sizeof(circle.angle_noize));
+				pos += sizeof(circle) - sizeof(circle.axisDirection) - sizeof(circle.angle_noize);
+				circle.axisDirection = AxisType::Z;
+				circle.angle_noize.max = 0;
+				circle.angle_noize.min = 0;
+			}
+			else
+			{
+				memcpy(&circle, pos, sizeof(circle));
+				pos += sizeof(circle);
+			}
+		}
+		else if (type == TYPE_LINE)
+		{
+			memcpy(&line, pos, sizeof(line));
+			pos += sizeof(line);
 		}
 	}
 };
@@ -486,12 +527,17 @@ struct ParameterRendererCommon
 				LOOPTYPE_DWORD = 0x7fffffff,
 			} LoopType;
 
+			random_int	StartFrame;
+
 		} Animation;
 
 		struct
 		{
 			rectf		Position;
 			vector2d	Speed;
+
+			random_int	StartFrame;
+
 		} Scroll;
 
 	} UV;
@@ -567,13 +613,35 @@ struct ParameterRendererCommon
 		}
 		else if( UVType == UV_ANIMATION )
 		{
-			memcpy( &UV.Animation, pos, sizeof(UV.Animation) );
-			pos += sizeof(UV.Animation);
+			if (version < 10)
+			{
+				// without start frame
+				memcpy(&UV.Animation, pos, sizeof(UV.Animation) - sizeof(UV.Animation.StartFrame));
+				pos += sizeof(UV.Animation) - sizeof(UV.Animation.StartFrame);
+				UV.Animation.StartFrame.max = 0;
+				UV.Animation.StartFrame.min = 0;
+			}
+			else
+			{
+				memcpy(&UV.Animation, pos, sizeof(UV.Animation));
+				pos += sizeof(UV.Animation);
+			}
 		}
 		else if( UVType == UV_SCROLL )
 		{
-			memcpy( &UV.Scroll, pos, sizeof(UV.Scroll) );
-			pos += sizeof(UV.Scroll);
+			if (version < 10)
+			{
+				// without start frame
+				memcpy(&UV.Scroll, pos, sizeof(UV.Scroll) - sizeof(UV.Scroll.StartFrame));
+				pos += sizeof(UV.Scroll) - sizeof(UV.Scroll.StartFrame);
+				UV.Scroll.StartFrame.max = 0;
+				UV.Scroll.StartFrame.min = 0;
+			}
+			else
+			{
+				memcpy(&UV.Scroll, pos, sizeof(UV.Scroll));
+				pos += sizeof(UV.Scroll);
+			}
 		}
 
 		if (version >= 10)

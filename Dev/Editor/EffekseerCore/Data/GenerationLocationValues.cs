@@ -5,6 +5,21 @@ using System.Text;
 
 namespace Effekseer.Data
 {
+	public enum AxisType
+	{
+		[Name(value = "X軸", language = Language.Japanese)]
+		[Name(value = "X-Axis", language = Language.English)]
+		XAxis,
+
+		[Name(value = "Y軸", language = Language.Japanese)]
+		[Name(value = "Y-Axis", language = Language.English)]
+		YAxis,
+
+		[Name(value = "Z軸", language = Language.Japanese)]
+		[Name(value = "Z-Axis", language = Language.English)]
+		ZAxis,
+	}
+
 	public class GenerationLocationValues
 	{
 		[Name(value = "生成角度に影響", language = Language.Japanese)]
@@ -54,6 +69,14 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Selected(ID = 0, Value = 4)]
+		[IO(Export = true)]
+		public LineParameter Line
+		{
+			get;
+			private set;
+		}
+
 		internal GenerationLocationValues()
 		{
 			EffectsRotation = new Value.Boolean(false);
@@ -62,6 +85,7 @@ namespace Effekseer.Data
 			Sphere = new SphereParameter();
 			Model = new ModelParameter();
 			Circle = new CircleParameter();
+			Line = new LineParameter();
 		}
 
 		public class PointParameter
@@ -77,6 +101,58 @@ namespace Effekseer.Data
 			internal PointParameter()
 			{
 				Location = new Value.Vector3DWithRandom();
+			}
+		}
+
+		public class LineParameter
+		{
+			[Name(value = "分割数", language = Language.Japanese)]
+			[Name(value = "Verticies", language = Language.English)]
+			public Value.Int Division
+			{
+				get;
+				private set;
+			}
+
+			[Name(value = "開始位置", language = Language.Japanese)]
+			[Name(value = "Init Position", language = Language.English)]
+			public Value.Vector3DWithRandom PositionStart
+			{
+				get;
+				private set;
+			}
+
+			[Name(value = "終了位置", language = Language.Japanese)]
+			[Name(value = "Final Angle", language = Language.English)]
+			public Value.Vector3DWithRandom PositionEnd
+			{
+				get;
+				private set;
+			}
+
+			[Name(value = "位置ノイズ", language = Language.Japanese)]
+			[Name(value = "Angle Noize", language = Language.English)]
+			public Value.FloatWithRandom PositionNoize
+			{
+				get;
+				private set;
+			}
+
+			[Name(language = Language.Japanese, value = "生成位置種類")]
+			[Name(language = Language.English, value = "Spawn Mode")]
+			public Value.Enum<LineType> Type
+			{
+				get;
+				private set;
+			}
+
+			public LineParameter()
+			{
+				Division = new Value.Int(8, int.MaxValue, 1);
+				PositionStart = new Value.Vector3DWithRandom();
+				PositionEnd = new Value.Vector3DWithRandom();
+				PositionNoize = new Value.FloatWithRandom();
+				Type = new Value.Enum<LineType>(LineType.Random);
 			}
 		}
 
@@ -143,6 +219,14 @@ namespace Effekseer.Data
 
 		public class CircleParameter
 		{
+			[Name(language = Language.Japanese, value = "軸方向")]
+			[Name(language = Language.English, value = "Axis Direction")]
+			public Value.Enum<AxisType> AxisDirection
+			{
+				get;
+				private set;
+			}
+
 			[Name(value = "分割数", language = Language.Japanese)]
 			[Name(value = "Verticies", language = Language.English)]
 			public Value.Int Division
@@ -175,6 +259,14 @@ namespace Effekseer.Data
 				private set;
 			}
 
+			[Name(value = "角度ノイズ", language = Language.Japanese)]
+			[Name(value = "Angle Noize", language = Language.English)]
+			public Value.FloatWithRandom AngleNoize
+			{
+				get;
+				private set;
+			}
+
 			[Name(language = Language.Japanese, value = "生成位置種類")]
 			[Name(language = Language.English, value = "Spawn Mode")]
 			public Value.Enum<CircleType> Type
@@ -185,10 +277,12 @@ namespace Effekseer.Data
 
 			public CircleParameter()
 			{
+				AxisDirection = new Value.Enum<AxisType>(AxisType.ZAxis);
 				Division = new Value.Int(8, int.MaxValue, 1);
 				Radius = new Value.FloatWithRandom();
 				AngleStart = new Value.FloatWithRandom(0, float.MaxValue, float.MinValue);
 				AngleEnd = new Value.FloatWithRandom(360, float.MaxValue, float.MinValue);
+				AngleNoize = new Value.FloatWithRandom(0);
 				Type = new Value.Enum<CircleType>(CircleType.Random);
 			}
 		}
@@ -198,6 +292,9 @@ namespace Effekseer.Data
 			[Name(value = "点", language = Language.Japanese)]
 			[Name(value = "Point", language = Language.English)]
 			Point = 0,
+			[Name(value = "線", language = Language.Japanese)]
+			[Name(value = "Line", language = Language.English)]
+			Line = 4,
 			[Name(value = "円", language = Language.Japanese)]
 			[Name(value = "Circle", language = Language.English)]
 			Circle = 3,
@@ -227,6 +324,16 @@ namespace Effekseer.Data
 			[Name(value = "面(ランダム)", language = Language.Japanese)]
 			[Name(value = "Random Surface", language = Language.English)]
 			RandomFace = 4,
+		}
+
+		public enum LineType : int
+		{
+			[Name(value = "ランダム", language = Language.Japanese)]
+			[Name(value = "Random", language = Language.English)]
+			Random = 0,
+			[Name(value = "順番", language = Language.Japanese)]
+			[Name(value = "Order", language = Language.English)]
+			Order = 1,
 		}
 
 		public enum CircleType : int

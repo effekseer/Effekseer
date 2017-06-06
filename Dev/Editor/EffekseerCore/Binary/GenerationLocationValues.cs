@@ -59,6 +59,22 @@ namespace Effekseer.Binary
 				data.Add((value.Circle.AngleEnd.Max / 180.0f * (float)Math.PI).GetBytes());
 				data.Add((value.Circle.AngleEnd.Min / 180.0f * (float)Math.PI).GetBytes());
 				data.Add(((int)value.Circle.Type.Value).GetBytes());
+
+				// Version 1.30(10)
+				data.Add(((int)value.Circle.AxisDirection.Value).GetBytes());
+
+				data.Add((value.Circle.AngleNoize.Max / 180.0f * (float)Math.PI).GetBytes());
+				data.Add((value.Circle.AngleNoize.Min / 180.0f * (float)Math.PI).GetBytes());
+			}
+
+			else if (value.Type.GetValue() == Data.GenerationLocationValues.ParameterType.Line)
+			{
+				data.Add((value.Line.Division.Value).GetBytes());
+				data.Add(value.Line.PositionStart.GetBytes(1.0f));
+				data.Add(value.Line.PositionEnd.GetBytes(1.0f));
+				data.Add((value.Line.PositionNoize.Max).GetBytes());
+				data.Add((value.Line.PositionNoize.Min).GetBytes());
+				data.Add(((int)value.Line.Type.Value).GetBytes());
 			}
 
 			return data.ToArray().ToArray();

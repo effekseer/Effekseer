@@ -286,6 +286,10 @@ namespace Effekseer.Data
 			[Name(value = "Loop", language = Language.English)]
 			public Value.Enum<LoopType> LoopType { get; private set; }
 
+			[Name(value = "開始フレーム", language = Language.Japanese)]
+			[Name(value = "Start Frame", language = Language.English)]
+			public Value.IntWithRandom StartFrame { get; private set; }
+
 			public UVAnimationParamater()
 			{
 				Start = new Value.Vector2D();
@@ -294,6 +298,7 @@ namespace Effekseer.Data
 				FrameCountX = new Value.Int(1, int.MaxValue, 1);
 				FrameCountY = new Value.Int(1, int.MaxValue, 1);
 				LoopType = new Value.Enum<LoopType>(RendererCommonValues.LoopType.Once);
+				StartFrame = new Value.IntWithRandom(0, int.MaxValue, 0);
 			}
 		}
 
@@ -310,11 +315,16 @@ namespace Effekseer.Data
 			[Name(value = "Scroll Speed", language = Language.English)]
 			public Value.Vector2D Speed { get; private set; }
 
+			[Name(value = "開始フレーム", language = Language.Japanese)]
+			[Name(value = "Start Frame", language = Language.English)]
+			public Value.IntWithRandom StartFrame { get; private set; }
+
 			public UVScrollParamater()
 			{
 				Start = new Value.Vector2D();
 				Size = new Value.Vector2D();
 				Speed = new Value.Vector2D();
+				StartFrame = new Value.IntWithRandom(0, int.MaxValue, 0);
 			}
 		}
 

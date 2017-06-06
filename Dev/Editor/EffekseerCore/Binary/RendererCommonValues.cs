@@ -122,6 +122,10 @@ namespace Effekseer.Binary
 					data.Add(value_.FrameCountX.Value.GetBytes());
 					data.Add(value_.FrameCountY.Value.GetBytes());
 					data.Add(value_.LoopType);
+
+					data.Add(value_.StartFrame.Max.GetBytes());
+					data.Add(value_.StartFrame.Min.GetBytes());
+
 				}
 				else if (value.UV.Value == Data.RendererCommonValues.UVType.Scroll)
 				{
@@ -133,6 +137,9 @@ namespace Effekseer.Binary
 
 					data.Add((value_.Speed.X / width).GetBytes());
 					data.Add((value_.Speed.Y / height).GetBytes());
+
+					data.Add(value_.StartFrame.Max.GetBytes());
+					data.Add(value_.StartFrame.Min.GetBytes());
 				}
 			}
 			else

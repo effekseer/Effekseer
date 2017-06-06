@@ -209,6 +209,9 @@ public:
 	// 生成されてからの時間
 	float		m_LivingTime;
 
+	// The time offset for UV
+	int32_t		uvTimeOffset;
+
 	// The number of generated chiledren. (fixed size)
 	int32_t		m_fixedGeneratedChildrenCount[ChildrenMax];
 
