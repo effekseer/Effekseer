@@ -54,12 +54,44 @@
 パーティクルが消滅するときに、フェードアウトしつつ消滅するようにします。
 		</p>
 
-		<h3>UV</h4>
+		<h3>UV</h3>
 		<p>
 色/歪み画像で、実際にパーティクルの表示に使用する範囲を指定します。
 使用される範囲は時間で変化させられるため、画像をアニメーションさせられます。
 領域の指定に使用される数値の単位はピクセルです。
 		</p>
+
+		<h3>色への影響</h4>
+		<p>
+親のパーティクルの色が子のパーティクルの色に影響を与えるか、を指定します。
+影響を与える場合、親のパーティクルの色と子のパーティクルの色を掛け合わせた色が最終的な子のパーティクルの色になります。
+「生成時のみ」を選択した場合、子のパーティクルが生成された時の親のパーティクルの色が常に適用されます。
+		</p>
+<table>
+	<tr>
+		<td>
+			<p>なし</p>
+		</td>
+		<td>
+			<p>生成時のみ</p>
+		</td>
+		<td>
+			<p>常時</p>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<img src="../../img/Reference/renderCommon_inherit_color_none.gif">
+		</td>
+		<td>
+			<img src="../../img/Reference/renderCommon_inherit_color_when.gif">
+		</td>
+		<td>
+			<img src="../../img/Reference/renderCommon_inherit_color_always.gif">
+		</td>
+	</tr>
+</table>
 
 		<h3>歪み</h3>
 		<p>
