@@ -354,7 +354,8 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 	{
 		vector3d s = m_pEffectNode->GenerationLocation.line.position_start.getValue(*m_pManager);
 		vector3d e = m_pEffectNode->GenerationLocation.line.position_end.getValue(*m_pManager);
-		auto n = Max(1, m_pEffectNode->GenerationLocation.line.position_noize.getValue(*m_pManager));
+		auto noize = Max(1, m_pEffectNode->GenerationLocation.line.position_noize.getValue(*m_pManager));
+		auto division = m_pEffectNode->GenerationLocation.line.division;
 
 		Vector3D dir;
 		(e - s).setValueToArg(dir);
@@ -371,19 +372,19 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 			int32_t target = 0;
 			if (m_pEffectNode->GenerationLocation.line.type == ParameterGenerationLocation::LineType::Order)
 			{
-				target = instanceNumber % n;
+				target = instanceNumber % division;
 			}
 			else if (m_pEffectNode->GenerationLocation.line.type == ParameterGenerationLocation::LineType::Random)
 			{
 				RandFunc randFunc = m_pManager->GetRandFunc();
 				int32_t randMax = m_pManager->GetRandMax();
 
-				target = (int32_t)((n) * ((float)randFunc() / (float)randMax));
-				if (target == n) n -= 1;
+				target = (int32_t)((division) * ((float)randFunc() / (float)randMax));
+				if (target == division) division -= 1;
 			}
 
-			auto d = (len / (float)n) * target;
-			d += m_pEffectNode->GenerationLocation.line.position_noize.getValue(*m_pManager);
+			auto d = (len / (float)division) * target;
+			d += noize;
 		
 			s.x += dir.X * d;
 			s.y += dir.Y * d;
@@ -506,17 +507,20 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		if (m_pEffectNode->GenerationLocation.circle.axisDirection == ParameterGenerationLocation::AxisType::X)
 		{
 			mat.RotationX(angle);
+			m_GenerationLocation.Translation(0, 0, radius);
 		}
 		if (m_pEffectNode->GenerationLocation.circle.axisDirection == ParameterGenerationLocation::AxisType::Y)
 		{
 			mat.RotationY(angle);
+			m_GenerationLocation.Translation(radius, 0, 0);
 		}
 		if (m_pEffectNode->GenerationLocation.circle.axisDirection == ParameterGenerationLocation::AxisType::Z)
 		{
 			mat.RotationZ(angle);
+			m_GenerationLocation.Translation(0, radius, 0);
 		}
 
-		m_GenerationLocation.Translation( 0, radius, 0 );
+		
 		Matrix43::Multiple( m_GenerationLocation, m_GenerationLocation, mat );
 	}
 
