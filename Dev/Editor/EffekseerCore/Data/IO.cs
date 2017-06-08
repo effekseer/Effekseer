@@ -504,8 +504,17 @@ namespace Effekseer.Data
 			var e_value = e["Value"] as XmlElement;
 			var e_infinite = e["Infinite"] as XmlElement;
 
-			if (e_value != null) LoadFromElement(e_value, value.Value, isClip);
-			if (e_infinite != null) LoadFromElement(e_infinite, value.Infinite, isClip);
+			// Convert int into intWithInfinit
+			if(e_value == null && e_infinite == null)
+			{
+				var i = e.GetTextAsInt();
+				value.Value.SetValue(i);
+			}
+			else
+			{
+				if (e_value != null) LoadFromElement(e_value, value.Value, isClip);
+				if (e_infinite != null) LoadFromElement(e_infinite, value.Infinite, isClip);
+			}
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.Vector2D value, bool isClip)
@@ -625,12 +634,27 @@ namespace Effekseer.Data
 			var e_y = e["Y"] as XmlElement;
 			var e_da = e["DrawnAs"];
 
-			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
-			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
-
-			if (e_da != null)
+			// Convert Vector2D into Vector2DWithRandom
+			if(e_da == null &&
+				e_x != null &&
+				e_y != null &&
+				e_x["Max"] == null &&
+				e_y["Max"] == null)
 			{
-				value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
+				var x = e_x.GetTextAsFloat();
+				var y = e_y.GetTextAsFloat();
+				value.X.SetCenter(x);
+				value.Y.SetCenter(y);
+			}
+			else
+			{
+				if (e_x != null) LoadFromElement(e_x, value.X, isClip);
+				if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
+
+				if (e_da != null)
+				{
+					value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
+				}
 			}
 		}
 

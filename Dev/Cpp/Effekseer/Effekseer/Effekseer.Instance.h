@@ -212,6 +212,12 @@ public:
 	// The time offset for UV
 	int32_t		uvTimeOffset;
 
+	// Scroll area for UV
+	RectF		uvScrollArea;
+
+	// Scroll speed for UV
+	Vector2D	uvScrollSpeed;
+
 	// The number of generated chiledren. (fixed size)
 	int32_t		m_fixedGeneratedChildrenCount[ChildrenMax];
 

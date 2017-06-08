@@ -15,8 +15,7 @@
 #include <emmintrin.h>
 #endif
 
-/* Visual Studio 2008 */
-#if _MSC_VER == 1500
+#ifdef _MSC_VER
 #include <xmmintrin.h>
 #endif
 
