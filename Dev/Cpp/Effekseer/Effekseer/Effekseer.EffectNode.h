@@ -500,6 +500,18 @@ struct ParameterRendererCommon
 		UV_DWORD = 0x7fffffff,
 	} UVType;
 
+
+	/**
+		@brief	UV Parameter
+		@note
+		for Compatibility
+	*/
+	struct UVScroll_09
+	{
+		rectf		Position;
+		vector2d	Speed;
+	};
+
 	union
 	{
 		struct
@@ -533,11 +545,9 @@ struct ParameterRendererCommon
 
 		struct
 		{
-			rectf		Position;
-			vector2d	Speed;
-
-			random_int	StartFrame;
-
+			random_vector2d	Position;
+			random_vector2d	Size;
+			random_vector2d	Speed;
 		} Scroll;
 
 	} UV;
@@ -631,11 +641,22 @@ struct ParameterRendererCommon
 		{
 			if (version < 10)
 			{
-				// without start frame
-				memcpy(&UV.Scroll, pos, sizeof(UV.Scroll) - sizeof(UV.Scroll.StartFrame));
-				pos += sizeof(UV.Scroll) - sizeof(UV.Scroll.StartFrame);
-				UV.Scroll.StartFrame.max = 0;
-				UV.Scroll.StartFrame.min = 0;
+				// compatibility
+				UVScroll_09 values;
+				memcpy(&values, pos, sizeof(values));
+				pos += sizeof(values);
+				UV.Scroll.Position.max.x = values.Position.x;
+				UV.Scroll.Position.max.y = values.Position.y;
+				UV.Scroll.Position.min = UV.Scroll.Position.max;
+
+				UV.Scroll.Size.max.x = values.Position.w;
+				UV.Scroll.Size.max.y = values.Position.h;
+				UV.Scroll.Size.min = UV.Scroll.Size.max;
+
+				UV.Scroll.Speed.max.x = values.Speed.x;
+				UV.Scroll.Speed.max.y = values.Speed.y;
+				UV.Scroll.Speed.min = UV.Scroll.Speed.max;
+
 			}
 			else
 			{

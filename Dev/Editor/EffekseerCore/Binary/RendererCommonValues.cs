@@ -118,28 +118,41 @@ namespace Effekseer.Binary
 					data.Add((value_.Size.X / width).GetBytes());
 					data.Add((value_.Size.Y / height).GetBytes());
 
-					data.Add(value_.FrameLength.Value.GetBytes());
+					if (value_.FrameLength.Infinite)
+					{
+						var inf = int.MaxValue / 100;
+						data.Add(inf.GetBytes());
+					}
+					else
+					{
+						data.Add(value_.FrameLength.Value.Value.GetBytes());
+					}
+				
 					data.Add(value_.FrameCountX.Value.GetBytes());
 					data.Add(value_.FrameCountY.Value.GetBytes());
 					data.Add(value_.LoopType);
 
-					data.Add(value_.StartFrame.Max.GetBytes());
-					data.Add(value_.StartFrame.Min.GetBytes());
+					data.Add(value_.StartSheet.Max.GetBytes());
+					data.Add(value_.StartSheet.Min.GetBytes());
 
 				}
 				else if (value.UV.Value == Data.RendererCommonValues.UVType.Scroll)
 				{
 					var value_ = value.UVScroll;
-					data.Add((value_.Start.X / width).GetBytes());
-					data.Add((value_.Start.Y / height).GetBytes());
-					data.Add((value_.Size.X / width).GetBytes());
-					data.Add((value_.Size.Y / height).GetBytes());
+					data.Add((value_.Start.X.Max / width).GetBytes());
+					data.Add((value_.Start.Y.Max / height).GetBytes());
+					data.Add((value_.Start.X.Min / width).GetBytes());
+					data.Add((value_.Start.Y.Min / height).GetBytes());
 
-					data.Add((value_.Speed.X / width).GetBytes());
-					data.Add((value_.Speed.Y / height).GetBytes());
+					data.Add((value_.Size.X.Max / width).GetBytes());
+					data.Add((value_.Size.Y.Max / height).GetBytes());
+					data.Add((value_.Size.X.Min / width).GetBytes());
+					data.Add((value_.Size.Y.Min / height).GetBytes());
 
-					data.Add(value_.StartFrame.Max.GetBytes());
-					data.Add(value_.StartFrame.Min.GetBytes());
+					data.Add((value_.Speed.X.Max / width).GetBytes());
+					data.Add((value_.Speed.Y.Max / height).GetBytes());
+					data.Add((value_.Speed.X.Min / width).GetBytes());
+					data.Add((value_.Speed.Y.Min / height).GetBytes());
 				}
 			}
 			else

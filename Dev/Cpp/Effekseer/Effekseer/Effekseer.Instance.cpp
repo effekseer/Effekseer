@@ -533,11 +533,20 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_ANIMATION)
 	{
 		uvTimeOffset = m_pEffectNode->RendererCommon.UV.Animation.StartFrame.getValue(*m_pManager);
+		uvTimeOffset *= m_pEffectNode->RendererCommon.UV.Animation.FrameLength;
 	}
 	
 	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_SCROLL)
 	{
-		uvTimeOffset = m_pEffectNode->RendererCommon.UV.Scroll.StartFrame.getValue(*m_pManager);
+		auto xy = m_pEffectNode->RendererCommon.UV.Scroll.Position.getValue(*m_pManager);
+		auto zw = m_pEffectNode->RendererCommon.UV.Scroll.Size.getValue(*m_pManager);
+
+		uvScrollArea.X = xy.x;
+		uvScrollArea.Y = xy.y;
+		uvScrollArea.Width = zw.x;
+		uvScrollArea.Height = zw.y;
+
+		m_pEffectNode->RendererCommon.UV.Scroll.Speed.getValue(*m_pManager).setValueToArg(uvScrollSpeed);
 	}
 
 	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
@@ -1294,10 +1303,10 @@ RectF Instance::GetUV() const
 		auto time = m_LivingTime + uvTimeOffset;
 
 		return RectF(
-			m_pEffectNode->RendererCommon.UV.Scroll.Position.x + m_pEffectNode->RendererCommon.UV.Scroll.Speed.x * time,
-			m_pEffectNode->RendererCommon.UV.Scroll.Position.y + m_pEffectNode->RendererCommon.UV.Scroll.Speed.y * time,
-			m_pEffectNode->RendererCommon.UV.Scroll.Position.w,
-			m_pEffectNode->RendererCommon.UV.Scroll.Position.h );
+			uvScrollArea.X + uvScrollSpeed.X * time,
+			uvScrollArea.Y + uvScrollSpeed.Y * time,
+			uvScrollArea.Width,
+			uvScrollArea.Height);
 	}
 
 	return RectF( 0.0f, 0.0f, 1.0f, 1.0f );

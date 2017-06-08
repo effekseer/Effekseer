@@ -272,7 +272,7 @@ namespace Effekseer.Data
 
 			[Name(value = "1枚あたりの時間", language = Language.Japanese)]
 			[Name(value = "Frame Length", language = Language.English)]
-			public Value.Int FrameLength { get; private set; }
+			public Value.IntWithInifinite FrameLength { get; private set; }
 
 			[Name(value = "横方向枚数", language = Language.Japanese)]
 			[Name(value = "X-Count", language = Language.English)]
@@ -286,19 +286,19 @@ namespace Effekseer.Data
 			[Name(value = "Loop", language = Language.English)]
 			public Value.Enum<LoopType> LoopType { get; private set; }
 
-			[Name(value = "開始フレーム", language = Language.Japanese)]
-			[Name(value = "Start Frame", language = Language.English)]
-			public Value.IntWithRandom StartFrame { get; private set; }
+			[Name(value = "開始枚数", language = Language.Japanese)]
+			[Name(value = "Start Sheet", language = Language.English)]
+			public Value.IntWithRandom StartSheet { get; private set; }
 
 			public UVAnimationParamater()
 			{
 				Start = new Value.Vector2D();
 				Size = new Value.Vector2D();
-				FrameLength = new Value.Int(1, int.MaxValue, 1);
+				FrameLength = new Value.IntWithInifinite(1, false, int.MaxValue, 1);
 				FrameCountX = new Value.Int(1, int.MaxValue, 1);
 				FrameCountY = new Value.Int(1, int.MaxValue, 1);
 				LoopType = new Value.Enum<LoopType>(RendererCommonValues.LoopType.Once);
-				StartFrame = new Value.IntWithRandom(0, int.MaxValue, 0);
+				StartSheet = new Value.IntWithRandom(0, int.MaxValue, 0);
 			}
 		}
 
@@ -306,25 +306,21 @@ namespace Effekseer.Data
 		{
 			[Name(value = "始点", language = Language.Japanese)]
 			[Name(value = "Start", language = Language.English)]
-			public Value.Vector2D Start { get; private set; }
+			public Value.Vector2DWithRandom Start { get; private set; }
+
 			[Name(value = "大きさ", language = Language.Japanese)]
 			[Name(value = "Size", language = Language.English)]
-			public Value.Vector2D Size { get; private set; }
+			public Value.Vector2DWithRandom Size { get; private set; }
 
 			[Name(value = "移動速度", language = Language.Japanese)]
 			[Name(value = "Scroll Speed", language = Language.English)]
-			public Value.Vector2D Speed { get; private set; }
-
-			[Name(value = "開始フレーム", language = Language.Japanese)]
-			[Name(value = "Start Frame", language = Language.English)]
-			public Value.IntWithRandom StartFrame { get; private set; }
+			public Value.Vector2DWithRandom Speed { get; private set; }
 
 			public UVScrollParamater()
 			{
-				Start = new Value.Vector2D();
-				Size = new Value.Vector2D();
-				Speed = new Value.Vector2D();
-				StartFrame = new Value.IntWithRandom(0, int.MaxValue, 0);
+				Start = new Value.Vector2DWithRandom();
+				Size = new Value.Vector2DWithRandom();
+				Speed = new Value.Vector2DWithRandom();
 			}
 		}
 
