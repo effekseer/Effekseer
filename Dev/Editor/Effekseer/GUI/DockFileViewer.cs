@@ -74,21 +74,45 @@ namespace Effekseer.GUI
 			}
 			return null;
 		}
+
+		// ファイルに関連付くアイコンの取得
+		private Icon GetImagePreview(string path) {
+			Image image = Image.FromFile(path);
+			if (image != null) {
+				return Icon.FromHandle(((Bitmap)image).GetHicon());
+			}
+			return null;
+		}
 		
 		private int GetImageIndexFileIcon(string path)
 		{
-			string key = Path.GetExtension(path);
+			string ext = Path.GetExtension(path);
 
 			int imageIndex = -1;
-			if (extensionsIcon.ContainsKey(key)) {
-				imageIndex = extensionsIcon[key];
-			} else {
-				// アイコンを取得
-				Icon icon = GetFileIcon(path);
+			if (ext == ".png") {
+				// プレビュー画像を取得(変更があるかもしれないので毎回取得する)
+				Icon icon = GetImagePreview(path);
 				if (icon != null) {
 					imageIndex = imageList.Images.Count;
 					imageList.Images.Add(icon);
-					extensionsIcon.Add(key, imageIndex);
+					if (extensionsIcon.ContainsKey(path)) {
+						extensionsIcon[path] = imageIndex;
+					} else {
+						extensionsIcon.Add(path, imageIndex);
+					}
+				}
+			} else {
+				// その他のファイルタイプはアイコンを表示
+				if (extensionsIcon.ContainsKey(ext)) {
+					imageIndex = extensionsIcon[ext];
+				} else {
+					// アイコンを取得
+					Icon icon = GetFileIcon(path);
+					if (icon != null) {
+						imageIndex = imageList.Images.Count;
+						imageList.Images.Add(icon);
+						extensionsIcon.Add(ext, imageIndex);
+					}
 				}
 			}
 			return imageIndex;
