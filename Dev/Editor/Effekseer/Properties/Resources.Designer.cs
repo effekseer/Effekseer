@@ -1146,7 +1146,7 @@ namespace Effekseer.Properties {
         }
         
         /// <summary>
-        ///   生成位置 に類似しているローカライズされた文字列を検索します。
+        ///   生成方法 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string SpawningMethod {
             get {

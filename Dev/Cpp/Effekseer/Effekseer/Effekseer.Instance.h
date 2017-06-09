@@ -236,7 +236,7 @@ public:
 	// The time to generate next child.  (actually used)
 	float*			m_nextGenerationTime;
 
-	// 生成位置
+	// Spawning Method matrix
 	Matrix43		m_GenerationLocation;
 
 	// 変換用行列

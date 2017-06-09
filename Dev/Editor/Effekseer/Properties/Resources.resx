@@ -252,7 +252,7 @@
     <value>音</value>
   </data>
   <data name="SpawningMethod" xml:space="preserve">
-    <value>生成位置</value>
+    <value>生成方法</value>
   </data>
   <data name="ViewerControls" xml:space="preserve">
     <value>ビュワー操作</value>

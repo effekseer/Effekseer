@@ -343,10 +343,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			ScalingFCurve->Z.SetDefaultValue( 1.0f );
 		}
 
-		/* 生成位置 */
+		/* Spawning Method */
 		GenerationLocation.load( pos, m_effect->GetVersion());
 
-		/* 生成位置拡大処理*/
+		/* Spawning Method 拡大処理*/
 		if( m_effect->GetVersion() >= 8  
 			/* && (this->CommonValues.ScalingBindType == BindType::NotBind || parent->GetType() == EFFECT_NODE_TYPE_ROOT)*/ )
 		{

@@ -344,7 +344,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		scaling_values.fcruve.offset.z = m_pEffectNode->ScalingFCurve->Z.GetOffset( *m_pManager );
 	}
 
-	/* 生成位置 */
+	// Spawning Method
 	if( m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT )
 	{
 		vector3d p = m_pEffectNode->GenerationLocation.point.location.getValue( *m_pManager );
@@ -390,7 +390,49 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 			s.y += dir.Y * d;
 			s.z += dir.Z * d;
 
-			m_GenerationLocation.Translation(s.x, s.y, s.z);
+			Vector3D xdir;
+			Vector3D ydir;
+			Vector3D zdir;
+
+			if (std::abs(dir.Y) > 0.999f)
+			{
+				xdir = dir;
+				Vector3D::Cross(zdir, xdir, Vector3D(-1, 0, 0));
+				Vector3D::Normal(zdir, zdir);
+				Vector3D::Cross(ydir, zdir, xdir);
+				Vector3D::Normal(ydir, ydir);
+			}
+			else
+			{
+				xdir = dir;
+				Vector3D::Cross(ydir, Vector3D(0, 0, 1), xdir);
+				Vector3D::Normal(ydir, ydir);
+				Vector3D::Cross(zdir, xdir, ydir);
+				Vector3D::Normal(zdir, zdir);
+			}
+
+			if (m_pEffectNode->GenerationLocation.EffectsRotation)
+			{
+				m_GenerationLocation.Value[0][0] = xdir.X;
+				m_GenerationLocation.Value[0][1] = xdir.Y;
+				m_GenerationLocation.Value[0][2] = xdir.Z;
+
+				m_GenerationLocation.Value[1][0] = ydir.X;
+				m_GenerationLocation.Value[1][1] = ydir.Y;
+				m_GenerationLocation.Value[1][2] = ydir.Z;
+
+				m_GenerationLocation.Value[2][0] = zdir.X;
+				m_GenerationLocation.Value[2][1] = zdir.Y;
+				m_GenerationLocation.Value[2][2] = zdir.Z;
+			}
+			else
+			{
+				m_GenerationLocation.Indentity();
+			}
+
+			m_GenerationLocation.Value[3][0] = s.x;
+			m_GenerationLocation.Value[3][1] = s.y;
+			m_GenerationLocation.Value[3][2] = s.z;
 		}
 	}
 	else if( m_pEffectNode->GenerationLocation.type == ParameterGenerationLocation::TYPE_SPHERE )
