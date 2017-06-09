@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace Effekseer.GUI.Component
 {
@@ -189,6 +190,58 @@ namespace Effekseer.GUI.Component
 			Core.OnAfterNew -= Core_OnAfterNew;
 			Core.OnAfterSave -= Core_OnAfterSave;
 			Core.OnAfterLoad -= Core_OnAfterLoad;
+		}
+		
+		private bool CheckExtension(string path)
+		{
+			Match match = Regex.Match(binding.Filter, "\\*(\\.[a-zA-Z0-9]*)");
+			string extension = match.Value.Substring(1);
+			return System.IO.Path.GetExtension(path) == extension;
+		}
+
+		private string GetDragFile(DragEventArgs e)
+		{
+			{	// FileViewerからのDrag
+				var fileItem = e.Data.GetData(typeof(DockFileViewer.FileItem)) as DockFileViewer.FileItem;
+				if (fileItem != null) {
+					return fileItem.FilePath;
+				}
+			}
+
+			{	// ExplorerからのDrag
+				var dropFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
+				if (dropFiles != null && dropFiles.Length == 1) {
+					return dropFiles[0];
+				}
+			}
+			return null;
+		}
+
+		private void PathForImage_DragEnter(object sender, DragEventArgs e)
+		{
+			string filePath = GetDragFile(e);
+
+			if (filePath != null) {
+				if (CheckExtension(filePath)) {
+					e.Effect = DragDropEffects.Link;
+				}
+			}
+		}
+
+		private void PathForImage_DragLeave(object sender, EventArgs e)
+		{
+		}
+
+		private void PathForImage_DragDrop(object sender, DragEventArgs e)
+		{
+			string filePath = GetDragFile(e);
+			
+			if (filePath != null) {
+				if (CheckExtension(filePath)) {
+					binding.SetAbsolutePath(filePath);
+					Read();
+				}
+			}
 		}
 	}
 }

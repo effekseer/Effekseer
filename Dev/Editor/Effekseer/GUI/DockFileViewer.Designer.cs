@@ -61,6 +61,7 @@
 			// 
 			// fileView
 			// 
+			this.fileView.AllowDrop = true;
 			this.fileView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -75,6 +76,7 @@
 			this.fileView.TileSize = new System.Drawing.Size(160, 32);
 			this.fileView.UseCompatibleStateImageBehavior = false;
 			this.fileView.View = System.Windows.Forms.View.Tile;
+			this.fileView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.fileView_ItemDrag);
 			this.fileView.DoubleClick += new System.EventHandler(this.fileView_DoubleClick);
 			// 
 			// imageList

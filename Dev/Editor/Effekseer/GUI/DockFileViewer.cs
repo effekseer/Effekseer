@@ -95,7 +95,7 @@ namespace Effekseer.GUI
 		}	
 		
 		// リストビューのファイルアイテム
-		class FileItem : ListViewItem
+		public class FileItem : ListViewItem
 		{
 			// ファイルパス
 			public string FilePath {get; set;}
@@ -203,6 +203,11 @@ namespace Effekseer.GUI
 		void Core_OnAfterNew(object sender, EventArgs e)
 		{
 			UpdateFileList();
+		}
+
+		private void fileView_ItemDrag(object sender, ItemDragEventArgs e)
+		{
+			fileView.DoDragDrop(e.Item, DragDropEffects.Link);
 		}
 	}
 }
