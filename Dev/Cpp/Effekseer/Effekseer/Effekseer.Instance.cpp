@@ -394,7 +394,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 			Vector3D ydir;
 			Vector3D zdir;
 
-			if (std::abs(dir.Y) > 0.999f)
+			if (fabs(dir.Y) > 0.999f)
 			{
 				xdir = dir;
 				Vector3D::Cross(zdir, xdir, Vector3D(-1, 0, 0));
