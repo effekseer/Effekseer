@@ -200,27 +200,26 @@ bool Initialize(OpenGLDeviceType deviceType)
 #endif
 
 #if defined(__EFFEKSEER_RENDERER_GLES2__)
-	if (deviceType == OpenGLDeviceType::OpenGLES2)
-	{
+
 #if defined(__APPLE__)
-		g_isSupportedVertexArray = true;
+	g_glGenVertexArraysOES = ::glGenVertexArraysOES;
+	g_glDeleteVertexArraysOES = ::glDeleteVertexArraysOES;
+	g_glBindVertexArrayOES = ::glBindVertexArrayOES;
+	g_isSupportedVertexArray = true;
 #else
-		g_isSupportedVertexArray = strstr((const char*) glGetString(GL_EXTENSIONS), "GL_OES_vertex_array_object") != NULL;
-		if (g_isSupportedVertexArray)
-		{
-			GET_PROC(glGenVertexArraysOES);
-			GET_PROC(glDeleteVertexArraysOES);
-			GET_PROC(glBindVertexArrayOES);
-		}
-#endif
-	}
+	GET_PROC(glGenVertexArraysOES);
+	GET_PROC(glDeleteVertexArraysOES);
+	GET_PROC(glBindVertexArrayOES);
+	g_isSupportedVertexArray = (g_glGenVertexArraysOES && g_glDeleteVertexArraysOES && g_glBindVertexArrayOES);
 #endif
 
+#else
 	if (deviceType == OpenGLDeviceType::OpenGL3 ||
 		deviceType == OpenGLDeviceType::OpenGLES3)
 	{
 		g_isSupportedVertexArray = true;
 	}
+#endif
 
 	g_isInitialized = true;
 	return true;
@@ -514,8 +513,6 @@ void glGenVertexArrays(GLsizei n, GLuint *arrays)
 {
 #if _WIN32
 	g_glGenVertexArrays(n, arrays);
-#elif defined(__EFFEKSEER_RENDERER_GLES2__) && defined(__APPLE__)
-	::glGenVertexArraysOES(n, arrays);
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glGenVertexArraysOES(n, arrays);
 #else
@@ -527,8 +524,6 @@ void glDeleteVertexArrays(GLsizei n, const GLuint *arrays)
 {
 #if _WIN32
 	g_glDeleteVertexArrays(n, arrays);
-#elif defined(__EFFEKSEER_RENDERER_GLES2__) && defined(__APPLE__)
-	::glDeleteVertexArraysOES(n, arrays);
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glDeleteVertexArraysOES(n, arrays);
 #else
@@ -540,8 +535,6 @@ void glBindVertexArray(GLuint array)
 {
 #if _WIN32
 	g_glBindVertexArray(array);
-#elif defined(__EFFEKSEER_RENDERER_GLES2__) && defined(__APPLE__)
-	::glBindVertexArrayOES(array);
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 	g_glBindVertexArrayOES(array);
 #else
