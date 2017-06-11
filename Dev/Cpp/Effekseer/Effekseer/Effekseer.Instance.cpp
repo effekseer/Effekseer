@@ -354,8 +354,8 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 	{
 		vector3d s = m_pEffectNode->GenerationLocation.line.position_start.getValue(*m_pManager);
 		vector3d e = m_pEffectNode->GenerationLocation.line.position_end.getValue(*m_pManager);
-		auto noize = Max(1, m_pEffectNode->GenerationLocation.line.position_noize.getValue(*m_pManager));
-		auto division = m_pEffectNode->GenerationLocation.line.division;
+		auto noize =  m_pEffectNode->GenerationLocation.line.position_noize.getValue(*m_pManager);
+		auto division = Max(1, m_pEffectNode->GenerationLocation.line.division);
 
 		Vector3D dir;
 		(e - s).setValueToArg(dir);
@@ -380,10 +380,15 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				int32_t randMax = m_pManager->GetRandMax();
 
 				target = (int32_t)((division) * ((float)randFunc() / (float)randMax));
-				if (target == division) division -= 1;
+				if (target == division) target -= 1;
 			}
 
-			auto d = (len / (float)division) * target;
+			auto d = 0.0f;
+			if (division > 1)
+			{
+				d = (len / (float)(division-1)) * target;
+			}
+
 			d += noize;
 		
 			s.x += dir.X * d;
@@ -538,7 +543,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 			int32_t randMax = m_pManager->GetRandMax();
 
 			target = (int32_t)( (div) * ( (float)randFunc() / (float)randMax ) );
-			if (target == div) div -= 1;
+			if (target == div) target -= 1;
 		}
 
 		float angle = (end - start) * ((float)target / (float)div) + start;
