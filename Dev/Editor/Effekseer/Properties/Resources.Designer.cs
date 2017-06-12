@@ -778,7 +778,7 @@ namespace Effekseer.Properties {
         }
         
         /// <summary>
-        ///   モデルファイル (*.efkmodel)|*.efkmodel に類似しているローカライズされた文字列を検索します。
+        ///   モデルファイル (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ModelFilter {
             get {

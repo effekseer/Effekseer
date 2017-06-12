@@ -478,7 +478,7 @@
     <value>画像ファイル (*.png)|*.png</value>
   </data>
   <data name="ModelFilter" xml:space="preserve">
-    <value>モデルファイル (*.efkmodel)|*.efkmodel</value>
+    <value>モデルファイル (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo</value>
   </data>
   <data name="SoundFilter" xml:space="preserve">
     <value>音声ファイル (*.wav)|*.wav</value>

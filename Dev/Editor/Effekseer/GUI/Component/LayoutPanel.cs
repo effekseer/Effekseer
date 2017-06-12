@@ -428,6 +428,10 @@ namespace Effekseer.GUI.Component
 				{
 					gui = new Path();
 				}
+				else if (p.PropertyType == typeof(Data.Value.PathForModel))
+				{
+					gui = new PathForModel();
+				}
 				else if (p.PropertyType == typeof(Data.Value.PathForImage))
 				{
 					gui = new PathForImage();

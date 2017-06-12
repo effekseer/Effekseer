@@ -196,7 +196,7 @@ namespace Effekseer.Data
 			[Description(language = Language.Japanese, value = "モデルファイル")]
 			[Name(language = Language.English, value = "Model")]
 			[Description(language = Language.English, value = "Model File")]
-			public Value.Path Model
+			public Value.PathForModel Model
 			{
 				get;
 				private set;
@@ -212,7 +212,7 @@ namespace Effekseer.Data
 
 			public ModelParameter()
 			{
-                Model = new Value.Path(Properties.Resources.ModelFilter, true, "");				
+                Model = new Value.PathForModel(Properties.Resources.ModelFilter, true, "");				
 				Type = new Value.Enum<ModelType>(ModelType.Random);
 			}
 		}

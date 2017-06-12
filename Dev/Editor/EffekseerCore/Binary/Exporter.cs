@@ -173,6 +173,9 @@ namespace Effekseer.Binary
 					if (_node.IsRendered && _node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model)
 					{
 						var relative_path = _node.DrawingValues.Model.Model.RelativePath;
+
+						relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+
 						if (relative_path != string.Empty)
 						{
 							if (!models.Contains(relative_path))
@@ -185,6 +188,8 @@ namespace Effekseer.Binary
 					if (_node.GenerationLocationValues.Type.Value == Data.GenerationLocationValues.ParameterType.Model)
 					{
 						var relative_path = _node.GenerationLocationValues.Model.Model.RelativePath;
+
+						relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
 
 						if (relative_path != string.Empty)
 						{

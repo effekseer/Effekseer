@@ -405,7 +405,7 @@
     <value>Image File (*.png)|*.png</value>
   </data>
   <data name="ModelFilter" xml:space="preserve">
-    <value>Model File (*.efkmodel)|*.efkmodel</value>
+    <value>Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo</value>
   </data>
   <data name="SoundFilter" xml:space="preserve">
     <value>Sound File (*.wav)|*.wav</value>

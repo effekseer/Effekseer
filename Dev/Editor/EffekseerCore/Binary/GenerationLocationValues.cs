@@ -37,10 +37,12 @@ namespace Effekseer.Binary
 			}
 			if (value.Type.GetValue() == Data.GenerationLocationValues.ParameterType.Model)
 			{
-				var path = value.Model.Model.RelativePath;
-				if (model_and_index.ContainsKey(path))
+				var relative_path = value.Model.Model.RelativePath;
+				relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+
+				if (model_and_index.ContainsKey(relative_path))
 				{
-					data.Add(model_and_index[path].GetBytes());
+					data.Add(model_and_index[relative_path].GetBytes());
 				}
 				else
 				{

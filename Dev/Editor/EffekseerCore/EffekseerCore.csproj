@@ -108,6 +108,7 @@
     <Compile Include="Data\Value\IntWithInifinite.cs" />
     <Compile Include="Data\Value\IntWithRandom.cs" />
     <Compile Include="Data\Value\Path.cs" />
+    <Compile Include="Data\Value\PathForModel.cs" />
     <Compile Include="Data\Value\PathForSound.cs" />
     <Compile Include="Data\Value\String.cs" />
     <Compile Include="Data\Value\Vector2D.cs" />

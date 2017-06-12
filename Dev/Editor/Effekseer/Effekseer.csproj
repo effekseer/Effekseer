@@ -184,6 +184,12 @@
     <Compile Include="GUI\Component\Path.Designer.cs">
       <DependentUpon>Path.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\Component\PathForModel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Component\PathForModel.designer.cs">
+      <DependentUpon>PathForModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\Component\PathForSound.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -412,6 +418,9 @@
     <EmbeddedResource Include="GUI\Component\Path.resx">
       <DependentUpon>Path.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\PathForModel.resx">
+      <DependentUpon>PathForModel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\Component\PathForSound.resx">
       <DependentUpon>PathForSound.cs</DependentUpon>
     </EmbeddedResource>
@@ -543,6 +552,7 @@
     <Content Include="Image\Step.png" />
     <Content Include="Image\Stop.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
