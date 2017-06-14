@@ -96,16 +96,20 @@ Sets the rate at which particles are generated. The number of frames specified w
 Specify the number of frames that must pass between generation of parent particles and the initial generation of their child particles.
 		</p>
 
-		<h4>1.3以降</h4>
+		<h4>1.3 or later</h4>
 		<p>
-生成開始時間にはマイナスの数値も指定できます。マイナスの時間に生成される予定のパーティクルは、実際には0フレーム目に生成されます。
+A negative numerical value can also be specified as Initial Delay.
+The particles that are supposed to be generated at a negative time are actually generated at the 0th frame.
 		</p>
 
 		<p>
-下の図に生成時間、生成開始時間と生成される時間の関係性を示します。(1)は生成時間、(2)は生成開始時間、(3)は時間(フレーム単位)です。
-生成開始時間の値の分だけ、開始時間がずれます。ずれた開始時間から生成時間の値の分、時間が経過するとパーティクルが生成されます。
-ただし、マイナスの時間に生成されたパーティクルは全て0フレーム目に生成されます。
+The following figure shows the relationship between Spawn Rate, Initial Delay and time. 
+(1) is Spawn Rate, (2) is Initial Delay, (3) is time (frame unit). 
+The start time is shifted by the value of Initial Delay. 
+When Initial Delay elapses from the start time, particles are generated. 
+However, all the particles generated at the negative time are generated in the 0th frame.
 		</p>
+
 		<img src="../../img/Reference/common_generatedTime.png">
 	</div>
 </body>

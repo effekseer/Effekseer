@@ -58,35 +58,32 @@ When a particle is about to be despawned, it fades out over a duration and disap
 In the color/distortion image, this specifies the region of the image actually used when displaying the particle. The range used can be changed over time, allowing you to scroll or animate the image. The units used in these parameters for specifying the area are pixels.
 		</p>
 
-	<h4>アニメーション</h4>
+	<h4>Animation</h4>
 
 	<p>
-アニメーションが連続して配置されている画像を元に、アニメーションを再生します。
+Play animation based on images with animations arranged in succession.
 	</p>
 
 
 <img src="../../img/Reference/renderCommon_uv_animation.png">
 
-	<h5>開始時間(1.3以降)</h5>
+	<h5>Start time(1.3 or later)</h5>
 
 	<p>
-再生を開始するアニメーションの時間を指定します。
-例えば、4枚の画像で構成されるアニメーションで2枚目から再生できます。
+Specify the time of animation to start playing. For example, you can play from the second piece with animation composed of 4 images.
 	</p>
 
-	<h4>スクロール</h4>
+	<h4>Scroll</h4>
 
 	<p>
-一定の速度でUVの範囲を移動させます。
+Move the UV range at a constant speed.
 	</p>
 
 <img src="../../img/Reference/renderCommon_uv_scroll.png">
 
-		<h3>色への影響(1.3以降)</h3>
+		<h3>Inherit color(1.3 or later)</h3>
 		<p>
-親のパーティクルの色が子のパーティクルの色に影響を与えるか、を指定します。
-影響を与える場合、親のパーティクルの色と子のパーティクルの色を掛け合わせた色が最終的な子のパーティクルの色になります。
-「生成時のみ」を選択した場合、子のパーティクルが生成された時の親のパーティクルの色が常に適用されます。
+Specify whether the color of the parent particle affects the color of the child's particles. In case of inheritance of color, the color of the parent's particle multiplied by the color of the child's particle becomes the color of the final child's particle. When "Only on create" is selected, the color of the parent particle when the child particles are generated is always applied.
 		</p>
 <table>
 	<tr>
