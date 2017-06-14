@@ -58,6 +58,62 @@ When a particle is about to be despawned, it fades out over a duration and disap
 In the color/distortion image, this specifies the region of the image actually used when displaying the particle. The range used can be changed over time, allowing you to scroll or animate the image. The units used in these parameters for specifying the area are pixels.
 		</p>
 
+	<h4>アニメーション</h4>
+
+	<p>
+アニメーションが連続して配置されている画像を元に、アニメーションを再生します。
+	</p>
+
+
+<img src="../../img/Reference/renderCommon_uv_animation.png">
+
+	<h5>開始時間(1.3以降)</h5>
+
+	<p>
+再生を開始するアニメーションの時間を指定します。
+例えば、4枚の画像で構成されるアニメーションで2枚目から再生できます。
+	</p>
+
+	<h4>スクロール</h4>
+
+	<p>
+一定の速度でUVの範囲を移動させます。
+	</p>
+
+<img src="../../img/Reference/renderCommon_uv_scroll.png">
+
+		<h3>色への影響(1.3以降)</h3>
+		<p>
+親のパーティクルの色が子のパーティクルの色に影響を与えるか、を指定します。
+影響を与える場合、親のパーティクルの色と子のパーティクルの色を掛け合わせた色が最終的な子のパーティクルの色になります。
+「生成時のみ」を選択した場合、子のパーティクルが生成された時の親のパーティクルの色が常に適用されます。
+		</p>
+<table>
+	<tr>
+		<td>
+			<p>Never</p>
+		</td>
+		<td>
+			<p>Only on create</p>
+		</td>
+		<td>
+			<p>Always</p>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<img src="../../img/Reference/renderCommon_inherit_color_none.gif">
+		</td>
+		<td>
+			<img src="../../img/Reference/renderCommon_inherit_color_when.gif">
+		</td>
+		<td>
+			<img src="../../img/Reference/renderCommon_inherit_color_always.gif">
+		</td>
+	</tr>
+</table>
+
 		<h3>Distortion</h3>
 		<p>
 This is explained in the distortion section below.

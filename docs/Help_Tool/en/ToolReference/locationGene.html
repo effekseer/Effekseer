@@ -47,10 +47,86 @@ Specify how to set the generation position.
 Treats the point at the specified position as the generation position.
 		</p>
 
+
+	<h4>線(1.3以降)</h4>
+	<p>
+線上にパーティクルを配置します。線の始点(1)と終点(2)を指定します。線を分割数で分割した位置にパーティクルを配置します。
+パーティクルのX方向が線の方向になるように回転します。
+	</p>
+
+	<img src="../../img/Reference/locationGene_line.png">
+	
+	<h5>位置ノイズ</h5>
+	<p>
+生成される位置に、このパラメーターで指定された距離の範囲のノイズを、線の方向に向けて加えます。
+生成される位置の均等感を抑制することができます。
+	</p>
+
+	<h5>生成方法種類</h5>
+	<h6>ランダム</h6>
+	<p>
+	線上の点からランダムにパーティクルを配置します。
+	</p>
+	<img src="../../img/Reference/locationGeneModelRand.png">
+	
+	<h6>順番</h6>
+	<p>
+	線上の点から、順番にパーティクルを配置します。
+	</p>
+
 	<h4>Circle</h4>
 		<p>
 Place the particles in a circle. At this time, you specify just the radius and rotation angle. 
 If "Set angle on spawn" is checked, the Y direction of the particle will be normal to the surface of the circle.
+		</p>
+
+	<h5>軸方向</h5>
+	<p>
+円の軸の方向を指定します。「生成角度に影響」にチェックを入れた場合、パーティクルの上方向は下記の表のようになります。
+	<p>
+
+<table>
+	<tr>
+		<td>
+			<p>X軸</p>
+		</td>
+		<td>
+			<p>Y軸</p>
+		</td>
+		<td>
+			<p>Z軸</p>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<p>弧の方向</p>
+		</td>
+		<td>
+			<p>軸の方向</p>
+		</td>
+		<td>
+			<p>外周の方向</p>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<img src="../../img/Reference/locationGene_circle_xaxis.png">
+		</td>
+		<td>
+			<img src="../../img/Reference/locationGene_circle_yaxis.png">
+		</td>
+		<td>
+			<img src="../../img/Reference/locationGene_circle_zaxis.png">
+		</td>
+	</tr>
+</table>
+
+		<h5>角度ノイズ</h5>
+		<p>
+生成される角度に、このパラメーターで指定された角度の範囲のノイズを加えます。
+生成される位置の均等感を抑制することができます。
 		</p>
 
 		<h4>Sphere</h4>
@@ -63,6 +139,12 @@ Place the particles in a spherical shape. At this time, you specify just the rad
 Place particles along the shape of the model for Effekseer. If "Set angle on spawn" is checked, the Z direction of the particle will be normal to the surface of the model.
 	</p>
 	
+	<p>
+(1.3以降)：表示に使用するFBX(.fbx)、metasequoiaファイル(.mqo)、もしくは、Effekseer用モデルファイル(.efkmodel)を指定します。
+.efkmodel以外を指定した場合、指定したファイルと同じディレクトリに.efkmodelが生成されます。他アプリケーションでエフェクトを再生する場合、
+この生成されたファイルが必要です。
+	</p>
+
 	<h5>Spawn Mode</h5>
 	<h6>Random</h6>
 	<p>
