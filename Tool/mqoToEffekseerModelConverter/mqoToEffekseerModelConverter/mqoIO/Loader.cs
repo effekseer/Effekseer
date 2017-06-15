@@ -210,128 +210,133 @@ namespace mqoToEffekseerModelConverter.mqoIO
 
 			while (true)
 			{
-				if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "facet")
-				{
-					obj.Facet = (float)tokens[n + 1].Digit;
-					n += 2;
-				}
-				else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "vertex")
-				{
-					obj.Vertexes = new Vector3D[(int)tokens[n + 1].Digit];
-					n += 3;
+                if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "facet")
+                {
+                    obj.Facet = (float)tokens[n + 1].Digit;
+                    n += 2;
+                }
+                else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "visible")
+                {
+                    obj.Visible = tokens[n + 1].Digit > 0;
+                    n += 2;
+                }
+                else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "vertex")
+                {
+                    obj.Vertexes = new Vector3D[(int)tokens[n + 1].Digit];
+                    n += 3;
 
-					for (int vind = 0; vind < obj.Vertexes.Length; vind++)
-					{
-						obj.Vertexes[vind].X = (float)tokens[n + 0].Digit;
-						obj.Vertexes[vind].Y = (float)tokens[n + 1].Digit;
-						obj.Vertexes[vind].Z = (float)tokens[n + 2].Digit;
-						n += 3;
-					}
+                    for (int vind = 0; vind < obj.Vertexes.Length; vind++)
+                    {
+                        obj.Vertexes[vind].X = (float)tokens[n + 0].Digit;
+                        obj.Vertexes[vind].Y = (float)tokens[n + 1].Digit;
+                        obj.Vertexes[vind].Z = (float)tokens[n + 2].Digit;
+                        n += 3;
+                    }
 
-					n += 1;
-				}
-				else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "face")
-				{
-					obj.Faces = new Face[(int)tokens[n + 1].Digit];
-					for (int i = 0; i < obj.Faces.Length; i++)
-					{
-						obj.Faces[i] = new Face();
-					}
+                    n += 1;
+                }
+                else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "face")
+                {
+                    obj.Faces = new Face[(int)tokens[n + 1].Digit];
+                    for (int i = 0; i < obj.Faces.Length; i++)
+                    {
+                        obj.Faces[i] = new Face();
+                    }
 
-					n += 3;
+                    n += 3;
 
-					for (int find = 0; find < obj.Faces.Length; find++)
-					{
-						int count = (int)tokens[n + 0].Digit;
-						obj.Faces[find].Indexes = new int[count];
-						obj.Faces[find].UV = new float[count * 2];
-						obj.Faces[find].Colors = new Color[count];
+                    for (int find = 0; find < obj.Faces.Length; find++)
+                    {
+                        int count = (int)tokens[n + 0].Digit;
+                        obj.Faces[find].Indexes = new int[count];
+                        obj.Faces[find].UV = new float[count * 2];
+                        obj.Faces[find].Colors = new Color[count];
 
-						for (int fvind = 0; fvind < count; fvind++)
-						{
-							obj.Faces[find].Colors[fvind] = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-						}
+                        for (int fvind = 0; fvind < count; fvind++)
+                        {
+                            obj.Faces[find].Colors[fvind] = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+                        }
 
-						n += 1;
+                        n += 1;
 
-						while (true)
-						{
-							if (tokens[n].Kind == TokenKind.Digit)
-							{
-								break;
-							}
-							else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "V")
-							{
-								n += 2;
+                        while (true)
+                        {
+                            if (tokens[n].Kind == TokenKind.Digit)
+                            {
+                                break;
+                            }
+                            else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "V")
+                            {
+                                n += 2;
 
-								for (int c = 0; c < count; c++)
-								{
-									obj.Faces[find].Indexes[c] = (int)tokens[n + c].Digit;
-								}
-								n += count;
+                                for (int c = 0; c < count; c++)
+                                {
+                                    obj.Faces[find].Indexes[c] = (int)tokens[n + c].Digit;
+                                }
+                                n += count;
 
-								n += 1;
-							}
-							else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "M")
-							{
-								n += 2;
-								obj.Faces[find].MaterialIndex = (int)tokens[n + 0].Digit;
-								n += 1;
-								n += 1;
-							}
-							else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "UV")
-							{
-								n += 2;
+                                n += 1;
+                            }
+                            else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "M")
+                            {
+                                n += 2;
+                                obj.Faces[find].MaterialIndex = (int)tokens[n + 0].Digit;
+                                n += 1;
+                                n += 1;
+                            }
+                            else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "UV")
+                            {
+                                n += 2;
 
-								for (int c = 0; c < count; c++)
-								{
-									obj.Faces[find].UV[c * 2 + 0] = (float)tokens[n + c * 2 + 0].Digit;
-									obj.Faces[find].UV[c * 2 + 1] = (float)tokens[n + c * 2 + 1].Digit;
-								}
+                                for (int c = 0; c < count; c++)
+                                {
+                                    obj.Faces[find].UV[c * 2 + 0] = (float)tokens[n + c * 2 + 0].Digit;
+                                    obj.Faces[find].UV[c * 2 + 1] = (float)tokens[n + c * 2 + 1].Digit;
+                                }
 
-								n += count * 2;
-								n += 1;
-							}
-							else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "COL")
-							{
-								n += 2;
+                                n += count * 2;
+                                n += 1;
+                            }
+                            else if (tokens[n].Kind == TokenKind.Letter && tokens[n].Letter == "COL")
+                            {
+                                n += 2;
 
-								for (int c = 0; c < count; c++)
-								{
-									var color = (UInt64)tokens[n + c].Digit;
-									var r = (color & 0x000000FF) >> 0;
-									var g = (color & 0x0000FF00) >> 8;
-									var b = (color & 0x00FF0000) >> 16;
-									var a = (color & 0xFF000000) >> 24;
+                                for (int c = 0; c < count; c++)
+                                {
+                                    var color = (UInt64)tokens[n + c].Digit;
+                                    var r = (color & 0x000000FF) >> 0;
+                                    var g = (color & 0x0000FF00) >> 8;
+                                    var b = (color & 0x00FF0000) >> 16;
+                                    var a = (color & 0xFF000000) >> 24;
 
-									obj.Faces[find].Colors[c] = new Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
-								}
-								n += count;
+                                    obj.Faces[find].Colors[c] = new Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+                                }
+                                n += count;
 
-								n += 1;
-							}
-							else if (tokens[n].Kind == TokenKind.RCurly)
-							{
-								break;
-							}
-							else
-							{
-								n++;
-							}
-						}
-					}
+                                n += 1;
+                            }
+                            else if (tokens[n].Kind == TokenKind.RCurly)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                n++;
+                            }
+                        }
+                    }
 
-					n += 1;
-				}
-				else if (tokens[n].Kind == TokenKind.RCurly)
-				{
-					n++;
-					break;
-				}
-				else
-				{
-					n++;
-				}
+                    n += 1;
+                }
+                else if (tokens[n].Kind == TokenKind.RCurly)
+                {
+                    n++;
+                    break;
+                }
+                else
+                {
+                    n++;
+                }
 
 			}
 

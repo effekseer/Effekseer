@@ -226,6 +226,7 @@
     <Compile Include="GUI\Component\Vector3DWithRandom.Designer.cs">
       <DependentUpon>Vector3DWithRandom.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\Dialog\OpenModelDialog.cs" />
     <Compile Include="GUI\DockContent.cs">
       <SubType>Form</SubType>
     </Compile>

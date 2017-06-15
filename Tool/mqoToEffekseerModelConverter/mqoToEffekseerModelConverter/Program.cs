@@ -8,7 +8,7 @@ namespace mqoToEffekseerModelConverter
 {
 	class Program
 	{
-		const int Version = 1;
+		const int Version = 2;
 
 		static void PrintUsage()
 		{
@@ -109,55 +109,71 @@ namespace mqoToEffekseerModelConverter
 			}
 
 			var model = mqoIO.Realtime.Model.Create(mqoModel);
-			var obj = model.Objects[0];
-
+			
 			List<byte[]> data = new List<byte[]>();
 
 			data.Add(BitConverter.GetBytes(Version));
 
-			data.Add(BitConverter.GetBytes(modelCount));
+            data.Add(BitConverter.GetBytes(modelScale));
 
-			data.Add(BitConverter.GetBytes((int)obj.Vertexes.Length));
+            data.Add(BitConverter.GetBytes(modelCount));
 
-			foreach (var v in obj.Vertexes)
-			{
-				v.Position *= modelScale;
+            var vcount = model.Objects.Sum(_ => _.Vertexes.Length);
+            var fcount = model.Objects.Sum(_ => _.Faces.Length);
 
-				data.Add(BitConverter.GetBytes(v.Position.X));
-				data.Add(BitConverter.GetBytes(v.Position.Y));
-				data.Add(BitConverter.GetBytes(v.Position.Z));
+            data.Add(BitConverter.GetBytes((int)vcount));
 
-				data.Add(BitConverter.GetBytes(v.Normal.X));
-				data.Add(BitConverter.GetBytes(v.Normal.Y));
-				data.Add(BitConverter.GetBytes(v.Normal.Z));
+            foreach(var obj in model.Objects)
+            {
+                foreach (var v in obj.Vertexes)
+                {
+                    v.Position *= modelScale;
 
-				data.Add(BitConverter.GetBytes(v.Binormal.X));
-				data.Add(BitConverter.GetBytes(v.Binormal.Y));
-				data.Add(BitConverter.GetBytes(v.Binormal.Z));
+                    data.Add(BitConverter.GetBytes(v.Position.X));
+                    data.Add(BitConverter.GetBytes(v.Position.Y));
+                    data.Add(BitConverter.GetBytes(v.Position.Z));
 
-				data.Add(BitConverter.GetBytes(v.Tangent.X));
-				data.Add(BitConverter.GetBytes(v.Tangent.Y));
-				data.Add(BitConverter.GetBytes(v.Tangent.Z));
+                    data.Add(BitConverter.GetBytes(v.Normal.X));
+                    data.Add(BitConverter.GetBytes(v.Normal.Y));
+                    data.Add(BitConverter.GetBytes(v.Normal.Z));
 
-				data.Add(BitConverter.GetBytes(v.UV.X));
-				data.Add(BitConverter.GetBytes(v.UV.Y));
+                    data.Add(BitConverter.GetBytes(v.Binormal.X));
+                    data.Add(BitConverter.GetBytes(v.Binormal.Y));
+                    data.Add(BitConverter.GetBytes(v.Binormal.Z));
 
-				data.Add(
-					new byte[]
-					{
-					(byte)(v.Color.R * 255.0),
-					(byte)(v.Color.G * 255.0),
-					(byte)(v.Color.B * 255.0),
-					(byte)(v.Color.A * 255.0)});
-			}
+                    data.Add(BitConverter.GetBytes(v.Tangent.X));
+                    data.Add(BitConverter.GetBytes(v.Tangent.Y));
+                    data.Add(BitConverter.GetBytes(v.Tangent.Z));
 
-			data.Add(BitConverter.GetBytes((int)obj.Faces.Length));
-			foreach (var f in obj.Faces)
-			{
-				data.Add(BitConverter.GetBytes(f.Indexes[0]));
-				data.Add(BitConverter.GetBytes(f.Indexes[1]));
-				data.Add(BitConverter.GetBytes(f.Indexes[2]));
-			}
+                    data.Add(BitConverter.GetBytes(v.UV.X));
+                    data.Add(BitConverter.GetBytes(v.UV.Y));
+
+                    data.Add(
+                        new byte[]
+                        {
+                    (byte)(v.Color.R * 255.0),
+                    (byte)(v.Color.G * 255.0),
+                    (byte)(v.Color.B * 255.0),
+                    (byte)(v.Color.A * 255.0)});
+                }
+            }
+
+
+            data.Add(BitConverter.GetBytes((int)fcount));
+
+            int foffset = 0;
+
+            foreach (var obj in model.Objects)
+            {
+                foreach (var f in obj.Faces)
+                {
+                    data.Add(BitConverter.GetBytes(foffset + f.Indexes[0]));
+                    data.Add(BitConverter.GetBytes(foffset + f.Indexes[1]));
+                    data.Add(BitConverter.GetBytes(foffset + f.Indexes[2]));
+                }
+
+                foffset += obj.Faces.Length;
+            }
 
 			System.IO.File.WriteAllBytes(dst, data.SelectMany(_ => _).ToArray());
 		}

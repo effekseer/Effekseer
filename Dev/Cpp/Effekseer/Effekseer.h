@@ -2591,6 +2591,12 @@ public:
 		memcpy( &m_version, p, sizeof(int32_t) );
 		p += sizeof(int32_t);
 
+		if (m_version >= 2)
+		{
+			// Scale
+			p += sizeof(int32_t);
+		}
+
 		memcpy( &m_modelCount, p, sizeof(int32_t) );
 		p += sizeof(int32_t);
 

@@ -58,10 +58,12 @@ namespace mqoToEffekseerModelConverter.mqoIO.Realtime
 				model.Materials[item.i].Ambient = new Color(dif[0] * 0.2f, dif[0] * 0.2f, dif[0] * 0.2f, 0.0f);
 			}
 
-			model.Objects = new Object[mqodata.Objects.Length];
+            var enabledObjects = mqodata.Objects.Where(_ => _.Visible).ToArray();
+
+			model.Objects = new Object[enabledObjects.Length];
 
 			// オブジェクト変換
-			foreach (var item in mqodata.Objects.Select((v, i) => new { v, i }))
+			foreach (var item in enabledObjects.Select((v, i) => new { v, i }))
 			{
 				model.Objects[item.i] = CreateObject(item.v, model.Materials);
 			}
@@ -407,18 +409,18 @@ namespace mqoToEffekseerModelConverter.mqoIO.Realtime
 			}
 		}
 
-		/// <summary>
-		/// 接ベクトルと従法線を求める。
-		/// </summary>
-		/// <param name="p0"></param>
-		/// <param name="uv0"></param>
-		/// <param name="p1"></param>
-		/// <param name="uv1"></param>
-		/// <param name="p2"></param>
-		/// <param name="uv2"></param>
-		/// <param name="tangent"></param>
-		/// <param name="binormal"></param>
-		static void CalculateTangentAndBinormal(
+        /// <summary>
+        /// Calculate tangent and binormal
+        /// </summary>
+        /// <param name="p0"></param>
+        /// <param name="uv0"></param>
+        /// <param name="p1"></param>
+        /// <param name="uv1"></param>
+        /// <param name="p2"></param>
+        /// <param name="uv2"></param>
+        /// <param name="tangent"></param>
+        /// <param name="binormal"></param>
+        static void CalculateTangentAndBinormal(
 			Vector3D p0, Vector2D uv0,
 			Vector3D p1, Vector2D uv1,
 			Vector3D p2, Vector2D uv2,
@@ -455,8 +457,7 @@ namespace mqoToEffekseerModelConverter.mqoIO.Realtime
 
 				if (abc.X == 0.0f)
 				{
-					// ポリゴン縮退
-					Console.WriteLine("Warning:ポリゴン縮退");
+					Console.WriteLine("Warning : Failed to calculate tangent");
 					tangent.X = 0.0f;
 					tangent.Y = 0.0f;
 					tangent.Z = 0.0f;
