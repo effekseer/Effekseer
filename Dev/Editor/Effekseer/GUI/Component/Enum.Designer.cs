@@ -1,6 +1,6 @@
 ﻿namespace Effekseer.GUI.Component
 {
-	partial class Enum<T>
+	partial class Enum
 	{
 		/// <summary> 
 		/// Required designer variable.

@@ -21,27 +21,9 @@ namespace Effekseer.GUI.Component
 			HandleCreated += new EventHandler(FCurves_HandleCreated);
 			HandleDestroyed += new EventHandler(FCurves_HandleDestroyed);
 
-			cb_fcurveEdgeStart = new Enum<Data.Value.FCurveEdge>();
-			cb_fcurveEdgeStart.Location = new Point(lbl_start.Location.X + 30, lbl_start.Location.Y-3);
-			cb_fcurveEdgeStart.Size = new Size(40, 19);
-			cb_fcurveEdgeStart.TabIndex = 12;
-			splitContainer.Panel2.Controls.Add(cb_fcurveEdgeStart);
-
-			cb_fcurveEdgeEnd = new Enum<Data.Value.FCurveEdge>();
-			cb_fcurveEdgeEnd.Location = new Point(lbl_end.Location.X + 30, lbl_end.Location.Y-3);
-			cb_fcurveEdgeEnd.Size = new Size(40, 19);
-			cb_fcurveEdgeEnd.TabIndex = 13;
-			splitContainer.Panel2.Controls.Add(cb_fcurveEdgeEnd);
-
-			cb_fcurveInterpolation = new Enum<Data.Value.FCurveInterpolation>();
-			cb_fcurveInterpolation.Location = new Point(lbl_type.Location.X + 30, lbl_type.Location.Y - 3);
-			cb_fcurveInterpolation.Size = new Size(40, 19);
-			cb_fcurveInterpolation.TabIndex = 14;
-			splitContainer.Panel2.Controls.Add(cb_fcurveInterpolation);
-
-			txt_offset_max.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-			txt_offset_min.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-			txt_sampling.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+			cb_fcurveEdgeStart.Initialize(typeof(Data.Value.FCurveEdge));
+			cb_fcurveEdgeEnd.Initialize(typeof(Data.Value.FCurveEdge));
+			cb_fcurveInterpolation.Initialize(typeof(Data.Value.FCurveInterpolation));
 
 			txt_frame.IsEnable = () =>
 				{
@@ -187,10 +169,6 @@ namespace Effekseer.GUI.Component
 				return 0.0f;
 			};
 		}
-
-		Enum<Data.Value.FCurveEdge> cb_fcurveEdgeStart = null;
-		Enum<Data.Value.FCurveEdge> cb_fcurveEdgeEnd = null;
-		Enum<Data.Value.FCurveInterpolation> cb_fcurveInterpolation = null;
 
 		Data.Value.IFCurveKey editedFCurveKey = null;
 
@@ -371,7 +349,7 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
-			treeNodes.CalculatePosition();
+			treeNodes.CalculatePosition(Math.Max(0, splitContainer.Panel2.Width - 20));
 
 			paramaterTreeNode = paramTreeNodes;
 		}
@@ -526,6 +504,15 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
+
+		private void splitContainer_Panel2_SizeChanged(object sender, EventArgs e)
+		{
+			if (treeNodes != null)
+			{
+				treeNodes.CalculatePosition(Math.Max(0, splitContainer.Panel2.Width - 20));
+			}
+		}
+
 		private void splitContainer_Panel2_Scroll(object sender, ScrollEventArgs e)
 		{
 			splitContainer.Panel1.Refresh();
@@ -537,7 +524,7 @@ namespace Effekseer.GUI.Component
 			{
 				if (treeNodes.ClickOnPanel(e.X, e.Y - splitContainer.Panel2.AutoScrollPosition.Y))
 				{
-					treeNodes.CalculatePosition();
+					treeNodes.CalculatePosition(Math.Max(0, splitContainer.Panel2.Width - 20));
 					splitContainer.Panel1.Refresh();
 				}
 			}
@@ -604,7 +591,7 @@ namespace Effekseer.GUI.Component
 			const int indent = 10;
 			const int paramOffset = 25;
 
-			public void CalculatePosition()
+			public void CalculatePosition(int width)
 			{
 				int indentCount = 1;
 
@@ -616,13 +603,13 @@ namespace Effekseer.GUI.Component
 
 				foreach (var child in Children)
 				{
-					child.CalculatePosition(childY, indentCount + 1, IsExtended);
+					child.CalculatePosition(childY, indentCount + 1, IsExtended, width);
 					childY += child.Height;
 				}
 				
 			}
 
-			void CalculatePosition(int y, int indentCount, bool isParentExtended)
+			void CalculatePosition(int y, int indentCount, bool isParentExtended, int width)
 			{
 				Position = new Point(indent * indentCount, y);
 
@@ -640,7 +627,7 @@ namespace Effekseer.GUI.Component
 				foreach (var f in FCurves)
 				{
 					f.Position = new Point(paramOffset + indent * indentCount, childY);
-					f.SetSize(IsExtended && isParentExtended);
+					f.SetSize(IsExtended && isParentExtended, width);
 
 					if (IsExtended && isParentExtended)
 					{
@@ -651,7 +638,7 @@ namespace Effekseer.GUI.Component
 				
 				foreach (var child in Children)
 				{
-					child.CalculatePosition(childY, indentCount + 1, IsExtended && isParentExtended);
+					child.CalculatePosition(childY, indentCount + 1, IsExtended && isParentExtended, width);
 					Height += child.Height;
 					childY = Position.Y + Height;
 				}
@@ -929,9 +916,10 @@ namespace Effekseer.GUI.Component
 				added = false;
 			}
 
-			public void SetSize(bool isParentExtended)
+			public void SetSize(bool isParentExtended, int width)
 			{
 				this.isParentExtended = isParentExtended;
+				Width = width;
 				GraphPanel.Size = new Size(Width, Height);
 
 				if (Height > 0)
@@ -2048,5 +2036,6 @@ namespace Effekseer.GUI.Component
 				return new Point(p.X, p.Y);
 			}
 		}
+
 	}
 }

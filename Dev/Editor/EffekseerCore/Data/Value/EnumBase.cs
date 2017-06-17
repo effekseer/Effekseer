@@ -10,7 +10,10 @@ namespace Effekseer.Data.Value
 		public abstract int GetValueAsInt();
 		public abstract int GetDefaultValueAsInt();
 		public abstract void SetValue(int value);
+		public abstract void SetValueDirectly(int value);
 		public event ChangedValueEventHandler OnChanged;
+
+		public abstract Type GetEnumType();
 
 		protected void Change(object value, ChangedValueType type)
 		{

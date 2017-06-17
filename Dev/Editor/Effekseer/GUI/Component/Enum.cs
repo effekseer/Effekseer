@@ -10,52 +10,13 @@ using System.Windows.Forms.VisualStyles;
 
 namespace Effekseer.GUI.Component
 {
-	public partial class Enum<T> : System.Windows.Forms.ComboBox where T : struct, IComparable, IFormattable, IConvertible
+	public partial class Enum : System.Windows.Forms.ComboBox
 	{
 		public Enum()
 		{
 			InitializeComponent();
 
 			EnableUndo = true;
-			
-			// GetValuesだと順番が狂うため、GetFieldsで取得
-			var list = new List<T>();
-			var fields = typeof(T).GetFields();
-			var iconBitmaps = new List<Bitmap>();
-			bool hasIcon = false;
-			
-			foreach (var f in fields)
-			{
-				if (f.FieldType != typeof(T)) continue;
-				
-				var attributes = f.GetCustomAttributes(false);
-				var name = NameAttribute.GetName(attributes);
-				if (name == string.Empty)
-				{
-					name = f.ToString();
-				}
-
-				Bitmap icon = null;
-				var iconAttribute = IconAttribute.GetIcon(attributes);
-				if (iconAttribute != null) {
-					icon = (Bitmap)Properties.Resources.ResourceManager.GetObject(iconAttribute.resourceName);
-					hasIcon = true;
-				}
-
-				Items.Add(name);
-				list.Add((T)f.GetValue(null));
-				iconBitmaps.Add(icon);
-			}
-			enums = list.ToArray();
-
-			if (hasIcon)
-			{
-				// アイコンが存在するときはカスタム描画に切り替える
-				icons = iconBitmaps.ToArray();
-				DrawMode = DrawMode.OwnerDrawFixed;
-				DrawItem += new DrawItemEventHandler(Enum_OnDrawItem);
-				ItemHeight += icons[0].Height / 2;
-			}
 
 			Reading = false;
 			Writing = false;
@@ -69,13 +30,61 @@ namespace Effekseer.GUI.Component
 			SelectedIndexChanged += new EventHandler(Enum_SelectedIndexChanged);
 		}
 
-		T[] enums = null;
+		public void Initialize(Type enumType)
+		{
+			if (isInitialized) return;
+			isInitialized = true;
+
+			// GetValuesだと順番が狂うため、GetFieldsで取得
+			var list = new List<int>();
+			var fields = enumType.GetFields();
+			var iconBitmaps = new List<Bitmap>();
+			bool hasIcon = false;
+
+			foreach (var f in fields)
+			{
+				if (f.FieldType != enumType) continue;
+
+				var attributes = f.GetCustomAttributes(false);
+				var name = NameAttribute.GetName(attributes);
+				if (name == string.Empty)
+				{
+					name = f.ToString();
+				}
+
+				Bitmap icon = null;
+				var iconAttribute = IconAttribute.GetIcon(attributes);
+				if (iconAttribute != null)
+				{
+					icon = (Bitmap)Properties.Resources.ResourceManager.GetObject(iconAttribute.resourceName);
+					hasIcon = true;
+				}
+
+				Items.Add(name);
+				list.Add((int)f.GetValue(null));
+				iconBitmaps.Add(icon);
+			}
+			enums = list.ToArray();
+
+			if (hasIcon)
+			{
+				// アイコンが存在するときはカスタム描画に切り替える
+				icons = iconBitmaps.ToArray();
+				DrawMode = DrawMode.OwnerDrawFixed;
+				DrawItem += new DrawItemEventHandler(Enum_OnDrawItem);
+				ItemHeight += icons[0].Height / 2;
+			}
+		}
+
+		bool isInitialized = false;
+
+		int[] enums = null;
 		Bitmap[] icons = null;
-		Data.Value.Enum<T> binding = null;
+		Data.Value.EnumBase binding = null;
 
 		public bool EnableUndo { get; set; }
 
-		public Data.Value.Enum<T> Binding
+		public Data.Value.EnumBase Binding
 		{
 			get
 			{
@@ -105,7 +114,7 @@ namespace Effekseer.GUI.Component
 
 		public void SetBinding(object o)
 		{
-			var o_ = o as Data.Value.Enum<T>;
+			var o_ = o as Data.Value.EnumBase;
 			Binding = o_;
 		}
 
@@ -135,7 +144,7 @@ namespace Effekseer.GUI.Component
 			{
 				for (int i = 0; i < enums.Length; i++)
 				{
-					if (enums[i].ToString() == binding.GetValue().ToString())
+					if (enums[i] == binding.GetValueAsInt())
 					{
 						SelectedIndex = i;
 						break;

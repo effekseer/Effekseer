@@ -83,6 +83,17 @@ namespace Effekseer.Data.Value
 			Change(_value, ChangedValueType.Execute);
 		}
 
+		public override void SetValueDirectly(int value)
+		{
+			dynamic v = value;
+			SetValueDirectly((T)v);
+		}
+
+		public override Type GetEnumType()
+		{
+			return typeof(T);
+		}
+
 		public static implicit operator T(Enum<T> value)
 		{
 			return value._value;

@@ -472,9 +472,10 @@ namespace Effekseer.GUI.Component
 				else if (p.PropertyType.IsGenericType)
 				{
 					var types = p.PropertyType.GetGenericArguments();
-					var generic_type = typeof(Enum<>).MakeGenericType(types);
-					var constructor = generic_type.GetConstructor(new Type[] { });
-					gui = constructor.Invoke(null) as Control;
+					gui = new Enum();
+				
+					var dgui = (dynamic)gui;
+					dgui.Initialize(types[0]);
 				}
 
 				var selector_attribute = (from a in attributes where a is Data.SelectorAttribute select a).FirstOrDefault() as Data.SelectorAttribute;
