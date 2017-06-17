@@ -46,9 +46,9 @@ issuesとwishlistを読んでください。常時、機能追加、バグ修正
 ## 1.3 Finished
 * Add some icons to Editor GUI
 * File viewer
+* Integrate FBX and mqo importer
 
 ## 1.3 Todo
-* Integrate FBX and mqo importer.
 * Show the number of draw call.
 * For UnrealEngine4
 * For Cocos2d-x

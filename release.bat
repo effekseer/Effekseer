@@ -37,6 +37,9 @@ mkdir %RDIR%\Tool\en-US
 copy Dev\release\en-US\Effekseer.resources.dll %RDIR%\Tool\en-US\.
 copy Dev\release\en-US\EffekseerCore.resources.dll %RDIR%\Tool\en-US\.
 
+mkdir %RDIR%\Tool\tools
+copy Dev\release\tools\fbxToEffekseerModelConverter.exe %RDIR%\Tool\tools\.
+copy Dev\release\tools\mqoToEffekseerModelConverter.exe %RDIR%\Tool\tools\.
 
 echo Copy runtime
 mkdir %RDIR_R%\RuntimeSample\
