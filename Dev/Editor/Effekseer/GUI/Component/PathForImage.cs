@@ -94,6 +94,11 @@ namespace Effekseer.GUI.Component
 
 		void UpdatePreview(string path)
 		{
+            if (!System.IO.File.Exists(path))
+            {
+                return;
+            }
+
 			try
 			{
 				Bitmap srcbmp = new Bitmap(binding.GetAbsolutePath());
@@ -127,7 +132,8 @@ namespace Effekseer.GUI.Component
 			}
 			catch (Exception e)
 			{
-				System.IO.File.WriteAllText("error.txt", e.ToString());
+                if (path == null) path = string.Empty;
+				System.IO.File.WriteAllText("error_image.txt", path +  "\n" + e.ToString());
 				pic_preview.Image = null;
 			}
 		}

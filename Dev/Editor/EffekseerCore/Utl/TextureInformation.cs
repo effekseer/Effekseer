@@ -17,8 +17,11 @@ namespace Effekseer.Utl
 
 		public bool Load(string path)
 		{ 
+
 			System.IO.FileStream fs = null;
-			try
+            if (!System.IO.File.Exists(path)) return false;
+
+            try
 			{
 				fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
 			}
