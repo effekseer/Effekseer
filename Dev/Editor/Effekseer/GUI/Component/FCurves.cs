@@ -25,6 +25,11 @@ namespace Effekseer.GUI.Component
 			cb_fcurveEdgeEnd.Initialize(typeof(Data.Value.FCurveEdge));
 			cb_fcurveInterpolation.Initialize(typeof(Data.Value.FCurveInterpolation));
 
+
+			txt_offset_min.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Top;
+			txt_offset_max.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Top;
+			txt_sampling.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Top;
+
 			txt_frame.IsEnable = () =>
 				{
 					return editedFCurveKey != null;

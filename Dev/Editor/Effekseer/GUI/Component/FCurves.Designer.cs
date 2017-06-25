@@ -65,7 +65,7 @@
 			this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.splitContainer.Location = new System.Drawing.Point(0, 0);
+			this.splitContainer.Location = new System.Drawing.Point(0, 53);
 			this.splitContainer.Name = "splitContainer";
 			// 
 			// splitContainer.Panel1
@@ -80,15 +80,14 @@
 			this.splitContainer.Panel2.BackColor = System.Drawing.SystemColors.Control;
 			this.splitContainer.Panel2.Scroll += new System.Windows.Forms.ScrollEventHandler(this.splitContainer_Panel2_Scroll);
 			this.splitContainer.Panel2.SizeChanged += new System.EventHandler(this.splitContainer_Panel2_SizeChanged);
-			this.splitContainer.Size = new System.Drawing.Size(906, 412);
-			this.splitContainer.SplitterDistance = 207;
+			this.splitContainer.Size = new System.Drawing.Size(1062, 362);
+			this.splitContainer.SplitterDistance = 242;
 			this.splitContainer.TabIndex = 2;
 			// 
 			// lbl_sampling
 			// 
-			this.lbl_sampling.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_sampling.AutoSize = true;
-			this.lbl_sampling.Location = new System.Drawing.Point(940, 136);
+			this.lbl_sampling.Location = new System.Drawing.Point(545, 7);
 			this.lbl_sampling.Name = "lbl_sampling";
 			this.lbl_sampling.Size = new System.Drawing.Size(58, 12);
 			this.lbl_sampling.TabIndex = 26;
@@ -96,9 +95,8 @@
 			// 
 			// lbl_offset_min
 			// 
-			this.lbl_offset_min.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_offset_min.AutoSize = true;
-			this.lbl_offset_min.Location = new System.Drawing.Point(965, 286);
+			this.lbl_offset_min.Location = new System.Drawing.Point(570, 31);
 			this.lbl_offset_min.Name = "lbl_offset_min";
 			this.lbl_offset_min.Size = new System.Drawing.Size(29, 12);
 			this.lbl_offset_min.TabIndex = 20;
@@ -106,9 +104,8 @@
 			// 
 			// lbl_offset_max
 			// 
-			this.lbl_offset_max.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_offset_max.AutoSize = true;
-			this.lbl_offset_max.Location = new System.Drawing.Point(965, 261);
+			this.lbl_offset_max.Location = new System.Drawing.Point(477, 31);
 			this.lbl_offset_max.Name = "lbl_offset_max";
 			this.lbl_offset_max.Size = new System.Drawing.Size(29, 12);
 			this.lbl_offset_max.TabIndex = 19;
@@ -116,9 +113,8 @@
 			// 
 			// lbl_offset
 			// 
-			this.lbl_offset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_offset.AutoSize = true;
-			this.lbl_offset.Location = new System.Drawing.Point(912, 261);
+			this.lbl_offset.Location = new System.Drawing.Point(424, 31);
 			this.lbl_offset.Name = "lbl_offset";
 			this.lbl_offset.Size = new System.Drawing.Size(47, 12);
 			this.lbl_offset.TabIndex = 18;
@@ -126,9 +122,8 @@
 			// 
 			// lbl_end
 			// 
-			this.lbl_end.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_end.AutoSize = true;
-			this.lbl_end.Location = new System.Drawing.Point(940, 85);
+			this.lbl_end.Location = new System.Drawing.Point(327, 6);
 			this.lbl_end.Name = "lbl_end";
 			this.lbl_end.Size = new System.Drawing.Size(29, 12);
 			this.lbl_end.TabIndex = 16;
@@ -136,9 +131,8 @@
 			// 
 			// lbl_start
 			// 
-			this.lbl_start.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_start.AutoSize = true;
-			this.lbl_start.Location = new System.Drawing.Point(940, 64);
+			this.lbl_start.Location = new System.Drawing.Point(221, 6);
 			this.lbl_start.Name = "lbl_start";
 			this.lbl_start.Size = new System.Drawing.Size(29, 12);
 			this.lbl_start.TabIndex = 15;
@@ -146,9 +140,8 @@
 			// 
 			// lbl_type
 			// 
-			this.lbl_type.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_type.AutoSize = true;
-			this.lbl_type.Location = new System.Drawing.Point(940, 111);
+			this.lbl_type.Location = new System.Drawing.Point(434, 6);
 			this.lbl_type.Name = "lbl_type";
 			this.lbl_type.Size = new System.Drawing.Size(29, 12);
 			this.lbl_type.TabIndex = 14;
@@ -156,9 +149,8 @@
 			// 
 			// lbl_value
 			// 
-			this.lbl_value.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_value.AutoSize = true;
-			this.lbl_value.Location = new System.Drawing.Point(940, 34);
+			this.lbl_value.Location = new System.Drawing.Point(127, 6);
 			this.lbl_value.Name = "lbl_value";
 			this.lbl_value.Size = new System.Drawing.Size(17, 12);
 			this.lbl_value.TabIndex = 13;
@@ -166,9 +158,8 @@
 			// 
 			// lbl_frame
 			// 
-			this.lbl_frame.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_frame.AutoSize = true;
-			this.lbl_frame.Location = new System.Drawing.Point(940, 9);
+			this.lbl_frame.Location = new System.Drawing.Point(7, 6);
 			this.lbl_frame.Name = "lbl_frame";
 			this.lbl_frame.Size = new System.Drawing.Size(42, 12);
 			this.lbl_frame.TabIndex = 12;
@@ -176,9 +167,8 @@
 			// 
 			// lbl_right_y
 			// 
-			this.lbl_right_y.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_right_y.AutoSize = true;
-			this.lbl_right_y.Location = new System.Drawing.Point(983, 236);
+			this.lbl_right_y.Location = new System.Drawing.Point(312, 31);
 			this.lbl_right_y.Name = "lbl_right_y";
 			this.lbl_right_y.Size = new System.Drawing.Size(11, 12);
 			this.lbl_right_y.TabIndex = 11;
@@ -186,9 +176,8 @@
 			// 
 			// lbl_right_x
 			// 
-			this.lbl_right_x.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_right_x.AutoSize = true;
-			this.lbl_right_x.Location = new System.Drawing.Point(983, 211);
+			this.lbl_right_x.Location = new System.Drawing.Point(239, 31);
 			this.lbl_right_x.Name = "lbl_right_x";
 			this.lbl_right_x.Size = new System.Drawing.Size(11, 12);
 			this.lbl_right_x.TabIndex = 10;
@@ -196,9 +185,8 @@
 			// 
 			// lbl_right
 			// 
-			this.lbl_right.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_right.AutoSize = true;
-			this.lbl_right.Location = new System.Drawing.Point(960, 211);
+			this.lbl_right.Location = new System.Drawing.Point(216, 31);
 			this.lbl_right.Name = "lbl_right";
 			this.lbl_right.Size = new System.Drawing.Size(17, 12);
 			this.lbl_right.TabIndex = 9;
@@ -206,9 +194,8 @@
 			// 
 			// lbl_left_y
 			// 
-			this.lbl_left_y.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_left_y.AutoSize = true;
-			this.lbl_left_y.Location = new System.Drawing.Point(983, 186);
+			this.lbl_left_y.Location = new System.Drawing.Point(113, 31);
 			this.lbl_left_y.Name = "lbl_left_y";
 			this.lbl_left_y.Size = new System.Drawing.Size(11, 12);
 			this.lbl_left_y.TabIndex = 8;
@@ -216,9 +203,8 @@
 			// 
 			// lbl_left_x
 			// 
-			this.lbl_left_x.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_left_x.AutoSize = true;
-			this.lbl_left_x.Location = new System.Drawing.Point(983, 161);
+			this.lbl_left_x.Location = new System.Drawing.Point(38, 31);
 			this.lbl_left_x.Name = "lbl_left_x";
 			this.lbl_left_x.Size = new System.Drawing.Size(11, 12);
 			this.lbl_left_x.TabIndex = 7;
@@ -226,9 +212,8 @@
 			// 
 			// lbl_left
 			// 
-			this.lbl_left.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.lbl_left.AutoSize = true;
-			this.lbl_left.Location = new System.Drawing.Point(960, 161);
+			this.lbl_left.Location = new System.Drawing.Point(15, 31);
 			this.lbl_left.Name = "lbl_left";
 			this.lbl_left.Size = new System.Drawing.Size(17, 12);
 			this.lbl_left.TabIndex = 6;
@@ -236,89 +221,82 @@
 			// 
 			// cb_fcurveEdgeEnd
 			// 
-			this.cb_fcurveEdgeEnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.cb_fcurveEdgeEnd.Binding = null;
 			this.cb_fcurveEdgeEnd.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cb_fcurveEdgeEnd.Enabled = false;
 			this.cb_fcurveEdgeEnd.EnableUndo = true;
 			this.cb_fcurveEdgeEnd.FormattingEnabled = true;
-			this.cb_fcurveEdgeEnd.Location = new System.Drawing.Point(999, 82);
+			this.cb_fcurveEdgeEnd.Location = new System.Drawing.Point(362, 3);
 			this.cb_fcurveEdgeEnd.Name = "cb_fcurveEdgeEnd";
 			this.cb_fcurveEdgeEnd.Size = new System.Drawing.Size(50, 20);
 			this.cb_fcurveEdgeEnd.TabIndex = 13;
 			// 
 			// cb_fcurveEdgeStart
 			// 
-			this.cb_fcurveEdgeStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.cb_fcurveEdgeStart.Binding = null;
 			this.cb_fcurveEdgeStart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cb_fcurveEdgeStart.Enabled = false;
 			this.cb_fcurveEdgeStart.EnableUndo = true;
 			this.cb_fcurveEdgeStart.FormattingEnabled = true;
-			this.cb_fcurveEdgeStart.Location = new System.Drawing.Point(999, 56);
+			this.cb_fcurveEdgeStart.Location = new System.Drawing.Point(256, 3);
 			this.cb_fcurveEdgeStart.Name = "cb_fcurveEdgeStart";
 			this.cb_fcurveEdgeStart.Size = new System.Drawing.Size(50, 20);
 			this.cb_fcurveEdgeStart.TabIndex = 12;
 			// 
 			// cb_fcurveInterpolation
 			// 
-			this.cb_fcurveInterpolation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.cb_fcurveInterpolation.Binding = null;
 			this.cb_fcurveInterpolation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cb_fcurveInterpolation.Enabled = false;
 			this.cb_fcurveInterpolation.EnableUndo = true;
 			this.cb_fcurveInterpolation.FormattingEnabled = true;
-			this.cb_fcurveInterpolation.Location = new System.Drawing.Point(999, 108);
+			this.cb_fcurveInterpolation.Location = new System.Drawing.Point(469, 3);
 			this.cb_fcurveInterpolation.Name = "cb_fcurveInterpolation";
 			this.cb_fcurveInterpolation.Size = new System.Drawing.Size(50, 20);
 			this.cb_fcurveInterpolation.TabIndex = 14;
 			// 
 			// txt_offset_min
 			// 
-			this.txt_offset_min.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.txt_offset_min.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(200)))), ((int)(((byte)(170)))));
 			this.txt_offset_min.Binding = null;
 			this.txt_offset_min.Enabled = false;
 			this.txt_offset_min.EnableUndo = true;
 			this.txt_offset_min.IsEnable = null;
-			this.txt_offset_min.Location = new System.Drawing.Point(1000, 283);
+			this.txt_offset_min.Location = new System.Drawing.Point(605, 28);
 			this.txt_offset_min.Name = "txt_offset_min";
 			this.txt_offset_min.Size = new System.Drawing.Size(50, 19);
 			this.txt_offset_min.TabIndex = 31;
 			// 
 			// txt_offset_max
 			// 
-			this.txt_offset_max.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.txt_offset_max.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(200)))), ((int)(((byte)(170)))));
 			this.txt_offset_max.Binding = null;
 			this.txt_offset_max.Enabled = false;
 			this.txt_offset_max.EnableUndo = true;
 			this.txt_offset_max.IsEnable = null;
-			this.txt_offset_max.Location = new System.Drawing.Point(1000, 258);
+			this.txt_offset_max.Location = new System.Drawing.Point(512, 28);
 			this.txt_offset_max.Name = "txt_offset_max";
 			this.txt_offset_max.Size = new System.Drawing.Size(50, 19);
 			this.txt_offset_max.TabIndex = 30;
 			// 
 			// txt_sampling
 			// 
-			this.txt_sampling.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.txt_sampling.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
 			this.txt_sampling.Binding = null;
 			this.txt_sampling.Enabled = false;
 			this.txt_sampling.EnableUndo = true;
 			this.txt_sampling.IsEnable = null;
-			this.txt_sampling.Location = new System.Drawing.Point(1000, 133);
+			this.txt_sampling.Location = new System.Drawing.Point(605, 4);
 			this.txt_sampling.Name = "txt_sampling";
 			this.txt_sampling.Size = new System.Drawing.Size(50, 19);
 			this.txt_sampling.TabIndex = 15;
 			// 
 			// txt_frame
 			// 
-			this.txt_frame.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.txt_frame.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(170)))), ((int)(((byte)(170)))));
 			this.txt_frame.Enabled = false;
 			this.txt_frame.IsEnable = null;
-			this.txt_frame.Location = new System.Drawing.Point(999, 6);
+			this.txt_frame.Location = new System.Drawing.Point(55, 3);
 			this.txt_frame.Name = "txt_frame";
 			this.txt_frame.ReadMethod = null;
 			this.txt_frame.Size = new System.Drawing.Size(50, 19);
@@ -328,11 +306,10 @@
 			// 
 			// txt_value
 			// 
-			this.txt_value.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.txt_value.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(200)))), ((int)(((byte)(170)))));
 			this.txt_value.Enabled = false;
 			this.txt_value.IsEnable = null;
-			this.txt_value.Location = new System.Drawing.Point(999, 31);
+			this.txt_value.Location = new System.Drawing.Point(150, 3);
 			this.txt_value.Name = "txt_value";
 			this.txt_value.ReadMethod = null;
 			this.txt_value.Size = new System.Drawing.Size(50, 19);
@@ -342,11 +319,10 @@
 			// 
 			// txt_right_y
 			// 
-			this.txt_right_y.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.txt_right_y.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(200)))), ((int)(((byte)(170)))));
 			this.txt_right_y.Enabled = false;
 			this.txt_right_y.IsEnable = null;
-			this.txt_right_y.Location = new System.Drawing.Point(1000, 233);
+			this.txt_right_y.Location = new System.Drawing.Point(329, 28);
 			this.txt_right_y.Name = "txt_right_y";
 			this.txt_right_y.ReadMethod = null;
 			this.txt_right_y.Size = new System.Drawing.Size(50, 19);
@@ -356,11 +332,10 @@
 			// 
 			// txt_right_x
 			// 
-			this.txt_right_x.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.txt_right_x.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(200)))), ((int)(((byte)(170)))));
 			this.txt_right_x.Enabled = false;
 			this.txt_right_x.IsEnable = null;
-			this.txt_right_x.Location = new System.Drawing.Point(1000, 208);
+			this.txt_right_x.Location = new System.Drawing.Point(256, 28);
 			this.txt_right_x.Name = "txt_right_x";
 			this.txt_right_x.ReadMethod = null;
 			this.txt_right_x.Size = new System.Drawing.Size(50, 19);
@@ -370,11 +345,10 @@
 			// 
 			// txt_left_y
 			// 
-			this.txt_left_y.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.txt_left_y.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(200)))), ((int)(((byte)(170)))));
 			this.txt_left_y.Enabled = false;
 			this.txt_left_y.IsEnable = null;
-			this.txt_left_y.Location = new System.Drawing.Point(999, 183);
+			this.txt_left_y.Location = new System.Drawing.Point(129, 28);
 			this.txt_left_y.Name = "txt_left_y";
 			this.txt_left_y.ReadMethod = null;
 			this.txt_left_y.Size = new System.Drawing.Size(50, 19);
@@ -384,11 +358,10 @@
 			// 
 			// txt_left_x
 			// 
-			this.txt_left_x.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.txt_left_x.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(200)))), ((int)(((byte)(170)))));
 			this.txt_left_x.Enabled = false;
 			this.txt_left_x.IsEnable = null;
-			this.txt_left_x.Location = new System.Drawing.Point(1000, 158);
+			this.txt_left_x.Location = new System.Drawing.Point(55, 28);
 			this.txt_left_x.Name = "txt_left_x";
 			this.txt_left_x.ReadMethod = null;
 			this.txt_left_x.Size = new System.Drawing.Size(50, 19);
