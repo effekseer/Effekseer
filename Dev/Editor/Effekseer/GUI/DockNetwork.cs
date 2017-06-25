@@ -14,7 +14,9 @@ namespace Effekseer.GUI
 		public DockNetwork()
 		{
 			InitializeComponent();
-		}
+
+            Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconNetwork).GetHicon());
+        }
 
 		private void DockNetwork_Load(object sender, EventArgs e)
 		{

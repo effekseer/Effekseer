@@ -389,6 +389,16 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap IconBehavior {
+            get {
+                object obj = ResourceManager.GetObject("IconBehavior", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap IconCommon {
             get {
                 object obj = ResourceManager.GetObject("IconCommon", resourceCulture);
@@ -399,9 +409,29 @@ namespace Effekseer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap IconCulling {
+            get {
+                object obj = ResourceManager.GetObject("IconCulling", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap IconFCurve {
             get {
                 object obj = ResourceManager.GetObject("IconFCurve", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap IconFileViewer {
+            get {
+                object obj = ResourceManager.GetObject("IconFileViewer", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -432,6 +462,36 @@ namespace Effekseer.Properties {
         internal static System.Drawing.Bitmap IconLocationAbs {
             get {
                 object obj = ResourceManager.GetObject("IconLocationAbs", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap IconNetwork {
+            get {
+                object obj = ResourceManager.GetObject("IconNetwork", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap IconNodeTree {
+            get {
+                object obj = ResourceManager.GetObject("IconNodeTree", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap IconOption {
+            get {
+                object obj = ResourceManager.GetObject("IconOption", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

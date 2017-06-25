@@ -299,7 +299,7 @@ namespace Effekseer.GUI
 						menu.DropDownItems.Add(item);
 					};
 
-				setDockWindow(Properties.Resources.NodeTree, typeof(DockNodeTreeView), null);
+				setDockWindow(Properties.Resources.NodeTree, typeof(DockNodeTreeView), Properties.Resources.IconNodeTree);
 				setDockWindow(Properties.Resources.BasicSettings, typeof(DockNodeCommonValues), Properties.Resources.IconCommon);
 				setDockWindow(Properties.Resources.Position, typeof(DockNodeLocationValues), Properties.Resources.IconLocation);
 				setDockWindow(Properties.Resources.AttractionForces, typeof(DockNodeLocationAbsValues), Properties.Resources.IconLocationAbs);
@@ -313,11 +313,11 @@ namespace Effekseer.GUI
 				setDockWindow(Properties.Resources.ViewerControls, typeof(DockViewerController), Properties.Resources.IconViewer);
 				setDockWindow(Properties.Resources.CameraSettings, typeof(DockViewPoint), Properties.Resources.IconViewPoint);
 				setDockWindow(Properties.Resources.Recorder, typeof(DockRecorder), Properties.Resources.IconRecorder);
-				setDockWindow(Properties.Resources.Options, typeof(DockOption), null);
-				setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), null);
-				setDockWindow(Properties.Resources.Culling, typeof(DockCulling), null);
-				setDockWindow(Properties.Resources.Network, typeof(DockNetwork), null);
-				setDockWindow(Properties.Resources.FileViewer, typeof(DockFileViewer), null);
+				setDockWindow(Properties.Resources.Options, typeof(DockOption), Properties.Resources.IconOption);
+				setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), Properties.Resources.IconBehavior);
+				setDockWindow(Properties.Resources.Culling, typeof(DockCulling), Properties.Resources.IconCulling);
+				setDockWindow(Properties.Resources.Network, typeof(DockNetwork), Properties.Resources.IconNetwork);
+				setDockWindow(Properties.Resources.FileViewer, typeof(DockFileViewer), Properties.Resources.IconFileViewer);
 
 				menuStrip.Items.Add(menu);
 			}

@@ -17,7 +17,9 @@ namespace Effekseer.GUI
 		public DockFileViewer()
 		{
 			InitializeComponent();
-		}
+
+            Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconFileViewer).GetHicon());
+        }
 		
 		class Win32
 		{

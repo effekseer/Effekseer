@@ -25,7 +25,9 @@ namespace Effekseer.GUI
 			imageList1.Images.Add(Properties.Resources.NodeRing);
 			imageList1.Images.Add(Properties.Resources.NodeModel);
 			imageList1.Images.Add(Properties.Resources.NodeTrack);
-		}
+
+            Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconNodeTree).GetHicon());
+        }
 
 		internal Component.NodeTreeView NodeTreeView
 		{

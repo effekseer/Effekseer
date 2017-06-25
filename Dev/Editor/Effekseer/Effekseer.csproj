@@ -531,11 +531,17 @@
   <ItemGroup>
     <Content Include="Image\icon.ico" />
     <Content Include="Image\BackStep.png" />
+    <Content Include="Image\IconBehavior.png" />
     <Content Include="Image\IconCommon.png" />
+    <Content Include="Image\IconCulling.png" />
     <Content Include="Image\IconFCurve.png" />
+    <Content Include="Image\IconFileViewer.png" />
     <Content Include="Image\IconGenerationLocation.png" />
     <Content Include="Image\IconLocation.png" />
     <Content Include="Image\IconLocationAbs.png" />
+    <Content Include="Image\IconNetwork.png" />
+    <Content Include="Image\IconNodeTree.png" />
+    <Content Include="Image\IconOption.png" />
     <Content Include="Image\IconRecorder.png" />
     <Content Include="Image\IconRenderer.png" />
     <Content Include="Image\IconRendererCommon.png" />

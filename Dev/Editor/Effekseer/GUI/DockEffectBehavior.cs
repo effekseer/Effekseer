@@ -18,7 +18,9 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockEffectBehavior_HandleDestroyed);
 
 			lp_behavior.SetType(typeof(Data.EffectBehaviorValues));
-		}
+
+            Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconBehavior).GetHicon());
+        }
 
 		void Read()
 		{

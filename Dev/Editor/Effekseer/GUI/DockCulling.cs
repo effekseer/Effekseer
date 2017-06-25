@@ -18,7 +18,9 @@ namespace Effekseer.GUI
 			HandleDestroyed += new EventHandler(DockCulling_HandleDestroyed);
 
 			lp_culling.SetType(typeof(Data.EffectCullingValues));
-		}
+
+            Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconCulling).GetHicon());
+        }
 
 		void Read()
 		{
