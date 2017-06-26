@@ -269,10 +269,10 @@ int main()
 	g_manager->Destroy();
 
 	// 次に音再生用インスタンスを破棄
-	g_sound->Destory();
+	g_sound->Destroy();
 
 	// 次に描画用インスタンスを破棄
-	g_renderer->Destory();
+	g_renderer->Destroy();
 
 	// OpenALの解放
 	alcDestroyContext(g_alcctx);

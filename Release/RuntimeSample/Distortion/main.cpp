@@ -134,16 +134,17 @@ public:
 
 	}
 
-	void OnDistorting()
+	bool OnDistorting()
 	{
 		if (g_backgroundTexture == NULL)
 		{
 			((EffekseerRendererDX9::Renderer*)g_renderer)->SetBackground(NULL);
-			return;
+			return false;
 		}
 
 		CopyRenderTargetToBackground();
 		((EffekseerRendererDX9::Renderer*)g_renderer)->SetBackground(g_backgroundTexture);
+		return true;
 	}
 };
 
@@ -383,10 +384,10 @@ int main()
 	g_manager->Destroy();
 
 	// 次に音再生用インスタンスを破棄
-	g_sound->Destory();
+	g_sound->Destroy();
 
 	// 次に描画用インスタンスを破棄
-	g_renderer->Destory();
+	g_renderer->Destroy();
 
 	// XAudio2の解放
 	if( g_xa2_master != NULL )
