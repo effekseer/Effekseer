@@ -161,6 +161,9 @@ private:
 	::Effekseer::Vector3D m_rootLocation;
 	::Effekseer::Vector3D m_rootRotation;
 	::Effekseer::Vector3D m_rootScale;
+
+	::Effekseer::Effect* GetEffect();
+
 public:
 	Native();
 

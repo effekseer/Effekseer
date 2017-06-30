@@ -302,6 +302,11 @@ void Renderer::ResetDevice()
 {
 	GenerateRenderTargets(0, 0);
 
+	if (LostedDevice != nullptr)
+	{
+		LostedDevice();
+	}
+
 	m_renderer->OnLostDevice();
 
 	HRESULT hr;
@@ -328,6 +333,11 @@ void Renderer::ResetDevice()
 	}
 
 	m_renderer->OnResetDevice();
+
+	if (ResettedDevice != nullptr)
+	{
+		ResettedDevice();
+	}
 
 	GenerateRenderTargets(m_width, m_height);
 }

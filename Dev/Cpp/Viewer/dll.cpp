@@ -558,13 +558,7 @@ Effekseer::TextureData* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effe
 //----------------------------------------------------------------------------------
 void Native::TextureLoader::Unload(Effekseer::TextureData* data )
 {
-	/*
-	if( data != NULL )
-	{
-		IDirect3DTexture9* texture = (IDirect3DTexture9*)data;
-		texture->Release();
-	}
-	*/
+	//m_originalTextureLoader->Unload(data);
 }
 
 //----------------------------------------------------------------------------------
@@ -772,6 +766,11 @@ void Native::ModelLoader::Unload( void* data )
 	*/
 }
 
+::Effekseer::Effect* Native::GetEffect()
+{
+	return g_effect;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -828,6 +827,26 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			g_manager->SetTextureLoader( new TextureLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer()) );
 			g_manager->SetModelLoader( new ModelLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer() ) );
 		}
+
+		// Assign device lost events.
+		g_renderer->LostedDevice = [this]() -> void
+		{
+			this->InvalidateTextureCache();
+			auto e = this->GetEffect();
+			if (e != nullptr)
+			{
+				e->UnloadResources();
+			}
+		};
+
+		g_renderer->ResettedDevice = [this]() -> void
+		{
+			auto e = this->GetEffect();
+			if (e != nullptr)
+			{
+				e->ReloadResources();
+			}
+		};
 	}
 	else
 	{
@@ -1657,8 +1676,8 @@ bool Native::InvalidateTextureCache()
 	}
 
 	{
-		std::map<std::wstring,EffekseerRendererDX9::Model*>::iterator it = m_models.begin();
-		std::map<std::wstring,EffekseerRendererDX9::Model*>::iterator it_end = m_models.end();
+		auto it = m_models.begin();
+		auto it_end = m_models.end();
 		while( it != it_end )
 		{
 			ES_SAFE_DELETE( (*it).second );

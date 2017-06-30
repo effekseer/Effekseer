@@ -7,6 +7,8 @@
 //----------------------------------------------------------------------------------
 #include "EffekseerTool.Base.h"
 
+#include <functional>
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -237,6 +239,17 @@ public:
 		@brief	背景の読み込み
 	*/
 	void LoadBackgroundImage( void* data, int32_t size );
+
+	/**
+		Called when device is losted.
+	*/
+	std::function<void()>	LostedDevice;
+
+	/**
+	Called when device is resetted.
+	*/
+	std::function<void()>	ResettedDevice;
+
 };
 
 //----------------------------------------------------------------------------------

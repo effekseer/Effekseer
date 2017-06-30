@@ -35,6 +35,9 @@ public:
 
 	static Guide* Create( EffekseerRendererDX9::RendererImplemented* renderer );
 
+public:	// デバイス復旧用
+	virtual void OnLostDevice();
+	virtual void OnResetDevice();
 
 public:
 	void Rendering( int32_t width, int32_t height, int32_t guide_width, int32_t guide_height );
