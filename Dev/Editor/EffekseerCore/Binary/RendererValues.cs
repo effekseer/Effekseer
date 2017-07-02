@@ -404,7 +404,11 @@ namespace Effekseer.Binary
 				if (param.Model.RelativePath != string.Empty)
 				{
 					var relative_path = param.Model.RelativePath;
-					relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+
+                    if (!string.IsNullOrEmpty(relative_path))
+                    {
+                        relative_path = System.IO.Path.GetDirectoryName(relative_path) + "/" + System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+                    }
 
 					data.Add(model_and_index[relative_path].GetBytes());
 				}

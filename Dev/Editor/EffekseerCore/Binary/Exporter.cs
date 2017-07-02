@@ -174,30 +174,37 @@ namespace Effekseer.Binary
 					{
 						var relative_path = _node.DrawingValues.Model.Model.RelativePath;
 
-						relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+                        if (!string.IsNullOrEmpty(relative_path))
+                        {
+                            relative_path = System.IO.Path.GetDirectoryName(relative_path) + "/" + System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
 
-						if (relative_path != string.Empty)
-						{
-							if (!models.Contains(relative_path))
-							{
-								models.Add(relative_path);
-							}
-						}
+                            if (relative_path != string.Empty)
+                            {
+                                if (!models.Contains(relative_path))
+                                {
+                                    models.Add(relative_path);
+                                }
+                            }
+                        }
+                       
 					}
 
 					if (_node.GenerationLocationValues.Type.Value == Data.GenerationLocationValues.ParameterType.Model)
 					{
 						var relative_path = _node.GenerationLocationValues.Model.Model.RelativePath;
 
-						relative_path = System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+                        if (!string.IsNullOrEmpty(relative_path))
+                        {
+                            relative_path = System.IO.Path.GetDirectoryName(relative_path) + "/" + System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
 
-						if (relative_path != string.Empty)
-						{
-							if (!models.Contains(relative_path))
-							{
-								models.Add(relative_path);
-							}
-						}
+                            if (relative_path != string.Empty)
+                            {
+                                if (!models.Contains(relative_path))
+                                {
+                                    models.Add(relative_path);
+                                }
+                            }
+                        }
 					}
 				}
 
