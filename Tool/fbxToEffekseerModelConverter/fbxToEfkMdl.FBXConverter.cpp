@@ -144,19 +144,13 @@ namespace fbxToEfkMdl
 			switch (colors->GetReferenceMode())
 			{
 			case FbxGeometryElement::eDirect:
-				color.mRed = static_cast<uint8_t>(colors->GetDirectArray().GetAt(ctrlPointIndex)[0] * 255);
-				color.mGreen = static_cast<uint8_t>(colors->GetDirectArray().GetAt(ctrlPointIndex)[1] * 255);
-				color.mBlue = static_cast<uint8_t>(colors->GetDirectArray().GetAt(ctrlPointIndex)[2] * 255);
-				color.mAlpha = static_cast<uint8_t>(colors->GetDirectArray().GetAt(ctrlPointIndex)[3] * 255);
+				color = colors->GetDirectArray().GetAt(ctrlPointIndex);
 				break;
 
 			case FbxGeometryElement::eIndexToDirect:
 			{
 				auto id = colors->GetIndexArray().GetAt(ctrlPointIndex);
-				color.mRed = static_cast<uint8_t>(colors->GetDirectArray().GetAt(id)[0] * 255);
-				color.mGreen = static_cast<uint8_t>(colors->GetDirectArray().GetAt(id)[1] * 255);
-				color.mBlue = static_cast<uint8_t>(colors->GetDirectArray().GetAt(id)[2] * 255);
-				color.mAlpha = static_cast<uint8_t>(colors->GetDirectArray().GetAt(id)[3] * 255);
+				color = colors->GetDirectArray().GetAt(id);
 			}
 				break;
 			default:
@@ -168,18 +162,12 @@ namespace fbxToEfkMdl
 			switch (colors->GetReferenceMode())
 			{
 			case FbxGeometryElement::eDirect:
-				color.mRed = static_cast<uint8_t>(colors->GetDirectArray().GetAt(vertexID)[0] * 255);
-				color.mGreen = static_cast<uint8_t>(colors->GetDirectArray().GetAt(vertexID)[1] * 255);
-				color.mBlue = static_cast<uint8_t>(colors->GetDirectArray().GetAt(vertexID)[2] * 255);
-				color.mAlpha = static_cast<uint8_t>(colors->GetDirectArray().GetAt(vertexID)[3] * 255);
+				color = colors->GetDirectArray().GetAt(vertexID);
 				break;
 
 			case FbxGeometryElement::eIndexToDirect:
 				auto id = colors->GetIndexArray().GetAt(vertexID);
-				color.mRed = static_cast<uint8_t>(colors->GetDirectArray().GetAt(id)[0] * 255);
-				color.mGreen = static_cast<uint8_t>(colors->GetDirectArray().GetAt(id)[1] * 255);
-				color.mBlue = static_cast<uint8_t>(colors->GetDirectArray().GetAt(id)[2] * 255);
-				color.mAlpha = static_cast<uint8_t>(colors->GetDirectArray().GetAt(id)[3] * 255);
+				color = colors->GetDirectArray().GetAt(id);
 				break;
 			}
 
