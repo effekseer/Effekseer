@@ -540,7 +540,7 @@ Effekseer::TextureData* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effe
 	}
 	else
 	{
-		auto t = m_originalTextureLoader->Load(path, textureType);
+		auto t = m_originalTextureLoader->Load((EFK_CHAR*)dst, textureType);
 		
 		if (t != nullptr)
 		{
