@@ -82,7 +82,7 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 					width,
 					height,
 					mipMapCount,
-					0,
+					D3DUSAGE_AUTOGENMIPMAP,
 					D3DFMT_A8R8G8B8,
 					D3DPOOL_DEFAULT,
 					&texture,

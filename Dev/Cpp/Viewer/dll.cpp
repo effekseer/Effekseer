@@ -688,6 +688,8 @@ void* Native::ModelLoader::Load( const EFK_CHAR* path )
 						v.VColor = model->GetVertexes()[i].VColor;
 						v.Index[0] = m;
 
+						std::swap(v.VColor.R, v.VColor.B);
+
 						memcpy( resource, &v, sizeof(Effekseer::Model::VertexWithIndex) );
 						resource += sizeof(Effekseer::Model::VertexWithIndex);
 					}
