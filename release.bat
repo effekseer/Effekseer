@@ -136,10 +136,6 @@ robocopy docs\QuickTutorial_Tool %RDIR%\QuickTutorial *.html *.css *.efkproj *.p
 mkdir %RDIR_R%\Help
 robocopy Release\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S
 
-echo Tool
-mkdir %RDIR%\Tool
-copy Release\Tool\mqoToEffekseerModelConverter.exe %RDIR%\Tool\.
-
 echo doxygen(exe or bat)
 call doxygen.bat doxygen.template
 call doxygen.exe doxygen.template

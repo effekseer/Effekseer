@@ -407,11 +407,11 @@ namespace Effekseer.GUI
 		static public bool ViewHelp()
 		{
 			string rootDir = Path.GetDirectoryName(GUIManager.GetEntryDirectory());
-			string helpPath = Path.Combine(rootDir, @"..\Help\index_en.html");
+			string helpPath = Path.Combine(rootDir, @"Help\index_en.html");
 
             if(Core.Language == Language.Japanese)
             {
-                helpPath = Path.Combine(rootDir, @"..\Help\index_ja.html");
+                helpPath = Path.Combine(rootDir, @"Help\index_ja.html");
             }
 
             if (File.Exists(helpPath))
@@ -434,7 +434,7 @@ namespace Effekseer.GUI
 
 			OpenFileDialog ofd = new OpenFileDialog();
 
-			ofd.InitialDirectory = Path.Combine(rootDir, @"..\Sample");
+			ofd.InitialDirectory = Path.Combine(rootDir, @"Sample");
             ofd.Filter = Properties.Resources.ProjectFilter;
 			ofd.FilterIndex = 2;
 			ofd.Multiselect = false;
