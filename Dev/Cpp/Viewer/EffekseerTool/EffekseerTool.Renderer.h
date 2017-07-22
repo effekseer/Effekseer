@@ -61,7 +61,8 @@ private:
 	IDirect3DSurface9*	m_recordingTempTarget;
 	IDirect3DSurface9*	m_recordingTempDepth;
 
-	IDirect3DTexture9*	m_backGroundTexture;
+	IDirect3DTexture9*		m_backGroundTexture;
+	std::vector<uint8_t>	m_backGroundTextureBuffer;
 
 	IDirect3DSurface9*	m_renderTarget = nullptr;
 	IDirect3DTexture9*	m_renderTargetTexture = nullptr;
@@ -79,6 +80,9 @@ private:
 	bool				m_isSRGBMode = false;
 
 	void GenerateRenderTargets(int32_t width, int32_t height);
+
+	void LoadBackgroundImageInternal(void* data, int32_t size);
+
 public:
 	/**
 		@brief	コンストラクタ
