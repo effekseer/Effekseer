@@ -43,23 +43,24 @@ issuesとwishlistを読んでください。常時、機能追加、バグ修正
 
 # RoadMap
 
-## 1.3 Finished
-* Add some icons to Editor GUI
-* File viewer
-* Integrate FBX and mqo importer
+## 1.3 Finished (1.3開発終了)
+* Add some icons to Editor GUI (アイコンの追加)
+* File viewer (ファイルビューア)
+* Integrate FBX and mqo importer (FBXインポーター)
 
-## 1.3 Todo
-* Show the number of draw call.
-* For UnrealEngine4
-* For Cocos2d-x
-* Documents
+## 1.3 Todo (1.3TODO)
+* Show the number of draw call. (ドローコール数表示)
+* For UnrealEngine4 (UnrealEngine向けの実装)
+* For Cocos2d-x (Cocos2d-x向けの実装)
+* Add tutorial documents (チュートリアルのドキュメントの追加)
 
 # Todo
 
 ** Easy **
-* Add Samples
-* Add Documents
-* Add Tests
+* Add samples (サンプルの追加)
+* Add tutorial documents (チュートリアルのドキュメントの追加)
+* Add tests for a runtime (ランタイムのテストの追加)
+* Translate documents from Japanese into English (ドキュメントの日本語から英語への翻訳)
 
 ** Medium
 * Add model exporters for 3D modeling softwares
