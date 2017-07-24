@@ -262,7 +262,7 @@ namespace Effekseer.Data
 			MouseSlideInvX = new Value.Boolean(false);
 			MouseSlideInvY = new Value.Boolean(false);
 
-            // OSの設定によりデフォ言語を切り替えます
+            // Switch the language according to the OS settings
             var culture = System.Globalization.CultureInfo.CurrentCulture;
             if (culture.Name == "ja-JP")
             {

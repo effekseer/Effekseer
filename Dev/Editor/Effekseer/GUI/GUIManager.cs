@@ -16,7 +16,7 @@ namespace Effekseer.GUI
 		public const string ConfigNetworkFileName = "config.network.xml";
 
 		/// <summary>
-		/// 最近使用したファイル
+		/// Recent files
 		/// </summary>
         static LinkedList<string> recentFiles = new LinkedList<string>();
         static string configGuiPath;

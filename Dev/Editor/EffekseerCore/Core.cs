@@ -268,9 +268,11 @@ namespace Effekseer
 			FullPath = string.Empty;
 
             option = LoadOption();
-            Language = Option.GuiLanguage; // 読み込んだ設定により Core の言語を設定する
 
-            // 設定された言語によりカルチャーを切り替えます
+            // Switch the language according to the loaded settings
+            Language = Option.GuiLanguage;
+
+            // Switch the culture according to the set language
             switch (Language)
             {
                 case Effekseer.Language.English:
@@ -293,7 +295,7 @@ namespace Effekseer
 		{
 			var entryDirectory = GetEntryDirectory() + "\\";
 
-			// スクリプト読み込み
+			// Load scripts
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/import");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/export");
@@ -411,7 +413,7 @@ namespace Effekseer
 		}
 
 		/// <summary>
-		/// アプリケーションの存在するディレクトリを取得
+		/// Get a directory where the application exists
 		/// </summary>
 		/// <returns></returns>
 		public static string GetEntryDirectory()
@@ -451,7 +453,7 @@ namespace Effekseer
 		}
 
 		/// <summary>
-		/// 新規作成
+		/// New
 		/// </summary>
 		public static void New()
 		{
@@ -467,9 +469,11 @@ namespace Effekseer
 			SelectedNode = null;
 			Command.CommandManager.Clear();
 			Root = new Data.NodeRoot();
+            effectBehavior = new Data.EffectBehaviorValues();
+            culling = new Data.EffectCullingValues();
 
-			// 初期ノードの追加
-			Root.AddChild();
+            // Add a root node
+            Root.AddChild();
 			Command.CommandManager.Clear();
 			FullPath = string.Empty;
 			IsChanged = false;
@@ -550,25 +554,35 @@ namespace Effekseer
 
 				if (toolVersion > ParseVersion(currentVersion))
 				{
-					throw new Exception("Version Error : \nファイルがより新しいバージョンのツールで作成されています。\n最新バージョンのツールを使用してください。");
+                    switch (Language)
+                    {
+                        case Effekseer.Language.English:
+                            throw new Exception("Version Error : \nThe file is created with a newer version of the tool.\nPlease use the latest version of the tool.");
+                            break;
+                        case Effekseer.Language.Japanese:
+                            throw new Exception("Version Error : \nファイルがより新しいバージョンのツールで作成されています。\n最新バージョンのツールを使用してください。");
+                            break;
+                    }
+
+                    
 				}
 			}
 
-			// 互換性のための変換
-			{
-				// Stripe→Ribbon
-				var innerText = doc.InnerXml;
+            // For compatibility
+            {
+                // Stripe→Ribbon
+                var innerText = doc.InnerXml;
 				innerText = innerText.Replace("<Stripe>", "<Ribbon>").Replace("</Stripe>", "</Ribbon>");
 				doc = new System.Xml.XmlDocument();
 				doc.LoadXml(innerText);
 			}
 
-			// 互換性のための変換
-			{
-				// GenerationTime
-				// GenerationTimeOffset
+            // For compatibility
+            {
+                // GenerationTime
+                // GenerationTimeOffset
 
-				Action<System.Xml.XmlNode> replace = null;
+                Action<System.Xml.XmlNode> replace = null;
 				replace = (node) =>
 					{
 						if ((node.Name == "GenerationTime" || node.Name == "GenerationTimeOffset") &&
@@ -613,6 +627,10 @@ namespace Effekseer
 				var o = effectBehavior as object;
 				Data.IO.LoadObjectFromElement(behaviorElement as System.Xml.XmlElement, ref o, false);
 			}
+            else
+            {
+                effectBehavior = new Data.EffectBehaviorValues();
+            }
 
 			var cullingElement = doc["EffekseerProject"]["Culling"];
 			if (cullingElement != null)
@@ -620,6 +638,10 @@ namespace Effekseer
 				var o = culling as object;
 				Data.IO.LoadObjectFromElement(cullingElement as System.Xml.XmlElement, ref o, false);
 			}
+            else
+            {
+                culling = new Data.EffectCullingValues();
+            }
 
 			StartFrame = 0;
 			EndFrame = doc["EffekseerProject"]["EndFrame"].GetTextAsInt();
@@ -636,8 +658,8 @@ namespace Effekseer
 			var root_node = new Data.NodeRoot() as object;
 			Data.IO.LoadObjectFromElement(root as System.Xml.XmlElement, ref root_node, false);
 
-			// 互換性のための変換(テクスチャ周り)
-			if (version < 3)
+            // For compatibility
+            if (version < 3)
 			{
 				Action<Data.NodeBase> convert = null;
 				convert = (n) =>
@@ -861,7 +883,7 @@ namespace Effekseer
 					return list.ToArray();
 				};
 
-			// ツリーを形成する
+			// Generate tree
 			Func<Data.NodeBase, Utl.ParameterTreeNode> getParameterTreeNodes = null;
 
 			getParameterTreeNodes = (node) =>
