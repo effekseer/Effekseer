@@ -617,7 +617,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				if (node->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
 					m_nextGenerationTime[i] <= 0.0f)
 				{
-					// Create particle
+					// Create a particle
 					auto newInstance = group->CreateInstance();
 					if (newInstance != nullptr)
 					{
@@ -687,7 +687,7 @@ void Instance::Update( float deltaFrame, bool shown )
 			{
 				auto pNode = (EffectNodeImplemented*) m_pEffectNode->GetChild(i);
 
-				// インスタンス生成
+				// When this instance creates a particle
 				if (pNode->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
 					originalTime + deltaFrame > m_nextGenerationTime[i])
 				{
@@ -742,11 +742,11 @@ void Instance::Update( float deltaFrame, bool shown )
 			auto pContainer = m_pContainer->GetChild( i );
 			assert( group != NULL );
 
-			// インスタンス生成
+			// Create a particle
 			while (true)
 			{
 				if (pNode->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
-					originalTime + deltaFrame > m_nextGenerationTime[i])
+					originalTime + deltaFrame >= m_nextGenerationTime[i])
 				{
 					// 生成処理
 					Instance* pNewInstance = group->CreateInstance();
@@ -845,7 +845,7 @@ void Instance::Update( float deltaFrame, bool shown )
 			}
 		}
 
-		/* 破棄 */
+		// Delete this particle with myself.
 		Kill();
 		return;
 	}
