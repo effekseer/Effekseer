@@ -634,38 +634,38 @@ namespace Effekseer.Data
 			var e_y = e["Y"] as XmlElement;
 			var e_da = e["DrawnAs"];
 
-            // Convert Vector2D into Vector2DWithRandom
-            if(e_x != null)
-            {
-                if(e_da == null || e_x["Max"] == null)
-                {
-                    var x = e_x.GetTextAsFloat();
-                    value.X.SetCenter(x);
-                }
-                else
-                {
-                    LoadFromElement(e_x, value.X, isClip);
-                }
-            }
+			// Convert Vector2D into Vector2DWithRandom
+			if(e_x != null)
+			{
+				if(e_da == null && e_x["Max"] == null && e_x["Min"] == null && e_x["Center"] == null)
+				{
+					var x = e_x.GetTextAsFloat();
+					value.X.SetCenter(x);
+				}
+				else
+				{
+					LoadFromElement(e_x, value.X, isClip);
+				}
+			}
 
-            if (e_y != null)
-            {
-                if (e_da == null || e_y["Max"] == null)
-                {
-                    var y = e_y.GetTextAsFloat();
-                    value.Y.SetCenter(y);
-                }
-                else
-                {
-                    LoadFromElement(e_y, value.Y, isClip);
-                }
-            }
+			if (e_y != null)
+			{
+				if (e_da == null && e_y["Max"] == null && e_y["Min"] == null && e_y["Center"] == null)
+				{
+					var y = e_y.GetTextAsFloat();
+					value.Y.SetCenter(y);
+				}
+				else
+				{
+					LoadFromElement(e_y, value.Y, isClip);
+				}
+			}
 
-            if (e_da != null)
-            {
-                value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
-            }
-        }
+			if (e_da != null)
+			{
+				value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
+			}
+		}
 
 		public static void LoadFromElement(XmlElement e, Value.Vector3DWithRandom value, bool isClip)
 		{
