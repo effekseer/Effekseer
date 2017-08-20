@@ -303,6 +303,13 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, Manager* manag
 	}
 
 	instance.ColorInheritance = instValues._color;
+
+	// Apply fade for inheritance
+	float fadeAlpha = GetFadeAlpha(instance);
+	if (fadeAlpha != 1.0f)
+	{
+		instance.ColorInheritance.a = (uint8_t)(instance.ColorInheritance.a * fadeAlpha);
+	}
 }
 
 //----------------------------------------------------------------------------------

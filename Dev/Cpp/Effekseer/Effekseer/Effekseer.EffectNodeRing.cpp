@@ -353,6 +353,13 @@ void EffectNodeRing::UpdateRenderedInstance(Instance& instance, Manager* manager
 	}
 
 	instance.ColorInheritance = instValues.centerColor.current;
+
+	// Apply fade for inheritance
+	float fadeAlpha = GetFadeAlpha(instance);
+	if (fadeAlpha != 1.0f)
+	{
+		instance.ColorInheritance.a = (uint8_t)(instance.ColorInheritance.a * fadeAlpha);
+	}
 }
 
 //----------------------------------------------------------------------------------
