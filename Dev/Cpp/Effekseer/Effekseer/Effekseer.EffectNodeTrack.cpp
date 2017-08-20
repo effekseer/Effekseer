@@ -243,13 +243,6 @@ void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, Manager* manage
 	_c.a = c.A;
 
 	instance.ColorInheritance = _c;
-
-	// Apply fade for inheritance
-	float fadeAlpha = GetFadeAlpha(instance);
-	if (fadeAlpha != 1.0f)
-	{
-		instance.ColorInheritance.a = (uint8_t)(instance.ColorInheritance.a * fadeAlpha);
-	}
 }
 
 //----------------------------------------------------------------------------------

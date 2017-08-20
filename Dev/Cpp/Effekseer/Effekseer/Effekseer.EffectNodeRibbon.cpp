@@ -201,18 +201,9 @@ void EffectNodeRibbon::Rendering(const Instance& instance, Manager* manager)
 			color_r = color::mul( color_r, RibbonColor.fixed.r );
 		}
 
-		float fadeAlpha = GetFadeAlpha( instance );
-		if( fadeAlpha != 1.0f )
-		{
-			color_l.a = (uint8_t)(color_l.a * fadeAlpha);
-			color_r.a = (uint8_t)(color_r.a * fadeAlpha);
-		}
-
 		color_l.setValueToArg( m_instanceParameter.Colors[0] );
 		color_r.setValueToArg( m_instanceParameter.Colors[1] );
 
-
-		
 		if( RibbonPosition.type == RibbonPositionParameter::Default )
 		{
 			m_instanceParameter.Positions[0] = -0.5f;
@@ -252,10 +243,12 @@ void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, Manager* m
 	if( RibbonAllColor.type == RibbonAllColorParameter::Fixed )
 	{
 		instValues._original = RibbonAllColor.fixed.all;
+		instValues.allColorValues.fixed._color = instValues._original;
 	}
 	else if( RibbonAllColor.type == RibbonAllColorParameter::Random )
 	{
 		instValues._original = RibbonAllColor.random.all.getValue(*(manager));
+		instValues.allColorValues.random._color = instValues._original;
 	}
 	else if( RibbonAllColor.type == RibbonAllColorParameter::Easing )
 	{
@@ -282,7 +275,15 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, Manager* manag
 {
 	InstanceValues& instValues = instance.rendererValues.ribbon;
 
-	if( RibbonAllColor.type == RibbonAllColorParameter::Easing )
+	if (RibbonAllColor.type == RibbonAllColorParameter::Fixed)
+	{
+		instValues._original = instValues.allColorValues.fixed._color;
+	}
+	else if (RibbonAllColor.type == RibbonAllColorParameter::Random)
+	{
+		instValues._original = instValues.allColorValues.random._color;
+	}
+	else if( RibbonAllColor.type == RibbonAllColorParameter::Easing )
 	{
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
@@ -291,6 +292,12 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, Manager* manag
 			instValues.allColorValues.easing.start,
 			instValues.allColorValues.easing.end,
 			t );
+	}
+
+	float fadeAlpha = GetFadeAlpha(instance);
+	if (fadeAlpha != 1.0f)
+	{
+		instValues._original.a = (uint8_t)(instValues._original.a * fadeAlpha);
 	}
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
@@ -303,13 +310,6 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, Manager* manag
 	}
 
 	instance.ColorInheritance = instValues._color;
-
-	// Apply fade for inheritance
-	float fadeAlpha = GetFadeAlpha(instance);
-	if (fadeAlpha != 1.0f)
-	{
-		instance.ColorInheritance.a = (uint8_t)(instance.ColorInheritance.a * fadeAlpha);
-	}
 }
 
 //----------------------------------------------------------------------------------

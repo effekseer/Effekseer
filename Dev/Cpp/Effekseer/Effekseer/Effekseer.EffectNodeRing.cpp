@@ -249,14 +249,6 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 		_centerColor.setValueToArg( instanceParameter.CenterColor );
 		_innerColor.setValueToArg( instanceParameter.InnerColor );
 		
-		float fadeAlpha = GetFadeAlpha( instance );
-		if( fadeAlpha != 1.0f )
-		{
-			instanceParameter.OuterColor.A = (uint8_t)(instanceParameter.OuterColor.A * fadeAlpha);
-			instanceParameter.CenterColor.A = (uint8_t)(instanceParameter.CenterColor.A * fadeAlpha);
-			instanceParameter.InnerColor.A = (uint8_t)(instanceParameter.InnerColor.A * fadeAlpha);
-		}
-
 		instanceParameter.UV = instance.GetUV();
 		renderer->Rendering( nodeParameter, instanceParameter, m_userData );
 	}
@@ -353,13 +345,6 @@ void EffectNodeRing::UpdateRenderedInstance(Instance& instance, Manager* manager
 	}
 
 	instance.ColorInheritance = instValues.centerColor.current;
-
-	// Apply fade for inheritance
-	float fadeAlpha = GetFadeAlpha(instance);
-	if (fadeAlpha != 1.0f)
-	{
-		instance.ColorInheritance.a = (uint8_t)(instance.ColorInheritance.a * fadeAlpha);
-	}
 }
 
 //----------------------------------------------------------------------------------
@@ -493,9 +478,11 @@ void EffectNodeRing::InitializeColorValues(const RingColorParameter& param, Ring
 	{
 		case RingColorParameter::Fixed:
 			values.original = param.fixed;
+			values.fixed._color = values.original;
 			break;
 		case RingColorParameter::Random:
 			values.original = param.random.getValue(*manager);
+			values.random._color = values.original;
 			break;
 		case RingColorParameter::Easing:
 			values.easing.start = param.easing.getStartValue( *manager );
@@ -548,7 +535,15 @@ void EffectNodeRing::UpdateLocationValues( Instance& instance, const RingLocatio
 //----------------------------------------------------------------------------------
 void EffectNodeRing::UpdateColorValues( Instance& instance, const RingColorParameter& param, RingColorValues& values )
 {
-	if( param.type == RingColorParameter::Easing )
+	if (param.type == RingColorParameter::Fixed)
+	{
+		values.original = values.fixed._color;
+	}
+	else if (param.type == RingColorParameter::Random)
+	{
+		values.original = values.random._color;
+	}
+	else if( param.type == RingColorParameter::Easing )
 	{
 		param.easing.setValueToArg(
 			values.original, 
@@ -557,7 +552,11 @@ void EffectNodeRing::UpdateColorValues( Instance& instance, const RingColorParam
 			instance.m_LivingTime / instance.m_LivedTime );
 	}
 
-
+	float fadeAlpha = GetFadeAlpha(instance);
+	if (fadeAlpha != 1.0f)
+	{
+		values.original.a = (uint8_t)(values.original.a * fadeAlpha);
+	}
 }
 
 //----------------------------------------------------------------------------------

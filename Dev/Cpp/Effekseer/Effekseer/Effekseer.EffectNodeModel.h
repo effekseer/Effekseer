@@ -38,12 +38,12 @@ public:
 		{
 			struct
 			{
-			
+				color _color;
 			} fixed;
 
 			struct
 			{
-
+				color _color;
 			} random;
 
 			struct

@@ -192,15 +192,6 @@ void EffectNodeSprite::Rendering(const Instance& instance, Manager* manager)
 			color_ur = color::mul( color_ur, SpriteColor.fixed.ur );
 		}
 
-		float fadeAlpha = GetFadeAlpha( instance );
-		if( fadeAlpha != 1.0f )
-		{
-			color_ll.a = (uint8_t)(color_ll.a * fadeAlpha);
-			color_lr.a = (uint8_t)(color_lr.a * fadeAlpha);
-			color_ul.a = (uint8_t)(color_ul.a * fadeAlpha);
-			color_ur.a = (uint8_t)(color_ur.a * fadeAlpha);
-		}
-
 		color_ll.setValueToArg( instanceParameter.Colors[0] );
 		color_lr.setValueToArg( instanceParameter.Colors[1] );
 		color_ul.setValueToArg( instanceParameter.Colors[2] );
@@ -265,11 +256,13 @@ void EffectNodeSprite::InitializeRenderedInstance(Instance& instance, Manager* m
 
 	if( SpriteAllColor.type == StandardColorParameter::Fixed )
 	{
-		instValues._originalColor = SpriteAllColor.fixed.all;
+		instValues.allColorValues.fixed._color = SpriteAllColor.fixed.all;
+		instValues._originalColor = instValues.allColorValues.fixed._color;
 	}
 	else if( SpriteAllColor.type == StandardColorParameter::Random )
 	{
-		instValues._originalColor = SpriteAllColor.random.all.getValue(*(manager));
+		instValues.allColorValues.random._color = SpriteAllColor.random.all.getValue(*(manager));
+		instValues._originalColor = instValues.allColorValues.random._color;
 	}
 	else if( SpriteAllColor.type == StandardColorParameter::Easing )
 	{
@@ -316,6 +309,14 @@ void EffectNodeSprite::UpdateRenderedInstance(Instance& instance, Manager* manag
 {
 	InstanceValues& instValues = instance.rendererValues.sprite;
 
+	if (SpriteAllColor.type == StandardColorParameter::Fixed)
+	{
+		instValues._originalColor = instValues.allColorValues.fixed._color;
+	}
+	else if (SpriteAllColor.type == StandardColorParameter::Random)
+	{
+		instValues._originalColor = instValues.allColorValues.random._color;
+	}
 	if( SpriteAllColor.type == StandardColorParameter::Easing )
 	{
 		float t = instance.m_LivingTime / instance.m_LivedTime;
@@ -334,6 +335,12 @@ void EffectNodeSprite::UpdateRenderedInstance(Instance& instance, Manager* manag
 		instValues._originalColor.a = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[3] + SpriteAllColor.fcurve_rgba.FCurve->A.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 	}
 
+	float fadeAlpha = GetFadeAlpha(instance);
+	if (fadeAlpha != 1.0f)
+	{
+		instValues._originalColor.a = (uint8_t)(instValues._originalColor.a * fadeAlpha);
+	}
+
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
 		instValues._color = color::mul(instValues._originalColor, instance.ColorParent);
@@ -344,13 +351,6 @@ void EffectNodeSprite::UpdateRenderedInstance(Instance& instance, Manager* manag
 	}
 
 	instance.ColorInheritance = instValues._color;
-
-	// Apply fade for inheritance
-	float fadeAlpha = GetFadeAlpha(instance);
-	if (fadeAlpha != 1.0f)
-	{
-		instance.ColorInheritance.a = (uint8_t)(instance.ColorInheritance.a * fadeAlpha);
-	}
 }
 
 //----------------------------------------------------------------------------------

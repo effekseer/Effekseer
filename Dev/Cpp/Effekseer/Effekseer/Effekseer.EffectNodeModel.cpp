@@ -135,11 +135,6 @@ void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 		}
 
 		_color.setValueToArg( instanceParameter.AllColor );
-		float fadeAlpha = GetFadeAlpha( instance );
-		if( fadeAlpha != 1.0f )
-		{
-			instanceParameter.AllColor.A = (uint8_t)(instanceParameter.AllColor.A * fadeAlpha);
-		}
 
 		renderer->Rendering( nodeParameter, instanceParameter, m_userData );
 	}
@@ -186,10 +181,12 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* ma
 	if( AllColor.type == StandardColorParameter::Fixed )
 	{
 		instValues._original = AllColor.fixed.all;
+		instValues.allColorValues.fixed._color = instValues._original;
 	}
 	else if( AllColor.type == StandardColorParameter::Random )
 	{
 		instValues._original = AllColor.random.all.getValue(*(manager));
+		instValues.allColorValues.random._color = instValues._original;
 	}
 	else if( AllColor.type == StandardColorParameter::Easing )
 	{
@@ -227,13 +224,6 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* ma
 	}
 
 	instance.ColorInheritance = instValues._color;
-
-	// Apply fade for inheritance
-	float fadeAlpha = GetFadeAlpha(instance);
-	if (fadeAlpha != 1.0f)
-	{
-		instance.ColorInheritance.a = (uint8_t)(instance.ColorInheritance.a * fadeAlpha);
-	}
 }
 
 //----------------------------------------------------------------------------------
@@ -243,7 +233,15 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, Manager* manage
 {
 	InstanceValues& instValues = instance.rendererValues.model;
 
-	if( AllColor.type == StandardColorParameter::Easing )
+	if (AllColor.type == StandardColorParameter::Fixed)
+	{
+		instValues._original = instValues.allColorValues.fixed._color;
+	}
+	else if (AllColor.type == StandardColorParameter::Random)
+	{
+		instValues._original = instValues.allColorValues.random._color;
+	}
+	else if( AllColor.type == StandardColorParameter::Easing )
 	{
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
@@ -259,6 +257,12 @@ void EffectNodeModel::UpdateRenderedInstance(Instance& instance, Manager* manage
 		instValues._original.g = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[1] + AllColor.fcurve_rgba.FCurve->G.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 		instValues._original.b = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[2] + AllColor.fcurve_rgba.FCurve->B.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 		instValues._original.a = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[3] + AllColor.fcurve_rgba.FCurve->A.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
+	}
+
+	float fadeAlpha = GetFadeAlpha(instance);
+	if (fadeAlpha != 1.0f)
+	{
+		instValues._original.a = (uint8_t)(instValues._original.a * fadeAlpha);
 	}
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
