@@ -689,7 +689,7 @@ void Instance::Update( float deltaFrame, bool shown )
 
 				// When this instance creates a particle
 				if (pNode->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
-					originalTime + deltaFrame > m_nextGenerationTime[i])
+					originalTime + deltaFrame >= m_nextGenerationTime[i])
 				{
 					calculateMatrix = true;
 					break;
