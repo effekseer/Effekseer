@@ -112,8 +112,7 @@ public:
 	// Rootの取得
 	EffectNode* GetRoot() const;
 
-	/* 拡大率の取得 */
-	float GetMaginification() const;
+	float GetMaginification() const override;
 
 	/**
 		@brief	読み込む。
@@ -124,6 +123,11 @@ public:
 		@breif	何も読み込まれていない状態に戻す
 	*/
 	void Reset();
+
+	/**
+		@brief	Compatibility for magnification.
+	*/
+	bool IsDyanamicMagnificationValid() const;
 
 private:
 	/**

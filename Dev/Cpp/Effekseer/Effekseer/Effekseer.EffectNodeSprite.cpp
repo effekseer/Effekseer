@@ -5,10 +5,13 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Manager.h"
 #include "Effekseer.Effect.h"
+#include "Effekseer.EffectImplemented.h"
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.Instance.h"
 #include "Effekseer.EffectNodeSprite.h"
+
+
 
 #include "Renderer/Effekseer.SpriteRenderer.h"
 
@@ -30,6 +33,7 @@ namespace Effekseer
 	assert(type == GetType());
 	EffekseerPrintDebug("Renderer : Sprite\n");
 
+	auto ef = (EffectImplemented*) m_effect;
 	int32_t size = 0;
 
 	memcpy(&RenderingOrder, pos, sizeof(int));
@@ -43,6 +47,7 @@ namespace Effekseer
 	{
 		memcpy(&AlphaBlend, pos, sizeof(int));
 		pos += sizeof(int);
+		RendererCommon.AlphaBlend = AlphaBlend;
 	}
 
 	memcpy(&Billboard, pos, sizeof(int));
@@ -76,6 +81,18 @@ namespace Effekseer
 			pos += sizeof(SpritePosition.fixed);
 			SpritePosition.type = SpritePosition.Fixed;
 		}
+		else
+		{
+			SpritePosition.fixed.ll.x = -0.5f;
+			SpritePosition.fixed.ll.y = -0.5f;
+			SpritePosition.fixed.lr.x = 0.5f;
+			SpritePosition.fixed.lr.y = -0.5f;
+			SpritePosition.fixed.ul.x = -0.5f;
+			SpritePosition.fixed.ul.y = 0.5f;
+			SpritePosition.fixed.ur.x = 0.5f;
+			SpritePosition.fixed.ur.y = 0.5f;
+			SpritePosition.type = SpritePosition.Fixed;
+		}
 	}
 	else if (SpritePosition.type == SpritePosition.Fixed)
 	{
@@ -91,6 +108,7 @@ namespace Effekseer
 	{
 		memcpy(&SpriteTexture, pos, sizeof(int));
 		pos += sizeof(int);
+		RendererCommon.ColorTextureIndex = SpriteTexture;
 	}
 
 	// 右手系左手系変換
@@ -99,7 +117,7 @@ namespace Effekseer
 	}
 
 	/* 位置拡大処理 */
-	if (m_effect->GetVersion() >= 8)
+	if (ef->IsDyanamicMagnificationValid())
 	{
 		if (SpritePosition.type == SpritePosition.Default)
 		{

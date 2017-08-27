@@ -419,9 +419,10 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	{
 		memcpy( &m_maginification, pos, sizeof(float) );
 		pos += sizeof(float);
-		m_maginification *= mag;
-		m_maginificationExternal = mag;
 	}
+
+	m_maginification *= mag;
+	m_maginificationExternal = mag;
 
 	// カリング
 	if( m_version >= 9 )
@@ -516,6 +517,11 @@ void EffectImplemented::Reset()
 	ES_SAFE_DELETE_ARRAY( m_pModels );
 
 	ES_SAFE_DELETE( m_pRoot );
+}
+
+bool EffectImplemented::IsDyanamicMagnificationValid() const
+{
+	return GetVersion() >= 8 || GetVersion() < 2;
 }
 
 //----------------------------------------------------------------------------------

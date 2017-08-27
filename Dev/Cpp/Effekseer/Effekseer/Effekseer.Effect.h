@@ -83,7 +83,10 @@ public:
 	*/
 	virtual Setting* GetSetting() const = 0;
 
-	/* 拡大率を取得する。 */
+	/**
+	@brief	\~English	Get the magnification multiplied by the magnification at the time of loaded and exported.
+			\~Japanese	読み込み時と出力時の拡大率をかけた拡大率を取得する。
+	*/
 	virtual float GetMaginification() const = 0;
 	
 	/**

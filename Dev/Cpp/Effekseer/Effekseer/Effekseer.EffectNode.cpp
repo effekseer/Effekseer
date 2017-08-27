@@ -5,7 +5,9 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Manager.h"
 #include "Effekseer.Effect.h"
+#include "Effekseer.EffectImplemented.h"
 #include "Effekseer.EffectNode.h"
+
 #include "Effekseer.Vector3D.h"
 
 #include "Effekseer.Instance.h"
@@ -45,6 +47,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 {
 	int size = 0;
 	int node_type = 0;
+	auto ef = (EffectImplemented*) m_effect;
+
 	memcpy( &node_type, pos, sizeof(int) );
 	pos += sizeof(int);
 
@@ -147,7 +151,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 
 		/* 位置拡大処理 */
-		if( m_effect->GetVersion() >= 8 )
+		if (ef->IsDyanamicMagnificationValid())
 		{
 			if( TranslationType == ParameterTranslationType_Fixed )
 			{
@@ -207,7 +211,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 
 		// Magnify attraction forces
-		if( m_effect->GetVersion() >= 8 )
+		if (ef->IsDyanamicMagnificationValid())
 		{
 			if( LocationAbs.type == LocationAbsParameter::None )
 			{
@@ -347,7 +351,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		GenerationLocation.load( pos, m_effect->GetVersion());
 
 		/* Spawning Method 拡大処理*/
-		if( m_effect->GetVersion() >= 8  
+		if (ef->IsDyanamicMagnificationValid()
 			/* && (this->CommonValues.ScalingBindType == BindType::NotBind || parent->GetType() == EFFECT_NODE_TYPE_ROOT)*/ )
 		{
 			if( GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT )
@@ -457,9 +461,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		if( m_effect->GetVersion() >= 3)
 		{
 			RendererCommon.load( pos, m_effect->GetVersion() );
-
-			// 拡大処理
-			RendererCommon.DistortionIntensity *= m_effect->GetMaginification();
 		}
 		else
 		{
