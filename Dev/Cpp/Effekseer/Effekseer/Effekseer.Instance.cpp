@@ -292,6 +292,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		rotation_values.axis.random.acceleration = m_pEffectNode->RotationAxisPVA.acceleration.getValue( *m_pManager );
 		rotation_values.axis.rotation = rotation_values.axis.random.rotation;
 		rotation_values.axis.axis = m_pEffectNode->RotationAxisPVA.axis.getValue(*m_pManager);
+		rotation_values.axis.axis.normalize();
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_AxisEasing )
 	{
@@ -299,6 +300,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		rotation_values.axis.easing.end = m_pEffectNode->RotationAxisEasing.easing.end.getValue( *m_pManager );
 		rotation_values.axis.rotation = rotation_values.axis.easing.start;
 		rotation_values.axis.axis = m_pEffectNode->RotationAxisEasing.axis.getValue(*m_pManager);
+		rotation_values.axis.axis.normalize();
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_FCurve )
 	{

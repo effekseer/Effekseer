@@ -238,6 +238,23 @@ struct vector3d
 		memset( this, 0, sizeof(vector3d) );
 	};
 
+	void normalize()
+	{
+		float len = std::sqrtf(x * x + y * y + z * z);
+		if (len > 0.0001f)
+		{
+			x /= len;
+			y /= len;
+			z /= len;
+		}
+		else
+		{
+			x = 1.0;
+			y = 0.0;
+			z = 0.0;
+		}
+	}
+
 	void setValueToArg( Vector3D& v ) const
 	{
 		v.X = x;

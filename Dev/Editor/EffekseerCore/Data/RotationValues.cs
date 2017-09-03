@@ -195,6 +195,7 @@ namespace Effekseer.Data
 				private set;
 			}
 
+			[IO(Export = true)]
 			public FloatEasingParamater Easing
 			{
 				get;
