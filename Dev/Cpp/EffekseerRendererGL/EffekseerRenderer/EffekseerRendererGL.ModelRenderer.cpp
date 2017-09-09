@@ -197,7 +197,7 @@ R"(
 
 	gl_Position = ProjectionMatrix * localPosition;
 
-	v_TexCoord.xy = a_TexCoord.xy + uvOffset.xy;
+	v_TexCoord.xy = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
 
 	v_Normal = ProjectionMatrix * localNormal;
 	v_Binormal = ProjectionMatrix * localBinormal;

@@ -39,7 +39,7 @@ VS_Output VS( const VS_Input Input )
 		float4 localTangent = { Input.Pos.x + Input.Tangent.x, Input.Pos.y + Input.Tangent.y, Input.Pos.z + Input.Tangent.z, 1.0 };
 
 
-		localPosition = mul(matModel, localPosition);
+	localPosition = mul(matModel, localPosition);
 	localNormal = mul(matModel, localNormal);
 	localBinormal = mul(matModel, localBinormal);
 	localTangent = mul(matModel, localTangent);
@@ -50,8 +50,8 @@ VS_Output VS( const VS_Input Input )
 
 	Output.Position = mul(mCameraProj, localPosition);
 
-	Output.UV.x = Input.UV.x + uv.x;
-	Output.UV.y = Input.UV.y + uv.y;
+	Output.UV.x = Input.UV.x * uv.z + uv.x;
+	Output.UV.y = Input.UV.y * uv.w + uv.y;
 
 	Output.Normal = mul(mCameraProj, localNormal);
 	Output.Binormal = mul(mCameraProj, localBinormal);
