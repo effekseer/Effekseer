@@ -112,6 +112,10 @@ namespace Effekseer.Data
 		[IO(Export = true)]
 		public UVScrollParamater UVScroll { get; private set; }
 
+		[Selected(ID = 2, Value = 4)]
+		[IO(Export = true)]
+		public UVFCurveParamater UVFCurve { get; private set; }
+
 		[Name(language = Language.Japanese, value = "色への影響")]
 		[Description(language = Language.Japanese, value = "親ノードからの色への影響")]
 		[Name(language = Language.English, value = "Inherit Color")]
@@ -152,6 +156,7 @@ namespace Effekseer.Data
 			UVFixed = new UVFixedParamater();
 			UVAnimation = new UVAnimationParamater();
 			UVScroll = new UVScrollParamater();
+			UVFCurve = new UVFCurveParamater();
 
 			ZWrite = new Value.Boolean(false);
 			ZTest = new Value.Boolean(true);
@@ -324,6 +329,25 @@ namespace Effekseer.Data
 			}
 		}
 
+		public class UVFCurveParamater
+		{
+			[Name(value = "始点", language = Language.Japanese)]
+			[Name(value = "Start", language = Language.English)]
+			[IO(Export = true)]
+			public Value.FCurveVector2D Start { get; private set; }
+
+			[Name(value = "大きさ", language = Language.Japanese)]
+			[Name(value = "Size", language = Language.English)]
+			[IO(Export = true)]
+			public Value.FCurveVector2D Size { get; private set; }
+
+			public UVFCurveParamater()
+			{
+				Start = new Value.FCurveVector2D();
+				Size = new Value.FCurveVector2D();
+			}
+		}
+
 		public enum FadeType : int
 		{
 			[Name(value = "有り", language = Language.Japanese)]
@@ -368,6 +392,9 @@ namespace Effekseer.Data
 			[Name(value = "スクロール", language = Language.Japanese)]
 			[Name(value = "Scroll", language = Language.English)]
 			Scroll = 3,
+			[Name(value = "Fカーブ", language = Language.Japanese)]
+			[Name(value = "F-Curve", language = Language.English)]
+			FCurve = 4,
 		}
 
 		public enum LoopType : int

@@ -440,6 +440,11 @@ namespace Effekseer.GUI.Component
 				{
 					gui = new PathForSound();
 				}
+				else if (p.PropertyType == typeof(Data.Value.FCurveVector2D))
+				{
+					FCurveButton button = new FCurveButton();
+					gui = button;
+				}
 				else if (p.PropertyType == typeof(Data.Value.FCurveVector3D))
 				{
 					FCurveButton button = new FCurveButton();

@@ -496,6 +496,7 @@ struct ParameterRendererCommon
 		UV_FIXED = 1,
 		UV_ANIMATION = 2,
 		UV_SCROLL = 3,
+		UV_FCURVE = 4,
 
 		UV_DWORD = 0x7fffffff,
 	} UVType;
@@ -549,6 +550,12 @@ struct ParameterRendererCommon
 			random_vector2d	Size;
 			random_vector2d	Speed;
 		} Scroll;
+
+		struct
+		{
+			FCurveVector2D* Position;
+			FCurveVector2D* Size;
+		} FCurve;
 
 	} UV;
 
@@ -664,6 +671,13 @@ struct ParameterRendererCommon
 				pos += sizeof(UV.Scroll);
 			}
 		}
+		else if (UVType == UV_FCURVE)
+		{
+			UV.FCurve.Position = new FCurveVector2D();
+			UV.FCurve.Size = new FCurveVector2D();
+			pos += UV.FCurve.Position->Load(pos, version);
+			pos += UV.FCurve.Size->Load(pos, version);
+		}
 
 		if (version >= 10)
 		{
@@ -687,6 +701,15 @@ struct ParameterRendererCommon
 			memcpy(&DistortionIntensity, pos, sizeof(float));
 			pos += sizeof(float);
 			
+		}
+	}
+
+	void destroy()
+	{
+		if (UVType == UV_FCURVE)
+		{
+			ES_SAFE_DELETE(UV.FCurve.Position);
+			ES_SAFE_DELETE(UV.FCurve.Size);
 		}
 	}
 };

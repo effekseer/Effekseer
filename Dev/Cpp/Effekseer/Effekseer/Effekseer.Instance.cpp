@@ -590,12 +590,20 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		auto xy = m_pEffectNode->RendererCommon.UV.Scroll.Position.getValue(*m_pManager);
 		auto zw = m_pEffectNode->RendererCommon.UV.Scroll.Size.getValue(*m_pManager);
 
-		uvScrollArea.X = xy.x;
-		uvScrollArea.Y = xy.y;
-		uvScrollArea.Width = zw.x;
-		uvScrollArea.Height = zw.y;
+		uvAreaOffset.X = xy.x;
+		uvAreaOffset.Y = xy.y;
+		uvAreaOffset.Width = zw.x;
+		uvAreaOffset.Height = zw.y;
 
 		m_pEffectNode->RendererCommon.UV.Scroll.Speed.getValue(*m_pManager).setValueToArg(uvScrollSpeed);
+	}
+
+	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_FCURVE)
+	{
+		uvAreaOffset.X = m_pEffectNode->RendererCommon.UV.FCurve.Position->X.GetOffset(*m_pManager);
+		uvAreaOffset.Y = m_pEffectNode->RendererCommon.UV.FCurve.Position->Y.GetOffset(*m_pManager);
+		uvAreaOffset.Width = m_pEffectNode->RendererCommon.UV.FCurve.Size->X.GetOffset(*m_pManager);
+		uvAreaOffset.Height = m_pEffectNode->RendererCommon.UV.FCurve.Size->Y.GetOffset(*m_pManager);
 	}
 
 	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
@@ -1352,11 +1360,22 @@ RectF Instance::GetUV() const
 		auto time = m_LivingTime + uvTimeOffset;
 
 		return RectF(
-			uvScrollArea.X + uvScrollSpeed.X * time,
-			uvScrollArea.Y + uvScrollSpeed.Y * time,
-			uvScrollArea.Width,
-			uvScrollArea.Height);
+			uvAreaOffset.X + uvScrollSpeed.X * time,
+			uvAreaOffset.Y + uvScrollSpeed.Y * time,
+			uvAreaOffset.Width,
+			uvAreaOffset.Height);
 	}
+	else if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_FCURVE)
+	{
+		auto time = m_LivingTime + uvTimeOffset;
+
+		return RectF(
+			uvAreaOffset.X + m_pEffectNode->RendererCommon.UV.FCurve.Position->X.GetValue(time),
+			uvAreaOffset.Y + m_pEffectNode->RendererCommon.UV.FCurve.Position->Y.GetValue(time),
+			uvAreaOffset.Width + m_pEffectNode->RendererCommon.UV.FCurve.Size->X.GetValue(time),
+			uvAreaOffset.Height + m_pEffectNode->RendererCommon.UV.FCurve.Size->Y.GetValue(time));
+	}
+
 
 	return RectF( 0.0f, 0.0f, 1.0f, 1.0f );
 }

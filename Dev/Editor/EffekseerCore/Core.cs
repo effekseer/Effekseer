@@ -835,6 +835,16 @@ namespace Effekseer
 						list.Add(Tuple.Create("拡大率", (object)node.ScalingValues.FCurve.FCurve));
 					}
 
+					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+					{
+						list.Add(Tuple.Create("UV(始点)", (object)node.RendererCommonValues.UVFCurve.Start));
+					}
+
+					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+					{
+						list.Add(Tuple.Create("UV(大きさ)", (object)node.RendererCommonValues.UVFCurve.Size));
+					}
+
 					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite &&
 						node.DrawingValues.Sprite.ColorAll.Value == Data.StandardColorType.FCurve)
 					{

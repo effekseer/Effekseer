@@ -823,7 +823,12 @@ namespace Effekseer.GUI.Component
 
 			static public FCurve Create(Tuple<string, object> v, FCurves window)
 			{
-				if (v.Item2 is Data.Value.FCurveVector3D)
+				if (v.Item2 is Data.Value.FCurveVector2D)
+				{
+					var v_ = (Data.Value.FCurveVector2D)v.Item2;
+					return new FCurveVector2D(v.Item1, v_, window);
+				}
+				else if (v.Item2 is Data.Value.FCurveVector3D)
 				{
 					var v_ = (Data.Value.FCurveVector3D)v.Item2;
 					return new FCurveVector3D(v.Item1, v_, window);
@@ -1956,6 +1961,152 @@ namespace Effekseer.GUI.Component
 
 				return new Data.Value.FCurveKey<byte>((int)p.X, (byte)Math.Max(0, Math.Min(255, p.Y)));
 			}
+
+			Point FCurveKeyToPoint(Data.Value.FCurveKey<float> key)
+			{
+				var p = ValueToScreen(key.Frame, key.Value);
+				return new Point(p.X, p.Y);
+			}
+		}
+
+
+		class FCurveVector2D : FCurve
+		{
+			public Data.Value.FCurveVector2D Value { get; private set; }
+
+			public FCurveVector2D(string name, Data.Value.FCurveVector2D value, FCurves window)
+			{
+				Name = name;
+				Value = value;
+				this.window = window;
+
+				fCurvesMagYCount = (float)Math.Log((float)GraphPanel.Height / (value.X.DefaultValueRangeMax - value.X.DefaultValueRangeMin), 2.0);
+				fCurvesOffsetY = (value.X.DefaultValueRangeMax + value.X.DefaultValueRangeMin) / 2.0f;
+			}
+
+			public override object GetValueAsObject()
+			{
+				return Value;
+			}
+
+			protected override IEnumerable<SelectablePoint> GetAllSelectablePoints()
+			{
+				var selectedX = Value.X.Keys.Select(_ => new SelectablePoint(Value.X, _, SelectablePoint.PointType.Center));
+
+				var selectedY = Value.Y.Keys.Select(_ => new SelectablePoint(Value.Y, _, SelectablePoint.PointType.Center));
+
+				var selectedLeft = selectedPoints.Select(_ => new SelectablePoint(_.FCurve, _.Key, SelectablePoint.PointType.Left));
+
+				var selectedRight = selectedPoints.Select(_ => new SelectablePoint(_.FCurve, _.Key, SelectablePoint.PointType.Right));
+
+				return selectedX.Concat(selectedY.Concat(selectedLeft.Concat(selectedRight)));
+			}
+
+			protected override IEnumerable<SelectablePoint> GetSelectablePoints(int x, int y)
+			{
+				var fv = ScreenToValue(x, y);
+
+				var selectableArea = new PointF(
+						5.0f / window.FCurvesMagnificationX,
+						5.0f / FCurvesMagnificationY);
+
+				var selectableAreaAncor = new PointF(
+					9.0f / window.FCurvesMagnificationX,
+					9.0f / FCurvesMagnificationY);
+
+				var selectedX = Value.X.Keys.Where(_ =>
+					fv.X - selectableArea.X < _.Frame &&
+					_.Frame < fv.X + selectableArea.X &&
+					fv.Y - selectableArea.Y < _.ValueAsFloat &&
+					_.ValueAsFloat < fv.Y + selectableArea.Y).Select(_ => new SelectablePoint(Value.X, _, SelectablePoint.PointType.Center));
+
+				var selectedY = Value.Y.Keys.Where(_ =>
+					fv.X - selectableArea.X < _.Frame &&
+					_.Frame < fv.X + selectableArea.X &&
+					fv.Y - selectableArea.Y < _.ValueAsFloat &&
+					_.ValueAsFloat < fv.Y + selectableArea.Y).Select(_ => new SelectablePoint(Value.Y, _, SelectablePoint.PointType.Center));
+
+				var selectedLeft = selectedPoints.Where(_ =>
+				{
+					var p1 = new PointF(_.Key.LeftX, _.Key.LeftY);
+					return fv.X - selectableAreaAncor.X < p1.X &&
+						p1.X < fv.X + selectableAreaAncor.X &&
+						fv.Y - selectableAreaAncor.Y < p1.Y &&
+						p1.Y < fv.Y + selectableAreaAncor.Y;
+				}).Select(_ => new SelectablePoint(_.FCurve, _.Key, SelectablePoint.PointType.Left));
+
+				var selectedRight = selectedPoints.Where(_ =>
+				{
+					var p1 = new PointF(_.Key.RightX, _.Key.RightY);
+					return fv.X - selectableAreaAncor.X < p1.X &&
+						p1.X < fv.X + selectableAreaAncor.X &&
+						fv.Y - selectableAreaAncor.Y < p1.Y &&
+						p1.Y < fv.Y + selectableAreaAncor.Y;
+				}).Select(_ => new SelectablePoint(_.FCurve, _.Key, SelectablePoint.PointType.Right));
+
+				return selectedX.Concat(selectedY.Concat(selectedLeft.Concat(selectedRight)));
+			}
+
+			protected override void Paint(Graphics g)
+			{
+				DrawBackground(g);
+				DrawFrame(g);
+
+				DrawGrids(g);
+
+				DrawLine(g, Value.X, Color.Red);
+				DrawLine(g, Value.Y, Color.LightGreen);
+			}
+
+			protected override void KeyDown(Keys e)
+			{
+				if (!EventFlag && e == Keys.X)
+				{
+					selectedPoints.Clear();
+
+					var key = PointToKey(MousePosition.X, MousePosition.Y);
+
+					var p = new SelectablePoint();
+					p.FCurve = Value.X;
+					p.Key = key;
+					selectedPoints.Add(p);
+
+					Value.X.AddKey(key);
+				}
+
+				if (!EventFlag && e == Keys.Y)
+				{
+					selectedPoints.Clear();
+
+					var key = PointToKey(MousePosition.X, MousePosition.Y);
+
+					var p = new SelectablePoint();
+					p.FCurve = Value.Y;
+					p.Key = key;
+					selectedPoints.Add(p);
+
+					Value.Y.AddKey(key);
+				}
+
+				if (!EventFlag && e == Keys.Delete)
+				{
+					foreach (var s in selectedPoints)
+					{
+						s.FCurve.RemoveKey(s.Key);
+					}
+					selectedPoints.Clear();
+				}
+
+				SetGraphToPanel();
+			}
+
+			Data.Value.FCurveKey<float> PointToKey(int x, int y)
+			{
+				var p = ScreenToValue(x, y);
+
+				return new Data.Value.FCurveKey<float>((int)p.X, p.Y);
+			}
+
 
 			Point FCurveKeyToPoint(Data.Value.FCurveKey<float> key)
 			{

@@ -154,6 +154,22 @@ namespace Effekseer.Binary
 					data.Add((value_.Speed.X.Min / width).GetBytes());
 					data.Add((value_.Speed.Y.Min / height).GetBytes());
 				}
+				else if (value.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+				{
+					{
+						var value_ = value.UVFCurve.Start;
+						var bytes1 = value_.GetBytes(1.0f / width);
+						List<byte[]> _data = new List<byte[]>();
+						data.Add(bytes1);
+					}
+
+					{
+						var value_ = value.UVFCurve.Size;
+						var bytes1 = value_.GetBytes(1.0f / height);
+						List<byte[]> _data = new List<byte[]>();
+						data.Add(bytes1);
+					}
+				}
 			}
 			else
 			{

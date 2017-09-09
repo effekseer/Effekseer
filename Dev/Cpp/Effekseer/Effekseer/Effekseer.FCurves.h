@@ -57,6 +57,17 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+class FCurveVector2D
+{
+public:
+	FCurve X;
+	FCurve Y;
+	
+	FCurveVector2D();
+	int32_t Load(void* data, int32_t version);
+};
+
 class FCurveVector3D
 {
 public:

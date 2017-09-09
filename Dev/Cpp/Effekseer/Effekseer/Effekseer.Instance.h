@@ -212,8 +212,8 @@ public:
 	// The time offset for UV
 	int32_t		uvTimeOffset;
 
-	// Scroll area for UV
-	RectF		uvScrollArea;
+	// Scroll, FCurve area for UV
+	RectF		uvAreaOffset;
 
 	// Scroll speed for UV
 	Vector2D	uvScrollSpeed;
