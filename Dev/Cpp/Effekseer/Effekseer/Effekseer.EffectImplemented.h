@@ -65,6 +65,9 @@ private:
 
 	float	m_maginificationExternal;
 
+	// default random seed
+	int32_t	m_defaultRandomSeed;
+
 	// 子ノード
 	EffectNode* m_pRoot;
 

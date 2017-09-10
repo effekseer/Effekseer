@@ -9,7 +9,7 @@ namespace Effekseer.Binary
 {
 	public class Exporter
 	{
-		const int Version = 10;
+		const int Version = 11;
 
 		/// <summary>
 		/// エフェクトデータの出力
@@ -274,8 +274,12 @@ namespace Effekseer.Binary
 				data.Add(new byte[] { 0, 0 });
 			}
 
-			// 倍率を出力
+			// Export magnification
 			data.Add(BitConverter.GetBytes(magnification));
+
+			// Export default seed
+			int randomSeed = -1;
+			data.Add(BitConverter.GetBytes(randomSeed));
 
 			// カリングを出力
 			data.Add(BitConverter.GetBytes((int)Core.Culling.Type.Value));

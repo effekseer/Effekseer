@@ -195,6 +195,7 @@ EffectImplemented::EffectImplemented( Manager* pManager, void* pData, int size )
 	, m_pModels			( NULL )
 	, m_maginification	( 1.0f )
 	, m_maginificationExternal	( 1.0f )
+	, m_defaultRandomSeed	(-1)
 	, m_pRoot			( NULL )
 
 	, m_normalImageCount(0)
@@ -423,6 +424,16 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 
 	m_maginification *= mag;
 	m_maginificationExternal = mag;
+
+	if (m_version >= 11)
+	{
+		memcpy(&m_defaultRandomSeed, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+	}
+	else
+	{
+		m_defaultRandomSeed = -1;
+	}
 
 	// カリング
 	if( m_version >= 9 )
