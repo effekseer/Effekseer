@@ -1074,9 +1074,16 @@ void ManagerImplemented::SetRemovingCallback( Handle handle, EffectInstanceRemov
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+bool ManagerImplemented::GetShown(Handle handle)
+{
+	if (m_DrawSets.count(handle) > 0)
+	{
+		return m_DrawSets[handle].IsShown;
+	}
+
+	return false;
+}
+
 void ManagerImplemented::SetShown( Handle handle, bool shown )
 {
 	if( m_DrawSets.count( handle ) > 0 )
@@ -1085,9 +1092,16 @@ void ManagerImplemented::SetShown( Handle handle, bool shown )
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+bool ManagerImplemented::GetPaused(Handle handle)
+{
+	if (m_DrawSets.count(handle) > 0)
+	{
+		return m_DrawSets[handle].IsPaused;
+	}
+
+	return false;
+}
+
 void ManagerImplemented::SetPaused( Handle handle, bool paused )
 {
 	if( m_DrawSets.count( handle ) > 0 )

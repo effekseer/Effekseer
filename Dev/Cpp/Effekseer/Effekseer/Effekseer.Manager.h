@@ -350,11 +350,29 @@ public:
 	virtual void SetRemovingCallback( Handle handle, EffectInstanceRemovingCallback callback ) = 0;
 
 	/**
+	@brief	\~English	Get status that a particle of effect specified is shown.
+	\~Japanese	指定したエフェクトのパーティクルが表示されているか取得する。
+
+	@param	handle	\~English	Particle's handle
+	\~Japanese	パーティクルのハンドル
+	*/
+	virtual bool GetShown(Handle handle) = 0;
+
+	/**
 		@brief	エフェクトのインスタンスをDraw時に描画するか設定する。
 		@param	handle	[in]	インスタンスのハンドル
 		@param	shown	[in]	描画するか?
 	*/
 	virtual void SetShown( Handle handle, bool shown ) = 0;
+
+	/**
+	@brief	\~English	Get status that a particle of effect specified is paused.
+	\~Japanese	指定したエフェクトのパーティクルが一時停止されているか取得する。
+
+	@param	handle	\~English	Particle's handle
+			\~Japanese	パーティクルのハンドル
+	*/
+	virtual bool GetPaused(Handle handle) = 0;
 
 	/**
 		@brief	\~English	Pause or resume a particle of effect specified.

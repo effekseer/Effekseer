@@ -486,8 +486,12 @@ public:
 	*/
 	void SetRemovingCallback( Handle handle, EffectInstanceRemovingCallback callback );
 
+	bool GetShown(Handle handle);
+
 	void SetShown( Handle handle, bool shown );
 	
+	bool GetPaused(Handle handle);
+
 	void SetPaused( Handle handle, bool paused );
 
 	void SetPausedToAllEffects(bool paused);
