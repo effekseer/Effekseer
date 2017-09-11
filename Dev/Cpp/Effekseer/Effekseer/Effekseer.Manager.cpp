@@ -1096,6 +1096,15 @@ void ManagerImplemented::SetPaused( Handle handle, bool paused )
 	}
 }
 
+void ManagerImplemented::SetPausedToAllEffects(bool paused)
+{
+	std::map<Handle, DrawSet>::iterator it = m_DrawSets.begin();
+	while (it != m_DrawSets.end())
+	{
+		(*it).second.IsPaused = paused;
+	}
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

@@ -487,7 +487,11 @@ public:
 	void SetRemovingCallback( Handle handle, EffectInstanceRemovingCallback callback );
 
 	void SetShown( Handle handle, bool shown );
+	
 	void SetPaused( Handle handle, bool paused );
+
+	void SetPausedToAllEffects(bool paused);
+
 	void SetSpeed( Handle handle, float speed );
 	void SetAutoDrawing( Handle handle, bool autoDraw );
 	void Flip();
