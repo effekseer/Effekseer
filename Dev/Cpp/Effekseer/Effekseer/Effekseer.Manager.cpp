@@ -1116,6 +1116,7 @@ void ManagerImplemented::SetPausedToAllEffects(bool paused)
 	while (it != m_DrawSets.end())
 	{
 		(*it).second.IsPaused = paused;
+		++it;
 	}
 }
 
