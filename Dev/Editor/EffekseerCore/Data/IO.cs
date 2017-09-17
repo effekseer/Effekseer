@@ -72,28 +72,28 @@ namespace Effekseer.Data
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.String value, bool isClip)
 		{
-			if (value.DefaultValue == value.Value) return null;
+			if (value.DefaultValue == value.Value && !isClip) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Boolean value, bool isClip)
 		{
-			if (value.DefaultValue == value.Value) return null;
+			if (value.DefaultValue == value.Value && !isClip) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Int value, bool isClip)
 		{
-			if (value.Value == value.DefaultValue) return null;
+			if (value.Value == value.DefaultValue && !isClip) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Float value, bool isClip)
 		{
-			if (value.Value == value.DefaultValue) return null;
+			if (value.Value == value.DefaultValue && !isClip) return null;
 			var text = value.GetValue().ToString();
 			return doc.CreateTextElement(element_name, text);
 		}
@@ -155,10 +155,10 @@ namespace Effekseer.Data
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.IntWithRandom value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
-			if (value.DefaultValueCenter != value.Center) e.AppendChild(doc.CreateTextElement("Center", value.Center.ToString()));
-			if (value.DefaultValueMax != value.Max) e.AppendChild(doc.CreateTextElement("Max", value.Max.ToString()));
-			if (value.DefaultValueMin != value.Min) e.AppendChild(doc.CreateTextElement("Min", value.Min.ToString()));
-			if (value.DefaultDrawnAs != value.DrawnAs) e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
+			if (value.DefaultValueCenter != value.Center || isClip) e.AppendChild(doc.CreateTextElement("Center", value.Center.ToString()));
+			if (value.DefaultValueMax != value.Max || isClip) e.AppendChild(doc.CreateTextElement("Max", value.Max.ToString()));
+			if (value.DefaultValueMin != value.Min || isClip) e.AppendChild(doc.CreateTextElement("Min", value.Min.ToString()));
+			if (value.DefaultDrawnAs != value.DrawnAs || isClip) e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
 
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
@@ -167,10 +167,10 @@ namespace Effekseer.Data
 		{
 			var e = doc.CreateElement(element_name);
 
-			if(value.DefaultValueCenter != value.Center) e.AppendChild(doc.CreateTextElement("Center", value.Center.ToString()));
-			if(value.DefaultValueMax != value.Max) e.AppendChild(doc.CreateTextElement("Max", value.Max.ToString()));
-			if(value.DefaultValueMin != value.Min) e.AppendChild(doc.CreateTextElement("Min", value.Min.ToString()));
-			if(value.DefaultDrawnAs != value.DrawnAs) e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
+			if (value.DefaultValueCenter != value.Center || isClip) e.AppendChild(doc.CreateTextElement("Center", value.Center.ToString()));
+			if (value.DefaultValueMax != value.Max || isClip) e.AppendChild(doc.CreateTextElement("Max", value.Max.ToString()));
+			if (value.DefaultValueMin != value.Min || isClip) e.AppendChild(doc.CreateTextElement("Min", value.Min.ToString()));
+			if (value.DefaultDrawnAs != value.DrawnAs || isClip) e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
 			
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
@@ -180,7 +180,7 @@ namespace Effekseer.Data
 			var e = doc.CreateElement(element_name);
 			var x = SaveToElement(doc, "X", value.X, isClip);
 			var y = SaveToElement(doc, "Y", value.Y, isClip);
-			var da = value.DefaultDrawnAs != value.DrawnAs ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
+			var da = (value.DefaultDrawnAs != value.DrawnAs || isClip) ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
 
 			if (x != null) e.AppendChild(x);
 			if (y != null) e.AppendChild(y);
@@ -195,7 +195,7 @@ namespace Effekseer.Data
 			var x = SaveToElement(doc, "X", value.X, isClip);
 			var y = SaveToElement(doc, "Y", value.Y, isClip);
 			var z = SaveToElement(doc, "Z", value.Z, isClip);
-			var da = value.DefaultDrawnAs != value.DrawnAs ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
+			var da = (value.DefaultDrawnAs != value.DrawnAs || isClip) ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
 
 			if (x != null) e.AppendChild(x);
 			if (y != null) e.AppendChild(y);
@@ -212,8 +212,8 @@ namespace Effekseer.Data
 			var g = SaveToElement(doc, "G", value.G, isClip);
 			var b = SaveToElement(doc, "B", value.B, isClip);
 			var a = SaveToElement(doc, "A", value.A, isClip);
-			var da = value.DefaultDrawnAs != value.DrawnAs ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
-			var cs = value.DefaultColorSpace != value.ColorSpace ? doc.CreateTextElement("ColorSpace", (int)value.ColorSpace) : null;
+			var da = (value.DefaultDrawnAs != value.DrawnAs || isClip) ? doc.CreateTextElement("DrawnAs", (int)value.DrawnAs) : null;
+			var cs = (value.DefaultColorSpace != value.ColorSpace || isClip) ? doc.CreateTextElement("ColorSpace", (int)value.ColorSpace) : null;
 
 			if (r != null) e.AppendChild(r);
 			if (g != null) e.AppendChild(g);
@@ -226,7 +226,7 @@ namespace Effekseer.Data
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.EnumBase value, bool isClip)
 		{
-			if (value.GetValueAsInt() == value.GetDefaultValueAsInt()) return null;
+			if (value.GetValueAsInt() == value.GetDefaultValueAsInt() && !isClip) return null;
 
 			var text = value.GetValueAsInt().ToString();
 			return doc.CreateTextElement(element_name, text);
@@ -234,7 +234,7 @@ namespace Effekseer.Data
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Path value, bool isClip)
 		{
-			if (value.DefaultValue == value.GetAbsolutePath()) return null;
+			if (value.DefaultValue == value.GetAbsolutePath() && !isClip) return null;
 
 			var text = "";
 			if(!isClip && value.IsRelativeSaved)
