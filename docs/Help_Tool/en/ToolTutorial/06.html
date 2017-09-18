@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>No06. Let's create circular particles!</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../base.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">No06. Let's create circular particles!</h1>
+</header>
+<div class="main">
+<h2>Overview</h2>
+<p>In this chapter, you will create various effects using rings. You have specified the sprite as the <s>drawing method</s>, but this time you will specify the ring. The ring draws cylindrical particles. By changing the parameters, you can create not only circular but also various effects.</p>
+<div align="center">
+<img src="../../img/Tutorial/06_renderRing.png">
+<p>
+Ring
+</p>
+</div>
+<p>In addition, by changing the area (UV) used for the loaded image, try changing the image to improve the appearance.</p>
+<div align="center">
+<table>
+<tr>
+<td>
+<img src="../../img/Tutorial/06_ring_easing.gif">
+<p>
+Effect No.1 created in this chapter
+</p>
+</td>
+<td>
+<img src="../../img/Tutorial/06_tri.png">
+<p>
+Effect No.2 created in this chapter
+</p>
+</td>
+<td>
+<img src="../../img/Tutorial/06_scroll.gif">
+<p>
+Effect No.3 created in this chapter
+</p>
+</td>
+</tr>
+</table>
+</div>
+<p>
+あらかじめ作成途中のエフェクトを下記のリンクからダウンロードできるようにしました。
+</p>
+<div align="center">
+<p>
+<a href = "../../Sample/06_01_Sample.zip">Download</a>
+</p>
+</div>
+<h2>A basic ring</h2>
+<p>The first effect you create is a ring whose shape changes with time.</p>
+<p>Please open effect1.efkproj.</p>
+<p>You specify the ring for particle <s>drawing method</s>. You change the sprite in the <s>Drawing window</s> to Ring.</p>
+<div align="center">
+<img src="../../img/Tutorial/06_ring_ja.png">
+<p>
+Ring
+</p>
+</div>
+<p>After changing, when you play an effect, you can see that the rings are displayed.</p>
+<div align="center">
+<img src="../../img/Tutorial/06_ring.png">
+<p>
+Ring
+</p>
+</div>
+<p>You can change the shape of this ring by changing the parameters.</p>
+<p>The shape of the ring is specified by the <s>outer ring</s> (1) and the <s>inner ring</s> (2) of <s>the &quot;drawing&quot; window</s>. Here, you specify the direction (x) to the outside of the circle and the length (y) in the axial direction.</p>
+<p><b> The xyz direction of the preview screen differs from the xy direction you specify. </b></p>
+<div align="center">
+<img src="../../img/Tutorial/06_ring_inout.png">
+<p>
+内輪・外輪
+</p>
+</div>
+<p>These values can also be changed by easing.</p>
+<p>Change the values of <s>the outer and inner rings</s> as follows. This indicates that only <s>the outer ring</s> moves from (1, 2) to (3, 0) while fixing the <s>inner ring</s> position at (1, 0).</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">ウインドウ</th>
+<th style="text-align: left;">値の名称</th>
+<th style="text-align: left;">値</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">共通</td>
+<td style="text-align: left;">生存時間</td>
+<td style="text-align: left;">60</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">回転</td>
+<td style="text-align: left;">角度(度)</td>
+<td style="text-align: left;">x=0, y=0, z=-45</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">描画</td>
+<td style="text-align: left;">外輪</td>
+<td style="text-align: left;">イージング</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">描画</td>
+<td style="text-align: left;">外輪-始点(中心)</td>
+<td style="text-align: left;">x=1, y=2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">描画</td>
+<td style="text-align: left;">外輪-始点(中心)</td>
+<td style="text-align: left;">x=3, y=0</td>
+</tr>
+</tbody>
+</table>
+<p>輪っかの形状が変化していることがわかります。 リングは円形のエフェクトと相性が良いです。</p>
+<div align="center">
+<img src="../../img/Tutorial/06_ring_easing.gif">
+<p>
+内輪・外輪
+</p>
+</div>
+<h2>A triangle</h2>
+<p>The second effect you create is a triangle.</p>
+<p>Please open effect2.efkproj.</p>
+<p>You can express various shapes by changing the number of vertices composed 0f the ring. In the initial setting, the number of vertices is large, so the particles look like circles. Reducing the number of vertices allows you to express shapes such as triangles, rectangles, and hexagons.</p>
+<p>In this chapter, You try to create a triangle. Change the number of vertices to 3 from the <s>&quot;Drawing&quot; window</s>. You can see that changing the value will result in a triangle.</p>
+<div align="center">
+<img src="../../img/Tutorial/06_tri.png">
+<p>
+A triangle
+</p>
+</div>
+<h2>UV Scroll</h2>
+<p>The third effect you create is a ring with an image.</p>
+<p>Please open effect3.efkproj.</p>
+<p>You can also specify an image to the ring. By specifying the image, expression of the shock wave and the aura which blows up etc. becomes easier.</p>
+<p>Let's specify the image immediately. Select &quot;Scroll.png&quot; from the <s>&quot;drawing common&quot;</s> window.</p>
+<p>You can see that the color of the ring has changed from single color to image.</p>
+<div align="center">
+<img src="../../img/Tutorial/06_ring_img.png">
+<p>
+Image
+</p>
+</div>
+<p>However, this is not appetizing. If you change the image according to the passage of time, it looks better. In Effekseer, you can change the area (UV) of the image used for particles.</p>
+<p>Let the area of the image used for the particles move over time.</p>
+<p>Change UV from <s>&quot;Drawing common&quot;</s> window. Change UV <s>&quot;standard&quot;</s> to &quot;scroll&quot;. Then, nothing is shown. This is because you have not set the area of the image to use.</p>
+<p>Enter the image size (256, 256) in the size. Next, enter (0, -5) as the moving speed.</p>
+<p>You can see that the image is moving.</p>
+<div align="center">
+<img src="../../img/Tutorial/06_scroll.gif">
+<p>
+UV Scroll
+</p>
+</div>
+<p>最後に、本章で作成されたエフェクトをダウンロードできるようにしてみました。</p>
+<div align="center">
+<p><a href = "../../Sample/06_02_Sample.zip">Download</a></p>
+</div>
+<h2>Summery</h2>
+<p>In this chapter, you created an effect using a ring. In the next chapter, you will create complicated effects using parent-child relationships.</p>
+</div>
+</body>
+</html>

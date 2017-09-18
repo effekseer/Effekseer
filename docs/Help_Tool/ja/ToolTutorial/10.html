@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>No10. TIPS-1</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../base.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">No10. TIPS-1</h1>
+</header>
+<section class="level1">
+<h1>概要</h1>
+<p>本章では、Effekseerでエフェクトを作成するためのTIPSについて説明します。 特に今回は、生成、リング、親子関係を説明します。</p>
+<p>本章では、特に具体的なエフェクトを作成しません。</p>
+<section class="level2">
+<h2>生成</h2>
+<section class="level3">
+<h3>パーティクルの寿命を無限にする。</h3>
+<p>エフェクトによっては消滅せずに常に表示して欲しいことがあります。 それを実現する方法は2つあります。 1つ目は、寿命をゲームのプレイ時間より長くすることです。 2つ目は共通ウインドウの「寿命により削除」のチェックを外すことです。</p>
+<p>エフェクトを手動で停止しない限り、エフェクトが消えなくなるので注意してください。</p>
+</section>
+<section class="level3">
+<h3>複数のパーティクルを0フレーム目に同時に生成する。</h3>
+<p>生成時間を0.0001といった非常に小さい値にします。 加えて、生成開始時間をマイナスにします。</p>
+<p>生成時間を1より小さくすると、1フレームの間に複数のパーティクルが生成されます。 生成開始時間がマイナスの時間の場合、0フレームにパーティクルが生成されます。 この2つにより、0フレーム目に複数のパーティクルが生成されるようになります。</p>
+</section>
+</section>
+<section class="level2">
+<h2>リング</h2>
+<p>リングには様々な使用方法があります。</p>
+<section class="level3">
+<h3>三日月型リング</h3>
+<p>リングに円形の画像を使用すると、リングの一部が途切れて三日月型のリングになります。 これを複数、回転と拡大しつつ生成するだけで、格好いいエフェクトができます。</p>
+<p>図</p>
+</section>
+<section class="level3">
+<h3>衝撃波リング</h3>
+<p>リングにトゲトゲの画像を使用すると、衝撃波のようなリングになります。</p>
+<p>図</p>
+</section>
+<section class="level3">
+<h3></h3>
+</section>
+</section>
+<section class="level2">
+<h2>親子関係</h2>
+<p>典型的な親子関係の使用方法について説明します。 1つだけ、ここでは説明しない使用方法がありますが、それは次章以降で説明します。 ほとんどの内容は復習になります。</p>
+<section class="level3">
+<h3>親パーティクルの周りを子パーティクルが周回する場合</h3>
+<p>6章で説明したように、子パーティクルは親パーティクルの動きに追従します。 そのため、惑星のように親パーティクルの周りを子パーティクルが周回する場合に使用できます。</p>
+<p>図</p>
+</section>
+<section class="level3">
+<h3>親パーティクルを中心に子パーティクルを発生させる場合</h3>
+<p>6章で説明したように、位置、回転、拡大を生成時のみにすることで、 子パーティクルが生成された時刻の親パーティクルの姿勢を中心に、子パーティクルが生成されます。</p>
+<p>そのため、花火や流れ星といった親パーティクルからパーティクルが生成される場合に使用できます。</p>
+<p>図</p>
+</section>
+<section class="level3">
+<h3>親パーティクルを子パーティクルの調節に使用する場合</h3>
+<p>9章で説明したように、親子関係を用いて、子パーティクルの上方向を変更することができます。 生成方法と組み合わせることで、パーティクルの動きを制御しやすくなります。</p>
+<p>図</p>
+</section>
+<section class="level3">
+<h3></h3>
+</section>
+</section>
+</section>
+</body>
+</html>

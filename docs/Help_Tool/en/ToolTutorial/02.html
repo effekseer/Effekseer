@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>No02.パーティクルをばらまいてみよう！</title>
+  <title>No02.Let's spread the particles!</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../base.css">
   <!--[if lt IE 9]>
@@ -13,98 +13,98 @@
 </head>
 <body>
 <header>
-<h1 class="title">No02.パーティクルをばらまいてみよう！</h1>
+<h1 class="title">No02.Let's spread the particles!</h1>
 </header>
 <div class="main">
-<h2>概要</h2>
-<p>本章では、パーティクルをばらまいてみます。 これだけでは味気ないですが、Effekseerの基本操作を覚えれます。 本章で覚えた知識をもとに、次の章で格好いいエフェクトを作成します。 そのため、しっかり理解しましょう。</p>
+<h2>Overview</h2>
+<p>In this chapter, You will disperse the particles.&lt;&gt; This chapter is not enough to make cool effects, but you can learn the basic operation of Effekseer. Based on the knowledge learned in this chapter, you will create a cool effect in the next chapter. Therefore, let's understand firmly.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_completed.gif">
 <p>
-本章で作成するエフェクト
+Effects created in this chapter
 </p>
 </div>
-<h2>位置の編集</h2>
-<h3>初期配置の位置の編集</h3>
-<p>現在は、中央にパーティクルが表示されています。このパーティクルを中央から移動させてみます。</p>
+<h2><s>Edit location</s></h2>
+<h3><s>Edit initial placement position</s></h3>
+<p>Currently, particles are shown in the center. Let's move this particle from the center.</p>
 <div align="center">
 <img src="../../img/Tutorial/01_square.png">
 <p>
-中央に表示
+Shown in the center
 </p>
 </div>
-<p>まず、画面の右側の「ノードツリー」の「Node」をクリックします。「ノードツリー」のウインドウは エフェクト全体の構成を示しており、「Node」はパーティクルを示しています。これを編集することにより、 このパーティクルの形状を編集できます。</p>
+<p>First, click &quot;Node&quot; in the <s>&quot;node tree&quot;</s> on the right side of the screen. The <s>&quot;node tree&quot;</s> window is It shows the structure of the entire effect, &quot;Node&quot; indicates particles. By editing this, you can edit the shape of this particle.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_nodetree.png">
 <p>
 ノードツリーウインドウ
 </p>
 </div>
-<p>クリックすると、大量の編集可能なウインドウが表示されます。初めてだと驚くかもしれないですが、 本章で編集するウインドウは2つのみです。</p>
-<p>初期配置の位置を編集するには、「位置」のウインドウのパラメーターを編集します。</p>
+<p>When clicked, a large number of available windows will be displayed. Although it may be surprised if it is the first time, only two windows are used in this chapter.</p>
+<p>To edit the position of the <s>initial placement</s>, edit the parameters of the <s>&quot;position&quot; window</s>.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_position_en.png">
 <p>
 位置ウインドウ
 </p>
 </div>
-<p>位置のウインドウの位置のxの数値を0から2に変更してみましょう。</p>
+<p>Let's change the value of x at the position in the position window from 0 to 2.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_position_input_en.png">
 <p>
-xの数値を変更
+Change the value of x
 </p>
 </div>
-<p>そうすると、パーティクルの位置が中央から外側に移動しました。</p>
+<p>Then, the particle moved from the center to the outside.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_position_input_view.png">
 <p>
 外側に移動
 </p>
 </div>
-<h3>パーティクルが移動するようにする</h3>
-<p>パーティクルが静止している状態では面白くありません。パーティクルが移動するようにしましょう。</p>
-<p>Effekseerには位置を指定する方法が複数あります。</p>
-<p>初期設定では位置が固定されていますが、速度や加速度を指定できる設定方法があります。</p>
-<p>位置ウインドウのドロップダウンリストをクリックして、位置から位置・速度・加速度に変更します。 そうすると、位置ウインドウに速度や加速度を入力するテキストボックスが追加されます。 パーティクルの速度や加速度を設定できるようになるため、パーティクルを動かせるようになります。</p>
+<h3>Make the particle move</h3>
+<p>It is not fun when the particle is frozen. Let's move the particle.</p>
+<p>Effekseer has several ways to specify the position.</p>
+<p>Although the position is fixed in the initial setting, there is a specification method that can specify speed and acceleration.</p>
+<p>Click on the drop-down list in <s>the position window</s> and change from position to position, velocity, acceleration. Then, a text box for entering velocity and acceleration is added to the position window. You will be able to set particle velocity and acceleration, so you can move the particles.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_pva_en.png">
 <p>
 位置・速度・加速度
 </p>
 </div>
-<p>x方向の速度に0.1と入力しましょう。</p>
+<p>Let's enter 0.1 in the x direction velocity.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_pva_input_en.png">
 <p>
 位置・速度・加速度
 </p>
 </div>
-<p>そうすると、高速に画面外に飛び出すようになりました。</p>
+<p>Then, the particle began to jump out of the screen at high speed.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_pva.gif">
 <p>
 移動するエフェクト
 </p>
 </div>
-<p>他の数値も入力して、挙動がどう変化するか試してみましょう。</p>
-<h3>パーティクルが複数表示されるようにする</h3>
-<p>多くのエフェクトでは、パーティクルが1つしかないことはほとんどないです。 パーティクルを複数表示させてみましょう。</p>
-<p>パーティクルの数は、共通ウインドウの生成数に設定されています。 この数を増やすと、たくさんのパーティクルが生成されるようになります。</p>
+<p>Let's try to see how behavior changes by entering other numbers.</p>
+<h3>Display multiple particles</h3>
+<p>There are little effects constructed of single particle. Let's display multiple particles.</p>
+<p>The number of particles is set to <s>the generation number in common windows</s>. Increasing this number will generate a lot of particles.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_common_en.png">
 <p>
 生成数
 </p>
 </div>
-<p>生成数の数値を100にしてみましょう。</p>
+<p>Let's make <s>the number of generated numbers</s> 100.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_common_count_en.png">
 <p>
 生成数を増やす
 </p>
 </div>
-<p>沢山、パーティクルが生成されるようになりました。 ただ、全てのパーティクルの移動する方向が一緒なので、パーティクルが重なって表示されてしまいます。</p>
+<p>Much particles are now generated. However, as all the particles move in the same direction, the particles will be displayed overlapping.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_count.gif">
 <p>
@@ -112,44 +112,44 @@ xの数値を変更
 </p>
 </div>
 <h3>パーティクルをランダムな方向に移動させる</h3>
-<p>パーティクルの移動方向が同じだと、パーティクルが重なって表示されてしまいます。 そこで、パーティクルごとにランダムな方向に移動するようにします。</p>
-<p>位置ウインドウの速度のxyzの振幅に0.1と入力しましょう。さらに、先ほど中心に入力した0.1を0に戻します。</p>
-<p>これは、速度は-0.1～0.1の間でランダムに設定される、ということを示しています。 すなわち、パーティクルは(0,0,0)を中心に全周囲に移動します。</p>
+<p>When the particle movement direction is the same, the particles will be displayed overlapping. So, let's move randomly for each particle.</p>
+<p>Let's enter 0.1 for the xyz <s>amplitude of the position window speed</s>. In addition, we reset 0.1 which was input to center earlier to 0.</p>
+<p>This means that the speed is randomly set between -0.1 and 0.1. That is, the particles move to the entire periphery around (0, 0, 0).</p>
 <div align="center">
 <img src="../../img/Tutorial/02_random_input_en.png">
 <p>
 ランダム
 </p>
 </div>
-<p>パーティクルが全周囲に移動するようになりました。</p>
+<p>Particles now move around the entire circumference.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_random.gif">
 <p>
 ランダム
 </p>
 </div>
-<h3>パーティクルが表示されている時間を短くする</h3>
-<p>今はパーティクルが長時間表示されていますが、エフェクトによっては短いものもあります。 表示時間を短くしてみましょう。</p>
-<p>共通ウインドウに生存時間というパラメーターがあります。 このパラメーターを短くしてみます。今回は30と入力しました。</p>
+<h3>Shorten the time when particles are displayed</h3>
+<p>Although particles are displayed for a long time now, some effects are displayed for a short time, depending on the effect. Let's shorten the display time.</p>
+<p>There is a parameter called <s>Survival Time</s> in the common window. Let's shorten this parameter. I entered 30 this time.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_life_input_en.png">
 <p>
 生存時間
 </p>
 </div>
-<p>小さくすると、パーティクルがすぐ消えるようになります。</p>
+<p>If you make it smaller, particles will disappear soon.</p>
 <div align="center">
 <img src="../../img/Tutorial/02_completed.gif">
 <p>
 生存時間
 </p>
 </div>
-<p>最後に、本章で作成されたエフェクトをダウンロードできるようにしてみました。</p>
+<p>Finally, I tried to download the effect created in this chapter. &lt;- ???</p>
 <div align="center">
 <p><a href = "../../Sample/02_Sample.zip">ダウンロード</a></p>
 </div>
-<h2>まとめ</h2>
-<p>今回はパーティクルを複数生成し、移動させてみました。 次章では、パーティクルから、よりエフェクトらしい見た目に編集します。</p>
+<h2>Summary</h2>
+<p>This time I created multiple particles and made move. In the next chapter, you will edit from a particle to look more like an effect.</p>
 </div>
 </body>
 </html>
