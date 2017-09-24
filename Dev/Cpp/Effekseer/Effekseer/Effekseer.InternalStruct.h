@@ -240,7 +240,7 @@ struct vector3d
 
 	void normalize()
 	{
-		float len = std::sqrtf(x * x + y * y + z * z);
+		float len = sqrtf(x * x + y * y + z * z);
 		if (len > 0.0001f)
 		{
 			x /= len;
