@@ -21,7 +21,7 @@
 <div align="center">
 <img src="../../img/Tutorial/05_completed.gif">
 <p>
-Effects created in this chapter
+The effect created in this chapter
 </p>
 </div>
 <h2>Preparation</h2>
@@ -41,13 +41,13 @@ Effects created in this chapter
 <td>
 <img src="../../img/Tutorial/05_pva_type.png">
 <p>
-位置・速度・加速度
+PVA
 </p>
 </td>
 <td>
 <img src="../../img/Tutorial/05_easing_type.png">
 <p>
-イージング
+Easing
 </p>
 </td>
 </tr>
@@ -75,25 +75,25 @@ Interpolation method
 <table>
 <thead>
 <tr class="header">
-<th style="text-align: left;">ウインドウ</th>
-<th style="text-align: left;">値の名称</th>
-<th style="text-align: left;">値</th>
+<th style="text-align: left;">Window</th>
+<th style="text-align: left;">Value type</th>
+<th style="text-align: left;">Value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">共通</td>
-<td style="text-align: left;">名称</td>
+<td style="text-align: left;">Name</td>
 <td style="text-align: left;">Line1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">共通</td>
-<td style="text-align: left;">生存時間</td>
+<td style="text-align: left;">Time to live</td>
 <td style="text-align: left;">20</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">回転</td>
-<td style="text-align: left;">角度(度)</td>
+<td style="text-align: left;">Angle</td>
 <td style="text-align: left;">x=0, y=0, z=-45</td>
 </tr>
 <tr class="even">
@@ -107,61 +107,58 @@ Interpolation method
 <td style="text-align: left;">x=4, y=1, z=1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">拡</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">大</td>
+<td style="text-align: left;">拡大</td>
 <td style="text-align: left;">終点(中心)</td>
 <td style="text-align: left;">x=1, y=25, z=1</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">拡大</td>
 <td style="text-align: left;">始点速度</td>
 <td style="text-align: left;">高速3</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">拡大</td>
 <td style="text-align: left;">終点速度</td>
 <td style="text-align: left;">低速3</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">描画共通</td>
-<td style="text-align: left;">色/歪み画像</td>
+<td style="text-align: left;">Texture</td>
 <td style="text-align: left;">Texture/Line01.png</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">描画共通</td>
-<td style="text-align: left;">ブレンド</td>
+<td style="text-align: left;">Blend</td>
 <td style="text-align: left;">加算</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">配置方法</td>
+<td style="text-align: left;">Configuration</td>
 <td style="text-align: left;">Z軸回転ビルボード</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色</td>
+<td style="text-align: left;">ColorAll</td>
 <td style="text-align: left;">イージング</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-始点(中心)</td>
+<td style="text-align: left;">ColorAll-始点(中心)</td>
 <td style="text-align: left;">255,128,255,255</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">描画</td>
+<td style="text-align: left;">ColorAll-終点(中心)</td>
+<td style="text-align: left;">255,255,255,0</td>
+</tr>
 <tr class="odd">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-終点(中心)</td>
-<td style="text-align: left;">255,255,255,0</td>
+<td style="text-align: left;">ColorAll-始点速度</td>
+<td style="text-align: left;">低速3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-始点速度</td>
-<td style="text-align: left;">低速3</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-終点速度</td>
+<td style="text-align: left;">ColorAll-終点速度</td>
 <td style="text-align: left;">高速3</td>
 </tr>
 </tbody>
@@ -177,7 +174,7 @@ Sword line node
 <p>When the attack hits, not only the sword line but also the impact is generated. Impact node is created like a sword wire.</p>
 <p>Since the parameters of the sword line node and impact node are different, you need to add a node. First, you select Root. Then right click on Root to display the menu. From the menu, you choose Add Node.</p>
 <div align="center">
-<img src="../../img/Tutorial/05_addnode_ja.png">
+<img src="../../img/Tutorial/05_addnode_en.png">
 <p>
 Adding node
 </p>
@@ -187,35 +184,35 @@ Adding node
 <table>
 <thead>
 <tr class="header">
-<th style="text-align: left;">ウインドウ</th>
-<th style="text-align: left;">値の名称</th>
-<th style="text-align: left;">値</th>
+<th style="text-align: left;">Window</th>
+<th style="text-align: left;">Value type</th>
+<th style="text-align: left;">Value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">共通</td>
-<td style="text-align: left;">名称</td>
+<td style="text-align: left;">Name</td>
 <td style="text-align: left;">Line2</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">共通</td>
-<td style="text-align: left;">生成数</td>
+<td style="text-align: left;">Spawn Count</td>
 <td style="text-align: left;">10</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">共通</td>
-<td style="text-align: left;">生存時間</td>
+<td style="text-align: left;">Time to live</td>
 <td style="text-align: left;">20</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">回転</td>
 <td style="text-align: left;">回転方法</td>
-<td style="text-align: left;">角度・速度・加速度</td>
+<td style="text-align: left;">PVA</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">回転</td>
-<td style="text-align: left;">角度(度)-振幅</td>
+<td style="text-align: left;">Angle-Deviation</td>
 <td style="text-align: left;">x=0, y=0, z=180</td>
 </tr>
 <tr class="even">
@@ -245,42 +242,42 @@ Adding node
 </tr>
 <tr class="odd">
 <td style="text-align: left;">描画共通</td>
-<td style="text-align: left;">色/歪み画像</td>
+<td style="text-align: left;">Texture</td>
 <td style="text-align: left;">Texture/Line01.png</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">描画共通</td>
-<td style="text-align: left;">ブレンド</td>
+<td style="text-align: left;">Blend</td>
 <td style="text-align: left;">加算</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">配置方法</td>
+<td style="text-align: left;">Configuration</td>
 <td style="text-align: left;">Z軸回転ビルボード</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色</td>
+<td style="text-align: left;">ColorAll</td>
 <td style="text-align: left;">イージング</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-始点(中心)</td>
+<td style="text-align: left;">ColorAll-始点(中心)</td>
 <td style="text-align: left;">255,128,255,255</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-終点(中心)</td>
+<td style="text-align: left;">ColorAll-終点(中心)</td>
 <td style="text-align: left;">255,255,255,0</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-始点速度</td>
+<td style="text-align: left;">ColorAll-始点速度</td>
 <td style="text-align: left;">低速3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-終点速度</td>
+<td style="text-align: left;">ColorAll-終点速度</td>
 <td style="text-align: left;">高速3</td>
 </tr>
 </tbody>
@@ -298,65 +295,65 @@ Impact node
 <table>
 <thead>
 <tr class="header">
-<th style="text-align: left;">ウインドウ</th>
-<th style="text-align: left;">値の名称</th>
-<th style="text-align: left;">値</th>
+<th style="text-align: left;">Window</th>
+<th style="text-align: left;">Value type</th>
+<th style="text-align: left;">Value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">共通</td>
-<td style="text-align: left;">名称</td>
+<td style="text-align: left;">Name</td>
 <td style="text-align: left;">Flash1</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">共通</td>
-<td style="text-align: left;">生存時間</td>
+<td style="text-align: left;">Time to live</td>
 <td style="text-align: left;">20</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">拡大</td>
 <td style="text-align: left;">拡大方法</td>
-<td style="text-align: left;">単一拡大率・速度・加速度</td>
+<td style="text-align: left;">PVA(Single)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">拡大</td>
-<td style="text-align: left;">拡大速度</td>
+<td style="text-align: left;">Expansion Speed</td>
 <td style="text-align: left;">0.6</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">描画共通</td>
-<td style="text-align: left;">色/歪み画像</td>
+<td style="text-align: left;">Texture</td>
 <td style="text-align: left;">Texture/Particle01.png</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">描画共通</td>
-<td style="text-align: left;">ブレンド</td>
+<td style="text-align: left;">Blend</td>
 <td style="text-align: left;">加算</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色</td>
+<td style="text-align: left;">ColorAll</td>
 <td style="text-align: left;">イージング</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-始点(中心)</td>
+<td style="text-align: left;">ColorAll-始点(中心)</td>
 <td style="text-align: left;">255,32,255,255</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-終点(中心)</td>
+<td style="text-align: left;">ColorAll-終点(中心)</td>
 <td style="text-align: left;">255,128,255,0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-始点速度</td>
+<td style="text-align: left;">ColorAll-始点速度</td>
 <td style="text-align: left;">低速3</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">描画</td>
-<td style="text-align: left;">全体色-終点速度</td>
+<td style="text-align: left;">ColorAll-終点速度</td>
 <td style="text-align: left;">高速3</td>
 </tr>
 </tbody>
@@ -372,14 +369,14 @@ Light emitting node No.1
 <p>New emiitting node is added because the light emission is still sober. This light emitting node is almost same as the light emitting node created earlier. Effekseer can copy nodes.</p>
 <p>After selecting the lighting node, right click to copy the node.</p>
 <div align="center">
-<img src="../../img/Tutorial/05_copynode_ja.png">
+<img src="../../img/Tutorial/05_copynode_en.png">
 <p>
 Adding node
 </p>
 </div>
 <p>After selecting Root, right-click to paste the node.</p>
 <div align="center">
-<img src="../../img/Tutorial/05_pastenode_ja.png">
+<img src="../../img/Tutorial/05_pastenode_en.png">
 <p>
 Adding node
 </p>
@@ -389,20 +386,20 @@ Adding node
 <table>
 <thead>
 <tr class="header">
-<th style="text-align: left;">ウインドウ</th>
-<th style="text-align: left;">値の名称</th>
-<th style="text-align: left;">値</th>
+<th style="text-align: left;">Window</th>
+<th style="text-align: left;">Value type</th>
+<th style="text-align: left;">Value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">共通</td>
-<td style="text-align: left;">名称</td>
+<td style="text-align: left;">Name</td>
 <td style="text-align: left;">Flash2</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">描画共通</td>
-<td style="text-align: left;">色/歪み画像</td>
+<td style="text-align: left;">Texture</td>
 <td style="text-align: left;">Texture/Particle03.png</td>
 </tr>
 </tbody>
@@ -411,7 +408,7 @@ Adding node
 <div align="center">
 <img src="../../img/Tutorial/05_completed.gif">
 <p>
-完成
+Complete
 </p>
 </div>
 <p>Finally, I made it possible to download the effect created in this chapter.</p>

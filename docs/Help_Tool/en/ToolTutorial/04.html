@@ -40,20 +40,20 @@ The Effect created in this chapter
 <p>Just like the position, there are multiple ways to specify rotation. By default, <code>Fixed angle</code> is selected. Change this to <code>PVA</code>. Then enter 5 for <code>Angular Velocity</code> z.</p>
 <p>This means that you rotate 5 degrees per frame about the Z direction (front direction) as the axis.</p>
 <div align="center">
-<img src="../../img/Tutorial/04_ratation_pva_en.png">
+<img src="../../img/Tutorial/04_rotation_pva_en.png">
 <p>
-<s>Angular velocity</s>
+Angular velocity
 </p>
 </div>
 <p>After inputting, you play the effect ... nothing changes! This is because in the initial setting of drawing by sprite, the sprite always faces the front even if the particle rotates.</p>
-<p>In <s>the &quot;Drawing&quot; window</s>, change the placement method to <s>Z axis rotating building board</s>. <s>Z axis rotation The billboard</s> is a layout method in which the rectangular shape faces the front while the Z axis rotation is enable.</p>
+<p>In the &quot;Basic Render Settings&quot; window, change the <code>Configuration</code> to <code>Rotated Billboard</code>. <code>Rotated Billboard</code> is a layout method in which the rectangular shape faces the front while the Z axis rotation is enable.</p>
 <div align="center">
 <img src="../../img/Tutorial/04_conf_en.png">
 <p>
-<s>Arrangement method</s>
+Configuration
 </p>
 </div>
-<p>When setting the <s>placement method</s> to <s>the Z axis rotating building board</s>, you can see that the rectangle rotates about the Z direction (front direction).</p>
+<p>When setting the <code>Configuration</code> to <code>Rotated Billboard</code>, you can see that the rectangle rotates about the Z direction (front direction).</p>
 <div align="center">
 <img src="../../img/Tutorial/04_rotate.gif">
 <p>
@@ -61,19 +61,19 @@ Rotation
 </p>
 </div>
 <h3>Scale</h3>
-<p>As with position and rotation, you can scale particles. You can specify scale from the &quot;scale&quot; window.</p>
+<p>As with position and rotation, you can scale particles. You can specify scale from the &quot;Sale&quot; window.</p>
 <div align="center">
 <img src="../../img/Tutorial/04_scale_en.png">
 <p>
 &quot;Scale&quot; window
 </p>
 </div>
-<p>Just like the position and rotation, there is also a way to specify more than one in the scale. In the initial setting, the <s>enlargement ratio</s> is selected. Change this to <s>single magnification rate, speed, acceleration</s>. Then input 0.01 for <s>the enlargement speed</s>.</p>
-<p><s>The enlargement ratio</s> can also be set individually in the X, Y, Z direction, but <s>the enlargement ratio</s> is often the same for all directions. Therefore, you can set a single <s>enlargement ratio</s>.</p>
+<p>Just like the position and rotation, there is also a way to specify more than one in the scale. In the initial setting, the <code>Fixed Scale</code> is selected. Change this to <code>PVA(Single)</code>. Then input 0.01 for <s>the enlargement speed</s>.</p>
+<p><s>The enlargement ratio</s> can also be set individually in the X, Y, Z direction, but <s>the enlargement ratio</s> is often the same for all directions. Therefore, you can set a <s>Expansion Speed</s>.</p>
 <div align="center">
 <img src="../../img/Tutorial/04_scale_pva_en.png">
 <p>
-Expansion velocity
+Expansion Speed
 </p>
 </div>
 <p>You can see that the sprite is rotating and enlarging.</p>
@@ -85,33 +85,33 @@ Scale
 </div>
 <h2>Sprite shape</h2>
 <p>Sprite shape can be changed from square into rectangle, trapezoid, etc.</p>
-<p>Change <s>vertex coordinates</s> from <s>&quot;drawing&quot; window</s>, from <s>standard</s> to <s>fixed</s>. Then you can specify <s>the coordinates of the vertices</s> of the sprite.</p>
+<p>Change <code>Vertex Coords</code> from the &quot;Render Settings&quot; window</s>, from <s>standard</s> to '''Fixed'''. Then you can specify the coordinates of the vertices of the sprite.</p>
 <p>For this time, let's input as follows to enlarge the sprite vertically.</p>
 <div align="center">
 <img src="../../img/Tutorial/04_v_en.png">
 <p>
-頂点座標
+Vertex Coords
 </p>
 </div>
 <p>You can see that the vertical length of sprite is longer than horizontal length of one.</p>
 <div align="center">
 <img src="../../img/Tutorial/04_shape.gif">
 <p>
-頂点座標
+Vertex Coords
 </p>
 </div>
 <h2>Finish</h2>
 <p>Since it is not good looking as it is, you change parameters as follows.</p>
-<h3>「共通」ウインドウ</h3>
-<p>Change <s>generation number</s> to 10</p>
-<h3>「位置」ウインドウ</h3>
-<p>-位置・速度・加速度に変更 -位置の振幅を2に変更</p>
-<h3>「描画共通」ウインドウ</h3>
+<h3>The &quot;Basic Settings&quot; window</h3>
+<p>Change '''Spawn Count''' to 10</p>
+<h3>The &quot;Position&quot; window</h3>
+<p>-Change into PVA -Change Pos deviation into 2</p>
+<h3>The &quot;Basic Render Settings&quot; window</h3>
 <p>色/歪み画像にparticle.pngを選択</p>
 <p>ブレンドを加算に変更</p>
-<h3>「回転」ウインドウ</h3>
+<h3>The &quot;Rotation&quot; window</h3>
 <p>角度の振幅を180に変更</p>
-<h3>「拡大」ウインドウ</h3>
+<h3>The &quot;Scale&quot; window</h3>
 <p>拡大率を0に変更</p>
 <h3>Result</h3>
 <p>If you do not know how to change these parameters, please review chapters 1 to 3.</p>
@@ -125,9 +125,8 @@ Result
 <div align="center">
 <p><a href = "../../Sample/04_02_Sample.zip">Download</a></p>
 </div>
-<h2>まとめ</h2>
-<p>本章では、スプライトの回転や拡大について説明しました。 次章では、今までの知識を生かして実践的なエフェクトを作成します。</p>
-<p>In this chapter, I explained the sprite rotation and enlargement. In the next chapter, we will create practical effects by making the most of our knowledge.</p>
+<h2>Summary</h2>
+<p>In this chapter, we explained the sprite rotation and enlargement. In the next chapter, we will create practical effects by making the most of our knowledge.</p>
 </div>
 </body>
 </html>
