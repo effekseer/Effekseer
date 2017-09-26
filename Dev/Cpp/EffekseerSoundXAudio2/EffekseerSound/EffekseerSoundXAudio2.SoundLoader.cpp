@@ -65,7 +65,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 
 		if (memcmp(&chunkIdent, "fmt ", 4) == 0) {
 			// フォーマットチャンク
-			uint32_t size = min(chunkSize, sizeof(wavefmt));
+			uint32_t size = (chunkSize < (uint32_t)sizeof(wavefmt)) ? chunkSize : (uint32_t)sizeof(wavefmt);
 			reader->Read(&wavefmt, size);
 			if (size < chunkSize) {
 				reader->Seek(reader->GetPosition() + chunkSize - size);
