@@ -29,7 +29,7 @@ The effect created in this chapter
 <div align="center">
 <p><a href = "../../Sample/05_01_Sample.zip">Download</a></p>
 </div>
-<p>Since the length of the effect created is about 0.5 seconds, <s>&quot;end&quot;</s> in <s>&quot;viewer operation&quot;</s> window is specified to 30 frames.</p>
+<p>Since the length of the effect created is about 0.5 seconds, <code>End</code> in the <code>Viewer Controls</code> window is specified to 30 frames.</p>
 <h2>Easing</h2>
 <p>Easing is often used for various parameters.</p>
 <p>Easing is a method of representing changes in values by specifying the values of the start and end points and automatically interpolating the values between them.</p>
@@ -69,7 +69,7 @@ Interpolation method
 </ul>
 <h3>Sword line node</h3>
 <p>You create a node where a particle slenderly cuts at an angle of 45 degrees, representing a sword line.</p>
-<p>The sword line is specified to elongate in the direction of 45 degrees during 0.33 seconds (20 frames). <s>Z-axis rotating billboard</s> is specified to tilt the particles.</p>
+<p>The sword line is specified to elongate in the direction of 45 degrees during 0.33 seconds (20 frames). <code>Rotated Billboard</code> is specified to tilt the particles.</p>
 <p>Values are changed as follows.</p>
 <p><b>This chapter has many values to change. Even if the atmosphere is alike, it is not necessary to make them all the same.</b></p>
 <table>
@@ -82,84 +82,84 @@ Interpolation method
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">共通</td>
+<td style="text-align: left;">Basic Settings</td>
 <td style="text-align: left;">Name</td>
 <td style="text-align: left;">Line1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">共通</td>
+<td style="text-align: left;">Basic Settings</td>
 <td style="text-align: left;">Time to live</td>
 <td style="text-align: left;">20</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">回転</td>
+<td style="text-align: left;">Rotation</td>
 <td style="text-align: left;">Angle</td>
 <td style="text-align: left;">x=0, y=0, z=-45</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">拡大</td>
-<td style="text-align: left;">拡大方法</td>
-<td style="text-align: left;">イージング</td>
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">Scale Method</td>
+<td style="text-align: left;">Easing</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">拡大</td>
-<td style="text-align: left;">始点(中心)</td>
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">Start(Mean)</td>
 <td style="text-align: left;">x=4, y=1, z=1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">拡大</td>
-<td style="text-align: left;">終点(中心)</td>
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">End(Mean)</td>
 <td style="text-align: left;">x=1, y=25, z=1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">拡大</td>
-<td style="text-align: left;">始点速度</td>
-<td style="text-align: left;">高速3</td>
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">Ease In</td>
+<td style="text-align: left;">Fastest</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">拡大</td>
-<td style="text-align: left;">終点速度</td>
-<td style="text-align: left;">低速3</td>
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">Ease Out</td>
+<td style="text-align: left;">Slowest</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画共通</td>
+<td style="text-align: left;">Basic Render Settings</td>
 <td style="text-align: left;">Texture</td>
 <td style="text-align: left;">Texture/Line01.png</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画共通</td>
+<td style="text-align: left;">Basic Render Settings</td>
 <td style="text-align: left;">Blend</td>
-<td style="text-align: left;">加算</td>
+<td style="text-align: left;">Additive</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画</td>
+<td style="text-align: left;">Render Settings</td>
 <td style="text-align: left;">Configuration</td>
-<td style="text-align: left;">Z軸回転ビルボード</td>
+<td style="text-align: left;">Rotated Billboard</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画</td>
+<td style="text-align: left;">Render Settings</td>
 <td style="text-align: left;">ColorAll</td>
-<td style="text-align: left;">イージング</td>
+<td style="text-align: left;">Easing</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-始点(中心)</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-Start(Mean)</td>
 <td style="text-align: left;">255,128,255,255</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-終点(中心)</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-End(Mean)</td>
 <td style="text-align: left;">255,255,255,0</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-始点速度</td>
-<td style="text-align: left;">低速3</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-Ease In</td>
+<td style="text-align: left;">Slowest</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-終点速度</td>
-<td style="text-align: left;">高速3</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-Ease Out</td>
+<td style="text-align: left;">Fastest</td>
 </tr>
 </tbody>
 </table>
@@ -191,94 +191,94 @@ Adding node
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">共通</td>
+<td style="text-align: left;">Basic Settings</td>
 <td style="text-align: left;">Name</td>
 <td style="text-align: left;">Line2</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">共通</td>
+<td style="text-align: left;">Basic Settings</td>
 <td style="text-align: left;">Spawn Count</td>
 <td style="text-align: left;">10</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">共通</td>
+<td style="text-align: left;">Basic Settings</td>
 <td style="text-align: left;">Time to live</td>
 <td style="text-align: left;">20</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">回転</td>
-<td style="text-align: left;">回転方法</td>
+<td style="text-align: left;">Rotation</td>
+<td style="text-align: left;">Rotation Method</td>
 <td style="text-align: left;">PVA</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">回転</td>
-<td style="text-align: left;">Angle-Deviation</td>
+<td style="text-align: left;">Rotation</td>
+<td style="text-align: left;">Angle(Deviation)</td>
 <td style="text-align: left;">x=0, y=0, z=180</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">拡大</td>
-<td style="text-align: left;">拡大方法</td>
-<td style="text-align: left;">イージング</td>
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">Scale Method</td>
+<td style="text-align: left;">Easing</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">拡大</td>
-<td style="text-align: left;">始点(中心)</td>
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">Start(Mean)</td>
 <td style="text-align: left;">x=1, y=1, z=1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">拡大</td>
-<td style="text-align: left;">終点(中心)</td>
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">End(Mean)</td>
 <td style="text-align: left;">x=1, y=10, z=1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">拡大</td>
-<td style="text-align: left;">始点速度</td>
-<td style="text-align: left;">高速3</td>
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">Ease In</td>
+<td style="text-align: left;">Fastest</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">拡大</td>
-<td style="text-align: left;">終点速度</td>
-<td style="text-align: left;">低速3</td>
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">Ease Out</td>
+<td style="text-align: left;">Slowest</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画共通</td>
+<td style="text-align: left;">Basic Render Settings</td>
 <td style="text-align: left;">Texture</td>
 <td style="text-align: left;">Texture/Line01.png</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画共通</td>
+<td style="text-align: left;">Basic Render Settings</td>
 <td style="text-align: left;">Blend</td>
-<td style="text-align: left;">加算</td>
+<td style="text-align: left;">Additive</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画</td>
+<td style="text-align: left;">Render Settings</td>
 <td style="text-align: left;">Configuration</td>
-<td style="text-align: left;">Z軸回転ビルボード</td>
+<td style="text-align: left;">Rotated Billboard</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画</td>
+<td style="text-align: left;">Render Settings</td>
 <td style="text-align: left;">ColorAll</td>
-<td style="text-align: left;">イージング</td>
+<td style="text-align: left;">Easing</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-始点(中心)</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-Start(Mean)</td>
 <td style="text-align: left;">255,128,255,255</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-終点(中心)</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-End(Mean)</td>
 <td style="text-align: left;">255,255,255,0</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-始点速度</td>
-<td style="text-align: left;">低速3</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-Ease In</td>
+<td style="text-align: left;">Slowest</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-終点速度</td>
-<td style="text-align: left;">高速3</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-Ease Out</td>
+<td style="text-align: left;">Fastest</td>
 </tr>
 </tbody>
 </table>
@@ -302,59 +302,59 @@ Impact node
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">共通</td>
+<td style="text-align: left;">Basic Settings</td>
 <td style="text-align: left;">Name</td>
 <td style="text-align: left;">Flash1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">共通</td>
+<td style="text-align: left;">Basic Settings</td>
 <td style="text-align: left;">Time to live</td>
 <td style="text-align: left;">20</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">拡大</td>
-<td style="text-align: left;">拡大方法</td>
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">Scale Method</td>
 <td style="text-align: left;">PVA(Single)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">拡大</td>
+<td style="text-align: left;">Scale</td>
 <td style="text-align: left;">Expansion Speed</td>
 <td style="text-align: left;">0.6</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画共通</td>
+<td style="text-align: left;">Basic Render Settings</td>
 <td style="text-align: left;">Texture</td>
 <td style="text-align: left;">Texture/Particle01.png</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画共通</td>
+<td style="text-align: left;">Basic Render Settings</td>
 <td style="text-align: left;">Blend</td>
-<td style="text-align: left;">加算</td>
+<td style="text-align: left;">Additive</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画</td>
+<td style="text-align: left;">Render Settings</td>
 <td style="text-align: left;">ColorAll</td>
-<td style="text-align: left;">イージング</td>
+<td style="text-align: left;">Easing</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-始点(中心)</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-Start(Mean)</td>
 <td style="text-align: left;">255,32,255,255</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-終点(中心)</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-End(Mean)</td>
 <td style="text-align: left;">255,128,255,0</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-始点速度</td>
-<td style="text-align: left;">低速3</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-Ease In</td>
+<td style="text-align: left;">Slowest</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">描画</td>
-<td style="text-align: left;">ColorAll-終点速度</td>
-<td style="text-align: left;">高速3</td>
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">ColorAll-Ease Out</td>
+<td style="text-align: left;">Fastest</td>
 </tr>
 </tbody>
 </table>
@@ -393,12 +393,12 @@ Adding node
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">共通</td>
+<td style="text-align: left;">Basic Settings</td>
 <td style="text-align: left;">Name</td>
 <td style="text-align: left;">Flash2</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">描画共通</td>
+<td style="text-align: left;">Basic Render Settings</td>
 <td style="text-align: left;">Texture</td>
 <td style="text-align: left;">Texture/Particle03.png</td>
 </tr>
