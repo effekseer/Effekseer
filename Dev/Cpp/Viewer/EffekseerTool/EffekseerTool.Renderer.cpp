@@ -21,7 +21,8 @@ namespace EffekseerTool
 	Renderer::DistortingCallback::DistortingCallback(Renderer* renderer)
 		: renderer(renderer)
 	{
-	
+		IsEnabled = true;
+		Blit = true;
 	}
 
 	Renderer::DistortingCallback::~DistortingCallback()
@@ -31,9 +32,13 @@ namespace EffekseerTool
 
 	bool Renderer::DistortingCallback::OnDistorting()
 	{
-		auto texture = renderer->ExportBackground();
-		renderer->m_renderer->SetBackground(texture);
-		return true;
+		if (Blit)
+		{
+			auto texture = renderer->ExportBackground();
+			renderer->m_renderer->SetBackground(texture);
+		}
+
+		return IsEnabled;
 	}
 //----------------------------------------------------------------------------------
 //
@@ -192,6 +197,8 @@ Renderer::Renderer(int32_t squareMaxCount, bool isSRGBMode)
 	, CullingRadius		(0.0f)
 	, CullingPosition	()
 
+	, Distortion		(eDistortionType::DistortionType_Current)
+
 	, m_recording		( false )
 	, m_recordingTarget	( NULL )
 	, m_recordingTargetTexture	( NULL )
@@ -300,8 +307,9 @@ bool Renderer::Initialize( HWND handle, int width, int height )
 	m_width = width;
 	m_height = height;
 
+	m_distortionCallback = new DistortingCallback(this);
 	m_renderer = (::EffekseerRendererDX9::RendererImplemented*)::EffekseerRendererDX9::Renderer::Create( m_d3d_device, m_squareMaxCount );
-	m_renderer->SetDistortingCallback(new DistortingCallback(this));
+	m_renderer->SetDistortingCallback(m_distortionCallback);
 
 	// グリッド生成
 	m_grid = ::EffekseerRenderer::Grid::Create( m_renderer );
@@ -621,6 +629,26 @@ bool Renderer::BeginRendering()
 	if (m_isSRGBMode)
 	{
 		GetDevice()->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
+	}
+
+	// Distoriton
+	if (Distortion == eDistortionType::DistortionType_Current)
+	{
+		auto texture = ExportBackground();
+		m_renderer->SetBackground(texture);
+		m_distortionCallback->Blit = false;
+		m_distortionCallback->IsEnabled = true;
+	}
+	else if (Distortion == eDistortionType::DistortionType_Effekseer120)
+	{
+		m_distortionCallback->Blit = true;
+		m_distortionCallback->IsEnabled = true;
+	}
+	else
+	{
+		m_distortionCallback->Blit = false;
+		m_renderer->SetBackground(nullptr);
+		m_distortionCallback->IsEnabled = false;
 	}
 
 	m_renderer->BeginRendering();

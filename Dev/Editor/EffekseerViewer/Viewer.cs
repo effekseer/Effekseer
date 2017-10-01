@@ -307,6 +307,15 @@ namespace Effekseer
 			native.SetLightAmbientColor(r, g, b, a);
 		}
 
+		public void SetDistortionType(int type)
+		{
+			var param = native.GetViewerParamater();
+
+			param.Distortion = (DistortionType)type;
+
+			native.SetViewerParamater(param);
+		}
+
 		public void SetIsRightHand(bool value)
 		{
 			native.SetIsRightHand(value);

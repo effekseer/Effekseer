@@ -687,6 +687,28 @@ SWIGEXPORT float SWIGSTDCALL CSharp_ViewerParamater_CullingZ_get(void * jarg1) {
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_ViewerParamater_Distortion_set(void * jarg1, int jarg2) {
+  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
+  DistortionType arg2 ;
+  
+  arg1 = (ViewerParamater *)jarg1; 
+  arg2 = (DistortionType)jarg2; 
+  if (arg1) (arg1)->Distortion = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_ViewerParamater_Distortion_get(void * jarg1) {
+  int jresult ;
+  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
+  DistortionType result;
+  
+  arg1 = (ViewerParamater *)jarg1; 
+  result = (DistortionType) ((arg1)->Distortion);
+  jresult = (int)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_new_ViewerParamater() {
   void * jresult ;
   ViewerParamater *result = 0 ;

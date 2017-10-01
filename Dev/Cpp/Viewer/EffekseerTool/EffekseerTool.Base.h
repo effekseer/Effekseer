@@ -36,6 +36,15 @@ enum eProjectionType
 	PROJECTION_TYPE_DWORD = 0x7fffffff,
 };
 
+enum eDistortionType
+{
+	DistortionType_Current,
+	DistortionType_Effekseer120,
+	DistortionType_Disabled,
+};
+
+
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

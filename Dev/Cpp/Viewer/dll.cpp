@@ -453,6 +453,8 @@ ViewerParamater::ViewerParamater()
 	, CullingY			( 0 )
 	, CullingZ			( 0 )
 
+	, Distortion		( DistortionType::Current )
+
 {
 
 }
@@ -1589,6 +1591,8 @@ ViewerParamater Native::GetViewerParamater()
 	paramater.Distance = g_Distance;
 	paramater.RendersGuide = g_renderer->RendersGuide;
 	paramater.RateOfMagnification = g_renderer->RateOfMagnification;
+	
+	paramater.Distortion = (DistortionType)g_renderer->Distortion;
 
 	return paramater;
 }
@@ -1622,6 +1626,8 @@ void Native::SetViewerParamater( ViewerParamater& paramater )
 	g_RotY = paramater.AngleY;
 	g_Distance = paramater.Distance;
 	g_renderer->RendersGuide = paramater.RendersGuide;
+
+	g_renderer->Distortion = (::EffekseerTool::eDistortionType)paramater.Distortion;
 }
 
 //----------------------------------------------------------------------------------
