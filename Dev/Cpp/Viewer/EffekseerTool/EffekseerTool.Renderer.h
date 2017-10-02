@@ -30,6 +30,9 @@ private:
 		virtual ~DistortingCallback();
 
 		bool OnDistorting();
+
+		bool IsEnabled;
+		bool Blit;
 	};
 
 private:
@@ -44,6 +47,7 @@ private:
 	eProjectionType		m_projection;
 
 	::EffekseerRendererDX9::RendererImplemented*	m_renderer;
+	DistortingCallback*								m_distortionCallback;
 
 	::EffekseerRenderer::Grid*	m_grid;
 	::EffekseerRenderer::Guide*	m_guide;
@@ -198,6 +202,11 @@ public:
 	float CullingRadius;
 
 	Effekseer::Vector3D CullingPosition;
+
+	/**
+		@brief	The type of distortion
+	*/
+	eDistortionType		Distortion;
 
 	/**
 		@brief	背景色

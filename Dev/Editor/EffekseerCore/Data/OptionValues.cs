@@ -225,6 +225,18 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "歪み方法")]
+		[Description(language = Language.Japanese, value = "歪み方法")]
+		[Name(language = Language.English, value = "Distortion method")]
+		[Description(language = Language.English, value = "Distortion method")]
+		[Undo(Undo = false)]
+		public Value.Enum<DistortionMethodType> DistortionType
+		{
+			get;
+			private set;
+		}
+
+
         [Name(language = Language.Japanese, value = "言語設定")]
         [Description(language = Language.Japanese, value = "言語設定")]
         [Name(language = Language.English, value = "Language")]
@@ -261,6 +273,8 @@ namespace Effekseer.Data
 			MouseRotInvY = new Value.Boolean(false);
 			MouseSlideInvX = new Value.Boolean(false);
 			MouseSlideInvY = new Value.Boolean(false);
+
+			DistortionType = new Value.Enum<DistortionMethodType>(DistortionMethodType.Current);
 
             // Switch the language according to the OS settings
             var culture = System.Globalization.CultureInfo.CurrentCulture;
@@ -299,6 +313,20 @@ namespace Effekseer.Data
 			[Name(value = "Left-Handed", language = Language.English)]
 			Left = 1,
 		}
+
+		public enum DistortionMethodType : int
+		{
+			[Name(value = "現行", language = Language.Japanese)]
+			[Name(value = "Current", language = Language.English)]
+			Current = 0,
+			[Name(value = "1.20互換", language = Language.Japanese)]
+			[Name(value = "1.20 Compatible", language = Language.English)]
+			Effekseer120 = 1,
+			[Name(value = "無効", language = Language.Japanese)]
+			[Name(value = "Disabled", language = Language.English)]
+			Disabled = 2,
+		}
+
 
 		public enum ColorSpaceType : int
 		{

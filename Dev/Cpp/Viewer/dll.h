@@ -19,6 +19,15 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+enum class DistortionType
+{
+	Current,
+	Effekseer120,
+	Disabled,
+};
+
+
 class ViewerParamater
 {
 public:
@@ -40,6 +49,8 @@ public:
 	float	CullingX;
 	float	CullingY;
 	float	CullingZ;
+
+	DistortionType	Distortion;
 
 	ViewerParamater();
 };

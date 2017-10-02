@@ -61,6 +61,8 @@ namespace Effekseer.GUI
 			Core.Option.GridColor.B.OnChanged += OnChanged;
 			Core.Option.GridColor.A.OnChanged += OnChanged;
 			Core.Option.FPS.OnChanged += OnChanged;
+
+			Core.Option.DistortionType.OnChanged += OnChanged;
 			Core.Option.Coordinate.OnChanged += OnChanged;
 
 			Core.Option.BackgroundImage.OnChanged += OnChanged;
@@ -443,6 +445,8 @@ namespace Effekseer.GUI
 
 			viewer.SetStep((int)Core.Option.FPS.Value);
 			viewer.SetIsRightHand(Core.Option.Coordinate.Value == Data.OptionValues.CoordinateType.Right);
+
+			viewer.SetDistortionType((int)Core.Option.DistortionType.Value);
 
 			if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
 			{

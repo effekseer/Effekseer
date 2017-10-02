@@ -210,6 +210,16 @@ public class ViewerParamater : global::System.IDisposable {
     } 
   }
 
+  public DistortionType Distortion {
+    set {
+      EffekseerNativePINVOKE.ViewerParamater_Distortion_set(swigCPtr, (int)value);
+    } 
+    get {
+      DistortionType ret = (DistortionType)EffekseerNativePINVOKE.ViewerParamater_Distortion_get(swigCPtr);
+      return ret;
+    } 
+  }
+
   public ViewerParamater() : this(EffekseerNativePINVOKE.new_ViewerParamater(), true) {
   }
 

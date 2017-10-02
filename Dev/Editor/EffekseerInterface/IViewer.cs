@@ -315,6 +315,12 @@ namespace Effekseer
 		void SetIsRightHand(bool value);
 
 		/// <summary>
+		/// Set distortion type
+		/// </summary>
+		/// <param name="type"></param>
+		void SetDistortionType(int type);
+
+		/// <summary>
 		/// マウスでの画面回転方向を逆にするか?
 		/// </summary>
 		/// <param name="value"></param>
