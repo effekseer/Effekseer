@@ -134,7 +134,7 @@ robocopy docs\Help_Tool %RDIR%\Help *.html *.css *.efkproj *.png /mir /S
 robocopy docs\QuickTutorial_Tool %RDIR%\QuickTutorial *.html *.css *.efkproj *.png /mir /S
 
 mkdir %RDIR_R%\Help
-robocopy Release\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S
+robocopy docs\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S
 
 echo doxygen(exe or bat)
 call doxygen.bat doxygen.template
