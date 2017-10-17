@@ -28,6 +28,7 @@ namespace Effekseer.GUI.Component
 			Core.OnAfterNew += Core_OnAfterNew;
 			Core.OnAfterSave += Core_OnAfterSave;
 			Core.OnAfterLoad += Core_OnAfterLoad;
+			Core.OnReload += Core_OnReload;
 		}
 
 		Data.Value.Path binding = null;
@@ -94,108 +95,7 @@ namespace Effekseer.GUI.Component
 			if (ofd.ShowDialog() == DialogResult.OK)
 			{
 				var filepath = ofd.FileName;
-
-				// Convert file
-				var filenameWE = System.IO.Path.GetDirectoryName(filepath) + "/" + System.IO.Path.GetFileNameWithoutExtension(filepath);
-				var ext = System.IO.Path.GetExtension(filepath).ToLower().Replace(".","");
-				var newFilepath = filenameWE + ".efkmodel";
-
-				Effekseer.Utl.ModelInformation modelInfo = new Utl.ModelInformation();
-				if(modelInfo.Load(newFilepath))
-				{
-				}
-				else
-				{
-					// Remove invalid file
-					if (System.IO.File.Exists(newFilepath))
-					{ 
-						try
-						{
-							System.IO.File.Delete(newFilepath);
-						}
-						catch
-						{
-
-						}
-					}
-				}
-
-				Dialog.OpenModelDialog omd = new Dialog.OpenModelDialog(modelInfo.Scale);
-
-				if (ext == "fbx" || ext == "mqo")
-				{
-					omd.ShowDialog();
-					if (!omd.OK) return;
-				}
-
-				if (ext == "fbx")
-				{
-					var oldFilepath = filepath;
-					bool doGenerate = false;
-
-					if(!System.IO.File.Exists(newFilepath) ||
-						System.IO.File.GetLastWriteTime(oldFilepath) != System.IO.File.GetLastWriteTime(newFilepath) ||
-						modelInfo.Scale != omd.Magnification)
-					{
-						doGenerate = true;
-					}
-					
-					if(doGenerate)
-					{
-						string appPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-						string converterPath = System.IO.Path.GetDirectoryName(appPath) + "/tools/fbxToEffekseerModelConverter.exe";
-
-						System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
-						info.FileName = converterPath;
-						info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
-
-						System.Diagnostics.Process p = System.Diagnostics.Process.Start(info);
-						p.WaitForExit();
-						p.Dispose();
-
-						if (System.IO.File.Exists(newFilepath))
-						{
-							System.IO.File.SetLastWriteTime(newFilepath, System.IO.File.GetLastWriteTime(oldFilepath));
-						}
-					}
-				}
-
-				if (ext == "mqo")
-				{
-					var oldFilepath = filepath;
-
-					bool doGenerate = false;
-
-					if (!System.IO.File.Exists(newFilepath) ||
-						System.IO.File.GetLastWriteTime(oldFilepath) != System.IO.File.GetLastWriteTime(newFilepath) ||
-						modelInfo.Scale != omd.Magnification)
-					{
-						doGenerate = true;
-					}
-
-					if (doGenerate)
-					{
-						string appPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-						string converterPath = System.IO.Path.GetDirectoryName(appPath) + "/tools/mqoToEffekseerModelConverter.exe";
-
-						System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
-						info.FileName = converterPath;
-						info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
-
-						System.Diagnostics.Process p = System.Diagnostics.Process.Start(info);
-						p.WaitForExit();
-						p.Dispose();
-
-						if (System.IO.File.Exists(newFilepath))
-						{
-							System.IO.File.SetLastWriteTime(newFilepath, System.IO.File.GetLastWriteTime(oldFilepath));
-						}
-					}
-				}
-
-				binding.SetAbsolutePath(filepath);
-
-				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
+				LoadFile(filepath);
 			}
 			else
 			{
@@ -215,6 +115,11 @@ namespace Effekseer.GUI.Component
 			Read();
 		}
 
+		void Core_OnReload(object sender, EventArgs e)
+		{
+			Read();
+		}
+
 		void Core_OnAfterNew(object sender, EventArgs e)
 		{
 			Read();
@@ -226,6 +131,7 @@ namespace Effekseer.GUI.Component
 			Core.OnAfterNew -= Core_OnAfterNew;
 			Core.OnAfterSave -= Core_OnAfterSave;
 			Core.OnAfterLoad -= Core_OnAfterLoad;
+			Core.OnReload -= Core_OnReload;
 		}
 		
 		private bool CheckExtension(string path)
@@ -278,6 +184,130 @@ namespace Effekseer.GUI.Component
 					Read();
 				}
 			}
+		}
+
+		private void btn_delete_Click(object sender, EventArgs e)
+		{
+			if (binding == null) return;
+			binding.SetAbsolutePath(string.Empty);
+
+			Read();
+		}
+
+		private void btn_reload_Click(object sender, EventArgs e)
+		{
+			if (binding == null) return;
+			var filepath = binding.AbsolutePath;
+			if (string.IsNullOrEmpty(filepath)) return;
+			LoadFile(filepath);
+
+			Read();
+		}
+
+		void LoadFile(string filepath)
+		{
+
+			// Convert file
+			var filenameWE = System.IO.Path.GetDirectoryName(filepath) + "/" + System.IO.Path.GetFileNameWithoutExtension(filepath);
+			var ext = System.IO.Path.GetExtension(filepath).ToLower().Replace(".", "");
+			var newFilepath = filenameWE + ".efkmodel";
+
+			Effekseer.Utl.ModelInformation modelInfo = new Utl.ModelInformation();
+			if (modelInfo.Load(newFilepath))
+			{
+			}
+			else
+			{
+				// Remove invalid file
+				if (System.IO.File.Exists(newFilepath))
+				{
+					try
+					{
+						System.IO.File.Delete(newFilepath);
+					}
+					catch
+					{
+
+					}
+				}
+			}
+
+			Dialog.OpenModelDialog omd = new Dialog.OpenModelDialog(modelInfo.Scale);
+
+			if (ext == "fbx" || ext == "mqo")
+			{
+				omd.ShowDialog();
+				if (!omd.OK) return;
+			}
+
+			if (ext == "fbx")
+			{
+				var oldFilepath = filepath;
+				bool doGenerate = false;
+
+				if (!System.IO.File.Exists(newFilepath) ||
+					System.IO.File.GetLastWriteTime(oldFilepath) != System.IO.File.GetLastWriteTime(newFilepath) ||
+					modelInfo.Scale != omd.Magnification)
+				{
+					doGenerate = true;
+				}
+
+				if (doGenerate)
+				{
+					string appPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+					string converterPath = System.IO.Path.GetDirectoryName(appPath) + "/tools/fbxToEffekseerModelConverter.exe";
+
+					System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
+					info.FileName = converterPath;
+					info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
+
+					System.Diagnostics.Process p = System.Diagnostics.Process.Start(info);
+					p.WaitForExit();
+					p.Dispose();
+
+					if (System.IO.File.Exists(newFilepath))
+					{
+						System.IO.File.SetLastWriteTime(newFilepath, System.IO.File.GetLastWriteTime(oldFilepath));
+					}
+				}
+			}
+
+			if (ext == "mqo")
+			{
+				var oldFilepath = filepath;
+
+				bool doGenerate = false;
+
+				if (!System.IO.File.Exists(newFilepath) ||
+					System.IO.File.GetLastWriteTime(oldFilepath) != System.IO.File.GetLastWriteTime(newFilepath) ||
+					modelInfo.Scale != omd.Magnification)
+				{
+					doGenerate = true;
+				}
+
+				if (doGenerate)
+				{
+					string appPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+					string converterPath = System.IO.Path.GetDirectoryName(appPath) + "/tools/mqoToEffekseerModelConverter.exe";
+
+					System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
+					info.FileName = converterPath;
+					info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
+
+					System.Diagnostics.Process p = System.Diagnostics.Process.Start(info);
+					p.WaitForExit();
+					p.Dispose();
+
+					if (System.IO.File.Exists(newFilepath))
+					{
+						System.IO.File.SetLastWriteTime(newFilepath, System.IO.File.GetLastWriteTime(oldFilepath));
+					}
+				}
+			}
+
+			binding.SetAbsolutePath(filepath);
+
+			System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
 		}
 	}
 }
