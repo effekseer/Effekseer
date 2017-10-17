@@ -119,6 +119,18 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "出力時の拡大率")]
+		[Description(language = Language.Japanese, value = "出力時の拡大率")]
+		[Name(language = Language.English, value = "Output Magnification")]
+		[Description(language = Language.English, value = "Output magnification")]
+		[Undo(Undo = false)]
+		[Shown(Shown = false)]
+		public Value.Float ExternalMagnification
+		{
+			get;
+			private set;
+		}
+
 
 		[Name(language = Language.Japanese, value = "出力FPS")]
 		[Description(language = Language.Japanese, value = "出力FPS")]
@@ -264,6 +276,7 @@ namespace Effekseer.Data
 			LightColor = new Value.Color(215, 215, 215, 255);
 			LightAmbientColor = new Value.Color(40, 40, 40, 255);
 			Magnification = new Value.Float(1, float.MaxValue, 0.00001f);
+			ExternalMagnification = new Value.Float(1, float.MaxValue, 0.00001f);
 			FPS = new Value.Enum<FPSType>(FPSType._60FPS);
 			Coordinate = new Value.Enum<CoordinateType>(CoordinateType.Right);
 
