@@ -8,7 +8,7 @@ namespace mqoToEffekseerModelConverter
 {
 	class Program
 	{
-		const int Version = 2;
+		const int Version = 3;
 
 		static void PrintUsage()
 		{
@@ -114,7 +114,7 @@ namespace mqoToEffekseerModelConverter
 
 			data.Add(BitConverter.GetBytes(Version));
 
-            data.Add(BitConverter.GetBytes(modelScale));
+            //data.Add(BitConverter.GetBytes(modelScale));
 
             data.Add(BitConverter.GetBytes(modelCount));
 
@@ -174,6 +174,8 @@ namespace mqoToEffekseerModelConverter
 
                 foffset += obj.Faces.Length;
             }
+
+			data.Add(BitConverter.GetBytes(modelScale));
 
 			System.IO.File.WriteAllBytes(dst, data.SelectMany(_ => _).ToArray());
 		}

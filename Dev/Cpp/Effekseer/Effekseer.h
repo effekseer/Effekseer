@@ -2546,7 +2546,9 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	モデルクラス
+	@brief
+	\~English	Model class
+	\~Japanese	モデルクラス
 */
 class Model
 {
@@ -2602,8 +2604,11 @@ private:
 	int32_t		m_modelCount;
 
 public:
+
 	/**
-		@brief	コンストラクタ
+		@brief
+		\~English	Constructor
+		\~Japanese	コンストラクタ
 	*/
 	Model( void* data, int32_t size ) 
 		: m_data	( NULL )
@@ -2622,6 +2627,13 @@ public:
 		memcpy( &m_version, p, sizeof(int32_t) );
 		p += sizeof(int32_t);
 
+		// load scale except version 3
+		if (m_version == 2)
+		{
+			// Scale
+			p += sizeof(int32_t);
+		}
+
 		memcpy( &m_modelCount, p, sizeof(int32_t) );
 		p += sizeof(int32_t);
 
@@ -2635,7 +2647,7 @@ public:
 		}
 		else
 		{
-			// 新規バッファ確保
+			// allocate new buffer
 			m_vertexes = new Vertex[m_vertexCount];
 
 			for (int32_t i = 0; i < m_vertexCount; i++)
@@ -2663,7 +2675,9 @@ public:
 	int32_t GetModelCount() { return m_modelCount; }
 
 	/**
-		@brief	デストラクタ
+		@brief
+		\~English	Destructor
+		\~Japanese	デストラクタ
 	*/
 	virtual ~Model()
 	{
@@ -2690,7 +2704,7 @@ public:
 		float p1 = ( (float)randFunc() / (float)randMax );
 		float p2 = ( (float)randFunc() / (float)randMax );
 
-		/* 面内に収める */
+		// Fit within plane
 		if( p1 + p2 > 1.0f )
 		{
 			p1 = 1.0f - p1;

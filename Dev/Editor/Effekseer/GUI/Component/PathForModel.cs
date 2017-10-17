@@ -101,7 +101,24 @@ namespace Effekseer.GUI.Component
 				var newFilepath = filenameWE + ".efkmodel";
 
 				Effekseer.Utl.ModelInformation modelInfo = new Utl.ModelInformation();
-				modelInfo.Load(newFilepath);
+				if(modelInfo.Load(newFilepath))
+				{
+				}
+				else
+				{
+					// Remove invalid file
+					if (System.IO.File.Exists(newFilepath))
+					{ 
+						try
+						{
+							System.IO.File.Delete(newFilepath);
+						}
+						catch
+						{
+
+						}
+					}
+				}
 
 				Dialog.OpenModelDialog omd = new Dialog.OpenModelDialog(modelInfo.Scale);
 
@@ -134,6 +151,7 @@ namespace Effekseer.GUI.Component
 
 						System.Diagnostics.Process p = System.Diagnostics.Process.Start(info);
 						p.WaitForExit();
+						p.Dispose();
 
 						if (System.IO.File.Exists(newFilepath))
 						{
@@ -166,6 +184,7 @@ namespace Effekseer.GUI.Component
 
 						System.Diagnostics.Process p = System.Diagnostics.Process.Start(info);
 						p.WaitForExit();
+						p.Dispose();
 
 						if (System.IO.File.Exists(newFilepath))
 						{

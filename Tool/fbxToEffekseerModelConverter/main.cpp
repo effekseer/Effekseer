@@ -135,7 +135,7 @@ int main(int argc, char** argv)
 
 
 	// Export model.
-	const int Version = 2;
+	const int Version = 3;
 
 	std::ofstream fout;
 	fout.open(exportPath.c_str(), std::ios::out | std::ios::binary);
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
 	}
 
 	fout.write((const char*)&Version, sizeof(int32_t));
-	fout.write((const char*)&modelScale, sizeof(int32_t));
+	//fout.write((const char*)&modelScale, sizeof(int32_t));
 	fout.write((const char*)&modelCount, sizeof(int32_t));
 	
 	int32_t vcount = 0;
@@ -222,6 +222,8 @@ int main(int argc, char** argv)
 
 		foffset += mesh->Faces.size();
 	}
+
+	fout.write((const char*)&modelScale, sizeof(int32_t));
 
 	fout.close();
 

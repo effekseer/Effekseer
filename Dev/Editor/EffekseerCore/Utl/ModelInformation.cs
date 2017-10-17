@@ -5,6 +5,15 @@ using System.Text;
 
 namespace Effekseer.Utl
 {
+	/// <summary>
+	/// Model format
+	/// </summary>
+	/// <remarks>
+	/// Version 0 First version
+	/// Version 1 Vertex color is added
+	/// Version 2 Scale is added into header (this version is only 1.30 beta2)
+	/// Version 3 Scale is added into footer (compatible with Version1)
+	/// </remarks>
 	public class ModelInformation
 	{
 		public float Scale = 1.0f;
@@ -39,9 +48,28 @@ namespace Effekseer.Utl
 
 			var version = BitConverter.ToInt32(buf, 0);
 
-			if (version > 1)
+			if (version == 2)
 			{
 				Scale = BitConverter.ToSingle(buf, 4);
+				fs.Dispose();
+				br.Dispose();
+				return false;
+			}
+
+			if(version == 3)
+			{
+				fs.Seek(-4, System.IO.SeekOrigin.End);
+
+				if (br.Read(buf, 0, 4) == 4)
+				{
+					Scale = BitConverter.ToSingle(buf, 0);
+				}
+				else
+				{
+					fs.Dispose();
+					br.Dispose();
+					return false;
+				}
 			}
 
 			fs.Dispose();
