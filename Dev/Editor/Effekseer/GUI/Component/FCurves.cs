@@ -173,6 +173,19 @@ namespace Effekseer.GUI.Component
 				}
 				return 0.0f;
 			};
+
+			lbl_frame.Text = global::Effekseer.Properties.Resources.Frame;
+			lbl_value.Text = global::Effekseer.Properties.Resources.Value;
+			lbl_start.Text = global::Effekseer.Properties.Resources.Start;
+			lbl_end.Text = global::Effekseer.Properties.Resources.End;
+			lbl_type.Text = global::Effekseer.Properties.Resources.Complement;
+			lbl_sampling.Text = global::Effekseer.Properties.Resources.Sampling;
+			lbl_left.Text = global::Effekseer.Properties.Resources.Left;
+			lbl_right.Text = global::Effekseer.Properties.Resources.Right;
+			lbl_offset.Text = global::Effekseer.Properties.Resources.Offset;
+			lbl_offset_min.Text = global::Effekseer.Properties.Resources.Min;
+			lbl_offset_max.Text = global::Effekseer.Properties.Resources.Max;
+		
 		}
 
 		Data.Value.IFCurveKey editedFCurveKey = null;

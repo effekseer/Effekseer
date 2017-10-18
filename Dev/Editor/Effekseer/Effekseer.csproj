@@ -403,6 +403,9 @@
     <EmbeddedResource Include="GUI\Component\FloatWithRandom.resx">
       <DependentUpon>FloatWithRandom.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Component\GuiLanguage.resx">
+      <DependentUpon>GuiLanguage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\Component\PathForImage.resx">
       <DependentUpon>PathForImage.cs</DependentUpon>
     </EmbeddedResource>

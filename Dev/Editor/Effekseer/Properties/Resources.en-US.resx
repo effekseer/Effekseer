@@ -470,4 +470,7 @@
   <data name="InternalViewHelp" xml:space="preserve">
     <value>Manual</value>
   </data>
+  <data name="ResetMaginification" xml:space="preserve">
+    <value>Reset maginification</value>
+  </data>
 </root>

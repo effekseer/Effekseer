@@ -1116,6 +1116,15 @@ namespace Effekseer.Properties {
         }
         
         /// <summary>
+        ///   倍率再設定 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ResetMaginification {
+            get {
+                return ResourceManager.GetString("ResetMaginification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   ウインドウ位置を初期化 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ResetWindow {

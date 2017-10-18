@@ -822,71 +822,149 @@ namespace Effekseer
 
 					if (node.LocationValues.Type.Value == Data.LocationValues.ParamaterType.LocationFCurve)
 					{
-						list.Add(Tuple.Create("位置",(object)node.LocationValues.LocationFCurve.FCurve));
+						var name = "Location";
+						if(Language == Effekseer.Language.Japanese)
+						{
+							name = "位置";
+						}
+
+						list.Add(Tuple.Create(name,(object)node.LocationValues.LocationFCurve.FCurve));
 					}
 
 					if (node.RotationValues.Type.Value == Data.RotationValues.ParamaterType.RotationFCurve)
 					{
-						list.Add(Tuple.Create("角度", (object)node.RotationValues.RotationFCurve.FCurve));
+						var name = "Angle";
+						if (Language == Effekseer.Language.Japanese)
+						{
+							name = "角度";
+						}
+
+						list.Add(Tuple.Create(name, (object)node.RotationValues.RotationFCurve.FCurve));
 					}
 
 					if (node.ScalingValues.Type.Value == Data.ScaleValues.ParamaterType.FCurve)
 					{
-						list.Add(Tuple.Create("拡大率", (object)node.ScalingValues.FCurve.FCurve));
+						var name = "Scaling Factor";
+						if (Language == Effekseer.Language.Japanese)
+						{
+							name = "拡大率";
+						}
+
+						list.Add(Tuple.Create(name, (object)node.ScalingValues.FCurve.FCurve));
 					}
 
 					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
-						list.Add(Tuple.Create("UV(始点)", (object)node.RendererCommonValues.UVFCurve.Start));
+						var name = "UV(Start)";
+						if (Language == Effekseer.Language.Japanese)
+						{
+							name = "UV(始点)";
+						}
+
+						list.Add(Tuple.Create(name, (object)node.RendererCommonValues.UVFCurve.Start));
 					}
 
 					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
-						list.Add(Tuple.Create("UV(大きさ)", (object)node.RendererCommonValues.UVFCurve.Size));
+						var name = "UV(Size)";
+						if (Language == Effekseer.Language.Japanese)
+						{
+							name = "UV(大きさ)";
+						}
+
+						list.Add(Tuple.Create(name, (object)node.RendererCommonValues.UVFCurve.Size));
 					}
 
 					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite &&
 						node.DrawingValues.Sprite.ColorAll.Value == Data.StandardColorType.FCurve)
 					{
-						list.Add(Tuple.Create("スプライト・全体色(RGBA)", (object)node.DrawingValues.Sprite.ColorAll_FCurve.FCurve));
+						var name = "Sprite-Color all(RGBA)";
+						if (Language == Effekseer.Language.Japanese)
+						{
+							name = "スプライト・全体色(RGBA)";
+						}
+
+						list.Add(Tuple.Create(name, (object)node.DrawingValues.Sprite.ColorAll_FCurve.FCurve));
 					}
 
 					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model &&
 						node.DrawingValues.Model.Color.Value == Data.StandardColorType.FCurve)
 					{
-						list.Add(Tuple.Create("モデル・色(RGBA)", (object)node.DrawingValues.Model.Color_FCurve.FCurve));
+						var name = "Model-Color(RGBA)";
+						if (Language == Effekseer.Language.Japanese)
+						{
+							name = "モデル・色(RGBA)";
+						}
+
+						list.Add(Tuple.Create(name, (object)node.DrawingValues.Model.Color_FCurve.FCurve));
 					}
 
 					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track)
 					{
 						if (node.DrawingValues.Track.ColorLeft.Value == Data.StandardColorType.FCurve)
 						{
-							list.Add(Tuple.Create("軌跡・左(RGBA)", (object)node.DrawingValues.Track.ColorLeft_FCurve.FCurve));
+							var name = "Track-Color,Left(RGBA)";
+							if (Language == Effekseer.Language.Japanese)
+							{
+								name = "軌跡・左(RGBA)";
+							}
+
+							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorLeft_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorLeftMiddle.Value == Data.StandardColorType.FCurve)
 						{
-							list.Add(Tuple.Create("軌跡・左中間(RGBA)", (object)node.DrawingValues.Track.ColorLeftMiddle_FCurve.FCurve));
+							var name = "Track-Color,Left-Center(RGBA)";
+							if (Language == Effekseer.Language.Japanese)
+							{
+								name = "軌跡・左中間(RGBA)";
+							}
+
+							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorLeftMiddle_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorCenter.Value == Data.StandardColorType.FCurve)
 						{
-							list.Add(Tuple.Create("軌跡・中央(RGBA)", (object)node.DrawingValues.Track.ColorCenter_FCurve.FCurve));
+							var name = "Track-Color,Center(RGBA)";
+							if (Language == Effekseer.Language.Japanese)
+							{
+								name = "軌跡・中央(RGBA)";
+							}
+
+							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorCenter_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorCenterMiddle.Value == Data.StandardColorType.FCurve)
 						{
-							list.Add(Tuple.Create("軌跡・中央中間(RGBA)", (object)node.DrawingValues.Track.ColorCenterMiddle_FCurve.FCurve));
+							var name = "Track-Color,Center-Middle(RGBA)";
+							if (Language == Effekseer.Language.Japanese)
+							{
+								name = "軌跡・中央中間(RGBA)";
+							}
+
+							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorCenterMiddle_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorRight.Value == Data.StandardColorType.FCurve)
 						{
-							list.Add(Tuple.Create("軌跡・右(RGBA)", (object)node.DrawingValues.Track.ColorRight_FCurve.FCurve));
+							var name = "Track-Color,Right(RGBA)";
+							if (Language == Effekseer.Language.Japanese)
+							{
+								name = "軌跡・右(RGBA)";
+							}
+
+							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorRight_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorRightMiddle.Value == Data.StandardColorType.FCurve)
 						{
-							list.Add(Tuple.Create("軌跡・右中間(RGBA)", (object)node.DrawingValues.Track.ColorRightMiddle_FCurve.FCurve));
+							var name = "Track-Color,Right-Center(RGBA)";
+							if (Language == Effekseer.Language.Japanese)
+							{
+								name = "軌跡・右中間(RGBA)";
+
+							}
+							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorRightMiddle_FCurve.FCurve));
 						}
 					}
 
