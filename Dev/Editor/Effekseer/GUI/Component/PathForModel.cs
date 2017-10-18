@@ -29,6 +29,10 @@ namespace Effekseer.GUI.Component
 			Core.OnAfterSave += Core_OnAfterSave;
 			Core.OnAfterLoad += Core_OnAfterLoad;
 			Core.OnReload += Core_OnReload;
+
+			this.btn_load.Text = global::Effekseer.Properties.Resources.Load;
+			this.btn_delete.Text = global::Effekseer.Properties.Resources.Delete;
+			this.btn_reload.Text = global::Effekseer.Properties.Resources.ResetMaginification;
 		}
 
 		Data.Value.Path binding = null;
@@ -95,7 +99,7 @@ namespace Effekseer.GUI.Component
 			if (ofd.ShowDialog() == DialogResult.OK)
 			{
 				var filepath = ofd.FileName;
-				LoadFile(filepath);
+				LoadFile(filepath, false);
 			}
 			else
 			{
@@ -199,12 +203,12 @@ namespace Effekseer.GUI.Component
 			if (binding == null) return;
 			var filepath = binding.AbsolutePath;
 			if (string.IsNullOrEmpty(filepath)) return;
-			LoadFile(filepath);
+			LoadFile(filepath, true);
 
 			Read();
 		}
 
-		void LoadFile(string filepath)
+		void LoadFile(string filepath, bool isReloading)
 		{
 
 			// Convert file
@@ -215,6 +219,12 @@ namespace Effekseer.GUI.Component
 			Effekseer.Utl.ModelInformation modelInfo = new Utl.ModelInformation();
 			if (modelInfo.Load(newFilepath))
 			{
+				if(!isReloading)
+				{
+					binding.SetAbsolutePath(filepath);
+					System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
+					return;
+				}
 			}
 			else
 			{

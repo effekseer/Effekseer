@@ -71,9 +71,9 @@
 			this.btn_reload.Font = new System.Drawing.Font("MS UI Gothic", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.btn_reload.Location = new System.Drawing.Point(46, 21);
 			this.btn_reload.Name = "btn_reload";
-			this.btn_reload.Size = new System.Drawing.Size(51, 20);
+			this.btn_reload.Size = new System.Drawing.Size(151, 20);
 			this.btn_reload.TabIndex = 3;
-			this.btn_reload.Text = "再読込";
+			this.btn_reload.Text = "倍率再設定";
 			this.btn_reload.UseVisualStyleBackColor = true;
 			this.btn_reload.Click += new System.EventHandler(this.btn_reload_Click);
 			// 
@@ -87,7 +87,7 @@
 			this.Controls.Add(this.lbl_file);
 			this.Controls.Add(this.btn_load);
 			this.Name = "PathForModel";
-			this.Size = new System.Drawing.Size(150, 44);
+			this.Size = new System.Drawing.Size(200, 44);
 			this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Path_DragDrop);
 			this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Path_DragEnter);
 			this.DragLeave += new System.EventHandler(this.Path_DragLeave);
