@@ -3,111 +3,143 @@
 
 <head>
 	<meta charset=utf-8>
-	<title>組み込み</title>
+	<title>Execution</title>
 	<link href="../base.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
 	<div class="main">
-		<h1>実行</h1>
+		<h1>Execution</h1>
 		
-		<h2>概要</h2>
+		<h2>Overview</h2>
 		<p>
-ここでは、どのようにしてエフェクトを表示するかを説明します。
+We describe how to render effects.
 		</p>
 
 		<p>
-DirectX9のサンプル(VisualC++2010)「RuntimeSample/DirectX9.sln」
+A sample of DirectX9 (VisualC++2013)「RuntimeSample/DirectX9.sln」
 		</p>
-
-		<h2>初期化処理</h2>
+		
 		<p>
-描画管理クラスとエフェクト管理クラスのインスタンスの生成・初期化します。<br>
-DirectX、もしくはOpenGLの初期化を行った後に行う必要があります。
+A sample of DirectX11 (VisualC++2013)「RuntimeSample/DirectX11.sln」
 		</p>
 
-		<h3>DirectX9の場合</h3>
+		<h2>Initialization</h2>
+		<p>
+Instances of effect manager class and render manager class are created and initalized.<br>
+This procedure is required to execute after initializing DirectX or OpenGL.
+		</p>
+
+		<h3>In the case of DirectX9</h3>
 <pre>
 <code>
-// 描画管理インスタンスの生成
-::EffekseerRenderer::Renderer* renderer = ::EffekseerRendererDX9::Renderer::Create( LPDIRECT3DDEVICE9, 最大表示スプライト数 );
-// サウンド管理インスタンスの生成
-::EffekseerSound::Sound* sound = ::EffekseerSound::Sound::Create( IXAudio2*, モノラル再生用ボイス数, ステレオ再生用ボイス数 );
-// エフェクト管理用インスタンスの生成
-::Effekseer::Manager* manager = ::Effekseer::Manager::Create( 最大表示スプライト数 );
+// Create the instance of render manager
+::EffekseerRenderer::Renderer* renderer = ::EffekseerRendererDX9::Renderer::Create( LPDIRECT3DDEVICE9, Maximum number of sprites );
+// Create the instance of sound manager
+::EffekseerSound::Sound* sound = ::EffekseerSound::Sound::Create( IXAudio2*, Number of voices for monaural playback, Number of voices for stereo playback );
+// Create the instance of effect manager
+::Effekseer::Manager* manager = ::Effekseer::Manager::Create( Maximum number of sprites );
 </code>
 </pre>
 
-		<h3>OpenGLの場合</h3>
+		
+		<h3>In the case of DirectX11</h3>
 <pre>
 <code>
-// 描画管理インスタンスの生成
-::EffekseerRenderer::Renderer* renderer = ::EffekseerRendererGL::Renderer::Create( 最大表示スプライト数 );
-// エフェクト管理用インスタンスの生成
-::Effekseer::Manager* manager = ::Effekseer::Manager::Create( 最大表示スプライト数 );
+// Create the instance of render manager
+::EffekseerRenderer::Renderer* renderer = ::EffekseerRendererDX11::Renderer::Create( ID3D11Device*, ID3D11DeviceContext*, Maximum number of sprites );
+// Create the instance of sound manager
+::EffekseerSound::Sound* sound = ::EffekseerSound::Sound::Create( IXAudio2*, Number of voices for monaural playback, Number of voices for stereo playback );
+// Create the instance of effect manager
+::Effekseer::Manager* manager = ::Effekseer::Manager::Create( Maximum number of sprites );
 </code>
 </pre>
-※OpenAL,OpenSL ES等は現在未対応です。
-		<h2>設定</h2>
+
+		<h3>In the case of OpenGL</h3>
+<pre>
+<code>
+// Create the instance of render manager
+::EffekseerRenderer::Renderer* renderer = ::EffekseerRendererGL::Renderer::Create( Maximum number of sprites );
+// Create the instance of effect manager
+::Effekseer::Manager* manager = ::Effekseer::Manager::Create( Maximum number of sprites );
+</code>
+</pre>
+
+	<p>
+	OpenSL is currently unsupported.
+	</p>
+    
+		<h2>Settings</h2>
 		<p>
-初期化の後、描画方法、データ読込方法、座標系等を設定します。
+Render method, loading method, coordinate system, etc are specified after initializing.
 		</p>
 
 <pre>
 <code>
-// 描画方法の指定、独自に拡張しない限り定形文です。
+// Specify render method. You can extend these methods.
 manager->SetSpriteRenderer( renderer->CreateSpriteRenderer() );
 manager->SetRibbonRenderer( renderer->CreateRibbonRenderer() );
 manager->SetRingRenderer( renderer->CreateRingRenderer() );
-// テクスチャ画像の読込方法の指定(パッケージ等から読み込む場合拡張する必要があります。)
+manager->SetTrackRenderer( renderer->CreateTrackRenderer() );
+manager->SetModelRenderer( renderer->CreateModelRenderer() );
+
+// Specify texture image loading method (Extended when loading from package etc.)
 manager->SetTextureLoader( renderer->CreateTextureLoader() );
-// サウンド再生用インスタンスの指定
+
+// Specify the instance for playing sounds
 manager->SetSoundPlayer( sound->CreateSoundPlayer() );
-// サウンドデータの読込方法の指定(圧縮フォーマット、パッケージ等から読み込む場合拡張する必要があります。)
+
+// Specify sound loading method (Extended when loading from package etc.)
 manager->SetSoundLoader( sound->CreateSoundLoader() );
-// 座標系の指定(RHで右手系、LHで左手系)
+
+// Specify coordinate system (RH-Right hand, LH-Left hand)
 manager->SetCoordinateSystem( Effekseer::CoordinateSystem::RH );
 </code>
 </pre>
 
-		<h2>エフェクトの読込と再生</h2>
+		<h2>Loading and playing effects</h2>
 		<p>
-エフェクトをファイルから読み込みます。パッケージ等からファイルを読み込みたい場合、データ読込方法の指定にて読込方法を拡張する必要があります。
+Loads an effect from a file. 
+If you want to load a file from a package etc., you need to extend the loading method by specifying the data loading method.
 		</p>
 		<p>
-なお、読み込み時の文字コードはUTF16となっております。Windowsの場合はwchar_t、他OSの場合は、「::Effekseer::ConvertUtf8ToUtf16」を使用してUTF8からUTF16に変更して読みこむようお願いします。
+The character code of a path is UTF16.
+wchar_t for Windows,
+For other OS, change from UTF 8 to UTF 16 using "::Effekseer::ConvertUtf8ToUtf16"
+For C ++ 11, char16_t can also be used.
 		</p>
 <pre>
 <code>
-// エフェクトの読込
-Effekseer::Effect* effect = Effekseer::Effect::Create( manager, 読込先パス );
-// エフェクトの再生
-Effekseer::Handle handle = manager->Play( effect, 初期位置 );
+// Load an effect
+Effekseer::Effect* effect = Effekseer::Effect::Create( manager, source path );
+// Play the effect
+Effekseer::Handle handle = manager->Play( effect, initial position );
 </code>
 </pre>
 
-		<h2>更新処理</h2>
+		<h2>Updating</h2>
 		<p>
-再生中のエフェクトのパラメーターを変更しつつ、更新を行います。
+While updating the parameter of the effect being played, update it.
 		</p>
 <pre>
 <code>
-// 投影行列の更新
+// Update a projection matrix
 renderer->SetProjectionMatrix( ::Effekseer::Matrix44 );
-// カメラ行列の更新
+// Update a camera matrix
 renderer->SetCameraMatrix( ::Effekseer::Matrix44 );
-// 3Dサウンド用リスナー設定の更新
-sound->SetListener( リスナー位置, 注目点, 上方向ベクトル );
-// 再生中のエフェクトの移動等(::Effekseer::Manager経由で様々なパラメーターが設定できます。)
+// Update listener settings for 3D sound
+sound->SetListener( position, focus, upper direction );
+// Move or rotate effects(Many paramerters can be specified through ::Effekseer::Manager)
 manager->AddLocation( handle, ::Effekseer::Vector3D );
-// 全てのエフェクトの更新
+// Update all effects
 manager->Update();
 </code>
 </pre>
 
-		<h2>描画処理</h2>
+		<h2>Rendering</h2>
 		<p>
-描画を行います。DirectX9の場合、BeginSceneとEndSceneの間で実行してください。
+Effects are rendered.
+In the case of DirectX9, you need to execute it between BeginScene and EndScene.
 		</p>
 <pre>
 <code>
@@ -117,19 +149,19 @@ renderer->EndRendering();
 </code>
 </pre>
 
-		<h2>解放処理</h2>
+		<h2>Terminating</h2>
 		<p>
-解放処理を行います。DirextX、OpenGL自体を解放する前に行う必要があります。
+We terminate Effekseer. You need to execute it before releasing DirectX or OpenGL.
 		</p>
 <pre>
 <code>
-// エフェクトを解放します。再生中の場合は、再生が終了した後、自動的に解放されます。
+// Dispose an effects. When the effect is playing, the effect is released automatically after playing.
 ES_SAFE_RELEASE( effect );
-// エフェクト管理用インスタンスを破棄
+// Dispose the instance of effect manager
 manager->Destroy();
-// サウンド用インスタンスを破棄
+// Dispose the instance ofsound
 sound->Destroy();
-// 描画用インスタンスを破棄
+// Dispose the instance of render manager
 renderer->Destory();
 </code>
 </pre>

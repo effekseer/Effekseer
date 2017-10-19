@@ -3,45 +3,51 @@
 
 <head>
 	<meta charset=utf-8>
-	<title>マルチスレッド</title>
-	<link href="base.css" rel="stylesheet" type="text/css" />
+	<title>Multithreading</title>
+	<link href="../base.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
 	<div class="main">
-		<h1>マルチスレッド</h1>
+		<h1>Multithreading</h1>
 		
-		<h2>概要</h2>
+		<h2>Overview</h2>
 		<p>
-Effekseerは現在(0.5)、「Effekseer::Manager::Update」のみ、別スレッドで実行できるようになっています。更新しつつ、エフェクトの生成、エフェクトの移動等ができるようになっています。
+In Effekseer, "Effekseer::Manager::Update" only can be executed in other thread.
+While updating effects, you can create effects, move effects, and so on.
 		</p>
 
-		<h2>フリップ</h2>
+		<h2>Flip</h2>
 		<p>
-サンプルは「RuntimeSample/Multithread.sln」です。
+The sample is "RuntimeSample/Multithread.sln"
 		</p>
 		<p>
-マルチスレッドに対応させるにはフリップを手動で行う必要があります。まず、「::Effekseer::Manager::Create」の引数のautoFlipにfalseをしています。本来だったら内部で行なっていたフリップを手動で行うようになります。
+Flip must be done manually in order to support multi-threading.
+I set false to autoFlip of "::Effekseer::Manager::Create" argument. 
+Flip is done manually.
 		</p>
-		<p>
 
-「Effekseer::Manager::Update」の前に「Effekseer::Manager::Flip」を実行します。この関数を実行した時点に存在するエフェクトが更新及び描画の対象になります。その後、「Effekseer::Manager::Update」を別スレッドで実行することができます。
-		</p>
+    <p>
+You need to execute "Effekseer::Manager::Flip" before "Effekseer::Manager::Update".
+Effects existing at the time of executing this function are subject to updating and drawing.
+After that, you can run "Effekseer::Manager::Update" in other thread.
+    </p>
+
 <pre>
 <code>
-// エフェクト管理用インスタンスの生成(自動フリップは行わない)
+// Create an instance of effect manager (flip is not done automatically)
 g_manager = ::Effekseer::Manager::Create( 2000, false );
 
-// フリップを行う
+// Flip manager
 g_manager->Flip();
 
-// 別スレッドで「Effekseer::Manager::Update」を実行開始
+// Start executing "Effekseer::Manager::Update" in other thread
 
-// エフェクト生成等
+// Create effects, move effects and so on.
 
-// 「Effekseer::Manager::Update」の終了を待つ
+// Wait to finish "Effekseer::Manager::Update"
 
-// 描画
+// Render effects
 
 </code>
 </pre>

@@ -3,25 +3,25 @@
 
 <head>
 	<meta charset=utf-8>
-	<title>独自ローダーの設定</title>
+	<title>Setting the custom loader</title>
 	<link href="../base.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
 	<div class="main">
-		<h1>独自ローダーの設定</h1>
+		<h1>Setting the custom loader</h1>
 		
-		<h2>概要</h2>
+		<h2>Overview</h2>
 		<p>
-Effekseerでは基本的な読込はサポートしておりますが、実際開発の場で使用できるような読込になっていません。そのため、ローダークラスを追加し、ファイルの読込方法を拡張します。
+Effekseer supports basic loading, but it is not designed to be loadable from other game engine packages.
+So add a loader class and extend the file loading method.
 		</p>
 
-		<h2>エフェクトファイルの読込</h2>
+		<h2>Loading the effect file</h2>
 		<p>
-エフェクトファイルを読み込むには「::Effekseer::EffectLoader」クラスを継承し、「::Effekseer::Manager::SetEffectLoader」にて設定します。
-実際に、通常のファイルシステムから読み込むためのクラスを記述してみます。Load関数でメモリを確保し、Unload関数でメモリを破棄します。
+In order to load the effect file, inherit "::Effekseer::EffectLoader" class and set it with "::Effekseer::Manager::SetEffectLoader".
+Actually, I will write a class to load from a normal file system. Allocate the memory with the Load function and free the memory with the Unload function.
 		</p>
-
 <pre>
 <code>
 class EffectLoader : public ::Effekseer::EffectLoader {
@@ -53,20 +53,17 @@ void EffectLoader::Unload( void* data, int32_t size ) {
 	if( data != NULL ) delete [] data;
 }
 
-// 設定する。
+// Specify loader
 manager->SetEffectLoader( new EffectLoader() );
 </code>
 </pre>
 
-		<h2>テクスチャファイルの読込</h2>
+		<h2>Loading a texture file</h2>
 		<p>
-テクスチャファイルを読み込むには「::Effekseer::TextureLoader」クラスを継承し、「::Effekseer::Manager::SetTextureLoader」にて設定します。
-実際に、DirectX9にて通常のファイルシステムから読み込むためのクラスを記述してみます。Load関数でテクスチャを読み込み、Unload関数でテクスチャを破棄します。
+In order to load the image file, inherit "::Effekseer::TextureLoader" class and set it with "::Effekseer::Manager::SetTextureLoader".
+Actually, I will write a class to load from a normal file system with DirectX9.
+Load a image with the Load function and release the image with the Unload function.
 		</p>
-
-<p>
-現在(バージョン0.54)、OpenGL版の場合、テクスチャはミップマップを持つ必要があります。
-</p>
 
 <pre>
 <code>
@@ -81,7 +78,7 @@ public:
 	void Unload( void* data );
 };
 
-void* TextureLoader::Load( const EFK_CHAR* path ) {
+void* TextureLoader::Load( const EFK_CHAR* path, ::Effekseer::TextureType textureType ) {
 	FILE* fp_texture = _wfopen( (const wchar_t *)path, L"rb" );
 
 	if( fp_texture != NULL ) {
@@ -111,14 +108,17 @@ void TextureLoader::Unload( void* data ) {
 	}
 }
 
-// 設定する。
+// Specify the loader
 manager->SetTextureLoader( new TextureLoader() );
 </code>
 </pre>
 
-		<h2>相対パスの問題</h2>
+		<h2>The problem of relative path</h2>
 		<p>
-テクスチャファイルの場合、渡されるパスはツールで保存した時のテクスチャへの相対パスとなっています。多くの場合、エフェクトファイルを読み込んだ時、エフェクトファイルからの相対パスの位置のテクスチャを読み込む必要があります。その方法として、一例を記述します。TextureLoaderクラスにファイルパスを持たせれるようにし、「::Effekseer::Create::Effect::Create」を実行する前にパスを書き換えます。
+In the case of image file, a path provided is a relative path to texture file when an effect is saved with the tool.
+In many cases, when loading an effect file, you need to load the texture of the relative path position from the effect file.
+As an example, I will describe an example.
+Make the TextureLoader class have a file path and rewrite the path before executing "::Effekseer::Create::Effect::Create".
 		</p>
 
 <pre>
@@ -133,15 +133,15 @@ public:
 	void* Load( const EFK_CHAR* path );
 	void Unload( void* data );
 
-	// 読み込み時のルート
+	// Root path when loading
 	std::wstring RootPath;
 };
 
-void* TextureLoader::Load( const EFK_CHAR* path ) {
+void* TextureLoader::Load( const EFK_CHAR* path, ::Effekseer::TextureType textureType ) {
 
 	wchar_t dst[260];
 	
-	// ファイルパスを結合する関数
+	// A function for combining file pathes
 	Combine( RootPath.c_str(), (const wchar_t *)path, dst, 260 );
 
 	FILE* fp_texture = _wfopen( (const wchar_t *)dst, L"rb" );
@@ -173,11 +173,10 @@ void TextureLoader::Unload( void* data ) {
 	}
 }
 
-// 設定する。
+// Specify the loader
 manager->SetTextureLoader( new TextureLoader() );
 
-// 読み込む。
-// Createを実行指定する前に指定する。
+// Specify it before executing Create.
 ((TextureLoader*)manager->GetTextureLoader())->RootPath = std::wstring( Path );
 ::Effekseer::Effect* effect = ::Effekseer::Effect::Create( manager, Path );
 </code>

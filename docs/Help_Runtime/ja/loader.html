@@ -13,7 +13,8 @@
 		
 		<h2>概要</h2>
 		<p>
-Effekseerでは基本的な読込はサポートしておりますが、実際開発の場で使用できるような読込になっていません。そのため、ローダークラスを追加し、ファイルの読込方法を拡張します。
+Effekseerでは基本的な読込はサポートしていますが、他のゲームエンジンのパッケージから読み込めるようになっていません。
+そのため、ローダークラスを追加し、ファイルの読込方法を拡張します。
 		</p>
 
 		<h2>エフェクトファイルの読込</h2>
@@ -64,10 +65,6 @@ manager->SetEffectLoader( new EffectLoader() );
 実際に、DirectX9にて通常のファイルシステムから読み込むためのクラスを記述してみます。Load関数でテクスチャを読み込み、Unload関数でテクスチャを破棄します。
 		</p>
 
-<p>
-現在(バージョン0.54)、OpenGL版の場合、テクスチャはミップマップを持つ必要があります。
-</p>
-
 <pre>
 <code>
 class TextureLoader : public ::Effekseer::TextureLoader {
@@ -81,7 +78,7 @@ public:
 	void Unload( void* data );
 };
 
-void* TextureLoader::Load( const EFK_CHAR* path ) {
+void* TextureLoader::Load( const EFK_CHAR* path, ::Effekseer::TextureType textureType ) {
 	FILE* fp_texture = _wfopen( (const wchar_t *)path, L"rb" );
 
 	if( fp_texture != NULL ) {
@@ -137,7 +134,7 @@ public:
 	std::wstring RootPath;
 };
 
-void* TextureLoader::Load( const EFK_CHAR* path ) {
+void* TextureLoader::Load( const EFK_CHAR* path, ::Effekseer::TextureType textureType ) {
 
 	wchar_t dst[260];
 	
@@ -176,8 +173,7 @@ void TextureLoader::Unload( void* data ) {
 // 設定する。
 manager->SetTextureLoader( new TextureLoader() );
 
-// 読み込む。
-// Createを実行指定する前に指定する。
+// Createを実行する前に指定する。
 ((TextureLoader*)manager->GetTextureLoader())->RootPath = std::wstring( Path );
 ::Effekseer::Effect* effect = ::Effekseer::Effect::Create( manager, Path );
 </code>

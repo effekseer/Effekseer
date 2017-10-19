@@ -31,11 +31,6 @@ If the drawing method is "Sprite", rotation will be ignored when the render conf
 		<p>
 When you select "Window -> Recording" from the editing tool, the recording screen will be displayed. By pressing Record on the recording screen, the recording result is output to the directory where "Effekseer.exe" exists. If you select "Window -> Viewpoint Operation", the viewpoint operation screen will be displayed. On the viewpoint operation screen, you can manipulate the viewpoint numerically.
 		</p>
-
-		<h3>I would like to spawn instances at equal intervals around a circle.</h3>
-		<p>
-Currently, please use the spawn method window to change the model that is used for controlling spawn positions.
-		</p>
 		
 		<h2>Embedding Effects</h2>
 		
@@ -86,22 +81,12 @@ Effekseer::Manager::DrawHandleをEffekseer::Manager::Drawの代わりに使用�
 OpenGL版では、テクスチャはミップマップを持っている必要があります。「glGenerateMipmap」を使用して生成するようお願いします。
 		</p>
 
-		<h3>DXライブラリの3D表示がおかしくなる。</h3>
-		<p>
-Effekseerでエフェクトを描画した後、RefreshDxLibDirect3DSettingを呼んでください。
-		</p>
-
 		<h3>Effekseerのサンプルに存在するlibを使用したら_MSC_VER～というエラーがでる。</h3>
 		<p>
 現在、EffekseerのサンプルのlibはVisualStudio2010を使用してコンパイルしています。それ以外の環境の人は再度、自分の使用するバージョンでコンパイルしてみてください。
 		</p>
 
-		<h3>DirectXTexと併用したい</h3>
-		<p>
-「__EFFEKSEER_RENDERER_DIRECTXTEX」をEffekseerRendererのプリプロセッサの定義に追加し、コンパイルしてみてください。
-		</p>
-
-		<h2>他</h2>
+		<h2>Others</h2>
 		
 		<h3>○○という機能が欲しい。</h3>
 		<p>
