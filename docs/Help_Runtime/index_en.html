@@ -91,6 +91,44 @@ Please prepare your own settings according to your own environment.
 			<li><a href="html/doxygen/index.html" target="_top">Function reference(Translating)</a></li>
 		</ul>
 
+
+		<h2>FAQ</h2>
+		
+		<h3>I want to use Effekseer with left handed coordinate system.</h3>
+		<p>
+Please refer to "Basic" in this help.
+		</p>
+
+		<h3>I want to change the effect playback speed for each effect.</h3>
+		<p>
+Please use the "Effekseer::Manager::SetSpeed"
+		</p>
+
+		<h3>How can I extend the texture loading method?</h3>
+		<p>
+Please refer to "Setting the custom loader" in this help.
+		</p>
+
+		<h3>I want to draw the effects individually in an arbitrary order.</h3>
+		<p>
+Please execute "Effekseer::Manager::DrawHandle" instead of "Effekseer::Manager::Draw".
+To draw other libraries in the middle, execute "EffekseerRenderer::Renderer::ResetRenderState" before executing "DrawHandle" after the drawing is done.
+		</p>
+		
+		<h3>Z buffer does not work.</h3>
+		<p>
+In many cases, camera matrix setting and projection matrix setting are wrong.
+		</p>
+
+		<h3>The ribbon and the track become strange.</h3>
+		<p>
+In many cases, the maximum number of instances at initialization is too small.
+		</p>
+
+		<h3>Instances with textures are not drawn in OpenGL version.</h3>
+		<p>
+In the OpenGL version, the texture must have a mipmap. Please use "glGenerateMipmap" to generate it.
+		</p>
 	</div>
 </body>
 

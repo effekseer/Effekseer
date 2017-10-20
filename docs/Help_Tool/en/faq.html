@@ -34,9 +34,10 @@ When you select "Window -> Recording" from the editing tool, the recording scree
 		
 		<h2>Embedding Effects</h2>
 		
-		<h3>How to incorporate the runtime?</h3>
+		<h3>How can I use it with other applications?</h3>
 		<p>
-Please refer to "Embedding" in this help.
+Please download plugins and libraries for other applications from the official site.
+By using them you will be able to play effects in other applications.
 		</p>
 
 		<h3>How do you format it for playback at runtime?</h3>
@@ -44,53 +45,12 @@ Please refer to "Embedding" in this help.
 Select "File -> Output -> Effekseer Game Output Format" from the editing tool and output it.
 		</p>
 
-		<h3>左手系で使用したい。</h3>
-		<p>
-本ヘルプの「組み込み->実行」を参照願います。
-		</p>
-
-		<h3>エフェクトの再生速度をエフェクトごとに変えたい。</h3>
-		<p>
-「Effekseer::Manager::SetSpeed」を使用してください。
-		</p>
-
-		<h3>テクスチャ読込方法の拡張ってどうやるの？</h3>
-		<p>
-本ヘルプの「組み込み->独自ローダーの設定」を参照願います。
-		</p>
-
-		<h3>エフェクトを任意の順番に個別に描画したい。</h3>
-		<p>
-Effekseer::Manager::DrawHandleをEffekseer::Manager::Drawの代わりに使用します。
-途中に他のライブラリの描画を挟む場合は、その描画が行われた後にDrawHandleを実行する前に、EffekseerRenderer::Renderer::ResetRenderState()を実行します。
-		</p>
-		
-		<h2>不具合</h2>
-		<h3>Zバッファが正しく働かない。</h3>
-		<p>
-カメラ行列設定、射影変換行列設定が間違っているケースが多いようです。
-		</p>
-
-		<h3>リボン、軌跡の表示がおかしくなる。</h3>
-		<p>
-初期化時の最大インスタンス数が小さすぎるケースが多いようです。
-		</p>
-
-		<h3>OpenGL版でテクスチャが設定されているインスタンスが描画されない。</h3>
-		<p>
-OpenGL版では、テクスチャはミップマップを持っている必要があります。「glGenerateMipmap」を使用して生成するようお願いします。
-		</p>
-
-		<h3>Effekseerのサンプルに存在するlibを使用したら_MSC_VER～というエラーがでる。</h3>
-		<p>
-現在、EffekseerのサンプルのlibはVisualStudio2010を使用してコンパイルしています。それ以外の環境の人は再度、自分の使用するバージョンでコンパイルしてみてください。
-		</p>
-
 		<h2>Others</h2>
 		
-		<h3>○○という機能が欲しい。</h3>
+		<h3>I want the function of ....</h3>
 		<p>
-可能な限りは考慮します。一番早いのは、コミッターになるか、自分で別プロジェクトとしてこのツールを改造することです。
+We will consider as much as possible. 
+The earliest thing is to become a committer or to modify this tool as a separate project by yourself.
 		</p>
 	</div>
 </body>
