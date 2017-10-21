@@ -573,6 +573,20 @@ void EffectNodeImplemented::SetBasicRenderParameter(EffectBasicRenderParameter p
 	RendererCommon.ZWrite = param.ZWrite;
 }
 
+EffectModelParameter EffectNodeImplemented::GetEffectModelParameter()
+{
+	EffectModelParameter param;
+	param.Lighting = false;
+
+	if (GetType() == EFFECT_NODE_TYPE_MODEL)
+	{
+		auto t = (EffectNodeModel*)this;
+		param.Lighting = t->Lighting;
+	}
+
+	return param;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

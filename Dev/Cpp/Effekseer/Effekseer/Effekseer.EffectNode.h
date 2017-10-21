@@ -857,6 +857,8 @@ public:
 
 	void SetBasicRenderParameter(EffectBasicRenderParameter param) override;
 
+	EffectModelParameter GetEffectModelParameter() override;
+
 	/**
 		@brief	描画部分の読込
 	*/

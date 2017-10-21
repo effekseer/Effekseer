@@ -219,6 +219,20 @@ struct EffectBasicRenderParameter
 };
 
 /**
+@brief	
+	\~English	Model parameter
+	\~Japanese	モデルパラメーター
+@note
+	\~English	It may change greatly.
+	\~Japanese	大きく変更される可能性があります。
+
+*/
+struct EffectModelParameter
+{
+	bool				Lighting;
+};
+
+/**
 @brief	ノードインスタンス生成クラス
 @note
 エフェクトのノードの実体を生成する。
@@ -254,6 +268,12 @@ public:
 	*/
 	virtual void SetBasicRenderParameter(EffectBasicRenderParameter param) = 0;
 
+	/**
+	@brief	
+	\~English	Get a model parameter
+	\~Japanese	モデルパラメーターを取得する。
+	*/
+	virtual EffectModelParameter GetEffectModelParameter() = 0;
 };
 
 //----------------------------------------------------------------------------------
