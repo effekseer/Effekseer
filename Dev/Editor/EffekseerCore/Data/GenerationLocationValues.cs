@@ -123,7 +123,7 @@ namespace Effekseer.Data
 			}
 
 			[Name(value = "終了位置", language = Language.Japanese)]
-			[Name(value = "Final Angle", language = Language.English)]
+			[Name(value = "Final Position", language = Language.English)]
 			public Value.Vector3DWithRandom PositionEnd
 			{
 				get;
@@ -131,7 +131,7 @@ namespace Effekseer.Data
 			}
 
 			[Name(value = "位置ノイズ", language = Language.Japanese)]
-			[Name(value = "Angle Noize", language = Language.English)]
+			[Name(value = "Position Noize", language = Language.English)]
 			public Value.FloatWithRandom PositionNoize
 			{
 				get;

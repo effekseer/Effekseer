@@ -359,6 +359,15 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 				GenerationLocation.point.location.min *= m_effect->GetMaginification();
 				GenerationLocation.point.location.max *= m_effect->GetMaginification();
 			}
+			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_LINE)
+			{
+				GenerationLocation.line.position_end.min *= m_effect->GetMaginification();
+				GenerationLocation.line.position_end.max *= m_effect->GetMaginification();
+				GenerationLocation.line.position_start.min *= m_effect->GetMaginification();
+				GenerationLocation.line.position_start.max *= m_effect->GetMaginification();
+				GenerationLocation.line.position_noize.min *= m_effect->GetMaginification();
+				GenerationLocation.line.position_noize.max *= m_effect->GetMaginification();
+			}
 			else if( GenerationLocation.type == ParameterGenerationLocation::TYPE_SPHERE )
 			{
 				GenerationLocation.sphere.radius.min *= m_effect->GetMaginification();
