@@ -65,7 +65,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 
 		if (memcmp(&chunkIdent, "fmt ", 4) == 0) {
 			// フォーマットチャンク
-			uint32_t size = min(chunkSize, sizeof(wavefmt));
+			uint32_t size = (chunkSize < (uint32_t)sizeof(wavefmt)) ? chunkSize : (uint32_t)sizeof(wavefmt);
 			reader->Read(&wavefmt, size);
 			if (size < chunkSize) {
 				reader->Seek(reader->GetPosition() + chunkSize - size);
@@ -84,27 +84,46 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 		return NULL;
 	}
 
-	BYTE* buffer;
+	uint8_t* buffer;
 	uint32_t size;
 	switch (wavefmt.wBitsPerSample) {
 	case 8:
-		// 16bitPCMに変換
+		// 8bit -> 16bit PCM変換
 		size = chunkSize * 2;
-		buffer = new BYTE[size];
+		buffer = new uint8_t[size];
 		reader->Read(&buffer[size / 2], chunkSize);
 		{
 			int16_t* dst = (int16_t*)&buffer[0];
 			uint8_t* src = (uint8_t*)&buffer[size / 2];
-			for (uint32_t i = 0; i < chunkSize; i++) {
+			for (uint32_t i = 0; i < size; i += 2) {
 				*dst++ = (int16_t)(((int32_t)*src++ - 128) << 8);
 			}
 		}
 		break;
 	case 16:
 		// そのまま読み込み
-		buffer = new BYTE[chunkSize];
+		buffer = new uint8_t[chunkSize];
 		size = reader->Read(buffer, chunkSize);
 		break;
+	case 24:
+		// 24bit -> 16bit PCM変換
+		size = chunkSize * 2 / 3;
+		buffer = new uint8_t[size];
+		{
+			uint8_t* chunkData = new uint8_t[chunkSize];
+			reader->Read(chunkData, chunkSize);
+
+			int16_t* dst = (int16_t*)&buffer[0];
+			uint8_t* src = (uint8_t*)&chunkData[0];
+			for (uint32_t i = 0; i < size; i += 2) {
+				*dst++ = (int16_t)(src[1] | (src[2] << 8));
+				src += 3;
+			}
+			delete[] chunkData;
+		}
+		break;
+	default:
+		return NULL;
 	}
 
 	SoundData* soundData = new SoundData;
@@ -113,8 +132,8 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 	soundData->sampleRate = wavefmt.nSamplesPerSec;
 	soundData->buffer.Flags = XAUDIO2_END_OF_STREAM;
 	soundData->buffer.AudioBytes = size;
-	soundData->buffer.pAudioData = buffer;
-	
+	soundData->buffer.pAudioData = (BYTE*)buffer;
+
 	return soundData;
 }
 	
