@@ -149,6 +149,108 @@
                         <Infinite>True</Infinite>
                       </MaxGeneration>
                       <Life>
+                        <Center>90</Center>
+                        <Max>102</Max>
+                        <Min>78</Min>
+                      </Life>
+                      <GenerationTime>
+                        <Center>30</Center>
+                        <Max>37</Max>
+                        <Min>23</Min>
+                      </GenerationTime>
+                    </CommonValues>
+                    <LocationValues>
+                      <Fixed>
+                        <Location>
+                          <Z>-0.0001</Z>
+                        </Location>
+                      </Fixed>
+                    </LocationValues>
+                    <RotationValues>
+                      <Type>1</Type>
+                      <PVA>
+                        <Rotation>
+                          <Z>
+                            <Max>360</Max>
+                            <Min>-360</Min>
+                          </Z>
+                        </Rotation>
+                        <Velocity>
+                          <Z>
+                            <Center>1</Center>
+                            <Max>2</Max>
+                          </Z>
+                        </Velocity>
+                      </PVA>
+                    </RotationValues>
+                    <ScalingValues>
+                      <Type>2</Type>
+                      <Easing>
+                        <Start>
+                          <X>
+                            <Center>0.9</Center>
+                            <Min>0.8</Min>
+                          </X>
+                          <Y>
+                            <Center>0.9</Center>
+                            <Min>0.8</Min>
+                          </Y>
+                          <Z>
+                            <Center>0.9</Center>
+                            <Min>0.8</Min>
+                          </Z>
+                        </Start>
+                        <End>
+                          <X>
+                            <Center>1.5</Center>
+                            <Max>1.5</Max>
+                            <Min>1.5</Min>
+                          </X>
+                          <Y>
+                            <Center>1.5</Center>
+                            <Max>1.5</Max>
+                            <Min>1.5</Min>
+                          </Y>
+                          <Z>
+                            <Center>1.5</Center>
+                            <Max>1.5</Max>
+                            <Min>1.5</Min>
+                          </Z>
+                        </End>
+                      </Easing>
+                    </ScalingValues>
+                    <RendererCommonValues>
+                      <ColorTexture>Texture/Wind.png</ColorTexture>
+                      <ZWrite>True</ZWrite>
+                      <ZTest>False</ZTest>
+                      <FadeInType>1</FadeInType>
+                      <FadeIn>
+                        <Frame>15</Frame>
+                      </FadeIn>
+                      <FadeOutType>1</FadeOutType>
+                      <FadeOut>
+                        <Frame>30</Frame>
+                      </FadeOut>
+                      <Distortion>True</Distortion>
+                      <DistortionIntensity>1.25</DistortionIntensity>
+                    </RendererCommonValues>
+                    <DrawingValues>
+                      <Sprite>
+                        <Billboard>2</Billboard>
+                        <ColorAll_Fixed>
+                          <A>96</A>
+                        </ColorAll_Fixed>
+                      </Sprite>
+                    </DrawingValues>
+                    <Name>Wave_Distortion</Name>
+                    <Children />
+                  </Node>
+                  <Node>
+                    <CommonValues>
+                      <MaxGeneration>
+                        <Infinite>True</Infinite>
+                      </MaxGeneration>
+                      <Life>
                         <Center>80</Center>
                         <Max>80</Max>
                         <Min>80</Min>
@@ -279,108 +381,6 @@
                       </Sprite>
                     </DrawingValues>
                     <Name>BaseLight</Name>
-                    <Children />
-                  </Node>
-                  <Node>
-                    <CommonValues>
-                      <MaxGeneration>
-                        <Infinite>True</Infinite>
-                      </MaxGeneration>
-                      <Life>
-                        <Center>90</Center>
-                        <Max>102</Max>
-                        <Min>78</Min>
-                      </Life>
-                      <GenerationTime>
-                        <Center>30</Center>
-                        <Max>37</Max>
-                        <Min>23</Min>
-                      </GenerationTime>
-                    </CommonValues>
-                    <LocationValues>
-                      <Fixed>
-                        <Location>
-                          <Z>-0.0001</Z>
-                        </Location>
-                      </Fixed>
-                    </LocationValues>
-                    <RotationValues>
-                      <Type>1</Type>
-                      <PVA>
-                        <Rotation>
-                          <Z>
-                            <Max>360</Max>
-                            <Min>-360</Min>
-                          </Z>
-                        </Rotation>
-                        <Velocity>
-                          <Z>
-                            <Center>1</Center>
-                            <Max>2</Max>
-                          </Z>
-                        </Velocity>
-                      </PVA>
-                    </RotationValues>
-                    <ScalingValues>
-                      <Type>2</Type>
-                      <Easing>
-                        <Start>
-                          <X>
-                            <Center>0.9</Center>
-                            <Min>0.8</Min>
-                          </X>
-                          <Y>
-                            <Center>0.9</Center>
-                            <Min>0.8</Min>
-                          </Y>
-                          <Z>
-                            <Center>0.9</Center>
-                            <Min>0.8</Min>
-                          </Z>
-                        </Start>
-                        <End>
-                          <X>
-                            <Center>1.5</Center>
-                            <Max>1.5</Max>
-                            <Min>1.5</Min>
-                          </X>
-                          <Y>
-                            <Center>1.5</Center>
-                            <Max>1.5</Max>
-                            <Min>1.5</Min>
-                          </Y>
-                          <Z>
-                            <Center>1.5</Center>
-                            <Max>1.5</Max>
-                            <Min>1.5</Min>
-                          </Z>
-                        </End>
-                      </Easing>
-                    </ScalingValues>
-                    <RendererCommonValues>
-                      <ColorTexture>Texture/Wind.png</ColorTexture>
-                      <ZWrite>True</ZWrite>
-                      <ZTest>False</ZTest>
-                      <FadeInType>1</FadeInType>
-                      <FadeIn>
-                        <Frame>15</Frame>
-                      </FadeIn>
-                      <FadeOutType>1</FadeOutType>
-                      <FadeOut>
-                        <Frame>30</Frame>
-                      </FadeOut>
-                      <Distortion>True</Distortion>
-                      <DistortionIntensity>1.25</DistortionIntensity>
-                    </RendererCommonValues>
-                    <DrawingValues>
-                      <Sprite>
-                        <Billboard>2</Billboard>
-                        <ColorAll_Fixed>
-                          <A>96</A>
-                        </ColorAll_Fixed>
-                      </Sprite>
-                    </DrawingValues>
-                    <Name>Wave_Distortion</Name>
                     <Children />
                   </Node>
                   <Node>
@@ -1069,7 +1069,7 @@
       </Location>
     </Sphere>
   </Culling>
-  <ToolVersion>1.10</ToolVersion>
+  <ToolVersion>1.30</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>600</EndFrame>

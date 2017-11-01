@@ -2267,6 +2267,102 @@
                   <Node>
                     <CommonValues>
                       <MaxGeneration>
+                        <Value>8</Value>
+                      </MaxGeneration>
+                      <Life>
+                        <Center>28</Center>
+                        <Max>28</Max>
+                        <Min>28</Min>
+                      </Life>
+                      <GenerationTime>
+                        <Center>3</Center>
+                        <Max>3</Max>
+                        <Min>3</Min>
+                      </GenerationTime>
+                    </CommonValues>
+                    <RotationValues>
+                      <Type>1</Type>
+                      <PVA>
+                        <Rotation>
+                          <Z>
+                            <Max>360</Max>
+                            <Min>-360</Min>
+                          </Z>
+                        </Rotation>
+                        <Velocity>
+                          <Z>
+                            <Max>6</Max>
+                            <Min>-6</Min>
+                          </Z>
+                        </Velocity>
+                      </PVA>
+                    </RotationValues>
+                    <ScalingValues>
+                      <Type>1</Type>
+                      <PVA>
+                        <Scale>
+                          <X>
+                            <Center>80</Center>
+                            <Max>80</Max>
+                            <Min>80</Min>
+                          </X>
+                          <Y>
+                            <Center>80</Center>
+                            <Max>80</Max>
+                            <Min>80</Min>
+                          </Y>
+                          <Z>
+                            <Center>80</Center>
+                            <Max>80</Max>
+                            <Min>80</Min>
+                          </Z>
+                        </Scale>
+                        <Velocity>
+                          <X>
+                            <Center>1</Center>
+                            <Max>1</Max>
+                            <Min>1</Min>
+                          </X>
+                          <Y>
+                            <Center>1</Center>
+                            <Max>1</Max>
+                            <Min>1</Min>
+                          </Y>
+                          <Z>
+                            <Center>1</Center>
+                            <Max>1</Max>
+                            <Min>1</Min>
+                          </Z>
+                        </Velocity>
+                      </PVA>
+                    </ScalingValues>
+                    <RendererCommonValues>
+                      <ColorTexture>Texture/ExperimentalBlur.png</ColorTexture>
+                      <FadeInType>1</FadeInType>
+                      <FadeIn>
+                        <Frame>6</Frame>
+                      </FadeIn>
+                      <FadeOutType>1</FadeOutType>
+                      <FadeOut>
+                        <Frame>22</Frame>
+                      </FadeOut>
+                      <Distortion>True</Distortion>
+                      <DistortionIntensity>0.5</DistortionIntensity>
+                    </RendererCommonValues>
+                    <DrawingValues>
+                      <Sprite>
+                        <Billboard>3</Billboard>
+                        <ColorAll_Fixed>
+                          <A>32</A>
+                        </ColorAll_Fixed>
+                      </Sprite>
+                    </DrawingValues>
+                    <Name>Blur</Name>
+                    <Children />
+                  </Node>
+                  <Node>
+                    <CommonValues>
+                      <MaxGeneration>
                         <Value>6</Value>
                       </MaxGeneration>
                       <Life>
@@ -5121,102 +5217,6 @@
                   </Node>
                   <Node>
                     <CommonValues>
-                      <MaxGeneration>
-                        <Value>8</Value>
-                      </MaxGeneration>
-                      <Life>
-                        <Center>28</Center>
-                        <Max>28</Max>
-                        <Min>28</Min>
-                      </Life>
-                      <GenerationTime>
-                        <Center>3</Center>
-                        <Max>3</Max>
-                        <Min>3</Min>
-                      </GenerationTime>
-                    </CommonValues>
-                    <RotationValues>
-                      <Type>1</Type>
-                      <PVA>
-                        <Rotation>
-                          <Z>
-                            <Max>360</Max>
-                            <Min>-360</Min>
-                          </Z>
-                        </Rotation>
-                        <Velocity>
-                          <Z>
-                            <Max>6</Max>
-                            <Min>-6</Min>
-                          </Z>
-                        </Velocity>
-                      </PVA>
-                    </RotationValues>
-                    <ScalingValues>
-                      <Type>1</Type>
-                      <PVA>
-                        <Scale>
-                          <X>
-                            <Center>80</Center>
-                            <Max>80</Max>
-                            <Min>80</Min>
-                          </X>
-                          <Y>
-                            <Center>80</Center>
-                            <Max>80</Max>
-                            <Min>80</Min>
-                          </Y>
-                          <Z>
-                            <Center>80</Center>
-                            <Max>80</Max>
-                            <Min>80</Min>
-                          </Z>
-                        </Scale>
-                        <Velocity>
-                          <X>
-                            <Center>1</Center>
-                            <Max>1</Max>
-                            <Min>1</Min>
-                          </X>
-                          <Y>
-                            <Center>1</Center>
-                            <Max>1</Max>
-                            <Min>1</Min>
-                          </Y>
-                          <Z>
-                            <Center>1</Center>
-                            <Max>1</Max>
-                            <Min>1</Min>
-                          </Z>
-                        </Velocity>
-                      </PVA>
-                    </ScalingValues>
-                    <RendererCommonValues>
-                      <ColorTexture>Texture/ExperimentalBlur.png</ColorTexture>
-                      <FadeInType>1</FadeInType>
-                      <FadeIn>
-                        <Frame>6</Frame>
-                      </FadeIn>
-                      <FadeOutType>1</FadeOutType>
-                      <FadeOut>
-                        <Frame>22</Frame>
-                      </FadeOut>
-                      <Distortion>True</Distortion>
-                      <DistortionIntensity>0.5</DistortionIntensity>
-                    </RendererCommonValues>
-                    <DrawingValues>
-                      <Sprite>
-                        <Billboard>3</Billboard>
-                        <ColorAll_Fixed>
-                          <A>32</A>
-                        </ColorAll_Fixed>
-                      </Sprite>
-                    </DrawingValues>
-                    <Name>Blur</Name>
-                    <Children />
-                  </Node>
-                  <Node>
-                    <CommonValues>
                       <Life>
                         <Center>35</Center>
                         <Max>50</Max>
@@ -5408,7 +5408,7 @@
       </Node>
     </Children>
   </Root>
-  <ToolVersion>1.01</ToolVersion>
+  <ToolVersion>1.30</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>120</EndFrame>
