@@ -98,6 +98,15 @@ namespace Effekseer.GUI
 			txt_freq.Reload();
 			
 			Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconRecorder).GetHicon());
+
+			if(Core.Language == Language.Japanese)
+			{
+				this.Text = "録画";
+			}
+			else
+			{
+				this.Text = "Recorder";
+			}
 		}
 
 		int startingFrame = 1;

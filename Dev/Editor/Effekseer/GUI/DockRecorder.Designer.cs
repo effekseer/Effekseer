@@ -65,7 +65,7 @@
             this.grp_option.Size = new System.Drawing.Size(200, 48);
             this.grp_option.TabIndex = 51;
             this.grp_option.TabStop = false;
-            this.grp_option.Text = "オプション";
+			this.grp_option.Text = Properties.Resources.Options;
             // 
             // cb_tranceparence
             // 
@@ -88,7 +88,7 @@
             this.lbl_translucent.Name = "lbl_translucent";
             this.lbl_translucent.Size = new System.Drawing.Size(99, 12);
             this.lbl_translucent.TabIndex = 60;
-            this.lbl_translucent.Text = "背景透明化の方法";
+			this.lbl_translucent.Text = Properties.Resources.MakeTransparent;
             // 
             // grp_type
             // 
@@ -100,7 +100,7 @@
             this.grp_type.Size = new System.Drawing.Size(200, 69);
             this.grp_type.TabIndex = 3;
             this.grp_type.TabStop = false;
-            this.grp_type.Text = "出力形式";
+			this.grp_type.Text = Properties.Resources.Format;
             // 
             // txt_number_v
             // 
@@ -122,7 +122,7 @@
             this.lbl_the_number_of_image_h.Name = "lbl_the_number_of_image_h";
             this.lbl_the_number_of_image_h.Size = new System.Drawing.Size(65, 12);
             this.lbl_the_number_of_image_h.TabIndex = 31;
-            this.lbl_the_number_of_image_h.Text = "横方向枚数";
+			this.lbl_the_number_of_image_h.Text = Properties.Resources.XCount;
             // 
             // cb_type
             // 
@@ -152,7 +152,7 @@
             this.grp_frame.Size = new System.Drawing.Size(200, 85);
             this.grp_frame.TabIndex = 2;
             this.grp_frame.TabStop = false;
-            this.grp_frame.Text = "出力フレーム";
+			this.grp_frame.Text = Properties.Resources.ExportedFrame;
             // 
             // txt_freq
             // 
@@ -174,7 +174,7 @@
             this.lbl_freq.Name = "lbl_freq";
             this.lbl_freq.Size = new System.Drawing.Size(110, 12);
             this.lbl_freq.TabIndex = 29;
-            this.lbl_freq.Text = "出力頻度(フレーム毎)";
+			this.lbl_freq.Text = Properties.Resources.Frequency_Frame;
             // 
             // txt_endingFrame
             // 
@@ -196,7 +196,7 @@
             this.lbl_ending.Name = "lbl_ending";
             this.lbl_ending.Size = new System.Drawing.Size(66, 12);
             this.lbl_ending.TabIndex = 27;
-            this.lbl_ending.Text = "終了フレーム";
+			this.lbl_ending.Text = Properties.Resources.EndFrame;
             // 
             // txt_startingFrame
             // 
@@ -218,7 +218,7 @@
             this.lbl_starting.Name = "lbl_starting";
             this.lbl_starting.Size = new System.Drawing.Size(66, 12);
             this.lbl_starting.TabIndex = 26;
-            this.lbl_starting.Text = "Start Frame";
+			this.lbl_starting.Text = Properties.Resources.StartFrame;
             // 
             // grp_area
             // 
@@ -233,7 +233,7 @@
             this.grp_area.Size = new System.Drawing.Size(200, 74);
             this.grp_area.TabIndex = 1;
             this.grp_area.TabStop = false;
-            this.grp_area.Text = "録画範囲(解像度)";
+			this.grp_area.Text = Properties.Resources.Resolution;
             // 
             // cb_area
             // 
@@ -252,7 +252,7 @@
             this.lbl_showArea.Name = "lbl_showArea";
             this.lbl_showArea.Size = new System.Drawing.Size(86, 12);
             this.lbl_showArea.TabIndex = 25;
-            this.lbl_showArea.Text = "録画範囲を表示";
+			this.lbl_showArea.Text = Properties.Resources.ShowGuide;
             // 
             // txt_areaHeight
             // 
@@ -274,7 +274,7 @@
             this.lbl_h.Name = "lbl_h";
             this.lbl_h.Size = new System.Drawing.Size(29, 12);
             this.lbl_h.TabIndex = 24;
-            this.lbl_h.Text = "縦幅";
+			this.lbl_h.Text = Properties.Resources.Height;
             // 
             // lbl_w
             // 
@@ -283,7 +283,7 @@
             this.lbl_w.Name = "lbl_w";
             this.lbl_w.Size = new System.Drawing.Size(29, 12);
             this.lbl_w.TabIndex = 23;
-            this.lbl_w.Text = "横幅";
+			this.lbl_w.Text = Properties.Resources.Width;
             // 
             // txt_areaWidth
             // 
@@ -321,7 +321,6 @@
             this.Controls.Add(this.btn_record);
             this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.Name = "DockRecorder";
-            this.Text = "録画";
             this.grp_option.ResumeLayout(false);
             this.grp_option.PerformLayout();
             this.grp_type.ResumeLayout(false);
