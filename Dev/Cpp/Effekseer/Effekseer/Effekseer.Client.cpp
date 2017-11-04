@@ -109,11 +109,10 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 	SOCKADDR_IN sockAddr;
 	HOSTENT* hostEntry= NULL;
 	
-	/* ソケット生成 */
+	// Create a socket
 	EfkSocket socket_ = Socket::GenSocket();
 	if ( socket_ == InvalidSocket )
 	{
-		if ( socket_ != InvalidSocket ) Socket::Close( socket_ );
 		return false;
 	}
 

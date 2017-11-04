@@ -202,7 +202,7 @@ bool ServerImplemented::Start( uint16_t port )
 	int32_t returnCode;
 	sockaddr_in sockAddr = { AF_INET };
 
-	/* ソケット生成 */
+	// Create a socket
 	EfkSocket socket_ = Socket::GenSocket();
 	if ( socket_ == InvalidSocket )
 	{
