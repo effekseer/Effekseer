@@ -134,7 +134,7 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_state_vertexDeclaration	( NULL )
 	, m_state_streamData ( NULL )
 	, m_state_IndexData	( NULL )
-	, m_state_pTexture	( NULL )
+	, m_state_pTexture	( {} )
 	, m_renderState		( NULL )
 	, m_isChangedDevice	( false )
 	, m_restorationOfStates( true )
@@ -148,6 +148,8 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 {
 	m_background.UserPtr = nullptr;
 
+	SetRestorationOfStatesFlag(m_restorationOfStates);
+	
 	::Effekseer::Vector3D direction( 1.0f, 1.0f, 1.0f );
 	SetLightDirection( direction );
 	::Effekseer::Color lightColor( 255, 255, 255, 255 );
@@ -397,6 +399,18 @@ void RendererImplemented::Destroy()
 void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 {
 	m_restorationOfStates = flag;
+	if (flag)
+	{
+		m_state_VertexShaderConstantF.resize(256 * 4);
+		m_state_PixelShaderConstantF.resize(256 * 4);
+	}
+	else
+	{
+		m_state_VertexShaderConstantF.clear();
+		m_state_PixelShaderConstantF.shrink_to_fit();
+		m_state_VertexShaderConstantF.clear();
+		m_state_PixelShaderConstantF.shrink_to_fit();
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -426,14 +440,28 @@ bool RendererImplemented::BeginRendering()
 		GetDevice()->GetRenderState( D3DRS_LIGHTING, &m_state_D3DRS_LIGHTING );
 		GetDevice()->GetRenderState( D3DRS_SHADEMODE, &m_state_D3DRS_SHADEMODE );
 
+		for (int i = 0; i < static_cast<int>(m_state_D3DSAMP_MAGFILTER.size()); i++)
+		{
+			GetDevice()->GetSamplerState( i, D3DSAMP_MAGFILTER, &m_state_D3DSAMP_MAGFILTER[i] );
+			GetDevice()->GetSamplerState( i, D3DSAMP_MINFILTER, &m_state_D3DSAMP_MINFILTER[i] );
+			GetDevice()->GetSamplerState( i, D3DSAMP_MIPFILTER, &m_state_D3DSAMP_MIPFILTER[i] );
+			GetDevice()->GetSamplerState( i, D3DSAMP_ADDRESSU, &m_state_D3DSAMP_ADDRESSU[i] );
+			GetDevice()->GetSamplerState( i, D3DSAMP_ADDRESSV, &m_state_D3DSAMP_ADDRESSV[i] );
+		}
+
 		GetDevice()->GetVertexShader(&m_state_vertexShader);
 		GetDevice()->GetPixelShader(&m_state_pixelShader);
 		GetDevice()->GetVertexDeclaration( &m_state_vertexDeclaration );
-		//GetDevice()->GetStreamSource( 0, &m_state_streamData, &m_state_OffsetInBytes, &m_state_pStride );
-		//GetDevice()->GetIndices( &m_state_IndexData );
-		
-			
-		GetDevice()->GetTexture( 0, &m_state_pTexture );
+		GetDevice()->GetStreamSource( 0, &m_state_streamData, &m_state_OffsetInBytes, &m_state_pStride );
+		GetDevice()->GetIndices( &m_state_IndexData );
+
+		GetDevice()->GetVertexShaderConstantF( 0, m_state_VertexShaderConstantF.data(), static_cast<int>(m_state_VertexShaderConstantF.size()) / 4 );
+		GetDevice()->GetVertexShaderConstantF( 0, m_state_PixelShaderConstantF.data(), static_cast<int>(m_state_PixelShaderConstantF.size()) / 4 );
+
+		for (int i = 0; i < static_cast<int>(m_state_pTexture.size()); i++)
+		{
+			GetDevice()->GetTexture( i, &m_state_pTexture[i] );
+		}
 		GetDevice()->GetFVF( &m_state_FVF );
 	}
 
@@ -485,6 +513,15 @@ bool RendererImplemented::EndRendering()
 		GetDevice()->SetRenderState( D3DRS_LIGHTING, m_state_D3DRS_LIGHTING );
 		GetDevice()->SetRenderState( D3DRS_SHADEMODE, m_state_D3DRS_SHADEMODE );
 
+		for (int i = 0; i < static_cast<int>(m_state_D3DSAMP_MAGFILTER.size()); i++)
+		{
+			GetDevice()->SetSamplerState( i, D3DSAMP_MAGFILTER, m_state_D3DSAMP_MAGFILTER[i] );
+			GetDevice()->SetSamplerState( i, D3DSAMP_MINFILTER, m_state_D3DSAMP_MINFILTER[i] );
+			GetDevice()->SetSamplerState( i, D3DSAMP_MIPFILTER, m_state_D3DSAMP_MIPFILTER[i] );
+			GetDevice()->SetSamplerState( i, D3DSAMP_ADDRESSU, m_state_D3DSAMP_ADDRESSU[i] );
+			GetDevice()->SetSamplerState( i, D3DSAMP_ADDRESSV, m_state_D3DSAMP_ADDRESSV[i] );
+		}
+
 		GetDevice()->SetVertexShader(m_state_vertexShader);
 		ES_SAFE_RELEASE( m_state_vertexShader );
 
@@ -494,14 +531,20 @@ bool RendererImplemented::EndRendering()
 		GetDevice()->SetVertexDeclaration( m_state_vertexDeclaration );
 		ES_SAFE_RELEASE( m_state_vertexDeclaration );
 
-		//GetDevice()->SetStreamSource( 0, m_state_streamData, m_state_OffsetInBytes, m_state_pStride );
-		//ES_SAFE_RELEASE( m_state_streamData );
+		GetDevice()->SetStreamSource( 0, m_state_streamData, m_state_OffsetInBytes, m_state_pStride );
+		ES_SAFE_RELEASE( m_state_streamData );
 
-		//GetDevice()->SetIndices( m_state_IndexData );
-		//ES_SAFE_RELEASE( m_state_IndexData );
+		GetDevice()->SetIndices( m_state_IndexData );
+		ES_SAFE_RELEASE( m_state_IndexData );
 
-		GetDevice()->SetTexture( 0, m_state_pTexture );
-		ES_SAFE_RELEASE( m_state_pTexture );
+		GetDevice()->SetVertexShaderConstantF( 0, m_state_VertexShaderConstantF.data(), m_state_VertexShaderConstantF.size() / 4 );
+		GetDevice()->SetVertexShaderConstantF( 0, m_state_PixelShaderConstantF.data(), m_state_PixelShaderConstantF.size() / 4 );
+
+		for (int i = 0; i < static_cast<int>(m_state_pTexture.size()); i++)
+		{
+			GetDevice()->SetTexture( i, m_state_pTexture[i] );
+			ES_SAFE_RELEASE( m_state_pTexture[i] );
+		}
 
 		GetDevice()->SetFVF( m_state_FVF );
 	}
