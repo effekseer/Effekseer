@@ -74,8 +74,8 @@ public:
 	void* GetVertexConstantBuffer() { return m_vertexConstantBuffer; }
 	void* GetPixelConstantBuffer() { return m_pixelConstantBuffer; }
 
-	void SetVertexRegisterCount(int32_t count){ m_vertexRegisterCount = count; }
-	void SetPixelRegisterCount(int32_t count){ m_pixelRegisterCount = count; }
+	void SetVertexRegisterCount(int32_t count){ assert( count <= 256 ); m_vertexRegisterCount = count; }
+	void SetPixelRegisterCount(int32_t count){ assert( count <= 256 ); m_pixelRegisterCount = count; }
 
 	void SetConstantBuffer();
 };
