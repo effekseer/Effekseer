@@ -10,6 +10,8 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
 
+#include <array>
+
 #ifdef _MSC_VER
 #include <xmmintrin.h>
 #endif
@@ -301,6 +303,12 @@ private:
 	DWORD	m_state_D3DRS_LIGHTING;
 	DWORD	m_state_D3DRS_SHADEMODE;
 
+	std::array<DWORD, 4>	m_state_D3DSAMP_MAGFILTER;
+	std::array<DWORD, 4>	m_state_D3DSAMP_MINFILTER;
+	std::array<DWORD, 4>	m_state_D3DSAMP_MIPFILTER;
+	std::array<DWORD, 4>	m_state_D3DSAMP_ADDRESSU;
+	std::array<DWORD, 4>	m_state_D3DSAMP_ADDRESSV;
+
 	IDirect3DVertexShader9*			m_state_vertexShader;
 	IDirect3DPixelShader9*			m_state_pixelShader;
 	IDirect3DVertexDeclaration9*	m_state_vertexDeclaration;
@@ -311,7 +319,10 @@ private:
 
 	IDirect3DIndexBuffer9*	m_state_IndexData;
 
-	IDirect3DBaseTexture9*	m_state_pTexture;
+	std::vector<float>	m_state_VertexShaderConstantF;
+	std::vector<float>	m_state_PixelShaderConstantF;
+
+	std::array<IDirect3DBaseTexture9*, 2>	m_state_pTexture;
 
 	bool	m_isChangedDevice;
 
