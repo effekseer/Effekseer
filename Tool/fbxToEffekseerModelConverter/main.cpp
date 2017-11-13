@@ -45,6 +45,8 @@ int main(int argc, char** argv)
 		int ext_i = p.find_last_of(".");
 		std::string ext = p.substr(ext_i, p.size() - ext_i);
 
+		std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
 		if (ext != ".fbx")
 		{
 			printf("InputFile is not fbx\n");
@@ -58,6 +60,8 @@ int main(int argc, char** argv)
 		std::string p = argv[2];
 		int ext_i = p.find_last_of(".");
 		std::string ext = p.substr(ext_i, p.size() - ext_i);
+
+		std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
 
 		if (ext != ".efkmodel")
 		{

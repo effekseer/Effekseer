@@ -59,6 +59,7 @@ namespace mqoToEffekseerModelConverter
 			if (items.Count >= 1)
 			{
 				var ext = Path.GetExtension(items[0]);
+                ext = ext.ToLower();
 				if (ext != ".mqo")
 				{
 					Console.WriteLine("InputFile is not mqo");
@@ -70,7 +71,8 @@ namespace mqoToEffekseerModelConverter
 			if (items.Count >= 2)
 			{
 				var ext = Path.GetExtension(items[1]);
-				if (ext != ".efkmodel")
+                ext = ext.ToLower();
+                if (ext != ".efkmodel")
 				{
 					Console.WriteLine("OutputFile is not efkmodel");
 					return;
