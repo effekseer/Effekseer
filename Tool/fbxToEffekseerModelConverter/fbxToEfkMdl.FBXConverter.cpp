@@ -183,6 +183,12 @@ namespace fbxToEfkMdl
 
 		auto node = fbxMesh->GetNode();
 		auto layer = fbxMesh->GetLayer(0);
+
+		if (layer->GetNormals() == nullptr)
+		{
+			fbxMesh->GenerateNormals(true);
+		}
+
 		auto uvs = layer->GetUVs();
 		auto vcolors = layer->GetVertexColors();
 		auto normals = layer->GetNormals();
@@ -216,10 +222,16 @@ namespace fbxToEfkMdl
 				{
 					v.Normal = LoadNormal(normals, vertexID, ctrlPointIndex);
 				}
-
+		
 				if (uvs != nullptr)
 				{
 					v.UV = LoadUV(fbxMesh, uvs, vertexID, ctrlPointIndex, polygonIndex, polygonPointIndex);
+				}
+				else
+				{
+					// Auto generated
+					v.UV[0] = v.Position[0] + v.Position[2];
+					v.UV[1] = v.Position[1];
 				}
 
 				if (vcolors != nullptr)
@@ -314,7 +326,7 @@ namespace fbxToEfkMdl
 		for (auto& vn : vInd2Normals)
 		{
 			mesh->Vertexes[vn.first].Binormal = vn.second.Binormal;
-			//mesh->Vertexes[vn.first].Tangent = vn.second.Tangent;
+			mesh->Vertexes[vn.first].Tangent = vn.second.Tangent;
 
 			// “K“–‚È’l‚ð‘ã“ü‚·‚é
 			if (mesh->Vertexes[vn.first].Binormal.Length() == 0.0f)
@@ -322,10 +334,12 @@ namespace fbxToEfkMdl
 				if (mesh->Vertexes[vn.first].Normal != FbxVector4(1, 0, 0))
 				{
 					mesh->Vertexes[vn.first].Binormal = FbxVector4(1, 0, 0);
+					mesh->Vertexes[vn.first].Tangent = FbxVector4(0, 1, 0);
 				}
 				else
 				{
 					mesh->Vertexes[vn.first].Binormal = FbxVector4(0, 1, 0);
+					mesh->Vertexes[vn.first].Tangent = FbxVector4(1, 0, 0);
 				}
 			}
 		}
