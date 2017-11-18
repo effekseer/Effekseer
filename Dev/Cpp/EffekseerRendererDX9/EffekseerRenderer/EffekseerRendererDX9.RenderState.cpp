@@ -71,47 +71,58 @@ void RenderState::Update( bool forced )
 		}
 	}
 
-	if( m_active.AlphaBlend != m_next.AlphaBlend || forced )
+	if (m_active.AlphaBlend != m_next.AlphaBlend || forced)
 	{
-		if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity )
+		if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity)
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_BLENDOP,   D3DBLENDOP_ADD );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ZERO );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ONE );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHAREF,  127 );
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, FALSE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 127);
 		}
-		else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend )
+		else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Blend)
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_BLENDOP,   D3DBLENDOP_ADD );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHAREF,  0 );
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, FALSE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
-		else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add )
+		else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Add)
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_BLENDOP,   D3DBLENDOP_ADD );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHAREF,  0 );
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, FALSE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
-		else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub )
+		else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub)
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_BLENDOP,   D3DBLENDOP_REVSUBTRACT );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHAREF,  0 );
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ZERO);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
-		else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Mul )
+		else if (m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Mul)
 		{
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_BLENDOP,   D3DBLENDOP_ADD );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_SRCCOLOR );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ZERO );
-			m_renderer->GetDevice()->SetRenderState( D3DRS_ALPHAREF,  0 );
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCCOLOR);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ZERO);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_BLENDOPALPHA, D3DBLENDOP_ADD);
+			m_renderer->GetDevice()->SetRenderState(D3DRS_ALPHAREF, 0);
 		}
 	}
 	

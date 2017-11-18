@@ -84,12 +84,18 @@ namespace EffekseerRendererDX11
 				Desc.RenderTarget[k].DestBlend = D3D11_BLEND_ONE;
 				Desc.RenderTarget[k].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 				Desc.RenderTarget[k].BlendOp = D3D11_BLEND_OP_REV_SUBTRACT;
+				Desc.RenderTarget[k].SrcBlendAlpha = D3D11_BLEND_ZERO;
+				Desc.RenderTarget[k].DestBlendAlpha = D3D11_BLEND_ONE;
+				Desc.RenderTarget[k].BlendOpAlpha = D3D11_BLEND_OP_MAX;
 				break;
 
 			case ::Effekseer::AlphaBlendType::Mul:
 				Desc.RenderTarget[k].DestBlend = D3D11_BLEND_SRC_COLOR;
 				Desc.RenderTarget[k].SrcBlend  = D3D11_BLEND_ZERO;
 				Desc.RenderTarget[k].BlendOp   = D3D11_BLEND_OP_ADD;
+				Desc.RenderTarget[k].SrcBlendAlpha = D3D11_BLEND_ZERO;
+				Desc.RenderTarget[k].DestBlendAlpha = D3D11_BLEND_ONE;
+				Desc.RenderTarget[k].BlendOpAlpha = D3D11_BLEND_OP_MAX;
 				break;
 	
 			}

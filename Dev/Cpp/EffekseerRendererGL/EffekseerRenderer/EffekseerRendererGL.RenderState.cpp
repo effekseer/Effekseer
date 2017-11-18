@@ -99,7 +99,7 @@ void RenderState::Update( bool forced )
 			if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Sub )
 			{
 				GLExt::glBlendEquationSeparate(GL_FUNC_REVERSE_SUBTRACT, GL_FUNC_ADD);
-				GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ONE, GL_ONE);
+				GLExt::glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_ONE);
 			}
 			else
 			{
@@ -114,7 +114,7 @@ void RenderState::Update( bool forced )
 				}
 				else if( m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Mul )
 				{
-					GLExt::glBlendFuncSeparate(GL_ZERO, GL_SRC_COLOR, GL_ONE, GL_ONE);
+					GLExt::glBlendFuncSeparate(GL_ZERO, GL_SRC_COLOR, GL_ZERO, GL_ONE);
 				}
 			}
 		}
