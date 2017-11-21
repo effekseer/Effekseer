@@ -261,10 +261,10 @@ namespace fbxToEfkMdl
 
 		for (auto& face : faces)
 		{
-			if (face.Vertecies.size() != 3) continue;
-
-			for (auto& vertex : face.Vertecies)
+			for (int32_t vi = 0; vi < (int32_t)face.Vertecies.size(); vi++)
 			{
+				auto vertex = face.Vertecies[vi];
+
 				auto it = v2ind.find(vertex);
 				if (it == v2ind.end())
 				{
@@ -287,13 +287,31 @@ namespace fbxToEfkMdl
 
 		for (auto& face : faces)
 		{
-			if (face.Vertecies.size() != 3) continue;
+			if (face.Vertecies.size() < 3) continue;
 
-			Face f;
-			f.Index[0] = v2ind[face.Vertecies[0]];
-			f.Index[1] = v2ind[face.Vertecies[1]];
-			f.Index[2] = v2ind[face.Vertecies[2]];
-			mesh->Faces.push_back(f);
+			if (face.Vertecies.size() == 3)
+			{
+				Face f;
+				f.Index[0] = v2ind[face.Vertecies[0]];
+				f.Index[1] = v2ind[face.Vertecies[1]];
+				f.Index[2] = v2ind[face.Vertecies[2]];
+				mesh->Faces.push_back(f);
+			}
+			
+			if (face.Vertecies.size() == 4)
+			{
+				Face f0;
+				f0.Index[0] = v2ind[face.Vertecies[0]];
+				f0.Index[1] = v2ind[face.Vertecies[1]];
+				f0.Index[2] = v2ind[face.Vertecies[2]];
+				mesh->Faces.push_back(f0);
+
+				Face f1;
+				f1.Index[0] = v2ind[face.Vertecies[0]];
+				f1.Index[1] = v2ind[face.Vertecies[2]];
+				f1.Index[2] = v2ind[face.Vertecies[3]];
+				mesh->Faces.push_back(f1);
+			}
 		}
 
 		// Binormal,TangentŒvŽZ
@@ -367,7 +385,12 @@ namespace fbxToEfkMdl
 				if (!mesh->IsTriangleMesh())
 				{
 					FbxGeometryConverter converter(fbxManager);
-					mesh = (FbxMesh*) converter.Triangulate(mesh, false);
+					auto mesh_tri = (FbxMesh*) converter.Triangulate(mesh, false);
+				
+					if (mesh_tri != nullptr)
+					{
+						mesh = mesh_tri;
+					}
 				}
 
 				node->MeshData = LoadMesh(mesh);
