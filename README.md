@@ -1,4 +1,6 @@
-﻿Effekseer
+﻿# This repository is for maintenance 1.3x
+
+Effekseer
 =========
 This software is a tool editing particle effects.
 By incorporating a runtime and plug-ins, you will be able to show the effects that was created with Effekseer.
