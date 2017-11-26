@@ -1123,6 +1123,13 @@ void ManagerImplemented::SetPausedToAllEffects(bool paused)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+float ManagerImplemented::GetSpeed(Handle handle) const
+{
+	auto it = m_DrawSets.find(handle);
+	if (it == m_DrawSets.end()) return 0.0f;
+	return it->second.Speed;
+}
+
 void ManagerImplemented::SetSpeed( Handle handle, float speed )
 {
 	if( m_DrawSets.count( handle ) > 0 )
