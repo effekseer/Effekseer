@@ -38,6 +38,8 @@ public:
 
 		bool				Distortion;
 		float				DistortionIntensity;
+
+		float				DepthOffset;
 	};
 
 	struct InstanceParameter

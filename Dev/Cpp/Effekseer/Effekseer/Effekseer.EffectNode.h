@@ -139,6 +139,16 @@ struct ParameterCommonValues
 	random_float GenerationTimeOffset;
 };
 
+struct ParameterDepthValues
+{
+	float	DepthOffset;
+
+	ParameterDepthValues()
+	{
+		DepthOffset = 0;
+	}
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -839,6 +849,8 @@ public:
 	FCurveVector3D*				ScalingFCurve;
 
 	ParameterGenerationLocation	GenerationLocation;
+
+	ParameterDepthValues		DepthValues;
 
 	ParameterRendererCommon		RendererCommon;
 

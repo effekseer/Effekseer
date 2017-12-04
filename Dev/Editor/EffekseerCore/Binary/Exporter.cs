@@ -374,7 +374,10 @@ namespace Effekseer.Binary
 				node_data.Add(RotationValues.GetBytes(n.RotationValues));
 				node_data.Add(ScaleValues.GetBytes(n.ScalingValues, n.CommonValues.ScaleEffectType));
 				node_data.Add(GenerationLocationValues.GetBytes(n.GenerationLocationValues, n.CommonValues.ScaleEffectType, model_and_index));
-				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index, distortionTexture_and_index));
+
+                node_data.Add(n.DepthValues.DepthOffset.Value.GetBytes());
+
+                node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index, distortionTexture_and_index));
 
 				if (isRenderParamExported)
 				{

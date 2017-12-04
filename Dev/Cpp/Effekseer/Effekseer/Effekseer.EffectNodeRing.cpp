@@ -275,6 +275,8 @@ void EffectNodeRing::EndRendering(Manager* manager)
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
+		nodeParameter.DepthOffset = DepthValues.DepthOffset;
+
 		renderer->EndRendering( nodeParameter, m_userData );
 	}
 }

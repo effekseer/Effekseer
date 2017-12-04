@@ -86,6 +86,8 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
+		nodeParameter.DepthOffset = DepthValues.DepthOffset;
+
 		renderer->BeginRendering(nodeParameter, count, m_userData);
 	}
 }

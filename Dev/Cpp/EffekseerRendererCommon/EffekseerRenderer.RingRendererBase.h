@@ -396,6 +396,32 @@ protected:
 			}
 		}
 
+		auto camera = renderer->GetCameraMatrix();
+
+		if (m_instanceCount > 1)
+		{
+			// DepthOffset
+			if (parameter.DepthOffset != 0)
+			{
+				for (auto i = 0; i < vertexCount; i++)
+				{
+					auto f = ::Effekseer::Vector3D(-camera.Values[0][2], -camera.Values[1][2], -camera.Values[2][2]);
+					verteies[i].Pos += f * parameter.DepthOffset;
+				}
+			}
+		}
+		else
+		{
+			// DepthOffset
+			if (parameter.DepthOffset != 0)
+			{
+				auto f = ::Effekseer::Vector3D(-camera.Values[0][2], -camera.Values[1][2], -camera.Values[2][2]);
+				m_singleRenderingMatrix.Values[3][0] += f.X * parameter.DepthOffset;
+				m_singleRenderingMatrix.Values[3][1] += f.Y * parameter.DepthOffset;
+				m_singleRenderingMatrix.Values[3][2] += f.Z * parameter.DepthOffset;
+			}
+		}
+
 		m_spriteCount += 2 * parameter.VertexCount;
 	}
 
@@ -403,6 +429,7 @@ protected:
 	{
 		if (m_instanceCount == 1)
 		{
+
 			::Effekseer::Matrix44 mat;
 			::Effekseer::Matrix44::Mul(mat, m_singleRenderingMatrix, renderer->GetCameraMatrix());
 

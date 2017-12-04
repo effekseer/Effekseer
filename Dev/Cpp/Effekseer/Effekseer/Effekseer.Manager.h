@@ -392,28 +392,9 @@ public:
 	virtual void SetPausedToAllEffects(bool paused) = 0;
 
 	/**
-		@brief
-		\~English	Get a playing speed of particle of effect.
-		\~Japanese	エフェクトのパーティクルの再生スピードを取得する。
-		@param	handle
-		\~English	Particle's handle
-		\~Japanese	パーティクルのハンドル
-		@return	
-		\~English	Speed
-		\~Japanese	スピード
-	*/
-	virtual float GetSpeed(Handle handle) const = 0;
-
-	/**
-		@brief
-		\~English	Set a playing speed of particle of effect.
-		\~Japanese	エフェクトのパーティクルの再生スピードを設定する。
-		@param	handle
-		\~English	Particle's handle
-		\~Japanese	パーティクルのハンドル
-		@param	speed
-		\~English	Speed
-		\~Japanese	スピード
+		@brief	エフェクトのインスタンスを再生スピードを設定する。
+		@param	handle	[in]	インスタンスのハンドル
+		@param	speed	[in]	スピード
 	*/
 	virtual void SetSpeed( Handle handle, float speed ) = 0;
 

@@ -224,6 +224,13 @@ protected:
 			
 			::Effekseer::Matrix43 mat_rot;
 	
+			// DepthOffset
+			if (parameter.DepthOffset != 0)
+			{
+				auto f = ::Effekseer::Vector3D(-camera.Values[0][2], -camera.Values[1][2], -camera.Values[2][2]);
+				t += f * parameter.DepthOffset;
+			}
+
 			mat_rot.Value[0][0] = - R.X;
 			mat_rot.Value[0][1] = - R.Y;
 			mat_rot.Value[0][2] = - R.Z;

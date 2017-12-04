@@ -380,7 +380,16 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}		
 		}
 
-		// 右手系左手系変換
+		// Load depth values
+		if (m_effect->GetVersion() >= 10)
+		{
+			memcpy(&DepthValues.DepthOffset, pos, sizeof(float));
+			pos += sizeof(float);
+
+			DepthValues.DepthOffset *= m_effect->GetMaginification();
+		}
+
+		// Convert right handle coordinate system into left handle coordinate system
 		if( setting->GetCoordinateSystem() == CoordinateSystem::LH )
 		{
 			// Translation
@@ -477,10 +486,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 
 		LoadRendererParameter( pos, m_effect->GetSetting() );
-		
+
 		if( m_effect->GetVersion() >= 1)
 		{
-			// サウンド
+			// Sound
 			memcpy( &SoundType, pos, sizeof(int) );
 			pos += sizeof(int);
 			if( SoundType == ParameterSoundType_Use )
