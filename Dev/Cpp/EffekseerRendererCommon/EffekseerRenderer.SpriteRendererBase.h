@@ -227,7 +227,7 @@ protected:
 			// DepthOffset
 			if (parameter.DepthOffset != 0)
 			{
-				auto f = ::Effekseer::Vector3D(-camera.Values[0][2], -camera.Values[1][2], -camera.Values[2][2]);
+				auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
 				t += f * parameter.DepthOffset;
 			}
 

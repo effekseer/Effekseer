@@ -120,6 +120,7 @@ void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
+		nodeParameter.DepthOffset = DepthValues.DepthOffset;
 
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -168,6 +169,8 @@ void EffectNodeModel::EndRendering(Manager* manager)
 
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
+
+		nodeParameter.DepthOffset = DepthValues.DepthOffset;
 
 		renderer->EndRendering( nodeParameter, m_userData );
 	}

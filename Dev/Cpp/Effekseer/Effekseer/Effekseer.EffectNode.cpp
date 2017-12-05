@@ -381,7 +381,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 
 		// Load depth values
-		if (m_effect->GetVersion() >= 10)
+		if (m_effect->GetVersion() >= 12)
 		{
 			memcpy(&DepthValues.DepthOffset, pos, sizeof(float));
 			pos += sizeof(float);

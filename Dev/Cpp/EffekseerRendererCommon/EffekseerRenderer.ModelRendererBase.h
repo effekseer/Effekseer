@@ -270,12 +270,12 @@ public:
 					vcb->ModelMatrix[num] = m_matrixes[loop+num];
 
 					// DepthOffset
-					if (parameter.DepthOffset != 0)
+					if (param.DepthOffset != 0)
 					{
-						auto f = ::Effekseer::Vector3D(-camera.Values[0][2], -camera.Values[1][2], -camera.Values[2][2]);
-						vcb->ModelMatrix[num].Values[3][0] += f.X * parameter.DepthOffset;
-						vcb->ModelMatrix[num].Values[3][1] += f.Y * parameter.DepthOffset;
-						vcb->ModelMatrix[num].Values[3][2] += f.Z * parameter.DepthOffset;
+						auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
+						vcb->ModelMatrix[num].Values[3][0] += f.X * param.DepthOffset;
+						vcb->ModelMatrix[num].Values[3][1] += f.Y * param.DepthOffset;
+						vcb->ModelMatrix[num].Values[3][2] += f.Z * param.DepthOffset;
 					}
 
 					vcb->ModelUV[num][0] = m_uv[loop+num].X;
@@ -309,12 +309,12 @@ public:
 				vcb->ModelUV[0][3] = m_uv[loop].Height;
 
 				// DepthOffset
-				if (parameter.DepthOffset != 0)
+				if (param.DepthOffset != 0)
 				{
-					auto f = ::Effekseer::Vector3D(-camera.Values[0][2], -camera.Values[1][2], -camera.Values[2][2]);
-					vcb->ModelMatrix[0].Values[3][0] += f.X * parameter.DepthOffset;
-					vcb->ModelMatrix[0].Values[3][1] += f.Y * parameter.DepthOffset;
-					vcb->ModelMatrix[0].Values[3][2] += f.Z * parameter.DepthOffset;
+					auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
+					vcb->ModelMatrix[0].Values[3][0] += f.X * param.DepthOffset;
+					vcb->ModelMatrix[0].Values[3][1] += f.Y * param.DepthOffset;
+					vcb->ModelMatrix[0].Values[3][2] += f.Z * param.DepthOffset;
 				}
 				
 				ColorToFloat4( m_colors[loop], vcb->ModelColor[0] );

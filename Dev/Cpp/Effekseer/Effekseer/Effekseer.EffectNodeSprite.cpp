@@ -181,6 +181,8 @@ void EffectNodeSprite::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
+		nodeParameter.DepthOffset = DepthValues.DepthOffset;
+
 		SpriteRenderer::InstanceParameter instanceParameter;
 		instValues._color.setValueToArg( instanceParameter.AllColor );
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -262,6 +264,8 @@ void EffectNodeSprite::EndRendering(Manager* manager)
 
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
+
+		nodeParameter.DepthOffset = DepthValues.DepthOffset;
 
 		renderer->EndRendering( nodeParameter, m_userData );
 	}

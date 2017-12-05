@@ -396,8 +396,6 @@ protected:
 			}
 		}
 
-		auto camera = renderer->GetCameraMatrix();
-
 		if (m_instanceCount > 1)
 		{
 			// DepthOffset
@@ -405,7 +403,7 @@ protected:
 			{
 				for (auto i = 0; i < vertexCount; i++)
 				{
-					auto f = ::Effekseer::Vector3D(-camera.Values[0][2], -camera.Values[1][2], -camera.Values[2][2]);
+					auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
 					verteies[i].Pos += f * parameter.DepthOffset;
 				}
 			}
@@ -415,7 +413,7 @@ protected:
 			// DepthOffset
 			if (parameter.DepthOffset != 0)
 			{
-				auto f = ::Effekseer::Vector3D(-camera.Values[0][2], -camera.Values[1][2], -camera.Values[2][2]);
+				auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
 				m_singleRenderingMatrix.Values[3][0] += f.X * parameter.DepthOffset;
 				m_singleRenderingMatrix.Values[3][1] += f.Y * parameter.DepthOffset;
 				m_singleRenderingMatrix.Values[3][2] += f.Z * parameter.DepthOffset;

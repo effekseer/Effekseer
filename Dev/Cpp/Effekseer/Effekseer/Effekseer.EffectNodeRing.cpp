@@ -191,6 +191,8 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
+		nodeParameter.DepthOffset = DepthValues.DepthOffset;
+
 		renderer->BeginRendering( nodeParameter, count, m_userData );
 	}
 }
@@ -217,6 +219,8 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
+
+		nodeParameter.DepthOffset = DepthValues.DepthOffset;
 
 		color _outerColor;
 		color _centerColor;
