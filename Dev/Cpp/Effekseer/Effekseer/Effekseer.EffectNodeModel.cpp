@@ -87,6 +87,8 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 		nodeParameter.DepthOffset = DepthValues.DepthOffset;
+		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
 		renderer->BeginRendering(nodeParameter, count, m_userData);
 	}
@@ -121,6 +123,8 @@ void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 		nodeParameter.DepthOffset = DepthValues.DepthOffset;
+		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -171,6 +175,8 @@ void EffectNodeModel::EndRendering(Manager* manager)
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 		nodeParameter.DepthOffset = DepthValues.DepthOffset;
+		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
 		renderer->EndRendering( nodeParameter, m_userData );
 	}

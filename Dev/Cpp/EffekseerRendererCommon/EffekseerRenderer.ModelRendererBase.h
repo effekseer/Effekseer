@@ -270,14 +270,8 @@ public:
 					vcb->ModelMatrix[num] = m_matrixes[loop+num];
 
 					// DepthOffset
-					if (param.DepthOffset != 0)
-					{
-						auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
-						vcb->ModelMatrix[num].Values[3][0] += f.X * param.DepthOffset;
-						vcb->ModelMatrix[num].Values[3][1] += f.Y * param.DepthOffset;
-						vcb->ModelMatrix[num].Values[3][2] += f.Z * param.DepthOffset;
-					}
-
+					ApplyDepthOffset(vcb->ModelMatrix[num], camera, param.DepthOffset, param.IsDepthOffsetScaledWithCamera, param.IsDepthOffsetScaledWithParticleScale);
+	
 					vcb->ModelUV[num][0] = m_uv[loop+num].X;
 					vcb->ModelUV[num][1] = m_uv[loop+num].Y;
 					vcb->ModelUV[num][2] = m_uv[loop+num].Width;
@@ -309,13 +303,7 @@ public:
 				vcb->ModelUV[0][3] = m_uv[loop].Height;
 
 				// DepthOffset
-				if (param.DepthOffset != 0)
-				{
-					auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
-					vcb->ModelMatrix[0].Values[3][0] += f.X * param.DepthOffset;
-					vcb->ModelMatrix[0].Values[3][1] += f.Y * param.DepthOffset;
-					vcb->ModelMatrix[0].Values[3][2] += f.Z * param.DepthOffset;
-				}
+				ApplyDepthOffset(vcb->ModelMatrix[0], camera, param.DepthOffset, param.IsDepthOffsetScaledWithCamera, param.IsDepthOffsetScaledWithParticleScale);
 				
 				ColorToFloat4( m_colors[loop], vcb->ModelColor[0] );
 				shader_->SetConstantBuffer();

@@ -224,13 +224,6 @@ protected:
 			
 			::Effekseer::Matrix43 mat_rot;
 	
-			// DepthOffset
-			if (parameter.DepthOffset != 0)
-			{
-				auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
-				t += f * parameter.DepthOffset;
-			}
-
 			mat_rot.Value[0][0] = - R.X;
 			mat_rot.Value[0][1] = - R.Y;
 			mat_rot.Value[0][2] = - R.Z;
@@ -244,16 +237,22 @@ protected:
 			mat_rot.Value[3][1] = t.Y;
 			mat_rot.Value[3][2] = t.Z;
 	
+			ApplyDepthOffset(mat_rot, camera, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale);
+
 			TransformVertexes( verteies, 4, mat_rot );
 		}
 		else if( parameter.Billboard == ::Effekseer::BillboardType::Fixed )
 		{
+			auto mat = instanceParameter.SRTMatrix43;
+
+			ApplyDepthOffset(mat, camera, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale);
+
 			for( int i = 0; i < 4; i++ )
 			{
 				::Effekseer::Vector3D::Transform(
 					verteies[i].Pos,
 					verteies[i].Pos,
-					instanceParameter.SRTMatrix43 );
+					mat);
 
 				// 歪み処理
 				if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
@@ -263,18 +262,18 @@ protected:
 					::Effekseer::Vector3D::Transform(
 						vs->Tangent,
 						vs->Tangent,
-						instanceParameter.SRTMatrix43);
+						mat);
 
 					::Effekseer::Vector3D::Transform(
 						vs->Binormal,
 						vs->Binormal,
-						instanceParameter.SRTMatrix43);
+						mat);
 
 					Effekseer::Vector3D zero;
 					::Effekseer::Vector3D::Transform(
 						zero,
 						zero,
-						instanceParameter.SRTMatrix43);
+						mat);
 
 					::Effekseer::Vector3D::Normal(vs->Tangent, vs->Tangent - zero);
 					::Effekseer::Vector3D::Normal(vs->Binormal, vs->Binormal - zero);

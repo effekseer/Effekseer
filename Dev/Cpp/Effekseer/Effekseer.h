@@ -2045,6 +2045,8 @@ public:
 		float				DistortionIntensity;
 
 		float				DepthOffset;
+		bool				IsDepthOffsetScaledWithCamera;
+		bool				IsDepthOffsetScaledWithParticleScale;
 	};
 
 	struct InstanceParameter
@@ -2188,6 +2190,8 @@ public:
 		float				DistortionIntensity;
 
 		float				DepthOffset;
+		bool				IsDepthOffsetScaledWithCamera;
+		bool				IsDepthOffsetScaledWithParticleScale;
 	};
 
 	struct InstanceParameter
@@ -2265,6 +2269,8 @@ public:
 		float				DistortionIntensity;
 
 		float				DepthOffset;
+		bool				IsDepthOffsetScaledWithCamera;
+		bool				IsDepthOffsetScaledWithParticleScale;
 	};
 
 	struct InstanceParameter

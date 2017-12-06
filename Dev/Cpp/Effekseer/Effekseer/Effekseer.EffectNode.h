@@ -142,10 +142,14 @@ struct ParameterCommonValues
 struct ParameterDepthValues
 {
 	float	DepthOffset;
+	bool	IsDepthOffsetScaledWithCamera;
+	bool	IsDepthOffsetScaledWithParticleScale;
 
 	ParameterDepthValues()
 	{
 		DepthOffset = 0;
+		IsDepthOffsetScaledWithCamera = false;
+		IsDepthOffsetScaledWithParticleScale = false;
 	}
 };
 

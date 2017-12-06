@@ -356,6 +356,8 @@ protected:
 			mat_rot.Value[3][0] = t.X;
 			mat_rot.Value[3][1] = t.Y;
 			mat_rot.Value[3][2] = t.Z;
+
+			ApplyDepthOffset(mat_rot, camera, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale);
 			
 			if( m_instanceCount > 1 )
 			{
@@ -381,42 +383,22 @@ protected:
 		}
 		else if( parameter.Billboard == ::Effekseer::BillboardType::Fixed )
 		{
+			auto mat = instanceParameter.SRTMatrix43;
+
+			ApplyDepthOffset(mat, camera, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale);
+
 			if( m_instanceCount > 1 )
 			{
-				TransformVertexes( verteies, vertexCount, instanceParameter.SRTMatrix43 );
+				TransformVertexes(verteies, vertexCount, mat);
 			}
 			else
 			{
 				for( int32_t i = 0; i < 4; i++ )
 				{
-					m_singleRenderingMatrix.Values[i][0] = instanceParameter.SRTMatrix43.Value[i][0];
-					m_singleRenderingMatrix.Values[i][1] = instanceParameter.SRTMatrix43.Value[i][1];
-					m_singleRenderingMatrix.Values[i][2] = instanceParameter.SRTMatrix43.Value[i][2];
+					m_singleRenderingMatrix.Values[i][0] = mat.Value[i][0];
+					m_singleRenderingMatrix.Values[i][1] = mat.Value[i][1];
+					m_singleRenderingMatrix.Values[i][2] = mat.Value[i][2];
 				}
-			}
-		}
-
-		if (m_instanceCount > 1)
-		{
-			// DepthOffset
-			if (parameter.DepthOffset != 0)
-			{
-				for (auto i = 0; i < vertexCount; i++)
-				{
-					auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
-					verteies[i].Pos += f * parameter.DepthOffset;
-				}
-			}
-		}
-		else
-		{
-			// DepthOffset
-			if (parameter.DepthOffset != 0)
-			{
-				auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
-				m_singleRenderingMatrix.Values[3][0] += f.X * parameter.DepthOffset;
-				m_singleRenderingMatrix.Values[3][1] += f.Y * parameter.DepthOffset;
-				m_singleRenderingMatrix.Values[3][2] += f.Z * parameter.DepthOffset;
 			}
 		}
 
