@@ -400,7 +400,11 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 			DepthValues.IsDepthOffsetScaledWithParticleScale = IsDepthOffsetScaledWithParticleScale > 0;
 
+			memcpy(&DepthValues.SoftParticle, pos, sizeof(float));
+			pos += sizeof(float);
+
 			DepthValues.DepthOffset *= m_effect->GetMaginification();
+			DepthValues.SoftParticle *= m_effect->GetMaginification();
 		}
 
 		// Convert right handle coordinate system into left handle coordinate system

@@ -144,12 +144,14 @@ struct ParameterDepthValues
 	float	DepthOffset;
 	bool	IsDepthOffsetScaledWithCamera;
 	bool	IsDepthOffsetScaledWithParticleScale;
+	float	SoftParticle;
 
 	ParameterDepthValues()
 	{
 		DepthOffset = 0;
 		IsDepthOffsetScaledWithCamera = false;
 		IsDepthOffsetScaledWithParticleScale = false;
+		SoftParticle = 0.0f;
 	}
 };
 

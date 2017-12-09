@@ -375,9 +375,11 @@ namespace Effekseer.Binary
 				node_data.Add(ScaleValues.GetBytes(n.ScalingValues, n.CommonValues.ScaleEffectType));
 				node_data.Add(GenerationLocationValues.GetBytes(n.GenerationLocationValues, n.CommonValues.ScaleEffectType, model_and_index));
 
+				// Export depth
                 node_data.Add(n.DepthValues.DepthOffset.Value.GetBytes());
 				node_data.Add(BitConverter.GetBytes(n.DepthValues.IsScaleChangedDependingOnDepthOffset.Value ? 1 : 0));
 				node_data.Add(BitConverter.GetBytes(n.DepthValues.IsDepthOffsetChangedDependingOnParticleScale.Value ? 1 : 0));
+				node_data.Add(n.DepthValues.SoftParticle.Value.GetBytes());
 
                 node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index, distortionTexture_and_index));
 

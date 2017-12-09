@@ -38,11 +38,22 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "ソフトパーティクル")]
+		[Description(language = Language.Japanese, value = "ソフトパーティクル")]
+		[Name(language = Language.English, value = "Soft particle")]
+		[Description(language = Language.English, value = "Soft particle")]
+		public Value.Float SoftParticle
+		{
+			get;
+			private set;
+		}
+
         public DepthValues()
         {
             DepthOffset = new Value.Float();
 			IsScaleChangedDependingOnDepthOffset = new Value.Boolean();
 			IsDepthOffsetChangedDependingOnParticleScale = new Value.Boolean();
+			SoftParticle = new Value.Float(0, float.MaxValue, 0.0f);
         }
     }
 }
