@@ -386,6 +386,18 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			memcpy(&DepthValues.DepthOffset, pos, sizeof(float));
 			pos += sizeof(float);
 
+			auto IsDepthOffsetScaledWithCamera = 0;
+			memcpy(&IsDepthOffsetScaledWithCamera, pos, sizeof(int32_t));
+			pos += sizeof(int32_t);
+
+			DepthValues.IsDepthOffsetScaledWithCamera = IsDepthOffsetScaledWithCamera > 0;
+
+			auto IsDepthOffsetScaledWithParticleScale = 0;
+			memcpy(&IsDepthOffsetScaledWithParticleScale, pos, sizeof(int32_t));
+			pos += sizeof(int32_t);
+
+			DepthValues.IsDepthOffsetScaledWithParticleScale = IsDepthOffsetScaledWithParticleScale > 0;
+
 			DepthValues.DepthOffset *= m_effect->GetMaginification();
 		}
 
