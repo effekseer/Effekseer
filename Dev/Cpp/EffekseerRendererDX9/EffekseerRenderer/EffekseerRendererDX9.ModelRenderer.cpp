@@ -306,6 +306,16 @@ void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t c
 	BeginRendering_(m_renderer, parameter, count, userData);
 }
 
+void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const InstanceParameter& instanceParameter, void* userData)
+{
+	Rendering_<
+		RendererImplemented>(
+		m_renderer,
+		parameter,
+		instanceParameter,
+		userData);
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

@@ -65,6 +65,7 @@ public:
 	AlphaBlendType		AlphaBlend;
 	int32_t			ModelIndex;
 	int32_t			NormalTextureIndex;
+	BillboardType	Billboard;
 	bool			Lighting;
 	CullingType	Culling;
 

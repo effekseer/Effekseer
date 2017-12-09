@@ -426,6 +426,8 @@ namespace Effekseer.Binary
 					data.Add((-1).GetBytes());
 				}
 
+				data.Add(param.Billboard);
+
 				if (param.Lighting.Value)
 				{
 					data.Add((1).GetBytes());

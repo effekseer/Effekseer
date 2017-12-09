@@ -48,6 +48,16 @@ namespace Effekseer
 	pos += sizeof(int);
 	EffekseerPrintDebug("NormalTextureIndex : %d\n", NormalTextureIndex );
 
+	if (m_effect->GetVersion() >= 12)
+	{
+		memcpy(&Billboard, pos, sizeof(int));
+		pos += sizeof(int);
+	}
+	else
+	{
+		Billboard = BillboardType::Fixed;
+	}
+
 	int32_t lighting;
 	memcpy( &lighting, pos, sizeof(int) );
 	pos += sizeof(int);
@@ -77,6 +87,7 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.ModelIndex = ModelIndex;
 		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
+		nodeParameter.Billboard = Billboard;
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
@@ -113,6 +124,7 @@ void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.ModelIndex = ModelIndex;
 		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
+		nodeParameter.Billboard = Billboard;
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
@@ -165,6 +177,7 @@ void EffectNodeModel::EndRendering(Manager* manager)
 		nodeParameter.ModelIndex = ModelIndex;
 		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
+		nodeParameter.Billboard = Billboard;
 		nodeParameter.Lighting = Lighting;
 		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();

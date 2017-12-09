@@ -2257,6 +2257,8 @@ public:
 		TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
+		BillboardType		Billboard;
+
 		bool				Lighting;
 		CullingType		Culling;
 		int32_t				ModelIndex;
