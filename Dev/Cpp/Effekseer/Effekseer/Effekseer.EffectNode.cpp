@@ -11,6 +11,8 @@
 #include "Effekseer.Vector3D.h"
 
 #include "Effekseer.Instance.h"
+#include "Effekseer.InstanceContainer.h"
+#include "Effekseer.InstanceGlobal.h"
 
 #include "Effekseer.EffectNodeRoot.h"
 #include "Effekseer.EffectNodeSprite.h"
@@ -717,6 +719,8 @@ float EffectNodeImplemented::GetFadeAlpha(const Instance& instance)
 //----------------------------------------------------------------------------------
 void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, Manager* manager)
 {
+	auto instanceGlobal = instance.m_pContainer->GetRootInstance();
+
 	SoundPlayer* player = manager->GetSoundPlayer();
 	if( player == NULL )
 	{
@@ -727,9 +731,9 @@ void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, Manager
 	{
 		SoundPlayer::InstanceParameter parameter;
 		parameter.Data = m_effect->GetWave( Sound.WaveId );
-		parameter.Volume = Sound.Volume.getValue( *manager );
-		parameter.Pitch = Sound.Pitch.getValue( *manager );
-		parameter.Pan = Sound.Pan.getValue( *manager );
+		parameter.Volume = Sound.Volume.getValue(*instanceGlobal);
+		parameter.Pitch = Sound.Pitch.getValue(*instanceGlobal);
+		parameter.Pan = Sound.Pan.getValue(*instanceGlobal);
 		
 		parameter.Mode3D = (Sound.PanType == ParameterSoundPanType_3D);
 		Vector3D::Transform( parameter.Position, 

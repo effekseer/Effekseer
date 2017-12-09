@@ -278,7 +278,7 @@ namespace Effekseer.Binary
 			data.Add(BitConverter.GetBytes(magnification));
 
 			// Export default seed
-			int randomSeed = -1;
+			int randomSeed = Core.Global.RandomSeed.Value;
 			data.Add(BitConverter.GetBytes(randomSeed));
 
 			// カリングを出力

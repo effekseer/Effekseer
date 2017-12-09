@@ -22,6 +22,8 @@ namespace Effekseer
 
 		static Data.EffectCullingValues culling = new Data.EffectCullingValues();
 
+		static Data.GlobalValues globalValues = new Data.GlobalValues();
+
 		static int start_frame = 0;
 
 		static int end_frame = 160;
@@ -184,6 +186,12 @@ namespace Effekseer
 		{
 			get { return culling; }
 		}
+
+		public static Data.GlobalValues Global
+		{
+			get { return globalValues; }
+		}
+
 
 		/// <summary>
 		/// 選択中のノード
@@ -471,6 +479,7 @@ namespace Effekseer
 			Root = new Data.NodeRoot();
             effectBehavior = new Data.EffectBehaviorValues();
             culling = new Data.EffectCullingValues();
+			globalValues = new Data.GlobalValues();
 
             // Add a root node
             Root.AddChild();
@@ -496,6 +505,7 @@ namespace Effekseer
 
 			var behaviorElement = Data.IO.SaveObjectToElement(doc, "Behavior", EffectBehavior, false);
 			var cullingElement = Data.IO.SaveObjectToElement(doc, "Culling", Culling, false);
+			var globalElement = Data.IO.SaveObjectToElement(doc, "Global", Global, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 
@@ -642,6 +652,17 @@ namespace Effekseer
             {
                 culling = new Data.EffectCullingValues();
             }
+
+			var globalElement = doc["EffekseerProject"]["Global"];
+			if (globalElement != null)
+			{
+				var o = globalValues as object;
+				Data.IO.LoadObjectFromElement(globalElement as System.Xml.XmlElement, ref o, false);
+			}
+			else
+			{
+				globalValues = new Data.GlobalValues();
+			}
 
 			StartFrame = 0;
 			EndFrame = doc["EffekseerProject"]["EndFrame"].GetTextAsInt();

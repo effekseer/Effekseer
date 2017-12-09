@@ -45,7 +45,7 @@ public:
 
 	float GetValue( int32_t frame );
 
-	float GetOffset( const Manager& manager ) const;
+	float GetOffset( InstanceGlobal& g ) const;
 
 	void SetDefaultValue( float value ) { m_defaultValue = value; }
 

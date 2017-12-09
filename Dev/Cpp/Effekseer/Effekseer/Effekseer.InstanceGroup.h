@@ -89,6 +89,8 @@ public:
 	*/
 	InstanceGroup*	NextUsedByContainer;
 
+	InstanceGlobal* GetInstanceGlobal() const { return m_global; }
+
 };
 //----------------------------------------------------------------------------------
 //

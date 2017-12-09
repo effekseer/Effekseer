@@ -36,11 +36,19 @@ private:
 	InstanceContainer*	m_rootContainer;
 	Vector3D			m_targetLocation;
 
+	int32_t				m_seed = 0;
+
 	InstanceGlobal();
 
 	virtual ~InstanceGlobal();
 
 public:
+	void SetSeed(int32_t seed);
+
+	float GetRand();
+
+	float GetRand(float min_, float max_);
+
 	void IncInstanceCount();
 
 	void DecInstanceCount();

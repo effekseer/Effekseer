@@ -315,6 +315,7 @@ namespace Effekseer.GUI
 				setDockWindow(Properties.Resources.CameraSettings, typeof(DockViewPoint), Properties.Resources.IconViewPoint);
 				setDockWindow(Properties.Resources.Recorder, typeof(DockRecorder), Properties.Resources.IconRecorder);
 				setDockWindow(Properties.Resources.Options, typeof(DockOption), Properties.Resources.IconOption);
+				setDockWindow(Properties.Resources.Options, typeof(DockGlobal), Properties.Resources.IconOption);
 				setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), Properties.Resources.IconBehavior);
 				setDockWindow(Properties.Resources.Culling, typeof(DockCulling), Properties.Resources.IconCulling);
 				setDockWindow(Properties.Resources.Network, typeof(DockNetwork), Properties.Resources.IconNetwork);

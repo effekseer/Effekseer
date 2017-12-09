@@ -134,6 +134,12 @@ namespace Effekseer.GUI
 			set;
 		}
 
+		internal static DockGlobal DockGlobal
+		{
+			get;
+			set;
+		}
+
 		internal static DockEffectBehavior DockEffectBehavior
 		{
 			get;
@@ -203,6 +209,7 @@ namespace Effekseer.GUI
 			DockNodeDrawingValues = new GUI.DockNodeRendererValues();
             DockNodeSoundValues = new GUI.DockNodeSoundValues();
 			DockOption = new GUI.DockOption();
+			DockGlobal = new GUI.DockGlobal();
 			DockEffectBehavior = new GUI.DockEffectBehavior();
 			DockFCurves = new GUI.DockFCurves();
 			DockCulling = new GUI.DockCulling();
@@ -249,6 +256,8 @@ namespace Effekseer.GUI
 			if (DockNodeDrawingValues != null) DockNodeDrawingValues.Close();
             if (DockNodeSoundValues != null) DockNodeSoundValues.Close();
 			if (DockOption != null) DockOption.Close();
+			if (DockGlobal != null) DockGlobal.Close();
+
 			if (DockEffectBehavior != null) DockEffectBehavior.Close();
 
 			if (DockFCurves != null) DockFCurves.Close();
@@ -271,6 +280,7 @@ namespace Effekseer.GUI
 			DockNodeDrawingValues = null;
             DockNodeSoundValues = null;
 			DockOption = null;
+			DockGlobal = null;
 			DockEffectBehavior = null;
 			DockFCurves = null;
 			DockCulling = null;
@@ -297,6 +307,7 @@ namespace Effekseer.GUI
 			if (DockNodeDrawingValues == null) DockNodeDrawingValues = new GUI.DockNodeRendererValues();
             if (DockNodeSoundValues == null) DockNodeSoundValues = new GUI.DockNodeSoundValues();
 			if (DockOption == null) DockOption = new GUI.DockOption();
+			if (DockGlobal == null) DockGlobal = new GUI.DockGlobal();
 			if (DockEffectBehavior == null) DockEffectBehavior = new DockEffectBehavior();
 			if (DockFCurves == null) DockFCurves = new GUI.DockFCurves();
 			if (DockCulling == null) DockCulling = new DockCulling();
@@ -563,6 +574,11 @@ namespace Effekseer.GUI
 								return DockOption;
 							}
 
+							if (DockGlobal.GetType().FullName == s)
+							{
+								return DockGlobal;
+							}
+
 							if (DockCulling.GetType().FullName == s)
 							{
 								return DockCulling;
@@ -675,6 +691,7 @@ namespace Effekseer.GUI
 			if (DockNodeDrawingValues != null && DockNodeDrawingValues.DockState == DockState.Unknown) DockNodeDrawingValues = null;
 			if (DockNodeSoundValues != null && DockNodeSoundValues.DockState == DockState.Unknown) DockNodeSoundValues = null;
 			if (DockOption != null && DockOption.DockState == DockState.Unknown) DockOption = null;
+			if (DockGlobal != null && DockGlobal.DockState == DockState.Unknown) DockGlobal = null;
 			if (DockEffectBehavior != null && DockEffectBehavior.DockState == DockState.Unknown) DockEffectBehavior = null;
 			if (DockCulling != null && DockCulling.DockState == DockState.Unknown) DockCulling = null;
 			if (DockFCurves != null && DockFCurves.DockState == DockState.Unknown) DockFCurves = null;

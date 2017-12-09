@@ -9,6 +9,7 @@
 #include "Effekseer.Vector2D.h"
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.Manager.h"
+#include "Effekseer.InstanceGlobal.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -161,20 +162,17 @@ public:
 		ES_SAFE_DELETE_ARRAY( m_data );
 	}
 
-	Emitter GetEmitter( Manager* manager, CoordinateSystem coordinate, float magnification )
+	Emitter GetEmitter(InstanceGlobal* g, CoordinateSystem coordinate, float magnification )
 	{
-		RandFunc randFunc = manager->GetRandFunc();
-		int32_t randMax = manager->GetRandMax();
-
-		int32_t faceInd = (int32_t)( (GetFaceCount() - 1) * ( (float)randFunc() / (float)randMax ) );
+		int32_t faceInd = (int32_t)( (GetFaceCount() - 1) * ( g->GetRand() ));
 		faceInd = Clamp( faceInd, GetFaceCount() - 1, 0 );
 		Face& face = GetFaces()[faceInd];
 		Vertex& v0 = GetVertexes()[face.Indexes[0]];
 		Vertex& v1 = GetVertexes()[face.Indexes[1]];
 		Vertex& v2 = GetVertexes()[face.Indexes[2]];
 
-		float p1 = ( (float)randFunc() / (float)randMax );
-		float p2 = ( (float)randFunc() / (float)randMax );
+		float p1 = g->GetRand();
+		float p2 = g->GetRand();
 
 		// Fit within plane
 		if( p1 + p2 > 1.0f )
@@ -202,12 +200,9 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromVertex( Manager* manager, CoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromVertex(InstanceGlobal* g, CoordinateSystem coordinate, float magnification)
 	{
-		RandFunc randFunc = manager->GetRandFunc();
-		int32_t randMax = manager->GetRandMax();
-
-		int32_t vertexInd = (int32_t)( (GetVertexCount() - 1) * ( (float)randFunc() / (float)randMax ) );
+		int32_t vertexInd = (int32_t) ((GetVertexCount() - 1) * (g->GetRand()));
 		vertexInd = Clamp( vertexInd, GetVertexCount() - 1, 0 );
 		Vertex& v = GetVertexes()[vertexInd];
 		
@@ -250,12 +245,9 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromFace( Manager* manager, CoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromFace(InstanceGlobal* g, CoordinateSystem coordinate, float magnification)
 	{
-		RandFunc randFunc = manager->GetRandFunc();
-		int32_t randMax = manager->GetRandMax();
-
-		int32_t faceInd = (int32_t)( (GetFaceCount() - 1) * ( (float)randFunc() / (float)randMax ) );
+		int32_t faceInd = (int32_t) ((GetFaceCount() - 1) * (g->GetRand()));
 		faceInd = Clamp( faceInd, GetFaceCount() - 1, 0 );
 		Face& face = GetFaces()[faceInd];
 		Vertex& v0 = GetVertexes()[face.Indexes[0]];

@@ -7,7 +7,11 @@
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Vector3D.h"
+
 #include "Effekseer.Instance.h"
+#include "Effekseer.InstanceContainer.h"
+#include "Effekseer.InstanceGlobal.h"
+
 #include "Effekseer.EffectNodeRing.h"
 
 #include "Renderer/Effekseer.RingRenderer.h"
@@ -296,18 +300,20 @@ void EffectNodeRing::EndRendering(Manager* manager)
 //----------------------------------------------------------------------------------
 void EffectNodeRing::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
+	auto instanceGlobal = instance.m_pContainer->GetRootInstance();
+
 	InstanceValues& instValues = instance.rendererValues.ring;
 
-	InitializeSingleValues(ViewingAngle, instValues.viewingAngle, manager);
+	InitializeSingleValues(ViewingAngle, instValues.viewingAngle, manager, instanceGlobal);
 
-	InitializeLocationValues(OuterLocation, instValues.outerLocation, manager);
-	InitializeLocationValues(InnerLocation, instValues.innerLocation, manager);
+	InitializeLocationValues(OuterLocation, instValues.outerLocation, manager, instanceGlobal);
+	InitializeLocationValues(InnerLocation, instValues.innerLocation, manager, instanceGlobal);
 	
-	InitializeSingleValues(CenterRatio, instValues.centerRatio, manager);
+	InitializeSingleValues(CenterRatio, instValues.centerRatio, manager, instanceGlobal);
 
-	InitializeColorValues(OuterColor, instValues.outerColor, manager);
-	InitializeColorValues(CenterColor, instValues.centerColor, manager);
-	InitializeColorValues(InnerColor, instValues.innerColor, manager);
+	InitializeColorValues(OuterColor, instValues.outerColor, manager, instanceGlobal);
+	InitializeColorValues(CenterColor, instValues.centerColor, manager, instanceGlobal);
+	InitializeColorValues(InnerColor, instValues.innerColor, manager, instanceGlobal);
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
@@ -435,7 +441,7 @@ void EffectNodeRing::LoadColorParameter( unsigned char*& pos, RingColorParameter
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager)
+void EffectNodeRing::InitializeSingleValues(const RingSingleParameter& param, RingSingleValues& values, Manager* manager, InstanceGlobal* instanceGlobal)
 {
 	switch( param.type )
 	{
@@ -443,11 +449,11 @@ void EffectNodeRing::InitializeSingleValues(const RingSingleParameter& param, Ri
 			values.current = param.fixed;
 			break;
 		case RingSingleParameter::Random:
-			values.current = param.random.getValue( *manager );
+			values.current = param.random.getValue(*instanceGlobal);
 			break;
 		case RingSingleParameter::Easing:
-			values.easing.start = param.easing.start.getValue( *manager );
-			values.easing.end = param.easing.end.getValue( *manager );
+			values.easing.start = param.easing.start.getValue(*instanceGlobal);
+			values.easing.end = param.easing.end.getValue(*instanceGlobal);
 			values.current = values.easing.start;
 			break;
 		default:
@@ -458,7 +464,7 @@ void EffectNodeRing::InitializeSingleValues(const RingSingleParameter& param, Ri
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param, RingLocationValues& values, Manager* manager)
+void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param, RingLocationValues& values, Manager* manager, InstanceGlobal* instanceGlobal)
 {
 	switch( param.type )
 	{
@@ -466,14 +472,14 @@ void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param
 			values.current = param.fixed.location;
 			break;
 		case RingLocationParameter::PVA:
-			values.pva.start = param.pva.location.getValue( *manager );
-			values.pva.velocity = param.pva.velocity.getValue( *manager );
-			values.pva.acceleration = param.pva.acceleration.getValue( *manager );
+			values.pva.start = param.pva.location.getValue(*instanceGlobal);
+			values.pva.velocity = param.pva.velocity.getValue(*instanceGlobal);
+			values.pva.acceleration = param.pva.acceleration.getValue(*instanceGlobal);
 			values.current = values.pva.start;
 			break;
 		case RingLocationParameter::Easing:
-			values.easing.start = param.easing.start.getValue( *manager );
-			values.easing.end = param.easing.end.getValue( *manager );
+			values.easing.start = param.easing.start.getValue(*instanceGlobal);
+			values.easing.end = param.easing.end.getValue(*instanceGlobal);
 			values.current = values.easing.start;
 			break;
 		default:
@@ -484,7 +490,7 @@ void EffectNodeRing::InitializeLocationValues(const RingLocationParameter& param
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::InitializeColorValues(const RingColorParameter& param, RingColorValues& values, Manager* manager)
+void EffectNodeRing::InitializeColorValues(const RingColorParameter& param, RingColorValues& values, Manager* manager, InstanceGlobal* instanceGlobal)
 {
 	switch( param.type )
 	{
@@ -493,12 +499,12 @@ void EffectNodeRing::InitializeColorValues(const RingColorParameter& param, Ring
 			values.fixed._color = values.original;
 			break;
 		case RingColorParameter::Random:
-			values.original = param.random.getValue(*manager);
+			values.original = param.random.getValue(*instanceGlobal);
 			values.random._color = values.original;
 			break;
 		case RingColorParameter::Easing:
-			values.easing.start = param.easing.getStartValue( *manager );
-			values.easing.end = param.easing.getEndValue( *manager );
+			values.easing.start = param.easing.getStartValue(*instanceGlobal);
+			values.easing.end = param.easing.getEndValue(*instanceGlobal);
 			values.original = values.easing.start;
 			break;
 		default:

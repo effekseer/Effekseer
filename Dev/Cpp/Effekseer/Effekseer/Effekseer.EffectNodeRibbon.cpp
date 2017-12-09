@@ -7,7 +7,11 @@
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Vector3D.h"
+
 #include "Effekseer.Instance.h"
+#include "Effekseer.InstanceContainer.h"
+#include "Effekseer.InstanceGlobal.h"
+
 #include "Effekseer.InstanceGroup.h"
 #include "Effekseer.EffectNodeRibbon.h"
 
@@ -239,6 +243,7 @@ void EffectNodeRibbon::EndRendering(Manager* manager)
 void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.ribbon;
+	auto instanceGlobal = instance.m_pContainer->GetRootInstance();
 
 	if( RibbonAllColor.type == RibbonAllColorParameter::Fixed )
 	{
@@ -247,13 +252,13 @@ void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, Manager* m
 	}
 	else if( RibbonAllColor.type == RibbonAllColorParameter::Random )
 	{
-		instValues._original = RibbonAllColor.random.all.getValue(*(manager));
+		instValues._original = RibbonAllColor.random.all.getValue(*instanceGlobal);
 		instValues.allColorValues.random._color = instValues._original;
 	}
 	else if( RibbonAllColor.type == RibbonAllColorParameter::Easing )
 	{
-		instValues.allColorValues.easing.start = RibbonAllColor.easing.all.getStartValue(*(manager));
-		instValues.allColorValues.easing.end = RibbonAllColor.easing.all.getEndValue(*(manager));
+		instValues.allColorValues.easing.start = RibbonAllColor.easing.all.getStartValue(*instanceGlobal);
+		instValues.allColorValues.easing.end = RibbonAllColor.easing.all.getEndValue(*instanceGlobal);
 	}
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)

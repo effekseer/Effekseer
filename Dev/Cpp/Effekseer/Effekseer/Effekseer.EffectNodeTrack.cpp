@@ -7,7 +7,11 @@
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Vector3D.h"
+
 #include "Effekseer.Instance.h"
+#include "Effekseer.InstanceContainer.h"
+#include "Effekseer.InstanceGlobal.h"
+
 #include "Effekseer.InstanceGroup.h"
 #include "Effekseer.EffectNodeTrack.h"
 
@@ -178,14 +182,15 @@ void EffectNodeTrack::EndRendering(Manager* manager)
 void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager)
 {
 	InstanceGroupValues& instValues = instanceGroup.rendererValues.track;
+	auto instanceGlobal = instanceGroup.GetInstanceGlobal();
 
-	InitializeValues(instValues.ColorLeft, TrackColorLeft, manager);
-	InitializeValues(instValues.ColorCenter, TrackColorCenter, manager);
-	InitializeValues(instValues.ColorRight, TrackColorRight, manager);
+	InitializeValues(instValues.ColorLeft, TrackColorLeft, instanceGlobal);
+	InitializeValues(instValues.ColorCenter, TrackColorCenter, instanceGlobal);
+	InitializeValues(instValues.ColorRight, TrackColorRight, instanceGlobal);
 
-	InitializeValues(instValues.ColorLeftMiddle, TrackColorLeftMiddle, manager);
-	InitializeValues(instValues.ColorCenterMiddle, TrackColorCenterMiddle, manager);
-	InitializeValues(instValues.ColorRightMiddle, TrackColorRightMiddle, manager);
+	InitializeValues(instValues.ColorLeftMiddle, TrackColorLeftMiddle, instanceGlobal);
+	InitializeValues(instValues.ColorCenterMiddle, TrackColorCenterMiddle, instanceGlobal);
+	InitializeValues(instValues.ColorRightMiddle, TrackColorRightMiddle, instanceGlobal);
 
 	InitializeValues(instValues.SizeFor, TrackSizeFor, manager);
 	InitializeValues(instValues.SizeBack, TrackSizeBack, manager);
@@ -248,7 +253,7 @@ void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, Manager* manage
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeTrack::InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, Manager* manager)
+void EffectNodeTrack::InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, InstanceGlobal* instanceGlobal)
 {
 	if( param.type == StandardColorParameter::Fixed )
 	{
@@ -256,19 +261,19 @@ void EffectNodeTrack::InitializeValues(InstanceGroupValues::Color& value, Standa
 	}
 	else if( param.type == StandardColorParameter::Random )
 	{
-		value.color.random.color_ = param.random.all.getValue(*(manager));
+		value.color.random.color_ = param.random.all.getValue(*(instanceGlobal));
 	}
 	else if( param.type == StandardColorParameter::Easing )
 	{
-		value.color.easing.start = param.easing.all.getStartValue(*(manager));
-		value.color.easing.end = param.easing.all.getEndValue(*(manager));
+		value.color.easing.start = param.easing.all.getStartValue(*(instanceGlobal));
+		value.color.easing.end = param.easing.all.getEndValue(*(instanceGlobal));
 	}
 	else if( param.type == StandardColorParameter::FCurve_RGBA )
 	{
-		value.color.fcurve_rgba.offset[0] = param.fcurve_rgba.FCurve->R.GetOffset(*(manager));
-		value.color.fcurve_rgba.offset[1] = param.fcurve_rgba.FCurve->G.GetOffset(*(manager));
-		value.color.fcurve_rgba.offset[2] = param.fcurve_rgba.FCurve->B.GetOffset(*(manager));
-		value.color.fcurve_rgba.offset[3] = param.fcurve_rgba.FCurve->A.GetOffset(*(manager));
+		value.color.fcurve_rgba.offset[0] = param.fcurve_rgba.FCurve->R.GetOffset(*instanceGlobal);
+		value.color.fcurve_rgba.offset[1] = param.fcurve_rgba.FCurve->G.GetOffset(*instanceGlobal);
+		value.color.fcurve_rgba.offset[2] = param.fcurve_rgba.FCurve->B.GetOffset(*instanceGlobal);
+		value.color.fcurve_rgba.offset[3] = param.fcurve_rgba.FCurve->A.GetOffset(*instanceGlobal);
 	}
 }
 

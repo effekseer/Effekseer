@@ -3,6 +3,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.FCurves.h"
+#include "Effekseer.InstanceGlobal.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -135,9 +136,9 @@ float FCurve::GetValue( int32_t frame )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-float FCurve::GetOffset( const Manager& manager ) const
+float FCurve::GetOffset(InstanceGlobal& g) const
 {
-	return (m_offsetMax - m_offsetMin) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) + m_offsetMin;
+	return g.GetRand(m_offsetMin, m_offsetMax);
 }
 
 //----------------------------------------------------------------------------------

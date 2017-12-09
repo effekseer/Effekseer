@@ -259,6 +259,12 @@
     <Compile Include="GUI\DockFileViewer.Designer.cs">
       <DependentUpon>DockFileViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\DockGlobal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\DockGlobal.designer.cs">
+      <DependentUpon>DockGlobal.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\DockNetwork.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -459,6 +465,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\DockFileViewer.resx">
       <DependentUpon>DockFileViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\DockGlobal.resx">
+      <DependentUpon>DockGlobal.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\DockNetwork.resx">
       <DependentUpon>DockNetwork.cs</DependentUpon>

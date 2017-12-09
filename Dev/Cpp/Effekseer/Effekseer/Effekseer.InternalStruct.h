@@ -19,6 +19,8 @@
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.Color.h"
 
+#include "Effekseer.InstanceGlobal.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -46,9 +48,11 @@ struct random_float
 		memset( this, 0 , sizeof(random_float) );
 	};
 
-	float getValue( const Manager& manager ) const
+	float getValue(InstanceGlobal& g) const
 	{
-		return (max - min) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) + min;
+		float r;
+		r = g.GetRand(min, max);
+		return r;
 	}
 };
 
@@ -65,9 +69,11 @@ struct random_int
 		memset( this, 0 , sizeof(random_int) );
 	};
 
-	int getValue( const Manager& manager ) const
+	float getValue(InstanceGlobal& g) const
 	{
-		return (int) ( (max - min) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) ) + min;
+		float r;
+		r = (int32_t)g.GetRand(min, max);
+		return r;
 	}
 };
 
@@ -148,11 +154,11 @@ struct random_vector2d
 		memset( this, 0 , sizeof(random_vector2d) );
 	};
 
-	vector2d getValue( const Manager& manager ) const
+	vector2d getValue(InstanceGlobal& g) const
 	{
 		vector2d r;
-		r.x = (max.x - min.x) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) + min.x;
-		r.y = (max.y - min.y) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) + min.y;
+		r.x = g.GetRand(min.x, max.x);
+		r.y = g.GetRand(min.y, max.y);
 		return r;
 	}
 };
@@ -327,12 +333,12 @@ struct random_vector3d
 		memset( this, 0 , sizeof(random_vector3d) );
 	};
 
-	vector3d getValue( const Manager& manager ) const
+	vector3d getValue(InstanceGlobal& g) const
 	{
 		vector3d r;
-		r.x = (max.x - min.x) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) + min.x;
-		r.y = (max.y - min.y) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) + min.y;
-		r.z = (max.z - min.z) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) + min.z;
+		r.x = g.GetRand(min.x, max.x);
+		r.y = g.GetRand(min.y, max.y);
+		r.z = g.GetRand(min.z, max.z);
 		return r;
 	}
 };
@@ -463,9 +469,9 @@ struct random_color
 		min.reset();
 	};
 
-	color getValue( const Manager& manager ) const
+	color getValue(InstanceGlobal& g) const
 	{
-		color r = getDirectValue( manager );
+		color r = getDirectValue( g );
 		if( mode == COLOR_MODE_HSVA )
 		{
 			r = HSVToRGB( r );
@@ -473,13 +479,13 @@ struct random_color
 		return r;
 	}
 	
-	color getDirectValue( const Manager& manager ) const
+	color getDirectValue(InstanceGlobal& g) const
 	{
 		color r;
-		r.r = (uint8_t)(((float)max.r - (float)min.r) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) + (float)min.r);
-		r.g = (uint8_t)(((float)max.g - (float)min.g) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) + (float)min.g);
-		r.b = (uint8_t)(((float)max.b - (float)min.b) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) + (float)min.b);
-		r.a = (uint8_t)(((float)max.a - (float)min.a) * ( (float)manager.GetRandFunc()() / (float)manager.GetRandMax() ) + (float)min.a);
+		r.r = (uint8_t) (g.GetRand(min.r, max.r));
+		r.g = (uint8_t) (g.GetRand(min.g, max.g));
+		r.b = (uint8_t) (g.GetRand(min.b, max.b));
+		r.a = (uint8_t) (g.GetRand(min.a, max.a));
 		return r;
 	}
 
@@ -546,14 +552,14 @@ struct easing_color
 		}
 	}
 
-	color getStartValue( const Manager& manager ) const
+	color getStartValue(InstanceGlobal& g) const
 	{
-		return start.getDirectValue( manager );
+		return start.getDirectValue( g );
 	}
 	
-	color getEndValue( const Manager& manager ) const
+	color getEndValue(InstanceGlobal& g) const
 	{
-		return end.getDirectValue( manager );
+		return end.getDirectValue( g);
 	}
 
 	void load( int version, unsigned char*& pos )

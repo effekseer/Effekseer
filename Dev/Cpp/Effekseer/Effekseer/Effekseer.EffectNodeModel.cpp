@@ -7,7 +7,11 @@
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Vector3D.h"
+
 #include "Effekseer.Instance.h"
+#include "Effekseer.InstanceContainer.h"
+#include "Effekseer.InstanceGlobal.h"
+
 #include "Effekseer.EffectNodeModel.h"
 
 #include "Renderer/Effekseer.ModelRenderer.h"
@@ -201,6 +205,7 @@ void EffectNodeModel::EndRendering(Manager* manager)
 void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
 	InstanceValues& instValues = instance.rendererValues.model;
+	auto instanceGlobal = instance.m_pContainer->GetRootInstance();
 
 	if( AllColor.type == StandardColorParameter::Fixed )
 	{
@@ -209,13 +214,13 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* ma
 	}
 	else if( AllColor.type == StandardColorParameter::Random )
 	{
-		instValues._original = AllColor.random.all.getValue(*(manager));
+		instValues._original = AllColor.random.all.getValue(*instanceGlobal);
 		instValues.allColorValues.random._color = instValues._original;
 	}
 	else if( AllColor.type == StandardColorParameter::Easing )
 	{
-		instValues.allColorValues.easing.start = AllColor.easing.all.getStartValue(*(manager));
-		instValues.allColorValues.easing.end = AllColor.easing.all.getEndValue(*(manager));
+		instValues.allColorValues.easing.start = AllColor.easing.all.getStartValue(*instanceGlobal);
+		instValues.allColorValues.easing.end = AllColor.easing.all.getEndValue(*instanceGlobal);
 
 		float t = instance.m_LivingTime / instance.m_LivedTime;
 
@@ -227,10 +232,10 @@ void EffectNodeModel::InitializeRenderedInstance(Instance& instance, Manager* ma
 	}
 	else if( AllColor.type == StandardColorParameter::FCurve_RGBA )
 	{
-		instValues.allColorValues.fcurve_rgba.offset[0] = AllColor.fcurve_rgba.FCurve->R.GetOffset(*(manager));
-		instValues.allColorValues.fcurve_rgba.offset[1] = AllColor.fcurve_rgba.FCurve->G.GetOffset(*(manager));
-		instValues.allColorValues.fcurve_rgba.offset[2] = AllColor.fcurve_rgba.FCurve->B.GetOffset(*(manager));
-		instValues.allColorValues.fcurve_rgba.offset[3] = AllColor.fcurve_rgba.FCurve->A.GetOffset(*(manager));
+		instValues.allColorValues.fcurve_rgba.offset[0] = AllColor.fcurve_rgba.FCurve->R.GetOffset(*instanceGlobal);
+		instValues.allColorValues.fcurve_rgba.offset[1] = AllColor.fcurve_rgba.FCurve->G.GetOffset(*instanceGlobal);
+		instValues.allColorValues.fcurve_rgba.offset[2] = AllColor.fcurve_rgba.FCurve->B.GetOffset(*instanceGlobal);
+		instValues.allColorValues.fcurve_rgba.offset[3] = AllColor.fcurve_rgba.FCurve->A.GetOffset(*instanceGlobal);
 		
 		instValues._original.r = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[0] + AllColor.fcurve_rgba.FCurve->R.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);
 		instValues._original.g = (uint8_t)Clamp( (instValues.allColorValues.fcurve_rgba.offset[1] + AllColor.fcurve_rgba.FCurve->G.GetValue( (int32_t)instance.m_LivingTime )), 255, 0);

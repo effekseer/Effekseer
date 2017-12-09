@@ -1417,8 +1417,20 @@ Handle ManagerImplemented::Play( Effect* effect, float x, float y, float z )
 {
 	if( effect == NULL ) return -1;
 	
-	// ルート生成
+	auto e = (EffectImplemented*) effect;
+
+	// Create root
 	InstanceGlobal* pGlobal = new InstanceGlobal();
+
+	if (e->m_defaultRandomSeed >= 0)
+	{
+		pGlobal->SetSeed(e->m_defaultRandomSeed);
+	}
+	else
+	{
+		pGlobal->SetSeed(GetRandFunc()());
+	}
+
 	InstanceContainer* pContainer = CreateInstanceContainer( ((EffectImplemented*)effect)->GetRoot(), pGlobal, true, NULL );
 	
 	pGlobal->SetRootContainer(  pContainer );

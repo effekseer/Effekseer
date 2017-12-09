@@ -116,6 +116,7 @@
     <Compile Include="Data\Value\Vector2DWithRandom.cs" />
     <Compile Include="Data\Value\Vector3D.cs" />
     <Compile Include="Data\Value\Vector3DWithRandom.cs" />
+    <Compile Include="Data\GlobalValues.cs" />
     <Compile Include="Define.cs" />
     <Compile Include="Utl\ModelInformation.cs" />
     <Compile Include="Utl\ParamaterTreeNode.cs" />
