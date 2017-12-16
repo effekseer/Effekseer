@@ -23,6 +23,7 @@ namespace Effekseer
 	生成されたインスタンスの全てから参照できる部分
 */
 class InstanceGlobal
+	: public IRandObject
 {
 	friend class ManagerImplemented;
 
@@ -45,9 +46,9 @@ private:
 public:
 	void SetSeed(int32_t seed);
 
-	float GetRand();
+	virtual float GetRand() override;
 
-	float GetRand(float min_, float max_);
+	virtual float GetRand(float min_, float max_) override;
 
 	void IncInstanceCount();
 

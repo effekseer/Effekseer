@@ -9,7 +9,6 @@
 #include "Effekseer.Vector2D.h"
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.Manager.h"
-#include "Effekseer.InstanceGlobal.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -162,7 +161,7 @@ public:
 		ES_SAFE_DELETE_ARRAY( m_data );
 	}
 
-	Emitter GetEmitter(InstanceGlobal* g, CoordinateSystem coordinate, float magnification )
+	Emitter GetEmitter(IRandObject* g, CoordinateSystem coordinate, float magnification )
 	{
 		int32_t faceInd = (int32_t)( (GetFaceCount() - 1) * ( g->GetRand() ));
 		faceInd = Clamp( faceInd, GetFaceCount() - 1, 0 );
@@ -200,7 +199,7 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromVertex(InstanceGlobal* g, CoordinateSystem coordinate, float magnification)
+	Emitter GetEmitterFromVertex(IRandObject* g, CoordinateSystem coordinate, float magnification)
 	{
 		int32_t vertexInd = (int32_t) ((GetVertexCount() - 1) * (g->GetRand()));
 		vertexInd = Clamp( vertexInd, GetVertexCount() - 1, 0 );
@@ -245,7 +244,7 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromFace(InstanceGlobal* g, CoordinateSystem coordinate, float magnification)
+	Emitter GetEmitterFromFace(IRandObject* g, CoordinateSystem coordinate, float magnification)
 	{
 		int32_t faceInd = (int32_t) ((GetFaceCount() - 1) * (g->GetRand()));
 		faceInd = Clamp( faceInd, GetFaceCount() - 1, 0 );

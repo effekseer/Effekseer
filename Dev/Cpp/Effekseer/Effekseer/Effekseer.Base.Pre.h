@@ -445,6 +445,18 @@ public:
 		return m_reference;
 	}
 };
+
+/**
+	@brief	This object generates random values.
+*/
+class IRandObject
+{
+public:
+	virtual float GetRand() = 0;
+
+	virtual float GetRand(float min_, float max_) = 0;
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
