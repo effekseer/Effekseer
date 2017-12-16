@@ -19,8 +19,6 @@
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.Color.h"
 
-#include "Effekseer.InstanceGlobal.h"
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -48,7 +46,7 @@ struct random_float
 		memset( this, 0 , sizeof(random_float) );
 	};
 
-	float getValue(InstanceGlobal& g) const
+	float getValue(IRandObject& g) const
 	{
 		float r;
 		r = g.GetRand(min, max);
@@ -69,7 +67,7 @@ struct random_int
 		memset( this, 0 , sizeof(random_int) );
 	};
 
-	float getValue(InstanceGlobal& g) const
+	float getValue(IRandObject& g) const
 	{
 		float r;
 		r = (int32_t)g.GetRand(min, max);
@@ -154,7 +152,7 @@ struct random_vector2d
 		memset( this, 0 , sizeof(random_vector2d) );
 	};
 
-	vector2d getValue(InstanceGlobal& g) const
+	vector2d getValue(IRandObject& g) const
 	{
 		vector2d r;
 		r.x = g.GetRand(min.x, max.x);
@@ -333,7 +331,7 @@ struct random_vector3d
 		memset( this, 0 , sizeof(random_vector3d) );
 	};
 
-	vector3d getValue(InstanceGlobal& g) const
+	vector3d getValue(IRandObject& g) const
 	{
 		vector3d r;
 		r.x = g.GetRand(min.x, max.x);
@@ -469,7 +467,7 @@ struct random_color
 		min.reset();
 	};
 
-	color getValue(InstanceGlobal& g) const
+	color getValue(IRandObject& g) const
 	{
 		color r = getDirectValue( g );
 		if( mode == COLOR_MODE_HSVA )
@@ -479,7 +477,7 @@ struct random_color
 		return r;
 	}
 	
-	color getDirectValue(InstanceGlobal& g) const
+	color getDirectValue(IRandObject& g) const
 	{
 		color r;
 		r.r = (uint8_t) (g.GetRand(min.r, max.r));
@@ -552,12 +550,12 @@ struct easing_color
 		}
 	}
 
-	color getStartValue(InstanceGlobal& g) const
+	color getStartValue(IRandObject& g) const
 	{
 		return start.getDirectValue( g );
 	}
 	
-	color getEndValue(InstanceGlobal& g) const
+	color getEndValue(IRandObject& g) const
 	{
 		return end.getDirectValue( g);
 	}
