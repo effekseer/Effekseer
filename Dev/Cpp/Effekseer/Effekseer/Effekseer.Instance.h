@@ -245,6 +245,9 @@ public:
 	// 親の変換用行列
 	Matrix43		m_ParentMatrix43;
 
+	// 行列が計算済かどうか
+	bool			m_MatrixCalculated;
+
 	/* 時間を進めるかどうか? */
 	bool			m_stepTime;
 
@@ -302,7 +305,7 @@ private:
 	/**
 		@brief	行列の更新
 	*/
-	void CalculateParentMatrix();
+	void CalculateParentMatrix( float deltaFrame );
 	
 	/**
 		@brief	絶対パラメータの反映
