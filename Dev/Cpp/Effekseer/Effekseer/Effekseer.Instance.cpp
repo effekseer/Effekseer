@@ -31,6 +31,7 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	, m_LivedTime(0)
 	, m_LivingTime(0)
 	, uvTimeOffset(0)
+	, m_MatrixCalculated(false)
 	, m_stepTime(false)
 	, m_sequenceNumber(0)
 	, m_flexibleGeneratedChildrenCount(nullptr)
@@ -110,6 +111,10 @@ const Matrix43& Instance::GetGlobalMatrix43() const
 void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 {
 	assert(this->m_pContainer != nullptr);
+	
+	// Invalidate own matrix
+	m_MatrixCalculated = false;
+
 	auto instanceGlobal = this->m_pContainer->GetRootInstance();
 
 	auto parameter = (EffectNodeImplemented*) m_pEffectNode;
@@ -157,6 +162,9 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 
 		return;
 	}
+	
+	// 親の行列を計算
+	m_pParent->CalculateMatrix( 0 );
 
 	// 状態の初期化
 	m_State = INSTANCE_STATE_ACTIVE;
@@ -608,14 +616,12 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 	// Generate zero frame effect
 	{
 		InstanceGroup* group = m_headGroups;
-		bool calculateMatrix = false;
 
 		for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 		{
 			auto node = (EffectNodeImplemented*) parameter->GetChild(i);
 			auto container = m_pContainer->GetChild(i);
 			assert(group != NULL);
-
 
 			while (true)
 			{
@@ -628,12 +634,6 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 					auto newInstance = group->CreateInstance();
 					if (newInstance != nullptr)
 					{
-						if (!calculateMatrix)
-						{
-							CalculateMatrix(0);
-							calculateMatrix = true;
-						}
-
 						newInstance->Initialize(this, m_generatedChildrenCount[i]);
 					}
 
@@ -655,6 +655,10 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 void Instance::Update( float deltaFrame, bool shown )
 {
 	assert(this->m_pContainer != nullptr);
+	
+	// Invalidate own matrix
+	m_MatrixCalculated = false;
+	
 	auto instanceGlobal = this->m_pContainer->GetRootInstance();
 
 	if (m_stepTime && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
@@ -673,50 +677,14 @@ void Instance::Update( float deltaFrame, bool shown )
 	}
 
 	float originalTime = m_LivingTime;
-	bool calculateMatrix = false;
 
 	if(shown)
 	{
-		calculateMatrix = true;
+		CalculateMatrix( deltaFrame );
 	}
 	else if( m_pEffectNode->LocationAbs.type != LocationAbsParameter::None )
 	{
 		// If attraction forces are not default, updating is needed in each frame.
-		calculateMatrix = true;
-	}
-	else
-	{
-		/**
-			見えないケースで行列計算が必要なケース
-			-子が生成される。
-			-子の子が生成される。
-			*/
-		if (m_stepTime && (originalTime <= m_LivedTime || !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct))
-		{
-			for (int i = 0; i < m_pEffectNode->GetChildrenCount(); i++)
-			{
-				auto pNode = (EffectNodeImplemented*) m_pEffectNode->GetChild(i);
-
-				// When this instance creates a particle
-				if (pNode->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
-					originalTime + deltaFrame >= m_nextGenerationTime[i])
-				{
-					calculateMatrix = true;
-					break;
-				}
-			}
-		}
-	}
-
-	/* 親が破棄される瞬間に行列計算(条件を絞れば更に最適化可能) */
-	if( !calculateMatrix && m_pParent != NULL && m_pParent->GetState() != INSTANCE_STATE_ACTIVE &&
-		!(m_pEffectNode->CommonValues.RemoveWhenParentIsRemoved && m_pEffectNode->GetChildrenCount() == 0))
-	{
-		calculateMatrix = true;
-	}
-
-	if( calculateMatrix )
-	{
 		CalculateMatrix( deltaFrame );
 	}
 
@@ -839,12 +807,8 @@ void Instance::Update( float deltaFrame, bool shown )
 	if(killed)
 	{
 		/* 死亡確定時、計算が必要な場合は計算をする。*/
-		if( !calculateMatrix &&
-			m_pEffectNode->GetChildrenCount() > 0)
+		if( m_pEffectNode->GetChildrenCount() > 0)
 		{
-			calculateMatrix = true;
-			CalculateMatrix( deltaFrame );
-
 			// Get parent color.
 			if (m_pParent != NULL)
 			{
@@ -869,7 +833,10 @@ void Instance::Update( float deltaFrame, bool shown )
 //----------------------------------------------------------------------------------
 void Instance::CalculateMatrix( float deltaFrame )
 {
-	if( m_sequenceNumber == ((ManagerImplemented*)m_pManager)->GetSequenceNumber() ) return;
+	// 計算済なら終了
+	if( m_MatrixCalculated ) return;
+	
+	//if( m_sequenceNumber == ((ManagerImplemented*)m_pManager)->GetSequenceNumber() ) return;
 	m_sequenceNumber = ((ManagerImplemented*)m_pManager)->GetSequenceNumber();
 
 	assert( m_pEffectNode != NULL );
@@ -878,7 +845,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 	// 親の処理
 	if( m_pParent != NULL )
 	{
-		CalculateParentMatrix();
+		CalculateParentMatrix( deltaFrame );
 	}
 
 	Vector3D localPosition;
@@ -1123,12 +1090,14 @@ void Instance::CalculateMatrix( float deltaFrame )
 			ModifyMatrixFromLocationAbs( deltaFrame );
 		}
 	}
+
+	m_MatrixCalculated = true;
 }
 
-void Instance::CalculateParentMatrix()
+void Instance::CalculateParentMatrix( float deltaFrame )
 {
-	/* 親の行列を更新(現在は必要不必要関わらず行なっている) */
-	//m_pParent->CalculateMatrix( deltaFrame );
+	// 親の行列を計算
+	m_pParent->CalculateMatrix( deltaFrame );
 
 	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
 	{
