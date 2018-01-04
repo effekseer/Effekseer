@@ -496,8 +496,12 @@ public:
 
 	void SetPausedToAllEffects(bool paused);
 
+	float GetSpeed(Handle handle) const override;
+
 	void SetSpeed( Handle handle, float speed );
+	
 	void SetAutoDrawing( Handle handle, bool autoDraw );
+	
 	void Flip();
 
 	/**
