@@ -41,9 +41,9 @@ float InstanceGlobal::GetRand()
 	const int m = 2147483647;
 	
 	m_seed = (m_seed * a + c) & m;
-	m_seed = m_seed % 0x7fff;
+	auto ret = m_seed % 0x7fff;
 
-	return (float) m_seed / (float) (0x7fff - 1);
+	return (float)ret / (float) (0x7fff - 1);
 }
 
 float InstanceGlobal::GetRand(float min_, float max_)
