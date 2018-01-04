@@ -13,6 +13,9 @@
 #if defined(_M_IX86) || defined(__x86__)
 #define EFK_SSE2
 #include <emmintrin.h>
+#elif defined(__ARM_NEON__)
+#define EFK_NEON
+#include <arm_neon.h>
 #endif
 
 #ifdef _MSC_VER
@@ -125,6 +128,54 @@ inline void TransformVertexes( Vertex* vertexes, int32_t count, const ::Effeksee
 			inout_prev->Y = tmp_out[1];
 			inout_prev->Z = tmp_out[2];
 		}
+	#elif defined(EFK_NEON)
+		float32x4_t r0 = vld1q_f32( mat.Value[0] );
+		float32x4_t r1 = vld1q_f32( mat.Value[1] );
+		float32x4_t r2 = vld1q_f32( mat.Value[2] );
+		float32x4_t r3 = vld1q_f32( mat.Value[3] );
+	
+		float tmp_out[4];
+		::Effekseer::Vector3D* inout_prev;
+	
+		// １ループ目
+		{
+			::Effekseer::Vector3D* inout_cur = &vertexes[0].Pos;
+			float32x4_t v = vld1q_f32( (const float*)inout_cur );
+			
+			float32x4_t a = vmlaq_lane_f32( r3, r0, vget_low_f32(v), 0 );
+			a = vmlaq_lane_f32( a, r1, vget_low_f32(v), 1 );
+			a = vmlaq_lane_f32( a, r2, vget_high_f32(v), 0 );
+			
+			// 今回の結果をストアしておく
+			vst1q_f32( tmp_out, a );
+			inout_prev = inout_cur;
+		}
+	
+		for( int i = 1; i < count; i++ )
+		{
+			::Effekseer::Vector3D* inout_cur = &vertexes[i].Pos;
+			float32x4_t v = vld1q_f32( (const float*)inout_cur );
+			
+			float32x4_t a = vmlaq_lane_f32( r3, r0, vget_low_f32(v), 0 );
+			a = vmlaq_lane_f32( a, r1, vget_low_f32(v), 1 );
+			a = vmlaq_lane_f32( a, r2, vget_high_f32(v), 0 );
+			
+			// 直前のループの結果を書き込みます
+			inout_prev->X = tmp_out[0];
+			inout_prev->Y = tmp_out[1];
+			inout_prev->Z = tmp_out[2];
+			
+			// 今回の結果をストアしておく
+			vst1q_f32( tmp_out, a );
+			inout_prev = inout_cur;
+		}
+	
+		// 最後のループの結果を書き込み
+		{
+			inout_prev->X = tmp_out[0];
+			inout_prev->Y = tmp_out[1];
+			inout_prev->Z = tmp_out[2];
+		}
 	#else
 		for( int i = 0; i < count; i++ )
 		{
@@ -203,6 +254,54 @@ inline void TransformVertexes(VertexDistortion* vertexes, int32_t count, const :
 			inout_prev->Y = tmp_out[1];
 			inout_prev->Z = tmp_out[2];
 		}
+#elif defined(EFK_NEON)
+	float32x4_t r0 = vld1q_f32(mat.Value[0]);
+	float32x4_t r1 = vld1q_f32(mat.Value[1]);
+	float32x4_t r2 = vld1q_f32(mat.Value[2]);
+	float32x4_t r3 = vld1q_f32(mat.Value[3]);
+	
+	float tmp_out[4];
+	::Effekseer::Vector3D* inout_prev;
+	
+	// １ループ目
+	{
+		::Effekseer::Vector3D* inout_cur = &vertexes[0].Pos;
+		float32x4_t v = vld1q_f32((const float*) inout_cur);
+		
+		float32x4_t a = vmlaq_lane_f32( r3, r0, vget_low_f32(v), 0 );
+		a = vmlaq_lane_f32( a, r1, vget_low_f32(v), 1 );
+		a = vmlaq_lane_f32( a, r2, vget_high_f32(v), 0 );
+		
+		// 今回の結果をストアしておく
+		vst1q_f32(tmp_out, a);
+		inout_prev = inout_cur;
+	}
+	
+	for (int i = 1; i < count; i++)
+	{
+		::Effekseer::Vector3D* inout_cur = &vertexes[i].Pos;
+		float32x4_t v = vld1q_f32((const float*) inout_cur);
+		
+		float32x4_t a = vmlaq_lane_f32( r3, r0, vget_low_f32(v), 0 );
+		a = vmlaq_lane_f32( a, r1, vget_low_f32(v), 1 );
+		a = vmlaq_lane_f32( a, r2, vget_high_f32(v), 0 );
+		
+		// 直前のループの結果を書き込みます
+		inout_prev->X = tmp_out[0];
+		inout_prev->Y = tmp_out[1];
+		inout_prev->Z = tmp_out[2];
+		
+		// 今回の結果をストアしておく
+		vst1q_f32(tmp_out, a);
+		inout_prev = inout_cur;
+	}
+	
+	// 最後のループの結果を書き込み
+	{
+		inout_prev->X = tmp_out[0];
+		inout_prev->Y = tmp_out[1];
+		inout_prev->Z = tmp_out[2];
+	}
 #else
 	for (int i = 0; i < count; i++)
 	{

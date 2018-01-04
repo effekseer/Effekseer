@@ -9,6 +9,26 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#if (_M_IX86_FP >= 2) || defined(__SSE__)
+#define EFK_SSE2
+#include <emmintrin.h>
+#elif defined(__ARM_NEON__)
+#define EFK_NEON
+#include <arm_neon.h>
+#endif
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#if defined(MSC_VER)
+#define EFK_ALIGN_AS(n) __declspec(align(n))
+#else
+#define EFK_ALIGN_AS(n) alignas(n)
+#endif
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 namespace Effekseer {
 
 //----------------------------------------------------------------------------------
@@ -237,6 +257,66 @@ void Matrix43::Translation( float x, float y, float z )
 //----------------------------------------------------------------------------------
 void Matrix43::GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const
 {
+#if defined(EFK_SSE2)
+	t.X = Value[3][0];
+	t.Y = Value[3][1];
+	t.Z = Value[3][2];
+
+	__m128 v0 = _mm_loadu_ps(&Value[0][0]);
+	__m128 v1 = _mm_loadu_ps(&Value[1][0]);
+	__m128 v2 = _mm_loadu_ps(&Value[2][0]);
+	__m128 m0 = _mm_shuffle_ps(v0, v1, _MM_SHUFFLE(1, 0, 1, 0));
+	__m128 m1 = _mm_shuffle_ps(v0, v1, _MM_SHUFFLE(3, 2, 3, 2));
+	__m128 s0 = _mm_shuffle_ps(m0, v2, _MM_SHUFFLE(0, 0, 2, 0));
+	__m128 s1 = _mm_shuffle_ps(m0, v2, _MM_SHUFFLE(0, 1, 3, 1));
+	__m128 s2 = _mm_shuffle_ps(m1, v2, _MM_SHUFFLE(0, 2, 2, 0));
+	s0 = _mm_mul_ps(s0, s0);
+	s1 = _mm_mul_ps(s1, s1);
+	s2 = _mm_mul_ps(s2, s2);
+	__m128 vscq = _mm_add_ps(_mm_add_ps(s0, s1), s2);
+	__m128 vsc = _mm_sqrt_ps(vscq);
+	__m128 vscr = _mm_div_ps(vsc, vscq);
+	EFK_ALIGN_AS(16) float sc[4];
+	_mm_store_ps(sc, vsc);
+	s.X = sc[0];
+	s.Y = sc[1];
+	s.Z = sc[2];
+	v0 = _mm_mul_ps(v0, _mm_shuffle_ps(vscr, vscr, _MM_SHUFFLE(0, 0, 0, 0)));
+	v1 = _mm_mul_ps(v1, _mm_shuffle_ps(vscr, vscr, _MM_SHUFFLE(1, 1, 1, 1)));
+	v2 = _mm_mul_ps(v2, _mm_shuffle_ps(vscr, vscr, _MM_SHUFFLE(2, 2, 2, 2)));
+	_mm_storeu_ps(&r.Value[0][0], v0);
+	_mm_storeu_ps(&r.Value[1][0], v1);
+	_mm_storeu_ps(&r.Value[2][0], v2);
+	r.Value[3][0] = 0.0f;
+	r.Value[3][1] = 0.0f;
+	r.Value[3][2] = 0.0f;
+#elif defined(EFK_NEON)
+	t.X = Value[3][0];
+	t.Y = Value[3][1];
+	t.Z = Value[3][2];
+
+	float32x4x3_t m = vld3q_f32(&Value[0][0]);
+	float32x4_t vscq = vmulq_f32(m.val[0], m.val[0]);
+	vscq = vmlaq_f32(vscq, m.val[1], m.val[1]);
+	vscq = vmlaq_f32(vscq, m.val[2], m.val[2]);
+	float32x4_t scr_rep = vrsqrteq_f32(vscq);
+	float32x4_t scr_v = vmulq_f32(vrsqrtsq_f32(vmulq_f32(vscq, scr_rep), scr_rep), scr_rep);
+	float32x4_t sc_v = vmulq_f32(scr_v, vscq);
+	float sc[4];
+	vst1q_f32(sc, sc_v);
+	s.X = sc[0];
+	s.Y = sc[1];
+	s.Z = sc[2];
+	float32x4_t v0 = vld1q_f32(&Value[0][0]);
+	float32x4_t v1 = vld1q_f32(&Value[1][0]);
+	float32x4_t v2 = vld1q_f32(&Value[2][0]);
+	vst1q_f32(&r.Value[0][0], vmulq_lane_f32(v0, vget_low_f32(scr_v), 0));
+	vst1q_f32(&r.Value[1][0], vmulq_lane_f32(v1, vget_low_f32(scr_v), 1));
+	vst1q_f32(&r.Value[2][0], vmulq_lane_f32(v2, vget_high_f32(scr_v), 0));
+	r.Value[3][0] = 0.0f;
+	r.Value[3][1] = 0.0f;
+	r.Value[3][2] = 0.0f;
+#else
 	t.X = Value[3][0];
 	t.Y = Value[3][1];
 	t.Z = Value[3][2];
@@ -261,6 +341,7 @@ void Matrix43::GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const
 	r.Value[3][0] = 0.0f;
 	r.Value[3][1] = 0.0f;
 	r.Value[3][2] = 0.0f;
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -268,6 +349,39 @@ void Matrix43::GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const
 //----------------------------------------------------------------------------------
 void Matrix43::GetScale( Vector3D& s ) const
 {
+#if defined(EFK_SSE2)
+	__m128 v0 = _mm_loadu_ps(&Value[0][0]);
+	__m128 v1 = _mm_loadu_ps(&Value[1][0]);
+	__m128 v2 = _mm_loadu_ps(&Value[2][0]);
+	__m128 m0 = _mm_shuffle_ps(v0, v1, _MM_SHUFFLE(1, 0, 1, 0));
+	__m128 m1 = _mm_shuffle_ps(v0, v1, _MM_SHUFFLE(3, 2, 3, 2));
+	__m128 s0 = _mm_shuffle_ps(m0, v2, _MM_SHUFFLE(0, 0, 2, 0));
+	__m128 s1 = _mm_shuffle_ps(m0, v2, _MM_SHUFFLE(0, 1, 3, 1));
+	__m128 s2 = _mm_shuffle_ps(m1, v2, _MM_SHUFFLE(0, 2, 2, 0));
+	s0 = _mm_mul_ps(s0, s0);
+	s1 = _mm_mul_ps(s1, s1);
+	s2 = _mm_mul_ps(s2, s2);
+	__m128 vscq = _mm_add_ps(_mm_add_ps(s0, s1), s2);
+	__m128 sc_v = _mm_sqrt_ps(vscq);
+	EFK_ALIGN_AS(16) float sc[4];
+	_mm_store_ps(sc, sc_v);
+	s.X = sc[0];
+	s.Y = sc[1];
+	s.Z = sc[2];
+#elif defined(EFK_NEON)
+	float32x4x3_t m = vld3q_f32(&Value[0][0]);
+	float32x4_t vscq = vmulq_f32(m.val[0], m.val[0]);
+	vscq = vmlaq_f32(vscq, m.val[1], m.val[1]);
+	vscq = vmlaq_f32(vscq, m.val[2], m.val[2]);
+	float32x4_t scr_rep = vrsqrteq_f32(vscq);
+	float32x4_t scr_v = vmulq_f32(vrsqrtsq_f32(vmulq_f32(vscq, scr_rep), scr_rep), scr_rep);
+	float32x4_t sc_v = vmulq_f32(scr_v, vscq);
+	float sc[4];
+	vst1q_f32(sc, sc_v);
+	s.X = sc[0];
+	s.Y = sc[1];
+	s.Z = sc[2];
+#else
 	float sc[3];
 	for( int m = 0; m < 3; m++ )
 	{
@@ -277,6 +391,7 @@ void Matrix43::GetScale( Vector3D& s ) const
 	s.X = sc[0];
 	s.Y = sc[1];
 	s.Z = sc[2];
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -284,6 +399,47 @@ void Matrix43::GetScale( Vector3D& s ) const
 //----------------------------------------------------------------------------------
 void Matrix43::GetRotation( Matrix43& r ) const
 {
+#if defined(EFK_SSE2)
+	__m128 v0 = _mm_loadu_ps(&Value[0][0]);
+	__m128 v1 = _mm_loadu_ps(&Value[1][0]);
+	__m128 v2 = _mm_loadu_ps(&Value[2][0]);
+	__m128 m0 = _mm_shuffle_ps(v0, v1, _MM_SHUFFLE(1, 0, 1, 0));
+	__m128 m1 = _mm_shuffle_ps(v0, v1, _MM_SHUFFLE(3, 2, 3, 2));
+	__m128 s0 = _mm_shuffle_ps(m0, v2, _MM_SHUFFLE(0, 0, 2, 0));
+	__m128 s1 = _mm_shuffle_ps(m0, v2, _MM_SHUFFLE(0, 1, 3, 1));
+	__m128 s2 = _mm_shuffle_ps(m1, v2, _MM_SHUFFLE(0, 2, 2, 0));
+	s0 = _mm_mul_ps(s0, s0);
+	s1 = _mm_mul_ps(s1, s1);
+	s2 = _mm_mul_ps(s2, s2);
+	__m128 vscq = _mm_add_ps(_mm_add_ps(s0, s1), s2);
+	__m128 vsc = _mm_sqrt_ps(vscq);
+	__m128 vscr = _mm_div_ps(vsc, vscq);
+	v0 = _mm_mul_ps(v0, _mm_shuffle_ps(vscr, vscr, _MM_SHUFFLE(0, 0, 0, 0)));
+	v1 = _mm_mul_ps(v1, _mm_shuffle_ps(vscr, vscr, _MM_SHUFFLE(1, 1, 1, 1)));
+	v2 = _mm_mul_ps(v2, _mm_shuffle_ps(vscr, vscr, _MM_SHUFFLE(2, 2, 2, 2)));
+	_mm_storeu_ps(&r.Value[0][0], v0);
+	_mm_storeu_ps(&r.Value[1][0], v1);
+	_mm_storeu_ps(&r.Value[2][0], v2);
+	r.Value[3][0] = 0.0f;
+	r.Value[3][1] = 0.0f;
+	r.Value[3][2] = 0.0f;
+#elif defined(EFK_NEON)
+	float32x4x3_t m = vld3q_f32(&Value[0][0]);
+	float32x4_t vscq = vmulq_f32(m.val[0], m.val[0]);
+	vscq = vmlaq_f32(vscq, m.val[1], m.val[1]);
+	vscq = vmlaq_f32(vscq, m.val[2], m.val[2]);
+	float32x4_t scr_rep = vrsqrteq_f32(vscq);
+	float32x4_t scr_v = vmulq_f32(vrsqrtsq_f32(vmulq_f32(vscq, scr_rep), scr_rep), scr_rep);
+	float32x4_t v0 = vld1q_f32(&Value[0][0]);
+	float32x4_t v1 = vld1q_f32(&Value[1][0]);
+	float32x4_t v2 = vld1q_f32(&Value[2][0]);
+	vst1q_f32(&r.Value[0][0], vmulq_lane_f32(v0, vget_low_f32(scr_v), 0));
+	vst1q_f32(&r.Value[1][0], vmulq_lane_f32(v1, vget_low_f32(scr_v), 1));
+	vst1q_f32(&r.Value[2][0], vmulq_lane_f32(v2, vget_high_f32(scr_v), 0));
+	r.Value[3][0] = 0.0f;
+	r.Value[3][1] = 0.0f;
+	r.Value[3][2] = 0.0f;
+#else
 	float sc[3];
 	for( int m = 0; m < 3; m++ )
 	{
@@ -300,6 +456,7 @@ void Matrix43::GetRotation( Matrix43& r ) const
 	r.Value[3][0] = 0.0f;
 	r.Value[3][1] = 0.0f;
 	r.Value[3][2] = 0.0f;
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -317,11 +474,15 @@ void Matrix43::GetTranslation( Vector3D& t ) const
 //----------------------------------------------------------------------------------
 void Matrix43::SetSRT( const Vector3D& s, const Matrix43& r, const Vector3D& t )
 {
-	Matrix43 mats;
-	mats.Scaling( s.X, s.Y, s.Z );
-
-	Multiple( *this, mats, r );
-
+	Value[0][0] = s.X * r.Value[0][0];
+	Value[0][1] = s.X * r.Value[0][1];
+	Value[0][2] = s.X * r.Value[0][2];
+	Value[1][0] = s.Y * r.Value[1][0];
+	Value[1][1] = s.Y * r.Value[1][1];
+	Value[1][2] = s.Y * r.Value[1][2];
+	Value[2][0] = s.Z * r.Value[2][0];
+	Value[2][1] = s.Z * r.Value[2][1];
+	Value[2][2] = s.Z * r.Value[2][2];
 	Value[3][0] = t.X;
 	Value[3][1] = t.Y;
 	Value[3][2] = t.Z;
@@ -332,7 +493,101 @@ void Matrix43::SetSRT( const Vector3D& s, const Matrix43& r, const Vector3D& t )
 //----------------------------------------------------------------------------------
 void Matrix43::Multiple( Matrix43& out, const Matrix43& in1, const Matrix43& in2 )
 {
-#if 1
+#if defined(EFK_SSE2)
+	__m128 s1_v0 = _mm_loadu_ps(&in1.Value[0][0]);
+	__m128 s1_v1 = _mm_loadu_ps(&in1.Value[1][0]);
+	__m128 s1_v2 = _mm_loadu_ps(&in1.Value[2][0]);
+	__m128 s1_v3 = _mm_loadu_ps(&in1.Value[3][0] - 1);
+	__m128 s2_v0 = _mm_loadu_ps(&in2.Value[0][0]);
+	__m128 s2_v1 = _mm_loadu_ps(&in2.Value[1][0]);
+	__m128 s2_v2 = _mm_loadu_ps(&in2.Value[2][0]);
+	__m128 s2_v3 = _mm_loadu_ps(&in2.Value[3][0] - 1);
+	__m128 o_v3;
+
+	{
+		__m128 s1_00 = _mm_shuffle_ps(s1_v0, s1_v0, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 s1_01 = _mm_shuffle_ps(s1_v0, s1_v0, _MM_SHUFFLE(1, 1, 1, 1));
+		__m128 s1_02 = _mm_shuffle_ps(s1_v0, s1_v0, _MM_SHUFFLE(2, 2, 2, 2));
+		__m128 o_m00 = _mm_mul_ps(s1_00, s2_v0);
+		__m128 o_m01 = _mm_mul_ps(s1_01, s2_v1);
+		__m128 o_m02 = _mm_mul_ps(s1_02, s2_v2);
+		__m128 o_v0 = _mm_add_ps(_mm_add_ps(o_m00, o_m01), o_m02);
+		_mm_storeu_ps(&out.Value[0][0], o_v0);
+	}
+	{
+		__m128 s1_10 = _mm_shuffle_ps(s1_v1, s1_v1, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 s1_11 = _mm_shuffle_ps(s1_v1, s1_v1, _MM_SHUFFLE(1, 1, 1, 1));
+		__m128 s1_12 = _mm_shuffle_ps(s1_v1, s1_v1, _MM_SHUFFLE(2, 2, 2, 2));
+		__m128 o_m10 = _mm_mul_ps(s1_10, s2_v0);
+		__m128 o_m11 = _mm_mul_ps(s1_11, s2_v1);
+		__m128 o_m12 = _mm_mul_ps(s1_12, s2_v2);
+		__m128 o_v1 = _mm_add_ps(_mm_add_ps(o_m10, o_m11), o_m12);
+		_mm_storeu_ps(&out.Value[1][0], o_v1);
+	}
+	{
+		__m128 s1_20 = _mm_shuffle_ps(s1_v2, s1_v2, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 s1_21 = _mm_shuffle_ps(s1_v2, s1_v2, _MM_SHUFFLE(1, 1, 1, 1));
+		__m128 s1_22 = _mm_shuffle_ps(s1_v2, s1_v2, _MM_SHUFFLE(2, 2, 2, 2));
+		__m128 o_m20 = _mm_mul_ps(s1_20, s2_v0);
+		__m128 o_m21 = _mm_mul_ps(s1_21, s2_v1);
+		__m128 o_m22 = _mm_mul_ps(s1_22, s2_v2);
+		__m128 o_v2 = _mm_add_ps(_mm_add_ps(o_m20, o_m21), o_m22);
+		_mm_storeu_ps(&out.Value[2][0], o_v2);
+		o_v3 = _mm_shuffle_ps(o_v2, o_v2, _MM_SHUFFLE(2, 2, 2, 2));
+	}
+	{
+		EFK_ALIGN_AS(16) const uint32_t mask_u32[4] = {0xffffffff, 0x00000000, 0x00000000, 0x00000000};
+		__m128 mask = _mm_load_ps((const float*)mask_u32);
+		s2_v0 = _mm_shuffle_ps(s2_v0, s2_v0, _MM_SHUFFLE(2, 1, 0, 0));
+		s2_v1 = _mm_shuffle_ps(s2_v1, s2_v1, _MM_SHUFFLE(2, 1, 0, 0));
+		s2_v2 = _mm_shuffle_ps(s2_v2, s2_v2, _MM_SHUFFLE(2, 1, 0, 0));
+		__m128 s1_30 = _mm_shuffle_ps(s1_v3, s1_v3, _MM_SHUFFLE(1, 1, 1, 1));
+		__m128 s1_31 = _mm_shuffle_ps(s1_v3, s1_v3, _MM_SHUFFLE(2, 2, 2, 2));
+		__m128 s1_32 = _mm_shuffle_ps(s1_v3, s1_v3, _MM_SHUFFLE(3, 3, 3, 3));
+		__m128 o_m30 = _mm_mul_ps(s1_30, s2_v0);
+		__m128 o_m31 = _mm_mul_ps(s1_31, s2_v1);
+		__m128 o_m32 = _mm_mul_ps(s1_32, s2_v2);
+		__m128 o_v3p = _mm_add_ps(_mm_add_ps(o_m30, o_m31), _mm_add_ps(o_m32, s2_v3));
+		o_v3 = _mm_or_ps(_mm_and_ps(mask, o_v3), _mm_andnot_ps(mask, o_v3p));
+		_mm_storeu_ps(&out.Value[3][0] - 1, o_v3);
+	}
+#elif defined(EFK_NEON)
+	float32x4_t s1_v0 = vld1q_f32(&in1.Value[0][0]);
+	float32x4_t s1_v12 = vld1q_f32(&in1.Value[1][1]);
+	float32x4_t s1_v3 = vld1q_f32(&in1.Value[2][2]);
+	float32x4_t s1_v1 = vextq_f32(s1_v0, s1_v12, 3);
+	float32x4_t s1_v2 = vextq_f32(s1_v12, s1_v3, 2);
+	float32x4_t s2_v0 = vld1q_f32(&in2.Value[0][0]);
+	float32x4_t s2_v12 = vld1q_f32(&in2.Value[1][1]);
+	float32x4_t s2_v3 = vld1q_f32(&in2.Value[2][2]);
+	float32x4_t s2_v1 = vextq_f32(s2_v0, s2_v12, 3);
+	float32x4_t s2_v2 = vextq_f32(s2_v12, s2_v3, 2);
+	float o_v3_0;
+	{
+		float32x4_t o_v0 = vmulq_lane_f32(s2_v0, vget_low_f32(s1_v0), 0);
+		float32x4_t o_v1 = vmulq_lane_f32(s2_v0, vget_low_f32(s1_v1), 0);
+		float32x4_t o_v2 = vmulq_lane_f32(s2_v0, vget_low_f32(s1_v2), 0);
+		o_v0 = vmlaq_lane_f32(o_v0, s2_v1, vget_low_f32(s1_v0), 1);
+		o_v1 = vmlaq_lane_f32(o_v1, s2_v1, vget_low_f32(s1_v1), 1);
+		o_v2 = vmlaq_lane_f32(o_v2, s2_v1, vget_low_f32(s1_v2), 1);
+		o_v0 = vmlaq_lane_f32(o_v0, s2_v2, vget_high_f32(s1_v0), 0);
+		o_v1 = vmlaq_lane_f32(o_v1, s2_v2, vget_high_f32(s1_v1), 0);
+		o_v2 = vmlaq_lane_f32(o_v2, s2_v2, vget_high_f32(s1_v2), 0);
+		vst1q_f32(&out.Value[0][0], o_v0);
+		vst1q_f32(&out.Value[1][0], o_v1);
+		vst1q_f32(&out.Value[2][0], o_v2);
+		o_v3_0 = vgetq_lane_f32(o_v2, 2);
+	}
+	{
+		s2_v0 = vextq_f32(s2_v0, s2_v0, 3);
+		s2_v1 = vextq_f32(s2_v1, s2_v1, 3);
+		s2_v2 = vextq_f32(s2_v2, s2_v2, 3);
+		float32x4_t o_v3 = vmlaq_lane_f32(s2_v3, s2_v0, vget_low_f32(s1_v3), 1);
+		o_v3 = vmlaq_lane_f32(o_v3, s2_v1, vget_high_f32(s1_v3), 0);
+		o_v3 = vmlaq_lane_f32(o_v3, s2_v2, vget_high_f32(s1_v3), 1);
+		vst1q_f32(&out.Value[3][0] - 1, vsetq_lane_f32(o_v3_0, o_v3, 0));
+	}
+#elif 1
 	Matrix43 temp1, temp2;
 	// 共通の場合は一時変数にコピー
 	const Matrix43& s1 = (&out == &in1) ? (temp1 = in1) : in1;
