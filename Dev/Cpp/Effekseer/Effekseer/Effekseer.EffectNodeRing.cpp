@@ -260,6 +260,14 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 		_outerColor.setValueToArg( instanceParameter.OuterColor );
 		_centerColor.setValueToArg( instanceParameter.CenterColor );
 		_innerColor.setValueToArg( instanceParameter.InnerColor );
+
+		// Apply global color
+		if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
+		{
+			Color::Mul(instanceParameter.OuterColor, instanceParameter.OuterColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+			Color::Mul(instanceParameter.CenterColor, instanceParameter.CenterColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+			Color::Mul(instanceParameter.InnerColor, instanceParameter.InnerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+		}
 		
 		instanceParameter.UV = instance.GetUV();
 		renderer->Rendering( nodeParameter, instanceParameter, m_userData );

@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Vector3D.h"
+#include "Effekseer.Color.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -44,6 +45,10 @@ private:
 	virtual ~InstanceGlobal();
 
 public:
+
+	bool		IsGlobalColorSet = false;
+	Color		GlobalColor = Color(255, 255, 255, 255);
+
 	void SetSeed(int32_t seed);
 
 	virtual float GetRand() override;

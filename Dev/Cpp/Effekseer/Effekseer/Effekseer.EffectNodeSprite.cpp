@@ -193,6 +193,7 @@ void EffectNodeSprite::Rendering(const Instance& instance, Manager* manager)
 
 		SpriteRenderer::InstanceParameter instanceParameter;
 		instValues._color.setValueToArg( instanceParameter.AllColor );
+
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 
 		// Inherit color
@@ -227,6 +228,14 @@ void EffectNodeSprite::Rendering(const Instance& instance, Manager* manager)
 		color_ul.setValueToArg( instanceParameter.Colors[2] );
 		color_ur.setValueToArg( instanceParameter.Colors[3] );
 		
+		// Apply global color
+		if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
+		{
+			Color::Mul(instanceParameter.Colors[0], instanceParameter.Colors[0], instance.m_pContainer->GetRootInstance()->GlobalColor);
+			Color::Mul(instanceParameter.Colors[1], instanceParameter.Colors[1], instance.m_pContainer->GetRootInstance()->GlobalColor);
+			Color::Mul(instanceParameter.Colors[2], instanceParameter.Colors[2], instance.m_pContainer->GetRootInstance()->GlobalColor);
+			Color::Mul(instanceParameter.Colors[3], instanceParameter.Colors[3], instance.m_pContainer->GetRootInstance()->GlobalColor);
+		}
 
 		if( SpritePosition.type == SpritePosition.Default )
 		{

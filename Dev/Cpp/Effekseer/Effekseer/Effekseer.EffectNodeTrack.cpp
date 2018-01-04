@@ -332,6 +332,12 @@ void EffectNodeTrack::SetValues(Color& c, const Instance& instance, InstanceGrou
 	}
 
 	_c.setValueToArg(c);
+
+	// Apply global color
+	if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
+	{
+		Color::Mul(c, c, instance.m_pContainer->GetRootInstance()->GlobalColor);
+	}
 }
 
 //----------------------------------------------------------------------------------

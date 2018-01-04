@@ -160,6 +160,12 @@ void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 
 		_color.setValueToArg( instanceParameter.AllColor );
 
+		// Apply global color
+		if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
+		{
+			Color::Mul(instanceParameter.AllColor, instanceParameter.AllColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+		}
+
 		renderer->Rendering( nodeParameter, instanceParameter, m_userData );
 	}
 }

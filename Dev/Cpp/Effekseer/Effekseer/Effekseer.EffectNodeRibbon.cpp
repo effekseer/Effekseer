@@ -190,6 +190,8 @@ void EffectNodeRibbon::Rendering(const Instance& instance, Manager* manager)
 		}
 
 		_color.setValueToArg( m_instanceParameter.AllColor );
+
+
 		m_instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 
 		color color_l = _color;
@@ -207,6 +209,13 @@ void EffectNodeRibbon::Rendering(const Instance& instance, Manager* manager)
 
 		color_l.setValueToArg( m_instanceParameter.Colors[0] );
 		color_r.setValueToArg( m_instanceParameter.Colors[1] );
+
+		// Apply global color
+		if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
+		{
+			Color::Mul(m_instanceParameter.Colors[0], m_instanceParameter.Colors[0], instance.m_pContainer->GetRootInstance()->GlobalColor);
+			Color::Mul(m_instanceParameter.Colors[1], m_instanceParameter.Colors[1], instance.m_pContainer->GetRootInstance()->GlobalColor);
+		}
 
 		if( RibbonPosition.type == RibbonPositionParameter::Default )
 		{

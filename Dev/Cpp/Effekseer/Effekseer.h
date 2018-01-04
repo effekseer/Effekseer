@@ -1831,6 +1831,13 @@ public:
 	virtual void SetScale( Handle handle, float x, float y, float z ) = 0;
 
 	/**
+	@brief
+		\~English	Specify the color of overall effect.
+		\~Japanese	エフェクト全体の色を指定する。
+	*/
+	virtual void SetColor(Handle handle, Color color) = 0;
+
+	/**
 		@brief	エフェクトのインスタンスのターゲット位置を指定する。
 		@param	x	[in]	X座標
 		@param	y	[in]	Y座標

@@ -1009,6 +1009,17 @@ void ManagerImplemented::SetScale( Handle handle, float x, float y, float z )
 	}
 }
 
+void ManagerImplemented::SetColor(Handle handle, Color color)
+{
+	if (m_DrawSets.count(handle) > 0)
+	{
+		auto& drawSet = m_DrawSets[handle];
+
+		drawSet.GlobalPointer->IsGlobalColorSet = true;
+		drawSet.GlobalPointer->GlobalColor = color;
+	}
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
