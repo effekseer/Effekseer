@@ -55,6 +55,7 @@ public:
 		Matrix43		SRTMatrix43;
 		RectF			UV;
 		Color			AllColor;
+		int32_t			Time;
 	};
 
 public:

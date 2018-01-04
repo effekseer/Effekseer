@@ -1,6 +1,7 @@
 
 #include "fbxToEfkMdl.Base.h"
 #include "fbxToEfkMdl.FBXConverter.h"
+#include "fbxToMdl.VertexAnimation.h"
 
 #include <iostream>
 #include <fstream>
@@ -97,7 +98,7 @@ int main(int argc, char** argv)
 	FbxIOSettings* ios = FbxIOSettings::Create(sdkManager, IOSROOT);
 	sdkManager->SetIOSettings(ios);
 
-	fbxsdk::FbxImporter* fbxImporter = fbxsdk::FbxImporter::Create(sdkManager, "");
+	FbxImporter* fbxImporter = FbxImporter::Create(sdkManager, "");
 	if (!fbxImporter->Initialize(importPath.c_str(), -1, sdkManager->GetIOSettings()))
 	{
 		printf("Call to FbxImporter::Initialize() failed.\n");
@@ -115,6 +116,15 @@ int main(int argc, char** argv)
 	fbxImporter->Destroy();
 	sdkManager->Destroy();
 
+	// Animation mode
+	if (scene->AnimationClips.size() > 0)
+	{
+		fbxToEfkMdl::VertexAnimation va;
+		va.Export(exportPath.c_str(), scene);
+
+		return 0;
+	}
+	
 	// Find mesh
 	std::function<std::vector<std::shared_ptr<fbxToEfkMdl::Mesh>>(std::shared_ptr<fbxToEfkMdl::Node>)> findMesh = [&](std::shared_ptr<fbxToEfkMdl::Node> node) -> std::vector<std::shared_ptr<fbxToEfkMdl::Mesh>>
 	{
@@ -139,8 +149,8 @@ int main(int argc, char** argv)
 
 
 	// Export model.
-	const int Version = 3;
-
+	const int Version = 5;
+	int32_t frameCount = 1;
 	std::ofstream fout;
 	fout.open(exportPath.c_str(), std::ios::out | std::ios::binary);
 	
@@ -151,9 +161,10 @@ int main(int argc, char** argv)
 	}
 
 	fout.write((const char*)&Version, sizeof(int32_t));
-	//fout.write((const char*)&modelScale, sizeof(int32_t));
+	fout.write((const char*)&modelScale, sizeof(int32_t));
 	fout.write((const char*)&modelCount, sizeof(int32_t));
-	
+	fout.write((const char*)&frameCount, sizeof(int32_t));
+
 	int32_t vcount = 0;
 	int32_t fcount = 0;
 
@@ -226,8 +237,6 @@ int main(int argc, char** argv)
 
 		foffset += mesh->Faces.size();
 	}
-
-	fout.write((const char*)&modelScale, sizeof(int32_t));
 
 	fout.close();
 

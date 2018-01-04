@@ -9,7 +9,6 @@
 #include <memory>
 #include <functional>
 #include <algorithm>
-
 #include <assert.h>
 
 namespace fbxToEfkMdl
@@ -18,13 +17,68 @@ namespace fbxToEfkMdl
 	class Scene;
 	class Node;
 	class Mesh;
+	class BoneConnector;
 
 	class Node
 	{
 	public:
-		std::string							Name;
-		std::shared_ptr<Mesh>				MeshData;
+		std::string					Name;
+		std::shared_ptr<Mesh>		MeshData;
+
+		EFbxRotationOrder	RotationOrder;
+		float				Translation[3];
+		float				Rotation[4];
+		float				Scaling[3];
+
 		std::vector<std::shared_ptr<Node>>	Children;
+	};
+
+	class Weight
+	{
+	public:
+		float	Value = 0.0f;
+		int32_t	Index = -1;
+
+		bool operator () (const Weight& lhs, const Weight& rhs)
+		{
+			return lhs.Value > rhs.Value;
+		}
+	};
+
+	enum class AnimationTarget : int32_t
+	{
+		TX,
+		TY,
+		TZ,
+
+		RX,
+		RY,
+		RZ,
+
+		SX,
+		SY,
+		SZ,
+	};
+
+	struct KeyFrameAnimation
+	{
+		AnimationTarget	Target;
+		std::string		Name;
+		std::vector<float>	Values;
+	};
+
+	struct AnimationClip
+	{
+		std::string						Name;
+		int32_t							FrameCount;
+		std::vector<std::shared_ptr<KeyFrameAnimation>>	Animations;
+	};
+
+	class BoneConnector
+	{
+	public:
+		std::string		Name;
+		FbxMatrix		OffsetMatrix;
 	};
 
 	struct Vertex
@@ -35,6 +89,8 @@ namespace fbxToEfkMdl
 		FbxVector4	Binormal;
 		FbxVector2	UV;
 		FbxColor	VertexColor;
+
+		std::vector<Weight>	Weights;
 
 		bool operator<(const Vertex& r) const
 		{
@@ -89,11 +145,14 @@ namespace fbxToEfkMdl
 
 		std::vector<Vertex>	Vertexes;
 		std::vector<Face>	Faces;
+
+		std::vector<BoneConnector>	BoneConnectors;
 	};
 
 	class Scene
 	{
 	public:
 		std::shared_ptr<Node> Root;
+		std::vector<std::shared_ptr<AnimationClip>>	AnimationClips;
 	};
 }

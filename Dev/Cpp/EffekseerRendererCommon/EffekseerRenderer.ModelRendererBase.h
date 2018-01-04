@@ -54,6 +54,7 @@ protected:
 	std::vector<Effekseer::Matrix44>	m_matrixes;
 	std::vector<Effekseer::RectF>		m_uv;
 	std::vector<Effekseer::Color>		m_colors;
+	std::vector<int32_t>				m_times;
 
 	void ColorToFloat4(::Effekseer::Color color, float fc[4])
 	{
@@ -85,6 +86,7 @@ public:
 		m_matrixes.clear();
 		m_uv.clear();
 		m_colors.clear();
+		m_times.clear();
 
 		renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
 	}
@@ -226,6 +228,7 @@ public:
 		m_matrixes.push_back(mat44);
 		m_uv.push_back(instanceParameter.UV);
 		m_colors.push_back(instanceParameter.AllColor);
+		m_times.push_back(instanceParameter.Time);
 	}
 
 	template<typename RENDERER, typename SHADER, typename MODEL, bool Instancing, int InstanceCount>
@@ -394,11 +397,27 @@ public:
 		
 		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
 
-		if(Instancing)
+		// Check time
+		auto stTime = m_times[0] % model->GetFrameCount();
+		auto isTimeSame = true;
+
+		for (auto t : m_times)
 		{
-			/* バッファの設定の後にレイアウトを設定しないと無効 */
-			renderer->SetVertexBuffer(model->VertexBuffer, sizeof(Effekseer::Model::VertexWithIndex));
-			renderer->SetIndexBuffer(model->IndexBuffer);
+			t = t % model->GetFrameCount();
+			if(t != stTime)
+			{
+				isTimeSame = false;
+				break;
+			}
+		}
+
+		if(Instancing && isTimeSame)
+		{
+			auto& imodel = model->InternalModels[stTime];
+
+			// Invalid unless layout is set after buffer
+			renderer->SetVertexBuffer(imodel.VertexBuffer, sizeof(Effekseer::Model::VertexWithIndex));
+			renderer->SetIndexBuffer(imodel.IndexBuffer);
 			renderer->SetLayout(shader_);
 
 			for( size_t loop = 0; loop < m_matrixes.size(); )
@@ -422,20 +441,23 @@ public:
 
 				shader_->SetConstantBuffer();
 
-				renderer->DrawPolygon( model->VertexCount * modelCount, model->IndexCount * modelCount );
+				renderer->DrawPolygon(imodel.VertexCount * modelCount, imodel.IndexCount * modelCount);
 
 				loop += modelCount;
 			}
 		}
 		else
 		{
-			/* バッファの設定の後にレイアウトを設定しないと無効 */
-			renderer->SetVertexBuffer(model->VertexBuffer, sizeof(Effekseer::Model::Vertex));
-			renderer->SetIndexBuffer(model->IndexBuffer);
-			renderer->SetLayout(shader_);
-
 			for( size_t loop = 0; loop < m_matrixes.size(); )
 			{
+				auto stTime = m_times[loop] % model->GetFrameCount();
+				auto& imodel = model->InternalModels[stTime];
+
+				// Invalid unless layout is set after buffer
+				renderer->SetVertexBuffer(imodel.VertexBuffer, sizeof(Effekseer::Model::Vertex));
+				renderer->SetIndexBuffer(imodel.IndexBuffer);
+				renderer->SetLayout(shader_);
+
 				vcb->ModelMatrix[0] = m_matrixes[loop];
 				vcb->ModelUV[0][0] = m_uv[loop].X;
 				vcb->ModelUV[0][1] = m_uv[loop].Y;
@@ -447,7 +469,7 @@ public:
 				
 				ColorToFloat4( m_colors[loop], vcb->ModelColor[0] );
 				shader_->SetConstantBuffer();
-				renderer->DrawPolygon( model->VertexCount, model->IndexCount );
+				renderer->DrawPolygon(imodel.VertexCount, imodel.IndexCount);
 
 				loop += 1;
 			}

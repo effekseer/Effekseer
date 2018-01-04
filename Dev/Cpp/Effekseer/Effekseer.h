@@ -2305,6 +2305,7 @@ public:
 		Matrix43		SRTMatrix43;
 		RectF			UV;
 		Color			AllColor;
+		int32_t			Time;
 	};
 
 public:
@@ -2654,82 +2655,101 @@ private:
 
 	int32_t		m_version;
 
-	int32_t		m_vertexCount;
-	Vertex*		m_vertexes;
+	struct InternalModel
+	{
+		int32_t		m_vertexCount;
+		Vertex*		m_vertexes;
 
-	int32_t		m_faceCount;
-	Face*		m_faces;
+		int32_t		m_faceCount;
+		Face*		m_faces;
+	};
+
+	InternalModel*	models;
 
 	int32_t		m_modelCount;
-
+	int32_t		m_frameCount;
 public:
 
 	/**
-		@brief
-		\~English	Constructor
-		\~Japanese	コンストラクタ
+	@brief
+	\~English	Constructor
+	\~Japanese	コンストラクタ
 	*/
-	Model( void* data, int32_t size ) 
-		: m_data	( NULL )
-		, m_size	( size )
-		, m_version	( 0 )
-		, m_vertexCount	( 0 )
-		, m_vertexes	( NULL )
-		, m_faceCount	( 0 )
-		, m_faces		( NULL )
+	Model(void* data, int32_t size)
+		: m_data(NULL)
+		, m_size(size)
+		, m_version(0)
+		, models(nullptr)
 	{
 		m_data = new uint8_t[m_size];
-		memcpy( m_data, data, m_size );
+		memcpy(m_data, data, m_size);
 
-		uint8_t* p = (uint8_t*)m_data;
-	
-		memcpy( &m_version, p, sizeof(int32_t) );
+		uint8_t* p = (uint8_t*) m_data;
+
+		memcpy(&m_version, p, sizeof(int32_t));
 		p += sizeof(int32_t);
 
 		// load scale except version 3(for compatibility)
-		if (m_version == 2)
+		if (m_version == 2 || m_version >= 5)
 		{
 			// Scale
 			p += sizeof(int32_t);
 		}
 
-		memcpy( &m_modelCount, p, sizeof(int32_t) );
+		memcpy(&m_modelCount, p, sizeof(int32_t));
 		p += sizeof(int32_t);
 
-		memcpy( &m_vertexCount, p, sizeof(int32_t) );
-		p += sizeof(int32_t);
-
-		if (m_version >= 1)
+		if (m_version >= 5)
 		{
-			m_vertexes = (Vertex*) p;
-			p += (sizeof(Vertex) * m_vertexCount);
+			memcpy(&m_frameCount, p, sizeof(int32_t));
+			p += sizeof(int32_t);
 		}
 		else
 		{
-			// allocate new buffer
-			m_vertexes = new Vertex[m_vertexCount];
-
-			for (int32_t i = 0; i < m_vertexCount; i++)
-			{
-				memcpy(&m_vertexes[i], p, sizeof(Vertex) - sizeof(Color));
-				m_vertexes[i].VColor = Color(255, 255, 255, 255);
-
-				p += sizeof(Vertex) - sizeof(Color);
-			}
+			m_frameCount = 1;
 		}
-		
-		memcpy( &m_faceCount, p, sizeof(int32_t) );
-		p += sizeof(int32_t);
 
-		m_faces = (Face*)p;
-		p += ( sizeof(Face) * m_faceCount );
+		models = new InternalModel[m_frameCount];
+
+		for (int32_t f = 0; f < m_frameCount; f++)
+		{
+			memcpy(&models[f].m_vertexCount, p, sizeof(int32_t));
+			p += sizeof(int32_t);
+
+			if (m_version >= 1)
+			{
+				models[f].m_vertexes = (Vertex*) p;
+				p += (sizeof(Vertex) * models[f].m_vertexCount);
+			}
+			else
+			{
+				// allocate new buffer
+				models[f].m_vertexes = new Vertex[models[f].m_vertexCount];
+
+				for (int32_t i = 0; i < models[f].m_vertexCount; i++)
+				{
+					memcpy(&models[f].m_vertexes[i], p, sizeof(Vertex) - sizeof(Color));
+					models[f].m_vertexes[i].VColor = Color(255, 255, 255, 255);
+
+					p += sizeof(Vertex) - sizeof(Color);
+				}
+			}
+
+			memcpy(&models[f].m_faceCount, p, sizeof(int32_t));
+			p += sizeof(int32_t);
+
+			models[f].m_faces = (Face*) p;
+			p += (sizeof(Face) * models[f].m_faceCount);
+		}
 	}
 
-	Vertex* GetVertexes() const { return m_vertexes; }
-	int32_t GetVertexCount() { return m_vertexCount; }
+	Vertex* GetVertexes(int32_t index = 0) const { return models[index].m_vertexes; }
+	int32_t GetVertexCount(int32_t index = 0) { return models[index].m_vertexCount; }
 
-	Face* GetFaces() const { return m_faces; }
-	int32_t GetFaceCount() { return m_faceCount; }
+	Face* GetFaces(int32_t index = 0) const { return models[index].m_faces; }
+	int32_t GetFaceCount(int32_t index = 0) { return models[index].m_faceCount; }
+
+	int32_t GetFrameCount() const { return m_frameCount; }
 
 	int32_t GetModelCount() { return m_modelCount; }
 
@@ -2742,20 +2762,23 @@ public:
 	{
 		if (m_version == 0)
 		{
-			ES_SAFE_DELETE_ARRAY(m_vertexes);
+			ES_SAFE_DELETE_ARRAY(models[0].m_vertexes);
 		}
 
-		ES_SAFE_DELETE_ARRAY( m_data );
+		ES_SAFE_DELETE_ARRAY(models);
+		ES_SAFE_DELETE_ARRAY(m_data);
 	}
 
-	Emitter GetEmitter(IRandObject* g, CoordinateSystem coordinate, float magnification )
+	Emitter GetEmitter(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification )
 	{
-		int32_t faceInd = (int32_t)( (GetFaceCount() - 1) * ( g->GetRand() ));
-		faceInd = Clamp( faceInd, GetFaceCount() - 1, 0 );
-		Face& face = GetFaces()[faceInd];
-		Vertex& v0 = GetVertexes()[face.Indexes[0]];
-		Vertex& v1 = GetVertexes()[face.Indexes[1]];
-		Vertex& v2 = GetVertexes()[face.Indexes[2]];
+		time = time % GetFrameCount();
+
+		int32_t faceInd = (int32_t) ((GetFaceCount(time) - 1) * (g->GetRand()));
+		faceInd = Clamp(faceInd, GetFaceCount(time) - 1, 0);
+		Face& face = GetFaces(time)[faceInd];
+		Vertex& v0 = GetVertexes(time)[face.Indexes[0]];
+		Vertex& v1 = GetVertexes(time)[face.Indexes[1]];
+		Vertex& v2 = GetVertexes(time)[face.Indexes[2]];
 
 		float p1 = g->GetRand();
 		float p2 = g->GetRand();
@@ -2786,11 +2809,13 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromVertex(IRandObject* g, CoordinateSystem coordinate, float magnification)
+	Emitter GetEmitterFromVertex(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification)
 	{
-		int32_t vertexInd = (int32_t) ((GetVertexCount() - 1) * (g->GetRand()));
-		vertexInd = Clamp( vertexInd, GetVertexCount() - 1, 0 );
-		Vertex& v = GetVertexes()[vertexInd];
+		time = time % GetFrameCount();
+
+		int32_t vertexInd = (int32_t) ((GetVertexCount(time) - 1) * (g->GetRand()));
+		vertexInd = Clamp(vertexInd, GetVertexCount(time) - 1, 0);
+		Vertex& v = GetVertexes(time)[vertexInd];
 		
 		Emitter emitter;
 		emitter.Position = v.Position * magnification;
@@ -2809,10 +2834,12 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromVertex( int32_t index, CoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromVertex(int32_t index, int32_t time, CoordinateSystem coordinate, float magnification)
 	{
-		int32_t vertexInd = index % GetVertexCount();
-		Vertex& v = GetVertexes()[vertexInd];
+		time = time % GetFrameCount();
+
+		int32_t vertexInd = index % GetVertexCount(time);
+		Vertex& v = GetVertexes(time)[vertexInd];
 		
 		Emitter emitter;
 		emitter.Position = v.Position * magnification;
@@ -2831,14 +2858,16 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromFace(IRandObject* g, CoordinateSystem coordinate, float magnification)
+	Emitter GetEmitterFromFace(IRandObject* g, int32_t time, CoordinateSystem coordinate, float magnification)
 	{
-		int32_t faceInd = (int32_t) ((GetFaceCount() - 1) * (g->GetRand()));
-		faceInd = Clamp( faceInd, GetFaceCount() - 1, 0 );
-		Face& face = GetFaces()[faceInd];
-		Vertex& v0 = GetVertexes()[face.Indexes[0]];
-		Vertex& v1 = GetVertexes()[face.Indexes[1]];
-		Vertex& v2 = GetVertexes()[face.Indexes[2]];
+		time = time % GetFrameCount();
+
+		int32_t faceInd = (int32_t) ((GetFaceCount(time) - 1) * (g->GetRand()));
+		faceInd = Clamp(faceInd, GetFaceCount(time) - 1, 0);
+		Face& face = GetFaces(time)[faceInd];
+		Vertex& v0 = GetVertexes(time)[face.Indexes[0]];
+		Vertex& v1 = GetVertexes(time)[face.Indexes[1]];
+		Vertex& v2 = GetVertexes(time)[face.Indexes[2]];
 
 		float p0 = 1.0f / 3.0f;
 		float p1 = 1.0f / 3.0f;
@@ -2861,13 +2890,15 @@ public:
 		return emitter;
 	}
 
-	Emitter GetEmitterFromFace( int32_t index, CoordinateSystem coordinate, float magnification )
+	Emitter GetEmitterFromFace(int32_t index, int32_t time, CoordinateSystem coordinate, float magnification)
 	{
-		int32_t faceInd = index % (GetFaceCount() - 1);
-		Face& face = GetFaces()[faceInd];
-		Vertex& v0 = GetVertexes()[face.Indexes[0]];
-		Vertex& v1 = GetVertexes()[face.Indexes[1]];
-		Vertex& v2 = GetVertexes()[face.Indexes[2]];
+		time = time % GetFrameCount();
+
+		int32_t faceInd = index % (GetFaceCount(time) - 1);
+		Face& face = GetFaces(time)[faceInd];
+		Vertex& v0 = GetVertexes(time)[face.Indexes[0]];
+		Vertex& v1 = GetVertexes(time)[face.Indexes[1]];
+		Vertex& v2 = GetVertexes(time)[face.Indexes[2]];
 
 		float p0 = 1.0f / 3.0f;
 		float p1 = 1.0f / 3.0f;

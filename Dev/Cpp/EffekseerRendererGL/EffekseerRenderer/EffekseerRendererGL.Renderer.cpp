@@ -1161,40 +1161,54 @@ void RendererImplemented::ResetRenderState()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Model::Model(void* data, int32_t size)
-	: ::Effekseer::Model(data, size)
-	, VertexBuffer(0)
-	, IndexBuffer(0)
-	, ModelCount(1)
+
+Model::InternalModel::InternalModel()
 {
-	auto vertexData = GetVertexes();
-	auto vertexCount = GetVertexCount();
-	auto faceData = GetFaces();
-	auto faceCount = GetFaceCount();
-
-	VertexCount = vertexCount;
-	IndexCount = faceCount * 3;
-
-	GLExt::glGenBuffers(1, &VertexBuffer);
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
-	size_t vertexSize = vertexCount * sizeof(::Effekseer::Model::Vertex);
-	GLExt::glBufferData(GL_ARRAY_BUFFER, vertexSize, vertexData, GL_STATIC_DRAW);
-	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	GLExt::glGenBuffers(1, &IndexBuffer);
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBuffer);
-	size_t indexSize = faceCount * sizeof(::Effekseer::Model::Face);
-	GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize, faceData, GL_STATIC_DRAW);
-	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	VertexBuffer = 0;
+	IndexBuffer = 0;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+Model::InternalModel::~InternalModel()
+{
+	GLExt::glDeleteBuffers(1, &IndexBuffer);
+	GLExt::glDeleteBuffers(1, &VertexBuffer);
+}
+
+Model::Model(void* data, int32_t size)
+	: ::Effekseer::Model(data, size)
+	, InternalModels(nullptr)
+	, ModelCount(1)
+{
+	InternalModels = new Model::InternalModel[GetFrameCount()];
+
+	for (int32_t f = 0; f < GetFrameCount(); f++)
+	{
+		auto vertexData = GetVertexes(f);
+		auto vertexCount = GetVertexCount(f);
+		auto faceData = GetFaces(f);
+		auto faceCount = GetFaceCount(f);
+
+		InternalModels[f].VertexCount = vertexCount;
+		InternalModels[f].IndexCount = faceCount * 3;
+
+		GLExt::glGenBuffers(1, &InternalModels[f].VertexBuffer);
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, InternalModels[f].VertexBuffer);
+		size_t vertexSize = vertexCount * sizeof(::Effekseer::Model::Vertex);
+		GLExt::glBufferData(GL_ARRAY_BUFFER, vertexSize, vertexData, GL_STATIC_DRAW);
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		GLExt::glGenBuffers(1, &InternalModels[f].IndexBuffer);
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, InternalModels[f].IndexBuffer);
+		size_t indexSize = faceCount * sizeof(::Effekseer::Model::Face);
+		GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize, faceData, GL_STATIC_DRAW);
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+}
+
 Model::~Model()
 {
-	GLExt::glDeleteBuffers( 1, &IndexBuffer );
-	GLExt::glDeleteBuffers( 1, &VertexBuffer );
+	ES_SAFE_DELETE_ARRAY(InternalModels);
+
 }
 
 //----------------------------------------------------------------------------------

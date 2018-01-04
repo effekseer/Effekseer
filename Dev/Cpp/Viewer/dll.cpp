@@ -627,134 +627,22 @@ void* Native::ModelLoader::Load( const EFK_CHAR* path )
 
 	if( m_models.count( key ) > 0 )
 	{
-		model = m_models[ key ];
+		return m_models[ key ];
 	}
 	else
 	{
+		auto loader = ::EffekseerRendererDX9::CreateModelLoader(m_renderer->GetDevice());
+		auto m = (EffekseerRendererDX9::Model*)loader->Load((const EFK_CHAR*) dst);
 
-		FILE* fp_model = _wfopen( (const wchar_t *)dst, L"rb" );
-
-		if( fp_model != NULL )
+		if (m != nullptr)
 		{
-			HRESULT hr;
-
-			fseek( fp_model, 0, SEEK_END );
-			size_t size_model = ftell( fp_model );
-			uint8_t* data_model = new uint8_t[size_model];
-			fseek( fp_model, 0, SEEK_SET );
-			fread( data_model, 1, size_model, fp_model );
-			fclose( fp_model );
-
-			model = new EffekseerRendererDX9::Model( data_model, size_model );
-
-			model->ModelCount = Effekseer::Min( Effekseer::Max( model->GetModelCount(), 1 ), 40);
-
-			model->VertexCount = model->GetVertexCount();
-
-			IDirect3DVertexBuffer9* vb = NULL;
-			hr = m_renderer->GetDevice()->CreateVertexBuffer(
-				sizeof(Effekseer::Model::VertexWithIndex) * model->VertexCount * model->ModelCount,
-				D3DUSAGE_WRITEONLY,
-				0,
-				D3DPOOL_MANAGED,
-				&vb,
-				NULL );
-
-			if( FAILED( hr ) )
-			{
-				/* DirectX9ExではD3DPOOL_MANAGED使用不可 */
-				hr = m_renderer->GetDevice()->CreateVertexBuffer(
-					sizeof(Effekseer::Model::VertexWithIndex) * model->VertexCount * model->ModelCount,
-					D3DUSAGE_WRITEONLY,
-					0,
-					D3DPOOL_DEFAULT,
-					&vb,
-					NULL );
-			}
-
-			if( vb != NULL )
-			{
-				uint8_t* resource = NULL;
-				vb->Lock( 0, 0, (void**)&resource, 0 );
-
-				for(int32_t m = 0; m < model->ModelCount; m++ )
-				{
-					for( int32_t i = 0; i < model->GetVertexCount(); i++ )
-					{
-						Effekseer::Model::VertexWithIndex v;
-						v.Position = model->GetVertexes()[i].Position;
-						v.Normal = model->GetVertexes()[i].Normal;
-						v.Binormal = model->GetVertexes()[i].Binormal;
-						v.Tangent = model->GetVertexes()[i].Tangent;
-						v.UV = model->GetVertexes()[i].UV;
-						v.VColor = model->GetVertexes()[i].VColor;
-						v.Index[0] = m;
-
-						std::swap(v.VColor.R, v.VColor.B);
-
-						memcpy( resource, &v, sizeof(Effekseer::Model::VertexWithIndex) );
-						resource += sizeof(Effekseer::Model::VertexWithIndex);
-					}
-				}
-
-				vb->Unlock();
-			}
-
-			model->VertexBuffer = vb;
-
-			model->FaceCount = model->GetFaceCount();
-			model->IndexCount = model->FaceCount * 3;
-			IDirect3DIndexBuffer9* ib = NULL;
-			hr = m_renderer->GetDevice()->CreateIndexBuffer( 
-				sizeof(Effekseer::Model::Face) * model->FaceCount * model->ModelCount,
-				D3DUSAGE_WRITEONLY, 
-				D3DFMT_INDEX32, 
-				D3DPOOL_MANAGED, 
-				&ib, 
-				NULL );
-
-			if( FAILED( hr ) )
-			{
-				hr = m_renderer->GetDevice()->CreateIndexBuffer( 
-					sizeof(Effekseer::Model::Face) * model->FaceCount * model->ModelCount,
-					D3DUSAGE_WRITEONLY, 
-					D3DFMT_INDEX32, 
-					D3DPOOL_DEFAULT, 
-					&ib, 
-					NULL );
-			}
-
-			if( ib != NULL )
-			{
-				uint8_t* resource = NULL;
-				ib->Lock( 0, 0, (void**)&resource, 0 );
-				for(int32_t m = 0; m < model->ModelCount; m++ )
-				{
-					for( int32_t i = 0; i < model->FaceCount; i++ )
-					{
-						Effekseer::Model::Face f;
-						f.Indexes[0] = model->GetFaces()[i].Indexes[0] + model->GetVertexCount() * m;
-						f.Indexes[1] = model->GetFaces()[i].Indexes[1] + model->GetVertexCount() * m;
-						f.Indexes[2] = model->GetFaces()[i].Indexes[2] + model->GetVertexCount() * m;
-
-						memcpy( resource, &f, sizeof(Effekseer::Model::Face) );
-						resource += sizeof(Effekseer::Model::Face);
-					}
-				}
-				
-				ib->Unlock();
-			}
-
-			model->IndexBuffer = ib;
-
-			delete [] data_model;
-
-			return model;
+			m_models[key] = m;
 		}
 
-	}
+		ES_SAFE_DELETE(loader);
 
-	return model;
+		return m;
+	}
 }
 
 //----------------------------------------------------------------------------------

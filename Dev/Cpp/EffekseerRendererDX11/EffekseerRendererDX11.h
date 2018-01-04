@@ -296,35 +296,53 @@ public:
 //
 //----------------------------------------------------------------------------------
 /**
-	@brief	モデル
+@brief	\~English	Model
+		\~Japanese	モデル
 */
-class Model : public Effekseer::Model
+class Model 
+	: public Effekseer::Model
 {
 private:
 
 public:
-	ID3D11Buffer*		VertexBuffer;
-	ID3D11Buffer*		IndexBuffer;
-	int32_t				VertexCount;
-	int32_t				IndexCount;
-	int32_t				FaceCount;
-	int32_t				ModelCount;
+
+	struct InternalModel
+	{
+		ID3D11Buffer*		VertexBuffer;
+		ID3D11Buffer*		IndexBuffer;
+		int32_t				VertexCount;
+		int32_t				IndexCount;
+		int32_t				FaceCount;
+
+		InternalModel()
+		{
+			VertexBuffer = nullptr;
+			IndexBuffer = nullptr;
+			VertexCount = 0;
+			IndexCount = 0;
+			FaceCount = 0;
+		}
+
+		virtual ~InternalModel()
+		{
+			ES_SAFE_RELEASE(VertexBuffer);
+			ES_SAFE_RELEASE(IndexBuffer);
+		}
+	};
+
+	InternalModel*				InternalModels = nullptr;
+	int32_t						ModelCount;
 
 	Model( uint8_t* data, int32_t size )
 		: Effekseer::Model	( data, size )
-		, VertexBuffer	( NULL )
-		, IndexBuffer	( NULL )
-		, VertexCount		( 0 )
-		, IndexCount		( 0 )
-		, FaceCount			( 0 )
-		, ModelCount		( 0 )
+		, InternalModels(nullptr)
+		, ModelCount(0)
 	{
 	}
 
 	virtual ~Model()
 	{
-		ES_SAFE_RELEASE( VertexBuffer );
-		ES_SAFE_RELEASE( IndexBuffer );
+		ES_SAFE_DELETE_ARRAY(InternalModels);
 	}
 };
 

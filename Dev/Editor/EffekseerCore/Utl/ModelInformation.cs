@@ -72,6 +72,14 @@ namespace Effekseer.Utl
 				}
 			}
 
+			if (version == 5)
+			{
+				Scale = BitConverter.ToSingle(buf, 4);
+				fs.Dispose();
+				br.Dispose();
+				return false;
+			}
+
 			fs.Dispose();
 			br.Dispose();
 
