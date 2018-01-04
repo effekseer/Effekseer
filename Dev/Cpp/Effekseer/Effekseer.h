@@ -1835,7 +1835,7 @@ public:
 		\~English	Specify the color of overall effect.
 		\~Japanese	エフェクト全体の色を指定する。
 	*/
-	virtual void SetColor(Handle handle, Color color) = 0;
+	virtual void SetAllColor(Handle handle, Color color) = 0;
 
 	/**
 		@brief	エフェクトのインスタンスのターゲット位置を指定する。

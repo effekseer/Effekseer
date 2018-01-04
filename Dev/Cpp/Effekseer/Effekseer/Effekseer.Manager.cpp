@@ -1009,7 +1009,7 @@ void ManagerImplemented::SetScale( Handle handle, float x, float y, float z )
 	}
 }
 
-void ManagerImplemented::SetColor(Handle handle, Color color)
+void ManagerImplemented::SetAllColor(Handle handle, Color color)
 {
 	if (m_DrawSets.count(handle) > 0)
 	{
