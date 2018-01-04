@@ -85,11 +85,22 @@ class Model
 private:
 
 public:
-	GLuint		VertexBuffer;
-	GLuint		IndexBuffer;
-	int32_t		VertexCount;
-	int32_t		IndexCount;
-	int32_t		ModelCount;
+	struct InternalModel
+	{
+		GLuint		VertexBuffer;
+		GLuint		IndexBuffer;
+		int32_t		VertexCount;
+		int32_t		IndexCount;
+
+		InternalModel();
+
+		virtual ~InternalModel();
+	};
+
+
+	InternalModel*				InternalModels = nullptr;
+	int32_t						ModelCount;
+
 
 	Model(void* data, int32_t size);
 	~Model();

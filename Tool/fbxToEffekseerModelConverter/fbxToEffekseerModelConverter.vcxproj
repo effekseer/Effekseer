@@ -84,11 +84,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="fbxToEfkMdl.FBXConverter.cpp" />
+    <ClCompile Include="fbxToMdl.VertexAnimation.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fbxToEfkMdl.Base.h" />
     <ClInclude Include="fbxToEfkMdl.FBXConverter.h" />
+    <ClInclude Include="fbxToMdl.VertexAnimation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

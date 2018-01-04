@@ -476,6 +476,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				{
 					emitter = model->GetEmitter( 
 						instanceGlobal, 
+						m_LivingTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
 				}
@@ -483,6 +484,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				{
 					emitter = model->GetEmitterFromVertex( 
 						instanceNumber,
+						m_LivingTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
 				}
@@ -490,6 +492,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				{
 					emitter = model->GetEmitterFromVertex( 
 						instanceGlobal,
+						m_LivingTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
 				}
@@ -497,6 +500,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				{
 					emitter = model->GetEmitterFromFace( 
 						instanceNumber,
+						m_LivingTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
 				}
@@ -504,6 +508,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				{
 					emitter = model->GetEmitterFromFace( 
 						instanceGlobal,
+						m_LivingTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
 				}

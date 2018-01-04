@@ -144,6 +144,7 @@ void EffectNodeModel::Rendering(const Instance& instance, Manager* manager)
 
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
+		instanceParameter.Time = instance.m_LivingTime;
 
 		instanceParameter.UV = instance.GetUV();
 		
