@@ -70,6 +70,56 @@ public class ViewerEffectBehavior : global::System.IDisposable {
     } 
   }
 
+  public int TimeSpan {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_TimeSpan_set(swigCPtr, value);
+    } 
+    get {
+      int ret = EffekseerNativePINVOKE.ViewerEffectBehavior_TimeSpan_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public byte AllColorR {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_AllColorR_set(swigCPtr, value);
+    } 
+    get {
+      byte ret = EffekseerNativePINVOKE.ViewerEffectBehavior_AllColorR_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public byte AllColorG {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_AllColorG_set(swigCPtr, value);
+    } 
+    get {
+      byte ret = EffekseerNativePINVOKE.ViewerEffectBehavior_AllColorG_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public byte AllColorB {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_AllColorB_set(swigCPtr, value);
+    } 
+    get {
+      byte ret = EffekseerNativePINVOKE.ViewerEffectBehavior_AllColorB_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public byte AllColorA {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_AllColorA_set(swigCPtr, value);
+    } 
+    get {
+      byte ret = EffekseerNativePINVOKE.ViewerEffectBehavior_AllColorA_get(swigCPtr);
+      return ret;
+    } 
+  }
+
   public float Distance {
     set {
       EffekseerNativePINVOKE.ViewerEffectBehavior_Distance_set(swigCPtr, value);

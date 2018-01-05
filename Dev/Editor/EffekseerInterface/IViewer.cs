@@ -200,6 +200,10 @@ namespace Effekseer
 		/// <param name="distance"></param>
 		void SetEffectDistance(float distance);
 
+		void SetAllColor(byte r, byte g, byte b, byte a);
+
+		void SetEffectTimeSpan(int timeSpan);
+
 		/// <summary>
 		/// グリッドを表示するか設定する。
 		/// </summary>

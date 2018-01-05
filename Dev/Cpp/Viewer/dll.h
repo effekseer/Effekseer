@@ -61,6 +61,14 @@ public:
 	int32_t	CountX;
 	int32_t	CountY;
 	int32_t	CountZ;
+
+	int32_t	TimeSpan = 0;
+
+	uint8_t AllColorR = 255;
+	uint8_t AllColorG = 255;
+	uint8_t AllColorB = 255;
+	uint8_t AllColorA = 255;
+
 	float	Distance;
 
 	int32_t	RemovedTime;

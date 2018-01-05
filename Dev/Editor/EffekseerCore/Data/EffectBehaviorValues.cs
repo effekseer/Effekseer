@@ -128,6 +128,26 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "生成間隔(フレーム)")]
+		[Description(language = Language.Japanese, value = "1以上の場合、指定された時間ごとにエフェクトを生成する。")]
+		[Name(language = Language.English, value = "Generating time span(Frame)")]
+		[Description(language = Language.English, value = "If the value is larger than 1, effects are generated every specified time")]
+		[Undo(Undo = false)]
+		public Value.Int TimeSpan
+		{
+			get;
+			private set;
+		}
+
+		[Name(language = Language.Japanese, value = "全体色")]
+		[Name(language = Language.English, value = "Color All")]
+		[Undo(Undo = false)]
+		public Value.Color ColorAll
+		{
+			get;
+			private set;
+		}
+
 		[Name(language = Language.Japanese, value = "ターゲット位置")]
 		[Description(language = Language.Japanese, value = "ターゲット位置または引力位置")]
 		[Name(language = Language.English, value = "Point of\nAttraction")]
@@ -156,6 +176,10 @@ namespace Effekseer.Data
 			CountZ = new Value.Int(1, int.MaxValue, 1);
 
 			Distance = new Value.Float(5.0f, float.MaxValue, 0.0f);
+
+			TimeSpan = new Value.Int(0);
+			ColorAll = new Value.Color(255, 255, 255, 255);
+
 			TargetLocation = new Value.Vector3D();
 		}
 	}

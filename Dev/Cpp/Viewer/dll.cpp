@@ -492,6 +492,24 @@ ViewerEffectBehavior::ViewerEffectBehavior()
 
 }
 
+struct HandleHolder
+{
+	::Effekseer::Handle		Handle = 0;
+	int32_t					Time = 0;
+
+	HandleHolder()
+		: Handle(0)
+		, Time(0)
+	{
+	}
+
+	HandleHolder(::Effekseer::Handle handle, int32_t time = 0)
+		: Handle(handle)
+		, Time(time)
+	{
+	}
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -502,7 +520,7 @@ static ::EffekseerTool::Sound*			g_sound = NULL;
 static std::map<std::wstring, Effekseer::TextureData*> m_textures;
 static std::map<std::wstring,EffekseerRendererDX9::Model*> m_models;
 
-static std::vector<::Effekseer::Handle>	g_handles;
+static std::vector<HandleHolder>	g_handles;
 
 static ::Effekseer::Vector3D	g_focus_position;
 
@@ -829,7 +847,7 @@ bool Native::DestroyWindow()
 
 	for( size_t i = 0; i < g_handles.size(); i++ )
 	{
-		g_manager->StopEffect( g_handles[i] );
+		g_manager->StopEffect( g_handles[i].Handle );
 	}
 	g_handles.clear();
 	
@@ -901,7 +919,22 @@ bool Native::PlayEffect()
 		posY += m_effectBehavior.PositionY;
 		posZ += m_effectBehavior.PositionZ;
 
-		g_handles.push_back( g_manager->Play( g_effect, x, y, z ) );
+		HandleHolder handleHolder(g_manager->Play(g_effect, x, y, z));
+		g_handles.push_back(handleHolder);
+
+		if (m_effectBehavior.AllColorR != 255 ||
+			m_effectBehavior.AllColorG != 255 ||
+			m_effectBehavior.AllColorB != 255 ||
+			m_effectBehavior.AllColorA != 255)
+		{
+			g_manager->SetAllColor(
+				handleHolder.Handle,
+				Effekseer::Color(
+				m_effectBehavior.AllColorR,
+				m_effectBehavior.AllColorG,
+				m_effectBehavior.AllColorB,
+				m_effectBehavior.AllColorA));
+		}
 	}
 	}
 	}
@@ -930,7 +963,7 @@ bool Native::StopEffect()
 
 	for( size_t i = 0; i < g_handles.size(); i++ )
 	{
-		g_manager->StopEffect( g_handles[i] );
+		g_manager->StopEffect( g_handles[i].Handle );
 	}
 	g_handles.clear();
 
@@ -958,7 +991,7 @@ bool Native::StepEffect( int frame )
 
 		for( size_t i = 0; i < g_handles.size(); i++ )
 		{
-			g_manager->SetShown( g_handles[i], false );
+			g_manager->SetShown( g_handles[i].Handle, false );
 		}
 
 		for( int i = 0; i < frame - 1; i++ )
@@ -968,7 +1001,7 @@ bool Native::StepEffect( int frame )
 
 		for( size_t i = 0; i < g_handles.size(); i++ )
 		{
-			g_manager->SetShown( g_handles[i], true );
+			g_manager->SetShown( g_handles[i].Handle, true );
 		}
 
 		g_sound->SetMute(mute);
@@ -982,6 +1015,11 @@ bool Native::StepEffect( int frame )
 //----------------------------------------------------------------------------------
 bool Native::StepEffect()
 {
+	if (m_effectBehavior.TimeSpan > 0 && m_time > 0 && m_time % m_effectBehavior.TimeSpan == 0)
+	{
+		PlayEffect();
+	}
+
 	if( m_time % m_step == 0 )
 	{
 		m_rootLocation.X += m_effectBehavior.PositionVelocityX;
@@ -1026,9 +1064,10 @@ bool Native::StepEffect()
 			Effekseer::Matrix43::Multiple( mat, mat, matRot );
 			Effekseer::Matrix43::Multiple( mat, mat, matTra );
 
-			g_manager->SetMatrix( g_handles[index], mat );
+			g_manager->SetMatrix( g_handles[index].Handle, mat );
 
-			g_manager->SetTargetLocation( g_handles[index], 
+			g_manager->SetTargetLocation(
+				g_handles[index].Handle, 
 				m_effectBehavior.TargetPositionX,
 				m_effectBehavior.TargetPositionY,
 				m_effectBehavior.TargetPositionZ );
@@ -1038,15 +1077,22 @@ bool Native::StepEffect()
 		}
 		}
 
-		if( m_time >= m_effectBehavior.RemovedTime )
+		
+		for( size_t i = 0; i < g_handles.size(); i++ )
 		{
-			for( size_t i = 0; i < g_handles.size(); i++ )
+			if (g_handles[i].Time >= m_effectBehavior.RemovedTime)
 			{
-				g_manager->StopRoot( g_handles[i] );
+				g_manager->StopRoot(g_handles[i].Handle);
 			}
 		}
+		
 
 		g_manager->Update( (float)m_step );
+
+		for (size_t i = 0; i < g_handles.size(); i++)
+		{
+			g_handles[i].Time++;
+		}
 	}
 
 	m_time++;

@@ -206,6 +206,23 @@ namespace Effekseer
 			native.SetViewerEffectBehavior(behavior);
 		}
 
+		public void SetAllColor(byte r, byte g, byte b, byte a)
+		{
+			var behavior = native.GetEffectBehavior();
+			behavior.AllColorR = r;
+			behavior.AllColorG = g;
+			behavior.AllColorB = b;
+			behavior.AllColorA = a;
+			native.SetViewerEffectBehavior(behavior);
+		}
+
+		public void SetEffectTimeSpan(int timeSpan)
+		{
+			var behavior = native.GetEffectBehavior();
+			behavior.TimeSpan = timeSpan;
+			native.SetViewerEffectBehavior(behavior);
+		}
+
 		public void SetEffectCount(int x, int y, int z)
 		{
 			var behavior = native.GetEffectBehavior();

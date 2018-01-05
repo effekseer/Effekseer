@@ -49,6 +49,12 @@ namespace Effekseer.GUI
 
 			Core.EffectBehavior.Distance.OnChanged += OnChanged;
 
+			Core.EffectBehavior.TimeSpan.OnChanged += OnChanged;
+			Core.EffectBehavior.ColorAll.R.OnChanged += OnChanged;
+			Core.EffectBehavior.ColorAll.G.OnChanged += OnChanged;
+			Core.EffectBehavior.ColorAll.B.OnChanged += OnChanged;
+			Core.EffectBehavior.ColorAll.A.OnChanged += OnChanged;
+
 			Core.Option.Magnification.OnChanged += OnChanged;
 			Core.Option.IsGridShown.OnChanged += OnChanged;
 			Core.Option.GridLength.OnChanged += OnChanged;
@@ -433,6 +439,14 @@ namespace Effekseer.GUI
 				Core.EffectBehavior.CountY,
 				Core.EffectBehavior.CountZ);
 
+			viewer.SetAllColor(
+				(byte)Core.EffectBehavior.ColorAll.R,
+				(byte)Core.EffectBehavior.ColorAll.G,
+				(byte)Core.EffectBehavior.ColorAll.B,
+				(byte)Core.EffectBehavior.ColorAll.A);
+
+			viewer.SetEffectTimeSpan(Core.EffectBehavior.TimeSpan);
+			
 			viewer.SetEffectDistance(Core.EffectBehavior.Distance);
 
 			viewer.SetBackgroundColor(
