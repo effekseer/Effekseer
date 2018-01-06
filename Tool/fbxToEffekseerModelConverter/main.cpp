@@ -120,7 +120,7 @@ int main(int argc, char** argv)
 	if (scene->AnimationClips.size() > 0)
 	{
 		fbxToEfkMdl::VertexAnimation va;
-		va.Export(exportPath.c_str(), scene);
+		va.Export(exportPath.c_str(), scene, modelScale);
 
 		return 0;
 	}
