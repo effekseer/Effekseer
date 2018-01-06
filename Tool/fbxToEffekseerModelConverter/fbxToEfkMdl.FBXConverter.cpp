@@ -504,6 +504,7 @@ namespace fbxToEfkMdl
 		// load transforms
 		EFbxRotationOrder fbxRotationOrder;
 		fbxNode->GetRotationOrder(FbxNode::eDestinationPivot, fbxRotationOrder);
+		node->RotationOrder = fbxRotationOrder;
 
 		// default transform
 		auto lclT = fbxNode->LclTranslation.Get();

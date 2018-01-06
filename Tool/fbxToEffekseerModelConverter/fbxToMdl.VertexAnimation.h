@@ -17,6 +17,6 @@ namespace fbxToEfkMdl
 		VertexAnimation() = default;
 		virtual ~VertexAnimation() = default;
 
-		void Export(const char* path, std::shared_ptr<Scene> scene);
+		void Export(const char* path, std::shared_ptr<Scene> scene, float modelScale);
 	};
 }

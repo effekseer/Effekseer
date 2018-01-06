@@ -80,7 +80,7 @@ namespace fbxToEfkMdl
 		return ret;
 	}
 
-	void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene)
+	void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene, float modelScale)
 	{
 		auto meshes = GetAllMeshes(scene->Root);
 		auto anim = scene->AnimationClips[0];
@@ -118,8 +118,7 @@ namespace fbxToEfkMdl
 		// Preliminary
 		const int Version = 5;
 		int32_t modelCount = 1;
-		float modelScale = 1.0f;
-
+		
 		std::ofstream fout;
 		fout.open(path, std::ios::out | std::ios::binary);
 
