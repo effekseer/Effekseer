@@ -235,7 +235,7 @@ int main(int argc, char** argv)
 			fout.write((const char*)&(i2), sizeof(int32_t));
 		}
 
-		foffset += mesh->Faces.size();
+		foffset += mesh->Vertexes.size();
 	}
 
 	fout.close();

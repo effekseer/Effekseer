@@ -85,7 +85,7 @@ namespace fbxToEfkMdl
 		auto meshes = GetAllMeshes(scene->Root);
 		auto anim = scene->AnimationClips[0];
 		auto nodes = GetAllNodes(scene->Root, nullptr);
-		auto frameCount = anim->FrameCount;
+		auto frameCount = anim->EndFrame - anim->StartFrame;
 
 		// CalcIndex
 		for (auto& mesh : meshes)
@@ -134,7 +134,7 @@ namespace fbxToEfkMdl
 		fout.write((const char*)&frameCount, sizeof(int32_t));
 
 
-		for (int32_t frame = 0; frame < frameCount; frame++)
+		for (int32_t frame = anim->StartFrame; frame < anim->EndFrame; frame++)
 		{
 			// Calculate values
 			for (auto& node : nodes)
@@ -248,9 +248,9 @@ namespace fbxToEfkMdl
 					auto position = m.MultNormalize(v.Position);
 
 					float p[3];
-					p[0] = (float)(position[0]);
-					p[1] = (float)(position[1]);
-					p[2] = (float)(position[2]);
+					p[0] = (float)(position[0]) * modelScale;
+					p[1] = (float)(position[1]) * modelScale;
+					p[2] = (float)(position[2]) * modelScale;
 
 					v.Normal[3] = 1.0f;
 					auto normal = m.MultNormalize(v.Normal);
@@ -311,7 +311,7 @@ namespace fbxToEfkMdl
 					fout.write((const char*)&(i2), sizeof(int32_t));
 				}
 
-				foffset += mesh.Target->Faces.size();
+				foffset += mesh.Target->Vertexes.size();
 			}
 		}
 

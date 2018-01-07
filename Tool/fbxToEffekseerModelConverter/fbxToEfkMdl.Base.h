@@ -70,7 +70,8 @@ namespace fbxToEfkMdl
 	struct AnimationClip
 	{
 		std::string						Name;
-		int32_t							FrameCount;
+		int32_t							StartFrame;
+		int32_t							EndFrame;
 		std::vector<std::shared_ptr<KeyFrameAnimation>>	Animations;
 	};
 

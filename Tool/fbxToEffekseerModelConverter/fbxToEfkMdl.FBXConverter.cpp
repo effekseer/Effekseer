@@ -690,16 +690,21 @@ namespace fbxToEfkMdl
 		FbxTime endTime = fbxAnimStack->LocalStop;
 
 		int hour, minute, second, frame, field, residual;
+		
+		startTime.GetTime(hour, minute, second, frame, field, residual, FbxTime::eFrames60);
+		auto startFrame = 60 * (hour * 60 * 60 + minute * 60 + second) + frame;
+
 		endTime.GetTime(hour, minute, second, frame, field, residual, FbxTime::eFrames60);
 		auto endFrame = 60 * (hour * 60 * 60 + minute * 60 + second) + frame;
 
 		animClip->Name = animationName;
-		animClip->FrameCount = endFrame;
+		animClip->StartFrame = startFrame;
+		animClip->EndFrame = endFrame;
 
 		for (auto i = 0; i < layerCount; ++i)
 		{
 			auto layer = fbxAnimStack->GetMember<FbxAnimLayer>();
-			auto kfas = LoadCurve(layer, fbxRootNode, animClip->FrameCount);
+			auto kfas = LoadCurve(layer, fbxRootNode, animClip->EndFrame);
 		
 			for(auto a : kfas)
 			{
