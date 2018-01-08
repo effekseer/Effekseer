@@ -230,15 +230,15 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
 		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
-		color _outerColor;
-		color _centerColor;
-		color _innerColor;
+		Color _outerColor;
+		Color _centerColor;
+		Color _innerColor;
 
 		if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 		{
-			_outerColor = color::mul(instValues.outerColor.original, instance.ColorParent);
-			_centerColor = color::mul(instValues.centerColor.original, instance.ColorParent);
-			_innerColor = color::mul(instValues.innerColor.original, instance.ColorParent);
+			_outerColor = Color::Mul(instValues.outerColor.original, instance.ColorParent);
+			_centerColor = Color::Mul(instValues.centerColor.original, instance.ColorParent);
+			_innerColor = Color::Mul(instValues.innerColor.original, instance.ColorParent);
 		}
 		else
 		{
@@ -257,17 +257,17 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 
 		instanceParameter.CenterRatio = instValues.centerRatio.current;
 
-		_outerColor.setValueToArg( instanceParameter.OuterColor );
-		_centerColor.setValueToArg( instanceParameter.CenterColor );
-		_innerColor.setValueToArg( instanceParameter.InnerColor );
-
-		// Apply global color
+		// Apply global Color
 		if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
 		{
-			Color::Mul(instanceParameter.OuterColor, instanceParameter.OuterColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
-			Color::Mul(instanceParameter.CenterColor, instanceParameter.CenterColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
-			Color::Mul(instanceParameter.InnerColor, instanceParameter.InnerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+			Color::Mul(_outerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+			Color::Mul(_centerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+			Color::Mul(_innerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
 		}
+
+		instanceParameter.OuterColor  = _outerColor;
+		instanceParameter.CenterColor = _centerColor;
+		instanceParameter.InnerColor  = _innerColor;
 		
 		instanceParameter.UV = instance.GetUV();
 		renderer->Rendering( nodeParameter, instanceParameter, m_userData );
@@ -325,9 +325,9 @@ void EffectNodeRing::InitializeRenderedInstance(Instance& instance, Manager* man
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		instValues.outerColor.current = color::mul(instValues.outerColor.original, instance.ColorParent);
-		instValues.centerColor.current = color::mul(instValues.centerColor.original, instance.ColorParent);
-		instValues.innerColor.current = color::mul(instValues.innerColor.original, instance.ColorParent);
+		instValues.outerColor.current = Color::Mul(instValues.outerColor.original, instance.ColorParent);
+		instValues.centerColor.current = Color::Mul(instValues.centerColor.original, instance.ColorParent);
+		instValues.innerColor.current = Color::Mul(instValues.innerColor.original, instance.ColorParent);
 	}
 	else
 	{
@@ -359,9 +359,9 @@ void EffectNodeRing::UpdateRenderedInstance(Instance& instance, Manager* manager
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		instValues.outerColor.current = color::mul(instValues.outerColor.original, instance.ColorParent);
-		instValues.centerColor.current = color::mul(instValues.centerColor.original, instance.ColorParent);
-		instValues.innerColor.current = color::mul(instValues.innerColor.original, instance.ColorParent);
+		instValues.outerColor.current = Color::Mul(instValues.outerColor.original, instance.ColorParent);
+		instValues.centerColor.current = Color::Mul(instValues.centerColor.original, instance.ColorParent);
+		instValues.innerColor.current = Color::Mul(instValues.innerColor.original, instance.ColorParent);
 	}
 	else
 	{
@@ -581,7 +581,7 @@ void EffectNodeRing::UpdateColorValues( Instance& instance, const RingColorParam
 	float fadeAlpha = GetFadeAlpha(instance);
 	if (fadeAlpha != 1.0f)
 	{
-		values.original.a = (uint8_t)(values.original.a * fadeAlpha);
+		values.original.A = (uint8_t)(values.original.A * fadeAlpha);
 	}
 }
 

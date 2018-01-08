@@ -82,7 +82,7 @@ struct RingColorParameter
 
 	union
 	{	
-		color fixed;
+		Color fixed;
 		random_color random;
 		easing_color easing;
 	};
@@ -147,25 +147,25 @@ struct RingLocationValues
 //----------------------------------------------------------------------------------
 struct RingColorValues
 {
-	color	current;
-	color	original;
+	Color	current;
+	Color	original;
 
 	union
 	{
 		struct
 		{
-			color _color;
+			Color _color;
 		} fixed;
 
 		struct
 		{
-			color _color;
+			Color _color;
 		} random;
 
 		struct
 		{
-			color  start;
-			color  end;
+			Color  start;
+			Color  end;
 		} easing;
 	};
 };

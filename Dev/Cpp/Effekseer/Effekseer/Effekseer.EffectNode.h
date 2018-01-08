@@ -50,7 +50,7 @@ public:
 	{
 		struct
 		{
-			color all;
+			Color all;
 		} fixed;
 
 		struct

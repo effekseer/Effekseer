@@ -375,53 +375,8 @@ struct easing_vector3d
 	}
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct color
-{
-	uint8_t		r;
-	uint8_t		g;
-	uint8_t		b;
-	uint8_t		a;
-	
-	void reset()
-	{
-		assert( sizeof(color) == 4 );
-		memset( this, 255, sizeof(color) );
-	}
-
-	void setValueToArg( Color& c ) const
-	{
-		c.R = r;
-		c.G = g;
-		c.B = b;
-		c.A = a;
-	}
-
-	static color mul( const color& in1, const color& in2 )
-	{
-		color o;
-		o.r = (uint8_t)((float)in1.r * (float)in2.r / 255.0f);
-		o.g = (uint8_t)((float)in1.g * (float)in2.g / 255.0f);
-		o.b = (uint8_t)((float)in1.b * (float)in2.b / 255.0f);
-		o.a = (uint8_t)((float)in1.a * (float)in2.a / 255.0f);
-		return o;
-	}
-
-	static color mul( const color& in1, float in2 )
-	{
-		color o;
-		o.r = (uint8_t)((float)in1.r * in2);
-		o.g = (uint8_t)((float)in1.g * in2);
-		o.b = (uint8_t)((float)in1.b * in2);
-		o.a = (uint8_t)((float)in1.a * in2);
-		return o;
-	}
-};
-
-inline color HSVToRGB(color hsv) {
-	int H = hsv.r, S = hsv.g, V = hsv.b;
+inline Color HSVToRGB(Color hsv) {
+	int H = hsv.R, S = hsv.G, V = hsv.B;
 	int Hi, R=0, G=0, B=0, p, q, t;
 	float f, s;
 
@@ -442,11 +397,11 @@ inline color HSVToRGB(color hsv) {
 	case 4: R = t; G = p; B = V; break;
 	case 5: R = V; G = p; B = q; break;
 	}
-	color result;
-	result.r = R;
-	result.g = G;
-	result.b = B;
-	result.a = hsv.a;
+	Color result;
+	result.R = R;
+	result.G = G;
+	result.B = B;
+	result.A = hsv.A;
 	return result;
 }
 
@@ -456,20 +411,20 @@ inline color HSVToRGB(color hsv) {
 struct random_color
 {
 	ColorMode mode;
-	color	max;
-	color	min;
+	Color	max;
+	Color	min;
 
 	void reset()
 	{
 		assert( sizeof(random_color) == 12 );
 		mode = COLOR_MODE_RGBA;
-		max.reset();
-		min.reset();
+		max = {255, 255, 255, 255};
+		min = {255, 255, 255, 255};
 	};
 
-	color getValue(IRandObject& g) const
+	Color getValue(IRandObject& g) const
 	{
-		color r = getDirectValue( g );
+		Color r = getDirectValue( g );
 		if( mode == COLOR_MODE_HSVA )
 		{
 			r = HSVToRGB( r );
@@ -477,13 +432,13 @@ struct random_color
 		return r;
 	}
 	
-	color getDirectValue(IRandObject& g) const
+	Color getDirectValue(IRandObject& g) const
 	{
-		color r;
-		r.r = (uint8_t) (g.GetRand(min.r, max.r));
-		r.g = (uint8_t) (g.GetRand(min.g, max.g));
-		r.b = (uint8_t) (g.GetRand(min.b, max.b));
-		r.a = (uint8_t) (g.GetRand(min.a, max.a));
+		Color r;
+		r.R = (uint8_t) (g.GetRand(min.R, max.R));
+		r.G = (uint8_t) (g.GetRand(min.G, max.G));
+		r.B = (uint8_t) (g.GetRand(min.B, max.B));
+		r.A = (uint8_t) (g.GetRand(min.A, max.A));
 		return r;
 	}
 
@@ -498,8 +453,8 @@ struct random_color
 		{
 			mode = COLOR_MODE_RGBA;
 		}
-		max = ReadData<color>( pos );
-		min = ReadData<color>( pos );
+		max = ReadData<Color>( pos );
+		min = ReadData<Color>( pos );
 	}
 };
 
@@ -514,48 +469,23 @@ struct easing_color
 	float easingB;
 	float easingC;
 
-	void setValueToArg( color& o, const color& start_, const color& end_, float t ) const
+	void setValueToArg( Color& o, const Color& start_, const Color& end_, float t ) const
 	{
 		assert( start.mode == end.mode );
-		int d_r = end_.r - start_.r;
-		int d_g = end_.g - start_.g;
-		int d_b = end_.b - start_.b;
-		int d_a = end_.a - start_.a;
 		float d = easingA * t * t * t + easingB * t * t + easingC * t;
-		o.r = (uint8_t)Clamp( start_.r + d * d_r, 255.0f, 0.0f );
-		o.g = (uint8_t)Clamp( start_.g + d * d_g, 255.0f, 0.0f );
-		o.b = (uint8_t)Clamp( start_.b + d * d_b, 255.0f, 0.0f );
-		o.a = (uint8_t)Clamp( start_.a + d * d_a, 255.0f, 0.0f );
+		o = Color::Lerp(start_, end_, d);
 		if( start.mode == COLOR_MODE_HSVA )
 		{
 			o = HSVToRGB( o );
 		}
 	}
 
-	void setValueToArg( Color& o, const color& start_, const color& end_, float t ) const
-	{
-		assert( start.mode == end.mode );
-		int d_r = end_.r - start_.r;
-		int d_g = end_.g - start_.g;
-		int d_b = end_.b - start_.b;
-		int d_a = end_.a - start_.a;
-		float d = easingA * t * t * t + easingB * t * t + easingC * t;
-		o.R = (uint8_t)Clamp( start_.r + d * d_r, 255.0f, 0.0f );
-		o.G = (uint8_t)Clamp( start_.g + d * d_g, 255.0f, 0.0f );
-		o.B = (uint8_t)Clamp( start_.b + d * d_b, 255.0f, 0.0f );
-		o.A = (uint8_t)Clamp( start_.a + d * d_a, 255.0f, 0.0f );
-		if( start.mode == COLOR_MODE_HSVA )
-		{
-			*(color*)&o = HSVToRGB( *(color*)&o );
-		}
-	}
-
-	color getStartValue(IRandObject& g) const
+	Color getStartValue(IRandObject& g) const
 	{
 		return start.getDirectValue( g );
 	}
 	
-	color getEndValue(IRandObject& g) const
+	Color getEndValue(IRandObject& g) const
 	{
 		return end.getDirectValue( g);
 	}

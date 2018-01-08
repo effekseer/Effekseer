@@ -212,18 +212,12 @@ void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, Manager* ma
 	Color c;
 	SetValues(c, instance, m_currentGroupValues.ColorCenterMiddle, TrackColorCenterMiddle, time, livedTime);
 
-	color _c;
-	_c.r = c.R;
-	_c.g = c.G;
-	_c.b = c.B;
-	_c.a = c.A;
-
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		_c = color::mul(_c, instance.ColorParent);
+		c = Color::Mul(c, instance.ColorParent);
 	}
 
-	instance.ColorInheritance = _c;
+	instance.ColorInheritance = c;
 }
 
 //----------------------------------------------------------------------------------
@@ -241,13 +235,7 @@ void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, Manager* manage
 	Color c;
 	SetValues(c, instance, m_currentGroupValues.ColorCenterMiddle, TrackColorCenterMiddle, time, livedTime);
 
-	color _c;
-	_c.r = c.R;
-	_c.g = c.G;
-	_c.b = c.B;
-	_c.a = c.A;
-
-	instance.ColorInheritance = _c;
+	instance.ColorInheritance = c;
 }
 
 //----------------------------------------------------------------------------------
@@ -293,50 +281,46 @@ void EffectNodeTrack::InitializeValues(InstanceGroupValues::Size& value, TrackSi
 //----------------------------------------------------------------------------------
 void EffectNodeTrack::SetValues(Color& c, const Instance& instance, InstanceGroupValues::Color& value, StandardColorParameter& param, int32_t time, int32_t livedTime)
 {
-	color _c;
-
 	if( param.type == StandardColorParameter::Fixed )
 	{
-		_c = value.color.fixed.color_;
+		c = value.color.fixed.color_;
 	}
 	else if(param.type == StandardColorParameter::Random )
 	{
-		_c = value.color.random.color_;
+		c = value.color.random.color_;
 	}
 	else if( param.type == StandardColorParameter::Easing )
 	{
 		float t = (float)time / (float)livedTime;
 		param.easing.all.setValueToArg(
-			_c, 
+			c, 
 			value.color.easing.start,
 			value.color.easing.end,
 			t );
 	}
 	else if( param.type == StandardColorParameter::FCurve_RGBA )
 	{
-		_c.r = (uint8_t)Clamp( (value.color.fcurve_rgba.offset[0] + param.fcurve_rgba.FCurve->R.GetValue( (int32_t)time )), 255, 0);
-		_c.g = (uint8_t)Clamp( (value.color.fcurve_rgba.offset[1] + param.fcurve_rgba.FCurve->G.GetValue( (int32_t)time )), 255, 0);
-		_c.b = (uint8_t)Clamp( (value.color.fcurve_rgba.offset[2] + param.fcurve_rgba.FCurve->B.GetValue( (int32_t)time )), 255, 0);
-		_c.a = (uint8_t)Clamp( (value.color.fcurve_rgba.offset[3] + param.fcurve_rgba.FCurve->A.GetValue( (int32_t)time )), 255, 0);
+		c.R = (uint8_t)Clamp( (value.color.fcurve_rgba.offset[0] + param.fcurve_rgba.FCurve->R.GetValue( (int32_t)time )), 255, 0);
+		c.G = (uint8_t)Clamp( (value.color.fcurve_rgba.offset[1] + param.fcurve_rgba.FCurve->G.GetValue( (int32_t)time )), 255, 0);
+		c.B = (uint8_t)Clamp( (value.color.fcurve_rgba.offset[2] + param.fcurve_rgba.FCurve->B.GetValue( (int32_t)time )), 255, 0);
+		c.A = (uint8_t)Clamp( (value.color.fcurve_rgba.offset[3] + param.fcurve_rgba.FCurve->A.GetValue( (int32_t)time )), 255, 0);
 	}
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		_c = color::mul(_c, instance.ColorParent);
+		c = Color::Mul(c, instance.ColorParent);
 	}
 
 	float fadeAlpha = GetFadeAlpha(instance);
 	if (fadeAlpha != 1.0f)
 	{
-		_c.a = (uint8_t)(_c.a * fadeAlpha);
+		c.A = (uint8_t)(c.A * fadeAlpha);
 	}
 
-	_c.setValueToArg(c);
-
-	// Apply global color
+	// Apply global Color
 	if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
 	{
-		Color::Mul(c, c, instance.m_pContainer->GetRootInstance()->GlobalColor);
+		c = Color::Mul(c, instance.m_pContainer->GetRootInstance()->GlobalColor);
 	}
 }
 

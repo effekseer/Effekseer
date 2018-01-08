@@ -179,23 +179,21 @@ void EffectNodeRibbon::Rendering(const Instance& instance, Manager* manager)
 	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if( renderer != NULL )
 	{
-		color _color;
+		Color _color;
 		if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 		{
-			_color = color::mul(instValues._original, instance.ColorParent);
+			_color = Color::Mul(instValues._original, instance.ColorParent);
 		}
 		else
 		{
 			_color = instValues._original;
 		}
 
-		_color.setValueToArg( m_instanceParameter.AllColor );
-
-
+		m_instanceParameter.AllColor = _color;
 		m_instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 
-		color color_l = _color;
-		color color_r = _color;
+		Color color_l = _color;
+		Color color_r = _color;
 
 		if( RibbonColor.type == RibbonColorParameter::Default )
 		{
@@ -203,18 +201,18 @@ void EffectNodeRibbon::Rendering(const Instance& instance, Manager* manager)
 		}
 		else if( RibbonColor.type == RibbonColorParameter::Fixed )
 		{
-			color_l = color::mul( color_l, RibbonColor.fixed.l );
-			color_r = color::mul( color_r, RibbonColor.fixed.r );
+			color_l = Color::Mul( color_l, RibbonColor.fixed.l );
+			color_r = Color::Mul( color_r, RibbonColor.fixed.r );
 		}
 
-		color_l.setValueToArg( m_instanceParameter.Colors[0] );
-		color_r.setValueToArg( m_instanceParameter.Colors[1] );
+		m_instanceParameter.Colors[0] = color_l;
+		m_instanceParameter.Colors[1] = color_r;
 
-		// Apply global color
+		// Apply global Color
 		if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
 		{
-			Color::Mul(m_instanceParameter.Colors[0], m_instanceParameter.Colors[0], instance.m_pContainer->GetRootInstance()->GlobalColor);
-			Color::Mul(m_instanceParameter.Colors[1], m_instanceParameter.Colors[1], instance.m_pContainer->GetRootInstance()->GlobalColor);
+			m_instanceParameter.Colors[0] = Color::Mul(m_instanceParameter.Colors[0], instance.m_pContainer->GetRootInstance()->GlobalColor);
+			m_instanceParameter.Colors[1] = Color::Mul(m_instanceParameter.Colors[1], instance.m_pContainer->GetRootInstance()->GlobalColor);
 		}
 
 		if( RibbonPosition.type == RibbonPositionParameter::Default )
@@ -272,7 +270,7 @@ void EffectNodeRibbon::InitializeRenderedInstance(Instance& instance, Manager* m
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		instValues._color = color::mul(instValues._original, instance.ColorParent);
+		instValues._color = Color::Mul(instValues._original, instance.ColorParent);
 	}
 	else
 	{
@@ -311,12 +309,12 @@ void EffectNodeRibbon::UpdateRenderedInstance(Instance& instance, Manager* manag
 	float fadeAlpha = GetFadeAlpha(instance);
 	if (fadeAlpha != 1.0f)
 	{
-		instValues._original.a = (uint8_t)(instValues._original.a * fadeAlpha);
+		instValues._original.A = (uint8_t)(instValues._original.A * fadeAlpha);
 	}
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)
 	{
-		instValues._color = color::mul(instValues._original, instance.ColorParent);
+		instValues._color = Color::Mul(instValues._original, instance.ColorParent);
 	}
 	else
 	{

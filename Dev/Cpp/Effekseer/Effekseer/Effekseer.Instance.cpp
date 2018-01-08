@@ -40,15 +40,8 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	m_generatedChildrenCount = m_fixedGeneratedChildrenCount;
 	m_nextGenerationTime = m_fixedNextGenerationTime;
 	
-	ColorInheritance.r = 255;
-	ColorInheritance.g = 255;
-	ColorInheritance.b = 255;
-	ColorInheritance.a = 255;
-
-	ColorParent.r = 255;
-	ColorParent.g = 255;
-	ColorParent.b = 255;
-	ColorParent.a = 255;
+	ColorInheritance = Color(255, 255, 255, 255);
+	ColorParent = Color(255, 255, 255, 255);
 
 	InstanceGroup* group = NULL;
 
