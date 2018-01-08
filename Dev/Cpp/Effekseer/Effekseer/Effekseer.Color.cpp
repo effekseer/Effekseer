@@ -56,6 +56,21 @@ Color Color::Mul( Color in1, Color in2 )
 	Color o;
 	*(int*)&o = _mm_cvtsi128_si32(res);
 	return o;
+#elif defined(EFK_NEON)
+	uint8x8_t s1 = vreinterpret_u8_u32(vmov_n_u32(*(uint32_t*)&in1));
+	uint8x8_t s2 = vreinterpret_u8_u32(vmov_n_u32(*(uint32_t*)&in2));
+	uint16x8_t mask = vmovq_n_u16(1);
+	uint16x8_t s3 = vmovl_u8(s1);
+	uint16x8_t s4 = vmovl_u8(s2);
+	uint16x8_t r0 = vmulq_u16(s3, s4);
+	uint16x8_t r1 = vshrq_n_u16(r0, 8);
+	uint16x8_t r2 = vandq_u16(r0, mask);
+	uint16x8_t r3 = vorrq_u16(r2, r1);
+	uint8x8_t res = vqmovn_u16(r3);
+	
+	Color o;
+	*(uint32_t*)&o = vget_lane_u32(vreinterpret_u32_u8(res), 0);
+	return o;
 #else
 	Color o;
 	o.R = (uint8_t)((float)in1.R * (float)in2.R / 255.0f);
@@ -84,6 +99,17 @@ Color Color::Mul( Color in1, float in2 )
 	
 	Color o;
 	*(int*)&o = _mm_cvtsi128_si32(res);
+	return o;
+#elif defined(EFK_NEON)
+	uint8x8_t s1 = vreinterpret_u8_u32(vmov_n_u32(*(uint32_t*)&in1));
+	uint16x8_t s2 = vmovq_n_u16((uint16_t)(in2 * 256));
+	uint16x8_t s3 = vmovl_u8(s1);
+	uint16x8_t r0 = vmulq_u16(s3, s2);
+	uint16x8_t r1 = vshrq_n_u16(r0, 8);
+	uint8x8_t res = vqmovn_u16(r1);
+	
+	Color o;
+	*(uint32_t*)&o = vget_lane_u32(vreinterpret_u32_u8(res), 0);
 	return o;
 #else
 	Color o;
@@ -117,6 +143,21 @@ Color Color::Lerp( const Color in1, const Color in2, float t )
 	
 	Color o;
 	*(int*)&o = _mm_cvtsi128_si32(res);
+	return o;
+#elif defined(EFK_NEON)
+	uint8x8_t s1 = vreinterpret_u8_u32(vmov_n_u32(*(uint32_t*)&in1));
+	uint8x8_t s2 = vreinterpret_u8_u32(vmov_n_u32(*(uint32_t*)&in2));
+	int16x8_t tm = vmovq_n_s16((int16_t)(t * 256));
+	uint16x8_t s3 = vmovl_u8(s1);
+	uint16x8_t s4 = vmovl_u8(s2);
+	int16x8_t r0 = vqsubq_s16(s4, s3);
+	int16x8_t r1 = vmulq_s16(r0, tm);
+	int16x8_t r2 = vrshrq_n_s16(r1, 8);
+	int16x8_t r3 = vqaddq_s16(s3, r2);
+	uint8x8_t res = vqmovn_u16(r3);
+	
+	Color o;
+	*(uint32_t*)&o = vget_lane_u32(vreinterpret_u32_u8(res), 0);
 	return o;
 #else
 	Color o;
