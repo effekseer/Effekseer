@@ -147,10 +147,6 @@ namespace Effekseer.GUI
 		
 		private void UpdateFileListItems(string path)
 		{
-			// 変化がないときは更新しない
-			if (path == currentPath) {
-				return;
-			}
 			currentPath = path;
 			
 			fileView.Items.Clear();
@@ -183,6 +179,9 @@ namespace Effekseer.GUI
 			Core.OnAfterLoad += Core_OnAfterLoad;
 			Core.OnAfterSave += Core_OnAfterSave;
 			Core.OnAfterNew += Core_OnAfterNew;
+			Core.OnReload += Core_OnReload;
+
+			UpdateFileList();
 		}
 
 		private void DockFileViewer_FormClosed(object sender, FormClosedEventArgs e)
@@ -190,6 +189,7 @@ namespace Effekseer.GUI
 			Core.OnAfterLoad -= Core_OnAfterLoad;
 			Core.OnAfterSave -= Core_OnAfterSave;
 			Core.OnAfterNew -= Core_OnAfterNew;
+			Core.OnReload -= Core_OnReload;
 		}
 
 		private void fileView_DoubleClick(object sender, EventArgs e)
@@ -227,6 +227,11 @@ namespace Effekseer.GUI
 		}
 
 		void Core_OnAfterNew(object sender, EventArgs e)
+		{
+			UpdateFileList();
+		}
+		
+		void Core_OnReload(object sender, EventArgs e)
 		{
 			UpdateFileList();
 		}
