@@ -557,7 +557,11 @@ public:
 	/**
 	@brief	背景を取得する。
 	*/
-	Effekseer::TextureData* GetBackground() override { return &m_background; }
+	Effekseer::TextureData* GetBackground() override 
+	{
+		if (m_background.UserID == 0) return nullptr;
+		return &m_background;
+	}
 
 	/**
 	@brief	背景を設定する。
