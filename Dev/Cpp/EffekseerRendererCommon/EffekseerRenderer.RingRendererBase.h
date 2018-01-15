@@ -357,7 +357,7 @@ protected:
 			mat_rot.Value[3][1] = t.Y;
 			mat_rot.Value[3][2] = t.Z;
 
-			ApplyDepthOffset(mat_rot, camera, s, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale);
+			ApplyDepthOffset(mat_rot, camera, s, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale, parameter.IsRightHand);
 			
 			if( m_instanceCount > 1 )
 			{
@@ -385,7 +385,7 @@ protected:
 		{
 			auto mat = instanceParameter.SRTMatrix43;
 
-			ApplyDepthOffset(mat, camera, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale);
+			ApplyDepthOffset(mat, camera, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale, parameter.IsRightHand);
 
 			if( m_instanceCount > 1 )
 			{

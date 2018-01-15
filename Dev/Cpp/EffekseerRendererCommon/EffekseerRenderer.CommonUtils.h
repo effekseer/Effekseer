@@ -20,7 +20,7 @@ namespace EffekseerRenderer
 //
 //-----------------------------------------------------------------------------------
 
-	static void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Matrix44& camera, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect)
+	static void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Matrix44& camera, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
 	{
 		if (depthOffset != 0)
 		{
@@ -72,14 +72,22 @@ namespace EffekseerRenderer
 				}
 			}
 
-			mat.Value[3][0] += f.X * offset;
-			mat.Value[3][1] += f.Y * offset;
-			mat.Value[3][2] += f.Z * offset;
-
+			if (isRightHand)
+			{
+				mat.Value[3][0] += f.X * offset;
+				mat.Value[3][1] += f.Y * offset;
+				mat.Value[3][2] += f.Z * offset;
+			}
+			else
+			{
+				mat.Value[3][0] -= f.X * offset;
+				mat.Value[3][1] -= f.Y * offset;
+				mat.Value[3][2] -= f.Z * offset;
+			}
 		}
 	}
 
-	static void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Matrix44& camera, ::Effekseer::Vector3D& scaleValues, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect)
+	static void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Matrix44& camera, ::Effekseer::Vector3D& scaleValues, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
 {
 	if (depthOffset != 0)
 	{
@@ -115,14 +123,23 @@ namespace EffekseerRenderer
 			}
 		}
 
-		mat.Value[3][0] += f.X * offset;
-		mat.Value[3][1] += f.Y * offset;
-		mat.Value[3][2] += f.Z * offset;
+		if (isRightHand)
+		{
+			mat.Value[3][0] += f.X * offset;
+			mat.Value[3][1] += f.Y * offset;
+			mat.Value[3][2] += f.Z * offset;
+		}
+		else
+		{
+			mat.Value[3][0] -= f.X * offset;
+			mat.Value[3][1] -= f.Y * offset;
+			mat.Value[3][2] -= f.Z * offset;
+		}
 
 	}
 }
 
-static void ApplyDepthOffset(::Effekseer::Matrix44& mat, const ::Effekseer::Matrix44& camera, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect)
+	static void ApplyDepthOffset(::Effekseer::Matrix44& mat, const ::Effekseer::Matrix44& camera, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
 {
 	if (depthOffset != 0)
 	{
@@ -174,9 +191,18 @@ static void ApplyDepthOffset(::Effekseer::Matrix44& mat, const ::Effekseer::Matr
 			}
 		}
 
-		mat.Values[3][0] += f.X * offset;
-		mat.Values[3][1] += f.Y * offset;
-		mat.Values[3][2] += f.Z * offset;
+		if (isRightHand)
+		{
+			mat.Values[3][0] += f.X * offset;
+			mat.Values[3][1] += f.Y * offset;
+			mat.Values[3][2] += f.Z * offset;
+		}
+		else
+		{
+			mat.Values[3][0] -= f.X * offset;
+			mat.Values[3][1] -= f.Y * offset;
+			mat.Values[3][2] -= f.Z * offset;
+		}
 
 	}
 }

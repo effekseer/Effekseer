@@ -191,6 +191,8 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.ColorTextureIndex = RingTexture;
 		nodeParameter.VertexCount = VertexCount;
 		nodeParameter.EffectPointer = GetEffect();
+		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
+			CoordinateSystem::RH;
 
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
@@ -222,6 +224,8 @@ void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.VertexCount = VertexCount;
 		nodeParameter.ColorTextureIndex = RingTexture;
+		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
+			CoordinateSystem::RH;
 
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
@@ -291,6 +295,8 @@ void EffectNodeRing::EndRendering(Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.ColorTextureIndex = RingTexture;
 		nodeParameter.EffectPointer = GetEffect();
+		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
+			CoordinateSystem::RH;
 
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;

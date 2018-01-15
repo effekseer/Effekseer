@@ -2072,6 +2072,7 @@ public:
 		bool				ZTest;
 		bool				ZWrite;
 		BillboardType		Billboard;
+		bool				IsRightHand;
 
 		bool				Distortion;
 		float				DistortionIntensity;
@@ -2217,6 +2218,7 @@ public:
 		bool				ZWrite;
 		BillboardType		Billboard;
 		int32_t				VertexCount;
+		bool				IsRightHand;
 
 		bool				Distortion;
 		float				DistortionIntensity;

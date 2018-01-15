@@ -35,6 +35,7 @@ public:
 		bool				ZWrite;
 		BillboardType		Billboard;
 		int32_t				VertexCount;
+		bool				IsRightHand;
 
 		bool				Distortion;
 		float				DistortionIntensity;

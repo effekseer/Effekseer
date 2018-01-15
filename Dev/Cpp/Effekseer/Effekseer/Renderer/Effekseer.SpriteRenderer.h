@@ -34,6 +34,7 @@ public:
 		bool				ZTest;
 		bool				ZWrite;
 		BillboardType		Billboard;
+		bool				IsRightHand;
 
 		bool				Distortion;
 		float				DistortionIntensity;

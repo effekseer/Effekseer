@@ -237,7 +237,7 @@ protected:
 			mat_rot.Value[3][1] = t.Y;
 			mat_rot.Value[3][2] = t.Z;
 	
-			ApplyDepthOffset(mat_rot, camera, s, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale);
+			ApplyDepthOffset(mat_rot, camera, s, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale, parameter.IsRightHand);
 
 			TransformVertexes( verteies, 4, mat_rot );
 		}
@@ -245,7 +245,7 @@ protected:
 		{
 			auto mat = instanceParameter.SRTMatrix43;
 
-			ApplyDepthOffset(mat, camera, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale);
+			ApplyDepthOffset(mat, camera, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale, parameter.IsRightHand);
 
 			for( int i = 0; i < 4; i++ )
 			{

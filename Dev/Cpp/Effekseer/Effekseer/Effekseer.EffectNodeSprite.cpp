@@ -153,7 +153,9 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.ColorTextureIndex = SpriteTexture;
 		nodeParameter.EffectPointer = GetEffect();
-		
+		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
+			CoordinateSystem::RH;
+
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
@@ -183,6 +185,8 @@ void EffectNodeSprite::Rendering(const Instance& instance, Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.ColorTextureIndex = SpriteTexture;
 		nodeParameter.EffectPointer = GetEffect();
+		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
+			CoordinateSystem::RH;
 
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
@@ -278,6 +282,8 @@ void EffectNodeSprite::EndRendering(Manager* manager)
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.ColorTextureIndex = SpriteTexture;
 		nodeParameter.EffectPointer = GetEffect();
+		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
+			CoordinateSystem::RH;
 
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
