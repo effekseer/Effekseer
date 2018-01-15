@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
+#include "Effekseer.IntrusiveList.h"
 #include "Effekseer.EffectNodeTrack.h"
 
 //----------------------------------------------------------------------------------
@@ -34,8 +35,8 @@ private:
 	int32_t				m_time;
 
 	// インスタンスの実体
-	std::list<Instance*> m_instances;
-	std::list<Instance*> m_removingInstances;
+	IntrusiveList<Instance> m_instances;
+	IntrusiveList<Instance> m_removingInstances;
 
 	InstanceGroup( Manager* manager, EffectNode* effectNode, InstanceContainer* container, InstanceGlobal* global );
 

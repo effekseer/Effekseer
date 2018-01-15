@@ -245,7 +245,7 @@ void InstanceContainer::Draw( bool recursive )
 		{
 			for( InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer )
 			{
-				for (auto& instance : group->m_instances)
+				for (auto instance : group->m_instances)
 				{
 					if (instance->m_State == INSTANCE_STATE_ACTIVE)
 					{
@@ -266,7 +266,7 @@ void InstanceContainer::Draw( bool recursive )
 
 				if( m_pEffectNode->RenderingOrder == RenderingOrder_FirstCreatedInstanceIsFirst )
 				{
-					for (auto& instance : group->m_instances)
+					for (auto instance : group->m_instances)
 					{
 						if (instance->m_State == INSTANCE_STATE_ACTIVE)
 						{
@@ -276,7 +276,7 @@ void InstanceContainer::Draw( bool recursive )
 				}
 				else
 				{
-					std::list<Instance*>::reverse_iterator it = group->m_instances.rbegin();
+					auto it = group->m_instances.rbegin();
 
 					while( it != group->m_instances.rend() )
 					{

@@ -11,6 +11,7 @@
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.RectF.h"
 #include "Effekseer.Color.h"
+#include "Effekseer.IntrusiveList.h"
 
 #include "Effekseer.EffectNodeSprite.h"
 #include "Effekseer.EffectNodeRibbon.h"
@@ -30,7 +31,7 @@ namespace Effekseer
 /**
 	@brief	エフェクトの実体
 */
-class Instance
+class Instance : public IntrusiveList<Instance>::Node
 {
 	friend class Manager;
 	friend class InstanceContainer;

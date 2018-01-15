@@ -196,6 +196,9 @@
     <ClInclude Include="Effekseer\Culling\Culling3D.WorldInternal.h">
       <Filter>Effekseer\Culling</Filter>
     </ClInclude>
+    <ClInclude Include="Effekseer\Effekseer.IntrusiveList.h">
+      <Filter>Effekseer\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp">
@@ -302,6 +305,9 @@
     </ClCompile>
     <ClCompile Include="Effekseer\Culling\Culling3D.Grid.cpp">
       <Filter>Effekseer\Culling</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Effekseer.IntrusiveList.cpp">
+      <Filter>Effekseer\Utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
