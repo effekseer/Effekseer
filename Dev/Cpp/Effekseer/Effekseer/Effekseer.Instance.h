@@ -246,8 +246,11 @@ public:
 	// 親の変換用行列
 	Matrix43		m_ParentMatrix43;
 
-	// 行列が計算済かどうか
-	bool			m_MatrixCalculated;
+	// 変換用行列が計算済かどうか
+	bool			m_GlobalMatrix43Calculated;
+
+	// 親の変換用行列が計算済かどうか
+	bool			m_ParentMatrix43Calculated;
 
 	/* 時間を進めるかどうか? */
 	bool			m_stepTime;
