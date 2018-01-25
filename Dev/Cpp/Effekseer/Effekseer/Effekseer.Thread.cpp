@@ -164,8 +164,8 @@ void* Thread::ThreadProc( void* arguments )
 //
 //-----------------------------------------------------------------------------------
 Thread::Thread()
-	: m_running		( false )
-	, m_thread		()
+	: m_thread		()
+	, m_running		( false )
 	, m_data		( NULL )
 	, m_mainProc	( NULL )
 {

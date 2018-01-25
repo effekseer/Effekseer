@@ -32,13 +32,13 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 EffectNodeImplemented::EffectNodeImplemented(Effect* effect, unsigned char*& pos)
 	: m_effect		( effect )
-	, IsRendered		( true )
-	, SoundType			( ParameterSoundType_None )
-	, RenderingOrder	( RenderingOrder_FirstCreatedInstanceIsFirst )
 	, m_userData		( NULL )
+	, IsRendered		(true)
 	, TranslationFCurve	( NULL )
 	, RotationFCurve	( NULL )
 	, ScalingFCurve		( NULL )
+	, SoundType			(ParameterSoundType_None)
+	, RenderingOrder	(RenderingOrder_FirstCreatedInstanceIsFirst)
 {
 }
 

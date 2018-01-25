@@ -31,11 +31,11 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	, m_LivedTime(0)
 	, m_LivingTime(0)
 	, uvTimeOffset(0)
+	, m_flexibleGeneratedChildrenCount(nullptr)
+	, m_flexibleNextGenerationTime(nullptr)
 	, m_MatrixCalculated(false)
 	, m_stepTime(false)
 	, m_sequenceNumber(0)
-	, m_flexibleGeneratedChildrenCount(nullptr)
-	, m_flexibleNextGenerationTime(nullptr)
 {
 	m_generatedChildrenCount = m_fixedGeneratedChildrenCount;
 	m_nextGenerationTime = m_fixedNextGenerationTime;

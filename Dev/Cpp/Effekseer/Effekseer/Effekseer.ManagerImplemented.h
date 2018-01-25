@@ -92,8 +92,8 @@ private:
 			, IsShown					( true )
 			, IsRemoving				( false )
 			, IsParameterChanged		( false )
-			, RemovingCallback			( NULL )
 			, DoUseBaseMatrix			( false )
+			, RemovingCallback			(NULL)
 			, Speed						( 1.0f )
 			, Self						( -1 )
 		{
