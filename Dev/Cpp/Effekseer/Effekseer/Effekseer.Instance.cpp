@@ -31,9 +31,10 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	, m_LivedTime(0)
 	, m_LivingTime(0)
 	, uvTimeOffset(0)
+	, m_GlobalMatrix43Calculated(false)
+	, m_ParentMatrix43Calculated(false)
 	, m_flexibleGeneratedChildrenCount(nullptr)
 	, m_flexibleNextGenerationTime(nullptr)
-	, m_MatrixCalculated(false)
 	, m_stepTime(false)
 	, m_sequenceNumber(0)
 {
@@ -112,8 +113,9 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 {
 	assert(this->m_pContainer != nullptr);
 	
-	// Invalidate own matrix
-	m_MatrixCalculated = false;
+	// Invalidate matrix
+	m_GlobalMatrix43Calculated = false;
+	m_ParentMatrix43Calculated = false;
 
 	auto instanceGlobal = this->m_pContainer->GetRootInstance();
 
@@ -661,9 +663,10 @@ void Instance::Update( float deltaFrame, bool shown )
 {
 	assert(this->m_pContainer != nullptr);
 	
-	// Invalidate own matrix
-	m_MatrixCalculated = false;
-	
+	// Invalidate matrix
+	m_GlobalMatrix43Calculated = false;
+	m_ParentMatrix43Calculated = false;
+
 	auto instanceGlobal = this->m_pContainer->GetRootInstance();
 
 	if (m_stepTime && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
@@ -705,6 +708,7 @@ void Instance::Update( float deltaFrame, bool shown )
 	/* 親の削除処理 */
 	if (m_pParent != NULL && m_pParent->GetState() != INSTANCE_STATE_ACTIVE)
 	{
+		CalculateParentMatrix( deltaFrame );
 		m_pParent = nullptr;
 	}
 
@@ -839,7 +843,7 @@ void Instance::Update( float deltaFrame, bool shown )
 void Instance::CalculateMatrix( float deltaFrame )
 {
 	// 計算済なら終了
-	if( m_MatrixCalculated ) return;
+	if( m_GlobalMatrix43Calculated ) return;
 	
 	//if( m_sequenceNumber == ((ManagerImplemented*)m_pManager)->GetSequenceNumber() ) return;
 	m_sequenceNumber = ((ManagerImplemented*)m_pManager)->GetSequenceNumber();
@@ -1096,11 +1100,14 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 	}
 
-	m_MatrixCalculated = true;
+	m_GlobalMatrix43Calculated = true;
 }
 
 void Instance::CalculateParentMatrix( float deltaFrame )
 {
+	// 計算済なら終了
+	if( m_ParentMatrix43Calculated ) return;
+
 	// 親の行列を計算
 	m_pParent->CalculateMatrix( deltaFrame );
 
@@ -1174,6 +1181,8 @@ void Instance::CalculateParentMatrix( float deltaFrame )
 		// Rootの場合
 		m_ParentMatrix43 = m_pParent->GetGlobalMatrix43();
 	}
+
+	m_ParentMatrix43Calculated = true;
 }
 
 //----------------------------------------------------------------------------------
