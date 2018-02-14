@@ -19,10 +19,20 @@
 #include <gd/gdfontmb.h>
 
 #if _DEBUG
-#pragma comment(lib,"Debug/libgd_static.lib")
+#pragma comment(lib,"x86/Debug/libgd_static.lib")
 #else
-#pragma comment(lib,"Release/libgd_static.lib")
+#pragma comment(lib,"x86/Release/libgd_static.lib")
 #endif
+
+
+// PNG support
+#ifdef _WIN32
+#define WINVER          0x0501
+#define _WIN32_WINNT    0x0501
+#include <windows.h>
+#include <gdiplus.h>
+
+#else
 
 #define Z_SOLO
 #include <png.h>
@@ -36,6 +46,79 @@
 #pragma comment(lib,"Release/zlib.lib")
 #endif
 
+#endif
+
+class PNGHelper
+{
+private:
+	std::vector<uint8_t>	tempBuffer1;
+	Gdiplus::GdiplusStartupInput	gdiplusStartupInput;
+	ULONG_PTR						gdiplusToken;
+
+public:
+	PNGHelper::PNGHelper()
+	{
+		Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+		tempBuffer1.resize(2048 * 2048 * 4);
+	}
+
+	PNGHelper::~PNGHelper()
+	{
+		Gdiplus::GdiplusShutdown(gdiplusToken);
+	}
+
+	bool PNGHelper::Save(const char16_t* path, int32_t width, int32_t height, const void* data)
+	{
+		// Create bitmap data
+		Gdiplus::Bitmap bmp(width, height);
+
+		auto p = (Effekseer::Color*) data;
+		for (int32_t y = 0; y < height; y++)
+		{
+			for (int32_t x = 0; x < width; x++)
+			{
+				auto src = p[x + width * y];
+				Gdiplus::Color dst(src.A, src.R, src.G, src.B);
+				bmp.SetPixel(x, y, dst);
+			}
+		}
+
+		// Save bitmap
+		CLSID id;
+		UINT encoderNum = 0;
+		UINT encoderSize = 0;
+		Gdiplus::GetImageEncodersSize(&encoderNum, &encoderSize);
+		if (encoderSize == 0)
+		{
+			return false;
+		}
+
+		auto imageCodecInfo = (Gdiplus::ImageCodecInfo*) malloc(encoderSize);
+		Gdiplus::GetImageEncoders(encoderNum, encoderSize, imageCodecInfo);
+
+		for (UINT i = 0; i < encoderNum; i++)
+		{
+			if (wcscmp(imageCodecInfo[i].MimeType, L"image/png") == 0)
+			{
+				id = imageCodecInfo[i].Clsid;
+				free(imageCodecInfo);
+				imageCodecInfo = nullptr;
+				break;
+			}
+		}
+
+		if (imageCodecInfo != nullptr)
+		{
+			free(imageCodecInfo);
+			return false;
+		}
+
+		bmp.Save((const wchar_t*) path, &id);
+
+
+		return true;
+	}
+};
 
 class AVIExporter
 {
@@ -268,6 +351,9 @@ static bool									g_mouseSlideDirectionInvY = false;
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#ifdef _WIN32
+
+#else
 void SavePNGImage(const wchar_t* filepath, int32_t width, int32_t height, void* data, bool rev)
 {
 	/* 構造体確保 */
@@ -319,6 +405,7 @@ void SavePNGImage(const wchar_t* filepath, int32_t width, int32_t height, void* 
 	png_destroy_write_struct(&pp, &ip);
 	fclose(fp);
 }
+#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -1257,7 +1344,12 @@ bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t c
 		wchar_t path_[260];
 		swprintf_s(path_, L"%s.%d%s", pathWithoutExt, i, ext);
 
+#ifdef _WIN32
+		PNGHelper pngHelper;
+		pngHelper.Save((char16_t*)path_, g_renderer->GuideWidth, g_renderer->GuideHeight, pixels.data());
+#else
 		SavePNGImage(path_, g_renderer->GuideWidth, g_renderer->GuideHeight, pixels.data(), false);
+#endif
 	}
 
 	g_manager->StopEffect(handle);
@@ -1343,8 +1435,13 @@ bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t 
 	
 Exit:;
 
+#ifdef _WIN32
+	PNGHelper pngHelper;
+	pngHelper.Save((char16_t*)path, g_renderer->GuideWidth * xCount, g_renderer->GuideHeight * yCount, pixels_out.data());
+#else
 	SavePNGImage(path, g_renderer->GuideWidth * xCount, g_renderer->GuideHeight * yCount, pixels_out.data(), false);
-	
+#endif
+
 	g_manager->Update();
 
 	return true;

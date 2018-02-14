@@ -1,0 +1,3 @@
+[submodule "Downloads/libgd"]
+	path = Downloads/libgd
+	url = https://github.com/libgd/libgd.git
