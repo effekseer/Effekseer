@@ -75,9 +75,19 @@ issuesとTODOを読んでください。常時、機能追加、バグ修正と�
 
 ## How to compile
 
+Update submodule.
+
+Execute python scripts as follows.
+
+```
+
+Script/build_libgd.py
+
+```
+
 * Windows
 
-DirectX SDK and Visual Studio 2013 are required.
+DirectX SDK and Visual Studio 2015 are required.
 
 Open ```Dev/Cpp/Test.sln```
 
