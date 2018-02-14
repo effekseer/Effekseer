@@ -1,1 +1,2 @@
 *.bat eol=crlf
+*.lib filter=lfs diff=lfs merge=lfs -text
