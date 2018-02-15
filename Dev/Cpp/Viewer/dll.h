@@ -130,7 +130,7 @@ private:
 
 		void Unload(Effekseer::TextureData* data) override;
 
-		std::wstring RootPath;
+		std::u16string RootPath;
 	};
 
 	class SoundLoader
@@ -148,7 +148,7 @@ private:
 
 		void Unload( void* data );
 		
-		std::wstring RootPath;
+		std::u16string RootPath;
 	};
 
 	class ModelLoader
@@ -166,7 +166,7 @@ private:
 
 		void Unload( void* data );
 
-		std::wstring RootPath;
+		std::u16string RootPath;
 	};
 
 	ViewerEffectBehavior	m_effectBehavior;
@@ -196,7 +196,7 @@ public:
 
 	bool DestroyWindow();
 
-	bool LoadEffect( void* data, int size, const wchar_t* path );
+	bool LoadEffect( void* data, int size, const char16_t* path );
 
 	bool RemoveEffect();
 
@@ -216,13 +216,13 @@ public:
 
 	bool SetRandomSeed( int seed );
 
-	bool Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
+	bool Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
 
-	bool Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
+	bool Record(const char16_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
 
-	bool RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
+	bool RecordAsGifAnimation(const char16_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
 
-	bool RecordAsAVI(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
+	bool RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
 
 	ViewerParamater GetViewerParamater();
 
@@ -244,7 +244,7 @@ public:
 
 	void SetBackgroundColor( uint8_t r, uint8_t g, uint8_t b );
 
-	void SetBackgroundImage( const wchar_t* path );
+	void SetBackgroundImage( const char16_t* path );
 
 	void SetGridColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a );
 
@@ -258,7 +258,7 @@ public:
 
 	bool IsConnectingNetwork();
 
-	void SendDataByNetwork( const wchar_t* key, void* data, int size, const wchar_t* path );
+	void SendDataByNetwork( const char16_t* key, void* data, int size, const char16_t* path );
 
 	void SetLightDirection( float x, float y, float z );
 

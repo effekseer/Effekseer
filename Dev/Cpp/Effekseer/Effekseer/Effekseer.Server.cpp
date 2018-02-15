@@ -299,7 +299,7 @@ void ServerImplemented::Regist( const EFK_CHAR* key, Effect* effect )
 {
 	if( effect == NULL ) return;
 
-	std::wstring key_( (const wchar_t*)key );
+	std::u16string key_( (const char16_t*)key );
 
 	if( m_effects.count( key_ ) > 0 )
 	{
@@ -329,8 +329,8 @@ void ServerImplemented::Unregist( Effect* effect )
 {
 	if( effect == NULL ) return;
 
-	std::map<std::wstring,Effect*>::iterator it = m_effects.begin();
-	std::map<std::wstring,Effect*>::iterator it_end = m_effects.end();
+	auto it = m_effects.begin();
+	auto it_end = m_effects.end();
 
 	while( it != it_end )
 	{
@@ -376,11 +376,11 @@ void ServerImplemented::Update()
 			memcpy( &keylen, p, sizeof(int32_t) );
 			p += sizeof(int32_t);
 
-			std::wstring key;
+			std::u16string key;
 			for( int32_t k = 0; k < keylen; k++ )
 			{
-				key.push_back( ((wchar_t*)p)[0] );
-				p += sizeof(wchar_t);
+				key.push_back( ((char16_t*)p)[0] );
+				p += sizeof(char16_t);
 			}
 
 			uint8_t* data = p;

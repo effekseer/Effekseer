@@ -309,6 +309,9 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterWStringCallback_EffekseerNative(SWIG_CSh
 #include "dll.h"
 
 
+#include <stdint.h>		// Use the C99 official header
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -1507,12 +1510,12 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_DestroyWindow(void * jarg1) {
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_LoadEffect(void * jarg1, void * jarg2, int jarg3, wchar_t * jarg4) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_LoadEffect(void * jarg1, void * jarg2, int jarg3, char16_t * jarg4) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
   void *arg2 = (void *) 0 ;
   int arg3 ;
-  wchar_t *arg4 = (wchar_t *) 0 ;
+  char16_t *arg4 = (char16_t *) 0 ;
   bool result;
   
   arg1 = (Native *)jarg1; 
@@ -1520,8 +1523,8 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_LoadEffect(void * jarg1, void 
     arg2 = jarg2; 
   }
   arg3 = (int)jarg3; 
-  arg4 = (wchar_t *)jarg4; 
-  result = (bool)(arg1)->LoadEffect(arg2,arg3,(wchar_t const *)arg4);
+  arg4 = (char16_t *)jarg4; 
+  result = (bool)(arg1)->LoadEffect(arg2,arg3,(char16_t const *)arg4);
   jresult = result; 
   return jresult;
 }
@@ -1649,11 +1652,11 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_SetRandomSeed(void * jarg1, in
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_Record__SWIG_0(void * jarg1, wchar_t * jarg2, wchar_t * jarg3, int jarg4, int jarg5, int jarg6, int jarg7) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_Record__SWIG_0(void * jarg1, char16_t * jarg2, char16_t * jarg3, int jarg4, int jarg5, int jarg6, int jarg7) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
-  wchar_t *arg2 = (wchar_t *) 0 ;
-  wchar_t *arg3 = (wchar_t *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  char16_t *arg3 = (char16_t *) 0 ;
   int32_t arg4 ;
   int32_t arg5 ;
   int32_t arg6 ;
@@ -1661,22 +1664,22 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_Record__SWIG_0(void * jarg1, w
   bool result;
   
   arg1 = (Native *)jarg1; 
-  arg2 = (wchar_t *)jarg2; 
-  arg3 = (wchar_t *)jarg3; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (char16_t *)jarg3; 
   arg4 = (int32_t)jarg4; 
   arg5 = (int32_t)jarg5; 
   arg6 = (int32_t)jarg6; 
   arg7 = (TransparenceType)jarg7; 
-  result = (bool)(arg1)->Record((wchar_t const *)arg2,(wchar_t const *)arg3,arg4,arg5,arg6,arg7);
+  result = (bool)(arg1)->Record((char16_t const *)arg2,(char16_t const *)arg3,arg4,arg5,arg6,arg7);
   jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_Record__SWIG_1(void * jarg1, wchar_t * jarg2, int jarg3, int jarg4, int jarg5, int jarg6, int jarg7) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_Record__SWIG_1(void * jarg1, char16_t * jarg2, int jarg3, int jarg4, int jarg5, int jarg6, int jarg7) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
-  wchar_t *arg2 = (wchar_t *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
   int32_t arg3 ;
   int32_t arg4 ;
   int32_t arg5 ;
@@ -1685,22 +1688,22 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_Record__SWIG_1(void * jarg1, w
   bool result;
   
   arg1 = (Native *)jarg1; 
-  arg2 = (wchar_t *)jarg2; 
+  arg2 = (char16_t *)jarg2; 
   arg3 = (int32_t)jarg3; 
   arg4 = (int32_t)jarg4; 
   arg5 = (int32_t)jarg5; 
   arg6 = (int32_t)jarg6; 
   arg7 = (TransparenceType)jarg7; 
-  result = (bool)(arg1)->Record((wchar_t const *)arg2,arg3,arg4,arg5,arg6,arg7);
+  result = (bool)(arg1)->Record((char16_t const *)arg2,arg3,arg4,arg5,arg6,arg7);
   jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_RecordAsGifAnimation(void * jarg1, wchar_t * jarg2, int jarg3, int jarg4, int jarg5, int jarg6) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_RecordAsGifAnimation(void * jarg1, char16_t * jarg2, int jarg3, int jarg4, int jarg5, int jarg6) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
-  wchar_t *arg2 = (wchar_t *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
   int32_t arg3 ;
   int32_t arg4 ;
   int32_t arg5 ;
@@ -1708,21 +1711,21 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_RecordAsGifAnimation(void * ja
   bool result;
   
   arg1 = (Native *)jarg1; 
-  arg2 = (wchar_t *)jarg2; 
+  arg2 = (char16_t *)jarg2; 
   arg3 = (int32_t)jarg3; 
   arg4 = (int32_t)jarg4; 
   arg5 = (int32_t)jarg5; 
   arg6 = (TransparenceType)jarg6; 
-  result = (bool)(arg1)->RecordAsGifAnimation((wchar_t const *)arg2,arg3,arg4,arg5,arg6);
+  result = (bool)(arg1)->RecordAsGifAnimation((char16_t const *)arg2,arg3,arg4,arg5,arg6);
   jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_RecordAsAVI(void * jarg1, wchar_t * jarg2, int jarg3, int jarg4, int jarg5, int jarg6) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_RecordAsAVI(void * jarg1, char16_t * jarg2, int jarg3, int jarg4, int jarg5, int jarg6) {
   unsigned int jresult ;
   Native *arg1 = (Native *) 0 ;
-  wchar_t *arg2 = (wchar_t *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
   int32_t arg3 ;
   int32_t arg4 ;
   int32_t arg5 ;
@@ -1730,12 +1733,12 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_RecordAsAVI(void * jarg1, wcha
   bool result;
   
   arg1 = (Native *)jarg1; 
-  arg2 = (wchar_t *)jarg2; 
+  arg2 = (char16_t *)jarg2; 
   arg3 = (int32_t)jarg3; 
   arg4 = (int32_t)jarg4; 
   arg5 = (int32_t)jarg5; 
   arg6 = (TransparenceType)jarg6; 
-  result = (bool)(arg1)->RecordAsAVI((wchar_t const *)arg2,arg3,arg4,arg5,arg6);
+  result = (bool)(arg1)->RecordAsAVI((char16_t const *)arg2,arg3,arg4,arg5,arg6);
   jresult = result; 
   return jresult;
 }
@@ -1873,13 +1876,13 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Native_SetBackgroundColor(void * jarg1, unsig
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Native_SetBackgroundImage(void * jarg1, wchar_t * jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Native_SetBackgroundImage(void * jarg1, char16_t * jarg2) {
   Native *arg1 = (Native *) 0 ;
-  wchar_t *arg2 = (wchar_t *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
   
   arg1 = (Native *)jarg1; 
-  arg2 = (wchar_t *)jarg2; 
-  (arg1)->SetBackgroundImage((wchar_t const *)arg2);
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->SetBackgroundImage((char16_t const *)arg2);
 }
 
 
@@ -1961,21 +1964,21 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Native_IsConnectingNetwork(void * jar
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Native_SendDataByNetwork(void * jarg1, wchar_t * jarg2, void * jarg3, int jarg4, wchar_t * jarg5) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Native_SendDataByNetwork(void * jarg1, char16_t * jarg2, void * jarg3, int jarg4, char16_t * jarg5) {
   Native *arg1 = (Native *) 0 ;
-  wchar_t *arg2 = (wchar_t *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
   void *arg3 = (void *) 0 ;
   int arg4 ;
-  wchar_t *arg5 = (wchar_t *) 0 ;
+  char16_t *arg5 = (char16_t *) 0 ;
   
   arg1 = (Native *)jarg1; 
-  arg2 = (wchar_t *)jarg2; 
+  arg2 = (char16_t *)jarg2; 
   {
     arg3 = jarg3; 
   }
   arg4 = (int)jarg4; 
-  arg5 = (wchar_t *)jarg5; 
-  (arg1)->SendDataByNetwork((wchar_t const *)arg2,arg3,arg4,(wchar_t const *)arg5);
+  arg5 = (char16_t *)jarg5; 
+  (arg1)->SendDataByNetwork((char16_t const *)arg2,arg3,arg4,(char16_t const *)arg5);
 }
 
 

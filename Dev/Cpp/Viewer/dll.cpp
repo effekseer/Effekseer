@@ -354,7 +354,7 @@ static bool									g_mouseSlideDirectionInvY = false;
 #ifdef _WIN32
 
 #else
-void SavePNGImage(const wchar_t* filepath, int32_t width, int32_t height, void* data, bool rev)
+void SavePNGImage(const char16_t* filepath, int32_t width, int32_t height, void* data, bool rev)
 {
 	/* 構造体確保 */
 #if _WIN32
@@ -410,7 +410,7 @@ void SavePNGImage(const wchar_t* filepath, int32_t width, int32_t height, void* 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Combine( const wchar_t* rootPath, const wchar_t* treePath,  wchar_t* dst, int dst_length )
+bool Combine( const char16_t* rootPath, const char16_t* treePath,  char16_t* dst, int dst_length )
 {
 	int rootPathLength = 0;
 	while( rootPath[ rootPathLength ] != 0 )
@@ -435,7 +435,7 @@ bool Combine( const wchar_t* rootPath, const wchar_t* treePath,  wchar_t* dst, i
 	{
 		if( treePathLength < dst_length )
 		{
-			memcpy( dst, treePath, sizeof(wchar_t) * (treePathLength + 1) );
+			memcpy( dst, treePath, sizeof(char16_t) * (treePathLength + 1) );
 			return true;
 		}
 		else
@@ -448,7 +448,7 @@ bool Combine( const wchar_t* rootPath, const wchar_t* treePath,  wchar_t* dst, i
 	{
 		if( rootPathLength < dst_length )
 		{
-			memcpy( dst, rootPath, sizeof(wchar_t) * (rootPathLength + 1) );
+			memcpy( dst, rootPath, sizeof(char16_t) * (rootPathLength + 1) );
 			return true;
 		}
 		else
@@ -471,7 +471,7 @@ bool Combine( const wchar_t* rootPath, const wchar_t* treePath,  wchar_t* dst, i
 	}
 
 	// コピーする
-	memcpy( dst, rootPath, sizeof(wchar_t) * PathPosition );
+	memcpy( dst, rootPath, sizeof(char16_t) * PathPosition );
 	dst[ PathPosition ] = 0;
 
 	// 無理やり繋げる
@@ -480,7 +480,7 @@ bool Combine( const wchar_t* rootPath, const wchar_t* treePath,  wchar_t* dst, i
 		return false;
 	}
 
-	memcpy( &(dst[ PathPosition ]), treePath, sizeof(wchar_t) * treePathLength );
+	memcpy( &(dst[ PathPosition ]), treePath, sizeof(char16_t) * treePathLength );
 	PathPosition = PathPosition + treePathLength;
 	dst[ PathPosition ] = 0;
 
@@ -604,8 +604,8 @@ static ::Effekseer::Manager*			g_manager = NULL;
 static ::EffekseerTool::Renderer*		g_renderer = NULL;
 static ::Effekseer::Effect*				g_effect = NULL;
 static ::EffekseerTool::Sound*			g_sound = NULL;
-static std::map<std::wstring, Effekseer::TextureData*> m_textures;
-static std::map<std::wstring,EffekseerRendererDX9::Model*> m_models;
+static std::map<std::u16string, Effekseer::TextureData*> m_textures;
+static std::map<std::u16string,EffekseerRendererDX9::Model*> m_models;
 
 static std::vector<HandleHolder>	g_handles;
 
@@ -636,10 +636,10 @@ Native::TextureLoader::~TextureLoader()
 //----------------------------------------------------------------------------------
 Effekseer::TextureData* Native::TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
-	wchar_t dst[260];
-	Combine( RootPath.c_str(), (const wchar_t *)path, dst, 260 );
+	char16_t dst[260];
+	Combine( RootPath.c_str(), (const char16_t *)path, dst, 260 );
 
-	std::wstring key( dst );
+	std::u16string key( dst );
 
 	if( m_textures.count( key ) > 0 )
 	{
@@ -689,7 +689,7 @@ Native::SoundLoader::~SoundLoader()
 void* Native::SoundLoader::Load( const EFK_CHAR* path )
 {
 	EFK_CHAR dst[260];
-	Combine( RootPath.c_str(), (const wchar_t *)path, (wchar_t *)dst, 260 );
+	Combine( RootPath.c_str(), (const char16_t *)path, (char16_t *)dst, 260 );
 
 	return m_loader->Load( dst );
 }
@@ -724,10 +724,10 @@ Native::ModelLoader::~ModelLoader()
 //----------------------------------------------------------------------------------
 void* Native::ModelLoader::Load( const EFK_CHAR* path )
 {
-	wchar_t dst[260];
-	Combine( RootPath.c_str(), (const wchar_t *)path, dst, 260 );
+	char16_t dst[260];
+	Combine( RootPath.c_str(), (const char16_t *)path, dst, 260 );
 
-	std::wstring key( dst );
+	std::u16string key( dst );
 	EffekseerRendererDX9::Model* model = NULL;
 
 	if( m_models.count( key ) > 0 )
@@ -951,19 +951,19 @@ bool Native::DestroyWindow()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Native::LoadEffect( void* pData, int size, const wchar_t* Path )
+bool Native::LoadEffect( void* pData, int size, const char16_t* Path )
 {
 	assert( g_effect == NULL );
 
 	g_handles.clear();
 
-	((TextureLoader*)g_manager->GetTextureLoader())->RootPath = std::wstring( Path );
-	((ModelLoader*)g_manager->GetModelLoader())->RootPath = std::wstring( Path );
+	((TextureLoader*)g_manager->GetTextureLoader())->RootPath = std::u16string( Path );
+	((ModelLoader*)g_manager->GetModelLoader())->RootPath = std::u16string( Path );
 	
 	SoundLoader* soundLoader = (SoundLoader*)g_manager->GetSoundLoader();
 	if( soundLoader )
 	{
-		soundLoader->RootPath = std::wstring( Path );
+		soundLoader->RootPath = std::u16string( Path );
 	}
 
 	g_effect = Effekseer::Effect::Create( g_manager, pData, size );
@@ -1293,7 +1293,7 @@ bool Native::SetRandomSeed( int seed )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
+bool Native::Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
 	if (g_effect == NULL) return false;
 
@@ -1341,8 +1341,15 @@ bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t c
 		std::vector<Effekseer::Color> pixels;
 		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
 
-		wchar_t path_[260];
-		swprintf_s(path_, L"%s.%d%s", pathWithoutExt, i, ext);
+		char16_t path_[260];
+		
+#ifdef _WIN32
+		auto p_ = (wchar_t*)path_;
+		swprintf_s(p_, 260, L"%s.%d%s", pathWithoutExt, i, ext);
+#else
+		// TODO : Implement
+		assert(0);
+#endif
 
 #ifdef _WIN32
 		PNGHelper pngHelper;
@@ -1360,7 +1367,7 @@ bool Native::Record(const wchar_t* pathWithoutExt, const wchar_t* ext, int32_t c
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Native::Record(const wchar_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
+bool Native::Record(const char16_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
 	if( g_effect == NULL ) return false;
 
@@ -1447,7 +1454,7 @@ Exit:;
 	return true;
 }
 
-bool Native::RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
+bool Native::RecordAsGifAnimation(const char16_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
 	if (g_effect == NULL) return false;
 
@@ -1483,7 +1490,15 @@ bool Native::RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t of
 	gdImagePtr	img = nullptr;
 
 	img = gdImageCreate(g_renderer->GuideWidth, g_renderer->GuideHeight);
-	fp =  _wfopen(path, L"wb");
+	
+#ifdef _WIN32
+	_wfopen_s(&fp, (const wchar_t*)path, L"rb");
+#else
+	int8_t path8[256];
+	ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
+	fp = fopen((const char*)path8, "rb");
+#endif
+
 	gdImageGifAnimBegin(img, fp, false, 0);
 
 	for (int32_t i = 0; i < count; i++)
@@ -1528,7 +1543,7 @@ bool Native::RecordAsGifAnimation(const wchar_t* path, int32_t count, int32_t of
 	return true;
 }
 
-bool Native::RecordAsAVI(const wchar_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
+bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
 	if (g_effect == NULL) return false;
 
@@ -1561,7 +1576,7 @@ bool Native::RecordAsAVI(const wchar_t* path, int32_t count, int32_t offsetFrame
 	}
 
 	FILE*		fp = nullptr;
-	fp = _wfopen(path, L"wb");
+	fp = _wfopen((wchar_t*)path, L"wb");
 
 	AVIExporter exporter;
 	exporter.Initialize(g_renderer->GuideWidth, g_renderer->GuideHeight, (int32_t)(60.0f / (float)freq), count);
@@ -1761,9 +1776,18 @@ void Native::SetBackgroundColor( uint8_t r, uint8_t g, uint8_t b )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Native::SetBackgroundImage( const wchar_t* path )
+void Native::SetBackgroundImage( const char16_t* path )
 {
-	FILE* fp_texture = _wfopen( path, L"rb" );
+	FILE* fp_texture = nullptr;
+
+#ifdef _WIN32
+	_wfopen_s(&fp_texture, (const wchar_t*)path, L"rb");
+#else
+	int8_t path8[256];
+	ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
+	fp_texture = fopen((const char*)path8, "rb");
+#endif
+
 	if( fp_texture != NULL )
 	{
 		fseek( fp_texture, 0, SEEK_END );
@@ -1841,7 +1865,7 @@ bool Native::IsConnectingNetwork()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Native::SendDataByNetwork( const wchar_t* key, void* data, int size, const wchar_t* path )
+void Native::SendDataByNetwork( const char16_t* key, void* data, int size, const char16_t* path )
 {
 	g_client->Reload( (const EFK_CHAR *)key, data, size );
 }

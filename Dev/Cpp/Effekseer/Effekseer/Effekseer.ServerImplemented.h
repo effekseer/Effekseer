@@ -63,9 +63,9 @@ private:
 	std::set<InternalClient*>	m_clients;
 	std::set<InternalClient*>	m_removedClients;
 
-	std::map<std::wstring,Effect*>	m_effects;
+	std::map<std::u16string,Effect*>	m_effects;
 
-	std::map<std::wstring,std::vector<uint8_t> >	m_data;
+	std::map<std::u16string,std::vector<uint8_t> >	m_data;
 
 	std::vector<EFK_CHAR>	m_materialPath;
 
