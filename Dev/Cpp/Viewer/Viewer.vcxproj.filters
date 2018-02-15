@@ -4,6 +4,15 @@
     <Filter Include="EffekseerTool">
       <UniqueIdentifier>{56a0c8a1-3e92-4c87-8a86-63666a1c34ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{4ae8b388-dcb1-4783-bccd-e6b1888ed539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Platform">
+      <UniqueIdentifier>{a87fea15-b679-4ec6-9362-eeb0a16c0ef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Platform\DX9">
+      <UniqueIdentifier>{4409f2d7-bd77-4a14-a095-d1aca6bd8f66}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h">
@@ -27,6 +36,12 @@
     <ClInclude Include="EffekseerTool\EffekseerTool.Paste.h">
       <Filter>EffekseerTool</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\efk.Graphics.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Platform\DX9\efk.GraphicsDX9.h">
+      <Filter>Graphics\Platform\DX9</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -49,6 +64,12 @@
     </ClCompile>
     <ClCompile Include="EffekseerTool\EffekseerTool.Paste.cpp">
       <Filter>EffekseerTool</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\efk.Graphics.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Platform\DX9\efk.GraphicsDX9.cpp">
+      <Filter>Graphics\Platform\DX9</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

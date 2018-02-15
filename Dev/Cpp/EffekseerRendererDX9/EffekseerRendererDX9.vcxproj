@@ -187,6 +187,7 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.Renderer.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RenderStateBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RingRendererBase.h" />
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.ShaderBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.SpriteRendererBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.StandardRenderer.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.TrackRendererBase.h" />

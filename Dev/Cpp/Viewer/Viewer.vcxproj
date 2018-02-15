@@ -178,6 +178,8 @@
     <ClInclude Include="EffekseerTool\EffekseerTool.Paste.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Sound.h" />
+    <ClInclude Include="Graphics\efk.Graphics.h" />
+    <ClInclude Include="Graphics\Platform\DX9\efk.GraphicsDX9.h" />
     <CustomBuildStep Include="dll.h" />
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +191,8 @@
     <ClCompile Include="dll.cpp" />
     <ClCompile Include="dll_cs.cxx" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Sound.cpp" />
+    <ClCompile Include="Graphics\efk.Graphics.cpp" />
+    <ClCompile Include="Graphics\Platform\DX9\efk.GraphicsDX9.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
