@@ -24,5 +24,7 @@ namespace efk
 		bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode);
 
 		bool Present();
+
+		void ResetDevice();
 	};
 }
