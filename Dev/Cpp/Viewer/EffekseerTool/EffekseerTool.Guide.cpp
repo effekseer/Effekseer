@@ -1,7 +1,4 @@
 ﻿
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
@@ -9,84 +6,40 @@
 #include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 #include "EffekseerTool.Guide.h"
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace EffekseerRenderer
 {
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
-namespace Shader_
-{
-static 
-#include "EffekseerTool.Guide.Shader_VS.h"
-#include "EffekseerTool.Guide.Shader_PS.h"
-}
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Guide::Guide( EffekseerRendererDX9::RendererImplemented* renderer, EffekseerRendererDX9::Shader* shader )
+Guide::Guide( EffekseerRendererDX9::RendererImplemented* renderer)
 	: m_renderer	( renderer )
-	, m_shader		( shader )
 {
-	m_shader->SetVertexRegisterCount(1);
-	m_shader->SetVertexConstantBufferSize(sizeof(float)*4);
+	imageRenderer = new efk::ImageRendererDX9(renderer);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Guide::~Guide()
 {
-	ES_SAFE_DELETE( m_shader );
+	ES_SAFE_DELETE(imageRenderer);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Guide* Guide::Create( EffekseerRendererDX9::RendererImplemented* renderer )
 {
 	assert( renderer != NULL );
 	assert( renderer->GetDevice() != NULL );
-
-	// 座標(2)
-	D3DVERTEXELEMENT9 decl[] =
-	{
-		{0,	0,	D3DDECLTYPE_FLOAT2,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_POSITION,	0},
-		D3DDECL_END()
-	};
-
-	EffekseerRendererDX9::Shader* shader = EffekseerRendererDX9::Shader::Create( renderer, Shader_::g_vs20_VS, sizeof(Shader_::g_vs20_VS), Shader_::g_ps20_PS, sizeof(Shader_::g_ps20_PS), "Guide", decl );
-	
-	if( shader == NULL ) return NULL;
-
-	return new Guide( renderer, shader );
+	return new Guide( renderer );
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Guide::OnLostDevice()
 {
-	m_shader->OnLostDevice();
+	imageRenderer->OnLostDevice();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Guide::OnResetDevice()
 {
-	m_shader->OnResetDevice();
+	imageRenderer->OnResetDevice();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Guide::Rendering( int32_t width, int32_t height, int32_t guide_width, int32_t guide_height )
 {
-	m_renderer->GetVertexBuffer()->Lock();
+	imageRenderer->ClearCache();
 
 	float ul_x = 0;
 	float ul_y = 0;
@@ -108,85 +61,121 @@ void Guide::Rendering( int32_t width, int32_t height, int32_t guide_width, int32
 	float dr_gx = ur_gx;
 	float dr_gy = dl_gy;
 
+	Effekseer::Vector2D uv[4];
+	Effekseer::Color colors[4];
+
+	for (int32_t i = 0; i < 4; i++)
 	{
-		Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * 4 );
-		verteies[0].x = ul_gx;
-		verteies[0].y = ul_gy;
-		verteies[1].x = ul_x;
-		verteies[1].y = ul_y;
-		verteies[3].x = ur_x;
-		verteies[3].y = ur_y;
-		verteies[2].x = ur_gx;
-		verteies[2].y = ur_gy;
+		uv[i].X = 0.0f;
+		uv[i].Y = 0.0f;
+		colors[i].R = 255;
+		colors[i].G = 0;
+		colors[i].B = 0;
+		colors[i].A = 32;
 	}
 
 	{
-		Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * 4 );
-		verteies[0].x = ul_x;
-		verteies[0].y = ul_y;
-		verteies[1].x = ul_gx;
-		verteies[1].y = ul_gy;
-		verteies[3].x = dl_gx;
-		verteies[3].y = dl_gy;
-		verteies[2].x = dl_x;
-		verteies[2].y = dl_y;
+		Effekseer::Vector3D pos[4];
+		
+		pos[0].X = ul_gx;
+		pos[0].Y = ul_gy;
+		pos[1].X = ul_x;
+		pos[1].Y = ul_y;
+		pos[3].X = ur_x;
+		pos[3].Y = ur_y;
+		pos[2].X = ur_gx;
+		pos[2].Y = ur_gy;
+		pos[0].Z = 0.5f;
+		pos[1].Z = 0.5f;
+		pos[2].Z = 0.5f;
+		pos[3].Z = 0.5f;
+
+		for (int32_t i = 0; i < 4; i++)
+		{
+			pos[i].X = pos[i].X / (float)width * 2.0 - 1.0f;
+			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0;
+		}
+
+		imageRenderer->Draw(pos, uv, colors, nullptr);
 	}
 
 	{
-		Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * 4 );
-		verteies[0].x = dl_x;
-		verteies[0].y = dl_y;
-		verteies[1].x = dl_gx;
-		verteies[1].y = dl_gy;
-		verteies[3].x = dr_gx;
-		verteies[3].y = dr_gy;
-		verteies[2].x = dr_x;
-		verteies[2].y = dr_y;
+		Effekseer::Vector3D pos[4];
+
+		pos[0].X = ul_x;
+		pos[0].Y = ul_y;
+		pos[1].X = ul_gx;
+		pos[1].Y = ul_gy;
+		pos[3].X = dl_gx;
+		pos[3].Y = dl_gy;
+		pos[2].X = dl_x;
+		pos[2].Y = dl_y;
+		pos[0].Z = 0.5f;
+		pos[1].Z = 0.5f;
+		pos[2].Z = 0.5f;
+		pos[3].Z = 0.5f;
+
+		for (int32_t i = 0; i < 4; i++)
+		{
+			pos[i].X = pos[i].X / (float)width * 2.0 - 1.0f;
+			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0;
+		}
+
+		imageRenderer->Draw(pos, uv, colors, nullptr);
 	}
 
 	{
-		Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * 4 );
-		verteies[0].x = ur_x;
-		verteies[0].y = ur_y;
-		verteies[1].x = dr_x;
-		verteies[1].y = dr_y;
-		verteies[3].x = dr_gx;
-		verteies[3].y = dr_gy;
-		verteies[2].x = ur_gx;
-		verteies[2].y = ur_gy;
+		Effekseer::Vector3D pos[4];
+
+		pos[0].X = dl_x;
+		pos[0].Y = dl_y;
+		pos[1].X = dl_gx;
+		pos[1].Y = dl_gy;
+		pos[3].X = dr_gx;
+		pos[3].Y = dr_gy;
+		pos[2].X = dr_x;
+		pos[2].Y = dr_y;
+		pos[0].Z = 0.5f;
+		pos[1].Z = 0.5f;
+		pos[2].Z = 0.5f;
+		pos[3].Z = 0.5f;
+
+		for (int32_t i = 0; i < 4; i++)
+		{
+			pos[i].X = pos[i].X / (float)width * 2.0 - 1.0f;
+			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0;
+		}
+
+		imageRenderer->Draw(pos, uv, colors, nullptr);
 	}
 
-	m_renderer->GetVertexBuffer()->Unlock();
+	{
+		Effekseer::Vector3D pos[4];
 
-	auto& state = m_renderer->GetRenderState()->Push();
-	state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
-	state.DepthWrite = false;
-	state.DepthTest = false;
-	state.CullingType = Effekseer::CullingType::Double;
+		pos[0].X = ur_x;
+		pos[0].Y = ur_y;
+		pos[1].X = dr_x;
+		pos[1].Y = dr_y;
+		pos[3].X = dr_gx;
+		pos[3].Y = dr_gy;
+		pos[2].X = ur_gx;
+		pos[2].Y = ur_gy;
+		pos[0].Z = 0.5f;
+		pos[1].Z = 0.5f;
+		pos[2].Z = 0.5f;
+		pos[3].Z = 0.5f;
 
-	m_renderer->BeginShader(m_shader);
+		for (int32_t i = 0; i < 4; i++)
+		{
+			pos[i].X = pos[i].X / (float)width * 2.0 - 1.0f;
+			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0;
+		}
 
-	((float*)m_shader->GetVertexConstantBuffer())[0] = (float)width;
-	((float*)m_shader->GetVertexConstantBuffer())[1] = (float)height;
+		imageRenderer->Draw(pos, uv, colors, nullptr);
+	}
 
-	m_shader->SetConstantBuffer();
-
-	m_renderer->GetRenderState()->Update( false );
-	
-	m_renderer->SetLayout( m_shader );
-	m_renderer->GetDevice()->SetStreamSource( 0, m_renderer->GetVertexBuffer()->GetInterface(), 0, sizeof(Vertex) );
-	m_renderer->GetDevice()->SetIndices( m_renderer->GetIndexBuffer()->GetInterface() );
-	m_renderer->GetDevice()->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, 0, 0, 4 * 4, 0, 4 * 2 );
-
-	m_renderer->EndShader(m_shader);
-
-	m_renderer->GetRenderState()->Pop();
+	imageRenderer->Render();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 }
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+

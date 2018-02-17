@@ -9,6 +9,8 @@
 #include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.DeviceObject.h>
 
+#include "../Graphics/Platform/DX9/efk.LineRendererDX9.h"
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -21,18 +23,12 @@ class Culling
 	: public EffekseerRendererDX9::DeviceObject
 {
 private:
-	
-	struct Vertex
-	{
-		::Effekseer::Vector3D	Pos;
-		float	Col[4];
-	};
 
 	EffekseerRendererDX9::RendererImplemented*			m_renderer;
-	EffekseerRendererDX9::Shader*						m_shader;
-	int32_t							m_lineCount;
+	efk::LineRendererDX9*	lineRenderer = nullptr;
 
-	Culling( EffekseerRendererDX9::RendererImplemented* renderer, EffekseerRendererDX9::Shader*	m_shader);
+
+	Culling( EffekseerRendererDX9::RendererImplemented* renderer);
 public:
 
 	virtual ~Culling();
@@ -51,9 +47,6 @@ public:
 	float X;
 	float Y;
 	float Z;
-
-private:
-	void DrawLine( const ::Effekseer::Vector3D& pos1, const ::Effekseer::Vector3D& pos2, const ::Effekseer::Color& col );
 };
 //----------------------------------------------------------------------------------
 //

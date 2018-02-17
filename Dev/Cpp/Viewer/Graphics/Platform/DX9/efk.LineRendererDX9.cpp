@@ -29,6 +29,9 @@ namespace efk
 			Shader_::g_ps20_PS,
 			sizeof(Shader_::g_ps20_PS), "Grid",
 			decl);
+
+		shader->SetVertexRegisterCount(4);
+		shader->SetVertexConstantBufferSize(sizeof(float) * 16);
 	}
 
 	LineRendererDX9::~LineRendererDX9()
@@ -60,6 +63,57 @@ namespace efk
 
 	void LineRendererDX9::Render()
 	{
+		if (vertexies.size() == 0) return;
 
+		renderer->GetVertexBuffer()->Lock();
+
+		auto vs = (Vertex*)renderer->GetVertexBuffer()->GetBufferDirect(sizeof(Vertex) * vertexies.size());
+
+		memcpy(vs, vertexies.data(), sizeof(Vertex) * vertexies.size());
+
+		renderer->GetVertexBuffer()->Unlock();
+
+		auto& state = renderer->GetRenderState()->Push();
+		state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
+		state.DepthWrite = true;
+		state.DepthTest = true;
+		state.CullingType = Effekseer::CullingType::Double;
+
+		renderer->BeginShader((EffekseerRendererDX9::Shader*)shader);
+
+		auto mat = renderer->GetCameraProjectionMatrix();
+		mat = mat.Transpose();
+		memcpy(shader->GetVertexConstantBuffer(), &(mat), sizeof(float) * 16);
+
+		shader->SetConstantBuffer();
+
+		renderer->GetRenderState()->Update(false);
+
+		renderer->SetLayout((EffekseerRendererDX9::Shader*)shader);
+		renderer->GetDevice()->SetStreamSource(0, renderer->GetVertexBuffer()->GetInterface(), 0, sizeof(Vertex));
+		renderer->GetDevice()->SetIndices(NULL);
+		renderer->GetDevice()->DrawPrimitive(D3DPT_LINELIST, 0, vertexies.size() / 2);
+
+		renderer->EndShader((EffekseerRendererDX9::Shader*)shader);
+
+		renderer->GetRenderState()->Pop();
+	}
+
+
+	void LineRendererDX9::ClearCache()
+	{
+		vertexies.clear();
+	}
+
+	void LineRendererDX9::OnLostDevice()
+	{
+		auto shader_ = (EffekseerRendererDX9::Shader*)shader;
+		shader_->OnLostDevice();
+	}
+
+	void LineRendererDX9::OnResetDevice()
+	{
+		auto shader_ = (EffekseerRendererDX9::Shader*)shader;
+		shader_->OnResetDevice();
 	}
 }

@@ -32,5 +32,11 @@ namespace efk
 		void DrawLine(const Effekseer::Vector3D& p1, const Effekseer::Vector3D& p2, const Effekseer::Color& c);
 
 		void Render();
+
+		void ClearCache();
+
+		void OnLostDevice();
+
+		void OnResetDevice();
 	};
 }
