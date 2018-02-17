@@ -42,6 +42,18 @@
     <ClInclude Include="Graphics\Platform\DX9\efk.GraphicsDX9.h">
       <Filter>Graphics\Platform\DX9</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\efk.LineRenderer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\efk.ImageRenderer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Platform\DX9\efk.ImageRendererDX9.h">
+      <Filter>Graphics\Platform\DX9</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Platform\DX9\efk.LineRendererDX9.h">
+      <Filter>Graphics\Platform\DX9</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -69,6 +81,18 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Platform\DX9\efk.GraphicsDX9.cpp">
+      <Filter>Graphics\Platform\DX9</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\efk.LineRenderer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\efk.ImageRenderer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Platform\DX9\efk.LineRendererDX9.cpp">
+      <Filter>Graphics\Platform\DX9</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Platform\DX9\efk.ImageRendererDX9.cpp">
       <Filter>Graphics\Platform\DX9</Filter>
     </ClCompile>
   </ItemGroup>
