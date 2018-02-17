@@ -1,3 +1,6 @@
 [submodule "Downloads/libgd"]
 	path = Downloads/libgd
 	url = https://github.com/libgd/libgd.git
+[submodule "Downloads/OpenSoundMixer"]
+	path = Downloads/OpenSoundMixer
+	url = https://github.com/altseed/OpenSoundMixer
