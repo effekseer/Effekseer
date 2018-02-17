@@ -14,16 +14,10 @@ namespace efk
 	class LineRendererDX9
 	{
 	private:
-		struct Vertex
-		{
-			::Effekseer::Vector3D	Pos;
-			float	Col[4];
-		};
-
 		EffekseerRendererDX9::RendererImplemented*	renderer = nullptr;
 		EffekseerRenderer::ShaderBase*				shader = nullptr;
 
-		std::vector<Vertex>	vertexies;
+		std::vector<EffekseerRendererDX9::Vertex>	vertexies;
 	public:
 
 		LineRendererDX9(EffekseerRenderer::Renderer* renderer);

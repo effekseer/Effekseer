@@ -3,35 +3,49 @@
 
 namespace efk
 {
-	namespace Shader_
+	namespace Standard_VS
 	{
 		static
-#include "../../../EffekseerTool/EffekseerTool.Grid.Shader_VS.h"
-#include "../../../EffekseerTool/EffekseerTool.Grid.Shader_PS.h"
+#include <EffekseerRenderer/Shader/EffekseerRenderer.Standard_VS.h>
+	}
+
+	namespace Standard_PS
+	{
+		static
+#include <EffekseerRenderer/Shader/EffekseerRenderer.Standard_PS.h>
+	}
+
+	namespace StandardNoTexture_PS
+	{
+		static
+#include <EffekseerRenderer/Shader/EffekseerRenderer.StandardNoTexture_PS.h>
 	}
 
 	LineRendererDX9::LineRendererDX9(EffekseerRenderer::Renderer* renderer)
 	{
 		this->renderer = (EffekseerRendererDX9::RendererImplemented*)renderer;
 
-		// À•W(3) F(4)
+
+		// Position(3) Color(1) UV(2)
 		D3DVERTEXELEMENT9 decl[] =
 		{
-			{ 0,	0,	D3DDECLTYPE_FLOAT3,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_POSITION,	0 },
-			{ 0,	12,	D3DDECLTYPE_FLOAT4,	D3DDECLMETHOD_DEFAULT,	D3DDECLUSAGE_NORMAL,	0 },
+			{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+			{ 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+			{ 0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
 			D3DDECL_END()
 		};
 
 		shader = EffekseerRendererDX9::Shader::Create(
 			this->renderer,
-			Shader_::g_vs20_VS,
-			sizeof(Shader_::g_vs20_VS),
-			Shader_::g_ps20_PS,
-			sizeof(Shader_::g_ps20_PS), "Grid",
+			Standard_VS::g_vs20_VS,
+			sizeof(Standard_VS::g_vs20_VS),
+			StandardNoTexture_PS::g_ps20_PS,
+			sizeof(StandardNoTexture_PS::g_ps20_PS),
+			"StandardRenderer No Texture",
 			decl);
 
-		shader->SetVertexRegisterCount(4);
-		shader->SetVertexConstantBufferSize(sizeof(float) * 16);
+		shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+		shader->SetVertexRegisterCount(8);
 	}
 
 	LineRendererDX9::~LineRendererDX9()
@@ -43,19 +57,13 @@ namespace efk
 
 	void LineRendererDX9::DrawLine(const Effekseer::Vector3D& p1, const Effekseer::Vector3D& p2, const Effekseer::Color& c)
 	{
-		Vertex v0;
+		EffekseerRendererDX9::Vertex v0;
 		v0.Pos = p1;
-		v0.Col[0] = c.R / 255.0f;
-		v0.Col[1] = c.G / 255.0f;
-		v0.Col[2] = c.B / 255.0f;
-		v0.Col[3] = c.A / 255.0f;
+		v0.Col = D3DCOLOR_ARGB(c.A, c.R, c.G, c.B);
 
-		Vertex v1;
+		EffekseerRendererDX9::Vertex v1;
 		v1.Pos = p2;
-		v1.Col[0] = c.R / 255.0f;
-		v1.Col[1] = c.G / 255.0f;
-		v1.Col[2] = c.B / 255.0f;
-		v1.Col[3] = c.A / 255.0f;
+		v1.Col = D3DCOLOR_ARGB(c.A, c.R, c.G, c.B);
 
 		vertexies.push_back(v0);
 		vertexies.push_back(v1);
@@ -67,9 +75,9 @@ namespace efk
 
 		renderer->GetVertexBuffer()->Lock();
 
-		auto vs = (Vertex*)renderer->GetVertexBuffer()->GetBufferDirect(sizeof(Vertex) * vertexies.size());
+		auto vs = (EffekseerRendererDX9::Vertex*)renderer->GetVertexBuffer()->GetBufferDirect(sizeof(EffekseerRendererDX9::Vertex) * vertexies.size());
 
-		memcpy(vs, vertexies.data(), sizeof(Vertex) * vertexies.size());
+		memcpy(vs, vertexies.data(), sizeof(EffekseerRendererDX9::Vertex) * vertexies.size());
 
 		renderer->GetVertexBuffer()->Unlock();
 
@@ -81,16 +89,15 @@ namespace efk
 
 		renderer->BeginShader((EffekseerRendererDX9::Shader*)shader);
 
-		auto mat = renderer->GetCameraProjectionMatrix();
-		mat = mat.Transpose();
-		memcpy(shader->GetVertexConstantBuffer(), &(mat), sizeof(float) * 16);
+		((Effekseer::Matrix44*)(shader->GetVertexConstantBuffer()))[0] = renderer->GetCameraMatrix();
+		((Effekseer::Matrix44*)(shader->GetVertexConstantBuffer()))[1] = renderer->GetProjectionMatrix();
 
 		shader->SetConstantBuffer();
 
 		renderer->GetRenderState()->Update(false);
 
 		renderer->SetLayout((EffekseerRendererDX9::Shader*)shader);
-		renderer->GetDevice()->SetStreamSource(0, renderer->GetVertexBuffer()->GetInterface(), 0, sizeof(Vertex));
+		renderer->GetDevice()->SetStreamSource(0, renderer->GetVertexBuffer()->GetInterface(), 0, sizeof(EffekseerRendererDX9::Vertex));
 		renderer->GetDevice()->SetIndices(NULL);
 		renderer->GetDevice()->DrawPrimitive(D3DPT_LINELIST, 0, vertexies.size() / 2);
 

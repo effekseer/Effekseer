@@ -8,6 +8,7 @@
 #include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.DeviceObject.h>
+#include "../Graphics/Platform/DX9/efk.ImageRendererDX9.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -30,8 +31,9 @@ private:
 
 	EffekseerRendererDX9::RendererImplemented*			m_renderer;
 	EffekseerRendererDX9::Shader*						m_shader;
+	efk::ImageRendererDX9*								imageRenderer = nullptr;
 
-	Paste(EffekseerRendererDX9::RendererImplemented* renderer, EffekseerRendererDX9::Shader* shader);
+	Paste(EffekseerRendererDX9::RendererImplemented* renderer);
 public:
 
 	virtual ~Paste();

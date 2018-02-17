@@ -9,6 +9,8 @@
 #include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.DeviceObject.h>
 
+#include "../Graphics/Platform/DX9/efk.LineRendererDX9.h"
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -29,11 +31,12 @@ private:
 	};
 
 	EffekseerRendererDX9::RendererImplemented*			m_renderer;
-	EffekseerRendererDX9::Shader*						m_shader;
+	efk::LineRendererDX9*	lineRenderer = nullptr;
+
 	int32_t							m_lineCount;
 	float							m_gridLength;
 
-	Grid( EffekseerRendererDX9::RendererImplemented* renderer, EffekseerRendererDX9::Shader* shader );
+	Grid( EffekseerRendererDX9::RendererImplemented* renderer);
 public:
 
 	virtual ~Grid();
@@ -51,9 +54,6 @@ public:
 	bool IsShownXY;
 	bool IsShownXZ;
 	bool IsShownYZ;
-
-private:
-	void DrawLine( const ::Effekseer::Vector3D& pos1, const ::Effekseer::Vector3D& pos2, const ::Effekseer::Color& col );
 };
 //----------------------------------------------------------------------------------
 //
