@@ -2,14 +2,14 @@
 #pragma once
 
 #include <Effekseer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
+#include <EffekseerRenderer/EffekseerRendererGL.Renderer.h>
+#include <EffekseerRenderer/EffekseerRendererGL.RendererImplemented.h>
 
 #include "../../efk.Graphics.h"
 
 namespace efk
 {
-	class GraphicsDX9
+	class GraphicsGL
 		: public Graphics
 	{
 	private:
@@ -17,10 +17,12 @@ namespace efk
 		int32_t	windowWidth = 0;
 		int32_t	windowHeight = 0;
 
-		LPDIRECT3D9			d3d = nullptr;
-		LPDIRECT3DDEVICE9	d3d_device = nullptr;
 		bool				isSRGBMode = false;
 
+		/*
+		LPDIRECT3D9			d3d = nullptr;
+		LPDIRECT3DDEVICE9	d3d_device = nullptr;
+		
 		IDirect3DSurface9*	renderDefaultTarget = nullptr;
 		IDirect3DSurface9*	renderDefaultDepth = nullptr;
 
@@ -32,12 +34,12 @@ namespace efk
 
 		IDirect3DSurface9*	backTarget = nullptr;
 		IDirect3DTexture9*	backTargetTexture = nullptr;
-
-		EffekseerRendererDX9::Renderer*	renderer = nullptr;
+		*/
+		EffekseerRendererGL::Renderer*	renderer = nullptr;
 
 	public:
-		GraphicsDX9();
-		virtual ~GraphicsDX9();
+		GraphicsGL();
+		virtual ~GraphicsGL();
 
 		bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount) override;
 
@@ -63,6 +65,6 @@ namespace efk
 
 		EffekseerRenderer::Renderer* GetRenderer() override;
 
-		DeviceType GetDeviceType() const override { return DeviceType::DirectX9; }
+		DeviceType GetDeviceType() const override { return DeviceType::OpenGL; }
 	};
 }

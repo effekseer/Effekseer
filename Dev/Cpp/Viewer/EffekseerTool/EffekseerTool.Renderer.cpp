@@ -1,7 +1,4 @@
 ﻿
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "EffekseerTool.Renderer.h"
 #include "EffekseerTool.Grid.h"
 #include "EffekseerTool.Guide.h"
@@ -10,15 +7,9 @@
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace EffekseerTool
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-	Renderer::DistortingCallback::DistortingCallback(Renderer* renderer)
+	Renderer::DistortingCallback::DistortingCallback(efk::Graphics* renderer)
 		: renderer(renderer)
 	{
 		IsEnabled = true;
@@ -34,293 +25,121 @@ namespace EffekseerTool
 	{
 		if (Blit)
 		{
-			auto texture = renderer->ExportBackground();
-			renderer->m_renderer->SetBackground(texture);
+			renderer->CopyToBackground();
+
+			if (renderer->GetDeviceType() == efk::DeviceType::OpenGL)
+			{
+				auto r = (::EffekseerRendererGL::Renderer*)renderer->GetRenderer();
+				//r->SetBackground(renderer->GetBack());
+			}
+			else
+			{
+				auto r = (::EffekseerRendererDX9::Renderer*)renderer->GetRenderer();
+				r->SetBackground((IDirect3DTexture9*)renderer->GetBack());
+			}
 		}
 
 		return IsEnabled;
 	}
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Renderer::GenerateRenderTargets(int32_t width, int32_t height)
-{
-	ES_SAFE_RELEASE(m_renderTarget);
-	ES_SAFE_RELEASE(m_renderTargetTexture);
-	ES_SAFE_RELEASE(m_renderTargetDepth);
 
-	ES_SAFE_RELEASE(m_renderEffectBackTarget);
-	ES_SAFE_RELEASE(m_renderEffectBackTargetTexture);
+	Renderer::Renderer(int32_t squareMaxCount, bool isSRGBMode, bool isOpenGLMode)
+		: m_handle(NULL)
+		, m_width(0)
+		, m_height(0)
+		, m_squareMaxCount(squareMaxCount)
+		, m_projection(PROJECTION_TYPE_PERSPECTIVE)
+		, m_renderer(NULL)
 
-	if (width == 0 || height == 0) return;
+		, RateOfMagnification(1.0f)
 
-	HRESULT hr;
+		, m_grid(NULL)
+		, m_guide(NULL)
+		, m_culling(NULL)
+		, m_background(NULL)
 
-	hr = GetDevice()->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_renderTargetTexture, NULL);
-	if (FAILED(hr)) return;
+		, GuideWidth(100)
+		, GuideHeight(100)
+		, RendersGuide(false)
 
-	m_renderTargetTexture->GetSurfaceLevel(0, &m_renderTarget);
+		, IsGridShown(true)
 
-	GetDevice()->CreateDepthStencilSurface(width, height, D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, TRUE, &m_renderTargetDepth, NULL);
+		, IsGridXYShown(false)
+		, IsGridXZShown(true)
+		, IsGridYZShown(false)
 
-	hr = GetDevice()->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_renderEffectBackTargetTexture, NULL);
-	if (FAILED(hr)) return;
+		, IsRightHand(true)
+		, GridLength(2.0f)
 
-	m_renderEffectBackTargetTexture->GetSurfaceLevel(0, &m_renderEffectBackTarget);
-}
+		, IsCullingShown(false)
+		, CullingRadius(0.0f)
+		, CullingPosition()
 
-void Renderer::LoadBackgroundImageInternal(void* data, int32_t size)
-{
-	ES_SAFE_RELEASE(m_backGroundTexture);
+		, Distortion(eDistortionType::DistortionType_Current)
 
-	if (data != NULL && size > 4)
+		, m_isSRGBMode(isSRGBMode)
+
+		, BackgroundColor(0, 0, 0, 255)
+		, GridColor(255, 255, 255, 255)
+		, IsBackgroundTranslucent(false)
 	{
-		IDirect3DTexture9* texture = nullptr;
-
-		auto d = (uint8_t*)data;
-
-		if (d[1] == 'P' &&
-			d[2] == 'N' &&
-			d[3] == 'G')
+		if (isOpenGLMode)
 		{
-			if (::EffekseerRenderer::PngTextureLoader::Load(data, size, false))
-			{
-				HRESULT hr;
-				int32_t width = ::EffekseerRenderer::PngTextureLoader::GetWidth();
-				int32_t height = ::EffekseerRenderer::PngTextureLoader::GetHeight();
-				int32_t mipMapCount = 1;
-				hr = m_renderer->GetDevice()->CreateTexture(
-					width,
-					height,
-					mipMapCount,
-					0,
-					D3DFMT_A8R8G8B8,
-					D3DPOOL_DEFAULT,
-					&texture,
-					NULL);
-
-				if (FAILED(hr))
-				{
-					::EffekseerRenderer::PngTextureLoader::Unload();
-					return;
-				}
-
-				LPDIRECT3DTEXTURE9 tempTexture = NULL;
-				hr = m_renderer->GetDevice()->CreateTexture(
-					width,
-					height,
-					mipMapCount,
-					0,
-					D3DFMT_A8R8G8B8,
-					D3DPOOL_SYSTEMMEM,
-					&tempTexture,
-					NULL);
-
-				if (FAILED(hr))
-				{
-					::EffekseerRenderer::PngTextureLoader::Unload();
-					return;
-				}
-
-				uint8_t* srcBits = (uint8_t*)::EffekseerRenderer::PngTextureLoader::GetData().data();
-				D3DLOCKED_RECT locked;
-				if (SUCCEEDED(tempTexture->LockRect(0, &locked, NULL, 0)))
-				{
-					uint8_t* destBits = (uint8_t*)locked.pBits;
-
-					for (int32_t h = 0; h < height; h++)
-					{
-						memcpy(destBits, srcBits, width * 4);
-
-						// RGB入れ替え
-						for (int32_t w = 0; w < width; w++)
-						{
-							std::swap(destBits[w * 4 + 0], destBits[w * 4 + 2]);
-						}
-
-						destBits += locked.Pitch;
-						srcBits += (width * 4);
-					}
-
-					tempTexture->UnlockRect(0);
-				}
-
-				hr = m_renderer->GetDevice()->UpdateTexture(tempTexture, texture);
-				ES_SAFE_RELEASE(tempTexture);
-
-				::EffekseerRenderer::PngTextureLoader::Unload();
-
-				ES_SAFE_RELEASE(m_backGroundTexture);
-				m_backGroundTexture = texture;
-			}
+			graphics = new efk::GraphicsGL();
+		}
+		else
+		{
+			graphics = new efk::GraphicsDX9();
 		}
 	}
-	else
+
+	Renderer::~Renderer()
 	{
-	}
-}
+		assert(!m_recording);
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Renderer::Renderer(int32_t squareMaxCount, bool isSRGBMode)
-	: m_handle		( NULL )
-	, m_width		( 0 )
-	, m_height		( 0 )
-	, m_d3d			( NULL )
-	, m_d3d_device	( NULL )
-	, m_squareMaxCount	( squareMaxCount )
-	, m_projection	( PROJECTION_TYPE_PERSPECTIVE )
-	, m_renderer	( NULL )
+		if (backgroundData != nullptr)
+		{
+			textureLoader->Unload(backgroundData);
+			backgroundData = nullptr;
+		}
 
-	, RateOfMagnification	( 1.0f )
+		ES_SAFE_DELETE(textureLoader);
 
-	, m_grid	( NULL )
-	, m_guide	( NULL )
-	, m_culling	( NULL )
-	, m_background	( NULL )
+		ES_SAFE_DELETE(m_guide);
+		ES_SAFE_DELETE(m_grid);
+		ES_SAFE_DELETE(m_culling);
 
-	, GuideWidth	( 100 )
-	, GuideHeight	( 100 )
-	, RendersGuide	( false )
+		ES_SAFE_DELETE(m_background);
 
-	, IsGridShown	( true )
-
-	, IsGridXYShown	( false )
-	, IsGridXZShown	( true )
-	, IsGridYZShown	( false )
-
-	, IsRightHand	( true )
-	, GridLength	( 2.0f )
-
-	, IsCullingShown	(false)
-	, CullingRadius		(0.0f)
-	, CullingPosition	()
-
-	, Distortion		(eDistortionType::DistortionType_Current)
-
-	, m_recording		( false )
-	, m_recordingTarget	( NULL )
-	, m_recordingTargetTexture	( NULL )
-	, m_recordingDepth	( NULL )
-	, m_recordingTempTarget	( NULL )
-	, m_recordingTempDepth	( NULL )
-
-	, m_backGroundTexture	( NULL )
-
-	, m_isSRGBMode(isSRGBMode)
-
-	, BackgroundColor		( 0, 0, 0, 255 )
-	, GridColor				( 255, 255, 255, 255 )
-	, IsBackgroundTranslucent	( false )
-{
-
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Renderer::~Renderer()
-{
-	assert( !m_recording );
-
-	ES_SAFE_RELEASE( m_backGroundTexture );
-
-	ES_SAFE_RELEASE(m_renderTarget);
-	ES_SAFE_RELEASE(m_renderTargetTexture);
-	ES_SAFE_RELEASE(m_renderTargetDepth);
-
-	ES_SAFE_RELEASE(m_renderEffectBackTarget);
-	ES_SAFE_RELEASE(m_renderEffectBackTargetTexture);
-
-
-	ES_SAFE_DELETE( m_guide );
-	ES_SAFE_DELETE( m_grid );
-	ES_SAFE_DELETE( m_culling );
-
-	ES_SAFE_DELETE( m_background );
-
-	if( m_renderer != NULL )
-	{
-		m_renderer->Destroy();
-		m_renderer = NULL;
+		ES_SAFE_DELETE(graphics);
 	}
 
-	ES_SAFE_RELEASE( m_d3d_device );
-	ES_SAFE_RELEASE( m_d3d );
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool Renderer::Initialize( HWND handle, int width, int height )
 {
-	HRESULT hr;
-
-	D3DPRESENT_PARAMETERS d3dp;
-	ZeroMemory(&d3dp, sizeof(d3dp));
-	d3dp.BackBufferWidth = width;
-	d3dp.BackBufferHeight = height;
-	d3dp.BackBufferFormat = D3DFMT_X8R8G8B8;
-    d3dp.BackBufferCount = 1;      
-	d3dp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dp.Windowed = TRUE;
-	d3dp.hDeviceWindow = handle;
-	d3dp.EnableAutoDepthStencil = TRUE;
-    d3dp.AutoDepthStencilFormat = D3DFMT_D16;
-
-	m_d3d = Direct3DCreate9(D3D_SDK_VERSION);
-	if( m_d3d == NULL ) return false;
-
-	D3DDEVTYPE	deviceTypes[4];
-	DWORD	flags[4];
-	
-	deviceTypes[0] = D3DDEVTYPE_HAL;
-	flags[0] = D3DCREATE_HARDWARE_VERTEXPROCESSING;
-	deviceTypes[1] = D3DDEVTYPE_HAL;
-	flags[1] = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-	deviceTypes[2] = D3DDEVTYPE_REF;
-	flags[2] = D3DCREATE_HARDWARE_VERTEXPROCESSING;
-	deviceTypes[3] = D3DDEVTYPE_REF;
-	flags[3] = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-
-	for( int ind = 0; ind < 4; ind++ )
+	if (!graphics->Initialize(handle, width, height, m_isSRGBMode, m_squareMaxCount))
 	{
-		hr = m_d3d->CreateDevice( 
-			D3DADAPTER_DEFAULT,
-			deviceTypes[ind],
-			handle,
-			flags[ind],
-			&d3dp,
-			&m_d3d_device );
-		if( SUCCEEDED( hr ) ) break;
-	}
-
-	if( FAILED( hr ) )
-	{
-		ES_SAFE_RELEASE( m_d3d_device );
-		ES_SAFE_RELEASE( m_d3d );
 		return false;
 	}
+
+	HRESULT hr;
 
 	m_handle = handle;
 	m_width = width;
 	m_height = height;
 
-	m_distortionCallback = new DistortingCallback(this);
-	m_renderer = (::EffekseerRendererDX9::RendererImplemented*)::EffekseerRendererDX9::Renderer::Create( m_d3d_device, m_squareMaxCount );
+	m_distortionCallback = new DistortingCallback(graphics);
+	m_renderer = graphics->GetRenderer();
 	m_renderer->SetDistortingCallback(m_distortionCallback);
 
 	// グリッド生成
-	m_grid = ::EffekseerRenderer::Grid::Create( m_renderer );
+	m_grid = ::EffekseerRenderer::Grid::Create(graphics);
 
 	// ガイド作成
-	m_guide = ::EffekseerRenderer::Guide::Create( m_renderer );
+	m_guide = ::EffekseerRenderer::Guide::Create(graphics);
 
-	m_culling = ::EffekseerRenderer::Culling::Create( m_renderer );
+	m_culling = ::EffekseerRenderer::Culling::Create(graphics);
 
 	// 背景作成
-	m_background = ::EffekseerRenderer::Paste::Create( m_renderer );
+	m_background = ::EffekseerRenderer::Paste::Create(graphics);
 
 
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
@@ -332,129 +151,44 @@ bool Renderer::Initialize( HWND handle, int width, int height )
 		SetOrthographic( width, height );
 	}
 
-	GenerateRenderTargets(m_width, m_height);
+	textureLoader = graphics->GetRenderer()->CreateTextureLoader();
 
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-LPDIRECT3DDEVICE9 Renderer::GetDevice()
-{
-	return m_d3d_device;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool Renderer::Present()
 {
-	HRESULT hr;
-
-	// ガンマ
-	if (m_isSRGBMode)
-	{
-		IDirect3DSwapChain9* swapChain = nullptr;
-		m_d3d_device->GetSwapChain(0, &swapChain);
-		
-		hr = swapChain->Present(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_LINEAR_CONTENT);
-		
-		ES_SAFE_RELEASE(swapChain);
-	}
-	else
-	{
-		hr = m_d3d_device->Present(NULL, NULL, NULL, NULL);
-	}
-
-	switch ( hr )
-	{
-		// ドライバ内部の意味不明なエラー
-	case D3DERR_DRIVERINTERNALERROR:
-		return false;
-
-		// デバイスロスト
-	case D3DERR_DEVICELOST:
-		while ( FAILED( hr = m_d3d_device->TestCooperativeLevel() ) )
-		{
-			switch ( hr )
-			{
-				// デバイスロスト
-			case D3DERR_DEVICELOST:
-				::SleepEx( 1000, true );
-				break;
-				// デバイスロスト：リセット可
-			case D3DERR_DEVICENOTRESET:
-				ResetDevice();
-				break;
-			}
-		}
-		break;
-	}
-
-	return true;
+	return graphics->Present();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Renderer::ResetDevice()
 {
-	GenerateRenderTargets(0, 0);
-	ES_SAFE_RELEASE(m_backGroundTexture);
+	if (backgroundData != nullptr)
+	{
+		textureLoader->Unload(backgroundData);
+		backgroundData = nullptr;
+	}
 
 	if (LostedDevice != nullptr)
 	{
 		LostedDevice();
 	}
 
-	m_renderer->OnLostDevice();
-
-	HRESULT hr;
-
-	D3DPRESENT_PARAMETERS d3dp;
-	ZeroMemory(&d3dp, sizeof(d3dp));
-	d3dp.BackBufferWidth = m_width;
-	d3dp.BackBufferHeight = m_height;
-	d3dp.BackBufferFormat = D3DFMT_X8R8G8B8;
-    d3dp.BackBufferCount = 1;      
-	d3dp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dp.Windowed = TRUE;
-	d3dp.hDeviceWindow = m_handle;
-	d3dp.EnableAutoDepthStencil = TRUE;
-    d3dp.AutoDepthStencilFormat = D3DFMT_D16;
-
-
-	hr = m_d3d_device->Reset( &d3dp );
-
-	if( FAILED( hr ) )
-	{
-		assert(0);
-		return;
-	}
-
-	m_renderer->OnResetDevice();
+	graphics->ResetDevice();
 
 	if (ResettedDevice != nullptr)
 	{
 		ResettedDevice();
 	}
 
-	LoadBackgroundImageInternal(m_backGroundTextureBuffer.data(), m_backGroundTextureBuffer.size());
-	GenerateRenderTargets(m_width, m_height);
+	backgroundData = textureLoader->Load(backgroundPath.c_str(), Effekseer::TextureType::Color);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 eProjectionType Renderer::GetProjectionType()
 {
 	return m_projection;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Renderer::SetProjectionType( eProjectionType type )
 {
 	m_projection = type;
@@ -469,21 +203,18 @@ void Renderer::SetProjectionType( eProjectionType type )
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Renderer::SetPerspectiveFov( int width, int height )
 {
 	::Effekseer::Matrix44 proj;
 
 	if( IsRightHand )
 	{
-		// 右手
+		// Right hand coordinate
 		proj.PerspectiveFovRH( 60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f );
 	}
 	else
 	{
-		// 左手
+		// Left hand coordinate
 		proj.PerspectiveFovLH( 60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f );
 	}
 
@@ -493,31 +224,24 @@ void Renderer::SetPerspectiveFov( int width, int height )
 	m_renderer->SetProjectionMatrix( proj );
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Renderer::SetOrthographic( int width, int height )
 {
 	::Effekseer::Matrix44 proj;
 
 	if( IsRightHand )
 	{
-		// 右手
+		// Right hand coordinate
 		proj.OrthographicRH( (float)width / 16.0f / RateOfMagnification, (float)height / 16.0f / RateOfMagnification, 1.0f, 300.0f );
 	}
 	else
 	{
-		// 左手
+		// Left hand coordinate
 		proj.OrthographicLH( (float)width / 16.0f / RateOfMagnification, (float)height / 16.0f / RateOfMagnification, 1.0f, 300.0f );
 	}
 
 	m_renderer->SetProjectionMatrix( proj );
 }
 
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool Renderer::Resize( int width, int height )
 {
 	m_width = width;
@@ -532,14 +256,13 @@ bool Renderer::Resize( int width, int height )
 		SetOrthographic( width, height );
 	}
 
+	graphics->Resize(width, height);
+
 	ResetDevice();
 
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Renderer::RecalcProjection()
 {
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
@@ -552,44 +275,35 @@ void Renderer::RecalcProjection()
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool Renderer::BeginRendering()
 {
-	assert( m_d3d_device != NULL );
-
 	HRESULT hr;
+
+	graphics->BeginScene();
 
 	if (!m_recording)
 	{
-		GetDevice()->GetRenderTarget(0, &m_renderDefaultTarget);
-		GetDevice()->GetDepthStencilSurface(&m_renderDefaultDepth);
-		
-		GetDevice()->SetRenderTarget(0, m_renderTarget);
-		GetDevice()->SetDepthStencilSurface(m_renderTargetDepth);
-
-		m_d3d_device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
+		graphics->Clear(Effekseer::Color(0, 0, 0, 0));
 	}
 
 	if( m_recording && IsBackgroundTranslucent )
 	{
-		m_d3d_device->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(0,0,0,0), 1.0f, 0 );
+		graphics->Clear(Effekseer::Color(0, 0, 0, 0));
 	}
 	else
 	{
-		m_d3d_device->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(BackgroundColor.R,BackgroundColor.G,BackgroundColor.B), 1.0f, 0 );
+		graphics->Clear(Effekseer::Color(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B, 255));
 	}
 
-	hr = m_d3d_device->BeginScene();
-
-	if( FAILED( hr ) ) return false;
-
 	/* 背景 */
-	if( !m_recording && m_backGroundTexture != NULL )
+	if( !m_recording && backgroundData != nullptr)
 	{
 		// 値は適当(背景は画面サイズと一致しないので問題ない)
-		m_background->Rendering(m_backGroundTexture, 1024, 1024);
+		m_background->Rendering((IDirect3DTexture9*)backgroundData->UserPtr, 1024, 1024);
+	}
+	else if(!m_recording)
+	{
+		m_background->Rendering(nullptr, 1024, 1024);
 	}
 
 	if( !m_recording && IsGridShown )
@@ -626,16 +340,21 @@ bool Renderer::BeginRendering()
 		m_renderer->SetProjectionMatrix(proj);
 	}
 
-	if (m_isSRGBMode)
-	{
-		GetDevice()->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
-	}
-
 	// Distoriton
 	if (Distortion == eDistortionType::DistortionType_Current)
 	{
-		auto texture = ExportBackground();
-		m_renderer->SetBackground(texture);
+		graphics->CopyToBackground();
+
+		if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
+		{
+			auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
+		}
+		else
+		{
+			auto r = (::EffekseerRendererDX9::Renderer*)graphics->GetRenderer();
+			r->SetBackground((IDirect3DTexture9*)graphics->GetBack());
+		}
+		
 		m_distortionCallback->Blit = false;
 		m_distortionCallback->IsEnabled = true;
 	}
@@ -646,8 +365,17 @@ bool Renderer::BeginRendering()
 	}
 	else
 	{
+		if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
+		{
+			auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
+		}
+		else
+		{
+			auto r = (EffekseerRendererDX9::RendererImplemented*)m_renderer;
+			r->SetBackground(nullptr);
+		}
+
 		m_distortionCallback->Blit = false;
-		m_renderer->SetBackground(nullptr);
 		m_distortionCallback->IsEnabled = false;
 	}
 
@@ -656,20 +384,9 @@ bool Renderer::BeginRendering()
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool Renderer::EndRendering()
 {
-	assert( m_d3d != NULL );
-	assert( m_d3d_device != NULL );
-
 	m_renderer->EndRendering();
-
-	if (m_isSRGBMode)
-	{
-		GetDevice()->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
-	}
 
 	if( RendersGuide && !m_recording )
 	{
@@ -678,15 +395,16 @@ bool Renderer::EndRendering()
 
 	if (!m_recording)
 	{
-		GetDevice()->SetRenderTarget(0, m_renderDefaultTarget);
-		GetDevice()->SetDepthStencilSurface(m_renderDefaultDepth);
-		ES_SAFE_RELEASE(m_renderDefaultTarget);
-		ES_SAFE_RELEASE(m_renderDefaultDepth);
-		
-		m_d3d_device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
-		m_background->Rendering(m_renderTargetTexture, m_width, m_height);
+		if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
+		{
+			auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
+		}
+		else
+		{
+			auto r = (EffekseerRendererDX9::RendererImplemented*)m_renderer;
+			r->SetBackground(nullptr);
+		}
 
-		m_renderer->SetBackground(nullptr);
 	}
 
 	if (m_recording)
@@ -695,206 +413,93 @@ bool Renderer::EndRendering()
 		m_renderer->SetProjectionMatrix(m_projMatTemp);
 	}
 	
-	m_d3d_device->EndScene();
+	graphics->EndScene();
+
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-IDirect3DTexture9* Renderer::ExportBackground()
-{
-	IDirect3DSurface9* tempRender = nullptr;
-	IDirect3DSurface9* tempDepth = nullptr;
-
-	GetDevice()->GetRenderTarget(0, &tempRender);
-	GetDevice()->GetDepthStencilSurface(&tempDepth);
-
-	GetDevice()->SetRenderTarget(0, m_renderEffectBackTarget);
-	GetDevice()->SetDepthStencilSurface(nullptr);
-	
-	m_d3d_device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
-
-	if (m_recording)
-	{
-		m_background->Rendering(m_recordingTargetTexture, m_recordingWidth, m_recordingHeight);
-	}
-	else
-	{
-		m_background->Rendering(m_renderTargetTexture, m_width, m_height);
-	}
-
-	GetDevice()->SetRenderTarget(0, tempRender);
-	GetDevice()->SetDepthStencilSurface(tempDepth);
-
-	ES_SAFE_RELEASE(tempRender);
-	ES_SAFE_RELEASE(tempDepth);
-
-	return m_renderEffectBackTargetTexture;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool Renderer::BeginRecord( int32_t width, int32_t height )
 {
 	assert( !m_recording );
-	assert( m_recordingTempTarget == NULL );
-	assert( m_recordingTempDepth == NULL );
-
+	
 	m_recordingWidth = width;
 	m_recordingHeight = height;
 
-	GenerateRenderTargets(m_recordingWidth, m_recordingHeight);
+	graphics->BeginRecord(m_recordingWidth, m_recordingHeight);
 
-	HRESULT hr;
-
-	hr = GetDevice()->CreateTexture( width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_recordingTargetTexture, NULL );
-	if( FAILED( hr ) ) return false;
-
-	m_recordingTargetTexture->GetSurfaceLevel( 0, &m_recordingTarget );
-
-	GetDevice()->CreateDepthStencilSurface( width, height, D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, TRUE, &m_recordingDepth, NULL );
-
-	if( m_recordingTarget == NULL || m_recordingDepth == NULL )
-	{
-		ES_SAFE_RELEASE( m_recordingTarget );
-		ES_SAFE_RELEASE( m_recordingTargetTexture );
-		ES_SAFE_RELEASE( m_recordingDepth );
-		return false;
-	}
-
-	GetDevice()->GetRenderTarget( 0, &m_recordingTempTarget );
-	GetDevice()->GetDepthStencilSurface( &m_recordingTempDepth );
-
-	GetDevice()->SetRenderTarget( 0, m_recordingTarget );
-	GetDevice()->SetDepthStencilSurface( m_recordingDepth );
-	
 	m_recording = true;
 
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlpha, bool removeAlpha)
 {
 	assert(m_recording);
 
-	pixels.resize(m_recordingWidth * m_recordingHeight);
+	graphics->EndRecord(pixels);
 
-	GetDevice()->SetRenderTarget(0, m_recordingTempTarget);
-	GetDevice()->SetDepthStencilSurface(m_recordingTempDepth);
-	ES_SAFE_RELEASE(m_recordingTempTarget);
-	ES_SAFE_RELEASE(m_recordingTempDepth);
-
-	IDirect3DSurface9*	temp_sur = nullptr;
-	//IDirect3DTexture9*	temp_tex = nullptr;
-
-	GetDevice()->CreateOffscreenPlainSurface(
-		m_recordingWidth, m_recordingHeight, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &temp_sur, NULL);
-	//temp_tex->GetSurfaceLevel(0, &temp_sur);
-
-	GetDevice()->GetRenderTargetData(m_recordingTarget, temp_sur);
-
-	D3DLOCKED_RECT drect;
-	RECT rect;
-	rect.top = 0;
-	rect.left = 0;
-	rect.right = m_recordingWidth;
-	rect.bottom = m_recordingHeight;
-
-	auto hr = temp_sur->LockRect(&drect, &rect, D3DLOCK_READONLY);
-	if (SUCCEEDED(hr))
+	auto f2b = [](float v) -> uint8_t
 	{
-		auto f2b = [](float v) -> uint8_t
-		{
-			auto v_ = v * 255;
-			if (v_ > 255) v_ = 255;
-			if (v_ < 0) v_ = 0;
-			return v_;
-		};
+		auto v_ = v * 255;
+		if (v_ > 255) v_ = 255;
+		if (v_ < 0) v_ = 0;
+		return v_;
+	};
 
-		auto b2f = [](uint8_t v) -> float
-		{
-			auto v_ = (float)v / 255.0f;
-			return v_;
-		};
+	auto b2f = [](uint8_t v) -> float
+	{
+		auto v_ = (float)v / 255.0f;
+		return v_;
+	};
 
-		// 強制透明化
-		for (int32_t y = 0; y < m_recordingHeight; y++)
+	// 強制透明化
+	for (int32_t i = 0; i < m_recordingWidth * m_recordingHeight; i++)
+	{
+		if (generateAlpha)
 		{
-			for (int32_t x = 0; x < m_recordingWidth; x++)
+			auto rf = b2f(pixels[i].R);
+			auto gf = b2f(pixels[i].G);
+			auto bf = b2f(pixels[i].B);
+			auto oaf = b2f(pixels[i].A);
+
+			rf = rf * oaf;
+			gf = gf * oaf;
+			bf = bf * oaf;
+
+			auto af = rf;
+			af = Effekseer::Max(af, gf);
+			af = Effekseer::Max(af, bf);
+
+			if (af > 0.0f)
 			{
-				auto src = &(((uint8_t*) drect.pBits)[x * 4 + drect.Pitch * y]);
-				pixels[x + m_recordingWidth * y].A = src[3];
-				pixels[x + m_recordingWidth * y].R = src[2];
-				pixels[x + m_recordingWidth * y].G = src[1];
-				pixels[x + m_recordingWidth * y].B = src[0];
-				
-				if (generateAlpha)
-				{
-					auto rf = b2f(pixels[x + m_recordingWidth * y].R);
-					auto gf = b2f(pixels[x + m_recordingWidth * y].G);
-					auto bf = b2f(pixels[x + m_recordingWidth * y].B);
-					auto oaf = b2f(pixels[x + m_recordingWidth * y].A);
-
-					rf = rf * oaf;
-					gf = gf * oaf;
-					bf = bf * oaf;
-
-					auto af = rf;
-					af = Effekseer::Max(af, gf);
-					af = Effekseer::Max(af, bf);
-
-					if (af > 0.0f)
-					{
-						pixels[x + m_recordingWidth * y].R = f2b(rf / af);
-						pixels[x + m_recordingWidth * y].G = f2b(gf / af);
-						pixels[x + m_recordingWidth * y].B = f2b(bf / af);
-					}
-
-					pixels[x + m_recordingWidth * y].A = f2b(af);
-				}
-
-				if (removeAlpha)
-				{
-					pixels[x + m_recordingWidth * y].A = 255;
-				}
+				pixels[i].R = f2b(rf / af);
+				pixels[i].G = f2b(gf / af);
+				pixels[i].B = f2b(bf / af);
 			}
+
+			pixels[i].A = f2b(af);
 		}
 
-		temp_sur->UnlockRect();
+		if (removeAlpha)
+		{
+			pixels[i].A = 255;
+		}
 	}
-
-	ES_SAFE_RELEASE(temp_sur);
-	//ES_SAFE_RELEASE(temp_tex);
-
-	ES_SAFE_RELEASE(m_recordingTarget);
-	ES_SAFE_RELEASE(m_recordingTargetTexture);
-	ES_SAFE_RELEASE(m_recordingDepth);
-
-	GenerateRenderTargets(m_width, m_height);
 
 	m_recording = false;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Renderer::LoadBackgroundImage( void* data, int32_t size )
+void Renderer::LoadBackgroundImage(const char16_t* path)
 {
-	m_backGroundTextureBuffer.resize(size);
-	memcpy(m_backGroundTextureBuffer.data(), data, size);
+	backgroundPath = path;
+	
+	if (backgroundData != nullptr)
+	{
+		textureLoader->Unload(backgroundData);
+		backgroundData = nullptr;
+	}
 
-	LoadBackgroundImageInternal(m_backGroundTextureBuffer.data(), m_backGroundTextureBuffer.size());
+	backgroundData = textureLoader->Load(path, Effekseer::TextureType::Color);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 }
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------

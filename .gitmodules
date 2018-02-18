@@ -4,3 +4,6 @@
 [submodule "Downloads/OpenSoundMixer"]
 	path = Downloads/OpenSoundMixer
 	url = https://github.com/altseed/OpenSoundMixer
+[submodule "Downloads/glfw"]
+	path = Downloads/glfw
+	url = https://github.com/glfw/glfw

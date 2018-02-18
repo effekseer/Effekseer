@@ -4,11 +4,9 @@
 namespace EffekseerRenderer
 {
 
-Paste::Paste( EffekseerRendererDX9::RendererImplemented* renderer)
-	: DeviceObject( renderer )
-	, m_renderer	( renderer )
+Paste::Paste(efk::Graphics* graphics)
 {
-	imageRenderer = new efk::ImageRendererDX9(renderer);
+	imageRenderer = efk::ImageRenderer::Create(graphics);
 }
 
 Paste::~Paste()
@@ -16,25 +14,12 @@ Paste::~Paste()
 	ES_SAFE_DELETE(imageRenderer);
 }
 
-Paste* Paste::Create( EffekseerRendererDX9::RendererImplemented* renderer )
+Paste* Paste::Create(efk::Graphics* graphics)
 {
-	assert( renderer != NULL );
-	assert( renderer->GetDevice() != NULL );
-
-	return new Paste( renderer );
+	return new Paste(graphics);
 }
 
-void Paste::OnLostDevice()
-{
-	imageRenderer->OnLostDevice();
-}
-
-void Paste::OnResetDevice()
-{
-	imageRenderer->OnResetDevice();
-}
-
-void Paste::Rendering(IDirect3DTexture9* texture, int32_t width, int32_t height)
+void Paste::Rendering(void* texture, int32_t width, int32_t height)
 {
 	if (texture == nullptr) return;
 

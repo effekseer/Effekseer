@@ -9,9 +9,12 @@
 #include <EffekseerRenderer/EffekseerRendererDX9.Shader.h>
 #include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 
+#include "../../efk.LineRenderer.h"
+
 namespace efk
 {
 	class LineRendererDX9
+		: public LineRenderer
 	{
 	private:
 		EffekseerRendererDX9::RendererImplemented*	renderer = nullptr;
@@ -23,14 +26,14 @@ namespace efk
 		LineRendererDX9(EffekseerRenderer::Renderer* renderer);
 		virtual ~LineRendererDX9();
 
-		void DrawLine(const Effekseer::Vector3D& p1, const Effekseer::Vector3D& p2, const Effekseer::Color& c);
+		void DrawLine(const Effekseer::Vector3D& p1, const Effekseer::Vector3D& p2, const Effekseer::Color& c) override;
 
-		void Render();
+		void Render() override;
 
-		void ClearCache();
+		void ClearCache() override;
 
-		void OnLostDevice();
+		void OnLostDevice() override;
 
-		void OnResetDevice();
+		void OnResetDevice() override;
 	};
 }

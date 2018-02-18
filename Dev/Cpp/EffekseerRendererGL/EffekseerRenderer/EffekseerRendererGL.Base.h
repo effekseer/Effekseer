@@ -24,6 +24,11 @@
 
 #include <memory>
 
+#if _WIN32
+#include <GL/glu.h>
+#elif EMSCRIPTEN
+#include <emscripten.h>
+#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -52,7 +57,6 @@ class RibbonRenderer;
 class TextureLoader;
 
 #if _WIN32
-#include <GL/glu.h>
 #pragma comment(lib, "glu32.lib")
 #ifdef _DEBUG
 #define GLCheckError()		{ int __code = glGetError(); if(__code != GL_NO_ERROR) { printf("GLError filename = %s , line = %d, error = %s\n", __FILE__, __LINE__, (const char*)gluErrorString(__code) ); }  }
@@ -61,7 +65,6 @@ class TextureLoader;
 #endif
 #elif EMSCRIPTEN
 #ifdef _DEBUG
-#include  <emscripten.h>
 #define GLCheckError()		{ int __code = glGetError(); if(__code != GL_NO_ERROR) { EM_ASM_ARGS({console.log("GLError filename = " + Pointer_stringify($0) + " , line = " + $1);}, __FILE__, __LINE__); } }
 #else
 #define GLCheckError()

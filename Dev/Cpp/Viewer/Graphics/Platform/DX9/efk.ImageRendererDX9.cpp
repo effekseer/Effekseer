@@ -22,6 +22,7 @@ namespace efk
 	}
 
 	ImageRendererDX9::ImageRendererDX9(EffekseerRenderer::Renderer* renderer)
+		: ImageRenderer(renderer)
 	{
 		this->renderer = (EffekseerRendererDX9::RendererImplemented*)renderer;
 
@@ -52,9 +53,9 @@ namespace efk
 			decl);
 
 		shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-		shader->SetVertexRegisterCount(8);
+		((EffekseerRendererDX9::Shader*)shader)->SetVertexRegisterCount(8);
 		shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-		shader_no_texture->SetVertexRegisterCount(8);
+		((EffekseerRendererDX9::Shader*)shader_no_texture)->SetVertexRegisterCount(8);
 
 	}
 

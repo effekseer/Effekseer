@@ -29,9 +29,6 @@ namespace EffekseerRenderer
 		virtual void* GetVertexConstantBuffer() = 0;
 		virtual void* GetPixelConstantBuffer() = 0;
 
-		virtual void SetVertexRegisterCount(int32_t count) = 0;
-		virtual void SetPixelRegisterCount(int32_t count) = 0;
-
 		virtual void SetConstantBuffer() = 0;
 	};
 

@@ -22,6 +22,7 @@ namespace efk
 	}
 
 	LineRendererDX9::LineRendererDX9(EffekseerRenderer::Renderer* renderer)
+		: LineRenderer(renderer)
 	{
 		this->renderer = (EffekseerRendererDX9::RendererImplemented*)renderer;
 
@@ -45,7 +46,7 @@ namespace efk
 			decl);
 
 		shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-		shader->SetVertexRegisterCount(8);
+		((EffekseerRendererDX9::Shader*)shader)->SetVertexRegisterCount(8);
 	}
 
 	LineRendererDX9::~LineRendererDX9()
