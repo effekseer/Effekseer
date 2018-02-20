@@ -1,15 +1,18 @@
 
-#include "efk.GraphicsDX9.h"
+#include "efk.GraphicsGL.h"
+
+#include <EffekseerRenderer/EffekseerRendererGL.GLExtension.h>
 
 namespace efk
 {
-	GraphicsDX9::GraphicsDX9()
+	GraphicsGL::GraphicsGL()
 	{
 
 	}
 
-	GraphicsDX9::~GraphicsDX9()
+	GraphicsGL::~GraphicsGL()
 	{
+		/*
 		if (renderer != nullptr)
 		{
 			renderer->Destroy();
@@ -24,70 +27,32 @@ namespace efk
 
 		ES_SAFE_RELEASE(d3d_device);
 		ES_SAFE_RELEASE(d3d);
+		*/
 	}
 
-	bool GraphicsDX9::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount)
+	bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount)
 	{
-		HRESULT hr;
-
-		D3DPRESENT_PARAMETERS d3dp;
-		ZeroMemory(&d3dp, sizeof(d3dp));
-		d3dp.BackBufferWidth = windowWidth;
-		d3dp.BackBufferHeight = windowHeight;
-		d3dp.BackBufferFormat = D3DFMT_X8R8G8B8;
-		d3dp.BackBufferCount = 1;
-		d3dp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		d3dp.Windowed = TRUE;
-		d3dp.hDeviceWindow = (HWND)windowHandle;
-		d3dp.EnableAutoDepthStencil = TRUE;
-		d3dp.AutoDepthStencilFormat = D3DFMT_D16;
-
-		d3d = Direct3DCreate9(D3D_SDK_VERSION);
-		if (d3d == NULL) return false;
-
-		D3DDEVTYPE	deviceTypes[4];
-		DWORD	flags[4];
-
-		deviceTypes[0] = D3DDEVTYPE_HAL;
-		flags[0] = D3DCREATE_HARDWARE_VERTEXPROCESSING;
-		deviceTypes[1] = D3DDEVTYPE_HAL;
-		flags[1] = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-		deviceTypes[2] = D3DDEVTYPE_REF;
-		flags[2] = D3DCREATE_HARDWARE_VERTEXPROCESSING;
-		deviceTypes[3] = D3DDEVTYPE_REF;
-		flags[3] = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-
-		for (int ind = 0; ind < 4; ind++)
-		{
-			hr = d3d->CreateDevice(
-				D3DADAPTER_DEFAULT,
-				deviceTypes[ind],
-				(HWND)windowHandle,
-				flags[ind],
-				&d3dp,
-				&d3d_device);
-			if (SUCCEEDED(hr)) break;
-		}
-
-		if (FAILED(hr))
-		{
-			ES_SAFE_RELEASE(d3d_device);
-			ES_SAFE_RELEASE(d3d);
-			return false;
-		}
-
 		this->isSRGBMode = isSRGBMode;
-		this->windowHandle = windowHandle;
+
 		this->windowWidth = windowWidth;
 		this->windowHeight = windowHeight;
 
-		renderer = ::EffekseerRendererDX9::Renderer::Create(d3d_device, spriteCount);
+		renderer = ::EffekseerRendererGL::Renderer::Create(spriteCount, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
 
+		if (this->isSRGBMode)
+		{
+			glEnable(GL_FRAMEBUFFER_SRGB);
+		}
+
+		// TODO
+		// create VAO
 		return true;
 	}
 
-	void GraphicsDX9::CopyToBackground()
+	void GraphicsGL::CopyToBackground()
 	{
+		return;
+		/*
 		bool ret = false;
 
 		HRESULT hr;
@@ -159,89 +124,37 @@ namespace efk
 	Exit:;
 		ES_SAFE_RELEASE(tempRender);
 		ES_SAFE_RELEASE(tempDepth);
+		*/
 	}
 
-	void GraphicsDX9::Resize(int32_t width, int32_t height)
+	void GraphicsGL::Resize(int32_t width, int32_t height)
 	{
 		this->windowWidth = width;
 		this->windowHeight = height;
 		ResetDevice();
 	}
 
-	bool GraphicsDX9::Present()
+	bool GraphicsGL::Present()
 	{
-		HRESULT hr;
-
-		// gamma
-		if (isSRGBMode)
-		{
-			IDirect3DSwapChain9* swapChain = nullptr;
-			d3d_device->GetSwapChain(0, &swapChain);
-
-			hr = swapChain->Present(nullptr, nullptr, nullptr, nullptr, D3DPRESENT_LINEAR_CONTENT);
-
-			ES_SAFE_RELEASE(swapChain);
-		}
-		else
-		{
-			hr = d3d_device->Present(NULL, NULL, NULL, NULL);
-		}
-
-		switch (hr)
-		{
-			// cause an unknown error
-		case D3DERR_DRIVERINTERNALERROR:
-			return false;
-
-			// device lost
-		case D3DERR_DEVICELOST:
-			while (FAILED(hr = d3d_device->TestCooperativeLevel()))
-			{
-				switch (hr)
-				{
-					// device lost
-				case D3DERR_DEVICELOST:
-					::SleepEx(1000, true);
-					break;
-					// device lost : reset
-				case D3DERR_DEVICENOTRESET:
-					ResetDevice();
-					break;
-				}
-			}
-			break;
-		}
-
 		if (Presented != nullptr)
 		{
 			Presented();
 		}
-
+		
 		return true;
 	}
 
-	void GraphicsDX9::BeginScene()
+	void GraphicsGL::BeginScene()
 	{
-		d3d_device->BeginScene();
-
-		if (isSRGBMode)
-		{
-			d3d_device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
-		}
 	}
 
-	void GraphicsDX9::EndScene()
+	void GraphicsGL::EndScene()
 	{
-		if (isSRGBMode)
-		{
-			d3d_device->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, FALSE);
-		}
-
-		d3d_device->EndScene();
 	}
 
-	void GraphicsDX9::BeginRecord(int32_t width, int32_t height)
+	void GraphicsGL::BeginRecord(int32_t width, int32_t height)
 	{
+		/*
 		HRESULT hr;
 
 		hr = d3d_device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &recordingTargetTexture, NULL);
@@ -259,10 +172,12 @@ namespace efk
 
 		d3d_device->SetRenderTarget(0, recordingTarget);
 		d3d_device->SetDepthStencilSurface(recordingDepth);
+		*/
 	}
 
-	void GraphicsDX9::EndRecord(std::vector<Effekseer::Color>& pixels)
+	void GraphicsGL::EndRecord(std::vector<Effekseer::Color>& pixels)
 	{
+		/*
 		pixels.resize(recordingWidth * recordingHeight);
 
 		d3d_device->SetRenderTarget(0, renderDefaultTarget);
@@ -307,24 +222,48 @@ namespace efk
 		ES_SAFE_RELEASE(recordingTarget);
 		ES_SAFE_RELEASE(recordingTargetTexture);
 		ES_SAFE_RELEASE(recordingDepth);
+		*/
 	}
 
-	void GraphicsDX9::Clear(Effekseer::Color color)
+	void GraphicsGL::Clear(Effekseer::Color color)
 	{
-		d3d_device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(color.R, color.G, color.B, color.A), 1.0f, 0);
+		GLbitfield bit = 0;
+		{
+			bit = bit | GL_COLOR_BUFFER_BIT;
+			glClearColor(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
+		}
+
+		{
+			// Need that GL_DEPTH_TEST & WRITE are enabled
+			glEnable(GL_DEPTH_TEST);
+			glDepthMask(GL_TRUE);
+
+			bit = bit | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+			glClearDepth(1.0f);
+		}
+
+		if (bit != 0)
+		{
+			glClear(bit);
+		}
+
+		GLCheckError();
 	}
 
-	void GraphicsDX9::ResetDevice()
+	void GraphicsGL::ResetDevice()
 	{
-		ES_SAFE_RELEASE(backTarget);
-		ES_SAFE_RELEASE(backTargetTexture);
-
 		renderer->OnLostDevice();
 
 		if (LostedDevice != nullptr)
 		{
 			LostedDevice();
 		}
+
+		/*
+		ES_SAFE_RELEASE(backTarget);
+		ES_SAFE_RELEASE(backTargetTexture);
+
+		
 
 		HRESULT hr;
 
@@ -347,6 +286,7 @@ namespace efk
 			assert(0);
 			return;
 		}
+		*/
 
 		if (ResettedDevice != nullptr)
 		{
@@ -356,12 +296,13 @@ namespace efk
 		renderer->OnResetDevice();
 	}
 
-	void* GraphicsDX9::GetBack()
+	void* GraphicsGL::GetBack()
 	{
-		return backTargetTexture;
+		return nullptr;
+		//return backTargetTexture;
 	}
 
-	EffekseerRenderer::Renderer* GraphicsDX9::GetRenderer()
+	EffekseerRenderer::Renderer* GraphicsGL::GetRenderer()
 	{
 		return renderer;
 	}

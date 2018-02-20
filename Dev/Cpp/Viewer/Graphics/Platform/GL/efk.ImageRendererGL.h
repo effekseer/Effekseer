@@ -1,36 +1,36 @@
 #pragma once
 
 #include <Effekseer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.Shader.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
+#include <EffekseerRenderer/EffekseerRendererGL.Renderer.h>
+#include <EffekseerRenderer/EffekseerRendererGL.RendererImplemented.h>
+#include <EffekseerRenderer/EffekseerRendererGL.VertexBuffer.h>
+#include <EffekseerRenderer/EffekseerRendererGL.IndexBuffer.h>
+#include <EffekseerRenderer/EffekseerRendererGL.Shader.h>
+#include <EffekseerRenderer/EffekseerRendererGL.RenderState.h>
 #include "../../efk.ImageRenderer.h"
 
 namespace efk
 {
-	class ImageRendererDX9
+	class ImageRendererGL
 		: public ImageRenderer
 	{
 	private:
 		struct Sprite
 		{
-			std::array<EffekseerRendererDX9::Vertex, 4>	Verteies;
+			std::array<EffekseerRendererGL::Vertex, 4>	Verteies;
 			void*	TexturePtr = nullptr;
 		};
 
-		EffekseerRendererDX9::RendererImplemented*	renderer = nullptr;
+		EffekseerRendererGL::RendererImplemented*	renderer = nullptr;
 		EffekseerRenderer::ShaderBase*				shader = nullptr;
 		EffekseerRenderer::ShaderBase*				shader_no_texture = nullptr;
 
 		std::vector<Sprite>	sprites;
 
 	public:
-		ImageRendererDX9(EffekseerRenderer::Renderer* renderer);
+		ImageRendererGL(EffekseerRenderer::Renderer* renderer);
 
-		virtual ~ImageRendererDX9();
+		virtual ~ImageRendererGL();
 
 		void Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], void* texturePtr) override;
 

@@ -2,11 +2,6 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.Shader.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 #include "EffekseerTool.Grid.h"
 
 //-----------------------------------------------------------------------------------
@@ -18,16 +13,14 @@ namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Grid::Grid( EffekseerRendererDX9::RendererImplemented* renderer)
-	: DeviceObject( renderer )
-	, m_renderer	( renderer )
-	, m_lineCount		( 0 )
+Grid::Grid(efk::Graphics* graphics)
+	: m_lineCount		( 0 )
 	, m_gridLength		( 2.0f )
 	, IsShownXY	( false )
 	, IsShownXZ	( true )
 	, IsShownYZ	( false )
 {
-	lineRenderer = new efk::LineRendererDX9(renderer);
+	lineRenderer = efk::LineRenderer::Create(graphics);
 }
 
 //----------------------------------------------------------------------------------
@@ -41,28 +34,9 @@ Grid::~Grid()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Grid* Grid::Create( EffekseerRendererDX9::RendererImplemented* renderer )
+Grid* Grid::Create(efk::Graphics* graphics)
 {
-	assert( renderer != NULL );
-	assert( renderer->GetDevice() != NULL );
-
-	return new Grid( renderer);
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Grid::OnLostDevice()
-{
-	lineRenderer->OnLostDevice();
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void Grid::OnResetDevice()
-{
-	lineRenderer->OnResetDevice();
+	return new Grid(graphics);
 }
 
 //----------------------------------------------------------------------------------

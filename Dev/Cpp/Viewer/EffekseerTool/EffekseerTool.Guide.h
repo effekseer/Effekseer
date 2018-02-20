@@ -6,7 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "EffekseerTool.Renderer.h"
-#include "../Graphics/Platform/DX9/efk.ImageRendererDX9.h"
+#include "../Graphics/efk.ImageRenderer.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -20,19 +20,14 @@ class Guide
 {
 private:
 	
-	EffekseerRendererDX9::RendererImplemented*			m_renderer;
-	efk::ImageRendererDX9*								imageRenderer = nullptr;
+	efk::ImageRenderer*								imageRenderer = nullptr;
 
-	Guide( EffekseerRendererDX9::RendererImplemented* renderer);
+	Guide(efk::Graphics* graphics);
 public:
 
 	virtual ~Guide();
 
-	static Guide* Create( EffekseerRendererDX9::RendererImplemented* renderer );
-
-public:	// デバイス復旧用
-	virtual void OnLostDevice();
-	virtual void OnResetDevice();
+	static Guide* Create(efk::Graphics* graphics);
 
 public:
 	void Rendering( int32_t width, int32_t height, int32_t guide_width, int32_t guide_height );

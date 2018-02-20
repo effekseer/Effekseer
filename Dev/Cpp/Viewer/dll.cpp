@@ -794,7 +794,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 {
 	m_isSRGBMode = isSRGBMode;
 
-	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode );
+	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode, false);
 	if( g_renderer->Initialize( (HWND)pHandle, width, height ) )
 	{
 		// 関数追加
@@ -1778,6 +1778,8 @@ void Native::SetBackgroundColor( uint8_t r, uint8_t g, uint8_t b )
 //----------------------------------------------------------------------------------
 void Native::SetBackgroundImage( const char16_t* path )
 {
+	g_renderer->LoadBackgroundImage(path);
+	/*
 	FILE* fp_texture = nullptr;
 
 #ifdef _WIN32
@@ -1805,6 +1807,7 @@ void Native::SetBackgroundImage( const char16_t* path )
 	{
 		g_renderer->LoadBackgroundImage( NULL, 0 );
 	}
+	*/
 }
 
 //----------------------------------------------------------------------------------

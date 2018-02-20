@@ -1,25 +1,18 @@
 ﻿
-#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.Shader.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 #include "EffekseerTool.Culling.h"
 
 
 namespace EffekseerRenderer
 {
 
-Culling::Culling( EffekseerRendererDX9::RendererImplemented* renderer)
-	: DeviceObject( renderer )
-	, m_renderer	( renderer )
-	, IsShown		(false)
+Culling::Culling(efk::Graphics* graphics)
+	: IsShown		(false)
 	, Radius		(0.0f)
 	, X				(0.0f)
 	, Y				(0.0f)
 	, Z				(0.0f)
 {
-	lineRenderer = new efk::LineRendererDX9(renderer);
+	lineRenderer = efk::LineRenderer::Create(graphics);
 }
 
 Culling::~Culling()
@@ -27,22 +20,9 @@ Culling::~Culling()
 	ES_SAFE_DELETE(lineRenderer);
 }
 
-Culling* Culling::Create( EffekseerRendererDX9::RendererImplemented* renderer )
+Culling* Culling::Create(efk::Graphics* graphics)
 {
-	assert(renderer != NULL);
-	assert(renderer->GetDevice() != NULL);
-
-	return new Culling( renderer );
-}
-
-void Culling::OnLostDevice()
-{
-	lineRenderer->OnLostDevice();
-}
-
-void Culling::OnResetDevice()
-{
-	lineRenderer->OnResetDevice();
+	return new Culling( graphics );
 }
 
 void Culling::Rendering(bool isRightHand )

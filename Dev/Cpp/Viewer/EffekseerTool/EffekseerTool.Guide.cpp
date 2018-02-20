@@ -1,18 +1,12 @@
 ﻿
-#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.Shader.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 #include "EffekseerTool.Guide.h"
 
 namespace EffekseerRenderer
 {
 
-Guide::Guide( EffekseerRendererDX9::RendererImplemented* renderer)
-	: m_renderer	( renderer )
+Guide::Guide(efk::Graphics* graphics)
 {
-	imageRenderer = new efk::ImageRendererDX9(renderer);
+	imageRenderer = efk::ImageRenderer::Create(graphics);
 }
 
 Guide::~Guide()
@@ -20,21 +14,9 @@ Guide::~Guide()
 	ES_SAFE_DELETE(imageRenderer);
 }
 
-Guide* Guide::Create( EffekseerRendererDX9::RendererImplemented* renderer )
+Guide* Guide::Create(efk::Graphics* graphics)
 {
-	assert( renderer != NULL );
-	assert( renderer->GetDevice() != NULL );
-	return new Guide( renderer );
-}
-
-void Guide::OnLostDevice()
-{
-	imageRenderer->OnLostDevice();
-}
-
-void Guide::OnResetDevice()
-{
-	imageRenderer->OnResetDevice();
+	return new Guide(graphics);
 }
 
 void Guide::Rendering( int32_t width, int32_t height, int32_t guide_width, int32_t guide_height )

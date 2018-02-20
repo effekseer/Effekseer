@@ -8,6 +8,8 @@
 #include "EffekseerRendererGL.RendererImplemented.h"
 #include "EffekseerRendererGL.DeviceObject.h"
 
+#include "../../EffekseerRendererCommon/EffekseerRenderer.ShaderBase.h"
+
 #include <vector>
 #include <string>
 
@@ -54,6 +56,7 @@ enum eConstantType
 //----------------------------------------------------------------------------------
 class Shader
 	: public DeviceObject
+	, public ::EffekseerRenderer::ShaderBase
 {
 private:
 	struct Layout
@@ -144,16 +147,16 @@ public:
 
 	void SetVertexSize(int32_t vertexSize);
 
-	void SetVertexConstantBufferSize(int32_t size);
-	void SetPixelConstantBufferSize(int32_t size);
+	void SetVertexConstantBufferSize(int32_t size) override;
+	void SetPixelConstantBufferSize(int32_t size) override;
 
-	void* GetVertexConstantBuffer() { return m_vertexConstantBuffer; }
-	void* GetPixelConstantBuffer() { return m_pixelConstantBuffer; }
+	void* GetVertexConstantBuffer()  override { return m_vertexConstantBuffer; }
+	void* GetPixelConstantBuffer()  override { return m_pixelConstantBuffer; }
 
 	void AddVertexConstantLayout(eConstantType type, GLint id, int32_t offset);
 	void AddPixelConstantLayout(eConstantType type, GLint id, int32_t offset);
 
-	void SetConstantBuffer();
+	void SetConstantBuffer() override;
 
 	void SetTextureSlot(int32_t index, GLuint value);
 	GLuint GetTextureSlot(int32_t index);
