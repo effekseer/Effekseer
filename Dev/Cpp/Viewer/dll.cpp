@@ -794,7 +794,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 {
 	m_isSRGBMode = isSRGBMode;
 
-	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode, false);
+	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode, false );
 	if( g_renderer->Initialize( (HWND)pHandle, width, height ) )
 	{
 		// 関数追加
@@ -853,7 +853,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 	}
 
 	g_sound = new ::EffekseerTool::Sound();
-	if( g_sound->Initialize( 16, 16 ) )
+	if( g_sound->Initialize() )
 	{
 		g_manager->SetSoundPlayer( g_sound->GetSound()->CreateSoundPlayer() );
 		g_manager->SetSoundLoader( new SoundLoader( g_sound->GetSound()->CreateSoundLoader() ) );
@@ -907,7 +907,8 @@ bool Native::UpdateWindow()
 	}
 
 	g_sound->SetListener( position, g_focus_position, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) );
-	
+	g_sound->Update();
+
 	g_renderer->BeginRendering();
 	g_manager->Draw();
 	g_renderer->EndRendering();
@@ -1779,35 +1780,6 @@ void Native::SetBackgroundColor( uint8_t r, uint8_t g, uint8_t b )
 void Native::SetBackgroundImage( const char16_t* path )
 {
 	g_renderer->LoadBackgroundImage(path);
-	/*
-	FILE* fp_texture = nullptr;
-
-#ifdef _WIN32
-	_wfopen_s(&fp_texture, (const wchar_t*)path, L"rb");
-#else
-	int8_t path8[256];
-	ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
-	fp_texture = fopen((const char*)path8, "rb");
-#endif
-
-	if( fp_texture != NULL )
-	{
-		fseek( fp_texture, 0, SEEK_END );
-		size_t size_texture = ftell( fp_texture );
-		char* data_texture = new char[size_texture];
-		fseek( fp_texture, 0, SEEK_SET );
-		fread( data_texture, 1, size_texture, fp_texture );
-		fclose( fp_texture );
-
-		g_renderer->LoadBackgroundImage( data_texture, size_texture );
-
-		delete [] data_texture;
-	}
-	else
-	{
-		g_renderer->LoadBackgroundImage( NULL, 0 );
-	}
-	*/
 }
 
 //----------------------------------------------------------------------------------

@@ -5,7 +5,8 @@
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#include "EffekseerSoundXAudio2.h"
+#include <OpenSoundMixer.h>
+#include "EffekseerSoundOSMixer.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -19,9 +20,7 @@ class Sound
 {
 private:
 	::EffekseerSound::Sound*	m_sound;
-
-	IXAudio2*				m_xaudio;
-	IXAudio2MasteringVoice*	m_masteringVoice;
+	osm::Manager*				m_manager;
 	float	m_volume;
 	bool	m_mute;
 
@@ -39,13 +38,13 @@ public:
 	/**
 		@brief	初期化を行う。
 	*/
-	bool Initialize( int32_t voiceCount1ch, int32_t voiceCount2ch );
+	bool Initialize();
 
 	/**
-		@brief	デバイスを取得する。
+		@brief	更新を行う。
 	*/
-	IXAudio2* GetDevice();
-	
+	void Update();
+
 	/**
 		@brief	ボリューム設定。
 	*/
