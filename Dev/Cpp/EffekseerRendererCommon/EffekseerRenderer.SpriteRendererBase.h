@@ -38,6 +38,14 @@ protected:
 	int32_t							m_ringBufferOffset;
 	uint8_t*						m_ringBufferData;
 
+	struct KeyValue
+	{
+		float Key;
+		efkSpriteInstanceParam	Value;
+	};
+
+	std::vector<KeyValue>				instances;
+
 public:
 
 	SpriteRendererBase(RENDERER* renderer)
@@ -87,17 +95,28 @@ protected:
 
 		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * 4, m_ringBufferOffset, (void*&) m_ringBufferData);
 		m_spriteCount = 0;
+
+		instances.clear();
 	}
 
 	void Rendering_(const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
 	{
-		if (parameter.Distortion)
+		if (parameter.ZSort == Effekseer::ZSortType::None)
 		{
-			Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+			if (parameter.Distortion)
+			{
+				Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+			}
+			else
+			{
+				Rendering_Internal<VERTEX_NORMAL>(parameter, instanceParameter, userData, camera);
+			}
 		}
 		else
 		{
-			Rendering_Internal<VERTEX_NORMAL>(parameter, instanceParameter, userData, camera);
+			KeyValue kv;
+			kv.Value = instanceParameter;
+			instances.push_back(kv);
 		}
 	}
 
@@ -286,53 +305,48 @@ protected:
 
 	void EndRendering_(RENDERER* renderer, const efkSpriteNodeParam& param)
 	{
-		/*
-		SHADER* shader_ = NULL;
-		if (param.ColorTextureIndex >= 0)
+		if (param.ZSort != Effekseer::ZSortType::None)
 		{
-			shader_ = shader;
+			auto mat = m_renderer->GetCameraMatrix();
+			for (auto& kv : instances)
+			{
+				efkVector3D t;
+				t.X = kv.Value.SRTMatrix43.Value[3][0];
+				t.Y = kv.Value.SRTMatrix43.Value[3][1];
+				t.Z = kv.Value.SRTMatrix43.Value[3][2];
+
+				::Effekseer::Vector3D::Transform(
+					t,
+					t,
+					mat);
+
+				kv.Key = t.Z;
+			}
+
+			if (param.ZSort == Effekseer::ZSortType::NormalOrder)
+			{
+				std::sort(instances.begin(), instances.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key < b.Key; });
+			}
+			else
+			{
+				std::sort(instances.begin(), instances.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key > b.Key; });
+			}
+			
+
+			for (auto& kv : instances)
+			{
+				auto camera = m_renderer->GetCameraMatrix();
+
+				if (param.Distortion)
+				{
+					Rendering_Internal<VERTEX_DISTORTION>(param, kv.Value, nullptr, camera);
+				}
+				else
+				{
+					Rendering_Internal<VERTEX_NORMAL>(param, kv.Value, nullptr, camera);
+				}
+			}
 		}
-		else
-		{
-			shader_ = shader_no_texture;
-		}
-
-		renderer->BeginShader(shader_);
-
-		RenderStateBase::State& state = renderer->GetRenderState()->Push();
-		state.DepthTest = param.ZTest;
-		state.DepthWrite = param.ZWrite;
-		state.CullingType = ::Effekseer::CullingType::Double;
-
-		if (param.ColorTextureIndex >= 0)
-		{
-			TEXTURE texture = TexturePointerToTexture<TEXTURE>(param.EffectPointer->GetColorImage(param.ColorTextureIndex));
-			renderer->SetTextures(shader_, &texture, 1);
-		}
-		else
-		{
-			TEXTURE texture = 0;
-			renderer->SetTextures(shader_, &texture, 1);
-		}
-
-		((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] = renderer->GetCameraProjectionMatrix();
-		shader_->SetConstantBuffer();
-
-		state.AlphaBlend = param.AlphaBlend;
-		state.TextureFilterTypes[0] = param.TextureFilter;
-		state.TextureWrapTypes[0] = param.TextureWrap;
-
-		renderer->GetRenderState()->Update(false);
-
-		renderer->SetVertexBuffer(renderer->GetVertexBuffer(), sizeof(VERTEX));
-		renderer->SetIndexBuffer(renderer->GetIndexBuffer());
-		renderer->SetLayout(shader_);
-		renderer->DrawSprites(m_spriteCount, m_ringBufferOffset / sizeof(VERTEX));
-
-		renderer->EndShader(shader_);
-
-		renderer->GetRenderState()->Pop();
-		*/
 	}
 
 public:
@@ -349,11 +363,7 @@ public:
 
 	void EndRendering(const efkSpriteNodeParam& parameter, void* userData) override
 	{
-		//if( m_ringBufferData == NULL ) return;
-		//
-		//if( m_spriteCount == 0 ) return;
-		//
-		//EndRendering_<RendererImplemented, Shader, GLuint, Vertex>(m_renderer, parameter);
+		EndRendering_(m_renderer, parameter);
 	}
 };
 //----------------------------------------------------------------------------------

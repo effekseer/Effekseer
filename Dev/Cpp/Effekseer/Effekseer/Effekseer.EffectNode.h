@@ -144,6 +144,8 @@ struct ParameterDepthValues
 	float	DepthOffset;
 	bool	IsDepthOffsetScaledWithCamera;
 	bool	IsDepthOffsetScaledWithParticleScale;
+	ZSortType	ZSort;
+	int32_t	DrawingPriority;
 	float	SoftParticle;
 
 	ParameterDepthValues()
@@ -151,6 +153,8 @@ struct ParameterDepthValues
 		DepthOffset = 0;
 		IsDepthOffsetScaledWithCamera = false;
 		IsDepthOffsetScaledWithParticleScale = false;
+		ZSort = ZSortType::None;
+		DrawingPriority = 0;
 		SoftParticle = 0.0f;
 	}
 };

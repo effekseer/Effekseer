@@ -400,6 +400,14 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 			DepthValues.IsDepthOffsetScaledWithParticleScale = IsDepthOffsetScaledWithParticleScale > 0;
 
+			if (m_effect->GetVersion() >= 13)
+			{
+				memcpy(&DepthValues.ZSort, pos, sizeof(int32_t));
+				pos += sizeof(int32_t);
+				memcpy(&DepthValues.DrawingPriority, pos, sizeof(int32_t));
+				pos += sizeof(int32_t);
+			}
+
 			memcpy(&DepthValues.SoftParticle, pos, sizeof(float));
 			pos += sizeof(float);
 

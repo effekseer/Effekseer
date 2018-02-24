@@ -42,6 +42,8 @@ public:
 		float				DepthOffset;
 		bool				IsDepthOffsetScaledWithCamera;
 		bool				IsDepthOffsetScaledWithParticleScale;
+
+		ZSortType			ZSort;
 	};
 
 	struct InstanceParameter

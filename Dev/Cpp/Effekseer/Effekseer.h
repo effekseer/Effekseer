@@ -197,6 +197,13 @@ enum class TextureFormatType : int32_t
 	BC3,
 };
 
+enum class ZSortType : int32_t
+{
+	None,
+	NormalOrder,
+	ReverseOrder,
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -2084,6 +2091,8 @@ public:
 		float				DepthOffset;
 		bool				IsDepthOffsetScaledWithCamera;
 		bool				IsDepthOffsetScaledWithParticleScale;
+
+		ZSortType			ZSort;
 	};
 
 	struct InstanceParameter

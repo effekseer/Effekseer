@@ -5,7 +5,24 @@ using System.Text;
 
 namespace Effekseer.Data
 {
-    public class DepthValues
+	public enum ZSortType
+	{
+		[Name(value = "なし", language = Language.Japanese)]
+		[Name(value = "None", language = Language.English)]
+		None,
+
+		[Name(value = "正順", language = Language.Japanese)]
+		[Name(value = "Normal order", language = Language.English)]
+		NormalOrder,
+
+		[Name(value = "逆順", language = Language.Japanese)]
+		[Name(value = "Reverse order", language = Language.English)]
+		ReverseOrder,
+
+	}
+
+
+	public class DepthValues
     {
 
         [Name(language = Language.Japanese, value = "Zオフセット")]
@@ -38,6 +55,26 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "深度ソート")]
+		[Description(language = Language.Japanese, value = "距離による並び替え")]
+		[Name(language = Language.English, value = "Depth sort")]
+		[Description(language = Language.English, value = "Sorting by a distance")]
+		public Value.Enum<ZSortType> ZSort
+		{
+			get;
+			private set;
+		}
+
+		[Name(language = Language.Japanese, value = "描画優先度")]
+		[Description(language = Language.Japanese, value = "小さい描画優先度のノードが先に描画される")]
+		[Name(language = Language.English, value = "Drawing priority")]
+		[Description(language = Language.English, value = "A node with Small drawing priority is drawn previously")]
+		public Value.Int DrawingPriority
+		{
+			get;
+			private set;
+		}
+
 		[Name(language = Language.Japanese, value = "ソフトパーティクル")]
 		[Description(language = Language.Japanese, value = "ソフトパーティクル")]
 		[Name(language = Language.English, value = "Soft particle")]
@@ -53,6 +90,8 @@ namespace Effekseer.Data
             DepthOffset = new Value.Float();
 			IsScaleChangedDependingOnDepthOffset = new Value.Boolean();
 			IsDepthOffsetChangedDependingOnParticleScale = new Value.Boolean();
+			ZSort = new Value.Enum<ZSortType>(ZSortType.None);
+			DrawingPriority = new Value.Int(0);
 			SoftParticle = new Value.Float(0, float.MaxValue, 0.0f);
         }
     }
