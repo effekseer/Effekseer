@@ -143,6 +143,8 @@ public:
 
 	int TrackTexture;
 
+	int32_t	SplineDivision = 1;
+
 	EffectNodeTrack( Effect* effect, unsigned char*& pos )
 		: EffectNodeImplemented(effect, pos)
 		, TrackTexture	( -1 )

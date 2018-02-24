@@ -53,6 +53,10 @@ public:
 
 	Vector3D operator / ( const float& o ) const;
 
+	Vector3D operator * (const Vector3D& o) const;
+
+	Vector3D operator / (const Vector3D& o) const;
+
 	Vector3D& operator += ( const Vector3D& o );
 
 	Vector3D& operator -= ( const Vector3D& o );

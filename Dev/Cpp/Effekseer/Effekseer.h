@@ -586,6 +586,10 @@ public:
 
 	Vector3D operator / ( const float& o ) const;
 
+	Vector3D operator * (const Vector3D& o) const;
+
+	Vector3D operator / (const Vector3D& o) const;
+
 	Vector3D& operator += ( const Vector3D& o );
 
 	Vector3D& operator -= ( const Vector3D& o );
@@ -2370,6 +2374,8 @@ public:
 
 		bool				Distortion;
 		float				DistortionIntensity;
+
+		int32_t				SplineDivision;
 	};
 
 	struct InstanceGroupParameter

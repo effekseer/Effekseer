@@ -733,6 +733,16 @@ namespace Effekseer.Data
 			[Selected(ID = 12, Value = 0)]
 			public Value.Float TrackSizeBack_Fixed { get; private set; }
 
+			[Name(language = Language.Japanese, value = "スプラインの分割数")]
+			[Description(language = Language.Japanese, value = "スプラインの分割数")]
+			[Name(language = Language.English, value = "The number of spline division")]
+			[Description(language = Language.English, value = "The number of spline division")]
+			public Value.Int SplineDivision
+			{
+				get;
+				private set;
+			}
+
 			[Selector(ID = 1)]
 			[Name(language = Language.Japanese, value = "色・左")]
 			[Name(language = Language.English, value = "Color, Left")]
@@ -847,6 +857,7 @@ namespace Effekseer.Data
 			[IO(Export = true)]
 			public ColorFCurveParameter ColorRightMiddle_FCurve { get; private set; }
 
+			
 			public TrackParameter()
 			{
 				TrackSizeFor = new Value.Enum<TrackSizeType>(TrackSizeType.Fixed);
@@ -894,6 +905,7 @@ namespace Effekseer.Data
 				ColorRightMiddle_Easing = new ColorEasingParamater();
 				ColorRightMiddle_FCurve = new ColorFCurveParameter();
 
+				SplineDivision = new Value.Int(1, int.MaxValue, 1);
 			}
 		}
 

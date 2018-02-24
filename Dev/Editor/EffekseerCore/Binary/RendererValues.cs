@@ -453,6 +453,8 @@ namespace Effekseer.Binary
 
 				data.Add(param.TrackSizeBack);
 				data.Add(BitConverter.GetBytes(param.TrackSizeBack_Fixed.Value));
+				
+				data.Add(BitConverter.GetBytes(param.SplineDivision.Value));
 
 				OutputStandardColor(data, param.ColorLeft, param.ColorLeft_Fixed, param.ColorLeft_Random, param.ColorLeft_Easing, param.ColorLeft_FCurve);
 				OutputStandardColor(data, param.ColorLeftMiddle, param.ColorLeftMiddle_Fixed, param.ColorLeftMiddle_Random, param.ColorLeftMiddle_Easing, param.ColorLeftMiddle_FCurve);

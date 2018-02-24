@@ -40,6 +40,12 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, Setting* settin
 	LoadValues( TrackSizeMiddle, pos );
 	LoadValues( TrackSizeBack, pos );
 
+	if (m_effect->GetVersion() >= 13)
+	{
+		memcpy(&SplineDivision, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+	}
+
 	TrackColorLeft.load( pos, m_effect->GetVersion() );
 	TrackColorLeftMiddle.load( pos, m_effect->GetVersion() );
 
@@ -92,6 +98,8 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.Distortion = RendererCommon.Distortion;
 		m_nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
+		m_nodeParameter.SplineDivision = SplineDivision;
+		
 		renderer->BeginRendering( m_nodeParameter, count, m_userData );
 	}
 }

@@ -85,6 +85,17 @@ Vector3D Vector3D::operator / ( const float& o ) const
 	return Vector3D( X / o, Y / o, Z / o );
 }
 
+Vector3D Vector3D::operator * (const Vector3D& o) const
+{
+	return Vector3D(X * o.X, Y * o.Y, Z * o.Z);
+}
+
+Vector3D Vector3D::operator / (const Vector3D& o) const
+{
+	return Vector3D(X / o.X, Y / o.Y, Z / o.Z);
+}
+
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
