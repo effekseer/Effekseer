@@ -157,6 +157,8 @@ public:
 
 	int RibbonTexture;
 
+	int32_t	SplineDivision = 1;
+
 	EffectNodeRibbon( Effect* effect, unsigned char*& pos )
 		: EffectNodeImplemented(effect, pos)
 	{

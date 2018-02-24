@@ -2153,6 +2153,8 @@ public:
 
 		bool				Distortion;
 		float				DistortionIntensity;
+
+		int32_t				SplineDivision;
 	};
 
 	struct InstanceParameter

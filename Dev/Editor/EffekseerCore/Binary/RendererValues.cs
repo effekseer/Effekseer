@@ -198,6 +198,8 @@ namespace Effekseer.Binary
 					data.Add(pos_r);
 				}
 
+				data.Add(BitConverter.GetBytes(ribbonParamater.SplineDivision.Value));
+
 				// テクスチャ番号
 				/*
 				if (ribbonParamater.ColorTexture.RelativePath != string.Empty)
@@ -209,7 +211,7 @@ namespace Effekseer.Binary
 					data.Add((-1).GetBytes());
 				}
 				*/
-            }
+			}
             else if (value.Type.Value == Data.RendererValues.ParamaterType.Ring)
             {
                 var ringParamater = value.Ring;

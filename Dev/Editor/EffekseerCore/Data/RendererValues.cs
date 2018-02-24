@@ -267,6 +267,15 @@ namespace Effekseer.Data
 			[Name(language = Language.English, value = "Right Coord")]
 			public Value.Float Position_Fixed_R { get; private set; }
 
+			[Name(language = Language.Japanese, value = "スプラインの分割数")]
+			[Description(language = Language.Japanese, value = "スプラインの分割数")]
+			[Name(language = Language.English, value = "The number of spline division")]
+			[Description(language = Language.English, value = "The number of spline division")]
+			public Value.Int SplineDivision
+			{
+				get;
+				private set;
+			}
 
 			[Name(language = Language.Japanese, value = "色画像")]
 			[Description(language = Language.Japanese, value = "リボンの色を表す画像")]
@@ -298,7 +307,9 @@ namespace Effekseer.Data
 				Position_Fixed_L = new Value.Float(-0.5f);
 				Position_Fixed_R = new Value.Float(0.5f);
 
-                ColorTexture = new Value.Path(Properties.Resources.ImageFilter, true, "");
+				SplineDivision = new Value.Int(1, int.MaxValue, 1);
+
+				ColorTexture = new Value.Path(Properties.Resources.ImageFilter, true, "");
 			}
 
             public enum ColorAllType : int

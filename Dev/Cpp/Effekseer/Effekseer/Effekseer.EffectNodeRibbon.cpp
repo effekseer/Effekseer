@@ -98,6 +98,12 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setti
 		pos += sizeof(RibbonPosition.fixed);
 	}
 
+	if (m_effect->GetVersion() >= 13)
+	{
+		memcpy(&SplineDivision, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+	}
+
 	if( m_effect->GetVersion() >= 3)
 	{
 		RibbonTexture = RendererCommon.ColorTextureIndex;
@@ -147,6 +153,7 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.Distortion = RendererCommon.Distortion;
 		m_nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
+		m_nodeParameter.SplineDivision = SplineDivision;
 
 		renderer->BeginRendering( m_nodeParameter, count, m_userData );
 	}
