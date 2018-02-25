@@ -226,8 +226,33 @@ namespace Effekseer.Binary
 				}
 			}
 
-			// ファイルにテクスチャ一覧出力
-			data.Add(BitConverter.GetBytes(texture_and_index.Count));
+			// get all nodes
+			var nodes = new List<Data.Node>();
+
+			Action<Data.NodeBase> get_nodes = null;
+			get_nodes = (node) =>
+			{
+				if (node is Data.Node)
+				{
+					var _node = node as Data.Node;
+					nodes.Add(_node);
+				}
+
+				for (int i = 0; i < node.Children.Count; i++)
+				{
+					get_nodes(node.Children[i]);
+				}
+			};
+
+			get_nodes(Core.Root);
+
+			var snode2ind = nodes.
+				Select((v, i) => Tuple.Create(v, i)).
+				OrderBy(_ => _.Item1.DepthValues.DrawingPriority.Value * 255 + _.Item2).
+				Select((v, i) => Tuple.Create(v.Item1, i)).ToList();
+
+				// ファイルにテクスチャ一覧出力
+				data.Add(BitConverter.GetBytes(texture_and_index.Count));
 			foreach (var texture in texture_and_index)
 			{
 				var path = Encoding.Unicode.GetBytes(texture.Key);
@@ -273,6 +298,9 @@ namespace Effekseer.Binary
 				data.Add(path);
 				data.Add(new byte[] { 0, 0 });
 			}
+
+			// Export the number of nodes
+			data.Add(BitConverter.GetBytes(snode2ind.Count));
 
 			// Export magnification
 			data.Add(BitConverter.GetBytes(magnification));
@@ -366,6 +394,19 @@ namespace Effekseer.Binary
 				{
 					int v = 0;
 					node_data.Add(BitConverter.GetBytes(v));
+				}
+
+				// render order
+				{
+					var s = snode2ind.FirstOrDefault(_ => _.Item1 == n);
+					if(s.Item1 != null)
+					{
+						node_data.Add(BitConverter.GetBytes(s.Item2));
+					}
+					else
+					{
+						node_data.Add(BitConverter.GetBytes(-1));
+					}
 				}
 
 				node_data.Add(CommonValues.GetBytes(n.CommonValues));

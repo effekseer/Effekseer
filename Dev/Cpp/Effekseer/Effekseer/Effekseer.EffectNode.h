@@ -869,6 +869,8 @@ public:
 
 	eRenderingOrder				RenderingOrder;
 
+	int32_t						RenderingPriority;
+
 	Effect* GetEffect() const override;
 
 	int GetChildrenCount() const override;

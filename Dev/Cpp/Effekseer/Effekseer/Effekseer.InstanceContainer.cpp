@@ -48,6 +48,12 @@ InstanceContainer::InstanceContainer( Manager* pManager, EffectNode* pEffectNode
 	, m_tailGroups		( NULL )
 
 {
+	auto en = (EffectNodeImplemented*)pEffectNode;
+	if (en->RenderingPriority >= 0)
+	{
+		pGlobal->RenderedInstanceContainers[en->RenderingPriority] = this;
+	}
+
 	m_Children = (InstanceContainer**)m_pManager->GetMallocFunc()( sizeof(InstanceContainer*) * m_ChildrenCount );
 	for( int i = 0; i < m_ChildrenCount; i++ )
 	{

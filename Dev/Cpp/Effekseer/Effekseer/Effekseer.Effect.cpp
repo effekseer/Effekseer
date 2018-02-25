@@ -99,9 +99,6 @@ Effect* Effect::Create(Manager* manager, const EFK_CHAR* path, float magnificati
 	return effect;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Effect* EffectImplemented::Create( Manager* pManager, void* pData, int size, float magnification, const EFK_CHAR* materialPath )
 {
 	if( pData == NULL || size == 0 ) return NULL;
@@ -411,6 +408,12 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 				m_pModels[i] = NULL;
 			}
 		}
+	}
+
+	if (m_version >= 13)
+	{
+		memcpy(&renderingNodesCount, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
 	}
 
 	// 拡大率

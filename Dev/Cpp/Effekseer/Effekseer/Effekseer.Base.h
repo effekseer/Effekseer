@@ -52,6 +52,7 @@ class ManagerImplemented;
 class Effect;
 class EffectImplemented;
 class EffectNode;
+class EffectNodeImplemented;
 class EffectNodeRoot;
 class EffectNodeSprite;
 class EffectNodeRibbon;

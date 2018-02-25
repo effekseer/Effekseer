@@ -1406,7 +1406,12 @@ void ManagerImplemented::Draw()
 
 			if( drawSet.IsShown && drawSet.IsAutoDrawing )
 			{
-				drawSet.InstanceContainerPointer->Draw( true );
+				//drawSet.InstanceContainerPointer->Draw( true );
+
+				for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+				{
+					c->Draw(false);
+				}
 			}
 		}
 	}
@@ -1418,7 +1423,12 @@ void ManagerImplemented::Draw()
 
 			if( drawSet.IsShown && drawSet.IsAutoDrawing )
 			{
-				drawSet.InstanceContainerPointer->Draw( true );
+				//drawSet.InstanceContainerPointer->Draw( true );
+
+				for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+				{
+					c->Draw(false);
+				}
 			}
 		}
 	}
@@ -1448,6 +1458,12 @@ Handle ManagerImplemented::Play( Effect* effect, float x, float y, float z )
 	else
 	{
 		pGlobal->SetSeed(GetRandFunc()());
+	}
+
+	pGlobal->RenderedInstanceContainers.resize(e->renderingNodesCount);
+	for (auto i = 0; i < pGlobal->RenderedInstanceContainers.size(); i++)
+	{
+		pGlobal->RenderedInstanceContainers[i] = nullptr;
 	}
 
 	InstanceContainer* pContainer = CreateInstanceContainer( ((EffectImplemented*)effect)->GetRoot(), pGlobal, true, NULL );
@@ -1486,7 +1502,12 @@ void ManagerImplemented::DrawHandle( Handle handle )
 			{
 				if( drawSet.IsShown )
 				{
-					drawSet.InstanceContainerPointer->Draw( true );
+					//drawSet.InstanceContainerPointer->Draw( true );
+
+					for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+					{
+						c->Draw(false);
+					}
 				}
 			}
 		}
@@ -1494,7 +1515,12 @@ void ManagerImplemented::DrawHandle( Handle handle )
 		{
 			if( drawSet.IsShown )
 			{
-				drawSet.InstanceContainerPointer->Draw( true );
+				//drawSet.InstanceContainerPointer->Draw( true );
+
+				for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+				{
+					c->Draw(false);
+				}
 			}
 		}
 	}

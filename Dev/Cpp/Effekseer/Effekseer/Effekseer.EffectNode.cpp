@@ -77,6 +77,13 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			IsRendered = rendered != 0;
 		}
 
+		// To render with priority, nodes are assigned a list.
+		if (m_effect->GetVersion() >= 13)
+		{
+			memcpy(&RenderingPriority, pos, sizeof(int32_t));
+			pos += sizeof(int32_t);
+		}
+
 		memcpy( &size, pos, sizeof(int) );
 		pos += sizeof(int);
 

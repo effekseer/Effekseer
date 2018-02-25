@@ -29,6 +29,7 @@ class EffectImplemented
 	, public ReferenceObject
 {
 	friend class ManagerImplemented;
+	friend class EffectNodeImplemented;
 private:
 	ManagerImplemented* m_pManager;
 
@@ -60,6 +61,8 @@ private:
 
 	std::basic_string<EFK_CHAR>		m_materialPath;
 
+	int32_t			renderingNodesCount = 0;
+
 	/* 拡大率 */
 	float	m_maginification;
 
@@ -90,7 +93,6 @@ private:
 		};
 
 	} Culling;
-
 
 public:
 	/**

@@ -91,7 +91,7 @@ namespace Effekseer.Data
 			IsScaleChangedDependingOnDepthOffset = new Value.Boolean();
 			IsDepthOffsetChangedDependingOnParticleScale = new Value.Boolean();
 			ZSort = new Value.Enum<ZSortType>(ZSortType.None);
-			DrawingPriority = new Value.Int(0);
+			DrawingPriority = new Value.Int(0, 255, -255);
 			SoftParticle = new Value.Float(0, float.MaxValue, 0.0f);
         }
     }

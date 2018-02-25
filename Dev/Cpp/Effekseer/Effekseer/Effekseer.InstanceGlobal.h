@@ -49,6 +49,8 @@ public:
 	bool		IsGlobalColorSet = false;
 	Color		GlobalColor = Color(255, 255, 255, 255);
 
+	std::vector<InstanceContainer*>	RenderedInstanceContainers;
+
 	void SetSeed(int32_t seed);
 
 	virtual float GetRand() override;
