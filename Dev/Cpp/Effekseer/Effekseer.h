@@ -1989,14 +1989,46 @@ public:
 	virtual void UpdateHandle( Handle handle, float deltaFrame = 1.0f ) = 0;
 
 	/**
-		@brief	描画処理を行う。
+	@brief	
+	\~English	Draw particles.
+	\~Japanese	描画処理を行う。
 	*/
 	virtual void Draw() = 0;
 	
 	/**
-		@brief	ハンドル単位の描画処理を行う。
+	@brief
+	\~English	Draw particles in the back of priority 0.
+	\~Japanese	背面の描画処理を行う。
+	*/
+	virtual void DrawBack() = 0;
+
+	/**
+	@brief
+	\~English	Draw particles in the front of priority 0.
+	\~Japanese	前面の描画処理を行う。
+	*/
+	virtual void DrawFront() = 0;
+
+	/**
+	@brief
+	\~English	Draw particles with a handle.
+	\~Japanese	ハンドル単位の描画処理を行う。
 	*/
 	virtual void DrawHandle( Handle handle ) = 0;
+
+	/**
+	@brief
+	\~English	Draw particles in the back of priority 0.
+	\~Japanese	背面のハンドル単位の描画処理を行う。
+	*/
+	virtual void DrawHandleBack(Handle handle) = 0;
+	
+	/**
+	@brief
+	\~English	Draw particles in the front of priority 0.
+	\~Japanese	前面のハンドル単位の描画処理を行う。
+	*/
+	virtual void DrawHandleFront(Handle handle) = 0;
 
 	/**
 		@brief	再生する。

@@ -144,7 +144,7 @@ namespace efk
 		d3d_device->SetRenderTarget(0, backTarget);
 		d3d_device->SetDepthStencilSurface(nullptr);
 
-		d3d_device->StretchRect(
+		hr = d3d_device->StretchRect(
 			tempRender,
 			nullptr,
 			backTarget,

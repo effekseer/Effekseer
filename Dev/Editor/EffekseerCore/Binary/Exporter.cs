@@ -302,6 +302,9 @@ namespace Effekseer.Binary
 			// Export the number of nodes
 			data.Add(BitConverter.GetBytes(snode2ind.Count));
 
+			var renderPriorityThreshold = snode2ind.Where(_ => _.Item1.DepthValues.DrawingPriority.Value <= 0).Count();
+			data.Add(BitConverter.GetBytes(renderPriorityThreshold));
+
 			// Export magnification
 			data.Add(BitConverter.GetBytes(magnification));
 

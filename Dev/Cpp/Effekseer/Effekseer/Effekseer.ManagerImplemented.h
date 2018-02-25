@@ -542,12 +542,17 @@ public:
 	/**
 		@brief	描画処理
 	*/
-	void Draw();
+	void Draw() override;
 	
-	/**
-		@brief	ハンドル単位の描画処理
-	*/
-	void DrawHandle( Handle handle );
+	void DrawBack() override;
+
+	void DrawFront() override;
+
+	void DrawHandle( Handle handle ) override;
+
+	void DrawHandleBack(Handle handle) override;
+
+	void DrawHandleFront(Handle handle) override;
 
 	/**
 		@brief	再生

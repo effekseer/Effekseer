@@ -1439,6 +1439,98 @@ void ManagerImplemented::Draw()
 	m_renderingSession.Leave();
 }
 
+void ManagerImplemented::DrawBack()
+{
+	m_renderingSession.Enter();
+
+	// 開始時間を記録
+	int64_t beginTime = ::Effekseer::GetTime();
+
+	if (m_culled)
+	{
+		for (size_t i = 0; i < m_culledObjects.size(); i++)
+		{
+			DrawSet& drawSet = *m_culledObjects[i];
+
+			if (drawSet.IsShown && drawSet.IsAutoDrawing)
+			{
+				auto e = (EffectImplemented*)drawSet.ParameterPointer;
+				for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
+				{
+					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+				}
+			}
+		}
+	}
+	else
+	{
+		for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
+		{
+			DrawSet& drawSet = m_renderingDrawSets[i];
+
+			if (drawSet.IsShown && drawSet.IsAutoDrawing)
+			{
+				auto e = (EffectImplemented*)drawSet.ParameterPointer;
+				for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
+				{
+					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+				}
+			}
+		}
+	}
+
+	// 経過時間を計算
+	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
+
+	m_renderingSession.Leave();
+}
+
+void ManagerImplemented::DrawFront()
+{
+	m_renderingSession.Enter();
+
+	// 開始時間を記録
+	int64_t beginTime = ::Effekseer::GetTime();
+
+	if (m_culled)
+	{
+		for (size_t i = 0; i < m_culledObjects.size(); i++)
+		{
+			DrawSet& drawSet = *m_culledObjects[i];
+
+			if (drawSet.IsShown && drawSet.IsAutoDrawing)
+			{
+				auto e = (EffectImplemented*)drawSet.ParameterPointer;
+				for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+				{
+					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+				}
+			}
+		}
+	}
+	else
+	{
+		for (size_t i = 0; i < m_renderingDrawSets.size(); i++)
+		{
+			DrawSet& drawSet = m_renderingDrawSets[i];
+
+			if (drawSet.IsShown && drawSet.IsAutoDrawing)
+			{
+				auto e = (EffectImplemented*)drawSet.ParameterPointer;
+				for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+				{
+					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+				}
+			}
+		}
+	}
+
+	// 経過時間を計算
+	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
+
+	m_renderingSession.Leave();
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1520,6 +1612,84 @@ void ManagerImplemented::DrawHandle( Handle handle )
 				for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
 				{
 					c->Draw(false);
+				}
+			}
+		}
+	}
+
+	m_renderingSession.Leave();
+}
+
+void ManagerImplemented::DrawHandleBack(Handle handle)
+{
+	m_renderingSession.Enter();
+
+	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
+	if (it != m_renderingDrawSetMaps.end())
+	{
+		DrawSet& drawSet = it->second;
+
+		if (m_culled)
+		{
+			if (m_culledObjectSets.find(drawSet.Self) != m_culledObjectSets.end())
+			{
+				if (drawSet.IsShown)
+				{
+					auto e = (EffectImplemented*)drawSet.ParameterPointer;
+					for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
+					{
+						drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+					}
+				}
+			}
+		}
+		else
+		{
+			if (drawSet.IsShown)
+			{
+				auto e = (EffectImplemented*)drawSet.ParameterPointer;
+				for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
+				{
+					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+				}
+			}
+		}
+	}
+
+	m_renderingSession.Leave();
+}
+
+void ManagerImplemented::DrawHandleFront(Handle handle)
+{
+	m_renderingSession.Enter();
+
+	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
+	if (it != m_renderingDrawSetMaps.end())
+	{
+		DrawSet& drawSet = it->second;
+
+		if (m_culled)
+		{
+			if (m_culledObjectSets.find(drawSet.Self) != m_culledObjectSets.end())
+			{
+				if (drawSet.IsShown)
+				{
+					auto e = (EffectImplemented*)drawSet.ParameterPointer;
+					for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+					{
+						drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+					}
+				}
+			}
+		}
+		else
+		{
+			if (drawSet.IsShown)
+			{
+				auto e = (EffectImplemented*)drawSet.ParameterPointer;
+				for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+				{
+					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
 				}
 			}
 		}

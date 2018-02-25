@@ -414,6 +414,9 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	{
 		memcpy(&renderingNodesCount, pos, sizeof(int32_t));
 		pos += sizeof(int32_t);
+
+		memcpy(&renderingNodesThreshold, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);	
 	}
 
 	// 拡大率

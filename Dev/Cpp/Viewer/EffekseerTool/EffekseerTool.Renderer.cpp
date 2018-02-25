@@ -343,17 +343,7 @@ bool Renderer::BeginRendering()
 	// Distoriton
 	if (Distortion == eDistortionType::DistortionType_Current)
 	{
-		graphics->CopyToBackground();
-
-		if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
-		{
-			auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
-		}
-		else
-		{
-			auto r = (::EffekseerRendererDX9::Renderer*)graphics->GetRenderer();
-			r->SetBackground((IDirect3DTexture9*)graphics->GetBack());
-		}
+		CopyToBackground();
 		
 		m_distortionCallback->Blit = false;
 		m_distortionCallback->IsEnabled = true;
@@ -500,6 +490,21 @@ void Renderer::LoadBackgroundImage(const char16_t* path)
 	}
 
 	backgroundData = textureLoader->Load(path, Effekseer::TextureType::Color);
+}
+
+void Renderer::CopyToBackground()
+{
+	graphics->CopyToBackground();
+
+	if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
+	{
+		auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
+	}
+	else
+	{
+		auto r = (::EffekseerRendererDX9::Renderer*)graphics->GetRenderer();
+		r->SetBackground((IDirect3DTexture9*)graphics->GetBack());
+	}
 }
 
 }

@@ -62,6 +62,7 @@ private:
 	std::basic_string<EFK_CHAR>		m_materialPath;
 
 	int32_t			renderingNodesCount = 0;
+	int32_t			renderingNodesThreshold = 0;
 
 	/* 拡大率 */
 	float	m_maginification;

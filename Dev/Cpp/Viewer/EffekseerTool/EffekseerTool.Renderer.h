@@ -228,6 +228,11 @@ public:
 	void LoadBackgroundImage(const char16_t* path);
 
 	/**
+		@brief	copy current render target to background buffer
+	*/
+	void CopyToBackground();
+
+	/**
 		Called when device is losted.
 	*/
 	std::function<void()>	LostedDevice;
