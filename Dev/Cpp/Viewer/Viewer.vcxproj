@@ -86,7 +86,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;DEBUG;WIN32;_WINDOWS;_DEBUG_EFFEKSEER;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -106,7 +106,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_NDEBUG;_WINDOWS;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -127,7 +127,7 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_NDEBUG;_WINDOWS;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -150,7 +150,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;DEBUG;WIN32;_WINDOWS;_DEBUG_EFFEKSEER;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -171,6 +171,11 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="3rdParty\imgui\imconfig.h" />
+    <ClInclude Include="3rdParty\imgui\imgui.h" />
+    <ClInclude Include="3rdParty\imgui\imgui_internal.h" />
+    <ClInclude Include="3rdParty\imgui_addon\imguidock\imguidock.h" />
+    <ClInclude Include="3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Base.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Culling.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Grid.h" />
@@ -187,10 +192,15 @@
     <ClInclude Include="Graphics\Platform\GL\efk.GraphicsGL.h" />
     <ClInclude Include="Graphics\Platform\GL\efk.ImageRendererGL.h" />
     <ClInclude Include="Graphics\Platform\GL\efk.LineRendererGL.h" />
-    <ClInclude Include="Window\efk.Window.h" />
+    <ClInclude Include="GUI\efk.GUIManager.h" />
+    <ClInclude Include="GUI\efk.Window.h" />
     <CustomBuildStep Include="dll.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="3rdParty\imgui\imgui.cpp" />
+    <ClCompile Include="3rdParty\imgui\imgui_draw.cpp" />
+    <ClCompile Include="3rdParty\imgui_addon\imguidock\imguidock.cpp" />
+    <ClCompile Include="3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Culling.cpp" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Grid.cpp" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Guide.cpp" />
@@ -208,8 +218,9 @@
     <ClCompile Include="Graphics\Platform\GL\efk.GraphicsGL.cpp" />
     <ClCompile Include="Graphics\Platform\GL\efk.ImageRendererGL.cpp" />
     <ClCompile Include="Graphics\Platform\GL\efk.LineRendererGL.cpp" />
+    <ClCompile Include="GUI\efk.GUIManager.cpp" />
+    <ClCompile Include="GUI\efk.Window.cpp" />
     <ClCompile Include="test.cpp" />
-    <ClCompile Include="Window\efk.Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EffekseerRendererDX9\EffekseerRendererDX9.vcxproj">

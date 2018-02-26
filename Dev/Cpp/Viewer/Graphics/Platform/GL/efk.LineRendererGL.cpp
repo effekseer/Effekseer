@@ -178,11 +178,12 @@ static const char g_sprite_fs_no_texture_src[] =
 
 		renderer->GetRenderState()->Update(false);
 
-		renderer->SetLayout((EffekseerRendererGL::Shader*)shader);
-
 		EffekseerRendererGL::GLExt::glBindBuffer(GL_ARRAY_BUFFER, renderer->GetVertexBuffer()->GetInterface());
 		EffekseerRendererGL::GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glDrawElements(GL_LINES, vertexies.size(), GL_UNSIGNED_SHORT, NULL);
+
+		renderer->SetLayout((EffekseerRendererGL::Shader*)shader);
+
+		glDrawArrays(GL_LINES, 0, vertexies.size());
 
 		renderer->EndShader((EffekseerRendererGL::Shader*)shader);
 

@@ -16,8 +16,23 @@
     <Filter Include="Graphics\Platform\GL">
       <UniqueIdentifier>{e1922269-488e-432b-a133-6e41fae3e619}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Window">
-      <UniqueIdentifier>{1c9cde8d-dcad-4124-ade2-fd5887df0f5c}</UniqueIdentifier>
+    <Filter Include="3rdParty">
+      <UniqueIdentifier>{09e5535d-56e6-47b8-84cc-b80e822f8a55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\imgui">
+      <UniqueIdentifier>{d4ac587e-9620-48b4-929c-e14db009cfef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\imgui_glfw_gl3">
+      <UniqueIdentifier>{d380b913-6e16-4372-b2dd-8ac562d471ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\imgui_addon">
+      <UniqueIdentifier>{ef085fba-1858-4077-8f85-e8c999bc338f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty\imgui_addon\imguidock">
+      <UniqueIdentifier>{d209fd25-5535-47b8-a0e1-1cd72bc39c39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{805a71fa-4115-49cf-a2a9-5f042350e2fe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,8 +84,26 @@
     <ClInclude Include="Graphics\Platform\GL\efk.GraphicsGL.h">
       <Filter>Graphics\Platform\GL</Filter>
     </ClInclude>
-    <ClInclude Include="Window\efk.Window.h">
-      <Filter>Window</Filter>
+    <ClInclude Include="3rdParty\imgui\imgui.h">
+      <Filter>3rdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\imgui_internal.h">
+      <Filter>3rdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\imconfig.h">
+      <Filter>3rdParty\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.h">
+      <Filter>3rdParty\imgui_glfw_gl3</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui_addon\imguidock\imguidock.h">
+      <Filter>3rdParty\imgui_addon\imguidock</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\efk.GUIManager.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\efk.Window.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -122,8 +155,23 @@
     <ClCompile Include="Graphics\Platform\GL\efk.GraphicsGL.cpp">
       <Filter>Graphics\Platform\GL</Filter>
     </ClCompile>
-    <ClCompile Include="Window\efk.Window.cpp">
-      <Filter>Window</Filter>
+    <ClCompile Include="3rdParty\imgui\imgui_draw.cpp">
+      <Filter>3rdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\imgui.cpp">
+      <Filter>3rdParty\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.cpp">
+      <Filter>3rdParty\imgui_glfw_gl3</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui_addon\imguidock\imguidock.cpp">
+      <Filter>3rdParty\imgui_addon\imguidock</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\efk.Window.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\efk.GUIManager.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

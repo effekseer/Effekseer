@@ -46,6 +46,8 @@ namespace efk
 
 		void MakeNone();
 
+		GLFWwindow*	GetGLFWWindows() const { return window; }
+
 		void* GetNativeHandle() const;
 	};
 

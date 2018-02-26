@@ -1406,11 +1406,16 @@ void ManagerImplemented::Draw()
 
 			if( drawSet.IsShown && drawSet.IsAutoDrawing )
 			{
-				//drawSet.InstanceContainerPointer->Draw( true );
-
-				for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
-					c->Draw(false);
+					for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+					{
+						c->Draw(false);
+					}
+				}
+				else
+				{
+					drawSet.InstanceContainerPointer->Draw( true );
 				}
 			}
 		}
@@ -1423,11 +1428,16 @@ void ManagerImplemented::Draw()
 
 			if( drawSet.IsShown && drawSet.IsAutoDrawing )
 			{
-				//drawSet.InstanceContainerPointer->Draw( true );
-
-				for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
-					c->Draw(false);
+					for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+					{
+						c->Draw(false);
+					}
+				}
+				else
+				{
+					drawSet.InstanceContainerPointer->Draw(true);
 				}
 			}
 		}
@@ -1594,11 +1604,16 @@ void ManagerImplemented::DrawHandle( Handle handle )
 			{
 				if( drawSet.IsShown )
 				{
-					//drawSet.InstanceContainerPointer->Draw( true );
-
-					for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+					if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 					{
-						c->Draw(false);
+						for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+						{
+							c->Draw(false);
+						}
+					}
+					else
+					{
+						drawSet.InstanceContainerPointer->Draw(true);
 					}
 				}
 			}
@@ -1607,11 +1622,16 @@ void ManagerImplemented::DrawHandle( Handle handle )
 		{
 			if( drawSet.IsShown )
 			{
-				//drawSet.InstanceContainerPointer->Draw( true );
-
-				for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
-					c->Draw(false);
+					for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
+					{
+						c->Draw(false);
+					}
+				}
+				else
+				{
+					drawSet.InstanceContainerPointer->Draw(true);
 				}
 			}
 		}

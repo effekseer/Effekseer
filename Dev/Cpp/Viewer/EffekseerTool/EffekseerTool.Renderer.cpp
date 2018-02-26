@@ -207,16 +207,33 @@ void Renderer::SetPerspectiveFov( int width, int height )
 {
 	::Effekseer::Matrix44 proj;
 
-	if( IsRightHand )
+	if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
 	{
-		// Right hand coordinate
-		proj.PerspectiveFovRH( 60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f );
+		if (IsRightHand)
+		{
+			// Right hand coordinate
+			proj.PerspectiveFovRH_OpenGL(60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f);
+		}
+		else
+		{
+			// Left hand coordinate
+			proj.PerspectiveFovLH_OpenGL(60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f);
+		}
 	}
 	else
 	{
-		// Left hand coordinate
-		proj.PerspectiveFovLH( 60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f );
+		if (IsRightHand)
+		{
+			// Right hand coordinate
+			proj.PerspectiveFovRH(60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f);
+		}
+		else
+		{
+			// Left hand coordinate
+			proj.PerspectiveFovLH(60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f);
+		}
 	}
+	
 
 	proj.Values[0][0] *= RateOfMagnification;
 	proj.Values[1][1] *= RateOfMagnification;
@@ -283,16 +300,16 @@ bool Renderer::BeginRendering()
 
 	if (!m_recording)
 	{
-		graphics->Clear(Effekseer::Color(0, 0, 0, 0));
+		//graphics->Clear(Effekseer::Color(0, 0, 0, 0));
 	}
 
 	if( m_recording && IsBackgroundTranslucent )
 	{
-		graphics->Clear(Effekseer::Color(0, 0, 0, 0));
+		//graphics->Clear(Effekseer::Color(0, 0, 0, 0));
 	}
 	else
 	{
-		graphics->Clear(Effekseer::Color(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B, 255));
+		//graphics->Clear(Effekseer::Color(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B, 255));
 	}
 
 	/* 背景 */
@@ -309,10 +326,10 @@ bool Renderer::BeginRendering()
 	if( !m_recording && IsGridShown )
 	{
 		m_grid->SetLength( GridLength );
-		m_grid->Rendering( GridColor, IsRightHand );
 		m_grid->IsShownXY = IsGridXYShown;
 		m_grid->IsShownXZ = IsGridXZShown;
 		m_grid->IsShownYZ = IsGridYZShown;
+		m_grid->Rendering(GridColor, IsRightHand);
 	}
 
 	if( !m_recording )
