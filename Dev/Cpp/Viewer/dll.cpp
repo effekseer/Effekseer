@@ -822,8 +822,12 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			g_manager->SetRingRenderer( ring_renderer );
 			g_manager->SetModelRenderer( model_renderer );
 			g_manager->SetTrackRenderer( track_renderer );
-			g_manager->SetTextureLoader( new TextureLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer()) );
-			g_manager->SetModelLoader( new ModelLoader( (EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer() ) );
+
+			if (!isOpenGLMode)
+			{
+				g_manager->SetTextureLoader(new TextureLoader((EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer()));
+				g_manager->SetModelLoader(new ModelLoader((EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer()));
+			}
 		}
 
 		// Assign device lost events.
