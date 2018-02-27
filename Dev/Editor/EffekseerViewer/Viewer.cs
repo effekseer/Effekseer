@@ -22,7 +22,13 @@ namespace Effekseer
 
 		public bool UpdateWindow()
 		{
-			return native.UpdateWindow();
+			if(native.UpdateWindow())
+            {
+                native.Present();
+                return true;
+            }
+
+            return false;
 		}
 
 		public bool ResizeWindow(int width, int height)

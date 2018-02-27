@@ -19,12 +19,36 @@ namespace efk
 
 		virtual ~GUIManager();
 
-		bool Initialize();
+		bool Initialize(char16_t* title, int32_t width, int32_t height, bool isSRGBMode);
 
 		void Terminate();
 
 		bool DoEvents();
 
 		void Present();
+
+		void ResetGUI();
+
+		void RenderGUI();
+
+		void* GetNativeHandle();
+
+		bool Begin(const char16_t* name, bool* p_open);
+
+		void End();
+
+		void Separator();
+
+		void SameLine();
+
+		void Text(const char16_t* text);
+
+		bool Button(const char16_t* label);
+
+		bool DragInt(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0);
+
+		bool InputInt(const char16_t* label, int* v, int step = 1, int step_fast = 100);
+
+		bool SliderInt(const char16_t* label, int* v, int v_min, int v_max);
 	};
 }

@@ -188,9 +188,11 @@ public:
 
 	~Native();
 
-	bool CreateWindow_Effekseer( void* handle, int width, int height, bool isSRGBMode );
+	bool CreateWindow_Effekseer( void* handle, int width, int height, bool isSRGBMode, bool isOpenGLMode = false);
 
 	bool UpdateWindow();
+
+	void Present();
 
 	bool ResizeWindow( int width, int height );
 

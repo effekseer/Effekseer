@@ -790,11 +790,11 @@ Native::~Native()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode)
+bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, bool isOpenGLMode)
 {
 	m_isSRGBMode = isSRGBMode;
 
-	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode, false );
+	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode, isOpenGLMode );
 	if( g_renderer->Initialize( (HWND)pHandle, width, height ) )
 	{
 		// 関数追加
@@ -930,13 +930,15 @@ bool Native::UpdateWindow()
 	}
 	
 	g_renderer->EndRendering();
-	g_renderer->Present();
+
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+void Native::Present()
+{
+	g_renderer->Present();
+}
+
 bool Native::ResizeWindow( int width, int height )
 {
 	g_renderer->Resize( width, height );

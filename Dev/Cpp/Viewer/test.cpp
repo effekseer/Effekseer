@@ -5,7 +5,10 @@
 #include "Effekseer.h"
 #include "EffekseerTool/EffekseerTool.Renderer.h"
 
+#include "dll.h"
+
 #include "GUI/efk.Window.h"
+#include "GUI/efk.GUIManager.h"
 
 #include "3rdParty\imgui\imgui.h"
 #include "3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.h"
@@ -18,6 +21,93 @@
 #endif
 
 int main()
+{
+	auto guiManager = new efk::GUIManager();
+	guiManager->Initialize(u"Effekseer", 960, 540, false);
+
+	auto renderer = new ::EffekseerTool::Renderer(2000, false, true);
+	renderer->Initialize((HWND)guiManager->GetNativeHandle(), 960, 540);
+
+	auto manager = ::Effekseer::Manager::Create(2000);
+	manager->SetSpriteRenderer(renderer->GetRenderer()->CreateSpriteRenderer());
+	manager->SetRibbonRenderer(renderer->GetRenderer()->CreateRibbonRenderer());
+	manager->SetTextureLoader(renderer->GetRenderer()->CreateTextureLoader());
+
+	auto position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
+
+	renderer->GetRenderer()->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+	char* pData = NULL;
+	FILE* fp = _wfopen(L"Resource/test.efk", L"rb");
+	fseek(fp, 0, SEEK_END);
+	size_t size = ftell(fp);
+	pData = new char[size];
+	fseek(fp, 0, SEEK_SET);
+	fread(pData, 1, size, fp);
+	fclose(fp);
+
+	auto effect = Effekseer::Effect::Create(manager, (void*)pData, size);
+
+	delete[] pData;
+
+	//auto handle = manager->Play(effect, 0, 0, 0);
+
+	bool show_another_window = true;
+
+	while (guiManager->DoEvents())
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		guiManager->ResetGUI();
+
+		static bool open = true;
+		guiManager->Begin(u"Test", &open);
+
+		guiManager->Text(u"nya-n");
+
+		static int v = 0;
+		guiManager->InputInt(u"nn", &v);
+
+		guiManager->Button(u"ボタン");
+
+		guiManager->DragInt(u"nnn", &v);
+
+		guiManager->SameLine();
+
+		guiManager->DragInt(u"nnn", &v);
+
+		guiManager->SliderInt(u"nnn", &v, -100, 100);
+
+		guiManager->End();
+
+		guiManager->RenderGUI();
+
+		manager->Update();
+
+		renderer->BeginRendering();
+		manager->Draw();
+		renderer->EndRendering();
+
+
+		renderer->Present();
+		guiManager->Present();
+	}
+
+	//manager->StopEffect(handle);
+
+	ES_SAFE_RELEASE(effect);
+
+	manager->Destroy();
+
+	ES_SAFE_DELETE(renderer);
+
+	guiManager->Terminate();
+	ES_SAFE_DELETE(guiManager);
+
+	return 0;
+}
+
+int main_()
 {
 	efk::Window* window = new efk::Window();
 
