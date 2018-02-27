@@ -155,10 +155,10 @@ private:
 	: public ::Effekseer::ModelLoader
 	{
 	private:
-		EffekseerRendererDX9::Renderer*	m_renderer;
+		EffekseerRenderer::Renderer*	m_renderer;
 
 	public:
-		ModelLoader( EffekseerRendererDX9::Renderer* renderer );
+		ModelLoader( EffekseerRenderer::Renderer* renderer );
 		virtual ~ModelLoader();
 
 	public:

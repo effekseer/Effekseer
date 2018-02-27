@@ -34,15 +34,30 @@ namespace Effekseer
 			}
 
 			var open = new[] { true };
+			var currentTime = new[] { 0 };
+			var currentMin = new[] { 0 };
+			var currentMax = new[] { 100 };
 
-			while(mgr.DoEvents())
+			while (mgr.DoEvents())
 			{
 				native.UpdateWindow();
 
 				mgr.ResetGUI();
 
-				mgr.Begin("Test", open);
-				mgr.Text("Effekseer");
+				mgr.Begin("ViewerController", open);
+				mgr.SliderInt("Timeline", currentTime, currentMin[0], currentMax[0]);
+				mgr.Separator();
+				mgr.PushItemWidth(200);
+				mgr.DragIntRange2("Range", currentMin, currentMax, 1.0f, 0, 1200);
+				mgr.PopItemWidth();
+				mgr.SameLine();
+				mgr.Button("Back");
+				mgr.SameLine();
+				mgr.Button("Next");
+				mgr.SameLine();
+				mgr.Button("Back");
+				mgr.SameLine();
+				mgr.Button("Play");
 				mgr.End();
 
 				mgr.RenderGUI();

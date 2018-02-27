@@ -100,6 +100,16 @@ namespace efk
 		ImGui::End();
 	}
 
+	void GUIManager::PushItemWidth(float item_width)
+	{
+		ImGui::PushItemWidth(item_width);
+	}
+
+	void GUIManager::PopItemWidth()
+	{
+		ImGui::PopItemWidth();
+	}
+
 	void GUIManager::Separator()
 	{
 		ImGui::Separator();
@@ -133,5 +143,10 @@ namespace efk
 	bool GUIManager::SliderInt(const char16_t* label, int* v, int v_min, int v_max)
 	{
 		return ImGui::SliderInt(utf16_to_utf8(label).c_str(), v, v_min, v_max);
+	}
+
+	bool GUIManager::DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed, int v_min, int v_max, const char16_t* display_format, const char16_t* display_format_max)
+	{
+		return ImGui::DragIntRange2(utf16_to_utf8(label).c_str(), v_current_min, v_current_max, v_speed, v_min, v_max, utf16_to_utf8(display_format).c_str(), nullptr);
 	}
 }

@@ -36,6 +36,8 @@ class"
 %apply int INOUT[] { int* v }
 %apply bool INOUT[] { bool* p_open }
 
+%apply int INOUT[] { int* v_current_min }
+%apply int INOUT[] { int* v_current_max }
 
 
 //-----------------------------------------------------------------------------------

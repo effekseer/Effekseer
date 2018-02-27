@@ -137,6 +137,36 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool DragIntRange2(string label, int[] v_current_min, int[] v_current_max, float v_speed, int v_min, int v_max, string display_format, string display_format_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragIntRange2__SWIG_0(swigCPtr, label, v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max);
+    return ret;
+  }
+
+  public bool DragIntRange2(string label, int[] v_current_min, int[] v_current_max, float v_speed, int v_min, int v_max, string display_format) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragIntRange2__SWIG_1(swigCPtr, label, v_current_min, v_current_max, v_speed, v_min, v_max, display_format);
+    return ret;
+  }
+
+  public bool DragIntRange2(string label, int[] v_current_min, int[] v_current_max, float v_speed, int v_min, int v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragIntRange2__SWIG_2(swigCPtr, label, v_current_min, v_current_max, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragIntRange2(string label, int[] v_current_min, int[] v_current_max, float v_speed, int v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragIntRange2__SWIG_3(swigCPtr, label, v_current_min, v_current_max, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragIntRange2(string label, int[] v_current_min, int[] v_current_max, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragIntRange2__SWIG_4(swigCPtr, label, v_current_min, v_current_max, v_speed);
+    return ret;
+  }
+
+  public bool DragIntRange2(string label, int[] v_current_min, int[] v_current_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragIntRange2__SWIG_5(swigCPtr, label, v_current_min, v_current_max);
+    return ret;
+  }
+
 }
 
 }

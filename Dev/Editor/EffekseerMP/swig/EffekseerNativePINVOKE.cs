@@ -684,6 +684,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_GUIManager_End")]
   public static extern void GUIManager_End(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_GUIManager_PushItemWidth")]
+  public static extern void GUIManager_PushItemWidth(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_GUIManager_PopItemWidth")]
+  public static extern void GUIManager_PopItemWidth(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_GUIManager_Separator")]
   public static extern void GUIManager_Separator(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -719,6 +725,24 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_GUIManager_SliderInt")]
   public static extern bool GUIManager_SliderInt(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg3, int jarg4, int jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_GUIManager_DragIntRange2__SWIG_0")]
+  public static extern bool GUIManager_DragIntRange2__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg3, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg4, float jarg5, int jarg6, int jarg7, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg8, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg9);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_GUIManager_DragIntRange2__SWIG_1")]
+  public static extern bool GUIManager_DragIntRange2__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg3, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg4, float jarg5, int jarg6, int jarg7, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg8);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_GUIManager_DragIntRange2__SWIG_2")]
+  public static extern bool GUIManager_DragIntRange2__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg3, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg4, float jarg5, int jarg6, int jarg7);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_GUIManager_DragIntRange2__SWIG_3")]
+  public static extern bool GUIManager_DragIntRange2__SWIG_3(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg3, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg4, float jarg5, int jarg6);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_GUIManager_DragIntRange2__SWIG_4")]
+  public static extern bool GUIManager_DragIntRange2__SWIG_4(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg3, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg4, float jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_GUIManager_DragIntRange2__SWIG_5")]
+  public static extern bool GUIManager_DragIntRange2__SWIG_5(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg3, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.Out, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]int[] jarg4);
 }
 
 }

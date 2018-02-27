@@ -37,6 +37,10 @@ namespace efk
 
 		void End();
 
+		void PushItemWidth(float item_width);
+
+		void PopItemWidth();
+
 		void Separator();
 
 		void SameLine();
@@ -50,5 +54,7 @@ namespace efk
 		bool InputInt(const char16_t* label, int* v, int step = 1, int step_fast = 100);
 
 		bool SliderInt(const char16_t* label, int* v, int v_min, int v_max);
+
+		bool DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char16_t* display_format = u"%.0f", const char16_t* display_format_max = NULL);
 	};
 }

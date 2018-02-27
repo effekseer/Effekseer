@@ -605,7 +605,7 @@ static ::EffekseerTool::Renderer*		g_renderer = NULL;
 static ::Effekseer::Effect*				g_effect = NULL;
 static ::EffekseerTool::Sound*			g_sound = NULL;
 static std::map<std::u16string, Effekseer::TextureData*> m_textures;
-static std::map<std::u16string,EffekseerRendererDX9::Model*> m_models;
+static std::map<std::u16string,Effekseer::Model*> m_models;
 
 static std::vector<HandleHolder>	g_handles;
 
@@ -613,14 +613,24 @@ static ::Effekseer::Vector3D	g_focus_position;
 
 static ::Effekseer::Client*		g_client = NULL;
 
+static bool						g_isOpenGLMode = false;
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer)
 	: m_renderer	( renderer )
 {
-	auto r = (EffekseerRendererDX9::Renderer*)m_renderer;
-	m_originalTextureLoader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
+	if (g_isOpenGLMode)
+	{
+		auto r = (EffekseerRendererGL::Renderer*)m_renderer;
+		m_originalTextureLoader = EffekseerRendererGL::CreateTextureLoader();
+	}
+	else
+	{
+		auto r = (EffekseerRendererDX9::Renderer*)m_renderer;
+		m_originalTextureLoader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -705,7 +715,7 @@ void Native::SoundLoader::Unload( void* handle )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Native::ModelLoader::ModelLoader( EffekseerRendererDX9::Renderer* renderer )
+Native::ModelLoader::ModelLoader( EffekseerRenderer::Renderer* renderer )
 	: m_renderer	( renderer )
 {
 
@@ -728,7 +738,7 @@ void* Native::ModelLoader::Load( const EFK_CHAR* path )
 	Combine( RootPath.c_str(), (const char16_t *)path, dst, 260 );
 
 	std::u16string key( dst );
-	EffekseerRendererDX9::Model* model = NULL;
+	Effekseer::Model* model = NULL;
 
 	if( m_models.count( key ) > 0 )
 	{
@@ -736,17 +746,36 @@ void* Native::ModelLoader::Load( const EFK_CHAR* path )
 	}
 	else
 	{
-		auto loader = ::EffekseerRendererDX9::CreateModelLoader(m_renderer->GetDevice());
-		auto m = (EffekseerRendererDX9::Model*)loader->Load((const EFK_CHAR*) dst);
-
-		if (m != nullptr)
+		if (g_isOpenGLMode)
 		{
-			m_models[key] = m;
+			auto r = (EffekseerRendererGL::Renderer*)m_renderer;
+			auto loader = ::EffekseerRendererGL::CreateModelLoader();
+			auto m = (Effekseer::Model*)loader->Load((const EFK_CHAR*)dst);
+
+			if (m != nullptr)
+			{
+				m_models[key] = m;
+			}
+
+			ES_SAFE_DELETE(loader);
+
+			return m;
 		}
+		else
+		{
+			auto r = (EffekseerRendererDX9::Renderer*)m_renderer;
+			auto loader = ::EffekseerRendererDX9::CreateModelLoader(r->GetDevice());
+			auto m = (Effekseer::Model*)loader->Load((const EFK_CHAR*)dst);
 
-		ES_SAFE_DELETE(loader);
+			if (m != nullptr)
+			{
+				m_models[key] = m;
+			}
 
-		return m;
+			ES_SAFE_DELETE(loader);
+
+			return m;
+		}
 	}
 }
 
@@ -793,6 +822,7 @@ Native::~Native()
 bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, bool isOpenGLMode)
 {
 	m_isSRGBMode = isSRGBMode;
+	g_isOpenGLMode = isOpenGLMode;
 
 	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode, isOpenGLMode );
 	if( g_renderer->Initialize( (HWND)pHandle, width, height ) )
@@ -823,11 +853,10 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			g_manager->SetModelRenderer( model_renderer );
 			g_manager->SetTrackRenderer( track_renderer );
 
-			if (!isOpenGLMode)
-			{
-				g_manager->SetTextureLoader(new TextureLoader((EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer()));
-				g_manager->SetModelLoader(new ModelLoader((EffekseerRendererDX9::Renderer *)g_renderer->GetRenderer()));
-			}
+			
+			g_manager->SetTextureLoader(new TextureLoader((EffekseerRenderer::Renderer *)g_renderer->GetRenderer()));
+			g_manager->SetModelLoader(new ModelLoader((EffekseerRenderer::Renderer *)g_renderer->GetRenderer()));
+			
 		}
 
 		// Assign device lost events.
