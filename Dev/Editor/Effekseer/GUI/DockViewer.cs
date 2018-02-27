@@ -93,7 +93,7 @@ namespace Effekseer.GUI
 			Load += new EventHandler(DockViewer_Load);
 		}
 
-		IViewer viewer = null;
+		Viewer viewer = null;
 		System.Drawing.Point mouse_left_location;
 		System.Drawing.Point mouse_middle_location;
 		System.Drawing.Point mouse_right_location;
@@ -105,7 +105,7 @@ namespace Effekseer.GUI
 		/// <summary>
 		/// ビュワーの取得を行う。
 		/// </summary>
-		public IViewer Viewer
+		public Viewer Viewer
 		{
 			get
 			{
@@ -604,7 +604,7 @@ namespace Effekseer.GUI
 				IsChanged = true;
 				current = 0;
 
-				Core.Viewer = viewer;
+				Viewer.Instance = viewer;
 			}
 			catch(Exception exception)
 			{
@@ -632,7 +632,7 @@ namespace Effekseer.GUI
 		void DockViewer_HandleDestroyed(object sender, EventArgs e)
 		{
 			HideViewer();
-			Core.Viewer = null;
+			Viewer.Instance = null;
 		}
 
 		void DockViewer_MouseDown(object sender, MouseEventArgs e)

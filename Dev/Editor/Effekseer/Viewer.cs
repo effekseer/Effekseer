@@ -5,14 +5,16 @@ using System.Text;
 
 namespace Effekseer
 {
-	public class Viewer : IViewer
+	public class Viewer
 	{
-		Native native = null;
+		static public Viewer Instance;
+
+		swig.Native native = null;
 		string backgroundImagePath = string.Empty;
 
 		public Viewer()
 		{
-			native = new Native();
+			native = new swig.Native();
 		}
 
 		public bool CreateWindow(IntPtr handle, int width, int height, bool isLinearMode)
@@ -86,7 +88,7 @@ namespace Effekseer
 			return native.SetRandomSeed(seed);
 		}
 
-		public bool Record(string path, int count, int offsetFrame, int freq, TransparenceType transparenceType)
+		public bool Record(string path, int count, int offsetFrame, int freq, swig.TransparenceType transparenceType)
 		{
 			var dir = System.IO.Path.GetDirectoryName(path);
 			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -95,28 +97,28 @@ namespace Effekseer
 			return native.Record(dir + "/" + fileWExt, ext, count, offsetFrame, freq, transparenceType);
 		}
 
-		public bool Record(string path, int count, int xCount, int offsetFrame, int freq, TransparenceType transparenceType)
+		public bool Record(string path, int count, int xCount, int offsetFrame, int freq, swig.TransparenceType transparenceType)
 		{
 			return native.Record(path, count, xCount, offsetFrame, freq, transparenceType);
 		}
 
-		public bool RecordAsGifAnimation(string path, int count, int offsetFrame, int freq, TransparenceType transparenceType)
+		public bool RecordAsGifAnimation(string path, int count, int offsetFrame, int freq, swig.TransparenceType transparenceType)
 		{
 			return native.RecordAsGifAnimation(path, count, offsetFrame, freq, transparenceType);
 		}
 
-		public bool RecordAsAVI(string path, int count, int offsetFrame, int freq, TransparenceType transparenceType)
+		public bool RecordAsAVI(string path, int count, int offsetFrame, int freq, swig.TransparenceType transparenceType)
 		{
 			return native.RecordAsAVI(path, count, offsetFrame, freq, transparenceType);
 		}
 
 
-		public ViewerParamater GetViewerParamater()
+		public swig.ViewerParamater GetViewerParamater()
 		{
 			return native.GetViewerParamater();
 		}
 
-		public void SetViewerParamater(ViewerParamater paramater)
+		public void SetViewerParamater(swig.ViewerParamater paramater)
 		{
 			native.SetViewerParamater(paramater);
 		}
@@ -334,7 +336,7 @@ namespace Effekseer
 		{
 			var param = native.GetViewerParamater();
 
-			param.Distortion = (DistortionType)type;
+			param.Distortion = (swig.DistortionType)type;
 
 			native.SetViewerParamater(param);
 		}

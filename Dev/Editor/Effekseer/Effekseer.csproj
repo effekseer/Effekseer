@@ -389,6 +389,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="swig\DistortionType.cs" />
+    <Compile Include="swig\EffekseerNative.cs" />
+    <Compile Include="swig\EffekseerNativePINVOKE.cs" />
+    <Compile Include="swig\GUIManager.cs" />
+    <Compile Include="swig\Native.cs" />
+    <Compile Include="swig\TransparenceType.cs" />
+    <Compile Include="swig\ViewerEffectBehavior.cs" />
+    <Compile Include="swig\ViewerParamater.cs" />
+    <Compile Include="Viewer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUI\AboutForm.resx">
@@ -536,14 +545,6 @@
     <ProjectReference Include="..\EffekseerCore\EffekseerCore.csproj">
       <Project>{E2495770-1734-4C77-8028-92040A1D36CB}</Project>
       <Name>EffekseerCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EffekseerInterface\EffekseerInterface.csproj">
-      <Project>{11D889E1-56E6-4050-9244-1629A55D6641}</Project>
-      <Name>EffekseerInterface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EffekseerViewer\EffekseerViewer.csproj">
-      <Project>{38CBEECD-CE84-4AEE-BF7B-7DB89CC6827F}</Project>
-      <Name>EffekseerViewer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

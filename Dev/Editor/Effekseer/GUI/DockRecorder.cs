@@ -191,28 +191,28 @@ namespace Effekseer.GUI
 
 				if (cb_type.SelectedIndex == 0)
 				{
-					if (!viewer.Record(filename, count, width, startingFrame, freq, (TransparenceType)cb_tranceparence.SelectedIndex))
+					if (!viewer.Record(filename, count, width, startingFrame, freq, (swig.TransparenceType)cb_tranceparence.SelectedIndex))
 					{
 						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 					}
 				}
 				else if (cb_type.SelectedIndex == 1)
 				{
-					if (!viewer.Record(filename, count, startingFrame, freq, (TransparenceType)cb_tranceparence.SelectedIndex))
+					if (!viewer.Record(filename, count, startingFrame, freq, (swig.TransparenceType)cb_tranceparence.SelectedIndex))
 					{
 						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 					}
 				}
 				else if (cb_type.SelectedIndex == 2)
 				{
-					if (!viewer.RecordAsGifAnimation(filename, count, startingFrame, freq, (TransparenceType)cb_tranceparence.SelectedIndex))
+					if (!viewer.RecordAsGifAnimation(filename, count, startingFrame, freq, (swig.TransparenceType)cb_tranceparence.SelectedIndex))
 					{
 						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 					}
 				}
 				else if (cb_type.SelectedIndex == 3)
 				{
-					if (!viewer.RecordAsAVI(filename, count, startingFrame, freq, (TransparenceType)cb_tranceparence.SelectedIndex))
+					if (!viewer.RecordAsAVI(filename, count, startingFrame, freq, (swig.TransparenceType)cb_tranceparence.SelectedIndex))
 					{
 						MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 					}

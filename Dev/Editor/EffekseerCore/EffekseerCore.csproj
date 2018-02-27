@@ -137,12 +137,6 @@
     <Compile Include="Utl\XmlDocumentExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EffekseerInterface\EffekseerInterface.csproj">
-      <Project>{11D889E1-56E6-4050-9244-1629A55D6641}</Project>
-      <Name>EffekseerInterface</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\Effekseer\Properties\Resources.en-US.resx">
       <Link>Properties\Resources.en-US.resx</Link>
     </EmbeddedResource>

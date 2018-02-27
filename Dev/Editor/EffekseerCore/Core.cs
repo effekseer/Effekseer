@@ -30,11 +30,13 @@ namespace Effekseer
 
 		static bool is_loop = false;
 
+		/*
 		public static IViewer Viewer
 		{
 			get;
 			set;
 		}
+		*/
 
 		public static object MainForm
 		{

@@ -2,6 +2,7 @@
 
 %{
 #include "dll.h"
+#include "GUI/efk.GUIManager.h"
 %}
 
 //-----------------------------------------------------------------------------------
@@ -10,6 +11,7 @@
 %include "wchar.i"
 %include "stdint.i"
 %include "char16.i"
+%include "arrays_csharp.i"
 
 %pragma(csharp) imclassclassmodifiers="
 [System.Security.SuppressUnmanagedCodeSecurity]
@@ -31,7 +33,13 @@ class"
 //-----------------------------------------------------------------------------------
 %typemap(csclassmodifiers) ViewerParamater "public class"
 
+%apply int INOUT[] { int* v }
+%apply bool INOUT[] { bool* p_open }
+
+
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
 %include "Cpp/Viewer/dll.h"
+%include "Cpp/Viewer/GUI/efk.GUIManager.h"

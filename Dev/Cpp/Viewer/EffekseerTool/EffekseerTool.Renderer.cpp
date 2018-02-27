@@ -300,16 +300,16 @@ bool Renderer::BeginRendering()
 
 	if (!m_recording)
 	{
-		//graphics->Clear(Effekseer::Color(0, 0, 0, 0));
+		graphics->Clear(Effekseer::Color(0, 0, 0, 0));
 	}
 
 	if( m_recording && IsBackgroundTranslucent )
 	{
-		//graphics->Clear(Effekseer::Color(0, 0, 0, 0));
+		graphics->Clear(Effekseer::Color(0, 0, 0, 0));
 	}
 	else
 	{
-		//graphics->Clear(Effekseer::Color(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B, 255));
+		graphics->Clear(Effekseer::Color(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B, 255));
 	}
 
 	/* 背景 */

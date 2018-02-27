@@ -31,14 +31,14 @@ namespace Effekseer.GUI
 
 		public void Connect()
 		{
-			if (Effekseer.Core.Viewer.IsConnected() && Target == target && Port == port) return;
+			if (Viewer.Instance.IsConnected() && Target == target && Port == port) return;
 
-			if (Effekseer.Core.Viewer.IsConnected())
+			if (Viewer.Instance.IsConnected())
 			{
 				Disconnect();
 			}
 
-			if (Effekseer.Core.Viewer.Connect(Target, Port))
+			if (Viewer.Instance.Connect(Target, Port))
 			{
 				target = Target;
 				port = Port;
@@ -47,15 +47,15 @@ namespace Effekseer.GUI
 
 		public void Disconnect()
 		{
-			if (!Effekseer.Core.Viewer.IsConnected()) return;
-			Effekseer.Core.Viewer.Disconnect();
+			if (!Viewer.Instance.IsConnected()) return;
+			Viewer.Instance.Disconnect();
 		}
 
 		public void Update()
 		{
 			if (AutoConnect && time % 60 * 15 == 0)
 			{
-				Effekseer.Core.Viewer.Connect(Target, Port);
+				Viewer.Instance.Connect(Target, Port);
 			}
 
 			time++;
@@ -63,12 +63,12 @@ namespace Effekseer.GUI
 
 		public unsafe void Send()
 		{
-			if (!Effekseer.Core.Viewer.IsConnected()) return;
+			if (!Viewer.Instance.IsConnected()) return;
 
 			var data = Binary.Exporter.Export(Core.Option.Magnification);
 			fixed (byte* p = &data[0])
 			{
-				Effekseer.Core.Viewer.SendEffect(System.IO.Path.GetFileNameWithoutExtension(Core.FullPath), new IntPtr(p), data.Length, Core.FullPath);
+				Viewer.Instance.SendEffect(System.IO.Path.GetFileNameWithoutExtension(Core.FullPath), new IntPtr(p), data.Length, Core.FullPath);
 			}
 		}
 
