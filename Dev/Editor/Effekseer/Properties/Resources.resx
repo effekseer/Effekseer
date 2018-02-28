@@ -430,13 +430,13 @@
     <value>開始</value>
   </data>
   <data name="StartFrame" xml:space="preserve">
-    <value>Start Frame</value>
+    <value>開始フレーム</value>
   </data>
   <data name="TransmitDataOnEdit" xml:space="preserve">
     <value>編集時にデータを送信する</value>
   </data>
   <data name="TransmitDataOnLoad" xml:space="preserve">
-    <value>Transmit data on load</value>
+    <value>読み込み時にデータを送信する</value>
   </data>
   <data name="TransmitDataOnSave" xml:space="preserve">
     <value>保存時にデータを送信する</value>

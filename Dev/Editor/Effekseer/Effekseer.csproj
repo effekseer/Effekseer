@@ -397,6 +397,7 @@
     <Compile Include="swig\TransparenceType.cs" />
     <Compile Include="swig\ViewerEffectBehavior.cs" />
     <Compile Include="swig\ViewerParamater.cs" />
+    <Compile Include="swig\WindowFlags.cs" />
     <Compile Include="Viewer.cs" />
   </ItemGroup>
   <ItemGroup>
