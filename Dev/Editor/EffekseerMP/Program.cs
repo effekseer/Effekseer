@@ -38,6 +38,8 @@ namespace Effekseer
 			var currentMin = new[] { 0 };
 			var currentMax = new[] { 100 };
 
+            var messageBoxOpened = new[] { false };
+
 			while (mgr.DoEvents())
 			{
 				native.UpdateWindow();
@@ -57,8 +59,19 @@ namespace Effekseer
 				mgr.SameLine();
 				mgr.Button("Back");
 				mgr.SameLine();
-				mgr.Button("Play");
-				mgr.End();
+
+				if(mgr.Button("Play"))
+                {
+                    mgr.OpenPopup("Message##AA");   
+                }
+
+                if (mgr.BeginPopupModal("Message##AA", null, swig.WindowFlags.AlwaysAutoResize))
+                {
+                    mgr.Text("testaaaaaaa");
+                    mgr.EndPopup();
+                }
+
+                mgr.End();
 
 				mgr.RenderGUI();
 

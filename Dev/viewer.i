@@ -34,7 +34,10 @@ class"
 %typemap(csclassmodifiers) ViewerParamater "public class"
 
 %apply int INOUT[] { int* v }
+%apply bool INOUT[] { bool* v }
+
 %apply bool INOUT[] { bool* p_open }
+%apply bool INOUT[] { bool* p_selected }
 
 %apply int INOUT[] { int* v_current_min }
 %apply int INOUT[] { int* v_current_max }

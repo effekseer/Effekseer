@@ -130,6 +130,11 @@ namespace efk
 		return ImGui::Button(utf16_to_utf8(label).c_str());
 	}
 
+	bool GUIManager::Checkbox(const char16_t* label, bool* v)
+	{
+		return ImGui::Checkbox(utf16_to_utf8(label).c_str(), v);
+	}
+
 	bool GUIManager::DragInt(const char16_t* label, int* v, float v_speed, int v_min, int v_max)
 	{
 		return ImGui::DragInt(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max);
@@ -145,8 +150,73 @@ namespace efk
 		return ImGui::SliderInt(utf16_to_utf8(label).c_str(), v, v_min, v_max);
 	}
 
-	bool GUIManager::DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed, int v_min, int v_max, const char16_t* display_format, const char16_t* display_format_max)
+	bool GUIManager::DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed, int v_min, int v_max, const char* display_format, const char* display_format_max)
 	{
-		return ImGui::DragIntRange2(utf16_to_utf8(label).c_str(), v_current_min, v_current_max, v_speed, v_min, v_max, utf16_to_utf8(display_format).c_str(), nullptr);
+		return ImGui::DragIntRange2(utf16_to_utf8(label).c_str(), v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max);
+	}
+
+	bool GUIManager::BeginMainMenuBar()
+	{
+		return ImGui::BeginMainMenuBar();
+	}
+
+	void GUIManager::EndMainMenuBar()
+	{
+		ImGui::EndMainMenuBar();
+	}
+
+	bool GUIManager::BeginMenuBar()
+	{
+		return ImGui::BeginMenuBar();
+	}
+
+	void GUIManager::EndMenuBar()
+	{
+		return ImGui::EndMenuBar();
+	}
+
+	bool GUIManager::BeginMenu(const char16_t* label, bool enabled)
+	{
+		return ImGui::BeginMenu(utf16_to_utf8(label).c_str(), enabled);
+	}
+
+	void GUIManager::EndMenu()
+	{
+		ImGui::EndMenu();
+	}
+
+	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool selected, bool enabled)
+	{
+		return ImGui::MenuItem(utf16_to_utf8(label).c_str(), shortcut, selected, enabled);
+	}
+
+	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled)
+	{
+		return ImGui::MenuItem(utf16_to_utf8(label).c_str(), shortcut, p_selected, enabled);
+	}
+
+	void GUIManager::OpenPopup(const char* str_id)
+	{
+		ImGui::OpenPopup(str_id);
+	}
+
+	bool GUIManager::BeginPopupModal(const char16_t* name, bool* p_open, WindowFlags extra_flags)
+	{
+		return ImGui::BeginPopupModal(utf16_to_utf8(name).c_str(), p_open, (int)extra_flags);
+	}
+
+	void GUIManager::EndPopup()
+	{
+		ImGui::EndPopup();
+	}
+
+	bool GUIManager::IsPopupOpen(const char* str_id)
+	{
+		return ImGui::IsPopupOpen(str_id);
+	}
+
+	void GUIManager::CloseCurrentPopup()
+	{
+		ImGui::CloseCurrentPopup();
 	}
 }
