@@ -40,6 +40,41 @@ namespace efk
 		ChildMenu = 1 << 28   // Don't use! For internal use by BeginMenu()
 	};
 
+	// Enumeration for ColorEdit3() / ColorEdit4() / ColorPicker3() / ColorPicker4() / ColorButton()
+	enum class ColorEditFlags : int32_t
+	{
+		None = 0,
+		NoAlpha = 1 << 1,   //              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (read 3 components from the input pointer).
+		NoPicker = 1 << 2,   //              // ColorEdit: disable picker when clicking on colored square.
+		NoOptions = 1 << 3,   //              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
+		NoSmallPreview = 1 << 4,   //              // ColorEdit, ColorPicker: disable colored square preview next to the inputs. (e.g. to show only the inputs)
+		NoInputs = 1 << 5,   //              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview colored square).
+		NoTooltip = 1 << 6,   //              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
+		NoLabel = 1 << 7,   //              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).
+		NoSidePreview = 1 << 8,   //              // ColorPicker: disable bigger color preview on right side of the picker, use small colored square preview instead.
+		// User Options (right-click on widget to change some of them). You can set application defaults using SetColorEditOptions(). The idea is that you probably don't want to override them in most of your calls, let the user choose and/or call SetColorEditOptions() during startup.
+		AlphaBar = 1 << 9,   //              // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
+		AlphaPreview = 1 << 10,  //              // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.
+		AlphaPreviewHalf = 1 << 11,  //              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
+		HDR = 1 << 12,  //              // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).
+		RGB = 1 << 13,  // [Inputs]     // ColorEdit: choose one among RGB/HSV/HEX. ColorPicker: choose any combination using RGB/HSV/HEX.
+		HSV = 1 << 14,  // [Inputs]     // "
+		HEX = 1 << 15,  // [Inputs]     // "
+		Uint8 = 1 << 16,  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255. 
+		Float = 1 << 17,  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of 0..255 integers. No round-trip of value via integers.
+		PickerHueBar = 1 << 18,  // [PickerMode] // ColorPicker: bar for Hue, rectangle for Sat/Value.
+		PickerHueWheel = 1 << 19,  // [PickerMode] // ColorPicker: wheel for Hue, triangle for Sat/Value.
+	};
+
+	enum class Cond : int32_t
+	{
+		None = 0,
+		Always = 1 << 0,   // Set the variable
+		Once = 1 << 1,   // Set the variable once per runtime session (only the first call with succeed)
+		FirstUseEver = 1 << 2,   // Set the variable if the window has no saved data (if doesn't exist in the .ini file)
+		Appearing = 1 << 3    // Set the variable if the window is appearing after being hidden/inactive (or the first time)
+	};
+
 	class GUIManager
 	{
 	private:
@@ -68,6 +103,8 @@ namespace efk
 
 		void End();
 
+		void SetNextWindowSize(float size_x, float size_y, Cond cond);
+
 		void PushItemWidth(float item_width);
 
 		void PopItemWidth();
@@ -77,18 +114,34 @@ namespace efk
 		void SameLine();
 
 		void Text(const char16_t* text);
+		void TextWrapped(const char16_t* text);
 
 		bool Button(const char16_t* label);
 
 		bool Checkbox(const char16_t* label, bool* v);
 
-		bool DragInt(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0);
-
 		bool InputInt(const char16_t* label, int* v, int step = 1, int step_fast = 100);
 
 		bool SliderInt(const char16_t* label, int* v, int v_min, int v_max);
 
+		// Drags
+		bool DragFloat(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char* display_format = "%.3f", float power = 1.0f);     // If v_min >= v_max we have no bound
+		bool DragFloat2(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char* display_format = "%.3f", float power = 1.0f);
+		bool DragFloat3(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char* display_format = "%.3f", float power = 1.0f);
+		bool DragFloat4(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char* display_format = "%.3f", float power = 1.0f);
+		bool DragFloatRange2(const char16_t* label, float* v_current_min, float* v_current_max, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char* display_format = "%.3f", const char* display_format_max = NULL, float power = 1.0f);
+		bool DragInt(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f");                                       // If v_min >= v_max we have no bound
+		bool DragInt2(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f");
+		bool DragInt3(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f");
+		bool DragInt4(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f");
 		bool DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f", const char* display_format_max = NULL);
+
+		// Color
+		bool ColorEdit4(const char16_t* label, float* col, ColorEditFlags flags = ColorEditFlags::None);
+
+		// Tree
+		bool TreeNode(const char16_t* label);
+		void TreePop();
 
 		// Menus
 		bool BeginMainMenuBar();                                                
@@ -103,6 +156,7 @@ namespace efk
 		// Popups
 		void OpenPopup(const char* str_id);
 		bool BeginPopupModal(const char16_t* name, bool* p_open = NULL, WindowFlags extra_flags = WindowFlags::None);
+		bool BeginPopupContextItem(const char* str_id = NULL, int mouse_button = 1);
 		void EndPopup();
 		bool IsPopupOpen(const char* str_id);
 		void CloseCurrentPopup();

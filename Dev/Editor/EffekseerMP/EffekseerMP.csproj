@@ -66,8 +66,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GUI\Component\Boolean.cs" />
+    <Compile Include="GUI\Dialog\About.cs" />
+    <Compile Include="GUI\Dialog\MessageBox.cs" />
+    <Compile Include="GUI\IControl.cs" />
+    <Compile Include="GUI\Manager.cs" />
+    <Compile Include="GUI\Menu\MainMenu.cs" />
+    <Compile Include="GUI\Menu\Menu.cs" />
+    <Compile Include="GUI\Menu\MenuItem.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="swig\ColorEditFlags.cs" />
+    <Compile Include="swig\Cond.cs" />
     <Compile Include="swig\DistortionType.cs" />
     <Compile Include="swig\EffekseerNative.cs" />
     <Compile Include="swig\EffekseerNativePINVOKE.cs" />

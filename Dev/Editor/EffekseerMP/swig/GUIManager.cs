@@ -80,6 +80,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_End(swigCPtr);
   }
 
+  public void SetNextWindowSize(float size_x, float size_y, Cond cond) {
+    EffekseerNativePINVOKE.GUIManager_SetNextWindowSize(swigCPtr, size_x, size_y, (int)cond);
+  }
+
   public void PushItemWidth(float item_width) {
     EffekseerNativePINVOKE.GUIManager_PushItemWidth(swigCPtr, item_width);
   }
@@ -100,6 +104,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Text(swigCPtr, text);
   }
 
+  public void TextWrapped(string text) {
+    EffekseerNativePINVOKE.GUIManager_TextWrapped(swigCPtr, text);
+  }
+
   public bool Button(string label) {
     bool ret = EffekseerNativePINVOKE.GUIManager_Button(swigCPtr, label);
     return ret;
@@ -107,26 +115,6 @@ public class GUIManager : global::System.IDisposable {
 
   public bool Checkbox(string label, bool[] v) {
     bool ret = EffekseerNativePINVOKE.GUIManager_Checkbox(swigCPtr, label, v);
-    return ret;
-  }
-
-  public bool DragInt(string label, int[] v, float v_speed, int v_min, int v_max) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max);
-    return ret;
-  }
-
-  public bool DragInt(string label, int[] v, float v_speed, int v_min) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt__SWIG_1(swigCPtr, label, v, v_speed, v_min);
-    return ret;
-  }
-
-  public bool DragInt(string label, int[] v, float v_speed) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt__SWIG_2(swigCPtr, label, v, v_speed);
-    return ret;
-  }
-
-  public bool DragInt(string label, int[] v) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt__SWIG_3(swigCPtr, label, v);
     return ret;
   }
 
@@ -147,6 +135,261 @@ public class GUIManager : global::System.IDisposable {
 
   public bool SliderInt(string label, int[] v, int v_min, int v_max) {
     bool ret = EffekseerNativePINVOKE.GUIManager_SliderInt(swigCPtr, label, v, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragFloat(string label, float[] v, float v_speed, float v_min, float v_max, string display_format, float power) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format, power);
+    return ret;
+  }
+
+  public bool DragFloat(string label, float[] v, float v_speed, float v_min, float v_max, string display_format) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max, display_format);
+    return ret;
+  }
+
+  public bool DragFloat(string label, float[] v, float v_speed, float v_min, float v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat__SWIG_2(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragFloat(string label, float[] v, float v_speed, float v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat__SWIG_3(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragFloat(string label, float[] v, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat__SWIG_4(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragFloat(string label, float[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat__SWIG_5(swigCPtr, label, v);
+    return ret;
+  }
+
+  public bool DragFloat2(string label, float[] v, float v_speed, float v_min, float v_max, string display_format, float power) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format, power);
+    return ret;
+  }
+
+  public bool DragFloat2(string label, float[] v, float v_speed, float v_min, float v_max, string display_format) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max, display_format);
+    return ret;
+  }
+
+  public bool DragFloat2(string label, float[] v, float v_speed, float v_min, float v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2__SWIG_2(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragFloat2(string label, float[] v, float v_speed, float v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2__SWIG_3(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragFloat2(string label, float[] v, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2__SWIG_4(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragFloat2(string label, float[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2__SWIG_5(swigCPtr, label, v);
+    return ret;
+  }
+
+  public bool DragFloat3(string label, float[] v, float v_speed, float v_min, float v_max, string display_format, float power) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format, power);
+    return ret;
+  }
+
+  public bool DragFloat3(string label, float[] v, float v_speed, float v_min, float v_max, string display_format) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max, display_format);
+    return ret;
+  }
+
+  public bool DragFloat3(string label, float[] v, float v_speed, float v_min, float v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3__SWIG_2(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragFloat3(string label, float[] v, float v_speed, float v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3__SWIG_3(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragFloat3(string label, float[] v, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3__SWIG_4(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragFloat3(string label, float[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3__SWIG_5(swigCPtr, label, v);
+    return ret;
+  }
+
+  public bool DragFloat4(string label, float[] v, float v_speed, float v_min, float v_max, string display_format, float power) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat4__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format, power);
+    return ret;
+  }
+
+  public bool DragFloat4(string label, float[] v, float v_speed, float v_min, float v_max, string display_format) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat4__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max, display_format);
+    return ret;
+  }
+
+  public bool DragFloat4(string label, float[] v, float v_speed, float v_min, float v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat4__SWIG_2(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragFloat4(string label, float[] v, float v_speed, float v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat4__SWIG_3(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragFloat4(string label, float[] v, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat4__SWIG_4(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragFloat4(string label, float[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat4__SWIG_5(swigCPtr, label, v);
+    return ret;
+  }
+
+  public bool DragFloatRange2(string label, float[] v_current_min, float[] v_current_max, float v_speed, float v_min, float v_max, string display_format, string display_format_max, float power) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloatRange2__SWIG_0(swigCPtr, label, v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max, power);
+    return ret;
+  }
+
+  public bool DragFloatRange2(string label, float[] v_current_min, float[] v_current_max, float v_speed, float v_min, float v_max, string display_format, string display_format_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloatRange2__SWIG_1(swigCPtr, label, v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max);
+    return ret;
+  }
+
+  public bool DragFloatRange2(string label, float[] v_current_min, float[] v_current_max, float v_speed, float v_min, float v_max, string display_format) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloatRange2__SWIG_2(swigCPtr, label, v_current_min, v_current_max, v_speed, v_min, v_max, display_format);
+    return ret;
+  }
+
+  public bool DragFloatRange2(string label, float[] v_current_min, float[] v_current_max, float v_speed, float v_min, float v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloatRange2__SWIG_3(swigCPtr, label, v_current_min, v_current_max, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragFloatRange2(string label, float[] v_current_min, float[] v_current_max, float v_speed, float v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloatRange2__SWIG_4(swigCPtr, label, v_current_min, v_current_max, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragFloatRange2(string label, float[] v_current_min, float[] v_current_max, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloatRange2__SWIG_5(swigCPtr, label, v_current_min, v_current_max, v_speed);
+    return ret;
+  }
+
+  public bool DragFloatRange2(string label, float[] v_current_min, float[] v_current_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloatRange2__SWIG_6(swigCPtr, label, v_current_min, v_current_max);
+    return ret;
+  }
+
+  public bool DragInt(string label, int[] v, float v_speed, int v_min, int v_max, string display_format) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format);
+    return ret;
+  }
+
+  public bool DragInt(string label, int[] v, float v_speed, int v_min, int v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragInt(string label, int[] v, float v_speed, int v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt__SWIG_2(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragInt(string label, int[] v, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt__SWIG_3(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragInt(string label, int[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt__SWIG_4(swigCPtr, label, v);
+    return ret;
+  }
+
+  public bool DragInt2(string label, int[] v, float v_speed, int v_min, int v_max, string display_format) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt2__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format);
+    return ret;
+  }
+
+  public bool DragInt2(string label, int[] v, float v_speed, int v_min, int v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt2__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragInt2(string label, int[] v, float v_speed, int v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt2__SWIG_2(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragInt2(string label, int[] v, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt2__SWIG_3(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragInt2(string label, int[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt2__SWIG_4(swigCPtr, label, v);
+    return ret;
+  }
+
+  public bool DragInt3(string label, int[] v, float v_speed, int v_min, int v_max, string display_format) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt3__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format);
+    return ret;
+  }
+
+  public bool DragInt3(string label, int[] v, float v_speed, int v_min, int v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt3__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragInt3(string label, int[] v, float v_speed, int v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt3__SWIG_2(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragInt3(string label, int[] v, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt3__SWIG_3(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragInt3(string label, int[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt3__SWIG_4(swigCPtr, label, v);
+    return ret;
+  }
+
+  public bool DragInt4(string label, int[] v, float v_speed, int v_min, int v_max, string display_format) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt4__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format);
+    return ret;
+  }
+
+  public bool DragInt4(string label, int[] v, float v_speed, int v_min, int v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt4__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragInt4(string label, int[] v, float v_speed, int v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt4__SWIG_2(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragInt4(string label, int[] v, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt4__SWIG_3(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragInt4(string label, int[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt4__SWIG_4(swigCPtr, label, v);
     return ret;
   }
 
@@ -178,6 +421,25 @@ public class GUIManager : global::System.IDisposable {
   public bool DragIntRange2(string label, int[] v_current_min, int[] v_current_max) {
     bool ret = EffekseerNativePINVOKE.GUIManager_DragIntRange2__SWIG_5(swigCPtr, label, v_current_min, v_current_max);
     return ret;
+  }
+
+  public bool ColorEdit4(string label, float[] col, ColorEditFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_ColorEdit4__SWIG_0(swigCPtr, label, col, (int)flags);
+    return ret;
+  }
+
+  public bool ColorEdit4(string label, float[] col) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_ColorEdit4__SWIG_1(swigCPtr, label, col);
+    return ret;
+  }
+
+  public bool TreeNode(string label) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNode(swigCPtr, label);
+    return ret;
+  }
+
+  public void TreePop() {
+    EffekseerNativePINVOKE.GUIManager_TreePop(swigCPtr);
   }
 
   public bool BeginMainMenuBar() {
@@ -258,6 +520,21 @@ public class GUIManager : global::System.IDisposable {
 
   public bool BeginPopupModal(string name) {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginPopupModal__SWIG_2(swigCPtr, name);
+    return ret;
+  }
+
+  public bool BeginPopupContextItem(string str_id, int mouse_button) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginPopupContextItem__SWIG_0(swigCPtr, str_id, mouse_button);
+    return ret;
+  }
+
+  public bool BeginPopupContextItem(string str_id) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginPopupContextItem__SWIG_1(swigCPtr, str_id);
+    return ret;
+  }
+
+  public bool BeginPopupContextItem() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginPopupContextItem__SWIG_2(swigCPtr);
     return ret;
   }
 

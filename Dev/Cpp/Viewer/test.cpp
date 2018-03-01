@@ -107,7 +107,7 @@ int main_()
 	return 0;
 }
 
-int main__()
+int main()
 {
 	efk::Window* window = new efk::Window();
 
@@ -155,8 +155,27 @@ int main__()
 
 		ImGui_ImplGlfwGL3_NewFrame();
 
-		/*
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Edit"))
+			{
+				if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+				if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+				ImGui::Separator();
+				if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+				if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+				if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+		}
+
 		ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+		ImGui::SetNextWindowPos(ImVec2(0, 30));
 		const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 		const float oldWindowRounding = ImGui::GetStyle().WindowRounding; ImGui::GetStyle().WindowRounding = 0;
 		const bool visible = ImGui::Begin("imguidock window (= lumix engine's dock system)", NULL, ImVec2(0, 0), 1.0f, flags);
@@ -175,7 +194,7 @@ int main__()
 			ImGui::EndDockspace();
 		}
 		ImGui::End();
-		*/
+		
 
 		ImGui::Begin("Another Window", &show_another_window);
 		ImGui::Text("Hello from another window!");
@@ -190,11 +209,11 @@ int main__()
 		glClearDepth(1.0f);
 		glClear(bit);
 
-		manager->Update();
-
-		renderer->BeginRendering();
-		manager->Draw();
-		renderer->EndRendering();
+		//manager->Update();
+		//
+		//renderer->BeginRendering();
+		//manager->Draw();
+		//renderer->EndRendering();
 
 
 		renderer->Present();
@@ -218,7 +237,7 @@ int main__()
 	return 0;
 }
 
-int main()
+int main__()
 {
 	efk::Window* window = new efk::Window();
 

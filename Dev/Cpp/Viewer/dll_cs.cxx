@@ -2217,6 +2217,20 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_End___(void * jarg1
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextWindowSize___(void * jarg1, float jarg2, float jarg3, int jarg4) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  efk::Cond arg4 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  arg3 = (float)jarg3; 
+  arg4 = (efk::Cond)jarg4; 
+  (arg1)->SetNextWindowSize(arg2,arg3,arg4);
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PushItemWidth___(void * jarg1, float jarg2) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   float arg2 ;
@@ -2261,6 +2275,16 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Text___(void * jarg
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TextWrapped___(void * jarg1, char16_t * jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->TextWrapped((char16_t const *)arg2);
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Button___(void * jarg1, char16_t * jarg2) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -2286,90 +2310,6 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Checkbox___
   arg2 = (char16_t *)jarg2; 
   arg3 = jarg3;
   result = (bool)(arg1)->Checkbox((char16_t const *)arg2,arg3);
-  jresult = result; 
-  
-  
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt__SWIG_0___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5, int jarg6) {
-  unsigned int jresult ;
-  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  int *arg3 = (int *) 0 ;
-  float arg4 ;
-  int arg5 ;
-  int arg6 ;
-  bool result;
-  
-  arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  arg3 = jarg3;
-  arg4 = (float)jarg4; 
-  arg5 = (int)jarg5; 
-  arg6 = (int)jarg6; 
-  result = (bool)(arg1)->DragInt((char16_t const *)arg2,arg3,arg4,arg5,arg6);
-  jresult = result; 
-  
-  
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt__SWIG_1___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5) {
-  unsigned int jresult ;
-  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  int *arg3 = (int *) 0 ;
-  float arg4 ;
-  int arg5 ;
-  bool result;
-  
-  arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  arg3 = jarg3;
-  arg4 = (float)jarg4; 
-  arg5 = (int)jarg5; 
-  result = (bool)(arg1)->DragInt((char16_t const *)arg2,arg3,arg4,arg5);
-  jresult = result; 
-  
-  
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt__SWIG_2___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4) {
-  unsigned int jresult ;
-  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  int *arg3 = (int *) 0 ;
-  float arg4 ;
-  bool result;
-  
-  arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  arg3 = jarg3;
-  arg4 = (float)jarg4; 
-  result = (bool)(arg1)->DragInt((char16_t const *)arg2,arg3,arg4);
-  jresult = result; 
-  
-  
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt__SWIG_3___(void * jarg1, char16_t * jarg2, int* jarg3) {
-  unsigned int jresult ;
-  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  int *arg3 = (int *) 0 ;
-  bool result;
-  
-  arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  arg3 = jarg3;
-  result = (bool)(arg1)->DragInt((char16_t const *)arg2,arg3);
   jresult = result; 
   
   
@@ -2452,6 +2392,1194 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SliderInt__
   arg4 = (int)jarg4; 
   arg5 = (int)jarg5; 
   result = (bool)(arg1)->SliderInt((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat__SWIG_0___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6, char * jarg7, float jarg8) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  char *arg7 = (char *) 0 ;
+  float arg8 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (char *)jarg7; 
+  arg8 = (float)jarg8; 
+  result = (bool)(arg1)->DragFloat((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7,arg8);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat__SWIG_1___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6, char * jarg7) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  char *arg7 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (char *)jarg7; 
+  result = (bool)(arg1)->DragFloat((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat__SWIG_2___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  result = (bool)(arg1)->DragFloat((char16_t const *)arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat__SWIG_3___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  result = (bool)(arg1)->DragFloat((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat__SWIG_4___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  result = (bool)(arg1)->DragFloat((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat__SWIG_5___(void * jarg1, char16_t * jarg2, float* jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  result = (bool)(arg1)->DragFloat((char16_t const *)arg2,arg3);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat2__SWIG_0___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6, char * jarg7, float jarg8) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  char *arg7 = (char *) 0 ;
+  float arg8 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (char *)jarg7; 
+  arg8 = (float)jarg8; 
+  result = (bool)(arg1)->DragFloat2((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7,arg8);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat2__SWIG_1___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6, char * jarg7) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  char *arg7 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (char *)jarg7; 
+  result = (bool)(arg1)->DragFloat2((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat2__SWIG_2___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  result = (bool)(arg1)->DragFloat2((char16_t const *)arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat2__SWIG_3___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  result = (bool)(arg1)->DragFloat2((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat2__SWIG_4___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  result = (bool)(arg1)->DragFloat2((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat2__SWIG_5___(void * jarg1, char16_t * jarg2, float* jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  result = (bool)(arg1)->DragFloat2((char16_t const *)arg2,arg3);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat3__SWIG_0___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6, char * jarg7, float jarg8) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  char *arg7 = (char *) 0 ;
+  float arg8 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (char *)jarg7; 
+  arg8 = (float)jarg8; 
+  result = (bool)(arg1)->DragFloat3((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7,arg8);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat3__SWIG_1___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6, char * jarg7) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  char *arg7 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (char *)jarg7; 
+  result = (bool)(arg1)->DragFloat3((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat3__SWIG_2___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  result = (bool)(arg1)->DragFloat3((char16_t const *)arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat3__SWIG_3___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  result = (bool)(arg1)->DragFloat3((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat3__SWIG_4___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  result = (bool)(arg1)->DragFloat3((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat3__SWIG_5___(void * jarg1, char16_t * jarg2, float* jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  result = (bool)(arg1)->DragFloat3((char16_t const *)arg2,arg3);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat4__SWIG_0___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6, char * jarg7, float jarg8) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  char *arg7 = (char *) 0 ;
+  float arg8 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (char *)jarg7; 
+  arg8 = (float)jarg8; 
+  result = (bool)(arg1)->DragFloat4((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7,arg8);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat4__SWIG_1___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6, char * jarg7) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  char *arg7 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (char *)jarg7; 
+  result = (bool)(arg1)->DragFloat4((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat4__SWIG_2___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5, float jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  result = (bool)(arg1)->DragFloat4((char16_t const *)arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat4__SWIG_3___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4, float jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  float arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  result = (bool)(arg1)->DragFloat4((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat4__SWIG_4___(void * jarg1, char16_t * jarg2, float* jarg3, float jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  result = (bool)(arg1)->DragFloat4((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloat4__SWIG_5___(void * jarg1, char16_t * jarg2, float* jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  result = (bool)(arg1)->DragFloat4((char16_t const *)arg2,arg3);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloatRange2__SWIG_0___(void * jarg1, char16_t * jarg2, float* jarg3, float* jarg4, float jarg5, float jarg6, float jarg7, char * jarg8, char * jarg9, float jarg10) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  float arg5 ;
+  float arg6 ;
+  float arg7 ;
+  char *arg8 = (char *) 0 ;
+  char *arg9 = (char *) 0 ;
+  float arg10 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (float)jarg7; 
+  arg8 = (char *)jarg8; 
+  arg9 = (char *)jarg9; 
+  arg10 = (float)jarg10; 
+  result = (bool)(arg1)->DragFloatRange2((char16_t const *)arg2,arg3,arg4,arg5,arg6,arg7,(char const *)arg8,(char const *)arg9,arg10);
+  jresult = result; 
+  
+  
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloatRange2__SWIG_1___(void * jarg1, char16_t * jarg2, float* jarg3, float* jarg4, float jarg5, float jarg6, float jarg7, char * jarg8, char * jarg9) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  float arg5 ;
+  float arg6 ;
+  float arg7 ;
+  char *arg8 = (char *) 0 ;
+  char *arg9 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (float)jarg7; 
+  arg8 = (char *)jarg8; 
+  arg9 = (char *)jarg9; 
+  result = (bool)(arg1)->DragFloatRange2((char16_t const *)arg2,arg3,arg4,arg5,arg6,arg7,(char const *)arg8,(char const *)arg9);
+  jresult = result; 
+  
+  
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloatRange2__SWIG_2___(void * jarg1, char16_t * jarg2, float* jarg3, float* jarg4, float jarg5, float jarg6, float jarg7, char * jarg8) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  float arg5 ;
+  float arg6 ;
+  float arg7 ;
+  char *arg8 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (float)jarg7; 
+  arg8 = (char *)jarg8; 
+  result = (bool)(arg1)->DragFloatRange2((char16_t const *)arg2,arg3,arg4,arg5,arg6,arg7,(char const *)arg8);
+  jresult = result; 
+  
+  
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloatRange2__SWIG_3___(void * jarg1, char16_t * jarg2, float* jarg3, float* jarg4, float jarg5, float jarg6, float jarg7) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  float arg5 ;
+  float arg6 ;
+  float arg7 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  arg7 = (float)jarg7; 
+  result = (bool)(arg1)->DragFloatRange2((char16_t const *)arg2,arg3,arg4,arg5,arg6,arg7);
+  jresult = result; 
+  
+  
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloatRange2__SWIG_4___(void * jarg1, char16_t * jarg2, float* jarg3, float* jarg4, float jarg5, float jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  float arg5 ;
+  float arg6 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = (float)jarg5; 
+  arg6 = (float)jarg6; 
+  result = (bool)(arg1)->DragFloatRange2((char16_t const *)arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  
+  
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloatRange2__SWIG_5___(void * jarg1, char16_t * jarg2, float* jarg3, float* jarg4, float jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  float arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = (float)jarg5; 
+  result = (bool)(arg1)->DragFloatRange2((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragFloatRange2__SWIG_6___(void * jarg1, char16_t * jarg2, float* jarg3, float* jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  result = (bool)(arg1)->DragFloatRange2((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  
+  
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt__SWIG_0___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5, int jarg6, char * jarg7) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  int arg6 ;
+  char *arg7 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  arg6 = (int)jarg6; 
+  arg7 = (char *)jarg7; 
+  result = (bool)(arg1)->DragInt((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt__SWIG_1___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5, int jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  int arg6 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  arg6 = (int)jarg6; 
+  result = (bool)(arg1)->DragInt((char16_t const *)arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt__SWIG_2___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  result = (bool)(arg1)->DragInt((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt__SWIG_3___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  result = (bool)(arg1)->DragInt((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt__SWIG_4___(void * jarg1, char16_t * jarg2, int* jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  result = (bool)(arg1)->DragInt((char16_t const *)arg2,arg3);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt2__SWIG_0___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5, int jarg6, char * jarg7) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  int arg6 ;
+  char *arg7 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  arg6 = (int)jarg6; 
+  arg7 = (char *)jarg7; 
+  result = (bool)(arg1)->DragInt2((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt2__SWIG_1___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5, int jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  int arg6 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  arg6 = (int)jarg6; 
+  result = (bool)(arg1)->DragInt2((char16_t const *)arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt2__SWIG_2___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  result = (bool)(arg1)->DragInt2((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt2__SWIG_3___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  result = (bool)(arg1)->DragInt2((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt2__SWIG_4___(void * jarg1, char16_t * jarg2, int* jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  result = (bool)(arg1)->DragInt2((char16_t const *)arg2,arg3);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt3__SWIG_0___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5, int jarg6, char * jarg7) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  int arg6 ;
+  char *arg7 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  arg6 = (int)jarg6; 
+  arg7 = (char *)jarg7; 
+  result = (bool)(arg1)->DragInt3((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt3__SWIG_1___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5, int jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  int arg6 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  arg6 = (int)jarg6; 
+  result = (bool)(arg1)->DragInt3((char16_t const *)arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt3__SWIG_2___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  result = (bool)(arg1)->DragInt3((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt3__SWIG_3___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  result = (bool)(arg1)->DragInt3((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt3__SWIG_4___(void * jarg1, char16_t * jarg2, int* jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  result = (bool)(arg1)->DragInt3((char16_t const *)arg2,arg3);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt4__SWIG_0___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5, int jarg6, char * jarg7) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  int arg6 ;
+  char *arg7 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  arg6 = (int)jarg6; 
+  arg7 = (char *)jarg7; 
+  result = (bool)(arg1)->DragInt4((char16_t const *)arg2,arg3,arg4,arg5,arg6,(char const *)arg7);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt4__SWIG_1___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5, int jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  int arg6 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  arg6 = (int)jarg6; 
+  result = (bool)(arg1)->DragInt4((char16_t const *)arg2,arg3,arg4,arg5,arg6);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt4__SWIG_2___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4, int jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  int arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  arg5 = (int)jarg5; 
+  result = (bool)(arg1)->DragInt4((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt4__SWIG_3___(void * jarg1, char16_t * jarg2, int* jarg3, float jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  float arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (float)jarg4; 
+  result = (bool)(arg1)->DragInt4((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragInt4__SWIG_4___(void * jarg1, char16_t * jarg2, int* jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  int *arg3 = (int *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  result = (bool)(arg1)->DragInt4((char16_t const *)arg2,arg3);
   jresult = result; 
   
   
@@ -2618,6 +3746,66 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragIntRang
   
   
   return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ColorEdit4__SWIG_0___(void * jarg1, char16_t * jarg2, float* jarg3, int jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  efk::ColorEditFlags arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (efk::ColorEditFlags)jarg4; 
+  result = (bool)(arg1)->ColorEdit4((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ColorEdit4__SWIG_1___(void * jarg1, char16_t * jarg2, float* jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  float *arg3 = (float *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  result = (bool)(arg1)->ColorEdit4((char16_t const *)arg2,arg3);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreeNode___(void * jarg1, char16_t * jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (bool)(arg1)->TreeNode((char16_t const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreePop___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->TreePop();
 }
 
 
@@ -2866,6 +4054,48 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPopupM
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
   result = (bool)(arg1)->BeginPopupModal((char16_t const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPopupContextItem__SWIG_0___(void * jarg1, char * jarg2, int jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char *arg2 = (char *) 0 ;
+  int arg3 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char *)jarg2; 
+  arg3 = (int)jarg3; 
+  result = (bool)(arg1)->BeginPopupContextItem((char const *)arg2,arg3);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPopupContextItem__SWIG_1___(void * jarg1, char * jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char *arg2 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char *)jarg2; 
+  result = (bool)(arg1)->BeginPopupContextItem((char const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPopupContextItem__SWIG_2___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->BeginPopupContextItem();
   jresult = result; 
   return jresult;
 }

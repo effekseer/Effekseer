@@ -35,6 +35,9 @@ class"
 
 %apply int INOUT[] { int* v }
 %apply bool INOUT[] { bool* v }
+%apply float INOUT[] { float* v }
+
+%apply float INOUT[] { float* col }
 
 %apply bool INOUT[] { bool* p_open }
 %apply bool INOUT[] { bool* p_selected }
@@ -42,6 +45,8 @@ class"
 %apply int INOUT[] { int* v_current_min }
 %apply int INOUT[] { int* v_current_max }
 
+%apply float INOUT[] { float* v_current_min }
+%apply float INOUT[] { float* v_current_max }
 
 //-----------------------------------------------------------------------------------
 //

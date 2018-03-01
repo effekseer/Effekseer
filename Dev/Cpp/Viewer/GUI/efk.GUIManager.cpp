@@ -100,6 +100,15 @@ namespace efk
 		ImGui::End();
 	}
 
+	void GUIManager::SetNextWindowSize(float size_x, float size_y, Cond cond)
+	{
+		ImVec2 size;
+		size.x = size_x;
+		size.y = size_y;
+
+		ImGui::SetNextWindowSize(size, (int)cond);
+	}
+
 	void GUIManager::PushItemWidth(float item_width)
 	{
 		ImGui::PushItemWidth(item_width);
@@ -125,6 +134,11 @@ namespace efk
 		ImGui::Text(utf16_to_utf8(text).c_str());
 	}
 
+	void GUIManager::TextWrapped(const char16_t* text)
+	{
+		ImGui::TextWrapped(utf16_to_utf8(text).c_str());
+	}
+
 	bool GUIManager::Button(const char16_t* label)
 	{
 		return ImGui::Button(utf16_to_utf8(label).c_str());
@@ -133,11 +147,6 @@ namespace efk
 	bool GUIManager::Checkbox(const char16_t* label, bool* v)
 	{
 		return ImGui::Checkbox(utf16_to_utf8(label).c_str(), v);
-	}
-
-	bool GUIManager::DragInt(const char16_t* label, int* v, float v_speed, int v_min, int v_max)
-	{
-		return ImGui::DragInt(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max);
 	}
 
 	bool GUIManager::InputInt(const char16_t* label, int* v, int step, int step_fast)
@@ -150,9 +159,69 @@ namespace efk
 		return ImGui::SliderInt(utf16_to_utf8(label).c_str(), v, v_min, v_max);
 	}
 
+	bool GUIManager::DragFloat(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char* display_format, float power)
+	{
+		return ImGui::DragFloat(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+	}
+
+	bool GUIManager::DragFloat2(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char* display_format, float power)
+	{
+		return ImGui::DragFloat2(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+	}
+
+	bool GUIManager::DragFloat3(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char* display_format, float power)
+	{
+		return ImGui::DragFloat3(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+	}
+
+	bool GUIManager::DragFloat4(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char* display_format, float power)
+	{
+		return ImGui::DragFloat4(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+	}
+
+	bool GUIManager::DragFloatRange2(const char16_t* label, float* v_current_min, float* v_current_max, float v_speed, float v_min, float v_max, const char* display_format, const char* display_format_max, float power)
+	{
+		return ImGui::DragFloatRange2(utf16_to_utf8(label).c_str(), v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max);
+	}
+
+	bool GUIManager::DragInt(const char16_t* label, int* v, float v_speed, int v_min, int v_max, const char* display_format)
+	{
+		return ImGui::DragInt(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+	}
+
+	bool GUIManager::DragInt2(const char16_t* label, int* v, float v_speed, int v_min, int v_max, const char* display_format)
+	{
+		return ImGui::DragInt2(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+	}
+
+	bool GUIManager::DragInt3(const char16_t* label, int* v, float v_speed, int v_min, int v_max, const char* display_format)
+	{
+		return ImGui::DragInt3(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+	}
+
+	bool GUIManager::DragInt4(const char16_t* label, int* v, float v_speed, int v_min, int v_max, const char* display_format)
+	{
+		return ImGui::DragInt4(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+	}
+
 	bool GUIManager::DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed, int v_min, int v_max, const char* display_format, const char* display_format_max)
 	{
 		return ImGui::DragIntRange2(utf16_to_utf8(label).c_str(), v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max);
+	}
+
+	bool GUIManager::ColorEdit4(const char16_t* label, float* col, ColorEditFlags flags)
+	{
+		return ImGui::ColorEdit4(utf16_to_utf8(label).c_str(), col, (int)flags);
+	}
+
+	bool GUIManager::TreeNode(const char16_t* label)
+	{
+		return ImGui::TreeNode(utf16_to_utf8(label).c_str());
+	}
+
+	void GUIManager::TreePop()
+	{
+		ImGui::TreePop();
 	}
 
 	bool GUIManager::BeginMainMenuBar()
@@ -203,6 +272,11 @@ namespace efk
 	bool GUIManager::BeginPopupModal(const char16_t* name, bool* p_open, WindowFlags extra_flags)
 	{
 		return ImGui::BeginPopupModal(utf16_to_utf8(name).c_str(), p_open, (int)extra_flags);
+	}
+
+	bool GUIManager::BeginPopupContextItem(const char* str_id, int mouse_button)
+	{
+		return ImGui::BeginPopupContextItem(str_id, mouse_button);
 	}
 
 	void GUIManager::EndPopup()

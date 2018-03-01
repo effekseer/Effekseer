@@ -38,7 +38,16 @@ namespace Effekseer
 			var currentMin = new[] { 0 };
 			var currentMax = new[] { 100 };
 
-            var messageBoxOpened = new[] { false };
+            GUI.Manager.NativeManager = mgr;
+
+            var mainMenu = new GUI.Menu.MainMenu();
+            var menu = new GUI.Menu.Menu();
+            menu.Label = "Nyan";
+            mainMenu.Controls.Add(menu);
+
+            bool isButton = true;
+
+            GUI.Manager.Controls.Add(mainMenu);
 
 			while (mgr.DoEvents())
 			{
@@ -53,23 +62,64 @@ namespace Effekseer
 				mgr.DragIntRange2("Range", currentMin, currentMax, 1.0f, 0, 1200);
 				mgr.PopItemWidth();
 				mgr.SameLine();
-				mgr.Button("Back");
+				mgr.Button("Back_");
 				mgr.SameLine();
 				mgr.Button("Next");
 				mgr.SameLine();
-				mgr.Button("Back");
-				mgr.SameLine();
+
+                if(isButton)
+                {
+                    if (mgr.Button("Back"))
+                    {
+                        var messageBox = new GUI.Dialog.About();
+                        messageBox.Show();
+                    }
+                }
+                else
+                {
+                    mgr.Text("Back");
+                }
+
+                if (mgr.BeginPopupContextItem("aaaaaaa"))
+                {
+                    if (mgr.Button("Change"))
+                    {
+                        isButton = !isButton;
+                    }
+                    mgr.EndPopup();
+                }
+
+                mgr.SameLine();
 
 				if(mgr.Button("Play"))
                 {
-                    mgr.OpenPopup("Message##AA");   
+                    var messageBox = new GUI.Dialog.MessageBox();
+                    messageBox.Show("TestTitle", "TestMessage");
+                    //mgr.OpenPopup("###AA");   
                 }
 
-                if (mgr.BeginPopupModal("Message##AA", null, swig.WindowFlags.AlwaysAutoResize))
+                if (mgr.TreeNode("AAA"))
                 {
-                    mgr.Text("testaaaaaaa");
-                    mgr.EndPopup();
+                    mgr.Text("aa");
+
+                    if (mgr.TreeNode("BBB"))
+                    {
+                        mgr.Text("bb");
+                        mgr.Button("cc");
+                        mgr.TreePop();
+                    }
+
+                    mgr.TreePop();
                 }
+
+
+                //if (mgr.BeginPopupModal("Message###AA", null, swig.WindowFlags.AlwaysAutoResize))
+                //{
+                //    mgr.Text("testaaaaaaa");
+                //    mgr.EndPopup();
+                //}
+
+                GUI.Manager.Update();
 
                 mgr.End();
 
