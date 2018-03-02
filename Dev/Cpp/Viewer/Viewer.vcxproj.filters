@@ -34,6 +34,9 @@
     <Filter Include="GUI">
       <UniqueIdentifier>{805a71fa-4115-49cf-a2a9-5f042350e2fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rdParty\nfd">
+      <UniqueIdentifier>{51f2ab6b-2b6e-43ae-b60e-7bad2bdab8b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h">
@@ -105,6 +108,21 @@
     <ClInclude Include="GUI\efk.Window.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="3rdParty\nfd\nfd_common.h">
+      <Filter>3rdParty\nfd</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\efk.FileDialog.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\efk.GifHelper.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\efk.PNGHelper.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\efk.AVIExporter.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -172,6 +190,24 @@
     </ClCompile>
     <ClCompile Include="GUI\efk.GUIManager.cpp">
       <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\nfd\nfd_common.c">
+      <Filter>3rdParty\nfd</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\nfd\nfd_win.cpp">
+      <Filter>3rdParty\nfd</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\efk.FileDialog.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\efk.GifHelper.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\efk.PNGHelper.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\efk.AVIExporter.cpp">
+      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

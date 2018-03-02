@@ -14,6 +14,8 @@
 #include "3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.h"
 #include "3rdParty/imgui_addon/imguidock/imguidock.h"
 
+#include "3rdParty/nfd/nfd.h"
+
 #ifdef _DEBUG
 #pragma comment (lib,"x86/Debug/libglew32d.lib")
 #else
@@ -109,6 +111,25 @@ int main_()
 
 int main()
 {
+	{
+		nfdchar_t *outPath = NULL;
+		nfdresult_t result = NFD_OpenDialog(NULL, NULL, &outPath);
+
+		if (result == NFD_OKAY) {
+			puts("Success!");
+			puts(outPath);
+			free(outPath);
+		}
+		else if (result == NFD_CANCEL) {
+			puts("User pressed cancel.");
+		}
+		else {
+			printf("Error: %s\n", NFD_GetError());
+		}
+
+		return 0;
+	}
+
 	efk::Window* window = new efk::Window();
 
 	window->Initialize(u"Effekseer", 960, 540, false, true);

@@ -70,6 +70,17 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Open")]
 		public static bool Open()
 		{
+            /*
+            var filter = Properties.Resources.ProjectFilter;
+            var filters = filter.Split('|');
+            var result = swig.FileDialog.OpenDialog(filters[1], System.IO.Directory.GetCurrentDirectory());
+
+            if(!string.IsNullOrEmpty(result))
+            {
+                Open(result);
+            }
+            */
+
 			OpenFileDialog ofd = new OpenFileDialog();
 
 			ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
@@ -82,7 +93,7 @@ namespace Effekseer.GUI
 				Open(ofd.FileName);
 			}
 
-			return true;
+            return true;
 		}
 
 		/// <summary>

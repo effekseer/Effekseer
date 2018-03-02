@@ -3,12 +3,10 @@
 //
 //----------------------------------------------------------------------------------
 
-#include <windows.h>
-#include <vfw.h>
+#include "Graphics/efk.PNGHelper.h"
+#include "Graphics/efk.AVIExporter.h"
 
 #include "dll.h"
-
-//#include <d3dx9.h>
 
 #pragma comment(lib, "d3d9.lib" )
 
@@ -24,315 +22,6 @@
 #pragma comment(lib,"x86/Release/libgd_static.lib")
 #endif
 
-
-// PNG support
-#ifdef _WIN32
-#define WINVER          0x0501
-#define _WIN32_WINNT    0x0501
-#include <windows.h>
-#include <gdiplus.h>
-
-#else
-
-#define Z_SOLO
-#include <png.h>
-#include <pngstruct.h>
-#include <pnginfo.h>
-#if _DEBUG
-#pragma comment(lib,"Debug/libpng16.lib")
-#pragma comment(lib,"Debug/zlib.lib")
-#else
-#pragma comment(lib,"Release/libpng16.lib")
-#pragma comment(lib,"Release/zlib.lib")
-#endif
-
-#endif
-
-class PNGHelper
-{
-private:
-	std::vector<uint8_t>	tempBuffer1;
-	Gdiplus::GdiplusStartupInput	gdiplusStartupInput;
-	ULONG_PTR						gdiplusToken;
-
-public:
-	PNGHelper::PNGHelper()
-	{
-		Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-		tempBuffer1.resize(2048 * 2048 * 4);
-	}
-
-	PNGHelper::~PNGHelper()
-	{
-		Gdiplus::GdiplusShutdown(gdiplusToken);
-	}
-
-	bool PNGHelper::Save(const char16_t* path, int32_t width, int32_t height, const void* data)
-	{
-		// Create bitmap data
-		Gdiplus::Bitmap bmp(width, height);
-
-		auto p = (Effekseer::Color*) data;
-		for (int32_t y = 0; y < height; y++)
-		{
-			for (int32_t x = 0; x < width; x++)
-			{
-				auto src = p[x + width * y];
-				Gdiplus::Color dst(src.A, src.R, src.G, src.B);
-				bmp.SetPixel(x, y, dst);
-			}
-		}
-
-		// Save bitmap
-		CLSID id;
-		UINT encoderNum = 0;
-		UINT encoderSize = 0;
-		Gdiplus::GetImageEncodersSize(&encoderNum, &encoderSize);
-		if (encoderSize == 0)
-		{
-			return false;
-		}
-
-		auto imageCodecInfo = (Gdiplus::ImageCodecInfo*) malloc(encoderSize);
-		Gdiplus::GetImageEncoders(encoderNum, encoderSize, imageCodecInfo);
-
-		for (UINT i = 0; i < encoderNum; i++)
-		{
-			if (wcscmp(imageCodecInfo[i].MimeType, L"image/png") == 0)
-			{
-				id = imageCodecInfo[i].Clsid;
-				free(imageCodecInfo);
-				imageCodecInfo = nullptr;
-				break;
-			}
-		}
-
-		if (imageCodecInfo != nullptr)
-		{
-			free(imageCodecInfo);
-			return false;
-		}
-
-		bmp.Save((const wchar_t*) path, &id);
-
-
-		return true;
-	}
-};
-
-class AVIExporter
-{
-private:
-	int32_t	width;
-	int32_t	height;
-	int32_t framerate = 60;
-	int32_t frameCount = 0;
-
-	struct ChunkList
-	{
-		uint32_t Name;
-		uint32_t Size;
-		uint32_t ID;
-	};
-
-	struct Chunk
-	{
-		uint32_t ID;
-		uint32_t Size;
-
-		Chunk() {}
-		Chunk(uint32_t id, uint32_t size)
-		{
-			ID = id;
-			Size = size;
-		}
-	};
-
-	template<typename T> void ExportData(std::vector<uint8_t>& dst, T* data)
-	{
-		auto u = (uint8_t*) data;
-		for (size_t i = 0; i < sizeof(T); i++)
-		{
-			dst.push_back(u[i]);
-		}
-	}
-
-	void ExportData(std::vector<uint8_t>& dst, std::vector<uint8_t>& data)
-	{
-		auto u = (uint8_t*)data.data();
-		for (size_t i = 0; i < data.size(); i++)
-		{
-			dst.push_back(u[i]);
-		}
-	}
-
-	void ExportData(std::vector<uint8_t>& dst, std::vector<Effekseer::Color>& data)
-	{
-		auto u = (uint8_t*) data.data();
-		for (size_t i = 0; i < data.size() * 4; i++)
-		{
-			dst.push_back(u[i]);
-		}
-	}
-
-
-public:
-
-	void Initialize(int32_t width, int32_t height, int32_t framerate, int32_t frameCount)
-	{
-		this->width = width;
-		this->height = height;
-		this->framerate = framerate;
-		this->frameCount = frameCount;
-	}
-
-	void BeginToExportAVI(std::vector<uint8_t>& dst)
-	{
-		dst.clear();
-
-		ChunkList aviChunkList;
-
-		ChunkList hdriChunkList;
-
-		Chunk avihChunk;
-		MainAVIHeader mainAVIHeader;
-
-		ChunkList strlChunkList;
-		Chunk  strhChunk;
-		AVIStreamHeader aviStreamHeader;
-		Chunk strfChunk;
-		BITMAPINFOHEADER infoHeader;
-		Chunk junkChunk;
-
-		std::vector<uint8_t> junk;
-		
-		ChunkList moviChunkList;
-
-		Chunk idx1Chunk;
-
-		aviChunkList.Name = mmioFOURCC('R', 'I', 'F', 'F');
-		aviChunkList.Size = 2048 - 8 + (sizeof(Chunk) + width * height * 4) * frameCount + sizeof(idx1Chunk) + sizeof(AVIINDEXENTRY) * frameCount;
-		aviChunkList.ID = mmioFOURCC('A', 'V', 'I', ' ');
-		ExportData(dst, &aviChunkList);
-	
-		hdriChunkList.Name = mmioFOURCC('L', 'I', 'S', 'T');
-		hdriChunkList.Size = 
-			sizeof(hdriChunkList) - 8 +
-			sizeof(avihChunk) + sizeof(mainAVIHeader) +
-			sizeof(strlChunkList) +
-			sizeof(strhChunk) + sizeof(aviStreamHeader) +
-			sizeof(strfChunk) + sizeof(infoHeader);
-		hdriChunkList.ID = mmioFOURCC('h', 'd', 'r', 'l');
-		ExportData(dst, &hdriChunkList);
-
-		avihChunk = Chunk(mmioFOURCC('a', 'v', 'i', 'h'), sizeof(mainAVIHeader));
-		ExportData(dst, &avihChunk);
-
-		mainAVIHeader.dwMicroSecPerFrame = 1000000 / (float)framerate;
-		mainAVIHeader.dwMaxBytesPerSec = width * height * 4 * framerate;
-		mainAVIHeader.dwPaddingGranularity = 0;
-		mainAVIHeader.dwFlags = 2064;
-		mainAVIHeader.dwTotalFrames = frameCount;
-		mainAVIHeader.dwInitialFrames = 0;
-		mainAVIHeader.dwStreams = 1;
-		mainAVIHeader.dwSuggestedBufferSize = width * height * 4;
-		mainAVIHeader.dwWidth = width;
-		mainAVIHeader.dwHeight = height;
-		ExportData(dst, &mainAVIHeader);
-
-		strlChunkList.Name = mmioFOURCC('L', 'I', 'S', 'T');
-		strlChunkList.Size = sizeof(strlChunkList) - 8 + sizeof(strhChunk) + sizeof(aviStreamHeader) + sizeof(strfChunk) + sizeof(infoHeader);
-		strlChunkList.ID = mmioFOURCC('s', 't', 'r', 'l');
-		ExportData(dst, &strlChunkList);
-
-		strhChunk = Chunk(mmioFOURCC('s', 't', 'r', 'h'), sizeof(aviStreamHeader));
-		ExportData(dst, &strhChunk);
-
-		aviStreamHeader.fccType = mmioFOURCC('v', 'i', 'd', 's');
-		aviStreamHeader.fccHandler = mmioFOURCC('D', 'I', 'B', ' ');
-		aviStreamHeader.dwFlags = 0;
-		aviStreamHeader.wPriority = 0;
-		aviStreamHeader.wLanguage = 0;
-		aviStreamHeader.dwInitialFrames = 0;
-		aviStreamHeader.dwScale = 1;
-		aviStreamHeader.dwRate = framerate;
-		aviStreamHeader.dwStart = 0;
-		aviStreamHeader.dwLength = frameCount;
-		aviStreamHeader.dwSuggestedBufferSize = width * height * 4;
-		aviStreamHeader.dwQuality = -1;
-		aviStreamHeader.dwSampleSize = width * height * 4;
-		ExportData(dst, &aviStreamHeader);
-
-		strfChunk = Chunk(mmioFOURCC('s', 't', 'r', 'f'), sizeof(infoHeader));
-		ExportData(dst, &strfChunk);
-
-		infoHeader.biSize = sizeof(infoHeader);
-		infoHeader.biWidth = width;
-		infoHeader.biHeight = height;
-		infoHeader.biPlanes = 1;
-		infoHeader.biBitCount = 32;
-		infoHeader.biCompression = 0;
-		infoHeader.biSizeImage = width * height * 4;
-		infoHeader.biXPelsPerMeter = 3780;
-		infoHeader.biYPelsPerMeter = 3780;
-		infoHeader.biClrUsed = 0;
-		infoHeader.biClrImportant = 0;
-		ExportData(dst, &infoHeader);
-
-		junk.resize(2048 - 240);
-		junkChunk = Chunk(mmioFOURCC('J', 'U', 'N', 'K'), junk.size());
-		ExportData(dst, &junkChunk);
-		ExportData(dst, junk);
-
-		moviChunkList.Name = mmioFOURCC('L', 'I', 'S', 'T');
-		moviChunkList.Size = sizeof(moviChunkList) - 8 + (sizeof(Chunk) + width * height * 4) * frameCount;
-		moviChunkList.ID = mmioFOURCC('m', 'o', 'v', 'i');
-		ExportData(dst, &moviChunkList);
-	}
-
-	void ExportFrame(std::vector<uint8_t>& dst, std::vector<Effekseer::Color> frame)
-	{
-		dst.clear();
-
-		Chunk chunk;
-		chunk.ID = mmioFOURCC('0', '0', 'd', 'b');
-		chunk.Size = width * height * 4;
-		ExportData(dst, &chunk);
-
-		for (auto h = 0; h < height; h++)
-		{
-			for (auto w = 0; w < width; w++)
-			{
-				auto c = frame[w + (height - h - 1) * width];
-				dst.push_back(c.B);
-				dst.push_back(c.G);
-				dst.push_back(c.R);
-				dst.push_back(c.A);
-			}
-		}
-	}
-
-	void FinishToExportAVI(std::vector<uint8_t>& dst)
-	{
-		dst.clear();
-
-		Chunk idx1Chunk;
-
-		idx1Chunk = Chunk(mmioFOURCC('i', 'd', 'x', '1'), sizeof(AVIINDEXENTRY) * frameCount);
-		ExportData(dst, &idx1Chunk);
-
-		AVIINDEXENTRY entry;
-		entry.ckid = mmioFOURCC('0', '0', 'd', 'b');
-		entry.dwFlags = AVIIF_KEYFRAME;
-		entry.dwChunkLength = width * height * 4;
-		for (size_t i = 0; i < frameCount; i++)
-		{
-			entry.dwChunkOffset = 4 + sizeof(Chunk) * i + width * height * 4 * i;
-			ExportData(dst, &entry);
-		}
-	}
-};
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -347,65 +36,6 @@ static bool									g_mouseRotDirectionInvY = false;
 
 static bool									g_mouseSlideDirectionInvX = false;
 static bool									g_mouseSlideDirectionInvY = false;
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#ifdef _WIN32
-
-#else
-void SavePNGImage(const char16_t* filepath, int32_t width, int32_t height, void* data, bool rev)
-{
-	/* 構造体確保 */
-#if _WIN32
-	FILE *fp = _wfopen(filepath, L"wb");
-#else
-	FILE *fp = fopen(ToUtf8String(filepath).c_str(), "wb");
-#endif
-
-	if (fp == nullptr) return;
-
-	png_structp pp = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	png_infop ip = png_create_info_struct(pp);
-
-	/* 書き込み準備 */
-	png_init_io(pp, fp);
-	png_set_IHDR(pp, ip, width, height,
-		8, /* 8bit以外にするなら変える */
-		PNG_COLOR_TYPE_RGBA, /* RGBA以外にするなら変える */
-		PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-
-	/* ピクセル領域確保 */
-	std::vector<png_byte>  raw1D(height * png_get_rowbytes(pp, ip));
-	std::vector<png_bytep> raw2D(height * sizeof(png_bytep));
-	for (int32_t i = 0; i < height; i++)
-	{
-		raw2D[i] = &raw1D[i*png_get_rowbytes(pp, ip)];
-	}
-
-	memcpy((void*) raw1D.data(), data, width * height * 4);
-
-	/* 上下反転 */
-	if (rev)
-	{
-		for (int32_t i = 0; i < height / 2; i++)
-		{
-			png_bytep swp = raw2D[i];
-			raw2D[i] = raw2D[height - i - 1];
-			raw2D[height - i - 1] = swp;
-		}
-	}
-
-	/* 書き込み */
-	png_write_info(pp, ip);
-	png_write_image(pp, raw2D.data());
-	png_write_end(pp, ip);
-
-	/* 解放 */
-	png_destroy_write_struct(&pp, &ip);
-	fclose(fp);
-}
-#endif
 
 //----------------------------------------------------------------------------------
 //
@@ -1423,12 +1053,8 @@ bool Native::Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t
 		assert(0);
 #endif
 
-#ifdef _WIN32
-		PNGHelper pngHelper;
+		efk::PNGHelper pngHelper;
 		pngHelper.Save((char16_t*)path_, g_renderer->GuideWidth, g_renderer->GuideHeight, pixels.data());
-#else
-		SavePNGImage(path_, g_renderer->GuideWidth, g_renderer->GuideHeight, pixels.data(), false);
-#endif
 	}
 
 	g_manager->StopEffect(handle);
@@ -1532,12 +1158,8 @@ bool Native::Record(const char16_t* path, int32_t count, int32_t xCount, int32_t
 	
 Exit:;
 
-#ifdef _WIN32
-	PNGHelper pngHelper;
+	efk::PNGHelper pngHelper;
 	pngHelper.Save((char16_t*)path, g_renderer->GuideWidth * xCount, g_renderer->GuideHeight * yCount, pixels_out.data());
-#else
-	SavePNGImage(path, g_renderer->GuideWidth * xCount, g_renderer->GuideHeight * yCount, pixels_out.data(), false);
-#endif
 
 	g_manager->Update();
 
@@ -1686,7 +1308,7 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 	FILE*		fp = nullptr;
 	fp = _wfopen((wchar_t*)path, L"wb");
 
-	AVIExporter exporter;
+	efk::AVIExporter exporter;
 	exporter.Initialize(g_renderer->GuideWidth, g_renderer->GuideHeight, (int32_t)(60.0f / (float)freq), count);
 
 	std::vector<uint8_t> d;

@@ -314,6 +314,7 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterWStringCallback_EffekseerNative(SWIG_CSh
 
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
+#include "GUI/efk.FileDialog.h"
 
 
 #include <stdint.h>		// Use the C99 official header
@@ -4128,6 +4129,52 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_CloseCurrentPopup__
   
   arg1 = (efk::GUIManager *)jarg1; 
   (arg1)->CloseCurrentPopup();
+}
+
+
+SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_FileDialog_OpenDialog___(char16_t * jarg1, char16_t * jarg2) {
+  char16_t * jresult ;
+  char16_t *arg1 = (char16_t *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  char16_t *result = 0 ;
+  
+  arg1 = (char16_t *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (char16_t *)efk::FileDialog::OpenDialog((char16_t const *)arg1,(char16_t const *)arg2);
+  jresult = (char16_t *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_FileDialog_SaveDialog___(char16_t * jarg1, char16_t * jarg2) {
+  char16_t * jresult ;
+  char16_t *arg1 = (char16_t *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  char16_t *result = 0 ;
+  
+  arg1 = (char16_t *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (char16_t *)efk::FileDialog::SaveDialog((char16_t const *)arg1,(char16_t const *)arg2);
+  jresult = (char16_t *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_FileDialog___() {
+  void * jresult ;
+  efk::FileDialog *result = 0 ;
+  
+  result = (efk::FileDialog *)new efk::FileDialog();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_FileDialog___(void * jarg1) {
+  efk::FileDialog *arg1 = (efk::FileDialog *) 0 ;
+  
+  arg1 = (efk::FileDialog *)jarg1; 
+  delete arg1;
 }
 
 

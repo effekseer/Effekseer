@@ -3,6 +3,7 @@
 %{
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
+#include "GUI/efk.FileDialog.h"
 %}
 
 //-----------------------------------------------------------------------------------
@@ -53,3 +54,4 @@ class"
 //-----------------------------------------------------------------------------------
 %include "Cpp/Viewer/dll.h"
 %include "Cpp/Viewer/GUI/efk.GUIManager.h"
+%include "Cpp/Viewer/GUI/efk.FileDialog.h"
