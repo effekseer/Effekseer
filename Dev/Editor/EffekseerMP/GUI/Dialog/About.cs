@@ -53,7 +53,6 @@ Dock Panel Suite
         {
             versionInfo = "Effekseer Version " + Core.Version;
 
-            Manager.NativeManager.SetNextWindowSize(400, 400, swig.Cond.Appearing);
             Manager.NativeManager.OpenPopup(id);
 
             Manager.Controls.Add(this);

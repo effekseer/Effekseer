@@ -43,8 +43,9 @@ namespace efk
 
 		glewInit();
 
+		ImGui::CreateContext();
 		ImGui_ImplGlfwGL3_Init(window->GetGLFWWindows(), true);
-		ImGui::StyleColorsClassic();
+		ImGui::StyleColorsDark();
 
 		return true;
 	}
@@ -52,6 +53,7 @@ namespace efk
 	void GUIManager::Terminate()
 	{
 		ImGui_ImplGlfwGL3_Shutdown();
+		ImGui::DestroyContext();
 
 		window->MakeNone();
 		window->Terminate();
@@ -76,6 +78,7 @@ namespace efk
 	void GUIManager::RenderGUI()
 	{
 		ImGui::Render();
+		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);

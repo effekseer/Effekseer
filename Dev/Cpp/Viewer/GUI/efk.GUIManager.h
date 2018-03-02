@@ -31,13 +31,8 @@ namespace efk
 		AlwaysHorizontalScrollbar = 1 << 15,  // Always show horizontal scrollbar (even if ContentSize.x < Size.x)
 		AlwaysUseWindowPadding = 1 << 16,  // Ensure child windows without border uses style.WindowPadding (ignored by default for non-bordered child windows, because more convenient)
 		ResizeFromAnySide = 1 << 17,  // (WIP) Enable resize from any corners and borders. Your back-end needs to honor the different values of io.MouseCursor set by imgui.
-
-		// [Internal]
-		ChildWindow = 1 << 24,  // Don't use! For internal use by BeginChild()
-		Tooltip = 1 << 25,  // Don't use! For internal use by BeginTooltip()
-		Popup = 1 << 26,  // Don't use! For internal use by BeginPopup()
-		Modal = 1 << 27,  // Don't use! For internal use by BeginPopupModal()
-		ChildMenu = 1 << 28   // Don't use! For internal use by BeginMenu()
+		NoNavInputs = 1 << 18,  // No gamepad/keyboard navigation within the window
+		NoNavFocus = 1 << 19,  // No focusing toward this window with gamepad/keyboard navigation (e.g. skipped by CTRL+TAB)
 	};
 
 	// Enumeration for ColorEdit3() / ColorEdit4() / ColorPicker3() / ColorPicker4() / ColorButton()
