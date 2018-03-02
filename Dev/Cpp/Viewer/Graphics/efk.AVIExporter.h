@@ -79,6 +79,7 @@ namespace efk
 
 		void BeginToExportAVI(std::vector<uint8_t>& dst)
 		{
+#ifdef _WIN32
 			dst.clear();
 
 			ChunkList aviChunkList;
@@ -179,10 +180,12 @@ namespace efk
 			moviChunkList.Size = sizeof(moviChunkList) - 8 + (sizeof(Chunk) + width * height * 4) * frameCount;
 			moviChunkList.ID = mmioFOURCC('m', 'o', 'v', 'i');
 			ExportData(dst, &moviChunkList);
+#endif
 		}
 
 		void ExportFrame(std::vector<uint8_t>& dst, std::vector<Effekseer::Color> frame)
 		{
+#ifdef _WIN32
 			dst.clear();
 
 			Chunk chunk;
@@ -201,10 +204,12 @@ namespace efk
 					dst.push_back(c.A);
 				}
 			}
+#endif
 		}
 
 		void FinishToExportAVI(std::vector<uint8_t>& dst)
 		{
+#ifdef _WIN32
 			dst.clear();
 
 			Chunk idx1Chunk;
@@ -222,6 +227,7 @@ namespace efk
 				ExportData(dst, &entry);
 			}
 		}
+#endif
 	};
 
 }

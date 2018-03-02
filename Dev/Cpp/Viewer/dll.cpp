@@ -11,15 +11,20 @@
 #pragma comment(lib, "d3d9.lib" )
 
 #define NONDLL	1
+
+#ifdef _WIN32
 #define MSWIN32 1
 #define BGDWIN32 1
+#endif
 #include <gd/gd.h>
 #include <gd/gdfontmb.h>
 
+#ifdef _WIN32
 #if _DEBUG
 #pragma comment(lib,"x86/Debug/libgd_static.lib")
 #else
 #pragma comment(lib,"x86/Release/libgd_static.lib")
+#endif
 #endif
 
 //----------------------------------------------------------------------------------
@@ -256,11 +261,13 @@ Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer)
 		auto r = (EffekseerRendererGL::Renderer*)m_renderer;
 		m_originalTextureLoader = EffekseerRendererGL::CreateTextureLoader();
 	}
+#ifdef _WIN32
 	else
 	{
 		auto r = (EffekseerRendererDX9::Renderer*)m_renderer;
 		m_originalTextureLoader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
 	}
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -391,6 +398,7 @@ void* Native::ModelLoader::Load( const EFK_CHAR* path )
 
 			return m;
 		}
+#ifdef _WIN32
 		else
 		{
 			auto r = (EffekseerRendererDX9::Renderer*)m_renderer;
@@ -406,6 +414,7 @@ void* Native::ModelLoader::Load( const EFK_CHAR* path )
 
 			return m;
 		}
+#endif
 	}
 }
 

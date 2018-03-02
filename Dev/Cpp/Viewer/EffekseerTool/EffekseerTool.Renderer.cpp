@@ -32,11 +32,13 @@ namespace EffekseerTool
 				auto r = (::EffekseerRendererGL::Renderer*)renderer->GetRenderer();
 				//r->SetBackground(renderer->GetBack());
 			}
+#ifdef _WIN32
 			else
 			{
 				auto r = (::EffekseerRendererDX9::Renderer*)renderer->GetRenderer();
 				r->SetBackground((IDirect3DTexture9*)renderer->GetBack());
 			}
+#endif
 		}
 
 		return IsEnabled;
@@ -86,10 +88,12 @@ namespace EffekseerTool
 		{
 			graphics = new efk::GraphicsGL();
 		}
+#ifdef _WIN32
 		else
 		{
 			graphics = new efk::GraphicsDX9();
 		}
+#endif
 	}
 
 	Renderer::~Renderer()
@@ -376,11 +380,13 @@ bool Renderer::BeginRendering()
 		{
 			auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
 		}
+#ifdef _WIN32
 		else
 		{
 			auto r = (EffekseerRendererDX9::RendererImplemented*)m_renderer;
 			r->SetBackground(nullptr);
 		}
+#endif
 
 		m_distortionCallback->Blit = false;
 		m_distortionCallback->IsEnabled = false;
@@ -406,12 +412,13 @@ bool Renderer::EndRendering()
 		{
 			auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
 		}
+#ifdef _WIN32
 		else
 		{
 			auto r = (EffekseerRendererDX9::RendererImplemented*)m_renderer;
 			r->SetBackground(nullptr);
 		}
-
+#endif
 	}
 
 	if (m_recording)
@@ -517,11 +524,13 @@ void Renderer::CopyToBackground()
 	{
 		auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
 	}
+#ifdef _WIN32
 	else
 	{
 		auto r = (::EffekseerRendererDX9::Renderer*)graphics->GetRenderer();
 		r->SetBackground((IDirect3DTexture9*)graphics->GetBack());
 	}
+#endif
 }
 
 }

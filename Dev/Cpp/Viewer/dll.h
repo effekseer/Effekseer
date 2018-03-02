@@ -4,15 +4,13 @@
 
 /**
 	@file
-	@brief	ツール向けDLL出力
+	@brief	DLL export for tool
 */
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
-#include "EffekseerRenderer/EffekseerRendererDX9.Renderer.h"
-#include "EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h"
 #include "EffekseerTool/EffekseerTool.Renderer.h"
 #include "EffekseerTool/EffekseerTool.Sound.h"
 
