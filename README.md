@@ -33,11 +33,13 @@ Effekseer主要用作遊戲開發,不僅是程序員而且設計師也可進行�
 Todo
 =========
 
-Please read issues and TODO. We always welcome pull requests for improvements, bug fixes, and so on.
+Please read issues, Trello and TODO. We always welcome pull requests for improvements, bug fixes, and so on.
 
-issuesとTODOを読んでください。常時、機能追加、バグ修正といったプルリクエストを募集しております。
+issues、TrelloとTODOを読んでください。常時、機能追加、バグ修正といったプルリクエストを募集しております。
 
 [Issues](https://github.com/effekseer/Effekseer/issues)
+
+[Trello](https://trello.com/b/APLk8e6V/effekseer-wishlist)
 
 # RoadMap
 
