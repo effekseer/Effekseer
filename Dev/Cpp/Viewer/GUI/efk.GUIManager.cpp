@@ -147,6 +147,21 @@ namespace efk
 		return ImGui::Button(utf16_to_utf8(label).c_str());
 	}
 
+	void GUIManager::Image(ImageResource* user_texture_id, float x, float y)
+	{
+		if (user_texture_id != nullptr)
+		{
+			if (user_texture_id->GetTextureData()->UserPtr != nullptr)
+			{
+				ImGui::Image((ImTextureID)user_texture_id->GetTextureData()->UserPtr, ImVec2(x, y));
+			}
+			else
+			{
+				ImGui::Image((ImTextureID)user_texture_id->GetTextureData()->UserID, ImVec2(x, y));
+			}
+		}
+	}
+
 	bool GUIManager::Checkbox(const char16_t* label, bool* v)
 	{
 		return ImGui::Checkbox(utf16_to_utf8(label).c_str(), v);

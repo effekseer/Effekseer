@@ -2,6 +2,7 @@
 #pragma once
 
 #include "efk.Window.h"
+#include "efk.ImageResource.h"
 
 #include "../3rdParty\imgui\imgui.h"
 #include "../3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.h"
@@ -111,7 +112,10 @@ namespace efk
 		void Text(const char16_t* text);
 		void TextWrapped(const char16_t* text);
 
+		// Main
 		bool Button(const char16_t* label);
+
+		void Image(ImageResource* user_texture_id, float x, float y);
 
 		bool Checkbox(const char16_t* label, bool* v);
 

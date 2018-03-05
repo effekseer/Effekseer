@@ -312,6 +312,7 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterWStringCallback_EffekseerNative(SWIG_CSh
 }
 
 
+#include "GUI/efk.ImageResource.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
@@ -323,6 +324,36 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterWStringCallback_EffekseerNative(SWIG_CSh
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetPath___(void * jarg1) {
+  char16_t * jresult ;
+  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
+  char16_t *result = 0 ;
+  
+  arg1 = (efk::ImageResource *)jarg1; 
+  result = (char16_t *)((efk::ImageResource const *)arg1)->GetPath();
+  jresult = (char16_t *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ImageResource___() {
+  void * jresult ;
+  efk::ImageResource *result = 0 ;
+  
+  result = (efk::ImageResource *)new efk::ImageResource();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ImageResource___(void * jarg1) {
+  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
+  
+  arg1 = (efk::ImageResource *)jarg1; 
+  delete arg1;
+}
+
 
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___(void * jarg1, int jarg2) {
   ViewerParamater *arg1 = (ViewerParamater *) 0 ;
@@ -2096,6 +2127,20 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetCullingParameter___(
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_LoadImageResource___(void * jarg1, char16_t * jarg2) {
+  void * jresult ;
+  Native *arg1 = (Native *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  efk::ImageResource *result = 0 ;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (efk::ImageResource *)(arg1)->LoadImageResource((char16_t const *)arg2);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GUIManager___() {
   void * jresult ;
   efk::GUIManager *result = 0 ;
@@ -2297,6 +2342,20 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Button___(v
   result = (bool)(arg1)->Button((char16_t const *)arg2);
   jresult = result; 
   return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Image___(void * jarg1, void * jarg2, float jarg3, float jarg4) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::ImageResource *arg2 = (efk::ImageResource *) 0 ;
+  float arg3 ;
+  float arg4 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::ImageResource *)jarg2; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  (arg1)->Image(arg2,arg3,arg4);
 }
 
 

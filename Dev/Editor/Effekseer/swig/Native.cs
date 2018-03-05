@@ -243,6 +243,12 @@ public class Native : global::System.IDisposable {
     EffekseerNativePINVOKE.Native_SetCullingParameter(swigCPtr, isCullingShown, cullingRadius, cullingX, cullingY, cullingZ);
   }
 
+  public ImageResource LoadImageResource(string path) {
+    global::System.IntPtr cPtr = EffekseerNativePINVOKE.Native_LoadImageResource(swigCPtr, path);
+    ImageResource ret = (cPtr == global::System.IntPtr.Zero) ? null : new ImageResource(cPtr, false);
+    return ret;
+  }
+
 }
 
 }

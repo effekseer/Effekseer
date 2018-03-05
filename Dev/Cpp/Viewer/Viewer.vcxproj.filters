@@ -123,6 +123,9 @@
     <ClInclude Include="Graphics\efk.AVIExporter.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="GUI\efk.ImageResource.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -208,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="Graphics\efk.AVIExporter.cpp">
       <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\efk.ImageResource.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

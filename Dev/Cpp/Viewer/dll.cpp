@@ -5,6 +5,7 @@
 
 #include "Graphics/efk.PNGHelper.h"
 #include "Graphics/efk.AVIExporter.h"
+#include "Graphics/efk.GifHelper.h"
 
 #include "dll.h"
 
@@ -241,6 +242,7 @@ static ::Effekseer::Effect*				g_effect = NULL;
 static ::EffekseerTool::Sound*			g_sound = NULL;
 static std::map<std::u16string, Effekseer::TextureData*> m_textures;
 static std::map<std::u16string,Effekseer::Model*> m_models;
+static std::map<std::u16string, std::shared_ptr<efk::ImageResource>>	g_imageResources;
 
 static std::vector<HandleHolder>	g_handles;
 
@@ -507,6 +509,28 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			{
 				e->UnloadResources();
 			}
+
+			{
+				Effekseer::TextureLoader* loader = nullptr;
+				if (g_isOpenGLMode)
+				{
+					auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
+					loader = EffekseerRendererGL::CreateTextureLoader();
+				}
+#ifdef _WIN32
+				else
+				{
+					auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
+					loader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
+				}
+#endif
+				for (auto& resource : g_imageResources)
+				{
+					loader->Unload(resource.second->GetTextureData());
+				}
+
+				delete loader;
+			}
 		};
 
 		g_renderer->ResettedDevice = [this]() -> void
@@ -515,6 +539,28 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			if (e != nullptr)
 			{
 				e->ReloadResources();
+			}
+
+			{
+				Effekseer::TextureLoader* loader = nullptr;
+				if (g_isOpenGLMode)
+				{
+					auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
+					loader = EffekseerRendererGL::CreateTextureLoader();
+				}
+#ifdef _WIN32
+				else
+				{
+					auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
+					loader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
+				}
+#endif
+				for (auto& resource : g_imageResources)
+				{
+					resource.second->GetTextureData() = loader->Load(resource.second->GetPath(), Effekseer::TextureType::Color);
+				}
+
+				delete loader;
 			}
 		};
 	}
@@ -632,6 +678,28 @@ bool Native::DestroyWindow()
 	g_handles.clear();
 	
 	InvalidateTextureCache();
+
+	{
+		Effekseer::TextureLoader* loader = nullptr;
+		if (g_isOpenGLMode)
+		{
+			auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
+			loader = EffekseerRendererGL::CreateTextureLoader();
+		}
+#ifdef _WIN32
+		else
+		{
+			auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
+			loader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
+		}
+#endif
+		for (auto& resource : g_imageResources)
+		{
+			loader->Unload(resource.second->GetTextureData());
+		}
+		
+		delete loader;
+	}
 
 	ES_SAFE_RELEASE( g_effect );
 
@@ -1207,6 +1275,65 @@ bool Native::RecordAsGifAnimation(const char16_t* path, int32_t count, int32_t o
 		g_manager->Update();
 	}
 
+	efk::GifHelper helper;
+	helper.Initialize(path, g_renderer->GuideWidth, g_renderer->GuideHeight, freq);
+
+	for (int32_t i = 0; i < count; i++)
+	{
+		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
+
+		g_renderer->BeginRendering();
+
+		if (g_renderer->Distortion == EffekseerTool::eDistortionType::DistortionType_Current)
+		{
+			g_manager->DrawBack();
+
+			// HACK
+			g_renderer->GetRenderer()->EndRendering();
+
+			g_renderer->CopyToBackground();
+
+			// HACK
+			g_renderer->GetRenderer()->BeginRendering();
+			g_manager->DrawFront();
+		}
+		else
+		{
+			g_manager->Draw();
+		}
+
+		g_renderer->EndRendering();
+
+		for (int j = 0; j < freq; j++)
+		{
+			g_manager->Update();
+		}
+
+		std::vector<Effekseer::Color> pixels;
+		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
+
+		helper.AddImage(pixels);
+
+		/*
+		int delay = (int)round((1.0 / (double) 60.0 * freq) * 100.0);
+		gdImagePtr frameImage = gdImageCreateTrueColor(g_renderer->GuideWidth, g_renderer->GuideHeight);
+
+		for (int32_t y = 0; y < g_renderer->GuideHeight; y++)
+		{
+			for (int32_t x = 0; x < g_renderer->GuideWidth; x++)
+			{
+				auto c = pixels[x + y * g_renderer->GuideWidth];
+				gdImageSetPixel(frameImage, x, y, gdTrueColor(c.R, c.G, c.B));
+			}
+		}
+		gdImageTrueColorToPalette(frameImage, true, gdMaxColors);
+		gdImageGifAnimAdd(frameImage, fp, true, 0, 0, delay, gdDisposalNone, NULL);
+		gdImageDestroy(frameImage);
+		*/
+	}
+
+
+	/*
 	FILE*		fp = nullptr;
 	gdImagePtr	img = nullptr;
 
@@ -1275,6 +1402,7 @@ bool Native::RecordAsGifAnimation(const char16_t* path, int32_t count, int32_t o
 	gdImageGifAnimEnd(fp);
 	fclose(fp);
 	gdImageDestroy(img);
+	*/
 
 	g_manager->StopEffect(handle);
 	g_manager->Update();
@@ -1673,6 +1801,35 @@ void Native::SetCullingParameter( bool isCullingShown, float cullingRadius, floa
 	g_renderer->CullingPosition.Z = cullingZ;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
+efk::ImageResource* Native::LoadImageResource(const char16_t* path)
+{
+	Effekseer::TextureLoader* loader = nullptr;
+	if (g_isOpenGLMode)
+	{
+		auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
+		loader = EffekseerRendererGL::CreateTextureLoader();
+	}
+#ifdef _WIN32
+	else
+	{
+		auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
+		loader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
+	}
+#endif
+
+	auto resource = std::make_shared<efk::ImageResource>();
+
+	resource->GetTextureData() = loader->Load(path, Effekseer::TextureType::Color);
+
+	if (g_imageResources[path] != nullptr)
+	{
+		loader->Unload(g_imageResources[path]->GetTextureData());
+	}
+	
+	g_imageResources[path] = resource;
+
+	delete loader;
+
+	return resource.get();
+}

@@ -49,6 +49,8 @@ namespace Effekseer
 
             GUI.Manager.Controls.Add(mainMenu);
 
+            //var img = native.LoadImageResource("resources/Play.png");
+
 			while (mgr.DoEvents())
 			{
 				native.UpdateWindow();
@@ -66,6 +68,8 @@ namespace Effekseer
 				mgr.SameLine();
 				mgr.Button("Next");
 				mgr.SameLine();
+
+                //mgr.Image(img, 48, 21);
 
                 if(isButton)
                 {

@@ -1,0 +1,2 @@
+
+#include "efk.ImageResource.h"

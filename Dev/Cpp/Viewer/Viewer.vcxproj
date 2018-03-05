@@ -198,6 +198,7 @@
     <ClInclude Include="Graphics\Platform\GL\efk.LineRendererGL.h" />
     <ClInclude Include="GUI\efk.FileDialog.h" />
     <ClInclude Include="GUI\efk.GUIManager.h" />
+    <ClInclude Include="GUI\efk.ImageResource.h" />
     <ClInclude Include="GUI\efk.Window.h" />
     <CustomBuildStep Include="dll.h" />
   </ItemGroup>
@@ -230,6 +231,7 @@
     <ClCompile Include="Graphics\Platform\GL\efk.LineRendererGL.cpp" />
     <ClCompile Include="GUI\efk.FileDialog.cpp" />
     <ClCompile Include="GUI\efk.GUIManager.cpp" />
+    <ClCompile Include="GUI\efk.ImageResource.cpp" />
     <ClCompile Include="GUI\efk.Window.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>

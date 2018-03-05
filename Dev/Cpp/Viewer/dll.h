@@ -1,6 +1,5 @@
 ﻿
-#ifndef	__EFFEKSEER_DLL_H__
-#define	__EFFEKSEER_DLL_H__
+#pragma once
 
 /**
 	@file
@@ -13,6 +12,8 @@
 #include <Effekseer.h>
 #include "EffekseerTool/EffekseerTool.Renderer.h"
 #include "EffekseerTool/EffekseerTool.Sound.h"
+
+#include "GUI/efk.ImageResource.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -269,9 +270,6 @@ public:
 	void SetIsRightHand( bool value );
 
 	void SetCullingParameter( bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ);
-};
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_DLL_H__
+	efk::ImageResource* LoadImageResource(const char16_t* path);
+};

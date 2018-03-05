@@ -113,6 +113,10 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public void Image(ImageResource user_texture_id, float x, float y) {
+    EffekseerNativePINVOKE.GUIManager_Image(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+  }
+
   public bool Checkbox(string label, bool[] v) {
     bool ret = EffekseerNativePINVOKE.GUIManager_Checkbox(swigCPtr, label, v);
     return ret;

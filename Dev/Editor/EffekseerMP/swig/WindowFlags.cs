@@ -30,11 +30,8 @@ public enum WindowFlags {
   AlwaysHorizontalScrollbar = 1 << 15,
   AlwaysUseWindowPadding = 1 << 16,
   ResizeFromAnySide = 1 << 17,
-  ChildWindow = 1 << 24,
-  Tooltip = 1 << 25,
-  Popup = 1 << 26,
-  Modal = 1 << 27,
-  ChildMenu = 1 << 28
+  NoNavInputs = 1 << 18,
+  NoNavFocus = 1 << 19
 }
 
 }
