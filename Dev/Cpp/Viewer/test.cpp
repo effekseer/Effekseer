@@ -111,25 +111,6 @@ int main_()
 
 int main()
 {
-	{
-		nfdchar_t *outPath = NULL;
-		nfdresult_t result = NFD_OpenDialog(NULL, NULL, &outPath);
-
-		if (result == NFD_OKAY) {
-			puts("Success!");
-			puts(outPath);
-			free(outPath);
-		}
-		else if (result == NFD_CANCEL) {
-			puts("User pressed cancel.");
-		}
-		else {
-			printf("Error: %s\n", NFD_GetError());
-		}
-
-		return 0;
-	}
-
 	efk::Window* window = new efk::Window();
 
 	window->Initialize(u"Effekseer", 960, 540, false, true);
@@ -137,6 +118,7 @@ int main()
 
 	glewInit();
 
+	ImGui::CreateContext();
 	ImGui_ImplGlfwGL3_Init(window->GetGLFWWindows(), true);
 	ImGui::StyleColorsClassic();
 	
@@ -218,10 +200,49 @@ int main()
 		
 
 		ImGui::Begin("Another Window", &show_another_window);
-		ImGui::Text("Hello from another window!");
+		if (ImGui::TreeNode("Tree"))
+		{
+			if (ImGui::TreeNode("Tree1"))
+			{
+				if (ImGui::BeginChild("Child1"))
+				{
+					for (int32_t i = 0; i < 10; i++)
+					{
+						ImGui::Text("aa");
+					}
+					
+					ImGui::EndChild();
+				}
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNode("Tree2"))
+			{
+				if (ImGui::BeginChildFrame(ImGui::GetID("Child2"), ImVec2(0,100), ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
+				{
+					for (int32_t i = 0; i < 10; i++)
+					{
+						ImGui::Text("aa");
+					}
+
+					ImGui::EndChildFrame();
+				}
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNode("Tree3"))
+			{
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop();
+		}
 		ImGui::End();
 
 		ImGui::Render();
+		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
@@ -250,6 +271,7 @@ int main()
 	ES_SAFE_DELETE(renderer);
 
 	ImGui_ImplGlfwGL3_Shutdown();
+	ImGui::DestroyContext();
 
 	window->MakeNone();
 	window->Terminate();
