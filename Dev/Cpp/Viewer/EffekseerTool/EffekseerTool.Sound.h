@@ -6,7 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include <OpenSoundMixer.h>
-#include "EffekseerSoundOSMixer.h"
+#include <EffekseerSoundOSMixer.h>
 
 //----------------------------------------------------------------------------------
 //

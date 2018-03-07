@@ -31,7 +31,7 @@
 //  2016-09-05: OpenGL: Fixed save and restore of current scissor rectangle.
 //  2016-04-30: OpenGL: Fixed save and restore of current GL_ACTIVE_TEXTURE.
 
-#include "imgui.h"
+#include "../imgui/imgui.h"
 #include "imgui_impl_glfw_gl3.h"
 
 // GL3W/GLFW
