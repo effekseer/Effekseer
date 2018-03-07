@@ -85,6 +85,12 @@ Execute python scripts as follows.
 
 Script/build_libgd.py
 
+Script/build_glew.py
+
+Script/build_glfw.py
+
+Script/build_OpenSoundMixer.py
+
 ```
 
 * Windows
