@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Effekseer
+namespace Effekseer.GUI
 {
 	public class Viewer
 	{
-		//static public Viewer Instance;
-
 		swig.Native native = null;
 		string backgroundImagePath = string.Empty;
 
@@ -24,13 +22,13 @@ namespace Effekseer
 
 		public bool UpdateWindow()
 		{
-			if(native.UpdateWindow())
-            {
-                native.Present();
-                return true;
-            }
+			if (native.UpdateWindow())
+			{
+				native.Present();
+				return true;
+			}
 
-            return false;
+			return false;
 		}
 
 		public bool ResizeWindow(int width, int height)
@@ -65,7 +63,7 @@ namespace Effekseer
 
 		public bool StepEffect(int frame)
 		{
-			return native.StepEffect( frame );
+			return native.StepEffect(frame);
 		}
 
 		public bool Rotate(float x, float y)
@@ -129,20 +127,20 @@ namespace Effekseer
 			set;
 		}
 
-        public void SetSoundMute(bool mute)
-        {
-            native.SetSoundMute(mute);
-        }
+		public void SetSoundMute(bool mute)
+		{
+			native.SetSoundMute(mute);
+		}
 
-        public void SetSoundVolume(float volume)
-        {
-            native.SetSoundVolume(volume);
-        }
+		public void SetSoundVolume(float volume)
+		{
+			native.SetSoundVolume(volume);
+		}
 
-        public void InvalidateTextureCache()
-        {
-            native.InvalidateTextureCache();
-        }
+		public void InvalidateTextureCache()
+		{
+			native.InvalidateTextureCache();
+		}
 
 		public void SetLotation(float x, float y, float z)
 		{
@@ -197,7 +195,7 @@ namespace Effekseer
 			behavior.ScaleVelocityZ = z;
 			native.SetViewerEffectBehavior(behavior);
 		}
-		
+
 		public void SetTargetLocation(float x, float y, float z)
 		{
 			var behavior = native.GetEffectBehavior();
@@ -316,7 +314,7 @@ namespace Effekseer
 		{
 			native.SendDataByNetwork(key, data, size, path);
 		}
-		
+
 		public void SetLightDirection(float x, float y, float z)
 		{
 			native.SetLightDirection(x, y, z);

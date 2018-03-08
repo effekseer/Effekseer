@@ -603,8 +603,6 @@ namespace Effekseer.GUI
 				IsPaused = false;
 				IsChanged = true;
 				current = 0;
-
-				Viewer.Instance = viewer;
 			}
 			catch(Exception exception)
 			{
@@ -632,7 +630,6 @@ namespace Effekseer.GUI
 		void DockViewer_HandleDestroyed(object sender, EventArgs e)
 		{
 			HideViewer();
-			Viewer.Instance = null;
 		}
 
 		void DockViewer_MouseDown(object sender, MouseEventArgs e)

@@ -89,7 +89,7 @@ namespace Effekseer.GUI
 
 		public void Update_()
 		{
-			if (Viewer.Instance.IsConnected())
+			if (GUIManager.DockViewer.Viewer.IsConnected())
 			{
                 lbl_state.Text = Properties.Resources.NetworkConnected;
 				btn_connect.Text = Properties.Resources.Disconnect;
@@ -110,7 +110,7 @@ namespace Effekseer.GUI
 
 		private void btn_connect_Click(object sender, EventArgs e)
 		{
-			if (Viewer.Instance.IsConnected())
+			if (GUIManager.DockViewer.Viewer.IsConnected())
 			{
 				GUIManager.Network.Disconnect();
 			}
