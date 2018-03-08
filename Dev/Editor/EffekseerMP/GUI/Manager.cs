@@ -12,14 +12,28 @@ namespace Effekseer.GUI
 
         internal static List<IRemovableControl> Controls = new List<IRemovableControl>();
 
+		static List<IRemovableControl> addingControls = new List<IRemovableControl>();
+
+		public static void AddControl(IRemovableControl control)
+		{
+			addingControls.Add(control);
+		}
+
         public static void Update()
         {
-            foreach (var c in Controls)
-            {
-                c.Update();
-            }
+			foreach (var c in Controls)
+			{
+				c.Update();
+			}
 
-            Controls.RemoveAll(_ => _.ShouldBeRemoved);
-        }
-    }
+			foreach (var c in addingControls)
+			{
+				Controls.Add(c);
+			}
+
+			addingControls.Clear();
+
+			Controls.RemoveAll(_ => _.ShouldBeRemoved);
+		}
+	}
 }

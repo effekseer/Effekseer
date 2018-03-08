@@ -12,19 +12,26 @@ namespace Effekseer.GUI.Dialog
         string message = string.Empty;
         string id = "###messageBox";
 
+		bool isFirstUpdate = true;
+
         public bool ShouldBeRemoved { get; private set; } = false;
 
         public void Show(string title, string message)
         {
             this.title = title;
             this.message = message;
-            Manager.NativeManager.OpenPopup(id);
 
-            Manager.Controls.Add(this);
-        }
+			Manager.AddControl(this);
+		}
 
         public void Update()
         {
+			if(isFirstUpdate)
+			{
+				Manager.NativeManager.OpenPopup(id);
+				isFirstUpdate = false;
+			}
+
             if(Manager.NativeManager.BeginPopupModal(title + id, null, swig.WindowFlags.AlwaysAutoResize))
             {
                 Manager.NativeManager.Text(message);

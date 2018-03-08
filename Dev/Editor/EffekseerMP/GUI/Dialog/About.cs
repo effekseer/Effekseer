@@ -12,7 +12,9 @@ namespace Effekseer.GUI.Dialog
         string title = "About";
         string versionInfo = "";
 
-        string license = @"
+		bool isFirstUpdate = true;
+
+		string license = @"
 The MIT License
 
 Copyright (c) 2011-2015 Effekseer Project 
@@ -53,17 +55,23 @@ Dock Panel Suite
         {
             versionInfo = "Effekseer Version " + Core.Version;
 
-            Manager.NativeManager.OpenPopup(id);
-
-            Manager.Controls.Add(this);
+			Manager.AddControl(this);
         }
 
         public void Update()
         {
-            if (Manager.NativeManager.BeginPopupModal(title + id, null, swig.WindowFlags.None))
+			if (isFirstUpdate)
+			{
+				Manager.NativeManager.OpenPopup(id);
+				Manager.NativeManager.SetNextWindowSize(600, 400, swig.Cond.Appearing);
+				isFirstUpdate = false;
+			}
+
+			if (Manager.NativeManager.BeginPopupModal(title + id, null, swig.WindowFlags.None))
             {
-                // TODO
-                // Show icon
+				Manager.NativeManager.Image(Resources.Icon, 32, 32);
+
+				Manager.NativeManager.SameLine();
 
                 Manager.NativeManager.Text(versionInfo);
 
