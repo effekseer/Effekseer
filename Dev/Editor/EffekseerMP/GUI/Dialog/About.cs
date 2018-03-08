@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dialog
 {
-    class About : IControl
+    class About : IRemovableControl
     {
         string id = "###Abount";
         string title = "About";

@@ -9,7 +9,10 @@ namespace Effekseer.GUI
     interface IControl
     {
         void Update();
+    }
 
+    interface IRemovableControl : IControl
+    {
         bool ShouldBeRemoved { get; }
     }
 }

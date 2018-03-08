@@ -6,7 +6,67 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-    class Boolean
+    class Boolean : IControl
     {
+        string id = "";
+
+        public string Label { get; set; } = string.Empty;
+
+        Data.Value.Boolean binding = null;
+
+        bool[] internalValue = new bool[] { false };
+
+        public bool ShouldBeRemoved { get; private set; } = false;
+
+        public bool EnableUndo { get; set; }
+
+        public Data.Value.Boolean Binding
+        {
+            get
+            {
+                return binding;
+            }
+            set
+            {
+                if (binding == value) return;
+
+                if(binding != null)
+                {
+                    internalValue[0] = binding.Value;
+                }
+            }
+        }
+
+        public Boolean()
+        {
+            var rand = new Random();
+            id = "###" + rand.Next(0xffff).ToString();
+        }
+
+        public void SetBinding(object o)
+        {
+            var o_ = o as Data.Value.Boolean;
+            Binding = o_;
+        }
+
+        public void Update()
+        {
+            if (binding != null)
+            {
+                internalValue[0] = binding.Value;
+            }
+
+            if (Manager.NativeManager.Checkbox(Label + id, internalValue))
+            {
+                if (EnableUndo)
+                {
+                    binding.SetValue(internalValue[0]);
+                }
+                else
+                {
+                    binding.SetValueDirectly(internalValue[0]);
+                }
+            }
+        }
     }
 }

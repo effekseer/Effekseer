@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Menu
 {
-    class MainMenu : IControl
+    class MainMenu : IRemovableControl
     {
         public bool ShouldBeRemoved { get; private set; } = false;
 

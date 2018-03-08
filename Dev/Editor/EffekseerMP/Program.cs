@@ -10,7 +10,9 @@ namespace Effekseer
 	{
 		static void Main(string[] args)
 		{
-			var mgr = new swig.GUIManager();
+            Core.Initialize();
+
+            var mgr = new swig.GUIManager();
 			if(mgr.Initialize("Effekseer", 960, 540, false))
 			{
 			}
@@ -47,8 +49,11 @@ namespace Effekseer
 
             bool isButton = true;
 
-            GUI.Manager.Controls.Add(mainMenu);
+            var noteTreeView = new GUI.Dock.NodeTreeView();
+            noteTreeView.Renew();
 
+            GUI.Manager.Controls.Add(mainMenu);
+            GUI.Manager.Controls.Add(noteTreeView);
             //var img = native.LoadImageResource("resources/Play.png");
 
 			while (mgr.DoEvents())
@@ -140,6 +145,8 @@ namespace Effekseer
 			mgr.Terminate();
 			mgr.Dispose();
 			mgr = null;
+
+            Core.Dispose();
 		}
 	}
 }

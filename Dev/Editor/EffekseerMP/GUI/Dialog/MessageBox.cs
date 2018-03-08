@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dialog
 {
-    class MessageBox : IControl
+    class MessageBox : IRemovableControl
     {
         string title = string.Empty;
         string message = string.Empty;

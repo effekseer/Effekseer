@@ -65,9 +65,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GUI\Commands.cs" />
     <Compile Include="GUI\Component\Boolean.cs" />
     <Compile Include="GUI\Dialog\About.cs" />
     <Compile Include="GUI\Dialog\MessageBox.cs" />
+    <Compile Include="GUI\Dock\DockPanel.cs" />
+    <Compile Include="GUI\Dock\NodeTreeView.cs" />
     <Compile Include="GUI\IControl.cs" />
     <Compile Include="GUI\Manager.cs" />
     <Compile Include="GUI\Menu\MainMenu.cs" />

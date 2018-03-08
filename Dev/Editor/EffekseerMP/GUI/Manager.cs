@@ -10,7 +10,7 @@ namespace Effekseer.GUI
     {
         internal static swig.GUIManager NativeManager;
 
-        internal static List<IControl> Controls = new List<IControl>();
+        internal static List<IRemovableControl> Controls = new List<IRemovableControl>();
 
         public static void Update()
         {
