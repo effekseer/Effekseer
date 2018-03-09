@@ -42,7 +42,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 
 	std::unique_ptr<::Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
-	if( reader.get() == NULL ) return false;
+	if( reader.get() == NULL ) return nullptr;
 
 	size_t size = reader->GetLength();
 	std::unique_ptr<uint8_t[]> data(new uint8_t[size]);

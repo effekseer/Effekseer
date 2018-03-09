@@ -74,7 +74,7 @@ SoundPlayer::~SoundPlayer()
 //----------------------------------------------------------------------------------
 void SoundPlayer::Stop( ::Effekseer::SoundHandle handle, ::Effekseer::SoundTag tag )
 {
-	int32_t id = reinterpret_cast<int32_t>( handle );
+	int32_t id = (int32_t)(intptr_t)handle;
 	m_sound->GetDevice()->Stop( id );
 }
 
@@ -83,7 +83,7 @@ void SoundPlayer::Stop( ::Effekseer::SoundHandle handle, ::Effekseer::SoundTag t
 //----------------------------------------------------------------------------------
 void SoundPlayer::Pause( ::Effekseer::SoundHandle handle, ::Effekseer::SoundTag tag, bool pause )
 {
-	int32_t id = reinterpret_cast<int32_t>( handle );
+	int32_t id = (int32_t)(intptr_t)handle;
 	if( pause )
 	{
 		m_sound->GetDevice()->Pause( id );
@@ -99,7 +99,7 @@ void SoundPlayer::Pause( ::Effekseer::SoundHandle handle, ::Effekseer::SoundTag 
 //----------------------------------------------------------------------------------
 bool SoundPlayer::CheckPlaying( ::Effekseer::SoundHandle handle, ::Effekseer::SoundTag tag )
 {
-	int32_t id = reinterpret_cast<int32_t>( handle );
+	int32_t id = (int32_t)(intptr_t)handle;
 	return m_sound->GetDevice()->IsPlaying( id );
 }
 
