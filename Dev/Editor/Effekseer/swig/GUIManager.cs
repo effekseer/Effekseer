@@ -48,6 +48,10 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public void SetTitle(string title) {
+    EffekseerNativePINVOKE.GUIManager_SetTitle(swigCPtr, title);
+  }
+
   public void Terminate() {
     EffekseerNativePINVOKE.GUIManager_Terminate(swigCPtr);
   }

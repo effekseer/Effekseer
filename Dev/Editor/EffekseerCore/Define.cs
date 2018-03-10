@@ -61,7 +61,7 @@ namespace Effekseer
     // アセンブリからリソースファイルをロードする
     // Resources.GetString(...) に介して取得する場合、
     // カルチャーによってローカライズ済の文字列が得られます。
-    static class Resources
+    public static class Resources
     {
         static ResourceManager resources;
         static Resources()

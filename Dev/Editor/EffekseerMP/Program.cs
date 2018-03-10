@@ -98,7 +98,7 @@ namespace Effekseer
 				return;
 			}
 
-			Resources.Load(GUI.Manager.Native);
+			Images.Load(GUI.Manager.Native);
 
             var mainMenu = new GUI.Menu.MainMenu();
             var menu = new GUI.Menu.Menu();
@@ -115,7 +115,7 @@ namespace Effekseer
 				GUI.Manager.Update();
 			}
 
-			Resources.Unload();
+			Images.Unload();
 
 			GUI.Manager.Terminate();
 
@@ -247,7 +247,7 @@ namespace Effekseer
 		}
 	}
 
-	class Resources
+	class Images
 	{
 		public static swig.ImageResource Icon;
 

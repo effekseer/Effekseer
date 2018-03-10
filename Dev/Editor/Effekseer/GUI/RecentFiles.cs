@@ -67,7 +67,7 @@ namespace Effekseer.GUI
 		/// <param name="fullPath">絶対パス</param>
 		public static void AddRecentFile(string fullPath)
 		{
-			var errorText = Properties.Resources.NotAbsolutePathError;
+			var errorText = Resources.GetString("NotAbsolutePathError");
 
 			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception(errorText);
 

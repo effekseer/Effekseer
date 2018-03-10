@@ -69,7 +69,7 @@ Dock Panel Suite
 
 			if (Manager.NativeManager.BeginPopupModal(title + id, null, swig.WindowFlags.None))
             {
-				Manager.NativeManager.Image(Resources.Icon, 32, 32);
+				Manager.NativeManager.Image(Images.Icon, 32, 32);
 
 				Manager.NativeManager.SameLine();
 

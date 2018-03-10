@@ -16,7 +16,7 @@ namespace Effekseer.GUI
 		{
 			InitializeComponent();
 
-			// イベント設定
+			// assgin events
 			Core.OnAfterNew += new EventHandler(Core_OnAfterNew);
 			Core.OnAfterSave += new EventHandler(Core_OnAfterSave);
 			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
@@ -35,7 +35,7 @@ namespace Effekseer.GUI
 		}
 
 		/// <summary>
-		/// 最近使用したファイル
+		/// recent files
 		/// </summary>
 		ToolStripMenuItem recentFiles = null;
 
@@ -69,7 +69,7 @@ namespace Effekseer.GUI
 			
 			if (Core.IsChanged)
 			{
-                newTitle += Properties.Resources.UnsavedChanges;
+				newTitle += Resources.GetString("UnsavedChanges");
 			}
 
 			if (Text != newTitle)
@@ -236,43 +236,6 @@ namespace Effekseer.GUI
 				menuStrip.Items.Add(menu);
 			}
 
-			/*
-			{
-				var menu = new ToolStripMenuItem("全体処理");
-
-				for (int c = 0; c < Core.CommandScripts.Count; c++)
-				{
-					var command_item = new ToolStripMenuItem();
-					var command = Core.CommandScripts[c];
-					command_item.Text = command.Title;
-					command_item.Click += (object _sender, EventArgs _e) =>
-					{
-						command.Function();
-					};
-					menu.DropDownItems.Add(command_item);
-				}
-
-				menuStrip.Items.Add(menu);
-			}
-
-			{
-				var menu = new ToolStripMenuItem("選択部処理");
-				for (int c = 0; c < Core.SelectedScripts.Count; c++)
-				{
-					var command_item = new ToolStripMenuItem();
-					var command = Core.SelectedScripts[c];
-					command_item.Text = command.Title;
-					command_item.Click += (object _sender, EventArgs _e) =>
-					{
-						command.Function(Core.SelectedNode, null);
-					};
-					menu.DropDownItems.Add(command_item);
-				}
-
-				menuStrip.Items.Add(menu);
-			}
-			*/
-
 			{
 				var menu = new ToolStripMenuItem(Properties.Resources.Window);
 
@@ -424,8 +387,8 @@ namespace Effekseer.GUI
  
 		private void MainForm_Resize(object sender, EventArgs e)
 		{
-			// 最大化、最小化前のサイズを保存
-			if(this.WindowState != FormWindowState.Maximized && this.WindowState != FormWindowState.Minimized)
+			// Save a size before maximization or miniimization
+			if (this.WindowState != FormWindowState.Maximized && this.WindowState != FormWindowState.Minimized)
 			{
 				BeforeResizeWidth = this.Width;
 				BeforeResizeHeight = this.Height;
@@ -434,8 +397,8 @@ namespace Effekseer.GUI
 
 		private void MainForm_Move(object sender, EventArgs e)
 		{
-			// 最大化、最小化前の位置を保存
-			if(this.WindowState != FormWindowState.Maximized && this.WindowState != FormWindowState.Minimized)
+			// Save a location before maximization or miniimization
+			if (this.WindowState != FormWindowState.Maximized && this.WindowState != FormWindowState.Minimized)
 				BeforeResizeLocation = this.Location;
 		}
 	}
