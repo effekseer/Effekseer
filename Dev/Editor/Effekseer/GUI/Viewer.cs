@@ -76,7 +76,7 @@ namespace Effekseer.GUI
 
 		public bool StepEffect(int frame)
 		{
-			return native.StepEffect(frame);
+			return native.StepEffect( frame );
 		}
 
 		public bool Rotate(float x, float y)
@@ -148,20 +148,20 @@ namespace Effekseer.GUI
 			native.SetViewerParamater(paramater);
 		}
 
-		public void SetSoundMute(bool mute)
-		{
-			native.SetSoundMute(mute);
-		}
+        public void SetSoundMute(bool mute)
+        {
+            native.SetSoundMute(mute);
+        }
 
-		public void SetSoundVolume(float volume)
-		{
-			native.SetSoundVolume(volume);
-		}
+        public void SetSoundVolume(float volume)
+        {
+            native.SetSoundVolume(volume);
+        }
 
-		public void InvalidateTextureCache()
-		{
-			native.InvalidateTextureCache();
-		}
+        public void InvalidateTextureCache()
+        {
+            native.InvalidateTextureCache();
+        }
 
 		public void SetLotation(float x, float y, float z)
 		{
@@ -216,7 +216,7 @@ namespace Effekseer.GUI
 			behavior.ScaleVelocityZ = z;
 			native.SetViewerEffectBehavior(behavior);
 		}
-
+		
 		public void SetTargetLocation(float x, float y, float z)
 		{
 			var behavior = native.GetEffectBehavior();
@@ -342,13 +342,13 @@ namespace Effekseer.GUI
 		{
 			if (isViewerShown) return false;
 
-			if (native == null)
+			if(native == null)
 			{
 				throw new Exception("native is null.");
 			}
 
 			if (native.CreateWindow_Effekseer(
-				handle, width <= 0 ? 1 : width,
+				handle, width <= 0 ? 1 : width, 
 				height <= 0 ? 1 : height,
 				Core.Option.ColorSpace.Value == Data.OptionValues.ColorSpaceType.LinearSpace,
 				isOpenGLMode))
@@ -448,7 +448,7 @@ namespace Effekseer.GUI
 
 		public void UpdateWindow()
 		{
-			if (isViewerShown)
+			if(isViewerShown)
 			{
 				native.UpdateWindow();
 			}
@@ -631,7 +631,7 @@ namespace Effekseer.GUI
 		/// </summary>
 		public unsafe void Reload(bool isResourceReloaded)
 		{
-			if (isResourceReloaded)
+			if(isResourceReloaded)
 			{
 				native.InvalidateTextureCache();
 			}

@@ -12,16 +12,10 @@ namespace Effekseer.GUI
 	{
         public const string ConfigGuiFileName = "config.gui.xml";
         public const string ConfigGuiPanelFileName = "config.gui.panel.xml";
-        public const string ConfigRecentFileName = "config.recent.xml";
 		public const string ConfigNetworkFileName = "config.network.xml";
 
-		/// <summary>
-		/// Recent files
-		/// </summary>
-        static LinkedList<string> recentFiles = new LinkedList<string>();
         static string configGuiPath;
         static string configGuiPanelPath;
-        static string configRecentPath;
 		static string configNetworkPath;
 
 		internal static Network Network { get; private set; }
@@ -170,11 +164,6 @@ namespace Effekseer.GUI
 			set;
 		}
 
-		/// <summary>
-		/// 最近使用したファイルが変更
-		/// </summary>
-		public static event EventHandler OnChangeRecentFiles;
-
 		public static void Initialize()
 		{
 			Application.EnableVisualStyles();
@@ -182,14 +171,14 @@ namespace Effekseer.GUI
 
             configGuiPath = System.IO.Path.Combine(GetEntryDirectory(), ConfigGuiFileName);
             configGuiPanelPath = System.IO.Path.Combine(GetEntryDirectory(), ConfigGuiPanelFileName);
-            configRecentPath = System.IO.Path.Combine(GetEntryDirectory(), ConfigRecentFileName);
+            
 			configNetworkPath = System.IO.Path.Combine(GetEntryDirectory(), ConfigNetworkFileName);
             
 			Shortcuts.LoadShortcuts();
 			Commands.Regist();
-			LoadRecentConfig();
+			RecentFiles.LoadRecentConfig();
 
-			Network = new Network();
+			Network = new Network(new swig.Native());
 
 			MainForm = new MainForm();
 			AboutForm = new AboutForm();
@@ -225,19 +214,7 @@ namespace Effekseer.GUI
 			Core.MainForm = MainForm;
 		}
 
-		internal static void LoadRecentConfig()
-		{
-            if (System.IO.File.Exists(configRecentPath))
-			{
-				System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
-                doc.Load(configRecentPath);
-				var files = doc["Recent"].GetElements("File");
-				foreach (var file in files)
-				{
-					AddRecentFile(file.GetText());
-				}
-			}
-		}
+		
 
 		public static void CloseDockWindow()
 		{
@@ -625,22 +602,7 @@ namespace Effekseer.GUI
 		internal static void SaveConfig()
 		{
 			{
-				var rf = GetRecentFiles();
-
-				System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
-
-				System.Xml.XmlElement project_root = doc.CreateElement("Recent");
-
-				foreach (var f in rf.Reverse())
-				{
-					project_root.AppendChild(doc.CreateTextElement("File", f));
-				}
-
-				doc.AppendChild(project_root);
-
-				var dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
-				doc.InsertBefore(dec, project_root);
-                doc.Save(configRecentPath);
+				RecentFiles.SaveRecentConfig();
 			}
 
 			{
@@ -725,37 +687,6 @@ namespace Effekseer.GUI
 		public static void Close()
 		{
 			MainForm.Close();
-		}
-
-		/// <summary>
-		/// 最近使用したファイルの追加
-		/// </summary>
-		/// <param name="fullPath">絶対パス</param>
-		public static void AddRecentFile(string fullPath)
-		{
-            var errorText = Properties.Resources.NotAbsolutePathError;
-
-			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception(errorText);
-
-			recentFiles.Remove(fullPath);
-			recentFiles.AddFirst(fullPath);
-			while (recentFiles.Count > 10)
-			{
-				recentFiles.RemoveLast();
-			}
-			if (OnChangeRecentFiles != null)
-			{
-				OnChangeRecentFiles(null, null);
-			}
-		}
-
-		/// <summary>
-		/// 最近使用したファイル一覧の取得
-		/// </summary>
-		/// <returns></returns>
-		public static string[] GetRecentFiles()
-		{
-			return recentFiles.ToArray();
 		}
 
 		/// <summary>

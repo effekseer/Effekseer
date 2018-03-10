@@ -61,31 +61,31 @@ namespace Effekseer.GUI
 
 			txt_areaWidth.ReadMethod = () =>
 			{
-				if (GUIManager.DockViewer.ViewerAsDynamic != null) return GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater().GuideWidth;
+				if (GUIManager.DockViewer.Viewer != null) return GUIManager.DockViewer.Viewer.GetViewerParamater().GuideWidth;
 				return 0;
 			};
 			txt_areaWidth.WriteMethod = (value, wheel) =>
 			{
-				if (GUIManager.DockViewer.ViewerAsDynamic != null)
+				if (GUIManager.DockViewer.Viewer != null)
 				{
-					var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
+					var param = GUIManager.DockViewer.Viewer.GetViewerParamater();
 					param.GuideWidth = Math.Max(0, value);
-					GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
+					GUIManager.DockViewer.Viewer.SetViewerParamater(param);
 				}
 			};
 
 			txt_areaHeight.ReadMethod = () =>
 			{
-				if (GUIManager.DockViewer.ViewerAsDynamic != null) return GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater().GuideHeight;
+				if (GUIManager.DockViewer.Viewer != null) return GUIManager.DockViewer.Viewer.GetViewerParamater().GuideHeight;
 				return 0;
 			};
 			txt_areaHeight.WriteMethod = (value, wheel) =>
 			{
-				if (GUIManager.DockViewer.ViewerAsDynamic != null)
+				if (GUIManager.DockViewer.Viewer != null)
 				{
-					var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
+					var param = GUIManager.DockViewer.Viewer.GetViewerParamater();
 					param.GuideHeight = Math.Max(0, value);
-					GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
+					GUIManager.DockViewer.Viewer.SetViewerParamater(param);
 				}
 			};
 
@@ -127,9 +127,9 @@ namespace Effekseer.GUI
 			if (!txt_endingFrame.Changed) txt_endingFrame.Reload();
 			if (!txt_freq.Changed) txt_freq.Reload();
 
-			if (GUIManager.DockViewer.ViewerAsDynamic != null)
+			if (GUIManager.DockViewer.Viewer != null)
 			{
-				var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
+				var param = GUIManager.DockViewer.Viewer.GetViewerParamater();
 				cb_area.Checked = param.RendersGuide;
 			}
 
@@ -149,7 +149,7 @@ namespace Effekseer.GUI
 			var height = count / width;
 			if (height * width != count) height++;
 
-			if (GUIManager.DockViewer.ViewerAsDynamic != null)
+			if (GUIManager.DockViewer.Viewer != null)
 			{
 				var dialog = new SaveFileDialog();
 
@@ -177,10 +177,10 @@ namespace Effekseer.GUI
 
 				var filename = dialog.FileName;
 
-				var viewer = GUIManager.DockViewer.ViewerAsDynamic;
-				var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
+				var viewer = GUIManager.DockViewer.Viewer;
+				var param = GUIManager.DockViewer.Viewer.GetViewerParamater();
 
-				if (viewer.LoadEffectFunc != null)
+				//if (viewer.LoadEffectFunc != null)
 				{
 					viewer.LoadEffectFunc();
 				}
@@ -226,9 +226,9 @@ namespace Effekseer.GUI
 		private void cb_guide_CheckedChanged(object sender, EventArgs e)
 		{
 			if (nowReloading) return;
-			var param = GUIManager.DockViewer.ViewerAsDynamic.GetViewerParamater();
+			var param = GUIManager.DockViewer.Viewer.GetViewerParamater();
 			param.RendersGuide = cb_area.Checked;
-			GUIManager.DockViewer.ViewerAsDynamic.SetViewerParamater(param);
+			GUIManager.DockViewer.Viewer.SetViewerParamater(param);
 		}
 
 		private void cb_type_SelectedIndexChanged(object sender, EventArgs e)

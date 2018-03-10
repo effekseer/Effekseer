@@ -16,7 +16,20 @@ namespace Effekseer.GUI
 			InitializeComponent();
 
             Icon = Icon.FromHandle(((Bitmap)Properties.Resources.IconNetwork).GetHicon());
+
+			HandleCreated += DockNetwork_HandleCreated;
+			HandleDestroyed += DockNetwork_HandleDestroyed;
         }
+
+		private void DockNetwork_HandleCreated(object sender, EventArgs e)
+		{
+			GUIManager.Network.Loaded += Reload;
+		}
+
+		private void DockNetwork_HandleDestroyed(object sender, EventArgs e)
+		{
+			GUIManager.Network.Loaded -= Reload;
+		}
 
 		private void DockNetwork_Load(object sender, EventArgs e)
 		{
@@ -89,7 +102,7 @@ namespace Effekseer.GUI
 
 		public void Update_()
 		{
-			if (GUIManager.DockViewer.Viewer.IsConnected())
+			if (GUIManager.Network.IsConnected())
 			{
                 lbl_state.Text = Properties.Resources.NetworkConnected;
 				btn_connect.Text = Properties.Resources.Disconnect;
@@ -110,7 +123,7 @@ namespace Effekseer.GUI
 
 		private void btn_connect_Click(object sender, EventArgs e)
 		{
-			if (GUIManager.DockViewer.Viewer.IsConnected())
+			if (GUIManager.Network.IsConnected())
 			{
 				GUIManager.Network.Disconnect();
 			}

@@ -503,6 +503,8 @@ void Renderer::EndRecord(std::vector<Effekseer::Color>& pixels, bool generateAlp
 
 void Renderer::LoadBackgroundImage(const char16_t* path)
 {
+	if (backgroundPath == path) return;
+
 	backgroundPath = path;
 	
 	if (backgroundData != nullptr)

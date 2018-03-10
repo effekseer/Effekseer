@@ -218,9 +218,9 @@ namespace Effekseer
 		}
 
 		/// <summary>
-		/// メッセージ表示
+		/// Output message
 		/// </summary>
-		public static event Action<string> OnOutputMessage;
+		public static Action<string> OnOutputMessage;
 
 		/// <summary>
 		/// 選択中のノード変更後イベント

@@ -97,10 +97,6 @@ namespace Effekseer.GUI
 		System.Drawing.Point mouse_left_location;
 		System.Drawing.Point mouse_middle_location;
 		System.Drawing.Point mouse_right_location;
-		bool is_shown = false;
-		int current = 0;
-		int random_seed = 0;
-		Random rand = new Random();
 
 		/// <summary>
 		/// ビュワーの取得を行う。
@@ -112,60 +108,7 @@ namespace Effekseer.GUI
 				return viewer;
 			}
 		}
-
-		/// <summary>
-		/// dynamic形式としてビュワーの取得を行う。
-		/// </summary>
-		public dynamic ViewerAsDynamic
-		{
-			get
-			{
-				return viewer;
-			}
-		}
-
-		/// <summary>
-		/// 現在再生中か?
-		/// </summary>
-		public bool IsPlaying
-		{
-			get;
-			private set;
-		}
-
-		/// <summary>
-		/// 現在一時停止中か?
-		/// </summary>
-		public bool IsPaused
-		{
-			get;
-			private set;
-		}
-
-		/// <summary>
-		/// パラメーターに変更点があるかどうか?
-		/// </summary>
-		public bool IsChanged
-		{
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// 現在のフレーム
-		/// </summary>
-		public int Current
-		{
-			get
-			{
-				return current;
-			}
-			set
-			{
-				Step(value);
-			}
-		}
-
+		
 		public bool IsMouseDownLeft
 		{
 			get;
@@ -222,387 +165,46 @@ namespace Effekseer.GUI
 
 		public void ShowViewer()
 		{
-			if (is_shown) return;
-
 			if (viewer == null)
 			{
 				throw new Exception("Viewerが生成されていません。");
 			}
 
-			// WidthかHeightが0以下だとウィンドウの作成に失敗するので、その場合はとりあえずサイズを1にして回避
-			if (viewer.CreateWindow(Handle, Width <= 0 ? 1 : Width, Height <= 0 ? 1 : Height, Core.Option.ColorSpace.Value == Data.OptionValues.ColorSpaceType.LinearSpace))
-			{
-				is_shown = true;
-			}
-			else
-			{
-				MessageBox.Show("描画画面の生成に失敗しました。DirectXのバージョンの問題、メモリの不足等が考えられます。");
-			}
-		}
-
-		public void HideViewer()
-		{
-			if (!is_shown) return;
-			is_shown = false;
-
-			viewer.DestroyWindow();
+			viewer.ShowViewer(Handle, Width, Height);
 		}
 
 		public void UpdateViewer()
 		{
-			if (is_shown)
-			{
-				if (IsChanged && (IsPlaying || IsPaused))
-				{
-					Reload();
-					IsChanged = false;
-				}
-
-				if (IsPlaying && !IsPaused)
-				{
-                    StepViewer(true);
-				}
-
-				viewer.SetBackgroundColor(
-				(byte)Core.Option.BackgroundColor.R,
-				(byte)Core.Option.BackgroundColor.G,
-				(byte)Core.Option.BackgroundColor.B);
-
-				viewer.SetBackgroundImage(Core.Option.BackgroundImage.AbsolutePath);
-
-				viewer.SetGridColor(
-				(byte)Core.Option.GridColor.R,
-				(byte)Core.Option.GridColor.G,
-				(byte)Core.Option.GridColor.B,
-				(byte)Core.Option.GridColor.A);
-
-				viewer.SetGridLength(
-					Core.Option.GridLength);
-
-				viewer.SetIsGridShown(
-					Core.Option.IsGridShown,
-					Core.Option.IsXYGridShown,
-					Core.Option.IsXZGridShown,
-					Core.Option.IsYZGridShown);
-				
-				viewer.SetLightDirection(
-					Core.Option.LightDirection.X,
-					Core.Option.LightDirection.Y,
-					Core.Option.LightDirection.Z);
-
-				viewer.SetLightColor(
-					(byte)Core.Option.LightColor.R,
-					(byte)Core.Option.LightColor.G,
-					(byte)Core.Option.LightColor.B,
-					(byte)Core.Option.LightColor.A);
-
-				viewer.SetLightAmbientColor(
-					(byte)Core.Option.LightAmbientColor.R,
-					(byte)Core.Option.LightAmbientColor.G,
-					(byte)Core.Option.LightAmbientColor.B,
-					(byte)Core.Option.LightAmbientColor.A);
-
-				viewer.SetMouseInverseFlag(
-					Core.Option.MouseRotInvX,
-					Core.Option.MouseRotInvY,
-					Core.Option.MouseSlideInvX,
-					Core.Option.MouseSlideInvY);
-
-				if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
-				{
-					viewer.SetCullingParameter(Core.Culling.IsShown, Core.Culling.Sphere.Radius.Value, Core.Culling.Sphere.Location.X, Core.Culling.Sphere.Location.Y, Core.Culling.Sphere.Location.Z);
-				}
-				else if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.None)
-				{
-					viewer.SetCullingParameter(false, 0.0f, 0.0f, 0.0f, 0.0f);
-				}
-
-				viewer.UpdateWindow();
-			}
-			else
-			{
-				System.Threading.Thread.Sleep(1);
-			}
+			viewer.UpdateViewer();
+			viewer.UpdateWindow();
+			viewer.PresentWindow();
 		}
 
 		public void PlayViewer()
 		{
-			if (is_shown)
-			{
-				PlayNew();
-                IsPaused = false;
-			}
+			viewer.PlayViewer();
 		}
 
 		public void StopViewer()
 		{
-			if (is_shown)
-			{
-				viewer.StopEffect();
-				
-				IsPlaying = false;
-				IsPaused = false;
-				current = Core.StartFrame;
-			}
+			viewer.StopViewer();
 		}
 
 		public void PauseAndResumeViewer()
 		{
-			if (is_shown)
-			{
-                IsPaused = !IsPaused;
-			}
+			viewer.PauseAndResumeViewer();
 		}
 
 		public void StepViewer(bool isLooping)
 		{
-            //if (!IsPlaying)
-            //{
-            //    return;
-            //}
-
-			int next = Current + 1;
-
-			if(isLooping)
-			{
-				if (next > Core.EndFrame) next = 0;
-			}
-			
-            Step(next);
-
-            //if (Core.EndFrame < current)
-            //{
-            //    if (Core.IsLoop)
-            //    {
-            //        PlayNew();
-            //    }
-            //    else
-            //    {
-            //        StopViewer();
-            //    }
-            //}
-		}
-
-		public void BackStepViewer()
-		{
-			Step(Current - 1);
-		}
-
-		unsafe void Export()
-		{
-			viewer.SetLotationVelocity(
-				Core.EffectBehavior.LocationVelocity.X,
-				Core.EffectBehavior.LocationVelocity.Y,
-				Core.EffectBehavior.LocationVelocity.Z);
-
-			viewer.SetRotationVelocity(
-				Core.EffectBehavior.RotationVelocity.X / 180.0f * 3.141592f,
-				Core.EffectBehavior.RotationVelocity.Y / 180.0f * 3.141592f,
-				Core.EffectBehavior.RotationVelocity.Z / 180.0f * 3.141592f);
-
-			viewer.SetScaleVelocity(
-				Core.EffectBehavior.ScaleVelocity.X,
-				Core.EffectBehavior.ScaleVelocity.Y,
-				Core.EffectBehavior.ScaleVelocity.Z);
-
-			if (Core.EffectBehavior.RemovedTime.Infinite.Value)
-			{
-				viewer.SetRemovedTime(int.MaxValue);
-			}
-			else
-			{
-				viewer.SetRemovedTime(Core.EffectBehavior.RemovedTime.Value);
-			}
-
-			viewer.SetLotation(
-				Core.EffectBehavior.Location.X,
-				Core.EffectBehavior.Location.Y,
-				Core.EffectBehavior.Location.Z);
-
-			viewer.SetRotation(
-				Core.EffectBehavior.Rotation.X / 180.0f * 3.141592f,
-				Core.EffectBehavior.Rotation.Y / 180.0f * 3.141592f,
-				Core.EffectBehavior.Rotation.Z / 180.0f * 3.141592f);
-
-			viewer.SetScale(
-				Core.EffectBehavior.Scale.X,
-				Core.EffectBehavior.Scale.Y,
-				Core.EffectBehavior.Scale.Z);
-
-			viewer.SetTargetLocation(
-				Core.EffectBehavior.TargetLocation.X,
-				Core.EffectBehavior.TargetLocation.Y,
-				Core.EffectBehavior.TargetLocation.Z);
-
-			viewer.SetEffectCount(
-				Core.EffectBehavior.CountX,
-				Core.EffectBehavior.CountY,
-				Core.EffectBehavior.CountZ);
-
-			viewer.SetAllColor(
-				(byte)Core.EffectBehavior.ColorAll.R,
-				(byte)Core.EffectBehavior.ColorAll.G,
-				(byte)Core.EffectBehavior.ColorAll.B,
-				(byte)Core.EffectBehavior.ColorAll.A);
-
-			viewer.SetEffectTimeSpan(Core.EffectBehavior.TimeSpan);
-			
-			viewer.SetEffectDistance(Core.EffectBehavior.Distance);
-
-			viewer.SetBackgroundColor(
-				(byte)Core.Option.BackgroundColor.R,
-				(byte)Core.Option.BackgroundColor.G,
-				(byte)Core.Option.BackgroundColor.B);
-
-			viewer.SetGridLength(
-				Core.Option.GridLength);
-
-			viewer.SetStep((int)Core.Option.FPS.Value);
-			viewer.SetIsRightHand(Core.Option.Coordinate.Value == Data.OptionValues.CoordinateType.Right);
-
-			viewer.SetDistortionType((int)Core.Option.DistortionType.Value);
-
-			if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
-			{
-				viewer.SetCullingParameter(Core.Culling.IsShown, Core.Culling.Sphere.Radius.Value, Core.Culling.Sphere.Location.X, Core.Culling.Sphere.Location.Y, Core.Culling.Sphere.Location.Z);
-			}
-			else if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.None)
-			{
-				viewer.SetCullingParameter(false, 0.0f, 0.0f, 0.0f, 0.0f);
-			}
-
-			var data = Binary.Exporter.Export(Core.Option.Magnification);
-			fixed (byte* p = &data[0])
-			{
-				viewer.LoadEffect(new IntPtr(p), data.Length, Core.FullPath);
-			}
-		}
-
-		/// <summary>
-		/// 新規再生
-		/// </summary>
-		unsafe void PlayNew()
-		{
-			viewer.StopEffect();
-
-			if (IsChanged)
-			{
-				viewer.RemoveEffect();
-
-				Export();
-
-				IsChanged = false;
-			}
-
-			random_seed = rand.Next(0, 0xffff);
-			viewer.SetRandomSeed(random_seed);
-			viewer.PlayEffect();
-			IsPlaying = true;
-
-			if (Core.StartFrame > 0)
-			{
-				viewer.StepEffect(Core.StartFrame);
-			}
-			current = Core.StartFrame;
-		}
-
-		/// <summary>
-		/// 状態はそのまま、エフェクトのデータだけ差し替え
-		/// </summary>
-		unsafe void Reload()
-		{
-			viewer.StopEffect();
-
-			viewer.RemoveEffect();
-
-			Export();
-
-			viewer.SetRandomSeed(random_seed);
-			viewer.PlayEffect();
-			viewer.StepEffect(Current);
-		}
-
-		/// <summary>
-		/// 指定フレームに移動
-		/// </summary>
-		/// <param name="new_frame"></param>
-		unsafe void Step(int new_frame )
-		{
-			// 同一フレーム
-			if (current == new_frame) return;
-
-			if (new_frame < Core.StartFrame) new_frame = Core.StartFrame;
-			if (new_frame > Core.EndFrame) new_frame = Core.EndFrame;
-
-			if (is_shown)
-			{
-				if (!IsPlaying)
-				{
-					PlayNew();
-					PauseAndResumeViewer();
-				}
-
-				if (IsPaused)
-				{
-					if (current == new_frame)
-					{
-					}
-					else if (current > new_frame)
-					{
-						viewer.StopEffect();
-						viewer.SetRandomSeed(random_seed);
-						viewer.PlayEffect();
-						viewer.StepEffect(new_frame);
-					}
-					else
-					{
-						viewer.StepEffect(new_frame - current);
-					}
-					current = new_frame;
-				}
-				else
-				{
-					if (current == new_frame)
-					{
-					}
-					else if (current > new_frame)
-					{
-						viewer.StopEffect();
-						viewer.PlayEffect();
-						viewer.StepEffect(new_frame);
-					}
-					else
-					{
-						viewer.StepEffect(new_frame - current);
-					}
-					current = new_frame;
-				}
-			
-			}
+			viewer.StepViewer(isLooping);
 		}
 
 		unsafe void DockViewer_Load(object sender, EventArgs e)
 		{
 			try
 			{
-				viewer = new Viewer();
-				viewer.LoadEffectFunc += () =>
-					{
-						StopViewer();
-
-						viewer.RemoveEffect();
-
-						Export();
-
-						IsChanged = false;
-
-						return true;
-					};
-
-				IsPlaying = false;
-				IsPaused = false;
-				IsChanged = true;
-				current = 0;
+				viewer = new Viewer(new swig.Native());
 			}
 			catch(Exception exception)
 			{
@@ -613,7 +215,7 @@ namespace Effekseer.GUI
 
 		void DockViewer_SizeChanged(object sender, EventArgs e)
 		{
-			if (is_shown && Width > 0 && Height > 0)
+			if (Width > 0 && Height > 0 && viewer != null)
 			{
 				if (!viewer.ResizeWindow(Width, Height))
 				{
@@ -629,7 +231,7 @@ namespace Effekseer.GUI
 
 		void DockViewer_HandleDestroyed(object sender, EventArgs e)
 		{
-			HideViewer();
+			viewer.HideViewer();
 		}
 
 		void DockViewer_MouseDown(object sender, MouseEventArgs e)
@@ -720,14 +322,13 @@ namespace Effekseer.GUI
 			if (e.Y >= this.Height) return;
 			if (e.Y <= 0) return;
 
-			if (!is_shown) return;
 			viewer.Zoom((float)e.Delta / 120.0f);
 		}
 
 		void Core_OnAfterLoad(object sender, EventArgs e)
 		{
-			StopViewer();
-			
+			viewer.StopViewer();
+
 			if (GUIManager.Network.SendOnLoad)
 			{
 				GUIManager.Network.Send();
@@ -736,19 +337,18 @@ namespace Effekseer.GUI
 
 		void Core_OnAfterNew(object sender, EventArgs e)
 		{
-			StopViewer();
+			viewer.StopViewer();
 		}
 		
 		void Core_OnReload(object sender, EventArgs e)
 		{
-			viewer.InvalidateTextureCache();
-			Reload();
+			viewer.Reload(true);
 		}
 
 		void OnChanged(object sender, EventArgs e)
 		{
-			IsChanged = true;
-
+			viewer.IsChanged = true;
+			
 			if (GUIManager.Network.SendOnEdit)
 			{
 				GUIManager.Network.Send();
