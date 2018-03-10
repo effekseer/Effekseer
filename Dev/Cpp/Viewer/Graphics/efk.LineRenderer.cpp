@@ -1,6 +1,9 @@
 #include "efk.LineRenderer.h"
 
+#ifdef _WIN32
 #include "Platform/DX9/efk.LineRendererDX9.h"
+#endif
+
 #include "Platform/GL/efk.LineRendererGL.h"
 
 namespace efk
