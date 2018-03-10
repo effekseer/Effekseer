@@ -172,7 +172,7 @@ public:
 	/**
 		@brief	ライトの方向を設定する。
 	*/
-	virtual void SetLightDirection( ::Effekseer::Vector3D& direction ) = 0;
+	virtual void SetLightDirection( const ::Effekseer::Vector3D& direction ) = 0;
 
 	/**
 		@brief	ライトの色を取得する。
@@ -182,7 +182,7 @@ public:
 	/**
 		@brief	ライトの色を設定する。
 	*/
-	virtual void SetLightColor( ::Effekseer::Color& color ) = 0;
+	virtual void SetLightColor( const ::Effekseer::Color& color ) = 0;
 
 	/**
 		@brief	ライトの環境光の色を取得する。
@@ -192,7 +192,7 @@ public:
 	/**
 		@brief	ライトの環境光の色を設定する。
 	*/
-	virtual void SetLightAmbientColor( ::Effekseer::Color& color ) = 0;
+	virtual void SetLightAmbientColor( const ::Effekseer::Color& color ) = 0;
 
 		/**
 		@brief	最大描画スプライト数を取得する。

@@ -594,7 +594,7 @@ const ::Effekseer::Vector3D& RendererImplemented::GetLightDirection() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetLightDirection( ::Effekseer::Vector3D& direction )
+void RendererImplemented::SetLightDirection( const ::Effekseer::Vector3D& direction )
 {
 	m_lightDirection = direction;
 }
@@ -610,7 +610,7 @@ const ::Effekseer::Color& RendererImplemented::GetLightColor() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetLightColor( ::Effekseer::Color& color )
+void RendererImplemented::SetLightColor( const ::Effekseer::Color& color )
 {
 	m_lightColor = color;
 }
@@ -626,7 +626,7 @@ const ::Effekseer::Color& RendererImplemented::GetLightAmbientColor() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::SetLightAmbientColor( ::Effekseer::Color& color )
+void RendererImplemented::SetLightAmbientColor( const ::Effekseer::Color& color )
 {
 	m_lightAmbient = color;
 }

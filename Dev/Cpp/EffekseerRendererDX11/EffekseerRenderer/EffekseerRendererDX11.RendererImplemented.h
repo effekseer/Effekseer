@@ -405,7 +405,7 @@ public:
 	/**
 		@brief	ライトの方向を設定する。
 	*/
-	void SetLightDirection( ::Effekseer::Vector3D& direction );
+	void SetLightDirection( const ::Effekseer::Vector3D& direction );
 
 	/**
 		@brief	ライトの色を取得する。
@@ -415,7 +415,7 @@ public:
 	/**
 		@brief	ライトの色を設定する。
 	*/
-	void SetLightColor( ::Effekseer::Color& color );
+	void SetLightColor( const ::Effekseer::Color& color );
 
 	/**
 		@brief	ライトの環境光の色を取得する。
@@ -425,7 +425,7 @@ public:
 	/**
 		@brief	ライトの環境光の色を設定する。
 	*/
-	void SetLightAmbientColor( ::Effekseer::Color& color );
+	void SetLightAmbientColor( const ::Effekseer::Color& color );
 
 	/**
 		@brief	投影行列を取得する。

@@ -472,7 +472,7 @@ public:
 	/**
 		@brief	ライトの方向を設定する。
 	*/
-	void SetLightDirection( ::Effekseer::Vector3D& direction ) override;
+	void SetLightDirection( const ::Effekseer::Vector3D& direction ) override;
 
 	/**
 		@brief	ライトの色を取得する。
@@ -482,7 +482,7 @@ public:
 	/**
 		@brief	ライトの色を設定する。
 	*/
-	void SetLightColor( ::Effekseer::Color& color ) override;
+	void SetLightColor( const ::Effekseer::Color& color ) override;
 
 	/**
 		@brief	ライトの環境光の色を取得する。
@@ -492,7 +492,7 @@ public:
 	/**
 		@brief	ライトの環境光の色を設定する。
 	*/
-	void SetLightAmbientColor( ::Effekseer::Color& color ) override;
+	void SetLightAmbientColor( const ::Effekseer::Color& color ) override;
 
 	/**
 		@brief	投影行列を取得する。
