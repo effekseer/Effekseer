@@ -1,6 +1,8 @@
 
+#ifdef _WIN32
 #define GLEW_STATIC 1
 #include <GL/glew.h>
+#endif
 
 #include "../EffekseerTool/EffekseerTool.Renderer.h"
 
@@ -43,8 +45,10 @@ namespace efk
 
 		window->MakeCurrent();
 
+#ifdef _WIN32
 		glewInit();
-
+#endif
+        
 		ImGui::CreateContext();
 		ImGui_ImplGlfwGL3_Init(window->GetGLFWWindows(), true);
 		ImGui::StyleColorsDark();

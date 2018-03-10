@@ -14,9 +14,10 @@ aceutils.editCmakeForACE(r'libpng/CMakeLists.txt')
 
 aceutils.mkdir(r'zlib_bin')
 aceutils.mkdir(r'libpng_bin')
+aceutils.mkdir(r'libpng_bin/i386')
 
-aceutils.mkdir(r'Dev/Cpp/include')
-aceutils.mkdir(r'Dev/Cpp/lib')
+aceutils.mkdir(r'../Dev/Cpp/include')
+aceutils.mkdir(r'../Dev/Cpp/lib')
 
 if aceutils.isWin():
 	print('already installed.')

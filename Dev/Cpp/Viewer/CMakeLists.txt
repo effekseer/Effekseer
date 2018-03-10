@@ -203,6 +203,8 @@ target_link_libraries(
 	effekseer_sound_al
 	glfw3
 	libgd_static
+	libz
+	libpng16
 	OpenSoundMixer
 	${OpenAL_LIBRARY}
 	${CMAKE_THREAD_LIBS_INIT}

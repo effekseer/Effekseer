@@ -26,7 +26,12 @@ endif()
 option(USE_INTERNAL_LOADER "Use Internal Loader" ON)
 
 option(USE_GLEW_STATIC "Use Glew static library" OFF)
+
+if (WIN32)
 option(USE_GLEW_DLL "Use Glew DLL" ON)
+else()
+option(USE_GLEW_DLL "Use Glew DLL" OFF)
+endif()
 
 option(USE_OPENGLES2 "Use OpenGL ES2" OFF)
 option(USE_OPENGLES3 "Use OpenGL ES3" OFF)
@@ -161,6 +166,7 @@ endif()
 # set include directories
 include_directories(
 	Effekseer/
+	include/
 	)
 
 # set lib directories

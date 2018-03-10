@@ -36,7 +36,13 @@
 
 // GL3W/GLFW
 #define GLEW_STATIC 1
+
+#ifdef _WIN32
 #include <GL/glew.h>    // This example is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
+#else
+#include <OpenGL/gl3.h>
+#endif
+
 #include <GLFW/glfw3.h>
 #ifdef _WIN32
 #undef APIENTRY

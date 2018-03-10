@@ -1,6 +1,8 @@
-﻿
+
+#ifdef _WIN32
 #define GLEW_STATIC 1
 #include <GL/glew.h>
+#endif
 
 #include "Effekseer.h"
 #include "EffekseerTool/EffekseerTool.Renderer.h"
@@ -121,8 +123,10 @@ int main()
 	window->Initialize(u"Effekseer", 960, 540, false, true);
 	window->MakeCurrent();
 
+#ifdef _WIN32
 	glewInit();
-
+#endif
+    
 	ImGui::CreateContext();
 	ImGui_ImplGlfwGL3_Init(window->GetGLFWWindows(), true);
 	ImGui::StyleColorsClassic();
