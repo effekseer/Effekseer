@@ -144,19 +144,25 @@ int main()
 
 	renderer->GetRenderer()->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
 
+    Effekseer::Effect* effect = nullptr;
+    
 	char* pData = NULL;
 	FILE* fp = fopen("Resource/test.efk", "rb");
-	fseek(fp, 0, SEEK_END);
-	size_t size = ftell(fp);
-	pData = new char[size];
-	fseek(fp, 0, SEEK_SET);
-	fread(pData, 1, size, fp);
-	fclose(fp);
+	
+    if(fp != nullptr)
+    {
+        fseek(fp, 0, SEEK_END);
+        size_t size = ftell(fp);
+        pData = new char[size];
+        fseek(fp, 0, SEEK_SET);
+        fread(pData, 1, size, fp);
+        fclose(fp);
 
-	auto effect = Effekseer::Effect::Create(manager, (void*)pData, size);
+        effect = Effekseer::Effect::Create(manager, (void*)pData, size);
 
-	delete[] pData;
-
+        delete[] pData;
+    }
+    
 	auto handle = manager->Play(effect, 0, 0, 0);
 
 	bool show_another_window = true;
@@ -186,6 +192,7 @@ int main()
 			ImGui::EndMainMenuBar();
 		}
 
+        /*
 		ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
 		ImGui::SetNextWindowPos(ImVec2(0, 30));
 		const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
@@ -206,7 +213,7 @@ int main()
 			ImGui::EndDockspace();
 		}
 		ImGui::End();
-		
+		*/
 
 		ImGui::Begin("Another Window", &show_another_window);
 		if (ImGui::TreeNode("Tree"))
@@ -252,7 +259,8 @@ int main()
 
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
-
+        
+/*
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 
@@ -260,12 +268,12 @@ int main()
 		glClearDepth(1.0f);
 		glClear(bit);
 
-		//manager->Update();
-		//
-		//renderer->BeginRendering();
-		//manager->Draw();
-		//renderer->EndRendering();
-
+		manager->Update();
+		
+		renderer->BeginRendering();
+		manager->Draw();
+		renderer->EndRendering();
+*/
 
 		renderer->Present();
 		window->Present();

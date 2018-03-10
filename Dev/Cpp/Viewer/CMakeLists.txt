@@ -183,11 +183,14 @@ target_link_libraries(
 	Viewer
 	effekseer
 	effekseer_renderer_gl
-	effekseer_sound_al
+	EffekseerSoundOSMixer
 	glfw3
-	libgd_static
+	gd
+	z
+	png16
 	OpenSoundMixer
 	${OpenAL_LIBRARY}
+	"-framework OpenAL"
 	${CMAKE_THREAD_LIBS_INIT}
 	${COCOA_FRAMEWORK}
 	${OPENGL_gl_LIBRARY}
@@ -200,13 +203,14 @@ target_link_libraries(
 	ViewerTest
 	effekseer
 	effekseer_renderer_gl
-	effekseer_sound_al
+	EffekseerSoundOSMixer
 	glfw3
-	libgd_static
-	libz
-	libpng16
+	gd
+	z
+	png16
 	OpenSoundMixer
 	${OpenAL_LIBRARY}
+	"-framework OpenAL"
 	${CMAKE_THREAD_LIBS_INIT}
 	${COCOA_FRAMEWORK}
 	${OPENGL_gl_LIBRARY}
