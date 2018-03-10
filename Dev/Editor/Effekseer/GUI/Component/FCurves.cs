@@ -1488,7 +1488,7 @@ namespace Effekseer.GUI.Component
 								GraphPanel.Parent.Refresh();
 
 								// エフェクトに反映
-								GUIManager.DockViewer.IsChanged = true;
+								GUIManager.DockViewer.Viewer.IsChanged = true;
 
 								// 数値に反映
 								window.UpdateFCurveKey();
@@ -1528,7 +1528,7 @@ namespace Effekseer.GUI.Component
 									GraphPanel.Parent.Refresh();
 
 									// エフェクトに反映
-									GUIManager.DockViewer.IsChanged = true;
+									GUIManager.DockViewer.Viewer.IsChanged = true;
 
 									// 数値に反映
 									window.UpdateFCurveKey();
@@ -1568,7 +1568,7 @@ namespace Effekseer.GUI.Component
 										GraphPanel.Parent.Refresh();
 
 										// エフェクトに反映
-										GUIManager.DockViewer.IsChanged = true;
+										GUIManager.DockViewer.Viewer.IsChanged = true;
 
 										// 数値に反映
 										window.UpdateFCurveKey();

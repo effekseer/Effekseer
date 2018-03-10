@@ -47,9 +47,9 @@ namespace Effekseer.GUI
 
 		public void UpdateController()
 		{
-			lb_current_value.Text = GUIManager.DockViewer.Current.ToString();
+			lb_current_value.Text = GUIManager.DockViewer.Viewer.Current.ToString();
 
-			if (GUIManager.DockViewer.IsPaused)
+			if (GUIManager.DockViewer.Viewer.IsPaused)
 			{
 				//btn_pause.Text = "resume";
 			}
@@ -58,11 +58,11 @@ namespace Effekseer.GUI
 				//btn_pause.Text = "pause";
             }
 
-            trackBar.Value = GUIManager.DockViewer.Current;
+            trackBar.Value = GUIManager.DockViewer.Viewer.Current;
 
-			if (GUIManager.DockViewer.IsPlaying)
+			if (GUIManager.DockViewer.Viewer.IsPlaying)
 			{
-				if(GUIManager.DockViewer.IsPaused)
+				if(GUIManager.DockViewer.Viewer.IsPaused)
 				{
 					btn_play_pause.Image = global::Effekseer.Properties.Resources.Play;
 				}
@@ -84,13 +84,13 @@ namespace Effekseer.GUI
 
 		private void btn_play_Click(object sender, EventArgs e)
 		{
-			if (GUIManager.DockViewer.IsPlaying && !GUIManager.DockViewer.IsPaused)
+			if (GUIManager.DockViewer.Viewer.IsPlaying && !GUIManager.DockViewer.Viewer.IsPaused)
 			{
 				GUIManager.DockViewer.PauseAndResumeViewer();
 			}
 			else
 			{
-				if(GUIManager.DockViewer.IsPaused)
+				if(GUIManager.DockViewer.Viewer.IsPaused)
 				{
 					GUIManager.DockViewer.PauseAndResumeViewer();
 				}
@@ -103,36 +103,26 @@ namespace Effekseer.GUI
 
 		private void btn_stop_Click(object sender, EventArgs e)
 		{
-			GUIManager.DockViewer.StopViewer();
+			Commands.Stop();
 			btn_play_pause.Image = global::Effekseer.Properties.Resources.Play;
-		}
-
-		private void btn_pause_Click(object sender, EventArgs e)
-		{
-			//GUIManager.DockViewer.PauseAndResumeViewer();
 		}
 
 		private void btn_step_Click(object sender, EventArgs e)
 		{
-			GUIManager.DockViewer.StepViewer(false);
+			Commands.Step();
 		}
 
 		private void btn_backstep_Click(object sender, EventArgs e)
 		{
-			GUIManager.DockViewer.BackStepViewer();
-		}
-
-		private void cb_loop_CheckedChanged(object sender, EventArgs e)
-		{
-			//Core.IsLoop = cb_loop.Checked;
+			Commands.BackStep();
 		}
 
 		void Core_OnAfterChangeStartFrame(object sender, EventArgs e)
 		{
 			tb_start.Reload();
-			if (GUIManager.DockViewer.Current < Core.StartFrame)
+			if (GUIManager.DockViewer.Viewer.Current < Core.StartFrame)
 			{
-				GUIManager.DockViewer.Current = Core.StartFrame;
+				GUIManager.DockViewer.Viewer.Current = Core.StartFrame;
 			}
 			trackBar.Minimum = Core.StartFrame;
 		}
@@ -140,9 +130,9 @@ namespace Effekseer.GUI
 		void Core_OnAfterChangeEndFrame(object sender, EventArgs e)
 		{
 			tb_end.Reload();
-			if (GUIManager.DockViewer.Current > Core.EndFrame)
+			if (GUIManager.DockViewer.Viewer.Current > Core.EndFrame)
 			{
-				GUIManager.DockViewer.Current = Core.EndFrame;
+				GUIManager.DockViewer.Viewer.Current = Core.EndFrame;
 			}
 			trackBar.Maximum = Core.EndFrame;
 		}
@@ -154,7 +144,7 @@ namespace Effekseer.GUI
 
 		private void trackBar_ValueChanged(object sender, EventArgs e)
 		{
-			GUIManager.DockViewer.Current = trackBar.Value;
+			GUIManager.DockViewer.Viewer.Current = trackBar.Value;
 		}
 	}
 }

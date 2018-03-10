@@ -20,7 +20,7 @@ namespace Effekseer.GUI
 			Core.OnAfterNew += new EventHandler(Core_OnAfterNew);
 			Core.OnAfterSave += new EventHandler(Core_OnAfterSave);
 			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
-			GUIManager.OnChangeRecentFiles += new EventHandler(GUIManager_OnChangeRecentFiles);
+			RecentFiles.OnChangeRecentFiles += new EventHandler(GUIManager_OnChangeRecentFiles);
 
 			recentFiles = new ToolStripMenuItem();
             recentFiles.Text = Properties.Resources.RecentFiles;
@@ -48,7 +48,7 @@ namespace Effekseer.GUI
 		{
 			recentFiles.DropDownItems.Clear();
 
-			var rf = GUIManager.GetRecentFiles();
+			var rf = RecentFiles.GetRecentFiles();
 
 			foreach (var f in rf)
 			{
