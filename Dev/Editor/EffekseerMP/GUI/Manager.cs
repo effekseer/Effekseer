@@ -41,6 +41,10 @@ namespace Effekseer.GUI
 			}
 
 			NativeManager = mgr;
+
+			// Load font
+			NativeManager.AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 16);
+
 			/*
 			Command.CommandManager.Changed += OnChanged;
 

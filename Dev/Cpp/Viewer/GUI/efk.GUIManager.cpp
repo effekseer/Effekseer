@@ -6,6 +6,8 @@
 
 #include "efk.GUIManager.h"
 
+#include "efk.JapaneseFont.h"
+
 namespace efk
 {
 	// http://hasenpfote36.blogspot.jp/2016/09/stdcodecvt.html
@@ -310,5 +312,11 @@ namespace efk
 	void GUIManager::CloseCurrentPopup()
 	{
 		ImGui::CloseCurrentPopup();
+	}
+
+	void GUIManager::AddFontFromFileTTF(const char* filename, float size_pixels)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.Fonts->AddFontFromFileTTF(filename, size_pixels, nullptr, glyphRangesJapanese);
 	}
 }

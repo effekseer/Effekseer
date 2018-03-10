@@ -159,5 +159,7 @@ namespace efk
 		void EndPopup();
 		bool IsPopupOpen(const char* str_id);
 		void CloseCurrentPopup();
+
+		void AddFontFromFileTTF(const char* filename, float size_pixels);
 	};
 }
