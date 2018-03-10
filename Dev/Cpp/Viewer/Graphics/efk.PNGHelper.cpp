@@ -5,13 +5,15 @@ namespace efk
 #ifdef _WIN32
 
 #else
-	void SavePNGImage(const char16_t* filepath, int32_t width, int32_t height, void* data, bool rev)
+	void SavePNGImage(const char16_t* filepath, int32_t width, int32_t height, const void* data, bool rev)
 	{
 		/* ç\ë¢ëÃämï€ */
 #if _WIN32
 		FILE *fp = _wfopen(filepath, L"wb");
 #else
-		FILE *fp = fopen(ToUtf8String(filepath).c_str(), "wb");
+		char filepath8[1024];
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)filepath8, sizeof(filepath8), (const int16_t*)filepath);
+		FILE *fp = fopen(filepath8, "wb");
 #endif
 
 		if (fp == nullptr) return;
@@ -124,7 +126,7 @@ namespace efk
 
 		return true;
 #else
-		SavePNGImage(path_ width, height, data, false);
+		SavePNGImage(path, width, height, data, false);
 		return true;
 #endif
 	}

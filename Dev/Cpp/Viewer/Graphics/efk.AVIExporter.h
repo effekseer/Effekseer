@@ -226,8 +226,8 @@ namespace efk
 				entry.dwChunkOffset = 4 + sizeof(Chunk) * i + width * height * 4 * i;
 				ExportData(dst, &entry);
 			}
-		}
 #endif
+		}
 	};
 
 }

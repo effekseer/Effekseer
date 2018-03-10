@@ -29,7 +29,7 @@ namespace efk
 	GUIManager::~GUIManager()
 	{}
 
-	bool GUIManager::Initialize(char16_t* title, int32_t width, int32_t height, bool isSRGBMode)
+	bool GUIManager::Initialize(const char16_t* title, int32_t width, int32_t height, bool isSRGBMode)
 	{
 		window = new efk::Window();
 

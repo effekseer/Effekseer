@@ -10,8 +10,8 @@
 #include "GUI/efk.Window.h"
 #include "GUI/efk.GUIManager.h"
 
-#include "3rdParty\imgui\imgui.h"
-#include "3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.h"
+#include "3rdParty/imgui/imgui.h"
+#include "3rdParty/imgui_glfw_gl3/imgui_impl_glfw_gl3.h"
 #include "3rdParty/imgui_addon/imguidock/imguidock.h"
 
 #include "3rdParty/nfd/nfd.h"
@@ -33,7 +33,7 @@ int main_()
 	guiManager->Initialize(u"Effekseer", 960, 540, false);
 
 	auto renderer = new ::EffekseerTool::Renderer(2000, false, true);
-	renderer->Initialize((HWND)guiManager->GetNativeHandle(), 960, 540);
+	renderer->Initialize(guiManager->GetNativeHandle(), 960, 540);
 
 	auto manager = ::Effekseer::Manager::Create(2000);
 	manager->SetSpriteRenderer(renderer->GetRenderer()->CreateSpriteRenderer());
@@ -45,7 +45,7 @@ int main_()
 	renderer->GetRenderer()->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
 
 	char* pData = NULL;
-	FILE* fp = _wfopen(L"Resource/test.efk", L"rb");
+	FILE* fp = fopen("Resource/test.efk", "rb");
 	fseek(fp, 0, SEEK_END);
 	size_t size = ftell(fp);
 	pData = new char[size];
@@ -129,7 +129,7 @@ int main()
 	
 
 	auto renderer = new ::EffekseerTool::Renderer(2000, false, true);
-	renderer->Initialize((HWND)window->GetNativeHandle(), 960, 540);
+	renderer->Initialize(window->GetNativeHandle(), 960, 540);
 
 	auto manager = ::Effekseer::Manager::Create(2000);
 	manager->SetSpriteRenderer(renderer->GetRenderer()->CreateSpriteRenderer());
@@ -141,7 +141,7 @@ int main()
 	renderer->GetRenderer()->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
 
 	char* pData = NULL;
-	FILE* fp = _wfopen(L"Resource/test.efk", L"rb");
+	FILE* fp = fopen("Resource/test.efk", "rb");
 	fseek(fp, 0, SEEK_END);
 	size_t size = ftell(fp);
 	pData = new char[size];
@@ -292,7 +292,7 @@ int main__()
 	window->Initialize(u"Effekseer", 960, 540, false, false);
 
 	auto renderer = new ::EffekseerTool::Renderer(2000, false, false);
-	renderer->Initialize((HWND)window->GetNativeHandle(), 960, 540);
+	renderer->Initialize(window->GetNativeHandle(), 960, 540);
 
 	auto manager = ::Effekseer::Manager::Create(2000);
 	manager->SetSpriteRenderer(renderer->GetRenderer()->CreateSpriteRenderer());
@@ -304,7 +304,7 @@ int main__()
 	renderer->GetRenderer()->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
 
 	char* pData = NULL;
-	FILE* fp = _wfopen(L"Resource/test.efk", L"rb");
+	FILE* fp = fopen("Resource/test.efk", "rb");
 	fseek(fp, 0, SEEK_END);
 	size_t size = ftell(fp);
 	pData = new char[size];

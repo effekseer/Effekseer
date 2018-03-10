@@ -10,11 +10,12 @@ namespace efk
 {
 	ImageRenderer* ImageRenderer::Create(Graphics* graphics)
 	{
+#ifdef _WIN32
 		if (graphics->GetDeviceType() == DeviceType::DirectX9)
 		{
 			return new ImageRendererDX9(graphics->GetRenderer());
 		}
-
+#endif
 		if (graphics->GetDeviceType() == DeviceType::OpenGL)
 		{
 			return new ImageRendererGL(graphics->GetRenderer());

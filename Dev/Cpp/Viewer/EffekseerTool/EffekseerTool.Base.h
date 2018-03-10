@@ -6,8 +6,6 @@
 // Include
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
 
 //----------------------------------------------------------------------------------
 //

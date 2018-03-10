@@ -4,8 +4,8 @@
 #include "efk.Window.h"
 #include "efk.ImageResource.h"
 
-#include "../3rdParty\imgui\imgui.h"
-#include "../3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.h"
+#include "../3rdParty/imgui/imgui.h"
+#include "../3rdParty/imgui_glfw_gl3/imgui_impl_glfw_gl3.h"
 #include "../3rdParty/imgui_addon/imguidock/imguidock.h"
 
 namespace efk
@@ -81,7 +81,7 @@ namespace efk
 
 		virtual ~GUIManager();
 
-		bool Initialize(char16_t* title, int32_t width, int32_t height, bool isSRGBMode);
+		bool Initialize(const char16_t* title, int32_t width, int32_t height, bool isSRGBMode);
 
 		void Terminate();
 

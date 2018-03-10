@@ -277,7 +277,7 @@ Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer)
 //----------------------------------------------------------------------------------
 Native::TextureLoader::~TextureLoader()
 {
-	ES_SAFE_DELETE(m_originalTextureLoader);
+	//ES_SAFE_DELETE(m_originalTextureLoader);
 }
 
 //----------------------------------------------------------------------------------
@@ -466,7 +466,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 	g_isOpenGLMode = isOpenGLMode;
 
 	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode, isOpenGLMode );
-	if( g_renderer->Initialize( (HWND)pHandle, width, height ) )
+	if( g_renderer->Initialize( pHandle, width, height ) )
 	{
 		// 関数追加
 		//::Effekseer::ScriptRegister::SetExternalFunction(0, print);
@@ -494,8 +494,8 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			g_manager->SetModelRenderer( model_renderer );
 			g_manager->SetTrackRenderer( track_renderer );
 
-			
-			g_manager->SetTextureLoader(new TextureLoader((EffekseerRenderer::Renderer *)g_renderer->GetRenderer()));
+			m_textureLoader = new TextureLoader((EffekseerRenderer::Renderer *)g_renderer->GetRenderer());
+			g_manager->SetTextureLoader(m_textureLoader);
 			g_manager->SetModelLoader(new ModelLoader((EffekseerRenderer::Renderer *)g_renderer->GetRenderer()));
 			
 		}
@@ -1414,6 +1414,7 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 {
 	if (g_effect == NULL) return false;
 
+#if _WIN32
 	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
 
 	::Effekseer::Vector3D position(0, 0, g_Distance);
@@ -1499,6 +1500,9 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 	g_manager->Update();
 
 	return true;
+#else
+	return false;
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -1608,8 +1612,7 @@ bool Native::InvalidateTextureCache()
 		auto it_end = m_textures.end();
 		while( it != it_end )
 		{
-			auto p = (IDirect3DTexture9*)(*it).second->UserPtr;
-			ES_SAFE_RELEASE(p);
+			m_textureLoader->GetOriginalTextureLoader()->Unload( (*it).second );
 			++it;
 		}
 		m_textures.clear();

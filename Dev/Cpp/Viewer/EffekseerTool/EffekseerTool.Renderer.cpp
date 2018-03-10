@@ -45,8 +45,7 @@ namespace EffekseerTool
 	}
 
 	Renderer::Renderer(int32_t squareMaxCount, bool isSRGBMode, bool isOpenGLMode)
-		: m_handle(NULL)
-		, m_width(0)
+		: m_width(0)
 		, m_height(0)
 		, m_squareMaxCount(squareMaxCount)
 		, m_projection(PROJECTION_TYPE_PERSPECTIVE)
@@ -117,16 +116,13 @@ namespace EffekseerTool
 		ES_SAFE_DELETE(graphics);
 	}
 
-bool Renderer::Initialize( HWND handle, int width, int height )
+bool Renderer::Initialize( void* handle, int width, int height )
 {
 	if (!graphics->Initialize(handle, width, height, m_isSRGBMode, m_squareMaxCount))
 	{
 		return false;
 	}
 
-	HRESULT hr;
-
-	m_handle = handle;
 	m_width = width;
 	m_height = height;
 
@@ -298,8 +294,6 @@ void Renderer::RecalcProjection()
 
 bool Renderer::BeginRendering()
 {
-	HRESULT hr;
-
 	graphics->BeginScene();
 
 	if (!m_recording)
@@ -320,7 +314,11 @@ bool Renderer::BeginRendering()
 	if( !m_recording && backgroundData != nullptr)
 	{
 		// 値は適当(背景は画面サイズと一致しないので問題ない)
+#ifdef _WIN32
 		m_background->Rendering((IDirect3DTexture9*)backgroundData->UserPtr, 1024, 1024);
+#else
+		m_background->Rendering(backgroundData->UserPtr, 1024, 1024);
+#endif
 	}
 	else if(!m_recording)
 	{

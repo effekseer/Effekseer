@@ -129,6 +129,7 @@ private:
 
 		void Unload(Effekseer::TextureData* data) override;
 
+		Effekseer::TextureLoader* GetOriginalTextureLoader() const {return m_originalTextureLoader;}
 		std::u16string RootPath;
 	};
 
@@ -169,6 +170,7 @@ private:
 	};
 
 	ViewerEffectBehavior	m_effectBehavior;
+	TextureLoader*			m_textureLoader;
 
 	int32_t				m_time;
 	

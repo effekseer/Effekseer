@@ -36,10 +36,10 @@ namespace efk
 #endif
 
 	public:
-		PNGHelper::PNGHelper();
+		PNGHelper();
 		
-		PNGHelper::~PNGHelper();
+		~PNGHelper();
 
-		bool PNGHelper::Save(const char16_t* path, int32_t width, int32_t height, const void* data);
+		bool Save(const char16_t* path, int32_t width, int32_t height, const void* data);
 	};
 }

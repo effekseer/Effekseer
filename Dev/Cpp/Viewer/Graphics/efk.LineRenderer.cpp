@@ -10,11 +10,12 @@ namespace efk
 {
 	LineRenderer* LineRenderer::Create(Graphics* graphics)
 	{
+#ifdef _WIN32
 		if (graphics->GetDeviceType() == DeviceType::DirectX9)
 		{
 			return new LineRendererDX9(graphics->GetRenderer());
 		}
-
+#endif
 		if (graphics->GetDeviceType() == DeviceType::OpenGL)
 		{
 			return new LineRendererGL(graphics->GetRenderer());

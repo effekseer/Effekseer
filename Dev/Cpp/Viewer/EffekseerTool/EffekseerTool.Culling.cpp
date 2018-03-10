@@ -1,4 +1,5 @@
 ﻿
+#include <math.h>
 #include "EffekseerTool.Culling.h"
 
 

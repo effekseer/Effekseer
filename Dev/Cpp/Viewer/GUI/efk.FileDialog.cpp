@@ -1,4 +1,4 @@
-
+#include "Effekseer.h"
 #include "efk.FileDialog.h"
 #include "../3rdParty/nfd/nfd.h"
 
@@ -6,6 +6,7 @@
 
 namespace efk
 {
+#if 0
 	// http://hasenpfote36.blogspot.jp/2016/09/stdcodecvt.html
 	static constexpr std::codecvt_mode mode = std::codecvt_mode::little_endian;
 
@@ -33,20 +34,27 @@ namespace efk
 		return conv.from_bytes(s);
 #endif
 	}
+#endif
 
 	std::u16string FileDialog::temp;
 
 	const char16_t* FileDialog::OpenDialog(const char16_t* filterList, const char16_t* defaultPath)
 	{
-		auto filterList_ = utf16_to_utf8(filterList);
-		auto defaultPath_ = utf16_to_utf8(defaultPath);
+		//auto filterList_ = utf16_to_utf8(filterList);
+		//auto defaultPath_ = utf16_to_utf8(defaultPath);
+		char filterList_[256], defaultPath_[1024];
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)filterList_, sizeof(filterList_), (const int16_t*)filterList);
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)defaultPath_, sizeof(defaultPath_), (const int16_t*)defaultPath);
 
 		nfdchar_t* outPath = NULL;
-		nfdresult_t result = NFD_OpenDialog(filterList_.c_str(), defaultPath_.c_str(), &outPath);
+		nfdresult_t result = NFD_OpenDialog(filterList_, defaultPath_, &outPath);
 
 		if (result == NFD_OKAY)
 		{
-			temp = utf8_to_utf16(outPath);
+			char16_t outPath_[1024];
+			Effekseer::ConvertUtf8ToUtf16((int16_t*)outPath_, sizeof(outPath_)/sizeof(char16_t), (const int8_t*)outPath);
+			temp = outPath_;
+			//temp = utf8_to_utf16(outPath);
 			free(outPath);
 			return temp.c_str();
 		}
@@ -62,15 +70,21 @@ namespace efk
 
 	const char16_t* FileDialog::SaveDialog(const char16_t* filterList, const char16_t* defaultPath)
 	{
-		auto filterList_ = utf16_to_utf8(filterList);
-		auto defaultPath_ = utf16_to_utf8(defaultPath);
+		//auto filterList_ = utf16_to_utf8(filterList);
+		//auto defaultPath_ = utf16_to_utf8(defaultPath);
+		char filterList_[256], defaultPath_[1024];
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)filterList_, sizeof(filterList_), (const int16_t*)filterList);
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)defaultPath_, sizeof(defaultPath_), (const int16_t*)defaultPath);
 
 		nfdchar_t* outPath = NULL;
-		nfdresult_t result = NFD_SaveDialog(filterList_.c_str(), defaultPath_.c_str(), &outPath);
+		nfdresult_t result = NFD_SaveDialog(filterList_, defaultPath_, &outPath);
 
 		if (result == NFD_OKAY)
 		{
-			temp = utf8_to_utf16(outPath);
+			char16_t outPath_[1024];
+			Effekseer::ConvertUtf8ToUtf16((int16_t*)outPath_, sizeof(outPath_)/sizeof(char16_t), (const int8_t*)outPath);
+			temp = outPath_;
+			//temp = utf8_to_utf16(outPath);
 			free(outPath);
 			return temp.c_str();
 		}

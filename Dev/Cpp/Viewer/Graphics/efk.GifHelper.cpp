@@ -1,3 +1,4 @@
+#include <math.h>
 #include "efk.GifHelper.h"
 
 namespace efk
@@ -16,8 +17,8 @@ namespace efk
 #ifdef _WIN32
 		_wfopen_s(&fp, (const wchar_t*)path, L"rb");
 #else
-		int8_t path8[256];
-		ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
+		int8_t path8[1024];
+		Effekseer::ConvertUtf16ToUtf8(path8, sizeof(path8), (const int16_t*)path);
 		fp = fopen((const char*)path8, "rb");
 #endif
 

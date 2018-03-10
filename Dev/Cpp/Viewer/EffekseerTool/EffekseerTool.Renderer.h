@@ -35,7 +35,6 @@ private:
 private:
 	efk::Graphics*	graphics = nullptr;
 
-	HWND				m_handle;
 	int32_t				m_width;
 	int32_t				m_height;
 	
@@ -79,7 +78,7 @@ public:
 	/**
 		@brief	初期化を行う。
 	*/
-	bool Initialize( HWND handle, int width, int height );
+	bool Initialize( void* handle, int width, int height );
 
 	/**
 		@brief	画面に表示する。
