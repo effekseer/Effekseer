@@ -145,6 +145,7 @@ if (MSVC)
 endif()
 
 add_library(Viewer SHARED ${cpps} ${hs})
+add_executable(ViewerTest ${cpps} ${hs} test.cpp)
 
 include_directories(
 	3rdParty/imgui/
@@ -154,14 +155,65 @@ include_directories(
 	../EffekseerSoundOSMixer/
 )
 
+link_directories(
+
+    ${PROJECT_SOURCE_DIR}/../lib/
+
+)
+
 if (WIN32)
 
 target_link_libraries(Viewer effekseer effekseer_renderer_dx9 effekseer_renderer_gl EffekseerSoundOSMixer)
+target_link_libraries(ViewerTest effekseer effekseer_renderer_dx9 effekseer_renderer_gl EffekseerSoundOSMixer)
 
 else()
 
-target_link_libraries(Viewer effekseer effekseer_renderer_gl effekseer_sound_al glfw3 libgd_static OpenSoundMixer)
+FIND_PACKAGE(OpenAL REQUIRED)
+FIND_PACKAGE(Threads REQUIRED)
+FIND_PACKAGE(OpenGL REQUIRED)
+
+# For Mac
+find_library(COCOA_FRAMEWORK Cocoa)
+find_library(COCOA_FRAMEWORK Cocoa)
+find_library(IOKIT_FRAMEWORK IOKit)
+find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
+find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
+
+target_link_libraries(
+	Viewer
+	effekseer
+	effekseer_renderer_gl
+	effekseer_sound_al
+	glfw3
+	libgd_static
+	OpenSoundMixer
+	${OpenAL_LIBRARY}
+	${CMAKE_THREAD_LIBS_INIT}
+	${COCOA_FRAMEWORK}
+	${OPENGL_gl_LIBRARY}
+	${OPENGL_glu_LIBRARY}
+	${IOKIT_FRAMEWORK}
+	${CORE_FOUNDATION_FRAMEWORK}
+	${CORE_VIDEO_FRAMEWORK})
+
+target_link_libraries(
+	ViewerTest
+	effekseer
+	effekseer_renderer_gl
+	effekseer_sound_al
+	glfw3
+	libgd_static
+	OpenSoundMixer
+	${OpenAL_LIBRARY}
+	${CMAKE_THREAD_LIBS_INIT}
+	${COCOA_FRAMEWORK}
+	${OPENGL_gl_LIBRARY}
+	${OPENGL_glu_LIBRARY}
+	${IOKIT_FRAMEWORK}
+	${CORE_FOUNDATION_FRAMEWORK}
+	${CORE_VIDEO_FRAMEWORK})
 
 endif()
 
 set_target_properties(Viewer PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(ViewerTest PROPERTIES LINKER_LANGUAGE CXX)

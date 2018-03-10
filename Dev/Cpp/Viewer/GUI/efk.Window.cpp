@@ -92,6 +92,11 @@ namespace efk
 		return true;
 	}
 
+	void Window::SetTitle(const char16_t* title)
+	{
+		glfwSetWindowTitle(window, utf16_to_utf8(title).c_str());
+	}
+
 	void Window::SetSize(int32_t width, int32_t height)
 	{
 		glfwSetWindowSize(window, width, height);

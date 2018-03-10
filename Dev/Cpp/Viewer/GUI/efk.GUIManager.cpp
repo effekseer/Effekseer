@@ -52,6 +52,11 @@ namespace efk
 		return true;
 	}
 
+	void GUIManager::SetTitle(const char16_t* title)
+	{
+		window->SetTitle(title);
+	}
+
 	void GUIManager::Terminate()
 	{
 		ImGui_ImplGlfwGL3_Shutdown();

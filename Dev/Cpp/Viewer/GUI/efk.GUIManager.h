@@ -83,6 +83,8 @@ namespace efk
 
 		bool Initialize(const char16_t* title, int32_t width, int32_t height, bool isSRGBMode);
 
+		void SetTitle(const char16_t* title);
+
 		void Terminate();
 
 		bool DoEvents();
