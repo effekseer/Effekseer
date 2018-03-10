@@ -7,3 +7,9 @@
 [submodule "Downloads/glfw"]
 	path = Downloads/glfw
 	url = https://github.com/glfw/glfw
+[submodule "Downloads/libpng"]
+	path = Downloads/libpng
+	url = https://github.com/glennrp/libpng
+[submodule "Downloads/zlib"]
+	path = Downloads/zlib
+	url = https://github.com/madler/zlib
