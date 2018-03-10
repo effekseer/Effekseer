@@ -102,7 +102,7 @@ namespace Effekseer
 
             var mainMenu = new GUI.Menu.MainMenu();
             var menu = new GUI.Menu.Menu();
-            menu.Label = "Nyan";
+            menu.Label = "メニューバーテスト";
             mainMenu.Controls.Add(menu);
 
             GUI.Manager.Controls.Add(mainMenu);

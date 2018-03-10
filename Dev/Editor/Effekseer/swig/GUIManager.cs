@@ -555,6 +555,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_CloseCurrentPopup(swigCPtr);
   }
 
+  public void AddFontFromFileTTF(string filename, float size_pixels) {
+    EffekseerNativePINVOKE.GUIManager_AddFontFromFileTTF(swigCPtr, filename, size_pixels);
+  }
+
 }
 
 }

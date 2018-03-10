@@ -4191,6 +4191,18 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_CloseCurrentPopup__
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_AddFontFromFileTTF___(void * jarg1, char * jarg2, float jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char *arg2 = (char *) 0 ;
+  float arg3 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char *)jarg2; 
+  arg3 = (float)jarg3; 
+  (arg1)->AddFontFromFileTTF((char const *)arg2,arg3);
+}
+
+
 SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_FileDialog_OpenDialog___(char16_t * jarg1, char16_t * jarg2) {
   char16_t * jresult ;
   char16_t *arg1 = (char16_t *) 0 ;
