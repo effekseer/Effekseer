@@ -277,7 +277,7 @@ Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer)
 //----------------------------------------------------------------------------------
 Native::TextureLoader::~TextureLoader()
 {
-	//ES_SAFE_DELETE(m_originalTextureLoader);
+	ES_SAFE_DELETE(m_originalTextureLoader);
 }
 
 //----------------------------------------------------------------------------------
