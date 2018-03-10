@@ -27,6 +27,10 @@ namespace efk
 		GLFWwindow*	window = nullptr;
 		bool		isOpenGLMode = false;
 
+#ifndef _WIN32
+        GLuint      vao;
+#endif
+        
 	public:
 		Window();
 		virtual ~Window();

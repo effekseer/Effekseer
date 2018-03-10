@@ -167,10 +167,35 @@ int main()
 
 	bool show_another_window = true;
 
+#ifndef _WIN32
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+#endif
+    
 	while (window->DoEvents())
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
-
+	   	glClear(GL_COLOR_BUFFER_BIT);
+         glEnable(GL_DEPTH_TEST);
+         glDepthMask(GL_TRUE);
+         
+         auto bit = GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+         glClearDepth(1.0f);
+         glClear(bit);
+        
+#ifndef _WIN32
+         glBindVertexArray(vao);
+#endif
+        
+         manager->Update();
+         
+         renderer->BeginRendering();
+         manager->Draw();
+         renderer->EndRendering();
+        
+#ifndef _WIN32
+         glBindVertexArray(0);
+#endif
+        
 		ImGui_ImplGlfwGL3_NewFrame();
 
 		if (ImGui::BeginMainMenuBar())
@@ -260,21 +285,6 @@ int main()
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
         
-/*
-		glEnable(GL_DEPTH_TEST);
-		glDepthMask(GL_TRUE);
-
-		auto bit = GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-		glClearDepth(1.0f);
-		glClear(bit);
-
-		manager->Update();
-		
-		renderer->BeginRendering();
-		manager->Draw();
-		renderer->EndRendering();
-*/
-
 		renderer->Present();
 		window->Present();
 	}

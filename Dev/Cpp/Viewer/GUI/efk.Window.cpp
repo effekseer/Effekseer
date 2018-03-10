@@ -1,6 +1,10 @@
 
 #include "efk.Window.h"
 
+#ifndef _WIN32
+#include <OpenGL/gl3.h>
+#endif
+
 namespace efk
 {
 	// http://hasenpfote36.blogspot.jp/2016/09/stdcodecvt.html
@@ -117,6 +121,11 @@ namespace efk
 		if (isOpenGLMode)
 		{
 			glfwMakeContextCurrent(window);
+            
+#ifndef _WIN32
+            glGenVertexArrays(1, &vao);
+            glBindVertexArray(vao);
+#endif
 		}
 	}
 
@@ -124,6 +133,11 @@ namespace efk
 	{
 		if (isOpenGLMode)
 		{
+            
+#ifndef _WIN32
+            glBindVertexArray(0);
+            glDeleteVertexArrays(1, &vao);
+#endif
 			glfwMakeContextCurrent(nullptr);
 		}
 	}
