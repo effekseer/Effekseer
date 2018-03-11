@@ -168,8 +168,8 @@ int main()
 	bool show_another_window = true;
 
 #ifndef _WIN32
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
+    //GLuint vao;
+    //glGenVertexArrays(1, &vao);
 #endif
     
 	while (window->DoEvents())
@@ -183,7 +183,7 @@ int main()
          glClear(bit);
         
 #ifndef _WIN32
-         glBindVertexArray(vao);
+         //glBindVertexArray(vao);
 #endif
         
          manager->Update();
@@ -193,7 +193,7 @@ int main()
          renderer->EndRendering();
         
 #ifndef _WIN32
-         glBindVertexArray(0);
+         //glBindVertexArray(0);
 #endif
         
 		ImGui_ImplGlfwGL3_NewFrame();
