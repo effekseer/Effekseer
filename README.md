@@ -85,7 +85,7 @@ Execute python scripts as follows.
 
 Script/build_libgd.py
 
-Script/build_glew.py
+Script/build_libpng.py
 
 Script/build_glfw.py
 
@@ -93,9 +93,17 @@ Script/build_OpenSoundMixer.py
 
 ```
 
+Execute python scripts as follows. (Windows only)
+
+```
+
+Script/build_glew.py
+
+```
+
 * Windows
 
-DirectX SDK and Visual Studio 2015 are required.
+Visual Studio 2015 are required.
 
 Open ```Dev/Cpp/Test.sln```
 
