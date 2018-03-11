@@ -634,6 +634,11 @@ bool RendererImplemented::BeginRendering()
 		glGetIntegerv(GL_BLEND_SRC_RGB, &m_originalState.blendSrc);
 		glGetIntegerv(GL_BLEND_DST_RGB, &m_originalState.blendDst);
 		glGetIntegerv(GL_BLEND_EQUATION, &m_originalState.blendEquation);
+
+		if (GLExt::IsSupportedVertexArray())
+		{
+			glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &m_originalState.vao);
+		}
 	}
 
 	glDepthFunc(GL_LEQUAL);
@@ -659,10 +664,10 @@ bool RendererImplemented::EndRendering()
 {
 	GLCheckError();
 
-	// レンダラーリセット
+	// reset renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
-	// ステートを復元する
+	// restore states
 	if(m_restorationOfStates)
 	{
 		if (m_originalState.blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
@@ -686,6 +691,11 @@ bool RendererImplemented::EndRendering()
 			{
 				GLExt::glBindSampler(i, 0);
 			}
+		}
+
+		if (GLExt::IsSupportedVertexArray())
+		{
+			GLExt::glBindVertexArray(m_originalState.vao);
 		}
 	}
 

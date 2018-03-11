@@ -352,6 +352,7 @@ struct RenderStateSet
 	GLint		blendSrc;
 	GLint		blendDst;
 	GLint		blendEquation;
+	GLint		vao;
 };
 
 /**
