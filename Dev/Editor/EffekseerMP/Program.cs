@@ -93,7 +93,16 @@ namespace Effekseer
 		{
             Core.Initialize();
 
-			if(!GUI.Manager.Initialize(960,540))
+			if(Core.Language == Language.Japanese)
+			{
+				Resources.LoadLanguageFile("resources/lang_ja.json");
+			}
+			if (Core.Language == Language.English)
+			{
+				Resources.LoadLanguageFile("resources/lang_en.json");
+			}
+
+			if (!GUI.Manager.Initialize(960,540))
 			{
 				return;
 			}

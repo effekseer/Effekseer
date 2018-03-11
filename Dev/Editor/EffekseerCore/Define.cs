@@ -6,6 +6,14 @@ using System.Reflection;
 using System.Resources;
 using System.Threading;
 
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
+
 namespace Effekseer
 {
 	/// <summary>
@@ -63,14 +71,47 @@ namespace Effekseer
     // カルチャーによってローカライズ済の文字列が得られます。
     public static class Resources
     {
-        static ResourceManager resources;
-        static Resources()
+		[DataContract]
+		class Data
+		{
+			[DataMember]
+			public Dictionary<string, string> kv;
+		}
+
+
+		static ResourceManager resources;
+
+		static Dictionary<string, string> keyToStrings = new Dictionary<string, string>();
+
+		static Resources()
         {
             resources = new ResourceManager("Effekseer.Properties.Resources", Assembly.GetExecutingAssembly());
         }
 
+		public static void LoadLanguageFile(string path)
+		{
+			var bytes = System.IO.File.ReadAllBytes(path);
+
+			var settings = new DataContractJsonSerializerSettings();
+			settings.UseSimpleDictionaryFormat = true;
+			var serializer = new DataContractJsonSerializer(typeof(Data), settings);
+			using (var ms = new MemoryStream(bytes))
+			{
+				var data = (Data)serializer.ReadObject(ms);
+				foreach (var x in data.kv)
+				{
+					keyToStrings = data.kv;
+				}
+			}
+		}
+
         public static string GetString(string name)
         {
+			if(keyToStrings.ContainsKey(name))
+			{
+				return keyToStrings[name];
+			}
+
             if (resources == null) return String.Empty;
 
             try

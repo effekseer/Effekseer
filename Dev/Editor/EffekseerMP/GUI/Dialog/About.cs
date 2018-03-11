@@ -54,6 +54,7 @@ Dock Panel Suite
         public void Show()
         {
             versionInfo = "Effekseer Version " + Core.Version;
+			title = Resources.GetString("InternalAbout");
 
 			Manager.AddControl(this);
         }
