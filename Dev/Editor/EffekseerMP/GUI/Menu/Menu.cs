@@ -16,10 +16,15 @@ namespace Effekseer.GUI.Menu
 
         internal List<IControl> Controls = new List<IControl>();
 
-        public Menu()
+        public Menu(string label = null)
         {
-            var rand = new Random();
-            id = "###" + rand.Next(0xffff).ToString();
+			if(label != null)
+			{
+				Label = label;
+			}
+
+			var rand = new Random();
+            id = "###" + Manager.GetUniqueID().ToString();
         }
 
         public void Update()

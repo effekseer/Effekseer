@@ -11,8 +11,14 @@ namespace Effekseer.GUI
         internal static swig.GUIManager NativeManager;
 		internal static swig.Native Native;
 
-		static Viewer Viewer;
-		
+		static int nextID = 10;
+
+		public static Viewer Viewer;
+
+		public static Network Network;
+
+		public static Dock.NodeTreeView NodeTreeView;
+
 		internal static List<IRemovableControl> Controls = new List<IRemovableControl>();
 
 		static List<IRemovableControl> addingControls = new List<IRemovableControl>();
@@ -44,6 +50,10 @@ namespace Effekseer.GUI
 
 			// Load font
 			NativeManager.AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 16);
+
+			// Add controls
+			var mainMenu = new GUI.Menu.MainMenu();
+			GUI.Manager.AddControl(mainMenu);
 
 			/*
 			Command.CommandManager.Changed += OnChanged;
@@ -190,6 +200,28 @@ namespace Effekseer.GUI
 			//{
 			//	GUIManager.Network.Send();
 			//}
+		}
+
+		/// <summary>
+		/// Get unique id in this aplication.
+		/// </summary>
+		/// <returns></returns>
+		public static int GetUniqueID()
+		{
+			nextID++;
+			return nextID;
+		}
+
+		/// <summary>
+		/// Get a directory where this application is located.
+		/// </summary>
+		/// <returns></returns>
+		public static string GetEntryDirectory()
+		{
+			var myAssembly = System.Reflection.Assembly.GetEntryAssembly();
+			string path = myAssembly.Location;
+
+			return System.IO.Path.GetDirectoryName(path);
 		}
 	}
 }

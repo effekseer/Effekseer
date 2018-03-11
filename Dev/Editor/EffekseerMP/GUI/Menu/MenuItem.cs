@@ -19,8 +19,8 @@ namespace Effekseer.GUI.Menu
         public MenuItem()
         {
             var rand = new Random();
-            id = "###" + rand.Next(0xffff).ToString();
-        }
+			id = "###" + Manager.GetUniqueID().ToString();
+		}
 
         public void Update()
         {

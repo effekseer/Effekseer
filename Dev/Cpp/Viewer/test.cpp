@@ -23,7 +23,7 @@
 #ifdef _DEBUG
 #pragma comment (lib,"x86/Debug/libglew32d.lib")
 #else
-#pragma comment (lib,"x86/Release/libglew32dlib")
+#pragma comment (lib,"x86/Release/libglew32.lib")
 #endif
 
 #endif

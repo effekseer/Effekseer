@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using System.Diagnostics;
 using System.Reflection;
 using System.IO;
@@ -13,7 +14,7 @@ namespace Effekseer.GUI
 	/// </summary>
 	class Commands
 	{
-		public static void Regist()
+		public static void Register()
 		{
 			Action<Func<bool>> register = (f) =>
 			{
@@ -21,35 +22,32 @@ namespace Effekseer.GUI
 				var uniquename = UniqueNameAttribute.GetUniqueName(attributes);
 				if (uniquename != null)
 				{
-					Console.WriteLine("Not implemented.");
-					//Shortcuts.SetFunction(uniquename, f);
+					Shortcuts.SetFunction(uniquename, f);
+
 				}
 			};
 
-			/*
-			regist(New);
-			regist(Open);
-			regist(Overwrite);
-			regist(SaveAs);
-			regist(Exit);
+			register(New);
+			register(Open);
+			register(Overwrite);
+			register(SaveAs);
+			register(Exit);
 
-			regist(Play);
-			regist(Stop);
-			regist(Step);
-			regist(BackStep);
+			register(Play);
+			register(Stop);
+			register(Step);
+			register(BackStep);
 
-			regist(Undo);
-			regist(Redo);
-			regist(Copy);
-			regist(Paste);
-			regist(PasteInfo);
-			regist(AddNode);
-			regist(InsertNode);
-			regist(RemoveNode);
-			*/
+			register(Undo);
+			register(Redo);
+			register(Copy);
+			register(Paste);
+			register(PasteInfo);
+			register(AddNode);
+			register(InsertNode);
+			register(RemoveNode);
 		}
 
-		/*
 		[Name(value = "InternalNew")]  // 新規
 		[UniqueName(value = "Internal.New")]
 		public static bool New()
@@ -68,16 +66,25 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		
 		[Name(value = "InternalOpen")]  // 開く
 		[UniqueName(value = "Internal.Open")]
 		public static bool Open()
 		{
+			/*
+            var filter = Properties.Resources.ProjectFilter;
+            var filters = filter.Split('|');
+            var result = swig.FileDialog.OpenDialog(filters[1], System.IO.Directory.GetCurrentDirectory());
+
+            if(!string.IsNullOrEmpty(result))
+            {
+                Open(result);
+            }
+            */
 
 			OpenFileDialog ofd = new OpenFileDialog();
 
 			ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-			ofd.Filter = Properties.Resources.ProjectFilter;
+			ofd.Filter = Resources.GetString("ProjectFilter");
 			ofd.FilterIndex = 2;
 			ofd.Multiselect = false;
 
@@ -95,7 +102,7 @@ namespace Effekseer.GUI
 		/// <param name="fullPath">絶対パス</param>
 		public static bool Open(string fullPath)
 		{
-			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception(Properties.Resources.NotAbsolutePathError);
+			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception(Resources.GetString("NotAbsolutePathError"));
 
 			if (SaveOnDisposing())
 			{
@@ -110,7 +117,7 @@ namespace Effekseer.GUI
 			{
 				if (Core.LoadFrom(fullPath))
 				{
-					GUIManager.AddRecentFile(fullPath);
+					RecentFiles.AddRecentFile(fullPath);
 				}
 			}
 			catch (Exception e)
@@ -135,9 +142,9 @@ namespace Effekseer.GUI
 			{
 				Core.SaveTo(Core.FullPath);
 
-				if (GUIManager.Network.SendOnSave)
+				if (Manager.Network.SendOnSave)
 				{
-					GUIManager.Network.Send();
+					Manager.Network.Send();
 				}
 			}
 
@@ -151,7 +158,7 @@ namespace Effekseer.GUI
 			SaveFileDialog ofd = new SaveFileDialog();
 
 			ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-			ofd.Filter = Properties.Resources.ProjectFilter;
+			ofd.Filter = Resources.GetString("ProjectFilter");
 			ofd.FilterIndex = 2;
 			ofd.OverwritePrompt = true;
 
@@ -159,13 +166,13 @@ namespace Effekseer.GUI
 			{
 				var filepath = ofd.FileName;
 				Core.SaveTo(filepath);
-				GUIManager.AddRecentFile(filepath);
+				RecentFiles.AddRecentFile(filepath);
 
 				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
 
-				if (GUIManager.Network.SendOnSave)
+				if (Manager.Network.SendOnSave)
 				{
-					GUIManager.Network.Send();
+					Manager.Network.Send();
 				}
 			}
 
@@ -176,7 +183,8 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Exit")]
 		public static bool Exit()
 		{
-			GUIManager.Close();
+			Console.WriteLine("Not implemented.");
+			//GUIManager.Close();
 			return true;
 		}
 
@@ -184,19 +192,19 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.PlayViewer")]
 		public static bool Play()
 		{
-			if (GUIManager.DockViewer.IsPlaying && !GUIManager.DockViewer.IsPaused)
+			if (Manager.Viewer.IsPlaying && !Manager.Viewer.IsPaused)
 			{
-				GUIManager.DockViewer.PauseAndResumeViewer();
+				Manager.Viewer.PauseAndResumeViewer();
 			}
 			else
 			{
-				if (GUIManager.DockViewer.IsPaused)
+				if (Manager.Viewer.IsPaused)
 				{
-					GUIManager.DockViewer.PauseAndResumeViewer();
+					Manager.Viewer.PauseAndResumeViewer();
 				}
 				else
 				{
-					GUIManager.DockViewer.PlayViewer();
+					Manager.Viewer.PlayViewer();
 				}
 			}
 
@@ -207,7 +215,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.StopViewer")]
 		public static bool Stop()
 		{
-			GUIManager.DockViewer.StopViewer();
+			Manager.Viewer.StopViewer();
 			return true;
 		}
 
@@ -215,7 +223,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.StepViewer")]
 		public static bool Step()
 		{
-			GUIManager.DockViewer.StepViewer(false);
+			Manager.Viewer.StepViewer(false);
 			return true;
 		}
 
@@ -223,7 +231,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.BackStepViewer")]
 		public static bool BackStep()
 		{
-			GUIManager.DockViewer.BackStepViewer();
+			Manager.Viewer.BackStepViewer();
 			return true;
 		}
 
@@ -247,8 +255,11 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Copy")]
 		public static bool Copy()
 		{
-			if (GUIManager.DockNodeTreeView == null) return false;
-			if (!GUIManager.DockNodeTreeView.NodeTreeView.Focused) return false;
+
+			Console.WriteLine("Not implemented.");
+			/*
+			if (Manager.NodeTreeView == null) return false;
+			if (!Manager.NodeTreeView.NodeTreeView.Focused) return false;
 
 			if (Core.SelectedNode != null)
 			{
@@ -257,6 +268,7 @@ namespace Effekseer.GUI
 				Clipboard.SetText(data);
 				return true;
 			}
+			*/
 
 			return false;
 		}
@@ -265,8 +277,10 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Paste")]
 		public static bool Paste()
 		{
-			if (GUIManager.DockNodeTreeView == null) return false;
-			if (!GUIManager.DockNodeTreeView.NodeTreeView.Focused) return false;
+			Console.WriteLine("Not implemented.");
+			/*
+			if (Manager.NodeTreeView == null) return false;
+			if (!Manager.NodeTreeView.NodeTreeView.Focused) return false;
 
 			if (Core.SelectedNode != null)
 			{
@@ -284,6 +298,7 @@ namespace Effekseer.GUI
 
 				return true;
 			}
+			*/
 
 			return false;
 		}
@@ -292,8 +307,10 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.PasteInfo")]
 		public static bool PasteInfo()
 		{
-			if (GUIManager.DockNodeTreeView == null) return false;
-			if (!GUIManager.DockNodeTreeView.NodeTreeView.Focused) return false;
+			Console.WriteLine("Not implemented.");
+			/*
+			if (Manager.NodeTreeView == null) return false;
+			if (!Manager.NodeTreeView.NodeTreeView.Focused) return false;
 
 			if (Core.SelectedNode != null)
 			{
@@ -301,6 +318,7 @@ namespace Effekseer.GUI
 				Core.Paste(Core.SelectedNode, data);
 				return true;
 			}
+			*/
 
 			return false;
 		}
@@ -355,7 +373,7 @@ namespace Effekseer.GUI
 		{
 			if (Core.IsChanged)
 			{
-				var format = Properties.Resources.ConfirmSaveChanged;
+				var format = Resources.GetString("ConfirmSaveChanged");
 
 				var result = MessageBox.Show(
 					string.Format(format, System.IO.Path.GetFileName(Core.FullPath)),
@@ -374,7 +392,7 @@ namespace Effekseer.GUI
 
 						ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
 
-						ofd.Filter = Properties.Resources.ProjectFilter;
+						ofd.Filter = Resources.GetString("ProjectFilter");
 						ofd.FilterIndex = 2;
 						ofd.OverwritePrompt = true;
 
@@ -410,7 +428,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.ViewHelp")]
 		static public bool ViewHelp()
 		{
-			string rootDir = Path.GetDirectoryName(GUIManager.GetEntryDirectory());
+			string rootDir = Path.GetDirectoryName(Manager.GetEntryDirectory());
 			string helpPath = Path.Combine(rootDir, @"Help\index_en.html");
 
 			if (Core.Language == Language.Japanese)
@@ -434,12 +452,12 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.OpenSample")]
 		static public bool OpenSample()
 		{
-			string rootDir = Path.GetDirectoryName(GUIManager.GetEntryDirectory());
+			string rootDir = Path.GetDirectoryName(Manager.GetEntryDirectory());
 
 			OpenFileDialog ofd = new OpenFileDialog();
 
 			ofd.InitialDirectory = Path.Combine(rootDir, @"Sample");
-			ofd.Filter = Properties.Resources.ProjectFilter;
+			ofd.Filter = Resources.GetString("ProjectFilter");
 			ofd.FilterIndex = 2;
 			ofd.Multiselect = false;
 
@@ -459,9 +477,9 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.About")]
 		static public bool About()
 		{
-			GUIManager.AboutForm.ShowDialog();
+			var messageBox = new GUI.Dialog.About();
+			messageBox.Show();
 			return true;
 		}
-		*/
 	}
 }

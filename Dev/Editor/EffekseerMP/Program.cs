@@ -109,15 +109,9 @@ namespace Effekseer
 
 			Images.Load(GUI.Manager.Native);
 
-            var mainMenu = new GUI.Menu.MainMenu();
-            var menu = new GUI.Menu.Menu();
-            menu.Label = "メニューバーテスト";
-            mainMenu.Controls.Add(menu);
+            //GUI.Manager.AddControl(new DebugMenu());
 
-            GUI.Manager.Controls.Add(mainMenu);
-            GUI.Manager.Controls.Add(new DebugMenu());
-
-			GUI.Manager.Controls.Add(new TestWindow());
+			//GUI.Manager.AddControl(new TestWindow());
 
 			while (GUI.Manager.NativeManager.DoEvents())
 			{
