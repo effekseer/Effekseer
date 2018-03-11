@@ -130,12 +130,25 @@ static const char g_sprite_fs_no_texture_src[] =
 
 		this->shader = shader_;
 		this->shader_no_texture = shader_no_texture_;
+        
+        vao = EffekseerRendererGL::VertexArray::Create(
+                                                       this->renderer,shader_,
+                                                       this->renderer->GetVertexBuffer(),
+                                                       this->renderer->GetIndexBuffer());
+        vao_nt = EffekseerRendererGL::VertexArray::Create(
+                                                       this->renderer,shader_no_texture_,
+                                                       this->renderer->GetVertexBuffer(),
+                                                       this->renderer->GetIndexBuffer());
+
 	}
 
 	ImageRendererGL::~ImageRendererGL()
 	{
 		ES_SAFE_DELETE(shader);
 		ES_SAFE_DELETE(shader_no_texture);
+        ES_SAFE_DELETE(vao);
+        ES_SAFE_DELETE(vao_nt);
+
 	}
 
 	void ImageRendererGL::Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], void* texturePtr)
@@ -183,16 +196,20 @@ static const char g_sprite_fs_no_texture_src[] =
 			state.TextureWrapTypes[0] = Effekseer::TextureWrapType::Clamp;
 
 			EffekseerRendererGL::Shader* shader_ = nullptr;
-
+            EffekseerRendererGL::VertexArray* vao_ = nullptr;
+            
 			if (sprites[i].TexturePtr != nullptr)
 			{
 				shader_ = (EffekseerRendererGL::Shader*)shader;
+                vao_ = vao;
 			}
 			else
 			{
 				shader_ = (EffekseerRendererGL::Shader*)shader_no_texture;
+                vao_ = vao_nt;
 			}
 
+            renderer->SetVertexArray(vao_);
 			renderer->BeginShader(shader_);
 
 			Effekseer::Matrix44 mats[2];
@@ -210,8 +227,8 @@ static const char g_sprite_fs_no_texture_src[] =
 			// TODO fix it
 			EffekseerRendererGL::GLExt::glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, 0);
-			EffekseerRendererGL::GLExt::glBindBuffer(GL_ARRAY_BUFFER, renderer->GetVertexBuffer()->GetInterface());
-			EffekseerRendererGL::GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderer->GetIndexBuffer()->GetInterface());
+			//EffekseerRendererGL::GLExt::glBindBuffer(GL_ARRAY_BUFFER, renderer->GetVertexBuffer()->GetInterface());
+			//EffekseerRendererGL::GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderer->GetIndexBuffer()->GetInterface());
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
 
 			renderer->EndShader(shader_);

@@ -128,12 +128,18 @@ static const char g_sprite_fs_no_texture_src[] =
 
 		this->shader = shader_no_texture_;
 		ES_SAFE_DELETE(shader_);
+        
+        vao = EffekseerRendererGL::VertexArray::Create(
+               this->renderer,shader_no_texture_,
+               this->renderer->GetVertexBuffer(),
+               nullptr);
 	}
 
 	LineRendererGL::~LineRendererGL()
 	{
 		auto shader_ = (EffekseerRendererGL::Shader*)shader;
 		ES_SAFE_DELETE(shader_);
+        ES_SAFE_DELETE(vao);
 		shader = nullptr;
 	}
 
@@ -169,6 +175,8 @@ static const char g_sprite_fs_no_texture_src[] =
 		state.DepthTest = true;
 		state.CullingType = Effekseer::CullingType::Double;
 
+        
+        renderer->SetVertexArray(vao);
 		renderer->BeginShader((EffekseerRendererGL::Shader*)shader);
 
 		((Effekseer::Matrix44*)(shader->GetVertexConstantBuffer()))[0] = renderer->GetCameraMatrix();
@@ -178,8 +186,8 @@ static const char g_sprite_fs_no_texture_src[] =
 
 		renderer->GetRenderState()->Update(false);
 
-		EffekseerRendererGL::GLExt::glBindBuffer(GL_ARRAY_BUFFER, renderer->GetVertexBuffer()->GetInterface());
-		EffekseerRendererGL::GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		//EffekseerRendererGL::GLExt::glBindBuffer(GL_ARRAY_BUFFER, renderer->GetVertexBuffer()->GetInterface());
+		//EffekseerRendererGL::GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		renderer->SetLayout((EffekseerRendererGL::Shader*)shader);
 

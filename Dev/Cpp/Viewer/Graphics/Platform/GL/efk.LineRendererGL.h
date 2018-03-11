@@ -8,6 +8,7 @@
 #include <EffekseerRenderer/EffekseerRendererGL.IndexBuffer.h>
 #include <EffekseerRenderer/EffekseerRendererGL.Shader.h>
 #include <EffekseerRenderer/EffekseerRendererGL.RenderState.h>
+#include <EffekseerRenderer/EffekseerRendererGL.VertexArray.h>
 
 #include "../../efk.LineRenderer.h"
 
@@ -19,7 +20,8 @@ namespace efk
 	private:
 		EffekseerRendererGL::RendererImplemented*	renderer = nullptr;
 		EffekseerRenderer::ShaderBase*				shader = nullptr;
-
+        EffekseerRendererGL::VertexArray*           vao = nullptr;
+        
 		std::vector<EffekseerRendererGL::Vertex>	vertexies;
 	public:
 

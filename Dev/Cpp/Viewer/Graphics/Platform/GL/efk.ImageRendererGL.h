@@ -7,6 +7,7 @@
 #include <EffekseerRenderer/EffekseerRendererGL.IndexBuffer.h>
 #include <EffekseerRenderer/EffekseerRendererGL.Shader.h>
 #include <EffekseerRenderer/EffekseerRendererGL.RenderState.h>
+#include <EffekseerRenderer/EffekseerRendererGL.VertexArray.h>
 #include "../../efk.ImageRenderer.h"
 
 namespace efk
@@ -24,6 +25,8 @@ namespace efk
 		EffekseerRendererGL::RendererImplemented*	renderer = nullptr;
 		EffekseerRenderer::ShaderBase*				shader = nullptr;
 		EffekseerRenderer::ShaderBase*				shader_no_texture = nullptr;
+        EffekseerRendererGL::VertexArray*           vao = nullptr;
+        EffekseerRendererGL::VertexArray*           vao_nt = nullptr;
 
 		std::vector<Sprite>	sprites;
 
