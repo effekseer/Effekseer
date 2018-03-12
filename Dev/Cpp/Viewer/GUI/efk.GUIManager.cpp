@@ -81,6 +81,11 @@ namespace efk
 		window->Present();
 	}
 
+	void GUIManager::Close()
+	{
+		window->Close();
+	}
+
 	void GUIManager::ResetGUI()
 	{
 		ImGui_ImplGlfwGL3_NewFrame();
@@ -171,6 +176,23 @@ namespace efk
 				ImGui::Image((ImTextureID)user_texture_id->GetTextureData()->UserID, ImVec2(x, y));
 			}
 		}
+	}
+
+	bool GUIManager::ImageButton(ImageResource* user_texture_id, float x, float y)
+	{
+		if (user_texture_id != nullptr)
+		{
+			if (user_texture_id->GetTextureData()->UserPtr != nullptr)
+			{
+				return ImGui::ImageButton((ImTextureID)user_texture_id->GetTextureData()->UserPtr, ImVec2(x, y));
+			}
+			else
+			{
+				return ImGui::ImageButton((ImTextureID)user_texture_id->GetTextureData()->UserID, ImVec2(x, y));
+			}
+		}
+
+		return false;
 	}
 
 	bool GUIManager::Checkbox(const char16_t* label, bool* v)

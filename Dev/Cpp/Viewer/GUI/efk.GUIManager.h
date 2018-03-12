@@ -91,6 +91,8 @@ namespace efk
 
 		void Present();
 
+		void Close();
+
 		void ResetGUI();
 
 		void RenderGUI();
@@ -118,6 +120,8 @@ namespace efk
 		bool Button(const char16_t* label);
 
 		void Image(ImageResource* user_texture_id, float x, float y);
+
+		bool ImageButton(ImageResource* user_texture_id, float x, float y);
 
 		bool Checkbox(const char16_t* label, bool* v);
 
