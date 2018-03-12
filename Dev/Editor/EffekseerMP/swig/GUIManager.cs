@@ -65,6 +65,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Present(swigCPtr);
   }
 
+  public void Close() {
+    EffekseerNativePINVOKE.GUIManager_Close(swigCPtr);
+  }
+
   public void ResetGUI() {
     EffekseerNativePINVOKE.GUIManager_ResetGUI(swigCPtr);
   }
@@ -119,6 +123,11 @@ public class GUIManager : global::System.IDisposable {
 
   public void Image(ImageResource user_texture_id, float x, float y) {
     EffekseerNativePINVOKE.GUIManager_Image(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+  }
+
+  public bool ImageButton(ImageResource user_texture_id, float x, float y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButton(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+    return ret;
   }
 
   public bool Checkbox(string label, bool[] v) {

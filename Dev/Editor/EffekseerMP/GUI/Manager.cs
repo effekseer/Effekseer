@@ -19,6 +19,10 @@ namespace Effekseer.GUI
 
 		public static Dock.NodeTreeView NodeTreeView;
 
+		public static Dock.ViewerController ViewerController;
+
+		public static Dock.Option Option;
+
 		internal static List<IRemovableControl> Controls = new List<IRemovableControl>();
 
 		static List<IRemovableControl> addingControls = new List<IRemovableControl>();
@@ -54,6 +58,18 @@ namespace Effekseer.GUI
 			// Add controls
 			var mainMenu = new GUI.Menu.MainMenu();
 			GUI.Manager.AddControl(mainMenu);
+
+			NodeTreeView = new Dock.NodeTreeView();
+			GUI.Manager.AddControl(NodeTreeView);
+			NodeTreeView.Renew();
+
+			ViewerController = new Dock.ViewerController();
+			GUI.Manager.AddControl(ViewerController);
+
+			Option = new Dock.Option();
+			GUI.Manager.AddControl(Option);
+
+			Network = new Network(Native);
 
 			/*
 			Command.CommandManager.Changed += OnChanged;

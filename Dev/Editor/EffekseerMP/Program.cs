@@ -109,7 +109,7 @@ namespace Effekseer
 
 			Images.Load(GUI.Manager.Native);
 
-            //GUI.Manager.AddControl(new DebugMenu());
+            GUI.Manager.AddControl(new DebugMenu());
 
 			//GUI.Manager.AddControl(new TestWindow());
 
@@ -210,9 +210,8 @@ namespace Effekseer
 				//    mgr.Text("testaaaaaaa");
 				//    mgr.EndPopup();
 				//}
-
-				mgr.End();
 			}
+			mgr.End();
 		}
 	}
 
@@ -244,19 +243,29 @@ namespace Effekseer
 					nodeTreeView.Renew();
 					GUI.Manager.AddControl(nodeTreeView);
 				}
-
-				GUI.Manager.NativeManager.End();
 			}
+
+			GUI.Manager.NativeManager.End();
 		}
 	}
 
 	class Images
 	{
 		public static swig.ImageResource Icon;
+		public static swig.ImageResource Play;
+		public static swig.ImageResource Stop;
+		public static swig.ImageResource Pause;
+		public static swig.ImageResource Step;
+		public static swig.ImageResource BackStep;
 
 		public static void Load(swig.Native native)
 		{
 			Icon = native.LoadImageResource("resources/icon.png");
+			Play = native.LoadImageResource("resources/Play.png");
+			Stop = native.LoadImageResource("resources/Stop.png");
+			Pause = native.LoadImageResource("resources/Pause.png");
+			Step = native.LoadImageResource("resources/Step.png");
+			BackStep = native.LoadImageResource("resources/BackStep.png");
 		}
 
 		public static void Unload()

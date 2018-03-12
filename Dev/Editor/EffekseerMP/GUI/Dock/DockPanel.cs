@@ -8,18 +8,28 @@ namespace Effekseer.GUI.Dock
 {
     class DockPanel : IRemovableControl
     {
-        public bool ShouldBeRemoved { get; private set; } = false;
+		public string Label { get; set; } = string.Empty;
 
-        public void Update()
-        {
-            bool[] opened = new[] { true };
+		public bool ShouldBeRemoved { get; private set; } = false;
 
-            if(Manager.NativeManager.Begin("###Dock", opened))
-            {
-                UpdateInternal();
-                Manager.NativeManager.End();
-            }
-        }
+		string id = "";
+
+		bool[] opened = new[] { true };
+
+		public DockPanel()
+		{
+			id = "###" + Manager.GetUniqueID().ToString();
+		}
+
+		public void Update()
+		{
+			if (Manager.NativeManager.Begin(Label + id, opened))
+			{
+				UpdateInternal();
+			}
+
+			Manager.NativeManager.End();
+		}
 
         protected virtual void UpdateInternal()
         {

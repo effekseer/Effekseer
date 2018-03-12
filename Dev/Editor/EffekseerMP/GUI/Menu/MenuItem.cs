@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Menu
 {
-    class MenuItem : IControl
+	class MenuSeparator : IControl
+	{
+		public void Update()
+		{
+			Manager.NativeManager.Separator();
+		}
+	}
+
+	class MenuItem : IControl
     {
         string id = "";
 

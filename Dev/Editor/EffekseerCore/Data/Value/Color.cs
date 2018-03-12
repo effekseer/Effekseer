@@ -51,12 +51,18 @@ namespace Effekseer.Data.Value
 			A = new Int(a, a_max, a_min);
 		}
 
-		public void SetValue(int r, int g, int b)
+		public void SetValue(int r, int g, int b, int a = -1)
 		{
 			Command.CommandManager.StartCollection();
 			R.SetValue(r);
 			G.SetValue(g);
 			B.SetValue(b);
+
+			if(a >= 0)
+			{
+				A.SetValue(a);
+			}
+
 			Command.CommandManager.EndCollection();
 		}
 

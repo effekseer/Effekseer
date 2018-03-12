@@ -8,16 +8,11 @@ namespace Effekseer.GUI.Dock
 {
     class NodeTreeView : DockPanel
     {
-        string id = "";
-
-        public string Label { get; set; } = string.Empty;
-
         internal List<NodeTreeViewNode> Children = new List<NodeTreeViewNode>();
 
         public NodeTreeView()
         {
-            var rand = new Random();
-            id = "###" + rand.Next(0xffff).ToString();
+			Label = Resources.GetString("NodeTree");
         }
 
         override protected void UpdateInternal()

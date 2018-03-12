@@ -183,8 +183,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Exit")]
 		public static bool Exit()
 		{
-			Console.WriteLine("Not implemented.");
-			//GUIManager.Close();
+			Manager.NativeManager.Close();
 			return true;
 		}
 

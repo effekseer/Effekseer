@@ -30,6 +30,8 @@ namespace Effekseer.GUI.Component
             {
                 if (binding == value) return;
 
+				binding = value;
+
                 if(binding != null)
                 {
                     internalValue[0] = binding.Value;
@@ -37,8 +39,13 @@ namespace Effekseer.GUI.Component
             }
         }
 
-        public Boolean()
+        public Boolean(string label = null)
         {
+			if(label != null)
+			{
+				Label = label;
+			}
+
             var rand = new Random();
 			id = "###" + Manager.GetUniqueID().ToString();
 		}

@@ -123,8 +123,7 @@ namespace Effekseer.GUI.Menu
 				menu.Controls.Add(create_menu_item_from_commands(Commands.Overwrite));
 				menu.Controls.Add(create_menu_item_from_commands(Commands.SaveAs));
 
-				Console.WriteLine("Not implemented.");
-				//menu.DropDownItems.Add(new ToolStripSeparator());
+				menu.Controls.Add(new MenuSeparator());
 
 				{
 					var import_menu = new Menu(input);
@@ -196,16 +195,14 @@ namespace Effekseer.GUI.Menu
 					menu.Controls.Add(export_menu);
 				}
 
-				Console.WriteLine("Not implemented.");
-				//menu.DropDownItems.Add(new ToolStripSeparator());
+				menu.Controls.Add(new MenuSeparator());
 
 				{
 					ReloadRecentFiles();
 					menu.Controls.Add(recentFiles);
 				}
 
-				Console.WriteLine("Not implemented.");
-				//menu.DropDownItems.Add(new ToolStripSeparator());
+				menu.Controls.Add(new MenuSeparator());
 
 				menu.Controls.Add(create_menu_item_from_commands(Commands.Exit));
 
@@ -221,15 +218,13 @@ namespace Effekseer.GUI.Menu
 				menu.Controls.Add(create_menu_item_from_commands(Commands.InsertNode));
 				menu.Controls.Add(create_menu_item_from_commands(Commands.RemoveNode));
 
-				Console.WriteLine("Not implemented.");
-				//menu.DropDownItems.Add(new ToolStripSeparator());
+				menu.Controls.Add(new MenuSeparator());
 
 				menu.Controls.Add(create_menu_item_from_commands(Commands.Copy));
 				menu.Controls.Add(create_menu_item_from_commands(Commands.Paste));
 				menu.Controls.Add(create_menu_item_from_commands(Commands.PasteInfo));
 
-				Console.WriteLine("Not implemented.");
-				//menu.DropDownItems.Add(new ToolStripSeparator());
+				menu.Controls.Add(new MenuSeparator());
 
 				menu.Controls.Add(create_menu_item_from_commands(Commands.Undo));
 				menu.Controls.Add(create_menu_item_from_commands(Commands.Redo));
@@ -311,9 +306,8 @@ namespace Effekseer.GUI.Menu
 				menu.Controls.Add(create_menu_item_from_commands(Commands.ViewHelp));
 				menu.Controls.Add(create_menu_item_from_commands(Commands.OpenSample));
 
-				Console.WriteLine("Not implemented.");	 
-				//menu.Controls.Add(new ToolStripSeparator());
-					
+				menu.Controls.Add(new MenuSeparator());
+
 				menu.Controls.Add(create_menu_item_from_commands(Commands.About));
 
 				this.Controls.Add(menu);

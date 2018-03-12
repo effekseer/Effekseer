@@ -51,10 +51,16 @@
     <Compile Include="Define.cs" />
     <Compile Include="GUI\Commands.cs" />
     <Compile Include="GUI\Component\Boolean.cs" />
+    <Compile Include="GUI\Component\ColorCtrl.cs" />
+    <Compile Include="GUI\Component\Float.cs" />
+    <Compile Include="GUI\Component\ParameterList.cs" />
+    <Compile Include="GUI\Component\Vector3D.cs" />
     <Compile Include="GUI\Dialog\About.cs" />
     <Compile Include="GUI\Dialog\MessageBox.cs" />
     <Compile Include="GUI\Dock\DockPanel.cs" />
     <Compile Include="GUI\Dock\NodeTreeView.cs" />
+    <Compile Include="GUI\Dock\Option.cs" />
+    <Compile Include="GUI\Dock\ViewerController.cs" />
     <Compile Include="GUI\IControl.cs" />
     <Compile Include="GUI\Manager.cs" />
     <Compile Include="GUI\Menu\MainMenu.cs" />
