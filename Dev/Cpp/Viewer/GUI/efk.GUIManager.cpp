@@ -311,6 +311,11 @@ namespace efk
 		ImGui::TreePop();
 	}
 
+	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags)
+	{
+		return ImGui::Selectable(utf16_to_utf8(label).c_str(), selected, flags);
+	}
+
 	bool GUIManager::BeginMainMenuBar()
 	{
 		return ImGui::BeginMainMenuBar();
@@ -379,6 +384,11 @@ namespace efk
 	void GUIManager::CloseCurrentPopup()
 	{
 		ImGui::CloseCurrentPopup();
+	}
+
+	void GUIManager::SetItemDefaultFocus()
+	{
+		ImGui::SetItemDefaultFocus();
 	}
 
 	void GUIManager::AddFontFromFileTTF(const char* filename, float size_pixels)

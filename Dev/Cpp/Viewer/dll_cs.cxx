@@ -3931,6 +3931,54 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreePop___(void * j
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_0___(void * jarg1, char16_t * jarg2, unsigned int jarg3, int jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool arg3 ;
+  efk::SelectableFlags arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3 ? true : false; 
+  arg4 = (efk::SelectableFlags)jarg4; 
+  result = (bool)(arg1)->Selectable((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_1___(void * jarg1, char16_t * jarg2, unsigned int jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool arg3 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3 ? true : false; 
+  result = (bool)(arg1)->Selectable((char16_t const *)arg2,arg3);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_2___(void * jarg1, char16_t * jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (bool)(arg1)->Selectable((char16_t const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginMainMenuBar___(void * jarg1) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -4250,6 +4298,14 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_CloseCurrentPopup__
   
   arg1 = (efk::GUIManager *)jarg1; 
   (arg1)->CloseCurrentPopup();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetItemDefaultFocus___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->SetItemDefaultFocus();
 }
 
 

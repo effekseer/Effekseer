@@ -125,9 +125,20 @@ namespace Effekseer.GUI.Component
 
 			if(Manager.NativeManager.BeginCombo(Label + id, names[v.Item2], swig.ComboFlags.None))
 			{
-				foreach(var name in names)
+				for(int i = 0; i < names.Count; i++)
 				{
-					Manager.NativeManager.Text(name);
+					bool is_selected = (names[v.Item2] == names[i]);
+					if (Manager.NativeManager.Selectable(names[i], is_selected))
+					{
+						selectedValues = enums[i];
+						binding.SetValue(selectedValues);
+					}
+						
+					if (is_selected)
+					{
+						Manager.NativeManager.SetItemDefaultFocus();
+					}
+
 				}
 
 				Manager.NativeManager.EndCombo();

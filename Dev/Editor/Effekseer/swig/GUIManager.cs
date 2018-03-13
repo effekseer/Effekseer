@@ -468,6 +468,21 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_TreePop(swigCPtr);
   }
 
+  public bool Selectable(string label, bool selected, SelectableFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_0(swigCPtr, label, selected, (int)flags);
+    return ret;
+  }
+
+  public bool Selectable(string label, bool selected) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_1(swigCPtr, label, selected);
+    return ret;
+  }
+
+  public bool Selectable(string label) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_2(swigCPtr, label);
+    return ret;
+  }
+
   public bool BeginMainMenuBar() {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginMainMenuBar(swigCPtr);
     return ret;
@@ -575,6 +590,10 @@ public class GUIManager : global::System.IDisposable {
 
   public void CloseCurrentPopup() {
     EffekseerNativePINVOKE.GUIManager_CloseCurrentPopup(swigCPtr);
+  }
+
+  public void SetItemDefaultFocus() {
+    EffekseerNativePINVOKE.GUIManager_SetItemDefaultFocus(swigCPtr);
   }
 
   public void AddFontFromFileTTF(string filename, float size_pixels) {
