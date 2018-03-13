@@ -52,7 +52,10 @@
     <Compile Include="GUI\Commands.cs" />
     <Compile Include="GUI\Component\Boolean.cs" />
     <Compile Include="GUI\Component\ColorCtrl.cs" />
+    <Compile Include="GUI\Component\ColorWithRandom.cs" />
+    <Compile Include="GUI\Component\Enum.cs" />
     <Compile Include="GUI\Component\Float.cs" />
+    <Compile Include="GUI\Component\FloatWithRandom.cs" />
     <Compile Include="GUI\Component\ParameterList.cs" />
     <Compile Include="GUI\Component\Vector3D.cs" />
     <Compile Include="GUI\Dialog\About.cs" />
@@ -73,6 +76,7 @@
     <Compile Include="GUI\Shortcuts.cs" />
     <Compile Include="GUI\RecentFiles.cs" />
     <Compile Include="swig\ColorEditFlags.cs" />
+    <Compile Include="swig\ComboFlags.cs" />
     <Compile Include="swig\Cond.cs" />
     <Compile Include="swig\DistortionType.cs" />
     <Compile Include="swig\EffekseerNative.cs" />

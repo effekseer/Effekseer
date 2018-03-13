@@ -65,6 +65,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Present(swigCPtr);
   }
 
+  public void Close() {
+    EffekseerNativePINVOKE.GUIManager_Close(swigCPtr);
+  }
+
   public void ResetGUI() {
     EffekseerNativePINVOKE.GUIManager_ResetGUI(swigCPtr);
   }
@@ -121,6 +125,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Image(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
   }
 
+  public bool ImageButton(ImageResource user_texture_id, float x, float y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_ImageButton(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+    return ret;
+  }
+
   public bool Checkbox(string label, bool[] v) {
     bool ret = EffekseerNativePINVOKE.GUIManager_Checkbox(swigCPtr, label, v);
     return ret;
@@ -144,6 +153,15 @@ public class GUIManager : global::System.IDisposable {
   public bool SliderInt(string label, int[] v, int v_min, int v_max) {
     bool ret = EffekseerNativePINVOKE.GUIManager_SliderInt(swigCPtr, label, v, v_min, v_max);
     return ret;
+  }
+
+  public bool BeginCombo(string label, string preview_value, ComboFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginCombo(swigCPtr, label, preview_value, (int)flags);
+    return ret;
+  }
+
+  public void EndCombo() {
+    EffekseerNativePINVOKE.GUIManager_EndCombo(swigCPtr);
   }
 
   public bool DragFloat(string label, float[] v, float v_speed, float v_min, float v_max, string display_format, float power) {

@@ -403,13 +403,11 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.Float))
 				{
-					Console.WriteLine("Not implemented.");
 					gui = new Float(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.FloatWithRandom))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new FloatWithRandom();
+					gui = new FloatWithRandom(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.Vector2D))
 				{
@@ -432,13 +430,11 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.Color))
 				{
-					Console.WriteLine("Not implemented.");
 					gui = new ColorCtrl(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.ColorWithRandom))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new ColorWithRandom();
+					gui = new ColorWithRandom(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.Path))
 				{
@@ -500,12 +496,11 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType.IsGenericType)
 				{
-					Console.WriteLine("Not implemented.");
-					//var types = p.PropertyType.GetGenericArguments();
-					//gui = new Enum();
-					//
-					//var dgui = (dynamic)gui;
-					//dgui.Initialize(types[0]);
+					var types = p.PropertyType.GetGenericArguments();
+					gui = new Enum(Title);
+					
+					var dgui = (dynamic)gui;
+					dgui.Initialize(types[0]);
 				}
 
 				var selector_attribute = (from a in attributes where a is Data.SelectorAttribute select a).FirstOrDefault() as Data.SelectorAttribute;

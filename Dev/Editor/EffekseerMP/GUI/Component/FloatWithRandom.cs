@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class Vector3D : IControl
+	class FloatWithRandom : IControl
 	{
 		string id = "";
 
 		public string Label { get; set; } = string.Empty;
 
-		Data.Value.Vector3D binding = null;
+		Data.Value.FloatWithRandom binding = null;
 
-		float[] internalValue = new float[] { 0.0f, 0.0f, 0.0f };
+		float[] internalValue = new float[] { 0.0f, 0.0f };
 
 		public bool ShouldBeRemoved { get; private set; } = false;
 
 		public bool EnableUndo { get; set; } = true;
 
-		public Data.Value.Vector3D Binding
+		public Data.Value.FloatWithRandom Binding
 		{
 			get
 			{
@@ -34,14 +34,13 @@ namespace Effekseer.GUI.Component
 
 				if (binding != null)
 				{
-					internalValue[0] = binding.X.Value;
-					internalValue[1] = binding.Y.Value;
-					internalValue[2] = binding.Z.Value;
+					internalValue[0] = binding.GetMin();
+					internalValue[1] = binding.GetMax();
 				}
 			}
 		}
 
-		public Vector3D(string label = null)
+		public FloatWithRandom(string label = null)
 		{
 			if (label != null)
 			{
@@ -54,7 +53,7 @@ namespace Effekseer.GUI.Component
 
 		public void SetBinding(object o)
 		{
-			var o_ = o as Data.Value.Vector3D;
+			var o_ = o as Data.Value.FloatWithRandom;
 			Binding = o_;
 		}
 
@@ -62,24 +61,20 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding != null)
 			{
-				internalValue[0] = binding.X.Value;
-				internalValue[1] = binding.Y.Value;
-				internalValue[2] = binding.Z.Value;
+				internalValue[0] = binding.GetMin();
+				internalValue[1] = binding.GetMax();
 			}
 
-			if (Manager.NativeManager.DragFloat3(Label + id, internalValue))
+			if (Manager.NativeManager.DragFloat2(Label + id, internalValue))
 			{
 				if (EnableUndo)
 				{
-					binding.X.SetValue(internalValue[0]);
-					binding.Y.SetValue(internalValue[1]);
-					binding.Z.SetValue(internalValue[2]);
+					binding.SetMin(internalValue[0]);
+					binding.SetMax(internalValue[1]);
 				}
 				else
 				{
-					binding.X.SetValueDirectly(internalValue[0]);
-					binding.Y.SetValueDirectly(internalValue[1]);
-					binding.Z.SetValueDirectly(internalValue[2]);
+					Console.WriteLine("Not implemented.");
 				}
 			}
 		}

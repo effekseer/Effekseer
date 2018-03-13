@@ -71,6 +71,17 @@ namespace efk
 		Appearing = 1 << 3    // Set the variable if the window is appearing after being hidden/inactive (or the first time)
 	};
 
+	enum class ComboFlags : int32_t
+	{
+		None = 0,
+		PopupAlignLeft = 1 << 0,   // Align the popup toward the left by default
+		HeightSmall = 1 << 1,   // Max ~4 items visible. Tip: If you want your combo popup to be a specific size you can use SetNextWindowSizeConstraints() prior to calling BeginCombo()
+		HeightRegular = 1 << 2,   // Max ~8 items visible (default)
+		HeightLarge = 1 << 3,   // Max ~20 items visible
+		HeightLargest = 1 << 4,   // As many fitting items as possible
+	};
+
+
 	class GUIManager
 	{
 	private:
@@ -128,6 +139,10 @@ namespace efk
 		bool InputInt(const char16_t* label, int* v, int step = 1, int step_fast = 100);
 
 		bool SliderInt(const char16_t* label, int* v, int v_min, int v_max);
+
+		// Widgets: Combo Box
+		bool BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags);
+		void EndCombo(); // only call EndCombo() if BeginCombo() returns true!
 
 		// Drags
 		bool DragFloat(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char* display_format = "%.3f", float power = 1.0f);     // If v_min >= v_max we have no bound

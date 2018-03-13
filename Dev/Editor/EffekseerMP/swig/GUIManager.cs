@@ -155,6 +155,15 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool BeginCombo(string label, string preview_value, ComboFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginCombo(swigCPtr, label, preview_value, (int)flags);
+    return ret;
+  }
+
+  public void EndCombo() {
+    EffekseerNativePINVOKE.GUIManager_EndCombo(swigCPtr);
+  }
+
   public bool DragFloat(string label, float[] v, float v_speed, float v_min, float v_max, string display_format, float power) {
     bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format, power);
     return ret;

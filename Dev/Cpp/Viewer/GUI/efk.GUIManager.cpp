@@ -53,6 +53,29 @@ namespace efk
 		ImGui_ImplGlfwGL3_Init(window->GetGLFWWindows(), true);
 		ImGui::StyleColorsDark();
 
+		ImGuiStyle& style = ImGui::GetStyle();
+
+		style.ChildRounding = 3.f;
+		style.GrabRounding = 3.f;
+		style.WindowRounding = 3.f;
+		style.ScrollbarRounding = 3.f;
+		style.FrameRounding = 3.f;
+		style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
+
+		// mono tone
+
+		for (int32_t i = 0; i < ImGuiCol_COUNT; i++)
+		{
+			auto v = (style.Colors[i].x + style.Colors[i].y + style.Colors[i].z) / 3.0f;
+			style.Colors[i].x = v;
+			style.Colors[i].y = v;
+			style.Colors[i].z = v;
+		}
+
+		style.Colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.80f, 1.00f);
+		style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+		style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.9f);
+
 		return true;
 	}
 
@@ -208,6 +231,19 @@ namespace efk
 	bool GUIManager::SliderInt(const char16_t* label, int* v, int v_min, int v_max)
 	{
 		return ImGui::SliderInt(utf16_to_utf8(label).c_str(), v, v_min, v_max);
+	}
+
+	bool GUIManager::BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags)
+	{
+		return ImGui::BeginCombo(
+			utf16_to_utf8(label).c_str(),
+			utf16_to_utf8(preview_value).c_str(),
+			(int)flags);
+	}
+
+	void GUIManager::EndCombo()
+	{
+		ImGui::EndCombo();
 	}
 
 	bool GUIManager::DragFloat(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char* display_format, float power)

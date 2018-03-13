@@ -18,7 +18,7 @@ namespace Effekseer.GUI.Component
 
         public bool ShouldBeRemoved { get; private set; } = false;
 
-        public bool EnableUndo { get; set; }
+		public bool EnableUndo { get; set; } = true;
 
         public Data.Value.Boolean Binding
         {

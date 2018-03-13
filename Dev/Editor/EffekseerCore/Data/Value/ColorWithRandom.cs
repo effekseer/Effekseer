@@ -126,21 +126,33 @@ namespace Effekseer.Data.Value
 			DefaultColorSpace = ColorSpace;
 		}
 
-		public void SetMin(int r, int g, int b)
+		public void SetMin(int r, int g, int b, int a = -1)
 		{
 			Command.CommandManager.StartCollection();
 			R.SetMin(r);
 			G.SetMin(g);
 			B.SetMin(b);
+
+			if (a >= 0)
+			{
+				A.SetMax(a);
+			}
+
 			Command.CommandManager.EndCollection();
 		}
 
-		public void SetMax(int r, int g, int b)
+		public void SetMax(int r, int g, int b, int a = -1)
 		{
 			Command.CommandManager.StartCollection();
 			R.SetMax(r);
 			G.SetMax(g);
 			B.SetMax(b);
+
+			if(a >= 0)
+			{
+				A.SetMax(a);
+			}
+
 			Command.CommandManager.EndCollection();
 		}
 
