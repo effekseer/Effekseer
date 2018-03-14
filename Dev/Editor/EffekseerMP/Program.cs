@@ -243,6 +243,12 @@ namespace Effekseer
 					nodeTreeView.Renew();
 					GUI.Manager.AddControl(nodeTreeView);
 				}
+
+				if (GUI.Manager.NativeManager.Button("Common"))
+				{
+					var window = new GUI.Dock.CommonValues();
+					GUI.Manager.AddControl(window);
+				}
 			}
 
 			GUI.Manager.NativeManager.End();

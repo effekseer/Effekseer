@@ -129,6 +129,7 @@
     <ClInclude Include="GUI\efk.JapaneseFont.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="dll_cs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />

@@ -229,7 +229,7 @@ namespace efk
 
 	bool GUIManager::ImageButton(ImageResource* user_texture_id, float x, float y)
 	{
-		if (user_texture_id != nullptr)
+		if (user_texture_id != nullptr && user_texture_id->GetTextureData() != nullptr)
 		{
 			if (user_texture_id->GetTextureData()->UserPtr != nullptr)
 			{

@@ -310,7 +310,7 @@ bool Renderer::BeginRendering()
 		graphics->Clear(Effekseer::Color(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B, 255));
 	}
 
-	/* 背景 */
+	// Render background
 	if( !m_recording && backgroundData != nullptr)
 	{
 		// 値は適当(背景は画面サイズと一致しないので問題ない)
@@ -358,7 +358,7 @@ bool Renderer::BeginRendering()
 
 		m_renderer->SetProjectionMatrix(proj);
 	}
-
+	
 	// Distoriton
 	if (Distortion == eDistortionType::DistortionType_Current)
 	{

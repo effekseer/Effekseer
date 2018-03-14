@@ -100,7 +100,6 @@ namespace Effekseer.GUI.Component
 				Label = label;
 			}
 
-			var rand = new Random();
 			id = "###" + Manager.GetUniqueID().ToString();
 		}
 

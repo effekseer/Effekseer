@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class FloatWithRandom : IControl
+	class String : IControl
 	{
 		string id = "";
 
 		public string Label { get; set; } = string.Empty;
 
-		Data.Value.FloatWithRandom binding = null;
+		Data.Value.String binding = null;
 
-		float[] internalValue = new float[] { 0.0f, 0.0f };
+		string internalValue = string.Empty;
 
 		public bool ShouldBeRemoved { get; private set; } = false;
 
 		public bool EnableUndo { get; set; } = true;
 
-		public Data.Value.FloatWithRandom Binding
+		public Data.Value.String Binding
 		{
 			get
 			{
@@ -34,13 +34,12 @@ namespace Effekseer.GUI.Component
 
 				if (binding != null)
 				{
-					internalValue[0] = binding.GetMin();
-					internalValue[1] = binding.GetMax();
+					internalValue = binding.Value;
 				}
 			}
 		}
 
-		public FloatWithRandom(string label = null)
+		public String(string label = null)
 		{
 			if (label != null)
 			{
@@ -52,7 +51,7 @@ namespace Effekseer.GUI.Component
 
 		public void SetBinding(object o)
 		{
-			var o_ = o as Data.Value.FloatWithRandom;
+			var o_ = o as Data.Value.String;
 			Binding = o_;
 		}
 
@@ -60,20 +59,20 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding != null)
 			{
-				internalValue[0] = binding.GetMin();
-				internalValue[1] = binding.GetMax();
+				internalValue = binding.Value;
 			}
 
-			if (Manager.NativeManager.DragFloat2(Label + id, internalValue))
+			if(Manager.NativeManager.InputText(Label + id))
 			{
+				var v = Manager.NativeManager.GetInputTextResult();
+
 				if (EnableUndo)
 				{
-					binding.SetMin(internalValue[0]);
-					binding.SetMax(internalValue[1]);
+					binding.SetValue(v);
 				}
 				else
 				{
-					Console.WriteLine("Not implemented.");
+					throw new Exception();
 				}
 			}
 		}

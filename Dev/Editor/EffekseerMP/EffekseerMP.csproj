@@ -57,9 +57,11 @@
     <Compile Include="GUI\Component\Float.cs" />
     <Compile Include="GUI\Component\FloatWithRandom.cs" />
     <Compile Include="GUI\Component\ParameterList.cs" />
+    <Compile Include="GUI\Component\String.cs" />
     <Compile Include="GUI\Component\Vector3D.cs" />
     <Compile Include="GUI\Dialog\About.cs" />
     <Compile Include="GUI\Dialog\MessageBox.cs" />
+    <Compile Include="GUI\Dock\CommonValues.cs" />
     <Compile Include="GUI\Dock\DockPanel.cs" />
     <Compile Include="GUI\Dock\NodeTreeView.cs" />
     <Compile Include="GUI\Dock\Option.cs" />

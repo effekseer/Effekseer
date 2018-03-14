@@ -177,6 +177,7 @@
     <ClInclude Include="3rdParty\imgui_addon\imguidock\imguidock.h" />
     <ClInclude Include="3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.h" />
     <ClInclude Include="3rdParty\nfd\nfd_common.h" />
+    <ClInclude Include="dll_cs.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Base.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Culling.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Grid.h" />
