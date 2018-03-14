@@ -197,10 +197,12 @@ Shader::Shader(
 	}
 
 	m_vsSrc.resize(vertexShaderSize);
-	memcpy( &(m_vsSrc[0]), vs_src, vertexShaderSize );
+	memcpy(m_vsSrc.data(), vs_src, vertexShaderSize );
+	m_vsSrc.push_back(0);
 
 	m_psSrc.resize(pixelShaderSize);
-	memcpy( &(m_psSrc[0]), fs_src, pixelShaderSize );
+	memcpy(m_psSrc.data(), fs_src, pixelShaderSize );
+	m_psSrc.push_back(0);
 
 	m_name = name;
 }
@@ -288,9 +290,9 @@ void Shader::OnResetDevice()
 	if(CompileShader(
 		GetRenderer(),
 		program,
-		(const char*)&(m_vsSrc[0]),
+		(const char*)(m_vsSrc.data()),
 		m_vsSrc.size(),
-		(const char*)&(m_psSrc[0]),
+		(const char*)(m_psSrc.data()),
 		m_psSrc.size(),
 		m_name.c_str()))
 	{

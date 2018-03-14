@@ -90,8 +90,8 @@ private:
 	GLuint	m_textureSlots[4];
 	bool	m_textureSlotEnables[4];
 
-	std::vector<uint8_t>	m_vsSrc;
-	std::vector<uint8_t>	m_psSrc;
+	std::vector<char>	m_vsSrc;
+	std::vector<char>	m_psSrc;
 	std::string				m_name;
 
 	static bool CompileShader(

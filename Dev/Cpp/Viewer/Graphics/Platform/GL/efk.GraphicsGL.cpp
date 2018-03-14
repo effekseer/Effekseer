@@ -132,6 +132,8 @@ namespace efk
 		this->windowWidth = width;
 		this->windowHeight = height;
 		ResetDevice();
+
+		glViewport(0, 0, this->windowWidth, this->windowHeight);
 	}
 
 	bool GraphicsGL::Present()
