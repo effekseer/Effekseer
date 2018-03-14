@@ -28,9 +28,25 @@ namespace Effekseer.GUI.Dock
 			{
 				paramerterList.SetValue(Core.Option);
 				isFiestUpdate = false;
+
+				Core.Option.GuiLanguage.OnChanged += GuiLanguage_OnChanged;
 			}
 
 			paramerterList.Update();
+		}
+
+		private void GuiLanguage_OnChanged(object sender, ChangedValueEventArgs e_)
+		{
+			var e = Core.Option.GuiLanguage.GetValue();
+
+			if (e == Language.Japanese)
+			{
+				System.Windows.Forms.MessageBox.Show("次回のEffekseer起動時に適応します。");
+			}
+			else if (e == Language.English)
+			{
+				System.Windows.Forms.MessageBox.Show("It adapts to the next startup");
+			}
 		}
 
 		void OnAfter(object sender, EventArgs e)

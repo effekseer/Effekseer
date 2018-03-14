@@ -81,6 +81,14 @@ namespace efk
 		HeightLargest = 1 << 4,   // As many fitting items as possible
 	};
 
+	enum SelectableFlags : int32_t
+	{
+		None = 0,
+		DontClosePopups = 1 << 0,   // Clicking this don't close parent popup window
+		SpanAllColumns = 1 << 1,   // Selectable frame can span all columns (text will still fit in current column)
+		AllowDoubleClick = 1 << 2    // Generate press events on double clicks too
+	};
+
 	class GUIManagerCallback
 	{
 	public:
@@ -177,6 +185,9 @@ namespace efk
 		bool TreeNode(const char16_t* label);
 		void TreePop();
 
+		// Widgets: Selectable / Lists
+		bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None);
+
 		// Menus
 		bool BeginMainMenuBar();                                                
 		void EndMainMenuBar();
@@ -194,6 +205,8 @@ namespace efk
 		void EndPopup();
 		bool IsPopupOpen(const char* str_id);
 		void CloseCurrentPopup();
+
+		void SetItemDefaultFocus();
 
 		void AddFontFromFileTTF(const char* filename, float size_pixels);
 	};

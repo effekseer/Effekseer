@@ -41,12 +41,34 @@ public class GUIManagerCallback : global::System.IDisposable {
   }
 
   public GUIManagerCallback() : this(EffekseerNativePINVOKE.new_GUIManagerCallback(), true) {
+    SwigDirectorConnect();
   }
 
   public virtual void Resized(int x, int y) {
-    EffekseerNativePINVOKE.GUIManagerCallback_Resized(swigCPtr, x, y);
+    if (SwigDerivedClassHasMethod("Resized", swigMethodTypes0)) EffekseerNativePINVOKE.GUIManagerCallback_ResizedSwigExplicitGUIManagerCallback(swigCPtr, x, y); else EffekseerNativePINVOKE.GUIManagerCallback_Resized(swigCPtr, x, y);
   }
 
+  private void SwigDirectorConnect() {
+    if (SwigDerivedClassHasMethod("Resized", swigMethodTypes0))
+      swigDelegate0 = new SwigDelegateGUIManagerCallback_0(SwigDirectorResized);
+    EffekseerNativePINVOKE.GUIManagerCallback_director_connect(swigCPtr, swigDelegate0);
+  }
+
+  private bool SwigDerivedClassHasMethod(string methodName, global::System.Type[] methodTypes) {
+    global::System.Reflection.MethodInfo methodInfo = this.GetType().GetMethod(methodName, global::System.Reflection.BindingFlags.Public | global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Instance, null, methodTypes, null);
+    bool hasDerivedMethod = methodInfo.DeclaringType.IsSubclassOf(typeof(GUIManagerCallback));
+    return hasDerivedMethod;
+  }
+
+  private void SwigDirectorResized(int x, int y) {
+    Resized(x, y);
+  }
+
+  public delegate void SwigDelegateGUIManagerCallback_0(int x, int y);
+
+  private SwigDelegateGUIManagerCallback_0 swigDelegate0;
+
+  private static global::System.Type[] swigMethodTypes0 = new global::System.Type[] { typeof(int), typeof(int) };
 }
 
 }

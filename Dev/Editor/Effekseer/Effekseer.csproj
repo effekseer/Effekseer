@@ -403,6 +403,7 @@
     <Compile Include="swig\GUIManagerCallback.cs" />
     <Compile Include="swig\ImageResource.cs" />
     <Compile Include="swig\Native.cs" />
+    <Compile Include="swig\SelectableFlags.cs" />
     <Compile Include="swig\TransparenceType.cs" />
     <Compile Include="swig\ViewerEffectBehavior.cs" />
     <Compile Include="swig\ViewerParamater.cs" />
