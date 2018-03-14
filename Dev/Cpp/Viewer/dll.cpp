@@ -465,13 +465,16 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 	m_isSRGBMode = isSRGBMode;
 	g_isOpenGLMode = isOpenGLMode;
 
-	g_renderer = new ::EffekseerTool::Renderer( 20000, isSRGBMode, isOpenGLMode );
+	// because internal buffer is 16bit
+	int32_t spriteCount = 65000 / 4;
+
+	g_renderer = new ::EffekseerTool::Renderer(spriteCount, isSRGBMode, isOpenGLMode );
 	if( g_renderer->Initialize( pHandle, width, height ) )
 	{
 		// 関数追加
 		//::Effekseer::ScriptRegister::SetExternalFunction(0, print);
 
-		g_manager = ::Effekseer::Manager::Create( 20000 );
+		g_manager = ::Effekseer::Manager::Create(spriteCount);
 
 		{
 			::Effekseer::SpriteRenderer* sprite_renderer = g_renderer->GetRenderer()->CreateSpriteRenderer();
