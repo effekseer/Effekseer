@@ -83,12 +83,14 @@
     <Compile Include="swig\EffekseerNativePINVOKE.cs" />
     <Compile Include="swig\FileDialog.cs" />
     <Compile Include="swig\GUIManager.cs" />
+    <Compile Include="swig\GUIManagerCallback.cs" />
     <Compile Include="swig\ImageResource.cs" />
     <Compile Include="swig\Native.cs" />
     <Compile Include="swig\TransparenceType.cs" />
     <Compile Include="swig\ViewerEffectBehavior.cs" />
     <Compile Include="swig\ViewerParamater.cs" />
     <Compile Include="swig\WindowFlags.cs" />
+    <Compile Include="Utils\DelayedList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

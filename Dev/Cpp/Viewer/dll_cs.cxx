@@ -13,6 +13,7 @@
 #define SWIGCSHARP
 #endif
 
+#define SWIG_DIRECTORS
 
 
 #ifdef __cplusplus
@@ -311,6 +312,67 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterWStringCallback_EffekseerNative(SWIG_CSh
   SWIG_csharp_wstring_callback = callback;
 }
 
+/* -----------------------------------------------------------------------------
+ * director_common.swg
+ *
+ * This file contains support for director classes which is common between
+ * languages.
+ * ----------------------------------------------------------------------------- */
+
+/*
+  Use -DSWIG_DIRECTOR_STATIC if you prefer to avoid the use of the
+  'Swig' namespace. This could be useful for multi-modules projects.
+*/
+#ifdef SWIG_DIRECTOR_STATIC
+/* Force anonymous (static) namespace */
+#define Swig
+#endif
+/* -----------------------------------------------------------------------------
+ * director.swg
+ *
+ * This file contains support for director classes so that C# proxy
+ * methods can be called from C++.
+ * ----------------------------------------------------------------------------- */
+
+#if defined(DEBUG_DIRECTOR_OWNED)
+#include <iostream>
+#endif
+#include <string>
+#include <exception>
+
+namespace Swig {
+  /* Director base class - not currently used in C# directors */
+  class Director {
+  };
+
+  /* Base class for director exceptions */
+  class DirectorException : public std::exception {
+  protected:
+    std::string swig_msg;
+
+  public:
+    DirectorException(const char *msg) : swig_msg(msg) {
+    }
+
+    DirectorException(const std::string &msg) : swig_msg(msg) {
+    }
+
+    virtual ~DirectorException() throw() {
+    }
+
+    const char *what() const throw() {
+      return swig_msg.c_str();
+    }
+  };
+
+  /* Pure virtual method exception */
+  class DirectorPureVirtualException : public DirectorException {
+  public:
+    DirectorPureVirtualException(const char *msg) : DirectorException(std::string("Attempt to invoke pure virtual method ") + msg) {
+    }
+  };
+}
+
 
 #include "GUI/efk.ImageResource.h"
 #include "dll.h"
@@ -319,6 +381,45 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterWStringCallback_EffekseerNative(SWIG_CSh
 
 
 #include <stdint.h>		// Use the C99 official header
+
+
+
+/* ---------------------------------------------------
+ * C++ director class methods
+ * --------------------------------------------------- */
+
+#include "dll_cs.h"
+
+SwigDirector_GUIManagerCallback::SwigDirector_GUIManagerCallback() : efk::GUIManagerCallback(), Swig::Director() {
+  swig_init_callbacks();
+}
+
+SwigDirector_GUIManagerCallback::~SwigDirector_GUIManagerCallback() {
+  
+}
+
+
+void SwigDirector_GUIManagerCallback::Resized(int x, int y) {
+  int jx  ;
+  int jy  ;
+  
+  if (!swig_callbackResized) {
+    efk::GUIManagerCallback::Resized(x,y);
+    return;
+  } else {
+    jx = x;
+    jy = y;
+    swig_callbackResized(jx, jy);
+  }
+}
+
+void SwigDirector_GUIManagerCallback::swig_connect_director(SWIG_Callback0_t callbackResized) {
+  swig_callbackResized = callbackResized;
+}
+
+void SwigDirector_GUIManagerCallback::swig_init_callbacks() {
+  swig_callbackResized = 0;
+}
 
 
 #ifdef __cplusplus
@@ -2141,6 +2242,57 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_LoadImageResource___(
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GUIManagerCallback___() {
+  void * jresult ;
+  efk::GUIManagerCallback *result = 0 ;
+  
+  result = (efk::GUIManagerCallback *)new SwigDirector_GUIManagerCallback();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_GUIManagerCallback___(void * jarg1) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_Resized___(void * jarg1, int jarg2, int jarg3) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  (arg1)->Resized(arg2,arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_ResizedSwigExplicitGUIManagerCallback___(void * jarg1, int jarg2, int jarg3) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (int)jarg3; 
+  (arg1)->efk::GUIManagerCallback::Resized(arg2,arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_director_connect___(void *objarg, SwigDirector_GUIManagerCallback::SWIG_Callback0_t callback0) {
+  efk::GUIManagerCallback *obj = (efk::GUIManagerCallback *)objarg;
+  SwigDirector_GUIManagerCallback *director = dynamic_cast<SwigDirector_GUIManagerCallback *>(obj);
+  if (director) {
+    director->swig_connect_director(callback0);
+  }
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GUIManager___() {
   void * jresult ;
   efk::GUIManager *result = 0 ;
@@ -2222,6 +2374,16 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Close___(void * jar
   
   arg1 = (efk::GUIManager *)jarg1; 
   (arg1)->Close();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetCallback___(void * jarg1, void * jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::GUIManagerCallback *arg2 = (efk::GUIManagerCallback *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::GUIManagerCallback *)jarg2; 
+  (arg1)->SetCallback(arg2);
 }
 
 
@@ -3867,6 +4029,32 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragIntRang
   
   
   
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_InputText___(void * jarg1, char16_t * jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (bool)(arg1)->InputText((char16_t const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetInputTextResult___(void * jarg1) {
+  char16_t * jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *result = 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (char16_t *)(arg1)->GetInputTextResult();
+  jresult = (char16_t *)result; 
   return jresult;
 }
 

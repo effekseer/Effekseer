@@ -374,6 +374,7 @@ void Shader::EndScene()
 
 void Shader::EnableAttribs()
 {
+	GLCheckError();
 	for( size_t i = 0; i < m_aid.size(); i++ )
 	{
 		if ( m_aid[i] >= 0 ) 

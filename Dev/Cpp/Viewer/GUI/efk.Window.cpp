@@ -22,6 +22,16 @@ namespace efk
 #endif
 	}
 
+	void GLFLW_ResizeCallback(GLFWwindow* w, int x, int y)
+	{
+		auto w_ = (Window*)glfwGetWindowUserPointer(w);
+
+		if (w_->Resized != nullptr)
+		{
+			w_->Resized(x, y);
+		}
+	}
+
 	Window::Window()
 	{}
 
@@ -65,6 +75,9 @@ namespace efk
 			glfwTerminate();
 			return false;
 		}
+
+		glfwSetWindowUserPointer(window, this);
+		glfwSetFramebufferSizeCallback(window, GLFLW_ResizeCallback);
 
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(1);

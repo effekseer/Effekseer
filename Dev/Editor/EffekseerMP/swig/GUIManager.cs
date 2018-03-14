@@ -69,6 +69,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Close(swigCPtr);
   }
 
+  public void SetCallback(GUIManagerCallback callback) {
+    EffekseerNativePINVOKE.GUIManager_SetCallback(swigCPtr, GUIManagerCallback.getCPtr(callback));
+  }
+
   public void ResetGUI() {
     EffekseerNativePINVOKE.GUIManager_ResetGUI(swigCPtr);
   }
@@ -446,6 +450,16 @@ public class GUIManager : global::System.IDisposable {
 
   public bool DragIntRange2(string label, int[] v_current_min, int[] v_current_max) {
     bool ret = EffekseerNativePINVOKE.GUIManager_DragIntRange2__SWIG_5(swigCPtr, label, v_current_min, v_current_max);
+    return ret;
+  }
+
+  public bool InputText(string label) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_InputText(swigCPtr, label);
+    return ret;
+  }
+
+  public string GetInputTextResult() {
+    string ret = System.Runtime.InteropServices.Marshal.PtrToStringUni(EffekseerNativePINVOKE.GUIManager_GetInputTextResult(swigCPtr));
     return ret;
   }
 

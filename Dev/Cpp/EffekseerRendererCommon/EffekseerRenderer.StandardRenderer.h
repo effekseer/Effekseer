@@ -243,13 +243,13 @@ public:
 
 		Effekseer::TextureData* textures[2];
 
-		if (m_state.TexturePtr != nullptr)
+		if (m_state.TexturePtr != nullptr && m_state.TexturePtr != (Effekseer::TextureData*)0x01)
 		{
 			textures[0] = m_state.TexturePtr;
 		}
 		else
 		{
-			textures[0] = 0;
+			textures[0] = nullptr;
 		}
 
 		if (distortion)

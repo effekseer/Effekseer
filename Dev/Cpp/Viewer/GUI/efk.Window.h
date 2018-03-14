@@ -17,9 +17,11 @@
 
 #include <codecvt>
 #include <locale>
+#include <functional>
 
 namespace efk
 {
+	void GLFLW_ResizeCallback(GLFWwindow* w, int x, int y);
 
 	class Window
 	{
@@ -56,6 +58,8 @@ namespace efk
 		GLFWwindow*	GetGLFWWindows() const { return window; }
 
 		void* GetNativeHandle() const;
+
+		std::function<void(int, int)> Resized;
 	};
 
 }

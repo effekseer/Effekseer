@@ -6,10 +6,20 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI
 {
+	class GUIManagerCallback : swig.GUIManagerCallback
+	{
+		public override void Resized(int x, int y)
+		{
+			Manager.Native.ResizeWindow(x, y);
+		}
+	}
+
     class Manager
     {
         internal static swig.GUIManager NativeManager;
 		internal static swig.Native Native;
+
+		static GUIManagerCallback guiManagerCallback;
 
 		static int nextID = 10;
 
@@ -52,6 +62,9 @@ namespace Effekseer.GUI
 
 			NativeManager = mgr;
 
+			guiManagerCallback = new GUIManagerCallback();
+			NativeManager.SetCallback(guiManagerCallback);
+
 			// Load font
 			NativeManager.AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 16);
 
@@ -70,6 +83,8 @@ namespace Effekseer.GUI
 			GUI.Manager.AddControl(Option);
 
 			Network = new Network(Native);
+
+			RecentFiles.LoadRecentConfig();
 
 			/*
 			Command.CommandManager.Changed += OnChanged;
@@ -146,7 +161,11 @@ namespace Effekseer.GUI
 
 		public static void Terminate()
 		{
+			RecentFiles.SaveRecentConfig();
+
 			Viewer.HideViewer();
+
+			NativeManager.SetCallback(null);
 			NativeManager.Terminate();
 		}
 

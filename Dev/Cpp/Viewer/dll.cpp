@@ -1824,6 +1824,7 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 	auto resource = std::make_shared<efk::ImageResource>();
 
 	resource->GetTextureData() = loader->Load(path, Effekseer::TextureType::Color);
+	resource->SetPath(path);
 
 	if (g_imageResources[path] != nullptr)
 	{

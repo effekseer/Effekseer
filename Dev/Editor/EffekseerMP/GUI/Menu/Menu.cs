@@ -6,38 +6,40 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Menu
 {
-    class Menu : IControl
-    {
-        string id = "";
+	class Menu : IControl
+	{
+		string id = "";
 
-        public string Label { get; set; } = string.Empty;
+		public string Label { get; set; } = string.Empty;
 
-        public bool ShouldBeRemoved { get; private set; } = false;
+		public bool ShouldBeRemoved { get; private set; } = false;
 
-        internal List<IControl> Controls = new List<IControl>();
+		internal Utils.DelayedList<IControl> Controls = new Utils.DelayedList<IControl>();
 
-        public Menu(string label = null)
-        {
-			if(label != null)
+		public Menu(string label = null)
+		{
+			if (label != null)
 			{
 				Label = label;
 			}
 
 			var rand = new Random();
-            id = "###" + Manager.GetUniqueID().ToString();
-        }
+			id = "###" + Manager.GetUniqueID().ToString();
+		}
 
-        public void Update()
-        {
-            if(Manager.NativeManager.BeginMenu(Label + id))
-            {
-                foreach (var ctrl in Controls)
-                {
-                    ctrl.Update();
-                }
+		public void Update()
+		{
+			if (Manager.NativeManager.BeginMenu(Label + id))
+			{
+				Controls.Lock();
+				foreach (var ctrl in Controls.Internal)
+				{
+					ctrl.Update();
+				}
+				Controls.Unlock();
 
-                Manager.NativeManager.EndMenu();
-            }
-        }
-    }
+				Manager.NativeManager.EndMenu();
+			}
+		}
+	}
 }

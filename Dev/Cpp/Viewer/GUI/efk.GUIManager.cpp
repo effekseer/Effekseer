@@ -27,6 +27,19 @@ namespace efk
 #endif
 	}
 
+	static std::u16string utf8_to_utf16(const std::string& s)
+	{
+
+#if defined(_MSC_VER)
+		std::wstring_convert<std::codecvt_utf8_utf16<std::uint16_t, 0x10ffff, mode>, std::uint16_t> conv;
+		auto p = reinterpret_cast<const std::uint16_t*>(s.c_str());
+		return std::u16string((const char16_t*)conv.from_bytes(s).c_str());
+#else
+		std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, mode>, char16_t> conv;
+		return conv.from_bytes(s);
+#endif
+	}
+
 	GUIManager::GUIManager()
 	{}
 
@@ -42,6 +55,14 @@ namespace efk
 			ES_SAFE_DELETE(window);
 			return false;
 		}
+
+		window->Resized = [this](int x, int y) -> void
+		{
+			if (this->callback != nullptr)
+			{
+				this->callback->Resized(x, y);
+			}
+		};
 
 		window->MakeCurrent();
 
@@ -107,6 +128,11 @@ namespace efk
 	void GUIManager::Close()
 	{
 		window->Close();
+	}
+
+	void GUIManager::SetCallback(GUIManagerCallback* callback)
+	{
+		this->callback = callback;
 	}
 
 	void GUIManager::ResetGUI()
@@ -294,6 +320,24 @@ namespace efk
 	bool GUIManager::DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed, int v_min, int v_max, const char* display_format, const char* display_format_max)
 	{
 		return ImGui::DragIntRange2(utf16_to_utf8(label).c_str(), v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max);
+	}
+
+	static std::u16string inputTextResult;
+
+	bool GUIManager::InputText(const char16_t* label)
+	{
+		char buf[260];
+
+		auto ret = ImGui::InputText(utf16_to_utf8(label).c_str(), buf, 260);
+	
+		inputTextResult = utf8_to_utf16(buf);
+	
+		return ret;
+	}
+
+	const char16_t* GUIManager::GetInputTextResult()
+	{
+		return inputTextResult.c_str();
 	}
 
 	bool GUIManager::ColorEdit4(const char16_t* label, float* col, ColorEditFlags flags)

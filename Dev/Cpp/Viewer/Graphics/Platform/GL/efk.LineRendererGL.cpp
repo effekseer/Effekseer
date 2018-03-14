@@ -178,6 +178,12 @@ static const char g_sprite_fs_no_texture_src[] =
         
         renderer->SetVertexArray(vao);
 		renderer->BeginShader((EffekseerRendererGL::Shader*)shader);
+		
+		Effekseer::TextureData* textures[2];
+		textures[0] = nullptr;
+		textures[1] = nullptr;
+
+		renderer->SetTextures((EffekseerRendererGL::Shader*)shader, textures, 1);
 
 		((Effekseer::Matrix44*)(shader->GetVertexConstantBuffer()))[0] = renderer->GetCameraMatrix();
 		((Effekseer::Matrix44*)(shader->GetVertexConstantBuffer()))[1] = renderer->GetProjectionMatrix();
@@ -194,8 +200,11 @@ static const char g_sprite_fs_no_texture_src[] =
 		glDrawArrays(GL_LINES, 0, vertexies.size());
 
 		renderer->EndShader((EffekseerRendererGL::Shader*)shader);
+		renderer->SetVertexArray(nullptr);
 
 		renderer->GetRenderState()->Pop();
+
+		GLCheckError();
 	}
 
 

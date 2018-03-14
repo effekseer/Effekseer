@@ -232,8 +232,11 @@ static const char g_sprite_fs_no_texture_src[] =
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
 
 			renderer->EndShader(shader_);
+			renderer->SetVertexArray(nullptr);
 
 			renderer->GetRenderState()->Pop();
+
+			GLCheckError();
 		}
 	}
 

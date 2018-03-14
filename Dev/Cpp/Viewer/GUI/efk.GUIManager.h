@@ -81,10 +81,18 @@ namespace efk
 		HeightLargest = 1 << 4,   // As many fitting items as possible
 	};
 
+	class GUIManagerCallback
+	{
+	public:
+		GUIManagerCallback() {}
+		virtual ~GUIManagerCallback() {}
+		virtual void Resized(int x, int y) {}
+	};
 
 	class GUIManager
 	{
 	private:
+		GUIManagerCallback*		callback = nullptr;
 		efk::Window*	window = nullptr;
 
 	public:
@@ -103,6 +111,8 @@ namespace efk
 		void Present();
 
 		void Close();
+
+		void SetCallback(GUIManagerCallback* callback);
 
 		void ResetGUI();
 
@@ -155,6 +165,10 @@ namespace efk
 		bool DragInt3(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f");
 		bool DragInt4(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f");
 		bool DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f", const char* display_format_max = NULL);
+
+		// Input
+		bool InputText(const char16_t* label);
+		const char16_t* GetInputTextResult();
 
 		// Color
 		bool ColorEdit4(const char16_t* label, float* col, ColorEditFlags flags = ColorEditFlags::None);

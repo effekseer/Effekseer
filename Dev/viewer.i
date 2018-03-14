@@ -1,4 +1,4 @@
-%module EffekseerNative
+%module(directors="1") EffekseerNative
 
 %{
 #include "GUI/efk.ImageResource.h"
@@ -49,6 +49,8 @@ class"
 
 %apply float INOUT[] { float* v_current_min }
 %apply float INOUT[] { float* v_current_max }
+
+%feature("director") GUIManagerCallback;
 
 //-----------------------------------------------------------------------------------
 //
