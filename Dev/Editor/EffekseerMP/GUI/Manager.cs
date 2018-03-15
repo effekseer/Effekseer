@@ -12,11 +12,21 @@ namespace Effekseer.GUI
 		{
 			Manager.Native.ResizeWindow(x, y);
 		}
+
+		public override void Focused()
+		{
+			Core.Reload();
+		}
+
+		public override void Droped()
+		{
+			Commands.Open(GetPath());
+		}
 	}
 
-    class Manager
-    {
-        internal static swig.GUIManager NativeManager;
+	class Manager
+	{
+		internal static swig.GUIManager NativeManager;
 		internal static swig.Native Native;
 
 		static GUIManagerCallback guiManagerCallback;
@@ -36,7 +46,7 @@ namespace Effekseer.GUI
 		internal static List<IRemovableControl> Controls = new List<IRemovableControl>();
 
 		static List<IRemovableControl> addingControls = new List<IRemovableControl>();
-		
+
 		public static bool Initialize(int width, int height)
 		{
 			var mgr = new swig.GUIManager();
@@ -53,7 +63,7 @@ namespace Effekseer.GUI
 			Native = new swig.Native();
 
 			Viewer = new Viewer(Native);
-			if(!Viewer.ShowViewer(mgr.GetNativeHandle(), 960, 540, true))
+			if (!Viewer.ShowViewer(mgr.GetNativeHandle(), 960, 540, true))
 			{
 				mgr.Dispose();
 				mgr = null;
@@ -174,8 +184,51 @@ namespace Effekseer.GUI
 			addingControls.Add(control);
 		}
 
-        public static void Update()
-        {
+		static swig.Vec2 mousePos_pre;
+
+		static bool isFirstUpdate = true;
+
+		public static void Update()
+		{
+			var mousePos = NativeManager.GetMousePosition();
+
+			if (isFirstUpdate)
+			{
+				mousePos_pre = mousePos;
+			}
+
+			if (NativeManager.GetMouseButton(2) > 0)
+			{
+				var dx = mousePos.X - mousePos_pre.X;
+				var dy = mousePos.Y - mousePos_pre.Y;
+
+				if (!NativeManager.IsAnyWindowHovered())
+				{
+					Viewer.Slide(dx, dy);
+				}
+			}
+
+			if (NativeManager.GetMouseButton(1) > 0)
+			{
+				var dx = mousePos.X - mousePos_pre.X;
+				var dy = mousePos.Y - mousePos_pre.Y;
+
+				if (!NativeManager.IsAnyWindowHovered())
+				{
+					Viewer.Rotate(dx, dy);
+				}
+			}
+
+			if (NativeManager.GetMouseWheel() != 0)
+			{
+				if (!NativeManager.IsAnyWindowHovered())
+				{
+					Viewer.Zoom(NativeManager.GetMouseWheel());
+				}
+			}
+
+			mousePos_pre = mousePos;
+
 			Viewer.UpdateViewer();
 
 			Native.UpdateWindow();
@@ -196,23 +249,23 @@ namespace Effekseer.GUI
 
 			Controls.RemoveAll(_ => _.ShouldBeRemoved);
 
-			
+
 			NativeManager.RenderGUI();
 
 			Native.Present();
 			NativeManager.Present();
+
+			isFirstUpdate = false;
 		}
-		
 
 		static void Core_OnAfterLoad(object sender, EventArgs e)
 		{
 			Viewer.StopViewer();
 
-			Console.WriteLine("Not implemented");
-			//if (GUIManager.Network.SendOnLoad)
-			//{
-			//	GUIManager.Network.Send();
-			//}
+			if (Network.SendOnLoad)
+			{
+				Network.Send();
+			}
 		}
 
 		static void Core_OnAfterNew(object sender, EventArgs e)
@@ -229,12 +282,10 @@ namespace Effekseer.GUI
 		{
 			Viewer.IsChanged = true;
 			
-			Console.WriteLine("Not implemented");
-
-			//if (GUIManager.Network.SendOnEdit)
-			//{
-			//	GUIManager.Network.Send();
-			//}
+			if (Network.SendOnEdit)
+			{
+				Network.Send();
+			}
 		}
 
 		/// <summary>

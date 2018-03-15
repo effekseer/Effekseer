@@ -55,7 +55,9 @@ class"
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+%include "Cpp/Viewer/GUI/efk.Vec2.h"
 %include "Cpp/Viewer/GUI/efk.ImageResource.h"
 %include "Cpp/Viewer/dll.h"
 %include "Cpp/Viewer/GUI/efk.GUIManager.h"
 %include "Cpp/Viewer/GUI/efk.FileDialog.h"
+

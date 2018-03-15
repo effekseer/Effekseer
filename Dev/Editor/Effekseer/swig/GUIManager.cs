@@ -69,6 +69,21 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Close(swigCPtr);
   }
 
+  public Vec2 GetMousePosition() {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetMousePosition(swigCPtr), true);
+    return ret;
+  }
+
+  public int GetMouseButton(int mouseButton) {
+    int ret = EffekseerNativePINVOKE.GUIManager_GetMouseButton(swigCPtr, mouseButton);
+    return ret;
+  }
+
+  public int GetMouseWheel() {
+    int ret = EffekseerNativePINVOKE.GUIManager_GetMouseWheel(swigCPtr);
+    return ret;
+  }
+
   public void SetCallback(GUIManagerCallback callback) {
     EffekseerNativePINVOKE.GUIManager_SetCallback(swigCPtr, GUIManagerCallback.getCPtr(callback));
   }
@@ -612,6 +627,16 @@ public class GUIManager : global::System.IDisposable {
 
   public void AddFontFromFileTTF(string filename, float size_pixels) {
     EffekseerNativePINVOKE.GUIManager_AddFontFromFileTTF(swigCPtr, filename, size_pixels);
+  }
+
+  public bool IsKeyDown(int user_key_index) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsKeyDown(swigCPtr, user_key_index);
+    return ret;
+  }
+
+  public bool IsAnyWindowHovered() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsAnyWindowHovered(swigCPtr);
+    return ret;
   }
 
 }

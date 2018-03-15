@@ -91,10 +91,23 @@ namespace efk
 
 	class GUIManagerCallback
 	{
+		std::u16string	path;
 	public:
 		GUIManagerCallback() {}
 		virtual ~GUIManagerCallback() {}
 		virtual void Resized(int x, int y) {}
+		virtual void Droped() {}
+		virtual void Focused() {}
+
+		const char16_t* GetPath()
+		{
+			return path.c_str();
+		}
+		
+		void SetPath(const char16_t* path)
+		{
+			this->path = path;
+		}
 	};
 
 	class GUIManager
@@ -119,6 +132,12 @@ namespace efk
 		void Present();
 
 		void Close();
+
+		Vec2 GetMousePosition();
+
+		int GetMouseButton(int32_t mouseButton);
+
+		int GetMouseWheel();
 
 		void SetCallback(GUIManagerCallback* callback);
 
@@ -209,5 +228,9 @@ namespace efk
 		void SetItemDefaultFocus();
 
 		void AddFontFromFileTTF(const char* filename, float size_pixels);
+
+		bool IsKeyDown(int user_key_index);
+
+		bool IsAnyWindowHovered();
 	};
 }

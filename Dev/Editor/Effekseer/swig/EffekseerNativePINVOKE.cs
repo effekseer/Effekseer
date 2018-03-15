@@ -210,6 +210,24 @@ class EffekseerNativePINVOKE {
   static protected SWIGWStringHelper swigWStringHelper = new SWIGWStringHelper();
 
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_X_set___")]
+  public static extern void Vec2_X_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_X_get___")]
+  public static extern float Vec2_X_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_Y_set___")]
+  public static extern void Vec2_Y_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Vec2_Y_get___")]
+  public static extern float Vec2_Y_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_Vec2___")]
+  public static extern global::System.IntPtr new_Vec2();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Vec2___")]
+  public static extern void delete_Vec2(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ImageResource_GetPath___")]
   public static extern System.IntPtr ImageResource_GetPath(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -675,8 +693,26 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_ResizedSwigExplicitGUIManagerCallback___")]
   public static extern void GUIManagerCallback_ResizedSwigExplicitGUIManagerCallback(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_Droped___")]
+  public static extern void GUIManagerCallback_Droped(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_DropedSwigExplicitGUIManagerCallback___")]
+  public static extern void GUIManagerCallback_DropedSwigExplicitGUIManagerCallback(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_Focused___")]
+  public static extern void GUIManagerCallback_Focused(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_FocusedSwigExplicitGUIManagerCallback___")]
+  public static extern void GUIManagerCallback_FocusedSwigExplicitGUIManagerCallback(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_GetPath___")]
+  public static extern System.IntPtr GUIManagerCallback_GetPath(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_SetPath___")]
+  public static extern void GUIManagerCallback_SetPath(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_director_connect___")]
-  public static extern void GUIManagerCallback_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, GUIManagerCallback.SwigDelegateGUIManagerCallback_0 delegate0);
+  public static extern void GUIManagerCallback_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, GUIManagerCallback.SwigDelegateGUIManagerCallback_0 delegate0, GUIManagerCallback.SwigDelegateGUIManagerCallback_1 delegate1, GUIManagerCallback.SwigDelegateGUIManagerCallback_2 delegate2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_GUIManager___")]
   public static extern global::System.IntPtr new_GUIManager();
@@ -701,6 +737,15 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Close___")]
   public static extern void GUIManager_Close(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetMousePosition___")]
+  public static extern global::System.IntPtr GUIManager_GetMousePosition(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetMouseButton___")]
+  public static extern int GUIManager_GetMouseButton(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetMouseWheel___")]
+  public static extern int GUIManager_GetMouseWheel(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetCallback___")]
   public static extern void GUIManager_SetCallback(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
@@ -1043,6 +1088,12 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_AddFontFromFileTTF___")]
   public static extern void GUIManager_AddFontFromFileTTF(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2, float jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsKeyDown___")]
+  public static extern bool GUIManager_IsKeyDown(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsAnyWindowHovered___")]
+  public static extern bool GUIManager_IsAnyWindowHovered(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_FileDialog_OpenDialog___")]
   public static extern System.IntPtr FileDialog_OpenDialog([global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);

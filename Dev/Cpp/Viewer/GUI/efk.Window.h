@@ -19,6 +19,8 @@
 #include <locale>
 #include <functional>
 
+#include "efk.Vec2.h"
+
 namespace efk
 {
 	void GLFLW_ResizeCallback(GLFWwindow* w, int x, int y);
@@ -51,6 +53,10 @@ namespace efk
 
 		void Close();
 
+		Vec2 GetMousePosition();
+
+		int GetMouseButton(int32_t mouseButton);
+
 		void MakeCurrent();
 
 		void MakeNone();
@@ -60,6 +66,10 @@ namespace efk
 		void* GetNativeHandle() const;
 
 		std::function<void(int, int)> Resized;
+
+		std::function<void()> Focused;
+
+		std::function<void(const char* path)> Droped;
 	};
 
 }

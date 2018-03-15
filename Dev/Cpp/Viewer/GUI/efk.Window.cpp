@@ -32,6 +32,23 @@ namespace efk
 		}
 	}
 
+	void GLFW_DropCallback(GLFWwindow* w, int count, const char** paths)
+	{
+		auto w_ = (Window*)glfwGetWindowUserPointer(w);
+		w_->Droped(paths[0]);
+	}
+
+	void GLFW_WindowFocusCallback(GLFWwindow* w, int f)
+	{
+
+		auto w_ = (Window*)glfwGetWindowUserPointer(w);
+
+		if (f > 0)
+		{
+			w_->Focused();
+		}
+	}
+
 	Window::Window()
 	{}
 
@@ -78,6 +95,8 @@ namespace efk
 
 		glfwSetWindowUserPointer(window, this);
 		glfwSetFramebufferSizeCallback(window, GLFLW_ResizeCallback);
+		glfwSetDropCallback(window, GLFW_DropCallback);
+		glfwSetWindowFocusCallback(window, GLFW_WindowFocusCallback);
 
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(1);
@@ -127,6 +146,23 @@ namespace efk
 	void Window::Close()
 	{
 		glfwSetWindowShouldClose(window, 1);
+	}
+
+	Vec2 Window::GetMousePosition()
+	{
+		double xpos, ypos = 0;
+		glfwGetCursorPos(window, &xpos, &ypos);
+
+		Vec2 ret;
+		ret.X = xpos;
+		ret.Y = ypos;
+
+		return ret;
+	}
+
+	int Window::GetMouseButton(int32_t mouseButton)
+	{
+		return glfwGetMouseButton(window, mouseButton);
 	}
 
 	void Window::MakeCurrent()

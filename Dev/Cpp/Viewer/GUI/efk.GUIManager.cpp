@@ -64,6 +64,22 @@ namespace efk
 			}
 		};
 
+		window->Focused = [this]() -> void
+		{
+			if (this->callback != nullptr)
+			{
+				this->callback->Focused();
+			}
+		};
+
+		window->Droped = [this](const char* path) -> void
+		{
+			if (this->callback != nullptr)
+			{
+				this->callback->SetPath(utf8_to_utf16(path).c_str());
+				this->callback->Droped();
+			}
+		};
 		window->MakeCurrent();
 
 #ifdef _WIN32
@@ -128,6 +144,21 @@ namespace efk
 	void GUIManager::Close()
 	{
 		window->Close();
+	}
+
+	Vec2 GUIManager::GetMousePosition()
+	{
+		return window->GetMousePosition();
+	}
+
+	int GUIManager::GetMouseButton(int32_t mouseButton)
+	{
+		return window->GetMouseButton(mouseButton);
+	}
+
+	int GUIManager::GetMouseWheel()
+	{
+		return ImGui::GetIO().MouseWheel;
 	}
 
 	void GUIManager::SetCallback(GUIManagerCallback* callback)
@@ -439,5 +470,15 @@ namespace efk
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.Fonts->AddFontFromFileTTF(filename, size_pixels, nullptr, glyphRangesJapanese);
+	}
+
+	bool GUIManager::IsKeyDown(int user_key_index)
+	{
+		return ImGui::IsKeyDown(user_key_index);
+	}
+
+	bool GUIManager::IsAnyWindowHovered()
+	{
+		return ImGui::IsAnyWindowHovered();
 	}
 }

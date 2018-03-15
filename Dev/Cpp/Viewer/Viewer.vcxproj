@@ -201,6 +201,7 @@
     <ClInclude Include="GUI\efk.GUIManager.h" />
     <ClInclude Include="GUI\efk.ImageResource.h" />
     <ClInclude Include="GUI\efk.JapaneseFont.h" />
+    <ClInclude Include="GUI\efk.Vec2.h" />
     <ClInclude Include="GUI\efk.Window.h" />
     <CustomBuildStep Include="dll.h" />
   </ItemGroup>

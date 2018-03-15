@@ -48,10 +48,31 @@ public class GUIManagerCallback : global::System.IDisposable {
     if (SwigDerivedClassHasMethod("Resized", swigMethodTypes0)) EffekseerNativePINVOKE.GUIManagerCallback_ResizedSwigExplicitGUIManagerCallback(swigCPtr, x, y); else EffekseerNativePINVOKE.GUIManagerCallback_Resized(swigCPtr, x, y);
   }
 
+  public virtual void Droped() {
+    if (SwigDerivedClassHasMethod("Droped", swigMethodTypes1)) EffekseerNativePINVOKE.GUIManagerCallback_DropedSwigExplicitGUIManagerCallback(swigCPtr); else EffekseerNativePINVOKE.GUIManagerCallback_Droped(swigCPtr);
+  }
+
+  public virtual void Focused() {
+    if (SwigDerivedClassHasMethod("Focused", swigMethodTypes2)) EffekseerNativePINVOKE.GUIManagerCallback_FocusedSwigExplicitGUIManagerCallback(swigCPtr); else EffekseerNativePINVOKE.GUIManagerCallback_Focused(swigCPtr);
+  }
+
+  public string GetPath() {
+    string ret = System.Runtime.InteropServices.Marshal.PtrToStringUni(EffekseerNativePINVOKE.GUIManagerCallback_GetPath(swigCPtr));
+    return ret;
+  }
+
+  public void SetPath(string path) {
+    EffekseerNativePINVOKE.GUIManagerCallback_SetPath(swigCPtr, path);
+  }
+
   private void SwigDirectorConnect() {
     if (SwigDerivedClassHasMethod("Resized", swigMethodTypes0))
       swigDelegate0 = new SwigDelegateGUIManagerCallback_0(SwigDirectorResized);
-    EffekseerNativePINVOKE.GUIManagerCallback_director_connect(swigCPtr, swigDelegate0);
+    if (SwigDerivedClassHasMethod("Droped", swigMethodTypes1))
+      swigDelegate1 = new SwigDelegateGUIManagerCallback_1(SwigDirectorDroped);
+    if (SwigDerivedClassHasMethod("Focused", swigMethodTypes2))
+      swigDelegate2 = new SwigDelegateGUIManagerCallback_2(SwigDirectorFocused);
+    EffekseerNativePINVOKE.GUIManagerCallback_director_connect(swigCPtr, swigDelegate0, swigDelegate1, swigDelegate2);
   }
 
   private bool SwigDerivedClassHasMethod(string methodName, global::System.Type[] methodTypes) {
@@ -64,11 +85,25 @@ public class GUIManagerCallback : global::System.IDisposable {
     Resized(x, y);
   }
 
+  private void SwigDirectorDroped() {
+    Droped();
+  }
+
+  private void SwigDirectorFocused() {
+    Focused();
+  }
+
   public delegate void SwigDelegateGUIManagerCallback_0(int x, int y);
+  public delegate void SwigDelegateGUIManagerCallback_1();
+  public delegate void SwigDelegateGUIManagerCallback_2();
 
   private SwigDelegateGUIManagerCallback_0 swigDelegate0;
+  private SwigDelegateGUIManagerCallback_1 swigDelegate1;
+  private SwigDelegateGUIManagerCallback_2 swigDelegate2;
 
   private static global::System.Type[] swigMethodTypes0 = new global::System.Type[] { typeof(int), typeof(int) };
+  private static global::System.Type[] swigMethodTypes1 = new global::System.Type[] {  };
+  private static global::System.Type[] swigMethodTypes2 = new global::System.Type[] {  };
 }
 
 }

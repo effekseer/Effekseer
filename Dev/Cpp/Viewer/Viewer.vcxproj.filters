@@ -130,6 +130,9 @@
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="dll_cs.h" />
+    <ClInclude Include="GUI\efk.Vec2.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />

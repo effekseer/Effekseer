@@ -17,12 +17,18 @@ public:
     SwigDirector_GUIManagerCallback();
     virtual ~SwigDirector_GUIManagerCallback();
     virtual void Resized(int x, int y);
+    virtual void Droped();
+    virtual void Focused();
 
     typedef void (SWIGSTDCALL* SWIG_Callback0_t)(int, int);
-    void swig_connect_director(SWIG_Callback0_t callbackResized);
+    typedef void (SWIGSTDCALL* SWIG_Callback1_t)();
+    typedef void (SWIGSTDCALL* SWIG_Callback2_t)();
+    void swig_connect_director(SWIG_Callback0_t callbackResized, SWIG_Callback1_t callbackDroped, SWIG_Callback2_t callbackFocused);
 
 private:
     SWIG_Callback0_t swig_callbackResized;
+    SWIG_Callback1_t swig_callbackDroped;
+    SWIG_Callback2_t swig_callbackFocused;
     void swig_init_callbacks();
 };
 

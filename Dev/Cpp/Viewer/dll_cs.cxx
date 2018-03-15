@@ -413,18 +413,102 @@ void SwigDirector_GUIManagerCallback::Resized(int x, int y) {
   }
 }
 
-void SwigDirector_GUIManagerCallback::swig_connect_director(SWIG_Callback0_t callbackResized) {
+void SwigDirector_GUIManagerCallback::Droped() {
+  if (!swig_callbackDroped) {
+    efk::GUIManagerCallback::Droped();
+    return;
+  } else {
+    swig_callbackDroped();
+  }
+}
+
+void SwigDirector_GUIManagerCallback::Focused() {
+  if (!swig_callbackFocused) {
+    efk::GUIManagerCallback::Focused();
+    return;
+  } else {
+    swig_callbackFocused();
+  }
+}
+
+void SwigDirector_GUIManagerCallback::swig_connect_director(SWIG_Callback0_t callbackResized, SWIG_Callback1_t callbackDroped, SWIG_Callback2_t callbackFocused) {
   swig_callbackResized = callbackResized;
+  swig_callbackDroped = callbackDroped;
+  swig_callbackFocused = callbackFocused;
 }
 
 void SwigDirector_GUIManagerCallback::swig_init_callbacks() {
   swig_callbackResized = 0;
+  swig_callbackDroped = 0;
+  swig_callbackFocused = 0;
 }
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Vec2_X_set___(void * jarg1, float jarg2) {
+  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::Vec2 *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->X = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Vec2_X_get___(void * jarg1) {
+  float jresult ;
+  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+  float result;
+  
+  arg1 = (efk::Vec2 *)jarg1; 
+  result = (float) ((arg1)->X);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Vec2_Y_set___(void * jarg1, float jarg2) {
+  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::Vec2 *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->Y = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Vec2_Y_get___(void * jarg1) {
+  float jresult ;
+  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+  float result;
+  
+  arg1 = (efk::Vec2 *)jarg1; 
+  result = (float) ((arg1)->Y);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Vec2___() {
+  void * jresult ;
+  efk::Vec2 *result = 0 ;
+  
+  result = (efk::Vec2 *)new efk::Vec2();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vec2___(void * jarg1) {
+  efk::Vec2 *arg1 = (efk::Vec2 *) 0 ;
+  
+  arg1 = (efk::Vec2 *)jarg1; 
+  delete arg1;
+}
+
 
 SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetPath___(void * jarg1) {
   char16_t * jresult ;
@@ -2284,11 +2368,65 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_ResizedSwig
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_director_connect___(void *objarg, SwigDirector_GUIManagerCallback::SWIG_Callback0_t callback0) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_Droped___(void * jarg1) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  (arg1)->Droped();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_DropedSwigExplicitGUIManagerCallback___(void * jarg1) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  (arg1)->efk::GUIManagerCallback::Droped();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_Focused___(void * jarg1) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  (arg1)->Focused();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_FocusedSwigExplicitGUIManagerCallback___(void * jarg1) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  (arg1)->efk::GUIManagerCallback::Focused();
+}
+
+
+SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_GetPath___(void * jarg1) {
+  char16_t * jresult ;
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  char16_t *result = 0 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  result = (char16_t *)(arg1)->GetPath();
+  jresult = (char16_t *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_SetPath___(void * jarg1, char16_t * jarg2) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->SetPath((char16_t const *)arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_director_connect___(void *objarg, SwigDirector_GUIManagerCallback::SWIG_Callback0_t callback0, SwigDirector_GUIManagerCallback::SWIG_Callback1_t callback1, SwigDirector_GUIManagerCallback::SWIG_Callback2_t callback2) {
   efk::GUIManagerCallback *obj = (efk::GUIManagerCallback *)objarg;
   SwigDirector_GUIManagerCallback *director = dynamic_cast<SwigDirector_GUIManagerCallback *>(obj);
   if (director) {
-    director->swig_connect_director(callback0);
+    director->swig_connect_director(callback0, callback1, callback2);
   }
 }
 
@@ -2374,6 +2512,44 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Close___(void * jar
   
   arg1 = (efk::GUIManager *)jarg1; 
   (arg1)->Close();
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetMousePosition___(void * jarg1) {
+  void * jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Vec2 result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (arg1)->GetMousePosition();
+  jresult = new efk::Vec2((const efk::Vec2 &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetMouseButton___(void * jarg1, int jarg2) {
+  int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int32_t arg2 ;
+  int result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  result = (int)(arg1)->GetMouseButton(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetMouseWheel___(void * jarg1) {
+  int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (int)(arg1)->GetMouseWheel();
+  jresult = result; 
+  return jresult;
 }
 
 
@@ -4506,6 +4682,32 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_AddFontFromFileTTF_
   arg2 = (char *)jarg2; 
   arg3 = (float)jarg3; 
   (arg1)->AddFontFromFileTTF((char const *)arg2,arg3);
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsKeyDown___(void * jarg1, int jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  result = (bool)(arg1)->IsKeyDown(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsAnyWindowHovered___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->IsAnyWindowHovered();
+  jresult = result; 
+  return jresult;
 }
 
 
