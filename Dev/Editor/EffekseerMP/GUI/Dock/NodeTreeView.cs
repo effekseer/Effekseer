@@ -10,10 +10,16 @@ namespace Effekseer.GUI.Dock
     {
         internal List<NodeTreeViewNode> Children = new List<NodeTreeViewNode>();
 
-        public NodeTreeView()
+		NodeTreeViewNode SelectedNode = null;
+
+		public NodeTreeView()
         {
 			Label = Resources.GetString("NodeTree");
-        }
+
+			Core.OnAfterNew += OnRenew;
+			Core.OnAfterLoad += OnRenew;
+			Core.OnAfterSelectNode += OnAfterSelect;
+		}
 
         override protected void UpdateInternal()
         {
@@ -95,7 +101,33 @@ namespace Effekseer.GUI.Dock
         {
             Renew();
         }
-    }
+
+		void ReadSelect()
+		{
+			Func<Data.NodeBase, List<NodeTreeViewNode>, NodeTreeViewNode> search_node = null;
+			search_node = (searched_node, treenodes) =>
+			{
+				if (search_node == null) return null;
+
+				for (int i = 0; i < treenodes.Count; i++)
+				{
+					if (treenodes[i].node == searched_node) return treenodes[i];
+					var ret = search_node(searched_node, treenodes[i].Children);
+					if (ret != null) return ret;
+				}
+				return null;
+			};
+
+			var node = search_node(Core.SelectedNode, Children);
+
+			SelectedNode = node;
+		}
+
+		void OnAfterSelect(object sender, EventArgs e)
+		{
+			ReadSelect();
+		}
+	}
 
     class NodeTreeViewNode : IControl
     {
@@ -107,8 +139,7 @@ namespace Effekseer.GUI.Dock
 
         public NodeTreeViewNode(Data.NodeBase node, bool createChildren = false)
         {
-            var rand = new Random();
-            id = "###" + rand.Next(0xffff).ToString();
+            id = "###" + Manager.GetUniqueID().ToString();
 
             this.node = node;
 
@@ -150,6 +181,12 @@ namespace Effekseer.GUI.Dock
         {
             if (Manager.NativeManager.TreeNode(node.Name + id))
             {
+				bool isSelected = this.node == Core.SelectedNode;
+				if(Manager.NativeManager.Selectable(node.Name, isSelected))
+				{
+					Core.SelectedNode = this.node;
+				}
+
                 foreach (var child in Children)
                 {
                     child.Update();

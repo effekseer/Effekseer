@@ -96,9 +96,7 @@ namespace Effekseer.GUI.Menu
 				var attributes = a.Method.GetCustomAttributes(false);
 				var uniquename = UniqueNameAttribute.GetUniqueName(attributes);
 				item.Label = NameAttribute.GetName(attributes);
-				Console.WriteLine("Not implemented.");
-				//item.ShowShortcutKeys = true;
-				//item.ShortcutKeyDisplayString = Shortcuts.GetShortcutText(uniquename);
+				item.Shortcut = Shortcuts.GetShortcutText(uniquename);
 				item.Clicked += () =>
 				{
 					a();
@@ -355,7 +353,6 @@ namespace Effekseer.GUI.Menu
 			}
 
 			GUIManager.SaveConfig();
-			Shortcuts.SeveShortcuts();
 		}
 		*/
 

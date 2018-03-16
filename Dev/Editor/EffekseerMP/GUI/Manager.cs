@@ -78,6 +78,11 @@ namespace Effekseer.GUI
 			// Load font
 			NativeManager.AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 16);
 
+			// Load config
+			RecentFiles.LoadRecentConfig();
+			Shortcuts.LoadShortcuts();
+			Commands.Register();
+
 			// Add controls
 			var mainMenu = new GUI.Menu.MainMenu();
 			GUI.Manager.AddControl(mainMenu);
@@ -94,9 +99,7 @@ namespace Effekseer.GUI
 
 			Network = new Network(Native);
 
-			RecentFiles.LoadRecentConfig();
-
-			/*
+			
 			Command.CommandManager.Changed += OnChanged;
 
 			Core.EffectBehavior.Location.X.OnChanged += OnChanged;
@@ -165,12 +168,13 @@ namespace Effekseer.GUI
 			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
 			Core.OnAfterNew += new EventHandler(Core_OnAfterNew);
 			Core.OnReload += new EventHandler(Core_OnReload);
-			*/
+			
 			return true;
 		}
 
 		public static void Terminate()
 		{
+			Shortcuts.SeveShortcuts();
 			RecentFiles.SaveRecentConfig();
 
 			Viewer.HideViewer();
@@ -190,6 +194,14 @@ namespace Effekseer.GUI
 
 		public static void Update()
 		{
+			Shortcuts.Update();
+
+			var handle = false;
+			if(!handle)
+			{
+				Shortcuts.ProcessCmdKey(ref handle);
+			}
+
 			var mousePos = NativeManager.GetMousePosition();
 
 			if (isFirstUpdate)

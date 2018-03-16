@@ -249,6 +249,12 @@ namespace Effekseer
 					var window = new GUI.Dock.CommonValues();
 					GUI.Manager.AddControl(window);
 				}
+
+				if (GUI.Manager.NativeManager.Button("Location"))
+				{
+					var window = new GUI.Dock.LocationValues();
+					GUI.Manager.AddControl(window);
+				}
 			}
 
 			GUI.Manager.NativeManager.End();

@@ -18,7 +18,7 @@ namespace Effekseer.GUI.Component
 		List<TypeRow> validRows = new List<TypeRow>();
 		Dictionary<object, TypeRow> objToTypeRow = new Dictionary<object, TypeRow>();
 
-		internal List<IControl> Controls = new List<IControl>();
+		internal Utils.DelayedList<IControl> Controls = new Utils.DelayedList<IControl>();
 
 		public ParameterList()
 		{
@@ -29,10 +29,14 @@ namespace Effekseer.GUI.Component
 
 		public void Update()
 		{
-			foreach(var c in Controls)
+			Controls.Lock();
+
+			foreach (var c in Controls.Internal)
 			{
 				c.Update();
 			}
+
+			Controls.Unlock();
 		}
 
 		public void SetType(Type type)
@@ -379,8 +383,7 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.String))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new String();
+					gui = new String(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.Boolean))
 				{
@@ -388,8 +391,7 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.Int))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new Int();
+					gui = new Int(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.IntWithInifinite))
 				{
@@ -411,8 +413,7 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.Vector2D))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new Vector2D();
+					gui = new Vector2D(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.Vector2DWithRandom))
 				{

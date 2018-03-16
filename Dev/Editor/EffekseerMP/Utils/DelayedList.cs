@@ -29,6 +29,19 @@ namespace Effekseer.Utils
 			}
 		}
 
+		public void Remove(T item)
+		{
+			if (lockCount == 0)
+			{
+				internalList.Remove(item);
+			}
+			else
+			{
+				var c = new Command_Remove(item);
+				commands.Add(c);
+			}
+		}
+
 		public void Clear()
 		{
 			if (lockCount == 0)
@@ -79,6 +92,21 @@ namespace Effekseer.Utils
 			public override void Run(List<T> list)
 			{
 				list.Add(adding);
+			}
+		}
+
+		class Command_Remove : Command
+		{
+			T removing;
+
+			public Command_Remove(T o)
+			{
+				removing = o;
+			}
+
+			public override void Run(List<T> list)
+			{
+				list.Remove(removing);
 			}
 		}
 

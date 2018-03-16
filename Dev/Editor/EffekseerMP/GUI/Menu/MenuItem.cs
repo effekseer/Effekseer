@@ -20,6 +20,8 @@ namespace Effekseer.GUI.Menu
 
         public string Label { get; set; } = string.Empty;
 
+		public string Shortcut { get; set; } = null;
+
         public bool ShouldBeRemoved { get; private set; } = false;
 
         public Action Clicked;
@@ -32,7 +34,7 @@ namespace Effekseer.GUI.Menu
 
         public void Update()
         {
-            if (Manager.NativeManager.MenuItem(Label + id))
+            if (Manager.NativeManager.MenuItem(Label + id, Shortcut))
             {
                 if(Clicked != null)
                 {
