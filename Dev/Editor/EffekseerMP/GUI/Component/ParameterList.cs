@@ -18,7 +18,7 @@ namespace Effekseer.GUI.Component
 		List<TypeRow> validRows = new List<TypeRow>();
 		Dictionary<object, TypeRow> objToTypeRow = new Dictionary<object, TypeRow>();
 
-		internal Utils.DelayedList<IControl> Controls = new Utils.DelayedList<IControl>();
+		internal Utils.DelayedList<IParameterControl> Controls = new Utils.DelayedList<IParameterControl>();
 
 		public ParameterList()
 		{
@@ -56,6 +56,18 @@ namespace Effekseer.GUI.Component
 				//toolTip.SetToolTip(row.Control, row.Description);
 				//toolTip.SetToolTip(row.Label, row.Description);
 			}
+		}
+
+		public void FixValues()
+		{
+			Controls.Lock();
+
+			foreach (var c in Controls.Internal)
+			{
+				c.FixValue();
+			}
+
+			Controls.Unlock();
 		}
 
 		void AppendType(Type type, PropertyInfo[] props = null, TypeRow parentRow = null)
@@ -105,7 +117,7 @@ namespace Effekseer.GUI.Component
 		{
 			if (value != null)
 			{
-				RegistValue(value);
+				RegisterValue(value);
 			}
 			else
 			{
@@ -114,7 +126,7 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		void RegistValue(object value)
+		void RegisterValue(object value)
 		{
 			int labelWidth = 0;
 
@@ -249,6 +261,7 @@ namespace Effekseer.GUI.Component
 
 			if (removeControls)
 			{
+				row.Control.OnDisposed();
 				this.Controls.Remove(row.Control);
 				Console.WriteLine("Not implemented.");
 				//this.Controls.Remove(row.Label);
@@ -294,7 +307,7 @@ namespace Effekseer.GUI.Component
 				private set;
 			}
 
-			public IControl Control
+			public IParameterControl Control
 			{
 				get;
 				private set;
@@ -362,7 +375,7 @@ namespace Effekseer.GUI.Component
 				Title = NameAttribute.GetName(attributes);
 				Description = DescriptionAttribute.GetDescription(attributes);
 				
-				IControl gui = null;
+				IParameterControl gui = null;
 
 				var undo = attributes.Where(_ => _.GetType() == typeof(Effekseer.Data.UndoAttribute)).FirstOrDefault() as Effekseer.Data.UndoAttribute;
 				if (undo != null && !undo.Undo)

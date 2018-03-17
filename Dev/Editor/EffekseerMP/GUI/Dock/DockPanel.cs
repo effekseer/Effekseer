@@ -23,17 +23,27 @@ namespace Effekseer.GUI.Dock
 
 		public void Update()
 		{
-			if (Manager.NativeManager.Begin(Label + id, opened))
+			if(opened[0])
 			{
-				UpdateInternal();
-			}
+				if (Manager.NativeManager.Begin(Label + id, opened))
+				{
+					UpdateInternal();
+				}
 
-			Manager.NativeManager.End();
+				Manager.NativeManager.End();
+			}
+			else
+			{
+				ShouldBeRemoved = true;
+			}
+		}
+
+		public virtual void OnDisposed()
+		{
 		}
 
         protected virtual void UpdateInternal()
         {
-
         }
     }
 }

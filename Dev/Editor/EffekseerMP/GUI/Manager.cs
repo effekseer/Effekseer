@@ -26,6 +26,8 @@ namespace Effekseer.GUI
 
 	class Manager
 	{
+
+
 		internal static swig.GUIManager NativeManager;
 		internal static swig.Native Native;
 
@@ -37,11 +39,16 @@ namespace Effekseer.GUI
 
 		public static Network Network;
 
-		public static Dock.NodeTreeView NodeTreeView;
+		static Type[] dockTypes =
+		{
+			typeof(Dock.NodeTreeView),
+			typeof(Dock.ViewerController),
+			typeof(Dock.CommonValues),
+			typeof(Dock.LocationValues),
+			typeof(Dock.Option),
+		};
 
-		public static Dock.ViewerController ViewerController;
-
-		public static Dock.Option Option;
+		static Dock.DockPanel[] panels = new Dock.DockPanel[0];
 
 		internal static List<IRemovableControl> Controls = new List<IRemovableControl>();
 
@@ -75,6 +82,8 @@ namespace Effekseer.GUI
 			guiManagerCallback = new GUIManagerCallback();
 			NativeManager.SetCallback(guiManagerCallback);
 
+			panels = new Dock.DockPanel[dockTypes.Length];
+
 			// Load font
 			NativeManager.AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 16);
 
@@ -87,18 +96,10 @@ namespace Effekseer.GUI
 			var mainMenu = new GUI.Menu.MainMenu();
 			GUI.Manager.AddControl(mainMenu);
 
-			NodeTreeView = new Dock.NodeTreeView();
-			GUI.Manager.AddControl(NodeTreeView);
-			NodeTreeView.Renew();
-
-			ViewerController = new Dock.ViewerController();
-			GUI.Manager.AddControl(ViewerController);
-
-			Option = new Dock.Option();
-			GUI.Manager.AddControl(Option);
-
 			Network = new Network(Native);
 
+			SelectOrShowWindow(typeof(Dock.NodeTreeView));
+			SelectOrShowWindow(typeof(Dock.ViewerController));
 			
 			Command.CommandManager.Changed += OnChanged;
 
@@ -174,6 +175,14 @@ namespace Effekseer.GUI
 
 		public static void Terminate()
 		{
+			foreach(var p in panels)
+			{
+				if(p != null)
+				{
+					p.OnDisposed();
+				}
+			}
+
 			Shortcuts.SeveShortcuts();
 			RecentFiles.SaveRecentConfig();
 
@@ -259,8 +268,26 @@ namespace Effekseer.GUI
 
 			addingControls.Clear();
 
-			Controls.RemoveAll(_ => _.ShouldBeRemoved);
+			foreach(var _ in Controls)
+			{
+				if (!_.ShouldBeRemoved) continue;
 
+				var dp = _ as Dock.DockPanel;
+				if(dp != null)
+				{
+					dp.OnDisposed();
+				}
+			}
+
+			for (int i = 0; i < dockTypes.Length; i++)
+			{
+				if (panels[i] != null && panels[i].ShouldBeRemoved)
+				{
+					panels[i] = null;
+				}
+			}
+
+			Controls.RemoveAll(_ => _.ShouldBeRemoved);
 
 			NativeManager.RenderGUI();
 
@@ -268,6 +295,24 @@ namespace Effekseer.GUI
 			NativeManager.Present();
 
 			isFirstUpdate = false;
+		}
+
+		public static void SelectOrShowWindow(Type t)
+		{
+			for(int i = 0; i < dockTypes.Length; i++)
+			{
+				if (dockTypes[i] != t) continue;
+
+				if(panels[i] != null)
+				{
+
+				}
+				else
+				{
+					panels[i] = (Dock.DockPanel)t.GetConstructor(Type.EmptyTypes).Invoke(null);
+					AddControl(panels[i]);
+				}
+			}
 		}
 
 		static void Core_OnAfterLoad(object sender, EventArgs e)

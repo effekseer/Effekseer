@@ -22,6 +22,19 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterNew += OnAfter;
 		}
 
+		public void FixValues()
+		{
+			paramerterList.FixValues();
+		}
+
+		public override void OnDisposed()
+		{
+			FixValues();
+
+			Core.OnAfterLoad -= OnAfter;
+			Core.OnAfterNew -= OnAfter;
+		}
+
 		protected override void UpdateInternal()
 		{
 			if(isFiestUpdate)

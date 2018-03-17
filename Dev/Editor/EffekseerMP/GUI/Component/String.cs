@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class String : IControl
+	class String : IParameterControl
 	{
 		string id = "";
 
@@ -16,7 +16,7 @@ namespace Effekseer.GUI.Component
 
 		string internalValue = string.Empty;
 
-		public bool ShouldBeRemoved { get; private set; } = false;
+		bool isActive = false;
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -29,6 +29,11 @@ namespace Effekseer.GUI.Component
 			set
 			{
 				if (binding == value) return;
+
+				if(binding != null)
+				{
+					FixValue();
+				}
 
 				binding = value;
 
@@ -55,26 +60,53 @@ namespace Effekseer.GUI.Component
 			Binding = o_;
 		}
 
+		public void FixValue()
+		{
+			if (binding == null) return;
+			if (binding.Value == internalValue) return;
+			binding.SetValue(internalValue);
+		}
+
+		public void OnDisposed()
+		{
+			FixValue();
+			Binding = null;
+		}
+
 		public void Update()
 		{
+			string initialValue = string.Empty;
 			if (binding != null)
 			{
-				internalValue = binding.Value;
+				initialValue = binding.Value;
+			}
+			else
+			{
+				initialValue = internalValue;
 			}
 
-			if(Manager.NativeManager.InputText(Label + id, internalValue))
+			if(Manager.NativeManager.InputText(Label + id, initialValue))
 			{
 				var v = Manager.NativeManager.GetInputTextResult();
 
 				if (EnableUndo)
 				{
-					binding.SetValue(v);
+					internalValue = v;
 				}
 				else
 				{
 					throw new Exception();
 				}
 			}
+
+			var isActive_Current = Manager.NativeManager.IsItemActive();
+
+			if(isActive && !isActive_Current)
+			{
+				FixValue();
+			}
+
+			isActive = isActive_Current;
 		}
 	}
 }

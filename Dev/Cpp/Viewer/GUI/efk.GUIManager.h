@@ -250,6 +250,8 @@ namespace efk
 
 		bool IsKeyDown(int user_key_index);
 
+		bool IsItemActive();
+		bool IsItemFocused();
 		bool IsItemClicked(int mouse_button);
 		bool IsAnyWindowHovered();
 	};

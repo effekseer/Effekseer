@@ -19,6 +19,8 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterNew += OnRenew;
 			Core.OnAfterLoad += OnRenew;
 			Core.OnAfterSelectNode += OnAfterSelect;
+
+			Renew();
 		}
 
         override protected void UpdateInternal()

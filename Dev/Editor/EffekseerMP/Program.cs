@@ -109,7 +109,7 @@ namespace Effekseer
 
 			Images.Load(GUI.Manager.Native);
 
-            GUI.Manager.AddControl(new DebugMenu());
+            //GUI.Manager.AddControl(new DebugMenu());
 
 			//GUI.Manager.AddControl(new TestWindow());
 

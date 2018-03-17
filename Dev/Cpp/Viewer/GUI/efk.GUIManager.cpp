@@ -486,6 +486,16 @@ namespace efk
 		return ImGui::IsKeyDown(user_key_index);
 	}
 
+	bool GUIManager::IsItemActive()
+	{
+		return ImGui::IsItemActive();
+	}
+
+	bool GUIManager::IsItemFocused()
+	{
+		return ImGui::IsItemFocused();
+	}
+
 	bool GUIManager::IsItemClicked(int mouse_button)
 	{
 		return ImGui::IsItemClicked(mouse_button);

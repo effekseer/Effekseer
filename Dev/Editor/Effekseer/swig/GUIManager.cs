@@ -644,6 +644,16 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsItemActive() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemActive(swigCPtr);
+    return ret;
+  }
+
+  public bool IsItemFocused() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemFocused(swigCPtr);
+    return ret;
+  }
+
   public bool IsItemClicked(int mouse_button) {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsItemClicked(swigCPtr, mouse_button);
     return ret;

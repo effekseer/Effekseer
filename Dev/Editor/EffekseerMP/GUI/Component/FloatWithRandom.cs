@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class FloatWithRandom : IControl
+	class FloatWithRandom : IParameterControl
 	{
 		string id = "";
 
@@ -54,6 +54,14 @@ namespace Effekseer.GUI.Component
 		{
 			var o_ = o as Data.Value.FloatWithRandom;
 			Binding = o_;
+		}
+
+		public void FixValue()
+		{
+		}
+
+		public void OnDisposed()
+		{
 		}
 
 		public void Update()

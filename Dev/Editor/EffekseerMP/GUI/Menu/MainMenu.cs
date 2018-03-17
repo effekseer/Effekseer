@@ -258,21 +258,27 @@ namespace Effekseer.GUI.Menu
 					menu.Controls.Add(item);
 				}
 
-				// Not implemented.
-				/*
-				Action<string, Type, Image> setDockWindow = (s, t, icon) =>
+				Action<string, Type, swig.ImageResource> setDockWindow = (s, t, icon) =>
 				{
 					var item = new MenuItem();
-					item.Text = s;
-					item.Click += (object sender, EventArgs e) =>
+					item.Label = s;
+					item.Clicked += () =>
 					{
-						GUIManager.SelectOrShowWindow(t);
+						Manager.SelectOrShowWindow(t);
 					};
-					item.Image = icon;
-					menu.DropDownItems.Add(item);
+					Console.WriteLine("Not implemented.");
+					//item.Image = icon;
+					menu.Controls.Add(item);
 				};
 
-				setDockWindow(Properties.Resources.NodeTree, typeof(DockNodeTreeView), Properties.Resources.IconNodeTree);
+				setDockWindow(Resources.GetString("NodeTree"), typeof(Dock.NodeTreeView), null);
+				setDockWindow(Resources.GetString("BasicSettings"), typeof(Dock.CommonValues), null);
+				setDockWindow(Resources.GetString("Position"), typeof(Dock.LocationValues), null);
+				setDockWindow(Resources.GetString("ViewerControls"), typeof(Dock.ViewerController), null);
+				setDockWindow(Resources.GetString("Options"), typeof(Dock.Option), null);
+
+				/*
+				
 				setDockWindow(Properties.Resources.BasicSettings, typeof(DockNodeCommonValues), Properties.Resources.IconCommon);
 				setDockWindow(Properties.Resources.Position, typeof(DockNodeLocationValues), Properties.Resources.IconLocation);
 				setDockWindow(Properties.Resources.AttractionForces, typeof(DockNodeLocationAbsValues), Properties.Resources.IconLocationAbs);

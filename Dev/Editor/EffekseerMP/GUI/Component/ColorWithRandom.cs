@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class ColorWithRandom : IControl
+	class ColorWithRandom : IParameterControl
 	{
 		string id = "";
 
@@ -66,6 +66,14 @@ namespace Effekseer.GUI.Component
 		{
 			var o_ = o as Data.Value.ColorWithRandom;
 			Binding = o_;
+		}
+
+		public void FixValue()
+		{
+		}
+
+		public void OnDisposed()
+		{
 		}
 
 		public void Update()

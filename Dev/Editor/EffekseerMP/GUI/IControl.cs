@@ -15,4 +15,15 @@ namespace Effekseer.GUI
     {
         bool ShouldBeRemoved { get; }
     }
+
+	interface IParameterControl : IControl
+	{
+		bool EnableUndo { get; set; }
+
+		void SetBinding(object o);
+
+		void FixValue();
+
+		void OnDisposed();
+	}
 }

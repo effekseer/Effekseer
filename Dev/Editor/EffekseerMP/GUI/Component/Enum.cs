@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class Enum : IControl
+	class Enum : IParameterControl
 	{
 		string id = "";
 
@@ -107,6 +107,14 @@ namespace Effekseer.GUI.Component
 		{
 			var o_ = o as Data.Value.EnumBase;
 			Binding = o_;
+		}
+
+		public void FixValue()
+		{
+		}
+
+		public void OnDisposed()
+		{
 		}
 
 		public void Update()

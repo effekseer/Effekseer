@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-    class Boolean : IControl
+    class Boolean : IParameterControl
     {
         string id = "";
 
@@ -15,8 +15,6 @@ namespace Effekseer.GUI.Component
         Data.Value.Boolean binding = null;
 
         bool[] internalValue = new bool[] { false };
-
-        public bool ShouldBeRemoved { get; private set; } = false;
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -55,7 +53,15 @@ namespace Effekseer.GUI.Component
             Binding = o_;
         }
 
-        public void Update()
+		public void FixValue()
+		{
+		}
+
+		public void OnDisposed()
+		{
+		}
+
+		public void Update()
         {
             if (binding != null)
             {
