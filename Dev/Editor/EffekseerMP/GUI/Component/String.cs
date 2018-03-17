@@ -62,7 +62,7 @@ namespace Effekseer.GUI.Component
 				internalValue = binding.Value;
 			}
 
-			if(Manager.NativeManager.InputText(Label + id))
+			if(Manager.NativeManager.InputText(Label + id, internalValue))
 			{
 				var v = Manager.NativeManager.GetInputTextResult();
 

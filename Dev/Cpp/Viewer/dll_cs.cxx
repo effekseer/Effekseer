@@ -4209,15 +4209,17 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DragIntRang
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_InputText___(void * jarg1, char16_t * jarg2) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_InputText___(void * jarg1, char16_t * jarg2, char16_t * jarg3) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
+  char16_t *arg3 = (char16_t *) 0 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
-  result = (bool)(arg1)->InputText((char16_t const *)arg2);
+  arg3 = (char16_t *)jarg3; 
+  result = (bool)(arg1)->InputText((char16_t const *)arg2,(char16_t const *)arg3);
   jresult = result; 
   return jresult;
 }

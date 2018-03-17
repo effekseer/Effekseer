@@ -468,8 +468,8 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public bool InputText(string label) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_InputText(swigCPtr, label);
+  public bool InputText(string label, string text) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_InputText(swigCPtr, label, text);
     return ret;
   }
 

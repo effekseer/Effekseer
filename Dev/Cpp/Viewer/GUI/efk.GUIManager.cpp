@@ -1,4 +1,4 @@
-
+#define NOMINMAX
 #ifdef _WIN32
 #define GLEW_STATIC 1
 #include <GL/glew.h>
@@ -355,9 +355,13 @@ namespace efk
 
 	static std::u16string inputTextResult;
 
-	bool GUIManager::InputText(const char16_t* label)
+	bool GUIManager::InputText(const char16_t* label, const char16_t* text)
 	{
+		auto text_ = utf16_to_utf8(text);
+
 		char buf[260];
+		memcpy(buf, text_.data(), std::min((int32_t)text_.size(), 250));
+		buf[std::min((int32_t)text_.size(), 250)] = 0;
 
 		auto ret = ImGui::InputText(utf16_to_utf8(label).c_str(), buf, 260);
 	

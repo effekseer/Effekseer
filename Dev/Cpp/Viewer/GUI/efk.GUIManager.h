@@ -210,7 +210,7 @@ namespace efk
 		bool DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f", const char* display_format_max = NULL);
 
 		// Input
-		bool InputText(const char16_t* label);
+		bool InputText(const char16_t* label, const char16_t* text);
 		const char16_t* GetInputTextResult();
 
 		// Color

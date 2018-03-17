@@ -216,7 +216,7 @@ namespace Effekseer.GUI
 
 				if (!NativeManager.IsAnyWindowHovered())
 				{
-					Viewer.Slide(dx, dy);
+					Viewer.Slide(dx / 30.0f, dy / 30.0f);
 				}
 			}
 
