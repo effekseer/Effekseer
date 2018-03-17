@@ -130,7 +130,7 @@ namespace Effekseer.GUI.Component
 
 			var v = enums.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValues).FirstOrDefault();
 
-			if(Manager.NativeManager.BeginCombo(Label + id, names[v.Item2], swig.ComboFlags.None))
+			if(Manager.NativeManager.BeginCombo(id, names[v.Item2], swig.ComboFlags.None))
 			{
 				for(int i = 0; i < names.Count; i++)
 				{

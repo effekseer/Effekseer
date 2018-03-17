@@ -75,7 +75,7 @@ namespace Effekseer.GUI.Component
 				internalValue[2] = binding.Z.Value;
 			}
 
-			if (Manager.NativeManager.DragFloat3(Label + id, internalValue))
+			if (Manager.NativeManager.DragFloat3(id, internalValue))
 			{
 				if (EnableUndo)
 				{

@@ -228,6 +228,36 @@ namespace efk
 		ImGui::SameLine();
 	}
 
+	void GUIManager::Columns(int count, const char* id, bool border)
+	{
+		ImGui::Columns(count, id, border);
+	}
+
+	void GUIManager::NextColumn()
+	{
+		ImGui::NextColumn();
+	}
+
+	float GUIManager::GetColumnWidth(int column_index)
+	{
+		return ImGui::GetColumnWidth(column_index);
+	}
+
+	void GUIManager::SetColumnWidth(int column_index, float width)
+	{
+		ImGui::SetColumnWidth(column_index, width);
+	}
+
+	float GUIManager::GetColumnOffset(int column_index)
+	{
+		return ImGui::GetColumnOffset(column_index);
+	}
+
+	void GUIManager::SetColumnOffset(int column_index, float offset_x)
+	{
+		ImGui::SetColumnOffset(column_index, offset_x);
+	}
+
 	void GUIManager::Text(const char16_t* text)
 	{
 		ImGui::Text(utf16_to_utf8(text).c_str());

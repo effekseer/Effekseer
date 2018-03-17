@@ -16,7 +16,7 @@ namespace Effekseer.GUI.Component
 
 		float[] internalValue = new float[] { 0.0f };
 
-		public bool ShouldBeRemoved { get; private set; } = false;
+		bool isActive = false;
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -57,10 +57,19 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
+			if (EnableUndo)
+			{
+				binding.SetValue(internalValue[0]);
+			}
+			else
+			{
+				binding.SetValueDirectly(internalValue[0]);
+			}
 		}
 
 		public void OnDisposed()
 		{
+			FixValue();
 		}
 
 		public void Update()
@@ -70,17 +79,26 @@ namespace Effekseer.GUI.Component
 				internalValue[0] = binding.Value;
 			}
 
-			if (Manager.NativeManager.DragFloat(Label + id, internalValue))
+			if (Manager.NativeManager.DragFloat(id, internalValue))
 			{
 				if (EnableUndo)
 				{
-					binding.SetValue(internalValue[0]);
+					binding.SetValue(internalValue[0], isActive);
 				}
 				else
 				{
 					binding.SetValueDirectly(internalValue[0]);
 				}
 			}
+
+			var isActive_Current = Manager.NativeManager.IsItemActive();
+
+			if (isActive && !isActive_Current)
+			{
+				FixValue();
+			}
+
+			isActive = isActive_Current;
 		}
 	}
 }

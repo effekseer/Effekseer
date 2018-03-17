@@ -18,6 +18,8 @@ namespace Effekseer.GUI
 
 	interface IParameterControl : IControl
 	{
+		string Label { get; }
+
 		bool EnableUndo { get; set; }
 
 		void SetBinding(object o);

@@ -169,6 +169,7 @@ namespace efk
 
 		void SetNextWindowSize(float size_x, float size_y, Cond cond);
 
+		// Parameters stacks (current window)
 		void PushItemWidth(float item_width);
 
 		void PopItemWidth();
@@ -176,6 +177,16 @@ namespace efk
 		void Separator();
 
 		void SameLine();
+
+		// Column
+		void  Columns(int count = 1, const char* id = NULL, bool border = true);
+		void  NextColumn();
+
+		float GetColumnWidth(int column_index = -1);
+		void SetColumnWidth(int column_index, float width);
+
+		float GetColumnOffset(int column_index = -1);
+		void SetColumnOffset(int column_index, float offset_x);
 
 		void Text(const char16_t* text);
 		void TextWrapped(const char16_t* text);

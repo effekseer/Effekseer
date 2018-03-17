@@ -16,6 +16,8 @@ namespace Effekseer.GUI.Component
 
 		int[] internalValue = new int[] { 0 };
 
+		bool isActive = false;
+
 		public bool EnableUndo { get; set; } = true;
 
 		public Data.Value.Int Binding
@@ -55,10 +57,19 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
+			if (EnableUndo)
+			{
+				binding.SetValue(internalValue[0]);
+			}
+			else
+			{
+				binding.SetValueDirectly(internalValue[0]);
+			}
 		}
 
 		public void OnDisposed()
 		{
+			FixValue();
 		}
 
 		public void Update()
@@ -68,17 +79,26 @@ namespace Effekseer.GUI.Component
 				internalValue[0] = binding.Value;
 			}
 
-			if (Manager.NativeManager.DragInt(Label + id, internalValue))
+			if (Manager.NativeManager.DragInt(id, internalValue, binding.Step))
 			{
 				if (EnableUndo)
 				{
-					binding.SetValue(internalValue[0]);
+					binding.SetValue(internalValue[0], isActive);
 				}
 				else
 				{
 					binding.SetValueDirectly(internalValue[0]);
 				}
 			}
+
+			var isActive_Current = Manager.NativeManager.IsItemActive();
+
+			if (isActive && !isActive_Current)
+			{
+				FixValue();
+			}
+
+			isActive = isActive_Current;
 		}
 	}
 }

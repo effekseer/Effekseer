@@ -76,7 +76,7 @@ namespace Effekseer.GUI.Component
 				internalValue[3] = binding.A / 255.0f;
 			}
 
-			if (Manager.NativeManager.ColorEdit4(Label + id, internalValue, swig.ColorEditFlags.None))
+			if (Manager.NativeManager.ColorEdit4(id, internalValue, swig.ColorEditFlags.None))
 			{
 				if (EnableUndo)
 				{

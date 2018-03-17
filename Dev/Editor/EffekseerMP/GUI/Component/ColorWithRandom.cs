@@ -93,7 +93,7 @@ namespace Effekseer.GUI.Component
 
 			Console.WriteLine("Not implemented. (HSV, gauss, range)");
 
-			if (Manager.NativeManager.ColorEdit4(Label + id, internalValueMax, swig.ColorEditFlags.None))
+			if (Manager.NativeManager.ColorEdit4(id, internalValueMax, swig.ColorEditFlags.None))
 			{
 				binding.SetMax(
 					(int)(internalValueMax[0] * 255),
@@ -102,7 +102,7 @@ namespace Effekseer.GUI.Component
 					(int)(internalValueMax[3] * 255));
 			}
 
-			if (Manager.NativeManager.ColorEdit4(Label + id, internalValueMin, swig.ColorEditFlags.None))
+			if (Manager.NativeManager.ColorEdit4(id, internalValueMin, swig.ColorEditFlags.None))
 			{
 				binding.SetMin(
 					(int)(internalValueMin[0] * 255),

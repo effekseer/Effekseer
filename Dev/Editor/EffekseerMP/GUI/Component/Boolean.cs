@@ -68,7 +68,7 @@ namespace Effekseer.GUI.Component
                 internalValue[0] = binding.Value;
             }
 
-            if (Manager.NativeManager.Checkbox(Label + id, internalValue))
+            if (Manager.NativeManager.Checkbox(id, internalValue))
             {
                 if (EnableUndo)
                 {

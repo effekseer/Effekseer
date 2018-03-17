@@ -31,11 +31,24 @@ namespace Effekseer.GUI.Component
 		{
 			Controls.Lock();
 
+			Manager.NativeManager.Columns(2);
+
+			var columnWidth = Manager.NativeManager.GetColumnWidth(0);
+			Manager.NativeManager.SetColumnWidth(0, 200);
+
 			foreach (var c in Controls.Internal)
 			{
+				Manager.NativeManager.PushItemWidth(180);
 				c.Update();
+				Manager.NativeManager.PopItemWidth();
+
+				Manager.NativeManager.NextColumn();
+				Manager.NativeManager.Text(c.Label);
+				Manager.NativeManager.NextColumn();
 			}
 
+			Manager.NativeManager.Columns(1);
+			
 			Controls.Unlock();
 		}
 
@@ -408,8 +421,7 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.IntWithInifinite))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new IntWithInifinite();
+					gui = new IntWithInifinite(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.IntWithRandom))
 				{

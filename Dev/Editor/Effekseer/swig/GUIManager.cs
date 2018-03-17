@@ -127,6 +127,54 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SameLine(swigCPtr);
   }
 
+  public void Columns(int count, string id, bool border) {
+    EffekseerNativePINVOKE.GUIManager_Columns__SWIG_0(swigCPtr, count, id, border);
+  }
+
+  public void Columns(int count, string id) {
+    EffekseerNativePINVOKE.GUIManager_Columns__SWIG_1(swigCPtr, count, id);
+  }
+
+  public void Columns(int count) {
+    EffekseerNativePINVOKE.GUIManager_Columns__SWIG_2(swigCPtr, count);
+  }
+
+  public void Columns() {
+    EffekseerNativePINVOKE.GUIManager_Columns__SWIG_3(swigCPtr);
+  }
+
+  public void NextColumn() {
+    EffekseerNativePINVOKE.GUIManager_NextColumn(swigCPtr);
+  }
+
+  public float GetColumnWidth(int column_index) {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetColumnWidth__SWIG_0(swigCPtr, column_index);
+    return ret;
+  }
+
+  public float GetColumnWidth() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetColumnWidth__SWIG_1(swigCPtr);
+    return ret;
+  }
+
+  public void SetColumnWidth(int column_index, float width) {
+    EffekseerNativePINVOKE.GUIManager_SetColumnWidth(swigCPtr, column_index, width);
+  }
+
+  public float GetColumnOffset(int column_index) {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetColumnOffset__SWIG_0(swigCPtr, column_index);
+    return ret;
+  }
+
+  public float GetColumnOffset() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetColumnOffset__SWIG_1(swigCPtr);
+    return ret;
+  }
+
+  public void SetColumnOffset(int column_index, float offset_x) {
+    EffekseerNativePINVOKE.GUIManager_SetColumnOffset(swigCPtr, column_index, offset_x);
+  }
+
   public void Text(string text) {
     EffekseerNativePINVOKE.GUIManager_Text(swigCPtr, text);
   }
