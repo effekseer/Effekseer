@@ -202,6 +202,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool RadioButton(string label, bool active) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_RadioButton(swigCPtr, label, active);
+    return ret;
+  }
+
   public bool InputInt(string label, int[] v, int step, int step_fast) {
     bool ret = EffekseerNativePINVOKE.GUIManager_InputInt__SWIG_0(swigCPtr, label, v, step, step_fast);
     return ret;
@@ -516,6 +521,111 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool DragFloat1EfkEx(string label, float[] v, float v_speed, float v_min, float v_max, string display_format1, float power) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat1EfkEx__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format1, power);
+    return ret;
+  }
+
+  public bool DragFloat1EfkEx(string label, float[] v, float v_speed, float v_min, float v_max, string display_format1) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat1EfkEx__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max, display_format1);
+    return ret;
+  }
+
+  public bool DragFloat1EfkEx(string label, float[] v, float v_speed, float v_min, float v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat1EfkEx__SWIG_2(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragFloat1EfkEx(string label, float[] v, float v_speed, float v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat1EfkEx__SWIG_3(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragFloat1EfkEx(string label, float[] v, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat1EfkEx__SWIG_4(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragFloat1EfkEx(string label, float[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat1EfkEx__SWIG_5(swigCPtr, label, v);
+    return ret;
+  }
+
+  public bool DragFloat2EfkEx(string label, float[] v, float v_speed, float v_min, float v_max, string display_format1, string display_format2, float power) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2EfkEx__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format1, display_format2, power);
+    return ret;
+  }
+
+  public bool DragFloat2EfkEx(string label, float[] v, float v_speed, float v_min, float v_max, string display_format1, string display_format2) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2EfkEx__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max, display_format1, display_format2);
+    return ret;
+  }
+
+  public bool DragFloat2EfkEx(string label, float[] v, float v_speed, float v_min, float v_max, string display_format1) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2EfkEx__SWIG_2(swigCPtr, label, v, v_speed, v_min, v_max, display_format1);
+    return ret;
+  }
+
+  public bool DragFloat2EfkEx(string label, float[] v, float v_speed, float v_min, float v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2EfkEx__SWIG_3(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragFloat2EfkEx(string label, float[] v, float v_speed, float v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2EfkEx__SWIG_4(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragFloat2EfkEx(string label, float[] v, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2EfkEx__SWIG_5(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragFloat2EfkEx(string label, float[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat2EfkEx__SWIG_6(swigCPtr, label, v);
+    return ret;
+  }
+
+  public bool DragFloat3EfkEx(string label, float[] v, float v_speed, float v_min, float v_max, string display_format1, string display_format2, string display_format3, float power) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3EfkEx__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format1, display_format2, display_format3, power);
+    return ret;
+  }
+
+  public bool DragFloat3EfkEx(string label, float[] v, float v_speed, float v_min, float v_max, string display_format1, string display_format2, string display_format3) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3EfkEx__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max, display_format1, display_format2, display_format3);
+    return ret;
+  }
+
+  public bool DragFloat3EfkEx(string label, float[] v, float v_speed, float v_min, float v_max, string display_format1, string display_format2) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3EfkEx__SWIG_2(swigCPtr, label, v, v_speed, v_min, v_max, display_format1, display_format2);
+    return ret;
+  }
+
+  public bool DragFloat3EfkEx(string label, float[] v, float v_speed, float v_min, float v_max, string display_format1) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3EfkEx__SWIG_3(swigCPtr, label, v, v_speed, v_min, v_max, display_format1);
+    return ret;
+  }
+
+  public bool DragFloat3EfkEx(string label, float[] v, float v_speed, float v_min, float v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3EfkEx__SWIG_4(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragFloat3EfkEx(string label, float[] v, float v_speed, float v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3EfkEx__SWIG_5(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragFloat3EfkEx(string label, float[] v, float v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3EfkEx__SWIG_6(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragFloat3EfkEx(string label, float[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragFloat3EfkEx__SWIG_7(swigCPtr, label, v);
+    return ret;
+  }
+
   public bool InputText(string label, string text) {
     bool ret = EffekseerNativePINVOKE.GUIManager_InputText(swigCPtr, label, text);
     return ret;
@@ -634,6 +744,16 @@ public class GUIManager : global::System.IDisposable {
 
   public void OpenPopup(string str_id) {
     EffekseerNativePINVOKE.GUIManager_OpenPopup(swigCPtr, str_id);
+  }
+
+  public bool BeginPopup(string str_id, WindowFlags extra_flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginPopup__SWIG_0(swigCPtr, str_id, (int)extra_flags);
+    return ret;
+  }
+
+  public bool BeginPopup(string str_id) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginPopup__SWIG_1(swigCPtr, str_id);
+    return ret;
   }
 
   public bool BeginPopupModal(string name, bool[] p_open, WindowFlags extra_flags) {

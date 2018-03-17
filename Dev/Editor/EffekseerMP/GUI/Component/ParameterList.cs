@@ -564,11 +564,10 @@ namespace Effekseer.GUI.Component
 				
 				ControlDynamic = Control;
 
-				Console.WriteLine("Not implemented.");
-				//if (Control != null && !(Control is Button))
-				//{
-				//	ControlDynamic.EnableUndo = EnableUndo;
-				//}
+				if (Control != null)
+				{
+					Control.EnableUndo = EnableUndo;
+				}
 			}
 
 			public object GetValue(object obj)

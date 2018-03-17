@@ -40,6 +40,44 @@ namespace efk
 #endif
 	}
 
+	bool DragFloatN(const char* label, float* v, int components, float v_speed, float v_min, float v_max, 
+		const char* display_format1, 
+		const char* display_format2,
+		const char* display_format3,
+		float power)
+	{
+		ImGuiWindow* window = ImGui::GetCurrentWindow();
+		if (window->SkipItems)
+			return false;
+
+		ImGuiContext& g = *GImGui;
+		bool value_changed = false;
+		ImGui::BeginGroup();
+		ImGui::PushID(label);
+		ImGui::PushMultiItemsWidths(components);
+
+		const char* display_formats[] = {
+			display_format1,
+			display_format2,
+			display_format3
+		};
+
+		for (int i = 0; i < components; i++)
+		{
+			ImGui::PushID(i);
+			value_changed |= ImGui::DragFloat("##v", &v[i], v_speed, v_min, v_max, display_formats[i], power);
+			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
+			ImGui::PopID();
+			ImGui::PopItemWidth();
+		}
+		ImGui::PopID();
+
+		ImGui::TextUnformatted(label, ImGui::FindRenderedTextEnd(label));
+		ImGui::EndGroup();
+
+		return value_changed;
+	}
+
 	GUIManager::GUIManager()
 	{}
 
@@ -310,6 +348,11 @@ namespace efk
 		return ImGui::Checkbox(utf16_to_utf8(label).c_str(), v);
 	}
 
+	bool GUIManager::RadioButton(const char16_t* label, bool active)
+	{
+		return ImGui::RadioButton(utf16_to_utf8(label).c_str(), active);
+	}
+
 	bool GUIManager::InputInt(const char16_t* label, int* v, int step, int step_fast)
 	{
 		return ImGui::InputInt(utf16_to_utf8(label).c_str(), v, step, step_fast);
@@ -381,6 +424,36 @@ namespace efk
 	bool GUIManager::DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed, int v_min, int v_max, const char* display_format, const char* display_format_max)
 	{
 		return ImGui::DragIntRange2(utf16_to_utf8(label).c_str(), v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max);
+	}
+
+	bool GUIManager::DragFloat1EfkEx(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char16_t* display_format1, float power)
+	{
+		return DragFloatN(
+			utf16_to_utf8(label).c_str(), v, 1, v_speed, v_min, v_max, 
+			utf16_to_utf8(display_format1).c_str(), 
+			nullptr, 
+			nullptr,
+			power);
+	}
+
+	bool GUIManager::DragFloat2EfkEx(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char16_t* display_format1, const char16_t* display_format2, float power)
+	{
+		return DragFloatN(
+			utf16_to_utf8(label).c_str(), v, 2, v_speed, v_min, v_max,
+			utf16_to_utf8(display_format1).c_str(),
+			utf16_to_utf8(display_format2).c_str(),
+			nullptr,
+			power);
+	}
+
+	bool GUIManager::DragFloat3EfkEx(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char16_t* display_format1, const char16_t* display_format2, const char16_t* display_format3, float power)
+	{
+		return DragFloatN(
+			utf16_to_utf8(label).c_str(), v, 3, v_speed, v_min, v_max,
+			utf16_to_utf8(display_format1).c_str(),
+			utf16_to_utf8(display_format2).c_str(),
+			utf16_to_utf8(display_format3).c_str(),
+			power);
 	}
 
 	static std::u16string inputTextResult;
@@ -473,6 +546,11 @@ namespace efk
 	void GUIManager::OpenPopup(const char* str_id)
 	{
 		ImGui::OpenPopup(str_id);
+	}
+
+	bool GUIManager::BeginPopup(const char* str_id, WindowFlags extra_flags)
+	{
+		return ImGui::BeginPopup(str_id, (int)extra_flags);
 	}
 
 	bool GUIManager::BeginPopupModal(const char16_t* name, bool* p_open, WindowFlags extra_flags)

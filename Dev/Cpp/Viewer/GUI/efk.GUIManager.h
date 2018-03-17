@@ -5,6 +5,8 @@
 #include "efk.ImageResource.h"
 
 #include "../3rdParty/imgui/imgui.h"
+#include "../3rdParty/imgui/imgui_internal.h"
+
 #include "../3rdParty/imgui_glfw_gl3/imgui_impl_glfw_gl3.h"
 #include "../3rdParty/imgui_addon/imguidock/imguidock.h"
 
@@ -200,6 +202,8 @@ namespace efk
 
 		bool Checkbox(const char16_t* label, bool* v);
 
+		bool RadioButton(const char16_t* label, bool active);
+
 		bool InputInt(const char16_t* label, int* v, int step = 1, int step_fast = 100);
 
 		bool SliderInt(const char16_t* label, int* v, int v_min, int v_max);
@@ -219,6 +223,11 @@ namespace efk
 		bool DragInt3(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f");
 		bool DragInt4(const char16_t* label, int* v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f");
 		bool DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char* display_format = "%.0f", const char* display_format_max = NULL);
+
+		// Drags(Ex)
+		bool DragFloat1EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char16_t* display_format1 = u"%.3f", float power = 1.0f);
+		bool DragFloat2EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char16_t* display_format1 = u"%.3f", const char16_t* display_format2 = u"%.3f", float power = 1.0f);
+		bool DragFloat3EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char16_t* display_format1 = u"%.3f", const char16_t* display_format2 = u"%.3f", const char16_t* display_format3 = u"%.3f", float power = 1.0f);
 
 		// Input
 		bool InputText(const char16_t* label, const char16_t* text);
@@ -249,6 +258,7 @@ namespace efk
 
 		// Popups
 		void OpenPopup(const char* str_id);
+		bool BeginPopup(const char* str_id, WindowFlags extra_flags = WindowFlags::None);
 		bool BeginPopupModal(const char16_t* name, bool* p_open = NULL, WindowFlags extra_flags = WindowFlags::None);
 		bool BeginPopupContextItem(const char* str_id = NULL, int mouse_button = 1);
 		void EndPopup();
