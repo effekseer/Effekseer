@@ -274,32 +274,24 @@ namespace Effekseer.GUI.Menu
 				setDockWindow(Resources.GetString("NodeTree"), typeof(Dock.NodeTreeView), null);
 				setDockWindow(Resources.GetString("BasicSettings"), typeof(Dock.CommonValues), null);
 				setDockWindow(Resources.GetString("Position"), typeof(Dock.LocationValues), null);
+				setDockWindow(Resources.GetString("AttractionForces"), typeof(Dock.LocationAbsValues), null);
+				setDockWindow(Resources.GetString("SpawningMethod"), typeof(Dock.GenerationLocationValues), null);
+				setDockWindow(Resources.GetString("Rotation"), typeof(Dock.RotationValues), null);
+				setDockWindow(Resources.GetString("Scale"), typeof(Dock.ScaleValues), null);
+				setDockWindow(Resources.GetString("Depth"), typeof(Dock.DepthValues), null);
+				setDockWindow(Resources.GetString("BasicRenderSettings"), typeof(Dock.RendererCommonValues), null);
+				setDockWindow(Resources.GetString("RenderSettings"), typeof(Dock.RendererValues), null);
+				setDockWindow(Resources.GetString("Sound"), typeof(Dock.SoundValues), null);
+				//setDockWindow(Properties.Resources.FCurves, typeof(DockFCurves), Properties.Resources.IconFCurve);
 				setDockWindow(Resources.GetString("ViewerControls"), typeof(Dock.ViewerController), null);
+				//setDockWindow(Properties.Resources.CameraSettings, typeof(DockViewPoint), Properties.Resources.IconViewPoint);
+				//setDockWindow(Properties.Resources.Recorder, typeof(DockRecorder), Properties.Resources.IconRecorder);
 				setDockWindow(Resources.GetString("Options"), typeof(Dock.Option), null);
-
-				/*
-				
-				setDockWindow(Properties.Resources.BasicSettings, typeof(DockNodeCommonValues), Properties.Resources.IconCommon);
-				setDockWindow(Properties.Resources.Position, typeof(DockNodeLocationValues), Properties.Resources.IconLocation);
-				setDockWindow(Properties.Resources.AttractionForces, typeof(DockNodeLocationAbsValues), Properties.Resources.IconLocationAbs);
-				setDockWindow(Properties.Resources.SpawningMethod, typeof(DockNodeGenerationLocationValues), Properties.Resources.IconGenerationLocation);
-				setDockWindow(Properties.Resources.Rotation, typeof(DockNodeRotationValues), Properties.Resources.IconRotation);
-				setDockWindow(Properties.Resources.Scale, typeof(DockNodeScaleValues), Properties.Resources.IconScale);
-				setDockWindow(Properties.Resources.Scale, typeof(DockNodeDepthValues), Properties.Resources.IconScale);
-				setDockWindow(Properties.Resources.BasicRenderSettings, typeof(DockNodeRendererCommonValues), Properties.Resources.IconRendererCommon);
-				setDockWindow(Properties.Resources.RenderSettings, typeof(DockNodeRendererValues), Properties.Resources.IconRenderer);
-				setDockWindow(Properties.Resources.Sound, typeof(DockNodeSoundValues), Properties.Resources.IconSound);
-				setDockWindow(Properties.Resources.FCurves, typeof(DockFCurves), Properties.Resources.IconFCurve);
-				setDockWindow(Properties.Resources.ViewerControls, typeof(DockViewerController), Properties.Resources.IconViewer);
-				setDockWindow(Properties.Resources.CameraSettings, typeof(DockViewPoint), Properties.Resources.IconViewPoint);
-				setDockWindow(Properties.Resources.Recorder, typeof(DockRecorder), Properties.Resources.IconRecorder);
-				setDockWindow(Properties.Resources.Options, typeof(DockOption), Properties.Resources.IconOption);
-				setDockWindow(Properties.Resources.Options, typeof(DockGlobal), Properties.Resources.IconOption);
-				setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), Properties.Resources.IconBehavior);
-				setDockWindow(Properties.Resources.Culling, typeof(DockCulling), Properties.Resources.IconCulling);
-				setDockWindow(Properties.Resources.Network, typeof(DockNetwork), Properties.Resources.IconNetwork);
-				setDockWindow(Properties.Resources.FileViewer, typeof(DockFileViewer), Properties.Resources.IconFileViewer);
-				*/
+				//setDockWindow(Properties.Resources.Options, typeof(DockGlobal), Properties.Resources.IconOption);
+				//setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), Properties.Resources.IconBehavior);
+				//setDockWindow(Properties.Resources.Culling, typeof(DockCulling), Properties.Resources.IconCulling);
+				//setDockWindow(Properties.Resources.Network, typeof(DockNetwork), Properties.Resources.IconNetwork);
+				//setDockWindow(Properties.Resources.FileViewer, typeof(DockFileViewer), Properties.Resources.IconFileViewer);
 
 				this.Controls.Add(menu);
 			}

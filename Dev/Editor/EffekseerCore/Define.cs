@@ -112,7 +112,7 @@ namespace Effekseer
 				return keyToStrings[name];
 			}
 
-            if (resources == null) return String.Empty;
+            if (resources == null) return name;
 
             try
             {
@@ -121,7 +121,7 @@ namespace Effekseer
             }
             catch {}
             
-            return string.Empty;
+            return name;
         }
     }
 

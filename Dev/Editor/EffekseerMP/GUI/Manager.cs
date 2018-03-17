@@ -45,6 +45,15 @@ namespace Effekseer.GUI
 			typeof(Dock.ViewerController),
 			typeof(Dock.CommonValues),
 			typeof(Dock.LocationValues),
+			typeof(Dock.LocationAbsValues),
+			typeof(Dock.GenerationLocationValues),
+			typeof(Dock.RotationValues),
+			typeof(Dock.ScaleValues),
+			typeof(Dock.DepthValues),
+			typeof(Dock.RendererCommonValues),
+			typeof(Dock.RendererValues),
+			typeof(Dock.SoundValues),
+
 			typeof(Dock.Option),
 		};
 
