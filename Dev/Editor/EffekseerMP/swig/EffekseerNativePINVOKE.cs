@@ -1002,6 +1002,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TreeNode___")]
   public static extern bool GUIManager_TreeNode(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TreeNodeEx__SWIG_0___")]
+  public static extern bool GUIManager_TreeNodeEx__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, int jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TreeNodeEx__SWIG_1___")]
+  public static extern bool GUIManager_TreeNodeEx__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_TreePop___")]
   public static extern void GUIManager_TreePop(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -1091,6 +1097,9 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsKeyDown___")]
   public static extern bool GUIManager_IsKeyDown(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsItemClicked___")]
+  public static extern bool GUIManager_IsItemClicked(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsAnyWindowHovered___")]
   public static extern bool GUIManager_IsAnyWindowHovered(global::System.Runtime.InteropServices.HandleRef jarg1);

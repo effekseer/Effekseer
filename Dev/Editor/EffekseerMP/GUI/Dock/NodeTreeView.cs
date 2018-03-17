@@ -179,10 +179,21 @@ namespace Effekseer.GUI.Dock
 
         public void Update()
         {
-            if (Manager.NativeManager.TreeNode(node.Name + id))
+			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick;
+
+			if(Core.SelectedNode == this.node)
+			{
+				flag = flag | swig.TreeNodeFlags.Selected;
+			}
+
+			if(this.node.Children.Count == 0)
+			{
+				flag = flag | swig.TreeNodeFlags.Leaf;
+			}
+
+			if (Manager.NativeManager.TreeNodeEx(node.Name + id, flag))
             {
-				bool isSelected = this.node == Core.SelectedNode;
-				if(Manager.NativeManager.Selectable(node.Name, isSelected))
+				if(Manager.NativeManager.IsItemClicked(0))
 				{
 					Core.SelectedNode = this.node;
 				}

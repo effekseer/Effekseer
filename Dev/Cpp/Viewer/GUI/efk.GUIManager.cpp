@@ -381,6 +381,11 @@ namespace efk
 		return ImGui::TreeNode(utf16_to_utf8(label).c_str());
 	}
 
+	bool GUIManager::TreeNodeEx(const char16_t* label, TreeNodeFlags flags)
+	{
+		return ImGui::TreeNodeEx(utf16_to_utf8(label).c_str(), (int)flags);
+	}
+
 	void GUIManager::TreePop()
 	{
 		ImGui::TreePop();
@@ -388,7 +393,7 @@ namespace efk
 
 	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags)
 	{
-		return ImGui::Selectable(utf16_to_utf8(label).c_str(), selected, flags);
+		return ImGui::Selectable(utf16_to_utf8(label).c_str(), selected, (int)flags);
 	}
 
 	bool GUIManager::BeginMainMenuBar()
@@ -475,6 +480,11 @@ namespace efk
 	bool GUIManager::IsKeyDown(int user_key_index)
 	{
 		return ImGui::IsKeyDown(user_key_index);
+	}
+
+	bool GUIManager::IsItemClicked(int mouse_button)
+	{
+		return ImGui::IsItemClicked(mouse_button);
 	}
 
 	bool GUIManager::IsAnyWindowHovered()

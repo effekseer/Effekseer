@@ -493,6 +493,16 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool TreeNodeEx(string label, TreeNodeFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_0(swigCPtr, label, (int)flags);
+    return ret;
+  }
+
+  public bool TreeNodeEx(string label) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_1(swigCPtr, label);
+    return ret;
+  }
+
   public void TreePop() {
     EffekseerNativePINVOKE.GUIManager_TreePop(swigCPtr);
   }
@@ -631,6 +641,11 @@ public class GUIManager : global::System.IDisposable {
 
   public bool IsKeyDown(int user_key_index) {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsKeyDown(swigCPtr, user_key_index);
+    return ret;
+  }
+
+  public bool IsItemClicked(int mouse_button) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemClicked(swigCPtr, mouse_button);
     return ret;
   }
 

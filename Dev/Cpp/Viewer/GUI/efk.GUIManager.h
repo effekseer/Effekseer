@@ -81,12 +81,28 @@ namespace efk
 		HeightLargest = 1 << 4,   // As many fitting items as possible
 	};
 
-	enum SelectableFlags : int32_t
+	enum class SelectableFlags : int32_t
 	{
 		None = 0,
 		DontClosePopups = 1 << 0,   // Clicking this don't close parent popup window
 		SpanAllColumns = 1 << 1,   // Selectable frame can span all columns (text will still fit in current column)
 		AllowDoubleClick = 1 << 2    // Generate press events on double clicks too
+	};
+
+	enum class TreeNodeFlags : int32_t
+	{
+		None = 0,
+		Selected = 1 << 0,   // Draw as selected
+		Framed = 1 << 1,   // Full colored frame (e.g. for CollapsingHeader)
+		AllowItemOverlap = 1 << 2,   // Hit testing to allow subsequent widgets to overlap this one
+		NoTreePushOnOpen = 1 << 3,   // Don't do a TreePush() when open (e.g. for CollapsingHeader) = no extra indent nor pushing on ID stack
+		NoAutoOpenOnLog = 1 << 4,   // Don't automatically and temporarily open node when Logging is active (by default logging will automatically open tree nodes)
+		DefaultOpen = 1 << 5,   // Default node to be open
+		OpenOnDoubleClick = 1 << 6,   // Need double-click to open node
+		OpenOnArrow = 1 << 7,   // Only open when clicking on the arrow part. If ImGuiTreeNodeFlags_OpenOnDoubleClick is also set, single-click arrow or double-click all box to open.
+		Leaf = 1 << 8,   // No collapsing, no arrow (use as a convenience for leaf nodes). 
+		Bullet = 1 << 9,   // Display a bullet instead of arrow
+		FramePadding = 1 << 10,  // Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height. Equivalent to calling AlignTextToFramePadding().
 	};
 
 	class GUIManagerCallback
@@ -202,6 +218,9 @@ namespace efk
 
 		// Tree
 		bool TreeNode(const char16_t* label);
+
+		bool TreeNodeEx(const char16_t* label, TreeNodeFlags flags = TreeNodeFlags::None);
+
 		void TreePop();
 
 		// Widgets: Selectable / Lists
@@ -231,6 +250,7 @@ namespace efk
 
 		bool IsKeyDown(int user_key_index);
 
+		bool IsItemClicked(int mouse_button);
 		bool IsAnyWindowHovered();
 	};
 }

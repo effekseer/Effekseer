@@ -4287,6 +4287,36 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreeNode___
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreeNodeEx__SWIG_0___(void * jarg1, char16_t * jarg2, int jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  efk::TreeNodeFlags arg3 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (efk::TreeNodeFlags)jarg3; 
+  result = (bool)(arg1)->TreeNodeEx((char16_t const *)arg2,arg3);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreeNodeEx__SWIG_1___(void * jarg1, char16_t * jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (bool)(arg1)->TreeNodeEx((char16_t const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreePop___(void * jarg1) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   
@@ -4694,6 +4724,20 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsKeyDown__
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (int)jarg2; 
   result = (bool)(arg1)->IsKeyDown(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsItemClicked___(void * jarg1, int jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  result = (bool)(arg1)->IsItemClicked(arg2);
   jresult = result; 
   return jresult;
 }
