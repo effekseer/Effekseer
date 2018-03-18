@@ -284,13 +284,13 @@ namespace Effekseer.GUI.Menu
 				setDockWindow(Resources.GetString("Sound"), typeof(Dock.SoundValues), null);
 				//setDockWindow(Properties.Resources.FCurves, typeof(DockFCurves), Properties.Resources.IconFCurve);
 				setDockWindow(Resources.GetString("ViewerControls"), typeof(Dock.ViewerController), null);
-				//setDockWindow(Properties.Resources.CameraSettings, typeof(DockViewPoint), Properties.Resources.IconViewPoint);
+				setDockWindow(Resources.GetString("CameraSettings"), typeof(Dock.ViewPoint), null);
 				//setDockWindow(Properties.Resources.Recorder, typeof(DockRecorder), Properties.Resources.IconRecorder);
 				setDockWindow(Resources.GetString("Options"), typeof(Dock.Option), null);
 				//setDockWindow(Properties.Resources.Options, typeof(DockGlobal), Properties.Resources.IconOption);
 				//setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), Properties.Resources.IconBehavior);
 				//setDockWindow(Properties.Resources.Culling, typeof(DockCulling), Properties.Resources.IconCulling);
-				//setDockWindow(Properties.Resources.Network, typeof(DockNetwork), Properties.Resources.IconNetwork);
+				setDockWindow(Resources.GetString("Network"), typeof(Dock.Network), null);
 				//setDockWindow(Properties.Resources.FileViewer, typeof(DockFileViewer), Properties.Resources.IconFileViewer);
 
 				this.Controls.Add(menu);

@@ -54,7 +54,12 @@ namespace Effekseer.GUI
 			typeof(Dock.RendererValues),
 			typeof(Dock.SoundValues),
 
+			typeof(Dock.ViewPoint),
+
 			typeof(Dock.Option),
+
+			typeof(Dock.Network),
+
 		};
 
 		static Dock.DockPanel[] panels = new Dock.DockPanel[0];

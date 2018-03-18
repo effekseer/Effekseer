@@ -70,6 +70,7 @@
     <Compile Include="GUI\Dock\GenerationLocationValues.cs" />
     <Compile Include="GUI\Dock\LocationAbsValues.cs" />
     <Compile Include="GUI\Dock\LocationValues.cs" />
+    <Compile Include="GUI\Dock\Network.cs" />
     <Compile Include="GUI\Dock\NodeTreeView.cs" />
     <Compile Include="GUI\Dock\Option.cs" />
     <Compile Include="GUI\Dock\RendererCommonValues.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="GUI\Dock\ScaleValues.cs" />
     <Compile Include="GUI\Dock\SoundValues.cs" />
     <Compile Include="GUI\Dock\ViewerController.cs" />
+    <Compile Include="GUI\Dock\ViewPoint.cs" />
     <Compile Include="GUI\IControl.cs" />
     <Compile Include="GUI\Manager.cs" />
     <Compile Include="GUI\Menu\MainMenu.cs" />
