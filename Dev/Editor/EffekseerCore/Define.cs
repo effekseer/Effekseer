@@ -71,13 +71,14 @@ namespace Effekseer
     // カルチャーによってローカライズ済の文字列が得られます。
     public static class Resources
     {
+		/* this implementation causes errors in mono
 		[DataContract]
 		class Data
 		{
 			[DataMember]
 			public Dictionary<string, string> kv;
 		}
-
+		*/
 
 		static ResourceManager resources;
 
@@ -90,8 +91,22 @@ namespace Effekseer
 
 		public static void LoadLanguageFile(string path)
 		{
-			var bytes = System.IO.File.ReadAllBytes(path);
+			var lines = System.IO.File.ReadAllLines(path);
 
+			foreach(var line in lines)
+			{
+				var strs = line.Split(',');
+				if (strs.Length < 2) continue;
+
+				var key = strs[0];
+				var value = string.Join(",", strs.Skip(1));
+
+				keyToStrings.Add(key, value);
+			}
+
+			/* this implementation causes errors in mono
+			var bytes = System.IO.File.ReadAllBytes(path);
+		
 			var settings = new DataContractJsonSerializerSettings();
 			settings.UseSimpleDictionaryFormat = true;
 			var serializer = new DataContractJsonSerializer(typeof(Data), settings);
@@ -103,9 +118,10 @@ namespace Effekseer
 					keyToStrings = data.kv;
 				}
 			}
+			*/
 		}
 
-        public static string GetString(string name)
+		public static string GetString(string name)
         {
 			if(keyToStrings.ContainsKey(name))
 			{

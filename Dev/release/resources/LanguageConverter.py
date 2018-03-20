@@ -26,4 +26,11 @@ json.dump(values_en,f_en, ensure_ascii=False, indent=2)
 
 f_ja = codecs.open('lang_ja.json','w', "utf-8")
 json.dump(values_ja,f_ja, ensure_ascii=False, indent=2)
-f_ja.close()
+
+ftxt_en = codecs.open('lang_en.txt','w', "utf-8")
+for k,v in kv_en.items():
+    ftxt_en.write(str(k) + ',' + str(v) + '\r\n')
+
+ftxt_ja = codecs.open('lang_ja.txt','w', "utf-8")
+for k,v in kv_ja.items():
+    ftxt_ja.write(str(k) + ',' + str(v) + '\r\n')
