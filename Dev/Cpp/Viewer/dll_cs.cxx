@@ -2479,6 +2479,18 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetTitle___(void * 
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetSize___(void * jarg1, int jarg2, int jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int32_t arg2 ;
+  int32_t arg3 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  arg3 = (int32_t)jarg3; 
+  (arg1)->SetSize(arg2,arg3);
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Terminate___(void * jarg1) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   

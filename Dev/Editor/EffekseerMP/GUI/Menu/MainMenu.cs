@@ -285,7 +285,7 @@ namespace Effekseer.GUI.Menu
 				//setDockWindow(Properties.Resources.FCurves, typeof(DockFCurves), Properties.Resources.IconFCurve);
 				setDockWindow(Resources.GetString("ViewerControls"), typeof(Dock.ViewerController), null);
 				setDockWindow(Resources.GetString("CameraSettings"), typeof(Dock.ViewPoint), null);
-				//setDockWindow(Properties.Resources.Recorder, typeof(DockRecorder), Properties.Resources.IconRecorder);
+				setDockWindow(Resources.GetString("Recorder"), typeof(Dock.Recorder), null);
 				setDockWindow(Resources.GetString("Options"), typeof(Dock.Option), null);
 				//setDockWindow(Properties.Resources.Options, typeof(DockGlobal), Properties.Resources.IconOption);
 				//setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), Properties.Resources.IconBehavior);

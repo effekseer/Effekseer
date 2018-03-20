@@ -55,6 +55,7 @@ namespace Effekseer.GUI
 			typeof(Dock.SoundValues),
 
 			typeof(Dock.ViewPoint),
+			typeof(Dock.Recorder),
 
 			typeof(Dock.Option),
 

@@ -46,6 +46,7 @@ IndexBuffer* IndexBuffer::Create( RendererImplemented* renderer, int maxCount, b
 void IndexBuffer::OnLostDevice()
 {
 	GLExt::glDeleteBuffers(1, &m_buffer);
+	m_buffer = 0;
 }
 
 //-----------------------------------------------------------------------------------
@@ -53,6 +54,7 @@ void IndexBuffer::OnLostDevice()
 //-----------------------------------------------------------------------------------
 void IndexBuffer::OnResetDevice()
 {
+	if (IsValid()) return;
 	GLuint ib;
 	GLExt::glGenBuffers(1, &ib);
 	m_buffer = ib;
@@ -81,6 +83,12 @@ void IndexBuffer::Unlock()
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	m_isLock = false;
+}
+
+
+bool IndexBuffer::IsValid()
+{
+	return m_buffer != 0;
 }
 
 //-----------------------------------------------------------------------------------

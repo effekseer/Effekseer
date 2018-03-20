@@ -52,6 +52,7 @@ VertexBuffer* VertexBuffer::Create( RendererImplemented* renderer, int size, boo
 void VertexBuffer::OnLostDevice()
 {
 	GLExt::glDeleteBuffers(1, &m_buffer);
+	m_buffer = 0;
 }
 
 //-----------------------------------------------------------------------------------
@@ -59,6 +60,8 @@ void VertexBuffer::OnLostDevice()
 //-----------------------------------------------------------------------------------
 void VertexBuffer::OnResetDevice()
 {
+	if (IsValid()) return;
+
 	GLExt::glGenBuffers(1, &m_buffer);
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
 	GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
@@ -134,6 +137,11 @@ void VertexBuffer::Unlock()
 	
 	m_isLock = false;
 	m_ringBufferLock = false;
+}
+
+bool VertexBuffer::IsValid()
+{
+	return m_buffer != 0;
 }
 
 //-----------------------------------------------------------------------------------

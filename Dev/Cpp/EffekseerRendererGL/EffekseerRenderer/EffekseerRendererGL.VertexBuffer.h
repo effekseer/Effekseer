@@ -45,6 +45,8 @@ public:
 	bool TryRingBufferLock(int32_t size, int32_t& offset, void*& data);
 
 	void Unlock();
+
+	bool IsValid();
 };
 
 //-----------------------------------------------------------------------------------

@@ -159,6 +159,11 @@ namespace efk
 		window->SetTitle(title);
 	}
 
+	void GUIManager::SetSize(int32_t width, int32_t height)
+	{
+		window->SetSize(width, height);
+	}
+
 	void GUIManager::Terminate()
 	{
 		ImGui_ImplGlfwGL3_Shutdown();

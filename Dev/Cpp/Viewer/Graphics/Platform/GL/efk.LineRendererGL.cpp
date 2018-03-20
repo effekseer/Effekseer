@@ -159,11 +159,14 @@ static const char g_sprite_fs_no_texture_src[] =
 
 	void LineRendererGL::Render()
 	{
+		GLCheckError();
+
 		if (vertexies.size() == 0) return;
 
 		renderer->GetVertexBuffer()->Lock();
 
 		auto vs = (EffekseerRendererGL::Vertex*)renderer->GetVertexBuffer()->GetBufferDirect(sizeof(EffekseerRendererGL::Vertex) * vertexies.size());
+		if (vs == nullptr) return;
 
 		memcpy(vs, vertexies.data(), sizeof(EffekseerRendererGL::Vertex) * vertexies.size());
 

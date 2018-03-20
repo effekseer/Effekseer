@@ -39,6 +39,8 @@ public:	// デバイス復旧用
 public:
 	void Lock() override;
 	void Unlock() override;
+
+	bool IsValid();
 };
 
 //-----------------------------------------------------------------------------------

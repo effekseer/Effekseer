@@ -143,6 +143,8 @@ namespace efk
 
 		void SetTitle(const char16_t* title);
 
+		void SetSize(int32_t width, int32_t height);
+
 		void Terminate();
 
 		bool DoEvents();

@@ -52,6 +52,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetTitle(swigCPtr, title);
   }
 
+  public void SetSize(int width, int height) {
+    EffekseerNativePINVOKE.GUIManager_SetSize(swigCPtr, width, height);
+  }
+
   public void Terminate() {
     EffekseerNativePINVOKE.GUIManager_Terminate(swigCPtr);
   }

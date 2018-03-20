@@ -67,6 +67,20 @@ private:
 		bool		normalized;
 	};
 
+	struct ShaderAttribInfoInternal
+	{
+		std::string	name;
+		GLenum		type;
+		uint16_t	count;
+		uint16_t	offset;
+		bool		normalized;
+	};
+
+	struct ShaderUniformInfoInternal
+	{
+		std::string	name;
+	};
+
 	struct ConstantLayout
 	{
 		eConstantType	Type;
@@ -93,6 +107,9 @@ private:
 	std::vector<char>	m_vsSrc;
 	std::vector<char>	m_psSrc;
 	std::string				m_name;
+
+	std::vector<ShaderAttribInfoInternal>	attribs;
+	std::vector<ShaderUniformInfoInternal>	uniforms;
 
 	static bool CompileShader(
 		RendererImplemented* renderer,
@@ -161,6 +178,8 @@ public:
 	void SetTextureSlot(int32_t index, GLuint value);
 	GLuint GetTextureSlot(int32_t index);
 	bool GetTextureSlotEnable(int32_t index);
+
+	bool IsValid() const;
 };
 
 //----------------------------------------------------------------------------------
