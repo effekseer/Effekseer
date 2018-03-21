@@ -57,6 +57,8 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
+			if (binding == null) return;
+
 			if (EnableUndo)
 			{
 				binding.SetValue(internalValue[0]);

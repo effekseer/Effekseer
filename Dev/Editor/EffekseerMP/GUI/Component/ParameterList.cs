@@ -442,8 +442,7 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.Vector2DWithRandom))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new Vector2DWithRandom();
+					gui = new Vector2DWithRandom(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.Vector3D))
 				{
@@ -451,8 +450,7 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.Vector3DWithRandom))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new Vector3DWithRandom();
+					gui = new Vector3DWithRandom(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.Color))
 				{

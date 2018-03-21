@@ -61,7 +61,9 @@
     <Compile Include="GUI\Component\ParameterList.cs" />
     <Compile Include="GUI\Component\String.cs" />
     <Compile Include="GUI\Component\Vector2D.cs" />
+    <Compile Include="GUI\Component\Vector2DWithRandom.cs" />
     <Compile Include="GUI\Component\Vector3D.cs" />
+    <Compile Include="GUI\Component\Vector3DWithRandom.cs" />
     <Compile Include="GUI\Dialog\About.cs" />
     <Compile Include="GUI\Dialog\MessageBox.cs" />
     <Compile Include="GUI\Dock\CommonValues.cs" />
