@@ -425,8 +425,7 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.IntWithRandom))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new IntWithRandom();
+					gui = new IntWithRandom();
 				}
 				else if (p.PropertyType == typeof(Data.Value.Float))
 				{

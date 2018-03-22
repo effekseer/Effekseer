@@ -14,6 +14,8 @@ namespace Effekseer.GUI.Component
 		string id_r2 = "";
 		string id_c = "";
 
+		bool isPopupShown = false;
+
 		public string Label { get; set; } = string.Empty;
 
 		Data.Value.Vector3DWithRandom binding = null;
@@ -39,10 +41,24 @@ namespace Effekseer.GUI.Component
 
 				if (binding != null)
 				{
-					internalValue1[0] = binding.X.Min;
-					internalValue1[1] = binding.Y.Min;
-					internalValue2[0] = binding.X.Max;
-					internalValue2[1] = binding.Y.Max;
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					{
+						internalValue1[0] = binding.X.Center;
+						internalValue1[1] = binding.Y.Center;
+						internalValue1[2] = binding.Z.Center;
+						internalValue2[0] = binding.X.Amplitude;
+						internalValue2[1] = binding.Y.Amplitude;
+						internalValue2[2] = binding.Z.Amplitude;
+					}
+					else
+					{
+						internalValue1[0] = binding.X.Min;
+						internalValue1[1] = binding.Y.Min;
+						internalValue1[2] = binding.Z.Min;
+						internalValue2[0] = binding.X.Max;
+						internalValue2[1] = binding.Y.Max;
+						internalValue2[2] = binding.Z.Max;
+					}
 				}
 			}
 		}
@@ -78,6 +94,7 @@ namespace Effekseer.GUI.Component
 		public void Update()
 		{
 			if (binding == null) return;
+			isPopupShown = false;
 
 			if (binding != null)
 			{
@@ -140,21 +157,21 @@ namespace Effekseer.GUI.Component
 
 			Popup();
 
-			if (Manager.NativeManager.DragFloat3EfkEx(id2, internalValue1, 1, float.MinValue, float.MaxValue, txt_r2 + ":" + "%.3f", txt_r2 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
+			if (Manager.NativeManager.DragFloat3EfkEx(id2, internalValue2, 1, float.MinValue, float.MaxValue, txt_r2 + ":" + "%.3f", txt_r2 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
 			{
 				if (EnableUndo)
 				{
 					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
 					{
-						binding.X.SetAmplitude(internalValue1[0]);
-						binding.Y.SetAmplitude(internalValue1[1]);
-						binding.Z.SetAmplitude(internalValue1[2]);
+						binding.X.SetAmplitude(internalValue2[0]);
+						binding.Y.SetAmplitude(internalValue2[1]);
+						binding.Z.SetAmplitude(internalValue2[2]);
 					}
 					else
 					{
-						binding.X.SetMax(internalValue1[0]);
-						binding.Y.SetMax(internalValue1[1]);
-						binding.Z.SetMax(internalValue1[2]);
+						binding.X.SetMax(internalValue2[0]);
+						binding.Y.SetMax(internalValue2[1]);
+						binding.Z.SetMax(internalValue2[2]);
 					}
 				}
 				else
@@ -168,10 +185,12 @@ namespace Effekseer.GUI.Component
 
 		void Popup()
 		{
+			if (isPopupShown) return;
+
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-				var txt_r_r1 = Resources.GetString("Range");
-				var txt_r_r2 = Resources.GetString("Gauss");
+				var txt_r_r1 = Resources.GetString("Gauss");
+				var txt_r_r2 = Resources.GetString("Range");
 
 				if (Manager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
 				{
@@ -186,6 +205,7 @@ namespace Effekseer.GUI.Component
 				}
 
 				Manager.NativeManager.EndPopup();
+				isPopupShown = true;
 			}
 		}
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class FloatWithRandom : IParameterControl
+	class IntWithRandom : IParameterControl
 	{
 		string id = "";
 		string id_r1 = "";
@@ -15,15 +15,15 @@ namespace Effekseer.GUI.Component
 
 		public string Label { get; set; } = string.Empty;
 
-		Data.Value.FloatWithRandom binding = null;
+		Data.Value.IntWithRandom binding = null;
 
-		float[] internalValue = new float[] { 0.0f, 0.0f };
+		int[] internalValue = new int[] { 0, 0 };
 
 		public bool ShouldBeRemoved { get; private set; } = false;
 
 		public bool EnableUndo { get; set; } = true;
 
-		public Data.Value.FloatWithRandom Binding
+		public Data.Value.IntWithRandom Binding
 		{
 			get
 			{
@@ -43,7 +43,7 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public FloatWithRandom(string label = null)
+		public IntWithRandom(string label = null)
 		{
 			if (label != null)
 			{
@@ -58,7 +58,7 @@ namespace Effekseer.GUI.Component
 
 		public void SetBinding(object o)
 		{
-			var o_ = o as Data.Value.FloatWithRandom;
+			var o_ = o as Data.Value.IntWithRandom;
 			Binding = o_;
 		}
 
@@ -102,11 +102,11 @@ namespace Effekseer.GUI.Component
 				txt_r2 = Resources.GetString("Min");
 			}
 
-			if (Manager.NativeManager.DragFloat2EfkEx(id, internalValue, 1, float.MinValue, float.MaxValue, txt_r1 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
+			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, 1, int.MinValue, int.MaxValue, txt_r1 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
 			{
 				if (EnableUndo)
 				{
-					if(binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
 					{
 						binding.SetCenter(internalValue[0]);
 						binding.SetAmplitude(internalValue[1]);

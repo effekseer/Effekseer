@@ -630,6 +630,36 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool DragInt2EfkEx(string label, int[] v, int v_speed, int v_min, int v_max, string display_format1, string display_format2) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt2EfkEx__SWIG_0(swigCPtr, label, v, v_speed, v_min, v_max, display_format1, display_format2);
+    return ret;
+  }
+
+  public bool DragInt2EfkEx(string label, int[] v, int v_speed, int v_min, int v_max, string display_format1) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt2EfkEx__SWIG_1(swigCPtr, label, v, v_speed, v_min, v_max, display_format1);
+    return ret;
+  }
+
+  public bool DragInt2EfkEx(string label, int[] v, int v_speed, int v_min, int v_max) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt2EfkEx__SWIG_2(swigCPtr, label, v, v_speed, v_min, v_max);
+    return ret;
+  }
+
+  public bool DragInt2EfkEx(string label, int[] v, int v_speed, int v_min) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt2EfkEx__SWIG_3(swigCPtr, label, v, v_speed, v_min);
+    return ret;
+  }
+
+  public bool DragInt2EfkEx(string label, int[] v, int v_speed) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt2EfkEx__SWIG_4(swigCPtr, label, v, v_speed);
+    return ret;
+  }
+
+  public bool DragInt2EfkEx(string label, int[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_DragInt2EfkEx__SWIG_5(swigCPtr, label, v);
+    return ret;
+  }
+
   public bool InputText(string label, string text) {
     bool ret = EffekseerNativePINVOKE.GUIManager_InputText(swigCPtr, label, text);
     return ret;

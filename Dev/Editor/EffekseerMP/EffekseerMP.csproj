@@ -58,6 +58,7 @@
     <Compile Include="GUI\Component\FloatWithRandom.cs" />
     <Compile Include="GUI\Component\Int.cs" />
     <Compile Include="GUI\Component\IntWithInifinite.cs" />
+    <Compile Include="GUI\Component\IntWithRandom.cs" />
     <Compile Include="GUI\Component\ParameterList.cs" />
     <Compile Include="GUI\Component\String.cs" />
     <Compile Include="GUI\Component\Vector2D.cs" />

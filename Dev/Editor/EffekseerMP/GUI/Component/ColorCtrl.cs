@@ -60,6 +60,12 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
+			if (binding == null) return;
+			binding.SetValue(
+				(int)(internalValue[0] * 255),
+				(int)(internalValue[1] * 255),
+				(int)(internalValue[2] * 255),
+				(int)(internalValue[3] * 255));
 		}
 
 		public void OnDisposed()
@@ -80,11 +86,7 @@ namespace Effekseer.GUI.Component
 			{
 				if (EnableUndo)
 				{
-					binding.SetValue(
-						(int)(internalValue[0] * 255),
-						(int)(internalValue[1] * 255),
-						(int)(internalValue[2] * 255),
-						(int)(internalValue[3] * 255));
+					FixValue();
 				}
 				else
 				{

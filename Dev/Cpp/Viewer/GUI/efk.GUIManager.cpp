@@ -78,6 +78,43 @@ namespace efk
 		return value_changed;
 	}
 
+	bool DragIntN(const char* label, int* v, int components, int v_speed, int v_min, int v_max,
+		const char* display_format1,
+		const char* display_format2,
+		const char* display_format3)
+	{
+		ImGuiWindow* window = ImGui::GetCurrentWindow();
+		if (window->SkipItems)
+			return false;
+
+		ImGuiContext& g = *GImGui;
+		bool value_changed = false;
+		ImGui::BeginGroup();
+		ImGui::PushID(label);
+		ImGui::PushMultiItemsWidths(components);
+
+		const char* display_formats[] = {
+			display_format1,
+			display_format2,
+			display_format3
+		};
+
+		for (int i = 0; i < components; i++)
+		{
+			ImGui::PushID(i);
+			value_changed |= ImGui::DragInt("##v", &v[i], v_speed, v_min, v_max, display_formats[i]);
+			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
+			ImGui::PopID();
+			ImGui::PopItemWidth();
+		}
+		ImGui::PopID();
+
+		ImGui::TextUnformatted(label, ImGui::FindRenderedTextEnd(label));
+		ImGui::EndGroup();
+
+		return value_changed;
+	}
+
 	GUIManager::GUIManager()
 	{}
 
@@ -459,6 +496,15 @@ namespace efk
 			utf16_to_utf8(display_format2).c_str(),
 			utf16_to_utf8(display_format3).c_str(),
 			power);
+	}
+
+	bool GUIManager::DragInt2EfkEx(const char16_t* label, int* v, int v_speed, int v_min, int v_max, const char16_t* display_format1, const char16_t* display_format2)
+	{
+		return DragIntN(
+			utf16_to_utf8(label).c_str(), v, 2, v_speed, v_min, v_max,
+			utf16_to_utf8(display_format1).c_str(),
+			utf16_to_utf8(display_format2).c_str(),
+			nullptr);
 	}
 
 	static std::u16string inputTextResult;

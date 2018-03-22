@@ -231,6 +231,8 @@ namespace efk
 		bool DragFloat2EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char16_t* display_format1 = u"%.3f", const char16_t* display_format2 = u"%.3f", float power = 1.0f);
 		bool DragFloat3EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char16_t* display_format1 = u"%.3f", const char16_t* display_format2 = u"%.3f", const char16_t* display_format3 = u"%.3f", float power = 1.0f);
 
+		bool DragInt2EfkEx(const char16_t* label, int* v, int v_speed = 1.0f, int v_min = 0.0f, int v_max = 0.0f, const char16_t* display_format1 = u"%d", const char16_t* display_format2 = u"%d");
+
 		// Input
 		bool InputText(const char16_t* label, const char16_t* text);
 		const char16_t* GetInputTextResult();
