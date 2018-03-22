@@ -22,6 +22,8 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 			Core.OnAfterSelectNode += OnAfterSelectNode;
+
+			Controls.Add(paramerterList);
 		}
 
 		public void FixValues()
@@ -43,8 +45,6 @@ namespace Effekseer.GUI.Dock
 			if (isFiestUpdate)
 			{
 			}
-
-			paramerterList.Update();
 		}
 
 		void Read()

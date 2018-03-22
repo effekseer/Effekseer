@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Effekseer.GUI.Component
 {
-	class ParameterList : IControl
+	class ParameterList : IControl, IDroppableControl
 	{
 		// Not implemented
 		// ToolTip toolTip = null;
@@ -25,6 +25,23 @@ namespace Effekseer.GUI.Component
 			// Not implemented
 			//toolTip = new ToolTip();
 			//toolTip.ShowAlways = true;
+		}
+
+		public void OnDropped(string path, ref bool handle)
+		{
+			Controls.Lock();
+
+			foreach (var c in Controls.Internal)
+			{
+				var dc = c as IDroppableControl;
+				if(dc != null)
+				{
+					dc.OnDropped(path, ref handle);
+					if (handle) break;
+				}
+			}
+
+			Controls.Unlock();
 		}
 
 		public void Update()
@@ -476,8 +493,7 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.PathForSound))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new PathForSound();
+					gui = new PathForSound(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.FCurveVector2D))
 				{

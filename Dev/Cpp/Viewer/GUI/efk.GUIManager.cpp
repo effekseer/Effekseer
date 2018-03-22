@@ -645,6 +645,11 @@ namespace efk
 		return ImGui::IsKeyDown(user_key_index);
 	}
 
+	bool GUIManager::IsItemHovered()
+	{
+		return ImGui::IsItemHovered();
+	}
+
 	bool GUIManager::IsItemActive()
 	{
 		return ImGui::IsItemActive();

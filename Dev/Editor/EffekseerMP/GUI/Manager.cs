@@ -20,7 +20,27 @@ namespace Effekseer.GUI
 
 		public override void Droped()
 		{
-			Commands.Open(GetPath());
+			var path = GetPath();
+			var handle = false;
+
+			Manager.Controls.Lock();
+
+			foreach (var c in Manager.Controls.Internal)
+			{
+				var dc = c as IDroppableControl;
+				if (dc != null)
+				{
+					dc.OnDropped(path, ref handle);
+					if (handle) break;
+				}
+			}
+
+			Manager.Controls.Unlock();
+		
+			if(!handle)
+			{
+				Commands.Open();
+			}
 		}
 	}
 
@@ -65,9 +85,7 @@ namespace Effekseer.GUI
 
 		static Dock.DockPanel[] panels = new Dock.DockPanel[0];
 
-		internal static List<IRemovableControl> Controls = new List<IRemovableControl>();
-
-		static List<IRemovableControl> addingControls = new List<IRemovableControl>();
+		internal static Utils.DelayedList<IRemovableControl> Controls = new Utils.DelayedList<IRemovableControl>();
 
 		public static bool Initialize(int width, int height)
 		{
@@ -209,7 +227,7 @@ namespace Effekseer.GUI
 
 		public static void AddControl(IRemovableControl control)
 		{
-			addingControls.Add(control);
+			Controls.Add(control);
 		}
 
 		static swig.Vec2 mousePos_pre;
@@ -271,19 +289,14 @@ namespace Effekseer.GUI
 
 			NativeManager.ResetGUI();
 
-			foreach (var c in Controls)
+			Controls.Lock();
+
+			foreach (var c in Controls.Internal)
 			{
 				c.Update();
 			}
 
-			foreach (var c in addingControls)
-			{
-				Controls.Add(c);
-			}
-
-			addingControls.Clear();
-
-			foreach(var _ in Controls)
+			foreach(var _ in Controls.Internal)
 			{
 				if (!_.ShouldBeRemoved) continue;
 
@@ -302,7 +315,13 @@ namespace Effekseer.GUI
 				}
 			}
 
-			Controls.RemoveAll(_ => _.ShouldBeRemoved);
+			foreach (var _ in Controls.Internal)
+			{
+				if (!_.ShouldBeRemoved) continue;
+				Controls.Remove(_);
+			}
+
+			Controls.Unlock();
 
 			NativeManager.RenderGUI();
 

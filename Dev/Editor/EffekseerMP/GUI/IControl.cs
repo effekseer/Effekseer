@@ -16,6 +16,11 @@ namespace Effekseer.GUI
         bool ShouldBeRemoved { get; }
     }
 
+	interface IDroppableControl : IControl
+	{
+		void OnDropped(string path, ref bool handle);
+	}
+
 	interface IParameterControl : IControl
 	{
 		string Label { get; }

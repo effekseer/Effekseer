@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-    class DockPanel : IRemovableControl
+    class DockPanel : IRemovableControl, IDroppableControl
     {
 		public string Label { get; set; } = string.Empty;
 
@@ -15,6 +15,8 @@ namespace Effekseer.GUI.Dock
 		string id = "";
 
 		bool[] opened = new[] { true };
+
+		internal Utils.DelayedList<IControl> Controls = new Utils.DelayedList<IControl>();
 
 		public DockPanel()
 		{
@@ -28,6 +30,15 @@ namespace Effekseer.GUI.Dock
 				if (Manager.NativeManager.Begin(Label + id, opened))
 				{
 					UpdateInternal();
+
+					Controls.Lock();
+
+					foreach (var c in Controls.Internal)
+					{
+						c.Update();
+					}
+
+					Controls.Unlock();
 				}
 
 				Manager.NativeManager.End();
@@ -36,6 +47,23 @@ namespace Effekseer.GUI.Dock
 			{
 				ShouldBeRemoved = true;
 			}
+		}
+
+		public void OnDropped(string path, ref bool handle)
+		{
+			Controls.Lock();
+
+			foreach (var c in Controls.Internal)
+			{
+				var dc = c as IDroppableControl;
+				if (dc != null)
+				{
+					dc.OnDropped(path, ref handle);
+					if (handle) break;
+				}
+			}
+
+			Controls.Unlock();
 		}
 
 		public virtual void OnDisposed()

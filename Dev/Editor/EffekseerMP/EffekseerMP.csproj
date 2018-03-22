@@ -60,6 +60,7 @@
     <Compile Include="GUI\Component\IntWithInifinite.cs" />
     <Compile Include="GUI\Component\IntWithRandom.cs" />
     <Compile Include="GUI\Component\ParameterList.cs" />
+    <Compile Include="GUI\Component\PathForSound.cs" />
     <Compile Include="GUI\Component\String.cs" />
     <Compile Include="GUI\Component\Vector2D.cs" />
     <Compile Include="GUI\Component\Vector2DWithRandom.cs" />
