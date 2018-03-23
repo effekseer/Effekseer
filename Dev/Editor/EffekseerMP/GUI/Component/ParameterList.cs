@@ -9,24 +9,22 @@ namespace Effekseer.GUI.Component
 {
 	class ParameterList : GroupControl, IControl, IDroppableControl
 	{
-		// Not implemented
-		// ToolTip toolTip = null;
-
 		object bindingObject = null;
 		Type bindingType = null;
 		List<TypeRow> typeRows = new List<TypeRow>();
 		List<TypeRow> validRows = new List<TypeRow>();
 		Dictionary<object, TypeRow> objToTypeRow = new Dictionary<object, TypeRow>();
 
+		bool isControlsChanged = false;
+
 		public ParameterList()
 		{
-			// Not implemented
-			//toolTip = new ToolTip();
-			//toolTip.ShowAlways = true;
 		}
 
 		public override void Update()
 		{
+			isControlsChanged = false;
+
 			Controls.Lock();
 
 			Manager.NativeManager.Columns(2);
@@ -42,31 +40,32 @@ namespace Effekseer.GUI.Component
 
 				Manager.NativeManager.NextColumn();
 				Manager.NativeManager.Text(c.Label);
+
+				if(Manager.NativeManager.IsItemHovered())
+				{
+					Manager.NativeManager.SetTooltip(c.Description);
+				}
+
 				Manager.NativeManager.NextColumn();
 			}
 
 			Manager.NativeManager.Columns(1);
 			
 			Controls.Unlock();
+
+			if(isControlsChanged)
+			{
+				SetValue(bindingObject);
+				isControlsChanged = false;
+			}
 		}
 
 		public void SetType(Type type)
 		{
 			typeRows.Clear();
-			// Not implemented
-			//toolTip.RemoveAll();
 
 			bindingType = type;
 			AppendType(type);
-
-			foreach (var row in typeRows)
-			{
-				if (row.Control == null) continue;
-
-				// Not implemented
-				//toolTip.SetToolTip(row.Control, row.Description);
-				//toolTip.SetToolTip(row.Label, row.Description);
-			}
 		}
 
 		public void FixValues()
@@ -103,15 +102,15 @@ namespace Effekseer.GUI.Component
 
 				if (row.Control != null)
 				{
-					// 表示可能な値
+					// visible values
 					typeRows.Add(row);
 					sameLayer.Add(row);
 				}
 				else
 				{
-					// 値コンテナ
+					// value container
 
-					// ループ防止
+					// protect looping
 					if (ps[i].PropertyType == typeof(Data.NodeBase)) continue;
 					if (ps[i].PropertyType == typeof(Data.NodeBase.ChildrenCollection)) continue;
 					if (ps[i].PropertyType == typeof(Data.Value.FCurve<float>)) continue;
@@ -139,8 +138,6 @@ namespace Effekseer.GUI.Component
 
 		void RegisterValue(object value)
 		{
-			int labelWidth = 0;
-
 			objToTypeRow.Clear();
 
 			var newTypeRows = new List<TypeRow>();
@@ -169,39 +166,9 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
-			// 長さを求めるために追加
-			foreach (var row in newTypeRows)
-			{
-				if (existsTypeRowsHash.Contains(row)) continue;
-				if (row.Control == null) continue;
-				Console.WriteLine("Not implemented.");
-				//Controls.Add(row.Label);
-			}
-
 			foreach (var row in newTypeRows)
 			{
 				if (row.Control == null) continue;
-				Console.WriteLine("Not implemented.");
-				//labelWidth = Math.Max(labelWidth, row.Label.Width);
-			}
-
-			int y = 5;
-			labelWidth += 5;
-
-			Console.WriteLine("Not implemented.");
-			//AutoScrollPosition = new Point(0, 0);
-			//AutoScroll = false;
-
-			foreach (var row in newTypeRows)
-			{
-				if (row.Control == null) continue;
-
-				Console.WriteLine("Not implemented.");
-				//int height = Math.Max(row.Label.Height, row.Control.Height) + 4;
-				//
-				//row.Label.Location = new Point(0, y + (height - row.Label.Height) / 2);
-				//row.Control.Location = new Point(labelWidth, y + (height - row.Control.Height) / 2);
-				//row.Control.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 
 				if (!existsTypeRowsHash.Contains(row))
 				{
@@ -211,9 +178,6 @@ namespace Effekseer.GUI.Component
 				var v = row.GetValue(value);
 				row.ControlDynamic.SetBinding(v);
 				objToTypeRow.Add(v, row);
-
-				Console.WriteLine("Not implemented.");
-				//y += height;
 
 				{
 					var o0 = row.GetValue(value) as Data.Value.EnumBase;
@@ -231,9 +195,6 @@ namespace Effekseer.GUI.Component
 
 			validRows.Clear();
 			validRows.AddRange(newTypeRows);
-
-			Console.WriteLine("Not implemented.");
-			//AutoScroll = true;
 
 			bindingObject = value;
 		}
@@ -283,22 +244,12 @@ namespace Effekseer.GUI.Component
 				}
 
 				this.Controls.Remove(row.Control);
-				Console.WriteLine("Not implemented.");
-				//this.Controls.Remove(row.Label);
 			}
 		}
 
 		void ChangeSelector(object sender, ChangedValueEventArgs e)
 		{
-			SetValue(bindingObject);
-
-			// 選択位置移動
-			TypeRow row = null;
-			if (objToTypeRow.TryGetValue(sender, out row))
-			{
-				Console.WriteLine("Not implemented.");
-				//AutoScrollPosition = new Point(0, row.Control.Location.Y);
-			}
+			isControlsChanged = true;
 		}
 
 		class TypeRow
@@ -539,6 +490,11 @@ namespace Effekseer.GUI.Component
 
 				Properties = properties.Clone() as PropertyInfo[];
 				Control = gui;
+				
+				if(gui != null)
+				{
+					gui.Description = this.Description;
+				}
 
 				// Selector
 				var selected_attribute = (from a in attributes where a is Data.SelectedAttribute select a).FirstOrDefault() as Data.SelectedAttribute;
@@ -555,14 +511,6 @@ namespace Effekseer.GUI.Component
 
 				Label = Title;
 
-				Console.WriteLine("Not implemented.");
-				//Label = new Label();
-				//Label.Width = 0;
-				//Label.AutoSize = true;
-				//Label.Text = Title;
-				//Label.TextAlign = ContentAlignment.MiddleCenter;
-				//Label.Font = new Font(Label.Font.FontFamily, 9);
-				
 				ControlDynamic = Control;
 
 				if (Control != null)

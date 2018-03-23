@@ -554,6 +554,11 @@ namespace efk
 		return ImGui::Selectable(utf16_to_utf8(label).c_str(), selected, (int)flags);
 	}
 
+	void GUIManager::SetTooltip(const char16_t* text)
+	{
+		ImGui::SetTooltip(utf16_to_utf8(text).c_str());
+	}
+
 	bool GUIManager::BeginMainMenuBar()
 	{
 		return ImGui::BeginMainMenuBar();

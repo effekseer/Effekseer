@@ -12,7 +12,9 @@ namespace Effekseer.GUI.Component
 
         public string Label { get; set; } = string.Empty;
 
-        Data.Value.Boolean binding = null;
+		public string Description { get; set; } = string.Empty;
+
+		Data.Value.Boolean binding = null;
 
         bool[] internalValue = new bool[] { false };
 

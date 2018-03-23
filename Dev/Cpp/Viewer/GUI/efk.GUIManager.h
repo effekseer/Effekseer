@@ -250,6 +250,9 @@ namespace efk
 		// Widgets: Selectable / Lists
 		bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None);
 
+		// Tooltips
+		void SetTooltip(const char16_t* text);
+
 		// Menus
 		bool BeginMainMenuBar();                                                
 		void EndMainMenuBar();

@@ -12,6 +12,8 @@ namespace Effekseer.GUI.Component
 
 		public string Label { get; set; } = string.Empty;
 
+		public string Description { get; set; } = string.Empty;
+
 		Data.Value.Int binding = null;
 
 		int[] internalValue = new int[] { 0 };

@@ -12,6 +12,8 @@ namespace Effekseer.GUI.Component
 
 		public string Label { get; set; } = string.Empty;
 
+		public string Description { get; set; } = string.Empty;
+
 		Data.Value.Color binding = null;
 
 		float[] internalValue = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };

@@ -714,6 +714,10 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public void SetTooltip(string text) {
+    EffekseerNativePINVOKE.GUIManager_SetTooltip(swigCPtr, text);
+  }
+
   public bool BeginMainMenuBar() {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginMainMenuBar(swigCPtr);
     return ret;
@@ -843,6 +847,11 @@ public class GUIManager : global::System.IDisposable {
 
   public bool IsKeyDown(int user_key_index) {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsKeyDown(swigCPtr, user_key_index);
+    return ret;
+  }
+
+  public bool IsItemHovered() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsItemHovered(swigCPtr);
     return ret;
   }
 

@@ -714,6 +714,10 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public void SetTooltip(string text) {
+    EffekseerNativePINVOKE.GUIManager_SetTooltip(swigCPtr, text);
+  }
+
   public bool BeginMainMenuBar() {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginMainMenuBar(swigCPtr);
     return ret;

@@ -25,6 +25,8 @@ namespace Effekseer.GUI
 	{
 		string Label { get; }
 
+		string Description { get; set; }
+
 		bool EnableUndo { get; set; }
 
 		void SetBinding(object o);
