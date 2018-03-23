@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Effekseer.GUI.Component
 {
-	class ParameterList : IControl, IDroppableControl
+	class ParameterList : GroupControl, IControl, IDroppableControl
 	{
 		// Not implemented
 		// ToolTip toolTip = null;
@@ -18,8 +18,6 @@ namespace Effekseer.GUI.Component
 		List<TypeRow> validRows = new List<TypeRow>();
 		Dictionary<object, TypeRow> objToTypeRow = new Dictionary<object, TypeRow>();
 
-		internal Utils.DelayedList<IParameterControl> Controls = new Utils.DelayedList<IParameterControl>();
-
 		public ParameterList()
 		{
 			// Not implemented
@@ -27,24 +25,7 @@ namespace Effekseer.GUI.Component
 			//toolTip.ShowAlways = true;
 		}
 
-		public void OnDropped(string path, ref bool handle)
-		{
-			Controls.Lock();
-
-			foreach (var c in Controls.Internal)
-			{
-				var dc = c as IDroppableControl;
-				if(dc != null)
-				{
-					dc.OnDropped(path, ref handle);
-					if (handle) break;
-				}
-			}
-
-			Controls.Unlock();
-		}
-
-		public void Update()
+		public override void Update()
 		{
 			Controls.Lock();
 
@@ -53,7 +34,7 @@ namespace Effekseer.GUI.Component
 			var columnWidth = Manager.NativeManager.GetColumnWidth(0);
 			Manager.NativeManager.SetColumnWidth(0, 200);
 
-			foreach (var c in Controls.Internal)
+			foreach (var c in Controls.Internal.OfType<IParameterControl>())
 			{
 				Manager.NativeManager.PushItemWidth(180);
 				c.Update();
@@ -92,7 +73,7 @@ namespace Effekseer.GUI.Component
 		{
 			Controls.Lock();
 
-			foreach (var c in Controls.Internal)
+			foreach (var c in Controls.Internal.OfType<IParameterControl>())
 			{
 				c.FixValue();
 			}
@@ -291,7 +272,16 @@ namespace Effekseer.GUI.Component
 
 			if (removeControls)
 			{
-				row.Control.OnDisposed();
+				if( row.Control is Control)
+				{
+					var c = row.Control as Control;
+					c.DispatchDisposed();
+				}
+				else
+				{
+					row.Control.OnDisposed();
+				}
+
 				this.Controls.Remove(row.Control);
 				Console.WriteLine("Not implemented.");
 				//this.Controls.Remove(row.Label);
@@ -442,7 +432,7 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.IntWithRandom))
 				{
-					gui = new IntWithRandom();
+					gui = new IntWithRandom(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.Float))
 				{
@@ -478,18 +468,16 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.Path))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new Path();
+					gui = null;
+					return;
 				}
 				else if (p.PropertyType == typeof(Data.Value.PathForModel))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new PathForModel();
+					gui = new PathForModel(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.PathForImage))
 				{
-					Console.WriteLine("Not implemented.");
-					//gui = new PathForImage();
+					gui = new PathForImage(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.PathForSound))
 				{

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-    class Boolean : IParameterControl
+    class Boolean : Control, IParameterControl
     {
         string id = "";
 
@@ -57,11 +57,7 @@ namespace Effekseer.GUI.Component
 		{
 		}
 
-		public void OnDisposed()
-		{
-		}
-
-		public void Update()
+		public override void Update()
         {
             if (binding != null)
             {

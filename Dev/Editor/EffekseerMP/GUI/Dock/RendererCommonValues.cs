@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public RendererCommonValues()
 		{
-			Label = Resources.GetString("Rotation");
+			Label = Resources.GetString("BasicRenderSettings");
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RendererCommonValues));
@@ -22,6 +22,8 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 			Core.OnAfterSelectNode += OnAfterSelectNode;
+
+			Controls.Add(paramerterList);
 		}
 
 		public void FixValues()
@@ -43,8 +45,6 @@ namespace Effekseer.GUI.Dock
 			if (isFiestUpdate)
 			{
 			}
-
-			paramerterList.Update();
 		}
 
 		void Read()

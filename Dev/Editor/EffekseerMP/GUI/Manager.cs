@@ -25,14 +25,9 @@ namespace Effekseer.GUI
 
 			Manager.Controls.Lock();
 
-			foreach (var c in Manager.Controls.Internal)
+			foreach (var c in Manager.Controls.Internal.OfType<Control>())
 			{
-				var dc = c as IDroppableControl;
-				if (dc != null)
-				{
-					dc.OnDropped(path, ref handle);
-					if (handle) break;
-				}
+				c.DispatchDropped(path, ref handle);
 			}
 
 			Manager.Controls.Unlock();
@@ -212,7 +207,7 @@ namespace Effekseer.GUI
 			{
 				if(p != null)
 				{
-					p.OnDisposed();
+					p.DispatchDisposed();
 				}
 			}
 
@@ -303,15 +298,7 @@ namespace Effekseer.GUI
 				var dp = _ as Dock.DockPanel;
 				if(dp != null)
 				{
-					dp.OnDisposed();
-				}
-			}
-
-			for (int i = 0; i < dockTypes.Length; i++)
-			{
-				if (panels[i] != null && panels[i].ShouldBeRemoved)
-				{
-					panels[i] = null;
+					dp.DispatchDisposed();
 				}
 			}
 
@@ -322,6 +309,14 @@ namespace Effekseer.GUI
 			}
 
 			Controls.Unlock();
+
+			for (int i = 0; i < dockTypes.Length; i++)
+			{
+				if (panels[i] != null && panels[i].ShouldBeRemoved)
+				{
+					panels[i] = null;
+				}
+			}
 
 			NativeManager.RenderGUI();
 

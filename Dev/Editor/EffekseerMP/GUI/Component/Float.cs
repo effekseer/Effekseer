@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class Float : IParameterControl
+	class Float : Control, IParameterControl
 	{
 		string id = "";
 
@@ -69,12 +69,12 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public void OnDisposed()
+		public override void OnDisposed()
 		{
 			FixValue();
 		}
 
-		public void Update()
+		public override void Update()
 		{
 			if (binding != null)
 			{

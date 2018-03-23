@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class Enum : IParameterControl
+	class Enum : Control, IParameterControl
 	{
 		string id = "";
 
@@ -17,8 +17,6 @@ namespace Effekseer.GUI.Component
 		int[] enums = null;
 
 		List<string> names = new List<string>();
-
-		public bool ShouldBeRemoved { get; private set; } = false;
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -113,11 +111,7 @@ namespace Effekseer.GUI.Component
 		{
 		}
 
-		public void OnDisposed()
-		{
-		}
-
-		public void Update()
+		public override void Update()
 		{
 			if (binding != null)
 			{

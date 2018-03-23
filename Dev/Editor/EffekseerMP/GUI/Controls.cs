@@ -34,11 +34,23 @@ namespace Effekseer.GUI
 		void OnDisposed();
 	}
 
-	class Control
+
+	class Control : IDroppableControl
 	{
+		public bool ShouldBeRemoved { get; protected set; } = false;
+
+		public virtual void Update() { }
+
+		public virtual void OnDisposed() { }
+
 		public virtual void OnDropped(string path, ref bool handle) { }
 
-		protected virtual void DispatchDropped(string path, ref bool handle)
+		public virtual void DispatchDisposed()
+		{
+			OnDisposed();
+		}
+
+		public virtual void DispatchDropped(string path, ref bool handle)
 		{
 			if (handle) return;
 			OnDropped(path, ref handle);
@@ -47,14 +59,30 @@ namespace Effekseer.GUI
 
 	class GroupControl : Control
 	{
-			
+		public Utils.DelayedList<IControl> Controls { get; } = new Utils.DelayedList<IControl>();
 
-		protected override void DispatchDropped(string path, ref bool handle)
+		public override void DispatchDisposed()
 		{
+			foreach (var c in Controls.Internal.OfType<Control>())
+			{
+				c.DispatchDisposed();
+			}
+
+			OnDisposed();
+		}
+
+		public override void DispatchDropped(string path, ref bool handle)
+		{
+			if (handle) return;
+
+			foreach (var c in Controls.Internal.OfType<Control>())
+			{
+				c.DispatchDropped(path, ref handle);
+				if (handle) break;
+			}
 
 			base.DispatchDropped(path, ref handle);
 		}
 	}
-
 
 }

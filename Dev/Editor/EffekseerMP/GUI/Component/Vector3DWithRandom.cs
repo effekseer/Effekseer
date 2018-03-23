@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class Vector3DWithRandom : IParameterControl
+	class Vector3DWithRandom : Control, IParameterControl
 	{
 		string id1 = "";
 		string id2 = "";
@@ -87,11 +87,11 @@ namespace Effekseer.GUI.Component
 		{
 		}
 
-		public void OnDisposed()
+		public override void OnDisposed()
 		{
 		}
 
-		public void Update()
+		public override void Update()
 		{
 			if (binding == null) return;
 			isPopupShown = false;

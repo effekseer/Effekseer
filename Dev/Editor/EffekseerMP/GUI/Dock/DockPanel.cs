@@ -6,24 +6,20 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-    class DockPanel : IRemovableControl, IDroppableControl
+    class DockPanel : GroupControl, IRemovableControl, IDroppableControl
     {
 		public string Label { get; set; } = string.Empty;
-
-		public bool ShouldBeRemoved { get; private set; } = false;
 
 		string id = "";
 
 		bool[] opened = new[] { true };
-
-		internal Utils.DelayedList<IControl> Controls = new Utils.DelayedList<IControl>();
 
 		public DockPanel()
 		{
 			id = "###" + Manager.GetUniqueID().ToString();
 		}
 
-		public void Update()
+		public override void Update()
 		{
 			if(opened[0])
 			{
@@ -47,27 +43,6 @@ namespace Effekseer.GUI.Dock
 			{
 				ShouldBeRemoved = true;
 			}
-		}
-
-		public void OnDropped(string path, ref bool handle)
-		{
-			Controls.Lock();
-
-			foreach (var c in Controls.Internal)
-			{
-				var dc = c as IDroppableControl;
-				if (dc != null)
-				{
-					dc.OnDropped(path, ref handle);
-					if (handle) break;
-				}
-			}
-
-			Controls.Unlock();
-		}
-
-		public virtual void OnDisposed()
-		{
 		}
 
         protected virtual void UpdateInternal()

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class IntWithInifinite : IParameterControl
+	class IntWithInifinite : Control, IParameterControl
 	{
 		string id1 = "";
 		string id2 = "";
@@ -76,12 +76,12 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
-		public void OnDisposed()
+		public override void OnDisposed()
 		{
 			FixValue();
 		}
 
-		public void Update()
+		public override void Update()
 		{
 			if (binding != null)
 			{

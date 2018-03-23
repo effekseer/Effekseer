@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class ColorCtrl : IParameterControl
+	class ColorCtrl : Control, IParameterControl
 	{
 		string id = "";
 
@@ -68,11 +68,7 @@ namespace Effekseer.GUI.Component
 				(int)(internalValue[3] * 255));
 		}
 
-		public void OnDisposed()
-		{
-		}
-
-		public void Update()
+		public override void Update()
 		{
 			if (binding != null)
 			{

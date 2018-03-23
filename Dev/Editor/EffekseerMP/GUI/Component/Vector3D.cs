@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
-	class Vector3D : IParameterControl
+	class Vector3D : Control, IParameterControl
 	{
 		string id = "";
 
@@ -62,11 +62,11 @@ namespace Effekseer.GUI.Component
 		{
 		}
 
-		public void OnDisposed()
+		public override void OnDisposed()
 		{
 		}
 
-		public void Update()
+		public override void Update()
 		{
 			if (binding != null)
 			{
