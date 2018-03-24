@@ -143,7 +143,16 @@ namespace Effekseer.GUI.Component
 				}
 				else
 				{
-					Console.WriteLine("Not implemented.");
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					{
+						binding.X.SetCenterDirectly(internalValue1[0]);
+						binding.Y.SetCenterDirectly(internalValue1[1]);
+					}
+					else
+					{
+						binding.X.SetMinDirectly(internalValue1[0]);
+						binding.Y.SetMinDirectly(internalValue1[1]);
+					}
 				}
 			}
 
@@ -166,7 +175,16 @@ namespace Effekseer.GUI.Component
 				}
 				else
 				{
-					Console.WriteLine("Not implemented.");
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					{
+						binding.X.SetAmplitudeDirectly(internalValue2[0]);
+						binding.Y.SetAmplitudeDirectly(internalValue2[1]);
+					}
+					else
+					{
+						binding.X.SetMaxDirectly(internalValue2[0]);
+						binding.Y.SetMaxDirectly(internalValue2[1]);
+					}
 				}
 			}
 

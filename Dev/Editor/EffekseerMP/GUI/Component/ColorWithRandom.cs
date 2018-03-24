@@ -9,6 +9,11 @@ namespace Effekseer.GUI.Component
 	class ColorWithRandom : Control, IParameterControl
 	{
 		string id = "";
+		string id_c = "";
+		string id_r1 = "";
+		string id_r2 = "";
+
+		bool isPopupShown = false;
 
 		public string Label { get; set; } = string.Empty;
 
@@ -18,8 +23,6 @@ namespace Effekseer.GUI.Component
 
 		float[] internalValueMax = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
 		float[] internalValueMin = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
-
-		public bool ShouldBeRemoved { get; private set; } = false;
 
 		/// <summary>
 		/// This parameter is unused.
@@ -40,6 +43,12 @@ namespace Effekseer.GUI.Component
 
 				if (binding != null)
 				{
+					// Force to minmax
+					binding.R.DrawnAs = Data.DrawnAs.MaxAndMin;
+					binding.G.DrawnAs = Data.DrawnAs.MaxAndMin;
+					binding.B.DrawnAs = Data.DrawnAs.MaxAndMin;
+					binding.A.DrawnAs = Data.DrawnAs.MaxAndMin;
+
 					internalValueMax[0] = binding.R.Max / 255.0f;
 					internalValueMax[1] = binding.G.Max / 255.0f;
 					internalValueMax[2] = binding.B.Max / 255.0f;
@@ -49,7 +58,6 @@ namespace Effekseer.GUI.Component
 					internalValueMin[1] = binding.G.Min / 255.0f;
 					internalValueMin[2] = binding.B.Min / 255.0f;
 					internalValueMin[3] = binding.A.Min / 255.0f;
-
 				}
 			}
 		}
@@ -62,6 +70,9 @@ namespace Effekseer.GUI.Component
 			}
 
 			id = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_r1 = "###" + Manager.GetUniqueID().ToString();
+			id_r2 = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -76,6 +87,8 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
+			isPopupShown = false;
+
 			if (binding != null)
 			{
 				internalValueMax[0] = binding.R.Max / 255.0f;
@@ -89,9 +102,25 @@ namespace Effekseer.GUI.Component
 				internalValueMax[3] = binding.A.Min / 255.0f;
 			}
 
-			Console.WriteLine("Not implemented. (HSV, gauss, range)");
+			var colorSpace = binding.ColorSpace == Data.ColorSpace.RGBA ? swig.ColorEditFlags.RGB : swig.ColorEditFlags.HSV;
 
-			if (Manager.NativeManager.ColorEdit4(id, internalValueMax, swig.ColorEditFlags.None))
+			Manager.NativeManager.PushItemWidth(150);
+
+			if (Manager.NativeManager.ColorEdit4(id, internalValueMin, swig.ColorEditFlags.NoOptions | colorSpace))
+			{
+				binding.SetMin(
+					(int)(internalValueMin[0] * 255),
+					(int)(internalValueMin[1] * 255),
+					(int)(internalValueMin[2] * 255),
+					(int)(internalValueMin[3] * 255));
+			}
+
+			Popup();
+
+			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Text("最小");
+
+			if (Manager.NativeManager.ColorEdit4(id, internalValueMax, swig.ColorEditFlags.NoOptions | colorSpace))
 			{
 				binding.SetMax(
 					(int)(internalValueMax[0] * 255),
@@ -100,13 +129,37 @@ namespace Effekseer.GUI.Component
 					(int)(internalValueMax[3] * 255));
 			}
 
-			if (Manager.NativeManager.ColorEdit4(id, internalValueMin, swig.ColorEditFlags.None))
+			Popup();
+
+			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Text("最大");
+
+			Manager.NativeManager.PopItemWidth();
+		}
+
+		void Popup()
+		{
+			if (isPopupShown) return;
+
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-				binding.SetMin(
-					(int)(internalValueMin[0] * 255),
-					(int)(internalValueMin[1] * 255),
-					(int)(internalValueMin[2] * 255),
-					(int)(internalValueMin[3] * 255));
+				var txt_r_r1 = "RGBA";
+				var txt_r_r2 = "HSVA";
+
+				if (Manager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.ColorSpace == Data.ColorSpace.RGBA))
+				{
+					binding.ColorSpace = Data.ColorSpace.RGBA;
+				}
+
+				Manager.NativeManager.SameLine();
+
+				if (Manager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.ColorSpace == Data.ColorSpace.HSVA))
+				{
+					binding.ColorSpace = Data.ColorSpace.HSVA;
+				}
+
+				Manager.NativeManager.EndPopup();
+				isPopupShown = true;
 			}
 		}
 	}

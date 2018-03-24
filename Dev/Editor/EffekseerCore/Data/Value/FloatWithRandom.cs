@@ -155,7 +155,7 @@ namespace Effekseer.Data.Value
 			Command.CommandManager.Execute(cmd);
 		}
 
-		internal void SetCenterDirectly(float value)
+		public void SetCenterDirectly(float value)
 		{
 			_value_center = value;
 		}
@@ -202,7 +202,7 @@ namespace Effekseer.Data.Value
 			Command.CommandManager.Execute(cmd);
 		}
 
-		internal void SetMaxDirectly(float value)
+		public void SetMaxDirectly(float value)
 		{
 			_value_max = value;
 		}
@@ -249,7 +249,7 @@ namespace Effekseer.Data.Value
 			Command.CommandManager.Execute(cmd);
 		}
 
-		internal void SetMinDirectly(float value)
+		public void SetMinDirectly(float value)
 		{
 			_value_min = value;
 		}
@@ -293,6 +293,19 @@ namespace Effekseer.Data.Value
 				isCombined);
 
 			Command.CommandManager.Execute(cmd);
+		}
+
+		public void SetAmplitudeDirectly(float value)
+		{
+			float old_center = _value_center;
+			float new_center = _value_center;
+			float old_max = _value_max;
+			float new_max = Math.Min(_value_center + value, _max);
+			float old_min = _value_min;
+			float new_min = Math.Max(_value_center - value, _min);
+			_value_center = new_center;
+			_value_max = new_max;
+			_value_min = new_min;
 		}
 	}
 }
