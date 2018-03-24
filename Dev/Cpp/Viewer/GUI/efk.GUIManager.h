@@ -276,12 +276,20 @@ namespace efk
 
 		void AddFontFromFileTTF(const char* filename, float size_pixels);
 
+		// Inputs
 		bool IsKeyDown(int user_key_index);
+		bool IsMouseDoubleClicked(int button);
 
 		bool IsItemHovered();
 		bool IsItemActive();
 		bool IsItemFocused();
 		bool IsItemClicked(int mouse_button);
 		bool IsAnyWindowHovered();
+
+		// Dock
+		void BeginDockspace();
+		void EndDockspace();
+		bool BeginDock(const char16_t* label);
+		void EndDock();
 	};
 }

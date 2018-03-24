@@ -291,7 +291,7 @@ namespace Effekseer.GUI.Menu
 				//setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), Properties.Resources.IconBehavior);
 				//setDockWindow(Properties.Resources.Culling, typeof(DockCulling), Properties.Resources.IconCulling);
 				setDockWindow(Resources.GetString("Network"), typeof(Dock.Network), null);
-				//setDockWindow(Properties.Resources.FileViewer, typeof(DockFileViewer), Properties.Resources.IconFileViewer);
+				setDockWindow(Resources.GetString("FileViewer"), typeof(Dock.FileViewer), null);
 
 				this.Controls.Add(menu);
 			}

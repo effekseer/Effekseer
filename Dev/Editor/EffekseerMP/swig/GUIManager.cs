@@ -850,6 +850,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsMouseDoubleClicked(int button) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsMouseDoubleClicked(swigCPtr, button);
+    return ret;
+  }
+
   public bool IsItemHovered() {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsItemHovered(swigCPtr);
     return ret;
@@ -873,6 +878,23 @@ public class GUIManager : global::System.IDisposable {
   public bool IsAnyWindowHovered() {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsAnyWindowHovered(swigCPtr);
     return ret;
+  }
+
+  public void BeginDockspace() {
+    EffekseerNativePINVOKE.GUIManager_BeginDockspace(swigCPtr);
+  }
+
+  public void EndDockspace() {
+    EffekseerNativePINVOKE.GUIManager_EndDockspace(swigCPtr);
+  }
+
+  public bool BeginDock(string label) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label);
+    return ret;
+  }
+
+  public void EndDock() {
+    EffekseerNativePINVOKE.GUIManager_EndDock(swigCPtr);
   }
 
 }

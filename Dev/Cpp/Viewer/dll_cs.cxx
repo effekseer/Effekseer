@@ -5571,6 +5571,20 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsKeyDown__
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsMouseDoubleClicked___(void * jarg1, int jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  result = (bool)(arg1)->IsMouseDoubleClicked(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsItemHovered___(void * jarg1) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -5630,6 +5644,44 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsAnyWindow
   result = (bool)(arg1)->IsAnyWindowHovered();
   jresult = result; 
   return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDockspace___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->BeginDockspace();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndDockspace___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->EndDockspace();
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginDock___(void * jarg1, char16_t * jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (bool)(arg1)->BeginDock((char16_t const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndDock___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->EndDock();
 }
 
 

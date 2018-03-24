@@ -650,6 +650,11 @@ namespace efk
 		return ImGui::IsKeyDown(user_key_index);
 	}
 
+	bool GUIManager::IsMouseDoubleClicked(int button)
+	{
+		return ImGui::IsMouseDoubleClicked(button);
+	}
+
 	bool GUIManager::IsItemHovered()
 	{
 		return ImGui::IsItemHovered();
@@ -673,5 +678,25 @@ namespace efk
 	bool GUIManager::IsAnyWindowHovered()
 	{
 		return ImGui::IsAnyWindowHovered();
+	}
+
+	void GUIManager::BeginDockspace()
+	{
+		ImGui::BeginDockspace();
+	}
+
+	void GUIManager::EndDockspace()
+	{
+		ImGui::EndDockspace();
+	}
+
+	bool GUIManager::BeginDock(const char16_t* label)
+	{
+		return ImGui::BeginDock(utf16_to_utf8(label).c_str());
+	}
+
+	void GUIManager::EndDock()
+	{
+		ImGui::EndDock();
 	}
 }

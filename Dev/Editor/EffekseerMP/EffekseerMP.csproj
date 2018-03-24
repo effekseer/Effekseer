@@ -73,7 +73,9 @@
     <Compile Include="GUI\Dialog\OpenModel.cs" />
     <Compile Include="GUI\Dock\CommonValues.cs" />
     <Compile Include="GUI\Dock\DepthValues.cs" />
+    <Compile Include="GUI\Dock\DockManager.cs" />
     <Compile Include="GUI\Dock\DockPanel.cs" />
+    <Compile Include="GUI\Dock\FileViewer.cs" />
     <Compile Include="GUI\Dock\GenerationLocationValues.cs" />
     <Compile Include="GUI\Dock\LocationAbsValues.cs" />
     <Compile Include="GUI\Dock\LocationValues.cs" />

@@ -75,10 +75,14 @@ namespace Effekseer.GUI
 			typeof(Dock.Option),
 
 			typeof(Dock.Network),
-
+			typeof(Dock.FileViewer),
 		};
 
+		static Dock.DockManager dockManager = null;
+
 		static Dock.DockPanel[] panels = new Dock.DockPanel[0];
+
+		public static bool IsDockMode() { return dockManager != null; }
 
 		internal static Utils.DelayedList<IRemovableControl> Controls = new Utils.DelayedList<IRemovableControl>();
 
@@ -123,6 +127,9 @@ namespace Effekseer.GUI
 			// Add controls
 			var mainMenu = new GUI.Menu.MainMenu();
 			GUI.Manager.AddControl(mainMenu);
+
+			//dockManager = new GUI.Dock.DockManager();
+			//GUI.Manager.AddControl(dockManager);
 
 			Network = new Network(Native);
 
@@ -339,7 +346,15 @@ namespace Effekseer.GUI
 				else
 				{
 					panels[i] = (Dock.DockPanel)t.GetConstructor(Type.EmptyTypes).Invoke(null);
-					AddControl(panels[i]);
+
+					if(dockManager != null)
+					{
+						dockManager.Controls.Add(panels[i]);
+					}
+					else
+					{
+						AddControl(panels[i]);
+					}
 				}
 			}
 		}

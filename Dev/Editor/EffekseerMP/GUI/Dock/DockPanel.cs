@@ -23,21 +23,44 @@ namespace Effekseer.GUI.Dock
 		{
 			if(opened[0])
 			{
-				if (Manager.NativeManager.Begin(Label + id, opened))
+				if (Manager.IsDockMode())
 				{
-					UpdateInternal();
-
-					Controls.Lock();
-
-					foreach (var c in Controls.Internal)
+					if (Manager.NativeManager.BeginDock(Label + id))
 					{
-						c.Update();
+						UpdateInternal();
+
+
+						Controls.Lock();
+
+						foreach (var c in Controls.Internal)
+						{
+							c.Update();
+						}
+
+						Controls.Unlock();
 					}
 
-					Controls.Unlock();
+					Manager.NativeManager.EndDock();
 				}
+				else
+				{
+					if (Manager.NativeManager.Begin(Label + id, opened))
+					{
+						UpdateInternal();
 
-				Manager.NativeManager.End();
+
+						Controls.Lock();
+
+						foreach (var c in Controls.Internal)
+						{
+							c.Update();
+						}
+
+						Controls.Unlock();
+					}
+
+					Manager.NativeManager.End();
+				}
 			}
 			else
 			{

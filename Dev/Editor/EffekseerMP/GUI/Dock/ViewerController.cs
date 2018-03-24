@@ -10,7 +10,7 @@ namespace Effekseer.GUI.Dock
 	{
 		public ViewerController()
 		{
-
+			Label = Resources.GetString("ViewerControls");
 		}
 
 		protected override void UpdateInternal()
