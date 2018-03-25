@@ -33,8 +33,8 @@ namespace Effekseer.GUI.Dock
 				Core.StartFrame = frameMin[0];
 				Core.EndFrame = frameMax[0];
 
-				Manager.Viewer.Current = Math.Max(Manager.Viewer.Current, Core.StartFrame);
-				Manager.Viewer.Current = Math.Min(Manager.Viewer.Current, Core.EndFrame);
+				Manager.Viewer.Current = System.Math.Max(Manager.Viewer.Current, Core.StartFrame);
+				Manager.Viewer.Current = System.Math.Min(Manager.Viewer.Current, Core.EndFrame);
 			}
 
 			Manager.NativeManager.PopItemWidth();

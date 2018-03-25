@@ -10,7 +10,11 @@ namespace Effekseer.GUI.Dock
     {
         internal List<NodeTreeViewNode> Children = new List<NodeTreeViewNode>();
 
+		internal List<IControl> menuItems = new List<IControl>();
+
 		NodeTreeViewNode SelectedNode = null;
+
+		bool isPopupShown = false;
 
 		public NodeTreeView()
         {
@@ -20,11 +24,43 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnRenew;
 			Core.OnAfterSelectNode += OnAfterSelect;
 
+			Func<Func<bool>, Menu.MenuItem> create_menu_item_from_commands = (a) =>
+			{
+				var item = new Menu.MenuItem();
+				var attributes = a.Method.GetCustomAttributes(false);
+				var uniquename = UniqueNameAttribute.GetUniqueName(attributes);
+				item.Label = NameAttribute.GetName(attributes);
+				item.Shortcut = Shortcuts.GetShortcutText(uniquename);
+				item.Clicked += () =>
+				{
+					a();
+				};
+
+				return item;
+			};
+
+			menuItems.Add(create_menu_item_from_commands(Commands.AddNode));
+			menuItems.Add(create_menu_item_from_commands(Commands.InsertNode));
+			menuItems.Add(create_menu_item_from_commands(Commands.RemoveNode));
+
+			menuItems.Add(new Menu.MenuSeparator());
+
+			menuItems.Add(create_menu_item_from_commands(Commands.Copy));
+			menuItems.Add(create_menu_item_from_commands(Commands.Paste));
+			menuItems.Add(create_menu_item_from_commands(Commands.PasteInfo));
+
+			menuItems.Add(new Menu.MenuSeparator());
+
+			menuItems.Add(create_menu_item_from_commands(Commands.Undo));
+			menuItems.Add(create_menu_item_from_commands(Commands.Redo));
+
 			Renew();
 		}
 
         override protected void UpdateInternal()
         {
+			isPopupShown = false;
+
             foreach (var child in Children)
             {
                 child.Update();
@@ -45,7 +81,7 @@ namespace Effekseer.GUI.Dock
                 }
                 Children.Clear();
 
-                Children.Add(new NodeTreeViewNode(Core.Root));
+                Children.Add(new NodeTreeViewNode(this, Core.Root));
             }
 
 
@@ -73,7 +109,7 @@ namespace Effekseer.GUI.Dock
 
                     while (ns.Count > ind)
                     {
-                        tns.Add(new NodeTreeViewNode(ns[ind]));
+                        tns.Add(new NodeTreeViewNode(this, ns[ind]));
                         ind++;
                     }
                 }
@@ -94,12 +130,28 @@ namespace Effekseer.GUI.Dock
             Console.WriteLine("Not implemented");
         }
 
-        /// <summary>
-        /// When renew, it is called.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void OnRenew(object sender, EventArgs e)
+		internal void Popup()
+		{
+			if (isPopupShown) return;
+
+			if (Manager.NativeManager.BeginPopupContextItem("##Popup"))
+			{
+				foreach(var item in menuItems)
+				{
+					item.Update();
+				}
+
+				Manager.NativeManager.EndPopup();
+				isPopupShown = true;
+			}
+		}
+
+		/// <summary>
+		/// When renew, it is called.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void OnRenew(object sender, EventArgs e)
         {
             Renew();
         }
@@ -139,10 +191,13 @@ namespace Effekseer.GUI.Dock
 
         internal List<NodeTreeViewNode> Children = new List<NodeTreeViewNode>();
 
-        public NodeTreeViewNode(Data.NodeBase node, bool createChildren = false)
+		NodeTreeView treeView = null;
+
+		public NodeTreeViewNode(NodeTreeView treeView, Data.NodeBase node, bool createChildren = false)
         {
             id = "###" + Manager.GetUniqueID().ToString();
 
+			this.treeView = treeView;
             this.node = node;
 
             node.OnAfterAddNode += OnAfterAddNode;
@@ -153,7 +208,7 @@ namespace Effekseer.GUI.Dock
             {
                 for(int i = 0; i < node.Children.Count; i++)
                 {
-                    var newNode = new NodeTreeViewNode(node.Children[i], true);
+                    var newNode = new NodeTreeViewNode(treeView, node.Children[i], true);
                     Children.Add(newNode);
                 }
             }
@@ -181,7 +236,7 @@ namespace Effekseer.GUI.Dock
 
         public void Update()
         {
-			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick;
+			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen;
 
 			if(Core.SelectedNode == this.node)
 			{
@@ -195,7 +250,8 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.TreeNodeEx(node.Name + id, flag))
             {
-				if(Manager.NativeManager.IsItemClicked(0))
+				if(Manager.NativeManager.IsItemClicked(0) ||
+					Manager.NativeManager.IsItemClicked(1))
 				{
 					Core.SelectedNode = this.node;
 				}
@@ -207,6 +263,8 @@ namespace Effekseer.GUI.Dock
 
                 Manager.NativeManager.TreePop();
             }
+
+			treeView.Popup();
         }
 
         public void ExpandAll()
@@ -226,11 +284,11 @@ namespace Effekseer.GUI.Dock
 
             if (ind == node.Children.Count)
             {
-                Children.Add(new NodeTreeViewNode(node, true));
+                Children.Add(new NodeTreeViewNode(treeView ,node, true));
             }
             else
             {
-                Children.Insert(ind, new NodeTreeViewNode(node, true));
+                Children.Insert(ind, new NodeTreeViewNode(treeView, node, true));
             }
 
             ExpandAll();
@@ -285,10 +343,10 @@ namespace Effekseer.GUI.Dock
                 node2 = node_temp;
             }
 
-            Children.Insert(ind2, new NodeTreeViewNode(node1, true));
+            Children.Insert(ind2, new NodeTreeViewNode(treeView, node1, true));
             Children.RemoveAt(ind2 + 1);
 
-            Children.Insert(ind1, new NodeTreeViewNode(node2, true));
+            Children.Insert(ind1, new NodeTreeViewNode(treeView, node2, true));
             Children.RemoveAt(ind1 + 1);
 
             ExpandAll();

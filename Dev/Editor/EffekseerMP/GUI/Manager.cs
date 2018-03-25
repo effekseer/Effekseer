@@ -68,7 +68,7 @@ namespace Effekseer.GUI
 			typeof(Dock.RendererCommonValues),
 			typeof(Dock.RendererValues),
 			typeof(Dock.SoundValues),
-
+			typeof(Dock.FCurves),
 			typeof(Dock.ViewPoint),
 			typeof(Dock.Recorder),
 

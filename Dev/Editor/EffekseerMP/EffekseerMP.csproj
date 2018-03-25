@@ -75,6 +75,7 @@
     <Compile Include="GUI\Dock\DepthValues.cs" />
     <Compile Include="GUI\Dock\DockManager.cs" />
     <Compile Include="GUI\Dock\DockPanel.cs" />
+    <Compile Include="GUI\Dock\FCurves.cs" />
     <Compile Include="GUI\Dock\FileViewer.cs" />
     <Compile Include="GUI\Dock\GenerationLocationValues.cs" />
     <Compile Include="GUI\Dock\LocationAbsValues.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="GUI\Menu\MenuItem.cs" />
     <Compile Include="GUI\Network.cs" />
     <Compile Include="GUI\Viewer.cs" />
+    <Compile Include="Math\Point.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GUI\Shortcuts.cs" />

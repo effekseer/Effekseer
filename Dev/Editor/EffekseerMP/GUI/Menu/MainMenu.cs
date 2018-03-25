@@ -282,7 +282,7 @@ namespace Effekseer.GUI.Menu
 				setDockWindow(Resources.GetString("BasicRenderSettings"), typeof(Dock.RendererCommonValues), null);
 				setDockWindow(Resources.GetString("RenderSettings"), typeof(Dock.RendererValues), null);
 				setDockWindow(Resources.GetString("Sound"), typeof(Dock.SoundValues), null);
-				//setDockWindow(Properties.Resources.FCurves, typeof(DockFCurves), Properties.Resources.IconFCurve);
+				setDockWindow(Resources.GetString("FCurves"), typeof(Dock.FCurves), null);
 				setDockWindow(Resources.GetString("ViewerControls"), typeof(Dock.ViewerController), null);
 				setDockWindow(Resources.GetString("CameraSettings"), typeof(Dock.ViewPoint), null);
 				setDockWindow(Resources.GetString("Recorder"), typeof(Dock.Recorder), null);

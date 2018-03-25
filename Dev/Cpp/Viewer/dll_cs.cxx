@@ -492,11 +492,25 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Vec2_Y_get___(void * jarg1) {
 }
 
 
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Vec2___() {
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Vec2__SWIG_0___() {
   void * jresult ;
   efk::Vec2 *result = 0 ;
   
   result = (efk::Vec2 *)new efk::Vec2();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_Vec2__SWIG_1___(float jarg1, float jarg2) {
+  void * jresult ;
+  float arg1 ;
+  float arg2 ;
+  efk::Vec2 *result = 0 ;
+  
+  arg1 = (float)jarg1; 
+  arg2 = (float)jarg2; 
+  result = (efk::Vec2 *)new efk::Vec2(arg1,arg2);
   jresult = (void *)result; 
   return jresult;
 }
@@ -2631,6 +2645,28 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_End___(void * jarg1
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginChild___(void * jarg1, char * jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char *arg2 = (char *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char *)jarg2; 
+  result = (bool)(arg1)->BeginChild((char const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndChild___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->EndChild();
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextWindowSize___(void * jarg1, float jarg2, float jarg3, int jarg4) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   float arg2 ;
@@ -2676,6 +2712,22 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SameLine___(void * 
   
   arg1 = (efk::GUIManager *)jarg1; 
   (arg1)->SameLine();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginGroup___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->BeginGroup();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndGroup___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->EndGroup();
 }
 
 
@@ -5554,6 +5606,56 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_AddFontFromFileTTF_
   arg2 = (char *)jarg2; 
   arg3 = (float)jarg3; 
   (arg1)->AddFontFromFileTTF((char const *)arg2,arg3);
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginChildFrame__SWIG_0___(void * jarg1, unsigned int jarg2, void * jarg3, int jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  uint32_t arg2 ;
+  efk::Vec2 *arg3 = 0 ;
+  efk::WindowFlags arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (uint32_t)jarg2; 
+  arg3 = (efk::Vec2 *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return 0;
+  } 
+  arg4 = (efk::WindowFlags)jarg4; 
+  result = (bool)(arg1)->BeginChildFrame(arg2,(efk::Vec2 const &)*arg3,arg4);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginChildFrame__SWIG_1___(void * jarg1, unsigned int jarg2, void * jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  uint32_t arg2 ;
+  efk::Vec2 *arg3 = 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (uint32_t)jarg2; 
+  arg3 = (efk::Vec2 *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return 0;
+  } 
+  result = (bool)(arg1)->BeginChildFrame(arg2,(efk::Vec2 const &)*arg3);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndChildFrame___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->EndChildFrame();
 }
 
 

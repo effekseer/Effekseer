@@ -111,6 +111,15 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_End(swigCPtr);
   }
 
+  public bool BeginChild(string str_id) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginChild(swigCPtr, str_id);
+    return ret;
+  }
+
+  public void EndChild() {
+    EffekseerNativePINVOKE.GUIManager_EndChild(swigCPtr);
+  }
+
   public void SetNextWindowSize(float size_x, float size_y, Cond cond) {
     EffekseerNativePINVOKE.GUIManager_SetNextWindowSize(swigCPtr, size_x, size_y, (int)cond);
   }
@@ -129,6 +138,14 @@ public class GUIManager : global::System.IDisposable {
 
   public void SameLine() {
     EffekseerNativePINVOKE.GUIManager_SameLine(swigCPtr);
+  }
+
+  public void BeginGroup() {
+    EffekseerNativePINVOKE.GUIManager_BeginGroup(swigCPtr);
+  }
+
+  public void EndGroup() {
+    EffekseerNativePINVOKE.GUIManager_EndGroup(swigCPtr);
   }
 
   public void Columns(int count, string id, bool border) {
@@ -843,6 +860,22 @@ public class GUIManager : global::System.IDisposable {
 
   public void AddFontFromFileTTF(string filename, float size_pixels) {
     EffekseerNativePINVOKE.GUIManager_AddFontFromFileTTF(swigCPtr, filename, size_pixels);
+  }
+
+  public bool BeginChildFrame(uint id, Vec2 size, WindowFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginChildFrame__SWIG_0(swigCPtr, id, Vec2.getCPtr(size), (int)flags);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public bool BeginChildFrame(uint id, Vec2 size) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginChildFrame__SWIG_1(swigCPtr, id, Vec2.getCPtr(size));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public void EndChildFrame() {
+    EffekseerNativePINVOKE.GUIManager_EndChildFrame(swigCPtr);
   }
 
   public bool IsKeyDown(int user_key_index) {
