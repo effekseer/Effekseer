@@ -8,7 +8,7 @@ namespace Effekseer.GUI.Dock
 {
     class NodeTreeView : DockPanel
     {
-        internal List<NodeTreeViewNode> Children = new List<NodeTreeViewNode>();
+        internal Utils.DelayedList<NodeTreeViewNode> Children = new Utils.DelayedList<NodeTreeViewNode>();
 
 		internal List<IControl> menuItems = new List<IControl>();
 
@@ -57,33 +57,36 @@ namespace Effekseer.GUI.Dock
 			Renew();
 		}
 
-        override protected void UpdateInternal()
-        {
+		override protected void UpdateInternal()
+		{
 			isPopupShown = false;
 
-            foreach (var child in Children)
-            {
-                child.Update();
-            }
-        }
+			Children.Lock();
+			foreach (var child in Children.Internal)
+			{
+				child.Update();
+			}
+			Children.Unlock();
+		}
 
         /// <summary>
         /// Renew all view
         /// </summary>
         public void Renew()
         {
-            // Reset all
-            if(Children.Count != 1 || Children[0].node != Core.Root)
-            {
-                foreach(var child in Children)
-                {
-                    child.RemoveEvent(true);
-                }
-                Children.Clear();
+			// Reset all
+			if (Children.Count != 1 || Children[0].node != Core.Root)
+			{
+				Children.Lock();
+				foreach (var child in Children.Internal)
+				{
+					child.RemoveEvent(true);
+				}
+				Children.Unlock();
+				Children.Clear();
 
-                Children.Add(new NodeTreeViewNode(this, Core.Root));
-            }
-
+				Children.Add(new NodeTreeViewNode(this, Core.Root));
+			}
 
             Action<NodeTreeViewNode, Data.NodeBase> set_nodes = null;
             set_nodes = (treenode, node) =>
@@ -158,7 +161,7 @@ namespace Effekseer.GUI.Dock
 
 		void ReadSelect()
 		{
-			Func<Data.NodeBase, List<NodeTreeViewNode>, NodeTreeViewNode> search_node = null;
+			Func<Data.NodeBase, Utils.DelayedList<NodeTreeViewNode>, NodeTreeViewNode> search_node = null;
 			search_node = (searched_node, treenodes) =>
 			{
 				if (search_node == null) return null;
@@ -189,7 +192,7 @@ namespace Effekseer.GUI.Dock
 
         public Data.NodeBase node { get; private set; } = null;
 
-        internal List<NodeTreeViewNode> Children = new List<NodeTreeViewNode>();
+        internal Utils.DelayedList<NodeTreeViewNode> Children = new Utils.DelayedList<NodeTreeViewNode>();
 
 		NodeTreeView treeView = null;
 
@@ -256,15 +259,23 @@ namespace Effekseer.GUI.Dock
 					Core.SelectedNode = this.node;
 				}
 
-                foreach (var child in Children)
+				treeView.Popup();
+
+				Children.Lock();
+
+                foreach (var child in Children.Internal)
                 {
                     child.Update();
                 }
 
+				Children.Unlock();
+
                 Manager.NativeManager.TreePop();
             }
-
-			treeView.Popup();
+			else
+			{
+				treeView.Popup();
+			}
         }
 
         public void ExpandAll()

@@ -16,6 +16,16 @@ namespace Effekseer.Utils
 
 		public List<T> Internal { get { return internalList; } }
 
+		public int Count { get { return internalList.Count; } }
+
+		public T this[int index]
+		{
+			get
+			{
+				return internalList[index];
+			}
+		}
+
 		public void Add(T item)
 		{
 			if(lockCount == 0)
@@ -38,6 +48,32 @@ namespace Effekseer.Utils
 			else
 			{
 				var c = new Command_Remove(item);
+				commands.Add(c);
+			}
+		}
+
+		public void RemoveAt(int index)
+		{
+			if (lockCount == 0)
+			{
+				internalList.RemoveAt(index);
+			}
+			else
+			{
+				var c = new Command_RemoveAt(index);
+				commands.Add(c);
+			}
+		}
+
+		public void Insert(int index, T item)
+		{
+			if (lockCount == 0)
+			{
+				internalList.Insert(index, item);
+			}
+			else
+			{
+				var c = new Command_Insert(index, item);
 				commands.Add(c);
 			}
 		}
@@ -107,6 +143,38 @@ namespace Effekseer.Utils
 			public override void Run(List<T> list)
 			{
 				list.Remove(removing);
+			}
+		}
+
+		class Command_RemoveAt : Command
+		{
+			int index;
+
+			public Command_RemoveAt(int index)
+			{
+				this.index = index;
+			}
+
+			public override void Run(List<T> list)
+			{
+				list.RemoveAt(index);
+			}
+		}
+
+		class Command_Insert : Command
+		{
+			int index;
+			T item;
+
+			public Command_Insert(int index, T item)
+			{
+				this.index = index;
+				this.item = item;
+			}
+
+			public override void Run(List<T> list)
+			{
+				list.Insert(index, item);
 			}
 		}
 
