@@ -88,7 +88,8 @@ void RenderState::Update( bool forced )
 
 	if( m_active.AlphaBlend != m_next.AlphaBlend || forced )
 	{
-		if(  m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity )
+		if(  m_next.AlphaBlend == ::Effekseer::AlphaBlendType::Opacity ||
+			m_renderer->GetRenderMode() == ::Effekseer::RenderMode::Wireframe )
 		{
 			glDisable( GL_BLEND );
 		}

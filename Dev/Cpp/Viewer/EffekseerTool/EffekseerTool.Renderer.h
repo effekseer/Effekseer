@@ -191,6 +191,11 @@ public:
 	Effekseer::Color BackgroundColor;
 
 	/**
+	@brief	背景色
+	*/
+	Effekseer::RenderMode RenderingMode;
+
+	/**
 		@brief	背景が半透明か?
 	*/
 	bool IsBackgroundTranslucent;

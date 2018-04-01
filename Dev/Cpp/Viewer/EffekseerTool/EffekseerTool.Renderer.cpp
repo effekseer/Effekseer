@@ -76,6 +76,7 @@ namespace EffekseerTool
 		, CullingPosition()
 
 		, Distortion(eDistortionType::DistortionType_Current)
+		, RenderingMode(Effekseer::RenderMode::Normal)
 
 		, m_isSRGBMode(isSRGBMode)
 
@@ -389,6 +390,8 @@ bool Renderer::BeginRendering()
 		m_distortionCallback->Blit = false;
 		m_distortionCallback->IsEnabled = false;
 	}
+
+	m_renderer->SetRenderMode(RenderingMode);
 
 	m_renderer->BeginRendering();
 	

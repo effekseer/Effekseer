@@ -220,6 +220,16 @@ public class ViewerParamater : global::System.IDisposable {
     } 
   }
 
+  public RenderMode RenderingMode {
+    set {
+      EffekseerNativePINVOKE.ViewerParamater_RenderingMode_set(swigCPtr, (int)value);
+    } 
+    get {
+      RenderMode ret = (RenderMode)EffekseerNativePINVOKE.ViewerParamater_RenderingMode_get(swigCPtr);
+      return ret;
+    } 
+  }
+
   public ViewerParamater() : this(EffekseerNativePINVOKE.new_ViewerParamater(), true) {
   }
 

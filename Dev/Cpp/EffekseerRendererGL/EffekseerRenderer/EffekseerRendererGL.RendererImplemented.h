@@ -369,6 +369,7 @@ friend class DeviceObject;
 private:
 	VertexBuffer*		m_vertexBuffer;
 	IndexBuffer*		m_indexBuffer;
+	IndexBuffer*		m_indexBufferForWireframe;
 	int32_t				m_squareMaxCount;
 	
 	Shader*							m_shader;
@@ -384,6 +385,8 @@ private:
 
 	VertexArray*			m_vao_distortion;
 	VertexArray*			m_vao_no_texture_distortion;
+
+	VertexArray*			m_vao_wire_frame;
 
 	::Effekseer::Vector3D	m_lightDirection;
 	::Effekseer::Color		m_lightColor;
@@ -412,6 +415,8 @@ private:
 	std::vector<GLuint>	m_currentTextures;
 
 	VertexArray*	m_currentVertexArray;
+
+	Effekseer::RenderMode m_renderMode;
 
 public:
 	/**
@@ -573,6 +578,18 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
+	/**
+	@brief	描画モードを設定する。
+	*/
+	void SetRenderMode( Effekseer::RenderMode renderMode ) override
+	{
+		m_renderMode = renderMode;
+	}
+	Effekseer::RenderMode GetRenderMode() override
+	{
+		return m_renderMode;
+	}
+
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* GetStandardRenderer() { return m_standardRenderer; }
 
 	void SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size );
@@ -584,6 +601,8 @@ public:
 	void SetLayout(Shader* shader);
 	void DrawSprites( int32_t spriteCount, int32_t vertexOffset );
 	void DrawPolygon( int32_t vertexCount, int32_t indexCount);
+
+	Shader* GetShader(bool useTexture, bool useDistortion) const;
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 

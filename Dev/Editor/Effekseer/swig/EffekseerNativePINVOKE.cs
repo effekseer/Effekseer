@@ -348,6 +348,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_Distortion_get___")]
   public static extern int ViewerParamater_Distortion_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RenderingMode_set___")]
+  public static extern void ViewerParamater_RenderingMode_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RenderingMode_get___")]
+  public static extern int ViewerParamater_RenderingMode_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ViewerParamater___")]
   public static extern global::System.IntPtr new_ViewerParamater();
 
