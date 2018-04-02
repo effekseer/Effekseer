@@ -24,6 +24,8 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterSelectNode += OnAfterSelectNode;
 
 			Controls.Add(paramerterList);
+			
+			Read();
 		}
 
 		public void FixValues()
