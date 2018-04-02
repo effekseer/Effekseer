@@ -19,10 +19,14 @@ namespace Effekseer.GUI.Dock
 			int[] frameMin = new int[] { Core.StartFrame };
 			int[] frameMax = new int[] { Core.EndFrame };
 
+			Manager.NativeManager.PushItemWidth(-1);
+
 			if (Manager.NativeManager.SliderInt("###Timeline", currentFrame, Core.StartFrame, Core.EndFrame))
 			{
 				Manager.Viewer.Current = currentFrame[0];
 			}
+
+			Manager.NativeManager.PopItemWidth();
 
 			Manager.NativeManager.Separator();
 
