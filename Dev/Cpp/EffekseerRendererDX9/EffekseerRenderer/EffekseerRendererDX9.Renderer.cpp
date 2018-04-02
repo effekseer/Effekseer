@@ -820,6 +820,9 @@ void RendererImplemented::SetLayout( Shader* shader )
 //----------------------------------------------------------------------------------
 void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset )
 {
+	drawcallCount++;
+	drawvertexCount += spriteCount * 4;
+
 	GetDevice()->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, vertexOffset, 0, spriteCount * 4, 0, spriteCount * 2 );
 }
 
@@ -828,6 +831,9 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 //----------------------------------------------------------------------------------
 void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 {
+	drawcallCount++;
+	drawvertexCount += vertexCount;
+
 	GetDevice()->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, 0, 0, vertexCount, 0, indexCount / 3 );
 }
 
@@ -888,6 +894,26 @@ void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
+}
+
+int32_t RendererImplemented::GetDrawCallCount() const
+{
+	return drawcallCount;
+}
+
+int32_t RendererImplemented::GetDrawVertexCount() const
+{
+	return drawvertexCount;
+}
+
+void RendererImplemented::ResetDrawCallCount()
+{
+	drawcallCount = 0;
+}
+
+void RendererImplemented::ResetDrawVertexCount()
+{
+	drawvertexCount = 0;
 }
 
 //----------------------------------------------------------------------------------

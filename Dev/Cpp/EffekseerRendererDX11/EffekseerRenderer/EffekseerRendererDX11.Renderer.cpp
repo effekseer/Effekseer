@@ -807,6 +807,9 @@ void RendererImplemented::SetLayout( Shader* shader )
 //----------------------------------------------------------------------------------
 void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset )
 {
+	drawcallCount++;
+	drawvertexCount += spriteCount * 4;
+
 	GetContext()->DrawIndexed(
 		spriteCount * 2 * 3,
 		0,
@@ -818,6 +821,9 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 //----------------------------------------------------------------------------------
 void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 {
+	drawcallCount++;
+	drawvertexCount += vertexCount;
+
 	GetContext()->DrawIndexed(
 		indexCount,
 		0,
@@ -861,13 +867,30 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 	GetContext()->PSSetShaderResources(0, count, srv);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
+}
+
+int32_t RendererImplemented::GetDrawCallCount() const
+{
+	return drawcallCount;
+}
+
+int32_t RendererImplemented::GetDrawVertexCount() const
+{
+	return drawvertexCount;
+}
+
+void RendererImplemented::ResetDrawCallCount()
+{
+	drawcallCount = 0;
+}
+
+void RendererImplemented::ResetDrawVertexCount()
+{
+	drawvertexCount = 0;
 }
 
 //----------------------------------------------------------------------------------

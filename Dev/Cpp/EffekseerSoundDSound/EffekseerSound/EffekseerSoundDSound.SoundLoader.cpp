@@ -7,6 +7,7 @@
 #include "EffekseerSoundDSound.SoundLoader.h"
 #include <algorithm>
 #include <memory>
+#include <assert.h>
 
 //-----------------------------------------------------------------------------------
 //

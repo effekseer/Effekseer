@@ -1033,6 +1033,9 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 	// 全てがスプライトであること前提
 	auto triangles = vertexOffset / 4 * 2;
 
+	drawcallCount++;
+	drawvertexCount += spriteCount * 4;
+
 	glDrawElements(GL_TRIANGLES, spriteCount * 6, GL_UNSIGNED_SHORT, (void*) (triangles * 3 * sizeof(GLushort)));
 	
 	GLCheckError();
@@ -1044,6 +1047,9 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 {
 	GLCheckError();
+
+	drawcallCount++;
+	drawvertexCount += vertexCount;
 
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL);
 
@@ -1166,6 +1172,26 @@ void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
+}
+
+int32_t RendererImplemented::GetDrawCallCount() const
+{
+	return drawcallCount;
+}
+
+int32_t RendererImplemented::GetDrawVertexCount() const
+{
+	return drawvertexCount;
+}
+
+void RendererImplemented::ResetDrawCallCount()
+{
+	drawcallCount = 0;
+}
+
+void RendererImplemented::ResetDrawVertexCount()
+{
+	drawvertexCount = 0;
 }
 
 //----------------------------------------------------------------------------------

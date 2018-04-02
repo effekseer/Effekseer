@@ -177,6 +177,35 @@ public:
 	@brief	背景を歪ませるエフェクトが描画される前に呼ばれるコールバックを設定する。
 	*/
 	virtual void SetDistortingCallback(DistortingCallback* callback) = 0;
+
+	/**
+	@brief	
+	\~english Get draw call count
+	\~japanese ドローコールの回数を取得する
+	*/
+	virtual int32_t GetDrawCallCount() const = 0;
+
+	/**
+	@brief
+	\~english Get the number of vertex drawn
+	\~japanese 描画された頂点数をリセットする
+	*/
+	virtual int32_t GetDrawVertexCount() const = 0;
+
+	/**
+	@brief
+	\~english Reset draw call count
+	\~japanese ドローコールの回数をリセットする
+	*/
+	virtual void ResetDrawCallCount() = 0;
+
+	/**
+	@brief
+	\~english Reset the number of vertex drawn
+	\~japanese 描画された頂点数をリセットする
+	*/
+	virtual void ResetDrawVertexCount() = 0;
+
 };
 
 //----------------------------------------------------------------------------------
