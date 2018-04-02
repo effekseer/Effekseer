@@ -257,6 +257,7 @@ private:
 
 	VertexBuffer*		m_vertexBuffer;
 	IndexBuffer*		m_indexBuffer;
+	IndexBuffer*		m_indexBufferForWireframe;
 	int32_t				m_squareMaxCount;
 
 	int32_t				drawcallCount = 0;
@@ -338,6 +339,8 @@ private:
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
+	Effekseer::RenderMode m_renderMode;
+
 public:
 	/**
 		@brief	コンストラクタ
@@ -385,6 +388,11 @@ public:
 		@brief	インデックスバッファ取得
 	*/
 	IndexBuffer* GetIndexBuffer();
+
+	/**
+		@brief	インデックスバッファ取得
+	*/
+	IndexBuffer* GetIndexBufferForWireframe();
 
 	/**
 		@brief	最大描画スプライト数
@@ -501,6 +509,18 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
+	/**
+	@brief	描画モードを設定する。
+	*/
+	void SetRenderMode( Effekseer::RenderMode renderMode ) override
+	{
+		m_renderMode = renderMode;
+	}
+	Effekseer::RenderMode GetRenderMode() override
+	{
+		return m_renderMode;
+	}
+
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* GetStandardRenderer() { return m_standardRenderer; }
 
 	void SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size );
@@ -512,6 +532,7 @@ public:
 	void DrawSprites( int32_t spriteCount, int32_t vertexOffset );
 	void DrawPolygon( int32_t vertexCount, int32_t indexCount);
 
+	Shader* GetShader(bool useTexture, bool useDistortion) const;
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 

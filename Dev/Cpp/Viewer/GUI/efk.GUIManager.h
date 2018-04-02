@@ -168,8 +168,10 @@ namespace efk
 		void* GetNativeHandle();
 
 		bool Begin(const char16_t* name, bool* p_open);
-
 		void End();
+
+		bool BeginChild(const char* str_id);
+		void EndChild();
 
 		void SetNextWindowSize(float size_x, float size_y, Cond cond);
 
@@ -181,6 +183,9 @@ namespace efk
 		void Separator();
 
 		void SameLine();
+
+		void BeginGroup();
+		void EndGroup();
 
 		// Column
 		void  Columns(int count = 1, const char* id = NULL, bool border = true);
@@ -275,6 +280,10 @@ namespace efk
 		void SetItemDefaultFocus();
 
 		void AddFontFromFileTTF(const char* filename, float size_pixels);
+
+		// Utils
+		bool BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flags = WindowFlags::None);
+		void EndChildFrame();
 
 		// Inputs
 		bool IsKeyDown(int user_key_index);

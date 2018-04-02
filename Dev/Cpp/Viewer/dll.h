@@ -26,6 +26,11 @@ enum class DistortionType
 	Disabled,
 };
 
+enum class RenderMode
+{
+	Normal,
+	Wireframe,
+};
 
 class ViewerParamater
 {
@@ -50,6 +55,7 @@ public:
 	float	CullingZ;
 
 	DistortionType	Distortion;
+	RenderMode		RenderingMode;
 
 	ViewerParamater();
 };

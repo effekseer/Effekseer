@@ -60,7 +60,10 @@ public class Vec2 : global::System.IDisposable {
     } 
   }
 
-  public Vec2() : this(EffekseerNativePINVOKE.new_Vec2(), true) {
+  public Vec2() : this(EffekseerNativePINVOKE.new_Vec2__SWIG_0(), true) {
+  }
+
+  public Vec2(float x, float y) : this(EffekseerNativePINVOKE.new_Vec2__SWIG_1(x, y), true) {
   }
 
 }

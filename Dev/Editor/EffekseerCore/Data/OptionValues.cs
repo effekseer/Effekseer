@@ -7,6 +7,17 @@ namespace Effekseer.Data
 {
 	public class OptionValues
 	{
+		[Name(language = Language.Japanese, value = "描画モード")]
+		[Description(language = Language.Japanese, value = "エフェクトの通常モードの設定")]
+		[Name(language = Language.English, value = "Render Mode")]
+		[Description(language = Language.English, value = "Set the Render Mode of effects")]
+		[Undo(Undo = false)]
+		public Value.Enum<RenderMode> RenderingMode
+		{
+			get;
+			private set;
+		}
+
 		[Name(language = Language.Japanese, value = "グリッド色")]
 		[Description(language = Language.Japanese, value = "グリッド色")]
 		[Name(language = Language.English, value = "Grid Color")]
@@ -262,6 +273,7 @@ namespace Effekseer.Data
         
         public OptionValues()
 		{
+			RenderingMode = new Value.Enum<RenderMode>(RenderMode.Normal);
 			BackgroundColor = new Value.Color(0, 0, 0, 255);
             LasyBackgroundImage = new Lazy<Value.PathForImage>(() => { return new Value.PathForImage(Properties.Resources.ImageFilter, false, ""); });
 			GridColor = new Value.Color(255, 255, 255, 255);
@@ -299,6 +311,16 @@ namespace Effekseer.Data
             {
                 GuiLanguage = new Value.Enum<Language>(Language.English);
             }
+		}
+		
+		public enum RenderMode : int
+		{
+			[Name(value = "通常モード", language = Language.Japanese)]
+			[Name(value = "Normal", language = Language.English)]
+			Normal = 0,
+			[Name(value = "ワイヤーフレーム", language = Language.Japanese)]
+			[Name(value = "Wireframe", language = Language.English)]
+			Wireframe = 1,
 		}
 
 		public enum FPSType : int

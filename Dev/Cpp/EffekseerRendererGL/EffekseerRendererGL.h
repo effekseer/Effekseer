@@ -302,6 +302,16 @@ public:
 	*/
 	virtual void ResetDrawVertexCount() = 0;
 
+
+	/**
+	@brief	描画モードを設定する。
+	*/
+	virtual void SetRenderMode( Effekseer::RenderMode renderMode ) = 0;
+
+	/**
+	@brief	描画モードを取得する。
+	*/
+	virtual Effekseer::RenderMode GetRenderMode() = 0;
 };
 
 //----------------------------------------------------------------------------------

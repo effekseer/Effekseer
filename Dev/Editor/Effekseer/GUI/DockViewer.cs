@@ -67,6 +67,7 @@ namespace Effekseer.GUI
 			Core.Option.GridColor.B.OnChanged += OnChanged;
 			Core.Option.GridColor.A.OnChanged += OnChanged;
 			Core.Option.FPS.OnChanged += OnChanged;
+			Core.Option.RenderingMode.OnChanged += OnChanged;
 
 			Core.Option.DistortionType.OnChanged += OnChanged;
 			Core.Option.Coordinate.OnChanged += OnChanged;

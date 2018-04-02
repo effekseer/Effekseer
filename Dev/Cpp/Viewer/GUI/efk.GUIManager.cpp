@@ -279,6 +279,16 @@ namespace efk
 		ImGui::End();
 	}
 
+	bool GUIManager::BeginChild(const char* str_id)
+	{
+		return ImGui::BeginChild(str_id);
+	}
+
+	void GUIManager::EndChild()
+	{
+		ImGui::EndChild();
+	}
+
 	void GUIManager::SetNextWindowSize(float size_x, float size_y, Cond cond)
 	{
 		ImVec2 size;
@@ -306,6 +316,16 @@ namespace efk
 	void GUIManager::SameLine()
 	{
 		ImGui::SameLine();
+	}
+
+	void GUIManager::BeginGroup()
+	{
+		ImGui::BeginGroup();
+	}
+
+	void GUIManager::EndGroup()
+	{
+		ImGui::EndGroup();
 	}
 
 	void GUIManager::Columns(int count, const char* id, bool border)
@@ -643,6 +663,16 @@ namespace efk
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.Fonts->AddFontFromFileTTF(filename, size_pixels, nullptr, glyphRangesJapanese);
+	}
+
+	bool GUIManager::BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flags)
+	{
+		return ImGui::BeginChildFrame(id, ImVec2(size.X, size.Y), (int32_t)flags);
+	}
+
+	void GUIManager::EndChildFrame()
+	{
+		ImGui::EndChildFrame();
 	}
 
 	bool GUIManager::IsKeyDown(int user_key_index)

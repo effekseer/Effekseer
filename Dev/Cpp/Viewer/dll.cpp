@@ -177,6 +177,7 @@ ViewerParamater::ViewerParamater()
 	, CullingZ			( 0 )
 
 	, Distortion		( DistortionType::Current )
+	, RenderingMode		( RenderMode::Normal )
 
 {
 
@@ -1566,6 +1567,7 @@ void Native::SetViewerParamater( ViewerParamater& paramater )
 	g_renderer->RendersGuide = paramater.RendersGuide;
 
 	g_renderer->Distortion = (::EffekseerTool::eDistortionType)paramater.Distortion;
+	g_renderer->RenderingMode = (::Effekseer::RenderMode)paramater.RenderingMode;
 }
 
 //----------------------------------------------------------------------------------

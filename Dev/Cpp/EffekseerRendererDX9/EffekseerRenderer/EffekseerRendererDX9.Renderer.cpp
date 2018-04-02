@@ -129,6 +129,7 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_indexBuffer	( NULL )
 	, m_squareMaxCount	( squareMaxCount )
 	, m_coordinateSystem	( ::Effekseer::CoordinateSystem::RH )
+	, m_renderMode	( ::Effekseer::RenderMode::Normal )
 	, m_state_vertexShader( NULL )
 	, m_state_pixelShader( NULL )
 	, m_state_vertexDeclaration	( NULL )
@@ -235,6 +236,27 @@ void RendererImplemented::OnResetDevice()
 
 		m_isChangedDevice = false;
 	}
+
+	// ワイヤーフレーム用インデックスの生成
+	{
+		m_indexBufferForWireframe->Lock();
+
+		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
+		for( int i = 0; i < m_squareMaxCount; i++ )
+		{
+			uint16_t* buf = (uint16_t*)m_indexBufferForWireframe->GetBufferDirect( 8 );
+			buf[0] = 0 + 4 * i;
+			buf[1] = 1 + 4 * i;
+			buf[2] = 2 + 4 * i;
+			buf[3] = 3 + 4 * i;
+			buf[4] = 0 + 4 * i;
+			buf[5] = 2 + 4 * i;
+			buf[6] = 1 + 4 * i;
+			buf[7] = 3 + 4 * i;
+		}
+
+		m_indexBufferForWireframe->Unlock();
+	}
 }
 
 
@@ -275,6 +297,30 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 		}
 
 		m_indexBuffer->Unlock();
+	}
+
+	// ワイヤーフレーム用インデックスの生成
+	{
+		m_indexBufferForWireframe = IndexBuffer::Create( this, m_squareMaxCount * 8, false );
+		if( m_indexBufferForWireframe == NULL ) return false;
+
+		m_indexBufferForWireframe->Lock();
+
+		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
+		for( int i = 0; i < m_squareMaxCount; i++ )
+		{
+			uint16_t* buf = (uint16_t*)m_indexBufferForWireframe->GetBufferDirect( 8 );
+			buf[0] = 0 + 4 * i;
+			buf[1] = 1 + 4 * i;
+			buf[2] = 2 + 4 * i;
+			buf[3] = 3 + 4 * i;
+			buf[4] = 0 + 4 * i;
+			buf[5] = 2 + 4 * i;
+			buf[6] = 1 + 4 * i;
+			buf[7] = 3 + 4 * i;
+		}
+
+		m_indexBufferForWireframe->Unlock();
 	}
 
 	// 参照カウントの調整
@@ -583,7 +629,22 @@ VertexBuffer* RendererImplemented::GetVertexBuffer()
 //----------------------------------------------------------------------------------
 IndexBuffer* RendererImplemented::GetIndexBuffer()
 {
-	return m_indexBuffer;
+	if( m_renderMode == ::Effekseer::RenderMode::Wireframe )
+	{
+		return m_indexBufferForWireframe;
+	}
+	else
+	{
+		return m_indexBuffer;
+	}
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+IndexBuffer* RendererImplemented::GetIndexBufferForWireframe()
+{
+	return m_indexBufferForWireframe;
 }
 
 //----------------------------------------------------------------------------------
@@ -823,7 +884,14 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 	drawcallCount++;
 	drawvertexCount += spriteCount * 4;
 
-	GetDevice()->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, vertexOffset, 0, spriteCount * 4, 0, spriteCount * 2 );
+	if( m_renderMode == ::Effekseer::RenderMode::Normal )
+	{
+		GetDevice()->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, vertexOffset, 0, spriteCount * 4, 0, spriteCount * 2 );
+	}
+	else if( m_renderMode == ::Effekseer::RenderMode::Wireframe )
+	{
+		GetDevice()->DrawIndexedPrimitive( D3DPT_LINELIST, vertexOffset, 0, spriteCount * 4, 0, spriteCount * 4 );
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -835,6 +903,35 @@ void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 	drawvertexCount += vertexCount;
 
 	GetDevice()->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, 0, 0, vertexCount, 0, indexCount / 3 );
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) const
+{
+	if( useDistortion )
+	{
+		if( useTexture && m_renderMode == Effekseer::RenderMode::Normal )
+		{
+			return m_shader_distortion;
+		}
+		else
+		{
+			return m_shader_no_texture_distortion;
+		}
+	}
+	else
+	{
+		if( useTexture && m_renderMode == Effekseer::RenderMode::Normal )
+		{
+			return m_shader;
+		}
+		else
+		{
+			return m_shader_no_texture;
+		}
+	}
 }
 
 //----------------------------------------------------------------------------------

@@ -327,6 +327,15 @@ namespace Effekseer.GUI
 
 			native.SetViewerParamater(param);
 		}
+		
+		public void SetRenderMode(int renderMode)
+		{
+			var param = native.GetViewerParamater();
+
+			param.RenderingMode = (swig.RenderMode)renderMode;
+
+			native.SetViewerParamater(param);
+		}
 
 		public void SetIsRightHand(bool value)
 		{
@@ -581,6 +590,7 @@ namespace Effekseer.GUI
 			SetIsRightHand(Core.Option.Coordinate.Value == Data.OptionValues.CoordinateType.Right);
 
 			SetDistortionType((int)Core.Option.DistortionType.Value);
+			SetRenderMode((int)Core.Option.RenderingMode.Value);
 
 			if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
 			{
