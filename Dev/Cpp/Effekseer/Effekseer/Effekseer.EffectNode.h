@@ -869,7 +869,7 @@ public:
 
 	eRenderingOrder				RenderingOrder;
 
-	int32_t						RenderingPriority;
+	int32_t						RenderingPriority = -1;
 
 	Effect* GetEffect() const override;
 
