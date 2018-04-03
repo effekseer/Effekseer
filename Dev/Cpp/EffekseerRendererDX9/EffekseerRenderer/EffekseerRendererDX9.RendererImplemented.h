@@ -339,7 +339,7 @@ private:
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
-	Effekseer::RenderMode m_renderMode;
+	Effekseer::RenderMode m_renderMode = Effekseer::RenderMode::Normal;
 
 public:
 	/**

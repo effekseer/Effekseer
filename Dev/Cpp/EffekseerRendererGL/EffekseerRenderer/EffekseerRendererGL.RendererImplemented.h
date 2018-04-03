@@ -419,7 +419,7 @@ private:
 
 	VertexArray*	m_currentVertexArray;
 
-	Effekseer::RenderMode m_renderMode;
+	Effekseer::RenderMode m_renderMode = Effekseer::RenderMode::Normal;
 
 public:
 	/**
