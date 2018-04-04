@@ -18,6 +18,10 @@ namespace Effekseer.GUI.Dock
 			Label = Resources.GetString("FileViewer");
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
+
+			if (!String.IsNullOrEmpty(Core.FullPath)) {
+				UpdateFileList(Path.GetDirectoryName(Core.FullPath));
+			}
 		}
 
 		public override void OnDisposed()
@@ -28,10 +32,40 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+			Manager.NativeManager.PushItemWidth(-1);
+
+			// Address bar
+			{
+				if (Manager.NativeManager.Button("↑") &&
+					!String.IsNullOrEmpty(currentPath))
+				{
+					UpdateFileList(Path.GetDirectoryName(currentPath));
+				}
+			
+				Manager.NativeManager.SameLine();
+
+				// Display current directory
+				if (Manager.NativeManager.InputText("", (currentPath != null) ? currentPath : ""))
+				{
+					string path = Manager.NativeManager.GetInputTextResult();
+					UpdateFileList(path);
+				}
+			}
+
+			Manager.NativeManager.Separator();
+
+			// Display all files
 			for(int i = 0; i < items.Count; i++)
 			{
 				var item = items[i];
-				if (Manager.NativeManager.Selectable(item.FilePath, i == selectedIndex, swig.SelectableFlags.AllowDoubleClick))
+
+				// Todo: ファイルタイプに適したアイコンを割り当てる
+				Manager.NativeManager.Image(Images.Icon, 16, 16);
+
+				Manager.NativeManager.SameLine();
+				
+				string caption = Path.GetFileName(item.FilePath);
+				if (Manager.NativeManager.Selectable(caption, i == selectedIndex, swig.SelectableFlags.AllowDoubleClick))
 				{
 					selectedIndex = i;
 
@@ -41,11 +75,13 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 			}
+			
+			Manager.NativeManager.PopItemWidth();
 		}
 
 		void OnAfterLoad(object sender, EventArgs e)
 		{
-			UpdateFileList();
+			UpdateFileList(Path.GetDirectoryName(Core.FullPath));
 		}
 
 		/// <summary>
@@ -67,31 +103,22 @@ namespace Effekseer.GUI.Dock
 		/// <summary>
 		/// Update list
 		/// </summary>
-		private void UpdateFileList()
+		private void UpdateFileList(string path)
 		{
-			selectedIndex = -1;
-
-			if (String.IsNullOrEmpty(Core.FullPath))
+			if (!Directory.Exists(path))
 			{
-				items.Clear();
-				currentPath = null;
 				return;
 			}
 
-			// enumerate items
-			UpdateFileListItems(System.IO.Path.GetDirectoryName(Core.FullPath));
-		}
-
-		private void UpdateFileListItems(string path)
-		{
+			selectedIndex = -1;
 			currentPath = path;
 			items.Clear();
 
-			string parentDirectory = System.IO.Path.GetDirectoryName(path);
-			if (parentDirectory != null)
-			{
-				items.Add(new FileItem("Parent directory", Path.GetDirectoryName(path)));
-			}
+			//string parentDirectory = System.IO.Path.GetDirectoryName(path);
+			//if (parentDirectory != null)
+			//{
+			//	items.Add(new FileItem("Parent directory", Path.GetDirectoryName(path)));
+			//}
 
 			// add directories
 			foreach (string dirPath in Directory.EnumerateDirectories(path))
@@ -128,7 +155,7 @@ namespace Effekseer.GUI.Dock
 			else if (Directory.Exists(fileItem.FilePath))
 			{
 				// move directory
-				UpdateFileListItems(fileItem.FilePath);
+				UpdateFileList(fileItem.FilePath);
 			}
 			else
 			{
