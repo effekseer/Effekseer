@@ -1373,19 +1373,16 @@ void ManagerImplemented::UpdateHandle( Handle handle, float deltaFrame )
 //----------------------------------------------------------------------------------
 void ManagerImplemented::UpdateHandle( DrawSet& drawSet, float deltaFrame )
 {
-	if( !drawSet.IsPaused )
+	float df = drawSet.IsPaused ? 0 : deltaFrame * drawSet.Speed;
+
+	drawSet.InstanceContainerPointer->Update( true, df, drawSet.IsShown );
+
+	if( drawSet.DoUseBaseMatrix )
 	{
-		float df = deltaFrame * drawSet.Speed;
-
-		drawSet.InstanceContainerPointer->Update( true, df, drawSet.IsShown );
-
-		if( drawSet.DoUseBaseMatrix )
-		{
-			drawSet.InstanceContainerPointer->SetBaseMatrix( true, drawSet.BaseMatrix );
-		}
-
-		drawSet.GlobalPointer->AddUpdatedFrame( df );
+		drawSet.InstanceContainerPointer->SetBaseMatrix( true, drawSet.BaseMatrix );
 	}
+
+	drawSet.GlobalPointer->AddUpdatedFrame( df );
 }
 
 //----------------------------------------------------------------------------------
