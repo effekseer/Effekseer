@@ -2641,7 +2641,7 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetNativeHandle__
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Begin___(void * jarg1, char16_t * jarg2, bool* jarg3) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Begin___(void * jarg1, char16_t * jarg2, unsigned int * jarg3) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -2650,11 +2650,9 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Begin___(vo
   
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
-  arg3 = jarg3;
+  arg3 = (bool *)jarg3; 
   result = (bool)(arg1)->Begin((char16_t const *)arg2,arg3);
   jresult = result; 
-  
-  
   return jresult;
 }
 
@@ -5405,7 +5403,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__S
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_4___(void * jarg1, char16_t * jarg2, char * jarg3, bool* jarg4, unsigned int jarg5) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_4___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int * jarg4, unsigned int jarg5) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5417,17 +5415,15 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__S
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
   arg3 = (char *)jarg3; 
-  arg4 = jarg4;
+  arg4 = (bool *)jarg4; 
   arg5 = jarg5 ? true : false; 
   result = (bool)(arg1)->MenuItem((char16_t const *)arg2,(char const *)arg3,arg4,arg5);
   jresult = result; 
-  
-  
   return jresult;
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_5___(void * jarg1, char16_t * jarg2, char * jarg3, bool* jarg4) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_5___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int * jarg4) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5438,11 +5434,9 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__S
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
   arg3 = (char *)jarg3; 
-  arg4 = jarg4;
+  arg4 = (bool *)jarg4; 
   result = (bool)(arg1)->MenuItem((char16_t const *)arg2,(char const *)arg3,arg4);
   jresult = result; 
-  
-  
   return jresult;
 }
 
@@ -5487,7 +5481,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPopup_
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPopupModal__SWIG_0___(void * jarg1, char16_t * jarg2, bool* jarg3, int jarg4) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPopupModal__SWIG_0___(void * jarg1, char16_t * jarg2, unsigned int * jarg3, int jarg4) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5497,17 +5491,15 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPopupM
   
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
-  arg3 = jarg3;
+  arg3 = (bool *)jarg3; 
   arg4 = (efk::WindowFlags)jarg4; 
   result = (bool)(arg1)->BeginPopupModal((char16_t const *)arg2,arg3,arg4);
   jresult = result; 
-  
-  
   return jresult;
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPopupModal__SWIG_1___(void * jarg1, char16_t * jarg2, bool* jarg3) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPopupModal__SWIG_1___(void * jarg1, char16_t * jarg2, unsigned int * jarg3) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5516,11 +5508,9 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginPopupM
   
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (char16_t *)jarg2; 
-  arg3 = jarg3;
+  arg3 = (bool *)jarg3; 
   result = (bool)(arg1)->BeginPopupModal((char16_t const *)arg2,arg3);
   jresult = result; 
-  
-  
   return jresult;
 }
 
@@ -5806,6 +5796,90 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndDock___(void * j
   
   arg1 = (efk::GUIManager *)jarg1; 
   (arg1)->EndDock();
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve___(void * jarg1, int jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  result = (bool)(arg1)->BeginFCurve(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndFCurve___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->EndFCurve();
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_FCurve___(void * jarg1, int jarg2, float* jarg3, float* jarg4, float* jarg5, float* jarg6, float* jarg7, float* jarg8, bool* jarg9, int jarg10, unsigned int jarg11, unsigned int jarg12, unsigned int jarg13, unsigned int jarg14, int * jarg15, unsigned int * jarg16, float * jarg17, float * jarg18, int * jarg19) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  float *arg3 = (float *) 0 ;
+  float *arg4 = (float *) 0 ;
+  float *arg5 = (float *) 0 ;
+  float *arg6 = (float *) 0 ;
+  float *arg7 = (float *) 0 ;
+  float *arg8 = (float *) 0 ;
+  bool *arg9 = (bool *) 0 ;
+  int arg10 ;
+  bool arg11 ;
+  bool arg12 ;
+  uint32_t arg13 ;
+  bool arg14 ;
+  int *arg15 = (int *) 0 ;
+  bool *arg16 = (bool *) 0 ;
+  float *arg17 = (float *) 0 ;
+  float *arg18 = (float *) 0 ;
+  int *arg19 = (int *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = jarg3;
+  arg4 = jarg4;
+  arg5 = jarg5;
+  arg6 = jarg6;
+  arg7 = jarg7;
+  arg8 = jarg8;
+  arg9 = jarg9;
+  arg10 = (int)jarg10; 
+  arg11 = jarg11 ? true : false; 
+  arg12 = jarg12 ? true : false; 
+  arg13 = (uint32_t)jarg13; 
+  arg14 = jarg14 ? true : false; 
+  arg15 = (int *)jarg15; 
+  arg16 = (bool *)jarg16; 
+  arg17 = (float *)jarg17; 
+  arg18 = (float *)jarg18; 
+  arg19 = (int *)jarg19; 
+  result = (bool)(arg1)->FCurve(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19);
+  jresult = result; 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  return jresult;
 }
 
 

@@ -15,11 +15,5 @@ public enum DistortionType {
   Effekseer120,
   Disabled
 }
-	
-public enum RenderMode
-{
-	Normal,
-	Wireframe,
-}
 
 }

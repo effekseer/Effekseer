@@ -13,6 +13,7 @@
 %include "wchar.i"
 %include "stdint.i"
 %include "char16.i"
+%include "typemaps.i"
 %include "arrays_csharp.i"
 
 %pragma(csharp) imclassclassmodifiers="
@@ -41,14 +42,30 @@ class"
 
 %apply float INOUT[] { float* col }
 
-%apply bool INOUT[] { bool* p_open }
-%apply bool INOUT[] { bool* p_selected }
+%apply bool *INOUT { bool* p_open }
+%apply bool *INOUT { bool* p_selected }
 
 %apply int INOUT[] { int* v_current_min }
 %apply int INOUT[] { int* v_current_max }
 
 %apply float INOUT[] { float* v_current_min }
 %apply float INOUT[] { float* v_current_max }
+
+
+// FCurve
+%apply float INOUT[] { float* keys }
+%apply float INOUT[] { float* values }
+%apply float INOUT[] { float* leftHandleKeys }
+%apply float INOUT[] { float* leftHandleValues }
+%apply float INOUT[] { float* rightHandleKeys }
+%apply float INOUT[] { float* rightHandleValues }
+%apply bool INOUT[] { bool* kv_selected }
+%apply int *INOUT { int* newCount }
+%apply bool *INOUT { bool* newSelected }
+%apply float *INOUT { float* movedX }
+%apply float *INOUT { float* movedY }
+%apply int *INOUT { int* changedType }
+
 
 %feature("director") GUIManagerCallback;
 

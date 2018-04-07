@@ -37,6 +37,9 @@
     <Filter Include="3rdParty\nfd">
       <UniqueIdentifier>{51f2ab6b-2b6e-43ae-b60e-7bad2bdab8b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rdParty\imgui_addon\fcurve">
+      <UniqueIdentifier>{13e33b19-cf08-4793-9e67-681b11ce31c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h">
@@ -133,6 +136,9 @@
     <ClInclude Include="GUI\efk.Vec2.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="3rdParty\imgui_addon\fcurve\fcurve.h">
+      <Filter>3rdParty\imgui_addon\fcurve</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -221,6 +227,9 @@
     </ClCompile>
     <ClCompile Include="GUI\efk.ImageResource.cpp">
       <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui_addon\fcurve\fcurve.cpp">
+      <Filter>3rdParty\imgui_addon\fcurve</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

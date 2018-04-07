@@ -12,7 +12,7 @@ namespace Effekseer.GUI.Dock
 
 		string id = "";
 
-		bool[] opened = new[] { true };
+		bool opened = true ;
 
 		public DockManager()
 		{
@@ -21,9 +21,9 @@ namespace Effekseer.GUI.Dock
 
 		public override void Update()
 		{
-			if (opened[0])
+			if (opened)
 			{
-				if (Manager.NativeManager.Begin(Label + id, opened))
+				if (Manager.NativeManager.Begin(Label + id, ref opened))
 				{
 					Manager.NativeManager.BeginDockspace();
 

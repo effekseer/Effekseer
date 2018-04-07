@@ -12,7 +12,7 @@ namespace Effekseer.GUI.Dock
 
 		string id = "";
 
-		bool[] opened = new[] { true };
+		bool opened = true;
 
 		public DockPanel()
 		{
@@ -21,7 +21,7 @@ namespace Effekseer.GUI.Dock
 
 		public override void Update()
 		{
-			if(opened[0])
+			if(opened)
 			{
 				if (Manager.IsDockMode())
 				{
@@ -44,7 +44,7 @@ namespace Effekseer.GUI.Dock
 				}
 				else
 				{
-					if (Manager.NativeManager.Begin(Label + id, opened))
+					if (Manager.NativeManager.Begin(Label + id, ref opened))
 					{
 						UpdateInternal();
 

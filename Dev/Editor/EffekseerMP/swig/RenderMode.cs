@@ -10,10 +10,9 @@
 
 namespace Effekseer.swig {
 
-public enum DistortionType {
-  Current,
-  Effekseer120,
-  Disabled
+public enum RenderMode {
+  Normal,
+  Wireframe
 }
 
 }

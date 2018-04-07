@@ -10,6 +10,8 @@
 
 #include "efk.JapaneseFont.h"
 
+#include "../3rdParty/imgui_addon/fcurve/fcurve.h"
+
 namespace efk
 {
 	// http://hasenpfote36.blogspot.jp/2016/09/stdcodecvt.html
@@ -728,5 +730,53 @@ namespace efk
 	void GUIManager::EndDock()
 	{
 		ImGui::EndDock();
+	}
+
+	bool GUIManager::BeginFCurve(int id)
+	{
+		return ImGui::BeginFCurve(id);
+	}
+
+	void GUIManager::EndFCurve()
+	{
+		ImGui::EndFCurve();
+	}
+
+	bool GUIManager::FCurve(
+		int fcurve_id,
+		float* keys, float* values,
+		float* leftHandleKeys, float* leftHandleValues,
+		float* rightHandleKeys, float* rightHandleValues,
+		bool* kv_selected,
+		int count,
+		bool isLocked,
+		bool canControl,
+		uint32_t col,
+		bool selected,
+		int* newCount,
+		bool* newSelected,
+		float* movedX,
+		float* movedY,
+		int* changedType)
+	{
+		return ImGui::FCurve(
+			fcurve_id,
+			keys,
+			values,
+			leftHandleKeys,
+			leftHandleValues,
+			rightHandleKeys,
+			rightHandleValues,
+			kv_selected,
+			count,
+			isLocked,
+			canControl,
+			col,
+			selected,
+			newCount,
+			newSelected,
+			movedX,
+			movedY,
+			changedType);
 	}
 }

@@ -14,6 +14,8 @@ namespace Effekseer.GUI.Dialog
 
 		bool isFirstUpdate = true;
 
+		bool opened = true;
+
 		string license = @"
 The MIT License
 
@@ -68,7 +70,7 @@ Dock Panel Suite
 				isFirstUpdate = false;
 			}
 
-			if (Manager.NativeManager.BeginPopupModal(title + id, null, swig.WindowFlags.None))
+			if (Manager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.None))
             {
 				Manager.NativeManager.Image(Images.Icon, 32, 32);
 

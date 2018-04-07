@@ -15,6 +15,8 @@ namespace Effekseer.GUI.Dialog
 		string message = string.Empty;
 		string id = "###openModel";
 
+		bool opened = true;
+
 		bool isFirstUpdate = true;
 
 		public bool ShouldBeRemoved { get; private set; } = false;
@@ -47,7 +49,7 @@ namespace Effekseer.GUI.Dialog
 				}
 			}
 
-			if (Manager.NativeManager.BeginPopupModal(title + id, null, swig.WindowFlags.AlwaysAutoResize))
+			if (Manager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.AlwaysAutoResize))
 			{
 				Manager.NativeManager.Text(message);
 

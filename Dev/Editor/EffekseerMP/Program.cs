@@ -128,7 +128,7 @@ namespace Effekseer
 
 	class TestWindow : GUI.IRemovableControl
 	{
-		bool[] opened = new[] { true };
+		bool opened = true;
 
 		public bool ShouldBeRemoved { get; private set; } = false;
 
@@ -143,7 +143,7 @@ namespace Effekseer
 		{
 			var mgr = GUI.Manager.NativeManager;
 
-			if (mgr.Begin("ViewerController", opened))
+			if (mgr.Begin("ViewerController", ref opened))
 			{
 
 				mgr.SliderInt("Timeline", currentTime, currentMin[0], currentMax[0]);
@@ -217,13 +217,13 @@ namespace Effekseer
 
 	class DebugMenu : GUI.IRemovableControl
 	{
-		bool[] opened = new[] { true };
+		bool opened = true;
 
 		public bool ShouldBeRemoved { get; private set; } = false;
 
 		public void Update()
 		{
-			if(GUI.Manager.NativeManager.Begin("DebugMenu", opened))
+			if(GUI.Manager.NativeManager.Begin("DebugMenu", ref opened))
 			{
 				if(GUI.Manager.NativeManager.Button("About"))
 				{

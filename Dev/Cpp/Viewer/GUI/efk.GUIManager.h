@@ -300,5 +300,25 @@ namespace efk
 		void EndDockspace();
 		bool BeginDock(const char16_t* label);
 		void EndDock();
+
+		// Fcurve
+		bool BeginFCurve(int id);
+		void EndFCurve();
+		bool FCurve(
+			int fcurve_id,
+			float* keys, float* values,
+			float* leftHandleKeys, float* leftHandleValues,
+			float* rightHandleKeys, float* rightHandleValues,
+			bool* kv_selected,
+			int count,
+			bool isLocked,
+			bool canControl,
+			uint32_t col,
+			bool selected,
+			int* newCount,
+			bool* newSelected,
+			float* movedX,
+			float* movedY,
+			int* changedType);
 	};
 }

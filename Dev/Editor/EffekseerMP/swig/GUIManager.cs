@@ -102,8 +102,8 @@ public class GUIManager : global::System.IDisposable {
 
   public System.IntPtr GetNativeHandle() { return EffekseerNativePINVOKE.GUIManager_GetNativeHandle(swigCPtr); }
 
-  public bool Begin(string name, bool[] p_open) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Begin(swigCPtr, name, p_open);
+  public bool Begin(string name, ref bool p_open) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Begin(swigCPtr, name, ref p_open);
     return ret;
   }
 
@@ -787,13 +787,13 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public bool MenuItem(string label, string shortcut, bool[] p_selected, bool enabled) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_4(swigCPtr, label, shortcut, p_selected, enabled);
+  public bool MenuItem(string label, string shortcut, ref bool p_selected, bool enabled) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_4(swigCPtr, label, shortcut, ref p_selected, enabled);
     return ret;
   }
 
-  public bool MenuItem(string label, string shortcut, bool[] p_selected) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_5(swigCPtr, label, shortcut, p_selected);
+  public bool MenuItem(string label, string shortcut, ref bool p_selected) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_5(swigCPtr, label, shortcut, ref p_selected);
     return ret;
   }
 
@@ -811,13 +811,13 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
-  public bool BeginPopupModal(string name, bool[] p_open, WindowFlags extra_flags) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginPopupModal__SWIG_0(swigCPtr, name, p_open, (int)extra_flags);
+  public bool BeginPopupModal(string name, ref bool p_open, WindowFlags extra_flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginPopupModal__SWIG_0(swigCPtr, name, ref p_open, (int)extra_flags);
     return ret;
   }
 
-  public bool BeginPopupModal(string name, bool[] p_open) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginPopupModal__SWIG_1(swigCPtr, name, p_open);
+  public bool BeginPopupModal(string name, ref bool p_open) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginPopupModal__SWIG_1(swigCPtr, name, ref p_open);
     return ret;
   }
 
@@ -928,6 +928,20 @@ public class GUIManager : global::System.IDisposable {
 
   public void EndDock() {
     EffekseerNativePINVOKE.GUIManager_EndDock(swigCPtr);
+  }
+
+  public bool BeginFCurve(int id) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve(swigCPtr, id);
+    return ret;
+  }
+
+  public void EndFCurve() {
+    EffekseerNativePINVOKE.GUIManager_EndFCurve(swigCPtr);
+  }
+
+  public bool FCurve(int fcurve_id, float[] keys, float[] values, float[] leftHandleKeys, float[] leftHandleValues, float[] rightHandleKeys, float[] rightHandleValues, bool[] kv_selected, int count, bool isLocked, bool canControl, uint col, bool selected, ref int newCount, ref bool newSelected, ref float movedX, ref float movedY, ref int changedType) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_FCurve(swigCPtr, fcurve_id, keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, kv_selected, count, isLocked, canControl, col, selected, ref newCount, ref newSelected, ref movedX, ref movedY, ref changedType);
+    return ret;
   }
 
 }
