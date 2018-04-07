@@ -553,6 +553,9 @@ public:
 	virtual int GetRef() { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() { return ::Effekseer::ReferenceObject::AddRef(); }
 	virtual int Release() { return ::Effekseer::ReferenceObject::Release(); }
+
+private:
+	void GenerateIndexData();
 };
 
 //----------------------------------------------------------------------------------
