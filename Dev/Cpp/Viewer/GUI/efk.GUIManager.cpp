@@ -164,7 +164,7 @@ namespace efk
 #endif
         
 		ImGui::CreateContext();
-		ImGui_ImplGlfwGL3_Init(window->GetGLFWWindows(), true);
+		ImGui_ImplGlfwGL3_Init(window->GetGLFWWindows(), true, nullptr);
 		ImGui::StyleColorsDark();
 
 		ImGuiStyle& style = ImGui::GetStyle();

@@ -128,7 +128,7 @@ int main()
 #endif
     
 	ImGui::CreateContext();
-	ImGui_ImplGlfwGL3_Init(window->GetGLFWWindows(), true);
+	ImGui_ImplGlfwGL3_Init(window->GetGLFWWindows(), true, nullptr);
 	ImGui::StyleColorsClassic();
 	
 

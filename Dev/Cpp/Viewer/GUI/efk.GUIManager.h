@@ -81,6 +81,8 @@ namespace efk
 		HeightRegular = 1 << 2,   // Max ~8 items visible (default)
 		HeightLarge = 1 << 3,   // Max ~20 items visible
 		HeightLargest = 1 << 4,   // As many fitting items as possible
+		NoArrowButton = 1 << 5,   // Display on the preview box without the square arrow button
+		NoPreview = 1 << 6,   // Display only a square arrow button
 	};
 
 	enum class SelectableFlags : int32_t
