@@ -28,6 +28,9 @@ namespace Effekseer.GUI.Dock
 
 		bool loading = false;
 
+		bool canCurveControlPre = true;
+		bool canCurveControl = true;
+
 		public FCurves()
 		{
 			Label = Resources.GetString("FCurves");
@@ -62,7 +65,7 @@ namespace Effekseer.GUI.Dock
 
 			if(treeNodes != null)
 			{
-				DrawTreeNode(treeNodes);
+				UpdateTreeNode(treeNodes);
 			}
 
 			Manager.NativeManager.EndChild();
@@ -73,7 +76,7 @@ namespace Effekseer.GUI.Dock
 
 			if(Manager.NativeManager.BeginFCurve(1))
 			{
-				DrawGraph(treeNodes);
+				UpdateGraph(treeNodes);
 			}
 
 			Manager.NativeManager.EndFCurve();
@@ -86,13 +89,14 @@ namespace Effekseer.GUI.Dock
 
 		public override void OnDisposed()
 		{
+			Console.WriteLine("Not Implemented (Dispose fcurve event)");
 			Command.CommandManager.Changed -= OnChanged;
 			Core.OnAfterNew -= OnChanged;
 			Core.OnBeforeLoad -= OnBeforeLoad;
 			Core.OnAfterLoad -= OnAfterLoad;
 		}
 
-		void DrawTreeNode(TreeNode treeNode)
+		void UpdateTreeNode(TreeNode treeNode)
 		{
 			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen;
 
@@ -105,16 +109,73 @@ namespace Effekseer.GUI.Dock
 
 				for (int i = 0; i < treeNode.Children.Count; i++)
 				{
-					DrawTreeNode(treeNode.Children[i]);
+					UpdateTreeNode(treeNode.Children[i]);
 				}
 
 				Manager.NativeManager.TreePop();
 			}
 		}
 
-		void DrawGraph(TreeNode treeNode)
+		void UpdateGraph(TreeNode treeNode)
 		{
 			bool canControl = true;
+
+			UpdateGraph(treeNodes, ref canControl);
+
+			canCurveControlPre = canCurveControl;
+			canCurveControl = canControl;
+
+			// Check update
+			if(!canCurveControlPre && canCurveControl)
+			{
+				Func<TreeNode, bool> isDirtied = null;
+
+				isDirtied = (t) =>
+				{
+					foreach (var fcurve in t.FCurves)
+					{
+						if (fcurve.IsDirtied()) return true;
+					}
+
+					foreach (var c in t.Children)
+					{
+						if (isDirtied(c)) return true;
+					}
+
+					return false;
+				};
+
+				if(isDirtied(treeNode))
+				{
+					Command.CommandManager.StartCollection();
+
+					Action<TreeNode> recurse = null;
+
+					recurse = (t) =>
+					{
+						foreach (var fcurve in t.FCurves)
+						{
+							fcurve.Commit();
+						}
+
+						foreach (var c in t.Children)
+						{
+							recurse(c);
+						}
+					};
+
+					recurse(treeNodes);
+
+					Command.CommandManager.EndCollection();
+				}
+			}
+
+			canCurveControl = canControl;
+		}
+
+		void UpdateGraph(TreeNode treeNode, ref bool canControl)
+		{
+			
 			foreach (var fcurve in treeNode.FCurves)
 			{
 				fcurve.UpdateGraph(ref canControl);
@@ -122,7 +183,7 @@ namespace Effekseer.GUI.Dock
 
 			for (int i = 0; i < treeNode.Children.Count; i++)
 			{
-				DrawGraph(treeNode.Children[i]);
+				UpdateGraph(treeNode.Children[i], ref canControl);
 			}
 
 		}
@@ -193,7 +254,7 @@ namespace Effekseer.GUI.Dock
 					bool nochange = tn.Children.Count() == ptn.Children.Count();
 					for (int i = 0; i < ptn.Children.Count() && nochange; i++)
 					{
-						if (tn.Children[i].ParamTreeNode != ptn.Children[i])
+						if (tn.Children[i].ParamTreeNode.Node != ptn.Children[i].Node)
 						{
 							nochange = false;
 							break;
@@ -449,24 +510,9 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
-			public virtual void OnAdded()
-			{
-				/*
-				panelTree.Controls.Add(GraphPanel);
-				GraphPanel.BackColor = ColorBackground;
+			public virtual void OnAdded() {}
 
-				added = true;
-				*/
-			}
-
-			public virtual void OnRemoved()
-			{
-				/*
-				panelTree.Controls.Remove(GraphPanel);
-				if (!added) throw new Exception("already added.");
-				added = false;
-				*/
-			}
+			public virtual void OnRemoved() {}
 
 			public virtual void Move(float x, float y, int changedType, Data.Value.IFCurve except) { }
 
@@ -477,6 +523,10 @@ namespace Effekseer.GUI.Dock
 			public virtual void UpdateGraph(ref bool canControl) { }
 
 			public virtual void Hide() { }
+
+			public virtual void Commit() { }
+
+			public virtual bool IsDirtied() { return false; }
 		}
 
 		class FCurveColor : FCurve
@@ -524,6 +574,7 @@ namespace Effekseer.GUI.Dock
 			FCurveProperty[] properties = new FCurveProperty[3];
 			Data.Value.FCurve<float>[] fcurves = new Data.Value.FCurve<float>[3];
 			int[] ids = new int[3];
+			bool[] isDirtied = new bool[3];
 
 			FCurves window = null;
 
@@ -553,6 +604,10 @@ namespace Effekseer.GUI.Dock
 				properties[0].Color = 0xff0000ff;
 				properties[1].Color = 0xff00ff00;
 				properties[2].Color = 0xffff0000;
+
+				isDirtied[0] = false;
+				isDirtied[1] = false;
+				isDirtied[2] = false;
 			}
 
 			public override object GetValueAsObject()
@@ -651,6 +706,7 @@ namespace Effekseer.GUI.Dock
 						if (movedX != 0 || movedY != 0)
 						{
 							window.Move(movedX, movedY, changedType, fcurves[i]);
+							isDirtied[i] = true;
 						}
 
 						if (isSelected)
@@ -668,7 +724,7 @@ namespace Effekseer.GUI.Dock
 								properties[i].Selected = true;
 							}
 						}
-
+						
 						if(properties[i].Keys.Length - 1 != newCount && newCount != -1)
 						{
 							if(properties[i].Keys.Length == newCount)
@@ -700,6 +756,8 @@ namespace Effekseer.GUI.Dock
 				{
 					if (fcurves[j] == except) continue;
 					if (!properties[j].Selected) continue;
+
+					isDirtied[j] = true;
 
 					for (int k = 0; k < properties[j].Keys.Length - 1; k++)
 					{
@@ -758,6 +816,46 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
+			public override void OnAdded()
+			{
+				fcurves[0].OnChanged += OnChanged_1;
+				fcurves[1].OnChanged += OnChanged_2;
+				fcurves[2].OnChanged += OnChanged_3;
+			}
+
+			public override void OnRemoved()
+			{
+				fcurves[0].OnChanged -= OnChanged_1;
+				fcurves[1].OnChanged -= OnChanged_2;
+				fcurves[2].OnChanged -= OnChanged_3;
+			}
+
+			void OnChanged_1(object sender, ChangedValueEventArgs e)
+			{
+				OnChanged(0);
+			}
+
+			void OnChanged_2(object sender, ChangedValueEventArgs e)
+			{
+				OnChanged(1);
+			}
+
+			void OnChanged_3(object sender, ChangedValueEventArgs e)
+			{
+				OnChanged(2);
+			}
+
+			void OnChanged(int i)
+			{
+				properties[i].Keys = new float[0];
+				properties[i].Values = new float[0];
+				properties[i].LeftKeys = new float[0];
+				properties[i].LeftValues = new float[0];
+				properties[i].RightKeys = new float[0];
+				properties[i].RightValues = new float[0];
+				properties[i].Update(fcurves[i]);
+			}
+
 			public override void Unselect()
 			{
 				foreach(var prop in properties)
@@ -772,6 +870,47 @@ namespace Effekseer.GUI.Dock
 				{
 					prop.IsShown = false;
 				}
+			}
+
+			public override void Commit()
+			{
+				for(int i = 0; i < properties.Length; i++)
+				{
+					if (!isDirtied[i]) continue;
+					
+					var keys = new List<Data.Value.FCurveKey<float>>();
+
+					for(int j = 0; j < properties[i].Keys.Length - 1; j++)
+					{
+						Data.Value.FCurveKey<float> key = new FCurveKey<float>(
+							(int)properties[i].Keys[j],
+							properties[i].Values[j]);
+
+						key.SetLeftDirectly(
+							properties[i].LeftKeys[j],
+							properties[i].LeftValues[j]);
+
+						key.SetLeftDirectly(
+							properties[i].RightKeys[j],
+							properties[i].RightValues[j]);
+
+						keys.Add(key);
+					}
+
+					fcurves[i].SetKeys(keys.ToArray());
+					
+					isDirtied[i] = false;
+				}
+			}
+
+			public override bool IsDirtied()
+			{
+				for (int i = 0; i < properties.Length; i++)
+				{
+					if (isDirtied[i]) return true;
+				}
+
+				return false;
 			}
 		}
 

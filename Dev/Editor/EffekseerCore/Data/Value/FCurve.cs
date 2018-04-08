@@ -78,6 +78,44 @@ namespace Effekseer.Data.Value
 			Sampling = new Int(5, int.MaxValue, 1, 1);
 		}
 
+		public void SetKeys(FCurveKey<T>[] keys)
+		{
+			var new_value = keys.ToList();
+			var old_value = this.keys.ToList();
+
+			var cmd = new Command.DelegateCommand(
+			() =>
+			{
+				this.keys = new_value;
+
+				foreach (var key in keys)
+				{
+					key.OnChangedKey += OnChangedKey;
+				}
+
+				if (OnChanged != null)
+				{
+					OnChanged(this, new ChangedValueEventArgs(new_value, ChangedValueType.Execute));
+				}
+			},
+			() =>
+			{
+				this.keys = old_value;
+
+				foreach (var key in keys)
+				{
+					key.OnChangedKey -= OnChangedKey;
+				}
+
+				if (OnChanged != null)
+				{
+					OnChanged(this, new ChangedValueEventArgs(old_value, ChangedValueType.Unexecute));
+				}
+			});
+
+			Command.CommandManager.Execute(cmd);
+		}
+
 		public void AddKey(FCurveKey<T> key)
 		{
 			if (keys.Contains(key)) return;
