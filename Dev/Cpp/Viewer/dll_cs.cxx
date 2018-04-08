@@ -5821,7 +5821,7 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndFCurve___(void *
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_FCurve___(void * jarg1, int jarg2, float* jarg3, float* jarg4, float* jarg5, float* jarg6, float* jarg7, float* jarg8, bool* jarg9, int jarg10, unsigned int jarg11, unsigned int jarg12, unsigned int jarg13, unsigned int jarg14, int * jarg15, unsigned int * jarg16, float * jarg17, float * jarg18, int * jarg19) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_FCurve___(void * jarg1, int jarg2, float* jarg3, float* jarg4, float* jarg5, float* jarg6, float* jarg7, float* jarg8, unsigned char* jarg9, int jarg10, unsigned int jarg11, unsigned int jarg12, unsigned int jarg13, unsigned int jarg14, int * jarg15, unsigned int * jarg16, float * jarg17, float * jarg18, int * jarg19) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int arg2 ;
@@ -5831,7 +5831,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_FCurve___(v
   float *arg6 = (float *) 0 ;
   float *arg7 = (float *) 0 ;
   float *arg8 = (float *) 0 ;
-  bool *arg9 = (bool *) 0 ;
+  uint8_t *arg9 = (uint8_t *) 0 ;
   int arg10 ;
   bool arg11 ;
   bool arg12 ;

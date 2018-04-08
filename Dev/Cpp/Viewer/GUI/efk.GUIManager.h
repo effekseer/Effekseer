@@ -309,7 +309,7 @@ namespace efk
 			float* keys, float* values,
 			float* leftHandleKeys, float* leftHandleValues,
 			float* rightHandleKeys, float* rightHandleValues,
-			bool* kv_selected,
+			uint8_t* kv_selected,
 			int count,
 			bool isLocked,
 			bool canControl,

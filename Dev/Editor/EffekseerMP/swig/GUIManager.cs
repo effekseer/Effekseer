@@ -939,7 +939,7 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndFCurve(swigCPtr);
   }
 
-  public bool FCurve(int fcurve_id, float[] keys, float[] values, float[] leftHandleKeys, float[] leftHandleValues, float[] rightHandleKeys, float[] rightHandleValues, bool[] kv_selected, int count, bool isLocked, bool canControl, uint col, bool selected, ref int newCount, ref bool newSelected, ref float movedX, ref float movedY, ref int changedType) {
+  public bool FCurve(int fcurve_id, float[] keys, float[] values, float[] leftHandleKeys, float[] leftHandleValues, float[] rightHandleKeys, float[] rightHandleValues, byte[] kv_selected, int count, bool isLocked, bool canControl, uint col, bool selected, ref int newCount, ref bool newSelected, ref float movedX, ref float movedY, ref int changedType) {
     bool ret = EffekseerNativePINVOKE.GUIManager_FCurve(swigCPtr, fcurve_id, keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, kv_selected, count, isLocked, canControl, col, selected, ref newCount, ref newSelected, ref movedX, ref movedY, ref changedType);
     return ret;
   }

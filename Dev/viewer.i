@@ -66,6 +66,7 @@ class"
 %apply float *INOUT { float* movedY }
 %apply int *INOUT { int* changedType }
 
+%apply uint8_t INOUT[] { uint8_t* kv_selected }
 
 %feature("director") GUIManagerCallback;
 

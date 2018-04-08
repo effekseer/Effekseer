@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Effekseer.Data.Value;
 
 namespace Effekseer.GUI.Dock
 {
@@ -55,7 +56,9 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.BeginGroup();
 
-			Manager.NativeManager.BeginChild("##FCurveGroup");
+			Manager.NativeManager.Columns(2);
+
+			Manager.NativeManager.BeginChild("##FCurveGroup_Tree");
 
 			if(treeNodes != null)
 			{
@@ -63,6 +66,20 @@ namespace Effekseer.GUI.Dock
 			}
 
 			Manager.NativeManager.EndChild();
+
+			Manager.NativeManager.NextColumn();
+
+			Manager.NativeManager.BeginChild("##FCurveGroup_Graph");
+
+			if(Manager.NativeManager.BeginFCurve(1))
+			{
+				DrawGraph(treeNodes);
+			}
+
+			Manager.NativeManager.EndFCurve();
+
+			Manager.NativeManager.EndChild();
+
 
 			Manager.NativeManager.EndGroup();
 		}
@@ -83,11 +100,7 @@ namespace Effekseer.GUI.Dock
 			{
 				foreach (var fcurve in treeNode.FCurves)
 				{
-					if(Manager.NativeManager.BeginChildFrame((uint)fcurve.ID, new swig.Vec2(200,100)))
-					{
-						Manager.NativeManager.Text(fcurve.Name);
-					}
-					Manager.NativeManager.EndChildFrame();
+					fcurve.UpdateTree();
 				}
 
 				for (int i = 0; i < treeNode.Children.Count; i++)
@@ -97,6 +110,21 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.TreePop();
 			}
+		}
+
+		void DrawGraph(TreeNode treeNode)
+		{
+			bool canControl = true;
+			foreach (var fcurve in treeNode.FCurves)
+			{
+				fcurve.UpdateGraph(ref canControl);
+			}
+
+			for (int i = 0; i < treeNode.Children.Count; i++)
+			{
+				DrawGraph(treeNode.Children[i]);
+			}
+
 		}
 
 		void OnBeforeLoad(object sender, EventArgs e)
@@ -285,6 +313,66 @@ namespace Effekseer.GUI.Dock
 			paramaterTreeNode = paramTreeNodes;
 		}
 
+		public void UnselectAll()
+		{
+			Action<TreeNode> recurse = null;
+
+			recurse = (t) =>
+			{
+				foreach(var fcurve in t.FCurves)
+				{
+					fcurve.Unselect();
+				}
+
+				foreach(var c in t.Children)
+				{
+					recurse(c);
+				}
+			};
+
+			recurse(treeNodes);
+		}
+
+		public void HideAll()
+		{
+			Action<TreeNode> recurse = null;
+
+			recurse = (t) =>
+			{
+				foreach (var fcurve in t.FCurves)
+				{
+					fcurve.Hide();
+				}
+
+				foreach (var c in t.Children)
+				{
+					recurse(c);
+				}
+			};
+
+			recurse(treeNodes);
+		}
+
+		public void Move(float x, float y, int changedType, Data.Value.IFCurve except)
+		{
+			Action<TreeNode> recurse = null;
+
+			recurse = (t) =>
+			{
+				foreach (var fcurve in t.FCurves)
+				{
+					fcurve.Move(x, y, changedType, except);
+				}
+
+				foreach (var c in t.Children)
+				{
+					recurse(c);
+				}
+			};
+
+			recurse(treeNodes);
+		}
+
 		class TreeNode
 		{
 			public string ID = string.Empty;
@@ -336,10 +424,6 @@ namespace Effekseer.GUI.Dock
 
 			public abstract object GetValueAsObject();
 
-			public string IDStr { get; private set; }
-
-			public int ID { get; private set; }
-
 			static public FCurve Create(Tuple<string, object> v, FCurves window)
 			{
 				if (v.Item2 is Data.Value.FCurveVector2D)
@@ -363,8 +447,6 @@ namespace Effekseer.GUI.Dock
 
 			public FCurve()
 			{
-				ID = Manager.GetUniqueID();
-				IDStr = "##" + ID.ToString();
 			}
 
 			public virtual void OnAdded()
@@ -385,6 +467,16 @@ namespace Effekseer.GUI.Dock
 				added = false;
 				*/
 			}
+
+			public virtual void Move(float x, float y, int changedType, Data.Value.IFCurve except) { }
+
+			public virtual void Unselect() { }
+
+			public virtual void UpdateTree() { }
+
+			public virtual void UpdateGraph(ref bool canControl) { }
+
+			public virtual void Hide() { }
 		}
 
 		class FCurveColor : FCurve
@@ -429,21 +521,326 @@ namespace Effekseer.GUI.Dock
 
 		class FCurveVector3D : FCurve
 		{
+			FCurveProperty[] properties = new FCurveProperty[3];
+			Data.Value.FCurve<float>[] fcurves = new Data.Value.FCurve<float>[3];
+			int[] ids = new int[3];
+
+			FCurves window = null;
+
 			public Data.Value.FCurveVector3D Value { get; private set; }
 
 			public FCurveVector3D(string name, Data.Value.FCurveVector3D value, FCurves window)
 			{
 				Name = name;
 				Value = value;
-				//this.window = window;
+				this.window = window;
 				//
 				//fCurvesMagYCount = (float)Math.Log((float)GraphPanel.Height / (value.X.DefaultValueRangeMax - value.X.DefaultValueRangeMin), 2.0);
 				//fCurvesOffsetY = (value.X.DefaultValueRangeMax + value.X.DefaultValueRangeMin) / 2.0f;
+
+				properties[0] = new FCurveProperty();
+				properties[1] = new FCurveProperty();
+				properties[2] = new FCurveProperty();
+
+				fcurves[0] = Value.X;
+				fcurves[1] = Value.Y;
+				fcurves[2] = Value.Z;
+
+				ids[0] = Manager.GetUniqueID();
+				ids[1] = Manager.GetUniqueID();
+				ids[2] = Manager.GetUniqueID();
+
+				properties[0].Color = 0xff0000ff;
+				properties[1].Color = 0xff00ff00;
+				properties[2].Color = 0xffff0000;
 			}
 
 			public override object GetValueAsObject()
 			{
 				return Value;
+			}
+
+			public override void UpdateTree()
+			{
+				if (Manager.NativeManager.Selectable("X", properties[0].IsShown))
+				{
+					int LEFT_SHIFT = 340;
+					int RIGHT_SHIFT = 344;
+
+					if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+					{
+					}
+					else
+					{
+						window.HideAll();
+					}
+
+					properties[0].IsShown = true;
+				}
+
+				if (Manager.NativeManager.Selectable("Y", properties[1].IsShown))
+				{
+					int LEFT_SHIFT = 340;
+					int RIGHT_SHIFT = 344;
+
+					if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+					{
+					}
+					else
+					{
+						window.HideAll();
+					}
+
+					properties[1].IsShown = true;
+				}
+
+				if (Manager.NativeManager.Selectable("Z", properties[2].IsShown))
+				{
+					int LEFT_SHIFT = 340;
+					int RIGHT_SHIFT = 344;
+
+					if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+					{
+					}
+					else
+					{
+						window.HideAll();
+					}
+
+					properties[2].IsShown = true;
+				}
+			}
+
+			public override void UpdateGraph(ref bool canControl)
+			{
+				for(int i = 0; i < 3; i++)
+				{
+					if (!properties[i].IsShown) continue;
+
+					properties[i].Update(fcurves[i]);
+
+					int newCount = -1;
+					float movedX = 0;
+					float movedY = 0;
+					int changedType = 0;
+
+					bool isSelected = false;
+
+					if (Manager.NativeManager.FCurve(
+						ids[i],
+						properties[i].Keys,
+						properties[i].Values,
+						properties[i].LeftKeys,
+						properties[i].LeftValues,
+						properties[i].RightKeys,
+						properties[i].RightValues,
+						properties[i].KVSelected,
+						properties[i].Keys.Length - 1,
+						false,
+						canControl,
+						properties[i].Color,
+						properties[i].Selected,
+						ref newCount,
+						ref isSelected,
+						ref movedX,
+						ref movedY,
+						ref changedType))
+					{
+						canControl = false;
+
+						if (movedX != 0 || movedY != 0)
+						{
+							window.Move(movedX, movedY, changedType, fcurves[i]);
+						}
+
+						if (isSelected)
+						{
+							int LEFT_SHIFT = 340;
+							int RIGHT_SHIFT = 344;
+
+							if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+							{
+								properties[i].Selected = true;
+							}
+							else
+							{
+								window.UnselectAll();
+								properties[i].Selected = true;
+							}
+						}
+
+						if(properties[i].Keys.Length - 1 != newCount && newCount != -1)
+						{
+							if(properties[i].Keys.Length == newCount)
+							{
+								properties[i].Keys = properties[i].Keys.Concat(new[] { 0.0f }).ToArray();
+								properties[i].Values = properties[i].Values.Concat(new[] { 0.0f }).ToArray();
+								properties[i].LeftKeys = properties[i].LeftKeys.Concat(new[] { 0.0f }).ToArray();
+								properties[i].LeftValues = properties[i].LeftValues.Concat(new[] { 0.0f }).ToArray();
+								properties[i].RightKeys = properties[i].RightKeys.Concat(new[] { 0.0f }).ToArray();
+								properties[i].RightValues = properties[i].RightValues.Concat(new[] { 0.0f }).ToArray();
+							}
+							else
+							{
+								properties[i].Keys = properties[i].Keys.Take(properties[i].Keys.Length -1).ToArray();
+								properties[i].Values = properties[i].Values.Take(properties[i].Values.Length - 1).ToArray();
+								properties[i].LeftKeys = properties[i].LeftKeys.Take(properties[i].LeftKeys.Length - 1).ToArray();
+								properties[i].LeftValues = properties[i].LeftValues.Take(properties[i].LeftValues.Length - 1).ToArray();
+								properties[i].RightKeys = properties[i].RightKeys.Take(properties[i].RightKeys.Length - 1).ToArray();
+								properties[i].RightValues = properties[i].RightValues.Take(properties[i].RightValues.Length - 1).ToArray();
+							}
+						}
+					}
+				}
+			}
+
+			public override void Move(float x, float y, int changedType, IFCurve except)
+			{
+				for (int j = 0; j < properties.Length; j++)
+				{
+					if (fcurves[j] == except) continue;
+					if (!properties[j].Selected) continue;
+
+					for (int k = 0; k < properties[j].Keys.Length - 1; k++)
+					{
+						if (properties[j].KVSelected[k] == 0) continue;
+
+						if (changedType == 0)
+						{
+							properties[j].Keys[k] += x;
+							properties[j].Values[k] += y;
+							properties[j].LeftKeys[k] += x;
+							properties[j].LeftValues[k] += y;
+							properties[j].RightKeys[k] += x;
+							properties[j].RightValues[k] += y;
+						}
+						if (changedType == 1)
+						{
+							properties[j].LeftKeys[k] += x;
+							properties[j].LeftValues[k] += y;
+						}
+						if (changedType == 2)
+						{
+							properties[j].RightKeys[k] += x;
+							properties[j].RightValues[k] += y;
+						}
+					}
+
+
+					List<Tuple<float, int>> kis = new List<Tuple<float, int>>();
+
+					for (int i = 0; i < properties[j].Keys.Length - 1; i++)
+					{
+						Tuple<float, int> ki = Tuple.Create(properties[j].Keys[i], i);
+
+						kis.Add(ki);
+					}
+
+					kis = kis.OrderBy(_ => _.Item1).ToList();
+
+					var temp_k = properties[j].Keys.ToArray();
+					var temp_v = properties[j].Values.ToArray();
+					var temp_lk = properties[j].LeftKeys.ToArray();
+					var temp_lv = properties[j].LeftValues.ToArray();
+					var temp_rk = properties[j].RightKeys.ToArray();
+					var temp_rv = properties[j].RightValues.ToArray();
+
+
+					for (int k = 0; k < properties[j].Keys.Length - 1; k++)
+					{
+						properties[j].Keys[k] = temp_k[kis[k].Item2];
+						properties[j].Values[k] = temp_v[kis[k].Item2];
+						properties[j].LeftKeys[k] = temp_lk[kis[k].Item2];
+						properties[j].LeftValues[k] = temp_lv[kis[k].Item2];
+						properties[j].RightKeys[k] = temp_rk[kis[k].Item2];
+						properties[j].RightValues[k] = temp_rv[kis[k].Item2];
+					}
+				}
+			}
+
+			public override void Unselect()
+			{
+				foreach(var prop in properties)
+				{
+					prop.Selected = false;
+				}
+			}
+
+			public override void Hide()
+			{
+				foreach (var prop in properties)
+				{
+					prop.IsShown = false;
+				}
+			}
+		}
+
+		class FCurveProperty
+		{
+			public UInt32 Color = 0;
+
+			public bool Selected = false;
+			public bool IsShown = false;
+
+			public float[] Keys = new float[0];
+			public float[] Values = new float[0];
+
+			public float[] LeftKeys = new float[0];
+			public float[] LeftValues = new float[0];
+
+			public float[] RightKeys = new float[0];
+			public float[] RightValues = new float[0];
+
+			public byte[] KVSelected = new byte[0];
+
+			public void Update(Data.Value.FCurve<float> fcurve)
+			{
+				var plength = fcurve.Keys.Count() + 1;
+
+				if (Keys.Length < plength)
+				{
+					var keyFrames = fcurve.Keys.ToArray();
+					Keys = keyFrames.Select(_ => (float)_.Frame).Concat(new float[] { 0.0f }).ToArray();
+				}
+
+				if (Values.Length < plength)
+				{
+					var keyFrames = fcurve.Keys.ToArray();
+					Values = keyFrames.Select(_ => _.ValueAsFloat).Concat(new float[] { 0.0f }).ToArray();
+				}
+
+				if (LeftKeys.Length < plength)
+				{
+					var keyFrames = fcurve.Keys.ToArray();
+					LeftKeys = keyFrames.Select(_ => _.LeftX).Concat(new float[] { 0.0f }).ToArray();
+				}
+
+				if (LeftValues.Length < plength)
+				{
+					var keyFrames = fcurve.Keys.ToArray();
+					LeftValues = keyFrames.Select(_ => _.LeftY).Concat(new float[] { 0.0f }).ToArray();
+				}
+
+				if (RightKeys.Length < plength)
+				{
+					var keyFrames = fcurve.Keys.ToArray();
+					RightKeys = keyFrames.Select(_ => _.RightX).Concat(new float[] { 0.0f }).ToArray();
+				}
+
+				if (RightValues.Length < plength)
+				{
+					var keyFrames = fcurve.Keys.ToArray();
+					RightValues = keyFrames.Select(_ => _.RightY).Concat(new float[] { 0.0f }).ToArray();
+				}
+
+				if (KVSelected.Length < plength)
+				{
+					var keyFrames = fcurve.Keys.ToArray();
+
+					var new_selected = new byte[keyFrames.Length + 1];
+					KVSelected.CopyTo(new_selected, 0);
+					KVSelected = new_selected;
+				}
 			}
 		}
 	}
