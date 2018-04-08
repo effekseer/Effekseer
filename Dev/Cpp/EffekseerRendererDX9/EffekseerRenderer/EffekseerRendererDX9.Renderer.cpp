@@ -218,6 +218,21 @@ void RendererImplemented::OnResetDevice()
 
 	if( m_isChangedDevice )
 	{
+		// インデックスデータの生成
+		GenerateIndexData();
+
+		m_isChangedDevice = false;
+	}
+}
+
+//----------------------------------------------------------------------------------
+// インデックスデータの生成
+//----------------------------------------------------------------------------------
+void RendererImplemented::GenerateIndexData()
+{
+	// インデックスの生成
+	if( m_indexBuffer != NULL )
+	{
 		m_indexBuffer->Lock();
 
 		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
@@ -233,11 +248,10 @@ void RendererImplemented::OnResetDevice()
 		}
 
 		m_indexBuffer->Unlock();
-
-		m_isChangedDevice = false;
 	}
 
 	// ワイヤーフレーム用インデックスの生成
+	if( m_indexBufferForWireframe != NULL )
 	{
 		m_indexBufferForWireframe->Lock();
 
@@ -258,7 +272,6 @@ void RendererImplemented::OnResetDevice()
 		m_indexBufferForWireframe->Unlock();
 	}
 }
-
 
 //----------------------------------------------------------------------------------
 //
@@ -281,50 +294,22 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 	{
 		m_indexBuffer = IndexBuffer::Create( this, m_squareMaxCount * 6, false );
 		if( m_indexBuffer == NULL ) return false;
-
-		m_indexBuffer->Lock();
-
-		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
-		for( int i = 0; i < m_squareMaxCount; i++ )
-		{
-			uint16_t* buf = (uint16_t*)m_indexBuffer->GetBufferDirect( 6 );
-			buf[0] = 3 + 4 * i;
-			buf[1] = 1 + 4 * i;
-			buf[2] = 0 + 4 * i;
-			buf[3] = 3 + 4 * i;
-			buf[4] = 0 + 4 * i;
-			buf[5] = 2 + 4 * i;
-		}
-
-		m_indexBuffer->Unlock();
 	}
+
+	// 参照カウントの調整
+	Release();
 
 	// ワイヤーフレーム用インデックスの生成
 	{
 		m_indexBufferForWireframe = IndexBuffer::Create( this, m_squareMaxCount * 8, false );
 		if( m_indexBufferForWireframe == NULL ) return false;
-
-		m_indexBufferForWireframe->Lock();
-
-		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
-		for( int i = 0; i < m_squareMaxCount; i++ )
-		{
-			uint16_t* buf = (uint16_t*)m_indexBufferForWireframe->GetBufferDirect( 8 );
-			buf[0] = 0 + 4 * i;
-			buf[1] = 1 + 4 * i;
-			buf[2] = 2 + 4 * i;
-			buf[3] = 3 + 4 * i;
-			buf[4] = 0 + 4 * i;
-			buf[5] = 2 + 4 * i;
-			buf[6] = 1 + 4 * i;
-			buf[7] = 3 + 4 * i;
-		}
-
-		m_indexBufferForWireframe->Unlock();
 	}
 
 	// 参照カウントの調整
 	Release();
+
+	// インデックスデータの生成
+	GenerateIndexData();
 
 	m_renderState = new RenderState( this );
 
