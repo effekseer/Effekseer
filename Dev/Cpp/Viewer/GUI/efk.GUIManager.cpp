@@ -291,6 +291,12 @@ namespace efk
 		ImGui::EndChild();
 	}
 
+	Vec2 GUIManager::GetWindowSize()
+	{
+		auto v = ImGui::GetWindowSize();
+		return Vec2(v.x, v.y);
+	}
+
 	void GUIManager::SetNextWindowSize(float size_x, float size_y, Cond cond)
 	{
 		ImVec2 size;
@@ -388,6 +394,11 @@ namespace efk
 				ImGui::Image((ImTextureID)user_texture_id->GetTextureData()->UserID, ImVec2(x, y));
 			}
 		}
+	}
+
+	void GUIManager::Image(void* user_texture_id, float x, float y)
+	{
+		ImGui::Image((ImTextureID)user_texture_id, ImVec2(x, y), ImVec2(0,1), ImVec2(1,0));
 	}
 
 	bool GUIManager::ImageButton(ImageResource* user_texture_id, float x, float y)
@@ -707,9 +718,19 @@ namespace efk
 		return ImGui::IsItemClicked(mouse_button);
 	}
 
+	bool GUIManager::IsWindowHovered()
+	{
+		return ImGui::IsWindowHovered();
+	}
+
 	bool GUIManager::IsAnyWindowHovered()
 	{
 		return ImGui::IsAnyWindowHovered();
+	}
+
+	void GUIManager::SetNextDock(DockSlot slot)
+	{
+		ImGui::SetNextDock((ImGuiDockSlot)slot);
 	}
 
 	void GUIManager::BeginDockspace()
@@ -722,9 +743,9 @@ namespace efk
 		ImGui::EndDockspace();
 	}
 
-	bool GUIManager::BeginDock(const char16_t* label)
+	bool GUIManager::BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags, Vec2 default_size)
 	{
-		return ImGui::BeginDock(utf16_to_utf8(label).c_str());
+		return ImGui::BeginDock(utf16_to_utf8(label).c_str(), p_open, (int32_t)extra_flags, ImVec2(default_size.X, default_size.Y));
 	}
 
 	void GUIManager::EndDock()

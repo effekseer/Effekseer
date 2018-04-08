@@ -199,6 +199,10 @@ public:
 
 	bool UpdateWindow();
 
+	void ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+
+	void RenderWindow();
+
 	void Present();
 
 	bool ResizeWindow( int width, int height );
@@ -224,6 +228,8 @@ public:
 	bool Zoom( float zoom );
 
 	bool SetRandomSeed( int seed );
+
+	void* RenderView(int32_t width, int32_t height);
 
 	bool Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
 

@@ -460,6 +460,7 @@ namespace Effekseer.GUI
 			if(isViewerShown)
 			{
 				native.UpdateWindow();
+				native.RenderWindow();
 			}
 		}
 

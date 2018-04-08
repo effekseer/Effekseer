@@ -120,6 +120,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndChild(swigCPtr);
   }
 
+  public Vec2 GetWindowSize() {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetWindowSize(swigCPtr), true);
+    return ret;
+  }
+
   public void SetNextWindowSize(float size_x, float size_y, Cond cond) {
     EffekseerNativePINVOKE.GUIManager_SetNextWindowSize(swigCPtr, size_x, size_y, (int)cond);
   }
@@ -210,7 +215,11 @@ public class GUIManager : global::System.IDisposable {
   }
 
   public void Image(ImageResource user_texture_id, float x, float y) {
-    EffekseerNativePINVOKE.GUIManager_Image(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+    EffekseerNativePINVOKE.GUIManager_Image__SWIG_0(swigCPtr, ImageResource.getCPtr(user_texture_id), x, y);
+  }
+
+  public void Image(System.IntPtr user_texture_id, float x, float y) {
+    EffekseerNativePINVOKE.GUIManager_Image__SWIG_1(swigCPtr, user_texture_id, x, y);
   }
 
   public bool ImageButton(ImageResource user_texture_id, float x, float y) {
@@ -908,9 +917,18 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsWindowHovered() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsWindowHovered(swigCPtr);
+    return ret;
+  }
+
   public bool IsAnyWindowHovered() {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsAnyWindowHovered(swigCPtr);
     return ret;
+  }
+
+  public void SetNextDock(DockSlot slot) {
+    EffekseerNativePINVOKE.GUIManager_SetNextDock(swigCPtr, (int)slot);
   }
 
   public void BeginDockspace() {
@@ -921,8 +939,9 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndDockspace(swigCPtr);
   }
 
-  public bool BeginDock(string label) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label);
+  public bool BeginDock(string label, ref bool p_open, WindowFlags extra_flags, Vec2 default_size) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDock(swigCPtr, label, ref p_open, (int)extra_flags, Vec2.getCPtr(default_size));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 

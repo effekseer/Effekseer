@@ -64,6 +64,9 @@ private:
 
 	bool	m_isSRGBMode = false;
 
+	std::shared_ptr<efk::RenderTextureGL>	viewRenderTexture;
+	std::shared_ptr<efk::DepthTextureGL>	viewDepthTexture;
+
 public:
 	/**
 		@brief	コンストラクタ
@@ -210,6 +213,10 @@ public:
 	*/
 	bool EndRendering();
 
+	bool BeginRenderToView(int32_t width, int32_t height);
+
+	bool EndRenderToView();
+
 	/**
 		@brief	録画開始
 	*/
@@ -229,6 +236,13 @@ public:
 		@brief	copy current render target to background buffer
 	*/
 	void CopyToBackground();
+
+	/**
+		@brief	temp
+	*/
+	uint32_t GetViewID();
+
+	efk::Graphics* GetGraphics() const { return graphics; }
 
 	/**
 		Called when device is losted.

@@ -396,6 +396,7 @@
     <Compile Include="swig\ComboFlags.cs" />
     <Compile Include="swig\Cond.cs" />
     <Compile Include="swig\DistortionType.cs" />
+    <Compile Include="swig\DockSlot.cs" />
     <Compile Include="swig\EffekseerNative.cs" />
     <Compile Include="swig\EffekseerNativePINVOKE.cs" />
     <Compile Include="swig\FileDialog.cs" />

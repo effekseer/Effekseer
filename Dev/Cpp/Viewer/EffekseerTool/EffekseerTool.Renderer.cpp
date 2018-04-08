@@ -433,6 +433,45 @@ bool Renderer::EndRendering()
 	return true;
 }
 
+bool Renderer::BeginRenderToView(int32_t width, int32_t height)
+{
+	if (viewRenderTexture == nullptr || viewRenderTexture->GetWidth() != width || viewRenderTexture->GetHeight() != height)
+	{
+		viewRenderTexture = std::make_shared<efk::RenderTextureGL>();
+		viewDepthTexture = std::make_shared<efk::DepthTextureGL>();
+
+		viewRenderTexture->Initialize(width, height);
+		viewDepthTexture->Initialize(width, height);
+	}
+
+	auto g = (efk::GraphicsGL*)graphics;
+	g->SetRenderTarget(viewRenderTexture.get(), viewDepthTexture.get());
+
+	m_cameraMatTemp = m_renderer->GetCameraMatrix();
+	m_projMatTemp = m_renderer->GetProjectionMatrix();
+
+	if (m_projection == PROJECTION_TYPE_PERSPECTIVE)
+	{
+		SetPerspectiveFov(width, height);
+	}
+	else if (m_projection == PROJECTION_TYPE_ORTHOGRAPHIC)
+	{
+		SetOrthographic(width, height);
+	}
+
+	return true;
+}
+
+bool Renderer::EndRenderToView()
+{
+	m_renderer->SetCameraMatrix(m_cameraMatTemp);
+	m_renderer->SetProjectionMatrix(m_projMatTemp);
+
+	auto g = (efk::GraphicsGL*)graphics;
+	g->SetRenderTarget(nullptr, nullptr);
+	return true;
+}
+
 bool Renderer::BeginRecord( int32_t width, int32_t height )
 {
 	assert( !m_recording );
@@ -534,6 +573,11 @@ void Renderer::CopyToBackground()
 		r->SetBackground((IDirect3DTexture9*)graphics->GetBack());
 	}
 #endif
+}
+
+uint32_t Renderer::GetViewID()
+{
+	return viewRenderTexture->GetBuffer();
 }
 
 }

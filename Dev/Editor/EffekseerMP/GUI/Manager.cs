@@ -80,6 +80,8 @@ namespace Effekseer.GUI
 
 		static Dock.DockManager dockManager = null;
 
+		static Dock.EffectViwer effectViewer = null;
+
 		static Dock.DockPanel[] panels = new Dock.DockPanel[0];
 
 		public static bool IsDockMode() { return dockManager != null; }
@@ -128,8 +130,20 @@ namespace Effekseer.GUI
 			var mainMenu = new GUI.Menu.MainMenu();
 			GUI.Manager.AddControl(mainMenu);
 
-			//dockManager = new GUI.Dock.DockManager();
-			//GUI.Manager.AddControl(dockManager);
+			/*
+			dockManager = new GUI.Dock.DockManager();
+			GUI.Manager.AddControl(dockManager);
+
+			effectViewer = new Dock.EffectViwer();
+			if(dockManager != null)
+			{
+				dockManager.Controls.Add(effectViewer);
+			}
+			else
+			{
+				AddControl(effectViewer);
+			}
+			*/
 
 			Network = new Network(Native);
 
@@ -218,6 +232,11 @@ namespace Effekseer.GUI
 				}
 			}
 
+			if(effectViewer != null)
+			{
+				effectViewer.DispatchDisposed();
+			}
+
 			Shortcuts.SeveShortcuts();
 			RecentFiles.SaveRecentConfig();
 
@@ -253,31 +272,25 @@ namespace Effekseer.GUI
 				mousePos_pre = mousePos;
 			}
 
-			if (NativeManager.GetMouseButton(2) > 0)
+			if((effectViewer == null && !NativeManager.IsAnyWindowHovered()) || (effectViewer != null && effectViewer.IsHovered))
 			{
-				var dx = mousePos.X - mousePos_pre.X;
-				var dy = mousePos.Y - mousePos_pre.Y;
-
-				if (!NativeManager.IsAnyWindowHovered())
+				if (NativeManager.GetMouseButton(2) > 0)
 				{
+					var dx = mousePos.X - mousePos_pre.X;
+					var dy = mousePos.Y - mousePos_pre.Y;
+
 					Viewer.Slide(dx / 30.0f, dy / 30.0f);
 				}
-			}
 
-			if (NativeManager.GetMouseButton(1) > 0)
-			{
-				var dx = mousePos.X - mousePos_pre.X;
-				var dy = mousePos.Y - mousePos_pre.Y;
-
-				if (!NativeManager.IsAnyWindowHovered())
+				if (NativeManager.GetMouseButton(1) > 0)
 				{
+					var dx = mousePos.X - mousePos_pre.X;
+					var dy = mousePos.Y - mousePos_pre.Y;
+
 					Viewer.Rotate(dx, dy);
 				}
-			}
 
-			if (NativeManager.GetMouseWheel() != 0)
-			{
-				if (!NativeManager.IsAnyWindowHovered())
+				if (NativeManager.GetMouseWheel() != 0)
 				{
 					Viewer.Zoom(NativeManager.GetMouseWheel());
 				}
@@ -288,6 +301,13 @@ namespace Effekseer.GUI
 			Viewer.UpdateViewer();
 
 			Native.UpdateWindow();
+
+			Native.ClearWindow(50, 50, 50, 0);
+
+			if(effectViewer == null)
+			{
+				Native.RenderWindow();
+			}
 
 			NativeManager.ResetGUI();
 

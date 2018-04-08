@@ -1,10 +1,82 @@
 
+#define GLEW_STATIC 1
+#include <GL/glew.h>
+
 #include "efk.GraphicsGL.h"
 
 #include <EffekseerRenderer/EffekseerRendererGL.GLExtension.h>
 
 namespace efk
 {
+	RenderTextureGL::RenderTextureGL()
+	{
+
+	}
+
+	RenderTextureGL::~RenderTextureGL()
+	{
+		glDeleteTextures(1, &texture);
+	}
+
+	bool RenderTextureGL::Initialize(int32_t width, int32_t height)
+	{
+		glGenTextures(1, &texture);
+
+		if (glGetError() != GL_NO_ERROR) return false;
+
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA8,
+			width,
+			height,
+			0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			nullptr);
+		
+		this->width = width;
+		this->height = height;
+
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return true;
+	}
+
+	DepthTextureGL::DepthTextureGL()
+	{
+
+	}
+
+	DepthTextureGL::~DepthTextureGL()
+	{
+		glDeleteTextures(1, &texture);
+	}
+
+	bool DepthTextureGL::Initialize(int32_t width, int32_t height)
+	{
+		glGenTextures(1, &texture);
+
+		if (glGetError() != GL_NO_ERROR) return false;
+
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
+
+		// Set filter
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return true;
+	}
+
 	GraphicsGL::GraphicsGL()
 	{
 
@@ -12,6 +84,8 @@ namespace efk
 
 	GraphicsGL::~GraphicsGL()
 	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDeleteFramebuffers(1, &frameBuffer);
 		/*
 		if (renderer != nullptr)
 		{
@@ -43,6 +117,13 @@ namespace efk
 		{
 			glEnable(GL_FRAMEBUFFER_SRGB);
 		}
+
+		glGenFramebuffers(1, &frameBuffer);
+		
+		// for bug
+		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		GLCheckError();
 
 		// TODO
 		// create VAO
@@ -152,6 +233,53 @@ namespace efk
 
 	void GraphicsGL::EndScene()
 	{
+	}
+
+	void GraphicsGL::SetRenderTarget(RenderTextureGL* renderTexture, DepthTextureGL* depthTexture)
+	{
+		GLCheckError();
+
+		// reset
+		for (int32_t i = 0; i < 4; i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		glActiveTexture(GL_TEXTURE0);
+		GLCheckError();
+
+		if (renderTexture == nullptr)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glDrawBuffer(GL_BACK);
+			glViewport(0, 0, windowWidth, windowHeight);
+		}
+		else
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
+			GLuint cb[] = { 0 };
+			GLuint db = 0;
+
+			cb[0] = renderTexture->GetBuffer();
+
+			if (depthTexture != nullptr)
+			{
+				db = depthTexture->GetBuffer();
+			}
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cb[0], 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, db, 0);
+
+			static const GLenum bufs[] = {
+				GL_COLOR_ATTACHMENT0,
+			};
+			glDrawBuffers(1, bufs);
+
+			GLCheckError();
+
+			glViewport(0, 0, renderTexture->GetWidth(), renderTexture->GetHeight());
+		}
 	}
 
 	void GraphicsGL::BeginRecord(int32_t width, int32_t height)

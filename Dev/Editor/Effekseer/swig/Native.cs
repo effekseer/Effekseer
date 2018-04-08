@@ -58,6 +58,14 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
+  public void ClearWindow(byte r, byte g, byte b, byte a) {
+    EffekseerNativePINVOKE.Native_ClearWindow(swigCPtr, r, g, b, a);
+  }
+
+  public void RenderWindow() {
+    EffekseerNativePINVOKE.Native_RenderWindow(swigCPtr);
+  }
+
   public void Present() {
     EffekseerNativePINVOKE.Native_Present(swigCPtr);
   }
@@ -121,6 +129,8 @@ public class Native : global::System.IDisposable {
     bool ret = EffekseerNativePINVOKE.Native_SetRandomSeed(swigCPtr, seed);
     return ret;
   }
+
+  public System.IntPtr RenderView(int width, int height) { return EffekseerNativePINVOKE.Native_RenderView(swigCPtr, width, height); }
 
   public bool Record(string pathWithoutExt, string ext, int count, int offsetFrame, int freq, TransparenceType transparenceType) {
     bool ret = EffekseerNativePINVOKE.Native_Record__SWIG_0(swigCPtr, pathWithoutExt, ext, count, offsetFrame, freq, (int)transparenceType);

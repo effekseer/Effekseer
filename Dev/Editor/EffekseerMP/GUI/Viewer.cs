@@ -455,14 +455,6 @@ namespace Effekseer.GUI
 			}
 		}
 
-		public void UpdateWindow()
-		{
-			if (isViewerShown)
-			{
-				native.UpdateWindow();
-			}
-		}
-
 		public void PresentWindow()
 		{
 			if (isViewerShown)

@@ -584,9 +584,11 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+void Native::ClearWindow(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+	g_renderer->GetGraphics()->Clear(Effekseer::Color(r, g, b, a));
+}
+
 bool Native::UpdateWindow()
 {
 	assert( g_manager != NULL );
@@ -631,6 +633,11 @@ bool Native::UpdateWindow()
 	g_sound->SetListener( position, g_focus_position, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) );
 	g_sound->Update();
 
+	return true;
+}
+
+void Native::RenderWindow()
+{
 	g_renderer->BeginRendering();
 
 	if (g_renderer->Distortion == EffekseerTool::eDistortionType::DistortionType_Current)
@@ -650,10 +657,8 @@ bool Native::UpdateWindow()
 	{
 		g_manager->Draw();
 	}
-	
-	g_renderer->EndRendering();
 
-	return true;
+	g_renderer->EndRendering();
 }
 
 void Native::Present()
@@ -1055,9 +1060,14 @@ bool Native::SetRandomSeed( int seed )
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+void* Native::RenderView(int32_t width, int32_t height)
+{
+	g_renderer->BeginRenderToView(width, height);
+	RenderWindow();
+	g_renderer->EndRenderToView();
+	return (void*)g_renderer->GetViewID();
+}
+
 bool Native::Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
 	if (g_effect == NULL) return false;

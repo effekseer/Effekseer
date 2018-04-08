@@ -25,7 +25,7 @@ namespace Effekseer.GUI.Dock
 			{
 				if (Manager.IsDockMode())
 				{
-					if (Manager.NativeManager.BeginDock(Label + id))
+					if (Manager.NativeManager.BeginDock(Label + id, ref opened, swig.WindowFlags.None, new swig.Vec2(0,0)))
 					{
 						UpdateInternal();
 

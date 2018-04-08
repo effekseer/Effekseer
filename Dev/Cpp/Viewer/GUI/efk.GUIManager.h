@@ -107,6 +107,18 @@ namespace efk
 		FramePadding = 1 << 10,  // Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height. Equivalent to calling AlignTextToFramePadding().
 	};
 
+	enum class DockSlot : int32_t
+	{
+		Left = 0,
+		Right,
+		Top,
+		Bottom,
+		Tab,
+
+		Float,
+		None
+	};
+
 	class GUIManagerCallback
 	{
 		std::u16string	path;
@@ -173,6 +185,8 @@ namespace efk
 		bool BeginChild(const char* str_id);
 		void EndChild();
 
+		Vec2 GetWindowSize();
+
 		void SetNextWindowSize(float size_x, float size_y, Cond cond);
 
 		// Parameters stacks (current window)
@@ -204,6 +218,8 @@ namespace efk
 		bool Button(const char16_t* label);
 
 		void Image(ImageResource* user_texture_id, float x, float y);
+
+		void Image(void* user_texture_id, float x, float y);
 
 		bool ImageButton(ImageResource* user_texture_id, float x, float y);
 
@@ -293,12 +309,14 @@ namespace efk
 		bool IsItemActive();
 		bool IsItemFocused();
 		bool IsItemClicked(int mouse_button);
+		bool IsWindowHovered();
 		bool IsAnyWindowHovered();
 
 		// Dock
+		void SetNextDock(DockSlot slot);
 		void BeginDockspace();
 		void EndDockspace();
-		bool BeginDock(const char16_t* label);
+		bool BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags, Vec2 default_size);
 		void EndDock();
 
 		// Fcurve
