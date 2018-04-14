@@ -44,16 +44,28 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+
+
 			Manager.NativeManager.Text(frame_text);
+			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(value_text);
+			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(start_text);
+			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(end_text);
+			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(type_text);
+
 			Manager.NativeManager.Text(sampling_text);
+			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(left_text);
+			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(right_text);
+			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(offset_text);
+			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(offset_min_text);
+			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(offset_max_text);
 
 
@@ -61,6 +73,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.Columns(2);
 
+			Manager.NativeManager.SetColumnWidth(0, 200);
 			Manager.NativeManager.BeginChild("##FCurveGroup_Tree");
 
 			if(treeNodes != null)
@@ -689,8 +702,12 @@ namespace Effekseer.GUI.Dock
 						properties[i].LeftValues,
 						properties[i].RightKeys,
 						properties[i].RightValues,
+						properties[i].Interpolations,
+						swig.FCurveEdgeType.Constant,
+						swig.FCurveEdgeType.Constant,
 						properties[i].KVSelected,
 						properties[i].Keys.Length - 1,
+						0.0f,
 						false,
 						canControl,
 						properties[i].Color,
@@ -735,6 +752,7 @@ namespace Effekseer.GUI.Dock
 								properties[i].LeftValues = properties[i].LeftValues.Concat(new[] { 0.0f }).ToArray();
 								properties[i].RightKeys = properties[i].RightKeys.Concat(new[] { 0.0f }).ToArray();
 								properties[i].RightValues = properties[i].RightValues.Concat(new[] { 0.0f }).ToArray();
+								properties[i].Interpolations = properties[i].Interpolations.Concat(new[] { 0 }).ToArray();
 							}
 							else
 							{
@@ -744,6 +762,7 @@ namespace Effekseer.GUI.Dock
 								properties[i].LeftValues = properties[i].LeftValues.Take(properties[i].LeftValues.Length - 1).ToArray();
 								properties[i].RightKeys = properties[i].RightKeys.Take(properties[i].RightKeys.Length - 1).ToArray();
 								properties[i].RightValues = properties[i].RightValues.Take(properties[i].RightValues.Length - 1).ToArray();
+								properties[i].Interpolations = properties[i].Interpolations.Take(properties[i].Interpolations.Length - 1).ToArray();
 							}
 						}
 					}
@@ -802,7 +821,7 @@ namespace Effekseer.GUI.Dock
 					var temp_lv = properties[j].LeftValues.ToArray();
 					var temp_rk = properties[j].RightKeys.ToArray();
 					var temp_rv = properties[j].RightValues.ToArray();
-
+					var temp_in = properties[j].Interpolations.ToArray();
 
 					for (int k = 0; k < properties[j].Keys.Length - 1; k++)
 					{
@@ -812,6 +831,7 @@ namespace Effekseer.GUI.Dock
 						properties[j].LeftValues[k] = temp_lv[kis[k].Item2];
 						properties[j].RightKeys[k] = temp_rk[kis[k].Item2];
 						properties[j].RightValues[k] = temp_rv[kis[k].Item2];
+						properties[j].Interpolations[k] = temp_in[kis[k].Item2];
 					}
 				}
 			}
@@ -853,6 +873,7 @@ namespace Effekseer.GUI.Dock
 				properties[i].LeftValues = new float[0];
 				properties[i].RightKeys = new float[0];
 				properties[i].RightValues = new float[0];
+				properties[i].Interpolations = new int[0];
 				properties[i].Update(fcurves[i]);
 			}
 
@@ -932,6 +953,8 @@ namespace Effekseer.GUI.Dock
 
 			public byte[] KVSelected = new byte[0];
 
+			public int[] Interpolations = new int[0];
+
 			public void Update(Data.Value.FCurve<float> fcurve)
 			{
 				var plength = fcurve.Keys.Count() + 1;
@@ -979,6 +1002,15 @@ namespace Effekseer.GUI.Dock
 					var new_selected = new byte[keyFrames.Length + 1];
 					KVSelected.CopyTo(new_selected, 0);
 					KVSelected = new_selected;
+				}
+
+				if (Interpolations.Length < plength)
+				{
+					var keyFrames = fcurve.Keys.ToArray();
+
+					var new_interpolations = new int[keyFrames.Length + 1];
+					Interpolations.CopyTo(new_interpolations, 0);
+					Interpolations = new_interpolations;
 				}
 			}
 		}

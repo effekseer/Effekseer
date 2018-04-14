@@ -65,6 +65,7 @@ class"
 %apply float *INOUT { float* movedX }
 %apply float *INOUT { float* movedY }
 %apply int *INOUT { int* changedType }
+%apply int INOUT[] { int* interporations }
 
 %apply uint8_t INOUT[] { uint8_t* kv_selected }
 

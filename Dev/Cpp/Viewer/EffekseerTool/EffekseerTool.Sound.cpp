@@ -72,7 +72,7 @@ bool Sound::Initialize()
 
 void Sound::Update()
 {
-	m_sound->Update();
+	//m_sound->Update();
 }
 
 //----------------------------------------------------------------------------------

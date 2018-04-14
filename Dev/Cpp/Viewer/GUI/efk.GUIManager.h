@@ -109,6 +109,19 @@ namespace efk
 		FramePadding = 1 << 10,  // Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height. Equivalent to calling AlignTextToFramePadding().
 	};
 
+	enum class FCurveInterporationType : int32_t
+	{
+		Linear = 0,
+		Cubic,
+	};
+
+	enum class FCurveEdgeType : int32_t
+	{
+		Constant = 0,
+		Loop = 1,
+		LoopInversely = 2,
+	};
+
 	enum class DockSlot : int32_t
 	{
 		Left = 0,
@@ -329,8 +342,12 @@ namespace efk
 			float* keys, float* values,
 			float* leftHandleKeys, float* leftHandleValues,
 			float* rightHandleKeys, float* rightHandleValues,
+			int* interporations,
+			FCurveEdgeType startEdge,
+			FCurveEdgeType endEdge,
 			uint8_t* kv_selected,
 			int count,
+			float defaultValue,
 			bool isLocked,
 			bool canControl,
 			uint32_t col,

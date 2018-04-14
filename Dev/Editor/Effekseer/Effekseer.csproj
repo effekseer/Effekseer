@@ -399,6 +399,8 @@
     <Compile Include="swig\DockSlot.cs" />
     <Compile Include="swig\EffekseerNative.cs" />
     <Compile Include="swig\EffekseerNativePINVOKE.cs" />
+    <Compile Include="swig\FCurveEdgeType.cs" />
+    <Compile Include="swig\FCurveInterporationType.cs" />
     <Compile Include="swig\FileDialog.cs" />
     <Compile Include="swig\GUIManager.cs" />
     <Compile Include="swig\GUIManagerCallback.cs" />

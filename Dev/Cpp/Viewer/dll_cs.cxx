@@ -5925,7 +5925,7 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndFCurve___(void *
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_FCurve___(void * jarg1, int jarg2, float* jarg3, float* jarg4, float* jarg5, float* jarg6, float* jarg7, float* jarg8, unsigned char* jarg9, int jarg10, unsigned int jarg11, unsigned int jarg12, unsigned int jarg13, unsigned int jarg14, int * jarg15, unsigned int * jarg16, float * jarg17, float * jarg18, int * jarg19) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_FCurve___(void * jarg1, int jarg2, float* jarg3, float* jarg4, float* jarg5, float* jarg6, float* jarg7, float* jarg8, int* jarg9, int jarg10, int jarg11, unsigned char* jarg12, int jarg13, float jarg14, unsigned int jarg15, unsigned int jarg16, unsigned int jarg17, unsigned int jarg18, int * jarg19, unsigned int * jarg20, float * jarg21, float * jarg22, int * jarg23) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int arg2 ;
@@ -5935,17 +5935,21 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_FCurve___(v
   float *arg6 = (float *) 0 ;
   float *arg7 = (float *) 0 ;
   float *arg8 = (float *) 0 ;
-  uint8_t *arg9 = (uint8_t *) 0 ;
-  int arg10 ;
-  bool arg11 ;
-  bool arg12 ;
-  uint32_t arg13 ;
-  bool arg14 ;
-  int *arg15 = (int *) 0 ;
-  bool *arg16 = (bool *) 0 ;
-  float *arg17 = (float *) 0 ;
-  float *arg18 = (float *) 0 ;
+  int *arg9 = (int *) 0 ;
+  efk::FCurveEdgeType arg10 ;
+  efk::FCurveEdgeType arg11 ;
+  uint8_t *arg12 = (uint8_t *) 0 ;
+  int arg13 ;
+  float arg14 ;
+  bool arg15 ;
+  bool arg16 ;
+  uint32_t arg17 ;
+  bool arg18 ;
   int *arg19 = (int *) 0 ;
+  bool *arg20 = (bool *) 0 ;
+  float *arg21 = (float *) 0 ;
+  float *arg22 = (float *) 0 ;
+  int *arg23 = (int *) 0 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
@@ -5957,18 +5961,24 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_FCurve___(v
   arg7 = jarg7;
   arg8 = jarg8;
   arg9 = jarg9;
-  arg10 = (int)jarg10; 
-  arg11 = jarg11 ? true : false; 
-  arg12 = jarg12 ? true : false; 
-  arg13 = (uint32_t)jarg13; 
-  arg14 = jarg14 ? true : false; 
-  arg15 = (int *)jarg15; 
-  arg16 = (bool *)jarg16; 
-  arg17 = (float *)jarg17; 
-  arg18 = (float *)jarg18; 
+  arg10 = (efk::FCurveEdgeType)jarg10; 
+  arg11 = (efk::FCurveEdgeType)jarg11; 
+  arg12 = jarg12;
+  arg13 = (int)jarg13; 
+  arg14 = (float)jarg14; 
+  arg15 = jarg15 ? true : false; 
+  arg16 = jarg16 ? true : false; 
+  arg17 = (uint32_t)jarg17; 
+  arg18 = jarg18 ? true : false; 
   arg19 = (int *)jarg19; 
-  result = (bool)(arg1)->FCurve(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19);
+  arg20 = (bool *)jarg20; 
+  arg21 = (float *)jarg21; 
+  arg22 = (float *)jarg22; 
+  arg23 = (int *)jarg23; 
+  result = (bool)(arg1)->FCurve(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20,arg21,arg22,arg23);
   jresult = result; 
+  
+  
   
   
   
