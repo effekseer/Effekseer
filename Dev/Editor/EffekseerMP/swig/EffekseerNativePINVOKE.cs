@@ -744,6 +744,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetTitle___")]
   public static extern void GUIManager_SetTitle(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetSize___")]
+  public static extern global::System.IntPtr GUIManager_GetSize(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetSize___")]
   public static extern void GUIManager_SetSize(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, int jarg3);
 
@@ -1293,6 +1296,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsAnyWindowHovered___")]
   public static extern bool GUIManager_IsAnyWindowHovered(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginFullscreen___")]
+  public static extern bool GUIManager_BeginFullscreen(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextDock___")]
   public static extern void GUIManager_SetNextDock(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
@@ -1307,6 +1313,12 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndDock___")]
   public static extern void GUIManager_EndDock(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextDockRate___")]
+  public static extern void GUIManager_SetNextDockRate(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_ResetNextParentDock___")]
+  public static extern void GUIManager_ResetNextParentDock(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginFCurve___")]
   public static extern bool GUIManager_BeginFCurve(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);

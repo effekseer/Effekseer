@@ -130,6 +130,10 @@ IMGUI_API void DockDebugWindow();
 #   endif //NO_IMGUIHELPER_SERIALIZATION_LOAD
 #endif //(defined(IMGUIHELPER_H_) && !defined(NO_IMGUIHELPER_SERIALIZATION))
 
+// Added
+IMGUI_API void SetNextDockRate(float rate);
+IMGUI_API void ResetNextParentDock();
+
 } // namespace ImGui
 
 extern bool gImGuiDockReuseTabWindowTextureIfAvailable; // [true] (used only when available)

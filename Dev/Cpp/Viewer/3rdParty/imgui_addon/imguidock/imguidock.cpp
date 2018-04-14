@@ -240,6 +240,8 @@ struct DockContext
     ImGuiDockSlot m_next_dock_slot;
     bool m_is_first_call;
 
+	float m_nextRate = 0.5f;
+
     DockContext()
         : m_current(NULL)
         , m_next_parent(NULL)
@@ -860,31 +862,35 @@ struct DockContext
         dock.pos = container.pos;
         dock.size = container.size;
 
+		auto rate = GetCurrentDockContext()->m_nextRate;
+
         switch (dock_slot)
         {
         case ImGuiDockSlot_Bottom:
-            dest.size.y *= 0.5f;
-            dock.size.y *= 0.5f;
+            dest.size.y *= (1.0 - rate);
+            dock.size.y *= rate;
             dock.pos.y += dest.size.y;
             break;
         case ImGuiDockSlot_Right:
-            dest.size.x *= 0.5f;
-            dock.size.x *= 0.5f;
+            dest.size.x *= (1.0 - rate);
+            dock.size.x *= rate;
             dock.pos.x += dest.size.x;
             break;
         case ImGuiDockSlot_Left:
-            dest.size.x *= 0.5f;
-            dock.size.x *= 0.5f;
+            dest.size.x *= (1.0 - rate);
+            dock.size.x *= rate;
             dest.pos.x += dock.size.x;
             break;
         case ImGuiDockSlot_Top:
-            dest.size.y *= 0.5f;
-            dock.size.y *= 0.5f;
+            dest.size.y *= (1.0 - rate);
+            dock.size.y *= rate;
             dest.pos.y += dock.size.y;
             break;
         default: IM_ASSERT(false); break;
         }
         dest.setPosSize(dest.pos, dest.size);
+		
+		GetCurrentDockContext()->m_nextRate = 0.5f;
 
         if (container.children[1]->pos.x < container.children[0]->pos.x ||
                 container.children[1]->pos.y < container.children[0]->pos.y)
@@ -1474,6 +1480,16 @@ void DockDebugWindow()
     bool LoadDock(const char* filename)  {ImGuiHelper::Deserializer d(filename);return LoadDock(d);}
 #   endif //NO_IMGUIHELPER_SERIALIZATION_LOAD
 #endif //(defined(IMGUIHELPER_H_) && !defined(NO_IMGUIHELPER_SERIALIZATION))
+
+void SetNextDockRate(float rate)
+{
+	g_dock->m_nextRate = rate;
+}
+
+void ResetNextParentDock()
+{
+	g_dock->m_next_parent = nullptr;
+}
 
 
 } // namespace ImGui

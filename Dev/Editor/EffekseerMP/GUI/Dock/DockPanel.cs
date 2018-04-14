@@ -14,6 +14,14 @@ namespace Effekseer.GUI.Dock
 
 		bool opened = true;
 
+		internal swig.DockSlot InitialDockSlot = swig.DockSlot.Float;
+
+		internal swig.Vec2 InitialDockSize = new swig.Vec2(0, 0);
+
+		internal float InitialDockRate = 0.5f;
+
+		internal bool InitialDockReset = false;
+
 		public DockPanel()
 		{
 			id = "###" + Manager.GetUniqueID().ToString();
@@ -25,7 +33,14 @@ namespace Effekseer.GUI.Dock
 			{
 				if (Manager.IsDockMode())
 				{
-					if (Manager.NativeManager.BeginDock(Label + id, ref opened, swig.WindowFlags.None, new swig.Vec2(0,0)))
+					Manager.NativeManager.SetNextDock(InitialDockSlot);
+					Manager.NativeManager.SetNextDockRate(InitialDockRate);
+					if(InitialDockReset)
+					{
+						Manager.NativeManager.ResetNextParentDock();
+					}
+
+					if (Manager.NativeManager.BeginDock(Label + id, ref opened, swig.WindowFlags.None, InitialDockSize))
 					{
 						UpdateInternal();
 

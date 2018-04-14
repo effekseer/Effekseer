@@ -23,7 +23,8 @@ namespace Effekseer.GUI.Dock
 		{
 			if (opened)
 			{
-				if (Manager.NativeManager.Begin(Label + id, ref opened))
+				//if (Manager.NativeManager.Begin(Label + id, ref opened))
+				if(Manager.NativeManager.BeginFullscreen(Label + id))
 				{
 					Manager.NativeManager.BeginDockspace();
 

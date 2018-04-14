@@ -133,6 +133,16 @@ namespace efk
 		glfwSetWindowTitle(window, utf16_to_utf8(title).c_str());
 	}
 
+	Vec2 Window::GetSize() const
+	{
+		int32_t w, h;
+		glfwGetWindowSize(window, &w, &h);
+		Vec2 s;
+		s.X = w;
+		s.Y = h;
+		return s;
+	}
+
 	void Window::SetSize(int32_t width, int32_t height)
 	{
 		glfwSetWindowSize(window, width, height);

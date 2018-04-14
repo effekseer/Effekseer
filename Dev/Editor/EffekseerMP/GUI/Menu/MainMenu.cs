@@ -264,7 +264,7 @@ namespace Effekseer.GUI.Menu
 					item.Label = s;
 					item.Clicked += () =>
 					{
-						Manager.SelectOrShowWindow(t);
+						Manager.SelectOrShowWindow(t, new swig.Vec2(300, 300));
 					};
 					Console.WriteLine("Not implemented.");
 					//item.Image = icon;

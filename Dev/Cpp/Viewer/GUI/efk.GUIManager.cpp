@@ -198,6 +198,11 @@ namespace efk
 		window->SetTitle(title);
 	}
 
+	Vec2 GUIManager::GetSize() const
+	{
+		return window->GetSize();
+	}
+
 	void GUIManager::SetSize(int32_t width, int32_t height)
 	{
 		window->SetSize(width, height);
@@ -728,6 +733,21 @@ namespace efk
 		return ImGui::IsAnyWindowHovered();
 	}
 
+	bool GUIManager::BeginFullscreen(const char16_t* label)
+	{
+		ImVec2 windowSize;
+		windowSize.x = ImGui::GetIO().DisplaySize.x;
+		windowSize.y = ImGui::GetIO().DisplaySize.y - 25;
+
+		ImGui::SetNextWindowSize(windowSize);
+		ImGui::SetNextWindowPos(ImVec2(0, 25));
+		const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
+		const float oldWindowRounding = ImGui::GetStyle().WindowRounding; ImGui::GetStyle().WindowRounding = 0;
+		const bool visible = ImGui::Begin(utf16_to_utf8(label).c_str(), NULL, ImVec2(0, 0), 1.0f, flags);
+		ImGui::GetStyle().WindowRounding = oldWindowRounding;
+		return visible;
+	}
+
 	void GUIManager::SetNextDock(DockSlot slot)
 	{
 		ImGui::SetNextDock((ImGuiDockSlot)slot);
@@ -752,6 +772,17 @@ namespace efk
 	{
 		ImGui::EndDock();
 	}
+
+	void GUIManager::SetNextDockRate(float rate)
+	{
+		ImGui::SetNextDockRate(rate);
+	}
+
+	void GUIManager::ResetNextParentDock()
+	{
+		ImGui::ResetNextParentDock();
+	}
+
 
 	bool GUIManager::BeginFCurve(int id)
 	{

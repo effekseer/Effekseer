@@ -170,6 +170,8 @@ namespace efk
 
 		void SetTitle(const char16_t* title);
 
+		Vec2 GetSize() const;
+
 		void SetSize(int32_t width, int32_t height);
 
 		void Terminate();
@@ -328,11 +330,14 @@ namespace efk
 		bool IsAnyWindowHovered();
 
 		// Dock
+		bool BeginFullscreen(const char16_t* label);
 		void SetNextDock(DockSlot slot);
 		void BeginDockspace();
 		void EndDockspace();
 		bool BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags, Vec2 default_size);
 		void EndDock();
+		void SetNextDockRate(float rate);
+		void ResetNextParentDock();
 
 		// Fcurve
 		bool BeginFCurve(int id);

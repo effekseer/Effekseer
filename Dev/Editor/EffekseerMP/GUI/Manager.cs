@@ -54,10 +54,16 @@ namespace Effekseer.GUI
 
 		public static Network Network;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <remarks>
+		/// This order is important for dock panel.
+		/// </remarks>
 		static Type[] dockTypes =
 		{
-			typeof(Dock.NodeTreeView),
 			typeof(Dock.ViewerController),
+			typeof(Dock.NodeTreeView),
 			typeof(Dock.CommonValues),
 			typeof(Dock.LocationValues),
 			typeof(Dock.LocationAbsValues),
@@ -130,26 +136,31 @@ namespace Effekseer.GUI
 			var mainMenu = new GUI.Menu.MainMenu();
 			GUI.Manager.AddControl(mainMenu);
 
-			/*
 			dockManager = new GUI.Dock.DockManager();
 			GUI.Manager.AddControl(dockManager);
 
+			// Default 
 			effectViewer = new Dock.EffectViwer();
 			if(dockManager != null)
 			{
+				effectViewer.InitialDockSlot = swig.DockSlot.None;
 				dockManager.Controls.Add(effectViewer);
 			}
 			else
 			{
 				AddControl(effectViewer);
 			}
-			*/
+
+			SelectOrShowWindow(typeof(Dock.ViewerController), null, swig.DockSlot.Bottom, 0.2f, true);
+			SelectOrShowWindow(typeof(Dock.NodeTreeView), null, swig.DockSlot.Right, 0.2f, true);
+			SelectOrShowWindow(typeof(Dock.CommonValues), null, swig.DockSlot.Bottom, 0.5f, false);
+			SelectOrShowWindow(typeof(Dock.LocationValues), null, swig.DockSlot.Right, 0.2f, true);
+			SelectOrShowWindow(typeof(Dock.RotationValues), null, swig.DockSlot.Bottom, 0.7f, false);
+			SelectOrShowWindow(typeof(Dock.ScaleValues), null, swig.DockSlot.Bottom, 0.5f, false);
+			SelectOrShowWindow(typeof(Dock.RendererCommonValues), null, swig.DockSlot.Right, 0.2f, true);
 
 			Network = new Network(Native);
 
-			SelectOrShowWindow(typeof(Dock.NodeTreeView));
-			SelectOrShowWindow(typeof(Dock.ViewerController));
-			
 			Command.CommandManager.Changed += OnChanged;
 
 			Core.EffectBehavior.Location.X.OnChanged += OnChanged;
@@ -353,7 +364,7 @@ namespace Effekseer.GUI
 			isFirstUpdate = false;
 		}
 
-		public static void SelectOrShowWindow(Type t)
+		public static void SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, swig.DockSlot slot = swig.DockSlot.None, float dockRate = 0.5f, bool isResetParent = false)
 		{
 			for(int i = 0; i < dockTypes.Length; i++)
 			{
@@ -365,9 +376,18 @@ namespace Effekseer.GUI
 				}
 				else
 				{
-					panels[i] = (Dock.DockPanel)t.GetConstructor(Type.EmptyTypes).Invoke(null);
+					if(defaultSize == null)
+					{
+						defaultSize = new swig.Vec2();
+					}
 
-					if(dockManager != null)
+					panels[i] = (Dock.DockPanel)t.GetConstructor(Type.EmptyTypes).Invoke(null);
+					panels[i].InitialDockSlot = slot;
+					panels[i].InitialDockSize = defaultSize;
+					panels[i].InitialDockReset = isResetParent;
+					panels[i].InitialDockRate = dockRate;
+
+					if (dockManager != null)
 					{
 						dockManager.Controls.Add(panels[i]);
 					}

@@ -2557,6 +2557,18 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetTitle___(void * 
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetSize___(void * jarg1) {
+  void * jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Vec2 result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = ((efk::GUIManager const *)arg1)->GetSize();
+  jresult = new efk::Vec2((const efk::Vec2 &)result); 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetSize___(void * jarg1, int jarg2, int jarg3) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int32_t arg2 ;
@@ -5843,6 +5855,20 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsAnyWindow
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFullscreen___(void * jarg1, char16_t * jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  result = (bool)(arg1)->BeginFullscreen((char16_t const *)arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextDock___(void * jarg1, int jarg2) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   efk::DockSlot arg2 ;
@@ -5900,6 +5926,24 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndDock___(void * j
   
   arg1 = (efk::GUIManager *)jarg1; 
   (arg1)->EndDock();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextDockRate___(void * jarg1, float jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->SetNextDockRate(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ResetNextParentDock___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->ResetNextParentDock();
 }
 
 

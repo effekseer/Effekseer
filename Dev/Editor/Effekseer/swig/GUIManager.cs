@@ -52,6 +52,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetTitle(swigCPtr, title);
   }
 
+  public Vec2 GetSize() {
+    Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetSize(swigCPtr), true);
+    return ret;
+  }
+
   public void SetSize(int width, int height) {
     EffekseerNativePINVOKE.GUIManager_SetSize(swigCPtr, width, height);
   }
@@ -927,6 +932,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool BeginFullscreen(string label) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFullscreen(swigCPtr, label);
+    return ret;
+  }
+
   public void SetNextDock(DockSlot slot) {
     EffekseerNativePINVOKE.GUIManager_SetNextDock(swigCPtr, (int)slot);
   }
@@ -947,6 +957,14 @@ public class GUIManager : global::System.IDisposable {
 
   public void EndDock() {
     EffekseerNativePINVOKE.GUIManager_EndDock(swigCPtr);
+  }
+
+  public void SetNextDockRate(float rate) {
+    EffekseerNativePINVOKE.GUIManager_SetNextDockRate(swigCPtr, rate);
+  }
+
+  public void ResetNextParentDock() {
+    EffekseerNativePINVOKE.GUIManager_ResetNextParentDock(swigCPtr);
   }
 
   public bool BeginFCurve(int id) {

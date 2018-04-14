@@ -47,6 +47,8 @@ namespace efk
 
 		void SetTitle(const char16_t* title);
 
+		Vec2 GetSize() const;
+
 		void SetSize(int32_t width, int32_t height);
 
 		void Present();
