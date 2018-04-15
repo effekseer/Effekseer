@@ -42,6 +42,26 @@ namespace efk
 #endif
 	}
 
+	static ImTextureID ToImTextureID(ImageResource* image)
+	{
+		if (image != nullptr)
+		{
+			Effekseer::TextureData* texture = image->GetTextureData();
+			if (texture != nullptr)
+			{
+				if (texture->UserPtr != nullptr)
+				{
+					return (ImTextureID)texture->UserPtr;
+				}
+				else
+				{
+					return (ImTextureID)texture->UserID;
+				}
+			}
+		}
+		return nullptr;
+	}
+
 	bool DragFloatN(const char* label, float* v, int components, float v_speed, float v_min, float v_max, 
 		const char* display_format1, 
 		const char* display_format2,
@@ -341,6 +361,36 @@ namespace efk
 		ImGui::EndGroup();
 	}
 
+	void GUIManager::SetCursorPosX(float x)
+	{
+		ImGui::SetCursorPosX(x);
+	}
+
+	void GUIManager::SetCursorPosY(float y)
+	{
+		ImGui::SetCursorPosY(y);
+	}
+
+	float GUIManager::GetCursorPosX()
+	{
+		return ImGui::GetCursorPosX();
+	}
+
+	float GUIManager::GetCursorPosY()
+	{
+		return ImGui::GetCursorPosY();
+	}
+
+	float GUIManager::GetTextLineHeight()
+	{
+		return ImGui::GetTextLineHeight();
+	}
+
+	float GUIManager::GetTextLineHeightWithSpacing()
+	{
+		return ImGui::GetTextLineHeightWithSpacing();
+	}
+
 	void GUIManager::Columns(int count, const char* id, bool border)
 	{
 		ImGui::Columns(count, id, border);
@@ -388,17 +438,7 @@ namespace efk
 
 	void GUIManager::Image(ImageResource* user_texture_id, float x, float y)
 	{
-		if (user_texture_id != nullptr && user_texture_id->GetTextureData() != nullptr)
-		{
-			if (user_texture_id->GetTextureData()->UserPtr != nullptr)
-			{
-				ImGui::Image((ImTextureID)user_texture_id->GetTextureData()->UserPtr, ImVec2(x, y));
-			}
-			else
-			{
-				ImGui::Image((ImTextureID)user_texture_id->GetTextureData()->UserID, ImVec2(x, y));
-			}
-		}
+		ImGui::Image(ToImTextureID(user_texture_id), ImVec2(x, y));
 	}
 
 	void GUIManager::Image(void* user_texture_id, float x, float y)
@@ -408,19 +448,7 @@ namespace efk
 
 	bool GUIManager::ImageButton(ImageResource* user_texture_id, float x, float y)
 	{
-		if (user_texture_id != nullptr && user_texture_id->GetTextureData() != nullptr)
-		{
-			if (user_texture_id->GetTextureData()->UserPtr != nullptr)
-			{
-				return ImGui::ImageButton((ImTextureID)user_texture_id->GetTextureData()->UserPtr, ImVec2(x, y));
-			}
-			else
-			{
-				return ImGui::ImageButton((ImTextureID)user_texture_id->GetTextureData()->UserID, ImVec2(x, y));
-			}
-		}
-
-		return false;
+		return ImGui::ImageButton(ToImTextureID(user_texture_id), ImVec2(x, y));
 	}
 
 	bool GUIManager::Checkbox(const char16_t* label, bool* v)
@@ -443,12 +471,12 @@ namespace efk
 		return ImGui::SliderInt(utf16_to_utf8(label).c_str(), v, v_min, v_max);
 	}
 
-	bool GUIManager::BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags)
+	bool GUIManager::BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, ImageResource* user_texture_id)
 	{
 		return ImGui::BeginCombo(
 			utf16_to_utf8(label).c_str(),
 			utf16_to_utf8(preview_value).c_str(),
-			(int)flags);
+			(int)flags, ToImTextureID(user_texture_id));
 	}
 
 	void GUIManager::EndCombo()
@@ -587,9 +615,9 @@ namespace efk
 		ImGui::TreePop();
 	}
 
-	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags)
+	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags, ImageResource* user_texture_id)
 	{
-		return ImGui::Selectable(utf16_to_utf8(label).c_str(), selected, (int)flags);
+		return ImGui::Selectable(utf16_to_utf8(label).c_str(), selected, (int)flags, ImVec2(0, 0), ToImTextureID(user_texture_id));
 	}
 
 	void GUIManager::SetTooltip(const char16_t* text)
@@ -627,14 +655,14 @@ namespace efk
 		ImGui::EndMenu();
 	}
 
-	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool selected, bool enabled)
+	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool selected, bool enabled, ImageResource* icon)
 	{
-		return ImGui::MenuItem(utf16_to_utf8(label).c_str(), shortcut, selected, enabled);
+		return ImGui::MenuItem(utf16_to_utf8(label).c_str(), shortcut, selected, enabled, ToImTextureID(icon));
 	}
 
-	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled)
+	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled, ImageResource* icon)
 	{
-		return ImGui::MenuItem(utf16_to_utf8(label).c_str(), shortcut, p_selected, enabled);
+		return ImGui::MenuItem(utf16_to_utf8(label).c_str(), shortcut, p_selected, enabled, ToImTextureID(icon));
 	}
 
 	void GUIManager::OpenPopup(const char* str_id)

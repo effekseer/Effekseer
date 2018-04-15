@@ -266,32 +266,31 @@ namespace Effekseer.GUI.Menu
 					{
 						Manager.SelectOrShowWindow(t, new swig.Vec2(300, 300));
 					};
-					Console.WriteLine("Not implemented.");
-					//item.Image = icon;
+					item.Icon = icon;
 					menu.Controls.Add(item);
 				};
-
-				setDockWindow(Resources.GetString("NodeTree"), typeof(Dock.NodeTreeView), null);
-				setDockWindow(Resources.GetString("BasicSettings"), typeof(Dock.CommonValues), null);
-				setDockWindow(Resources.GetString("Position"), typeof(Dock.LocationValues), null);
-				setDockWindow(Resources.GetString("AttractionForces"), typeof(Dock.LocationAbsValues), null);
-				setDockWindow(Resources.GetString("SpawningMethod"), typeof(Dock.GenerationLocationValues), null);
-				setDockWindow(Resources.GetString("Rotation"), typeof(Dock.RotationValues), null);
-				setDockWindow(Resources.GetString("Scale"), typeof(Dock.ScaleValues), null);
+				
+				setDockWindow(Resources.GetString("NodeTree"), typeof(Dock.NodeTreeView), Images.GetIcon("PanelNodeTree"));
+				setDockWindow(Resources.GetString("BasicSettings"), typeof(Dock.CommonValues), Images.GetIcon("PanelCommon"));
+				setDockWindow(Resources.GetString("Position"), typeof(Dock.LocationValues), Images.GetIcon("PanelLocation"));
+				setDockWindow(Resources.GetString("AttractionForces"), typeof(Dock.LocationAbsValues), Images.GetIcon("PanelLocationAbs"));
+				setDockWindow(Resources.GetString("SpawningMethod"), typeof(Dock.GenerationLocationValues), Images.GetIcon("PanelGenerationLocation"));
+				setDockWindow(Resources.GetString("Rotation"), typeof(Dock.RotationValues), Images.GetIcon("PanelRotation"));
+				setDockWindow(Resources.GetString("Scale"), typeof(Dock.ScaleValues), Images.GetIcon("PanelScale"));
 				setDockWindow(Resources.GetString("Depth"), typeof(Dock.DepthValues), null);
-				setDockWindow(Resources.GetString("BasicRenderSettings"), typeof(Dock.RendererCommonValues), null);
-				setDockWindow(Resources.GetString("RenderSettings"), typeof(Dock.RendererValues), null);
-				setDockWindow(Resources.GetString("Sound"), typeof(Dock.SoundValues), null);
-				setDockWindow(Resources.GetString("FCurves"), typeof(Dock.FCurves), null);
-				setDockWindow(Resources.GetString("ViewerControls"), typeof(Dock.ViewerController), null);
-				setDockWindow(Resources.GetString("CameraSettings"), typeof(Dock.ViewPoint), null);
-				setDockWindow(Resources.GetString("Recorder"), typeof(Dock.Recorder), null);
-				setDockWindow(Resources.GetString("Options"), typeof(Dock.Option), null);
-				//setDockWindow(Properties.Resources.Options, typeof(DockGlobal), Properties.Resources.IconOption);
-				//setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), Properties.Resources.IconBehavior);
+				setDockWindow(Resources.GetString("BasicRenderSettings"), typeof(Dock.RendererCommonValues), Images.GetIcon("PanelRendererCommon"));
+				setDockWindow(Resources.GetString("RenderSettings"), typeof(Dock.RendererValues), Images.GetIcon("PanelRenderer"));
+				setDockWindow(Resources.GetString("Sound"), typeof(Dock.SoundValues), Images.GetIcon("PanelSound"));
+				setDockWindow(Resources.GetString("FCurves"), typeof(Dock.FCurves), Images.GetIcon("PanelFCurve"));
+				setDockWindow(Resources.GetString("ViewerControls"), typeof(Dock.ViewerController), Images.GetIcon("PanelViewer"));
+				setDockWindow(Resources.GetString("CameraSettings"), typeof(Dock.ViewPoint), Images.GetIcon("PanelViewPoint"));
+				setDockWindow(Resources.GetString("Recorder"), typeof(Dock.Recorder), Images.GetIcon("PanelRecorder"));
+				setDockWindow(Resources.GetString("Options"), typeof(Dock.Option), Images.GetIcon("PanelOption"));
+				//setDockWindow(Properties.Resources.Options, typeof(DockGlobal), Properties.Get(Icon.Resources_IconOption));
+				//setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), Properties.Get(Icon.Resources_IconBehavior));
 				//setDockWindow(Properties.Resources.Culling, typeof(DockCulling), Properties.Resources.IconCulling);
-				setDockWindow(Resources.GetString("Network"), typeof(Dock.Network), null);
-				setDockWindow(Resources.GetString("FileViewer"), typeof(Dock.FileViewer), null);
+				setDockWindow(Resources.GetString("Network"), typeof(Dock.Network), Images.GetIcon("PanelNetwork"));
+				setDockWindow(Resources.GetString("FileViewer"), typeof(Dock.FileViewer), Images.GetIcon("PanelFileViewer"));
 
 				this.Controls.Add(menu);
 			}

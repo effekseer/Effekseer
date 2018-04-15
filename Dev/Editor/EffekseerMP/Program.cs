@@ -263,26 +263,71 @@ namespace Effekseer
 
 	class Images
 	{
-		public static swig.ImageResource Icon;
 		public static swig.ImageResource Play;
 		public static swig.ImageResource Stop;
 		public static swig.ImageResource Pause;
 		public static swig.ImageResource Step;
 		public static swig.ImageResource BackStep;
+		
+		public static Dictionary<string, swig.ImageResource> Icons;
 
 		public static void Load(swig.Native native)
 		{
-			Icon = native.LoadImageResource("resources/icon.png");
 			Play = native.LoadImageResource("resources/Play.png");
 			Stop = native.LoadImageResource("resources/Stop.png");
 			Pause = native.LoadImageResource("resources/Pause.png");
 			Step = native.LoadImageResource("resources/Step.png");
 			BackStep = native.LoadImageResource("resources/BackStep.png");
+
+			Icons = new Dictionary<string, swig.ImageResource>();
+			
+			Icons["AppIcon"] = native.LoadImageResource("resources/icon.png");
+			Icons["NodeEmpty"] = native.LoadImageResource("resources/icons/NodeType_Empty.png");
+			Icons["NodeModel"] = native.LoadImageResource("resources/icons/NodeType_Model.png");
+			Icons["NodeRibbon"] = native.LoadImageResource("resources/icons/NodeType_Ribbon.png");
+			Icons["NodeRing"] = native.LoadImageResource("resources/icons/NodeType_Ring.png");
+			Icons["NodeSprite"] = native.LoadImageResource("resources/icons/NodeType_Sprite.png");
+			Icons["NodeTrack"] = native.LoadImageResource("resources/icons/NodeType_Track.png");
+			
+			Icons["PanelBehavior"] = native.LoadImageResource("resources/icons/Panel_Behavior.png");
+			Icons["PanelCommon"] = native.LoadImageResource("resources/icons/Panel_Common.png");
+			Icons["PanelCulling"] = native.LoadImageResource("resources/icons/Panel_Culling.png");
+			Icons["PanelFCurve"] = native.LoadImageResource("resources/icons/Panel_FCurve.png");
+			Icons["PanelFileViewer"] = native.LoadImageResource("resources/icons/Panel_FileViewer.png");
+			Icons["PanelGenerationLocation"] = native.LoadImageResource("resources/icons/Panel_GenerationLocation.png");
+			Icons["PanelLocation"] = native.LoadImageResource("resources/icons/Panel_Location.png");
+			Icons["PanelLocationAbs"] = native.LoadImageResource("resources/icons/Panel_LocationAbs.png");
+			Icons["PanelNetwork"] = native.LoadImageResource("resources/icons/Panel_Network.png");
+			Icons["PanelNodeTree"] = native.LoadImageResource("resources/icons/Panel_NodeTree.png");
+			Icons["PanelOption"] = native.LoadImageResource("resources/icons/Panel_Option.png");
+			Icons["PanelRecorder"] = native.LoadImageResource("resources/icons/Panel_Recorder.png");
+			Icons["PanelRenderer"] = native.LoadImageResource("resources/icons/Panel_Renderer.png");
+			Icons["PanelRendererCommon"] = native.LoadImageResource("resources/icons/Panel_RendererCommon.png");
+			Icons["PanelRotation"] = native.LoadImageResource("resources/icons/Panel_Rotation.png");
+			Icons["PanelScale"] = native.LoadImageResource("resources/icons/Panel_Scale.png");
+			Icons["PanelSound"] = native.LoadImageResource("resources/icons/Panel_Sound.png");
+			Icons["PanelViewer"] = native.LoadImageResource("resources/icons/Panel_Viewer.png");
+			Icons["PanelViewPoint"] = native.LoadImageResource("resources/icons/Panel_ViewPoint.png");
 		}
 
 		public static void Unload()
 		{
-			Icon.Dispose();
+			Play.Dispose();
+			Stop.Dispose();
+			Pause.Dispose();
+			Step.Dispose();
+			BackStep.Dispose();
+			foreach (var keyValue in Icons)
+			{
+				if (keyValue.Value != null)
+				{
+					keyValue.Value.Dispose();
+				}
+			}
+		}
+
+		public static swig.ImageResource GetIcon(string resourceName) {
+			return Icons.ContainsKey(resourceName) ? Icons[resourceName] : null;
 		}
 	}
 }

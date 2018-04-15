@@ -218,6 +218,13 @@ namespace efk
 		void BeginGroup();
 		void EndGroup();
 
+		void SetCursorPosX(float x);
+		void SetCursorPosY(float y);
+		float GetCursorPosX();
+		float GetCursorPosY();
+		float GetTextLineHeight();
+		float GetTextLineHeightWithSpacing();
+
 		// Column
 		void  Columns(int count = 1, const char* id = NULL, bool border = true);
 		void  NextColumn();
@@ -249,7 +256,7 @@ namespace efk
 		bool SliderInt(const char16_t* label, int* v, int v_min, int v_max);
 
 		// Widgets: Combo Box
-		bool BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags);
+		bool BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, ImageResource* user_texture_id = NULL);
 		void EndCombo(); // only call EndCombo() if BeginCombo() returns true!
 
 		// Drags
@@ -286,7 +293,7 @@ namespace efk
 		void TreePop();
 
 		// Widgets: Selectable / Lists
-		bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None);
+		bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None, ImageResource* user_texture_id = NULL);
 
 		// Tooltips
 		void SetTooltip(const char16_t* text);
@@ -298,8 +305,8 @@ namespace efk
 		void EndMenuBar();
 		bool BeginMenu(const char16_t* label, bool enabled = true);
 		void EndMenu();
-		bool MenuItem(const char16_t* label, const char* shortcut = NULL, bool selected = false, bool enabled = true);
-		bool MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled = true);
+		bool MenuItem(const char16_t* label, const char* shortcut = NULL, bool selected = false, bool enabled = true, ImageResource* icon = NULL);
+		bool MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled = true, ImageResource* icon = NULL);
 
 		// Popups
 		void OpenPopup(const char* str_id);

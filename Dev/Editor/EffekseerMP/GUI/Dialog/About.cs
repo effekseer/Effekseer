@@ -72,7 +72,7 @@ Dock Panel Suite
 
 			if (Manager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.None))
             {
-				Manager.NativeManager.Image(Images.Icon, 32, 32);
+				Manager.NativeManager.Image(Images.GetIcon("AppIcon"), 32, 32);
 
 				Manager.NativeManager.SameLine();
 

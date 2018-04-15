@@ -60,9 +60,6 @@ namespace Effekseer.GUI.Dock
 				var item = items[i];
 
 				// Todo: ファイルタイプに適したアイコンを割り当てる
-				Manager.NativeManager.Image(Images.Icon, 16, 16);
-
-				Manager.NativeManager.SameLine();
 				
 				string caption = Path.GetFileName(item.FilePath);
 				if (Manager.NativeManager.Selectable(caption, i == selectedIndex, swig.SelectableFlags.AllowDoubleClick))

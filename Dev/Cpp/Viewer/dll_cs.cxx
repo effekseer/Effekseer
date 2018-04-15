@@ -2817,6 +2817,74 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndGroup___(void * 
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetCursorPosX___(void * jarg1, float jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->SetCursorPosX(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetCursorPosY___(void * jarg1, float jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->SetCursorPosY(arg2);
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetCursorPosX___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetCursorPosX();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetCursorPosY___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetCursorPosY();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetTextLineHeight___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetTextLineHeight();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetTextLineHeightWithSpacing___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetTextLineHeightWithSpacing();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Columns__SWIG_0___(void * jarg1, int jarg2, char * jarg3, unsigned int jarg4) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int arg2 ;
@@ -3143,7 +3211,27 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SliderInt__
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginCombo___(void * jarg1, char16_t * jarg2, char16_t * jarg3, int jarg4) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginCombo__SWIG_0___(void * jarg1, char16_t * jarg2, char16_t * jarg3, int jarg4, void * jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  efk::ComboFlags arg4 ;
+  efk::ImageResource *arg5 = (efk::ImageResource *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (char16_t *)jarg3; 
+  arg4 = (efk::ComboFlags)jarg4; 
+  arg5 = (efk::ImageResource *)jarg5; 
+  result = (bool)(arg1)->BeginCombo((char16_t const *)arg2,(char16_t const *)arg3,arg4,arg5);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginCombo__SWIG_1___(void * jarg1, char16_t * jarg2, char16_t * jarg3, int jarg4) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5281,7 +5369,27 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreePop___(void * j
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_0___(void * jarg1, char16_t * jarg2, unsigned int jarg3, int jarg4) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_0___(void * jarg1, char16_t * jarg2, unsigned int jarg3, int jarg4, void * jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool arg3 ;
+  efk::SelectableFlags arg4 ;
+  efk::ImageResource *arg5 = (efk::ImageResource *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3 ? true : false; 
+  arg4 = (efk::SelectableFlags)jarg4; 
+  arg5 = (efk::ImageResource *)jarg5; 
+  result = (bool)(arg1)->Selectable((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_1___(void * jarg1, char16_t * jarg2, unsigned int jarg3, int jarg4) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5299,7 +5407,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable_
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_1___(void * jarg1, char16_t * jarg2, unsigned int jarg3) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_2___(void * jarg1, char16_t * jarg2, unsigned int jarg3) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5315,7 +5423,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable_
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_2___(void * jarg1, char16_t * jarg2) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_3___(void * jarg1, char16_t * jarg2) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5417,7 +5525,29 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndMenu___(void * j
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_0___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int jarg4, unsigned int jarg5) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_0___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int jarg4, unsigned int jarg5, void * jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  char *arg3 = (char *) 0 ;
+  bool arg4 ;
+  bool arg5 ;
+  efk::ImageResource *arg6 = (efk::ImageResource *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (char *)jarg3; 
+  arg4 = jarg4 ? true : false; 
+  arg5 = jarg5 ? true : false; 
+  arg6 = (efk::ImageResource *)jarg6; 
+  result = (bool)(arg1)->MenuItem((char16_t const *)arg2,(char const *)arg3,arg4,arg5,arg6);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_1___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int jarg4, unsigned int jarg5) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5437,7 +5567,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__S
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_1___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int jarg4) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_2___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int jarg4) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5455,7 +5585,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__S
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_2___(void * jarg1, char16_t * jarg2, char * jarg3) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_3___(void * jarg1, char16_t * jarg2, char * jarg3) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5471,7 +5601,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__S
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_3___(void * jarg1, char16_t * jarg2) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_4___(void * jarg1, char16_t * jarg2) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5485,7 +5615,29 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__S
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_4___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int * jarg4, unsigned int jarg5) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_5___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int * jarg4, unsigned int jarg5, void * jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  char *arg3 = (char *) 0 ;
+  bool *arg4 = (bool *) 0 ;
+  bool arg5 ;
+  efk::ImageResource *arg6 = (efk::ImageResource *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (char *)jarg3; 
+  arg4 = (bool *)jarg4; 
+  arg5 = jarg5 ? true : false; 
+  arg6 = (efk::ImageResource *)jarg6; 
+  result = (bool)(arg1)->MenuItem((char16_t const *)arg2,(char const *)arg3,arg4,arg5,arg6);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_6___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int * jarg4, unsigned int jarg5) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -5505,7 +5657,7 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__S
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_5___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int * jarg4) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_MenuItem__SWIG_7___(void * jarg1, char16_t * jarg2, char * jarg3, unsigned int * jarg4) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;

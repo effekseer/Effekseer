@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Effekseer.swig;
 
 namespace Effekseer.GUI.Menu
 {
@@ -26,6 +27,8 @@ namespace Effekseer.GUI.Menu
 
         public Action Clicked;
 
+		public ImageResource Icon;
+
         public MenuItem()
         {
             var rand = new Random();
@@ -34,7 +37,7 @@ namespace Effekseer.GUI.Menu
 
         public void Update()
         {
-            if (Manager.NativeManager.MenuItem(Label + id, Shortcut))
+			if (Manager.NativeManager.MenuItem(Label + id, Shortcut, false, true, Icon))
             {
                 if(Clicked != null)
                 {
