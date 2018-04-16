@@ -44,30 +44,36 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+			var selected = GetSelectedFCurve();
 
+			if(selected.Item1 != null)
+			{
+				Manager.NativeManager.Text(frame_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(value_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(start_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(end_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(type_text);
 
-			Manager.NativeManager.Text(frame_text);
-			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text(value_text);
-			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text(start_text);
-			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text(end_text);
-			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text(type_text);
+				Manager.NativeManager.Text(sampling_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(left_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(right_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(offset_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(offset_min_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(offset_max_text);
+			}
+			else
+			{
 
-			Manager.NativeManager.Text(sampling_text);
-			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text(left_text);
-			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text(right_text);
-			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text(offset_text);
-			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text(offset_min_text);
-			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text(offset_max_text);
-
+			}
 
 			Manager.NativeManager.BeginGroup();
 
@@ -447,6 +453,36 @@ namespace Effekseer.GUI.Dock
 			recurse(treeNodes);
 		}
 
+
+		Tuple<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve()
+		{
+			List<Tuple<Data.Value.IFCurve, FCurveProperty>> rets = new List<Tuple<IFCurve, FCurveProperty>>();
+			Action<TreeNode> recurse = null;
+
+			recurse = (t) =>
+			{
+				foreach (var fcurve in t.FCurves)
+				{
+					var r = fcurve.GetSelectedFCurve();
+					if(r.Item1 != null)
+					{
+						rets.Add(r);
+					}
+				}
+
+				foreach (var c in t.Children)
+				{
+					recurse(c);
+				}
+			};
+
+			recurse(treeNodes);
+
+			if (rets.Count != 1) return new Tuple<Data.Value.IFCurve, FCurveProperty>(null, null);
+
+			return rets[0];
+		}
+
 		class TreeNode
 		{
 			public string ID = string.Empty;
@@ -497,6 +533,8 @@ namespace Effekseer.GUI.Dock
 			public string Name { get; protected set; }
 
 			public abstract object GetValueAsObject();
+
+			public virtual Tuple<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve() { return new Tuple<Data.Value.IFCurve, FCurveProperty>(null, null); }
 
 			static public FCurve Create(Tuple<string, object> v, FCurves window)
 			{
@@ -626,6 +664,22 @@ namespace Effekseer.GUI.Dock
 			public override object GetValueAsObject()
 			{
 				return Value;
+			}
+
+			public override Tuple<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve()
+			{
+				int count = properties.Count(_ => _.Selected);
+				if (count != 1) new Tuple<Data.Value.IFCurve, FCurveProperty>(null, null);
+
+				for(int i = 0; i < 3; i++)
+				{
+					if(properties[i].Selected)
+					{
+						return new Tuple<Data.Value.IFCurve, FCurveProperty>(fcurves[i], properties[i]);
+					}
+				}
+
+				return new Tuple<Data.Value.IFCurve, FCurveProperty>(null, null);
 			}
 
 			public override void UpdateTree()
