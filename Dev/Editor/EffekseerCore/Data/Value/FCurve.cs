@@ -8,18 +8,23 @@ namespace Effekseer.Data.Value
 	public enum FCurveEdge
 	{
 		[Name(language = Language.Japanese, value = "一定")]
+		[Name(language = Language.English, value = "Constant")]
 		Constant = 0,
 		[Name(language = Language.Japanese, value = "ループ")]
+		[Name(language = Language.English, value = "Loop")]
 		Loop = 1,
 		[Name(language = Language.Japanese, value = "逆ループ")]
+		[Name(language = Language.English, value = "Loop inversely")]
 		LoopInversely = 2,
 	}
 
 	public enum FCurveInterpolation
 	{
 		[Name(language = Language.Japanese, value = "ベジェ")]
+		[Name(language = Language.English, value = "Bezier")]
 		Bezier = 0,
 		[Name(language = Language.Japanese, value = "線形")]
+		[Name(language = Language.English, value = "Linear")]
 		Linear = 1,
 	}
 

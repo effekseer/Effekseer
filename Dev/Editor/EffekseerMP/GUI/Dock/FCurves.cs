@@ -31,6 +31,10 @@ namespace Effekseer.GUI.Dock
 		bool canCurveControlPre = true;
 		bool canCurveControl = true;
 
+		Component.Enum startCurve = new Component.Enum();
+		Component.Enum endCurve = new Component.Enum();
+		Component.Enum type = new Component.Enum();
+
 		public FCurves()
 		{
 			Label = Resources.GetString("FCurves");
@@ -39,6 +43,16 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterNew += OnChanged;
 			Core.OnBeforeLoad += OnBeforeLoad;
 			Core.OnAfterLoad += OnAfterLoad;
+
+			startCurve.Initialize(typeof(Data.Value.FCurveEdge));
+			startCurve.Label = start_text + "##Start";
+
+			endCurve.Initialize(typeof(Data.Value.FCurveEdge));
+			endCurve.Label = end_text + "##End";
+
+			type.Initialize(typeof(Data.Value.FCurveInterpolation));
+			type.Label = type_text + "##Type";
+
 			OnChanged();
 		}
 
@@ -46,33 +60,182 @@ namespace Effekseer.GUI.Dock
 		{
 			var selected = GetSelectedFCurve();
 
+			var invalidValue = "/";
+
 			if(selected.Item1 != null)
 			{
-				Manager.NativeManager.Text(frame_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(value_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(start_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(end_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(type_text);
+				var ind = selected.Item2.GetSelectedIndex();
 
-				Manager.NativeManager.Text(sampling_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(left_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(right_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(offset_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(offset_min_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(offset_max_text);
+				if(ind != -1)
+				{
+					var frameKey = new int[] { (int)selected.Item2.Keys[ind] };
+					if(Manager.NativeManager.DragInt(frame_text, frameKey))
+					{
+						selected.Item2.Keys[ind] = (int)frameKey[0];
+					}
+
+					Manager.NativeManager.SameLine();
+
+					var frameValue = new float[] { selected.Item2.Values[ind] };
+					if (Manager.NativeManager.DragFloat(value_text, frameValue))
+					{
+						selected.Item2.Values[ind] = frameValue[0];
+					}
+
+					Manager.NativeManager.SameLine();
+
+					var leftValues = new float[] { selected.Item2.LeftKeys[ind], selected.Item2.LeftValues[ind] };
+					if(Manager.NativeManager.DragFloat2(left_text, leftValues))
+					{
+						selected.Item2.LeftKeys[ind] = leftValues[0];
+						selected.Item2.LeftValues[ind] = leftValues[1];
+					}
+
+					Manager.NativeManager.SameLine();
+
+					var rightValues = new float[] { selected.Item2.RightKeys[ind], selected.Item2.RightValues[ind] };
+					if (Manager.NativeManager.DragFloat2(right_text, rightValues))
+					{
+						selected.Item2.RightKeys[ind] = rightValues[0];
+						selected.Item2.RightValues[ind] = rightValues[1];
+					}
+
+					Manager.NativeManager.SameLine();
+
+					{
+						if (Manager.NativeManager.BeginCombo(type.Label, type.FieldNames[selected.Item2.Interpolations[ind]], swig.ComboFlags.None))
+						{
+							for (int i = 0; i < type.FieldNames.Count; i++)
+							{
+								bool is_selected = (type.FieldNames[(int)selected.Item2.Interpolations[ind]] == type.FieldNames[i]);
+
+								if (Manager.NativeManager.Selectable(type.FieldNames[i], is_selected, swig.SelectableFlags.None))
+								{
+									selected.Item2.Interpolations[ind] = i;
+								}
+
+								if (is_selected)
+								{
+									Manager.NativeManager.SetItemDefaultFocus();
+								}
+							}
+
+							Manager.NativeManager.EndCombo();
+						}
+					}
+				}
+				else
+				{
+					Manager.NativeManager.Text(frame_text);
+					Manager.NativeManager.SameLine();
+					Manager.NativeManager.Text(invalidValue);
+					Manager.NativeManager.SameLine();
+
+					Manager.NativeManager.Text(value_text);
+					Manager.NativeManager.SameLine();
+					Manager.NativeManager.Text(invalidValue);
+					Manager.NativeManager.SameLine();
+
+					Manager.NativeManager.Text(left_text);
+					Manager.NativeManager.SameLine();
+					Manager.NativeManager.Text(invalidValue);
+					Manager.NativeManager.SameLine();
+
+					Manager.NativeManager.Text(right_text);
+					Manager.NativeManager.SameLine();
+					Manager.NativeManager.Text(invalidValue);
+					Manager.NativeManager.SameLine();
+
+					Manager.NativeManager.Text(type_text);
+					Manager.NativeManager.SameLine();
+					Manager.NativeManager.Text(invalidValue);
+				}
+
+				Manager.NativeManager.Columns(4);
+				
+				// Start curve
+				startCurve.SetBinding(selected.Item1.StartType);
+				startCurve.Update();
+				selected.Item2.StartEdge = (Data.Value.FCurveEdge)selected.Item1.StartType;
+				Manager.NativeManager.NextColumn();
+
+				// End curve
+				endCurve.SetBinding(selected.Item1.EndType);
+				endCurve.Update();
+				selected.Item2.EndEdge = (Data.Value.FCurveEdge)selected.Item1.EndType;
+				Manager.NativeManager.NextColumn();
+
+				// Sampling
+				var sampling = new int[] { selected.Item1.Sampling };
+
+				if(Manager.NativeManager.InputInt(sampling_text + "##SamplingText", sampling))
+				{
+					selected.Item1.Sampling.SetValue(sampling[0]);
+				}
+
+				Manager.NativeManager.NextColumn();
+
+				// Offset label
+				var offset_id = offset_text + "##OffsetMinMax";
+				var offsets = new float[] { selected.Item1.OffsetMin, selected.Item1.OffsetMax };
+
+				if (Manager.NativeManager.DragFloat2(offset_id, offsets))
+				{
+					selected.Item1.OffsetMin.SetValue(offsets[0]);
+					selected.Item1.OffsetMax.SetValue(offsets[1]);
+				}
+				
+				Manager.NativeManager.Columns(1);
 			}
 			else
 			{
 
+				Manager.NativeManager.Text(frame_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(invalidValue);
+				Manager.NativeManager.SameLine();
+
+				Manager.NativeManager.Text(value_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(invalidValue);
+				Manager.NativeManager.SameLine();
+
+				Manager.NativeManager.Text(left_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(invalidValue);
+				Manager.NativeManager.SameLine();
+
+				Manager.NativeManager.Text(right_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(invalidValue);
+				Manager.NativeManager.SameLine();
+
+				Manager.NativeManager.Text(type_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(invalidValue);
+
+				Manager.NativeManager.Text(start_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(invalidValue);
+				Manager.NativeManager.SameLine();
+
+
+				Manager.NativeManager.Text(end_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(invalidValue);
+				Manager.NativeManager.SameLine();
+
+				Manager.NativeManager.Text(sampling_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(invalidValue);
+				Manager.NativeManager.SameLine();
+
+				Manager.NativeManager.Text(offset_text);
+				Manager.NativeManager.SameLine();
+				Manager.NativeManager.Text(invalidValue);
+				
+				startCurve.SetBinding(null);
+				endCurve.SetBinding(null);
 			}
 
 			Manager.NativeManager.BeginGroup();
@@ -669,7 +832,7 @@ namespace Effekseer.GUI.Dock
 			public override Tuple<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve()
 			{
 				int count = properties.Count(_ => _.Selected);
-				if (count != 1) new Tuple<Data.Value.IFCurve, FCurveProperty>(null, null);
+				if (count != 1) return new Tuple<Data.Value.IFCurve, FCurveProperty>(null, null);
 
 				for(int i = 0; i < 3; i++)
 				{
@@ -757,8 +920,8 @@ namespace Effekseer.GUI.Dock
 						properties[i].RightKeys,
 						properties[i].RightValues,
 						properties[i].Interpolations,
-						swig.FCurveEdgeType.Constant,
-						swig.FCurveEdgeType.Constant,
+						(swig.FCurveEdgeType)properties[i].StartEdge,
+						(swig.FCurveEdgeType)properties[i].EndEdge,
 						properties[i].KVSelected,
 						properties[i].Keys.Length - 1,
 						0.0f,
@@ -1008,6 +1171,25 @@ namespace Effekseer.GUI.Dock
 			public byte[] KVSelected = new byte[0];
 
 			public int[] Interpolations = new int[0];
+
+			public Data.Value.FCurveEdge StartEdge = Data.Value.FCurveEdge.Constant;
+
+			public Data.Value.FCurveEdge EndEdge = Data.Value.FCurveEdge.Constant;
+
+			public int GetSelectedIndex()
+			{
+				if(KVSelected.Take(KVSelected.Count() - 1).Count(_ => _ > 0) != 1)
+				{
+					return -1;
+				}
+
+				for(int i = 0; i < KVSelected.Count() - 1; i++)
+				{
+					if (KVSelected[i] > 0) return i;
+				}
+
+				return -1;
+			}
 
 			public void Update(Data.Value.FCurve<float> fcurve)
 			{

@@ -18,7 +18,7 @@ namespace Effekseer.GUI.Component
 
 		int[] enums = null;
 
-		List<string> names = new List<string>();
+		public List<string> FieldNames = new List<string>();
 		
 		List<swig.ImageResource> icons = new List<swig.ImageResource>();
 
@@ -77,7 +77,7 @@ namespace Effekseer.GUI.Component
 				}
 
 				list.Add((int)f.GetValue(null));
-				names.Add(name);
+				FieldNames.Add(name);
 				icons.Add(icon);
 			}
 			enums = list.ToArray();
@@ -116,13 +116,13 @@ namespace Effekseer.GUI.Component
 
 			var v = enums.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValues).FirstOrDefault();
 
-			if(Manager.NativeManager.BeginCombo(id, names[v.Item2], swig.ComboFlags.None, icons[v.Item2]))
+			if(Manager.NativeManager.BeginCombo(Label + id, FieldNames[v.Item2], swig.ComboFlags.None, icons[v.Item2]))
 			{
-				for(int i = 0; i < names.Count; i++)
+				for(int i = 0; i < FieldNames.Count; i++)
 				{
-					bool is_selected = (names[v.Item2] == names[i]);
+					bool is_selected = (FieldNames[v.Item2] == FieldNames[i]);
 
-					if (Manager.NativeManager.Selectable(names[i], is_selected, swig.SelectableFlags.None, icons[i]))
+					if (Manager.NativeManager.Selectable(FieldNames[i], is_selected, swig.SelectableFlags.None, icons[i]))
 					{
 						selectedValues = enums[i];
 						binding.SetValue(selectedValues);
