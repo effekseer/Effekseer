@@ -309,7 +309,7 @@ namespace Effekseer.GUI.Dock
 
 		void UpdateGraph(TreeNode treeNode)
 		{
-			canControl = true;
+			bool canControl = true;
 
 			UpdateGraph(treeNodes, ref canControl);
 
