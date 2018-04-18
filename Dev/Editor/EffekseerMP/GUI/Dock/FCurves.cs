@@ -68,39 +68,45 @@ namespace Effekseer.GUI.Dock
 
 				if(ind != -1)
 				{
+					Manager.NativeManager.Columns(5);
+
 					var frameKey = new int[] { (int)selected.Item2.Keys[ind] };
 					if(Manager.NativeManager.DragInt(frame_text, frameKey))
 					{
 						selected.Item2.Keys[ind] = (int)frameKey[0];
+						selected.Item2.IsDirtied = true;
 					}
 
-					Manager.NativeManager.SameLine();
+					Manager.NativeManager.NextColumn();
 
 					var frameValue = new float[] { selected.Item2.Values[ind] };
 					if (Manager.NativeManager.DragFloat(value_text, frameValue))
 					{
 						selected.Item2.Values[ind] = frameValue[0];
+						selected.Item2.IsDirtied = true;
 					}
 
-					Manager.NativeManager.SameLine();
+					Manager.NativeManager.NextColumn();
 
 					var leftValues = new float[] { selected.Item2.LeftKeys[ind], selected.Item2.LeftValues[ind] };
 					if(Manager.NativeManager.DragFloat2(left_text, leftValues))
 					{
 						selected.Item2.LeftKeys[ind] = leftValues[0];
 						selected.Item2.LeftValues[ind] = leftValues[1];
+						selected.Item2.IsDirtied = true;
 					}
 
-					Manager.NativeManager.SameLine();
+					Manager.NativeManager.NextColumn();
 
 					var rightValues = new float[] { selected.Item2.RightKeys[ind], selected.Item2.RightValues[ind] };
 					if (Manager.NativeManager.DragFloat2(right_text, rightValues))
 					{
 						selected.Item2.RightKeys[ind] = rightValues[0];
 						selected.Item2.RightValues[ind] = rightValues[1];
+						selected.Item2.IsDirtied = true;
 					}
 
-					Manager.NativeManager.SameLine();
+					Manager.NativeManager.NextColumn();
 
 					{
 						if (Manager.NativeManager.BeginCombo(type.Label, type.FieldNames[selected.Item2.Interpolations[ind]], swig.ComboFlags.None))
@@ -112,6 +118,7 @@ namespace Effekseer.GUI.Dock
 								if (Manager.NativeManager.Selectable(type.FieldNames[i], is_selected, swig.SelectableFlags.None))
 								{
 									selected.Item2.Interpolations[ind] = i;
+									selected.Item2.IsDirtied = true;
 								}
 
 								if (is_selected)
@@ -123,6 +130,8 @@ namespace Effekseer.GUI.Dock
 							Manager.NativeManager.EndCombo();
 						}
 					}
+
+					Manager.NativeManager.Columns(1);
 				}
 				else
 				{
@@ -300,7 +309,7 @@ namespace Effekseer.GUI.Dock
 
 		void UpdateGraph(TreeNode treeNode)
 		{
-			bool canControl = true;
+			canControl = true;
 
 			UpdateGraph(treeNodes, ref canControl);
 
@@ -788,7 +797,6 @@ namespace Effekseer.GUI.Dock
 			FCurveProperty[] properties = new FCurveProperty[3];
 			Data.Value.FCurve<float>[] fcurves = new Data.Value.FCurve<float>[3];
 			int[] ids = new int[3];
-			bool[] isDirtied = new bool[3];
 
 			FCurves window = null;
 
@@ -818,10 +826,6 @@ namespace Effekseer.GUI.Dock
 				properties[0].Color = 0xff0000ff;
 				properties[1].Color = 0xff00ff00;
 				properties[2].Color = 0xffff0000;
-
-				isDirtied[0] = false;
-				isDirtied[1] = false;
-				isDirtied[2] = false;
 			}
 
 			public override object GetValueAsObject()
@@ -940,7 +944,7 @@ namespace Effekseer.GUI.Dock
 						if (movedX != 0 || movedY != 0)
 						{
 							window.Move(movedX, movedY, changedType, fcurves[i]);
-							isDirtied[i] = true;
+							properties[i].IsDirtied = true;
 						}
 
 						if (isSelected)
@@ -993,7 +997,7 @@ namespace Effekseer.GUI.Dock
 					if (fcurves[j] == except) continue;
 					if (!properties[j].Selected) continue;
 
-					isDirtied[j] = true;
+					properties[j].IsDirtied = true;
 
 					for (int k = 0; k < properties[j].Keys.Length - 1; k++)
 					{
@@ -1114,7 +1118,7 @@ namespace Effekseer.GUI.Dock
 			{
 				for(int i = 0; i < properties.Length; i++)
 				{
-					if (!isDirtied[i]) continue;
+					if (!properties[i].IsDirtied) continue;
 					
 					var keys = new List<Data.Value.FCurveKey<float>>();
 
@@ -1136,8 +1140,8 @@ namespace Effekseer.GUI.Dock
 					}
 
 					fcurves[i].SetKeys(keys.ToArray());
-					
-					isDirtied[i] = false;
+
+					properties[i].IsDirtied = false;
 				}
 			}
 
@@ -1145,7 +1149,7 @@ namespace Effekseer.GUI.Dock
 			{
 				for (int i = 0; i < properties.Length; i++)
 				{
-					if (isDirtied[i]) return true;
+					if (properties[i].IsDirtied) return true;
 				}
 
 				return false;
@@ -1156,6 +1160,7 @@ namespace Effekseer.GUI.Dock
 		{
 			public UInt32 Color = 0;
 
+			public bool IsDirtied = false;
 			public bool Selected = false;
 			public bool IsShown = false;
 
