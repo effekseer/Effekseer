@@ -101,11 +101,11 @@ namespace Effekseer.GUI.Dock
 
 				if(n2_end != null)
 				{
-					Core.MoveNode(n1.node as Data.Node, n2_end.node.Parent, int.MaxValue);
+					Core.MoveNode(n1.Node as Data.Node, n2_end.Node.Parent, int.MaxValue);
 				}
 				else if(n2 != null)
 				{
-					Core.MoveNode(n1.node as Data.Node, n2.node.Parent, n2.node.Parent.Children.Internal.IndexOf(n2.node as Data.Node));
+					Core.MoveNode(n1.Node as Data.Node, n2.Node.Parent, n2.Node.Parent.Children.Internal.IndexOf(n2.Node as Data.Node));
 				}
 			}
 			exchangeEvents.Clear();
@@ -117,7 +117,7 @@ namespace Effekseer.GUI.Dock
         public void Renew()
         {
 			// Reset all
-			if (Children.Count != 1 || Children[0].node != Core.Root)
+			if (Children.Count != 1 || Children[0].Node != Core.Root)
 			{
 				Children.Lock();
 				foreach (var child in Children.Internal)
@@ -139,7 +139,7 @@ namespace Effekseer.GUI.Dock
                 for (int ind = 0; ind < ns.Count;)
                 {
                     // not need to change
-                    if (ind < tns.Count && ((NodeTreeViewNode)tns[ind]).node == ns[ind])
+                    if (ind < tns.Count && ((NodeTreeViewNode)tns[ind]).Node == ns[ind])
                     {
                         ind++;
                         continue;
@@ -210,7 +210,7 @@ namespace Effekseer.GUI.Dock
 
 				for (int i = 0; i < treenodes.Count; i++)
 				{
-					if (treenodes[i].node == searched_node) return treenodes[i];
+					if (treenodes[i].Node == searched_node) return treenodes[i];
 					var ret = search_node(searched_node, treenodes[i].Children);
 					if (ret != null) return ret;
 				}
@@ -233,7 +233,7 @@ namespace Effekseer.GUI.Dock
         string id = "";
 		public int UniqueID { get; private set; }
 
-        public Data.NodeBase node { get; private set; } = null;
+        public Data.NodeBase Node { get; private set; } = null;
 
         internal Utils.DelayedList<NodeTreeViewNode> Children = new Utils.DelayedList<NodeTreeViewNode>();
 
@@ -245,7 +245,7 @@ namespace Effekseer.GUI.Dock
 			id = "###" + UniqueID.ToString();
 
 			this.treeView = treeView;
-            this.node = node;
+            this.Node = node;
 
             node.OnAfterAddNode += OnAfterAddNode;
             node.OnAfterRemoveNode += OnAfterRemoveNode;
@@ -263,14 +263,14 @@ namespace Effekseer.GUI.Dock
 
         public void RemoveEvent(bool recursion)
         {
-            if (node is Data.Node)
+            if (Node is Data.Node)
             {
-                var realNode = (Data.Node)node;
+                var realNode = (Data.Node)Node;
             }
 
-            node.OnAfterAddNode -= OnAfterAddNode;
-            node.OnAfterRemoveNode -= OnAfterRemoveNode;
-            node.OnAfterExchangeNodes -= OnAfterExchangeNodes;
+            Node.OnAfterAddNode -= OnAfterAddNode;
+            Node.OnAfterRemoveNode -= OnAfterRemoveNode;
+            Node.OnAfterExchangeNodes -= OnAfterExchangeNodes;
             if (recursion)
             {
                 for (int i = 0; i < Children.Count; i++)
@@ -285,12 +285,12 @@ namespace Effekseer.GUI.Dock
         {
 			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen;
 
-			if(Core.SelectedNode == this.node)
+			if(Core.SelectedNode == this.Node)
 			{
 				flag = flag | swig.TreeNodeFlags.Selected;
 			}
 
-			if(this.node.Children.Count == 0)
+			if(this.Node.Children.Count == 0)
 			{
 				flag = flag | swig.TreeNodeFlags.Leaf;
 			}
@@ -298,12 +298,12 @@ namespace Effekseer.GUI.Dock
 			UpdateDDTarget(false);
 
 			// Tree
-			if (Manager.NativeManager.TreeNodeEx(node.Name + id, flag))
+			if (Manager.NativeManager.TreeNodeEx(Node.Name + id, flag))
             {
 				if(Manager.NativeManager.IsItemClicked(0) ||
 					Manager.NativeManager.IsItemClicked(1))
 				{
-					Core.SelectedNode = this.node;
+					Core.SelectedNode = this.Node;
 				}
 
 				treeView.Popup();
@@ -315,7 +315,7 @@ namespace Effekseer.GUI.Dock
 					if(Manager.NativeManager.SetDragDropPayload(treeView.treePyloadName, idBuf, idBuf.Length))
 					{
 					}
-					Manager.NativeManager.Text(this.node.Name);
+					Manager.NativeManager.Text(this.Node.Name);
 
 					Manager.NativeManager.EndDragDropSource();
 				}
@@ -375,13 +375,15 @@ namespace Effekseer.GUI.Dock
         {
             var node = e.Value as Data.NodeBase;
 
-            int ind = 0;
-            for (; ind < node.Children.Count; ind++)
+			Console.WriteLine(string.Format("OnAfterAddNode({0})", node.Name.Value));
+
+			int ind = 0;
+            for (; ind < Node.Children.Count; ind++)
             {
-                if (node == node.Children[ind]) break;
+                if (node == Node.Children[ind]) break;
             }
 
-            if (ind == node.Children.Count)
+            if (ind == Children.Count)
             {
                 Children.Add(new NodeTreeViewNode(treeView ,node, true));
             }
@@ -397,10 +399,12 @@ namespace Effekseer.GUI.Dock
         {
             var node = e.Value as Data.NodeBase;
 
-            for (int i = 0; i < Children.Count; i++)
+			Console.WriteLine(string.Format("OnAfterRemoveNode({0})", node.Name.Value));
+
+			for (int i = 0; i < Children.Count; i++)
             {
                 var treenode = Children[i];
-                if (treenode.node == node)
+                if (treenode.Node == node)
                 {
                     treenode.RemoveEvent(true);
                     Children.Remove(treenode);
@@ -422,11 +426,11 @@ namespace Effekseer.GUI.Dock
             for (int i = 0; i < Children.Count; i++)
             {
                 var treenode = Children[i];
-                if (treenode.node == node1)
+                if (treenode.Node == node1)
                 {
                     ind1 = i;
                 }
-                if (treenode.node == node2)
+                if (treenode.Node == node2)
                 {
                     ind2 = i;
                 }

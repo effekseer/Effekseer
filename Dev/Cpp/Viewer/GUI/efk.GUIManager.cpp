@@ -381,7 +381,7 @@ namespace efk
 			return;
 		}
 
-		window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), 0xffffffff);
+		window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), 0);
 
 		if (window->DC.ColumnsSet)
 		{
