@@ -69,6 +69,10 @@ class"
 
 %apply uint8_t INOUT[] { uint8_t* kv_selected }
 
+%apply int *INOUT { int* size }
+%apply uint8_t INOUT[] { uint8_t* data }
+%apply uint8_t INOUT[] { uint8_t* data_output }
+
 %feature("director") GUIManagerCallback;
 
 //-----------------------------------------------------------------------------------

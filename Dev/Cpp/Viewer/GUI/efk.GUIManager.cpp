@@ -346,6 +346,50 @@ namespace efk
 		ImGui::Separator();
 	}
 
+	void GUIManager::HiddenSeparator()
+	{
+		ImGuiWindow* window = ImGui::GetCurrentWindow();
+		if (window->SkipItems)
+			return;
+		ImGuiContext& g = *GImGui;
+
+		ImGuiSeparatorFlags flags = 0;
+		if ((flags & (ImGuiSeparatorFlags_Horizontal | ImGuiSeparatorFlags_Vertical)) == 0)
+			flags |= (window->DC.LayoutType == ImGuiLayoutType_Horizontal) ? ImGuiSeparatorFlags_Vertical : ImGuiSeparatorFlags_Horizontal;
+		IM_ASSERT(ImIsPowerOfTwo((int)(flags & (ImGuiSeparatorFlags_Horizontal | ImGuiSeparatorFlags_Vertical))));   // Check that only 1 option is selected
+		if (flags & ImGuiSeparatorFlags_Vertical)
+		{
+			ImGui::VerticalSeparator();
+			return;
+		}
+
+		// Horizontal Separator
+		if (window->DC.ColumnsSet)
+			ImGui::PopClipRect();
+
+		float x1 = window->Pos.x;
+		float x2 = window->Pos.x + window->Size.x;
+		if (!window->DC.GroupStack.empty())
+			x1 += window->DC.IndentX;
+
+		const ImRect bb(ImVec2(x1, window->DC.CursorPos.y), ImVec2(x2, window->DC.CursorPos.y + 4.0f));
+		ImGui::ItemSize(ImVec2(0.0f, 0.0f)); // NB: we don't provide our width so that it doesn't get feed back into AutoFit, we don't provide height to not alter layout.
+		if (!ImGui::ItemAdd(bb, 0))
+		{
+			if (window->DC.ColumnsSet)
+				ImGui::PushColumnClipRect();
+			return;
+		}
+
+		window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), 0xffffffff);
+
+		if (window->DC.ColumnsSet)
+		{
+			ImGui::PushColumnClipRect();
+			window->DC.ColumnsSet->LineMinY = window->DC.CursorPos.y;
+		}
+	}
+
 	void GUIManager::SameLine()
 	{
 		ImGui::SameLine();
@@ -811,6 +855,15 @@ namespace efk
 		ImGui::ResetNextParentDock();
 	}
 
+	void GUIManager::SaveDock(const char* path)
+	{
+		ImGui::SaveDock(path);
+	}
+	
+	void GUIManager::LoadDock(const char* path)
+	{
+		ImGui::LoadDock(path);
+	}
 
 	bool GUIManager::BeginFCurve(int id)
 	{
@@ -866,5 +919,46 @@ namespace efk
 			movedX,
 			movedY,
 			changedType);
+	}
+
+	bool GUIManager::BeginDragDropSource()
+	{
+		return ImGui::BeginDragDropSource();
+	}
+
+	bool GUIManager::SetDragDropPayload(const char* type, uint8_t* data, int size)
+	{
+		return ImGui::SetDragDropPayload(type, data, size);
+	}
+
+	void GUIManager::EndDragDropSource()
+	{
+		ImGui::EndDragDropSource();
+	}
+
+	bool GUIManager::BeginDragDropTarget()
+	{
+		return ImGui::BeginDragDropTarget();
+	}
+
+	bool GUIManager::AcceptDragDropPayload(const char* type, uint8_t* data_output, int data_output_size, int* size)
+	{
+		auto pyload = ImGui::AcceptDragDropPayload(type);
+		if (pyload == nullptr)
+		{
+			*size = 0;
+			return false;
+		}
+
+		auto max_size = std::min(data_output_size, pyload->DataSize);
+		memcpy(data_output, pyload->Data, max_size);
+		*size = max_size;
+
+		return true;
+	}
+
+	void GUIManager::EndDragDropTarget()
+	{
+		ImGui::EndDragDropTarget();
 	}
 }

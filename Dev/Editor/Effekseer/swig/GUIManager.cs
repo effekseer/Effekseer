@@ -146,6 +146,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Separator(swigCPtr);
   }
 
+  public void HiddenSeparator() {
+    EffekseerNativePINVOKE.GUIManager_HiddenSeparator(swigCPtr);
+  }
+
   public void SameLine() {
     EffekseerNativePINVOKE.GUIManager_SameLine(swigCPtr);
   }
@@ -156,6 +160,34 @@ public class GUIManager : global::System.IDisposable {
 
   public void EndGroup() {
     EffekseerNativePINVOKE.GUIManager_EndGroup(swigCPtr);
+  }
+
+  public void SetCursorPosX(float x) {
+    EffekseerNativePINVOKE.GUIManager_SetCursorPosX(swigCPtr, x);
+  }
+
+  public void SetCursorPosY(float y) {
+    EffekseerNativePINVOKE.GUIManager_SetCursorPosY(swigCPtr, y);
+  }
+
+  public float GetCursorPosX() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetCursorPosX(swigCPtr);
+    return ret;
+  }
+
+  public float GetCursorPosY() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetCursorPosY(swigCPtr);
+    return ret;
+  }
+
+  public float GetTextLineHeight() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetTextLineHeight(swigCPtr);
+    return ret;
+  }
+
+  public float GetTextLineHeightWithSpacing() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetTextLineHeightWithSpacing(swigCPtr);
+    return ret;
   }
 
   public void Columns(int count, string id, bool border) {
@@ -262,8 +294,13 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool BeginCombo(string label, string preview_value, ComboFlags flags, ImageResource user_texture_id) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginCombo__SWIG_0(swigCPtr, label, preview_value, (int)flags, ImageResource.getCPtr(user_texture_id));
+    return ret;
+  }
+
   public bool BeginCombo(string label, string preview_value, ComboFlags flags) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginCombo(swigCPtr, label, preview_value, (int)flags);
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginCombo__SWIG_1(swigCPtr, label, preview_value, (int)flags);
     return ret;
   }
 
@@ -730,18 +767,23 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_TreePop(swigCPtr);
   }
 
+  public bool Selectable(string label, bool selected, SelectableFlags flags, ImageResource user_texture_id) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_0(swigCPtr, label, selected, (int)flags, ImageResource.getCPtr(user_texture_id));
+    return ret;
+  }
+
   public bool Selectable(string label, bool selected, SelectableFlags flags) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_0(swigCPtr, label, selected, (int)flags);
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_1(swigCPtr, label, selected, (int)flags);
     return ret;
   }
 
   public bool Selectable(string label, bool selected) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_1(swigCPtr, label, selected);
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_2(swigCPtr, label, selected);
     return ret;
   }
 
   public bool Selectable(string label) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_2(swigCPtr, label);
+    bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_3(swigCPtr, label);
     return ret;
   }
 
@@ -781,33 +823,43 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndMenu(swigCPtr);
   }
 
+  public bool MenuItem(string label, string shortcut, bool selected, bool enabled, ImageResource icon) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_0(swigCPtr, label, shortcut, selected, enabled, ImageResource.getCPtr(icon));
+    return ret;
+  }
+
   public bool MenuItem(string label, string shortcut, bool selected, bool enabled) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_0(swigCPtr, label, shortcut, selected, enabled);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_1(swigCPtr, label, shortcut, selected, enabled);
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut, bool selected) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_1(swigCPtr, label, shortcut, selected);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_2(swigCPtr, label, shortcut, selected);
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_2(swigCPtr, label, shortcut);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_3(swigCPtr, label, shortcut);
     return ret;
   }
 
   public bool MenuItem(string label) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_3(swigCPtr, label);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_4(swigCPtr, label);
+    return ret;
+  }
+
+  public bool MenuItem(string label, string shortcut, ref bool p_selected, bool enabled, ImageResource icon) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_5(swigCPtr, label, shortcut, ref p_selected, enabled, ImageResource.getCPtr(icon));
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut, ref bool p_selected, bool enabled) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_4(swigCPtr, label, shortcut, ref p_selected, enabled);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_6(swigCPtr, label, shortcut, ref p_selected, enabled);
     return ret;
   }
 
   public bool MenuItem(string label, string shortcut, ref bool p_selected) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_5(swigCPtr, label, shortcut, ref p_selected);
+    bool ret = EffekseerNativePINVOKE.GUIManager_MenuItem__SWIG_7(swigCPtr, label, shortcut, ref p_selected);
     return ret;
   }
 
@@ -967,6 +1019,14 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_ResetNextParentDock(swigCPtr);
   }
 
+  public void SaveDock(string path) {
+    EffekseerNativePINVOKE.GUIManager_SaveDock(swigCPtr, path);
+  }
+
+  public void LoadDock(string path) {
+    EffekseerNativePINVOKE.GUIManager_LoadDock(swigCPtr, path);
+  }
+
   public bool BeginFCurve(int id) {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve(swigCPtr, id);
     return ret;
@@ -979,6 +1039,34 @@ public class GUIManager : global::System.IDisposable {
   public bool FCurve(int fcurve_id, float[] keys, float[] values, float[] leftHandleKeys, float[] leftHandleValues, float[] rightHandleKeys, float[] rightHandleValues, int[] interporations, FCurveEdgeType startEdge, FCurveEdgeType endEdge, byte[] kv_selected, int count, float defaultValue, bool isLocked, bool canControl, uint col, bool selected, ref int newCount, ref bool newSelected, ref float movedX, ref float movedY, ref int changedType) {
     bool ret = EffekseerNativePINVOKE.GUIManager_FCurve(swigCPtr, fcurve_id, keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, interporations, (int)startEdge, (int)endEdge, kv_selected, count, defaultValue, isLocked, canControl, col, selected, ref newCount, ref newSelected, ref movedX, ref movedY, ref changedType);
     return ret;
+  }
+
+  public bool BeginDragDropSource() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDragDropSource(swigCPtr);
+    return ret;
+  }
+
+  public bool SetDragDropPayload(string type, byte[] data, int size) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_SetDragDropPayload(swigCPtr, type, data, size);
+    return ret;
+  }
+
+  public void EndDragDropSource() {
+    EffekseerNativePINVOKE.GUIManager_EndDragDropSource(swigCPtr);
+  }
+
+  public bool BeginDragDropTarget() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDragDropTarget(swigCPtr);
+    return ret;
+  }
+
+  public bool AcceptDragDropPayload(string type, byte[] data_output, int data_output_size, ref int size) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_AcceptDragDropPayload(swigCPtr, type, data_output, data_output_size, ref size);
+    return ret;
+  }
+
+  public void EndDragDropTarget() {
+    EffekseerNativePINVOKE.GUIManager_EndDragDropTarget(swigCPtr);
   }
 
 }

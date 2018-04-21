@@ -830,6 +830,15 @@ namespace Effekseer
 			}
 		}
 
+		public static bool MoveNode(Data.Node movedNode, Data.NodeBase targetParent, int targetIndex)
+		{
+			Command.CommandManager.StartCollection();
+			movedNode.Parent.RemoveChild(movedNode);
+			targetParent.AddChild(movedNode, targetIndex);
+			Command.CommandManager.EndCollection();
+			return true;
+		}
+
 		/// <summary>
 		/// 現在有効なFカーブを含めたノード情報を取得する。
 		/// </summary>

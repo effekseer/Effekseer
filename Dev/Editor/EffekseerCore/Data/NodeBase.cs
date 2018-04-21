@@ -60,16 +60,36 @@ namespace Effekseer.Data
 		}
 
 		/// <summary>
-		/// 子ノードの追加
+		/// Add child
 		/// </summary>
+		/// <param name="node">Added node (if null, generated automatically)</param>
+		/// <param name="index">inserted position</param>
 		/// <returns></returns>
-		public Node AddChild()
+		public Node AddChild(Node node = null, int index = int.MaxValue)
 		{
-			var node = new Node(this);
+			if(node == null)
+			{
+				node = new Node(this);
+			}
 
 			var old_value = children;
 			var new_value = new List<Node>(children);
-			new_value.Add(node);
+
+			if(index == int.MaxValue)
+			{
+				new_value.Add(node);
+			}
+			else
+			{
+				if(index >= children.Count)
+				{
+					new_value.Add(node);
+				}
+				else
+				{
+					new_value.Insert(index, node);
+				}
+			}
 
 			var cmd = new Command.DelegateCommand(
 				() =>
@@ -215,7 +235,7 @@ namespace Effekseer.Data
 		}
 
 		/// <summary>
-		/// 子同士を交換
+		/// Exchange children each other
 		/// </summary>
 		/// <param name="node1"></param>
 		/// <param name="node2"></param>
@@ -329,6 +349,14 @@ namespace Effekseer.Data
 						return _node.children[index];
 					}
 					return null;
+				}
+			}
+
+			public List<Node> Internal
+			{
+				get
+				{
+					return _node.children;
 				}
 			}
 		}

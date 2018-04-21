@@ -40,6 +40,9 @@
     <Filter Include="3rdParty\imgui_addon\fcurve">
       <UniqueIdentifier>{13e33b19-cf08-4793-9e67-681b11ce31c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rdParty\imgui_addon\imguihelper">
+      <UniqueIdentifier>{97e75eb9-c8f9-439e-87aa-8dfcee2129fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h">
@@ -139,6 +142,9 @@
     <ClInclude Include="3rdParty\imgui_addon\fcurve\fcurve.h">
       <Filter>3rdParty\imgui_addon\fcurve</Filter>
     </ClInclude>
+    <ClInclude Include="3rdParty\imgui_addon\imguihelper\imguihelper.h">
+      <Filter>3rdParty\imgui_addon\imguihelper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -230,6 +236,9 @@
     </ClCompile>
     <ClCompile Include="3rdParty\imgui_addon\fcurve\fcurve.cpp">
       <Filter>3rdParty\imgui_addon\fcurve</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui_addon\imguihelper\imguihelper.cpp">
+      <Filter>3rdParty\imgui_addon\imguihelper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

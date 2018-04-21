@@ -86,16 +86,22 @@ namespace Effekseer.GUI.Component
 
 			if (binding == null) return;
 
+			string dd = null;
+
 			if (Manager.NativeManager.Button("読込"))
 			{
 				btn_load_Click();
 			}
+
+			if (dd == null) dd = DragAndDrops.UpdateImageDst();
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
 			Manager.NativeManager.SameLine();
 
 			Manager.NativeManager.Text(filePath);
+
+			if (dd == null) dd = DragAndDrops.UpdateImageDst();
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
@@ -104,13 +110,23 @@ namespace Effekseer.GUI.Component
 				btn_delete_Click();
 			}
 
+			if (dd == null) dd = DragAndDrops.UpdateImageDst();
+
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
 			Manager.NativeManager.SameLine();
 
 			Manager.NativeManager.Text(infoText);
 
+			if (dd == null) dd = DragAndDrops.UpdateImageDst();
+
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
+
+			if(dd != null)
+			{
+				bool handled = false;
+				OnDropped(dd, ref handled);
+			}
 		}
 
 		private void btn_load_Click()

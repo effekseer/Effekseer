@@ -213,6 +213,8 @@ namespace efk
 
 		void Separator();
 
+		void HiddenSeparator();
+
 		void SameLine();
 
 		void BeginGroup();
@@ -345,6 +347,8 @@ namespace efk
 		void EndDock();
 		void SetNextDockRate(float rate);
 		void ResetNextParentDock();
+		void SaveDock(const char* path);
+		void LoadDock(const char* path);
 
 		// Fcurve
 		bool BeginFCurve(int id);
@@ -369,5 +373,14 @@ namespace efk
 			float* movedX,
 			float* movedY,
 			int* changedType);
+
+		// Drag
+		bool BeginDragDropSource();
+		bool SetDragDropPayload(const char* type, uint8_t* data, int size);
+		void EndDragDropSource();
+
+		bool BeginDragDropTarget();
+		bool AcceptDragDropPayload(const char* type, uint8_t* data_output, int data_output_size, int* size);
+		void EndDragDropTarget();
 	};
 }

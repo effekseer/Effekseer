@@ -146,6 +146,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Separator(swigCPtr);
   }
 
+  public void HiddenSeparator() {
+    EffekseerNativePINVOKE.GUIManager_HiddenSeparator(swigCPtr);
+  }
+
   public void SameLine() {
     EffekseerNativePINVOKE.GUIManager_SameLine(swigCPtr);
   }
@@ -1015,6 +1019,14 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_ResetNextParentDock(swigCPtr);
   }
 
+  public void SaveDock(string path) {
+    EffekseerNativePINVOKE.GUIManager_SaveDock(swigCPtr, path);
+  }
+
+  public void LoadDock(string path) {
+    EffekseerNativePINVOKE.GUIManager_LoadDock(swigCPtr, path);
+  }
+
   public bool BeginFCurve(int id) {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve(swigCPtr, id);
     return ret;
@@ -1027,6 +1039,34 @@ public class GUIManager : global::System.IDisposable {
   public bool FCurve(int fcurve_id, float[] keys, float[] values, float[] leftHandleKeys, float[] leftHandleValues, float[] rightHandleKeys, float[] rightHandleValues, int[] interporations, FCurveEdgeType startEdge, FCurveEdgeType endEdge, byte[] kv_selected, int count, float defaultValue, bool isLocked, bool canControl, uint col, bool selected, ref int newCount, ref bool newSelected, ref float movedX, ref float movedY, ref int changedType) {
     bool ret = EffekseerNativePINVOKE.GUIManager_FCurve(swigCPtr, fcurve_id, keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, interporations, (int)startEdge, (int)endEdge, kv_selected, count, defaultValue, isLocked, canControl, col, selected, ref newCount, ref newSelected, ref movedX, ref movedY, ref changedType);
     return ret;
+  }
+
+  public bool BeginDragDropSource() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDragDropSource(swigCPtr);
+    return ret;
+  }
+
+  public bool SetDragDropPayload(string type, byte[] data, int size) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_SetDragDropPayload(swigCPtr, type, data, size);
+    return ret;
+  }
+
+  public void EndDragDropSource() {
+    EffekseerNativePINVOKE.GUIManager_EndDragDropSource(swigCPtr);
+  }
+
+  public bool BeginDragDropTarget() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginDragDropTarget(swigCPtr);
+    return ret;
+  }
+
+  public bool AcceptDragDropPayload(string type, byte[] data_output, int data_output_size, ref int size) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_AcceptDragDropPayload(swigCPtr, type, data_output, data_output_size, ref size);
+    return ret;
+  }
+
+  public void EndDragDropTarget() {
+    EffekseerNativePINVOKE.GUIManager_EndDragDropTarget(swigCPtr);
   }
 
 }

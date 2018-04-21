@@ -30,6 +30,7 @@ namespace Effekseer.GUI.Dock
 
 		bool canCurveControlPre = true;
 		bool canCurveControl = true;
+		bool canControl = true;
 
 		Component.Enum startCurve = new Component.Enum();
 		Component.Enum endCurve = new Component.Enum();
@@ -58,6 +59,8 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+			canControl = true;
+
 			var selected = GetSelectedFCurve();
 
 			var invalidValue = "/";
@@ -77,6 +80,9 @@ namespace Effekseer.GUI.Dock
 						selected.Item2.IsDirtied = true;
 					}
 
+					if(Manager.NativeManager.IsItemActive()) canControl = false;
+
+
 					Manager.NativeManager.NextColumn();
 
 					var frameValue = new float[] { selected.Item2.Values[ind] };
@@ -85,6 +91,8 @@ namespace Effekseer.GUI.Dock
 						selected.Item2.Values[ind] = frameValue[0];
 						selected.Item2.IsDirtied = true;
 					}
+
+					if (Manager.NativeManager.IsItemActive()) canControl = false;
 
 					Manager.NativeManager.NextColumn();
 
@@ -96,6 +104,8 @@ namespace Effekseer.GUI.Dock
 						selected.Item2.IsDirtied = true;
 					}
 
+					if (Manager.NativeManager.IsItemActive()) canControl = false;
+
 					Manager.NativeManager.NextColumn();
 
 					var rightValues = new float[] { selected.Item2.RightKeys[ind], selected.Item2.RightValues[ind] };
@@ -105,6 +115,8 @@ namespace Effekseer.GUI.Dock
 						selected.Item2.RightValues[ind] = rightValues[1];
 						selected.Item2.IsDirtied = true;
 					}
+
+					if (Manager.NativeManager.IsItemActive()) canControl = false;
 
 					Manager.NativeManager.NextColumn();
 
@@ -129,6 +141,8 @@ namespace Effekseer.GUI.Dock
 
 							Manager.NativeManager.EndCombo();
 						}
+
+						if (Manager.NativeManager.IsItemActive()) canControl = false;
 					}
 
 					Manager.NativeManager.Columns(1);
@@ -166,12 +180,16 @@ namespace Effekseer.GUI.Dock
 				startCurve.SetBinding(selected.Item1.StartType);
 				startCurve.Update();
 				selected.Item2.StartEdge = (Data.Value.FCurveEdge)selected.Item1.StartType;
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
 				Manager.NativeManager.NextColumn();
 
 				// End curve
 				endCurve.SetBinding(selected.Item1.EndType);
 				endCurve.Update();
 				selected.Item2.EndEdge = (Data.Value.FCurveEdge)selected.Item1.EndType;
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
 				Manager.NativeManager.NextColumn();
 
 				// Sampling
@@ -182,6 +200,7 @@ namespace Effekseer.GUI.Dock
 					selected.Item1.Sampling.SetValue(sampling[0]);
 				}
 
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
 				Manager.NativeManager.NextColumn();
 
 				// Offset label
@@ -193,7 +212,8 @@ namespace Effekseer.GUI.Dock
 					selected.Item1.OffsetMin.SetValue(offsets[0]);
 					selected.Item1.OffsetMax.SetValue(offsets[1]);
 				}
-				
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
 				Manager.NativeManager.Columns(1);
 			}
 			else
@@ -309,8 +329,6 @@ namespace Effekseer.GUI.Dock
 
 		void UpdateGraph(TreeNode treeNode)
 		{
-			bool canControl = true;
-
 			UpdateGraph(treeNodes, ref canControl);
 
 			canCurveControlPre = canCurveControl;

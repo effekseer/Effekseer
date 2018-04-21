@@ -93,6 +93,7 @@
     <Compile Include="GUI\Dock\ViewerController.cs" />
     <Compile Include="GUI\Dock\ViewPoint.cs" />
     <Compile Include="GUI\Controls.cs" />
+    <Compile Include="GUI\DragAndDrops.cs" />
     <Compile Include="GUI\Manager.cs" />
     <Compile Include="GUI\Menu\MainMenu.cs" />
     <Compile Include="GUI\Menu\Menu.cs" />
