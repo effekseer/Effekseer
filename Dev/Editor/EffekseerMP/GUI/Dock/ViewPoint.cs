@@ -25,7 +25,7 @@ namespace Effekseer.GUI.Dock
 
 		public ViewPoint()
 		{
-			Label = Resources.GetString("CameraSettings");
+			Label = Resources.GetString("CameraSettings") + "###CameraSettings";
 
 			id_f = "###" + Manager.GetUniqueID().ToString();
 			id_rx = "###" + Manager.GetUniqueID().ToString();

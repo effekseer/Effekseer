@@ -1027,6 +1027,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_LoadDock(swigCPtr, path);
   }
 
+  public void ShutdownDock() {
+    EffekseerNativePINVOKE.GUIManager_ShutdownDock(swigCPtr);
+  }
+
   public bool BeginFCurve(int id) {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve(swigCPtr, id);
     return ret;

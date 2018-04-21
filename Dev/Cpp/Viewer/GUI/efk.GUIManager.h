@@ -349,6 +349,7 @@ namespace efk
 		void ResetNextParentDock();
 		void SaveDock(const char* path);
 		void LoadDock(const char* path);
+		void ShutdownDock();
 
 		// Fcurve
 		bool BeginFCurve(int id);

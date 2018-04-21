@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public ScaleValues()
 		{
-			Label = Resources.GetString("Scale");
+			Label = Resources.GetString("Scale") + "###Scale";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.ScaleValues));

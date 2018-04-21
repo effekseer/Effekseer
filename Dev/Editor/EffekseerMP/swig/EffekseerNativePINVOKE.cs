@@ -1359,6 +1359,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_LoadDock___")]
   public static extern void GUIManager_LoadDock(global::System.Runtime.InteropServices.HandleRef jarg1, string jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_ShutdownDock___")]
+  public static extern void GUIManager_ShutdownDock(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginFCurve___")]
   public static extern bool GUIManager_BeginFCurve(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 

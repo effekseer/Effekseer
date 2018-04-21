@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public SoundValues()
 		{
-			Label = Resources.GetString("Sound");
+			Label = Resources.GetString("Sound") + "###Sound";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.SoundValues));

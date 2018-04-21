@@ -10,7 +10,7 @@ namespace Effekseer.GUI.Dock
 	{
 		public Network()
 		{
-			Label = Resources.GetString("Network");
+			Label = Resources.GetString("Network") + "###Network";
 		}
 
 		protected override void UpdateInternal()

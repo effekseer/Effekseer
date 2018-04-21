@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public Option()
 		{
-			Label = Resources.GetString("Options");
+			Label = Resources.GetString("Options") + "###Options";
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.OptionValues));
 

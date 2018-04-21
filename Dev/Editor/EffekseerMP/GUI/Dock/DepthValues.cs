@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public DepthValues()
 		{
-			Label = Resources.GetString("Depth");
+			Label = Resources.GetString("Depth") + "###Depth";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.ScaleValues));

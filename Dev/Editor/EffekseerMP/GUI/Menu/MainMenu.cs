@@ -251,9 +251,7 @@ namespace Effekseer.GUI.Menu
 					item.Label = Resources.GetString("ResetWindow");
 					item.Clicked += () =>
 					{
-						Console.WriteLine("Not implemented.");
-						//GUIManager.CloseDockWindow();
-						//GUIManager.AssignDockWindowIntoDefaultPosition();
+						Manager.ResetWindow();
 					};
 					menu.Controls.Add(item);
 				}

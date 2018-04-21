@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public FileViewer()
 		{
-			Label = Resources.GetString("FileViewer");
+			Label = Resources.GetString("FileViewer") + "###FileVeiwer";
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 

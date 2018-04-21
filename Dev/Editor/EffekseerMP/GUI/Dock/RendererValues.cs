@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public RendererValues()
 		{
-			Label = Resources.GetString("RenderSettings");
+			Label = Resources.GetString("RenderSettings") + "###RenderSettings";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RendererValues));

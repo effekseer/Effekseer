@@ -25,7 +25,7 @@ namespace Effekseer.GUI.Dock
 
 		public NodeTreeView()
         {
-			Label = Resources.GetString("NodeTree");
+			Label = Resources.GetString("NodeTree") + "###NodeTree";
 
 			Core.OnAfterNew += OnRenew;
 			Core.OnAfterLoad += OnRenew;

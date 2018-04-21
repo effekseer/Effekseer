@@ -10,8 +10,6 @@ namespace Effekseer.GUI.Dock
     {
 		public string Label { get; set; } = string.Empty;
 
-		string id = "";
-
 		bool opened = true;
 
 		internal swig.DockSlot InitialDockSlot = swig.DockSlot.Float;
@@ -24,7 +22,6 @@ namespace Effekseer.GUI.Dock
 
 		public DockPanel()
 		{
-			id = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public override void Update()
@@ -40,7 +37,7 @@ namespace Effekseer.GUI.Dock
 						Manager.NativeManager.ResetNextParentDock();
 					}
 
-					if (Manager.NativeManager.BeginDock(Label + id, ref opened, swig.WindowFlags.None, InitialDockSize))
+					if (Manager.NativeManager.BeginDock(Label, ref opened, swig.WindowFlags.None, InitialDockSize))
 					{
 						UpdateInternal();
 
@@ -59,7 +56,7 @@ namespace Effekseer.GUI.Dock
 				}
 				else
 				{
-					if (Manager.NativeManager.Begin(Label + id, ref opened))
+					if (Manager.NativeManager.Begin(Label, ref opened))
 					{
 						UpdateInternal();
 
@@ -81,6 +78,11 @@ namespace Effekseer.GUI.Dock
 			{
 				ShouldBeRemoved = true;
 			}
+		}
+
+		public void Close()
+		{
+			opened = false;
 		}
 
         protected virtual void UpdateInternal()

@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public LocationAbsValues()
 		{
-			Label = Resources.GetString("AttractionForces");
+			Label = Resources.GetString("AttractionForces") + "###AttractionForces";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.LocationAbsValues));

@@ -12,7 +12,7 @@ namespace Effekseer.GUI.Dock
 
 		public EffectViwer()
 		{
-			Label = Resources.GetString("Viewer");
+			Label = Resources.GetString("Viewer") + "###Viewer";
 		}
 
 		protected override void UpdateInternal()

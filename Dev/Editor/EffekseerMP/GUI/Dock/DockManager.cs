@@ -35,7 +35,17 @@ namespace Effekseer.GUI.Dock
 						c.Update();
 					}
 
+					foreach(var c in Controls.Internal.OfType<DockPanel>())
+					{
+						if(c.ShouldBeRemoved)
+						{
+							Controls.Remove(c);
+						}
+					}
+
 					Controls.Unlock();
+
+					
 
 					Manager.NativeManager.EndDockspace();
 				}

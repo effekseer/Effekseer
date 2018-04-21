@@ -6127,6 +6127,14 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_LoadDock___(void * 
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ShutdownDock___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->ShutdownDock();
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve___(void * jarg1, int jarg2) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;

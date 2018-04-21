@@ -865,6 +865,11 @@ namespace efk
 		ImGui::LoadDock(path);
 	}
 
+	void GUIManager::ShutdownDock()
+	{
+		ImGui::ShutdownDock();
+	}
+
 	bool GUIManager::BeginFCurve(int id)
 	{
 		return ImGui::BeginFCurve(id);

@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public GenerationLocationValues()
 		{
-			Label = Resources.GetString("SpawningMethod");
+			Label = Resources.GetString("SpawningMethod") + "###SpawningMethod";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.GenerationLocationValues));

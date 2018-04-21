@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
 
 		public CommonValues()
 		{
-			Label = Resources.GetString("BasicSettings");
+			Label = Resources.GetString("BasicSettings") + "###BasicSettings";
 
 			paramerterList_Node = new Component.ParameterList();
 			paramerterList_Node.SetType(typeof(Data.NodeBase));

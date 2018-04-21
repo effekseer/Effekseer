@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public LocationValues()
 		{
-			Label = Resources.GetString("Position");
+			Label = Resources.GetString("Position") + "###Position";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.LocationValues));

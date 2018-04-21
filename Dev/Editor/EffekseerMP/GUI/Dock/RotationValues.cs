@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public RotationValues()
 		{
-			Label = Resources.GetString("Rotation");
+			Label = Resources.GetString("Rotation") + "###Rotation";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RotationValues));

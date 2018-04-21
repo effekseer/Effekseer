@@ -38,7 +38,7 @@ namespace Effekseer.GUI.Dock
 
 		public FCurves()
 		{
-			Label = Resources.GetString("FCurves");
+			Label = Resources.GetString("FCurves") + "###FCurves";
 
 			Command.CommandManager.Changed += OnChanged;
 			Core.OnAfterNew += OnChanged;

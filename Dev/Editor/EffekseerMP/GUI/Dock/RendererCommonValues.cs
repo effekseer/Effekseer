@@ -14,7 +14,7 @@ namespace Effekseer.GUI.Dock
 
 		public RendererCommonValues()
 		{
-			Label = Resources.GetString("BasicRenderSettings");
+			Label = Resources.GetString("BasicRenderSettings") + "###BasicRenderSettings";
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RendererCommonValues));
