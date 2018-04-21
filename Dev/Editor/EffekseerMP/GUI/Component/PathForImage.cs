@@ -80,6 +80,15 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
+		public void Dropped(string path)
+		{	
+			if (CheckExtension(path))
+			{
+				binding.SetAbsolutePath(path);
+				Read();
+			}
+		}
+
 		public override void Update()
 		{
 			isHovered = false;
@@ -124,8 +133,7 @@ namespace Effekseer.GUI.Component
 
 			if(dd != null)
 			{
-				bool handled = false;
-				OnDropped(dd, ref handled);
+				Dropped(dd);
 			}
 		}
 

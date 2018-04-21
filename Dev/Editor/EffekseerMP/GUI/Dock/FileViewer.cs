@@ -73,7 +73,7 @@ namespace Effekseer.GUI.Dock
 				}
 				
 				// D&D
-				DragAndDrops.UpdateImageSrc(caption);
+				DragAndDrops.UpdateImageSrc(item.FilePath);
 			}
 			
 			Manager.NativeManager.PopItemWidth();
