@@ -57,7 +57,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 	if( node_type == -1 )
 	{
 		TranslationType = ParameterTranslationType_None;
-		LocationAbs.type = LocationAbsParameter::None;
+		LocationAbs.type = LocationAbsType::None;
 		RotationType = ParameterRotationType_None;
 		ScalingType = ParameterScalingType_None;
 		CommonValues.MaxGeneration = 1;
@@ -200,7 +200,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		pos += sizeof(int);
 
 		// Calc attraction forces
-		if( LocationAbs.type == LocationAbsParameter::None )
+		if( LocationAbs.type == LocationAbsType::None )
 		{
 			memcpy( &size, pos, sizeof(int) );
 			pos += sizeof(int);
@@ -208,7 +208,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			memcpy( &LocationAbs.none, pos, size );
 			pos += size;
 		}
-		else if( LocationAbs.type == LocationAbsParameter::Gravity )
+		else if( LocationAbs.type == LocationAbsType::Gravity )
 		{
 			memcpy( &size, pos, sizeof(int) );
 			pos += sizeof(int);
@@ -216,7 +216,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			memcpy( &LocationAbs.gravity, pos, size );
 			pos += size;
 		}
-		else if( LocationAbs.type == LocationAbsParameter::AttractiveForce )
+		else if( LocationAbs.type == LocationAbsType::AttractiveForce )
 		{
 			memcpy( &size, pos, sizeof(int) );
 			pos += sizeof(int);
@@ -228,12 +228,19 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		// Magnify attraction forces
 		if (ef->IsDyanamicMagnificationValid())
 		{
-			if( LocationAbs.type == LocationAbsParameter::None )
+			if( LocationAbs.type == LocationAbsType::None )
 			{
 			}
-			else if( LocationAbs.type == LocationAbsParameter::Gravity )
+			else if( LocationAbs.type == LocationAbsType::Gravity )
 			{
 				LocationAbs.gravity *= m_effect->GetMaginification();
+			}
+			else if (LocationAbs.type == LocationAbsType::AttractiveForce)
+			{
+				LocationAbs.attractiveForce.control *= m_effect->GetMaginification();
+				LocationAbs.attractiveForce.force *= m_effect->GetMaginification();
+				LocationAbs.attractiveForce.minRange *= m_effect->GetMaginification();
+				LocationAbs.attractiveForce.maxRange *= m_effect->GetMaginification();
 			}
 		}
 

@@ -302,7 +302,6 @@ public:
 	*/
 	virtual void ResetDrawVertexCount() = 0;
 
-
 	/**
 	@brief	描画モードを設定する。
 	*/

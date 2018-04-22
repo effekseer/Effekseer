@@ -195,17 +195,16 @@ struct ParameterTranslationPVA
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+enum class LocationAbsType : int32_t
+{
+	None = 0,
+	Gravity = 1,
+	AttractiveForce = 2,
+};
+
 struct LocationAbsParameter
 {
-	enum
-	{
-		None = 0,
-		Gravity = 1,
-		AttractiveForce = 2,
-		
-		//UniformlyAttractiveForce = 3,
-		Parameter_DWORD = 0x7fffffff,
-	} type;
+	LocationAbsType type = LocationAbsType::None;
 
 	union
 	{
