@@ -830,9 +830,32 @@ void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 		0 );
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) const
+{
+	if (useDistortion)
+	{
+		if (useTexture /*&& m_renderMode == Effekseer::RenderMode::Normal*/)
+		{
+			return m_shader_distortion;
+		}
+		else
+		{
+			return m_shader_no_texture_distortion;
+		}
+	}
+	else
+	{
+		if (useTexture /*&& m_renderMode == Effekseer::RenderMode::Normal*/)
+		{
+			return m_shader;
+		}
+		else
+		{
+			return m_shader_no_texture;
+		}
+	}
+}
+
 void RendererImplemented::BeginShader(Shader* shader)
 {
 	GetContext()->VSSetShader( shader->GetVertexShader(), NULL, 0);

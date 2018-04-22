@@ -519,6 +519,7 @@ public:
 	void DrawSprites( int32_t spriteCount, int32_t vertexOffset );
 	void DrawPolygon( int32_t vertexCount, int32_t indexCount);
 
+	Shader* GetShader(bool useTexture, bool useDistortion) const;
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 
@@ -533,6 +534,10 @@ public:
 	void ResetDrawCallCount() override;
 
 	void ResetDrawVertexCount() override;
+
+	void SetRenderMode(Effekseer::RenderMode renderMode) override { printf("Not implemented.\n"); }
+
+	Effekseer::RenderMode GetRenderMode() override { printf("Not implemented.\n"); return Effekseer::RenderMode::Normal; }
 
 	virtual int GetRef() { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() { return ::Effekseer::ReferenceObject::AddRef(); }
