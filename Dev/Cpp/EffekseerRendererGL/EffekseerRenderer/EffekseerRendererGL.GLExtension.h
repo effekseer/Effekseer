@@ -61,9 +61,12 @@ namespace GLExt
 #define GL_MAP_FLUSH_EXPLICIT_BIT 0x0010
 #define GL_MAP_UNSYNCHRONIZED_BIT 0x0020
 
+#if defined(__APPLE__) || defined(__ANDROID__)
+#else
 typedef ptrdiff_t GLsizeiptr;
 typedef ptrdiff_t GLintptr;
 typedef char GLchar;
+#endif
 
 bool Initialize(OpenGLDeviceType deviceType);
 bool IsSupportedVertexArray();
