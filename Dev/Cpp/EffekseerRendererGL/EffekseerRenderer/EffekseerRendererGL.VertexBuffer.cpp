@@ -132,7 +132,18 @@ void VertexBuffer::Unlock()
 	assert( m_isLock || m_ringBufferLock );
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-	GLExt::glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
+
+	if (GLExt::IsSupportedBufferRange() && m_vertexRingOffset > 0)
+	{
+		auto target = GLExt::glMapBufferRange(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+		memcpy(target, m_resource, m_offset);
+		GLExt::glUnmapBuffer(GL_ARRAY_BUFFER);
+	}
+	else
+	{
+		GLExt::glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
+	}
+
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	m_isLock = false;
