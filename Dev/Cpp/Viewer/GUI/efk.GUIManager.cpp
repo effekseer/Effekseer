@@ -14,6 +14,18 @@
 
 namespace efk
 {
+	template <size_t size_>
+	struct utf8str {
+		enum {size = size_};
+		char data[size];
+		utf8str(const char16_t* u16str) {
+			Effekseer::ConvertUtf16ToUtf8((int8_t*)data, size, (const int16_t*)u16str);
+		}
+		operator const char*() const {
+			return data;
+		}
+	};
+
 	// http://hasenpfote36.blogspot.jp/2016/09/stdcodecvt.html
 	static constexpr std::codecvt_mode mode = std::codecvt_mode::little_endian;
 
@@ -298,7 +310,7 @@ namespace efk
 
 	bool GUIManager::Begin(const char16_t* name, bool* p_open)
 	{
-		return ImGui::Begin(utf16_to_utf8(name).c_str(), p_open);
+		return ImGui::Begin(utf8str<256>(name), p_open);
 	}
 
 	void GUIManager::End()
@@ -467,17 +479,17 @@ namespace efk
 
 	void GUIManager::Text(const char16_t* text)
 	{
-		ImGui::Text(utf16_to_utf8(text).c_str());
+		ImGui::Text(utf8str<1024>(text));
 	}
 
 	void GUIManager::TextWrapped(const char16_t* text)
 	{
-		ImGui::TextWrapped(utf16_to_utf8(text).c_str());
+		ImGui::TextWrapped(utf8str<1024>(text));
 	}
 
 	bool GUIManager::Button(const char16_t* label)
 	{
-		return ImGui::Button(utf16_to_utf8(label).c_str());
+		return ImGui::Button(utf8str<256>(label));
 	}
 
 	void GUIManager::Image(ImageResource* user_texture_id, float x, float y)
@@ -497,29 +509,29 @@ namespace efk
 
 	bool GUIManager::Checkbox(const char16_t* label, bool* v)
 	{
-		return ImGui::Checkbox(utf16_to_utf8(label).c_str(), v);
+		return ImGui::Checkbox(utf8str<256>(label), v);
 	}
 
 	bool GUIManager::RadioButton(const char16_t* label, bool active)
 	{
-		return ImGui::RadioButton(utf16_to_utf8(label).c_str(), active);
+		return ImGui::RadioButton(utf8str<256>(label), active);
 	}
 
 	bool GUIManager::InputInt(const char16_t* label, int* v, int step, int step_fast)
 	{
-		return ImGui::InputInt(utf16_to_utf8(label).c_str(), v, step, step_fast);
+		return ImGui::InputInt(utf8str<256>(label), v, step, step_fast);
 	}
 
 	bool GUIManager::SliderInt(const char16_t* label, int* v, int v_min, int v_max)
 	{
-		return ImGui::SliderInt(utf16_to_utf8(label).c_str(), v, v_min, v_max);
+		return ImGui::SliderInt(utf8str<256>(label), v, v_min, v_max);
 	}
 
 	bool GUIManager::BeginCombo(const char16_t* label, const char16_t* preview_value, ComboFlags flags, ImageResource* user_texture_id)
 	{
 		return ImGui::BeginCombo(
-			utf16_to_utf8(label).c_str(),
-			utf16_to_utf8(preview_value).c_str(),
+			utf8str<256>(label),
+			utf8str<256>(preview_value),
 			(int)flags, ToImTextureID(user_texture_id));
 	}
 
@@ -530,59 +542,59 @@ namespace efk
 
 	bool GUIManager::DragFloat(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char* display_format, float power)
 	{
-		return ImGui::DragFloat(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+		return ImGui::DragFloat(utf8str<256>(label), v, v_speed, v_min, v_max, display_format);
 	}
 
 	bool GUIManager::DragFloat2(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char* display_format, float power)
 	{
-		return ImGui::DragFloat2(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+		return ImGui::DragFloat2(utf8str<256>(label), v, v_speed, v_min, v_max, display_format);
 	}
 
 	bool GUIManager::DragFloat3(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char* display_format, float power)
 	{
-		return ImGui::DragFloat3(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+		return ImGui::DragFloat3(utf8str<256>(label), v, v_speed, v_min, v_max, display_format);
 	}
 
 	bool GUIManager::DragFloat4(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char* display_format, float power)
 	{
-		return ImGui::DragFloat4(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+		return ImGui::DragFloat4(utf8str<256>(label), v, v_speed, v_min, v_max, display_format);
 	}
 
 	bool GUIManager::DragFloatRange2(const char16_t* label, float* v_current_min, float* v_current_max, float v_speed, float v_min, float v_max, const char* display_format, const char* display_format_max, float power)
 	{
-		return ImGui::DragFloatRange2(utf16_to_utf8(label).c_str(), v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max);
+		return ImGui::DragFloatRange2(utf8str<256>(label), v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max);
 	}
 
 	bool GUIManager::DragInt(const char16_t* label, int* v, float v_speed, int v_min, int v_max, const char* display_format)
 	{
-		return ImGui::DragInt(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+		return ImGui::DragInt(utf8str<256>(label), v, v_speed, v_min, v_max, display_format);
 	}
 
 	bool GUIManager::DragInt2(const char16_t* label, int* v, float v_speed, int v_min, int v_max, const char* display_format)
 	{
-		return ImGui::DragInt2(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+		return ImGui::DragInt2(utf8str<256>(label), v, v_speed, v_min, v_max, display_format);
 	}
 
 	bool GUIManager::DragInt3(const char16_t* label, int* v, float v_speed, int v_min, int v_max, const char* display_format)
 	{
-		return ImGui::DragInt3(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+		return ImGui::DragInt3(utf8str<256>(label), v, v_speed, v_min, v_max, display_format);
 	}
 
 	bool GUIManager::DragInt4(const char16_t* label, int* v, float v_speed, int v_min, int v_max, const char* display_format)
 	{
-		return ImGui::DragInt4(utf16_to_utf8(label).c_str(), v, v_speed, v_min, v_max, display_format);
+		return ImGui::DragInt4(utf8str<256>(label), v, v_speed, v_min, v_max, display_format);
 	}
 
 	bool GUIManager::DragIntRange2(const char16_t* label, int* v_current_min, int* v_current_max, float v_speed, int v_min, int v_max, const char* display_format, const char* display_format_max)
 	{
-		return ImGui::DragIntRange2(utf16_to_utf8(label).c_str(), v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max);
+		return ImGui::DragIntRange2(utf8str<256>(label), v_current_min, v_current_max, v_speed, v_min, v_max, display_format, display_format_max);
 	}
 
 	bool GUIManager::DragFloat1EfkEx(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char16_t* display_format1, float power)
 	{
 		return DragFloatN(
-			utf16_to_utf8(label).c_str(), v, 1, v_speed, v_min, v_max, 
-			utf16_to_utf8(display_format1).c_str(), 
+			utf8str<256>(label), v, 1, v_speed, v_min, v_max, 
+			utf8str<256>(display_format1), 
 			nullptr, 
 			nullptr,
 			power);
@@ -591,9 +603,9 @@ namespace efk
 	bool GUIManager::DragFloat2EfkEx(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char16_t* display_format1, const char16_t* display_format2, float power)
 	{
 		return DragFloatN(
-			utf16_to_utf8(label).c_str(), v, 2, v_speed, v_min, v_max,
-			utf16_to_utf8(display_format1).c_str(),
-			utf16_to_utf8(display_format2).c_str(),
+			utf8str<256>(label), v, 2, v_speed, v_min, v_max,
+			utf8str<256>(display_format1),
+			utf8str<256>(display_format2),
 			nullptr,
 			power);
 	}
@@ -601,19 +613,19 @@ namespace efk
 	bool GUIManager::DragFloat3EfkEx(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char16_t* display_format1, const char16_t* display_format2, const char16_t* display_format3, float power)
 	{
 		return DragFloatN(
-			utf16_to_utf8(label).c_str(), v, 3, v_speed, v_min, v_max,
-			utf16_to_utf8(display_format1).c_str(),
-			utf16_to_utf8(display_format2).c_str(),
-			utf16_to_utf8(display_format3).c_str(),
+			utf8str<256>(label), v, 3, v_speed, v_min, v_max,
+			utf8str<256>(display_format1),
+			utf8str<256>(display_format2),
+			utf8str<256>(display_format3),
 			power);
 	}
 
 	bool GUIManager::DragInt2EfkEx(const char16_t* label, int* v, int v_speed, int v_min, int v_max, const char16_t* display_format1, const char16_t* display_format2)
 	{
 		return DragIntN(
-			utf16_to_utf8(label).c_str(), v, 2, v_speed, v_min, v_max,
-			utf16_to_utf8(display_format1).c_str(),
-			utf16_to_utf8(display_format2).c_str(),
+			utf8str<256>(label), v, 2, v_speed, v_min, v_max,
+			utf8str<256>(display_format1),
+			utf8str<256>(display_format2),
 			nullptr);
 	}
 
@@ -621,13 +633,13 @@ namespace efk
 
 	bool GUIManager::InputText(const char16_t* label, const char16_t* text)
 	{
-		auto text_ = utf16_to_utf8(text);
+		auto text_ = utf8str<1024>(text);
 
 		char buf[260];
-		memcpy(buf, text_.data(), std::min((int32_t)text_.size(), 250));
-		buf[std::min((int32_t)text_.size(), 250)] = 0;
+		memcpy(buf, text_.data, std::min((int32_t)text_.size, 250));
+		buf[std::min((int32_t)text_.size, 250)] = 0;
 
-		auto ret = ImGui::InputText(utf16_to_utf8(label).c_str(), buf, 260);
+		auto ret = ImGui::InputText(utf8str<256>(label), buf, 260);
 	
 		inputTextResult = utf8_to_utf16(buf);
 	
@@ -641,17 +653,17 @@ namespace efk
 
 	bool GUIManager::ColorEdit4(const char16_t* label, float* col, ColorEditFlags flags)
 	{
-		return ImGui::ColorEdit4(utf16_to_utf8(label).c_str(), col, (int)flags);
+		return ImGui::ColorEdit4(utf8str<256>(label), col, (int)flags);
 	}
 
 	bool GUIManager::TreeNode(const char16_t* label)
 	{
-		return ImGui::TreeNode(utf16_to_utf8(label).c_str());
+		return ImGui::TreeNode(utf8str<256>(label));
 	}
 
 	bool GUIManager::TreeNodeEx(const char16_t* label, TreeNodeFlags flags)
 	{
-		return ImGui::TreeNodeEx(utf16_to_utf8(label).c_str(), (int)flags);
+		return ImGui::TreeNodeEx(utf8str<256>(label), (int)flags);
 	}
 
 	void GUIManager::TreePop()
@@ -661,12 +673,12 @@ namespace efk
 
 	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags, ImageResource* user_texture_id)
 	{
-		return ImGui::Selectable(utf16_to_utf8(label).c_str(), selected, (int)flags, ImVec2(0, 0), ToImTextureID(user_texture_id));
+		return ImGui::Selectable(utf8str<256>(label), selected, (int)flags, ImVec2(0, 0), ToImTextureID(user_texture_id));
 	}
 
 	void GUIManager::SetTooltip(const char16_t* text)
 	{
-		ImGui::SetTooltip(utf16_to_utf8(text).c_str());
+		ImGui::SetTooltip(utf8str<256>(text));
 	}
 
 	bool GUIManager::BeginMainMenuBar()
@@ -691,7 +703,7 @@ namespace efk
 
 	bool GUIManager::BeginMenu(const char16_t* label, bool enabled)
 	{
-		return ImGui::BeginMenu(utf16_to_utf8(label).c_str(), enabled);
+		return ImGui::BeginMenu(utf8str<256>(label), enabled);
 	}
 
 	void GUIManager::EndMenu()
@@ -701,12 +713,12 @@ namespace efk
 
 	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool selected, bool enabled, ImageResource* icon)
 	{
-		return ImGui::MenuItem(utf16_to_utf8(label).c_str(), shortcut, selected, enabled, ToImTextureID(icon));
+		return ImGui::MenuItem(utf8str<256>(label), shortcut, selected, enabled, ToImTextureID(icon));
 	}
 
 	bool GUIManager::MenuItem(const char16_t* label, const char* shortcut, bool* p_selected, bool enabled, ImageResource* icon)
 	{
-		return ImGui::MenuItem(utf16_to_utf8(label).c_str(), shortcut, p_selected, enabled, ToImTextureID(icon));
+		return ImGui::MenuItem(utf8str<256>(label), shortcut, p_selected, enabled, ToImTextureID(icon));
 	}
 
 	void GUIManager::OpenPopup(const char* str_id)
@@ -721,7 +733,7 @@ namespace efk
 
 	bool GUIManager::BeginPopupModal(const char16_t* name, bool* p_open, WindowFlags extra_flags)
 	{
-		return ImGui::BeginPopupModal(utf16_to_utf8(name).c_str(), p_open, (int)extra_flags);
+		return ImGui::BeginPopupModal(utf8str<256>(name), p_open, (int)extra_flags);
 	}
 
 	bool GUIManager::BeginPopupContextItem(const char* str_id, int mouse_button)
@@ -815,7 +827,7 @@ namespace efk
 		ImGui::SetNextWindowPos(ImVec2(0, 25));
 		const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 		const float oldWindowRounding = ImGui::GetStyle().WindowRounding; ImGui::GetStyle().WindowRounding = 0;
-		const bool visible = ImGui::Begin(utf16_to_utf8(label).c_str(), NULL, ImVec2(0, 0), 1.0f, flags);
+		const bool visible = ImGui::Begin(utf8str<256>(label), NULL, ImVec2(0, 0), 1.0f, flags);
 		ImGui::GetStyle().WindowRounding = oldWindowRounding;
 		return visible;
 	}
@@ -837,7 +849,7 @@ namespace efk
 
 	bool GUIManager::BeginDock(const char16_t* label, bool* p_open, WindowFlags extra_flags, Vec2 default_size)
 	{
-		return ImGui::BeginDock(utf16_to_utf8(label).c_str(), p_open, (int32_t)extra_flags, ImVec2(default_size.X, default_size.Y));
+		return ImGui::BeginDock(utf8str<256>(label), p_open, (int32_t)extra_flags, ImVec2(default_size.X, default_size.Y));
 	}
 
 	void GUIManager::EndDock()
