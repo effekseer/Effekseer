@@ -121,7 +121,7 @@ namespace Effekseer.GUI.Component
 				}
 				else
 				{
-					Console.WriteLine("Not implemented.");
+					throw new Exception("Not Implemented.");
 				}
 			}
 

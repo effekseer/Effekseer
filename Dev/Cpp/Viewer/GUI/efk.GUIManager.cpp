@@ -189,6 +189,17 @@ namespace efk
 				this->callback->Droped();
 			}
 		};
+
+		window->Closing = [this]() -> bool
+		{
+			if (this->callback != nullptr)
+			{
+				return this->callback->Closing();
+			}
+
+			return true;
+		};
+
 		window->MakeCurrent();
 
 #ifdef _WIN32

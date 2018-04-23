@@ -143,6 +143,7 @@ namespace efk
 		virtual void Resized(int x, int y) {}
 		virtual void Droped() {}
 		virtual void Focused() {}
+		virtual bool Closing() { return true; }
 
 		const char16_t* GetPath()
 		{

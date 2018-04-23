@@ -436,21 +436,15 @@ namespace Effekseer.GUI.Component
 				}
 				else if (p.PropertyType == typeof(Data.Value.FCurveVector2D))
 				{
-					Console.WriteLine("Not implemented.");
-					//FCurveButton button = new FCurveButton();
-					//gui = button;
+					gui = new FCurveButton(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.FCurveVector3D))
 				{
-					Console.WriteLine("Not implemented.");
-					//FCurveButton button = new FCurveButton();
-					//gui = button;
+					gui = new FCurveButton(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.FCurveColorRGBA))
 				{
-					Console.WriteLine("Not implemented.");
-					//FCurveButton button = new FCurveButton();
-					//gui = button;
+					gui = new FCurveButton(Title);
 				}
 				else if (p.PropertyType == typeof(Data.Value.FCurve<float>))
 				{
