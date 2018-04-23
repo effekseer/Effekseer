@@ -717,7 +717,7 @@ struct Color
 	/**
 		@brief	コンストラクタ
 	*/
-	Color();
+	Color() = default;
 
 	/**
 		@brief	コンストラクタ
@@ -727,7 +727,13 @@ struct Color
 	/**
 		@brief	乗算
 	*/
-	static void Mul( Color& o, const Color& in1, const Color& in2 );
+	static Color Mul( Color in1, Color in2 );
+	static Color Mul( Color in1, float in2 );
+	
+	/**
+		@brief	線形補間
+	*/
+	static Color Lerp( const Color in1, const Color in2, float t );
 };
 #pragma pack(pop)
 //----------------------------------------------------------------------------------

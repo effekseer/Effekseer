@@ -64,10 +64,10 @@ public:
 	Vector3D	m_GlobalRevisionVelocity;
 	
 	// Color for binding
-	color		ColorInheritance;
+	Color		ColorInheritance;
 
 	// Parent color
-	color		ColorParent;
+	Color		ColorParent;
 
 	union 
 	{

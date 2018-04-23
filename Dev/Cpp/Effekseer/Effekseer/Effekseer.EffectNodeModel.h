@@ -31,25 +31,25 @@ public:
 	struct InstanceValues
 	{
 		// 色
-		color _color;
-		color _original;
+		Color _color;
+		Color _original;
 
 		union 
 		{
 			struct
 			{
-				color _color;
+				Color _color;
 			} fixed;
 
 			struct
 			{
-				color _color;
+				Color _color;
 			} random;
 
 			struct
 			{
-				color start;
-				color  end;
+				Color start;
+				Color  end;
 
 			} easing;
 

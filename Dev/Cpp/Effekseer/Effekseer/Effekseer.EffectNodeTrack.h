@@ -50,18 +50,18 @@ public:
 			{
 				struct
 				{
-					color color_;
+					Effekseer::Color color_;
 				} fixed;
 
 				struct
 				{
-					color color_;
+					Effekseer::Color color_;
 				} random;
 
 				struct
 				{
-					color start;
-					color  end;
+					Effekseer::Color start;
+					Effekseer::Color  end;
 				} easing;
 
 				struct
@@ -99,21 +99,21 @@ public:
 
 	struct InstanceValues
 	{
-		color	colorLeft;
-		color	colorCenter;
-		color	colorRight;
+		Color	colorLeft;
+		Color	colorCenter;
+		Color	colorRight;
 
-		color	colorLeftMiddle;
-		color	colorCenterMiddle;
-		color	colorRightMiddle;
+		Color	colorLeftMiddle;
+		Color	colorCenterMiddle;
+		Color	colorRightMiddle;
 
-		color	_colorLeft;
-		color	_colorCenter;
-		color	_colorRight;
+		Color	_colorLeft;
+		Color	_colorCenter;
+		Color	_colorRight;
 
-		color	_colorLeftMiddle;
-		color	_colorCenterMiddle;
-		color	_colorRightMiddle;
+		Color	_colorLeftMiddle;
+		Color	_colorCenterMiddle;
+		Color	_colorRightMiddle;
 
 		float	SizeFor;
 		float	SizeMiddle;

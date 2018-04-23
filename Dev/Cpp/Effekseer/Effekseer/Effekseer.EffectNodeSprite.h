@@ -31,10 +31,10 @@ struct SpriteColorParameter
 
 		struct
 		{
-			color ll;
-			color lr;
-			color ul;
-			color ur;
+			Color ll;
+			Color lr;
+			Color ul;
+			Color ur;
 		} fixed;
 	};
 };
@@ -81,26 +81,26 @@ public:
 	struct InstanceValues
 	{
 		// 色
-		color _color;
+		Color _color;
 
-		color _originalColor;
+		Color _originalColor;
 		
 		union 
 		{
 			struct
 			{
-				color _color;
+				Color _color;
 			} fixed;
 
 			struct
 			{
-				color _color;
+				Color _color;
 			} random;
 
 			struct
 			{
-				color start;
-				color  end;
+				Color start;
+				Color  end;
 
 			} easing;
 
