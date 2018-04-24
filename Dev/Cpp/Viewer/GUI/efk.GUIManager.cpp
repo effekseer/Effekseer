@@ -682,6 +682,11 @@ namespace efk
 		ImGui::TreePop();
 	}
 
+	void GUIManager::SetNextTreeNodeOpen(bool is_open, Cond cond)
+	{
+		ImGui::SetNextTreeNodeOpen(is_open, (ImGuiCond)cond);
+	}
+
 	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags, ImageResource* user_texture_id)
 	{
 		return ImGui::Selectable(utf8str<256>(label), selected, (int)flags, ImVec2(0, 0), ToImTextureID(user_texture_id));

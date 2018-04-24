@@ -271,6 +271,25 @@ namespace Effekseer
 		
 		public static Dictionary<string, swig.ImageResource> Icons;
 
+		public static Dictionary<string, swig.ImageResource> tempImages = new Dictionary<string, swig.ImageResource>();
+
+		public static swig.ImageResource Load(swig.Native native, string path)
+		{
+			if(tempImages.ContainsKey(path))
+			{
+				return tempImages[path];
+			}
+			else
+			{
+				var img = native.LoadImageResource(path);
+				if(img != null)
+				{
+					tempImages.Add(path, img);
+				}
+				return img;
+			}
+		}
+
 		public static void Load(swig.Native native)
 		{
 			Play = native.LoadImageResource("resources/Play.png");
@@ -318,6 +337,14 @@ namespace Effekseer
 			Step.Dispose();
 			BackStep.Dispose();
 			foreach (var keyValue in Icons)
+			{
+				if (keyValue.Value != null)
+				{
+					keyValue.Value.Dispose();
+				}
+			}
+
+			foreach (var keyValue in tempImages)
 			{
 				if (keyValue.Value != null)
 				{

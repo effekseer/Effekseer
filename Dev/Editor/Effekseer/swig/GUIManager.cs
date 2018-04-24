@@ -767,6 +767,14 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_TreePop(swigCPtr);
   }
 
+  public void SetNextTreeNodeOpen(bool is_open, Cond cond) {
+    EffekseerNativePINVOKE.GUIManager_SetNextTreeNodeOpen__SWIG_0(swigCPtr, is_open, (int)cond);
+  }
+
+  public void SetNextTreeNodeOpen(bool is_open) {
+    EffekseerNativePINVOKE.GUIManager_SetNextTreeNodeOpen__SWIG_1(swigCPtr, is_open);
+  }
+
   public bool Selectable(string label, bool selected, SelectableFlags flags, ImageResource user_texture_id) {
     bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_0(swigCPtr, label, selected, (int)flags, ImageResource.getCPtr(user_texture_id));
     return ret;

@@ -300,7 +300,24 @@ namespace Effekseer.GUI.Dock
 
 		public override void OnDisposed()
 		{
-			Console.WriteLine("Not Implemented (Dispose fcurve event)");
+
+			Action<TreeNode> recurse = null;
+
+			recurse = (t) =>
+			{
+				foreach (var fcurve in t.FCurves)
+				{
+					fcurve.OnRemoved();
+				}
+
+				foreach (var c in t.Children)
+				{
+					recurse(c);
+				}
+			};
+
+			recurse(treeNodes);
+
 			Command.CommandManager.Changed -= OnChanged;
 			Core.OnAfterNew -= OnChanged;
 			Core.OnBeforeLoad -= OnBeforeLoad;

@@ -24,6 +24,8 @@ namespace Effekseer.GUI.Component
 		string infoText = string.Empty;
 		bool isHovered = false;
 
+		swig.ImageResource image = null;
+
 		public bool EnableUndo { get; set; } = true;
 
 		public Data.Value.PathForImage Binding
@@ -131,7 +133,16 @@ namespace Effekseer.GUI.Component
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			if(dd != null)
+			if(image != null)
+			{
+				Manager.NativeManager.Image(image, 128, 128);
+
+				if (dd == null) dd = DragAndDrops.UpdateImageDst();
+
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
+			}
+
+			if (dd != null)
 			{
 				Dropped(dd);
 			}
@@ -191,14 +202,7 @@ namespace Effekseer.GUI.Component
 		void UpdateInfo()
 		{
 			string path = binding.GetAbsolutePath();
-
-			try
-			{
-				Console.WriteLine("Not implemented.");
-			}
-			catch (Exception e)
-			{
-			}
+			image = Images.Load(Manager.Native, path);
 		}
 
 		private bool CheckExtension(string path)

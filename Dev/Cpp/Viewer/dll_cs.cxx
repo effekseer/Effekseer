@@ -5416,6 +5416,28 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreePop___(void * j
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextTreeNodeOpen__SWIG_0___(void * jarg1, unsigned int jarg2, int jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool arg2 ;
+  efk::Cond arg3 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  arg3 = (efk::Cond)jarg3; 
+  (arg1)->SetNextTreeNodeOpen(arg2,arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextTreeNodeOpen__SWIG_1___(void * jarg1, unsigned int jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  (arg1)->SetNextTreeNodeOpen(arg2);
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_0___(void * jarg1, char16_t * jarg2, unsigned int jarg3, int jarg4, void * jarg5) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
