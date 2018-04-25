@@ -38,6 +38,16 @@ namespace Effekseer.GUI
 				Commands.Open();
 			}
 		}
+
+		public override bool Closing()
+		{
+			if (Commands.SaveOnDisposing())
+			{
+				return true;
+			}
+
+			return false;
+		}
 	}
 
 	class Manager
@@ -413,6 +423,16 @@ namespace Effekseer.GUI
 			SelectOrShowWindow(typeof(Dock.RotationValues), null, swig.DockSlot.Bottom, 0.7f, false);
 			SelectOrShowWindow(typeof(Dock.ScaleValues), null, swig.DockSlot.Bottom, 0.5f, false);
 			SelectOrShowWindow(typeof(Dock.RendererCommonValues), null, swig.DockSlot.Right, 0.2f, true);
+		}
+
+		public static Dock.DockPanel GetWindow(Type t)
+		{
+			foreach(var panel in panels)
+			{
+				if (panel.GetType() == t) return panel;
+			}
+
+			return null;
 		}
 
 		public static void SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, swig.DockSlot slot = swig.DockSlot.None, float dockRate = 0.5f, bool isResetParent = false)

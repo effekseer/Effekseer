@@ -24,7 +24,7 @@
 namespace efk
 {
 	void GLFLW_ResizeCallback(GLFWwindow* w, int x, int y);
-
+	
 	class Window
 	{
 	private:
@@ -72,6 +72,8 @@ namespace efk
 		std::function<void()> Focused;
 
 		std::function<void(const char* path)> Droped;
+
+		std::function<bool()> Closing;
 	};
 
 }

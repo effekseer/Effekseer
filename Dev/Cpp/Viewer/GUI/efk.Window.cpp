@@ -38,6 +38,14 @@ namespace efk
 		w_->Droped(paths[0]);
 	}
 
+	void GLFLW_CloseCallback(GLFWwindow* w)
+	{
+		auto w_ = (Window*)glfwGetWindowUserPointer(w);
+		auto ret = w_->Closing();
+		
+		glfwSetWindowShouldClose(w, ret);
+	}
+
 	void GLFW_WindowFocusCallback(GLFWwindow* w, int f)
 	{
 
@@ -97,7 +105,7 @@ namespace efk
 		glfwSetFramebufferSizeCallback(window, GLFLW_ResizeCallback);
 		glfwSetDropCallback(window, GLFW_DropCallback);
 		glfwSetWindowFocusCallback(window, GLFW_WindowFocusCallback);
-
+		glfwSetWindowCloseCallback(window, GLFLW_CloseCallback);
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(1);
 

@@ -189,6 +189,17 @@ namespace efk
 				this->callback->Droped();
 			}
 		};
+
+		window->Closing = [this]() -> bool
+		{
+			if (this->callback != nullptr)
+			{
+				return this->callback->Closing();
+			}
+
+			return true;
+		};
+
 		window->MakeCurrent();
 
 #ifdef _WIN32
@@ -669,6 +680,11 @@ namespace efk
 	void GUIManager::TreePop()
 	{
 		ImGui::TreePop();
+	}
+
+	void GUIManager::SetNextTreeNodeOpen(bool is_open, Cond cond)
+	{
+		ImGui::SetNextTreeNodeOpen(is_open, (ImGuiCond)cond);
 	}
 
 	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags, ImageResource* user_texture_id)

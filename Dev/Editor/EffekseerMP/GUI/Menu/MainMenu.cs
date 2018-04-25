@@ -307,18 +307,6 @@ namespace Effekseer.GUI.Menu
 			}
 		}
 
-		// Not implemented.
-		/*
-		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-		{
-			bool handle = false;
-			Shortcuts.ProcessCmdKey(ref msg, keyData, ref handle);
-			if (handle) return true;
-
-			return base.ProcessCmdKey(ref msg, keyData);
-		}
-		*/
-
 		private void MainForm_Load(object sender, EventArgs e)
 		{
 			ReloadTitle();
@@ -332,24 +320,6 @@ namespace Effekseer.GUI.Menu
 				Core.Reload();
 			}
 		}
-
-		// Not implemented.
-		/*
-		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			if (Commands.SaveOnDisposing())
-			{
-
-			}
-			else
-			{
-				e.Cancel = true;
-				return;
-			}
-
-			GUIManager.SaveConfig();
-		}
-		*/
 
 		void Core_OnAfterNew(object sender, EventArgs e)
 		{
@@ -370,43 +340,5 @@ namespace Effekseer.GUI.Menu
 		{
 			ReloadRecentFiles();
 		}
-
-		// Not implemented.
-		/*
-		public Point BeforeResizeLocation
-		{
-			get;
-			private set;
-		}
-
-		public int BeforeResizeWidth
-		{
-			get;
-			private set;
-		}
-
-		public int BeforeResizeHeight
-		{
-			get;
-			private set;
-		}
-
-		private void MainForm_Resize(object sender, EventArgs e)
-		{
-			// Save a size before maximization or miniimization
-			if (this.WindowState != FormWindowState.Maximized && this.WindowState != FormWindowState.Minimized)
-			{
-				BeforeResizeWidth = this.Width;
-				BeforeResizeHeight = this.Height;
-			}
-		}
-
-		private void MainForm_Move(object sender, EventArgs e)
-		{
-			// Save a location before maximization or miniimization
-			if (this.WindowState != FormWindowState.Maximized && this.WindowState != FormWindowState.Minimized)
-				BeforeResizeLocation = this.Location;
-		}
-		*/
 	}
 }

@@ -54,6 +54,7 @@
     <Compile Include="GUI\Component\ColorCtrl.cs" />
     <Compile Include="GUI\Component\ColorWithRandom.cs" />
     <Compile Include="GUI\Component\Enum.cs" />
+    <Compile Include="GUI\Component\FCurveButton.cs" />
     <Compile Include="GUI\Component\Float.cs" />
     <Compile Include="GUI\Component\FloatWithRandom.cs" />
     <Compile Include="GUI\Component\Int.cs" />

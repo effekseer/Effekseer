@@ -254,11 +254,8 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Copy")]
 		public static bool Copy()
 		{
-
-			Console.WriteLine("Not implemented.");
-			/*
-			if (Manager.NodeTreeView == null) return false;
-			if (!Manager.NodeTreeView.NodeTreeView.Focused) return false;
+			//if (Manager.NodeTreeView == null) return false;
+			//if (!Manager.NodeTreeView.NodeTreeView.Focused) return false;
 
 			if (Core.SelectedNode != null)
 			{
@@ -267,7 +264,6 @@ namespace Effekseer.GUI
 				Clipboard.SetText(data);
 				return true;
 			}
-			*/
 
 			return false;
 		}
@@ -276,10 +272,8 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Paste")]
 		public static bool Paste()
 		{
-			Console.WriteLine("Not implemented.");
-			/*
-			if (Manager.NodeTreeView == null) return false;
-			if (!Manager.NodeTreeView.NodeTreeView.Focused) return false;
+			//if (Manager.NodeTreeView == null) return false;
+			//if (!Manager.NodeTreeView.NodeTreeView.Focused) return false;
 
 			if (Core.SelectedNode != null)
 			{
@@ -297,8 +291,7 @@ namespace Effekseer.GUI
 
 				return true;
 			}
-			*/
-
+			
 			return false;
 		}
 
@@ -306,10 +299,8 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.PasteInfo")]
 		public static bool PasteInfo()
 		{
-			Console.WriteLine("Not implemented.");
-			/*
-			if (Manager.NodeTreeView == null) return false;
-			if (!Manager.NodeTreeView.NodeTreeView.Focused) return false;
+			//if (Manager.NodeTreeView == null) return false;
+			//if (!Manager.NodeTreeView.NodeTreeView.Focused) return false;
 
 			if (Core.SelectedNode != null)
 			{
@@ -317,8 +308,7 @@ namespace Effekseer.GUI
 				Core.Paste(Core.SelectedNode, data);
 				return true;
 			}
-			*/
-
+			
 			return false;
 		}
 

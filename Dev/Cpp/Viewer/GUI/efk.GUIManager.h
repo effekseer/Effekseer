@@ -143,6 +143,7 @@ namespace efk
 		virtual void Resized(int x, int y) {}
 		virtual void Droped() {}
 		virtual void Focused() {}
+		virtual bool Closing() { return true; }
 
 		const char16_t* GetPath()
 		{
@@ -293,6 +294,8 @@ namespace efk
 		bool TreeNodeEx(const char16_t* label, TreeNodeFlags flags = TreeNodeFlags::None);
 
 		void TreePop();
+
+		void SetNextTreeNodeOpen(bool is_open, Cond cond = Cond::None);
 
 		// Widgets: Selectable / Lists
 		bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None, ImageResource* user_texture_id = NULL);

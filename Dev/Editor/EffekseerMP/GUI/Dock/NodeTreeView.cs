@@ -172,7 +172,10 @@ namespace Effekseer.GUI.Dock
 
         public void ExpandAll()
         {
-            Console.WriteLine("Not implemented");
+			foreach(var child in Children.Internal)
+			{
+				child.ExpandAll();
+			}
         }
 
 		internal void Popup()
@@ -239,6 +242,8 @@ namespace Effekseer.GUI.Dock
 
 		NodeTreeView treeView = null;
 
+		bool isExpanding = false;
+
 		public NodeTreeViewNode(NodeTreeView treeView, Data.NodeBase node, bool createChildren = false)
         {
 			UniqueID = Manager.GetUniqueID();
@@ -260,6 +265,11 @@ namespace Effekseer.GUI.Dock
                 }
             }
         }
+
+		public void Expand()
+		{
+			isExpanding = true;
+		}
 
         public void RemoveEvent(bool recursion)
         {
@@ -296,6 +306,12 @@ namespace Effekseer.GUI.Dock
 			}
 
 			UpdateDDTarget(false);
+
+			if(isExpanding)
+			{
+				Manager.NativeManager.SetNextTreeNodeOpen(true);
+				isExpanding = false;
+			}
 
 			// Tree
 			if (Manager.NativeManager.TreeNodeEx(Node.Name + id, flag))
@@ -368,7 +384,11 @@ namespace Effekseer.GUI.Dock
 
         public void ExpandAll()
         {
-            Console.WriteLine("Not implemented.");
+			Expand();
+			foreach(var child in Children.Internal)
+			{
+				child.ExpandAll();
+			}
         }
 
         void OnAfterAddNode(object sender, ChangedValueEventArgs e)

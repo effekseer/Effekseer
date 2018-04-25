@@ -116,7 +116,7 @@ namespace Effekseer.GUI.Component
 
 			var v = enums.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValues).FirstOrDefault();
 
-			if(Manager.NativeManager.BeginCombo(Label + id, FieldNames[v.Item2], swig.ComboFlags.None, icons[v.Item2]))
+			if(Manager.NativeManager.BeginCombo(id, FieldNames[v.Item2], swig.ComboFlags.None, icons[v.Item2]))
 			{
 				for(int i = 0; i < FieldNames.Count; i++)
 				{
