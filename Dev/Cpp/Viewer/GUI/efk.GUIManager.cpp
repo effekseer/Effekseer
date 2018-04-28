@@ -690,7 +690,7 @@ namespace efk
 
 	bool GUIManager::ImageButton(ImageResource* user_texture_id, float x, float y)
 	{
-		return ImGui::ImageButton(ToImTextureID(user_texture_id), ImVec2(x, y));
+		return ImGui::ImageButton(ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0);
 	}
 
 	bool GUIManager::Checkbox(const char16_t* label, bool* v)

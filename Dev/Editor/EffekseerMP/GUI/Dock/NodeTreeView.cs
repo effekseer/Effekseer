@@ -68,6 +68,9 @@ namespace Effekseer.GUI.Dock
 		{
 			isPopupShown = false;
 
+			Manager.NativeManager.Columns(2);
+			//Manager.NativeManager.SetColumnOffset(1, 300);
+
 			Children.Lock();
 			foreach (var child in Children.Internal)
 			{
@@ -75,8 +78,10 @@ namespace Effekseer.GUI.Dock
 			}
 			Children.Unlock();
 
+			Manager.NativeManager.Columns(1);
+
 			// Run exchange events
-			foreach(var pair in exchangeEvents)
+			foreach (var pair in exchangeEvents)
 			{
 				Func<int, List<NodeTreeViewNode>, NodeTreeViewNode> findNode = null;
 
@@ -271,7 +276,38 @@ namespace Effekseer.GUI.Dock
 			isExpanding = true;
 		}
 
-        public void RemoveEvent(bool recursion)
+		public void ChangeVisible(bool recursion, bool value)
+		{
+			Command.CommandManager.StartCollection();
+
+			Action<Data.NodeBase.ChildrenCollection> recurse = null;
+
+			Node.IsRendered.SetValue(value);
+
+			if(recursion)
+			{
+				recurse = (t) =>
+				{
+					for (int i = 0; i < t.Count; i++)
+					{
+						t[i].IsRendered.SetValue(value);
+					}
+
+					for (int i = 0; i < t.Count; i++)
+					{
+						recurse(t[i].Children);
+					}
+				};
+
+			}
+
+			recurse(Node.Children);
+
+			Command.CommandManager.EndCollection();
+
+		}
+
+		public void RemoveEvent(bool recursion)
         {
             if (Node is Data.Node)
             {
@@ -314,11 +350,20 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// Tree
+			var temp = new[] { false };
 
-			var test = new[] { false };
+			var iconString = "NodeEmpty";
+			var node = Node as Data.Node;
+			if(node != null)
+			{
+				if(node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite) iconString = "NodeSprite";
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring) iconString = "NodeRing";
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ribbon) iconString = "NodeRibbon";
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model) iconString = "NodeModel";
+				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track) iconString = "NodeTrack";
+			}
 
-			if(Manager.NativeManager.TreeNodeEx(Node.Name, test, Images.GetIcon("PanelCommon"), flag))
-			//if (Manager.NativeManager.TreeNodeEx(Node.Name + id, flag))
+			if (Manager.NativeManager.TreeNodeEx(Node.Name + id, temp, Images.GetIcon(iconString), flag))
             {
 				if(Manager.NativeManager.IsItemClicked(0) ||
 					Manager.NativeManager.IsItemClicked(1))
@@ -339,6 +384,27 @@ namespace Effekseer.GUI.Dock
 
 					Manager.NativeManager.EndDragDropSource();
 				}
+
+				Manager.NativeManager.NextColumn();
+
+				var visible = Node.IsRendered;
+
+				if(Manager.NativeManager.ImageButton(Images.GetIcon(visible ? "VisibleShow" : "VisibleHide"), 18, 18))
+				{
+					int LEFT_SHIFT = 340;
+					int RIGHT_SHIFT = 344;
+
+					if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+					{
+						ChangeVisible(true, !visible);
+					}
+					else
+					{
+						ChangeVisible(false, !visible);
+					}
+				}
+
+				Manager.NativeManager.NextColumn();
 
 				Children.Lock();
 
@@ -361,8 +427,14 @@ namespace Effekseer.GUI.Dock
 				//UpdateDDTarget(true);
 
 				treeView.Popup();
+
+				Manager.NativeManager.NextColumn();
+
+				Manager.NativeManager.Checkbox("##Check", temp);
+
+				Manager.NativeManager.NextColumn();
 			}
-        }
+		}
 
 		/// <summary>
 		/// Update D&D Target

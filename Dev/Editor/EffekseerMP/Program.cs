@@ -305,7 +305,10 @@ namespace Effekseer
 			Icons["NodeRing"] = native.LoadImageResource("resources/icons/NodeType_Ring.png");
 			Icons["NodeSprite"] = native.LoadImageResource("resources/icons/NodeType_Sprite.png");
 			Icons["NodeTrack"] = native.LoadImageResource("resources/icons/NodeType_Track.png");
-			
+
+			Icons["VisibleShow"] = native.LoadImageResource("resources/icons/Visible_Show.png");
+			Icons["VisibleHide"] = native.LoadImageResource("resources/icons/Visible_Hide.png");
+
 			Icons["PanelBehavior"] = native.LoadImageResource("resources/icons/Panel_Behavior.png");
 			Icons["PanelCommon"] = native.LoadImageResource("resources/icons/Panel_Common.png");
 			Icons["PanelCulling"] = native.LoadImageResource("resources/icons/Panel_Culling.png");
