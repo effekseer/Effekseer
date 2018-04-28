@@ -299,9 +299,9 @@ namespace Effekseer.GUI.Dock
 					}
 				};
 
+				recurse(Node.Children);
 			}
 
-			recurse(Node.Children);
 
 			Command.CommandManager.EndCollection();
 
@@ -389,7 +389,7 @@ namespace Effekseer.GUI.Dock
 
 				var visible = Node.IsRendered;
 
-				if(Manager.NativeManager.ImageButton(Images.GetIcon(visible ? "VisibleShow" : "VisibleHide"), 18, 18))
+				if(Manager.NativeManager.ImageButton(Images.GetIcon(visible ? "VisibleShow" : "VisibleHide"), 16, 16))
 				{
 					int LEFT_SHIFT = 340;
 					int RIGHT_SHIFT = 344;
