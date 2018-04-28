@@ -233,8 +233,8 @@ bool Initialize(OpenGLDeviceType deviceType)
 	GET_PROC(glBindVertexArrayOES);
 	g_isSupportedVertexArray = (g_glGenVertexArraysOES && g_glDeleteVertexArraysOES && g_glBindVertexArrayOES);
 
-	GET_PROC(g_glMapBufferRangeOES);
-	GET_PROC(g_glUnmapBufferOES);
+	GET_PROC(glMapBufferRangeOES);
+	GET_PROC(glUnmapBufferOES);
 	g_isSurrpotedBufferRange = (g_glMapBufferRangeOES && g_glUnmapBufferOES);
 #endif
 
