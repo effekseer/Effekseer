@@ -132,6 +132,8 @@ namespace Effekseer.GUI
 
 			NativeManager = mgr;
 
+			Images.Load(GUI.Manager.Native);
+
 			guiManagerCallback = new GUIManagerCallback();
 			NativeManager.SetCallback(guiManagerCallback);
 
@@ -272,6 +274,8 @@ namespace Effekseer.GUI
 
 			NativeManager.SetCallback(null);
 			NativeManager.Terminate();
+
+			Images.Unload();
 		}
 
 		public static void AddControl(IRemovableControl control)

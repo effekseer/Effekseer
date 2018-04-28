@@ -12,6 +12,181 @@
 
 #include "../3rdParty/imgui_addon/fcurve/fcurve.h"
 
+namespace ImGui
+{
+	static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
+	{
+		return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y);
+	}
+
+	bool TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, bool* v, ImTextureID user_texture, const char* label, const char* label_end)
+	{
+		ImGuiWindow* window = GetCurrentWindow();
+		if (window->SkipItems)
+			return false;
+
+		ImGuiContext& g = *GImGui;
+		const ImGuiStyle& style = g.Style;
+		const bool display_frame = (flags & ImGuiTreeNodeFlags_Framed) != 0;
+		const ImVec2 padding = (display_frame || (flags & ImGuiTreeNodeFlags_FramePadding)) ? style.FramePadding : ImVec2(style.FramePadding.x, 0.0f);
+
+		if (!label_end)
+			label_end = FindRenderedTextEnd(label);
+		const ImVec2 label_size = CalcTextSize(label, label_end, false);
+
+
+
+		// We vertically grow up to current line height up the typical widget height.
+		const float text_base_offset_y = ImMax(padding.y, window->DC.CurrentLineTextBaseOffset); // Latch before ItemSize changes it
+		const float frame_height = ImMax(ImMin(window->DC.CurrentLineHeight, g.FontSize + style.FramePadding.y * 2), label_size.y + padding.y * 2);
+		const float icon_size = frame_height;
+
+		ImRect frame_bb = ImRect(window->DC.CursorPos, ImVec2(window->Pos.x + GetContentRegionMax().x, window->DC.CursorPos.y + frame_height));
+		if (display_frame)
+		{
+			// Framed header expand a little outside the default padding
+			frame_bb.Min.x -= (float)(int)(window->WindowPadding.x*0.5f) - 1;
+			frame_bb.Max.x += (float)(int)(window->WindowPadding.x*0.5f) - 1;
+		}
+
+		const float text_offset_x = (g.FontSize + icon_size + (display_frame ? padding.x * 3 : padding.x * 2));   // Collapser arrow width + Spacing
+		const float text_width = g.FontSize + (label_size.x > 0.0f ? label_size.x + padding.x * 2 : 0.0f);   // Include collapser
+		ItemSize(ImVec2(text_width + icon_size, frame_height), text_base_offset_y);
+
+		// For regular tree nodes, we arbitrary allow to click past 2 worth of ItemSpacing
+		// (Ideally we'd want to add a flag for the user to specify if we want the hit test to be done up to the right side of the content or not)
+		const ImRect interact_bb = display_frame ? frame_bb : ImRect(frame_bb.Min.x, frame_bb.Min.y, frame_bb.Min.x + text_width + style.ItemSpacing.x * 2, frame_bb.Max.y);
+		bool is_open = TreeNodeBehaviorIsOpen(id, flags);
+
+		// Store a flag for the current depth to tell if we will allow closing this node when navigating one of its child. 
+		// For this purpose we essentially compare if g.NavIdIsAlive went from 0 to 1 between TreeNode() and TreePop().
+		// This is currently only support 32 level deep and we are fine with (1 << Depth) overflowing into a zero.
+		if (is_open && !g.NavIdIsAlive && (flags & ImGuiTreeNodeFlags_NavLeftJumpsBackHere) && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+			window->DC.TreeDepthMayJumpToParentOnPop |= (1 << window->DC.TreeDepth);
+
+		bool item_add = ItemAdd(interact_bb, id);
+		window->DC.LastItemStatusFlags |= ImGuiItemStatusFlags_HasDisplayRect;
+		window->DC.LastItemDisplayRect = frame_bb;
+
+		if (!item_add)
+		{
+			if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+				TreePushRawID(id);
+			return is_open;
+		}
+
+		// Flags that affects opening behavior:
+		// - 0(default) ..................... single-click anywhere to open
+		// - OpenOnDoubleClick .............. double-click anywhere to open
+		// - OpenOnArrow .................... single-click on arrow to open
+		// - OpenOnDoubleClick|OpenOnArrow .. single-click on arrow or double-click anywhere to open
+		ImGuiButtonFlags button_flags = ImGuiButtonFlags_NoKeyModifiers | ((flags & ImGuiTreeNodeFlags_AllowItemOverlap) ? ImGuiButtonFlags_AllowItemOverlap : 0);
+		if (!(flags & ImGuiTreeNodeFlags_Leaf))
+			button_flags |= ImGuiButtonFlags_PressedOnDragDropHold;
+		if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
+			button_flags |= ImGuiButtonFlags_PressedOnDoubleClick | ((flags & ImGuiTreeNodeFlags_OpenOnArrow) ? ImGuiButtonFlags_PressedOnClickRelease : 0);
+
+		bool hovered, held, pressed = ButtonBehavior(interact_bb, id, &hovered, &held, button_flags);
+		if (!(flags & ImGuiTreeNodeFlags_Leaf))
+		{
+			bool toggled = false;
+			if (pressed)
+			{
+				toggled = !(flags & (ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) || (g.NavActivateId == id);
+				if (flags & ImGuiTreeNodeFlags_OpenOnArrow)
+					toggled |= IsMouseHoveringRect(interact_bb.Min, ImVec2(interact_bb.Min.x + text_offset_x, interact_bb.Max.y)) && (!g.NavDisableMouseHover);
+				if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
+					toggled |= g.IO.MouseDoubleClicked[0];
+				if (g.DragDropActive && is_open) // When using Drag and Drop "hold to open" we keep the node highlighted after opening, but never close it again.
+					toggled = false;
+			}
+
+			if (g.NavId == id && g.NavMoveRequest && g.NavMoveDir == ImGuiDir_Left && is_open)
+			{
+				toggled = true;
+				NavMoveRequestCancel();
+			}
+			if (g.NavId == id && g.NavMoveRequest && g.NavMoveDir == ImGuiDir_Right && !is_open) // If there's something upcoming on the line we may want to give it the priority?
+			{
+				toggled = true;
+				NavMoveRequestCancel();
+			}
+
+			if (toggled)
+			{
+				is_open = !is_open;
+				window->DC.StateStorage->SetInt(id, is_open);
+			}
+		}
+		if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
+			SetItemAllowOverlap();
+
+		// Render
+		const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+		const ImVec2 text_pos = frame_bb.Min + ImVec2(text_offset_x, text_base_offset_y);
+		if (display_frame)
+		{
+			// Framed type
+			RenderFrame(frame_bb.Min, frame_bb.Max, col, true, style.FrameRounding);
+			RenderNavHighlight(frame_bb, id, ImGuiNavHighlightFlags_TypeThin);
+			RenderArrow(frame_bb.Min + ImVec2(padding.x, text_base_offset_y), is_open ? ImGuiDir_Down : ImGuiDir_Right, 1.0f);
+			
+			window->DrawList->AddImage(user_texture, 
+				frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y), 
+				frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y) + ImVec2(icon_size,icon_size), ImVec2(0, 0), ImVec2(1, 1));
+
+			if (g.LogEnabled)
+			{
+				// NB: '##' is normally used to hide text (as a library-wide feature), so we need to specify the text range to make sure the ## aren't stripped out here.
+				const char log_prefix[] = "\n##";
+				const char log_suffix[] = "##";
+				//LogRenderedText(&text_pos, log_prefix, log_prefix + 3);
+				RenderTextClipped(text_pos, frame_bb.Max, label, label_end, &label_size);
+				//LogRenderedText(&text_pos, log_suffix + 1, log_suffix + 3);
+			}
+			else
+			{
+				RenderTextClipped(text_pos, frame_bb.Max, label, label_end, &label_size);
+			}
+		}
+		else
+		{
+			// Unframed typed for tree nodes
+			if (hovered || (flags & ImGuiTreeNodeFlags_Selected))
+			{
+				RenderFrame(frame_bb.Min, frame_bb.Max, col, false);
+				RenderNavHighlight(frame_bb, id, ImGuiNavHighlightFlags_TypeThin);
+			}
+
+			if (flags & ImGuiTreeNodeFlags_Bullet)
+				RenderBullet(frame_bb.Min + ImVec2(text_offset_x * 0.5f, g.FontSize*0.50f + text_base_offset_y));
+			else if (!(flags & ImGuiTreeNodeFlags_Leaf))
+				RenderArrow(frame_bb.Min + ImVec2(padding.x, g.FontSize*0.15f + text_base_offset_y), is_open ? ImGuiDir_Down : ImGuiDir_Right, 0.70f);
+			//if (g.LogEnabled)
+			//	LogRenderedText(&text_pos, ">");
+
+			window->DrawList->AddImage(user_texture,
+				frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y),
+				frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y) + ImVec2(icon_size, icon_size), ImVec2(0, 0), ImVec2(1, 1));
+
+			RenderText(text_pos, label, label_end, false);
+		}
+
+		if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+			TreePushRawID(id);
+		return is_open;
+	}
+
+	bool TreeNodeEx(const char* label, ImGuiTreeNodeFlags flags, bool* v, ImTextureID user_texture)
+	{
+		ImGuiWindow* window = GetCurrentWindow();
+		if (window->SkipItems)
+			return false;
+
+		return TreeNodeBehavior(window->GetID(label), flags, v, user_texture, label, NULL);
+	}
+}
+
 namespace efk
 {
 	template <size_t size_>
@@ -685,6 +860,11 @@ namespace efk
 	void GUIManager::SetNextTreeNodeOpen(bool is_open, Cond cond)
 	{
 		ImGui::SetNextTreeNodeOpen(is_open, (ImGuiCond)cond);
+	}
+
+	bool GUIManager::TreeNodeEx(const char16_t* label, bool* v, ImageResource* user_texture_id, TreeNodeFlags flags)
+	{
+		return ImGui::TreeNodeEx(utf8str<256>(label), (ImGuiTreeNodeFlags)flags, v, ToImTextureID(user_texture_id));
 	}
 
 	bool GUIManager::Selectable(const char16_t* label, bool selected, SelectableFlags flags, ImageResource* user_texture_id)

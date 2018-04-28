@@ -314,7 +314,11 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// Tree
-			if (Manager.NativeManager.TreeNodeEx(Node.Name + id, flag))
+
+			var test = new[] { false };
+
+			if(Manager.NativeManager.TreeNodeEx(Node.Name, test, Images.GetIcon("PanelCommon"), flag))
+			//if (Manager.NativeManager.TreeNodeEx(Node.Name + id, flag))
             {
 				if(Manager.NativeManager.IsItemClicked(0) ||
 					Manager.NativeManager.IsItemClicked(1))

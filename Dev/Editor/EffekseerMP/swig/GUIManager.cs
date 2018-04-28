@@ -775,6 +775,21 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetNextTreeNodeOpen__SWIG_1(swigCPtr, is_open);
   }
 
+  public bool TreeNodeEx(string label, bool[] v, ImageResource user_texture_id, TreeNodeFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_2(swigCPtr, label, v, ImageResource.getCPtr(user_texture_id), (int)flags);
+    return ret;
+  }
+
+  public bool TreeNodeEx(string label, bool[] v, ImageResource user_texture_id) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_3(swigCPtr, label, v, ImageResource.getCPtr(user_texture_id));
+    return ret;
+  }
+
+  public bool TreeNodeEx(string label, bool[] v) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_TreeNodeEx__SWIG_4(swigCPtr, label, v);
+    return ret;
+  }
+
   public bool Selectable(string label, bool selected, SelectableFlags flags, ImageResource user_texture_id) {
     bool ret = EffekseerNativePINVOKE.GUIManager_Selectable__SWIG_0(swigCPtr, label, selected, (int)flags, ImageResource.getCPtr(user_texture_id));
     return ret;

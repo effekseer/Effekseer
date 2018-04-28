@@ -5438,6 +5438,66 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextTreeNodeOpen
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreeNodeEx__SWIG_2___(void * jarg1, char16_t * jarg2, bool* jarg3, void * jarg4, int jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool *arg3 = (bool *) 0 ;
+  efk::ImageResource *arg4 = (efk::ImageResource *) 0 ;
+  efk::TreeNodeFlags arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (efk::ImageResource *)jarg4; 
+  arg5 = (efk::TreeNodeFlags)jarg5; 
+  result = (bool)(arg1)->TreeNodeEx((char16_t const *)arg2,arg3,arg4,arg5);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreeNodeEx__SWIG_3___(void * jarg1, char16_t * jarg2, bool* jarg3, void * jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool *arg3 = (bool *) 0 ;
+  efk::ImageResource *arg4 = (efk::ImageResource *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  arg4 = (efk::ImageResource *)jarg4; 
+  result = (bool)(arg1)->TreeNodeEx((char16_t const *)arg2,arg3,arg4);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_TreeNodeEx__SWIG_4___(void * jarg1, char16_t * jarg2, bool* jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  bool *arg3 = (bool *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = jarg3;
+  result = (bool)(arg1)->TreeNodeEx((char16_t const *)arg2,arg3);
+  jresult = result; 
+  
+  
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Selectable__SWIG_0___(void * jarg1, char16_t * jarg2, unsigned int jarg3, int jarg4, void * jarg5) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;

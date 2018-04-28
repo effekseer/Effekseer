@@ -107,7 +107,7 @@ namespace Effekseer
 				return;
 			}
 
-			Images.Load(GUI.Manager.Native);
+			//Images.Load(GUI.Manager.Native);
 
             //GUI.Manager.AddControl(new DebugMenu());
 
@@ -118,7 +118,7 @@ namespace Effekseer
 				GUI.Manager.Update();
 			}
 
-			Images.Unload();
+			//Images.Unload();
 
 			GUI.Manager.Terminate();
 
@@ -269,7 +269,7 @@ namespace Effekseer
 		public static swig.ImageResource Step;
 		public static swig.ImageResource BackStep;
 		
-		public static Dictionary<string, swig.ImageResource> Icons;
+		public static Dictionary<string, swig.ImageResource> Icons = new Dictionary<string, swig.ImageResource>();
 
 		public static Dictionary<string, swig.ImageResource> tempImages = new Dictionary<string, swig.ImageResource>();
 
@@ -298,8 +298,6 @@ namespace Effekseer
 			Step = native.LoadImageResource("resources/Step.png");
 			BackStep = native.LoadImageResource("resources/BackStep.png");
 
-			Icons = new Dictionary<string, swig.ImageResource>();
-			
 			Icons["AppIcon"] = native.LoadImageResource("resources/icon.png");
 			Icons["NodeEmpty"] = native.LoadImageResource("resources/icons/NodeType_Empty.png");
 			Icons["NodeModel"] = native.LoadImageResource("resources/icons/NodeType_Model.png");

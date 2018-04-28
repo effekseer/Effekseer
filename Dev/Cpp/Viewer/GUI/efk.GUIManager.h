@@ -297,6 +297,8 @@ namespace efk
 
 		void SetNextTreeNodeOpen(bool is_open, Cond cond = Cond::None);
 
+		bool TreeNodeEx(const char16_t* label, bool* v, ImageResource* user_texture_id = NULL, TreeNodeFlags flags = TreeNodeFlags::None);
+
 		// Widgets: Selectable / Lists
 		bool Selectable(const char16_t* label, bool selected = false, SelectableFlags flags = SelectableFlags::None, ImageResource* user_texture_id = NULL);
 
