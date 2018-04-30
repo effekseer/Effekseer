@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using System.Reflection;
 
 namespace Effekseer
 {
@@ -290,44 +292,51 @@ namespace Effekseer
 			}
 		}
 
+		public static swig.ImageResource LoadAppResource(swig.Native native, string path)
+		{
+			string appDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+			string fullPath = Path.Combine(appDirectory, path);
+			return native.LoadImageResource(fullPath);
+		}
+
 		public static void Load(swig.Native native)
 		{
-			Play = native.LoadImageResource("resources/Play.png");
-			Stop = native.LoadImageResource("resources/Stop.png");
-			Pause = native.LoadImageResource("resources/Pause.png");
-			Step = native.LoadImageResource("resources/Step.png");
-			BackStep = native.LoadImageResource("resources/BackStep.png");
+			Play = LoadAppResource(native, "resources/Play.png");
+			Stop = LoadAppResource(native, "resources/Stop.png");
+			Pause = LoadAppResource(native, "resources/Pause.png");
+			Step = LoadAppResource(native, "resources/Step.png");
+			BackStep = LoadAppResource(native, "resources/BackStep.png");
 
-			Icons["AppIcon"] = native.LoadImageResource("resources/icon.png");
-			Icons["NodeEmpty"] = native.LoadImageResource("resources/icons/NodeType_Empty.png");
-			Icons["NodeModel"] = native.LoadImageResource("resources/icons/NodeType_Model.png");
-			Icons["NodeRibbon"] = native.LoadImageResource("resources/icons/NodeType_Ribbon.png");
-			Icons["NodeRing"] = native.LoadImageResource("resources/icons/NodeType_Ring.png");
-			Icons["NodeSprite"] = native.LoadImageResource("resources/icons/NodeType_Sprite.png");
-			Icons["NodeTrack"] = native.LoadImageResource("resources/icons/NodeType_Track.png");
+			Icons["AppIcon"] = LoadAppResource(native, "resources/icon.png");
+			Icons["NodeEmpty"] = LoadAppResource(native, "resources/icons/NodeType_Empty.png");
+			Icons["NodeModel"] = LoadAppResource(native, "resources/icons/NodeType_Model.png");
+			Icons["NodeRibbon"] = LoadAppResource(native, "resources/icons/NodeType_Ribbon.png");
+			Icons["NodeRing"] = LoadAppResource(native, "resources/icons/NodeType_Ring.png");
+			Icons["NodeSprite"] = LoadAppResource(native, "resources/icons/NodeType_Sprite.png");
+			Icons["NodeTrack"] = LoadAppResource(native, "resources/icons/NodeType_Track.png");
 
-			Icons["VisibleShow"] = native.LoadImageResource("resources/icons/Visible_Show.png");
-			Icons["VisibleHide"] = native.LoadImageResource("resources/icons/Visible_Hide.png");
+			Icons["VisibleShow"] = LoadAppResource(native, "resources/icons/Visible_Show.png");
+			Icons["VisibleHide"] = LoadAppResource(native, "resources/icons/Visible_Hide.png");
 
-			Icons["PanelBehavior"] = native.LoadImageResource("resources/icons/Panel_Behavior.png");
-			Icons["PanelCommon"] = native.LoadImageResource("resources/icons/Panel_Common.png");
-			Icons["PanelCulling"] = native.LoadImageResource("resources/icons/Panel_Culling.png");
-			Icons["PanelFCurve"] = native.LoadImageResource("resources/icons/Panel_FCurve.png");
-			Icons["PanelFileViewer"] = native.LoadImageResource("resources/icons/Panel_FileViewer.png");
-			Icons["PanelGenerationLocation"] = native.LoadImageResource("resources/icons/Panel_GenerationLocation.png");
-			Icons["PanelLocation"] = native.LoadImageResource("resources/icons/Panel_Location.png");
-			Icons["PanelLocationAbs"] = native.LoadImageResource("resources/icons/Panel_LocationAbs.png");
-			Icons["PanelNetwork"] = native.LoadImageResource("resources/icons/Panel_Network.png");
-			Icons["PanelNodeTree"] = native.LoadImageResource("resources/icons/Panel_NodeTree.png");
-			Icons["PanelOption"] = native.LoadImageResource("resources/icons/Panel_Option.png");
-			Icons["PanelRecorder"] = native.LoadImageResource("resources/icons/Panel_Recorder.png");
-			Icons["PanelRenderer"] = native.LoadImageResource("resources/icons/Panel_Renderer.png");
-			Icons["PanelRendererCommon"] = native.LoadImageResource("resources/icons/Panel_RendererCommon.png");
-			Icons["PanelRotation"] = native.LoadImageResource("resources/icons/Panel_Rotation.png");
-			Icons["PanelScale"] = native.LoadImageResource("resources/icons/Panel_Scale.png");
-			Icons["PanelSound"] = native.LoadImageResource("resources/icons/Panel_Sound.png");
-			Icons["PanelViewer"] = native.LoadImageResource("resources/icons/Panel_Viewer.png");
-			Icons["PanelViewPoint"] = native.LoadImageResource("resources/icons/Panel_ViewPoint.png");
+			Icons["PanelBehavior"] = LoadAppResource(native, "resources/icons/Panel_Behavior.png");
+			Icons["PanelCommon"] = LoadAppResource(native, "resources/icons/Panel_Common.png");
+			Icons["PanelCulling"] = LoadAppResource(native, "resources/icons/Panel_Culling.png");
+			Icons["PanelFCurve"] = LoadAppResource(native, "resources/icons/Panel_FCurve.png");
+			Icons["PanelFileViewer"] = LoadAppResource(native, "resources/icons/Panel_FileViewer.png");
+			Icons["PanelGenerationLocation"] = LoadAppResource(native, "resources/icons/Panel_GenerationLocation.png");
+			Icons["PanelLocation"] = LoadAppResource(native, "resources/icons/Panel_Location.png");
+			Icons["PanelLocationAbs"] = LoadAppResource(native, "resources/icons/Panel_LocationAbs.png");
+			Icons["PanelNetwork"] = LoadAppResource(native, "resources/icons/Panel_Network.png");
+			Icons["PanelNodeTree"] = LoadAppResource(native, "resources/icons/Panel_NodeTree.png");
+			Icons["PanelOption"] = LoadAppResource(native, "resources/icons/Panel_Option.png");
+			Icons["PanelRecorder"] = LoadAppResource(native, "resources/icons/Panel_Recorder.png");
+			Icons["PanelRenderer"] = LoadAppResource(native, "resources/icons/Panel_Renderer.png");
+			Icons["PanelRendererCommon"] = LoadAppResource(native, "resources/icons/Panel_RendererCommon.png");
+			Icons["PanelRotation"] = LoadAppResource(native, "resources/icons/Panel_Rotation.png");
+			Icons["PanelScale"] = LoadAppResource(native, "resources/icons/Panel_Scale.png");
+			Icons["PanelSound"] = LoadAppResource(native, "resources/icons/Panel_Sound.png");
+			Icons["PanelViewer"] = LoadAppResource(native, "resources/icons/Panel_Viewer.png");
+			Icons["PanelViewPoint"] = LoadAppResource(native, "resources/icons/Panel_ViewPoint.png");
 		}
 
 		public static void Unload()
