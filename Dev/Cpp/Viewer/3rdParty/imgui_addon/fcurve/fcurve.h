@@ -7,8 +7,8 @@ namespace ImGui
 {
 	enum class ImFCurveInterporationType
 	{
-		Linear = 0,
-		Cubic,
+		Cubic = 0,
+		Linear,
 	};
 
 	enum class ImFCurveEdgeType

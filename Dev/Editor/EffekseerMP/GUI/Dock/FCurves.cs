@@ -96,11 +96,13 @@ namespace Effekseer.GUI.Dock
 
 					Manager.NativeManager.NextColumn();
 
+					// Left key
 					var leftValues = new float[] { selected.Item2.LeftKeys[ind], selected.Item2.LeftValues[ind] };
 					if(Manager.NativeManager.DragFloat2(left_text, leftValues))
 					{
 						selected.Item2.LeftKeys[ind] = leftValues[0];
 						selected.Item2.LeftValues[ind] = leftValues[1];
+						selected.Item2.Clip(ind);
 						selected.Item2.IsDirtied = true;
 					}
 
@@ -108,11 +110,13 @@ namespace Effekseer.GUI.Dock
 
 					Manager.NativeManager.NextColumn();
 
+					// Right key
 					var rightValues = new float[] { selected.Item2.RightKeys[ind], selected.Item2.RightValues[ind] };
 					if (Manager.NativeManager.DragFloat2(right_text, rightValues))
 					{
 						selected.Item2.RightKeys[ind] = rightValues[0];
 						selected.Item2.RightValues[ind] = rightValues[1];
+						selected.Item2.Clip(ind);
 						selected.Item2.IsDirtied = true;
 					}
 
@@ -1167,7 +1171,7 @@ namespace Effekseer.GUI.Dock
 							properties[i].LeftKeys[j],
 							properties[i].LeftValues[j]);
 
-						key.SetLeftDirectly(
+						key.SetRightDirectly(
 							properties[i].RightKeys[j],
 							properties[i].RightValues[j]);
 
@@ -1215,6 +1219,26 @@ namespace Effekseer.GUI.Dock
 			public Data.Value.FCurveEdge StartEdge = Data.Value.FCurveEdge.Constant;
 
 			public Data.Value.FCurveEdge EndEdge = Data.Value.FCurveEdge.Constant;
+
+			/// <summary>
+			/// Clip left and right values
+			/// </summary>
+			/// <param name="index"></param>
+			public void Clip(int index)
+			{
+				if(index > 0)
+				{
+					LeftKeys[index] = System.Math.Max(LeftKeys[index], Keys[index - 1]);
+				}
+
+				if (index < KVSelected.Length - 2)
+				{
+					RightKeys[index] = System.Math.Min(RightKeys[index], Keys[index + 1]);
+				}
+
+				LeftKeys[index] = System.Math.Min(LeftKeys[index], Keys[index]);
+				RightKeys[index] = System.Math.Max(RightKeys[index], Keys[index]);
+			}
 
 			public int GetSelectedIndex()
 			{

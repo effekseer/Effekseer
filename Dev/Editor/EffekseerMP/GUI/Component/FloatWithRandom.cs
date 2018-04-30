@@ -71,6 +71,8 @@ namespace Effekseer.GUI.Component
 
 		void FixValueInternal(bool combined)
 		{
+			if (binding == null) return;
+
 			if (EnableUndo)
 			{
 				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
