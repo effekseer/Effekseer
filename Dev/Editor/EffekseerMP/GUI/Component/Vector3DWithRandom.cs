@@ -96,6 +96,7 @@ namespace Effekseer.GUI.Component
 		public override void Update()
 		{
 			if (binding == null) return;
+
 			isPopupShown = false;
 
 			if (binding != null)
@@ -134,7 +135,8 @@ namespace Effekseer.GUI.Component
 				txt_r2 = Resources.GetString("Min");
 			}
 
-			if (Manager.NativeManager.DragFloat3EfkEx(id1, internalValue1, 1, float.MinValue, float.MaxValue, txt_r1 + ":" + "%.3f", txt_r1 + ":" + "%.3f", txt_r1 + ":" + "%.3f"))
+			Manager.NativeManager.PushItemWidth(120);
+			if (Manager.NativeManager.DragFloat3EfkEx(id1, internalValue1, 1, float.MinValue, float.MaxValue, "X:" + "%.3f", "Y:" + "%.3f", "Z:" + "%.3f"))
 			{
 				if (EnableUndo)
 				{
@@ -159,7 +161,10 @@ namespace Effekseer.GUI.Component
 
 			Popup();
 
-			if (Manager.NativeManager.DragFloat3EfkEx(id2, internalValue2, 1, float.MinValue, float.MaxValue, txt_r2 + ":" + "%.3f", txt_r2 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
+			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Text(txt_r1);
+
+			if (Manager.NativeManager.DragFloat3EfkEx(id2, internalValue2, 1, float.MinValue, float.MaxValue, "X:" + "%.3f", "Y:" + "%.3f", "Z:" + "%.3f"))
 			{
 				if (EnableUndo)
 				{
@@ -183,6 +188,11 @@ namespace Effekseer.GUI.Component
 			}
 
 			Popup();
+
+			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Text(txt_r2);
+
+			Manager.NativeManager.PopItemWidth();
 		}
 
 		void Popup()

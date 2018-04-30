@@ -170,10 +170,7 @@ namespace Effekseer.GUI.Component
 			{
 				if (row.Control == null) continue;
 
-				if (!existsTypeRowsHash.Contains(row))
-				{
-					Controls.Add(row.Control);
-				}
+				Controls.Add(row.Control);
 
 				var v = row.GetValue(value);
 				row.ControlDynamic.SetBinding(v);
@@ -242,9 +239,9 @@ namespace Effekseer.GUI.Component
 				{
 					row.Control.OnDisposed();
 				}
-
-				this.Controls.Remove(row.Control);
 			}
+
+			this.Controls.Remove(row.Control);
 		}
 
 		void ChangeSelector(object sender, ChangedValueEventArgs e)

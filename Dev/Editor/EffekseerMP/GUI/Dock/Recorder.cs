@@ -43,6 +43,8 @@ namespace Effekseer.GUI.Dock
 			selectedAlphaTypes[0] = Resources.GetString("None");
 			selectedAlphaTypes[1] = Resources.GetString("UseOriginalImage");
 			selectedAlphaTypes[2] = Resources.GetString("GenerateAlpha");
+
+			Label = Resources.GetString("Recorder") + "###Recorder";
 		}
 
 		protected override void UpdateInternal()
