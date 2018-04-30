@@ -16,6 +16,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.Vector2D binding = null;
 
+		bool isActive = false;
+
 		float[] internalValue = new float[] { 0.0f, 0.0f };
 
 		public bool EnableUndo { get; set; } = true;
@@ -58,10 +60,26 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
+			FixValueInternal(false);
+		}
+
+		void FixValueInternal(bool combined)
+		{
+			if (EnableUndo)
+			{
+				binding.X.SetValue(internalValue[0], combined);
+				binding.Y.SetValue(internalValue[1], combined);
+			}
+			else
+			{
+				binding.X.SetValueDirectly(internalValue[0]);
+				binding.Y.SetValueDirectly(internalValue[1]);
+			}
 		}
 
 		public override void OnDisposed()
 		{
+			FixValueInternal(false);
 		}
 
 		public override void Update()
@@ -74,17 +92,17 @@ namespace Effekseer.GUI.Component
 
 			if (Manager.NativeManager.DragFloat2(id, internalValue))
 			{
-				if (EnableUndo)
-				{
-					binding.X.SetValue(internalValue[0]);
-					binding.Y.SetValue(internalValue[1]);
-				}
-				else
-				{
-					binding.X.SetValueDirectly(internalValue[0]);
-					binding.Y.SetValueDirectly(internalValue[1]);
-				}
+				FixValueInternal(isActive);
 			}
+
+			var isActive_Current = Manager.NativeManager.IsItemActive();
+
+			if (isActive && !isActive_Current)
+			{
+				FixValue();
+			}
+
+			isActive = isActive_Current;
 		}
 	}
 }

@@ -14,11 +14,11 @@ namespace Effekseer.GUI.Component
 
 		public string Description { get; set; } = string.Empty;
 
+		bool isActive = false;
+
 		Data.Value.Vector3D binding = null;
 
 		float[] internalValue = new float[] { 0.0f, 0.0f, 0.0f };
-
-		public bool ShouldBeRemoved { get; private set; } = false;
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -62,10 +62,28 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
+			FixValueInternal(false);
+		}
+
+		void FixValueInternal(bool combined)
+		{
+			if (EnableUndo)
+			{
+				binding.X.SetValue(internalValue[0], combined);
+				binding.Y.SetValue(internalValue[1], combined);
+				binding.Z.SetValue(internalValue[2], combined);
+			}
+			else
+			{
+				binding.X.SetValueDirectly(internalValue[0]);
+				binding.Y.SetValueDirectly(internalValue[1]);
+				binding.Z.SetValueDirectly(internalValue[2]);
+			}
 		}
 
 		public override void OnDisposed()
 		{
+			FixValueInternal(false);
 		}
 
 		public override void Update()
@@ -79,19 +97,17 @@ namespace Effekseer.GUI.Component
 
 			if (Manager.NativeManager.DragFloat3(id, internalValue))
 			{
-				if (EnableUndo)
-				{
-					binding.X.SetValue(internalValue[0]);
-					binding.Y.SetValue(internalValue[1]);
-					binding.Z.SetValue(internalValue[2]);
-				}
-				else
-				{
-					binding.X.SetValueDirectly(internalValue[0]);
-					binding.Y.SetValueDirectly(internalValue[1]);
-					binding.Z.SetValueDirectly(internalValue[2]);
-				}
+				FixValueInternal(isActive);
 			}
+
+			var isActive_Current = Manager.NativeManager.IsItemActive();
+
+			if (isActive && !isActive_Current)
+			{
+				FixValue();
+			}
+
+			isActive = isActive_Current;
 		}
 	}
 }
