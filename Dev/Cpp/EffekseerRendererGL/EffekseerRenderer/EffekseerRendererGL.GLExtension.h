@@ -61,6 +61,8 @@ namespace GLExt
 #define GL_MAP_FLUSH_EXPLICIT_BIT 0x0010
 #define GL_MAP_UNSYNCHRONIZED_BIT 0x0020
 
+#define GL_WRITE_ONLY 0x000088b9
+
 #if defined(__APPLE__) || defined(__ANDROID__)
 #else
 typedef ptrdiff_t GLsizeiptr;
@@ -71,6 +73,7 @@ typedef char GLchar;
 bool Initialize(OpenGLDeviceType deviceType);
 bool IsSupportedVertexArray();
 bool IsSupportedBufferRange();
+bool IsSupportedMapBuffer();
 
 void glDeleteBuffers(GLsizei n, const GLuint* buffers);
 GLuint glCreateShader(GLenum type);
@@ -113,7 +116,7 @@ void glDeleteSamplers(GLsizei n, const GLuint * samplers);
 void glSamplerParameteri(GLuint sampler, GLenum pname, GLint param);
 void glBindSampler(GLuint unit, GLuint sampler);
 
-
+void* glMapBuffer(GLenum target, GLenum access);
 void* glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 GLboolean glUnmapBuffer(GLenum target);
 

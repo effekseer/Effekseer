@@ -128,10 +128,12 @@ static const char g_sprite_fs_no_texture_src[] =
 
 		this->shader = shader_no_texture_;
 		ES_SAFE_DELETE(shader_);
+
+		vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 1024, true);
         
         vao = EffekseerRendererGL::VertexArray::Create(
                this->renderer,shader_no_texture_,
-               this->renderer->GetVertexBuffer(),
+               (EffekseerRendererGL::VertexBuffer*)vertexBuffer,
                nullptr);
 	}
 
@@ -140,6 +142,7 @@ static const char g_sprite_fs_no_texture_src[] =
 		auto shader_ = (EffekseerRendererGL::Shader*)shader;
 		ES_SAFE_DELETE(shader_);
         ES_SAFE_DELETE(vao);
+		ES_SAFE_DELETE(vertexBuffer);
 		shader = nullptr;
 	}
 
@@ -160,17 +163,17 @@ static const char g_sprite_fs_no_texture_src[] =
 	void LineRendererGL::Render()
 	{
 		GLCheckError();
-
+	
 		if (vertexies.size() == 0) return;
 
-		renderer->GetVertexBuffer()->Lock();
+		vertexBuffer->Lock();
 
-		auto vs = (EffekseerRendererGL::Vertex*)renderer->GetVertexBuffer()->GetBufferDirect(sizeof(EffekseerRendererGL::Vertex) * vertexies.size());
+		auto vs = (EffekseerRendererGL::Vertex*)vertexBuffer->GetBufferDirect(sizeof(EffekseerRendererGL::Vertex) * vertexies.size());
 		if (vs == nullptr) return;
 
 		memcpy(vs, vertexies.data(), sizeof(EffekseerRendererGL::Vertex) * vertexies.size());
 
-		renderer->GetVertexBuffer()->Unlock();
+		vertexBuffer->Unlock();
 
 		auto& state = renderer->GetRenderState()->Push();
 		state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
@@ -195,6 +198,7 @@ static const char g_sprite_fs_no_texture_src[] =
 
 		renderer->GetRenderState()->Update(false);
 
+		renderer->SetVertexBuffer((EffekseerRendererGL::VertexBuffer*)vertexBuffer, sizeof(EffekseerRendererGL::Vertex));
 		//EffekseerRendererGL::GLExt::glBindBuffer(GL_ARRAY_BUFFER, renderer->GetVertexBuffer()->GetInterface());
 		//EffekseerRendererGL::GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 

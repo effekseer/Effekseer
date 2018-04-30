@@ -21,7 +21,11 @@ class VertexBuffer
 	, public ::EffekseerRenderer::VertexBufferBase
 {
 private:
-	GLuint					m_buffer;
+	bool					nBufferingMode = false;
+	int32_t					bufferingIndex = 0;
+	int32_t					bufferingCount = 0;
+
+	GLuint					m_buffers[3];
 
 	uint32_t				m_vertexRingStart;
 	uint32_t				m_vertexRingOffset;
@@ -33,7 +37,7 @@ public:
 
 	static VertexBuffer* Create( RendererImplemented* renderer, int size, bool isDynamic );
 
-	GLuint GetInterface() { return m_buffer; }
+	GLuint GetInterface();
 
 public:	// デバイス復旧用
 	virtual void OnLostDevice();
@@ -47,6 +51,8 @@ public:
 	void Unlock();
 
 	bool IsValid();
+
+	bool IsNBufferingMode() const { return nBufferingMode; }
 };
 
 //-----------------------------------------------------------------------------------

@@ -956,7 +956,9 @@ void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCal
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size )
 {
-	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetVertexBuffer() == nullptr)
+	if (m_currentVertexArray == nullptr ||
+		m_currentVertexArray->GetVertexBuffer() == nullptr ||
+		m_currentVertexArray->GetVertexBuffer()->IsNBufferingMode())
 	{
 		GLExt::glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->GetInterface());
 	}
@@ -1010,7 +1012,9 @@ void RendererImplemented::SetLayout(Shader* shader)
 {
 	GLCheckError();
 	
-	if (m_currentVertexArray == nullptr || m_currentVertexArray->GetVertexBuffer() == nullptr)
+	if (m_currentVertexArray == nullptr || 
+		m_currentVertexArray->GetVertexBuffer() == nullptr ||
+		m_currentVertexArray->GetVertexBuffer()->IsNBufferingMode())
 	{
 		shader->EnableAttribs();
 		shader->SetVertex();

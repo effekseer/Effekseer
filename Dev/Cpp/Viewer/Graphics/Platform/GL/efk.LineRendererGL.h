@@ -20,6 +20,7 @@ namespace efk
 	private:
 		EffekseerRendererGL::RendererImplemented*	renderer = nullptr;
 		EffekseerRenderer::ShaderBase*				shader = nullptr;
+		EffekseerRenderer::VertexBufferBase*		vertexBuffer = nullptr;
         EffekseerRendererGL::VertexArray*           vao = nullptr;
         
 		std::vector<EffekseerRendererGL::Vertex>	vertexies;

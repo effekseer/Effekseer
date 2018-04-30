@@ -131,13 +131,15 @@ static const char g_sprite_fs_no_texture_src[] =
 		this->shader = shader_;
 		this->shader_no_texture = shader_no_texture_;
         
+		vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 12, true);
+
         vao = EffekseerRendererGL::VertexArray::Create(
                                                        this->renderer,shader_,
-                                                       this->renderer->GetVertexBuffer(),
+														(EffekseerRendererGL::VertexBuffer*)vertexBuffer,
                                                        this->renderer->GetIndexBuffer());
         vao_nt = EffekseerRendererGL::VertexArray::Create(
                                                        this->renderer,shader_no_texture_,
-                                                       this->renderer->GetVertexBuffer(),
+														(EffekseerRendererGL::VertexBuffer*)vertexBuffer,
                                                        this->renderer->GetIndexBuffer());
 
 	}
@@ -148,7 +150,7 @@ static const char g_sprite_fs_no_texture_src[] =
 		ES_SAFE_DELETE(shader_no_texture);
         ES_SAFE_DELETE(vao);
         ES_SAFE_DELETE(vao_nt);
-
+		ES_SAFE_DELETE(vertexBuffer);
 	}
 
 	void ImageRendererGL::Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], void* texturePtr)
@@ -176,16 +178,16 @@ static const char g_sprite_fs_no_texture_src[] =
 
 		for (auto i = 0; i < sprites.size(); i++)
 		{
-			renderer->GetVertexBuffer()->Lock();
+			vertexBuffer->Lock();
 
-			auto verteies = (EffekseerRendererGL::Vertex*)renderer->GetVertexBuffer()->GetBufferDirect(sizeof(EffekseerRendererGL::Vertex) * 4);
+			auto verteies = (EffekseerRendererGL::Vertex*)vertexBuffer->GetBufferDirect(sizeof(EffekseerRendererGL::Vertex) * 4);
 
 			verteies[0] = sprites[i].Verteies[0];
 			verteies[1] = sprites[i].Verteies[1];
 			verteies[2] = sprites[i].Verteies[2];
 			verteies[3] = sprites[i].Verteies[3];
 
-			renderer->GetVertexBuffer()->Unlock();
+			vertexBuffer->Unlock();
 
 			auto& state = renderer->GetRenderState()->Push();
 			state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
@@ -221,6 +223,8 @@ static const char g_sprite_fs_no_texture_src[] =
 			shader_->SetConstantBuffer();
 
 			renderer->GetRenderState()->Update(true);
+
+			renderer->SetVertexBuffer((EffekseerRendererGL::VertexBuffer*)vertexBuffer, sizeof(EffekseerRendererGL::Vertex));
 
 			renderer->SetLayout(shader_);
 

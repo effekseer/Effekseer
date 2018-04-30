@@ -77,6 +77,7 @@ typedef void (EFK_STDCALL * FP_glDeleteSamplers) (GLsizei n, const GLuint * samp
 typedef void (EFK_STDCALL * FP_glSamplerParameteri) (GLuint sampler, GLenum pname, GLint param);
 typedef void (EFK_STDCALL * FP_glBindSampler) (GLuint unit, GLuint sampler);
 
+typedef void* (EFK_STDCALL *FP_glMapBuffer)(GLenum target, GLenum access);
 typedef void* (EFK_STDCALL *FP_glMapBufferRange)(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 typedef GLboolean(EFK_STDCALL *FP_glUnmapBuffer)(GLenum target);
 
@@ -121,6 +122,7 @@ static FP_glDeleteSamplers g_glDeleteSamplers = nullptr;
 static FP_glSamplerParameteri g_glSamplerParameteri = nullptr;
 static FP_glBindSampler g_glBindSampler = nullptr;
 
+static FP_glMapBuffer g_glMapBuffer = NULL;
 static FP_glMapBufferRange g_glMapBufferRange = NULL;
 static FP_glUnmapBuffer g_glUnmapBuffer = NULL;
 
@@ -132,14 +134,16 @@ typedef void (* FP_glGenVertexArraysOES) (GLsizei n, GLuint *arrays);
 typedef void (* FP_glDeleteVertexArraysOES) (GLsizei n, const GLuint *arrays);
 typedef void (* FP_glBindVertexArrayOES) (GLuint array);
 
-typedef void* (* FP_glMapBufferRangeOES)(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
+typedef void* (* FP_glMapBufferOES)(GLenum target, GLenum access);
+typedef void* (* FP_glMapBufferRangeEXT)(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access);
 typedef GLboolean (* FP_glUnmapBufferOES)(GLenum target);
 
 static FP_glGenVertexArraysOES g_glGenVertexArraysOES = NULL;
 static FP_glDeleteVertexArraysOES g_glDeleteVertexArraysOES = NULL;
 static FP_glBindVertexArrayOES g_glBindVertexArrayOES = NULL;
 
-static FP_glMapBufferRangeOES g_glMapBufferRangeOES = NULL;
+static FP_glMapBufferOES g_glMapBufferOES = NULL;
+static FP_glMapBufferRangeEXT g_glMapBufferRangeEXT = NULL;
 static FP_glUnmapBufferOES g_glUnmapBufferOES = NULL;
 
 #endif
@@ -147,6 +151,7 @@ static FP_glUnmapBufferOES g_glUnmapBufferOES = NULL;
 static bool g_isInitialized = false;
 static bool g_isSupportedVertexArray = false;
 static bool g_isSurrpotedBufferRange = false;
+static bool g_isSurrpotedMapBuffer = false;
 
 #if _WIN32
 #define GET_PROC(name)	g_##name = (FP_##name)wglGetProcAddress( #name ); if(g_##name==NULL) return false;
@@ -207,6 +212,7 @@ bool Initialize(OpenGLDeviceType deviceType)
 	GET_PROC(glSamplerParameteri);
 	GET_PROC(glBindSampler);
 
+	GET_PROC(glMapBuffer);
 	GET_PROC(glMapBufferRange);
 	GET_PROC(glUnmapBuffer);
 
@@ -214,6 +220,8 @@ bool Initialize(OpenGLDeviceType deviceType)
 
 	g_isSupportedVertexArray = (g_glGenVertexArrays && g_glDeleteVertexArrays && g_glBindVertexArray);
 	g_isSurrpotedBufferRange = (g_glMapBufferRange && g_glUnmapBuffer);
+	g_isSurrpotedMapBuffer = (g_glMapBuffer && g_glUnmapBuffer);
+
 #endif
 
 #if defined(__EFFEKSEER_RENDERER_GLES2__)
@@ -224,18 +232,24 @@ bool Initialize(OpenGLDeviceType deviceType)
 	g_glBindVertexArrayOES = ::glBindVertexArrayOES;
 	g_isSupportedVertexArray = true;
 
-	g_glMapBufferRangeOES = ::glMapBufferRangeEXT;
+	g_glUnmapBuffer = ::glUnmapBuffer;
+	g_glMapBufferRangeEXT = ::glMapBufferRangeEXT;
 	g_glUnmapBufferOES = ::glUnmapBufferOES;
 	g_isSurrpotedBufferRange = true;
+	g_isSurrpotedMapBuffer = true;
 #else
 	GET_PROC(glGenVertexArraysOES);
 	GET_PROC(glDeleteVertexArraysOES);
 	GET_PROC(glBindVertexArrayOES);
 	g_isSupportedVertexArray = (g_glGenVertexArraysOES && g_glDeleteVertexArraysOES && g_glBindVertexArrayOES);
 
-	GET_PROC(glMapBufferRangeOES);
+	// Some smartphone causes segmentation fault.
+	//GET_PROC(glMapBufferRangeEXT);
+
+	GET_PROC(glMapBufferOES);
 	GET_PROC(glUnmapBufferOES);
-	g_isSurrpotedBufferRange = (g_glMapBufferRangeOES && g_glUnmapBufferOES);
+	g_isSurrpotedBufferRange = (g_glMapBufferRangeEXT && g_glUnmapBufferOES);
+	g_isSurrpotedMapBuffer = (g_glMapBufferOES && g_glUnmapBufferOES);
 #endif
 
 #else
@@ -258,6 +272,11 @@ bool IsSupportedVertexArray()
 bool IsSupportedBufferRange()
 {
 	return g_isSurrpotedBufferRange;
+}
+
+bool IsSupportedMapBuffer()
+{
+	return g_isSurrpotedMapBuffer;
 }
 
 void glDeleteBuffers(GLsizei n, const GLuint* buffers)
@@ -612,12 +631,23 @@ void glBindSampler(GLuint unit, GLuint sampler)
 #endif
 }
 
+void* glMapBuffer(GLenum target, GLenum access)
+{
+#if _WIN32
+	return g_glMapBuffer(target, access);
+#elif defined(__EFFEKSEER_RENDERER_GLES2__)
+	return g_glMapBufferOES(target, access);
+#else
+	return ::glMapBuffer(target, access);
+#endif
+}
+
 void* glMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access)
 {
 #if _WIN32
 	return g_glMapBufferRange(target, offset, length, access);
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
-	return g_glMapBufferRangeOES(target, offset, length, access);
+	return g_glMapBufferRangeEXT(target, offset, length, access);
 #else
 	return ::glMapBufferRange(target, offset, length, access);
 #endif

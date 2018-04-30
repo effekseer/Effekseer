@@ -24,6 +24,7 @@ namespace efk
 
 		EffekseerRendererGL::RendererImplemented*	renderer = nullptr;
 		EffekseerRenderer::ShaderBase*				shader = nullptr;
+		EffekseerRenderer::VertexBufferBase*		vertexBuffer = nullptr;
 		EffekseerRenderer::ShaderBase*				shader_no_texture = nullptr;
         EffekseerRendererGL::VertexArray*           vao = nullptr;
         EffekseerRendererGL::VertexArray*           vao_nt = nullptr;
