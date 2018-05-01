@@ -64,8 +64,8 @@ private:
 
 	bool	m_isSRGBMode = false;
 
-	std::shared_ptr<efk::RenderTextureGL>	viewRenderTexture;
-	std::shared_ptr<efk::DepthTextureGL>	viewDepthTexture;
+	std::shared_ptr<efk::RenderTexture>	viewRenderTexture;
+	std::shared_ptr<efk::DepthTexture>	viewDepthTexture;
 
 public:
 	/**
@@ -240,7 +240,7 @@ public:
 	/**
 		@brief	temp
 	*/
-	uint32_t GetViewID();
+	uint64_t GetViewID();
 
 	efk::Graphics* GetGraphics() const { return graphics; }
 

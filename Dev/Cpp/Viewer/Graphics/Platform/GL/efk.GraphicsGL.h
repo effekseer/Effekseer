@@ -10,6 +10,7 @@
 namespace efk
 {
 	class RenderTextureGL
+		: public RenderTexture
 	{
 	private:
 		int32_t width = 0;
@@ -17,22 +18,25 @@ namespace efk
 		GLuint	texture = 0;
 
 	public:
-		RenderTextureGL();
+		RenderTextureGL(Graphics* graphics);
 		virtual ~RenderTextureGL();
 		bool Initialize(int32_t width, int32_t height);
 
 		int32_t GetWidth() { return width; }
 		int32_t GetHeight() { return height; }
 		GLuint GetBuffer() { return texture; }
+
+		uint64_t GetViewID() override { return texture; }
 	};
 
 	class DepthTextureGL
+		: public DepthTexture
 	{
 	private:
 		GLuint	texture = 0;
 
 	public:
-		DepthTextureGL();
+		DepthTextureGL(Graphics* graphics);
 		virtual ~DepthTextureGL();
 		bool Initialize(int32_t width, int32_t height);
 
@@ -84,7 +88,7 @@ namespace efk
 
 		void EndScene() override;
 
-		void SetRenderTarget(RenderTextureGL* renderTexture, DepthTextureGL* depthTexture);
+		void SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture) override;
 
 		void BeginRecord(int32_t width, int32_t height) override;
 

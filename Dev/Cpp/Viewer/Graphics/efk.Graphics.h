@@ -10,10 +10,39 @@
 
 namespace efk
 {
+	class Graphics;
+
 	enum class DeviceType
 	{
 		DirectX9,
 		OpenGL,
+	};
+
+	class RenderTexture
+	{
+	public:
+		RenderTexture() = default;
+		virtual ~RenderTexture() = default;
+
+		virtual bool Initialize(int32_t width, int32_t height) = 0;
+
+		virtual int32_t GetWidth() = 0;
+		virtual int32_t GetHeight() = 0;
+
+		virtual uint64_t GetViewID() = 0;
+
+		static RenderTexture* Create(Graphics* graphics);
+	};
+
+	class DepthTexture
+	{
+	public:
+		DepthTexture() = default;
+		virtual ~DepthTexture() = default;
+
+		virtual bool Initialize(int32_t width, int32_t height) = 0;
+
+		static DepthTexture* Create(Graphics* graphics);
 	};
 
 	class Graphics
@@ -33,6 +62,8 @@ namespace efk
 		virtual void BeginScene() = 0;
 
 		virtual void EndScene() = 0;
+
+		virtual void SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture) = 0;
 
 		virtual void BeginRecord(int32_t width, int32_t height) = 0;
 

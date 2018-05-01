@@ -481,12 +481,14 @@ namespace efk
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
+		/*
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 
 		auto bit = GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 		glClearDepth(1.0f);
 		glClear(bit);
+		*/
 	}
 
 	void* GUIManager::GetNativeHandle()

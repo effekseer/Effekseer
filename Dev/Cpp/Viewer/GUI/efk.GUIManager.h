@@ -161,7 +161,7 @@ namespace efk
 	private:
 		GUIManagerCallback*		callback = nullptr;
 		efk::Window*	window = nullptr;
-
+		bool			isOpenGLMode = false;
 	public:
 		GUIManager();
 

@@ -8,7 +8,7 @@
 
 namespace efk
 {
-	RenderTextureGL::RenderTextureGL()
+	RenderTextureGL::RenderTextureGL(Graphics* graphics)
 	{
 
 	}
@@ -46,7 +46,7 @@ namespace efk
 		return true;
 	}
 
-	DepthTextureGL::DepthTextureGL()
+	DepthTextureGL::DepthTextureGL(Graphics* graphics)
 	{
 
 	}
@@ -235,8 +235,11 @@ namespace efk
 	{
 	}
 
-	void GraphicsGL::SetRenderTarget(RenderTextureGL* renderTexture, DepthTextureGL* depthTexture)
+	void GraphicsGL::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture)
 	{
+		auto rt = (RenderTextureGL*)renderTexture;
+		auto dt = (DepthTextureGL*)depthTexture;
+
 		GLCheckError();
 
 		// reset
@@ -261,11 +264,11 @@ namespace efk
 			GLuint cb[] = { 0 };
 			GLuint db = 0;
 
-			cb[0] = renderTexture->GetBuffer();
+			cb[0] = rt->GetBuffer();
 
 			if (depthTexture != nullptr)
 			{
-				db = depthTexture->GetBuffer();
+				db = dt->GetBuffer();
 			}
 
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cb[0], 0);

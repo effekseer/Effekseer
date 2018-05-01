@@ -7,6 +7,8 @@
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 
+
+
 namespace EffekseerTool
 {
 	Renderer::DistortingCallback::DistortingCallback(efk::Graphics* renderer)
@@ -169,6 +171,9 @@ void Renderer::ResetDevice()
 		textureLoader->Unload(backgroundData);
 		backgroundData = nullptr;
 	}
+
+	viewRenderTexture.reset();
+	viewDepthTexture.reset();
 
 	if (LostedDevice != nullptr)
 	{
@@ -437,15 +442,14 @@ bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 {
 	if (viewRenderTexture == nullptr || viewRenderTexture->GetWidth() != width || viewRenderTexture->GetHeight() != height)
 	{
-		viewRenderTexture = std::make_shared<efk::RenderTextureGL>();
-		viewDepthTexture = std::make_shared<efk::DepthTextureGL>();
+		viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
+		viewDepthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
 
 		viewRenderTexture->Initialize(width, height);
 		viewDepthTexture->Initialize(width, height);
 	}
 
-	auto g = (efk::GraphicsGL*)graphics;
-	g->SetRenderTarget(viewRenderTexture.get(), viewDepthTexture.get());
+	graphics->SetRenderTarget(viewRenderTexture.get(), viewDepthTexture.get());
 
 	m_cameraMatTemp = m_renderer->GetCameraMatrix();
 	m_projMatTemp = m_renderer->GetProjectionMatrix();
@@ -467,8 +471,7 @@ bool Renderer::EndRenderToView()
 	m_renderer->SetCameraMatrix(m_cameraMatTemp);
 	m_renderer->SetProjectionMatrix(m_projMatTemp);
 
-	auto g = (efk::GraphicsGL*)graphics;
-	g->SetRenderTarget(nullptr, nullptr);
+	graphics->SetRenderTarget(nullptr, nullptr);
 	return true;
 }
 
@@ -575,9 +578,9 @@ void Renderer::CopyToBackground()
 #endif
 }
 
-uint32_t Renderer::GetViewID()
+uint64_t Renderer::GetViewID()
 {
-	return viewRenderTexture->GetBuffer();
+	return viewRenderTexture->GetViewID();
 }
 
 }

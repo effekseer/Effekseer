@@ -3,6 +3,71 @@
 
 namespace efk
 {
+	RenderTextureDX9::RenderTextureDX9(Graphics* graphics)
+		: graphics(graphics)
+	{
+	}
+
+	RenderTextureDX9::~RenderTextureDX9()
+	{
+		ES_SAFE_RELEASE(renderTarget);
+		ES_SAFE_RELEASE(renderTargetTexture);
+	}
+
+	bool RenderTextureDX9::Initialize(int32_t width, int32_t height)
+	{
+		auto g = (GraphicsDX9*)graphics;
+		auto r = (EffekseerRendererDX9::Renderer*)g->GetRenderer();
+		auto hr = r->GetDevice()->CreateTexture(
+			width,
+			height,
+			1,
+			D3DUSAGE_RENDERTARGET,
+			D3DFMT_A8R8G8B8,
+			D3DPOOL_DEFAULT,
+			&renderTargetTexture,
+			NULL
+		);
+
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		renderTargetTexture->GetSurfaceLevel(0, &renderTarget);
+		this->width = width;
+		this->height = height;
+
+		return true;
+	}
+
+	DepthTextureDX9::DepthTextureDX9(Graphics* graphics)
+		: graphics(graphics)
+	{
+	}
+
+	DepthTextureDX9::~DepthTextureDX9()
+	{
+		ES_SAFE_RELEASE(depthTexture);
+	}
+
+	bool DepthTextureDX9::Initialize(int32_t width, int32_t height)
+	{
+		auto g = (GraphicsDX9*)graphics;
+		auto r = (EffekseerRendererDX9::Renderer*)g->GetRenderer();
+		auto hr = r->GetDevice()->CreateDepthStencilSurface(width, height, D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, TRUE, &depthTexture, NULL);
+
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		this->width = width;
+		this->height = height;
+
+		return true;
+	}
+
 	GraphicsDX9::GraphicsDX9()
 	{
 
@@ -238,6 +303,43 @@ namespace efk
 		}
 
 		d3d_device->EndScene();
+	}
+
+	void GraphicsDX9::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture)
+	{
+		auto rt = (RenderTextureDX9*)renderTexture;
+		auto dt = (DepthTextureDX9*)depthTexture;
+
+		if (renderTexture == nullptr)
+		{
+			d3d_device->SetRenderTarget(0, renderDefaultTarget);
+			d3d_device->SetDepthStencilSurface(renderDefaultDepth);
+			ES_SAFE_RELEASE(renderDefaultTarget);
+			ES_SAFE_RELEASE(renderDefaultDepth);
+		}
+		else
+		{
+			d3d_device->GetRenderTarget(0, &renderDefaultTarget);
+			d3d_device->GetDepthStencilSurface(&renderDefaultDepth);
+
+			if (rt != nullptr)
+			{
+				d3d_device->SetRenderTarget(0, rt->GetSurface());
+			}
+			else
+			{
+				d3d_device->SetRenderTarget(0, nullptr);
+			}
+			
+			if (dt != nullptr)
+			{
+				d3d_device->SetDepthStencilSurface(dt->GetSurface());
+			}
+			else
+			{
+				d3d_device->SetDepthStencilSurface(nullptr);
+			}
+		}
 	}
 
 	void GraphicsDX9::BeginRecord(int32_t width, int32_t height)
