@@ -257,6 +257,8 @@ bool Initialize(OpenGLDeviceType deviceType)
 		deviceType == OpenGLDeviceType::OpenGLES3)
 	{
 		g_isSupportedVertexArray = true;
+		g_isSurrpotedBufferRange = true;
+		g_isSurrpotedMapBuffer = true;
 	}
 #endif
 
