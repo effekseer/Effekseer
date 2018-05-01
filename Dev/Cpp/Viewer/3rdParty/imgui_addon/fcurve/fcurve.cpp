@@ -6,6 +6,15 @@
 
 namespace ImGui
 {
+	const int HoveredSize = 6;
+	const int PointHoveredSize = 8;
+	const int PointSelectedSize = 6;
+	const int PointUnselectedSize = 4;
+
+	const uint32_t PointHoveredColor = 0xf0FFFFFF;
+	const uint32_t PointSelectedColor = 0x80FFFFFF;
+	const uint32_t PointUnselectedColor = 0x50FFFFFF;
+
 	static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
 	{
 		return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y);
@@ -345,7 +354,7 @@ namespace ImGui
 				transform_f2s(v1),
 				transform_f2s(v2),
 				col,
-				2);
+				HoveredSize / 2);
 		}
 
 		// Add point
@@ -500,7 +509,7 @@ namespace ImGui
 				PushID(i + 1);
 
 				auto isChanged = false;
-				float pointSize = 4;
+				float pointSize = PointHoveredSize / 2;
 
 				auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 				auto cursorPos = GetCursorPos();
@@ -511,10 +520,10 @@ namespace ImGui
 
 				if (IsItemHovered())
 				{
-					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), 0x55000000);
-					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), 0x55000000);
-					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), 0x55000000);
-					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), 0x55000000);
+					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), PointHoveredColor);
+					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), PointHoveredColor);
+					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), PointHoveredColor);
+					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), PointHoveredColor);
 				}
 
 				if (IsItemActive() && IsMouseClicked(0))
@@ -584,14 +593,14 @@ namespace ImGui
 				{
 					if (0 < i)
 					{
-						leftHandleKeys[i] = std::max(leftHandleKeys[i], keys[i - 1]);
+						//leftHandleKeys[i] = std::max(leftHandleKeys[i], keys[i - 1]);
 					}
 
 					leftHandleKeys[i] = std::min(leftHandleKeys[i], keys[i]);
 
 					if (i < count - 1)
 					{
-						rightHandleKeys[i] = std::min(rightHandleKeys[i], keys[i + 1]);
+						//rightHandleKeys[i] = std::min(rightHandleKeys[i], keys[i + 1]);
 					}
 
 					rightHandleKeys[i] = std::max(rightHandleKeys[i], keys[i]);
@@ -669,7 +678,7 @@ namespace ImGui
 				if (!kv_selected[i]) continue;
 
 				auto isChanged = false;
-				float pointSize = 4;
+				float pointSize = PointHoveredSize / 2;
 
 				auto pos = transform_f2s(ImVec2(leftHandleKeys[i], leftHandleValues[i]));
 				auto cursorPos = GetCursorPos();
@@ -681,10 +690,10 @@ namespace ImGui
 
 				if (IsItemHovered())
 				{
-					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), 0x55000000);
-					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), 0x55000000);
-					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), 0x55000000);
-					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), 0x55000000);
+					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), PointHoveredColor);
+					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), PointHoveredColor);
+					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), PointHoveredColor);
+					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), PointHoveredColor);
 				}
 
 				if (IsItemActive() && IsMouseClicked(0))
@@ -728,7 +737,7 @@ namespace ImGui
 					// movable area is limited
 					if (0 < i)
 					{
-						leftHandleKeys[i] = std::max(leftHandleKeys[i], keys[i - 1]);
+						//leftHandleKeys[i] = std::max(leftHandleKeys[i], keys[i - 1]);
 					}
 
 					leftHandleKeys[i] = std::min(leftHandleKeys[i], keys[i]);
@@ -745,7 +754,7 @@ namespace ImGui
 				if (!kv_selected[i]) continue;
 
 				auto isChanged = false;
-				float pointSize = 4;
+				float pointSize = PointHoveredSize / 2;
 
 				auto pos = transform_f2s(ImVec2(rightHandleKeys[i], rightHandleValues[i]));
 				auto cursorPos = GetCursorPos();
@@ -757,10 +766,10 @@ namespace ImGui
 
 				if (IsItemHovered())
 				{
-					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), 0x55000000);
-					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), 0x55000000);
-					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), 0x55000000);
-					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), 0x55000000);
+					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), PointHoveredColor);
+					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), PointHoveredColor);
+					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), PointHoveredColor);
+					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), PointHoveredColor);
 				}
 
 				if (IsItemActive() && IsMouseClicked(0))
@@ -804,7 +813,7 @@ namespace ImGui
 					// movable area is limited
 					if (i < count - 1)
 					{
-						rightHandleKeys[i] = std::min(rightHandleKeys[i], keys[i + 1]);
+						//rightHandleKeys[i] = std::min(rightHandleKeys[i], keys[i + 1]);
 					}
 
 					rightHandleKeys[i] = std::max(rightHandleKeys[i], keys[i]);
@@ -830,6 +839,28 @@ namespace ImGui
 						auto cp1 = ImVec2(-rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
 						auto cp2 = ImVec2(-leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
 
+						if (v1.x < cp2.x)
+						{
+							auto n = ImNorm(cp2 - v2);
+							if (std::abs(n.x) > 0)
+							{
+								n.y /= n.x;
+								n.x = 1.0;
+								cp2 = v2 + n * (v2.x - v1.x);
+							}
+						}
+
+						if (v2.x > cp1.x)
+						{
+							auto n = ImNorm(cp1 - v1);
+							if (std::abs(n.x) > 0)
+							{
+								n.y /= n.x;
+								n.x = 1.0;
+								cp1 = v1 + n * (v1.x - v2.x);
+							}
+						}
+
 						if (interporations[i] == ImFCurveInterporationType::Cubic)
 						{
 							isLineHovered = isLineHovered | IsHoveredOnBezierCurve(
@@ -839,7 +870,7 @@ namespace ImGui
 								transform_f2s(cp2),
 								transform_f2s(v2),
 								col,
-								2);
+								HoveredSize / 2);
 						}
 						else
 						{
@@ -848,7 +879,7 @@ namespace ImGui
 								transform_f2s(v1),
 								transform_f2s(v2),
 								col,
-								2);
+								HoveredSize / 2);
 						}
 						
 						if (isLineHovered) break;
@@ -864,6 +895,28 @@ namespace ImGui
 						auto cp1 = ImVec2(rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
 						auto cp2 = ImVec2(leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
 
+						if (v1.x > cp2.x)
+						{
+							auto n = ImNorm(cp2 - v2);
+							if (std::abs(n.x) > 0)
+							{
+								n.y /= n.x;
+								n.x = 1.0;
+								cp2 = v2 + n * (v1.x - v2.x);
+							}
+						}
+
+						if (v2.x < cp1.x)
+						{
+							auto n = ImNorm(cp1 - v1);
+							if (std::abs(n.x) > 0)
+							{
+								n.y /= n.x;
+								n.x = 1.0;
+								cp1 = v1 + n * (v2.x - v1.x);
+							}
+						}
+
 						if (interporations[i] == ImFCurveInterporationType::Cubic)
 						{
 							isLineHovered = isLineHovered | IsHoveredOnBezierCurve(
@@ -873,7 +926,7 @@ namespace ImGui
 								transform_f2s(cp2),
 								transform_f2s(v2),
 								col,
-								2);
+								HoveredSize / 2);
 						}
 						else
 						{
@@ -882,7 +935,7 @@ namespace ImGui
 								transform_f2s(v1),
 								transform_f2s(v2),
 								col,
-								2);
+								HoveredSize / 2);
 						}
 
 						if (isLineHovered) break;
@@ -902,7 +955,7 @@ namespace ImGui
 						transform_f2s(v1),
 						transform_f2s(v2),
 						col,
-						2);
+						HoveredSize / 2);
 				}
 				else if (startEdge == ImFCurveEdgeType::Loop)
 				{
@@ -939,7 +992,7 @@ namespace ImGui
 						transform_f2s(v1),
 						transform_f2s(v2),
 						col,
-						2);
+						HoveredSize / 2);
 				}
 				else if (endEdge == ImFCurveEdgeType::Loop)
 				{
@@ -972,7 +1025,7 @@ namespace ImGui
 			{
 				auto p = transform_f2s(ImVec2(keys[i], values[i]));
 
-				if (!IsHovered(mousePos, p, 3)) continue;
+				if (!IsHovered(mousePos, p, PointHoveredSize / 2)) continue;
 
 
 				for (int j = i; j < count - 1; j++)
@@ -1104,6 +1157,28 @@ namespace ImGui
 					auto cp1 = ImVec2(-rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
 					auto cp2 = ImVec2(-leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
 
+					if (v1.x < cp2.x)
+					{
+						auto n = ImNorm(cp2 - v2);
+						if (std::abs(n.x) > 0)
+						{
+							n.y /= n.x;
+							n.x = 1.0;
+							cp2 = v2 + n * (v2.x - v1.x);
+						}
+					}
+
+					if (v2.x > cp1.x)
+					{
+						auto n = ImNorm(cp1 - v1);
+						if (std::abs(n.x) > 0)
+						{
+							n.y /= n.x;
+							n.x = 1.0;
+							cp1 = v1 + n * (v1.x - v2.x);
+						}
+					}
+
 					if (interporations[i] == ImFCurveInterporationType::Cubic)
 					{
 						window->DrawList->AddBezierCurve(
@@ -1133,6 +1208,28 @@ namespace ImGui
 
 					auto cp1 = ImVec2(rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
 					auto cp2 = ImVec2(leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
+
+					if (v1.x > cp2.x)
+					{
+						auto n = ImNorm(cp2 - v2);
+						if (std::abs(n.x) > 0)
+						{
+							n.y /= n.x;
+							n.x = 1.0;
+							cp2 = v2 + n * (v1.x - v2.x);
+						}
+					}
+
+					if (v2.x < cp1.x)
+					{
+						auto n = ImNorm(cp1 - v1);
+						if (std::abs(n.x) > 0)
+						{
+							n.y /= n.x;
+							n.x = 1.0;
+							cp1 = v1 + n * (v2.x - v1.x);
+						}
+					}
 
 					if (interporations[i] == ImFCurveInterporationType::Cubic)
 					{
@@ -1234,26 +1331,26 @@ namespace ImGui
 			{
 				if (kv_selected[i])
 				{
-					int pointSize = 4;
+					int pointSize = PointSelectedSize / 2;
 					auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 
-					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), 0x55FFFFFF);
-					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), 0x55FFFFFF);
-					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), 0x55FFFFFF);
-					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), 0x55FFFFFF);
+					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), PointSelectedColor);
+					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), PointSelectedColor);
+					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), PointSelectedColor);
+					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), PointSelectedColor);
 
-					window->DrawList->AddLine(transform_f2s(ImVec2(leftHandleKeys[i], leftHandleValues[i])), pos, 0x55FFFFFF);
-					window->DrawList->AddLine(transform_f2s(ImVec2(rightHandleKeys[i], rightHandleValues[i])), pos, 0x55FFFFFF);
+					window->DrawList->AddLine(transform_f2s(ImVec2(leftHandleKeys[i], leftHandleValues[i])), pos, PointSelectedColor);
+					window->DrawList->AddLine(transform_f2s(ImVec2(rightHandleKeys[i], rightHandleValues[i])), pos, PointSelectedColor);
 				}
 				else
 				{
-					int pointSize = 2;
+					int pointSize = PointUnselectedSize / 2;
 					auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 
-					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), 0x55FFFFFF);
-					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), 0x55FFFFFF);
-					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), 0x55FFFFFF);
-					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), 0x55FFFFFF);
+					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), PointUnselectedColor);
+					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), PointUnselectedColor);
+					window->DrawList->AddLine(ImVec2(pos.x + pointSize, pos.y), ImVec2(pos.x, pos.y + pointSize), PointUnselectedColor);
+					window->DrawList->AddLine(ImVec2(pos.x - pointSize, pos.y), ImVec2(pos.x, pos.y - pointSize), PointUnselectedColor);
 				}
 			}
 		}
