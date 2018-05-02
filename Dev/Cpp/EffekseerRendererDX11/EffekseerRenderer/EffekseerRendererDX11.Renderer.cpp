@@ -858,6 +858,7 @@ Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) cons
 
 void RendererImplemented::BeginShader(Shader* shader)
 {
+	currentShader = shader;
 	GetContext()->VSSetShader( shader->GetVertexShader(), NULL, 0);
 	GetContext()->PSSetShader( shader->GetPixelShader(), NULL, 0);
 }
@@ -867,7 +868,12 @@ void RendererImplemented::BeginShader(Shader* shader)
 //----------------------------------------------------------------------------------
 void RendererImplemented::EndShader(Shader* shader)
 {
+	currentShader = nullptr;
+}
 
+void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size)
+{
+	memcpy(currentShader->GetPixelConstantBuffer(), data, size);
 }
 
 //----------------------------------------------------------------------------------

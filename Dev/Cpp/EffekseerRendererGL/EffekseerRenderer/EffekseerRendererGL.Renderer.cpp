@@ -1124,6 +1124,9 @@ void RendererImplemented::BeginShader(Shader* shader)
 		GLExt::glBindVertexArray(m_currentVertexArray->GetInterface());
 	}
 
+	assert(currentShader == nullptr);
+	currentShader = shader;
+
 	GLCheckError();
 }
 
@@ -1132,6 +1135,9 @@ void RendererImplemented::BeginShader(Shader* shader)
 //----------------------------------------------------------------------------------
 void RendererImplemented::EndShader(Shader* shader)
 {
+	assert(currentShader == shader);
+	currentShader = nullptr;
+
 	GLCheckError();
 	
 	if (m_currentVertexArray)
@@ -1168,9 +1174,12 @@ void RendererImplemented::EndShader(Shader* shader)
 	GLCheckError();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size)
+{
+	assert(currentShader != nullptr);
+	memcpy(currentShader->GetPixelConstantBuffer(), data, size);
+}
+
 void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
 {
 	GLCheckError();

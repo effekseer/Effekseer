@@ -381,6 +381,8 @@ private:
 	Shader*							m_shader_distortion;
 	Shader*							m_shader_no_texture_distortion;
 
+	Shader*		currentShader = nullptr;
+
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>*	m_standardRenderer;
 
 	VertexArray*			m_vao;
@@ -608,6 +610,8 @@ public:
 	Shader* GetShader(bool useTexture, bool useDistortion) const;
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
+
+	void SetPixelBufferToShader(const void* data, int32_t size);
 
 	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
 
