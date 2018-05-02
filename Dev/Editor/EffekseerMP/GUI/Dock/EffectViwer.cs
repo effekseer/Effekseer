@@ -10,9 +10,16 @@ namespace Effekseer.GUI.Dock
 	{
 		public bool IsHovered = false;
 
+
+
+		Component.Enum renderMode;
+
 		public EffectViwer()
 		{
 			Label = Resources.GetString("Viewer") + "###Viewer";
+			renderMode = new Component.Enum();
+			renderMode.Initialize(typeof(Data.OptionValues.RenderMode));
+			renderMode.SetBinding(Core.Option.RenderingMode);
 		}
 
 		protected override void UpdateInternal()
@@ -22,12 +29,26 @@ namespace Effekseer.GUI.Dock
 			var windowSize = Manager.NativeManager.GetWindowSize();
 
 			// Menu
-			windowSize.Y = System.Math.Max(1, windowSize.Y - 40);
+			windowSize.Y = System.Math.Max(1, windowSize.Y - 50);
 
 			var p = Manager.Native.RenderView((int)windowSize.X, (int)windowSize.Y);
 			Manager.NativeManager.Image(p, (int)windowSize.X, (int)windowSize.Y);
 
 			IsHovered = Manager.NativeManager.IsWindowHovered();
+
+			// Enum
+			renderMode.Update();
+
+			Manager.NativeManager.SameLine();
+
+			// DrawCall
+			Manager.NativeManager.Text("Draw : " + Manager.Native.GetAndResetDrawCall().ToString());
+
+			Manager.NativeManager.SameLine();
+
+			// DrawCall
+			Manager.NativeManager.Text("Vertex : " + Manager.Native.GetAndResetVertexCount().ToString());
+
 		}
 	}
 }

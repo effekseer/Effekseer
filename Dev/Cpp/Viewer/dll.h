@@ -286,4 +286,14 @@ public:
 	void SetCullingParameter( bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ);
 
 	efk::ImageResource* LoadImageResource(const char16_t* path);
+
+	int32_t GetAndResetDrawCall();
+
+	int32_t GetAndResetVertexCount();
+
+	float GetFPS();
+
+#if !SWIG
+	EffekseerRenderer::Renderer* GetRenderer();
+#endif
 };

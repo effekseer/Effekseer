@@ -12,6 +12,8 @@
 
 #include "../3rdParty/imgui_addon/fcurve/fcurve.h"
 
+#include "../dll.h"
+
 namespace ImGui
 {
 	static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
@@ -330,11 +332,13 @@ namespace efk
 	GUIManager::~GUIManager()
 	{}
 
-	bool GUIManager::Initialize(const char16_t* title, int32_t width, int32_t height, bool isSRGBMode)
+	bool GUIManager::Initialize(const char16_t* title, int32_t width, int32_t height, bool isOpenGLMode, bool isSRGBMode)
 	{
 		window = new efk::Window();
 
-		if (!window->Initialize(title, width, height, isSRGBMode, true))
+		this->isOpenGLMode = isOpenGLMode;
+
+		if (!window->Initialize(title, width, height, isSRGBMode, isOpenGLMode))
 		{
 			ES_SAFE_DELETE(window);
 			return false;
@@ -375,14 +379,35 @@ namespace efk
 			return true;
 		};
 
-		window->MakeCurrent();
+		if (isOpenGLMode)
+		{
+			window->MakeCurrent();
 
 #ifdef _WIN32
-		glewInit();
+			glewInit();
 #endif
-        
+		}
+       		
+		return true;
+	}
+
+	void GUIManager::InitializeGUI(Native* native)
+	{
 		ImGui::CreateContext();
-		ImGui_ImplGlfwGL3_Init(window->GetGLFWWindows(), true, nullptr);
+		ImGui_ImplGlfw_Init(window->GetGLFWWindows(), true);
+
+		if (isOpenGLMode)
+		{
+			ImGui_ImplGL3_Init(window->GetGLFWWindows(), true, nullptr);
+		}
+		else
+		{
+#ifdef _WIN32
+			auto r = (EffekseerRendererDX9::Renderer*)native->GetRenderer();
+			ImGui_ImplDX9_Init(window->GetNativeHandle(), r->GetDevice());
+#endif
+		}
+
 		ImGui::StyleColorsDark();
 
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -408,7 +433,6 @@ namespace efk
 		style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
 		style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.9f);
 
-		return true;
 	}
 
 	void GUIManager::SetTitle(const char16_t* title)
@@ -428,7 +452,18 @@ namespace efk
 
 	void GUIManager::Terminate()
 	{
-		ImGui_ImplGlfwGL3_Shutdown();
+		if (isOpenGLMode)
+		{
+			ImGui_ImplGL3_Shutdown();
+		}
+		else
+		{
+#ifdef _WIN32
+			ImGui_ImplDX9_Shutdown();
+#endif
+		}
+
+		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 
 		window->MakeNone();
@@ -473,14 +508,35 @@ namespace efk
 
 	void GUIManager::ResetGUI()
 	{
-		ImGui_ImplGlfwGL3_NewFrame();
+		if (isOpenGLMode)
+		{
+			ImGui_ImplGL3_NewFrame();
+		}
+		else
+		{
+#if _WIN32
+			ImGui_ImplDX9_NewFrame();
+#endif
+		}
+
+		ImGui_ImplGlfw_NewFrame();
 	}
 
 	void GUIManager::RenderGUI()
 	{
 		ImGui::Render();
-		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
+		if (isOpenGLMode)
+		{
+			ImGui_ImplGL3_RenderDrawData(ImGui::GetDrawData());
+		}
+		else
+		{
+#if _WIN32
+			ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+#endif
+		}
+		
 		/*
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
@@ -687,7 +743,14 @@ namespace efk
 
 	void GUIManager::Image(void* user_texture_id, float x, float y)
 	{
-		ImGui::Image((ImTextureID)user_texture_id, ImVec2(x, y), ImVec2(0,1), ImVec2(1,0));
+		if (!isOpenGLMode)
+		{
+			ImGui::Image((ImTextureID)user_texture_id, ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1));
+		}
+		else
+		{
+			ImGui::Image((ImTextureID)user_texture_id, ImVec2(x, y), ImVec2(0, 1), ImVec2(1, 0));
+		}
 	}
 
 	bool GUIManager::ImageButton(ImageResource* user_texture_id, float x, float y)

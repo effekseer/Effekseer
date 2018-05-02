@@ -43,6 +43,9 @@
     <Filter Include="3rdParty\imgui_addon\imguihelper">
       <UniqueIdentifier>{97e75eb9-c8f9-439e-87aa-8dfcee2129fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rdParty\imgui_platform">
+      <UniqueIdentifier>{bb1df4a7-11df-4d01-a6b0-b0f974332851}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h">
@@ -102,9 +105,6 @@
     <ClInclude Include="3rdParty\imgui\imconfig.h">
       <Filter>3rdParty\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.h">
-      <Filter>3rdParty\imgui_glfw_gl3</Filter>
-    </ClInclude>
     <ClInclude Include="3rdParty\imgui_addon\imguidock\imguidock.h">
       <Filter>3rdParty\imgui_addon\imguidock</Filter>
     </ClInclude>
@@ -144,6 +144,15 @@
     </ClInclude>
     <ClInclude Include="3rdParty\imgui_addon\imguihelper\imguihelper.h">
       <Filter>3rdParty\imgui_addon\imguihelper</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_gl3.h">
+      <Filter>3rdParty\imgui_platform</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_glfw.h">
+      <Filter>3rdParty\imgui_platform</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_dx9.h">
+      <Filter>3rdParty\imgui_platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -201,9 +210,6 @@
     <ClCompile Include="3rdParty\imgui\imgui.cpp">
       <Filter>3rdParty\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="3rdParty\imgui_glfw_gl3\imgui_impl_glfw_gl3.cpp">
-      <Filter>3rdParty\imgui_glfw_gl3</Filter>
-    </ClCompile>
     <ClCompile Include="3rdParty\imgui_addon\imguidock\imguidock.cpp">
       <Filter>3rdParty\imgui_addon\imguidock</Filter>
     </ClCompile>
@@ -239,6 +245,15 @@
     </ClCompile>
     <ClCompile Include="3rdParty\imgui_addon\imguihelper\imguihelper.cpp">
       <Filter>3rdParty\imgui_addon\imguihelper</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_glfw.cpp">
+      <Filter>3rdParty\imgui_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_gl3.cpp">
+      <Filter>3rdParty\imgui_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_dx9.cpp">
+      <Filter>3rdParty\imgui_platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

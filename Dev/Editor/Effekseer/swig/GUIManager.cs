@@ -43,9 +43,13 @@ public class GUIManager : global::System.IDisposable {
   public GUIManager() : this(EffekseerNativePINVOKE.new_GUIManager(), true) {
   }
 
-  public bool Initialize(string title, int width, int height, bool isSRGBMode) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Initialize(swigCPtr, title, width, height, isSRGBMode);
+  public bool Initialize(string title, int width, int height, bool isOpenGLMode, bool isSRGBMode) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Initialize(swigCPtr, title, width, height, isOpenGLMode, isSRGBMode);
     return ret;
+  }
+
+  public void InitializeGUI(Native native) {
+    EffekseerNativePINVOKE.GUIManager_InitializeGUI(swigCPtr, Native.getCPtr(native));
   }
 
   public void SetTitle(string title) {

@@ -7,8 +7,17 @@
 #include "../3rdParty/imgui/imgui.h"
 #include "../3rdParty/imgui/imgui_internal.h"
 
-#include "../3rdParty/imgui_glfw_gl3/imgui_impl_glfw_gl3.h"
+#include "../3rdParty/imgui_platform/imgui_impl_glfw.h"
+#include "../3rdParty/imgui_platform/imgui_impl_gl3.h"
+
+#ifdef _WIN32
+#include "../3rdParty/imgui_platform/imgui_impl_dx9.h"
+#endif
+
+//#include "../3rdParty/imgui_glfw_gl3/imgui_impl_glfw_gl3.h"
 #include "../3rdParty/imgui_addon/imguidock/imguidock.h"
+
+class Native;
 
 namespace efk
 {
@@ -167,7 +176,9 @@ namespace efk
 
 		virtual ~GUIManager();
 
-		bool Initialize(const char16_t* title, int32_t width, int32_t height, bool isSRGBMode);
+		bool Initialize(const char16_t* title, int32_t width, int32_t height, bool isOpenGLMode, bool isSRGBMode);
+
+		void InitializeGUI(Native* native);
 
 		void SetTitle(const char16_t* title);
 

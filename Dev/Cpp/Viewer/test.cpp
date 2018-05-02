@@ -13,7 +13,9 @@
 #include "GUI/efk.GUIManager.h"
 
 #include "3rdParty/imgui/imgui.h"
-#include "3rdParty/imgui_glfw_gl3/imgui_impl_glfw_gl3.h"
+#include "3rdParty/imgui_platform/imgui_impl_gl3.h"
+#include "3rdParty/imgui_platform/imgui_impl_glfw.h"
+
 #include "3rdParty/imgui_addon/imguidock/imguidock.h"
 
 #include "3rdParty/nfd/nfd.h"
@@ -32,7 +34,7 @@
 int main_()
 {
 	auto guiManager = new efk::GUIManager();
-	guiManager->Initialize(u"Effekseer", 960, 540, false);
+	guiManager->Initialize(u"Effekseer", 960, 540, true, false);
 
 	auto renderer = new ::EffekseerTool::Renderer(2000, false, true);
 	renderer->Initialize(guiManager->GetNativeHandle(), 960, 540);
@@ -128,7 +130,8 @@ int main()
 #endif
     
 	ImGui::CreateContext();
-	ImGui_ImplGlfwGL3_Init(window->GetGLFWWindows(), true, nullptr);
+	ImGui_ImplGlfw_Init(window->GetGLFWWindows(), true);
+	ImGui_ImplGL3_Init(window->GetGLFWWindows(), true, nullptr);
 	ImGui::StyleColorsClassic();
 	
 
@@ -196,7 +199,8 @@ int main()
          //glBindVertexArray(0);
 #endif
         
-		ImGui_ImplGlfwGL3_NewFrame();
+		ImGui_ImplGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
 
 		if (ImGui::BeginMainMenuBar())
 		{
@@ -283,7 +287,7 @@ int main()
 		ImGui::End();
 
 		ImGui::Render();
-		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+		ImGui_ImplGL3_RenderDrawData(ImGui::GetDrawData());
         
 		renderer->Present();
 		window->Present();
@@ -297,7 +301,8 @@ int main()
 
 	ES_SAFE_DELETE(renderer);
 
-	ImGui_ImplGlfwGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui_ImplGL3_Shutdown();
 	ImGui::DestroyContext();
 
 	window->MakeNone();

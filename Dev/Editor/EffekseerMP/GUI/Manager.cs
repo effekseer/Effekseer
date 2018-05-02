@@ -109,8 +109,10 @@ namespace Effekseer.GUI
 
 		public static bool Initialize(int width, int height)
 		{
+			bool isOpenGLMode = true;
+
 			var mgr = new swig.GUIManager();
-			if (mgr.Initialize("Effekseer", 1280, 720, false))
+			if (mgr.Initialize("Effekseer", 1280, 720, isOpenGLMode, false))
 			{
 			}
 			else
@@ -123,12 +125,14 @@ namespace Effekseer.GUI
 			Native = new swig.Native();
 
 			Viewer = new Viewer(Native);
-			if (!Viewer.ShowViewer(mgr.GetNativeHandle(), 1280, 720, true))
+			if (!Viewer.ShowViewer(mgr.GetNativeHandle(), 1280, 720, isOpenGLMode))
 			{
 				mgr.Dispose();
 				mgr = null;
 				return false;
 			}
+
+			mgr.InitializeGUI(Native);
 
 			NativeManager = mgr;
 

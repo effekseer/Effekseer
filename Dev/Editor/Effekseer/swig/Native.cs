@@ -259,6 +259,21 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
+  public int GetAndResetDrawCall() {
+    int ret = EffekseerNativePINVOKE.Native_GetAndResetDrawCall(swigCPtr);
+    return ret;
+  }
+
+  public int GetAndResetVertexCount() {
+    int ret = EffekseerNativePINVOKE.Native_GetAndResetVertexCount(swigCPtr);
+    return ret;
+  }
+
+  public float GetFPS() {
+    float ret = EffekseerNativePINVOKE.Native_GetFPS(swigCPtr);
+    return ret;
+  }
+
 }
 
 }

@@ -2419,6 +2419,42 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_Native_LoadImageResource___(
 }
 
 
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_Native_GetAndResetDrawCall___(void * jarg1) {
+  int jresult ;
+  Native *arg1 = (Native *) 0 ;
+  int32_t result;
+  
+  arg1 = (Native *)jarg1; 
+  result = (int32_t)(arg1)->GetAndResetDrawCall();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_Native_GetAndResetVertexCount___(void * jarg1) {
+  int jresult ;
+  Native *arg1 = (Native *) 0 ;
+  int32_t result;
+  
+  arg1 = (Native *)jarg1; 
+  result = (int32_t)(arg1)->GetAndResetVertexCount();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Native_GetFPS___(void * jarg1) {
+  float jresult ;
+  Native *arg1 = (Native *) 0 ;
+  float result;
+  
+  arg1 = (Native *)jarg1; 
+  result = (float)(arg1)->GetFPS();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GUIManagerCallback___() {
   void * jresult ;
   efk::GUIManagerCallback *result = 0 ;
@@ -2566,13 +2602,14 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_GUIManager___(void * ja
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Initialize___(void * jarg1, char16_t * jarg2, int jarg3, int jarg4, unsigned int jarg5) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Initialize___(void * jarg1, char16_t * jarg2, int jarg3, int jarg4, unsigned int jarg5, unsigned int jarg6) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
   int32_t arg3 ;
   int32_t arg4 ;
   bool arg5 ;
+  bool arg6 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
@@ -2580,9 +2617,20 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Initialize_
   arg3 = (int32_t)jarg3; 
   arg4 = (int32_t)jarg4; 
   arg5 = jarg5 ? true : false; 
-  result = (bool)(arg1)->Initialize((char16_t const *)arg2,arg3,arg4,arg5);
+  arg6 = jarg6 ? true : false; 
+  result = (bool)(arg1)->Initialize((char16_t const *)arg2,arg3,arg4,arg5,arg6);
   jresult = result; 
   return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_InitializeGUI___(void * jarg1, void * jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  Native *arg2 = (Native *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (Native *)jarg2; 
+  (arg1)->InitializeGUI(arg2);
 }
 
 

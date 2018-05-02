@@ -1852,3 +1852,27 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 
 	return resource.get();
 }
+
+int32_t Native::GetAndResetDrawCall()
+{
+	auto call = g_renderer->GetRenderer()->GetDrawCallCount();
+	g_renderer->GetRenderer()->ResetDrawCallCount();
+	return call;
+}
+
+int32_t Native::GetAndResetVertexCount()
+{
+	auto call = g_renderer->GetRenderer()->GetDrawVertexCount();
+	g_renderer->GetRenderer()->ResetDrawVertexCount();
+	return call;
+}
+
+float Native::GetFPS()
+{
+	return 60.0;
+}
+
+EffekseerRenderer::Renderer* Native::GetRenderer()
+{
+	return g_renderer->GetRenderer();
+}
