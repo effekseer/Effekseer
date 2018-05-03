@@ -22,9 +22,6 @@
     <Filter Include="3rdParty\imgui">
       <UniqueIdentifier>{d4ac587e-9620-48b4-929c-e14db009cfef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3rdParty\imgui_glfw_gl3">
-      <UniqueIdentifier>{d380b913-6e16-4372-b2dd-8ac562d471ea}</UniqueIdentifier>
-    </Filter>
     <Filter Include="3rdParty\imgui_addon">
       <UniqueIdentifier>{ef085fba-1858-4077-8f85-e8c999bc338f}</UniqueIdentifier>
     </Filter>
