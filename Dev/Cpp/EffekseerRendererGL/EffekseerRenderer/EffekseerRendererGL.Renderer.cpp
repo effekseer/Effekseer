@@ -1174,6 +1174,12 @@ void RendererImplemented::EndShader(Shader* shader)
 	GLCheckError();
 }
 
+void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size)
+{
+	assert(currentShader != nullptr);
+	memcpy(currentShader->GetVertexConstantBuffer(), data, size);
+}
+
 void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size)
 {
 	assert(currentShader != nullptr);

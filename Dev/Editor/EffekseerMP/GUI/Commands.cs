@@ -70,17 +70,17 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Open")]
 		public static bool Open()
 		{
-			/*
-            var filter = Properties.Resources.ProjectFilter;
-            var filters = filter.Split('|');
-            var result = swig.FileDialog.OpenDialog(filters[1], System.IO.Directory.GetCurrentDirectory());
+
+			var filter = Resources.GetString("ProjectFilter");
+            var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
             if(!string.IsNullOrEmpty(result))
             {
                 Open(result);
             }
-            */
+            
 
+			/*
 			OpenFileDialog ofd = new OpenFileDialog();
 
 			ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
@@ -92,6 +92,7 @@ namespace Effekseer.GUI
 			{
 				Open(ofd.FileName);
 			}
+			*/
 
 			return true;
 		}
@@ -155,6 +156,30 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.SaveAs")]
 		public static bool SaveAs()
 		{
+			var filter = Resources.GetString("ProjectFilter");
+			var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
+
+			if (!string.IsNullOrEmpty(result))
+			{
+				var filepath = result;
+
+				if(System.IO.Path.GetExtension(filepath) != ".efkproj")
+				{
+					filepath += ".efkproj";
+				}
+				
+				Core.SaveTo(filepath);
+				RecentFiles.AddRecentFile(filepath);
+
+				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
+
+				if (Manager.Network.SendOnSave)
+				{
+					Manager.Network.Send();
+				}
+			}
+
+			/*
 			SaveFileDialog ofd = new SaveFileDialog();
 
 			ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
@@ -175,6 +200,7 @@ namespace Effekseer.GUI
 					Manager.Network.Send();
 				}
 			}
+			*/
 
 			return true;
 		}

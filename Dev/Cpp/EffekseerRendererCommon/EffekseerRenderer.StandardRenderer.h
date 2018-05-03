@@ -243,12 +243,17 @@ public:
 			m_renderer->SetTextures(shader_, textures, 1);
 		}
 
-		((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[0] = mCamera;
-		((Effekseer::Matrix44*)(shader_->GetVertexConstantBuffer()))[1] = mProj;
+		Effekseer::Matrix44 constantVSBuffer[2];
+		constantVSBuffer[0] = mCamera;
+		constantVSBuffer[1] = mProj;
+		m_renderer->SetVertexBufferToShader(constantVSBuffer, sizeof(Effekseer::Matrix44) * 2);
 
 		if (distortion)
 		{
-			((float*) (shader_->GetPixelConstantBuffer()))[0] = m_state.DistortionIntensity;
+			float constantPSBuffer[1];
+			constantPSBuffer[0] = m_state.DistortionIntensity;
+
+			m_renderer->SetPixelBufferToShader(constantPSBuffer, sizeof(float));
 		}
 
 		shader_->SetConstantBuffer();

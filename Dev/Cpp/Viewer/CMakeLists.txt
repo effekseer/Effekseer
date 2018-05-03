@@ -29,6 +29,9 @@ list(APPEND hs
 list(APPEND cpps
 	3rdParty/nfd/nfd_common.c
 	3rdParty/nfd/nfd_win.cpp
+	3rdParty/imgui_platform/imgui_impl_glfw.cpp
+	3rdParty/imgui_platform/imgui_impl_gl3.cpp
+	3rdParty/imgui_platform/imgui_impl_dx9.cpp
 )
 
 elseif(APPLE)
@@ -40,6 +43,8 @@ list(APPEND hs
 list(APPEND cpps
 	3rdParty/nfd/nfd_common.c
 	3rdParty/nfd/nfd_cocoa.m
+	3rdParty/imgui_platform/imgui_impl_glfw.cpp
+	3rdParty/imgui_platform/imgui_impl_gl3.cpp
 )
 else()
 list(APPEND hs
@@ -50,6 +55,8 @@ list(APPEND hs
 list(APPEND cpps
 	3rdParty/nfd/nfd_common.c
 	3rdParty/nfd/nfd_gtk.c
+	3rdParty/imgui_platform/imgui_impl_glfw.cpp
+	3rdParty/imgui_platform/imgui_impl_gl3.cpp
 )
 endif()
 
@@ -63,7 +70,6 @@ FILE(GLOB hs_g
 FILE(GLOB cpps_g
 	Graphics/Platform/DX9/*.cpp
 	Graphics/Platform/GL/*.cpp
-	3rdParty/imgui_glfw_gl3/*.cpp
 )
 else()
 FILE(GLOB hs_g
