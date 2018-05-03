@@ -90,14 +90,18 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
+			float step = 1.0f;
+
 			if (binding != null)
 			{
 				internalValue[0] = binding.X.Value;
 				internalValue[1] = binding.Y.Value;
 				internalValue[2] = binding.Z.Value;
+
+				step = Binding.X.Step / 10.0f;
 			}
 
-			if (Manager.NativeManager.DragFloat3(id, internalValue))
+			if (Manager.NativeManager.DragFloat3(id, internalValue, step))
 			{
 				FixValueInternal(isActive);
 			}

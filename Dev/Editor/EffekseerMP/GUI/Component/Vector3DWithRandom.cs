@@ -142,6 +142,8 @@ namespace Effekseer.GUI.Component
 
 			isPopupShown = false;
 
+			float step = 1.0f;
+
 			if (binding != null)
 			{
 				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
@@ -162,6 +164,8 @@ namespace Effekseer.GUI.Component
 					internalValue2[1] = binding.Y.Max;
 					internalValue2[2] = binding.Z.Max;
 				}
+
+				step = Binding.X.Step / 10.0f;
 			}
 
 			var txt_r1 = string.Empty;
@@ -179,7 +183,7 @@ namespace Effekseer.GUI.Component
 			}
 
 			Manager.NativeManager.PushItemWidth(120);
-			if (Manager.NativeManager.DragFloat3EfkEx(id1, internalValue1, 1, float.MinValue, float.MaxValue, "X:" + "%.3f", "Y:" + "%.3f", "Z:" + "%.3f"))
+			if (Manager.NativeManager.DragFloat3EfkEx(id1, internalValue1, step, float.MinValue, float.MaxValue, "X:" + "%.3f", "Y:" + "%.3f", "Z:" + "%.3f"))
 			{
 				if (EnableUndo)
 				{
@@ -209,7 +213,7 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(txt_r1);
 
-			if (Manager.NativeManager.DragFloat3EfkEx(id2, internalValue2, 1, float.MinValue, float.MaxValue, "X:" + "%.3f", "Y:" + "%.3f", "Z:" + "%.3f"))
+			if (Manager.NativeManager.DragFloat3EfkEx(id2, internalValue2, step, float.MinValue, float.MaxValue, "X:" + "%.3f", "Y:" + "%.3f", "Z:" + "%.3f"))
 			{
 				if (EnableUndo)
 				{
