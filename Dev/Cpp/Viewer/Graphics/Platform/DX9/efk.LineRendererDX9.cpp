@@ -88,6 +88,7 @@ namespace efk
 		state.DepthTest = true;
 		state.CullingType = Effekseer::CullingType::Double;
 
+		renderer->SetRenderMode(Effekseer::RenderMode::Normal);
 		renderer->BeginShader((EffekseerRendererDX9::Shader*)shader);
 
 		((Effekseer::Matrix44*)(shader->GetVertexConstantBuffer()))[0] = renderer->GetCameraMatrix();

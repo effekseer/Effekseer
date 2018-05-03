@@ -181,7 +181,7 @@ static const char g_sprite_fs_no_texture_src[] =
 		state.DepthTest = true;
 		state.CullingType = Effekseer::CullingType::Double;
 
-        
+		renderer->SetRenderMode(Effekseer::RenderMode::Normal);
         renderer->SetVertexArray(vao);
 		renderer->BeginShader((EffekseerRendererGL::Shader*)shader);
 		
@@ -191,8 +191,10 @@ static const char g_sprite_fs_no_texture_src[] =
 
 		renderer->SetTextures((EffekseerRendererGL::Shader*)shader, textures, 1);
 
-		((Effekseer::Matrix44*)(shader->GetVertexConstantBuffer()))[0] = renderer->GetCameraMatrix();
-		((Effekseer::Matrix44*)(shader->GetVertexConstantBuffer()))[1] = renderer->GetProjectionMatrix();
+		Effekseer::Matrix44 constantVSBuffer[2];
+		constantVSBuffer[0] = renderer->GetCameraMatrix();
+		constantVSBuffer[1] = renderer->GetProjectionMatrix();
+		renderer->SetVertexBufferToShader(constantVSBuffer, sizeof(Effekseer::Matrix44) * 2);
 
 		shader->SetConstantBuffer();
 

@@ -211,6 +211,7 @@ static const char g_sprite_fs_no_texture_src[] =
                 vao_ = vao_nt;
 			}
 
+			renderer->SetRenderMode(Effekseer::RenderMode::Normal);
             renderer->SetVertexArray(vao_);
 			renderer->BeginShader(shader_);
 

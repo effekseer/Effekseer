@@ -120,6 +120,7 @@ namespace efk
 				shader_ = (EffekseerRendererDX9::Shader*)shader_no_texture;
 			}
 
+			renderer->SetRenderMode(Effekseer::RenderMode::Normal);
 			renderer->BeginShader(shader_);
 
 			Effekseer::Matrix44 mats[2];
