@@ -145,6 +145,23 @@ Color Color::Lerp( const Color in1, const Color in2, float t )
 	*(int*)&o = _mm_cvtsi128_si32(res);
 	return o;
 #elif defined(EFK_NEON)
+
+#ifdef __ANDROID__
+	uint8x8_t s1 = vreinterpret_u8_u32(vmov_n_u32(*(uint32_t*)&in1));
+	uint8x8_t s2 = vreinterpret_u8_u32(vmov_n_u32(*(uint32_t*)&in2));
+	int16x8_t tm = vmovq_n_s16((int16_t)(t * 256));
+	uint16x8_t s3 = vmovl_u8(s1);
+	uint16x8_t s4 = vmovl_u8(s2);
+	int16x8_t r0 = (int16x8_t)vqsubq_s16((int16x8_t)s4, (int16x8_t)s3);
+	int16x8_t r1 = vmulq_s16(r0, tm);
+	int16x8_t r2 = vrshrq_n_s16(r1, 8);
+	int16x8_t r3 = (int16x8_t)vqaddq_s16((int16x8_t)s3, r2);
+	uint8x8_t res = (uint8x8_t)vqmovn_u16((uint16x8_t)r3);
+
+	Color o;
+	*(uint32_t*)&o = vget_lane_u32(vreinterpret_u32_u8(res), 0);
+	return o;
+#else
 	uint8x8_t s1 = vreinterpret_u8_u32(vmov_n_u32(*(uint32_t*)&in1));
 	uint8x8_t s2 = vreinterpret_u8_u32(vmov_n_u32(*(uint32_t*)&in2));
 	int16x8_t tm = vmovq_n_s16((int16_t)(t * 256));
@@ -159,6 +176,8 @@ Color Color::Lerp( const Color in1, const Color in2, float t )
 	Color o;
 	*(uint32_t*)&o = vget_lane_u32(vreinterpret_u32_u8(res), 0);
 	return o;
+#endif
+
 #else
 	Color o;
 	o.R = (uint8_t)Clamp( in1.R + (in2.R - in1.R) * t, 255, 0 );
