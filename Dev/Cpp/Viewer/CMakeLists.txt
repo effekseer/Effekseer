@@ -80,7 +80,6 @@ FILE(GLOB hs_g
 
 FILE(GLOB cpps_g
 	Graphics/Platform/GL/*.cpp
-	3rdParty/imgui_glfw_gl3/*.cpp
 )
 
 endif()
