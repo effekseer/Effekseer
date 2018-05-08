@@ -12,6 +12,8 @@ FILE(GLOB hs
 FILE(GLOB cpps
 	3rdParty/imgui/*.cpp
 	3rdParty/imgui_addon/imguidock/*.cpp
+	3rdParty/imgui_addon/imguihelper/*.cpp
+	3rdParty/imgui_addon/fcurve/*.cpp
 	EffekseerTool/*.cpp
 	Graphics/*.cpp
 	GUI/*.cpp
