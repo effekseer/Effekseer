@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace Effekseer.GUI.Menu
 {
@@ -133,6 +133,22 @@ namespace Effekseer.GUI.Menu
 						item.Label = script.Title;
 						item.Clicked += () =>
 						{
+							var filter = script.Filter.Split('.').Last();
+							var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
+
+							if (!string.IsNullOrEmpty(result))
+							{
+								var filepath = result;
+
+								script.Function(filepath);
+								System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
+							}
+							else
+							{
+								return;
+							}
+
+							/*
 							OpenFileDialog ofd = new OpenFileDialog();
 
 							ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
@@ -151,6 +167,7 @@ namespace Effekseer.GUI.Menu
 							{
 								return;
 							}
+							*/
 						};
 						import_menu.Controls.Add(item);
 					}
@@ -168,6 +185,21 @@ namespace Effekseer.GUI.Menu
 						item.Label = script.Title;
 						item.Clicked += () =>
 						{
+							var filter = script.Filter.Split('.').Last();
+							var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
+
+							if (!string.IsNullOrEmpty(result))
+							{
+								var filepath = result;
+								script.Function(filepath);
+
+								System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
+							}
+							else
+							{
+								return;
+							}
+							/*
 							SaveFileDialog ofd = new SaveFileDialog();
 
 							ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
@@ -186,6 +218,7 @@ namespace Effekseer.GUI.Menu
 							{
 								return;
 							}
+							*/
 						};
 						export_menu.Controls.Add(item);
 					}
