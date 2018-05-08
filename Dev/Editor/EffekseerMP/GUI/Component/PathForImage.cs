@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Media;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -152,16 +151,12 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding == null) return;
 
-			OpenFileDialog ofd = new OpenFileDialog();
+			var filter = Resources.GetString("ImageFilter");
+			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
-			ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
-			ofd.Filter = binding.Filter;
-			ofd.FilterIndex = 2;
-			ofd.Multiselect = false;
-
-			if (ofd.ShowDialog() == DialogResult.OK)
+			if (!string.IsNullOrEmpty(result))
 			{
-				var filepath = ofd.FileName;
+				var filepath = result;
 				binding.SetAbsolutePath(filepath);
 
 				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
@@ -171,7 +166,28 @@ namespace Effekseer.GUI.Component
 				return;
 			}
 
-			Read();
+				/*
+				OpenFileDialog ofd = new OpenFileDialog();
+
+				ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory();
+				ofd.Filter = binding.Filter;
+				ofd.FilterIndex = 2;
+				ofd.Multiselect = false;
+
+				if (ofd.ShowDialog() == DialogResult.OK)
+				{
+					var filepath = ofd.FileName;
+					binding.SetAbsolutePath(filepath);
+
+					System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
+				}
+				else
+				{
+					return;
+				}
+				*/
+
+				Read();
 		}
 
 		private void btn_delete_Click()
