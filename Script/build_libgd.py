@@ -27,7 +27,7 @@ with aceutils.CurrentDir('../Downloads'):
 			aceutils.call(r'cmake -G "Unix Makefiles" -DBUILD_STATIC_LIBS=ON "-DCMAKE_OSX_ARCHITECTURES=x86_64;i386" ../' + pathname + '/')
 			aceutils.call(r'make')
 		else:
-			aceutils.call(r'cmake -G "Unix Makefiles" ../' + pathname + '/')
+			aceutils.call(r'cmake -G "Unix Makefiles" -DBUILD_STATIC_LIBS=ON ../' + pathname + '/')
 			aceutils.call(r'make')
 
 	with aceutils.CurrentDir('gd_bin_x64'):
