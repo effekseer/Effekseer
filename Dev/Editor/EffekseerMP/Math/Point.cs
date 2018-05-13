@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Effekseer.Math
 {
+	/*
 	struct Point
 	{
 		public int X;
 		public int Y;
 	}
+    */
 }

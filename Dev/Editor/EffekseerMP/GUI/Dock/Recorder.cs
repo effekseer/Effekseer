@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using System.Windows.Forms;
-
 namespace Effekseer.GUI.Dock
 {
 	class Recorder : DockPanel
@@ -130,7 +128,8 @@ namespace Effekseer.GUI.Dock
 				var during = endingFrame - startingFrame;
 				if (during < 0)
 				{
-					MessageBox.Show("出力フレームが存在しません。");
+					var mb = new Dialog.MessageBox();
+					mb.Show("Error", "出力フレームが存在しません。");
 				}
 
 				var count = during / freq + 1;
@@ -140,31 +139,36 @@ namespace Effekseer.GUI.Dock
 
 				if (Manager.Viewer != null)
 				{
-					var dialog = new SaveFileDialog();
+					var filter = string.Empty;
 
 					if (selectedTypeIndex == 0)
-					{
-						dialog.Filter = "png(*.png)|*.png";
-					}
-					else if (selectedTypeIndex == 1)
-					{
-						dialog.Filter = "png(*.png)|*.png";
-					}
-					else if (selectedTypeIndex == 2)
-					{
-						dialog.Filter = "gif(*.gif)|*.gif";
-					}
-					else if (selectedTypeIndex == 3)
-					{
-						dialog.Filter = "AVI(*.avi)|*.avi";
-					}
+                    {
+						filter = "png";
+                    }
+                    else if (selectedTypeIndex == 1)
+                    {
+						filter = "png";
+                    }
+                    else if (selectedTypeIndex == 2)
+                    {
+						filter = "gif";
+                    }
+                    else if (selectedTypeIndex == 3)
+                    {
+						filter = "avi";
+                    }
 
-					if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-					{
-						return;
-					}
 
-					var filename = dialog.FileName;
+                    var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
+
+					if (string.IsNullOrEmpty(result)) return;
+                                   
+					var filename = result;
+
+					if (System.IO.Path.GetExtension(filename) != "." + filter)
+                    {
+						filename += "." + filter;
+                    }
 
 					var viewer = Manager.Viewer;
 					var param = Manager.Viewer.GetViewerParamater();
@@ -174,7 +178,6 @@ namespace Effekseer.GUI.Dock
 						viewer.LoadEffectFunc();
 					}
 
-
 					var tempDirectory = System.IO.Directory.GetCurrentDirectory();
 					System.IO.Directory.SetCurrentDirectory(Program.StartDirectory);
 
@@ -182,28 +185,32 @@ namespace Effekseer.GUI.Dock
 					{
 						if (!viewer.Record(filename, count, width, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
 						{
-							MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+							var mb = new Dialog.MessageBox();
+							mb.Show("Error", "保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 						}
 					}
 					else if (selectedTypeIndex == 1)
 					{
 						if (!viewer.Record(filename, count, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
 						{
-							MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+							var mb = new Dialog.MessageBox();
+                            mb.Show("Error", "保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 						}
 					}
 					else if (selectedTypeIndex == 2)
 					{
 						if (!viewer.RecordAsGifAnimation(filename, count, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
 						{
-							MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+							var mb = new Dialog.MessageBox();
+                            mb.Show("Error", "保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 						}
 					}
 					else if (selectedTypeIndex == 3)
 					{
 						if (!viewer.RecordAsAVI(filename, count, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
 						{
-							MessageBox.Show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+							var mb = new Dialog.MessageBox();
+                            mb.Show("Error", "保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
 						}
 					}
 

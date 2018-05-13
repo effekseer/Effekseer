@@ -702,7 +702,7 @@ namespace Effekseer.GUI.Dock
 
 			public List<TreeNode> Children { get; private set; }
 
-			public Math.Point Position { get; private set; }
+			//public Math.Point Position { get; private set; }
 
 			public int Height { get; private set; }
 

@@ -112,7 +112,8 @@ namespace Effekseer.GUI
 					}
 					catch (Exception e)
 					{
-						MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						var messageBox = new Dialog.MessageBox();
+    					messageBox.Show("Error", e.Message);
 					}
 
 					System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(fullPath));
@@ -295,7 +296,7 @@ namespace Effekseer.GUI
 
 			if (Core.SelectedNode != null)
 			{
-				var data = System.Windows.Forms.Clipboard.GetText();
+				var data = Clipboard.GetText();
 
 				var selected = Core.SelectedNode;
 
@@ -322,7 +323,7 @@ namespace Effekseer.GUI
 
 			if (Core.SelectedNode != null)
 			{
-				var data = System.Windows.Forms.Clipboard.GetText();
+				var data = Clipboard.GetText();
 				Core.Paste(Core.SelectedNode, data);
 				return true;
 			}
@@ -463,6 +464,15 @@ namespace Effekseer.GUI
 		{
 			string rootDir = Path.GetDirectoryName(Manager.GetEntryDirectory());
 
+			var filter = Resources.GetString("ProjectFilter");
+			var result = swig.FileDialog.OpenDialog(filter, Path.Combine(rootDir, @"Sample"));
+
+            if (!string.IsNullOrEmpty(result))
+            {
+                Open(result);
+            }
+
+            /*
 			OpenFileDialog ofd = new OpenFileDialog();
 
 			ofd.InitialDirectory = Path.Combine(rootDir, @"Sample");
@@ -474,6 +484,7 @@ namespace Effekseer.GUI
 			{
 				Open(ofd.FileName);
 			}
+            */
 
 			return true;
 		}
