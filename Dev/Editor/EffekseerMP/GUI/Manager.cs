@@ -9,6 +9,11 @@ namespace Effekseer.GUI
 {
 	class GUIManagerCallback : swig.GUIManagerCallback
 	{
+		void HandleAction()
+		{
+		}
+
+
 		public override void Resized(int x, int y)
 		{
 			Manager.Native.ResizeWindow(x, y);
@@ -41,10 +46,15 @@ namespace Effekseer.GUI
 
 		public override bool Closing()
 		{
-			if (Commands.SaveOnDisposing())
+			if (Manager.IgnoreDisposingDialogBox) return true;
+			if (!Core.IsChanged) return true;
+
+			var dialog = new Dialog.SaveOnDisposing(
+				() =>
 			{
-				return true;
-			}
+				Manager.IgnoreDisposingDialogBox = true;
+				Manager.NativeManager.Close();
+			});
 
 			return false;
 		}
@@ -54,8 +64,8 @@ namespace Effekseer.GUI
 	{
 
 
-		internal static swig.GUIManager NativeManager;
-		internal static swig.Native Native;
+		public static swig.GUIManager NativeManager;
+		public static swig.Native Native;
 
 		static GUIManagerCallback guiManagerCallback;
 
@@ -66,6 +76,11 @@ namespace Effekseer.GUI
 		public static Network Network;
 
 		static int resetCount = 0;
+
+        /// <summary>
+        /// if this flag is true, a dialog box on disposing is not shown
+        /// </summary>
+		internal static bool IgnoreDisposingDialogBox = false;
 
 		/// <summary>
 		/// 
@@ -132,8 +147,8 @@ namespace Effekseer.GUI
 				return false;
 			}
 
-			mgr.InitializeGUI(Native);
-
+            mgr.InitializeGUI(Native);
+			
 			NativeManager = mgr;
 
 			Images.Load(GUI.Manager.Native);

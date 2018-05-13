@@ -10,7 +10,7 @@ using System.IO;
 namespace Effekseer.GUI
 {
 	/// <summary>
-	/// ショートカット等から呼び出される命令群
+	/// Commands called with shortcuts
 	/// </summary>
 	class Commands
 	{
@@ -48,25 +48,20 @@ namespace Effekseer.GUI
 			register(RemoveNode);
 		}
 
-		[Name(value = "InternalNew")]  // 新規
+		[Name(value = "InternalNew")]
 		[UniqueName(value = "Internal.New")]
 		public static bool New()
 		{
-			if (SaveOnDisposing())
-			{
-
-			}
-			else
-			{
-				return true;
-			}
-
-			Core.New();
-
+            var dialog = new Dialog.SaveOnDisposing(
+                () =>
+                {
+				    Core.New();
+                });
+                     
 			return true;
 		}
 
-		[Name(value = "InternalOpen")]  // 開く
+		[Name(value = "InternalOpen")]
 		[UniqueName(value = "Internal.Open")]
 		public static bool Open()
 		{
@@ -98,46 +93,41 @@ namespace Effekseer.GUI
 		}
 
 		/// <summary>
-		/// ファイルを開く
+		/// Open a file
 		/// </summary>
-		/// <param name="fullPath">絶対パス</param>
+		/// <param name="fullPath">absolute path</param>
 		public static bool Open(string fullPath)
 		{
 			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception(Resources.GetString("NotAbsolutePathError"));
 
-			if (SaveOnDisposing())
-			{
-
-			}
-			else
-			{
-				return true;
-			}
-
-			try
-			{
-				if (Core.LoadFrom(fullPath))
+			var dialog = new Dialog.SaveOnDisposing(
+				() =>
 				{
-					RecentFiles.AddRecentFile(fullPath);
-				}
-			}
-			catch (Exception e)
-			{
-				MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+					try
+					{
+						if (Core.LoadFrom(fullPath))
+						{
+							RecentFiles.AddRecentFile(fullPath);
+						}
+					}
+					catch (Exception e)
+					{
+						MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
 
-			System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(fullPath));
+					System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(fullPath));
+				});
 
 			return true;
 		}
 
-		[Name(value = "InternalOverwrite")] // 上書き保存
+		[Name(value = "InternalOverwrite")]
 		[UniqueName(value = "Internal.Overwrite")]
 		public static bool Overwrite()
 		{
 			if (!System.IO.File.Exists(Core.FullPath))
 			{
-				SaveAs();
+				return SaveAs();
 			}
 			else
 			{
@@ -152,7 +142,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "InternalSaveAs")] // 名前をつけて保存
+		[Name(value = "InternalSaveAs")]
 		[UniqueName(value = "Internal.SaveAs")]
 		public static bool SaveAs()
 		{
@@ -177,6 +167,8 @@ namespace Effekseer.GUI
 				{
 					Manager.Network.Send();
 				}
+
+				return true;
 			}
 
 			/*
@@ -202,10 +194,10 @@ namespace Effekseer.GUI
 			}
 			*/
 
-			return true;
+			return false;
 		}
 
-		[Name(value = "InternalExit")] // 終了
+		[Name(value = "InternalExit")]
 		[UniqueName(value = "Internal.Exit")]
 		public static bool Exit()
 		{
@@ -213,7 +205,7 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "InternalPauseOrResume")] // 再生・一時停止
+		[Name(value = "InternalPauseOrResume")]
 		[UniqueName(value = "Internal.PlayViewer")]
 		public static bool Play()
 		{
@@ -381,9 +373,10 @@ namespace Effekseer.GUI
 		}
 
 		/// <summary>
-		/// 現在のエフェクトを破棄する必要がある場合の保存
+		/// if to save an effect is required, show disposing dialog box
 		/// </summary>
 		/// <returns></returns>
+        /*
 		static public bool SaveOnDisposing()
 		{
 			if (Core.IsChanged)
@@ -434,6 +427,7 @@ namespace Effekseer.GUI
 
 			return true;
 		}
+        */
 
 		/// <summary>
 		/// ヘルプを表示
