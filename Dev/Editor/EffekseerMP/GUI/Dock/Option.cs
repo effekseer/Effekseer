@@ -54,11 +54,13 @@ namespace Effekseer.GUI.Dock
 
 			if (e == Language.Japanese)
 			{
-				System.Windows.Forms.MessageBox.Show("次回のEffekseer起動時に適応します。");
+				var mb = new Dialog.MessageBox();
+				mb.Show("Info", "次回のEffekseer起動時に適応します。");
 			}
 			else if (e == Language.English)
 			{
-				System.Windows.Forms.MessageBox.Show("It adapts to the next startup");
+				var mb = new Dialog.MessageBox();
+				mb.Show("Info", "It adapts to the next startup");
 			}
 		}
 
