@@ -60,10 +60,10 @@ namespace Effekseer.GUI
 		}
 	}
 
-	class Manager
+	public class Manager
 	{
 
-
+ 
 		public static swig.GUIManager NativeManager;
 		public static swig.Native Native;
 
@@ -73,7 +73,7 @@ namespace Effekseer.GUI
 
 		public static Viewer Viewer;
 
-		public static Network Network;
+		internal static Network Network;
 
 		static int resetCount = 0;
 
@@ -105,9 +105,10 @@ namespace Effekseer.GUI
 			typeof(Dock.FCurves),
 			typeof(Dock.ViewPoint),
 			typeof(Dock.Recorder),
-
 			typeof(Dock.Option),
-
+			typeof(Dock.GlobalValues),
+			typeof(Dock.BehaviorValues),
+			typeof(Dock.Culling),
 			typeof(Dock.Network),
 			typeof(Dock.FileViewer),
 		};
@@ -448,7 +449,7 @@ namespace Effekseer.GUI
 			SelectOrShowWindow(typeof(Dock.RendererCommonValues), null, swig.DockSlot.Right, 0.2f, true);
 		}
 
-		public static Dock.DockPanel GetWindow(Type t)
+		internal static Dock.DockPanel GetWindow(Type t)
 		{
 			foreach(var panel in panels)
 			{

@@ -47,11 +47,15 @@ namespace Effekseer.GUI.Dialog
 					}
                 }
 
+				Manager.NativeManager.SameLine();
+
 				if (Manager.NativeManager.Button("No"))
                 {
                     ShouldBeRemoved = true;
 					disposed();        
                 }
+                
+                Manager.NativeManager.SameLine();
 
 				if (Manager.NativeManager.Button("Cancel"))
                 {

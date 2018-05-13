@@ -44,7 +44,7 @@ namespace Effekseer.Script
 
 		static public void Initialize()
 		{
-			var entryDirectory = Core.GetEntryDirectory() + "\\";
+			var entryDirectory = Core.GetEntryDirectory() + "/";
 
 			CSharpCodeProvider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
 			CompilerParameters = new CompilerParameters();
@@ -53,7 +53,17 @@ namespace Effekseer.Script
 			CompilerParameters.ReferencedAssemblies.Add("System.dll");
 			CompilerParameters.ReferencedAssemblies.Add("System.Drawing.dll");
 			CompilerParameters.ReferencedAssemblies.Add("System.Windows.Forms.dll");
-			CompilerParameters.ReferencedAssemblies.Add(entryDirectory + "EffekseerInterface.dll");
+
+			if(System.IO.File.Exists(entryDirectory + "EffekseerMP.exe"))
+			{
+				CompilerParameters.ReferencedAssemblies.Add(entryDirectory + "EffekseerMP.exe");
+			}
+
+			if (System.IO.File.Exists(entryDirectory + "EffekseerInterface.dll"))
+            {
+                CompilerParameters.ReferencedAssemblies.Add(entryDirectory + "EffekseerInterface.dll");
+            }
+
 			CompilerParameters.ReferencedAssemblies.Add(entryDirectory + "EffekseerCore.dll");
 			PythonEngine = ph.Python.CreateEngine();
 		}
@@ -84,12 +94,21 @@ namespace Effekseer.Script
 
 			string ext = System.IO.Path.GetExtension(path);
 
-			
+
 			if (ext == ".cs")
 			{
-				// C#
+				var entryDirectory = Core.GetEntryDirectory() + "/";
 
-				var result = CSharpCodeProvider.CompileAssemblyFromFile(CompilerParameters, path);
+				// C#
+				var lines = System.IO.File.ReadAllText(path);
+
+                // Temp for dev
+				if (System.IO.File.Exists(entryDirectory + "EffekseerMP.exe"))
+				{
+					lines = "#define MPDEF\n" + lines;
+				}
+
+				var result = CSharpCodeProvider.CompileAssemblyFromSource(CompilerParameters, lines);
 				if (result.Errors.HasErrors)
 				{
 					compiled = null;

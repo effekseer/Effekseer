@@ -130,6 +130,9 @@
     <Compile Include="swig\WindowFlags.cs" />
     <Compile Include="Utils\DelayedList.cs" />
     <Compile Include="GUI\Dialog\SaveOnDisposing.cs" />
+    <Compile Include="GUI\Dock\BehaviorValues.cs" />
+    <Compile Include="GUI\Dock\Culling.cs" />
+    <Compile Include="GUI\Dock\GlobalValues.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

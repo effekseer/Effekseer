@@ -303,7 +303,7 @@ namespace Effekseer
 
 		public static void Initialize()
 		{
-			var entryDirectory = GetEntryDirectory() + "\\";
+			var entryDirectory = GetEntryDirectory() + "/";
 
 			// Load scripts
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts");
@@ -316,6 +316,7 @@ namespace Effekseer
 
 			{
 				var files = System.IO.Directory.GetFiles(entryDirectory + "scripts/command", "*.*", System.IO.SearchOption.AllDirectories);
+                
 				foreach (var file in files)
 				{
 					var ext = System.IO.Path.GetExtension(file);
@@ -385,6 +386,9 @@ namespace Effekseer
 								OnOutputMessage(error);
 							}
 						}
+
+						Console.WriteLine(error);
+
 					}
 				}
 			}

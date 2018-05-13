@@ -316,10 +316,10 @@ namespace Effekseer.GUI.Menu
 				setDockWindow(Resources.GetString("CameraSettings"), typeof(Dock.ViewPoint), Images.GetIcon("PanelViewPoint"));
 				setDockWindow(Resources.GetString("Recorder"), typeof(Dock.Recorder), Images.GetIcon("PanelRecorder"));
 				setDockWindow(Resources.GetString("Options"), typeof(Dock.Option), Images.GetIcon("PanelOption"));
-				//setDockWindow(Properties.Resources.Options, typeof(DockGlobal), Properties.Get(Icon.Resources_IconOption));
-				//setDockWindow(Properties.Resources.Behavior, typeof(DockEffectBehavior), Properties.Get(Icon.Resources_IconBehavior));
-				//setDockWindow(Properties.Resources.Culling, typeof(DockCulling), Properties.Resources.IconCulling);
-				setDockWindow(Resources.GetString("Network"), typeof(Dock.Network), Images.GetIcon("PanelNetwork"));
+				setDockWindow(Resources.GetString("Global"), typeof(Dock.GlobalValues), Images.GetIcon("PanelGlobal"));
+				setDockWindow(Resources.GetString("Behavior"), typeof(Dock.BehaviorValues), Images.GetIcon("Behavior"));
+				setDockWindow(Resources.GetString("Culling"), typeof(Dock.Culling), Images.GetIcon("Culling"));
+                setDockWindow(Resources.GetString("Network"), typeof(Dock.Network), Images.GetIcon("PanelNetwork"));
 				setDockWindow(Resources.GetString("FileViewer"), typeof(Dock.FileViewer), Images.GetIcon("PanelFileViewer"));
 
 				this.Controls.Add(menu);
