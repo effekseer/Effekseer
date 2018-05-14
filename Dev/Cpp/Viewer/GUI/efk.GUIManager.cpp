@@ -553,6 +553,18 @@ namespace efk
 		return window->GetNativeHandle();
 	}
 
+	const char16_t* GUIManager::GetClipboardText()
+	{
+		auto ret = glfwGetClipboardString(window->GetGLFWWindows());
+		clipboard = utf8_to_utf16(ret);
+		return clipboard.c_str();
+	}
+
+	void GUIManager::SetClipboardText(const char16_t* text)
+	{
+		glfwSetClipboardString(window->GetGLFWWindows(), utf16_to_utf8(text).c_str());
+	}
+
 	bool GUIManager::Begin(const char16_t* name, bool* p_open)
 	{
 		return ImGui::Begin(utf8str<256>(name), p_open);

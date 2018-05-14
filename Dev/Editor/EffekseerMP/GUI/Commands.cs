@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using System.Diagnostics;
 using System.Reflection;
 using System.IO;
@@ -279,8 +279,7 @@ namespace Effekseer.GUI
 			if (Core.SelectedNode != null)
 			{
 				var data = Core.Copy(Core.SelectedNode);
-				Clipboard.Clear();
-				Clipboard.SetText(data);
+				Manager.NativeManager.SetClipboardText(data);
 				return true;
 			}
 
@@ -296,7 +295,7 @@ namespace Effekseer.GUI
 
 			if (Core.SelectedNode != null)
 			{
-				var data = Clipboard.GetText();
+				var data = Manager.NativeManager.GetClipboardText();
 
 				var selected = Core.SelectedNode;
 
@@ -314,7 +313,7 @@ namespace Effekseer.GUI
 			return false;
 		}
 
-		[Name(value = "InternalPasteInfo")] // ノード情報の貼り付け
+		[Name(value = "InternalPasteInfo")]
 		[UniqueName(value = "Internal.PasteInfo")]
 		public static bool PasteInfo()
 		{
@@ -323,7 +322,7 @@ namespace Effekseer.GUI
 
 			if (Core.SelectedNode != null)
 			{
-				var data = Clipboard.GetText();
+				var data = Manager.NativeManager.GetClipboardText();
 				Core.Paste(Core.SelectedNode, data);
 				return true;
 			}
@@ -331,7 +330,7 @@ namespace Effekseer.GUI
 			return false;
 		}
 
-		[Name(value = "InternalAddNode")] // ノードの追加
+		[Name(value = "InternalAddNode")]
 		[UniqueName(value = "Internal.AddNode")]
 		public static bool AddNode()
 		{

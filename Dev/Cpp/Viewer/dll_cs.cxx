@@ -2782,6 +2782,28 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetNativeHandle__
 }
 
 
+SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetClipboardText___(void * jarg1) {
+  char16_t * jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *result = 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (char16_t *)(arg1)->GetClipboardText();
+  jresult = (char16_t *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetClipboardText___(void * jarg1, char16_t * jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->SetClipboardText((char16_t const *)arg2);
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Begin___(void * jarg1, char16_t * jarg2, unsigned int * jarg3) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;

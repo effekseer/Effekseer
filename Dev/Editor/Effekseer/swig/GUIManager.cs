@@ -111,6 +111,15 @@ public class GUIManager : global::System.IDisposable {
 
   public System.IntPtr GetNativeHandle() { return EffekseerNativePINVOKE.GUIManager_GetNativeHandle(swigCPtr); }
 
+  public string GetClipboardText() {
+    string ret = System.Runtime.InteropServices.Marshal.PtrToStringUni(EffekseerNativePINVOKE.GUIManager_GetClipboardText(swigCPtr));
+    return ret;
+  }
+
+  public void SetClipboardText(string text) {
+    EffekseerNativePINVOKE.GUIManager_SetClipboardText(swigCPtr, text);
+  }
+
   public bool Begin(string name, ref bool p_open) {
     bool ret = EffekseerNativePINVOKE.GUIManager_Begin(swigCPtr, name, ref p_open);
     return ret;

@@ -171,6 +171,8 @@ namespace efk
 		GUIManagerCallback*		callback = nullptr;
 		efk::Window*	window = nullptr;
 		bool			isOpenGLMode = false;
+		std::u16string	clipboard;
+
 	public:
 		GUIManager();
 
@@ -207,6 +209,10 @@ namespace efk
 		void RenderGUI();
 
 		void* GetNativeHandle();
+
+		const char16_t* GetClipboardText();
+
+		void SetClipboardText(const char16_t* text);
 
 		bool Begin(const char16_t* name, bool* p_open);
 		void End();
