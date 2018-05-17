@@ -66,10 +66,13 @@ namespace Effekseer.GUI.Dock
 
 		override protected void UpdateInternal()
 		{
+			const int showHideButtonOffset = 40;
+
 			isPopupShown = false;
 
+			var windowSize = Manager.NativeManager.GetWindowSize();
 			Manager.NativeManager.Columns(2);
-			//Manager.NativeManager.SetColumnOffset(1, 300);
+			Manager.NativeManager.SetColumnOffset(1, Math.Max(0, windowSize.X - showHideButtonOffset));
 
 			Children.Lock();
 			foreach (var child in Children.Internal)
