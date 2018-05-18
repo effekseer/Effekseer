@@ -65,7 +65,12 @@ public class Script
         string path = string.Empty;
         float[] mag = new float[1];
 
-        public bool ShouldBeRemoved { get; private set; } = false;
+        public bool ShouldBeRemoved { get; private set; }
+
+		public Magnification()
+		{
+			ShouldBeRemoved = false;
+		}
 
         public void Show(string path)
         {
