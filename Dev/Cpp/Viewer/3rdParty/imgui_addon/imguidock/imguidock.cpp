@@ -595,6 +595,7 @@ struct DockContext
     {
         Dock* dest_dock = getDockAt(GetIO().MousePos);
 
+		SetNextWindowBgAlpha(0.0f);
 	Begin("##Overlay",
               NULL,
 	      ImVec2(0, 0),
