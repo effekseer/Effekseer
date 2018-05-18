@@ -539,6 +539,52 @@ struct DockContext
 	}
 #	endif ////IMGUITABWINDOW_H_
 	}
+		// drop on tab
+	auto current_dock = dest_dock;
+	int dockCount = 1;
+	while (current_dock != nullptr && current_dock->prev_tab != nullptr)
+	{
+		current_dock = current_dock->prev_tab;
+		dockCount++;
+	}
+	
+	auto current_pos = current_dock != nullptr ? dest_dock->pos : ImVec2();
+
+	current_pos += GetStyle().WindowPadding;
+	// Dropdown
+	if (dockCount > 1) current_pos += ImVec2(16, 0);
+	
+	while (current_dock != nullptr)
+	{
+		current_pos.x += 15;
+		float line_height = GetTextLineHeightWithSpacing();
+		const char* text_end = FindRenderedTextEnd(current_dock->label);
+		ImVec2 size(CalcTextSize(current_dock->label, text_end).x, line_height);
+
+		// temp
+		bool close_button = true;
+		if (current_dock->active && close_button) size.x += 16 + GetStyle().ItemSpacing.x;
+		
+		// is hover?
+		ImRect r = ImRect(current_pos.x, current_pos.y, current_pos.x + size.x, current_pos.y + size.y);
+
+		if (r.Contains(mouse_pos))
+		{
+			canvas->AddRectFilled(r.Min, r.Max, color);
+
+			if (!IsMouseDown(0))
+			{
+				doDock(dock, current_dock, ImGuiDockSlot_Tab, true);
+				return true;
+			}
+		}
+
+		current_pos.x += size.x;
+
+		current_dock = current_dock->next_tab;
+	}
+
+		// drop on dock
         for (int i = 0; i < (on_border ? 4 : 5); ++i)
         {
 	    const ImGuiDockSlot iSlot = (ImGuiDockSlot)i;
@@ -612,6 +658,7 @@ struct DockContext
         dock.pos = GetIO().MousePos - m_drag_offset;
         if (dest_dock)
         {
+			// drop on the dock
             if (dockSlots(dock,
                           dest_dock,
                           ImRect(dest_dock->pos, dest_dock->pos + dest_dock->size),
@@ -622,6 +669,8 @@ struct DockContext
                 return;
             }
         }
+
+		// drop edge positions
         if (dockSlots(dock, NULL, ImRect(m_workspace_pos, m_workspace_pos + m_workspace_size), true))
         {
             canvas->PopClipRect();
@@ -918,7 +967,7 @@ struct DockContext
             return dock;
     }
 
-    void doDock(Dock& dock, Dock* dest, ImGuiDockSlot dock_slot)
+    void doDock(Dock& dock, Dock* dest, ImGuiDockSlot dock_slot, bool isTabInserted = false)
     {
         IM_ASSERT(!dock.parent);
         IM_ASSERT(!dock.prev_tab);
@@ -935,17 +984,39 @@ struct DockContext
             IM_ASSERT(dest);
 
             Dock *tmp = dest;
-            while (tmp->next_tab)
-            {
-                tmp = tmp->next_tab;
-            }
 
-            tmp->next_tab = &dock;
-            dock.prev_tab = tmp;
-            dock.size = tmp->size;
-            dock.pos = tmp->pos;
-            dock.parent = dest->parent;
-            dock.status = Status_Docked;
+			if (isTabInserted)
+			{
+				auto ptab = tmp->prev_tab;
+				tmp->prev_tab = &dock;
+
+				if (ptab != nullptr)
+				{
+					ptab->next_tab = &dock;
+				}
+
+				dock.prev_tab = ptab;
+				dock.next_tab = dest;
+				dock.size = tmp->size;
+				dock.pos = tmp->pos;
+				dock.parent = dest->parent;
+				dock.status = Status_Docked;
+			}
+			else
+			{
+				while (tmp->next_tab)
+				{
+					tmp = tmp->next_tab;
+				}
+
+				tmp->next_tab = &dock;
+				dock.prev_tab = tmp;
+				dock.size = tmp->size;
+				dock.pos = tmp->pos;
+				dock.parent = dest->parent;
+				dock.status = Status_Docked;
+			}
+
         }
         else if (dock_slot == ImGuiDockSlot_None)
         {
