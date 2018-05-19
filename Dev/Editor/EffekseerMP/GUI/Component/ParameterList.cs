@@ -30,21 +30,24 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.Columns(2);
 
 			var columnWidth = Manager.NativeManager.GetColumnWidth(0);
-			Manager.NativeManager.SetColumnWidth(0, 200);
+			Manager.NativeManager.SetColumnWidth(0, 140);
 
 			foreach (var c in Controls.Internal.OfType<IParameterControl>())
 			{
-				Manager.NativeManager.PushItemWidth(180);
-				c.Update();
-				Manager.NativeManager.PopItemWidth();
+				Manager.NativeManager.PushItemWidth(100);
 
-				Manager.NativeManager.NextColumn();
 				Manager.NativeManager.Text(c.Label);
 
-				if(Manager.NativeManager.IsItemHovered())
+				if (Manager.NativeManager.IsItemHovered())
 				{
 					Manager.NativeManager.SetTooltip(c.Description);
 				}
+
+				Manager.NativeManager.PopItemWidth();
+
+				Manager.NativeManager.NextColumn();
+
+				c.Update();
 
 				Manager.NativeManager.NextColumn();
 			}

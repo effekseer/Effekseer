@@ -70,7 +70,7 @@ namespace Effekseer.GUI.Dock
 
 		override protected void UpdateInternal()
 		{
-			const int showHideButtonOffset = 40;
+			const int showHideButtonOffset = 50;
 
 			isPopupShown = false;
 
@@ -357,6 +357,25 @@ namespace Effekseer.GUI.Dock
             }
         }
 
+		void UpdateVisibleButton()
+		{
+			var visible = Node.IsRendered;
+
+			if (Manager.NativeManager.ImageButton(Images.GetIcon(visible ? "VisibleShow" : "VisibleHide"), 16, 16))
+			{
+				int LEFT_SHIFT = 340;
+				int RIGHT_SHIFT = 344;
+
+				if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+				{
+					ChangeVisible(true, !visible);
+				}
+				else
+				{
+					ChangeVisible(false, !visible);
+				}
+			}
+		}
 
         public void Update()
         {
@@ -426,23 +445,8 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.NextColumn();
 
-				var visible = Node.IsRendered;
-
-				if(Manager.NativeManager.ImageButton(Images.GetIcon(visible ? "VisibleShow" : "VisibleHide"), 16, 16))
-				{
-					int LEFT_SHIFT = 340;
-					int RIGHT_SHIFT = 344;
-
-					if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
-					{
-						ChangeVisible(true, !visible);
-					}
-					else
-					{
-						ChangeVisible(false, !visible);
-					}
-				}
-
+				UpdateVisibleButton();
+				
 				Manager.NativeManager.NextColumn();
 
 				Children.Lock();
@@ -471,7 +475,7 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.NextColumn();
 
-				Manager.NativeManager.Checkbox("##Check", temp);
+				UpdateVisibleButton();
 
 				Manager.NativeManager.NextColumn();
 			}
