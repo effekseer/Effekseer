@@ -372,6 +372,8 @@ namespace efk
 		void SaveDock(const char* path);
 		void LoadDock(const char* path);
 		void ShutdownDock();
+		void SetNextDockIcon(ImageResource* icon, Vec2 iconSize);
+		void SetNextDockTabToolTip(const char16_t* popup);
 
 		// Fcurve
 		bool BeginFCurve(int id);

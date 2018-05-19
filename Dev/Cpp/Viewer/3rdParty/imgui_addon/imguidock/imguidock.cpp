@@ -35,6 +35,7 @@ SOFTWARE.
 //-----------------------------------------------------------------------------------------------------------------
 
 #include "imguidock.h"
+#include <string>
 
 bool gImGuiDockReuseTabWindowTextureIfAvailable = true;
 
@@ -225,6 +226,10 @@ struct DockContext
         char location[16];
         bool opened;
         bool first;
+
+		ImTextureID	iconID = nullptr;
+		ImVec2 iconSize = ImVec2();
+		std::string dockTabToolTip;
     };
 
 
@@ -241,6 +246,9 @@ struct DockContext
     bool m_is_first_call;
 
 	float m_nextRate = 0.5f;
+	ImTextureID	m_next_iconID = nullptr;
+	ImVec2 m_next_iconSize = ImVec2();
+	std::string m_next_dockTabToolTip;
 
     DockContext()
         : m_current(NULL)
@@ -518,8 +526,9 @@ struct DockContext
     }
 
 
-    bool dockSlots(Dock& dock, Dock* dest_dock, const ImRect& rect, bool on_border)
+    bool dockSlots(Dock& dock, Dock* dest_dock, const ImRect& rect, bool on_border, bool& isHovered)
     {
+		isHovered = false;
         ImDrawList* canvas = GetWindowDrawList();
 	ImU32 color = GetColorU32(ImGuiCol_Button);		    // Color of all the available "spots"
 	ImU32 color_hovered = GetColorU32(ImGuiCol_ButtonHovered);  // Color of the hovered "spot"
@@ -557,9 +566,21 @@ struct DockContext
 	while (current_dock != nullptr)
 	{
 		current_pos.x += 15;
+
+		ImVec2 size = ImVec2();
+
 		float line_height = GetTextLineHeightWithSpacing();
-		const char* text_end = FindRenderedTextEnd(current_dock->label);
-		ImVec2 size(CalcTextSize(current_dock->label, text_end).x, line_height);
+		
+		if (current_dock->iconID == nullptr)
+		{
+
+			const char* text_end = FindRenderedTextEnd(current_dock->label);
+			ImVec2 size(CalcTextSize(current_dock->label, text_end).x, line_height);
+		}
+		else
+		{
+			size = current_dock->iconSize;
+		}
 
 		// temp
 		bool close_button = true;
@@ -571,7 +592,7 @@ struct DockContext
 		if (r.Contains(mouse_pos))
 		{
 			canvas->AddRectFilled(r.Min, r.Max, color);
-
+			isHovered = true;
 			if (!IsMouseDown(0))
 			{
 				doDock(dock, current_dock, ImGuiDockSlot_Tab, true);
@@ -591,6 +612,7 @@ struct DockContext
             ImRect r =
 		    on_border ? getSlotRectOnBorder(rect, iSlot) : getSlotRect(rect, iSlot);
             bool hovered = r.Contains(mouse_pos);
+			
 	    ImU32 color_to_use = hovered ? color_hovered : color;
 	    if (!texture) canvas->AddRectFilled(r.Min, r.Max, color_to_use);
 	    else {
@@ -618,7 +640,7 @@ struct DockContext
 #		endif ////IMGUITABWINDOW_H_
 	    }
             if (!hovered) continue;
-
+			isHovered = hovered;
             if (!IsMouseDown(0))
             {
 #		ifdef IMGUITABWINDOW_H_
@@ -656,13 +678,15 @@ struct DockContext
         ImU32 docked_color = GetColorU32(ImGuiCol_FrameBg);
 	docked_color = (docked_color & 0x00ffFFFF) | 0x80000000;
         dock.pos = GetIO().MousePos - m_drag_offset;
+		bool isHovered = false;
         if (dest_dock)
         {
 			// drop on the dock
             if (dockSlots(dock,
                           dest_dock,
                           ImRect(dest_dock->pos, dest_dock->pos + dest_dock->size),
-                          false))
+                          false,
+						isHovered))
             {
                 canvas->PopClipRect();
                 End();
@@ -671,7 +695,7 @@ struct DockContext
         }
 
 		// drop edge positions
-        if (dockSlots(dock, NULL, ImRect(m_workspace_pos, m_workspace_pos + m_workspace_size), true))
+        if (!isHovered && dockSlots(dock, NULL, ImRect(m_workspace_pos, m_workspace_pos + m_workspace_size), true, isHovered))
         {
             canvas->PopClipRect();
             End();
@@ -823,6 +847,24 @@ struct DockContext
     {
         float tabbar_height = 2 * GetTextLineHeightWithSpacing();
         ImVec2 size(dock.size.x, tabbar_height);
+
+		// IconTab
+		{
+			Dock* dock_tab = &dock;
+			while (dock_tab)
+			{
+				if (dock_tab->iconID != nullptr)
+				{
+					if (size.y < dock_tab->iconSize.y)
+					{
+						size.y = dock_tab->iconSize.y;
+					}
+				}
+
+				dock_tab = dock_tab->next_tab;
+			}
+		}
+
         bool tab_closed = false;
 
         SetCursorScreenPos(dock.pos);
@@ -847,13 +889,29 @@ struct DockContext
             {
                 SameLine(0, 15);
 
-                const char* text_end = FindRenderedTextEnd(dock_tab->label);
-                ImVec2 size(CalcTextSize(dock_tab->label, text_end).x, line_height);
-		if (InvisibleButton(dock_tab->label, size))
-                {
-                    dock_tab->setActive();
-                    m_next_parent = dock_tab;
-                }
+				ImVec2 size = ImVec2();
+
+				if (dock_tab->iconID == nullptr)
+				{
+					const char* text_end = FindRenderedTextEnd(dock_tab->label);
+					size = ImVec2(CalcTextSize(dock_tab->label, text_end).x, line_height);
+				}
+				else
+				{
+					size = dock_tab->iconSize;
+					line_height = size.y;
+				}
+
+				if (InvisibleButton(dock_tab->label, size))
+				{
+					dock_tab->setActive();
+					m_next_parent = dock_tab;
+				}
+
+				if (IsItemHovered())
+				{
+					SetTooltip(dock_tab->dockTabToolTip.c_str());
+				}
 
                 if (IsItemActive() && IsMouseDragging())
                 {
@@ -877,16 +935,28 @@ struct DockContext
                                              pos + ImVec2(size.x + 15, size.y),
                                              10);
 		draw_list->PathFillConvex(hovered ? color_hovered : (dock_tab->active ? color_active : color));
-		draw_list->AddText(pos + ImVec2(0, 1), text_color, dock_tab->label, text_end);
+
+		if (dock_tab->iconID == nullptr)
+		{
+			const char* text_end = FindRenderedTextEnd(dock_tab->label);
+			draw_list->AddText(pos + ImVec2(0, 1), text_color, dock_tab->label, text_end);
+		}
+		else
+		{
+			draw_list->AddImage(dock_tab->iconID, pos, pos + dock_tab->iconSize);
+		}
 
 		if (dock_tab->active && close_button)	{
 		    size.x += 16 + GetStyle().ItemSpacing.x;
 		    SameLine();
 		    tab_closed = InvisibleButton("close", ImVec2(16, 16));
 		    ImVec2 center = (GetItemRectMin() + GetItemRectMax()) * 0.5f;
-		    if (IsItemHovered())    {
-			draw_list->AddRectFilled(center + ImVec2(-6.0f, -6.0f), center + ImVec2(7.0f, 7.0f), button_hovered);
-		    }
+
+			
+			if (IsItemHovered()) {
+				draw_list->AddRectFilled(center + ImVec2(-6.0f, -6.0f), center + ImVec2(7.0f, 7.0f), button_hovered);
+			}
+			
 		    draw_list->AddLine(
 				center + ImVec2(-3.5f, -3.5f), center + ImVec2(3.5f, 3.5f), text_color);
 		    draw_list->AddLine(
@@ -1173,6 +1243,15 @@ struct DockContext
 	dock.last_frame = ImGui::GetFrameCount();
         ImGuiDockSlot next_slot = m_next_dock_slot;
         m_next_dock_slot = ImGuiDockSlot_Tab;
+
+		dock.iconID = m_next_iconID;
+		dock.iconSize = m_next_iconSize;
+		dock.dockTabToolTip = m_next_dockTabToolTip;
+
+		m_next_iconID = nullptr;
+		m_next_iconSize = ImVec2();
+		m_next_dockTabToolTip = std::string();
+
 	if (!dock.opened && (!opened || *opened)) tryDockToStoredLocation(dock);
 	if (strcmp(dock.label, label) != 0)
         {
@@ -1270,6 +1349,23 @@ struct DockContext
 
     ImVec2 pos = dock.pos;
     ImVec2 size = dock.size;
+
+	// IconTab
+	{
+		Dock* dock_tab = &dock;
+		while (dock_tab)
+		{
+			if (dock_tab->iconID != nullptr)
+			{
+				if (tabbar_height < dock_tab->iconSize.y + 8)
+				{
+					tabbar_height = dock_tab->iconSize.y + 8;
+				}
+			}
+
+			dock_tab = dock_tab->next_tab;
+		}
+	}
 
     if (draw_tabbar)
     {
@@ -1563,6 +1659,16 @@ void ResetNextParentDock()
 	g_dock->m_next_parent = nullptr;
 }
 
+void SetNextDockIcon(ImTextureID iconID, ImVec2 iconSize)
+{
+	g_dock->m_next_iconID = iconID;
+	g_dock->m_next_iconSize = iconSize;
+}
+
+void SetNextDockTabToolTip(const char* text)
+{
+	g_dock->m_next_dockTabToolTip = std::string(text);
+}
 
 } // namespace ImGui
 

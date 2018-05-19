@@ -1156,6 +1156,16 @@ namespace efk
 		ImGui::ShutdownDock();
 	}
 
+	void GUIManager::SetNextDockIcon(ImageResource* icon, Vec2 iconSize)
+	{
+		ImGui::SetNextDockIcon(ToImTextureID(icon), ImVec2(iconSize.X, iconSize.Y));
+	}
+
+	void GUIManager::SetNextDockTabToolTip(const char16_t* popup)
+	{
+		ImGui::SetNextDockTabToolTip(utf8str<256>(popup));
+	}
+
 	bool GUIManager::BeginFCurve(int id)
 	{
 		return ImGui::BeginFCurve(id);

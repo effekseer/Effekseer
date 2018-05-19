@@ -9,7 +9,7 @@ namespace Effekseer.GUI.Dock
 
 		public GlobalValues()
         {
-			Label = Resources.GetString("Globa") + "###Global";
+			Label = Resources.GetString("Global") + "###Global";
 
             paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.GlobalValues));
@@ -19,7 +19,11 @@ namespace Effekseer.GUI.Dock
             Core.OnAfterSelectNode += OnAfterSelectNode;
 
             Read();
-        }
+
+			Icon = Images.GetIcon("PanelGlobal");
+			IconSize = new swig.Vec2(24, 24);
+			TabToolTip = Resources.GetString("Global");
+		}
 
         public void FixValues()
         {

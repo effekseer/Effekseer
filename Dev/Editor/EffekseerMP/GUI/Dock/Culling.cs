@@ -19,7 +19,11 @@ namespace Effekseer.GUI.Dock
             Core.OnAfterSelectNode += OnAfterSelectNode;
 
             Read();
-        }
+
+			Icon = Images.GetIcon("Culling");
+			IconSize = new swig.Vec2(24, 24);
+			TabToolTip = Resources.GetString("Culling");
+		}
 
         public void FixValues()
         {

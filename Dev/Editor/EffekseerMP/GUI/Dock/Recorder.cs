@@ -43,6 +43,10 @@ namespace Effekseer.GUI.Dock
 			selectedAlphaTypes[2] = Resources.GetString("GenerateAlpha");
 
 			Label = Resources.GetString("Recorder") + "###Recorder";
+
+			Icon = Images.GetIcon("PanelRecorder");
+			IconSize = new swig.Vec2(24, 24);
+			TabToolTip = Resources.GetString("Recorder");
 		}
 
 		protected override void UpdateInternal()

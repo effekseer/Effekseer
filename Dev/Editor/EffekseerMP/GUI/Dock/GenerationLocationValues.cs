@@ -24,6 +24,10 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterSelectNode += OnAfterSelectNode;
 			
 			Read();
+
+			Icon = Images.GetIcon("PanelGenerationLocation");
+			IconSize = new swig.Vec2(24, 24);
+			TabToolTip = Resources.GetString("SpawningMethod");
 		}
 
 		public void FixValues()

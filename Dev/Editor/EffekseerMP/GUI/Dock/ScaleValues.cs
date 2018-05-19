@@ -24,6 +24,10 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterSelectNode += OnAfterSelectNode;
 			
 			Read();
+
+			Icon = Images.GetIcon("PanelScale");
+			IconSize = new swig.Vec2(24, 24);
+			TabToolTip = Resources.GetString("Scale");
 		}
 
 		public void FixValues()

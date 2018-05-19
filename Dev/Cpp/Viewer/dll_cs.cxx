@@ -6326,6 +6326,34 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ShutdownDock___(voi
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextDockIcon___(void * jarg1, void * jarg2, void * jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::ImageResource *arg2 = (efk::ImageResource *) 0 ;
+  efk::Vec2 arg3 ;
+  efk::Vec2 *argp3 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::ImageResource *)jarg2; 
+  argp3 = (efk::Vec2 *)jarg3; 
+  if (!argp3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null efk::Vec2", 0);
+    return ;
+  }
+  arg3 = *argp3; 
+  (arg1)->SetNextDockIcon(arg2,arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextDockTabToolTip___(void * jarg1, char16_t * jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->SetNextDockTabToolTip((char16_t const *)arg2);
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve___(void * jarg1, int jarg2) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;

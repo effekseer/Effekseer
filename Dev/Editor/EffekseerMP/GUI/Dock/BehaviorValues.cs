@@ -19,7 +19,11 @@ namespace Effekseer.GUI.Dock
             Core.OnAfterSelectNode += OnAfterSelectNode;
 
             Read();
-        }
+
+			Icon = Images.GetIcon("Behavior");
+			IconSize = new swig.Vec2(24, 24);
+			TabToolTip = Resources.GetString("Behavior");
+		}
 
         public void FixValues()
         {

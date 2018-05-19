@@ -136,6 +136,9 @@ IMGUI_API void DockDebugWindow();
 IMGUI_API void SetNextDockRate(float rate);
 IMGUI_API void ResetNextParentDock();
 
+IMGUI_API void SetNextDockIcon(ImTextureID iconID, ImVec2 iconSize);
+IMGUI_API void SetNextDockTabToolTip(const char* text);
+
 } // namespace ImGui
 
 extern bool gImGuiDockReuseTabWindowTextureIfAvailable; // [true] (used only when available)

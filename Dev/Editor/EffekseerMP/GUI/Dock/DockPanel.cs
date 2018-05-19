@@ -20,6 +20,12 @@ namespace Effekseer.GUI.Dock
 
 		internal bool InitialDockReset = false;
 
+		internal swig.ImageResource Icon;
+
+		internal swig.Vec2 IconSize;
+
+		internal string TabToolTip = string.Empty;
+
 		public DockPanel()
 		{
 		}
@@ -35,6 +41,16 @@ namespace Effekseer.GUI.Dock
 					if(InitialDockReset)
 					{
 						Manager.NativeManager.ResetNextParentDock();
+					}
+
+					if(Icon != null)
+					{
+						Manager.NativeManager.SetNextDockIcon(Icon, IconSize);
+					}
+
+					if(TabToolTip != null)
+					{
+						Manager.NativeManager.SetNextDockTabToolTip(TabToolTip);
 					}
 
 					if (Manager.NativeManager.BeginDock(Label, ref opened, swig.WindowFlags.None, InitialDockSize))

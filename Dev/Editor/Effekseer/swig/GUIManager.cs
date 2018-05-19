@@ -1067,6 +1067,15 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_ShutdownDock(swigCPtr);
   }
 
+  public void SetNextDockIcon(ImageResource icon, Vec2 iconSize) {
+    EffekseerNativePINVOKE.GUIManager_SetNextDockIcon(swigCPtr, ImageResource.getCPtr(icon), Vec2.getCPtr(iconSize));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public void SetNextDockTabToolTip(string popup) {
+    EffekseerNativePINVOKE.GUIManager_SetNextDockTabToolTip(swigCPtr, popup);
+  }
+
   public bool BeginFCurve(int id) {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve(swigCPtr, id);
     return ret;

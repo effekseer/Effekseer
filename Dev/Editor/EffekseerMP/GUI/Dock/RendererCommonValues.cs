@@ -26,6 +26,10 @@ namespace Effekseer.GUI.Dock
 			Controls.Add(paramerterList);
 			
 			Read();
+
+			Icon = Images.GetIcon("PanelRendererCommon");
+			IconSize = new swig.Vec2(24, 24);
+			TabToolTip = Resources.GetString("BasicRenderSettings");
 		}
 
 		public void FixValues()

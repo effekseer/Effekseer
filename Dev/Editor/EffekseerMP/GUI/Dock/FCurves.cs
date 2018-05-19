@@ -55,6 +55,10 @@ namespace Effekseer.GUI.Dock
 			type.Label = type_text + "##Type";
 
 			OnChanged();
+
+			Icon = Images.GetIcon("PanelFCurve");
+			IconSize = new swig.Vec2(24, 24);
+			TabToolTip = Resources.GetString("FCurves");
 		}
 
 		protected override void UpdateInternal()

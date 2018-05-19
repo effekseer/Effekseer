@@ -22,6 +22,10 @@ namespace Effekseer.GUI.Dock
 			if (!String.IsNullOrEmpty(Core.FullPath)) {
 				UpdateFileList(Path.GetDirectoryName(Core.FullPath));
 			}
+
+			Icon = Images.GetIcon("PanelFileViewer");
+			IconSize = new swig.Vec2(24, 24);
+			TabToolTip = Resources.GetString("FileViewer");
 		}
 
 		public override void OnDisposed()

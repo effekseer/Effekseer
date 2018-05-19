@@ -62,6 +62,10 @@ namespace Effekseer.GUI.Dock
 			menuItems.Add(create_menu_item_from_commands(Commands.Redo));
 
 			Renew();
+
+			Icon = Images.GetIcon("PanelNodeTree");
+			IconSize = new swig.Vec2(24, 24);
+			TabToolTip = Resources.GetString("NodeTree");
 		}
 
 		override protected void UpdateInternal()
