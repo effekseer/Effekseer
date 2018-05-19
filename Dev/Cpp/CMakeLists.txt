@@ -8,6 +8,7 @@ project(Effekseer)
 cmake_minimum_required(VERSION 2.8)
 
 option(BUILD_VIEWER "Build viewer" OFF)
+option(BUILD_TEST "Build test" OFF)
 
 # For MSVC
 if (MSVC)
@@ -305,4 +306,8 @@ install(
 
 if (BUILD_VIEWER)
 	add_subdirectory("Viewer")
+endif()
+
+if (BUILD_TEST)
+	add_subdirectory("Test")
 endif()
