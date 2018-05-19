@@ -6206,6 +6206,18 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsAnyWindow
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DrawLineBackground___(void * jarg1, float jarg2, unsigned int jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  uint32_t arg3 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  arg3 = (uint32_t)jarg3; 
+  (arg1)->DrawLineBackground(arg2,arg3);
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFullscreen___(void * jarg1, char16_t * jarg2) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;

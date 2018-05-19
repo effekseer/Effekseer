@@ -1091,6 +1091,20 @@ namespace efk
 		return ImGui::IsAnyWindowHovered();
 	}
 
+	void GUIManager::DrawLineBackground(float height, uint32_t col)
+	{
+		ImGuiWindow* window = ImGui::GetCurrentWindow();
+		auto cursorPos = ImGui::GetCursorPos();
+
+		cursorPos.x = window->Pos.x;
+		cursorPos.y += window->Pos.y;
+		ImVec2 size;
+		size.x = window->Size.x;
+		size.y = height;
+
+		window->DrawList->AddRectFilled(cursorPos, ImVec2(cursorPos.x + size.x, cursorPos.y + size.y), col);
+	}
+
 	bool GUIManager::BeginFullscreen(const char16_t* label)
 	{
 		ImVec2 windowSize;

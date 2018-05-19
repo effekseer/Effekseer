@@ -78,6 +78,26 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Columns(2);
 			Manager.NativeManager.SetColumnOffset(1, Math.Max(0, windowSize.X - showHideButtonOffset));
 
+			// Assign tree node index
+			Action<Utils.DelayedList<NodeTreeViewNode>> assignIndex = null;
+			int nodeIndex = 0;
+
+			assignIndex = (objs) =>
+			{
+				foreach (var child in objs.Internal)
+				{
+					child.TreeNodeIndex = nodeIndex;
+					nodeIndex++;
+
+					if(child.IsExpanding)
+					{
+						assignIndex(child.Children);
+					}	
+				}
+			};
+
+			assignIndex(Children);
+
 			Children.Lock();
 			foreach (var child in Children.Internal)
 			{
@@ -254,7 +274,11 @@ namespace Effekseer.GUI.Dock
 
 		NodeTreeView treeView = null;
 
-		bool isExpanding = false;
+		bool requiredToExpand = false;
+
+		public bool IsExpanding = false;
+
+		public int TreeNodeIndex = 0;
 
 		public NodeTreeViewNode(NodeTreeView treeView, Data.NodeBase node, bool createChildren = false)
         {
@@ -280,7 +304,7 @@ namespace Effekseer.GUI.Dock
 
 		public void Expand()
 		{
-			isExpanding = true;
+			requiredToExpand = true;
 		}
 
 		public void ChangeVisible(bool recursion, bool value)
@@ -350,10 +374,10 @@ namespace Effekseer.GUI.Dock
 
 			UpdateDDTarget(false);
 
-			if(isExpanding)
+			if(requiredToExpand)
 			{
 				Manager.NativeManager.SetNextTreeNodeOpen(true);
-				isExpanding = false;
+				requiredToExpand = false;
 			}
 
 			// Tree
@@ -370,8 +394,16 @@ namespace Effekseer.GUI.Dock
 				if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track) iconString = "NodeTrack";
 			}
 
+			// Change background color
+			if(TreeNodeIndex % 2 == 1)
+			{
+				Manager.NativeManager.DrawLineBackground(Manager.NativeManager.GetTextLineHeight(), 0x0cffffff);
+			}
+
 			if (Manager.NativeManager.TreeNodeEx(Node.Name + id, temp, Images.GetIcon(iconString), flag))
             {
+				IsExpanding = true;
+
 				if(Manager.NativeManager.IsItemClicked(0) ||
 					Manager.NativeManager.IsItemClicked(1))
 				{
@@ -431,6 +463,8 @@ namespace Effekseer.GUI.Dock
             }
 			else
 			{
+				IsExpanding = false;
+
 				//UpdateDDTarget(true);
 
 				treeView.Popup();

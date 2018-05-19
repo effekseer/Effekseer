@@ -360,6 +360,9 @@ namespace efk
 		bool IsWindowHovered();
 		bool IsAnyWindowHovered();
 
+		// Design
+		void DrawLineBackground(float height, uint32_t col);
+
 		// Dock
 		bool BeginFullscreen(const char16_t* label);
 		void SetNextDock(DockSlot slot);

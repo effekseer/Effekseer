@@ -1368,6 +1368,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsAnyWindowHovered___")]
   public static extern bool GUIManager_IsAnyWindowHovered(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_DrawLineBackground___")]
+  public static extern void GUIManager_DrawLineBackground(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, uint jarg3);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginFullscreen___")]
   public static extern bool GUIManager_BeginFullscreen(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
 
