@@ -36,6 +36,9 @@ with aceutils.CurrentDir('../Downloads'):
 			aceutils.call(aceutils.cmd_compile + r'src/libgd_static.vcxproj /p:configuration=Debug')
 			aceutils.call(aceutils.cmd_compile + r'src/libgd_static.vcxproj /p:configuration=Release')
 
+	aceutils.mkdir(r"../Dev/Cpp/include/")
+	aceutils.mkdir(r"../Dev/Cpp/lib/")
+
 	if aceutils.isWin():
 		aceutils.mkdir(r'../Dev/Cpp/lib/x86/')
 		aceutils.mkdir(r'../Dev/Cpp/lib/x86/Debug')

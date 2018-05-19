@@ -31,6 +31,9 @@ with aceutils.CurrentDir('../Downloads'):
 			aceutils.call(aceutils.cmd_compile + r'ALL_BUILD.vcxproj /p:configuration=Debug')
 			aceutils.call(aceutils.cmd_compile + r'ALL_BUILD.vcxproj /p:configuration=Release')
 	
+	aceutils.mkdir(r"../Dev/Cpp/include/")
+	aceutils.mkdir(r"../Dev/Cpp/lib/")
+
 	aceutils.mkdir(r"../Dev/Cpp/include/GLFW/")
 
 	if aceutils.isWin():

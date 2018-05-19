@@ -30,6 +30,9 @@ with aceutils.CurrentDir('../Downloads'):
 			aceutils.call(aceutils.cmd_compile + r'OpenSoundMixer.sln /p:configuration=Debug')
 			aceutils.call(aceutils.cmd_compile + r'OpenSoundMixer.sln /p:configuration=Release')
 
+	aceutils.mkdir(r"../Dev/Cpp/include/")
+	aceutils.mkdir(r"../Dev/Cpp/lib/")
+
 	if aceutils.isWin():
 		aceutils.copy(r'OpenSoundMixer/src/OpenSoundMixer.h', r'../Dev/Cpp/include/')
 
