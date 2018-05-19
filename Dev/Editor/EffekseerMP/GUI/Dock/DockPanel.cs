@@ -20,6 +20,8 @@ namespace Effekseer.GUI.Dock
 
 		internal bool InitialDockReset = false;
 
+		internal int InitialDockActive = 0;
+
 		internal swig.ImageResource Icon;
 
 		internal swig.Vec2 IconSize;
@@ -57,7 +59,6 @@ namespace Effekseer.GUI.Dock
 					{
 						UpdateInternal();
 
-
 						Controls.Lock();
 
 						foreach (var c in Controls.Internal)
@@ -67,7 +68,13 @@ namespace Effekseer.GUI.Dock
 
 						Controls.Unlock();
 					}
-
+					
+					if (InitialDockActive > 0)
+					{
+						Manager.NativeManager.SetDockActive();
+						InitialDockActive--;
+					}
+					
 					Manager.NativeManager.EndDock();
 				}
 				else

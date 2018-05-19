@@ -1076,6 +1076,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetNextDockTabToolTip(swigCPtr, popup);
   }
 
+  public void SetDockActive() {
+    EffekseerNativePINVOKE.GUIManager_SetDockActive(swigCPtr);
+  }
+
   public bool BeginFCurve(int id) {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve(swigCPtr, id);
     return ret;

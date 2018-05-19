@@ -1166,6 +1166,11 @@ namespace efk
 		ImGui::SetNextDockTabToolTip(utf8str<256>(popup));
 	}
 
+	void GUIManager::SetDockActive()
+	{
+		ImGui::SetDockActive();
+	}
+
 	bool GUIManager::BeginFCurve(int id)
 	{
 		return ImGui::BeginFCurve(id);

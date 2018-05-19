@@ -294,7 +294,11 @@ namespace Effekseer.GUI.Menu
 					item.Label = s;
 					item.Clicked += () =>
 					{
-						Manager.SelectOrShowWindow(t, new swig.Vec2(300, 300));
+						var panel = Manager.SelectOrShowWindow(t, new swig.Vec2(300, 300));
+						if(panel != null)
+						{
+							panel.InitialDockActive = 1;
+						}
 					};
 					item.Icon = icon;
 					menu.Controls.Add(item);

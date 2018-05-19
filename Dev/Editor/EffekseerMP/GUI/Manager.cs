@@ -440,13 +440,16 @@ namespace Effekseer.GUI
 				}
 			}
 			
-			SelectOrShowWindow(typeof(Dock.ViewerController), null, swig.DockSlot.Bottom, 0.2f, true);
-			SelectOrShowWindow(typeof(Dock.NodeTreeView), null, swig.DockSlot.Right, 0.2f, true);
-			SelectOrShowWindow(typeof(Dock.CommonValues), null, swig.DockSlot.Bottom, 0.5f, false);
-			SelectOrShowWindow(typeof(Dock.LocationValues), null, swig.DockSlot.Right, 0.2f, true);
-			SelectOrShowWindow(typeof(Dock.RotationValues), null, swig.DockSlot.Bottom, 0.7f, false);
-			SelectOrShowWindow(typeof(Dock.ScaleValues), null, swig.DockSlot.Bottom, 0.5f, false);
-			SelectOrShowWindow(typeof(Dock.RendererCommonValues), null, swig.DockSlot.Right, 0.2f, true);
+			SelectOrShowWindow(typeof(Dock.ViewerController), null, swig.DockSlot.Bottom, 0.15f, true);
+			SelectOrShowWindow(typeof(Dock.NodeTreeView), null, swig.DockSlot.Right, 0.3f, true);
+			var basicPanel = SelectOrShowWindow(typeof(Dock.CommonValues), null, swig.DockSlot.Top, 0.7f, false);
+			SelectOrShowWindow(typeof(Dock.LocationValues), null, swig.DockSlot.Tab, 1.0f, false);
+			SelectOrShowWindow(typeof(Dock.RotationValues), null, swig.DockSlot.Tab, 1.0f, false);
+			SelectOrShowWindow(typeof(Dock.ScaleValues), null, swig.DockSlot.Tab, 1.0f, false);
+			SelectOrShowWindow(typeof(Dock.RendererCommonValues), null, swig.DockSlot.Tab, 1.0f, false);
+			SelectOrShowWindow(typeof(Dock.RendererValues), null, swig.DockSlot.Tab, 1.0f, false);
+
+			basicPanel.InitialDockActive = 2;
 		}
 
 		internal static Dock.DockPanel GetWindow(Type t)
@@ -459,7 +462,7 @@ namespace Effekseer.GUI
 			return null;
 		}
 
-		public static void SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, swig.DockSlot slot = swig.DockSlot.None, float dockRate = 0.5f, bool isResetParent = false)
+		internal static Dock.DockPanel SelectOrShowWindow(Type t, swig.Vec2 defaultSize = null, swig.DockSlot slot = swig.DockSlot.None, float dockRate = 0.5f, bool isResetParent = false)
 		{
 			for(int i = 0; i < dockTypes.Length; i++)
 			{
@@ -467,7 +470,7 @@ namespace Effekseer.GUI
 
 				if(panels[i] != null)
 				{
-
+					return panels[i];
 				}
 				else
 				{
@@ -490,8 +493,12 @@ namespace Effekseer.GUI
 					{
 						AddControl(panels[i]);
 					}
+
+					return panels[i];
 				}
 			}
+
+			return null;
 		}
 
 		static void Core_OnAfterLoad(object sender, EventArgs e)
