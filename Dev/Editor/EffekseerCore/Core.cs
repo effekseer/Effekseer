@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -434,8 +434,17 @@ namespace Effekseer
 		{
 			var myAssembly = System.Reflection.Assembly.GetEntryAssembly();
 			string path = myAssembly.Location;
-
-			return System.IO.Path.GetDirectoryName(path);
+            var dir = System.IO.Path.GetDirectoryName(path);
+            
+            // for mkbundle
+            if(dir == string.Empty)
+            {
+                dir = System.IO.Path.GetDirectoryName(
+                System.IO.Path.GetFullPath(
+                Environment.GetCommandLineArgs()[0]));
+            }
+            
+			return dir;
 		}
 
 		public static string Copy(Data.NodeBase node)
