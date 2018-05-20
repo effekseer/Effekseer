@@ -77,7 +77,28 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 
 ## How to compile
 
+This project requires as follows
+
+```
+git
+git-lfs
+cmake
+python3.x
+```
+
+On Mac
+
+```
+g++
+VisualStudio For Mac2017
+mono
+```
+
 Update submodule.
+
+```
+git submodule update --init
+```
 
 Execute python scripts as follows.
 
@@ -107,10 +128,12 @@ Visual Studio 2015 are required.
 
 Open ```Dev/Cpp/Test.sln```
 
-* Linux
+* Mac
 
-Execute ```Dev/Cpp/build.sh```
+Execute ```Dev/build.Mac.sh``` to compile and generate binary into Dev/release/
+
+Execute ```Dev/package.Mac.sh``` to generate app into Dev/Mac/
 
 or
 
-Use cmake to ```Dev/Cpp/Test/CMakeLists.txt```
+Use cmake to ```Dev/Cpp/CMakeLists.txt```
