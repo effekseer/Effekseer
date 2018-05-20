@@ -16,71 +16,75 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------
+	//
+	//----------------------------------------------------------------------------------
 
-class TrackRenderer
-{
-public:
-
-	struct NodeParameter
+	class TrackRenderer
 	{
-		Effect*				EffectPointer;
-		int32_t				ColorTextureIndex;
-		AlphaBlendType			AlphaBlend;
-		TextureFilterType	TextureFilter;
-		TextureWrapType		TextureWrap;
-		bool				ZTest;
-		bool				ZWrite;
+	public:
 
-		bool				Distortion;
-		float				DistortionIntensity;
+		struct NodeParameter
+		{
+			Effect*				EffectPointer;
+			int32_t				ColorTextureIndex;
+			AlphaBlendType			AlphaBlend;
+			TextureFilterType	TextureFilter;
+			TextureWrapType		TextureWrap;
+			bool				ZTest;
+			bool				ZWrite;
 
-		int32_t				SplineDivision;
+			bool				Distortion;
+			float				DistortionIntensity;
+
+			int32_t				SplineDivision;
+		};
+
+		struct InstanceGroupParameter
+		{
+
+		};
+
+		struct InstanceParameter
+		{
+			int32_t			InstanceCount;
+			int32_t			InstanceIndex;
+			Matrix43		SRTMatrix43;
+
+			Color	ColorLeft;
+			Color	ColorCenter;
+			Color	ColorRight;
+
+			Color	ColorLeftMiddle;
+			Color	ColorCenterMiddle;
+			Color	ColorRightMiddle;
+
+			float	SizeFor;
+			float	SizeMiddle;
+			float	SizeBack;
+
+			RectF	UV;
+		};
+
+	public:
+		TrackRenderer() {}
+
+		virtual ~TrackRenderer() {}
+
+		virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) {}
+
+		virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData) {}
+
+		virtual void EndRendering(const NodeParameter& parameter, void* userData) {}
+
+		virtual void BeginRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData) {}
+
+		virtual void EndRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData) {}
 	};
 
-	struct InstanceGroupParameter
-	{
-		
-	};
-
-	struct InstanceParameter
-	{
-		int32_t			InstanceCount;
-		int32_t			InstanceIndex;
-		Matrix43		SRTMatrix43;
-
-		Color	ColorLeft;
-		Color	ColorCenter;
-		Color	ColorRight;
-
-		Color	ColorLeftMiddle;
-		Color	ColorCenterMiddle;
-		Color	ColorRightMiddle;
-
-		float	SizeFor;
-		float	SizeMiddle;
-		float	SizeBack;
-
-		RectF	UV;
-	};
-
-public:
-	TrackRenderer() {}
-
-	virtual ~TrackRenderer() {}
-
-	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
-
-	virtual void Rendering( const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData ) {}
-
-	virtual void EndRendering( const NodeParameter& parameter, void* userData ) {}
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------
+	//
+	//----------------------------------------------------------------------------------
 }
 //----------------------------------------------------------------------------------
 //

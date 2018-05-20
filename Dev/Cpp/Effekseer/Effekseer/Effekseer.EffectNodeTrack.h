@@ -46,7 +46,7 @@ public:
 	{
 		struct Color
 		{
-			union 
+			union
 			{
 				struct
 				{
@@ -136,7 +136,7 @@ public:
 	StandardColorParameter	TrackColorLeftMiddle;
 	StandardColorParameter	TrackColorCenterMiddle;
 	StandardColorParameter	TrackColorRightMiddle;
-	
+
 	TrackSizeParameter	TrackSizeFor;
 	TrackSizeParameter	TrackSizeMiddle;
 	TrackSizeParameter	TrackSizeBack;
@@ -145,9 +145,9 @@ public:
 
 	int32_t	SplineDivision = 1;
 
-	EffectNodeTrack( Effect* effect, unsigned char*& pos )
+	EffectNodeTrack(Effect* effect, unsigned char*& pos)
 		: EffectNodeImplemented(effect, pos)
-		, TrackTexture	( -1 )
+		, TrackTexture(-1)
 	{
 	}
 
@@ -159,7 +159,9 @@ public:
 
 	void BeginRendering(int32_t count, Manager* manager);
 
-	void BeginRenderingGroup(InstanceGroup* group, Manager* manager);
+	void BeginRenderingGroup(InstanceGroup* group, Manager* manager) override;
+
+	void EndRenderingGroup(InstanceGroup* group, Manager* manager) override;
 
 	void Rendering(const Instance& instance, Manager* manager);
 
@@ -176,8 +178,8 @@ public:
 	void InitializeValues(InstanceGroupValues::Color& value, StandardColorParameter& param, InstanceGlobal* instanceGlobal);
 	void InitializeValues(InstanceGroupValues::Size& value, TrackSizeParameter& param, Manager* manager);
 	void SetValues(Color& c, const Instance& instance, InstanceGroupValues::Color& value, StandardColorParameter& param, int32_t time, int32_t livedTime);
-	void SetValues( float& s, InstanceGroupValues::Size& value, TrackSizeParameter& param, float time );
-	void LoadValues( TrackSizeParameter& param, unsigned char*& pos );
+	void SetValues(float& s, InstanceGroupValues::Size& value, TrackSizeParameter& param, float time);
+	void LoadValues(TrackSizeParameter& param, unsigned char*& pos);
 };
 
 //----------------------------------------------------------------------------------
