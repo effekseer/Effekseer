@@ -434,16 +434,16 @@ namespace Effekseer
 		{
 			var myAssembly = System.Reflection.Assembly.GetEntryAssembly();
 			string path = myAssembly.Location;
-            var dir = System.IO.Path.GetDirectoryName(path);
-            
-            // for mkbundle
-            if(dir == string.Empty)
-            {
-                dir = System.IO.Path.GetDirectoryName(
-                System.IO.Path.GetFullPath(
-                Environment.GetCommandLineArgs()[0]));
-            }
-            
+			var dir = System.IO.Path.GetDirectoryName(path);
+
+			// for mkbundle
+			if (dir == string.Empty)
+			{
+				dir = System.IO.Path.GetDirectoryName(
+				System.IO.Path.GetFullPath(
+				Environment.GetCommandLineArgs()[0]));
+			}
+
 			return dir;
 		}
 

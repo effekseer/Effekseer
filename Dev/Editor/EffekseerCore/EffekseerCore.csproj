@@ -49,6 +49,9 @@
     <Reference Include="Microsoft.Scripting">
       <HintPath>.\Microsoft.Scripting.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Scripting.Metadata">
+      <HintPath>.\Microsoft.Scripting.Metadata.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
