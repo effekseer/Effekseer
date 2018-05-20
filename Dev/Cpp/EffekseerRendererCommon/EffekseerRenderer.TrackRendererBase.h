@@ -297,10 +297,10 @@ namespace EffekseerRenderer
 
 				Effekseer::Vector3D axisBefore;
 
-				for (int32_t i = 0; i < (Effekseer::Min(countMax, instances.size()) - 1) * parameter.SplineDivision + 1; i++)
+				for (int32_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
 				{
 					bool isFirst_ = (i == 0);
-					bool isLast_ = (i == ((Effekseer::Min(countMax, instances.size()) - 1) * parameter.SplineDivision));
+					bool isLast_ = (i == ((instances.size() - 1) * parameter.SplineDivision));
 					Effekseer::Vector3D axis;
 					Effekseer::Vector3D pos;
 
