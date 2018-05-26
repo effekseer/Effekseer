@@ -43,6 +43,9 @@
     <Filter Include="3rdParty\imgui_platform">
       <UniqueIdentifier>{bb1df4a7-11df-4d01-a6b0-b0f974332851}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rdParty\Boxer">
+      <UniqueIdentifier>{21168e29-a242-49b8-99f9-90adc38e6cfe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h">
@@ -151,6 +154,9 @@
     <ClInclude Include="3rdParty\imgui_platform\imgui_impl_dx9.h">
       <Filter>3rdParty\imgui_platform</Filter>
     </ClInclude>
+    <ClInclude Include="3rdParty\Boxer\boxer.h">
+      <Filter>3rdParty\Boxer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -251,6 +257,9 @@
     </ClCompile>
     <ClCompile Include="3rdParty\imgui_platform\imgui_impl_dx9.cpp">
       <Filter>3rdParty\imgui_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\Boxer\boxer_win.cpp">
+      <Filter>3rdParty\Boxer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

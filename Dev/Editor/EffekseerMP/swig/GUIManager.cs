@@ -1126,6 +1126,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndDragDropTarget(swigCPtr);
   }
 
+  public static DialogSelection show(string message, string title, DialogStyle style, DialogButtons buttons) {
+    DialogSelection ret = (DialogSelection)EffekseerNativePINVOKE.GUIManager_show(message, title, (int)style, (int)buttons);
+    return ret;
+  }
+
 }
 
 }

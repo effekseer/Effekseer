@@ -171,6 +171,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="3rdParty\Boxer\boxer.h" />
     <ClInclude Include="3rdParty\imgui\imconfig.h" />
     <ClInclude Include="3rdParty\imgui\imgui.h" />
     <ClInclude Include="3rdParty\imgui\imgui_internal.h" />
@@ -210,6 +211,7 @@
     <CustomBuildStep Include="dll.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="3rdParty\Boxer\boxer_win.cpp" />
     <ClCompile Include="3rdParty\imgui\imgui.cpp" />
     <ClCompile Include="3rdParty\imgui\imgui_draw.cpp" />
     <ClCompile Include="3rdParty\imgui_addon\fcurve\fcurve.cpp" />

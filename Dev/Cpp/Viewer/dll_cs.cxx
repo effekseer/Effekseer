@@ -6550,6 +6550,24 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndDragDropTarget__
 }
 
 
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_show___(char16_t * jarg1, char16_t * jarg2, int jarg3, int jarg4) {
+  int jresult ;
+  char16_t *arg1 = (char16_t *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  efk::DialogStyle arg3 ;
+  efk::DialogButtons arg4 ;
+  efk::DialogSelection result;
+  
+  arg1 = (char16_t *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (efk::DialogStyle)jarg3; 
+  arg4 = (efk::DialogButtons)jarg4; 
+  result = (efk::DialogSelection)efk::GUIManager::show((char16_t const *)arg1,(char16_t const *)arg2,arg3,arg4);
+  jresult = (int)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_FileDialog_OpenDialog___(char16_t * jarg1, char16_t * jarg2) {
   char16_t * jresult ;
   char16_t *arg1 = (char16_t *) 0 ;
