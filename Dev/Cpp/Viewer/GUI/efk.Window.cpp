@@ -41,9 +41,16 @@ namespace efk
 	void GLFLW_CloseCallback(GLFWwindow* w)
 	{
 		auto w_ = (Window*)glfwGetWindowUserPointer(w);
-		auto ret = w_->Closing();
-		
-		glfwSetWindowShouldClose(w, ret);
+        
+        if(w_->Closing != nullptr)
+        {
+            auto ret = w_->Closing();
+            glfwSetWindowShouldClose(w, ret);
+        }
+		else
+        {
+            glfwSetWindowShouldClose(w, GL_TRUE);
+        }
 	}
 
 	void GLFW_WindowFocusCallback(GLFWwindow* w, int f)
@@ -51,7 +58,7 @@ namespace efk
 
 		auto w_ = (Window*)glfwGetWindowUserPointer(w);
 
-		if (f > 0)
+		if (f > 0 && w_->Focused != nullptr)
 		{
 			w_->Focused();
 		}

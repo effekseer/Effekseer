@@ -142,6 +142,30 @@ namespace efk
 		Float,
 		None
 	};
+    
+    enum class DialogStyle {
+        Info,
+        Warning,
+        Error,
+        Question
+    };
+    
+    enum class DialogButtons {
+        OK,
+        OKCancel,
+        YesNo,
+        Quit
+    };
+    
+    enum class DialogSelection {
+        OK,
+        Cancel,
+        Yes,
+        No,
+        Quit,
+        None,
+        Error
+    };
 
 	class GUIManagerCallback
 	{
@@ -411,5 +435,8 @@ namespace efk
 		bool BeginDragDropTarget();
 		bool AcceptDragDropPayload(const char* type, uint8_t* data_output, int data_output_size, int* size);
 		void EndDragDropTarget();
+        
+        // Dalog
+        static DialogSelection show(const char16_t* message, const char16_t* title, DialogStyle style, DialogButtons buttons);
 	};
 }

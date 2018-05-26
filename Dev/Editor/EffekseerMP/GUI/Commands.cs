@@ -112,8 +112,9 @@ namespace Effekseer.GUI
 					}
 					catch (Exception e)
 					{
-						var messageBox = new Dialog.MessageBox();
-    					messageBox.Show("Error", e.Message);
+                        swig.GUIManager.show(e.Message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+						//var messageBox = new Dialog.MessageBox();
+    					//messageBox.Show("Error", e.Message);
 					}
 
 					System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(fullPath));

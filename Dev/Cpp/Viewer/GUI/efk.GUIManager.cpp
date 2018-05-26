@@ -13,6 +13,8 @@
 
 #include "../3rdParty/imgui_addon/fcurve/fcurve.h"
 
+#include "../3rdParty/Boxer/boxer.h"
+
 #include "../dll.h"
 
 namespace ImGui
@@ -1281,4 +1283,13 @@ namespace efk
 	{
 		ImGui::EndDragDropTarget();
 	}
+    
+    DialogSelection GUIManager::show(const char16_t* message, const char16_t* title, DialogStyle style, DialogButtons buttons)
+    {
+        return (DialogSelection)boxer::show(
+                                            utf8str<256>(message),
+                                            utf8str<256>(title),
+                                            (boxer::Style)style,
+                                            (boxer::Buttons)buttons);
+    }
 }
