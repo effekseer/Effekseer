@@ -129,6 +129,9 @@ bool Renderer::Initialize( void* handle, int width, int height )
 	m_width = width;
 	m_height = height;
 
+	m_windowWidth = m_width;
+	m_windowHeight = m_height;
+
 	m_distortionCallback = new DistortingCallback(graphics);
 	m_renderer = graphics->GetRenderer();
 	m_renderer->SetDistortingCallback(m_distortionCallback);
@@ -269,6 +272,8 @@ bool Renderer::Resize( int width, int height )
 {
 	m_width = width;
 	m_height = height;
+	m_windowWidth = m_width;
+	m_windowHeight = m_height;
 
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
@@ -358,8 +363,8 @@ bool Renderer::BeginRendering()
 		auto proj = m_projMatTemp;
 
 		::Effekseer::Matrix44 mat;
-		mat.Values[0][0] = (float) m_width / (float) GuideWidth;
-		mat.Values[1][1] = (float) m_height / (float) GuideHeight;
+		mat.Values[0][0] = (float) m_windowWidth / (float) GuideWidth;
+		mat.Values[1][1] = (float) m_windowHeight / (float) GuideHeight;
 		::Effekseer::Matrix44::Mul(proj, proj, mat);
 
 		m_renderer->SetProjectionMatrix(proj);
@@ -409,7 +414,7 @@ bool Renderer::EndRendering()
 
 	if( RendersGuide && !m_recording )
 	{
-		m_guide->Rendering( m_width, m_height, GuideWidth, GuideHeight );
+		m_guide->Rendering( m_windowWidth, m_windowHeight, GuideWidth, GuideHeight );
 	}
 
 	if (!m_recording)
@@ -463,6 +468,9 @@ bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 		SetOrthographic(width, height);
 	}
 
+	m_windowWidth = width;
+	m_windowHeight = height;
+
 	return true;
 }
 
@@ -472,6 +480,9 @@ bool Renderer::EndRenderToView()
 	m_renderer->SetProjectionMatrix(m_projMatTemp);
 
 	graphics->SetRenderTarget(nullptr, nullptr);
+
+	m_windowWidth = m_width;
+	m_windowHeight = m_height;
 	return true;
 }
 

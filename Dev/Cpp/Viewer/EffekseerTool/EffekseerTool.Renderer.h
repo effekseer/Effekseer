@@ -38,6 +38,9 @@ private:
 	int32_t				m_width;
 	int32_t				m_height;
 	
+	int32_t				m_windowWidth;
+	int32_t				m_windowHeight;
+
 	int32_t				m_squareMaxCount;
 
 	eProjectionType		m_projection;

@@ -79,6 +79,37 @@ namespace efk
 		return true;
 	}
 
+	bool SaveTextureGL(std::vector<Effekseer::Color>& dst, GLuint texture, int32_t width, int32_t height)
+	{
+		GLCheckError();
+
+		std::vector<Effekseer::Color> src;
+		src.resize(width * height);
+		dst.resize(width * height);
+
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, src.data());
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		auto size = width * height;
+		dst.resize(size);
+
+		for (auto y = 0; y < height; y++)
+		{
+			for (auto x = 0; x < width; x++)
+			{
+				dst[x + y * width] = src[x + (height - y - 1) * width];
+			}
+		}
+
+		GLCheckError();
+
+		return true;
+	}
+
 	GraphicsGL::GraphicsGL()
 	{
 
@@ -88,22 +119,15 @@ namespace efk
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDeleteFramebuffers(1, &frameBuffer);
-		/*
+
+		recordingTarget.reset();
+		recordingDepth.reset();
+
 		if (renderer != nullptr)
 		{
 			renderer->Destroy();
 			renderer = nullptr;
 		}
-
-		assert(renderDefaultTarget == nullptr);
-		assert(recordingTarget == nullptr);
-		
-		ES_SAFE_RELEASE(backTarget);
-		ES_SAFE_RELEASE(backTargetTexture);
-
-		ES_SAFE_RELEASE(d3d_device);
-		ES_SAFE_RELEASE(d3d);
-		*/
 	}
 
 	bool GraphicsGL::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount)
@@ -289,75 +313,30 @@ namespace efk
 
 	void GraphicsGL::BeginRecord(int32_t width, int32_t height)
 	{
-		/*
-		HRESULT hr;
+		auto rt = std::make_shared<RenderTextureGL>(this);
+		rt->Initialize(width, height);
 
-		hr = d3d_device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &recordingTargetTexture, NULL);
-		if (FAILED(hr)) return;
+		auto dt = std::make_shared<DepthTextureGL>(this);
+		dt->Initialize(width, height);
 
-		d3d_device->GetRenderTarget(0, &renderDefaultTarget);
-		d3d_device->GetDepthStencilSurface(&renderDefaultDepth);
-
-		recordingTargetTexture->GetSurfaceLevel(0, &recordingTarget);
-
-		d3d_device->CreateDepthStencilSurface(width, height, D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, TRUE, &recordingDepth, NULL);
+		recordingTarget = rt;
+		recordingDepth = dt;
 
 		recordingWidth = width;
 		recordingHeight = height;
 
-		d3d_device->SetRenderTarget(0, recordingTarget);
-		d3d_device->SetDepthStencilSurface(recordingDepth);
-		*/
+		SetRenderTarget(rt.get(), dt.get());
 	}
 
 	void GraphicsGL::EndRecord(std::vector<Effekseer::Color>& pixels)
 	{
-		/*
 		pixels.resize(recordingWidth * recordingHeight);
+		SetRenderTarget(nullptr, nullptr);
 
-		d3d_device->SetRenderTarget(0, renderDefaultTarget);
-		d3d_device->SetDepthStencilSurface(renderDefaultDepth);
-		ES_SAFE_RELEASE(renderDefaultTarget);
-		ES_SAFE_RELEASE(renderDefaultDepth);
+		SaveTextureGL(pixels, recordingTarget->GetBuffer(), recordingWidth, recordingHeight);
 
-		IDirect3DSurface9*	temp_sur = nullptr;
-		
-		d3d_device->CreateOffscreenPlainSurface(
-			recordingWidth, recordingHeight, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &temp_sur, NULL);
-		
-		d3d_device->GetRenderTargetData(recordingTarget, temp_sur);
-
-		D3DLOCKED_RECT drect;
-		RECT rect;
-		rect.top = 0;
-		rect.left = 0;
-		rect.right = recordingWidth;
-		rect.bottom = recordingHeight;
-
-		auto hr = temp_sur->LockRect(&drect, &rect, D3DLOCK_READONLY);
-		if (SUCCEEDED(hr))
-		{
-			for (int32_t y = 0; y < recordingHeight; y++)
-			{
-				for (int32_t x = 0; x < recordingWidth; x++)
-				{
-					auto src = &(((uint8_t*)drect.pBits)[x * 4 + drect.Pitch * y]);
-					pixels[x + recordingWidth * y].A = src[3];
-					pixels[x + recordingWidth * y].R = src[2];
-					pixels[x + recordingWidth * y].G = src[1];
-					pixels[x + recordingWidth * y].B = src[0];
-				}
-			}
-
-			temp_sur->UnlockRect();
-		}
-
-		ES_SAFE_RELEASE(temp_sur);
-
-		ES_SAFE_RELEASE(recordingTarget);
-		ES_SAFE_RELEASE(recordingTargetTexture);
-		ES_SAFE_RELEASE(recordingDepth);
-		*/
+		recordingTarget = nullptr;
+		recordingDepth = nullptr;
 	}
 
 	void GraphicsGL::Clear(Effekseer::Color color)

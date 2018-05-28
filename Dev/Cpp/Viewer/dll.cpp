@@ -1542,6 +1542,7 @@ ViewerParamater Native::GetViewerParamater()
 	paramater.RateOfMagnification = g_renderer->RateOfMagnification;
 	
 	paramater.Distortion = (DistortionType)g_renderer->Distortion;
+	paramater.RenderingMode = (RenderMode)g_renderer->RenderingMode;
 
 	return paramater;
 }

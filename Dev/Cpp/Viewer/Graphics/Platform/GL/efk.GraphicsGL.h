@@ -54,6 +54,11 @@ namespace efk
 		bool				isSRGBMode = false;
 		GLuint	frameBuffer = 0;
 
+		std::shared_ptr<RenderTextureGL>	recordingTarget;
+		std::shared_ptr<DepthTextureGL>		recordingDepth;
+		int32_t								recordingWidth = 0;
+		int32_t								recordingHeight = 0;
+
 		/*
 		LPDIRECT3D9			d3d = nullptr;
 		LPDIRECT3DDEVICE9	d3d_device = nullptr;
