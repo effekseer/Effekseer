@@ -90,8 +90,16 @@ On Mac
 
 ```
 g++
-VisualStudio For Mac2017
 mono
+VisualStudio For Mac2017
+```
+
+On Linux
+
+```
+g++
+mono
+libx11-dev libgl1-mesa-dev libxrandr-dev libxi-dev x11proto-xf86vidmode-dev xorg-dev libglu1-mesa-dev libalut0 libalut-dev
 ```
 
 Update submodule.
