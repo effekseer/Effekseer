@@ -37,6 +37,7 @@ with aceutils.CurrentDir('../Downloads'):
 
 	aceutils.mkdir(r"../Dev/Cpp/include/")
 	aceutils.mkdir(r"../Dev/Cpp/lib/")
+	aceutils.mkdir(r'../Dev/Cpp/include/GL')
 
 	if aceutils.isWin():
 		aceutils.mkdir(r'../Dev/Cpp/lib/')
@@ -47,9 +48,6 @@ with aceutils.CurrentDir('../Downloads'):
 		aceutils.mkdir(r'../Dev/Cpp/lib/x64/')
 		aceutils.mkdir(r'../Dev/Cpp/lib/x64/Debug')
 		aceutils.mkdir(r'../Dev/Cpp/lib/x64/Release')
-
-		aceutils.mkdir(r'../Dev/Cpp/include')
-		aceutils.mkdir(r'../Dev/Cpp/include/GL')
 
 		aceutils.copy(pathname + r'/include/GL/glew.h', r'../Dev/Cpp/include/GL/')
 		aceutils.copy(pathname + r'/include/GL/glxew.h', r'../Dev/Cpp/include/GL/')
