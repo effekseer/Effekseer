@@ -9,6 +9,7 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
+#include <algorithm>
 
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.RenderStateBase.h"

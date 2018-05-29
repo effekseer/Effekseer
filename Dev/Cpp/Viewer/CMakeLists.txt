@@ -179,7 +179,7 @@ if (WIN32)
 target_link_libraries(Viewer effekseer effekseer_renderer_dx9 effekseer_renderer_gl EffekseerSoundOSMixer)
 target_link_libraries(ViewerTest effekseer effekseer_renderer_dx9 effekseer_renderer_gl EffekseerSoundOSMixer)
 
-else()
+elif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 FIND_PACKAGE(OpenAL REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
@@ -231,6 +231,60 @@ target_link_libraries(
 	${IOKIT_FRAMEWORK}
 	${CORE_FOUNDATION_FRAMEWORK}
 	${CORE_VIDEO_FRAMEWORK})
+
+else()
+
+FIND_PACKAGE(OpenAL REQUIRED)
+FIND_PACKAGE(Threads REQUIRED)
+FIND_PACKAGE(OpenGL REQUIRED)
+
+find_package(X11 REQUIRED)
+find_package(Threads REQUIRED)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+
+include_directories(
+	${OPENGL_INCLUDE_DIR}
+	${GTK3_INCLUDE_DIRS}
+	${X11_INCLUDE_DIR})
+
+link_directories(${GTK3_LIBRARY_DIRS})
+
+add_definitions(${GTK3_CFLAGS_OTHER})
+
+target_link_libraries(
+	Viewer
+	effekseer
+	effekseer_renderer_gl
+	EffekseerSoundOSMixer
+	glfw3
+	gd
+	png16
+	z
+	dl
+	${OPENGL_LIBRARY}
+	${CMAKE_THREAD_LIBS_INIT}
+	${OpenAL_LIBRARY}
+	${GTK3_LIBRARIES}
+	${X11_LIBRARIES})
+
+target_link_libraries(
+	ViewerTest
+	effekseer
+	effekseer_renderer_gl
+	EffekseerSoundOSMixer
+	glfw3
+	gd
+	png16
+	z
+	dl
+	${OPENGL_LIBRARY}
+	${CMAKE_THREAD_LIBS_INIT}
+	${OpenAL_LIBRARY}
+	${GTK3_LIBRARIES}
+	${X11_LIBRARIES})
+
 
 endif()
 

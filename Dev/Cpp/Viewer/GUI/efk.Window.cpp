@@ -1,7 +1,7 @@
 
 #include "efk.Window.h"
 
-#ifndef _WIN32
+#ifdef __APPLE__
 #include <OpenGL/gl3.h>
 #endif
 

@@ -45,8 +45,11 @@
 
 #ifdef _WIN32
 #include <GL/glew.h>    // This example is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
-#else
+#elif defined(__APPLE__)
 #include <OpenGL/gl3.h>
+#else
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
 #endif
 
 #include <GLFW/glfw3.h>

@@ -12,6 +12,7 @@
 
 #endif
 
+#define GL_GLEXT_PROTOTYPES
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 

@@ -99,7 +99,7 @@ On Linux
 ```
 g++
 mono
-libx11-dev libgl1-mesa-dev libxrandr-dev libxi-dev x11proto-xf86vidmode-dev xorg-dev libglu1-mesa-dev libalut0 libalut-dev
+libx11-dev libgl1-mesa-dev libxrandr-dev libxi-dev x11proto-xf86vidmode-dev xorg-dev libglu1-mesa-dev libalut0 libalut-dev libgtk-3-dev
 ```
 
 Update submodule.
