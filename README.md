@@ -98,7 +98,7 @@ On Linux
 
 ```
 g++
-mono
+mono-devel
 libx11-dev libgl1-mesa-dev libxrandr-dev libxi-dev x11proto-xf86vidmode-dev xorg-dev libglu1-mesa-dev libpulse-dev libgtk-3-dev
 ```
 
@@ -145,3 +145,9 @@ Execute ```Dev/package.Mac.sh``` to generate app into Dev/Mac/
 or
 
 Use cmake to ```Dev/Cpp/CMakeLists.txt```
+
+* Linux
+
+Execute ```Dev/build.Linux.sh``` to compile and generate binary into Dev/release/
+
+.net binary cannot compile now. So get with windows or mac.
