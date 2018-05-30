@@ -234,7 +234,7 @@ target_link_libraries(
 
 else()
 
-FIND_PACKAGE(OpenAL REQUIRED)
+FIND_PACKAGE(PulseAudio REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
 FIND_PACKAGE(OpenGL REQUIRED)
 
@@ -263,9 +263,10 @@ target_link_libraries(
 	png16
 	z
 	dl
+	OpenSoundMixer
 	${OPENGL_LIBRARY}
 	${CMAKE_THREAD_LIBS_INIT}
-	${OpenAL_LIBRARY}
+	${PulseAudio_LIBRARY}
 	${GTK3_LIBRARIES}
 	${X11_LIBRARIES})
 
@@ -279,9 +280,10 @@ target_link_libraries(
 	png16
 	z
 	dl
+	OpenSoundMixer
 	${OPENGL_LIBRARY}
 	${CMAKE_THREAD_LIBS_INIT}
-	${OpenAL_LIBRARY}
+	${PulseAudio_LIBRARY}
 	${GTK3_LIBRARIES}
 	${X11_LIBRARIES})
 
