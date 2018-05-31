@@ -241,7 +241,9 @@ bool Initialize(OpenGLDeviceType deviceType)
 	GET_PROC(glGenVertexArraysOES);
 	GET_PROC(glDeleteVertexArraysOES);
 	GET_PROC(glBindVertexArrayOES);
-	g_isSupportedVertexArray = (g_glGenVertexArraysOES && g_glDeleteVertexArraysOES && g_glBindVertexArrayOES);
+	char *glExtensions = (char *)glGetString(GL_EXTENSIONS);
+	g_isSupportedVertexArray = (g_glGenVertexArraysOES && g_glDeleteVertexArraysOES && g_glBindVertexArrayOES
+		&& ((glExtensions && strstr(glExtensions, "GL_OES_vertex_array_object")) ? true : false));
 
 	// Some smartphone causes segmentation fault.
 	//GET_PROC(glMapBufferRangeEXT);
@@ -249,7 +251,8 @@ bool Initialize(OpenGLDeviceType deviceType)
 	GET_PROC(glMapBufferOES);
 	GET_PROC(glUnmapBufferOES);
 	g_isSurrpotedBufferRange = (g_glMapBufferRangeEXT && g_glUnmapBufferOES);
-	g_isSurrpotedMapBuffer = (g_glMapBufferOES && g_glUnmapBufferOES);
+	g_isSurrpotedMapBuffer = (g_glMapBufferOES && g_glUnmapBufferOES 
+		&& ((glExtensions && strstr(glExtensions, "GL_OES_mapbuffer")) ? true : false));
 #endif
 
 #else
