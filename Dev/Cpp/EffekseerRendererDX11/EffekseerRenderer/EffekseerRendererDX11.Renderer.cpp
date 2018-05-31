@@ -871,6 +871,11 @@ void RendererImplemented::EndShader(Shader* shader)
 	currentShader = nullptr;
 }
 
+void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size)
+{
+	memcpy(currentShader->GetVertexConstantBuffer(), data, size);
+}
+
 void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size)
 {
 	memcpy(currentShader->GetPixelConstantBuffer(), data, size);

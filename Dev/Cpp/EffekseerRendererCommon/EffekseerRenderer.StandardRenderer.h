@@ -81,13 +81,13 @@ private:
 	StandardRendererState		m_state;
 
 	std::vector<uint8_t>		vertexCaches;
-	int32_t						vertexCacheMaxSize;
+	int32_t						renderVertexMaxSize;
 
 	bool						m_isDistortionMode;
 public:
 
 	StandardRenderer(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, SHADER* shader_distortion, SHADER* shader_no_texture_distortion)
-		: vertexCacheMaxSize(0)
+		: renderVertexMaxSize(0)
 		, m_isDistortionMode(false)
 	{
 		m_renderer = renderer;
@@ -97,7 +97,7 @@ public:
 		m_shader_no_texture_distortion = shader_no_texture_distortion;
 
 		vertexCaches.reserve(m_renderer->GetVertexBuffer()->GetMaxSize());
-		vertexCacheMaxSize = m_renderer->GetVertexBuffer()->GetMaxSize();
+		renderVertexMaxSize = m_renderer->GetVertexBuffer()->GetMaxSize();
 	}
 
 	void UpdateStateAndRenderingIfRequired(StandardRendererState state)
@@ -116,7 +116,7 @@ public:
 	{
 		if (m_isDistortionMode)
 		{
-			if (count * sizeof(VERTEX_DISTORTION) + vertexCaches.size() > vertexCacheMaxSize)
+			if (count * sizeof(VERTEX_DISTORTION) + vertexCaches.size() > renderVertexMaxSize)
 			{
 				Rendering();
 			}
@@ -128,7 +128,7 @@ public:
 		}
 		else
 		{
-			if (count * sizeof(VERTEX) + vertexCaches.size() > vertexCacheMaxSize)
+			if (count * sizeof(VERTEX) + vertexCaches.size() > renderVertexMaxSize)
 			{
 				Rendering();
 			}
@@ -152,6 +152,43 @@ public:
 	{
 		if (vertexCaches.size() == 0) return;
 
+		int32_t offset = 0;
+
+		auto vsize = 0;
+
+		if (m_state.Distortion)
+		{
+			vsize = sizeof(VERTEX_DISTORTION);
+		}
+		else
+		{
+			vsize = sizeof(VERTEX);
+		}
+
+		while (true)
+		{
+			auto renderBufferSize = 0;
+	
+			// only sprite
+			renderBufferSize = vertexCaches.size() - offset;
+
+			if (renderBufferSize > renderVertexMaxSize)
+			{
+				renderBufferSize = (int32_t)(Effekseer::Min(renderVertexMaxSize, vertexCaches.size() - offset) / (vsize * 4)) * (vsize * 4);
+			}
+
+			Rendering_(mCamera, mProj, offset, renderBufferSize);
+
+			offset += renderBufferSize;
+
+			if (offset == vertexCaches.size()) break;
+		}
+
+		vertexCaches.clear();
+	}
+
+	void Rendering_(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj, int32_t bufferOffset, int32_t bufferSize)
+	{
 		if (m_state.Distortion)
 		{
 			auto callback = m_renderer->GetDistortingCallback();
@@ -159,7 +196,6 @@ public:
 			{
 				if (!callback->OnDistorting())
 				{
-					vertexCaches.clear();
 					return;
 				}
 			}
@@ -167,11 +203,10 @@ public:
 
 		if (m_state.Distortion && m_renderer->GetBackground() == 0)
 		{
-			vertexCaches.clear();
 			return;
 		}
 
-		int32_t vertexSize = vertexCaches.size();
+		int32_t vertexSize = bufferSize;
 		int32_t offsetSize = 0;
 		{
 			VertexBufferBase* vb = m_renderer->GetVertexBuffer();
@@ -182,30 +217,24 @@ public:
 			{
 				// For OpenGL ES(Because OpenGL ES 3.2 and later can only realize a vertex layout variable ring buffer)
 				vb->Lock();
-				data = vb->GetBufferDirect(vertexCaches.size());
+				data = vb->GetBufferDirect(vertexSize);
 				if (data == nullptr)
 				{
-					vertexCaches.clear();
 					return;
 				}
-				memcpy(data, vertexCaches.data(), vertexCaches.size());
+				memcpy(data, vertexCaches.data() + bufferOffset, vertexSize);
 				vb->Unlock();
 			}
-			else if (vb->RingBufferLock(vertexCaches.size(), offsetSize, data))
+			else if (vb->RingBufferLock(vertexSize, offsetSize, data))
 			{
 				assert(data != nullptr);
-				memcpy(data, vertexCaches.data(), vertexCaches.size());
+				memcpy(data, vertexCaches.data() + bufferOffset, vertexSize);
 				vb->Unlock();
 			}
 			else
 			{
-				// 現状、描画するインスタンス数が多すぎる場合は描画しなくしている
-				vertexCaches.clear();
 				return;
 			}
-
-			vertexCaches.clear();
-
 		}
 
 		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();

@@ -525,6 +525,8 @@ public:
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 
+	void SetVertexBufferToShader(const void* data, int32_t size);
+
 	void SetPixelBufferToShader(const void* data, int32_t size);
 
 	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
