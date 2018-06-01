@@ -64,9 +64,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Effekseer\Properties\Resources.Designer.cs">
-      <Link>Properties\Resources.Designer.cs</Link>
-    </Compile>
     <Compile Include="Binary\CommonValues.cs" />
     <Compile Include="Binary\GenerationLocationValues.cs" />
     <Compile Include="Binary\RendererValues.cs" />
@@ -142,14 +139,6 @@
     <Compile Include="Utl\MathExtensions.cs" />
     <Compile Include="Utl\TextureInformation.cs" />
     <Compile Include="Utl\XmlDocumentExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\Effekseer\Properties\Resources.en-US.resx">
-      <Link>Properties\Resources.en-US.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Effekseer\Properties\Resources.resx">
-      <Link>Properties\Resources.resx</Link>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

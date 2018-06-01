@@ -275,7 +275,7 @@ namespace Effekseer.Data
 		{
 			RenderingMode = new Value.Enum<RenderMode>(RenderMode.Normal);
 			BackgroundColor = new Value.Color(0, 0, 0, 255);
-            LasyBackgroundImage = new Lazy<Value.PathForImage>(() => { return new Value.PathForImage(Properties.Resources.ImageFilter, false, ""); });
+            LasyBackgroundImage = new Lazy<Value.PathForImage>(() => { return new Value.PathForImage(Resources.GetString("ImageFilter"), false, ""); });
 			GridColor = new Value.Color(255, 255, 255, 255);
 			
 			IsGridShown = new Value.Boolean(true);

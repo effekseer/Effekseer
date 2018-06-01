@@ -309,7 +309,7 @@ namespace Effekseer.Data
 
 				SplineDivision = new Value.Int(1, int.MaxValue, 1);
 
-				ColorTexture = new Value.Path(Properties.Resources.ImageFilter, true, "");
+				ColorTexture = new Value.Path(Resources.GetString("ImageFilter"), true, "");
 			}
 
             public enum ColorAllType : int
@@ -534,7 +534,7 @@ namespace Effekseer.Data
                 InnerColor_Random = new Value.ColorWithRandom(255, 255, 255, 0);
                 InnerColor_Easing = new ColorEasingParamater();
 
-                ColorTexture = new Value.Path(Properties.Resources.ImageFilter, true, "");
+                ColorTexture = new Value.Path(Resources.GetString("ImageFilter"), true, "");
             }
 
             public enum ViewingAngleType : int
@@ -684,8 +684,8 @@ namespace Effekseer.Data
 
 			public ModelParamater()
 			{
-                Model = new Value.PathForModel(Properties.Resources.ModelFilter, true, "");
-                NormalTexture = new Value.PathForImage(Properties.Resources.ImageFilter, true, "");
+                Model = new Value.PathForModel(Resources.GetString("ModelFilter"), true, "");
+                NormalTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
 
 				Billboard = new Value.Enum<BillboardType>(BillboardType.Fixed);
 

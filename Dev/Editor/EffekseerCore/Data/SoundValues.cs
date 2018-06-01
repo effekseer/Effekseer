@@ -119,7 +119,7 @@ namespace Effekseer.Data
 
             internal SoundParamater()
 			{
-				Wave = new Value.PathForSound(Properties.Resources.SoundFilter, true, "");
+				Wave = new Value.PathForSound(Resources.GetString("SoundFilter"), true, "");
                 Volume = new Value.FloatWithRandom(1.0f, 1.0f, 0.0f, DrawnAs.CenterAndAmplitude, 0.1f);
                 Pitch = new Value.FloatWithRandom(0.0f, 2.0f, -2.0f, DrawnAs.CenterAndAmplitude, 0.1f);
                 PanType = new Value.Enum<ParamaterPanType>(ParamaterPanType.Sound2D);

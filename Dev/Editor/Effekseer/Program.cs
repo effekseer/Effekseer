@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace Effekseer
 {
@@ -20,6 +21,9 @@ namespace Effekseer
 		[STAThread]
 		static void Main(string[] args)
 		{
+			var resources = new System.Resources.ResourceManager("Effekseer.Properties.Resources", Assembly.GetExecutingAssembly());
+			Effekseer.Resources.SetResourceManager(resources);
+
 			StartDirectory = System.IO.Directory.GetCurrentDirectory();
 
 			bool gui = true;

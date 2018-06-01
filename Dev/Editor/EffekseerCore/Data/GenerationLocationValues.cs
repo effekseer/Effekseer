@@ -212,7 +212,7 @@ namespace Effekseer.Data
 
 			public ModelParameter()
 			{
-                Model = new Value.PathForModel(Properties.Resources.ModelFilter, true, "");				
+                Model = new Value.PathForModel(Resources.GetString("ModelFilter"), true, "");				
 				Type = new Value.Enum<ModelType>(ModelType.Random);
 			}
 		}

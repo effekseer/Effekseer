@@ -136,7 +136,7 @@ namespace Effekseer.Data
 
 		internal RendererCommonValues()
 		{
-            ColorTexture = new Value.PathForImage(Properties.Resources.ImageFilter, true, "");
+            ColorTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
 			
 			AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);

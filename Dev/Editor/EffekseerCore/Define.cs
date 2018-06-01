@@ -86,8 +86,12 @@ namespace Effekseer
 
 		static Resources()
         {
-            resources = new ResourceManager("Effekseer.Properties.Resources", Assembly.GetExecutingAssembly());
         }
+
+		public static void SetResourceManager(ResourceManager resourceManager)
+		{
+			resources = resourceManager;
+		}
 
 		public static void LoadLanguageFile(string path)
 		{
@@ -129,7 +133,7 @@ namespace Effekseer
 			}
 
             if (resources == null) return string.Empty;
-
+			
             try
             {
                 var value = resources.GetString(name);
@@ -150,11 +154,8 @@ namespace Effekseer
 	Inherited = false)]
 	public class NameAttribute : Attribute
 	{
-        static ResourceManager resources;
-
         static NameAttribute()
         {
-            resources = new ResourceManager("Effekseer.Properties.Resources", Assembly.GetExecutingAssembly());
         }
 
 		public NameAttribute()
