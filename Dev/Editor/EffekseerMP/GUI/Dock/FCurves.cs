@@ -743,6 +743,9 @@ namespace Effekseer.GUI.Dock
 
 		abstract class FCurve
 		{
+			protected int LEFT_SHIFT = 340;
+			protected int RIGHT_SHIFT = 344;
+
 			public TreeNode ParentNode { get; set; }
 
 			public string Name { get; protected set; }
@@ -761,7 +764,7 @@ namespace Effekseer.GUI.Dock
 				else if (v.Item2 is Data.Value.FCurveVector3D)
 				{
 					var v_ = (Data.Value.FCurveVector3D)v.Item2;
-					return new FCurveVector3D(v.Item1, v_, window);
+					return new FCurveVector3D(3, v.Item1, v_, window);
 				}
 				else if (v.Item2 is Data.Value.FCurveColorRGBA)
 				{
@@ -845,26 +848,25 @@ namespace Effekseer.GUI.Dock
 
 			public Data.Value.FCurveVector3D Value { get; private set; }
 
-			public FCurveVector3D(string name, Data.Value.FCurveVector3D value, FCurves window)
+			public FCurveVector3D(int length, string name, Data.Value.FCurveVector3D value, FCurves window)
 			{
 				Name = name;
 				Value = value;
 				this.window = window;
-				//
-				//fCurvesMagYCount = (float)Math.Log((float)GraphPanel.Height / (value.X.DefaultValueRangeMax - value.X.DefaultValueRangeMin), 2.0);
-				//fCurvesOffsetY = (value.X.DefaultValueRangeMax + value.X.DefaultValueRangeMin) / 2.0f;
 
-				properties[0] = new FCurveProperty();
-				properties[1] = new FCurveProperty();
-				properties[2] = new FCurveProperty();
+				properties = new FCurveProperty[length];
+				fcurves = new Data.Value.FCurve<float>[length];
+				ids = new int[length];
+
+				for(int i = 0; i < length; i++)
+				{
+					properties[i] = new FCurveProperty();
+					ids[i] = Manager.GetUniqueID();
+				}
 
 				fcurves[0] = Value.X;
 				fcurves[1] = Value.Y;
 				fcurves[2] = Value.Z;
-
-				ids[0] = Manager.GetUniqueID();
-				ids[1] = Manager.GetUniqueID();
-				ids[2] = Manager.GetUniqueID();
 
 				properties[0].Color = 0xff0000ff;
 				properties[1].Color = 0xff00ff00;
@@ -881,7 +883,7 @@ namespace Effekseer.GUI.Dock
 				int count = properties.Count(_ => _.Selected);
 				if (count != 1) return new Tuple<Data.Value.IFCurve, FCurveProperty>(null, null);
 
-				for(int i = 0; i < 3; i++)
+				for(int i = 0; i < properties.Length; i++)
 				{
 					if(properties[i].Selected)
 					{
@@ -894,58 +896,28 @@ namespace Effekseer.GUI.Dock
 
 			public override void UpdateTree()
 			{
-				if (Manager.NativeManager.Selectable("X", properties[0].IsShown))
+				var names = new string[] { "X", "Y", "Z"};
+
+				for(int i = 0; i < properties.Length; i++)
 				{
-					int LEFT_SHIFT = 340;
-					int RIGHT_SHIFT = 344;
-
-					if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+					if (Manager.NativeManager.Selectable(names[i], properties[i].IsShown))
 					{
+						if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+						{
+						}
+						else
+						{
+							window.HideAll();
+						}
+
+						properties[i].IsShown = true;
 					}
-					else
-					{
-						window.HideAll();
-					}
-
-					properties[0].IsShown = true;
-				}
-
-				if (Manager.NativeManager.Selectable("Y", properties[1].IsShown))
-				{
-					int LEFT_SHIFT = 340;
-					int RIGHT_SHIFT = 344;
-
-					if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
-					{
-					}
-					else
-					{
-						window.HideAll();
-					}
-
-					properties[1].IsShown = true;
-				}
-
-				if (Manager.NativeManager.Selectable("Z", properties[2].IsShown))
-				{
-					int LEFT_SHIFT = 340;
-					int RIGHT_SHIFT = 344;
-
-					if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
-					{
-					}
-					else
-					{
-						window.HideAll();
-					}
-
-					properties[2].IsShown = true;
 				}
 			}
 
 			public override void UpdateGraph(ref bool canControl)
 			{
-				for(int i = 0; i < 3; i++)
+				for(int i = 0; i < properties.Length; i++)
 				{
 					if (!properties[i].IsShown) continue;
 
@@ -992,9 +964,6 @@ namespace Effekseer.GUI.Dock
 
 						if (isSelected)
 						{
-							int LEFT_SHIFT = 340;
-							int RIGHT_SHIFT = 344;
-
 							if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
 							{
 								properties[i].Selected = true;
