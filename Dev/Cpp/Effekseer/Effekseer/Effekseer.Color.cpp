@@ -126,6 +126,7 @@ Color Color::Mul( Color in1, float in2 )
 //----------------------------------------------------------------------------------
 Color Color::Lerp( const Color in1, const Color in2, float t )
 {
+	/*
 #if defined(EFK_SSE2)
 	__m128i s1 = _mm_cvtsi32_si128(*(int32_t*)&in1);
 	__m128i s2 = _mm_cvtsi32_si128(*(int32_t*)&in2);
@@ -179,13 +180,14 @@ Color Color::Lerp( const Color in1, const Color in2, float t )
 #endif
 
 #else
+	*/
 	Color o;
 	o.R = (uint8_t)Clamp( in1.R + (in2.R - in1.R) * t, 255, 0 );
 	o.G = (uint8_t)Clamp( in1.G + (in2.G - in1.G) * t, 255, 0 );
 	o.B = (uint8_t)Clamp( in1.B + (in2.B - in1.B) * t, 255, 0 );
 	o.A = (uint8_t)Clamp( in1.A + (in2.A - in1.A) * t, 255, 0 );
 	return o;
-#endif
+//#endif
 }
 
 //----------------------------------------------------------------------------------
