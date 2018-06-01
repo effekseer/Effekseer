@@ -1,3 +1,6 @@
+xbuild Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86
+xbuild Editor/EffekseerMP/EffekseerMP.csproj /t:build /p:Configuration=Release /p:Platform=x86
+
 rm -rf Temp
 
 mkdir Temp

@@ -150,4 +150,4 @@ Use cmake to ```Dev/Cpp/CMakeLists.txt```
 
 Execute ```Dev/build.Linux.sh``` to compile and generate binary into Dev/release/
 
-.net binary cannot compile now. So get with windows or mac.
+I have not debug Effekseer on Linux yet.
