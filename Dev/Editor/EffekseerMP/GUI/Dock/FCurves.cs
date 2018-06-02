@@ -758,18 +758,50 @@ namespace Effekseer.GUI.Dock
 			{
 				if (v.Item2 is Data.Value.FCurveVector2D)
 				{
+					Func<float, float> converter = (float pre) => { return pre; };
+
 					var v_ = (Data.Value.FCurveVector2D)v.Item2;
-					return new FCurveVector2D(v.Item1, v_, window);
+					return new FCurveTemplate<float>(
+						2,
+						new[] { v_.X, v_.Y },
+						new[] { 0xff0000ff, 0xff00ff00 },
+						new string[] { "X", "Y", "Z" },
+						v_,
+						v.Item1,
+						window,
+						converter);
 				}
 				else if (v.Item2 is Data.Value.FCurveVector3D)
 				{
+					Func<float, float> converter = (float pre) => { return pre; };
+
 					var v_ = (Data.Value.FCurveVector3D)v.Item2;
-					return new FCurveVector3D(3, v.Item1, v_, window);
+					return new FCurveTemplate<float>(
+						3, 
+						new[] { v_.X, v_.Y, v_.Z}, 
+						new[] { 0xff0000ff, 0xff00ff00, 0xffff0000 },
+						new string[] { "X", "Y", "Z" },
+						v_,
+						v.Item1, 
+						window,
+						converter);
 				}
 				else if (v.Item2 is Data.Value.FCurveColorRGBA)
 				{
+					Func<float, byte> converter = (float pre) => {
+						return (byte)Math.Min(255, Math.Max(0, pre));
+					};
+
 					var v_ = (Data.Value.FCurveColorRGBA)v.Item2;
-					return new FCurveColor(v.Item1, v_, window);
+					return new FCurveTemplate<byte>(
+						4,
+						new[] { v_.R, v_.G, v_.B, v_.A },
+						new[] { 0xff0000ff, 0xff00ff00, 0xffff0000, 0xffaaaaaa },
+						new string[] { "R", "G", "B", "A" },
+						v_,
+						v.Item1,
+						window,
+						converter);
 				}
 				
 				return null;
@@ -798,79 +830,37 @@ namespace Effekseer.GUI.Dock
 			public virtual bool IsDirtied() { return false; }
 		}
 
-		class FCurveColor : FCurve
-		{
-			public Data.Value.FCurveColorRGBA Value { get; private set; }
-
-			public FCurveColor(string name, Data.Value.FCurveColorRGBA value, FCurves window)
-			{
-				Name = name;
-				Value = value;
-				//this.window = window;
-				//
-				//fCurvesMagYCount = (float)Math.Log((float)GraphPanel.Height / (value.R.DefaultValueRangeMax - value.R.DefaultValueRangeMin), 2.0);
-				//fCurvesOffsetY = (value.R.DefaultValueRangeMax + value.R.DefaultValueRangeMin) / 2.0f;
-			}
-
-			public override object GetValueAsObject()
-			{
-				return Value;
-			}
-		}
-
-		class FCurveVector2D : FCurve
-		{
-			public Data.Value.FCurveVector2D Value { get; private set; }
-
-			public FCurveVector2D(string name, Data.Value.FCurveVector2D value, FCurves window)
-			{
-				Name = name;
-				Value = value;
-				//this.window = window;
-				//
-				//fCurvesMagYCount = (float)Math.Log((float)GraphPanel.Height / (value.X.DefaultValueRangeMax - value.X.DefaultValueRangeMin), 2.0);
-				//fCurvesOffsetY = (value.X.DefaultValueRangeMax + value.X.DefaultValueRangeMin) / 2.0f;
-			}
-
-			public override object GetValueAsObject()
-			{
-				return Value;
-			}
-		}
-
-		class FCurveVector3D : FCurve
+		class FCurveTemplate<T> : FCurve where T : struct, IComparable<T>, IEquatable<T>
 		{
 			FCurveProperty[] properties = new FCurveProperty[3];
-			Data.Value.FCurve<float>[] fcurves = new Data.Value.FCurve<float>[3];
+			Data.Value.FCurve<T>[] fcurves = new Data.Value.FCurve<T>[3];
 			int[] ids = new int[3];
+			string[] names = null;
 
 			FCurves window = null;
+			Func<float, T> converter = null;
 
-			public Data.Value.FCurveVector3D Value { get; private set; }
+			public object Value { get; private set; }
 
-			public FCurveVector3D(int length, string name, Data.Value.FCurveVector3D value, FCurves window)
+			public FCurveTemplate(int length, FCurve<T>[] fcurves, uint[] colors, string[] names, object value, string name, FCurves window, Func<float, T> converter)
 			{
 				Name = name;
 				Value = value;
 				this.window = window;
+				this.converter = converter;
 
 				properties = new FCurveProperty[length];
-				fcurves = new Data.Value.FCurve<float>[length];
 				ids = new int[length];
 
 				for(int i = 0; i < length; i++)
 				{
 					properties[i] = new FCurveProperty();
 					ids[i] = Manager.GetUniqueID();
+					properties[i].Color = colors[i];
 				}
 
-				fcurves[0] = Value.X;
-				fcurves[1] = Value.Y;
-				fcurves[2] = Value.Z;
-
-				properties[0].Color = 0xff0000ff;
-				properties[1].Color = 0xff00ff00;
-				properties[2].Color = 0xffff0000;
+				this.names = names;
+				this.fcurves = fcurves;
 			}
 
 			public override object GetValueAsObject()
@@ -896,7 +886,6 @@ namespace Effekseer.GUI.Dock
 
 			public override void UpdateTree()
 			{
-				var names = new string[] { "X", "Y", "Z"};
 
 				for(int i = 0; i < properties.Length; i++)
 				{
@@ -1132,13 +1121,17 @@ namespace Effekseer.GUI.Dock
 				{
 					if (!properties[i].IsDirtied) continue;
 					
-					var keys = new List<Data.Value.FCurveKey<float>>();
+					var keys = new List<Data.Value.FCurveKey<T>>();
 
 					for(int j = 0; j < properties[i].Keys.Length - 1; j++)
 					{
-						Data.Value.FCurveKey<float> key = new FCurveKey<float>(
+						var v = properties[i].Values[j];
+						var v_ = converter(v);
+
+
+						Data.Value.FCurveKey<T> key = new FCurveKey<T>(
 							(int)properties[i].Keys[j],
-							properties[i].Values[j]);
+							v_);
 
 						key.SetLeftDirectly(
 							properties[i].LeftKeys[j],
@@ -1228,7 +1221,7 @@ namespace Effekseer.GUI.Dock
 				return -1;
 			}
 
-			public void Update(Data.Value.FCurve<float> fcurve)
+			public void Update<T>(Data.Value.FCurve<T> fcurve) where T : struct, IComparable<T>, IEquatable<T>
 			{
 				var plength = fcurve.Keys.Count() + 1;
 
