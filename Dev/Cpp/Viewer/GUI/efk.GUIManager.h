@@ -421,6 +421,8 @@ namespace efk
 			bool canControl,
 			uint32_t col,
 			bool selected,
+			float v_min,
+			float v_max,
 			int* newCount,
 			bool* newSelected,
 			float* movedX,

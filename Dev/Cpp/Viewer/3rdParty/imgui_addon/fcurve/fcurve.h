@@ -43,6 +43,8 @@ namespace ImGui
 		bool canControl,
 		ImU32 col,
 		bool selected,
+		float v_min,
+		float v_max,
 		int* newCount,
 		bool* newSelected,
 		float* movedX,

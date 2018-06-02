@@ -947,6 +947,8 @@ namespace Effekseer.GUI.Dock
 						canControl,
 						properties[i].Color,
 						properties[i].Selected,
+						v_min,
+						v_max,
 						ref newCount,
 						ref isSelected,
 						ref movedX,
