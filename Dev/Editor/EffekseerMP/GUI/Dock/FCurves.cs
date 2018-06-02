@@ -769,7 +769,9 @@ namespace Effekseer.GUI.Dock
 						v_,
 						v.Item1,
 						window,
-						converter);
+						converter,
+						float.MinValue,
+						float.MaxValue);
 				}
 				else if (v.Item2 is Data.Value.FCurveVector3D)
 				{
@@ -784,7 +786,9 @@ namespace Effekseer.GUI.Dock
 						v_,
 						v.Item1, 
 						window,
-						converter);
+						converter,
+						float.MinValue,
+						float.MaxValue);
 				}
 				else if (v.Item2 is Data.Value.FCurveColorRGBA)
 				{
@@ -801,7 +805,9 @@ namespace Effekseer.GUI.Dock
 						v_,
 						v.Item1,
 						window,
-						converter);
+						converter,
+						0,
+						255);
 				}
 				
 				return null;
@@ -839,15 +845,19 @@ namespace Effekseer.GUI.Dock
 
 			FCurves window = null;
 			Func<float, T> converter = null;
+			float v_min;
+			float v_max;
 
 			public object Value { get; private set; }
 
-			public FCurveTemplate(int length, FCurve<T>[] fcurves, uint[] colors, string[] names, object value, string name, FCurves window, Func<float, T> converter)
+			public FCurveTemplate(int length, FCurve<T>[] fcurves, uint[] colors, string[] names, object value, string name, FCurves window, Func<float, T> converter, float v_min, float v_max)
 			{
 				Name = name;
 				Value = value;
 				this.window = window;
 				this.converter = converter;
+				this.v_max = v_max;
+				this.v_min = v_min;
 
 				properties = new FCurveProperty[length];
 				ids = new int[length];
@@ -987,6 +997,12 @@ namespace Effekseer.GUI.Dock
 								properties[i].Interpolations = properties[i].Interpolations.Take(properties[i].Interpolations.Length - 1).ToArray();
 							}
 						}
+
+						for(int k = 0; k < properties[i].Values.Length; k++)
+						{
+							if (properties[i].Values[k] < v_min) properties[i].Values[k] = v_min;
+							if (properties[i].Values[k] > v_max) properties[i].Values[k] = v_max;
+						}
 					}
 				}
 			}
@@ -1023,6 +1039,9 @@ namespace Effekseer.GUI.Dock
 							properties[j].RightKeys[k] += x;
 							properties[j].RightValues[k] += y;
 						}
+
+						if (properties[j].Values[k] < v_min) properties[j].Values[k] = v_min;
+						if (properties[j].Values[k] > v_max) properties[j].Values[k] = v_max;
 					}
 
 
