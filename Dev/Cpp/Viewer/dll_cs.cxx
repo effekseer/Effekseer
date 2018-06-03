@@ -6374,15 +6374,17 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetDockActive___(vo
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve___(void * jarg1, int jarg2) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve___(void * jarg1, int jarg2, float jarg3) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int arg2 ;
+  float arg3 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (int)jarg2; 
-  result = (bool)(arg1)->BeginFCurve(arg2);
+  arg3 = (float)jarg3; 
+  result = (bool)(arg1)->BeginFCurve(arg2,arg3);
   jresult = result; 
   return jresult;
 }

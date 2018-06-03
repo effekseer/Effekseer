@@ -1187,9 +1187,9 @@ namespace efk
 		ImGui::SetDockActive();
 	}
 
-	bool GUIManager::BeginFCurve(int id)
+	bool GUIManager::BeginFCurve(int id, float scale)
 	{
-		return ImGui::BeginFCurve(id);
+		return ImGui::BeginFCurve(id, scale);
 	}
 
 	void GUIManager::EndFCurve()

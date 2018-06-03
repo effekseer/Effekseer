@@ -137,7 +137,7 @@ namespace ImGui
 		return isHovered;
 	}
 
-	bool BeginFCurve(int id)
+	bool BeginFCurve(int id, float scale)
 	{
 		if (!BeginChildFrame(id, ImVec2(0, 0), ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
 		{
@@ -154,8 +154,8 @@ namespace ImGui
 		float offset_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, 0.0f);
 		float offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, 0.0f);
 
-		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, 1.0f);
-		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, 1.0f);
+		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, scale);
+		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, scale);
 
 		const ImRect innerRect = window->InnerRect;
 		float width = innerRect.Max.x - innerRect.Min.x;

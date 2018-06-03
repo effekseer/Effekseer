@@ -18,7 +18,7 @@ namespace ImGui
 		LoopInversely = 2,
 	};
 
-	bool BeginFCurve(int id);
+	bool BeginFCurve(int id, float scale = 1.0f);
 
 	void EndFCurve();
 

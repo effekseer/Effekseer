@@ -404,7 +404,7 @@ namespace efk
 		void SetDockActive();
 
 		// Fcurve
-		bool BeginFCurve(int id);
+		bool BeginFCurve(int id, float scale);
 		void EndFCurve();
 		bool FCurve(
 			int fcurve_id,
