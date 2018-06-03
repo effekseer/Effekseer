@@ -276,14 +276,14 @@ namespace Effekseer.GUI.Dock
 			}
 
 			{
-				if (Manager.NativeManager.Button("Expand"))
+				if (Manager.NativeManager.ImageButton(Images.GetIcon("EnlargeAnchor"), 24, 24))
 				{
-					ExpandAnchors();
+					EnlargeAnchors();
 				}
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("Shrink"))
+				if (Manager.NativeManager.ImageButton(Images.GetIcon("ShrinkAnchor"), 24, 24))
 				{
 					ShrinkAnchors();
 				}
@@ -683,7 +683,7 @@ namespace Effekseer.GUI.Dock
 		}
 
 
-		public void ExpandAnchors()
+		public void EnlargeAnchors()
 		{
 			Action<TreeNode> recurse = null;
 
@@ -691,7 +691,7 @@ namespace Effekseer.GUI.Dock
 			{
 				foreach (var fcurve in t.FCurves)
 				{
-					fcurve.ExpandAnchors();
+					fcurve.EnlargeAnchors();
 				}
 
 				foreach (var c in t.Children)
@@ -883,7 +883,7 @@ namespace Effekseer.GUI.Dock
 
 			public virtual void ShrinkAnchors() { }
 
-			public virtual void ExpandAnchors() { }
+			public virtual void EnlargeAnchors() { }
 
 			public virtual void Unselect() { }
 
@@ -1162,7 +1162,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public override void ExpandAnchors()
+			public override void EnlargeAnchors()
 			{
 				foreach(var prop in properties)
 				{
