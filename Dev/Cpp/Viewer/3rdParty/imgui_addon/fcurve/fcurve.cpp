@@ -48,6 +48,11 @@ namespace ImGui
 		return lhs / ImLength(lhs);
 	}
 
+	static double logn(float base, float x)
+	{
+		return log(x) / log(base);
+	}
+
 	enum class FCurveStorageValues : ImGuiID
 	{
 		SCALE_X = 100,
@@ -156,6 +161,8 @@ namespace ImGui
 
 		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, scale);
 		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, scale);
+		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_X, scale_x);
+		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, scale_y);
 
 		const ImRect innerRect = window->InnerRect;
 		float width = innerRect.Max.x - innerRect.Min.x;
@@ -224,12 +231,12 @@ namespace ImGui
 
 			auto kByPixel = (lowerRight_f.x - upperLeft_f.x) / width;
 			auto vByPixel = -(lowerRight_f.y - upperLeft_f.y) / height;
-			auto screenGridSize = 30.0f;
+			auto screenGridSize = 50.0f;
 			auto fieldGridSizeX = screenGridSize * kByPixel;
 			auto fieldGridSizeY = screenGridSize * vByPixel;
 
-			fieldGridSizeX  = pow(10.0f, (int32_t)log10(fieldGridSizeX * 2.0) + 1) / 2.0;
-			fieldGridSizeY = pow(10.0f, (int32_t)log10(fieldGridSizeY * 2.0) + 1) / 2.0;
+			fieldGridSizeX  = pow(2, (int32_t)logn(2, fieldGridSizeX));
+			fieldGridSizeY = pow(2, (int32_t)logn(2, fieldGridSizeY));
 
 			auto sx = (int)(upperLeft_f.x / fieldGridSizeX) * fieldGridSizeX;
 			auto sy = (int)(upperLeft_f.y / fieldGridSizeY) * fieldGridSizeY;
