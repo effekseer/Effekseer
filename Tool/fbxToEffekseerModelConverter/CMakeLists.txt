@@ -3,6 +3,7 @@ set(CMAKE_CONFIGURATION_TYPES Debug Release CACHE TYPE INTERNAL FORCE )
 project(fbxToEffekseerModelConverter)
 
 cmake_minimum_required(VERSION 2.8)
+set (CMAKE_CXX_STANDARD 11)
 
 set(srcs
 	fbxToEfkMdl.FBXConverter.cpp
@@ -29,11 +30,12 @@ if (MSVC)
 	endif()
 endif()
 
-add_executable(fbxToEffekseerModelConverter ${srcs})
 
 include_directories($ENV{FBX_INCLUDE})
 
 link_directories($ENV{FBX_LIB})
+
+add_executable(fbxToEffekseerModelConverter ${srcs})
 
 if (WIN32)
 
