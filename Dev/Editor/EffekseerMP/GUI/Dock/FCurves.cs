@@ -69,22 +69,22 @@ namespace Effekseer.GUI.Dock
 
 			var invalidValue = "/";
 
-			if(selected.Item1 != null)
+			if (selected.Item1 != null)
 			{
 				var ind = selected.Item2.GetSelectedIndex();
 
-				if(ind != -1)
+				if (ind != -1)
 				{
 					Manager.NativeManager.Columns(5);
 
 					var frameKey = new int[] { (int)selected.Item2.Keys[ind] };
-					if(Manager.NativeManager.DragInt(frame_text, frameKey))
+					if (Manager.NativeManager.DragInt(frame_text, frameKey))
 					{
 						selected.Item2.Keys[ind] = (int)frameKey[0];
 						selected.Item2.IsDirtied = true;
 					}
 
-					if(Manager.NativeManager.IsItemActive()) canControl = false;
+					if (Manager.NativeManager.IsItemActive()) canControl = false;
 
 
 					Manager.NativeManager.NextColumn();
@@ -102,7 +102,7 @@ namespace Effekseer.GUI.Dock
 
 					// Left key
 					var leftValues = new float[] { selected.Item2.LeftKeys[ind], selected.Item2.LeftValues[ind] };
-					if(Manager.NativeManager.DragFloat2(left_text, leftValues))
+					if (Manager.NativeManager.DragFloat2(left_text, leftValues))
 					{
 						selected.Item2.LeftKeys[ind] = leftValues[0];
 						selected.Item2.LeftValues[ind] = leftValues[1];
@@ -183,7 +183,7 @@ namespace Effekseer.GUI.Dock
 				}
 
 				Manager.NativeManager.Columns(4);
-				
+
 				// Start curve
 				startCurve.SetBinding(selected.Item1.StartType);
 				startCurve.Update();
@@ -203,7 +203,7 @@ namespace Effekseer.GUI.Dock
 				// Sampling
 				var sampling = new int[] { selected.Item1.Sampling };
 
-				if(Manager.NativeManager.InputInt(sampling_text + "##SamplingText", sampling))
+				if (Manager.NativeManager.InputInt(sampling_text + "##SamplingText", sampling))
 				{
 					selected.Item1.Sampling.SetValue(sampling[0]);
 				}
@@ -270,9 +270,23 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.Text(offset_text);
 				Manager.NativeManager.SameLine();
 				Manager.NativeManager.Text(invalidValue);
-				
+
 				startCurve.SetBinding(null);
 				endCurve.SetBinding(null);
+			}
+
+			{
+				if (Manager.NativeManager.Button("Expand"))
+				{
+					ExpandAnchors();
+				}
+
+				Manager.NativeManager.SameLine();
+
+				if (Manager.NativeManager.Button("Shrink"))
+				{
+					ShrinkAnchors();
+				}
 			}
 
 			Manager.NativeManager.BeginGroup();
@@ -293,7 +307,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.BeginChild("##FCurveGroup_Graph");
 
-			if(Manager.NativeManager.BeginFCurve(1))
+			if(Manager.NativeManager.BeginFCurve(1, 0.75f))
 			{
 				UpdateGraph(treeNodes);
 			}
@@ -648,6 +662,47 @@ namespace Effekseer.GUI.Dock
 			recurse(treeNodes);
 		}
 
+		public void ShrinkAnchors()
+		{
+			Action<TreeNode> recurse = null;
+
+			recurse = (t) =>
+			{
+				foreach (var fcurve in t.FCurves)
+				{
+					fcurve.ShrinkAnchors();
+				}
+
+				foreach (var c in t.Children)
+				{
+					recurse(c);
+				}
+			};
+
+			recurse(treeNodes);
+		}
+
+
+		public void ExpandAnchors()
+		{
+			Action<TreeNode> recurse = null;
+
+			recurse = (t) =>
+			{
+				foreach (var fcurve in t.FCurves)
+				{
+					fcurve.ExpandAnchors();
+				}
+
+				foreach (var c in t.Children)
+				{
+					recurse(c);
+				}
+			};
+
+			recurse(treeNodes);
+		}
+
 		public void Move(float x, float y, int changedType, Data.Value.IFCurve except)
 		{
 			Action<TreeNode> recurse = null;
@@ -766,6 +821,7 @@ namespace Effekseer.GUI.Dock
 						new[] { v_.X, v_.Y },
 						new[] { 0xff0000ff, 0xff00ff00 },
 						new string[] { "X", "Y", "Z" },
+						0,
 						v_,
 						v.Item1,
 						window,
@@ -783,6 +839,7 @@ namespace Effekseer.GUI.Dock
 						new[] { v_.X, v_.Y, v_.Z}, 
 						new[] { 0xff0000ff, 0xff00ff00, 0xffff0000 },
 						new string[] { "X", "Y", "Z" },
+						0,
 						v_,
 						v.Item1, 
 						window,
@@ -802,6 +859,7 @@ namespace Effekseer.GUI.Dock
 						new[] { v_.R, v_.G, v_.B, v_.A },
 						new[] { 0xff0000ff, 0xff00ff00, 0xffff0000, 0xffaaaaaa },
 						new string[] { "R", "G", "B", "A" },
+						255.0f,
 						v_,
 						v.Item1,
 						window,
@@ -822,6 +880,10 @@ namespace Effekseer.GUI.Dock
 			public virtual void OnRemoved() {}
 
 			public virtual void Move(float x, float y, int changedType, Data.Value.IFCurve except) { }
+
+			public virtual void ShrinkAnchors() { }
+
+			public virtual void ExpandAnchors() { }
 
 			public virtual void Unselect() { }
 
@@ -847,13 +909,15 @@ namespace Effekseer.GUI.Dock
 			Func<float, T> converter = null;
 			float v_min;
 			float v_max;
+			float defaultValue = 0;
 
 			public object Value { get; private set; }
 
-			public FCurveTemplate(int length, FCurve<T>[] fcurves, uint[] colors, string[] names, object value, string name, FCurves window, Func<float, T> converter, float v_min, float v_max)
+			public FCurveTemplate(int length, FCurve<T>[] fcurves, uint[] colors, string[] names, float defaultValue, object value, string name, FCurves window, Func<float, T> converter, float v_min, float v_max)
 			{
 				Name = name;
 				Value = value;
+				this.defaultValue = defaultValue;
 				this.window = window;
 				this.converter = converter;
 				this.v_max = v_max;
@@ -942,7 +1006,7 @@ namespace Effekseer.GUI.Dock
 						(swig.FCurveEdgeType)properties[i].EndEdge,
 						properties[i].KVSelected,
 						properties[i].Keys.Length - 1,
-						0.0f,
+						defaultValue,
 						false,
 						canControl,
 						properties[i].Color,
@@ -1075,6 +1139,78 @@ namespace Effekseer.GUI.Dock
 						properties[j].RightKeys[k] = temp_rk[kis[k].Item2];
 						properties[j].RightValues[k] = temp_rv[kis[k].Item2];
 						properties[j].Interpolations[k] = temp_in[kis[k].Item2];
+					}
+				}
+			}
+
+			public override void ShrinkAnchors()
+			{
+				foreach (var prop in properties)
+				{
+					for (int i = 0; i < prop.KVSelected.Length - 1; i++)
+					{
+						if (prop.KVSelected[i] == 0) continue;
+
+						prop.LeftKeys[i] = prop.Keys[i];
+						prop.LeftValues[i] = prop.Values[i];
+
+						prop.RightKeys[i] = prop.Keys[i];
+						prop.RightValues[i] = prop.Values[i];
+
+						prop.IsDirtied = true;
+					}
+				}
+			}
+
+			public override void ExpandAnchors()
+			{
+				foreach(var prop in properties)
+				{
+					for (int i = 0; i < prop.KVSelected.Length - 1; i++)
+					{
+						if (prop.KVSelected[i] == 0) continue;
+
+						var d = 0.0f;
+						var length_pre = 10.0f;
+						var length_next = 10.0f;
+
+						if (prop.KVSelected.Length == 1)
+						{
+							d = 0.0f;
+						}
+						else if (i == 0)
+						{
+							var dx = prop.Keys[i + 1] - prop.Keys[i + 0];
+							var dy = prop.Values[i + 1] - prop.Values[i + 0];
+							d = dy / dx;
+
+							length_next = Math.Min(length_next, dx / 2.0f);
+						}
+						else if (i == prop.KVSelected.Length - 2)
+						{
+							var dx = prop.Keys[i + 0] - prop.Keys[i - 1];
+							var dy = prop.Values[i + 0] - prop.Values[i - 1];
+							d = dy / dx;
+
+							length_pre = Math.Min(length_pre, dx / 2.0f);
+						}
+						else
+						{
+							var dx = prop.Keys[i + 1] - prop.Keys[i - 1];
+							var dy = prop.Values[i + 1] - prop.Values[i - 1];
+							d = dy / dx;
+
+							length_next = Math.Min(length_next, (prop.Keys[i + 1] - prop.Keys[i + 0]) / 2.0f);
+							length_pre = Math.Min(length_next, (prop.Keys[i + 0] - prop.Keys[i - 1]) / 2.0f);
+						}
+
+						prop.LeftKeys[i] = prop.Keys[i] - length_pre;
+						prop.LeftValues[i] = prop.Values[i] - d * length_pre;
+
+						prop.RightKeys[i] = prop.Keys[i] + length_next;
+						prop.RightValues[i] = prop.Values[i] + d * length_next;
+
+						prop.IsDirtied = true;
 					}
 				}
 			}

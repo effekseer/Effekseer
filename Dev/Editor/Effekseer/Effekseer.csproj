@@ -395,6 +395,9 @@
     <Compile Include="swig\ColorEditFlags.cs" />
     <Compile Include="swig\ComboFlags.cs" />
     <Compile Include="swig\Cond.cs" />
+    <Compile Include="swig\DialogButtons.cs" />
+    <Compile Include="swig\DialogSelection.cs" />
+    <Compile Include="swig\DialogStyle.cs" />
     <Compile Include="swig\DistortionType.cs" />
     <Compile Include="swig\DockSlot.cs" />
     <Compile Include="swig\EffekseerNative.cs" />

@@ -91,7 +91,7 @@ namespace Effekseer.GUI.Component
 				isInfinite[0] = binding.Infinite.Value;
 			}
 
-			Manager.NativeManager.PushItemWidth(100);
+			Manager.NativeManager.PushItemWidth(60);
 
 			if (Manager.NativeManager.DragInt(id1, internalValue, binding.Step))
 			{

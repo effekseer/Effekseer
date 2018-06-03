@@ -1084,8 +1084,8 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetDockActive(swigCPtr);
   }
 
-  public bool BeginFCurve(int id) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve(swigCPtr, id);
+  public bool BeginFCurve(int id, float scale) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve(swigCPtr, id, scale);
     return ret;
   }
 

@@ -1414,7 +1414,7 @@ class EffekseerNativePINVOKE {
   public static extern void GUIManager_SetDockActive(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginFCurve___")]
-  public static extern bool GUIManager_BeginFCurve(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+  public static extern bool GUIManager_BeginFCurve(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, float jarg3);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_EndFCurve___")]
   public static extern void GUIManager_EndFCurve(global::System.Runtime.InteropServices.HandleRef jarg1);
