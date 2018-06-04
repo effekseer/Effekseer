@@ -25,7 +25,11 @@ VertexBuffer::VertexBuffer( RendererImplemented* renderer, int size, bool isDyna
 
 	GLExt::glGenBuffers(1, &m_buffer);
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+
+#ifndef __ANDROID__
 	GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+#endif // !__ANDROID__
+
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
@@ -69,7 +73,11 @@ void VertexBuffer::OnResetDevice()
 
 	GLExt::glGenBuffers(1, &m_buffer);
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+
+#ifndef __ANDROID__
 	GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+#endif // !__ANDROID__
+
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
@@ -96,9 +104,11 @@ bool VertexBuffer::RingBufferLock( int32_t size, int32_t& offset, void*& data )
 
 	if( size > m_size ) return false;
 
-	// glDrawElementsでオフセットを指定できないため
-	if ( m_vertexRingOffset + size > m_size )
-	//if( true )
+#ifdef __ANDROID__
+	if (m_vertexRingOffset + size > m_size)
+#else
+	if (true)
+#endif
 	{
 		offset = 0;
 		data = m_resource;
@@ -140,13 +150,21 @@ void VertexBuffer::Unlock()
 
 	if (GLExt::IsSupportedBufferRange() && m_vertexRingOffset > 0)
 	{
+#ifdef __ANDROID__
+		GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+#endif // !__ANDROID__
+
 		auto target = GLExt::glMapBufferRange(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 		memcpy(target, m_resource, m_offset);
 		GLExt::glUnmapBuffer(GL_ARRAY_BUFFER);
 	}
 	else
 	{
+#ifdef __ANDROID__
+		GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+#else
 		GLExt::glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
+#endif
 	}
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
