@@ -21,11 +21,7 @@ class VertexBuffer
 	, public ::EffekseerRenderer::VertexBufferBase
 {
 private:
-	bool					nBufferingMode = false;
-	int32_t					bufferingIndex = 0;
-	int32_t					bufferingCount = 0;
-
-	GLuint					m_buffers[3];
+	GLuint					m_buffer;
 
 	uint32_t				m_vertexRingStart;
 	uint32_t				m_vertexRingOffset;
@@ -51,8 +47,6 @@ public:
 	void Unlock();
 
 	bool IsValid();
-
-	bool IsNBufferingMode() const { return nBufferingMode; }
 };
 
 //-----------------------------------------------------------------------------------
