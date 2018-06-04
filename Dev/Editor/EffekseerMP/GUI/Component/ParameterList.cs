@@ -13,6 +13,9 @@ namespace Effekseer.GUI.Component
 		Type bindingType = null;
 		List<TypeRow> typeRows = new List<TypeRow>();
 		List<TypeRow> validRows = new List<TypeRow>();
+
+		Utils.DelayedList<TypeRow> controlRows = new Utils.DelayedList<TypeRow>();
+
 		Dictionary<object, TypeRow> objToTypeRow = new Dictionary<object, TypeRow>();
 
 		bool isControlsChanged = false;
@@ -25,15 +28,17 @@ namespace Effekseer.GUI.Component
 		{
 			isControlsChanged = false;
 
-			Controls.Lock();
+			controlRows.Lock();
 
 			Manager.NativeManager.Columns(2);
 
 			var columnWidth = Manager.NativeManager.GetColumnWidth(0);
 			Manager.NativeManager.SetColumnWidth(0, 140);
 
-			foreach (var c in Controls.Internal.OfType<IParameterControl>())
+			for(int i = 0; i < controlRows.Internal.Count; i++)
 			{
+				var c = controlRows.Internal[i].Control as IParameterControl;
+
 				Manager.NativeManager.PushItemWidth(100);
 
 				Manager.NativeManager.Text(c.Label);
@@ -47,14 +52,21 @@ namespace Effekseer.GUI.Component
 
 				Manager.NativeManager.NextColumn();
 
+				if(i > 0 && 
+					(controlRows[i - 1].SelectorIndent > controlRows[i].SelectorIndent ||
+					controlRows[i].IsSelector))
+				{
+					Manager.NativeManager.Separator();
+				}
+
 				c.Update();
 
 				Manager.NativeManager.NextColumn();
 			}
 
 			Manager.NativeManager.Columns(1);
-			
-			Controls.Unlock();
+
+			controlRows.Unlock();
 
 			if(isControlsChanged)
 			{
@@ -68,22 +80,22 @@ namespace Effekseer.GUI.Component
 			typeRows.Clear();
 
 			bindingType = type;
-			AppendType(type);
+			AppendType(type, 0);
 		}
 
 		public void FixValues()
 		{
-			Controls.Lock();
+			controlRows.Lock();
 
-			foreach (var c in Controls.Internal.OfType<IParameterControl>())
+			foreach (var c in controlRows.Internal.Select(_=>_.Control).OfType<IParameterControl>())
 			{
 				c.FixValue();
 			}
 
-			Controls.Unlock();
+			controlRows.Unlock();
 		}
 
-		void AppendType(Type type, PropertyInfo[] props = null, TypeRow parentRow = null)
+		void AppendType(Type type, int selectorIndent, PropertyInfo[] props = null, TypeRow parentRow = null)
 		{
 			if (props == null)
 			{
@@ -108,6 +120,15 @@ namespace Effekseer.GUI.Component
 					// visible values
 					typeRows.Add(row);
 					sameLayer.Add(row);
+
+					if(row.Selector != null)
+					{
+						row.SelectorIndent = selectorIndent + 1;
+					}
+					else
+					{
+						row.SelectorIndent = selectorIndent;
+					}
 				}
 				else
 				{
@@ -121,7 +142,14 @@ namespace Effekseer.GUI.Component
 
 					typeRows.Add(row);
 					sameLayer.Add(row);
-					AppendType(ps[i].PropertyType, list_props.ToArray(), row);
+
+					var selectorIndentLocal = selectorIndent;
+					if (row.Selector != null)
+					{
+						selectorIndentLocal = selectorIndentLocal + 1;
+					}
+
+					AppendType(ps[i].PropertyType, selectorIndentLocal, list_props.ToArray(), row);
 				}
 			}
 		}
@@ -173,7 +201,7 @@ namespace Effekseer.GUI.Component
 			{
 				if (row.Control == null) continue;
 
-				Controls.Add(row.Control);
+				controlRows.Add(row);
 
 				var v = row.GetValue(value);
 				row.ControlDynamic.SetBinding(v);
@@ -244,7 +272,7 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
-			this.Controls.Remove(row.Control);
+			this.controlRows.Remove(row);
 		}
 
 		void ChangeSelector(object sender, ChangedValueEventArgs e)
@@ -331,6 +359,8 @@ namespace Effekseer.GUI.Component
 				get;
 				private set;
 			}
+
+			public int SelectorIndent = 0;
 
 			/// <summary>
 			/// Generate based on property
