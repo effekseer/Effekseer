@@ -54,7 +54,8 @@ namespace Effekseer.GUI.Component
 
 				if(i > 0 && 
 					(controlRows[i - 1].SelectorIndent > controlRows[i].SelectorIndent ||
-					controlRows[i].IsSelector))
+					controlRows[i].IsSelector ||
+					(controlRows[i - 1].SelectorIndent == controlRows[i].SelectorIndent && controlRows[i - 1].IsSelector)))
 				{
 					Manager.NativeManager.Separator();
 				}
