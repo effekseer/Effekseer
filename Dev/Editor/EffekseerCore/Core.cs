@@ -502,6 +502,9 @@ namespace Effekseer
 			FullPath = string.Empty;
 			IsChanged = false;
 
+			// Select child
+			SelectedNode = Root.Children[0];
+
 			if (OnAfterNew != null)
 			{
 				OnAfterNew(null, null);

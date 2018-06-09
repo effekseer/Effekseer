@@ -112,7 +112,7 @@ namespace Effekseer.GUI.Component
 
 			string dd = null;
 
-			if (Manager.NativeManager.Button("読込"))
+			if (Manager.NativeManager.Button(Resources.GetString("Load")))
 			{
 				btn_load_Click();
 			}
@@ -129,7 +129,7 @@ namespace Effekseer.GUI.Component
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			if (Manager.NativeManager.Button("解除"))
+			if (Manager.NativeManager.Button(Resources.GetString("Delete")))
 			{
 				btn_delete_Click();
 			}

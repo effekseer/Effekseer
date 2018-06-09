@@ -92,7 +92,7 @@ namespace Effekseer.GUI.Component
 
 			if (binding == null) return;
 		
-			if(Manager.NativeManager.Button("読込"))
+			if(Manager.NativeManager.Button(Resources.GetString("Load")))
 			{
 				btn_load_Click();
 			}
@@ -105,7 +105,7 @@ namespace Effekseer.GUI.Component
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			if (Manager.NativeManager.Button("解除"))
+			if (Manager.NativeManager.Button(Resources.GetString("Delete")))
 			{
 				btn_delete_Click();
 			}
@@ -118,7 +118,7 @@ namespace Effekseer.GUI.Component
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			if (Manager.NativeManager.Button("再生"))
+			if (Manager.NativeManager.Button(Resources.GetString("PlayString")))
 			{
 				btn_play_Click();
 			}
