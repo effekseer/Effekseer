@@ -179,7 +179,7 @@ if (WIN32)
 target_link_libraries(Viewer effekseer effekseer_renderer_dx9 effekseer_renderer_gl EffekseerSoundOSMixer)
 target_link_libraries(ViewerTest effekseer effekseer_renderer_dx9 effekseer_renderer_gl EffekseerSoundOSMixer)
 
-elif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+elseif(APPLE)
 
 FIND_PACKAGE(OpenAL REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
