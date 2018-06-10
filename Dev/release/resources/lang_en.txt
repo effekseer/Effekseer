@@ -1,124 +1,130 @@
-Options,Options
+Offset,Offset
+Recorder,Recorder
+CameraSettings,Camera Settings
+TransmitDataOnLoad,Transmit data on load
+X,x
+EnlargeAnchor_Desc,To make the value change smoothly,
+extend the anchor
+Format,Format
+ShrinkAnchor_Desc,To make the value change suddenly
+move the anchor to the position of the key
 Window,Window
-GenerateAlpha,Generate alpha
-RenderSettings,Render Settings
-UnsavedChanges,*Unsaved Changes
-ModelFilter_,Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
+InternalInsertNode,Insert Node
+UseOriginalImage,Use original image
 Right,Right
-Port,Port
-StartFrame,Start Frame
-InternalBaskStep,Step(Back)
-Viewpoint,Viewpoint
-ExportAsSingleImage,Export as a single image
-Edit,Edit
-SpawningMethod,Spawning Method
-InternalExit,Exit
-FileViewer,File Viewer
-InternalViewHelp,Manual
-InternalUndo,Undo
-Y,Y
-Delete,Del
-End,End
-Height,Height
-YRotation,Y Rotation
-NotAbsolutePathError,This is not an absolute path.
-Left,Left
+Zoom,Zoom
 Value,Val
+InternalExit,Exit
+FCurves,F-Curves
+InternalStep,Step
+Infinite,Infinite
+Start,Start
+nan,nan
+SendData,Send Data
+Sampling,Sampling
+Gauss,Gauss
+Disconnect,Disconnect
+AttractionForces,Attraction Forces
+Depth,Depth
+RenderSettings,Render Settings
+InternalAddNode,Add Node
+InternalSaveAs,Save as...
+ModelFilter_,Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
+InternalOpen,Open
 None,None
 ExportAsGifAnimation,Export as a gif animation
-Deviation,Deviation
-RecentFiles,Recent Files
-SendData,Send Data
-Render,Render
-nan,nan
-Format,Format
-EndFrame,End Frame
-Sound,Sound
-ExportAsAvi,Export as a AVI
-X,x
-Rotation,Rotation
-InternalOverwrite,Save
-SoundFilter_,Sound File (*.wav)|*.wav
+Delete,Del
 Min,Min
-ModelFilter,efkmodel,fbx,mqo
-Recorder,Recorder
-NetworkState,State：
+BasicRenderSettings,Basic Render Settings
+SoundFilter,*.wav
+AutoConnect,Auto-connect
 Frame,Frame
-NetworkAddress,Address
-InternalStep,Step
+TransmitDataOnSave,Transmit data on save
+Max,Max
+NetworkConnected,State：Connected
+InternalBaskStep,Step(Back)
+ResetMaginification,Reset maginification
+Load,Load
+Behavior,Behavior
+InternalCopy,Copy Node
+InternalPaste,Paste Node
+Range,Range
+Sound,Sound
+PlayString,Play
+ExportedFrame,Exported frame
+ExportAsAvi,Export as a AVI
+ExportAsSingleImage,Export as a single image
+Resolution,Resolution
+InternalRedo,Redo
+EnlargeAnchor,Enlarge anchor
+InternalViewHelp,Manual
+FileViewer,File Viewer
 InternalPauseOrResume,Pause/Resume
 XRotation,X Rotation
-AutoConnect,Auto-connect
-NetworkConnected,State：Connected
-XCount,X Count
-InternalRedo,Redo
-Import,Import
-ExportedFrame,Exported frame
-AttractionForces,Attraction Forces
-Help,Help
-ResetMaginification,Reset maginification
-BasicSettings,Basic Settings
-ImageFilter_,Image File (*.png)|*.png
-Position,Position
-ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
-Mean,Mean
-Gauss,Gauss
-Range,Range
-InternalOpenSample,Open Sample Project
-Record,Record
-Load,Load
-CameraSettings,Camera Settings
-ResetWindow,Reset Window Position
-Files,Files
-ConfirmSaveChanged,[{0}] has been changed. Do you want to save?
-FCurves,F-Curves
-NetworkDisconnected,State：Disconnected
-Infinite,Infinite
-Depth,Depth
-Zoom,Zoom
-ViewerControls,Viewer Controls
-InternalCopy,Copy Node
-Viewer,Viewer
-PlayString,Play
-CameraMode,Camera Mode
-Culling,Culling
-InternalOpen,Open
-Max,Max
-PoVDistance,PoV Distance
-Connect,Connect
-ShowGuide,Show guide
-TransmitDataOnEdit,Transmit data on edit
-View,View
-MakeTransparent,Make transparent
-InternalAddNode,Add Node
-Export,Export
-InternalNew,New Project
-Start,Start
-InternalPaste,Paste Node
-Width,Width
-InternalPasteInfo,Paste Node Info
-Sampling,Sampling
-Scale,Scale
-TransmitDataOnLoad,Transmit data on load
-ProjectFilter,efkproj
-AboutEffekseer,About Effekseer
-Offset,Offset
-Behavior,Behavior
-InternalSaveAs,Save as...
-SoundFilter,*.wav
-Complement,Type
+Options,Options
 InternalStop,Stop
-Disconnect,Disconnect
-Frequency_Frame,Frequency(Frame)
-ImageFilter,png
-BasicRenderSettings,Basic Render Settings
-Resolution,Resolution
-InternalRemoveNode,Delete Node
-InternalInsertNode,Insert Node
-Network,Network
-UseOriginalImage,Use original image
-Global,Global
-InternalAbout,About Effekseer
+ResetWindow,Reset Window Position
+ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
+SpawningMethod,Spawning Method
+End,End
+AboutEffekseer,About Effekseer
+Viewpoint,Viewpoint
+Position,Position
+InternalOverwrite,Save
+ModelFilter,efkmodel,fbx,mqo
+Export,Export
+SoundFilter_,Sound File (*.wav)|*.wav
+Import,Import
+GenerateAlpha,Generate alpha
+CameraMode,Camera Mode
+Global,Global Settings
+MakeTransparent,Make transparent
+RecentFiles,Recent Files
+Height,Height
+XCount,X Count
+Record,Record
+YRotation,Y Rotation
+InternalOpenSample,Open Sample Project
+PoVDistance,PoV Distance
 ExportAsImages,Export as images
-TransmitDataOnSave,Transmit data on save
+Port,Port
+ViewerControls,Viewer Controls
+Edit,Edit
+ImageFilter_,Image File (*.png)|*.png
+Culling,Culling
+ProjectFilter,efkproj
+InternalAbout,About Effekseer
+Mean,Mean
+BasicSettings,Basic Settings
+StartFrame,Start Frame
+Complement,Type
+Files,Files
+View,View
+InternalUndo,Undo
+Left,Left
+Frequency_Frame,Frequency(Frame)
+InternalRemoveNode,Delete Node
+Help,Help
+TransmitDataOnEdit,Transmit data on edit
+Network,Network
+InternalNew,New Project
+Y,Y
+Width,Width
+Scale,Scale
+ConfirmSaveChanged,[{0}] has been changed. Do you want to save?
+InternalPasteInfo,Paste Node Info
+NetworkDisconnected,State：Disconnected
+ShrinkAnchor,Shrink anchor
+ShowGuide,Show guide
+Render,Render
+EndFrame,End Frame
+Viewer,Viewer
 NodeTree,Node Tree
+UnsavedChanges,*Unsaved Changes
+Deviation,Deviation
+Rotation,Rotation
+NotAbsolutePathError,This is not an absolute path.
+Connect,Connect
+NetworkAddress,Address
+ImageFilter,png
+NetworkState,State：
