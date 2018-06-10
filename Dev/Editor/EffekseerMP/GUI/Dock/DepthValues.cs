@@ -17,7 +17,7 @@ namespace Effekseer.GUI.Dock
 			Label = Resources.GetString("Depth") + "###Depth";
 
 			paramerterList = new Component.ParameterList();
-			paramerterList.SetType(typeof(Data.ScaleValues));
+			paramerterList.SetType(typeof(Data.DepthValues));
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
@@ -25,7 +25,7 @@ namespace Effekseer.GUI.Dock
 			
 			Read();
 
-			Icon = Images.GetIcon("Depth");
+			Icon = Images.GetIcon("DepthPanel");
 			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("Depth");
 		}

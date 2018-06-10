@@ -311,7 +311,7 @@ namespace Effekseer.GUI.Menu
 				setDockWindow(Resources.GetString("SpawningMethod"), typeof(Dock.GenerationLocationValues), Images.GetIcon("PanelGenerationLocation"));
 				setDockWindow(Resources.GetString("Rotation"), typeof(Dock.RotationValues), Images.GetIcon("PanelRotation"));
 				setDockWindow(Resources.GetString("Scale"), typeof(Dock.ScaleValues), Images.GetIcon("PanelScale"));
-				setDockWindow(Resources.GetString("Depth"), typeof(Dock.DepthValues), null);
+				setDockWindow(Resources.GetString("Depth"), typeof(Dock.DepthValues), Images.GetIcon("PanelDepth"));
 				setDockWindow(Resources.GetString("BasicRenderSettings"), typeof(Dock.RendererCommonValues), Images.GetIcon("PanelRendererCommon"));
 				setDockWindow(Resources.GetString("RenderSettings"), typeof(Dock.RendererValues), Images.GetIcon("PanelRenderer"));
 				setDockWindow(Resources.GetString("Sound"), typeof(Dock.SoundValues), Images.GetIcon("PanelSound"));
@@ -321,8 +321,8 @@ namespace Effekseer.GUI.Menu
 				setDockWindow(Resources.GetString("Recorder"), typeof(Dock.Recorder), Images.GetIcon("PanelRecorder"));
 				setDockWindow(Resources.GetString("Options"), typeof(Dock.Option), Images.GetIcon("PanelOption"));
 				setDockWindow(Resources.GetString("Global"), typeof(Dock.GlobalValues), Images.GetIcon("PanelGlobal"));
-				setDockWindow(Resources.GetString("Behavior"), typeof(Dock.BehaviorValues), Images.GetIcon("Behavior"));
-				setDockWindow(Resources.GetString("Culling"), typeof(Dock.Culling), Images.GetIcon("Culling"));
+				setDockWindow(Resources.GetString("Behavior"), typeof(Dock.BehaviorValues), Images.GetIcon("PanelBehavior"));
+				setDockWindow(Resources.GetString("Culling"), typeof(Dock.Culling), Images.GetIcon("PanelCulling"));
                 setDockWindow(Resources.GetString("Network"), typeof(Dock.Network), Images.GetIcon("PanelNetwork"));
 				setDockWindow(Resources.GetString("FileViewer"), typeof(Dock.FileViewer), Images.GetIcon("PanelFileViewer"));
 

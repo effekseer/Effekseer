@@ -20,7 +20,7 @@ namespace Effekseer.GUI.Dock
 
             Read();
 
-			Icon = Images.GetIcon("Behavior");
+			Icon = Images.GetIcon("PanelBehavior");
 			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("Behavior");
 		}

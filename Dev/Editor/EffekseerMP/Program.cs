@@ -337,6 +337,8 @@ namespace Effekseer
 			Icons["PanelSound"] = LoadAppResource(native, "resources/icons/Panel_Sound.png");
 			Icons["PanelViewer"] = LoadAppResource(native, "resources/icons/Panel_Viewer.png");
 			Icons["PanelViewPoint"] = LoadAppResource(native, "resources/icons/Panel_ViewPoint.png");
+			Icons["PanelDepth"] = LoadAppResource(native, "resources/icons/Panel_Depth.png");
+			Icons["PanelGlobal"] = LoadAppResource(native, "resources/icons/Panel_Global.png");
 
 			Icons["EnlargeAnchor"] = LoadAppResource(native, "resources/icons/EnlargeAnchor.png");
 			Icons["ShrinkAnchor"] = LoadAppResource(native, "resources/icons/ShrinkAnchor.png");
