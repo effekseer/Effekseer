@@ -34,12 +34,27 @@ namespace Effekseer.GUI.Component
 			}
 			set
 			{
-				if (binding == value) return;
+				if (binding == value)
+				{
+					return;
+				}
+
+				if(value == null)
+				{
+					binding.OnChanged -= Binding_OnChanged;
+					binding = null;
+					return;
+				}
 
 				binding = value;
-
+				binding.OnChanged += Binding_OnChanged;
 				Read();
 			}
+		}
+
+		private void Binding_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			Read();
 		}
 
 		public PathForImage(string label = null)
@@ -97,7 +112,7 @@ namespace Effekseer.GUI.Component
 
 			string dd = null;
 
-			if (Manager.NativeManager.Button("読込"))
+			if (Manager.NativeManager.Button(Resources.GetString("Load")))
 			{
 				btn_load_Click();
 			}
@@ -114,7 +129,7 @@ namespace Effekseer.GUI.Component
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			if (Manager.NativeManager.Button("解除"))
+			if (Manager.NativeManager.Button(Resources.GetString("Delete")))
 			{
 				btn_delete_Click();
 			}
@@ -200,24 +215,27 @@ namespace Effekseer.GUI.Component
 			if (binding != null)
 			{
 				filePath = binding.GetRelativePath();
-				if (filePath.Length > 0)
-				{
-					UpdateInfo();
-				}
-				else
-				{
-				}
+				UpdateInfo();
 			}
 			else
 			{
 				filePath = string.Empty;
+				UpdateInfo();
 			}
 		}
 
 		void UpdateInfo()
 		{
 			string path = binding.GetAbsolutePath();
-			image = Images.Load(Manager.Native, path);
+
+			if(System.IO.File.Exists(path))
+			{
+				image = Images.Load(Manager.Native, path);
+			}
+			else
+			{
+				image = null;
+			}
 		}
 
 		private bool CheckExtension(string path)

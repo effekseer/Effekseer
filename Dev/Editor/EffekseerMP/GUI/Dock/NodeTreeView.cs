@@ -419,7 +419,9 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.DrawLineBackground(Manager.NativeManager.GetTextLineHeight(), 0x0cffffff);
 			}
 
-			if (Manager.NativeManager.TreeNodeEx(Node.Name + id, temp, Images.GetIcon(iconString), flag))
+			// Extend clickable space
+			var name = Node.Name + "                                                                " + id;
+			if (Manager.NativeManager.TreeNodeEx(name, temp, Images.GetIcon(iconString), flag))
             {
 				IsExpanding = true;
 

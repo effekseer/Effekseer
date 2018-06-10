@@ -19,6 +19,9 @@ namespace Effekseer.GUI.Dialog
 
 		bool isFirstUpdate = true;
 
+		public Action OnOK = null;
+		public Action OnCancel = null;
+
 		public bool ShouldBeRemoved { get; private set; } = false;
 
 		public OpenModel(float mag)
@@ -85,11 +88,19 @@ namespace Effekseer.GUI.Dialog
 				{
 					OK = true;
 					ShouldBeRemoved = true;
+					if(OnOK != null)
+					{
+						OnOK();
+					}
 				}
 
 				if (Manager.NativeManager.Button(cancelText))
 				{
 					ShouldBeRemoved = true;
+					if (OnCancel != null)
+					{
+						OnCancel();
+					}
 				}
 
 				Manager.NativeManager.EndPopup();
