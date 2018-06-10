@@ -26,7 +26,11 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
-			isControlsChanged = false;
+			if(isControlsChanged)
+			{
+				SetValue(bindingObject);
+				isControlsChanged = false;
+			}
 
 			controlRows.Lock();
 

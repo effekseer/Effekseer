@@ -103,7 +103,7 @@ namespace Effekseer.Data
 
 		internal CommonValues()
 		{
-			MaxGeneration = new Value.IntWithInifinite(1, false, int.MaxValue, 0);
+			MaxGeneration = new Value.IntWithInifinite(1, false, int.MaxValue, 1);
 			LocationEffectType = new Value.Enum<ParentEffectType>(ParentEffectType.Already);
 			RotationEffectType = new Value.Enum<ParentEffectType>(ParentEffectType.Already);
 			ScaleEffectType = new Value.Enum<ParentEffectType>(ParentEffectType.Already);

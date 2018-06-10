@@ -12,6 +12,22 @@ namespace Effekseer.Data.Value
 		int _max = int.MaxValue;
 		int _min = int.MinValue;
 		
+		public int Min
+		{
+			get
+			{
+				return _min;
+			}
+		}
+
+		public int Max
+		{
+			get
+			{
+				return _max;
+			}
+		}
+
 		public int Value
 		{
 			get

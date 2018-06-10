@@ -93,7 +93,7 @@ namespace Effekseer.GUI.Component
 
 			Manager.NativeManager.PushItemWidth(60);
 
-			if (Manager.NativeManager.DragInt(id1, internalValue, binding.Step))
+			if (Manager.NativeManager.DragInt(id1, internalValue, binding.Value.Step, binding.Value.Min, binding.Value.Max))
 			{
 				if (EnableUndo)
 				{
