@@ -334,10 +334,11 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
+	ES_SAFE_DELETE(m_indexBufferForWireframe);
 
 	if (isVaoEnabled)
 	{
-		assert(GetRef() == -10);
+		assert(GetRef() == -11);
 	}
 	else
 	{

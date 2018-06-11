@@ -189,10 +189,11 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
-	
+	ES_SAFE_DELETE(m_indexBufferForWireframe);
+
 	//ES_SAFE_RELEASE( m_d3d_device );
 
-	assert(GetRef() == -6);
+	assert(GetRef() == -7);
 }
 
 //----------------------------------------------------------------------------------

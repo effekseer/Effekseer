@@ -256,8 +256,8 @@ private:
 	LPDIRECT3DDEVICE9	m_d3d_device;
 
 	VertexBuffer*		m_vertexBuffer;
-	IndexBuffer*		m_indexBuffer;
-	IndexBuffer*		m_indexBufferForWireframe;
+	IndexBuffer*		m_indexBuffer = nullptr;
+	IndexBuffer*		m_indexBufferForWireframe = nullptr;
 	int32_t				m_squareMaxCount;
 
 	int32_t				drawcallCount = 0;
