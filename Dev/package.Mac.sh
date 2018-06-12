@@ -8,9 +8,16 @@ mkdir Mac/Effekseer.app/Contents/Resources/
 mkbundle -o Effekseer EffekseerMP.exe --deps --sdk /Library/Frameworks/Mono.framework/Versions/Current;
 otool -L Effekseer;)
 
+(cd release;
+mkbundle -o tools/mqoToEffekseerModelConverter tools/mqoToEffekseerModelConverter.exe --deps --sdk /Library/Frameworks/Mono.framework/Versions/Current;
+otool -L tools/mqoToEffekseerModelConverter;)
+
 cp release/Effekseer Mac/Effekseer.app/Contents/Resources/
 cp release/libViewer.dylib Mac/Effekseer.app/Contents/Resources/
 cp -r release/resources Mac/Effekseer.app/Contents/Resources/
 cp -r release/scripts Mac/Effekseer.app/Contents/Resources/
+
+mkdir Mac/Effekseer.app/Contents/Resources/tools
+cp release/tools/mqoToEffekseerModelConverter Mac/Effekseer.app/Contents/Resources/tools
 
 chmod +x Mac/Effekseer.app/Contents/MacOS/script.sh
