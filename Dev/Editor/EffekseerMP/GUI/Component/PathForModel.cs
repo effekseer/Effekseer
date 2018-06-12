@@ -10,7 +10,9 @@ namespace Effekseer.GUI.Component
 {
 	class PathForModel : Control, IParameterControl
 	{
-		string id = "";
+		string id1 = "";
+		string id2 = "";
+		string id3 = "";
 
 		public string Label { get; set; } = string.Empty;
 
@@ -46,7 +48,9 @@ namespace Effekseer.GUI.Component
 				Label = label;
 			}
 
-			id = "###" + Manager.GetUniqueID().ToString();
+			id1 = "###" + Manager.GetUniqueID().ToString();
+			id2 = "###" + Manager.GetUniqueID().ToString();
+			id3 = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -83,7 +87,7 @@ namespace Effekseer.GUI.Component
 
 			if (binding == null) return;
 
-			if (Manager.NativeManager.Button(Resources.GetString("Load")))
+			if (Manager.NativeManager.Button(Resources.GetString("Load") + id1))
 			{
 				btn_load_Click();
 			}
@@ -96,7 +100,7 @@ namespace Effekseer.GUI.Component
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			if (Manager.NativeManager.Button(Resources.GetString("Delete")))
+			if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2))
 			{
 				btn_delete_Click();
 			}
@@ -105,7 +109,7 @@ namespace Effekseer.GUI.Component
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			if (Manager.NativeManager.Button(Resources.GetString("ResetMaginification")))
+			if (Manager.NativeManager.Button(Resources.GetString("ResetMaginification") + id3))
 			{
 				btn_reload_Click();
 			}
