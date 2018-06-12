@@ -281,11 +281,21 @@ namespace Effekseer.GUI.Dock
 					EnlargeAnchors();
 				}
 
+				if (Manager.NativeManager.IsItemHovered())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("EnlargeAnchor") + "\n" + Resources.GetString("EnlargeAnchor_Desc"));
+				}
+
 				Manager.NativeManager.SameLine();
 
 				if (Manager.NativeManager.ImageButton(Images.GetIcon("ShrinkAnchor"), 24, 24))
 				{
 					ShrinkAnchors();
+				}
+
+				if (Manager.NativeManager.IsItemHovered())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("ShrinkAnchor") + "\n" + Resources.GetString("ShrinkAnchor_Desc"));
 				}
 			}
 
