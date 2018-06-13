@@ -20,4 +20,9 @@ cp -r release/scripts Mac/Effekseer.app/Contents/Resources/
 mkdir Mac/Effekseer.app/Contents/Resources/tools
 cp release/tools/mqoToEffekseerModelConverter Mac/Effekseer.app/Contents/Resources/tools
 
+echo Please download from https://github.com/effekseer/Effekseer/releases/download/Prebuild/ to Prebuild
+
+cp Prebuild/fbxToEffekseerModelConverter Mac/Effekseer.app/Contents/Resources/tools/
+cp Prebuild/libfbxsdk.dylib  Mac/Effekseer.app/Contents/Resources/tools/
+
 chmod +x Mac/Effekseer.app/Contents/MacOS/script.sh
