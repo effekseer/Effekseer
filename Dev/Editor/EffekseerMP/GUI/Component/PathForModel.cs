@@ -245,8 +245,7 @@ namespace Effekseer.GUI.Component
 
 					if (doGenerate)
 					{
-						string appPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-						string converterPath = System.IO.Path.GetDirectoryName(appPath) + "/tools/fbxToEffekseerModelConverter";
+						string converterPath = Manager.GetEntryDirectory() + "/tools/fbxToEffekseerModelConverter";
 
 						System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
 						info.FileName = converterPath;
@@ -278,8 +277,7 @@ namespace Effekseer.GUI.Component
 
 					if (doGenerate)
 					{
-						string appPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-						string converterPath = System.IO.Path.GetDirectoryName(appPath) + "/tools/mqoToEffekseerModelConverter";
+						string converterPath = Manager.GetEntryDirectory() + "/tools/mqoToEffekseerModelConverter";
 
 						System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
 						info.FileName = converterPath;
