@@ -973,7 +973,7 @@ namespace Effekseer.GUI.Dock
 
 				for(int i = 0; i < properties.Length; i++)
 				{
-					if (Manager.NativeManager.Selectable(names[i], properties[i].IsShown))
+					if (Manager.NativeManager.Selectable(Name + " : " + names[i], properties[i].IsShown))
 					{
 						if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
 						{
