@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8>
+	<title>Depth</title>
+	<link href="../base.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<div class="main">
+		<h1>Depth</h1>
+		
+		<h2>Overview</h2>
+		Set the parameters for depth-of-direction processing.
+
+		<h2>Parameter</h2>
+		
+		<h3>Z-Offset</h3>
+		<p>
+		Moves the particle position in the depth direction when it is drawn.
+		This parameter affects drawing only.
+		Only particles with this parameter are moved. Child's particles are not moved in Version 1.4.
+		For example, when drawing a hit effect, this parameter can be used to prevent that the caracter clips the effect.
+		</p>
+		
+		<h3>Is scaling invalid with Z offset</h3>
+
+		<p>
+Specifies whether the size of particles does not change when the distance from the camera is changed with movement by Z Offset.
+		</p>
+	
+		<h3>Scaling Z-Offset</h3>
+
+		<p>
+Specifies whether Z-offset increases with particle's scale parameter.
+		</p>
+	
+		<h3>Depth sort</h3>
+
+		<p>
+Specify whether particles belonging to the same node are sorted by the distance in the depth direction.
+If this parameter is on, particles get a better appearance and processing becomes heavier.
+		</p>
+
+		<h3>Drawing priority</h3>
+
+		<p>
+Specify the drawing order between nodes. The higher this parameter, the later particles are drawn.
+This parameter also affect a distortion.
+If the drawing priority is less than 0, distortion distorts only the background. Distortion does not distorts between particles.
+If the drawing priority is 0 or more, it distorts the background and particles with drawing priority less than 0.
+		</p>
+
+		<h3>Soft particle</h3>
+
+		<p>
+It is a parameter for a specific game engine. It is not reflected in Effekseer in version 1.4.
+		</p>
+	</div>
+</body>
+
+</html>
