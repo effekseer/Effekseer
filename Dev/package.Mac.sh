@@ -14,6 +14,8 @@ otool -L tools/mqoToEffekseerModelConverter;)
 
 cp release/Effekseer Mac/Effekseer.app/Contents/Resources/
 cp release/libViewer.dylib Mac/Effekseer.app/Contents/Resources/
+cp release/EffekseerCore.dll Mac/Effekseer.app/Contents/Resources/
+
 cp -r release/resources Mac/Effekseer.app/Contents/Resources/
 cp -r release/scripts Mac/Effekseer.app/Contents/Resources/
 
