@@ -27,6 +27,7 @@ list(APPEND hs
 	3rdParty/nfd/nfd.h
 	3rdParty/nfd/nfd_common.h
 	3rdParty/Boxer/boxer.h
+	GUI/Platform/efk.Language.h
 )
 
 list(APPEND cpps
@@ -36,13 +37,16 @@ list(APPEND cpps
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_gl3.cpp
 	3rdParty/imgui_platform/imgui_impl_dx9.cpp
+	GUI/Platform/efk.Language_Other.cpp
 )
 
 elseif(APPLE)
+
 list(APPEND hs
 	3rdParty/nfd/nfd.h
 	3rdParty/nfd/nfd_common.h
 	3rdParty/Boxer/boxer.h
+	GUI/Platform/efk.Language.h
 )
 
 list(APPEND cpps
@@ -51,12 +55,16 @@ list(APPEND cpps
 	3rdParty/Boxer/boxer_osx.mm
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_gl3.cpp
+	GUI/Platform/efk.Language_osx.mm
 )
+
 else()
+
 list(APPEND hs
 	3rdParty/nfd/nfd.h
 	3rdParty/nfd/nfd_common.h
 	3rdParty/Boxer/boxer.h
+	GUI/Platform/efk.Language.h
 )
 
 list(APPEND cpps
@@ -65,6 +73,7 @@ list(APPEND cpps
 	3rdParty/Boxer/boxer_linux.cpp
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_gl3.cpp
+	GUI/Platform/efk.Language_Other.cpp
 )
 endif()
 

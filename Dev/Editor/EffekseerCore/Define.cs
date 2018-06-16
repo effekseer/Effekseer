@@ -160,7 +160,7 @@ namespace Effekseer
 
 		public NameAttribute()
 		{
-			language = Language.Japanese;
+			language = Language.English;
 			value = string.Empty;
 		}
 
@@ -216,7 +216,7 @@ namespace Effekseer
 	{
 		public DescriptionAttribute()
 		{
-			language = Language.Japanese;
+			language = Language.English;
 			value = string.Empty;
 		}
 

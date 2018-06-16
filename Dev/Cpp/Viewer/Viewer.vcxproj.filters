@@ -46,6 +46,9 @@
     <Filter Include="3rdParty\Boxer">
       <UniqueIdentifier>{21168e29-a242-49b8-99f9-90adc38e6cfe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI\Platform">
+      <UniqueIdentifier>{b2f2d363-2ea5-490d-9cf3-1c527d980545}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h">
@@ -157,6 +160,9 @@
     <ClInclude Include="3rdParty\Boxer\boxer.h">
       <Filter>3rdParty\Boxer</Filter>
     </ClInclude>
+    <ClInclude Include="GUI\Platform\efk.Language.h">
+      <Filter>GUI\Platform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -261,8 +267,16 @@
     <ClCompile Include="3rdParty\Boxer\boxer_win.cpp">
       <Filter>3rdParty\Boxer</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\Platform\efk.Language_Other.cpp">
+      <Filter>GUI\Platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuildStep Include="dll.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GUI\Platform\efk.Language_osx.mm">
+      <Filter>GUI\Platform</Filter>
+    </None>
   </ItemGroup>
 </Project>

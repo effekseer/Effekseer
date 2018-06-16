@@ -6574,6 +6574,16 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_show___(char16_t * j
 }
 
 
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetLanguage___() {
+  int jresult ;
+  int result;
+  
+  result = (int)efk::GUIManager::GetLanguage();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_FileDialog_OpenDialog___(char16_t * jarg1, char16_t * jarg2) {
   char16_t * jresult ;
   char16_t *arg1 = (char16_t *) 0 ;

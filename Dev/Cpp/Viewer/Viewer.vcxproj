@@ -208,6 +208,7 @@
     <ClInclude Include="GUI\efk.JapaneseFont.h" />
     <ClInclude Include="GUI\efk.Vec2.h" />
     <ClInclude Include="GUI\efk.Window.h" />
+    <ClInclude Include="GUI\Platform\efk.Language.h" />
     <CustomBuildStep Include="dll.h" />
   </ItemGroup>
   <ItemGroup>
@@ -246,6 +247,7 @@
     <ClCompile Include="GUI\efk.GUIManager.cpp" />
     <ClCompile Include="GUI\efk.ImageResource.cpp" />
     <ClCompile Include="GUI\efk.Window.cpp" />
+    <ClCompile Include="GUI\Platform\efk.Language_Other.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -261,6 +263,9 @@
     <ProjectReference Include="..\Effekseer\Effekseer.vcxproj">
       <Project>{91e36741-5dfc-46e3-a7f3-28a67fd637c8}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GUI\Platform\efk.Language_osx.mm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

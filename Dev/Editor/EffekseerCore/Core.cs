@@ -48,7 +48,7 @@ namespace Effekseer
 		{
 			get;
 			private set;
-		}
+		} = Language.English;
 
 		public static Data.NodeRoot Root
 		{
@@ -274,36 +274,36 @@ namespace Effekseer
 
 		static Core()
 		{
-			Command.CommandManager.Changed += new EventHandler(CommandManager_Changed);
-			FullPath = string.Empty;
-
-            option = LoadOption();
-
-            // Switch the language according to the loaded settings
-            Language = Option.GuiLanguage;
-
-            // Switch the culture according to the set language
-            switch (Language)
-            {
-                case Effekseer.Language.English:
-                    Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
-                    break;
-                case Effekseer.Language.Japanese:
-                    Thread.CurrentThread.CurrentUICulture = new CultureInfo("ja-JP");
-                    break;
-            }
-
-			New();
-
 			CommandScripts = new Script.ScriptCollection<Script.CommandScript>();
 			SelectedScripts = new Script.ScriptCollection<Script.SelectedScript>();
 			ExportScripts = new Script.ScriptCollection<Script.ExportScript>();
 			ImportScripts = new Script.ScriptCollection<Script.ImportScript>();
 		}
 
-		public static void Initialize()
+		public static void Initialize(Language? language = null)
 		{
 			var entryDirectory = GetEntryDirectory() + "/";
+
+			Command.CommandManager.Changed += new EventHandler(CommandManager_Changed);
+			FullPath = string.Empty;
+
+			option = LoadOption(language);
+
+			// Switch the language according to the loaded settings
+			Language = Option.GuiLanguage;
+
+			// Switch the culture according to the set language
+			switch (Language)
+			{
+				case Effekseer.Language.English:
+					Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+					break;
+				case Effekseer.Language.Japanese:
+					Thread.CurrentThread.CurrentUICulture = new CultureInfo("ja-JP");
+					break;
+			}
+
+			New();
 
 			// Load scripts
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts");
@@ -745,15 +745,26 @@ namespace Effekseer
 			return true;
 		}
 
-        // config.option.xml から読み込み
-        // 読み込み失敗したら、OptionValues のデフォ設定を返します
-        static public Data.OptionValues LoadOption()
+		/// <summary>
+		/// Load option parameters from config.option.xml
+		/// If it failed, return default values.
+		/// </summary>
+		/// <param name="defaultLanguage"></param>
+		/// <returns></returns>
+		static public Data.OptionValues LoadOption(Language? defaultLanguage)
 		{
             Data.OptionValues res = new Data.OptionValues();
 
 			var path = System.IO.Path.Combine(GetEntryDirectory(), OptionFilePath);
 
-            if (!System.IO.File.Exists(path)) return res;
+			if (!System.IO.File.Exists(path))
+			{
+				if (defaultLanguage != null)
+				{
+					res.GuiLanguage.SetValueDirectly((Language)defaultLanguage.Value);
+				}
+				return res;
+			}
 
 			var doc = new System.Xml.XmlDocument();
 

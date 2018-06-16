@@ -9,6 +9,8 @@
 
 #include "efk.GUIManager.h"
 
+#include "Platform/efk.Language.h"
+
 #include "efk.JapaneseFont.h"
 
 #include "../3rdParty/imgui_addon/fcurve/fcurve.h"
@@ -1296,4 +1298,9 @@ namespace efk
                                             (boxer::Style)style,
                                             (boxer::Buttons)buttons);
     }
+
+	int GUIManager::GetLanguage()
+	{
+		return (int32_t)GetEfkLanguage();
+	}
 }

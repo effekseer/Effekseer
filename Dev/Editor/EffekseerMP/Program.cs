@@ -93,7 +93,15 @@ namespace Effekseer
 
 		static void Exec(bool gui, string input, string output, string export, float magnification)
 		{
-            Core.Initialize();
+			var languageIndex = swig.GUIManager.GetLanguage();
+			Language? language = null;
+
+			if(languageIndex >= 0)
+			{
+				language = (Language)languageIndex;
+			}
+
+            Core.Initialize(language);
 
 			if(Core.Language == Language.Japanese)
 			{

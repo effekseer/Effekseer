@@ -1131,6 +1131,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public static int GetLanguage() {
+    int ret = EffekseerNativePINVOKE.GUIManager_GetLanguage();
+    return ret;
+  }
+
 }
 
 }
