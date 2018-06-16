@@ -1,16 +1,22 @@
 #include "efk.Language.h"
 
 #import <Foundation/NSLocale.h>
+#import <Cocoa/Cocoa.h>
 
 EfkLanguage GetEfkLanguage()
 {
 	NSString *localeIdentifier = [[NSLocale currentLocale] localeIdentifier];
-	if([localeIdentifier isEqual: @"ja_JP"])
+    NSArray *languages = [NSLocale preferredLanguages];
+    NSString *languageID = [languages objectAtIndex:0];
+    
+    //printf("%s", [languageID cStringUsingEncoding:NSUTF8StringEncoding]);
+    
+	if ([languageID hasPrefix:@"ja-"])
 	{
 		return EfkLanguage::Japanese;
 	}
 	else
 	{
-		return EfkLanguage::Enligsh;
+        return EfkLanguage::English;
 	}
 }
