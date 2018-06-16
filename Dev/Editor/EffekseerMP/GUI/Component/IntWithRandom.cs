@@ -19,9 +19,9 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.IntWithRandom binding = null;
 
-		int[] internalValue = new int[] { 0, 0 };
+		bool isActive = false;
 
-		public bool ShouldBeRemoved { get; private set; } = false;
+		int[] internalValue = new int[] { 0, 0 };
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -66,10 +66,35 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
+			FixValueInternal(isActive);
+		}
+
+		void FixValueInternal(bool combined)
+		{
+			if (binding == null) return;
+
+			if (EnableUndo)
+			{
+				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+				{
+					binding.SetCenter(internalValue[0], combined);
+					binding.SetAmplitude(internalValue[1], combined);
+				}
+				else
+				{
+					binding.SetMin(internalValue[0], combined);
+					binding.SetMax(internalValue[1], combined);
+				}
+			}
+			else
+			{
+				throw new Exception("Not Implemented.");
+			}
 		}
 
 		public override void OnDisposed()
 		{
+			FixValueInternal(false);
 		}
 
 		public override void Update()
@@ -110,13 +135,13 @@ namespace Effekseer.GUI.Component
 				{
 					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
 					{
-						binding.SetCenter(internalValue[0]);
-						binding.SetAmplitude(internalValue[1]);
+						binding.SetCenter(internalValue[0], isActive);
+						binding.SetAmplitude(internalValue[1], isActive);
 					}
 					else
 					{
-						binding.SetMin(internalValue[0]);
-						binding.SetMax(internalValue[1]);
+						binding.SetMin(internalValue[0], isActive);
+						binding.SetMax(internalValue[1], isActive);
 					}
 				}
 				else
@@ -124,6 +149,15 @@ namespace Effekseer.GUI.Component
 					throw new Exception("Not Implemented.");
 				}
 			}
+
+			var isActive_Current = Manager.NativeManager.IsItemActive();
+
+			if (isActive && !isActive_Current)
+			{
+				FixValue();
+			}
+
+			isActive = isActive_Current;
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
