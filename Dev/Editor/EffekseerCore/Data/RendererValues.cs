@@ -269,7 +269,7 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "スプラインの分割数")]
 			[Description(language = Language.Japanese, value = "スプラインの分割数")]
-			[Name(language = Language.English, value = "The number of spline division")]
+			[Name(language = Language.English, value = "The number of \nspline division")]
 			[Description(language = Language.English, value = "The number of spline division")]
 			public Value.Int SplineDivision
 			{
@@ -746,7 +746,7 @@ namespace Effekseer.Data
 
 			[Name(language = Language.Japanese, value = "スプラインの分割数")]
 			[Description(language = Language.Japanese, value = "スプラインの分割数")]
-			[Name(language = Language.English, value = "The number of spline division")]
+			[Name(language = Language.English, value = "The number of \nspline division")]
 			[Description(language = Language.English, value = "The number of spline division")]
 			public Value.Int SplineDivision
 			{

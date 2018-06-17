@@ -36,7 +36,8 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
-			if(Manager.NativeManager.Button("Fカーブ" + id))
+			
+			if(Manager.NativeManager.Button(Resources.GetString("FCurves") + id))
 			{
 				Manager.SelectOrShowWindow(typeof(Dock.FCurves));
 			}	
