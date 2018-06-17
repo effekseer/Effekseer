@@ -18,7 +18,7 @@ namespace Effekseer.GUI.Component
 
 		float[] internalValue = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
 
-		public bool ShouldBeRemoved { get; private set; } = false;
+		bool isActive = false;
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -67,7 +67,8 @@ namespace Effekseer.GUI.Component
 				(int)(internalValue[0] * 255),
 				(int)(internalValue[1] * 255),
 				(int)(internalValue[2] * 255),
-				(int)(internalValue[3] * 255));
+				(int)(internalValue[3] * 255),
+				isActive);
 		}
 
 		public override void Update()
@@ -94,6 +95,15 @@ namespace Effekseer.GUI.Component
 					binding.A.SetValueDirectly((int)(internalValue[3] * 255));
 				}
 			}
+
+			var isActive_Current = Manager.NativeManager.IsItemActive();
+
+			if (isActive && !isActive_Current)
+			{
+				FixValue();
+			}
+
+			isActive = isActive_Current;
 		}
 	}
 }

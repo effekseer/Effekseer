@@ -126,34 +126,86 @@ namespace Effekseer.Data.Value
 			DefaultColorSpace = ColorSpace;
 		}
 
-		public void SetMin(int r, int g, int b, int a = -1)
+		public void SetMin(int r, int g, int b, int a = -1, bool isCombined = false)
 		{
-			Command.CommandManager.StartCollection();
-			R.SetMin(r);
-			G.SetMin(g);
-			B.SetMin(b);
+			if (
+				r == R.GetMin() &&
+				g == G.GetMin() &&
+				b == B.GetMin() &&
+				a == A.GetMin()) return;
 
-			if (a >= 0)
-			{
-				A.SetMax(a);
-			}
+			int old_r = R.GetMin();
+			int new_r = r;
 
-			Command.CommandManager.EndCollection();
+			int old_g = G.GetMin();
+			int new_g = g;
+
+			int old_b = B.GetMin();
+			int new_b = b;
+
+			int old_a = A.GetMin();
+			int new_a = a;
+
+			var cmd = new Command.DelegateCommand(
+				() =>
+				{
+					R.SetMinDirectly(new_r);
+					G.SetMinDirectly(new_g);
+					B.SetMinDirectly(new_b);
+					A.SetMinDirectly(new_a);
+				},
+				() =>
+				{
+					R.SetMinDirectly(old_r);
+					G.SetMinDirectly(old_g);
+					B.SetMinDirectly(old_b);
+					A.SetMinDirectly(old_a);
+				},
+				this,
+				isCombined);
+
+			Command.CommandManager.Execute(cmd);
 		}
 
-		public void SetMax(int r, int g, int b, int a = -1)
+		public void SetMax(int r, int g, int b, int a = -1, bool isCombined = false)
 		{
-			Command.CommandManager.StartCollection();
-			R.SetMax(r);
-			G.SetMax(g);
-			B.SetMax(b);
+			if (
+				r == R.GetMax() &&
+				g == G.GetMax() &&
+				b == B.GetMax() &&
+				a == A.GetMax()) return;
 
-			if(a >= 0)
-			{
-				A.SetMax(a);
-			}
+			int old_r = R.GetMax();
+			int new_r = r;
 
-			Command.CommandManager.EndCollection();
+			int old_g = G.GetMax();
+			int new_g = g;
+
+			int old_b = B.GetMax();
+			int new_b = b;
+
+			int old_a = A.GetMax();
+			int new_a = a;
+
+			var cmd = new Command.DelegateCommand(
+				() =>
+				{
+					R.SetMaxDirectly(new_r);
+					G.SetMaxDirectly(new_g);
+					B.SetMaxDirectly(new_b);
+					A.SetMaxDirectly(new_a);
+				},
+				() =>
+				{
+					R.SetMaxDirectly(old_r);
+					G.SetMaxDirectly(old_g);
+					B.SetMaxDirectly(old_b);
+					A.SetMaxDirectly(old_a);
+				},
+				this,
+				isCombined);
+
+			Command.CommandManager.Execute(cmd);
 		}
 
 		public void ChangeColorSpace(ColorSpace colorSpace, bool link = false)

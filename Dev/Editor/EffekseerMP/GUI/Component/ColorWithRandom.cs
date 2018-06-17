@@ -8,7 +8,8 @@ namespace Effekseer.GUI.Component
 {
 	class ColorWithRandom : Control, IParameterControl
 	{
-		string id = "";
+		string id1 = "";
+		string id2 = "";
 		string id_c = "";
 		string id_r1 = "";
 		string id_r2 = "";
@@ -20,6 +21,8 @@ namespace Effekseer.GUI.Component
 		public string Description { get; set; } = string.Empty;
 
 		Data.Value.ColorWithRandom binding = null;
+
+		bool isActive = false;
 
 		float[] internalValueMax = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
 		float[] internalValueMin = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -69,7 +72,8 @@ namespace Effekseer.GUI.Component
 				Label = label;
 			}
 
-			id = "###" + Manager.GetUniqueID().ToString();
+			id1 = "###" + Manager.GetUniqueID().ToString();
+			id2 = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
 			id_r1 = "###" + Manager.GetUniqueID().ToString();
 			id_r2 = "###" + Manager.GetUniqueID().ToString();
@@ -83,6 +87,19 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
+			binding.SetMin(
+				(int)(internalValueMin[0] * 255),
+				(int)(internalValueMin[1] * 255),
+				(int)(internalValueMin[2] * 255),
+				(int)(internalValueMin[3] * 255),
+				isActive);
+
+			binding.SetMax(
+			(int)(internalValueMax[0] * 255),
+			(int)(internalValueMax[1] * 255),
+			(int)(internalValueMax[2] * 255),
+			(int)(internalValueMax[3] * 255),
+			isActive);
 		}
 
 		public override void Update()
@@ -96,43 +113,58 @@ namespace Effekseer.GUI.Component
 				internalValueMax[2] = binding.B.Max / 255.0f;
 				internalValueMax[3] = binding.A.Max / 255.0f;
 
-				internalValueMax[0] = binding.R.Min / 255.0f;
-				internalValueMax[1] = binding.G.Min / 255.0f;
-				internalValueMax[2] = binding.B.Min / 255.0f;
-				internalValueMax[3] = binding.A.Min / 255.0f;
+				internalValueMin[0] = binding.R.Min / 255.0f;
+				internalValueMin[1] = binding.G.Min / 255.0f;
+				internalValueMin[2] = binding.B.Min / 255.0f;
+				internalValueMin[3] = binding.A.Min / 255.0f;
 			}
 
 			var colorSpace = binding.ColorSpace == Data.ColorSpace.RGBA ? swig.ColorEditFlags.RGB : swig.ColorEditFlags.HSV;
 
 			Manager.NativeManager.PushItemWidth(150);
 
-			if (Manager.NativeManager.ColorEdit4(id, internalValueMin, swig.ColorEditFlags.NoOptions | colorSpace))
+			if (Manager.NativeManager.ColorEdit4(id1, internalValueMin, swig.ColorEditFlags.NoOptions | colorSpace))
 			{
 				binding.SetMin(
 					(int)(internalValueMin[0] * 255),
 					(int)(internalValueMin[1] * 255),
 					(int)(internalValueMin[2] * 255),
-					(int)(internalValueMin[3] * 255));
+					(int)(internalValueMin[3] * 255),
+					isActive);
 			}
+
+
+			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			Popup();
 
 			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text("最小");
+			Manager.NativeManager.Text(Resources.GetString("Min"));
 
-			if (Manager.NativeManager.ColorEdit4(id, internalValueMax, swig.ColorEditFlags.NoOptions | colorSpace))
+			if (Manager.NativeManager.ColorEdit4(id2, internalValueMax, swig.ColorEditFlags.NoOptions | colorSpace))
 			{
 				binding.SetMax(
 					(int)(internalValueMax[0] * 255),
 					(int)(internalValueMax[1] * 255),
 					(int)(internalValueMax[2] * 255),
-					(int)(internalValueMax[3] * 255));
+					(int)(internalValueMax[3] * 255),
+					isActive);
 			}
+
+
+			isActive_Current = isActive_Current || Manager.NativeManager.IsItemActive();
+
+			if (isActive && !isActive_Current)
+			{
+				FixValue();
+			}
+
+			isActive = isActive_Current;
 
 			Popup();
 
 			Manager.NativeManager.SameLine();
-			Manager.NativeManager.Text("最大");
+			Manager.NativeManager.Text(Resources.GetString("Max"));
 
 			Manager.NativeManager.PopItemWidth();
 		}
