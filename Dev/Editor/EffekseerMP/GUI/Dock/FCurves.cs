@@ -1072,6 +1072,8 @@ namespace Effekseer.GUI.Dock
 								properties[i].RightValues = properties[i].RightValues.Take(properties[i].RightValues.Length - 1).ToArray();
 								properties[i].Interpolations = properties[i].Interpolations.Take(properties[i].Interpolations.Length - 1).ToArray();
 							}
+
+							properties[i].IsDirtied = true;
 						}
 
 						for(int k = 0; k < properties[i].Values.Length; k++)
@@ -1184,7 +1186,7 @@ namespace Effekseer.GUI.Dock
 						var length_pre = 10.0f;
 						var length_next = 10.0f;
 
-						if (prop.KVSelected.Length == 1)
+						if (prop.KVSelected.Length -1 == 1)
 						{
 							d = 0.0f;
 						}
@@ -1263,6 +1265,7 @@ namespace Effekseer.GUI.Dock
 				properties[i].RightKeys = new float[0];
 				properties[i].RightValues = new float[0];
 				properties[i].Interpolations = new int[0];
+				properties[i].KVSelected = new byte[0];
 				properties[i].Update(fcurves[i]);
 			}
 

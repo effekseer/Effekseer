@@ -980,14 +980,14 @@ namespace ImGui
 			auto mousePos = GetMousePos();
 			auto v = transform_s2f(mousePos);
 
-			for (int i = 0; i < count - 1; i++)
+			for (int i = 0; i < count; i++)
 			{
 				auto p = transform_f2s(ImVec2(keys[i], values[i]));
 
 				if (!IsHovered(mousePos, p, 3)) continue;
 
 
-				for (int j = i; j < count - 1; j++)
+				for (int j = i; j < count; j++)
 				{
 					keys[j] = keys[j + 1];
 					values[j] = values[j + 1];
@@ -1000,6 +1000,7 @@ namespace ImGui
 				}
 
 				(*newCount) = count - 1;
+				count = count - 1;
 				hasControlled = true;
 				break;
 
@@ -1038,6 +1039,7 @@ namespace ImGui
 					interporations[0] = ImFCurveInterporationType::Linear;
 
 					(*newCount) = count + 1;
+					count = count + 1;
 					hasControlled = true;
 				}
 				else if (v.x >= keys[count - 1])
@@ -1052,6 +1054,7 @@ namespace ImGui
 					interporations[count] = ImFCurveInterporationType::Linear;
 
 					(*newCount) = count + 1;
+					count = count + 1;
 					hasControlled = true;
 				}
 				else
@@ -1082,6 +1085,7 @@ namespace ImGui
 							interporations[i + 1] = ImFCurveInterporationType::Linear;
 
 							(*newCount) = count + 1;
+							count = count + 1;
 							hasControlled = true;
 							break;
 						}
