@@ -51,7 +51,7 @@ public:
 		Matrix43		SRTMatrix43;
 		Color		AllColor;
 
-		// 左下、右下、左上、右上
+		// Lower left, Lower right, Upper left, Upper right
 		Color		Colors[4];
 
 		Vector2D	Positions[4];

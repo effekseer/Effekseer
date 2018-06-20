@@ -1247,7 +1247,7 @@ void Instance::ModifyMatrixFromLocationAbs( float deltaFrame )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Instance::Draw()
+void Instance::Draw(Instance* next)
 {
 	assert( m_pEffectNode != NULL );
 
@@ -1258,7 +1258,7 @@ void Instance::Draw()
 		CalculateMatrix( 0 );
 	}
 
-	m_pEffectNode->Rendering(*this, m_pManager);
+	m_pEffectNode->Rendering(*this, next, m_pManager);
 }
 
 //----------------------------------------------------------------------------------

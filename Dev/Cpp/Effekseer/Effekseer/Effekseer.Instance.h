@@ -286,9 +286,9 @@ public:
 	void Update( float deltaFrame, bool shown );
 
 	/**
-		@brief	描画
+		@brief	Draw instance
 	*/
-	void Draw();
+	void Draw(Instance* next);
 
 	/**
 		@brief	破棄

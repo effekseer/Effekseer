@@ -65,6 +65,8 @@ public:
 
 	Vector3D& operator /= ( const float& o );
 
+	bool operator == (const Vector3D& o);
+
 	/**
 		@brief	加算
 	*/

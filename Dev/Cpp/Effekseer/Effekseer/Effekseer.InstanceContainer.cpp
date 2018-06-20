@@ -273,12 +273,26 @@ void InstanceContainer::Draw(bool recursive)
 
 				if (m_pEffectNode->RenderingOrder == RenderingOrder_FirstCreatedInstanceIsFirst)
 				{
-					for (auto instance : group->m_instances)
+					auto it = group->m_instances.begin();
+
+					while (it != group->m_instances.end())
 					{
-						if (instance->m_State == INSTANCE_STATE_ACTIVE)
+						if ((*it)->m_State == INSTANCE_STATE_ACTIVE)
 						{
-							instance->Draw();
+							auto it_temp = it;
+							it_temp++;
+
+							if (it_temp != group->m_instances.end())
+							{
+								(*it)->Draw((*it_temp));
+							}
+							else
+							{
+								(*it)->Draw(nullptr);
+							}
 						}
+
+						it++;
 					}
 				}
 				else
@@ -289,7 +303,17 @@ void InstanceContainer::Draw(bool recursive)
 					{
 						if ((*it)->m_State == INSTANCE_STATE_ACTIVE)
 						{
-							(*it)->Draw();
+							auto it_temp = it;
+							it_temp++;
+
+							if (it_temp != group->m_instances.rend())
+							{
+								(*it)->Draw((*it_temp));
+							}
+							else
+							{
+								(*it)->Draw(nullptr);
+							}
 						}
 						it++;
 					}
