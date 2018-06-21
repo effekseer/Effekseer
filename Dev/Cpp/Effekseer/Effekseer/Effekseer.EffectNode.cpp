@@ -685,7 +685,7 @@ void EffectNodeImplemented::EndRenderingGroup(InstanceGroup* group, Manager* man
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::Rendering(const Instance& instance, Manager* manager)
+void EffectNodeImplemented::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
 {
 }
 

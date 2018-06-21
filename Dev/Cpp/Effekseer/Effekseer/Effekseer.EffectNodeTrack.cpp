@@ -149,7 +149,7 @@ void EffectNodeTrack::EndRenderingGroup(InstanceGroup* group, Manager* manager)
 	}
 }
 
-void EffectNodeTrack::Rendering(const Instance& instance, Manager* manager)
+void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.track;
 

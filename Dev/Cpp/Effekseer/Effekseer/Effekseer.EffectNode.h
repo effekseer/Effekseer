@@ -903,7 +903,7 @@ public:
 	/**
 	@brief	描画
 	*/
-	virtual void Rendering(const Instance& instance, Manager* manager);
+	virtual void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager);
 
 	/**
 	@brief	描画終了

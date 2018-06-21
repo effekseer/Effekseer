@@ -208,7 +208,7 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeRing::Rendering(const Instance& instance, Manager* manager)
+void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
 {
 	const InstanceValues& instValues = instance.rendererValues.ring;
 	RingRenderer* renderer = manager->GetRingRenderer();

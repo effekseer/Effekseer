@@ -95,6 +95,10 @@ Vector3D Vector3D::operator / (const Vector3D& o) const
 	return Vector3D(X / o.X, Y / o.Y, Z / o.Z);
 }
 
+bool Vector3D::operator == (const Vector3D& o)
+{
+	return this->X == o.X && this->Y == o.Y && this->Z == o.Z;
+}
 
 //----------------------------------------------------------------------------------
 //
