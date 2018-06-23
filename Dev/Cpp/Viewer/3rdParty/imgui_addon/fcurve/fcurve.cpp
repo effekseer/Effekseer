@@ -226,8 +226,8 @@ namespace ImGui
 		// move
 		if (ImGui::GetIO().MouseWheel != 0 && ImGui::IsWindowHovered() && !isZoomed && !isAutoZoomMode)
 		{
-			float offset = ImGui::GetIO().MouseWheel;
-			offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::START_Y) - offset / scale_y;
+			float offset = ImGui::GetIO().MouseWheel * 5;
+			offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y) - offset / scale_y;
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, offset_x);
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, offset_y);
 		}

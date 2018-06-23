@@ -393,6 +393,15 @@ namespace Effekseer.GUI.Dock
 					isAutoZoomMode = true;
 				}
 			}
+
+			if (Manager.NativeManager.IsItemHovered())
+			{
+				Manager.NativeManager.SetTooltip(Resources.GetString("AutoZoom") + "\n" + Resources.GetString("AutoZoom_Desc"));
+			}
+
+			Manager.NativeManager.SameLine();
+
+			Manager.NativeManager.Text(Resources.GetString("FCurveCtrl_Desc"));
 		}
 
 		public override void OnDisposed()

@@ -1,130 +1,133 @@
-Offset,Offset
-Recorder,Recorder
-CameraSettings,Camera Settings
-TransmitDataOnLoad,Transmit data on load
-X,x
-EnlargeAnchor_Desc,To make the value change smoothly,
-extend the anchor
-Format,Format
+YRotation,Y Rotation
+UnsavedChanges,*Unsaved Changes
+NetworkAddress,Address
+Max,Max
+AutoZoom,AutoZoom
+AutoZoom_Desc,Adjust graph's height automatically
+Connect,Connect
+AttractionForces,Attraction Forces
+End,End
+Range,Range
 ShrinkAnchor_Desc,To make the value change suddenly
 move the anchor to the position of the key
-Window,Window
-InternalInsertNode,Insert Node
-UseOriginalImage,Use original image
-Right,Right
-Zoom,Zoom
-Value,Val
-InternalExit,Exit
-FCurves,F-Curves
-InternalStep,Step
-Infinite,Infinite
-Start,Start
-nan,nan
-SendData,Send Data
-Sampling,Sampling
-Gauss,Gauss
-Disconnect,Disconnect
-AttractionForces,Attraction Forces
-Depth,Depth
-RenderSettings,Render Settings
-InternalAddNode,Add Node
-InternalSaveAs,Save as...
-ModelFilter_,Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
-InternalOpen,Open
-None,None
-ExportAsGifAnimation,Export as a gif animation
-Delete,Del
-Min,Min
-BasicRenderSettings,Basic Render Settings
-SoundFilter,*.wav
-AutoConnect,Auto-connect
-Frame,Frame
-TransmitDataOnSave,Transmit data on save
-Max,Max
-NetworkConnected,State：Connected
-InternalBaskStep,Step(Back)
-ResetMaginification,Reset maginification
-Load,Load
-Behavior,Behavior
-InternalCopy,Copy Node
-InternalPaste,Paste Node
-Range,Range
-Sound,Sound
-PlayString,Play
-ExportedFrame,Exported frame
-ExportAsAvi,Export as a AVI
-ExportAsSingleImage,Export as a single image
-Resolution,Resolution
-InternalRedo,Redo
-EnlargeAnchor,Enlarge anchor
-InternalViewHelp,Manual
-FileViewer,File Viewer
-InternalPauseOrResume,Pause/Resume
-XRotation,X Rotation
-Options,Options
-InternalStop,Stop
-ResetWindow,Reset Window Position
-ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
-SpawningMethod,Spawning Method
-End,End
-AboutEffekseer,About Effekseer
-Viewpoint,Viewpoint
-Position,Position
-InternalOverwrite,Save
-ModelFilter,efkmodel,fbx,mqo
-Export,Export
-SoundFilter_,Sound File (*.wav)|*.wav
-Import,Import
-GenerateAlpha,Generate alpha
-CameraMode,Camera Mode
-Global,Global Settings
-MakeTransparent,Make transparent
-RecentFiles,Recent Files
-Height,Height
-XCount,X Count
-Record,Record
-YRotation,Y Rotation
-InternalOpenSample,Open Sample Project
-PoVDistance,PoV Distance
-ExportAsImages,Export as images
-Port,Port
-ViewerControls,Viewer Controls
-Edit,Edit
-ImageFilter_,Image File (*.png)|*.png
-Culling,Culling
-ProjectFilter,efkproj
-InternalAbout,About Effekseer
 Mean,Mean
-BasicSettings,Basic Settings
-StartFrame,Start Frame
-Complement,Type
-Files,Files
-View,View
-InternalUndo,Undo
-Left,Left
-Frequency_Frame,Frequency(Frame)
-InternalRemoveNode,Delete Node
-Help,Help
-TransmitDataOnEdit,Transmit data on edit
-Network,Network
-InternalNew,New Project
-Y,Y
-Width,Width
-Scale,Scale
-ConfirmSaveChanged,[{0}] has been changed. Do you want to save?
-InternalPasteInfo,Paste Node Info
-NetworkDisconnected,State：Disconnected
-ShrinkAnchor,Shrink anchor
-ShowGuide,Show guide
+EnlargeAnchor,Enlarge anchor
+InternalInsertNode,Insert Node
+InternalOpen,Open
 Render,Render
-EndFrame,End Frame
-Viewer,Viewer
-NodeTree,Node Tree
-UnsavedChanges,*Unsaved Changes
-Deviation,Deviation
-Rotation,Rotation
+ShowGuide,Show guide
+EnlargeAnchor_Desc,To make the value change smoothly,
+extend the anchor
+SoundFilter,*.wav
+ShrinkAnchor,Shrink anchor
+ModelFilter_,Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
+InternalSaveAs,Save as...
+CameraSettings,Camera Settings
+AutoConnect,Auto-connect
+FileViewer,File Viewer
+ConfirmSaveChanged,[{0}] has been changed. Do you want to save?
+ExportAsGifAnimation,Export as a gif animation
+ExportedFrame,Exported frame
+Recorder,Recorder
+Y,Y
+InternalPasteInfo,Paste Node Info
+BasicSettings,Basic Settings
 NotAbsolutePathError,This is not an absolute path.
-Connect,Connect
-NetworkAddress,Address
+InternalOpenSample,Open Sample Project
+Deviation,Deviation
+SpawningMethod,Spawning Method
+ResetMaginification,Reset maginification
+ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
+InternalPaste,Paste Node
+ModelFilter,efkmodel,fbx,mqo
+InternalOverwrite,Save
+InternalAddNode,Add Node
+NetworkDisconnected,State：Disconnected
+GenerateAlpha,Generate alpha
+SoundFilter_,Sound File (*.wav)|*.wav
+StartFrame,Start Frame
+None,None
+Files,Files
+Height,Height
+Window,Window
+Record,Record
 ImageFilter,png
+InternalViewHelp,Manual
+Right,Right
+Behavior,Behavior
+Format,Format
+Width,Width
+View,View
+ImageFilter_,Image File (*.png)|*.png
+Viewer,Viewer
+EndFrame,End Frame
+NetworkConnected,State：Connected
+XRotation,X Rotation
+Frame,Frame
+ExportAsImages,Export as images
+TransmitDataOnSave,Transmit data on save
+Culling,Culling
+Viewpoint,Viewpoint
+Delete,Del
+InternalNew,New Project
+ProjectFilter,efkproj
+InternalRedo,Redo
+TransmitDataOnEdit,Transmit data on edit
+Start,Start
+FCurveCtrl_Desc,Double click - Add,Remove points, Alt+Wheel - Zoom horizontal, Ctrl+Wheel Zoom vertical
+SendData,Send Data
+InternalCopy,Copy Node
+Left,Left
+InternalBaskStep,Step(Back)
+Gauss,Gauss
+Help,Help
+AboutEffekseer,About Effekseer
+Port,Port
+Frequency_Frame,Frequency(Frame)
+Sampling,Sampling
+UseOriginalImage,Use original image
+InternalStep,Step
+ExportAsAvi,Export as a AVI
+Import,Import
+Options,Options
+Edit,Edit
+Scale,Scale
+Depth,Depth
+nan,nan
+ViewerControls,Viewer Controls
+Zoom,Zoom
+PlayString,Play
+MakeTransparent,Make transparent
+TransmitDataOnLoad,Transmit data on load
+Min,Min
+InternalStop,Stop
+RecentFiles,Recent Files
+Network,Network
+Export,Export
+CameraMode,Camera Mode
+Complement,Type
+InternalExit,Exit
+XCount,X Count
+RenderSettings,Render Settings
+FCurves,F-Curves
+ResetWindow,Reset Window Position
+X,x
+InternalRemoveNode,Delete Node
+BasicRenderSettings,Basic Render Settings
+Global,Global Settings
 NetworkState,State：
+Position,Position
+PoVDistance,PoV Distance
+Load,Load
+Offset,Offset
+Rotation,Rotation
+Infinite,Infinite
+Disconnect,Disconnect
+InternalAbout,About Effekseer
+Resolution,Resolution
+ExportAsSingleImage,Export as a single image
+InternalPauseOrResume,Pause/Resume
+InternalUndo,Undo
+Value,Val
+Sound,Sound
+NodeTree,Node Tree
