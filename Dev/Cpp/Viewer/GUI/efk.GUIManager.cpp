@@ -595,6 +595,12 @@ namespace efk
 		return Vec2(v.x, v.y);
 	}
 
+	Vec2 GUIManager::GetContentRegionAvail()
+	{
+		auto v = ImGui::GetContentRegionAvail();
+		return Vec2(v.x, v.y);
+	}
+
 	void GUIManager::SetNextWindowSize(float size_x, float size_y, Cond cond)
 	{
 		ImVec2 size;
@@ -1189,9 +1195,9 @@ namespace efk
 		ImGui::SetDockActive();
 	}
 
-	bool GUIManager::BeginFCurve(int id, float scale)
+	bool GUIManager::BeginFCurve(int id, const Vec2& size, float min_value, float max_value)
 	{
-		return ImGui::BeginFCurve(id, scale);
+		return ImGui::BeginFCurve(id, ImVec2(size.X, size.Y), min_value, max_value);
 	}
 
 	void GUIManager::EndFCurve()

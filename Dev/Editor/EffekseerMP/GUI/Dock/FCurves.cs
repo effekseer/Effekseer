@@ -36,6 +36,12 @@ namespace Effekseer.GUI.Dock
 		Component.Enum endCurve = new Component.Enum();
 		Component.Enum type = new Component.Enum();
 
+		bool isAutoZoomMode = true;
+		float autoZoomRangeMin = 0;
+		float autoZoomRangeMax = 0;
+
+		Action<float, float> moved = null;
+
 		public FCurves()
 		{
 			Label = Resources.GetString("FCurves") + "###FCurves";
@@ -59,6 +65,27 @@ namespace Effekseer.GUI.Dock
 			Icon = Images.GetIcon("PanelFCurve");
 			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("FCurves");
+
+			// auto zoom event
+			moved += (x, y) =>
+			{
+				if (!isAutoZoomMode) return;
+
+				float min_y, max_y;
+				GetRange(treeNodes, out min_y, out max_y);
+
+				if(min_y < autoZoomRangeMin && y < 0)
+				{
+					autoZoomRangeMin += y;
+					autoZoomRangeMax += y;
+				}
+
+				if (max_y > autoZoomRangeMax && y > 0)
+				{
+					autoZoomRangeMin += y;
+					autoZoomRangeMax += y;
+				}
+			};
 		}
 
 		protected override void UpdateInternal()
@@ -299,35 +326,73 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			Manager.NativeManager.BeginGroup();
+			//Manager.NativeManager.BeginGroup();
 
 			Manager.NativeManager.Columns(2);
 
 			Manager.NativeManager.SetColumnWidth(0, 200);
-			Manager.NativeManager.BeginChild("##FCurveGroup_Tree");
+			//Manager.NativeManager.BeginChild("##FCurveGroup_Tree");
 
 			if(treeNodes != null)
 			{
 				UpdateTreeNode(treeNodes);
 			}
 
-			Manager.NativeManager.EndChild();
+			//Manager.NativeManager.EndChild();
 
 			Manager.NativeManager.NextColumn();
 
-			Manager.NativeManager.BeginChild("##FCurveGroup_Graph");
+			//Manager.NativeManager.BeginChild("##FCurveGroup_Graph");
 
-			if(Manager.NativeManager.BeginFCurve(1, 0.75f))
+			if(isAutoZoomMode)
+			{
+				if (canCurveControl)
+				{
+					float min_value, max_value;
+					GetRange(treeNodes, out min_value, out max_value);
+					var range = (max_value - min_value);
+					autoZoomRangeMin = min_value - range * 0.1f;
+					autoZoomRangeMax = max_value + range * 0.1f;
+				}
+			}
+			else
+			{
+				autoZoomRangeMin = float.MaxValue;
+				autoZoomRangeMax = float.MinValue;
+			}
+
+			var graphSize = Manager.NativeManager.GetContentRegionAvail();
+			graphSize.X = Math.Max(graphSize.X, 32);
+			graphSize.Y = Math.Max(graphSize.Y, 32);
+			graphSize.Y -= 28;
+
+			if (Manager.NativeManager.BeginFCurve(1, graphSize, autoZoomRangeMin, autoZoomRangeMax))
 			{
 				UpdateGraph(treeNodes);
 			}
 
 			Manager.NativeManager.EndFCurve();
 
-			Manager.NativeManager.EndChild();
+			//Manager.NativeManager.EndChild();
 
+			//Manager.NativeManager.EndGroup();
 
-			Manager.NativeManager.EndGroup();
+			Manager.NativeManager.Columns(1);
+
+			if (isAutoZoomMode)
+			{
+				if (Manager.NativeManager.ImageButton(Images.GetIcon("AutoZoom_On"), 24, 24))
+				{
+					isAutoZoomMode = false;
+				}
+			}
+			else
+			{
+				if (Manager.NativeManager.ImageButton(Images.GetIcon("AutoZoom_Off"), 24, 24))
+				{
+					isAutoZoomMode = true;
+				}
+			}
 		}
 
 		public override void OnDisposed()
@@ -429,6 +494,37 @@ namespace Effekseer.GUI.Dock
 			}
 
 			canCurveControl = canControl;
+		}
+
+		void GetRange(TreeNode treeNode, out float min_value, out float max_value)
+		{
+			min_value = float.MaxValue;
+			max_value = float.MinValue;
+
+			foreach (var fcurve in treeNode.FCurves)
+			{
+				float min_v = 0;
+				float max_v = 0;
+
+				fcurve.GetRange(out min_v, out max_v);
+
+				min_value = Math.Min(min_value, min_v);
+				max_value = Math.Max(max_value, max_v);
+			}
+
+			for (int i = 0; i < treeNode.Children.Count; i++)
+			{
+				float min_v = 0;
+				float max_v = 0;
+
+				GetRange(treeNode.Children[i], out min_v, out max_v);
+
+				min_value = Math.Min(min_value, min_v);
+				max_value = Math.Max(max_value, max_v);
+			}
+
+			if (min_value == float.MaxValue) min_value = 0.0f;
+			if (max_value == float.MinValue) max_value = 0.0f;
 		}
 
 		void UpdateGraph(TreeNode treeNode, ref bool canControl)
@@ -692,7 +788,6 @@ namespace Effekseer.GUI.Dock
 			recurse(treeNodes);
 		}
 
-
 		public void EnlargeAnchors()
 		{
 			Action<TreeNode> recurse = null;
@@ -731,8 +826,12 @@ namespace Effekseer.GUI.Dock
 			};
 
 			recurse(treeNodes);
-		}
 
+			if(moved != null)
+			{
+				moved(x, y);
+			}
+		}
 
 		Tuple<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve()
 		{
@@ -885,6 +984,8 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
+			public abstract void GetRange(out float value_min, out float value_max);
+
 			public virtual void OnAdded() {}
 
 			public virtual void OnRemoved() {}
@@ -945,6 +1046,30 @@ namespace Effekseer.GUI.Dock
 
 				this.names = names;
 				this.fcurves = fcurves;
+			}
+
+			public override void GetRange(out float value_min, out float value_max)
+			{
+				value_min = float.MaxValue;
+				value_max = float.MinValue;
+
+				foreach(var prop in properties)
+				{
+					if (!prop.IsShown) continue;
+
+					for(int i = 0; i < prop.KVSelected.Length - 1; i++)
+					{
+						value_min = Math.Min(prop.Values[i], value_min);
+						value_max = Math.Max(prop.Values[i], value_max);
+						value_min = Math.Min(prop.LeftValues[i], value_min);
+						value_max = Math.Max(prop.LeftValues[i], value_max);
+						value_min = Math.Min(prop.RightValues[i], value_min);
+						value_max = Math.Max(prop.RightValues[i], value_max);
+					}
+				}
+
+				if (value_min == float.MaxValue) value_min = defaultValue;
+				if (value_max == float.MinValue) value_max = defaultValue;
 			}
 
 			public override object GetValueAsObject()

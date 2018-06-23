@@ -64,6 +64,7 @@ namespace ImGui
 		START_Y,
 		DELTA_X,
 		DELTA_Y,
+		OVER_Y,
 	};
 
 	bool IsHovered(const ImVec2& v1, const ImVec2& v2, float radius)
@@ -142,9 +143,11 @@ namespace ImGui
 		return isHovered;
 	}
 
-	bool BeginFCurve(int id, float scale)
+	bool BeginFCurve(int id, const ImVec2& size, float min_value, float max_value)
 	{
-		if (!BeginChildFrame(id, ImVec2(0, 0), ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
+		bool isAutoZoomMode = min_value <= max_value;
+
+		if (!BeginChildFrame(id, size, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse))
 		{
 			return false;
 		}
@@ -159,8 +162,8 @@ namespace ImGui
 		float offset_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, 0.0f);
 		float offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, 0.0f);
 
-		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, scale);
-		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, scale);
+		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, 1.0f);
+		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, 1.0f);
 		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_X, scale_x);
 		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, scale_y);
 
@@ -178,15 +181,16 @@ namespace ImGui
 			return ImVec2((p.x - innerRect.Min.x) / scale_x + offset_x, -((p.y - innerRect.Min.y - height / 2) / scale_y + offset_y));
 		};
 
-		// zoom with user
-		if (ImGui::GetIO().MouseWheel != 0 && ImGui::IsWindowHovered())
+		bool isZoomed = false;
+
+		// Horizontal
+		if (ImGui::GetIO().MouseWheel != 0 && ImGui::IsWindowHovered() && ImGui::GetIO().KeyAlt)
 		{
 			auto mousePos = GetMousePos();
 			auto mousePos_f_pre = transform_s2f(mousePos);
 
 			auto s = powf(2, ImGui::GetIO().MouseWheel / 10.0);
 			scale_x *= s;
-			scale_y *= s;
 
 			auto mousePos_f_now = transform_s2f(mousePos);
 
@@ -194,8 +198,55 @@ namespace ImGui
 			offset_y -= (mousePos_f_pre.y - mousePos_f_now.y);
 
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_X, scale_x);
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, offset_x);
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, offset_y);
+			isZoomed = true;
+		}
+
+		// Vertial
+		if (ImGui::GetIO().MouseWheel != 0 && ImGui::IsWindowHovered() && ImGui::GetIO().KeyCtrl && !isAutoZoomMode)
+		{
+			auto mousePos = GetMousePos();
+			auto mousePos_f_pre = transform_s2f(mousePos);
+
+			auto s = powf(2, ImGui::GetIO().MouseWheel / 10.0);
+			scale_y *= s;
+
+			auto mousePos_f_now = transform_s2f(mousePos);
+
+			offset_x += (mousePos_f_pre.x - mousePos_f_now.x);
+			offset_y -= (mousePos_f_pre.y - mousePos_f_now.y);
+
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, scale_y);
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, offset_x);
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, offset_y);
+			isZoomed = true;
+		}
+
+		// move
+		if (ImGui::GetIO().MouseWheel != 0 && ImGui::IsWindowHovered() && !isZoomed && !isAutoZoomMode)
+		{
+			float offset = ImGui::GetIO().MouseWheel;
+			offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::START_Y) - offset / scale_y;
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, offset_x);
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, offset_y);
+		}
+
+		// AutoZoom
+		if (isAutoZoomMode)
+		{
+			auto range = max_value - min_value;
+
+			if (range == 0.0f)
+			{
+				max_value = +height / 2;
+				min_value = -height / 2;
+				range = height;
+			}
+			
+			offset_y = -(max_value + min_value) / 2.0f;
+			scale_y = height / (range);
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, scale_y);
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, offset_y);
 		}
 
@@ -208,8 +259,12 @@ namespace ImGui
 		{
 			ImVec2 drag_offset = ImGui::GetMouseDragDelta(1);
 			offset_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::START_X) - drag_offset.x / scale_x;
-			offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::START_Y) - drag_offset.y / scale_y;
 
+			if (!isAutoZoomMode)
+			{
+				offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::START_Y) - drag_offset.y / scale_y;
+			}
+			
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, offset_x);
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, offset_y);
 		}
@@ -284,6 +339,19 @@ namespace ImGui
 		{
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::DELTA_X, 0);
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::DELTA_Y, 0);
+		}
+
+		if (ImGui::GetMousePos().y < innerRect.Min.y)
+		{
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OVER_Y, ImGui::GetMousePos().y - innerRect.Min.y);
+		}
+		else if (ImGui::GetMousePos().y > innerRect.Max.y)
+		{
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OVER_Y, ImGui::GetMousePos().y - innerRect.Max.y);
+		}
+		else
+		{
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OVER_Y, 0);
 		}
 
 		return true;
@@ -498,6 +566,7 @@ namespace ImGui
 
 		auto dx = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::DELTA_X, 0.0f);
 		auto dy = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::DELTA_Y, 0.0f);
+		auto over_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OVER_Y, 0.0f);
 
 		// move points
 		if (!hasControlled && selected)
@@ -549,6 +618,12 @@ namespace ImGui
 				PopID();
 				SetCursorScreenPos(cursorPos);
 
+				// out of window
+				if (isChanged && over_y != 0.0f)
+				{
+					dy = over_y * 0.1;
+				}
+
 				if (isChanged)
 				{
 					if (changedType != nullptr)
@@ -556,7 +631,7 @@ namespace ImGui
 						(*changedType) = 0;
 
 						if (movedX != nullptr) (*movedX) = dx / scale_x;
-						if (movedY != nullptr) (*movedY) = dy / scale_y;
+						if (movedY != nullptr) (*movedY) = -dy / scale_y;
 					}
 
 					break;
@@ -713,6 +788,12 @@ namespace ImGui
 				PopID();
 				SetCursorScreenPos(cursorPos);
 
+				// out of window
+				if (isChanged && over_y != 0.0f)
+				{
+					dy = over_y * 0.1;
+				}
+
 				if (isChanged)
 				{
 					if (changedType != nullptr)
@@ -720,7 +801,7 @@ namespace ImGui
 						(*changedType) = 1;
 
 						if (movedX != nullptr) (*movedX) = dx / scale_x;
-						if (movedY != nullptr) (*movedY) = dy / scale_y;
+						if (movedY != nullptr) (*movedY) = -dy / scale_y;
 					}
 
 					break;
@@ -789,6 +870,12 @@ namespace ImGui
 				PopID();
 				SetCursorScreenPos(cursorPos);
 
+				// out of window
+				if (isChanged && over_y != 0.0f)
+				{
+					dy = over_y * 0.1;
+				}
+
 				if (isChanged)
 				{
 					if (changedType != nullptr)
@@ -796,7 +883,7 @@ namespace ImGui
 						(*changedType) = 2;
 
 						if (movedX != nullptr) (*movedX) = dx / scale_x;
-						if (movedY != nullptr) (*movedY) = dy / scale_y;
+						if (movedY != nullptr) (*movedY) = -dy / scale_y;
 					}
 
 					break;

@@ -244,7 +244,9 @@ namespace efk
 		bool BeginChild(const char* str_id);
 		void EndChild();
 
+		// Windows Utilities
 		Vec2 GetWindowSize();
+		Vec2 GetContentRegionAvail();
 
 		void SetNextWindowSize(float size_x, float size_y, Cond cond);
 
@@ -404,7 +406,7 @@ namespace efk
 		void SetDockActive();
 
 		// Fcurve
-		bool BeginFCurve(int id, float scale);
+		bool BeginFCurve(int id, const Vec2& size, float min_value = 1.0f, float max_value = -1.0f);
 		void EndFCurve();
 		bool FCurve(
 			int fcurve_id,
