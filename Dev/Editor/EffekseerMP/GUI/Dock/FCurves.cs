@@ -366,7 +366,9 @@ namespace Effekseer.GUI.Dock
 			graphSize.Y = Math.Max(graphSize.Y, 32);
 			graphSize.Y -= 28;
 
-			if (Manager.NativeManager.BeginFCurve(1, graphSize, autoZoomRangeMin, autoZoomRangeMax))
+			var scale = new swig.Vec2(12, 4);
+
+			if (Manager.NativeManager.BeginFCurve(1, graphSize, scale, autoZoomRangeMin, autoZoomRangeMax))
 			{
 				UpdateGraph(treeNodes);
 			}
@@ -1077,8 +1079,22 @@ namespace Effekseer.GUI.Dock
 					}
 				}
 
-				if (value_min == float.MaxValue) value_min = defaultValue;
-				if (value_max == float.MinValue) value_max = defaultValue;
+				/*
+				if (value_min == float.MaxValue || value_max == float.MinValue)
+				{
+					// todo set from outer
+					if(defaultValue == 255)
+					{
+						value_min = 0;
+						value_max = 255;
+					}
+					else
+					{
+						value_min = -0;
+						value_max = 0;
+					}
+				}
+				*/
 			}
 
 			public override object GetValueAsObject()
@@ -1399,7 +1415,7 @@ namespace Effekseer.GUI.Dock
 				properties[i].RightKeys = new float[0];
 				properties[i].RightValues = new float[0];
 				properties[i].Interpolations = new int[0];
-				properties[i].KVSelected = new byte[0];
+				//properties[i].KVSelected = new byte[0];
 				properties[i].Update(fcurves[i]);
 			}
 
@@ -1565,12 +1581,10 @@ namespace Effekseer.GUI.Dock
 					RightValues = keyFrames.Select(_ => _.RightY).Concat(new float[] { 0.0f }).ToArray();
 				}
 
-				if (KVSelected.Length < plength)
+				if (KVSelected.Length != plength)
 				{
-					var keyFrames = fcurve.Keys.ToArray();
-
-					var new_selected = new byte[keyFrames.Length + 1];
-					KVSelected.CopyTo(new_selected, 0);
+					var new_selected = new byte[plength];
+					//KVSelected.CopyTo(new_selected, 0);
 					KVSelected = new_selected;
 				}
 

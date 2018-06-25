@@ -143,7 +143,7 @@ namespace ImGui
 		return isHovered;
 	}
 
-	bool BeginFCurve(int id, const ImVec2& size, float min_value, float max_value)
+	bool BeginFCurve(int id, const ImVec2& size, const ImVec2& scale, float min_value, float max_value)
 	{
 		bool isAutoZoomMode = min_value <= max_value;
 
@@ -162,8 +162,8 @@ namespace ImGui
 		float offset_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, 0.0f);
 		float offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, 0.0f);
 
-		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, 1.0f);
-		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, 1.0f);
+		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, scale.x);
+		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, scale.y);
 		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_X, scale_x);
 		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, scale_y);
 
@@ -204,7 +204,7 @@ namespace ImGui
 		}
 
 		// Vertial
-		if (ImGui::GetIO().MouseWheel != 0 && ImGui::IsWindowHovered() && ImGui::GetIO().KeyCtrl && !isAutoZoomMode)
+		if (ImGui::GetIO().MouseWheel != 0 && ImGui::IsWindowHovered() && !isZoomed && ImGui::GetIO().KeyCtrl && !isAutoZoomMode)
 		{
 			auto mousePos = GetMousePos();
 			auto mousePos_f_pre = transform_s2f(mousePos);
@@ -242,10 +242,14 @@ namespace ImGui
 				max_value = +height / 2;
 				min_value = -height / 2;
 				range = height;
+				scale_y = scale.y;
+			}
+			else
+			{
+				scale_y = height / (range);
 			}
 			
 			offset_y = -(max_value + min_value) / 2.0f;
-			scale_y = height / (range);
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, scale_y);
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, offset_y);
 		}
@@ -290,8 +294,8 @@ namespace ImGui
 			auto fieldGridSizeX = screenGridSize * kByPixel;
 			auto fieldGridSizeY = screenGridSize * vByPixel;
 
-			fieldGridSizeX  = pow(2, (int32_t)logn(2, fieldGridSizeX));
-			fieldGridSizeY = pow(2, (int32_t)logn(2, fieldGridSizeY));
+			fieldGridSizeX  = pow(5, (int32_t)logn(5, fieldGridSizeX) + 1);
+			fieldGridSizeY = pow(5, (int32_t)logn(5, fieldGridSizeY) + 1);
 
 			auto sx = (int)(upperLeft_f.x / fieldGridSizeX) * fieldGridSizeX;
 			auto sy = (int)(upperLeft_f.y / fieldGridSizeY) * fieldGridSizeY;

@@ -406,7 +406,7 @@ namespace efk
 		void SetDockActive();
 
 		// Fcurve
-		bool BeginFCurve(int id, const Vec2& size, float min_value = 1.0f, float max_value = -1.0f);
+		bool BeginFCurve(int id, const Vec2& size, const Vec2& scale, float min_value = 1.0f, float max_value = -1.0f);
 		void EndFCurve();
 		bool FCurve(
 			int fcurve_id,

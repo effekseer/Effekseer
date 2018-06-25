@@ -1195,9 +1195,9 @@ namespace efk
 		ImGui::SetDockActive();
 	}
 
-	bool GUIManager::BeginFCurve(int id, const Vec2& size, float min_value, float max_value)
+	bool GUIManager::BeginFCurve(int id, const Vec2& size, const Vec2& scale, float min_value, float max_value)
 	{
-		return ImGui::BeginFCurve(id, ImVec2(size.X, size.Y), min_value, max_value);
+		return ImGui::BeginFCurve(id, ImVec2(size.X, size.Y), ImVec2(scale.X, scale.Y), min_value, max_value);
 	}
 
 	void GUIManager::EndFCurve()
