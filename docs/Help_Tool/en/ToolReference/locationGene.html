@@ -48,7 +48,7 @@ Treats the point at the specified position as the generation position.
 		</p>
 
 
-	<h4>Line(1.3 or later)</h4>
+	<h4>Line</h4>
 	<p>
 Particles are placed on the line. 
 When you specify the init position (1) and the final position (2) of the line, 
@@ -143,8 +143,15 @@ Place particles along the shape of the model for Effekseer. If "Set angle on spa
 	</p>
 	
 	<p>
-(1.3 or later)S pecify FBX (.fbx), metasequoia file (.mqo) used for display, or model file for Effekseer (.efkmodel). If .efkmodel is specified, .efkmodel is generated in the same directory as the specified file. When playing effects with other applications, this generated file is necessary.
+Specify FBX (.fbx), metasequoia file (.mqo) used for display, or model file for Effekseer (.efkmodel). If .efkmodel is specified, .efkmodel is generated in the same directory as the specified file. When playing effects with other applications, this generated file is necessary.
 	</p>
+
+<p>
+アニメーション付きのFBX(.fbx)を読み込むこともできます。
+FBXファイルで一番目に設定されているアニメーションが再生されます。
+親のパーティクルの時間に沿ってアニメーションも再生されます。
+アニメーションにより変形したモデルからパーティクルが生成されます。
+</p>
 
 	<h5>Spawn Mode</h5>
 	<h6>Random</h6>
