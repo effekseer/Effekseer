@@ -86,13 +86,17 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
+			if (binding == null) return;
+
+			float step = 1.0f;
 			if (binding != null)
 			{
 				internalValue[0] = binding.X.Value;
 				internalValue[1] = binding.Y.Value;
+				step = binding.X.Step / 10.0f;
 			}
 
-			if (Manager.NativeManager.DragFloat2(id, internalValue))
+			if (Manager.NativeManager.DragFloat2(id, internalValue, step, binding.X.Min, binding.X.Max))
 			{
 				FixValueInternal(isActive);
 			}

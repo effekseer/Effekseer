@@ -52,12 +52,20 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.New")]
 		public static bool New()
 		{
-            var dialog = new Dialog.SaveOnDisposing(
-                () =>
-                {
-				    Core.New();
-                });
-                     
+			if(Core.IsChanged)
+			{
+				var dialog = new Dialog.SaveOnDisposing(
+					() =>
+					{
+						Core.New();
+					});
+
+			}
+			else
+			{
+				Core.New();
+			}
+
 			return true;
 		}
 

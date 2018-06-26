@@ -90,6 +90,8 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
+			if (binding == null) return;
+
 			float step = 1.0f;
 
 			if (binding != null)

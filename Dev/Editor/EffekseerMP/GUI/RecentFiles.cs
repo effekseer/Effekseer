@@ -24,7 +24,7 @@ namespace Effekseer.GUI
 
 		static RecentFiles()
 		{
-			configRecentPath = System.IO.Path.Combine(GetEntryDirectory(), ConfigRecentFileName);
+			configRecentPath = System.IO.Path.Combine(Manager.GetEntryDirectory(), ConfigRecentFileName);
 		}
 
 		internal static void LoadRecentConfig()
@@ -90,18 +90,6 @@ namespace Effekseer.GUI
 		public static string[] GetRecentFiles()
 		{
 			return recentFiles.ToArray();
-		}
-
-		/// <summary>
-		/// アプリケーションの存在するディレクトリを取得
-		/// </summary>
-		/// <returns></returns>
-		public static string GetEntryDirectory()
-		{
-			var myAssembly = System.Reflection.Assembly.GetEntryAssembly();
-			string path = myAssembly.Location;
-
-			return System.IO.Path.GetDirectoryName(path);
 		}
 	}
 }

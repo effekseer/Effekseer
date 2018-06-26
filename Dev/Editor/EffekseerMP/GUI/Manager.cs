@@ -271,6 +271,8 @@ namespace Effekseer.GUI
 
 		public static void Terminate()
 		{
+			System.IO.Directory.SetCurrentDirectory(GetEntryDirectory());
+
 			Manager.NativeManager.SaveDock("config.Dock.config");
 			SaveWindowConfig("config.Dock.xml");
 

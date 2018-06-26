@@ -155,6 +155,8 @@ namespace Effekseer.GUI.Component
 			if (binding == null) return;
 			isPopupShown = false;
 
+			float step = binding.X.Step / 10.0f;
+			
 			if (binding != null)
 			{
 				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
@@ -187,7 +189,7 @@ namespace Effekseer.GUI.Component
 				txt_r2 = Resources.GetString("Min");
 			}
 
-			if (Manager.NativeManager.DragFloat2EfkEx(id1, internalValue1, 1, float.MinValue, float.MaxValue, txt_r1 + ":" + "%.3f", txt_r1 + ":" + "%.3f"))
+			if (Manager.NativeManager.DragFloat2EfkEx(id1, internalValue1, step, binding.X.ValueMin, binding.X.ValueMax, txt_r1 + ":" + "%.3f", txt_r1 + ":" + "%.3f"))
 			{
 				if (EnableUndo)
 				{

@@ -78,6 +78,16 @@ namespace Effekseer.Data.Value
 			set;
 		}
 
+		public int ValueMin
+		{
+			get { return _min; }
+		}
+
+		public int ValueMax
+		{
+			get { return _max; }
+		}
+
 		internal int DefaultValueCenter { get; private set; }
 		internal int DefaultValueMax { get; private set; }
 		internal int DefaultValueMin { get; private set; }

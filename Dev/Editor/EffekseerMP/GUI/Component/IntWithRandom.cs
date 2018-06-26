@@ -129,7 +129,7 @@ namespace Effekseer.GUI.Component
 				txt_r2 = Resources.GetString("Min");
 			}
 
-			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, 1, int.MinValue, int.MaxValue, txt_r1 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
+			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, binding.Step, binding.ValueMin, binding.ValueMax, txt_r1 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
 			{
 				if (EnableUndo)
 				{

@@ -182,7 +182,7 @@ namespace Effekseer.GUI.Component
 				txt_r2 = Resources.GetString("Min");
 			}
 
-			Manager.NativeManager.PushItemWidth(120);
+			Manager.NativeManager.PushItemWidth(140);
 			if (Manager.NativeManager.DragFloat3EfkEx(id1, internalValue1, step, float.MinValue, float.MaxValue, "X:" + "%.3f", "Y:" + "%.3f", "Z:" + "%.3f"))
 			{
 				if (EnableUndo)
