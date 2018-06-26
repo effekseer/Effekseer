@@ -86,10 +86,11 @@ Use the F-Curve window to control the UV by defining automation curves.
 
 <img src="../../img/Reference/renderCommon_uv_scroll.png">
 
-		<h3>Inherit color(1.3 or later)</h3>
+		<h3>Inherit color</h3>
 		<p>
 Specify whether the color of the parent particle affects the color of the child's particles. In case of inheritance of color, the color of the parent's particle multiplied by the color of the child's particle becomes the color of the final child's particle. When "Only on create" is selected, the color of the parent particle when the child particles are generated is always applied.
 		</p>
+
 <table>
 	<tr>
 		<td>
@@ -166,6 +167,12 @@ Distortion strength adjusts the strength of all colors. When it reaches 0, no mo
 		</td>
 	</tr>
 </table>
+
+<p>
+In the case of the default settings, the distortion distorts only the background without own effect itself.
+To distort other nodes of own effect with distortion, specify the drawing priority from the depth panel.
+Nodes with drawing priority less than 0 are distorted with the background due to the distortion of the node of own effect.
+</p>
 
 	</div>
 </body>
