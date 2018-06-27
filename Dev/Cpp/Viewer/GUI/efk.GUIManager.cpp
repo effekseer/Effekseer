@@ -256,7 +256,7 @@ namespace efk
 		return nullptr;
 	}
 
-	bool DragFloatN(const char* label, float* v, int components, float v_speed, float v_min, float v_max, 
+	bool DragFloatN(const char* label, float* v, int components, float v_speed, float* v_min, float* v_max, 
 		const char* display_format1, 
 		const char* display_format2,
 		const char* display_format3,
@@ -281,7 +281,7 @@ namespace efk
 		for (int i = 0; i < components; i++)
 		{
 			ImGui::PushID(i);
-			value_changed |= ImGui::DragFloat("##v", &v[i], v_speed, v_min, v_max, display_formats[i], power);
+			value_changed |= ImGui::DragFloat("##v", &v[i], v_speed, v_min[i], v_max[i], display_formats[i], power);
 			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
 			ImGui::PopID();
 			ImGui::PopItemWidth();
@@ -866,28 +866,49 @@ namespace efk
 
 	bool GUIManager::DragFloat1EfkEx(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char16_t* display_format1, float power)
 	{
+		float v_min_[3];
+		float v_max_[3];
+		v_min_[0] = v_min;
+		v_max_[0] = v_max;
+
 		return DragFloatN(
-			utf8str<256>(label), v, 1, v_speed, v_min, v_max, 
+			utf8str<256>(label), v, 1, v_speed, v_min_, v_max_, 
 			utf8str<256>(display_format1), 
 			nullptr, 
 			nullptr,
 			power);
 	}
 
-	bool GUIManager::DragFloat2EfkEx(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char16_t* display_format1, const char16_t* display_format2, float power)
+	bool GUIManager::DragFloat2EfkEx(const char16_t* label, float* v, float v_speed, float v_min1, float v_max1, float v_min2, float v_max2, const char16_t* display_format1, const char16_t* display_format2, float power)
 	{
+		float v_min_[3];
+		float v_max_[3];
+		v_min_[0] = v_min1;
+		v_max_[0] = v_max1;
+		v_min_[1] = v_min2;
+		v_max_[1] = v_max2;
+
 		return DragFloatN(
-			utf8str<256>(label), v, 2, v_speed, v_min, v_max,
+			utf8str<256>(label), v, 2, v_speed, v_min_, v_max_,
 			utf8str<256>(display_format1),
 			utf8str<256>(display_format2),
 			nullptr,
 			power);
 	}
 
-	bool GUIManager::DragFloat3EfkEx(const char16_t* label, float* v, float v_speed, float v_min, float v_max, const char16_t* display_format1, const char16_t* display_format2, const char16_t* display_format3, float power)
+	bool GUIManager::DragFloat3EfkEx(const char16_t* label, float* v, float v_speed, float v_min1, float v_max1, float v_min2, float v_max2, float v_min3, float v_max3, const char16_t* display_format1, const char16_t* display_format2, const char16_t* display_format3, float power)
 	{
+		float v_min_[3];
+		float v_max_[3];
+		v_min_[0] = v_min1;
+		v_max_[0] = v_max1;
+		v_min_[1] = v_min2;
+		v_max_[1] = v_max2;
+		v_min_[2] = v_min3;
+		v_max_[2] = v_max3;
+
 		return DragFloatN(
-			utf8str<256>(label), v, 3, v_speed, v_min, v_max,
+			utf8str<256>(label), v, 3, v_speed, v_min_, v_max_,
 			utf8str<256>(display_format1),
 			utf8str<256>(display_format2),
 			utf8str<256>(display_format3),

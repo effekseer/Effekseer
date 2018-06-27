@@ -319,8 +319,8 @@ namespace efk
 
 		// Drags(Ex)
 		bool DragFloat1EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char16_t* display_format1 = u"%.3f", float power = 1.0f);
-		bool DragFloat2EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char16_t* display_format1 = u"%.3f", const char16_t* display_format2 = u"%.3f", float power = 1.0f);
-		bool DragFloat3EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char16_t* display_format1 = u"%.3f", const char16_t* display_format2 = u"%.3f", const char16_t* display_format3 = u"%.3f", float power = 1.0f);
+		bool DragFloat2EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min1 = 0.0f, float v_max1 = 0.0f, float v_min2 = 0.0f, float v_max2 = 0.0f, const char16_t* display_format1 = u"%.3f", const char16_t* display_format2 = u"%.3f", float power = 1.0f);
+		bool DragFloat3EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min1 = 0.0f, float v_max1 = 0.0f, float v_min2 = 0.0f, float v_max2 = 0.0f, float v_min3 = 0.0f, float v_max3 = 0.0f, const char16_t* display_format1 = u"%.3f", const char16_t* display_format2 = u"%.3f", const char16_t* display_format3 = u"%.3f", float power = 1.0f);
 
 		bool DragInt2EfkEx(const char16_t* label, int* v, int v_speed = 1.0f, int v_min = 0.0f, int v_max = 0.0f, const char16_t* display_format1 = u"%d", const char16_t* display_format2 = u"%d");
 

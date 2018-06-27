@@ -37,7 +37,7 @@ namespace Effekseer.Data
 
 		[Name(language = Language.Japanese, value = "Zオフセットによる拡大無効化")]
 		[Description(language = Language.Japanese, value = "Zオフセットにより大きさが変化しないようにするか")]
-		[Name(language = Language.English, value = "Is scaling invalid with Z offset")]
+		[Name(language = Language.English, value = "Is scaling invalid \nwith Z offset")]
 		[Description(language = Language.English, value = "Whether Scaling is not changed with Z offset")]
 		public Value.Boolean IsScaleChangedDependingOnDepthOffset
 		{

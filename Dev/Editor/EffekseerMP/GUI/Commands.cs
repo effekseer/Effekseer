@@ -108,7 +108,9 @@ namespace Effekseer.GUI
 		{
 			if (System.IO.Path.GetFullPath(fullPath) != fullPath) throw new Exception(Resources.GetString("NotAbsolutePathError"));
 
-			var dialog = new Dialog.SaveOnDisposing(
+			if (Core.IsChanged)
+			{
+				var dialog = new Dialog.SaveOnDisposing(
 				() =>
 				{
 					try
@@ -120,15 +122,36 @@ namespace Effekseer.GUI
 					}
 					catch (Exception e)
 					{
-                        swig.GUIManager.show(e.Message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+						swig.GUIManager.show(e.Message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						//var messageBox = new Dialog.MessageBox();
-    					//messageBox.Show("Error", e.Message);
+						//messageBox.Show("Error", e.Message);
 					}
 
 					System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(fullPath));
 				});
 
-			return true;
+				return true;
+			}
+			else
+			{
+				try
+				{
+					if (Core.LoadFrom(fullPath))
+					{
+						RecentFiles.AddRecentFile(fullPath);
+					}
+				}
+				catch (Exception e)
+				{
+					swig.GUIManager.show(e.Message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+					//var messageBox = new Dialog.MessageBox();
+					//messageBox.Show("Error", e.Message);
+				}
+
+				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(fullPath));
+
+				return true;
+			}
 		}
 
 		[Name(value = "InternalOverwrite")]

@@ -25,7 +25,7 @@ namespace Effekseer.GUI.Dock
 			
 			Read();
 
-			Icon = Images.GetIcon("DepthPanel");
+			Icon = Images.GetIcon("PanelDepth");
 			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("Depth");
 		}

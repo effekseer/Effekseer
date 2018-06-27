@@ -100,8 +100,7 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding == null) return;
 
-			if (binding != null)
-			{
+			
 				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
 				{
 					internalValue[0] = binding.GetCenter();
@@ -112,23 +111,39 @@ namespace Effekseer.GUI.Component
 					internalValue[0] = binding.GetMin();
 					internalValue[1] = binding.GetMax();
 				}
-			}
+			
 
 			var txt_r1 = string.Empty;
 			var txt_r2 = string.Empty;
+
+			var range_1_min = float.MinValue;
+			var range_1_max = float.MaxValue;
+			var range_2_min = float.MinValue;
+			var range_2_max = float.MaxValue;
 
 			if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
 			{
 				txt_r1 = Resources.GetString("Mean");
 				txt_r2 = Resources.GetString("Deviation");
+
+				range_1_min = binding.ValueMin;
+				range_1_max = binding.ValueMax;
 			}
 			else
 			{
 				txt_r1 = Resources.GetString("Max");
 				txt_r2 = Resources.GetString("Min");
+
+				range_1_min = binding.ValueMin;
+				range_1_max = binding.ValueMax;
+				range_2_min = binding.ValueMin;
+				range_2_max = binding.ValueMax;
 			}
 
-			if (Manager.NativeManager.DragFloat2EfkEx(id, internalValue, 1, float.MinValue, float.MaxValue, txt_r1 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
+			if (Manager.NativeManager.DragFloat2EfkEx(id, internalValue, binding.Step / 10.0f,
+				range_1_min, range_1_max,
+				range_2_min, range_2_max,
+				txt_r1 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
 			{
 				if (EnableUndo)
 				{

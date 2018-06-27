@@ -189,7 +189,10 @@ namespace Effekseer.GUI.Component
 				txt_r2 = Resources.GetString("Min");
 			}
 
-			if (Manager.NativeManager.DragFloat2EfkEx(id1, internalValue1, step, binding.X.ValueMin, binding.X.ValueMax, txt_r1 + ":" + "%.3f", txt_r1 + ":" + "%.3f"))
+			if (Manager.NativeManager.DragFloat2EfkEx(id1, internalValue1, step,
+				binding.X.ValueMin, binding.X.ValueMax,
+				binding.X.ValueMin, binding.X.ValueMax, 
+				txt_r1 + ":" + "%.3f", txt_r1 + ":" + "%.3f"))
 			{
 				if (EnableUndo)
 				{
@@ -223,7 +226,10 @@ namespace Effekseer.GUI.Component
 
 			Popup();
 
-			if (Manager.NativeManager.DragFloat2EfkEx(id2, internalValue2, 1, float.MinValue, float.MaxValue, txt_r2 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
+			if (Manager.NativeManager.DragFloat2EfkEx(id2, internalValue2, 1, 
+				float.MinValue, float.MaxValue,
+				float.MinValue, float.MaxValue, 
+				txt_r2 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
 			{
 				if (EnableUndo)
 				{

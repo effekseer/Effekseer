@@ -21,8 +21,36 @@
 		Moves the particle position in the depth direction when it is drawn.
 		This parameter affects drawing only.
 		Only particles with this parameter are moved. Child's particles are not moved in Version 1.4.
-		For example, when drawing a hit effect, this parameter can be used to prevent that the caracter clips the effect.
+		For example, when drawing a hit effect, this parameter can be used to prevent that the character clips the effect.
 		</p>
+
+		
+		<p>
+			(1) is an effect clipping the character. (2) is Z offset.
+			You can see that Z-offset protect the character to be clipped.
+		</p>
+	<img src="../../img/Reference/depth_Z-Offset.png" width="80%" height="80%">
+	
+	<table>
+		<tr>
+			<td>
+				<p>Z-Offset : 0</p>
+			</td>
+			<td>
+				<p>Z-Offset : 4</p>
+			</td>
+		</tr>
+	
+		<tr>
+			<td>
+				<img src="../../img/Reference/depth_Z-Offset-None.png" width="200" height="200">
+			</td>
+			<td>
+				<img src="../../img/Reference/depth_Z-Offset-4.png" width="200" height="200">
+			</td>
+		</tr>
+	</table>
+	
 		
 		<h3>Is scaling invalid with Z offset</h3>
 
@@ -30,18 +58,81 @@
 Specifies whether the size of particles does not change when the distance from the camera is changed with movement by Z Offset.
 		</p>
 	
+		<table>
+				<tr>
+					<td>
+						<p>Off</p>
+					</td>
+					<td>
+						<p>On</p>
+					</td>
+				</tr>
+			
+				<tr>
+					<td>
+						<img src="../../img/Reference/depth_Z-Offset-4.png" width="200" height="200">
+					</td>
+					<td>
+						<img src="../../img/Reference/depth_Z-Offset-None.png" width="200" height="200">
+					</td>
+				</tr>
+			</table>
+			
+
 		<h3>Scaling Z-Offset</h3>
 
 		<p>
 Specifies whether Z-offset increases with particle's scale parameter.
 		</p>
 	
+
+		<table>
+				<tr>
+					<td>
+						<p>Off</p>
+					</td>
+					<td>
+						<p>On</p>
+					</td>
+				</tr>
+			
+				<tr>
+					<td>
+						<img src="../../img/Reference/depth_Z-Offset-2-Scale-2.png" width="200" height="200">
+					</td>
+					<td>
+						<img src="../../img/Reference/depth_Z-Offset-2-Scale-2-With.png" width="200" height="200">
+					</td>
+				</tr>
+			</table>
+
 		<h3>Depth sort</h3>
 
 		<p>
 Specify whether particles belonging to the same node are sorted by the distance in the depth direction.
 If this parameter is on, particles get a better appearance and processing becomes heavier.
 		</p>
+
+		<table>
+				<tr>
+					<td>
+						<p>Off</p>
+					</td>
+					<td>
+						<p>On</p>
+					</td>
+				</tr>
+			
+				<tr>
+					<td>
+						<img src="../../img/Reference/depth_Z-Sort-Off.png" width="200" height="200">
+					</td>
+					<td>
+						<img src="../../img/Reference/depth_Z-Sort-On.png" width="200" height="200">
+					</td>
+				</tr>
+			</table>
+			
 
 		<h3>Drawing priority</h3>
 
@@ -51,6 +142,18 @@ This parameter also affect a distortion.
 If the drawing priority is less than 0, distortion distorts only the background. Distortion does not distorts between particles.
 If the drawing priority is 0 or more, it distorts the background and particles with drawing priority less than 0.
 		</p>
+
+		
+		<p>
+			This picture is an example of a drawing order.
+			(1) is parent node of (2) and a drawing priority is 0.
+			(2)'s drawing priority is 0.
+			(3)'s drawing priority is 1.
+			You can see that 
+			the drawing order is determined by the drawing priority and child nodes are drawn later between nodes with the same drawing priority.
+			</p>
+	<img src="../../img/Reference/depth_drawingPriority.png" width="200" height="200">
+	
 
 		<h3>Soft particle</h3>
 

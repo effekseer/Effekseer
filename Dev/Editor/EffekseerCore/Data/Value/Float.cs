@@ -34,12 +34,12 @@ namespace Effekseer.Data.Value
 			set;
 		}
 
-		public float Min
+		public float RangeMin
 		{
 			get { return _min; }
 		}
 
-		public float Max
+		public float RangeMax
 		{
 			get { return _max; }
 		}

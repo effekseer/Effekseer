@@ -78,12 +78,11 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
-			if (binding != null)
-			{
-				internalValue[0] = binding.Value;
-			}
+			if (binding == null) return;
+			
+			internalValue[0] = binding.Value;
 
-			if (Manager.NativeManager.DragFloat(id, internalValue))
+			if (Manager.NativeManager.DragFloat(id, internalValue, binding.Step / 10.0f, binding.RangeMin, binding.RangeMax))
 			{
 				if (EnableUndo)
 				{
