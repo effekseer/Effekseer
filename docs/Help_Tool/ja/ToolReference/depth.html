@@ -23,22 +23,103 @@
 		1.4では、このパラメーターが設定されているパーティクルのみ移動させます。子は移動されません。
 		例えば、ヒットエフェクトを表示する場合に、キャラクターにエフェクトがめり込まないようにするために使用できます。
 		</p>
+
+<img src="../../img/Reference/depth_Z-Offset.png" width="80%" height="80%">
+
+<table>
+	<tr>
+		<td>
+			<p>Zオフセット : 0</p>
+		</td>
+		<td>
+			<p>Zオフセット : 4</p>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<img src="../../img/Reference/depth_Z-Offset-None.png" width="200" height="200">
+		</td>
+		<td>
+			<img src="../../img/Reference/depth_Z-Offset-4.png" width="200" height="200">
+		</td>
+	</tr>
+</table>
 		
 		<h3>Zオフセットによる拡大無効化</h3>
 		<p>
 		Zオフセットによる移動でカメラからの距離が変更されたときに大きさの変化が起きないようにするか、設定します。
 		</p>
+
+<table>
+	<tr>
+		<td>
+			<p>Off</p>
+		</td>
+		<td>
+			<p>On</p>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<img src="../../img/Reference/depth_Z-Offset-4.png" width="200" height="200">
+		</td>
+		<td>
+			<img src="../../img/Reference/depth_Z-Offset-None.png" width="200" height="200">
+		</td>
+	</tr>
+</table>
 	
 		<h3>Zオフセットの拡大</h3>
 		<p>
 		Zオフセットがパーティクルの拡大で大きくなるか、設定します。
 		</p>
 	
+<table>
+	<tr>
+		<td>
+			<p>Off</p>
+		</td>
+		<td>
+			<p>On</p>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<img src="../../img/Reference/depth_Z-Offset-2-Scale-2.png" width="200" height="200">
+		</td>
+		<td>
+			<img src="../../img/Reference/depth_Z-Offset-2-Scale-2-With.png" width="200" height="200">
+		</td>
+	</tr>
+</table>
 		<h3>深度ソート</h3>
 		<p>
 		同じノードに属するパーティクルが奥行き方向の距離によって並び替えられるか指定します。
 		指定したほうが見栄えがいいことが多いですが、処理も重くなります。
 		</p>
+
+<table>
+	<tr>
+		<td>
+			<p>Off</p>
+		</td>
+		<td>
+			<p>On</p>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<img src="../../img/Reference/depth_Z-Sort-Off.png" width="200" height="200">
+		</td>
+		<td>
+			<img src="../../img/Reference/depth_Z-Sort-On.png" width="200" height="200">
+		</td>
+	</tr>
+</table>
 		
 		<h3>描画優先度</h3>
 		<p>
@@ -47,6 +128,8 @@
 		描画優先度が0より小さい場合、歪みは背景のみを歪ませます。パーティクル同士で歪みは発生しません。
 		描画優先度が0以上の場合、背景と描画優先度が0より小さいパーティクルを歪ませます。
 		</p>
+
+<img src="../../img/Reference/depth_drawingPriority.png" width="200" height="200">
 
 		<h3>ソフトパーティクル</h3>
 		<p>
