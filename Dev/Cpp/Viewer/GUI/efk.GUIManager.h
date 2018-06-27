@@ -118,6 +118,18 @@ namespace efk
 		FramePadding = 1 << 10,  // Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height. Equivalent to calling AlignTextToFramePadding().
 	};
 
+	enum class MouseCursor : int32_t
+	{
+		None = -1,
+		Arrow = 0,
+		TextInput,         // When hovering over InputText, etc.
+		ResizeAll,         // Unused by imgui functions
+		ResizeNS,          // When hovering over an horizontal border
+		ResizeEW,          // When hovering over a vertical border or a column
+		ResizeNESW,        // When hovering over the bottom-left corner of a window
+		ResizeNWSE,        // When hovering over the bottom-right corner of a window
+	};
+
 	enum class FCurveInterporationType : int32_t
 	{
 		Linear = 0,
@@ -322,7 +334,7 @@ namespace efk
 		bool DragFloat2EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min1 = 0.0f, float v_max1 = 0.0f, float v_min2 = 0.0f, float v_max2 = 0.0f, const char16_t* display_format1 = u"%.3f", const char16_t* display_format2 = u"%.3f", float power = 1.0f);
 		bool DragFloat3EfkEx(const char16_t* label, float* v, float v_speed = 1.0f, float v_min1 = 0.0f, float v_max1 = 0.0f, float v_min2 = 0.0f, float v_max2 = 0.0f, float v_min3 = 0.0f, float v_max3 = 0.0f, const char16_t* display_format1 = u"%.3f", const char16_t* display_format2 = u"%.3f", const char16_t* display_format3 = u"%.3f", float power = 1.0f);
 
-		bool DragInt2EfkEx(const char16_t* label, int* v, int v_speed = 1.0f, int v_min = 0.0f, int v_max = 0.0f, const char16_t* display_format1 = u"%d", const char16_t* display_format2 = u"%d");
+		bool DragInt2EfkEx(const char16_t* label, int* v, int v_speed = 1.0f, int v_min1 = 0.0f, int v_max1 = 0.0f, int v_min2 = 0.0f, int v_max2 = 0.0f, const char16_t* display_format1 = u"%d", const char16_t* display_format2 = u"%d");
 
 		// Input
 		bool InputText(const char16_t* label, const char16_t* text);
@@ -385,6 +397,7 @@ namespace efk
 		bool IsItemClicked(int mouse_button);
 		bool IsWindowHovered();
 		bool IsAnyWindowHovered();
+		MouseCursor GetMouseCursor();
 
 		// Design
 		void DrawLineBackground(float height, uint32_t col);

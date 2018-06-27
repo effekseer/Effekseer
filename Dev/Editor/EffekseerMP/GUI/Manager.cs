@@ -316,7 +316,11 @@ namespace Effekseer.GUI
 			var handle = false;
 			if(!handle)
 			{
-				Shortcuts.ProcessCmdKey(ref handle);
+				var cursor = Manager.NativeManager.GetMouseCursor();
+				if (cursor == swig.MouseCursor.None || cursor == swig.MouseCursor.Arrow)
+				{
+					Shortcuts.ProcessCmdKey(ref handle);
+				}
 			}
 
 			var mousePos = NativeManager.GetMousePosition();

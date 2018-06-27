@@ -118,18 +118,34 @@ namespace Effekseer.GUI.Component
 			var txt_r1 = string.Empty;
 			var txt_r2 = string.Empty;
 
+			var range_1_min = int.MinValue;
+			var range_1_max = int.MaxValue;
+			var range_2_min = int.MinValue;
+			var range_2_max = int.MaxValue;
+
 			if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
 			{
 				txt_r1 = Resources.GetString("Mean");
 				txt_r2 = Resources.GetString("Deviation");
+
+				range_1_min = binding.ValueMin;
+				range_1_max = binding.ValueMax;
 			}
 			else
 			{
 				txt_r1 = Resources.GetString("Max");
 				txt_r2 = Resources.GetString("Min");
+
+				range_1_min = binding.ValueMin;
+				range_1_max = binding.ValueMax;
+				range_2_min = binding.ValueMin;
+				range_2_max = binding.ValueMax;
 			}
 
-			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, binding.Step, binding.ValueMin, binding.ValueMax, txt_r1 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
+			if (Manager.NativeManager.DragInt2EfkEx(id, internalValue, binding.Step,
+				range_1_min, range_1_max,
+				range_2_min, range_2_max,
+				txt_r1 + ":" + "%.0f", txt_r2 + ":" + "%.0f"))
 			{
 				if (EnableUndo)
 				{

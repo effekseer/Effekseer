@@ -121,6 +121,7 @@
     <Compile Include="swig\GUIManager.cs" />
     <Compile Include="swig\GUIManagerCallback.cs" />
     <Compile Include="swig\ImageResource.cs" />
+    <Compile Include="swig\MouseCursor.cs" />
     <Compile Include="swig\Native.cs" />
     <Compile Include="swig\RenderMode.cs" />
     <Compile Include="swig\SelectableFlags.cs" />

@@ -294,7 +294,7 @@ namespace efk
 		return value_changed;
 	}
 
-	bool DragIntN(const char* label, int* v, int components, int v_speed, int v_min, int v_max,
+	bool DragIntN(const char* label, int* v, int components, int v_speed, int* v_min, int* v_max,
 		const char* display_format1,
 		const char* display_format2,
 		const char* display_format3)
@@ -318,7 +318,7 @@ namespace efk
 		for (int i = 0; i < components; i++)
 		{
 			ImGui::PushID(i);
-			value_changed |= ImGui::DragInt("##v", &v[i], v_speed, v_min, v_max, display_formats[i]);
+			value_changed |= ImGui::DragInt("##v", &v[i], v_speed, v_min[i], v_max[i], display_formats[i]);
 			ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
 			ImGui::PopID();
 			ImGui::PopItemWidth();
@@ -915,10 +915,17 @@ namespace efk
 			power);
 	}
 
-	bool GUIManager::DragInt2EfkEx(const char16_t* label, int* v, int v_speed, int v_min, int v_max, const char16_t* display_format1, const char16_t* display_format2)
+	bool GUIManager::DragInt2EfkEx(const char16_t* label, int* v, int v_speed, int v_min1, int v_max1, int v_min2, int v_max2, const char16_t* display_format1, const char16_t* display_format2)
 	{
+		int v_min_[3];
+		int v_max_[3];
+		v_min_[0] = v_min1;
+		v_max_[0] = v_max1;
+		v_min_[1] = v_min2;
+		v_max_[1] = v_max2;
+
 		return DragIntN(
-			utf8str<256>(label), v, 2, v_speed, v_min, v_max,
+			utf8str<256>(label), v, 2, v_speed, v_min_, v_max_,
 			utf8str<256>(display_format1),
 			utf8str<256>(display_format2),
 			nullptr);
@@ -1120,6 +1127,11 @@ namespace efk
 	bool GUIManager::IsAnyWindowHovered()
 	{
 		return ImGui::IsAnyWindowHovered();
+	}
+
+	MouseCursor GUIManager::GetMouseCursor()
+	{
+		return (MouseCursor)ImGui::GetMouseCursor();
 	}
 
 	void GUIManager::DrawLineBackground(float height, uint32_t col)
