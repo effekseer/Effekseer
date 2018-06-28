@@ -130,6 +130,30 @@ namespace efk
 		ResizeNWSE,        // When hovering over the bottom-right corner of a window
 	};
 
+	enum InputTextFlags
+	{
+		None = 0,
+		CharsDecimal = 1 << 0,   // Allow 0123456789.+-*/
+		CharsHexadecimal = 1 << 1,   // Allow 0123456789ABCDEFabcdef
+		CharsUppercase = 1 << 2,   // Turn a..z into A..Z
+		CharsNoBlank = 1 << 3,   // Filter out spaces, tabs
+		AutoSelectAll = 1 << 4,   // Select entire text when first taking mouse focus
+		EnterReturnsTrue = 1 << 5,   // Return 'true' when Enter is pressed (as opposed to when the value was modified)
+		CallbackCompletion = 1 << 6,   // Call user function on pressing TAB (for completion handling)
+		CallbackHistory = 1 << 7,   // Call user function on pressing Up/Down arrows (for history handling)
+		CallbackAlways = 1 << 8,   // Call user function every time. User code may query cursor position, modify text buffer.
+		CallbackCharFilter = 1 << 9,   // Call user function to filter character. Modify data->EventChar to replace/filter input, or return 1 to discard character.
+		AllowTabInput = 1 << 10,  // Pressing TAB input a '\t' character into the text field
+		CtrlEnterForNewLine = 1 << 11,  // In multi-line mode, unfocus with Enter, add new line with Ctrl+Enter (default is opposite: unfocus with Ctrl+Enter, add line with Enter).
+		NoHorizontalScroll = 1 << 12,  // Disable following the cursor horizontally
+		AlwaysInsertMode = 1 << 13,  // Insert mode
+		ReadOnly = 1 << 14,  // Read-only mode
+		Password = 1 << 15,  // Password mode, display all characters as '*'
+		NoUndoRedo = 1 << 16,  // Disable undo/redo. Note that input text owns the text data while active, if you want to provide your own undo/redo stack you need e.g. to call ClearActiveID().
+		CharsScientific = 1 << 17,  // Allow 0123456789.+-*/eE (Scientific notation input)
+	};
+
+
 	enum class FCurveInterporationType : int32_t
 	{
 		Linear = 0,
@@ -337,7 +361,7 @@ namespace efk
 		bool DragInt2EfkEx(const char16_t* label, int* v, int v_speed = 1.0f, int v_min1 = 0.0f, int v_max1 = 0.0f, int v_min2 = 0.0f, int v_max2 = 0.0f, const char16_t* display_format1 = u"%d", const char16_t* display_format2 = u"%d");
 
 		// Input
-		bool InputText(const char16_t* label, const char16_t* text);
+		bool InputText(const char16_t* label, const char16_t* text, InputTextFlags flags = InputTextFlags::None);
 		const char16_t* GetInputTextResult();
 
 		// Color

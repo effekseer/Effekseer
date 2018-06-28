@@ -786,8 +786,13 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool InputText(string label, string text, InputTextFlags flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_InputText__SWIG_0(swigCPtr, label, text, (int)flags);
+    return ret;
+  }
+
   public bool InputText(string label, string text) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_InputText(swigCPtr, label, text);
+    bool ret = EffekseerNativePINVOKE.GUIManager_InputText__SWIG_1(swigCPtr, label, text);
     return ret;
   }
 

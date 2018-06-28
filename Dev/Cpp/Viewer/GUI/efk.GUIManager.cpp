@@ -933,7 +933,7 @@ namespace efk
 
 	static std::u16string inputTextResult;
 
-	bool GUIManager::InputText(const char16_t* label, const char16_t* text)
+	bool GUIManager::InputText(const char16_t* label, const char16_t* text, InputTextFlags flags)
 	{
 		auto text_ = utf8str<1024>(text);
 
@@ -941,7 +941,7 @@ namespace efk
 		memcpy(buf, text_.data, std::min((int32_t)text_.size, 250));
 		buf[std::min((int32_t)text_.size, 250)] = 0;
 
-		auto ret = ImGui::InputText(utf8str<256>(label), buf, 260);
+		auto ret = ImGui::InputText(utf8str<256>(label), buf, 260, (ImGuiWindowFlags)flags);
 	
 		inputTextResult = utf8_to_utf16(buf);
 	

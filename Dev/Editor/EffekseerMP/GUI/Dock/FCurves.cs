@@ -95,139 +95,160 @@ namespace Effekseer.GUI.Dock
 			var selected = GetSelectedFCurve();
 
 			var invalidValue = "/";
+			var selectedInd = selected.Item1 != null ? selected.Item2.GetSelectedIndex() : -1;
 
-			if (selected.Item1 != null)
+			
+			// line 1
+			Manager.NativeManager.Columns(5);
+
+			if (selectedInd >= 0)
 			{
-				var ind = selected.Item2.GetSelectedIndex();
-
-				if (ind != -1)
+				var frameKey = new int[] { (int)selected.Item2.Keys[selectedInd] };
+				if (Manager.NativeManager.DragInt(frame_text, frameKey))
 				{
-					Manager.NativeManager.Columns(5);
+					selected.Item2.Keys[selectedInd] = (int)frameKey[0];
+					selected.Item2.IsDirtied = true;
+				}
 
-					var frameKey = new int[] { (int)selected.Item2.Keys[ind] };
-					if (Manager.NativeManager.DragInt(frame_text, frameKey))
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(frame_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			Manager.NativeManager.NextColumn();
+
+			if (selectedInd >= 0)
+			{
+				var frameValue = new float[] { selected.Item2.Values[selectedInd] };
+				if (Manager.NativeManager.DragFloat(value_text, frameValue))
+				{
+					selected.Item2.Values[selectedInd] = frameValue[0];
+					selected.Item2.IsDirtied = true;
+				}
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(value_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			Manager.NativeManager.NextColumn();
+
+			// Left key
+			if (selectedInd >= 0)
+			{
+				var leftValues = new float[] { selected.Item2.LeftKeys[selectedInd], selected.Item2.LeftValues[selectedInd] };
+				if (Manager.NativeManager.DragFloat2(left_text, leftValues))
+				{
+					selected.Item2.LeftKeys[selectedInd] = leftValues[0];
+					selected.Item2.LeftValues[selectedInd] = leftValues[1];
+					selected.Item2.Clip(selectedInd);
+					selected.Item2.IsDirtied = true;
+				}
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(left_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			Manager.NativeManager.NextColumn();
+
+			// Right key
+			if (selectedInd >= 0)
+			{
+				var rightValues = new float[] { selected.Item2.RightKeys[selectedInd], selected.Item2.RightValues[selectedInd] };
+				if (Manager.NativeManager.DragFloat2(right_text, rightValues))
+				{
+					selected.Item2.RightKeys[selectedInd] = rightValues[0];
+					selected.Item2.RightValues[selectedInd] = rightValues[1];
+					selected.Item2.Clip(selectedInd);
+					selected.Item2.IsDirtied = true;
+				}
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(right_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			Manager.NativeManager.NextColumn();
+
+			if (selectedInd >= 0)
+			{
+				if (Manager.NativeManager.BeginCombo(type.Label, type.FieldNames[selected.Item2.Interpolations[selectedInd]], swig.ComboFlags.None))
+				{
+					for (int i = 0; i < type.FieldNames.Count; i++)
 					{
-						selected.Item2.Keys[ind] = (int)frameKey[0];
-						selected.Item2.IsDirtied = true;
-					}
+						bool is_selected = (type.FieldNames[(int)selected.Item2.Interpolations[selectedInd]] == type.FieldNames[i]);
 
-					if (Manager.NativeManager.IsItemActive()) canControl = false;
-
-
-					Manager.NativeManager.NextColumn();
-
-					var frameValue = new float[] { selected.Item2.Values[ind] };
-					if (Manager.NativeManager.DragFloat(value_text, frameValue))
-					{
-						selected.Item2.Values[ind] = frameValue[0];
-						selected.Item2.IsDirtied = true;
-					}
-
-					if (Manager.NativeManager.IsItemActive()) canControl = false;
-
-					Manager.NativeManager.NextColumn();
-
-					// Left key
-					var leftValues = new float[] { selected.Item2.LeftKeys[ind], selected.Item2.LeftValues[ind] };
-					if (Manager.NativeManager.DragFloat2(left_text, leftValues))
-					{
-						selected.Item2.LeftKeys[ind] = leftValues[0];
-						selected.Item2.LeftValues[ind] = leftValues[1];
-						selected.Item2.Clip(ind);
-						selected.Item2.IsDirtied = true;
-					}
-
-					if (Manager.NativeManager.IsItemActive()) canControl = false;
-
-					Manager.NativeManager.NextColumn();
-
-					// Right key
-					var rightValues = new float[] { selected.Item2.RightKeys[ind], selected.Item2.RightValues[ind] };
-					if (Manager.NativeManager.DragFloat2(right_text, rightValues))
-					{
-						selected.Item2.RightKeys[ind] = rightValues[0];
-						selected.Item2.RightValues[ind] = rightValues[1];
-						selected.Item2.Clip(ind);
-						selected.Item2.IsDirtied = true;
-					}
-
-					if (Manager.NativeManager.IsItemActive()) canControl = false;
-
-					Manager.NativeManager.NextColumn();
-
-					{
-						if (Manager.NativeManager.BeginCombo(type.Label, type.FieldNames[selected.Item2.Interpolations[ind]], swig.ComboFlags.None))
+						if (Manager.NativeManager.Selectable(type.FieldNames[i], is_selected, swig.SelectableFlags.None))
 						{
-							for (int i = 0; i < type.FieldNames.Count; i++)
-							{
-								bool is_selected = (type.FieldNames[(int)selected.Item2.Interpolations[ind]] == type.FieldNames[i]);
-
-								if (Manager.NativeManager.Selectable(type.FieldNames[i], is_selected, swig.SelectableFlags.None))
-								{
-									selected.Item2.Interpolations[ind] = i;
-									selected.Item2.IsDirtied = true;
-								}
-
-								if (is_selected)
-								{
-									Manager.NativeManager.SetItemDefaultFocus();
-								}
-							}
-
-							Manager.NativeManager.EndCombo();
+							selected.Item2.Interpolations[selectedInd] = i;
+							selected.Item2.IsDirtied = true;
 						}
 
-						if (Manager.NativeManager.IsItemActive()) canControl = false;
+						if (is_selected)
+						{
+							Manager.NativeManager.SetItemDefaultFocus();
+						}
 					}
 
-					Manager.NativeManager.Columns(1);
-				}
-				else
-				{
-					Manager.NativeManager.Text(frame_text);
-					Manager.NativeManager.SameLine();
-					Manager.NativeManager.Text(invalidValue);
-					Manager.NativeManager.SameLine();
-
-					Manager.NativeManager.Text(value_text);
-					Manager.NativeManager.SameLine();
-					Manager.NativeManager.Text(invalidValue);
-					Manager.NativeManager.SameLine();
-
-					Manager.NativeManager.Text(left_text);
-					Manager.NativeManager.SameLine();
-					Manager.NativeManager.Text(invalidValue);
-					Manager.NativeManager.SameLine();
-
-					Manager.NativeManager.Text(right_text);
-					Manager.NativeManager.SameLine();
-					Manager.NativeManager.Text(invalidValue);
-					Manager.NativeManager.SameLine();
-
-					Manager.NativeManager.Text(type_text);
-					Manager.NativeManager.SameLine();
-					Manager.NativeManager.Text(invalidValue);
+					Manager.NativeManager.EndCombo();
 				}
 
-				Manager.NativeManager.Columns(4);
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(type_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
 
-				// Start curve
+			Manager.NativeManager.Columns(1);
+				
+			Manager.NativeManager.Columns(4);
+
+			// Start curve
+			if(selected.Item1 != null)
+			{
 				startCurve.SetBinding(selected.Item1.StartType);
 				startCurve.Update();
 				selected.Item2.StartEdge = (Data.Value.FCurveEdge)selected.Item1.StartType;
 
 				if (Manager.NativeManager.IsItemActive()) canControl = false;
-				Manager.NativeManager.NextColumn();
+			}
+			else
+			{
+				Manager.NativeManager.InputText(start_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
 
-				// End curve
+			Manager.NativeManager.NextColumn();
+
+			// End curve
+
+			if (selected.Item1 != null)
+			{
 				endCurve.SetBinding(selected.Item1.EndType);
 				endCurve.Update();
 				selected.Item2.EndEdge = (Data.Value.FCurveEdge)selected.Item1.EndType;
 
 				if (Manager.NativeManager.IsItemActive()) canControl = false;
-				Manager.NativeManager.NextColumn();
+			}
+			else
+			{
+				Manager.NativeManager.InputText(end_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
 
-				// Sampling
+			Manager.NativeManager.NextColumn();
+
+			// Sampling
+			if (selected.Item1 != null)
+			{
 				var sampling = new int[] { selected.Item1.Sampling };
 
 				if (Manager.NativeManager.InputInt(sampling_text + "##SamplingText", sampling))
@@ -236,9 +257,17 @@ namespace Effekseer.GUI.Dock
 				}
 
 				if (Manager.NativeManager.IsItemActive()) canControl = false;
-				Manager.NativeManager.NextColumn();
+			}
+			else
+			{
+				Manager.NativeManager.InputText(sampling_text + "##SamplingText", invalidValue, swig.InputTextFlags.ReadOnly);
+			}
 
-				// Offset label
+			Manager.NativeManager.NextColumn();
+
+			// Offset label
+			if (selected.Item1 != null)
+			{
 				var offset_id = offset_text + "##OffsetMinMax";
 				var offsets = new float[] { selected.Item1.OffsetMin, selected.Item1.OffsetMax };
 
@@ -249,55 +278,16 @@ namespace Effekseer.GUI.Dock
 				}
 
 				if (Manager.NativeManager.IsItemActive()) canControl = false;
-				Manager.NativeManager.Columns(1);
 			}
 			else
 			{
+				Manager.NativeManager.InputText(offset_text + "##OffsetMinMax", invalidValue, swig.InputTextFlags.ReadOnly);
+			}
 
-				Manager.NativeManager.Text(frame_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(invalidValue);
-				Manager.NativeManager.SameLine();
-
-				Manager.NativeManager.Text(value_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(invalidValue);
-				Manager.NativeManager.SameLine();
-
-				Manager.NativeManager.Text(left_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(invalidValue);
-				Manager.NativeManager.SameLine();
-
-				Manager.NativeManager.Text(right_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(invalidValue);
-				Manager.NativeManager.SameLine();
-
-				Manager.NativeManager.Text(type_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(invalidValue);
-
-				Manager.NativeManager.Text(start_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(invalidValue);
-				Manager.NativeManager.SameLine();
-
-
-				Manager.NativeManager.Text(end_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(invalidValue);
-				Manager.NativeManager.SameLine();
-
-				Manager.NativeManager.Text(sampling_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(invalidValue);
-				Manager.NativeManager.SameLine();
-
-				Manager.NativeManager.Text(offset_text);
-				Manager.NativeManager.SameLine();
-				Manager.NativeManager.Text(invalidValue);
-
+			Manager.NativeManager.Columns(1);
+			
+			if(selected.Item1 == null)
+			{
 				startCurve.SetBinding(null);
 				endCurve.SetBinding(null);
 			}
