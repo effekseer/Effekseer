@@ -247,13 +247,23 @@ namespace fbxToEfkMdl
 
 					auto position = m.MultNormalize(v.Position);
 
+					auto rot_m = m;
+					
+					rot_m.Set(0, 3, 0);
+					rot_m.Set(1, 3, 0);
+					rot_m.Set(2, 3, 0);
+					rot_m.Set(3, 0, 0);
+					rot_m.Set(3, 1, 0);
+					rot_m.Set(3, 2, 0);
+
 					float p[3];
 					p[0] = (float)(position[0]) * modelScale;
 					p[1] = (float)(position[1]) * modelScale;
 					p[2] = (float)(position[2]) * modelScale;
 
 					v.Normal[3] = 1.0f;
-					auto normal = m.MultNormalize(v.Normal);
+					auto normal = rot_m.MultNormalize(v.Normal);
+					normal.Normalize();
 
 					float n[3];
 					n[0] = (float)(normal[0]);
@@ -261,7 +271,8 @@ namespace fbxToEfkMdl
 					n[2] = (float)(normal[2]);
 
 					v.Binormal[3] = 1.0f;
-					auto binormal = m.MultNormalize(v.Binormal);
+					auto binormal = rot_m.MultNormalize(v.Binormal);
+					binormal.Normalize();
 
 					float b[3];
 					b[0] = (float)(binormal[0]);
@@ -269,7 +280,8 @@ namespace fbxToEfkMdl
 					b[2] = (float)(binormal[2]);
 
 					v.Tangent[3] = 1.0f;
-					auto tangent = m.MultNormalize(v.Tangent);
+					auto tangent = rot_m.MultNormalize(v.Tangent);
+					tangent.Normalize();
 
 					float t[3];
 					t[0] = (float)(tangent[0]);
