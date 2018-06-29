@@ -813,7 +813,7 @@ namespace Effekseer.Data
 
 			[Selector(ID = 4)]
 			[Name(language = Language.Japanese, value = "色・中央中間")]
-			[Name(language = Language.English, value = "Color, Center-Middle")]
+			[Name(language = Language.English, value = "Color, Center-Mid.")]
 			public Value.Enum<StandardColorType> ColorCenterMiddle { get; private set; }
 
 			[Selected(ID = 4, Value = 0)]

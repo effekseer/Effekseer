@@ -227,6 +227,14 @@ namespace Effekseer.GUI.Component
 			{
 				omd.Show("");
 			}
+			else
+			{
+				binding.SetAbsolutePath(filepath);
+
+				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
+
+				Manager.Viewer.Reload(true);
+			}
 
 			omd.OnOK = () =>
 			{

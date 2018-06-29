@@ -37,13 +37,13 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.Columns(2);
 
 			var columnWidth = Manager.NativeManager.GetColumnWidth(0);
-			Manager.NativeManager.SetColumnWidth(0, 140);
+			Manager.NativeManager.SetColumnWidth(0, 120);
 
 			for(int i = 0; i < controlRows.Internal.Count; i++)
 			{
 				var c = controlRows.Internal[i].Control as IParameterControl;
 
-				Manager.NativeManager.PushItemWidth(100);
+				//Manager.NativeManager.PushItemWidth(100);
 
 				Manager.NativeManager.Text(c.Label);
 
@@ -52,7 +52,7 @@ namespace Effekseer.GUI.Component
 					Manager.NativeManager.SetTooltip(c.Description);
 				}
 
-				Manager.NativeManager.PopItemWidth();
+				//Manager.NativeManager.PopItemWidth();
 
 				Manager.NativeManager.NextColumn();
 

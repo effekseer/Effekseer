@@ -1,5 +1,5 @@
-SET RDIR=Effekseer132
-SET RDIR_R=EffekseerRuntime130
+SET RDIR=Effekseer140
+SET RDIR_R=EffekseerRuntime140
 
 rmdir %RDIR%
 mkdir %RDIR%
@@ -33,13 +33,13 @@ mkdir %RDIR%\Tool\scripts
 mkdir %RDIR%\Tool\scripts\export
 copy Dev\release\scripts\export\Default.cs %RDIR%\Tool\scripts\export\.
 
-mkdir %RDIR%\Tool\en-US
-copy Dev\release\en-US\Effekseer.resources.dll %RDIR%\Tool\en-US\.
-copy Dev\release\en-US\EffekseerCore.resources.dll %RDIR%\Tool\en-US\.
-
 mkdir %RDIR%\Tool\tools
 copy Dev\release\tools\fbxToEffekseerModelConverter.exe %RDIR%\Tool\tools\.
 copy Dev\release\tools\mqoToEffekseerModelConverter.exe %RDIR%\Tool\tools\.
+
+mkdir %RDIR%\Tool\resources
+robocopy Dev\release\resources\ %RDIR%\Tool\resources\. /s
+
 
 echo Copy runtime
 mkdir %RDIR_R%\RuntimeSample\
@@ -150,34 +150,6 @@ echo VS
 
 mkdir %RDIR_R%\Compiled\
 
-echo Compile VS11
-rmdir /S /Q VS11
-mkdir VS11
-
-cd VS11
-call cmake.bat -G "Visual Studio 11"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
-cmake.exe -G "Visual Studio 11"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
-
-"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Debug
-"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Release
-cd ..
-
-
-
-echo Compile VS12
-rmdir /S /Q VS12
-mkdir VS12
-
-cd VS12
-call cmake.bat -G "Visual Studio 12"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
-cmake.exe -G "Visual Studio 12"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF ../Dev/Cpp/
-
-"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Debug
-"C:\Program Files (x86)\MSBuild\12.0\Bin\msbuild" Effekseer.sln /p:configuration=Release
-cd ..
-
-
-
 echo Compile VS14
 rmdir /S /Q VS14
 mkdir VS14
@@ -194,16 +166,7 @@ cd ..
 mkdir %RDIR_R%\Compiled\\include\
 mkdir %RDIR_R%\Compiled\\lib\
 
-mkdir %RDIR_R%\Compiled\\lib\VS2012\
-mkdir %RDIR_R%\Compiled\\lib\VS2013\
 mkdir %RDIR_R%\Compiled\\lib\VS2015\
-
-
-robocopy VS11\Debug %RDIR_R%\Compiled\\lib\VS2012\Debug *.lib /mir /S
-robocopy VS11\Release %RDIR_R%\Compiled\\lib\VS2012\Release *.lib /mir /S
-
-robocopy VS12\Debug %RDIR_R%\Compiled\\lib\VS2013\Debug *.lib /mir /S
-robocopy VS12\Release %RDIR_R%\Compiled\\lib\VS2013\Release *.lib /mir /S
 
 robocopy VS14\Debug %RDIR_R%\Compiled\\lib\VS2015\Debug *.lib /mir /S
 robocopy VS14\Release %RDIR_R%\Compiled\\lib\VS2015\Release *.lib /mir /S

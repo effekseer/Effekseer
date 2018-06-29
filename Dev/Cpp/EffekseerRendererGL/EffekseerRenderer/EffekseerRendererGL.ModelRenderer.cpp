@@ -34,104 +34,136 @@ static std::string Replace( std::string target, std::string from_, std::string t
 	return target;
 }
 
-static const char g_model_vs_src[] = 
-	"IN vec4 a_Position;\n"
-	"IN vec4 a_Normal;\n"
-	"IN vec4 a_Binormal;\n"
-	"IN vec4 a_Tangent;\n"
-	"IN vec4 a_TexCoord;\n"
-	"IN vec4 a_Color;\n"
+static const char g_model_vs_src[] =
+R"(
+IN vec4 a_Position;
+IN vec4 a_Normal;
+IN vec4 a_Binormal;
+IN vec4 a_Tangent;
+IN vec4 a_TexCoord;
+IN vec4 a_Color;
+)"
 #if defined(MODEL_SOFTWARE_INSTANCING)
-	"IN float a_InstanceID;\n"
-	"IN vec4 a_UVOffset;\n"
-	"IN vec4 a_ModelColor;\n"
+R"(
+IN float a_InstanceID;
+IN vec4 a_UVOffset;
+IN vec4 a_ModelColor;
+)"
 #endif
-	"OUT mediump vec4 v_Normal;\n"
-	"OUT mediump vec4 v_Binormal;\n"
-	"OUT mediump vec4 v_Tangent;\n"
-	"OUT mediump vec4 v_TexCoord;\n"
-	"OUT lowp vec4 v_Color;\n"
-	
+R"(
+OUT mediump vec4 v_Normal;
+OUT mediump vec4 v_Binormal;
+OUT mediump vec4 v_Tangent;
+OUT mediump vec4 v_TexCoord;
+OUT lowp vec4 v_Color;
+)"
 #if defined(MODEL_SOFTWARE_INSTANCING)
-	"uniform mat4 ModelMatrix[20];\n"
-	"uniform vec4 UVOffset[20];\n"
-	"uniform vec4 ModelColor[20];\n"
+R"(
+uniform mat4 ModelMatrix[20];
+uniform vec4 UVOffset[20];
+uniform vec4 ModelColor[20];
+)"
 #else
-	"uniform mat4 ModelMatrix;\n"
-	"uniform vec4 UVOffset;\n"
-	"uniform vec4 ModelColor;\n"
+R"(
+uniform mat4 ModelMatrix;
+uniform vec4 UVOffset;
+uniform vec4 ModelColor;
+)"
 #endif
-	"uniform mat4 ProjectionMatrix;\n"
-	"uniform vec4 LightDirection;\n"
-	"uniform vec4 LightColor;\n"
-	"uniform vec4 LightAmbient;\n"
+R"(
+uniform mat4 ProjectionMatrix;
+uniform vec4 LightDirection;
+uniform vec4 LightColor;
+uniform vec4 LightAmbient;
 
-	"void main() {\n"
+void main()
+{
+)"
 #if defined(MODEL_SOFTWARE_INSTANCING)
-	"	mat4 modelMatrix = ModelMatrix[int(a_InstanceID)];\n"
-	"	vec4 uvOffset = a_UVOffset;\n"
-	"	vec4 modelColor = a_ModelColor;\n"
+R"(
+	mat4 modelMatrix = ModelMatrix[int(a_InstanceID)];
+	vec4 uvOffset = a_UVOffset;
+	vec4 modelColor = a_ModelColor;
+)"
 #else
-	"	mat4 modelMatrix = ModelMatrix;\n"
-	"	vec4 uvOffset = UVOffset;\n"
-	"	vec4 modelColor = ModelColor * a_Color;\n"
+R"(
+	mat4 modelMatrix = ModelMatrix;
+	vec4 uvOffset = UVOffset;
+	vec4 modelColor = ModelColor * a_Color;
+)"
 #endif
-	"	vec4 localPosition = modelMatrix * a_Position;\n"
-	"	gl_Position = ProjectionMatrix * localPosition;\n"
-	
-	"	v_TexCoord.xy = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;\n"
+R"(
+	vec4 localPosition = modelMatrix * a_Position;
+	gl_Position = ProjectionMatrix * localPosition;
 
-	"	if (LightingEnable) {\n"
-	"		mat3 lightMatrix = mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz);"
-	"		vec3 localNormal = normalize( lightMatrix * a_Normal.xyz );\n"
-	"		float diffuse = 1.0;\n"
-	"		if (NormalMapEnable) {\n"
-	"			v_Normal = vec4(localNormal, 1.0);\n"
-	"			v_Binormal = vec4(normalize( lightMatrix * a_Binormal.xyz ), 1.0);\n"
-	"			v_Tangent = vec4(normalize( lightMatrix * a_Tangent.xyz ), 1.0);\n"
-	"		} else {\n"
-	"			diffuse = max(0.0, dot(localNormal, LightDirection.xyz));\n"
-	"		}\n"
-	"		v_Color = modelColor * vec4(diffuse * LightColor.rgb, 1.0);\n"
-	"	} else {\n"
-	"		v_Color = modelColor;\n"
-	"	}\n"
-	"}\n";
+	v_TexCoord.xy = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
+
+	if (LightingEnable)
+	{
+		mat3 lightMatrix = mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz);
+		vec3 localNormal = normalize( lightMatrix * a_Normal.xyz );
+		float diffuse = 1.0;
+		if (NormalMapEnable)
+		{
+			v_Normal = vec4(localNormal, 1.0);
+			v_Binormal = vec4(normalize( lightMatrix * a_Binormal.xyz ), 1.0);
+			v_Tangent = vec4(normalize( lightMatrix * a_Tangent.xyz ), 1.0);
+		}
+		else
+		{
+			diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
+		}
+		v_Color = modelColor * vec4(diffuse * LightColor.rgb, 1.0);
+	}
+	else
+	{
+		v_Color = modelColor;
+	}
+}
+)";
 
 static const char g_model_fs_src[] = 
-	"IN mediump vec4 v_Normal;\n"
-	"IN mediump vec4 v_Binormal;\n"
-	"IN mediump vec4 v_Tangent;\n"
-	"IN mediump vec4 v_TexCoord;\n"
-	"IN lowp vec4 v_Color;\n"
+R"(
 
-	"uniform sampler2D ColorTexture;\n"
-	"uniform sampler2D NormalTexture;\n"
-	"uniform vec4 LightDirection;\n"
-	"uniform vec4 LightColor;\n"
-	"uniform vec4 LightAmbient;\n"
+IN mediump vec4 v_Normal;
+IN mediump vec4 v_Binormal;
+IN mediump vec4 v_Tangent;
+IN mediump vec4 v_TexCoord;
+IN lowp vec4 v_Color;
 
-	"void main() {\n"
-	"	vec4 diffuse = vec4(1.0);\n"
-	"	if (LightingEnable && NormalMapEnable) {\n"
-	"		vec3 texNormal = (TEX2D(NormalTexture, v_TexCoord.xy).xyz - 0.5) * 2.0;\n"
-	"		mat3 normalMatrix = mat3(v_Tangent.xyz, v_Binormal.xyz, v_Normal.xyz );\n"
-	"		vec3 localNormal = normalize( normalMatrix * texNormal );\n;"
-	"		//FRAGCOLOR.xyz = localNormal.xyz; FRAGCOLOR.w = 1.0; return;\n"
-	"		diffuse = vec4(max(0.0, dot(localNormal, LightDirection.xyz)));\n"
-	"	}\n"
-	"	if (TextureEnable) {\n"
-	"		FRAGCOLOR = v_Color * TEX2D(ColorTexture, v_TexCoord.xy);\n"
-	"		FRAGCOLOR.xyz = FRAGCOLOR.xyz * diffuse.xyz;\n"
-	"	} else {\n"
-	"		FRAGCOLOR = v_Color;\n"
-	"		FRAGCOLOR.xyz = FRAGCOLOR.xyz * diffuse.xyz;\n"
-	"	}\n"
-	"   \n"
-	"	if (LightingEnable) {\n"
-	"		FRAGCOLOR.xyz = FRAGCOLOR.xyz + LightAmbient.xyz;\n"
-	"	}\n"
-	"}\n";
+uniform sampler2D ColorTexture;
+uniform sampler2D NormalTexture;
+uniform vec4 LightDirection;
+uniform vec4 LightColor;
+uniform vec4 LightAmbient;
+
+void main()
+{
+	vec4 diffuse = vec4(1.0);
+	if (LightingEnable && NormalMapEnable)
+	{
+		vec3 texNormal = (TEX2D(NormalTexture, v_TexCoord.xy).xyz - 0.5) * 2.0;
+		mat3 normalMatrix = mat3(v_Tangent.xyz, v_Binormal.xyz, v_Normal.xyz );
+		vec3 localNormal = normalize( normalMatrix * texNormal );
+		diffuse = vec4(max(0.0, dot(localNormal, LightDirection.xyz)));
+	}
+	if (TextureEnable)
+	{
+		FRAGCOLOR = v_Color * TEX2D(ColorTexture, v_TexCoord.xy);
+		FRAGCOLOR.xyz = FRAGCOLOR.xyz * diffuse.xyz;
+	} else
+	{
+		FRAGCOLOR = v_Color;
+		FRAGCOLOR.xyz = FRAGCOLOR.xyz * diffuse.xyz;
+	}
+  
+	if (LightingEnable)
+	{
+		FRAGCOLOR.xyz = FRAGCOLOR.xyz + LightAmbient.xyz;
+	}
+}
+
+)";
 
 
 static const char g_model_distortion_vs_src [] =

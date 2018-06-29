@@ -83,22 +83,28 @@ void main() {
 )";
 
 static const char g_sprite_fs_texture_src[] =
-"IN lowp vec4 vaColor;\n"
-"IN mediump vec4 vaTexCoord;\n"
+R"(
+IN lowp vec4 vaColor;
+IN mediump vec4 vaTexCoord;
 
-"uniform sampler2D uTexture0;\n"
+uniform sampler2D uTexture0;
 
-"void main() {\n"
-"FRAGCOLOR = vaColor * TEX2D(uTexture0, vaTexCoord.xy);\n"
-"}\n";
+void main()
+{
+	FRAGCOLOR = vaColor * TEX2D(uTexture0, vaTexCoord.xy);
+}
+)";
 
 static const char g_sprite_fs_no_texture_src[] =
-"IN lowp vec4 vaColor;\n"
-"IN mediump vec4 vaTexCoord;\n"
+R"(
+IN lowp vec4 vaColor;
+IN mediump vec4 vaTexCoord;
 
-"void main() {\n"
-"FRAGCOLOR = vaColor;\n"
-"}\n";
+void main()
+{
+	FRAGCOLOR = vaColor;
+}
+)";
 
 
 static const char g_sprite_distortion_vs_src [] =
