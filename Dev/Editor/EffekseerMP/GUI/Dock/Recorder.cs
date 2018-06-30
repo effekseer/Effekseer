@@ -61,43 +61,143 @@ namespace Effekseer.GUI.Dock
 			var freq_ = new int[] { freq };
 			var theNumberOfImageV_ = new int[] { theNumberOfImageV };
 			var nowReloading_ = new bool[] { nowReloading };
+
+			var areaTitle = Resources.GetString("Resolution");
+			var exportedFrameTitle = Resources.GetString("ExportedFrame");
+			var typeTitle = Resources.GetString("Format");
+			var optionsTitle = Resources.GetString("Options");
 			
-			if(Manager.NativeManager.DragInt(Resources.GetString("Width") + "###w", w))
+			// Recordingwindow
+			Manager.NativeManager.BeginChild("##RecordRes", new swig.Vec2(0,120), true, swig.WindowFlags.MenuBar);
+			if (Manager.NativeManager.BeginMenuBar())
+			{
+				if (Manager.NativeManager.BeginMenu(areaTitle + "##RecordResTitle"))
+				{
+					Manager.NativeManager.EndMenu();
+				}
+
+				Manager.NativeManager.EndMenuBar();
+			}
+
+			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.SetColumnWidth(0, 120);
+
+			Manager.NativeManager.Text(Resources.GetString("Width"));
+
+			Manager.NativeManager.NextColumn();
+
+			if (Manager.NativeManager.DragInt("###w", w))
 			{
 				viewerParameter.GuideWidth = w[0];
 			}
 
-			if (Manager.NativeManager.DragInt(Resources.GetString("Height") + "###h", h))
+			Manager.NativeManager.NextColumn();
+
+			Manager.NativeManager.Text(Resources.GetString("Height"));
+
+			Manager.NativeManager.NextColumn();
+
+			if (Manager.NativeManager.DragInt("###h", h))
 			{
 				viewerParameter.GuideHeight = h[0];
 			}
 
-			if (Manager.NativeManager.Checkbox(Resources.GetString("ShowGuide") + "###sg", showGuide))
+			Manager.NativeManager.NextColumn();
+
+			Manager.NativeManager.Text(Resources.GetString("ShowGuide"));
+
+			Manager.NativeManager.NextColumn();
+
+			if (Manager.NativeManager.Checkbox("###sg", showGuide))
 			{
 				viewerParameter.RendersGuide = showGuide[0];
 			}
 
-			if (Manager.NativeManager.DragInt(Resources.GetString("StartFrame") + "###sf", startingFrame_))
+			Manager.NativeManager.Columns(1);
+
+			Manager.NativeManager.EndChild();
+
+			// Recordingwindow
+			Manager.NativeManager.BeginChild("##OutputFrame", new swig.Vec2(0, 120), true, swig.WindowFlags.MenuBar);
+			if (Manager.NativeManager.BeginMenuBar())
+			{
+				if (Manager.NativeManager.BeginMenu(exportedFrameTitle + "##OutputFrameTitle"))
+				{
+					Manager.NativeManager.EndMenu();
+				}
+
+				Manager.NativeManager.EndMenuBar();
+			}
+
+			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.SetColumnWidth(0, 120);
+
+			Manager.NativeManager.Text(Resources.GetString("StartFrame"));
+
+			Manager.NativeManager.NextColumn();
+
+			if (Manager.NativeManager.DragInt("###sf", startingFrame_))
 			{
 				startingFrame = startingFrame_[0];
 			}
 
-			if (Manager.NativeManager.DragInt(Resources.GetString("EndFrame") + "###ef", endingFrame_))
+			Manager.NativeManager.NextColumn();
+
+			Manager.NativeManager.Text(Resources.GetString("EndFrame"));
+
+			Manager.NativeManager.NextColumn();
+
+			if (Manager.NativeManager.DragInt("###ef", endingFrame_))
 			{
 				endingFrame = endingFrame_[0];
 			}
 
-			if (Manager.NativeManager.DragInt(Resources.GetString("Frequency_Frame") + "###ff", freq_))
+			Manager.NativeManager.NextColumn();
+
+			Manager.NativeManager.Text(Resources.GetString("Frequency_Frame"));
+
+			Manager.NativeManager.NextColumn();
+
+			if (Manager.NativeManager.DragInt("###ff", freq_))
 			{
 				freq = freq_[0];
 			}
 
-			if(Manager.NativeManager.DragInt(Resources.GetString("XCount") + "###tn", theNumberOfImageV_))
+			Manager.NativeManager.Columns(1);
+
+			Manager.NativeManager.EndChild();
+
+			// Recordingwindow
+			Manager.NativeManager.BeginChild("##OutputType", new swig.Vec2(0, 100), true, swig.WindowFlags.MenuBar);
+			if (Manager.NativeManager.BeginMenuBar())
+			{
+				if (Manager.NativeManager.BeginMenu(typeTitle + "#OutputTypeTitle"))
+				{
+					Manager.NativeManager.EndMenu();
+				}
+
+				Manager.NativeManager.EndMenuBar();
+			}
+
+			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.SetColumnWidth(0, 120);
+
+			Manager.NativeManager.Text(Resources.GetString("XCount"));
+
+			Manager.NativeManager.NextColumn();
+
+			if (Manager.NativeManager.DragInt("###tn", theNumberOfImageV_))
 			{
 				theNumberOfImageV = theNumberOfImageV_[0];
 			}
 
-			if (Manager.NativeManager.BeginCombo(Resources.GetString("ExportedFrame")  + "###extype", selectedExportTypes[selectedTypeIndex], swig.ComboFlags.None))
+			Manager.NativeManager.NextColumn();
+
+			Manager.NativeManager.Text(Resources.GetString("ExportedFrame"));
+
+			Manager.NativeManager.NextColumn();
+
+			if (Manager.NativeManager.BeginCombo("###extype", selectedExportTypes[selectedTypeIndex], swig.ComboFlags.None))
 			{
 				for(int i = 0; i < selectedExportTypes.Length; i++)
 				{
@@ -111,7 +211,30 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.EndCombo();
 			}
 
-			if (Manager.NativeManager.BeginCombo(Resources.GetString("MakeTransparent") + "###tr", selectedAlphaTypes[selectedAlphaIndex], swig.ComboFlags.None))
+			Manager.NativeManager.Columns(1);
+
+			Manager.NativeManager.EndChild();
+
+			// Recordingwindow
+			Manager.NativeManager.BeginChild("##Option", new swig.Vec2(0, 60), true, swig.WindowFlags.MenuBar);
+			if (Manager.NativeManager.BeginMenuBar())
+			{
+				if (Manager.NativeManager.BeginMenu(optionsTitle + "##OptionTitle"))
+				{
+					Manager.NativeManager.EndMenu();
+				}
+
+				Manager.NativeManager.EndMenuBar();
+			}
+
+			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.SetColumnWidth(0, 120);
+
+			Manager.NativeManager.Text(Resources.GetString("MakeTransparent"));
+
+			Manager.NativeManager.NextColumn();
+
+			if (Manager.NativeManager.BeginCombo("###tr", selectedAlphaTypes[selectedAlphaIndex], swig.ComboFlags.None))
 			{
 				for (int i = 0; i < selectedAlphaTypes.Length; i++)
 				{
@@ -124,6 +247,10 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.EndCombo();
 			}
+
+			Manager.NativeManager.Columns(1);
+
+			Manager.NativeManager.EndChild();
 
 			Manager.Viewer.SetViewerParamater(viewerParameter);
 

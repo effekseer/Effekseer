@@ -579,9 +579,9 @@ namespace efk
 		ImGui::End();
 	}
 
-	bool GUIManager::BeginChild(const char* str_id)
+	bool GUIManager::BeginChild(const char* str_id, const Vec2& size_arg, bool border, WindowFlags extra_flags)
 	{
-		return ImGui::BeginChild(str_id);
+		return ImGui::BeginChild(str_id, ImVec2(size_arg.X, size_arg.Y), border, (ImGuiWindowFlags)extra_flags);
 	}
 
 	void GUIManager::EndChild()

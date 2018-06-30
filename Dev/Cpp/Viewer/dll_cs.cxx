@@ -2828,7 +2828,73 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_End___(void * jarg1
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginChild___(void * jarg1, char * jarg2) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginChild__SWIG_0___(void * jarg1, char * jarg2, void * jarg3, unsigned int jarg4, int jarg5) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char *arg2 = (char *) 0 ;
+  efk::Vec2 *arg3 = 0 ;
+  bool arg4 ;
+  efk::WindowFlags arg5 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char *)jarg2; 
+  arg3 = (efk::Vec2 *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return 0;
+  } 
+  arg4 = jarg4 ? true : false; 
+  arg5 = (efk::WindowFlags)jarg5; 
+  result = (bool)(arg1)->BeginChild((char const *)arg2,(efk::Vec2 const &)*arg3,arg4,arg5);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginChild__SWIG_1___(void * jarg1, char * jarg2, void * jarg3, unsigned int jarg4) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char *arg2 = (char *) 0 ;
+  efk::Vec2 *arg3 = 0 ;
+  bool arg4 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char *)jarg2; 
+  arg3 = (efk::Vec2 *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return 0;
+  } 
+  arg4 = jarg4 ? true : false; 
+  result = (bool)(arg1)->BeginChild((char const *)arg2,(efk::Vec2 const &)*arg3,arg4);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginChild__SWIG_2___(void * jarg1, char * jarg2, void * jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char *arg2 = (char *) 0 ;
+  efk::Vec2 *arg3 = 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char *)jarg2; 
+  arg3 = (efk::Vec2 *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return 0;
+  } 
+  result = (bool)(arg1)->BeginChild((char const *)arg2,(efk::Vec2 const &)*arg3);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginChild__SWIG_3___(void * jarg1, char * jarg2) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char *arg2 = (char *) 0 ;

@@ -129,8 +129,26 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_End(swigCPtr);
   }
 
+  public bool BeginChild(string str_id, Vec2 size_arg, bool border, WindowFlags extra_flags) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginChild__SWIG_0(swigCPtr, str_id, Vec2.getCPtr(size_arg), border, (int)extra_flags);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public bool BeginChild(string str_id, Vec2 size_arg, bool border) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginChild__SWIG_1(swigCPtr, str_id, Vec2.getCPtr(size_arg), border);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
+  public bool BeginChild(string str_id, Vec2 size_arg) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginChild__SWIG_2(swigCPtr, str_id, Vec2.getCPtr(size_arg));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
   public bool BeginChild(string str_id) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginChild(swigCPtr, str_id);
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginChild__SWIG_3(swigCPtr, str_id);
     return ret;
   }
 

@@ -277,7 +277,7 @@ namespace efk
 		bool Begin(const char16_t* name, bool* p_open);
 		void End();
 
-		bool BeginChild(const char* str_id);
+		bool BeginChild(const char* str_id, const Vec2& size_arg = Vec2(), bool border = false, WindowFlags extra_flags = WindowFlags::None);
 		void EndChild();
 
 		// Windows Utilities

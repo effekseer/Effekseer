@@ -13,19 +13,13 @@ When playing in the game, please download other runtime, Unity, DX library etc p
 
 
 * Operating environment
-- Windows Vista or later PC with a video card compatible with ShaderModel 2.0
-
+- Windows 7 SP1 or later PC
 
 *Required runtime
-You need to install the following runtime.
 
-- Microsoft .NET Framework 4 (Full)
-Please download from the following address.
-https://www.microsoft.com/en-US/download/details.aspx?id=17851
+If this application doesn't run, please install D3DCompiler_47.dll from a bellow link.
 
-- The latest DirectX end user runtime
-Please download from the following address.
-https://www.microsoft.com/en-US/download/details.aspx?id=35
+https://support.microsoft.com/en-us/help/4020302/the-net-framework-4-7-installation-is-blocked-on-windows-7-windows-ser
 
 
 * Directory structure
@@ -71,19 +65,14 @@ Effekseerをダウンロードしていただきありがとうございます。
 
 
 ■　動作環境
--ShaderModel2.0対応のビデオカードを搭載したWindowsVista以降のPC
+-Windows7 SP1以降のPC
 
 
 ■　必要ランタイム
-以下のランタイムをインストールする必要があります。
 
--Microsoft .NET Framework 4(Full)
-以下のアドレスからダウンロードするようお願いします。
-http://www.microsoft.com/downloads/details.aspx?familyid=9CFB2D51-5FF4-4491-B0E5-B386F32C0992&displaylang=ja
+もし起動しない場合は下記のリンクからD3DCompiler_47.dllをインストールしてください。
 
--最新のDirectX エンド ユーザー ランタイム
-以下のアドレスからダウンロードするようお願いします。
-http://www.microsoft.com/downloads/details.aspx?FamilyID=2da43d38-db71-4c1b-bc6a-9b6652cd92a3&displayLang=ja
+https://support.microsoft.com/ja-jp/help/4020302/the-net-framework-4-7-installation-is-blocked-on-windows-7-windows-ser
 
 
 ■　ディレクトリ構成
