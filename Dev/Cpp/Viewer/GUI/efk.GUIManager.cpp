@@ -384,6 +384,14 @@ namespace efk
 			return true;
 		};
 
+		window->Iconify = [this](float f) -> void
+		{
+			if (this->callback != nullptr)
+			{
+				this->callback->Iconify(f);
+			}
+		};
+
 		if (isOpenGLMode)
 		{
 			window->MakeCurrent();

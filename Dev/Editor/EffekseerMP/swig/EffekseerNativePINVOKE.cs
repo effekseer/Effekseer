@@ -738,6 +738,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_ClosingSwigExplicitGUIManagerCallback___")]
   public static extern bool GUIManagerCallback_ClosingSwigExplicitGUIManagerCallback(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_Iconify___")]
+  public static extern void GUIManagerCallback_Iconify(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_IconifySwigExplicitGUIManagerCallback___")]
+  public static extern void GUIManagerCallback_IconifySwigExplicitGUIManagerCallback(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_GetPath___")]
   public static extern System.IntPtr GUIManagerCallback_GetPath(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -745,7 +751,7 @@ class EffekseerNativePINVOKE {
   public static extern void GUIManagerCallback_SetPath(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_director_connect___")]
-  public static extern void GUIManagerCallback_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, GUIManagerCallback.SwigDelegateGUIManagerCallback_0 delegate0, GUIManagerCallback.SwigDelegateGUIManagerCallback_1 delegate1, GUIManagerCallback.SwigDelegateGUIManagerCallback_2 delegate2, GUIManagerCallback.SwigDelegateGUIManagerCallback_3 delegate3);
+  public static extern void GUIManagerCallback_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, GUIManagerCallback.SwigDelegateGUIManagerCallback_0 delegate0, GUIManagerCallback.SwigDelegateGUIManagerCallback_1 delegate1, GUIManagerCallback.SwigDelegateGUIManagerCallback_2 delegate2, GUIManagerCallback.SwigDelegateGUIManagerCallback_3 delegate3, GUIManagerCallback.SwigDelegateGUIManagerCallback_4 delegate4);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_GUIManager___")]
   public static extern global::System.IntPtr new_GUIManager();

@@ -17,6 +17,12 @@ namespace Effekseer.GUI
 		public override void Resized(int x, int y)
 		{
 			Manager.Native.ResizeWindow(x, y);
+
+			if(x > 0 && y > 0)
+			{
+				Manager.WindowSize.X = x;
+				Manager.WindowSize.Y = y;
+			}
 		}
 
 		public override void Focused()
@@ -58,6 +64,11 @@ namespace Effekseer.GUI
 
 			return false;
 		}
+
+		public override void Iconify(int f)
+		{
+			base.Iconify(f);
+		}
 	}
 
 	public class Manager
@@ -74,6 +85,8 @@ namespace Effekseer.GUI
 		public static Viewer Viewer;
 
 		internal static Network Network;
+
+		internal static swig.Vec2 WindowSize = new swig.Vec2(1280, 720);
 
 		static int resetCount = 0;
 
@@ -575,7 +588,7 @@ namespace Effekseer.GUI
 
 		public static void SaveWindowConfig(string path)
 		{
-			var size = Manager.NativeManager.GetSize();
+			var size = Manager.WindowSize;
 
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 

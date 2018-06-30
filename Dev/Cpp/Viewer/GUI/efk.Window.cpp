@@ -64,6 +64,16 @@ namespace efk
 		}
 	}
 
+	void GLFW_IconifyCallback(GLFWwindow* w, int f)
+	{
+		auto w_ = (Window*)glfwGetWindowUserPointer(w);
+
+		if (f > 0 && w_->Iconify != nullptr)
+		{
+			w_->Iconify(f);
+		}
+	}
+
 	Window::Window()
 	{}
 
@@ -113,6 +123,7 @@ namespace efk
 		glfwSetDropCallback(window, GLFW_DropCallback);
 		glfwSetWindowFocusCallback(window, GLFW_WindowFocusCallback);
 		glfwSetWindowCloseCallback(window, GLFLW_CloseCallback);
+		glfwSetWindowIconifyCallback(window, GLFW_IconifyCallback);
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(1);
 

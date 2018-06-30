@@ -444,11 +444,24 @@ bool SwigDirector_GUIManagerCallback::Closing() {
   return c_result;
 }
 
-void SwigDirector_GUIManagerCallback::swig_connect_director(SWIG_Callback0_t callbackResized, SWIG_Callback1_t callbackDroped, SWIG_Callback2_t callbackFocused, SWIG_Callback3_t callbackClosing) {
+void SwigDirector_GUIManagerCallback::Iconify(int f) {
+  int jf  ;
+  
+  if (!swig_callbackIconify) {
+    efk::GUIManagerCallback::Iconify(f);
+    return;
+  } else {
+    jf = f;
+    swig_callbackIconify(jf);
+  }
+}
+
+void SwigDirector_GUIManagerCallback::swig_connect_director(SWIG_Callback0_t callbackResized, SWIG_Callback1_t callbackDroped, SWIG_Callback2_t callbackFocused, SWIG_Callback3_t callbackClosing, SWIG_Callback4_t callbackIconify) {
   swig_callbackResized = callbackResized;
   swig_callbackDroped = callbackDroped;
   swig_callbackFocused = callbackFocused;
   swig_callbackClosing = callbackClosing;
+  swig_callbackIconify = callbackIconify;
 }
 
 void SwigDirector_GUIManagerCallback::swig_init_callbacks() {
@@ -456,6 +469,7 @@ void SwigDirector_GUIManagerCallback::swig_init_callbacks() {
   swig_callbackDroped = 0;
   swig_callbackFocused = 0;
   swig_callbackClosing = 0;
+  swig_callbackIconify = 0;
 }
 
 
@@ -2553,6 +2567,26 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_Clo
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_Iconify___(void * jarg1, int jarg2) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  int arg2 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->Iconify(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_IconifySwigExplicitGUIManagerCallback___(void * jarg1, int jarg2) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  int arg2 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->efk::GUIManagerCallback::Iconify(arg2);
+}
+
+
 SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_GetPath___(void * jarg1) {
   char16_t * jresult ;
   efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
@@ -2575,11 +2609,11 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_SetPath___(
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_director_connect___(void *objarg, SwigDirector_GUIManagerCallback::SWIG_Callback0_t callback0, SwigDirector_GUIManagerCallback::SWIG_Callback1_t callback1, SwigDirector_GUIManagerCallback::SWIG_Callback2_t callback2, SwigDirector_GUIManagerCallback::SWIG_Callback3_t callback3) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_director_connect___(void *objarg, SwigDirector_GUIManagerCallback::SWIG_Callback0_t callback0, SwigDirector_GUIManagerCallback::SWIG_Callback1_t callback1, SwigDirector_GUIManagerCallback::SWIG_Callback2_t callback2, SwigDirector_GUIManagerCallback::SWIG_Callback3_t callback3, SwigDirector_GUIManagerCallback::SWIG_Callback4_t callback4) {
   efk::GUIManagerCallback *obj = (efk::GUIManagerCallback *)objarg;
   SwigDirector_GUIManagerCallback *director = dynamic_cast<SwigDirector_GUIManagerCallback *>(obj);
   if (director) {
-    director->swig_connect_director(callback0, callback1, callback2, callback3);
+    director->swig_connect_director(callback0, callback1, callback2, callback3, callback4);
   }
 }
 

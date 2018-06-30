@@ -61,6 +61,10 @@ public class GUIManagerCallback : global::System.IDisposable {
     return ret;
   }
 
+  public virtual void Iconify(int f) {
+    if (SwigDerivedClassHasMethod("Iconify", swigMethodTypes4)) EffekseerNativePINVOKE.GUIManagerCallback_IconifySwigExplicitGUIManagerCallback(swigCPtr, f); else EffekseerNativePINVOKE.GUIManagerCallback_Iconify(swigCPtr, f);
+  }
+
   public string GetPath() {
     string ret = System.Runtime.InteropServices.Marshal.PtrToStringUni(EffekseerNativePINVOKE.GUIManagerCallback_GetPath(swigCPtr));
     return ret;
@@ -79,7 +83,9 @@ public class GUIManagerCallback : global::System.IDisposable {
       swigDelegate2 = new SwigDelegateGUIManagerCallback_2(SwigDirectorFocused);
     if (SwigDerivedClassHasMethod("Closing", swigMethodTypes3))
       swigDelegate3 = new SwigDelegateGUIManagerCallback_3(SwigDirectorClosing);
-    EffekseerNativePINVOKE.GUIManagerCallback_director_connect(swigCPtr, swigDelegate0, swigDelegate1, swigDelegate2, swigDelegate3);
+    if (SwigDerivedClassHasMethod("Iconify", swigMethodTypes4))
+      swigDelegate4 = new SwigDelegateGUIManagerCallback_4(SwigDirectorIconify);
+    EffekseerNativePINVOKE.GUIManagerCallback_director_connect(swigCPtr, swigDelegate0, swigDelegate1, swigDelegate2, swigDelegate3, swigDelegate4);
   }
 
   private bool SwigDerivedClassHasMethod(string methodName, global::System.Type[] methodTypes) {
@@ -104,20 +110,27 @@ public class GUIManagerCallback : global::System.IDisposable {
     return Closing();
   }
 
+  private void SwigDirectorIconify(int f) {
+    Iconify(f);
+  }
+
   public delegate void SwigDelegateGUIManagerCallback_0(int x, int y);
   public delegate void SwigDelegateGUIManagerCallback_1();
   public delegate void SwigDelegateGUIManagerCallback_2();
   public delegate bool SwigDelegateGUIManagerCallback_3();
+  public delegate void SwigDelegateGUIManagerCallback_4(int f);
 
   private SwigDelegateGUIManagerCallback_0 swigDelegate0;
   private SwigDelegateGUIManagerCallback_1 swigDelegate1;
   private SwigDelegateGUIManagerCallback_2 swigDelegate2;
   private SwigDelegateGUIManagerCallback_3 swigDelegate3;
+  private SwigDelegateGUIManagerCallback_4 swigDelegate4;
 
   private static global::System.Type[] swigMethodTypes0 = new global::System.Type[] { typeof(int), typeof(int) };
   private static global::System.Type[] swigMethodTypes1 = new global::System.Type[] {  };
   private static global::System.Type[] swigMethodTypes2 = new global::System.Type[] {  };
   private static global::System.Type[] swigMethodTypes3 = new global::System.Type[] {  };
+  private static global::System.Type[] swigMethodTypes4 = new global::System.Type[] { typeof(int) };
 }
 
 }

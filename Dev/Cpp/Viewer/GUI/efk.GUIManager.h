@@ -213,6 +213,7 @@ namespace efk
 		virtual void Droped() {}
 		virtual void Focused() {}
 		virtual bool Closing() { return true; }
+		virtual void Iconify(int f) {}
 
 		const char16_t* GetPath()
 		{

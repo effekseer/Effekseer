@@ -75,6 +75,8 @@ namespace efk
 		std::function<void(const char* path)> Droped;
 
 		std::function<bool()> Closing;
+
+		std::function<void(int)> Iconify;
 	};
 
 }
