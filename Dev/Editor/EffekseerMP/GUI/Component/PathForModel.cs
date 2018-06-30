@@ -182,9 +182,8 @@ namespace Effekseer.GUI.Component
 
 		private bool CheckExtension(string path)
 		{
-			Match match = Regex.Match(binding.Filter, "\\*(\\.[a-zA-Z0-9]*)");
-			string extension = match.Value.Substring(1);
-			return System.IO.Path.GetExtension(path) == extension;
+			var filters = binding.Filter.Split(',');
+			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
 		}
 
 		void LoadFile(string filepath, bool isReloading)

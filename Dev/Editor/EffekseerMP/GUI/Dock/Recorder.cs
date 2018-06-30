@@ -171,7 +171,7 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.BeginChild("##OutputType", new swig.Vec2(0, 100), true, swig.WindowFlags.MenuBar);
 			if (Manager.NativeManager.BeginMenuBar())
 			{
-				if (Manager.NativeManager.BeginMenu(typeTitle + "#OutputTypeTitle"))
+				if (Manager.NativeManager.BeginMenu(typeTitle + "##OutputTypeTitle"))
 				{
 					Manager.NativeManager.EndMenu();
 				}
