@@ -151,6 +151,30 @@ namespace ImGui
 		window->DrawList->AddLine(ImVec2(pos.x - size, pos.y), ImVec2(pos.x, pos.y - size), color, thickness);
 	}
 
+	void ClampHandles(
+		float* keys, float* values,
+		float* leftHandleKeys, float* leftHandleValues,
+		float* rightHandleKeys, float* rightHandleValues,
+		int count)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			if (0 < i)
+			{
+				leftHandleKeys[i] = std::max(leftHandleKeys[i], keys[i - 1]);
+			}
+
+			leftHandleKeys[i] = std::min(leftHandleKeys[i], keys[i]);
+
+			if (i < count - 1)
+			{
+				rightHandleKeys[i] = std::min(rightHandleKeys[i], keys[i + 1]);
+			}
+
+			rightHandleKeys[i] = std::max(rightHandleKeys[i], keys[i]);
+		}
+	}
+
 	bool BeginFCurve(int id, const ImVec2& size, const ImVec2& scale, float min_value, float max_value)
 	{
 		bool isAutoZoomMode = min_value <= max_value;
@@ -688,22 +712,7 @@ namespace ImGui
 					}
 				}
 
-				for (int i = 0; i < count; i++)
-				{
-					if (0 < i)
-					{
-						leftHandleKeys[i] = std::max(leftHandleKeys[i], keys[i - 1]);
-					}
-
-					leftHandleKeys[i] = std::min(leftHandleKeys[i], keys[i]);
-
-					if (i < count - 1)
-					{
-						rightHandleKeys[i] = std::min(rightHandleKeys[i], keys[i + 1]);
-					}
-
-					rightHandleKeys[i] = std::max(rightHandleKeys[i], keys[i]);
-				}
+				ClampHandles(keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, count);
 
 				// check values
 				bool isChanged = true;
@@ -1217,6 +1226,8 @@ namespace ImGui
 						}
 					}
 				}
+
+				ClampHandles(keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, count);
 			}
 		}
 
