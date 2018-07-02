@@ -1,4 +1,4 @@
-
+﻿
 This readme is available in English and Japanese.
 
 この説明は日本語と英語で記述されています。
@@ -18,8 +18,7 @@ Directory structure
 =============
 -Compiled
 This directory contains compiled lib files.
-You can use these on VisualStudio 2012, 2013 or 2015.
-OpenGL version, however, is NOT available on VisualStudio 2012.
+You can use these on VisualStudio 2015 or 2017.
 
 Compiler Options are Multithread debug for Debug build and Multithread for Release one.
 
@@ -44,7 +43,7 @@ Effekseerをダウンロードしていただきありがとうございます�
 ■　ディレクトリ構成
 -Compiled
 コンパイル済みのlibファイルが保存されています。
-VisualStudio2012、2013、2015に対応しています。
+VisualStudio2015、2017に対応しています。
 ただし、OpenGL版は2012には対応していません。
 
 コンパイルオプションは
