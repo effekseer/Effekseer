@@ -1433,11 +1433,25 @@ namespace Effekseer.GUI.Dock
 					
 					var keys = new List<Data.Value.FCurveKey<T>>();
 
-					for(int j = 0; j < properties[i].Keys.Length - 1; j++)
+					// Change value format into int
+					for (int j = 0; j < properties[i].Keys.Length - 1; j++)
+					{
+						properties[i].Keys[j] = (int)Math.Round(properties[i].Keys[j]);
+					}
+
+					// Clamp
+					for (int j = 1; j < properties[i].Keys.Length - 2; j++)
+					{
+						var new_left = Math.Max(properties[i].LeftKeys[j], properties[i].Keys[j - 1]);
+						var new_right = Math.Max(properties[i].RightKeys[j], properties[i].Keys[j + 1]);
+						properties[i].LeftKeys[j] = new_left;
+						properties[i].RightKeys[j] = new_right;
+					}
+
+					for (int j = 0; j < properties[i].Keys.Length - 1; j++)
 					{
 						var v = properties[i].Values[j];
 						var v_ = converter(v);
-
 
 						Data.Value.FCurveKey<T> key = new FCurveKey<T>(
 							(int)properties[i].Keys[j],
