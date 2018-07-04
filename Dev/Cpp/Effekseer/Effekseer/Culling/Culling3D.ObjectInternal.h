@@ -68,9 +68,9 @@ namespace Culling3D
 		void ChangeIntoCuboid(Vector3DF size) override;
 
 		void* GetUserData() override;
-		void SetUserData(void* userData) override;
+		void SetUserData(void* userData_) override;
 
-		void SetWorld(World* world);
+		void SetWorld(World* world_);
 
 		Status	GetCurrentStatus() { return currentStatus; }
 		Status	GetNextStatus() { return nextStatus; }

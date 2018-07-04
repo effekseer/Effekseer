@@ -503,7 +503,7 @@ namespace Effekseer
 			IsChanged = false;
 
 			// Select child
-			SelectedNode = Root.Children[0];
+			//SelectedNode = Root.Children[0];
 
 			if (OnAfterNew != null)
 			{

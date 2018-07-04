@@ -186,21 +186,21 @@ public:
 			mat_scale.Scaling(s.X, s.Y, s.Z);
 			::Effekseer::Matrix43::Multiple(mat_rot, mat_scale, mat_rot);
 
-			for (int32_t r = 0; r < 4; r++)
+			for (int32_t r_ = 0; r_ < 4; r_++)
 			{
-				for (int32_t c = 0; c < 3; c++)
+				for (int32_t c_ = 0; c_ < 3; c_++)
 				{
-					mat44.Values[r][c] = mat_rot.Value[r][c];
+					mat44.Values[r_][c_] = mat_rot.Value[r_][c_];
 				}
 			}
 		}
 		else if (btype == ::Effekseer::BillboardType::Fixed)
 		{
-			for (int32_t r = 0; r < 4; r++)
+			for (int32_t r_ = 0; r_ < 4; r_++)
 			{
-				for (int32_t c = 0; c < 3; c++)
+				for (int32_t c_ = 0; c_ < 3; c_++)
 				{
-					mat44.Values[r][c] = instanceParameter.SRTMatrix43.Value[r][c];
+					mat44.Values[r_][c_] = instanceParameter.SRTMatrix43.Value[r_][c_];
 				}
 			}
 		}
@@ -398,13 +398,13 @@ public:
 		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
 
 		// Check time
-		auto stTime = m_times[0] % model->GetFrameCount();
+		auto stTime0 = m_times[0] % model->GetFrameCount();
 		auto isTimeSame = true;
 
 		for (auto t : m_times)
 		{
 			t = t % model->GetFrameCount();
-			if(t != stTime)
+			if(t != stTime0)
 			{
 				isTimeSame = false;
 				break;
@@ -413,7 +413,7 @@ public:
 
 		if(Instancing && isTimeSame)
 		{
-			auto& imodel = model->InternalModels[stTime];
+			auto& imodel = model->InternalModels[stTime0];
 
 			// Invalid unless layout is set after buffer
 			renderer->SetVertexBuffer(imodel.VertexBuffer, sizeof(Effekseer::Model::VertexWithIndex));

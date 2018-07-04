@@ -294,11 +294,11 @@ namespace Culling3D
 					float t = -FLT_MAX;
 					float t_max = FLT_MAX;
 
-					for (int i = 0; i < 3; ++i)
+					for (int k = 0; k < 3; ++k)
 					{
-						if (std::abs(d[i]) < FLT_EPSILON)
+						if (std::abs(d[k]) < FLT_EPSILON)
 						{
-							if (p[i] < min[i] || p[i] > max[i])
+							if (p[k] < min[k] || p[k] > max[k])
 							{
 								// 交差していない
 								continue;
@@ -308,9 +308,9 @@ namespace Culling3D
 						{
 							// スラブとの距離を算出
 							// t1が近スラブ、t2が遠スラブとの距離
-							float odd = 1.0f / d[i];
-							float t1 = (min[i] - p[i]) * odd;
-							float t2 = (max[i] - p[i]) * odd;
+							float odd = 1.0f / d[k];
+							float t1 = (min[k] - p[k]) * odd;
+							float t2 = (max[k] - p[k]) * odd;
 							if (t1 > t2)
 							{
 								float tmp = t1; t1 = t2; t2 = tmp;
@@ -351,17 +351,12 @@ namespace Culling3D
 	{
 		objs.clear();
 	
-#if _MSC_VER == 1700
-		if (_finite(cameraProjMat.Values[2][2]) &&
+
+		if (!std::isinf(cameraProjMat.Values[2][2]) &&
 			cameraProjMat.Values[0][0] != 0.0f &&
 			cameraProjMat.Values[1][1] != 0.0f)
 		{
-#else
-				if (!std::isinf(cameraProjMat.Values[2][2]) &&
-			cameraProjMat.Values[0][0] != 0.0f &&
-			cameraProjMat.Values[1][1] != 0.0f)
-		{
-#endif
+
 			Matrix44 cameraProjMatInv = cameraProjMat;
 			cameraProjMatInv.SetInverted();
 

@@ -1462,9 +1462,9 @@ void ManagerImplemented::DrawBack()
 			if (drawSet.IsShown && drawSet.IsAutoDrawing)
 			{
 				auto e = (EffectImplemented*)drawSet.ParameterPointer;
-				for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
+				for (int32_t j = 0; j < e->renderingNodesThreshold; j++)
 				{
-					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+					drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
 				}
 			}
 		}
@@ -1478,9 +1478,9 @@ void ManagerImplemented::DrawBack()
 			if (drawSet.IsShown && drawSet.IsAutoDrawing)
 			{
 				auto e = (EffectImplemented*)drawSet.ParameterPointer;
-				for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
+				for (int32_t j = 0; j < e->renderingNodesThreshold; j++)
 				{
-					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+					drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
 				}
 			}
 		}
@@ -1508,9 +1508,9 @@ void ManagerImplemented::DrawFront()
 			if (drawSet.IsShown && drawSet.IsAutoDrawing)
 			{
 				auto e = (EffectImplemented*)drawSet.ParameterPointer;
-				for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+				for (int32_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
 				{
-					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+					drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
 				}
 			}
 		}
@@ -1524,9 +1524,9 @@ void ManagerImplemented::DrawFront()
 			if (drawSet.IsShown && drawSet.IsAutoDrawing)
 			{
 				auto e = (EffectImplemented*)drawSet.ParameterPointer;
-				for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+				for (int32_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
 				{
-					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+					drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
 				}
 			}
 		}

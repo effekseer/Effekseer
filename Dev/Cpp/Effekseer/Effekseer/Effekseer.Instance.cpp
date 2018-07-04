@@ -48,16 +48,16 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 
 	for( int i = 0; i < m_pEffectNode->GetChildrenCount(); i++ )
 	{
-		InstanceContainer* pContainer = m_pContainer->GetChild( i );
+		InstanceContainer* childContainer = m_pContainer->GetChild( i );
 
 		if( group != NULL )
 		{
-			group->NextUsedByInstance = pContainer->CreateGroup();
+			group->NextUsedByInstance = childContainer->CreateGroup();
 			group = group->NextUsedByInstance;
 		}
 		else
 		{
-			group = pContainer->CreateGroup();
+			group = childContainer->CreateGroup();
 			m_headGroups = group;
 		}
 	}
@@ -1200,8 +1200,6 @@ void Instance::ModifyMatrixFromLocationAbs( float deltaFrame )
 	}
 	else if( m_pEffectNode->LocationAbs.type == LocationAbsType::AttractiveForce )
 	{
-		InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
-
 		float force = m_pEffectNode->LocationAbs.attractiveForce.force;
 		float control = m_pEffectNode->LocationAbs.attractiveForce.control;
 		float minRange = m_pEffectNode->LocationAbs.attractiveForce.minRange;

@@ -100,14 +100,14 @@ namespace Culling3D
 		return userData;
 	}
 
-	void ObjectInternal::SetUserData(void* userData)
+	void ObjectInternal::SetUserData(void* userData_)
 	{
-		this->userData = userData;
+		this->userData = userData_;
 	}
 
 
-	void ObjectInternal::SetWorld(World* world)
+	void ObjectInternal::SetWorld(World* world_)
 	{
-		this->world = world;
+		this->world = world_;
 	}
 }
