@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>No06. 円形のパーティクルを作成しよう！</title>
-  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
   <link rel="stylesheet" href="../base.css">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -18,14 +23,14 @@
 <div class="main">
 <h2>概要</h2>
 <p>本章では、リングを使って様々なエフェクトを作成してみます。 今までは、描画方法にスプライトを指定していましたが、今回はリングを指定します。 リングは、円筒状のパーティクルを描画します。 パラメーターを変更することで、ただの円形ではなく、様々なエフェクトを作成できます。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_renderRing.png">
 <p>
 リング
 </p>
 </div>
 <p>それに加えて、読み込んだ画像の使用する領域(UV)を変更することで、画像を変化させて見栄えを良くしてみます。</p>
-<div align="center">
+<div data-align="center">
 <table>
 <tr>
 <td>
@@ -52,7 +57,7 @@
 <p>
 あらかじめ作成途中のエフェクトを下記のリンクからダウンロードできるようにしました。
 </p>
-<div align="center">
+<div data-align="center">
 <p>
 <a href = "../../Sample/06_01_Sample.zip">ダウンロード</a>
 </p>
@@ -61,14 +66,14 @@
 <p>1つ目に作成するエフェクトは、形状が時間に応じて変化する輪っかです。</p>
 <p>effect1.efkprojを開いてください。</p>
 <p>パーティクルの描画方法にリングを指定します。 「描画」ウインドウのスプライトをリングに変更します。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_ring_ja.png">
 <p>
 リング
 </p>
 </div>
 <p>変更した後、エフェクト再生すると、輪っかが表示されていることがわかります。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_ring.png">
 <p>
 リング
@@ -77,7 +82,7 @@
 <p>パラメーターを変更すると、この輪っかの形状を変更できます。</p>
 <p>リングの形状は、「描画」ウインドウの外輪(1)と内輪(2)で指定されています。 ここでは円の外側への方向(x)と軸方向の長さ(y)を指定しています。</p>
 <p><b>プレビュー画面のxyz方向と指定するxy方向は異なります。</b></p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_ring_inout.png">
 <p>
 内輪・外輪
@@ -122,7 +127,7 @@
 </tbody>
 </table>
 <p>輪っかの形状が変化していることがわかります。 リングは円形のエフェクトと相性が良いです。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_ring_easing.gif">
 <p>
 内輪・外輪
@@ -133,7 +138,7 @@
 <p>effect2.efkprojを開いてください。</p>
 <p>リングを更生する頂点の数を変更することで、様々な形状を表現できます。 初期設定では頂点の数が多いため、パーティクルは円に見えます。 この頂点の数を減らすと、三角形、四角形、六角形といった形状を表現できます。</p>
 <p>本章では、三角形を作成してみます。「描画」ウインドウから、頂点数を3に変更します。 値を変更すると三角形になることがわかります。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_tri.png">
 <p>
 三角
@@ -145,7 +150,7 @@
 <p>リングにも画像を設定できます。 画像を設定することで、衝撃波や吹き上がるオーラ等の表現がしやすくなります。</p>
 <p>早速、画像を設定してみましょう。「描画共通」ウインドウから「Scroll.png」を読み込みます。</p>
 <p>リングの色が単色から画像に変更されていることがわかります。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_ring_img.png">
 <p>
 三角
@@ -156,14 +161,14 @@
 <p>「描画共通」ウインドウからUVを変更します。 UVの「標準」を「スクロール」に変更します。 そうすると、何も表示されなくなりました。 これは、使用する画像の領域を設定していないからです。</p>
 <p>大きさに画像の大きさ(256,256)を入力します。次に、移動速度に(0,-5)を入力します。</p>
 <p>画像が移動していることがわかります。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_scroll.gif">
 <p>
 スクロール
 </p>
 </div>
 <p>最後に、本章で作成されたエフェクトをダウンロードできるようにしてみました。</p>
-<div align="center">
+<div data-align="center">
 <p><a href = "../../Sample/06_02_Sample.zip">ダウンロード</a></p>
 </div>
 <h2>まとめ</h2>

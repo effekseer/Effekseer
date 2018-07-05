@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>No08. 生成方法でパーティクルを並べよう！</title>
-  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
   <link rel="stylesheet" href="../base.css">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -18,11 +23,11 @@
 <div class="main">
 <h2>概要</h2>
 <p>本章では、生成方法を変更して、パーティクルを一定間隔で並べてみます。 生成方法では、パーティクルの最初の姿勢を指定できます。 ノードの親子関係を使えば同じようなことを再現できますが、同じことを簡単に実現できます。</p>
-<div align="center">
+<div data-align="center">
 <table>
 <tr>
 <td>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_effect1.gif">
 <p>
 本章で作成するエフェクト1
@@ -30,7 +35,7 @@
 </div>
 </td>
 <td>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_effect2.gif">
 <p>
 本章で作成するエフェクト2
@@ -38,7 +43,7 @@
 </div>
 </td>
 <td>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_effect3.gif">
 <p>
 本章で作成するエフェクト3
@@ -50,18 +55,18 @@
 </div>
 <h2>生成方法</h2>
 <p>Effekseerでは、生成方法を指定できます。 生成方法では、パーティクルが生成されたときの最初の姿勢を指定できます。 例えば、パーティクルを円形に配置したり、球形に配置したりできます。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_spawn_method.png">
 <p>
 生成方法
 </p>
 </div>
 <p>位置だけでなく、角度も指定できます。 例えば、パーティクルの上方向が球の外側を向く、といったことができます。</p>
-<div align="center">
+<div data-align="center">
 <table>
 <tr>
 <td>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_affect_no_angle.png">
 <p>
 角度指定なし
@@ -69,7 +74,7 @@
 </div>
 </td>
 <td>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_affect_angle.png">
 <p>
 角度指定あり
@@ -82,7 +87,7 @@
 <p>
 あらかじめ作成途中のエフェクトを下記のリンクからダウンロードできるようにしました。
 </p>
-<div align="center">
+<div data-align="center">
 <p>
 <a href = "../../Sample/08_01_Sample.zip">ダウンロード</a>
 </p>
@@ -92,7 +97,7 @@
 <p>このエフェクトは親子関係を利用して実現できますが、それはとても面倒です。 複雑な配置を簡単に実現するために、生成方法があります。</p>
 <p>effect01.efkprojを開いてください。</p>
 <p>「生成方法」のウインドウは初期設定では表示されていません。 メニューバーから「ウインドウ-&gt;生成方法」を選択します。 選択すると「生成方法」ウインドウが表示されます。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_spawn_ja.png">
 <p>
 生成方法
@@ -100,7 +105,7 @@
 </div>
 <p>「生成方法」ウインドウから、生成方法に円を指定します。 円の半径には4を入力します。</p>
 <p>円形にパーティクルが表示されることがわかります。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_effect1_random.gif">
 <p>
 ランダムに配置されたパーティクル
@@ -108,7 +113,7 @@
 </div>
 <p>パーティクルはランダムに配置されているため、順番に出現しません。 順番に出現するように、生成位置種類を正順に変更します。 それに加えて、分割数と生成数を12に変更します。 これは、円を均等に12分割した位置にパーティクルを出現させることを示しています。</p>
 <p>円形にパーティクルが均等に表示されることがわかります。 同時に、パーティクルが順番に出現するようになることもわかります。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_effect1.gif">
 <p>
 作成されたエフェクト
@@ -120,7 +125,7 @@
 <p>円形と同じように、球形も設定できます。</p>
 <p>「生成方法」ウインドウから生成方法を球に変更します。 球の半径には4を入力します。 さらに、全方位にパーティクルを配置するためにX軸角度とY軸角度の振れ幅には360度を入力します。</p>
 <p>球形にパーティクルが配置されていることがわかります。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_effect2.gif">
 <p>
 作成されたエフェクト
@@ -130,7 +135,7 @@
 <p>球の外側方向に向けてパーティクルが飛ぶようにしてみます。</p>
 <p>effect03.efjprojを開いてください。</p>
 <p>球の上方向にパーティクルが飛んでいくのがわかります。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_effect3_start.gif">
 <p>
 上方向にパーティクルが飛んでいくエフェクト
@@ -139,14 +144,14 @@
 <p>ただ、実際、球形にパーティクルを配置する場合、球の内側方向や外側方向に飛んでほしいことが多いです。 そのような場合、角度に影響にチェックします。 これにチェックすると、生成されるときにパーティクルの上方向が球の外側方向に一致するように回転させます。</p>
 <p>今回の場合、上方向に向かっていたパーティクルが球の外側方向に向かうようになります。</p>
 <p>チェックすると、球の外側方向にパーティクルが飛んでいくのがわかります。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/08_effect3.gif">
 <p>
 作成されたエフェクト
 </p>
 </div>
 <p>最後に、本章で作成されたエフェクトをダウンロードできるようにしてみました。</p>
-<div align="center">
+<div data-align="center">
 <p><a href = "../../Sample/08_02_Sample.zip">ダウンロード</a></p>
 </div>
 <h2>まとめ</h2>

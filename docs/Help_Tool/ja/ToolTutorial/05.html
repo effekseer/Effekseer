@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>No05. ヒットマーク(斬撃)を作成しよう！</title>
-  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
   <link rel="stylesheet" href="../base.css">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -18,7 +23,7 @@
 <div class="main">
 <h2>概要</h2>
 <p>本章では、実際のゲームに使用されるような斬撃が命中したエフェクト(ヒットマーク)を作成します。 真ん中に剣線が入り、周囲に細かい衝撃が飛ぶようなエフェクトです。 その際、新しい内容として、ノードのコピー、追加とイージングについて説明します。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_completed.gif">
 <p>
 本章で作成するエフェクト
@@ -26,7 +31,7 @@
 </div>
 <h2>準備</h2>
 <p>あらかじめ作成途中のエフェクトを下記のリンクからダウンロードできるようにしました。</p>
-<div align="center">
+<div data-align="center">
 <p><a href = "../../Sample/05_01_Sample.zip">ダウンロード</a></p>
 </div>
 <p>今回作成するエフェクトの長さは約0.5秒なので、「ビュワー操作」ウインドウの「終了」を30フレームにしています。</p>
@@ -35,7 +40,7 @@
 <p>イージングとは、始点と終点の値を指定して、間の値は自動的に補完される指定方法です。</p>
 <p>下記の図で示すように、今まで、位置、回転、拡大は速度(1)や加速度で指定していました。 ただ、この指定方法だと生存時間が長くなるほど値が大きくなってしまいます。</p>
 <p>一方、イージングでは、生成された直後の値(2)と消える直前の値(3)を指定して、その間を補完します。 消える直前の値を指定できるためにパーティクルの形状がわかりやすくなります。</p>
-<div align="center">
+<div data-align="center">
 <table>
 <tr>
 <td>
@@ -54,7 +59,7 @@
 </table>
 </div>
 <p>補完方法は複数存在します。始点と終点でそれぞれ、低速3～高速3を指定できます。 低速なほど、値が変化しにくく、高速なほど、値が変化しやすくなります。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_easing.gif">
 <p>
 補完方法
@@ -164,7 +169,7 @@
 </tbody>
 </table>
 <p>この時点でエフェクトは以下のようになりました。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_01.gif">
 <p>
 剣線ノード
@@ -173,7 +178,7 @@
 <h3>衝撃ノード</h3>
 <p>攻撃がヒットした時に、剣線だけではなく衝撃も発生します。 剣線と同じように作成します。</p>
 <p>剣線ノードと衝撃ノードはパラメーターが異なるため、ノードを追加する必要があります。 まず、Rootを選択します。その後、Rootを右クリックするとメニューが表示されます。 メニューから、ノードの追加を選択します。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_addnode_ja.png">
 <p>
 ノードの追加
@@ -283,7 +288,7 @@
 </tbody>
 </table>
 <p>この時点でエフェクトは以下のようになりました。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_02.gif">
 <p>
 衝撃ノード
@@ -359,7 +364,7 @@
 </tbody>
 </table>
 <p>この時点でエフェクトは以下のようになりました。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_03.gif">
 <p>
 発光ノードその1
@@ -368,14 +373,14 @@
 <h3>発光ノードその2</h3>
 <p>まだ、発光が地味なので、発光を追加します。 この発光ですが、先ほど作成した発光ノードとほとんど変わりません。 Effekseerではノードをコピーできます。</p>
 <p>発光ノードを選択した後、右クリックを押してノードをコピーします。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_copynode_ja.png">
 <p>
 ノードの追加
 </p>
 </div>
 <p>Rootを選択した後、右クリックを押してノードの貼り付けをします。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_pastenode_ja.png">
 <p>
 ノードの追加
@@ -405,19 +410,18 @@
 </tbody>
 </table>
 <p>斬撃が命中したエフェクトが作成できました。</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_completed.gif">
 <p>
 完成
 </p>
 </div>
 <p>最後に、本章で作成されたエフェクトをダウンロードできるようにしてみました。</p>
-<div align="center">
+<div data-align="center">
 <p><a href = "../../Sample/05_02_Sample.zip">ダウンロード</a></p>
 </div>
 <h2>まとめ</h2>
 <p>本章では、実際にゲームで使用できそうなエフェクトを作成しました。 次章では、さらに複雑なエフェクトを作成していきます。</p>
-<p>(執筆中です。少々お待ちください。)</p>
 </div>
 </body>
 </html>
