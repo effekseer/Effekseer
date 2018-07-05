@@ -97,7 +97,7 @@ bool Thread::Wait() const
 	return true;
 }
 
-#elif defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE)
+#elif defined(_PSVITA) || defined(_PS4) || defined(NN_NINTENDO_SDK) || defined(_XBOXONE)
 	//-----------------------------------------------------------------------------------
 	//
 	//-----------------------------------------------------------------------------------
