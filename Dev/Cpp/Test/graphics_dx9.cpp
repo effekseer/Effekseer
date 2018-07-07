@@ -162,7 +162,9 @@ void Rendering()
 	g_renderer->SetLightAmbientColor(::Effekseer::Color(40, 40, 40, 255));
 
 	g_renderer->BeginRendering();
-	g_manager->Draw();
+	//g_manager->Draw();
+	g_manager->DrawBack();
+	g_manager->DrawFront();
 	g_renderer->EndRendering();
 
 	g_d3d_device->EndScene();

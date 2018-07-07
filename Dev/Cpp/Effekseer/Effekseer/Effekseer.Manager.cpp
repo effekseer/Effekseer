@@ -1507,10 +1507,17 @@ void ManagerImplemented::DrawFront()
 
 			if (drawSet.IsShown && drawSet.IsAutoDrawing)
 			{
-				auto e = (EffectImplemented*)drawSet.ParameterPointer;
-				for (int32_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
+				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
-					drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
+					auto e = (EffectImplemented*)drawSet.ParameterPointer;
+					for (int32_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
+					{
+						drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
+					}
+				}
+				else
+				{
+					drawSet.InstanceContainerPointer->Draw(true);
 				}
 			}
 		}
@@ -1523,10 +1530,17 @@ void ManagerImplemented::DrawFront()
 
 			if (drawSet.IsShown && drawSet.IsAutoDrawing)
 			{
-				auto e = (EffectImplemented*)drawSet.ParameterPointer;
-				for (int32_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
+				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
-					drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
+					auto e = (EffectImplemented*)drawSet.ParameterPointer;
+					for (int32_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
+					{
+						drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
+					}
+				}
+				else
+				{
+					drawSet.InstanceContainerPointer->Draw(true);
 				}
 			}
 		}
@@ -1691,10 +1705,17 @@ void ManagerImplemented::DrawHandleFront(Handle handle)
 			{
 				if (drawSet.IsShown)
 				{
-					auto e = (EffectImplemented*)drawSet.ParameterPointer;
-					for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+					if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 					{
-						drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+						auto e = (EffectImplemented*)drawSet.ParameterPointer;
+						for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+						{
+							drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+						}
+					}
+					else
+					{
+						drawSet.InstanceContainerPointer->Draw(true);
 					}
 				}
 			}
@@ -1703,10 +1724,17 @@ void ManagerImplemented::DrawHandleFront(Handle handle)
 		{
 			if (drawSet.IsShown)
 			{
-				auto e = (EffectImplemented*)drawSet.ParameterPointer;
-				for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
-					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+					auto e = (EffectImplemented*)drawSet.ParameterPointer;
+					for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+					{
+						drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
+					}
+				}
+				else
+				{
+					drawSet.InstanceContainerPointer->Draw(true);
 				}
 			}
 		}
