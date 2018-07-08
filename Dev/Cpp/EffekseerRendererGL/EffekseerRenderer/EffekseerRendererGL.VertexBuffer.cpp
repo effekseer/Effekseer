@@ -148,7 +148,7 @@ void VertexBuffer::Unlock()
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
 
-	if (GLExt::IsSupportedBufferRange() && m_vertexRingOffset > 0)
+	if (GLExt::IsSupportedBufferRange() && m_vertexRingStart > 0)
 	{
 #ifdef __ANDROID__
 		GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, m_resource, GL_STREAM_DRAW);
@@ -164,10 +164,12 @@ void VertexBuffer::Unlock()
 		{
 #ifdef __ANDROID__
 			GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, nullptr, GL_STREAM_DRAW);
+#else
+			GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, nullptr, GL_STREAM_DRAW);
 #endif // !__ANDROID__
 
 			auto target = (uint8_t*)GLExt::glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-			memcpy(target + m_vertexRingOffset, m_resource, m_offset);
+			memcpy(target + m_vertexRingStart, m_resource, m_offset);
 			GLExt::glUnmapBuffer(GL_ARRAY_BUFFER);
 		}
 		else
@@ -175,13 +177,19 @@ void VertexBuffer::Unlock()
 #ifdef __ANDROID__
 			GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
 #else
-			GLExt::glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
+			GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+			//GLExt::glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
 #endif
 		}
 	}
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
+	if (m_isLock)
+	{
+		m_vertexRingOffset += m_offset;
+	}
+
 	m_isLock = false;
 	m_ringBufferLock = false;
 }

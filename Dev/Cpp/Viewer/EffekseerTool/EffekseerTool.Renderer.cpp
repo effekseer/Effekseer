@@ -598,6 +598,7 @@ void Renderer::CopyToBackground()
 	if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
 	{
 		auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
+		r->SetBackground((GLuint)graphics->GetBack());
 	}
 #ifdef _WIN32
 	else
