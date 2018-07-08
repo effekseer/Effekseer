@@ -75,6 +75,12 @@ namespace efk
 		IDirect3DSurface9*	backTarget = nullptr;
 		IDirect3DTexture9*	backTargetTexture = nullptr;
 		*/
+
+		int32_t backTargetWidth = 0;
+		int32_t backTargetHeight = 0;
+		GLuint backTarget = 0;
+		GLuint	frameBufferForCopy = 0;
+
 		EffekseerRendererGL::Renderer*	renderer = nullptr;
 
 	public:

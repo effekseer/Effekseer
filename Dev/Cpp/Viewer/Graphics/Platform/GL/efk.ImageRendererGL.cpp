@@ -229,11 +229,8 @@ static const char g_sprite_fs_no_texture_src[] =
 
 			renderer->SetLayout(shader_);
 
-			// TODO fix it
 			EffekseerRendererGL::GLExt::glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			//EffekseerRendererGL::GLExt::glBindBuffer(GL_ARRAY_BUFFER, renderer->GetVertexBuffer()->GetInterface());
-			//EffekseerRendererGL::GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderer->GetIndexBuffer()->GetInterface());
+			glBindTexture(GL_TEXTURE_2D, (GLuint)sprites[i].TexturePtr);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
 
 			renderer->EndShader(shader_);

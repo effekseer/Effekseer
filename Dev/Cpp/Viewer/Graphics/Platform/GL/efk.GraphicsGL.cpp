@@ -120,6 +120,9 @@ namespace efk
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDeleteFramebuffers(1, &frameBuffer);
 
+		glDeleteFramebuffers(1, &frameBufferForCopy);
+		glDeleteTextures(1, &backTarget);
+
 		recordingTarget.reset();
 		recordingDepth.reset();
 
@@ -153,85 +156,67 @@ namespace efk
 
 		// TODO
 		// create VAO
+
+		glGenTextures(1, &backTarget);
+		glGenFramebuffers(1, &frameBufferForCopy);
+
 		return true;
 	}
 
 	void GraphicsGL::CopyToBackground()
 	{
-		return;
-		/*
-		bool ret = false;
+#ifndef _WIN32
+		GLint backupFramebuffer;
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
+		if (backupFramebuffer <= 0) return false;
+#endif
+		GLint viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+		uint32_t width = viewport[2];
+		uint32_t height = viewport[3];
 
-		HRESULT hr;
-
-		IDirect3DSurface9* tempRender = nullptr;
-		IDirect3DSurface9* tempDepth = nullptr;
-
-		hr = d3d_device->GetRenderTarget(0, &tempRender);
-		if (FAILED(hr))
+		if (backTarget == 0 ||
+			backTargetWidth != width ||
+			backTargetHeight != height)
 		{
-			goto Exit;
+			glBindTexture(GL_TEXTURE_2D, backTarget);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+			backTargetWidth = width;
+			backTargetHeight = height;
 		}
 
-		hr = d3d_device->GetDepthStencilSurface(&tempDepth);
-		if (FAILED(hr))
-		{
-			goto Exit;
+#ifndef _WIN32
+
+		GLint rbtype;
+		glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+			GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &rbtype);
+
+		if (rbtype == GL_RENDERBUFFER) {
+			GLint renderbuffer;
+			glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &renderbuffer);
+
+			glBindFramebuffer(GL_FRAMEBUFFER, framebufferForCopy);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
 		}
+		else if (rbtype == GL_TEXTURE_2D) {
+			GLint renderTexture;
+			glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+				GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &renderTexture);
 
-		D3DSURFACE_DESC temp_desc;
-		D3DSURFACE_DESC background_desc;
-
-		tempRender->GetDesc(&temp_desc);
-
-		if (backTarget != nullptr)
-		{
-			backTarget->GetDesc(&background_desc);
+			glBindFramebuffer(GL_FRAMEBUFFER, framebufferForCopy);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
 		}
+#endif
 
-		if (backTarget == nullptr || temp_desc.Width != background_desc.Width || temp_desc.Height != background_desc.Height)
-		{
-			ES_SAFE_RELEASE(backTarget);
-			ES_SAFE_RELEASE(backTargetTexture);
+		glBindTexture(GL_TEXTURE_2D, backTarget);
+		//glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height );
+		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, viewport[0], viewport[1], width, height);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
-			hr = d3d_device->CreateTexture(
-				temp_desc.Width,
-				temp_desc.Height,
-				1,
-				D3DUSAGE_RENDERTARGET,
-				D3DFMT_A8R8G8B8,
-				D3DPOOL_DEFAULT,
-				&backTargetTexture,
-				NULL
-			);
-
-			if (FAILED(hr))
-			{
-				goto Exit;
-			}
-
-			backTargetTexture->GetSurfaceLevel(0, &backTarget);
-		}
-
-		d3d_device->SetRenderTarget(0, backTarget);
-		d3d_device->SetDepthStencilSurface(nullptr);
-
-		d3d_device->StretchRect(
-			tempRender,
-			nullptr,
-			backTarget,
-			nullptr,
-			D3DTEXF_POINT);
-
-		d3d_device->SetRenderTarget(0, tempRender);
-		d3d_device->SetDepthStencilSurface(tempDepth);
-
-		ret = true;
-
-	Exit:;
-		ES_SAFE_RELEASE(tempRender);
-		ES_SAFE_RELEASE(tempDepth);
-		*/
+#ifndef _WIN32
+		glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
+#endif
 	}
 
 	void GraphicsGL::Resize(int32_t width, int32_t height)
@@ -412,8 +397,7 @@ namespace efk
 
 	void* GraphicsGL::GetBack()
 	{
-		return nullptr;
-		//return backTargetTexture;
+		return (void*)backTarget;
 	}
 
 	EffekseerRenderer::Renderer* GraphicsGL::GetRenderer()

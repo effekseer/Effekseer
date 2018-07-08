@@ -32,7 +32,7 @@ namespace EffekseerTool
 			if (renderer->GetDeviceType() == efk::DeviceType::OpenGL)
 			{
 				auto r = (::EffekseerRendererGL::Renderer*)renderer->GetRenderer();
-				//r->SetBackground(renderer->GetBack());
+				r->SetBackground((GLuint)renderer->GetBack());
 			}
 #ifdef _WIN32
 			else
@@ -321,14 +321,18 @@ bool Renderer::BeginRendering()
 		graphics->Clear(Effekseer::Color(BackgroundColor.R, BackgroundColor.G, BackgroundColor.B, 255));
 	}
 
-	// Render background
+	// Render background (the size of texture is ignored)
 	if( !m_recording && backgroundData != nullptr)
 	{
-		// 値は適当(背景は画面サイズと一致しないので問題ない)
+		if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
+		{
+			m_background->Rendering((void*)backgroundData->UserID, 1024, 1024);
+		}
 #ifdef _WIN32
-		m_background->Rendering((IDirect3DTexture9*)backgroundData->UserPtr, 1024, 1024);
-#else
-		m_background->Rendering(backgroundData->UserPtr, 1024, 1024);
+		else
+		{
+			m_background->Rendering((IDirect3DTexture9*)backgroundData->UserPtr, 1024, 1024);
+		}
 #endif
 	}
 	else if(!m_recording)
@@ -375,6 +379,19 @@ bool Renderer::BeginRendering()
 	{
 		CopyToBackground();
 		
+		if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
+		{
+			auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
+			r->SetBackground((GLuint)graphics->GetBack());
+		}
+#ifdef _WIN32
+		else
+		{
+			auto r = (EffekseerRendererDX9::RendererImplemented*)m_renderer;
+			r->SetBackground((IDirect3DTexture9*)graphics->GetBack());
+		}
+#endif
+
 		m_distortionCallback->Blit = false;
 		m_distortionCallback->IsEnabled = true;
 	}
@@ -388,6 +405,7 @@ bool Renderer::BeginRendering()
 		if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
 		{
 			auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
+			r->SetBackground(0);
 		}
 #ifdef _WIN32
 		else
@@ -422,6 +440,7 @@ bool Renderer::EndRendering()
 		if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
 		{
 			auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
+			r->SetBackground(0);
 		}
 #ifdef _WIN32
 		else
