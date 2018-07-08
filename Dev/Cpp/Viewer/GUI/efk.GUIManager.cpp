@@ -1148,7 +1148,7 @@ namespace efk
 		auto cursorPos = ImGui::GetCursorPos();
 
 		cursorPos.x = window->Pos.x;
-		cursorPos.y += window->Pos.y;
+		cursorPos.y = window->DC.CursorPos.y;
 		ImVec2 size;
 		size.x = window->Size.x;
 		size.y = height;

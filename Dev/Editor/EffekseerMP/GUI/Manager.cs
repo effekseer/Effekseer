@@ -136,10 +136,8 @@ namespace Effekseer.GUI
 
 		internal static Utils.DelayedList<IRemovableControl> Controls = new Utils.DelayedList<IRemovableControl>();
 
-		public static bool Initialize(int width, int height)
+		public static bool Initialize(int width, int height, bool isOpenGLMode)
 		{
-			bool isOpenGLMode = true;
-
 			var mgr = new swig.GUIManager();
 			if (mgr.Initialize("Effekseer", 1280, 720, isOpenGLMode, false))
 			{
