@@ -32,7 +32,7 @@ namespace EffekseerTool
 			if (renderer->GetDeviceType() == efk::DeviceType::OpenGL)
 			{
 				auto r = (::EffekseerRendererGL::Renderer*)renderer->GetRenderer();
-				r->SetBackground((GLuint)renderer->GetBack());
+				r->SetBackground((GLuint)(size_t)renderer->GetBack());
 			}
 #ifdef _WIN32
 			else
@@ -382,7 +382,7 @@ bool Renderer::BeginRendering()
 		if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
 		{
 			auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
-			r->SetBackground((GLuint)graphics->GetBack());
+			r->SetBackground((GLuint)(size_t)graphics->GetBack());
 		}
 #ifdef _WIN32
 		else
@@ -598,7 +598,7 @@ void Renderer::CopyToBackground()
 	if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
 	{
 		auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
-		r->SetBackground((GLuint)graphics->GetBack());
+		r->SetBackground((GLuint)(size_t)graphics->GetBack());
 	}
 #ifdef _WIN32
 	else

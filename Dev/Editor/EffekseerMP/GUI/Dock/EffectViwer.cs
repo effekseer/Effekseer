@@ -29,6 +29,7 @@ namespace Effekseer.GUI.Dock
 			var windowSize = Manager.NativeManager.GetWindowSize();
 
 			// Menu
+			windowSize.X = System.Math.Max(1, windowSize.X - 20);
 			windowSize.Y = System.Math.Max(1, windowSize.Y - 50);
 
 			var p = Manager.Native.RenderView((int)windowSize.X, (int)windowSize.Y);

@@ -230,7 +230,7 @@ static const char g_sprite_fs_no_texture_src[] =
 			renderer->SetLayout(shader_);
 
 			EffekseerRendererGL::GLExt::glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, (GLuint)sprites[i].TexturePtr);
+			glBindTexture(GL_TEXTURE_2D, (GLuint)(size_t)sprites[i].TexturePtr);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
 
 			renderer->EndShader(shader_);

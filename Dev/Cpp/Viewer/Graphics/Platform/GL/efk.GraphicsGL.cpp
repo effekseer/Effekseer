@@ -168,7 +168,7 @@ namespace efk
 #ifndef _WIN32
 		GLint backupFramebuffer;
 		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &backupFramebuffer);
-		if (backupFramebuffer <= 0) return false;
+		if (backupFramebuffer <= 0) return;
 #endif
 		GLint viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
@@ -196,7 +196,7 @@ namespace efk
 			glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
 				GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &renderbuffer);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, framebufferForCopy);
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopy);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
 		}
 		else if (rbtype == GL_TEXTURE_2D) {
@@ -204,7 +204,7 @@ namespace efk
 			glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
 				GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &renderTexture);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, framebufferForCopy);
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopy);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
 		}
 #endif

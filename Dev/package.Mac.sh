@@ -5,7 +5,7 @@ export CC="clang -arch i386 -mmacosx-version-min=10.6"
 mkdir Mac/Effekseer.app/Contents/Resources/
 
 (cd release;
-mkbundle -o Effekseer EffekseerMP.exe --deps --sdk /Library/Frameworks/Mono.framework/Versions/Current;
+mkbundle -o Effekseer Effekseer.exe --deps --sdk /Library/Frameworks/Mono.framework/Versions/Current;
 otool -L Effekseer;)
 
 (cd release;
