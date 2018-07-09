@@ -859,6 +859,55 @@ namespace Effekseer
 
 		public static bool MoveNode(Data.Node movedNode, Data.NodeBase targetParent, int targetIndex)
 		{
+			// Check
+			if(movedNode.Parent == targetParent && targetIndex != int.MaxValue)
+			{
+				var index = targetParent.Children.Internal.Select((i, n) => Tuple.Create(i, n)).FirstOrDefault(_ => _.Item1 == movedNode).Item2;
+
+				// Not changed.
+				if (index == targetIndex || index + 1 == targetIndex)
+				{
+					return false;
+				}
+			}
+
+			if(movedNode == targetParent)
+			{
+				return false;
+			}
+
+			Func<Data.Node, bool> isFound = null;
+			
+			isFound = (Data.Node n) =>
+			{
+				if(n.Children.Internal.Any(_=>_ == targetParent))
+				{
+					return true;
+				}
+
+				foreach(var n_ in n.Children.Internal)
+				{
+					if (isFound(n_)) return true;
+				}
+
+				return false;
+			};
+
+			if(isFound(movedNode))
+			{
+				return false;
+			}
+
+			// 
+			if(targetParent == movedNode.Parent && targetIndex != int.MaxValue)
+			{
+				var index = targetParent.Children.Internal.Select((i, n) => Tuple.Create(i, n)).FirstOrDefault(_ => _.Item1 == movedNode).Item2;
+				if(index < targetIndex)
+				{
+					targetIndex -= 1;
+				}
+			}
+
 			Command.CommandManager.StartCollection();
 			movedNode.Parent.RemoveChild(movedNode);
 			targetParent.AddChild(movedNode, targetIndex);

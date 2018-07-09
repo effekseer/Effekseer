@@ -72,6 +72,8 @@ namespace Effekseer.Data
 				node = new Node(this);
 			}
 
+			var old_parent = node.Parent;
+			var new_parent = this;
 			var old_value = children;
 			var new_value = new List<Node>(children);
 
@@ -95,7 +97,8 @@ namespace Effekseer.Data
 				() =>
 				{
 					children = new_value;
-					
+					node.Parent = new_parent;
+
 					if (OnAfterAddNode != null)
 					{
 						OnAfterAddNode(this, new ChangedValueEventArgs(node, ChangedValueType.Execute));
@@ -104,6 +107,7 @@ namespace Effekseer.Data
 				() =>
 				{
 					children = old_value;
+					node.Parent = old_parent;
 
 					if (OnAfterRemoveNode != null)
 					{
