@@ -96,6 +96,32 @@ namespace EffekseerTool
 			graphics = new efk::GraphicsDX9();
 		}
 #endif
+		graphics->LostedDevice = [this]() -> void
+		{
+			if (backgroundData != nullptr)
+			{
+				textureLoader->Unload(backgroundData);
+				backgroundData = nullptr;
+			}
+
+			viewRenderTexture.reset();
+			viewDepthTexture.reset();
+
+			if (LostedDevice != nullptr)
+			{
+				LostedDevice();
+			}
+		};
+
+		graphics->ResettedDevice = [this]() -> void
+		{
+			if (ResettedDevice != nullptr)
+			{
+				ResettedDevice();
+			}
+
+			backgroundData = textureLoader->Load(backgroundPath.c_str(), Effekseer::TextureType::Color);
+		};
 	}
 
 	Renderer::~Renderer()
@@ -169,28 +195,7 @@ bool Renderer::Present()
 
 void Renderer::ResetDevice()
 {
-	if (backgroundData != nullptr)
-	{
-		textureLoader->Unload(backgroundData);
-		backgroundData = nullptr;
-	}
-
-	viewRenderTexture.reset();
-	viewDepthTexture.reset();
-
-	if (LostedDevice != nullptr)
-	{
-		LostedDevice();
-	}
-
 	graphics->ResetDevice();
-
-	if (ResettedDevice != nullptr)
-	{
-		ResettedDevice();
-	}
-
-	backgroundData = textureLoader->Load(backgroundPath.c_str(), Effekseer::TextureType::Color);
 }
 
 eProjectionType Renderer::GetProjectionType()
@@ -285,8 +290,6 @@ bool Renderer::Resize( int width, int height )
 	}
 
 	graphics->Resize(width, height);
-
-	ResetDevice();
 
 	return true;
 }

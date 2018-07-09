@@ -7,6 +7,10 @@
 #include "Graphics/efk.AVIExporter.h"
 #include "Graphics/efk.GifHelper.h"
 
+#ifdef _WIN32
+#include "3rdParty/imgui_platform/imgui_impl_dx9.h"
+#endif
+
 #include "dll.h"
 
 #pragma comment(lib, "d3d9.lib" )
@@ -507,6 +511,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 		// Assign device lost events.
 		g_renderer->LostedDevice = [this]() -> void
 		{
+
 			this->InvalidateTextureCache();
 			auto e = this->GetEffect();
 			if (e != nullptr)
@@ -531,9 +536,22 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 				for (auto& resource : g_imageResources)
 				{
 					loader->Unload(resource.second->GetTextureData());
+					resource.second->GetTextureData() = nullptr;
 				}
 
 				delete loader;
+			}
+
+			{
+				if (g_isOpenGLMode)
+				{
+				}
+#ifdef _WIN32
+				else
+				{
+					ImGui_ImplDX9_InvalidateDeviceObjects();
+				}
+#endif
 			}
 		};
 
@@ -565,6 +583,18 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 				}
 
 				delete loader;
+			}
+
+			{
+				if (g_isOpenGLMode)
+				{
+				}
+#ifdef _WIN32
+				else
+				{
+					ImGui_ImplDX9_CreateDeviceObjects();
+				}
+#endif
 			}
 		};
 	}

@@ -2794,7 +2794,17 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ResetGUI___(void * 
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_RenderGUI___(void * jarg1) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_RenderGUI__SWIG_0___(void * jarg1, unsigned int jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  (arg1)->RenderGUI(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_RenderGUI__SWIG_1___(void * jarg1) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   
   arg1 = (efk::GUIManager *)jarg1; 

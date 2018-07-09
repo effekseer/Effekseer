@@ -535,29 +535,30 @@ namespace efk
 		ImGui_ImplGlfw_NewFrame();
 	}
 
-	void GUIManager::RenderGUI()
+	void GUIManager::RenderGUI(bool isValid)
 	{
 		ImGui::Render();
 
-		if (isOpenGLMode)
+		if (isValid)
 		{
-			ImGui_ImplGL3_RenderDrawData(ImGui::GetDrawData());
+			if (isOpenGLMode)
+			{
+				ImGui_ImplGL3_RenderDrawData(ImGui::GetDrawData());
+			}
+			else
+			{
+#if _WIN32
+				ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+#endif
+			}
 		}
 		else
 		{
-#if _WIN32
-			ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-#endif
+			if (ImGui::GetDrawData() != nullptr)
+			{
+				ImGui::GetDrawData()->Clear();
+			}
 		}
-		
-		/*
-		glEnable(GL_DEPTH_TEST);
-		glDepthMask(GL_TRUE);
-
-		auto bit = GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-		glClearDepth(1.0f);
-		glClear(bit);
-		*/
 	}
 
 	void* GUIManager::GetNativeHandle()

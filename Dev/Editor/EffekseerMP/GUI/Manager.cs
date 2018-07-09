@@ -23,6 +23,8 @@ namespace Effekseer.GUI
 				Manager.WindowSize.X = x;
 				Manager.WindowSize.Y = y;
 			}
+
+			Manager.resizedCount = 5;
 		}
 
 		public override void Focused()
@@ -89,6 +91,7 @@ namespace Effekseer.GUI
 		internal static swig.Vec2 WindowSize = new swig.Vec2(1280, 720);
 
 		static int resetCount = 0;
+		internal static int resizedCount = 0;
 
         /// <summary>
         /// if this flag is true, a dialog box on disposing is not shown
@@ -389,6 +392,11 @@ namespace Effekseer.GUI
 				}
 			}
 
+			if(resizedCount > 0)
+			{
+				resizedCount--;
+			}
+
 			Controls.Lock();
 
 			foreach (var c in Controls.Internal)
@@ -423,7 +431,7 @@ namespace Effekseer.GUI
 				}
 			}
 
-			NativeManager.RenderGUI();
+			NativeManager.RenderGUI(resizedCount == 0);
 
 			Native.Present();
 			NativeManager.Present();

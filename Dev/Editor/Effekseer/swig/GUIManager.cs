@@ -105,8 +105,12 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_ResetGUI(swigCPtr);
   }
 
+  public void RenderGUI(bool isValid) {
+    EffekseerNativePINVOKE.GUIManager_RenderGUI__SWIG_0(swigCPtr, isValid);
+  }
+
   public void RenderGUI() {
-    EffekseerNativePINVOKE.GUIManager_RenderGUI(swigCPtr);
+    EffekseerNativePINVOKE.GUIManager_RenderGUI__SWIG_1(swigCPtr);
   }
 
   public System.IntPtr GetNativeHandle() { return EffekseerNativePINVOKE.GUIManager_GetNativeHandle(swigCPtr); }

@@ -801,8 +801,11 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_ResetGUI___")]
   public static extern void GUIManager_ResetGUI(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_RenderGUI___")]
-  public static extern void GUIManager_RenderGUI(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_RenderGUI__SWIG_0___")]
+  public static extern void GUIManager_RenderGUI__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_RenderGUI__SWIG_1___")]
+  public static extern void GUIManager_RenderGUI__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetNativeHandle___")]
   public static extern System.IntPtr GUIManager_GetNativeHandle(global::System.Runtime.InteropServices.HandleRef jarg1);

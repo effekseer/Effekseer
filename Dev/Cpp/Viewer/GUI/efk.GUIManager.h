@@ -267,7 +267,7 @@ namespace efk
 
 		void ResetGUI();
 
-		void RenderGUI();
+		void RenderGUI(bool isValid = true);
 
 		void* GetNativeHandle();
 
