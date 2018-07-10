@@ -286,8 +286,18 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_TextWrapped(swigCPtr, text);
   }
 
+  public bool Button(string label, float size_x, float size_y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Button__SWIG_0(swigCPtr, label, size_x, size_y);
+    return ret;
+  }
+
+  public bool Button(string label, float size_x) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Button__SWIG_1(swigCPtr, label, size_x);
+    return ret;
+  }
+
   public bool Button(string label) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Button(swigCPtr, label);
+    bool ret = EffekseerNativePINVOKE.GUIManager_Button__SWIG_2(swigCPtr, label);
     return ret;
   }
 

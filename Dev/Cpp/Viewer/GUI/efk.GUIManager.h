@@ -322,7 +322,7 @@ namespace efk
 		void TextWrapped(const char16_t* text);
 
 		// Main
-		bool Button(const char16_t* label);
+		bool Button(const char16_t* label, float size_x = 0.0f, float size_y = 0.0f);
 
 		void Image(ImageResource* user_texture_id, float x, float y);
 

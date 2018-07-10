@@ -755,17 +755,31 @@ namespace efk
 
 	void GUIManager::Text(const char16_t* text)
 	{
-		ImGui::Text(utf8str<1024>(text));
+		if (std::char_traits<char16_t>::length(text) < 1024)
+		{
+			ImGui::Text(utf8str<1024>(text));
+		}
+		else
+		{
+			ImGui::Text(utf16_to_utf8(text).c_str());
+		}
 	}
 
 	void GUIManager::TextWrapped(const char16_t* text)
 	{
-		ImGui::TextWrapped(utf8str<1024>(text));
+		if (std::char_traits<char16_t>::length(text) < 1024)
+		{
+			ImGui::TextWrapped(utf8str<1024>(text));
+		}
+		else
+		{
+			ImGui::TextWrapped(utf16_to_utf8(text).c_str());
+		}
 	}
 
-	bool GUIManager::Button(const char16_t* label)
+	bool GUIManager::Button(const char16_t* label, float size_x, float size_y)
 	{
-		return ImGui::Button(utf8str<256>(label));
+		return ImGui::Button(utf8str<256>(label), ImVec2(size_x, size_y));
 	}
 
 	void GUIManager::Image(ImageResource* user_texture_id, float x, float y)

@@ -38,7 +38,9 @@ namespace Effekseer.GUI.Dialog
             {
                 Manager.NativeManager.Text(message);
 
-                if (Manager.NativeManager.Button("OK"))
+				Manager.NativeManager.Separator();
+
+                if (Manager.NativeManager.Button("Yes", 100))
 				{
 					if(Commands.Overwrite())
 					{
@@ -49,7 +51,7 @@ namespace Effekseer.GUI.Dialog
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("No"))
+				if (Manager.NativeManager.Button("No", 100))
                 {
                     ShouldBeRemoved = true;
 					disposed();        
@@ -57,7 +59,7 @@ namespace Effekseer.GUI.Dialog
                 
                 Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("Cancel"))
+				if (Manager.NativeManager.Button("Cancel", 100))
                 {
                     ShouldBeRemoved = true;
                 }

@@ -72,25 +72,35 @@ Dock Panel Suite
 
 			if (Manager.NativeManager.BeginPopupModal(title + id, ref opened, swig.WindowFlags.None))
             {
-				Manager.NativeManager.Image(Images.GetIcon("AppIcon"), 32, 32);
+				const float iconSize = 64;
+
+				Manager.NativeManager.Image(Images.GetIcon("AppIcon"), iconSize, iconSize);
 
 				Manager.NativeManager.SameLine();
+				
+				Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + iconSize / 2 - Manager.NativeManager.GetTextLineHeight() / 2);
+				Manager.NativeManager.Text(versionInfo);
 
-                Manager.NativeManager.Text(versionInfo);
+				Manager.NativeManager.Separator();
 
                 Manager.NativeManager.TextWrapped(license);
-
-                if(Manager.NativeManager.Button("http://effekseer.github.io/"))
+				
+				Manager.NativeManager.Separator();
+				
+                if(Manager.NativeManager.Button("Website: http://effekseer.github.io/"))
                 {
                     System.Diagnostics.Process.Start("http://effekseer.github.io/");
                 }
-
-                if (Manager.NativeManager.Button("https://github.com/effekseer/Effekseer"))
+				
+                if (Manager.NativeManager.Button("Repository: https://github.com/effekseer/Effekseer"))
                 {
                     System.Diagnostics.Process.Start("https://github.com/effekseer/Effekseer");
                 }
-
-                if (Manager.NativeManager.Button("OK"))
+				
+				Manager.NativeManager.Separator();
+				
+				Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - 100 / 2);
+                if (Manager.NativeManager.Button("OK", 100))
                 {
                     ShouldBeRemoved = true;
                 }
