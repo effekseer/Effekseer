@@ -5,5 +5,7 @@
   <dict>
     <key>CFBundleExecutable</key>
     <string>script.sh</string>
+    <key>CFBundleIconFile</key>
+    <string>Icon.icns</string>
   </dict>
 </plist>
