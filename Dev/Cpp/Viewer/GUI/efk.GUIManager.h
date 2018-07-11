@@ -246,6 +246,8 @@ namespace efk
 
 		void SetTitle(const char16_t* title);
 
+		void SetWindowIcon(const char16_t* iconPath);
+
 		Vec2 GetSize() const;
 
 		void SetSize(int32_t width, int32_t height);

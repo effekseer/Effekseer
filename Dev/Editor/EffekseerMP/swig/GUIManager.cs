@@ -56,6 +56,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetTitle(swigCPtr, title);
   }
 
+  public void SetWindowIcon(string iconPath) {
+    EffekseerNativePINVOKE.GUIManager_SetWindowIcon(swigCPtr, iconPath);
+  }
+
   public Vec2 GetSize() {
     Vec2 ret = new Vec2(EffekseerNativePINVOKE.GUIManager_GetSize(swigCPtr), true);
     return ret;

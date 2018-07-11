@@ -176,6 +176,9 @@ namespace Effekseer.GUI
 			// Load font
 			NativeManager.AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 16);
 
+			// Load window icon
+			NativeManager.SetWindowIcon("resources/icon.png");
+
 			// Load config
 			RecentFiles.LoadRecentConfig();
 			Shortcuts.LoadShortcuts();

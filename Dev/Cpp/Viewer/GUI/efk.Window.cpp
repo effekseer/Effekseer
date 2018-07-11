@@ -1,5 +1,7 @@
-
+#include <memory>
 #include "efk.Window.h"
+#include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include "../Effekseer/Effekseer/Effekseer.DefaultFile.h"
 
 #ifdef __APPLE__
 #include <OpenGL/gl3.h>
@@ -157,6 +159,29 @@ namespace efk
 	void Window::SetTitle(const char16_t* title)
 	{
 		glfwSetWindowTitle(window, utf16_to_utf8(title).c_str());
+	}
+
+	void Window::SetWindowIcon(const char16_t * iconPath)
+	{
+		Effekseer::DefaultFileInterface file;
+		std::unique_ptr<Effekseer::FileReader> 
+			reader( file.OpenRead( iconPath ) );
+		if( reader.get() != NULL ) {
+			size_t size = reader->GetLength();
+			std::vector<uint8_t> data(size);
+			reader->Read( &data[0], size );
+
+			using PngLoader = EffekseerRenderer::PngTextureLoader;
+			PngLoader::Initialize();
+			PngLoader::Load(&data[0], size, false);
+			PngLoader::Finalize();
+
+			GLFWimage image;
+			image.pixels = PngLoader::GetData().data();
+			image.width = PngLoader::GetWidth();
+			image.height = PngLoader::GetHeight();
+			glfwSetWindowIcon(window, 1, &image);
+		}
 	}
 
 	Vec2 Window::GetSize() const

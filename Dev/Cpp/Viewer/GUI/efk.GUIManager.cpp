@@ -460,6 +460,11 @@ namespace efk
 		window->SetTitle(title);
 	}
 
+	void GUIManager::SetWindowIcon(const char16_t * iconPath)
+	{
+		window->SetWindowIcon(iconPath);
+	}
+
 	Vec2 GUIManager::GetSize() const
 	{
 		return window->GetSize();
