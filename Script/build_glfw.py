@@ -12,6 +12,7 @@ with aceutils.CurrentDir('../Downloads'):
 	aceutils.editCmakeForACE(pathname + r'/CMakeLists.txt')
 	aceutils.mkdir(r"glfw_bin")
 	aceutils.mkdir(r"glfw_bin_x64")
+	aceutils.mkdir(r'glfw_bin/i386')
 
 	with aceutils.CurrentDir('glfw_bin'):
 		if aceutils.isWin():
