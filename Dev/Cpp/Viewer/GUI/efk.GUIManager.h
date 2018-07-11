@@ -233,6 +233,7 @@ namespace efk
 		efk::Window*	window = nullptr;
 		bool			isOpenGLMode = false;
 		std::u16string	clipboard;
+		float			fontScale = 1.0f;
 
 	public:
 		GUIManager();

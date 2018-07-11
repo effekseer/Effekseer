@@ -400,7 +400,14 @@ namespace efk
 			glewInit();
 #endif
 		}
-       		
+
+#ifdef _WIN32
+		// Calculate font scale from DPI
+		HDC screen = GetDC(0);
+		int dpiX = GetDeviceCaps(screen, LOGPIXELSX);
+		fontScale = (float)dpiX / 96.0f;
+#endif
+		
 		return true;
 	}
 
@@ -1099,6 +1106,9 @@ namespace efk
 	void GUIManager::AddFontFromFileTTF(const char* filename, float size_pixels)
 	{
 		ImGuiIO& io = ImGui::GetIO();
+		
+		size_pixels = roundf(size_pixels * fontScale);
+
 		io.Fonts->AddFontFromFileTTF(filename, size_pixels, nullptr, glyphRangesJapanese);
 	}
 
