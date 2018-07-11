@@ -1028,6 +1028,16 @@ namespace efk
 		ImGui::SetTooltip(utf8str<256>(text));
 	}
 
+	void GUIManager::BeginTooltip()
+	{
+		ImGui::BeginTooltip();
+	}
+
+	void GUIManager::EndTooltip()
+	{
+		ImGui::EndTooltip();
+	}
+
 	bool GUIManager::BeginMainMenuBar()
 	{
 		return ImGui::BeginMainMenuBar();

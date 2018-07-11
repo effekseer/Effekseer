@@ -913,6 +913,14 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetTooltip(swigCPtr, text);
   }
 
+  public void BeginTooltip() {
+    EffekseerNativePINVOKE.GUIManager_BeginTooltip(swigCPtr);
+  }
+
+  public void EndTooltip() {
+    EffekseerNativePINVOKE.GUIManager_EndTooltip(swigCPtr);
+  }
+
   public bool BeginMainMenuBar() {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginMainMenuBar(swigCPtr);
     return ret;

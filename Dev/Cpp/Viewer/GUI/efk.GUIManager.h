@@ -387,6 +387,8 @@ namespace efk
 
 		// Tooltips
 		void SetTooltip(const char16_t* text);
+		void BeginTooltip();
+		void EndTooltip();
 
 		// Menus
 		bool BeginMainMenuBar();                                                

@@ -49,7 +49,15 @@ namespace Effekseer.GUI.Component
 
 				if (Manager.NativeManager.IsItemHovered())
 				{
-					Manager.NativeManager.SetTooltip(c.Description);
+					//Manager.NativeManager.SetTooltip(c.Description);
+
+					Manager.NativeManager.BeginTooltip();
+
+					Manager.NativeManager.Text(c.Label);
+					Manager.NativeManager.Separator();
+					Manager.NativeManager.Text(c.Description);
+
+					Manager.NativeManager.EndTooltip();
 				}
 
 				//Manager.NativeManager.PopItemWidth();
