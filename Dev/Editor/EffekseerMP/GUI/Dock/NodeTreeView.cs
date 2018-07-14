@@ -361,7 +361,8 @@ namespace Effekseer.GUI.Dock
 		{
 			var visible = Node.IsRendered;
 
-			if (Manager.NativeManager.ImageButton(Images.GetIcon(visible ? "VisibleShow" : "VisibleHide"), 16, 16))
+			float buttonSize = Manager.NativeManager.GetTextLineHeight();
+			if (Manager.NativeManager.ImageButton(Images.GetIcon(visible ? "VisibleShow" : "VisibleHide"), buttonSize, buttonSize))
 			{
 				int LEFT_SHIFT = 340;
 				int RIGHT_SHIFT = 344;

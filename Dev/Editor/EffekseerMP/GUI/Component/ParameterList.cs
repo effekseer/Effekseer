@@ -42,9 +42,17 @@ namespace Effekseer.GUI.Component
 			for(int i = 0; i < controlRows.Internal.Count; i++)
 			{
 				var c = controlRows.Internal[i].Control as IParameterControl;
-
+				
+				if(i > 0 && 
+					(controlRows[i - 1].SelectorIndent > controlRows[i].SelectorIndent ||
+					controlRows[i].IsSelector ||
+					(controlRows[i - 1].SelectorIndent == controlRows[i].SelectorIndent && controlRows[i - 1].IsSelector)))
+				{
+					Manager.NativeManager.Separator();
+				}
 				//Manager.NativeManager.PushItemWidth(100);
-
+				
+				Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + Manager.TextOffsetY);
 				Manager.NativeManager.Text(c.Label);
 
 				if (Manager.NativeManager.IsItemHovered())
@@ -64,14 +72,6 @@ namespace Effekseer.GUI.Component
 
 				Manager.NativeManager.NextColumn();
 
-				if(i > 0 && 
-					(controlRows[i - 1].SelectorIndent > controlRows[i].SelectorIndent ||
-					controlRows[i].IsSelector ||
-					(controlRows[i - 1].SelectorIndent == controlRows[i].SelectorIndent && controlRows[i - 1].IsSelector)))
-				{
-					Manager.NativeManager.Separator();
-				}
-				
 				Manager.NativeManager.PushItemWidth(-1);
 				c.Update();
 				Manager.NativeManager.PopItemWidth();

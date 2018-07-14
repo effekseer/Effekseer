@@ -90,6 +90,8 @@ namespace Effekseer.GUI
 
 		internal static swig.Vec2 WindowSize = new swig.Vec2(1280, 720);
 
+		public static float TextOffsetY {get; private set;}
+
 		static int resetCount = 0;
 		internal static int resizedCount = 0;
 
@@ -211,6 +213,8 @@ namespace Effekseer.GUI
 			{
 				ResetWindowActually();
 			}
+
+			TextOffsetY = (NativeManager.GetTextLineHeightWithSpacing() - NativeManager.GetTextLineHeight()) / 2;
 
 			Network = new Network(Native);
 
