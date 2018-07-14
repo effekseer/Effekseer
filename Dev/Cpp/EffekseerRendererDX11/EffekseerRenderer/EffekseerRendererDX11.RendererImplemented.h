@@ -324,6 +324,9 @@ private:
 	::Effekseer::Matrix44	m_camera;
 	::Effekseer::Matrix44	m_cameraProj;
 
+	::Effekseer::Vector3D	m_cameraPosition;
+	::Effekseer::Vector3D	m_cameraFrontDirection;
+
 	// 座標系
 	::Effekseer::CoordinateSystem			m_coordinateSystem;
 
@@ -451,6 +454,12 @@ public:
 		@brief	カメラ行列を設定する。
 	*/
 	void SetCameraMatrix( const ::Effekseer::Matrix44& mat );
+
+	::Effekseer::Vector3D GetCameraFrontDirection() const override;
+
+	::Effekseer::Vector3D GetCameraPosition() const  override;
+
+	void SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position)  override;
 
 	/**
 		@brief	カメラプロジェクション行列を取得する。

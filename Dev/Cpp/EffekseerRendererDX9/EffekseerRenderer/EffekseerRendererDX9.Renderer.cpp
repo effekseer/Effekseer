@@ -726,6 +726,8 @@ const ::Effekseer::Matrix44& RendererImplemented::GetCameraMatrix() const
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 {
+	m_cameraFrontDirection = ::Effekseer::Vector3D(mat.Values[0][2], mat.Values[1][2], mat.Values[2][2]);
+	m_cameraPosition = ::Effekseer::Vector3D(mat.Values[3][0], mat.Values[3][1], mat.Values[3][2]);
 	m_camera = mat;
 }
 
@@ -735,6 +737,22 @@ void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 ::Effekseer::Matrix44& RendererImplemented::GetCameraProjectionMatrix()
 {
 	return m_cameraProj;
+}
+
+::Effekseer::Vector3D RendererImplemented::GetCameraFrontDirection() const
+{
+	return m_cameraFrontDirection;
+}
+
+::Effekseer::Vector3D RendererImplemented::GetCameraPosition() const
+{
+	return m_cameraPosition;
+}
+
+void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position)
+{
+	m_cameraFrontDirection = front;
+	m_cameraPosition = position;
 }
 
 //----------------------------------------------------------------------------------

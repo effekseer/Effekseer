@@ -45,6 +45,8 @@ public:
 	*/
 	Vector3D( float x, float y, float z );
 
+	Vector3D operator-();
+
 	Vector3D operator + ( const Vector3D& o ) const;
 
 	Vector3D operator - ( const Vector3D& o ) const;

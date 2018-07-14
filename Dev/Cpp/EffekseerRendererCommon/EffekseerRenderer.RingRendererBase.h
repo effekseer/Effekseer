@@ -291,7 +291,7 @@ protected:
 			{
 				::Effekseer::Vector3D Up( 0.0f, 1.0f, 0.0f );
 
-				::Effekseer::Vector3D::Normal( F, ::Effekseer::Vector3D( - camera.Values[0][2], - camera.Values[1][2], - camera.Values[2][2] ) );
+				::Effekseer::Vector3D::Normal( F, -m_renderer->GetCameraFrontDirection());
 
 				::Effekseer::Vector3D::Normal( R, ::Effekseer::Vector3D::Cross( R, Up, F ) );
 				::Effekseer::Vector3D::Normal( U, ::Effekseer::Vector3D::Cross( U, F, R ) );
@@ -300,7 +300,7 @@ protected:
 			{
 				::Effekseer::Vector3D Up( 0.0f, 1.0f, 0.0f );
 
-				::Effekseer::Vector3D::Normal( F, ::Effekseer::Vector3D( - camera.Values[0][2], - camera.Values[1][2], - camera.Values[2][2] ) );
+				::Effekseer::Vector3D::Normal( F, -m_renderer->GetCameraFrontDirection());
 
 				::Effekseer::Vector3D::Normal( R, ::Effekseer::Vector3D::Cross( R, Up, F ) );
 				::Effekseer::Vector3D::Normal( U, ::Effekseer::Vector3D::Cross( U, F, R ) );
@@ -336,7 +336,7 @@ protected:
 			{
 				U = ::Effekseer::Vector3D( r.Value[1][0], r.Value[1][1], r.Value[1][2] );
 
-				::Effekseer::Vector3D::Normal( F, ::Effekseer::Vector3D( - camera.Values[0][2], - camera.Values[1][2], - camera.Values[2][2] ) );
+				::Effekseer::Vector3D::Normal( F, -m_renderer->GetCameraFrontDirection());
 
 				::Effekseer::Vector3D::Normal( R, ::Effekseer::Vector3D::Cross( R, U, F ) );
 				::Effekseer::Vector3D::Normal( F, ::Effekseer::Vector3D::Cross( F, R, U ) );
@@ -385,7 +385,7 @@ protected:
 		{
 			auto mat = instanceParameter.SRTMatrix43;
 
-			ApplyDepthOffset(mat, camera, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale, parameter.IsRightHand);
+			ApplyDepthOffset(mat, m_renderer->GetCameraFrontDirection(), m_renderer->GetCameraPosition(), parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale, parameter.IsRightHand);
 
 			if( m_instanceCount > 1 )
 			{

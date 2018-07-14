@@ -179,7 +179,7 @@ namespace EffekseerRenderer
 
 						U = ::Effekseer::Vector3D(r.Value[1][0], r.Value[1][1], r.Value[1][2]);
 
-						::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D(-camera.Values[0][2], -camera.Values[1][2], -camera.Values[2][2]));
+						::Effekseer::Vector3D::Normal(F, -m_renderer->GetCameraFrontDirection());
 
 						::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, U, F));
 						::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D::Cross(F, R, U));
@@ -300,7 +300,7 @@ namespace EffekseerRenderer
 
 							U = ::Effekseer::Vector3D(r.Value[1][0], r.Value[1][1], r.Value[1][2]);
 
-							::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D(-camera.Values[0][2], -camera.Values[1][2], -camera.Values[2][2]));
+							::Effekseer::Vector3D::Normal(F, -m_renderer->GetCameraFrontDirection());
 
 							::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, U, F));
 							::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D::Cross(F, R, U));

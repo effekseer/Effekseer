@@ -20,11 +20,11 @@ namespace EffekseerRenderer
 //
 //-----------------------------------------------------------------------------------
 
-	static void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Matrix44& camera, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
+	static void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Vector3D& cameraFront, const ::Effekseer::Vector3D& cameraPos, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
 	{
 		if (depthOffset != 0)
 		{
-			auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
+			auto f = cameraFront;
 
 			auto offset = depthOffset;
 
@@ -53,9 +53,9 @@ namespace EffekseerRenderer
 
 			if (isDepthOffsetScaledWithCamera)
 			{
-				auto cx = mat.Value[3][0] + camera.Values[3][0];
-				auto cy = mat.Value[3][1] + camera.Values[3][1];
-				auto cz = mat.Value[3][2] + camera.Values[3][2];
+				auto cx = mat.Value[3][0] + cameraPos.X;
+				auto cy = mat.Value[3][1] + cameraPos.Y;
+				auto cz = mat.Value[3][2] + cameraPos.Z;
 				auto cl = sqrt(cx * cx + cy * cy + cz * cz);
 
 				if (cl != 0.0)

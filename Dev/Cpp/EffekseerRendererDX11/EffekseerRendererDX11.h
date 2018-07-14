@@ -164,6 +164,24 @@ public:
 	virtual ::Effekseer::Matrix44& GetCameraProjectionMatrix() = 0;
 
 	/**
+		@brief	Get a front direction of camera
+	*/
+	virtual ::Effekseer::Vector3D GetCameraFrontDirection() const = 0;
+
+	/**
+		@brief	Get a position of camera
+	*/
+	virtual ::Effekseer::Vector3D GetCameraPosition() const = 0;
+
+	/**
+		@brief	Set a front direction and position of camera manually
+		@note
+		These are set based on camera matrix automatically.
+		It is failed on some platform.
+	*/
+	virtual void SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position) = 0;
+
+	/**
 		@brief	スプライトレンダラーを生成する。
 	*/
 	virtual ::Effekseer::SpriteRenderer* CreateSpriteRenderer() = 0;

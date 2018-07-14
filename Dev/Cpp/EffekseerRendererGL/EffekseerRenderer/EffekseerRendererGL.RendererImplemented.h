@@ -401,6 +401,9 @@ private:
 	::Effekseer::Matrix44	m_camera;
 	::Effekseer::Matrix44	m_cameraProj;
 
+	::Effekseer::Vector3D	m_cameraPosition;
+	::Effekseer::Vector3D	m_cameraFrontDirection;
+
 	::EffekseerRenderer::RenderStateBase*		m_renderState;
 
 	Effekseer::TextureData	m_background;
@@ -529,6 +532,12 @@ public:
 		@brief	カメラプロジェクション行列を取得する。
 	*/
 	::Effekseer::Matrix44& GetCameraProjectionMatrix() override;
+
+	::Effekseer::Vector3D GetCameraFrontDirection() const override;
+
+	::Effekseer::Vector3D GetCameraPosition() const  override;
+
+	void SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position)  override;
 
 	/**
 		@brief	スプライトレンダラーを生成する。
