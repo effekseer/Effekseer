@@ -15,11 +15,11 @@ namespace Effekseer.GUI
 
 
 		public override void Resized(int x, int y)
-		{
-			Manager.Native.ResizeWindow(x, y);
-
+		{			
 			if(x > 0 && y > 0)
 			{
+				Manager.Native.ResizeWindow(x, y);
+
 				Manager.WindowSize.X = x;
 				Manager.WindowSize.Y = y;
 			}

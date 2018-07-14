@@ -96,7 +96,7 @@ namespace Effekseer.GUI.Component
 
 			if (binding == null) return;
 		
-			if(Manager.NativeManager.Button(Resources.GetString("Load" + id1)))
+			if(Manager.NativeManager.Button(Resources.GetString("Load") + id1))
 			{
 				btn_load_Click();
 			}
@@ -109,7 +109,7 @@ namespace Effekseer.GUI.Component
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			if (Manager.NativeManager.Button(Resources.GetString("Delete" + id2)))
+			if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2))
 			{
 				btn_delete_Click();
 			}
