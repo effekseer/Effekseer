@@ -310,6 +310,8 @@ namespace efk
 		float GetCursorPosY();
 		float GetTextLineHeight();
 		float GetTextLineHeightWithSpacing();
+		float GetFrameHeight();
+		float GetFrameHeightWithSpacing();
 
 		// Column
 		void  Columns(int count = 1, const char* id = NULL, bool border = true);

@@ -234,6 +234,16 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public float GetFrameHeight() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetFrameHeight(swigCPtr);
+    return ret;
+  }
+
+  public float GetFrameHeightWithSpacing() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetFrameHeightWithSpacing(swigCPtr);
+    return ret;
+  }
+
   public void Columns(int count, string id, bool border) {
     EffekseerNativePINVOKE.GUIManager_Columns__SWIG_0(swigCPtr, count, id, border);
   }

@@ -182,12 +182,12 @@ namespace Effekseer.GUI.Component
 				txt_r2 = Resources.GetString("Min");
 			}
 
-			Manager.NativeManager.PushItemWidth(140);
+			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 60);
 			if (Manager.NativeManager.DragFloat3EfkEx(id1, internalValue1, step, 
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue, 
-				"X:" + "%.3f", "Y:" + "%.3f", "Z:" + "%.3f"))
+				"X:%.3f", "Y:%.3f", "Z:%.3f"))
 			{
 				if (EnableUndo)
 				{
@@ -257,7 +257,7 @@ namespace Effekseer.GUI.Component
 
 			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(txt_r2);
-
+			
 			Manager.NativeManager.PopItemWidth();
 		}
 

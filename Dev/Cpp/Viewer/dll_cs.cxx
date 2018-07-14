@@ -3134,6 +3134,30 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetTextLineHeightW
 }
 
 
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetFrameHeight___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetFrameHeight();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetFrameHeightWithSpacing___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetFrameHeightWithSpacing();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Columns__SWIG_0___(void * jarg1, int jarg2, char * jarg3, unsigned int jarg4) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int arg2 ;

@@ -44,19 +44,23 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.PopItemWidth();
 
 			Manager.NativeManager.SameLine();
-			if(Manager.NativeManager.ImageButton(Images.BackStep, 48, 21))
+			
+			float buttonSizeY = Manager.NativeManager.GetFrameHeight();
+			float buttonSizeX = buttonSizeY * 2.2f;
+			
+			if(Manager.NativeManager.ImageButton(Images.BackStep, buttonSizeX, buttonSizeY))
 			{
 				Commands.BackStep();
 			}
 
 			Manager.NativeManager.SameLine();
-			if(Manager.NativeManager.ImageButton(Images.Step, 48, 21))
+			if(Manager.NativeManager.ImageButton(Images.Step, buttonSizeX, buttonSizeY))
 			{
 				Commands.Step();
 			}
 
 			Manager.NativeManager.SameLine();
-			if(Manager.NativeManager.ImageButton(Images.Stop, 48, 21))
+			if(Manager.NativeManager.ImageButton(Images.Stop, buttonSizeX, buttonSizeY))
 			{
 				Commands.Stop();
 			}
@@ -69,7 +73,7 @@ namespace Effekseer.GUI.Dock
 				icon = Images.Pause;
 			}
 
-			if (Manager.NativeManager.ImageButton(icon, 48, 21))
+			if (Manager.NativeManager.ImageButton(icon, buttonSizeX, buttonSizeY))
 			{
 				if (Manager.Viewer.IsPlaying && !Manager.Viewer.IsPaused)
 				{

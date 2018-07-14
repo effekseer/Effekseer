@@ -735,6 +735,16 @@ namespace efk
 		return ImGui::GetTextLineHeightWithSpacing();
 	}
 
+	float GUIManager::GetFrameHeight()
+	{
+		return ImGui::GetFrameHeight();
+	}
+
+	float GUIManager::GetFrameHeightWithSpacing()
+	{
+		return ImGui::GetFrameHeightWithSpacing();
+	}
+
 	void GUIManager::Columns(int count, const char* id, bool border)
 	{
 		ImGui::Columns(count, id, border);

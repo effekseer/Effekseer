@@ -71,8 +71,10 @@ namespace Effekseer.GUI.Component
 				{
 					Manager.NativeManager.Separator();
 				}
-
+				
+				Manager.NativeManager.PushItemWidth(-1);
 				c.Update();
+				Manager.NativeManager.PopItemWidth();
 
 				Manager.NativeManager.NextColumn();
 			}
