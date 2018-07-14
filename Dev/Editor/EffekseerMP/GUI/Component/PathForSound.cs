@@ -96,7 +96,9 @@ namespace Effekseer.GUI.Component
 
 			if (binding == null) return;
 		
-			if(Manager.NativeManager.Button(Resources.GetString("Load") + id1))
+			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
+
+			if(Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
 			{
 				btn_load_Click();
 			}
@@ -107,33 +109,41 @@ namespace Effekseer.GUI.Component
 
 			Manager.NativeManager.Text(filePath);
 
-			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
-			if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2))
+			if (Manager.NativeManager.IsItemHovered())
 			{
-				btn_delete_Click();
+				Manager.NativeManager.SetTooltip(filePath);
 			}
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
-			Manager.NativeManager.SameLine();
-
-			Manager.NativeManager.Text(formatText1);
-
-			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
-			if (Manager.NativeManager.Button(Resources.GetString("PlayString") + id3))
+			if (filePath != string.Empty)
 			{
-				btn_play_Click();
+				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
+				{
+					btn_delete_Click();
+				}
+
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
+
+				Manager.NativeManager.SameLine();
+
+				Manager.NativeManager.Text(formatText1);
+
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
+
+				if (Manager.NativeManager.Button(Resources.GetString("PlayString") + id3, buttonSizeX))
+				{
+					btn_play_Click();
+				}
+
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
+
+				Manager.NativeManager.SameLine();
+
+				Manager.NativeManager.Text(formatText2);
+
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			}
-
-			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
-			Manager.NativeManager.SameLine();
-
-			Manager.NativeManager.Text(formatText2);
-
-			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 		}
 
 		private void btn_load_Click()

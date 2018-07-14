@@ -114,7 +114,9 @@ namespace Effekseer.GUI.Component
 
 			string dd = null;
 
-			if (Manager.NativeManager.Button(Resources.GetString("Load") + id1))
+			float buttonSizeX = Manager.NativeManager.GetTextLineHeightWithSpacing() * 2;
+
+			if (Manager.NativeManager.Button(Resources.GetString("Load") + id1, buttonSizeX))
 			{
 				btn_load_Click();
 			}
@@ -124,33 +126,51 @@ namespace Effekseer.GUI.Component
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
 			Manager.NativeManager.SameLine();
-
+			
 			Manager.NativeManager.Text(filePath);
 
-			if (dd == null) dd = DragAndDrops.UpdateImageDst();
-
-			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
-			if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2))
+			if (Manager.NativeManager.IsItemHovered())
 			{
-				btn_delete_Click();
+				Manager.NativeManager.SetTooltip(filePath);
 			}
 
 			if (dd == null) dd = DragAndDrops.UpdateImageDst();
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
-			Manager.NativeManager.SameLine();
-
-			Manager.NativeManager.Text(infoText);
-
-			if (dd == null) dd = DragAndDrops.UpdateImageDst();
-
-			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
+			
 			if(image != null)
 			{
-				Manager.NativeManager.Image(image, 128, 128);
+				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
+				{
+					btn_delete_Click();
+				}
+				
+				if (dd == null) dd = DragAndDrops.UpdateImageDst();
+
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
+
+				Manager.NativeManager.SameLine();
+
+				Manager.NativeManager.Text(infoText);
+
+				if (dd == null) dd = DragAndDrops.UpdateImageDst();
+
+				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
+
+				float imageSizeX = image.GetWidth();
+				float imageSizeY = image.GetHeight();
+				if (imageSizeX < imageSizeY)
+				{
+					Manager.NativeManager.Image(image, 128 * imageSizeX / imageSizeY, 128);
+				}
+				else if (imageSizeX > imageSizeY)
+				{
+					Manager.NativeManager.Image(image, 128, 128 * imageSizeY / imageSizeX);
+				}
+				else
+				{
+					Manager.NativeManager.Image(image, 128, 128);
+				}
 
 				if (dd == null) dd = DragAndDrops.UpdateImageDst();
 
@@ -233,10 +253,12 @@ namespace Effekseer.GUI.Component
 			if(System.IO.File.Exists(path))
 			{
 				image = Images.Load(Manager.Native, path);
+				infoText = "" + image.GetWidth() + "x" + image.GetHeight();
 			}
 			else
 			{
 				image = null;
+				infoText = "";
 			}
 		}
 

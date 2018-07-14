@@ -13,6 +13,9 @@ namespace efk
 	public:
 
 		const char16_t* GetPath() const { return path.c_str(); }
+		int32_t GetWidth() const { return textureData->Width; }
+		int32_t GetHeight() const { return textureData->Height; }
+
 #if !SWIG
 		void SetPath(const char16_t* path) { this->path = path; }
 		Effekseer::TextureData*& GetTextureData() { return textureData; }

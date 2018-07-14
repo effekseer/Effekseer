@@ -565,6 +565,30 @@ SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetPath___
 }
 
 
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetWidth___(void * jarg1) {
+  int jresult ;
+  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
+  int32_t result;
+  
+  arg1 = (efk::ImageResource *)jarg1; 
+  result = (int32_t)((efk::ImageResource const *)arg1)->GetWidth();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetHeight___(void * jarg1) {
+  int jresult ;
+  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
+  int32_t result;
+  
+  arg1 = (efk::ImageResource *)jarg1; 
+  result = (int32_t)((efk::ImageResource const *)arg1)->GetHeight();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ImageResource___() {
   void * jresult ;
   efk::ImageResource *result = 0 ;

@@ -45,6 +45,16 @@ public class ImageResource : global::System.IDisposable {
     return ret;
   }
 
+  public int GetWidth() {
+    int ret = EffekseerNativePINVOKE.ImageResource_GetWidth(swigCPtr);
+    return ret;
+  }
+
+  public int GetHeight() {
+    int ret = EffekseerNativePINVOKE.ImageResource_GetHeight(swigCPtr);
+    return ret;
+  }
+
   public ImageResource() : this(EffekseerNativePINVOKE.new_ImageResource(), true) {
   }
 
