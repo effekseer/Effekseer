@@ -357,7 +357,7 @@ protected:
 			mat_rot.Value[3][1] = t.Y;
 			mat_rot.Value[3][2] = t.Z;
 
-			ApplyDepthOffset(mat_rot, camera, s, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale, parameter.IsRightHand);
+			ApplyDepthOffset(mat_rot, m_renderer->GetCameraFrontDirection(), m_renderer->GetCameraPosition(), s, parameter.DepthOffset, parameter.IsDepthOffsetScaledWithCamera, parameter.IsDepthOffsetScaledWithParticleScale, parameter.IsRightHand);
 			
 			if( m_instanceCount > 1 )
 			{

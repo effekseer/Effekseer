@@ -72,26 +72,30 @@ namespace EffekseerRenderer
 				}
 			}
 
+			auto objPos = ::Effekseer::Vector3D(mat.Value[3][0], mat.Value[3][1], mat.Value[3][2]);
+			auto dir = cameraPos - objPos;
+			Effekseer::Vector3D::Normal(dir, dir);
+
 			if (isRightHand)
 			{
-				mat.Value[3][0] += f.X * offset;
-				mat.Value[3][1] += f.Y * offset;
-				mat.Value[3][2] += f.Z * offset;
+				mat.Value[3][0] += dir.X * offset;
+				mat.Value[3][1] += dir.Y * offset;
+				mat.Value[3][2] += dir.Z * offset;
 			}
 			else
 			{
-				mat.Value[3][0] -= f.X * offset;
-				mat.Value[3][1] -= f.Y * offset;
-				mat.Value[3][2] -= f.Z * offset;
+				mat.Value[3][0] += dir.X * offset;
+				mat.Value[3][1] += dir.Y * offset;
+				mat.Value[3][2] += dir.Z * offset;
 			}
 		}
 	}
 
-	static void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Matrix44& camera, ::Effekseer::Vector3D& scaleValues, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
+	static void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Vector3D& cameraFront, const ::Effekseer::Vector3D& cameraPos, ::Effekseer::Vector3D& scaleValues, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
 {
 	if (depthOffset != 0)
 	{
-		auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
+		auto f = cameraFront;
 
 		auto offset = depthOffset;
 		
@@ -104,9 +108,9 @@ namespace EffekseerRenderer
 
 		if (isDepthOffsetScaledWithCamera)
 		{
-			auto cx = mat.Value[3][0] + camera.Values[3][0];
-			auto cy = mat.Value[3][1] + camera.Values[3][1];
-			auto cz = mat.Value[3][2] + camera.Values[3][2];
+			auto cx = mat.Value[3][0] + cameraPos.X;
+			auto cy = mat.Value[3][1] + cameraPos.Y;
+			auto cz = mat.Value[3][2] + cameraPos.Z;
 			auto cl = sqrt(cx * cx + cy * cy + cz * cz);
 
 			if (cl != 0.0)
@@ -123,27 +127,30 @@ namespace EffekseerRenderer
 			}
 		}
 
+		auto objPos = ::Effekseer::Vector3D(mat.Value[3][0], mat.Value[3][1], mat.Value[3][2]);
+		auto dir = cameraPos - objPos;
+		Effekseer::Vector3D::Normal(dir, dir);
+
 		if (isRightHand)
 		{
-			mat.Value[3][0] += f.X * offset;
-			mat.Value[3][1] += f.Y * offset;
-			mat.Value[3][2] += f.Z * offset;
+			mat.Value[3][0] += dir.X * offset;
+			mat.Value[3][1] += dir.Y * offset;
+			mat.Value[3][2] += dir.Z * offset;
 		}
 		else
 		{
-			mat.Value[3][0] -= f.X * offset;
-			mat.Value[3][1] -= f.Y * offset;
-			mat.Value[3][2] -= f.Z * offset;
+			mat.Value[3][0] += dir.X * offset;
+			mat.Value[3][1] += dir.Y * offset;
+			mat.Value[3][2] += dir.Z * offset;
 		}
-
 	}
 }
 
-	static void ApplyDepthOffset(::Effekseer::Matrix44& mat, const ::Effekseer::Matrix44& camera, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
+	static void ApplyDepthOffset(::Effekseer::Matrix44& mat, const ::Effekseer::Vector3D& cameraFront, const ::Effekseer::Vector3D& cameraPos, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
 {
 	if (depthOffset != 0)
 	{
-		auto f = ::Effekseer::Vector3D(camera.Values[0][2], camera.Values[1][2], camera.Values[2][2]);
+		auto f = cameraFront;
 
 		auto offset = depthOffset;
 
@@ -172,9 +179,9 @@ namespace EffekseerRenderer
 
 		if (isDepthOffsetScaledWithCamera)
 		{
-			auto cx = mat.Values[3][0] + camera.Values[3][0];
-			auto cy = mat.Values[3][1] + camera.Values[3][1];
-			auto cz = mat.Values[3][2] + camera.Values[3][2];
+			auto cx = mat.Values[3][0] + cameraPos.X;
+			auto cy = mat.Values[3][1] + cameraPos.Y;
+			auto cz = mat.Values[3][2] + cameraPos.Z;
 			auto cl = sqrt(cx * cx + cy * cy + cz * cz);
 
 			if (cl != 0.0)
@@ -191,19 +198,22 @@ namespace EffekseerRenderer
 			}
 		}
 
+		auto objPos = ::Effekseer::Vector3D(mat.Values[3][0], mat.Values[3][1], mat.Values[3][2]);
+		auto dir = cameraPos - objPos;
+		Effekseer::Vector3D::Normal(dir, dir);
+
 		if (isRightHand)
 		{
-			mat.Values[3][0] += f.X * offset;
-			mat.Values[3][1] += f.Y * offset;
-			mat.Values[3][2] += f.Z * offset;
+			mat.Values[3][0] += dir.X * offset;
+			mat.Values[3][1] += dir.Y * offset;
+			mat.Values[3][2] += dir.Z * offset;
 		}
 		else
 		{
-			mat.Values[3][0] -= f.X * offset;
-			mat.Values[3][1] -= f.Y * offset;
-			mat.Values[3][2] -= f.Z * offset;
+			mat.Values[3][0] += dir.X * offset;
+			mat.Values[3][1] += dir.Y * offset;
+			mat.Values[3][2] += dir.Z * offset;
 		}
-
 	}
 }
 

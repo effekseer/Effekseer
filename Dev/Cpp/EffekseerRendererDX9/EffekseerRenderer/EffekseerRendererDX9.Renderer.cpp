@@ -727,7 +727,14 @@ const ::Effekseer::Matrix44& RendererImplemented::GetCameraMatrix() const
 void RendererImplemented::SetCameraMatrix( const ::Effekseer::Matrix44& mat )
 {
 	m_cameraFrontDirection = ::Effekseer::Vector3D(mat.Values[0][2], mat.Values[1][2], mat.Values[2][2]);
-	m_cameraPosition = ::Effekseer::Vector3D(mat.Values[3][0], mat.Values[3][1], mat.Values[3][2]);
+
+	auto localPos = ::Effekseer::Vector3D(-mat.Values[3][0], -mat.Values[3][1], -mat.Values[3][2]);
+	auto f = m_cameraFrontDirection;
+	auto r = ::Effekseer::Vector3D(mat.Values[0][0], mat.Values[1][0], mat.Values[2][0]);
+	auto u = ::Effekseer::Vector3D(mat.Values[0][1], mat.Values[1][1], mat.Values[2][1]);
+
+	m_cameraPosition = r * localPos.X + u * localPos.Y + f * localPos.Z;
+
 	m_camera = mat;
 }
 
