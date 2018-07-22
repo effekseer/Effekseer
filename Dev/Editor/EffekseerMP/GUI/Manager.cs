@@ -48,7 +48,7 @@ namespace Effekseer.GUI
 		
 			if(!handle)
 			{
-				Commands.Open();
+				Commands.Open(this.GetPath());
 			}
 		}
 
