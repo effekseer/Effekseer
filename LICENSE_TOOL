@@ -24,6 +24,14 @@ DirectX Tool Kit
 https://directxtk.codeplex.com/
 Microsoft Public License (Ms-PL)
 
+Lumix Engine is licensed under the MIT License
+Copyright (c) 2013-2016 Mikulas Florek
+
+imgui is licensed under the MIT License
+Copyright (c) 2014-2018 Omar Cornut
+
+Boxer is licensed under the MIT License
+Copyright (c) 2014 Aaron Jacobs
 
 GD Graphics Library
 
@@ -118,8 +126,6 @@ freely, subject to the following restrictions:
    misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 
-Boxer is licensed under the MIT License
-Copyright (c) 2014 Aaron Jacobs
 
 -- 源真ゴシック --
 

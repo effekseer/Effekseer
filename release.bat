@@ -123,7 +123,7 @@ echo ライセンス
 cp Release/LICENSE.txt %RDIR_R%/LICENSE.txt
 
 echo Readme
-copy readme_tool.txt %RDIR%\readme.txt
+copy readme_tool_win.txt %RDIR%\readme.txt
 copy readme_runtime.txt %RDIR_R%\readme.txt
 
 echo ヘルプ
