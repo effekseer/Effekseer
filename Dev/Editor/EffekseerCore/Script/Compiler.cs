@@ -102,7 +102,20 @@ namespace Effekseer.Script
 				// C#
 				var lines = System.IO.File.ReadAllText(path);
 
-				var result = CSharpCodeProvider.CompileAssemblyFromSource(CompilerParameters, lines);
+				CompilerResults result = null;
+
+				try
+				{
+					result = CSharpCodeProvider.CompileAssemblyFromSource(CompilerParameters, lines);
+				}
+				catch (Exception e)
+				{
+					compiled = null;
+					error = "CSharp Compile Exception : " + path + "\n";
+					error += e.ToString();
+					return ScriptLanguage.Unknown;
+				}
+
 				if (result.Errors.HasErrors)
 				{
 					compiled = null;

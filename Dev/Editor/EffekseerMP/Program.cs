@@ -103,7 +103,20 @@ namespace Effekseer
 
             Core.Initialize(language);
 
-			if(Core.Language == Language.Japanese)
+			// Failed to compile script
+			if (Core.ExportScripts.Count == 0)
+			{
+				Script.ExportScript script = new Script.ExportScript(
+					Script.ScriptPosition.External,
+					Plugin.ExportDefault.UniqueName,
+					Plugin.ExportDefault.Author,
+					Plugin.ExportDefault.Title,
+					Plugin.ExportDefault.Description,
+					Plugin.ExportDefault.Filter,
+					Plugin.ExportDefault.Call);
+			}
+
+			if (Core.Language == Language.Japanese)
 			{
 				Resources.LoadLanguageFile("resources/lang_ja.txt");
 			}

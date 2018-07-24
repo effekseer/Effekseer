@@ -107,6 +107,7 @@
     <Compile Include="GUI\Network.cs" />
     <Compile Include="GUI\Viewer.cs" />
     <Compile Include="Math\Point.cs" />
+    <Compile Include="Plugin\ExportDefault.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GUI\Shortcuts.cs" />
