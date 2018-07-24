@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 project(Viewer CXX)
 
+# For Mac
+if(APPLE)
+	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.6)
+endif()
+
 FILE(GLOB hs
 	3rdParty/imgui/*.h
 	EffekseerTool/*.h

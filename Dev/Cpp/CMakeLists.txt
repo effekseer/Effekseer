@@ -15,6 +15,11 @@ if (MSVC)
 	option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
 endif()
 
+# For Mac
+if(APPLE)
+	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.6)
+endif()
+
 if (MSVC)
 
 elseif (MINGW)
