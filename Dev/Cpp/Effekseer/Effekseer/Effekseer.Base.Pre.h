@@ -24,7 +24,7 @@
 //----------------------------------------------------------------------------------
 
 #ifdef _WIN32
-#include <windows.h>
+//#include <windows.h>
 #elif defined(_PSVITA)
 #include "Effekseer.PSVita.h"
 #elif defined(_PS4)

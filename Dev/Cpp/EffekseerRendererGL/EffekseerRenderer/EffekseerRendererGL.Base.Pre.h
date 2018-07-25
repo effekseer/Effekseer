@@ -7,6 +7,10 @@
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 #if defined(__EFFEKSEER_RENDERER_GL_GLEW__)
 
 #if _WIN32

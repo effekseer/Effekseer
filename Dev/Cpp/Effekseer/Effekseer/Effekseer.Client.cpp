@@ -143,7 +143,10 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 
 	m_running = true;
 
-	m_threadRecv.Create( RecvAsync, this );
+	m_threadRecv = std::thread(
+		[this](){
+		RecvAsync(this);
+	});
 
 	EffekseerPrintDebug("Client : Start\n");
 
@@ -160,6 +163,7 @@ void ClientImplemented::Stop()
 	Socket::Shutsown( m_socket );
 	Socket::Close( m_socket );
 	m_running = false;
+	m_threadRecv.join();
 
 	EffekseerPrintDebug("Client : Stop\n");
 }

@@ -41,29 +41,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 static int64_t GetTime(void)
 {
-#ifdef _WIN32
-	int64_t count, freq;
-	if (QueryPerformanceCounter((LARGE_INTEGER*)&count))
-	{
-		if (QueryPerformanceFrequency((LARGE_INTEGER*)&freq))
-		{
-			return count * 1000000 / freq;
-		}
-	}
-	return 0;
-#elif defined(_PSVITA)
 	return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
-#elif defined(_PS4)
-	return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
-#elif defined(_SWITCH)
-	return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
-#elif defined(_XBOXONE)
-	return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
-#else
-	struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return (int64_t)tv.tv_sec * 1000000 + (int64_t)tv.tv_usec;
-#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -1169,7 +1147,7 @@ void ManagerImplemented::Flip()
 {
 	if( !m_autoFlip )
 	{
-		m_renderingSession.Enter();
+		m_renderingMutex.lock();
 	}
 
 	ExecuteEvents();
@@ -1304,7 +1282,7 @@ void ManagerImplemented::Flip()
 
 	if( !m_autoFlip )
 	{
-		m_renderingSession.Leave();
+		m_renderingMutex.unlock();
 	}
 }
 
@@ -1336,7 +1314,7 @@ void ManagerImplemented::Update( float deltaFrame )
 //----------------------------------------------------------------------------------
 void ManagerImplemented::BeginUpdate()
 {
-	m_renderingSession.Enter();
+	m_renderingMutex.lock();
 
 	if( m_autoFlip )
 	{
@@ -1351,7 +1329,7 @@ void ManagerImplemented::BeginUpdate()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::EndUpdate()
 {
-	m_renderingSession.Leave();
+	m_renderingMutex.unlock();
 }
 
 //----------------------------------------------------------------------------------
@@ -1390,7 +1368,7 @@ void ManagerImplemented::UpdateHandle( DrawSet& drawSet, float deltaFrame )
 //----------------------------------------------------------------------------------
 void ManagerImplemented::Draw()
 {
-	m_renderingSession.Enter();
+	m_renderingMutex.lock();
 
 	// 開始時間を記録
 	int64_t beginTime = ::Effekseer::GetTime();
@@ -1443,13 +1421,13 @@ void ManagerImplemented::Draw()
 	// 経過時間を計算
 	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
 
-	m_renderingSession.Leave();
+	m_renderingMutex.unlock();
 }
 
 void ManagerImplemented::DrawBack()
 {
-	m_renderingSession.Enter();
-
+	std::lock_guard<std::mutex> lock(m_renderingMutex);
+	
 	// 開始時間を記録
 	int64_t beginTime = ::Effekseer::GetTime();
 
@@ -1488,13 +1466,11 @@ void ManagerImplemented::DrawBack()
 
 	// 経過時間を計算
 	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
-
-	m_renderingSession.Leave();
 }
 
 void ManagerImplemented::DrawFront()
 {
-	m_renderingSession.Enter();
+	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
 	// 開始時間を記録
 	int64_t beginTime = ::Effekseer::GetTime();
@@ -1548,8 +1524,6 @@ void ManagerImplemented::DrawFront()
 
 	// 経過時間を計算
 	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
-
-	m_renderingSession.Leave();
 }
 
 //----------------------------------------------------------------------------------
@@ -1602,8 +1576,8 @@ Handle ManagerImplemented::Play( Effect* effect, float x, float y, float z )
 //----------------------------------------------------------------------------------
 void ManagerImplemented::DrawHandle( Handle handle )
 {
-	m_renderingSession.Enter();
-	
+	std::lock_guard<std::mutex> lock(m_renderingMutex);
+
 	std::map<Handle,DrawSet>::iterator it = m_renderingDrawSetMaps.find( handle );
 	if( it != m_renderingDrawSetMaps.end() )
 	{
@@ -1647,13 +1621,11 @@ void ManagerImplemented::DrawHandle( Handle handle )
 			}
 		}
 	}
-
-	m_renderingSession.Leave();
 }
 
 void ManagerImplemented::DrawHandleBack(Handle handle)
 {
-	m_renderingSession.Enter();
+	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
 	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
 	if (it != m_renderingDrawSetMaps.end())
@@ -1686,13 +1658,11 @@ void ManagerImplemented::DrawHandleBack(Handle handle)
 			}
 		}
 	}
-
-	m_renderingSession.Leave();
 }
 
 void ManagerImplemented::DrawHandleFront(Handle handle)
 {
-	m_renderingSession.Enter();
+	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
 	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
 	if (it != m_renderingDrawSetMaps.end())
@@ -1739,8 +1709,6 @@ void ManagerImplemented::DrawHandleFront(Handle handle)
 			}
 		}
 	}
-
-	m_renderingSession.Leave();
 }
 
 //----------------------------------------------------------------------------------
@@ -1748,7 +1716,7 @@ void ManagerImplemented::DrawHandleFront(Handle handle)
 //----------------------------------------------------------------------------------
 void ManagerImplemented::BeginReloadEffect( Effect* effect )
 {
-	m_renderingSession.Enter();
+	m_renderingMutex.lock();
 
 	std::map<Handle,DrawSet>::iterator it = m_DrawSets.begin();
 	std::map<Handle,DrawSet>::iterator it_end = m_DrawSets.end();
@@ -1794,7 +1762,7 @@ void ManagerImplemented::EndReloadEffect( Effect* effect )
 		(*it).second.InstanceContainerPointer->Update( true, 1.0f, (*it).second.IsShown );
 	}
 
-	m_renderingSession.Leave();
+	m_renderingMutex.unlock();
 }
 
 //----------------------------------------------------------------------------------

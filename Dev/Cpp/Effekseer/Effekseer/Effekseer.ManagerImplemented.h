@@ -9,7 +9,6 @@
 #include "Effekseer.Manager.h"
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Matrix44.h"
-#include "Effekseer.CriticalSection.h"
 #include "Culling/Culling3D.h"
 
 //----------------------------------------------------------------------------------
@@ -144,8 +143,8 @@ private:
 	std::vector<DrawSet>		m_renderingDrawSets;
 	std::map<Handle,DrawSet>	m_renderingDrawSetMaps;
 
-	/* 描画セッション */
-	CriticalSection				m_renderingSession;
+	// mutex for rendering
+	std::mutex					m_renderingMutex;
 
 	/* 設定インスタンス */
 	Setting*					m_setting;

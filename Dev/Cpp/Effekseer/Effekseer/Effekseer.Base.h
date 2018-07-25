@@ -22,6 +22,8 @@
 #include <string>
 #include <queue>
 #include <chrono>
+#include <thread>
+#include <mutex>
 
 //----------------------------------------------------------------------------------
 //

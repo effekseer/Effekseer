@@ -69,9 +69,9 @@ void ServerImplemented::InternalClient::RecvAsync( void* data )
 		}
 
 		/* 受信処理 */
-		client->m_ctrlRecvBuffers.Enter();
+		client->m_ctrlRecvBuffers.lock();
 		client->m_recvBuffers.push_back(client->m_recvBuffer);
-		client->m_ctrlRecvBuffers.Leave();
+		client->m_ctrlRecvBuffers.unlock();
 	}
 }
 
@@ -83,7 +83,11 @@ ServerImplemented::InternalClient::InternalClient( EfkSocket socket_, ServerImpl
 	, m_server	( server )
 	, m_active	( true )
 {
-	m_threadRecv.Create( RecvAsync, this );
+	m_threadRecv = std::thread(
+		[this]() 
+	{
+		RecvAsync(this);
+	});
 }
 
 //----------------------------------------------------------------------------------
@@ -91,7 +95,7 @@ ServerImplemented::InternalClient::InternalClient( EfkSocket socket_, ServerImpl
 //----------------------------------------------------------------------------------
 ServerImplemented::InternalClient::~InternalClient()
 {
-	m_threadRecv.Wait();
+	m_threadRecv.join();
 }
 
 //----------------------------------------------------------------------------------
@@ -140,9 +144,8 @@ Server* Server::Create()
 //----------------------------------------------------------------------------------
 void ServerImplemented::AddClient( InternalClient* client )
 {
-	m_ctrlClients.Enter();
+	std::lock_guard<std::mutex> lock(m_ctrlClients);
 	m_clients.insert( client );
-	m_ctrlClients.Leave();
 }
 
 //----------------------------------------------------------------------------------
@@ -150,13 +153,12 @@ void ServerImplemented::AddClient( InternalClient* client )
 //----------------------------------------------------------------------------------
 void ServerImplemented::RemoveClient( InternalClient* client )
 {
-	m_ctrlClients.Enter();
+	std::lock_guard<std::mutex> lock(m_ctrlClients);
 	if( m_clients.count( client ) > 0 )
 	{
 		m_clients.erase( client );
 		m_removedClients.insert( client );
 	}
-	m_ctrlClients.Leave();
 }
 
 //----------------------------------------------------------------------------------
@@ -238,7 +240,12 @@ bool ServerImplemented::Start( uint16_t port )
 	m_running = true;
 	m_socket = socket_;
 	m_port = port;
-	m_thread.Create( AcceptAsync, this );
+
+	m_thread = std::thread(
+		[this]()
+	{
+		AcceptAsync(this);
+	});
 
 	EffekseerPrintDebug("Server : Start\n");
 
@@ -258,23 +265,23 @@ void ServerImplemented::Stop()
 	
 	m_running = false;
 
-	m_thread.Wait();
+	m_thread.join();
 
 	/* クライアント停止 */
-	m_ctrlClients.Enter();
+	m_ctrlClients.lock();
 	for( std::set<InternalClient*>::iterator it = m_clients.begin(); it != m_clients.end(); ++it )
 	{
 		(*it)->ShutDown();
 	}
-	m_ctrlClients.Leave();
+	m_ctrlClients.unlock();
 	
 
 	/* クライアントの消滅待ち */
 	while(true)
 	{
-		m_ctrlClients.Enter();
+		m_ctrlClients.lock();
 		int32_t size = m_clients.size();
-		m_ctrlClients.Leave();
+		m_ctrlClients.unlock();
 	
 		if( size == 0 ) break;
 
@@ -350,7 +357,7 @@ void ServerImplemented::Unregist( Effect* effect )
 //----------------------------------------------------------------------------------
 void ServerImplemented::Update()
 {
-	m_ctrlClients.Enter();
+	m_ctrlClients.lock();
 
 	for( std::set<InternalClient*>::iterator it = m_removedClients.begin(); it != m_removedClients.end(); ++it )
 	{
@@ -364,7 +371,7 @@ void ServerImplemented::Update()
 
 	for( std::set<InternalClient*>::iterator it = m_clients.begin(); it != m_clients.end(); ++it )
 	{
-		(*it)->m_ctrlRecvBuffers.Enter();
+		(*it)->m_ctrlRecvBuffers.lock();
 
 		for( size_t i = 0; i < (*it)->m_recvBuffers.size(); i++ )
 		{
@@ -410,10 +417,10 @@ void ServerImplemented::Update()
 		}
 
 		(*it)->m_recvBuffers.clear();
-		(*it)->m_ctrlRecvBuffers.Leave();
+		(*it)->m_ctrlRecvBuffers.unlock();
 
 	}
-	m_ctrlClients.Leave();
+	m_ctrlClients.unlock();
 	
 }
 

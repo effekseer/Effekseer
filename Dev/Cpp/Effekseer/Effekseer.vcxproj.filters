@@ -16,9 +16,6 @@
     <Filter Include="Effekseer\Utility">
       <UniqueIdentifier>{6bcd9ed3-e992-4095-9d2e-118426cbaf30}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Effekseer\Thread">
-      <UniqueIdentifier>{f4d4d3dc-7a06-4784-bac8-c7a4af6c6d05}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Effekseer\EffectData">
       <UniqueIdentifier>{790631e1-0b5f-4dcb-9e8a-2f394a852d22}</UniqueIdentifier>
     </Filter>
@@ -96,12 +93,6 @@
     </ClInclude>
     <ClInclude Include="Effekseer\Effekseer.EffectNodeRoot.h">
       <Filter>Effekseer\EffectData</Filter>
-    </ClInclude>
-    <ClInclude Include="Effekseer\Effekseer.CriticalSection.h">
-      <Filter>Effekseer\Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="Effekseer\Effekseer.Thread.h">
-      <Filter>Effekseer\Thread</Filter>
     </ClInclude>
     <ClInclude Include="Effekseer\Effekseer.Vector3D.h">
       <Filter>Effekseer\Utility</Filter>
@@ -224,12 +215,6 @@
     </ClCompile>
     <ClCompile Include="Effekseer\Effekseer.EffectNodeSprite.cpp">
       <Filter>Effekseer\EffectData</Filter>
-    </ClCompile>
-    <ClCompile Include="Effekseer\Effekseer.CriticalSection.cpp">
-      <Filter>Effekseer\Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="Effekseer\Effekseer.Thread.cpp">
-      <Filter>Effekseer\Thread</Filter>
     </ClCompile>
     <ClCompile Include="Effekseer\Effekseer.RectF.cpp">
       <Filter>Effekseer\Utility</Filter>

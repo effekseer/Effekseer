@@ -168,7 +168,6 @@
     <ClInclude Include="Effekseer\Effekseer.Client.h" />
     <ClInclude Include="Effekseer\Effekseer.ClientImplemented.h" />
     <ClInclude Include="Effekseer\Effekseer.Color.h" />
-    <ClInclude Include="Effekseer\Effekseer.CriticalSection.h" />
     <ClInclude Include="Effekseer\Effekseer.DefaultEffectLoader.h" />
     <ClInclude Include="Effekseer\Effekseer.DefaultFile.h" />
     <ClInclude Include="Effekseer\Effekseer.Effect.h" />
@@ -202,7 +201,6 @@
     <ClInclude Include="Effekseer\Effekseer.Socket.h" />
     <ClInclude Include="Effekseer\Effekseer.SoundLoader.h" />
     <ClInclude Include="Effekseer\Effekseer.TextureLoader.h" />
-    <ClInclude Include="Effekseer\Effekseer.Thread.h" />
     <ClInclude Include="Effekseer\Effekseer.Vector2D.h" />
     <ClInclude Include="Effekseer\Effekseer.Vector3D.h" />
     <ClInclude Include="Effekseer\Renderer\Effekseer.ModelRenderer.h" />
@@ -223,7 +221,6 @@
     <ClCompile Include="Effekseer\Culling\Culling3D.WorldInternal.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Client.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Color.cpp" />
-    <ClCompile Include="Effekseer\Effekseer.CriticalSection.cpp" />
     <ClCompile Include="Effekseer\Effekseer.DefaultEffectLoader.cpp" />
     <ClCompile Include="Effekseer\Effekseer.DefaultFile.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Effect.cpp" />
@@ -247,7 +244,6 @@
     <ClCompile Include="Effekseer\Effekseer.RectF.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Server.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Socket.cpp" />
-    <ClCompile Include="Effekseer\Effekseer.Thread.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Vector2D.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Vector3D.cpp" />
   </ItemGroup>

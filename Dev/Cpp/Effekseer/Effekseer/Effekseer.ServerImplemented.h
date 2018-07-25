@@ -11,8 +11,6 @@
 #include "Effekseer.Server.h"
 
 #include "Effekseer.Socket.h"
-#include "Effekseer.Thread.h"
-#include "Effekseer.CriticalSection.h"
 
 #include <string>
 
@@ -33,7 +31,7 @@ private:
 	class InternalClient
 	{
 	public:
-		Thread		m_threadRecv;
+		std::thread		m_threadRecv;
 		EfkSocket	m_socket;
 		ServerImplemented*		m_server;
 		bool		m_active;
@@ -41,7 +39,7 @@ private:
 		std::vector<uint8_t>	m_recvBuffer;
 
 		std::vector<std::vector<uint8_t> >	m_recvBuffers;
-		CriticalSection						m_ctrlRecvBuffers;
+		std::mutex						m_ctrlRecvBuffers;
 
 		static void RecvAsync( void* data );
 
@@ -55,8 +53,8 @@ private:
 	EfkSocket	m_socket;
 	uint16_t	m_port;
 
-	Thread		m_thread;
-	CriticalSection		m_ctrlClients;
+	std::thread		m_thread;
+	std::mutex		m_ctrlClients;
 
 	bool		m_running;
 
@@ -79,7 +77,9 @@ public:
 	virtual ~ServerImplemented();
 
 	/**
-		@brief	サーバーを開始する。
+	@brief
+	\~Japanese	サーバーを開始する。
+	\~English	Start a server
 	*/
 	bool Start( uint16_t port );
 

@@ -60,9 +60,6 @@ effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Setting.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Server.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Client.h')
 
-effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.CriticalSection.h')
-effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Thread.h')
-
 effekseerHeader.output('Effekseer/Effekseer.h')
 
 effekseerRendererDX9Header = CreateHeader()
