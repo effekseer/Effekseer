@@ -36,7 +36,8 @@ Help that describes how to use the tool is saved.
 
 * For those using Effekseer for the first time
 
-Let's start Effekseer.exe in the Tool directory.
+Let's open Effekseer.dmg and install it.
+Let's start Effekseer.exe.
 
 If it not run, please download mono to satisfy the operating environment.
 
@@ -90,7 +91,8 @@ https://www.mono-project.com
 
 ■　初めてEffekseerを使用する方へ
 
-そして、Toolディレクトリ内のEffekseer.exeを起動してみましょう。
+まずはEffekseer.dmgを開き、Effekseerをインストールしましょう。
+そしてEffekseerを起動してみましょう。
 
 もし起動しないならmonoをダウンロードしましょう。
 
