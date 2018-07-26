@@ -3,7 +3,7 @@ project(Viewer CXX)
 
 # For Mac
 if(APPLE)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.6)
+	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
 endif()
 
 FILE(GLOB hs

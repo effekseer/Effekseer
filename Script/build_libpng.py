@@ -24,7 +24,7 @@ if aceutils.isWin():
 else:
 	aceutils.cd(r'zlib_bin')
 	if aceutils.isMac():
-		aceutils.call(r'cmake -G "Unix Makefiles" -D BUILD_SHARED_LIBS:BOOL=OFF -D CMAKE_INSTALL_PREFIX:PATH=../../Dev/Cpp "-DCMAKE_OSX_ARCHITECTURES=x86_64;i386" ../zlib/')
+		aceutils.call(r'cmake -G "Unix Makefiles" -D BUILD_SHARED_LIBS:BOOL=OFF -D CMAKE_INSTALL_PREFIX:PATH=../../Dev/Cpp "-DCMAKE_OSX_ARCHITECTURES=x86_64;i386" "-DCMAKE_OSX_DEPLOYMENT_TARGET=10.10" -D CMAKE_BUILD_TYPE=Release ../zlib/')
 	else:
 		aceutils.call(r'cmake -G "Unix Makefiles" -D BUILD_SHARED_LIBS:BOOL=OFF -D CMAKE_INSTALL_PREFIX:PATH=../../Dev/Cpp ../zlib/')
 	aceutils.call(r'make install')
@@ -33,7 +33,7 @@ else:
 	aceutils.cd(r'libpng_bin')
 	if aceutils.isMac():
 		aceutils.copy(r'../libpng/scripts/pnglibconf.h.prebuilt',r'../libpng/pnglibconf.h')
-		aceutils.call(r'cmake -G "Unix Makefiles" -D PNG_STATIC:BOOL=ON -D CMAKE_INSTALL_PREFIX:PATH=../../Dev/Cpp "-DCMAKE_OSX_ARCHITECTURES=x86_64;i386" ../libpng/')
+		aceutils.call(r'cmake -G "Unix Makefiles" -D PNG_STATIC:BOOL=ON -D CMAKE_INSTALL_PREFIX:PATH=../../Dev/Cpp "-DCMAKE_OSX_ARCHITECTURES=x86_64;i386" "-DCMAKE_OSX_DEPLOYMENT_TARGET=10.10" -D CMAKE_BUILD_TYPE=Release ../libpng/')
 	else:
 		aceutils.call(r'cmake -G "Unix Makefiles" -D BUILD_SHARED_LIBS:BOOL=OFF -D CMAKE_INSTALL_PREFIX:PATH=../../Dev/Cpp ../libpng/')
 	aceutils.call(r'make install')
