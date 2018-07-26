@@ -1289,7 +1289,7 @@ class Effect
 {
 protected:
 	Effect() {}
-    ~Effect() {}
+    virtual ~Effect() {}
 
 public:
 
@@ -1572,7 +1572,7 @@ class Manager
 {
 protected:
 	Manager() {}
-    ~Manager() {}
+    virtual ~Manager() {}
 
 public:
 	/**

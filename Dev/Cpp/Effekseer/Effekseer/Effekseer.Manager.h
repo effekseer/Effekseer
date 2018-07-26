@@ -24,7 +24,7 @@ class Manager
 {
 protected:
 	Manager() {}
-    ~Manager() {}
+    virtual ~Manager() {}
 
 public:
 	/**

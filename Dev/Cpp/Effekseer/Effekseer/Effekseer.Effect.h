@@ -26,7 +26,7 @@ class Effect
 {
 protected:
 	Effect() {}
-    ~Effect() {}
+    virtual ~Effect() {}
 
 public:
 
