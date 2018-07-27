@@ -114,6 +114,7 @@ namespace Effekseer
 					Plugin.ExportDefault.Description,
 					Plugin.ExportDefault.Filter,
 					Plugin.ExportDefault.Call);
+				Core.ExportScripts.Add(script);
 			}
 
 			if (Core.Language == Language.Japanese)
