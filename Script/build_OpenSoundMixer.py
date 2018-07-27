@@ -1,4 +1,4 @@
-﻿
+
 import aceutils
 import itertools
 
@@ -18,7 +18,7 @@ with aceutils.CurrentDir('../Downloads'):
 			aceutils.call(aceutils.cmd_compile + r'OpenSoundMixer.sln /p:configuration=Debug')
 			aceutils.call(aceutils.cmd_compile + r'OpenSoundMixer.sln /p:configuration=Release')
 		elif aceutils.isMac():
-			aceutils.call(r'cmake -G "Unix Makefiles" "-DCMAKE_OSX_ARCHITECTURES=x86_64;i386" ../OpenSoundMixer/')
+			aceutils.call(r'cmake -G "Unix Makefiles" "-DCMAKE_OSX_ARCHITECTURES=x86_64;i386" "-DCMAKE_OSX_DEPLOYMENT_TARGET=10.10" -D CMAKE_BUILD_TYPE=Release ../OpenSoundMixer/')
 			aceutils.call(r'make')
 		else:
 			aceutils.call(r'cmake -G "Unix Makefiles" ../OpenSoundMixer/')
