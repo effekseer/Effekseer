@@ -179,8 +179,8 @@
     <ClInclude Include="3rdParty\imgui_addon\imguidock\imguidock.h" />
     <ClInclude Include="3rdParty\imgui_addon\imguihelper\imguihelper.h" />
     <ClInclude Include="3rdParty\imgui_platform\imgui_impl_dx9.h" />
-    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_gl3.h" />
     <ClInclude Include="3rdParty\imgui_platform\imgui_impl_glfw.h" />
+    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_opengl3.h" />
     <ClInclude Include="3rdParty\nfd\nfd_common.h" />
     <ClInclude Include="dll_cs.h" />
     <ClInclude Include="EffekseerTool\EffekseerTool.Base.h" />
@@ -219,8 +219,8 @@
     <ClCompile Include="3rdParty\imgui_addon\imguidock\imguidock.cpp" />
     <ClCompile Include="3rdParty\imgui_addon\imguihelper\imguihelper.cpp" />
     <ClCompile Include="3rdParty\imgui_platform\imgui_impl_dx9.cpp" />
-    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_gl3.cpp" />
     <ClCompile Include="3rdParty\imgui_platform\imgui_impl_glfw.cpp" />
+    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_opengl3.cpp" />
     <ClCompile Include="3rdParty\nfd\nfd_common.c" />
     <ClCompile Include="3rdParty\nfd\nfd_win.cpp" />
     <ClCompile Include="EffekseerTool\EffekseerTool.Culling.cpp" />

@@ -8,7 +8,7 @@
 #include "../3rdParty/imgui/imgui_internal.h"
 
 #include "../3rdParty/imgui_platform/imgui_impl_glfw.h"
-#include "../3rdParty/imgui_platform/imgui_impl_gl3.h"
+#include "../3rdParty/imgui_platform/imgui_impl_opengl3.h"
 
 #ifdef _WIN32
 #include "../3rdParty/imgui_platform/imgui_impl_dx9.h"
@@ -32,7 +32,7 @@ namespace efk
 		NoScrollWithMouse = 1 << 4,   // Disable user vertically scrolling with mouse wheel. On child window, mouse wheel will be forwarded to the parent unless NoScrollbar is also set.
 		NoCollapse = 1 << 5,   // Disable user collapsing window by double-clicking on it
 		AlwaysAutoResize = 1 << 6,   // Resize every window to its content every frame
-		ShowBorders          = 1 << 7,   // Show borders around windows and items (OBSOLETE! Use e.g. style.FrameBorderSize=1.0f to enable borders).
+		//ShowBorders          = 1 << 7,   // Show borders around windows and items (OBSOLETE! Use e.g. style.FrameBorderSize=1.0f to enable borders).
 		NoSavedSettings = 1 << 8,   // Never load/save settings in .ini file
 		NoInputs = 1 << 9,   // Disable catching mouse or keyboard inputs, hovering test with pass through.
 		MenuBar = 1 << 10,  // Has a menu-bar
@@ -42,7 +42,7 @@ namespace efk
 		AlwaysVerticalScrollbar = 1 << 14,  // Always show vertical scrollbar (even if ContentSize.y < Size.y)
 		AlwaysHorizontalScrollbar = 1 << 15,  // Always show horizontal scrollbar (even if ContentSize.x < Size.x)
 		AlwaysUseWindowPadding = 1 << 16,  // Ensure child windows without border uses style.WindowPadding (ignored by default for non-bordered child windows, because more convenient)
-		ResizeFromAnySide = 1 << 17,  // (WIP) Enable resize from any corners and borders. Your back-end needs to honor the different values of io.MouseCursor set by imgui.
+		//ResizeFromAnySide = 1 << 17,  // (WIP) Enable resize from any corners and borders. Your back-end needs to honor the different values of io.MouseCursor set by imgui.
 		NoNavInputs = 1 << 18,  // No gamepad/keyboard navigation within the window
 		NoNavFocus = 1 << 19,  // No focusing toward this window with gamepad/keyboard navigation (e.g. skipped by CTRL+TAB)
 	};

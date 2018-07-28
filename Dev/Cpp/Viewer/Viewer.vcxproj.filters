@@ -148,20 +148,20 @@
     <ClInclude Include="3rdParty\imgui_addon\imguihelper\imguihelper.h">
       <Filter>3rdParty\imgui_addon\imguihelper</Filter>
     </ClInclude>
-    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_gl3.h">
-      <Filter>3rdParty\imgui_platform</Filter>
-    </ClInclude>
-    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_glfw.h">
-      <Filter>3rdParty\imgui_platform</Filter>
-    </ClInclude>
-    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_dx9.h">
-      <Filter>3rdParty\imgui_platform</Filter>
-    </ClInclude>
     <ClInclude Include="3rdParty\Boxer\boxer.h">
       <Filter>3rdParty\Boxer</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Platform\efk.Language.h">
       <Filter>GUI\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_dx9.h">
+      <Filter>3rdParty\imgui_platform</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_glfw.h">
+      <Filter>3rdParty\imgui_platform</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_opengl3.h">
+      <Filter>3rdParty\imgui_platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -255,20 +255,20 @@
     <ClCompile Include="3rdParty\imgui_addon\imguihelper\imguihelper.cpp">
       <Filter>3rdParty\imgui_addon\imguihelper</Filter>
     </ClCompile>
-    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_glfw.cpp">
-      <Filter>3rdParty\imgui_platform</Filter>
-    </ClCompile>
-    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_gl3.cpp">
-      <Filter>3rdParty\imgui_platform</Filter>
-    </ClCompile>
-    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_dx9.cpp">
-      <Filter>3rdParty\imgui_platform</Filter>
-    </ClCompile>
     <ClCompile Include="3rdParty\Boxer\boxer_win.cpp">
       <Filter>3rdParty\Boxer</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Platform\efk.Language_Other.cpp">
       <Filter>GUI\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_glfw.cpp">
+      <Filter>3rdParty\imgui_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_opengl3.cpp">
+      <Filter>3rdParty\imgui_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_dx9.cpp">
+      <Filter>3rdParty\imgui_platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

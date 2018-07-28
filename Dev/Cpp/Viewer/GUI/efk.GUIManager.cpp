@@ -414,17 +414,21 @@ namespace efk
 	void GUIManager::InitializeGUI(Native* native)
 	{
 		ImGui::CreateContext();
-		ImGui_ImplGlfw_Init(window->GetGLFWWindows(), true);
-
+		
 		if (isOpenGLMode)
 		{
-			ImGui_ImplGL3_Init(window->GetGLFWWindows(), true, nullptr);
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+			ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWWindows(), true);
+			ImGui_ImplOpenGL3_Init(nullptr);
 		}
 		else
 		{
 #ifdef _WIN32
+			ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWWindows(), true);
 			auto r = (EffekseerRendererDX9::Renderer*)native->GetRenderer();
-			ImGui_ImplDX9_Init(window->GetNativeHandle(), r->GetDevice());
+			ImGui_ImplDX9_Init(r->GetDevice());
 #endif
 		}
 
@@ -479,7 +483,7 @@ namespace efk
 	{
 		if (isOpenGLMode)
 		{
-			ImGui_ImplGL3_Shutdown();
+			ImGui_ImplOpenGL3_Shutdown();
 		}
 		else
 		{
@@ -535,7 +539,7 @@ namespace efk
 	{
 		if (isOpenGLMode)
 		{
-			ImGui_ImplGL3_NewFrame();
+			ImGui_ImplOpenGL3_NewFrame();
 		}
 		else
 		{
@@ -545,17 +549,19 @@ namespace efk
 		}
 
 		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 	}
 
 	void GUIManager::RenderGUI(bool isValid)
 	{
+		ImGui::EndFrame();
 		ImGui::Render();
 
 		if (isValid)
 		{
 			if (isOpenGLMode)
 			{
-				ImGui_ImplGL3_RenderDrawData(ImGui::GetDrawData());
+				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 			}
 			else
 			{
@@ -569,6 +575,20 @@ namespace efk
 			if (ImGui::GetDrawData() != nullptr)
 			{
 				ImGui::GetDrawData()->Clear();
+			}
+		}
+
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+			}
+
+			if (isOpenGLMode)
+			{
+				glfwMakeContextCurrent(window->GetGLFWWindows());
 			}
 		}
 	}
@@ -1213,7 +1233,19 @@ namespace efk
 		windowSize.y = ImGui::GetIO().DisplaySize.y - 25;
 
 		ImGui::SetNextWindowSize(windowSize);
-		ImGui::SetNextWindowPos(ImVec2(0, 25));
+		
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			auto pos = ImGui::GetMainViewport()->Pos;
+			pos.y += 25;
+			ImGui::SetNextWindowPos(pos);
+		}
+		else
+		{
+			ImGui::SetNextWindowPos(ImVec2(0, 25));
+		}
+		
 		const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 		const float oldWindowRounding = ImGui::GetStyle().WindowRounding; ImGui::GetStyle().WindowRounding = 0;
 		const bool visible = ImGui::Begin(utf8str<256>(label), NULL, ImVec2(0, 0), 1.0f, flags);

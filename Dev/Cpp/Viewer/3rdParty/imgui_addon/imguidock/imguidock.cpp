@@ -673,11 +673,15 @@ struct DockContext
               ImGuiWindowFlags_AlwaysAutoResize);
         ImDrawList* canvas = GetWindowDrawList();
 
-        canvas->PushClipRectFullScreen();
+       canvas->PushClipRectFullScreen();
 
         ImU32 docked_color = GetColorU32(ImGuiCol_FrameBg);
 	docked_color = (docked_color & 0x00ffFFFF) | 0x80000000;
-        dock.pos = GetIO().MousePos - m_drag_offset;
+
+	dock.pos = GetIO().MousePos - m_drag_offset;
+
+	ImGuiIO& io = ImGui::GetIO();
+
 		bool isHovered = false;
         if (dest_dock)
         {
@@ -701,7 +705,17 @@ struct DockContext
             End();
             return;
         }
-        canvas->AddRectFilled(dock.pos, dock.pos + dock.size, docked_color);
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			auto dock_pos = dock.pos + ImGui::GetMainViewport()->Pos;
+			canvas->AddRectFilled(dock_pos, dock_pos + dock.size, docked_color);
+		}
+		else
+		{
+			canvas->AddRectFilled(dock.pos, dock.pos + dock.size, docked_color);
+		}
+
         canvas->PopClipRect();
 
         if (!IsMouseDown(0))
@@ -867,7 +881,18 @@ struct DockContext
 
         bool tab_closed = false;
 
-        SetCursorScreenPos(dock.pos);
+		ImGuiIO& io = ImGui::GetIO();
+
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable && dock.status == Status_Dragged)
+		{
+			SetCursorScreenPos(dock.pos + ImGui::GetMainViewport()->Pos);
+		}
+		else
+		{
+			SetCursorScreenPos(dock.pos);
+		}
+
         char tmp[20];
         ImFormatString(tmp, IM_ARRAYSIZE(tmp), "tabs%d", (int)dock.id);
         if (BeginChild(tmp, size, true))
@@ -1233,6 +1258,8 @@ struct DockContext
 
     bool begin(const char* label, bool* opened, ImGuiWindowFlags extra_flags, const ImVec2& default_size)
     {
+		ImGuiIO& io = ImGui::GetIO();
+
 	IM_ASSERT(!m_is_begin_open);
 	m_is_begin_open = true;
 	Dock& dock = getDock(label, !opened || *opened, default_size);
@@ -1289,39 +1316,83 @@ struct DockContext
         }
         
         m_current = &dock;
-        if (dock.status == Status_Dragged) handleDrag(dock);
+		if (dock.status == Status_Dragged)
+		{
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable && GetCurrentWindowRead()->ViewportOwned)
+			{
+				dock.status = Status_Float;
+				dock.location[0] = 0;
+				dock.setActive();
+			}
+			else
+			{
+				handleDrag(dock);
+			}
+		}
 
         bool is_float = dock.status == Status_Float;
 
-        if (is_float)
-        {
-            SetNextWindowPos(dock.pos);
-	    const ImVec2 old_size(dock.floatmode_size.x>0 ? dock.floatmode_size.x : dock.size.x,
-				  dock.floatmode_size.y>0 ? dock.floatmode_size.y : dock.size.y);
-	    SetNextWindowSize(old_size);
-	    dock.size = old_size;
-            bool ret = Begin(label,
-                             opened,
-			     ImGuiWindowFlags_NoCollapse | extra_flags);
-            m_end_action = EndAction_End;
-            dock.pos = GetWindowPos();
-	    dock.size = GetWindowSize();
-	    if (dock.size.x!=old_size.x && dock.floatmode_size.x>=0) dock.floatmode_size.x = dock.size.x;
-	    if (dock.size.y!=old_size.y && dock.floatmode_size.y>=0) dock.floatmode_size.y = dock.size.y;
+		if (is_float)
+		{
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				if (GetCurrentWindowRead()->Viewport != nullptr)
+				{
 
-	    // Dbg (to remove)
-	    //if (ImGui::IsWindowHovered()) ImGui::SetTooltip("dock.size:\t(%1.f,%1.f)\\ndock.floatmode_size\t(%1.f,%1.f)\n",dock.size.x,dock.size.y,dock.floatmode_size.x,dock.floatmode_size.y);
+				}
+				else
+				{
+					SetNextWindowPos(ImGui::GetMainViewport()->Pos + dock.pos);
+				}
+			}
+			else
+			{
+				SetNextWindowPos(dock.pos);
+			}
 
-            ImGuiContext& g = *GImGui;
+			const ImVec2 old_size(dock.floatmode_size.x > 0 ? dock.floatmode_size.x : dock.size.x,
+				dock.floatmode_size.y > 0 ? dock.floatmode_size.y : dock.size.y);
+			SetNextWindowSize(old_size);
+			dock.size = old_size;
+			bool ret = Begin(label,
+				opened,
+				ImGuiWindowFlags_NoCollapse | extra_flags);
+			m_end_action = EndAction_End;
 
-            if (g.ActiveId == GetCurrentWindow()->MoveId && g.IO.MouseDown[0])
-            {
-                m_drag_offset = GetMousePos() - dock.pos;
-                doUndock(dock);
-                dock.status = Status_Dragged;
-            }
-            return ret;
-        }
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				dock.pos = GetWindowPos() - ImGui::GetMainViewport()->Pos;
+			}
+			else
+			{
+				dock.pos = GetWindowPos();
+			}
+
+			dock.size = GetWindowSize();
+			if (dock.size.x != old_size.x && dock.floatmode_size.x >= 0) dock.floatmode_size.x = dock.size.x;
+			if (dock.size.y != old_size.y && dock.floatmode_size.y >= 0) dock.floatmode_size.y = dock.size.y;
+
+			// Dbg (to remove)
+			//if (ImGui::IsWindowHovered()) ImGui::SetTooltip("dock.size:\t(%1.f,%1.f)\\ndock.floatmode_size\t(%1.f,%1.f)\n",dock.size.x,dock.size.y,dock.floatmode_size.x,dock.floatmode_size.y);
+
+			ImGuiContext& g = *GImGui;
+
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable && GetCurrentWindowRead()->ViewportOwned)
+			{
+
+			}
+			else
+			{
+				if (g.ActiveId == GetCurrentWindow()->MoveId && g.IO.MouseDown[0])
+				{
+					m_drag_offset = GetMousePos() - dock.pos;
+					doUndock(dock);
+					dock.status = Status_Dragged;
+				}
+			}
+
+			return ret;
+		}
 
         if (!dock.active && dock.status != Status_Dragged) return false;
 
@@ -1378,6 +1449,11 @@ struct DockContext
         size.y -= tabbar_height + GetStyle().WindowPadding.y;
     }
 
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable && dock.status == Status_Dragged)
+	{
+		pos += ImGui::GetMainViewport()->Pos;
+	}
+
         SetCursorScreenPos(pos);
         ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
@@ -1396,6 +1472,11 @@ struct DockContext
         window->BeginOrderWithinParent = 100000;
     }
 
+	if (dock.status == Status_Dragged)
+	{
+		ImGuiWindow* window = GetCurrentWindow();
+		SetWindowFocus();
+	}
         return ret;
     }
 

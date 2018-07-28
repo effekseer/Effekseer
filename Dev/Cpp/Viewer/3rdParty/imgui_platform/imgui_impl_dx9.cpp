@@ -1,35 +1,27 @@
-// ImGui Win32 + DirectX9 binding
+// ImGui Renderer for: DirectX9
+// This needs to be used along with a Platform Binding (e.g. Win32)
 
 // Implemented features:
-//  [X] User texture binding. Use 'LPDIRECT3DTEXTURE9' as ImTextureID. Read the FAQ about ImTextureID in imgui.cpp.
+//  [X] Renderer: User texture binding. Use 'LPDIRECT3DTEXTURE9' as ImTextureID. Read the FAQ about ImTextureID in imgui.cpp.
 
 // You can copy and use unmodified imgui_impl_* files in your project. See main.cpp for an example of using this.
-// If you use this binding you'll need to call 4 functions: ImGui_ImplXXXX_Init(), ImGui_ImplXXXX_NewFrame(), ImGui::Render() and ImGui_ImplXXXX_Shutdown().
-// If you are new to ImGui, see examples/README.txt and documentation at the top of imgui.cpp.
+// If you are new to dear imgui, read examples/README.txt and read the documentation at the top of imgui.cpp.
 // https://github.com/ocornut/imgui
 
 // CHANGELOG 
 // (minor and older changes stripped away, please see git history for details)
-//  2018-03-20: Misc: Setup io.BackendFlags ImGuiBackendFlags_HasMouseCursors and ImGuiBackendFlags_HasSetMousePos flags + honor ImGuiConfigFlags_NoMouseCursorChange flag.
-//  2018-02-20: Inputs: Added support for mouse cursors (ImGui::GetMouseCursor() value and WM_SETCURSOR message handling).
+//  2018-06-08: Misc: Extracted imgui_impl_dx9.cpp/.h away from the old combined DX9+Win32 example.
+//  2018-06-08: DirectX9: Use draw_data->DisplayPos and draw_data->DisplaySize to setup projection matrix and clipping rectangle.
+//  2018-05-07: Render: Saving/restoring Transform because they don't seem to be included in the StateBlock. Setting shading mode to Gouraud.
 //  2018-02-16: Misc: Obsoleted the io.RenderDrawListsFn callback and exposed ImGui_ImplDX9_RenderDrawData() in the .h file so you can call it yourself.
 //  2018-02-06: Misc: Removed call to ImGui::Shutdown() which is not available from 1.60 WIP, user needs to call CreateContext/DestroyContext themselves.
-//  2018-02-06: Inputs: Honoring the io.WantSetMousePos by repositioning the mouse (when using navigation and ImGuiConfigFlags_NavEnableSetMousePos is set).
-//  2018-02-06: Inputs: Added mapping for ImGuiKey_Space.
 
-#include "imgui.h"
 #include "imgui_impl_dx9.h"
 
 // DirectX
 #include <d3d9.h>
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
-
-// Win32 data
-static HWND                     g_hWnd = 0;
-static INT64                    g_Time = 0;
-static INT64                    g_TicksPerSecond = 0;
-static ImGuiMouseCursor         g_LastMouseCursor = ImGuiMouseCursor_COUNT;
 
 // DirectX data
 static LPDIRECT3DDEVICE9        g_pd3dDevice = NULL;
@@ -51,8 +43,7 @@ struct CUSTOMVERTEX
 void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
 {
     // Avoid rendering when minimized
-    ImGuiIO& io = ImGui::GetIO();
-    if (io.DisplaySize.x <= 0.0f || io.DisplaySize.y <= 0.0f)
+    if (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f)
         return;
 
     // Create and grow buffers if needed
@@ -76,7 +67,16 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
     if (g_pd3dDevice->CreateStateBlock(D3DSBT_ALL, &d3d9_state_block) < 0)
         return;
 
-    // Copy and convert all vertices into a single contiguous buffer
+    // Backup the DX9 transform (DX9 documentation suggests that it is included in the StateBlock but it doesn't appear to)
+    D3DMATRIX last_world, last_view, last_projection;
+    g_pd3dDevice->GetTransform(D3DTS_WORLD, &last_world);
+    g_pd3dDevice->GetTransform(D3DTS_VIEW, &last_view);
+    g_pd3dDevice->GetTransform(D3DTS_PROJECTION, &last_projection);
+
+    // Copy and convert all vertices into a single contiguous buffer, convert colors to DX9 default format.
+    // FIXME-OPT: This is a waste of resource, the ideal is to use imconfig.h and
+    //  1) to avoid repacking colors:   #define IMGUI_USE_BGRA_PACKED_COLOR
+    //  2) to avoid repacking vertices: #define IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT struct ImDrawVert { ImVec2 pos; float z; ImU32 col; ImVec2 uv; }
     CUSTOMVERTEX* vtx_dst;
     ImDrawIdx* idx_dst;
     if (g_pVB->Lock(0, (UINT)(draw_data->TotalVtxCount * sizeof(CUSTOMVERTEX)), (void**)&vtx_dst, D3DLOCK_DISCARD) < 0)
@@ -92,7 +92,7 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
             vtx_dst->pos[0] = vtx_src->pos.x;
             vtx_dst->pos[1] = vtx_src->pos.y;
             vtx_dst->pos[2] = 0.0f;
-            vtx_dst->col = (vtx_src->col & 0xFF00FF00) | ((vtx_src->col & 0xFF0000)>>16) | ((vtx_src->col & 0xFF) << 16);     // RGBA --> ARGB for DirectX9
+            vtx_dst->col = (vtx_src->col & 0xFF00FF00) | ((vtx_src->col & 0xFF0000) >> 16) | ((vtx_src->col & 0xFF) << 16);     // RGBA --> ARGB for DirectX9
             vtx_dst->uv[0] = vtx_src->uv.x;
             vtx_dst->uv[1] = vtx_src->uv.y;
             vtx_dst++;
@@ -110,13 +110,13 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
     // Setup viewport
     D3DVIEWPORT9 vp;
     vp.X = vp.Y = 0;
-    vp.Width = (DWORD)io.DisplaySize.x;
-    vp.Height = (DWORD)io.DisplaySize.y;
+    vp.Width = (DWORD)draw_data->DisplaySize.x;
+    vp.Height = (DWORD)draw_data->DisplaySize.y;
     vp.MinZ = 0.0f;
     vp.MaxZ = 1.0f;
     g_pd3dDevice->SetViewport(&vp);
 
-    // Setup render state: fixed-pipeline, alpha-blending, no face culling, no depth testing
+    // Setup render state: fixed-pipeline, alpha-blending, no face culling, no depth testing, shade mode (for gradient)
     g_pd3dDevice->SetPixelShader(NULL);
     g_pd3dDevice->SetVertexShader(NULL);
     g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -128,6 +128,7 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
     g_pd3dDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
     g_pd3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
     g_pd3dDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, true);
+    g_pd3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
     g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
     g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
     g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
@@ -138,9 +139,13 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
     g_pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 
     // Setup orthographic projection matrix
+    // Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). DisplayMin is (0,0) for single viewport apps.
     // Being agnostic of whether <d3dx9.h> or <DirectXMath.h> can be used, we aren't relying on D3DXMatrixIdentity()/D3DXMatrixOrthoOffCenterLH() or DirectX::XMMatrixIdentity()/DirectX::XMMatrixOrthographicOffCenterLH()
     {
-        const float L = 0.5f, R = io.DisplaySize.x+0.5f, T = 0.5f, B = io.DisplaySize.y+0.5f;
+        float L = draw_data->DisplayPos.x + 0.5f;
+        float R = draw_data->DisplayPos.x + draw_data->DisplaySize.x + 0.5f;
+        float T = draw_data->DisplayPos.y + 0.5f;
+        float B = draw_data->DisplayPos.y + draw_data->DisplaySize.y + 0.5f;
         D3DMATRIX mat_identity = { { 1.0f, 0.0f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f, 0.0f,  0.0f, 0.0f, 0.0f, 1.0f } };
         D3DMATRIX mat_projection =
         {
@@ -157,6 +162,7 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
     // Render command lists
     int vtx_offset = 0;
     int idx_offset = 0;
+    ImVec2 pos = draw_data->DisplayPos;
     for (int n = 0; n < draw_data->CmdListsCount; n++)
     {
         const ImDrawList* cmd_list = draw_data->CmdLists[n];
@@ -169,7 +175,7 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
             }
             else
             {
-                const RECT r = { (LONG)pcmd->ClipRect.x, (LONG)pcmd->ClipRect.y, (LONG)pcmd->ClipRect.z, (LONG)pcmd->ClipRect.w };
+                const RECT r = { (LONG)(pcmd->ClipRect.x - pos.x), (LONG)(pcmd->ClipRect.y - pos.y), (LONG)(pcmd->ClipRect.z - pos.x), (LONG)(pcmd->ClipRect.w - pos.y) };
                 g_pd3dDevice->SetTexture(0, (LPDIRECT3DTEXTURE9)pcmd->TextureId);
                 g_pd3dDevice->SetScissorRect(&r);
                 g_pd3dDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, vtx_offset, 0, (UINT)cmd_list->VtxBuffer.Size, idx_offset, pcmd->ElemCount/3);
@@ -179,28 +185,19 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
         vtx_offset += cmd_list->VtxBuffer.Size;
     }
 
+    // Restore the DX9 transform
+    g_pd3dDevice->SetTransform(D3DTS_WORLD, &last_world);
+    g_pd3dDevice->SetTransform(D3DTS_VIEW, &last_view);
+    g_pd3dDevice->SetTransform(D3DTS_PROJECTION, &last_projection);
+
     // Restore the DX9 state
     d3d9_state_block->Apply();
     d3d9_state_block->Release();
 }
 
-bool    ImGui_ImplDX9_Init(void* hwnd, IDirect3DDevice9* device)
+bool ImGui_ImplDX9_Init(IDirect3DDevice9* device)
 {
-    g_hWnd = (HWND)hwnd;
     g_pd3dDevice = device;
-
-    if (!QueryPerformanceFrequency((LARGE_INTEGER *)&g_TicksPerSecond))
-        return false;
-    if (!QueryPerformanceCounter((LARGE_INTEGER *)&g_Time))
-        return false;
-
-    // Setup back-end capabilities flags
-    ImGuiIO& io = ImGui::GetIO();
-    io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;   // We can honor GetMouseCursor() values (optional)
-    io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;    // We can honor io.WantSetMousePos requests (optional, rarely used)
-
-    io.ImeWindowHandle = g_hWnd;
-
     return true;
 }
 
@@ -208,7 +205,6 @@ void ImGui_ImplDX9_Shutdown()
 {
     ImGui_ImplDX9_InvalidateDeviceObjects();
     g_pd3dDevice = NULL;
-    g_hWnd = 0;
 }
 
 static bool ImGui_ImplDX9_CreateFontsTexture()
@@ -273,48 +269,4 @@ void ImGui_ImplDX9_NewFrame()
 {
     if (!g_FontTexture)
         ImGui_ImplDX9_CreateDeviceObjects();
-
-	/*
-    ImGuiIO& io = ImGui::GetIO();
-
-    // Setup display size (every frame to accommodate for window resizing)
-    RECT rect;
-    GetClientRect(g_hWnd, &rect);
-    io.DisplaySize = ImVec2((float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
-
-    // Setup time step
-    INT64 current_time;
-    QueryPerformanceCounter((LARGE_INTEGER *)&current_time);
-    io.DeltaTime = (float)(current_time - g_Time) / g_TicksPerSecond;
-    g_Time = current_time;
-
-    // Read keyboard modifiers inputs
-    io.KeyCtrl = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
-    io.KeyShift = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
-    io.KeyAlt = (GetKeyState(VK_MENU) & 0x8000) != 0;
-    io.KeySuper = false;
-    // io.KeysDown : filled by WM_KEYDOWN/WM_KEYUP events
-    // io.MousePos : filled by WM_MOUSEMOVE events
-    // io.MouseDown : filled by WM_*BUTTON* events
-    // io.MouseWheel : filled by WM_MOUSEWHEEL events
-
-    // Set OS mouse position if requested (only used when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
-    if (io.WantSetMousePos)
-    {
-        POINT pos = { (int)io.MousePos.x, (int)io.MousePos.y };
-        ClientToScreen(g_hWnd, &pos);
-        SetCursorPos(pos.x, pos.y);
-    }
-
-    // Update OS mouse cursor with the cursor requested by imgui
-    ImGuiMouseCursor mouse_cursor = io.MouseDrawCursor ? ImGuiMouseCursor_None : ImGui::GetMouseCursor();
-    if (g_LastMouseCursor != mouse_cursor)
-    {
-        g_LastMouseCursor = mouse_cursor;
-        ImGui_ImplWin32_UpdateMouseCursor();
-    }
-
-    // Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
-    ImGui::NewFrame();
-	*/
 }

@@ -13,7 +13,7 @@
 #include "GUI/efk.GUIManager.h"
 
 #include "3rdParty/imgui/imgui.h"
-#include "3rdParty/imgui_platform/imgui_impl_gl3.h"
+#include "3rdParty/imgui_platform/imgui_impl_opengl3.h"
 #include "3rdParty/imgui_platform/imgui_impl_glfw.h"
 
 #include "3rdParty/imgui_addon/imguidock/imguidock.h"
@@ -130,8 +130,8 @@ int main()
 #endif
     
 	ImGui::CreateContext();
-	ImGui_ImplGlfw_Init(window->GetGLFWWindows(), true);
-	ImGui_ImplGL3_Init(window->GetGLFWWindows(), true, nullptr);
+	ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWWindows(), true);
+	ImGui_ImplOpenGL3_Init(nullptr);
 	ImGui::StyleColorsClassic();
 	
 
@@ -199,7 +199,7 @@ int main()
          //glBindVertexArray(0);
 #endif
         
-		ImGui_ImplGL3_NewFrame();
+		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 
 		if (ImGui::BeginMainMenuBar())
@@ -287,7 +287,7 @@ int main()
 		ImGui::End();
 
 		ImGui::Render();
-		ImGui_ImplGL3_RenderDrawData(ImGui::GetDrawData());
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         
 		renderer->Present();
 		window->Present();
@@ -302,7 +302,7 @@ int main()
 	ES_SAFE_DELETE(renderer);
 
 	ImGui_ImplGlfw_Shutdown();
-	ImGui_ImplGL3_Shutdown();
+	ImGui_ImplOpenGL3_Shutdown();
 	ImGui::DestroyContext();
 
 	window->MakeNone();
