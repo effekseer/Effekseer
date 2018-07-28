@@ -14,7 +14,7 @@ namespace Effekseer.Script
 	
 		}
 
-		internal void Add(T script)
+		public void Add(T script)
 		{
 			scripts.Add(script);
 		}
