@@ -10912,6 +10912,22 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* v, floa
             g.ScalarAsInputTextId = 0;
         }
     }
+	else if (hovered && g.IO.MouseReleased[0] && g.IO.MouseClickedPos[0].x == g.IO.MousePos.x && g.IO.MouseClickedPos[0].y == g.IO.MousePos.y)
+	{
+		SetActiveID(id, window);
+		SetFocusID(id, window);
+		FocusWindow(window);
+
+		// HACK
+		g.IO.MouseClicked[0] = 1;
+
+		g.ActiveIdAllowNavDirFlags = (1 << ImGuiDir_Up) | (1 << ImGuiDir_Down);
+		{
+			start_text_input = true;
+			g.ScalarAsInputTextId = 0;
+		}
+	}
+
     if (start_text_input || (g.ActiveId == id && g.ScalarAsInputTextId == id))
         return InputScalarAsWidgetReplacement(frame_bb, id, label, data_type, v, format);
 
