@@ -127,13 +127,17 @@ namespace Effekseer
 			}
 
 			System.OperatingSystem os = System.Environment.OSVersion;
-			bool isOpenGLMode =
-				!(os.Platform == PlatformID.Win32NT || 
+			swig.DeviceType deviceType = swig.DeviceType.DirectX9;
+
+				if(!(os.Platform == PlatformID.Win32NT || 
 				os.Platform == PlatformID.Win32S ||
 				os.Platform == PlatformID.Win32Windows ||
-				os.Platform == PlatformID.WinCE);
+				os.Platform == PlatformID.WinCE))
+			{
+				deviceType = swig.DeviceType.OpenGL;
+			}
 
-			if (!GUI.Manager.Initialize(960,540, isOpenGLMode))
+			if (!GUI.Manager.Initialize(960,540, deviceType))
 			{
 				return;
 			}

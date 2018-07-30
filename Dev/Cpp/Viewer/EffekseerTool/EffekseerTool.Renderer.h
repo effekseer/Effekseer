@@ -5,9 +5,11 @@
 
 #ifdef _WIN32
 #include "../Graphics/Platform/DX9/efk.GraphicsDX9.h"
+#include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
 #endif
 
 #include "../Graphics/Platform/GL/efk.GraphicsGL.h"
+#include "../efk.Base.h"
 
 #include <functional>
 
@@ -72,9 +74,9 @@ private:
 
 public:
 	/**
-		@brief	コンストラクタ
+		@brief	Constructor
 	*/
-	Renderer(int32_t squareMaxCount, bool isSRGBMode, bool isOpenGLMode);
+	Renderer(int32_t squareMaxCount, bool isSRGBMode, efk::DeviceType deviceType);
 
 	/**
 		@brief	デストラクタ

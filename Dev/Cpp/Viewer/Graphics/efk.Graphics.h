@@ -7,16 +7,11 @@
 #include <vector>
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
+#include "../efk.Base.h"
 
 namespace efk
 {
 	class Graphics;
-
-	enum class DeviceType
-	{
-		DirectX9,
-		OpenGL,
-	};
 
 	class RenderTexture
 	{

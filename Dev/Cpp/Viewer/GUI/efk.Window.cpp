@@ -83,7 +83,7 @@ namespace efk
 	{}
 
 
-	bool Window::Initialize(const char16_t* title, int32_t width, int32_t height, bool isSRGBMode, bool isOpenGLMode)
+	bool Window::Initialize(const char16_t* title, int32_t width, int32_t height, bool isSRGBMode, DeviceType deviceType)
 	{
 		if (!glfwInit())
 		{
@@ -97,9 +97,9 @@ namespace efk
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
 
-		this->isOpenGLMode = isOpenGLMode;
+		this->deviceType = deviceType;
 
-		if (this->isOpenGLMode)
+		if (deviceType == DeviceType::OpenGL)
 		{
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		}

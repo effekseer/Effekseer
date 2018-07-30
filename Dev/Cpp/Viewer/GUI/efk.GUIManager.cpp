@@ -337,13 +337,13 @@ namespace efk
 	GUIManager::~GUIManager()
 	{}
 
-	bool GUIManager::Initialize(const char16_t* title, int32_t width, int32_t height, bool isOpenGLMode, bool isSRGBMode)
+	bool GUIManager::Initialize(const char16_t* title, int32_t width, int32_t height, efk::DeviceType deviceType, bool isSRGBMode)
 	{
 		window = new efk::Window();
 
-		this->isOpenGLMode = isOpenGLMode;
+		this->deviceType = deviceType;
 
-		if (!window->Initialize(title, width, height, isSRGBMode, isOpenGLMode))
+		if (!window->Initialize(title, width, height, isSRGBMode, deviceType))
 		{
 			ES_SAFE_DELETE(window);
 			return false;
@@ -392,7 +392,7 @@ namespace efk
 			}
 		};
 
-		if (isOpenGLMode)
+		if (deviceType == DeviceType::OpenGL)
 		{
 			window->MakeCurrent();
 
@@ -415,7 +415,7 @@ namespace efk
 	{
 		ImGui::CreateContext();
 		
-		if (isOpenGLMode)
+		if (deviceType == DeviceType::OpenGL)
 		{
 			ImGuiIO& io = ImGui::GetIO();
 			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
@@ -423,14 +423,20 @@ namespace efk
 			ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWWindows(), true);
 			ImGui_ImplOpenGL3_Init(nullptr);
 		}
+#ifdef _WIN32
+		else if (deviceType == DeviceType::DirectX11)
+		{
+			ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWWindows(), true);
+			auto r = (EffekseerRendererDX11::Renderer*)native->GetRenderer();
+			ImGui_ImplDX11_Init(r->GetDevice(), r->GetContext());
+		}
 		else
 		{
-#ifdef _WIN32
 			ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWWindows(), true);
 			auto r = (EffekseerRendererDX9::Renderer*)native->GetRenderer();
 			ImGui_ImplDX9_Init(r->GetDevice());
-#endif
 		}
+#endif
 
 		ImGui::StyleColorsDark();
 
@@ -481,16 +487,20 @@ namespace efk
 
 	void GUIManager::Terminate()
 	{
-		if (isOpenGLMode)
+		if (deviceType == DeviceType::OpenGL) 
 		{
 			ImGui_ImplOpenGL3_Shutdown();
 		}
+#ifdef _WIN32
+		else if (deviceType == DeviceType::DirectX11)
+		{
+			ImGui_ImplDX11_Shutdown();
+		}
 		else
 		{
-#ifdef _WIN32
 			ImGui_ImplDX9_Shutdown();
-#endif
 		}
+#endif
 
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
@@ -537,16 +547,20 @@ namespace efk
 
 	void GUIManager::ResetGUI()
 	{
-		if (isOpenGLMode)
+		if (deviceType == DeviceType::OpenGL)
 		{
 			ImGui_ImplOpenGL3_NewFrame();
 		}
+#if _WIN32
+		else if (deviceType == DeviceType::DirectX11)
+		{
+			ImGui_ImplDX11_NewFrame();
+		}
 		else
 		{
-#if _WIN32
 			ImGui_ImplDX9_NewFrame();
-#endif
 		}
+#endif
 
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -559,16 +573,20 @@ namespace efk
 
 		if (isValid)
 		{
-			if (isOpenGLMode)
+			if (deviceType == DeviceType::OpenGL)
 			{
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 			}
+#if _WIN32
+			else if (deviceType == DeviceType::DirectX11)
+			{
+				ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			}
 			else
 			{
-#if _WIN32
 				ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-#endif
 			}
+#endif
 		}
 		else
 		{
@@ -586,7 +604,7 @@ namespace efk
 				ImGui::RenderPlatformWindowsDefault();
 			}
 
-			if (isOpenGLMode)
+			if (deviceType == DeviceType::OpenGL)
 			{
 				glfwMakeContextCurrent(window->GetGLFWWindows());
 			}
@@ -831,7 +849,7 @@ namespace efk
 
 	void GUIManager::Image(void* user_texture_id, float x, float y)
 	{
-		if (!isOpenGLMode)
+		if (deviceType != DeviceType::OpenGL)
 		{
 			ImGui::Image((ImTextureID)user_texture_id, ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1));
 		}

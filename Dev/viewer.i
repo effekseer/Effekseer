@@ -1,6 +1,7 @@
 %module(directors="1") EffekseerNative
 
 %{
+#include "efk.Base.h"
 #include "GUI/efk.ImageResource.h"
 #include "dll.h"
 #include "GUI/efk.GUIManager.h"
@@ -78,6 +79,7 @@ class"
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+%include "Cpp/Viewer/efk.Base.h"
 %include "Cpp/Viewer/GUI/efk.Vec2.h"
 %include "Cpp/Viewer/GUI/efk.ImageResource.h"
 %include "Cpp/Viewer/dll.h"

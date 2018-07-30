@@ -171,7 +171,7 @@ namespace Effekseer.GUI
 				throw new Exception("Viewerが生成されていません。");
 			}
 
-			viewer.ShowViewer(Handle, Width, Height);
+			viewer.ShowViewer(Handle, Width, Height, swig.DeviceType.DirectX9);
 		}
 
 		public void UpdateViewer()

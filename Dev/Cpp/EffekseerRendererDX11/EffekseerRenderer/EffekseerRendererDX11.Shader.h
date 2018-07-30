@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include "EffekseerRendererDX11.RendererImplemented.h"
 #include "EffekseerRendererDX11.DeviceObject.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.ShaderBase.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -18,6 +19,7 @@ namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 class Shader
 	: public DeviceObject
+	, public ::EffekseerRenderer::ShaderBase
 {
 private:
 	

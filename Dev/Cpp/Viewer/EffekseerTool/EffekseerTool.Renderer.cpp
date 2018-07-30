@@ -35,6 +35,11 @@ namespace EffekseerTool
 				r->SetBackground((GLuint)(size_t)renderer->GetBack());
 			}
 #ifdef _WIN32
+			else if (renderer->GetDeviceType() == efk::DeviceType::DirectX11)
+			{
+				auto r = (::EffekseerRendererDX11::Renderer*)renderer->GetRenderer();
+				r->SetBackground((ID3D11ShaderResourceView*)renderer->GetBack());
+			}
 			else
 			{
 				auto r = (::EffekseerRendererDX9::Renderer*)renderer->GetRenderer();
@@ -46,7 +51,7 @@ namespace EffekseerTool
 		return IsEnabled;
 	}
 
-	Renderer::Renderer(int32_t squareMaxCount, bool isSRGBMode, bool isOpenGLMode)
+	Renderer::Renderer(int32_t squareMaxCount, bool isSRGBMode, efk::DeviceType deviceType)
 		: m_width(0)
 		, m_height(0)
 		, m_squareMaxCount(squareMaxCount)
@@ -86,11 +91,15 @@ namespace EffekseerTool
 		, GridColor(255, 255, 255, 255)
 		, IsBackgroundTranslucent(false)
 	{
-		if (isOpenGLMode)
+		if (deviceType == efk::DeviceType::OpenGL)
 		{
 			graphics = new efk::GraphicsGL();
 		}
 #ifdef _WIN32
+		else if (deviceType == efk::DeviceType::OpenGL)
+		{
+			assert(0);
+		}
 		else
 		{
 			graphics = new efk::GraphicsDX9();

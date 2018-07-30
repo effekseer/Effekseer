@@ -330,10 +330,9 @@ public:
 		int32_t squareMaxCount, 
 		D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS);
 
-	/**
-		@brief	デバイスを取得する。
-	*/
 	virtual ID3D11Device* GetDevice() = 0;
+
+	virtual ID3D11DeviceContext* GetContext() = 0;
 
 	/**
 		@brief	\~English	Get background

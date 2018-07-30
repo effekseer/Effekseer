@@ -19,7 +19,6 @@ public enum WindowFlags {
   NoScrollWithMouse = 1 << 4,
   NoCollapse = 1 << 5,
   AlwaysAutoResize = 1 << 6,
-  ShowBorders = 1 << 7,
   NoSavedSettings = 1 << 8,
   NoInputs = 1 << 9,
   MenuBar = 1 << 10,
@@ -29,7 +28,6 @@ public enum WindowFlags {
   AlwaysVerticalScrollbar = 1 << 14,
   AlwaysHorizontalScrollbar = 1 << 15,
   AlwaysUseWindowPadding = 1 << 16,
-  ResizeFromAnySide = 1 << 17,
   NoNavInputs = 1 << 18,
   NoNavFocus = 1 << 19
 }

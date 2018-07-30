@@ -381,12 +381,12 @@ public:
 	/**
 		@brief	デバイス取得
 	*/
-	ID3D11Device* GetDevice();
+	ID3D11Device* GetDevice() override;
 
 	/**
 		@brief	コンテキスト取得
 	*/
-	ID3D11DeviceContext* GetContext();
+	ID3D11DeviceContext* GetContext() override;
 
 	/**
 		@brief	頂点バッファ取得

@@ -49,6 +49,9 @@
     <Filter Include="GUI\Platform">
       <UniqueIdentifier>{b2f2d363-2ea5-490d-9cf3-1c527d980545}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics\Platform\DX11">
+      <UniqueIdentifier>{d7820f9a-6588-4945-9013-9900274bc6b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffekseerTool\EffekseerTool.Renderer.h">
@@ -163,6 +166,10 @@
     <ClInclude Include="3rdParty\imgui_platform\imgui_impl_opengl3.h">
       <Filter>3rdParty\imgui_platform</Filter>
     </ClInclude>
+    <ClInclude Include="3rdParty\imgui_platform\imgui_impl_dx11.h">
+      <Filter>3rdParty\imgui_platform</Filter>
+    </ClInclude>
+    <ClInclude Include="efk.Base.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -268,6 +275,9 @@
       <Filter>3rdParty\imgui_platform</Filter>
     </ClCompile>
     <ClCompile Include="3rdParty\imgui_platform\imgui_impl_dx9.cpp">
+      <Filter>3rdParty\imgui_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui_platform\imgui_impl_dx11.cpp">
       <Filter>3rdParty\imgui_platform</Filter>
     </ClCompile>
   </ItemGroup>

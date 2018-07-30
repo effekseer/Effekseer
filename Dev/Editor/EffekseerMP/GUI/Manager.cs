@@ -141,10 +141,10 @@ namespace Effekseer.GUI
 
 		internal static Utils.DelayedList<IRemovableControl> Controls = new Utils.DelayedList<IRemovableControl>();
 
-		public static bool Initialize(int width, int height, bool isOpenGLMode)
+		public static bool Initialize(int width, int height, swig.DeviceType deviceType)
 		{
 			var mgr = new swig.GUIManager();
-			if (mgr.Initialize("Effekseer", 1280, 720, isOpenGLMode, false))
+			if (mgr.Initialize("Effekseer", 1280, 720, deviceType, false))
 			{
 			}
 			else
@@ -157,7 +157,7 @@ namespace Effekseer.GUI
 			Native = new swig.Native();
 
 			Viewer = new Viewer(Native);
-			if (!Viewer.ShowViewer(mgr.GetNativeHandle(), 1280, 720, isOpenGLMode))
+			if (!Viewer.ShowViewer(mgr.GetNativeHandle(), 1280, 720, deviceType))
 			{
 				mgr.Dispose();
 				mgr = null;

@@ -34,9 +34,9 @@
 int main_()
 {
 	auto guiManager = new efk::GUIManager();
-	guiManager->Initialize(u"Effekseer", 960, 540, true, false);
+	guiManager->Initialize(u"Effekseer", 960, 540, efk::DeviceType::OpenGL, false);
 
-	auto renderer = new ::EffekseerTool::Renderer(2000, false, true);
+	auto renderer = new ::EffekseerTool::Renderer(2000, false, efk::DeviceType::OpenGL);
 	renderer->Initialize(guiManager->GetNativeHandle(), 960, 540);
 
 	auto manager = ::Effekseer::Manager::Create(2000);
@@ -122,7 +122,7 @@ int main()
 {
 	efk::Window* window = new efk::Window();
 
-	window->Initialize(u"Effekseer", 960, 540, false, true);
+	window->Initialize(u"Effekseer", 960, 540, false, efk::DeviceType::OpenGL);
 	window->MakeCurrent();
 
 #ifdef _WIN32
@@ -135,7 +135,7 @@ int main()
 	ImGui::StyleColorsClassic();
 	
 
-	auto renderer = new ::EffekseerTool::Renderer(2000, false, true);
+	auto renderer = new ::EffekseerTool::Renderer(2000, false, efk::DeviceType::OpenGL);
 	renderer->Initialize(window->GetNativeHandle(), 960, 540);
 
 	auto manager = ::Effekseer::Manager::Create(2000);
@@ -316,9 +316,9 @@ int main__()
 {
 	efk::Window* window = new efk::Window();
 
-	window->Initialize(u"Effekseer", 960, 540, false, false);
+	window->Initialize(u"Effekseer", 960, 540, false, efk::DeviceType::OpenGL);
 
-	auto renderer = new ::EffekseerTool::Renderer(2000, false, false);
+	auto renderer = new ::EffekseerTool::Renderer(2000, false, efk::DeviceType::OpenGL);
 	renderer->Initialize(window->GetNativeHandle(), 960, 540);
 
 	auto manager = ::Effekseer::Manager::Create(2000);

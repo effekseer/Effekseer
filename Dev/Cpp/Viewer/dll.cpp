@@ -9,11 +9,14 @@
 
 #ifdef _WIN32
 #include "3rdParty/imgui_platform/imgui_impl_dx9.h"
+#include "3rdParty/imgui_platform/imgui_impl_dx11.h"
 #endif
 
 #include "dll.h"
 
 #pragma comment(lib, "d3d9.lib" )
+#pragma comment(lib, "d3d11.lib" )
+#pragma comment(lib, "d3dcompiler.lib")
 
 #define NONDLL	1
 
@@ -255,7 +258,7 @@ static ::Effekseer::Vector3D	g_focus_position;
 
 static ::Effekseer::Client*		g_client = NULL;
 
-static bool						g_isOpenGLMode = false;
+static efk::DeviceType			g_deviceType = efk::DeviceType::OpenGL;
 
 //----------------------------------------------------------------------------------
 //
@@ -263,12 +266,17 @@ static bool						g_isOpenGLMode = false;
 Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer)
 	: m_renderer	( renderer )
 {
-	if (g_isOpenGLMode)
+	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
 		auto r = (EffekseerRendererGL::Renderer*)m_renderer;
 		m_originalTextureLoader = EffekseerRendererGL::CreateTextureLoader();
 	}
 #ifdef _WIN32
+	else if (g_deviceType == efk::DeviceType::DirectX11)
+	{
+		auto r = (EffekseerRendererDX11::Renderer*)m_renderer;
+		m_originalTextureLoader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice());
+	}
 	else
 	{
 		auto r = (EffekseerRendererDX9::Renderer*)m_renderer;
@@ -390,7 +398,7 @@ void* Native::ModelLoader::Load( const EFK_CHAR* path )
 	}
 	else
 	{
-		if (g_isOpenGLMode)
+		if (g_deviceType == efk::DeviceType::OpenGL)
 		{
 			auto r = (EffekseerRendererGL::Renderer*)m_renderer;
 			auto loader = ::EffekseerRendererGL::CreateModelLoader();
@@ -406,6 +414,21 @@ void* Native::ModelLoader::Load( const EFK_CHAR* path )
 			return m;
 		}
 #ifdef _WIN32
+		else if (g_deviceType == efk::DeviceType::DirectX11)
+		{
+			auto r = (EffekseerRendererDX11::Renderer*)m_renderer;
+			auto loader = ::EffekseerRendererDX11::CreateModelLoader(r->GetDevice());
+			auto m = (Effekseer::Model*)loader->Load((const EFK_CHAR*)dst);
+
+			if (m != nullptr)
+			{
+				m_models[key] = m;
+			}
+
+			ES_SAFE_DELETE(loader);
+
+			return m;
+		}
 		else
 		{
 			auto r = (EffekseerRendererDX9::Renderer*)m_renderer;
@@ -465,15 +488,15 @@ Native::~Native()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, bool isOpenGLMode)
+bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
 {
 	m_isSRGBMode = isSRGBMode;
-	g_isOpenGLMode = isOpenGLMode;
-
+	g_deviceType = deviceType;
+	
 	// because internal buffer is 16bit
 	int32_t spriteCount = 65000 / 4;
 
-	g_renderer = new ::EffekseerTool::Renderer(spriteCount, isSRGBMode, isOpenGLMode );
+	g_renderer = new ::EffekseerTool::Renderer(spriteCount, isSRGBMode, g_deviceType );
 	if( g_renderer->Initialize( pHandle, width, height ) )
 	{
 		// 関数追加
@@ -521,12 +544,17 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 
 			{
 				Effekseer::TextureLoader* loader = nullptr;
-				if (g_isOpenGLMode)
+				if (g_deviceType == efk::DeviceType::OpenGL)
 				{
 					auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
 					loader = EffekseerRendererGL::CreateTextureLoader();
 				}
 #ifdef _WIN32
+				else if (g_deviceType == efk::DeviceType::DirectX11)
+				{
+					auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
+					loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice());
+				}
 				else
 				{
 					auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
@@ -543,10 +571,14 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			}
 
 			{
-				if (g_isOpenGLMode)
+				if (g_deviceType == efk::DeviceType::OpenGL)
 				{
 				}
 #ifdef _WIN32
+				else if (g_deviceType == efk::DeviceType::DirectX11)
+				{
+
+				}
 				else
 				{
 					ImGui_ImplDX9_InvalidateDeviceObjects();
@@ -565,12 +597,17 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 
 			{
 				Effekseer::TextureLoader* loader = nullptr;
-				if (g_isOpenGLMode)
+				if (g_deviceType == efk::DeviceType::OpenGL)
 				{
 					auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
 					loader = EffekseerRendererGL::CreateTextureLoader();
 				}
 #ifdef _WIN32
+				else if (g_deviceType == efk::DeviceType::DirectX11)
+				{
+					auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
+					loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice());
+				}
 				else
 				{
 					auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
@@ -586,10 +623,13 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			}
 
 			{
-				if (g_isOpenGLMode)
+				if (g_deviceType == efk::DeviceType::OpenGL)
 				{
 				}
 #ifdef _WIN32
+				else if (g_deviceType == efk::DeviceType::DirectX11)
+				{
+				}
 				else
 				{
 					ImGui_ImplDX9_CreateDeviceObjects();
@@ -720,12 +760,17 @@ bool Native::DestroyWindow()
 
 	{
 		Effekseer::TextureLoader* loader = nullptr;
-		if (g_isOpenGLMode)
+		if (g_deviceType == efk::DeviceType::OpenGL)
 		{
 			auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
 			loader = EffekseerRendererGL::CreateTextureLoader();
 		}
 #ifdef _WIN32
+		else if (g_deviceType == efk::DeviceType::DirectX11)
+		{
+			auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
+			loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice());
+		}
 		else
 		{
 			auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
@@ -1854,12 +1899,17 @@ void Native::SetCullingParameter( bool isCullingShown, float cullingRadius, floa
 efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 {
 	Effekseer::TextureLoader* loader = nullptr;
-	if (g_isOpenGLMode)
+	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
 		auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
 		loader = EffekseerRendererGL::CreateTextureLoader();
 	}
 #ifdef _WIN32
+	else if (g_deviceType == efk::DeviceType::DirectX11)
+	{
+		auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
+		loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice());
+	}
 	else
 	{
 		auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();

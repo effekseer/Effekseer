@@ -347,7 +347,7 @@ namespace Effekseer.GUI
 			native.SetMouseInverseFlag(rotX, rotY, slideX, slideY);
 		}
 
-		public bool ShowViewer(IntPtr handle, int width, int height, bool isOpenGLMode = false)
+		public bool ShowViewer(IntPtr handle, int width, int height, swig.DeviceType deviceType)
 		{
 			if (isViewerShown) return false;
 
@@ -360,7 +360,7 @@ namespace Effekseer.GUI
 				handle, width <= 0 ? 1 : width, 
 				height <= 0 ? 1 : height,
 				Core.Option.ColorSpace.Value == Data.OptionValues.ColorSpaceType.LinearSpace,
-				isOpenGLMode))
+				deviceType))
 			{
 				isViewerShown = true;
 				return true;

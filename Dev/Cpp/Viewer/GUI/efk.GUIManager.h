@@ -12,6 +12,7 @@
 
 #ifdef _WIN32
 #include "../3rdParty/imgui_platform/imgui_impl_dx9.h"
+#include "../3rdParty/imgui_platform/imgui_impl_dx11.h"
 #endif
 
 //#include "../3rdParty/imgui_glfw_gl3/imgui_impl_glfw_gl3.h"
@@ -231,7 +232,7 @@ namespace efk
 	private:
 		GUIManagerCallback*		callback = nullptr;
 		efk::Window*	window = nullptr;
-		bool			isOpenGLMode = false;
+		efk::DeviceType deviceType;
 		std::u16string	clipboard;
 		float			fontScale = 1.0f;
 
@@ -240,7 +241,7 @@ namespace efk
 
 		virtual ~GUIManager();
 
-		bool Initialize(const char16_t* title, int32_t width, int32_t height, bool isOpenGLMode, bool isSRGBMode);
+		bool Initialize(const char16_t* title, int32_t width, int32_t height, efk::DeviceType deviceType, bool isSRGBMode);
 
 		void InitializeGUI(Native* native);
 

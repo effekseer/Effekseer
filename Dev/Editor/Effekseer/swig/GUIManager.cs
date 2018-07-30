@@ -43,8 +43,8 @@ public class GUIManager : global::System.IDisposable {
   public GUIManager() : this(EffekseerNativePINVOKE.new_GUIManager(), true) {
   }
 
-  public bool Initialize(string title, int width, int height, bool isOpenGLMode, bool isSRGBMode) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Initialize(swigCPtr, title, width, height, isOpenGLMode, isSRGBMode);
+  public bool Initialize(string title, int width, int height, DeviceType deviceType, bool isSRGBMode) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Initialize(swigCPtr, title, width, height, (int)deviceType, isSRGBMode);
     return ret;
   }
 
@@ -54,6 +54,10 @@ public class GUIManager : global::System.IDisposable {
 
   public void SetTitle(string title) {
     EffekseerNativePINVOKE.GUIManager_SetTitle(swigCPtr, title);
+  }
+
+  public void SetWindowIcon(string iconPath) {
+    EffekseerNativePINVOKE.GUIManager_SetWindowIcon(swigCPtr, iconPath);
   }
 
   public Vec2 GetSize() {
@@ -230,6 +234,16 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public float GetFrameHeight() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetFrameHeight(swigCPtr);
+    return ret;
+  }
+
+  public float GetFrameHeightWithSpacing() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetFrameHeightWithSpacing(swigCPtr);
+    return ret;
+  }
+
   public void Columns(int count, string id, bool border) {
     EffekseerNativePINVOKE.GUIManager_Columns__SWIG_0(swigCPtr, count, id, border);
   }
@@ -286,8 +300,18 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_TextWrapped(swigCPtr, text);
   }
 
+  public bool Button(string label, float size_x, float size_y) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Button__SWIG_0(swigCPtr, label, size_x, size_y);
+    return ret;
+  }
+
+  public bool Button(string label, float size_x) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Button__SWIG_1(swigCPtr, label, size_x);
+    return ret;
+  }
+
   public bool Button(string label) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Button(swigCPtr, label);
+    bool ret = EffekseerNativePINVOKE.GUIManager_Button__SWIG_2(swigCPtr, label);
     return ret;
   }
 
@@ -897,6 +921,14 @@ public class GUIManager : global::System.IDisposable {
 
   public void SetTooltip(string text) {
     EffekseerNativePINVOKE.GUIManager_SetTooltip(swigCPtr, text);
+  }
+
+  public void BeginTooltip() {
+    EffekseerNativePINVOKE.GUIManager_BeginTooltip(swigCPtr);
+  }
+
+  public void EndTooltip() {
+    EffekseerNativePINVOKE.GUIManager_EndTooltip(swigCPtr);
   }
 
   public bool BeginMainMenuBar() {
