@@ -36,7 +36,7 @@ namespace Effekseer.GUI.Dock
 		Component.Enum endCurve = new Component.Enum();
 		Component.Enum type = new Component.Enum();
 
-		bool isAutoZoomMode = true;
+		bool isAutoZoomMode = false;
 		float autoZoomRangeMin = 0;
 		float autoZoomRangeMax = 0;
 
@@ -106,8 +106,13 @@ namespace Effekseer.GUI.Dock
 				var frameKey = new int[] { (int)selected.Item2.Keys[selectedInd] };
 				if (Manager.NativeManager.DragInt(frame_text, frameKey))
 				{
+					var diff = frameKey[0] - selected.Item2.Keys[selectedInd];
+
 					selected.Item2.Keys[selectedInd] = (int)frameKey[0];
+					selected.Item2.LeftKeys[selectedInd] += diff;
+					selected.Item2.RightKeys[selectedInd] += diff;
 					selected.Item2.IsDirtied = true;
+					selected.Item2.SolveContradiction();
 				}
 
 				if (Manager.NativeManager.IsItemActive()) canControl = false;
@@ -124,7 +129,11 @@ namespace Effekseer.GUI.Dock
 				var frameValue = new float[] { selected.Item2.Values[selectedInd] };
 				if (Manager.NativeManager.DragFloat(value_text, frameValue))
 				{
+					var diff = frameValue[0] - selected.Item2.Values[selectedInd];
+
 					selected.Item2.Values[selectedInd] = frameValue[0];
+					selected.Item2.LeftValues[selectedInd] += diff;
+					selected.Item2.RightValues[selectedInd] += diff;
 					selected.Item2.IsDirtied = true;
 				}
 
@@ -371,6 +380,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.Columns(1);
 
+			/*
 			if (isAutoZoomMode)
 			{
 				if (Manager.NativeManager.ImageButton(Images.GetIcon("AutoZoom_On"), 24, 24))
@@ -385,13 +395,14 @@ namespace Effekseer.GUI.Dock
 					isAutoZoomMode = true;
 				}
 			}
+			*/
 
-			if (Manager.NativeManager.IsItemHovered())
-			{
-				Manager.NativeManager.SetTooltip(Resources.GetString("AutoZoom") + "\n" + Resources.GetString("AutoZoom_Desc"));
-			}
+			//if (Manager.NativeManager.IsItemHovered())
+			//{
+			//	Manager.NativeManager.SetTooltip(Resources.GetString("AutoZoom") + "\n" + Resources.GetString("AutoZoom_Desc"));
+			//}
 
-			Manager.NativeManager.SameLine();
+			//Manager.NativeManager.SameLine();
 
 			Manager.NativeManager.Text(Resources.GetString("FCurveCtrl_Desc"));
 		}
@@ -1117,13 +1128,13 @@ namespace Effekseer.GUI.Dock
 					{
 						if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
 						{
+							properties[i].IsShown = !properties[i].IsShown;
 						}
 						else
 						{
 							window.HideAll();
+							properties[i].IsShown = true;
 						}
-
-						properties[i].IsShown = true;
 					}
 				}
 			}
@@ -1509,6 +1520,46 @@ namespace Effekseer.GUI.Dock
 			public Data.Value.FCurveEdge StartEdge = Data.Value.FCurveEdge.Constant;
 
 			public Data.Value.FCurveEdge EndEdge = Data.Value.FCurveEdge.Constant;
+
+			public void SolveContradiction()
+			{
+				List<Tuple<float, int>> kis = new List<Tuple<float, int>>();
+
+				for (int i = 0; i < Keys.Length - 1; i++)
+				{
+					Tuple<float, int> ki = Tuple.Create(Keys[i], i);
+
+					kis.Add(ki);
+				}
+
+				kis = kis.OrderBy(_ => _.Item1).ToList();
+
+				var temp_k = Keys.ToArray();
+				var temp_v = Values.ToArray();
+				var temp_lk = LeftKeys.ToArray();
+				var temp_lv = LeftValues.ToArray();
+				var temp_rk = RightKeys.ToArray();
+				var temp_rv = RightValues.ToArray();
+				var temp_in = Interpolations.ToArray();
+				var temp_sl = KVSelected.ToArray();
+
+				for (int k = 0; k < Keys.Length - 1; k++)
+				{
+					Keys[k] = temp_k[kis[k].Item2];
+					Values[k] = temp_v[kis[k].Item2];
+					LeftKeys[k] = temp_lk[kis[k].Item2];
+					LeftValues[k] = temp_lv[kis[k].Item2];
+					RightKeys[k] = temp_rk[kis[k].Item2];
+					RightValues[k] = temp_rv[kis[k].Item2];
+					Interpolations[k] = temp_in[kis[k].Item2];
+					KVSelected[k] = temp_sl[kis[k].Item2];
+				}
+
+				for (int k = 0; k < Keys.Length - 1; k++)
+				{
+					Clip(k);
+				}
+			}
 
 			/// <summary>
 			/// Clip left and right values
