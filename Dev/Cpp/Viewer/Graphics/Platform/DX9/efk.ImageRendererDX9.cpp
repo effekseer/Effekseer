@@ -6,19 +6,19 @@ namespace efk
 	namespace Standard_VS
 	{
 		static
-#include <EffekseerRenderer/Shader/EffekseerRenderer.Standard_VS.h>
+#include <EffekseerRendererDX9/EffekseerRenderer/Shader/EffekseerRenderer.Standard_VS.h>
 	}
 
 	namespace Standard_PS
 	{
 		static
-#include <EffekseerRenderer/Shader/EffekseerRenderer.Standard_PS.h>
+#include <EffekseerRendererDX9/EffekseerRenderer/Shader/EffekseerRenderer.Standard_PS.h>
 	}
 
 	namespace StandardNoTexture_PS
 	{
 		static
-#include <EffekseerRenderer/Shader/EffekseerRenderer.StandardNoTexture_PS.h>
+#include <EffekseerRendererDX9/EffekseerRenderer/Shader/EffekseerRenderer.StandardNoTexture_PS.h>
 	}
 
 	ImageRendererDX9::ImageRendererDX9(EffekseerRenderer::Renderer* renderer)

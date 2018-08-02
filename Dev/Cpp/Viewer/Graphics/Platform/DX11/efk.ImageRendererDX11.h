@@ -1,12 +1,12 @@
 #pragma once
 
 #include <Effekseer.h>
-#include <EffekseerRenderer/EffekseerRendererDX11.Renderer.h>
-#include <EffekseerRenderer/EffekseerRendererDX11.RendererImplemented.h>
-#include <EffekseerRenderer/EffekseerRendererDX11.VertexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX11.IndexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX11.Shader.h>
-#include <EffekseerRenderer/EffekseerRendererDX11.RenderState.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Renderer.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.RendererImplemented.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.VertexBuffer.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.IndexBuffer.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Shader.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.RenderState.h>
 #include "../../efk.ImageRenderer.h"
 
 namespace efk

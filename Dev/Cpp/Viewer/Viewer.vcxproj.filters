@@ -170,6 +170,15 @@
       <Filter>3rdParty\imgui_platform</Filter>
     </ClInclude>
     <ClInclude Include="efk.Base.h" />
+    <ClInclude Include="Graphics\Platform\DX11\efk.ImageRendererDX11.h">
+      <Filter>Graphics\Platform\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Platform\DX11\efk.LineRendererDX11.h">
+      <Filter>Graphics\Platform\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Platform\DX11\efk.GraphicsDX11.h">
+      <Filter>Graphics\Platform\DX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -279,6 +288,15 @@
     </ClCompile>
     <ClCompile Include="3rdParty\imgui_platform\imgui_impl_dx11.cpp">
       <Filter>3rdParty\imgui_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Platform\DX11\efk.LineRendererDX11.cpp">
+      <Filter>Graphics\Platform\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Platform\DX11\efk.ImageRendererDX11.cpp">
+      <Filter>Graphics\Platform\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Platform\DX11\efk.GraphicsDX11.cpp">
+      <Filter>Graphics\Platform\DX11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

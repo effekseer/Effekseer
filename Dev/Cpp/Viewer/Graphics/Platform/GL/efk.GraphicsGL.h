@@ -2,8 +2,8 @@
 #pragma once
 
 #include <Effekseer.h>
-#include <EffekseerRenderer/EffekseerRendererGL.Renderer.h>
-#include <EffekseerRenderer/EffekseerRendererGL.RendererImplemented.h>
+#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Renderer.h>
+#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RendererImplemented.h>
 
 #include "../../efk.Graphics.h"
 

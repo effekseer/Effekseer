@@ -426,6 +426,9 @@ namespace efk
 #ifdef _WIN32
 		else if (deviceType == DeviceType::DirectX11)
 		{
+			ImGuiIO& io = ImGui::GetIO();
+			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
 			ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWWindows(), true);
 			auto r = (EffekseerRendererDX11::Renderer*)native->GetRenderer();
 			ImGui_ImplDX11_Init(r->GetDevice(), r->GetContext());

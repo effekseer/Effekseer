@@ -2,15 +2,14 @@
 #pragma once
 
 #include <Effekseer.h>
-#include <EffekseerRenderer/EffekseerRendererDX11.Renderer.h>
-#include <EffekseerRenderer/EffekseerRendererDX11.RendererImplemented.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Renderer.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.RendererImplemented.h>
 
 #include "../../efk.Graphics.h"
 
-#if 0
 namespace efk
 {
-	class RenderTextureDX9
+	class RenderTextureDX11
 		: public RenderTexture
 	{
 	private:
@@ -18,51 +17,79 @@ namespace efk
 		int32_t width = 0;
 		int32_t height = 0;
 
-		IDirect3DSurface9*	renderTarget = nullptr;
-		IDirect3DTexture9*	renderTargetTexture = nullptr;
+		ID3D11Texture2D*			texture = nullptr;
+		ID3D11ShaderResourceView*	textureSRV = nullptr;
+		ID3D11RenderTargetView*		textureRTV = nullptr;
 
 	public:
-		RenderTextureDX9(Graphics* graphics);
-		virtual ~RenderTextureDX9();
+		RenderTextureDX11(Graphics* graphics);
+		virtual ~RenderTextureDX11();
 		bool Initialize(int32_t width, int32_t height);
 
 		int32_t GetWidth() { return width; }
 		int32_t GetHeight() { return height; }
 
-		IDirect3DSurface9* GetSurface() const { return renderTarget; }
+		ID3D11RenderTargetView* GetRenderTargetView() const { return textureRTV; }
 
-		uint64_t GetViewID() override { return (uint64_t)renderTargetTexture; }
+		ID3D11ShaderResourceView* GetShaderResourceView() const { return textureSRV; }
+
+		uint64_t GetViewID() override { return (uint64_t)textureSRV; }
 	};
 
-	class DepthTextureDX9
+	class DepthTextureDX11
 		: public DepthTexture
 	{
 	private:
 		Graphics* graphics = nullptr;
 		int32_t width = 0;
 		int32_t height = 0;
-		IDirect3DSurface9*	depthTexture = nullptr;
+
+		ID3D11Texture2D*			depthBuffer = nullptr;
+		ID3D11DepthStencilView*		depthStencilView = nullptr;
+		ID3D11ShaderResourceView*	depthSRV = nullptr;
+
 	public:
-		DepthTextureDX9(Graphics* graphics);
-		virtual ~DepthTextureDX9();
+		DepthTextureDX11(Graphics* graphics);
+		virtual ~DepthTextureDX11();
 		bool Initialize(int32_t width, int32_t height);
 
-		IDirect3DSurface9* GetSurface() const { return depthTexture; }
+		ID3D11DepthStencilView* GetDepthStencilView() const { return depthStencilView; }
+
+		ID3D11ShaderResourceView* GetShaderResourceView() const { return depthSRV; }
 	};
 
 
-	class GraphicsDX9
+	class GraphicsDX11
 		: public Graphics
 	{
 	private:
 		void*	windowHandle = nullptr;
 		int32_t	windowWidth = 0;
 		int32_t	windowHeight = 0;
-
-		LPDIRECT3D9			d3d = nullptr;
-		LPDIRECT3DDEVICE9	d3d_device = nullptr;
 		bool				isSRGBMode = false;
 
+		ID3D11Device*			device = nullptr;
+		ID3D11DeviceContext*	context = nullptr;
+		IDXGIDevice1*			dxgiDevice = nullptr;
+		IDXGIAdapter*			adapter = nullptr;
+		IDXGIFactory*			dxgiFactory = nullptr;
+		IDXGISwapChain*			swapChain = nullptr;
+
+		ID3D11Texture2D*		defaultRenderTarget = nullptr;
+		ID3D11Texture2D*		defaultDepthStencil = nullptr;
+		ID3D11RenderTargetView*	renderTargetView = nullptr;
+		ID3D11DepthStencilView*	depthStencilView = nullptr;
+
+		ID3D11Texture2D*		backTexture = nullptr;
+		ID3D11ShaderResourceView*	backTextureSRV = nullptr;
+
+		ID3D11RenderTargetView*	currentRenderTargetView = nullptr;
+		ID3D11DepthStencilView*	currentDepthStencilView = nullptr;
+
+		/*
+		LPDIRECT3D9			d3d = nullptr;
+		LPDIRECT3DDEVICE9	d3d_device = nullptr;
+		
 		IDirect3DSurface9*	renderDefaultTarget = nullptr;
 		IDirect3DSurface9*	renderDefaultDepth = nullptr;
 
@@ -74,12 +101,13 @@ namespace efk
 
 		IDirect3DSurface9*	backTarget = nullptr;
 		IDirect3DTexture9*	backTargetTexture = nullptr;
+		*/
 
-		EffekseerRendererDX9::Renderer*	renderer = nullptr;
+		EffekseerRendererDX11::Renderer*	renderer = nullptr;
 
 	public:
-		GraphicsDX9();
-		virtual ~GraphicsDX9();
+		GraphicsDX11();
+		virtual ~GraphicsDX11();
 
 		bool Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount) override;
 
@@ -107,8 +135,6 @@ namespace efk
 
 		EffekseerRenderer::Renderer* GetRenderer() override;
 
-		DeviceType GetDeviceType() const override { return DeviceType::DirectX9; }
+		DeviceType GetDeviceType() const override { return DeviceType::DirectX11; }
 	};
 }
-
-#endif

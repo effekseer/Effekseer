@@ -1,7 +1,7 @@
 
 #include "efk.ImageRendererGL.h"
 
-#include <EffekseerRenderer/EffekseerRendererGL.GLExtension.h>
+#include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.GLExtension.h>
 
 namespace efk
 {

@@ -2,12 +2,12 @@
 #pragma once
 
 #include <Effekseer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.Shader.h>
-#include <EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
+#include <EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.Renderer.h>
+#include <EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.RendererImplemented.h>
+#include <EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.h>
+#include <EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.h>
+#include <EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.Shader.h>
+#include <EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.RenderState.h>
 
 #include "../../efk.LineRenderer.h"
 

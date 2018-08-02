@@ -6,19 +6,19 @@ namespace efk
 	namespace Standard_VS
 	{
 		static
-#include <EffekseerRenderer/Shader/EffekseerRenderer.Standard_VS.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/Shader/EffekseerRenderer.Standard_VS.h>
 	}
 
 	namespace Standard_PS
 	{
 		static
-#include <EffekseerRenderer/Shader/EffekseerRenderer.Standard_PS.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/Shader/EffekseerRenderer.Standard_PS.h>
 	}
 
 	namespace StandardNoTexture_PS
 	{
 		static
-#include <EffekseerRenderer/Shader/EffekseerRenderer.StandardNoTexture_PS.h>
+#include <EffekseerRendererDX11/EffekseerRenderer/Shader/EffekseerRenderer.StandardNoTexture_PS.h>
 	}
 
 	ImageRendererDX11::ImageRendererDX11(EffekseerRenderer::Renderer* renderer)
@@ -36,18 +36,18 @@ namespace efk
 
 		shader = EffekseerRendererDX11::Shader::Create(
 			this->renderer,
-			Standard_VS::g_vs20_VS,
-			sizeof(Standard_VS::g_vs20_VS),
-			Standard_PS::g_ps20_PS,
-			sizeof(Standard_PS::g_ps20_PS),
+			Standard_VS::g_VS,
+			sizeof(Standard_VS::g_VS),
+			Standard_PS::g_PS,
+			sizeof(Standard_PS::g_PS),
 			"StandardRenderer", decl, 3);
 
 		shader_no_texture = EffekseerRendererDX11::Shader::Create(
 			this->renderer,
-			Standard_VS::g_vs20_VS,
-			sizeof(Standard_VS::g_vs20_VS),
-			StandardNoTexture_PS::g_ps20_PS,
-			sizeof(StandardNoTexture_PS::g_ps20_PS),
+			Standard_VS::g_VS,
+			sizeof(Standard_VS::g_VS),
+			StandardNoTexture_PS::g_PS,
+			sizeof(StandardNoTexture_PS::g_PS),
 			"StandardRenderer No Texture", decl, 3);
 
 		shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);

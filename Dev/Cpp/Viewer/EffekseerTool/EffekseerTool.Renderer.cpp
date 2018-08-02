@@ -96,9 +96,9 @@ namespace EffekseerTool
 			graphics = new efk::GraphicsGL();
 		}
 #ifdef _WIN32
-		else if (deviceType == efk::DeviceType::OpenGL)
+		else if (deviceType == efk::DeviceType::DirectX11)
 		{
-			assert(0);
+			graphics = new efk::GraphicsDX11();
 		}
 		else
 		{

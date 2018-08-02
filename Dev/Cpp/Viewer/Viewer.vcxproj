@@ -86,7 +86,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;..\EffekseerRendererDX11\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Effekseer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;..\;..\EffekseerSoundOSMixer\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;DEBUG;WIN32;_WINDOWS;_DEBUG_EFFEKSEER;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -106,7 +106,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;..\EffekseerRendererDX11\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Effekseer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;..\;..\EffekseerSoundOSMixer\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_NDEBUG;_WINDOWS;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -127,7 +127,7 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;..\EffekseerRendererDX11\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Effekseer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;..\;..\EffekseerSoundOSMixer\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_NDEBUG;_WINDOWS;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -150,7 +150,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Effekseer\;..\EffekseerRendererDX9\;..\EffekseerRendererGL\;..\EffekseerSoundOSMixer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;..\EffekseerRendererDX11\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Effekseer\;..\include\;3rdParty\imgui\;3rdParty\gl3w\;..\;..\EffekseerSoundOSMixer\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;DEBUG;WIN32;_WINDOWS;_DEBUG_EFFEKSEER;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -198,6 +198,9 @@
     <ClInclude Include="Graphics\efk.ImageRenderer.h" />
     <ClInclude Include="Graphics\efk.LineRenderer.h" />
     <ClInclude Include="Graphics\efk.PNGHelper.h" />
+    <ClInclude Include="Graphics\Platform\DX11\efk.GraphicsDX11.h" />
+    <ClInclude Include="Graphics\Platform\DX11\efk.ImageRendererDX11.h" />
+    <ClInclude Include="Graphics\Platform\DX11\efk.LineRendererDX11.h" />
     <ClInclude Include="Graphics\Platform\DX9\efk.GraphicsDX9.h" />
     <ClInclude Include="Graphics\Platform\DX9\efk.ImageRendererDX9.h" />
     <ClInclude Include="Graphics\Platform\DX9\efk.LineRendererDX9.h" />
@@ -240,6 +243,9 @@
     <ClCompile Include="Graphics\efk.ImageRenderer.cpp" />
     <ClCompile Include="Graphics\efk.LineRenderer.cpp" />
     <ClCompile Include="Graphics\efk.PNGHelper.cpp" />
+    <ClCompile Include="Graphics\Platform\DX11\efk.GraphicsDX11.cpp" />
+    <ClCompile Include="Graphics\Platform\DX11\efk.ImageRendererDX11.cpp" />
+    <ClCompile Include="Graphics\Platform\DX11\efk.LineRendererDX11.cpp" />
     <ClCompile Include="Graphics\Platform\DX9\efk.GraphicsDX9.cpp" />
     <ClCompile Include="Graphics\Platform\DX9\efk.ImageRendererDX9.cpp" />
     <ClCompile Include="Graphics\Platform\DX9\efk.LineRendererDX9.cpp" />
