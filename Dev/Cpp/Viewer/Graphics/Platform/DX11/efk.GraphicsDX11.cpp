@@ -184,9 +184,6 @@ namespace efk
 			D3D_FEATURE_LEVEL_11_0,
 			D3D_FEATURE_LEVEL_10_1,
 			D3D_FEATURE_LEVEL_10_0,
-			D3D_FEATURE_LEVEL_9_3,
-			D3D_FEATURE_LEVEL_9_2,
-			D3D_FEATURE_LEVEL_9_1,
 		};
 		int32_t flevelCount = sizeof(flevels) / sizeof(D3D_FEATURE_LEVEL);
 
@@ -226,6 +223,7 @@ namespace efk
 		}
 
 		DXGI_SWAP_CHAIN_DESC hDXGISwapChainDesc;
+		hDXGISwapChainDesc.BufferCount = 2;
 		hDXGISwapChainDesc.BufferDesc.Width = windowWidth;
 		hDXGISwapChainDesc.BufferDesc.Height = windowHeight;
 		hDXGISwapChainDesc.BufferDesc.RefreshRate.Numerator = 60;

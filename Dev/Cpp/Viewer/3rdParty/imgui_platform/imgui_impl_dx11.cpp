@@ -26,6 +26,10 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
+#include <GLFW/glfw3.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>   // for glfwGetWin32Window
+
 // DirectX data
 static ID3D11Device*            g_pd3dDevice = NULL;
 static ID3D11DeviceContext*     g_pd3dDeviceContext = NULL;
@@ -533,7 +537,7 @@ static void ImGui_ImplDX11_CreateWindow(ImGuiViewport* viewport)
     ImGuiViewportDataDx11* data = IM_NEW(ImGuiViewportDataDx11)();
     viewport->RendererUserData = data;
 
-    HWND hwnd = (HWND)viewport->PlatformHandle;
+    HWND hwnd = (HWND)glfwGetWin32Window((GLFWwindow*)viewport->PlatformHandle);
     IM_ASSERT(hwnd != 0);
 
     // Create swap chain
