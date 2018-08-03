@@ -251,12 +251,11 @@ void RendererImplemented::GenerateIndexData()
 		m_indexBuffer->Unlock();
 	}
 
-	// ワイヤーフレーム用インデックスの生成
+	// Generate index buffer for rendering wireframes
 	if( m_indexBufferForWireframe != NULL )
 	{
 		m_indexBufferForWireframe->Lock();
 
-		// ( 標準設定で　DirectX 時計周りが表, OpenGLは反時計回りが表 )
 		for( int i = 0; i < m_squareMaxCount; i++ )
 		{
 			uint16_t* buf = (uint16_t*)m_indexBufferForWireframe->GetBufferDirect( 8 );

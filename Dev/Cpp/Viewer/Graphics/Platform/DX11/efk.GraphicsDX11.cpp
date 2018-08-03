@@ -470,75 +470,131 @@ namespace efk
 
 	void GraphicsDX11::BeginRecord(int32_t width, int32_t height)
 	{
-		/*
 		HRESULT hr;
 
-		hr = d3d_device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &recordingTargetTexture, NULL);
+		D3D11_TEXTURE2D_DESC textureDesc;
+		
+		ZeroMemory(&textureDesc, sizeof(textureDesc));
+		textureDesc.Usage = D3D11_USAGE_DEFAULT;
+		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+		textureDesc.Width = width;
+		textureDesc.Height = height;
+		textureDesc.CPUAccessFlags = 0;
+		textureDesc.MipLevels = 1;
+		textureDesc.ArraySize = 1;
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.SampleDesc.Quality = 0;
+
+		hr = device->CreateTexture2D(&textureDesc, nullptr, &recordingTexture);
 		if (FAILED(hr)) return;
 
-		d3d_device->GetRenderTarget(0, &renderDefaultTarget);
-		d3d_device->GetDepthStencilSurface(&renderDefaultDepth);
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		ZeroMemory(&srvDesc, sizeof(srvDesc));
+		srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		hr = device->CreateRenderTargetView(recordingTexture, NULL, &recordingTextureRTV);
 
-		recordingTargetTexture->GetSurfaceLevel(0, &recordingTarget);
+		D3D11_TEXTURE2D_DESC depthDesc;
+		depthDesc.Width = width;
+		depthDesc.Height = height;
+		depthDesc.MipLevels = 1;
+		depthDesc.ArraySize = 1;
+		depthDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+		depthDesc.SampleDesc.Count = 1;
+		depthDesc.SampleDesc.Quality = 0;
+		depthDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
+		depthDesc.CPUAccessFlags = 0;
+		depthDesc.MiscFlags = 0;
 
-		d3d_device->CreateDepthStencilSurface(width, height, D3DFMT_D16, D3DMULTISAMPLE_NONE, 0, TRUE, &recordingDepth, NULL);
+		hr = device->CreateTexture2D(&depthDesc, NULL, &recordingDepthStencil);
+		if (FAILED(hr)) return;
 
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthViewDesc;
+		depthViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+		depthViewDesc.Flags = 0;
+		hr = device->CreateDepthStencilView(recordingDepthStencil, &depthViewDesc, &recordingDepthStencilView);
+		if (FAILED(hr)) return;
+
+		context->OMGetRenderTargets(1, &backupRenderTargetView, &backupDepthStencilView);
 		recordingWidth = width;
 		recordingHeight = height;
 
-		d3d_device->SetRenderTarget(0, recordingTarget);
-		d3d_device->SetDepthStencilSurface(recordingDepth);
-		*/
+		context->OMSetRenderTargets(1, &recordingTextureRTV, recordingDepthStencilView);
+
+		D3D11_VIEWPORT vp;
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
+		vp.Width = (float)width;
+		vp.Height = (float)height;
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		context->RSSetViewports(1, &vp);
+
 	}
 
 	void GraphicsDX11::EndRecord(std::vector<Effekseer::Color>& pixels)
 	{
-		/*
+		HRESULT hr;
+
 		pixels.resize(recordingWidth * recordingHeight);
 
-		d3d_device->SetRenderTarget(0, renderDefaultTarget);
-		d3d_device->SetDepthStencilSurface(renderDefaultDepth);
-		ES_SAFE_RELEASE(renderDefaultTarget);
-		ES_SAFE_RELEASE(renderDefaultDepth);
+		context->OMSetRenderTargets(1, &recordingTextureRTV, recordingDepthStencilView);
 
-		IDirect3DSurface9*	temp_sur = nullptr;
-		
-		d3d_device->CreateOffscreenPlainSurface(
-			recordingWidth, recordingHeight, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &temp_sur, NULL);
-		
-		d3d_device->GetRenderTargetData(recordingTarget, temp_sur);
+		ES_SAFE_RELEASE(backupRenderTargetView);
+		ES_SAFE_RELEASE(backupDepthStencilView);
 
-		D3DLOCKED_RECT drect;
-		RECT rect;
-		rect.top = 0;
-		rect.left = 0;
-		rect.right = recordingWidth;
-		rect.bottom = recordingHeight;
+		ID3D11Texture2D* texture_ = nullptr;
 
-		auto hr = temp_sur->LockRect(&drect, &rect, D3DLOCK_READONLY);
-		if (SUCCEEDED(hr))
+		D3D11_TEXTURE2D_DESC recordingTextureDesc;
+		ZeroMemory(&recordingTextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+		if (recordingTexture != nullptr)
 		{
-			for (int32_t y = 0; y < recordingHeight; y++)
-			{
-				for (int32_t x = 0; x < recordingWidth; x++)
-				{
-					auto src = &(((uint8_t*)drect.pBits)[x * 4 + drect.Pitch * y]);
-					pixels[x + recordingWidth * y].A = src[3];
-					pixels[x + recordingWidth * y].R = src[2];
-					pixels[x + recordingWidth * y].G = src[1];
-					pixels[x + recordingWidth * y].B = src[0];
-				}
-			}
-
-			temp_sur->UnlockRect();
+			recordingTexture->GetDesc(&recordingTextureDesc);
 		}
 
-		ES_SAFE_RELEASE(temp_sur);
+		D3D11_TEXTURE2D_DESC desc;
+		desc.ArraySize = 1;
+		desc.BindFlags = 0;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.Width = recordingTextureDesc.Width;
+		desc.Height = recordingTextureDesc.Height;
+		desc.MipLevels = 1;
+		desc.MiscFlags = 0;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.Usage = D3D11_USAGE_STAGING;
 
-		ES_SAFE_RELEASE(recordingTarget);
-		ES_SAFE_RELEASE(recordingTargetTexture);
-		ES_SAFE_RELEASE(recordingDepth);
-		*/
+		device->CreateTexture2D(&desc, 0, &texture_);
+
+		context->CopyResource(texture_, recordingTexture);
+
+		D3D11_MAPPED_SUBRESOURCE mr;
+		UINT sr = D3D11CalcSubresource(0, 0, 0);
+		hr = context->Map(texture_, sr, D3D11_MAP_READ_WRITE, 0, &mr);
+		
+		assert(SUCCEEDED(hr));
+
+		pixels.resize(recordingTextureDesc.Width * recordingTextureDesc.Height);
+
+		for (int32_t h = 0; h < recordingTextureDesc.Height; h++)
+		{
+			auto dst_ = &(pixels[h * recordingTextureDesc.Width]);
+			auto src_ = &(((uint8_t*)mr.pData)[h*mr.RowPitch]);
+			memcpy(dst_, src_, recordingTextureDesc.Width * sizeof(Effekseer::Color));
+		}
+
+		context->Unmap(texture_, sr);
+
+		ES_SAFE_RELEASE(texture_);
+		ES_SAFE_RELEASE(recordingTexture);
+		ES_SAFE_RELEASE(recordingTextureRTV);
+		ES_SAFE_RELEASE(recordingDepthStencil);
+		ES_SAFE_RELEASE(recordingDepthStencilView);
 	}
 
 	void GraphicsDX11::Clear(Effekseer::Color color)

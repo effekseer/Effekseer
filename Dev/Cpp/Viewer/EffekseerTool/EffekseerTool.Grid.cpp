@@ -46,6 +46,21 @@ void Grid::Rendering( ::Effekseer::Color& gridColor, bool isRightHand )
 {
 	lineRenderer->ClearCache();
 
+	lineRenderer->DrawLine(
+		::Effekseer::Vector3D(0.0f, 0.0f, 0.0f),
+		::Effekseer::Vector3D(m_gridLength, 0.0f, 0.0f),
+		::Effekseer::Color(255, 0, 0, 255));
+
+	lineRenderer->DrawLine(
+		::Effekseer::Vector3D(0.0f, 0.0f, 0.0f),
+		::Effekseer::Vector3D(0.0f, m_gridLength, 0.0f),
+		::Effekseer::Color(0, 255, 0, 255));
+
+	lineRenderer->DrawLine(
+		::Effekseer::Vector3D(0.0f, 0.0f, 0.0f),
+		::Effekseer::Vector3D(0.0f, 0.0f, m_gridLength),
+		::Effekseer::Color(0, 0, 255, 255));
+
 	if (IsShownXZ)
 	{
 		for (int i = -5; i <= 5; i++)

@@ -303,8 +303,9 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
 	ES_SAFE_DELETE( m_indexBuffer );
+	ES_SAFE_DELETE(m_indexBufferForWireframe);
 
-	assert(GetRef() == -6);
+	assert(GetRef() == -7);
 }
 
 //----------------------------------------------------------------------------------
@@ -369,6 +370,32 @@ bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 		}
 
 		m_indexBuffer->Unlock();
+	}
+
+	// 参照カウントの調整
+	Release();
+
+	// Generate index buffer for rendering wireframes
+	{
+		m_indexBufferForWireframe = IndexBuffer::Create(this, m_squareMaxCount * 8, false);
+		if (m_indexBufferForWireframe == NULL) return false;
+
+		m_indexBufferForWireframe->Lock();
+
+		for (int i = 0; i < m_squareMaxCount; i++)
+		{
+			uint16_t* buf = (uint16_t*)m_indexBufferForWireframe->GetBufferDirect(8);
+			buf[0] = 0 + 4 * i;
+			buf[1] = 1 + 4 * i;
+			buf[2] = 2 + 4 * i;
+			buf[3] = 3 + 4 * i;
+			buf[4] = 0 + 4 * i;
+			buf[5] = 2 + 4 * i;
+			buf[6] = 1 + 4 * i;
+			buf[7] = 3 + 4 * i;
+		}
+
+		m_indexBufferForWireframe->Unlock();
 	}
 
 	// 参照カウントの調整
@@ -564,7 +591,14 @@ VertexBuffer* RendererImplemented::GetVertexBuffer()
 //----------------------------------------------------------------------------------
 IndexBuffer* RendererImplemented::GetIndexBuffer()
 {
-	return m_indexBuffer;
+	if (m_renderMode == ::Effekseer::RenderMode::Wireframe)
+	{
+		return m_indexBufferForWireframe;
+	}
+	else
+	{
+		return m_indexBuffer;
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -823,7 +857,15 @@ void RendererImplemented::SetIndexBuffer(ID3D11Buffer* indexBuffer)
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetLayout( Shader* shader )
 {
-	GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	if (m_renderMode == Effekseer::RenderMode::Normal)
+	{
+		GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+	else
+	{
+		GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	}
+
 	GetContext()->IASetInputLayout( shader->GetLayoutInterface() );
 }
 
@@ -835,10 +877,20 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 	drawcallCount++;
 	drawvertexCount += spriteCount * 4;
 
-	GetContext()->DrawIndexed(
-		spriteCount * 2 * 3,
-		0,
-		vertexOffset );
+	if (m_renderMode == Effekseer::RenderMode::Normal)
+	{
+		GetContext()->DrawIndexed(
+			spriteCount * 2 * 3,
+			0,
+			vertexOffset);
+	}
+	else
+	{
+		GetContext()->DrawIndexed(
+			spriteCount * 2 * 4,
+			0,
+			vertexOffset);
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -859,7 +911,7 @@ Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) cons
 {
 	if (useDistortion)
 	{
-		if (useTexture /*&& m_renderMode == Effekseer::RenderMode::Normal*/)
+		if (useTexture && m_renderMode == Effekseer::RenderMode::Normal)
 		{
 			return m_shader_distortion;
 		}
@@ -870,7 +922,7 @@ Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) cons
 	}
 	else
 	{
-		if (useTexture /*&& m_renderMode == Effekseer::RenderMode::Normal*/)
+		if (useTexture && m_renderMode == Effekseer::RenderMode::Normal)
 		{
 			return m_shader;
 		}

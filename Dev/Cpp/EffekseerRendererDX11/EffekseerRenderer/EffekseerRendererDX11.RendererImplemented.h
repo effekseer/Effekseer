@@ -301,6 +301,7 @@ private:
 
 	VertexBuffer*		m_vertexBuffer;
 	IndexBuffer*		m_indexBuffer;
+	IndexBuffer*		m_indexBufferForWireframe = nullptr;
 	int32_t				m_squareMaxCount;
 
 	int32_t				drawcallCount = 0;
@@ -344,6 +345,8 @@ private:
 	D3D11_COMPARISON_FUNC	m_depthFunc;
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
+
+	Effekseer::RenderMode m_renderMode = Effekseer::RenderMode::Normal;
 
 public:
 	/**
@@ -550,9 +553,9 @@ public:
 
 	void ResetDrawVertexCount() override;
 
-	void SetRenderMode(Effekseer::RenderMode renderMode) override { printf("Not implemented.\n"); }
+	void SetRenderMode(Effekseer::RenderMode renderMode) override { m_renderMode = renderMode; }
 
-	Effekseer::RenderMode GetRenderMode() override { printf("Not implemented.\n"); return Effekseer::RenderMode::Normal; }
+	Effekseer::RenderMode GetRenderMode() override { printf("Not implemented.\n"); return m_renderMode; }
 
 	virtual int GetRef() { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() { return ::Effekseer::ReferenceObject::AddRef(); }

@@ -83,8 +83,18 @@ namespace efk
 		ID3D11Texture2D*		backTexture = nullptr;
 		ID3D11ShaderResourceView*	backTextureSRV = nullptr;
 
+		ID3D11Texture2D*			recordingTexture = nullptr;
+		ID3D11RenderTargetView*		recordingTextureRTV = nullptr;
+		ID3D11Texture2D*			recordingDepthStencil = nullptr;
+		ID3D11DepthStencilView*		recordingDepthStencilView = nullptr;
+		int32_t				recordingWidth = 0;
+		int32_t				recordingHeight = 0;
+
 		ID3D11RenderTargetView*	currentRenderTargetView = nullptr;
 		ID3D11DepthStencilView*	currentDepthStencilView = nullptr;
+
+		ID3D11RenderTargetView*	backupRenderTargetView = nullptr;
+		ID3D11DepthStencilView*	backupDepthStencilView = nullptr;
 
 		/*
 		LPDIRECT3D9			d3d = nullptr;
@@ -92,12 +102,6 @@ namespace efk
 		
 		IDirect3DSurface9*	renderDefaultTarget = nullptr;
 		IDirect3DSurface9*	renderDefaultDepth = nullptr;
-
-		IDirect3DSurface9*	recordingTarget = nullptr;
-		IDirect3DTexture9*	recordingTargetTexture = nullptr;
-		IDirect3DSurface9*	recordingDepth = nullptr;
-		int32_t				recordingWidth = 0;
-		int32_t				recordingHeight = 0;
 
 		IDirect3DSurface9*	backTarget = nullptr;
 		IDirect3DTexture9*	backTargetTexture = nullptr;

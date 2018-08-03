@@ -108,9 +108,8 @@ namespace efk
 
 		renderer->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
-		renderer->GetContext()->DrawIndexed(
+		renderer->GetContext()->Draw(
 			vertexies.size(),
-			0,
 			0);
 
 

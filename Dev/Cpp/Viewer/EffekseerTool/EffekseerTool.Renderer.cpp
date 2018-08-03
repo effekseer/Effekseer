@@ -341,6 +341,10 @@ bool Renderer::BeginRendering()
 			m_background->Rendering((void*)backgroundData->UserID, 1024, 1024);
 		}
 #ifdef _WIN32
+		else if (graphics->GetDeviceType() == efk::DeviceType::DirectX11)
+		{
+			m_background->Rendering((ID3D11ShaderResourceView*)backgroundData->UserPtr, 1024, 1024);
+		}
 		else
 		{
 			m_background->Rendering((IDirect3DTexture9*)backgroundData->UserPtr, 1024, 1024);
@@ -397,6 +401,11 @@ bool Renderer::BeginRendering()
 			r->SetBackground((GLuint)(size_t)graphics->GetBack());
 		}
 #ifdef _WIN32
+		else if (graphics->GetDeviceType() == efk::DeviceType::DirectX11)
+		{
+			auto r = (EffekseerRendererDX11::RendererImplemented*)m_renderer;
+			r->SetBackground((ID3D11ShaderResourceView*)graphics->GetBack());
+		}
 		else
 		{
 			auto r = (EffekseerRendererDX9::RendererImplemented*)m_renderer;
@@ -420,6 +429,11 @@ bool Renderer::BeginRendering()
 			r->SetBackground(0);
 		}
 #ifdef _WIN32
+		else if (graphics->GetDeviceType() == efk::DeviceType::DirectX11)
+		{
+			auto r = (EffekseerRendererDX11::RendererImplemented*)m_renderer;
+			r->SetBackground(nullptr);
+		}
 		else
 		{
 			auto r = (EffekseerRendererDX9::RendererImplemented*)m_renderer;
@@ -455,6 +469,11 @@ bool Renderer::EndRendering()
 			r->SetBackground(0);
 		}
 #ifdef _WIN32
+		else if (graphics->GetDeviceType() == efk::DeviceType::DirectX11)
+		{
+			auto r = (EffekseerRendererDX11::RendererImplemented*)m_renderer;
+			r->SetBackground(nullptr);
+		}
 		else
 		{
 			auto r = (EffekseerRendererDX9::RendererImplemented*)m_renderer;
@@ -613,6 +632,11 @@ void Renderer::CopyToBackground()
 		r->SetBackground((GLuint)(size_t)graphics->GetBack());
 	}
 #ifdef _WIN32
+	else if (graphics->GetDeviceType() == efk::DeviceType::DirectX11)
+	{
+		auto r = (::EffekseerRendererDX11::Renderer*)graphics->GetRenderer();
+		r->SetBackground((ID3D11ShaderResourceView*)graphics->GetBack());
+	}
 	else
 	{
 		auto r = (::EffekseerRendererDX9::Renderer*)graphics->GetRenderer();
