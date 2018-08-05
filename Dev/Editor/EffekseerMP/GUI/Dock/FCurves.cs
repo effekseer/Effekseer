@@ -1381,15 +1381,17 @@ namespace Effekseer.GUI.Dock
 			public override void OnAdded()
 			{
 				fcurves[0].OnChanged += OnChanged_1;
-				fcurves[1].OnChanged += OnChanged_2;
-				fcurves[2].OnChanged += OnChanged_3;
+				if (fcurves.Length >= 2) fcurves[1].OnChanged += OnChanged_2;
+				if (fcurves.Length >= 3) fcurves[2].OnChanged += OnChanged_3;
+				if (fcurves.Length >= 4) fcurves[3].OnChanged += OnChanged_4;
 			}
 
 			public override void OnRemoved()
 			{
 				fcurves[0].OnChanged -= OnChanged_1;
-				fcurves[1].OnChanged -= OnChanged_2;
-				fcurves[2].OnChanged -= OnChanged_3;
+				if (fcurves.Length >= 2) fcurves[1].OnChanged -= OnChanged_2;
+				if (fcurves.Length >= 3) fcurves[2].OnChanged -= OnChanged_3;
+				if (fcurves.Length >= 4) fcurves[3].OnChanged -= OnChanged_4;
 			}
 
 			void OnChanged_1(object sender, ChangedValueEventArgs e)
@@ -1405,6 +1407,11 @@ namespace Effekseer.GUI.Dock
 			void OnChanged_3(object sender, ChangedValueEventArgs e)
 			{
 				OnChanged(2);
+			}
+
+			void OnChanged_4(object sender, ChangedValueEventArgs e)
+			{
+				OnChanged(3);
 			}
 
 			void OnChanged(int i)
