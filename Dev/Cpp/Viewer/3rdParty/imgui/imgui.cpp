@@ -12497,8 +12497,20 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
         RenderArrow(ImVec2(frame_bb.Max.x - arrow_size + style.FramePadding.y, frame_bb.Min.y + style.FramePadding.y), ImGuiDir_Down);
     }
     RenderFrameBorder(frame_bb.Min, frame_bb.Max, style.FrameRounding);
-    if (preview_value != NULL && !(flags & ImGuiComboFlags_NoPreview))
-        RenderTextClipped(frame_bb.Min + style.FramePadding, value_bb.Max, preview_value, NULL, NULL, ImVec2(0.0f,0.0f));
+	if (preview_value != NULL && !(flags & ImGuiComboFlags_NoPreview))
+	{
+		ImVec2 padding(0.0f, 0.0f);
+		if (user_texture_id)
+		{
+			const float icon_size = frame_bb.Max.y - frame_bb.Min.y - style.FramePadding.y * 2;
+			ImVec2 icon_min(frame_bb.Min.x + style.FramePadding.x, frame_bb.Min.y + style.FramePadding.y);
+			ImVec2 icon_max(icon_min.x + icon_size, frame_bb.Max.y - style.FramePadding.y);
+			window->DrawList->AddImage(user_texture_id, icon_min, icon_max);
+			padding.x = icon_size + style.FramePadding.x;
+		}
+		RenderTextClipped(frame_bb.Min + style.FramePadding + padding, value_bb.Max + padding, preview_value, NULL, NULL, ImVec2(0.0f, 0.0f));
+	}
+
     if (label_size.x > 0)
         RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
