@@ -367,7 +367,9 @@ namespace Effekseer.GUI.Dock
 				int LEFT_SHIFT = 340;
 				int RIGHT_SHIFT = 344;
 
-				if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+				if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || 
+					Manager.NativeManager.IsKeyDown(RIGHT_SHIFT) ||
+					((Node is Effekseer.Data.Node) && (Node as Effekseer.Data.Node).DrawingValues.Type.Value == Data.RendererValues.ParamaterType.None))
 				{
 					ChangeVisible(true, !visible);
 				}
