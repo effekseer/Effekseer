@@ -534,6 +534,8 @@ namespace efk
 		vp.MaxDepth = 1.0f;
 		context->RSSetViewports(1, &vp);
 
+		currentRenderTargetView = recordingTextureRTV;
+		currentDepthStencilView = recordingDepthStencilView;
 	}
 
 	void GraphicsDX11::EndRecord(std::vector<Effekseer::Color>& pixels)
@@ -542,7 +544,10 @@ namespace efk
 
 		pixels.resize(recordingWidth * recordingHeight);
 
-		context->OMSetRenderTargets(1, &recordingTextureRTV, recordingDepthStencilView);
+		context->OMSetRenderTargets(1, &backupRenderTargetView, backupDepthStencilView);
+
+		currentRenderTargetView = backupRenderTargetView;
+		currentDepthStencilView = backupDepthStencilView;
 
 		ES_SAFE_RELEASE(backupRenderTargetView);
 		ES_SAFE_RELEASE(backupDepthStencilView);
@@ -657,6 +662,9 @@ namespace efk
 		}
 
 		context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+
+		currentRenderTargetView = renderTargetView;
+		currentDepthStencilView = depthStencilView;
 
 		if (ResettedDevice != nullptr)
 		{

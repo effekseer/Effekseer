@@ -240,7 +240,7 @@ namespace Effekseer.GUI.Dock
 				{
 					if (Manager.NativeManager.Selectable(selectedAlphaTypes[i]))
 					{
-						selectedTypeIndex = i;
+						selectedAlphaIndex = i;
 						Manager.NativeManager.SetItemDefaultFocus();
 					}
 				}

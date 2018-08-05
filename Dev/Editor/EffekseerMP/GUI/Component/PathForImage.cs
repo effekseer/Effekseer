@@ -156,20 +156,23 @@ namespace Effekseer.GUI.Component
 				if (dd == null) dd = DragAndDrops.UpdateImageDst();
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
-
-				float imageSizeX = image.GetWidth();
-				float imageSizeY = image.GetHeight();
-				if (imageSizeX < imageSizeY)
+				
+				if(image != null)
 				{
-					Manager.NativeManager.Image(image, 128 * imageSizeX / imageSizeY, 128);
-				}
-				else if (imageSizeX > imageSizeY)
-				{
-					Manager.NativeManager.Image(image, 128, 128 * imageSizeY / imageSizeX);
-				}
-				else
-				{
-					Manager.NativeManager.Image(image, 128, 128);
+					float imageSizeX = image.GetWidth();
+					float imageSizeY = image.GetHeight();
+					if (imageSizeX < imageSizeY)
+					{
+						Manager.NativeManager.Image(image, 128 * imageSizeX / imageSizeY, 128);
+					}
+					else if (imageSizeX > imageSizeY)
+					{
+						Manager.NativeManager.Image(image, 128, 128 * imageSizeY / imageSizeX);
+					}
+					else
+					{
+						Manager.NativeManager.Image(image, 128, 128);
+					}
 				}
 
 				if (dd == null) dd = DragAndDrops.UpdateImageDst();
