@@ -805,6 +805,7 @@ enum ImGuiKey_
     ImGuiKey_Backspace,
     ImGuiKey_Space,
     ImGuiKey_Enter,
+	ImGuiKey_NumEnter,
     ImGuiKey_Escape,
     ImGuiKey_A,         // for text edit CTRL+A: select all
     ImGuiKey_C,         // for text edit CTRL+C: copy
