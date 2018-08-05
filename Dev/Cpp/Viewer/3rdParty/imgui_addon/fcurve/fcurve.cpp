@@ -493,6 +493,10 @@ namespace ImGui
 
 		// render curve
 
+		auto lineThiness = 1;
+		if (selected) lineThiness++;
+		if (isLineHovered) lineThiness++;
+
 		// start
 		{
 			auto v1 = ImVec2(transform_s2f(innerRect.Min).x, defaultValue);
@@ -502,7 +506,7 @@ namespace ImGui
 				transform_f2s(v1),
 				transform_f2s(v2),
 				col,
-				selected ? 2 : 1);
+				lineThiness);
 		}
 
 		PopID();
@@ -1241,6 +1245,11 @@ namespace ImGui
 			}
 		}
 
+		auto lineThiness = 1;
+		if (selected) lineThiness++;
+		if (isLineHovered) lineThiness++;
+
+
 		// render curve
 		auto renderCurve = [&](float offset, bool isReversed) -> void
 		{
@@ -1265,7 +1274,7 @@ namespace ImGui
 							transform_f2s(cp2),
 							transform_f2s(v2),
 							col,
-							selected ? 2 : 1);
+							lineThiness);
 					}
 					else
 					{
@@ -1273,7 +1282,7 @@ namespace ImGui
 							transform_f2s(v1),
 							transform_f2s(v2),
 							col,
-							selected ? 2 : 1);
+							lineThiness);
 					}
 				}
 			}
@@ -1295,7 +1304,7 @@ namespace ImGui
 							transform_f2s(cp2),
 							transform_f2s(v2),
 							col,
-							selected ? 2 : 1);
+							lineThiness);
 					}
 					else
 					{
@@ -1303,7 +1312,7 @@ namespace ImGui
 							transform_f2s(v1),
 							transform_f2s(v2),
 							col,
-							selected ? 2 : 1);
+							lineThiness);
 
 					}
 				}
@@ -1320,7 +1329,7 @@ namespace ImGui
 					transform_f2s(v1),
 					transform_f2s(v2),
 					col,
-					selected ? 2 : 1);
+					lineThiness);
 			}
 			else if (startEdge == ImFCurveEdgeType::Loop)
 			{
@@ -1358,7 +1367,7 @@ namespace ImGui
 					transform_f2s(v1),
 					transform_f2s(v2),
 					col,
-					selected ? 2 : 1);
+					lineThiness);
 			}
 			else if(endEdge == ImFCurveEdgeType::Loop)
 			{
