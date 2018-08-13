@@ -676,7 +676,7 @@ namespace efk
 
 	void* GraphicsDX11::GetBack()
 	{
-		return backTexture;
+		return backTextureSRV;
 	}
 
 	EffekseerRenderer::Renderer* GraphicsDX11::GetRenderer()

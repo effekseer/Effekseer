@@ -794,6 +794,12 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 #endif
 }
 
+Effekseer::TextureData* RendererImplemented::GetBackground()
+{
+	if (m_background.UserPtr == nullptr) return nullptr;
+	return &m_background;
+}
+
 void RendererImplemented::SetBackground(ID3D11ShaderResourceView* background)
 {
 	ES_SAFE_ADDREF(background);
