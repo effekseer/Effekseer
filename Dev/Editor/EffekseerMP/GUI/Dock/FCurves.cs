@@ -606,6 +606,12 @@ namespace Effekseer.GUI.Dock
 				treeNodes = new TreeNode(this, paramTreeNodes);
 			}
 
+			if (treeNodes.ParamTreeNode.Node != paramTreeNodes.Node ||
+				treeNodes.ParamTreeNode.Children.Length != paramTreeNodes.Node.Children.Count)
+			{
+				treeNodes = new TreeNode(this, paramTreeNodes);
+			}
+
 			// compare node structures
 			if (treeNodes.ParamTreeNode.Node != paramTreeNodes.Node)
 			{
@@ -617,7 +623,9 @@ namespace Effekseer.GUI.Dock
 				refleshNodes = (ptn, tn) =>
 				{
 					// check whether modification doesn't exist
-					bool nochange = tn.Children.Count() == ptn.Children.Count();
+					bool nochange = tn.Children.Count() == ptn.Children.Count() && 
+					tn.Children.Select(_=>_.ParamTreeNode.Node).SequenceEqual(ptn.Children.Select(_=>_.Node));
+
 					for (int i = 0; i < ptn.Children.Count() && nochange; i++)
 					{
 						if (tn.Children[i].ParamTreeNode.Node != ptn.Children[i].Node)
@@ -626,7 +634,14 @@ namespace Effekseer.GUI.Dock
 							break;
 						}
 					}
-					if (nochange) return;
+					if (nochange)
+					{
+						for (int i = 0; i < ptn.Children.Count(); i++)
+						{
+							refleshNodes(ptn.Children[i], tn.Children[i]);
+						}
+						return;
+					}
 
 					// if moditications exsist
 					var a = new TreeNode[ptn.Children.Count()];
@@ -666,6 +681,22 @@ namespace Effekseer.GUI.Dock
 						for (int i = 0; i < tn.FCurves.Count(); i++)
 						{
 							if (tn.FCurves[i].GetValueAsObject() != ptn.Parameters[i].Item2)
+							{
+								nochange = false;
+								break;
+							}
+						}
+					}
+					else
+					{
+						nochange = false;
+					}
+
+					if(tn.Children.Count() == ptn.Children.Count())
+					{
+						for (int i = 0; i < tn.FCurves.Count(); i++)
+						{
+							if (ptn.Children[i].Node != tn.Children[i].ParamTreeNode.Node)
 							{
 								nochange = false;
 								break;
