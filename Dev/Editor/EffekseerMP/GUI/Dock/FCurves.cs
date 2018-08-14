@@ -692,22 +692,6 @@ namespace Effekseer.GUI.Dock
 						nochange = false;
 					}
 
-					if(tn.Children.Count() == ptn.Children.Count())
-					{
-						for (int i = 0; i < tn.FCurves.Count(); i++)
-						{
-							if (ptn.Children[i].Node != tn.Children[i].ParamTreeNode.Node)
-							{
-								nochange = false;
-								break;
-							}
-						}
-					}
-					else
-					{
-						nochange = false;
-					}
-
 					if (nochange)
 					{
 						for (int i = 0; i < tn.Children.Count(); i++)
@@ -1492,7 +1476,7 @@ namespace Effekseer.GUI.Dock
 					for (int j = 1; j < properties[i].Keys.Length - 2; j++)
 					{
 						var new_left = Math.Max(properties[i].LeftKeys[j], properties[i].Keys[j - 1]);
-						var new_right = Math.Max(properties[i].RightKeys[j], properties[i].Keys[j + 1]);
+						var new_right = Math.Min(properties[i].RightKeys[j], properties[i].Keys[j + 1]);
 						properties[i].LeftKeys[j] = new_left;
 						properties[i].RightKeys[j] = new_right;
 					}
