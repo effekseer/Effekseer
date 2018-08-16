@@ -729,6 +729,8 @@ void Native::RenderWindow()
 	}
 
 	g_renderer->EndRendering();
+
+	g_renderer->RenderPostEffect();
 }
 
 void Native::Present()
