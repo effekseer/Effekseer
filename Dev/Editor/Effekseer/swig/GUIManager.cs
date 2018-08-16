@@ -1193,20 +1193,20 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetDockActive(swigCPtr);
   }
 
-  public bool BeginFCurve(int id, Vec2 size, Vec2 scale, float min_value, float max_value) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_0(swigCPtr, id, Vec2.getCPtr(size), Vec2.getCPtr(scale), min_value, max_value);
+  public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale, float min_value, float max_value) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_0(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale), min_value, max_value);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
-  public bool BeginFCurve(int id, Vec2 size, Vec2 scale, float min_value) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_1(swigCPtr, id, Vec2.getCPtr(size), Vec2.getCPtr(scale), min_value);
+  public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale, float min_value) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_1(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale), min_value);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
-  public bool BeginFCurve(int id, Vec2 size, Vec2 scale) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_2(swigCPtr, id, Vec2.getCPtr(size), Vec2.getCPtr(scale));
+  public bool BeginFCurve(int id, Vec2 size, float current, Vec2 scale) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_BeginFCurve__SWIG_2(swigCPtr, id, Vec2.getCPtr(size), current, Vec2.getCPtr(scale));
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }

@@ -6889,13 +6889,45 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetDockActive___(vo
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve__SWIG_0___(void * jarg1, int jarg2, void * jarg3, void * jarg4, float jarg5, float jarg6) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve__SWIG_0___(void * jarg1, int jarg2, void * jarg3, float jarg4, void * jarg5, float jarg6, float jarg7) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int arg2 ;
   efk::Vec2 *arg3 = 0 ;
-  efk::Vec2 *arg4 = 0 ;
-  float arg5 ;
+  float arg4 ;
+  efk::Vec2 *arg5 = 0 ;
+  float arg6 ;
+  float arg7 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  arg3 = (efk::Vec2 *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return 0;
+  } 
+  arg4 = (float)jarg4; 
+  arg5 = (efk::Vec2 *)jarg5;
+  if (!arg5) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return 0;
+  } 
+  arg6 = (float)jarg6; 
+  arg7 = (float)jarg7; 
+  result = (bool)(arg1)->BeginFCurve(arg2,(efk::Vec2 const &)*arg3,arg4,(efk::Vec2 const &)*arg5,arg6,arg7);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve__SWIG_1___(void * jarg1, int jarg2, void * jarg3, float jarg4, void * jarg5, float jarg6) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  efk::Vec2 *arg3 = 0 ;
+  float arg4 ;
+  efk::Vec2 *arg5 = 0 ;
   float arg6 ;
   bool result;
   
@@ -6906,26 +6938,26 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
     return 0;
   } 
-  arg4 = (efk::Vec2 *)jarg4;
-  if (!arg4) {
+  arg4 = (float)jarg4; 
+  arg5 = (efk::Vec2 *)jarg5;
+  if (!arg5) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
     return 0;
   } 
-  arg5 = (float)jarg5; 
   arg6 = (float)jarg6; 
-  result = (bool)(arg1)->BeginFCurve(arg2,(efk::Vec2 const &)*arg3,(efk::Vec2 const &)*arg4,arg5,arg6);
+  result = (bool)(arg1)->BeginFCurve(arg2,(efk::Vec2 const &)*arg3,arg4,(efk::Vec2 const &)*arg5,arg6);
   jresult = result; 
   return jresult;
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve__SWIG_1___(void * jarg1, int jarg2, void * jarg3, void * jarg4, float jarg5) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve__SWIG_2___(void * jarg1, int jarg2, void * jarg3, float jarg4, void * jarg5) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   int arg2 ;
   efk::Vec2 *arg3 = 0 ;
-  efk::Vec2 *arg4 = 0 ;
-  float arg5 ;
+  float arg4 ;
+  efk::Vec2 *arg5 = 0 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
@@ -6935,39 +6967,13 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
     return 0;
   } 
-  arg4 = (efk::Vec2 *)jarg4;
-  if (!arg4) {
+  arg4 = (float)jarg4; 
+  arg5 = (efk::Vec2 *)jarg5;
+  if (!arg5) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
     return 0;
   } 
-  arg5 = (float)jarg5; 
-  result = (bool)(arg1)->BeginFCurve(arg2,(efk::Vec2 const &)*arg3,(efk::Vec2 const &)*arg4,arg5);
-  jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_BeginFCurve__SWIG_2___(void * jarg1, int jarg2, void * jarg3, void * jarg4) {
-  unsigned int jresult ;
-  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  int arg2 ;
-  efk::Vec2 *arg3 = 0 ;
-  efk::Vec2 *arg4 = 0 ;
-  bool result;
-  
-  arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (int)jarg2; 
-  arg3 = (efk::Vec2 *)jarg3;
-  if (!arg3) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
-    return 0;
-  } 
-  arg4 = (efk::Vec2 *)jarg4;
-  if (!arg4) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
-    return 0;
-  } 
-  result = (bool)(arg1)->BeginFCurve(arg2,(efk::Vec2 const &)*arg3,(efk::Vec2 const &)*arg4);
+  result = (bool)(arg1)->BeginFCurve(arg2,(efk::Vec2 const &)*arg3,arg4,(efk::Vec2 const &)*arg5);
   jresult = result; 
   return jresult;
 }

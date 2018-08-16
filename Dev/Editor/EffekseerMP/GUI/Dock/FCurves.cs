@@ -40,6 +40,8 @@ namespace Effekseer.GUI.Dock
 		float autoZoomRangeMin = 0;
 		float autoZoomRangeMax = 0;
 
+		bool isFirstUpdate = true;
+
 		Action<float, float> moved = null;
 
 		public FCurves()
@@ -329,10 +331,13 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.Columns(2);
 
-			Manager.NativeManager.SetColumnWidth(0, 200);
+			if(isFirstUpdate)
+			{
+				Manager.NativeManager.SetColumnWidth(0, 200);
+			}
 			//Manager.NativeManager.BeginChild("##FCurveGroup_Tree");
 
-			if(treeNodes != null)
+			if (treeNodes != null)
 			{
 				UpdateTreeNode(treeNodes);
 			}
@@ -367,7 +372,7 @@ namespace Effekseer.GUI.Dock
 
 			var scale = new swig.Vec2(12, 4);
 
-			if (Manager.NativeManager.BeginFCurve(1, graphSize, scale, autoZoomRangeMin, autoZoomRangeMax))
+			if (Manager.NativeManager.BeginFCurve(1, graphSize, Manager.Viewer.Current, scale, autoZoomRangeMin, autoZoomRangeMax))
 			{
 				UpdateGraph(treeNodes);
 			}
@@ -405,6 +410,8 @@ namespace Effekseer.GUI.Dock
 			//Manager.NativeManager.SameLine();
 
 			Manager.NativeManager.Text(Resources.GetString("FCurveCtrl_Desc"));
+
+			isFirstUpdate = false;
 		}
 
 		public override void OnDisposed()
@@ -1139,7 +1146,9 @@ namespace Effekseer.GUI.Dock
 
 				for(int i = 0; i < properties.Length; i++)
 				{
-					if (Manager.NativeManager.Selectable(Name + " : " + names[i], properties[i].IsShown))
+					var value = this.fcurves[i].GetValue(Manager.Viewer.Current);
+
+					if (Manager.NativeManager.Selectable(Name + " : " + names[i] + " (" + value + ")", properties[i].IsShown))
 					{
 						if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
 						{

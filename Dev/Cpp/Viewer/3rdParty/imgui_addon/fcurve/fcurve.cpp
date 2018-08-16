@@ -175,7 +175,7 @@ namespace ImGui
 		}
 	}
 
-	bool BeginFCurve(int id, const ImVec2& size, const ImVec2& scale, float min_value, float max_value)
+	bool BeginFCurve(int id, const ImVec2& size, float current, const ImVec2& scale, float min_value, float max_value)
 	{
 		bool isAutoZoomMode = min_value <= max_value;
 
@@ -363,6 +363,17 @@ namespace ImGui
 					0xff000000,
 					text);
 			}
+		}
+
+		// Render current
+		{
+			ImVec2 upperLeft_s = ImVec2(innerRect.Min.x, innerRect.Min.y);
+			ImVec2 lowerRight_s = ImVec2(innerRect.Max.x, innerRect.Max.y);
+
+			auto upperLeft_f = transform_s2f(upperLeft_s);
+			auto lowerRight_f = transform_s2f(lowerRight_s);
+
+			window->DrawList->AddLine(transform_f2s(ImVec2(current, upperLeft_f.y)), transform_f2s(ImVec2(current, lowerRight_f.y)), 0x55aaaaaa);
 		}
 
 		// get left button drag
