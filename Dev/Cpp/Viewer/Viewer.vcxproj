@@ -198,6 +198,7 @@
     <ClInclude Include="Graphics\efk.ImageRenderer.h" />
     <ClInclude Include="Graphics\efk.LineRenderer.h" />
     <ClInclude Include="Graphics\efk.PNGHelper.h" />
+    <ClInclude Include="Graphics\efk.PostEffects.h" />
     <ClInclude Include="Graphics\Platform\DX11\efk.GraphicsDX11.h" />
     <ClInclude Include="Graphics\Platform\DX11\efk.ImageRendererDX11.h" />
     <ClInclude Include="Graphics\Platform\DX11\efk.LineRendererDX11.h" />
@@ -207,6 +208,7 @@
     <ClInclude Include="Graphics\Platform\GL\efk.GraphicsGL.h" />
     <ClInclude Include="Graphics\Platform\GL\efk.ImageRendererGL.h" />
     <ClInclude Include="Graphics\Platform\GL\efk.LineRendererGL.h" />
+    <ClInclude Include="Graphics\Platform\GL\efk.PostEffectsGL.h" />
     <ClInclude Include="GUI\efk.FileDialog.h" />
     <ClInclude Include="GUI\efk.GUIManager.h" />
     <ClInclude Include="GUI\efk.ImageResource.h" />
@@ -243,6 +245,7 @@
     <ClCompile Include="Graphics\efk.ImageRenderer.cpp" />
     <ClCompile Include="Graphics\efk.LineRenderer.cpp" />
     <ClCompile Include="Graphics\efk.PNGHelper.cpp" />
+    <ClCompile Include="Graphics\efk.PostEffects.cpp" />
     <ClCompile Include="Graphics\Platform\DX11\efk.GraphicsDX11.cpp" />
     <ClCompile Include="Graphics\Platform\DX11\efk.ImageRendererDX11.cpp" />
     <ClCompile Include="Graphics\Platform\DX11\efk.LineRendererDX11.cpp" />
@@ -252,6 +255,7 @@
     <ClCompile Include="Graphics\Platform\GL\efk.GraphicsGL.cpp" />
     <ClCompile Include="Graphics\Platform\GL\efk.ImageRendererGL.cpp" />
     <ClCompile Include="Graphics\Platform\GL\efk.LineRendererGL.cpp" />
+    <ClCompile Include="Graphics\Platform\GL\efk.PostEffectsGL.cpp" />
     <ClCompile Include="GUI\efk.FileDialog.cpp" />
     <ClCompile Include="GUI\efk.GUIManager.cpp" />
     <ClCompile Include="GUI\efk.ImageResource.cpp" />

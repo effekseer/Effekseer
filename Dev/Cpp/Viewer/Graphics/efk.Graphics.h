@@ -13,13 +13,19 @@ namespace efk
 {
 	class Graphics;
 
+	enum class TextureFormat {
+		RGBA8U,
+		RGBA16F,
+		R16F,
+	};
+
 	class RenderTexture
 	{
 	public:
 		RenderTexture() = default;
 		virtual ~RenderTexture() = default;
 
-		virtual bool Initialize(int32_t width, int32_t height) = 0;
+		virtual bool Initialize(int32_t width, int32_t height, TextureFormat format) = 0;
 
 		virtual int32_t GetWidth() = 0;
 		virtual int32_t GetHeight() = 0;
@@ -42,6 +48,10 @@ namespace efk
 
 	class Graphics
 	{
+	protected:
+		RenderTexture* currentRenderTexture = nullptr;
+		DepthTexture* currentDepthTexture = nullptr;
+
 	public:
 		Graphics() {}
 		virtual ~Graphics() {}
@@ -73,6 +83,9 @@ namespace efk
 		virtual EffekseerRenderer::Renderer* GetRenderer() = 0;
 
 		virtual DeviceType GetDeviceType() const = 0;
+
+		virtual RenderTexture* GetRenderTexture() const { return currentRenderTexture; }
+		virtual DepthTexture* GetDepthTexture() const { return currentDepthTexture; }
 
 		/**
 		Called when device is losted.

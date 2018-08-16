@@ -20,7 +20,7 @@ namespace efk
 		glDeleteTextures(1, &texture);
 	}
 
-	bool RenderTextureGL::Initialize(int32_t width, int32_t height)
+	bool RenderTextureGL::Initialize(int32_t width, int32_t height, TextureFormat format)
 	{
 		glGenTextures(1, &texture);
 
@@ -28,15 +28,39 @@ namespace efk
 
 		glBindTexture(GL_TEXTURE_2D, texture);
 
+		GLint glInternalFormat;
+		GLenum glFormat, glType;
+		switch (format)
+		{
+		case TextureFormat::RGBA8U:
+			glInternalFormat = GL_RGBA8;
+			glFormat = GL_RGBA;
+			glType = GL_UNSIGNED_BYTE;
+			break;
+		case TextureFormat::RGBA16F:
+			glInternalFormat = GL_RGBA16F;
+			glFormat = GL_RGBA;
+			glType = GL_HALF_FLOAT;
+			break;
+		case TextureFormat::R16F:
+			glInternalFormat = GL_R16F;
+			glFormat = GL_RED;
+			glType = GL_HALF_FLOAT;
+			break;
+		default:
+			assert(0);
+			return false;
+		}
+
 		glTexImage2D(
 			GL_TEXTURE_2D,
 			0,
-			GL_RGBA8,
+			glInternalFormat,
 			width,
 			height,
 			0,
-			GL_RGBA,
-			GL_UNSIGNED_BYTE,
+			glFormat,
+			glType,
 			nullptr);
 		
 		this->width = width;
@@ -248,6 +272,9 @@ namespace efk
 
 	void GraphicsGL::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture)
 	{
+		currentRenderTexture = renderTexture;
+		currentDepthTexture = depthTexture;
+
 		auto rt = (RenderTextureGL*)renderTexture;
 		auto dt = (DepthTextureGL*)depthTexture;
 
@@ -299,7 +326,7 @@ namespace efk
 	void GraphicsGL::BeginRecord(int32_t width, int32_t height)
 	{
 		auto rt = std::make_shared<RenderTextureGL>(this);
-		rt->Initialize(width, height);
+		rt->Initialize(width, height, TextureFormat::RGBA8U);
 
 		auto dt = std::make_shared<DepthTextureGL>(this);
 		dt->Initialize(width, height);

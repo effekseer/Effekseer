@@ -23,7 +23,7 @@ namespace efk
 	public:
 		RenderTextureDX9(Graphics* graphics);
 		virtual ~RenderTextureDX9();
-		bool Initialize(int32_t width, int32_t height);
+		bool Initialize(int32_t width, int32_t height, TextureFormat format);
 
 		int32_t GetWidth() { return width; }
 		int32_t GetHeight() { return height; }

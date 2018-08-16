@@ -15,7 +15,7 @@ namespace efk
 		ES_SAFE_RELEASE(textureRTV);
 	}
 
-	bool RenderTextureDX11::Initialize(int32_t width, int32_t height)
+	bool RenderTextureDX11::Initialize(int32_t width, int32_t height, TextureFormat format)
 	{
 		auto g = (GraphicsDX11*)graphics;
 		auto r = (EffekseerRendererDX11::Renderer*)g->GetRenderer();
@@ -27,7 +27,22 @@ namespace efk
 		TexDesc.Height = height;
 		TexDesc.MipLevels = 1;
 		TexDesc.ArraySize = 1;
-		TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		switch (format)
+		{
+		case TextureFormat::RGBA8U:
+			TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			break;
+		case TextureFormat::RGBA16F:
+			TexDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+			break;
+		case TextureFormat::R16F:
+			TexDesc.Format = DXGI_FORMAT_R16_FLOAT;
+			break;
+		default:
+			assert(0);
+			return false;
+		}
 
 		TexDesc.SampleDesc.Count = 1;
 		TexDesc.SampleDesc.Quality = 0;
@@ -426,6 +441,9 @@ namespace efk
 
 	void GraphicsDX11::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture)
 	{
+		currentRenderTexture = renderTexture;
+		currentDepthTexture = depthTexture;
+
 		auto rt = (RenderTextureDX11*)renderTexture;
 		auto dt = (DepthTextureDX11*)depthTexture;
 

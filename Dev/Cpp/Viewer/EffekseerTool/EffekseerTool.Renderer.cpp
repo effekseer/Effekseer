@@ -64,6 +64,7 @@ namespace EffekseerTool
 		, m_guide(NULL)
 		, m_culling(NULL)
 		, m_background(NULL)
+		, m_bloomEffect(NULL)
 
 		, GuideWidth(100)
 		, GuideHeight(100)
@@ -145,6 +146,7 @@ namespace EffekseerTool
 
 		ES_SAFE_DELETE(textureLoader);
 
+		ES_SAFE_DELETE(m_bloomEffect);
 		ES_SAFE_DELETE(m_guide);
 		ES_SAFE_DELETE(m_grid);
 		ES_SAFE_DELETE(m_culling);
@@ -182,6 +184,8 @@ bool Renderer::Initialize( void* handle, int width, int height )
 	// 背景作成
 	m_background = ::EffekseerRenderer::Paste::Create(graphics);
 
+	// ポストエフェクト作成
+	m_bloomEffect = efk::PostEffect::CreateBloom(graphics);
 
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
@@ -500,7 +504,8 @@ bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 		viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
 		viewDepthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
 
-		viewRenderTexture->Initialize(width, height);
+		//viewRenderTexture->Initialize(width, height, efk::TextureFormat::RGBA8U);
+		viewRenderTexture->Initialize(width, height, efk::TextureFormat::RGBA16F);
 		viewDepthTexture->Initialize(width, height);
 	}
 
@@ -534,6 +539,13 @@ bool Renderer::EndRenderToView()
 	m_windowWidth = m_width;
 	m_windowHeight = m_height;
 	return true;
+}
+
+void Renderer::RenderPostEffect()
+{
+	if (m_bloomEffect) {
+		m_bloomEffect->Render();
+	}
 }
 
 bool Renderer::BeginRecord( int32_t width, int32_t height )

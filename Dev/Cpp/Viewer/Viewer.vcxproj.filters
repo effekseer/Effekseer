@@ -179,6 +179,12 @@
     <ClInclude Include="Graphics\Platform\DX11\efk.GraphicsDX11.h">
       <Filter>Graphics\Platform\DX11</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\efk.PostEffects.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Platform\GL\efk.PostEffectsGL.h">
+      <Filter>Graphics\Platform\GL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -297,6 +303,12 @@
     </ClCompile>
     <ClCompile Include="Graphics\Platform\DX11\efk.GraphicsDX11.cpp">
       <Filter>Graphics\Platform\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\efk.PostEffects.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Platform\GL\efk.PostEffectsGL.cpp">
+      <Filter>Graphics\Platform\GL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

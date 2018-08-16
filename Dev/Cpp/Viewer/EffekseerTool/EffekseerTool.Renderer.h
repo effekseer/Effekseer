@@ -10,6 +10,7 @@
 
 #include "../Graphics/Platform/GL/efk.GraphicsGL.h"
 #include "../efk.Base.h"
+#include "../Graphics/efk.PostEffects.h"
 
 #include <functional>
 
@@ -54,6 +55,7 @@ private:
 	::EffekseerRenderer::Guide*	m_guide;
 	::EffekseerRenderer::Culling*	m_culling;
 	::EffekseerRenderer::Paste*	m_background;
+	efk::PostEffect* m_bloomEffect;
 
 	bool		m_recording = false;
 	int32_t		m_recordingWidth = 0;
@@ -221,6 +223,8 @@ public:
 	bool BeginRenderToView(int32_t width, int32_t height);
 
 	bool EndRenderToView();
+
+	void RenderPostEffect();
 
 	/**
 		@brief	録画開始
