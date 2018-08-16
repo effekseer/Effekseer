@@ -37,8 +37,8 @@ namespace Effekseer.GUI.Dock
 		Component.Enum type = new Component.Enum();
 
 		bool isAutoZoomMode = false;
-		float autoZoomRangeMin = 0;
-		float autoZoomRangeMax = 0;
+		float autoZoomRangeMin = float.MaxValue;
+		float autoZoomRangeMax = float.MinValue;
 
 		bool isFirstUpdate = true;
 
@@ -361,8 +361,8 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				autoZoomRangeMin = float.MaxValue;
-				autoZoomRangeMax = float.MinValue;
+				//autoZoomRangeMin = float.MaxValue;
+				//autoZoomRangeMax = float.MinValue;
 			}
 
 			var graphSize = Manager.NativeManager.GetContentRegionAvail();
@@ -376,6 +376,10 @@ namespace Effekseer.GUI.Dock
 			{
 				UpdateGraph(treeNodes);
 			}
+
+			// Reset area
+			autoZoomRangeMin = float.MaxValue;
+			autoZoomRangeMax = float.MinValue;
 
 			Manager.NativeManager.EndFCurve();
 
@@ -1148,16 +1152,36 @@ namespace Effekseer.GUI.Dock
 				{
 					var value = this.fcurves[i].GetValue(Manager.Viewer.Current);
 
-					if (Manager.NativeManager.Selectable(Name + " : " + names[i] + " (" + value + ")", properties[i].IsShown))
+					if (Manager.NativeManager.Selectable(Name + " : " + names[i] + " (" + value + ")", properties[i].IsShown, swig.SelectableFlags.AllowDoubleClick))
 					{
-						if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+						if(Manager.NativeManager.IsMouseDoubleClicked(0))
 						{
-							properties[i].IsShown = !properties[i].IsShown;
+							properties[i].IsShown = true;
+
+							if(this.fcurves[i].Keys.Count() > 0)
+							{
+								var max = this.fcurves[i].Keys.Max(_ => _.ValueAsFloat);
+								var min = this.fcurves[i].Keys.Min(_ => _.ValueAsFloat);
+								window.autoZoomRangeMax = max + 10;
+								window.autoZoomRangeMin = min - 10;
+							}
+							else
+							{
+								window.autoZoomRangeMax = defaultValue + 10;
+								window.autoZoomRangeMin = -10;
+							}
 						}
 						else
 						{
-							window.HideAll();
-							properties[i].IsShown = true;
+							if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
+							{
+								properties[i].IsShown = !properties[i].IsShown;
+							}
+							else
+							{
+								window.HideAll();
+								properties[i].IsShown = true;
+							}
 						}
 					}
 				}
