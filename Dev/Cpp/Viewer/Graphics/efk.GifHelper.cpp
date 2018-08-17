@@ -15,11 +15,11 @@ namespace efk
 		img = gdImageCreate(width, height);
 
 #ifdef _WIN32
-		_wfopen_s(&fp, (const wchar_t*)path, L"rb");
+		_wfopen_s(&fp, (const wchar_t*)path, L"wb");
 #else
 		int8_t path8[1024];
 		Effekseer::ConvertUtf16ToUtf8(path8, sizeof(path8), (const int16_t*)path);
-		fp = fopen((const char*)path8, "rb");
+		fp = fopen((const char*)path8, "wb");
 #endif
 
 		gdImageGifAnimBegin(img, fp, false, 0);
