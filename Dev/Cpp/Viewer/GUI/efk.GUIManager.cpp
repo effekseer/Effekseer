@@ -464,8 +464,15 @@ namespace efk
 			ImGuiIO& io = ImGui::GetIO();
 			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
+#if __APPLE__
+            // GL 3.2 + GLSL 150
+            const char* glsl_version = "#version 150";
+#else
+            // GL 3.0 + GLSL 130
+            const char* glsl_version = "#version 130";
+#endif
 			ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWWindows(), true);
-			ImGui_ImplOpenGL3_Init(nullptr);
+			ImGui_ImplOpenGL3_Init(glsl_version);
 		}
 #ifdef _WIN32
 		else if (deviceType == DeviceType::DirectX11)
