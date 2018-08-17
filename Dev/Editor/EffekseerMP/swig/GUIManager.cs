@@ -1089,6 +1089,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsMouseDown(int button) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsMouseDown(swigCPtr, button);
+    return ret;
+  }
+
   public bool IsMouseDoubleClicked(int button) {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsMouseDoubleClicked(swigCPtr, button);
     return ret;

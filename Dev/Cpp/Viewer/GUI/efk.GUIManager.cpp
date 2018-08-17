@@ -26,6 +26,12 @@ namespace ImGui
 		return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y);
 	}
 
+	static ImVec2 operator * (const ImVec2& lhs, const float& rhs)
+	{
+		return ImVec2(lhs.x * rhs, lhs.y * rhs);
+	}
+
+
 	bool TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, bool* v, ImTextureID user_texture, const char* label, const char* label_end)
 	{
 		ImGuiWindow* window = GetCurrentWindow();
@@ -192,6 +198,42 @@ namespace ImGui
 
 		return TreeNodeBehavior(window->GetID(label), flags, v, user_texture, label, NULL);
 	}
+
+	bool ImageButton_(ImTextureID user_texture_id, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, int frame_padding, const ImVec4& bg_col, const ImVec4& tint_col)
+	{
+		ImGuiWindow* window = GetCurrentWindow();
+		if (window->SkipItems)
+			return false;
+
+		ImGuiContext& g = *GImGui;
+		const ImGuiStyle& style = g.Style;
+
+		// Default to using texture ID as ID. User can still push string/integer prefixes.
+		// We could hash the size/uv to create a unique ID but that would prevent the user from animating UV.
+		PushID((void *)user_texture_id);
+		const ImGuiID id = window->GetID("#image");
+		PopID();
+
+		const ImVec2 padding = (frame_padding >= 0) ? ImVec2((float)frame_padding, (float)frame_padding) : style.FramePadding;
+		const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + size + padding * 2);
+		const ImRect image_bb(window->DC.CursorPos + padding, window->DC.CursorPos + padding + size);
+		ItemSize(bb);
+		if (!ItemAdd(bb, id))
+			return false;
+
+		bool hovered, held;
+		bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
+
+		// Render
+		const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+		RenderNavHighlight(bb, id);
+		RenderFrame(bb.Min, bb.Max, col, true, ImClamp((float)ImMin(padding.x, padding.y), 0.0f, style.FrameRounding));
+		if (bg_col.w > 0.0f)
+			window->DrawList->AddRectFilled(image_bb.Min, image_bb.Max, GetColorU32(bg_col));
+		window->DrawList->AddImage(user_texture_id, image_bb.Min, image_bb.Max, uv0, uv1, GetColorU32(tint_col));
+
+		return pressed;
+	}
 }
 
 namespace efk
@@ -330,6 +372,8 @@ namespace efk
 
 		return value_changed;
 	}
+
+
 
 	GUIManager::GUIManager()
 	{}
@@ -864,7 +908,7 @@ namespace efk
 
 	bool GUIManager::ImageButton(ImageResource* user_texture_id, float x, float y)
 	{
-		return ImGui::ImageButton(ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0);
+		return ImGui::ImageButton_(ToImTextureID(user_texture_id), ImVec2(x, y), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 	}
 
 	bool GUIManager::Checkbox(const char16_t* label, bool* v)
@@ -1191,6 +1235,11 @@ namespace efk
 	bool GUIManager::IsKeyDown(int user_key_index)
 	{
 		return ImGui::IsKeyDown(user_key_index);
+	}
+
+	bool GUIManager::IsMouseDown(int button)
+	{
+		return ImGui::IsMouseDown(button);
 	}
 
 	bool GUIManager::IsMouseDoubleClicked(int button)

@@ -422,6 +422,7 @@ namespace efk
 
 		// Inputs
 		bool IsKeyDown(int user_key_index);
+		bool IsMouseDown(int button);
 		bool IsMouseDoubleClicked(int button);
 
 		bool IsItemHovered();

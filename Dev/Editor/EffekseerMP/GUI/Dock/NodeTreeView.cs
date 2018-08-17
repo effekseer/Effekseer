@@ -16,6 +16,9 @@ namespace Effekseer.GUI.Dock
 
 		bool isPopupShown = false;
 
+		internal bool isVisibleChanging = false;
+		internal bool changingVisibleMode = false;
+
 		internal string treePyloadName = "NodeTreeNode";
 		internal byte[] treePyload = new byte[4];
 
@@ -141,6 +144,12 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 			exchangeEvents.Clear();
+
+			// reset
+			if(!Manager.NativeManager.IsMouseDown(0))
+			{
+				isVisibleChanging = false;
+			}
 		}
 
         /// <summary>
@@ -377,6 +386,15 @@ namespace Effekseer.GUI.Dock
 				{
 					ChangeVisible(false, !visible);
 				}
+
+				treeView.isVisibleChanging = true;
+				treeView.changingVisibleMode = Node.IsRendered;
+			}
+
+			// Change value continuously
+			if (Manager.NativeManager.IsItemHovered())
+			{
+				ChangeVisible(false, treeView.changingVisibleMode);
 			}
 		}
 
