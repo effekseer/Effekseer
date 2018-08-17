@@ -392,7 +392,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// Change value continuously
-			if (Manager.NativeManager.IsItemHovered())
+			if (Manager.NativeManager.IsItemHovered() && treeView.isVisibleChanging)
 			{
 				ChangeVisible(false, treeView.changingVisibleMode);
 			}
