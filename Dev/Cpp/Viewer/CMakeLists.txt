@@ -59,7 +59,7 @@ list(APPEND cpps
 	3rdParty/nfd/nfd_cocoa.m
 	3rdParty/Boxer/boxer_osx.mm
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
-	3rdParty/imgui_platform/imgui_impl_gl3.cpp
+	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 	GUI/Platform/efk.Language_osx.mm
 )
 
@@ -77,7 +77,7 @@ list(APPEND cpps
 	3rdParty/nfd/nfd_gtk.c
 	3rdParty/Boxer/boxer_linux.cpp
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
-	3rdParty/imgui_platform/imgui_impl_gl3.cpp
+	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 	GUI/Platform/efk.Language_Other.cpp
 )
 endif()
@@ -180,6 +180,7 @@ include_directories(
 	../EffekseerRendererDX9/
 	../EffekseerRendererGL/
 	../EffekseerSoundOSMixer/
+	../
 )
 
 link_directories(
