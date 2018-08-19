@@ -379,7 +379,7 @@ namespace efk
 			hr = device->CreateTexture2D(&backGroundTextureDesc, nullptr, &backTexture);
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 			ZeroMemory(&srvDesc, sizeof(srvDesc));
-			srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			srvDesc.Format = renderTextureDesc.Format;
 			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			srvDesc.Texture2D.MipLevels = 1;
 			hr = device->CreateShaderResourceView(backTexture, &srvDesc, &backTextureSRV);

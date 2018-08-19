@@ -1,0 +1,32 @@
+#include "efk.PostEffects.h"
+
+#ifdef _WIN32
+//#include "Platform/DX9/efk.PostEffectsDX9.h"
+#include "Platform/DX11/efk.PostEffectsDX11.h"
+#endif
+
+#include "Platform/GL/efk.PostEffectsGL.h"
+
+namespace efk
+{
+	PostEffect* PostEffect::CreateBloom(Graphics* graphics)
+	{
+#ifdef _WIN32
+		if (graphics->GetDeviceType() == DeviceType::DirectX9)
+		{
+			//return new BloomEffectDX9(graphics);
+		}
+
+		if (graphics->GetDeviceType() == DeviceType::DirectX11)
+		{
+			return new BloomEffectDX11(graphics);
+		}
+#endif
+		if (graphics->GetDeviceType() == DeviceType::OpenGL)
+		{
+			return new BloomEffectGL(graphics);
+		}
+
+		return nullptr;
+	}
+}
