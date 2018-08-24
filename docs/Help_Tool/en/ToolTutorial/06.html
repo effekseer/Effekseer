@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>No06. Let's create circular particles!</title>
-  <style type="text/css">code{white-space: pre;}</style>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>No06. Let’s create circular particles!</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
   <link rel="stylesheet" href="../base.css">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -13,19 +18,19 @@
 </head>
 <body>
 <header>
-<h1 class="title">No06. Let's create circular particles!</h1>
+<h1 class="title">No06. Let’s create circular particles!</h1>
 </header>
 <div class="main">
 <h2>Overview</h2>
 <p>In this chapter, you will create various effects using rings. You have specified the sprite as the drawing method, but this time you will specify the ring. The ring draws cylindrical particles. By changing the parameters, you can create not only circular but also various effects.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_renderRing.png">
 <p>
 Ring
 </p>
 </div>
 <p>In addition, by changing the area (UV) used for the loaded image, try changing the image to improve the appearance.</p>
-<div align="center">
+<div data-align="center">
 <table>
 <tr>
 <td>
@@ -52,7 +57,7 @@ Effect No.3 created in this chapter
 <p>
 We made it possible to download the effect created in advance from the link below.
 </p>
-<div align="center">
+<div data-align="center">
 <p>
 <a href = "../../Sample/06_01_Sample.zip">Download</a>
 </p>
@@ -60,24 +65,24 @@ We made it possible to download the effect created in advance from the link belo
 <h2>A basic ring</h2>
 <p>The first effect you create is a ring whose shape changes with time.</p>
 <p>Please open effect1.efkproj.</p>
-<p>You specify the ring for particle drawing method. You change the sprite in the &quot;Render Settings&quot; window to Ring.</p>
-<div align="center">
+<p>You specify the ring for particle drawing method. You change the sprite in the “Render Settings” window to Ring.</p>
+<div data-align="center">
 <img src="../../img/Tutorial/06_ring_en.png">
 <p>
 Ring
 </p>
 </div>
 <p>After changing, when you play an effect, you can see that the rings are displayed.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_ring.png">
 <p>
 Ring
 </p>
 </div>
 <p>You can change the shape of this ring by changing the parameters.</p>
-<p>The shape of the ring is specified by the outer ring (1) and the inner ring (2) of the &quot;Render Settings&quot; window. Here, you specify the direction (x) to the outside of the circle and the length (y) in the axial direction.</p>
+<p>The shape of the ring is specified by the outer ring (1) and the inner ring (2) of the “Render Settings” window. Here, you specify the direction (x) to the outside of the circle and the length (y) in the axial direction.</p>
 <p><b> The xyz direction of the preview screen differs from the xy direction you specify. </b></p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_ring_inout.png">
 <p>
 Inner,Outer
@@ -122,7 +127,7 @@ Inner,Outer
 </tbody>
 </table>
 <p>You can see that the shape of the ring is changing. The ring is compatible with circular effect.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_ring_easing.gif">
 <p>
 Inner ring, Outer ring
@@ -132,8 +137,8 @@ Inner ring, Outer ring
 <p>The second effect you create is a triangle.</p>
 <p>Please open effect2.efkproj.</p>
 <p>You can express various shapes by changing the number of vertices composed 0f the ring. In the initial setting, the number of vertices is large, so the particles look like circles. Reducing the number of vertices allows you to express shapes such as triangles, rectangles, and hexagons.</p>
-<p>In this chapter, You try to create a triangle. Change the number of vertices to 3 from the &quot;Render Settings&quot; window. You can see that changing the value will result in a triangle.</p>
-<div align="center">
+<p>In this chapter, You try to create a triangle. Change the number of vertices to 3 from the “Render Settings” window. You can see that changing the value will result in a triangle.</p>
+<div data-align="center">
 <img src="../../img/Tutorial/06_tri.png">
 <p>
 A triangle
@@ -143,9 +148,9 @@ A triangle
 <p>The third effect you create is a ring with an image.</p>
 <p>Please open effect3.efkproj.</p>
 <p>You can also specify an image to the ring. By specifying the image, expression of the shock wave and the aura which blows up etc. becomes easier.</p>
-<p>Let's specify the image immediately. Select &quot;Scroll.png&quot; from the &quot;Basic Render Settings&quot; window.</p>
+<p>Let’s specify the image immediately. Select “Scroll.png” from the “Basic Render Settings” window.</p>
 <p>You can see that the color of the ring has changed from single color to image.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_ring_img.png">
 <p>
 Image
@@ -153,17 +158,17 @@ Image
 </div>
 <p>However, this is not appetizing. If you change the image according to the passage of time, it looks better. In Effekseer, you can change the area (UV) of the image used for particles.</p>
 <p>Let the area of the image used for the particles move over time.</p>
-<p>Change UV from &quot;Basic Render Settings&quot; window. Change UV <code>Standard</code> to <code>Scroll</code>. Then, nothing is shown. This is because you have not set the area of the image to use.</p>
+<p>Change UV from “Basic Render Settings” window. Change UV <code>Standard</code> to <code>Scroll</code>. Then, nothing is shown. This is because you have not set the area of the image to use.</p>
 <p>Enter the image size (256, 256) in the size. Next, enter (0, -5) as the moving speed.</p>
 <p>You can see that the image is moving.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/06_scroll.gif">
 <p>
 UV Scroll
 </p>
 </div>
 <p>Finally, I made it possible to download the effect created in this chapter.</p>
-<div align="center">
+<div data-align="center">
 <p><a href = "../../Sample/06_02_Sample.zip">Download</a></p>
 </div>
 <h2>Summery</h2>

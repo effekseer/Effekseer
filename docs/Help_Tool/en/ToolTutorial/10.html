@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>No10.Ribbon and Track</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../base.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">No10.Ribbon and Track</h1>
+</header>
+<div class="main">
+<h2>Overview</h2>
+<p>This chapter explains the ribbon and the track. The ribbon and the track are long and narrow particles. You can express the afterglow of effects that can not be expressed with sprites.</p>
+<div data-align="center">
+<img src="../../img/Tutorial/10/ribbon_track.gif">
+<p>
+Ribbon and Track
+</p>
+</div>
+<p>The main difference between the ribbon and the track is the orientation of the particles. The ribbon is affected by the angle of the particle, but the track always points toward the camera.</p>
+<div data-align="center">
+<table>
+<tr>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/10/effect1_1.gif">
+<p>
+The effect No.1 created in this chapter
+</p>
+</div>
+</td>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/10/effect1_2.gif">
+<p>
+The effect No.2 created in this chapter
+</p>
+</div>
+</td>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/10/effect2.gif">
+<p>
+The effect No.3 created in this chapter
+</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<p>We made it possible to download the effect created in advance from the link below.</p>
+<div data-align="center">
+<p><a href = "../../Sample/10_01_Sample.zip">Download</a></p>
+</div>
+<h2>How to use</h2>
+<p>The ribbon and the track connect the particles generated from the same parent. By connecting it, I express long and narrow particles.</p>
+<div data-align="center">
+<img src="../../img/Tutorial/10/track.png">
+<p>
+Track
+</p>
+</div>
+<p>In sprites, particles are independent.</p>
+<p>If there is a distance between the particles, you can use the ribbon and the track. In order to use effectively, it is necessary to combine with parent-child relationship or spawning method.</p>
+<h3>Parent-child relationship</h3>
+<p>Set the parameters so that the parent particles move.</p>
+<p>Ensure that child particles are generated at regular intervals from parent particles. Ensure that the child particles remain in the generated position.</p>
+<p>Then, band-shaped particles are generated along the parent particles.</p>
+<p>Let’s try it.</p>
+<p>Create an effect whose shape is a spiral.</p>
+<p>Please open effect1-1.efkproj.</p>
+<p>The parent node’s parameters are already specified. The parent particle rises with rotating.</p>
+<div data-align="center">
+<img src="../../img/Tutorial/10/effect1_1_no_track.gif">
+<p>
+Parent particle
+</p>
+</div>
+<p>Some of the parameters of the child node have already been specified.</p>
+<p>The important thing is that the Inherit Position, Rotation and Scale are <code>Only on create</code>. If you specify <code>Only on create</code>, it is affected only by the parent’s parameters when particles are generated.</p>
+<p>In addition, multiple child particles need to be generated. In order to create a track by connecting child particles, the length of the track is determined according to the number of child particles.</p>
+<p>Specify the parameters of the Child node.</p>
+<p>Since the Particle node is decorative, you do not need to edit the Particle node.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Window</th>
+<th style="text-align: left;">Value type</th>
+<th style="text-align: left;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Spawn Count</td>
+<td style="text-align: left;">Infinity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Time to live</td>
+<td style="text-align: left;">60</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Inherit Position</td>
+<td style="text-align: left;">Only on create</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Inherit Rotation</td>
+<td style="text-align: left;">Only on create</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Inherit Scale</td>
+<td style="text-align: left;">Only on create</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">Render method</td>
+<td style="text-align: left;">Track</td>
+</tr>
+</tbody>
+</table>
+<p>You can see that the child particles are placed along the track of the parent particle.</p>
+<div data-align="center">
+<img src="../../img/Tutorial/10/effect1_1.gif">
+<p>
+Effect
+</p>
+</div>
+<h3>Spawning method</h3>
+<p>By using <code>Spawning method</code>, it is possible to generate beautiful track and ribbon particles without using parent-child relationship. In <code>Spawning method</code>, since particles can be regularly arranged in order, track and ribbon are generated in the order specified by <code>Spawning method</code>.</p>
+<p>Let’s try it.</p>
+<p>I create an effect whose shape is a spiral as before.</p>
+<p>Please open effect1-2.efkproj.</p>
+<p>Almost parameters already have been specified.</p>
+<p>Specify parameters of <code>Spawning method</code>.</p>
+<p>The parameters of the node are as follows.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Window</th>
+<th style="text-align: left;">Value type</th>
+<th style="text-align: left;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Spawn Count</td>
+<td style="text-align: left;">Infinity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Time to live</td>
+<td style="text-align: left;">60</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Inherit Position</td>
+<td style="text-align: left;">Only on create</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Inherit Rotation</td>
+<td style="text-align: left;">Only on create</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Inherit Scale</td>
+<td style="text-align: left;">Only on create</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">Render method</td>
+<td style="text-align: left;">Track</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Spawning method</td>
+<td style="text-align: left;">Set angle on spawn</td>
+<td style="text-align: left;">On</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Spawning method</td>
+<td style="text-align: left;">Spawning method</td>
+<td style="text-align: left;">Circle</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Spawning method</td>
+<td style="text-align: left;">Verticies</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Spawning method</td>
+<td style="text-align: left;">Radius(Mean)</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Spawning method</td>
+<td style="text-align: left;">Spwan Mode</td>
+<td style="text-align: left;">Clockwise</td>
+</tr>
+</tbody>
+</table>
+<div data-align="center">
+<img src="../../img/Tutorial/10/effect1_2.gif">
+<p>
+Effect
+</p>
+</div>
+<p>You can see that the track is generated along the arrangement order specified by <code>Spawning method</code>.</p>
+<h2>The difference between the track and the ribbon</h2>
+<p>In order to confirm the difference between the ribbon and the track, change the ribbon and the track with the same parameters.</p>
+<div data-align="center">
+<table>
+<tr>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/10/diff_track.png">
+<p>
+Track
+</p>
+</div>
+</td>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/10/diff_ribbon.png">
+<p>
+Ribbon
+</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<p>Since the ribbon is affected by the rotation of the particle, you can see that the orientation is inclined.</p>
+<p>Basically the track is more convenient, but we use the ribbon to create an effect with rotation like a sword trajectory.</p>
+<h2>Sword effect</h2>
+<p>As an effect that can not be expressed by the track, there are effects like weapons trajectories. Here we create an effect that emerges at the position where the sword has passed with the ribbon.</p>
+<p>Please open effect2.efkproj.</p>
+<p>The parent node rotates. Since it is a moment to swing the sword, specify <code>time to live</code> to 30 and the rotation to be 180 degrees from the angle 0 with easing.</p>
+<p>The parameters of the parent node have already been specified.</p>
+<p>Specify the child node’s parameters.</p>
+<p>Just as before, we make the Inherit Position, Rotation and Scale <code>Only on create</code>. Specify the ribbon to the rendering method. The position is (4, 0, 0) and spawn count is 30.</p>
+<p>Image and color already have been specified.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Window</th>
+<th style="text-align: left;">Value type</th>
+<th style="text-align: left;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Spawn Count</td>
+<td style="text-align: left;">30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Inherit Position</td>
+<td style="text-align: left;">Only on create</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Inherit Rotation</td>
+<td style="text-align: left;">Only on create</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Basic settings</td>
+<td style="text-align: left;">Inherit Scale</td>
+<td style="text-align: left;">Only on create</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;">4, 0, 0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;">Scale Factor</td>
+<td style="text-align: left;">6, 6, 6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">Render method</td>
+<td style="text-align: left;">Ribbon</td>
+</tr>
+</tbody>
+</table>
+<p>You can see that a sword-like effect is displayed.</p>
+<div data-align="center">
+<img src="../../img/Tutorial/10/effect2.gif">
+<p>
+Effect
+</p>
+</div>
+<p>Finally, I made it possible to download the effect created in this chapter.</p>
+<div data-align="center">
+<p><a href = "../../Sample/10_02_Sample.zip">Download</a></p>
+</div>
+<h2>Summary</h2>
+<p>In this chapter, I explained about the track and the ribbon.</p>
+</div>
+</body>
+</html>

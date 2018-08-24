@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>No12. Fカーブで複雑な動きを指定しよう！</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../base.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">No12. Fカーブで複雑な動きを指定しよう！</h1>
+</header>
+<div class="main">
+<h2>概要</h2>
+<p>本章では、Fカーブを使用して複雑な動きを指定します。 今までも様々な動かし方を説明してきました。 多くの場合、それらの機能だけで充分です。 しかし、それだけでは足りない場合があります。 そこで、Fカーブを使用して、好きな値に自由に変化できるようにします。</p>
+<div data-align="center">
+<img src="../../img/Tutorial/12/effect1.gif" >
+<p>
+本章で作成するエフェクト
+</p>
+</div>
+<p>ただ、本章では具体的なエフェクトを作成はしません。 上記の画像は本章及び今までの解説の知識で作成できるエフェクトです。</p>
+<h2>Fカーブ</h2>
+<p>Effekseerでは、Fカーブという曲線を設定してパラメーターを制御できます。 制御できるパラメーターは、位置、角度、拡大率、色、などです。</p>
+<p>Fカーブウインドウを開いてみましょう。 メニューからFカーブを選択します。そうすると、Fカーブを編集するウインドウが表示されます。</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/12/init_ja.png" width="80%"></p>
+</div>
+<p>ただ、編集されるFカーブが表示されていません。</p>
+<p>位置ウインドウからFカーブを選択します。</p>
+<p>そうすると、Fカーブウインドウの左側に編集可能なFカーブのラベルが表示されます。</p>
+<p>表示されたラベルを左クリックすると、Fカーブが表示されます。</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/12/select_ja.png" width="80%"></p>
+</div>
+<p>Fカーブに制御点を追加するために、Fカーブをダブルクリックします。 ダブルクリックすると制御点が追加されることがわかります。 2つ制御点を追加してみましょう。</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/12/two_points_ja.png" width="80%"></p>
+</div>
+<p>制御点は左クリックで選択して、制御点をドラックすることで移動できます。 制御点を移動させて値が変化するようにしてみましょう。</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/12/add_points_ja.png" width="80%"></p>
+</div>
+<p>再生してみると、Fカーブの値に沿ってパーティクルが動くのがわかります。</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/12/curve1.gif"></p>
+</div>
+<p>カーブも自由に制御できます。 制御点を選択して、左上の<code>アンカーの展開</code>をクリックします。 そうすると、カーブを制御するためのアンカーが表示されます。 アンカーを移動させてカーブを変化させてみましょう。</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/12/curve_ja.png" width="80%"></p>
+</div>
+<div data-align="center">
+<p><img src="../../img/Tutorial/12/curve2.gif"></p>
+</div>
+<p>隣の<code>アンカーの縮小</code>を選択すると、急に値が変化するようになります。</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/12/add_points_ja.png" width="80%"></p>
+</div>
+<p>制御点を削除するためには、制御点をダブルクリックします。</p>
+<p>これらを組み合わせて複雑な動きを表現できます。</p>
+<p>位置と同じように角度や色も制御できます。</p>
+<h3>サンプリング</h3>
+<p>Effekseerでは、実際にはFカーブを近似した値を使用しています。 そのため、急激な値の変化には対応できない場合があります。 そういうときは、サンプリングの値を小さくします。 そうすると、急激な値の変化に対応できるようになります。</p>
+<h3>便利な操作</h3>
+<h4>複数選択</h4>
+<p>Fカーブの項目をShiftと左クリックで複数のFカーブを同時に編集できるようになります。</p>
+<p>制御点もShiftと左クリックで複数選択できます。複数同時に移動もできます。</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/12/multi_en.png" width="80%"></p>
+</div>
+<h4>全体表示</h4>
+<p>Fカーブのラベルをダブルクリックすると、対応するFカーブ全体が表示されます。</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/12/show_entire.png" width="80%"></p>
+</div>
+<p>これらの知識を生かすことで複雑なエフェクトを作成できます。</p>
+<div data-align="center">
+<img src="../../img/Tutorial/12/effect1.gif" >
+<p>
+エフェクト
+</p>
+</div>
+<p>最後に、本章の知識で作成されたエフェクトをダウンロードできるようにしてみました。</p>
+<div data-align="center">
+<p><a href = "../../Sample/12_02_Sample.zip">ダウンロード</a></p>
+</div>
+<h2>まとめ</h2>
+<p>本章では、Fカーブについて説明しました。 Fカーブを使用して、複雑なエフェクトを作成してみましょう。</p>
+</div>
+</body>
+</html>
