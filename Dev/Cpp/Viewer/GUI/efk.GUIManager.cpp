@@ -1390,6 +1390,11 @@ namespace efk
 		ImGui::SetNextDockTabToolTip(utf8str<256>(popup));
 	}
 
+	bool GetDockActive()
+	{
+		return ImGui::GetDockActive();
+	}
+
 	void GUIManager::SetDockActive()
 	{
 		ImGui::SetDockActive();

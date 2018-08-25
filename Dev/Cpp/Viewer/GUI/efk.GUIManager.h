@@ -450,6 +450,7 @@ namespace efk
 		void ShutdownDock();
 		void SetNextDockIcon(ImageResource* icon, Vec2 iconSize);
 		void SetNextDockTabToolTip(const char16_t* popup);
+		bool GetDockActive();
 		void SetDockActive();
 
 		// Fcurve

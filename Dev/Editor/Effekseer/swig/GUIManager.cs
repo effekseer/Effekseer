@@ -1194,6 +1194,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetNextDockTabToolTip(swigCPtr, popup);
   }
 
+  public bool GetDockActive() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_GetDockActive(swigCPtr);
+    return ret;
+  }
+
   public void SetDockActive() {
     EffekseerNativePINVOKE.GUIManager_SetDockActive(swigCPtr);
   }

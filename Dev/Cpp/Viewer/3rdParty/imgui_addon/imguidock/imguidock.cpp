@@ -1602,6 +1602,12 @@ void EndDockspace() {
     EndChild();
 }
 
+bool GetDockActive()
+{
+	if (g_dock->m_current == nullptr) return false;
+	return g_dock->m_current->active;
+}
+
 void SetDockActive()
 {
     g_dock->setDockActive();

@@ -108,6 +108,15 @@ namespace Effekseer.GUI.Dock
 			opened = false;
 		}
 
+		public bool IsDockActive()
+		{
+			if (Manager.IsDockMode())
+			{
+				return Manager.NativeManager.GetDockActive();
+			}
+			return false;
+		}
+
         protected virtual void UpdateInternal()
         {
         }
