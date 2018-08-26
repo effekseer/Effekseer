@@ -87,10 +87,10 @@ namespace StandardNoTexture_Distortion_PS
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-::Effekseer::TextureLoader* CreateTextureLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::TextureLoader* CreateTextureLoader(ID3D11Device* device, ID3D11DeviceContext* context, ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(device, fileInterface);
+	return new TextureLoader(device, context, fileInterface);
 #else
 	return NULL;
 #endif
@@ -776,7 +776,7 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 ::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader( ::Effekseer::FileInterface* fileInterface )
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(this->GetDevice(), fileInterface );
+	return new TextureLoader(this->GetDevice(), this->GetContext(), fileInterface );
 #else
 	return NULL;
 #endif

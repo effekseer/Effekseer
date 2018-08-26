@@ -22,11 +22,12 @@ class TextureLoader
 {
 private:
 	ID3D11Device*						device;
+	ID3D11DeviceContext*				context = nullptr;
 	::Effekseer::FileInterface*			m_fileInterface;
 	::Effekseer::DefaultFileInterface	m_defaultFileInterface;
 
 public:
-	TextureLoader(ID3D11Device* device, ::Effekseer::FileInterface* fileInterface = NULL );
+	TextureLoader(ID3D11Device* device, ID3D11DeviceContext* context, ::Effekseer::FileInterface* fileInterface = NULL );
 	virtual ~TextureLoader();
 
 public:
