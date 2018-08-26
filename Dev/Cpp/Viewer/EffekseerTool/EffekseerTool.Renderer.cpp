@@ -383,8 +383,8 @@ bool Renderer::BeginRendering()
 		auto proj = m_projMatTemp;
 
 		::Effekseer::Matrix44 mat;
-		mat.Values[0][0] = (float) m_windowWidth / (float) GuideWidth;
-		mat.Values[1][1] = (float) m_windowHeight / (float) GuideHeight;
+		mat.Values[0][0] = (float) screenWidth / (float) GuideWidth;
+		mat.Values[1][1] = (float) screenHeight / (float) GuideHeight;
 		::Effekseer::Matrix44::Mul(proj, proj, mat);
 
 		m_renderer->SetProjectionMatrix(proj);
@@ -521,6 +521,8 @@ bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 	m_windowWidth = width;
 	m_windowHeight = height;
 
+	screenWidth = m_windowWidth;
+	screenHeight = m_windowHeight;
 	return true;
 }
 
