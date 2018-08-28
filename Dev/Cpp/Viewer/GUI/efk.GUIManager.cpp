@@ -1510,6 +1510,15 @@ namespace efk
                                             (boxer::Buttons)buttons);
     }
 
+	bool GUIManager::IsMacOSX()
+	{
+#if __APPLE__
+		return true;
+#else
+		return false;
+#endif
+	}
+
 	int GUIManager::GetLanguage()
 	{
 		return (int32_t)GetEfkLanguage();

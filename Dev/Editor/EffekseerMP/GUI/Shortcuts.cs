@@ -297,7 +297,7 @@ namespace Effekseer.GUI
 				bool pushed = currentKeys[Key] && !preKeys[Key];
 				if(Control)
 				{
-					if (System.Environment.OSVersion.Platform == PlatformID.MacOSX)
+					if (swig.GUIManager.IsMacOSX())
 					{
 						pressed = pressed && (currentKeys[(int)ShortcutKeys.LEFT_SUPER] || currentKeys[(int)ShortcutKeys.RIGHT_SUPER]);
 						pushed = pushed || (
@@ -346,7 +346,7 @@ namespace Effekseer.GUI
 
 				if (Control)
 				{
-					if (System.Environment.OSVersion.Platform == PlatformID.MacOSX)
+					if (swig.GUIManager.IsMacOSX())
 					{
 						r += "Command+";
 					}
@@ -363,7 +363,7 @@ namespace Effekseer.GUI
 
 				if (Alt)
 				{
-					if(System.Environment.OSVersion.Platform == PlatformID.MacOSX)
+					if(swig.GUIManager.IsMacOSX())
 					{
 						r += "Option+";
 					}

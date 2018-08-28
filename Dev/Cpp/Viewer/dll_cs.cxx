@@ -7189,6 +7189,16 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_show___(char16_t * j
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsMacOSX___() {
+  unsigned int jresult ;
+  bool result;
+  
+  result = (bool)efk::GUIManager::IsMacOSX();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetLanguage___() {
   int jresult ;
   int result;

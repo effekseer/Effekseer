@@ -494,6 +494,8 @@ namespace efk
         // Dalog
         static DialogSelection show(const char16_t* message, const char16_t* title, DialogStyle style, DialogButtons buttons);
 
+		static bool IsMacOSX();
+
 		// Language
 		static int GetLanguage();
 	};
