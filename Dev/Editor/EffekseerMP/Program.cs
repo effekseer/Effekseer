@@ -101,7 +101,8 @@ namespace Effekseer
 				language = (Language)languageIndex;
 			}
 
-            Core.Initialize(language);
+			Core.OnOutputMessage += new Action<string>(Core_OnOutputMessage);
+			Core.Initialize(language);
 
 			// Failed to compile script
 			if (Core.ExportScripts.Count == 0)
@@ -158,6 +159,11 @@ namespace Effekseer
 			GUI.Manager.Terminate();
 
 			Core.Dispose();
+		}
+
+		static void Core_OnOutputMessage(string obj)
+		{
+			swig.GUIManager.show(obj, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 		}
 	}
 
