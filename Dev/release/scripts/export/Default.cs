@@ -241,7 +241,15 @@ public class Script
 
 		public void Show(string path)
 		{
-			this.title = "Maginification";
+			if (Effekseer.Core.Language == Effekseer.Language.Japanese)
+			{
+				this.title = "拡大率";
+			}
+			else
+			{
+				this.title = "Maginification";
+			}
+
 			this.path = path;
 			mag[0] = Effekseer.Core.Option.ExternalMagnification.GetValue();
 			Effekseer.GUI.Manager.AddControl(this);
@@ -257,7 +265,7 @@ public class Script
 
 			if (Effekseer.GUI.Manager.NativeManager.BeginPopupModal(title + id, ref opened, Effekseer.swig.WindowFlags.AlwaysAutoResize))
 			{
-				if (Effekseer.GUI.Manager.NativeManager.DragFloat("Magnification", mag, 0.1f, 0, float.MaxValue))
+				if (Effekseer.GUI.Manager.NativeManager.DragFloat(this.title, mag, 0.1f, 0, float.MaxValue))
 				{
 
 				}

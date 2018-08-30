@@ -305,6 +305,14 @@ namespace Effekseer
 
 			New();
 
+			if(!DoExecuteWithMLBundle())
+			{
+				InitializeScripts(entryDirectory);
+			}
+		}
+
+		static void InitializeScripts(string entryDirectory)
+		{
 			// Load scripts
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/import");
@@ -316,7 +324,7 @@ namespace Effekseer
 
 			{
 				var files = System.IO.Directory.GetFiles(entryDirectory + "scripts/command", "*.*", System.IO.SearchOption.AllDirectories);
-                
+
 				foreach (var file in files)
 				{
 					var ext = System.IO.Path.GetExtension(file);
@@ -445,6 +453,14 @@ namespace Effekseer
 			}
 
 			return dir;
+		}
+
+		public static bool DoExecuteWithMLBundle()
+		{
+			var myAssembly = System.Reflection.Assembly.GetEntryAssembly();
+			string path = myAssembly.Location;
+			var dir = System.IO.Path.GetDirectoryName(path);
+			return dir == string.Empty;
 		}
 
 		public static string Copy(Data.NodeBase node)
