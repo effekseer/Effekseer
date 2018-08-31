@@ -137,6 +137,8 @@
           <MaxGeneration>
             <Value>2</Value>
           </MaxGeneration>
+          <RemoveWhenLifeIsExtinct>False</RemoveWhenLifeIsExtinct>
+          <RemoveWhenParentIsRemoved>True</RemoveWhenParentIsRemoved>
           <GenerationTime>
             <Center>10</Center>
             <Max>10</Max>
@@ -240,6 +242,9 @@
                 </Radius>
               </Circle>
             </GenerationLocationValues>
+            <DepthValues>
+              <DrawingPriority>-1</DrawingPriority>
+            </DepthValues>
             <RendererCommonValues>
               <ColorTexture>Texture/Particle04_clear_soft.png</ColorTexture>
               <AlphaBlend>2</AlphaBlend>
@@ -441,7 +446,7 @@
       </Node>
     </Children>
   </Root>
-  <ToolVersion>0.70CTP1</ToolVersion>
+  <ToolVersion>1.40β3</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>120</EndFrame>
