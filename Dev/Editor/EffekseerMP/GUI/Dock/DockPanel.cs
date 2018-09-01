@@ -28,6 +28,8 @@ namespace Effekseer.GUI.Dock
 
 		internal string TabToolTip = string.Empty;
 
+		internal bool isFirstUpdate = true;
+
 		public DockPanel()
 		{
 		}
@@ -38,11 +40,16 @@ namespace Effekseer.GUI.Dock
 			{
 				if (Manager.IsDockMode())
 				{
-					Manager.NativeManager.SetNextDock(InitialDockSlot);
-					Manager.NativeManager.SetNextDockRate(InitialDockRate);
-					if(InitialDockReset)
+					if (isFirstUpdate)
 					{
-						Manager.NativeManager.ResetNextParentDock();
+						Manager.NativeManager.SetNextDock(InitialDockSlot);
+						Manager.NativeManager.SetNextDockRate(InitialDockRate);
+						if (InitialDockReset)
+						{
+							Manager.NativeManager.ResetNextParentDock();
+						}
+
+						isFirstUpdate = false;
 					}
 
 					if(Icon != null)
