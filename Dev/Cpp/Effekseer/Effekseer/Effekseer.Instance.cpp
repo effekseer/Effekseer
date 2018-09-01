@@ -662,6 +662,12 @@ void Instance::Update( float deltaFrame, bool shown )
 
 	auto instanceGlobal = this->m_pContainer->GetRootInstance();
 
+	// If it is root, it can update immediately
+	if (m_pEffectNode->GetType() == EFFECT_NODE_TYPE_ROOT)
+	{
+		m_stepTime = true;
+	}
+
 	if (m_stepTime && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
 	{
 		/* 音の更新(現状放置) */
