@@ -15,8 +15,8 @@ for book in books:
     for sheet in file.sheet_names:
         parsed = file.parse(sheet)
         for index, row in parsed.iterrows():
-            kv_en[str(row[0])] = str(row[1])
-            kv_ja[str(row[0])] = str(row[2])
+            kv_en[str(row[0])] = str(row[1]).replace('\r\n',r'\n').replace('\n',r'\n')
+            kv_ja[str(row[0])] = str(row[2]).replace('\r\n',r'\n').replace('\n',r'\n')
             
 values_en['kv'] = kv_en
 values_ja['kv'] = kv_ja
