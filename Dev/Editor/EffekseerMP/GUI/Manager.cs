@@ -523,6 +523,7 @@ namespace Effekseer.GUI
 					panels[i].InitialDockSize = defaultSize;
 					panels[i].InitialDockReset = isResetParent;
 					panels[i].InitialDockRate = dockRate;
+					panels[i].IsInitialized = -2;
 
 					if (dockManager != null)
 					{
