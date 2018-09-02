@@ -253,9 +253,9 @@ namespace Effekseer.GUI.Component
 			c.G = (int)(values[1] * 255);
 			c.B = (int)(values[2] * 255);
 			c = RGBToHSV(c);
-			values[0] = c.R / 255;
-			values[1] = c.G / 255;
-			values[2] = c.B / 255;
+			values[0] = c.R / 255.0f;
+			values[1] = c.G / 255.0f;
+			values[2] = c.B / 255.0f;
 		}
 
 		void convertHSV2RGB(float[] values)
@@ -265,9 +265,9 @@ namespace Effekseer.GUI.Component
 			c.G = (int)(values[1] * 255);
 			c.B = (int)(values[2] * 255);
 			c = HSVToRGB(c);
-			values[0] = c.R / 255;
-			values[1] = c.G / 255;
-			values[2] = c.B / 255;
+			values[0] = c.R / 255.0f;
+			values[1] = c.G / 255.0f;
+			values[2] = c.B / 255.0f;
 		}
 
 		struct color
