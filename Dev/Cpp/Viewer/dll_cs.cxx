@@ -7199,6 +7199,14 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsMacOSX___
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetIniFilename___(char16_t * jarg1) {
+  char16_t *arg1 = (char16_t *) 0 ;
+  
+  arg1 = (char16_t *)jarg1; 
+  efk::GUIManager::SetIniFilename((char16_t const *)arg1);
+}
+
+
 SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetLanguage___() {
   int jresult ;
   int result;

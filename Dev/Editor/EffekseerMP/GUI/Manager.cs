@@ -286,13 +286,18 @@ namespace Effekseer.GUI
 			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
 			Core.OnAfterNew += new EventHandler(Core_OnAfterNew);
 			Core.OnReload += new EventHandler(Core_OnReload);
-		
+
+			// Set imgui path
+			var entryDirectory = GetEntryDirectory();
+			swig.GUIManager.SetIniFilename(entryDirectory + "/imgui.ini");
+
 			return true;
 		}
 
 		public static void Terminate()
 		{
-			System.IO.Directory.SetCurrentDirectory(GetEntryDirectory());
+			var entryDirectory = GetEntryDirectory();
+			System.IO.Directory.SetCurrentDirectory(entryDirectory);
 
 			Manager.NativeManager.SaveDock("config.Dock.config");
 			SaveWindowConfig("config.Dock.xml");

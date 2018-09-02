@@ -1268,6 +1268,10 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public static void SetIniFilename(string filename) {
+    EffekseerNativePINVOKE.GUIManager_SetIniFilename(filename);
+  }
+
   public static int GetLanguage() {
     int ret = EffekseerNativePINVOKE.GUIManager_GetLanguage();
     return ret;

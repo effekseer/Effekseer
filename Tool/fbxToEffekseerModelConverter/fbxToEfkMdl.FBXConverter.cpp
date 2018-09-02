@@ -535,14 +535,14 @@ namespace fbxToEfkMdl
 		return node;
 	}
 
-	std::shared_ptr<KeyFrameAnimation> FBXConverter::LoadCurve(FbxAnimCurve* curve, int32_t frameCount)
+	std::shared_ptr<KeyFrameAnimation> FBXConverter::LoadCurve(FbxAnimCurve* curve, int32_t frameStart, int32_t frameCount)
 	{
 		auto keyFrameAnimation = std::make_shared<KeyFrameAnimation>();
 		
 		for (int32_t i = 0; i < frameCount; i++)
 		{
 			FbxTime time;
-			time.SetFrame(i, FbxTime::eFrames60);
+			time.SetFrame(i + frameStart, FbxTime::eFrames60);
 			auto value = curve->Evaluate(time);
 			keyFrameAnimation->Values.push_back(value);
 		}
@@ -550,7 +550,7 @@ namespace fbxToEfkMdl
 		return keyFrameAnimation;
 	}
 
-	std::vector<std::shared_ptr<KeyFrameAnimation>> FBXConverter::LoadCurve(FbxAnimLayer* fbxAnimLayer, FbxNode* fbxNode, int32_t frameCount)
+	std::vector<std::shared_ptr<KeyFrameAnimation>> FBXConverter::LoadCurve(FbxAnimLayer* fbxAnimLayer, FbxNode* fbxNode, int32_t frameStart, int32_t frameCount)
 	{
 		std::vector<std::shared_ptr<KeyFrameAnimation>> ret;
 		auto boneName = fbxNode->GetName();
@@ -594,7 +594,7 @@ namespace fbxToEfkMdl
 
 		if (transXCurve != nullptr)
 		{
-			auto c = LoadCurve(transXCurve, frameCount);
+			auto c = LoadCurve(transXCurve, frameStart, frameCount);
 			c->Name = boneName;
 			c->Target = AnimationTarget::TX;
 			ret.push_back(c);
@@ -602,7 +602,7 @@ namespace fbxToEfkMdl
 
 		if (transYCurve != nullptr)
 		{
-			auto c = LoadCurve(transYCurve, frameCount);
+			auto c = LoadCurve(transYCurve, frameStart, frameCount);
 			c->Name = boneName;
 			c->Target = AnimationTarget::TY;
 			ret.push_back(c);
@@ -610,7 +610,7 @@ namespace fbxToEfkMdl
 
 		if (transZCurve != nullptr)
 		{
-			auto c = LoadCurve(transZCurve, frameCount);
+			auto c = LoadCurve(transZCurve, frameStart, frameCount);
 			c->Name = boneName;
 			c->Target = AnimationTarget::TZ;
 			ret.push_back(c);
@@ -618,7 +618,7 @@ namespace fbxToEfkMdl
 
 		if (rotXCurve != nullptr)
 		{
-			auto c = LoadCurve(rotXCurve, frameCount);
+			auto c = LoadCurve(rotXCurve, frameStart, frameCount);
 			c->Name = boneName;
 			c->Target = AnimationTarget::RX;
 			ret.push_back(c);
@@ -626,7 +626,7 @@ namespace fbxToEfkMdl
 
 		if (rotYCurve != nullptr)
 		{
-			auto c = LoadCurve(rotYCurve, frameCount);
+			auto c = LoadCurve(rotYCurve, frameStart, frameCount);
 			c->Name = boneName;
 			c->Target = AnimationTarget::RY;
 			ret.push_back(c);
@@ -634,7 +634,7 @@ namespace fbxToEfkMdl
 
 		if (rotZCurve != nullptr)
 		{
-			auto c = LoadCurve(rotZCurve, frameCount);
+			auto c = LoadCurve(rotZCurve, frameStart, frameCount);
 			c->Name = boneName;
 			c->Target = AnimationTarget::RZ;
 			ret.push_back(c);
@@ -642,7 +642,7 @@ namespace fbxToEfkMdl
 
 		if (sclXCurve != nullptr)
 		{
-			auto c = LoadCurve(sclXCurve, frameCount);
+			auto c = LoadCurve(sclXCurve, frameStart, frameCount);
 			c->Name = boneName;
 			c->Target = AnimationTarget::SX;
 			ret.push_back(c);
@@ -650,7 +650,7 @@ namespace fbxToEfkMdl
 
 		if (sclYCurve != nullptr)
 		{
-			auto c = LoadCurve(sclYCurve, frameCount);
+			auto c = LoadCurve(sclYCurve, frameStart, frameCount);
 			c->Name = boneName;
 			c->Target = AnimationTarget::SY;
 			ret.push_back(c);
@@ -658,7 +658,7 @@ namespace fbxToEfkMdl
 
 		if (sclZCurve != nullptr)
 		{
-			auto c = LoadCurve(sclZCurve, frameCount);
+			auto c = LoadCurve(sclZCurve, frameStart, frameCount);
 			c->Name = boneName;
 			c->Target = AnimationTarget::SZ;
 			ret.push_back(c);
@@ -666,7 +666,7 @@ namespace fbxToEfkMdl
 
 		for (auto i = 0; i< fbxNode->GetChildCount(); i++)
 		{
-			auto kfas = LoadCurve(fbxAnimLayer, fbxNode->GetChild(i), frameCount);
+			auto kfas = LoadCurve(fbxAnimLayer, fbxNode->GetChild(i), frameStart, frameCount);
 
 			for (auto a : kfas)
 			{
@@ -704,7 +704,7 @@ namespace fbxToEfkMdl
 		for (auto i = 0; i < layerCount; ++i)
 		{
 			auto layer = fbxAnimStack->GetMember<FbxAnimLayer>();
-			auto kfas = LoadCurve(layer, fbxRootNode, animClip->EndFrame);
+			auto kfas = LoadCurve(layer, fbxRootNode, animClip->StartFrame, animClip->EndFrame - animClip->StartFrame);
 		
 			for(auto a : kfas)
 			{
@@ -712,6 +712,9 @@ namespace fbxToEfkMdl
 			}
 		}
 
+		animClip->EndFrame = animClip->EndFrame - animClip->StartFrame;
+		animClip->StartFrame = 0;
+		
 		return animClip;
 	}
 

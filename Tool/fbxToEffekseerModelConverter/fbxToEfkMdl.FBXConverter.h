@@ -31,9 +31,9 @@ namespace fbxToEfkMdl
 
 		std::shared_ptr<Node> LoadHierarchy(std::shared_ptr<Node> parent, FbxNode* fbxNode, FbxManager* fbxManager);
 
-		std::shared_ptr<KeyFrameAnimation> LoadCurve(FbxAnimCurve* curve, int32_t frameCount);
+		std::shared_ptr<KeyFrameAnimation> LoadCurve(FbxAnimCurve* curve, int32_t frameStart, int32_t frameCount);
 
-		std::vector<std::shared_ptr<KeyFrameAnimation>> LoadCurve(FbxAnimLayer* fbxAnimLayer, FbxNode* fbxNode, int32_t frameCount);
+		std::vector<std::shared_ptr<KeyFrameAnimation>> LoadCurve(FbxAnimLayer* fbxAnimLayer, FbxNode* fbxNode, int32_t frameStart, int32_t frameCount);
 
 		std::shared_ptr<AnimationClip> LoadAnimation(FbxAnimStack* fbxAnimStack, FbxNode* fbxRootNode);
 	public:

@@ -496,6 +496,8 @@ namespace efk
 
 		static bool IsMacOSX();
 
+		static void SetIniFilename(const char16_t* filename);
+
 		// Language
 		static int GetLanguage();
 	};
