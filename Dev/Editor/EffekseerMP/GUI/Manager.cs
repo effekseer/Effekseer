@@ -25,6 +25,7 @@ namespace Effekseer.GUI
 			}
 
 			Manager.resizedCount = 5;
+			Manager.actualWidth = x;
 		}
 
 		public override void Focused()
@@ -75,8 +76,6 @@ namespace Effekseer.GUI
 
 	public class Manager
 	{
-
- 
 		public static swig.GUIManager NativeManager;
 		public static swig.Native Native;
 
@@ -94,6 +93,7 @@ namespace Effekseer.GUI
 
 		static int resetCount = 0;
 		internal static int resizedCount = 0;
+		internal static int actualWidth = 1;
 
         /// <summary>
         /// if this flag is true, a dialog box on disposing is not shown
@@ -444,6 +444,13 @@ namespace Effekseer.GUI
 			NativeManager.Present();
 
 			isFirstUpdate = false;
+
+			// TODO more smart
+			// When minimized, suppress CPU activity
+			if (actualWidth == 0)
+			{
+				System.Threading.Thread.Sleep(16);
+			}
 		}
 
 		public static void ResetWindow()
