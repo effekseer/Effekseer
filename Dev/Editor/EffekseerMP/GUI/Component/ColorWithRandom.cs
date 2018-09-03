@@ -23,6 +23,7 @@ namespace Effekseer.GUI.Component
 		Data.Value.ColorWithRandom binding = null;
 
 		bool isActive = false;
+		bool isWriting = false;
 
 		float[] internalValueMax = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
 		float[] internalValueMin = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -45,6 +46,10 @@ namespace Effekseer.GUI.Component
 				if(binding != null)
 				{
 					binding.OnChangedColorSpace -= Binding_OnChangedColorSpace;
+					binding.R.OnChanged -= Binding_OnChanged;
+					binding.G.OnChanged -= Binding_OnChanged;
+					binding.B.OnChanged -= Binding_OnChanged;
+					binding.A.OnChanged -= Binding_OnChanged;
 				}
 
 				binding = value;
@@ -68,9 +73,20 @@ namespace Effekseer.GUI.Component
 					internalValueMin[3] = binding.A.Min / 255.0f;
 
 					binding.OnChangedColorSpace += Binding_OnChangedColorSpace;
+					binding.R.OnChanged += Binding_OnChanged;
+					binding.G.OnChanged += Binding_OnChanged;
+					binding.B.OnChanged += Binding_OnChanged;
+					binding.A.OnChanged += Binding_OnChanged;
+
+					if(binding.ColorSpace == Data.ColorSpace.HSVA)
+					{
+						convertHSV2RGB(internalValueMin);
+						convertHSV2RGB(internalValueMax);
+					}
 				}
 			}
 		}
+
 
 		public ColorWithRandom(string label = null)
 		{
@@ -94,61 +110,62 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
-			binding.SetMin(
-				(int)(internalValueMin[0] * 255),
-				(int)(internalValueMin[1] * 255),
-				(int)(internalValueMin[2] * 255),
-				(int)(internalValueMin[3] * 255),
+			if (binding.ColorSpace == Data.ColorSpace.HSVA)
+			{
+				var ivmin = (float[])internalValueMin.Clone();
+				var ivmax = (float[])internalValueMax.Clone();
+				convertRGB2HSV(ivmin);
+				convertRGB2HSV(ivmax);
+
+				binding.SetMin(
+				(int)Math.Round(ivmin[0] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(ivmin[1] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(ivmin[2] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(ivmin[3] * 255, MidpointRounding.AwayFromZero),
 				isActive);
 
-			binding.SetMax(
-			(int)(internalValueMax[0] * 255),
-			(int)(internalValueMax[1] * 255),
-			(int)(internalValueMax[2] * 255),
-			(int)(internalValueMax[3] * 255),
-			isActive);
+				binding.SetMax(
+				(int)Math.Round(ivmax[0] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(ivmax[1] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(ivmax[2] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(ivmax[3] * 255, MidpointRounding.AwayFromZero),
+				isActive);
+			}
+			else
+			{
+				binding.SetMin(
+				(int)Math.Round(internalValueMin[0] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMin[1] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMin[2] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMin[3] * 255, MidpointRounding.AwayFromZero),
+				isActive);
+
+				binding.SetMax(
+				(int)Math.Round(internalValueMax[0] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMax[1] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMax[2] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMax[3] * 255, MidpointRounding.AwayFromZero),
+				isActive);
+			}
 		}
 
 		public override void Update()
 		{
+			if (binding == null) return;
+
 			isPopupShown = false;
-
-			if (binding != null)
-			{
-				internalValueMax[0] = binding.R.Max / 255.0f;
-				internalValueMax[1] = binding.G.Max / 255.0f;
-				internalValueMax[2] = binding.B.Max / 255.0f;
-				internalValueMax[3] = binding.A.Max / 255.0f;
-
-				internalValueMin[0] = binding.R.Min / 255.0f;
-				internalValueMin[1] = binding.G.Min / 255.0f;
-				internalValueMin[2] = binding.B.Min / 255.0f;
-				internalValueMin[3] = binding.A.Min / 255.0f;
-			}
 
 			var colorSpace = binding.ColorSpace == Data.ColorSpace.RGBA ? swig.ColorEditFlags.RGB : swig.ColorEditFlags.HSV;
 			
 			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 60);
 
-			var ivmin = (float[])internalValueMin.Clone();
-			if(binding.ColorSpace == Data.ColorSpace.HSVA)
+			if (Manager.NativeManager.ColorEdit4(id1, internalValueMin, swig.ColorEditFlags.NoOptions | colorSpace))
 			{
-				convertHSV2RGB(ivmin);
-			}
+				isWriting = true;
 
-			if (Manager.NativeManager.ColorEdit4(id1, ivmin, swig.ColorEditFlags.NoOptions | colorSpace))
-			{
-				if (binding.ColorSpace == Data.ColorSpace.HSVA)
-				{
-					convertRGB2HSV(ivmin);
-				}
+				FixValue();
 
-				binding.SetMin(
-					(int)(ivmin[0] * 255),
-					(int)(ivmin[1] * 255),
-					(int)(ivmin[2] * 255),
-					(int)(ivmin[3] * 255),
-					isActive);
+				isWriting = false;
 			}
 
 
@@ -159,25 +176,13 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(Resources.GetString("Min"));
 
-			var ivmax = (float[])internalValueMax.Clone();
-			if (binding.ColorSpace == Data.ColorSpace.HSVA)
+			if (Manager.NativeManager.ColorEdit4(id2, internalValueMax, swig.ColorEditFlags.NoOptions | colorSpace))
 			{
-				convertHSV2RGB(ivmax);
-			}
+				isWriting = true;
 
-			if (Manager.NativeManager.ColorEdit4(id2, ivmax, swig.ColorEditFlags.NoOptions | colorSpace))
-			{
-				if (binding.ColorSpace == Data.ColorSpace.HSVA)
-				{
-					convertRGB2HSV(ivmax);
-				}
+				FixValue();
 
-				binding.SetMax(
-					(int)(ivmax[0] * 255),
-					(int)(ivmax[1] * 255),
-					(int)(ivmax[2] * 255),
-					(int)(ivmax[3] * 255),
-					isActive);
+				isWriting = false;
 			}
 
 
@@ -227,21 +232,45 @@ namespace Effekseer.GUI.Component
 
 		private void Binding_OnChangedColorSpace(object sender, ChangedValueEventArgs e)
 		{
-			bool changeColor = (bool)e.Value;
-
-			if (changeColor)
+			if (binding != null)
 			{
-				if (binding.ColorSpace == Data.ColorSpace.RGBA)
+				internalValueMax[0] = binding.R.Max / 255.0f;
+				internalValueMax[1] = binding.G.Max / 255.0f;
+				internalValueMax[2] = binding.B.Max / 255.0f;
+				internalValueMax[3] = binding.A.Max / 255.0f;
+
+				internalValueMin[0] = binding.R.Min / 255.0f;
+				internalValueMin[1] = binding.G.Min / 255.0f;
+				internalValueMin[2] = binding.B.Min / 255.0f;
+				internalValueMin[3] = binding.A.Min / 255.0f;
+
+				if (binding.ColorSpace == Data.ColorSpace.HSVA)
 				{
 					convertHSV2RGB(internalValueMin);
 					convertHSV2RGB(internalValueMax);
-					FixValue();
 				}
-				else
+			}
+		}
+
+		private void Binding_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			if (isWriting) return;
+			if (binding != null)
+			{
+				internalValueMax[0] = binding.R.Max / 255.0f;
+				internalValueMax[1] = binding.G.Max / 255.0f;
+				internalValueMax[2] = binding.B.Max / 255.0f;
+				internalValueMax[3] = binding.A.Max / 255.0f;
+
+				internalValueMin[0] = binding.R.Min / 255.0f;
+				internalValueMin[1] = binding.G.Min / 255.0f;
+				internalValueMin[2] = binding.B.Min / 255.0f;
+				internalValueMin[3] = binding.A.Min / 255.0f;
+
+				if (binding.ColorSpace == Data.ColorSpace.HSVA)
 				{
-					convertRGB2HSV(internalValueMin);
-					convertRGB2HSV(internalValueMax);
-					FixValue();
+					convertHSV2RGB(internalValueMin);
+					convertHSV2RGB(internalValueMax);
 				}
 			}
 		}
@@ -249,9 +278,9 @@ namespace Effekseer.GUI.Component
 		void convertRGB2HSV(float[] values)
 		{
 			color c = new color();
-			c.R = (int)(values[0] * 255);
-			c.G = (int)(values[1] * 255);
-			c.B = (int)(values[2] * 255);
+			c.R = (int)Math.Round(values[0] * 255, MidpointRounding.AwayFromZero);
+			c.G = (int)Math.Round(values[1] * 255, MidpointRounding.AwayFromZero);
+			c.B = (int)Math.Round(values[2] * 255, MidpointRounding.AwayFromZero);
 			c = RGBToHSV(c);
 			values[0] = c.R / 255.0f;
 			values[1] = c.G / 255.0f;
@@ -261,9 +290,9 @@ namespace Effekseer.GUI.Component
 		void convertHSV2RGB(float[] values)
 		{
 			color c = new color();
-			c.R = (int)(values[0] * 255);
-			c.G = (int)(values[1] * 255);
-			c.B = (int)(values[2] * 255);
+			c.R = (int)Math.Round(values[0] * 255, MidpointRounding.AwayFromZero);
+			c.G = (int)Math.Round(values[1] * 255, MidpointRounding.AwayFromZero);
+			c.B = (int)Math.Round(values[2] * 255, MidpointRounding.AwayFromZero);
 			c = HSVToRGB(c);
 			values[0] = c.R / 255.0f;
 			values[1] = c.G / 255.0f;
@@ -279,13 +308,13 @@ namespace Effekseer.GUI.Component
 
 		static color RGBToHSV(color rgb)
 		{
-			float max;
-			float min;
-			float R, G, B, H, S, V;
+			double max;
+			double min;
+			double R, G, B, H, S, V;
 
-			R = (float)rgb.R / 255;
-			G = (float)rgb.G / 255;
-			B = (float)rgb.B / 255;
+			R = (double)rgb.R / 255.0;
+			G = (double)rgb.G / 255.0;
+			B = (double)rgb.B / 255.0;
 
 			if (R >= G && R >= B)
 			{
@@ -333,9 +362,9 @@ namespace Effekseer.GUI.Component
 			V = max;
 
 			color ret = new color();
-			ret.R = (int)(H / 360 * 252);
-			ret.G = (int)(S * 255);
-			ret.B = (int)(V * 255);
+			ret.R = (int)Math.Round(H / 360 * 252, MidpointRounding.AwayFromZero);
+			ret.G = (int)Math.Round(S * 255, MidpointRounding.AwayFromZero);
+			ret.B = (int)Math.Round(V * 255, MidpointRounding.AwayFromZero);
 			return ret;
 		}
 

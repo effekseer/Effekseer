@@ -111,7 +111,7 @@ namespace Effekseer.Data.Value
 			DefaultDrawnAs = DrawnAs;
 		}
 
-		protected void CallChanged(object value, ChangedValueType type)
+		internal void CallChanged(object value, ChangedValueType type)
 		{
 			if (OnChanged != null)
 			{
