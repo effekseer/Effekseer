@@ -83,7 +83,7 @@
           <Node>
             <CommonValues>
               <MaxGeneration>
-                <Value>100</Value>
+                <Value>180</Value>
               </MaxGeneration>
               <LocationEffectType>1</LocationEffectType>
               <Life>
