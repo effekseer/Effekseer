@@ -23,7 +23,7 @@
         <LocationValues>
           <Fixed>
             <Location>
-              <Y>2</Y>
+              <Y>4</Y>
             </Location>
           </Fixed>
         </LocationValues>
@@ -54,6 +54,13 @@
         </RotationValues>
         <ScalingValues>
           <Type>3</Type>
+          <SinglePVA>
+            <Scale>
+              <Center>2</Center>
+              <Max>2</Max>
+              <Min>2</Min>
+            </Scale>
+          </SinglePVA>
         </ScalingValues>
         <RendererCommonValues>
           <ColorTexture>Texture/LaserMain02.png</ColorTexture>
@@ -168,6 +175,15 @@
             </Acceleration>
           </PVA>
         </RotationValues>
+        <ScalingValues>
+          <Fixed>
+            <Scale>
+              <X>2</X>
+              <Y>2</Y>
+              <Z>2</Z>
+            </Scale>
+          </Fixed>
+        </ScalingValues>
         <RendererCommonValues>
           <ColorTexture>Texture/Particle04_clear_hard.png</ColorTexture>
           <Distortion>True</Distortion>
@@ -242,9 +258,6 @@
                 </Radius>
               </Circle>
             </GenerationLocationValues>
-            <DepthValues>
-              <DrawingPriority>-1</DrawingPriority>
-            </DepthValues>
             <RendererCommonValues>
               <ColorTexture>Texture/Particle04_clear_soft.png</ColorTexture>
               <AlphaBlend>2</AlphaBlend>
@@ -290,7 +303,7 @@
         <LocationValues>
           <Fixed>
             <Location>
-              <Y>2</Y>
+              <Y>4</Y>
             </Location>
           </Fixed>
         </LocationValues>
@@ -311,16 +324,19 @@
           <PVA>
             <Scale>
               <X>
-                <Max>1.2</Max>
-                <Min>0.8</Min>
+                <Center>2</Center>
+                <Max>2.4</Max>
+                <Min>1.6</Min>
               </X>
               <Y>
-                <Max>1.2</Max>
-                <Min>0.8</Min>
+                <Center>2</Center>
+                <Max>2.4</Max>
+                <Min>1.6</Min>
               </Y>
               <Z>
-                <Max>1.2</Max>
-                <Min>0.8</Min>
+                <Center>2</Center>
+                <Max>2.4</Max>
+                <Min>1.6</Min>
               </Z>
             </Scale>
           </PVA>
@@ -398,8 +414,9 @@
           <Type>3</Type>
           <SinglePVA>
             <Scale>
-              <Max>1.1</Max>
-              <Min>0.9</Min>
+              <Center>2</Center>
+              <Max>2.2</Max>
+              <Min>1.8</Min>
             </Scale>
           </SinglePVA>
         </ScalingValues>
@@ -446,7 +463,7 @@
       </Node>
     </Children>
   </Root>
-  <ToolVersion>1.40β3</ToolVersion>
+  <ToolVersion>1.32</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>120</EndFrame>
