@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>No11. Let’s use 3D model!!</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../base.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">No11. Let’s use 3D model!!</h1>
+</header>
+<div class="main">
+<h2>Overview</h2>
+<p>In this chapter, we create an effect with a 3D model. In Effekseer, 3D models can be shown as particles, or it can be used as a spawning position in Spawning method. We create effects with these functions.</p>
+<div data-align="center">
+<table>
+<tr>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/11/effect1.gif">
+<p>
+The effect No.1 created in this chapter
+</p>
+</div>
+</td>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/11/effect2.gif">
+<p>
+The effect No.2 created in this chapter
+</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h2>3D model</h2>
+<p>Effekseer can read the 3D model of fbx or mqo. fbx is a format that can be exported from various 3D software such as Blender, Maya, 3ds Max and so on. mqo is a format that can be exported from Metasequoia.</p>
+<p>Also supports fbx with animation.</p>
+<p>There are two uses.</p>
+<p>The first method is to display the 3D model as particles.</p>
+<div data-align="center">
+<img src="../../img/Tutorial/11/usecase_model.png">
+<p>
+Model
+</p>
+</div>
+<p>The second method is to display the 3D model as the spawning position of <code>Spawning method</code>.</p>
+<div data-align="center">
+<img src="../../img/Tutorial/11/usecase_spawn.png">
+<p>
+Spawning method
+</p>
+</div>
+<p>This chapter explains how to use them.</p>
+<p>
+We made it possible to download the effect created in advance from the link below.
+</p>
+<div data-align="center">
+<p>
+<a href = "../../Sample/11_01_Sample.zip">Download</a>
+</p>
+</div>
+<h2>Show 3D model as particles</h2>
+<p>We show a model as particles.</p>
+<p>Please open effect1.efkproj.</p>
+<p>Just like <code>Sprite</code>, select <code>Model</code> as rendering method in <code>Rendering Settings</code> panel.</p>
+<p>Then we load <code>Model/Sphere.fbx</code> as a model.</p>
+<p>You can see that the loaded 3D model is shown.</p>
+<div data-align="center">
+<img src="../../img/Tutorial/11/model.png">
+<p>
+Model
+</p>
+</div>
+<p>If an opaque object is rendered, there is no problem with this. On the other hand, there are times when you want to put out effects along the shape of the model.</p>
+<p>In such a case, turn off <code>Lighting</code> from <code>Render Settings</code> panel.</p>
+<p>In addition let’s specify the image. We also specify Scroll for UV.</p>
+<p>The parameters are as follows.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Window</th>
+<th style="text-align: left;">Value type</th>
+<th style="text-align: left;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">Render method</td>
+<td style="text-align: left;">Model</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Model/Sphere.mqo</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">Lighting</td>
+<td style="text-align: left;">Off</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Render Settings</td>
+<td style="text-align: left;">Culling</td>
+<td style="text-align: left;">Double-sided</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Basic Render Settings</td>
+<td style="text-align: left;">Blend</td>
+<td style="text-align: left;">Additive</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Basic Render Settings</td>
+<td style="text-align: left;">Texture</td>
+<td style="text-align: left;">Texture/Aurora.png</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Basic Render Settings</td>
+<td style="text-align: left;">UV</td>
+<td style="text-align: left;">Scroll</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Basic Render Settings</td>
+<td style="text-align: left;">Size(Mean)</td>
+<td style="text-align: left;">1024,1024</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Basic Render Settings</td>
+<td style="text-align: left;">Scroll Speed(Mean)</td>
+<td style="text-align: left;">0,-8</td>
+</tr>
+</tbody>
+</table>
+<p>Then you can see that the effect flows along the shape of the model.</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/11/effect1.gif"></p>
+</div>
+<p>Rendering is sometimes wrong in the depth direction depending on a model. To solve this problem, turn <code>Z Set</code> on. Not limited to Effekseer, 3D rendering has a function to judge before and after. When <code>Z Set</code> is off, other objects are rendered as if the 3D model was not drawn. Therefore, the depth may be wrong.</p>
+<p>If <code>Z Set</code> is changed to On, you can see that it is correctly displayed including the depth.</p>
+<div data-align="center">
+<table>
+<tr>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/11/zwrite_off.png">
+<p>
+Z Set:Off
+</p>
+</div>
+</td>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/11/zwrite_on.png">
+<p>
+Z Set:On
+</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h2>Use 3D model as position of Spawning method.</h2>
+<p>Besides showing the model, it can be used as the position of spawning method.</p>
+<p>You can generate particles at the vertices or faces of the model.</p>
+<p>Let’s try it.</p>
+<p>Please open effect2.efkproj.</p>
+<p>Specify the model to spawning method. Then load Model/model2.fbx as a model. For clarity, make <code>Spawn Mode</code> Vertex.</p>
+<p>Specify xxx for particle’s image. We also increase <code>Spawn Count</code>.</p>
+<p>The parameters are as follows.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Window</th>
+<th style="text-align: left;">Value type</th>
+<th style="text-align: left;">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Common</td>
+<td style="text-align: left;">Spawn Count</td>
+<td style="text-align: left;">90</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Spawning method</td>
+<td style="text-align: left;">Spawning method</td>
+<td style="text-align: left;">Model</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Spawning method</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Model/Sphere.mqo</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Spawning method</td>
+<td style="text-align: left;">Spwan Mode</td>
+<td style="text-align: left;">Vertex</td>
+</tr>
+</tbody>
+</table>
+<p>You can see that particles are placed along the model.</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/11/effect2.gif"></p>
+</div>
+<p>It can also be combined with ribbons and tracks. In that case, ribbons and tracks are generated along the vertices of the model.</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/11/effect3.gif"></p>
+</div>
+<p>Finally, I made it possible to download the effect created in this chapter.</p>
+<div data-align="center">
+<p><a href = "../../Sample/11_02_Sample.zip">Download</a></p>
+</div>
+<h2>Summary</h2>
+<p>In this chapter, we created an effect with 3D Model. In the next chapter, we will use the F-Curve to specify complicated movements.</p>
+</div>
+</body>
+</html>

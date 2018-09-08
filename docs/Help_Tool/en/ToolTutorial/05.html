@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>No05. Let's create a hit mark (Slashing)!</title>
-  <style type="text/css">code{white-space: pre;}</style>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>No05. Let’s create a hit mark (Slashing)!</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
   <link rel="stylesheet" href="../base.css">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -13,12 +18,12 @@
 </head>
 <body>
 <header>
-<h1 class="title">No05. Let's create a hit mark (Slashing)!</h1>
+<h1 class="title">No05. Let’s create a hit mark (Slashing)!</h1>
 </header>
 <div class="main">
 <h2>Overview</h2>
 <p>In this chapter, you create an effect (hit mark) hit by a slash as used in an actual game. It is an effect where a sword line is expressed in the middle and small impacts flies around. In doing so, we explain copying and adding nodes and easing particles as new contents.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_completed.gif">
 <p>
 The effect created in this chapter
@@ -26,7 +31,7 @@ The effect created in this chapter
 </div>
 <h2>Preparation</h2>
 <p>We made it possible to download the effect created in advance from the link below.</p>
-<div align="center">
+<div data-align="center">
 <p><a href = "../../Sample/05_01_Sample.zip">Download</a></p>
 </div>
 <p>Since the length of the effect created is about 0.5 seconds, <code>End</code> in the <code>Viewer Controls</code> window is specified to 30 frames.</p>
@@ -35,7 +40,7 @@ The effect created in this chapter
 <p>Easing is a method of representing changes in values by specifying the values of the start and end points and automatically interpolating the values between them.</p>
 <p>As shown in the figure below, position, rotation and scale have been specified by speed (1) or acceleration up to now. However, with this specified method, the longer the survival time becomes, the larger the value becomes.</p>
 <p>On the other hand, in easing, specify the value (2) just after generation and the value (3) just before disappearing, and interpolate between values. Since you can specify the value just before disappearing, the shape of the particle becomes easy to understand.</p>
-<div align="center">
+<div data-align="center">
 <table>
 <tr>
 <td>
@@ -54,7 +59,7 @@ Easing
 </table>
 </div>
 <p>There are several interpolation methods. Low speed 3 to high speed 3 can be specified for the start and end points respectively. The lower the speed, the harder the value changes, the faster the value, the easier the value changes.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_easing.gif">
 <p>
 Interpolation method
@@ -164,7 +169,7 @@ Interpolation method
 </tbody>
 </table>
 <p>At this point the effect is now as follows.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_01.gif">
 <p>
 Sword line node
@@ -173,7 +178,7 @@ Sword line node
 <h3>Impact node</h3>
 <p>When the attack hits, not only the sword line but also the impact is generated. Impact node is created like a sword wire.</p>
 <p>Since the parameters of the sword line node and impact node are different, you need to add a node. First, you select Root. Then right click on Root to display the menu. From the menu, you choose Add Node.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_addnode_en.png">
 <p>
 Adding node
@@ -283,7 +288,7 @@ Adding node
 </tbody>
 </table>
 <p>fect is now as follows.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_02.gif">
 <p>
 Impact node
@@ -359,7 +364,7 @@ Impact node
 </tbody>
 </table>
 <p>At this point the effect is now as follows.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_03.gif">
 <p>
 Light emitting node No.1
@@ -368,14 +373,14 @@ Light emitting node No.1
 <h3>Light emitting node No.2</h3>
 <p>New emiitting node is added because the light emission is still sober. This light emitting node is almost same as the light emitting node created earlier. Effekseer can copy nodes.</p>
 <p>After selecting the lighting node, right click to copy the node.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_copynode_en.png">
 <p>
 Adding node
 </p>
 </div>
 <p>After selecting Root, right-click to paste the node.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_pastenode_en.png">
 <p>
 Adding node
@@ -405,14 +410,14 @@ Adding node
 </tbody>
 </table>
 <p>You could create an effect that a slash hit.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/05_completed.gif">
 <p>
 Complete
 </p>
 </div>
 <p>Finally, I made it possible to download the effect created in this chapter.</p>
-<div align="center">
+<div data-align="center">
 <p><a href = "../../Sample/05_02_Sample.zip">Download</a></p>
 </div>
 <h2>Summary</h2>
