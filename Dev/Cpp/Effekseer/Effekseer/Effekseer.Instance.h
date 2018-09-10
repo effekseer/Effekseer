@@ -264,6 +264,8 @@ public:
 	// デストラクタ
 	virtual ~Instance();
 
+	void GenerateChildrenInRequired(float currentTime);
+
 public:
 	/**
 		@brief	状態の取得
