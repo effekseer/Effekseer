@@ -264,6 +264,19 @@ namespace Effekseer.GUI.Component
 					{
 						string converterPath = Manager.GetEntryDirectory() + "/tools/fbxToEffekseerModelConverter";
 
+						// japanese file path is not supported.
+						try
+						{
+							string tempFilePath = Path.GetTempPath() + System.IO.Path.GetFileName(filepath);
+							System.IO.File.Copy(oldFilepath, tempFilePath);
+							oldFilepath = tempFilePath;
+						}
+						catch
+						{
+
+						}
+
+
 						System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
 						info.FileName = converterPath;
 						info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
@@ -275,6 +288,16 @@ namespace Effekseer.GUI.Component
 						if (System.IO.File.Exists(newFilepath))
 						{
 							System.IO.File.SetLastWriteTime(newFilepath, System.IO.File.GetLastWriteTime(oldFilepath));
+						}
+
+						try
+						{
+							string tempFilePath = Path.GetTempPath() + System.IO.Path.GetFileName(filepath);
+							System.IO.File.Delete(tempFilePath);
+						}
+						catch
+						{
+
 						}
 					}
 				}
@@ -296,6 +319,18 @@ namespace Effekseer.GUI.Component
 					{
 						string converterPath = Manager.GetEntryDirectory() + "/tools/mqoToEffekseerModelConverter";
 
+						// japanese file path is not supported.
+						try
+						{
+							string tempFilePath = Path.GetTempPath() + System.IO.Path.GetFileName(filepath);
+							System.IO.File.Copy(oldFilepath, tempFilePath);
+							oldFilepath = tempFilePath;
+						}
+						catch
+						{
+
+						}
+
 						System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
 						info.FileName = converterPath;
 						info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
@@ -307,6 +342,16 @@ namespace Effekseer.GUI.Component
 						if (System.IO.File.Exists(newFilepath))
 						{
 							System.IO.File.SetLastWriteTime(newFilepath, System.IO.File.GetLastWriteTime(oldFilepath));
+						}
+
+						try
+						{
+							string tempFilePath = Path.GetTempPath() + System.IO.Path.GetFileName(filepath);
+							System.IO.File.Delete(tempFilePath);
+						}
+						catch
+						{
+
 						}
 					}
 				}
