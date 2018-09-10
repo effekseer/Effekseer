@@ -219,7 +219,7 @@ InstanceContainer* ManagerImplemented::CreateInstanceContainer( EffectNode* pEff
 
 		InstanceGroup* group = pContainer->CreateGroup();
 		Instance* instance = group->CreateInstance();
-		instance->Initialize( NULL, 0 );
+		instance->Initialize( NULL, 0, 0 );
 
 		/* インスタンスが生成したわけではないためfalseに変更 */
 		group->IsReferencedFromInstance = false;
