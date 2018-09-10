@@ -111,6 +111,7 @@ public:
 		, InternalModels	(nullptr)
 		, ModelCount		( 0 )
 	{
+		this->m_vertexSize = sizeof(VertexWithIndex);
 	}
 
 	virtual ~Model()

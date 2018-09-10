@@ -80,6 +80,9 @@ private:
 
 	int32_t		m_modelCount;
 	int32_t		m_frameCount;
+
+protected:
+	int32_t		m_vertexSize = sizeof(Vertex);
 public:
 
 	/**
@@ -164,6 +167,8 @@ public:
 	int32_t GetFrameCount() const { return m_frameCount; }
 
 	int32_t GetModelCount() { return m_modelCount; }
+
+	int32_t GetVertexSize() const { return m_vertexSize; }
 
 	/**
 		@brief
