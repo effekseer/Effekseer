@@ -1521,7 +1521,7 @@ namespace efk
 
 	void GUIManager::SetIniFilename(const char16_t* filename)
 	{
-		static std::string filename_ = utf8str<256>(filename);
+		static std::string filename_ = std::string(utf8str<256>(filename));
 		ImGui::GetIO().IniFilename = filename_.c_str();
 	}
 
