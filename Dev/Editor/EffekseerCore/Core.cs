@@ -10,7 +10,7 @@ namespace Effekseer
 {
 	public class Core
 	{
-		public const string Version = "1.40β3";
+		public const string Version = "1.40β4";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -476,9 +476,29 @@ namespace Effekseer
 			return doc.InnerXml;
 		}
 
+		/// <summary>
+		/// Check whether data is valid xml?
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		public static bool IsValidXml(string data)
+		{
+			try
+			{
+				System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+				doc.LoadXml(data);
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
 		public static void Paste(Data.NodeBase node, string data)
 		{
 			if (node == null) return;
+			if (!IsValidXml(data)) return;
 
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
