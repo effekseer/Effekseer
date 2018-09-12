@@ -18,17 +18,12 @@ mkdir %RDIR%\Tool
 copy Dev\release\Effekseer.exe %RDIR%\Tool\.
 copy Dev\release\Effekseer.exe.config %RDIR%\Tool\.
 copy Dev\release\EffekseerCore.dll %RDIR%\Tool\.
-copy Dev\release\EffekseerInterface.dll %RDIR%\Tool\.
 copy Dev\release\EffekseerViewer.dll %RDIR%\Tool\.
 copy Dev\release\IronPython.dll %RDIR%\Tool\.
 copy Dev\release\IronPython.Modules.dll %RDIR%\Tool\.
 copy Dev\release\Microsoft.Dynamic.dll %RDIR%\Tool\.
 copy Dev\release\Microsoft.Scripting.dll %RDIR%\Tool\.
 copy Dev\release\Viewer.dll %RDIR%\Tool\.
-copy Dev\release\WeifenLuo.WinFormsUI.Docking.dll %RDIR%\Tool\.
-copy Dev\release\System.Reactive.Core.dll %RDIR%\Tool\.
-copy Dev\release\System.Reactive.Interfaces.dll %RDIR%\Tool\.
-copy Dev\release\System.Reactive.Linq.dll %RDIR%\Tool\.
 
 mkdir %RDIR%\Tool\scripts
 mkdir %RDIR%\Tool\scripts\export
