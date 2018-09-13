@@ -28,7 +28,7 @@ namespace Effekseer.GUI.Dock
 
 		internal string TabToolTip = string.Empty;
 
-		internal int IsInitialized = -2;
+		internal int IsInitialized = -1;
 
 		public DockPanel()
 		{

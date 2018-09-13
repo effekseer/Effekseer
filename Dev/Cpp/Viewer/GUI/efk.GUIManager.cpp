@@ -673,6 +673,11 @@ namespace efk
 	const char16_t* GUIManager::GetClipboardText()
 	{
 		auto ret = glfwGetClipboardString(window->GetGLFWWindows());
+		if (ret == nullptr)
+		{
+			static std::u16string empty;
+			return empty.c_str();
+		}
 		clipboard = utf8_to_utf16(ret);
 		return clipboard.c_str();
 	}

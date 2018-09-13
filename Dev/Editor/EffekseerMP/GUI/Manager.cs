@@ -337,6 +337,11 @@ namespace Effekseer.GUI
 
 		public static void Update()
 		{
+			// Reset
+			NativeManager.SetNextDockRate(0.5f);
+			NativeManager.SetNextDock(swig.DockSlot.Tab);
+			NativeManager.ResetNextParentDock();
+
 			Shortcuts.Update();
 
 			var handle = false;
@@ -528,7 +533,7 @@ namespace Effekseer.GUI
 					panels[i].InitialDockSize = defaultSize;
 					panels[i].InitialDockReset = isResetParent;
 					panels[i].InitialDockRate = dockRate;
-					panels[i].IsInitialized = -2;
+					panels[i].IsInitialized = -1;
 
 					if (dockManager != null)
 					{
