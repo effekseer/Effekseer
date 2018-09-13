@@ -1,5 +1,5 @@
-SET RDIR=Effekseer140
-SET RDIR_R=EffekseerRuntime140
+SET RDIR=Effekseer141
+SET RDIR_R=EffekseerRuntime141
 
 rmdir %RDIR%
 mkdir %RDIR%
@@ -124,10 +124,8 @@ copy readme_runtime.txt %RDIR_R%\readme.txt
 
 echo ƒwƒ‹ƒv
 mkdir %RDIR%\Help
-mkdir %RDIR%\QuickTutorial
 
 robocopy docs\Help_Tool %RDIR%\Help *.html *.css *.efkproj *.png /mir /S
-robocopy docs\QuickTutorial_Tool %RDIR%\QuickTutorial *.html *.css *.efkproj *.png /mir /S
 
 mkdir %RDIR_R%\Help
 robocopy docs\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S

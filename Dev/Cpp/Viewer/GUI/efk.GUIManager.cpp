@@ -462,7 +462,8 @@ namespace efk
 		if (deviceType == DeviceType::OpenGL)
 		{
 			ImGuiIO& io = ImGui::GetIO();
-			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+			// It causes bugs on some mac pc
+			//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 #if __APPLE__
             // GL 3.2 + GLSL 150
