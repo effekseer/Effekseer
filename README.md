@@ -131,6 +131,10 @@ Script/build_glew.py
 
 Visual Studio 2015 are required.
 
+Open ```Dev/Editor/Effekseer.sln```
+
+or
+
 Open ```Dev/Cpp/Test.sln```
 
 * Mac
