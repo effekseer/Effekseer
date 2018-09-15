@@ -113,7 +113,7 @@ copy Dev\Cpp\CMakeLists.txt %RDIR_R%\src\.
 echo サンプル
 
 mkdir %RDIR%\Sample
-robocopy Release\Sample %RDIR%\Sample *.efkproj *.efkmodel *.txt *.png /mir /S
+robocopy Release\Sample %RDIR%\Sample *.efkproj *.efkmodel *.txt *.png *.mqo *.fbx /mir /S
 
 echo ライセンス
 cp Release/LICENSE.txt %RDIR_R%/LICENSE.txt
@@ -125,7 +125,7 @@ copy readme_runtime.txt %RDIR_R%\readme.txt
 echo ヘルプ
 mkdir %RDIR%\Help
 
-robocopy docs\Help_Tool %RDIR%\Help *.html *.css *.efkproj *.png /mir /S
+robocopy docs\Help_Tool %RDIR%\Help *.html *.css *.efkproj *.png *.gif *.zip /mir /S
 
 mkdir %RDIR_R%\Help
 robocopy docs\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S
