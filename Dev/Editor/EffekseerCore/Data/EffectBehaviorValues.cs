@@ -182,5 +182,55 @@ namespace Effekseer.Data
 
 			TargetLocation = new Value.Vector3D();
 		}
+
+		/// <summary>
+		/// Adhoc code
+		/// </summary>
+		public void Reset()
+		{
+			Location.X.SetValueDirectly(0.0f);
+			Location.Y.SetValueDirectly(0.0f);
+			Location.Z.SetValueDirectly(0.0f);
+
+			Rotation.X.SetValueDirectly(0.0f);
+			Rotation.Y.SetValueDirectly(0.0f);
+			Rotation.Z.SetValueDirectly(0.0f);
+
+			Scale.X.SetValueDirectly(1.0f);
+			Scale.Y.SetValueDirectly(1.0f);
+			Scale.Z.SetValueDirectly(1.0f);
+
+			LocationVelocity.X.SetValueDirectly(0.0f);
+			LocationVelocity.Y.SetValueDirectly(0.0f);
+			LocationVelocity.Z.SetValueDirectly(0.0f);
+
+			RotationVelocity.X.SetValueDirectly(0.0f);
+			RotationVelocity.Y.SetValueDirectly(0.0f);
+			RotationVelocity.Z.SetValueDirectly(0.0f);
+
+			ScaleVelocity.X.SetValueDirectly(0.0f);
+			ScaleVelocity.Y.SetValueDirectly(0.0f);
+			ScaleVelocity.Z.SetValueDirectly(0.0f);
+
+			RemovedTime.Infinite.SetValueDirectly(true);
+			RemovedTime.Value.SetValueDirectly(0);
+
+			CountX.SetValueDirectly(1);
+			CountY.SetValueDirectly(1);
+			CountZ.SetValueDirectly(1);
+
+			Distance.SetValueDirectly(5);
+
+			TimeSpan.SetValueDirectly(0);
+
+			ColorAll.R.SetValueDirectly(255);
+			ColorAll.G.SetValueDirectly(255);
+			ColorAll.B.SetValueDirectly(255);
+			ColorAll.A.SetValueDirectly(255);
+
+			TargetLocation.X.SetValueDirectly(0.0f);
+			TargetLocation.Y.SetValueDirectly(0.0f);
+			TargetLocation.Z.SetValueDirectly(0.0f);
+		}
 	}
 }

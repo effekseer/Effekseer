@@ -12,7 +12,7 @@ namespace Effekseer.GUI.Dock
 			Label = Resources.GetString("Culling") + "###Culling";
 
             paramerterList = new Component.ParameterList();
-			paramerterList.SetType(typeof(Data.CullingValues));
+			paramerterList.SetType(typeof(Data.EffectCullingValues));
 
             Core.OnAfterLoad += OnAfterLoad;
             Core.OnAfterNew += OnAfterLoad;
@@ -50,22 +50,8 @@ namespace Effekseer.GUI.Dock
 
         void Read()
         {
-            if (Core.SelectedNode != null)
-            {
-                if (Core.SelectedNode is Data.Node)
-                {
-					paramerterList.SetValue(Core.Culling);
-                }
-                else
-                {
-                    paramerterList.SetValue(null);
-                }
-            }
-            else
-            {
-                paramerterList.SetValue(null);
-            }
-        }
+			paramerterList.SetValue(Core.Culling);
+		}
 
         void OnAfterLoad(object sender, EventArgs e)
         {
