@@ -175,11 +175,13 @@ namespace Effekseer.GUI
 
 			panels = new Dock.DockPanel[dockTypes.Length];
 
+			var appDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+
 			// Load font
-			NativeManager.AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 16);
+			NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, "resources/GenShinGothic-Monospace-Normal.ttf"), 16);
 
 			// Load window icon
-			NativeManager.SetWindowIcon("resources/icon.png");
+			NativeManager.SetWindowIcon(System.IO.Path.Combine(appDirectory, "resources/icon.png"));
 
 			// Load config
 			RecentFiles.LoadRecentConfig();

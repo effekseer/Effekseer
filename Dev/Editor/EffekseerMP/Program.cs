@@ -104,59 +104,90 @@ namespace Effekseer
 			Core.OnOutputMessage += new Action<string>(Core_OnOutputMessage);
 			Core.Initialize(language);
 
-			// Failed to compile script
-			if (Core.ExportScripts.Count == 0)
+			if (gui)
 			{
-				Script.ExportScript script = new Script.ExportScript(
-					Script.ScriptPosition.External,
-					Plugin.ExportDefault.UniqueName,
-					Plugin.ExportDefault.Author,
-					Plugin.ExportDefault.Title,
-					Plugin.ExportDefault.Description,
-					Plugin.ExportDefault.Filter,
-					Plugin.ExportDefault.Call);
-				Core.ExportScripts.Add(script);
-			}
+				// Failed to compile script
+				if (Core.ExportScripts.Count == 0)
+				{
+					Script.ExportScript script = new Script.ExportScript(
+						Script.ScriptPosition.External,
+						Plugin.ExportDefault.UniqueName,
+						Plugin.ExportDefault.Author,
+						Plugin.ExportDefault.Title,
+						Plugin.ExportDefault.Description,
+						Plugin.ExportDefault.Filter,
+						Plugin.ExportDefault.Call);
+					Core.ExportScripts.Add(script);
+				}
 
-			if (Core.Language == Language.Japanese)
-			{
-				Resources.LoadLanguageFile("resources/lang_ja.txt");
-			}
-			if (Core.Language == Language.English)
-			{
-				Resources.LoadLanguageFile("resources/lang_en.txt");
-			}
+				{
+					var appDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+					if (Core.Language == Language.Japanese)
+					{
+						var fullPath = Path.Combine(appDirectory, "resources/lang_ja.txt");
+						Resources.LoadLanguageFile(fullPath);
+					}
+					if (Core.Language == Language.English)
+					{
+						var fullPath = Path.Combine(appDirectory, "resources/lang_en.txt");
+						Resources.LoadLanguageFile(fullPath);
+					}
+				}
 
-			System.OperatingSystem os = System.Environment.OSVersion;
-			swig.DeviceType deviceType = swig.DeviceType.DirectX11;
+				System.OperatingSystem os = System.Environment.OSVersion;
+				swig.DeviceType deviceType = swig.DeviceType.DirectX11;
 
-				if(!(os.Platform == PlatformID.Win32NT || 
+				if (!(os.Platform == PlatformID.Win32NT ||
 				os.Platform == PlatformID.Win32S ||
 				os.Platform == PlatformID.Win32Windows ||
 				os.Platform == PlatformID.WinCE))
-			{
-				deviceType = swig.DeviceType.OpenGL;
+				{
+					deviceType = swig.DeviceType.OpenGL;
+				}
+
+				if (!GUI.Manager.Initialize(960, 540, deviceType))
+				{
+					return;
+				}
 			}
 
-			if (!GUI.Manager.Initialize(960,540, deviceType))
+			try
 			{
-				return;
+				if (input != string.Empty)
+				{
+					Core.LoadFrom(input);
+				}
+
+				if (output != string.Empty)
+				{
+					Core.SaveTo(output);
+				}
+
+				if (export != string.Empty)
+				{
+					if (magnification == 0.0f)
+					{
+						magnification = Core.Option.Magnification;
+					}
+
+					var binary = Binary.Exporter.Export(magnification);
+					System.IO.File.WriteAllBytes(export, binary);
+				}
+			}
+			catch (Exception e)
+			{
+				System.Console.Error.WriteLine(e.Message);
 			}
 
-			//Images.Load(GUI.Manager.Native);
-
-            //GUI.Manager.AddControl(new DebugMenu());
-
-			//GUI.Manager.AddControl(new TestWindow());
-
-			while (GUI.Manager.NativeManager.DoEvents())
+			if (gui)
 			{
-				GUI.Manager.Update();
+				while (GUI.Manager.NativeManager.DoEvents())
+				{
+					GUI.Manager.Update();
+				}
+
+				GUI.Manager.Terminate();
 			}
-
-			//Images.Unload();
-
-			GUI.Manager.Terminate();
 
 			Core.Dispose();
 		}
@@ -164,141 +195,6 @@ namespace Effekseer
 		static void Core_OnOutputMessage(string obj)
 		{
 			swig.GUIManager.show(obj, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-		}
-	}
-
-	class TestWindow : GUI.IRemovableControl
-	{
-		bool opened = true;
-
-		public bool ShouldBeRemoved { get; private set; } = false;
-
-		bool[] open = new[] { true };
-		int[] currentTime = new[] { 0 };
-		int[] currentMin = new[] { 0 };
-		int[] currentMax = new[] { 100 };
-
-		bool isButton = true;
-
-		public void Update()
-		{
-			var mgr = GUI.Manager.NativeManager;
-
-			if (mgr.Begin("ViewerController", ref opened))
-			{
-
-				mgr.SliderInt("Timeline", currentTime, currentMin[0], currentMax[0]);
-				mgr.Separator();
-				mgr.PushItemWidth(200);
-				mgr.DragIntRange2("Range", currentMin, currentMax, 1.0f, 0, 1200);
-				mgr.PopItemWidth();
-				mgr.SameLine();
-				mgr.Button("Back_");
-				mgr.SameLine();
-				mgr.Button("Next");
-				mgr.SameLine();
-
-				//mgr.Image(img, 48, 21);
-
-				if (isButton)
-				{
-					if (mgr.Button("Back"))
-					{
-						var messageBox = new GUI.Dialog.About();
-						messageBox.Show();
-					}
-				}
-				else
-				{
-					mgr.Text("Back");
-				}
-
-				if (mgr.BeginPopupContextItem("aaaaaaa"))
-				{
-					if (mgr.Button("Change"))
-					{
-						isButton = !isButton;
-					}
-					mgr.EndPopup();
-				}
-
-				mgr.SameLine();
-
-				if (mgr.Button("Play"))
-				{
-					var messageBox = new GUI.Dialog.MessageBox();
-					messageBox.Show("TestTitle", "TestMessage");
-					//mgr.OpenPopup("###AA");   
-				}
-
-				if (mgr.TreeNode("AAA"))
-				{
-					mgr.Text("aa");
-
-					if (mgr.TreeNode("BBB"))
-					{
-						mgr.Text("bb");
-						mgr.Button("cc");
-						mgr.TreePop();
-					}
-
-					mgr.TreePop();
-				}
-
-
-				//if (mgr.BeginPopupModal("Message###AA", null, swig.WindowFlags.AlwaysAutoResize))
-				//{
-				//    mgr.Text("testaaaaaaa");
-				//    mgr.EndPopup();
-				//}
-			}
-			mgr.End();
-		}
-	}
-
-	class DebugMenu : GUI.IRemovableControl
-	{
-		bool opened = true;
-
-		public bool ShouldBeRemoved { get; private set; } = false;
-
-		public void Update()
-		{
-			if(GUI.Manager.NativeManager.Begin("DebugMenu", ref opened))
-			{
-				if(GUI.Manager.NativeManager.Button("About"))
-				{
-					var messageBox = new GUI.Dialog.About();
-					messageBox.Show();
-				}
-
-				if (GUI.Manager.NativeManager.Button("MessageBox"))
-				{
-					var messageBox = new GUI.Dialog.MessageBox();
-					messageBox.Show("Title", "Message");
-				}
-
-				if(GUI.Manager.NativeManager.Button("NodeTreeView"))
-				{
-					var nodeTreeView = new GUI.Dock.NodeTreeView();
-					nodeTreeView.Renew();
-					GUI.Manager.AddControl(nodeTreeView);
-				}
-
-				if (GUI.Manager.NativeManager.Button("Common"))
-				{
-					var window = new GUI.Dock.CommonValues();
-					GUI.Manager.AddControl(window);
-				}
-
-				if (GUI.Manager.NativeManager.Button("Location"))
-				{
-					var window = new GUI.Dock.LocationValues();
-					GUI.Manager.AddControl(window);
-				}
-			}
-
-			GUI.Manager.NativeManager.End();
 		}
 	}
 
