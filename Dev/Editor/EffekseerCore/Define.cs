@@ -104,6 +104,7 @@ namespace Effekseer
 
 				var key = strs[0];
 				var value = string.Join(",", strs.Skip(1));
+				value = value.Replace(@"\n", "\n");
 
 				keyToStrings.Add(key, value);
 			}

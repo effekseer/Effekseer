@@ -241,6 +241,7 @@ namespace Effekseer.Command
 		/// </summary>
 		public static void StartCollection()
 		{
+			FreezeCombinedCommands();
 			cmd_collections_count++;
 		}
 

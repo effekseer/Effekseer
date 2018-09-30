@@ -112,24 +112,23 @@ size_t NFDi_UTF8_Strlen( const nfdchar_t *str )
 	
 	while(str[i])
 	{
-		if (str[i] >> 7 == 0)
-        {
-            /* If bit pattern begins with 0 we have ascii character. */ 
-			++character_count;
-        }
-		else if (str[i] >> 6 == 3)
-        {
-		/* If bit pattern begins with 11 it is beginning of UTF-8 byte sequence. */
-			++character_count;
-        }
-		else if (str[i] >> 6 == 2)
-			;		/* If bit pattern begins with 10 it is middle of utf-8 byte sequence. */
-		else
-        {
-            /* In any other case this is not valid UTF-8. */
-			return -1;
-        }
-		++i;
+		int c = (unsigned char)str[i];
+		int bytes = 0;
+		if ((c >= 0x00) && (c <= 0x7f)) {
+			bytes = 1;
+		} else if ((c >= 0xc2) && (c <= 0xdf)) {
+			bytes = 2;
+		} else if ((c >= 0xe0) && (c <= 0xef)) {
+			bytes = 3;
+		} else if ((c >= 0xf0) && (c <= 0xf7)) {
+			bytes = 4;
+		} else if ((c >= 0xf8) && (c <= 0xfb)) {
+			bytes = 5;
+		} else if ((c >= 0xfc) && (c <= 0xfd)) {
+			bytes = 6;
+		}
+		++character_count;
+		i += bytes;
 	}
 
 	return character_count;	

@@ -215,9 +215,11 @@ InstanceContainer* ManagerImplemented::CreateInstanceContainer( EffectNode* pEff
 
 	if( isRoot )
 	{
+		pGlobal->SetRootContainer(pContainer);
+
 		InstanceGroup* group = pContainer->CreateGroup();
 		Instance* instance = group->CreateInstance();
-		instance->Initialize( NULL, 0 );
+		instance->Initialize( NULL, 0, 0 );
 
 		/* インスタンスが生成したわけではないためfalseに変更 */
 		group->IsReferencedFromInstance = false;
@@ -1553,10 +1555,9 @@ Handle ManagerImplemented::Play( Effect* effect, float x, float y, float z )
 		pGlobal->RenderedInstanceContainers[i] = nullptr;
 	}
 
+	// Create an instance through a container
 	InstanceContainer* pContainer = CreateInstanceContainer( ((EffectImplemented*)effect)->GetRoot(), pGlobal, true, NULL );
 	
-	pGlobal->SetRootContainer(  pContainer );
-
 	Instance* pInstance = pContainer->GetFirstGroup()->GetFirst();
 
 	pInstance->m_GlobalMatrix43.Value[3][0] = x;
@@ -1745,10 +1746,9 @@ void ManagerImplemented::EndReloadEffect( Effect* effect )
 	{
 		if( (*it).second.ParameterPointer != effect ) continue;
 
-		/* インスタンス生成 */
+		// Create an instance through a container
 		(*it).second.InstanceContainerPointer = CreateInstanceContainer( ((EffectImplemented*)effect)->GetRoot(), (*it).second.GlobalPointer, true, NULL );
-		(*it).second.GlobalPointer->SetRootContainer(  (*it).second.InstanceContainerPointer );
-
+		
 		/* 行列設定 */
 		(*it).second.InstanceContainerPointer->GetFirstGroup()->GetFirst()->m_GlobalMatrix43 = 
 			(*it).second.GlobalMatrix;

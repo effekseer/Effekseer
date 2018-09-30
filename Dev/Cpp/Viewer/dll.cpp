@@ -275,7 +275,7 @@ Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer)
 	else if (g_deviceType == efk::DeviceType::DirectX11)
 	{
 		auto r = (EffekseerRendererDX11::Renderer*)m_renderer;
-		m_originalTextureLoader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice());
+		m_originalTextureLoader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
 	}
 	else
 	{
@@ -553,7 +553,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 				else if (g_deviceType == efk::DeviceType::DirectX11)
 				{
 					auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
-					loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice());
+					loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
 				}
 				else
 				{
@@ -606,7 +606,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 				else if (g_deviceType == efk::DeviceType::DirectX11)
 				{
 					auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
-					loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice());
+					loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
 				}
 				else
 				{
@@ -771,7 +771,7 @@ bool Native::DestroyWindow()
 		else if (g_deviceType == efk::DeviceType::DirectX11)
 		{
 			auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
-			loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice());
+			loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
 		}
 		else
 		{
@@ -1910,7 +1910,7 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 	else if (g_deviceType == efk::DeviceType::DirectX11)
 	{
 		auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
-		loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice());
+		loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
 	}
 	else
 	{

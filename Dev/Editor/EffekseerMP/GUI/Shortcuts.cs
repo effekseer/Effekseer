@@ -297,10 +297,20 @@ namespace Effekseer.GUI
 				bool pushed = currentKeys[Key] && !preKeys[Key];
 				if(Control)
 				{
-					pressed = pressed && (currentKeys[(int)ShortcutKeys.LEFT_CONTROL] || currentKeys[(int)ShortcutKeys.RIGHT_CONTROL]);
-					pushed = pushed ||(
-						(currentKeys[(int)ShortcutKeys.LEFT_CONTROL] && !preKeys[(int)ShortcutKeys.LEFT_CONTROL]) || 
-						(currentKeys[(int)ShortcutKeys.RIGHT_CONTROL] && !preKeys[(int)ShortcutKeys.RIGHT_CONTROL]));
+					if (swig.GUIManager.IsMacOSX())
+					{
+						pressed = pressed && (currentKeys[(int)ShortcutKeys.LEFT_SUPER] || currentKeys[(int)ShortcutKeys.RIGHT_SUPER]);
+						pushed = pushed || (
+							(currentKeys[(int)ShortcutKeys.LEFT_SUPER] && !preKeys[(int)ShortcutKeys.LEFT_SUPER]) ||
+							(currentKeys[(int)ShortcutKeys.RIGHT_SUPER] && !preKeys[(int)ShortcutKeys.RIGHT_SUPER]));
+					}
+					else
+					{
+						pressed = pressed && (currentKeys[(int)ShortcutKeys.LEFT_CONTROL] || currentKeys[(int)ShortcutKeys.RIGHT_CONTROL]);
+						pushed = pushed || (
+							(currentKeys[(int)ShortcutKeys.LEFT_CONTROL] && !preKeys[(int)ShortcutKeys.LEFT_CONTROL]) ||
+							(currentKeys[(int)ShortcutKeys.RIGHT_CONTROL] && !preKeys[(int)ShortcutKeys.RIGHT_CONTROL]));
+					}
 				}
 
 				if (Alt)
@@ -336,7 +346,14 @@ namespace Effekseer.GUI
 
 				if (Control)
 				{
-					r += "Ctrl+";
+					if (swig.GUIManager.IsMacOSX())
+					{
+						r += "Command+";
+					}
+					else
+					{
+						r += "Ctrl+";
+					}
 				}
 
 				if (Shift)
@@ -346,7 +363,14 @@ namespace Effekseer.GUI
 
 				if (Alt)
 				{
-					r += "Alt+";
+					if(swig.GUIManager.IsMacOSX())
+					{
+						r += "Option+";
+					}
+					else
+					{
+						r += "Alt+";
+					}
 				}
 
 				r += ((ShortcutKeys)Key).ToString();

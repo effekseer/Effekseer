@@ -45,8 +45,17 @@ SoundPlayer::~SoundPlayer()
 	auto device = m_sound->GetDevice();
 	int32_t id = device->Play( soundData );
 	
-	device->SetPlaybackSpeed( id, powf(2.0f, parameter.Pitch) );
-
+	if (parameter.Pitch != 0.0f)
+	{
+		device->SetIsPlaybackSpeedEnabled(id, true);
+		device->SetPlaybackSpeed(id, powf(2.0f, parameter.Pitch));
+	}
+	else
+	{
+		device->SetIsPlaybackSpeedEnabled(id, false);
+		device->SetPlaybackSpeed(id, 1.0f);
+	}
+	
 	if( parameter.Mode3D )
 	{
 		float rolloff, pan;

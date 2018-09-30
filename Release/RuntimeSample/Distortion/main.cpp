@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------------------
 #include <stdio.h>
 #include <windows.h>
+#include <string>
 
 //----------------------------------------------------------------------------------
 //
@@ -20,13 +21,13 @@
 #include <EffekseerSoundXAudio2.h>
 
 #if _DEBUG
-#pragma comment(lib, "VS2013/Debug/Effekseer.lib" )
-#pragma comment(lib, "VS2013/Debug/EffekseerRendererDX9.lib" )
-#pragma comment(lib, "VS2013/Debug/EffekseerSoundXAudio2.lib" )
+#pragma comment(lib, "VS2015/Debug/Effekseer.lib" )
+#pragma comment(lib, "VS2015/Debug/EffekseerRendererDX9.lib" )
+#pragma comment(lib, "VS2015/Debug/EffekseerSoundXAudio2.lib" )
 #else
-#pragma comment(lib, "VS2013/Release/Effekseer.lib" )
-#pragma comment(lib, "VS2013/Release/EffekseerRendererDX9.lib" )
-#pragma comment(lib, "VS2013/Release/EffekseerSoundXAudio2.lib" )
+#pragma comment(lib, "VS2015/Release/Effekseer.lib" )
+#pragma comment(lib, "VS2015/Release/EffekseerRendererDX9.lib" )
+#pragma comment(lib, "VS2015/Release/EffekseerSoundXAudio2.lib" )
 #endif
 
 //----------------------------------------------------------------------------------
@@ -243,8 +244,18 @@ void MainLoop()
 			// エフェクトの描画開始処理を行う。
 			g_renderer->BeginRendering();
 
-			// エフェクトの描画を行う。
-			g_manager->Draw();
+			// Render rear effects
+			// 背面のエフェクトの描画を行う。
+			g_manager->DrawBack();
+
+			// Distort background and rear effects.
+			// 背景と背面のエフェクトを歪ませる。
+			DistortingCallback distoring;
+			distoring.OnDistorting();
+
+			// Render front effects
+			// 前面のエフェクトの描画を行う。
+			g_manager->DrawFront();
 
 			// エフェクトの描画終了処理を行う。
 			g_renderer->EndRendering();
@@ -304,17 +315,35 @@ void MainLoop()
 	}
 }
 
+#if _WIN32
+#include <Windows.h>
+std::wstring ToWide(const char* pText);
+void GetDirectoryName(char* dst, char* src);
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int main()
+int main(int argc, char **argv)
 {
+#if _WIN32
+	char current_path[MAX_PATH + 1];
+	GetDirectoryName(current_path, argv[0]);
+	SetCurrentDirectoryA(current_path);
+#endif
+
 	InitWindow();
 
 	// 描画用インスタンスの生成
 	g_renderer = ::EffekseerRendererDX9::Renderer::Create( g_d3d_device, 2000 );
 	
+	// Specify a distortion function
 	// 歪み機能を設定
+
+	// If you'd like to distort background and particles by rendering, it need to specify it.
+	// It is a bit heavy
+	// もし、描画するごとに背景とパーティクルを歪ませたい場合、設定する必要がある
+	// やや重い
 	g_renderer->SetDistortingCallback(new DistortingCallback());
 
 	// 背景バッファの生成
@@ -338,8 +367,9 @@ int main()
 	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
 	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
 	g_manager->SetRingRenderer( g_renderer->CreateRingRenderer() );
+	g_manager->SetTrackRenderer(g_renderer->CreateTrackRenderer());
 	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
-
+	
 	// 描画用インスタンスからテクスチャの読込機能を設定
 	// 独自拡張可能、現在はファイルから読み込んでいる。
 	g_manager->SetTextureLoader( g_renderer->CreateTextureLoader() );
@@ -356,7 +386,7 @@ int main()
 	g_manager->SetSoundLoader( g_sound->CreateSoundLoader() );
 
 	// 視点位置を確定
-	g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
+	g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f) * 0.25;
 
 	// 投影行列を設定
 	g_renderer->SetProjectionMatrix(
@@ -410,6 +440,45 @@ int main()
 
 	return 0;
 }
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+
+#if _WIN32
+static std::wstring ToWide(const char* pText)
+{
+	int Len = ::MultiByteToWideChar(CP_ACP, 0, pText, -1, NULL, 0);
+
+	wchar_t* pOut = new wchar_t[Len + 1];
+	::MultiByteToWideChar(CP_ACP, 0, pText, -1, pOut, Len);
+	std::wstring Out(pOut);
+	delete[] pOut;
+
+	return Out;
+}
+
+void GetDirectoryName(char* dst, char* src)
+{
+	auto Src = std::string(src);
+	int pos = 0;
+	int last = 0;
+	while (Src.c_str()[pos] != 0)
+	{
+		dst[pos] = Src.c_str()[pos];
+
+		if (Src.c_str()[pos] == L'\\' || Src.c_str()[pos] == L'/')
+		{
+			last = pos;
+		}
+
+		pos++;
+	}
+
+	dst[pos] = 0;
+	dst[last] = 0;
+}
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

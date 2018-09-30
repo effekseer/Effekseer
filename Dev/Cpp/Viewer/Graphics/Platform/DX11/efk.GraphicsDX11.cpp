@@ -1,6 +1,9 @@
 
 #include "efk.GraphicsDX11.h"
 
+#include <iostream>
+#include <fstream>
+
 namespace efk
 {
 	RenderTextureDX11::RenderTextureDX11(Graphics* graphics)
@@ -192,9 +195,12 @@ namespace efk
 
 	bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount)
 	{
-		UINT debugFlag = 0;
-		debugFlag = D3D11_CREATE_DEVICE_DEBUG;
+		std::string log = "";
 
+		UINT debugFlag = 0;
+#if _DEBUG
+		debugFlag = D3D11_CREATE_DEVICE_DEBUG;
+#endif
 		D3D_FEATURE_LEVEL flevels[] = {
 			D3D_FEATURE_LEVEL_11_0,
 			D3D_FEATURE_LEVEL_10_1,
@@ -218,22 +224,26 @@ namespace efk
 
 		if FAILED(hr)
 		{
+			log += "Failed : D3D11CreateDevice\n";
 			goto End;
 		}
 
 		if (FAILED(device->QueryInterface(__uuidof(IDXGIDevice1), (void**)&dxgiDevice)))
 		{
+			log += "Failed : QueryInterface\n";
 			goto End;
 		}
 
 		if (FAILED(dxgiDevice->GetAdapter(&adapter)))
 		{
+			log += "Failed : GetAdapter\n";
 			goto End;
 		}
 
 		adapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory);
 		if (dxgiFactory == NULL)
 		{
+			log += "Failed : GetParent\n";
 			goto End;
 		}
 
@@ -257,16 +267,19 @@ namespace efk
 
 		if (FAILED(dxgiFactory->CreateSwapChain(device, &hDXGISwapChainDesc, &swapChain)))
 		{
+			log += "Failed : CreateSwapChain\n";
 			goto End;
 		}
 
 		if (FAILED(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&defaultRenderTarget)))
 		{
+			log += "Failed : GetBuffer\n";
 			goto End;
 		}
 
 		if (FAILED(device->CreateRenderTargetView(defaultRenderTarget, NULL, &renderTargetView)))
 		{
+			log += "Failed : CreateRenderTargetView\n";
 			goto End;
 		}
 
@@ -283,6 +296,7 @@ namespace efk
 		hTexture2dDesc.MiscFlags = 0;
 		if (FAILED(device->CreateTexture2D(&hTexture2dDesc, NULL, &defaultDepthStencil)))
 		{
+			log += "Failed : CreateTexture2D\n";
 			goto End;
 		}
 
@@ -292,6 +306,7 @@ namespace efk
 		hDepthStencilViewDesc.Flags = 0;
 		if (FAILED(device->CreateDepthStencilView(defaultDepthStencil, &hDepthStencilViewDesc, &depthStencilView)))
 		{
+			log += "Failed : CreateDepthStencilView\n";
 			goto End;
 		}
 
@@ -318,6 +333,12 @@ namespace efk
 		ES_SAFE_RELEASE(dxgiDevice);
 		ES_SAFE_RELEASE(context);
 		ES_SAFE_RELEASE(device);
+
+
+		std::ofstream outputfile("error_native.txt");
+		outputfile << log.c_str();
+		outputfile.close();
+
 		return false;
 	}
 

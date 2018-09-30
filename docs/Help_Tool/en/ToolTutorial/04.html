@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>No04. Let's rotate and enlarge!</title>
-  <style type="text/css">code{white-space: pre;}</style>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>No04. Let’s rotate and enlarge!</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
   <link rel="stylesheet" href="../base.css">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -13,12 +18,12 @@
 </head>
 <body>
 <header>
-<h1 class="title">No04. Let's rotate and enlarge!</h1>
+<h1 class="title">No04. Let’s rotate and enlarge!</h1>
 </header>
 <div class="main">
 <h2>Overview</h2>
 <p>In this chapter, we rotate and enlarge particles. We also change the sprite shape from a square to a rectangle. This makes it possible to create complicated effects.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/04_completed.gif">
 <p>
 The Effect created in this chapter
@@ -26,58 +31,72 @@ The Effect created in this chapter
 </div>
 <h2>Rotation and expansion</h2>
 <p>We made it possible to download the effect created in advance from the link below.</p>
-<div align="center">
+<div data-align="center">
 <p><a href = "../../Sample/04_01_Sample.zip">Download</a></p>
 </div>
 <h3>Rotation</h3>
-<p>Let's rotate the particles immediately. Rotation can be specified from the &quot;Rotation&quot; window.</p>
-<div align="center">
+<p>Let’s rotate the particles immediately. Rotation can be specified from the “Rotation” window.</p>
+<p>Click an icon of “Rotation” window to show “Rotation” window.</p>
+<div data-align="center">
+<img src="../../img/Tutorial/04_rotation_icon.png">
+<p>
+An icon of Rotation window
+</p>
+</div>
+<div data-align="center">
 <img src="../../img/Tutorial/04_rotation_en.png">
 <p>
-&quot;Rotation&quot; window
+“Rotation” window
 </p>
 </div>
 <p>Just like the position, there are multiple ways to specify rotation. By default, <code>Fixed angle</code> is selected. Change this to <code>PVA</code>. Then enter 5 for <code>Angular Velocity</code> z.</p>
 <p>This means that you rotate 5 degrees per frame about the Z direction (front direction) as the axis.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/04_rotation_pva_en.png">
 <p>
 Angular velocity
 </p>
 </div>
-<p>After inputting, you play the effect ... nothing changes! This is because in the initial setting of drawing by sprite, the sprite always faces the front even if the particle rotates.</p>
-<p>In the &quot;Basic Render Settings&quot; window, change the <code>Configuration</code> to <code>Rotated Billboard</code>. <code>Rotated Billboard</code> is a layout method in which the rectangular shape faces the front while the Z axis rotation is enable.</p>
-<div align="center">
+<p>After inputting, you play the effect … nothing changes! This is because in the initial setting of drawing by sprite, the sprite always faces the front even if the particle rotates.</p>
+<p>In the “Basic Render Settings” window, change the <code>Configuration</code> to <code>Rotated Billboard</code>. <code>Rotated Billboard</code> is a layout method in which the rectangular shape faces the front while the Z axis rotation is enable.</p>
+<div data-align="center">
 <img src="../../img/Tutorial/04_conf_en.png">
 <p>
 Configuration
 </p>
 </div>
 <p>When setting the <code>Configuration</code> to <code>Rotated Billboard</code>, you can see that the rectangle rotates about the Z direction (front direction).</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/04_rotate.gif">
 <p>
 Rotation
 </p>
 </div>
 <h3>Scale</h3>
-<p>As with position and rotation, you can scale particles. You can specify scale from the &quot;Sale&quot; window.</p>
-<div align="center">
+<p>As with position and rotation, you can scale particles. You can specify scale from the “Sale” window.</p>
+<p>Click an icon of “Scale” window to show “Scale” window.</p>
+<div data-align="center">
+<img src="../../img/Tutorial/04_scale_icon.png">
+<p>
+An icon of Scale window
+</p>
+</div>
+<div data-align="center">
 <img src="../../img/Tutorial/04_scale_en.png">
 <p>
-&quot;Scale&quot; window
+“Scale” window
 </p>
 </div>
 <p>Just like the position and rotation, there is also a way to specify more than one in the scale. In the initial setting, the <code>Fixed Scale</code> is selected. Change this to <code>PVA(Single)</code>. Then input 0.01 for <code>Expansion Speed</code>.</p>
 <p><code>Expansion Speed</code> can also be set individually in the X, Y, Z direction, but <code>Expansion Speed</code> is often the same for all directions. Therefore, you can set a <code>Expansion Speed</code>.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/04_scale_pva_en.png">
 <p>
 Expansion Speed
 </p>
 </div>
 <p>You can see that the sprite is rotating and enlarging.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/04_scale.gif">
 <p>
 Scale
@@ -85,16 +104,16 @@ Scale
 </div>
 <h2>Sprite shape</h2>
 <p>Sprite shape can be changed from square into rectangle, trapezoid, etc.</p>
-<p>Change <code>Vertex Coords</code> from the &quot;Render Settings&quot; window, from <code>Default</code> to <code>Fixed</code>. Then you can specify the coordinates of the vertices of the sprite.</p>
-<p>For this time, let's input as follows to enlarge the sprite vertically.</p>
-<div align="center">
+<p>Change <code>Vertex Coords</code> from the “Render Settings” window, from <code>Default</code> to <code>Fixed</code>. Then you can specify the coordinates of the vertices of the sprite.</p>
+<p>For this time, let’s input as follows to enlarge the sprite vertically.</p>
+<div data-align="center">
 <img src="../../img/Tutorial/04_v_en.png">
 <p>
 Vertex Coords
 </p>
 </div>
 <p>You can see that the vertical length of sprite is longer than horizontal length of one.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/04_shape.gif">
 <p>
 Vertex Coords
@@ -102,27 +121,27 @@ Vertex Coords
 </div>
 <h2>Finish</h2>
 <p>Since it is not good looking as it is, you change parameters as follows.</p>
-<h3>The &quot;Basic Settings&quot; window</h3>
+<h3>The “Basic Settings” window</h3>
 <p>Change <code>Spawn Count</code> to 10</p>
-<h3>The &quot;Position&quot; window</h3>
+<h3>The “Position” window</h3>
 <p>-Change into PVA -Change Pos deviation into 2</p>
-<h3>The &quot;Basic Render Settings&quot; window</h3>
+<h3>The “Basic Render Settings” window</h3>
 <p>Select the <code>Texture</code> into particle.png</p>
 <p>Change the <code>Blend</code> into <code>Additive</code></p>
-<h3>The &quot;Rotation&quot; window</h3>
+<h3>The “Rotation” window</h3>
 <p>Change angle(Derivation) into 180</p>
-<h3>The &quot;Scale&quot; window</h3>
+<h3>The “Scale” window</h3>
 <p>Change <code>Scaling Factor</code> into 0</p>
 <h3>Result</h3>
 <p>If you do not know how to change these parameters, please review chapters 1 to 3.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/04_completed.gif">
 <p>
 Result
 </p>
 </div>
 <p>Finally, I made it possible to download the effect created in this chapter.</p>
-<div align="center">
+<div data-align="center">
 <p><a href = "../../Sample/04_02_Sample.zip">Download</a></p>
 </div>
 <h2>Summary</h2>

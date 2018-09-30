@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>No13. 背景を歪ませよう！</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../base.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">No13. 背景を歪ませよう！</h1>
+</header>
+<div class="main">
+<h2>概要</h2>
+<p>本章では、Effekseerで背景を歪ませる方法について説明します。 最近のゲームでは、背景を歪ませられるエフェクトが存在します。 Effekseerでもパラメーターを設定することで、エフェクトで背景を歪ませれます。</p>
+<div data-align="center">
+<table>
+<tr>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/13/effect1.gif">
+<p>
+本章で作成するエフェクト1
+</p>
+</div>
+</td>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/13/effect2.gif">
+<p>
+本章で作成するエフェクト2
+</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<p>
+あらかじめ作成途中のエフェクトを下記のリンクからダウンロードできるようにしました。
+</p>
+<div data-align="center">
+<p>
+<a href = "../../Sample/13_01_Sample.zip">ダウンロード</a>
+</p>
+</div>
+<h2>使い方</h2>
+<p>背景を歪ませるためには、歪みのための画像が必要です。 画像には色情報ではなく、歪み方を描きます。</p>
+<p>歪み用の画像はほとんど法線画像と同じです。ただ、青色だけ扱いが異なります。 赤色は左右方向の歪みの強さを表します。127を中心として、0は左方向、255は右方向に歪ませます。 緑色は上下方向の歪みの強さを表します。127を中心として、0は上方向、255は下方向に歪ませます。</p>
+<div data-align="center">
+<img src="../../img/Tutorial/13/Distortion1.png">
+<p>
+歪み画像
+</p>
+</div>
+<p>effect1.efkprojを開いてください。</p>
+<p>Texture/Distortion.pngを描画共通パネルから、予め用意されているDistortionノードの色画像に設定します。</p>
+<p>描画共通パネルから歪みにチェックを入れて有効にします。 背景が黒いままだと、わかりにくいのでオプションパネルから背景画像を設定するとわかりやすくなります。</p>
+<div data-align="center">
+<img src="../../img/Tutorial/13/intesity_1.png">
+<p>
+歪んだ背景
+</p>
+</div>
+<h2>歪み強度</h2>
+<p>描画共通パネルから歪み強度を変更すると、歪み方が変わります。 歪み強度が大きいほど、歪み方が強くなります。 歪み強度が0に近いほど、歪まなくなります。</p>
+<div data-align="center">
+<table>
+<tr>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/13/intesity_1.png">
+<p>
+歪み強度 : 1
+</p>
+</div>
+</td>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/13/intesity_3.png">
+<p>
+歪み強度 : 3
+</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h2>描画優先度</h2>
+<p>基本的に歪みは背景を歪ませるのみで、自身のエフェクトは歪ませられません。 しかし、自身のエフェクトを歪ませたくなる場合があります。 そのようなときは深度パネルから描画優先度を変更します。</p>
+<p>描画優先度はノード間の描画の順番を決めます。普通は、ノードツリーで下のほうに配置されているノードほど、後に描画されますが、 描画優先度が異なる場合、描画優先度が大きいノードが後に描画されます。</p>
+<p>この描画優先度が-1以下のノードは、描画優先度が0以上の歪みが設定されているノードに歪ませられます。</p>
+<p>Particleノードの描画優先度を変更しましょう。 描画優先度を変更すると、ParticleノードのパーティクルがDistortionノードに歪まされていることがわかります。</p>
+<div data-align="center">
+<table>
+<tr>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/13/priority_off.png">
+<p>
+描画優先度 : 0
+</p>
+</div>
+</td>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/13/priority_on.png">
+<p>
+描画優先度 : -1
+</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h2>使用例</h2>
+<p>歪みはリングやUVスクロールとも併用できます。 リングとUVスクロールを組み合わせると放射状の歪みを簡単に作成できます。</p>
+<p>このエフェクトはリングとUVスクロールを組み合わせた例です。 パラメーターを調節したリングに左の画像を適用しました。 中央の画像が歪みなしで適用させた結果です。 右の映像がUVスクロールをしつつ歪みを使用したエフェクトです。 白いパーティクルも全方向に散らばるようにしました。</p>
+<div data-align="center">
+<table>
+<tr>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/13/Distortion2.png">
+<p>
+歪み画像
+</p>
+</div>
+</td>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/13/effect2_original.png">
+<p>
+エフェクト(歪みなし)
+</p>
+</div>
+</td>
+<td>
+<div data-align="center">
+<img src="../../img/Tutorial/13/effect2.gif">
+<p>
+エフェクト
+</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<h2>注意</h2>
+<p>他のゲームエンジンで再生した場合は見た目が変わることがあります。</p>
+<p>最後に、本章で作成されたエフェクトをダウンロードできるようにしてみました。</p>
+<div data-align="center">
+<p><a href = "../../Sample/13_02_Sample.zip">ダウンロード</a></p>
+</div>
+<h2>まとめ</h2>
+<p>本章では、歪みについて説明しました。 上手く歪みを指定すると見栄えが良くなります。 ぜひ使ってみましょう。</p>
+</div>
+</body>
+</html>

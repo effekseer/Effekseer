@@ -333,10 +333,13 @@ namespace Effekseer.GUI
 
 				if (selected != null)
 				{
-					Command.CommandManager.StartCollection();
-					var node = selected.AddChild();
-					Core.Paste(node, data);
-					Command.CommandManager.EndCollection();
+					if (Core.IsValidXml(data))
+					{
+						Command.CommandManager.StartCollection();
+						var node = selected.AddChild();
+						Core.Paste(node, data);
+						Command.CommandManager.EndCollection();
+					}
 				}
 
 				return true;
@@ -355,7 +358,12 @@ namespace Effekseer.GUI
 			if (Core.SelectedNode != null)
 			{
 				var data = Manager.NativeManager.GetClipboardText();
-				Core.Paste(Core.SelectedNode, data);
+
+				if(Core.IsValidXml(data))
+				{
+					Core.Paste(Core.SelectedNode, data);
+				}
+				
 				return true;
 			}
 			

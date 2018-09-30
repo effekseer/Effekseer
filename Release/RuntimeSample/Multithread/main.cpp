@@ -4,6 +4,8 @@
 //----------------------------------------------------------------------------------
 #include <stdio.h>
 #include <windows.h>
+#include <string>
+#include <thread>
 
 //----------------------------------------------------------------------------------
 //
@@ -20,13 +22,13 @@
 #include <EffekseerSoundXAudio2.h>
 
 #if _DEBUG
-#pragma comment(lib, "VS2013/Debug/Effekseer.lib" )
-#pragma comment(lib, "VS2013/Debug/EffekseerRendererDX9.lib" )
-#pragma comment(lib, "VS2013/Debug/EffekseerSoundXAudio2.lib" )
+#pragma comment(lib, "VS2015/Debug/Effekseer.lib" )
+#pragma comment(lib, "VS2015/Debug/EffekseerRendererDX9.lib" )
+#pragma comment(lib, "VS2015/Debug/EffekseerSoundXAudio2.lib" )
 #else
-#pragma comment(lib, "VS2013/Release/Effekseer.lib" )
-#pragma comment(lib, "VS2013/Release/EffekseerRendererDX9.lib" )
-#pragma comment(lib, "VS2013/Release/EffekseerSoundXAudio2.lib" )
+#pragma comment(lib, "VS2015/Release/Effekseer.lib" )
+#pragma comment(lib, "VS2015/Release/EffekseerRendererDX9.lib" )
+#pragma comment(lib, "VS2015/Release/EffekseerSoundXAudio2.lib" )
 #endif
 
 //----------------------------------------------------------------------------------
@@ -47,7 +49,7 @@ static IXAudio2MasteringVoice*			g_xa2_master = NULL;
 
 static int32_t							g_timer = 0;
 
-static Effekseer::Thread				g_thread;
+static std::thread						g_thread;
 
 static volatile bool					g_wait = true;
 
@@ -263,11 +265,23 @@ void MainLoop()
 	}
 }
 
+#if _WIN32
+#include <Windows.h>
+std::wstring ToWide(const char* pText);
+void GetDirectoryName(char* dst, char* src);
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int main()
+int main(int argc, char **argv)
 {
+#if _WIN32
+	char current_path[MAX_PATH + 1];
+	GetDirectoryName(current_path, argv[0]);
+	SetCurrentDirectoryA(current_path);
+#endif
+
 	InitWindow();
 	
 	// 描画用インスタンスの生成
@@ -309,12 +323,13 @@ int main()
 	g_effect = Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"test.efk" );
 
 	// スレッド生成
-	g_thread.Create( UpdateAsync, NULL );
+	g_thread = std::thread([]() -> void { UpdateAsync(nullptr); });
 			
 	MainLoop();
 	
 	// スレッド破棄
 	g_esc = true;
+	g_thread.join();
 
 	// エフェクトの破棄
 	ES_SAFE_RELEASE( g_effect );
@@ -345,6 +360,45 @@ int main()
 
 	return 0;
 }
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+
+#if _WIN32
+static std::wstring ToWide(const char* pText)
+{
+	int Len = ::MultiByteToWideChar(CP_ACP, 0, pText, -1, NULL, 0);
+
+	wchar_t* pOut = new wchar_t[Len + 1];
+	::MultiByteToWideChar(CP_ACP, 0, pText, -1, pOut, Len);
+	std::wstring Out(pOut);
+	delete[] pOut;
+
+	return Out;
+}
+
+void GetDirectoryName(char* dst, char* src)
+{
+	auto Src = std::string(src);
+	int pos = 0;
+	int last = 0;
+	while (Src.c_str()[pos] != 0)
+	{
+		dst[pos] = Src.c_str()[pos];
+
+		if (Src.c_str()[pos] == L'\\' || Src.c_str()[pos] == L'/')
+		{
+			last = pos;
+		}
+
+		pos++;
+	}
+
+	dst[pos] = 0;
+	dst[last] = 0;
+}
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

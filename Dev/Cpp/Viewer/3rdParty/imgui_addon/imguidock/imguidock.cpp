@@ -1591,12 +1591,21 @@ void SetNextDock(ImGuiDockSlot slot) {
 void BeginDockspace() {
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar;
     BeginChild("###workspace", ImVec2(0,0), false, flags);
-    g_dock->m_workspace_pos = GetWindowPos();
-    g_dock->m_workspace_size = GetWindowSize();
+	if (GetWindowSize().x > 32)
+	{
+		g_dock->m_workspace_pos = GetWindowPos();
+		g_dock->m_workspace_size = GetWindowSize();
+	}
 }
 
 void EndDockspace() {
     EndChild();
+}
+
+bool GetDockActive()
+{
+	if (g_dock->m_current == nullptr) return false;
+	return g_dock->m_current->active;
 }
 
 void SetDockActive()

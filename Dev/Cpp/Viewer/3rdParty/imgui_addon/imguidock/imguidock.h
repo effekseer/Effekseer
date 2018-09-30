@@ -117,6 +117,7 @@ IMGUI_API void SetNextDock(ImGuiDockSlot slot);
 // Please note that if you LoadDock(...) the last saved value will be used (so 'default_size' can still be ignored).
 IMGUI_API bool BeginDock(const char* label, bool* opened = NULL, ImGuiWindowFlags extra_flags = 0, const ImVec2& default_size = ImVec2(0,0));
 IMGUI_API void EndDock();
+IMGUI_API bool GetDockActive();
 IMGUI_API void SetDockActive();
 IMGUI_API void DockDebugWindow();
 

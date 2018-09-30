@@ -74,6 +74,8 @@ private:
 	std::shared_ptr<efk::RenderTexture>	viewRenderTexture;
 	std::shared_ptr<efk::DepthTexture>	viewDepthTexture;
 
+	int32_t		screenWidth = 0;
+	int32_t		screenHeight = 0;
 public:
 	/**
 		@brief	Constructor

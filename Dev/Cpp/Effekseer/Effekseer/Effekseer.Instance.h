@@ -264,6 +264,8 @@ public:
 	// デストラクタ
 	virtual ~Instance();
 
+	void GenerateChildrenInRequired(float currentTime);
+
 public:
 	/**
 		@brief	状態の取得
@@ -278,7 +280,7 @@ public:
 	/**
 		@brief	初期化
 	*/
-	void Initialize( Instance* parent, int32_t instanceNumber );
+	void Initialize( Instance* parent, int32_t instanceNumber, int32_t parentTime );
 
 	/**
 		@brief	更新

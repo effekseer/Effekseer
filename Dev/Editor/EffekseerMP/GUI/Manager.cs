@@ -25,6 +25,7 @@ namespace Effekseer.GUI
 			}
 
 			Manager.resizedCount = 5;
+			Manager.actualWidth = x;
 		}
 
 		public override void Focused()
@@ -75,8 +76,6 @@ namespace Effekseer.GUI
 
 	public class Manager
 	{
-
- 
 		public static swig.GUIManager NativeManager;
 		public static swig.Native Native;
 
@@ -94,6 +93,7 @@ namespace Effekseer.GUI
 
 		static int resetCount = 0;
 		internal static int resizedCount = 0;
+		internal static int actualWidth = 1;
 
         /// <summary>
         /// if this flag is true, a dialog box on disposing is not shown
@@ -175,11 +175,13 @@ namespace Effekseer.GUI
 
 			panels = new Dock.DockPanel[dockTypes.Length];
 
+			var appDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+
 			// Load font
-			NativeManager.AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 16);
+			NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, "resources/GenShinGothic-Monospace-Normal.ttf"), 16);
 
 			// Load window icon
-			NativeManager.SetWindowIcon("resources/icon.png");
+			NativeManager.SetWindowIcon(System.IO.Path.Combine(appDirectory, "resources/icon.png"));
 
 			// Load config
 			RecentFiles.LoadRecentConfig();
@@ -286,13 +288,18 @@ namespace Effekseer.GUI
 			Core.OnAfterLoad += new EventHandler(Core_OnAfterLoad);
 			Core.OnAfterNew += new EventHandler(Core_OnAfterNew);
 			Core.OnReload += new EventHandler(Core_OnReload);
-		
+
+			// Set imgui path
+			var entryDirectory = GetEntryDirectory();
+			swig.GUIManager.SetIniFilename(entryDirectory + "/imgui.ini");
+
 			return true;
 		}
 
 		public static void Terminate()
 		{
-			System.IO.Directory.SetCurrentDirectory(GetEntryDirectory());
+			var entryDirectory = GetEntryDirectory();
+			System.IO.Directory.SetCurrentDirectory(entryDirectory);
 
 			Manager.NativeManager.SaveDock("config.Dock.config");
 			SaveWindowConfig("config.Dock.xml");
@@ -332,6 +339,11 @@ namespace Effekseer.GUI
 
 		public static void Update()
 		{
+			// Reset
+			NativeManager.SetNextDockRate(0.5f);
+			NativeManager.SetNextDock(swig.DockSlot.Tab);
+			NativeManager.ResetNextParentDock();
+
 			Shortcuts.Update();
 
 			var handle = false;
@@ -444,6 +456,13 @@ namespace Effekseer.GUI
 			NativeManager.Present();
 
 			isFirstUpdate = false;
+
+			// TODO more smart
+			// When minimized, suppress CPU activity
+			if (actualWidth == 0)
+			{
+				System.Threading.Thread.Sleep(16);
+			}
 		}
 
 		public static void ResetWindow()
@@ -516,6 +535,7 @@ namespace Effekseer.GUI
 					panels[i].InitialDockSize = defaultSize;
 					panels[i].InitialDockReset = isResetParent;
 					panels[i].InitialDockRate = dockRate;
+					panels[i].IsInitialized = -1;
 
 					if (dockManager != null)
 					{

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +10,7 @@ namespace Effekseer
 {
 	public class Core
 	{
-		public const string Version = "1.40β2";
+		public const string Version = "1.42b";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -305,6 +305,14 @@ namespace Effekseer
 
 			New();
 
+			if(!DoExecuteWithMLBundle())
+			{
+				InitializeScripts(entryDirectory);
+			}
+		}
+
+		static void InitializeScripts(string entryDirectory)
+		{
 			// Load scripts
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/import");
@@ -316,7 +324,7 @@ namespace Effekseer
 
 			{
 				var files = System.IO.Directory.GetFiles(entryDirectory + "scripts/command", "*.*", System.IO.SearchOption.AllDirectories);
-                
+
 				foreach (var file in files)
 				{
 					var ext = System.IO.Path.GetExtension(file);
@@ -447,6 +455,14 @@ namespace Effekseer
 			return dir;
 		}
 
+		public static bool DoExecuteWithMLBundle()
+		{
+			var myAssembly = System.Reflection.Assembly.GetEntryAssembly();
+			string path = myAssembly.Location;
+			var dir = System.IO.Path.GetDirectoryName(path);
+			return dir == string.Empty;
+		}
+
 		public static string Copy(Data.NodeBase node)
 		{
 			if (node == null) return string.Empty;
@@ -460,9 +476,29 @@ namespace Effekseer
 			return doc.InnerXml;
 		}
 
+		/// <summary>
+		/// Check whether data is valid xml?
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		public static bool IsValidXml(string data)
+		{
+			try
+			{
+				System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+				doc.LoadXml(data);
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
 		public static void Paste(Data.NodeBase node, string data)
 		{
 			if (node == null) return;
+			if (!IsValidXml(data)) return;
 
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
@@ -492,8 +528,10 @@ namespace Effekseer
 			SelectedNode = null;
 			Command.CommandManager.Clear();
 			Root = new Data.NodeRoot();
-            effectBehavior = new Data.EffectBehaviorValues();
-            culling = new Data.EffectCullingValues();
+
+			// Adhoc code
+			effectBehavior.Reset();
+			culling = new Data.EffectCullingValues();
 			globalValues = new Data.GlobalValues();
 
             // Add a root node
@@ -531,6 +569,7 @@ namespace Effekseer
 
 			if(behaviorElement != null) project_root.AppendChild(behaviorElement);
 			if (cullingElement != null) project_root.AppendChild(cullingElement);
+			if (globalElement != null) project_root.AppendChild(globalElement);
 
 			project_root.AppendChild(doc.CreateTextElement("ToolVersion", Core.Version));
 			project_root.AppendChild(doc.CreateTextElement("Version", 3));
@@ -649,16 +688,18 @@ namespace Effekseer
 			var root = doc["EffekseerProject"]["Root"];
 			if (root == null) return false;
 
+			culling = new Data.EffectCullingValues();
+			globalValues = new Data.GlobalValues();
+
+			// Adhoc code
+			effectBehavior.Reset();
+
 			var behaviorElement = doc["EffekseerProject"]["Behavior"];
 			if (behaviorElement != null)
 			{
 				var o = effectBehavior as object;
 				Data.IO.LoadObjectFromElement(behaviorElement as System.Xml.XmlElement, ref o, false);
 			}
-            else
-            {
-                effectBehavior = new Data.EffectBehaviorValues();
-            }
 
 			var cullingElement = doc["EffekseerProject"]["Culling"];
 			if (cullingElement != null)
@@ -666,20 +707,12 @@ namespace Effekseer
 				var o = culling as object;
 				Data.IO.LoadObjectFromElement(cullingElement as System.Xml.XmlElement, ref o, false);
 			}
-            else
-            {
-                culling = new Data.EffectCullingValues();
-            }
 
 			var globalElement = doc["EffekseerProject"]["Global"];
 			if (globalElement != null)
 			{
 				var o = globalValues as object;
 				Data.IO.LoadObjectFromElement(globalElement as System.Xml.XmlElement, ref o, false);
-			}
-			else
-			{
-				globalValues = new Data.GlobalValues();
 			}
 
 			StartFrame = 0;
@@ -829,6 +862,12 @@ namespace Effekseer
 			versionText = versionText.Replace("RC3", "");
 			versionText = versionText.Replace("RC4", "");
 			versionText = versionText.Replace("RC5", "");
+
+			versionText = versionText.Replace("a", "");
+			versionText = versionText.Replace("b", "");
+			versionText = versionText.Replace("c", "");
+			versionText = versionText.Replace("d", "");
+			versionText = versionText.Replace("e", "");
 
 			if (versionText.Length == 2) versionText += "000";
 			if (versionText.Length == 3) versionText += "00";

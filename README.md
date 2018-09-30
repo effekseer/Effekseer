@@ -50,7 +50,6 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 * Add tutorial documents (チュートリアルのドキュメントの追加)
 * Add tests for a runtime (ランタイムのテストの追加)
 * Translate documents from Japanese into English (ドキュメントの日本語から英語への翻訳)
-* Show the number of draw call. (ドローコール数表示)
 
 ** Medium
 * Add model exporters for 3D modeling softwares
@@ -61,8 +60,7 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 ** Hard
 * Support Metal
 * Support DirectX12
-* Change tool GUI library
-* Multiplatform tool
+* Node material
 
 ** VeryHard
 * Support Vulkan
@@ -71,7 +69,6 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 ** Others
 * New method of rotation to match Z and moving direction.
 * Turbulence noise ( https://ics.media/entry/10921 )
-* Change color on the runtime.
 
 # For contributor
 
@@ -133,6 +130,10 @@ Script/build_glew.py
 * Windows
 
 Visual Studio 2015 are required.
+
+Open ```Dev/Editor/Effekseer.sln```
+
+or
 
 Open ```Dev/Cpp/Test.sln```
 

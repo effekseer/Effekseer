@@ -83,13 +83,10 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
-			FixValueInternal(false);
 		}
 
 		void FixValueInternal(bool combined)
 		{
-			if (binding == null) return;
-
 			if (EnableUndo)
 			{
 				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
@@ -105,16 +102,7 @@ namespace Effekseer.GUI.Component
 			}
 			else
 			{
-				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
-				{
-					binding.X.SetCenterDirectly(internalValue1[0]);
-					binding.Y.SetCenterDirectly(internalValue1[1]);
-				}
-				else
-				{
-					binding.X.SetMinDirectly(internalValue1[0]);
-					binding.Y.SetMinDirectly(internalValue1[1]);
-				}
+				throw new Exception("Not Implemented.");
 			}
 
 			if (EnableUndo)
@@ -132,31 +120,22 @@ namespace Effekseer.GUI.Component
 			}
 			else
 			{
-				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
-				{
-					binding.X.SetAmplitudeDirectly(internalValue2[0]);
-					binding.Y.SetAmplitudeDirectly(internalValue2[1]);
-				}
-				else
-				{
-					binding.X.SetMaxDirectly(internalValue2[0]);
-					binding.Y.SetMaxDirectly(internalValue2[1]);
-				}
+				throw new Exception("Not Implemented.");
 			}
 		}
 
 		public override void OnDisposed()
 		{
-			FixValueInternal(false);
 		}
 
 		public override void Update()
 		{
 			if (binding == null) return;
+
 			isPopupShown = false;
 
-			float step = binding.X.Step / 10.0f;
-			
+			float step = 1.0f;
+
 			if (binding != null)
 			{
 				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
@@ -173,6 +152,8 @@ namespace Effekseer.GUI.Component
 					internalValue2[0] = binding.X.Max;
 					internalValue2[1] = binding.Y.Max;
 				}
+
+				step = Binding.X.Step / 10.0f;
 			}
 
 			var txt_r1 = string.Empty;
@@ -189,10 +170,11 @@ namespace Effekseer.GUI.Component
 				txt_r2 = Resources.GetString("Min");
 			}
 
+			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 60);
 			if (Manager.NativeManager.DragFloat2EfkEx(id1, internalValue1, step,
-				binding.X.ValueMin, binding.X.ValueMax,
-				binding.X.ValueMin, binding.X.ValueMax, 
-				txt_r1 + ":" + "%.3f", txt_r1 + ":" + "%.3f"))
+				float.MinValue, float.MaxValue,
+				float.MinValue, float.MaxValue,
+				"X:%.3f", "Y:%.3f"))
 			{
 				if (EnableUndo)
 				{
@@ -209,16 +191,7 @@ namespace Effekseer.GUI.Component
 				}
 				else
 				{
-					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
-					{
-						binding.X.SetCenterDirectly(internalValue1[0]);
-						binding.Y.SetCenterDirectly(internalValue1[1]);
-					}
-					else
-					{
-						binding.X.SetMinDirectly(internalValue1[0]);
-						binding.Y.SetMinDirectly(internalValue1[1]);
-					}
+					throw new Exception("Not Implemented.");
 				}
 			}
 
@@ -226,10 +199,13 @@ namespace Effekseer.GUI.Component
 
 			Popup();
 
-			if (Manager.NativeManager.DragFloat2EfkEx(id2, internalValue2, 1, 
+			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Text(txt_r1);
+
+			if (Manager.NativeManager.DragFloat2EfkEx(id2, internalValue2, step,
 				float.MinValue, float.MaxValue,
-				float.MinValue, float.MaxValue, 
-				txt_r2 + ":" + "%.3f", txt_r2 + ":" + "%.3f"))
+				float.MinValue, float.MaxValue,
+				"X:" + "%.3f", "Y:" + "%.3f"))
 			{
 				if (EnableUndo)
 				{
@@ -246,16 +222,7 @@ namespace Effekseer.GUI.Component
 				}
 				else
 				{
-					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
-					{
-						binding.X.SetAmplitudeDirectly(internalValue2[0]);
-						binding.Y.SetAmplitudeDirectly(internalValue2[1]);
-					}
-					else
-					{
-						binding.X.SetMaxDirectly(internalValue2[0]);
-						binding.Y.SetMaxDirectly(internalValue2[1]);
-					}
+					throw new Exception("Not Implemented.");
 				}
 			}
 
@@ -269,6 +236,11 @@ namespace Effekseer.GUI.Component
 			isActive = isActive_Current;
 
 			Popup();
+
+			Manager.NativeManager.SameLine();
+			Manager.NativeManager.Text(txt_r2);
+
+			Manager.NativeManager.PopItemWidth();
 		}
 
 		void Popup()

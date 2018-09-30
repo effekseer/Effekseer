@@ -103,7 +103,11 @@ namespace Effekseer.GUI.Component
 				step = Binding.X.Step / 10.0f;
 			}
 
-			if (Manager.NativeManager.DragFloat3(id, internalValue, step))
+			if (Manager.NativeManager.DragFloat3EfkEx(id, internalValue, step,
+				float.MinValue, float.MaxValue,
+				float.MinValue, float.MaxValue,
+				float.MinValue, float.MaxValue,
+				"X:" + "%.3f", "Y:" + "%.3f", "Z:" + "%.3f"))
 			{
 				FixValueInternal(isActive);
 			}

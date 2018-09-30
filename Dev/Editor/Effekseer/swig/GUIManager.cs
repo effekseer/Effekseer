@@ -1194,6 +1194,11 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetNextDockTabToolTip(swigCPtr, popup);
   }
 
+  public bool GetDockActive() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_GetDockActive(swigCPtr);
+    return ret;
+  }
+
   public void SetDockActive() {
     EffekseerNativePINVOKE.GUIManager_SetDockActive(swigCPtr);
   }
@@ -1256,6 +1261,15 @@ public class GUIManager : global::System.IDisposable {
   public static DialogSelection show(string message, string title, DialogStyle style, DialogButtons buttons) {
     DialogSelection ret = (DialogSelection)EffekseerNativePINVOKE.GUIManager_show(message, title, (int)style, (int)buttons);
     return ret;
+  }
+
+  public static bool IsMacOSX() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsMacOSX();
+    return ret;
+  }
+
+  public static void SetIniFilename(string filename) {
+    EffekseerNativePINVOKE.GUIManager_SetIniFilename(filename);
   }
 
   public static int GetLanguage() {

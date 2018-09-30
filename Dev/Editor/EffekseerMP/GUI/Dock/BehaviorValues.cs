@@ -50,22 +50,8 @@ namespace Effekseer.GUI.Dock
 
         void Read()
         {
-            if (Core.SelectedNode != null)
-            {
-                if (Core.SelectedNode is Data.Node)
-                {
-					paramerterList.SetValue(Core.EffectBehavior);
-                }
-                else
-                {
-                    paramerterList.SetValue(null);
-                }
-            }
-            else
-            {
-                paramerterList.SetValue(null);
-            }
-        }
+			paramerterList.SetValue(Core.EffectBehavior);
+		}
 
         void OnAfterLoad(object sender, EventArgs e)
         {

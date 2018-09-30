@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>No01.Sample and Use！</title>
-  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
   <link rel="stylesheet" href="../base.css">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -17,78 +22,89 @@
 </header>
 <div class="main">
 <h2>Summary</h2>
-<p>In this chapter, we will open Effekseer and examine the samples, as well as explain it's basic operation. After that, we will explain how to use Effekseer in other applications (For example, games)</p>
-<div align="center">
+<p>In this chapter, we will open Effekseer and examine the samples, as well as explain it’s basic operation. After that, we will explain how to use Effekseer in other applications (For example, games)</p>
+<div data-align="center">
 <img src="../../img/Tutorial/02_completed.gif">
 <p>
 Effects we will create this chapter.
 </p>
 </div>
 <h2>Startup</h2>
-<h3>Effekseer startup method</h3>
-<p>Effekseer is located in &quot;Tool/Effekseer.exe&quot;. Navigate to the folder and double click the executable to start the program.</p>
-<div align="center">
+<h3>Effekseer startup method (Windows)</h3>
+<p>Effekseer is located in “Tool/Effekseer.exe”. Navigate to the folder and double click the executable to start the program.</p>
+<div data-align="center">
 <img src="../../img/Tutorial/01_icon.png">
 <p>
 Effekseer Icon
 </p>
 </div>
-<h3>If Effekseer fails to start</h3>
-<h4>Verify .NetFramework4.0(Full) and DirectX End-User Runtime are installed</h4>
+<h3>If Effekseer fails to start (Windows)</h3>
+<h4>OS is too old.</h4>
+<p>Effekseer can run on Windows 7 SP1 or later.</p>
+<h4>Verify D3DCompiler_47.dll is installed</h4>
 <p>Download them from the links below.</p>
 <ul>
 <li>
-<a href="https://www.microsoft.com/en-us/download/details.aspx?id=17718" target="_top">Microsoft .NET Framework 4(Full)</a>
-</li>
-<li>
-<a href="https://www.microsoft.com/en-us/download/details.aspx?id=35" target="_top">Latest DirectX End-User Runtime</a>
+<a href="https://support.microsoft.com/en-us/help/4020302/the-net-framework-4-7-installation-is-blocked-on-windows-7-windows-ser" target="_top">D3DCompiler_47.dll</a>
 </li>
 </ul>
 <h4>Running Effekseer directly from the .zip file</h4>
-<p>Extract files before running. Right click the .zip and select &quot;Extract All&quot; from the context menu.</p>
+<p>Extract files before running. Right click the .zip and select “Extract All” from the context menu.</p>
+<h4>Effekseer still will not start</h4>
+<p>Please contact us on the offical website.</p>
+<h3>Effekseer startup method (Mac)</h3>
+<p>Effekseer is located in “Effekseer.dmg”. Move Effekseer to other folder such as an Applications and double click the executable to start the program.</p>
+<div data-align="center">
+<p><img src="../../img/Tutorial/01_icon_mac.png"></p>
+</div>
+<h3>If Effekseer fails to start (Mac)</h3>
+<h4>OS is too old.</h4>
+<p>Effekseer can run on macOS Sierra or later.</p>
+<h4>Running Effekseer directly from dmg</h4>
+<p>Effekseer to other folder.</p>
 <h4>Effekseer still will not start</h4>
 <p>Please contact us on the offical website.</p>
 <h3>Successful Startup</h3>
 <p>If startup is successfull, you will be greeted by a screen that looks similar to this.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/01_all_en.png">
 <p>
-Effekseer's startup screen
+Effekseer’s startup screen
 </p>
 </div>
-<p>Now let's try to open a sample.</p>
+<p>Now let’s try to open a sample.</p>
 <h2>Opening A Sample and Basic Operation</h2>
 <p>After startup you will see a 3D screen with nothing displayed on it. Press the play button located at the bottom left.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/01_play.png">
 <p>
 Play Button
 </p>
 </div>
 <p>After pressing the play button you will see a white square. This white square is the <b>particle</b> that effects are composed of. Effects are generally made up of many such <b>particles</b>. Because no settings were established all that is visible is a single white square particle. Particles like this are the basis for all the different particle effects that can be made using this software, but for new users editing particles into copmlex particles can be difficult. Because of this, we will not cover editing particles in this chapter.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/01_square.png">
 <p>
 Square particle
 </p>
 </div>
-<p>Making particles only using white squares however is no fun. To fix this, let's download a sample file. Please download the sample from the link below and extract it.</p>
-<div align="center">
+<p>Making particles only using white squares however is no fun. To fix this, let’s download a sample file. Please download the sample from the link below and extract it.</p>
+<div data-align="center">
 <p><a href = "../../Sample/01_Sample.zip">Download</a></p>
 </div>
-<p>After extracting the sample, please locate the file &quot;Sample.efkproj&quot; and extract it. You can open it by either double clicking the file or dragging the project or dragging it onto the 3D screen of Effekseer. After opening the file, press the play button. You should see the following.。</p>
-<div align="center">
+<p>After extracting the sample, please locate the file “Sample.efkproj” and extract it. You can open it by either double clicking the file or dragging the project or dragging it onto the 3D screen of Effekseer. After opening the file, press the play button. You should see the following.。</p>
+<div data-align="center">
 <img src="../../img/Tutorial/01_sample.png">
 <p>
 Sample project.
 </p>
 </div>
 <p>In addition to this sample, there are more than 150 freely available samples on the official site. Please see the link below for details.</p>
-<div align="center">
+<div data-align="center">
 <p><a href = "https://effekseer.github.io/jp/contribute.html">Official website</a></p>
 </div>
-<p>Up until now we have been looking at a fixed direction, so let's move the viewport. Instructions on how to do so can be found below.</p>
-<div align="center">
+<p>Up until now we have been looking at a fixed direction, so let’s move the viewport. Instructions on how to do so can be found below.</p>
+<div data-align="center">
 <table border="1">
 <tr>
 <td>
@@ -117,14 +133,14 @@ Scroll the mouse wheel to zoom in and out.
 </table>
 </div>
 <p>Use the mouse to look at the previous sample particle from a different direction</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/01_view.png">
 <p>
 Sample from new perspective
 </p>
 </div>
 <p>In order to make editing effect easier, effects will loop by defualt. You can specify a range to loop using the text box at the bottom left (pictured below)。Effekseer advances at increments of <b>1/60th seconds</b>。Because of this, the default range is set to 0 through 2 seconds.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/01_time_en.png">
 <p>
 Loop range
@@ -133,39 +149,39 @@ Loop range
 <h2>External Usage</h2>
 <p>If all you are concerned with is creating effects, then you do not need to read this section. Typically though, effects are exported and used in other applications. This section explains two methods of using Effekseer files in external applications.</p>
 <h3>Recording</h3>
-<p>Effekseer allows you to output sprite sheets and gif animations of your effects recorded at regular intervals. When &quot;Window -&gt;Record&quot; is selected in the menu bar, &quot;Recording Window&quot; is displayed. Here, you can change the recording parameters such as the size or the frequency to record pictures for your sprite sheets or gifs.</p>
-<div align="center">
+<p>Effekseer allows you to output sprite sheets and gif animations of your effects recorded at regular intervals. When “Window -&gt;Record” is selected in the menu bar, “Recording Window” is displayed. Here, you can change the recording parameters such as the size or the frequency to record pictures for your sprite sheets or gifs.</p>
+<div data-align="center">
 <img src="../../img/Tutorial/01_record_en.png">
 <p>
 Recording Window
 </p>
 </div>
 <p>Effekseer enables you to output sprite sheets and movie files in which images are displayed at regular time intervals. A sprite sheet is a single image file in which all frames of an animation are arranged in order.</p>
-<p>After setting the parameters and pressing &quot;Record&quot;, a dialog will be displayed asking you to save the recorded results. When you press save in the dialog, the results recorded at the specified destination are saved.</p>
+<p>After setting the parameters and pressing “Record”, a dialog will be displayed asking you to save the recorded results. When you press save in the dialog, the results recorded at the specified destination are saved.</p>
 <p>Since the output sprite sheet is just a picture, it can be easily used by other applications. Movie files can also be used with video editing software such as AfterEffects.</p>
-<div align="center">
+<div data-align="center">
 <img src="../../img/Tutorial/01_record_sprite.png">
 <p>
 An example of a spritesheet
 </p>
 </div>
 <h3>3D File Format</h3>
-<p>Effekseer allows you to output an efk file to directly play Effekseer's effects in other applications. You can output the efk file by selecting &quot;File -&gt; Output -&gt; Standard format.&quot; You can read the file in Unity using various Effekseer plugins like the plugin for Unity, or the library for Cocos2d-x. It is also possible to incorporate Effekseer into your project using the Effekseer runtime. (For more information, please consult the developer.)</p>
-<div align="center">
+<p>Effekseer allows you to output an efk file to directly play Effekseer’s effects in other applications. You can output the efk file by selecting “File -&gt; Output -&gt; Standard format.” You can read the file in Unity using various Effekseer plugins like the plugin for Unity, or the library for Cocos2d-x. It is also possible to incorporate Effekseer into your project using the Effekseer runtime. (For more information, please consult the developer.)</p>
+<div data-align="center">
 <img src="../../img/Tutorial/01_unity.png">
 <p>
 Example of usage in Unity
 </p>
 </div>
 <h2>About Sample Effects</h2>
-<p>Efekseer's official site has many sample effects. These can be used without any restriction. You may use them as is for a movie or a game, or as the basis for new materials that you create yourself. The sky is the limit!</p>
-<div align="center">
+<p>Efekseer’s official site has many sample effects. These can be used without any restriction. You may use them as is for a movie or a game, or as the basis for new materials that you create yourself. The sky is the limit!</p>
+<div data-align="center">
 <img src="../../img/Tutorial/01_samples_01.gif"> <img src="../../img/Tutorial/01_samples_02.gif"> <img src="../../img/Tutorial/01_samples_03.gif">
 <p>
 Sample Collection
 </p>
 </div>
-<p>It isn't mandatory, but it would be appreciated if you include the name of the author who created any sample effects you use.</p>
+<p>It isn’t mandatory, but it would be appreciated if you include the name of the author who created any sample effects you use.</p>
 <p>You can also use sample effects as a reference feor ideas about how to create your own effects. It might be overwhelming for a beginner to figure out how a certain effect was done, but in the next chapter we will take a look at how to create effects to give you a better idea of what to look for in these sample files.</p>
 <h2>Summary</h2>
 <p>In this chapter, we explored the basic usage of Effekseer and the basics of playing effects in external applications. In the next chapter, we will take a look at how to create our own effects.</p>

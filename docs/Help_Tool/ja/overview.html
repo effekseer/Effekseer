@@ -22,13 +22,13 @@
 
 		<h3>編集ツール(macOS)</h3>
 
-<p>macOS 10.13 High Sierra以降のPC</p>
+<p>macOS Sierra以降のPC</p>
 
 <p>もし起動しない場合は下記のリンクからmonoをインストールしてください。</p>
 
 <a href="https://www.mono-project.com/">mono</a>
 
-		<h3>ランタイム(公式)</h3>
+		<h3>ランタイム</h3>
 		<ul>
 <li>DirectX9(ShaderModel2.0以上)</li>
 <li>DirectX11(ShaderModel2.0以上)</li>
@@ -54,7 +54,7 @@
 		また、<a href="https://directxtk.codeplex.com/">DirectX Tool Kit</a>を使用しております。
 		</p>
 		<p>
-		テクスチャ及びエフェクトのデータはEffekseerと共に使用する場合、もしくはEffekseerから出力した画像、映像を使用する場合のみ、ご自由にお使いください。
+		テクスチャ及びエフェクトのデータはCC-0です。ご自由にお使いください。
 		</p>
 
 		<h2>免責事項</h2>
@@ -79,6 +79,7 @@ effekseer(at)gmail.com
     <li>lltcggie</li>
     <li>Javel</li>
     <li>kage3</li>
+    <li>Tiffanyx</li>
 </ul>
 
 <h3>翻訳</h3>
@@ -99,9 +100,13 @@ effekseer(at)gmail.com
     <li>日陰者ピエール</li>
     <li>鈴木克史</li>
     <li>AndrewFM</li>
+    <li>tktk</li>
 </ul>
 
-		<h2>著作権表示</h2>
+        <h2>著作権表示</h2>
+        
+<h3>ライセンス(ランタイム)</h3>
+
 <pre>
 
 The MIT License (MIT)
@@ -126,6 +131,37 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+DirectX Tool Kit
+https://directxtk.codeplex.com/
+Microsoft Public License (Ms-PL)
+
+</pre>
+
+<h3>ライセンス(ツール)</h3>
+
+<pre>
+
+The MIT License (MIT)
+
+Copyright (c) 2011 Effekseer Project
+        
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+        
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+        
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+         
 DirectX Tool Kit
 https://directxtk.codeplex.com/
 Microsoft Public License (Ms-PL)
@@ -328,9 +364,35 @@ FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
 
 </pre>
-	</div>
-    
+
     <h2>更新履歴</h2>
+
+    <h3>1.42b（18/09/25）</h3>
+    <li>不具合修正：コマンドラインに関する様々な不具合の修正</li>
+
+    <h3>1.42a（18/09/16）</h3>
+    <li>不具合修正：ピッチを変更すると落ちる不具合修正</li>
+
+    <h3>1.42（18/09/16）</h3>
+    <li>不具合修正：展開していないノードツリービューのノードを選択できない不具合を修正</li>
+    <li>不具合修正：振る舞い、カリング、全体に関する様々な不具合を修正</li>
+
+    <h3>1.41（18/09/13）</h3>
+    <li>不具合修正：UIの表示が崩れる不具合の修正(Mac)</li>
+    <li>不具合修正：ドックパネルの挙動がおかしい不具合の修正</li>
+    <li>不具合修正：ノードの貼り付けで落ちる不具合の修正</li>
+
+    <h3>1.40（18/09/12）</h3>
+    <li>ツール：UIの一新</li>
+    <li>ツール：FBXローダーの改良。アニメーションありFBXを読み込めるように</li>
+    <li>ツール：深度に関するパラメーターの追加</li>
+    <li>ツール：ランダムに関するパラメーターの追加</li>
+    <li>ツール：軌跡とリボンをスムーズにするパラメーターの追加</li>
+    <li>ツール：自己歪みの追加</li>
+    <li>ランタイム：スマートフォン上のパフォーマンス改善</li>
+    <li>ランタイム：全環境上でのパフォーマンス改善</li>
+    <li>不具合修正：1フレーム、パーティクルの生成が遅れる不具合の修正</li>
+
     <h3>1.32（17/11/21）</h3>
     <li>不具合修正：FBXコンバーターの不具合を修正</li>
 
@@ -578,7 +640,8 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <li>とりあえず使用可能</li>
     </ul>
     
-
+	</div>
+    
     
     
     </div>

@@ -6895,6 +6895,18 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextDockTabToolT
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetDockActive___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->GetDockActive();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetDockActive___(void * jarg1) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   
@@ -7174,6 +7186,24 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_show___(char16_t * j
   result = (efk::DialogSelection)efk::GUIManager::show((char16_t const *)arg1,(char16_t const *)arg2,arg3,arg4);
   jresult = (int)result; 
   return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsMacOSX___() {
+  unsigned int jresult ;
+  bool result;
+  
+  result = (bool)efk::GUIManager::IsMacOSX();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetIniFilename___(char16_t * jarg1) {
+  char16_t *arg1 = (char16_t *) 0 ;
+  
+  arg1 = (char16_t *)jarg1; 
+  efk::GUIManager::SetIniFilename((char16_t const *)arg1);
 }
 
 

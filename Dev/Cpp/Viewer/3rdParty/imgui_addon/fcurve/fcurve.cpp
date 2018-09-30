@@ -668,7 +668,7 @@ namespace ImGui
 
 				if (isDrawPositionRequired)
 				{
-					DrawMaker(window, pos, pointSize, 0x55FFFFFF, 2);
+					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 2);
 
 					char text[255];
 					sprintf(text, "(%.3f, %.3f)", keys[i], values[i]);
@@ -832,7 +832,7 @@ namespace ImGui
 
 				if (isDrawPositionRequired)
 				{
-					DrawMaker(window, pos, pointSize, 0x55FFFFFF, 2);
+					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 2);
 
 					char text[255];
 					sprintf(text, "(%.3f, %.3f)", leftHandleKeys[i], leftHandleValues[i]);
@@ -923,7 +923,7 @@ namespace ImGui
 
 				if (isDrawPositionRequired)
 				{
-					DrawMaker(window, pos, pointSize, 0x55FFFFFF, 2);
+					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 2);
 
 					char text[255];
 					sprintf(text, "(%.3f, %.3f)", rightHandleKeys[i], rightHandleValues[i]);
@@ -1410,17 +1410,17 @@ namespace ImGui
 					int pointSize = 3;
 					auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 
-					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 3);
+					DrawMaker(window, pos, pointSize, 0xEEFFFFFF, 3);
 
-					window->DrawList->AddLine(transform_f2s(ImVec2(leftHandleKeys[i], leftHandleValues[i])), pos, 0x55FFFFFF);
-					window->DrawList->AddLine(transform_f2s(ImVec2(rightHandleKeys[i], rightHandleValues[i])), pos, 0x55FFFFFF);
+					window->DrawList->AddLine(transform_f2s(ImVec2(leftHandleKeys[i], leftHandleValues[i])), pos, 0xEEFFFFFF);
+					window->DrawList->AddLine(transform_f2s(ImVec2(rightHandleKeys[i], rightHandleValues[i])), pos, 0xEEFFFFFF);
 				}
 				else
 				{
 					int pointSize = 2;
 					auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 
-					DrawMaker(window, pos, pointSize, 0x55FFFFFF, 2);
+					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 2);
 				}
 			}
 		}

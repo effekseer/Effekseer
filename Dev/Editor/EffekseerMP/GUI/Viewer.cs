@@ -357,7 +357,8 @@ namespace Effekseer.GUI
 			}
 
 			if (native.CreateWindow_Effekseer(
-				handle, width <= 0 ? 1 : width,
+				handle, 
+				width <= 0 ? 1 : width,
 				height <= 0 ? 1 : height,
 				Core.Option.ColorSpace.Value == Data.OptionValues.ColorSpaceType.LinearSpace,
 				deviceType))
@@ -367,7 +368,15 @@ namespace Effekseer.GUI
 			}
 			else
 			{
-				Core.OnOutputMessage("描画画面の生成に失敗しました。DirectXのバージョンの問題、メモリの不足等が考えられます。");
+				if(Core.Language == Language.Japanese)
+				{
+					Core.OnOutputMessage("描画画面の生成に失敗しました。DirectXのバージョンの問題、メモリの不足等が考えられます。");
+				}
+				else
+				{
+					Core.OnOutputMessage("Failed to generate drawing screen. DirectX version problems, memory shortage, and so on.");
+
+				}
 			}
 
 			return false;

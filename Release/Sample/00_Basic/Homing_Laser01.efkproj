@@ -17,7 +17,7 @@
           <ColorTexture>Texture/Particle01.png</ColorTexture>
           <AlphaBlend>2</AlphaBlend>
         </RendererCommonValues>
-        <Name>レーザー発射元</Name>
+        <Name>LaserEmitter</Name>
         <Children />
       </Node>
       <Node>
@@ -78,12 +78,12 @@
             </ColorAll_Fixed>
           </Sprite>
         </DrawingValues>
-        <Name>レーザー先頭</Name>
+        <Name>LaserHead</Name>
         <Children>
           <Node>
             <CommonValues>
               <MaxGeneration>
-                <Value>100</Value>
+                <Value>180</Value>
               </MaxGeneration>
               <LocationEffectType>1</LocationEffectType>
               <Life>
@@ -111,7 +111,7 @@
                 </ColorAll_Fixed>
               </Ribbon>
             </DrawingValues>
-            <Name>レーザー軌跡</Name>
+            <Name>LaserTrack</Name>
             <Children />
           </Node>
         </Children>
@@ -123,9 +123,9 @@
       <Y>15</Y>
     </TargetLocation>
   </Behavior>
-  <ToolVersion>0.620</ToolVersion>
+  <ToolVersion>1.32</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>300</EndFrame>
-  <IsLoop>False</IsLoop>
+  <IsLoop>True</IsLoop>
 </EffekseerProject>

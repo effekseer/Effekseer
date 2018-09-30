@@ -99,7 +99,6 @@ namespace Effekseer.GUI.Dock
 			var invalidValue = "/";
 			var selectedInd = selected.Item1 != null ? selected.Item2.GetSelectedIndex() : -1;
 
-			
 			// line 1
 			Manager.NativeManager.Columns(5);
 
@@ -331,7 +330,19 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.Columns(2);
 
-			if(isFirstUpdate)
+			// hot key
+			if (IsDockActive() && canControl)
+			{
+				int delete_num = 261;
+
+				if(Manager.NativeManager.IsKeyDown(delete_num))
+				{
+					// todo canControl = false;
+				}
+			}
+
+
+			if (isFirstUpdate)
 			{
 				Manager.NativeManager.SetColumnWidth(0, 200);
 			}
@@ -1193,7 +1204,10 @@ namespace Effekseer.GUI.Dock
 				{
 					if (!properties[i].IsShown) continue;
 
-					properties[i].Update(fcurves[i]);
+					if(!properties[i].IsDirtied)
+					{
+						properties[i].CopyValuesFromDataIfSizeDifferent(fcurves[i]);
+					}
 
 					int newCount = -1;
 					float movedX = 0;
@@ -1358,6 +1372,9 @@ namespace Effekseer.GUI.Dock
 			{
 				foreach (var prop in properties)
 				{
+					if (!prop.IsShown) continue;
+					if (!prop.Selected) continue;
+
 					for (int i = 0; i < prop.KVSelected.Length - 1; i++)
 					{
 						if (prop.KVSelected[i] == 0) continue;
@@ -1377,6 +1394,9 @@ namespace Effekseer.GUI.Dock
 			{
 				foreach(var prop in properties)
 				{
+					if (!prop.IsShown) continue;
+					if (!prop.Selected) continue;
+
 					for (int i = 0; i < prop.KVSelected.Length - 1; i++)
 					{
 						if (prop.KVSelected[i] == 0) continue;
@@ -1472,7 +1492,7 @@ namespace Effekseer.GUI.Dock
 				properties[i].RightValues = new float[0];
 				properties[i].Interpolations = new int[0];
 				//properties[i].KVSelected = new byte[0];
-				properties[i].Update(fcurves[i]);
+				properties[i].CopyValuesFromDataIfSizeDifferent(fcurves[i]);
 			}
 
 			public override void Unselect()
@@ -1651,41 +1671,41 @@ namespace Effekseer.GUI.Dock
 				return -1;
 			}
 
-			public void Update<T>(Data.Value.FCurve<T> fcurve) where T : struct, IComparable<T>, IEquatable<T>
+			public void CopyValuesFromDataIfSizeDifferent<T>(Data.Value.FCurve<T> fcurve) where T : struct, IComparable<T>, IEquatable<T>
 			{
 				var plength = fcurve.Keys.Count() + 1;
 
-				if (Keys.Length < plength)
+				if (Keys.Length != plength)
 				{
 					var keyFrames = fcurve.Keys.ToArray();
 					Keys = keyFrames.Select(_ => (float)_.Frame).Concat(new float[] { 0.0f }).ToArray();
 				}
 
-				if (Values.Length < plength)
+				if (Values.Length != plength)
 				{
 					var keyFrames = fcurve.Keys.ToArray();
 					Values = keyFrames.Select(_ => _.ValueAsFloat).Concat(new float[] { 0.0f }).ToArray();
 				}
 
-				if (LeftKeys.Length < plength)
+				if (LeftKeys.Length != plength)
 				{
 					var keyFrames = fcurve.Keys.ToArray();
 					LeftKeys = keyFrames.Select(_ => _.LeftX).Concat(new float[] { 0.0f }).ToArray();
 				}
 
-				if (LeftValues.Length < plength)
+				if (LeftValues.Length != plength)
 				{
 					var keyFrames = fcurve.Keys.ToArray();
 					LeftValues = keyFrames.Select(_ => _.LeftY).Concat(new float[] { 0.0f }).ToArray();
 				}
 
-				if (RightKeys.Length < plength)
+				if (RightKeys.Length != plength)
 				{
 					var keyFrames = fcurve.Keys.ToArray();
 					RightKeys = keyFrames.Select(_ => _.RightX).Concat(new float[] { 0.0f }).ToArray();
 				}
 
-				if (RightValues.Length < plength)
+				if (RightValues.Length != plength)
 				{
 					var keyFrames = fcurve.Keys.ToArray();
 					RightValues = keyFrames.Select(_ => _.RightY).Concat(new float[] { 0.0f }).ToArray();
@@ -1698,7 +1718,7 @@ namespace Effekseer.GUI.Dock
 					KVSelected = new_selected;
 				}
 
-				if (Interpolations.Length < plength)
+				if (Interpolations.Length != plength)
 				{
 					var keyFrames = fcurve.Keys.ToArray();
 

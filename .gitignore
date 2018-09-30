@@ -20,11 +20,25 @@
 *.log
 *.cache
 *.user
+*.sdf
+*.db
+*.pdb
+*.opendb
+*.vspx
+*.exp
 .DS_Store
 
 [Oo]bj/
+CMakeFiles/
 
+Debug*/
 Release/RuntimeSample/lib/*.lib
+Dev/release/*.exe
+Dev/release/*.lib
+Dev/release/*.dll
+Dev/release/*.config
+Dev/release/*.xml
 
 Dev/Cpp/include/
 Dev/Cpp/lib/
+Downloads/*/

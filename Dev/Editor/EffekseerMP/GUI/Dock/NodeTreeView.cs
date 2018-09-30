@@ -446,11 +446,7 @@ namespace Effekseer.GUI.Dock
             {
 				IsExpanding = true;
 
-				if(Manager.NativeManager.IsItemClicked(0) ||
-					Manager.NativeManager.IsItemClicked(1))
-				{
-					Core.SelectedNode = this.Node;
-				}
+				SelectNodeIfClicked();
 
 				treeView.Popup();
 				
@@ -492,6 +488,8 @@ namespace Effekseer.GUI.Dock
 			{
 				IsExpanding = false;
 
+				SelectNodeIfClicked();
+
 				//UpdateDDTarget(true);
 
 				treeView.Popup();
@@ -501,6 +499,15 @@ namespace Effekseer.GUI.Dock
 				UpdateVisibleButton();
 
 				Manager.NativeManager.NextColumn();
+			}
+		}
+
+		private void SelectNodeIfClicked()
+		{
+			if (Manager.NativeManager.IsItemClicked(0) ||
+				Manager.NativeManager.IsItemClicked(1))
+			{
+				Core.SelectedNode = this.Node;
 			}
 		}
 

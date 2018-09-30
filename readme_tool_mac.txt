@@ -14,7 +14,7 @@ When playing in the game, please download other runtime, Unity, DX library etc p
 
 * Operating environment
 
-- macOS 10.13 High Sierra or later PC
+- macOS 10.12 Sierra or later PC
 
 *Required runtime
 
@@ -68,7 +68,7 @@ Effekseerをダウンロードしていただきありがとうございます。
 
 
 ■　動作環境
--macOS 10.13 High Sierra以降のPC
+-macOS 10.12 Sierra以降のPC
 
 
 ■　必要ランタイム

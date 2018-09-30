@@ -83,6 +83,45 @@ Instance::~Instance()
 	}
 }
 
+void Instance::GenerateChildrenInRequired(float currentTime)
+{
+	auto instanceGlobal = this->m_pContainer->GetRootInstance();
+
+	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
+
+	InstanceGroup* group = m_headGroups;
+
+	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
+	{
+		auto node = (EffectNodeImplemented*)parameter->GetChild(i);
+		auto container = m_pContainer->GetChild(i);
+		assert(group != NULL);
+
+		while (true)
+		{
+			// GenerationTimeOffset can be minus value.
+			// Minus frame particles is generated simultaniously at frame 0.
+			if (node->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
+				m_nextGenerationTime[i] <= currentTime)
+			{
+				// Create a particle
+				auto newInstance = group->CreateInstance();
+				if (newInstance != nullptr)
+				{
+					newInstance->Initialize(this, m_generatedChildrenCount[i], std::max(0.0f, this->m_LivingTime));
+				}
+
+				m_generatedChildrenCount[i]++;
+				m_nextGenerationTime[i] += Max(0.0f, node->CommonValues.GenerationTime.getValue(*instanceGlobal));
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -102,7 +141,7 @@ const Matrix43& Instance::GetGlobalMatrix43() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Instance::Initialize( Instance* parent, int32_t instanceNumber )
+void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t parentTime)
 {
 	assert(this->m_pContainer != nullptr);
 	
@@ -155,6 +194,8 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 		// 親の初期化
 		m_ParentMatrix43 = GetGlobalMatrix43();
 
+		// Generate zero frame effect
+		GenerateChildrenInRequired(0.0f);
 		return;
 	}
 	
@@ -471,7 +512,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				{
 					emitter = model->GetEmitter( 
 						instanceGlobal, 
-						m_LivingTime,
+						parentTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
 				}
@@ -479,7 +520,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				{
 					emitter = model->GetEmitterFromVertex( 
 						instanceNumber,
-						m_LivingTime,
+						parentTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
 				}
@@ -487,7 +528,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				{
 					emitter = model->GetEmitterFromVertex( 
 						instanceGlobal,
-						m_LivingTime,
+						parentTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
 				}
@@ -495,7 +536,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				{
 					emitter = model->GetEmitterFromFace( 
 						instanceNumber,
-						m_LivingTime,
+						parentTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
 				}
@@ -503,7 +544,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 				{
 					emitter = model->GetEmitterFromFace( 
 						instanceGlobal,
-						m_LivingTime,
+						parentTime,
 						m_pManager->GetCoordinateSystem(), 
 						((EffectImplemented*)m_pEffectNode->GetEffect())->GetMaginification() );
 				}
@@ -614,39 +655,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber )
 	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
 
 	// Generate zero frame effect
-	{
-		InstanceGroup* group = m_headGroups;
-
-		for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
-		{
-			auto node = (EffectNodeImplemented*) parameter->GetChild(i);
-			auto container = m_pContainer->GetChild(i);
-			assert(group != NULL);
-
-			while (true)
-			{
-				// GenerationTimeOffset can be minus value.
-				// Minus frame particles is generated simultaniously at frame 0.
-				if (node->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
-					m_nextGenerationTime[i] <= 0.0f)
-				{
-					// Create a particle
-					auto newInstance = group->CreateInstance();
-					if (newInstance != nullptr)
-					{
-						newInstance->Initialize(this, m_generatedChildrenCount[i]);
-					}
-
-					m_generatedChildrenCount[i]++;
-					m_nextGenerationTime[i] += Max(0.0f, node->CommonValues.GenerationTime.getValue(*instanceGlobal));
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-	}
+	GenerateChildrenInRequired(0.0f);
 }
 
 //----------------------------------------------------------------------------------
@@ -711,9 +720,13 @@ void Instance::Update( float deltaFrame, bool shown )
 		m_LivingTime += deltaFrame;
 	}
 
-	// 子の処理
+	// Create child particles
 	if( m_stepTime && (originalTime <= m_LivedTime || !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct) )
 	{
+		GenerateChildrenInRequired(originalTime + deltaFrame);
+
+
+		/*
 		InstanceGroup* group = m_headGroups;
 
 		for (int i = 0; i < m_pEffectNode->GetChildrenCount(); i++, group = group->NextUsedByInstance)
@@ -748,6 +761,7 @@ void Instance::Update( float deltaFrame, bool shown )
 				}
 			}
 		}
+		*/
 	}
 	
 	// 死亡判定

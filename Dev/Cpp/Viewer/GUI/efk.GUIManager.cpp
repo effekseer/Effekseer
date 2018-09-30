@@ -462,7 +462,8 @@ namespace efk
 		if (deviceType == DeviceType::OpenGL)
 		{
 			ImGuiIO& io = ImGui::GetIO();
-			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+			// It causes bugs on some mac pc
+			//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 #if __APPLE__
             // GL 3.2 + GLSL 150
@@ -673,6 +674,11 @@ namespace efk
 	const char16_t* GUIManager::GetClipboardText()
 	{
 		auto ret = glfwGetClipboardString(window->GetGLFWWindows());
+		if (ret == nullptr)
+		{
+			static std::u16string empty;
+			return empty.c_str();
+		}
 		clipboard = utf8_to_utf16(ret);
 		return clipboard.c_str();
 	}
@@ -1390,6 +1396,11 @@ namespace efk
 		ImGui::SetNextDockTabToolTip(utf8str<256>(popup));
 	}
 
+	bool GUIManager::GetDockActive()
+	{
+		return ImGui::GetDockActive();
+	}
+
 	void GUIManager::SetDockActive()
 	{
 		ImGui::SetDockActive();
@@ -1504,6 +1515,21 @@ namespace efk
                                             (boxer::Style)style,
                                             (boxer::Buttons)buttons);
     }
+
+	bool GUIManager::IsMacOSX()
+	{
+#if __APPLE__
+		return true;
+#else
+		return false;
+#endif
+	}
+
+	void GUIManager::SetIniFilename(const char16_t* filename)
+	{
+		static std::string filename_ = std::string(utf8str<256>(filename));
+		ImGui::GetIO().IniFilename = filename_.c_str();
+	}
 
 	int GUIManager::GetLanguage()
 	{
