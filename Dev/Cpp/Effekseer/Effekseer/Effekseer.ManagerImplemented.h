@@ -553,10 +553,9 @@ public:
 
 	void DrawHandleFront(Handle handle) override;
 
-	/**
-		@brief	再生
-	*/
 	Handle Play( Effect* effect, float x, float y, float z );
+
+	Handle Play(Effect* effect, const Vector3D& position, int32_t startFrame) override;
 	
 	/**
 		@brief	Update処理時間を取得。

@@ -1528,14 +1528,16 @@ void ManagerImplemented::DrawFront()
 	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Handle ManagerImplemented::Play( Effect* effect, float x, float y, float z )
 {
-	if( effect == NULL ) return -1;
-	
-	auto e = (EffectImplemented*) effect;
+	return Play(effect, Vector3D(x, y, z), 0);
+}
+
+Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_t startFrame)
+{
+	if (effect == nullptr) return -1;
+
+	auto e = (EffectImplemented*)effect;
 
 	// Create root
 	InstanceGlobal* pGlobal = new InstanceGlobal();
@@ -1556,25 +1558,28 @@ Handle ManagerImplemented::Play( Effect* effect, float x, float y, float z )
 	}
 
 	// Create an instance through a container
-	InstanceContainer* pContainer = CreateInstanceContainer( ((EffectImplemented*)effect)->GetRoot(), pGlobal, true, NULL );
-	
+	InstanceContainer* pContainer = CreateInstanceContainer(((EffectImplemented*)effect)->GetRoot(), pGlobal, true, NULL);
+
 	Instance* pInstance = pContainer->GetFirstGroup()->GetFirst();
 
-	pInstance->m_GlobalMatrix43.Value[3][0] = x;
-	pInstance->m_GlobalMatrix43.Value[3][1] = y;
-	pInstance->m_GlobalMatrix43.Value[3][2] = z;
+	pInstance->m_GlobalMatrix43.Value[3][0] = position.X;
+	pInstance->m_GlobalMatrix43.Value[3][1] = position.Y;
+	pInstance->m_GlobalMatrix43.Value[3][2] = position.Z;
 
-	Handle handle = AddDrawSet( effect, pContainer, pGlobal );
+	Handle handle = AddDrawSet(effect, pContainer, pGlobal);
 
-	m_DrawSets[handle].GlobalMatrix = pInstance->m_GlobalMatrix43;
-	m_DrawSets[handle].IsParameterChanged = true;
+	auto& drawSet = m_DrawSets[handle];
+	drawSet.GlobalMatrix = pInstance->m_GlobalMatrix43;
+	drawSet.IsParameterChanged = true;
+
+	for (int32_t frame = 0; frame < startFrame; frame++)
+	{
+		UpdateHandle(drawSet, 1);
+	}
 
 	return handle;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void ManagerImplemented::DrawHandle( Handle handle )
 {
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
