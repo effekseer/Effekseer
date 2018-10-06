@@ -2060,6 +2060,22 @@ public:
 	virtual Handle Play( Effect* effect, float x, float y, float z ) = 0;
 	
 	/**
+		@brief
+		\~English	Play an effect.
+		\~Japanese	エフェクトを再生する。
+		@param	effect
+		\~English	Played effect
+		\~Japanese	再生されるエフェクト
+		@param	position
+		\~English	Initial position
+		\~Japanese	初期位置
+		@param	startFrame
+		\~English	A time to play from middle
+		\~Japanese	途中から再生するための時間
+	*/
+	virtual Handle Play(Effect* effect, const Vector3D& position, int32_t startFrame = 0) = 0;
+
+	/**
 		@brief	Update処理時間を取得。
 	*/
 	virtual int GetUpdateTime() const = 0;

@@ -689,9 +689,6 @@ namespace ImGui
 					if (changedType != nullptr)
 					{
 						(*changedType) = 0;
-
-						if (movedX != nullptr) (*movedX) = dx / scale_x;
-						if (movedY != nullptr) (*movedY) = -dy / scale_y;
 					}
 
 					break;
@@ -701,6 +698,25 @@ namespace ImGui
 			// move points acctually
 			if (movedIndex >= 0)
 			{
+				// calculate dx, dy on a field.
+				auto fd = moveFWithS(ImVec2(0, 0), ImVec2(dx, dy));
+
+				// make int
+				auto mousePos = GetMousePos();
+				auto f_mousePos = transform_s2f(mousePos);
+				if (keys[movedIndex] <= f_mousePos.x && 0 < fd.x)
+				{
+					fd.x = 1;
+				}
+				else if (keys[movedIndex] >= f_mousePos.x && 0 > fd.x)
+				{
+					fd.x = -1;
+				}
+				else
+				{
+					fd.x = 0;
+				}
+				
 				for (int i = 0; i < count; i++)
 				{
 					if (!kv_selected[i]) continue;
@@ -709,23 +725,16 @@ namespace ImGui
 					auto center_v = moveFWithS(ImVec2(keys[i], values[i]), ImVec2(dx, dy));
 					center_v.y = std::max(std::min(center_v.y, v_max), v_min);
 
-					keys[i] = center_v.x;
-					values[i] = center_v.y;
-					
-					auto diff_x = center_v.x - pre_center_v.x;
-					auto diff_y = center_v.y - pre_center_v.y;
-					
-					{
-						leftHandleKeys[i] += diff_x;
-						leftHandleValues[i] += diff_y;						
-					}
-
-					{
-						auto v = moveFWithS(ImVec2(rightHandleKeys[i], rightHandleValues[i]), ImVec2(dx, dy));
-						rightHandleKeys[i] += diff_x;
-						rightHandleValues[i] += diff_y;
-					}
+					keys[i] += fd.x;
+					values[i] += fd.y;
+					leftHandleKeys[i] += fd.x;
+					leftHandleValues[i] += fd.y;
+					rightHandleKeys[i] += fd.x;
+					rightHandleValues[i] += fd.y;
 				}
+
+				if (movedX != nullptr) (*movedX) = fd.x;
+				if (movedY != nullptr) (*movedY) = fd.y;
 
 				ClampHandles(keys, values, leftHandleKeys, leftHandleValues, rightHandleKeys, rightHandleValues, count);
 
@@ -1164,6 +1173,9 @@ namespace ImGui
 			{
 				auto mousePos = GetMousePos();
 				auto v = transform_s2f(mousePos);
+
+				// make int
+				v.x = (int32_t)(v.x + 0.5);
 
 				if (v.x < keys[0])
 				{
