@@ -165,7 +165,7 @@ namespace efk
 		renderer->BeginShader(shaderExtract.get());
 		renderer->GetContext()->IASetInputLayout(shaderExtract->GetLayoutInterface());
 		{
-			const float knee = threshold * (1.0f - softKnee);
+			const float knee = threshold * softKnee;
 			const float constantData[8] = {
 				threshold, 
 				threshold - knee, 

@@ -238,7 +238,7 @@ void main() {
 		renderer->SetVertexArray(vaoExtract.get());
 		renderer->BeginShader(shaderExtract.get());
 		{
-			const float knee = threshold * (1.0f - softKnee);
+			const float knee = threshold * softKnee;
 			const float constantData[8] = {
 				threshold, 
 				threshold - knee, 
