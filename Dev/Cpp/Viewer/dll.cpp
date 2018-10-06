@@ -1955,6 +1955,16 @@ float Native::GetFPS()
 	return 60.0;
 }
 
+void Native::SetBloomParameters(bool enabled, float intensity, float threshold, float softKnee)
+{
+	auto bloom = g_renderer->GetBloomEffect();
+	if (bloom)
+	{
+		bloom->SetEnabled(enabled);
+		bloom->SetParameters(intensity, threshold, softKnee);
+	}
+}
+
 EffekseerRenderer::Renderer* Native::GetRenderer()
 {
 	return g_renderer->GetRenderer();

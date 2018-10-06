@@ -13,7 +13,7 @@
 namespace efk
 {
 	class BloomEffectGL
-		: public PostEffect
+		: public BloomEffect
 	{
 		static const int BlurBuffers = 2;
 		static const int BlurIterations = 4;

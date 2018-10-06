@@ -124,6 +124,7 @@ namespace Effekseer.GUI
 			typeof(Dock.ViewPoint),
 			typeof(Dock.Recorder),
 			typeof(Dock.Option),
+			typeof(Dock.PostEffect),
 			typeof(Dock.GlobalValues),
 			typeof(Dock.BehaviorValues),
 			typeof(Dock.Culling),

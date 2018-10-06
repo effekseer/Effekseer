@@ -44,7 +44,7 @@ namespace efk
 	}
 
 	BloomEffectDX11::BloomEffectDX11(Graphics* graphics)
-		: PostEffect(graphics)
+		: BloomEffect(graphics)
 	{
 		using namespace Effekseer;
 		using namespace EffekseerRendererDX11;
@@ -62,7 +62,7 @@ namespace efk
 			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
 			PostFX_Extract_PS::g_PS, sizeof(PostFX_Extract_PS::g_PS),
 			"Bloom extract", decl, 2));
-		shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 4);
+		shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
 		shaderExtract->SetPixelRegisterCount(1);
 
 		// Copy shader
@@ -130,11 +130,13 @@ namespace efk
 
 	void BloomEffectDX11::Render()
 	{
+		if( !enabled )
+		{
+			return;
+		}
+
 		using namespace Effekseer;
 		using namespace EffekseerRendererDX11;
-
-		float threshold = 1.0f;
-		float softKnee = 0.8f;
 
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
 		auto renderTexture = graphics->GetRenderTexture();
@@ -164,8 +166,14 @@ namespace efk
 		renderer->GetContext()->IASetInputLayout(shaderExtract->GetLayoutInterface());
 		{
 			const float knee = threshold * (1.0f - softKnee);
-			const float filterParams[4] = {threshold, threshold - knee, knee * 2.0f, 0.25f / (knee + 0.00001f)};
-			memcpy(shaderExtract->GetPixelConstantBuffer(), filterParams, sizeof(filterParams));
+			const float constantData[8] = {
+				threshold, 
+				threshold - knee, 
+				knee * 2.0f, 
+				0.25f / (knee + 0.00001f),
+				intensity,
+			};
+			memcpy(shaderExtract->GetPixelConstantBuffer(), constantData, sizeof(constantData));
 			shaderExtract->SetConstantBuffer();
 			graphics->SetRenderTarget(extractBuffer.get(), nullptr);
 			ID3D11ShaderResourceView* textures[1] = {

@@ -294,6 +294,8 @@ public:
 
 	float GetFPS();
 
+	void SetBloomParameters(bool enabled, float intensity, float threshold, float softKnee);
+
 #if !SWIG
 	EffekseerRenderer::Renderer* GetRenderer();
 #endif

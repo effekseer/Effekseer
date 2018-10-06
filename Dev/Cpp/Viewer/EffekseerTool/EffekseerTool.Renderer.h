@@ -55,7 +55,7 @@ private:
 	::EffekseerRenderer::Guide*	m_guide;
 	::EffekseerRenderer::Culling*	m_culling;
 	::EffekseerRenderer::Paste*	m_background;
-	efk::PostEffect* m_bloomEffect;
+	efk::BloomEffect* m_bloomEffect;
 
 	bool		m_recording = false;
 	int32_t		m_recordingWidth = 0;
@@ -254,6 +254,8 @@ public:
 	uint64_t GetViewID();
 
 	efk::Graphics* GetGraphics() const { return graphics; }
+
+	efk::BloomEffect* GetBloomEffect() const { return m_bloomEffect; }
 
 	/**
 		Called when device is losted.

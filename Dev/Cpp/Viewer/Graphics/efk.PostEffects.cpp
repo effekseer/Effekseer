@@ -9,7 +9,7 @@
 
 namespace efk
 {
-	PostEffect* PostEffect::CreateBloom(Graphics* graphics)
+	BloomEffect* PostEffect::CreateBloom(Graphics* graphics)
 	{
 #ifdef _WIN32
 		if (graphics->GetDeviceType() == DeviceType::DirectX9)

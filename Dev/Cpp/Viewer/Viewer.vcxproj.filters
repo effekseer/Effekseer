@@ -259,9 +259,6 @@
     <ClCompile Include="3rdParty\nfd\nfd_win.cpp">
       <Filter>3rdParty\nfd</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\efk.FileDialog.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics\efk.GifHelper.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -315,6 +312,9 @@
     </ClCompile>
     <ClCompile Include="Graphics\Platform\DX11\efk.PostEffectsDX11.cpp">
       <Filter>Graphics\Platform\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\efk.FileDialog.cpp">
+      <Filter>GUI\Platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

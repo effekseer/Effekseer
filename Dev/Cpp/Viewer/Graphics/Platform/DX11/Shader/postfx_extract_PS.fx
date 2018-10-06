@@ -2,7 +2,8 @@
 Texture2D		g_texture		: register( t0 );
 SamplerState	g_sampler		: register( s0 );
 
-float4		g_filterParams			: register(c0);
+float4		g_filterParams		: register( c0 );
+float4		g_intensity			: register( c1 );
 
 struct PS_Input
 {
@@ -19,5 +20,5 @@ float4 PS( const PS_Input Input ) : SV_Target
 	soft = soft * soft * g_filterParams.w;
 	float contribution = max(soft, brightness - g_filterParams.x);
 	contribution /= max(brightness, 0.00001);
-	return float4(color.rgb * contribution, 1.0);
+	return float4(color.rgb * contribution * g_intensity.x, 1.0);
 }

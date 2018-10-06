@@ -35,6 +35,7 @@ R"(
 IN vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 uniform vec4 u_FilterParams;
+uniform vec4 u_Intensity;
 void main() {
 	vec3 color = TEX2D(u_Texture0, v_TexCoord).rgb;
 	float brightness = dot(color, vec3(0.299, 0.587, 0.114));
@@ -43,7 +44,7 @@ void main() {
 	soft = soft * soft * u_FilterParams.w;
 	float contribution = max(soft, brightness - u_FilterParams.x);
 	contribution /= max(brightness, 0.00001);
-	FRAGCOLOR = vec4(color.rgb * contribution, 1.0);
+	FRAGCOLOR = vec4(color.rgb * contribution * u_Intensity.x, 1.0);
 }
 )";
 
@@ -111,7 +112,7 @@ void main() {
 	}
 
 	BloomEffectGL::BloomEffectGL(Graphics* graphics)
-		: PostEffect(graphics)
+		: BloomEffect(graphics)
 	{
 		using namespace Effekseer;
 		using namespace EffekseerRendererGL;
@@ -131,9 +132,11 @@ void main() {
 		shaderExtract->GetAttribIdList(2, shaderAttributes);
 		shaderExtract->SetVertexSize(sizeof(Vertex));
 		shaderExtract->SetTextureSlot(0, shaderExtract->GetUniformId("u_Texture0"));
-		shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 4);
+		shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
 		shaderExtract->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, 
 			shaderExtract->GetUniformId("u_FilterParams"), 0);
+		shaderExtract->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, 
+			shaderExtract->GetUniformId("u_Intensity"), 0);
 
 		// Copy shader
 		shaderCopy.reset(Shader::Create(renderer,
@@ -205,11 +208,13 @@ void main() {
 
 	void BloomEffectGL::Render()
 	{
+		if( !enabled )
+		{
+			return;
+		}
+
 		using namespace Effekseer;
 		using namespace EffekseerRendererGL;
-
-		float threshold = 1.0f;
-		float softKnee = 0.8f;
 
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
 		auto renderTexture = graphics->GetRenderTexture();
@@ -234,8 +239,14 @@ void main() {
 		renderer->BeginShader(shaderExtract.get());
 		{
 			const float knee = threshold * (1.0f - softKnee);
-			const float filterParams[4] = {threshold, threshold - knee, knee * 2.0f, 0.25f / (knee + 0.00001f)};
-			memcpy(shaderExtract->GetPixelConstantBuffer(), filterParams, sizeof(filterParams));
+			const float constantData[8] = {
+				threshold, 
+				threshold - knee, 
+				knee * 2.0f, 
+				0.25f / (knee + 0.00001f),
+				intensity,
+			};
+			memcpy(shaderExtract->GetPixelConstantBuffer(), constantData, sizeof(constantData));
 			shaderExtract->SetConstantBuffer();
 			graphics->SetRenderTarget(extractBuffer.get(), nullptr);
 			SetTexture(shaderExtract.get(), 0, (GLuint)renderTexture->GetViewID());

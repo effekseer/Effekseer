@@ -2472,6 +2472,22 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Native_GetFPS___(void * jarg1
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetBloomParameters___(void * jarg1, unsigned int jarg2, float jarg3, float jarg4, float jarg5) {
+  Native *arg1 = (Native *) 0 ;
+  bool arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  (arg1)->SetBloomParameters(arg2,arg3,arg4,arg5);
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GUIManagerCallback___() {
   void * jresult ;
   efk::GUIManagerCallback *result = 0 ;

@@ -75,6 +75,7 @@ Options,Options
 PlayString,Play
 Port,Port
 Position,Position
+PostEffect,Post Effects
 PoVDistance,PoV Distance
 ProjectFilter,efkproj
 Range,Range
