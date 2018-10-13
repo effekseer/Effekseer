@@ -13,16 +13,32 @@
 
 namespace efk
 {
+	class BlitterDX11
+	{
+		struct Vertex {
+			float x, y;
+			float u, v;
+		};
+
+		Graphics* graphics;
+		std::unique_ptr<EffekseerRendererDX11::VertexBuffer> vertexBuffer;
+		ID3D11SamplerState* sampler = nullptr;
+
+	public:
+		BlitterDX11(Graphics* graphics);
+		virtual ~BlitterDX11();
+
+		void Blit(EffekseerRendererDX11::Shader* shader, 
+			int32_t numTextures, ID3D11ShaderResourceView* const* textures, 
+			const void* constantData, size_t constantDataSize, RenderTexture* dest, 
+			Effekseer::AlphaBlendType blendType = Effekseer::AlphaBlendType::Opacity);
+	};
+
 	class BloomEffectDX11
 		: public BloomEffect
 	{
 		static const int BlurBuffers = 2;
 		static const int BlurIterations = 4;
-
-		struct Vertex {
-			float x, y;
-			float u, v;
-		};
 
 		std::unique_ptr<EffekseerRendererDX11::Shader> shaderExtract;
 		std::unique_ptr<EffekseerRendererDX11::Shader> shaderCopy;
@@ -30,9 +46,7 @@ namespace efk
 		std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlurH;
 		std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlurV;
 
-		std::unique_ptr<EffekseerRendererDX11::VertexBuffer> vertexBuffer;
-		ID3D11SamplerState* sampler = nullptr;
-
+		BlitterDX11 blitter;
 		int32_t renderTextureWidth = 0;
 		int32_t renderTextureHeight = 0;
 		std::unique_ptr<RenderTexture> extractBuffer;
@@ -42,7 +56,7 @@ namespace efk
 		BloomEffectDX11(Graphics* graphics);
 		virtual ~BloomEffectDX11();
 
-		void Render() override;
+		void Render(RenderTexture* src, RenderTexture* dest) override;
 
 		void OnLostDevice() override;
 
@@ -51,5 +65,22 @@ namespace efk
 	private:
 		void SetupBuffers(int32_t width, int32_t height);
 		void ReleaseBuffers();
+	};
+
+	class TonemapEffectDX11
+		: public TonemapEffect
+	{
+		std::unique_ptr<EffekseerRendererDX11::Shader> shaderCopy;
+		BlitterDX11 blitter;
+
+	public:
+		TonemapEffectDX11(Graphics* graphics);
+		virtual ~TonemapEffectDX11();
+
+		void Render(RenderTexture* src, RenderTexture* dest) override;
+
+		void OnLostDevice() override {}
+
+		void OnResetDevice() override {}
 	};
 }

@@ -45,7 +45,7 @@ namespace efk
 		BloomEffectGL(Graphics* graphics);
 		virtual ~BloomEffectGL();
 
-		void Render() override;
+		void Render(RenderTexture* src, RenderTexture* dest) override;
 
 		void OnLostDevice() override;
 

@@ -29,4 +29,25 @@ namespace efk
 
 		return nullptr;
 	}
+
+	TonemapEffect* PostEffect::CreateTonemap(Graphics* graphics)
+	{
+#ifdef _WIN32
+		if (graphics->GetDeviceType() == DeviceType::DirectX9)
+		{
+			//return new TonemapEffectDX9(graphics);
+		}
+
+		if (graphics->GetDeviceType() == DeviceType::DirectX11)
+		{
+			return new TonemapEffectDX11(graphics);
+		}
+#endif
+		if (graphics->GetDeviceType() == DeviceType::OpenGL)
+		{
+			//return new TonemapEffectGL(graphics);
+		}
+
+		return nullptr;
+	}
 }

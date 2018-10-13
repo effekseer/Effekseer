@@ -1300,6 +1300,8 @@ bool Native::Record(const char16_t* path, int32_t count, int32_t xCount, int32_t
 
 			g_renderer->EndRendering();
 
+			g_renderer->RenderPostEffect();
+
 			for (int j = 0; j < freq; j++)
 			{
 				g_manager->Update();

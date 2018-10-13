@@ -7,6 +7,7 @@
 namespace efk
 {
 	class BloomEffect;
+	class TonemapEffect;
 
 	class PostEffect
 	{
@@ -16,9 +17,9 @@ namespace efk
 
 	public:
 		PostEffect(Graphics* graphics): graphics(graphics) {}
-		virtual ~PostEffect() {};
+		virtual ~PostEffect() = default;
 
-		virtual void Render() = 0;
+		virtual void Render(RenderTexture* src, RenderTexture* dest) = 0;
 
 		virtual void OnLostDevice() = 0;
 
@@ -27,6 +28,8 @@ namespace efk
 		virtual void SetEnabled(bool enabled) { this->enabled = enabled; }
 
 		static BloomEffect* CreateBloom(Graphics* graphics);
+
+		static TonemapEffect* CreateTonemap(Graphics* graphics);
 	};
 
 	class BloomEffect : public PostEffect
@@ -38,7 +41,7 @@ namespace efk
 
 	public:
 		BloomEffect(Graphics* graphics): PostEffect(graphics) {}
-		virtual ~BloomEffect() {};
+		virtual ~BloomEffect() = default;
 
 		virtual void SetParameters(float intensity, float threshold, float softKnee)
 		{
@@ -46,5 +49,14 @@ namespace efk
 			this->threshold = threshold;
 			this->softKnee = softKnee;
 		}
+	};
+
+	class TonemapEffect : public PostEffect
+	{
+	protected:
+
+	public:
+		TonemapEffect(Graphics* graphics): PostEffect(graphics) {}
+		virtual ~TonemapEffect() = default;
 	};
 }

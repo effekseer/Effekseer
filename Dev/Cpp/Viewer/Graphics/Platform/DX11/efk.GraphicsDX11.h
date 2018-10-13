@@ -29,6 +29,8 @@ namespace efk
 		int32_t GetWidth() { return width; }
 		int32_t GetHeight() { return height; }
 
+		ID3D11Texture2D* GetTexture() const { return texture; }
+
 		ID3D11RenderTargetView* GetRenderTargetView() const { return textureRTV; }
 
 		ID3D11ShaderResourceView* GetShaderResourceView() const { return textureSRV; }
@@ -83,18 +85,16 @@ namespace efk
 		ID3D11Texture2D*		backTexture = nullptr;
 		ID3D11ShaderResourceView*	backTextureSRV = nullptr;
 
-		ID3D11Texture2D*			recordingTexture = nullptr;
-		ID3D11RenderTargetView*		recordingTextureRTV = nullptr;
-		ID3D11Texture2D*			recordingDepthStencil = nullptr;
-		ID3D11DepthStencilView*		recordingDepthStencilView = nullptr;
+		RenderTexture*			recordingTexture = nullptr;
+		DepthTexture*			recordingDepthStencil = nullptr;
 		int32_t				recordingWidth = 0;
 		int32_t				recordingHeight = 0;
 
 		ID3D11RenderTargetView*	currentRenderTargetView = nullptr;
 		ID3D11DepthStencilView*	currentDepthStencilView = nullptr;
 
-		ID3D11RenderTargetView*	backupRenderTargetView = nullptr;
-		ID3D11DepthStencilView*	backupDepthStencilView = nullptr;
+		RenderTexture*	backupRenderTarget = nullptr;
+		DepthTexture*	backupDepthStencil = nullptr;
 
 		/*
 		LPDIRECT3D9			d3d = nullptr;

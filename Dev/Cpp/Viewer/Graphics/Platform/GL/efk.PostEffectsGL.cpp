@@ -206,7 +206,7 @@ void main() {
 	{
 	}
 
-	void BloomEffectGL::Render()
+	void BloomEffectGL::Render(RenderTexture* src, RenderTexture* dest)
 	{
 		if( !enabled )
 		{

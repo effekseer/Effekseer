@@ -64,7 +64,6 @@ namespace EffekseerTool
 		, m_guide(NULL)
 		, m_culling(NULL)
 		, m_background(NULL)
-		, m_bloomEffect(NULL)
 
 		, GuideWidth(100)
 		, GuideHeight(100)
@@ -146,7 +145,6 @@ namespace EffekseerTool
 
 		ES_SAFE_DELETE(textureLoader);
 
-		ES_SAFE_DELETE(m_bloomEffect);
 		ES_SAFE_DELETE(m_guide);
 		ES_SAFE_DELETE(m_grid);
 		ES_SAFE_DELETE(m_culling);
@@ -185,7 +183,8 @@ bool Renderer::Initialize( void* handle, int width, int height )
 	m_background = ::EffekseerRenderer::Paste::Create(graphics);
 
 	// ポストエフェクト作成
-	m_bloomEffect = efk::PostEffect::CreateBloom(graphics);
+	m_bloomEffect.reset(efk::PostEffect::CreateBloom(graphics));
+	m_tonemapEffect.reset(efk::PostEffect::CreateTonemap(graphics));
 
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
@@ -321,6 +320,19 @@ void Renderer::RecalcProjection()
 
 bool Renderer::BeginRendering()
 {
+	if (hdrRenderTexture == nullptr || hdrRenderTexture->GetWidth() != screenWidth || hdrRenderTexture->GetHeight() != screenHeight)
+	{
+		hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
+		hdrDepthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
+		hdrRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F);
+		hdrDepthTexture->Initialize(screenWidth, screenHeight);
+	}
+
+	targetRenderTexture = graphics->GetRenderTexture();
+	targetDepthTexture = graphics->GetDepthTexture();
+
+	graphics->SetRenderTarget(hdrRenderTexture.get(), hdrDepthTexture.get());
+
 	graphics->BeginScene();
 
 	if (!m_recording)
@@ -503,9 +515,7 @@ bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 	{
 		viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
 		viewDepthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
-
-		//viewRenderTexture->Initialize(width, height, efk::TextureFormat::RGBA8U);
-		viewRenderTexture->Initialize(width, height, efk::TextureFormat::RGBA16F);
+		viewRenderTexture->Initialize(width, height, efk::TextureFormat::RGBA8U);
 		viewDepthTexture->Initialize(width, height);
 	}
 
@@ -546,7 +556,10 @@ bool Renderer::EndRenderToView()
 void Renderer::RenderPostEffect()
 {
 	if (m_bloomEffect) {
-		m_bloomEffect->Render();
+		m_bloomEffect->Render(hdrRenderTexture.get(), hdrRenderTexture.get());
+	}
+	if (m_tonemapEffect) {
+		m_tonemapEffect->Render(hdrRenderTexture.get(), targetRenderTexture);
 	}
 }
 

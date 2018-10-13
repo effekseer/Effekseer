@@ -55,7 +55,8 @@ private:
 	::EffekseerRenderer::Guide*	m_guide;
 	::EffekseerRenderer::Culling*	m_culling;
 	::EffekseerRenderer::Paste*	m_background;
-	efk::BloomEffect* m_bloomEffect;
+	std::unique_ptr<efk::BloomEffect> m_bloomEffect;
+	std::unique_ptr<efk::TonemapEffect> m_tonemapEffect;
 
 	bool		m_recording = false;
 	int32_t		m_recordingWidth = 0;
@@ -70,6 +71,12 @@ private:
 	std::u16string	backgroundPath;
 
 	bool	m_isSRGBMode = false;
+
+	efk::RenderTexture* targetRenderTexture = nullptr;
+	efk::DepthTexture* targetDepthTexture = nullptr;
+
+	std::shared_ptr<efk::RenderTexture>	hdrRenderTexture;
+	std::shared_ptr<efk::DepthTexture>	hdrDepthTexture;
 
 	std::shared_ptr<efk::RenderTexture>	viewRenderTexture;
 	std::shared_ptr<efk::DepthTexture>	viewDepthTexture;
@@ -255,7 +262,8 @@ public:
 
 	efk::Graphics* GetGraphics() const { return graphics; }
 
-	efk::BloomEffect* GetBloomEffect() const { return m_bloomEffect; }
+	efk::BloomEffect* GetBloomEffect() const { return m_bloomEffect.get(); }
+	efk::TonemapEffect* GetTonemapEffect() const { return m_tonemapEffect.get(); }
 
 	/**
 		Called when device is losted.
