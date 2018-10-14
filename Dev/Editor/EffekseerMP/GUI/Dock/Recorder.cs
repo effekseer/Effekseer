@@ -318,11 +318,11 @@ namespace Effekseer.GUI.Dock
 
 					if(Effekseer.Core.Language == Language.Japanese)
 					{
-						errorMessage = "保存に失敗しました。ファイルが他のアプリケーションで開かれている、スペックが足りない、もしくはWindowsでないです。";
+						errorMessage = "保存に失敗しました。ファイルが他のアプリケーションで開かれている、もしくはスペックが足りません。";
 					}
 					else
 					{
-						errorMessage = "It failed to save. A file is opend by other application, lack of specification or not windows.";
+						errorMessage = "It failed to save. A file is opend by other application or lack of specification.";
 					}
 
 					if (selectedTypeIndex == 0)
