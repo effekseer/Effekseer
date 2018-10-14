@@ -1532,8 +1532,9 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 		g_manager->Update();
 	}
 
-	FILE*		fp = nullptr;
+	FILE* fp = nullptr;
 	fp = _wfopen((wchar_t*)path, L"wb");
+	if (fp == nullptr) return false;
 
 	efk::AVIExporter exporter;
 	exporter.Initialize(g_renderer->GuideWidth, g_renderer->GuideHeight, (int32_t)(60.0f / (float)freq), count);

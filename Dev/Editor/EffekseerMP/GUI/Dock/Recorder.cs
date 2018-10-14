@@ -314,44 +314,43 @@ namespace Effekseer.GUI.Dock
 					var tempDirectory = System.IO.Directory.GetCurrentDirectory();
 					System.IO.Directory.SetCurrentDirectory(Program.StartDirectory);
 
+					string errorMessage = string.Empty;
+
+					if(Effekseer.Core.Language == Language.Japanese)
+					{
+						errorMessage = "保存に失敗しました。ファイルが他のアプリケーションで開かれている、スペックが足りない、もしくはWindowsでないです。";
+					}
+					else
+					{
+						errorMessage = "It failed to save. A file is opend by other application, lack of specification or not windows.";
+					}
+
 					if (selectedTypeIndex == 0)
 					{
 						if (!viewer.Record(filename, count, width, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
 						{
-                            swig.GUIManager.show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。", "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-                        
-							//var mb = new Dialog.MessageBox();
-							//mb.Show("Error", "保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+                            swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						}
 					}
 					else if (selectedTypeIndex == 1)
 					{
 						if (!viewer.Record(filename, count, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
 						{
-                            swig.GUIManager.show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。", "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-                        
-							//var mb = new Dialog.MessageBox();
-                            //mb.Show("Error", "保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+                            swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						}
 					}
 					else if (selectedTypeIndex == 2)
 					{
 						if (!viewer.RecordAsGifAnimation(filename, count, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
 						{
-                            swig.GUIManager.show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。", "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-                        
-							//var mb = new Dialog.MessageBox();
-                            //mb.Show("Error", "保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+                            swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						}
 					}
 					else if (selectedTypeIndex == 3)
 					{
 						if (!viewer.RecordAsAVI(filename, count, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
 						{
-                            swig.GUIManager.show("保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。", "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-                        
-							//var mb = new Dialog.MessageBox();
-                            //mb.Show("Error", "保存に失敗しました。コンピューターのスペックが低い、もしくは設定に問題があります。");
+                            swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						}
 					}
 
