@@ -6545,15 +6545,15 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetItemDefaultFocus
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_AddFontFromFileTTF___(void * jarg1, char * jarg2, float jarg3) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_AddFontFromFileTTF___(void * jarg1, char16_t * jarg2, float jarg3) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  char *arg2 = (char *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
   float arg3 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (char *)jarg2; 
+  arg2 = (char16_t *)jarg2; 
   arg3 = (float)jarg3; 
-  (arg1)->AddFontFromFileTTF((char const *)arg2,arg3);
+  (arg1)->AddFontFromFileTTF((char16_t const *)arg2,arg3);
 }
 
 
@@ -6839,23 +6839,23 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ResetNextParentDock
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SaveDock___(void * jarg1, char * jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SaveDock___(void * jarg1, char16_t * jarg2) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  char *arg2 = (char *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (char *)jarg2; 
-  (arg1)->SaveDock((char const *)arg2);
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->SaveDock((char16_t const *)arg2);
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_LoadDock___(void * jarg1, char * jarg2) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_LoadDock___(void * jarg1, char16_t * jarg2) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  char *arg2 = (char *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (char *)jarg2; 
-  (arg1)->LoadDock((char const *)arg2);
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->LoadDock((char16_t const *)arg2);
 }
 
 

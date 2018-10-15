@@ -1226,13 +1226,13 @@ namespace efk
 		ImGui::SetItemDefaultFocus();
 	}
 
-	void GUIManager::AddFontFromFileTTF(const char* filename, float size_pixels)
+	void GUIManager::AddFontFromFileTTF(const char16_t* filename, float size_pixels)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		
 		size_pixels = roundf(size_pixels * fontScale);
 
-		io.Fonts->AddFontFromFileTTF(filename, size_pixels, nullptr, glyphRangesJapanese);
+		io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels, nullptr, glyphRangesJapanese);
 	}
 
 	bool GUIManager::BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flags)
@@ -1371,14 +1371,14 @@ namespace efk
 		ImGui::ResetNextParentDock();
 	}
 
-	void GUIManager::SaveDock(const char* path)
+	void GUIManager::SaveDock(const char16_t* path)
 	{
-		ImGui::SaveDock(path);
+		ImGui::SaveDock(utf8str<280>(path));
 	}
 	
-	void GUIManager::LoadDock(const char* path)
+	void GUIManager::LoadDock(const char16_t* path)
 	{
-		ImGui::LoadDock(path);
+		ImGui::LoadDock(utf8str<280>(path));
 	}
 
 	void GUIManager::ShutdownDock()
