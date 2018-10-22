@@ -2488,6 +2488,18 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetBloomParameters___(v
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetTonemapParameters___(void * jarg1, int jarg2, float jarg3) {
+  Native *arg1 = (Native *) 0 ;
+  int32_t arg2 ;
+  float arg3 ;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  arg3 = (float)jarg3; 
+  (arg1)->SetTonemapParameters(arg2,arg3);
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GUIManagerCallback___() {
   void * jresult ;
   efk::GUIManagerCallback *result = 0 ;

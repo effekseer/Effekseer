@@ -53,10 +53,23 @@ namespace efk
 
 	class TonemapEffect : public PostEffect
 	{
-	protected:
-
 	public:
+		enum class Algorithm {
+			Off,
+			Reinhard,
+		};
+
 		TonemapEffect(Graphics* graphics): PostEffect(graphics) {}
 		virtual ~TonemapEffect() = default;
+
+		virtual void SetParameters(Algorithm algorithm, float exposure)
+		{
+			this->algorithm = algorithm;
+			this->exposure = exposure;
+		}
+
+	protected:
+		Algorithm algorithm = Algorithm::Reinhard;
+		float exposure = 1.0f;
 	};
 }

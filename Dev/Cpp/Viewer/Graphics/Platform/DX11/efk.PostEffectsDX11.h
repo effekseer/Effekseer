@@ -71,6 +71,7 @@ namespace efk
 		: public TonemapEffect
 	{
 		std::unique_ptr<EffekseerRendererDX11::Shader> shaderCopy;
+		std::unique_ptr<EffekseerRendererDX11::Shader> shaderReinhard;
 		BlitterDX11 blitter;
 
 	public:

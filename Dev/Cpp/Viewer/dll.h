@@ -296,6 +296,8 @@ public:
 
 	void SetBloomParameters(bool enabled, float intensity, float threshold, float softKnee);
 
+	void SetTonemapParameters(int32_t algorithm, float exposure);
+
 #if !SWIG
 	EffekseerRenderer::Renderer* GetRenderer();
 #endif

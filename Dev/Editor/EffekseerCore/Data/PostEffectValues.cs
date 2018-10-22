@@ -36,11 +36,42 @@ namespace Effekseer.Data
 			private set;
 		}
 		
+		[Selector(ID = 0)]
+		[Name(language = Language.Japanese, value = "トーンマッピング")]
+		[Description(language = Language.Japanese, value = "")]
+		[Name(language = Language.English, value = "Tone mapping")]
+		[Description(language = Language.English, value = "")]
+		[Undo(Undo = false)]
+		public Value.Enum<TonemapAlgorithm> TonemapSelector
+		{
+			get;
+			private set;
+		}
+		
+        [Selected(ID = 0, Value = 0)]
+        [IO(Export = true)]
+		public NoneParamater TonemapNone
+        {
+            get;
+            private set;
+        }
+
+		[Selected(ID = 0, Value = 1)]
+		[IO(Export = true)]
+		public TonemapReinhardParameter TonemapReinhard
+		{
+			get;
+			private set;
+		}
+
         public PostEffectValues()
 		{
 			BloomSwitch = new Value.Enum<EffectSwitch>();
 			BloomNone = new NoneParamater();
 			Bloom = new BloomParamater();
+			TonemapSelector = new Value.Enum<TonemapAlgorithm>();
+			TonemapNone = new NoneParamater();
+			TonemapReinhard = new TonemapReinhardParameter();
 		}
 
 		
@@ -53,12 +84,22 @@ namespace Effekseer.Data
 		
 		public enum EffectSwitch : int
 		{
-			[Name(value = "On", language = Language.Japanese)]
-			[Name(value = "On", language = Language.English)]
-			On = 1,
 			[Name(value = "Off", language = Language.Japanese)]
 			[Name(value = "Off", language = Language.English)]
 			Off = 0,
+			[Name(value = "On", language = Language.Japanese)]
+			[Name(value = "On", language = Language.English)]
+			On = 1,
+		}
+		
+		public enum TonemapAlgorithm : int
+		{
+			[Name(value = "Off", language = Language.Japanese)]
+			[Name(value = "Off", language = Language.English)]
+			Off = 0,
+			[Name(value = "Reinhard", language = Language.Japanese)]
+			[Name(value = "Reinhard", language = Language.English)]
+			Reinhard = 1,
 		}
 
 		public class BloomParamater
@@ -101,6 +142,25 @@ namespace Effekseer.Data
 				Intensity = new Value.Float(1.0f, 100.0f, 0.0f, 0.1f);
 				Threshold = new Value.Float(1.0f, 100.0f, 0.0f, 0.1f);
 				SoftKnee  = new Value.Float(0.5f, 1.0f, 0.0f, 0.1f);
+			}
+		}
+		
+		public class TonemapReinhardParameter
+		{
+			[Name(language = Language.Japanese, value = "露光")]
+			[Description(language = Language.Japanese, value = "")]
+			[Name(language = Language.English, value = "Exposure")]
+			[Description(language = Language.English, value = "")]
+			[Undo(Undo = false)]
+			public Value.Float Exposure
+			{
+				get;
+				private set;
+			}
+			
+			internal TonemapReinhardParameter()
+			{
+				Exposure = new Value.Float(1.0f, 100.0f, 0.0f, 0.1f);
 			}
 		}
 	}

@@ -21,7 +21,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;
 
-			Icon = Images.GetIcon("PanelOption");
+			Icon = Images.GetIcon("PanelPostEffect");
 			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("Options");
 		}

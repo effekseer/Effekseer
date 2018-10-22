@@ -43,6 +43,12 @@ namespace efk
 #include "Shader/efk.GraphicsDX11.PostFX_BlurV_PS.h"
 	}
 
+	namespace PostFX_Tonemap_PS
+	{
+		static
+#include "Shader/efk.GraphicsDX11.PostFX_Tonemap_PS.h"
+	}
+
 	// Position(2) UV(2)
 	static const D3D11_INPUT_ELEMENT_DESC PostFx_ShaderDecl[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -273,21 +279,21 @@ namespace efk
 		renderTextureWidth = width;
 		renderTextureHeight = height;
 
-		const int32_t divides[BlurIterations] = {4, 8, 16, 32};
-		
 		// Create high brightness extraction buffer
 		{
-			int32_t bufferWidth  = std::max(1, width  / 2);
-			int32_t bufferHeight = std::max(1, height / 2);
+			int32_t bufferWidth  = std::max(1, (width  + 1) / 2);
+			int32_t bufferHeight = std::max(1, (height + 1) / 2);
 			extractBuffer.reset(RenderTexture::Create(graphics));
 			extractBuffer->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
 		}
 
 		// Create low-resolution buffers
 		for (int i = 0; i < BlurBuffers; i++) {
+			int32_t bufferWidth  = std::max(1, (width  + 1) / 2);
+			int32_t bufferHeight = std::max(1, (height + 1) / 2);
 			for (int j = 0; j < BlurIterations; j++) {
-				int32_t bufferWidth  = std::max(1, width  / divides[j]);
-				int32_t bufferHeight = std::max(1, height / divides[j]);
+				bufferWidth  = std::max(1, (bufferWidth  + 1) / 2);
+				bufferHeight = std::max(1, (bufferHeight + 1) / 2);
 				lowresBuffers[i][j].reset(RenderTexture::Create(graphics));
 				lowresBuffers[i][j]->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
 			}
@@ -319,7 +325,16 @@ namespace efk
 		shaderCopy.reset(Shader::Create(renderer,
 			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
 			PostFX_Copy_PS::g_PS, sizeof(PostFX_Copy_PS::g_PS),
-			"Tonemap copy", PostFx_ShaderDecl, 2));
+			"Tonemap Copy", PostFx_ShaderDecl, 2));
+
+		// Reinhard shader
+		shaderReinhard.reset(Shader::Create(renderer,
+			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
+			PostFX_Tonemap_PS::g_PS, sizeof(PostFX_Tonemap_PS::g_PS),
+			"Tonemap Reinhard", PostFx_ShaderDecl, 2));
+		shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
+		shaderReinhard->SetPixelRegisterCount(1);
+
 	}
 
 	TonemapEffectDX11::~TonemapEffectDX11()
@@ -334,10 +349,14 @@ namespace efk
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
 
 		// Tonemap pass
-		{
-			ID3D11ShaderResourceView* textures[1] = {
-				(ID3D11ShaderResourceView*)src->GetViewID()};
+		ID3D11ShaderResourceView* textures[1] = {
+			(ID3D11ShaderResourceView*)src->GetViewID()};
+
+		if (algorithm == Algorithm::Off) {
 			blitter.Blit(shaderCopy.get(), 1, textures, nullptr, 0, dest);
+		} else if (algorithm == Algorithm::Reinhard) {
+			const float constantData[4] = {exposure, 16.0f * 16.0f};
+			blitter.Blit(shaderReinhard.get(), 1, textures, constantData, sizeof(constantData), dest);
 		}
 	}
 }

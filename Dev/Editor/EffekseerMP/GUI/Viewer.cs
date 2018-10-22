@@ -384,6 +384,10 @@ namespace Effekseer.GUI
 			Core.PostEffect.Bloom.Threshold.OnChanged += Bloom_OnChanged;
 			Core.PostEffect.Bloom.SoftKnee.OnChanged += Bloom_OnChanged;
 			
+			Tonemap_OnChanged(null, null);
+			Core.PostEffect.TonemapSelector.OnChanged += Tonemap_OnChanged;
+			Core.PostEffect.TonemapReinhard.Exposure.OnChanged += Tonemap_OnChanged;
+			
 			return true;
 		}
 
@@ -396,7 +400,10 @@ namespace Effekseer.GUI
 			Core.PostEffect.Bloom.Intensity.OnChanged -= Bloom_OnChanged;
 			Core.PostEffect.Bloom.Threshold.OnChanged -= Bloom_OnChanged;
 			Core.PostEffect.Bloom.SoftKnee.OnChanged -= Bloom_OnChanged;
-
+			
+			Core.PostEffect.TonemapSelector.OnChanged -= Tonemap_OnChanged;
+			Core.PostEffect.TonemapReinhard.Exposure.OnChanged -= Tonemap_OnChanged;
+			
 			native.DestroyWindow();
 		}
 
@@ -738,6 +745,14 @@ namespace Effekseer.GUI
 				Core.PostEffect.Bloom.Intensity.Value,
 				Core.PostEffect.Bloom.Threshold.Value,
 				Core.PostEffect.Bloom.SoftKnee.Value);
+		}
+		
+		private void Tonemap_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			int algorithm = (int)Core.PostEffect.TonemapSelector.Value;
+
+			native.SetTonemapParameters(algorithm, 
+				Core.PostEffect.TonemapReinhard.Exposure.Value);
 		}
 	}
 }

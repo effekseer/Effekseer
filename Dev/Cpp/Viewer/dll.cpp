@@ -1967,6 +1967,16 @@ void Native::SetBloomParameters(bool enabled, float intensity, float threshold, 
 	}
 }
 
+void Native::SetTonemapParameters(int32_t algorithm, float exposure)
+{
+	auto tonemap = g_renderer->GetTonemapEffect();
+	if (tonemap)
+	{
+		tonemap->SetEnabled(algorithm != 0);
+		tonemap->SetParameters((efk::TonemapEffect::Algorithm)algorithm, exposure);
+	}
+}
+
 EffekseerRenderer::Renderer* Native::GetRenderer()
 {
 	return g_renderer->GetRenderer();
