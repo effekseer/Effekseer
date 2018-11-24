@@ -2,23 +2,29 @@
 #ifndef	__EFFEKSEER_SOCKET_H__
 #define	__EFFEKSEER_SOCKET_H__
 
-#if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
-
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
 #include <stdio.h>
 #include <stdint.h>
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_PS4)
+#define _WINSOCK
+#endif
+
+#if defined(_WINSOCK)
 #include <windows.h>
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <netdb.h>
 #include <unistd.h>
+
+#if !defined(_PS4)
+#include <netdb.h>
+#endif
+
 #endif
 
 //----------------------------------------------------------------------------------
@@ -29,7 +35,7 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 
-#ifdef _WIN32
+#if defined(_WINSOCK)
 
 typedef SOCKET	EfkSocket;
 typedef int		SOCKLEN;
@@ -52,7 +58,7 @@ typedef struct sockaddr SOCKADDR;
 
 #endif
 
-#ifdef _WIN32
+#if defined(_WINSOCK)
 static void Sleep_(int32_t ms)
 {
 	Sleep(ms);
@@ -88,7 +94,5 @@ public:
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-
-#endif	// #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
 
 #endif	// __EFFEKSEER_SOCKET_H__

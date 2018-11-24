@@ -1,6 +1,4 @@
 ﻿
-#if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
-
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -39,7 +37,7 @@ void ServerImplemented::InternalClient::RecvAsync( void* data )
 
 			if( recvSize == 0 || recvSize == -1 )
 			{
-				/* 失敗 */
+				// Failed
 				client->m_server->RemoveClient( client );
 				client->ShutDown();
 				return;
@@ -56,7 +54,7 @@ void ServerImplemented::InternalClient::RecvAsync( void* data )
 
 			if( recvSize == 0 || recvSize == -1 )
 			{
-				/* 失敗 */
+				// Failed
 				client->m_server->RemoveClient( client );
 				client->ShutDown();
 				return;
@@ -68,7 +66,7 @@ void ServerImplemented::InternalClient::RecvAsync( void* data )
 			}
 		}
 
-		/* 受信処理 */
+		// recieve buffer
 		client->m_ctrlRecvBuffers.lock();
 		client->m_recvBuffers.push_back(client->m_recvBuffer);
 		client->m_ctrlRecvBuffers.unlock();
@@ -183,7 +181,7 @@ void ServerImplemented::AcceptAsync( void* data )
 			break;
 		}
 
-		/* 接続追加 */
+		// Accept and add an internal client
 		server->AddClient( new InternalClient( socket_, server ) );
 
 		EffekseerPrintDebug("Server : AcceptClient\n");
@@ -211,12 +209,10 @@ bool ServerImplemented::Start( uint16_t port )
 		return false;
 	}
 
-	/* 接続用データ生成 */
 	memset( &sockAddr, 0, sizeof(SOCKADDR_IN));
 	sockAddr.sin_family	= AF_INET;
 	sockAddr.sin_port	= htons( port );
 
-	/* 関連付け */
 	returnCode = ::bind( socket_, (sockaddr*)&sockAddr, sizeof(sockaddr_in) );
 	if ( returnCode == SocketError )
 	{
@@ -227,7 +223,7 @@ bool ServerImplemented::Start( uint16_t port )
 		return false;
 	}
 
-	/* 接続 */
+	// Connect
 	if ( !Socket::Listen( socket_, 30 ) )
 	{
 		if ( socket_ != InvalidSocket )
@@ -267,7 +263,7 @@ void ServerImplemented::Stop()
 
 	m_thread.join();
 
-	/* クライアント停止 */
+	// Stop clients
 	m_ctrlClients.lock();
 	for( std::set<InternalClient*>::iterator it = m_clients.begin(); it != m_clients.end(); ++it )
 	{
@@ -276,7 +272,7 @@ void ServerImplemented::Stop()
 	m_ctrlClients.unlock();
 	
 
-	/* クライアントの消滅待ち */
+	// Wait clients to be removed
 	while(true)
 	{
 		m_ctrlClients.lock();
@@ -288,7 +284,7 @@ void ServerImplemented::Stop()
 		Sleep_(1);
 	}
 
-	/* 破棄 */
+	// Delete clients
 	for( std::set<InternalClient*>::iterator it = m_removedClients.begin(); it != m_removedClients.end(); ++it )
 	{
 		while( (*it)->m_active )
@@ -302,7 +298,7 @@ void ServerImplemented::Stop()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::Regist( const EFK_CHAR* key, Effect* effect )
+void ServerImplemented::Register( const EFK_CHAR* key, Effect* effect )
 {
 	if( effect == NULL ) return;
 
@@ -332,7 +328,7 @@ void ServerImplemented::Regist( const EFK_CHAR* key, Effect* effect )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::Unregist( Effect* effect )
+void ServerImplemented::Unregister( Effect* effect )
 {
 	if( effect == NULL ) return;
 
@@ -440,12 +436,4 @@ void ServerImplemented::SetMaterialPath( const EFK_CHAR* materialPath )
 	m_materialPath.push_back(0);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 } 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-
-#endif	// #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
