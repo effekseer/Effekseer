@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
+#include <vector>
 
 #ifdef _WIN32
 #include <Windows.h>
