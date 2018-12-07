@@ -348,7 +348,7 @@ RendererImplemented::~RendererImplemented()
 	}
 	else
 	{
-		assert(GetRef() == -6);
+		assert(GetRef() == -7);
 	}
 }
 
