@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
+#include <vector>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -435,9 +436,14 @@ public:
 		int32_t		VertexCount;
 		int32_t		IndexCount;
 
+		std::vector<uint8_t> delayVertexBuffer;
+		std::vector<uint8_t> delayIndexBuffer;
+
 		InternalModel();
 
 		virtual ~InternalModel();
+
+		bool TryDelayLoad();
 	};
 
 

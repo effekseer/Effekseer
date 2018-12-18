@@ -2,8 +2,6 @@
 #ifndef	__EFFEKSEER_SERVER_IMPLEMENTED_H__
 #define	__EFFEKSEER_SERVER_IMPLEMENTED_H__
 
-#if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
-
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -85,9 +83,9 @@ public:
 
 	void Stop();
 
-	void Regist( const EFK_CHAR* key, Effect* effect );
+	void Register( const EFK_CHAR* key, Effect* effect );
 
-	void Unregist( Effect* effect );
+	void Unregister( Effect* effect );
 
 	void Update();
 
@@ -102,6 +100,4 @@ public:
 //
 //----------------------------------------------------------------------------------
 
-#endif	// #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
-
-#endif	// __EFFEKSEER_SERVER_IMPLEMENTED_H__
+#endif

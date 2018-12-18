@@ -22,7 +22,7 @@ class RenderState
 {
 private:
 	RendererImplemented*	m_renderer;
-
+	bool					m_isCCW = true;
 
 	GLuint					m_samplers[4];
 

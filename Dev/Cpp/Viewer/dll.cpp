@@ -1,4 +1,4 @@
-﻿
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1217,8 +1217,14 @@ bool Native::Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t
 		auto p_ = (wchar_t*)path_;
 		swprintf_s(p_, 260, L"%s.%d%s", pathWithoutExt, i, ext);
 #else
-		// TODO : Implement
-		assert(0);
+        
+        char pathWOE[256];
+        char ext_[256];
+        char path8_dst[256];
+        Effekseer::ConvertUtf16ToUtf8( (int8_t*)pathWOE, 256, (const int16_t*)pathWithoutExt );
+        Effekseer::ConvertUtf16ToUtf8( (int8_t*)ext_, 256, (const int16_t*)ext );
+        sprintf(path8_dst, "%s.%d%s", pathWOE, i, ext_);
+        Effekseer::ConvertUtf8ToUtf16( (int16_t*)path_, 260, (const int8_t*)path8_dst );
 #endif
 
 		efk::PNGHelper pngHelper;
@@ -1507,7 +1513,6 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 {
 	if (g_effect == NULL) return false;
 
-#if _WIN32
 	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
 
 	::Effekseer::Vector3D position(0, 0, g_Distance);
@@ -1536,9 +1541,18 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 		g_manager->Update();
 	}
 
-	FILE*		fp = nullptr;
-	fp = _wfopen((wchar_t*)path, L"wb");
+	FILE* fp = nullptr;
+#ifdef _WIN32
+    _wfopen_s( &fp, (const wchar_t*)path, L"wb" );
+#else
+    int8_t path8[256];
+    Effekseer::ConvertUtf16ToUtf8( path8, 256, (const int16_t*)path );
+    fp = fopen( (const char*)path8, "wb" );
+#endif
 
+    if (fp == nullptr) return false;
+
+    
 	efk::AVIExporter exporter;
 	exporter.Initialize(g_renderer->GuideWidth, g_renderer->GuideHeight, (int32_t)(60.0f / (float)freq), count);
 
@@ -1549,7 +1563,7 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 	for (int32_t i = 0; i < count; i++)
 	{
 		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
-
+        
 		g_renderer->BeginRendering();
 	
 		if (g_renderer->Distortion == EffekseerTool::eDistortionType::DistortionType_Current)
@@ -1593,9 +1607,6 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 	g_manager->Update();
 
 	return true;
-#else
-	return false;
-#endif
 }
 
 //----------------------------------------------------------------------------------

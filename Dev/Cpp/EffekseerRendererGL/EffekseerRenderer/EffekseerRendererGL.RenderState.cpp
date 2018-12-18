@@ -24,6 +24,14 @@ RenderState::RenderState( RendererImplemented* renderer )
 	{
 		GLExt::glGenSamplers(4, m_samplers);
 	}
+
+	GLint frontFace = 0;
+	glGetIntegerv(GL_FRONT_FACE, &frontFace);
+
+	if (GL_CW == frontFace)
+	{
+		m_isCCW = false;
+	}
 }
 
 //-----------------------------------------------------------------------------------
@@ -67,20 +75,41 @@ void RenderState::Update( bool forced )
 
 	if( m_active.CullingType != m_next.CullingType || forced )
 	{
-		if( m_next.CullingType == Effekseer::CullingType::Front )
+		if (m_isCCW)
 		{
-			glEnable( GL_CULL_FACE );
-			glCullFace( GL_FRONT );
+			if (m_next.CullingType == Effekseer::CullingType::Front)
+			{
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_FRONT);
+			}
+			else if (m_next.CullingType == Effekseer::CullingType::Back)
+			{
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_BACK);
+			}
+			else if (m_next.CullingType == Effekseer::CullingType::Double)
+			{
+				glDisable(GL_CULL_FACE);
+				glCullFace(GL_FRONT_AND_BACK);
+			}
 		}
-		else if (m_next.CullingType == Effekseer::CullingType::Back)
+		else
 		{
-			glEnable( GL_CULL_FACE );
-			glCullFace( GL_BACK );
-		}
-		else if( m_next.CullingType == Effekseer::CullingType::Double )
-		{
-			glDisable( GL_CULL_FACE );
-			glCullFace( GL_FRONT_AND_BACK );
+			if (m_next.CullingType == Effekseer::CullingType::Front)
+			{
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_BACK);
+			}
+			else if (m_next.CullingType == Effekseer::CullingType::Back)
+			{
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_FRONT);
+			}
+			else if (m_next.CullingType == Effekseer::CullingType::Double)
+			{
+				glDisable(GL_CULL_FACE);
+				glCullFace(GL_FRONT_AND_BACK);
+			}
 		}
 	}
 

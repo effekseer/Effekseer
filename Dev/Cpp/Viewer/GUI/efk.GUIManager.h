@@ -417,7 +417,7 @@ namespace efk
 
 		void SetItemDefaultFocus();
 
-		void AddFontFromFileTTF(const char* filename, float size_pixels);
+		void AddFontFromFileTTF(const char16_t* filename, float size_pixels);
 
 		// Utils
 		bool BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flags = WindowFlags::None);
@@ -448,8 +448,8 @@ namespace efk
 		void EndDock();
 		void SetNextDockRate(float rate);
 		void ResetNextParentDock();
-		void SaveDock(const char* path);
-		void LoadDock(const char* path);
+		void SaveDock(const char16_t* path);
+		void LoadDock(const char16_t* path);
 		void ShutdownDock();
 		void SetNextDockIcon(ImageResource* icon, Vec2 iconSize);
 		void SetNextDockTabToolTip(const char16_t* popup);
