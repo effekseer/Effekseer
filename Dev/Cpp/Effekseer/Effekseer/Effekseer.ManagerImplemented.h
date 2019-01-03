@@ -145,6 +145,7 @@ private:
 
 	// mutex for rendering
 	std::mutex					m_renderingMutex;
+	bool						m_isLockedWithRenderingMutex = false;
 
 	/* 設定インスタンス */
 	Setting*					m_setting;
@@ -213,6 +214,8 @@ private:
 
 	// 破棄等のイベントを実際に実行
 	void ExecuteEvents();
+
+	void ShowErrorAndExit(const char* message);
 public:
 
 	// コンストラクタ
