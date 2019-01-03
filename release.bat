@@ -168,6 +168,30 @@ cmake.exe -G "Visual Studio 14 Win64"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF 
 "C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Effekseer.sln /p:configuration=Release
 cd ..
 
+echo Compile VS15
+rmdir /S /Q VS15
+mkdir VS15
+
+cd VS15
+call cmake.bat -G "Visual Studio 15"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../Dev/Cpp/
+cmake.exe -G "Visual Studio 15"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../Dev/Cpp/
+
+"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\bin\MSBuild.exe" Effekseer.sln /p:configuration=Debug
+"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\bin\MSBuild.exe" Effekseer.sln /p:configuration=Release
+cd ..
+
+echo Compile VS15WIN64
+rmdir /S /Q VS15WIN64
+mkdir VS15WIN64
+
+cd VS15WIN64
+call cmake.bat -G "Visual Studio 15 Win64"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../Dev/Cpp/
+cmake.exe -G "Visual Studio 15 Win64"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../Dev/Cpp/
+
+"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\bin\MSBuild.exe" Effekseer.sln /p:configuration=Debug
+"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\bin\MSBuild.exe" Effekseer.sln /p:configuration=Release
+cd ..
+
 
 mkdir %RDIR_R%\Compiled\\include\
 mkdir %RDIR_R%\Compiled\\lib\
@@ -186,6 +210,21 @@ robocopy VS14WIN64\Release %RDIR_R%\Compiled\\lib\VS2015WIN64\Release *.lib /mir
 
 copy VS14WIN64\EffekseerSoundXAudio2\Debug\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2015WIN64\Debug\.
 copy VS14WIN64\EffekseerSoundXAudio2\Release\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2015WIN64\Release\.
+
+mkdir %RDIR_R%\Compiled\\lib\VS2017\
+mkdir %RDIR_R%\Compiled\\lib\VS2017WIN64\
+
+robocopy VS15\Debug %RDIR_R%\Compiled\\lib\VS2017\Debug *.lib /mir /S
+robocopy VS15\Release %RDIR_R%\Compiled\\lib\VS2017\Release *.lib /mir /S
+
+copy VS15\EffekseerSoundXAudio2\Debug\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2017\Debug\.
+copy VS15\EffekseerSoundXAudio2\Release\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2017\Release\.
+
+robocopy VS15WIN64\Debug %RDIR_R%\Compiled\\lib\VS2017WIN64\Debug *.lib /mir /S
+robocopy VS15WIN64\Release %RDIR_R%\Compiled\\lib\VS2017WIN64\Release *.lib /mir /S
+
+copy VS15WIN64\EffekseerSoundXAudio2\Debug\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2017WIN64\Debug\.
+copy VS15WIN64\EffekseerSoundXAudio2\Release\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2017WIN64\Release\.
 
 
 copy Dev\Cpp\Effekseer\Effekseer.h %RDIR_R%\Compiled\\include\.
