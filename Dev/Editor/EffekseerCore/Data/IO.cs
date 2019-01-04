@@ -705,7 +705,7 @@ namespace Effekseer.Data
 
 			if (e_cs != null)
 			{
-				value.ColorSpace = (ColorSpace)e_cs.GetTextAsInt();
+				value.SetColorSpace((ColorSpace)e_cs.GetTextAsInt(), false, false);
 			}
 		}
 
