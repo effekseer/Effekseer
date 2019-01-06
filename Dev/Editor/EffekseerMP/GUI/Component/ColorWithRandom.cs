@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define RAW_HSV
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -78,11 +80,13 @@ namespace Effekseer.GUI.Component
 					binding.B.OnChanged += Binding_OnChanged;
 					binding.A.OnChanged += Binding_OnChanged;
 
+#if !RAW_HSV
 					if(binding.ColorSpace == Data.ColorSpace.HSVA)
 					{
 						convertHSV2RGB(internalValueMin);
 						convertHSV2RGB(internalValueMax);
 					}
+#endif
 				}
 			}
 		}
@@ -110,6 +114,21 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
+#if RAW_HSV
+							binding.SetMin(
+				(int)Math.Round(internalValueMin[0] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMin[1] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMin[2] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMin[3] * 255, MidpointRounding.AwayFromZero),
+				isActive);
+
+				binding.SetMax(
+				(int)Math.Round(internalValueMax[0] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMax[1] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMax[2] * 255, MidpointRounding.AwayFromZero),
+				(int)Math.Round(internalValueMax[3] * 255, MidpointRounding.AwayFromZero),
+				isActive);
+#else
 			if (binding.ColorSpace == Data.ColorSpace.HSVA)
 			{
 				var ivmin = (float[])internalValueMin.Clone();
@@ -147,6 +166,7 @@ namespace Effekseer.GUI.Component
 				(int)Math.Round(internalValueMax[3] * 255, MidpointRounding.AwayFromZero),
 				isActive);
 			}
+#endif
 		}
 
 		public override void Update()
@@ -244,11 +264,13 @@ namespace Effekseer.GUI.Component
 				internalValueMin[2] = binding.B.Min / 255.0f;
 				internalValueMin[3] = binding.A.Min / 255.0f;
 
+#if !RAW_HSV
 				if (binding.ColorSpace == Data.ColorSpace.HSVA)
 				{
 					convertHSV2RGB(internalValueMin);
 					convertHSV2RGB(internalValueMax);
 				}
+#endif
 			}
 		}
 
@@ -267,11 +289,13 @@ namespace Effekseer.GUI.Component
 				internalValueMin[2] = binding.B.Min / 255.0f;
 				internalValueMin[3] = binding.A.Min / 255.0f;
 
+#if !RAW_HSV
 				if (binding.ColorSpace == Data.ColorSpace.HSVA)
 				{
 					convertHSV2RGB(internalValueMin);
 					convertHSV2RGB(internalValueMax);
 				}
+#endif
 			}
 		}
 

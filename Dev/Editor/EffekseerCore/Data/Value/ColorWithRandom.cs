@@ -44,10 +44,6 @@ namespace Effekseer.Data.Value
 			{
 				return GetColorSpace();
 			}
-			set
-			{
-				SetColorSpace(value);
-			}
 		}
 
 		public ColorWithRandom Link
@@ -62,7 +58,7 @@ namespace Effekseer.Data.Value
 
 		public event ChangedValueEventHandler OnChangedColorSpace;
 
-		public void SetColorSpace(ColorSpace colorSpace, bool isCombined = false)
+		public void SetColorSpace(ColorSpace colorSpace, bool isColorConverted, bool isCombined)
 		{
 			ColorSpace oldval = ColorSpace;
 			ColorSpace newval = colorSpace;
@@ -88,15 +84,18 @@ namespace Effekseer.Data.Value
 			color_min.G = old_min_g;
 			color_min.B = old_min_b;
 
-			if(newval == ColorSpace.HSVA)
+			if (isColorConverted)
 			{
-				color_min = RGBToHSV(color_min);
-				color_max = RGBToHSV(color_max);
-			}
-			else
-			{
-				color_min = HSVToRGB(color_min);
-				color_max = HSVToRGB(color_max);
+				if (newval == ColorSpace.HSVA)
+				{
+					color_min = RGBToHSV(color_min);
+					color_max = RGBToHSV(color_max);
+				}
+				else
+				{
+					color_min = HSVToRGB(color_min);
+					color_max = HSVToRGB(color_max);
+				}
 			}
 
 			var cmd = new Command.DelegateCommand(
@@ -167,7 +166,7 @@ namespace Effekseer.Data.Value
 			B = new IntWithRandom(b, b_max, b_min);
 			A = new IntWithRandom(a, a_max, a_min);
 			DrawnAs = drawnas;
-			ColorSpace = colorSpace;
+			SetColorSpace(colorSpace, false, false);
 
 			DefaultDrawnAs = DrawnAs;
 			DefaultColorSpace = ColorSpace;
@@ -278,8 +277,8 @@ namespace Effekseer.Data.Value
 		public void ChangeColorSpace(ColorSpace colorSpace, bool link = false)
 		{
 			Command.CommandManager.StartCollection();
-			
-			ColorSpace = colorSpace;
+
+			SetColorSpace(colorSpace, true, false);
 			CallChangedColorSpace(true, ChangedValueType.Execute);
 			
 			if (link && Link != null)
