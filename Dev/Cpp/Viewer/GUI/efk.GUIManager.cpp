@@ -265,13 +265,13 @@ namespace ImGui
 
 #ifdef RAW_HSV
 		const bool alpha = (flags & ImGuiColorEditFlags_NoAlpha) == 0;
-		float col_[4] = { col[0], col[1], col[2], alpha ? col[3] : 1.0f };
+		float col_rgb_[4] = { col[0], col[1], col[2], alpha ? col[3] : 1.0f };
 		if (flags & ImGuiColorEditFlags_HSV)
-			ColorConvertHSVtoRGB(col_[0], col_[1], col_[2], col_[0], col_[1], col_[2]);
+			ColorConvertHSVtoRGB(col_rgb_[0], col_rgb_[1], col_rgb_[2], col_rgb_[0], col_rgb_[1], col_rgb_[2]);
 
 		// Context menu: display and modify options (before defaults are applied)
 		if (!(flags & ImGuiColorEditFlags_NoOptions))
-			ColorEditOptionsPopup(col_, flags);
+			ColorEditOptionsPopup(col_rgb_, flags);
 #else
 		// Context menu: display and modify options (before defaults are applied)
 		if (!(flags & ImGuiColorEditFlags_NoOptions))
@@ -376,7 +376,7 @@ namespace ImGui
 				SameLine(0, style.ItemInnerSpacing.x);
 
 #ifdef RAW_HSV
-			const ImVec4 col_v4(col_[0], col_[1], col_[2], alpha ? col_[3] : 1.0f);
+			const ImVec4 col_v4(col_rgb_[0], col_rgb_[1], col_rgb_[2], alpha ? col_rgb_[3] : 1.0f);
 #else
 			const ImVec4 col_v4(col[0], col[1], col[2], alpha ? col[3] : 1.0f);
 #endif
@@ -406,7 +406,27 @@ namespace ImGui
 				PushItemWidth(square_sz * 12.0f); // Use 256 + bar sizes?
 
 #ifdef RAW_HSV
-				value_changed |= ColorPicker4("##picker", col_, picker_flags, &g.ColorPickerRef.x);
+				auto picker_changed = ColorPicker4("##picker", col_rgb_, picker_flags, &g.ColorPickerRef.x);
+				value_changed |= picker_changed;
+
+				if (picker_changed)
+				{
+					float col_raw[4] = { col_rgb_[0], col_rgb_[1], col_rgb_[2], col_rgb_[3] };
+
+					if (flags & ImGuiColorEditFlags_HSV)
+						ColorConvertRGBtoHSV(col_raw[0], col_raw[1], col_raw[2], col_raw[0], col_raw[1], col_raw[2]);
+
+					f[0] = col_raw[0];
+					f[1] = col_raw[1];
+					f[2] = col_raw[2];
+					f[3] = col_raw[3];
+
+					col[0] = f[0];
+					col[1] = f[1];
+					col[2] = f[2];
+					if (alpha)
+						col[3] = f[3];
+				}
 #else
 				value_changed |= ColorPicker4("##picker", col, picker_flags, &g.ColorPickerRef.x);
 #endif
@@ -437,13 +457,13 @@ namespace ImGui
 				if (alpha)
 					col[3] = f[3];
 
-				col_[0] = col[0];
-				col_[1] = col[1];
-				col_[2] = col[2];
-				col_[3] = col[3];
+				col_rgb_[0] = col[0];
+				col_rgb_[1] = col[1];
+				col_rgb_[2] = col[2];
+				col_rgb_[3] = col[3];
 
 				if (flags & ImGuiColorEditFlags_HSV)
-					ColorConvertHSVtoRGB(col_[0], col_[1], col_[2], col_[0], col_[1], col_[2]);
+					ColorConvertHSVtoRGB(col_rgb_[0], col_rgb_[1], col_rgb_[2], col_rgb_[0], col_rgb_[1], col_rgb_[2]);
 			}
 #else
 			if (flags & ImGuiColorEditFlags_HSV)
@@ -469,12 +489,29 @@ namespace ImGui
 #ifdef RAW_HSV
 			if (const ImGuiPayload* payload = AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_3F))
 			{
-				memcpy((float*)col_, payload->Data, sizeof(float) * 3);
+				memcpy((float*)col_rgb_, payload->Data, sizeof(float) * 3);
+
+				col[0] = col_rgb_[0];
+				col[1] = col_rgb_[1];
+				col[2] = col_rgb_[2];
+
+				if (flags & ImGuiColorEditFlags_HSV)
+					ColorConvertRGBtoHSV(col[0], col[1], col[2], col[0], col[1], col[2]);
+
 				value_changed = true;
 			}
 			if (const ImGuiPayload* payload = AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F))
 			{
-				memcpy((float*)col_, payload->Data, sizeof(float) * components);
+				memcpy((float*)col_rgb_, payload->Data, sizeof(float) * components);
+
+				col[0] = col_rgb_[0];
+				col[1] = col_rgb_[1];
+				col[2] = col_rgb_[2];
+				col[3] = col_rgb_[3];
+
+				if (flags & ImGuiColorEditFlags_HSV)
+					ColorConvertRGBtoHSV(col[0], col[1], col[2], col[0], col[1], col[2]);
+
 				value_changed = true;
 			}
 #else
