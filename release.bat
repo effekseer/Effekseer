@@ -1,5 +1,5 @@
-SET RDIR=Effekseer141
-SET RDIR_R=EffekseerRuntime141
+SET RDIR=Effekseer142
+SET RDIR_R=EffekseerRuntime142
 
 rmdir %RDIR%
 mkdir %RDIR%
@@ -8,8 +8,8 @@ rmdir %RDIR_R%
 mkdir %RDIR_R%
 
 echo Compile Editor
-"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Dev\Editor\Effekseer.sln /p:configuration=Release
-"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Dev\Cpp\EffekseerSoundXAudio2.sln /p:configuration=Release
+"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Dev\Editor\Effekseer.sln /p:configuration=Release /t:Rebuild
+"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Dev\Cpp\EffekseerSoundXAudio2.sln /p:configuration=Release /t:Rebuild
 
 echo Copy application
 

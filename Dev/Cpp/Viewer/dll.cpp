@@ -1964,6 +1964,15 @@ float Native::GetFPS()
 	return 60.0;
 }
 
+bool Native::IsDebugMode()
+{
+#ifdef _DEBUG
+	return true;
+#else
+	return false;
+#endif
+}
+
 EffekseerRenderer::Renderer* Native::GetRenderer()
 {
 	return g_renderer->GetRenderer();
