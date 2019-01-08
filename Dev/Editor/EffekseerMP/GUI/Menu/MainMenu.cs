@@ -79,6 +79,11 @@ namespace Effekseer.GUI.Menu
 				newTitle += Resources.GetString("UnsavedChanges");
 			}
 
+			if (swig.Native.IsDebugMode())
+			{
+				newTitle += " - DebugMode";
+			}
+
 			if (currentTitle != newTitle)
 			{
 				currentTitle = newTitle;

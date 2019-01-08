@@ -294,6 +294,8 @@ public:
 
 	float GetFPS();
 
+	static bool IsDebugMode();
+
 #if !SWIG
 	EffekseerRenderer::Renderer* GetRenderer();
 #endif

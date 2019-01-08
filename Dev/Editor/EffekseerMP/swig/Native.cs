@@ -269,6 +269,11 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
+  public static bool IsDebugMode() {
+    bool ret = EffekseerNativePINVOKE.Native_IsDebugMode();
+    return ret;
+  }
+
 }
 
 }

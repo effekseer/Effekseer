@@ -2472,6 +2472,16 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Native_GetFPS___(void * jarg1
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_IsDebugMode___() {
+  unsigned int jresult ;
+  bool result;
+  
+  result = (bool)Native::IsDebugMode();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GUIManagerCallback___() {
   void * jresult ;
   efk::GUIManagerCallback *result = 0 ;
