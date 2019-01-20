@@ -52,9 +52,7 @@ namespace EffekseerTool
 	}
 
 	Renderer::Renderer(int32_t squareMaxCount, bool isSRGBMode, efk::DeviceType deviceType)
-		: m_width(0)
-		, m_height(0)
-		, m_squareMaxCount(squareMaxCount)
+		: m_squareMaxCount(squareMaxCount)
 		, m_projection(PROJECTION_TYPE_PERSPECTIVE)
 		, m_renderer(NULL)
 
@@ -161,11 +159,11 @@ bool Renderer::Initialize( void* handle, int width, int height )
 		return false;
 	}
 
-	m_width = width;
-	m_height = height;
+	m_windowWidth = width;
+	m_windowHeight = height;
 
-	m_windowWidth = m_width;
-	m_windowHeight = m_height;
+	currentWidth = m_windowWidth;
+	currentHeight = m_windowHeight;
 
 	m_distortionCallback = new DistortingCallback(graphics);
 	m_renderer = graphics->GetRenderer();
@@ -218,11 +216,11 @@ void Renderer::SetProjectionType( eProjectionType type )
 
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
-		SetPerspectiveFov( m_width, m_height );
+		SetPerspectiveFov( currentWidth, currentHeight );
 	}
 	else if( m_projection == PROJECTION_TYPE_ORTHOGRAPHIC )
 	{
-		SetOrthographic( m_width, m_height );
+		SetOrthographic(currentWidth, currentHeight);
 	}
 }
 
@@ -284,11 +282,15 @@ void Renderer::SetOrthographic( int width, int height )
 
 bool Renderer::Resize( int width, int height )
 {
-	m_width = width;
-	m_height = height;
-	m_windowWidth = m_width;
-	m_windowHeight = m_height;
+	m_windowWidth = width;
+	m_windowHeight = height;
 
+	if (!isScreenMode)
+	{
+		currentWidth = width;
+		currentHeight = height;
+	}
+	
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
 		SetPerspectiveFov( width, height );
@@ -307,11 +309,11 @@ void Renderer::RecalcProjection()
 {
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
-		SetPerspectiveFov( m_width, m_height );
+		SetPerspectiveFov( currentWidth, currentHeight );
 	}
 	else if( m_projection == PROJECTION_TYPE_ORTHOGRAPHIC )
 	{
-		SetOrthographic( m_width, m_height );
+		SetOrthographic( currentWidth, currentHeight );
 	}
 }
 
@@ -383,8 +385,8 @@ bool Renderer::BeginRendering()
 		auto proj = m_projMatTemp;
 
 		::Effekseer::Matrix44 mat;
-		mat.Values[0][0] = (float) screenWidth / (float) GuideWidth;
-		mat.Values[1][1] = (float) screenHeight / (float) GuideHeight;
+		mat.Values[0][0] = (float) currentWidth / (float) GuideWidth;
+		mat.Values[1][1] = (float) currentHeight / (float) GuideHeight;
 		::Effekseer::Matrix44::Mul(proj, proj, mat);
 
 		m_renderer->SetProjectionMatrix(proj);
@@ -458,7 +460,7 @@ bool Renderer::EndRendering()
 
 	if( RendersGuide && !m_recording )
 	{
-		m_guide->Rendering( m_windowWidth, m_windowHeight, GuideWidth, GuideHeight );
+		m_guide->Rendering( currentWidth, currentHeight, GuideWidth, GuideHeight );
 	}
 
 	if (!m_recording)
@@ -518,23 +520,28 @@ bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 		SetOrthographic(width, height);
 	}
 
-	m_windowWidth = width;
-	m_windowHeight = height;
+	screenWidth = width;
+	screenHeight = height;
 
-	screenWidth = m_windowWidth;
-	screenHeight = m_windowHeight;
+	currentWidth = screenWidth;
+	currentHeight = screenHeight;
+
+	isScreenMode = true;
+
 	return true;
 }
 
 bool Renderer::EndRenderToView()
 {
+	isScreenMode = false;
+
 	m_renderer->SetCameraMatrix(m_cameraMatTemp);
 	m_renderer->SetProjectionMatrix(m_projMatTemp);
 
 	graphics->SetRenderTarget(nullptr, nullptr);
 
-	m_windowWidth = m_width;
-	m_windowHeight = m_height;
+	currentWidth = m_windowWidth;
+	currentHeight = m_windowHeight;
 	return true;
 }
 

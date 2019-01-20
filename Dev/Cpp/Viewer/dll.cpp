@@ -50,6 +50,9 @@ static bool									g_mouseRotDirectionInvY = false;
 static bool									g_mouseSlideDirectionInvX = false;
 static bool									g_mouseSlideDirectionInvY = false;
 
+static int		g_lastViewWidth = 0;
+static int		g_lastViewHeight = 0;
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1137,6 +1140,9 @@ bool Native::SetRandomSeed( int seed )
 
 void* Native::RenderView(int32_t width, int32_t height)
 {
+	g_lastViewWidth = width;
+	g_lastViewHeight = height;
+
 	g_renderer->BeginRenderToView(width, height);
 	RenderWindow();
 	g_renderer->EndRenderToView();
@@ -1175,9 +1181,11 @@ bool Native::Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t
 		g_manager->Update();
 	}
 	
+	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
+
 	for (int32_t i = 0; i < count; i++)
 	{
-		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
+		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight))  goto Exit;
 
 		g_renderer->BeginRendering();
 		
@@ -1229,8 +1237,13 @@ bool Native::Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t
 		pngHelper.Save((char16_t*)path_, g_renderer->GuideWidth, g_renderer->GuideHeight, pixels.data());
 	}
 
+Exit:;
+
 	g_manager->StopEffect(handle);
 	g_manager->Update();
+
+	g_renderer->EndRenderToView();
+
 	return true;
 }
 
@@ -1275,12 +1288,14 @@ bool Native::Record(const char16_t* path, int32_t count, int32_t xCount, int32_t
 		g_manager->Update();
 	}
 
+	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
+
 	int32_t count_ = 0;
 	for( int y = 0; y < yCount; y++ )
 	{
 		for( int x = 0; x < xCount; x++ )
 		{
-			if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
+			if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) goto Exit;
 
 			g_renderer->BeginRendering();
 
@@ -1335,6 +1350,8 @@ Exit:;
 
 	g_manager->Update();
 
+	g_renderer->EndRenderToView();
+
 	return true;
 }
 
@@ -1370,12 +1387,14 @@ bool Native::RecordAsGifAnimation(const char16_t* path, int32_t count, int32_t o
 		g_manager->Update();
 	}
 
+	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
+
 	efk::GifHelper helper;
 	helper.Initialize(path, g_renderer->GuideWidth, g_renderer->GuideHeight, freq);
 
 	for (int32_t i = 0; i < count; i++)
 	{
-		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
+		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) goto End;
 
 		g_renderer->BeginRendering();
 
@@ -1499,8 +1518,12 @@ bool Native::RecordAsGifAnimation(const char16_t* path, int32_t count, int32_t o
 	gdImageDestroy(img);
 	*/
 
+End:;
+
 	g_manager->StopEffect(handle);
 	g_manager->Update();
+
+	g_renderer->EndRenderToView();
 
 	return true;
 }
@@ -1556,9 +1579,11 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 	exporter.BeginToExportAVI(d);
 	fwrite(d.data(), 1, d.size(), fp);
 
+	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
+
 	for (int32_t i = 0; i < count; i++)
 	{
-		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
+		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) goto End;
         
 		g_renderer->BeginRendering();
 	
@@ -1597,10 +1622,14 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 	exporter.FinishToExportAVI(d);
 	fwrite(d.data(), 1, d.size(), fp);
 
+End:;
+
 	fclose(fp);
 
 	g_manager->StopEffect(handle);
 	g_manager->Update();
+
+	g_renderer->EndRenderToView();
 
 	return true;
 }

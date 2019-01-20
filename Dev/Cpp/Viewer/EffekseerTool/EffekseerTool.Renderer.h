@@ -37,11 +37,16 @@ private:
 private:
 	efk::Graphics*	graphics = nullptr;
 
-	int32_t				m_width;
-	int32_t				m_height;
+	bool isScreenMode = false;
+
+	int32_t				currentWidth = 0;
+	int32_t				currentHeight = 0;
 	
-	int32_t				m_windowWidth;
-	int32_t				m_windowHeight;
+	int32_t				m_windowWidth = 0;
+	int32_t				m_windowHeight = 0;
+
+	int32_t		screenWidth = 0;
+	int32_t		screenHeight = 0;
 
 	int32_t				m_squareMaxCount;
 
@@ -71,9 +76,6 @@ private:
 
 	std::shared_ptr<efk::RenderTexture>	viewRenderTexture;
 	std::shared_ptr<efk::DepthTexture>	viewDepthTexture;
-
-	int32_t		screenWidth = 0;
-	int32_t		screenHeight = 0;
 public:
 	/**
 		@brief	Constructor
