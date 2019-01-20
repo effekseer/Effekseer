@@ -199,6 +199,7 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.CommonUtils.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.DDSTextureLoader.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.ModelRendererBase.cpp" />

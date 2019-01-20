@@ -88,6 +88,9 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.DDSTextureLoader.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.CommonUtils.h">
+      <Filter>EffekseerRendererCommon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">
@@ -152,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.DDSTextureLoader.cpp">
       <Filter>EffekseerRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.CommonUtils.cpp">
+      <Filter>EffekseerRendererCommon</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
