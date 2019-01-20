@@ -2830,7 +2830,7 @@ public:
 
 				for (int32_t i = 0; i < models[f].m_vertexCount; i++)
 				{
-					memcpy(&models[f].m_vertexes[i], p, sizeof(Vertex) - sizeof(Color));
+					memcpy((void*)&models[f].m_vertexes[i], p, sizeof(Vertex) - sizeof(Color));
 					models[f].m_vertexes[i].VColor = Color(255, 255, 255, 255);
 
 					p += sizeof(Vertex) - sizeof(Color);

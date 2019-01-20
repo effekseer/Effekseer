@@ -159,5 +159,8 @@
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.DDSTextureLoader.cpp">
       <Filter>EffekseerRendererCommon</Filter>
     </ClCompile>
+    <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.CommonUtils.cpp">
+      <Filter>EffekseerRendererCommon</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

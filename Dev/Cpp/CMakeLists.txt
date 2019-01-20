@@ -93,6 +93,7 @@ set(effekseer_src
 	Effekseer/Effekseer/Culling/Culling3D.WorldInternal.cpp)
 
 set(effekseer_renderer_common_src
+	EffekseerRendererCommon/EffekseerRenderer.CommonUtils.cpp
 	EffekseerRendererCommon/EffekseerRenderer.IndexBufferBase.cpp
 	EffekseerRendererCommon/EffekseerRenderer.ModelRendererBase.cpp
 	EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.cpp
