@@ -26,11 +26,10 @@ namespace Effekseer
 {
 
 template <typename T>
-T ReadData( unsigned char*& pos )
+void ReadData( T& dst, unsigned char*& pos )
 {
-	T result = *(T*)pos;
+	memcpy(&dst, pos, sizeof(T));
 	pos += sizeof(T);
-	return result;
 }
 
 //----------------------------------------------------------------------------------
@@ -446,15 +445,17 @@ struct random_color
 	{
 		if( version >= 4 )
 		{
-			mode = (ColorMode)ReadData<uint8_t>( pos );
+			uint8_t mode_ = 0;
+			ReadData<uint8_t>(mode_, pos);
+			mode = static_cast<ColorMode>(mode_);
 			pos++;	// reserved
 		}
 		else
 		{
 			mode = COLOR_MODE_RGBA;
 		}
-		max = ReadData<Color>( pos );
-		min = ReadData<Color>( pos );
+		ReadData<Color>(max, pos );
+		ReadData<Color>(min, pos );
 	}
 };
 
@@ -494,9 +495,9 @@ struct easing_color
 	{
 		start.load( version, pos );
 		end.load( version, pos );
-		easingA = ReadData<float>( pos );
-		easingB = ReadData<float>( pos );
-		easingC = ReadData<float>( pos );
+		ReadData<float>(easingA, pos );
+		ReadData<float>(easingB, pos );
+		ReadData<float>(easingC, pos );
 	}
 };
 
