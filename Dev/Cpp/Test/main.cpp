@@ -85,11 +85,33 @@ static efstring ToEFString(const wchar_t* src)
 	return efstring();
 }
 
+void TestManagerPlayAndStop()
+{
+	{
+		auto manager = ::Effekseer::Manager::Create(2000);
+		auto effect = Effekseer::Effect::Create(manager, u"Resource/Laser01.efk");
+		manager->Play(effect, Effekseer::Vector3D());
+		manager->Destroy();
+		effect->Release();
+	}
+
+	{
+		auto manager = ::Effekseer::Manager::Create(2000);
+		auto effect = Effekseer::Effect::Create(manager, u"Resource/Laser01.efk");
+		manager->Play(effect, Effekseer::Vector3D());
+		manager->Flip();
+		manager->Destroy();
+		effect->Release();
+	}
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 int main()
 {
+	TestManagerPlayAndStop();
+
 	g_manager = ::Effekseer::Manager::Create( 2000 );
 
 #if __CULLING_TEST

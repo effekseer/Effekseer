@@ -125,10 +125,14 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 		{
 			DrawSet& drawset = (*it).second;
 
-			// 全破棄処理
-			drawset.InstanceContainerPointer->RemoveForcibly( true );
-			drawset.InstanceContainerPointer->~InstanceContainer();
-			InstanceContainer::operator delete( drawset.InstanceContainerPointer, this );
+			// dispose all instances
+			if (drawset.InstanceContainerPointer != nullptr)
+			{
+				drawset.InstanceContainerPointer->RemoveForcibly(true);
+				drawset.InstanceContainerPointer->~InstanceContainer();
+				InstanceContainer::operator delete(drawset.InstanceContainerPointer, this);
+			}
+
 			ES_SAFE_RELEASE( drawset.ParameterPointer );
 			ES_SAFE_DELETE( drawset.GlobalPointer );
 
@@ -296,29 +300,33 @@ int EFK_STDCALL ManagerImplemented::Rand()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::ExecuteEvents()
 {	
-	std::map<Handle,DrawSet>::iterator it = m_DrawSets.begin();
-	std::map<Handle,DrawSet>::iterator it_end = m_DrawSets.end();
-
-	while( it != it_end )
+	for (auto& ds : m_DrawSets)
 	{
-		if( (*it).second.GoingToStop )
+		if( ds.second.GoingToStop )
 		{
-			InstanceContainer* pContainer = (*it).second.InstanceContainerPointer;
-			pContainer->KillAllInstances( true );
-			(*it).second.IsRemoving = true;
+			InstanceContainer* pContainer = ds.second.InstanceContainerPointer;
+
+			if (pContainer != nullptr)
+			{
+				pContainer->KillAllInstances(true);
+			}
+
+			ds.second.IsRemoving = true;
 			if (GetSoundPlayer() != NULL)
 			{
-				GetSoundPlayer()->StopTag((*it).second.GlobalPointer);
+				GetSoundPlayer()->StopTag(ds.second.GlobalPointer);
 			}
 		}
 
-		if( (*it).second.GoingToStopRoot )
+		if(ds.second.GoingToStopRoot )
 		{
-			InstanceContainer* pContainer = (*it).second.InstanceContainerPointer;
-			pContainer->KillAllInstances( false );
-		}
+			InstanceContainer* pContainer = ds.second.InstanceContainerPointer;
 
-		++it;
+			if (pContainer != nullptr)
+			{
+				pContainer->KillAllInstances(false);
+			}
+		}
 	}
 }
 
