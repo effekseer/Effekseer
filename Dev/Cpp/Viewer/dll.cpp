@@ -854,7 +854,20 @@ bool Native::PlayEffect()
 		posY += m_effectBehavior.PositionY;
 		posZ += m_effectBehavior.PositionZ;
 
-		HandleHolder handleHolder(g_manager->Play(g_effect, x, y, z));
+		HandleHolder handleHolder(g_manager->Play(g_effect, posX, posY, posZ));
+
+		Effekseer::Matrix43 mat, matTra, matRot, matScale;
+		matTra.Translation(posX, posY, posZ);
+		matRot.RotationZXY(m_rootRotation.Z, m_rootRotation.X, m_rootRotation.Y);
+		matScale.Scaling(m_rootScale.X, m_rootScale.Y, m_rootScale.Z);
+
+		mat.Indentity();
+		Effekseer::Matrix43::Multiple(mat, mat, matScale);
+		Effekseer::Matrix43::Multiple(mat, mat, matRot);
+		Effekseer::Matrix43::Multiple(mat, mat, matTra);
+
+		g_manager->SetMatrix(handleHolder.Handle, mat);
+
 		g_handles.push_back(handleHolder);
 
 		if (m_effectBehavior.AllColorR != 255 ||

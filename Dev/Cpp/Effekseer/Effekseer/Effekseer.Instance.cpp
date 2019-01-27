@@ -108,7 +108,10 @@ void Instance::GenerateChildrenInRequired(float currentTime)
 				auto newInstance = group->CreateInstance();
 				if (newInstance != nullptr)
 				{
-					newInstance->Initialize(this, m_generatedChildrenCount[i], std::max(0.0f, this->m_LivingTime));
+					Matrix43 rootMatrix;
+					rootMatrix.Indentity();
+
+					newInstance->Initialize(this, m_generatedChildrenCount[i], std::max(0.0f, this->m_LivingTime), rootMatrix);
 				}
 
 				m_generatedChildrenCount[i]++;
@@ -141,7 +144,7 @@ const Matrix43& Instance::GetGlobalMatrix43() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t parentTime)
+void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t parentTime, const Matrix43& globalMatrix)
 {
 	assert(this->m_pContainer != nullptr);
 	
@@ -188,7 +191,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 
 		// SRTの初期化
 		m_GenerationLocation.Indentity();
-		m_GlobalMatrix43.Indentity();
+		m_GlobalMatrix43 = globalMatrix;
 		m_ParentMatrix43.Indentity();
 
 		// 親の初期化
@@ -215,7 +218,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	m_GlobalRevisionLocation = Vector3D(0.0f, 0.0f, 0.0f);
 	m_GlobalRevisionVelocity = Vector3D(0.0f, 0.0f, 0.0f);
 	m_GenerationLocation.Indentity();
-	m_GlobalMatrix43.Indentity();
+	m_GlobalMatrix43 = globalMatrix;
 	m_ParentMatrix43.Indentity();
 
 	// 親の初期化

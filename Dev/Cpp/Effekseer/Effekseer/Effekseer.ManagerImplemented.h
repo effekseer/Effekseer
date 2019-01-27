@@ -62,6 +62,9 @@ private:
 
 		Handle				Self;
 
+		bool				IsPreupdated = false;
+		int32_t				StartFrame = 0;
+
 		DrawSet( Effect* effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal )
 			: ParameterPointer			( effect )
 			, InstanceContainerPointer	( pContainer )
@@ -98,6 +101,10 @@ private:
 		{
 		
 		}
+
+		Matrix43* GetEnabledGlobalMatrix();
+
+		void CopyMatrixFromInstanceToRoot();
 	};
 
 	struct CullingParameter
@@ -201,7 +208,7 @@ private:
 	void GCDrawSet( bool isRemovingManager );
 
 	// インスタンスコンテナ生成
-	InstanceContainer* CreateInstanceContainer( EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot = false, Instance* pParent = NULL );
+	InstanceContainer* CreateInstanceContainer( EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const Matrix43& rootMatrix, Instance* pParent);
 
 	// メモリ確保関数
 	static void* EFK_STDCALL Malloc( unsigned int size );
@@ -539,6 +546,7 @@ public:
 private:
 	void UpdateHandle( DrawSet& drawSet, float deltaFrame );
 
+	void Preupdate(DrawSet& drawSet);
 public:
 
 	/**
