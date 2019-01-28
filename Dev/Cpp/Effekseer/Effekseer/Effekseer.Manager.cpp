@@ -83,10 +83,13 @@ void ManagerImplemented::DrawSet::CopyMatrixFromInstanceToRoot()
 		InstanceContainer* pContainer = InstanceContainerPointer;
 		if (pContainer == nullptr) return;
 
+		auto firstGroup = pContainer->GetFirstGroup();
+		if (firstGroup == nullptr) return;
+
 		Instance* pInstance = pContainer->GetFirstGroup()->GetFirst();
 		if (pInstance == nullptr) return;
 
-		pInstance->m_GlobalMatrix43 = GlobalMatrix;
+		GlobalMatrix = pInstance->m_GlobalMatrix43;
 	}
 }
 
