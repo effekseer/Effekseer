@@ -1,4 +1,4 @@
-﻿
+
 
 //----------------------------------------------------------------------------------
 //
@@ -34,8 +34,6 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 	pos += sizeof(int);
 	assert( type == GetType() );
 	EffekseerPrintDebug("Renderer : Ring\n");
-
-	int32_t size = 0;
 
 	memcpy( &RenderingOrder, pos, sizeof(int) );
 	pos += sizeof(int);

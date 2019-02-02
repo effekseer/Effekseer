@@ -1,4 +1,4 @@
-﻿
+
 #ifndef	__EFFEKSEERRENDERER_SPRITE_RENDERER_BASE_H__
 #define	__EFFEKSEERRENDERER_SPRITE_RENDERER_BASE_H__
 
@@ -307,7 +307,6 @@ protected:
 	{
 		if (param.ZSort != Effekseer::ZSortType::None)
 		{
-			auto mat = m_renderer->GetCameraMatrix();
 			for (auto& kv : instances)
 			{
 				efkVector3D t;

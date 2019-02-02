@@ -1,4 +1,4 @@
-﻿
+
 #pragma once
 
 #include "Culling3D.h"
@@ -77,8 +77,8 @@ namespace Culling3D
 
 		int32_t ObjectIndex;
 
-		virtual int32_t GetRef() { return ReferenceObject::GetRef(); }
-		virtual int32_t AddRef() { return ReferenceObject::AddRef(); }
-		virtual int32_t Release() { return ReferenceObject::Release(); }
+		virtual int32_t GetRef() override { return ReferenceObject::GetRef(); }
+		virtual int32_t AddRef() override { return ReferenceObject::AddRef(); }
+		virtual int32_t Release() override { return ReferenceObject::Release(); }
 	};
 }

@@ -1,4 +1,4 @@
-﻿
+
 
 //----------------------------------------------------------------------------------
 //
@@ -33,8 +33,6 @@ namespace Effekseer
 	pos += sizeof(int);
 	assert( type == GetType() );
 	EffekseerPrintDebug("Renderer : Model\n");
-
-	int32_t size = 0;
 
 	AlphaBlend = RendererCommon.AlphaBlend;
 

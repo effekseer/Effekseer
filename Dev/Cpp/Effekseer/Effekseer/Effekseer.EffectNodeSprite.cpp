@@ -1,4 +1,4 @@
-﻿
+
 
 //----------------------------------------------------------------------------------
 //
@@ -38,7 +38,6 @@ namespace Effekseer
 	EffekseerPrintDebug("Renderer : Sprite\n");
 
 	auto ef = (EffectImplemented*) m_effect;
-	int32_t size = 0;
 
 	memcpy(&RenderingOrder, pos, sizeof(int));
 	pos += sizeof(int);

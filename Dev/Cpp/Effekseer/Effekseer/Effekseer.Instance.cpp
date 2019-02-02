@@ -1,4 +1,4 @@
-﻿
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -94,7 +94,6 @@ void Instance::GenerateChildrenInRequired(float currentTime)
 	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 	{
 		auto node = (EffectNodeImplemented*)parameter->GetChild(i);
-		auto container = m_pContainer->GetChild(i);
 		assert(group != NULL);
 
 		while (true)
@@ -671,8 +670,6 @@ void Instance::Update( float deltaFrame, bool shown )
 	// Invalidate matrix
 	m_GlobalMatrix43Calculated = false;
 	m_ParentMatrix43Calculated = false;
-
-	auto instanceGlobal = this->m_pContainer->GetRootInstance();
 
 	if (m_stepTime && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
 	{

@@ -1,4 +1,4 @@
-﻿
+
 
 //----------------------------------------------------------------------------------
 //
@@ -154,7 +154,6 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 		std::map<Handle,DrawSet>::iterator it = m_RemovingDrawSets[0].begin();
 		while( it != m_RemovingDrawSets[0].end() )
 		{
-			DrawSet& drawset = (*it).second;
 			m_RemovingDrawSets[1][ (*it).first ] = (*it).second;
 			m_RemovingDrawSets[0].erase( it++ );
 		}

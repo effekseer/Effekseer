@@ -1,4 +1,4 @@
-﻿
+
 #ifndef	__EFFEKSEER_EFFECT_IMPLEMENTED_H__
 #define	__EFFEKSEER_EFFECT_IMPLEMENTED_H__
 
@@ -116,7 +116,7 @@ public:
 	virtual ~EffectImplemented();
 
 	// Rootの取得
-	EffectNode* GetRoot() const;
+	EffectNode* GetRoot() const override;
 
 	float GetMaginification() const override;
 
@@ -145,12 +145,12 @@ public:
 	/**
 	@brief	設定取得
 	*/
-	Setting* GetSetting() const;
+	Setting* GetSetting() const override;
 	
 	/**
 		@brief	エフェクトデータのバージョン取得
 	*/
-	int GetVersion() const;
+	int GetVersion() const override;
 
 	/**
 		@brief	格納されている画像のポインタを取得する。
@@ -160,66 +160,66 @@ public:
 	/**
 		@brief	格納されている画像のポインタの個数を取得する。
 	*/
-	int32_t GetColorImageCount() const;
+	int32_t GetColorImageCount() const override;
 
 	/**
 	@brief	格納されている画像のポインタを取得する。
 	*/
 	TextureData* GetNormalImage(int n) const override;
 
-	int32_t GetNormalImageCount() const;
+	int32_t GetNormalImageCount() const override;
 
 	TextureData* GetDistortionImage(int n) const override;
 
-	int32_t GetDistortionImageCount() const;
+	int32_t GetDistortionImageCount() const override;
 
 	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/
-	void* GetWave( int n ) const;
+	void* GetWave( int n ) const override;
 
-	int32_t GetWaveCount() const;
+	int32_t GetWaveCount() const override;
 
 	/**
 		@brief	格納されているモデルのポインタを取得する。
 	*/
-	void* GetModel( int n ) const;
+	void* GetModel( int n ) const override;
 
-	int32_t GetModelCount() const;
-
-	/**
-		@brief	エフェクトのリロードを行う。
-	*/
-	bool Reload( void* data, int32_t size, const EFK_CHAR* materialPath = NULL );
+	int32_t GetModelCount() const override;
 
 	/**
 		@brief	エフェクトのリロードを行う。
 	*/
-	bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL );
+	bool Reload( void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) override;
 
 	/**
 		@brief	エフェクトのリロードを行う。
 	*/
-	bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL );
+	bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) override;
 
 	/**
 		@brief	エフェクトのリロードを行う。
 	*/
-	bool Reload( Manager* managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL );
+	bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) override;
+
+	/**
+		@brief	エフェクトのリロードを行う。
+	*/
+	bool Reload( Manager* managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) override;
 
 	/**
 		@brief	画像等リソースの再読み込みを行う。
 	*/
-	void ReloadResources( const EFK_CHAR* materialPath );
+	void ReloadResources( const EFK_CHAR* materialPath ) override;
 
 	/**
 		@brief	画像等リソースの破棄を行う。
 	*/
-	void UnloadResources();
+	void UnloadResources() override;
 
-	virtual int GetRef() { return ReferenceObject::GetRef(); }
-	virtual int AddRef() { return ReferenceObject::AddRef(); }
-	virtual int Release() { return ReferenceObject::Release(); }
+	virtual int GetRef() override { return ReferenceObject::GetRef(); }
+	virtual int AddRef() override { return ReferenceObject::AddRef(); }
+	virtual int Release() override { return ReferenceObject::Release(); }
 };
 //----------------------------------------------------------------------------------
 //

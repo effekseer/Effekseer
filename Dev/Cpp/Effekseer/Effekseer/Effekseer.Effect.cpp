@@ -1,4 +1,4 @@
-﻿
+
 
 //----------------------------------------------------------------------------------
 //
@@ -474,10 +474,6 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 void EffectImplemented::Reset()
 {
 	UnloadResources();
-
-	Setting* loader = GetSetting();
-
-	TextureLoader* textureLoader = loader->GetTextureLoader();
 
 	for( int i = 0; i < m_ImageCount; i++ )
 	{

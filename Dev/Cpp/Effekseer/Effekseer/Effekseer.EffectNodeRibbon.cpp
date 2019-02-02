@@ -1,4 +1,4 @@
-﻿
+
 
 //----------------------------------------------------------------------------------
 //
@@ -32,8 +32,6 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setti
 	pos += sizeof(int);
 	assert(type == GetType());
 	EffekseerPrintDebug("Renderer : Ribbon\n");
-
-	int32_t size = 0;
 
 	if (m_effect->GetVersion() >= 3)
 	{

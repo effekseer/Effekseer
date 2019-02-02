@@ -1,4 +1,4 @@
-﻿
+
 #ifndef	__EFFEKSEERRENDERER_MODEL_RENDERER_BASE_H__
 #define	__EFFEKSEERRENDERER_MODEL_RENDERER_BASE_H__
 
@@ -94,7 +94,6 @@ public:
 	template<typename RENDERER>
 	void Rendering_(RENDERER* renderer, const efkModelNodeParam& parameter, const efkModelInstanceParam& instanceParameter, void* userData)
 	{
-		auto camera = renderer->GetCameraMatrix();
 		::Effekseer::BillboardType btype = parameter.Billboard;
 		Effekseer::Matrix44 mat44;
 
@@ -245,8 +244,6 @@ public:
 	{
 		if (m_matrixes.size() == 0) return;
 		if (param.ModelIndex < 0) return;
-
-		auto camera = renderer->GetCameraMatrix();
 
 		MODEL* model = (MODEL*) param.EffectPointer->GetModel(param.ModelIndex);
 		if (model == NULL) return;

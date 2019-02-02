@@ -1,4 +1,4 @@
-﻿
+
 #ifndef	__EFFEKSEERRENDERER_STANDARD_RENDERER_BASE_H__
 #define	__EFFEKSEERRENDERER_STANDARD_RENDERER_BASE_H__
 
@@ -123,7 +123,7 @@ public:
 
 			auto old = vertexCaches.size();
 			vertexCaches.resize(count * sizeof(VERTEX_DISTORTION) + vertexCaches.size());
-			offset = old;
+			offset = (int32_t)old;
 			data = (vertexCaches.data() + old);
 		}
 		else
@@ -135,7 +135,7 @@ public:
 
 			auto old = vertexCaches.size();
 			vertexCaches.resize(count * sizeof(VERTEX) + vertexCaches.size());
-			offset = old;
+			offset = (int32_t)old;
 			data = (vertexCaches.data() + old);
 		}
 	}
@@ -167,14 +167,14 @@ public:
 
 		while (true)
 		{
-			auto renderBufferSize = 0;
+			int32_t renderBufferSize = 0;
 	
 			// only sprite
-			renderBufferSize = vertexCaches.size() - offset;
+			renderBufferSize = (int32_t)vertexCaches.size() - offset;
 
 			if (renderBufferSize > renderVertexMaxSize)
 			{
-				renderBufferSize = (int32_t)(Effekseer::Min(renderVertexMaxSize, vertexCaches.size() - offset) / (vsize * 4)) * (vsize * 4);
+				renderBufferSize = (Effekseer::Min((int32_t)renderVertexMaxSize, (int32_t)vertexCaches.size() - offset) / (vsize * 4)) * (vsize * 4);
 			}
 
 			Rendering_(mCamera, mProj, offset, renderBufferSize);

@@ -1,4 +1,4 @@
-﻿
+
 #ifndef	__EFFEKSEER_SOCKET_H__
 #define	__EFFEKSEER_SOCKET_H__
 
@@ -57,19 +57,6 @@ typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 
 #endif
-
-#if defined(_WINSOCK)
-static void Sleep_(int32_t ms)
-{
-	Sleep(ms);
-}
-#else
-static void Sleep_(int32_t ms)
-{
-	usleep(1000 * ms);
-}
-#endif
-
 
 class Socket
 {
