@@ -94,7 +94,6 @@ void Instance::GenerateChildrenInRequired(float currentTime)
 	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 	{
 		auto node = (EffectNodeImplemented*)parameter->GetChild(i);
-		auto container = m_pContainer->GetChild(i);
 		assert(group != NULL);
 
 		while (true)
@@ -111,7 +110,7 @@ void Instance::GenerateChildrenInRequired(float currentTime)
 					Matrix43 rootMatrix;
 					rootMatrix.Indentity();
 
-					newInstance->Initialize(this, m_generatedChildrenCount[i], std::max(0.0f, this->m_LivingTime), rootMatrix);
+					newInstance->Initialize(this, m_generatedChildrenCount[i], (int32_t)std::max(0.0f, this->m_LivingTime), rootMatrix);
 				}
 
 				m_generatedChildrenCount[i]++;
@@ -624,13 +623,13 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 
 	if( m_pEffectNode->SoundType == ParameterSoundType_Use )
 	{
-		soundValues.delay = m_pEffectNode->Sound.Delay.getValue( *instanceGlobal );
+		soundValues.delay = (int32_t)m_pEffectNode->Sound.Delay.getValue( *instanceGlobal );
 	}
 
 	// UV
 	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_ANIMATION)
 	{
-		uvTimeOffset = m_pEffectNode->RendererCommon.UV.Animation.StartFrame.getValue(*instanceGlobal);
+		uvTimeOffset = (int32_t)m_pEffectNode->RendererCommon.UV.Animation.StartFrame.getValue(*instanceGlobal);
 		uvTimeOffset *= m_pEffectNode->RendererCommon.UV.Animation.FrameLength;
 	}
 	
@@ -671,8 +670,6 @@ void Instance::Update( float deltaFrame, bool shown )
 	// Invalidate matrix
 	m_GlobalMatrix43Calculated = false;
 	m_ParentMatrix43Calculated = false;
-
-	auto instanceGlobal = this->m_pContainer->GetRootInstance();
 
 	if (m_stepTime && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
 	{
@@ -1348,7 +1345,7 @@ RectF Instance::GetUV() const
 	}
 	else if( m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_SCROLL )
 	{
-		auto time = m_LivingTime + uvTimeOffset;
+		auto time = (int32_t)m_LivingTime + uvTimeOffset;
 
 		return RectF(
 			uvAreaOffset.X + uvScrollSpeed.X * time,
@@ -1358,7 +1355,7 @@ RectF Instance::GetUV() const
 	}
 	else if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_FCURVE)
 	{
-		auto time = m_LivingTime + uvTimeOffset;
+		auto time = (int32_t)m_LivingTime + uvTimeOffset;
 
 		return RectF(
 			uvAreaOffset.X + m_pEffectNode->RendererCommon.UV.FCurve.Position->X.GetValue(time),

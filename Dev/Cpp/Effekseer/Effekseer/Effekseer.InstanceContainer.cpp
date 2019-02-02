@@ -25,7 +25,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 void* InstanceContainer::operator new(size_t size, Manager* pManager)
 {
-	return pManager->GetMallocFunc()(size);
+	return pManager->GetMallocFunc()((uint32_t)size);
 }
 
 //----------------------------------------------------------------------------------

@@ -242,7 +242,7 @@ public:
 		@note
 		このマネージャーから生成されたエフェクトは全て強制的に破棄されます。
 	*/
-	void Destroy();
+	void Destroy() override;
 
 	/**
 		@brief	更新番号を取得する。
@@ -252,216 +252,216 @@ public:
 	/**
 		@brief	メモリ確保関数取得
 	*/
-	MallocFunc GetMallocFunc() const;
+	MallocFunc GetMallocFunc() const override;
 
 	/**
 		@brief	メモリ確保関数設定
 	*/
-	void SetMallocFunc( MallocFunc func );
+	void SetMallocFunc( MallocFunc func ) override;
 
 	/**
 		@brief	メモリ破棄関数取得
 	*/
-	FreeFunc GetFreeFunc() const;
+	FreeFunc GetFreeFunc() const override;
 
 	/**
 		@brief	メモリ破棄関数設定
 	*/
-	void SetFreeFunc( FreeFunc func );
+	void SetFreeFunc( FreeFunc func ) override;
 
 	/**
 		@brief	ランダム関数取得
 	*/
-	RandFunc GetRandFunc() const;
+	RandFunc GetRandFunc() const override;
 
 	/**
 		@brief	ランダム関数設定
 	*/
-	void SetRandFunc( RandFunc func );
+	void SetRandFunc( RandFunc func ) override;
 
 	/**
 		@brief	ランダム最大値取得
 	*/
-	int GetRandMax() const;
+	int GetRandMax() const override;
 
 	/**
 		@brief	ランダム関数設定
 	*/
-	void SetRandMax( int max_ );
+	void SetRandMax( int max_ ) override;
 
 	/**
 		@brief	座標系を取得する。
 	*/
-	CoordinateSystem GetCoordinateSystem() const;
+	CoordinateSystem GetCoordinateSystem() const override;
 
 	/**
 		@brief	座標系を設定する。
 	*/
-	void SetCoordinateSystem( CoordinateSystem coordinateSystem );
+	void SetCoordinateSystem( CoordinateSystem coordinateSystem ) override;
 
 	/**
 		@brief	スプライト描画機能取得
 	*/
-	SpriteRenderer* GetSpriteRenderer();
+	SpriteRenderer* GetSpriteRenderer() override;
 
 	/**
 		@brief	スプライト描画機能設定
 	*/
-	void SetSpriteRenderer( SpriteRenderer* renderer );
+	void SetSpriteRenderer( SpriteRenderer* renderer ) override;
 
 	/**
 		@brief	リボン描画機能取得
 	*/
-	RibbonRenderer* GetRibbonRenderer();
+	RibbonRenderer* GetRibbonRenderer() override;
 
 	/**
 		@brief	リボン描画機能設定
 	*/
-	void SetRibbonRenderer( RibbonRenderer* renderer );
+	void SetRibbonRenderer( RibbonRenderer* renderer ) override;
 
 	/**
 		@brief	リング描画機能取得
 	*/
-	RingRenderer* GetRingRenderer();
+	RingRenderer* GetRingRenderer() override;
 
 	/**
 		@brief	リング描画機能設定
 	*/
-	void SetRingRenderer( RingRenderer* renderer );
+	void SetRingRenderer( RingRenderer* renderer ) override;
 
 	/**
 		@brief	モデル描画機能取得
 	*/
-	ModelRenderer* GetModelRenderer();
+	ModelRenderer* GetModelRenderer() override;
 
 	/**
 		@brief	モデル描画機能設定
 	*/
-	void SetModelRenderer( ModelRenderer* renderer );
+	void SetModelRenderer( ModelRenderer* renderer ) override;
 
 	/**
 		@brief	軌跡描画機能取得
 	*/
-	TrackRenderer* GetTrackRenderer();
+	TrackRenderer* GetTrackRenderer() override;
 
 	/**
 		@brief	軌跡描画機能設定
 	*/
-	void SetTrackRenderer( TrackRenderer* renderer );
+	void SetTrackRenderer( TrackRenderer* renderer ) override;
 
 	/**
 		@brief	設定クラスを取得する。
 	*/
-	Setting* GetSetting();
+	Setting* GetSetting() override;
 
 	/**
 		@brief	設定クラスを設定する。
 		@param	setting	[in]	設定
 	*/
-	void SetSetting(Setting* setting);
+	void SetSetting(Setting* setting) override;
 
 	/**
 		@brief	エフェクト読込クラスを取得する。
 	*/
-	EffectLoader* GetEffectLoader();
+	EffectLoader* GetEffectLoader() override;
 
 	/**
 		@brief	エフェクト読込クラスを設定する。
 	*/
-	void SetEffectLoader( EffectLoader* effectLoader );
+	void SetEffectLoader( EffectLoader* effectLoader ) override;
 
 	/**
 		@brief	テクスチャ読込クラスを取得する。
 	*/
-	TextureLoader* GetTextureLoader();
+	TextureLoader* GetTextureLoader() override;
 
 	/**
 		@brief	テクスチャ読込クラスを設定する。
 	*/
-	void SetTextureLoader( TextureLoader* textureLoader );
+	void SetTextureLoader( TextureLoader* textureLoader ) override;
 	
 	/**
 		@brief	サウンド再生取得
 	*/
-	SoundPlayer* GetSoundPlayer();
+	SoundPlayer* GetSoundPlayer() override;
 
 	/**
 		@brief	サウンド再生機能設定
 	*/
-	void SetSoundPlayer( SoundPlayer* soundPlayer );
+	void SetSoundPlayer( SoundPlayer* soundPlayer ) override;
 	
 	/**
 		@brief	サウンド再生取得
 	*/
-	SoundLoader* GetSoundLoader();
+	SoundLoader* GetSoundLoader() override;
 
 	/**
 		@brief	サウンド再生機能設定
 	*/
-	void SetSoundLoader( SoundLoader* soundLoader );
+	void SetSoundLoader( SoundLoader* soundLoader ) override;
 
 	/**
 		@brief	モデル読込クラスを取得する。
 	*/
-	ModelLoader* GetModelLoader();
+	ModelLoader* GetModelLoader() override;
 
 	/**
 		@brief	モデル読込クラスを設定する。
 	*/
-	void SetModelLoader( ModelLoader* modelLoader );
+	void SetModelLoader( ModelLoader* modelLoader ) override;
 	
 	/**
 		@brief	エフェクト停止
 	*/
-	void StopEffect( Handle handle );
+	void StopEffect( Handle handle ) override;
 
 	/**
 		@brief	全てのエフェクト停止
 	*/
-	void StopAllEffects();
+	void StopAllEffects() override;
 
 	/**
 		@brief	エフェクト停止
 	*/
-	void StopRoot( Handle handle );
+	void StopRoot( Handle handle ) override;
 
 	/**
 		@brief	エフェクト停止
 	*/
-	void StopRoot( Effect* effect );
+	void StopRoot( Effect* effect ) override;
 
 	/**
 		@brief	エフェクトのインスタンスが存在しているか取得する。
 		@param	handle	[in]	インスタンスのハンドル
 		@return	存在してるか?
 	*/
-	bool Exists( Handle handle );
+	bool Exists( Handle handle ) override;
 
-	int32_t GetInstanceCount( Handle handle );
+	int32_t GetInstanceCount( Handle handle ) override;
 
 	/**
 		@brief	エフェクトのインスタンスに設定されている行列を取得する。
 		@param	handle	[in]	インスタンスのハンドル
 		@return	行列
 	*/
-	Matrix43 GetMatrix( Handle handle );
+	Matrix43 GetMatrix( Handle handle ) override;
 
 	/**
 		@brief	エフェクトのインスタンスに変換行列を設定する。
 		@param	handle	[in]	インスタンスのハンドル
 		@param	mat		[in]	変換行列
 	*/
-	void SetMatrix( Handle handle, const Matrix43& mat );
+	void SetMatrix( Handle handle, const Matrix43& mat ) override;
 
-	Vector3D GetLocation( Handle handle );
-	void SetLocation( Handle handle, float x, float y, float z );
-	void SetLocation( Handle handle, const Vector3D& location );
-	void AddLocation( Handle handle, const Vector3D& location );
+	Vector3D GetLocation( Handle handle ) override;
+	void SetLocation( Handle handle, float x, float y, float z ) override;
+	void SetLocation( Handle handle, const Vector3D& location ) override;
+	void AddLocation( Handle handle, const Vector3D& location ) override;
 
 	/**
 		@brief	エフェクトのインスタンスの回転角度を指定する。(ラジアン)
 	*/
-	void SetRotation( Handle handle, float x, float y, float z );
+	void SetRotation( Handle handle, float x, float y, float z ) override;
 
 	/**
 		@brief	エフェクトのインスタンスの任意軸周りの反時計周りの回転角度を指定する。
@@ -469,7 +469,7 @@ public:
 		@param	axis	[in]	軸
 		@param	angle	[in]	角度(ラジアン)
 	*/
-	void SetRotation( Handle handle, const Vector3D& axis, float angle );
+	void SetRotation( Handle handle, const Vector3D& axis, float angle ) override;
 
 	/**
 		@brief	エフェクトのインスタンスの拡大率を指定する。
@@ -478,61 +478,61 @@ public:
 		@param	y		[in]	Y方向拡大率
 		@param	z		[in]	Z方向拡大率
 	*/
-	void SetScale( Handle handle, float x, float y, float z );
+	void SetScale( Handle handle, float x, float y, float z ) override;
 
 	void SetAllColor(Handle handle, Color color) override;
 
 	// エフェクトのターゲット位置を指定する。
-	void SetTargetLocation( Handle handle, float x, float y, float z );
-	void SetTargetLocation( Handle handle, const Vector3D& location );
+	void SetTargetLocation( Handle handle, float x, float y, float z ) override;
+	void SetTargetLocation( Handle handle, const Vector3D& location ) override;
 
-	Matrix43 GetBaseMatrix( Handle handle );
+	Matrix43 GetBaseMatrix( Handle handle ) override;
 
-	void SetBaseMatrix( Handle handle, const Matrix43& mat );
+	void SetBaseMatrix( Handle handle, const Matrix43& mat ) override;
 
 	/**
 		@brief	エフェクトのインスタンスに廃棄時のコールバックを設定する。
 		@param	handle	[in]	インスタンスのハンドル
 		@param	callback	[in]	コールバック
 	*/
-	void SetRemovingCallback( Handle handle, EffectInstanceRemovingCallback callback );
+	void SetRemovingCallback( Handle handle, EffectInstanceRemovingCallback callback ) override;
 
-	bool GetShown(Handle handle);
+	bool GetShown(Handle handle) override;
 
-	void SetShown( Handle handle, bool shown );
+	void SetShown( Handle handle, bool shown ) override;
 	
-	bool GetPaused(Handle handle);
+	bool GetPaused(Handle handle) override;
 
-	void SetPaused( Handle handle, bool paused );
+	void SetPaused( Handle handle, bool paused ) override;
 
-	void SetPausedToAllEffects(bool paused);
+	void SetPausedToAllEffects(bool paused) override;
 
 	float GetSpeed(Handle handle) const override;
 
-	void SetSpeed( Handle handle, float speed );
+	void SetSpeed( Handle handle, float speed ) override;
 	
-	void SetAutoDrawing( Handle handle, bool autoDraw );
+	void SetAutoDrawing( Handle handle, bool autoDraw ) override;
 	
-	void Flip();
+	void Flip() override;
 
 	/**
 		@brief	更新処理
 	*/
-	void Update( float deltaFrame );
+	void Update( float deltaFrame ) override;
 
 	/**
 		@brief	更新処理を開始する。
 		@note
 		Updateを実行する際は、実行する必要はない。
 	*/
-	void BeginUpdate();
+	void BeginUpdate() override;
 
 	/**
 		@brief	更新処理を終了する。
 		@note
 		Updateを実行する際は、実行する必要はない。
 	*/
-	void EndUpdate();
+	void EndUpdate() override;
 
 	/**
 		@brief	ハンドル単位の更新を行う。
@@ -541,7 +541,7 @@ public:
 		@note
 		更新する前にBeginUpdate、更新し終わった後にEndUpdateを実行する必要がある。
 	*/
-	void UpdateHandle( Handle handle, float deltaFrame = 1.0f );
+	void UpdateHandle( Handle handle, float deltaFrame = 1.0f ) override;
 
 private:
 	void UpdateHandle( DrawSet& drawSet, float deltaFrame );
@@ -564,24 +564,24 @@ public:
 
 	void DrawHandleFront(Handle handle) override;
 
-	Handle Play( Effect* effect, float x, float y, float z );
+	Handle Play( Effect* effect, float x, float y, float z ) override;
 
 	Handle Play(Effect* effect, const Vector3D& position, int32_t startFrame) override;
 	
 	/**
 		@brief	Update処理時間を取得。
 	*/
-	int GetUpdateTime() const {return m_updateTime;};
+	int GetUpdateTime() const override {return m_updateTime;};
 	
 	/**
 		@brief	Draw処理時間を取得。
 	*/
-	int GetDrawTime() const {return m_drawTime;};
+	int GetDrawTime() const override {return m_drawTime;};
 
 	/**
 		@brief	残りの確保したインスタンス数を取得する。
 	*/
-	virtual int32_t GetRestInstancesCount() const { return m_reserved_instances.size(); }
+	virtual int32_t GetRestInstancesCount() const override { return (int32_t)m_reserved_instances.size(); }
 
 	/**
 		@brief	リロードを開始する。
@@ -600,23 +600,23 @@ public:
 		@param	zsize	Z方向幅
 		@param	layerCount	層数(大きいほどカリングの効率は上がるがメモリも大量に使用する)
 	*/
-	void CreateCullingWorld( float xsize, float ysize, float zsize, int32_t layerCount);
+	void CreateCullingWorld( float xsize, float ysize, float zsize, int32_t layerCount) override;
 
 	/**
 		@brief	カリングを行い、カリングされたオブジェクトのみを描画するようにする。
 		@param	cameraProjMat	カメラプロジェクション行列
 		@param	isOpenGL		OpenGLによる描画か?
 	*/
-	void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL);
+	void CalcCulling(const Matrix44& cameraProjMat, bool isOpenGL) override;
 
 	/**
 		@brief	現在存在するエフェクトのハンドルからカリングの空間を配置しなおす。
 	*/
 	void RessignCulling() override;
 
-	virtual int GetRef() { return ReferenceObject::GetRef(); }
-	virtual int AddRef() { return ReferenceObject::AddRef(); }
-	virtual int Release() { return ReferenceObject::Release(); }
+	virtual int GetRef() override { return ReferenceObject::GetRef(); }
+	virtual int AddRef() override { return ReferenceObject::AddRef(); }
+	virtual int Release() override { return ReferenceObject::Release(); }
 };
 //----------------------------------------------------------------------------------
 //

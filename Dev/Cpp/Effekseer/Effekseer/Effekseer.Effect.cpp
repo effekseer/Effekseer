@@ -475,10 +475,6 @@ void EffectImplemented::Reset()
 {
 	UnloadResources();
 
-	Setting* loader = GetSetting();
-
-	TextureLoader* textureLoader = loader->GetTextureLoader();
-
 	for( int i = 0; i < m_ImageCount; i++ )
 	{
 		if( m_ImagePaths[i] != NULL ) delete [] m_ImagePaths[i];

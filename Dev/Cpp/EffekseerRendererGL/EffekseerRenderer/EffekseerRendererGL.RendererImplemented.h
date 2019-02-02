@@ -437,27 +437,27 @@ public:
 	*/
 	~RendererImplemented();
 
-	void OnLostDevice();
-	void OnResetDevice();
+	void OnLostDevice() override;
+	void OnResetDevice() override;
 
 	/**
 		@brief	初期化
 	*/
 	bool Initialize();
 
-	void Destroy();
+	void Destroy() override;
 
-	void SetRestorationOfStatesFlag(bool flag);
+	void SetRestorationOfStatesFlag(bool flag) override;
 
 	/**
 		@brief	描画開始
 	*/
-	bool BeginRendering();
+	bool BeginRendering() override;
 
 	/**
 		@brief	描画終了
 	*/
-	bool EndRendering();
+	bool EndRendering() override;
 
 	/**
 		@brief	頂点バッファ取得
@@ -472,7 +472,7 @@ public:
 	/**
 		@brief	最大描画スプライト数
 	*/
-	int32_t GetSquareMaxCount() const;
+	int32_t GetSquareMaxCount() const override;
 
 	void SetSquareMaxCount(int32_t count) override;
 
@@ -626,7 +626,7 @@ public:
 
 	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
 
-	void ResetRenderState();
+	void ResetRenderState() override;
 
 	int32_t GetDrawCallCount() const override;
 
@@ -640,9 +640,9 @@ public:
 
 	OpenGLDeviceType GetDeviceType() { return m_deviceType; }
 
-	virtual int GetRef() { return ::Effekseer::ReferenceObject::GetRef(); }
-	virtual int AddRef() { return ::Effekseer::ReferenceObject::AddRef(); }
-	virtual int Release() { return ::Effekseer::ReferenceObject::Release(); }
+	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
+	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
+	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
 
 private:
 	void GenerateIndexData();

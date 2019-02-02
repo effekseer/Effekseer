@@ -44,7 +44,7 @@ bool DefaultEffectLoader::Load( const EFK_CHAR* path, void*& data, int32_t& size
 		reader( m_fileInterface->OpenRead( path ) );
 	if( reader.get() == NULL ) return false;
 
-	size = reader->GetLength();
+	size = (int32_t)reader->GetLength();
 	data = new uint8_t[size];
 	reader->Read( data, size );
 

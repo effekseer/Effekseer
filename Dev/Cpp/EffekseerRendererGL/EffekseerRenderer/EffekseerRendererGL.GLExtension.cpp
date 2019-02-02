@@ -687,7 +687,7 @@ void glCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, G
 	g_glCompressedTexImage2D(target, level,internalformat, width, height, border,imageSize, data);
 #elif defined(__EFFEKSEER_RENDERER_GLES2__) || defined(__EFFEKSEER_RENDERER_GL2__)
 #else
-	glCompressedTexImage2D(target, level,internalformat, width, height, border,imageSize, data);
+	::glCompressedTexImage2D(target, level,internalformat, width, height, border,imageSize, data);
 #endif
 }
 

@@ -45,7 +45,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 		char* data_model = new char[size_model];
 		reader->Read( data_model, size_model );
 
-		Model* model = new Model(data_model, size_model);
+		Model* model = new Model(data_model, (int32_t)size_model);
 
 		delete [] data_model;
 

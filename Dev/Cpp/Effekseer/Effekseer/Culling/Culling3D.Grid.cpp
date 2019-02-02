@@ -17,7 +17,7 @@ namespace Culling3D
 		assert(o_->ObjectIndex == -1);
 
 		objects.push_back(o_);
-		o_->ObjectIndex = objects.size() - 1;
+		o_->ObjectIndex = (int32_t)objects.size() - 1;
 	}
 
 	void Grid::RemoveObject(Object* o)

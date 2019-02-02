@@ -33,8 +33,6 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setti
 	assert(type == GetType());
 	EffekseerPrintDebug("Renderer : Ribbon\n");
 
-	int32_t size = 0;
-
 	if (m_effect->GetVersion() >= 3)
 	{
 		AlphaBlend = RendererCommon.AlphaBlend;

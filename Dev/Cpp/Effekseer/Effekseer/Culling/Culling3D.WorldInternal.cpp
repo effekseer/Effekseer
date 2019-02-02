@@ -425,7 +425,7 @@ namespace Culling3D
 
 						for (int32_t e = 0; e < 8; e++)
 						{
-							float x_, y_, z_;
+							float x_ = 0.0f, y_ = 0.0f, z_ = 0.0f;
 							if (e == 0){ x_ = xsize * x; y_ = ysize * y; z_ = zsize * z; }
 							if (e == 1){ x_ = xsize * (x + 1); y_ = ysize * y; z_ = zsize * z; }
 							if (e == 2){ x_ = xsize * x; y_ = ysize * (y + 1); z_ = zsize * z; }
@@ -648,7 +648,7 @@ namespace Culling3D
 
 					for (int32_t e = 0; e < 8; e++)
 					{
-						float x_, y_, z_;
+						float x_ = 0.0f, y_ = 0.0f, z_ = 0.0f;
 						if (e == 0){ x_ = xsize * x; y_ = ysize * y; z_ = zsize * z; }
 						if (e == 1){ x_ = xsize * (x + 1); y_ = ysize * y; z_ = zsize * z; }
 						if (e == 2){ x_ = xsize * x; y_ = ysize * (y + 1); z_ = zsize * z; }

@@ -65,24 +65,24 @@ namespace EffekseerRenderer
 				d.resize(a.size());
 				w.resize(a.size());
 
-				for (auto i = 1; i < a.size() - 1; i++)
+				for (size_t i = 1; i < a.size() - 1; i++)
 				{
 					c[i] = (a[i - 1] + a[i] * (-2.0) + a[i + 1]) * 3.0;
 				}
 
-				for (auto i = 1; i < a.size() - 1; i++)
+				for (size_t i = 1; i < a.size() - 1; i++)
 				{
 					auto tmp = efkVector3D(4.0, 4.0, 4.0) - w[i - 1];
 					c[i] = (c[i] - c[i - 1]) / tmp;
 					w[i] = efkVector3D(1.0, 1.0, 1.0) / tmp;
 				}
 
-				for (auto i = (a.size() - 1) - 1; i > 0; i--)
+				for (size_t i = (a.size() - 1) - 1; i > 0; i--)
 				{
 					c[i] = c[i] - c[i + 1] * w[i];
 				}
 
-				for (auto i = 0; i < a.size() - 1; i++)
+				for (size_t i = 0; i < a.size() - 1; i++)
 				{
 					d[i] = (c[i + 1] - c[i]) / 3.0;
 					b[i] = a[i + 1] - a[i] - c[i] - d[i];
@@ -101,21 +101,21 @@ namespace EffekseerRenderer
 
 			efkVector3D GetValue(float t)
 			{
-				auto j = floorf(t);
+				int32_t j = (int32_t)floorf(t);
 
 				if (j < 0)
 				{
 					j = 0;
 				}
 
-				if (j > a.size())
+				if (j > (int32_t)a.size())
 				{
-					j = a.size() - 1;
+					j = (int32_t)a.size() - 1;
 				}
 
 				auto dt = t - j;
 
-				if (j < isSame.size() && isSame[j]) return a[j];
+				if (j < (int32_t)isSame.size() && isSame[j]) return a[j];
 
 				return a[j] + (b[j] + (c[j] + d[j] * dt) * dt) * dt;
 			}
@@ -146,7 +146,7 @@ namespace EffekseerRenderer
 				spline_left.Reset();
 				spline_right.Reset();
 
-				for (auto loop = 0; loop < instances.size(); loop++)
+				for (size_t loop = 0; loop < instances.size(); loop++)
 				{
 					auto pl = efkVector3D();
 					auto pr = efkVector3D();
@@ -235,7 +235,7 @@ namespace EffekseerRenderer
 			}
 
 
-			for (auto loop = 0; loop < instances.size(); loop++)
+			for (size_t loop = 0; loop < instances.size(); loop++)
 			{
 				auto& param = instances[loop];
 
@@ -376,7 +376,7 @@ namespace EffekseerRenderer
 
 				Effekseer::Vector3D axisBefore;
 
-				for (int32_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
+				for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
 				{
 					bool isFirst_ = (i == 0);
 					bool isLast_ = (i == ((instances.size() - 1) * parameter.SplineDivision));

@@ -33,9 +33,6 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, Setting* settin
 	assert(type == GetType());
 	EffekseerPrintDebug("Renderer : Track\n");
 
-	int32_t size = 0;
-
-
 	LoadValues(TrackSizeFor, pos);
 	LoadValues(TrackSizeMiddle, pos);
 	LoadValues(TrackSizeBack, pos);
@@ -112,7 +109,6 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 	TrackRenderer* renderer = manager->GetTrackRenderer();
 	if (renderer != nullptr)
 	{
-		InstanceGroupValues& instValues = group->rendererValues.track;
 		m_currentGroupValues = group->rendererValues.track;
 
 		m_instanceParameter.InstanceCount = group->GetInstanceCount();
@@ -151,14 +147,12 @@ void EffectNodeTrack::EndRenderingGroup(InstanceGroup* group, Manager* manager)
 
 void EffectNodeTrack::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
 {
-	const InstanceValues& instValues = instance.rendererValues.track;
-
 	TrackRenderer* renderer = manager->GetTrackRenderer();
 	if (renderer != NULL)
 	{
 		float t = (float)instance.m_LivingTime / (float)instance.m_LivedTime;
-		int32_t time = instance.m_LivingTime;
-		int32_t livedTime = instance.m_LivedTime;
+		int32_t time = (int32_t)instance.m_LivingTime;
+		int32_t livedTime = (int32_t)instance.m_LivedTime;
 
 		SetValues(m_instanceParameter.ColorLeft, instance, m_currentGroupValues.ColorLeft, TrackColorLeft, time, livedTime);
 		SetValues(m_instanceParameter.ColorCenter, instance, m_currentGroupValues.ColorCenter, TrackColorCenter, time, livedTime);
@@ -217,12 +211,9 @@ void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGro
 //----------------------------------------------------------------------------------
 void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, Manager* manager)
 {
-	InstanceValues& instValues = instance.rendererValues.track;
-
 	// Calculate only center
-	float t = (float)instance.m_LivingTime / (float)instance.m_LivedTime;
-	int32_t time = instance.m_LivingTime;
-	int32_t livedTime = instance.m_LivedTime;
+	int32_t time = (int32_t)instance.m_LivingTime;
+	int32_t livedTime = (int32_t)instance.m_LivedTime;
 
 	Color c;
 	SetValues(c, instance, m_currentGroupValues.ColorCenterMiddle, TrackColorCenterMiddle, time, livedTime);
@@ -240,12 +231,9 @@ void EffectNodeTrack::InitializeRenderedInstance(Instance& instance, Manager* ma
 //----------------------------------------------------------------------------------
 void EffectNodeTrack::UpdateRenderedInstance(Instance& instance, Manager* manager)
 {
-	InstanceValues& instValues = instance.rendererValues.track;
-
 	// Calculate only center
-	float t = (float)instance.m_LivingTime / (float)instance.m_LivedTime;
-	int32_t time = instance.m_LivingTime;
-	int32_t livedTime = instance.m_LivedTime;
+	int32_t time = (int32_t)instance.m_LivingTime;
+	int32_t livedTime = (int32_t)instance.m_LivedTime;
 
 	Color c;
 	SetValues(c, instance, m_currentGroupValues.ColorCenterMiddle, TrackColorCenterMiddle, time, livedTime);

@@ -33,8 +33,8 @@ public:
 	GLuint GetInterface() { return m_buffer; }
 
 public:	// デバイス復旧用
-	virtual void OnLostDevice();
-	virtual void OnResetDevice();
+	virtual void OnLostDevice() override;
+	virtual void OnResetDevice() override;
 
 public:
 	void Lock() override;

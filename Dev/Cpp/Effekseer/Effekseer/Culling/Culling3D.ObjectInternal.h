@@ -38,7 +38,7 @@ namespace Culling3D
 				radius = 0.0f;
 				if (Type == OBJECT_SHAPE_TYPE_NONE) radius = 0.0f;
 				if (Type == OBJECT_SHAPE_TYPE_SPHERE) radius = Data.Sphere.Radius;
-				if (Type == OBJECT_SHAPE_TYPE_CUBOID) radius = sqrt(Data.Cuboid.X * Data.Cuboid.X + Data.Cuboid.Y * Data.Cuboid.Y + Data.Cuboid.Z * Data.Cuboid.Z) / 2.0f;
+				if (Type == OBJECT_SHAPE_TYPE_CUBOID) radius = sqrtf(Data.Cuboid.X * Data.Cuboid.X + Data.Cuboid.Y * Data.Cuboid.Y + Data.Cuboid.Z * Data.Cuboid.Z) / 2.0f;
 			}
 
 			float GetRadius()
@@ -77,8 +77,8 @@ namespace Culling3D
 
 		int32_t ObjectIndex;
 
-		virtual int32_t GetRef() { return ReferenceObject::GetRef(); }
-		virtual int32_t AddRef() { return ReferenceObject::AddRef(); }
-		virtual int32_t Release() { return ReferenceObject::Release(); }
+		virtual int32_t GetRef() override { return ReferenceObject::GetRef(); }
+		virtual int32_t AddRef() override { return ReferenceObject::AddRef(); }
+		virtual int32_t Release() override { return ReferenceObject::Release(); }
 	};
 }

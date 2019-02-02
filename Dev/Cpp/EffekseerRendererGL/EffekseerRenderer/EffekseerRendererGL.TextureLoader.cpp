@@ -199,7 +199,7 @@ void TextureLoader::Unload(Effekseer::TextureData* data )
 {
 	if( data != NULL )
 	{
-		GLuint texture = data->UserID;
+		GLuint texture = (GLuint)data->UserID;
 		glDeleteTextures(1, &texture);
 	}
 

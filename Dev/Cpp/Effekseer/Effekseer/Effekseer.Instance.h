@@ -198,7 +198,7 @@ public:
 	// 音
 	union
 	{
-		int		delay;
+		int32_t		delay;
 	} soundValues;
 
 	// 状態

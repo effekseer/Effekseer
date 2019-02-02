@@ -307,7 +307,6 @@ protected:
 	{
 		if (param.ZSort != Effekseer::ZSortType::None)
 		{
-			auto mat = m_renderer->GetCameraMatrix();
 			for (auto& kv : instances)
 			{
 				efkVector3D t;

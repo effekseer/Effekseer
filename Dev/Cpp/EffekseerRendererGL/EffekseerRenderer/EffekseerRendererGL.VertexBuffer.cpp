@@ -107,7 +107,7 @@ bool VertexBuffer::RingBufferLock( int32_t size, int32_t& offset, void*& data )
 #ifdef __ANDROID__
 	if (true)
 #else
-	if (m_vertexRingOffset + size > m_size)
+	if ((int32_t)m_vertexRingOffset + size > m_size)
 #endif
 	{
 		offset = 0;

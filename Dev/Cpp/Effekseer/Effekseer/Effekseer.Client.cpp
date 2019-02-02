@@ -28,7 +28,7 @@ void ClientImplemented::RecvAsync( void* data )
 		restSize = 4;
 		while(restSize > 0)
 		{
-			int32_t recvSize = ::recv( client->m_socket, (char*)(&size), restSize, 0 );
+			auto recvSize = ::recv( client->m_socket, (char*)(&size), restSize, 0 );
 			restSize -= recvSize;
 
 			if( recvSize == 0 || recvSize == -1 )
@@ -186,10 +186,10 @@ bool ClientImplemented::Send( void* data, int32_t datasize )
 		m_sendBuffer.push_back( ((uint8_t*)(data))[i] );
 	}
 
-	int32_t size = m_sendBuffer.size();
+	int32_t size = (int32_t)m_sendBuffer.size();
 	while( size > 0 )
 	{
-		int32_t ret = ::send( m_socket, (const char*)(&(m_sendBuffer[m_sendBuffer.size()-size])), size, 0 );
+		auto ret = ::send( m_socket, (const char*)(&(m_sendBuffer[m_sendBuffer.size()-size])), size, 0 );
 		if( ret == 0 || ret < 0 )
 		{
 			Stop();
@@ -229,7 +229,7 @@ void ClientImplemented::Reload( const EFK_CHAR* key, void* data, int32_t size )
 		buf.push_back( ((uint8_t*)(data))[i] );
 	}
 
-	Send( &(buf[0]), buf.size() );
+	Send( &(buf[0]), (int32_t)buf.size() );
 }
 
 //----------------------------------------------------------------------------------

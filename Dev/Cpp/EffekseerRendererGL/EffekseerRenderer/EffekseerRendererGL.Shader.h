@@ -115,18 +115,18 @@ private:
 		RendererImplemented* renderer,
 		GLuint& program,
 		const char* vs_src,
-		int32_t vertexShaderSize,
+		size_t vertexShaderSize,
 		const char* fs_src,
-		int32_t pixelShaderSize,
+		size_t pixelShaderSize,
 		const char* name);
 
 	Shader(
 		RendererImplemented* renderer, 
 		GLuint program,
 		const char* vs_src,
-		int32_t vertexShaderSize,
+		size_t vertexShaderSize,
 		const char* fs_src,
-		int32_t pixelShaderSize,
+		size_t pixelShaderSize,
 		const char* name);
 
 	GLint GetAttribId(const char* name) const;
@@ -140,14 +140,14 @@ public:
 	static Shader* Create(
 		RendererImplemented* renderer,
 		const char* vs_src,
-		int32_t vertexShaderSize,
+		size_t vertexShaderSize,
 		const char* fs_src,
-		int32_t pixelShaderSize,
+		size_t pixelShaderSize,
 		const char* name);
 
 public:	// デバイス復旧用
-	virtual void OnLostDevice();
-	virtual void OnResetDevice();
+	virtual void OnLostDevice() override;
+	virtual void OnResetDevice() override;
 	virtual void OnChangeDevice();
 
 public:

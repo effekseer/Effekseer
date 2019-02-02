@@ -1606,7 +1606,7 @@ HRESULT EffekseerDirectX::CreateDDSTextureFromMemory(
 
 	auto srcBits = ddsData + offset;
 
-	for( int32_t mip = 0; mip < mipMapCount; mip++ )
+	for( uint32_t mip = 0; mip < mipMapCount; mip++ )
 	{
 		size_t numBytes = 0;
 		size_t rowBytes = 0;
@@ -1617,7 +1617,7 @@ HRESULT EffekseerDirectX::CreateDDSTextureFromMemory(
 		{
 			auto destBits = (uint8_t*)locked.pBits;
 
-			for( auto h = 0; h < numBytes / rowBytes; h++ )
+			for( size_t h = 0; h < numBytes / rowBytes; h++ )
 			{
 				memcpy( destBits, srcBits, rowBytes );
 				destBits += locked.Pitch;

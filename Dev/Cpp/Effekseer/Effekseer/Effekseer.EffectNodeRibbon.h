@@ -168,9 +168,9 @@ public:
 	{
 	}
 
-	void LoadRendererParameter(unsigned char*& pos, Setting* setting);
+	void LoadRendererParameter(unsigned char*& pos, Setting* setting) override;
 
-	void BeginRendering(int32_t count, Manager* manager);
+	void BeginRendering(int32_t count, Manager* manager) override;
 
 	void BeginRenderingGroup(InstanceGroup* group, Manager* manager) override;
 
@@ -178,13 +178,13 @@ public:
 
 	void Rendering(const Instance& instance, const Instance* next_instance, Manager* manager) override;
 
-	void EndRendering(Manager* manager);
+	void EndRendering(Manager* manager) override;
 
-	void InitializeRenderedInstance(Instance& instance, Manager* manager);
+	void InitializeRenderedInstance(Instance& instance, Manager* manager) override;
 
-	void UpdateRenderedInstance(Instance& instance, Manager* manager);
+	void UpdateRenderedInstance(Instance& instance, Manager* manager) override;
 
-	eEffectNodeType GetType() const { return EFFECT_NODE_TYPE_RIBBON; }
+	eEffectNodeType GetType() const override { return EFFECT_NODE_TYPE_RIBBON; }
 };
 
 //----------------------------------------------------------------------------------

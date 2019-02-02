@@ -84,9 +84,9 @@ bool Shader::CompileShader(
 	RendererImplemented* renderer,
 	GLuint& program,
 	const char* vs_src,
-	int32_t vertexShaderSize,
+	size_t vertexShaderSize,
 	const char* fs_src,
-	int32_t pixelShaderSize,
+	size_t pixelShaderSize,
 	const char* name)
 {
 	const char* src_data[2];
@@ -119,7 +119,7 @@ bool Shader::CompileShader(
 
 	src_size[0] = (GLint) strlen(src_data[0]);
 	src_data[1] = fs_src;
-	src_size[1] = strlen(fs_src);
+	src_size[1] = (GLint)strlen(fs_src);
 
 	frag_shader = GLExt::glCreateShader(GL_FRAGMENT_SHADER);
 	GLExt::glShaderSource(frag_shader, 2, src_data, src_size);
@@ -180,9 +180,9 @@ Shader::Shader(
 	RendererImplemented* renderer,
 	GLuint program,
 	const char* vs_src,
-	int32_t vertexShaderSize,
+	size_t vertexShaderSize,
 	const char* fs_src,
-	int32_t pixelShaderSize,
+	size_t pixelShaderSize,
 	const char* name)
 	: DeviceObject		( renderer )
 	, m_program			( program )
@@ -239,9 +239,9 @@ Shader::~Shader()
 Shader* Shader::Create(
 	RendererImplemented* renderer,
 		const char* vs_src,
-		int32_t vertexShaderSize,
+		size_t vertexShaderSize,
 		const char* fs_src,
-		int32_t pixelShaderSize,
+		size_t pixelShaderSize,
 		const char* name)
 {
 	GLuint program;
@@ -377,7 +377,7 @@ void Shader::GetAttribIdList(int count, const ShaderAttribInfo* info )
 	}
 	else
 	{
-		for (int i = 0; i < attribs.size(); i++)
+		for (int i = 0; i < (int)attribs.size(); i++)
 		{
 			m_aid.push_back(GLExt::glGetAttribLocation(m_program, attribs[i].name.c_str()));
 			Layout layout;

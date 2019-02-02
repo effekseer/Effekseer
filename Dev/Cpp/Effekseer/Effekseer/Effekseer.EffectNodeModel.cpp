@@ -34,8 +34,6 @@ namespace Effekseer
 	assert( type == GetType() );
 	EffekseerPrintDebug("Renderer : Model\n");
 
-	int32_t size = 0;
-
 	AlphaBlend = RendererCommon.AlphaBlend;
 
 	if( m_effect->GetVersion() >= 7 )
@@ -144,7 +142,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
-		instanceParameter.Time = instance.m_LivingTime;
+		instanceParameter.Time = (int32_t)instance.m_LivingTime;
 
 		instanceParameter.UV = instance.GetUV();
 		

@@ -1225,10 +1225,10 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 
 	for (int32_t i = 0; i < count; i++)
 	{
-		auto id = 0;
+		GLuint id = 0;
 		if (textures[i] != nullptr)
 		{
-			id = textures[i]->UserID;
+			id = (GLuint)textures[i]->UserID;
 		}
 
 		GLExt::glActiveTexture(GL_TEXTURE0 + i);

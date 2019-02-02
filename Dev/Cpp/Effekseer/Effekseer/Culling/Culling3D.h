@@ -149,7 +149,7 @@ namespace Culling3D
 		*/
 		float GetLength() const
 		{
-			return sqrt(GetSquaredLength());
+			return sqrtf(GetSquaredLength());
 		}
 
 		/**
