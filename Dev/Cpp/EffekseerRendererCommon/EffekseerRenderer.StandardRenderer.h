@@ -116,7 +116,7 @@ public:
 	{
 		if (m_isDistortionMode)
 		{
-			if (count * sizeof(VERTEX_DISTORTION) + vertexCaches.size() > renderVertexMaxSize)
+			if (count * (int32_t)sizeof(VERTEX_DISTORTION) + (int32_t)vertexCaches.size() > renderVertexMaxSize)
 			{
 				Rendering();
 			}
@@ -128,7 +128,7 @@ public:
 		}
 		else
 		{
-			if (count * sizeof(VERTEX) + vertexCaches.size() > renderVertexMaxSize)
+			if (count * (int32_t)sizeof(VERTEX) + (int32_t)vertexCaches.size() > renderVertexMaxSize)
 			{
 				Rendering();
 			}
@@ -167,14 +167,12 @@ public:
 
 		while (true)
 		{
-			int32_t renderBufferSize = 0;
-	
 			// only sprite
-			renderBufferSize = (int32_t)vertexCaches.size() - offset;
+			int32_t renderBufferSize = (int32_t)vertexCaches.size() - offset;
 
 			if (renderBufferSize > renderVertexMaxSize)
 			{
-				renderBufferSize = (Effekseer::Min((int32_t)renderVertexMaxSize, (int32_t)vertexCaches.size() - offset) / (vsize * 4)) * (vsize * 4);
+				renderBufferSize = (Effekseer::Min(renderVertexMaxSize, (int32_t)vertexCaches.size() - offset) / (vsize * 4)) * (vsize * 4);
 			}
 
 			Rendering_(mCamera, mProj, offset, renderBufferSize);

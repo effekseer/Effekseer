@@ -47,8 +47,6 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 
 	if( reader.get() != NULL )
 	{
-		HRESULT hr;
-
 		size_t size_model = reader->GetLength();
 		uint8_t* data_model = new uint8_t[size_model];
 		reader->Read( data_model, size_model );

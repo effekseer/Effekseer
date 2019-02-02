@@ -189,7 +189,7 @@ void RenderState::Update( bool forced )
 	else
 	{
 		GLCheckError();
-		for (int32_t i = 0; i < m_renderer->GetCurrentTextures().size(); i++)
+		for (int32_t i = 0; i < (int32_t)m_renderer->GetCurrentTextures().size(); i++)
 		{
 			/* テクスチャが設定されていない場合はスキップ */
 			if (m_renderer->GetCurrentTextures()[i] == 0) continue;

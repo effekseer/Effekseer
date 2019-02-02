@@ -1564,7 +1564,7 @@ void ManagerImplemented::DrawFront()
 				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
 					auto e = (EffectImplemented*)drawSet.ParameterPointer;
-					for (int32_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
+					for (size_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
 					{
 						drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
 					}
@@ -1587,7 +1587,7 @@ void ManagerImplemented::DrawFront()
 				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
 					auto e = (EffectImplemented*)drawSet.ParameterPointer;
-					for (int32_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
+					for (size_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
 					{
 						drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
 					}
@@ -1628,7 +1628,7 @@ Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_
 	}
 
 	pGlobal->RenderedInstanceContainers.resize(e->renderingNodesCount);
-	for (auto i = 0; i < pGlobal->RenderedInstanceContainers.size(); i++)
+	for (size_t i = 0; i < pGlobal->RenderedInstanceContainers.size(); i++)
 	{
 		pGlobal->RenderedInstanceContainers[i] = nullptr;
 	}
@@ -1766,7 +1766,7 @@ void ManagerImplemented::DrawHandleFront(Handle handle)
 					if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 					{
 						auto e = (EffectImplemented*)drawSet.ParameterPointer;
-						for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+						for (size_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
 						{
 							drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
 						}
@@ -1785,7 +1785,7 @@ void ManagerImplemented::DrawHandleFront(Handle handle)
 				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
 					auto e = (EffectImplemented*)drawSet.ParameterPointer;
-					for (int32_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
+					for (size_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
 					{
 						drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
 					}

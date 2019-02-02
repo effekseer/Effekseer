@@ -138,11 +138,11 @@ bool VertexBuffer::RingBufferLock( int32_t size, int32_t& offset, void*& data )
 
 	if( size > m_size ) return false;
 
-	if ( m_vertexRingOffset + size > m_size )
+	if ( (int32_t)m_vertexRingOffset + size > m_size )
 	{
 		offset = 0;
 		m_buffer->Lock( 0, 0, reinterpret_cast<void**>(&data), D3DLOCK_DISCARD );
-		m_vertexRingOffset = size;
+		m_vertexRingOffset = (uint32_t)size;
 	}
 	else
 	{

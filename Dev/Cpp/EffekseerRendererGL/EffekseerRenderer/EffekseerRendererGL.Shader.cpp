@@ -1,4 +1,4 @@
-
+﻿
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -377,7 +377,7 @@ void Shader::GetAttribIdList(int count, const ShaderAttribInfo* info )
 	}
 	else
 	{
-		for (int i = 0; i < attribs.size(); i++)
+		for (int i = 0; i < (int)attribs.size(); i++)
 		{
 			m_aid.push_back(GLExt::glGetAttribLocation(m_program, attribs[i].name.c_str()));
 			Layout layout;

@@ -69,7 +69,7 @@ struct random_int
 	float getValue(IRandObject& g) const
 	{
 		float r;
-		r = (int32_t)g.GetRand(min, max);
+		r = g.GetRand((float)min, (float)max);
 		return r;
 	}
 };
