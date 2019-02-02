@@ -1,4 +1,4 @@
-
+﻿
 #include "Culling3D.Grid.h"
 #include "Culling3D.ObjectInternal.h"
 

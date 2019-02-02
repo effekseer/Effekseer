@@ -1,4 +1,4 @@
-
+﻿
 #include "Culling3D.WorldInternal.h"
 #include "Culling3D.ObjectInternal.h"
 
