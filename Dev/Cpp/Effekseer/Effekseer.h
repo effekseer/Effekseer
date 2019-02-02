@@ -812,6 +812,8 @@ namespace Effekseer {
 //
 //----------------------------------------------------------------------------------
 
+struct Matrix44;
+
 /**
 	@brief	4x3行列
 	@note
@@ -936,6 +938,11 @@ public:
 		@param	t	[in]	位置
 	*/
 	void SetSRT( const Vector3D& s, const Matrix43& r, const Vector3D& t );
+
+	/**
+		@brief	convert into matrix44
+	*/
+	void ToMatrix44(Matrix44& dst);
 
 	/**
 		@brief	行列同士の乗算を行う。
