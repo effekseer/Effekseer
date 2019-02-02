@@ -76,8 +76,15 @@ public:
 		@brief	
 		\~English	update a server and reload effects
 		\~Japanese	サーバーを更新し、エフェクトのリロードを行う。
+		@brief	managers
+		\~English	all managers which is playing effects.
+		\~Japanese	エフェクトを再生している全てのマネージャー
+		@brief	managerCount
+		\~English	the number of manager
+		\~Japanese	マネージャーの個数
+
 	*/
-	virtual void Update() = 0;
+	virtual void Update(Manager** managers = nullptr, int32_t managerCount = 0) = 0;
 
 	/**
 		@brief

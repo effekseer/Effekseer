@@ -355,7 +355,7 @@ void ServerImplemented::Unregister( Effect* effect )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::Update()
+void ServerImplemented::Update(Manager** managers, int32_t managerCount)
 {
 	m_ctrlClients.lock();
 
@@ -405,14 +405,29 @@ void ServerImplemented::Update()
 
 			if( m_effects.count( key ) > 0 )
 			{
-				if( m_materialPath.size() > 1 )
+				if (managers != nullptr)
 				{
-					m_effects[key]->Reload( &(m_data[key][0]), (int32_t)m_data.size(), &(m_materialPath[0]) );
+					if (m_materialPath.size() > 1)
+					{
+						m_effects[key]->Reload(managers, managerCount, m_data[key].data(), (int32_t)m_data.size(), &(m_materialPath[0]));
+					}
+					else
+					{
+						m_effects[key]->Reload(managers, managerCount, m_data[key].data(), (int32_t)m_data.size());
+					}
 				}
 				else
 				{
-					m_effects[key]->Reload( &(m_data[key][0]), (int32_t)m_data.size() );
+					if (m_materialPath.size() > 1)
+					{
+						m_effects[key]->Reload(m_data[key].data(), (int32_t)m_data.size(), &(m_materialPath[0]));
+					}
+					else
+					{
+						m_effects[key]->Reload(m_data[key].data(), (int32_t)m_data.size());
+					}
 				}
+				
 			}
 		}
 

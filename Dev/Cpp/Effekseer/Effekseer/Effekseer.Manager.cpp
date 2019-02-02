@@ -1838,6 +1838,25 @@ void ManagerImplemented::EndReloadEffect( Effect* effect )
 	{
 		if( (*it).second.ParameterPointer != effect ) continue;
 
+		auto e = (EffectImplemented*)effect;
+		auto pGlobal = (*it).second.GlobalPointer;
+
+		// reallocate
+		if (e->m_defaultRandomSeed >= 0)
+		{
+			pGlobal->SetSeed(e->m_defaultRandomSeed);
+		}
+		else
+		{
+			pGlobal->SetSeed(GetRandFunc()());
+		}
+
+		pGlobal->RenderedInstanceContainers.resize(e->renderingNodesCount);
+		for (size_t i = 0; i < pGlobal->RenderedInstanceContainers.size(); i++)
+		{
+			pGlobal->RenderedInstanceContainers[i] = nullptr;
+		}
+
 		// Create an instance through a container
 		(*it).second.InstanceContainerPointer = CreateInstanceContainer( ((EffectImplemented*)effect)->GetRoot(), (*it).second.GlobalPointer, true, (*it).second.GlobalMatrix, NULL );
 		

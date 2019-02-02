@@ -200,12 +200,12 @@ public:
 	/**
 		@brief	エフェクトのリロードを行う。
 	*/
-	bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) override;
+	bool Reload( Manager** managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) override;
 
 	/**
 		@brief	エフェクトのリロードを行う。
 	*/
-	bool Reload( Manager* managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) override;
+	bool Reload( Manager** managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) override;
 
 	/**
 		@brief	画像等リソースの再読み込みを行う。

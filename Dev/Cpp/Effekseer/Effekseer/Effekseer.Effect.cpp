@@ -16,6 +16,8 @@
 
 #include "Effekseer.Setting.h"
 
+#include <array>
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -637,7 +639,10 @@ bool EffectImplemented::Reload( void* data, int32_t size, const EFK_CHAR* materi
 {
 	if(m_pManager == NULL ) return false;
 
-	return Reload( m_pManager, 1, data, size, materialPath );
+	std::array<Manager*, 1> managers;
+	managers[0] = m_pManager;
+
+	return Reload( managers.data(), managers.size(), data, size, materialPath );
 }
 
 //----------------------------------------------------------------------------------
@@ -647,29 +652,40 @@ bool EffectImplemented::Reload( const EFK_CHAR* path, const EFK_CHAR* materialPa
 {
 	if(m_pManager == NULL ) return false;
 
-	return Reload( m_pManager, 1, path, materialPath );
+	std::array<Manager*, 1> managers;
+	managers[0] = m_pManager;
+
+	return Reload(managers.data(), managers.size(), path, materialPath );
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool EffectImplemented::Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath )
+bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath )
 {
-	if(m_pManager == NULL ) return false;
-
 	const EFK_CHAR* matPath = materialPath != NULL ? materialPath : m_materialPath.c_str();
 	
+	if (m_pManager != nullptr)
+	{
+		m_pManager->BeginReloadEffect(this);
+	}
+
 	for( int32_t i = 0; i < managersCount; i++)
 	{
-		((ManagerImplemented*)&(managers[i]))->BeginReloadEffect( this );
+		((ManagerImplemented*)managers[i])->BeginReloadEffect( this );
 	}
 
 	Reset();
 	Load( data, size, m_maginificationExternal, matPath );
 
+	if (m_pManager != nullptr)
+	{
+		m_pManager->EndReloadEffect(this);
+	}
+
 	for( int32_t i = 0; i < managersCount; i++)
 	{
-		((ManagerImplemented*)&(managers[i]))->EndReloadEffect( this );
+		((ManagerImplemented*)managers[i])->EndReloadEffect( this );
 	}
 
 	return false;
@@ -678,10 +694,8 @@ bool EffectImplemented::Reload( Manager* managers, int32_t managersCount, void* 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool EffectImplemented::Reload( Manager* managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath )
+bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath )
 {
-	if(m_pManager == NULL ) return false;
-
 	Setting* loader = GetSetting();
 	
 	EffectLoader* eLoader = loader->GetEffectLoader();
@@ -699,6 +713,11 @@ bool EffectImplemented::Reload( Manager* managers, int32_t managersCount, const 
 		materialPath = parentDir;
 	}
 
+	if (m_pManager != nullptr)
+	{
+		m_pManager->BeginReloadEffect(this);
+	}
+
 	for( int32_t i = 0; i < managersCount; i++)
 	{
 		((ManagerImplemented*)&(managers[i]))->BeginReloadEffect( this );
@@ -707,8 +726,11 @@ bool EffectImplemented::Reload( Manager* managers, int32_t managersCount, const 
 	Reset();
 	Load( data, size, m_maginificationExternal, materialPath );
 
-	m_pManager->EndReloadEffect( this );
-
+	if (m_pManager != nullptr)
+	{
+		m_pManager->EndReloadEffect(this);
+	}
+	
 	for( int32_t i = 0; i < managersCount; i++)
 	{
 		((ManagerImplemented*)&(managers[i]))->EndReloadEffect( this );

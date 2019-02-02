@@ -1441,7 +1441,7 @@ public:
 		@note
 		Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 	*/
-	virtual bool Reload( Manager* managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) = 0;
+	virtual bool Reload( Manager** managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
 	@brief	エフェクトのリロードを行う。
@@ -1453,7 +1453,7 @@ public:
 	@note
 	Settingを用いてエフェクトを生成したときに、Managerを指定することで対象のManager内のエフェクトのリロードを行う。
 	*/
-	virtual bool Reload( Manager* managers, int32_t managersCount,const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
+	virtual bool Reload( Manager** managers, int32_t managersCount,const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) = 0;
 
 	/**
 		@brief	画像等リソースの再読み込みを行う。
@@ -3363,8 +3363,15 @@ public:
 		@brief	
 		\~English	update a server and reload effects
 		\~Japanese	サーバーを更新し、エフェクトのリロードを行う。
+		@brief	managers
+		\~English	all managers which is playing effects.
+		\~Japanese	エフェクトを再生している全てのマネージャー
+		@brief	managerCount
+		\~English	the number of manager
+		\~Japanese	マネージャーの個数
+
 	*/
-	virtual void Update() = 0;
+	virtual void Update(Manager** managers = nullptr, int32_t managerCount = 0) = 0;
 
 	/**
 		@brief
