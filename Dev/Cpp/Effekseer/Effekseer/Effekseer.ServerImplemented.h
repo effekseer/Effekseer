@@ -2,7 +2,7 @@
 #ifndef	__EFFEKSEER_SERVER_IMPLEMENTED_H__
 #define	__EFFEKSEER_SERVER_IMPLEMENTED_H__
 
-#if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+#if !( defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE) )
 
 //----------------------------------------------------------------------------------
 // Include
@@ -76,22 +76,22 @@ public:
 	ServerImplemented();
 	virtual ~ServerImplemented();
 
-	/**
-	@brief
-	\~Japanese	サーバーを開始する。
-	\~English	Start a server
-	*/
-	bool Start( uint16_t port );
+	bool Start( uint16_t port ) override;
 
-	void Stop();
+	void Stop() override;
 
-	void Regist( const EFK_CHAR* key, Effect* effect );
+	void Register(const EFK_CHAR* key, Effect* effect) override;
 
-	void Unregist( Effect* effect );
+	void Unregister(Effect* effect) override;
 
-	void Update();
+	void Update() override;
 
-	void SetMaterialPath( const EFK_CHAR* materialPath );
+	void SetMaterialPath( const EFK_CHAR* materialPath ) override;
+
+	void Regist(const EFK_CHAR* key, Effect* effect) override;
+
+	void Unregist(Effect* effect) override;
+
 };
 
 //----------------------------------------------------------------------------------
@@ -102,6 +102,6 @@ public:
 //
 //----------------------------------------------------------------------------------
 
-#endif	// #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+#endif	// #if !( defined(_PSVITA) || defined(_SWITCH) || defined(_XBOXONE) )
 
 #endif	// __EFFEKSEER_SERVER_IMPLEMENTED_H__

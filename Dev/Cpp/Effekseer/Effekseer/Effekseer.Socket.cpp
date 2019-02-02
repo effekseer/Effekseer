@@ -1,10 +1,10 @@
 ﻿
-#if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+#if !( defined(_PSVITA) || defined(_XBOXONE) )
 
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_PS4) 
 #include <winsock2.h>
 #pragma comment( lib, "ws2_32.lib" )
 #else
@@ -23,8 +23,8 @@ namespace Effekseer {
 //----------------------------------------------------------------------------------
 void Socket::Initialize()
 {
-#ifdef _WIN32
-	/* Winsock初期化 */
+#if defined(_WIN32) && !defined(_PS4) 
+	// Initialize  Winsock
 	WSADATA m_WsaData;
 	::WSAStartup( MAKEWORD(2,0), &m_WsaData );
 #endif
@@ -35,8 +35,8 @@ void Socket::Initialize()
 //----------------------------------------------------------------------------------
 void Socket::Finalize()
 {
-#ifdef _WIN32
-	/* Winsock参照カウンタ減少+破棄 */
+#if defined(_WIN32) && !defined(_PS4) 
+	// Dispose winsock or decrease a counter
 	WSACleanup();
 #endif
 }
@@ -54,7 +54,7 @@ EfkSocket Socket::GenSocket()
 //----------------------------------------------------------------------------------
 void Socket::Close( EfkSocket s )
 {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_PS4) 
 	::closesocket( s );
 #else
 	::close( s );
@@ -66,7 +66,7 @@ void Socket::Close( EfkSocket s )
 //----------------------------------------------------------------------------------
 void Socket::Shutsown( EfkSocket s )
 {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_PS4) 
 	::shutdown( s, SD_BOTH );
 #else
 	::shutdown( s, SHUT_RDWR );
@@ -78,7 +78,7 @@ void Socket::Shutsown( EfkSocket s )
 //----------------------------------------------------------------------------------
 bool Socket::Listen( EfkSocket s, int32_t backlog )
 {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_PS4) 
 	return ::listen( s, backlog ) != SocketError;
 #else
 	return listen( s, backlog ) >= 0;
@@ -93,5 +93,5 @@ bool Socket::Listen( EfkSocket s, int32_t backlog )
 //
 //----------------------------------------------------------------------------------
 
-#endif	// #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+#endif	// #if !( defined(_PSVITA) || defined(_XBOXONE) )
 

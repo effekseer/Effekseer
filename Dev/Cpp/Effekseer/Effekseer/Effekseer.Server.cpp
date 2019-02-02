@@ -1,5 +1,5 @@
 ﻿
-#if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+#if !( defined(_PSVITA) || defined(_XBOXONE) )
 
 //----------------------------------------------------------------------------------
 // Include
@@ -7,11 +7,12 @@
 #include "Effekseer.ServerImplemented.h"
 #include "Effekseer.Effect.h"
 
-#ifdef _WIN32
+#include <string.h>
+
+#if defined(_WIN32) && !defined(_PS4) 
 #else
 #include <unistd.h>
 #endif
-
 
 //----------------------------------------------------------------------------------
 //
@@ -302,7 +303,7 @@ void ServerImplemented::Stop()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::Regist( const EFK_CHAR* key, Effect* effect )
+void ServerImplemented::Register( const EFK_CHAR* key, Effect* effect )
 {
 	if( effect == NULL ) return;
 
@@ -320,11 +321,11 @@ void ServerImplemented::Regist( const EFK_CHAR* key, Effect* effect )
 	{
 		if( m_materialPath.size() > 1 )
 		{
-			m_effects[key_]->Reload( &(m_data[key_][0]), m_data.size(), &(m_materialPath[0]) );
+			m_effects[key_]->Reload( m_data[key_].data(), m_data.size(), &(m_materialPath[0]) );
 		}
 		else
 		{
-			m_effects[key_]->Reload( &(m_data[key_][0]), m_data.size() );
+			m_effects[key_]->Reload( m_data[key_].data(), m_data.size() );
 		}
 	}
 }
@@ -332,7 +333,7 @@ void ServerImplemented::Regist( const EFK_CHAR* key, Effect* effect )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::Unregist( Effect* effect )
+void ServerImplemented::Unregister( Effect* effect )
 {
 	if( effect == NULL ) return;
 
@@ -440,6 +441,16 @@ void ServerImplemented::SetMaterialPath( const EFK_CHAR* materialPath )
 	m_materialPath.push_back(0);
 }
 
+void ServerImplemented::Regist(const EFK_CHAR* key, Effect* effect)
+{
+	Register(key, effect);
+}
+
+void ServerImplemented::Unregist(Effect* effect)
+{
+	Unregister(effect);
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -448,4 +459,4 @@ void ServerImplemented::SetMaterialPath( const EFK_CHAR* materialPath )
 //
 //----------------------------------------------------------------------------------
 
-#endif	// #if !( defined(_PSVITA) || defined(_PS4) || defined(_SWITCH) || defined(_XBOXONE) )
+#endif	// #if !( defined(_PSVITA) || defined(_XBOXONE) )
