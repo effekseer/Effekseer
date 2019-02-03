@@ -10,18 +10,6 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
 
-#if defined(_M_IX86) || defined(__x86__)
-#define EFK_SSE2
-#include <emmintrin.h>
-#elif defined(__ARM_NEON__)
-#define EFK_NEON
-#include <arm_neon.h>
-#endif
-
-#ifdef _MSC_VER
-#include <xmmintrin.h>
-#endif
-
 //----------------------------------------------------------------------------------
 // Lib
 //----------------------------------------------------------------------------------

@@ -2,14 +2,23 @@
 #ifndef	__EFFEKSEERRENDERER_COMMON_UTILS_H__
 #define	__EFFEKSEERRENDERER_COMMON_UTILS_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include <Effekseer.h>
 #include <assert.h>
 #include <string.h>
 #include <math.h>
 #include <array>
+
+#if defined(_M_IX86) || defined(__x86__)
+#define EFK_SSE2
+#include <emmintrin.h>
+#elif defined(__ARM_NEON__)
+#define EFK_NEON
+#include <arm_neon.h>
+#endif
+
+#ifdef _MSC_VER
+#include <xmmintrin.h>
+#endif
 
 namespace EffekseerRenderer
 {
@@ -20,23 +29,20 @@ void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Vector3D& c
 
 void ApplyDepthOffset(::Effekseer::Matrix44& mat, const ::Effekseer::Vector3D& cameraFront, const ::Effekseer::Vector3D& cameraPos, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand);
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 template <typename Vertex>
 inline void TransformStandardVertexes( Vertex* vertexes, int32_t count, const ::Effekseer::Matrix43& mat )
 {
 	alignas(16) float Value3[4] = {mat.Value[3][0], mat.Value[3][1], mat.Value[3][2], 0.0f};
 #if defined(EFK_SSE2)
-	__m128 r0 = _mm_loadu_ps( mat.Value[0][0] );
-	__m128 r1 = _mm_loadu_ps( mat.Value[1][0] );
-	__m128 r2 = _mm_loadu_ps( mat.Value[2][0] );
+	__m128 r0 = _mm_loadu_ps( mat.Value[0] );
+	__m128 r1 = _mm_loadu_ps( mat.Value[1] );
+	__m128 r2 = _mm_loadu_ps( mat.Value[2] );
 	__m128 r3 = _mm_load_ps( Value3 );
 
 	float tmp_out[4];
 	::Effekseer::Vector3D* inout_prev;
 
-	// １ループ目
+	// 1st loop
 	{
 		::Effekseer::Vector3D* inout_cur = &vertexes[0].Pos;
 		__m128 v = _mm_loadu_ps( (const float*)inout_cur );
@@ -52,7 +58,7 @@ inline void TransformStandardVertexes( Vertex* vertexes, int32_t count, const ::
 		__m128 a23 = _mm_add_ps( a2, r3 );
 		__m128 a = _mm_add_ps( a01, a23 );
 
-		// 今回の結果をストアしておく
+		// store the result of 1st loop
 		_mm_storeu_ps( tmp_out, a );
 		inout_prev = inout_cur;
 	}
@@ -73,17 +79,17 @@ inline void TransformStandardVertexes( Vertex* vertexes, int32_t count, const ::
 		__m128 a23 = _mm_add_ps( a2, r3 );
 		__m128 a = _mm_add_ps( a01, a23 );
 
-		// 直前のループの結果を書き込みます
+		// write the result of previous loop
 		inout_prev->X = tmp_out[0];
 		inout_prev->Y = tmp_out[1];
 		inout_prev->Z = tmp_out[2];
 
-		// 今回の結果をストアしておく
+		// store the result of current loop
 		_mm_storeu_ps( tmp_out, a );
 		inout_prev = inout_cur;
 	}
 
-	// 最後のループの結果を書き込み
+	// write the result of last loop
 	{
 		inout_prev->X = tmp_out[0];
 		inout_prev->Y = tmp_out[1];
@@ -98,7 +104,7 @@ inline void TransformStandardVertexes( Vertex* vertexes, int32_t count, const ::
 	float tmp_out[4];
 	::Effekseer::Vector3D* inout_prev;
 
-	// １ループ目
+	// 1st loop
 	{
 		::Effekseer::Vector3D* inout_cur = &vertexes[0].Pos;
 		float32x4_t v = vld1q_f32( (const float*)inout_cur );
@@ -107,7 +113,7 @@ inline void TransformStandardVertexes( Vertex* vertexes, int32_t count, const ::
 		a = vmlaq_lane_f32( a, r1, vget_low_f32(v), 1 );
 		a = vmlaq_lane_f32( a, r2, vget_high_f32(v), 0 );
 
-		// 今回の結果をストアしておく
+		// store the result of 1st loop
 		vst1q_f32( tmp_out, a );
 		inout_prev = inout_cur;
 	}
@@ -121,17 +127,17 @@ inline void TransformStandardVertexes( Vertex* vertexes, int32_t count, const ::
 		a = vmlaq_lane_f32( a, r1, vget_low_f32(v), 1 );
 		a = vmlaq_lane_f32( a, r2, vget_high_f32(v), 0 );
 
-		// 直前のループの結果を書き込みます
+		// write the result of previous loop
 		inout_prev->X = tmp_out[0];
 		inout_prev->Y = tmp_out[1];
 		inout_prev->Z = tmp_out[2];
 
-		// 今回の結果をストアしておく
+		// store the result of current loop
 		vst1q_f32( tmp_out, a );
 		inout_prev = inout_cur;
 	}
 
-	// 最後のループの結果を書き込み
+	// write the result of last loop
 	{
 		inout_prev->X = tmp_out[0];
 		inout_prev->Y = tmp_out[1];
@@ -148,9 +154,6 @@ inline void TransformStandardVertexes( Vertex* vertexes, int32_t count, const ::
 #endif
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 template <typename VertexDistortion>
 inline void TransformDistortionVertexes(VertexDistortion* vertexes, int32_t count, const ::Effekseer::Matrix43& mat)
 {
@@ -181,9 +184,6 @@ inline void TransformDistortionVertexes(VertexDistortion* vertexes, int32_t coun
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 template <typename T>
 struct HasDistortion
 {
