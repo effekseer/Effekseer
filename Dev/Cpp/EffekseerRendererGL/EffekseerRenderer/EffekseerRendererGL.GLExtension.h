@@ -61,9 +61,9 @@ namespace GLExt
 #define GL_MAP_FLUSH_EXPLICIT_BIT 0x0010
 #define GL_MAP_UNSYNCHRONIZED_BIT 0x0020
 
-#ifndef GL_WRITE_ONLY
+//#ifndef GL_WRITE_ONLY
 #define GL_WRITE_ONLY 0x000088b9
-#endif
+//#endif
 
 #if defined(__APPLE__) || defined(__ANDROID__)
 #else
