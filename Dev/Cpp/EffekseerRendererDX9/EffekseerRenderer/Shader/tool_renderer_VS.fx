@@ -1,7 +1,6 @@
 
 float4x4 mCamera		: register(c0);
 float4x4 mProj			: register(c4);
-float4 mUVInversed		: register(c8);
 
 struct VS_Input
 {
@@ -12,13 +11,13 @@ struct VS_Input
 
 struct VS_Output
 {
-	float4 Position		: SV_POSITION;
-	float4 Color		: COLOR;
-	float2 UV		: TEXCOORD0;
+	float4 Position		: POSITION0;
+	float4 Color		: TEXCOORD0;
+	float2 UV		: TEXCOORD1;
 
-	float4 Pos		: TEXCOORD1;
-	float4 PosU		: TEXCOORD2;
-	float4 PosR		: TEXCOORD3;
+	float4 Pos		: TEXCOORD2;
+	float4 PosU		: TEXCOORD3;
+	float4 PosR		: TEXCOORD4;
 };
 
 VS_Output VS( const VS_Input Input )
@@ -43,8 +42,6 @@ VS_Output VS( const VS_Input Input )
 
 	Output.Color = Input.Color;
 	Output.UV = Input.UV;
-
-	Output.UV.y = mUVInversed.x + mUVInversed.y * Input.UV.y;
 
 	return Output;
 }

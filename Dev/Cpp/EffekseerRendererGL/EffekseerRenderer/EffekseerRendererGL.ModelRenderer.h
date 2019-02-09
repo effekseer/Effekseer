@@ -59,6 +59,8 @@ public:
 		UniformLightColor,
 		UniformLightAmbient,
 		Scale,
+		UVInversed,
+		UVInversedBack,
 		NumUniforms,
 	};
 

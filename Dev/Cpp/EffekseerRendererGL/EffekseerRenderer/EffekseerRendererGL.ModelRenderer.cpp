@@ -75,6 +75,7 @@ uniform mat4 ProjectionMatrix;
 uniform vec4 LightDirection;
 uniform vec4 LightColor;
 uniform vec4 LightAmbient;
+uniform vec4 mUVInversed;
 
 void main()
 {
@@ -119,6 +120,8 @@ R"(
 	{
 		v_Color = modelColor;
 	}
+
+	v_TexCoord.y = mUVInversed.x + mUVInversed.y * v_TexCoord.y;
 }
 )";
 
@@ -198,7 +201,7 @@ OUT lowp vec4 v_Color;
 "uniform vec4 ModelColor;\n"
 #endif
 "uniform mat4 ProjectionMatrix;\n"
-
+"uniform vec4 mUVInversed;\n"
 
 "void main() {\n"
 #if defined(MODEL_SOFTWARE_INSTANCING)
@@ -237,6 +240,8 @@ R"(
 	v_Pos = gl_Position;
 
 	v_Color = modelColor * a_Color;
+
+	v_TexCoord.y = mUVInversed.x + mUVInversed.y * v_TexCoord.y;
 }
 )";
 
@@ -253,7 +258,7 @@ uniform sampler2D uTexture0;
 uniform sampler2D uBackTexture0;
 
 uniform	vec4	g_scale;
-
+uniform	vec4	mUVInversedBack;
 
 void main() {
 	if (TextureEnable)
@@ -279,6 +284,8 @@ void main() {
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = (uv.y + 1.0) * 0.5;
 //	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
+
+	uv.y = mUVInversedBack.x + mUVInversedBack.y * uv.y;
 
 	vec3 color = TEX2D(uBackTexture0, uv).xyz;
 	FRAGCOLOR.xyz = color;
@@ -312,6 +319,8 @@ static ShaderUniformInfo g_model_uniforms[ModelRenderer::NumUniforms] = {
 	{"LightColor"		},
 	{"LightAmbient"		},
 	{ "g_scale" },
+	{ "mUVInversed" },
+	{ "mUVInversedBack" },
 };
 
 //----------------------------------------------------------------------------------
@@ -429,6 +438,11 @@ ModelRenderer::ModelRenderer(
 			shaders[i]->GetUniformId("LightAmbient"),
 			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 2
 			);
+		shaders[i]->AddVertexConstantLayout(
+			CONSTANT_TYPE_VECTOR4,
+			shaders[i]->GetUniformId("mUVInversed"),
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 3
+		);
 
 		shaders[i]->SetPixelConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererPixelConstantBuffer));
 		shaders[i]->AddPixelConstantLayout(
@@ -499,11 +513,25 @@ ModelRenderer::ModelRenderer(
 			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 2
 			);
 
-		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4);
+		shaders_d[i]->AddVertexConstantLayout(
+			CONSTANT_TYPE_VECTOR4,
+			shaders_d[i]->GetUniformId("mUVInversed"),
+			sizeof(Effekseer::Matrix44) * 2 + sizeof(float[4]) * 2 + sizeof(float[4]) * 3
+		);
+
+
+		shaders_d[i]->SetPixelConstantBufferSize(sizeof(float) * 4 * 2);
 		shaders_d[i]->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4,
 			shaders_d[i]->GetUniformId("g_scale"),
 			sizeof(float[4]) * 0
+			);
+
+
+		shaders_d[i]->AddPixelConstantLayout(
+			CONSTANT_TYPE_VECTOR4,
+			shaders_d[i]->GetUniformId("mUVInversedBack"),
+			sizeof(float[4]) * 1
 			);
 	}
 
@@ -636,35 +664,35 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	fs_d_src = Replace(fs_d_src, "TextureEnable", "false");
 
 	shader_lighting_texture_normal = Shader::Create(renderer,
-		vs_ltn_src.c_str(), vs_ltn_src.length(), fs_ltn_src.c_str(), fs_ltn_src.length(), "ModelRenderer");
+		vs_ltn_src.c_str(), vs_ltn_src.length(), fs_ltn_src.c_str(), fs_ltn_src.length(), "ModelRenderer1");
 	if (shader_lighting_texture_normal == NULL) goto End;
 
 	shader_lighting_normal = Shader::Create(renderer,
-		vs_ln_src.c_str(), vs_ln_src.length(), fs_ln_src.c_str(), fs_ln_src.length(), "ModelRenderer");
+		vs_ln_src.c_str(), vs_ln_src.length(), fs_ln_src.c_str(), fs_ln_src.length(), "ModelRenderer2");
 	if (shader_lighting_normal == NULL) goto End;
 
 	shader_lighting_texture = Shader::Create(renderer,
-		vs_lt_src.c_str(), vs_lt_src.length(), fs_lt_src.c_str(), fs_lt_src.length(), "ModelRenderer");
+		vs_lt_src.c_str(), vs_lt_src.length(), fs_lt_src.c_str(), fs_lt_src.length(), "ModelRenderer3");
 	if (shader_lighting_texture == NULL) goto End;
 
 	shader_lighting = Shader::Create(renderer,
-		vs_l_src.c_str(), vs_l_src.length(), fs_l_src.c_str(), fs_l_src.length(), "ModelRenderer");
+		vs_l_src.c_str(), vs_l_src.length(), fs_l_src.c_str(), fs_l_src.length(), "ModelRenderer4");
 	if (shader_lighting == NULL) goto End;
 
 	shader_texture = Shader::Create(renderer,
-		vs_t_src.c_str(), vs_t_src.length(), fs_t_src.c_str(), fs_t_src.length(), "ModelRenderer");
+		vs_t_src.c_str(), vs_t_src.length(), fs_t_src.c_str(), fs_t_src.length(), "ModelRenderer5");
 	if (shader_texture == NULL) goto End;
 
 	shader = Shader::Create( renderer, 
-		vs_src.c_str(), vs_src.length(), fs_src.c_str(), fs_src.length(), "ModelRenderer");
+		vs_src.c_str(), vs_src.length(), fs_src.c_str(), fs_src.length(), "ModelRenderer6");
 	if (shader == NULL) goto End;
 
 	shader_distortion_texture = Shader::Create(renderer,
-		vs_d_t_src.c_str(), vs_d_t_src.length(), fs_d_t_src.c_str(), fs_d_t_src.length(), "ModelRenderer");
+		vs_d_t_src.c_str(), vs_d_t_src.length(), fs_d_t_src.c_str(), fs_d_t_src.length(), "ModelRenderer7");
 	if (shader_distortion_texture == NULL) goto End;
 
 	shader_distortion = Shader::Create(renderer,
-		vs_d_src.c_str(), vs_d_src.length(), fs_d_src.c_str(), fs_d_src.length(), "ModelRenderer");
+		vs_d_src.c_str(), vs_d_src.length(), fs_d_src.c_str(), fs_d_src.length(), "ModelRenderer8");
 	if (shader_distortion == NULL) goto End;
 
 	return new ModelRenderer( 

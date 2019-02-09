@@ -1,3 +1,7 @@
+"%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tvs_2_0 /EVS /Fh Shader/EffekseerRenderer.Tool_VS.h Shader/tool_renderer_VS.fx
+"%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_2_0 /EPS /Fh Shader/EffekseerRenderer.Tool_PS.h Shader/tool_renderer_PS.fx
+"%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_2_0 /EPS /Fh Shader/EffekseerRenderer.ToolNoTexture_PS.h Shader/tool_renderer_no_texture_PS.fx
+
 "%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tvs_2_0 /EVS /Fh Shader/EffekseerRenderer.Standard_VS.h Shader/standard_renderer_VS.fx
 "%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_2_0 /EPS /Fh Shader/EffekseerRenderer.Standard_PS.h Shader/standard_renderer_PS.fx
 "%DXSDK_DIR%Utilities\\bin\x86\fxc" /Zpc /Tps_2_0 /EPS /Fh Shader/EffekseerRenderer.StandardNoTexture_PS.h Shader/standard_renderer_no_texture_PS.fx

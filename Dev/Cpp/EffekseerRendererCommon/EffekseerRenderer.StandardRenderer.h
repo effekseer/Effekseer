@@ -8,6 +8,7 @@
 #include <Effekseer.h>
 #include <vector>
 
+#include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 
@@ -84,6 +85,19 @@ private:
 	int32_t						renderVertexMaxSize;
 
 	bool						m_isDistortionMode;
+
+	struct VertexConstantBuffer
+	{
+		Effekseer::Matrix44 constantVSBuffer[2];
+		float uvInversed[4];
+	};
+
+	struct DistortionPixelConstantBuffer
+	{
+		float scale[4];
+		float uvInversed[4];
+	};
+
 public:
 
 	StandardRenderer(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, SHADER* shader_distortion, SHADER* shader_no_texture_distortion)
@@ -270,23 +284,52 @@ public:
 			m_renderer->SetTextures(shader_, textures, 1);
 		}
 
-		Effekseer::Matrix44 constantVSBuffer[2];
-		constantVSBuffer[0] = mCamera;
-		constantVSBuffer[1] = mProj;
-		m_renderer->SetVertexBufferToShader(constantVSBuffer, sizeof(Effekseer::Matrix44) * 2);
+		VertexConstantBuffer vcb;
+		vcb.constantVSBuffer[0] = mCamera;
+		vcb.constantVSBuffer[1] = mProj;
+
+		if (m_renderer->GetTextureUVStyle() == UVStyle::VerticalFlipped)
+		{
+			vcb.uvInversed[0] = 1;
+			vcb.uvInversed[1] = -1;
+		}
+		else
+		{
+			vcb.uvInversed[0] = 0;
+			vcb.uvInversed[1] = 1;
+		}
+
+		m_renderer->SetVertexBufferToShader(&vcb, sizeof(VertexConstantBuffer));
 
 		if (distortion)
 		{
-			float constantPSBuffer[1];
-			constantPSBuffer[0] = m_state.DistortionIntensity;
+			DistortionPixelConstantBuffer pcb;
+			pcb.scale[0] = m_state.DistortionIntensity;
 
-			m_renderer->SetPixelBufferToShader(constantPSBuffer, sizeof(float));
+			if (m_renderer->GetBackgroundTextureUVStyle() == UVStyle::VerticalFlipped)
+			{
+				pcb.uvInversed[0] = 1.0f;
+				pcb.uvInversed[1] = -1.0f;
+			}
+			else
+			{
+				pcb.uvInversed[0] = 0.0f;
+				pcb.uvInversed[1] = 1.0f;
+			}
+	
+			m_renderer->SetPixelBufferToShader(&pcb, sizeof(DistortionPixelConstantBuffer));
 		}
 
 		shader_->SetConstantBuffer();
 
 		state.TextureFilterTypes[0] = m_state.TextureFilterType;
 		state.TextureWrapTypes[0] = m_state.TextureWrapType;
+
+		if (distortion)
+		{
+			state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Nearest;
+			state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
+		}
 
 		m_renderer->GetRenderState()->Update(distortion);
 

@@ -9,6 +9,7 @@ float4	fLightDirection		: register( c244 );
 float4	fLightColor		: register( c245 );
 float4	fLightAmbient		: register( c246 );
 #endif
+float4 mUVInversed		: register(c247);
 
 
 struct VS_Input
@@ -83,6 +84,8 @@ VS_Output VS( const VS_Input Input )
 #else	
 	Output.Color = modelColor;
 #endif
+
+	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
 
 	return Output;
 }

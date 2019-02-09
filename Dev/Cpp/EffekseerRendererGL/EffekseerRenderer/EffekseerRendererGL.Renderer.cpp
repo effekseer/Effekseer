@@ -57,6 +57,7 @@ OUT vec4 vaPosU;
 R"(
 uniform mat4 uMatCamera;
 uniform mat4 uMatProjection;
+uniform vec4 mUVInversed;
 
 void main() {
 	vec4 cameraPos = uMatCamera * atPosition;
@@ -78,6 +79,8 @@ void main() {
 
 	vaColor = atColor;
 	vaTexCoord = atTexCoord;
+
+	vaTexCoord.y = mUVInversed.x + mUVInversed.y * vaTexCoord.y;
 }
 
 )";
@@ -127,6 +130,7 @@ OUT vec4 vaPosU;
 R"(
 uniform mat4 uMatCamera;
 uniform mat4 uMatProjection;
+uniform vec4 mUVInversed;
 
 void main() {
 
@@ -158,6 +162,8 @@ void main() {
 
 	vaColor = atColor;
 	vaTexCoord = atTexCoord;
+
+	vaTexCoord.y = mUVInversed.x + mUVInversed.y * vaTexCoord.y;
 }
 
 )";
@@ -176,6 +182,8 @@ uniform sampler2D uTexture0;
 uniform sampler2D uBackTexture0;
 
 uniform	vec4	g_scale;
+uniform	vec4	mUVInversedBack;
+
 )"
 
 R"(
@@ -191,6 +199,8 @@ void main() {
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = (uv.y + 1.0) * 0.5;
 	//uv.y = 1.0 - (uv.y + 1.0) * 0.5;
+
+	uv.y = mUVInversedBack.x + mUVInversedBack.y * uv.y;
 
 	color.xyz = TEX2D(uBackTexture0, uv).xyz;
 	
@@ -211,6 +221,7 @@ R"(
 uniform sampler2D uBackTexture0;
 
 uniform	vec4	g_scale;
+uniform	vec4	mUVInversedBack;
 
 )"
 
@@ -227,6 +238,8 @@ void main() {
 	uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = (uv.y + 1.0) * 0.5;
 	//uv.y = 1.0 - (uv.y + 1.0) * 0.5;
+
+	uv.y = mUVInversedBack.x + mUVInversedBack.y * uv.y;
 
 	color.xyz = TEX2D(uBackTexture0, uv).xyz;
 	
@@ -492,7 +505,7 @@ bool RendererImplemented::Initialize()
 	// 頂点属性IDを取得
 	m_shader->GetAttribIdList(3, sprite_attribs);
 	m_shader->SetVertexSize(sizeof(Vertex));
-	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	
 	m_shader->AddVertexConstantLayout(
 		CONSTANT_TYPE_MATRIX44,
@@ -506,11 +519,17 @@ bool RendererImplemented::Initialize()
 		sizeof(Effekseer::Matrix44)
 		);
 
+	m_shader->AddVertexConstantLayout(
+		CONSTANT_TYPE_VECTOR4,
+		m_shader->GetUniformId("mUVInversed"),
+		sizeof(Effekseer::Matrix44) * 2
+	);
+
 	m_shader->SetTextureSlot(0, m_shader->GetUniformId("uTexture0"));
 
 	m_shader_no_texture->GetAttribIdList(3, sprite_attribs);
 	m_shader_no_texture->SetVertexSize(sizeof(Vertex));
-	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
+	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	
 	m_shader_no_texture->AddVertexConstantLayout(
 		CONSTANT_TYPE_MATRIX44,
@@ -524,6 +543,12 @@ bool RendererImplemented::Initialize()
 		sizeof(Effekseer::Matrix44)
 		);
 
+	m_shader_no_texture->AddVertexConstantLayout(
+		CONSTANT_TYPE_VECTOR4,
+		m_shader_no_texture->GetUniformId("mUVInversed"),
+		sizeof(Effekseer::Matrix44) * 2
+	);
+
 	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer());
 	// 参照カウントの調整
 	if (m_vao != nullptr) Release();
@@ -535,8 +560,8 @@ bool RendererImplemented::Initialize()
 	// Distortion
 	m_shader_distortion->GetAttribIdList(5, sprite_attribs_distortion);
 	m_shader_distortion->SetVertexSize(sizeof(VertexDistortion));
-	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
+	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 
 	m_shader_distortion->AddVertexConstantLayout(
 		CONSTANT_TYPE_MATRIX44,
@@ -550,19 +575,32 @@ bool RendererImplemented::Initialize()
 		sizeof(Effekseer::Matrix44)
 		);
 
+	m_shader_distortion->AddVertexConstantLayout(
+		CONSTANT_TYPE_VECTOR4,
+		m_shader_distortion->GetUniformId("mUVInversed"),
+		sizeof(Effekseer::Matrix44) * 2
+	);
+
 	m_shader_distortion->AddPixelConstantLayout(
 		CONSTANT_TYPE_VECTOR4,
 		m_shader_distortion->GetUniformId("g_scale"),
 		0
 		);
 
+	m_shader_distortion->AddPixelConstantLayout(
+		CONSTANT_TYPE_VECTOR4,
+		m_shader_distortion->GetUniformId("mUVInversedBack"),
+		sizeof(float) * 4
+	);
+
+
 	m_shader_distortion->SetTextureSlot(0, m_shader_distortion->GetUniformId("uTexture0"));
 	m_shader_distortion->SetTextureSlot(1, m_shader_distortion->GetUniformId("uBackTexture0"));
 
 	m_shader_no_texture_distortion->GetAttribIdList(5, sprite_attribs_distortion);
 	m_shader_no_texture_distortion->SetVertexSize(sizeof(VertexDistortion));
-	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2);
-	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
+	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
+	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 
 	m_shader_no_texture_distortion->AddVertexConstantLayout(
 		CONSTANT_TYPE_MATRIX44,
@@ -576,11 +614,23 @@ bool RendererImplemented::Initialize()
 		sizeof(Effekseer::Matrix44)
 		);
 
+	m_shader_no_texture_distortion->AddVertexConstantLayout(
+		CONSTANT_TYPE_VECTOR4,
+		m_shader_no_texture_distortion->GetUniformId("mUVInversed"),
+		sizeof(Effekseer::Matrix44) * 2
+	);
+
 	m_shader_no_texture_distortion->AddPixelConstantLayout(
 		CONSTANT_TYPE_VECTOR4,
 		m_shader_distortion->GetUniformId("g_scale"),
 		0
 		);
+
+	m_shader_no_texture_distortion->AddPixelConstantLayout(
+		CONSTANT_TYPE_VECTOR4,
+		m_shader_no_texture_distortion->GetUniformId("mUVInversedBack"),
+		sizeof(float) * 4
+	);
 
 	m_shader_no_texture_distortion->SetTextureSlot(1, m_shader_no_texture_distortion->GetUniformId("uBackTexture0"));
 
