@@ -219,6 +219,7 @@ namespace Effekseer.GUI
 			TextOffsetY = (NativeManager.GetTextLineHeightWithSpacing() - NativeManager.GetTextLineHeight()) / 2;
 
 			Network = new Network(Native);
+			Network.Load();
 
 			Command.CommandManager.Changed += OnChanged;
 
@@ -317,6 +318,7 @@ namespace Effekseer.GUI
 				effectViewer.DispatchDisposed();
 			}
 
+			Network.Save();
 			Shortcuts.SeveShortcuts();
 			RecentFiles.SaveRecentConfig();
 
@@ -345,6 +347,7 @@ namespace Effekseer.GUI
 			NativeManager.ResetNextParentDock();
 
 			Shortcuts.Update();
+			Network.Update();
 
 			var handle = false;
 			if(!handle)

@@ -24,6 +24,7 @@ namespace Effekseer {
 class ClientImplemented : public Client
 {
 private:
+	bool isThreadRunning = false;
 	std::thread	m_threadRecv;
 
 	EfkSocket	m_socket;
@@ -31,10 +32,12 @@ private:
 	std::vector<uint8_t>	m_sendBuffer;
 
 	bool		m_running;
+	std::mutex	mutexStop;
 
 	HOSTENT* GetHostEntry( const char* host );
 
 	static void RecvAsync( void* data );
+	void StopInternal();
 public:
 	ClientImplemented();
 	~ClientImplemented();

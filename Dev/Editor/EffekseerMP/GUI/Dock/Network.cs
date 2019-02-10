@@ -26,32 +26,32 @@ namespace Effekseer.GUI.Dock
 			var sendOnEdit = new bool[] { Manager.Network.SendOnEdit };
 			var sendOnSave = new bool[] { Manager.Network.SendOnSave };
 
-			if (Manager.NativeManager.InputText("target", target))
+			if (Manager.NativeManager.InputText(Resources.GetString("NetworkAddress") + "###target", target))
 			{
 				Manager.Network.Target = Manager.NativeManager.GetInputTextResult();
 			}
 
-			if (Manager.NativeManager.InputInt("port", port))
+			if (Manager.NativeManager.InputInt(Resources.GetString("Port") + "###port", port))
 			{
 				Manager.Network.Port = port[0];
 			}
 
-			if (Manager.NativeManager.Checkbox("autoConnect", autoConnect))
+			if (Manager.NativeManager.Checkbox(Resources.GetString("AutoConnect") + "###autoConnect", autoConnect))
 			{
 				Manager.Network.AutoConnect = autoConnect[0];
 			}
 
-			if (Manager.NativeManager.Checkbox("sendOnLoad", sendOnLoad))
+			if (Manager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnLoad") + "###sendOnLoad", sendOnLoad))
 			{
 				Manager.Network.SendOnLoad = sendOnLoad[0];
 			}
 
-			if (Manager.NativeManager.Checkbox("sendOnEdit", sendOnEdit))
+			if (Manager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnEdit") + "###sendOnEdit", sendOnEdit))
 			{
 				Manager.Network.SendOnEdit = sendOnEdit[0];
 			}
 
-			if (Manager.NativeManager.Checkbox("sendOnSave", sendOnSave))
+			if (Manager.NativeManager.Checkbox(Resources.GetString("TransmitDataOnSave") + "###sendOnSave", sendOnSave))
 			{
 				Manager.Network.SendOnSave = sendOnSave[0];
 			}
@@ -75,7 +75,7 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.Text(state);
 
-			if(Manager.NativeManager.Button(connect + "###connect"))
+			if (Manager.NativeManager.Button(connect + "###connect"))
 			{
 				if (Manager.Network.IsConnected())
 				{
@@ -84,12 +84,29 @@ namespace Effekseer.GUI.Dock
 				else
 				{
 					Manager.Network.Connect();
+
+					if (!Manager.Network.IsConnected())
+					{
+						string errorMessage = "";
+
+						if (Effekseer.Core.Language == Language.Japanese)
+						{
+							errorMessage = "接続に失敗しました。";
+						}
+						else
+						{
+							errorMessage = "It failed to connect.";
+						}
+
+						swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+
+					}
 				}
 			}
 
-			if(Manager.NativeManager.Button("send"))
+			if (Manager.NativeManager.Button(Resources.GetString("SendData") + "###send"))
 			{
-				if(enabled)
+				if (enabled)
 				{
 					Manager.Network.Send();
 				}
