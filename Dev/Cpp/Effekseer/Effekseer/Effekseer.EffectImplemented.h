@@ -9,14 +9,83 @@
 #include "Effekseer.Effect.h"
 #include "Effekseer.Vector3D.h"
 
+#include <assert.h>
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
+/**
+	@brief	A class to backup resorces when effect is reloaded
+*/
+class EffectReloadingBackup
+{
+public:
+	template<class T> 
+	class Holder
+	{
+	public:
+		T value;
+		int counter = 0;
+	};
+
+	template<class T>
+	class HolderCollection
+	{
+		std::map<std::u16string, Holder<T>> collection;
+
+	public:
+		void Push(const char16_t* key, T value)
+		{
+			auto key_ = std::u16string(key);
+			auto it = collection.find(key_);
+			
+			if (it == collection.end())
+			{
+				collection[key_].value = value;
+				collection[key_].counter = 1;
+			}
+			else
+			{
+				assert(it->second.value == value);
+				it->second.counter++;
+			}
+		}
+
+		bool Pop(const char16_t* key, T& value)
+		{
+			auto key_ = std::u16string(key);
+			auto it = collection.find(key_);
+
+			if (it == collection.end())
+			{
+				return false;
+			}
+			else
+			{
+				it->second.counter--;
+				value = it->second.value;
+				if (it->second.counter == 0)
+				{
+					collection.erase(it);
+				}
+				return true;
+			}
+		}
+
+		std::map<std::u16string, Holder<T>>& GetCollection()
+		{
+			return collection;
+		}
+	};
+
+	HolderCollection<TextureData*> images;
+	HolderCollection<TextureData*> normalImages;
+	HolderCollection<TextureData*> distortionImages;
+	HolderCollection<void*> sounds;
+	HolderCollection<void*> models;
+};
 
 /**
 	@brief	エフェクトパラメーター
@@ -95,6 +164,14 @@ private:
 
 	} Culling;
 
+	//! a flag to reload
+	bool isReloadingOnRenderingThread = false;
+
+	//! backup to reload on rendering thread
+	std::unique_ptr<EffectReloadingBackup> reloadingBackup;
+
+	void ResetReloadingBackup();
+
 public:
 	/**
 		@brief	生成
@@ -120,10 +197,7 @@ public:
 
 	float GetMaginification() const override;
 
-	/**
-		@brief	読み込む。
-	*/
-	bool Load( void* pData, int size, float mag, const EFK_CHAR* materialPath );
+	bool Load( void* pData, int size, float mag, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType);
 
 	/**
 		@breif	何も読み込まれていない状態に戻す
@@ -190,31 +264,30 @@ public:
 	/**
 		@brief	エフェクトのリロードを行う。
 	*/
-	bool Reload( void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) override;
+	bool Reload( void* data, int32_t size, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType) override;
 
 	/**
 		@brief	エフェクトのリロードを行う。
 	*/
-	bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) override;
+	bool Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType) override;
 
 	/**
 		@brief	エフェクトのリロードを行う。
 	*/
-	bool Reload( Manager** managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath = NULL ) override;
+	bool Reload( Manager** managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType) override;
 
 	/**
 		@brief	エフェクトのリロードを行う。
 	*/
-	bool Reload( Manager** managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath = NULL ) override;
+	bool Reload( Manager** managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType) override;
 
 	/**
 		@brief	画像等リソースの再読み込みを行う。
 	*/
 	void ReloadResources( const EFK_CHAR* materialPath ) override;
 
-	/**
-		@brief	画像等リソースの破棄を行う。
-	*/
+	void UnloadResources(const EFK_CHAR* materialPath);
+
 	void UnloadResources() override;
 
 	virtual int GetRef() override { return ReferenceObject::GetRef(); }
