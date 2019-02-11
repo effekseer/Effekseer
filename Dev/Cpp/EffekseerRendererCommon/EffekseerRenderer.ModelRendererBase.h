@@ -10,6 +10,7 @@
 #include <string.h>
 #include <vector>
 
+#include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.RenderStateBase.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
@@ -38,6 +39,7 @@ struct ModelRendererVertexConstantBuffer
 	float	LightDirection[4];
 	float	LightColor[4];
 	float	LightAmbientColor[4];
+	float	UVInversed[4];
 };
 
 struct ModelRendererPixelConstantBuffer
@@ -353,17 +355,48 @@ public:
 
 		state.TextureFilterTypes[0] = param.TextureFilter;
 		state.TextureWrapTypes[0] = param.TextureWrap;
-		state.TextureFilterTypes[1] = param.TextureFilter;
-		state.TextureWrapTypes[1] = param.TextureWrap;
+
+		if (distortion)
+		{
+			state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Nearest;
+			state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
+		}
+		else
+		{
+			state.TextureFilterTypes[1] = param.TextureFilter;
+			state.TextureWrapTypes[1] = param.TextureWrap;
+		}
 
 		renderer->GetRenderState()->Update(distortion);
 
 		ModelRendererVertexConstantBuffer<InstanceCount>* vcb = (ModelRendererVertexConstantBuffer<InstanceCount>*)shader_->GetVertexConstantBuffer();
 
+		if (renderer->GetTextureUVStyle() == UVStyle::VerticalFlipped)
+		{
+			vcb->UVInversed[0] = 1;
+			vcb->UVInversed[1] = -1;
+		}
+		else
+		{
+			vcb->UVInversed[0] = 0;
+			vcb->UVInversed[1] = 1;
+		}
+
 		if (distortion)
 		{
 			float* pcb = (float*) shader_->GetPixelConstantBuffer();
-			pcb[0] = param.DistortionIntensity;
+			pcb[4 * 0 + 0] = param.DistortionIntensity;
+
+			if (renderer->GetBackgroundTextureUVStyle() == UVStyle::VerticalFlipped)
+			{
+				pcb[4 * 1 + 0] = 1;
+				pcb[4 * 1 + 1] = -1;
+			}
+			else
+			{
+				pcb[4 * 1 + 0] = 0;
+				pcb[4 * 1 + 1] = 1;
+			}
 		}
 		else
 		{

@@ -1,6 +1,7 @@
 
 float4x4 mCamera		: register(c0);
 float4x4 mProj			: register(c4);
+float4 mUVInversed		: register(c8);
 
 struct VS_Input
 {
@@ -42,5 +43,8 @@ VS_Output VS( const VS_Input Input )
 
 	Output.Color = Input.Color;
 	Output.UV = Input.UV;
+
+	Output.UV.y = mUVInversed.x + mUVInversed.y * Input.UV.y;
+
 	return Output;
 }

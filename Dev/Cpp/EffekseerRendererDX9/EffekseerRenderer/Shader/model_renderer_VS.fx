@@ -9,6 +9,7 @@ float4	fLightDirection		: register( c244 );
 float4	fLightColor		: register( c245 );
 float4	fLightAmbient		: register( c246 );
 #endif
+float4 mUVInversed		: register(c247);
 
 
 struct VS_Input

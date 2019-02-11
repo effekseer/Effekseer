@@ -3,6 +3,7 @@ float4x4 mCameraProj		: register( c0 );
 float4x4 mModel[40]		: register( c4 );
 float4	fUV[40]			: register( c164 );
 float4	fModelColor[40]		: register( c204 );
+float4 mUVInversed		: register(c247);
 
 struct VS_Input
 {
@@ -22,8 +23,8 @@ struct VS_Output
 	float4 Normal		: TEXCOORD1;
 	float4 Binormal		: TEXCOORD2;
 	float4 Tangent		: TEXCOORD3;
-	float4 Pos			: TEXCOORD4;
-	float4 Color		: COLOR;
+	float4 Pos		: TEXCOORD4;
+	float4 Color		: COLOR0;
 };
 
 VS_Output VS( const VS_Input Input )
@@ -59,6 +60,8 @@ VS_Output VS( const VS_Input Input )
 	Output.Pos = Output.Position;
 
 	Output.Color = modelColor;
+
+	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
 
 	return Output;
 }

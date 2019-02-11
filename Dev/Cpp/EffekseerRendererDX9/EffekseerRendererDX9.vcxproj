@@ -182,6 +182,7 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.ModelRendererBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.PngTextureLoader.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.Renderer.h" />
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.Renderer_Impl.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RenderStateBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RingRendererBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.ShaderBase.h" />
@@ -211,6 +212,7 @@
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.ModelRendererBase.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.PngTextureLoader.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.Renderer.cpp" />
+    <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.Renderer_Impl.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.RenderStateBase.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.RingRendererBase.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.SpriteRendererBase.cpp" />

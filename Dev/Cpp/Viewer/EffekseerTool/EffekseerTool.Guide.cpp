@@ -74,8 +74,8 @@ void Guide::Rendering( int32_t width, int32_t height, int32_t guide_width, int32
 
 		for (int32_t i = 0; i < 4; i++)
 		{
-			pos[i].X = pos[i].X / (float)width * 2.0 - 1.0f;
-			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0;
+			pos[i].X = pos[i].X / (float)width * 2.0f - 1.0f;
+			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0f;
 		}
 
 		imageRenderer->Draw(pos, uv, colors, nullptr);
@@ -99,8 +99,8 @@ void Guide::Rendering( int32_t width, int32_t height, int32_t guide_width, int32
 
 		for (int32_t i = 0; i < 4; i++)
 		{
-			pos[i].X = pos[i].X / (float)width * 2.0 - 1.0f;
-			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0;
+			pos[i].X = pos[i].X / (float)width * 2.0f - 1.0f;
+			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0f;
 		}
 
 		imageRenderer->Draw(pos, uv, colors, nullptr);
@@ -124,8 +124,8 @@ void Guide::Rendering( int32_t width, int32_t height, int32_t guide_width, int32
 
 		for (int32_t i = 0; i < 4; i++)
 		{
-			pos[i].X = pos[i].X / (float)width * 2.0 - 1.0f;
-			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0;
+			pos[i].X = pos[i].X / (float)width * 2.0f - 1.0f;
+			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0f;
 		}
 
 		imageRenderer->Draw(pos, uv, colors, nullptr);
@@ -149,8 +149,8 @@ void Guide::Rendering( int32_t width, int32_t height, int32_t guide_width, int32
 
 		for (int32_t i = 0; i < 4; i++)
 		{
-			pos[i].X = pos[i].X / (float)width * 2.0 - 1.0f;
-			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0;
+			pos[i].X = pos[i].X / (float)width * 2.0f - 1.0f;
+			pos[i].Y = 1.0f - pos[i].Y / (float)height * 2.0f;
 		}
 
 		imageRenderer->Draw(pos, uv, colors, nullptr);

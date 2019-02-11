@@ -5,15 +5,17 @@ Texture2D		g_backTexture		: register(t1);
 SamplerState	g_backSampler		: register(s1);
 
 float4		g_scale			: register(c0);
+float4 mUVInversedBack		: register(c1);
 
 struct PS_Input
 {
+	float4 Position		: SV_POSITION;
 	float2 UV		: TEXCOORD0;
 	float4 Normal		: TEXCOORD1;
 	float4 Binormal		: TEXCOORD2;
 	float4 Tangent		: TEXCOORD3;
-	float4 Pos			: TEXCOORD4;
-	float4 Color		: COLOR;
+	float4 Pos		: TEXCOORD4;
+	float4 Color		: COLOR0;
 };
 
 float4 PS( const PS_Input Input ) : SV_Target
@@ -38,6 +40,8 @@ float4 PS( const PS_Input Input ) : SV_Target
 
 		uv.x = (uv.x + 1.0) * 0.5;
 	uv.y = 1.0 - (uv.y + 1.0) * 0.5;
+
+	uv.y = mUVInversedBack.x + mUVInversedBack.y * uv.y;
 
 	float3 color = g_backTexture.Sample(g_backSampler, uv);
 		Output.xyz = color;

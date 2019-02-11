@@ -30,12 +30,27 @@ public:
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
+
+/**
+	@brief	
+	\~english A status of UV when particles are rendered.
+	\~japanese パーティクルを描画する時のUVの状態
+*/
+enum class UVStyle
+{
+	Normal,
+	VerticalFlipped,
+};
+
 class Renderer
 	: ::Effekseer::IReference
 {
 protected:
-	Renderer() {}
-	virtual ~Renderer() {}
+	Renderer();
+	virtual ~Renderer();
+
+	class Impl;
+	Impl* impl = nullptr;
 
 public:
 	/**
@@ -233,6 +248,34 @@ public:
 	@brief	描画モードを取得する。
 	*/
 	virtual Effekseer::RenderMode GetRenderMode() = 0;
+
+	/**
+	@brief
+	\~english Get an UV Style of texture when particles are rendered.
+	\~japanese パーティクルを描画するときのUVの状態を取得する。
+	*/
+	UVStyle GetTextureUVStyle() const;
+
+	/**
+	@brief
+	\~english Set an UV Style of texture when particles are rendered.
+	\~japanese パーティクルを描画するときのUVの状態を設定する。
+	*/
+	void SetTextureUVStyle(UVStyle style);
+
+	/**
+	@brief
+	\~english Get an UV Style of background when particles are rendered.
+	\~japanese パーティクルを描画するときの背景のUVの状態を取得する。
+	*/
+	UVStyle GetBackgroundTextureUVStyle() const;
+
+	/**
+	@brief
+	\~english Set an UV Style of background when particles are rendered.
+	\~japanese パーティクルを描画するときの背景のUVの状態を設定する。
+	*/
+	void SetBackgroundTextureUVStyle(UVStyle style);
 };
 
 //----------------------------------------------------------------------------------
