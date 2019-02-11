@@ -101,12 +101,61 @@ Effect* Effect::Create(Manager* manager, const EFK_CHAR* path, float magnificati
 	return effect;
 }
 
+void EffectImplemented::ResetReloadingBackup()
+{
+	if(reloadingBackup == nullptr) return;
+
+	Setting* loader = GetSetting();
+
+	TextureLoader* textureLoader = loader->GetTextureLoader();
+	if (textureLoader != NULL)
+	{
+		for (auto it: reloadingBackup->images.GetCollection())
+		{
+			textureLoader->Unload(it.second.value);
+		}
+	
+		for (auto it : reloadingBackup->normalImages.GetCollection())
+		{
+			textureLoader->Unload(it.second.value);
+		}
+
+		for (auto it : reloadingBackup->distortionImages.GetCollection())
+		{
+			textureLoader->Unload(it.second.value);
+		}
+	}
+
+	SoundLoader* soundLoader = loader->GetSoundLoader();
+	if (soundLoader != NULL)
+	{
+		for (auto it : reloadingBackup->sounds.GetCollection())
+		{
+			soundLoader->Unload(it.second.value);
+		}
+	}
+
+	{
+		ModelLoader* modelLoader = loader->GetModelLoader();
+		if (modelLoader != NULL)
+		{
+			for (auto it : reloadingBackup->models.GetCollection())
+			{
+				modelLoader->Unload(it.second.value);
+			}
+		}
+	}
+
+	reloadingBackup.reset();
+}
+
+
 Effect* EffectImplemented::Create( Manager* pManager, void* pData, int size, float magnification, const EFK_CHAR* materialPath )
 {
 	if( pData == NULL || size == 0 ) return NULL;
 
 	EffectImplemented* effect = new EffectImplemented( pManager, pData, size );
-	if ( !effect->Load( pData, size, magnification, materialPath ) )
+	if ( !effect->Load( pData, size, magnification, materialPath, ReloadingThreadType::Main) )
 	{
 		effect->Release();
 		effect = NULL;
@@ -159,7 +208,7 @@ Effect* EffectImplemented::Create( Setting* setting, void* pData, int size, floa
 	if( pData == NULL || size == 0 ) return NULL;
 
 	EffectImplemented* effect = new EffectImplemented( setting, pData, size );
-	if ( !effect->Load( pData, size, magnification, materialPath ) )
+	if ( !effect->Load( pData, size, magnification, materialPath, ReloadingThreadType::Main) )
 	{
 		effect->Release();
 		effect = NULL;
@@ -248,6 +297,7 @@ EffectImplemented::EffectImplemented( Setting* setting, void* pData, int size )
 //----------------------------------------------------------------------------------
 EffectImplemented::~EffectImplemented()
 {
+	ResetReloadingBackup();
 	Reset();
 
 	ES_SAFE_RELEASE( m_setting );
@@ -273,8 +323,10 @@ float EffectImplemented::GetMaginification() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* materialPath )
+bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType)
 {
+	// if reladingThreadType == ReloadingThreadType::Main, this function was regarded as loading function actually
+
 	EffekseerPrintDebug("** Create : Effect\n");
 
 	uint8_t* pos = (uint8_t*)pData;
@@ -635,33 +687,33 @@ int32_t EffectImplemented::GetModelCount() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool EffectImplemented::Reload( void* data, int32_t size, const EFK_CHAR* materialPath )
+bool EffectImplemented::Reload( void* data, int32_t size, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType)
 {
 	if(m_pManager == NULL ) return false;
 
 	std::array<Manager*, 1> managers;
 	managers[0] = m_pManager;
 
-	return Reload( managers.data(), managers.size(), data, size, materialPath );
+	return Reload( managers.data(), managers.size(), data, size, materialPath, reloadingThreadType);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool EffectImplemented::Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath )
+bool EffectImplemented::Reload( const EFK_CHAR* path, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType)
 {
 	if(m_pManager == NULL ) return false;
 
 	std::array<Manager*, 1> managers;
 	managers[0] = m_pManager;
 
-	return Reload(managers.data(), managers.size(), path, materialPath );
+	return Reload(managers.data(), managers.size(), path, materialPath, reloadingThreadType);
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath )
+bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, void* data, int32_t size, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType)
 {
 	const EFK_CHAR* matPath = materialPath != NULL ? materialPath : m_materialPath.c_str();
 	
@@ -675,8 +727,10 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, void*
 		((ManagerImplemented*)managers[i])->BeginReloadEffect( this );
 	}
 
+	isReloadingOnRenderingThread = true;
 	Reset();
-	Load( data, size, m_maginificationExternal, matPath );
+	Load( data, size, m_maginificationExternal, matPath, reloadingThreadType);
+	isReloadingOnRenderingThread = false;
 
 	if (m_pManager != nullptr)
 	{
@@ -694,7 +748,7 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, void*
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath )
+bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, const EFK_CHAR* path, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType)
 {
 	Setting* loader = GetSetting();
 	
@@ -723,8 +777,10 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, const
 		((ManagerImplemented*)&(managers[i]))->BeginReloadEffect( this );
 	}
 
+	isReloadingOnRenderingThread = true;
 	Reset();
-	Load( data, size, m_maginificationExternal, materialPath );
+	Load( data, size, m_maginificationExternal, materialPath, reloadingThreadType);
+	isReloadingOnRenderingThread = false;
 
 	if (m_pManager != nullptr)
 	{
@@ -749,6 +805,76 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 	const EFK_CHAR* matPath = materialPath != NULL ? materialPath : m_materialPath.c_str();
 	
 	Setting* loader = GetSetting();
+
+	// reloading on render thread
+	if (isReloadingOnRenderingThread)
+	{
+		assert(reloadingBackup != nullptr);
+
+		for (int32_t ind = 0; ind < m_ImageCount; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, m_ImagePaths[ind]);
+
+			TextureData* value = nullptr;
+			if (reloadingBackup->images.Pop(fullPath, value))
+			{
+				m_pImages[ind] = value;
+			}
+		}
+	
+		for (int32_t ind = 0; ind < m_normalImageCount; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, m_normalImagePaths[ind]);
+			
+			TextureData* value = nullptr;
+			if (reloadingBackup->normalImages.Pop(fullPath, value))
+			{
+				m_normalImages[ind] = value;
+			}
+		}
+				
+		for (int32_t ind = 0; ind < m_distortionImageCount; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, m_distortionImagePaths[ind]);
+			
+			TextureData* value = nullptr;
+			if (reloadingBackup->distortionImages.Pop(fullPath, value))
+			{
+				m_distortionImages[ind] = value;
+			}
+		}
+				
+		for (int32_t ind = 0; ind < m_WaveCount; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, m_WavePaths[ind]);
+
+			void* value = nullptr;
+			if (reloadingBackup->sounds.Pop(fullPath, value))
+			{
+				m_pWaves[ind] = value;
+			}
+		}
+		
+		
+		
+		for (int32_t ind = 0; ind < m_modelCount; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, m_modelPaths[ind]);
+			
+			void* value = nullptr;
+			if (reloadingBackup->models.Pop(fullPath, value))
+			{
+				m_pModels[ind] = value;
+			}
+		}
+			
+		return;
+	}
 
 	{
 		TextureLoader* textureLoader = loader->GetTextureLoader();
@@ -819,19 +945,70 @@ void EffectImplemented::ReloadResources( const EFK_CHAR* materialPath )
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void EffectImplemented::UnloadResources()
+void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 {
 	Setting* loader = GetSetting();
-	
-	TextureLoader* textureLoader = loader->GetTextureLoader();
-	if( textureLoader != NULL )
+
+	// reloading on render thread
+	if (isReloadingOnRenderingThread)
 	{
-		for( int32_t ind = 0; ind < m_ImageCount; ind++ )
+		assert(materialPath != nullptr);
+
+		if (reloadingBackup == nullptr)
 		{
-			textureLoader->Unload( m_pImages[ind] );
+			reloadingBackup = std::make_unique<EffectReloadingBackup>();
+		}
+
+		const EFK_CHAR* matPath = materialPath != nullptr ? materialPath : m_materialPath.c_str();
+
+		for (int32_t ind = 0; ind < m_ImageCount; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, m_ImagePaths[ind]);
+			reloadingBackup->images.Push(fullPath, m_pImages[ind]);
+		}
+
+		for (int32_t ind = 0; ind < m_normalImageCount; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, m_normalImagePaths[ind]);
+			reloadingBackup->normalImages.Push(fullPath, m_normalImages[ind]);
+		}
+
+		for (int32_t ind = 0; ind < m_distortionImageCount; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, m_distortionImagePaths[ind]);
+			reloadingBackup->distortionImages.Push(fullPath, m_distortionImages[ind]);
+		}
+
+		for (int32_t ind = 0; ind < m_WaveCount; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, m_WavePaths[ind]);
+			reloadingBackup->sounds.Push(fullPath, m_pWaves[ind]);
+		}
+
+		for (int32_t ind = 0; ind < m_modelCount; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, m_modelPaths[ind]);
+			reloadingBackup->models.Push(fullPath, m_pModels[ind]);
+		}
+
+		return;
+	}
+	else
+	{
+		ResetReloadingBackup();
+	}
+
+	TextureLoader* textureLoader = loader->GetTextureLoader();
+	if (textureLoader != NULL)
+	{
+		for (int32_t ind = 0; ind < m_ImageCount; ind++)
+		{
+			textureLoader->Unload(m_pImages[ind]);
 			m_pImages[ind] = NULL;
 		}
 
@@ -849,26 +1026,31 @@ void EffectImplemented::UnloadResources()
 	}
 
 	SoundLoader* soundLoader = loader->GetSoundLoader();
-	if( soundLoader != NULL )
+	if (soundLoader != NULL)
 	{
-		for( int32_t ind = 0; ind < m_WaveCount; ind++ )
+		for (int32_t ind = 0; ind < m_WaveCount; ind++)
 		{
-			soundLoader->Unload( m_pWaves[ind] );
+			soundLoader->Unload(m_pWaves[ind]);
 			m_pWaves[ind] = NULL;
 		}
 	}
 
 	{
 		ModelLoader* modelLoader = loader->GetModelLoader();
-		if( modelLoader != NULL )
+		if (modelLoader != NULL)
 		{
-			for( int32_t ind = 0; ind < m_modelCount; ind++ )
+			for (int32_t ind = 0; ind < m_modelCount; ind++)
 			{
-				modelLoader->Unload( m_pModels[ind] );
+				modelLoader->Unload(m_pModels[ind]);
 				m_pModels[ind] = NULL;
 			}
 		}
 	}
+}
+
+void EffectImplemented::UnloadResources()
+{
+	UnloadResources(nullptr);
 }
 
 //----------------------------------------------------------------------------------
