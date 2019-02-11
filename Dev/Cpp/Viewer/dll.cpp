@@ -1284,29 +1284,7 @@ bool Native::Record(const char16_t* path, int32_t count, int32_t xCount, int32_t
 		{
 			if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
 
-			g_renderer->BeginRendering();
-
-			if (g_renderer->Distortion == EffekseerTool::eDistortionType::DistortionType_Current)
-			{
-				g_manager->DrawBack();
-
-				// HACK
-				g_renderer->GetRenderer()->EndRendering();
-
-				g_renderer->CopyToBackground();
-
-				// HACK
-				g_renderer->GetRenderer()->BeginRendering();
-				g_manager->DrawFront();
-			}
-			else
-			{
-				g_manager->Draw();
-			}
-
-			g_renderer->EndRendering();
-
-			g_renderer->RenderPostEffect();
+			RenderWindow();
 
 			for (int j = 0; j < freq; j++)
 			{

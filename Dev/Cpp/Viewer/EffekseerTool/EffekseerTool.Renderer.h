@@ -38,9 +38,6 @@ private:
 private:
 	efk::Graphics*	graphics = nullptr;
 
-	int32_t				m_width;
-	int32_t				m_height;
-	
 	int32_t				m_windowWidth;
 	int32_t				m_windowHeight;
 
@@ -79,7 +76,7 @@ private:
 	std::shared_ptr<efk::RenderTexture>	postfxRenderTexture;
 	std::shared_ptr<efk::DepthTexture>	depthTexture;
 	std::shared_ptr<efk::RenderTexture>	viewRenderTexture;
-
+	
 	int32_t		screenWidth = 0;
 	int32_t		screenHeight = 0;
 	uint32_t	msaaSamples = 4;

@@ -52,9 +52,7 @@ namespace EffekseerTool
 	}
 
 	Renderer::Renderer(int32_t squareMaxCount, bool isSRGBMode, efk::DeviceType deviceType)
-		: m_width(0)
-		, m_height(0)
-		, m_squareMaxCount(squareMaxCount)
+		: m_squareMaxCount(squareMaxCount)
 		, m_projection(PROJECTION_TYPE_PERSPECTIVE)
 		, m_renderer(NULL)
 
@@ -160,11 +158,8 @@ bool Renderer::Initialize( void* handle, int width, int height )
 		return false;
 	}
 
-	m_width = width;
-	m_height = height;
-
-	m_windowWidth = m_width;
-	m_windowHeight = m_height;
+	m_windowWidth = width;
+	m_windowHeight = height;
 
 	m_distortionCallback = new DistortingCallback(graphics);
 	m_renderer = graphics->GetRenderer();
@@ -220,11 +215,11 @@ void Renderer::SetProjectionType( eProjectionType type )
 
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
-		SetPerspectiveFov( m_width, m_height );
+		SetPerspectiveFov( screenWidth, screenHeight );
 	}
 	else if( m_projection == PROJECTION_TYPE_ORTHOGRAPHIC )
 	{
-		SetOrthographic( m_width, m_height );
+		SetOrthographic( screenWidth, screenHeight );
 	}
 }
 
@@ -286,10 +281,8 @@ void Renderer::SetOrthographic( int width, int height )
 
 bool Renderer::Resize( int width, int height )
 {
-	m_width = width;
-	m_height = height;
-	m_windowWidth = m_width;
-	m_windowHeight = m_height;
+	m_windowWidth = width;
+	m_windowHeight = height;
 
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
@@ -309,11 +302,11 @@ void Renderer::RecalcProjection()
 {
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
-		SetPerspectiveFov( m_width, m_height );
+		SetPerspectiveFov( screenWidth, screenHeight );
 	}
 	else if( m_projection == PROJECTION_TYPE_ORTHOGRAPHIC )
 	{
-		SetOrthographic( m_width, m_height );
+		SetOrthographic( screenWidth, screenHeight );
 	}
 }
 
@@ -400,21 +393,6 @@ bool Renderer::BeginRendering()
 		m_culling->Rendering( IsRightHand );
 	}
 
-	// ガイド部分が描画されるように拡大
-	if (m_recording)
-	{
-		m_cameraMatTemp = m_renderer->GetCameraMatrix();
-		m_projMatTemp = m_renderer->GetProjectionMatrix();
-		auto proj = m_projMatTemp;
-
-		::Effekseer::Matrix44 mat;
-		mat.Values[0][0] = (float) screenWidth / (float) GuideWidth;
-		mat.Values[1][1] = (float) screenHeight / (float) GuideHeight;
-		::Effekseer::Matrix44::Mul(proj, proj, mat);
-
-		m_renderer->SetProjectionMatrix(proj);
-	}
-	
 /*	// Distoriton
 	if (Distortion == eDistortionType::DistortionType_Current)
 	{
@@ -555,8 +533,6 @@ bool Renderer::EndRenderToView()
 
 	graphics->SetRenderTarget(nullptr, nullptr);
 
-	m_windowWidth = m_width;
-	m_windowHeight = m_height;
 	return true;
 }
 
@@ -589,9 +565,25 @@ bool Renderer::BeginRecord( int32_t width, int32_t height )
 	m_recordingWidth = width;
 	m_recordingHeight = height;
 
-	graphics->BeginRecord(m_recordingWidth, m_recordingHeight);
+	screenWidth = m_recordingWidth;
+	screenHeight = m_recordingHeight;
 
 	m_recording = true;
+
+	RecalcProjection();
+	
+	// ガイド部分が描画されるように拡大
+	m_projMatTemp = m_renderer->GetProjectionMatrix();
+	auto proj = m_projMatTemp;
+
+	::Effekseer::Matrix44 mat;
+	mat.Values[0][0] = (float) m_windowHeight / (float) GuideWidth;
+	mat.Values[1][1] = (float) m_windowHeight / (float) GuideHeight;
+	::Effekseer::Matrix44::Mul(proj, proj, mat);
+
+	m_renderer->SetProjectionMatrix(proj);
+
+	graphics->BeginRecord(m_recordingWidth, m_recordingHeight);
 
 	return true;
 }
