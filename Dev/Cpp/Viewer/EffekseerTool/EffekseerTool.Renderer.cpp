@@ -114,8 +114,7 @@ namespace EffekseerTool
 			}
 
 			viewRenderTexture.reset();
-			viewDepthTexture.reset();
-
+			
 			if (LostedDevice != nullptr)
 			{
 				LostedDevice();
@@ -323,15 +322,25 @@ bool Renderer::BeginRendering()
 	if (hdrRenderTexture == nullptr || hdrRenderTexture->GetWidth() != screenWidth || hdrRenderTexture->GetHeight() != screenHeight)
 	{
 		hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-		hdrDepthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
-		hdrRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F);
-		hdrDepthTexture->Initialize(screenWidth, screenHeight);
+		hdrRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F, msaaSamples);
+		depthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
+		depthTexture->Initialize(screenWidth, screenHeight, msaaSamples);
+
+		if (msaaSamples > 1)
+		{
+			postfxRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
+			postfxRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F);
+		}
+		else
+		{
+			postfxRenderTexture = hdrRenderTexture;
+		}
 	}
 
 	targetRenderTexture = graphics->GetRenderTexture();
 	targetDepthTexture = graphics->GetDepthTexture();
 
-	graphics->SetRenderTarget(hdrRenderTexture.get(), hdrDepthTexture.get());
+	graphics->SetRenderTarget(hdrRenderTexture.get(), depthTexture.get());
 
 	graphics->BeginScene();
 
@@ -406,7 +415,7 @@ bool Renderer::BeginRendering()
 		m_renderer->SetProjectionMatrix(proj);
 	}
 	
-	// Distoriton
+/*	// Distoriton
 	if (Distortion == eDistortionType::DistortionType_Current)
 	{
 		CopyToBackground();
@@ -459,7 +468,7 @@ bool Renderer::BeginRendering()
 
 		m_distortionCallback->Blit = false;
 		m_distortionCallback->IsEnabled = false;
-	}
+	}*/
 
 	m_renderer->SetRenderMode(RenderingMode);
 
@@ -514,12 +523,10 @@ bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 	if (viewRenderTexture == nullptr || viewRenderTexture->GetWidth() != width || viewRenderTexture->GetHeight() != height)
 	{
 		viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-		viewDepthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
 		viewRenderTexture->Initialize(width, height, efk::TextureFormat::RGBA8U);
-		viewDepthTexture->Initialize(width, height);
 	}
 
-	graphics->SetRenderTarget(viewRenderTexture.get(), viewDepthTexture.get());
+	graphics->SetRenderTarget(viewRenderTexture.get(), nullptr);
 
 	m_cameraMatTemp = m_renderer->GetCameraMatrix();
 	m_projMatTemp = m_renderer->GetProjectionMatrix();
@@ -555,11 +562,23 @@ bool Renderer::EndRenderToView()
 
 void Renderer::RenderPostEffect()
 {
+	auto src = hdrRenderTexture.get();
+	auto dest = postfxRenderTexture.get();
+	
+	if (src != dest)
+	{
+		graphics->ResolveRenderTarget(src, dest);
+		src = dest;
+	}
+
 	if (m_bloomEffect) {
-		m_bloomEffect->Render(hdrRenderTexture.get(), hdrRenderTexture.get());
+		// ブルーム処理(srcとdestに同じターゲットを指定する方が高速)
+		m_bloomEffect->Render(src, src);
 	}
 	if (m_tonemapEffect) {
-		m_tonemapEffect->Render(hdrRenderTexture.get(), targetRenderTexture);
+		// トーンマップ処理(最終ターゲットをdestに指定)
+		dest = targetRenderTexture;
+		m_tonemapEffect->Render(src, dest);
 	}
 }
 

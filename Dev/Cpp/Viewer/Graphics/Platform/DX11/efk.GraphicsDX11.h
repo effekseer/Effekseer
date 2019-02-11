@@ -24,7 +24,7 @@ namespace efk
 	public:
 		RenderTextureDX11(Graphics* graphics);
 		virtual ~RenderTextureDX11();
-		bool Initialize(int32_t width, int32_t height, TextureFormat format);
+		bool Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample = 1);
 
 		int32_t GetWidth() { return width; }
 		int32_t GetHeight() { return height; }
@@ -53,7 +53,7 @@ namespace efk
 	public:
 		DepthTextureDX11(Graphics* graphics);
 		virtual ~DepthTextureDX11();
-		bool Initialize(int32_t width, int32_t height);
+		bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1);
 
 		ID3D11DepthStencilView* GetDepthStencilView() const { return depthStencilView; }
 
@@ -109,6 +109,9 @@ namespace efk
 
 		EffekseerRendererDX11::Renderer*	renderer = nullptr;
 
+		ID3D11RasterizerState*   rasterizerState = nullptr;
+		ID3D11RasterizerState*   savedRasterizerState = nullptr;
+
 	public:
 		GraphicsDX11();
 		virtual ~GraphicsDX11();
@@ -132,6 +135,8 @@ namespace efk
 		void EndRecord(std::vector<Effekseer::Color>& pixels) override;
 
 		void Clear(Effekseer::Color color) override;
+
+		void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest) override;
 
 		void ResetDevice() override;
 

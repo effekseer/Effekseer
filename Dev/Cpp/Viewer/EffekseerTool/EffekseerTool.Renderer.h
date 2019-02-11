@@ -76,13 +76,13 @@ private:
 	efk::DepthTexture* targetDepthTexture = nullptr;
 
 	std::shared_ptr<efk::RenderTexture>	hdrRenderTexture;
-	std::shared_ptr<efk::DepthTexture>	hdrDepthTexture;
-
+	std::shared_ptr<efk::RenderTexture>	postfxRenderTexture;
+	std::shared_ptr<efk::DepthTexture>	depthTexture;
 	std::shared_ptr<efk::RenderTexture>	viewRenderTexture;
-	std::shared_ptr<efk::DepthTexture>	viewDepthTexture;
 
 	int32_t		screenWidth = 0;
 	int32_t		screenHeight = 0;
+	uint32_t	msaaSamples = 4;
 public:
 	/**
 		@brief	Constructor

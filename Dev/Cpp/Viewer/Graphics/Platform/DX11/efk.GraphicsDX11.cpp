@@ -18,7 +18,7 @@ namespace efk
 		ES_SAFE_RELEASE(textureRTV);
 	}
 
-	bool RenderTextureDX11::Initialize(int32_t width, int32_t height, TextureFormat format)
+	bool RenderTextureDX11::Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample)
 	{
 		auto g = (GraphicsDX11*)graphics;
 		auto r = (EffekseerRendererDX11::Renderer*)g->GetRenderer();
@@ -47,8 +47,11 @@ namespace efk
 			return false;
 		}
 
-		TexDesc.SampleDesc.Count = 1;
-		TexDesc.SampleDesc.Quality = 0;
+		uint32_t quality = 0;
+		r->GetDevice()->CheckMultisampleQualityLevels(TexDesc.Format, multisample, &quality);
+		
+		TexDesc.SampleDesc.Count = multisample;
+		TexDesc.SampleDesc.Quality = quality - 1;
 		TexDesc.Usage = D3D11_USAGE_DEFAULT;
 		TexDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 		TexDesc.CPUAccessFlags = 0;
@@ -63,7 +66,7 @@ namespace efk
 		D3D11_SHADER_RESOURCE_VIEW_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.Format = TexDesc.Format;
-		desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		desc.ViewDimension = (multisample > 1) ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
 		desc.Texture2D.MostDetailedMip = 0;
 		desc.Texture2D.MipLevels = TexDesc.MipLevels;
 
@@ -103,7 +106,7 @@ namespace efk
 		ES_SAFE_RELEASE(depthSRV);
 	}
 
-	bool DepthTextureDX11::Initialize(int32_t width, int32_t height)
+	bool DepthTextureDX11::Initialize(int32_t width, int32_t height, uint32_t multisample)
 	{
 		auto g = (GraphicsDX11*)graphics;
 		auto r = (EffekseerRendererDX11::Renderer*)g->GetRenderer();
@@ -114,13 +117,12 @@ namespace efk
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
 		desc.Format = DXGI_FORMAT_R24G8_TYPELESS;
-		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Count = multisample;
 		desc.SampleDesc.Quality = 0;
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
 		desc.CPUAccessFlags = 0;
 		desc.MiscFlags = 0;
-
 
 		if (FAILED(r->GetDevice()->CreateTexture2D(&desc, NULL, &depthBuffer)))
 		{
@@ -139,7 +141,7 @@ namespace efk
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 		ZeroMemory(&srvDesc, sizeof(srvDesc));
 		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.ViewDimension = (multisample > 1) ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = desc.MipLevels;
 
@@ -321,8 +323,18 @@ namespace efk
 
 		renderer = ::EffekseerRendererDX11::Renderer::Create(device, context, spriteCount);
 
+		D3D11_RASTERIZER_DESC rasterizerDesc;
+		ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
+		rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+		rasterizerDesc.CullMode = D3D11_CULL_NONE;
+		rasterizerDesc.ScissorEnable = false;
+		rasterizerDesc.DepthClipEnable = false;
+		rasterizerDesc.MultisampleEnable = true;
+		device->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+
 		return true;
 	End:
+		ES_SAFE_RELEASE(rasterizerState);
 		ES_SAFE_RELEASE(renderTargetView);
 		ES_SAFE_RELEASE(defaultRenderTarget);
 		ES_SAFE_RELEASE(depthStencilView);
@@ -405,11 +417,21 @@ namespace efk
 			srvDesc.Texture2D.MipLevels = 1;
 			hr = device->CreateShaderResourceView(backTexture, &srvDesc, &backTextureSRV);
 		}
+
+
 		if (width == renderTextureDesc.Width &&
 			height == renderTextureDesc.Height)
 		{
-			// Copy to background
-			context->CopyResource(backTexture, renderTexture);
+			if (renderTextureDesc.SampleDesc.Count == backGroundTextureDesc.SampleDesc.Count)
+			{
+				// Copy to background
+				context->CopyResource(backTexture, renderTexture);
+			}
+			else
+			{
+				context->ResolveSubresource(backTexture, 0,
+					renderTexture, 0, backGroundTextureDesc.Format);
+			}
 		}
 		else
 		{
@@ -451,10 +473,17 @@ namespace efk
 		if (isSRGBMode)
 		{
 		}
+
+		assert(savedRasterizerState == nullptr);
+		context->RSGetState(&savedRasterizerState);
+		context->RSSetState(rasterizerState);
 	}
 
 	void GraphicsDX11::EndScene()
 	{
+		context->RSSetState(savedRasterizerState);
+		ES_SAFE_RELEASE(savedRasterizerState);
+
 		if (isSRGBMode)
 		{
 		}
@@ -595,6 +624,17 @@ namespace efk
 		float ClearColor[] = { color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f };
 		context->ClearRenderTargetView(currentRenderTargetView, ClearColor);
 		context->ClearDepthStencilView(currentDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	}
+
+	void GraphicsDX11::ResolveRenderTarget(RenderTexture* src, RenderTexture* dest)
+	{
+		auto srcDX11 = (RenderTextureDX11*)src;
+		auto destDX11 = (RenderTextureDX11*)dest;
+
+		context->ResolveSubresource(
+			destDX11->GetTexture(), 0,
+			srcDX11->GetTexture(), 0,
+			DXGI_FORMAT_R16G16B16A16_FLOAT);
 	}
 
 	void GraphicsDX11::ResetDevice()

@@ -25,7 +25,7 @@ namespace efk
 		RenderTexture() = default;
 		virtual ~RenderTexture() = default;
 
-		virtual bool Initialize(int32_t width, int32_t height, TextureFormat format) = 0;
+		virtual bool Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample = 1) = 0;
 
 		virtual int32_t GetWidth() = 0;
 		virtual int32_t GetHeight() = 0;
@@ -41,7 +41,7 @@ namespace efk
 		DepthTexture() = default;
 		virtual ~DepthTexture() = default;
 
-		virtual bool Initialize(int32_t width, int32_t height) = 0;
+		virtual bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1) = 0;
 
 		static DepthTexture* Create(Graphics* graphics);
 	};
@@ -86,6 +86,8 @@ namespace efk
 
 		virtual RenderTexture* GetRenderTexture() const { return currentRenderTexture; }
 		virtual DepthTexture* GetDepthTexture() const { return currentDepthTexture; }
+
+		virtual void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest) {}
 
 		/**
 		Called when device is losted.

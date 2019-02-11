@@ -14,7 +14,7 @@ namespace efk
 		ES_SAFE_RELEASE(renderTargetTexture);
 	}
 
-	bool RenderTextureDX9::Initialize(int32_t width, int32_t height, TextureFormat format)
+	bool RenderTextureDX9::Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample)
 	{
 		auto g = (GraphicsDX9*)graphics;
 		auto r = (EffekseerRendererDX9::Renderer*)g->GetRenderer();
@@ -69,7 +69,7 @@ namespace efk
 		ES_SAFE_RELEASE(depthTexture);
 	}
 
-	bool DepthTextureDX9::Initialize(int32_t width, int32_t height)
+	bool DepthTextureDX9::Initialize(int32_t width, int32_t height, uint32_t multisample)
 	{
 		auto g = (GraphicsDX9*)graphics;
 		auto r = (EffekseerRendererDX9::Renderer*)g->GetRenderer();
