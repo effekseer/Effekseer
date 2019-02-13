@@ -213,6 +213,17 @@ enum class RenderMode : int32_t
 	Wireframe,			// ワイヤーフレーム描画
 };
 
+/**
+	@brief
+	\~English	A thread where reload function is called
+	\~Japanese	リロードの関数が呼ばれるスレッド
+*/
+enum class ReloadingThreadType
+{
+	Main,
+	Render,
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

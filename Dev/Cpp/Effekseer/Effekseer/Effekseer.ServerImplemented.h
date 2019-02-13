@@ -84,7 +84,7 @@ public:
 
 	void Unregister(Effect* effect) override;
 
-	void Update(Manager** managers, int32_t managerCount) override;
+	void Update(Manager** managers, int32_t managerCount, ReloadingThreadType reloadingThreadType) override;
 
 	void SetMaterialPath( const EFK_CHAR* materialPath ) override;
 

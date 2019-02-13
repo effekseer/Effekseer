@@ -17,17 +17,6 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
-	@brief
-	\~English	A thread where reload function is called
-	\~Japanese	リロードの関数が呼ばれるスレッド
-*/
-enum class ReloadingThreadType
-{
-	Main,
-	Render,
-};
-
-/**
 	@brief	エフェクトパラメータークラス
 	@note
 	エフェクトに設定されたパラメーター。

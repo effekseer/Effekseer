@@ -84,7 +84,7 @@ public:
 		\~Japanese	マネージャーの個数
 
 	*/
-	virtual void Update(Manager** managers = nullptr, int32_t managerCount = 0) = 0;
+	virtual void Update(Manager** managers = nullptr, int32_t managerCount = 0, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief

@@ -310,7 +310,7 @@ public:
 	\~english Set an UV Style of background when particles are rendered.
 	\~japanese パーティクルを描画するときの背景のUVの状態を設定する。
 	*/
-	void GetBackgroundTextureUVStyle(UVStyle style);
+	void SetBackgroundTextureUVStyle(UVStyle style);
 };
 
 //----------------------------------------------------------------------------------

@@ -355,7 +355,7 @@ void ServerImplemented::Unregister( Effect* effect )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ServerImplemented::Update(Manager** managers, int32_t managerCount)
+void ServerImplemented::Update(Manager** managers, int32_t managerCount, ReloadingThreadType reloadingThreadType)
 {
 	m_ctrlClients.lock();
 
@@ -409,22 +409,22 @@ void ServerImplemented::Update(Manager** managers, int32_t managerCount)
 				{
 					if (m_materialPath.size() > 1)
 					{
-						m_effects[key]->Reload(managers, managerCount, m_data[key].data(), (int32_t)m_data.size(), &(m_materialPath[0]));
+						m_effects[key]->Reload(managers, managerCount, m_data[key].data(), (int32_t)m_data.size(), &(m_materialPath[0]), reloadingThreadType);
 					}
 					else
 					{
-						m_effects[key]->Reload(managers, managerCount, m_data[key].data(), (int32_t)m_data.size());
+						m_effects[key]->Reload(managers, managerCount, m_data[key].data(), (int32_t)m_data.size(), nullptr, reloadingThreadType);
 					}
 				}
 				else
 				{
 					if (m_materialPath.size() > 1)
 					{
-						m_effects[key]->Reload(m_data[key].data(), (int32_t)m_data.size(), &(m_materialPath[0]));
+						m_effects[key]->Reload(m_data[key].data(), (int32_t)m_data.size(), &(m_materialPath[0]), reloadingThreadType);
 					}
 					else
 					{
-						m_effects[key]->Reload(m_data[key].data(), (int32_t)m_data.size());
+						m_effects[key]->Reload(m_data[key].data(), (int32_t)m_data.size(), nullptr, reloadingThreadType);
 					}
 				}
 				

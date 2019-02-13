@@ -213,6 +213,17 @@ enum class RenderMode : int32_t
 	Wireframe,			// ワイヤーフレーム描画
 };
 
+/**
+	@brief
+	\~English	A thread where reload function is called
+	\~Japanese	リロードの関数が呼ばれるスレッド
+*/
+enum class ReloadingThreadType
+{
+	Main,
+	Render,
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1285,17 +1296,6 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-
-/**
-	@brief
-	\~English	A thread where reload function is called
-	\~Japanese	リロードの関数が呼ばれるスレッド
-*/
-enum class ReloadingThreadType
-{
-	Main,
-	Render,
-};
 
 /**
 	@brief	エフェクトパラメータークラス
@@ -3465,7 +3465,7 @@ public:
 		\~Japanese	マネージャーの個数
 
 	*/
-	virtual void Update(Manager** managers = nullptr, int32_t managerCount = 0) = 0;
+	virtual void Update(Manager** managers = nullptr, int32_t managerCount = 0, ReloadingThreadType reloadingThreadType = ReloadingThreadType::Main) = 0;
 
 	/**
 		@brief
