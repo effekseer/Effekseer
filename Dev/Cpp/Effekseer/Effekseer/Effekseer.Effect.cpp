@@ -956,7 +956,7 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 
 		if (reloadingBackup == nullptr)
 		{
-			reloadingBackup = std::make_unique<EffectReloadingBackup>();
+			reloadingBackup = std::unique_ptr<EffectReloadingBackup>(new EffectReloadingBackup());
 		}
 
 		const EFK_CHAR* matPath = materialPath != nullptr ? materialPath : m_materialPath.c_str();
