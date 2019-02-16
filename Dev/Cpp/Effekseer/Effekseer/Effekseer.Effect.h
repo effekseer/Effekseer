@@ -78,6 +78,19 @@ public:
 	static ::Effekseer::EffectLoader* CreateEffectLoader(::Effekseer::FileInterface* fileInterface = NULL);
 
 	/**
+	@brief	
+	\~English	Get this effect's name. If this effect is loaded from file, default name is file name without extention.
+	\~Japanese	エフェクトの名前を取得する。もしファイルからエフェクトを読み込んだ場合、名前は拡張子を除いたファイル名である。
+	*/
+	virtual const char16_t* GetName() const = 0;
+
+	/**
+		\~English	Set this effect's name
+	\~Japanese	エフェクトの名前を設定する。
+	*/
+	virtual void SetName(const char16_t* name) = 0;
+
+	/**
 	@brief	設定を取得する。
 	@return	設定
 	*/

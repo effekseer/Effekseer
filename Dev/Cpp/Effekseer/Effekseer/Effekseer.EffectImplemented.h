@@ -128,6 +128,7 @@ private:
 	EFK_CHAR**		m_modelPaths;
 	void**			m_pModels;
 
+	std::u16string name_;
 	std::basic_string<EFK_CHAR>		m_materialPath;
 
 	int32_t			renderingNodesCount = 0;
@@ -216,6 +217,10 @@ private:
 	Manager* GetManager() const;
 
 public:
+	const char16_t* GetName() const override;
+
+	void SetName(const char16_t* name) override;
+
 	/**
 	@brief	設定取得
 	*/

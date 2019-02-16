@@ -189,10 +189,10 @@ struct HasDistortion
 {
 private:
 	template <typename U>
-	static auto check(U v) -> decltype(v.Normal, std::true_type{});
-	static std::false_type check(...);
+	static auto check_has_dist(U v) -> decltype(v.Normal, std::true_type{});
+	static std::false_type check_has_dist(...);
 public:
-	static bool const value = decltype(check(std::declval<T>()))::value;
+	static bool const value = decltype(check_has_dist(std::declval<T>()))::value;
 };
 
 template <typename Vertex, 

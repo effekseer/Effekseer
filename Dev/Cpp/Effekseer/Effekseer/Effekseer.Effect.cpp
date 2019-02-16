@@ -63,6 +63,38 @@ static void GetParentDir(EFK_CHAR* dst, const EFK_CHAR* src)
 	}
 }
 
+static std::u16string getFilenameWithoutExt(const char16_t* path)
+{
+	int start = 0;
+	int end = 0;
+
+	for (int i = 0; path[i] != 0; i++)
+	{
+		if (path[i] == u'/' || path[i] == u'\\')
+		{
+			start = i;
+		}
+	}
+
+	for (int i = start; path[i] != 0; i++)
+	{
+		if (path[i] == u'.')
+		{
+			end = i;
+		}
+	}
+
+	std::vector<char16_t> ret;
+
+	for (int i = start; i < end; i++)
+	{
+		ret.push_back(path[i]);
+	}
+	ret.push_back(0);
+
+	return std::u16string(ret.data());
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -97,6 +129,8 @@ Effect* Effect::Create(Manager* manager, const EFK_CHAR* path, float magnificati
 	Effect* effect = EffectImplemented::Create(manager, data, size, magnification, materialPath);
 
 	eLoader->Unload(data, size);
+
+	effect->SetName(getFilenameWithoutExt(path).c_str());
 
 	return effect;
 }
@@ -196,6 +230,8 @@ Effect* Effect::Create( Setting* setting, const EFK_CHAR* path, float magnificat
 	Effect* effect = EffectImplemented::Create(setting, data, size, magnification, materialPath);
 
 	eLoader->Unload(data, size);
+
+	effect->SetName(getFilenameWithoutExt(path).c_str());
 
 	return effect;
 }
@@ -597,9 +633,16 @@ Manager* EffectImplemented::GetManager() const
 	return m_pManager;	
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+const char16_t* EffectImplemented::GetName() const
+{
+	return name_.c_str();
+}
+
+void EffectImplemented::SetName(const char16_t* name)
+{
+	name_ = name;
+}
+
 Setting* EffectImplemented::GetSetting() const
 {
 	if(m_setting != NULL) return m_setting;
