@@ -12,6 +12,7 @@
 #include <d3d11.h>
 #include <XAudio2.h>
 #pragma comment(lib, "d3d11.lib" )
+#pragma comment(lib, "xaudio2.lib" )
 
 //----------------------------------------------------------------------------------
 //

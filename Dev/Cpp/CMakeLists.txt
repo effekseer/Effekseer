@@ -98,6 +98,7 @@ set(effekseer_renderer_common_src
 	EffekseerRendererCommon/EffekseerRenderer.ModelRendererBase.cpp
 	EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.cpp
 	EffekseerRendererCommon/EffekseerRenderer.Renderer.cpp
+	EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.cpp
 	EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.cpp
 	EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.cpp
 	EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.cpp
