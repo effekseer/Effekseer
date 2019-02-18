@@ -2,11 +2,6 @@
 
 namespace EffekseerRenderer
 {
-	std::vector<uint8_t> DDSTextureLoader::textureData;
-	int32_t DDSTextureLoader::textureWidth = 0;
-	int32_t DDSTextureLoader::textureHeight = 0;
-	Effekseer::TextureFormatType	DDSTextureLoader::textureFormatType = Effekseer::TextureFormatType::ABGR8;
-
 	bool DDSTextureLoader::Load(void* data, int32_t size)
 	{
 		struct DDS_PIXELFORMAT {

@@ -10,6 +10,11 @@
 #include "EffekseerRendererDX9.RendererImplemented.h"
 #include "EffekseerRendererDX9.DeviceObject.h"
 
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.h"
+#endif
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -25,6 +30,11 @@ private:
 	LPDIRECT3DDEVICE9		device;
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
+
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	::EffekseerRenderer::PngTextureLoader pngTextureLoader;
+	::EffekseerRenderer::DDSTextureLoader ddsTextureLoader;
+#endif
 
 public:
 	TextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface = NULL);

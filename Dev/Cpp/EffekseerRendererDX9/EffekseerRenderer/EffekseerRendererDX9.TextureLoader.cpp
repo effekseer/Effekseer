@@ -32,7 +32,7 @@ TextureLoader::TextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterfac
 	}
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	EffekseerRenderer::PngTextureLoader::Initialize();
+	pngTextureLoader.Initialize();
 #endif
 }
 
@@ -42,7 +42,7 @@ TextureLoader::TextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterfac
 TextureLoader::~TextureLoader()
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	EffekseerRenderer::PngTextureLoader::Finalize();
+	pngTextureLoader.Finalize();
 #endif
 
 	ES_SAFE_RELEASE(device);
@@ -72,11 +72,11 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 			data_texture[2] == 'N' &&
 			data_texture[3] == 'G')
 		{
-			if(::EffekseerRenderer::PngTextureLoader::Load(data_texture, size_texture, false))
+			if(pngTextureLoader.Load(data_texture, size_texture, false))
 			{
 				HRESULT hr;
-				int32_t width = ::EffekseerRenderer::PngTextureLoader::GetWidth();
-				int32_t height = ::EffekseerRenderer::PngTextureLoader::GetHeight();
+				int32_t width = pngTextureLoader.GetWidth();
+				int32_t height = pngTextureLoader.GetHeight();
 				int32_t mipMapCount = 1;
 				hr = device->CreateTexture( 
 					width,
@@ -90,7 +90,7 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 
 				if(FAILED(hr))
 				{
-					::EffekseerRenderer::PngTextureLoader::Unload();
+					pngTextureLoader.Unload();
 					goto Exit;
 				}
 
@@ -107,11 +107,11 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 
 				if(FAILED(hr))
 				{
-					::EffekseerRenderer::PngTextureLoader::Unload();
+					pngTextureLoader.Unload();
 					goto Exit;
 				}
 
-				uint8_t* srcBits = (uint8_t*)::EffekseerRenderer::PngTextureLoader::GetData().data();
+				uint8_t* srcBits = (uint8_t*)pngTextureLoader.GetData().data();
 				D3DLOCKED_RECT locked;
 				if(SUCCEEDED(tempTexture->LockRect(0,&locked,NULL,0)))
 				{
@@ -137,7 +137,7 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 				hr = device->UpdateTexture( tempTexture, texture );
 				ES_SAFE_RELEASE( tempTexture );
 
-				::EffekseerRenderer::PngTextureLoader::Unload();
+				pngTextureLoader.Unload();
 
 				textureData = new Effekseer::TextureData();
 				textureData->UserPtr = texture;
@@ -159,14 +159,14 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 				texture );
 
 			// To get texture size, use loader
-			EffekseerRenderer::DDSTextureLoader::Load(data_texture, size_texture);
+			ddsTextureLoader.Load(data_texture, size_texture);
 
 			textureData = new Effekseer::TextureData();
 			textureData->UserPtr = texture;
 			textureData->UserID = 0;
-			textureData->TextureFormat = EffekseerRenderer::DDSTextureLoader::GetTextureFormat();
-			textureData->Width = EffekseerRenderer::DDSTextureLoader::GetWidth();
-			textureData->Height = EffekseerRenderer::DDSTextureLoader::GetHeight();
+			textureData->TextureFormat = ddsTextureLoader.GetTextureFormat();
+			textureData->Width = ddsTextureLoader.GetWidth();
+			textureData->Height = ddsTextureLoader.GetHeight();
 		}
 
 	Exit:;

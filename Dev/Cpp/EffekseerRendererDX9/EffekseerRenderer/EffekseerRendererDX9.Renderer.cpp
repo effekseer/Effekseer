@@ -157,10 +157,6 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	SetLightColor( lightColor );
 	::Effekseer::Color lightAmbient( 0, 0, 0, 0 );
 	SetLightAmbientColor( lightAmbient );
-
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	EffekseerRenderer::PngTextureLoader::Initialize();
-#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -168,10 +164,6 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 //----------------------------------------------------------------------------------
 RendererImplemented::~RendererImplemented()
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	EffekseerRenderer::PngTextureLoader::Finalize();
-#endif
-
 	assert(GetRef() == 0);
 
 	ES_SAFE_DELETE(m_distortingCallback);

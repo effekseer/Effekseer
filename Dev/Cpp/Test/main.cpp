@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "graphics.h"
 #include "sound.h"
@@ -44,6 +45,11 @@
 void Loop();
 void Init();
 
+struct TestManager
+{
+	std::vector < ::Effekseer::Effect *>	effects;
+};
+
 static const int g_window_width = 800;
 static const int g_window_height = 600;
 
@@ -52,7 +58,7 @@ static ::Effekseer::Handle				g_handle = -1;
 static ::Effekseer::Vector3D			g_position;
 static ::Effekseer::Vector3D			g_focus;
 
-static std::vector < ::Effekseer::Effect *>	g_effects;
+std::unique_ptr<TestManager> testManager;
 
 #ifdef _WIN32
 typedef wchar_t efchar;
@@ -121,6 +127,8 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
+	testManager = std::unique_ptr<TestManager>(new TestManager());
+	
 	TestManagerPlayAndStop();
 
 	g_manager = ::Effekseer::Manager::Create( 2000 );
@@ -150,14 +158,21 @@ int main()
 
 	g_manager->Destroy();
 
-	for (size_t i = 0; i < g_effects.size(); i++)
+	for (size_t i = 0; i < testManager->effects.size(); i++)
 	{
-		ES_SAFE_RELEASE(g_effects[i]);
+		ES_SAFE_RELEASE(testManager->effects[i]);
 	}
 
 	TermSound();
 
 	TermGraphics();
+	
+
+	testManager.reset();
+
+#if _WIN32
+	_CrtDumpMemoryLeaks();
+#endif
 
 	return 0;
 }
@@ -173,21 +188,21 @@ void Init()
 	SetCameraMatrix( ::Effekseer::Matrix44().LookAtRH( g_position, g_focus, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
 
 #if __DDS_TEST
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser01_dds.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser01_dds.efk").c_str() ) );
 #elif __CULLING_TEST
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/culling.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/culling.efk").c_str() ) );
 #else
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser01.efk").c_str() ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser02.efk").c_str() ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ribbon_Parent.efk").c_str() ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ribbon_Sword.efk").c_str() ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ring_Shape1.efk").c_str() ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ring_Shape2.efk").c_str() ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Sprite_FixedYAxis.efk").c_str() ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Track1.efk").c_str() ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block.efk").c_str() ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block_simple.efk").c_str() ) );
-	g_effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Distortion.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser01.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser02.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ribbon_Parent.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ribbon_Sword.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ring_Shape1.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ring_Shape2.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Sprite_FixedYAxis.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Track1.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block_simple.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Distortion.efk").c_str() ) );
 #endif
 	PlayEffect();
 }
@@ -221,12 +236,12 @@ void Loop()
 //----------------------------------------------------------------------------------
 void PlayEffect()
 {
-	if(g_effects.size() == 0) return;
+	if(testManager->effects.size() == 0) return;
 
 #if __NormalMode
 	static int target = 0;
-	target = target % g_effects.size();
-	g_handle = g_manager->Play( g_effects[target], 0, 0, 0 );
+	target = target % testManager->effects.size();
+	g_handle = g_manager->Play(testManager->effects[target], 0, 0, 0 );
 	target++;
 	//g_manager->SetLocation( g_handle, -5.0f, 0.0f, -20.0f );
 

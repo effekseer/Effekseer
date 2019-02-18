@@ -269,10 +269,6 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	m_background.UserPtr = nullptr;
 
 	m_state = new OriginalState();
-
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	EffekseerRenderer::PngTextureLoader::Initialize();
-#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -280,10 +276,6 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 //----------------------------------------------------------------------------------
 RendererImplemented::~RendererImplemented()
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	EffekseerRenderer::PngTextureLoader::Finalize();
-#endif
-
 	assert(GetRef() == 0);
 
 	ES_SAFE_DELETE(m_distortingCallback);

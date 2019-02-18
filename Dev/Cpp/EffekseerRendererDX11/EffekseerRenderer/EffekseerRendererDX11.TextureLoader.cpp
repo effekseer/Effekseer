@@ -7,7 +7,6 @@
 #include "EffekseerRendererDX11.TextureLoader.h"
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.h"
-#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.h"
 
 //-----------------------------------------------------------------------------------
@@ -32,7 +31,7 @@ TextureLoader::TextureLoader(ID3D11Device* device, ID3D11DeviceContext* context,
 	}
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	EffekseerRenderer::PngTextureLoader::Initialize();
+	pngTextureLoader.Initialize();
 #endif
 }
 
@@ -42,7 +41,7 @@ TextureLoader::TextureLoader(ID3D11Device* device, ID3D11DeviceContext* context,
 TextureLoader::~TextureLoader()
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	EffekseerRenderer::PngTextureLoader::Finalize();
+	pngTextureLoader.Finalize();
 #endif
 
 	ES_SAFE_RELEASE(device);
@@ -73,13 +72,13 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 			data_texture[2] == 'N' &&
 			data_texture[3] == 'G')
 		{
-			if(::EffekseerRenderer::PngTextureLoader::Load(data_texture, size_texture, false))
+			if(pngTextureLoader.Load(data_texture, size_texture, false))
 			{
 				ID3D11Texture2D* tex = NULL;
 
 				D3D11_TEXTURE2D_DESC TexDesc{};
-				TexDesc.Width = ::EffekseerRenderer::PngTextureLoader::GetWidth();
-				TexDesc.Height = ::EffekseerRenderer::PngTextureLoader::GetHeight();
+				TexDesc.Width = pngTextureLoader.GetWidth();
+				TexDesc.Height = pngTextureLoader.GetHeight();
 				TexDesc.ArraySize = 1;
 				TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 				TexDesc.SampleDesc.Count = 1;
@@ -90,7 +89,7 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 				TexDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 				D3D11_SUBRESOURCE_DATA data;
-				data.pSysMem = ::EffekseerRenderer::PngTextureLoader::GetData().data();
+				data.pSysMem = pngTextureLoader.GetData().data();
 				data.SysMemPitch = TexDesc.Width * 4;
 				data.SysMemSlicePitch = TexDesc.Width * TexDesc.Height * 4;
 
@@ -113,7 +112,7 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 					goto Exit;
 				}
 
-				context->UpdateSubresource(tex, 0, 0, ::EffekseerRenderer::PngTextureLoader::GetData().data(), data.SysMemPitch, 0);
+				context->UpdateSubresource(tex, 0, 0, pngTextureLoader.GetData().data(), data.SysMemPitch, 0);
 
 				ES_SAFE_RELEASE(tex);
 
@@ -144,14 +143,14 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 			ES_SAFE_RELEASE(textureR);
 
 			// To get texture size, use loader
-			EffekseerRenderer::DDSTextureLoader::Load(data_texture, size_texture);
+			ddsTextureLoader.Load(data_texture, size_texture);
 
 			textureData = new Effekseer::TextureData();
 			textureData->UserPtr = texture;
 			textureData->UserID = 0;
-			textureData->TextureFormat = EffekseerRenderer::DDSTextureLoader::GetTextureFormat();
-			textureData->Width = EffekseerRenderer::DDSTextureLoader::GetWidth();
-			textureData->Height = EffekseerRenderer::DDSTextureLoader::GetHeight();
+			textureData->TextureFormat = ddsTextureLoader.GetTextureFormat();
+			textureData->Width = ddsTextureLoader.GetWidth();
+			textureData->Height = ddsTextureLoader.GetHeight();
 		}
 
 	Exit:;

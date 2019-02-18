@@ -11,20 +11,20 @@ namespace EffekseerRenderer
 	class DDSTextureLoader
 	{
 	private:
-		static std::vector<uint8_t> textureData;
-		static int32_t textureWidth;
-		static int32_t textureHeight;
-		static Effekseer::TextureFormatType	textureFormatType;
+		std::vector<uint8_t> textureData;
+		int32_t textureWidth = 0;
+		int32_t textureHeight = 0;
+		Effekseer::TextureFormatType	textureFormatType = Effekseer::TextureFormatType::ABGR8;
 
 	public:
 
-		static bool Load(void* data, int32_t size);
-		static void Unload();
+		bool Load(void* data, int32_t size);
+		void Unload();
 
-		static std::vector<uint8_t>& GetData() { return textureData; }
-		static int32_t GetWidth() { return textureWidth; }
-		static int32_t GetHeight() { return textureHeight; }
-		static Effekseer::TextureFormatType GetTextureFormat() { return textureFormatType; }
+		std::vector<uint8_t>& GetData() { return textureData; }
+		int32_t GetWidth() { return textureWidth; }
+		int32_t GetHeight() { return textureHeight; }
+		Effekseer::TextureFormatType GetTextureFormat() { return textureFormatType; }
 	};
 }
 

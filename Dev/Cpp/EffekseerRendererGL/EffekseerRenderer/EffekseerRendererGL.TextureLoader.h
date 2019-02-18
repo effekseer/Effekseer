@@ -10,6 +10,11 @@
 #include "EffekseerRendererGL.RendererImplemented.h"
 #include "EffekseerRendererGL.DeviceObject.h"
 
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+#include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.h"
+#endif
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -24,6 +29,11 @@ class TextureLoader
 private:
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
+
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	::EffekseerRenderer::PngTextureLoader pngTextureLoader;
+	::EffekseerRenderer::DDSTextureLoader ddsTextureLoader;
+#endif
 
 public:
 	TextureLoader(::Effekseer::FileInterface* fileInterface = NULL);

@@ -1,32 +1,16 @@
 ﻿
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "EffekseerRenderer.PngTextureLoader.h"
 
-#if _WIN32
-#define __PNG_DDI 1
-#else
-#define __PNG_DDI 0
-#endif
+#ifdef __PNG_DDI
 
-#if __PNG_DDI
-#define WINVER          0x0501
-#define _WIN32_WINNT    0x0501
-#include <windows.h>
-#include <gdiplus.h>
 #else
 #include <png.h>
 #endif
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace EffekseerRenderer
 {
-#if __PNG_DDI
-static Gdiplus::GdiplusStartupInput		gdiplusStartupInput;
-static ULONG_PTR						gdiplusToken;
+#ifdef __PNG_DDI
+
 #else
 static void PngReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 {
@@ -36,16 +20,9 @@ static void PngReadData(png_structp png_ptr, png_bytep data, png_size_t length)
 }
 #endif
 
-std::vector<uint8_t> PngTextureLoader::textureData;
-int32_t PngTextureLoader::textureWidth;
-int32_t PngTextureLoader::textureHeight;
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 {
-#if __PNG_DDI
+#ifdef __PNG_DDI
 	auto global = GlobalAlloc(GMEM_MOVEABLE,size);
 	auto buf = GlobalLock(global);
 	CopyMemory(buf, data, size);
@@ -338,38 +315,24 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 #endif
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void PngTextureLoader::Unload()
 {
 	textureData.clear();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void PngTextureLoader::Initialize()
 {
-#if __PNG_DDI
+#ifdef __PNG_DDI
 	Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL );
 #endif
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void PngTextureLoader::Finalize()
 {
-#if __PNG_DDI
+#ifdef __PNG_DDI
 	Gdiplus::GdiplusShutdown(gdiplusToken);
 #endif
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 }
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
