@@ -14,6 +14,10 @@
 
 #if _WIN32
 
+#define _CRTDBG_MAP_ALLOC  
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #if _DEBUG
 #pragma comment(lib, "x86/Effekseer.Debug.lib" )
 #else
@@ -110,6 +114,13 @@ void TestManagerPlayAndStop()
 //----------------------------------------------------------------------------------
 int main()
 {
+#if _WIN32
+	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_WNDW);
+	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_WNDW);
+	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_WNDW);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
 	TestManagerPlayAndStop();
 
 	g_manager = ::Effekseer::Manager::Create( 2000 );
