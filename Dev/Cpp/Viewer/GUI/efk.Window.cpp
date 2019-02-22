@@ -171,15 +171,15 @@ namespace efk
 			std::vector<uint8_t> data(size);
 			reader->Read( &data[0], size );
 
-			using PngLoader = EffekseerRenderer::PngTextureLoader;
-			PngLoader::Initialize();
-			PngLoader::Load(&data[0], size, false);
-			PngLoader::Finalize();
+			auto pngLoader = EffekseerRenderer::PngTextureLoader();
+			pngLoader.Initialize();
+			pngLoader.Load(&data[0], size, false);
+			pngLoader.Finalize();
 
 			GLFWimage image;
-			image.pixels = PngLoader::GetData().data();
-			image.width = PngLoader::GetWidth();
-			image.height = PngLoader::GetHeight();
+			image.pixels = pngLoader.GetData().data();
+			image.width = pngLoader.GetWidth();
+			image.height = pngLoader.GetHeight();
 			glfwSetWindowIcon(window, 1, &image);
 		}
 	}
