@@ -96,6 +96,9 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 {
 	if( m_running ) return false;
 
+	// to stop thread
+	Stop();
+
 	SOCKADDR_IN sockAddr;
 	HOSTENT* hostEntry= NULL;
 	
