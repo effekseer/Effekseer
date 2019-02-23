@@ -760,14 +760,18 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, void*
 {
 	const EFK_CHAR* matPath = materialPath != NULL ? materialPath : m_materialPath.c_str();
 	
+	int lockCount = 0;
+
 	if (m_pManager != nullptr)
 	{
-		m_pManager->BeginReloadEffect(this);
+		m_pManager->BeginReloadEffect(this, lockCount == 0);
+		lockCount++;
 	}
 
 	for( int32_t i = 0; i < managersCount; i++)
 	{
-		((ManagerImplemented*)managers[i])->BeginReloadEffect( this );
+		((ManagerImplemented*)managers[i])->BeginReloadEffect( this, lockCount == 0);
+		lockCount++;
 	}
 
 	isReloadingOnRenderingThread = true;
@@ -777,12 +781,14 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, void*
 
 	if (m_pManager != nullptr)
 	{
-		m_pManager->EndReloadEffect(this);
+		lockCount--;
+		m_pManager->EndReloadEffect(this, lockCount == 0);
 	}
 
 	for( int32_t i = 0; i < managersCount; i++)
 	{
-		((ManagerImplemented*)managers[i])->EndReloadEffect( this );
+		lockCount--;
+		((ManagerImplemented*)managers[i])->EndReloadEffect( this, lockCount == 0);
 	}
 
 	return false;
@@ -810,14 +816,18 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, const
 		materialPath = parentDir;
 	}
 
+	int lockCount = 0;
+
 	if (m_pManager != nullptr)
 	{
-		m_pManager->BeginReloadEffect(this);
+		m_pManager->BeginReloadEffect(this, lockCount == 0);
+		lockCount++;
 	}
 
 	for( int32_t i = 0; i < managersCount; i++)
 	{
-		((ManagerImplemented*)&(managers[i]))->BeginReloadEffect( this );
+		((ManagerImplemented*)&(managers[i]))->BeginReloadEffect( this, lockCount == 0);
+		lockCount++;
 	}
 
 	isReloadingOnRenderingThread = true;
@@ -827,12 +837,14 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, const
 
 	if (m_pManager != nullptr)
 	{
-		m_pManager->EndReloadEffect(this);
+		lockCount--;
+		m_pManager->EndReloadEffect(this, lockCount == 0);
 	}
 	
 	for( int32_t i = 0; i < managersCount; i++)
 	{
-		((ManagerImplemented*)&(managers[i]))->EndReloadEffect( this );
+		lockCount--;
+		((ManagerImplemented*)&(managers[i]))->EndReloadEffect( this, lockCount == 0);
 	}
 
 	return false;

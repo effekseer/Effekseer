@@ -1802,14 +1802,17 @@ void ManagerImplemented::DrawHandleFront(Handle handle)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::BeginReloadEffect( Effect* effect )
+void ManagerImplemented::BeginReloadEffect( Effect* effect, bool doLockThread)
 {
-	if (m_isLockedWithRenderingMutex)
+	if (doLockThread)
 	{
-		ShowErrorAndExit("Rendering thread is locked.");
+		if (m_isLockedWithRenderingMutex)
+		{
+			ShowErrorAndExit("Rendering thread is locked.");
+		}
+		m_renderingMutex.lock();
+		m_isLockedWithRenderingMutex = true;
 	}
-	m_renderingMutex.lock();
-	m_isLockedWithRenderingMutex = true;
 
 	std::map<Handle,DrawSet>::iterator it = m_DrawSets.begin();
 	std::map<Handle,DrawSet>::iterator it_end = m_DrawSets.end();
@@ -1829,7 +1832,7 @@ void ManagerImplemented::BeginReloadEffect( Effect* effect )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void ManagerImplemented::EndReloadEffect( Effect* effect )
+void ManagerImplemented::EndReloadEffect( Effect* effect, bool doLockThread)
 {
 	std::map<Handle,DrawSet>::iterator it = m_DrawSets.begin();
 	std::map<Handle,DrawSet>::iterator it_end = m_DrawSets.end();
@@ -1869,8 +1872,11 @@ void ManagerImplemented::EndReloadEffect( Effect* effect )
 		(*it).second.InstanceContainerPointer->Update( true, 1.0f, (*it).second.IsShown );
 	}
 
-	m_renderingMutex.unlock();
-	m_isLockedWithRenderingMutex = false;
+	if (doLockThread)
+	{
+		m_renderingMutex.unlock();
+		m_isLockedWithRenderingMutex = false;
+	}
 }
 
 //----------------------------------------------------------------------------------

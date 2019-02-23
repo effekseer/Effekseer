@@ -584,14 +584,14 @@ public:
 	virtual int32_t GetRestInstancesCount() const override { return (int32_t)m_reserved_instances.size(); }
 
 	/**
-		@brief	リロードを開始する。
+		@brief	start reload
 	*/
-	void BeginReloadEffect( Effect* effect );
+	void BeginReloadEffect( Effect* effect, bool doLockThread );
 
 	/**
-		@brief	リロードを停止する。
+		@brief	end reload
 	*/
-	void EndReloadEffect( Effect* effect );
+	void EndReloadEffect( Effect* effect, bool doLockThread);
 
 	/**
 		@brief	エフェクトをカリングし描画負荷を減らすための空間を生成する。
