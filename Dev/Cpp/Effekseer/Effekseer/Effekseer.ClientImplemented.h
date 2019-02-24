@@ -34,7 +34,7 @@ private:
 	bool		m_running;
 	std::mutex	mutexStop;
 
-	HOSTENT* GetHostEntry( const char* host );
+	bool GetAddr( const char* host, IN_ADDR* addr);
 
 	static void RecvAsync( void* data );
 	void StopInternal();

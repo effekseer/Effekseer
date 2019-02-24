@@ -63,6 +63,7 @@ Client* Client::Create()
 	return new ClientImplemented();
 }
 
+/*
 HOSTENT* ClientImplemented::GetHostEntry( const char* host )
 {
 	HOSTENT* hostEntry = nullptr;
@@ -91,6 +92,28 @@ HOSTENT* ClientImplemented::GetHostEntry( const char* host )
 
 	return hostEntry;
 }
+*/
+
+bool ClientImplemented::GetAddr(const char* host, IN_ADDR* addr)
+{
+	HOSTENT* hostEntry = nullptr;
+
+	// check ip adress or DNS
+	addr->s_addr = ::inet_addr(host);
+	if (addr->s_addr == InaddrNone)
+	{
+		// DNS
+		hostEntry = ::gethostbyname(host);
+		if (hostEntry == nullptr)
+		{
+			return nullptr;
+		}
+
+		addr->s_addr = *(unsigned int *)hostEntry->h_addr_list[0];
+	}
+
+	return true;
+}
 
 bool ClientImplemented::Start( char* host, uint16_t port )
 {
@@ -100,8 +123,7 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 	Stop();
 
 	SOCKADDR_IN sockAddr;
-	HOSTENT* hostEntry= NULL;
-	
+
 	// create a socket
 	EfkSocket socket_ = Socket::GenSocket();
 	if ( socket_ == InvalidSocket )
@@ -109,11 +131,11 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 		return false;
 	}
 
-	// Get host entry
-	hostEntry = GetHostEntry( host );
-	if ( hostEntry == NULL )
+	// get adder
+	IN_ADDR addr;
+	if (!GetAddr(host, &addr))
 	{
-		if ( socket_ != InvalidSocket ) Socket::Close( socket_ );
+		if (socket_ != InvalidSocket) Socket::Close(socket_);
 		return false;
 	}
 
@@ -121,7 +143,7 @@ bool ClientImplemented::Start( char* host, uint16_t port )
 	memset( &sockAddr, 0, sizeof(SOCKADDR_IN) );
 	sockAddr.sin_family	= AF_INET;
 	sockAddr.sin_port	= htons( port );
-	sockAddr.sin_addr	= *(IN_ADDR*)(hostEntry->h_addr_list[0]);
+	sockAddr.sin_addr	= addr;
 
 	// connect
 	int32_t ret = ::connect( socket_, (SOCKADDR*)(&sockAddr), sizeof(SOCKADDR_IN) );
