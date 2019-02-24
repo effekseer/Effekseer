@@ -762,12 +762,6 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, void*
 	
 	int lockCount = 0;
 
-	if (m_pManager != nullptr)
-	{
-		m_pManager->BeginReloadEffect(this, lockCount == 0);
-		lockCount++;
-	}
-
 	for( int32_t i = 0; i < managersCount; i++)
 	{
 		((ManagerImplemented*)managers[i])->BeginReloadEffect( this, lockCount == 0);
@@ -778,12 +772,6 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, void*
 	Reset();
 	Load( data, size, m_maginificationExternal, matPath, reloadingThreadType);
 	isReloadingOnRenderingThread = false;
-
-	if (m_pManager != nullptr)
-	{
-		lockCount--;
-		m_pManager->EndReloadEffect(this, lockCount == 0);
-	}
 
 	for( int32_t i = 0; i < managersCount; i++)
 	{
@@ -818,12 +806,6 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, const
 
 	int lockCount = 0;
 
-	if (m_pManager != nullptr)
-	{
-		m_pManager->BeginReloadEffect(this, lockCount == 0);
-		lockCount++;
-	}
-
 	for( int32_t i = 0; i < managersCount; i++)
 	{
 		((ManagerImplemented*)&(managers[i]))->BeginReloadEffect( this, lockCount == 0);
@@ -835,12 +817,6 @@ bool EffectImplemented::Reload( Manager** managers, int32_t managersCount, const
 	Load( data, size, m_maginificationExternal, materialPath, reloadingThreadType);
 	isReloadingOnRenderingThread = false;
 
-	if (m_pManager != nullptr)
-	{
-		lockCount--;
-		m_pManager->EndReloadEffect(this, lockCount == 0);
-	}
-	
 	for( int32_t i = 0; i < managersCount; i++)
 	{
 		lockCount--;
@@ -1007,8 +983,6 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 	// reloading on render thread
 	if (isReloadingOnRenderingThread)
 	{
-		assert(materialPath != nullptr);
-
 		if (reloadingBackup == nullptr)
 		{
 			reloadingBackup = std::unique_ptr<EffectReloadingBackup>(new EffectReloadingBackup());
@@ -1018,6 +992,8 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 
 		for (int32_t ind = 0; ind < m_ImageCount; ind++)
 		{
+			if (m_pImages[ind] == nullptr) continue;
+
 			EFK_CHAR fullPath[512];
 			PathCombine(fullPath, matPath, m_ImagePaths[ind]);
 			reloadingBackup->images.Push(fullPath, m_pImages[ind]);
@@ -1025,6 +1001,8 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 
 		for (int32_t ind = 0; ind < m_normalImageCount; ind++)
 		{
+			if (m_normalImages[ind] == nullptr) continue;
+
 			EFK_CHAR fullPath[512];
 			PathCombine(fullPath, matPath, m_normalImagePaths[ind]);
 			reloadingBackup->normalImages.Push(fullPath, m_normalImages[ind]);
@@ -1032,6 +1010,8 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 
 		for (int32_t ind = 0; ind < m_distortionImageCount; ind++)
 		{
+			if (m_distortionImagePaths[ind] == nullptr) continue;
+
 			EFK_CHAR fullPath[512];
 			PathCombine(fullPath, matPath, m_distortionImagePaths[ind]);
 			reloadingBackup->distortionImages.Push(fullPath, m_distortionImages[ind]);
@@ -1039,6 +1019,8 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 
 		for (int32_t ind = 0; ind < m_WaveCount; ind++)
 		{
+			if (m_pWaves[ind] == nullptr) continue;
+
 			EFK_CHAR fullPath[512];
 			PathCombine(fullPath, matPath, m_WavePaths[ind]);
 			reloadingBackup->sounds.Push(fullPath, m_pWaves[ind]);
@@ -1046,6 +1028,8 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 
 		for (int32_t ind = 0; ind < m_modelCount; ind++)
 		{
+			if (m_pModels[ind] == nullptr) continue;
+
 			EFK_CHAR fullPath[512];
 			PathCombine(fullPath, matPath, m_modelPaths[ind]);
 			reloadingBackup->models.Push(fullPath, m_pModels[ind]);

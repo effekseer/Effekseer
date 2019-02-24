@@ -407,24 +407,28 @@ void ServerImplemented::Update(Manager** managers, int32_t managerCount, Reloadi
 			{
 				if (managers != nullptr)
 				{
+					auto& data = m_data[key];
+
 					if (m_materialPath.size() > 1)
 					{
-						m_effects[key]->Reload(managers, managerCount, m_data[key].data(), (int32_t)m_data.size(), &(m_materialPath[0]), reloadingThreadType);
+						m_effects[key]->Reload(managers, managerCount, data.data(), (int32_t)data.size(), &(m_materialPath[0]), reloadingThreadType);
 					}
 					else
 					{
-						m_effects[key]->Reload(managers, managerCount, m_data[key].data(), (int32_t)m_data.size(), nullptr, reloadingThreadType);
+						m_effects[key]->Reload(managers, managerCount, data.data(), (int32_t)data.size(), nullptr, reloadingThreadType);
 					}
 				}
 				else
 				{
+					auto& data = m_data[key];
+
 					if (m_materialPath.size() > 1)
 					{
-						m_effects[key]->Reload(m_data[key].data(), (int32_t)m_data.size(), &(m_materialPath[0]), reloadingThreadType);
+						m_effects[key]->Reload(data.data(), (int32_t)data.size(), &(m_materialPath[0]), reloadingThreadType);
 					}
 					else
 					{
-						m_effects[key]->Reload(m_data[key].data(), (int32_t)m_data.size(), nullptr, reloadingThreadType);
+						m_effects[key]->Reload(data.data(), (int32_t)data.size(), nullptr, reloadingThreadType);
 					}
 				}
 				
