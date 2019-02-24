@@ -53,9 +53,6 @@ static bool									g_mouseSlideDirectionInvY = false;
 static int		g_lastViewWidth = 0;
 static int		g_lastViewHeight = 0;
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 bool Combine( const char16_t* rootPath, const char16_t* treePath,  char16_t* dst, int dst_length )
 {
 	int rootPathLength = 0;
@@ -70,13 +67,13 @@ bool Combine( const char16_t* rootPath, const char16_t* treePath,  char16_t* dst
 		treePathLength++;
 	}
 
-	// 両方ともなし
+	// both pathes are none
 	if( rootPathLength == 0 && treePathLength == 0 )
 	{
 		return false;
 	}
 
-	// 片方なし
+	// either path is none
 	if( rootPathLength == 0 )
 	{
 		if( treePathLength < dst_length )
@@ -103,24 +100,24 @@ bool Combine( const char16_t* rootPath, const char16_t* treePath,  char16_t* dst
 		}
 	}
 	
-	// 両方あり
+	// both exists
 
-	// ディレクトリパスまで戻す。
+	// back to a directory separator
 	int PathPosition = rootPathLength;
 	while( PathPosition > 0 )
 	{
-		if( rootPath[ PathPosition - 1 ] == L'/' || rootPath[ PathPosition - 1 ] == L'\\' )
+		if( rootPath[ PathPosition - 1 ] == u'/' || rootPath[ PathPosition - 1 ] == u'\\' )
 		{
 			break;
 		}
 		PathPosition--;
 	}
 
-	// コピーする
+	// copy
 	memcpy( dst, rootPath, sizeof(char16_t) * PathPosition );
 	dst[ PathPosition ] = 0;
 
-	// 無理やり繋げる
+	// connect forcely
 	if( PathPosition + treePathLength > dst_length )
 	{
 		return false;
@@ -130,7 +127,7 @@ bool Combine( const char16_t* rootPath, const char16_t* treePath,  char16_t* dst
 	PathPosition = PathPosition + treePathLength;
 	dst[ PathPosition ] = 0;
 
-	// ../ ..\ の処理
+	// execute ..\ or ../
 	for( int i = 0; i < PathPosition - 2; i++ )
 	{
 		if( dst[ i ] == L'.' && dst[ i + 1 ] == L'.' && ( dst[ i + 2 ] == L'/' || dst[ i + 2 ] == L'\\' ) )
@@ -164,9 +161,6 @@ bool Combine( const char16_t* rootPath, const char16_t* treePath,  char16_t* dst
 	return true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 ViewerParamater::ViewerParamater()
 	: GuideWidth		( 0 )
 	, GuideHeight		( 0 )
