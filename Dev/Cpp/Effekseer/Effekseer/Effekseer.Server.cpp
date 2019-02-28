@@ -390,7 +390,7 @@ void ServerImplemented::Update(Manager** managers, int32_t managerCount, Reloadi
 				p += sizeof(char16_t);
 			}
 
-			uint8_t* data = p;
+			uint8_t* recv_data = p;
 			auto datasize = (int32_t)buf.size() - (p-&(buf[0]));
 		
 			if( m_data.count( key ) > 0 )
@@ -400,35 +400,35 @@ void ServerImplemented::Update(Manager** managers, int32_t managerCount, Reloadi
 
 			for( int32_t d = 0; d < datasize; d++ )
 			{
-				m_data[key].push_back( data[d] );
+				m_data[key].push_back( recv_data[d] );
 			}
 
 			if( m_effects.count( key ) > 0 )
 			{
 				if (managers != nullptr)
 				{
-					auto& data = m_data[key];
+					auto& data_ = m_data[key];
 
 					if (m_materialPath.size() > 1)
 					{
-						m_effects[key]->Reload(managers, managerCount, data.data(), (int32_t)data.size(), &(m_materialPath[0]), reloadingThreadType);
+						m_effects[key]->Reload(managers, managerCount, data_.data(), (int32_t)data_.size(), &(m_materialPath[0]), reloadingThreadType);
 					}
 					else
 					{
-						m_effects[key]->Reload(managers, managerCount, data.data(), (int32_t)data.size(), nullptr, reloadingThreadType);
+						m_effects[key]->Reload(managers, managerCount, data_.data(), (int32_t)data_.size(), nullptr, reloadingThreadType);
 					}
 				}
 				else
 				{
-					auto& data = m_data[key];
+					auto& data_ = m_data[key];
 
 					if (m_materialPath.size() > 1)
 					{
-						m_effects[key]->Reload(data.data(), (int32_t)data.size(), &(m_materialPath[0]), reloadingThreadType);
+						m_effects[key]->Reload(data_.data(), (int32_t)data_.size(), &(m_materialPath[0]), reloadingThreadType);
 					}
 					else
 					{
-						m_effects[key]->Reload(data.data(), (int32_t)data.size(), nullptr, reloadingThreadType);
+						m_effects[key]->Reload(data_.data(), (int32_t)data_.size(), nullptr, reloadingThreadType);
 					}
 				}
 				
