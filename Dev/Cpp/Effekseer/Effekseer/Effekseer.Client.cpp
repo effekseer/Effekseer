@@ -106,7 +106,7 @@ bool ClientImplemented::GetAddr(const char* host, IN_ADDR* addr)
 		hostEntry = ::gethostbyname(host);
 		if (hostEntry == nullptr)
 		{
-			return nullptr;
+			return false;
 		}
 
 		addr->s_addr = *(unsigned int *)hostEntry->h_addr_list[0];
