@@ -292,6 +292,8 @@ public:
 
 	int32_t GetAndResetVertexCount();
 
+	int32_t GetInstanceCount();
+
 	float GetFPS();
 
 	static bool IsDebugMode();

@@ -708,6 +708,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_GetAndResetVertexCount___")]
   public static extern int Native_GetAndResetVertexCount(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_GetInstanceCount___")]
+  public static extern int Native_GetInstanceCount(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_GetFPS___")]
   public static extern float Native_GetFPS(global::System.Runtime.InteropServices.HandleRef jarg1);
 

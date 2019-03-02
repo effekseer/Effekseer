@@ -50,6 +50,11 @@ namespace Effekseer.GUI.Dock
 			// DrawCall
 			Manager.NativeManager.Text("Vertex : " + Manager.Native.GetAndResetVertexCount().ToString());
 
+			Manager.NativeManager.SameLine();
+
+			// DrawCall
+			Manager.NativeManager.Text("Particle : " + Manager.Native.GetInstanceCount().ToString());
+
 		}
 	}
 }

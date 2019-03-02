@@ -264,6 +264,11 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
+  public int GetInstanceCount() {
+    int ret = EffekseerNativePINVOKE.Native_GetInstanceCount(swigCPtr);
+    return ret;
+  }
+
   public float GetFPS() {
     float ret = EffekseerNativePINVOKE.Native_GetFPS(swigCPtr);
     return ret;

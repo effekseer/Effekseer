@@ -2460,6 +2460,18 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_Native_GetAndResetVertexCount__
 }
 
 
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_Native_GetInstanceCount___(void * jarg1) {
+  int jresult ;
+  Native *arg1 = (Native *) 0 ;
+  int32_t result;
+  
+  arg1 = (Native *)jarg1; 
+  result = (int32_t)(arg1)->GetInstanceCount();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_Native_GetFPS___(void * jarg1) {
   float jresult ;
   Native *arg1 = (Native *) 0 ;

@@ -224,6 +224,7 @@ struct HandleHolder
 {
 	::Effekseer::Handle		Handle = 0;
 	int32_t					Time = 0;
+	bool					IsRootStopped = false;
 
 	HandleHolder()
 		: Handle(0)
@@ -1025,6 +1026,7 @@ bool Native::StepEffect()
 			if (g_handles[i].Time >= m_effectBehavior.RemovedTime)
 			{
 				g_manager->StopRoot(g_handles[i].Handle);
+				g_handles[i].IsRootStopped = true;
 			}
 		}
 		
@@ -1993,6 +1995,24 @@ int32_t Native::GetAndResetVertexCount()
 	auto call = g_renderer->GetRenderer()->GetDrawVertexCount();
 	g_renderer->GetRenderer()->ResetDrawVertexCount();
 	return call;
+}
+
+int32_t Native::GetInstanceCount()
+{
+	int32_t sum = 0;
+	for (int i = 0; i < g_handles.size(); i++)
+	{
+		auto count = g_manager->GetInstanceCount(g_handles[i].Handle);
+		
+		// Root
+		if (!g_handles[i].IsRootStopped) count--;
+
+		if (!g_manager->Exists(g_handles[i].Handle)) count = 0;
+
+		sum += count;
+	}
+
+	return sum;
 }
 
 float Native::GetFPS()
