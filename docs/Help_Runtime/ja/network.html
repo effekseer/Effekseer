@@ -49,13 +49,9 @@ Effekseerから変更したいエフェクトをサーバーに登録する必�
 すなわち、ディレクトリだけ違ってファイル名が一緒の場合は、正しく変更が適用されない可能性があります。
 </p>
 
-<p>
-Regist は英語として間違っているため、将来的に関数名が変わる可能性があります。
-</p>
-    
 <pre>
 <code>
-g_server->Regist( (const EFK_CHAR*)L"test", g_effect );
+g_server->Register( u"test", g_effect );
 </code>
 </pre>
 
@@ -99,7 +95,7 @@ g_client = Effekseer::Client::Create();
 g_client->Start( "127.0.0.1", 60000 );
 
 // 送信
-g_client->Reload( g_manager, (const EFK_CHAR*)L"test_reload.efk", (const EFK_CHAR*)L"test" );
+g_client->Reload( g_manager, u"test_reload.efk", u"test" );
 </code>
 </pre>
 

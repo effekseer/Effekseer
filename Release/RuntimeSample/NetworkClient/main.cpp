@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -99,10 +99,10 @@ void InitWindow()
 	ShowWindow( g_window_handle, true );
 	UpdateWindow( g_window_handle );
 	
-	// COM‚Ì‰Šú‰»
+	// COMã®åˆæœŸåŒ–
 	CoInitializeEx( NULL, NULL );
 
-	// DirectX9‚Ì‰Šú‰»‚ğs‚¤
+	// DirectX9ã®åˆæœŸåŒ–ã‚’è¡Œã†
 	D3DPRESENT_PARAMETERS d3dp;
 	ZeroMemory(&d3dp, sizeof(d3dp));
 	d3dp.BackBufferWidth = g_window_width;
@@ -125,7 +125,7 @@ void InitWindow()
 		&d3dp,
 		&g_d3d_device );
 	
-	// XAudio2‚Ì‰Šú‰»‚ğs‚¤
+	// XAudio2ã®åˆæœŸåŒ–ã‚’è¡Œã†
 	XAudio2Create( &g_xa2 );
 
 	g_xa2->CreateMasteringVoice( &g_xa2_master );
@@ -153,22 +153,22 @@ void MainLoop()
 		{
 			if( g_timer % 120 == 0 )
 			{
-				g_client->Reload( g_manager, (const EFK_CHAR*)L"test_reload.efk", (const EFK_CHAR*)L"test" );
+				g_client->Reload( g_manager, u"test_reload.efk", u"test" );
 			}
 
-			// ƒGƒtƒFƒNƒg‚ÌXVˆ—‚ğs‚¤B
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æ›´æ–°å‡¦ç†ã‚’è¡Œã†ã€‚
 			g_manager->Update();
 		
 			g_d3d_device->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0 );
 			g_d3d_device->BeginScene();
 
-			// ƒGƒtƒFƒNƒg‚Ì•`‰æŠJnˆ—‚ğs‚¤B
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»é–‹å§‹å‡¦ç†ã‚’è¡Œã†ã€‚
 			g_renderer->BeginRendering();
 
-			// ƒGƒtƒFƒNƒg‚Ì•`‰æ‚ğs‚¤B
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»ã‚’è¡Œã†ã€‚
 			g_manager->Draw();
 
-			// ƒGƒtƒFƒNƒg‚Ì•`‰æI—¹ˆ—‚ğs‚¤B
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»çµ‚äº†å‡¦ç†ã‚’è¡Œã†ã€‚
 			g_renderer->EndRendering();
 
 			g_d3d_device->EndScene();
@@ -179,24 +179,24 @@ void MainLoop()
 				HRESULT hr;
 				hr = g_d3d_device->Present( NULL, NULL, NULL, NULL );
 
-				// ƒfƒoƒCƒXƒƒXƒgˆ—
+				// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆå‡¦ç†
 				switch ( hr )
 				{
-					// ƒfƒoƒCƒXƒƒXƒg
+					// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆ
 					case D3DERR_DEVICELOST:
 					while ( FAILED( hr = g_d3d_device->TestCooperativeLevel() ) )
 					{
 						switch ( hr )
 						{
-							// ƒfƒoƒCƒXƒƒXƒg
+							// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆ
 							case D3DERR_DEVICELOST:
 								::SleepEx( 1000, true );
 								break;
 
-							// ƒfƒoƒCƒXƒƒXƒgFƒŠƒZƒbƒg‰Â
+							// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆï¼šãƒªã‚»ãƒƒãƒˆå¯
 							case D3DERR_DEVICENOTRESET:
 								
-								// ƒfƒoƒCƒXƒƒXƒg‚Ìˆ—‚ğs‚¤‘O‚ÉÀs‚·‚é
+								// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆã®å‡¦ç†ã‚’è¡Œã†å‰ã«å®Ÿè¡Œã™ã‚‹
 								g_renderer->OnLostDevice();
 
 								D3DPRESENT_PARAMETERS d3dp;
@@ -213,7 +213,7 @@ void MainLoop()
 
 								g_d3d_device->Reset( &d3dp );
 
-								// ƒfƒoƒCƒXƒƒXƒg‚Ìˆ—‚ÌŒã‚ÉÀs‚·‚é
+								// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆã®å‡¦ç†ã®å¾Œã«å®Ÿè¡Œã™ã‚‹
 								g_renderer->OnResetDevice();
 
 								break;
@@ -245,54 +245,54 @@ int main(int argc, char **argv)
 
 	InitWindow();
 
-	// •`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬
+	// æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
 	g_renderer = ::EffekseerRendererDX9::Renderer::Create( g_d3d_device, 2000 );
 	
-	// ƒGƒtƒFƒNƒgŠÇ——pƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç®¡ç†ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
 	g_manager = ::Effekseer::Manager::Create( 2000 );
 
-	// •`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚ç•`‰æ‹@”\‚ğİ’è
+	// æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰æç”»æ©Ÿèƒ½ã‚’è¨­å®š
 	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
 	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
 	g_manager->SetRingRenderer( g_renderer->CreateRingRenderer() );
 	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
 
-	// •`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚çƒeƒNƒXƒ`ƒƒ‚Ì“Ç‹@”\‚ğİ’è
-	// “Æ©Šg’£‰Â”\AŒ»İ‚Íƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚ñ‚Å‚¢‚éB
+	// æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®èª­è¾¼æ©Ÿèƒ½ã‚’è¨­å®š
+	// ç‹¬è‡ªæ‹¡å¼µå¯èƒ½ã€ç¾åœ¨ã¯ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã‚“ã§ã„ã‚‹ã€‚
 	g_manager->SetTextureLoader( g_renderer->CreateTextureLoader() );
 	g_manager->SetModelLoader( g_renderer->CreateModelLoader() );
 
-	// ‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬
+	// éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
 	g_sound = ::EffekseerSound::Sound::Create( g_xa2, 16, 16 );
 
-	// ‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚çÄ¶‹@”\‚ğw’è
+	// éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰å†ç”Ÿæ©Ÿèƒ½ã‚’æŒ‡å®š
 	g_manager->SetSoundPlayer( g_sound->CreateSoundPlayer() );
 	
-	// ‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚çƒTƒEƒ“ƒhƒf[ƒ^‚Ì“Ç‹@”\‚ğİ’è
-	// “Æ©Šg’£‰Â”\AŒ»İ‚Íƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚ñ‚Å‚¢‚éB
+	// éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰ã‚µã‚¦ãƒ³ãƒ‰ãƒ‡ãƒ¼ã‚¿ã®èª­è¾¼æ©Ÿèƒ½ã‚’è¨­å®š
+	// ç‹¬è‡ªæ‹¡å¼µå¯èƒ½ã€ç¾åœ¨ã¯ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã‚“ã§ã„ã‚‹ã€‚
 	g_manager->SetSoundLoader( g_sound->CreateSoundLoader() );
 
-	// ƒNƒ‰ƒCƒAƒ“ƒg‚Ì¶¬
+	// ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã®ç”Ÿæˆ
 	g_client = Effekseer::Client::Create();
 
-	// ƒNƒ‰ƒCƒAƒ“ƒg‚ğƒ|[ƒg60000‚ÅÚ‘±
+	// ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‚’ãƒãƒ¼ãƒˆ60000ã§æ¥ç¶š
 	g_client->Start( "127.0.0.1", 60000 );
 
 	MainLoop();
 
-	// ƒNƒ‰ƒCƒAƒ“ƒg‚Ì”jŠü
+	// ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã®ç ´æ£„
 	ES_SAFE_DELETE( g_client );
 
-	// æ‚ÉƒGƒtƒFƒNƒgŠÇ——pƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü
+	// å…ˆã«ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç®¡ç†ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„
 	g_manager->Destroy();
 
-	// Ÿ‚É‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü
+	// æ¬¡ã«éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„
 	g_sound->Destroy();
 
-	// Ÿ‚É•`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü
+	// æ¬¡ã«æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„
 	g_renderer->Destroy();
 
-	// XAudio2‚Ì‰ğ•ú
+	// XAudio2ã®è§£æ”¾
 	if( g_xa2_master != NULL )
 	{
 		g_xa2_master->DestroyVoice();
@@ -300,11 +300,11 @@ int main(int argc, char **argv)
 	}
 	ES_SAFE_RELEASE( g_xa2 );
 
-	// DirectX‚Ì‰ğ•ú
+	// DirectXã®è§£æ”¾
 	ES_SAFE_RELEASE( g_d3d_device );
 	ES_SAFE_RELEASE( g_d3d );
 
-	// COM‚ÌI—¹ˆ—
+	// COMã®çµ‚äº†å‡¦ç†
 	CoUninitialize();
 
 	return 0;

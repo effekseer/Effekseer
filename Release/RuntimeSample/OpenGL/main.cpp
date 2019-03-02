@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -121,10 +121,10 @@ void InitWindow()
 	ShowWindow( g_window_handle, true );
 	UpdateWindow( g_window_handle );
 	
-	// COM‚Ì‰Šú‰»
+	// COMã®åˆæœŸåŒ–
 	CoInitializeEx( NULL, NULL );
 
-	// OpenGL‚Ì‰Šú‰»‚ğs‚¤
+	// OpenGLã®åˆæœŸåŒ–ã‚’è¡Œã†
 	g_hDC = GetDC( g_window_handle );
 
 	PIXELFORMATDESCRIPTOR pfd =
@@ -149,10 +149,10 @@ void InitWindow()
 
 	glViewport( 0, 0, g_window_width, g_window_height );
 	
-	// OpenALƒfƒoƒCƒX‚ğì¬
+	// OpenALãƒ‡ãƒã‚¤ã‚¹ã‚’ä½œæˆ
 	g_alcdev = alcOpenDevice(NULL);
 
-	// OpenALƒRƒ“ƒeƒLƒXƒg‚ğì¬
+	// OpenALã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚’ä½œæˆ
 	g_alcctx = alcCreateContext(g_alcdev, NULL);
 
 	alcMakeContextCurrent(g_alcctx);
@@ -178,10 +178,10 @@ void MainLoop()
 		}
 		else
 		{
-			// ƒGƒtƒFƒNƒg‚ÌˆÚ“®ˆ—‚ğs‚¤
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ç§»å‹•å‡¦ç†ã‚’è¡Œã†
 			g_manager->AddLocation( g_handle, ::Effekseer::Vector3D( 0.2f, 0.0f, 0.0f ) );
 
-			// ƒGƒtƒFƒNƒg‚ÌXVˆ—‚ğs‚¤
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æ›´æ–°å‡¦ç†ã‚’è¡Œã†
 			g_manager->Update();
 			
 			
@@ -190,13 +190,13 @@ void MainLoop()
 			glClearColor( 0.0f, 0.0f, 0.0f, 0.0f);
 			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			// ƒGƒtƒFƒNƒg‚Ì•`‰æŠJnˆ—‚ğs‚¤B
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»é–‹å§‹å‡¦ç†ã‚’è¡Œã†ã€‚
 			g_renderer->BeginRendering();
 
-			// ƒGƒtƒFƒNƒg‚Ì•`‰æ‚ğs‚¤B
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»ã‚’è¡Œã†ã€‚
 			g_manager->Draw();
 
-			// ƒGƒtƒFƒNƒg‚Ì•`‰æI—¹ˆ—‚ğs‚¤B
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»çµ‚äº†å‡¦ç†ã‚’è¡Œã†ã€‚
 			g_renderer->EndRendering();
 
 			glFlush();
@@ -226,80 +226,80 @@ int main(int argc, char **argv)
 
 	InitWindow();
 	
-	// •`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬
+	// æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
 	g_renderer = ::EffekseerRendererGL::Renderer::Create( 2000 );
 	
-	// ƒGƒtƒFƒNƒgŠÇ——pƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç®¡ç†ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
 	g_manager = ::Effekseer::Manager::Create( 2000 );
 
-	// •`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚ç•`‰æ‹@”\‚ğİ’è
+	// æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰æç”»æ©Ÿèƒ½ã‚’è¨­å®š
 	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
 	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
 	g_manager->SetRingRenderer( g_renderer->CreateRingRenderer() );
 	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
 
-	// •`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚çƒeƒNƒXƒ`ƒƒ‚Ì“Ç‹@”\‚ğİ’è
-	// “Æ©Šg’£‰Â”\AŒ»İ‚Íƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚ñ‚Å‚¢‚éB
+	// æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®èª­è¾¼æ©Ÿèƒ½ã‚’è¨­å®š
+	// ç‹¬è‡ªæ‹¡å¼µå¯èƒ½ã€ç¾åœ¨ã¯ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã‚“ã§ã„ã‚‹ã€‚
 	g_manager->SetTextureLoader( g_renderer->CreateTextureLoader() );
 	g_manager->SetModelLoader( g_renderer->CreateModelLoader() );
 
-	// ‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬
+	// éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
 	g_sound = EffekseerSound::Sound::Create( 32 );
 
-	// ‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚çÄ¶‹@”\‚ğw’è
+	// éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰å†ç”Ÿæ©Ÿèƒ½ã‚’æŒ‡å®š
 	g_manager->SetSoundPlayer( g_sound->CreateSoundPlayer() );
 	
-	// ‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚çƒTƒEƒ“ƒhƒf[ƒ^‚Ì“Ç‹@”\‚ğİ’è
-	// “Æ©Šg’£‰Â”\AŒ»İ‚Íƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚ñ‚Å‚¢‚éB
+	// éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰ã‚µã‚¦ãƒ³ãƒ‰ãƒ‡ãƒ¼ã‚¿ã®èª­è¾¼æ©Ÿèƒ½ã‚’è¨­å®š
+	// ç‹¬è‡ªæ‹¡å¼µå¯èƒ½ã€ç¾åœ¨ã¯ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã‚“ã§ã„ã‚‹ã€‚
 	g_manager->SetSoundLoader( g_sound->CreateSoundLoader() );
 
-	// ‹“_ˆÊ’u‚ğŠm’è
+	// è¦–ç‚¹ä½ç½®ã‚’ç¢ºå®š
 	g_position = ::Effekseer::Vector3D( 10.0f, 5.0f, 20.0f );
 
-	// “Š‰es—ñ‚ğİ’è
+	// æŠ•å½±è¡Œåˆ—ã‚’è¨­å®š
 	g_renderer->SetProjectionMatrix(
 		::Effekseer::Matrix44().PerspectiveFovRH_OpenGL( 90.0f / 180.0f * 3.14f, (float)g_window_width / (float)g_window_height, 1.0f, 50.0f ) );
 
-	// ƒJƒƒ‰s—ñ‚ğİ’è
+	// ã‚«ãƒ¡ãƒ©è¡Œåˆ—ã‚’è¨­å®š
 	g_renderer->SetCameraMatrix(
 		::Effekseer::Matrix44().LookAtRH( g_position, ::Effekseer::Vector3D( 0.0f, 0.0f, 0.0f ), ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
 	
-	// ƒGƒtƒFƒNƒg‚Ì“Ç
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®èª­è¾¼
 	g_effect = Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"test.efk" );
 
-	// ƒGƒtƒFƒNƒg‚ÌÄ¶
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®å†ç”Ÿ
 	g_handle = g_manager->Play( g_effect, 0, 0, 0 );
 
 	MainLoop();
 	
-	// ƒGƒtƒFƒNƒg‚Ì’â~
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®åœæ­¢
 	g_manager->StopEffect( g_handle );
 
-	// ƒGƒtƒFƒNƒg‚Ì”jŠü
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ç ´æ£„
 	ES_SAFE_RELEASE( g_effect );
 
-	// æ‚ÉƒGƒtƒFƒNƒgŠÇ——pƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü
+	// å…ˆã«ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç®¡ç†ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„
 	g_manager->Destroy();
 
-	// Ÿ‚É‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü
+	// æ¬¡ã«éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„
 	g_sound->Destroy();
 
-	// Ÿ‚É•`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü
+	// æ¬¡ã«æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„
 	g_renderer->Destroy();
 
-	// OpenAL‚Ì‰ğ•ú
+	// OpenALã®è§£æ”¾
 	alcDestroyContext(g_alcctx);
 	alcCloseDevice(g_alcdev);
 	
 	g_alcctx = NULL;
 	g_alcdev = NULL;
 
-	// OpenGL‚Ì‰ğ•ú
+	// OpenGLã®è§£æ”¾
 	wglMakeCurrent( 0, 0 );
 	wglDeleteContext( g_hGLRC );
 	timeEndPeriod(1);
 
-	// COM‚ÌI—¹ˆ—
+	// COMã®çµ‚äº†å‡¦ç†
 	CoUninitialize();
 
 	return 0;

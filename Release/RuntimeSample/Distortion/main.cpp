@@ -1,4 +1,4 @@
-
+ï»¿
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -184,10 +184,10 @@ void InitWindow()
 	ShowWindow( g_window_handle, true );
 	UpdateWindow( g_window_handle );
 	
-	// COM‚Ì‰Šú‰»
+	// COMã®åˆæœŸåŒ–
 	CoInitializeEx( NULL, NULL );
 
-	// DirectX9‚Ì‰Šú‰»‚ğs‚¤
+	// DirectX9ã®åˆæœŸåŒ–ã‚’è¡Œã†
 	D3DPRESENT_PARAMETERS d3dp;
 	ZeroMemory(&d3dp, sizeof(d3dp));
 	d3dp.BackBufferWidth = g_window_width;
@@ -210,7 +210,7 @@ void InitWindow()
 		&d3dp,
 		&g_d3d_device );
 	
-	// XAudio2‚Ì‰Šú‰»‚ğs‚¤
+	// XAudio2ã®åˆæœŸåŒ–ã‚’è¡Œã†
 	XAudio2Create( &g_xa2 );
 
 	g_xa2->CreateMasteringVoice( &g_xa2_master );
@@ -236,29 +236,29 @@ void MainLoop()
 		}
 		else
 		{
-			// ƒGƒtƒFƒNƒg‚ÌXVˆ—‚ğs‚¤B
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æ›´æ–°å‡¦ç†ã‚’è¡Œã†ã€‚
 			g_manager->Update();
 		
 			g_d3d_device->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0 );
 			g_d3d_device->BeginScene();
 
-			// ƒGƒtƒFƒNƒg‚Ì•`‰æŠJnˆ—‚ğs‚¤B
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»é–‹å§‹å‡¦ç†ã‚’è¡Œã†ã€‚
 			g_renderer->BeginRendering();
 
 			// Render rear effects
-			// ”w–Ê‚ÌƒGƒtƒFƒNƒg‚Ì•`‰æ‚ğs‚¤B
+			// èƒŒé¢ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»ã‚’è¡Œã†ã€‚
 			g_manager->DrawBack();
 
 			// Distort background and rear effects.
-			// ”wŒi‚Æ”w–Ê‚ÌƒGƒtƒFƒNƒg‚ğ˜c‚Ü‚¹‚éB
+			// èƒŒæ™¯ã¨èƒŒé¢ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’æ­ªã¾ã›ã‚‹ã€‚
 			DistortingCallback distoring;
 			distoring.OnDistorting();
 
 			// Render front effects
-			// ‘O–Ê‚ÌƒGƒtƒFƒNƒg‚Ì•`‰æ‚ğs‚¤B
+			// å‰é¢ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»ã‚’è¡Œã†ã€‚
 			g_manager->DrawFront();
 
-			// ƒGƒtƒFƒNƒg‚Ì•`‰æI—¹ˆ—‚ğs‚¤B
+			// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»çµ‚äº†å‡¦ç†ã‚’è¡Œã†ã€‚
 			g_renderer->EndRendering();
 
 			g_d3d_device->EndScene();
@@ -269,24 +269,24 @@ void MainLoop()
 				HRESULT hr;
 				hr = g_d3d_device->Present( NULL, NULL, NULL, NULL );
 
-				// ƒfƒoƒCƒXƒƒXƒgˆ—
+				// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆå‡¦ç†
 				switch ( hr )
 				{
-					// ƒfƒoƒCƒXƒƒXƒg
+					// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆ
 					case D3DERR_DEVICELOST:
 					while ( FAILED( hr = g_d3d_device->TestCooperativeLevel() ) )
 					{
 						switch ( hr )
 						{
-							// ƒfƒoƒCƒXƒƒXƒg
+							// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆ
 							case D3DERR_DEVICELOST:
 								::SleepEx( 1000, true );
 								break;
 
-							// ƒfƒoƒCƒXƒƒXƒgFƒŠƒZƒbƒg‰Â
+							// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆï¼šãƒªã‚»ãƒƒãƒˆå¯
 							case D3DERR_DEVICENOTRESET:
 								
-								// ƒfƒoƒCƒXƒƒXƒg‚Ìˆ—‚ğs‚¤‘O‚ÉÀs‚·‚é
+								// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆã®å‡¦ç†ã‚’è¡Œã†å‰ã«å®Ÿè¡Œã™ã‚‹
 								g_renderer->OnLostDevice();
 
 								D3DPRESENT_PARAMETERS d3dp;
@@ -303,7 +303,7 @@ void MainLoop()
 
 								g_d3d_device->Reset( &d3dp );
 
-								// ƒfƒoƒCƒXƒƒXƒg‚Ìˆ—‚ÌŒã‚ÉÀs‚·‚é
+								// ãƒ‡ãƒã‚¤ã‚¹ãƒ­ã‚¹ãƒˆã®å‡¦ç†ã®å¾Œã«å®Ÿè¡Œã™ã‚‹
 								g_renderer->OnResetDevice();
 
 								break;
@@ -335,19 +335,19 @@ int main(int argc, char **argv)
 
 	InitWindow();
 
-	// •`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬
+	// æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
 	g_renderer = ::EffekseerRendererDX9::Renderer::Create( g_d3d_device, 2000 );
 	
 	// Specify a distortion function
-	// ˜c‚İ‹@”\‚ğİ’è
+	// æ­ªã¿æ©Ÿèƒ½ã‚’è¨­å®š
 
 	// If you'd like to distort background and particles by rendering, it need to specify it.
 	// It is a bit heavy
-	// ‚à‚µA•`‰æ‚·‚é‚²‚Æ‚É”wŒi‚Æƒp[ƒeƒBƒNƒ‹‚ğ˜c‚Ü‚¹‚½‚¢ê‡Aİ’è‚·‚é•K—v‚ª‚ ‚é
-	// ‚â‚âd‚¢
+	// ã‚‚ã—ã€æç”»ã™ã‚‹ã”ã¨ã«èƒŒæ™¯ã¨ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚’æ­ªã¾ã›ãŸã„å ´åˆã€è¨­å®šã™ã‚‹å¿…è¦ãŒã‚ã‚‹
+	// ã‚„ã‚„é‡ã„
 	g_renderer->SetDistortingCallback(new DistortingCallback());
 
-	// ”wŒiƒoƒbƒtƒ@‚Ì¶¬
+	// èƒŒæ™¯ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
 	g_d3d_device->CreateTexture(
 		640,
 		480,
@@ -361,66 +361,66 @@ int main(int argc, char **argv)
 
 	g_backgroundTexture->GetSurfaceLevel(0, &g_backgroundSurface);
 
-	// ƒGƒtƒFƒNƒgŠÇ——pƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç®¡ç†ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
 	g_manager = ::Effekseer::Manager::Create( 2000 );
 
-	// •`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚ç•`‰æ‹@”\‚ğİ’è
+	// æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰æç”»æ©Ÿèƒ½ã‚’è¨­å®š
 	g_manager->SetSpriteRenderer( g_renderer->CreateSpriteRenderer() );
 	g_manager->SetRibbonRenderer( g_renderer->CreateRibbonRenderer() );
 	g_manager->SetRingRenderer( g_renderer->CreateRingRenderer() );
 	g_manager->SetTrackRenderer(g_renderer->CreateTrackRenderer());
 	g_manager->SetModelRenderer( g_renderer->CreateModelRenderer() );
 	
-	// •`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚çƒeƒNƒXƒ`ƒƒ‚Ì“Ç‹@”\‚ğİ’è
-	// “Æ©Šg’£‰Â”\AŒ»İ‚Íƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚ñ‚Å‚¢‚éB
+	// æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®èª­è¾¼æ©Ÿèƒ½ã‚’è¨­å®š
+	// ç‹¬è‡ªæ‹¡å¼µå¯èƒ½ã€ç¾åœ¨ã¯ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã‚“ã§ã„ã‚‹ã€‚
 	g_manager->SetTextureLoader( g_renderer->CreateTextureLoader() );
 	g_manager->SetModelLoader( g_renderer->CreateModelLoader() );
 
-	// ‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚Ì¶¬
+	// éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ç”Ÿæˆ
 	g_sound = ::EffekseerSound::Sound::Create( g_xa2, 16, 16 );
 
-	// ‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚çÄ¶‹@”\‚ğw’è
+	// éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰å†ç”Ÿæ©Ÿèƒ½ã‚’æŒ‡å®š
 	g_manager->SetSoundPlayer( g_sound->CreateSoundPlayer() );
 	
-	// ‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚©‚çƒTƒEƒ“ƒhƒf[ƒ^‚Ì“Ç‹@”\‚ğİ’è
-	// “Æ©Šg’£‰Â”\AŒ»İ‚Íƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚ñ‚Å‚¢‚éB
+	// éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‹ã‚‰ã‚µã‚¦ãƒ³ãƒ‰ãƒ‡ãƒ¼ã‚¿ã®èª­è¾¼æ©Ÿèƒ½ã‚’è¨­å®š
+	// ç‹¬è‡ªæ‹¡å¼µå¯èƒ½ã€ç¾åœ¨ã¯ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã‚“ã§ã„ã‚‹ã€‚
 	g_manager->SetSoundLoader( g_sound->CreateSoundLoader() );
 
-	// ‹“_ˆÊ’u‚ğŠm’è
+	// è¦–ç‚¹ä½ç½®ã‚’ç¢ºå®š
 	g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f) * 0.25;
 
-	// “Š‰es—ñ‚ğİ’è
+	// æŠ•å½±è¡Œåˆ—ã‚’è¨­å®š
 	g_renderer->SetProjectionMatrix(
 		::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)g_window_width / (float)g_window_height, 1.0f, 50.0f));
 
-	// ƒJƒƒ‰s—ñ‚ğİ’è
+	// ã‚«ãƒ¡ãƒ©è¡Œåˆ—ã‚’è¨­å®š
 	g_renderer->SetCameraMatrix(
 		::Effekseer::Matrix44().LookAtRH(g_position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
 
-	// ƒGƒtƒFƒNƒg‚Ì“Ç
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®èª­è¾¼
 	g_effect = Effekseer::Effect::Create(g_manager, (const EFK_CHAR*)L"distortion.efk");
 
-	// ƒGƒtƒFƒNƒg‚ÌÄ¶
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®å†ç”Ÿ
 	g_handle = g_manager->Play(g_effect, 0, 0, 0);
 	
 	MainLoop();
 
-	// ƒGƒtƒFƒNƒg‚Ì’â~
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®åœæ­¢
 	g_manager->StopEffect(g_handle);
 
-	// ƒGƒtƒFƒNƒg‚Ì”jŠü
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ç ´æ£„
 	ES_SAFE_RELEASE(g_effect);
 
-	// æ‚ÉƒGƒtƒFƒNƒgŠÇ——pƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü
+	// å…ˆã«ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç®¡ç†ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„
 	g_manager->Destroy();
 
-	// Ÿ‚É‰¹Ä¶—pƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü
+	// æ¬¡ã«éŸ³å†ç”Ÿç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„
 	g_sound->Destroy();
 
-	// Ÿ‚É•`‰æ—pƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü
+	// æ¬¡ã«æç”»ç”¨ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„
 	g_renderer->Destroy();
 
-	// XAudio2‚Ì‰ğ•ú
+	// XAudio2ã®è§£æ”¾
 	if( g_xa2_master != NULL )
 	{
 		g_xa2_master->DestroyVoice();
@@ -428,15 +428,15 @@ int main(int argc, char **argv)
 	}
 	ES_SAFE_RELEASE( g_xa2 );
 
-	// ƒoƒbƒNƒoƒbƒtƒ@‚Ì”jŠü
+	// ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã®ç ´æ£„
 	ES_SAFE_RELEASE( g_backgroundTexture );
 	ES_SAFE_RELEASE( g_backgroundSurface );
 
-	// DirectX‚Ì‰ğ•ú
+	// DirectXã®è§£æ”¾
 	ES_SAFE_RELEASE( g_d3d_device );
 	ES_SAFE_RELEASE( g_d3d );
 
-	// COM‚ÌI—¹ˆ—
+	// COMã®çµ‚äº†å‡¦ç†
 	CoUninitialize();
 
 	return 0;

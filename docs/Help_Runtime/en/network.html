@@ -50,13 +50,9 @@ For example, please set the character string "test" as the target to send "test.
 In other words, if the file name is different only in the directory, the change may not be applied correctly.
 </p>
 
-<p>
-Since Regist is incorrect as English, function names may change in the future.
-</p>
-    
 <pre>
 <code>
-g_server->Regist( (const EFK_CHAR*)L"test", g_effect );
+g_server->Register( u"test", g_effect );
 </code>
 </pre>
 
@@ -100,7 +96,7 @@ g_client = Effekseer::Client::Create();
 g_client->Start( "127.0.0.1", 60000 );
 
 // Send data
-g_client->Reload( g_manager, (const EFK_CHAR*)L"test_reload.efk", (const EFK_CHAR*)L"test" );
+g_client->Reload( g_manager, u"test_reload.efk", u"test" );
 </code>
 </pre>
 

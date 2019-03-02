@@ -10,7 +10,7 @@ namespace Effekseer
 {
 	public class Core
 	{
-		public const string Version = "1.42f";
+		public const string Version = "1.43";
 
 		public const string OptionFilePath = "config.option.xml";
 
