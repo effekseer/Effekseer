@@ -12,9 +12,9 @@
           <RotationEffectType>1</RotationEffectType>
           <ScaleEffectType>1</ScaleEffectType>
           <Life>
-            <Center>720</Center>
-            <Max>720</Max>
-            <Min>720</Min>
+            <Center>180</Center>
+            <Max>180</Max>
+            <Min>180</Min>
           </Life>
           <GenerationTime>
             <Center>0.03</Center>

@@ -6,9 +6,9 @@
       <Node>
         <CommonValues>
           <Life>
-            <Center>300</Center>
-            <Max>300</Max>
-            <Min>300</Min>
+            <Center>220</Center>
+            <Max>220</Max>
+            <Min>220</Min>
           </Life>
         </CommonValues>
         <RotationValues>
@@ -154,10 +154,18 @@
                   <R>
                     <Center>212</Center>
                     <Min>170</Min>
+                    <DrawnAs>0</DrawnAs>
                   </R>
+                  <G>
+                    <DrawnAs>0</DrawnAs>
+                  </G>
+                  <B>
+                    <DrawnAs>0</DrawnAs>
+                  </B>
                   <A>
                     <Center>127</Center>
                     <Min>0</Min>
+                    <DrawnAs>0</DrawnAs>
                   </A>
                   <DrawnAs>0</DrawnAs>
                 </ColorAll_Random>
@@ -217,14 +225,22 @@
                   <Ribbon>
                     <ColorAll>1</ColorAll>
                     <ColorAll_Random>
+                      <R>
+                        <DrawnAs>0</DrawnAs>
+                      </R>
                       <G>
                         <Center>191</Center>
                         <Min>128</Min>
+                        <DrawnAs>0</DrawnAs>
                       </G>
                       <B>
                         <Center>127</Center>
                         <Min>0</Min>
+                        <DrawnAs>0</DrawnAs>
                       </B>
+                      <A>
+                        <DrawnAs>0</DrawnAs>
+                      </A>
                       <DrawnAs>0</DrawnAs>
                     </ColorAll_Random>
                   </Ribbon>
@@ -253,7 +269,7 @@
       <Z>11</Z>
     </TargetLocation>
   </Behavior>
-  <ToolVersion>0.7CTP1</ToolVersion>
+  <ToolVersion>1.43</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>300</EndFrame>

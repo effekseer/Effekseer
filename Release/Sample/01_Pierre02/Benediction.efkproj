@@ -180,19 +180,25 @@
                       <Sprite>
                         <ColorAll>1</ColorAll>
                         <ColorAll_Random>
+                          <R>
+                            <DrawnAs>0</DrawnAs>
+                          </R>
                           <G>
                             <Center>180</Center>
                             <Max>196</Max>
                             <Min>164</Min>
+                            <DrawnAs>0</DrawnAs>
                           </G>
                           <B>
                             <Center>56</Center>
                             <Max>80</Max>
                             <Min>32</Min>
+                            <DrawnAs>0</DrawnAs>
                           </B>
                           <A>
                             <Center>191</Center>
                             <Min>127</Min>
+                            <DrawnAs>0</DrawnAs>
                           </A>
                         </ColorAll_Random>
                       </Sprite>
@@ -236,20 +242,26 @@
                               <A>128</A>
                             </ColorAll_Fixed>
                             <ColorAll_Random>
+                              <R>
+                                <DrawnAs>0</DrawnAs>
+                              </R>
                               <G>
                                 <Center>180</Center>
                                 <Max>196</Max>
                                 <Min>164</Min>
+                                <DrawnAs>0</DrawnAs>
                               </G>
                               <B>
                                 <Center>56</Center>
                                 <Max>88</Max>
                                 <Min>24</Min>
+                                <DrawnAs>0</DrawnAs>
                               </B>
                               <A>
                                 <Center>96</Center>
                                 <Max>160</Max>
                                 <Min>32</Min>
+                                <DrawnAs>0</DrawnAs>
                               </A>
                             </ColorAll_Random>
                           </Sprite>
@@ -411,9 +423,9 @@
                   <RotationEffectType>1</RotationEffectType>
                   <ScaleEffectType>1</ScaleEffectType>
                   <Life>
-                    <Center>720</Center>
-                    <Max>720</Max>
-                    <Min>720</Min>
+                    <Center>180</Center>
+                    <Max>180</Max>
+                    <Min>180</Min>
                   </Life>
                 </CommonValues>
                 <LocationValues>
@@ -3668,21 +3680,25 @@
                                         <Center>240</Center>
                                         <Max>240</Max>
                                         <Min>240</Min>
+                                        <DrawnAs>0</DrawnAs>
                                       </R>
                                       <G>
                                         <Center>224</Center>
                                         <Max>224</Max>
                                         <Min>224</Min>
+                                        <DrawnAs>0</DrawnAs>
                                       </G>
                                       <B>
                                         <Center>192</Center>
                                         <Max>192</Max>
                                         <Min>192</Min>
+                                        <DrawnAs>0</DrawnAs>
                                       </B>
                                       <A>
                                         <Center>30</Center>
                                         <Max>60</Max>
                                         <Min>0</Min>
+                                        <DrawnAs>0</DrawnAs>
                                       </A>
                                     </ColorAll_Random>
                                   </Sprite>
@@ -3857,21 +3873,25 @@
                                         <Center>224</Center>
                                         <Max>224</Max>
                                         <Min>224</Min>
+                                        <DrawnAs>0</DrawnAs>
                                       </R>
                                       <G>
                                         <Center>224</Center>
                                         <Max>224</Max>
                                         <Min>224</Min>
+                                        <DrawnAs>0</DrawnAs>
                                       </G>
                                       <B>
                                         <Center>192</Center>
                                         <Max>192</Max>
                                         <Min>192</Min>
+                                        <DrawnAs>0</DrawnAs>
                                       </B>
                                       <A>
                                         <Center>28</Center>
                                         <Max>56</Max>
                                         <Min>0</Min>
+                                        <DrawnAs>0</DrawnAs>
                                       </A>
                                     </ColorAll_Random>
                                   </Sprite>
@@ -4241,20 +4261,26 @@
                               <A>64</A>
                             </ColorAll_Fixed>
                             <ColorAll_Random>
+                              <R>
+                                <DrawnAs>0</DrawnAs>
+                              </R>
                               <G>
                                 <Center>180</Center>
                                 <Max>180</Max>
                                 <Min>180</Min>
+                                <DrawnAs>0</DrawnAs>
                               </G>
                               <B>
                                 <Center>56</Center>
                                 <Max>56</Max>
                                 <Min>56</Min>
+                                <DrawnAs>0</DrawnAs>
                               </B>
                               <A>
                                 <Center>24</Center>
                                 <Max>40</Max>
                                 <Min>8</Min>
+                                <DrawnAs>0</DrawnAs>
                               </A>
                             </ColorAll_Random>
                           </Sprite>

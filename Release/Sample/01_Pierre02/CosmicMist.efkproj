@@ -875,9 +875,9 @@
                   <RotationEffectType>1</RotationEffectType>
                   <ScaleEffectType>1</ScaleEffectType>
                   <Life>
-                    <Center>720</Center>
-                    <Max>720</Max>
-                    <Min>720</Min>
+                    <Center>240</Center>
+                    <Max>240</Max>
+                    <Min>240</Min>
                   </Life>
                 </CommonValues>
                 <LocationValues>

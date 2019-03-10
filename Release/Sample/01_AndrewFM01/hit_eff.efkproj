@@ -4,6 +4,13 @@
     <Name>Root</Name>
     <Children>
       <Node>
+        <CommonValues>
+          <Life>
+            <Center>50</Center>
+            <Max>50</Max>
+            <Min>50</Min>
+          </Life>
+        </CommonValues>
         <RotationValues>
           <Type>1</Type>
           <Fixed>
@@ -636,7 +643,7 @@
       <Y>25</Y>
     </TargetLocation>
   </Behavior>
-  <ToolVersion>0.7CTP1</ToolVersion>
+  <ToolVersion>1.43</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>55</EndFrame>

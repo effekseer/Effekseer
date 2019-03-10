@@ -12,9 +12,9 @@
           <RotationEffectType>1</RotationEffectType>
           <ScaleEffectType>1</ScaleEffectType>
           <Life>
-            <Center>720</Center>
-            <Max>720</Max>
-            <Min>720</Min>
+            <Center>180</Center>
+            <Max>180</Max>
+            <Min>180</Min>
           </Life>
           <GenerationTime>
             <Center>0.3</Center>
@@ -216,11 +216,11 @@
                     <InterpolationType>0</InterpolationType>
                   </Key16>
                   <Key17>
-                    <Frame>720</Frame>
+                    <Frame>180</Frame>
                     <Value>0</Value>
-                    <LeftX>720</LeftX>
+                    <LeftX>180</LeftX>
                     <LeftY>0</LeftY>
-                    <RightX>720</RightX>
+                    <RightX>180</RightX>
                     <RightY>0</RightY>
                     <InterpolationType>0</InterpolationType>
                   </Key17>
@@ -508,11 +508,11 @@
                     <InterpolationType>0</InterpolationType>
                   </Key14>
                   <Key15>
-                    <Frame>720</Frame>
+                    <Frame>180</Frame>
                     <Value>1.2</Value>
-                    <LeftX>720</LeftX>
+                    <LeftX>180</LeftX>
                     <LeftY>1.2</LeftY>
-                    <RightX>720</RightX>
+                    <RightX>180</RightX>
                     <RightY>1.2</RightY>
                     <InterpolationType>0</InterpolationType>
                   </Key15>
@@ -744,9 +744,9 @@
                     <InterpolationType>0</InterpolationType>
                   </Key9>
                   <Key10>
-                    <Frame>720</Frame>
+                    <Frame>180</Frame>
                     <Value>14.79589</Value>
-                    <LeftX>720</LeftX>
+                    <LeftX>180</LeftX>
                     <LeftY>14.79589</LeftY>
                     <RightX>842</RightX>
                     <RightY>14.79589</RightY>
@@ -872,9 +872,9 @@
                     <InterpolationType>0</InterpolationType>
                   </Key12>
                   <Key13>
-                    <Frame>720</Frame>
+                    <Frame>180</Frame>
                     <Value>0</Value>
-                    <LeftX>720</LeftX>
+                    <LeftX>180</LeftX>
                     <LeftY>0</LeftY>
                     <RightX>840</RightX>
                     <RightY>0</RightY>
