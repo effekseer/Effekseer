@@ -1999,6 +1999,8 @@ int32_t Native::GetAndResetVertexCount()
 
 int32_t Native::GetInstanceCount()
 {
+	if (m_time == 0) return 0;
+
 	int32_t sum = 0;
 	for (int i = 0; i < g_handles.size(); i++)
 	{
