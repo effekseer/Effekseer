@@ -175,7 +175,7 @@ namespace Effekseer.GUI
 
 			panels = new Dock.DockPanel[dockTypes.Length];
 
-			var appDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+			var appDirectory = Manager.GetEntryDirectory();
 
 			// Load font
 			NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, "resources/GenShinGothic-Monospace-Normal.ttf"), 16);

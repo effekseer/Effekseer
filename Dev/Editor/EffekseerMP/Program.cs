@@ -121,7 +121,7 @@ namespace Effekseer
 				}
 
 				{
-					var appDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+					var appDirectory = GUI.Manager.GetEntryDirectory();
 					if (Core.Language == Language.Japanese)
 					{
 						var fullPath = Path.Combine(appDirectory, "resources/lang_ja.txt");
@@ -229,7 +229,7 @@ namespace Effekseer
 
 		public static swig.ImageResource LoadAppResource(swig.Native native, string path)
 		{
-			string appDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+			string appDirectory = GUI.Manager.GetEntryDirectory();
 			string fullPath = Path.Combine(appDirectory, path);
 			return native.LoadImageResource(fullPath);
 		}
