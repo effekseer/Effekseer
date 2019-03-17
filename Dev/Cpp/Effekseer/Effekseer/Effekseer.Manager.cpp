@@ -332,15 +332,6 @@ void ManagerImplemented::ExecuteEvents()
 	}
 }
 
-void ManagerImplemented::ShowErrorAndExit(const char* message)
-{
-	std::cerr << "EffekseerError : " << message << std::endl;
-	abort();
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 	: m_autoFlip	( autoFlip )
 	, m_NextHandle	( 0 )
@@ -1176,11 +1167,6 @@ void ManagerImplemented::Flip()
 {
 	if( !m_autoFlip )
 	{
-		if (m_isLockedWithRenderingMutex)
-		{
-			ShowErrorAndExit("Rendering thread is locked.");
-		}
-
 		m_renderingMutex.lock();
 	}
 
@@ -1352,11 +1338,6 @@ void ManagerImplemented::Update( float deltaFrame )
 //----------------------------------------------------------------------------------
 void ManagerImplemented::BeginUpdate()
 {
-	if (m_isLockedWithRenderingMutex)
-	{
-		ShowErrorAndExit("Rendering thread is locked.");
-	}
-
 	m_renderingMutex.lock();
 	m_isLockedWithRenderingMutex = true;
 
@@ -1436,10 +1417,6 @@ void ManagerImplemented::Preupdate(DrawSet& drawSet)
 //----------------------------------------------------------------------------------
 void ManagerImplemented::Draw()
 {
-	if (m_isLockedWithRenderingMutex)
-	{
-		ShowErrorAndExit("Rendering thread is locked.");
-	}
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
 	// 開始時間を記録
@@ -1496,10 +1473,6 @@ void ManagerImplemented::Draw()
 
 void ManagerImplemented::DrawBack()
 {
-	if (m_isLockedWithRenderingMutex)
-	{
-		ShowErrorAndExit("Rendering thread is locked.");
-	}
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 	
 	// 開始時間を記録
@@ -1544,10 +1517,6 @@ void ManagerImplemented::DrawBack()
 
 void ManagerImplemented::DrawFront()
 {
-	if (m_isLockedWithRenderingMutex)
-	{
-		ShowErrorAndExit("Rendering thread is locked.");
-	}
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
 	// 開始時間を記録
@@ -1652,10 +1621,6 @@ Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_
 
 void ManagerImplemented::DrawHandle( Handle handle )
 {
-	if (m_isLockedWithRenderingMutex)
-	{
-		ShowErrorAndExit("Rendering thread is locked.");
-	}
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
 	std::map<Handle,DrawSet>::iterator it = m_renderingDrawSetMaps.find( handle );
@@ -1705,10 +1670,6 @@ void ManagerImplemented::DrawHandle( Handle handle )
 
 void ManagerImplemented::DrawHandleBack(Handle handle)
 {
-	if (m_isLockedWithRenderingMutex)
-	{
-		ShowErrorAndExit("Rendering thread is locked.");
-	}
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
 	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
@@ -1746,10 +1707,6 @@ void ManagerImplemented::DrawHandleBack(Handle handle)
 
 void ManagerImplemented::DrawHandleFront(Handle handle)
 {
-	if (m_isLockedWithRenderingMutex)
-	{
-		ShowErrorAndExit("Rendering thread is locked.");
-	}
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
 	std::map<Handle, DrawSet>::iterator it = m_renderingDrawSetMaps.find(handle);
@@ -1806,10 +1763,6 @@ void ManagerImplemented::BeginReloadEffect( Effect* effect, bool doLockThread)
 {
 	if (doLockThread)
 	{
-		if (m_isLockedWithRenderingMutex)
-		{
-			ShowErrorAndExit("Rendering thread is locked.");
-		}
 		m_renderingMutex.lock();
 		m_isLockedWithRenderingMutex = true;
 	}
