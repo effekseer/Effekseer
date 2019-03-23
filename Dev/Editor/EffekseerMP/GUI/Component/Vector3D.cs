@@ -18,6 +18,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.Vector3D binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		float[] internalValue = new float[] { 0.0f, 0.0f, 0.0f };
 
 		public bool EnableUndo { get; set; } = true;
@@ -92,6 +94,8 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding == null) return;
 
+			valueChangingProp.Enable(binding);
+
 			float step = 1.0f;
 
 			if (binding != null)
@@ -120,6 +124,8 @@ namespace Effekseer.GUI.Component
 			}
 
 			isActive = isActive_Current;
+
+			valueChangingProp.Disable();
 		}
 	}
 }

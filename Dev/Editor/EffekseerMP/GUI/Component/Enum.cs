@@ -16,6 +16,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.EnumBase binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		int[] enums = null;
 
 		public List<string> FieldNames = new List<string>();
@@ -114,6 +116,8 @@ namespace Effekseer.GUI.Component
 				selectedValues = -1;
 			}
 
+			valueChangingProp.Enable(binding);
+
 			var v = enums.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValues).FirstOrDefault();
 
 			if(Manager.NativeManager.BeginCombo(id, FieldNames[v.Item2], swig.ComboFlags.None, icons[v.Item2]))
@@ -137,6 +141,8 @@ namespace Effekseer.GUI.Component
 
 				Manager.NativeManager.EndCombo();
 			}
+
+			valueChangingProp.Disable();
 		}
 	}
 }

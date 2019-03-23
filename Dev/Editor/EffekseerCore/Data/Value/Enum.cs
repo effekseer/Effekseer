@@ -22,7 +22,12 @@ namespace Effekseer.Data.Value
 			}
 		}
 
-		internal T DefaultValue { get; private set; }
+		public T DefaultValue { get; private set; }
+
+		public bool IsValueChangedFromDefault
+		{
+			get { return GetValueAsInt() != GetDefaultValueAsInt(); }
+		}
 
 		internal Enum(T value = default(T))
 		{

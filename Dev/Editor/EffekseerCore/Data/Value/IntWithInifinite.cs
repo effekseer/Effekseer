@@ -23,6 +23,11 @@ namespace Effekseer.Data.Value
 			private set;
 		}
 
+		public bool IsValueChangedFromDefault
+		{
+			get { return Value.IsValueChangedFromDefault || Infinite.IsValueChangedFromDefault; }
+		}
+
 		internal IntWithInifinite(int value = 0, bool infinite = false, int max = int.MaxValue, int min = int.MinValue, int step = 1)
 		{
 			Value = new Int(value, max, min, step);

@@ -44,7 +44,12 @@ namespace Effekseer.Data.Value
 			get { return _max; }
 		}
 
-		internal float DefaultValue { get; private set; }
+		public float DefaultValue { get; private set; }
+
+		public bool IsValueChangedFromDefault
+		{
+			get { return Value != DefaultValue; }
+		}
 
 		public event ChangedValueEventHandler OnChanged;
 

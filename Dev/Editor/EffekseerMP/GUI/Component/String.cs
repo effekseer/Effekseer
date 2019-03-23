@@ -16,6 +16,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.String binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		string internalValue = string.Empty;
 
 		bool isActive = false;
@@ -87,7 +89,9 @@ namespace Effekseer.GUI.Component
 				initialValue = internalValue;
 			}
 
-			if(Manager.NativeManager.InputText(id, initialValue))
+			valueChangingProp.Enable(binding);
+
+			if (Manager.NativeManager.InputText(id, initialValue))
 			{
 				var v = Manager.NativeManager.GetInputTextResult();
 
@@ -109,6 +113,8 @@ namespace Effekseer.GUI.Component
 			}
 
 			isActive = isActive_Current;
+
+			valueChangingProp.Disable();
 		}
 	}
 }

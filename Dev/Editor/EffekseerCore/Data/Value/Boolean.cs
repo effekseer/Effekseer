@@ -24,7 +24,12 @@ namespace Effekseer.Data.Value
 
 		public event ChangedValueEventHandler OnChanged;
 
-		internal bool DefaultValue { get; private set; }
+		public bool DefaultValue { get; private set; }
+
+		public bool IsValueChangedFromDefault
+		{
+			get { return Value != DefaultValue; }
+		}
 
 		internal Boolean(bool value = false)
 		{

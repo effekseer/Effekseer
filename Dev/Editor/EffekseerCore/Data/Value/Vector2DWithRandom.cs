@@ -27,6 +27,11 @@ namespace Effekseer.Data.Value
 
 		internal DrawnAs DefaultDrawnAs { get; private set; }
 
+		public bool IsValueChangedFromDefault
+		{
+			get { return X.IsValueChangedFromDefault || Y.IsValueChangedFromDefault || DrawnAs != DefaultDrawnAs; }
+		}
+
 		internal Vector2DWithRandom(
 			float x = 0,
 			float y = 0,

@@ -3033,6 +3033,82 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextWindowSize__
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PushStyleColor___(void * jarg1, int jarg2, unsigned int jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::ImGuiColFlags arg2 ;
+  uint32_t arg3 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::ImGuiColFlags)jarg2; 
+  arg3 = (uint32_t)jarg3; 
+  (arg1)->PushStyleColor(arg2,arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PopStyleColor__SWIG_0___(void * jarg1, int jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->PopStyleColor(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PopStyleColor__SWIG_1___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->PopStyleColor();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PushStyleVar__SWIG_0___(void * jarg1, int jarg2, float jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::ImGuiStyleVarFlags arg2 ;
+  float arg3 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::ImGuiStyleVarFlags)jarg2; 
+  arg3 = (float)jarg3; 
+  (arg1)->PushStyleVar(arg2,arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PushStyleVar__SWIG_1___(void * jarg1, int jarg2, void * jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::ImGuiStyleVarFlags arg2 ;
+  efk::Vec2 *arg3 = 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::ImGuiStyleVarFlags)jarg2; 
+  arg3 = (efk::Vec2 *)jarg3;
+  if (!arg3) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return ;
+  } 
+  (arg1)->PushStyleVar(arg2,(efk::Vec2 const &)*arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PopStyleVar__SWIG_0___(void * jarg1, int jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  (arg1)->PopStyleVar(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PopStyleVar__SWIG_1___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->PopStyleVar();
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_PushItemWidth___(void * jarg1, float jarg2) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   float arg2 ;

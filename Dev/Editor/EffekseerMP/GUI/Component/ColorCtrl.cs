@@ -16,6 +16,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.Color binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		float[] internalValue = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		bool isActive = false;
@@ -81,6 +83,8 @@ namespace Effekseer.GUI.Component
 				internalValue[3] = binding.A / 255.0f;
 			}
 
+			valueChangingProp.Enable(binding);
+
 			if (Manager.NativeManager.ColorEdit4(id, internalValue, swig.ColorEditFlags.NoOptions))
 			{
 				if (EnableUndo)
@@ -95,6 +99,8 @@ namespace Effekseer.GUI.Component
 					binding.A.SetValueDirectly((int)(internalValue[3] * 255));
 				}
 			}
+
+			valueChangingProp.Disable();
 
 			var isActive_Current = Manager.NativeManager.IsItemActive();
 

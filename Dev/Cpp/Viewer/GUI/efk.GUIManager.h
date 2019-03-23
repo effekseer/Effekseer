@@ -157,6 +157,77 @@ namespace efk
 		CharsScientific = 1 << 17,  // Allow 0123456789.+-*/eE (Scientific notation input)
 	};
 
+	enum class ImGuiColFlags : int32_t
+	{
+		Text,
+		TextDisabled,
+		WindowBg,              // Background of normal windows
+		ChildBg,               // Background of child windows
+		PopupBg,               // Background of popups, menus, tooltips windows
+		Border,
+		BorderShadow,
+		FrameBg,               // Background of checkbox, radio button, plot, slider, text input
+		FrameBgHovered,
+		FrameBgActive,
+		TitleBg,
+		TitleBgActive,
+		TitleBgCollapsed,
+		MenuBarBg,
+		ScrollbarBg,
+		ScrollbarGrab,
+		ScrollbarGrabHovered,
+		ScrollbarGrabActive,
+		CheckMark,
+		SliderGrab,
+		SliderGrabActive,
+		Button,
+		ButtonHovered,
+		ButtonActive,
+		Header,
+		HeaderHovered,
+		HeaderActive,
+		Separator,
+		SeparatorHovered,
+		SeparatorActive,
+		ResizeGrip,
+		ResizeGripHovered,
+		ResizeGripActive,
+		PlotLines,
+		PlotLinesHovered,
+		PlotHistogram,
+		PlotHistogramHovered,
+		TextSelectedBg,
+		DragDropTarget,
+		NavHighlight,          // Gamepad/keyboard: current highlighted item
+		NavWindowingHighlight, // Highlight window when using CTRL+TAB
+		NavWindowingDimBg,     // Darken/colorize entire screen behind the CTRL+TAB window list, when active
+		ModalWindowDimBg,      // Darken/colorize entire screen behind a modal window, when one is active
+	};
+
+	enum ImGuiStyleVarFlags : int32_t
+	{
+		Alpha,               // float     Alpha
+		WindowPadding,       // ImVec2    WindowPadding
+		WindowRounding,      // float     WindowRounding
+		WindowBorderSize,    // float     WindowBorderSize
+		WindowMinSize,       // ImVec2    WindowMinSize
+		WindowTitleAlign,    // ImVec2    WindowTitleAlign
+		ChildRounding,       // float     ChildRounding
+		ChildBorderSize,     // float     ChildBorderSize
+		PopupRounding,       // float     PopupRounding
+		PopupBorderSize,     // float     PopupBorderSize
+		FramePadding,        // ImVec2    FramePadding
+		FrameRounding,       // float     FrameRounding
+		FrameBorderSize,     // float     FrameBorderSize
+		ItemSpacing,         // ImVec2    ItemSpacing
+		ItemInnerSpacing,    // ImVec2    ItemInnerSpacing
+		IndentSpacing,       // float     IndentSpacing
+		ScrollbarSize,       // float     ScrollbarSize
+		ScrollbarRounding,   // float     ScrollbarRounding
+		GrabMinSize,         // float     GrabMinSize
+		GrabRounding,        // float     GrabRounding
+		ButtonTextAlign,     // ImVec2    ButtonTextAlign
+	};
 
 	enum class FCurveInterporationType : int32_t
 	{
@@ -293,6 +364,14 @@ namespace efk
 		Vec2 GetContentRegionAvail();
 
 		void SetNextWindowSize(float size_x, float size_y, Cond cond);
+
+		// Parameters stacks (shared)
+		void PushStyleColor(ImGuiColFlags idx, uint32_t col);
+		void PopStyleColor(int count = 1);
+
+		void PushStyleVar(ImGuiStyleVarFlags idx, float val);
+		void PushStyleVar(ImGuiStyleVarFlags idx, const Vec2& val);
+		void PopStyleVar(int count = 1);
 
 		// Parameters stacks (current window)
 		void PushItemWidth(float item_width);

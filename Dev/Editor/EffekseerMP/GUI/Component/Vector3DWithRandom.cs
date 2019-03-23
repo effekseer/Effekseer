@@ -24,6 +24,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.Vector3DWithRandom binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		float[] internalValue1 = new float[] { 0.0f, 0.0f, 0.0f };
 		float[] internalValue2 = new float[] { 0.0f, 0.0f, 0.0f };
 
@@ -139,6 +141,8 @@ namespace Effekseer.GUI.Component
 		public override void Update()
 		{
 			if (binding == null) return;
+
+			valueChangingProp.Enable(binding);
 
 			isPopupShown = false;
 
@@ -259,6 +263,8 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.Text(txt_r2);
 			
 			Manager.NativeManager.PopItemWidth();
+
+			valueChangingProp.Disable();
 		}
 
 		void Popup()

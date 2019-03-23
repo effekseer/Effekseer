@@ -24,7 +24,13 @@ namespace Effekseer.Data.Value
 			get;
 			private set;
 		}
-		
+
+		public bool IsValueChangedFromDefault
+		{
+			get { return X.IsValueChangedFromDefault || Y.IsValueChangedFromDefault || Z.IsValueChangedFromDefault; }
+		}
+
+
 		internal Vector3D(
 			float x = 0,
 			float y = 0,

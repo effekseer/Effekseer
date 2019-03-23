@@ -178,6 +178,35 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetNextWindowSize(swigCPtr, size_x, size_y, (int)cond);
   }
 
+  public void PushStyleColor(ImGuiColFlags idx, uint col) {
+    EffekseerNativePINVOKE.GUIManager_PushStyleColor(swigCPtr, (int)idx, col);
+  }
+
+  public void PopStyleColor(int count) {
+    EffekseerNativePINVOKE.GUIManager_PopStyleColor__SWIG_0(swigCPtr, count);
+  }
+
+  public void PopStyleColor() {
+    EffekseerNativePINVOKE.GUIManager_PopStyleColor__SWIG_1(swigCPtr);
+  }
+
+  public void PushStyleVar(ImGuiStyleVarFlags idx, float val) {
+    EffekseerNativePINVOKE.GUIManager_PushStyleVar__SWIG_0(swigCPtr, (int)idx, val);
+  }
+
+  public void PushStyleVar(ImGuiStyleVarFlags idx, Vec2 val) {
+    EffekseerNativePINVOKE.GUIManager_PushStyleVar__SWIG_1(swigCPtr, (int)idx, Vec2.getCPtr(val));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
+  public void PopStyleVar(int count) {
+    EffekseerNativePINVOKE.GUIManager_PopStyleVar__SWIG_0(swigCPtr, count);
+  }
+
+  public void PopStyleVar() {
+    EffekseerNativePINVOKE.GUIManager_PopStyleVar__SWIG_1(swigCPtr);
+  }
+
   public void PushItemWidth(float item_width) {
     EffekseerNativePINVOKE.GUIManager_PushItemWidth(swigCPtr, item_width);
   }

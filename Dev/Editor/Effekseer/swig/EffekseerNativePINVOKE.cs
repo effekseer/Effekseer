@@ -858,6 +858,15 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetNextWindowSize___")]
   public static extern void GUIManager_SetNextWindowSize(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, float jarg3, int jarg4);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PushStyleColor___")]
+  public static extern void GUIManager_PushStyleColor(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, uint jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PopStyleColor__SWIG_0___")]
+  public static extern void GUIManager_PopStyleColor__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PopStyleColor__SWIG_1___")]
+  public static extern void GUIManager_PopStyleColor__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_PushItemWidth___")]
   public static extern void GUIManager_PushItemWidth(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
 

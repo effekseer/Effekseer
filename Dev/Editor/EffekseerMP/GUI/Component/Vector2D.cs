@@ -16,6 +16,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.Vector2D binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		bool isActive = false;
 
 		float[] internalValue = new float[] { 0.0f, 0.0f };
@@ -88,6 +90,8 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding == null) return;
 
+			valueChangingProp.Enable(binding);
+
 			float step = 1.0f;
 			if (binding != null)
 			{
@@ -112,6 +116,8 @@ namespace Effekseer.GUI.Component
 			}
 
 			isActive = isActive_Current;
+
+			valueChangingProp.Disable();
 		}
 	}
 }

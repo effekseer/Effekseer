@@ -89,6 +89,8 @@ namespace Effekseer.GUI
 
 		internal static swig.Vec2 WindowSize = new swig.Vec2(1280, 720);
 
+		internal static bool DoesChangeColorOnChangedValue = false;
+
 		public static float TextOffsetY {get; private set;}
 
 		static int resetCount = 0;

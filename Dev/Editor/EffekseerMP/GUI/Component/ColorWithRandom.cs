@@ -24,6 +24,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.ColorWithRandom binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		bool isActive = false;
 		bool isWriting = false;
 
@@ -173,6 +175,8 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding == null) return;
 
+			valueChangingProp.Enable(binding);
+
 			isPopupShown = false;
 
 			var colorSpace = binding.ColorSpace == Data.ColorSpace.RGBA ? swig.ColorEditFlags.RGB : swig.ColorEditFlags.HSV;
@@ -221,6 +225,8 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.Text(Resources.GetString("Max"));
 
 			Manager.NativeManager.PopItemWidth();
+
+			valueChangingProp.Disable();
 		}
 
 		void Popup()

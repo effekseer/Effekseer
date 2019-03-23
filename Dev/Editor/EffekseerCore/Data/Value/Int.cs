@@ -52,7 +52,12 @@ namespace Effekseer.Data.Value
 
 		public event ChangedValueEventHandler OnChanged;
 
-		internal int DefaultValue { get; private set; }
+		public int DefaultValue { get; private set; }
+
+		public bool IsValueChangedFromDefault
+		{
+			get { return Value != DefaultValue; }
+		}
 
 		internal Int(int value = 0, int max = int.MaxValue, int min = int.MinValue, int step = 1 )
 		{

@@ -46,6 +46,17 @@ namespace Effekseer.Data.Value
 			}
 		}
 
+		public bool IsValueChangedFromDefault
+		{
+			get { return 
+					R.IsValueChangedFromDefault ||
+					G.IsValueChangedFromDefault || 
+					B.IsValueChangedFromDefault || 
+					A.IsValueChangedFromDefault || 
+					DrawnAs != DefaultDrawnAs || 
+					ColorSpace != DefaultColorSpace; }
+		}
+
 		public ColorWithRandom Link
 		{
 			get;

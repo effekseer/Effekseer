@@ -30,7 +30,16 @@ namespace Effekseer.Data.Value
 			get;
 			private set;
 		}
-		
+
+		public bool IsValueChangedFromDefault
+		{
+			get { return 
+					R.IsValueChangedFromDefault || 
+					G.IsValueChangedFromDefault || 
+					B.IsValueChangedFromDefault || 
+					A.IsValueChangedFromDefault; }
+		}
+
 		internal Color(
 			byte r = 0,
 			byte g = 0,

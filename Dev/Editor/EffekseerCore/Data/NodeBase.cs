@@ -54,7 +54,7 @@ namespace Effekseer.Data
 		internal NodeBase(NodeBase parent)
 		{
 			Parent = parent;
-			Name = new Value.String();
+			Name = new Value.String("Node");
 			IsRendered = new Value.Boolean(true);
 			Children = new ChildrenCollection(this);
 		}

@@ -95,6 +95,11 @@ namespace Effekseer.Data.Value
 
 		public event ChangedValueEventHandler OnChanged;
 
+		public bool IsValueChangedFromDefault
+		{
+			get { return Center != DefaultValueCenter || Min != DefaultValueMin || Max != DefaultValueMax || DrawnAs != DefaultDrawnAs; }
+		}
+
 		internal IntWithRandom(int value = 0, int max = int.MaxValue, int min = int.MinValue, DrawnAs drawnas = Data.DrawnAs.CenterAndAmplitude, int step = 1)
 		{
 			_value_center = value;

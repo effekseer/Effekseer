@@ -1033,6 +1033,34 @@ namespace efk
 		ImGui::SetNextWindowSize(size, (int)cond);
 	}
 
+	void GUIManager::PushStyleColor(ImGuiColFlags idx, uint32_t col)
+	{
+		ImGui::PushStyleColor((int32_t)idx, col);
+	}
+
+	void GUIManager::PopStyleColor(int count)
+	{
+		ImGui::PopStyleColor(count);
+	}
+
+	void GUIManager::PushStyleVar(ImGuiStyleVarFlags idx, float val)
+	{
+		ImGui::PushStyleVar(idx, val);
+	}
+
+	void GUIManager::PushStyleVar(ImGuiStyleVarFlags idx, const Vec2& val)
+	{
+		ImVec2 val_;
+		val_.x = val.X;
+		val_.y = val.Y;
+		ImGui::PushStyleVar(idx, val_);
+	}
+
+	void GUIManager::PopStyleVar(int count)
+	{
+		ImGui::PopStyleVar(count);
+	}
+
 	void GUIManager::PushItemWidth(float item_width)
 	{
 		ImGui::PushItemWidth(item_width);

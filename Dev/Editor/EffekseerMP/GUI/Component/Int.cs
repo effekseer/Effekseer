@@ -16,6 +16,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.Int binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		int[] internalValue = new int[] { 0 };
 
 		bool isActive = false;
@@ -83,6 +85,8 @@ namespace Effekseer.GUI.Component
 				internalValue[0] = binding.Value;
 			}
 
+			valueChangingProp.Enable(binding);
+
 			if (Manager.NativeManager.DragInt(id, internalValue, binding.Step))
 			{
 				if (EnableUndo)
@@ -103,6 +107,8 @@ namespace Effekseer.GUI.Component
 			}
 
 			isActive = isActive_Current;
+
+			valueChangingProp.Disable();
 		}
 	}
 }

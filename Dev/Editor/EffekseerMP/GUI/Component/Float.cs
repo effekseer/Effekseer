@@ -16,6 +16,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.Float binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		float[] internalValue = new float[] { 0.0f };
 
 		bool isActive = false;
@@ -79,7 +81,9 @@ namespace Effekseer.GUI.Component
 		public override void Update()
 		{
 			if (binding == null) return;
-			
+
+			valueChangingProp.Enable(binding);
+
 			internalValue[0] = binding.Value;
 
 			if (Manager.NativeManager.DragFloat(id, internalValue, binding.Step / 10.0f, binding.RangeMin, binding.RangeMax))
@@ -102,6 +106,8 @@ namespace Effekseer.GUI.Component
 			}
 
 			isActive = isActive_Current;
+
+			valueChangingProp.Disable();
 		}
 	}
 }

@@ -16,7 +16,9 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.Boolean binding = null;
 
-        bool[] internalValue = new bool[] { false };
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
+		bool[] internalValue = new bool[] { false };
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -60,23 +62,27 @@ namespace Effekseer.GUI.Component
 		}
 
 		public override void Update()
-        {
-            if (binding != null)
-            {
-                internalValue[0] = binding.Value;
-            }
+		{
+			if (binding != null)
+			{
+				internalValue[0] = binding.Value;
+			}
 
-            if (Manager.NativeManager.Checkbox(id, internalValue))
-            {
-                if (EnableUndo)
-                {
-                    binding.SetValue(internalValue[0]);
-                }
-                else
-                {
-                    binding.SetValueDirectly(internalValue[0]);
-                }
-            }
-        }
+			valueChangingProp.Enable(binding);
+
+			if (Manager.NativeManager.Checkbox(id, internalValue))
+			{
+				if (EnableUndo)
+				{
+					binding.SetValue(internalValue[0]);
+				}
+				else
+				{
+					binding.SetValueDirectly(internalValue[0]);
+				}
+			}
+
+			valueChangingProp.Disable();
+		}
     }
 }

@@ -17,6 +17,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.IntWithInifinite binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		int[] internalValue = new int[] { 0 };
 		bool[] isInfinite = new bool[] { false };
 
@@ -91,6 +93,8 @@ namespace Effekseer.GUI.Component
 				isInfinite[0] = binding.Infinite.Value;
 			}
 
+			valueChangingProp.Enable(binding);
+
 			Manager.NativeManager.PushItemWidth(60);
 
 			if (Manager.NativeManager.DragInt(id1, internalValue, binding.Value.Step, binding.Value.Min, binding.Value.Max))
@@ -130,6 +134,8 @@ namespace Effekseer.GUI.Component
 					binding.Infinite.SetValueDirectly(isInfinite[0]);
 				}
 			}
+
+			valueChangingProp.Disable();
 		}
 	}
 }

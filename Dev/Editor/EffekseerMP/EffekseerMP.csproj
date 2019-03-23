@@ -71,6 +71,7 @@
     <Compile Include="GUI\Component\PathForModel.cs" />
     <Compile Include="GUI\Component\PathForSound.cs" />
     <Compile Include="GUI\Component\String.cs" />
+    <Compile Include="GUI\Component\Utils.cs" />
     <Compile Include="GUI\Component\Vector2D.cs" />
     <Compile Include="GUI\Component\Vector2DWithRandom.cs" />
     <Compile Include="GUI\Component\Vector3D.cs" />
@@ -129,6 +130,8 @@
     <Compile Include="swig\GUIManager.cs" />
     <Compile Include="swig\GUIManagerCallback.cs" />
     <Compile Include="swig\ImageResource.cs" />
+    <Compile Include="swig\ImGuiColFlags.cs" />
+    <Compile Include="swig\ImGuiStyleVarFlags.cs" />
     <Compile Include="swig\InputTextFlags.cs" />
     <Compile Include="swig\MouseCursor.cs" />
     <Compile Include="swig\Native.cs" />

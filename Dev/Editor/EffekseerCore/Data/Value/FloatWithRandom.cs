@@ -96,6 +96,11 @@ namespace Effekseer.Data.Value
 		internal float DefaultValueMin { get; private set; }
 		internal DrawnAs DefaultDrawnAs { get; private set; }
 
+		public bool IsValueChangedFromDefault
+		{
+			get { return Center != DefaultValueCenter || Min != DefaultValueMin || Max != DefaultValueMax || DrawnAs != DefaultDrawnAs; }
+		}
+
 		internal FloatWithRandom(float value = 0, float max = float.MaxValue, float min = float.MinValue, DrawnAs drawnas = Data.DrawnAs.CenterAndAmplitude, float step = 1.0f)
 		{
 			_max = max;

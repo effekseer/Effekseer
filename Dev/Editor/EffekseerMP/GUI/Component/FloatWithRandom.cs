@@ -19,6 +19,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.FloatWithRandom binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		bool isActive = false;
 
 		float[] internalValue = new float[] { 0.0f, 0.0f };
@@ -100,18 +102,19 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding == null) return;
 
-			
-				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
-				{
-					internalValue[0] = binding.GetCenter();
-					internalValue[1] = binding.GetAmplitude();
-				}
-				else
-				{
-					internalValue[0] = binding.GetMin();
-					internalValue[1] = binding.GetMax();
-				}
-			
+			valueChangingProp.Enable(binding);
+
+			if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+			{
+				internalValue[0] = binding.GetCenter();
+				internalValue[1] = binding.GetAmplitude();
+			}
+			else
+			{
+				internalValue[0] = binding.GetMin();
+				internalValue[1] = binding.GetMax();
+			}
+
 
 			var txt_r1 = string.Empty;
 			var txt_r2 = string.Empty;
@@ -147,7 +150,7 @@ namespace Effekseer.GUI.Component
 			{
 				if (EnableUndo)
 				{
-					if(binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
 					{
 						binding.SetCenter(internalValue[0], isActive);
 						binding.SetAmplitude(internalValue[1], isActive);
@@ -192,6 +195,8 @@ namespace Effekseer.GUI.Component
 
 				Manager.NativeManager.EndPopup();
 			}
+
+			valueChangingProp.Disable();
 		}
 	}
 }

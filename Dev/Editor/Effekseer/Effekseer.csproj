@@ -387,6 +387,7 @@
     <Compile Include="GUI\RecentFiles.cs" />
     <Compile Include="GUI\Shortcuts.cs" />
     <Compile Include="swig\DeviceType.cs" />
+    <Compile Include="swig\ImGuiColFlags.cs" />
     <Compile Include="swig\InputTextFlags.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

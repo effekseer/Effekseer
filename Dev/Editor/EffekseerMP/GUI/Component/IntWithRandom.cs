@@ -19,6 +19,8 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.IntWithRandom binding = null;
 
+		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
+
 		bool isActive = false;
 
 		int[] internalValue = new int[] { 0, 0 };
@@ -115,6 +117,8 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
+			valueChangingProp.Enable(binding);
+
 			var txt_r1 = string.Empty;
 			var txt_r2 = string.Empty;
 
@@ -194,6 +198,8 @@ namespace Effekseer.GUI.Component
 
 				Manager.NativeManager.EndPopup();
 			}
+
+			valueChangingProp.Disable();
 		}
 	}
 }
