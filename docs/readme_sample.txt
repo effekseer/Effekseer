@@ -1,4 +1,4 @@
-All the licenses of these effects are CC-0.
+ï»¿All the licenses of these effects are CC-0.
 We'd appreciate it if you could credit Effekseer and a contributor somewhere in your works.
 
 A sample stored in this directory is only part of sample.
@@ -7,11 +7,11 @@ You can download other effects from the official site.
 CC-0
 http://creativecommons.org/about/cc0
 
-‚±‚ê‚ç‚ÌƒGƒtƒFƒNƒg‚Ìƒ‰ƒCƒZƒ“ƒX‚Í‘S‚ÄCC-0‚Å‚·B
-‚½‚¾A‚Å‚«‚ê‚Îg—p‚µ‚½ê‡‚Íì•i‚Ì‚Ç‚±‚©‚ÉEffekseer‚Æ“ŠeÒ‚Ì–¼‘O‚ğ‹Lq‚µ‚Ä‚¢‚½‚¾‚¯‚é‚ÆK‚¢‚Å‚·B
+ã“ã‚Œã‚‰ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒ©ã‚¤ã‚»ãƒ³ã‚¹ã¯å…¨ã¦CC-0ã§ã™ã€‚
+ãŸã ã€ã§ãã‚Œã°ä½¿ç”¨ã—ãŸå ´åˆã¯ä½œå“ã®ã©ã“ã‹ã«Effekseerã¨æŠ•ç¨¿è€…ã®åå‰ã‚’è¨˜è¿°ã—ã¦ã„ãŸã ã‘ã‚‹ã¨å¹¸ã„ã§ã™ã€‚
 
-‚±‚ÌƒfƒBƒŒƒNƒgƒŠ‚É•Û‘¶‚³‚ê‚Ä‚¢‚éƒTƒ“ƒvƒ‹‚Íˆê•”‚Ì‚İ‚Å‚·B
-‘¼‚ÌƒGƒtƒFƒNƒg‚ÍŒö®ƒTƒCƒg‚©‚çƒ_ƒEƒ“ƒ[ƒh‚Å‚«‚Ü‚·B
+ã“ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«ä¿å­˜ã•ã‚Œã¦ã„ã‚‹ã‚µãƒ³ãƒ—ãƒ«ã¯ä¸€éƒ¨ã®ã¿ã§ã™ã€‚
+ä»–ã®ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã¯å…¬å¼ã‚µã‚¤ãƒˆã‹ã‚‰ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã§ãã¾ã™ã€‚
 
 CC-0
 http://sciencecommons.jp/cc0/about
