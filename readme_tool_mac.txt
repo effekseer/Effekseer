@@ -1,7 +1,7 @@
-
+﻿
 This readme is available in English and Japanese.
 
-���̐����͓��{��Ɖp��ŋL�q����Ă��܂��B
+この説明は日本語と英語で記述されています。
 
 English
 ==========================
@@ -58,56 +58,56 @@ As long as you use the sample effect with Effekseer, you can use it freely, so y
 For 2D games, you can output it as an image from the recording window, and you can easily play it even during the game with the DX library or Unity.
 
 
-���{��
+日本語
 ==========================
-���@�T�v
-Effekseer���_�E�����[�h���Ă����������肪�Ƃ��������܂��B
-�{�p�b�P�[�W�̓f�U�C�i�[�����̃G�t�F�N�g���쐬���邽�߂̃c�[���݂̂��ۑ�����Ă��܂��B
+■　概要
+Effekseerをダウンロードしていただきありがとうございます。
+本パッケージはデザイナー向けのエフェクトを作成するためのツールのみが保存されています。
 
-�Q�[�����ōĐ�����ꍇ�́A���̃����^�C���AUnity�ADX���C�u�������̃p�b�P�[�W���_�E�����[�h����悤���肢���܂��B
-
-
-���@�����
--macOS 10.12 Sierra�ȍ~��PC
+ゲーム中で再生する場合は、他のランタイム、Unity、DXライブラリ等のパッケージをダウンロードするようお願いします。
 
 
-���@�K�v�����^�C��
+■　動作環境
+-macOS 10.12 Sierra以降のPC
 
-�����N�����Ȃ��ꍇ�͉��L�̃����N����mono���C���X�g�[�����Ă��������B
+
+■　必要ランタイム
+
+もし起動しない場合は下記のリンクからmonoをインストールしてください。
 
 https://www.mono-project.com
 
 
-���@�f�B���N�g���\��
+■　ディレクトリ構成
 -Tool
-�G�t�F�N�g���쐬���邽�߂̃c�[�����ۑ�����Ă��܂��B
+エフェクトを作成するためのツールが保存されています。
 
 -Sample
-�l�X�ȃ��[�U�[����񋟂��ꂽ�T���v���G�t�F�N�g���ۑ�����Ă��܂��B
+様々なユーザーから提供されたサンプルエフェクトが保存されています。
 
 -Help
-�c�[���̎g�������L�q����Ă���w���v���ۑ�����Ă��܂��B
+ツールの使い方が記述されているヘルプが保存されています。
 
 
-���@���߂�Effekseer���g�p�������
+■　初めてEffekseerを使用する方へ
 
-�܂���Effekseer.dmg���J���AEffekseer���C���X�g�[�����܂��傤�B
-������Effekseer���N�����Ă݂܂��傤�B
+まずはEffekseer.dmgを開き、Effekseerをインストールしましょう。
+そしてEffekseerを起動してみましょう。
 
-�����N�����Ȃ��Ȃ�mono���_�E�����[�h���܂��傤�B
+もし起動しないならmonoをダウンロードしましょう。
 
-��R�p�����[�^�[�����݂��čŏ��͈Ӗ����킩��Ȃ��Ǝv���܂����A�Ƃ肠���������̍Đ��{�^��(�O�p�̃}�[�N)�������Ă݂܂��傤�B
-��������ƁA��ʂɎl�p���\������܂����B����͈�ԃV���v���ȃG�t�F�N�g�ɂȂ�܂��B
+沢山パラメーターが存在して最初は意味がわからないと思いますが、とりあえず左下の再生ボタン(三角のマーク)を押してみましょう。
+そうすると、画面に四角が表示されました。これは一番シンプルなエフェクトになります。
 
-���̂܂܂ł͂܂�Ȃ��̂ŁASample�f�B���N�g�����̃G�t�F�N�g�t�@�C����Effekseer�ŊJ���Ă݂܂��傤�B
-Effekseer�̃G�t�F�N�g�́A.efkproj�Ƃ����g���q�����Ă��܂��B�����Effekseer�ŊJ���Ă݂܂��B
-��������Ɨl�X�ȃG�t�F�N�g�����邱�Ƃ��ł��܂��B
+このままではつまらないので、Sampleディレクトリ内のエフェクトファイルをEffekseerで開いてみましょう。
+Effekseerのエフェクトは、.efkprojという拡張子がついています。これをEffekseerで開いてみます。
+そうすると様々なエフェクトを見ることができます。
 
-�E��̃m�[�h�c���[�̃m�[�h���N���b�N����ƁA�m�[�h�̃p�����[�^�[�����邱�Ƃ��ł��܂��B
-�T���v���G�t�F�N�g�̐��l��F�X�ς��Ă݂܂��傤�B���ꂾ���ł������̃Q�[���Ɏg�p�����悤�ȃG�t�F�N�g�͍��܂��B
+右上のノードツリーのノードをクリックすると、ノードのパラメーターを見ることができます。
+サンプルエフェクトの数値を色々変えてみましょう。それだけでも多くのゲームに使用されるようなエフェクトは作れます。
 
-�T���v����M��̂Ɋ��ꂽ��A���悢�掩���ŃG�t�F�N�g���쐬���Ă݂܂��傤�B
-���܂ł̌o������G�t�F�N�g���쐬���Ă݂�̂������ł����AHelp���ɂ���`���[�g���A�������ė��K���Ă���肠��܂���B
+サンプルを弄るのに慣れたら、いよいよ自分でエフェクトを作成してみましょう。
+今までの経験からエフェクトを作成してみるのもいいですし、Help内にあるチュートリアルを見て練習しても問題ありません。
 
-�T���v���̃G�t�F�N�g��Effekseer�Ŏg�p�������A���R�Ɏg����̂ŉ��������G�t�F�N�g�����̂܂܎����̃Q�[���Ŏg�p���Ă���肠��܂���B
-2D�Q�[���Ȃ�A�^��E�C���h�E����摜�Ƃ��ďo�͂��Ă������ł����ADX���C�u������Unity�Ȃ�ȒP�ɃQ�[�����ł��Đ��ł��܂��B
+サンプルのエフェクトはEffekseerで使用する限り、自由に使えるので改造したエフェクトをそのまま自分のゲームで使用しても問題ありません。
+2Dゲームなら、録画ウインドウから画像として出力してもいいですし、DXライブラリやUnityなら簡単にゲーム中でも再生できます。
