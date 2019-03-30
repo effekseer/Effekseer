@@ -295,6 +295,8 @@ public:
 
 	void UnloadResources() override;
 
+	EffectTerm CalculateTerm() const override;
+
 	virtual int GetRef() override { return ReferenceObject::GetRef(); }
 	virtual int AddRef() override { return ReferenceObject::AddRef(); }
 	virtual int Release() override { return ReferenceObject::Release(); }
