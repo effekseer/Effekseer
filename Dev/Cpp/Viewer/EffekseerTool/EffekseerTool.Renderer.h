@@ -10,6 +10,7 @@
 
 #include "../Graphics/Platform/GL/efk.GraphicsGL.h"
 #include "../efk.Base.h"
+#include "../Graphics/efk.PostEffects.h"
 
 #include <functional>
 
@@ -44,10 +45,6 @@ private:
 	
 	int32_t				m_windowWidth = 0;
 	int32_t				m_windowHeight = 0;
-
-	int32_t		screenWidth = 0;
-	int32_t		screenHeight = 0;
-
 	int32_t				m_squareMaxCount;
 
 	eProjectionType		m_projection;
@@ -59,6 +56,8 @@ private:
 	::EffekseerRenderer::Guide*	m_guide;
 	::EffekseerRenderer::Culling*	m_culling;
 	::EffekseerRenderer::Paste*	m_background;
+	std::unique_ptr<efk::BloomEffect> m_bloomEffect;
+	std::unique_ptr<efk::TonemapEffect> m_tonemapEffect;
 
 	bool		m_recording = false;
 	int32_t		m_recordingWidth = 0;
@@ -76,6 +75,17 @@ private:
 
 	std::shared_ptr<efk::RenderTexture>	viewRenderTexture;
 	std::shared_ptr<efk::DepthTexture>	viewDepthTexture;
+
+	efk::RenderTexture* targetRenderTexture = nullptr;
+	efk::DepthTexture* targetDepthTexture = nullptr;
+
+	std::shared_ptr<efk::RenderTexture>	hdrRenderTexture;
+	std::shared_ptr<efk::RenderTexture>	postfxRenderTexture;
+	std::shared_ptr<efk::DepthTexture>	depthTexture;
+	
+	int32_t		screenWidth = 0;
+	int32_t		screenHeight = 0;
+	uint32_t	msaaSamples = 4;
 public:
 	/**
 		@brief	Constructor
@@ -226,6 +236,8 @@ public:
 
 	bool EndRenderToView();
 
+	void RenderPostEffect();
+
 	/**
 		@brief	録画開始
 	*/
@@ -252,6 +264,9 @@ public:
 	uint64_t GetViewID();
 
 	efk::Graphics* GetGraphics() const { return graphics; }
+
+	efk::BloomEffect* GetBloomEffect() const { return m_bloomEffect.get(); }
+	efk::TonemapEffect* GetTonemapEffect() const { return m_tonemapEffect.get(); }
 
 	/**
 		Called when device is losted.

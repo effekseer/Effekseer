@@ -961,7 +961,7 @@ void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size)
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
 {
-	ID3D11ShaderResourceView* srv[3];
+	ID3D11ShaderResourceView* srv[4];
 	for (int32_t i = 0; i < count; i++)
 	{
 		if (textures[i] == nullptr)

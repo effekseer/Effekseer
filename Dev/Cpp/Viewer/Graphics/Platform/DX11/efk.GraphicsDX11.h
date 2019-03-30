@@ -24,10 +24,12 @@ namespace efk
 	public:
 		RenderTextureDX11(Graphics* graphics);
 		virtual ~RenderTextureDX11();
-		bool Initialize(int32_t width, int32_t height);
+		bool Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample = 1);
 
 		int32_t GetWidth() { return width; }
 		int32_t GetHeight() { return height; }
+
+		ID3D11Texture2D* GetTexture() const { return texture; }
 
 		ID3D11RenderTargetView* GetRenderTargetView() const { return textureRTV; }
 
@@ -51,7 +53,7 @@ namespace efk
 	public:
 		DepthTextureDX11(Graphics* graphics);
 		virtual ~DepthTextureDX11();
-		bool Initialize(int32_t width, int32_t height);
+		bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1);
 
 		ID3D11DepthStencilView* GetDepthStencilView() const { return depthStencilView; }
 
@@ -83,18 +85,16 @@ namespace efk
 		ID3D11Texture2D*		backTexture = nullptr;
 		ID3D11ShaderResourceView*	backTextureSRV = nullptr;
 
-		ID3D11Texture2D*			recordingTexture = nullptr;
-		ID3D11RenderTargetView*		recordingTextureRTV = nullptr;
-		ID3D11Texture2D*			recordingDepthStencil = nullptr;
-		ID3D11DepthStencilView*		recordingDepthStencilView = nullptr;
+		RenderTexture*			recordingTexture = nullptr;
+		DepthTexture*			recordingDepthStencil = nullptr;
 		int32_t				recordingWidth = 0;
 		int32_t				recordingHeight = 0;
 
 		ID3D11RenderTargetView*	currentRenderTargetView = nullptr;
 		ID3D11DepthStencilView*	currentDepthStencilView = nullptr;
 
-		ID3D11RenderTargetView*	backupRenderTargetView = nullptr;
-		ID3D11DepthStencilView*	backupDepthStencilView = nullptr;
+		RenderTexture*	backupRenderTarget = nullptr;
+		DepthTexture*	backupDepthStencil = nullptr;
 
 		/*
 		LPDIRECT3D9			d3d = nullptr;
@@ -108,6 +108,9 @@ namespace efk
 		*/
 
 		EffekseerRendererDX11::Renderer*	renderer = nullptr;
+
+		ID3D11RasterizerState*   rasterizerState = nullptr;
+		ID3D11RasterizerState*   savedRasterizerState = nullptr;
 
 	public:
 		GraphicsDX11();
@@ -132,6 +135,8 @@ namespace efk
 		void EndRecord(std::vector<Effekseer::Color>& pixels) override;
 
 		void Clear(Effekseer::Color color) override;
+
+		void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest) override;
 
 		void ResetDevice() override;
 

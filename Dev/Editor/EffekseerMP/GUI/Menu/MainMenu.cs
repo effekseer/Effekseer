@@ -330,6 +330,7 @@ namespace Effekseer.GUI.Menu
 				setDockWindow(Resources.GetString("CameraSettings"), typeof(Dock.ViewPoint), Images.GetIcon("PanelViewPoint"));
 				setDockWindow(Resources.GetString("Recorder"), typeof(Dock.Recorder), Images.GetIcon("PanelRecorder"));
 				setDockWindow(Resources.GetString("Options"), typeof(Dock.Option), Images.GetIcon("PanelOption"));
+				setDockWindow(Resources.GetString("PostEffect"), typeof(Dock.PostEffect), Images.GetIcon("PanelPostEffect"));
 				setDockWindow(Resources.GetString("Global"), typeof(Dock.GlobalValues), Images.GetIcon("PanelGlobal"));
 				setDockWindow(Resources.GetString("Behavior"), typeof(Dock.BehaviorValues), Images.GetIcon("PanelBehavior"));
 				setDockWindow(Resources.GetString("Culling"), typeof(Dock.Culling), Images.GetIcon("PanelCulling"));

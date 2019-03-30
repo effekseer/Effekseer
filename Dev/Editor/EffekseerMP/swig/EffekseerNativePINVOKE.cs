@@ -717,6 +717,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_IsDebugMode___")]
   public static extern bool Native_IsDebugMode();
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetBloomParameters___")]
+  public static extern void Native_SetBloomParameters(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2, float jarg3, float jarg4, float jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetTonemapParameters___")]
+  public static extern void Native_SetTonemapParameters(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, float jarg3);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_GUIManagerCallback___")]
   public static extern global::System.IntPtr new_GUIManagerCallback();
 

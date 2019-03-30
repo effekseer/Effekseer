@@ -84,6 +84,7 @@
     <Compile Include="Data\EffectCullingValues.cs" />
     <Compile Include="Data\EffectBehaviorValues.cs" />
     <Compile Include="Data\OptionValues.cs" />
+    <Compile Include="Data\PostEffectValues.cs" />
     <Compile Include="Data\RendererCommonValues.cs" />
     <Compile Include="Data\CommonValues.cs" />
     <Compile Include="Data\Define.cs" />

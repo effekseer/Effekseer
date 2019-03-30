@@ -2494,6 +2494,34 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_IsDebugMode___(
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetBloomParameters___(void * jarg1, unsigned int jarg2, float jarg3, float jarg4, float jarg5) {
+  Native *arg1 = (Native *) 0 ;
+  bool arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  arg3 = (float)jarg3; 
+  arg4 = (float)jarg4; 
+  arg5 = (float)jarg5; 
+  (arg1)->SetBloomParameters(arg2,arg3,arg4,arg5);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetTonemapParameters___(void * jarg1, int jarg2, float jarg3) {
+  Native *arg1 = (Native *) 0 ;
+  int32_t arg2 ;
+  float arg3 ;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  arg3 = (float)jarg3; 
+  (arg1)->SetTonemapParameters(arg2,arg3);
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GUIManagerCallback___() {
   void * jresult ;
   efk::GUIManagerCallback *result = 0 ;

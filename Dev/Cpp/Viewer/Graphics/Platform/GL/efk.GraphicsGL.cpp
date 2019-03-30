@@ -17,33 +17,64 @@ namespace efk
 
 	RenderTextureGL::~RenderTextureGL()
 	{
-		glDeleteTextures(1, &texture);
+		if (texture)
+		{
+			glDeleteTextures(1, &texture);
+		}
+		if (renderbuffer)
+		{
+			glDeleteRenderbuffers(1, &renderbuffer);
+		}
 	}
 
-	bool RenderTextureGL::Initialize(int32_t width, int32_t height)
+	bool RenderTextureGL::Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample)
 	{
-		glGenTextures(1, &texture);
-
 		if (glGetError() != GL_NO_ERROR) return false;
 
-		glBindTexture(GL_TEXTURE_2D, texture);
+		GLint glInternalFormat;
+		GLenum glFormat, glType;
+		switch (format)
+		{
+		case TextureFormat::RGBA8U:
+			glInternalFormat = GL_RGBA8;
+			glFormat = GL_RGBA;
+			glType = GL_UNSIGNED_BYTE;
+			break;
+		case TextureFormat::RGBA16F:
+			glInternalFormat = GL_RGBA16F;
+			glFormat = GL_RGBA;
+			glType = GL_HALF_FLOAT;
+			break;
+		case TextureFormat::R16F:
+			glInternalFormat = GL_R16F;
+			glFormat = GL_RED;
+			glType = GL_HALF_FLOAT;
+			break;
+		default:
+			assert(0);
+			return false;
+		}
 
-		glTexImage2D(
-			GL_TEXTURE_2D,
-			0,
-			GL_RGBA8,
-			width,
-			height,
-			0,
-			GL_RGBA,
-			GL_UNSIGNED_BYTE,
-			nullptr);
-		
+		if (multisample <= 1)
+		{
+			glGenTextures(1, &texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, glInternalFormat, width, height, 0, glFormat, glType, nullptr);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		else
+		{
+			glGenRenderbuffers(1, &renderbuffer);
+			glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+			glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisample, glInternalFormat, width, height);
+			glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		}
+		GLCheckError();
+
 		this->width = width;
 		this->height = height;
-
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		this->multisample = multisample;
 
 		return true;
 	}
@@ -55,26 +86,40 @@ namespace efk
 
 	DepthTextureGL::~DepthTextureGL()
 	{
-		glDeleteTextures(1, &texture);
+		if (texture)
+		{
+			glDeleteTextures(1, &texture);
+		}
+		if (renderbuffer)
+		{
+			glDeleteRenderbuffers(1, &renderbuffer);
+		}
 	}
 
-	bool DepthTextureGL::Initialize(int32_t width, int32_t height)
+	bool DepthTextureGL::Initialize(int32_t width, int32_t height, uint32_t multisample)
 	{
-		glGenTextures(1, &texture);
-
 		if (glGetError() != GL_NO_ERROR) return false;
 
-		glBindTexture(GL_TEXTURE_2D, texture);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
-
-		// Set filter
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
+		if (multisample <= 1)
+		{
+			glGenTextures(1, &texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
+			// Set filter
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		else
+		{
+			glGenRenderbuffers(1, &renderbuffer);
+			glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+			glRenderbufferStorageMultisample(GL_RENDERBUFFER, multisample, GL_DEPTH_COMPONENT24, width, height);
+			glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		}
+		assert(glGetError() == GL_NO_ERROR);
 
 		return true;
 	}
@@ -121,10 +166,10 @@ namespace efk
 		glDeleteFramebuffers(1, &frameBuffer);
 
 		glDeleteFramebuffers(1, &frameBufferForCopy);
-		glDeleteTextures(1, &backTarget);
 
 		recordingTarget.reset();
 		recordingDepth.reset();
+		backTarget.reset();
 
 		if (renderer != nullptr)
 		{
@@ -157,7 +202,6 @@ namespace efk
 		// TODO
 		// create VAO
 
-		glGenTextures(1, &backTarget);
 		glGenFramebuffers(1, &frameBufferForCopy);
 
 		return true;
@@ -175,14 +219,12 @@ namespace efk
 		uint32_t width = viewport[2];
 		uint32_t height = viewport[3];
 
-		if (backTarget == 0 ||
-			backTargetWidth != width ||
-			backTargetHeight != height)
+		if (!backTarget ||
+			backTarget->GetWidth() != width ||
+			backTarget->GetHeight() != height)
 		{
-			glBindTexture(GL_TEXTURE_2D, backTarget);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-			backTargetWidth = width;
-			backTargetHeight = height;
+			backTarget = std::make_shared<RenderTextureGL>(this);
+			backTarget->Initialize(width, height, TextureFormat::RGBA8U);
 		}
 
 #ifndef _WIN32
@@ -209,11 +251,17 @@ namespace efk
 		}
 #endif
 
-		glBindTexture(GL_TEXTURE_2D, backTarget);
-		//glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height );
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, viewport[0], viewport[1], width, height);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
+		auto rt = (RenderTextureGL*)currentRenderTexture;
+		if (rt->IsMultisample())
+		{
+			ResolveRenderTarget(currentRenderTexture, backTarget.get());
+		}
+		else
+		{
+			glBindTexture(GL_TEXTURE_2D, (GLuint)backTarget->GetViewID());
+			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, viewport[0], viewport[1], width, height);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 #ifndef _WIN32
 		glBindFramebuffer(GL_FRAMEBUFFER, backupFramebuffer);
 #endif
@@ -248,6 +296,9 @@ namespace efk
 
 	void GraphicsGL::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture)
 	{
+		currentRenderTexture = renderTexture;
+		currentDepthTexture = depthTexture;
+
 		auto rt = (RenderTextureGL*)renderTexture;
 		auto dt = (DepthTextureGL*)depthTexture;
 
@@ -272,18 +323,16 @@ namespace efk
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
-			GLuint cb[] = { 0 };
-			GLuint db = 0;
-
-			cb[0] = rt->GetBuffer();
-
-			if (depthTexture != nullptr)
+			if (rt->IsMultisample())
 			{
-				db = dt->GetBuffer();
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rt->GetBuffer());
+				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dt ? dt->GetBuffer() : 0);
 			}
-
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cb[0], 0);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, db, 0);
+			else
+			{
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rt->GetTexture(), 0);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dt ? dt->GetBuffer() : 0, 0);
+			}
 
 			static const GLenum bufs[] = {
 				GL_COLOR_ATTACHMENT0,
@@ -299,7 +348,7 @@ namespace efk
 	void GraphicsGL::BeginRecord(int32_t width, int32_t height)
 	{
 		auto rt = std::make_shared<RenderTextureGL>(this);
-		rt->Initialize(width, height);
+		rt->Initialize(width, height, TextureFormat::RGBA8U);
 
 		auto dt = std::make_shared<DepthTextureGL>(this);
 		dt->Initialize(width, height);
@@ -318,7 +367,7 @@ namespace efk
 		pixels.resize(recordingWidth * recordingHeight);
 		SetRenderTarget(nullptr, nullptr);
 
-		SaveTextureGL(pixels, recordingTarget->GetBuffer(), recordingWidth, recordingHeight);
+		SaveTextureGL(pixels, recordingTarget->GetTexture(), recordingWidth, recordingHeight);
 
 		recordingTarget = nullptr;
 		recordingDepth = nullptr;
@@ -345,6 +394,30 @@ namespace efk
 		{
 			glClear(bit);
 		}
+
+		GLCheckError();
+	}
+
+	void GraphicsGL::ResolveRenderTarget(RenderTexture* src, RenderTexture* dest)
+	{
+		auto rtSrc = (RenderTextureGL*)src;
+		auto rtDest = (RenderTextureGL*)dest;
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBuffer);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferForCopy);
+		
+		glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rtSrc->GetBuffer());
+		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rtDest->GetTexture(), 0);
+
+		glBlitFramebuffer(0, 0, src->GetWidth(), src->GetHeight(),
+			0, 0, dest->GetWidth(), dest->GetHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+		glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, 0);
+		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+		
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 		GLCheckError();
 	}
@@ -397,7 +470,7 @@ namespace efk
 
 	void* GraphicsGL::GetBack()
 	{
-		return (void*)backTarget;
+		return (void*)(uintptr_t)backTarget->GetViewID();
 	}
 
 	EffekseerRenderer::Renderer* GraphicsGL::GetRenderer()

@@ -179,6 +179,15 @@
     <ClInclude Include="Graphics\Platform\DX11\efk.GraphicsDX11.h">
       <Filter>Graphics\Platform\DX11</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\efk.PostEffects.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Platform\GL\efk.PostEffectsGL.h">
+      <Filter>Graphics\Platform\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Platform\DX11\efk.PostEffectsDX11.h">
+      <Filter>Graphics\Platform\DX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dll.cpp" />
@@ -250,9 +259,6 @@
     <ClCompile Include="3rdParty\nfd\nfd_win.cpp">
       <Filter>3rdParty\nfd</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\efk.FileDialog.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics\efk.GifHelper.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
@@ -297,6 +303,18 @@
     </ClCompile>
     <ClCompile Include="Graphics\Platform\DX11\efk.GraphicsDX11.cpp">
       <Filter>Graphics\Platform\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\efk.PostEffects.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Platform\GL\efk.PostEffectsGL.cpp">
+      <Filter>Graphics\Platform\GL</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Platform\DX11\efk.PostEffectsDX11.cpp">
+      <Filter>Graphics\Platform\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\efk.FileDialog.cpp">
+      <Filter>GUI\Platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

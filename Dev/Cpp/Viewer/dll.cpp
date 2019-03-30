@@ -727,6 +727,8 @@ void Native::RenderWindow()
 	}
 
 	g_renderer->EndRendering();
+
+	g_renderer->RenderPostEffect();
 }
 
 void Native::Present()
@@ -1306,27 +1308,7 @@ bool Native::Record(const char16_t* path, int32_t count, int32_t xCount, int32_t
 		{
 			if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) goto Exit;
 
-			g_renderer->BeginRendering();
-
-			if (g_renderer->Distortion == EffekseerTool::eDistortionType::DistortionType_Current)
-			{
-				g_manager->DrawBack();
-
-				// HACK
-				g_renderer->GetRenderer()->EndRendering();
-
-				g_renderer->CopyToBackground();
-
-				// HACK
-				g_renderer->GetRenderer()->BeginRendering();
-				g_manager->DrawFront();
-			}
-			else
-			{
-				g_manager->Draw();
-			}
-
-			g_renderer->EndRendering();
+			RenderWindow();
 
 			for (int j = 0; j < freq; j++)
 			{
@@ -2029,6 +2011,26 @@ bool Native::IsDebugMode()
 #else
 	return false;
 #endif
+}
+
+void Native::SetBloomParameters(bool enabled, float intensity, float threshold, float softKnee)
+{
+	auto bloom = g_renderer->GetBloomEffect();
+	if (bloom)
+	{
+		bloom->SetEnabled(enabled);
+		bloom->SetParameters(intensity, threshold, softKnee);
+	}
+}
+
+void Native::SetTonemapParameters(int32_t algorithm, float exposure)
+{
+	auto tonemap = g_renderer->GetTonemapEffect();
+	if (tonemap)
+	{
+		tonemap->SetEnabled(algorithm != 0);
+		tonemap->SetParameters((efk::TonemapEffect::Algorithm)algorithm, exposure);
+	}
 }
 
 EffekseerRenderer::Renderer* Native::GetRenderer()

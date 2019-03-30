@@ -92,6 +92,7 @@
     <Compile Include="GUI\Dock\Network.cs" />
     <Compile Include="GUI\Dock\NodeTreeView.cs" />
     <Compile Include="GUI\Dock\Option.cs" />
+    <Compile Include="GUI\Dock\PostEffect.cs" />
     <Compile Include="GUI\Dock\Recorder.cs" />
     <Compile Include="GUI\Dock\RendererCommonValues.cs" />
     <Compile Include="GUI\Dock\RendererValues.cs" />

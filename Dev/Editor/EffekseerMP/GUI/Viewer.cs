@@ -364,7 +364,6 @@ namespace Effekseer.GUI
 				deviceType))
 			{
 				isViewerShown = true;
-				return true;
 			}
 			else
 			{
@@ -375,17 +374,36 @@ namespace Effekseer.GUI
 				else
 				{
 					Core.OnOutputMessage("Failed to generate drawing screen. DirectX version problems, memory shortage, and so on.");
-
 				}
+				return false;
 			}
 
-			return false;
+			Bloom_OnChanged(null, null);
+			Core.PostEffect.BloomSwitch.OnChanged += Bloom_OnChanged;
+			Core.PostEffect.Bloom.Intensity.OnChanged += Bloom_OnChanged;
+			Core.PostEffect.Bloom.Threshold.OnChanged += Bloom_OnChanged;
+			Core.PostEffect.Bloom.SoftKnee.OnChanged += Bloom_OnChanged;
+			
+			Tonemap_OnChanged(null, null);
+			Core.PostEffect.TonemapSelector.OnChanged += Tonemap_OnChanged;
+			Core.PostEffect.TonemapReinhard.Exposure.OnChanged += Tonemap_OnChanged;
+			
+			return true;
 		}
 
 		public void HideViewer()
 		{
 			if (!isViewerShown) return;
 			isViewerShown = false;
+			
+			Core.PostEffect.BloomSwitch.OnChanged -= Bloom_OnChanged;
+			Core.PostEffect.Bloom.Intensity.OnChanged -= Bloom_OnChanged;
+			Core.PostEffect.Bloom.Threshold.OnChanged -= Bloom_OnChanged;
+			Core.PostEffect.Bloom.SoftKnee.OnChanged -= Bloom_OnChanged;
+			
+			Core.PostEffect.TonemapSelector.OnChanged -= Tonemap_OnChanged;
+			Core.PostEffect.TonemapReinhard.Exposure.OnChanged -= Tonemap_OnChanged;
+			
 			native.DestroyWindow();
 		}
 
@@ -716,6 +734,25 @@ namespace Effekseer.GUI
 				}
 
 			}
+		}
+
+		
+		private void Bloom_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			bool enabled = Core.PostEffect.BloomSwitch.Value == Data.PostEffectValues.EffectSwitch.On;
+
+			native.SetBloomParameters(enabled, 
+				Core.PostEffect.Bloom.Intensity.Value,
+				Core.PostEffect.Bloom.Threshold.Value,
+				Core.PostEffect.Bloom.SoftKnee.Value);
+		}
+		
+		private void Tonemap_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			int algorithm = (int)Core.PostEffect.TonemapSelector.Value;
+
+			native.SetTonemapParameters(algorithm, 
+				Core.PostEffect.TonemapReinhard.Exposure.Value);
 		}
 	}
 }

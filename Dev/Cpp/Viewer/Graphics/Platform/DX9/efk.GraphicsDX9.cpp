@@ -14,16 +14,34 @@ namespace efk
 		ES_SAFE_RELEASE(renderTargetTexture);
 	}
 
-	bool RenderTextureDX9::Initialize(int32_t width, int32_t height)
+	bool RenderTextureDX9::Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample)
 	{
 		auto g = (GraphicsDX9*)graphics;
 		auto r = (EffekseerRendererDX9::Renderer*)g->GetRenderer();
+		
+		D3DFORMAT d3dFormat;
+		switch (format)
+		{
+		case TextureFormat::RGBA8U:
+			d3dFormat = D3DFMT_A8R8G8B8;
+			break;
+		case TextureFormat::RGBA16F:
+			d3dFormat = D3DFMT_A16B16G16R16F;
+			break;
+		case TextureFormat::R16F:
+			d3dFormat = D3DFMT_R16F;
+			break;
+		default:
+			assert(0);
+			return false;
+		}
+
 		auto hr = r->GetDevice()->CreateTexture(
 			width,
 			height,
 			1,
 			D3DUSAGE_RENDERTARGET,
-			D3DFMT_A8R8G8B8,
+			d3dFormat,
 			D3DPOOL_DEFAULT,
 			&renderTargetTexture,
 			NULL
@@ -51,7 +69,7 @@ namespace efk
 		ES_SAFE_RELEASE(depthTexture);
 	}
 
-	bool DepthTextureDX9::Initialize(int32_t width, int32_t height)
+	bool DepthTextureDX9::Initialize(int32_t width, int32_t height, uint32_t multisample)
 	{
 		auto g = (GraphicsDX9*)graphics;
 		auto r = (EffekseerRendererDX9::Renderer*)g->GetRenderer();
@@ -307,6 +325,9 @@ namespace efk
 
 	void GraphicsDX9::SetRenderTarget(RenderTexture* renderTexture, DepthTexture* depthTexture)
 	{
+		currentRenderTexture = renderTexture;
+		currentDepthTexture = depthTexture;
+
 		auto rt = (RenderTextureDX9*)renderTexture;
 		auto dt = (DepthTextureDX9*)depthTexture;
 

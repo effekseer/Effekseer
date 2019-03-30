@@ -279,6 +279,14 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
+  public void SetBloomParameters(bool enabled, float intensity, float threshold, float softKnee) {
+    EffekseerNativePINVOKE.Native_SetBloomParameters(swigCPtr, enabled, intensity, threshold, softKnee);
+  }
+
+  public void SetTonemapParameters(int algorithm, float exposure) {
+    EffekseerNativePINVOKE.Native_SetTonemapParameters(swigCPtr, algorithm, exposure);
+  }
+
 }
 
 }

@@ -15,16 +15,20 @@ namespace efk
 	private:
 		int32_t width = 0;
 		int32_t height = 0;
+		uint32_t multisample = 0;
 		GLuint	texture = 0;
+		GLuint	renderbuffer = 0;
 
 	public:
 		RenderTextureGL(Graphics* graphics);
 		virtual ~RenderTextureGL();
-		bool Initialize(int32_t width, int32_t height);
+		bool Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample = 1);
 
 		int32_t GetWidth() { return width; }
 		int32_t GetHeight() { return height; }
-		GLuint GetBuffer() { return texture; }
+		bool IsMultisample() { return multisample > 1; }
+		GLuint GetTexture() { return texture; }
+		GLuint GetBuffer() { return renderbuffer; }
 
 		uint64_t GetViewID() override { return texture; }
 	};
@@ -34,13 +38,15 @@ namespace efk
 	{
 	private:
 		GLuint	texture = 0;
+		GLuint	renderbuffer = 0;
 
 	public:
 		DepthTextureGL(Graphics* graphics);
 		virtual ~DepthTextureGL();
-		bool Initialize(int32_t width, int32_t height);
+		bool Initialize(int32_t width, int32_t height, uint32_t multisample = 1);
 
-		GLuint GetBuffer() { return texture; }
+		GLuint GetTexture() { return texture; }
+		GLuint GetBuffer() { return renderbuffer; }
 	};
 
 	class GraphicsGL
@@ -76,9 +82,7 @@ namespace efk
 		IDirect3DTexture9*	backTargetTexture = nullptr;
 		*/
 
-		int32_t backTargetWidth = 0;
-		int32_t backTargetHeight = 0;
-		GLuint backTarget = 0;
+		std::shared_ptr<RenderTextureGL>	backTarget;
 		GLuint	frameBufferForCopy = 0;
 
 		EffekseerRendererGL::Renderer*	renderer = nullptr;
@@ -106,6 +110,8 @@ namespace efk
 		void EndRecord(std::vector<Effekseer::Color>& pixels) override;
 
 		void Clear(Effekseer::Color color) override;
+
+		void ResolveRenderTarget(RenderTexture* src, RenderTexture* dest) override;
 
 		void ResetDevice() override;
 

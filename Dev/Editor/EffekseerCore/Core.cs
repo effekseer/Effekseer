@@ -18,6 +18,8 @@ namespace Effekseer
 
 		static Data.OptionValues option;
 
+		static Data.PostEffectValues postEffect;
+
 		static Data.EffectBehaviorValues effectBehavior = new Data.EffectBehaviorValues();
 
 		static Data.EffectCullingValues culling = new Data.EffectCullingValues();
@@ -177,6 +179,11 @@ namespace Effekseer
 		public static Data.OptionValues Option
 		{
 			get { return option; }
+		}
+		
+		public static Data.PostEffectValues PostEffect
+		{
+			get { return postEffect; }
 		}
 
 		public static Data.EffectBehaviorValues EffectBehavior
@@ -787,6 +794,7 @@ namespace Effekseer
 		static public Data.OptionValues LoadOption(Language? defaultLanguage)
 		{
             Data.OptionValues res = new Data.OptionValues();
+			postEffect = new Data.PostEffectValues();
 
 			var path = System.IO.Path.Combine(GetEntryDirectory(), OptionFilePath);
 
@@ -813,6 +821,12 @@ namespace Effekseer
 				Data.IO.LoadObjectFromElement(optionElement as System.Xml.XmlElement, ref o, false);
 			}
 
+			var postEffectElement = doc["EffekseerProject"]["PostEffect"];
+			if (postEffectElement != null) {
+				var o = postEffect as object;
+				Data.IO.LoadObjectFromElement(postEffectElement as System.Xml.XmlElement, ref o, false);
+			}
+
 			IsChanged = false;
 
             return res;
@@ -825,9 +839,11 @@ namespace Effekseer
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
 			var optionElement = Data.IO.SaveObjectToElement(doc, "Option", Option, false);
+			var postEffectElement = Data.IO.SaveObjectToElement(doc, "PostEffect", PostEffect, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 			if(optionElement != null) project_root.AppendChild(optionElement);
+			if(postEffectElement != null) project_root.AppendChild(postEffectElement);
 
 			doc.AppendChild(project_root);
 

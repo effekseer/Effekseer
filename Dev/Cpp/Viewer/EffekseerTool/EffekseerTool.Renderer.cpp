@@ -112,8 +112,7 @@ namespace EffekseerTool
 			}
 
 			viewRenderTexture.reset();
-			viewDepthTexture.reset();
-
+			
 			if (LostedDevice != nullptr)
 			{
 				LostedDevice();
@@ -180,6 +179,9 @@ bool Renderer::Initialize( void* handle, int width, int height )
 	// 背景作成
 	m_background = ::EffekseerRenderer::Paste::Create(graphics);
 
+	// ポストエフェクト作成
+	m_bloomEffect.reset(efk::PostEffect::CreateBloom(graphics));
+	m_tonemapEffect.reset(efk::PostEffect::CreateTonemap(graphics));
 
 	if( m_projection == PROJECTION_TYPE_PERSPECTIVE )
 	{
@@ -220,7 +222,7 @@ void Renderer::SetProjectionType( eProjectionType type )
 	}
 	else if( m_projection == PROJECTION_TYPE_ORTHOGRAPHIC )
 	{
-		SetOrthographic(currentWidth, currentHeight);
+		SetOrthographic( currentWidth, currentHeight );
 	}
 }
 
@@ -319,6 +321,29 @@ void Renderer::RecalcProjection()
 
 bool Renderer::BeginRendering()
 {
+	if (hdrRenderTexture == nullptr || hdrRenderTexture->GetWidth() != screenWidth || hdrRenderTexture->GetHeight() != screenHeight)
+	{
+		hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
+		hdrRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F, msaaSamples);
+		depthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
+		depthTexture->Initialize(screenWidth, screenHeight, msaaSamples);
+
+		if (msaaSamples > 1)
+		{
+			postfxRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
+			postfxRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F);
+		}
+		else
+		{
+			postfxRenderTexture = hdrRenderTexture;
+		}
+	}
+
+	targetRenderTexture = graphics->GetRenderTexture();
+	targetDepthTexture = graphics->GetDepthTexture();
+
+	graphics->SetRenderTarget(hdrRenderTexture.get(), depthTexture.get());
+
 	graphics->BeginScene();
 
 	if (!m_recording)
@@ -392,7 +417,7 @@ bool Renderer::BeginRendering()
 		m_renderer->SetProjectionMatrix(proj);
 	}
 	
-	// Distoriton
+	/*// Distoriton
 	if (Distortion == eDistortionType::DistortionType_Current)
 	{
 		CopyToBackground();
@@ -445,7 +470,7 @@ bool Renderer::BeginRendering()
 
 		m_distortionCallback->Blit = false;
 		m_distortionCallback->IsEnabled = false;
-	}
+	}*/
 
 	m_renderer->SetRenderMode(RenderingMode);
 
@@ -500,13 +525,10 @@ bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 	if (viewRenderTexture == nullptr || viewRenderTexture->GetWidth() != width || viewRenderTexture->GetHeight() != height)
 	{
 		viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-		viewDepthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
-
-		viewRenderTexture->Initialize(width, height);
-		viewDepthTexture->Initialize(width, height);
+		viewRenderTexture->Initialize(width, height, efk::TextureFormat::RGBA8U);
 	}
 
-	graphics->SetRenderTarget(viewRenderTexture.get(), viewDepthTexture.get());
+	graphics->SetRenderTarget(viewRenderTexture.get(), nullptr);
 
 	m_cameraMatTemp = m_renderer->GetCameraMatrix();
 	m_projMatTemp = m_renderer->GetProjectionMatrix();
@@ -542,7 +564,30 @@ bool Renderer::EndRenderToView()
 
 	currentWidth = m_windowWidth;
 	currentHeight = m_windowHeight;
+
 	return true;
+}
+
+void Renderer::RenderPostEffect()
+{
+	auto src = hdrRenderTexture.get();
+	auto dest = postfxRenderTexture.get();
+	
+	if (src != dest)
+	{
+		graphics->ResolveRenderTarget(src, dest);
+		src = dest;
+	}
+
+	if (m_bloomEffect) {
+		// ブルーム処理(srcとdestに同じターゲットを指定する方が高速)
+		m_bloomEffect->Render(src, src);
+	}
+	if (m_tonemapEffect) {
+		// トーンマップ処理(最終ターゲットをdestに指定)
+		dest = targetRenderTexture;
+		m_tonemapEffect->Render(src, dest);
+	}
 }
 
 bool Renderer::BeginRecord( int32_t width, int32_t height )
@@ -552,9 +597,25 @@ bool Renderer::BeginRecord( int32_t width, int32_t height )
 	m_recordingWidth = width;
 	m_recordingHeight = height;
 
-	graphics->BeginRecord(m_recordingWidth, m_recordingHeight);
+	screenWidth = m_recordingWidth;
+	screenHeight = m_recordingHeight;
 
 	m_recording = true;
+
+	RecalcProjection();
+	
+	// ガイド部分が描画されるように拡大
+	m_projMatTemp = m_renderer->GetProjectionMatrix();
+	auto proj = m_projMatTemp;
+
+	::Effekseer::Matrix44 mat;
+	mat.Values[0][0] = (float) m_windowHeight / (float) GuideWidth;
+	mat.Values[1][1] = (float) m_windowHeight / (float) GuideHeight;
+	::Effekseer::Matrix44::Mul(proj, proj, mat);
+
+	m_renderer->SetProjectionMatrix(proj);
+
+	graphics->BeginRecord(m_recordingWidth, m_recordingHeight);
 
 	return true;
 }

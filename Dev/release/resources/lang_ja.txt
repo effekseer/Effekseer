@@ -75,6 +75,7 @@ Options,オプション
 PlayString,再生
 Port,ポート
 Position,位置
+PostEffect,ポストエフェクト
 PoVDistance,視点への距離
 ProjectFilter,efkproj
 Range,最大,最小
