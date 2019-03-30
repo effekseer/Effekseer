@@ -3,10 +3,10 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#include "Effekseer.Manager.h"
+#include "Effekseer.EffectNode.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
-#include "Effekseer.EffectNode.h"
+#include "Effekseer.Manager.h"
 
 #include "Effekseer.Vector3D.h"
 
@@ -14,10 +14,10 @@
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
 
-#include "Effekseer.EffectNodeRoot.h"
-#include "Effekseer.EffectNodeSprite.h"
 #include "Effekseer.EffectNodeRibbon.h"
 #include "Effekseer.EffectNodeRing.h"
+#include "Effekseer.EffectNodeRoot.h"
+#include "Effekseer.EffectNodeSprite.h"
 #include "Sound/Effekseer.SoundPlayer.h"
 
 #include "Effekseer.Setting.h"
@@ -133,9 +133,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			pos += size;
 
 			// 無効化
-			if (TranslationFixed.Position.X == 0.0f &&
-				TranslationFixed.Position.Y == 0.0f &&
-				TranslationFixed.Position.Z == 0.0f)
+			if (TranslationFixed.Position.X == 0.0f && TranslationFixed.Position.Y == 0.0f && TranslationFixed.Position.Z == 0.0f)
 			{
 				TranslationType = ParameterTranslationType_None;
 				EffekseerPrintDebug("LocationType Change None\n");
@@ -257,9 +255,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			pos += size;
 
 			// 無効化
-			if (RotationFixed.Position.X == 0.0f &&
-				RotationFixed.Position.Y == 0.0f &&
-				RotationFixed.Position.Z == 0.0f)
+			if (RotationFixed.Position.X == 0.0f && RotationFixed.Position.Y == 0.0f && RotationFixed.Position.Z == 0.0f)
 			{
 				RotationType = ParameterRotationType_None;
 				EffekseerPrintDebug("RotationType Change None\n");
@@ -318,9 +314,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			pos += size;
 
 			// 無効化
-			if (ScalingFixed.Position.X == 1.0f &&
-				ScalingFixed.Position.Y == 1.0f &&
-				ScalingFixed.Position.Z == 1.0f)
+			if (ScalingFixed.Position.X == 1.0f && ScalingFixed.Position.Y == 1.0f && ScalingFixed.Position.Z == 1.0f)
 			{
 				ScalingType = ParameterScalingType_None;
 				EffekseerPrintDebug("ScalingType Change None\n");
@@ -512,7 +506,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			// GenerationLocation
 			if (GenerationLocation.type == ParameterGenerationLocation::TYPE_POINT)
 			{
-
 			}
 			else if (GenerationLocation.type == ParameterGenerationLocation::TYPE_SPHERE)
 			{
@@ -589,28 +582,22 @@ EffectNodeImplemented::~EffectNodeImplemented()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Effect* EffectNodeImplemented::GetEffect() const
-{
-	return m_effect;
-}
+Effect* EffectNodeImplemented::GetEffect() const { return m_effect; }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int EffectNodeImplemented::GetChildrenCount() const
-{
-	return (int)m_Nodes.size();
-}
+int EffectNodeImplemented::GetChildrenCount() const { return (int)m_Nodes.size(); }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 EffectNode* EffectNodeImplemented::GetChild(int index) const
 {
-	if (index >= GetChildrenCount()) return NULL;
+	if (index >= GetChildrenCount())
+		return NULL;
 	return m_Nodes[index];
 }
-
 
 EffectBasicRenderParameter EffectNodeImplemented::GetBasicRenderParameter()
 {
@@ -667,55 +654,39 @@ void EffectNodeImplemented::LoadRendererParameter(unsigned char*& pos, Setting* 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::BeginRendering(int32_t count, Manager* manager)
-{
-}
+void EffectNodeImplemented::BeginRendering(int32_t count, Manager* manager) {}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::BeginRenderingGroup(InstanceGroup* group, Manager* manager)
-{
-}
+void EffectNodeImplemented::BeginRenderingGroup(InstanceGroup* group, Manager* manager) {}
 
-void EffectNodeImplemented::EndRenderingGroup(InstanceGroup* group, Manager* manager)
-{
-}
+void EffectNodeImplemented::EndRenderingGroup(InstanceGroup* group, Manager* manager) {}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager)
-{
-}
+void EffectNodeImplemented::Rendering(const Instance& instance, const Instance* next_instance, Manager* manager) {}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::EndRendering(Manager* manager)
-{
-}
+void EffectNodeImplemented::EndRendering(Manager* manager) {}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager)
-{
-}
+void EffectNodeImplemented::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager) {}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::InitializeRenderedInstance(Instance& instance, Manager* manager)
-{
-}
+void EffectNodeImplemented::InitializeRenderedInstance(Instance& instance, Manager* manager) {}
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void EffectNodeImplemented::UpdateRenderedInstance(Instance& instance, Manager* manager)
-{
-}
+void EffectNodeImplemented::UpdateRenderedInstance(Instance& instance, Manager* manager) {}
 
 //----------------------------------------------------------------------------------
 //
@@ -727,23 +698,20 @@ float EffectNodeImplemented::GetFadeAlpha(const Instance& instance)
 	if (RendererCommon.FadeInType == ParameterRendererCommon::FADEIN_ON && instance.m_LivingTime < RendererCommon.FadeIn.Frame)
 	{
 		float v = 1.0f;
-		RendererCommon.FadeIn.Value.setValueToArg(
-			v,
-			0.0f,
-			1.0f,
-			(float)instance.m_LivingTime / (float)RendererCommon.FadeIn.Frame);
+		RendererCommon.FadeIn.Value.setValueToArg(v, 0.0f, 1.0f, (float)instance.m_LivingTime / (float)RendererCommon.FadeIn.Frame);
 
 		alpha *= v;
 	}
 
-	if (RendererCommon.FadeOutType == ParameterRendererCommon::FADEOUT_ON && instance.m_LivingTime + RendererCommon.FadeOut.Frame > instance.m_LivedTime)
+	if (RendererCommon.FadeOutType == ParameterRendererCommon::FADEOUT_ON &&
+		instance.m_LivingTime + RendererCommon.FadeOut.Frame > instance.m_LivedTime)
 	{
 		float v = 1.0f;
-		RendererCommon.FadeOut.Value.setValueToArg(
-			v,
-			1.0f,
-			0.0f,
-			(float)(instance.m_LivingTime + RendererCommon.FadeOut.Frame - instance.m_LivedTime) / (float)RendererCommon.FadeOut.Frame);
+		RendererCommon.FadeOut.Value.setValueToArg(v,
+												   1.0f,
+												   0.0f,
+												   (float)(instance.m_LivingTime + RendererCommon.FadeOut.Frame - instance.m_LivedTime) /
+													   (float)RendererCommon.FadeOut.Frame);
 
 		alpha *= v;
 	}
@@ -773,17 +741,138 @@ void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, Manager
 		parameter.Pan = Sound.Pan.getValue(*instanceGlobal);
 
 		parameter.Mode3D = (Sound.PanType == ParameterSoundPanType_3D);
-		Vector3D::Transform(parameter.Position,
-			Vector3D(0.0f, 0.0f, 0.0f), instance.GetGlobalMatrix43());
+		Vector3D::Transform(parameter.Position, Vector3D(0.0f, 0.0f, 0.0f), instance.GetGlobalMatrix43());
 		parameter.Distance = Sound.Distance;
 
 		player->Play(tag, parameter);
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+EffectInstanceTerm EffectNodeImplemented::CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const
+{
+	EffectInstanceTerm ret;
+
+	auto addWithClip = [](int v1, int v2) -> int {
+		v1 = Max(v1, 0);
+		v2 = Max(v2, 0);
+
+		if (v1 >= INT_MAX / 2)
+			return INT_MAX;
+
+		if (v2 >= INT_MAX / 2)
+			return INT_MAX;
+
+		return v1 + v2;
+	};
+
+	int lifeMin = CommonValues.life.min;
+	int lifeMax = CommonValues.life.max;
+
+	if (CommonValues.RemoveWhenLifeIsExtinct <= 0)
+	{
+		lifeMin = INT_MAX;
+		lifeMax = INT_MAX;
+	}
+
+	auto firstBeginMin = CommonValues.GenerationTimeOffset.min;
+	auto firstBeginMax = CommonValues.GenerationTimeOffset.max;
+	auto firstEndMin = addWithClip(firstBeginMin, lifeMin);
+	auto firstEndMax = addWithClip(firstBeginMax, lifeMax);
+
+	auto lastBeginMin = 0;
+	auto lastBeginMax = 0;
+	if (CommonValues.MaxGeneration > INT_MAX / 2)
+	{
+		lastBeginMin = INT_MAX / 2;
+	}
+	else
+	{
+		lastBeginMin = CommonValues.GenerationTimeOffset.min + (CommonValues.MaxGeneration - 1) * (CommonValues.GenerationTime.min);
+	}
+
+	if (CommonValues.MaxGeneration > INT_MAX / 2)
+	{
+		lastBeginMax = INT_MAX / 2;
+	}
+	else
+	{
+		lastBeginMax = CommonValues.GenerationTimeOffset.max + (CommonValues.MaxGeneration - 1) * (CommonValues.GenerationTime.max);
+	}
+
+	auto lastEndMin = addWithClip(lastBeginMin, lifeMin);
+	auto lastEndMax = addWithClip(lastBeginMax, lifeMax);
+
+	auto parentFirstTermMin = parentTerm.FirstInstanceEndMin - parentTerm.FirstInstanceStartMin;
+	auto parentFirstTermMax = parentTerm.FirstInstanceEndMax - parentTerm.FirstInstanceStartMax;
+	auto parentLastTermMin = parentTerm.LastInstanceEndMin - parentTerm.LastInstanceStartMin;
+	auto parentLastTermMax = parentTerm.LastInstanceEndMax - parentTerm.LastInstanceStartMax;
+
+	if (CommonValues.RemoveWhenParentIsRemoved > 0)
+	{
+		if (firstEndMin - firstBeginMin > parentFirstTermMin)
+			firstEndMin = firstBeginMin + parentFirstTermMin;
+
+		if (firstEndMax - firstBeginMax > parentFirstTermMax)
+			firstEndMax = firstBeginMax + parentFirstTermMax;
+
+		if (lastEndMin > INT_MAX / 2)
+		{
+			lastBeginMin = parentLastTermMin;
+			lastEndMin = parentLastTermMin;
+		}
+		else if (lastEndMin - lastBeginMin > parentLastTermMin)
+		{
+			lastEndMin = lastBeginMin + parentLastTermMin;
+		}
+
+		if (lastEndMax > INT_MAX / 2)
+		{
+			lastBeginMax = parentLastTermMax;
+			lastEndMax = parentLastTermMax;
+		}
+		else if (lastEndMax - lastBeginMax > parentLastTermMax)
+		{
+			lastEndMax = lastBeginMax + parentLastTermMax;
+		}
+	}
+
+	ret.FirstInstanceStartMin = addWithClip(parentTerm.FirstInstanceStartMin, firstBeginMin);
+	ret.FirstInstanceStartMax = addWithClip(parentTerm.FirstInstanceStartMax, firstBeginMax);
+	ret.FirstInstanceEndMin = addWithClip(parentTerm.FirstInstanceStartMin, firstEndMin);
+	ret.FirstInstanceEndMax = addWithClip(parentTerm.FirstInstanceStartMax, firstEndMax);
+
+	ret.LastInstanceStartMin = addWithClip(parentTerm.LastInstanceStartMin, lastBeginMin);
+	ret.LastInstanceStartMax = addWithClip(parentTerm.LastInstanceStartMax, lastBeginMax);
+	ret.LastInstanceEndMin = addWithClip(parentTerm.LastInstanceStartMin, lastEndMin);
+	ret.LastInstanceEndMax = addWithClip(parentTerm.LastInstanceStartMax, lastEndMax);
+
+	// check children
+	if (CommonValues.RemoveWhenChildrenIsExtinct > 0)
+	{
+		int childFirstEndMin = 0;
+		int childFirstEndMax = 0;
+		int childLastEndMin = 0;
+		int childLastEndMax = 0;
+
+		for (int32_t i = 0; i < GetChildrenCount(); i++)
+		{
+			auto child = static_cast<EffectNodeImplemented*>(GetChild(i));
+			auto childTerm = child->CalculateInstanceTerm(ret);
+			childFirstEndMin = Max(childTerm.FirstInstanceEndMin, childFirstEndMin);
+			childFirstEndMax = Max(childTerm.FirstInstanceEndMax, childFirstEndMax);
+			childLastEndMin = Max(childTerm.LastInstanceEndMin, childLastEndMin);
+			childLastEndMax = Max(childTerm.LastInstanceEndMax, childLastEndMax);
+		}
+
+		ret.FirstInstanceEndMin = Min(ret.FirstInstanceEndMin, childFirstEndMin);
+		ret.FirstInstanceEndMax = Min(ret.FirstInstanceEndMax, childFirstEndMax);
+		ret.LastInstanceEndMin = Min(ret.LastInstanceEndMin, childLastEndMin);
+		ret.LastInstanceEndMax = Min(ret.LastInstanceEndMax, childLastEndMax);
+	}
+
+	return ret;
+}
+
 EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode* parent, unsigned char*& pos)
 {
 	EffectNodeImplemented* effectnode = NULL;
@@ -840,7 +929,7 @@ EffectNodeImplemented* EffectNodeImplemented::Create(Effect* effect, EffectNode*
 //
 //----------------------------------------------------------------------------------
 
-}
+} // namespace Effekseer
 
 //----------------------------------------------------------------------------------
 //

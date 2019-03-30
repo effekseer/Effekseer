@@ -781,9 +781,6 @@ enum eRenderingOrder
 	RenderingOrder_DWORD = 0x7fffffff,
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 /**
 @brief	ノードインスタンス生成クラス
@@ -934,6 +931,8 @@ public:
 	@brief	サウンド再生
 	*/
 	virtual void PlaySound_(Instance& instance, SoundTag tag, Manager* manager);
+
+	EffectInstanceTerm CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const override;
 
 	/**
 	@brief	エフェクトノード生成

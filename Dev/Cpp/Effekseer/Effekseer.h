@@ -1298,6 +1298,92 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 
 /**
+@brief
+\~English	Terms where an effect exists
+\~Japanese	エフェクトが存在する期間
+*/
+struct EffectTerm
+{
+	/**
+@brief
+\~English	Minimum end time that the effect may exist
+\~Japanese	エフェクトが存在する可能性のある最小の終了時間
+*/
+	int32_t TermMin;
+
+	/**
+	@brief
+	\~English	Maximum end time that the effect may exist
+	\~Japanese	エフェクトが存在する可能性のある最大の終了時間
+	*/
+	int32_t TermMax;
+};
+
+	/**
+@brief
+\~English	Terms where instances exists
+\~Japanese	インスタンスが存在する期間
+*/
+struct EffectInstanceTerm
+{
+	/**
+	@brief
+	\~English	Minimum start time that the first instance may exist
+	\~Japanese	最初のインスタンスが存在する可能性のある最小の開始時間
+	*/
+	int32_t FirstInstanceStartMin = 0;
+
+	/**
+	@brief
+	\~English	Maximum start time that the first instance may exist
+	\~Japanese	最初のインスタンスが存在する可能性のある最大の開始時間
+	*/
+	int32_t FirstInstanceStartMax = 0;
+
+	/**
+	@brief
+	\~English	Minimum end time that the first instance may exist
+	\~Japanese	最初のインスタンスが存在する可能性のある最小の終了時間
+	*/
+	int32_t FirstInstanceEndMin = INT_MAX;
+
+	/**
+	@brief
+	\~English	Maximum end time that the first instance may exist
+	\~Japanese	最初のインスタンスが存在する可能性のある最大の終了時間
+	*/
+	int32_t FirstInstanceEndMax = INT_MAX;
+
+	/**
+	@brief
+	\~English	Minimum start time that the last instance may exist
+	\~Japanese	最後のインスタンスが存在する可能性のある最小の開始時間
+	*/
+	int32_t LastInstanceStartMin = 0;
+
+	/**
+	@brief
+	\~English	Maximum start time that the last instance may exist
+	\~Japanese	最後のインスタンスが存在する可能性のある最大の開始時間
+	*/
+	int32_t LastInstanceStartMax = 0;
+
+	/**
+	@brief
+	\~English	Minimum end time that the last instance may exist
+	\~Japanese	最後のインスタンスが存在する可能性のある最小の終了時間
+	*/
+	int32_t LastInstanceEndMin = INT_MAX;
+
+	/**
+	@brief
+	\~English	Maximum end time that the last instance may exist
+	\~Japanese	最後のインスタンスが存在する可能性のある最大の終了時間
+	*/
+	int32_t LastInstanceEndMax = INT_MAX;
+};
+
+/**
 	@brief	エフェクトパラメータークラス
 	@note
 	エフェクトに設定されたパラメーター。
@@ -1576,6 +1662,13 @@ public:
 	@brief	Rootを取得する。
 	*/
 	virtual EffectNode* GetRoot() const = 0;
+
+	/**
+		@brief
+	\~English	Calculate a term of instances where the effect exists
+	\~Japanese	エフェクトが存在する期間を計算する。
+	*/
+	virtual EffectTerm CalculateTerm() const = 0;
 };
 
 /**
@@ -1651,6 +1744,13 @@ public:
 	\~Japanese	モデルパラメーターを取得する。
 	*/
 	virtual EffectModelParameter GetEffectModelParameter() = 0;
+
+	/**
+	@brief
+	\~English	Calculate a term of instances where instances exists
+	\~Japanese	インスタンスが存在する期間を計算する。
+	*/
+	virtual EffectInstanceTerm CalculateInstanceTerm(EffectInstanceTerm& parentTerm) const = 0;
 };
 
 //----------------------------------------------------------------------------------

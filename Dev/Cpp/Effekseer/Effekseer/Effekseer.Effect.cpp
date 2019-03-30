@@ -1101,6 +1101,34 @@ void EffectImplemented::UnloadResources()
 	UnloadResources(nullptr);
 }
 
+EffectTerm EffectImplemented::CalculateTerm() const
+{ 
+	
+	EffectTerm effectTerm;
+	effectTerm.TermMin = 0;
+	effectTerm.TermMax = 0;
+
+	auto root = GetRoot(); 
+	EffectInstanceTerm rootTerm;
+
+	std::function<void(EffectNode*, EffectInstanceTerm&)> recurse;
+	recurse = [&effectTerm, &recurse](EffectNode* node, EffectInstanceTerm& term) -> void
+	{
+		for (int i = 0; i < node->GetChildrenCount(); i++)
+		{
+			auto cterm = node->GetChild(i)->CalculateInstanceTerm(term);
+			effectTerm.TermMin = Max(effectTerm.TermMin, cterm.LastInstanceEndMin);
+			effectTerm.TermMax = Max(effectTerm.TermMax, cterm.LastInstanceEndMax);
+
+			recurse(node->GetChild(i), cterm);
+		}
+	};
+
+	recurse(root, rootTerm);
+
+	return effectTerm;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
