@@ -122,7 +122,8 @@ namespace Effekseer
 						magnification = Core.Option.Magnification;
 					}
 
-					var binary = Binary.Exporter.Export(magnification);
+					var binaryExporter = new Binary.Exporter();
+					var binary = binaryExporter.Export(magnification);
 					System.IO.File.WriteAllBytes(export, binary);
 				}
 			}

@@ -275,7 +275,8 @@ public class Script
 
 				if (Effekseer.GUI.Manager.NativeManager.Button(save_text))
 				{
-					var binary = Effekseer.Binary.Exporter.Export(mag[0]);
+                    var exporter = new Effekseer.Binary.Exporter();
+                    var binary = exporter.Export(mag[0]);
 					System.IO.File.WriteAllBytes(path, binary);
 					Effekseer.Core.Option.ExternalMagnification.SetValue(mag[0]);
 					ShouldBeRemoved = true;

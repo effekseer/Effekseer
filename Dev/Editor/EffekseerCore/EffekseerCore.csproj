@@ -53,6 +53,9 @@
     <Reference Include="Microsoft.Scripting.Metadata">
       <HintPath>.\Microsoft.Scripting.Metadata.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -124,6 +127,7 @@
     <Compile Include="Data\Value\Vector3DWithRandom.cs" />
     <Compile Include="Data\GlobalValues.cs" />
     <Compile Include="Define.cs" />
+    <Compile Include="Exporter\glTFExporter.cs" />
     <Compile Include="Utl\ModelInformation.cs" />
     <Compile Include="Utl\ParamaterTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -141,6 +145,9 @@
     <Compile Include="Utl\MathExtensions.cs" />
     <Compile Include="Utl\TextureInformation.cs" />
     <Compile Include="Utl\XmlDocumentExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

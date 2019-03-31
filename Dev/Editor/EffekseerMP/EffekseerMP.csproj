@@ -110,6 +110,8 @@
     <Compile Include="GUI\Network.cs" />
     <Compile Include="GUI\Viewer.cs" />
     <Compile Include="Plugin\ExportDefault.cs" />
+    <Compile Include="Plugin\Exportglb.cs" />
+    <Compile Include="Plugin\ExportglTF.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GUI\Shortcuts.cs" />

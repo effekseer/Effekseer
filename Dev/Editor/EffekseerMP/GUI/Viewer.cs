@@ -620,7 +620,8 @@ namespace Effekseer.GUI
 				SetCullingParameter(false, 0.0f, 0.0f, 0.0f, 0.0f);
 			}
 
-			var data = Binary.Exporter.Export(Core.Option.Magnification);
+			var binaryExporter = new Binary.Exporter();
+			var data = binaryExporter.Export(Core.Option.Magnification);
 			fixed (byte* p = &data[0])
 			{
 				LoadEffect(new IntPtr(p), data.Length, Core.FullPath);

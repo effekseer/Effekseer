@@ -27,6 +27,7 @@ namespace Effekseer
 			bool gui = true;
 			string input = string.Empty;
 			string output = string.Empty;
+			string format = "efk";
 			string export = string.Empty;
 			float magnification = 0.0f;
 
@@ -50,6 +51,14 @@ namespace Effekseer
 					if (i < args.Length)
 					{
 						output = args[i];
+					}
+				}
+				else if (args[i] == "-f")
+				{
+					i++;
+					if (i < args.Length)
+					{
+						format = args[i];
 					}
 				}
 				else if (args[i] == "-e")
@@ -76,13 +85,13 @@ namespace Effekseer
 
 			if (System.Diagnostics.Debugger.IsAttached)
 			{
-				Exec(gui, input, output, export, magnification);
+				Exec(gui, input, output, export, format, magnification);
 			}
 			else
 			{
 				try
 				{
-					Exec(gui, input, output, export, magnification);
+					Exec(gui, input, output, export, format, magnification);
 				}
 				catch (Exception e)
 				{
@@ -91,7 +100,7 @@ namespace Effekseer
 			}
 		}
 
-		static void Exec(bool gui, string input, string output, string export, float magnification)
+		static void Exec(bool gui, string input, string output, string export, string format, float magnification)
 		{
 			var languageIndex = swig.GUIManager.GetLanguage();
 			Language? language = null;
@@ -109,7 +118,7 @@ namespace Effekseer
 				// Failed to compile script
 				if (Core.ExportScripts.Count == 0)
 				{
-					Script.ExportScript script = new Script.ExportScript(
+					Script.ExportScript defaultExporter = new Script.ExportScript(
 						Script.ScriptPosition.External,
 						Plugin.ExportDefault.UniqueName,
 						Plugin.ExportDefault.Author,
@@ -117,10 +126,30 @@ namespace Effekseer
 						Plugin.ExportDefault.Description,
 						Plugin.ExportDefault.Filter,
 						Plugin.ExportDefault.Call);
-					Core.ExportScripts.Add(script);
-				}
+					Core.ExportScripts.Add(defaultExporter);
 
-				{
+                    Script.ExportScript glTFExporter = new Script.ExportScript(
+                        Script.ScriptPosition.External,
+                        Plugin.ExportglTF.UniqueName,
+                        Plugin.ExportglTF.Author,
+                        Plugin.ExportglTF.Title,
+                        Plugin.ExportglTF.Description,
+                        Plugin.ExportglTF.Filter,
+                        Plugin.ExportglTF.Call);
+                    Core.ExportScripts.Add(glTFExporter);
+
+                    Script.ExportScript glbExporter = new Script.ExportScript(
+                        Script.ScriptPosition.External,
+                        Plugin.Exportglb.UniqueName,
+                        Plugin.Exportglb.Author,
+                        Plugin.Exportglb.Title,
+                        Plugin.Exportglb.Description,
+                        Plugin.Exportglb.Filter,
+                        Plugin.Exportglb.Call);
+                    Core.ExportScripts.Add(glbExporter);
+                }
+
+                {
 					var appDirectory = GUI.Manager.GetEntryDirectory();
 					if (Core.Language == Language.Japanese)
 					{
@@ -170,8 +199,27 @@ namespace Effekseer
 						magnification = Core.Option.Magnification;
 					}
 
-					var binary = Binary.Exporter.Export(magnification);
-					System.IO.File.WriteAllBytes(export, binary);
+					if(format == "gltf")
+					{
+						var option = new Effekseer.Exporter.glTFExporterOption();
+						option.Scale = magnification;
+						var exporter = new Effekseer.Exporter.glTFExporter();
+						exporter.Export(export, option);
+					}
+					else if (format == "glb")
+					{
+						var option = new Effekseer.Exporter.glTFExporterOption();
+						option.Scale = magnification;
+						option.Format = Exporter.glTFExporterFormat.glb;
+						var exporter = new Effekseer.Exporter.glTFExporter();
+						exporter.Export(export, option);
+					}
+					else
+					{
+						var binaryExporter = new Binary.Exporter();
+						var binary = binaryExporter.Export(magnification);
+						System.IO.File.WriteAllBytes(export, binary);
+					}
 				}
 			}
 			catch (Exception e)

@@ -11,11 +11,17 @@ namespace Effekseer.Binary
 	{
 		const int Version = 13;
 
+		public SortedSet<string> UsedTextures = new SortedSet<string>();
+
+		public SortedSet<string> UsedNormalTextures = new SortedSet<string>();
+
+		public SortedSet<string> UsedDistortionTextures = new SortedSet<string>();
+
 		/// <summary>
 		/// エフェクトデータの出力
 		/// </summary>
 		/// <returns></returns>
-		public static byte[] Export(float magnification = 1.0f)
+		public byte[] Export(float magnification = 1.0f)
 		{
 			List<byte[]> data = new List<byte[]>();
 
@@ -25,12 +31,12 @@ namespace Effekseer.Binary
 			// バージョン
 			data.Add(BitConverter.GetBytes(Version));
 
-			// テクスチャ名称一覧取得
-            SortedSet<string> textures = new SortedSet<string>();
+			// reset texture names
+            UsedTextures = new SortedSet<string>();
 
-			SortedSet<string> normalTextures = new SortedSet<string>();
+			UsedNormalTextures = new SortedSet<string>();
 
-			SortedSet<string> distortionTextures = new SortedSet<string>();
+			UsedDistortionTextures = new SortedSet<string>();
 
             // ウェーブ名称一覧取得
             SortedSet<string> waves = new SortedSet<string>();
@@ -56,16 +62,16 @@ namespace Effekseer.Binary
 								{
 									if(_node.RendererCommonValues.Distortion.Value)
 									{
-										if (!distortionTextures.Contains(relative_path))
+										if (!UsedDistortionTextures.Contains(relative_path))
 										{
-											distortionTextures.Add(relative_path);
+											UsedDistortionTextures.Add(relative_path);
 										}
 									}
 									else
 									{
-										if (!textures.Contains(relative_path))
+										if (!UsedTextures.Contains(relative_path))
 										{
-											textures.Add(relative_path);
+											UsedTextures.Add(relative_path);
 										}
 									}
 								}
@@ -75,9 +81,9 @@ namespace Effekseer.Binary
 								var relative_path = _node.DrawingValues.Model.NormalTexture.RelativePath;
 								if (relative_path != string.Empty)
 								{
-									if (!normalTextures.Contains(relative_path))
+									if (!UsedNormalTextures.Contains(relative_path))
 									{
-										normalTextures.Add(relative_path);
+										UsedNormalTextures.Add(relative_path);
 									}
 								}
 							}
@@ -95,7 +101,7 @@ namespace Effekseer.Binary
             Dictionary<string, int> texture_and_index = new Dictionary<string, int>();
             {
                 int index = 0;
-                foreach (var texture in textures)
+                foreach (var texture in UsedTextures)
                 {
                     texture_and_index.Add(texture, index);
                     index++;
@@ -105,7 +111,7 @@ namespace Effekseer.Binary
 			Dictionary<string, int> normalTexture_and_index = new Dictionary<string, int>();
 			{
 				int index = 0;
-				foreach (var texture in normalTextures)
+				foreach (var texture in UsedNormalTextures)
 				{
 					normalTexture_and_index.Add(texture, index);
 					index++;
@@ -115,7 +121,7 @@ namespace Effekseer.Binary
 			Dictionary<string, int> distortionTexture_and_index = new Dictionary<string, int>();
 			{
 				int index = 0;
-				foreach (var texture in distortionTextures)
+				foreach (var texture in UsedDistortionTextures)
 				{
 					distortionTexture_and_index.Add(texture, index);
 					index++;
