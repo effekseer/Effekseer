@@ -9,6 +9,7 @@
 #include <string.h>
 #include <atomic>
 #include <stdint.h>
+#include <climits>
 
 //----------------------------------------------------------------------------------
 //
