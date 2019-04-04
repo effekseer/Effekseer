@@ -71,6 +71,7 @@ namespace efk
 		bool				isSRGBMode = false;
 
 		ID3D11Device*			device = nullptr;
+		ID3D11Debug*			d3dDebug = nullptr;
 		ID3D11DeviceContext*	context = nullptr;
 		IDXGIDevice1*			dxgiDevice = nullptr;
 		IDXGIAdapter*			adapter = nullptr;

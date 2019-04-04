@@ -117,8 +117,13 @@ namespace efk
 		desc.MipLevels = 1;
 		desc.ArraySize = 1;
 		desc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+
+		uint32_t quality = 0;
+		r->GetDevice()->CheckMultisampleQualityLevels(desc.Format, multisample, &quality);
+
 		desc.SampleDesc.Count = multisample;
-		desc.SampleDesc.Quality = 0;
+		desc.SampleDesc.Quality = quality - 1;
+
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
 		desc.CPUAccessFlags = 0;
@@ -193,6 +198,12 @@ namespace efk
 		ES_SAFE_RELEASE(dxgiDevice);
 		ES_SAFE_RELEASE(context);
 		ES_SAFE_RELEASE(device);
+
+		if (d3dDebug != nullptr)
+		{
+			d3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+		}
+		ES_SAFE_RELEASE(d3dDebug);
 	}
 
 	bool GraphicsDX11::Initialize(void* windowHandle, int32_t windowWidth, int32_t windowHeight, bool isSRGBMode, int32_t spriteCount)
@@ -229,6 +240,14 @@ namespace efk
 			log += "Failed : D3D11CreateDevice\n";
 			goto End;
 		}
+
+		#if DEBUG
+		if (FAILED( device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&d3dDebug))))
+		{
+			log += "Failed : QueryInterface(Debug)\n";
+			goto End;
+		}
+		#endif
 
 		if (FAILED(device->QueryInterface(__uuidof(IDXGIDevice1), (void**)&dxgiDevice)))
 		{
