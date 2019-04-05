@@ -34,7 +34,7 @@
     "GenerateAlpha": "生成",
     "Height": "縦幅",
     "Help": "ヘルプ",
-    "ImageFilter": "png",
+    "ImageFilter": "png,dds",
     "Import": "入力",
     "Infinite": "無限",
     "InternalAbout": "Effekseerについて",

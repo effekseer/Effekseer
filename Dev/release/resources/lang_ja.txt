@@ -32,7 +32,7 @@ Gauss,中心,振幅
 GenerateAlpha,生成
 Height,縦幅
 Help,ヘルプ
-ImageFilter,png
+ImageFilter,png,dds
 Import,入力
 Infinite,無限
 InternalAbout,Effekseerについて
@@ -75,7 +75,6 @@ Options,オプション
 PlayString,再生
 Port,ポート
 Position,位置
-PostEffect,ポストエフェクト
 PoVDistance,視点への距離
 ProjectFilter,efkproj
 Range,最大,最小

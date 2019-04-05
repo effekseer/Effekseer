@@ -34,7 +34,7 @@
     "GenerateAlpha": "Generate alpha",
     "Height": "Height",
     "Help": "Help",
-    "ImageFilter": "png",
+    "ImageFilter": "png,dds",
     "Import": "Import",
     "Infinite": "Infinite",
     "InternalAbout": "About Effekseer",

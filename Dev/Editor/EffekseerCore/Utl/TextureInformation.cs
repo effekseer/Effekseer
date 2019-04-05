@@ -51,6 +51,7 @@ namespace Effekseer.Utl
 				buf[6] == 0x1A &&
 				buf[7] == 0x0A)
 			{
+				// PNG
 				if (br.Read(buf, 0, 25) != 25)
 				{
 					fs.Dispose();
@@ -62,6 +63,19 @@ namespace Effekseer.Utl
 				var height = new byte[] { buf[15], buf[14], buf[13], buf[12] };
 				Width = BitConverter.ToInt32(width, 0);
 				Height = BitConverter.ToInt32(height, 0);
+			}
+			else if (buf[0] == 0x44 && buf[1] == 0x44 && buf[2] == 0x53)
+			{
+				// DDS
+				if (br.Read(buf, 0, 25) != 25)
+				{
+					fs.Dispose();
+					br.Dispose();
+					return false;
+				}
+
+				Width = BitConverter.ToInt32(buf, 8);
+				Height = BitConverter.ToInt32(buf, 4);
 			}
 			else
 			{

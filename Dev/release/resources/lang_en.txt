@@ -32,7 +32,7 @@ Gauss,Gauss
 GenerateAlpha,Generate alpha
 Height,Height
 Help,Help
-ImageFilter,png
+ImageFilter,png,dds
 Import,Import
 Infinite,Infinite
 InternalAbout,About Effekseer
@@ -75,7 +75,6 @@ Options,Options
 PlayString,Play
 Port,Port
 Position,Position
-PostEffect,Post Effects
 PoVDistance,PoV Distance
 ProjectFilter,efkproj
 Range,Range
