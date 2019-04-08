@@ -95,7 +95,7 @@ class EffectImplemented : public Effect, public ReferenceObject
 	friend class ManagerImplemented;
 	friend class EffectNodeImplemented;
 
-private:
+protected:
 	ManagerImplemented* m_pManager;
 
 	Setting* m_setting;
@@ -130,7 +130,7 @@ private:
 	int32_t renderingNodesCount = 0;
 	int32_t renderingNodesThreshold = 0;
 
-	/* 拡大率 */
+	//! scaling of this effect
 	float m_maginification;
 
 	float m_maginificationExternal;
@@ -138,10 +138,10 @@ private:
 	// default random seed
 	int32_t m_defaultRandomSeed;
 
-	// 子ノード
+	//! child root node
 	EffectNode* m_pRoot;
 
-	/* カリング */
+	// culling
 	struct
 	{
 		CullingShape Shape;
