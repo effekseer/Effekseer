@@ -199,6 +199,9 @@ namespace efk
 		ES_SAFE_RELEASE(context);
 		ES_SAFE_RELEASE(device);
 
+		ES_SAFE_RELEASE(rasterizerState);
+		ES_SAFE_RELEASE(savedRasterizerState);
+
 		if (d3dDebug != nullptr)
 		{
 			d3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
