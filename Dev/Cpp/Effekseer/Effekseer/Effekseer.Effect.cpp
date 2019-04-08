@@ -135,6 +135,196 @@ Effect* Effect::Create(Manager* manager, const EFK_CHAR* path, float magnificati
 	return effect;
 }
 
+bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
+{
+	uint8_t* pos = (uint8_t*)data;
+
+	// EFKS
+	int head = 0;
+	memcpy(&head, pos, sizeof(int));
+	if (memcmp(&head, "SKFE", 4) != 0)
+		return false;
+	pos += sizeof(int);
+
+	memcpy(&m_version, pos, sizeof(int));
+	pos += sizeof(int);
+
+	// 画像
+	memcpy(&m_ImageCount, pos, sizeof(int));
+	pos += sizeof(int);
+
+	if (m_ImageCount > 0)
+	{
+		m_ImagePaths = new EFK_CHAR*[m_ImageCount];
+		m_pImages = new TextureData*[m_ImageCount];
+
+		for (int i = 0; i < m_ImageCount; i++)
+		{
+			int length = 0;
+			memcpy(&length, pos, sizeof(int));
+			pos += sizeof(int);
+
+			m_ImagePaths[i] = new EFK_CHAR[length];
+			memcpy(m_ImagePaths[i], pos, length * sizeof(EFK_CHAR));
+			pos += length * sizeof(EFK_CHAR);
+
+			m_pImages[i] = NULL;
+		}
+	}
+
+	if (m_version >= 9)
+	{
+		// 画像
+		memcpy(&m_normalImageCount, pos, sizeof(int));
+		pos += sizeof(int);
+
+		if (m_normalImageCount > 0)
+		{
+			m_normalImagePaths = new EFK_CHAR*[m_normalImageCount];
+			m_normalImages = new TextureData*[m_normalImageCount];
+
+			for (int i = 0; i < m_normalImageCount; i++)
+			{
+				int length = 0;
+				memcpy(&length, pos, sizeof(int));
+				pos += sizeof(int);
+
+				m_normalImagePaths[i] = new EFK_CHAR[length];
+				memcpy(m_normalImagePaths[i], pos, length * sizeof(EFK_CHAR));
+				pos += length * sizeof(EFK_CHAR);
+
+				m_normalImages[i] = NULL;
+			}
+		}
+
+		// 画像
+		memcpy(&m_distortionImageCount, pos, sizeof(int));
+		pos += sizeof(int);
+
+		if (m_distortionImageCount > 0)
+		{
+			m_distortionImagePaths = new EFK_CHAR*[m_distortionImageCount];
+			m_distortionImages = new TextureData*[m_distortionImageCount];
+
+			for (int i = 0; i < m_distortionImageCount; i++)
+			{
+				int length = 0;
+				memcpy(&length, pos, sizeof(int));
+				pos += sizeof(int);
+
+				m_distortionImagePaths[i] = new EFK_CHAR[length];
+				memcpy(m_distortionImagePaths[i], pos, length * sizeof(EFK_CHAR));
+				pos += length * sizeof(EFK_CHAR);
+
+				m_distortionImages[i] = NULL;
+			}
+		}
+	}
+
+	if (m_version >= 1)
+	{
+		// ウェーブ
+		memcpy(&m_WaveCount, pos, sizeof(int));
+		pos += sizeof(int);
+
+		if (m_WaveCount > 0)
+		{
+			m_WavePaths = new EFK_CHAR*[m_WaveCount];
+			m_pWaves = new void*[m_WaveCount];
+
+			for (int i = 0; i < m_WaveCount; i++)
+			{
+				int length = 0;
+				memcpy(&length, pos, sizeof(int));
+				pos += sizeof(int);
+
+				m_WavePaths[i] = new EFK_CHAR[length];
+				memcpy(m_WavePaths[i], pos, length * sizeof(EFK_CHAR));
+				pos += length * sizeof(EFK_CHAR);
+
+				m_pWaves[i] = NULL;
+			}
+		}
+	}
+
+	if (m_version >= 6)
+	{
+		/* モデル */
+		memcpy(&m_modelCount, pos, sizeof(int));
+		pos += sizeof(int);
+
+		if (m_modelCount > 0)
+		{
+			m_modelPaths = new EFK_CHAR*[m_modelCount];
+			m_pModels = new void*[m_modelCount];
+
+			for (int i = 0; i < m_modelCount; i++)
+			{
+				int length = 0;
+				memcpy(&length, pos, sizeof(int));
+				pos += sizeof(int);
+
+				m_modelPaths[i] = new EFK_CHAR[length];
+				memcpy(m_modelPaths[i], pos, length * sizeof(EFK_CHAR));
+				pos += length * sizeof(EFK_CHAR);
+
+				m_pModels[i] = NULL;
+			}
+		}
+	}
+
+	if (m_version >= 13)
+	{
+		memcpy(&renderingNodesCount, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+
+		memcpy(&renderingNodesThreshold, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+	}
+
+	// 拡大率
+	if (m_version >= 2)
+	{
+		memcpy(&m_maginification, pos, sizeof(float));
+		pos += sizeof(float);
+	}
+
+	m_maginification *= mag;
+	m_maginificationExternal = mag;
+
+	if (m_version >= 11)
+	{
+		memcpy(&m_defaultRandomSeed, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+	}
+	else
+	{
+		m_defaultRandomSeed = -1;
+	}
+
+	// カリング
+	if (m_version >= 9)
+	{
+		memcpy(&(Culling.Shape), pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+		if (Culling.Shape == CullingShape::Sphere)
+		{
+			memcpy(&(Culling.Sphere.Radius), pos, sizeof(float));
+			pos += sizeof(float);
+
+			memcpy(&(Culling.Location.X), pos, sizeof(float));
+			pos += sizeof(float);
+			memcpy(&(Culling.Location.Y), pos, sizeof(float));
+			pos += sizeof(float);
+			memcpy(&(Culling.Location.Z), pos, sizeof(float));
+			pos += sizeof(float);
+		}
+	}
+
+	// ノード
+	m_pRoot = EffectNodeImplemented::Create(this, NULL, pos);
+}
+
 void EffectImplemented::ResetReloadingBackup()
 {
 	if(reloadingBackup == nullptr) return;
@@ -365,194 +555,10 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 
 	EffekseerPrintDebug("** Create : Effect\n");
 
-	uint8_t* pos = (uint8_t*)pData;
+	LoadBody((uint8_t*)pData, size, mag);
 
-	// EFKS
-	int head = 0;
-	memcpy( &head, pos, sizeof(int) );
-	if( memcmp( &head, "SKFE", 4 ) != 0 ) return false;
-	pos += sizeof( int );
-
-	memcpy( &m_version, pos, sizeof(int) );
-	pos += sizeof(int);
-
-	// 画像
-	memcpy( &m_ImageCount, pos, sizeof(int) );
-	pos += sizeof(int);
-
-	if( m_ImageCount > 0 )
-	{
-		m_ImagePaths = new EFK_CHAR*[ m_ImageCount ];
-		m_pImages = new TextureData*[ m_ImageCount ];
-
-		for( int i = 0; i < m_ImageCount; i++ )
-		{
-			int length = 0;
-			memcpy( &length, pos, sizeof(int) );
-			pos += sizeof(int);
-
-			m_ImagePaths[i] = new EFK_CHAR[ length ];
-			memcpy( m_ImagePaths[i], pos, length * sizeof(EFK_CHAR) );
-			pos += length * sizeof(EFK_CHAR);
-
-			m_pImages[i] = NULL;
-		}
-	}
-
-	if (m_version >= 9)
-	{
-		// 画像
-		memcpy(&m_normalImageCount, pos, sizeof(int));
-		pos += sizeof(int);
-
-		if (m_normalImageCount > 0)
-		{
-			m_normalImagePaths = new EFK_CHAR*[m_normalImageCount];
-			m_normalImages = new TextureData*[m_normalImageCount];
-
-			for (int i = 0; i < m_normalImageCount; i++)
-			{
-				int length = 0;
-				memcpy(&length, pos, sizeof(int));
-				pos += sizeof(int);
-
-				m_normalImagePaths[i] = new EFK_CHAR[length];
-				memcpy(m_normalImagePaths[i], pos, length * sizeof(EFK_CHAR));
-				pos += length * sizeof(EFK_CHAR);
-
-				m_normalImages[i] = NULL;
-			}
-		}
-
-		// 画像
-		memcpy(&m_distortionImageCount, pos, sizeof(int));
-		pos += sizeof(int);
-
-		if (m_distortionImageCount > 0)
-		{
-			m_distortionImagePaths = new EFK_CHAR*[m_distortionImageCount];
-			m_distortionImages = new TextureData*[m_distortionImageCount];
-
-			for (int i = 0; i < m_distortionImageCount; i++)
-			{
-				int length = 0;
-				memcpy(&length, pos, sizeof(int));
-				pos += sizeof(int);
-
-				m_distortionImagePaths[i] = new EFK_CHAR[length];
-				memcpy(m_distortionImagePaths[i], pos, length * sizeof(EFK_CHAR));
-				pos += length * sizeof(EFK_CHAR);
-
-				m_distortionImages[i] = NULL;
-			}
-		}
-	}
-
-	if( m_version >= 1 )
-	{
-		// ウェーブ
-		memcpy( &m_WaveCount, pos, sizeof(int) );
-		pos += sizeof(int);
-
-		if( m_WaveCount > 0 )
-		{
-			m_WavePaths = new EFK_CHAR*[ m_WaveCount ];
-			m_pWaves = new void*[ m_WaveCount ];
-
-			for( int i = 0; i < m_WaveCount; i++ )
-			{
-				int length = 0;
-				memcpy( &length, pos, sizeof(int) );
-				pos += sizeof(int);
-
-				m_WavePaths[i] = new EFK_CHAR[ length ];
-				memcpy( m_WavePaths[i], pos, length * sizeof(EFK_CHAR) );
-				pos += length * sizeof(EFK_CHAR);
-
-				m_pWaves[i] = NULL;
-			}
-		}
-	}
-
-	if( m_version >= 6 )
-	{
-		/* モデル */
-		memcpy( &m_modelCount, pos, sizeof(int) );
-		pos += sizeof(int);
-
-		if( m_modelCount > 0 )
-		{
-			m_modelPaths = new EFK_CHAR*[ m_modelCount ];
-			m_pModels = new void*[ m_modelCount ];
-
-			for( int i = 0; i < m_modelCount; i++ )
-			{
-				int length = 0;
-				memcpy( &length, pos, sizeof(int) );
-				pos += sizeof(int);
-
-				m_modelPaths[i] = new EFK_CHAR[ length ];
-				memcpy( m_modelPaths[i], pos, length * sizeof(EFK_CHAR) );
-				pos += length * sizeof(EFK_CHAR);
-
-				m_pModels[i] = NULL;
-			}
-		}
-	}
-
-	if (m_version >= 13)
-	{
-		memcpy(&renderingNodesCount, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
-
-		memcpy(&renderingNodesThreshold, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);	
-	}
-
-	// 拡大率
-	if( m_version >= 2 )
-	{
-		memcpy( &m_maginification, pos, sizeof(float) );
-		pos += sizeof(float);
-	}
-
-	m_maginification *= mag;
-	m_maginificationExternal = mag;
-
-	if (m_version >= 11)
-	{
-		memcpy(&m_defaultRandomSeed, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
-	}
-	else
-	{
-		m_defaultRandomSeed = -1;
-	}
-
-	// カリング
-	if( m_version >= 9 )
-	{
-		memcpy( &(Culling.Shape), pos, sizeof(int32_t) );
-		pos += sizeof(int32_t);
-		if(Culling.Shape ==	CullingShape::Sphere)
-		{
-			memcpy( &(Culling.Sphere.Radius), pos, sizeof(float) );
-			pos += sizeof(float);
-		
-			memcpy( &(Culling.Location.X), pos, sizeof(float) );
-			pos += sizeof(float);
-			memcpy( &(Culling.Location.Y), pos, sizeof(float) );
-			pos += sizeof(float);
-			memcpy( &(Culling.Location.Z), pos, sizeof(float) );
-			pos += sizeof(float);
-		}
-	}
-
-	// ノード
-	m_pRoot = EffectNodeImplemented::Create( this, NULL, pos );
-
-	// リロード用にmaterialPathを記録しておく
-    if (materialPath) m_materialPath = materialPath;
+	// save materialPath for reloading
+    if (materialPath != nullptr) m_materialPath = materialPath;
 
 	ReloadResources( materialPath );
 	return true;
