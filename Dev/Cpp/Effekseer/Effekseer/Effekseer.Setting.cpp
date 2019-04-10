@@ -17,6 +17,8 @@
 #include "Renderer/Effekseer.ModelRenderer.h"
 #include "Renderer/Effekseer.TrackRenderer.h"
 
+#include "Effekseer.Effect.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -32,6 +34,8 @@ Setting::Setting()
 	, m_soundLoader(NULL)
 	, m_modelLoader(NULL)
 {
+	auto effectFactory = new EffectFactory();
+	effectFactories.push_back(effectFactory);
 }
 
 //----------------------------------------------------------------------------------
@@ -39,11 +43,16 @@ Setting::Setting()
 //----------------------------------------------------------------------------------
 Setting::~Setting()
 {
+	for (auto& e : effectFactories)
+	{
+		ES_SAFE_RELEASE(e);
+	}
+	effectFactories.clear();
+
 	ES_SAFE_DELETE(m_effectLoader);
 	ES_SAFE_DELETE(m_textureLoader);
 	ES_SAFE_DELETE(m_soundLoader);
 	ES_SAFE_DELETE(m_modelLoader);
-
 }
 
 //----------------------------------------------------------------------------------
@@ -138,12 +147,23 @@ void Setting::SetSoundLoader(SoundLoader* loader)
 	m_soundLoader = loader;
 }
 
+void Setting::AddEffectFactory(EffectFactory* effectFactory) { 
+	
+	if (effectFactory == nullptr)
+		return;
+	ES_SAFE_ADDREF(effectFactory); 
+	effectFactories.push_back(effectFactory);
+}
 
+EffectFactory* Setting::GetEffectFactory(int32_t ind) const
+{
+	return effectFactories[ind]; 
+}
 
+int32_t Setting::GetEffectFactoryCount() const { 
+	return effectFactories.size();
+}
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 }
 //----------------------------------------------------------------------------------
 //

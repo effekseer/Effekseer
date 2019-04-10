@@ -103,9 +103,88 @@ struct EffectInstanceTerm
 };
 
 /**
-	@brief	エフェクトパラメータークラス
-	@note
-	エフェクトに設定されたパラメーター。
+	@brief
+	\~English A class to edit an instance of EffectParameter for supporting original format when a binary is loaded.
+	\~Japanese	独自フォーマットをサポートするための、バイナリが読み込まれた時にEffectParameterのインスタンスを編集するクラス
+*/
+class EffectFactory : public ReferenceObject
+{
+protected:
+	/**
+	@brief	
+	\~English load body data(parameters of effect) from a binary
+	\~Japanese	バイナリから本体(エフェクトのパラメーター)を読み込む。
+	*/
+	bool LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath); 
+
+	/**
+	@brief
+	\~English set texture data into specified index
+	\~Japanese	指定されたインデックスにテクスチャを設定する。
+	*/
+	void SetTexture(Effect* effect, int32_t index, TextureType type, TextureData* data);
+
+	/**
+	@brief
+	\~English set sound data into specified index
+	\~Japanese	指定されたインデックスに音を設定する。
+	*/
+
+	void SetSound(Effect* effect, int32_t index, void* data);
+
+	/**
+	@brief
+	\~English set model data into specified index
+	\~Japanese	指定されたインデックスにモデルを設定する。
+	*/
+	void SetModel(Effect* effect, int32_t index, void* data);
+
+
+public:
+	EffectFactory();
+
+	virtual ~EffectFactory();
+
+	/**
+		@brief
+		\~English this method is called to check whether loaded binary are supported. 
+		\~Japanese	バイナリがサポートされているか確認するためにこのメソッドが呼ばれる。
+	*/
+	virtual bool OnCheckIsBinarySupported(const void* data, int32_t size);
+
+	/**
+		@brief
+		\~English this method is called to check whether reloading are supported.
+		\~Japanese	リロードがサポートされているか確認するためにこのメソッドが呼ばれる。
+	*/
+	virtual bool OnCheckIsReloadSupported();
+
+	/**
+		@brief
+		\~English this method is called when load a effect from binary
+		\~Japanese	バイナリからエフェクトを読み込む時に、このメソッドが呼ばれる。
+	*/
+	virtual bool OnLoading(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath);
+
+	/**
+		@brief
+		\~English this method is called when load resources
+		\~Japanese	リソースを読み込む時に、このメソッドが呼ばれる。
+	*/
+	virtual void OnLoadingResource(Effect* effect, const void* data, int32_t size, const EFK_CHAR* materialPath);
+
+	/**
+	@brief
+	\~English this method is called when unload resources
+	\~Japanese	リソースを廃棄される時に、このメソッドが呼ばれる。
+	*/
+	virtual void OnUnloadingResource(Effect* effect);
+};
+
+/**
+	@brief	
+	\~English	Effect parameters
+	\~Japanese	エフェクトパラメータークラス
 */
 class Effect
 	: public IReference
@@ -206,6 +285,12 @@ public:
 	virtual int32_t GetColorImageCount() const = 0;
 
 	/**
+	@brief	\~English	Get a color image's path
+	\~Japanese	色画像のパスを取得する。
+	*/
+	virtual const EFK_CHAR* GetColorImagePath(int n) const = 0;
+
+	/**
 	@brief	格納されている法線画像のポインタを取得する。
 	@param	n	[in]	画像のインデックス
 	@return	画像のポインタ
@@ -217,6 +302,12 @@ public:
 	*/
 	virtual int32_t GetNormalImageCount() const = 0;
 
+	/**
+	@brief	\~English	Get a normal image's path
+	\~Japanese	法線画像のパスを取得する。
+	*/
+	virtual const EFK_CHAR* GetNormalImagePath(int n) const = 0;
+	
 	/**
 	@brief	格納されている歪み画像のポインタを取得する。
 	@param	n	[in]	画像のインデックス
@@ -230,6 +321,12 @@ public:
 	virtual int32_t GetDistortionImageCount() const = 0;
 
 	/**
+	@brief	\~English	Get a distortion image's path
+	\~Japanese	歪み画像のパスを取得する。
+	*/
+	virtual const EFK_CHAR* GetDistortionImagePath(int n) const = 0;
+	
+	/**
 		@brief	格納されている音波形のポインタを取得する。
 	*/
 	virtual void* GetWave( int n ) const = 0;
@@ -240,6 +337,12 @@ public:
 	virtual int32_t GetWaveCount() const = 0;
 
 	/**
+	@brief	\~English	Get a wave's path
+	\~Japanese	音波形のパスを取得する。
+	*/
+	virtual const EFK_CHAR* GetWavePath(int n) const = 0;
+	
+	/**
 		@brief	格納されているモデルのポインタを取得する。
 	*/
 	virtual void* GetModel( int n ) const = 0;
@@ -249,6 +352,12 @@ public:
 	*/
 	virtual int32_t GetModelCount() const = 0;
 
+	/**
+	@brief	\~English	Get a model's path
+	\~Japanese	モデルのパスを取得する。
+	*/
+	virtual const EFK_CHAR* GetModelPath(int n) const = 0;
+	
 	/**
 		@brief
 		\~English	Reload this effect
@@ -370,7 +479,7 @@ public:
 	/**
 		@brief	画像等リソースの再読み込みを行う。
 	*/
-	virtual void ReloadResources( const EFK_CHAR* materialPath = nullptr ) = 0;
+	virtual void ReloadResources( const void* data = nullptr, int32_t size = 0, const EFK_CHAR* materialPath = nullptr ) = 0;
 
 	/**
 		@brief	画像等リソースの破棄を行う。

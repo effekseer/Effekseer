@@ -14,6 +14,9 @@ namespace Effekseer {
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+class EffectFactory;
+
 /**
 	@brief	設定クラス
 	@note
@@ -24,13 +27,15 @@ namespace Effekseer {
 		: public ReferenceObject
 	{
 	private:
-		/* 座標系 */
+		//! coordinate system
 		CoordinateSystem		m_coordinateSystem;
 
 		EffectLoader*	m_effectLoader;
 		TextureLoader*	m_textureLoader;
 		SoundLoader*	m_soundLoader;
 		ModelLoader*	m_modelLoader;
+
+		std::vector<EffectFactory*> effectFactories;
 
 	protected:
 		/**
@@ -111,6 +116,27 @@ namespace Effekseer {
 			@param	loader	[in]		ローダー
 			*/
 		void SetSoundLoader(SoundLoader* loader);
+
+		/**
+			@brief
+			\~English	Add effect factory
+			\~Japanese Add an effect factory
+		*/
+		void AddEffectFactory(EffectFactory* effectFactory);
+
+		/**
+			@brief
+			\~English	Get effect factory
+			\~Japanese Effect Factoryを取得する。
+		*/
+		EffectFactory* GetEffectFactory(int32_t ind) const;
+
+		/**
+			@brief
+			\~English	Get the number of effect factory
+			\~Japanese Effect Factoryの数を取得する。
+		*/
+		int32_t GetEffectFactoryCount() const;
 	};
 
 //----------------------------------------------------------------------------------
