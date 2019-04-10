@@ -323,6 +323,8 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 
 	// ノード
 	m_pRoot = EffectNodeImplemented::Create(this, NULL, pos);
+
+	return true;
 }
 
 void EffectImplemented::ResetReloadingBackup()
