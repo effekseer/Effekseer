@@ -1241,8 +1241,9 @@ void Instance::ModifyMatrixFromLocationAbs( float deltaFrame )
 
 			if (deltaFrame > 0)
 			{
+				float eps = 0.0001f;
 				m_GlobalRevisionVelocity += targetDirection * force * deltaFrame;
-				float currentVelocity = Vector3D::Length(m_GlobalRevisionVelocity);
+				float currentVelocity = Vector3D::Length(m_GlobalRevisionVelocity) + eps;
 				Vector3D currentDirection = m_GlobalRevisionVelocity / currentVelocity;
 
 				m_GlobalRevisionVelocity = (targetDirection * control + currentDirection * (1.0f - control)) * currentVelocity;
