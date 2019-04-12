@@ -128,16 +128,26 @@ struct ParameterCommonValues_8
 
 struct ParameterCommonValues
 {
-	int MaxGeneration;
-	BindType TranslationBindType;
-	BindType RotationBindType;
-	BindType ScalingBindType;
-	int		RemoveWhenLifeIsExtinct;
-	int		RemoveWhenParentIsRemoved;
-	int		RemoveWhenChildrenIsExtinct;
+	int MaxGeneration = 1;
+	BindType TranslationBindType = BindType::Always;
+	BindType RotationBindType = BindType::Always;
+	BindType ScalingBindType = BindType::Always;
+	int RemoveWhenLifeIsExtinct = 1;
+	int RemoveWhenParentIsRemoved = 0;
+	int RemoveWhenChildrenIsExtinct = 0;
 	random_int	life;
 	random_float GenerationTime;
 	random_float GenerationTimeOffset;
+
+	ParameterCommonValues()
+	{
+		life.max = 1;
+		life.min = 1;
+		GenerationTime.max = 1;
+		GenerationTime.min = 1;
+		GenerationTimeOffset.max = 0;
+		GenerationTimeOffset.min = 0;
+	}
 };
 
 struct ParameterDepthValues
