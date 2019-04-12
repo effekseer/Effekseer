@@ -84,16 +84,17 @@ public:
 	HolderCollection<void*> models;
 };
 
-/**
-	@brief	エフェクトパラメーター
-	@note
-	エフェクトに設定されたパラメーター。
-*/
 
+
+
+/**
+	@brief	Effect parameter
+*/
 class EffectImplemented : public Effect, public ReferenceObject
 {
 	friend class ManagerImplemented;
 	friend class EffectNodeImplemented;
+	friend class EffectFactory;
 
 protected:
 	ManagerImplemented* m_pManager;
@@ -101,6 +102,8 @@ protected:
 	Setting* m_setting;
 
 	mutable std::atomic<int32_t> m_reference;
+
+	EffectFactory* factory = nullptr;
 
 	int m_version;
 
@@ -233,10 +236,9 @@ public:
 	*/
 	TextureData* GetColorImage(int n) const override;
 
-	/**
-		@brief	格納されている画像のポインタの個数を取得する。
-	*/
 	int32_t GetColorImageCount() const override;
+
+	const EFK_CHAR* GetColorImagePath(int n) const override;
 
 	/**
 	@brief	格納されている画像のポインタを取得する。
@@ -245,23 +247,25 @@ public:
 
 	int32_t GetNormalImageCount() const override;
 
+	const EFK_CHAR* GetNormalImagePath(int n) const override;
+
 	TextureData* GetDistortionImage(int n) const override;
 
 	int32_t GetDistortionImageCount() const override;
 
-	/**
-		@brief	格納されている音波形のポインタを取得する。
-	*/
+	const EFK_CHAR* GetDistortionImagePath(int n) const override;
+
 	void* GetWave(int n) const override;
 
 	int32_t GetWaveCount() const override;
 
-	/**
-		@brief	格納されているモデルのポインタを取得する。
-	*/
+	const EFK_CHAR* GetWavePath(int n) const override;
+
 	void* GetModel(int n) const override;
 
 	int32_t GetModelCount() const override;
+
+	const EFK_CHAR* GetModelPath(int n) const override;
 
 	/**
 		@brief	エフェクトのリロードを行う。
@@ -295,7 +299,7 @@ public:
 	/**
 		@brief	画像等リソースの再読み込みを行う。
 	*/
-	void ReloadResources(const EFK_CHAR* materialPath) override;
+	void ReloadResources(const void* data, int32_t size, const EFK_CHAR* materialPath) override;
 
 	void UnloadResources(const EFK_CHAR* materialPath);
 
