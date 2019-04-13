@@ -10,6 +10,7 @@
 #include <atomic>
 #include <stdint.h>
 #include <climits>
+#include <vector>
 
 //----------------------------------------------------------------------------------
 //
