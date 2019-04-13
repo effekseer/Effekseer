@@ -2938,6 +2938,25 @@ public:
 	virtual TextureData* Load( const EFK_CHAR* path, TextureType textureType ) { return nullptr; }
 
 	/**
+		@brief
+		\~English	a function called when texture is loaded
+		\~Japanese	テクスチャが読み込まれるときに呼ばれる関数
+		@param	data
+		\~English	data pointer
+		\~Japanese	データのポインタ
+		@param	size
+		\~English	the size of data
+		\~Japanese	データの大きさ
+		@param	textureType
+		\~English	a kind of texture
+		\~Japanese	テクスチャの種類
+		@return
+		\~English	a pointer of loaded texture
+		\~Japanese	読み込まれたテクスチャのポインタ
+	*/
+	virtual TextureData* Load(const void* data, int32_t size, TextureType textureType) { return nullptr; }
+
+	/**
 		@brief	テクスチャを破棄する。
 		@param	data	[in]	テクスチャ
 		@note
@@ -2995,6 +3014,22 @@ public:
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
 	virtual void* Load( const EFK_CHAR* path ) { return NULL; }
+
+	/**
+		@brief
+		\~English	a function called when model is loaded
+		\~Japanese	モデルが読み込まれるときに呼ばれる関数
+		@param	data
+		\~English	data pointer
+		\~Japanese	データのポインタ
+		@param	size
+		\~English	the size of data
+		\~Japanese	データの大きさ
+		@return
+		\~English	a pointer of loaded texture
+		\~Japanese	読み込まれたモデルのポインタ
+	*/
+	virtual void* Load(const void* data, int32_t size) { return nullptr; }
 
 	/**
 		@brief	モデルを破棄する。
@@ -3463,6 +3498,22 @@ public:
 		::Effekseer::Effect::Create実行時に使用される。
 	*/
 	virtual void* Load( const EFK_CHAR* path ) { return NULL; }
+
+	/**
+		@brief
+		\~English	a function called when sound is loaded
+		\~Japanese	サウンドが読み込まれるときに呼ばれる関数
+		@param	data
+		\~English	data pointer
+		\~Japanese	データのポインタ
+		@param	size
+		\~English	the size of data
+		\~Japanese	データの大きさ
+		@return
+		\~English	a pointer of loaded texture
+		\~Japanese	読み込まれたサウンドのポインタ
+	*/
+	virtual void* Load(const void* data, int32_t size) { return nullptr; }
 
 	/**
 		@brief	サウンドを破棄する。

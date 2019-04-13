@@ -26,7 +26,7 @@ namespace Effekseer.Exporter
 		Dictionary<string, Buffer> buffers = new Dictionary<string, Buffer>();
 		Dictionary<string, BufferView> bufferViews = new Dictionary<string, BufferView>();
 
-		public bool Export(string pathWithoutExt, glTFExporterOption option = null)
+		public bool Export(string path, glTFExporterOption option = null)
 		{
 			if(option == null)
 			{
@@ -44,7 +44,7 @@ namespace Effekseer.Exporter
 
 			var extentions = new Dictionary<string, object>();
 
-			gltf.Add("extentions", extentions);
+			gltf.Add("extensions", extentions);
 
 			var effekseerExtention = new EffekseerExtention();
 
@@ -55,10 +55,9 @@ namespace Effekseer.Exporter
 			extentions.Add("Effekseer", effekseerExtention);
 
 			// buffer
-			var basePath = System.IO.Path.GetFileNameWithoutExtension(pathWithoutExt);
 			Buffer buffer = new Buffer();
 			buffer.byteLength = internalBuffer.Count;
-			buffer.uri = basePath + ".bin";
+            buffer.uri = System.IO.Path.ChangeExtension(path, "bin");
 			buffers.Add("effectBuffer", buffer);
 			gltf.Add("buffers", buffers);
 
@@ -74,8 +73,8 @@ namespace Effekseer.Exporter
 
 			if(option.Format == glTFExporterFormat.glTF)
 			{
-				System.IO.File.WriteAllText(pathWithoutExt + ".json", json);
-				System.IO.File.WriteAllBytes(pathWithoutExt + ".bin", internalBuffer.ToArray());
+				System.IO.File.WriteAllText(System.IO.Path.ChangeExtension(path, "json"), json);
+				System.IO.File.WriteAllBytes(System.IO.Path.ChangeExtension(path, "bin"), internalBuffer.ToArray());
 			}
 			else
 			{
@@ -85,15 +84,15 @@ namespace Effekseer.Exporter
 				exported.Add(BitConverter.GetBytes(2));
 				exported.Add(BitConverter.GetBytes(12 + 8 + jsonBuffer.Length + 8 + internalBuffer.Count));
 
-				exported.Add(BitConverter.GetBytes(8 + jsonBuffer.Length));
+				exported.Add(BitConverter.GetBytes(jsonBuffer.Length));
 				exported.Add(Encoding.ASCII.GetBytes("JSON").Take(4).ToArray());
 				exported.Add(jsonBuffer);
 
-				exported.Add(BitConverter.GetBytes(8 + internalBuffer.Count));
-				exported.Add(Encoding.ASCII.GetBytes("BIN"));
+				exported.Add(BitConverter.GetBytes(internalBuffer.Count));
+				exported.Add(Encoding.ASCII.GetBytes("BIN").Concat(new byte [] {0}).ToArray());
 				exported.Add(internalBuffer.ToArray());
 
-				System.IO.File.WriteAllBytes(pathWithoutExt + ".glb", exported.SelectMany(_=>_).ToArray());
+				System.IO.File.WriteAllBytes(System.IO.Path.ChangeExtension(path, "glb"), exported.SelectMany(_=>_).ToArray());
 			}
 
 			return true;

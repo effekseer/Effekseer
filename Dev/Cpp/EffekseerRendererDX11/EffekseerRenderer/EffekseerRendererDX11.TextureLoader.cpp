@@ -58,107 +58,104 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 	
 	if( reader.get() != NULL )
 	{
-		ID3D11ShaderResourceView* texture = NULL;
-		Effekseer::TextureData* textureData = nullptr;
-
 		size_t size_texture = reader->GetLength();
 		char* data_texture = new char[size_texture];
 		reader->Read( data_texture, size_texture );
 
-		if( size_texture < 4 )
-		{
-		}
-		else if(data_texture[1] == 'P' &&
-			data_texture[2] == 'N' &&
-			data_texture[3] == 'G')
-		{
-			if(pngTextureLoader.Load(data_texture, size_texture, false))
-			{
-				ID3D11Texture2D* tex = NULL;
-
-				D3D11_TEXTURE2D_DESC TexDesc{};
-				TexDesc.Width = pngTextureLoader.GetWidth();
-				TexDesc.Height = pngTextureLoader.GetHeight();
-				TexDesc.ArraySize = 1;
-				TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-				TexDesc.SampleDesc.Count = 1;
-				TexDesc.SampleDesc.Quality = 0;
-				TexDesc.Usage = D3D11_USAGE_DEFAULT;
-				TexDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-				TexDesc.CPUAccessFlags = 0;
-				TexDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
-
-				D3D11_SUBRESOURCE_DATA data;
-				data.pSysMem = pngTextureLoader.GetData().data();
-				data.SysMemPitch = TexDesc.Width * 4;
-				data.SysMemSlicePitch = TexDesc.Width * TexDesc.Height * 4;
-
-				HRESULT hr = device->CreateTexture2D(&TexDesc, nullptr, &tex);
-
-				if (FAILED(hr))
-				{
-					goto Exit;
-				}
-			
-				D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
-				desc.Format = TexDesc.Format;
-				desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-				desc.Texture2D.MipLevels = -1;
-
-				hr = device->CreateShaderResourceView(tex, &desc, &texture);
-				if (FAILED(hr))
-				{
-					ES_SAFE_RELEASE(texture);
-					goto Exit;
-				}
-
-				context->UpdateSubresource(tex, 0, 0, pngTextureLoader.GetData().data(), data.SysMemPitch, 0);
-
-				ES_SAFE_RELEASE(tex);
-
-				// Generate mipmap
-				context->GenerateMips(texture);
-
-				textureData = new Effekseer::TextureData();
-				textureData->UserPtr = texture;
-				textureData->UserID = 0;
-				textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-				textureData->Width = TexDesc.Width;
-				textureData->Height = TexDesc.Height;
-			}
-		}
-		else if( data_texture[0] == 'D' &&
-			data_texture[1] == 'D' &&
-			data_texture[2] == 'S' &&
-			data_texture[3] == ' ')
-		{
-			ID3D11Resource* textureR = NULL;
-			EffekseerDirectX::CreateDDSTextureFromMemory(
-				device,
-				(uint8_t*)data_texture,
-				size_texture,
-				&textureR,
-				&texture );
-
-			ES_SAFE_RELEASE(textureR);
-
-			// To get texture size, use loader
-			ddsTextureLoader.Load(data_texture, size_texture);
-
-			textureData = new Effekseer::TextureData();
-			textureData->UserPtr = texture;
-			textureData->UserID = 0;
-			textureData->TextureFormat = ddsTextureLoader.GetTextureFormat();
-			textureData->Width = ddsTextureLoader.GetWidth();
-			textureData->Height = ddsTextureLoader.GetHeight();
-		}
-
-	Exit:;
+		Effekseer::TextureData* textureData = Load(data_texture, size_texture, textureType);
 		delete[] data_texture;
 		return textureData;
 	}
 
 	return nullptr;
+}
+
+Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effekseer::TextureType textureType) {
+	auto size_texture = size;
+	auto data_texture = (uint8_t*)data;
+	ID3D11ShaderResourceView* texture = NULL;
+	Effekseer::TextureData* textureData = nullptr;
+
+	if (size_texture < 4)
+	{
+	}
+	else if (data_texture[1] == 'P' && data_texture[2] == 'N' && data_texture[3] == 'G')
+	{
+		if (pngTextureLoader.Load(data_texture, size_texture, false))
+		{
+			ID3D11Texture2D* tex = NULL;
+
+			D3D11_TEXTURE2D_DESC TexDesc{};
+			TexDesc.Width = pngTextureLoader.GetWidth();
+			TexDesc.Height = pngTextureLoader.GetHeight();
+			TexDesc.ArraySize = 1;
+			TexDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			TexDesc.SampleDesc.Count = 1;
+			TexDesc.SampleDesc.Quality = 0;
+			TexDesc.Usage = D3D11_USAGE_DEFAULT;
+			TexDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+			TexDesc.CPUAccessFlags = 0;
+			TexDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+
+			D3D11_SUBRESOURCE_DATA data;
+			data.pSysMem = pngTextureLoader.GetData().data();
+			data.SysMemPitch = TexDesc.Width * 4;
+			data.SysMemSlicePitch = TexDesc.Width * TexDesc.Height * 4;
+
+			HRESULT hr = device->CreateTexture2D(&TexDesc, nullptr, &tex);
+
+			if (FAILED(hr))
+			{
+				goto Exit;
+			}
+
+			D3D11_SHADER_RESOURCE_VIEW_DESC desc{};
+			desc.Format = TexDesc.Format;
+			desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			desc.Texture2D.MipLevels = -1;
+
+			hr = device->CreateShaderResourceView(tex, &desc, &texture);
+			if (FAILED(hr))
+			{
+				ES_SAFE_RELEASE(texture);
+				goto Exit;
+			}
+
+			context->UpdateSubresource(tex, 0, 0, pngTextureLoader.GetData().data(), data.SysMemPitch, 0);
+
+			ES_SAFE_RELEASE(tex);
+
+			// Generate mipmap
+			context->GenerateMips(texture);
+
+			textureData = new Effekseer::TextureData();
+			textureData->UserPtr = texture;
+			textureData->UserID = 0;
+			textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
+			textureData->Width = TexDesc.Width;
+			textureData->Height = TexDesc.Height;
+		}
+	}
+	else if (data_texture[0] == 'D' && data_texture[1] == 'D' && data_texture[2] == 'S' && data_texture[3] == ' ')
+	{
+		ID3D11Resource* textureR = NULL;
+		EffekseerDirectX::CreateDDSTextureFromMemory(device, (uint8_t*)data_texture, size_texture, &textureR, &texture);
+
+		ES_SAFE_RELEASE(textureR);
+
+		// To get texture size, use loader
+		ddsTextureLoader.Load(data_texture, size_texture);
+
+		textureData = new Effekseer::TextureData();
+		textureData->UserPtr = texture;
+		textureData->UserID = 0;
+		textureData->TextureFormat = ddsTextureLoader.GetTextureFormat();
+		textureData->Width = ddsTextureLoader.GetWidth();
+		textureData->Height = ddsTextureLoader.GetHeight();
+	}
+
+Exit:;
+	return textureData;
 }
 
 //----------------------------------------------------------------------------------

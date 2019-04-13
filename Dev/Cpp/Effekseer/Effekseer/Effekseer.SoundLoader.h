@@ -41,6 +41,22 @@ public:
 	virtual void* Load( const EFK_CHAR* path ) { return NULL; }
 
 	/**
+		@brief
+		\~English	a function called when sound is loaded
+		\~Japanese	サウンドが読み込まれるときに呼ばれる関数
+		@param	data
+		\~English	data pointer
+		\~Japanese	データのポインタ
+		@param	size
+		\~English	the size of data
+		\~Japanese	データの大きさ
+		@return
+		\~English	a pointer of loaded texture
+		\~Japanese	読み込まれたサウンドのポインタ
+	*/
+	virtual void* Load(const void* data, int32_t size) { return nullptr; }
+
+	/**
 		@brief	サウンドを破棄する。
 		@param	data	[in]	サウンド
 		@note

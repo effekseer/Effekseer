@@ -42,6 +42,25 @@ public:
 	virtual TextureData* Load( const EFK_CHAR* path, TextureType textureType ) { return nullptr; }
 
 	/**
+		@brief
+		\~English	a function called when texture is loaded
+		\~Japanese	テクスチャが読み込まれるときに呼ばれる関数
+		@param	data
+		\~English	data pointer
+		\~Japanese	データのポインタ
+		@param	size
+		\~English	the size of data
+		\~Japanese	データの大きさ
+		@param	textureType
+		\~English	a kind of texture
+		\~Japanese	テクスチャの種類
+		@return
+		\~English	a pointer of loaded texture
+		\~Japanese	読み込まれたテクスチャのポインタ
+	*/
+	virtual TextureData* Load(const void* data, int32_t size, TextureType textureType) { return nullptr; }
+
+	/**
 		@brief	テクスチャを破棄する。
 		@param	data	[in]	テクスチャ
 		@note

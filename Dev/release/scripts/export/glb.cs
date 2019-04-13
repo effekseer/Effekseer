@@ -110,7 +110,7 @@ public class Script
 					option.Scale = mag[0];
 					option.Format = Effekseer.Exporter.glTFExporterFormat.glb;
 					var exporter = new Effekseer.Exporter.glTFExporter();
-					exporter.Export(System.IO.Path.ChangeExtension(path, ""), option);
+					exporter.Export(path, option);
 					Effekseer.Core.Option.ExternalMagnification.SetValue(mag[0]);
 					ShouldBeRemoved = true;
 				}

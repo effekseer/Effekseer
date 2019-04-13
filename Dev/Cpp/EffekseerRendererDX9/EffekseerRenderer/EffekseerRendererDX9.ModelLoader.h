@@ -33,6 +33,8 @@ public:
 public:
 	void* Load( const EFK_CHAR* path );
 
+	void* Load(const void* data, int32_t size) override;
+
 	void Unload( void* data );
 };
 //----------------------------------------------------------------------------------
