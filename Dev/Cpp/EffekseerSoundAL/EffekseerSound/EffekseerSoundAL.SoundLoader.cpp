@@ -1,21 +1,51 @@
 ﻿
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include <assert.h>
 #include <string.h>
 #include <memory>
 #include "EffekseerSoundAL.SoundImplemented.h"
 #include "EffekseerSoundAL.SoundLoader.h"
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace EffekseerSound
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
+namespace SupportOpenAL
+{
+class BinaryFileReader : public Effekseer::FileReader
+{
+private:
+	uint8_t* origin = nullptr;
+	int32_t pos = 0;
+	int32_t size_ = 0;
+
+public:
+	BinaryFileReader(const void* data, int32_t size)
+	{
+		origin = (uint8_t*)data;
+		size_ = size;
+	}
+
+	virtual ~BinaryFileReader() {}
+
+	size_t Read(void* buffer, size_t size) override
+	{
+		if (pos + size > size_)
+		{
+			size = size_ - pos;
+		}
+
+		memcpy(buffer, (origin + pos), size);
+		pos += size;
+		return size;
+	}
+
+	void Seek(int position) override { pos = position; }
+
+	int GetPosition() override { return pos; }
+
+	size_t GetLength() override { return size_; }
+};
+}
+
 SoundLoader::SoundLoader( ::Effekseer::FileInterface* fileInterface )
 	: m_fileInterface( fileInterface )
 {
@@ -25,96 +55,96 @@ SoundLoader::SoundLoader( ::Effekseer::FileInterface* fileInterface )
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 SoundLoader::~SoundLoader()
 {
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void* SoundLoader::Load( const EFK_CHAR* path )
-{
-	assert( path != NULL );
-	
-	std::unique_ptr<::Effekseer::FileReader> 
-		reader( m_fileInterface->OpenRead( path ) );
-	if( reader.get() == NULL ) return NULL;
-
+void* SoundLoader::Load(::Effekseer::FileReader* reader) {
 	uint32_t chunkIdent, chunkSize;
-	// RIFFチャンクをチェック
+	// check RIFF chunk
 	reader->Read(&chunkIdent, 4);
 	reader->Read(&chunkSize, 4);
-	if (memcmp(&chunkIdent, "RIFF", 4) != 0) {
+	if (memcmp(&chunkIdent, "RIFF", 4) != 0)
+	{
 		return NULL;
 	}
 
-	// WAVEシンボルをチェック
+	// check WAVE Symbol
 	reader->Read(&chunkIdent, 4);
-	if (memcmp(&chunkIdent, "WAVE", 4) != 0) {
+	if (memcmp(&chunkIdent, "WAVE", 4) != 0)
+	{
 		return NULL;
 	}
-	
-	struct { 
-		uint16_t	wFormatTag;
-		uint16_t	nChannels;
-		uint32_t	nSamplesPerSec;
-		uint32_t	nAvgBytesPerSec;
-		uint16_t	nBlockAlign;
-		uint16_t	wBitsPerSample;
-		uint16_t	cbSize;
+
+	struct
+	{
+		uint16_t wFormatTag;
+		uint16_t nChannels;
+		uint32_t nSamplesPerSec;
+		uint32_t nAvgBytesPerSec;
+		uint16_t nBlockAlign;
+		uint16_t wBitsPerSample;
+		uint16_t cbSize;
 	} wavefmt = {0};
 
-	for (;;) {
+	for (;;)
+	{
 		reader->Read(&chunkIdent, 4);
 		reader->Read(&chunkSize, 4);
 
-		if (memcmp(&chunkIdent, "fmt ", 4) == 0) {
-			// フォーマットチャンク
+		if (memcmp(&chunkIdent, "fmt ", 4) == 0)
+		{
+			// format chunk
 			uint32_t size = (chunkSize < (uint32_t)sizeof(wavefmt)) ? chunkSize : (uint32_t)sizeof(wavefmt);
 			reader->Read(&wavefmt, size);
-			if (size < chunkSize) {
+			if (size < chunkSize)
+			{
 				reader->Seek(reader->GetPosition() + chunkSize - size);
 			}
-		} else if (memcmp(&chunkIdent, "data", 4) == 0) {
-			// データチャンク
+		}
+		else if (memcmp(&chunkIdent, "data", 4) == 0)
+		{
+			// data chunk
 			break;
-		} else {
-			// 不明なチャンクはスキップ
+		}
+		else
+		{
+			// unknown chunk
 			reader->Seek(reader->GetPosition() + chunkSize);
 		}
 	}
-	
-	// フォーマットチェック
-	if (wavefmt.wFormatTag != 1 || wavefmt.nChannels > 2) {
+
+	// check format
+	if (wavefmt.wFormatTag != 1 || wavefmt.nChannels > 2)
+	{
 		return NULL;
 	}
 
 	uint8_t* buffer;
 	uint32_t size;
-	switch (wavefmt.wBitsPerSample) {
+	switch (wavefmt.wBitsPerSample)
+	{
 	case 8:
-		// 8bit -> 16bit PCM変換
+		// convert 8bit -> 16bit PCM
 		size = chunkSize * 2;
 		buffer = new uint8_t[size];
 		reader->Read(&buffer[size / 2], chunkSize);
 		{
 			int16_t* dst = (int16_t*)&buffer[0];
 			uint8_t* src = (uint8_t*)&buffer[size / 2];
-			for (uint32_t i = 0; i < size; i += 2) {
+			for (uint32_t i = 0; i < size; i += 2)
+			{
 				*dst++ = (int16_t)(((int32_t)*src++ - 128) << 8);
 			}
 		}
 		break;
 	case 16:
-		// そのまま読み込み
+		// not convert
 		buffer = new uint8_t[chunkSize];
 		size = reader->Read(buffer, chunkSize);
 		break;
 	case 24:
-		// 24bit -> 16bit PCM変換
+		// convert 24bit -> 16bit PCM
 		size = chunkSize * 2 / 3;
 		buffer = new uint8_t[size];
 		{
@@ -123,7 +153,8 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 
 			int16_t* dst = (int16_t*)&buffer[0];
 			uint8_t* src = (uint8_t*)&chunkData[0];
-			for (uint32_t i = 0; i < size; i += 2) {
+			for (uint32_t i = 0; i < size; i += 2)
+			{
 				*dst++ = (int16_t)(src[1] | (src[2] << 8));
 				src += 3;
 			}
@@ -146,10 +177,24 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 
 	return soundData;
 }
+
+void* SoundLoader::Load( const EFK_CHAR* path )
+{
+	assert( path != NULL );
 	
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+	std::unique_ptr<::Effekseer::FileReader> 
+		reader( m_fileInterface->OpenRead( path ) );
+	if( reader.get() == NULL ) return NULL;
+
+	return Load(reader.get());
+}
+	
+void* SoundLoader::Load(const void* data, int32_t size)
+{
+	auto reader = SupportOpenAL::BinaryFileReader(data, size);
+	return Load(&reader);
+}
+
 void SoundLoader::Unload( void* data )
 {
 	SoundData* soundData = (SoundData*)data;
@@ -160,10 +205,4 @@ void SoundLoader::Unload( void* data )
 	delete soundData;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 }
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
