@@ -76,7 +76,8 @@ namespace Effekseer.GUI
 		{
 			if (!native.IsConnectingNetwork()) return;
 
-			var data = Binary.Exporter.Export(Core.Option.Magnification);
+			var binaryExporter = new Binary.Exporter();
+			var data = binaryExporter.Export(Core.Option.Magnification);
 			fixed (byte* p = &data[0])
 			{
 				native.SendDataByNetwork(System.IO.Path.GetFileNameWithoutExtension(Core.FullPath), new IntPtr(p), data.Length, Core.FullPath);
