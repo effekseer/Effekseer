@@ -26,6 +26,8 @@ class SoundLoader
 public:
 	SoundLoader( SoundImplemented* sound, ::Effekseer::FileInterface* fileInterface = NULL );
 
+	void* Load(const void* data, int32_t size) override;
+
 	virtual ~SoundLoader();
 
 public:

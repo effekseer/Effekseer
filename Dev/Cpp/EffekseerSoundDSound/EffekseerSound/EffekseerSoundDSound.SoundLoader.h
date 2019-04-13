@@ -29,10 +29,14 @@ public:
 
 	virtual ~SoundLoader();
 
-public:
-	void* Load( const EFK_CHAR* path );
+	void* Load(::Effekseer::FileReader* reader);
 
-	void Unload( void* data );
+public:
+	void* Load( const EFK_CHAR* path ) override;
+
+	void* Load(const void* data, int32_t size) override;
+
+	void Unload(void* data) override;
 };
 
 //----------------------------------------------------------------------------------

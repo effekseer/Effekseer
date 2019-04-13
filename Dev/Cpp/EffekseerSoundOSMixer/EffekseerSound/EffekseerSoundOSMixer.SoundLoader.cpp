@@ -48,12 +48,11 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 	std::unique_ptr<uint8_t[]> data(new uint8_t[size]);
 	size = reader->Read( data.get(), size );
 
-	return m_sound->GetDevice()->CreateSound( data.get(), (int32_t)size, false );
+	return Load( data.get(), (int32_t)size );
 }
 	
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+void* SoundLoader::Load(const void* data, int32_t size) { m_sound->GetDevice()->CreateSound(data, (int32_t)size, false); }
+
 void SoundLoader::Unload( void* data )
 {
 	SoundData* soundData = (SoundData*)data;
