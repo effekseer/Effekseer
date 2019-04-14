@@ -177,7 +177,9 @@ namespace Effekseer.Data
 		}
 
 
-        // コンストラクタで初期化時、使用言語がまだ決められないので遅延初期化にする
+        /// <summary>
+        /// this value is initialized lazily because it cannot decide using language in the constructor
+        /// </summary>
         Lazy<Value.PathForImage> LasyBackgroundImage;
 
 		[Name(language = Language.Japanese, value = "背景画像")]
@@ -270,7 +272,51 @@ namespace Effekseer.Data
             get;
             private set;
         }
-        
+
+        [Undo(Undo = false)]
+        [Shown(Shown = false)]
+        public Value.Int RecordingWidth { get; private set; } = new Value.Int(256);
+
+        [Undo(Undo = false)]
+        [Shown(Shown = false)]
+        public Value.Int RecordingHeight { get; private set; } = new Value.Int(256);
+
+        [Undo(Undo = false)]
+        [Shown(Shown =false)]
+        [IO(Export = true, Import = true)]
+        public Value.Boolean IsRecordingGuideShown { get; private set; } = new Value.Boolean(false);
+
+
+        [Undo(Undo = false)]
+        [Shown(Shown = false)]
+        [IO(Export = true, Import = true)]
+        public Value.Int RecordingStartingFrame { get; private set; } = new Value.Int(1);
+
+        [Undo(Undo = false)]
+        [Shown(Shown = false)]
+        [IO(Export = true, Import = true)]
+        public Value.Int RecordingEndingFrame { get; private set; } = new Value.Int(30);
+
+        [Undo(Undo = false)]
+        [Shown(Shown = false)]
+        [IO(Export = true, Import = true)]
+        public Value.Int RecordingFrequency { get; private set; } = new Value.Int(1);
+
+        [Undo(Undo = false)]
+        [Shown(Shown = false)]
+        [IO(Export = true, Import = true)]
+        public Value.Int RecordingHorizontalCount { get; private set; } = new Value.Int(1);
+
+        [Undo(Undo = false)]
+        [Shown(Shown = false)]
+        [IO(Export = true, Import = true)]
+        public Value.Enum<RecordingExporterType> RecordingExporter { get; private set; } = new Value.Enum<RecordingExporterType>(Data.RecordingExporterType.Sprite);
+
+        [Undo(Undo = false)]
+        [Shown(Shown = false)]
+        [IO(Export = true, Import = true)]
+        public Value.Enum<RecordingTransparentMethodType> RecordingTransparentMethod { get; private set; } = new Value.Enum<RecordingTransparentMethodType>(Data.RecordingTransparentMethodType.None);
+
         public OptionValues()
 		{
 			RenderingMode = new Value.Enum<RenderMode>(RenderMode.Normal);

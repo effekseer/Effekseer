@@ -5,7 +5,22 @@ using System.Text;
 
 namespace Effekseer.Data
 {
-	public enum ParentEffectType : int
+    public enum RecordingExporterType : int
+    {
+        Sprite,
+        SpriteSheet,
+        Gif,
+        Avi,
+    }
+
+    public enum RecordingTransparentMethodType : int
+    {
+        None,
+        Original,
+        GenerateAlpha,
+    }
+
+    public enum ParentEffectType : int
 	{
 		[Name(value = "なし", language = Language.Japanese)]
 		[Name(value = "Never", language = Language.English)]

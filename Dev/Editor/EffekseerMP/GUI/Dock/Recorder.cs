@@ -8,11 +8,6 @@ namespace Effekseer.GUI.Dock
 {
 	class Recorder : DockPanel
 	{
-		int startingFrame = 1;
-		int endingFrame = 16;
-		int freq = 1;
-		int theNumberOfImageV = 4;
-		bool nowReloading = false;
 		int selectedTypeIndex = 0;
 		int selectedAlphaIndex = 0;
 
@@ -52,21 +47,27 @@ namespace Effekseer.GUI.Dock
 		protected override void UpdateInternal()
 		{
 			var viewerParameter = Manager.Viewer.GetViewerParamater();
-			var w = new int [] { Manager.Viewer.GetViewerParamater().GuideWidth };
+            viewerParameter.GuideWidth = Core.Option.RecordingWidth.Value;
+            viewerParameter.GuideHeight = Core.Option.RecordingHeight.Value;
+            viewerParameter.RendersGuide = Core.Option.IsRecordingGuideShown;
+
+            var w = new int [] { Manager.Viewer.GetViewerParamater().GuideWidth };
 			var h = new int [] { Manager.Viewer.GetViewerParamater().GuideHeight };
 			var showGuide = new bool[] { Manager.Viewer.GetViewerParamater().RendersGuide };
 
-			var startingFrame_ = new int[] { startingFrame };
-			var endingFrame_ = new int[] { endingFrame };
-			var freq_ = new int[] { freq };
-			var theNumberOfImageV_ = new int[] { theNumberOfImageV };
-			var nowReloading_ = new bool[] { nowReloading };
+            var startingFrame_ = new int[] { Core.Option.RecordingStartingFrame.Value };
+			var endingFrame_ = new int[] { Core.Option.RecordingEndingFrame.Value };
+			var freq_ = new int[] { Core.Option.RecordingFrequency.Value };
+			var theNumberOfImageH_ = new int[] { Core.Option.RecordingHorizontalCount.Value };
 
 			var areaTitle = Resources.GetString("Resolution");
 			var exportedFrameTitle = Resources.GetString("ExportedFrame");
 			var typeTitle = Resources.GetString("Format");
 			var optionsTitle = Resources.GetString("Options");
-			
+
+            selectedTypeIndex = Core.Option.RecordingExporter.GetValueAsInt();
+            selectedAlphaIndex = Core.Option.RecordingTransparentMethod.GetValueAsInt();
+
 			// Recordingwindow
 			Manager.NativeManager.BeginChild("##RecordRes", new swig.Vec2(0,120), true, swig.WindowFlags.MenuBar);
 			if (Manager.NativeManager.BeginMenuBar())
@@ -89,7 +90,8 @@ namespace Effekseer.GUI.Dock
 			if (Manager.NativeManager.DragInt("###w", w))
 			{
 				viewerParameter.GuideWidth = w[0];
-			}
+                Core.Option.RecordingWidth.SetValueDirectly(w[0]);
+            }
 
 			Manager.NativeManager.NextColumn();
 
@@ -100,7 +102,8 @@ namespace Effekseer.GUI.Dock
 			if (Manager.NativeManager.DragInt("###h", h))
 			{
 				viewerParameter.GuideHeight = h[0];
-			}
+                Core.Option.RecordingHeight.SetValueDirectly(h[0]);
+            }
 
 			Manager.NativeManager.NextColumn();
 
@@ -111,7 +114,8 @@ namespace Effekseer.GUI.Dock
 			if (Manager.NativeManager.Checkbox("###sg", showGuide))
 			{
 				viewerParameter.RendersGuide = showGuide[0];
-			}
+                Core.Option.IsRecordingGuideShown.SetValueDirectly(showGuide[0]);
+            }
 
 			Manager.NativeManager.Columns(1);
 
@@ -138,7 +142,7 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.DragInt("###sf", startingFrame_))
 			{
-				startingFrame = startingFrame_[0];
+                Core.Option.RecordingStartingFrame.SetValueDirectly(startingFrame_[0]);
 			}
 
 			Manager.NativeManager.NextColumn();
@@ -149,7 +153,7 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.DragInt("###ef", endingFrame_))
 			{
-				endingFrame = endingFrame_[0];
+                Core.Option.RecordingEndingFrame.SetValueDirectly(endingFrame_[0]);
 			}
 
 			Manager.NativeManager.NextColumn();
@@ -160,7 +164,7 @@ namespace Effekseer.GUI.Dock
 
 			if (Manager.NativeManager.DragInt("###ff", freq_))
 			{
-				freq = freq_[0];
+                Core.Option.RecordingFrequency.SetValueDirectly(freq_[0]);
 			}
 
 			Manager.NativeManager.Columns(1);
@@ -186,9 +190,9 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.NextColumn();
 
-			if (Manager.NativeManager.DragInt("###tn", theNumberOfImageV_))
+			if (Manager.NativeManager.DragInt("###tn", theNumberOfImageH_))
 			{
-				theNumberOfImageV = theNumberOfImageV_[0];
+                Core.Option.RecordingHorizontalCount.SetValueDirectly(theNumberOfImageH_[0]);
 			}
 
 			Manager.NativeManager.NextColumn();
@@ -204,7 +208,8 @@ namespace Effekseer.GUI.Dock
 					if(Manager.NativeManager.Selectable(selectedExportTypes[i]))
 					{
 						selectedTypeIndex = i;
-						Manager.NativeManager.SetItemDefaultFocus();
+                        Core.Option.RecordingExporter.SetValueDirectly((Data.RecordingExporterType)i);
+                        Manager.NativeManager.SetItemDefaultFocus();
 					}
 				}
 
@@ -241,7 +246,8 @@ namespace Effekseer.GUI.Dock
 					if (Manager.NativeManager.Selectable(selectedAlphaTypes[i]))
 					{
 						selectedAlphaIndex = i;
-						Manager.NativeManager.SetItemDefaultFocus();
+                        Core.Option.RecordingTransparentMethod.SetValueDirectly((Data.RecordingTransparentMethodType)i);
+                        Manager.NativeManager.SetItemDefaultFocus();
 					}
 				}
 
@@ -256,7 +262,7 @@ namespace Effekseer.GUI.Dock
 
 			if(Manager.NativeManager.Button(Resources.GetString("Record") + "###btn"))
 			{
-				var during = endingFrame - startingFrame;
+				var during = Core.Option.RecordingEndingFrame.Value - Core.Option.RecordingStartingFrame.Value;
 				if (during < 0)
 				{
                     swig.GUIManager.show("出力フレームが存在しません。", "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
@@ -265,8 +271,8 @@ namespace Effekseer.GUI.Dock
 					//mb.Show("Error", "出力フレームが存在しません。");
 				}
 
-				var count = during / freq + 1;
-				var width = theNumberOfImageV;
+				var count = during / Core.Option.RecordingFrequency.Value + 1;
+				var width = Core.Option.RecordingHorizontalCount.Value;
 				var height = count / width;
 				if (height * width != count) height++;
 
@@ -315,6 +321,9 @@ namespace Effekseer.GUI.Dock
 					System.IO.Directory.SetCurrentDirectory(Program.StartDirectory);
 
 					string errorMessage = string.Empty;
+
+                    var startingFrame = Core.Option.RecordingStartingFrame.Value;
+                    var freq = Core.Option.RecordingFrequency.Value;
 
 					if(Effekseer.Core.Language == Language.Japanese)
 					{

@@ -51,7 +51,7 @@ void* SoundLoader::Load( const EFK_CHAR* path )
 	return Load( data.get(), (int32_t)size );
 }
 	
-void* SoundLoader::Load(const void* data, int32_t size) { m_sound->GetDevice()->CreateSound(data, (int32_t)size, false); }
+void* SoundLoader::Load(const void* data, int32_t size) { return m_sound->GetDevice()->CreateSound(data, (int32_t)size, false); }
 
 void SoundLoader::Unload( void* data )
 {
