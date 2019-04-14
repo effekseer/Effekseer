@@ -305,7 +305,7 @@ namespace Effekseer.Data
         [Undo(Undo = false)]
         [Shown(Shown = false)]
         [IO(Export = true, Import = true)]
-        public Value.Int RecordingHorizontalCount { get; private set; } = new Value.Int(1);
+        public Value.Int RecordingHorizontalCount { get; private set; } = new Value.Int(4);
 
         [Undo(Undo = false)]
         [Shown(Shown = false)]

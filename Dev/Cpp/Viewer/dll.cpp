@@ -1162,6 +1162,8 @@ void* Native::RenderView(int32_t width, int32_t height)
 
 bool Native::Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
+	bool isBehaviorEnabled = true;
+
 	if (g_effect == NULL) return false;
 
 	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
@@ -1180,16 +1182,28 @@ bool Native::Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t
 
 	StopEffect();
 
-	::Effekseer::Handle handle = g_manager->Play(g_effect, 0, 0, 0);
-
-	g_manager->SetTargetLocation(handle,
-		m_effectBehavior.TargetPositionX,
-		m_effectBehavior.TargetPositionY,
-		m_effectBehavior.TargetPositionZ);
-
-	for (int i = 0; i < offsetFrame; i++)
+	::Effekseer::Handle handle;
+	if (isBehaviorEnabled)
 	{
-		g_manager->Update();
+		PlayEffect();
+	}
+	else
+	{
+		handle = g_manager->Play(g_effect, 0, 0, 0);
+		g_manager->SetTargetLocation(
+			handle, m_effectBehavior.TargetPositionX, m_effectBehavior.TargetPositionY, m_effectBehavior.TargetPositionZ);
+	}
+
+	if (isBehaviorEnabled)
+	{
+		StepEffect(offsetFrame);
+	}
+	else
+	{
+		for (int i = 0; i < offsetFrame; i++)
+		{
+			g_manager->Update();
+		}
 	}
 	
 	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
@@ -1220,9 +1234,16 @@ bool Native::Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t
 
 		g_renderer->EndRendering();
 
-		for (int j = 0; j < freq; j++)
+		if (isBehaviorEnabled)
 		{
-			g_manager->Update();
+			StepEffect(freq);
+		}
+		else
+		{
+			for (int j = 0; j < freq; j++)
+			{
+				g_manager->Update();
+			}
 		}
 
 		std::vector<Effekseer::Color> pixels;
@@ -1250,7 +1271,15 @@ bool Native::Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t
 
 Exit:;
 
-	g_manager->StopEffect(handle);
+	if (isBehaviorEnabled)
+	{
+		StopEffect();
+	}
+	else
+	{
+		g_manager->StopEffect(handle);
+	}
+
 	g_manager->Update();
 
 	g_renderer->EndRenderToView();
@@ -1263,6 +1292,8 @@ Exit:;
 //----------------------------------------------------------------------------------
 bool Native::Record(const char16_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
+	bool isBehaviorEnabled = true;
+
 	if( g_effect == NULL ) return false;
 
 	int32_t yCount = count / xCount;
@@ -1287,16 +1318,28 @@ bool Native::Record(const char16_t* path, int32_t count, int32_t xCount, int32_t
 
 	StopEffect();
 	
-	::Effekseer::Handle handle = g_manager->Play( g_effect, 0, 0, 0 );
-	
-	g_manager->SetTargetLocation(handle,
-		m_effectBehavior.TargetPositionX,
-		m_effectBehavior.TargetPositionY,
-		m_effectBehavior.TargetPositionZ);
-
-	for( int i = 0; i < offsetFrame; i++ )
+	::Effekseer::Handle handle;
+	if (isBehaviorEnabled)
 	{
-		g_manager->Update();
+		PlayEffect();
+	}
+	else
+	{
+		handle = g_manager->Play(g_effect, 0, 0, 0);
+		g_manager->SetTargetLocation(
+			handle, m_effectBehavior.TargetPositionX, m_effectBehavior.TargetPositionY, m_effectBehavior.TargetPositionZ);
+	}
+
+	if (isBehaviorEnabled)
+	{
+		StepEffect(offsetFrame);
+	}
+	else
+	{
+		for (int i = 0; i < offsetFrame; i++)
+		{
+			g_manager->Update();
+		}
 	}
 
 	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
@@ -1310,9 +1353,16 @@ bool Native::Record(const char16_t* path, int32_t count, int32_t xCount, int32_t
 
 			RenderWindow();
 
-			for (int j = 0; j < freq; j++)
+			if (isBehaviorEnabled)
 			{
-				g_manager->Update();
+				StepEffect(freq);
+			}
+			else
+			{
+				for (int j = 0; j < freq; j++)
+				{
+					g_manager->Update();
+				}
 			}
 
 			count_++;
@@ -1339,6 +1389,15 @@ Exit:;
 	efk::PNGHelper pngHelper;
 	pngHelper.Save((char16_t*)path, g_renderer->GuideWidth * xCount, g_renderer->GuideHeight * yCount, pixels_out.data());
 
+	if (isBehaviorEnabled)
+	{
+		StopEffect();
+	}
+	else
+	{
+		g_manager->StopEffect(handle);
+	}
+
 	g_manager->Update();
 
 	g_renderer->EndRenderToView();
@@ -1348,6 +1407,8 @@ Exit:;
 
 bool Native::RecordAsGifAnimation(const char16_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
+	bool isBehaviorEnabled = true;
+
 	if (g_effect == NULL) return false;
 
 	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
@@ -1366,16 +1427,28 @@ bool Native::RecordAsGifAnimation(const char16_t* path, int32_t count, int32_t o
 
 	StopEffect();
 
-	::Effekseer::Handle handle = g_manager->Play(g_effect, 0, 0, 0);
-
-	g_manager->SetTargetLocation(handle,
-		m_effectBehavior.TargetPositionX,
-		m_effectBehavior.TargetPositionY,
-		m_effectBehavior.TargetPositionZ);
-
-	for (int i = 0; i < offsetFrame; i++)
+	::Effekseer::Handle handle;
+	if (isBehaviorEnabled)
 	{
-		g_manager->Update();
+		PlayEffect();
+	}
+	else
+	{
+		handle = g_manager->Play(g_effect, 0, 0, 0);
+		g_manager->SetTargetLocation(
+			handle, m_effectBehavior.TargetPositionX, m_effectBehavior.TargetPositionY, m_effectBehavior.TargetPositionZ);
+	}
+
+	if (isBehaviorEnabled)
+	{
+		StepEffect(offsetFrame);
+	}
+	else
+	{
+		for (int i = 0; i < offsetFrame; i++)
+		{
+			g_manager->Update();
+		}
 	}
 
 	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
@@ -1409,109 +1482,35 @@ bool Native::RecordAsGifAnimation(const char16_t* path, int32_t count, int32_t o
 
 		g_renderer->EndRendering();
 
-		for (int j = 0; j < freq; j++)
+		if (isBehaviorEnabled)
 		{
-			g_manager->Update();
+			StepEffect(freq);
+		}
+		else
+		{
+			for (int j = 0; j < freq; j++)
+			{
+				g_manager->Update();
+			}
 		}
 
 		std::vector<Effekseer::Color> pixels;
 		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
 
 		helper.AddImage(pixels);
-
-		/*
-		int delay = (int)round((1.0 / (double) 60.0 * freq) * 100.0);
-		gdImagePtr frameImage = gdImageCreateTrueColor(g_renderer->GuideWidth, g_renderer->GuideHeight);
-
-		for (int32_t y = 0; y < g_renderer->GuideHeight; y++)
-		{
-			for (int32_t x = 0; x < g_renderer->GuideWidth; x++)
-			{
-				auto c = pixels[x + y * g_renderer->GuideWidth];
-				gdImageSetPixel(frameImage, x, y, gdTrueColor(c.R, c.G, c.B));
-			}
-		}
-		gdImageTrueColorToPalette(frameImage, true, gdMaxColors);
-		gdImageGifAnimAdd(frameImage, fp, true, 0, 0, delay, gdDisposalNone, NULL);
-		gdImageDestroy(frameImage);
-		*/
 	}
-
-
-	/*
-	FILE*		fp = nullptr;
-	gdImagePtr	img = nullptr;
-
-	img = gdImageCreate(g_renderer->GuideWidth, g_renderer->GuideHeight);
-	
-#ifdef _WIN32
-	_wfopen_s(&fp, (const wchar_t*)path, L"rb");
-#else
-	int8_t path8[256];
-	ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
-	fp = fopen((const char*)path8, "rb");
-#endif
-
-	gdImageGifAnimBegin(img, fp, false, 0);
-
-	for (int32_t i = 0; i < count; i++)
-	{
-		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight)) return false;
-
-		g_renderer->BeginRendering();
-	
-		if (g_renderer->Distortion == EffekseerTool::eDistortionType::DistortionType_Current)
-		{
-			g_manager->DrawBack();
-
-			// HACK
-			g_renderer->GetRenderer()->EndRendering();
-
-			g_renderer->CopyToBackground();
-
-			// HACK
-			g_renderer->GetRenderer()->BeginRendering();
-			g_manager->DrawFront();
-		}
-		else
-		{
-			g_manager->Draw();
-		}
-
-		g_renderer->EndRendering();
-
-		for (int j = 0; j < freq; j++)
-		{
-			g_manager->Update();
-		}
-
-		std::vector<Effekseer::Color> pixels;
-		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
-
-		int delay = (int) round((1.0 / (double) 60.0 * freq) * 100.0);
-		gdImagePtr frameImage = gdImageCreateTrueColor(g_renderer->GuideWidth, g_renderer->GuideHeight);
-
-		for (int32_t y = 0; y < g_renderer->GuideHeight; y++)
-		{
-			for (int32_t x = 0; x < g_renderer->GuideWidth; x++)
-			{
-				auto c = pixels[x + y * g_renderer->GuideWidth];
-				gdImageSetPixel(frameImage, x, y, gdTrueColor(c.R, c.G, c.B));
-			}
-		}
-		gdImageTrueColorToPalette(frameImage, true, gdMaxColors);
-		gdImageGifAnimAdd(frameImage, fp, true, 0, 0, delay, gdDisposalNone, NULL);
-		gdImageDestroy(frameImage);
-	}
-
-	gdImageGifAnimEnd(fp);
-	fclose(fp);
-	gdImageDestroy(img);
-	*/
 
 End:;
 
-	g_manager->StopEffect(handle);
+	if (isBehaviorEnabled)
+	{
+		StopEffect();
+	}
+	else
+	{
+		g_manager->StopEffect(handle);
+	}
+
 	g_manager->Update();
 
 	g_renderer->EndRenderToView();
@@ -1521,6 +1520,8 @@ End:;
 
 bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
 {
+	bool isBehaviorEnabled = true;
+
 	if (g_effect == NULL) return false;
 
 	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
@@ -1539,16 +1540,28 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 
 	StopEffect();
 
-	::Effekseer::Handle handle = g_manager->Play(g_effect, 0, 0, 0);
-
-	g_manager->SetTargetLocation(handle,
-		m_effectBehavior.TargetPositionX,
-		m_effectBehavior.TargetPositionY,
-		m_effectBehavior.TargetPositionZ);
-
-	for (int i = 0; i < offsetFrame; i++)
+	::Effekseer::Handle handle;
+	if (isBehaviorEnabled)
 	{
-		g_manager->Update();
+		PlayEffect();
+	}
+	else
+	{
+		handle = g_manager->Play(g_effect, 0, 0, 0);
+		g_manager->SetTargetLocation(
+			handle, m_effectBehavior.TargetPositionX, m_effectBehavior.TargetPositionY, m_effectBehavior.TargetPositionZ);
+	}
+
+	if (isBehaviorEnabled)
+	{
+		StepEffect(offsetFrame);
+	}
+	else
+	{
+		for (int i = 0; i < offsetFrame; i++)
+		{
+			g_manager->Update();
+		}
 	}
 
 	FILE* fp = nullptr;
@@ -1598,9 +1611,16 @@ bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFram
 
 		g_renderer->EndRendering();
 
-		for (int j = 0; j < freq; j++)
+		if (isBehaviorEnabled)
 		{
-			g_manager->Update();
+			StepEffect(freq);
+		}
+		else
+		{
+			for (int j = 0; j < freq; j++)
+			{
+				g_manager->Update();
+			}
 		}
 
 		std::vector<Effekseer::Color> pixels;
@@ -1617,7 +1637,15 @@ End:;
 
 	fclose(fp);
 
-	g_manager->StopEffect(handle);
+	if (isBehaviorEnabled)
+	{
+		StopEffect();
+	}
+	else
+	{
+		g_manager->StopEffect(handle);
+	}
+
 	g_manager->Update();
 
 	g_renderer->EndRenderToView();

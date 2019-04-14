@@ -597,23 +597,7 @@ bool Renderer::BeginRecord( int32_t width, int32_t height )
 	m_recordingWidth = width;
 	m_recordingHeight = height;
 
-	screenWidth = m_recordingWidth;
-	screenHeight = m_recordingHeight;
-
 	m_recording = true;
-
-	RecalcProjection();
-	
-	// ガイド部分が描画されるように拡大
-	m_projMatTemp = m_renderer->GetProjectionMatrix();
-	auto proj = m_projMatTemp;
-
-	::Effekseer::Matrix44 mat;
-	mat.Values[0][0] = (float) m_windowHeight / (float) GuideWidth;
-	mat.Values[1][1] = (float) m_windowHeight / (float) GuideHeight;
-	::Effekseer::Matrix44::Mul(proj, proj, mat);
-
-	m_renderer->SetProjectionMatrix(proj);
 
 	graphics->BeginRecord(m_recordingWidth, m_recordingHeight);
 
