@@ -147,6 +147,16 @@ public:
 	float	RateOfMagnification;
 
 	/**
+		@brief	Z near
+	*/
+	float ClippingStart = 1.0f;
+
+	/**
+		@brief	Z far
+	*/
+	float ClippingEnd = 300.0f;
+
+	/**
 		@brief	ガイドの縦幅
 	*/
 	int32_t GuideWidth;

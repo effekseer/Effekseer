@@ -129,3 +129,5 @@ ImageFilter_,画像ファイル (*.png)|*.png
 ModelFilter_,モデルファイル (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
 SoundFilter_,音声ファイル (*.wav)|*.wav
 ProjectFilter_,エフェクトプロジェクト (*.efkproj)|*.efkproj
+PostEffect,ポストエフェクト
+Clipping,クリッピング

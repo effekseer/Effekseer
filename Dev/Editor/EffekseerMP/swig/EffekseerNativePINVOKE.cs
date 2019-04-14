@@ -312,6 +312,18 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_Distance_get___")]
   public static extern float ViewerParamater_Distance_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_ClippingStart_set___")]
+  public static extern void ViewerParamater_ClippingStart_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_ClippingStart_get___")]
+  public static extern float ViewerParamater_ClippingStart_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_ClippingEnd_set___")]
+  public static extern void ViewerParamater_ClippingEnd_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_ClippingEnd_get___")]
+  public static extern float ViewerParamater_ClippingEnd_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RendersGuide_set___")]
   public static extern void ViewerParamater_RendersGuide_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
 

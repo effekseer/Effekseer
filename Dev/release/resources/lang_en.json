@@ -130,6 +130,8 @@
     "ImageFilter_": "Image File (*.png)|*.png",
     "ModelFilter_": "Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo",
     "SoundFilter_": "Sound File (*.wav)|*.wav",
-    "ProjectFilter_": "Effekseer Project (*.efkproj)|*.efkproj"
+    "ProjectFilter_": "Effekseer Project (*.efkproj)|*.efkproj",
+    "PostEffect": "PostEffect",
+    "Clipping": "Clipping"
   }
 }

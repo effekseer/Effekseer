@@ -16,8 +16,10 @@ namespace Effekseer.GUI.Dock
 		string id_d = string.Empty;
 		string id_s = string.Empty;
 		string id_t = string.Empty;
+        string id_cs = string.Empty;
+        string id_ce = string.Empty;
 
-		string[] viewTypes = new string[]
+        string[] viewTypes = new string[]
 			{
 			"Perspective",
             "Orthographic"
@@ -33,8 +35,10 @@ namespace Effekseer.GUI.Dock
 			id_d = "###" + Manager.GetUniqueID().ToString();
 			id_s = "###" + Manager.GetUniqueID().ToString();
 			id_t = "###" + Manager.GetUniqueID().ToString();
+            id_cs = "###" + Manager.GetUniqueID().ToString();
+            id_ce = "###" + Manager.GetUniqueID().ToString();
 
-			Icon = Images.GetIcon("PanelViewPoint");
+            Icon = Images.GetIcon("PanelViewPoint");
 			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("CameraSettings");
 		}
@@ -66,8 +70,10 @@ namespace Effekseer.GUI.Dock
 			var d = new float[] { viewerParameter.Distance };
 			var s = new float[] { viewerParameter.RateOfMagnification };
 
+            var cs = new float[] { viewerParameter.ClippingStart };
+            var ce = new float[] { viewerParameter.ClippingEnd };
 
-			if (Manager.NativeManager.DragFloat3(Resources.GetString("Viewpoint") + id_f, f))
+            if (Manager.NativeManager.DragFloat3(Resources.GetString("Viewpoint") + id_f, f))
 			{
 				viewerParameter.FocusX = f[0];
 				viewerParameter.FocusY = f[1];
@@ -94,7 +100,17 @@ namespace Effekseer.GUI.Dock
 				viewerParameter.RateOfMagnification = s[0];
 			}
 
-			if (Manager.NativeManager.BeginCombo(Resources.GetString("CameraMode") + id_t, viewTypes[viewerParameter.IsPerspective ? 0 : 1], swig.ComboFlags.None))
+            if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("Start") + id_cs, cs))
+            {
+                viewerParameter.ClippingStart = cs[0];
+            }
+
+            if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("End") + id_ce, ce))
+            {
+                viewerParameter.ClippingEnd = ce[0];
+            }
+
+            if (Manager.NativeManager.BeginCombo(Resources.GetString("CameraMode") + id_t, viewTypes[viewerParameter.IsPerspective ? 0 : 1], swig.ComboFlags.None))
 			{
 				if(Manager.NativeManager.Selectable(viewTypes[0]))
 				{

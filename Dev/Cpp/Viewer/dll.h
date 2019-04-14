@@ -47,6 +47,8 @@ public:
 	float	AngleX;
 	float	AngleY;
 	float	Distance;
+	float ClippingStart;
+	float ClippingEnd;
 	bool	RendersGuide;
 
 	bool	IsCullingShown;

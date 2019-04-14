@@ -235,12 +235,12 @@ void Renderer::SetPerspectiveFov( int width, int height )
 		if (IsRightHand)
 		{
 			// Right hand coordinate
-			proj.PerspectiveFovRH_OpenGL(60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f);
+			proj.PerspectiveFovRH_OpenGL(60.0f / 180.0f * 3.141592f, (float)width / (float)height, ClippingStart, ClippingEnd);
 		}
 		else
 		{
 			// Left hand coordinate
-			proj.PerspectiveFovLH_OpenGL(60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f);
+			proj.PerspectiveFovLH_OpenGL(60.0f / 180.0f * 3.141592f, (float)width / (float)height, ClippingStart, ClippingEnd);
 		}
 	}
 	else
@@ -248,12 +248,12 @@ void Renderer::SetPerspectiveFov( int width, int height )
 		if (IsRightHand)
 		{
 			// Right hand coordinate
-			proj.PerspectiveFovRH(60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f);
+			proj.PerspectiveFovRH(60.0f / 180.0f * 3.141592f, (float)width / (float)height, ClippingStart, ClippingEnd);
 		}
 		else
 		{
 			// Left hand coordinate
-			proj.PerspectiveFovLH(60.0f / 180.0f * 3.141592f, (float)width / (float)height, 1.0f, 300.0f);
+			proj.PerspectiveFovLH(60.0f / 180.0f * 3.141592f, (float)width / (float)height, ClippingStart, ClippingEnd);
 		}
 	}
 	
@@ -271,12 +271,14 @@ void Renderer::SetOrthographic( int width, int height )
 	if( IsRightHand )
 	{
 		// Right hand coordinate
-		proj.OrthographicRH( (float)width / 16.0f / RateOfMagnification, (float)height / 16.0f / RateOfMagnification, 1.0f, 300.0f );
+		proj.OrthographicRH(
+			(float)width / 16.0f / RateOfMagnification, (float)height / 16.0f / RateOfMagnification, ClippingStart, ClippingEnd);
 	}
 	else
 	{
 		// Left hand coordinate
-		proj.OrthographicLH( (float)width / 16.0f / RateOfMagnification, (float)height / 16.0f / RateOfMagnification, 1.0f, 300.0f );
+		proj.OrthographicLH(
+			(float)width / 16.0f / RateOfMagnification, (float)height / 16.0f / RateOfMagnification, ClippingStart, ClippingEnd);
 	}
 
 	m_renderer->SetProjectionMatrix( proj );

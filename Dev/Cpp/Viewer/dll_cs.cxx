@@ -850,6 +850,50 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_Distance_get_
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ClippingStart_set___(void * jarg1, float jarg2) {
+  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
+  float arg2 ;
+  
+  arg1 = (ViewerParamater *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->ClippingStart = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ClippingStart_get___(void * jarg1) {
+  float jresult ;
+  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
+  float result;
+  
+  arg1 = (ViewerParamater *)jarg1; 
+  result = (float) ((arg1)->ClippingStart);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ClippingEnd_set___(void * jarg1, float jarg2) {
+  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
+  float arg2 ;
+  
+  arg1 = (ViewerParamater *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->ClippingEnd = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ClippingEnd_get___(void * jarg1) {
+  float jresult ;
+  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
+  float result;
+  
+  arg1 = (ViewerParamater *)jarg1; 
+  result = (float) ((arg1)->ClippingEnd);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RendersGuide_set___(void * jarg1, unsigned int jarg2) {
   ViewerParamater *arg1 = (ViewerParamater *) 0 ;
   bool arg2 ;

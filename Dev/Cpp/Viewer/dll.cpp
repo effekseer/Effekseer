@@ -1664,6 +1664,8 @@ ViewerParamater Native::GetViewerParamater()
 
 	paramater.GuideWidth = g_renderer->GuideWidth;
 	paramater.GuideHeight = g_renderer->GuideHeight;
+	paramater.ClippingStart = g_renderer->ClippingStart;
+	paramater.ClippingEnd = g_renderer->ClippingEnd;
 	paramater.IsPerspective = g_renderer->GetProjectionType() == ::EffekseerTool::PROJECTION_TYPE_PERSPECTIVE;
 	paramater.IsOrthographic = g_renderer->GetProjectionType() == ::EffekseerTool::PROJECTION_TYPE_ORTHOGRAPHIC;
 	paramater.FocusX = g_focus_position.X;
@@ -1688,6 +1690,8 @@ void Native::SetViewerParamater( ViewerParamater& paramater )
 {
 	assert( g_renderer != NULL );
 
+	g_renderer->ClippingStart = paramater.ClippingStart;
+	g_renderer->ClippingEnd = paramater.ClippingEnd;
 	g_renderer->GuideWidth = paramater.GuideWidth;
 	g_renderer->GuideHeight = paramater.GuideHeight;
 	
