@@ -129,7 +129,60 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.EndCombo();
 			}
 
-			Manager.Viewer.SetViewerParamater(viewerParameter);
+            if (Manager.NativeManager.Button(Resources.GetString("Save") + "###btn1"))
+            {
+                var filter = "view";
+
+                var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
+
+                if (!string.IsNullOrEmpty(result))
+                {
+                    var filename = result;
+
+                    if (System.IO.Path.GetExtension(filename) != "." + filter)
+                    {
+                        filename += "." + filter;
+                    }
+
+                    Data.ViewPoint viewPoint = new Data.ViewPoint();
+                    viewPoint.FocusX = viewerParameter.FocusX;
+                    viewPoint.FocusY = viewerParameter.FocusY;
+                    viewPoint.FocusZ = viewerParameter.FocusZ;
+                    viewPoint.Distance = viewerParameter.Distance;
+                    viewPoint.AngleX = viewerParameter.AngleX;
+                    viewPoint.AngleY = viewerParameter.AngleY;
+                    viewPoint.ClippingStart = viewerParameter.ClippingStart;
+                    viewPoint.ClippingEnd = viewerParameter.ClippingEnd;
+                    viewPoint.CameraMode = viewerParameter.IsPerspective ? 0 : 1;
+                    viewPoint.Save(filename);
+                }
+            }
+
+            if (Manager.NativeManager.Button(Resources.GetString("Load") + "###btn2"))
+            {
+                var filter = "view";
+
+                var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
+
+                if (!string.IsNullOrEmpty(result))
+                {
+                    var viewPoint = Data.ViewPoint.Load(result);
+                    if(viewPoint != null)
+                    {
+                        viewerParameter.FocusX = viewPoint.FocusX;
+                        viewerParameter.FocusY = viewPoint.FocusY;
+                        viewerParameter.FocusZ = viewPoint.FocusZ;
+                        viewerParameter.Distance = viewPoint.Distance;
+                        viewerParameter.AngleX = viewPoint.AngleX;
+                        viewerParameter.AngleY = viewPoint.AngleY;
+                        viewerParameter.ClippingStart = viewPoint.ClippingStart;
+                        viewerParameter.ClippingEnd = viewPoint.ClippingEnd;
+                        viewerParameter.IsPerspective = viewPoint.CameraMode == 0;
+                    }
+                }
+            }
+
+            Manager.Viewer.SetViewerParamater(viewerParameter);
 		}
 	}
 }

@@ -131,3 +131,4 @@ SoundFilter_,Sound File (*.wav)|*.wav
 ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
 PostEffect,PostEffect
 Clipping,Clipping
+Save,Save

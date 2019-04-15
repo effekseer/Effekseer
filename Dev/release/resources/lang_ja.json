@@ -6,7 +6,7 @@
     "BasicRenderSettings": "描画共通",
     "BasicSettings": "共通",
     "Behavior": "振る舞い",
-    "CameraMode": "カメラの種類\"",
+    "CameraMode": "カメラの種類",
     "CameraSettings": "視点操作",
     "Complement": "補完",
     "ConfirmSaveChanged": "[{0}] は変更されています。保存しますか？",
@@ -132,6 +132,7 @@
     "SoundFilter_": "音声ファイル (*.wav)|*.wav",
     "ProjectFilter_": "エフェクトプロジェクト (*.efkproj)|*.efkproj",
     "PostEffect": "ポストエフェクト",
-    "Clipping": "クリッピング"
+    "Clipping": "クリッピング",
+    "Save": "保存"
   }
 }
