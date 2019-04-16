@@ -151,8 +151,8 @@ namespace Effekseer
 				}
 			}
 		}
-
-		public static Script.ScriptCollection<Script.CommandScript> CommandScripts
+#if SCRIPT_ENABLED
+        public static Script.ScriptCollection<Script.CommandScript> CommandScripts
 		{
 			get;
 			private set;
@@ -175,7 +175,7 @@ namespace Effekseer
 			get;
 			private set;
 		}
-
+#endif
 		public static Data.OptionValues Option
 		{
 			get { return option; }
@@ -281,11 +281,12 @@ namespace Effekseer
 
 		static Core()
 		{
+#if SCRIPT_ENABLED
 			CommandScripts = new Script.ScriptCollection<Script.CommandScript>();
 			SelectedScripts = new Script.ScriptCollection<Script.SelectedScript>();
 			ExportScripts = new Script.ScriptCollection<Script.ExportScript>();
 			ImportScripts = new Script.ScriptCollection<Script.ImportScript>();
-
+#endif
             // change a separator
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
@@ -307,10 +308,10 @@ namespace Effekseer
 			// Switch the culture according to the set language
 			switch (Language)
 			{
-				case Effekseer.Language.English:
+				case Language.English:
 					Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
 					break;
-				case Effekseer.Language.Japanese:
+				case Language.Japanese:
 					Thread.CurrentThread.CurrentUICulture = new CultureInfo("ja-JP");
 					break;
 			}
@@ -325,6 +326,7 @@ namespace Effekseer
 
 		static void InitializeScripts(string entryDirectory)
 		{
+#if SCRIPT_ENABLED
 			// Load scripts
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts");
 			System.IO.Directory.CreateDirectory(entryDirectory + "scripts/import");
@@ -437,13 +439,15 @@ namespace Effekseer
 					}
 				}
 			}
+#endif
 		}
 
 		public static void Dispose()
 		{
-			Script.Compiler.Dispose();
-
-			SaveOption();
+#if SCRIPT_ENABLED
+            Script.Compiler.Dispose();
+#endif
+            SaveOption();
 		}
 
 		/// <summary>
@@ -635,10 +639,10 @@ namespace Effekseer
 				{
                     switch (Language)
                     {
-                        case Effekseer.Language.English:
+                        case Language.English:
                             throw new Exception("Version Error : \nThe file is created with a newer version of the tool.\nPlease use the latest version of the tool.");
                             break;
-                        case Effekseer.Language.Japanese:
+                        case Language.Japanese:
                             throw new Exception("Version Error : \nファイルがより新しいバージョンのツールで作成されています。\n最新バージョンのツールを使用してください。");
                             break;
                     }
@@ -995,7 +999,7 @@ namespace Effekseer
 					if (node.LocationValues.Type.Value == Data.LocationValues.ParamaterType.LocationFCurve)
 					{
 						var name = "Location";
-						if(Language == Effekseer.Language.Japanese)
+						if(Language == Language.Japanese)
 						{
 							name = "位置";
 						}
@@ -1006,7 +1010,7 @@ namespace Effekseer
 					if (node.RotationValues.Type.Value == Data.RotationValues.ParamaterType.RotationFCurve)
 					{
 						var name = "Angle";
-						if (Language == Effekseer.Language.Japanese)
+						if (Language == Language.Japanese)
 						{
 							name = "角度";
 						}
@@ -1017,7 +1021,7 @@ namespace Effekseer
 					if (node.ScalingValues.Type.Value == Data.ScaleValues.ParamaterType.FCurve)
 					{
 						var name = "Scaling Factor";
-						if (Language == Effekseer.Language.Japanese)
+						if (Language == Language.Japanese)
 						{
 							name = "拡大率";
 						}
@@ -1028,7 +1032,7 @@ namespace Effekseer
 					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
 						var name = "UV(Start)";
-						if (Language == Effekseer.Language.Japanese)
+						if (Language == Language.Japanese)
 						{
 							name = "UV(始点)";
 						}
@@ -1039,7 +1043,7 @@ namespace Effekseer
 					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
 					{
 						var name = "UV(Size)";
-						if (Language == Effekseer.Language.Japanese)
+						if (Language == Language.Japanese)
 						{
 							name = "UV(大きさ)";
 						}
@@ -1051,7 +1055,7 @@ namespace Effekseer
 						node.DrawingValues.Sprite.ColorAll.Value == Data.StandardColorType.FCurve)
 					{
 						var name = "Sprite-Color all(RGBA)";
-						if (Language == Effekseer.Language.Japanese)
+						if (Language == Language.Japanese)
 						{
 							name = "スプライト・全体色(RGBA)";
 						}
@@ -1063,7 +1067,7 @@ namespace Effekseer
 						node.DrawingValues.Model.Color.Value == Data.StandardColorType.FCurve)
 					{
 						var name = "Model-Color(RGBA)";
-						if (Language == Effekseer.Language.Japanese)
+						if (Language == Language.Japanese)
 						{
 							name = "モデル・色(RGBA)";
 						}
@@ -1076,7 +1080,7 @@ namespace Effekseer
 						if (node.DrawingValues.Track.ColorLeft.Value == Data.StandardColorType.FCurve)
 						{
 							var name = "Track-Color,Left(RGBA)";
-							if (Language == Effekseer.Language.Japanese)
+							if (Language == Language.Japanese)
 							{
 								name = "軌跡・左(RGBA)";
 							}
@@ -1087,7 +1091,7 @@ namespace Effekseer
 						if (node.DrawingValues.Track.ColorLeftMiddle.Value == Data.StandardColorType.FCurve)
 						{
 							var name = "Track-Color,Left-Center(RGBA)";
-							if (Language == Effekseer.Language.Japanese)
+							if (Language == Language.Japanese)
 							{
 								name = "軌跡・左中間(RGBA)";
 							}
@@ -1098,7 +1102,7 @@ namespace Effekseer
 						if (node.DrawingValues.Track.ColorCenter.Value == Data.StandardColorType.FCurve)
 						{
 							var name = "Track-Color,Center(RGBA)";
-							if (Language == Effekseer.Language.Japanese)
+							if (Language == Language.Japanese)
 							{
 								name = "軌跡・中央(RGBA)";
 							}
@@ -1109,7 +1113,7 @@ namespace Effekseer
 						if (node.DrawingValues.Track.ColorCenterMiddle.Value == Data.StandardColorType.FCurve)
 						{
 							var name = "Track-Color,Center-Middle(RGBA)";
-							if (Language == Effekseer.Language.Japanese)
+							if (Language == Language.Japanese)
 							{
 								name = "軌跡・中央中間(RGBA)";
 							}
@@ -1120,7 +1124,7 @@ namespace Effekseer
 						if (node.DrawingValues.Track.ColorRight.Value == Data.StandardColorType.FCurve)
 						{
 							var name = "Track-Color,Right(RGBA)";
-							if (Language == Effekseer.Language.Japanese)
+							if (Language == Language.Japanese)
 							{
 								name = "軌跡・右(RGBA)";
 							}
@@ -1131,7 +1135,7 @@ namespace Effekseer
 						if (node.DrawingValues.Track.ColorRightMiddle.Value == Data.StandardColorType.FCurve)
 						{
 							var name = "Track-Color,Right-Center(RGBA)";
-							if (Language == Effekseer.Language.Japanese)
+							if (Language == Language.Japanese)
 							{
 								name = "軌跡・右中間(RGBA)";
 

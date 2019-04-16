@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class PathForSound : Effekseer.Data.Value.Path
+	public class PathForSound : Path
 	{
 		internal PathForSound(string filter, bool isRelativeSaved, string abspath = "")
 			: base(filter, isRelativeSaved, abspath)
