@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.156
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EffekseerCore", "EffekseerCore\EffekseerCore.csproj", "{E2495770-1734-4C77-8028-92040A1D36CB}"
 EndProject
@@ -24,7 +24,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerRendererGL", "..\C
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerSoundOSMixer", "..\Cpp\EffekseerSoundOSMixer\EffekseerSoundOSMixer.vcxproj", "{5C73251F-26D7-44CF-A3D7-1E333F585D4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EffekseerMP", "EffekseerMP\EffekseerMP.csproj", "{30984EBA-2329-4BAF-9E9D-88A5B62D7014}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Effekseer", "Effekseer\EffekseerMP.csproj", "{30984EBA-2329-4BAF-9E9D-88A5B62D7014}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8145E20A-FDAA-4C69-994D-697876E61FAA} = {8145E20A-FDAA-4C69-994D-697876E61FAA}
 		{5C73251F-26D7-44CF-A3D7-1E333F585D4F} = {5C73251F-26D7-44CF-A3D7-1E333F585D4F}
