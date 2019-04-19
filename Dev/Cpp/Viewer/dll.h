@@ -6,19 +6,12 @@
 	@brief	DLL export for tool
 */
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#include <Effekseer.h>
 #include "EffekseerTool/EffekseerTool.Renderer.h"
 #include "EffekseerTool/EffekseerTool.Sound.h"
+#include <Effekseer.h>
 
 #include "GUI/efk.ImageResource.h"
 #include "efk.Base.h"
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 enum class DistortionType
 {
@@ -36,29 +29,29 @@ enum class RenderMode
 class ViewerParamater
 {
 public:
-	int32_t	GuideWidth;
-	int32_t	GuideHeight;
-	float	RateOfMagnification;
-	bool	IsPerspective;
-	bool	IsOrthographic;
-	float	FocusX;
-	float	FocusY;
-	float	FocusZ;
-	float	AngleX;
-	float	AngleY;
-	float	Distance;
+	int32_t GuideWidth;
+	int32_t GuideHeight;
+	float RateOfMagnification;
+	bool IsPerspective;
+	bool IsOrthographic;
+	float FocusX;
+	float FocusY;
+	float FocusZ;
+	float AngleX;
+	float AngleY;
+	float Distance;
 	float ClippingStart;
 	float ClippingEnd;
-	bool	RendersGuide;
+	bool RendersGuide;
 
-	bool	IsCullingShown;
-	float	CullingRadius;
-	float	CullingX;
-	float	CullingY;
-	float	CullingZ;
+	bool IsCullingShown;
+	float CullingRadius;
+	float CullingX;
+	float CullingY;
+	float CullingZ;
 
-	DistortionType	Distortion;
-	RenderMode		RenderingMode;
+	DistortionType Distortion;
+	RenderMode RenderingMode;
 
 	ViewerParamater();
 };
@@ -66,48 +59,48 @@ public:
 class ViewerEffectBehavior
 {
 public:
-	int32_t	CountX;
-	int32_t	CountY;
-	int32_t	CountZ;
+	int32_t CountX;
+	int32_t CountY;
+	int32_t CountZ;
 
-	int32_t	TimeSpan = 0;
+	int32_t TimeSpan = 0;
 
 	uint8_t AllColorR = 255;
 	uint8_t AllColorG = 255;
 	uint8_t AllColorB = 255;
 	uint8_t AllColorA = 255;
 
-	float	Distance;
+	float Distance;
 
-	int32_t	RemovedTime;
+	int32_t RemovedTime;
 
-	float	PositionX;
-	float	PositionY;
-	float	PositionZ;
+	float PositionX;
+	float PositionY;
+	float PositionZ;
 
-	float	RotationX;
-	float	RotationY;
-	float	RotationZ;
+	float RotationX;
+	float RotationY;
+	float RotationZ;
 
-	float	ScaleX;
-	float	ScaleY;
-	float	ScaleZ;
+	float ScaleX;
+	float ScaleY;
+	float ScaleZ;
 
-	float	PositionVelocityX;
-	float	PositionVelocityY;
-	float	PositionVelocityZ;
+	float PositionVelocityX;
+	float PositionVelocityY;
+	float PositionVelocityZ;
 
-	float	RotationVelocityX;
-	float	RotationVelocityY;
-	float	RotationVelocityZ;
+	float RotationVelocityX;
+	float RotationVelocityY;
+	float RotationVelocityZ;
 
-	float	ScaleVelocityX;
-	float	ScaleVelocityY;
-	float	ScaleVelocityZ;
-	
-	float	TargetPositionX;
-	float	TargetPositionY;
-	float	TargetPositionZ;
+	float ScaleVelocityX;
+	float ScaleVelocityY;
+	float ScaleVelocityZ;
+
+	float TargetPositionX;
+	float TargetPositionY;
+	float TargetPositionZ;
 
 	ViewerEffectBehavior();
 };
@@ -122,70 +115,67 @@ enum class TransparenceType
 class Native
 {
 private:
-
-	class TextureLoader
-	: public ::Effekseer::TextureLoader
+	class TextureLoader : public ::Effekseer::TextureLoader
 	{
 	private:
-		EffekseerRenderer::Renderer*	m_renderer;
-		Effekseer::TextureLoader*		m_originalTextureLoader;
+		EffekseerRenderer::Renderer* m_renderer;
+		Effekseer::TextureLoader* m_originalTextureLoader;
+
 	public:
-		TextureLoader( EffekseerRenderer::Renderer* renderer);
+		TextureLoader(EffekseerRenderer::Renderer* renderer);
 		virtual ~TextureLoader();
 
 	public:
-		Effekseer::TextureData* Load( const EFK_CHAR* path, ::Effekseer::TextureType textureType ) override;
+		Effekseer::TextureData* Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override;
 
 		void Unload(Effekseer::TextureData* data) override;
 
-		Effekseer::TextureLoader* GetOriginalTextureLoader() const {return m_originalTextureLoader;}
+		Effekseer::TextureLoader* GetOriginalTextureLoader() const { return m_originalTextureLoader; }
 		std::u16string RootPath;
 	};
 
-	class SoundLoader
-	: public ::Effekseer::SoundLoader
+	class SoundLoader : public ::Effekseer::SoundLoader
 	{
 	private:
 		::Effekseer::SoundLoader* m_loader;
-	
+
 	public:
-		SoundLoader( Effekseer::SoundLoader* loader );
+		SoundLoader(Effekseer::SoundLoader* loader);
 		virtual ~SoundLoader();
 
 	public:
-		void* Load( const EFK_CHAR* path );
+		void* Load(const EFK_CHAR* path);
 
-		void Unload( void* data );
-		
+		void Unload(void* data);
+
 		std::u16string RootPath;
 	};
 
-	class ModelLoader
-	: public ::Effekseer::ModelLoader
+	class ModelLoader : public ::Effekseer::ModelLoader
 	{
 	private:
-		EffekseerRenderer::Renderer*	m_renderer;
+		EffekseerRenderer::Renderer* m_renderer;
 
 	public:
-		ModelLoader( EffekseerRenderer::Renderer* renderer );
+		ModelLoader(EffekseerRenderer::Renderer* renderer);
 		virtual ~ModelLoader();
 
 	public:
-		void* Load( const EFK_CHAR* path );
+		void* Load(const EFK_CHAR* path);
 
-		void Unload( void* data );
+		void Unload(void* data);
 
 		std::u16string RootPath;
 	};
 
-	ViewerEffectBehavior	m_effectBehavior;
-	TextureLoader*			m_textureLoader;
+	ViewerEffectBehavior m_effectBehavior;
+	TextureLoader* m_textureLoader;
 
-	int32_t				m_time;
-	
-	int					m_step;
+	int32_t m_time;
 
-	bool				m_isSRGBMode = false;
+	int m_step;
+
+	bool m_isSRGBMode = false;
 
 	::Effekseer::Vector3D m_rootLocation;
 	::Effekseer::Vector3D m_rootRotation;
@@ -198,7 +188,7 @@ public:
 
 	~Native();
 
-	bool CreateWindow_Effekseer( void* handle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType);
+	bool CreateWindow_Effekseer(void* handle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType);
 
 	bool UpdateWindow();
 
@@ -208,11 +198,11 @@ public:
 
 	void Present();
 
-	bool ResizeWindow( int width, int height );
+	bool ResizeWindow(int width, int height);
 
 	bool DestroyWindow();
 
-	bool LoadEffect( void* data, int size, const char16_t* path );
+	bool LoadEffect(void* data, int size, const char16_t* path);
 
 	bool RemoveEffect();
 
@@ -220,21 +210,26 @@ public:
 
 	bool StopEffect();
 
-	bool StepEffect( int frame );
+	bool StepEffect(int frame);
 
 	bool StepEffect();
 
-	bool Rotate( float x, float y );
+	bool Rotate(float x, float y);
 
-	bool Slide( float x, float y );
+	bool Slide(float x, float y);
 
-	bool Zoom( float zoom );
+	bool Zoom(float zoom);
 
-	bool SetRandomSeed( int seed );
+	bool SetRandomSeed(int seed);
 
 	void* RenderView(int32_t width, int32_t height);
 
-	bool Record(const char16_t* pathWithoutExt, const char16_t* ext, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
+	bool Record(const char16_t* pathWithoutExt,
+				const char16_t* ext,
+				int32_t count,
+				int32_t offsetFrame,
+				int32_t freq,
+				TransparenceType transparenceType);
 
 	bool Record(const char16_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType);
 
@@ -244,49 +239,49 @@ public:
 
 	ViewerParamater GetViewerParamater();
 
-	void SetViewerParamater( ViewerParamater& paramater );
+	void SetViewerParamater(ViewerParamater& paramater);
 
 	ViewerEffectBehavior GetEffectBehavior();
 
-	void SetViewerEffectBehavior( ViewerEffectBehavior& behavior );
+	void SetViewerEffectBehavior(ViewerEffectBehavior& behavior);
 
-	bool SetSoundMute( bool mute );
+	bool SetSoundMute(bool mute);
 
-	bool SetSoundVolume( float volume );
-	
+	bool SetSoundVolume(float volume);
+
 	bool InvalidateTextureCache();
 
-	void SetIsGridShown( bool value, bool xy, bool xz, bool yz );
+	void SetIsGridShown(bool value, bool xy, bool xz, bool yz);
 
-	void SetGridLength( float length );
+	void SetGridLength(float length);
 
-	void SetBackgroundColor( uint8_t r, uint8_t g, uint8_t b );
+	void SetBackgroundColor(uint8_t r, uint8_t g, uint8_t b);
 
-	void SetBackgroundImage( const char16_t* path );
+	void SetBackgroundImage(const char16_t* path);
 
-	void SetGridColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a );
+	void SetGridColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-	void SetMouseInverseFlag( bool rotX, bool rotY, bool slideX, bool slideY );
+	void SetMouseInverseFlag(bool rotX, bool rotY, bool slideX, bool slideY);
 
-	void SetStep( int32_t step );
+	void SetStep(int32_t step);
 
-	bool StartNetwork( const char* host, uint16_t port );
+	bool StartNetwork(const char* host, uint16_t port);
 
 	void StopNetwork();
 
 	bool IsConnectingNetwork();
 
-	void SendDataByNetwork( const char16_t* key, void* data, int size, const char16_t* path );
+	void SendDataByNetwork(const char16_t* key, void* data, int size, const char16_t* path);
 
-	void SetLightDirection( float x, float y, float z );
+	void SetLightDirection(float x, float y, float z);
 
-	void SetLightColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a );
+	void SetLightColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-	void SetLightAmbientColor( uint8_t r, uint8_t g, uint8_t b, uint8_t a );
+	void SetLightAmbientColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-	void SetIsRightHand( bool value );
+	void SetIsRightHand(bool value);
 
-	void SetCullingParameter( bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ);
+	void SetCullingParameter(bool isCullingShown, float cullingRadius, float cullingX, float cullingY, float cullingZ);
 
 	efk::ImageResource* LoadImageResource(const char16_t* path);
 
