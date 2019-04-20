@@ -18,6 +18,13 @@ namespace Effekseer.Exporter
 		public glTFExporterFormat Format = glTFExporterFormat.glTF;
 		public bool IsContainedTextureAsBinary = false;
 		public float Scale = 1.0f;
+
+        /// <summary>
+        /// if bindingNode is int, an effect is binding with node index.
+        /// if bindingNode is str, an effect is binding with node name.
+        /// if bindingNode is null, an effect is binding with default node name.
+        /// </summary>
+        public object bindingNode = null;
 	}
 
 	public class glTFExporter
@@ -48,9 +55,9 @@ namespace Effekseer.Exporter
 
 			var effekseerExtention = new EffekseerExtention();
 
-			var effect = CreateEffect(option.Scale, option.IsContainedTextureAsBinary);
+			var effect = CreateEffect(option.Scale, option.bindingNode, option.IsContainedTextureAsBinary);
 
-			effekseerExtention.effects.Add(effect.effectName, effect);
+			effekseerExtention.effects.Add((string)effect["effectName"], effect);
 
 			extentions.Add("Effekseer", effekseerExtention);
 
@@ -73,7 +80,7 @@ namespace Effekseer.Exporter
 
 			if(option.Format == glTFExporterFormat.glTF)
 			{
-				System.IO.File.WriteAllText(System.IO.Path.ChangeExtension(path, "json"), json);
+				System.IO.File.WriteAllText(System.IO.Path.ChangeExtension(path, "glTF"), json);
 				System.IO.File.WriteAllBytes(System.IO.Path.ChangeExtension(path, "bin"), internalBuffer.ToArray());
 			}
 			else
@@ -114,9 +121,9 @@ namespace Effekseer.Exporter
 			bufferViews.Add(name, bufferView);
 		}
 
-		EffekseerEffect CreateEffect(float scale, bool isContainedTextureAsBinary)
+        EffekseerEffect CreateEffect(float scale, object bindingNode, bool isContainedTextureAsBinary)
 		{
-			EffekseerEffect effect = new EffekseerEffect();
+			var effect = new EffekseerEffect();
 
 			var name = System.IO.Path.GetFileNameWithoutExtension(Core.FullPath);
 			if (string.IsNullOrEmpty(name))
@@ -126,15 +133,27 @@ namespace Effekseer.Exporter
 
 			var bodyName = name + "_body";
 
-			effect.nodeName = name;
-			effect.effectName = name;
+            if (bindingNode == null)
+            {
+                effect.Add("nodeName", name);
+            }
+            else if (bindingNode is string)
+            {
+                effect.Add("nodeName", (string)bindingNode);
+            }
+            else if (bindingNode is int)
+            {
+                effect.Add("nodeIndex", (int)bindingNode);
+            }
+
+            effect.Add("effectName", name);
 
 			var binaryExporter = new Binary.Exporter();
 			var binary = binaryExporter.Export(scale);
 
 			AddBufferView(bodyName, binary);
 
-			effect.body = bodyName;
+			effect.Add("body", bodyName);
 
 			SortedSet<string> textures = new SortedSet<string>();
 
@@ -153,24 +172,28 @@ namespace Effekseer.Exporter
 				textures.Add(texture);
 			}
 
-			if(isContainedTextureAsBinary)
+            Dictionary<string, object> images = new Dictionary<string, object>();
+
+            if (isContainedTextureAsBinary)
 			{
 				foreach (var texture in textures)
 				{
 					var buf = System.IO.File.ReadAllBytes(texture);
 					AddBufferView(texture, buf);
-					effect.images.Add(texture, CreateImageAsBufferView(texture));
+					images.Add(texture, CreateImageAsBufferView(texture));
 				}
 			}
 			else
 			{
 				foreach (var texture in textures)
 				{
-					effect.images.Add(texture, CreateImageAsURI(texture));
+					images.Add(texture, CreateImageAsURI(texture));
 				}
 			}
 
-			return effect;
+            effect.Add("images", images);
+
+            return effect;
 		}
 
 		class Buffer
@@ -192,16 +215,8 @@ namespace Effekseer.Exporter
 			public Dictionary<string, EffekseerEffect> effects = new Dictionary<string, EffekseerEffect>();
 		}
 
-		class EffekseerEffect
-		{
-			public string nodeName = "";
-
-			public string effectName = "";
-
-			public object body = "";
-
-			public Dictionary<string, object> images = new Dictionary<string, object>();
-		}
+        class EffekseerEffect : Dictionary<string, object>
+        { }
 
 		Dictionary<string, object> CreateImageAsBufferView(string bufferview)
 		{
