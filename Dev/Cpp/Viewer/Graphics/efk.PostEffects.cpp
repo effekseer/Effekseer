@@ -24,6 +24,7 @@ namespace efk
 #endif
 		if (graphics->GetDeviceType() == DeviceType::OpenGL)
 		{
+			return nullptr;
 			return new BloomEffectGL(graphics);
 		}
 

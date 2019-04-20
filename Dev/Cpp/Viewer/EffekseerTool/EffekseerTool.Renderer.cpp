@@ -179,7 +179,7 @@ bool Renderer::Initialize( void* handle, int width, int height )
 	// 背景作成
 	m_background = ::EffekseerRenderer::Paste::Create(graphics);
 
-	// ポストエフェクト作成
+	// create postprocessings
 	m_bloomEffect.reset(efk::PostEffect::CreateBloom(graphics));
 	m_tonemapEffect.reset(efk::PostEffect::CreateTonemap(graphics));
 
@@ -323,29 +323,37 @@ void Renderer::RecalcProjection()
 
 bool Renderer::BeginRendering()
 {
-	if (hdrRenderTexture == nullptr || hdrRenderTexture->GetWidth() != screenWidth || hdrRenderTexture->GetHeight() != screenHeight)
+	if (m_bloomEffect == nullptr &&  m_tonemapEffect == nullptr)
 	{
-		hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-		hdrRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F, msaaSamples);
-		depthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
-		depthTexture->Initialize(screenWidth, screenHeight, msaaSamples);
-
-		if (msaaSamples > 1)
-		{
-			postfxRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
-			postfxRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F);
-		}
-		else
-		{
-			postfxRenderTexture = hdrRenderTexture;
-		}
+		targetRenderTexture = graphics->GetRenderTexture();
+		targetDepthTexture = graphics->GetDepthTexture();
+		graphics->SetRenderTarget(targetRenderTexture, targetDepthTexture);
 	}
-
-	targetRenderTexture = graphics->GetRenderTexture();
-	targetDepthTexture = graphics->GetDepthTexture();
-
-	graphics->SetRenderTarget(hdrRenderTexture.get(), depthTexture.get());
-
+	else
+	{
+	
+		if (hdrRenderTexture == nullptr || hdrRenderTexture->GetWidth() != screenWidth || hdrRenderTexture->GetHeight() != screenHeight)
+		{
+			hdrRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
+			hdrRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F, msaaSamples);
+			depthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
+			depthTexture->Initialize(screenWidth, screenHeight, msaaSamples);
+	
+			if (msaaSamples > 1)
+			{
+				postfxRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
+				postfxRenderTexture->Initialize(screenWidth, screenHeight, efk::TextureFormat::RGBA16F);
+			}
+			else
+			{
+				postfxRenderTexture = hdrRenderTexture;
+			}
+		}
+		targetRenderTexture = graphics->GetRenderTexture();
+		targetDepthTexture = graphics->GetDepthTexture();
+		graphics->SetRenderTarget(hdrRenderTexture.get(), depthTexture.get());	
+	}
+	
 	graphics->BeginScene();
 
 	if (!m_recording)
@@ -528,9 +536,12 @@ bool Renderer::BeginRenderToView(int32_t width, int32_t height)
 	{
 		viewRenderTexture = std::shared_ptr<efk::RenderTexture>(efk::RenderTexture::Create(graphics));
 		viewRenderTexture->Initialize(width, height, efk::TextureFormat::RGBA8U);
+
+		viewDepthTexture = std::shared_ptr<efk::DepthTexture>(efk::DepthTexture::Create(graphics));
+		viewDepthTexture->Initialize(width, height);
 	}
 
-	graphics->SetRenderTarget(viewRenderTexture.get(), nullptr);
+	graphics->SetRenderTarget(viewRenderTexture.get(), viewDepthTexture.get());
 
 	m_cameraMatTemp = m_renderer->GetCameraMatrix();
 	m_projMatTemp = m_renderer->GetProjectionMatrix();
@@ -575,6 +586,12 @@ void Renderer::RenderPostEffect()
 	auto src = hdrRenderTexture.get();
 	auto dest = postfxRenderTexture.get();
 	
+	// all post effects are disabled
+	if (m_bloomEffect == nullptr && m_tonemapEffect == nullptr)
+	{
+		return;
+	}
+
 	if (src != dest)
 	{
 		graphics->ResolveRenderTarget(src, dest);
@@ -582,11 +599,11 @@ void Renderer::RenderPostEffect()
 	}
 
 	if (m_bloomEffect) {
-		// ブルーム処理(srcとdestに同じターゲットを指定する方が高速)
+		// Bloom processing (specifying the same target for src and dest is faster)
 		m_bloomEffect->Render(src, src);
 	}
 	if (m_tonemapEffect) {
-		// トーンマップ処理(最終ターゲットをdestに指定)
+		// Tone map processing(final target is specified as dest)
 		dest = targetRenderTexture;
 		m_tonemapEffect->Render(src, dest);
 	}
