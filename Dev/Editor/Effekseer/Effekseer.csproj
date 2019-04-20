@@ -142,6 +142,8 @@
     <Compile Include="swig\InputTextFlags.cs" />
     <Compile Include="swig\MouseCursor.cs" />
     <Compile Include="swig\Native.cs" />
+    <Compile Include="swig\RecordingModeType.cs" />
+    <Compile Include="swig\RecordingParameter.cs" />
     <Compile Include="swig\RenderMode.cs" />
     <Compile Include="swig\SelectableFlags.cs" />
     <Compile Include="swig\TransparenceType.cs" />

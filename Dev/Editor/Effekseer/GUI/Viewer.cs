@@ -113,29 +113,38 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		public bool Record(string path, int count, int offsetFrame, int freq, swig.TransparenceType transparenceType)
+		public bool RecordSprite(string path, swig.RecordingParameter recordingParameter)
 		{
 			var dir = System.IO.Path.GetDirectoryName(path);
 			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
 			var ext = System.IO.Path.GetExtension(path);
 
-			return native.Record(dir + "/" + fileWExt, ext, count, offsetFrame, freq, transparenceType);
+            recordingParameter.SetPath(dir + "/" + fileWExt);
+            recordingParameter.SetExt(ext);
+            recordingParameter.RecordingMode = swig.RecordingModeType.Sprite;
+            return native.Record(recordingParameter);
 		}
 
-		public bool Record(string path, int count, int xCount, int offsetFrame, int freq, swig.TransparenceType transparenceType)
+		public bool RecordSpriteSheet(string path, swig.RecordingParameter recordingParameter)
 		{
-			return native.Record(path, count, xCount, offsetFrame, freq, transparenceType);
+            recordingParameter.SetPath(path);
+            recordingParameter.RecordingMode = swig.RecordingModeType.SpriteSheet;
+            return native.Record(recordingParameter);
 		}
 
-		public bool RecordAsGifAnimation(string path, int count, int offsetFrame, int freq, swig.TransparenceType transparenceType)
-		{
-			return native.RecordAsGifAnimation(path, count, offsetFrame, freq, transparenceType);
-		}
+		public bool RecordAsGifAnimation(string path, swig.RecordingParameter recordingParameter)
+        {
+            recordingParameter.SetPath(path);
+            recordingParameter.RecordingMode = swig.RecordingModeType.Gif;
+            return native.Record(recordingParameter);
+        }
 
-		public bool RecordAsAVI(string path, int count, int offsetFrame, int freq, swig.TransparenceType transparenceType)
-		{
-			return native.RecordAsAVI(path, count, offsetFrame, freq, transparenceType);
-		}
+		public bool RecordAsAVI(string path, swig.RecordingParameter recordingParameter)
+        {
+            recordingParameter.SetPath(path);
+            recordingParameter.RecordingMode = swig.RecordingModeType.Avi;
+            return native.Record(recordingParameter);
+        }
 
 
 		public swig.ViewerParamater GetViewerParamater()

@@ -272,9 +272,7 @@ namespace Effekseer.GUI.Dock
 				}
 
 				var count = during / Core.Option.RecordingFrequency.Value + 1;
-				var width = Core.Option.RecordingHorizontalCount.Value;
-				var height = count / width;
-				if (height * width != count) height++;
+				var horizontalCount = Core.Option.RecordingHorizontalCount.Value;
 
 				if (Manager.Viewer != null)
 				{
@@ -325,7 +323,15 @@ namespace Effekseer.GUI.Dock
                     var startingFrame = Core.Option.RecordingStartingFrame.Value;
                     var freq = Core.Option.RecordingFrequency.Value;
 
-					if(Effekseer.Core.Language == Language.Japanese)
+                    var recordingParameter = new swig.RecordingParameter();
+
+                    recordingParameter.Count = count;
+                    recordingParameter.HorizontalCount = horizontalCount;
+                    recordingParameter.Freq = freq;
+                    recordingParameter.OffsetFrame = startingFrame;
+                    recordingParameter.Transparence = (swig.TransparenceType)selectedAlphaIndex;
+
+					if (Effekseer.Core.Language == Language.Japanese)
 					{
 						errorMessage = "保存に失敗しました。ファイルが他のアプリケーションで開かれている、もしくはスペックが足りません。";
 					}
@@ -336,28 +342,28 @@ namespace Effekseer.GUI.Dock
 
 					if (selectedTypeIndex == 0)
 					{
-						if (!viewer.Record(filename, count, width, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
+						if (!viewer.RecordSpriteSheet(filename, recordingParameter))
 						{
                             swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						}
 					}
 					else if (selectedTypeIndex == 1)
 					{
-						if (!viewer.Record(filename, count, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
+						if (!viewer.RecordSprite(filename, recordingParameter))
 						{
                             swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						}
 					}
 					else if (selectedTypeIndex == 2)
 					{
-						if (!viewer.RecordAsGifAnimation(filename, count, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
+						if (!viewer.RecordAsGifAnimation(filename, recordingParameter))
 						{
                             swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						}
 					}
 					else if (selectedTypeIndex == 3)
 					{
-						if (!viewer.RecordAsAVI(filename, count, startingFrame, freq, (swig.TransparenceType)selectedAlphaIndex))
+						if (!viewer.RecordAsAVI(filename, recordingParameter))
 						{
                             swig.GUIManager.show(errorMessage, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						}

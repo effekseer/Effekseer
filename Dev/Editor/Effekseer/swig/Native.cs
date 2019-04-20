@@ -127,23 +127,9 @@ public class Native : global::System.IDisposable {
 
   public System.IntPtr RenderView(int width, int height) { return EffekseerNativePINVOKE.Native_RenderView(swigCPtr, width, height); }
 
-  public bool Record(string pathWithoutExt, string ext, int count, int offsetFrame, int freq, TransparenceType transparenceType) {
-    bool ret = EffekseerNativePINVOKE.Native_Record__SWIG_0(swigCPtr, pathWithoutExt, ext, count, offsetFrame, freq, (int)transparenceType);
-    return ret;
-  }
-
-  public bool Record(string path, int count, int xCount, int offsetFrame, int freq, TransparenceType transparenceType) {
-    bool ret = EffekseerNativePINVOKE.Native_Record__SWIG_1(swigCPtr, path, count, xCount, offsetFrame, freq, (int)transparenceType);
-    return ret;
-  }
-
-  public bool RecordAsGifAnimation(string path, int count, int offsetFrame, int freq, TransparenceType transparenceType) {
-    bool ret = EffekseerNativePINVOKE.Native_RecordAsGifAnimation(swigCPtr, path, count, offsetFrame, freq, (int)transparenceType);
-    return ret;
-  }
-
-  public bool RecordAsAVI(string path, int count, int offsetFrame, int freq, TransparenceType transparenceType) {
-    bool ret = EffekseerNativePINVOKE.Native_RecordAsAVI(swigCPtr, path, count, offsetFrame, freq, (int)transparenceType);
+  public bool Record(RecordingParameter recordingParameter) {
+    bool ret = EffekseerNativePINVOKE.Native_Record(swigCPtr, RecordingParameter.getCPtr(recordingParameter));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 

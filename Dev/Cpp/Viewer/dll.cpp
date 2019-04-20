@@ -1010,108 +1010,42 @@ void* Native::RenderView(int32_t width, int32_t height)
 	return (void*)g_renderer->GetViewID();
 }
 
-bool Native::Record(const char16_t* pathWithoutExt,
-					const char16_t* ext,
-					int32_t count,
-					int32_t offsetFrame,
-					int32_t freq,
-					TransparenceType transparenceType)
+class RecorderCallback
 {
-	bool isBehaviorEnabled = true;
+private:
+public:
+	RecorderCallback() = default;
+	virtual ~RecorderCallback() = default;
 
-	if (g_effect == NULL)
-		return false;
+	virtual bool OnBeginRecord() { return false; }
 
-	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
+	virtual void OnEndRecord() {}
 
-	::Effekseer::Vector3D position(0, 0, g_Distance);
-	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
-	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
-	mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
-	::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
-	::Effekseer::Vector3D::Transform(position, position, mat);
-	position.X += g_focus_position.X;
-	position.Y += g_focus_position.Y;
-	position.Z += g_focus_position.Z;
+	virtual void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) {}
+};
 
-	g_renderer->GetRenderer()->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+class RecorderCallbackSprite : public RecorderCallback
+{
+private:
+	RecordingParameter& recordingParameter_;
 
-	StopEffect();
+public:
+	RecorderCallbackSprite(RecordingParameter& recordingParameter) : recordingParameter_(recordingParameter) {}
 
-	::Effekseer::Handle handle;
-	if (isBehaviorEnabled)
+	virtual ~RecorderCallbackSprite() = default;
+
+	bool OnBeginRecord() override { return true; }
+
+	void OnEndRecord() override {}
+
+	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
 	{
-		PlayEffect();
-	}
-	else
-	{
-		handle = g_manager->Play(g_effect, 0, 0, 0);
-		g_manager->SetTargetLocation(
-			handle, m_effectBehavior.TargetPositionX, m_effectBehavior.TargetPositionY, m_effectBehavior.TargetPositionZ);
-	}
-
-	if (isBehaviorEnabled)
-	{
-		StepEffect(offsetFrame);
-	}
-	else
-	{
-		for (int i = 0; i < offsetFrame; i++)
-		{
-			g_manager->Update();
-		}
-	}
-
-	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
-
-	for (int32_t i = 0; i < count; i++)
-	{
-		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight))
-			goto Exit;
-
-		g_renderer->BeginRendering();
-
-		if (g_renderer->Distortion == EffekseerTool::eDistortionType::DistortionType_Current)
-		{
-			g_manager->DrawBack();
-
-			// HACK
-			g_renderer->GetRenderer()->EndRendering();
-
-			g_renderer->CopyToBackground();
-
-			// HACK
-			g_renderer->GetRenderer()->BeginRendering();
-			g_manager->DrawFront();
-		}
-		else
-		{
-			g_manager->Draw();
-		}
-
-		g_renderer->EndRendering();
-
-		if (isBehaviorEnabled)
-		{
-			StepEffect(freq);
-		}
-		else
-		{
-			for (int j = 0; j < freq; j++)
-			{
-				g_manager->Update();
-			}
-		}
-
-		std::vector<Effekseer::Color> pixels;
-		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
-
 		char16_t path_[260];
-
+		auto pathWithoutExt = recordingParameter_.GetPath();
+		auto ext = recordingParameter_.GetExt();
 #ifdef _WIN32
 		auto p_ = (wchar_t*)path_;
-		swprintf_s(p_, 260, L"%s.%d%s", pathWithoutExt, i, ext);
+		swprintf_s(p_, 260, L"%s.%d%s", pathWithoutExt, index, ext);
 #else
 
 		char pathWOE[256];
@@ -1119,390 +1053,255 @@ bool Native::Record(const char16_t* pathWithoutExt,
 		char path8_dst[256];
 		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)pathWithoutExt);
 		Effekseer::ConvertUtf16ToUtf8((int8_t*)ext_, 256, (const int16_t*)ext);
-		sprintf(path8_dst, "%s.%d%s", pathWOE, i, ext_);
+		sprintf(path8_dst, "%s.%d%s", pathWOE, index, ext_);
 		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)path8_dst);
 #endif
 
 		efk::PNGHelper pngHelper;
 		pngHelper.Save((char16_t*)path_, g_renderer->GuideWidth, g_renderer->GuideHeight, pixels.data());
 	}
+};
 
-Exit:;
-
-	if (isBehaviorEnabled)
-	{
-		StopEffect();
-	}
-	else
-	{
-		g_manager->StopEffect(handle);
-	}
-
-	g_manager->Update();
-
-	g_renderer->EndRenderToView();
-
-	return true;
-}
-
-bool Native::Record(
-	const char16_t* path, int32_t count, int32_t xCount, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
+class RecorderCallbackSpriteSheet : public RecorderCallback
 {
-	bool isBehaviorEnabled = true;
-
-	if (g_effect == NULL)
-		return false;
-
-	int32_t yCount = count / xCount;
-	if (count != xCount * yCount)
-		yCount++;
-
+private:
+	RecordingParameter& recordingParameter_;
+	int yCount = 0;
 	std::vector<Effekseer::Color> pixels_out;
-	pixels_out.resize((g_renderer->GuideWidth * xCount) * (g_renderer->GuideHeight * yCount));
 
-	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
+public:
+	RecorderCallbackSpriteSheet(RecordingParameter& recordingParameter) : recordingParameter_(recordingParameter) {}
 
-	::Effekseer::Vector3D position(0, 0, g_Distance);
-	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
-	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
-	mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
-	::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
-	::Effekseer::Vector3D::Transform(position, position, mat);
-	position.X += g_focus_position.X;
-	position.Y += g_focus_position.Y;
-	position.Z += g_focus_position.Z;
+	virtual ~RecorderCallbackSpriteSheet() = default;
 
-	g_renderer->GetRenderer()->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
-
-	StopEffect();
-
-	::Effekseer::Handle handle;
-	if (isBehaviorEnabled)
+	bool OnBeginRecord() override
 	{
-		PlayEffect();
-	}
-	else
-	{
-		handle = g_manager->Play(g_effect, 0, 0, 0);
-		g_manager->SetTargetLocation(
-			handle, m_effectBehavior.TargetPositionX, m_effectBehavior.TargetPositionY, m_effectBehavior.TargetPositionZ);
-	}
+		yCount = recordingParameter_.Count / recordingParameter_.HorizontalCount;
+		if (recordingParameter_.Count > recordingParameter_.HorizontalCount * yCount)
+			yCount++;
 
-	if (isBehaviorEnabled)
-	{
-		StepEffect(offsetFrame);
-	}
-	else
-	{
-		for (int i = 0; i < offsetFrame; i++)
+		pixels_out.resize((g_renderer->GuideWidth * recordingParameter_.HorizontalCount) * (g_renderer->GuideHeight * yCount));
+
+		if (recordingParameter_.Transparence == TransparenceType::Original)
 		{
-			g_manager->Update();
+			for (auto& p : pixels_out)
+			{
+				p = Effekseer::Color(0, 0, 0, 0);
+			}
 		}
+		else
+
+		{
+			for (auto& p : pixels_out)
+			{
+				p = Effekseer::Color(0, 0, 0, 255);
+			}
+		}
+
+		return true;
 	}
 
-	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
-
-	int32_t count_ = 0;
-	for (int y = 0; y < yCount; y++)
+	void OnEndRecord() override
 	{
-		for (int x = 0; x < xCount; x++)
+
+		efk::PNGHelper pngHelper;
+		pngHelper.Save((char16_t*)recordingParameter_.GetPath(),
+					   g_renderer->GuideWidth * recordingParameter_.HorizontalCount,
+					   g_renderer->GuideHeight * yCount,
+					   pixels_out.data());
+	}
+
+	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
+	{
+		auto x = index % recordingParameter_.HorizontalCount;
+		auto y = index / recordingParameter_.HorizontalCount;
+
+		for (int32_t y_ = 0; y_ < g_renderer->GuideHeight; y_++)
 		{
-			if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight))
-				goto Exit;
-
-			RenderWindow();
-
-			if (isBehaviorEnabled)
+			for (int32_t x_ = 0; x_ < g_renderer->GuideWidth; x_++)
 			{
-				StepEffect(freq);
-			}
-			else
-			{
-				for (int j = 0; j < freq; j++)
-				{
-					g_manager->Update();
-				}
-			}
-
-			count_++;
-			if (count == count_)
-			{
-				g_manager->StopEffect(handle);
-			}
-
-			std::vector<Effekseer::Color> pixels;
-			g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
-
-			for (int32_t y_ = 0; y_ < g_renderer->GuideHeight; y_++)
-			{
-				for (int32_t x_ = 0; x_ < g_renderer->GuideWidth; x_++)
-				{
-					pixels_out[x * g_renderer->GuideWidth + x_ + (g_renderer->GuideWidth * xCount) * (g_renderer->GuideHeight * y + y_)] =
-						pixels[x_ + y_ * g_renderer->GuideWidth];
-				}
+				pixels_out[x * g_renderer->GuideWidth + x_ +
+						   (g_renderer->GuideWidth * recordingParameter_.HorizontalCount) * (g_renderer->GuideHeight * y + y_)] =
+					pixels[x_ + y_ * g_renderer->GuideWidth];
 			}
 		}
 	}
+};
 
-Exit:;
-
-	efk::PNGHelper pngHelper;
-	pngHelper.Save((char16_t*)path, g_renderer->GuideWidth * xCount, g_renderer->GuideHeight * yCount, pixels_out.data());
-
-	if (isBehaviorEnabled)
-	{
-		StopEffect();
-	}
-	else
-	{
-		g_manager->StopEffect(handle);
-	}
-
-	g_manager->Update();
-
-	g_renderer->EndRenderToView();
-
-	return true;
-}
-
-bool Native::RecordAsGifAnimation(const char16_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
+class RecorderCallbackGif : public RecorderCallback
 {
-	bool isBehaviorEnabled = true;
-
-	if (g_effect == NULL)
-		return false;
-
-	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
-
-	::Effekseer::Vector3D position(0, 0, g_Distance);
-	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
-	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
-	mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
-	::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
-	::Effekseer::Vector3D::Transform(position, position, mat);
-	position.X += g_focus_position.X;
-	position.Y += g_focus_position.Y;
-	position.Z += g_focus_position.Z;
-
-	g_renderer->GetRenderer()->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
-
-	StopEffect();
-
-	::Effekseer::Handle handle;
-	if (isBehaviorEnabled)
-	{
-		PlayEffect();
-	}
-	else
-	{
-		handle = g_manager->Play(g_effect, 0, 0, 0);
-		g_manager->SetTargetLocation(
-			handle, m_effectBehavior.TargetPositionX, m_effectBehavior.TargetPositionY, m_effectBehavior.TargetPositionZ);
-	}
-
-	if (isBehaviorEnabled)
-	{
-		StepEffect(offsetFrame);
-	}
-	else
-	{
-		for (int i = 0; i < offsetFrame; i++)
-		{
-			g_manager->Update();
-		}
-	}
-
-	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
-
+private:
+	RecordingParameter& recordingParameter_;
 	efk::GifHelper helper;
-	helper.Initialize(path, g_renderer->GuideWidth, g_renderer->GuideHeight, freq);
 
-	for (int32_t i = 0; i < count; i++)
+public:
+	RecorderCallbackGif(RecordingParameter& recordingParameter) : recordingParameter_(recordingParameter) {}
+
+	virtual ~RecorderCallbackGif() = default;
+
+	bool OnBeginRecord() override
 	{
-		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight))
-			goto End;
-
-		g_renderer->BeginRendering();
-
-		if (g_renderer->Distortion == EffekseerTool::eDistortionType::DistortionType_Current)
-		{
-			g_manager->DrawBack();
-
-			// HACK
-			g_renderer->GetRenderer()->EndRendering();
-
-			g_renderer->CopyToBackground();
-
-			// HACK
-			g_renderer->GetRenderer()->BeginRendering();
-			g_manager->DrawFront();
-		}
-		else
-		{
-			g_manager->Draw();
-		}
-
-		g_renderer->EndRendering();
-
-		if (isBehaviorEnabled)
-		{
-			StepEffect(freq);
-		}
-		else
-		{
-			for (int j = 0; j < freq; j++)
-			{
-				g_manager->Update();
-			}
-		}
-
-		std::vector<Effekseer::Color> pixels;
-		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
-
-		helper.AddImage(pixels);
+		helper.Initialize(recordingParameter_.GetPath(), g_renderer->GuideWidth, g_renderer->GuideHeight, recordingParameter_.Freq);
+		return true;
 	}
 
-End:;
+	void OnEndRecord() override {}
 
-	if (isBehaviorEnabled)
-	{
-		StopEffect();
-	}
-	else
-	{
-		g_manager->StopEffect(handle);
-	}
+	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override { helper.AddImage(pixels); }
+};
 
-	g_manager->Update();
-
-	g_renderer->EndRenderToView();
-
-	return true;
-}
-
-bool Native::RecordAsAVI(const char16_t* path, int32_t count, int32_t offsetFrame, int32_t freq, TransparenceType transparenceType)
+class RecorderCallbackAvi : public RecorderCallback
 {
-	bool isBehaviorEnabled = true;
-
-	if (g_effect == NULL)
-		return false;
-
-	g_renderer->IsBackgroundTranslucent = transparenceType == TransparenceType::Original;
-
-	::Effekseer::Vector3D position(0, 0, g_Distance);
-	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
-	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
-	mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
-	::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
-	::Effekseer::Vector3D::Transform(position, position, mat);
-	position.X += g_focus_position.X;
-	position.Y += g_focus_position.Y;
-	position.Z += g_focus_position.Z;
-
-	g_renderer->GetRenderer()->SetCameraMatrix(
-		::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
-
-	StopEffect();
-
-	::Effekseer::Handle handle;
-	if (isBehaviorEnabled)
-	{
-		PlayEffect();
-	}
-	else
-	{
-		handle = g_manager->Play(g_effect, 0, 0, 0);
-		g_manager->SetTargetLocation(
-			handle, m_effectBehavior.TargetPositionX, m_effectBehavior.TargetPositionY, m_effectBehavior.TargetPositionZ);
-	}
-
-	if (isBehaviorEnabled)
-	{
-		StepEffect(offsetFrame);
-	}
-	else
-	{
-		for (int i = 0; i < offsetFrame; i++)
-		{
-			g_manager->Update();
-		}
-	}
-
+private:
+	RecordingParameter& recordingParameter_;
+	efk::AVIExporter exporter;
+	std::vector<uint8_t> d;
 	FILE* fp = nullptr;
+
+public:
+	RecorderCallbackAvi(RecordingParameter& recordingParameter) : recordingParameter_(recordingParameter) {}
+
+	virtual ~RecorderCallbackAvi() = default;
+
+	bool OnBeginRecord() override
+	{
 #ifdef _WIN32
-	_wfopen_s(&fp, (const wchar_t*)path, L"wb");
+		_wfopen_s(&fp, (const wchar_t*)recordingParameter_.GetPath(), L"wb");
 #else
-	int8_t path8[256];
-	Effekseer::ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
-	fp = fopen((const char*)path8, "wb");
+		int8_t path8[256];
+		Effekseer::ConvertUtf16ToUtf8(path8, 256, (const int16_t*)recordingParameter_.GetPath());
+		fp = fopen((const char*)path8, "wb");
 #endif
 
-	if (fp == nullptr)
-		return false;
+		if (fp == nullptr)
+			return false;
 
-	efk::AVIExporter exporter;
-	exporter.Initialize(g_renderer->GuideWidth, g_renderer->GuideHeight, (int32_t)(60.0f / (float)freq), count);
+		exporter.Initialize(
+			g_renderer->GuideWidth, g_renderer->GuideHeight, (int32_t)(60.0f / (float)recordingParameter_.Freq), recordingParameter_.Count);
 
-	std::vector<uint8_t> d;
-	exporter.BeginToExportAVI(d);
-	fwrite(d.data(), 1, d.size(), fp);
+		exporter.BeginToExportAVI(d);
+		fwrite(d.data(), 1, d.size(), fp);
 
-	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
+		return true;
+	}
 
-	for (int32_t i = 0; i < count; i++)
+	void OnEndRecord() override
 	{
-		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight))
-			goto End;
+		exporter.FinishToExportAVI(d);
+		fwrite(d.data(), 1, d.size(), fp);
+		fclose(fp);
+	}
 
-		g_renderer->BeginRendering();
-
-		if (g_renderer->Distortion == EffekseerTool::eDistortionType::DistortionType_Current)
-		{
-			g_manager->DrawBack();
-
-			// HACK
-			g_renderer->GetRenderer()->EndRendering();
-
-			g_renderer->CopyToBackground();
-
-			// HACK
-			g_renderer->GetRenderer()->BeginRendering();
-			g_manager->DrawFront();
-		}
-		else
-		{
-			g_manager->Draw();
-		}
-
-		g_renderer->EndRendering();
-
-		if (isBehaviorEnabled)
-		{
-			StepEffect(freq);
-		}
-		else
-		{
-			for (int j = 0; j < freq; j++)
-			{
-				g_manager->Update();
-			}
-		}
-
-		std::vector<Effekseer::Color> pixels;
-		g_renderer->EndRecord(pixels, transparenceType == TransparenceType::Generate, transparenceType == TransparenceType::None);
-
+	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
+	{
 		exporter.ExportFrame(d, pixels);
 		fwrite(d.data(), 1, d.size(), fp);
 	}
+};
 
-	exporter.FinishToExportAVI(d);
-	fwrite(d.data(), 1, d.size(), fp);
+bool Native::Record(RecordingParameter& recordingParameter)
+{
 
-End:;
+	bool isBehaviorEnabled = true;
 
-	fclose(fp);
+	if (g_effect == nullptr)
+		return false;
+
+	std::shared_ptr<RecorderCallback> recorderCallback;
+
+	if (recordingParameter.RecordingMode == RecordingModeType::Sprite)
+	{
+		recorderCallback = std::make_shared<RecorderCallbackSprite>(recordingParameter);
+	}
+	else if (recordingParameter.RecordingMode == RecordingModeType::SpriteSheet)
+	{
+		recorderCallback = std::make_shared<RecorderCallbackSpriteSheet>(recordingParameter);
+	}
+	else if (recordingParameter.RecordingMode == RecordingModeType::Gif)
+	{
+		recorderCallback = std::make_shared<RecorderCallbackGif>(recordingParameter);
+	}
+	else if (recordingParameter.RecordingMode == RecordingModeType::Avi)
+	{
+		recorderCallback = std::make_shared<RecorderCallbackAvi>(recordingParameter);
+	}
+
+	if (!recorderCallback->OnBeginRecord())
+	{
+		return false;
+	}
+
+	g_renderer->IsBackgroundTranslucent = recordingParameter.Transparence == TransparenceType::Original;
+
+	::Effekseer::Vector3D position(0, 0, g_Distance);
+	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
+	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
+	mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
+	::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
+	::Effekseer::Vector3D::Transform(position, position, mat);
+	position.X += g_focus_position.X;
+	position.Y += g_focus_position.Y;
+	position.Z += g_focus_position.Z;
+
+	g_renderer->GetRenderer()->SetCameraMatrix(
+		::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+	StopEffect();
+
+	::Effekseer::Handle handle;
+	if (isBehaviorEnabled)
+	{
+		PlayEffect();
+	}
+	else
+	{
+		handle = g_manager->Play(g_effect, 0, 0, 0);
+		g_manager->SetTargetLocation(
+			handle, m_effectBehavior.TargetPositionX, m_effectBehavior.TargetPositionY, m_effectBehavior.TargetPositionZ);
+	}
+
+	if (isBehaviorEnabled)
+	{
+		StepEffect(recordingParameter.OffsetFrame);
+	}
+	else
+	{
+		for (int i = 0; i < recordingParameter.OffsetFrame; i++)
+		{
+			g_manager->Update();
+		}
+	}
+
+	g_renderer->BeginRenderToView(g_lastViewWidth, g_lastViewHeight);
+
+	for (int32_t i = 0; i < recordingParameter.Count; i++)
+	{
+		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight))
+			goto Exit;
+
+		RenderWindow();
+
+		if (isBehaviorEnabled)
+		{
+			StepEffect(recordingParameter.Freq);
+		}
+		else
+		{
+			for (int j = 0; j < recordingParameter.Freq; j++)
+			{
+				g_manager->Update();
+			}
+		}
+
+		std::vector<Effekseer::Color> pixels;
+		g_renderer->EndRecord(pixels,
+							  recordingParameter.Transparence == TransparenceType::Generate,
+							  recordingParameter.Transparence == TransparenceType::None);
+
+		recorderCallback->OnEndFrameRecord(i, pixels);
+	}
+
+Exit:;
 
 	if (isBehaviorEnabled)
 	{
@@ -1516,6 +1315,8 @@ End:;
 	g_manager->Update();
 
 	g_renderer->EndRenderToView();
+
+	recorderCallback->OnEndRecord();
 
 	return true;
 }
