@@ -352,7 +352,7 @@ namespace Effekseer.Data.Value
 						float subF = (float)(keys[rInd].Frame - keys[lInd].Frame);
 						var subV = ToFloat(keys[rInd].Value) - ToFloat(keys[lInd].Value);
 
-						if (subF == 0) return (dynamic)keys[lInd].Value;
+						if (subF == 0) return ToFloat(keys[lInd].Value);
 
 						return subV / (float)(subF) * (float)(frame - keys[lInd].Frame) + ToFloat(keys[lInd].Value);
 					}
