@@ -42,13 +42,13 @@ namespace Effekseer.Data.Value
 
 		public override int GetValueAsInt()
 		{
-			dynamic v = _value;
+			object v = _value;
 			return (int)v;
 		}
 
 		public override int GetDefaultValueAsInt()
 		{
-			dynamic v = DefaultValue;
+			object v = DefaultValue;
 			return (int)v;
 		}
 
@@ -76,7 +76,7 @@ namespace Effekseer.Data.Value
 
 		public override void SetValue(int value)
 		{
-			dynamic v = value;
+			object v = value;
 			SetValue((T)v);
 		}
 
@@ -90,7 +90,7 @@ namespace Effekseer.Data.Value
 
 		public override void SetValueDirectly(int value)
 		{
-			dynamic v = value;
+			object v = value;
 			SetValueDirectly((T)v);
 		}
 

@@ -42,7 +42,22 @@ namespace Effekseer.Data.Value
 
 	public class FCurve<T> : IFCurve where T : struct, IComparable<T>, IEquatable<T>
 	{
-		public event ChangedValueEventHandler OnChanged;
+        float ToFloat(T v)
+        {
+            var o = (object)v;
+
+            if (o is float) return (float)o;
+
+            if (v is byte)
+            {
+                var b = (byte)o;
+                return (float)b;
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public event ChangedValueEventHandler OnChanged;
 
 		List<FCurveKey<T>> keys = new List<FCurveKey<T>>();
 
@@ -286,15 +301,18 @@ namespace Effekseer.Data.Value
 			int lInd = 0;
 			int rInd = (int)keys.Count- 1;
 
-			if (keys.Count == 0) return (float)((dynamic)DefaultValue);
+			if (keys.Count == 0)
+            {
+                return ToFloat(DefaultValue);
+            }
 
-			int length = keys[rInd].Frame - keys[lInd].Frame;
+            int length = keys[rInd].Frame - keys[lInd].Frame;
 
 			if (keys[rInd].Frame <= frame)
 			{
 				if (end == FCurveEdge.Constant)
 				{
-					return (dynamic)keys[rInd].Value;
+					return ToFloat(keys[rInd].Value);
 				}
 				else if (end == FCurveEdge.Loop)
 				{
@@ -310,7 +328,7 @@ namespace Effekseer.Data.Value
 			{
 				if (begin == FCurveEdge.Constant)
 				{
-					return (dynamic)keys[lInd].Value;
+					return ToFloat(keys[lInd].Value);
 				}
 				else if (begin == FCurveEdge.Loop)
 				{
@@ -332,15 +350,15 @@ namespace Effekseer.Data.Value
 					if (keys[lInd].InterpolationType.Value == FCurveInterpolation.Linear)
 					{
 						float subF = (float)(keys[rInd].Frame - keys[lInd].Frame);
-						var subV = (dynamic)keys[rInd].Value - (dynamic)keys[lInd].Value;
+						var subV = ToFloat(keys[rInd].Value) - ToFloat(keys[lInd].Value);
 
 						if (subF == 0) return (dynamic)keys[lInd].Value;
 
-						return subV / (float)(subF) * (float)(frame - keys[lInd].Frame) + keys[lInd].Value;
+						return subV / (float)(subF) * (float)(frame - keys[lInd].Frame) + ToFloat(keys[lInd].Value);
 					}
 					else if (keys[lInd].InterpolationType.Value == FCurveInterpolation.Bezier)
 					{
-						if (keys[lInd].Frame == frame) return (dynamic)keys[lInd].Value;
+						if (keys[lInd].Frame == frame) return ToFloat(keys[lInd].Value);
 
 						float[] k1 = new float[2];
 						float[] k1rh = new float[2];
@@ -348,7 +366,7 @@ namespace Effekseer.Data.Value
 						float[] k2 = new float[2];
 
 						k1[0] = keys[lInd].Frame;
-						k1[1] = (dynamic)keys[lInd].Value;
+						k1[1] = ToFloat(keys[lInd].Value);
 
 						k1rh[0] = keys[lInd].RightX;
 						k1rh[1] = keys[lInd].RightY;
@@ -357,7 +375,7 @@ namespace Effekseer.Data.Value
 						k2lh[1] = keys[rInd].LeftY;
 
 						k2[0] = keys[rInd].Frame;
-						k2[1] = (dynamic)keys[rInd].Value;
+						k2[1] = ToFloat(keys[rInd].Value);
 
 						NormalizeValues(k1, k1rh, k2lh, k2);
 						float t = 0;
@@ -703,9 +721,22 @@ namespace Effekseer.Data.Value
 		float _right_x_temp = 0;
 		float _right_y_temp = 0;
 
+        float ToFloat(T v)
+        {
+            var o = (object)v;
 
+            if (o is float) return (float)o;
 
-		public event Action<FCurveKey<T>> OnChangedKey;
+            if (v is byte)
+            {
+                var b = (byte)o;
+                return (float)b;
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public event Action<FCurveKey<T>> OnChangedKey;
 
 		public int Frame
 		{
@@ -727,9 +758,8 @@ namespace Effekseer.Data.Value
 		{
 			get
 			{
-				dynamic v = _value_temp;
-				return v;
-			}
+                return ToFloat(_value_temp);
+            }
 		}
 
 		public float LeftX
@@ -784,9 +814,9 @@ namespace Effekseer.Data.Value
 		{
 			get
 			{
-				dynamic v = _value;
-				return v;
-			}
+                return ToFloat(_value);
+
+            }
 		}
 
 		public float LeftXPrevious
@@ -930,7 +960,7 @@ namespace Effekseer.Data.Value
 		public void SetValue(T value)
 		{
 			if (value.CompareTo(_value_temp) == 0) return;
-			var dif = (float)((dynamic)value) - (float)((dynamic)_value_temp);
+			var dif = ToFloat(value) - ToFloat(_value_temp);
 			_value_temp = value;
 
 			_left_y_temp += dif;
@@ -951,11 +981,11 @@ namespace Effekseer.Data.Value
 				value = Math.Min(255, value);
 			}
 
-			var valNow = (dynamic)_value_temp;
+			var valNow = ToFloat(_value_temp);
 			if (valNow == value) return;
 			
 			var dif = value - valNow;
-			_value_temp = (T)((dynamic)value);
+			_value_temp = (T)((object)value);
 
 			_left_y_temp += dif;
 			_right_y_temp += dif;
@@ -977,12 +1007,12 @@ namespace Effekseer.Data.Value
 			}
 
 			// 傾き調整
-			var _valueF = (float)((dynamic)_value_temp);
+			var _valueF = ToFloat(_value_temp);
 			var dxR = _right_x_temp - _frame_temp;
-			var dyR = _right_y_temp - (float)((dynamic)_value_temp);
+			var dyR = _right_y_temp - ToFloat(_value_temp);
 
 			var dxL = _left_x_temp - _frame_temp;
-			var dyL = _left_y_temp - (float)((dynamic)_value_temp);
+			var dyL = _left_y_temp - ToFloat(_value_temp);
 
 			if (dxR != 0)
 			{ 
@@ -1007,12 +1037,12 @@ namespace Effekseer.Data.Value
 			_left_y_temp = value;
 
 			// 傾き調整
-			var _valueF = (float)((dynamic)_value_temp);
+			var _valueF = ToFloat(_value_temp);
 			var dxR = _right_x_temp - _frame_temp;
-			var dyR = _right_y_temp - (float)((dynamic)_value_temp);
+			var dyR = _right_y_temp - ToFloat(_value_temp);
 
 			var dxL = _left_x_temp - _frame_temp;
-			var dyL = _left_y_temp - (float)((dynamic)_value_temp);
+			var dyL = _left_y_temp - ToFloat(_value_temp);
 
 			if (dxR != 0)
 			{
@@ -1069,12 +1099,12 @@ namespace Effekseer.Data.Value
 			}
 			_left_y_temp = y;
 
-			var _valueF = (float)((dynamic)_value_temp);
+			var _valueF = ToFloat(_value_temp);
 			var dxR = _right_x_temp - _frame_temp;
-			var dyR = _right_y_temp - (float)((dynamic)_value_temp);
+			var dyR = _right_y_temp - ToFloat(_value_temp);
 
 			var dxL = _left_x_temp - _frame_temp;
-			var dyL = _left_y_temp - (float)((dynamic)_value_temp);
+			var dyL = _left_y_temp - ToFloat(_value_temp);
 
 			var lenL = (float)Math.Sqrt(dxL * dxL + dyL * dyL);
 			var lenR = (float)Math.Sqrt(dxR * dxR + dyR * dyR);
@@ -1129,12 +1159,12 @@ namespace Effekseer.Data.Value
 		/// </summary>
 		void CorrectGradientRight()
 		{
-			var _valueF = (float)((dynamic)_value_temp);
+			var _valueF = ToFloat(_value_temp);
 			var dxR = _right_x_temp - _frame_temp;
-			var dyR = _right_y_temp - (float)((dynamic)_value_temp);
+			var dyR = _right_y_temp - ToFloat(_value_temp);
 
 			var dxL = _left_x_temp - _frame_temp;
-			var dyL = _left_y_temp - (float)((dynamic)_value_temp);
+			var dyL = _left_y_temp - ToFloat(_value_temp);
 
 			var lenL = (float)Math.Sqrt(dxL * dxL + dyL * dyL);
 			var lenR = (float)Math.Sqrt(dxR * dxR + dyR * dyR);
@@ -1158,10 +1188,10 @@ namespace Effekseer.Data.Value
 			_right_x = frame;
 			_right_x_temp = frame;
 
-			_left_y = (float)((dynamic)value);
-			_left_y_temp = (float)((dynamic)value);
-			_right_y = (float)((dynamic)value);
-			_right_y_temp = (float)((dynamic)value);
+			_left_y = ToFloat(value);
+			_left_y_temp = ToFloat(value);
+			_right_y = ToFloat(value);
+			_right_y_temp = ToFloat(value);
 
 			InterpolationType = new Enum<FCurveInterpolation>(FCurveInterpolation.Bezier);
 		}
