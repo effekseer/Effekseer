@@ -17,7 +17,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\release\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SCRIPT_ENABLED</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SCRIPT_ENABLED;ESCAPE_URI_ENABLED;</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
