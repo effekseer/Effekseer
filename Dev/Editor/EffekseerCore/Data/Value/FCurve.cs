@@ -65,7 +65,7 @@ namespace Effekseer.Data.Value
 		{
 			get
 			{
-				return keys;
+				return (IEnumerable<IFCurveKey>)keys;
 			}
 		}
 

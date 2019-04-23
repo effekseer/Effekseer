@@ -262,7 +262,7 @@ namespace Effekseer.Data
 			var cmd = new Command.DelegateCommand(
 				() =>
 				{
-					Tuple<Node, Node> nodes = new Tuple<Node, Node>(node1, node2);
+					Tuple35<Node, Node> nodes = new Tuple35<Node, Node>(node1, node2);
 					children = new_value;
 
 					if (OnAfterExchangeNodes != null)
@@ -272,7 +272,7 @@ namespace Effekseer.Data
 				},
 				() =>
 				{
-					Tuple<Node, Node> nodes = new Tuple<Node, Node>(node2, node1);
+					Tuple35<Node, Node> nodes = new Tuple35<Node, Node>(node2, node1);
 					children = old_value;
 
 					if (OnAfterExchangeNodes != null)
