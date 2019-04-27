@@ -31,10 +31,10 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	, m_LivedTime(0)
 	, m_LivingTime(0)
 	, uvTimeOffset(0)
-	, m_GlobalMatrix43Calculated(false)
-	, m_ParentMatrix43Calculated(false)
 	, m_flexibleGeneratedChildrenCount(nullptr)
 	, m_flexibleNextGenerationTime(nullptr)
+	, m_GlobalMatrix43Calculated(false)
+	, m_ParentMatrix43Calculated(false)
 	, m_stepTime(false)
 	, m_sequenceNumber(0)
 {
