@@ -180,7 +180,7 @@ namespace Effekseer.Data
         /// <summary>
         /// this value is initialized lazily because it cannot decide using language in the constructor
         /// </summary>
-        Lazy<Value.PathForImage> LasyBackgroundImage;
+        Value.PathForImage LasyBackgroundImage;
 
 		[Name(language = Language.Japanese, value = "背景画像")]
 		[Description(language = Language.Japanese, value = "背景画像")]
@@ -191,7 +191,11 @@ namespace Effekseer.Data
 		{
             get
             {
-                return LasyBackgroundImage.Value;
+                if(LasyBackgroundImage == null)
+                {
+                    LasyBackgroundImage = new Value.PathForImage(Resources.GetString("ImageFilter"), false, "");
+                }
+                return LasyBackgroundImage;
             }
 		}
 
@@ -275,53 +279,51 @@ namespace Effekseer.Data
 
         [Undo(Undo = false)]
         [Shown(Shown = false)]
-        public Value.Int RecordingWidth { get; private set; } = new Value.Int(256);
+        public Value.Int RecordingWidth { get; private set; }
 
         [Undo(Undo = false)]
         [Shown(Shown = false)]
-        public Value.Int RecordingHeight { get; private set; } = new Value.Int(256);
+        public Value.Int RecordingHeight { get; private set; }
 
         [Undo(Undo = false)]
         [Shown(Shown =false)]
         [IO(Export = true, Import = true)]
-        public Value.Boolean IsRecordingGuideShown { get; private set; } = new Value.Boolean(false);
+        public Value.Boolean IsRecordingGuideShown { get; private set; }
 
 
         [Undo(Undo = false)]
         [Shown(Shown = false)]
         [IO(Export = true, Import = true)]
-        public Value.Int RecordingStartingFrame { get; private set; } = new Value.Int(1);
+        public Value.Int RecordingStartingFrame { get; private set; }
 
         [Undo(Undo = false)]
         [Shown(Shown = false)]
         [IO(Export = true, Import = true)]
-        public Value.Int RecordingEndingFrame { get; private set; } = new Value.Int(30);
+        public Value.Int RecordingEndingFrame { get; private set; }
 
         [Undo(Undo = false)]
         [Shown(Shown = false)]
         [IO(Export = true, Import = true)]
-        public Value.Int RecordingFrequency { get; private set; } = new Value.Int(1);
+        public Value.Int RecordingFrequency { get; private set; }
 
         [Undo(Undo = false)]
         [Shown(Shown = false)]
         [IO(Export = true, Import = true)]
-        public Value.Int RecordingHorizontalCount { get; private set; } = new Value.Int(4);
+        public Value.Int RecordingHorizontalCount { get; private set; }
 
         [Undo(Undo = false)]
         [Shown(Shown = false)]
         [IO(Export = true, Import = true)]
-        public Value.Enum<RecordingExporterType> RecordingExporter { get; private set; } = new Value.Enum<RecordingExporterType>(Data.RecordingExporterType.Sprite);
+        public Value.Enum<RecordingExporterType> RecordingExporter { get; private set; }
 
         [Undo(Undo = false)]
         [Shown(Shown = false)]
         [IO(Export = true, Import = true)]
-        public Value.Enum<RecordingTransparentMethodType> RecordingTransparentMethod { get; private set; } = new Value.Enum<RecordingTransparentMethodType>(Data.RecordingTransparentMethodType.None);
-
+        public Value.Enum<RecordingTransparentMethodType> RecordingTransparentMethod { get; private set; }
         public OptionValues()
 		{
 			RenderingMode = new Value.Enum<RenderMode>(RenderMode.Normal);
 			BackgroundColor = new Value.Color(0, 0, 0, 255);
-            LasyBackgroundImage = new Lazy<Value.PathForImage>(() => { return new Value.PathForImage(Resources.GetString("ImageFilter"), false, ""); });
 			GridColor = new Value.Color(255, 255, 255, 255);
 			
 			IsGridShown = new Value.Boolean(true);
@@ -346,6 +348,16 @@ namespace Effekseer.Data
 			MouseSlideInvY = new Value.Boolean(false);
 
 			DistortionType = new Value.Enum<DistortionMethodType>(DistortionMethodType.Current);
+
+            RecordingWidth = new Value.Int(256);
+            RecordingHeight = new Value.Int(256);
+            IsRecordingGuideShown = new Value.Boolean(false);
+            RecordingStartingFrame = new Value.Int(1);
+            RecordingEndingFrame = new Value.Int(30);
+            RecordingFrequency = new Value.Int(1);
+            RecordingHorizontalCount = new Value.Int(4);
+            RecordingExporter = new Value.Enum<RecordingExporterType>(Data.RecordingExporterType.Sprite);
+            RecordingTransparentMethod = new Value.Enum<RecordingTransparentMethodType>(Data.RecordingTransparentMethodType.None);
 
             // Switch the language according to the OS settings
             var culture = System.Globalization.CultureInfo.CurrentCulture;

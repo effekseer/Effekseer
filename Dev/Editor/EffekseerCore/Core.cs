@@ -50,7 +50,7 @@ namespace Effekseer
 		{
 			get;
 			private set;
-		} = Language.English;
+		}
 
 		public static Data.NodeRoot Root
 		{
@@ -291,6 +291,7 @@ namespace Effekseer
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+            Language = Language.English;
         }
 
 		public static void Initialize(Language? language = null)
@@ -930,7 +931,7 @@ namespace Effekseer
 			// Check
 			if(movedNode.Parent == targetParent && targetIndex != int.MaxValue)
 			{
-				var index = targetParent.Children.Internal.Select((i, n) => Tuple.Create(i, n)).FirstOrDefault(_ => _.Item1 == movedNode).Item2;
+				var index = targetParent.Children.Internal.Select((i, n) => Tuple35.Create(i, n)).FirstOrDefault(_ => _.Item1 == movedNode).Item2;
 
 				// Not changed.
 				if (index == targetIndex || index + 1 == targetIndex)
@@ -969,7 +970,7 @@ namespace Effekseer
 			// 
 			if(targetParent == movedNode.Parent && targetIndex != int.MaxValue)
 			{
-				var index = targetParent.Children.Internal.Select((i, n) => Tuple.Create(i, n)).FirstOrDefault(_ => _.Item1 == movedNode).Item2;
+				var index = targetParent.Children.Internal.Select((i, n) => Tuple35.Create(i, n)).FirstOrDefault(_ => _.Item1 == movedNode).Item2;
 				if(index < targetIndex)
 				{
 					targetIndex -= 1;
@@ -992,9 +993,9 @@ namespace Effekseer
 			// 実行速度を上げるために、全て力技で対応
 
 			// 値を取得する
-			Func<Data.Node, Tuple<string, object>[]> getParameters = (node) =>
+			Func<Data.Node, Tuple35<string, object>[]> getParameters = (node) =>
 				{
-					var list = new List<Tuple<string, object>>();
+					var list = new List<Tuple35<string, object>>();
 
 					if (node.LocationValues.Type.Value == Data.LocationValues.ParamaterType.LocationFCurve)
 					{
@@ -1004,7 +1005,7 @@ namespace Effekseer
 							name = "位置";
 						}
 
-						list.Add(Tuple.Create(name,(object)node.LocationValues.LocationFCurve.FCurve));
+						list.Add(Tuple35.Create(name,(object)node.LocationValues.LocationFCurve.FCurve));
 					}
 
 					if (node.RotationValues.Type.Value == Data.RotationValues.ParamaterType.RotationFCurve)
@@ -1015,7 +1016,7 @@ namespace Effekseer
 							name = "角度";
 						}
 
-						list.Add(Tuple.Create(name, (object)node.RotationValues.RotationFCurve.FCurve));
+						list.Add(Tuple35.Create(name, (object)node.RotationValues.RotationFCurve.FCurve));
 					}
 
 					if (node.ScalingValues.Type.Value == Data.ScaleValues.ParamaterType.FCurve)
@@ -1026,7 +1027,7 @@ namespace Effekseer
 							name = "拡大率";
 						}
 
-						list.Add(Tuple.Create(name, (object)node.ScalingValues.FCurve.FCurve));
+						list.Add(Tuple35.Create(name, (object)node.ScalingValues.FCurve.FCurve));
 					}
 
 					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
@@ -1037,7 +1038,7 @@ namespace Effekseer
 							name = "UV(始点)";
 						}
 
-						list.Add(Tuple.Create(name, (object)node.RendererCommonValues.UVFCurve.Start));
+						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.UVFCurve.Start));
 					}
 
 					if (node.RendererCommonValues.UV.Value == Data.RendererCommonValues.UVType.FCurve)
@@ -1048,7 +1049,7 @@ namespace Effekseer
 							name = "UV(大きさ)";
 						}
 
-						list.Add(Tuple.Create(name, (object)node.RendererCommonValues.UVFCurve.Size));
+						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.UVFCurve.Size));
 					}
 
 					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite &&
@@ -1060,7 +1061,7 @@ namespace Effekseer
 							name = "スプライト・全体色(RGBA)";
 						}
 
-						list.Add(Tuple.Create(name, (object)node.DrawingValues.Sprite.ColorAll_FCurve.FCurve));
+						list.Add(Tuple35.Create(name, (object)node.DrawingValues.Sprite.ColorAll_FCurve.FCurve));
 					}
 
 					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Model &&
@@ -1072,7 +1073,7 @@ namespace Effekseer
 							name = "モデル・色(RGBA)";
 						}
 
-						list.Add(Tuple.Create(name, (object)node.DrawingValues.Model.Color_FCurve.FCurve));
+						list.Add(Tuple35.Create(name, (object)node.DrawingValues.Model.Color_FCurve.FCurve));
 					}
 
 					if (node.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Track)
@@ -1085,7 +1086,7 @@ namespace Effekseer
 								name = "軌跡・左(RGBA)";
 							}
 
-							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorLeft_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorLeft_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorLeftMiddle.Value == Data.StandardColorType.FCurve)
@@ -1096,7 +1097,7 @@ namespace Effekseer
 								name = "軌跡・左中間(RGBA)";
 							}
 
-							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorLeftMiddle_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorLeftMiddle_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorCenter.Value == Data.StandardColorType.FCurve)
@@ -1107,7 +1108,7 @@ namespace Effekseer
 								name = "軌跡・中央(RGBA)";
 							}
 
-							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorCenter_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorCenter_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorCenterMiddle.Value == Data.StandardColorType.FCurve)
@@ -1118,7 +1119,7 @@ namespace Effekseer
 								name = "軌跡・中央中間(RGBA)";
 							}
 
-							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorCenterMiddle_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorCenterMiddle_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorRight.Value == Data.StandardColorType.FCurve)
@@ -1129,7 +1130,7 @@ namespace Effekseer
 								name = "軌跡・右(RGBA)";
 							}
 
-							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorRight_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorRight_FCurve.FCurve));
 						}
 
 						if (node.DrawingValues.Track.ColorRightMiddle.Value == Data.StandardColorType.FCurve)
@@ -1140,7 +1141,7 @@ namespace Effekseer
 								name = "軌跡・右中間(RGBA)";
 
 							}
-							list.Add(Tuple.Create(name, (object)node.DrawingValues.Track.ColorRightMiddle_FCurve.FCurve));
+							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorRightMiddle_FCurve.FCurve));
 						}
 					}
 
@@ -1152,14 +1153,14 @@ namespace Effekseer
 
 			getParameterTreeNodes = (node) =>
 				{
-					Tuple<string, object>[] parameters = null;
+					Tuple35<string, object>[] parameters = null;
 
 					var rootNode = node as Data.NodeRoot;
 					var normalNode = node as Data.Node;
 
 					if (rootNode != null)
 					{
-						parameters = new Tuple<string, object>[0];
+						parameters = new Tuple35<string, object>[0];
 					}
 					else if (normalNode != null)
 					{

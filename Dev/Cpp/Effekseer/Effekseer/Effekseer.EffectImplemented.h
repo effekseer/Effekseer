@@ -119,13 +119,13 @@ protected:
 	EFK_CHAR** m_distortionImagePaths;
 	TextureData** m_distortionImages;
 
-	int m_WaveCount;
-	EFK_CHAR** m_WavePaths;
-	void** m_pWaves;
+	int m_WaveCount = 0;
+	EFK_CHAR** m_WavePaths = nullptr;
+	void** m_pWaves = nullptr;
 
-	int32_t m_modelCount;
-	EFK_CHAR** m_modelPaths;
-	void** m_pModels;
+	int32_t m_modelCount = 0;
+	EFK_CHAR** m_modelPaths = nullptr;
+	void** m_pModels = nullptr;
 
 	std::u16string name_;
 	std::basic_string<EFK_CHAR> m_materialPath;
@@ -134,15 +134,15 @@ protected:
 	int32_t renderingNodesThreshold = 0;
 
 	//! scaling of this effect
-	float m_maginification;
+	float m_maginification = 1.0f;
 
-	float m_maginificationExternal;
+	float m_maginificationExternal = 1.0f;
 
 	// default random seed
 	int32_t m_defaultRandomSeed;
 
 	//! child root node
-	EffectNode* m_pRoot;
+	EffectNode* m_pRoot = nullptr;
 
 	// culling
 	struct

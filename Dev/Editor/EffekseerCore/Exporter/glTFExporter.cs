@@ -155,19 +155,19 @@ namespace Effekseer.Exporter
 
 			effect.Add("body", bodyName);
 
-			SortedSet<string> textures = new SortedSet<string>();
+			HashSet<string> textures = new HashSet<string>();
 
-			foreach (var texture in binaryExporter.UsedTextures)
+			foreach (var texture in binaryExporter.UsedTextures.ToList().OrderBy(_ => _))
 			{
 				textures.Add(texture);
 			}
 
-			foreach (var texture in binaryExporter.UsedNormalTextures)
+			foreach (var texture in binaryExporter.UsedNormalTextures.ToList().OrderBy(_ => _))
 			{
 				textures.Add(texture);
 			}
 
-			foreach (var texture in binaryExporter.UsedDistortionTextures)
+			foreach (var texture in binaryExporter.UsedDistortionTextures.ToList().OrderBy(_ => _))
 			{
 				textures.Add(texture);
 			}
@@ -176,7 +176,7 @@ namespace Effekseer.Exporter
 
             if (isContainedTextureAsBinary)
 			{
-				foreach (var texture in textures)
+				foreach (var texture in textures.ToList().OrderBy(_=>_))
 				{
 					var buf = System.IO.File.ReadAllBytes(texture);
 					AddBufferView(texture, buf);
@@ -185,7 +185,7 @@ namespace Effekseer.Exporter
 			}
 			else
 			{
-				foreach (var texture in textures)
+				foreach (var texture in textures.ToList().OrderBy(_ => _))
 				{
 					images.Add(texture, CreateImageAsURI(texture));
 				}

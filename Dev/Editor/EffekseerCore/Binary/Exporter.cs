@@ -11,11 +11,11 @@ namespace Effekseer.Binary
 	{
 		const int Version = 13;
 
-		public SortedSet<string> UsedTextures = new SortedSet<string>();
+		public HashSet<string> UsedTextures = new HashSet<string>();
 
-		public SortedSet<string> UsedNormalTextures = new SortedSet<string>();
+		public HashSet<string> UsedNormalTextures = new HashSet<string>();
 
-		public SortedSet<string> UsedDistortionTextures = new SortedSet<string>();
+		public HashSet<string> UsedDistortionTextures = new HashSet<string>();
 
 		/// <summary>
 		/// エフェクトデータの出力
@@ -32,17 +32,17 @@ namespace Effekseer.Binary
 			data.Add(BitConverter.GetBytes(Version));
 
 			// reset texture names
-            UsedTextures = new SortedSet<string>();
+            UsedTextures = new HashSet<string>();
 
-			UsedNormalTextures = new SortedSet<string>();
+			UsedNormalTextures = new HashSet<string>();
 
-			UsedDistortionTextures = new SortedSet<string>();
+			UsedDistortionTextures = new HashSet<string>();
 
             // ウェーブ名称一覧取得
-            SortedSet<string> waves = new SortedSet<string>();
+            HashSet<string> waves = new HashSet<string>();
 
 			// モデル名称一覧取得
-			SortedSet<string> models = new SortedSet<string>();
+			HashSet<string> models = new HashSet<string>();
 
 			Action<Data.NodeBase> get_textures = null;
 			get_textures = (node) =>
@@ -101,7 +101,7 @@ namespace Effekseer.Binary
             Dictionary<string, int> texture_and_index = new Dictionary<string, int>();
             {
                 int index = 0;
-                foreach (var texture in UsedTextures)
+                foreach (var texture in UsedTextures.ToList().OrderBy(_ => _))
                 {
                     texture_and_index.Add(texture, index);
                     index++;
@@ -111,7 +111,7 @@ namespace Effekseer.Binary
 			Dictionary<string, int> normalTexture_and_index = new Dictionary<string, int>();
 			{
 				int index = 0;
-				foreach (var texture in UsedNormalTextures)
+				foreach (var texture in UsedNormalTextures.ToList().OrderBy(_ => _))
 				{
 					normalTexture_and_index.Add(texture, index);
 					index++;
@@ -121,7 +121,7 @@ namespace Effekseer.Binary
 			Dictionary<string, int> distortionTexture_and_index = new Dictionary<string, int>();
 			{
 				int index = 0;
-				foreach (var texture in UsedDistortionTextures)
+				foreach (var texture in UsedDistortionTextures.ToList().OrderBy(_ => _))
 				{
 					distortionTexture_and_index.Add(texture, index);
 					index++;
@@ -162,7 +162,7 @@ namespace Effekseer.Binary
             Dictionary<string, int> wave_and_index = new Dictionary<string, int>();
             {
                 int index = 0;
-                foreach (var wave in waves)
+                foreach (var wave in waves.ToList().OrderBy(_ => _))
                 {
                     wave_and_index.Add(wave, index);
                     index++;
@@ -239,7 +239,7 @@ namespace Effekseer.Binary
 			Dictionary<string, int> model_and_index = new Dictionary<string, int>();
 			{
 				int index = 0;
-				foreach (var model in models)
+				foreach (var model in models.ToList().OrderBy(_ => _))
 				{
 					model_and_index.Add(model, index);
 					index++;
@@ -267,9 +267,9 @@ namespace Effekseer.Binary
 			get_nodes(Core.Root);
 
 			var snode2ind = nodes.
-				Select((v, i) => Tuple.Create(v, i)).
+				Select((v, i) => Tuple35.Create(v, i)).
 				OrderBy(_ => _.Item1.DepthValues.DrawingPriority.Value * 255 + _.Item2).
-				Select((v, i) => Tuple.Create(v.Item1, i)).ToList();
+				Select((v, i) => Tuple35.Create(v.Item1, i)).ToList();
 
 				// ファイルにテクスチャ一覧出力
 				data.Add(BitConverter.GetBytes(texture_and_index.Count));

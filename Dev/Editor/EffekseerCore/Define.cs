@@ -95,7 +95,7 @@ namespace Effekseer
 				if (strs.Length < 2) continue;
 
 				var key = strs[0];
-				var value = string.Join(",", strs.Skip(1));
+				var value = string.Join(",", strs.Skip(1).ToArray());
 				value = value.Replace(@"\n", "\n");
 
 				keyToStrings.Add(key, value);
@@ -309,4 +309,30 @@ namespace Effekseer
 			NFI = culture.NumberFormat;
 		}
 	}
+
+    public class Tuple35<T1, T2>
+    {
+        public T1 Item1;
+        public T2 Item2;
+
+        public Tuple35()
+        {
+            Item1 = default(T1);
+            Item2 = default(T2);
+        }
+
+        public Tuple35(T1 t1, T2 t2)
+        {
+            Item1 = t1;
+            Item2 = t2;
+        }
+    }
+
+    public class Tuple35
+    {
+        public static Tuple35<TV1, TV2> Create<TV1, TV2>(TV1 t1, TV2 t2)
+        {
+            return new Tuple35<TV1, TV2>(t1, t2);
+        }
+    }
 }
