@@ -719,6 +719,10 @@ void ManagerImplemented::SetModelLoader( ModelLoader* modelLoader )
 	m_setting->SetModelLoader(modelLoader);
 }
 
+MaterialLoader* ManagerImplemented::GetMaterialLoader() { return m_setting->GetMaterialLoader(); }
+
+void ManagerImplemented::SetMaterialLoader(MaterialLoader* loader) { m_setting->SetMaterialLoader(loader); }
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

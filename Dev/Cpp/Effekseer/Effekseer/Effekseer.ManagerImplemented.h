@@ -408,6 +408,10 @@ public:
 	*/
 	void SetModelLoader( ModelLoader* modelLoader ) override;
 	
+	MaterialLoader* GetMaterialLoader() override;
+
+	void SetMaterialLoader(MaterialLoader* loader) override;
+
 	/**
 		@brief	エフェクト停止
 	*/

@@ -17,7 +17,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\release\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MATERIAL_ENABLED</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -63,6 +63,7 @@
     <Compile Include="GUI\Component\Boolean.cs" />
     <Compile Include="GUI\Component\ColorCtrl.cs" />
     <Compile Include="GUI\Component\ColorWithRandom.cs" />
+    <Compile Include="GUI\Component\Dummy.cs" />
     <Compile Include="GUI\Component\Enum.cs" />
     <Compile Include="GUI\Component\FCurveButton.cs" />
     <Compile Include="GUI\Component\Float.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="GUI\Component\IntWithRandom.cs" />
     <Compile Include="GUI\Component\ParameterList.cs" />
     <Compile Include="GUI\Component\PathForImage.cs" />
+    <Compile Include="GUI\Component\PathForMaterial.cs" />
     <Compile Include="GUI\Component\PathForModel.cs" />
     <Compile Include="GUI\Component\PathForSound.cs" />
     <Compile Include="GUI\Component\String.cs" />

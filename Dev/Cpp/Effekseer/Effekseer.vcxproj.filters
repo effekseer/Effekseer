@@ -190,6 +190,9 @@
     <ClInclude Include="Effekseer\Effekseer.IntrusiveList.h">
       <Filter>Effekseer\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Effekseer\Effekseer.MaterialLoader.h">
+      <Filter>Effekseer\Loader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp">

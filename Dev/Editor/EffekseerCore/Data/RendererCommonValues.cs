@@ -5,8 +5,274 @@ using System.Text;
 
 namespace Effekseer.Data
 {
+#if MATERIAL_ENABLED
+	public class MaterialFileParameter : IEditableValueCollection
+	{
+		[Shown(Shown = true)]
+		[Name(language = Language.Japanese, value = "パス")]
+		[Name(language = Language.English, value = "Path")]
+		public Value.PathForMaterial Path
+		{
+			get;
+			private set;
+		}
+
+		[Shown(Shown =false)]
+		[Name(language = Language.Japanese, value = "パラメーター")]
+		[Name(language = Language.English, value = "Paramters")]
+		public Value.ValueList TextureValues
+		{
+			get;
+			private set;
+		}
+
+		public Value.ValueList UniformValues
+		{
+			get;
+			private set;
+		}
+
+		Dictionary<object, ValueStatus> valueToStatus = new Dictionary<object, ValueStatus>();
+		Dictionary<string, object> keyToValues = new Dictionary<string, object>();
+
+		public MaterialFileParameter()
+		{
+			Path = new Value.PathForMaterial(".efkmat", true);
+			TextureValues = new Value.ValueList();
+			UniformValues = new Value.ValueList();
+
+			Path.OnChanged += Path_OnChanged;
+		}
+
+		private void Path_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			// Apply values
+			Utl.MaterialInformation info = new Utl.MaterialInformation();
+			info.Load(Path.GetAbsolutePath());
+
+			ApplyMaterial(info);
+		}
+
+		public EditableValue[] GetValues()
+		{
+			var ret = new List<EditableValue>();
+
+			// self
+			{
+				EditableValue ev = new EditableValue();
+				ev.Value = this;
+				ev.Title = "";
+				ev.Description = "";
+				ev.IsShown = true;
+				ev.IsUndoEnabled = false;
+				//ret.Add(ev);
+			}
+
+			// need to filter
+			var propPath = EditableValue.Create(Path, this.GetType().GetProperty("Path"));
+			ret.Add(propPath);
+
+			// textures
+			foreach(var v in TextureValues.Values)
+			{
+				EditableValue ev = new EditableValue();
+				var status = valueToStatus[v];
+				ev.Value = v;
+				ev.Title = status.Name;
+				ev.Description = status.Description;
+				ev.IsShown = status.IsShown;
+				ev.IsUndoEnabled = true;
+				ret.Add(ev);
+			}
+
+			// uniforms
+			foreach (var v in UniformValues.Values)
+			{
+				EditableValue ev = new EditableValue();
+				var status = valueToStatus[v];
+				ev.Value = v;
+				ev.Title = status.Name;
+				ev.Description = status.Description;
+				ev.IsShown = status.IsShown;
+				ev.IsUndoEnabled = true;
+				ret.Add(ev);
+			}
+
+			return ret.ToArray();
+		}
+
+		public void ApplyMaterial(Utl.MaterialInformation info)
+		{
+			bool isChanged = false;
+
+			var textureKeys = info.Textures.Select(_ => CreateKey(_)).ToList();
+
+			foreach (var kts in keyToValues)
+			{
+				if(!textureKeys.Contains(kts.Key))
+				{
+					var status = valueToStatus[kts.Value];
+					if(status.IsShown)
+					{
+						status.IsShown = false;
+						isChanged = true;
+					}
+				}
+			}
+
+			var uniformKeys = info.Uniforms.Select(_ => CreateKey(_)).ToList();
+
+			foreach (var kts in keyToValues)
+			{
+				if (!uniformKeys.Contains(kts.Key))
+				{
+					var status = valueToStatus[kts.Value];
+					if (status.IsShown)
+					{
+						status.IsShown = false;
+						isChanged = true;
+					}
+				}
+			}
+
+			foreach (var texture in info.Textures)
+			{
+				var key = CreateKey(texture);
+
+				if(keyToValues.ContainsKey(key))
+				{
+					var value = keyToValues[key];
+					var status = valueToStatus[value];
+					if(status.IsShown != texture.IsParam)
+					{
+						status.IsShown = texture.IsParam;
+						isChanged = true;
+					}
+				}
+				else
+				{
+					var status = new ValueStatus();
+					var value = new Value.PathForImage(".png", false);
+					status.Name = texture.Name;
+					status.Description = "";
+					status.IsShown = texture.IsParam;
+					keyToValues.Add(key, value);
+					valueToStatus.Add(value, status);
+					value.SetAbsolutePathDirectly(texture.DefaultPath);
+					TextureValues.Add(value);
+					isChanged = true;
+				}
+			}
+
+			foreach(var uniform in info.Uniforms)
+			{
+				var key = CreateKey(uniform);
+
+				if (keyToValues.ContainsKey(key))
+				{
+					var value = keyToValues[key];
+					var status = valueToStatus[value];
+					if (!status.IsShown)
+					{
+						status.IsShown = true;
+						isChanged = true;
+					}
+				}
+				else
+				{
+					var status = new ValueStatus();
+					var value = new Value.Vector3D();
+					status.Name = uniform.Name;
+					status.Description = "";
+					status.IsShown = true;
+					keyToValues.Add(key, value);
+					valueToStatus.Add(value, status);
+					UniformValues.Add(value);
+					isChanged = true;
+				}
+			}
+
+			if(isChanged && OnChanged != null)
+			{
+				OnChanged(this, null);
+			}
+		}
+
+		public List<Value.PathForImage> GetTextures(Utl.MaterialInformation info)
+		{
+			var ret = new List<Value.PathForImage>();
+
+			foreach(var texture in info.Textures)
+			{
+				var key = CreateKey(texture);
+				if(keyToValues.ContainsKey(key))
+				{
+					ret.Add(keyToValues[key] as Value.PathForImage);
+				}
+				else
+				{
+					ret.Add(null);
+				}
+			}
+
+			return ret;
+		}
+
+		public List<object> GetUniforms(Utl.MaterialInformation info)
+		{
+			var ret = new List<object>();
+
+			foreach (var uniform in info.Uniforms)
+			{
+				var key = CreateKey(uniform);
+				if (keyToValues.ContainsKey(key))
+				{
+					ret.Add(keyToValues[key]);
+				}
+				else
+				{
+					ret.Add(null);
+				}
+			}
+
+			return ret;
+		}
+
+		string CreateKey(Utl.MaterialInformation.UniformInformation info)
+		{
+			return info.Name + "@U" + info.Type;
+		}
+
+		string CreateKey(Utl.MaterialInformation.TextureInformation info)
+		{
+			return info.Name + "@T";
+		}
+
+		class ValueStatus
+		{
+			public string Name = string.Empty;
+			public string Description = string.Empty;
+			public bool IsShown = false;
+		}
+
+		public event ChangedValueEventHandler OnChanged;
+	}
+
+#endif
 	public class RendererCommonValues
 	{
+#if MATERIAL_ENABLED
+		[Selector(ID = 3)]
+		[Name(language = Language.Japanese, value = "マテリアル")]
+		[Name(language = Language.English, value = "Material")]
+		public Value.Enum<MaterialType> Material
+		{
+			get;
+			private set;
+		}
+#endif
+
+		[Selected(ID = 3, Value = 0)]
 		[Name(language = Language.Japanese, value = "色/歪み画像")]
 		[Description(language = Language.Japanese, value = "色/歪みを表す画像")]
 		[Name(language = Language.English, value = "Texture")]
@@ -16,6 +282,16 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
+
+#if MATERIAL_ENABLED
+		[Selected(ID = 3, Value = 1)]
+		[IO(Export = true)]
+		public MaterialFileParameter MaterialFile
+		{
+			get;
+			private set;
+		}
+#endif
 
 		[Name(language = Language.Japanese, value = "ブレンド")]
 		[Name(language = Language.English, value = "Blend")]
@@ -136,7 +412,11 @@ namespace Effekseer.Data
 
 		internal RendererCommonValues()
 		{
-            ColorTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+#if MATERIAL_ENABLED
+			Material = new Value.Enum<MaterialType>(MaterialType.Default);
+			MaterialFile = new MaterialFileParameter();
+#endif
+			ColorTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
 			
 			AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);
@@ -348,6 +628,18 @@ namespace Effekseer.Data
 			}
 		}
 
+#if MATERIAL_ENABLED
+		
+		public enum MaterialType : int
+		{
+			[Name(value = "標準", language = Language.Japanese)]
+			[Name(value = "Default", language = Language.English)]
+			Default,
+			[Name(value = "ファイル", language = Language.Japanese)]
+			[Name(value = "File", language = Language.English)]
+			File,
+		}
+#endif
 		public enum FadeType : int
 		{
 			[Name(value = "有り", language = Language.Japanese)]

@@ -12,6 +12,7 @@
 #include "Effekseer.TextureLoader.h"
 #include "Effekseer.SoundLoader.h"
 #include "Effekseer.ModelLoader.h"
+#include "Effekseer.MaterialLoader.h"
 #include "Effekseer.DefaultEffectLoader.h"
 
 #include "Effekseer.Setting.h"
@@ -136,8 +137,15 @@ void EffectFactory::SetSound(Effect* effect, int32_t index, void* data)
 void EffectFactory::SetModel(Effect* effect, int32_t index, void* data)
 { 
 	auto effect_ = static_cast<EffectImplemented*>(effect);
-	assert(0 <= index && index < effect_->m_modelCount);
-	effect_->m_pModels[index] = data;
+	assert(0 <= index && index < effect_->modelCount_);
+	effect_->models_[index] = data;
+}
+
+void EffectFactory::SetMaterial(Effect* effect, int32_t index, MaterialData* data)
+{
+	auto effect_ = static_cast<EffectImplemented*>(effect);
+	assert(0 <= index && index < effect_->materialCount_);
+	effect_->materials_[index] = data;
 }
 
 bool EffectFactory::OnCheckIsBinarySupported(const void* data, int32_t size)
@@ -162,6 +170,7 @@ void EffectFactory::OnLoadingResource(Effect* effect, const void* data, int32_t 
 	auto textureLoader = effect->GetSetting()->GetTextureLoader();
 	auto soundLoader = effect->GetSetting()->GetSoundLoader();
 	auto modelLoader = effect->GetSetting()->GetModelLoader();
+	auto materialLoader = effect->GetSetting()->GetMaterialLoader();
 
 	if (textureLoader != nullptr)
 	{
@@ -216,12 +225,25 @@ void EffectFactory::OnLoadingResource(Effect* effect, const void* data, int32_t 
 			SetModel(effect, i, resource);
 		}
 	}
+
+	if (materialLoader != nullptr)
+	{
+		for (auto i = 0; i < effect->GetMaterialCount(); i++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, materialPath, effect->GetMaterialPath(i));
+
+			auto resource = materialLoader->Load(fullPath);
+			SetMaterial(effect, i, resource);
+		}
+	}
 }
 
 void EffectFactory::OnUnloadingResource(Effect* effect) { 
 	auto textureLoader = effect->GetSetting()->GetTextureLoader(); 
 	auto soundLoader = effect->GetSetting()->GetSoundLoader();
 	auto modelLoader = effect->GetSetting()->GetModelLoader();
+	auto materialLoader = effect->GetSetting()->GetMaterialLoader();
 
 	if (textureLoader != nullptr)
 	{
@@ -259,6 +281,15 @@ void EffectFactory::OnUnloadingResource(Effect* effect) {
 		{
 			modelLoader->Unload(effect->GetModel(i));
 			SetModel(effect, i, nullptr);
+		}
+	}
+	
+	if (materialLoader != nullptr)
+	{
+		for (auto i = 0; i < effect->GetMaterialCount(); i++)
+		{
+			materialLoader->Unload(effect->GetMaterial(i));
+			SetMaterial(effect, i, nullptr);
 		}
 	}
 }
@@ -419,25 +450,51 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 	if (m_version >= 6)
 	{
 		// Model
-		memcpy(&m_modelCount, pos, sizeof(int));
+		memcpy(&modelCount_, pos, sizeof(int));
 		pos += sizeof(int);
 
-		if (m_modelCount > 0)
+		if (modelCount_ > 0)
 		{
-			m_modelPaths = new EFK_CHAR*[m_modelCount];
-			m_pModels = new void*[m_modelCount];
+			modelPaths_ = new EFK_CHAR*[modelCount_];
+			models_ = new void*[modelCount_];
 
-			for (int i = 0; i < m_modelCount; i++)
+			for (int i = 0; i < modelCount_; i++)
 			{
 				int length = 0;
 				memcpy(&length, pos, sizeof(int));
 				pos += sizeof(int);
 
-				m_modelPaths[i] = new EFK_CHAR[length];
-				memcpy(m_modelPaths[i], pos, length * sizeof(EFK_CHAR));
+				modelPaths_[i] = new EFK_CHAR[length];
+				memcpy(modelPaths_[i], pos, length * sizeof(EFK_CHAR));
 				pos += length * sizeof(EFK_CHAR);
 
-				m_pModels[i] = NULL;
+				models_[i] = NULL;
+			}
+		}
+	}
+
+	if (m_version >= 14)
+	{
+		// material
+		memcpy(&materialCount_, pos, sizeof(int));
+		pos += sizeof(int);
+
+		if (materialCount_ > 0)
+		{
+			materialPaths_ = new EFK_CHAR*[materialCount_];
+			materials_ = new MaterialData*[materialCount_];
+
+			for (int i = 0; i < materialCount_; i++)
+			{
+				int length = 0;
+				memcpy(&length, pos, sizeof(int));
+				pos += sizeof(int);
+
+				materialPaths_[i] = new EFK_CHAR[length];
+				memcpy(materialPaths_[i], pos, length * sizeof(EFK_CHAR));
+				pos += length * sizeof(EFK_CHAR);
+
+				materials_[i] = NULL;
 			}
 		}
 	}
@@ -808,14 +865,24 @@ void EffectImplemented::Reset()
 	ES_SAFE_DELETE_ARRAY( m_WavePaths );
 	ES_SAFE_DELETE_ARRAY( m_pWaves );
 
-	for( int i = 0; i < m_modelCount; i++ )
+	for( int i = 0; i < modelCount_; i++ )
 	{
-		if( m_modelPaths[i] != NULL ) delete [] m_modelPaths[i];
+		if( modelPaths_[i] != NULL ) delete [] modelPaths_[i];
 	}
-	m_modelCount = 0;
+	modelCount_ = 0;
 
-	ES_SAFE_DELETE_ARRAY( m_modelPaths );
-	ES_SAFE_DELETE_ARRAY( m_pModels );
+	ES_SAFE_DELETE_ARRAY( modelPaths_ );
+	ES_SAFE_DELETE_ARRAY( models_ );
+
+	for (int i = 0; i < materialCount_; i++)
+	{
+		if (materialPaths_[i] != NULL)
+			delete[] materialPaths_[i];
+	}
+	materialCount_ = 0;
+
+	ES_SAFE_DELETE_ARRAY(materialPaths_);
+	ES_SAFE_DELETE_ARRAY(materials_);
 
 	ES_SAFE_DELETE( m_pRoot );
 }
@@ -922,15 +989,22 @@ const EFK_CHAR* EffectImplemented::GetWavePath(int n) const { return m_WavePaths
 
 void* EffectImplemented::GetModel( int n ) const
 {
-	return m_pModels[ n ];
+	return models_[ n ];
 }
 
 int32_t EffectImplemented::GetModelCount() const
 {
-	return m_modelCount;
+	return modelCount_;
 }
 
-const EFK_CHAR* EffectImplemented::GetModelPath(int n) const { return m_modelPaths[n]; }
+const EFK_CHAR* EffectImplemented::GetModelPath(int n) const { return modelPaths_[n]; }
+
+MaterialData* EffectImplemented::GetMaterial(int n) const { return materials_[n]; }
+
+int32_t EffectImplemented::GetMaterialCount() const { return materialCount_; }
+
+const EFK_CHAR* EffectImplemented::GetMaterialPath(int n) const { return materialPaths_[n]; }
+
 
 bool EffectImplemented::Reload( void* data, int32_t size, const EFK_CHAR* materialPath, ReloadingThreadType reloadingThreadType)
 {
@@ -1109,15 +1183,27 @@ void EffectImplemented::ReloadResources(const void* data, int32_t size, const EF
 		
 		
 		
-		for (int32_t ind = 0; ind < m_modelCount; ind++)
+		for (int32_t ind = 0; ind < modelCount_; ind++)
 		{
 			EFK_CHAR fullPath[512];
-			PathCombine(fullPath, matPath, m_modelPaths[ind]);
+			PathCombine(fullPath, matPath, modelPaths_[ind]);
 			
 			void* value = nullptr;
 			if (reloadingBackup->models.Pop(fullPath, value))
 			{
-				m_pModels[ind] = value;
+				models_[ind] = value;
+			}
+		}
+
+		for (int32_t ind = 0; ind < materialCount_; ind++)
+		{
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, materialPaths_[ind]);
+
+			MaterialData* value = nullptr;
+			if (reloadingBackup->materials.Pop(fullPath, value))
+			{
+				materials_[ind] = value;
 			}
 		}
 			
@@ -1177,13 +1263,23 @@ void EffectImplemented::UnloadResources(const EFK_CHAR* materialPath)
 			reloadingBackup->sounds.Push(fullPath, m_pWaves[ind]);
 		}
 
-		for (int32_t ind = 0; ind < m_modelCount; ind++)
+		for (int32_t ind = 0; ind < modelCount_; ind++)
 		{
-			if (m_pModels[ind] == nullptr) continue;
+			if (models_[ind] == nullptr) continue;
 
 			EFK_CHAR fullPath[512];
-			PathCombine(fullPath, matPath, m_modelPaths[ind]);
-			reloadingBackup->models.Push(fullPath, m_pModels[ind]);
+			PathCombine(fullPath, matPath, modelPaths_[ind]);
+			reloadingBackup->models.Push(fullPath, models_[ind]);
+		}
+
+		for (int32_t ind = 0; ind < materialCount_; ind++)
+		{
+			if (materials_[ind] == nullptr)
+				continue;
+
+			EFK_CHAR fullPath[512];
+			PathCombine(fullPath, matPath, materialPaths_[ind]);
+			reloadingBackup->materials.Push(fullPath, materials_[ind]);
 		}
 
 		return;

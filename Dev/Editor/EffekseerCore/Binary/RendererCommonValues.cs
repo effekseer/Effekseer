@@ -9,12 +9,114 @@ namespace Effekseer.Binary
 {
 	class RendererCommonValues
 	{
+#if MATERIAL_ENABLED
+		public static byte[] GetBytes(Data.RendererCommonValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index)
+#else
 		public static byte[] GetBytes(Data.RendererCommonValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> distortionTexture_and_index)
+#endif
 		{
 			List<byte[]> data = new List<byte[]>();
 
 			var texInfo = new TextureInformation();
 			var hasTexture = true;
+
+#if MATERIAL_ENABLED
+			data.Add((value.Material.Value).GetBytes());
+
+
+			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default)
+			{
+				// テクスチャ番号
+				if (value.Distortion.Value)
+				{
+					if (value.ColorTexture.RelativePath != string.Empty &&
+					distortionTexture_and_index.ContainsKey(value.ColorTexture.RelativePath) &&
+					texInfo.Load(value.ColorTexture.AbsolutePath))
+					{
+						data.Add(distortionTexture_and_index[value.ColorTexture.RelativePath].GetBytes());
+						hasTexture = true;
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+						hasTexture = false;
+					}
+				}
+				else
+				{
+					if (value.ColorTexture.RelativePath != string.Empty &&
+						texture_and_index.ContainsKey(value.ColorTexture.RelativePath) &&
+						texInfo.Load(value.ColorTexture.AbsolutePath))
+					{
+						data.Add(texture_and_index[value.ColorTexture.RelativePath].GetBytes());
+						hasTexture = true;
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+						hasTexture = false;
+					}
+				}
+			}
+			else
+			{
+				var materialInfo = new Utl.MaterialInformation();
+				materialInfo.Load(value.MaterialFile.Path.AbsolutePath);
+				var textures = value.MaterialFile.GetTextures(materialInfo);
+				var uniforms = value.MaterialFile.GetUniforms(materialInfo);
+
+				data.Add(material_and_index[value.MaterialFile.Path.RelativePath].GetBytes());
+				
+
+				data.Add(textures.Count.GetBytes());
+
+				foreach (var texture in textures)
+				{
+					if (texture.RelativePath != string.Empty &&
+	texture_and_index.ContainsKey(texture.RelativePath) &&
+	texInfo.Load(texture.AbsolutePath))
+					{
+						data.Add(texture_and_index[texture.RelativePath].GetBytes());
+						hasTexture = true;
+					}
+					else
+					{
+						data.Add((-1).GetBytes());
+						hasTexture = false;
+					}
+				}
+
+				data.Add(uniforms.Count.GetBytes());
+
+				foreach (var uniform in uniforms)
+				{
+					float[] floats = new float[4];
+					
+					if(uniform is Data.Value.Float)
+					{
+						floats[0] = (uniform as Data.Value.Float).Value;
+					}
+
+					if (uniform is Data.Value.Vector2D)
+					{
+						floats[0] = (uniform as Data.Value.Vector2D).X.Value;
+						floats[1] = (uniform as Data.Value.Vector2D).Y.Value;
+					}
+
+					if (uniform is Data.Value.Vector3D)
+					{
+						floats[0] = (uniform as Data.Value.Vector3D).X.Value;
+						floats[1] = (uniform as Data.Value.Vector3D).Y.Value;
+						floats[2] = (uniform as Data.Value.Vector3D).Z.Value;
+					}
+
+					data.Add(floats[0].GetBytes());
+					data.Add(floats[1].GetBytes());
+					data.Add(floats[2].GetBytes());
+					data.Add(floats[3].GetBytes());
+				}
+			}
+#else
 
 			// テクスチャ番号
 			if (value.Distortion.Value)
@@ -47,7 +149,7 @@ namespace Effekseer.Binary
 					hasTexture = false;
 				}
 			}
-			
+#endif
 
 			data.Add(value.AlphaBlend);
 			data.Add(value.Filter);

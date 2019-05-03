@@ -209,6 +209,26 @@ public:
 	virtual void SetModelLoader( ModelLoader* modelLoader ) = 0;
 
 	/**
+		@brief
+		\~English get a material loader
+		\~Japanese マテリアルローダーを取得する。
+		@return
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	virtual MaterialLoader* GetMaterialLoader() = 0;
+
+	/**
+		@brief
+		\~English specfiy a material loader
+		\~Japanese マテリアルローダーを設定する。
+		@param	loader
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	virtual void SetMaterialLoader(MaterialLoader* loader) = 0;
+
+	/**
 		@brief	エフェクトを停止する。
 		@param	handle	[in]	インスタンスのハンドル
 	*/

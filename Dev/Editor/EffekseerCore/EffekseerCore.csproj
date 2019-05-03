@@ -17,7 +17,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\release\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SCRIPT_ENABLED;ESCAPE_URI_ENABLED;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SCRIPT_ENABLED;ESCAPE_URI_ENABLED;MATERIAL_ENABLED;</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
@@ -28,7 +28,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>..\..\release\</OutputPath>
-    <DefineConstants>TRACE;SCRIPT_ENABLED</DefineConstants>
+    <DefineConstants>TRACE;SCRIPT_ENABLED;ESCAPE_URI_ENABLED;</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -118,9 +118,11 @@
     <Compile Include="Data\Value\IntWithInifinite.cs" />
     <Compile Include="Data\Value\IntWithRandom.cs" />
     <Compile Include="Data\Value\Path.cs" />
+    <Compile Include="Data\Value\PathForMaterial.cs" />
     <Compile Include="Data\Value\PathForModel.cs" />
     <Compile Include="Data\Value\PathForSound.cs" />
     <Compile Include="Data\Value\String.cs" />
+    <Compile Include="Data\Value\ValueList.cs" />
     <Compile Include="Data\Value\Vector2D.cs" />
     <Compile Include="Data\Value\Vector2DWithRandom.cs" />
     <Compile Include="Data\Value\Vector3D.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="Data\GlobalValues.cs" />
     <Compile Include="Define.cs" />
     <Compile Include="Exporter\glTFExporter.cs" />
+    <Compile Include="Utl\MaterialInformation.cs" />
     <Compile Include="Utl\ModelInformation.cs" />
     <Compile Include="Utl\ParamaterTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

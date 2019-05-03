@@ -82,6 +82,7 @@ public:
 	HolderCollection<TextureData*> distortionImages;
 	HolderCollection<void*> sounds;
 	HolderCollection<void*> models;
+	HolderCollection<MaterialData*> materials;
 };
 
 
@@ -123,9 +124,13 @@ protected:
 	EFK_CHAR** m_WavePaths = nullptr;
 	void** m_pWaves = nullptr;
 
-	int32_t m_modelCount = 0;
-	EFK_CHAR** m_modelPaths = nullptr;
-	void** m_pModels = nullptr;
+	int32_t modelCount_ = 0;
+	EFK_CHAR** modelPaths_ = nullptr;
+	void** models_ = nullptr;
+
+	int32_t materialCount_ = 0;
+	EFK_CHAR** materialPaths_ = nullptr;
+	MaterialData** materials_ = nullptr;
 
 	std::u16string name_;
 	std::basic_string<EFK_CHAR> m_materialPath;
@@ -266,6 +271,12 @@ public:
 	int32_t GetModelCount() const override;
 
 	const EFK_CHAR* GetModelPath(int n) const override;
+
+	MaterialData* GetMaterial(int n) const override;
+
+	int32_t GetMaterialCount() const override;
+
+	const EFK_CHAR* GetMaterialPath(int n) const override;
 
 	/**
 		@brief	エフェクトのリロードを行う。

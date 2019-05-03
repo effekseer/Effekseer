@@ -475,22 +475,43 @@ struct ParameterGenerationLocation
 
 struct ParameterRendererCommon
 {
-	int32_t				ColorTextureIndex;
-	AlphaBlendType		AlphaBlend;
+	/**
+		@brief	material type
+	*/
+	enum class MaterialType : int32_t
+	{
+		Default,
+		File,
+	};
 
-	TextureFilterType	FilterType;
+	MaterialType Material = MaterialType::File;
 
-	TextureWrapType		WrapType;
+	/**
+		@brief	texture index in MaterialType::Default
+	*/
+	int32_t				ColorTextureIndex = 0;
 
-	bool				ZWrite;
+	int32_t MaterialIndex = -1;
 
-	bool				ZTest;
+	std::vector<int32_t> MaterialColorTextureIndexes;
 
-	bool				Distortion;
+	std::vector<std::array<float, 4>> MaterialUniforms;
 
-	float				DistortionIntensity;
+	AlphaBlendType AlphaBlend = AlphaBlendType::Opacity;
 
-	BindType			ColorBindType;
+	TextureFilterType FilterType = TextureFilterType::Nearest;
+
+	TextureWrapType WrapType = TextureWrapType::Repeat;
+
+	bool				ZWrite = false;
+
+	bool				ZTest = false;
+
+	bool				Distortion = false;
+
+	float				DistortionIntensity = 0;
+
+	BindType ColorBindType = BindType::NotBind;
 
 	enum
 	{
@@ -589,18 +610,61 @@ struct ParameterRendererCommon
 
 	} UV;
 
+	ParameterRendererCommon()
+	{
+		FadeInType = FADEIN_OFF;
+		FadeOutType = FADEOUT_OFF;
+		UVType = UV_DEFAULT;
+	}
+
 	void reset()
 	{
-		memset(this, 0, sizeof(ParameterRendererCommon));
+		// with constructor
+		//memset(this, 0, sizeof(ParameterRendererCommon));
 	}
 
 	void load(uint8_t*& pos, int32_t version)
 	{
-		memset(this, 0, sizeof(ParameterRendererCommon));
+		//memset(this, 0, sizeof(ParameterRendererCommon));
 
-		memcpy(&ColorTextureIndex, pos, sizeof(int));
-		pos += sizeof(int);
+		if (version >= 14)
+		{
+			memcpy(&Material, pos, sizeof(int));
 
+			if (Material == MaterialType::Default)
+			{
+				memcpy(&ColorTextureIndex, pos, sizeof(int));
+				pos += sizeof(int);
+			}
+			else
+			{
+				memcpy(&MaterialIndex, pos, sizeof(int));
+				pos += sizeof(int);
+
+				int32_t textures = 0;
+				int32_t uniforms = 0;
+
+				memcpy(&textures, pos, sizeof(int));
+				pos += sizeof(int);
+
+				MaterialColorTextureIndexes.resize(textures);
+				memcpy(MaterialColorTextureIndexes.data(), pos, sizeof(int32_t) * textures);
+				pos += (sizeof(int32_t) * textures);
+
+				memcpy(&uniforms, pos, sizeof(int));
+				pos += sizeof(int);
+
+				MaterialUniforms.resize(uniforms);
+				memcpy(MaterialUniforms.data(), pos, sizeof(int32_t) * uniforms);
+				pos += (sizeof(int32_t) * uniforms);
+			}
+		}
+		else
+		{
+			memcpy(&ColorTextureIndex, pos, sizeof(int));
+			pos += sizeof(int);
+		}
+		
 		memcpy(&AlphaBlend, pos, sizeof(int));
 		pos += sizeof(int);
 

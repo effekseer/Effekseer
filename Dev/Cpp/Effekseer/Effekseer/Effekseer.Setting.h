@@ -34,6 +34,7 @@ class EffectFactory;
 		TextureLoader*	m_textureLoader;
 		SoundLoader*	m_soundLoader;
 		ModelLoader*	m_modelLoader;
+		MaterialLoader* m_materialLoader = nullptr;
 
 		std::vector<EffectFactory*> effectFactories;
 
@@ -119,8 +120,28 @@ class EffectFactory;
 
 		/**
 			@brief
+			\~English get a material loader
+			\~Japanese マテリアルローダーを取得する。
+			@return
+			\~English	loader
+			\~Japanese ローダー
+		*/
+		MaterialLoader* GetMaterialLoader();
+
+		/**
+			@brief
+			\~English specfiy a material loader
+			\~Japanese マテリアルローダーを設定する。
+			@param	loader
+			\~English	loader
+			\~Japanese ローダー
+			*/
+		void SetMaterialLoader(MaterialLoader* loader);
+
+		/**
+			@brief
 			\~English	Add effect factory
-			\~Japanese Add an effect factory
+			\~Japanese Effect factoryを追加する。
 		*/
 		void AddEffectFactory(EffectFactory* effectFactory);
 

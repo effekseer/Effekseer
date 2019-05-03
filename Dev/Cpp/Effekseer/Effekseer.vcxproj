@@ -188,6 +188,7 @@
     <ClInclude Include="Effekseer\Effekseer.InstanceGroup.h" />
     <ClInclude Include="Effekseer\Effekseer.InternalStruct.h" />
     <ClInclude Include="Effekseer\Effekseer.IntrusiveList.h" />
+    <ClInclude Include="Effekseer\Effekseer.MaterialLoader.h" />
     <ClInclude Include="Effekseer\Effekseer.Setting.h" />
     <ClInclude Include="Effekseer\Effekseer.Manager.h" />
     <ClInclude Include="Effekseer\Effekseer.ManagerImplemented.h" />

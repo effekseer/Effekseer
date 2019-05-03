@@ -139,6 +139,12 @@ protected:
 	*/
 	void SetModel(Effect* effect, int32_t index, void* data);
 
+	/**
+	@brief
+	\~English set material data into specified index
+	\~Japanese	指定されたインデックスにマテリアルを設定する。
+	*/
+	void SetMaterial(Effect* effect, int32_t index, MaterialData* data);
 
 public:
 	EffectFactory();
@@ -358,6 +364,24 @@ public:
 	*/
 	virtual const EFK_CHAR* GetModelPath(int n) const = 0;
 	
+	/**
+	@brief	\~English	Get a material's pointer
+	\~Japanese	格納されているマテリアルのポインタを取得する。
+	*/
+	virtual MaterialData* GetMaterial(int n) const = 0;
+
+	/**
+	@brief	\~English	Get the number of stored material pointer 
+	\~Japanese	格納されているマテリアルのポインタの個数を取得する。
+	*/
+	virtual int32_t GetMaterialCount() const = 0;
+
+	/**
+	@brief	\~English	Get a material's path
+	\~Japanese	マテリアルのパスを取得する。
+	*/
+	virtual const EFK_CHAR* GetMaterialPath(int n) const = 0;
+
 	/**
 		@brief
 		\~English	Reload this effect
