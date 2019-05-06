@@ -178,7 +178,10 @@ namespace Effekseer.Exporter
 			{
 				foreach (var texture in textures.ToList().OrderBy(_=>_))
 				{
-					var buf = System.IO.File.ReadAllBytes(texture);
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u2 = new Uri(u1, texture);
+
+					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
 					AddBufferView(texture, buf);
 					images.Add(texture, CreateImageAsBufferView(texture));
 				}
