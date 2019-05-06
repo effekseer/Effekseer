@@ -132,3 +132,6 @@ ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
 PostEffect,PostEffect
 Clipping,Clipping
 Save,Save
+StorageTarget,Setting save destination
+StorageGlobal,Effekseer Application
+StorageLocal,Effekseer Project

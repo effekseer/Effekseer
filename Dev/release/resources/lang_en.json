@@ -133,6 +133,9 @@
     "ProjectFilter_": "Effekseer Project (*.efkproj)|*.efkproj",
     "PostEffect": "PostEffect",
     "Clipping": "Clipping",
-    "Save": "Save"
+    "Save": "Save",
+    "StorageTarget": "Setting save destination",
+    "StorageGlobal": "Effekseer Application",
+    "StorageLocal": "Effekseer Project"
   }
 }

@@ -277,49 +277,6 @@ namespace Effekseer.Data
             private set;
         }
 
-        [Undo(Undo = false)]
-        [Shown(Shown = false)]
-        public Value.Int RecordingWidth { get; private set; }
-
-        [Undo(Undo = false)]
-        [Shown(Shown = false)]
-        public Value.Int RecordingHeight { get; private set; }
-
-        [Undo(Undo = false)]
-        [Shown(Shown =false)]
-        [IO(Export = true, Import = true)]
-        public Value.Boolean IsRecordingGuideShown { get; private set; }
-
-
-        [Undo(Undo = false)]
-        [Shown(Shown = false)]
-        [IO(Export = true, Import = true)]
-        public Value.Int RecordingStartingFrame { get; private set; }
-
-        [Undo(Undo = false)]
-        [Shown(Shown = false)]
-        [IO(Export = true, Import = true)]
-        public Value.Int RecordingEndingFrame { get; private set; }
-
-        [Undo(Undo = false)]
-        [Shown(Shown = false)]
-        [IO(Export = true, Import = true)]
-        public Value.Int RecordingFrequency { get; private set; }
-
-        [Undo(Undo = false)]
-        [Shown(Shown = false)]
-        [IO(Export = true, Import = true)]
-        public Value.Int RecordingHorizontalCount { get; private set; }
-
-        [Undo(Undo = false)]
-        [Shown(Shown = false)]
-        [IO(Export = true, Import = true)]
-        public Value.Enum<RecordingExporterType> RecordingExporter { get; private set; }
-
-        [Undo(Undo = false)]
-        [Shown(Shown = false)]
-        [IO(Export = true, Import = true)]
-        public Value.Enum<RecordingTransparentMethodType> RecordingTransparentMethod { get; private set; }
         public OptionValues()
 		{
 			RenderingMode = new Value.Enum<RenderMode>(RenderMode.Normal);
@@ -348,16 +305,6 @@ namespace Effekseer.Data
 			MouseSlideInvY = new Value.Boolean(false);
 
 			DistortionType = new Value.Enum<DistortionMethodType>(DistortionMethodType.Current);
-
-            RecordingWidth = new Value.Int(256);
-            RecordingHeight = new Value.Int(256);
-            IsRecordingGuideShown = new Value.Boolean(false);
-            RecordingStartingFrame = new Value.Int(1);
-            RecordingEndingFrame = new Value.Int(30);
-            RecordingFrequency = new Value.Int(1);
-            RecordingHorizontalCount = new Value.Int(4);
-            RecordingExporter = new Value.Enum<RecordingExporterType>(Data.RecordingExporterType.Sprite);
-            RecordingTransparentMethod = new Value.Enum<RecordingTransparentMethodType>(Data.RecordingTransparentMethodType.None);
 
             // Switch the language according to the OS settings
             var culture = System.Globalization.CultureInfo.CurrentCulture;

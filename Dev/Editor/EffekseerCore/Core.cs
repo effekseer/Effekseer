@@ -26,6 +26,8 @@ namespace Effekseer
 
 		static Data.GlobalValues globalValues = new Data.GlobalValues();
 
+		static Data.RecordingValues recording = new Data.RecordingValues();
+
 		static int start_frame = 0;
 
 		static int end_frame = 160;
@@ -181,6 +183,11 @@ namespace Effekseer
 			get { return option; }
 		}
 		
+		public static Data.RecordingValues Recording
+		{
+			get { return recording; }
+		}
+
 		public static Data.PostEffectValues PostEffect
 		{
 			get { return postEffect; }
@@ -551,6 +558,11 @@ namespace Effekseer
 			culling = new Data.EffectCullingValues();
 			globalValues = new Data.GlobalValues();
 
+			if(recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Local)
+			{
+				recording = new Data.RecordingValues();
+			}
+
             // Add a root node
             Root.AddChild();
 			Command.CommandManager.Clear();
@@ -587,6 +599,13 @@ namespace Effekseer
 			if(behaviorElement != null) project_root.AppendChild(behaviorElement);
 			if (cullingElement != null) project_root.AppendChild(cullingElement);
 			if (globalElement != null) project_root.AppendChild(globalElement);
+
+			// recording option (this option is stored in local or global)
+			if(recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Local)
+			{
+				var recordingElement = Data.IO.SaveObjectToElement(doc, "Recording", Recording, false);
+				if (recordingElement != null) project_root.AppendChild(recordingElement);
+			}
 
 			project_root.AppendChild(doc.CreateTextElement("ToolVersion", Core.Version));
 			project_root.AppendChild(doc.CreateTextElement("Version", 3));
@@ -732,6 +751,13 @@ namespace Effekseer
 				Data.IO.LoadObjectFromElement(globalElement as System.Xml.XmlElement, ref o, false);
 			}
 
+			// recording option (this option is stored in local or global)
+			if (doc["EffekseerProject"]["Recording"] != null)
+			{
+				var o = recording as object;
+				Data.IO.LoadObjectFromElement(doc["EffekseerProject"]["Recording"] as System.Xml.XmlElement, ref o, false);
+			}
+
 			StartFrame = 0;
 			EndFrame = doc["EffekseerProject"]["EndFrame"].GetTextAsInt();
 			StartFrame = doc["EffekseerProject"]["StartFrame"].GetTextAsInt();
@@ -837,6 +863,13 @@ namespace Effekseer
 				Data.IO.LoadObjectFromElement(postEffectElement as System.Xml.XmlElement, ref o, false);
 			}
 
+			var recordingElement = doc["EffekseerProject"]["Recording"];
+			if(recordingElement != null)
+			{
+				var o = recording as object;
+				Data.IO.LoadObjectFromElement(recordingElement as System.Xml.XmlElement, ref o, false);
+			}
+
 			IsChanged = false;
 
             return res;
@@ -854,6 +887,13 @@ namespace Effekseer
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 			if(optionElement != null) project_root.AppendChild(optionElement);
 			if(postEffectElement != null) project_root.AppendChild(postEffectElement);
+
+			// recording option (this option is stored in local or global)
+			if (recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Global)
+			{
+				var recordingElement = Data.IO.SaveObjectToElement(doc, "Recording", Recording, false);
+				if (recordingElement != null) project_root.AppendChild(recordingElement);
+			}
 
 			doc.AppendChild(project_root);
 
