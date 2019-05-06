@@ -80,7 +80,7 @@ namespace Effekseer.Exporter
 
 			if(option.Format == glTFExporterFormat.glTF)
 			{
-				System.IO.File.WriteAllText(System.IO.Path.ChangeExtension(path, "glTF"), json);
+				System.IO.File.WriteAllText(System.IO.Path.ChangeExtension(path, "gltf"), json);
 				System.IO.File.WriteAllBytes(System.IO.Path.ChangeExtension(path, "bin"), internalBuffer.ToArray());
 			}
 			else
