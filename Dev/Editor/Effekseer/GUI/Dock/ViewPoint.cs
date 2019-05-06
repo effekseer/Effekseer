@@ -154,6 +154,7 @@ namespace Effekseer.GUI.Dock
                     viewPoint.ClippingStart = viewerParameter.ClippingStart;
                     viewPoint.ClippingEnd = viewerParameter.ClippingEnd;
                     viewPoint.CameraMode = viewerParameter.IsPerspective ? 0 : 1;
+					viewPoint.RateOfMagnification = viewerParameter.RateOfMagnification;
                     viewPoint.Save(filename);
                 }
             }
@@ -178,7 +179,9 @@ namespace Effekseer.GUI.Dock
                         viewerParameter.ClippingStart = viewPoint.ClippingStart;
                         viewerParameter.ClippingEnd = viewPoint.ClippingEnd;
                         viewerParameter.IsPerspective = viewPoint.CameraMode == 0;
-                    }
+						viewerParameter.IsOrthographic = !viewerParameter.IsPerspective;
+						viewerParameter.RateOfMagnification = viewPoint.RateOfMagnification;
+					}
                 }
             }
 
