@@ -281,6 +281,14 @@ namespace Effekseer.GUI.Component
 						info.FileName = converterPath;
 						info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
 
+						if (!System.IO.File.Exists(oldFilepath))
+						{
+							var msg = oldFilepath + " is not found.";
+
+							swig.GUIManager.show(msg, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+							return;
+						}
+
 						System.Diagnostics.Process p = System.Diagnostics.Process.Start(info);
 						p.WaitForExit();
 						p.Dispose();

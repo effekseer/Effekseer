@@ -92,6 +92,9 @@ int main(int argc, char** argv)
 		modelScale = ::std::atof(args["-scale"].c_str());
 	}
 
+	std::cout << "Import path : " << importPath << std::endl;
+	std::cout << "modelScale : " << modelScale << std::endl;
+
 	fbxToEfkMdl::FBXConverter converter;
 
 	FbxManager* sdkManager = FbxManager::Create();
@@ -104,7 +107,7 @@ int main(int argc, char** argv)
 		printf("Call to FbxImporter::Initialize() failed.\n");
 		printf("Error returned: %s\n\n", fbxImporter->GetStatus().GetErrorString());
 		system("PAUSE");
-		exit(-1);
+		return -1;
 	}
 
 	FbxScene* fbxScene = FbxScene::Create(sdkManager, "myScene");
