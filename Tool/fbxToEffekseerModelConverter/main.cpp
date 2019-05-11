@@ -13,6 +13,21 @@
 #endif
 
 
+#ifdef _WIN32
+#include <windows.h>
+#include <string>
+#include <cstring>
+
+std::string ANSI_to_UTF8(std::string inANSI) {
+    wchar_t tempWideChar[1024];
+	char outUTF8[1024];
+    MultiByteToWideChar( CP_ACP, 0, inANSI.c_str(), -1, tempWideChar, 1024);
+    WideCharToMultiByte( CP_UTF8, 0, tempWideChar, -1, outUTF8, 1024, NULL, NULL);
+	return outUTF8;
+}
+
+#endif
+
 int main(int argc, char** argv)
 {
 	if(argc == 1)
@@ -102,6 +117,11 @@ int main(int argc, char** argv)
 	sdkManager->SetIOSettings(ios);
 
 	FbxImporter* fbxImporter = FbxImporter::Create(sdkManager, "");
+
+#ifdef _WIN32
+	importPath = ANSI_to_UTF8(importPath);
+#endif
+
 	if (!fbxImporter->Initialize(importPath.c_str(), -1, sdkManager->GetIOSettings()))
 	{
 		printf("Call to FbxImporter::Initialize() failed.\n");
