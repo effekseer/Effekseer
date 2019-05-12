@@ -30,7 +30,7 @@ namespace Effekseer.Exporter
 	public class glTFExporter
 	{
 		List<byte> internalBuffer = new List<byte>();
-		Dictionary<string, Buffer> buffers = new Dictionary<string, Buffer>();
+		List<Buffer> buffers = new List<Buffer>();
 		Dictionary<string, BufferView> bufferViews = new Dictionary<string, BufferView>();
 
 		public bool Export(string path, glTFExporterOption option = null)
@@ -64,14 +64,14 @@ namespace Effekseer.Exporter
 			// buffer
 			Buffer buffer = new Buffer();
 			buffer.byteLength = internalBuffer.Count;
-            buffer.uri = System.IO.Path.ChangeExtension(path, "bin");
-			buffers.Add("effectBuffer", buffer);
+            buffer.uri = System.IO.Path.GetFileName(System.IO.Path.ChangeExtension(path, "bin"));
+			buffers.Add(buffer);
 			gltf.Add("buffers", buffers);
 
 			// bufferview
 			foreach (var bufferView in bufferViews)
 			{
-				bufferView.Value.buffer = "effectBuffer";
+				bufferView.Value.buffer = 0;
 			}
 
 			gltf.Add("bufferViews", bufferViews);
@@ -153,7 +153,7 @@ namespace Effekseer.Exporter
 
 			AddBufferView(bodyName, binary);
 
-			effect.Add("body", bodyName);
+			effect.Add("body", CreateeBodyAsBufferView(bodyName));
 
 			HashSet<string> textures = new HashSet<string>();
 
@@ -172,7 +172,7 @@ namespace Effekseer.Exporter
 				textures.Add(texture);
 			}
 
-            Dictionary<string, object> images = new Dictionary<string, object>();
+            List<object> images = new List<object>();
 
             if (isContainedTextureAsBinary)
 			{
@@ -183,14 +183,14 @@ namespace Effekseer.Exporter
 
 					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
 					AddBufferView(texture, buf);
-					images.Add(texture, CreateImageAsBufferView(texture));
+					images.Add(CreateImageAsBufferView(texture));
 				}
 			}
 			else
 			{
 				foreach (var texture in textures.ToList().OrderBy(_ => _))
 				{
-					images.Add(texture, CreateImageAsURI(texture));
+					images.Add(CreateImageAsURI(texture));
 				}
 			}
 
@@ -220,6 +220,20 @@ namespace Effekseer.Exporter
 
         class EffekseerEffect : Dictionary<string, object>
         { }
+
+		Dictionary<string, object> CreateeBodyAsBufferView(string bufferview)
+		{
+			var ret = new Dictionary<string, object>();
+			ret.Add("bufferview", bufferview);
+			return ret;
+		}
+
+		Dictionary<string, object> CreateBodyAsURI(string uri)
+		{
+			var ret = new Dictionary<string, object>();
+			ret.Add("uri", uri);
+			return ret;
+		}
 
 		Dictionary<string, object> CreateImageAsBufferView(string bufferview)
 		{
