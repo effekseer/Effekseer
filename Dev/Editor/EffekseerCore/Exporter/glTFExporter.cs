@@ -57,7 +57,7 @@ namespace Effekseer.Exporter
 
 			var effect = CreateEffect(option.Scale, option.bindingNode, option.IsContainedTextureAsBinary);
 
-			effekseerExtention.effects.Add((string)effect["effectName"], effect);
+			effekseerExtention.effects.Add(effect);
 
 			extentions.Add("Effekseer", effekseerExtention);
 
@@ -156,25 +156,31 @@ namespace Effekseer.Exporter
 			effect.Add("body", CreateeBodyAsBufferView(bodyName));
 
 			HashSet<string> textures = new HashSet<string>();
-
+			
 			foreach (var texture in binaryExporter.UsedTextures.ToList().OrderBy(_ => _))
 			{
 				textures.Add(texture);
 			}
 
+			HashSet<string> normalTextures = new HashSet<string>();
+
 			foreach (var texture in binaryExporter.UsedNormalTextures.ToList().OrderBy(_ => _))
 			{
-				textures.Add(texture);
+				normalTextures.Add(texture);
 			}
+
+			HashSet<string> distortionTextures = new HashSet<string>();
 
 			foreach (var texture in binaryExporter.UsedDistortionTextures.ToList().OrderBy(_ => _))
 			{
-				textures.Add(texture);
+				distortionTextures.Add(texture);
 			}
 
             List<object> images = new List<object>();
+			List<object> normalImages = new List<object>();
+			List<object> distortionImages = new List<object>();
 
-            if (isContainedTextureAsBinary)
+			if (isContainedTextureAsBinary)
 			{
 				foreach (var texture in textures.ToList().OrderBy(_=>_))
 				{
@@ -185,6 +191,26 @@ namespace Effekseer.Exporter
 					AddBufferView(texture, buf);
 					images.Add(CreateImageAsBufferView(texture));
 				}
+
+				foreach (var texture in normalTextures.ToList().OrderBy(_ => _))
+				{
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u2 = new Uri(u1, texture);
+
+					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
+					AddBufferView(texture, buf);
+					normalImages.Add(CreateImageAsBufferView(texture));
+				}
+
+				foreach (var texture in distortionTextures.ToList().OrderBy(_ => _))
+				{
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u2 = new Uri(u1, texture);
+
+					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
+					AddBufferView(texture, buf);
+					distortionImages.Add(CreateImageAsBufferView(texture));
+				}
 			}
 			else
 			{
@@ -192,11 +218,23 @@ namespace Effekseer.Exporter
 				{
 					images.Add(CreateImageAsURI(texture));
 				}
+
+				foreach (var texture in normalTextures.ToList().OrderBy(_ => _))
+				{
+					normalImages.Add(CreateImageAsURI(texture));
+				}
+
+				foreach (var texture in distortionTextures.ToList().OrderBy(_ => _))
+				{
+					distortionImages.Add(CreateImageAsURI(texture));
+				}
 			}
 
             effect.Add("images", images);
+			effect.Add("normalImages", normalImages);
+			effect.Add("distortionImages", distortionImages);
 
-            return effect;
+			return effect;
 		}
 
 		class Buffer
@@ -208,14 +246,14 @@ namespace Effekseer.Exporter
 
 		class BufferView
 		{
-			public object buffer = null;
+			public int buffer = 0;
 			public int byteLength = 0;
 			public int byteOffset = 0;
 		}
 
 		class EffekseerExtention
 		{
-			public Dictionary<string, EffekseerEffect> effects = new Dictionary<string, EffekseerEffect>();
+			public List<EffekseerEffect> effects = new List<EffekseerEffect>();
 		}
 
         class EffekseerEffect : Dictionary<string, object>
