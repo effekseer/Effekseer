@@ -369,6 +369,8 @@ namespace Effekseer.GUI.Component
 				System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
 
 				Manager.Viewer.Reload(true);
+
+                Read();
 			};
 		}
 
