@@ -1,4 +1,4 @@
-﻿
+
 #ifndef	__EFFEKSEERRENDERER_GL_GLEXTENSION_H__
 #define	__EFFEKSEERRENDERER_GL_GLEXTENSION_H__
 
@@ -72,6 +72,7 @@ typedef ptrdiff_t GLintptr;
 typedef char GLchar;
 #endif
 
+OpenGLDeviceType GetDeviceType();
 bool Initialize(OpenGLDeviceType deviceType);
 bool IsSupportedVertexArray();
 bool IsSupportedBufferRange();

@@ -183,7 +183,7 @@ static nfdresult_t AddFiltersToDialog( ::IFileDialog *fileOpenDialog, const char
             /* end of filter -- add it to specList */
 
             // Empty filter name -- Windows describes them by extension.            
-            specList[specIdx].pszName = EMPTY_WSTR;
+            CopyNFDCharToWChar( specbuf, (wchar_t**)&specList[specIdx].pszName );
             CopyNFDCharToWChar( specbuf, (wchar_t**)&specList[specIdx].pszSpec );
                         
             memset( specbuf, 0, sizeof(char)*NFD_MAX_STRLEN );
@@ -203,14 +203,15 @@ static nfdresult_t AddFiltersToDialog( ::IFileDialog *fileOpenDialog, const char
 
     /* Add wildcard */
     specList[specIdx].pszSpec = WILDCARD;
-    specList[specIdx].pszName = EMPTY_WSTR;
+    specList[specIdx].pszName = WILDCARD;
     
     fileOpenDialog->SetFileTypes( filterCount+1, specList );
 
     /* free speclist */
     for ( size_t i = 0; i < filterCount; ++i )
     {
-        NFDi_Free( (void*)specList[i].pszSpec );
+        NFDi_Free((void*)specList[i].pszName);
+        NFDi_Free((void*)specList[i].pszSpec);
     }
     NFDi_Free( specList );    
 

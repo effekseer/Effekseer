@@ -1,4 +1,4 @@
-﻿
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -160,7 +160,16 @@ void VertexBuffer::Unlock()
 	}
 	else
 	{
-		if (GLExt::IsSupportedMapBuffer())
+        // giMapBuffer is invalid with OpenGLES3 after iOS12.2?
+        bool avoidIOS122 = false;
+#if defined(__APPLE__)
+        if(GLExt::GetDeviceType() == OpenGLDeviceType::OpenGLES3)
+        {
+            avoidIOS122 = true;
+        }
+#endif
+
+		if (GLExt::IsSupportedMapBuffer() && !avoidIOS122)
 		{
 #ifdef __ANDROID__
 			GLExt::glBufferData(GL_ARRAY_BUFFER, m_offset, nullptr, GL_STREAM_DRAW);
