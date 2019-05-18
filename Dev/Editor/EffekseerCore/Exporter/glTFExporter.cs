@@ -189,7 +189,12 @@ namespace Effekseer.Exporter
 
 					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
 					AddBufferView(texture, buf);
-					images.Add(CreateImageAsBufferView(texture));
+
+					var mimeType = "dds";
+					if (System.IO.Path.GetExtension(texture).ToLower().Contains("png"))
+						mimeType = "png";
+
+					images.Add(CreateImageAsBufferView(texture, mimeType));
 				}
 
 				foreach (var texture in normalTextures.ToList().OrderBy(_ => _))
@@ -199,7 +204,12 @@ namespace Effekseer.Exporter
 
 					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
 					AddBufferView(texture, buf);
-					normalImages.Add(CreateImageAsBufferView(texture));
+
+					var mimeType = "dds";
+					if (System.IO.Path.GetExtension(texture).ToLower().Contains("png"))
+						mimeType = "png";
+
+					normalImages.Add(CreateImageAsBufferView(texture, mimeType));
 				}
 
 				foreach (var texture in distortionTextures.ToList().OrderBy(_ => _))
@@ -209,7 +219,12 @@ namespace Effekseer.Exporter
 
 					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
 					AddBufferView(texture, buf);
-					distortionImages.Add(CreateImageAsBufferView(texture));
+
+					var mimeType = "dds";
+					if (System.IO.Path.GetExtension(texture).ToLower().Contains("png"))
+						mimeType = "png";
+
+					distortionImages.Add(CreateImageAsBufferView(texture, mimeType));
 				}
 			}
 			else
@@ -273,10 +288,11 @@ namespace Effekseer.Exporter
 			return ret;
 		}
 
-		Dictionary<string, object> CreateImageAsBufferView(string bufferview)
+		Dictionary<string, object> CreateImageAsBufferView(string bufferview, string mimetype)
 		{
 			var ret = new Dictionary<string, object>();
 			ret.Add("bufferview", bufferview);
+			ret.Add("mimeType", "image/" + mimetype);
 			return ret;
 		}
 
