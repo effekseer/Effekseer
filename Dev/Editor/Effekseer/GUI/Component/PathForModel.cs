@@ -278,7 +278,18 @@ namespace Effekseer.GUI.Component
 
 
 						System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
+
+						var os = System.Environment.OSVersion;
+						if (os.Platform == PlatformID.Win32NT ||
+							os.Platform == PlatformID.Win32S ||
+							os.Platform == PlatformID.Win32Windows ||
+							os.Platform == PlatformID.WinCE)
+						{
+							converterPath += ".exe";
+						}
+
 						info.FileName = converterPath;
+
 						info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
 
 						if (!System.IO.File.Exists(oldFilepath))
@@ -289,13 +300,36 @@ namespace Effekseer.GUI.Component
 							return;
 						}
 
+						if (!System.IO.File.Exists(converterPath))
+						{
+							var msg = converterPath + " is not found.";
+
+							swig.GUIManager.show(msg, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+							return;
+						}
+
+						info.UseShellExecute = false;
+						info.RedirectStandardOutput = true;
+						info.RedirectStandardInput = false;
+						info.CreateNoWindow = true;
+
 						System.Diagnostics.Process p = System.Diagnostics.Process.Start(info);
+
+						string outputs = p.StandardOutput.ReadToEnd();
+
 						p.WaitForExit();
 						p.Dispose();
+						
 
 						if (System.IO.File.Exists(newFilepath))
 						{
 							System.IO.File.SetLastWriteTime(newFilepath, System.IO.File.GetLastWriteTime(oldFilepath));
+						}
+						else
+						{
+							var msg =" Failed to load. \n" + outputs;
+
+							swig.GUIManager.show(msg, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
 						}
 
 						try
@@ -340,6 +374,16 @@ namespace Effekseer.GUI.Component
 						}
 
 						System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
+
+						var os = System.Environment.OSVersion;
+						if (os.Platform == PlatformID.Win32NT ||
+							os.Platform == PlatformID.Win32S ||
+							os.Platform == PlatformID.Win32Windows ||
+							os.Platform == PlatformID.WinCE)
+						{
+							converterPath += ".exe";
+						}
+
 						info.FileName = converterPath;
 						info.Arguments = "\"" + oldFilepath + "\" \"" + newFilepath + "\" -scale " + omd.Magnification.ToString();
 
