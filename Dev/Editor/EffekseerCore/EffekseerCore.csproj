@@ -84,6 +84,7 @@
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Data\DepthValues.cs" />
+    <Compile Include="Data\Dynamic.cs" />
     <Compile Include="Data\EffectCullingValues.cs" />
     <Compile Include="Data\EffectBehaviorValues.cs" />
     <Compile Include="Data\OptionValues.cs" />
@@ -131,6 +132,11 @@
     <Compile Include="Data\GlobalValues.cs" />
     <Compile Include="Define.cs" />
     <Compile Include="Exporter\glTFExporter.cs" />
+    <Compile Include="InternalScript\Compiler.cs" />
+    <Compile Include="InternalScript\Exceptions.cs" />
+    <Compile Include="InternalScript\Lexer.cs" />
+    <Compile Include="InternalScript\Parser.cs" />
+    <Compile Include="InternalScript\Tests.cs" />
     <Compile Include="Utl\MaterialInformation.cs" />
     <Compile Include="Utl\ModelInformation.cs" />
     <Compile Include="Utl\ParamaterTreeNode.cs" />
@@ -153,6 +159,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

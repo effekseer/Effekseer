@@ -15,11 +15,11 @@ namespace Effekseer.Binary
 		/// </summary>
 		/// <remarks>
 		/// Version14
-		/// Support material
+		/// Support dynamic parameter
 		/// </remarks>
-		const int Version = 14;
+		const int Version = 15;
 #else
-		const int Version = 13;
+		const int Version = 14;
 #endif
 		public HashSet<string> UsedTextures = new HashSet<string>();
 
@@ -101,12 +101,22 @@ namespace Effekseer.Binary
 
 								foreach (var texture in textures)
 								{
-									var relative_path = texture.RelativePath;
+									var relative_path = texture.Item1.RelativePath;
 									if (relative_path != string.Empty)
 									{
-										if (!UsedTextures.Contains(relative_path))
+										if(texture.Item2)
 										{
-											UsedTextures.Add(relative_path);
+											if (!UsedNormalTextures.Contains(relative_path))
+											{
+												UsedNormalTextures.Add(relative_path);
+											}
+										}
+										else
+										{
+											if (!UsedTextures.Contains(relative_path))
+											{
+												UsedTextures.Add(relative_path);
+											}
 										}
 									}
 								}
@@ -425,6 +435,34 @@ namespace Effekseer.Binary
 				data.Add(path);
 				data.Add(new byte[] { 0, 0 });
 			}
+
+			// export dynamic parameters
+			data.Add(BitConverter.GetBytes(Core.Dynamic.Vectors.Values.Count));
+
+			var compiler = new InternalScript.Compiler();
+
+			foreach (var value in Core.Dynamic.Vectors.Values)
+			{
+				var cx = compiler.Compile(value.X.Value);
+				var cy = compiler.Compile(value.Y.Value);
+				var cz = compiler.Compile(value.Z.Value);
+				var cw = compiler.Compile(value.W.Value);
+
+				var cs = new []{ cx, cy, cz, cw };
+
+				foreach(var c in cs)
+				{
+					if(c.Bytecode != null)
+					{
+						data.Add(BitConverter.GetBytes((int)c.Bytecode.Length));
+						data.Add(c.Bytecode);
+					}
+					else
+					{
+						data.Add(BitConverter.GetBytes((int)0));
+					}
+				}
+			}
 #endif
 
 			// Export the number of nodes
@@ -556,7 +594,7 @@ namespace Effekseer.Binary
 				node_data.Add(n.DepthValues.SoftParticle.Value.GetBytes());
 
 #if MATERIAL_ENABLED
-				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index, distortionTexture_and_index, material_and_index));
+				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index));
 #else
 				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index, distortionTexture_and_index));
 #endif

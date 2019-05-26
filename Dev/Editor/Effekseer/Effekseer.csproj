@@ -64,6 +64,7 @@
     <Compile Include="GUI\Component\ColorCtrl.cs" />
     <Compile Include="GUI\Component\ColorWithRandom.cs" />
     <Compile Include="GUI\Component\Dummy.cs" />
+    <Compile Include="GUI\Component\DynamicSelector.cs" />
     <Compile Include="GUI\Component\Enum.cs" />
     <Compile Include="GUI\Component\FCurveButton.cs" />
     <Compile Include="GUI\Component\Float.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="GUI\Dock\DepthValues.cs" />
     <Compile Include="GUI\Dock\DockManager.cs" />
     <Compile Include="GUI\Dock\DockPanel.cs" />
+    <Compile Include="GUI\Dock\Dynamic.cs" />
     <Compile Include="GUI\Dock\EffectViwer.cs" />
     <Compile Include="GUI\Dock\FCurves.cs" />
     <Compile Include="GUI\Dock\FileViewer.cs" />

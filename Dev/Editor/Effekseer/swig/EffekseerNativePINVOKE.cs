@@ -564,6 +564,30 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_TargetPositionZ_get___")]
   public static extern float ViewerEffectBehavior_TargetPositionZ_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput1_set___")]
+  public static extern void ViewerEffectBehavior_DynamicInput1_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput1_get___")]
+  public static extern float ViewerEffectBehavior_DynamicInput1_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput2_set___")]
+  public static extern void ViewerEffectBehavior_DynamicInput2_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput2_get___")]
+  public static extern float ViewerEffectBehavior_DynamicInput2_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput3_set___")]
+  public static extern void ViewerEffectBehavior_DynamicInput3_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput3_get___")]
+  public static extern float ViewerEffectBehavior_DynamicInput3_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput4_set___")]
+  public static extern void ViewerEffectBehavior_DynamicInput4_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput4_get___")]
+  public static extern float ViewerEffectBehavior_DynamicInput4_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ViewerEffectBehavior___")]
   public static extern global::System.IntPtr new_ViewerEffectBehavior();
 

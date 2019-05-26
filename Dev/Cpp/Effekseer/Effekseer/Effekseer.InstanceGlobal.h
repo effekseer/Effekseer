@@ -27,6 +27,8 @@ class InstanceGlobal
 	: public IRandObject
 {
 	friend class ManagerImplemented;
+	friend class Instance;
+
 
 private:
 	/* このエフェクトで使用しているインスタンス数 */
@@ -40,6 +42,8 @@ private:
 
 	int32_t				m_seed = 0;
 
+	std::array<float, 4> dynamicInputParameters;
+
 	InstanceGlobal();
 
 	virtual ~InstanceGlobal();
@@ -49,7 +53,11 @@ public:
 	bool		IsGlobalColorSet = false;
 	Color		GlobalColor = Color(255, 255, 255, 255);
 
+	std::array<std::array<float, 4>, 16> dynamicParameters;
+
 	std::vector<InstanceContainer*>	RenderedInstanceContainers;
+
+	std::array<float, 4> GetDynamicParameter(int32_t index);
 
 	void SetSeed(int32_t seed);
 

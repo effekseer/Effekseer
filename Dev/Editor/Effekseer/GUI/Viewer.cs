@@ -356,6 +356,16 @@ namespace Effekseer.GUI
 			native.SetMouseInverseFlag(rotX, rotY, slideX, slideY);
 		}
 
+		public void SetDynamicInput(float v1, float v2, float v3, float v4)
+		{
+			var behavior = native.GetEffectBehavior();
+			behavior.DynamicInput1 = v1;
+			behavior.DynamicInput2 = v2;
+			behavior.DynamicInput3 = v3;
+			behavior.DynamicInput4 = v4;
+			native.SetViewerEffectBehavior(behavior);
+		}
+
 		public bool ShowViewer(IntPtr handle, int width, int height, swig.DeviceType deviceType)
 		{
 			if (isViewerShown) return false;

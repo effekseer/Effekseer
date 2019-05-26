@@ -194,7 +194,7 @@ static const char g_sprite_fs_no_texture_src[] =
 		Effekseer::Matrix44 constantVSBuffer[2];
 		constantVSBuffer[0] = renderer->GetCameraMatrix();
 		constantVSBuffer[1] = renderer->GetProjectionMatrix();
-		renderer->SetVertexBufferToShader(constantVSBuffer, sizeof(Effekseer::Matrix44) * 2);
+		renderer->SetVertexBufferToShader(constantVSBuffer, sizeof(Effekseer::Matrix44) * 2, 0);
 
 		shader->SetConstantBuffer();
 

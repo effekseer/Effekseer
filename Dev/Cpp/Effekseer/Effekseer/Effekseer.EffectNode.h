@@ -190,6 +190,8 @@ enum ParameterTranslationType
 //----------------------------------------------------------------------------------
 struct ParameterTranslationFixed
 {
+	int32_t ReferencedDynamicParameter = -1;
+
 	Vector3D Position;
 };
 
@@ -198,6 +200,12 @@ struct ParameterTranslationFixed
 //----------------------------------------------------------------------------------
 struct ParameterTranslationPVA
 {
+	int32_t ReferencedDynamicParameterPMax = -1;
+	int32_t ReferencedDynamicParameterPMin = -1;
+	int32_t ReferencedDynamicParameterVMax = -1;
+	int32_t ReferencedDynamicParameterVMin = -1;
+	int32_t ReferencedDynamicParameterAMax = -1;
+	int32_t ReferencedDynamicParameterAMin = -1;
 	random_vector3d	location;
 	random_vector3d	velocity;
 	random_vector3d	acceleration;
@@ -478,24 +486,21 @@ struct ParameterRendererCommon
 	/**
 		@brief	material type
 	*/
-	enum class MaterialType : int32_t
+	enum class RendererMaterialType : int32_t
 	{
 		Default,
 		File,
 	};
 
-	MaterialType Material = MaterialType::File;
+	RendererMaterialType MaterialType = RendererMaterialType::File;
 
 	/**
 		@brief	texture index in MaterialType::Default
 	*/
 	int32_t				ColorTextureIndex = 0;
 
-	int32_t MaterialIndex = -1;
-
-	std::vector<int32_t> MaterialColorTextureIndexes;
-
-	std::vector<std::array<float, 4>> MaterialUniforms;
+	//! material index in MaterialType::File
+	MaterialParameter Material;
 
 	AlphaBlendType AlphaBlend = AlphaBlendType::Opacity;
 
@@ -627,18 +632,19 @@ struct ParameterRendererCommon
 	{
 		//memset(this, 0, sizeof(ParameterRendererCommon));
 
-		if (version >= 14)
+		if (version >= 15)
 		{
-			memcpy(&Material, pos, sizeof(int));
+			memcpy(&MaterialType, pos, sizeof(int));
+			pos += sizeof(int);
 
-			if (Material == MaterialType::Default)
+			if (MaterialType == RendererMaterialType::Default)
 			{
 				memcpy(&ColorTextureIndex, pos, sizeof(int));
 				pos += sizeof(int);
 			}
 			else
 			{
-				memcpy(&MaterialIndex, pos, sizeof(int));
+				memcpy(&Material.MaterialIndex, pos, sizeof(int));
 				pos += sizeof(int);
 
 				int32_t textures = 0;
@@ -647,15 +653,16 @@ struct ParameterRendererCommon
 				memcpy(&textures, pos, sizeof(int));
 				pos += sizeof(int);
 
-				MaterialColorTextureIndexes.resize(textures);
-				memcpy(MaterialColorTextureIndexes.data(), pos, sizeof(int32_t) * textures);
-				pos += (sizeof(int32_t) * textures);
+				
+				Material.MaterialTextures.resize(textures);
+				memcpy(Material.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
+				pos += (sizeof(MaterialTextureParameter) * textures);
 
 				memcpy(&uniforms, pos, sizeof(int));
 				pos += sizeof(int);
 
-				MaterialUniforms.resize(uniforms);
-				memcpy(MaterialUniforms.data(), pos, sizeof(int32_t) * uniforms);
+				Material.MaterialUniforms.resize(uniforms);
+				memcpy(Material.MaterialUniforms.data(), pos, sizeof(int32_t) * uniforms);
 				pos += (sizeof(int32_t) * uniforms);
 			}
 		}

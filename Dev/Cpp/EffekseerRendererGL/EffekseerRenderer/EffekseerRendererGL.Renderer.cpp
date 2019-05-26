@@ -18,6 +18,7 @@
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.TextureLoader.h"
 #include "EffekseerRendererGL.ModelLoader.h"
+#include "EffekseerRendererGL.MaterialLoader.h"
 
 #include "EffekseerRendererGL.GLExtension.h"
 
@@ -1009,6 +1010,14 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 #endif
 }
 
+::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) {
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	return new MaterialLoader(this, fileInterface);
+#else
+	return nullptr;
+#endif
+}
+
 void RendererImplemented::SetBackground(GLuint background)
 {
 	m_background.UserID = background;
@@ -1246,16 +1255,18 @@ void RendererImplemented::EndShader(Shader* shader)
 	GLCheckError();
 }
 
-void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size)
+void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {
 	assert(currentShader != nullptr);
-	memcpy(currentShader->GetVertexConstantBuffer(), data, size);
+	auto p = static_cast<uint8_t*>(currentShader->GetVertexConstantBuffer()) + dstOffset;
+	memcpy(p, data, size);
 }
 
-void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size)
+void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {
 	assert(currentShader != nullptr);
-	memcpy(currentShader->GetPixelConstantBuffer(), data, size);
+	auto p = static_cast<uint8_t*>(currentShader->GetPixelConstantBuffer()) + dstOffset;
+	memcpy(p, data, size);
 }
 
 void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)

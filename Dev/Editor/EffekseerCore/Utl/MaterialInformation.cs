@@ -98,10 +98,16 @@ namespace Effekseer.Utl
 					{
 						var name = texture["Name"].Value<string>();
 						var offset = texture["Index"].Value<double>();
-						var defaultPath = texture["DefaultPath"].Value<double>();
+						var defaultPath = texture["DefaultPath"].Value<string>();
 						var isParam = texture["IsParam"].Value<bool>();
-
+						var isValueTexture = texture["IsValueTexture"].Value<bool>();
 						var info = new TextureInformation();
+
+						info.Name = name;
+						info.Index = (int)offset;
+						info.DefaultPath = defaultPath;
+						info.IsParam = isParam;
+						info.IsValueTexture = isValueTexture;
 
 						textures.Add(info);
 					}
@@ -143,6 +149,7 @@ namespace Effekseer.Utl
 			public int Index;
 			public string DefaultPath;
 			public bool IsParam;
+			public bool IsValueTexture;
 		}
 
 		public class UniformInformation

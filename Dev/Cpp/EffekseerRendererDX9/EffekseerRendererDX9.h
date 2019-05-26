@@ -78,7 +78,7 @@ enum class UVStyle
 };
 
 class Renderer
-	: ::Effekseer::IReference
+	: public ::Effekseer::IReference
 {
 protected:
 	Renderer();
@@ -230,6 +230,14 @@ public:
 		@brief	標準のモデル読込クラスを生成する。
 	*/
 	virtual ::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL ) = 0;
+
+	/**
+	@brief	
+	\~english Create default material loader
+	\~japanese 標準のマテリアル読込クラスを生成する。
+
+	*/
+	virtual ::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) = 0;
 
 	/**
 		@brief	レンダーステートを強制的にリセットする。

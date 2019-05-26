@@ -198,20 +198,35 @@ namespace Effekseer.Data
 			}
 		}
 
-		public List<Value.PathForImage> GetTextures(Utl.MaterialInformation info)
+		public List<Tuple35<Value.PathForImage, bool>> GetTextures(Utl.MaterialInformation info)
 		{
-			var ret = new List<Value.PathForImage>();
+			var ret = new List<Tuple35<Value.PathForImage, bool>>();
 
-			foreach(var texture in info.Textures)
+			foreach (var texture in info.Textures)
 			{
 				var key = CreateKey(texture);
-				if(keyToValues.ContainsKey(key))
+
+				if(texture.IsValueTexture)
 				{
-					ret.Add(keyToValues[key] as Value.PathForImage);
+					if (keyToValues.ContainsKey(key))
+					{
+						ret.Add(Tuple35.Create(keyToValues[key] as Value.PathForImage, true));
+					}
+					else
+					{
+						ret.Add(Tuple35.Create((Value.PathForImage)(null), true));
+					}
 				}
 				else
 				{
-					ret.Add(null);
+					if (keyToValues.ContainsKey(key))
+					{
+						ret.Add(Tuple35.Create(keyToValues[key] as Value.PathForImage, false));
+					}
+					else
+					{
+						ret.Add(Tuple35.Create((Value.PathForImage)(null), false));
+					}
 				}
 			}
 

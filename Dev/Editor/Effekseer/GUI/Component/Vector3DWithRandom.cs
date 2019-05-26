@@ -140,11 +140,38 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
+			isPopupShown = false;
+
 			if (binding == null) return;
 
-			valueChangingProp.Enable(binding);
+			if (binding.IsDynamicParameterEnabled)
+			{
+				if(binding.DynamicParameterMin != null)
+				{
+					Manager.NativeManager.Text("Min : " + binding.DynamicParameterMin.Name.Value);
+				}
+				else
+				{
+					Manager.NativeManager.Text("Min : ");
+				}
 
-			isPopupShown = false;
+				Popup();
+
+				if (binding.DynamicParameterMax != null)
+				{
+					Manager.NativeManager.Text("Max : " + binding.DynamicParameterMax.Name.Value);
+				}
+				else
+				{
+					Manager.NativeManager.Text("Max : ");
+				}
+
+				Popup();
+
+				return;
+			}
+
+			valueChangingProp.Enable(binding);
 
 			float step = 1.0f;
 
@@ -187,10 +214,10 @@ namespace Effekseer.GUI.Component
 			}
 
 			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 60);
-			if (Manager.NativeManager.DragFloat3EfkEx(id1, internalValue1, step, 
+			if (Manager.NativeManager.DragFloat3EfkEx(id1, internalValue1, step,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
-				float.MinValue, float.MaxValue, 
+				float.MinValue, float.MaxValue,
 				"X:%.3f", "Y:%.3f", "Z:%.3f"))
 			{
 				if (EnableUndo)
@@ -221,10 +248,10 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(txt_r1);
 
-			if (Manager.NativeManager.DragFloat3EfkEx(id2, internalValue2, step, 
+			if (Manager.NativeManager.DragFloat3EfkEx(id2, internalValue2, step,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
-				float.MinValue, float.MaxValue, 
+				float.MinValue, float.MaxValue,
 				"X:" + "%.3f", "Y:" + "%.3f", "Z:" + "%.3f"))
 			{
 				if (EnableUndo)
@@ -261,7 +288,7 @@ namespace Effekseer.GUI.Component
 
 			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(txt_r2);
-			
+
 			Manager.NativeManager.PopItemWidth();
 
 			valueChangingProp.Disable();
@@ -273,19 +300,57 @@ namespace Effekseer.GUI.Component
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-				var txt_r_r1 = Resources.GetString("Gauss");
-				var txt_r_r2 = Resources.GetString("Range");
 
-				if (Manager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
+				if (Manager.NativeManager.RadioButton("Default" + id_c + "_1", !binding.IsDynamicParameterEnabled))
 				{
-					binding.DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+					binding.IsDynamicParameterEnabled = false;
+					binding.SetDynamicParameterMin(null);
+					binding.SetDynamicParameterMax(null);
 				}
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.DrawnAs == Data.DrawnAs.MaxAndMin))
+				if (Manager.NativeManager.RadioButton("Dynamic" + id_c + "_2", binding.IsDynamicParameterEnabled))
 				{
-					binding.DrawnAs = Data.DrawnAs.MaxAndMin;
+					binding.IsDynamicParameterEnabled = true;
+				}
+
+				if (binding.IsDynamicParameterEnabled)
+				{
+					{
+						var nextParam = DynamicSelector.Select("Min", "_1", binding.DynamicParameterMin, false, false);
+
+						if (binding.DynamicParameterMin != nextParam)
+						{
+							binding.SetDynamicParameterMin(nextParam);
+						}
+					}
+
+					{
+						var nextParam = DynamicSelector.Select("Max", "_2", binding.DynamicParameterMax, false, false);
+
+						if (binding.DynamicParameterMax != nextParam)
+						{
+							binding.SetDynamicParameterMax(nextParam);
+						}
+					}
+				}
+				else
+				{
+					var txt_r_r1 = Resources.GetString("Gauss");
+					var txt_r_r2 = Resources.GetString("Range");
+
+					if (Manager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
+					{
+						binding.DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+					}
+
+					Manager.NativeManager.SameLine();
+
+					if (Manager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.DrawnAs == Data.DrawnAs.MaxAndMin))
+					{
+						binding.DrawnAs = Data.DrawnAs.MaxAndMin;
+					}
 				}
 
 				Manager.NativeManager.EndPopup();

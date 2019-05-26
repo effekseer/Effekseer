@@ -120,6 +120,7 @@
     "Depth": "深度",
     "Global": "全体",
     "nan": "nan",
+    "DynamicParameter_Name": "動的パラメーター",
     "EnlargeAnchor": "アンカーの展開",
     "EnlargeAnchor_Desc": "値が滑らかに変化するように\\nアンカーを広げる",
     "ShrinkAnchor": "アンカーの縮退",

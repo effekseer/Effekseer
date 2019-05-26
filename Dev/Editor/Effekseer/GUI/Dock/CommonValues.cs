@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
-#if MATERIAL_ENABLED
 	class NodeBaseValues : Data.IEditableValueCollection
 	{
 		Data.NodeBase node;
@@ -32,7 +31,6 @@ namespace Effekseer.GUI.Dock
 		public event ChangedValueEventHandler OnChanged;
 	}
 
-#endif
 	class CommonValues : DockPanel
 	{
 		Component.ParameterList paramerterList_Common = null;
@@ -89,11 +87,8 @@ namespace Effekseer.GUI.Dock
 		{
 			if (Core.SelectedNode != null)
 			{
-#if MATERIAL_ENABLED
 				paramerterList_Node.SetValue(new NodeBaseValues(Core.SelectedNode));
-#else
-				paramerterList_Node.SetValue(Core.SelectedNode);
-#endif
+
 				if (Core.SelectedNode is Data.Node)
 				{
 					paramerterList_Common.SetValue(((Data.Node)Core.SelectedNode).CommonValues);

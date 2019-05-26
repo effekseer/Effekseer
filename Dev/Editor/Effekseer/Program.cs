@@ -22,6 +22,9 @@ namespace Effekseer
 		[STAThread]
 		static void Main(string[] args)
 		{
+#if DEBUG
+			var test = new Effekseer.InternalScript.Tests();
+#endif
 			StartDirectory = System.IO.Directory.GetCurrentDirectory();
 
 			bool gui = true;
@@ -164,7 +167,7 @@ namespace Effekseer
 				}
 
 				System.OperatingSystem os = System.Environment.OSVersion;
-				swig.DeviceType deviceType = swig.DeviceType.DirectX11;
+				swig.DeviceType deviceType = swig.DeviceType.OpenGL;
 
 				if (!(os.Platform == PlatformID.Win32NT ||
 				os.Platform == PlatformID.Win32S ||

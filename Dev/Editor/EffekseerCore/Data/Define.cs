@@ -544,12 +544,14 @@ namespace Effekseer.Data
 		}
 	}
 
-#if MATERIAL_ENABLED
+	/// <summary>
+	/// A class to show editable value in parameter list
+	/// </summary>
 	public class EditableValue
 	{
 		public object Value;
-		public string Title;
-		public string Description;
+		public string Title = string.Empty;
+		public string Description = string.Empty;
 		public bool IsUndoEnabled;
 		public bool IsShown = true;
 		public int SelectorID = -1;
@@ -600,12 +602,14 @@ namespace Effekseer.Data
 			return ret;
 		}
 	}
+
+	/// <summary>
+	/// An interface to special editable parameters
+	/// </summary>
 	public interface IEditableValueCollection
 	{
 		EditableValue[] GetValues();
 
 		event ChangedValueEventHandler OnChanged;
 	}
-
-#endif
 }

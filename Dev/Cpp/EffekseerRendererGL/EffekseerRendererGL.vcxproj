@@ -179,6 +179,8 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RenderStateBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RibbonRendererBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.RingRendererBase.h" />
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.ShaderBase.h" />
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.ShaderLoader.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.SpriteRendererBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.StandardRenderer.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.TrackRendererBase.h" />
@@ -189,6 +191,7 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.DeviceObject.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.GLExtension.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.IndexBuffer.h" />
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.MaterialLoader.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.ModelLoader.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.ModelRenderer.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.Renderer.h" />
@@ -216,6 +219,7 @@
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.DeviceObject.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.GLExtension.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.IndexBuffer.cpp" />
+    <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.MaterialLoader.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.ModelLoader.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.ModelRenderer.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.Renderer.cpp" />

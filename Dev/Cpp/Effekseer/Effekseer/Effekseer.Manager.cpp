@@ -1050,6 +1050,22 @@ void ManagerImplemented::SetTargetLocation( Handle handle, const Vector3D& locat
 	}
 }
 
+void ManagerImplemented::SetDynamicParameter(Handle handle, int32_t index, float value) {
+	if (m_DrawSets.count(handle) > 0)
+	{
+		DrawSet& drawSet = m_DrawSets[handle];
+
+		InstanceGlobal* instanceGlobal = drawSet.GlobalPointer;
+
+		if (index < 0 || instanceGlobal->dynamicInputParameters.size() <= index)
+			return;
+
+		instanceGlobal->dynamicInputParameters[index] = value;
+
+		drawSet.IsParameterChanged = true;
+	}
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1381,6 +1397,26 @@ void ManagerImplemented::UpdateHandle( Handle handle, float deltaFrame )
 //----------------------------------------------------------------------------------
 void ManagerImplemented::UpdateHandle( DrawSet& drawSet, float deltaFrame )
 {
+	// calculate dynamic parameters
+	auto e = static_cast<EffectImplemented*>(drawSet.ParameterPointer);
+	assert(e != nullptr);
+	assert(drawSet.GlobalPointer->dynamicParameters.size() >= e->dynamicParameters.size());
+
+	std::array<float, 1> globals;
+	globals[0] = drawSet.GlobalPointer->GetUpdatedFrame() / 60.0f;
+
+	for (size_t i = 0; i < e->dynamicParameters.size(); i++)
+	{
+		for (size_t j = 0; j < 4; j++)
+		{
+			if (e->dynamicParameters[i].Elements[j].GetRunningPhase() != InternalScript::RunningPhaseType::Global)
+				continue;
+
+			drawSet.GlobalPointer->dynamicParameters[i][j] =
+				e->dynamicParameters[i].Elements[j].Execute(drawSet.GlobalPointer->dynamicInputParameters, globals, std::array<float, 5>());
+		}
+	}
+
 	if (!drawSet.IsPreupdated)
 	{
 		Preupdate(drawSet);

@@ -186,6 +186,7 @@
     <ClInclude Include="Effekseer\Effekseer.InstanceContainer.h" />
     <ClInclude Include="Effekseer\Effekseer.InstanceGlobal.h" />
     <ClInclude Include="Effekseer\Effekseer.InstanceGroup.h" />
+    <ClInclude Include="Effekseer\Effekseer.InternalScript.h" />
     <ClInclude Include="Effekseer\Effekseer.InternalStruct.h" />
     <ClInclude Include="Effekseer\Effekseer.IntrusiveList.h" />
     <ClInclude Include="Effekseer\Effekseer.MaterialLoader.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="Effekseer\Effekseer.InstanceContainer.cpp" />
     <ClCompile Include="Effekseer\Effekseer.InstanceGlobal.cpp" />
     <ClCompile Include="Effekseer\Effekseer.InstanceGroup.cpp" />
+    <ClCompile Include="Effekseer\Effekseer.InternalScript.cpp" />
     <ClCompile Include="Effekseer\Effekseer.IntrusiveList.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Setting.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp" />
