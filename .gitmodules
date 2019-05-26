@@ -13,3 +13,6 @@
 [submodule "Downloads/zlib"]
 	path = Downloads/zlib
 	url = https://github.com/madler/zlib
+[submodule "Dev/Cpp/3rdParty/LLGI"]
+	path = Dev/Cpp/3rdParty/LLGI
+	url = https://github.com/altseed/LLGI

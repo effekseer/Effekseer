@@ -20,6 +20,11 @@ namespace Effekseer.Data
         GenerateAlpha,
     }
 
+	public enum RecordingStorageTargetTyoe : int
+	{
+		Global,
+		Local,
+	}
     public enum ParentEffectType : int
 	{
 		[Name(value = "なし", language = Language.Japanese)]

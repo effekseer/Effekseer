@@ -30,7 +30,7 @@ namespace Effekseer.Exporter
 	public class glTFExporter
 	{
 		List<byte> internalBuffer = new List<byte>();
-		Dictionary<string, Buffer> buffers = new Dictionary<string, Buffer>();
+		List<Buffer> buffers = new List<Buffer>();
 		Dictionary<string, BufferView> bufferViews = new Dictionary<string, BufferView>();
 
 		public bool Export(string path, glTFExporterOption option = null)
@@ -57,21 +57,21 @@ namespace Effekseer.Exporter
 
 			var effect = CreateEffect(option.Scale, option.bindingNode, option.IsContainedTextureAsBinary);
 
-			effekseerExtention.effects.Add((string)effect["effectName"], effect);
+			effekseerExtention.effects.Add(effect);
 
 			extentions.Add("Effekseer", effekseerExtention);
 
 			// buffer
 			Buffer buffer = new Buffer();
 			buffer.byteLength = internalBuffer.Count;
-            buffer.uri = System.IO.Path.ChangeExtension(path, "bin");
-			buffers.Add("effectBuffer", buffer);
+            buffer.uri = System.IO.Path.GetFileName(System.IO.Path.ChangeExtension(path, "bin"));
+			buffers.Add(buffer);
 			gltf.Add("buffers", buffers);
 
 			// bufferview
 			foreach (var bufferView in bufferViews)
 			{
-				bufferView.Value.buffer = "effectBuffer";
+				bufferView.Value.buffer = 0;
 			}
 
 			gltf.Add("bufferViews", bufferViews);
@@ -80,7 +80,7 @@ namespace Effekseer.Exporter
 
 			if(option.Format == glTFExporterFormat.glTF)
 			{
-				System.IO.File.WriteAllText(System.IO.Path.ChangeExtension(path, "glTF"), json);
+				System.IO.File.WriteAllText(System.IO.Path.ChangeExtension(path, "gltf"), json);
 				System.IO.File.WriteAllBytes(System.IO.Path.ChangeExtension(path, "bin"), internalBuffer.ToArray());
 			}
 			else
@@ -153,47 +153,103 @@ namespace Effekseer.Exporter
 
 			AddBufferView(bodyName, binary);
 
-			effect.Add("body", bodyName);
+			effect.Add("body", CreateeBodyAsBufferView(bodyName));
 
 			HashSet<string> textures = new HashSet<string>();
-
+			
 			foreach (var texture in binaryExporter.UsedTextures.ToList().OrderBy(_ => _))
 			{
 				textures.Add(texture);
 			}
 
+			HashSet<string> normalTextures = new HashSet<string>();
+
 			foreach (var texture in binaryExporter.UsedNormalTextures.ToList().OrderBy(_ => _))
 			{
-				textures.Add(texture);
+				normalTextures.Add(texture);
 			}
+
+			HashSet<string> distortionTextures = new HashSet<string>();
 
 			foreach (var texture in binaryExporter.UsedDistortionTextures.ToList().OrderBy(_ => _))
 			{
-				textures.Add(texture);
+				distortionTextures.Add(texture);
 			}
 
-            Dictionary<string, object> images = new Dictionary<string, object>();
+            List<object> images = new List<object>();
+			List<object> normalImages = new List<object>();
+			List<object> distortionImages = new List<object>();
 
-            if (isContainedTextureAsBinary)
+			if (isContainedTextureAsBinary)
 			{
 				foreach (var texture in textures.ToList().OrderBy(_=>_))
 				{
-					var buf = System.IO.File.ReadAllBytes(texture);
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u2 = new Uri(u1, texture);
+
+					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
 					AddBufferView(texture, buf);
-					images.Add(texture, CreateImageAsBufferView(texture));
+
+					var mimeType = "dds";
+					if (System.IO.Path.GetExtension(texture).ToLower().Contains("png"))
+						mimeType = "png";
+
+					images.Add(CreateImageAsBufferView(texture, mimeType));
+				}
+
+				foreach (var texture in normalTextures.ToList().OrderBy(_ => _))
+				{
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u2 = new Uri(u1, texture);
+
+					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
+					AddBufferView(texture, buf);
+
+					var mimeType = "dds";
+					if (System.IO.Path.GetExtension(texture).ToLower().Contains("png"))
+						mimeType = "png";
+
+					normalImages.Add(CreateImageAsBufferView(texture, mimeType));
+				}
+
+				foreach (var texture in distortionTextures.ToList().OrderBy(_ => _))
+				{
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u2 = new Uri(u1, texture);
+
+					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
+					AddBufferView(texture, buf);
+
+					var mimeType = "dds";
+					if (System.IO.Path.GetExtension(texture).ToLower().Contains("png"))
+						mimeType = "png";
+
+					distortionImages.Add(CreateImageAsBufferView(texture, mimeType));
 				}
 			}
 			else
 			{
 				foreach (var texture in textures.ToList().OrderBy(_ => _))
 				{
-					images.Add(texture, CreateImageAsURI(texture));
+					images.Add(CreateImageAsURI(texture));
+				}
+
+				foreach (var texture in normalTextures.ToList().OrderBy(_ => _))
+				{
+					normalImages.Add(CreateImageAsURI(texture));
+				}
+
+				foreach (var texture in distortionTextures.ToList().OrderBy(_ => _))
+				{
+					distortionImages.Add(CreateImageAsURI(texture));
 				}
 			}
 
             effect.Add("images", images);
+			effect.Add("normalImages", normalImages);
+			effect.Add("distortionImages", distortionImages);
 
-            return effect;
+			return effect;
 		}
 
 		class Buffer
@@ -205,23 +261,38 @@ namespace Effekseer.Exporter
 
 		class BufferView
 		{
-			public object buffer = null;
+			public int buffer = 0;
 			public int byteLength = 0;
 			public int byteOffset = 0;
 		}
 
 		class EffekseerExtention
 		{
-			public Dictionary<string, EffekseerEffect> effects = new Dictionary<string, EffekseerEffect>();
+			public List<EffekseerEffect> effects = new List<EffekseerEffect>();
 		}
 
         class EffekseerEffect : Dictionary<string, object>
         { }
 
-		Dictionary<string, object> CreateImageAsBufferView(string bufferview)
+		Dictionary<string, object> CreateeBodyAsBufferView(string bufferview)
 		{
 			var ret = new Dictionary<string, object>();
 			ret.Add("bufferview", bufferview);
+			return ret;
+		}
+
+		Dictionary<string, object> CreateBodyAsURI(string uri)
+		{
+			var ret = new Dictionary<string, object>();
+			ret.Add("uri", uri);
+			return ret;
+		}
+
+		Dictionary<string, object> CreateImageAsBufferView(string bufferview, string mimetype)
+		{
+			var ret = new Dictionary<string, object>();
+			ret.Add("bufferview", bufferview);
+			ret.Add("mimeType", "image/" + mimetype);
 			return ret;
 		}
 

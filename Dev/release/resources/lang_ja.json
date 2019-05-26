@@ -133,6 +133,9 @@
     "ProjectFilter_": "エフェクトプロジェクト (*.efkproj)|*.efkproj",
     "PostEffect": "ポストエフェクト",
     "Clipping": "クリッピング",
-    "Save": "保存"
+    "Save": "保存",
+    "StorageTarget": "設定保存先",
+    "StorageGlobal": "Effekseerアプリケーション",
+    "StorageLocal": "プロジェクト"
   }
 }
