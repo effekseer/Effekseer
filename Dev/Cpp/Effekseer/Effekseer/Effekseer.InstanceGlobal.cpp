@@ -29,7 +29,7 @@ InstanceGlobal::~InstanceGlobal()
 	
 }
 
-void InstanceGlobal::SetSeed(int32_t seed)
+void InstanceGlobal::SetSeed(int64_t seed)
 {
 	m_seed = seed;
 }

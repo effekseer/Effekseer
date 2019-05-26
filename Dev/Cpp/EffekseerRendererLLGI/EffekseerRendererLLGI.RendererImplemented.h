@@ -309,31 +309,31 @@ public:
 	*/
 	~RendererImplemented();
 
-	void OnLostDevice();
-	void OnResetDevice();
+	void OnLostDevice() override;;
+	void OnResetDevice() override;;
 
 	/**
 		@brief	初期化
 	*/
 	bool Initialize(LLGI::Graphics* graphics, FixedShader* fixedShader, bool isReversedDepth);
 
-	void Destroy();
+	void Destroy() override;
 
-	void SetRestorationOfStatesFlag(bool flag);
+	void SetRestorationOfStatesFlag(bool flag) override;
 
 	/**
 		@brief	描画開始
 	*/
-	bool BeginRendering();
+	bool BeginRendering() override;
 
 	/**
 		@brief	描画終了
 	*/
-	bool EndRendering();
+	bool EndRendering() override;
 
 	void NewFrame() override;
 
-	LLGI::Graphics* GetGraphics() { return graphics_; }
+	LLGI::Graphics* GetGraphics() override { return graphics_; }
 
 	/**
 		@brief	頂点バッファ取得
@@ -348,59 +348,59 @@ public:
 	/**
 		@brief	最大描画スプライト数
 	*/
-	int32_t GetSquareMaxCount() const;
+	int32_t GetSquareMaxCount() const override;
 
 	::EffekseerRenderer::RenderStateBase* GetRenderState();
 
 	/**
 		@brief	ライトの方向を取得する。
 	*/
-	const ::Effekseer::Vector3D& GetLightDirection() const;
+	const ::Effekseer::Vector3D& GetLightDirection() const override;
 
 	/**
 		@brief	ライトの方向を設定する。
 	*/
-	void SetLightDirection(const ::Effekseer::Vector3D& direction);
+	void SetLightDirection(const ::Effekseer::Vector3D& direction) override;
 
 	/**
 		@brief	ライトの色を取得する。
 	*/
-	const ::Effekseer::Color& GetLightColor() const;
+	const ::Effekseer::Color& GetLightColor() const override;
 
 	/**
 		@brief	ライトの色を設定する。
 	*/
-	void SetLightColor(const ::Effekseer::Color& color);
+	void SetLightColor(const ::Effekseer::Color& color) override;
 
 	/**
 		@brief	ライトの環境光の色を取得する。
 	*/
-	const ::Effekseer::Color& GetLightAmbientColor() const;
+	const ::Effekseer::Color& GetLightAmbientColor() const override;;
 
 	/**
 		@brief	ライトの環境光の色を設定する。
 	*/
-	void SetLightAmbientColor(const ::Effekseer::Color& color);
+	void SetLightAmbientColor(const ::Effekseer::Color& color) override;;
 
 	/**
 		@brief	投影行列を取得する。
 	*/
-	const ::Effekseer::Matrix44& GetProjectionMatrix() const;
+	const ::Effekseer::Matrix44& GetProjectionMatrix() const override;;
 
 	/**
 		@brief	投影行列を設定する。
 	*/
-	void SetProjectionMatrix(const ::Effekseer::Matrix44& mat);
+	void SetProjectionMatrix(const ::Effekseer::Matrix44& mat) override;
 
 	/**
 		@brief	カメラ行列を取得する。
 	*/
-	const ::Effekseer::Matrix44& GetCameraMatrix() const;
+	const ::Effekseer::Matrix44& GetCameraMatrix() const override;
 
 	/**
 		@brief	カメラ行列を設定する。
 	*/
-	void SetCameraMatrix(const ::Effekseer::Matrix44& mat);
+	void SetCameraMatrix(const ::Effekseer::Matrix44& mat) override;
 
 	::Effekseer::Vector3D GetCameraFrontDirection() const override;
 
@@ -411,42 +411,42 @@ public:
 	/**
 		@brief	カメラプロジェクション行列を取得する。
 	*/
-	::Effekseer::Matrix44& GetCameraProjectionMatrix();
+	::Effekseer::Matrix44& GetCameraProjectionMatrix() override;
 
 	/**
 		@brief	スプライトレンダラーを生成する。
 	*/
-	::Effekseer::SpriteRenderer* CreateSpriteRenderer();
+	::Effekseer::SpriteRenderer* CreateSpriteRenderer() override;
 
 	/**
 		@brief	リボンレンダラーを生成する。
 	*/
-	::Effekseer::RibbonRenderer* CreateRibbonRenderer();
+	::Effekseer::RibbonRenderer* CreateRibbonRenderer() override;
 
 	/**
 		@brief	リングレンダラーを生成する。
 	*/
-	::Effekseer::RingRenderer* CreateRingRenderer();
+	::Effekseer::RingRenderer* CreateRingRenderer() override;
 
 	/**
 		@brief	モデルレンダラーを生成する。
 	*/
-	::Effekseer::ModelRenderer* CreateModelRenderer();
+	::Effekseer::ModelRenderer* CreateModelRenderer() override;
 
 	/**
 		@brief	軌跡レンダラーを生成する。
 	*/
-	::Effekseer::TrackRenderer* CreateTrackRenderer();
+	::Effekseer::TrackRenderer* CreateTrackRenderer() override;
 
 	/**
 		@brief	テクスチャ読込クラスを生成する。
 	*/
-	::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL);
+	::Effekseer::TextureLoader* CreateTextureLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
 
 	/**
 		@brief	モデル読込クラスを生成する。
 	*/
-	::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL);
+	::Effekseer::ModelLoader* CreateModelLoader(::Effekseer::FileInterface* fileInterface = NULL) override;
 
 	/**
 	@brief	背景を取得する。
@@ -486,7 +486,7 @@ public:
 
 	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
 
-	void ResetRenderState();
+	void ResetRenderState() override;
 
 	int32_t GetDrawCallCount() const override;
 
@@ -504,9 +504,9 @@ public:
 		return m_renderMode;
 	}
 
-	virtual int GetRef() { return ::Effekseer::ReferenceObject::GetRef(); }
-	virtual int AddRef() { return ::Effekseer::ReferenceObject::AddRef(); }
-	virtual int Release() { return ::Effekseer::ReferenceObject::Release(); }
+	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
+	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
+	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
 };
 
 } // namespace EffekseerRendererLLGI

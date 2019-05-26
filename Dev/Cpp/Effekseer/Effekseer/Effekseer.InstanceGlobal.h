@@ -38,7 +38,7 @@ private:
 	InstanceContainer*	m_rootContainer;
 	Vector3D			m_targetLocation;
 
-	int32_t				m_seed = 0;
+	int64_t				m_seed = 0;
 
 	InstanceGlobal();
 
@@ -51,7 +51,7 @@ public:
 
 	std::vector<InstanceContainer*>	RenderedInstanceContainers;
 
-	void SetSeed(int32_t seed);
+	void SetSeed(int64_t seed);
 
 	virtual float GetRand() override;
 
