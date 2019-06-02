@@ -267,7 +267,7 @@ namespace Effekseer.Exporter
 			{
 				foreach (var sound in binaryExporter.Sounds.ToList().OrderBy(_ => _))
 				{
-					sounds.Add(sound);
+					sounds.Add(CreateImageAsURI(sound));
 				}
 			}
 
@@ -289,7 +289,7 @@ namespace Effekseer.Exporter
 			{
 				foreach (var model in binaryExporter.Models.ToList().OrderBy(_ => _))
 				{
-					models.Add(model);
+					models.Add(CreateImageAsURI(model));
 				}
 			}
 
