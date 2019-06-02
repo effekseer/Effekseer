@@ -17,6 +17,10 @@ namespace Effekseer.Binary
 
 		public HashSet<string> UsedDistortionTextures = new HashSet<string>();
 
+		public HashSet<string> Sounds = new HashSet<string>();
+
+		public HashSet<string> Models = new HashSet<string>();
+
 		/// <summary>
 		/// エフェクトデータの出力
 		/// </summary>
@@ -38,11 +42,9 @@ namespace Effekseer.Binary
 
 			UsedDistortionTextures = new HashSet<string>();
 
-            // ウェーブ名称一覧取得
-            HashSet<string> Sounds = new HashSet<string>();
+            Sounds = new HashSet<string>();
 
-			// モデル名称一覧取得
-			HashSet<string> Models = new HashSet<string>();
+			Models = new HashSet<string>();
 
 			Action<Data.NodeBase> get_textures = null;
 			get_textures = (node) =>
