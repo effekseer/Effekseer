@@ -286,6 +286,8 @@ public:
 	*/
 	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL )override;
 
+	::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
+
 	/**
 	@brief	背景を取得する。
 	*/
@@ -332,9 +334,9 @@ public:
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 
-	void SetVertexBufferToShader(const void* data, int32_t size);
+	void SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
-	void SetPixelBufferToShader(const void* data, int32_t size);
+	void SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
 	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
 
@@ -350,7 +352,7 @@ public:
 
 	std::vector<GLuint>& GetCurrentTextures() { return m_currentTextures; }
 
-	OpenGLDeviceType GetDeviceType() { return m_deviceType; }
+	OpenGLDeviceType GetDeviceType() const override { return m_deviceType; }
 
 	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }

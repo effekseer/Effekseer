@@ -48,6 +48,7 @@ effekseerHeader.readLines('Effekseer/Effekseer/Renderer/Effekseer.TrackRenderer.
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.EffectLoader.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.TextureLoader.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.ModelLoader.h')
+effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.MaterialLoader.h')
 
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Model.h')
 

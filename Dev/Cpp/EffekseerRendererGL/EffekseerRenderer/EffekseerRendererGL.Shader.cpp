@@ -81,7 +81,7 @@ static const char g_header_fs_gl2_src [] =
 //
 //-----------------------------------------------------------------------------------
 bool Shader::CompileShader(
-	RendererImplemented* renderer,
+	Renderer* renderer,
 	GLuint& program,
 	const char* vs_src,
 	size_t vertexShaderSize,
@@ -177,14 +177,14 @@ bool Shader::CompileShader(
 //
 //-----------------------------------------------------------------------------------
 Shader::Shader( 
-	RendererImplemented* renderer,
+	Renderer* renderer,
 	GLuint program,
 	const char* vs_src,
 	size_t vertexShaderSize,
 	const char* fs_src,
 	size_t pixelShaderSize,
 	const char* name)
-	: DeviceObject		( renderer )
+	: DeviceObject(static_cast<RendererImplemented*>(renderer))
 	, m_program			( program )
 	, m_vertexSize		( 0 )
 	, m_vertexConstantBuffer	( NULL )
@@ -237,7 +237,7 @@ Shader::~Shader()
 //
 //-----------------------------------------------------------------------------------
 Shader* Shader::Create(
-	RendererImplemented* renderer,
+	Renderer* renderer,
 		const char* vs_src,
 		size_t vertexShaderSize,
 		const char* fs_src,

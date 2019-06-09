@@ -18,6 +18,47 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+template<typename T, typename U>
+void Instance::ApplyDynamicParameter(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd, const U& originalParam)
+{
+	static_assert(sizeof(T) == 12, "size is not mismatched");
+	static_assert(sizeof(U) == 12, "size is not mismatched");
+
+	EFK_ASSERT(e != nullptr);
+	EFK_ASSERT(0 <= dpInd && dpInd < static_cast<int>(instg->dynamicParameters.size()));
+
+	auto dst = reinterpret_cast<float*>(&(dstParam));
+	auto src = reinterpret_cast<const float*>(&(originalParam));
+
+	auto dparam = instg->dynamicParameters[dpInd];
+	std::array<float, 1> globals;
+	globals[0] = instg->GetUpdatedFrame() / 60.0f;
+
+	std::array<float, 5> locals;
+	locals[0] = src[0];
+	locals[1] = src[1];
+	locals[2] = src[2];
+	locals[3] = 0.0f;
+	locals[4] = m_pParent != nullptr ? m_pParent->m_LivingTime / 60.0f : 0.0f;
+
+	auto e_ = static_cast<EffectImplemented*>(e);
+	auto& dp = e_->dynamicParameters[dpInd];
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (dp.Elements[i].GetRunningPhase() == InternalScript::RunningPhaseType::Local)
+		{
+			auto v = dp.Elements[i].Execute(instg->dynamicInputParameters, globals, locals);
+			dst[i] = v;
+		}
+		else
+		{
+			dst[i] = dparam[i];
+		}
+	}
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -295,15 +336,78 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		ColorParent = m_pParent->ColorInheritance;
 	}
 
-	/* 位置 */
+	// Translation
 	if( m_pEffectNode->TranslationType == ParameterTranslationType_Fixed )
 	{
 	}
 	else if( m_pEffectNode->TranslationType == ParameterTranslationType_PVA )
 	{
-		translation_values.random.location = m_pEffectNode->TranslationPVA.location.getValue( *this->m_pContainer->GetRootInstance() );
-		translation_values.random.velocity = m_pEffectNode->TranslationPVA.velocity.getValue(*this->m_pContainer->GetRootInstance());
-		translation_values.random.acceleration = m_pEffectNode->TranslationPVA.acceleration.getValue(*this->m_pContainer->GetRootInstance());
+		random_vector3d rvl = m_pEffectNode->TranslationPVA.location;
+
+		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterPMax >= 0)
+		{
+			ApplyDynamicParameter(rvl.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterPMax,
+								  m_pEffectNode->TranslationPVA.location.max);
+		}
+
+		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterPMin >= 0)
+		{
+			ApplyDynamicParameter(rvl.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterPMin,
+								  m_pEffectNode->TranslationPVA.location.min);
+		}
+
+		translation_values.random.location = rvl.getValue(*this->m_pContainer->GetRootInstance());
+
+		random_vector3d rvv = m_pEffectNode->TranslationPVA.velocity;
+
+		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterVMax >= 0)
+		{
+			ApplyDynamicParameter(rvv.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterVMax,
+								  m_pEffectNode->TranslationPVA.velocity.max);
+		}
+
+		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterVMin >= 0)
+		{
+			ApplyDynamicParameter(rvv.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterVMin,
+								  m_pEffectNode->TranslationPVA.velocity.min);
+		}
+
+		translation_values.random.velocity = rvv.getValue(*this->m_pContainer->GetRootInstance());
+
+		random_vector3d rva = m_pEffectNode->TranslationPVA.acceleration;
+
+		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterAMax >= 0)
+		{
+			ApplyDynamicParameter(rva.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterAMax,
+								  m_pEffectNode->TranslationPVA.acceleration.max);
+		}
+
+		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterAMin >= 0)
+		{
+			ApplyDynamicParameter(rva.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterAMin,
+								  m_pEffectNode->TranslationPVA.acceleration.min);
+		}
+
+		translation_values.random.acceleration = rva.getValue(*this->m_pContainer->GetRootInstance());
+
 	}
 	else if( m_pEffectNode->TranslationType == ParameterTranslationType_Easing )
 	{
@@ -880,9 +984,20 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->TranslationType == ParameterTranslationType_Fixed )
 		{
-			localPosition.X = m_pEffectNode->TranslationFixed.Position.X;
-			localPosition.Y = m_pEffectNode->TranslationFixed.Position.Y;
-			localPosition.Z = m_pEffectNode->TranslationFixed.Position.Z;
+			if (m_pEffectNode->TranslationFixed.ReferencedDynamicParameter >= 0)
+			{
+				ApplyDynamicParameter(localPosition,
+									  this->m_pEffectNode->m_effect,
+									  this->m_pContainer->GetRootInstance(),
+									  m_pEffectNode->TranslationFixed.ReferencedDynamicParameter,
+									  m_pEffectNode->TranslationFixed.Position);
+			}
+			else
+			{
+				localPosition.X = m_pEffectNode->TranslationFixed.Position.X;
+				localPosition.Y = m_pEffectNode->TranslationFixed.Position.Y;
+				localPosition.Z = m_pEffectNode->TranslationFixed.Position.Z;
+			}
 		}
 		else if( m_pEffectNode->TranslationType == ParameterTranslationType_PVA )
 		{

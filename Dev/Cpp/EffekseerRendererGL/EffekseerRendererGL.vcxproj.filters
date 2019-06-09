@@ -94,6 +94,15 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.Renderer_Impl.h">
       <Filter>EffekseerRendererCommon</Filter>
     </ClInclude>
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.MaterialLoader.h">
+      <Filter>EffekseerRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.ShaderBase.h">
+      <Filter>EffekseerRendererCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.ShaderLoader.h">
+      <Filter>EffekseerRendererCommon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">
@@ -167,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.Renderer_Impl.cpp">
       <Filter>EffekseerRendererCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.MaterialLoader.cpp">
+      <Filter>EffekseerRenderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

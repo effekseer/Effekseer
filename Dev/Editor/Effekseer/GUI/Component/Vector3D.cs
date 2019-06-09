@@ -9,12 +9,16 @@ namespace Effekseer.GUI.Component
 	class Vector3D : Control, IParameterControl
 	{
 		string id = "";
+		string id_c = "";
+
 
 		public string Label { get; set; } = string.Empty;
 
 		public string Description { get; set; } = string.Empty;
 
 		bool isActive = false;
+
+		bool isPopupShown = false;
 
 		Data.Value.Vector3D binding = null;
 
@@ -92,7 +96,18 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
+			isPopupShown = false;
+
 			if (binding == null) return;
+
+			if (binding.DynamicParameter != null && binding.DynamicParameter.IsValid)
+			{
+				Manager.NativeManager.Text(binding.DynamicParameter.Name.Value);
+
+				Popup();
+
+				return;
+			}
 
 			valueChangingProp.Enable(binding);
 
@@ -118,6 +133,8 @@ namespace Effekseer.GUI.Component
 
 			var isActive_Current = Manager.NativeManager.IsItemActive();
 
+			Popup();
+
 			if (isActive && !isActive_Current)
 			{
 				FixValue();
@@ -126,6 +143,41 @@ namespace Effekseer.GUI.Component
 			isActive = isActive_Current;
 
 			valueChangingProp.Disable();
+		}
+
+		void Popup()
+		{
+			if (isPopupShown) return;
+
+			if (Manager.NativeManager.BeginPopupContextItem(id))
+			{
+				if (Manager.NativeManager.RadioButton("Default" + id + "_1", !binding.IsDynamicParameterEnabled))
+				{
+					binding.IsDynamicParameterEnabled = false;
+					binding.SetDynamicParameter(null);
+				}
+
+				Manager.NativeManager.SameLine();
+
+				if (Manager.NativeManager.RadioButton("Dynamic" + id + "_2", binding.IsDynamicParameterEnabled))
+				{
+					binding.IsDynamicParameterEnabled = true;
+				}
+
+				if(binding.IsDynamicParameterEnabled)
+				{
+					var nextParam = DynamicSelector.Select("", "", binding.DynamicParameter, false, false);
+
+					if (binding.DynamicParameter != nextParam)
+					{
+						binding.SetDynamicParameter(nextParam);
+					}
+				}
+
+				Manager.NativeManager.EndPopup();
+			}
+
+			isPopupShown = true;
 		}
 	}
 }

@@ -1770,6 +1770,94 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_TargetPo
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput1_set___(void * jarg1, float jarg2) {
+  ViewerEffectBehavior *arg1 = (ViewerEffectBehavior *) 0 ;
+  float arg2 ;
+  
+  arg1 = (ViewerEffectBehavior *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->DynamicInput1 = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput1_get___(void * jarg1) {
+  float jresult ;
+  ViewerEffectBehavior *arg1 = (ViewerEffectBehavior *) 0 ;
+  float result;
+  
+  arg1 = (ViewerEffectBehavior *)jarg1; 
+  result = (float) ((arg1)->DynamicInput1);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput2_set___(void * jarg1, float jarg2) {
+  ViewerEffectBehavior *arg1 = (ViewerEffectBehavior *) 0 ;
+  float arg2 ;
+  
+  arg1 = (ViewerEffectBehavior *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->DynamicInput2 = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput2_get___(void * jarg1) {
+  float jresult ;
+  ViewerEffectBehavior *arg1 = (ViewerEffectBehavior *) 0 ;
+  float result;
+  
+  arg1 = (ViewerEffectBehavior *)jarg1; 
+  result = (float) ((arg1)->DynamicInput2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput3_set___(void * jarg1, float jarg2) {
+  ViewerEffectBehavior *arg1 = (ViewerEffectBehavior *) 0 ;
+  float arg2 ;
+  
+  arg1 = (ViewerEffectBehavior *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->DynamicInput3 = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput3_get___(void * jarg1) {
+  float jresult ;
+  ViewerEffectBehavior *arg1 = (ViewerEffectBehavior *) 0 ;
+  float result;
+  
+  arg1 = (ViewerEffectBehavior *)jarg1; 
+  result = (float) ((arg1)->DynamicInput3);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput4_set___(void * jarg1, float jarg2) {
+  ViewerEffectBehavior *arg1 = (ViewerEffectBehavior *) 0 ;
+  float arg2 ;
+  
+  arg1 = (ViewerEffectBehavior *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->DynamicInput4 = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput4_get___(void * jarg1) {
+  float jresult ;
+  ViewerEffectBehavior *arg1 = (ViewerEffectBehavior *) 0 ;
+  float result;
+  
+  arg1 = (ViewerEffectBehavior *)jarg1; 
+  result = (float) ((arg1)->DynamicInput4);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ViewerEffectBehavior___() {
   void * jresult ;
   ViewerEffectBehavior *result = 0 ;

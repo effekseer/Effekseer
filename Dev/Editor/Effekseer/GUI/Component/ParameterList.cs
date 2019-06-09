@@ -10,9 +10,6 @@ namespace Effekseer.GUI.Component
 	class ParameterList : GroupControl, IControl, IDroppableControl
 	{
 		object bindingObject = null;
-		Type bindingType = null;
-		List<TypeRow> typeRows = new List<TypeRow>();
-		List<TypeRow> validRows = new List<TypeRow>();
 
 		Utils.DelayedList<TypeRow> controlRows = new Utils.DelayedList<TypeRow>();
 
@@ -26,7 +23,7 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
-			if(isControlsChanged)
+			if (isControlsChanged)
 			{
 				SetValue(bindingObject);
 				isControlsChanged = false;
@@ -39,11 +36,13 @@ namespace Effekseer.GUI.Component
 			var columnWidth = Manager.NativeManager.GetColumnWidth(0);
 			Manager.NativeManager.SetColumnWidth(0, 120);
 
-			for(int i = 0; i < controlRows.Internal.Count; i++)
+			for (int i = 0; i < controlRows.Internal.Count; i++)
 			{
 				var c = controlRows.Internal[i].Control as IParameterControl;
-				
-				if(i > 0 && 
+
+				if (c is Dummy) continue;
+
+				if (i > 0 &&
 					(controlRows[i - 1].SelectorIndent > controlRows[i].SelectorIndent ||
 					controlRows[i].IsSelector ||
 					(controlRows[i - 1].SelectorIndent == controlRows[i].SelectorIndent && controlRows[i - 1].IsSelector)))
@@ -51,7 +50,7 @@ namespace Effekseer.GUI.Component
 					Manager.NativeManager.Separator();
 				}
 				//Manager.NativeManager.PushItemWidth(100);
-				
+
 				Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + Manager.TextOffsetY);
 				Manager.NativeManager.Text(c.Label);
 
@@ -83,7 +82,7 @@ namespace Effekseer.GUI.Component
 
 			controlRows.Unlock();
 
-			if(isControlsChanged)
+			if (isControlsChanged)
 			{
 				SetValue(bindingObject);
 				isControlsChanged = false;
@@ -92,17 +91,20 @@ namespace Effekseer.GUI.Component
 
 		public void SetType(Type type)
 		{
+			// Ignore
+			/*
 			typeRows.Clear();
 
 			bindingType = type;
 			AppendType(type, 0);
+			*/
 		}
 
 		public void FixValues()
 		{
 			controlRows.Lock();
 
-			foreach (var c in controlRows.Internal.Select(_=>_.Control).OfType<IParameterControl>())
+			foreach (var c in controlRows.Internal.Select(_ => _.Control).OfType<IParameterControl>())
 			{
 				c.FixValue();
 			}
@@ -110,6 +112,7 @@ namespace Effekseer.GUI.Component
 			controlRows.Unlock();
 		}
 
+		/*
 		void AppendType(Type type, int selectorIndent, PropertyInfo[] props = null, TypeRow parentRow = null)
 		{
 			if (props == null)
@@ -136,7 +139,7 @@ namespace Effekseer.GUI.Component
 					typeRows.Add(row);
 					sameLayer.Add(row);
 
-					if(row.Selector != null)
+					if (row.Selector != null)
 					{
 						row.SelectorIndent = selectorIndent + 1;
 					}
@@ -168,6 +171,7 @@ namespace Effekseer.GUI.Component
 				}
 			}
 		}
+		*/
 
 		public void SetValue(object value)
 		{
@@ -178,80 +182,150 @@ namespace Effekseer.GUI.Component
 			else
 			{
 				ResetValue();
+
+				if (bindingObject is Data.IEditableValueCollection)
+				{
+					var o2 = bindingObject as Data.IEditableValueCollection;
+					o2.OnChanged -= ChangeSelector;
+				}
+
 				bindingObject = null;
 			}
 		}
 
 		void RegisterValue(object value)
 		{
-			objToTypeRow.Clear();
+			List<TypeRow> newRows = new List<TypeRow>();
 
-			var newTypeRows = new List<TypeRow>();
-			var newTypeRowsHash = new HashSet<TypeRow>();
-			var existsTypeRowsHash = new HashSet<TypeRow>();
+			Action<object,int> parseObject = null;
 
-			foreach (var row in typeRows)
-			{
-				if (row.IsShown(value))
+			parseObject = (objValue, indent) =>
 				{
-					newTypeRows.Add(row);
-					newTypeRowsHash.Add(row);
-				}
-			}
+					Data.EditableValue[] editableValues = null;
 
-			foreach (var row in validRows)
-			{
-				if (newTypeRowsHash.Contains(row))
-				{
-					existsTypeRowsHash.Add(row);
-					RemoveRow(row, false);
-				}
-				else
-				{
-					RemoveRow(row, true);
-				}
-			}
-
-			foreach (var row in newTypeRows)
-			{
-				if (row.Control == null) continue;
-
-				controlRows.Add(row);
-
-				var v = row.GetValue(value);
-				row.ControlDynamic.SetBinding(v);
-				objToTypeRow.Add(v, row);
-
-				{
-					var o0 = row.GetValue(value) as Data.Value.EnumBase;
-					var o1 = row.GetValue(value) as Data.Value.PathForImage;
-					if (o0 != null && row.IsSelector)
+					if(objValue is Data.IEditableValueCollection)
 					{
-						o0.OnChanged += ChangeSelector;
+						editableValues = (objValue as Data.IEditableValueCollection).GetValues();
 					}
-					else if (o1 != null)
+					else
 					{
-						o1.OnChanged += ChangeSelector;
+						var props = objValue.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+						editableValues = props.Select(_ => Data.EditableValue.Create(_.GetValue(objValue), _)).ToArray();
 					}
-				}
+
+					List<TypeRow> localRows = new List<TypeRow>();
+
+					foreach (var editableValue in editableValues)
+					{
+						var propValue = editableValue.Value;
+						var prop = editableValue;
+
+						TypeRow row = null;
+
+						if (!editableValue.IsShown) continue;
+
+						if (objToTypeRow.ContainsKey(propValue))
+						{
+							row = objToTypeRow[propValue];
+							row.SetSelector(localRows);
+							row.SelectorIndent = indent;
+							if (row.Selector != null) row.SelectorIndent++;
+#if DEBUG
+							if(row.BindingValue != propValue) throw new Exception();
+#endif
+
+							if (!row.IsShown()) continue;
+						}
+						else
+						{
+							row = new TypeRow(prop);
+							row.SetSelector(localRows);
+							row.BindingValue = propValue;
+							row.SelectorIndent = indent;
+							if (row.Selector != null) row.SelectorIndent++;
+
+							if (!row.IsShown()) continue;
+
+							if (row.Control == null)
+							{
+								if (prop.Value.GetType() == typeof(Data.NodeBase)) continue;
+								if (prop.Value.GetType() == typeof(Data.NodeBase.ChildrenCollection)) continue;
+								if (prop.Value.GetType() == typeof(Data.Value.FCurve<float>)) continue;
+								if (prop.Value.GetType() == typeof(Data.Value.FCurve<byte>)) continue;
+
+								parseObject(propValue, row.SelectorIndent);
+								continue;
+							}
+							else
+							{
+								row.ControlDynamic.SetBinding(propValue);
+								objToTypeRow.Add(propValue, row);
+							}
+						}
+
+						newRows.Add(row);
+						localRows.Add(row);
+
+						if (propValue is Data.IEditableValueCollection)
+						{
+							parseObject(propValue, row.SelectorIndent);
+						}
+
+						{
+							var o0 = row.BindingValue as Data.Value.EnumBase;
+							var o1 = row.BindingValue as Data.Value.PathForImage;
+							var o2 = row.BindingValue as Data.IEditableValueCollection;
+							if (o0 != null && row.IsSelector)
+							{
+								o0.OnChanged += ChangeSelector;
+							}
+							else if (o1 != null)
+							{
+								o1.OnChanged += ChangeSelector;
+							}
+							else if (o2 != null)
+							{
+								o2.OnChanged += ChangeSelector;
+							}
+						}
+					}
+				};
+
+			parseObject(value, 0);
+
+			foreach(var row in controlRows.Internal.ToArray())
+			{
+				if (newRows.Contains(row)) continue;
+				RemoveRow(row, true);
+				objToTypeRow.Remove(row.BindingValue);
 			}
 
-			validRows.Clear();
-			validRows.AddRange(newTypeRows);
+			controlRows.Clear();
+
+			foreach(var n in newRows)
+			{
+				controlRows.Add(n);
+			}
 
 			bindingObject = value;
+
+			if(bindingObject is Data.IEditableValueCollection)
+			{
+				var o2 = bindingObject as Data.IEditableValueCollection;
+				o2.OnChanged += ChangeSelector;
+			}
 		}
 
 		void ResetValue()
 		{
 			objToTypeRow.Clear();
 
-			foreach (var row in validRows)
+			controlRows.Lock();
+			foreach (var row in controlRows.Internal)
 			{
 				RemoveRow(row, true);
 			}
-
-			validRows.Clear();
+			controlRows.Unlock();
 		}
 
 		void RemoveRow(TypeRow row, bool removeControls)
@@ -262,8 +336,9 @@ namespace Effekseer.GUI.Component
 
 			if (bindingObject != null)
 			{
-				var o0 = row.GetValue(bindingObject) as Data.Value.EnumBase;
-				var o1 = row.GetValue(bindingObject) as Data.Value.PathForImage;
+				var o0 = row.BindingValue as Data.Value.EnumBase;
+				var o1 = row.BindingValue as Data.Value.PathForImage;
+				var o2 = row.BindingValue as Data.IEditableValueCollection;
 				if (o0 != null && row.IsSelector)
 				{
 					o0.OnChanged -= ChangeSelector;
@@ -272,11 +347,15 @@ namespace Effekseer.GUI.Component
 				{
 					o1.OnChanged -= ChangeSelector;
 				}
+				else if (o2 != null)
+				{
+					o2.OnChanged -= ChangeSelector;
+				}
 			}
 
 			if (removeControls)
 			{
-				if( row.Control is Control)
+				if (row.Control is Control)
 				{
 					var c = row.Control as Control;
 					c.DispatchDisposed();
@@ -297,11 +376,7 @@ namespace Effekseer.GUI.Component
 
 		class TypeRow
 		{
-			PropertyInfo[] Properties
-			{
-				get;
-				set;
-			}
+			Data.EditableValue editableValue;
 
 			public string Title
 			{
@@ -375,151 +450,150 @@ namespace Effekseer.GUI.Component
 				private set;
 			}
 
+			public object BindingValue { get; set; }
+
 			public int SelectorIndent = 0;
 
 			/// <summary>
 			/// Generate based on property
 			/// </summary>
-			/// <param name="properties"></param>
-			public TypeRow(PropertyInfo[] properties, List<TypeRow> sameLayer, TypeRow parent)
+			/// <param name="propInfo"></param>
+			public TypeRow(Data.EditableValue propInfo)
 			{
-				Parent = parent;
+				editableValue = propInfo;
 
-				var p = properties.LastOrDefault();
-				var attributes = p.GetCustomAttributes(false);
+				Title = editableValue.Title;
+				Description = editableValue.Description;
+				EnableUndo = editableValue.IsUndoEnabled;
+				var shown = editableValue.IsShown;
 
-				Title = NameAttribute.GetName(attributes);
-				Description = DescriptionAttribute.GetDescription(attributes);
-				
 				IParameterControl gui = null;
+				var type = editableValue.Value.GetType();
 
-				var undo = attributes.Where(_ => _.GetType() == typeof(Effekseer.Data.UndoAttribute)).FirstOrDefault() as Effekseer.Data.UndoAttribute;
-				if (undo != null && !undo.Undo)
-				{
-					EnableUndo = false;
-				}
-				else
-				{
-					EnableUndo = true;
-				}
-
-				var shown = attributes.Where(_ => _.GetType() == typeof(Effekseer.Data.ShownAttribute)).FirstOrDefault() as Effekseer.Data.ShownAttribute;
-
-				if (shown != null && !shown.Shown)
+				if (!shown)
 				{
 					gui = null;
 					return;
 				}
-				else if (p.PropertyType == typeof(Data.Value.String))
+				else if (type == typeof(Data.Value.String))
 				{
 					gui = new String(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.Boolean))
+				else if (type == typeof(Data.Value.Boolean))
 				{
 					gui = new Boolean(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.Int))
+				else if (type == typeof(Data.Value.Int))
 				{
 					gui = new Int(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.IntWithInifinite))
+				else if (type == typeof(Data.Value.IntWithInifinite))
 				{
 					gui = new IntWithInifinite(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.IntWithRandom))
+				else if (type == typeof(Data.Value.IntWithRandom))
 				{
 					gui = new IntWithRandom(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.Float))
+				else if (type == typeof(Data.Value.Float))
 				{
 					gui = new Float(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.FloatWithRandom))
+				else if (type == typeof(Data.Value.FloatWithRandom))
 				{
 					gui = new FloatWithRandom(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.Vector2D))
+				else if (type == typeof(Data.Value.Vector2D))
 				{
 					gui = new Vector2D(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.Vector2DWithRandom))
+				else if (type == typeof(Data.Value.Vector2DWithRandom))
 				{
 					gui = new Vector2DWithRandom(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.Vector3D))
+				else if (type == typeof(Data.Value.Vector3D))
 				{
 					gui = new Vector3D(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.Vector3DWithRandom))
+				else if (type == typeof(Data.Value.Vector3DWithRandom))
 				{
 					gui = new Vector3DWithRandom(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.Color))
+				else if (type == typeof(Data.Value.Color))
 				{
 					gui = new ColorCtrl(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.ColorWithRandom))
+				else if (type == typeof(Data.Value.ColorWithRandom))
 				{
 					gui = new ColorWithRandom(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.Path))
+				else if (type == typeof(Data.Value.Path))
 				{
 					gui = null;
 					return;
 				}
-				else if (p.PropertyType == typeof(Data.Value.PathForModel))
+				else if (type == typeof(Data.Value.PathForModel))
 				{
 					gui = new PathForModel(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.PathForImage))
+				else if (type == typeof(Data.Value.PathForImage))
 				{
 					gui = new PathForImage(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.PathForSound))
+				else if (type == typeof(Data.Value.PathForSound))
 				{
 					gui = new PathForSound(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.FCurveVector2D))
+#if MATERIAL_ENABLED
+				else if (type == typeof(Data.Value.PathForMaterial))
+				{
+					gui = new PathForMaterial(Title);
+				}
+#endif
+				else if (type == typeof(Data.Value.FCurveVector2D))
 				{
 					gui = new FCurveButton(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.FCurveVector3D))
+				else if (type == typeof(Data.Value.FCurveVector3D))
 				{
 					gui = new FCurveButton(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.FCurveColorRGBA))
+				else if (type == typeof(Data.Value.FCurveColorRGBA))
 				{
 					gui = new FCurveButton(Title);
 				}
-				else if (p.PropertyType == typeof(Data.Value.FCurve<float>))
+				else if (editableValue.Value is Data.IEditableValueCollection)
+				{
+					gui = new Dummy(Title);
+				}
+				else if (type == typeof(Data.Value.FCurve<float>))
 				{
 					gui = null;
 					return;
 				}
-				else if (p.PropertyType == typeof(Data.Value.FCurve<byte>))
+				else if (type == typeof(Data.Value.FCurve<byte>))
 				{
 					gui = null;
 					return;
 				}
-				else if (p.PropertyType == typeof(Data.Value.IFCurveKey))
+				else if (type == typeof(Data.Value.IFCurveKey))
 				{
 					gui = null;
 					return;
 				}
-				else if (p.PropertyType.IsGenericType)
+				else if (type.IsGenericType)
 				{
-					var types = p.PropertyType.GetGenericArguments();
+					var types = type.GetGenericArguments();
 					gui = new Enum(Title);
-					
+
 					var dgui = (dynamic)gui;
 					dgui.Initialize(types[0]);
 				}
 
-				var selector_attribute = (from a in attributes where a is Data.SelectorAttribute select a).FirstOrDefault() as Data.SelectorAttribute;
-				if (selector_attribute != null)
+				if (editableValue.SelectorID >= 0)
 				{
 					IsSelector = true;
-					SelectorID = selector_attribute.ID;
+					SelectorID = editableValue.SelectorID;
 				}
 				else
 				{
@@ -527,25 +601,11 @@ namespace Effekseer.GUI.Component
 					SelectorID = -1;
 				}
 
-				Properties = properties.Clone() as PropertyInfo[];
 				Control = gui;
-				
-				if(gui != null)
+
+				if (gui != null)
 				{
 					gui.Description = this.Description;
-				}
-
-				// Selector
-				var selected_attribute = (from a in attributes where a is Data.SelectedAttribute select a).FirstOrDefault() as Data.SelectedAttribute;
-				if (selected_attribute != null)
-				{
-					var selector = sameLayer.Where(_ => _.IsSelector && _.SelectorID == selected_attribute.ID).LastOrDefault();
-
-					if (selector != null)
-					{
-						Selector = selector;
-						SelectorValue = selected_attribute.Value;
-					}
 				}
 
 				Label = Title;
@@ -558,26 +618,33 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
-			public object GetValue(object obj)
+			public void SetSelector(List<TypeRow> sameLayerRows)
 			{
-				var value = obj;
-				foreach (var p in Properties)
+				// Selector
+				if(editableValue.SelectedID >= 0)
 				{
-					value = p.GetValue(value, null);
-				}
+					var selector = sameLayerRows.Where(_ => _.IsSelector && _.SelectorID == editableValue.SelectedID).LastOrDefault();
 
-				return value;
+					if (selector != null)
+					{
+						Selector = selector;
+						SelectorValue = editableValue.SelectedValue;
+					}
+				}
 			}
 
-			public bool IsShown(object obj)
+			public bool IsShown()
 			{
-				if (Parent != null && !Parent.IsShown(obj)) return false;
-				if (Selector == null) return true;
-				if (!Selector.IsShown(obj)) return false;
+				if (Parent != null && !Parent.IsShown()) return false;
+				if (!editableValue.IsShown) return false;
 
-				var value = Selector.GetValue(obj) as Data.Value.EnumBase;
+				if (Selector == null) return true;
+				if (!Selector.IsShown()) return false;
+
+				var value = Selector.BindingValue as Data.Value.EnumBase;
 
 				if (value == null) return false;
+
 
 				return SelectorValue == value.GetValueAsInt();
 			}

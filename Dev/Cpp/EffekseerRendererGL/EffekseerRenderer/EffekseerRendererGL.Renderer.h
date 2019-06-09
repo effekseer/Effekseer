@@ -71,6 +71,14 @@ public:
 	@brief	背景を設定する。
 	*/
 	virtual void SetBackground(GLuint background) = 0;
+
+	/**
+	@brief	
+	\~english get a device type
+	\~japanese デバイスの種類を取得する。
+
+	*/
+	virtual OpenGLDeviceType GetDeviceType() const = 0;
 };
 
 //----------------------------------------------------------------------------------

@@ -209,6 +209,26 @@ public:
 	virtual void SetModelLoader( ModelLoader* modelLoader ) = 0;
 
 	/**
+		@brief
+		\~English get a material loader
+		\~Japanese マテリアルローダーを取得する。
+		@return
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	virtual MaterialLoader* GetMaterialLoader() = 0;
+
+	/**
+		@brief
+		\~English specfiy a material loader
+		\~Japanese マテリアルローダーを設定する。
+		@param	loader
+		\~English	loader
+		\~Japanese ローダー
+	*/
+	virtual void SetMaterialLoader(MaterialLoader* loader) = 0;
+
+	/**
 		@brief	エフェクトを停止する。
 		@param	handle	[in]	インスタンスのハンドル
 	*/
@@ -332,6 +352,14 @@ public:
 		@param	location	[in]	位置
 	*/
 	virtual void SetTargetLocation( Handle handle, const Vector3D& location ) = 0;
+
+
+	/**
+		@brief
+		\~English specfiy a dynamic parameter, which changes effect parameters dynamically while playing
+		\~Japanese 再生中にエフェクトのパラメーターを変更する動的パラメーターを設定する。
+	*/
+	virtual void SetDynamicParameter(Handle handle, int32_t index, float value) = 0;
 
 	/**
 		@brief	エフェクトのベース行列を取得する。

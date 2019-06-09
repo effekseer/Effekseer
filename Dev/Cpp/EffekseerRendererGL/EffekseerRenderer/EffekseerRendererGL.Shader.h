@@ -112,7 +112,7 @@ private:
 	std::vector<ShaderUniformInfoInternal>	uniforms;
 
 	static bool CompileShader(
-		RendererImplemented* renderer,
+		Renderer* renderer,
 		GLuint& program,
 		const char* vs_src,
 		size_t vertexShaderSize,
@@ -121,7 +121,7 @@ private:
 		const char* name);
 
 	Shader(
-		RendererImplemented* renderer, 
+		Renderer* renderer, 
 		GLuint program,
 		const char* vs_src,
 		size_t vertexShaderSize,
@@ -138,7 +138,7 @@ public:
 	virtual ~Shader();
 
 	static Shader* Create(
-		RendererImplemented* renderer,
+		Renderer* renderer,
 		const char* vs_src,
 		size_t vertexShaderSize,
 		const char* fs_src,

@@ -28,6 +28,9 @@
     <Filter Include="Effekseer\Culling">
       <UniqueIdentifier>{e8a8875a-4164-4bbe-8d86-08471e19742f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effekseer\InternalScript">
+      <UniqueIdentifier>{0382aadc-7e1c-4fb0-bb9b-ae5d4f3f2a87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effekseer\Effekseer.Base.h">
@@ -190,6 +193,12 @@
     <ClInclude Include="Effekseer\Effekseer.IntrusiveList.h">
       <Filter>Effekseer\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Effekseer\Effekseer.MaterialLoader.h">
+      <Filter>Effekseer\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Effekseer.InternalScript.h">
+      <Filter>Effekseer\InternalScript</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp">
@@ -293,6 +302,9 @@
     </ClCompile>
     <ClCompile Include="Effekseer\Effekseer.IntrusiveList.cpp">
       <Filter>Effekseer\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Effekseer.InternalScript.cpp">
+      <Filter>Effekseer\InternalScript</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

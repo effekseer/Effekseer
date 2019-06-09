@@ -350,6 +350,46 @@ public class ViewerEffectBehavior : global::System.IDisposable {
     } 
   }
 
+  public float DynamicInput1 {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_DynamicInput1_set(swigCPtr, value);
+    } 
+    get {
+      float ret = EffekseerNativePINVOKE.ViewerEffectBehavior_DynamicInput1_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public float DynamicInput2 {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_DynamicInput2_set(swigCPtr, value);
+    } 
+    get {
+      float ret = EffekseerNativePINVOKE.ViewerEffectBehavior_DynamicInput2_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public float DynamicInput3 {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_DynamicInput3_set(swigCPtr, value);
+    } 
+    get {
+      float ret = EffekseerNativePINVOKE.ViewerEffectBehavior_DynamicInput3_get(swigCPtr);
+      return ret;
+    } 
+  }
+
+  public float DynamicInput4 {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_DynamicInput4_set(swigCPtr, value);
+    } 
+    get {
+      float ret = EffekseerNativePINVOKE.ViewerEffectBehavior_DynamicInput4_get(swigCPtr);
+      return ret;
+    } 
+  }
+
   public ViewerEffectBehavior() : this(EffekseerNativePINVOKE.new_ViewerEffectBehavior(), true) {
   }
 

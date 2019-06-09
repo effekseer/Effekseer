@@ -322,6 +322,8 @@ public:
 	*/
 	::Effekseer::ModelLoader* CreateModelLoader( ::Effekseer::FileInterface* fileInterface = NULL );
 
+	::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override { return nullptr; }
+
 	/**
 	@brief	背景を取得する。
 	*/
@@ -351,9 +353,9 @@ public:
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 
-	void SetVertexBufferToShader(const void* data, int32_t size);
+	void SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
-	void SetPixelBufferToShader(const void* data, int32_t size);
+	void SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
 	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
 

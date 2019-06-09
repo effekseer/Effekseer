@@ -53,6 +53,7 @@ Setting::~Setting()
 	ES_SAFE_DELETE(m_textureLoader);
 	ES_SAFE_DELETE(m_soundLoader);
 	ES_SAFE_DELETE(m_modelLoader);
+	ES_SAFE_DELETE(m_materialLoader);
 }
 
 //----------------------------------------------------------------------------------
@@ -145,6 +146,16 @@ void Setting::SetSoundLoader(SoundLoader* loader)
 {
 	ES_SAFE_DELETE(m_soundLoader);
 	m_soundLoader = loader;
+}
+
+MaterialLoader* Setting::GetMaterialLoader()
+{ return m_materialLoader;
+}
+
+void Setting::SetMaterialLoader(MaterialLoader* loader)
+{
+	ES_SAFE_DELETE(m_materialLoader);
+	m_materialLoader = loader;
 }
 
 void Setting::AddEffectFactory(EffectFactory* effectFactory) { 

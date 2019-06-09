@@ -74,6 +74,7 @@ class TrackRenderer;
 class Setting;
 class EffectLoader;
 class TextureLoader;
+class MaterialLoader;
 
 class SoundPlayer;
 class SoundLoader;
@@ -111,6 +112,8 @@ typedef	void ( EFK_STDCALL *EffectInstanceRemovingCallback ) ( Manager* manager,
 #define ES_SAFE_RELEASE(val)					if ( (val) != NULL ) { (val)->Release(); (val) = NULL; }
 #define ES_SAFE_DELETE(val)						if ( (val) != NULL ) { delete (val); (val) = NULL; }
 #define ES_SAFE_DELETE_ARRAY(val)				if ( (val) != NULL ) { delete [] (val); (val) = NULL; }
+
+#define EFK_ASSERT(x) assert(x)
 
 //----------------------------------------------------------------------------------
 //
@@ -500,6 +503,45 @@ struct TextureData
 	TextureFormatType	TextureFormat;
 	void*	UserPtr;
 	int64_t	UserID;
+};
+
+/**
+	@brief	\~english	Material data
+			\~japanese	マテリアルデータ
+*/
+struct MaterialData
+{
+	int32_t TextureCount = 0;
+	int32_t UniformCount = 0;
+
+	void* UserPtr = nullptr;
+};
+
+/**
+	@brief	\~english	Textures used by material
+			\~japanese	マテリアルに使用されるテクスチャ
+*/
+struct MaterialTextureParameter
+{
+	//! 0 - color, 1 - value
+	int32_t Type = 0;
+	int32_t Index = 0;
+};
+
+/**
+	@brief	\~english	Material parameter for shaders
+			\~japanese	シェーダー向けマテリアルパラメーター
+*/
+struct MaterialParameter
+{
+	//! material index in MaterialType::File
+	int32_t MaterialIndex = -1;
+
+	//! used textures in MaterialType::File
+	std::vector<MaterialTextureParameter> MaterialTextures;
+
+	//! used uniforms in MaterialType::File
+	std::vector<std::array<float, 4>> MaterialUniforms;
 };
 
 //----------------------------------------------------------------------------------

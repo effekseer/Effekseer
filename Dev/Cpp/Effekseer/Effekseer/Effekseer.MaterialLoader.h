@@ -1,0 +1,74 @@
+﻿
+#ifndef __EFFEKSEER_MATERIALLOADER_H__
+#define __EFFEKSEER_MATERIALLOADER_H__
+
+#include "Effekseer.Base.h"
+
+namespace Effekseer
+{
+
+/**
+	@brief	
+	\~English	Material loader
+	\~Japanese	マテリアル読み込み破棄関数指定クラス
+*/
+class MaterialLoader
+{
+public:
+	/**
+	@brief	
+	\~English	Constructor
+	\~Japanese	コンストラクタ
+	*/
+	MaterialLoader() = default;
+
+	/**
+	@brief
+	\~English	Destructor
+	\~Japanese	デストラクタ
+	*/
+	virtual ~MaterialLoader() = default;
+
+	/**
+		@brief
+		\~English	load a material
+		\~Japanese	マテリアルを読み込む。
+		@param	path	
+		\~English	a file path
+		\~Japanese	読み込み元パス
+		@return
+		\~English	a pointer of loaded a material
+		\~Japanese	読み込まれたマテリアルのポインタ
+	*/
+	virtual MaterialData* Load(const EFK_CHAR* path) { return nullptr; }
+
+	/**
+		@brief
+		\~English	a function called when a material is loaded
+		\~Japanese	マテリアルが読み込まれるときに呼ばれる関数
+		@param	data
+		\~English	data pointer
+		\~Japanese	データのポインタ
+		@param	size
+		\~English	the size of data
+		\~Japanese	データの大きさ
+		@return
+		\~English	a pointer of loaded a material
+		\~Japanese	読み込まれたマテリアルのポインタ
+	*/
+	virtual MaterialData* Load(const void* data, int32_t size) { return nullptr; }
+
+	/**
+		@brief
+		\~English	dispose a material
+		\~Japanese	マテリアルを破棄する。
+		@param	data
+		\~English	a pointer of loaded a material
+		\~Japanese	読み込まれたマテリアルのポインタ
+	*/
+	virtual void Unload(MaterialData* data) {}
+};
+
+} // namespace Effekseer
+
+#endif // __EFFEKSEER_TEXTURELOADER_H__

@@ -8,7 +8,7 @@
 #include "Effekseer.Base.h"
 #include "Effekseer.Effect.h"
 #include "Effekseer.Vector3D.h"
-
+#include "Effekseer.InternalScript.h"
 #include <assert.h>
 #include <memory>
 
@@ -82,10 +82,14 @@ public:
 	HolderCollection<TextureData*> distortionImages;
 	HolderCollection<void*> sounds;
 	HolderCollection<void*> models;
+	HolderCollection<MaterialData*> materials;
 };
 
-
-
+class DynamicParameter
+{
+public:
+	std::array<InternalScript, 4> Elements;
+};
 
 /**
 	@brief	Effect parameter
@@ -95,6 +99,7 @@ class EffectImplemented : public Effect, public ReferenceObject
 	friend class ManagerImplemented;
 	friend class EffectNodeImplemented;
 	friend class EffectFactory;
+	friend class Instance;
 
 protected:
 	ManagerImplemented* m_pManager;
@@ -123,12 +128,19 @@ protected:
 	EFK_CHAR** m_WavePaths = nullptr;
 	void** m_pWaves = nullptr;
 
-	int32_t m_modelCount = 0;
-	EFK_CHAR** m_modelPaths = nullptr;
-	void** m_pModels = nullptr;
+	int32_t modelCount_ = 0;
+	EFK_CHAR** modelPaths_ = nullptr;
+	void** models_ = nullptr;
+
+	int32_t materialCount_ = 0;
+	EFK_CHAR** materialPaths_ = nullptr;
+	MaterialData** materials_ = nullptr;
 
 	std::u16string name_;
 	std::basic_string<EFK_CHAR> m_materialPath;
+
+	//! dynamic parameters
+	std::vector<DynamicParameter> dynamicParameters;
 
 	int32_t renderingNodesCount = 0;
 	int32_t renderingNodesThreshold = 0;
@@ -266,6 +278,12 @@ public:
 	int32_t GetModelCount() const override;
 
 	const EFK_CHAR* GetModelPath(int n) const override;
+
+	MaterialData* GetMaterial(int n) const override;
+
+	int32_t GetMaterialCount() const override;
+
+	const EFK_CHAR* GetMaterialPath(int n) const override;
 
 	/**
 		@brief	エフェクトのリロードを行う。

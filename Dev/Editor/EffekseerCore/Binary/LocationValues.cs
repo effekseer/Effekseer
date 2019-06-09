@@ -18,15 +18,30 @@ namespace Effekseer.Binary
 
 			if (value.Type.GetValue() == Data.LocationValues.ParamaterType.Fixed)
 			{
-				var bytes = Translation_Fixed_Values.Create(value.Fixed, 1.0f).GetBytes();
-				data.Add(bytes.Count().GetBytes());
-				data.Add(bytes);
+				var refBuf = (value.Fixed.Location.DynamicParameter != null ? Core.Dynamic.Vectors.Values.IndexOf(value.Fixed.Location.DynamicParameter) : -1).GetBytes();
+				var mainBuf = Translation_Fixed_Values.Create(value.Fixed, 1.0f).GetBytes();
+				data.Add((mainBuf.Count() + refBuf.Count()).GetBytes());
+				data.Add(refBuf);
+				data.Add(mainBuf);
 			}
 			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.PVA)
 			{
-				var bytes = Translation_PVA_Values.Create(value.PVA, 1.0f).GetBytes();
-				data.Add(bytes.Count().GetBytes());
-				data.Add(bytes);
+				var refBuf1_1 = (value.PVA.Location.DynamicParameterMax != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Location.DynamicParameterMax) : -1).GetBytes();
+				var refBuf1_2 = (value.PVA.Location.DynamicParameterMin != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Location.DynamicParameterMin) : -1).GetBytes();
+				var refBuf2_1 = (value.PVA.Velocity.DynamicParameterMax != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Velocity.DynamicParameterMax) : -1).GetBytes();
+				var refBuf2_2 = (value.PVA.Velocity.DynamicParameterMin != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Velocity.DynamicParameterMin) : -1).GetBytes();
+				var refBuf3_1 = (value.PVA.Acceleration.DynamicParameterMax != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Acceleration.DynamicParameterMax) : -1).GetBytes();
+				var refBuf3_2 = (value.PVA.Acceleration.DynamicParameterMin != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Acceleration.DynamicParameterMin) : -1).GetBytes();
+
+				var mainBuf = Translation_PVA_Values.Create(value.PVA, 1.0f).GetBytes();
+				data.Add((mainBuf.Count() + refBuf1_1.Count() * 6).GetBytes());
+				data.Add(refBuf1_1);
+				data.Add(refBuf1_2);
+				data.Add(refBuf2_1);
+				data.Add(refBuf2_2);
+				data.Add(refBuf3_1);
+				data.Add(refBuf3_2);
+				data.Add(mainBuf);
 			}
 			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.Easing)
 			{

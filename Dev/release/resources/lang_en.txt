@@ -118,6 +118,7 @@ Zoom,Zoom
 Depth,Depth
 Global,Global Settings
 nan,nan
+DynamicParameter_Name,Dynamic parameter
 EnlargeAnchor,Enlarge anchor
 EnlargeAnchor_Desc,To make the value change smoothly,\nextend the anchor
 ShrinkAnchor,Shrink anchor

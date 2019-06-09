@@ -190,6 +190,8 @@ enum ParameterTranslationType
 //----------------------------------------------------------------------------------
 struct ParameterTranslationFixed
 {
+	int32_t ReferencedDynamicParameter = -1;
+
 	Vector3D Position;
 };
 
@@ -198,6 +200,12 @@ struct ParameterTranslationFixed
 //----------------------------------------------------------------------------------
 struct ParameterTranslationPVA
 {
+	int32_t ReferencedDynamicParameterPMax = -1;
+	int32_t ReferencedDynamicParameterPMin = -1;
+	int32_t ReferencedDynamicParameterVMax = -1;
+	int32_t ReferencedDynamicParameterVMin = -1;
+	int32_t ReferencedDynamicParameterAMax = -1;
+	int32_t ReferencedDynamicParameterAMin = -1;
 	random_vector3d	location;
 	random_vector3d	velocity;
 	random_vector3d	acceleration;
@@ -475,22 +483,40 @@ struct ParameterGenerationLocation
 
 struct ParameterRendererCommon
 {
-	int32_t				ColorTextureIndex;
-	AlphaBlendType		AlphaBlend;
+	/**
+		@brief	material type
+	*/
+	enum class RendererMaterialType : int32_t
+	{
+		Default,
+		File,
+	};
 
-	TextureFilterType	FilterType;
+	RendererMaterialType MaterialType = RendererMaterialType::File;
 
-	TextureWrapType		WrapType;
+	/**
+		@brief	texture index in MaterialType::Default
+	*/
+	int32_t				ColorTextureIndex = 0;
 
-	bool				ZWrite;
+	//! material index in MaterialType::File
+	MaterialParameter Material;
 
-	bool				ZTest;
+	AlphaBlendType AlphaBlend = AlphaBlendType::Opacity;
 
-	bool				Distortion;
+	TextureFilterType FilterType = TextureFilterType::Nearest;
 
-	float				DistortionIntensity;
+	TextureWrapType WrapType = TextureWrapType::Repeat;
 
-	BindType			ColorBindType;
+	bool				ZWrite = false;
+
+	bool				ZTest = false;
+
+	bool				Distortion = false;
+
+	float				DistortionIntensity = 0;
+
+	BindType ColorBindType = BindType::NotBind;
 
 	enum
 	{
@@ -589,18 +615,63 @@ struct ParameterRendererCommon
 
 	} UV;
 
+	ParameterRendererCommon()
+	{
+		FadeInType = FADEIN_OFF;
+		FadeOutType = FADEOUT_OFF;
+		UVType = UV_DEFAULT;
+	}
+
 	void reset()
 	{
-		memset(this, 0, sizeof(ParameterRendererCommon));
+		// with constructor
+		//memset(this, 0, sizeof(ParameterRendererCommon));
 	}
 
 	void load(uint8_t*& pos, int32_t version)
 	{
-		memset(this, 0, sizeof(ParameterRendererCommon));
+		//memset(this, 0, sizeof(ParameterRendererCommon));
 
-		memcpy(&ColorTextureIndex, pos, sizeof(int));
-		pos += sizeof(int);
+		if (version >= 15)
+		{
+			memcpy(&MaterialType, pos, sizeof(int));
+			pos += sizeof(int);
 
+			if (MaterialType == RendererMaterialType::Default)
+			{
+				memcpy(&ColorTextureIndex, pos, sizeof(int));
+				pos += sizeof(int);
+			}
+			else
+			{
+				memcpy(&Material.MaterialIndex, pos, sizeof(int));
+				pos += sizeof(int);
+
+				int32_t textures = 0;
+				int32_t uniforms = 0;
+
+				memcpy(&textures, pos, sizeof(int));
+				pos += sizeof(int);
+
+				
+				Material.MaterialTextures.resize(textures);
+				memcpy(Material.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
+				pos += (sizeof(MaterialTextureParameter) * textures);
+
+				memcpy(&uniforms, pos, sizeof(int));
+				pos += sizeof(int);
+
+				Material.MaterialUniforms.resize(uniforms);
+				memcpy(Material.MaterialUniforms.data(), pos, sizeof(int32_t) * uniforms);
+				pos += (sizeof(int32_t) * uniforms);
+			}
+		}
+		else
+		{
+			memcpy(&ColorTextureIndex, pos, sizeof(int));
+			pos += sizeof(int);
+		}
+		
 		memcpy(&AlphaBlend, pos, sizeof(int));
 		pos += sizeof(int);
 

@@ -102,6 +102,11 @@ public:
 	float TargetPositionY;
 	float TargetPositionZ;
 
+	float DynamicInput1 = 0.0f;
+	float DynamicInput2 = 0.0f;
+	float DynamicInput3 = 0.0f;
+	float DynamicInput4 = 0.0f;
+
 	ViewerEffectBehavior();
 };
 

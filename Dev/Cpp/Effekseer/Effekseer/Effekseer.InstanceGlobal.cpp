@@ -17,8 +17,8 @@ InstanceGlobal::InstanceGlobal()
 	: m_instanceCount	( 0 )
 	, m_updatedFrame	( 0 )
 	, m_rootContainer	( NULL )
-{
-	
+{ 
+	dynamicInputParameters.fill(0);
 }
 
 //----------------------------------------------------------------------------------
@@ -27,6 +27,11 @@ InstanceGlobal::InstanceGlobal()
 InstanceGlobal::~InstanceGlobal()
 {
 	
+}
+
+std::array<float, 4> InstanceGlobal::GetDynamicParameter(int32_t index) {
+	assert(0 <= index && index < dynamicParameters.size());
+	return dynamicParameters[index];
 }
 
 void InstanceGlobal::SetSeed(int64_t seed)

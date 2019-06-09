@@ -6,6 +6,31 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Dock
 {
+	class NodeBaseValues : Data.IEditableValueCollection
+	{
+		Data.NodeBase node;
+
+		public NodeBaseValues(Data.NodeBase node)
+		{
+			this.node = node;
+		}
+		public Data.EditableValue[] GetValues()
+		{
+			List<Data.EditableValue> values = new List<Data.EditableValue>();
+
+			var valueIsRendered = Data.EditableValue.Create(node.IsRendered, node.GetType().GetProperty("IsRendered"));
+			var valueName = Data.EditableValue.Create(node.Name, node.GetType().GetProperty("Name"));
+
+			return new[]
+			{
+				valueIsRendered,
+				valueName,
+			};
+		}
+
+		public event ChangedValueEventHandler OnChanged;
+	}
+
 	class CommonValues : DockPanel
 	{
 		Component.ParameterList paramerterList_Common = null;
@@ -62,7 +87,8 @@ namespace Effekseer.GUI.Dock
 		{
 			if (Core.SelectedNode != null)
 			{
-				paramerterList_Node.SetValue(Core.SelectedNode);
+				paramerterList_Node.SetValue(new NodeBaseValues(Core.SelectedNode));
+
 				if (Core.SelectedNode is Data.Node)
 				{
 					paramerterList_Common.SetValue(((Data.Node)Core.SelectedNode).CommonValues);

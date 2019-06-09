@@ -204,7 +204,7 @@ namespace efk
 
 		if (d3dDebug != nullptr)
 		{
-			d3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+			//d3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 		}
 		ES_SAFE_RELEASE(d3dDebug);
 	}

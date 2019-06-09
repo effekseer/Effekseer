@@ -44,6 +44,8 @@ public:
 		bool				IsDepthOffsetScaledWithParticleScale;
 
 		ZSortType			ZSort;
+
+		MaterialParameter* MaterialParameterPtr = nullptr;
 	};
 
 	struct InstanceParameter

@@ -24,6 +24,7 @@
 #include <chrono>
 #include <thread>
 #include <mutex>
+#include <array>
 
 //----------------------------------------------------------------------------------
 //
@@ -79,6 +80,7 @@ class EffectLoader;
 class TextureLoader;
 class SoundLoader;
 class ModelLoader;
+class MaterialLoader;
 
 class Model;
 
