@@ -27,6 +27,10 @@ namespace Effekseer.Binary
 
 		public HashSet<string> UsedDistortionTextures = new HashSet<string>();
 
+		public HashSet<string> Sounds = new HashSet<string>();
+
+		public HashSet<string> Models = new HashSet<string>();
+
 		/// <summary>
 		/// エフェクトデータの出力
 		/// </summary>
@@ -48,11 +52,9 @@ namespace Effekseer.Binary
 
 			UsedDistortionTextures = new HashSet<string>();
 
-            // ウェーブ名称一覧取得
-            HashSet<string> waves = new HashSet<string>();
+            Sounds = new HashSet<string>();
 
-			// モデル名称一覧取得
-			HashSet<string> models = new HashSet<string>();
+			Models = new HashSet<string>();
 
 #if MATERIAL_ENABLED
 			HashSet<string> materials = new HashSet<string>();
@@ -209,9 +211,9 @@ namespace Effekseer.Binary
                         var relative_path = _node.SoundValues.Sound.Wave.RelativePath;
                         if (relative_path != string.Empty)
                         {
-                            if (!waves.Contains(relative_path))
+                            if (!Sounds.Contains(relative_path))
                             {
-                                waves.Add(relative_path);
+                                Sounds.Add(relative_path);
                             }
                         }
                     }
@@ -228,7 +230,7 @@ namespace Effekseer.Binary
             Dictionary<string, int> wave_and_index = new Dictionary<string, int>();
             {
                 int index = 0;
-                foreach (var wave in waves.ToList().OrderBy(_ => _))
+                foreach (var wave in Sounds.ToList().OrderBy(_ => _))
                 {
                     wave_and_index.Add(wave, index);
                     index++;
@@ -259,9 +261,9 @@ namespace Effekseer.Binary
 
 							if (relative_path != string.Empty)
                             {
-                                if (!models.Contains(relative_path))
+                                if (!Models.Contains(relative_path))
                                 {
-                                    models.Add(relative_path);
+                                    Models.Add(relative_path);
                                 }
                             }
                         }
@@ -285,9 +287,9 @@ namespace Effekseer.Binary
 
 							if (relative_path != string.Empty)
                             {
-                                if (!models.Contains(relative_path))
+                                if (!Models.Contains(relative_path))
                                 {
-                                    models.Add(relative_path);
+                                    Models.Add(relative_path);
                                 }
                             }
                         }
@@ -305,7 +307,7 @@ namespace Effekseer.Binary
 			Dictionary<string, int> model_and_index = new Dictionary<string, int>();
 			{
 				int index = 0;
-				foreach (var model in models.ToList().OrderBy(_ => _))
+				foreach (var model in Models.ToList().OrderBy(_ => _))
 				{
 					model_and_index.Add(model, index);
 					index++;

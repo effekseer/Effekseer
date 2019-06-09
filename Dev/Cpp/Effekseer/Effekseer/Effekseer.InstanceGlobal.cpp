@@ -34,7 +34,7 @@ std::array<float, 4> InstanceGlobal::GetDynamicParameter(int32_t index) {
 	return dynamicParameters[index];
 }
 
-void InstanceGlobal::SetSeed(int32_t seed)
+void InstanceGlobal::SetSeed(int64_t seed)
 {
 	m_seed = seed;
 }

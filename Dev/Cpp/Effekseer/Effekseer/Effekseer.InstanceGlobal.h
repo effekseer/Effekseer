@@ -40,7 +40,7 @@ private:
 	InstanceContainer*	m_rootContainer;
 	Vector3D			m_targetLocation;
 
-	int32_t				m_seed = 0;
+	int64_t				m_seed = 0;
 
 	std::array<float, 4> dynamicInputParameters;
 
@@ -58,8 +58,7 @@ public:
 	std::vector<InstanceContainer*>	RenderedInstanceContainers;
 
 	std::array<float, 4> GetDynamicParameter(int32_t index);
-
-	void SetSeed(int32_t seed);
+	void SetSeed(int64_t seed);
 
 	virtual float GetRand() override;
 

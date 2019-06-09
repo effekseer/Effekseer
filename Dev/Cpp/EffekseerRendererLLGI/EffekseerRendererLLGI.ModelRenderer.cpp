@@ -46,15 +46,14 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	}
 
 	m_shader_distortion_texture->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
-	m_shader_distortion_texture->SetVertexRegisterCount(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>) /
-														(sizeof(float) * 4));
-	m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(float) * 4);
-	m_shader_distortion_texture->SetPixelRegisterCount(1);
+	m_shader_distortion_texture->SetVertexRegisterCount(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>) / (sizeof(float) * 4));
+	m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
+	m_shader_distortion_texture->SetPixelRegisterCount(1 + 1);
 
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
 	m_shader_distortion->SetVertexRegisterCount(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>) / (sizeof(float) * 4));
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4);
-	m_shader_distortion->SetPixelRegisterCount(1);
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
+	m_shader_distortion->SetPixelRegisterCount(1 + 1);
 }
 
 ModelRenderer::~ModelRenderer()

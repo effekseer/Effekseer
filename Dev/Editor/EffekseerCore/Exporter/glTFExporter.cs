@@ -121,7 +121,7 @@ namespace Effekseer.Exporter
 			bufferViews.Add(name, bufferView);
 		}
 
-        EffekseerEffect CreateEffect(float scale, object bindingNode, bool isContainedTextureAsBinary)
+        EffekseerEffect CreateEffect(float scale, object bindingNode, bool isContainedAsBinary)
 		{
 			var effect = new EffekseerEffect();
 
@@ -180,7 +180,7 @@ namespace Effekseer.Exporter
 			List<object> normalImages = new List<object>();
 			List<object> distortionImages = new List<object>();
 
-			if (isContainedTextureAsBinary)
+			if (isContainedAsBinary)
 			{
 				foreach (var texture in textures.ToList().OrderBy(_=>_))
 				{
@@ -249,6 +249,53 @@ namespace Effekseer.Exporter
 			effect.Add("normalImages", normalImages);
 			effect.Add("distortionImages", distortionImages);
 
+			List<object> sounds = new List<object>();
+
+			if (isContainedAsBinary)
+			{
+				foreach (var sound in binaryExporter.Sounds.ToList().OrderBy(_ => _))
+				{
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u2 = new Uri(u1, sound);
+
+					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
+					AddBufferView(sound, buf);
+					sounds.Add(CreateAsBufferView(sound));
+				}
+			}
+			else
+			{
+				foreach (var sound in binaryExporter.Sounds.ToList().OrderBy(_ => _))
+				{
+					sounds.Add(CreateImageAsURI(sound));
+				}
+			}
+
+			List<object> models = new List<object>();
+
+			if (isContainedAsBinary)
+			{
+				foreach (var model in binaryExporter.Models.ToList().OrderBy(_ => _))
+				{
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u2 = new Uri(u1, model);
+
+					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
+					AddBufferView(model, buf);
+					models.Add(CreateAsBufferView(model));
+				}
+			}
+			else
+			{
+				foreach (var model in binaryExporter.Models.ToList().OrderBy(_ => _))
+				{
+					models.Add(CreateImageAsURI(model));
+				}
+			}
+
+			effect.Add("sounds", sounds);
+			effect.Add("models", models);
+
 			return effect;
 		}
 
@@ -285,6 +332,13 @@ namespace Effekseer.Exporter
 		{
 			var ret = new Dictionary<string, object>();
 			ret.Add("uri", uri);
+			return ret;
+		}
+
+		Dictionary<string, object> CreateAsBufferView(string bufferview)
+		{
+			var ret = new Dictionary<string, object>();
+			ret.Add("bufferview", bufferview);
 			return ret;
 		}
 
