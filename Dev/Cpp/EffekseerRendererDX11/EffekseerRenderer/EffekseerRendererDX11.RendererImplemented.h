@@ -122,9 +122,6 @@ private:
 	IndexBuffer*		m_indexBufferForWireframe = nullptr;
 	int32_t				m_squareMaxCount;
 
-	int32_t				drawcallCount = 0;
-	int32_t				drawvertexCount = 0;
-
 	Shader*							m_shader;
 	Shader*							m_shader_no_texture;
 
@@ -360,14 +357,6 @@ public:
 	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
 
 	void ResetRenderState();
-
-	int32_t GetDrawCallCount() const override;
-
-	int32_t GetDrawVertexCount() const override;
-
-	void ResetDrawCallCount() override;
-
-	void ResetDrawVertexCount() override;
 
 	void SetRenderMode(Effekseer::RenderMode renderMode) override { m_renderMode = renderMode; }
 

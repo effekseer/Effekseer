@@ -23,4 +23,12 @@ void Renderer::Impl::SetBackgroundTextureUVStyle(UVStyle style)
 	backgroundTextureUVStyle = style;
 }
 
+int32_t Renderer::Impl::GetDrawCallCount() const { return drawcallCount; }
+
+int32_t Renderer::Impl::GetDrawVertexCount() const { return drawvertexCount; }
+
+void Renderer::Impl::ResetDrawCallCount() { drawcallCount = 0; }
+
+void Renderer::Impl::ResetDrawVertexCount() { drawvertexCount = 0; }
+
 }

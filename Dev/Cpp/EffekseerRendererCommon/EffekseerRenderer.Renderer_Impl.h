@@ -13,8 +13,10 @@ class Renderer::Impl
 private:
 	UVStyle textureUVStyle = UVStyle::Normal;
 	UVStyle backgroundTextureUVStyle = UVStyle::Normal;
-
 public:
+
+	int32_t drawcallCount = 0;
+	int32_t drawvertexCount = 0;
 
 	UVStyle GetTextureUVStyle() const;
 
@@ -24,6 +26,13 @@ public:
 
 	void SetBackgroundTextureUVStyle(UVStyle style);
 
+	int32_t GetDrawCallCount() const;
+
+	int32_t GetDrawVertexCount() const;
+
+	void ResetDrawCallCount();
+
+	void ResetDrawVertexCount();
 };
 
 }

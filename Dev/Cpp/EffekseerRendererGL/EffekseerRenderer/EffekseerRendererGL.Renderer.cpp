@@ -26,6 +26,7 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.h"
+#include "../../EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.h"
 
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 #include "../../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
@@ -1110,8 +1111,8 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 {
 	GLCheckError();
 
-	drawcallCount++;
-	drawvertexCount += spriteCount * 4;
+	impl->drawcallCount++;
+	impl->drawvertexCount += spriteCount * 4;
 
 	if( m_renderMode == ::Effekseer::RenderMode::Normal )
 	{
@@ -1132,8 +1133,8 @@ void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 {
 	GLCheckError();
 
-	drawcallCount++;
-	drawvertexCount += vertexCount;
+	impl->drawcallCount++;
+	impl->drawvertexCount += vertexCount;
 
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL);
 
@@ -1306,26 +1307,6 @@ void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
-}
-
-int32_t RendererImplemented::GetDrawCallCount() const
-{
-	return drawcallCount;
-}
-
-int32_t RendererImplemented::GetDrawVertexCount() const
-{
-	return drawvertexCount;
-}
-
-void RendererImplemented::ResetDrawCallCount()
-{
-	drawcallCount = 0;
-}
-
-void RendererImplemented::ResetDrawVertexCount()
-{
-	drawvertexCount = 0;
 }
 
 //----------------------------------------------------------------------------------
