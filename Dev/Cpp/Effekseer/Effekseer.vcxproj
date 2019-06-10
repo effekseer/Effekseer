@@ -165,6 +165,7 @@
     <ClInclude Include="Effekseer\Culling\Culling3D.WorldInternal.h" />
     <ClInclude Include="Effekseer\Effekseer.Base.h" />
     <ClInclude Include="Effekseer\Effekseer.Base.Pre.h" />
+    <ClInclude Include="Effekseer\Effekseer.BinaryReader.h" />
     <ClInclude Include="Effekseer\Effekseer.Client.h" />
     <ClInclude Include="Effekseer\Effekseer.ClientImplemented.h" />
     <ClInclude Include="Effekseer\Effekseer.Color.h" />

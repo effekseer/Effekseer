@@ -199,6 +199,9 @@
     <ClInclude Include="Effekseer\Effekseer.InternalScript.h">
       <Filter>Effekseer\InternalScript</Filter>
     </ClInclude>
+    <ClInclude Include="Effekseer\Effekseer.BinaryReader.h">
+      <Filter>Effekseer\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp">

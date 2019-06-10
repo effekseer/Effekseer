@@ -154,6 +154,13 @@ class EffectFactory;
 
 		/**
 			@brief
+			\~English	clear effect factories
+			\~Japanese 全てのEffect Factoryを削除する。
+		*/
+		void ClearEffectFactory();
+
+		/**
+			@brief
 			\~English	Get the number of effect factory
 			\~Japanese Effect Factoryの数を取得する。
 		*/

@@ -43,11 +43,7 @@ Setting::Setting()
 //----------------------------------------------------------------------------------
 Setting::~Setting()
 {
-	for (auto& e : effectFactories)
-	{
-		ES_SAFE_RELEASE(e);
-	}
-	effectFactories.clear();
+	ClearEffectFactory();
 
 	ES_SAFE_DELETE(m_effectLoader);
 	ES_SAFE_DELETE(m_textureLoader);
@@ -164,6 +160,15 @@ void Setting::AddEffectFactory(EffectFactory* effectFactory) {
 		return;
 	ES_SAFE_ADDREF(effectFactory); 
 	effectFactories.push_back(effectFactory);
+}
+
+void Setting::ClearEffectFactory()
+{
+	for (auto& e : effectFactories)
+	{
+		ES_SAFE_RELEASE(e);
+	}
+	effectFactories.clear();
 }
 
 EffectFactory* Setting::GetEffectFactory(int32_t ind) const

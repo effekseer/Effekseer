@@ -1,4 +1,5 @@
 ﻿#include "Effekseer.InternalScript.h"
+#include "Effekseer.BinaryReader.h"
 #include <assert.h>
 
 namespace Effekseer
@@ -66,16 +67,17 @@ InternalScript::InternalScript() {}
 InternalScript ::~InternalScript() {}
 bool InternalScript::Load(uint8_t* data, int size)
 {
-	if (size < 20)
+	if (data == nullptr || size <= 0)
 		return false;
+	BinaryReader<true> reader(data, static_cast<size_t>(size));
 
 	int32_t registerCount = 0;
 
-	memcpy(&version_, data + sizeof(int) * 0, sizeof(int));
-	memcpy(&runningPhase, data + sizeof(int) * 1, sizeof(int));
-	memcpy(&registerCount, data + sizeof(int) * 2, sizeof(int));
-	memcpy(&operatorCount_, data + sizeof(int) * 3, sizeof(int));
-	memcpy(&outputRegister_, data + sizeof(int) * 4, sizeof(int));
+	reader.Read(version_);
+	reader.Read(runningPhase);
+	reader.Read(registerCount);
+	reader.Read(operatorCount_);
+	reader.Read(outputRegister_);
 
 	if (registerCount < 0)
 		return false;
@@ -87,55 +89,40 @@ bool InternalScript::Load(uint8_t* data, int size)
 		return false;
 	}
 
-	operators.resize(size - 20);
-	memcpy(operators.data(), data + sizeof(int) * 5, size - 20);
+	reader.Read(operators, size - reader.GetOffset());
+
+	if (reader.GetStatus() == BinaryReaderStatus::Failed)
+		return false;
 
 	// check operators
-	uint32_t offset = 0;
+	auto operatorReader = BinaryReader<true>(operators.data(), operators.size());
+
 	for (int i = 0; i < operatorCount_; i++)
 	{
 		// type
 		OperatorType type;
-		if (offset + 4 > operators.size())
-			return false;
+		operatorReader.Read(type);
 
-		memcpy(&type, operators.data() + offset, sizeof(OperatorType));
-		offset += sizeof(int);
+		if (reader.GetStatus() == BinaryReaderStatus::Failed)
+			return false;
 
 		if (!IsValidOperator((int)type))
 			return false;
 
-		// counter
-		if (offset + 4 > operators.size())
-			return false;
-
 		int32_t inputCount = 0;
-		memcpy(&inputCount, operators.data() + offset, sizeof(int));
-		offset += sizeof(int);
-
-		if (offset + 4 > operators.size())
-			return false;
+		operatorReader.Read(inputCount);
 
 		int32_t outputCount = 0;
-		memcpy(&outputCount, operators.data() + offset, sizeof(int));
-		offset += sizeof(int);
-
-		if (offset + 4 > operators.size())
-			return false;
+		operatorReader.Read(outputCount);
 
 		int32_t attributeCount = 0;
-		memcpy(&attributeCount, operators.data() + offset, sizeof(int));
-		offset += sizeof(int);
+		operatorReader.Read(attributeCount);
 
 		// input
 		for (int j = 0; j < inputCount; j++)
 		{
-			if (offset + 4 > operators.size())
-				return false;
 			int index = 0;
-			memcpy(&index, operators.data() + offset, sizeof(int));
-			offset += sizeof(int);
-
+			operatorReader.Read(index);
 			if (!IsValidRegister(index))
 			{
 				return false;
@@ -145,13 +132,9 @@ bool InternalScript::Load(uint8_t* data, int size)
 		// output
 		for (int j = 0; j < outputCount; j++)
 		{
-			if (offset + 4 > operators.size())
-				return false;
 			int index = 0;
-			memcpy(&index, operators.data() + offset, sizeof(int));
-			offset += sizeof(int);
-
-			if ((index < 0 || index >= registers.size()))
+			operatorReader.Read(index);
+			if ((index < 0 || index >= static_cast<int32_t>(registers.size())))
 			{
 				return false;
 			}
@@ -160,15 +143,12 @@ bool InternalScript::Load(uint8_t* data, int size)
 		// attribute
 		for (int j = 0; j < attributeCount; j++)
 		{
-			if (offset + 4 > operators.size())
-				return false;
 			int index = 0;
-			memcpy(&index, operators.data() + offset, sizeof(int));
-			offset += sizeof(int);
+			operatorReader.Read(index);
 		}
 	}
 
-	if (offset != operators.size())
+	if (operatorReader.GetStatus() != BinaryReaderStatus::Complete)
 		return false;
 
 	isValid_ = true;
