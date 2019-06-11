@@ -13,7 +13,8 @@ namespace Effekseer.swig {
 public enum TransparenceType {
   None = 0,
   Original = 1,
-  Generate = 2
+  Generate = 2,
+  Generate2 = 3
 }
 
 }

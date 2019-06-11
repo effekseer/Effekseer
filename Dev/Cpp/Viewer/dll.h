@@ -123,6 +123,7 @@ enum class TransparenceType
 	None = 0,
 	Original = 1,
 	Generate = 2,
+	Generate2 = 3,
 };
 
 class RecordingParameter

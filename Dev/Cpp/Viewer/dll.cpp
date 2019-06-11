@@ -153,6 +153,82 @@ bool Combine(const char16_t* rootPath, const char16_t* treePath, char16_t* dst, 
 	return true;
 }
 
+void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsBlend,
+										  std::vector<Effekseer::Color>& pixelsAdd,
+										  std::vector<std::vector<Effekseer::Color>>& pixels)
+{
+	assert(pixels.size() == 9);
+
+	auto f2b = [](float v) -> uint8_t {
+		auto v_ = v * 255;
+		if (v_ > 255)
+			v_ = 255;
+		if (v_ < 0)
+			v_ = 0;
+		return v_;
+	};
+
+	auto b2f = [](uint8_t v) -> float {
+		auto v_ = (float)v / 255.0f;
+		return v_;
+	};
+
+	pixelsAdd.resize(pixels[0].size());
+	pixelsBlend.resize(pixels[0].size());
+
+	for (auto i = 0; i < pixels[0].size(); i++)
+	{
+		float colors[4][9];
+
+		for (auto j = 0; j < 9; j++)
+		{
+			colors[0][j] = pixels[j][i].R / 255.0;
+			colors[1][j] = pixels[j][i].G / 255.0;
+			colors[2][j] = pixels[j][i].B / 255.0;
+			colors[3][j] = pixels[j][i].A / 255.0;
+
+			colors[0][j] *= colors[3][j];
+			colors[1][j] *= colors[3][j];
+			colors[2][j] *= colors[3][j];
+		}
+
+		std::array<float, 3> gradients;
+		gradients.fill(0.0f);
+
+		for (auto c = 0; c < 3; c++)
+		{
+			bool found = false;
+
+			for (auto j = 0; j < 9; j++)
+			{
+				if (colors[c][j] >= 1.0f)
+				{
+					gradients[c] = (colors[c][j] - colors[c][0]) / ((j + 1) / 9.0f);
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				gradients[c] = (colors[c][8] - colors[c][0]);
+			}
+		}
+
+		float blendAlpha = (3.0f - (gradients[0] + gradients[1] + gradients[2])) / 3.0f;
+
+		pixelsBlend[i].R = 0.0f;
+		pixelsBlend[i].G = 0.0f;
+		pixelsBlend[i].B = 0.0f;
+		pixelsBlend[i].A = Effekseer::Clamp(blendAlpha * 255.0f, 255.0f, 0.0f);
+
+		pixelsAdd[i].R = Effekseer::Clamp(colors[0][0] * 255.0f, 255.0f, 0.0f);
+		pixelsAdd[i].G = Effekseer::Clamp(colors[1][0] * 255.0f, 255.0f, 0.0f);
+		pixelsAdd[i].B = Effekseer::Clamp(colors[2][0] * 255.0f, 255.0f, 0.0f);
+		pixelsAdd[i].A = 255.0f;
+	}
+}
+
 ViewerParamater::ViewerParamater()
 	: GuideWidth(0)
 	, GuideHeight(0)
@@ -1033,7 +1109,7 @@ public:
 
 	virtual void OnEndRecord() {}
 
-	virtual void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) {}
+	virtual void OnEndFrameRecord(int index, std::vector<std::vector<Effekseer::Color>>& pixels) {}
 };
 
 class RecorderCallbackSprite : public RecorderCallback
@@ -1050,7 +1126,7 @@ public:
 
 	void OnEndRecord() override {}
 
-	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
+	void OnEndFrameRecord(int index, std::vector<std::vector<Effekseer::Color>>& pixels) override
 	{
 		char16_t path_[260];
 		auto pathWithoutExt = recordingParameter_.GetPath();
@@ -1123,7 +1199,7 @@ public:
 					   pixels_out.data());
 	}
 
-	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
+	void OnEndFrameRecord(int index, std::vector<std::vector<Effekseer::Color>>& pixels) override
 	{
 		auto x = index % recordingParameter_.HorizontalCount;
 		auto y = index / recordingParameter_.HorizontalCount;
@@ -1134,7 +1210,7 @@ public:
 			{
 				pixels_out[x * g_renderer->GuideWidth + x_ +
 						   (g_renderer->GuideWidth * recordingParameter_.HorizontalCount) * (g_renderer->GuideHeight * y + y_)] =
-					pixels[x_ + y_ * g_renderer->GuideWidth];
+					pixels[0][x_ + y_ * g_renderer->GuideWidth];
 			}
 		}
 	}
@@ -1159,7 +1235,7 @@ public:
 
 	void OnEndRecord() override {}
 
-	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override { helper.AddImage(pixels); }
+	void OnEndFrameRecord(int index, std::vector<std::vector<Effekseer::Color>>& pixels) override { helper.AddImage(pixels[0]); }
 };
 
 class RecorderCallbackAvi : public RecorderCallback
@@ -1204,9 +1280,9 @@ public:
 		fclose(fp);
 	}
 
-	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
+	void OnEndFrameRecord(int index, std::vector<std::vector<Effekseer::Color>>& pixels) override
 	{
-		exporter.ExportFrame(d, pixels);
+		exporter.ExportFrame(d, pixels[0]);
 		fwrite(d.data(), 1, d.size(), fp);
 	}
 };
@@ -1288,10 +1364,30 @@ bool Native::Record(RecordingParameter& recordingParameter)
 
 	for (int32_t i = 0; i < recordingParameter.Count; i++)
 	{
-		if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight))
-			goto Exit;
+		int iteratorCount = 1;
 
-		RenderWindow();
+		if (recordingParameter.Transparence == TransparenceType::Generate2)
+		{
+			iteratorCount = 9;
+		}
+
+		std::vector<std::vector<Effekseer::Color>> pixels;
+		pixels.resize(iteratorCount);
+
+		for (int32_t loop = 0; loop < iteratorCount; loop++)
+		{
+			auto colorValue = Effekseer::Clamp(32 * loop, 255, 0);
+			g_renderer->BackgroundColor = Effekseer::Color(colorValue, colorValue, colorValue, 255);
+
+			if (!g_renderer->BeginRecord(g_renderer->GuideWidth, g_renderer->GuideHeight))
+				goto Exit;
+
+			RenderWindow();
+
+			g_renderer->EndRecord(pixels[0],
+								  recordingParameter.Transparence == TransparenceType::Generate,
+								  recordingParameter.Transparence == TransparenceType::None);
+		}
 
 		if (isBehaviorEnabled)
 		{
@@ -1305,12 +1401,18 @@ bool Native::Record(RecordingParameter& recordingParameter)
 			}
 		}
 
-		std::vector<Effekseer::Color> pixels;
-		g_renderer->EndRecord(pixels,
-							  recordingParameter.Transparence == TransparenceType::Generate,
-							  recordingParameter.Transparence == TransparenceType::None);
+		if (recordingParameter.Transparence == TransparenceType::Generate2)
+		{
+			std::vector<std::vector<Effekseer::Color>> pixels_out;
+			pixels_out.resize(2);
+			GenerateExportedImageWithBlendAndAdd(pixels_out[0], pixels_out[1], pixels);
 
-		recorderCallback->OnEndFrameRecord(i, pixels);
+			recorderCallback->OnEndFrameRecord(i, pixels_out);
+		}
+		else
+		{
+			recorderCallback->OnEndFrameRecord(i, pixels);
+		}
 	}
 
 Exit:;
