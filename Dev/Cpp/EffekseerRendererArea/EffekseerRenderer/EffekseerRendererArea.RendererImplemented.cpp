@@ -12,6 +12,17 @@
 
 namespace EffekseerRendererArea
 {
+Renderer* Renderer::Create()
+{
+	auto renderer = RendererImplemented::Create();
+	if (!renderer->Initialize(16000))
+	{
+		ES_SAFE_RELEASE(renderer);
+	}
+
+	return renderer;
+}
+
 ModelRenderer::ModelRenderer(RendererImplemented* renderer) : m_renderer(renderer) {}
 
 ModelRenderer::~ModelRenderer() {}
@@ -180,8 +191,6 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 	m_cameraPosition = position;
 }
 
-::Effekseer::Matrix44& RendererImplemented::GetCameraProjectionMatrix() { return m_cameraProj; }
-
 ::Effekseer::SpriteRenderer* RendererImplemented::CreateSpriteRenderer()
 {
 	return new ::EffekseerRenderer::SpriteRendererBase<RendererImplemented, Vertex, VertexDistortion>(this);
@@ -343,7 +352,7 @@ Exit:;
 		assert(f1[2] < m_vertexes.size());
 	}
 
-	auto material = Material();
+	auto material = RenderedMaterial();
 
 	material.AlphaBlend = m_renderState->GetActiveState().AlphaBlend;
 
@@ -365,7 +374,7 @@ void RendererImplemented::DrawModel(void* model,
 {
 	int32_t modelCount = matrixes.size();
 
-	auto material = Material();
+	auto material = RenderedMaterial();
 
 	material.AlphaBlend = m_renderState->GetActiveState().AlphaBlend;
 
@@ -431,15 +440,39 @@ void RendererImplemented::DrawModel(void* model,
 	}
 }
 
+Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) const
+{
+
+	if (useDistortion)
+	{
+		return m_distShader;
+	}
+	else
+	{
+		return m_stanShader;
+	}
+}
+
 void RendererImplemented::BeginShader(Shader* shader)
 {
 	m_distorting = shader == m_distShader;
-	// TODO
+	currentShader = shader;
 }
 
-void RendererImplemented::EndShader(Shader* shader)
-{
-	// TODO
+void RendererImplemented::EndShader(Shader* shader) { currentShader = nullptr; }
+
+void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset) { 
+	assert(currentShader != nullptr);
+	auto p = static_cast<uint8_t*>(currentShader->GetVertexConstantBuffer());
+	p += dstOffset;
+	memcpy(p, data, size);
+}
+
+void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset) { 
+	assert(currentShader != nullptr); 
+	auto p = static_cast<uint8_t*>(currentShader->GetPixelConstantBuffer());
+	p += dstOffset;
+	memcpy(p, data, size);
 }
 
 void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)

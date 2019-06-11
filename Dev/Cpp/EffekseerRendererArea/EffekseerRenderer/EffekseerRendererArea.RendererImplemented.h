@@ -4,6 +4,7 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.ModelRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
+#include "EffekseerRendererArea.Renderer.h"
 
 #include <map>
 #include <memory>
@@ -99,15 +100,6 @@ public:
 	}
 };
 
-struct Vertex
-{
-	::Effekseer::Vector3D Pos;
-	::Effekseer::Color Col;
-	float UV[2];
-
-	void SetColor(const ::Effekseer::Color& color) { Col = color; }
-};
-
 struct VertexDistortion
 {
 	::Effekseer::Vector3D Pos;
@@ -117,13 +109,6 @@ struct VertexDistortion
 	::Effekseer::Vector3D Binormal;
 
 	void SetColor(const ::Effekseer::Color& color) { Col = color; }
-};
-
-struct Material
-{
-	std::u16string TexturePath;
-	::Effekseer::AlphaBlendType AlphaBlend;
-	bool DepthTest;
 };
 
 typedef ::Effekseer::ModelRenderer::NodeParameter efkModelNodeParam;
@@ -149,7 +134,7 @@ public:
 	void EndRendering(const efkModelNodeParam& parameter, void* userData);
 };
 
-class RendererImplemented : public ::EffekseerRenderer::Renderer, public ::Effekseer::ReferenceObject
+class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 {
 protected:
 	::Effekseer::Vector3D m_lightDirection;
@@ -170,12 +155,13 @@ protected:
 	RenderState* m_renderState = nullptr;
 
 	bool m_distorting = false;
+	Shader* currentShader = nullptr;
 
 	void* m_textures[16];
 
 	std::vector<Vertex> m_vertexes;
 	std::vector<std::array<int32_t, 3>> m_indexes;
-	std::vector<Material> m_materials;
+	std::vector<RenderedMaterial> m_materials;
 	std::vector<int32_t> m_materialFaceCounts;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* m_standardRenderer = nullptr;
@@ -276,8 +262,13 @@ public:
 				   std::vector<Effekseer::RectF>& uvs,
 				   std::vector<Effekseer::Color>& colors);
 
+	Shader* GetShader(bool useTexture, bool useDistortion) const;
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
+
+	void SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset);
+
+	void SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset);
 
 	void SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count);
 
@@ -287,7 +278,7 @@ public:
 
 	std::vector<Vertex>& GetCurrentVertexes() { return m_vertexes; }
 	std::vector<std::array<int32_t, 3>>& GetCurrentIndexes() { return m_indexes; }
-	std::vector<Material>& GetCurrentMaterials() { return m_materials; }
+	std::vector<RenderedMaterial>& GetCurrentMaterials() { return m_materials; }
 	std::vector<int32_t>& GetCurrentMaterialFaceCounts() { return m_materialFaceCounts; }
 };
 

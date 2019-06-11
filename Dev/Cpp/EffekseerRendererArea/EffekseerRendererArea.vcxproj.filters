@@ -72,6 +72,15 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererArea.VertexBuffer.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererArea.Base.h">
+      <Filter>EffekseerRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererArea.Base.Pre.h">
+      <Filter>EffekseerRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererArea.Renderer.h">
+      <Filter>EffekseerRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">

@@ -185,7 +185,10 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.StandardRenderer.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.TrackRendererBase.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.h" />
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererArea.Base.h" />
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererArea.Base.Pre.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererArea.IndexBuffer.h" />
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererArea.Renderer.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererArea.RendererImplemented.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererArea.RenderState.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererArea.Shader.h" />
