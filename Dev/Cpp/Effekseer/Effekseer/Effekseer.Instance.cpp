@@ -76,7 +76,7 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	, m_flexibleNextGenerationTime(nullptr)
 	, m_GlobalMatrix43Calculated(false)
 	, m_ParentMatrix43Calculated(false)
-	, m_stepTime(false)
+	, is_time_step_allowed(false)
 	, m_sequenceNumber(0)
 {
 	m_generatedChildrenCount = m_fixedGeneratedChildrenCount;
@@ -775,7 +775,7 @@ void Instance::Update( float deltaFrame, bool shown )
 	m_GlobalMatrix43Calculated = false;
 	m_ParentMatrix43Calculated = false;
 
-	if (m_stepTime && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
+	if (is_time_step_allowed && m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
 	{
 		/* 音の更新(現状放置) */
 		if (m_pEffectNode->SoundType == ParameterSoundType_Use)
@@ -791,6 +791,14 @@ void Instance::Update( float deltaFrame, bool shown )
 	}
 
 	float originalTime = m_LivingTime;
+
+	// step time
+	// frame 0 - generated time
+	// frame 1- now
+	if (is_time_step_allowed)
+	{
+		m_LivingTime += deltaFrame;
+	}
 
 	if(shown)
 	{
@@ -818,14 +826,8 @@ void Instance::Update( float deltaFrame, bool shown )
 		m_pParent = nullptr;
 	}
 
-	/* 時間の進行 */
-	if(  m_stepTime )
-	{
-		m_LivingTime += deltaFrame;
-	}
-
 	// Create child particles
-	if( m_stepTime && (originalTime <= m_LivedTime || !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct) )
+	if( is_time_step_allowed && (originalTime <= m_LivedTime || !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct) )
 	{
 		GenerateChildrenInRequired(originalTime + deltaFrame);
 
@@ -868,11 +870,11 @@ void Instance::Update( float deltaFrame, bool shown )
 		*/
 	}
 	
-	// 死亡判定
+	// check whether killed?
 	bool killed = false;
 	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
 	{
-		// 時間経過
+		// if pass time
 		if( m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct )
 		{
 			if( m_LivingTime > m_LivedTime )
@@ -881,7 +883,7 @@ void Instance::Update( float deltaFrame, bool shown )
 			}
 		}
 
-		// 親が消えた場合
+		// if remove parent
 		if( m_pEffectNode->CommonValues.RemoveWhenParentIsRemoved )
 		{
 			if( m_pParent == nullptr || m_pParent->GetState() != INSTANCE_STATE_ACTIVE )
@@ -891,7 +893,7 @@ void Instance::Update( float deltaFrame, bool shown )
 			}
 		}
 
-		// 子が全て消えた場合
+		// if children are removed and going not to generate a child
 		if( !killed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct )
 		{
 			int maxcreate_count = 0;
@@ -926,11 +928,11 @@ void Instance::Update( float deltaFrame, bool shown )
 
 	if(killed)
 	{
-		/* 死亡確定時、計算が必要な場合は計算をする。*/
+		// if it need to calculate a matrix
 		if( m_pEffectNode->GetChildrenCount() > 0)
 		{
 			// Get parent color.
-			if (m_pParent != NULL)
+			if (m_pParent != nullptr)
 			{
 				if (m_pEffectNode->RendererCommon.ColorBindType == BindType::Always)
 				{
@@ -944,8 +946,8 @@ void Instance::Update( float deltaFrame, bool shown )
 		return;
 	}
 
-	// 時間の進行許可
-	m_stepTime = true;
+	// allow to pass time
+	is_time_step_allowed = true;
 }
 
 //----------------------------------------------------------------------------------

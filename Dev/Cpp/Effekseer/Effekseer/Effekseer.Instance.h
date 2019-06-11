@@ -252,8 +252,8 @@ public:
 	// 親の変換用行列が計算済かどうか
 	bool			m_ParentMatrix43Calculated;
 
-	/* 時間を進めるかどうか? */
-	bool			m_stepTime;
+	//! whether a time is allowed to pass
+	bool			is_time_step_allowed;
 
 	/* 更新番号 */
 	uint32_t		m_sequenceNumber;
