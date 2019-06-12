@@ -83,6 +83,7 @@ class ModelLoader;
 class MaterialLoader;
 
 class Model;
+class InternalScript;
 
 //----------------------------------------------------------------------------------
 //

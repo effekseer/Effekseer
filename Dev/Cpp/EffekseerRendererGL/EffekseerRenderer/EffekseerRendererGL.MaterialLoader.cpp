@@ -9,7 +9,7 @@
 namespace EffekseerRendererGL
 {
 
-static const char g_sprite_vs_src[] =
+static const char g_material_sprite_vs_src[] =
 	R"(
 IN vec4 atPosition;
 IN vec4 atColor;
@@ -98,12 +98,13 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 	auto shaderCode = loader.GenerateShader();
 #ifdef _DEBUG
-	std::cout << shaderCode << std::endl;
+	//std::cout << shaderCode << std::endl;
 #endif
 
 	auto materialData = new ::Effekseer::MaterialData();
 
-	auto shader = Shader::Create(renderer_, g_sprite_vs_src, sizeof(g_sprite_vs_src), shaderCode.c_str(), shaderCode.size(), "CustomMaterial");
+	auto shader = Shader::Create(
+		renderer_, g_material_sprite_vs_src, sizeof(g_material_sprite_vs_src), shaderCode.c_str(), shaderCode.size(), "CustomMaterial");
 
 	if (shader == nullptr)
 		return nullptr;
