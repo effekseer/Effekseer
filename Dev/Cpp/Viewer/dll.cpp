@@ -1109,7 +1109,7 @@ public:
 
 	virtual void OnEndRecord() {}
 
-	virtual void OnEndFrameRecord(int index, std::vector<std::vector<Effekseer::Color>>& pixels) {}
+	virtual void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) {}
 };
 
 class RecorderCallbackSprite : public RecorderCallback
@@ -1126,15 +1126,11 @@ public:
 
 	void OnEndRecord() override {}
 
-	void OnEndFrameRecord(int index, std::vector<std::vector<Effekseer::Color>>& pixels) override
+	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
 	{
 		char16_t path_[260];
 		auto pathWithoutExt = recordingParameter_.GetPath();
 		auto ext = recordingParameter_.GetExt();
-#ifdef _WIN32
-		auto p_ = (wchar_t*)path_;
-		swprintf_s(p_, 260, L"%s.%d%s", pathWithoutExt, index, ext);
-#else
 
 		char pathWOE[256];
 		char ext_[256];
@@ -1143,7 +1139,7 @@ public:
 		Effekseer::ConvertUtf16ToUtf8((int8_t*)ext_, 256, (const int16_t*)ext);
 		sprintf(path8_dst, "%s.%d%s", pathWOE, index, ext_);
 		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)path8_dst);
-#endif
+
 
 		efk::PNGHelper pngHelper;
 		pngHelper.Save((char16_t*)path_, g_renderer->GuideWidth, g_renderer->GuideHeight, pixels.data());
@@ -1191,15 +1187,26 @@ public:
 
 	void OnEndRecord() override
 	{
+		char16_t path_[260];
+		auto pathWithoutExt = recordingParameter_.GetPath();
+		auto ext = recordingParameter_.GetExt();
+
+		char pathWOE[256];
+		char ext_[256];
+		char path8_dst[256];
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)pathWithoutExt);
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)ext_, 256, (const int16_t*)ext);
+		sprintf(path8_dst, "%s%s", pathWOE, ext_);
+		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)path8_dst);
 
 		efk::PNGHelper pngHelper;
-		pngHelper.Save((char16_t*)recordingParameter_.GetPath(),
+		pngHelper.Save(path_,
 					   g_renderer->GuideWidth * recordingParameter_.HorizontalCount,
 					   g_renderer->GuideHeight * yCount,
 					   pixels_out.data());
 	}
 
-	void OnEndFrameRecord(int index, std::vector<std::vector<Effekseer::Color>>& pixels) override
+	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
 	{
 		auto x = index % recordingParameter_.HorizontalCount;
 		auto y = index / recordingParameter_.HorizontalCount;
@@ -1210,7 +1217,7 @@ public:
 			{
 				pixels_out[x * g_renderer->GuideWidth + x_ +
 						   (g_renderer->GuideWidth * recordingParameter_.HorizontalCount) * (g_renderer->GuideHeight * y + y_)] =
-					pixels[0][x_ + y_ * g_renderer->GuideWidth];
+					pixels[x_ + y_ * g_renderer->GuideWidth];
 			}
 		}
 	}
@@ -1229,13 +1236,25 @@ public:
 
 	bool OnBeginRecord() override
 	{
-		helper.Initialize(recordingParameter_.GetPath(), g_renderer->GuideWidth, g_renderer->GuideHeight, recordingParameter_.Freq);
+		char16_t path_[260];
+		auto pathWithoutExt = recordingParameter_.GetPath();
+		auto ext = recordingParameter_.GetExt();
+
+		char pathWOE[256];
+		char ext_[256];
+		char path8_dst[256];
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)pathWithoutExt);
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)ext_, 256, (const int16_t*)ext);
+		sprintf(path8_dst, "%s%s", pathWOE, ext_);
+		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)path8_dst);
+
+		helper.Initialize(path_, g_renderer->GuideWidth, g_renderer->GuideHeight, recordingParameter_.Freq);
 		return true;
 	}
 
 	void OnEndRecord() override {}
 
-	void OnEndFrameRecord(int index, std::vector<std::vector<Effekseer::Color>>& pixels) override { helper.AddImage(pixels[0]); }
+	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override { helper.AddImage(pixels); }
 };
 
 class RecorderCallbackAvi : public RecorderCallback
@@ -1253,12 +1272,22 @@ public:
 
 	bool OnBeginRecord() override
 	{
+		char16_t path_[260];
+		auto pathWithoutExt = recordingParameter_.GetPath();
+		auto ext = recordingParameter_.GetExt();
+
+		char pathWOE[256];
+		char ext_[256];
+		char path8_dst[256];
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)pathWithoutExt);
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)ext_, 256, (const int16_t*)ext);
+		sprintf(path8_dst, "%s%s", pathWOE, ext_);
+		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)path8_dst);
+
 #ifdef _WIN32
-		_wfopen_s(&fp, (const wchar_t*)recordingParameter_.GetPath(), L"wb");
+		_wfopen_s(&fp, (const wchar_t*)path_, L"wb");
 #else
-		int8_t path8[256];
-		Effekseer::ConvertUtf16ToUtf8(path8, 256, (const int16_t*)recordingParameter_.GetPath());
-		fp = fopen((const char*)path8, "wb");
+		fp = fopen(path8_dst, "wb");
 #endif
 
 		if (fp == nullptr)
@@ -1280,9 +1309,9 @@ public:
 		fclose(fp);
 	}
 
-	void OnEndFrameRecord(int index, std::vector<std::vector<Effekseer::Color>>& pixels) override
+	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
 	{
-		exporter.ExportFrame(d, pixels[0]);
+		exporter.ExportFrame(d, pixels);
 		fwrite(d.data(), 1, d.size(), fp);
 	}
 };
@@ -1296,25 +1325,75 @@ bool Native::Record(RecordingParameter& recordingParameter)
 		return false;
 
 	std::shared_ptr<RecorderCallback> recorderCallback;
+	std::shared_ptr<RecorderCallback> recorderCallback2;
+
+	RecordingParameter recordingParameter2;
+
+	if (recordingParameter.Transparence == TransparenceType::Generate2)
+	{
+		recordingParameter2 = recordingParameter;
+		auto path = recordingParameter2.GetPath();
+
+		char pathWOE[256];
+		char ext_[256];
+		char path8_dst[256];
+		char16_t* path_[256];
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)path);
+		sprintf(path8_dst, "%s_add", pathWOE, ext_);
+		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 256, (const int8_t*)path8_dst);
+		recordingParameter2.SetPath((const char16_t*)path_);
+	}
 
 	if (recordingParameter.RecordingMode == RecordingModeType::Sprite)
 	{
 		recorderCallback = std::make_shared<RecorderCallbackSprite>(recordingParameter);
+
+		if (recordingParameter.Transparence == TransparenceType::Generate2)
+		{
+			recorderCallback2 = std::make_shared<RecorderCallbackSprite>(recordingParameter2);
+		}
 	}
 	else if (recordingParameter.RecordingMode == RecordingModeType::SpriteSheet)
 	{
 		recorderCallback = std::make_shared<RecorderCallbackSpriteSheet>(recordingParameter);
+
+		if (recordingParameter.Transparence == TransparenceType::Generate2)
+		{
+			recorderCallback2 = std::make_shared<RecorderCallbackSpriteSheet>(recordingParameter2);
+		}
 	}
 	else if (recordingParameter.RecordingMode == RecordingModeType::Gif)
 	{
 		recorderCallback = std::make_shared<RecorderCallbackGif>(recordingParameter);
+
+		if (recordingParameter.Transparence == TransparenceType::Generate2)
+		{
+			recorderCallback2 = std::make_shared<RecorderCallbackGif>(recordingParameter2);
+		}
 	}
 	else if (recordingParameter.RecordingMode == RecordingModeType::Avi)
 	{
 		recorderCallback = std::make_shared<RecorderCallbackAvi>(recordingParameter);
+
+		if (recordingParameter.Transparence == TransparenceType::Generate2)
+		{
+			recorderCallback2 = std::make_shared<RecorderCallbackAvi>(recordingParameter2);
+		}
+	}
+
+	int iteratorCount = 1;
+
+	if (recordingParameter.Transparence == TransparenceType::Generate2)
+	{
+		iteratorCount = 9;
 	}
 
 	if (!recorderCallback->OnBeginRecord())
+	{
+		return false;
+	}
+
+	if (recorderCallback2 != nullptr && !recorderCallback2->OnBeginRecord())
 	{
 		return false;
 	}
@@ -1364,13 +1443,6 @@ bool Native::Record(RecordingParameter& recordingParameter)
 
 	for (int32_t i = 0; i < recordingParameter.Count; i++)
 	{
-		int iteratorCount = 1;
-
-		if (recordingParameter.Transparence == TransparenceType::Generate2)
-		{
-			iteratorCount = 9;
-		}
-
 		std::vector<std::vector<Effekseer::Color>> pixels;
 		pixels.resize(iteratorCount);
 
@@ -1384,7 +1456,7 @@ bool Native::Record(RecordingParameter& recordingParameter)
 
 			RenderWindow();
 
-			g_renderer->EndRecord(pixels[0],
+			g_renderer->EndRecord(pixels[loop],
 								  recordingParameter.Transparence == TransparenceType::Generate,
 								  recordingParameter.Transparence == TransparenceType::None);
 		}
@@ -1407,11 +1479,16 @@ bool Native::Record(RecordingParameter& recordingParameter)
 			pixels_out.resize(2);
 			GenerateExportedImageWithBlendAndAdd(pixels_out[0], pixels_out[1], pixels);
 
-			recorderCallback->OnEndFrameRecord(i, pixels_out);
+			recorderCallback->OnEndFrameRecord(i, pixels_out[0]);
+
+			if (recorderCallback2 != nullptr)
+			{
+				recorderCallback2->OnEndFrameRecord(i, pixels_out[1]);
+			}
 		}
 		else
 		{
-			recorderCallback->OnEndFrameRecord(i, pixels);
+			recorderCallback->OnEndFrameRecord(i, pixels[0]);
 		}
 	}
 
@@ -1431,6 +1508,11 @@ Exit:;
 	g_renderer->EndRenderToView();
 
 	recorderCallback->OnEndRecord();
+
+	if (recorderCallback2 != nullptr)
+	{
+		recorderCallback2->OnEndRecord();
+	}
 
 	return true;
 }

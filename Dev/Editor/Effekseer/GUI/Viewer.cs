@@ -127,22 +127,37 @@ namespace Effekseer.GUI
 
 		public bool RecordSpriteSheet(string path, swig.RecordingParameter recordingParameter)
 		{
-            recordingParameter.SetPath(path);
-            recordingParameter.RecordingMode = swig.RecordingModeType.SpriteSheet;
+			var dir = System.IO.Path.GetDirectoryName(path);
+			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
+			var ext = System.IO.Path.GetExtension(path);
+
+			recordingParameter.SetPath(dir + "/" + fileWExt);
+			recordingParameter.SetExt(ext);
+			recordingParameter.RecordingMode = swig.RecordingModeType.SpriteSheet;
             return native.Record(recordingParameter);
 		}
 
 		public bool RecordAsGifAnimation(string path, swig.RecordingParameter recordingParameter)
         {
-            recordingParameter.SetPath(path);
-            recordingParameter.RecordingMode = swig.RecordingModeType.Gif;
+			var dir = System.IO.Path.GetDirectoryName(path);
+			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
+			var ext = System.IO.Path.GetExtension(path);
+
+			recordingParameter.SetPath(dir + "/" + fileWExt);
+			recordingParameter.SetExt(ext);
+			recordingParameter.RecordingMode = swig.RecordingModeType.Gif;
             return native.Record(recordingParameter);
         }
 
 		public bool RecordAsAVI(string path, swig.RecordingParameter recordingParameter)
         {
-            recordingParameter.SetPath(path);
-            recordingParameter.RecordingMode = swig.RecordingModeType.Avi;
+			var dir = System.IO.Path.GetDirectoryName(path);
+			var fileWExt = System.IO.Path.GetFileNameWithoutExtension(path);
+			var ext = System.IO.Path.GetExtension(path);
+
+			recordingParameter.SetPath(dir + "/" + fileWExt);
+			recordingParameter.SetExt(ext);
+			recordingParameter.RecordingMode = swig.RecordingModeType.Avi;
             return native.Record(recordingParameter);
         }
 

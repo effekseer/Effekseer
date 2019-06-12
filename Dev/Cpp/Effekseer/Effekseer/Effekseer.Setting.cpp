@@ -10,6 +10,7 @@
 #include "Effekseer.TextureLoader.h"
 #include "Effekseer.ModelLoader.h"
 #include "Effekseer.SoundLoader.h"
+#include "Effekseer.MaterialLoader.h"
 
 #include "Renderer/Effekseer.SpriteRenderer.h"
 #include "Renderer/Effekseer.RibbonRenderer.h"
