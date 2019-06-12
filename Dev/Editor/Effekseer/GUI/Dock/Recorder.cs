@@ -25,6 +25,7 @@ namespace Effekseer.GUI.Dock
 			"1",
 			"2",
 			"3",
+			"4",
 		};
 
 		string[] selectedStorageTargets = new string[]
@@ -44,6 +45,7 @@ namespace Effekseer.GUI.Dock
 			selectedAlphaTypes[0] = Resources.GetString("None");
 			selectedAlphaTypes[1] = Resources.GetString("UseOriginalImage");
 			selectedAlphaTypes[2] = Resources.GetString("GenerateAlpha");
+			selectedAlphaTypes[3] = Resources.GetString("GenerateAlpha2");
 
 			selectedStorageTargets[0] = Resources.GetString("StorageGlobal");
 			selectedStorageTargets[1] = Resources.GetString("StorageLocal");
