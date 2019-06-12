@@ -211,6 +211,15 @@ struct ParameterTranslationPVA
 	random_vector3d	acceleration;
 };
 
+struct ParameterTranslationEasing
+{
+	int32_t ReferencedDynamicParameterSMax = -1;
+	int32_t ReferencedDynamicParameterSMin = -1;
+	int32_t ReferencedDynamicParameterEMax = -1;
+	int32_t ReferencedDynamicParameterEMin = -1;
+	easing_vector3d location;
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -914,7 +923,7 @@ public:
 	ParameterTranslationType	TranslationType;
 	ParameterTranslationFixed	TranslationFixed;
 	ParameterTranslationPVA		TranslationPVA;
-	easing_vector3d				TranslationEasing;
+	ParameterTranslationEasing TranslationEasing;
 	FCurveVector3D*				TranslationFCurve;
 
 	LocationAbsParameter		LocationAbs;

@@ -116,6 +116,12 @@ namespace Effekseer.Data
 	{
 		List<DynamicVector> values = new List<DynamicVector>();
 
+		public int GetIndex(DynamicVector vector)
+		{
+			if (vector == null) return -1;
+			return Values.IndexOf(vector);
+		}
+
 		public List<DynamicVector> Values
 		{
 			get

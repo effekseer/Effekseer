@@ -411,8 +411,48 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 	else if( m_pEffectNode->TranslationType == ParameterTranslationType_Easing )
 	{
-		translation_values.easing.start = m_pEffectNode->TranslationEasing.start.getValue(*this->m_pContainer->GetRootInstance());
-		translation_values.easing.end = m_pEffectNode->TranslationEasing.end.getValue(*this->m_pContainer->GetRootInstance());
+		random_vector3d rvs = m_pEffectNode->TranslationEasing.location.start;
+
+		if (m_pEffectNode->TranslationEasing.ReferencedDynamicParameterSMax >= 0)
+		{
+			ApplyDynamicParameter(rvs.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->TranslationEasing.ReferencedDynamicParameterSMax,
+								  m_pEffectNode->TranslationEasing.location.start.max);
+		}
+
+		if (m_pEffectNode->TranslationEasing.ReferencedDynamicParameterSMin >= 0)
+		{
+			ApplyDynamicParameter(rvs.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->TranslationEasing.ReferencedDynamicParameterSMin,
+								  m_pEffectNode->TranslationEasing.location.start.min);
+		}
+
+		random_vector3d rve = m_pEffectNode->TranslationEasing.location.end;
+
+		if (m_pEffectNode->TranslationEasing.ReferencedDynamicParameterEMax >= 0)
+		{
+			ApplyDynamicParameter(rve.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->TranslationEasing.ReferencedDynamicParameterEMax,
+								  m_pEffectNode->TranslationEasing.location.end.max);
+		}
+
+		if (m_pEffectNode->TranslationEasing.ReferencedDynamicParameterEMin >= 0)
+		{
+			ApplyDynamicParameter(rve.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->TranslationEasing.ReferencedDynamicParameterEMin,
+								  m_pEffectNode->TranslationEasing.location.end.min);
+		}
+
+		translation_values.easing.start = rvs.getValue(*this->m_pContainer->GetRootInstance());
+		translation_values.easing.end = rve.getValue(*this->m_pContainer->GetRootInstance());
 	}
 	else if( m_pEffectNode->TranslationType == ParameterTranslationType_FCurve )
 	{
@@ -1019,7 +1059,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->TranslationType == ParameterTranslationType_Easing )
 		{
-			m_pEffectNode->TranslationEasing.setValueToArg(
+			m_pEffectNode->TranslationEasing.location.setValueToArg(
 				localPosition,
 				translation_values.easing.start,
 				translation_values.easing.end,

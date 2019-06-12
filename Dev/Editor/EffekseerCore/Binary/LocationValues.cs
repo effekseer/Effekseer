@@ -18,7 +18,7 @@ namespace Effekseer.Binary
 
 			if (value.Type.GetValue() == Data.LocationValues.ParamaterType.Fixed)
 			{
-				var refBuf = (value.Fixed.Location.DynamicParameter != null ? Core.Dynamic.Vectors.Values.IndexOf(value.Fixed.Location.DynamicParameter) : -1).GetBytes();
+				var refBuf = Core.Dynamic.Vectors.GetIndex(value.Fixed.Location.DynamicParameter).GetBytes();
 				var mainBuf = Translation_Fixed_Values.Create(value.Fixed, 1.0f).GetBytes();
 				data.Add((mainBuf.Count() + refBuf.Count()).GetBytes());
 				data.Add(refBuf);
@@ -26,12 +26,12 @@ namespace Effekseer.Binary
 			}
 			else if (value.Type.GetValue() == Data.LocationValues.ParamaterType.PVA)
 			{
-				var refBuf1_1 = (value.PVA.Location.DynamicParameterMax != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Location.DynamicParameterMax) : -1).GetBytes();
-				var refBuf1_2 = (value.PVA.Location.DynamicParameterMin != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Location.DynamicParameterMin) : -1).GetBytes();
-				var refBuf2_1 = (value.PVA.Velocity.DynamicParameterMax != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Velocity.DynamicParameterMax) : -1).GetBytes();
-				var refBuf2_2 = (value.PVA.Velocity.DynamicParameterMin != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Velocity.DynamicParameterMin) : -1).GetBytes();
-				var refBuf3_1 = (value.PVA.Acceleration.DynamicParameterMax != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Acceleration.DynamicParameterMax) : -1).GetBytes();
-				var refBuf3_2 = (value.PVA.Acceleration.DynamicParameterMin != null ? Core.Dynamic.Vectors.Values.IndexOf(value.PVA.Acceleration.DynamicParameterMin) : -1).GetBytes();
+				var refBuf1_1 = Core.Dynamic.Vectors.GetIndex(value.PVA.Location.DynamicParameterMax).GetBytes();
+				var refBuf1_2 = Core.Dynamic.Vectors.GetIndex(value.PVA.Location.DynamicParameterMin).GetBytes();
+				var refBuf2_1 = Core.Dynamic.Vectors.GetIndex(value.PVA.Velocity.DynamicParameterMax).GetBytes();
+				var refBuf2_2 = Core.Dynamic.Vectors.GetIndex(value.PVA.Velocity.DynamicParameterMin).GetBytes();
+				var refBuf3_1 = Core.Dynamic.Vectors.GetIndex(value.PVA.Acceleration.DynamicParameterMax).GetBytes();
+				var refBuf3_2 = Core.Dynamic.Vectors.GetIndex(value.PVA.Acceleration.DynamicParameterMin).GetBytes();
 
 				var mainBuf = Translation_PVA_Values.Create(value.PVA, 1.0f).GetBytes();
 				data.Add((mainBuf.Count() + refBuf1_1.Count() * 6).GetBytes());
@@ -47,7 +47,16 @@ namespace Effekseer.Binary
 			{
 				var easing = Utl.MathUtl.Easing((float)value.Easing.StartSpeed.Value, (float)value.Easing.EndSpeed.Value);
 
+				var refBuf1_1 = Core.Dynamic.Vectors.GetIndex(value.Easing.Start.DynamicParameterMax).GetBytes();
+				var refBuf1_2 = Core.Dynamic.Vectors.GetIndex(value.Easing.Start.DynamicParameterMin).GetBytes();
+				var refBuf2_1 = Core.Dynamic.Vectors.GetIndex(value.Easing.End.DynamicParameterMax).GetBytes();
+				var refBuf2_2 = Core.Dynamic.Vectors.GetIndex(value.Easing.End.DynamicParameterMin).GetBytes();
+
 				List<byte[]> _data = new List<byte[]>();
+				_data.Add(refBuf1_1);
+				_data.Add(refBuf1_2);
+				_data.Add(refBuf2_1);
+				_data.Add(refBuf2_2);
 				_data.Add(value.Easing.Start.GetBytes(1.0f));
 				_data.Add(value.Easing.End.GetBytes(1.0f));
 				_data.Add(BitConverter.GetBytes(easing[0]));

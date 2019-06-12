@@ -172,9 +172,19 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			assert(size == sizeof(easing_vector3d));
-			memcpy(&TranslationEasing, pos, size);
-			pos += size;
+
+			if (ef->GetVersion() >= 14)
+			{
+				assert(size == sizeof(ParameterTranslationEasing));
+				memcpy(&TranslationEasing, pos, size);
+				pos += size;
+			}
+			else
+			{
+				assert(size == sizeof(easing_vector3d));
+				memcpy(&TranslationEasing.location, pos, size);
+				pos += size;
+			}
 		}
 		else if (TranslationType == ParameterTranslationType_FCurve)
 		{
@@ -203,10 +213,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 			else if (TranslationType == ParameterTranslationType_Easing)
 			{
-				TranslationEasing.start.min *= m_effect->GetMaginification();
-				TranslationEasing.start.max *= m_effect->GetMaginification();
-				TranslationEasing.end.min *= m_effect->GetMaginification();
-				TranslationEasing.end.max *= m_effect->GetMaginification();
+				TranslationEasing.location.start.min *= m_effect->GetMaginification();
+				TranslationEasing.location.start.max *= m_effect->GetMaginification();
+				TranslationEasing.location.end.min *= m_effect->GetMaginification();
+				TranslationEasing.location.end.max *= m_effect->GetMaginification();
 			}
 			else if (TranslationType == ParameterTranslationType_FCurve)
 			{
@@ -470,10 +480,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 			else if (TranslationType == ParameterTranslationType_Easing)
 			{
-				TranslationEasing.start.max.z *= -1.0f;
-				TranslationEasing.start.min.z *= -1.0f;
-				TranslationEasing.end.max.z *= -1.0f;
-				TranslationEasing.end.min.z *= -1.0f;
+				TranslationEasing.location.start.max.z *= -1.0f;
+				TranslationEasing.location.start.min.z *= -1.0f;
+				TranslationEasing.location.end.max.z *= -1.0f;
+				TranslationEasing.location.end.min.z *= -1.0f;
 			}
 
 			// Rotation
