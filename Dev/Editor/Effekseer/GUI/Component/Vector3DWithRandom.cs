@@ -13,6 +13,8 @@ namespace Effekseer.GUI.Component
 		string id_r1 = "";
 		string id_r2 = "";
 		string id_c = "";
+		string id_d1 = "";
+		string id_d2 = "";
 
 		bool isPopupShown = false;
 
@@ -79,6 +81,8 @@ namespace Effekseer.GUI.Component
 			id_r1 = "###" + Manager.GetUniqueID().ToString();
 			id_r2 = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_d1 = "###" + Manager.GetUniqueID().ToString();
+			id_d2 = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -144,40 +148,13 @@ namespace Effekseer.GUI.Component
 
 			if (binding == null) return;
 
-			if (binding.IsDynamicParameterEnabled)
-			{
-				if(binding.DynamicParameterMin != null)
-				{
-					Manager.NativeManager.Text("Min : " + binding.DynamicParameterMin.Name.Value);
-				}
-				else
-				{
-					Manager.NativeManager.Text("Min : ");
-				}
-
-				Popup();
-
-				if (binding.DynamicParameterMax != null)
-				{
-					Manager.NativeManager.Text("Max : " + binding.DynamicParameterMax.Name.Value);
-				}
-				else
-				{
-					Manager.NativeManager.Text("Max : ");
-				}
-
-				Popup();
-
-				return;
-			}
-
 			valueChangingProp.Enable(binding);
 
 			float step = 1.0f;
 
 			if (binding != null)
 			{
-				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicParameterEnabled)
 				{
 					internalValue1[0] = binding.X.Center;
 					internalValue1[1] = binding.Y.Center;
@@ -202,7 +179,7 @@ namespace Effekseer.GUI.Component
 			var txt_r1 = string.Empty;
 			var txt_r2 = string.Empty;
 
-			if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+			if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicParameterEnabled)
 			{
 				txt_r1 = Resources.GetString("Mean");
 				txt_r2 = Resources.GetString("Deviation");
@@ -222,7 +199,7 @@ namespace Effekseer.GUI.Component
 			{
 				if (EnableUndo)
 				{
-					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicParameterEnabled)
 					{
 						binding.X.SetCenter(internalValue1[0], isActive);
 						binding.Y.SetCenter(internalValue1[1], isActive);
@@ -248,6 +225,21 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(txt_r1);
 
+			if (binding.IsDynamicParameterEnabled)
+			{
+				Manager.NativeManager.Text("Dynamic");
+				Manager.NativeManager.SameLine();
+
+				var nextParam = DynamicSelector.Select("Max", id_d1, binding.DynamicParameterMax, false, false);
+
+				if (binding.DynamicParameterMax != nextParam)
+				{
+					binding.SetDynamicParameterMax(nextParam);
+				}
+
+				Popup();
+			}
+
 			if (Manager.NativeManager.DragFloat3EfkEx(id2, internalValue2, step,
 				float.MinValue, float.MaxValue,
 				float.MinValue, float.MaxValue,
@@ -256,7 +248,7 @@ namespace Effekseer.GUI.Component
 			{
 				if (EnableUndo)
 				{
-					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude)
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicParameterEnabled)
 					{
 						binding.X.SetAmplitude(internalValue2[0], isActive);
 						binding.Y.SetAmplitude(internalValue2[1], isActive);
@@ -289,6 +281,22 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(txt_r2);
 
+			if (binding.IsDynamicParameterEnabled)
+			{
+				Manager.NativeManager.Text("Dynamic");
+				Manager.NativeManager.SameLine();
+
+				var nextParam = DynamicSelector.Select("Min", id_d2, binding.DynamicParameterMin, false, false);
+
+				if (binding.DynamicParameterMin != nextParam)
+				{
+					binding.SetDynamicParameterMin(nextParam);
+				}
+
+				Popup();
+			}
+
+
 			Manager.NativeManager.PopItemWidth();
 
 			valueChangingProp.Disable();
@@ -317,23 +325,7 @@ namespace Effekseer.GUI.Component
 
 				if (binding.IsDynamicParameterEnabled)
 				{
-					{
-						var nextParam = DynamicSelector.Select("Min", "_1", binding.DynamicParameterMin, false, false);
-
-						if (binding.DynamicParameterMin != nextParam)
-						{
-							binding.SetDynamicParameterMin(nextParam);
-						}
-					}
-
-					{
-						var nextParam = DynamicSelector.Select("Max", "_2", binding.DynamicParameterMax, false, false);
-
-						if (binding.DynamicParameterMax != nextParam)
-						{
-							binding.SetDynamicParameterMax(nextParam);
-						}
-					}
+					// None
 				}
 				else
 				{

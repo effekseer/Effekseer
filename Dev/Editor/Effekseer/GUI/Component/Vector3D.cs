@@ -58,6 +58,7 @@ namespace Effekseer.GUI.Component
 
 			var rand = new Random();
 			id = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -100,15 +101,6 @@ namespace Effekseer.GUI.Component
 
 			if (binding == null) return;
 
-			if (binding.DynamicParameter != null && binding.DynamicParameter.IsValid)
-			{
-				Manager.NativeManager.Text(binding.DynamicParameter.Name.Value);
-
-				Popup();
-
-				return;
-			}
-
 			valueChangingProp.Enable(binding);
 
 			float step = 1.0f;
@@ -142,6 +134,21 @@ namespace Effekseer.GUI.Component
 
 			isActive = isActive_Current;
 
+			if (binding.IsDynamicParameterEnabled)
+			{
+				Manager.NativeManager.Text("Dynamic");
+				Manager.NativeManager.SameLine();
+
+				var nextParam = DynamicSelector.Select("", "", binding.DynamicParameter, false, false);
+
+				if (binding.DynamicParameter != nextParam)
+				{
+					binding.SetDynamicParameter(nextParam);
+				}
+
+				Popup();
+			}
+
 			valueChangingProp.Disable();
 		}
 
@@ -149,9 +156,9 @@ namespace Effekseer.GUI.Component
 		{
 			if (isPopupShown) return;
 
-			if (Manager.NativeManager.BeginPopupContextItem(id))
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-				if (Manager.NativeManager.RadioButton("Default" + id + "_1", !binding.IsDynamicParameterEnabled))
+				if (Manager.NativeManager.RadioButton("Default" + id_c + "_1", !binding.IsDynamicParameterEnabled))
 				{
 					binding.IsDynamicParameterEnabled = false;
 					binding.SetDynamicParameter(null);
@@ -159,25 +166,15 @@ namespace Effekseer.GUI.Component
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.RadioButton("Dynamic" + id + "_2", binding.IsDynamicParameterEnabled))
+				if (Manager.NativeManager.RadioButton("Dynamic" + id_c + "_2", binding.IsDynamicParameterEnabled))
 				{
 					binding.IsDynamicParameterEnabled = true;
 				}
 
-				if(binding.IsDynamicParameterEnabled)
-				{
-					var nextParam = DynamicSelector.Select("", "", binding.DynamicParameter, false, false);
-
-					if (binding.DynamicParameter != nextParam)
-					{
-						binding.SetDynamicParameter(nextParam);
-					}
-				}
-
 				Manager.NativeManager.EndPopup();
-			}
 
-			isPopupShown = true;
+				isPopupShown = true;
+			}
 		}
 	}
 }
