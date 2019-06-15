@@ -70,6 +70,33 @@ namespace Effekseer.Data
 			return e;
 		}
 
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicInputCollection collection, bool isClip)
+		{
+			var e = doc.CreateElement(element_name);
+			for (int i = 0; i < collection.Values.Count; i++)
+			{
+				var e_node = SaveToElement(doc, collection.Values[i].GetType().Name, collection.Values[i], isClip);
+				if(e_node != null)
+				{
+					e.AppendChild(e_node);
+				}
+			}
+
+			return e;
+		}
+
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicVectorCollection collection, bool isClip)
+		{
+			var e = doc.CreateElement(element_name);
+			for (int i = 0; i < collection.Values.Count; i++)
+			{
+				var e_node = SaveToElement(doc, collection.Values[i].GetType().Name, collection.Values[i], isClip);
+				e.AppendChild(e_node);
+			}
+
+			return e;
+		}
+
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.String value, bool isClip)
 		{
 			if (value.DefaultValue == value.Value && !isClip) return null;
@@ -411,6 +438,54 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicInput value, bool isClip)
+		{
+			var e = doc.CreateElement(element_name);
+			var input = SaveToElement(doc, "Input", value.Input, isClip);
+			if (input != null)
+			{
+				e.AppendChild(input);
+			}
+
+			return e.ChildNodes.Count > 0 ? e : null;
+		}
+
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicVector value, bool isClip)
+		{
+			var e = doc.CreateElement(element_name);
+			var name = SaveToElement(doc, "Name", value.Name, isClip);
+			if (name != null)
+			{
+				e.AppendChild(name);
+			}
+
+			var x = SaveToElement(doc, "X", value.X, isClip);
+			if (x != null)
+			{
+				e.AppendChild(x);
+			}
+
+			var y = SaveToElement(doc, "Y", value.Y, isClip);
+			if (y != null)
+			{
+				e.AppendChild(y);
+			}
+
+			var z = SaveToElement(doc, "Z", value.Z, isClip);
+			if (z != null)
+			{
+				e.AppendChild(z);
+			}
+
+			var w = SaveToElement(doc, "W", value.W, isClip);
+			if (w != null)
+			{
+				e.AppendChild(w);
+			}
+
+			return e.ChildNodes.Count > 0 ? e : null;
+		}
+
 		public static void LoadObjectFromElement(XmlElement e, ref object o, bool isClip)
 		{
 			var o_type = o.GetType();
@@ -460,6 +535,32 @@ namespace Effekseer.Data
 
 				var node = children.Node.AddChild();
 				LoadFromElement(e_child, node, isClip);
+			}
+		}
+
+		public static void LoadFromElement(XmlElement e, Data.DynamicInputCollection collection, bool isClip)
+		{
+			collection.Values.Clear();
+
+			for (var i = 0; i < e.ChildNodes.Count; i++)
+			{
+				var e_child = e.ChildNodes[i] as XmlElement;
+				var element = new DynamicInput();
+				LoadFromElement(e_child, element, isClip);
+				collection.Values.Add(element);
+			}
+		}
+
+		public static void LoadFromElement(XmlElement e, Data.DynamicVectorCollection collection, bool isClip)
+		{
+			collection.Values.Clear();
+
+			for (var i = 0; i < e.ChildNodes.Count; i++)
+			{
+				var e_child = e.ChildNodes[i] as XmlElement;
+				var element = new DynamicVector(DynamicVector.DefaultName, collection);
+				LoadFromElement(e_child, element, isClip);
+				collection.Values.Add(element);
 			}
 		}
 
@@ -918,6 +1019,27 @@ namespace Effekseer.Data
 			if (e_g != null) import(value.G, e_g);
 			if (e_b != null) import(value.B, e_b);
 			if (e_a != null) import(value.A, e_a);
+		}
+
+		public static void LoadFromElement(XmlElement e, Data.DynamicInput value, bool isClip)
+		{
+			var e_input = e["Input"] as XmlElement;
+			if (e_input != null) LoadFromElement(e_input, value.Input, isClip);
+		}
+
+		public static void LoadFromElement(XmlElement e, Data.DynamicVector value, bool isClip)
+		{
+			var e_name = e["Name"] as XmlElement;
+			var e_x = e["X"] as XmlElement;
+			var e_y = e["Y"] as XmlElement;
+			var e_z = e["Z"] as XmlElement;
+			var e_w = e["W"] as XmlElement;
+
+			if (e_name != null) LoadFromElement(e_name, value.Name, isClip);
+			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
+			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
+			if (e_z != null) LoadFromElement(e_z, value.Z, isClip);
+			if (e_w != null) LoadFromElement(e_w, value.W, isClip);
 		}
 	}
 }

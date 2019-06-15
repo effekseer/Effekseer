@@ -599,6 +599,7 @@ namespace Effekseer
 			var behaviorElement = Data.IO.SaveObjectToElement(doc, "Behavior", EffectBehavior, false);
 			var cullingElement = Data.IO.SaveObjectToElement(doc, "Culling", Culling, false);
 			var globalElement = Data.IO.SaveObjectToElement(doc, "Global", Global, false);
+			var dynamicElement = Data.IO.SaveObjectToElement(doc, "Dynamic", Dynamic, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 
@@ -607,9 +608,10 @@ namespace Effekseer
 			if(behaviorElement != null) project_root.AppendChild(behaviorElement);
 			if (cullingElement != null) project_root.AppendChild(cullingElement);
 			if (globalElement != null) project_root.AppendChild(globalElement);
+			if (dynamicElement != null) project_root.AppendChild(dynamicElement);
 
 			// recording option (this option is stored in local or global)
-			if(recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Local)
+			if (recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Local)
 			{
 				var recordingElement = Data.IO.SaveObjectToElement(doc, "Recording", Recording, false);
 				if (recordingElement != null) project_root.AppendChild(recordingElement);
@@ -757,6 +759,13 @@ namespace Effekseer
 			{
 				var o = globalValues as object;
 				Data.IO.LoadObjectFromElement(globalElement as System.Xml.XmlElement, ref o, false);
+			}
+
+			var dynamicElement = doc["EffekseerProject"]["Dynamic"];
+			if (dynamicElement != null)
+			{
+				var o = dynamic_ as object;
+				Data.IO.LoadObjectFromElement(dynamicElement as System.Xml.XmlElement, ref o, false);
 			}
 
 			// recording option (this option is stored in local or global)

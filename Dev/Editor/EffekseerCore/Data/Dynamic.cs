@@ -18,6 +18,8 @@ namespace Effekseer.Data
 
 	public class DynamicVector
 	{
+		public const string DefaultName = "Param";
+
 		public Value.String Name { get; private set; }
 
 		public Value.String X { get; private set; }
@@ -153,7 +155,7 @@ namespace Effekseer.Data
 
 			var old_value = values;
 			var new_value = new List<DynamicVector>(values);
-			new_value.Add(new DynamicVector("Param", this));
+			new_value.Add(new DynamicVector(DynamicVector.DefaultName, this));
 
 
 			var cmd = new Command.DelegateCommand(
