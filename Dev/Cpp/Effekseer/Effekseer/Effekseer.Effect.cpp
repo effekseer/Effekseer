@@ -14,7 +14,7 @@
 #include "Effekseer.ModelLoader.h"
 #include "Effekseer.MaterialLoader.h"
 #include "Effekseer.DefaultEffectLoader.h"
-
+#include "Effekseer.BinaryReader.h"
 #include "Effekseer.Setting.h"
 
 #include <array>
@@ -337,21 +337,24 @@ Effect* Effect::Create(Manager* manager, const EFK_CHAR* path, float magnificati
 
 bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 {
-	uint8_t* pos = (uint8_t*)data;
+	// TODO share with an editor
+	const int32_t elementCountMax = 1024;
+	const int32_t dynamicBinaryCountMax = 102400;
+
+	uint8_t* pos = data;
+
+	BinaryReader<true> binaryReader(data, size);
 
 	// EFKS
 	int head = 0;
-	memcpy(&head, pos, sizeof(int));
+	binaryReader.Read(head);
 	if (memcmp(&head, "SKFE", 4) != 0)
 		return false;
-	pos += sizeof(int);
 
-	memcpy(&m_version, pos, sizeof(int));
-	pos += sizeof(int);
+	binaryReader.Read(m_version);
 
 	// Image
-	memcpy(&m_ImageCount, pos, sizeof(int));
-	pos += sizeof(int);
+	binaryReader.Read(m_ImageCount, 0, elementCountMax);
 
 	if (m_ImageCount > 0)
 	{
@@ -361,22 +364,19 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 		for (int i = 0; i < m_ImageCount; i++)
 		{
 			int length = 0;
-			memcpy(&length, pos, sizeof(int));
-			pos += sizeof(int);
+			binaryReader.Read(length, 0, elementCountMax);
 
 			m_ImagePaths[i] = new EFK_CHAR[length];
-			memcpy(m_ImagePaths[i], pos, length * sizeof(EFK_CHAR));
-			pos += length * sizeof(EFK_CHAR);
+			binaryReader.Read(m_ImagePaths[i], length);
 
-			m_pImages[i] = NULL;
+			m_pImages[i] = nullptr;
 		}
 	}
 
 	if (m_version >= 9)
 	{
 		// Image
-		memcpy(&m_normalImageCount, pos, sizeof(int));
-		pos += sizeof(int);
+		binaryReader.Read(m_normalImageCount, 0, elementCountMax);
 
 		if (m_normalImageCount > 0)
 		{
@@ -386,20 +386,17 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 			for (int i = 0; i < m_normalImageCount; i++)
 			{
 				int length = 0;
-				memcpy(&length, pos, sizeof(int));
-				pos += sizeof(int);
+				binaryReader.Read(length, 0, elementCountMax);
 
 				m_normalImagePaths[i] = new EFK_CHAR[length];
-				memcpy(m_normalImagePaths[i], pos, length * sizeof(EFK_CHAR));
-				pos += length * sizeof(EFK_CHAR);
+				binaryReader.Read(m_normalImagePaths[i], length);
 
-				m_normalImages[i] = NULL;
+				m_normalImages[i] = nullptr;
 			}
 		}
 
 		// Image
-		memcpy(&m_distortionImageCount, pos, sizeof(int));
-		pos += sizeof(int);
+		binaryReader.Read(m_distortionImageCount, 0, elementCountMax);
 
 		if (m_distortionImageCount > 0)
 		{
@@ -409,14 +406,12 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 			for (int i = 0; i < m_distortionImageCount; i++)
 			{
 				int length = 0;
-				memcpy(&length, pos, sizeof(int));
-				pos += sizeof(int);
+				binaryReader.Read(length, 0, elementCountMax);
 
 				m_distortionImagePaths[i] = new EFK_CHAR[length];
-				memcpy(m_distortionImagePaths[i], pos, length * sizeof(EFK_CHAR));
-				pos += length * sizeof(EFK_CHAR);
+				binaryReader.Read(m_distortionImagePaths[i], length);
 
-				m_distortionImages[i] = NULL;
+				m_distortionImages[i] = nullptr;
 			}
 		}
 	}
@@ -424,8 +419,7 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 	if (m_version >= 1)
 	{
 		// Sound
-		memcpy(&m_WaveCount, pos, sizeof(int));
-		pos += sizeof(int);
+		binaryReader.Read(m_WaveCount, 0, elementCountMax);
 
 		if (m_WaveCount > 0)
 		{
@@ -435,14 +429,12 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 			for (int i = 0; i < m_WaveCount; i++)
 			{
 				int length = 0;
-				memcpy(&length, pos, sizeof(int));
-				pos += sizeof(int);
+				binaryReader.Read(length, 0, elementCountMax);
 
 				m_WavePaths[i] = new EFK_CHAR[length];
-				memcpy(m_WavePaths[i], pos, length * sizeof(EFK_CHAR));
-				pos += length * sizeof(EFK_CHAR);
+				binaryReader.Read(m_WavePaths[i], length);
 
-				m_pWaves[i] = NULL;
+				m_pWaves[i] = nullptr;
 			}
 		}
 	}
@@ -450,8 +442,7 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 	if (m_version >= 6)
 	{
 		// Model
-		memcpy(&modelCount_, pos, sizeof(int));
-		pos += sizeof(int);
+		binaryReader.Read(modelCount_, 0, elementCountMax);
 
 		if (modelCount_ > 0)
 		{
@@ -461,14 +452,12 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 			for (int i = 0; i < modelCount_; i++)
 			{
 				int length = 0;
-				memcpy(&length, pos, sizeof(int));
-				pos += sizeof(int);
+				binaryReader.Read(length, 0, elementCountMax);
 
 				modelPaths_[i] = new EFK_CHAR[length];
-				memcpy(modelPaths_[i], pos, length * sizeof(EFK_CHAR));
-				pos += length * sizeof(EFK_CHAR);
+				binaryReader.Read(modelPaths_[i], length);
 
-				models_[i] = NULL;
+				models_[i] = nullptr;
 			}
 		}
 	}
@@ -476,9 +465,8 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 	if (m_version >= 15)
 	{
 		// material
-		memcpy(&materialCount_, pos, sizeof(int));
-		pos += sizeof(int);
-
+		binaryReader.Read(materialCount_, 0, elementCountMax);
+		
 		if (materialCount_ > 0)
 		{
 			materialPaths_ = new EFK_CHAR*[materialCount_];
@@ -487,14 +475,12 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 			for (int i = 0; i < materialCount_; i++)
 			{
 				int length = 0;
-				memcpy(&length, pos, sizeof(int));
-				pos += sizeof(int);
+				binaryReader.Read(length, 0, elementCountMax);
 
 				materialPaths_[i] = new EFK_CHAR[length];
-				memcpy(materialPaths_[i], pos, length * sizeof(EFK_CHAR));
-				pos += length * sizeof(EFK_CHAR);
+				binaryReader.Read(materialPaths_[i], length);
 
-				materials_[i] = NULL;
+				materials_[i] = nullptr;
 			}
 		}
 	}
@@ -503,25 +489,23 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 	{
 		// dynamic parameter
 		int32_t dynamicParameterCount = 0;
-
-		memcpy(&dynamicParameterCount, pos, sizeof(int));
-		pos += sizeof(int);
+		binaryReader.Read(dynamicParameterCount, 0, elementCountMax);
 
 		if (dynamicParameterCount > 0)
 		{
 			dynamicParameters.resize(dynamicParameterCount);
 
-			for (int dp = 0; dp < dynamicParameters.size(); dp++)
+			for (size_t dp = 0; dp < dynamicParameters.size(); dp++)
 			{
 				for (int i = 0; i < 4; i++)
 				{
 					int size_ = 0;
-					memcpy(&size_, pos, sizeof(int));
-					pos += sizeof(int);
+					binaryReader.Read(size_, 0, dynamicBinaryCountMax);
 
-					dynamicParameters[dp].Elements[i].Load(pos, size_);
+					auto data_ = pos + binaryReader.GetOffset();
+					dynamicParameters[dp].Elements[i].Load(data_, size_);
 
-					pos += size_;
+					binaryReader.AddOffset(size_);
 				}
 			}
 		}
@@ -529,18 +513,14 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 
 	if (m_version >= 13)
 	{
-		memcpy(&renderingNodesCount, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
-
-		memcpy(&renderingNodesThreshold, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		binaryReader.Read(renderingNodesCount, 0, elementCountMax);
+		binaryReader.Read(renderingNodesThreshold, 0, elementCountMax);
 	}
 
 	// magnification
 	if (m_version >= 2)
 	{
-		memcpy(&m_maginification, pos, sizeof(float));
-		pos += sizeof(float);
+		binaryReader.Read(m_maginification);
 	}
 
 	m_maginification *= mag;
@@ -548,8 +528,7 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 
 	if (m_version >= 11)
 	{
-		memcpy(&m_defaultRandomSeed, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		binaryReader.Read(m_defaultRandomSeed);
 	}
 	else
 	{
@@ -559,25 +538,24 @@ bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
 	// Culling
 	if (m_version >= 9)
 	{
-		memcpy(&(Culling.Shape), pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		binaryReader.Read(Culling.Shape);
 		if (Culling.Shape == CullingShape::Sphere)
 		{
-			memcpy(&(Culling.Sphere.Radius), pos, sizeof(float));
-			pos += sizeof(float);
-
-			memcpy(&(Culling.Location.X), pos, sizeof(float));
-			pos += sizeof(float);
-			memcpy(&(Culling.Location.Y), pos, sizeof(float));
-			pos += sizeof(float);
-			memcpy(&(Culling.Location.Z), pos, sizeof(float));
-			pos += sizeof(float);
+			binaryReader.Read(Culling.Sphere.Radius);
+			binaryReader.Read(Culling.Location.X);
+			binaryReader.Read(Culling.Location.Y);
+			binaryReader.Read(Culling.Location.Z);
 		}
 	}
 
-	// Nodes
-	m_pRoot = EffectNodeImplemented::Create(this, NULL, pos);
+	// Check
+	if (binaryReader.GetStatus() == BinaryReaderStatus::Failed)
+		return false;
 
+	// Nodes
+	auto nodeData = pos + binaryReader.GetOffset();
+	m_pRoot = EffectNodeImplemented::Create(this, nullptr, nodeData);
+	
 	return true;
 }
 
