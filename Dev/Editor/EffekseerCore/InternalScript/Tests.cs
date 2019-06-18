@@ -14,10 +14,17 @@ namespace Effekseer.InternalScript
 		public Tests()
 		{
 			Compiler compiler = new Compiler();
-			if (!Validate(compiler.Compile("1 + 2 + 3"))) throw new Exception();
-			if(!Validate(compiler.Compile("1 * 2 + 3"))) throw new Exception();
-			if (!Validate(compiler.Compile("1 * (2 + 3)"))) throw new Exception();
-			if (!Validate(compiler.Compile("@1"))) throw new Exception();
+			Validate(compiler.Compile("1 + 2 + 3"), null);
+			Validate(compiler.Compile("1 * 2 + 3"), null);
+			Validate(compiler.Compile("1 * (2 + 3)"), null);
+			Validate(compiler.Compile("@1"), null);
+			Validate(compiler.Compile("sin(1.0)"), null);
+			Validate(compiler.Compile("cos(2.0)"), null);
+			Validate(compiler.Compile(".1"), null);
+			Validate(compiler.Compile("..1"), typeof(InvalidTokenException));
+			Validate(compiler.Compile(".1.1"), typeof(InvalidTokenException));
+
+			/*
 
 			if (!Validate(compiler.Compile(".1"))) throw new Exception();
 			if (Validate(compiler.Compile("..1"))) throw new Exception();
@@ -25,11 +32,22 @@ namespace Effekseer.InternalScript
 
 			if (compiler.Compile("@P.x + @P.y").RunningPhase != RunningPhaseType.Local) throw new Exception();
 
+			*/
+
 		}
 
-		public bool Validate(CompileResult result)
+		public bool Validate(CompileResult result, Type type)
 		{
-			return result.Error == null;
+			if(type == null)
+			{
+				if (result.Error != null) throw result.Error;
+			}
+			else
+			{
+				if (result.Error == null) throw new Exception();
+				if(result.Error.GetType() != type) throw result.Error;
+			}
+			return true;
 		}
 	}
 }

@@ -34,6 +34,11 @@ namespace Effekseer.InternalScript
 
 	class LabelExpression : Expression
 	{
+		/// <summary>
+		/// Unimplemented
+		/// </summary>
+		Expression Parent = null;
+
 		public string Value;
 		public LabelExpression(string value)
 		{
@@ -41,6 +46,20 @@ namespace Effekseer.InternalScript
 		}
 	}
 
+	class FunctionExpression : Expression
+	{
+		public string Value;
+		public Expression[] Args = new Expression[0];
+	}
+
+	/// <summary>
+	/// Unimplemented
+	/// </summary>
+	class SubstitutionExpression : Expression
+	{
+		public Expression Target = null;
+		public Expression Value = null;
+	}
 
 	/// <summary>
 	/// 
@@ -48,7 +67,9 @@ namespace Effekseer.InternalScript
 	/// <remarks>
 	/// Expr = Term {* Term, / Term}
 	/// Term = Group {+ Group, - Group}
-	/// Group = (Expr), Number, Label
+	/// Group = (Expr), Number, Value
+	/// Value = Label {Arg}
+	/// Arg = (Expr, Expr...)
 	/// </remarks>
 	class Parser
 	{
@@ -196,7 +217,7 @@ namespace Effekseer.InternalScript
 					{
 						if (token == null)
 						{
-							throw new CompileException(string.Format("Invalid EOF"), token.Line);
+							throw new InvalidEOFException(token.Line);
 						}
 
 						throw new CompileException(string.Format("Invalid token {0}", token), token.Line);
@@ -215,8 +236,7 @@ namespace Effekseer.InternalScript
 				}
 				else if (token.Type == TokenType.Label)
 				{
-					Next();
-					var ret = new LabelExpression((string)token.Value);
+					var ret = Value();
 					ret.Line = token.Line;
 					return ret;
 				}
@@ -234,7 +254,72 @@ namespace Effekseer.InternalScript
 			}
 			else
 			{
-				throw new CompileException(string.Format("Invalid EOF"), token.Line);
+				throw new InvalidEOFException(token.Line);
+			}
+		}
+
+		Expression Value()
+		{
+			var token = Peek();
+
+			if (token != null)
+			{
+				var next = Next();
+
+				if(next == null || next.Type != TokenType.LeftParentheses)
+				{
+					var ret = new LabelExpression((string)token.Value);
+					ret.Line = token.Line;
+					return ret;
+				}
+				else
+				{
+					var ret = new FunctionExpression();
+					ret.Value = (string)token.Value;
+					ret.Args = Arg();
+					Next();
+					return ret;
+				}
+			}
+			else
+			{
+				throw new Exception();
+			}
+		}
+
+		Expression[] Arg()
+		{
+			List<Expression> exps = new List<Expression>();
+
+			var token = Peek();
+
+			if (token != null)
+			{
+				while(true)
+				{
+					var next = Next();
+					var expr = Expr();
+					var next2 = Peek();
+
+					if (next2 == null)
+					{
+						throw new InvalidEOFException(token.Line);
+					}
+					else if (next2.Type == TokenType.Comma)
+					{
+						exps.Add(expr);
+					}
+					else if (next2.Type == TokenType.RightParentheses)
+					{
+						exps.Add(expr);
+						return exps.ToArray();
+					}
+				}
+
+			}
+			else
+			{
+				throw new Exception();
 			}
 		}
 

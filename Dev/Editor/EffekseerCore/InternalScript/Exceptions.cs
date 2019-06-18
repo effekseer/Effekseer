@@ -27,4 +27,33 @@ namespace Effekseer.InternalScript
 		{
 		}
 	}
+
+	public class InvalidEOFException : CompileException
+	{
+		public InvalidEOFException(int line)
+			: base("", line)
+		{
+		}
+	}
+
+	public class ArgSizeException : CompileException
+	{
+		public ArgSizeException(int actual, int expected, int line)
+			: base("", line)
+		{
+			Actual = actual;
+			Expected = expected;
+		}
+
+		public int Actual = 0;
+		public int Expected = 0;
+	}
+
+	public class UnknownFunctionException : CompileException
+	{
+		public UnknownFunctionException(string message, int line)
+			: base(message, line)
+		{
+		}
+	}
 }

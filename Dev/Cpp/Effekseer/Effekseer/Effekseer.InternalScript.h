@@ -29,6 +29,9 @@ private:
 
 		UnaryAdd = 11,
 		UnarySub = 12,
+
+		Sine = 21,
+		Cos = 22,
 	};
 
 private:

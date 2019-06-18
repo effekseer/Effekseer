@@ -13,6 +13,8 @@ namespace Effekseer.InternalScript
 		Operator,
 		LeftParentheses,
 		RightParentheses,
+		Comma,
+		Equal,
 	}
 	class Token
 	{
@@ -83,6 +85,22 @@ namespace Effekseer.InternalScript
 				{
 					var token = new Token();
 					token.Type = TokenType.RightParentheses;
+					token.Line = index;
+					tokens.Add(token);
+					index++;
+				}
+				else if (type == ElementType.Comma)
+				{
+					var token = new Token();
+					token.Type = TokenType.Comma;
+					token.Line = index;
+					tokens.Add(token);
+					index++;
+				}
+				else if (type == ElementType.Equal)
+				{
+					var token = new Token();
+					token.Type = TokenType.Equal;
 					token.Line = index;
 					tokens.Add(token);
 					index++;
@@ -195,8 +213,10 @@ namespace Effekseer.InternalScript
 				if (type == ElementType.SpecialLetter) break;
 				if (type == ElementType.LeftParentheses) break;
 				if (type == ElementType.RightParentheses) break;
+				if (type == ElementType.Comma) break;
+				if (type == ElementType.Equal) break;
 
-				if(type == ElementType.Dot)
+				if (type == ElementType.Dot)
 				{
 					if(hasDot)
 					{
@@ -223,6 +243,8 @@ namespace Effekseer.InternalScript
 			if (c == ')') return ElementType.RightParentheses;
 			if (c == '@') return ElementType.SpecialLetter;
 			if (c == '.') return ElementType.Dot;
+			if (c == ',') return ElementType.Comma;
+			if (c == '=') return ElementType.Equal;
 			return ElementType.Other;
 		}
 
@@ -238,6 +260,8 @@ namespace Effekseer.InternalScript
 			LeftParentheses,
 			RightParentheses,
 			Dot,
+			Comma,
+			Equal,
 		}
 	}
 }

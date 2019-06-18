@@ -11,6 +11,8 @@ bool InternalScript::IsValidOperator(int value) const
 		return true;
 	if (11 <= value && value <= 12)
 		return true;
+	if (21 <= value && value <= 22)
+		return true;
 
 	return false;
 }
@@ -213,6 +215,10 @@ float InternalScript::Execute(const std::array<float, 4>& externals,
 				registers[index] = tempInputs[0] * tempInputs[1];
 			else if (type == OperatorType::Div)
 				registers[index] = tempInputs[0] / tempInputs[1];
+			else if (type == OperatorType::Sine)
+				registers[index] = sin(tempInputs[0]);
+			else if (type == OperatorType::Cos)
+				registers[index] = cos(tempInputs[0]);
 			else if (type == OperatorType::UnaryAdd)
 				registers[index] = tempInputs[0];
 			else if (type == OperatorType::UnarySub)

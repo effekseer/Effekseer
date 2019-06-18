@@ -16,6 +16,10 @@ namespace Effekseer.InternalScript
 
 		UnaryAdd = 11,
 		UnarySub = 12,
+
+		Sine = 21,
+		Cos = 22,
+
 	}
 
 	public enum RunningPhaseType : int
@@ -170,7 +174,7 @@ namespace Effekseer.InternalScript
 
 		void Compile(Expression expr)
 		{
-			if(expr is BinOpExpression)
+			if (expr is BinOpExpression)
 			{
 				var e = expr as BinOpExpression;
 				var o = new Operator();
@@ -200,6 +204,39 @@ namespace Effekseer.InternalScript
 				o.Outputs.Add(GetOutputName(e));
 				operators.Add(o);
 			}
+			else if (expr is FunctionExpression)
+			{
+				var e = expr as FunctionExpression;
+
+				if(e.Value == "sin")
+				{
+					if (e.Args.Count() != 1) throw new ArgSizeException(e.Args.Count(), 1, e.Line);
+
+					Compile(e.Args[0]);
+
+					var o = new Operator();
+					o.Type = OperatorType.Sine;
+					o.Inputs.Add(GetOutputName(e.Args[0]));
+					o.Outputs.Add(GetOutputName(e));
+					operators.Add(o);
+				}
+				else if (e.Value == "cos")
+				{
+					if (e.Args.Count() != 1) throw new ArgSizeException(e.Args.Count(), 1, e.Line);
+
+					Compile(e.Args[0]);
+
+					var o = new Operator();
+					o.Type = OperatorType.Cos;
+					o.Inputs.Add(GetOutputName(e.Args[0]));
+					o.Outputs.Add(GetOutputName(e));
+					operators.Add(o);
+				}
+				else
+				{
+					throw new UnknownFunctionException(e.Value, e.Line);
+				}
+			}
 			else if (expr is LabelExpression)
 			{
 				var e = expr as LabelExpression;
@@ -209,7 +246,7 @@ namespace Effekseer.InternalScript
 				}
 
 			}
-			else if(expr is NumberExpression)
+			else if (expr is NumberExpression)
 			{
 				var e = expr as NumberExpression;
 				var o = new Operator();
