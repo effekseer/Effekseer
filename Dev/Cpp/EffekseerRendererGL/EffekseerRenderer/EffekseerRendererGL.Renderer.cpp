@@ -436,6 +436,18 @@ void RendererImplemented::GenerateIndexData()
 //----------------------------------------------------------------------------------
 bool RendererImplemented::Initialize()
 {
+	GLint currentVAO = 0;
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+	}
+
+	int arrayBufferBinding = 0;
+	int elementArrayBufferBinding = 0;
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+
 	SetSquareMaxCount( m_squareMaxCount );
 
 	m_renderState = new RenderState( this );
@@ -644,6 +656,14 @@ bool RendererImplemented::Initialize()
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		GLExt::glBindVertexArray(currentVAO);
+	}
+
 	return true;
 }
 
@@ -669,7 +689,7 @@ bool RendererImplemented::BeginRendering()
 
 	::Effekseer::Matrix44::Mul( m_cameraProj, m_camera, m_proj );
 
-	// ステートを保存する
+	// store state
 	if(m_restorationOfStates)
 	{
 		m_originalState.blend = glIsEnabled(GL_BLEND);
@@ -702,7 +722,7 @@ bool RendererImplemented::BeginRendering()
 	m_renderState->Update( true );
 	m_currentTextures.clear();
 
-	// レンダラーリセット
+	// reset renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
 	GLCheckError();
@@ -786,6 +806,11 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetSquareMaxCount(int32_t count)
 {
+	int arrayBufferBinding = 0;
+	int elementArrayBufferBinding = 0;
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+
 	m_squareMaxCount = count;
 
 	if (m_vertexBuffer != nullptr) AddRef();
@@ -822,8 +847,11 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 	// 参照カウントの調整
 	Release();
 
-	// インデックスデータの生成
+	// generate index data
 	GenerateIndexData();
+
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
 }
 
 //----------------------------------------------------------------------------------
@@ -1308,6 +1336,8 @@ void RendererImplemented::ResetRenderState()
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
 }
+
+bool RendererImplemented::IsVertexArrayObjectSupported() const { return GLExt::IsSupportedVertexArray(); }
 
 //----------------------------------------------------------------------------------
 //

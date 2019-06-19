@@ -343,6 +343,8 @@ public:
 
 	OpenGLDeviceType GetDeviceType() const override { return m_deviceType; }
 
+	bool IsVertexArrayObjectSupported() const override;
+
 	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
 	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }

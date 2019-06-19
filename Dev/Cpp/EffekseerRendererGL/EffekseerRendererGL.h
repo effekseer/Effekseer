@@ -326,28 +326,28 @@ public:
 	\~english Get draw call count
 	\~japanese ドローコールの回数を取得する
 	*/
-	virtual int32_t GetDrawCallCount() const = 0;
+	virtual int32_t GetDrawCallCount() const;
 
 	/**
 	@brief
 	\~english Get the number of vertex drawn
 	\~japanese 描画された頂点数をリセットする
 	*/
-	virtual int32_t GetDrawVertexCount() const = 0;
+	virtual int32_t GetDrawVertexCount() const;
 
 	/**
 	@brief
 	\~english Reset draw call count
 	\~japanese ドローコールの回数をリセットする
 	*/
-	virtual void ResetDrawCallCount() = 0;
+	virtual void ResetDrawCallCount();
 
 	/**
 	@brief
 	\~english Reset the number of vertex drawn
 	\~japanese 描画された頂点数をリセットする
 	*/
-	virtual void ResetDrawVertexCount() = 0;
+	virtual void ResetDrawVertexCount();
 
 	/**
 	@brief	描画モードを設定する。
@@ -472,9 +472,15 @@ public:
 	@brief	
 	\~english get a device type
 	\~japanese デバイスの種類を取得する。
-
 	*/
 	virtual OpenGLDeviceType GetDeviceType() const = 0;
+
+	/**
+	@brief
+	\~english get whether VAO is supported
+	\~japanese VAOがサポートされているか取得する。
+	*/
+	virtual bool IsVertexArrayObjectSupported() const = 0;
 };
 
 //----------------------------------------------------------------------------------

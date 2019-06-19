@@ -10,7 +10,7 @@
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
 #include "EffekseerRendererGL.VertexArray.h"
-
+#include "EffekseerRendererGL.GLExtension.h"
 #include <string>
 
 //-----------------------------------------------------------------------------------
@@ -535,6 +535,13 @@ ModelRenderer::ModelRenderer(
 			);
 	}
 
+	GLint currentVAO = 0;
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+	}
+
 	m_va[0] = VertexArray::Create(renderer, m_shader_lighting_texture_normal, nullptr, nullptr);
 	m_va[1] = VertexArray::Create(renderer, m_shader_lighting_normal, nullptr, nullptr);
 
@@ -547,6 +554,10 @@ ModelRenderer::ModelRenderer(
 	m_va[6] = VertexArray::Create(renderer, m_shader_distortion_texture, nullptr, nullptr);
 	m_va[7] = VertexArray::Create(renderer, m_shader_distortion, nullptr, nullptr);
 
+	if (GLExt::IsSupportedVertexArray())
+	{
+		GLExt::glBindVertexArray(currentVAO);
+	}
 }
 
 //----------------------------------------------------------------------------------
