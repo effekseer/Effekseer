@@ -501,7 +501,7 @@ struct ParameterRendererCommon
 		File,
 	};
 
-	RendererMaterialType MaterialType = RendererMaterialType::File;
+	RendererMaterialType MaterialType = RendererMaterialType::Default;
 
 	/**
 		@brief	texture index in MaterialType::Default
