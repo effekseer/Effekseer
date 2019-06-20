@@ -43,24 +43,30 @@ public:
 	virtual void Destroy() = 0;
 
 	/**
-		@brief	メモリ確保関数を取得する。
+		@brief
+		\~English get an allocator
+		\~Japanese メモリ確保関数を取得する。
 	*/
 	virtual MallocFunc GetMallocFunc() const = 0;
 
 	/**
-		@brief	メモリ確保関数を設定する。
+		\~English specify an allocator
+		\~Japanese メモリ確保関数を設定する。
 	*/
-	virtual void SetMallocFunc( MallocFunc func ) = 0;
+	virtual void SetMallocFunc(MallocFunc func) = 0;
 
 	/**
-		@brief	メモリ破棄関数を取得する。
+		@brief
+		\~English get a deallocator
+		\~Japanese メモリ破棄関数を取得する。
 	*/
 	virtual FreeFunc GetFreeFunc() const = 0;
 
 	/**
-		@brief	メモリ破棄関数を設定する。
+		\~English specify a deallocator
+		\~Japanese メモリ破棄関数を設定する。
 	*/
-	virtual void SetFreeFunc( FreeFunc func ) = 0;
+	virtual void SetFreeFunc(FreeFunc func) = 0;
 
 	/**
 		@brief	ランダム関数を取得する。

@@ -181,7 +181,7 @@ protected:
 	//! backup to reload on rendering thread
 	std::unique_ptr<EffectReloadingBackup> reloadingBackup;
 
-	bool LoadBody(uint8_t* data, int32_t size, float mag);
+	bool LoadBody(const uint8_t* data, int32_t size, float mag);
 
 	void ResetReloadingBackup();
 

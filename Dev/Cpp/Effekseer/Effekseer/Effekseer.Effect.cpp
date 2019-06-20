@@ -99,7 +99,8 @@ static std::u16string getFilenameWithoutExt(const char16_t* path)
 bool EffectFactory::LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath)
 {
 	auto effect_ = static_cast<EffectImplemented*>(effect);
-	return effect_->LoadBody((uint8_t*)data, size, magnification);
+	auto data_ = static_cast<const uint8_t*>(data);
+	return effect_->LoadBody(data_, size, magnification);
 }
 
 void EffectFactory::SetTexture(Effect* effect, int32_t index, TextureType type, TextureData* data)
@@ -335,15 +336,15 @@ Effect* Effect::Create(Manager* manager, const EFK_CHAR* path, float magnificati
 	return effect;
 }
 
-bool EffectImplemented::LoadBody(uint8_t* data, int32_t size, float mag)
+bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 {
 	// TODO share with an editor
 	const int32_t elementCountMax = 1024;
 	const int32_t dynamicBinaryCountMax = 102400;
 
-	uint8_t* pos = data;
+	uint8_t* pos = const_cast<uint8_t*>(data);
 
-	BinaryReader<true> binaryReader(data, size);
+	BinaryReader<true> binaryReader(const_cast<uint8_t*>(data), size);
 
 	// EFKS
 	int head = 0;

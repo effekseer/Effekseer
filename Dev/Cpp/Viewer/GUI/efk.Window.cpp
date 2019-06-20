@@ -2,6 +2,7 @@
 #include "efk.Window.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "../Effekseer/Effekseer/Effekseer.DefaultFile.h"
+#include "../Effekseer/Effekseer/Effekseer.CustomAllocator.h"
 
 #ifdef __APPLE__
 #include <OpenGL/gl3.h>
@@ -85,6 +86,18 @@ namespace efk
 
 	bool Window::Initialize(const char16_t* title, int32_t width, int32_t height, bool isSRGBMode, DeviceType deviceType)
 	{
+		Effekseer::CustomVector<int> v;
+		v.push_back(10);
+
+		Effekseer::CustomList<int> l;
+		l.push_back(10);
+
+		Effekseer::CustomSet<int> s;
+		s.insert(10);
+
+		Effekseer::CustomMap<int, int> m;
+		m[1] = 10;
+
 		if (!glfwInit())
 		{
 			return false;

@@ -4,6 +4,8 @@
 //
 //----------------------------------------------------------------------------------
 #include "Effekseer.InstanceGlobal.h"
+#include "Effekseer.CustomAllocator.h"
+#include <assert.h>
 
 //----------------------------------------------------------------------------------
 //
@@ -13,6 +15,15 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+
+void* InstanceGlobal::operator new(size_t size)
+{
+	assert(sizeof(InstanceGlobal) == size);
+	return GetMallocFunc()(size);
+}
+
+void InstanceGlobal::operator delete(void* p) {GetFreeFunc()(p, sizeof(InstanceGlobal)); }
+
 InstanceGlobal::InstanceGlobal()
 	: m_instanceCount	( 0 )
 	, m_updatedFrame	( 0 )

@@ -44,6 +44,12 @@ private:
 
 	std::array<float, 4> dynamicInputParameters;
 
+	//! placement new
+	static void* operator new(size_t size);
+
+	//! placement delete
+	static void operator delete(void* p);
+
 	InstanceGlobal();
 
 	virtual ~InstanceGlobal();

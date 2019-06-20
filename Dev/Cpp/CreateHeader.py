@@ -28,6 +28,7 @@ class CreateHeader:
 
 effekseerHeader = CreateHeader()
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Base.Pre.h')
+effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.CustomAllocator.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Vector2D.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Vector3D.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Color.h')

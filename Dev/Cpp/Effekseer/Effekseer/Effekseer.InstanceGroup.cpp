@@ -9,12 +9,24 @@
 #include "Effekseer.Instance.h"
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
+#include "Effekseer.CustomAllocator.h"
+#include <assert.h>
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+
+void* InstanceGroup::operator new(size_t size)
+{
+	assert(sizeof(InstanceGroup) == size);
+	return GetMallocFunc()(size);
+}
+
+void InstanceGroup::operator delete(void* p) { GetFreeFunc()(p, sizeof(InstanceGroup)); }
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

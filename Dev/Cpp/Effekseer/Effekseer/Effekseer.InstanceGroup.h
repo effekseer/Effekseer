@@ -38,6 +38,12 @@ private:
 	IntrusiveList<Instance> m_instances;
 	IntrusiveList<Instance> m_removingInstances;
 
+		//! placement new
+	static void* operator new(size_t size);
+
+	//! placement delete
+	static void operator delete(void* p);
+
 	InstanceGroup( Manager* manager, EffectNode* effectNode, InstanceContainer* container, InstanceGlobal* global );
 
 	~InstanceGroup();

@@ -202,6 +202,9 @@
     <ClInclude Include="Effekseer\Effekseer.BinaryReader.h">
       <Filter>Effekseer\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Effekseer\Effekseer.CustomAllocator.h">
+      <Filter>Effekseer\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp">
@@ -308,6 +311,9 @@
     </ClCompile>
     <ClCompile Include="Effekseer\Effekseer.InternalScript.cpp">
       <Filter>Effekseer\InternalScript</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Effekseer.CustomAllocator.cpp">
+      <Filter>Effekseer\Utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

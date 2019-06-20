@@ -10,6 +10,7 @@
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Matrix44.h"
 #include "Culling/Culling3D.h"
+#include "Effekseer.CustomAllocator.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -146,9 +147,11 @@ private:
 	// 破棄待ちオブジェクト
 	std::map<Handle,DrawSet>	m_RemovingDrawSets[2];
 
-	/* 描画中オブジェクト */
-	std::vector<DrawSet>		m_renderingDrawSets;
-	std::map<Handle,DrawSet>	m_renderingDrawSetMaps;
+	//! objects on rendering
+	CustomVector<DrawSet> m_renderingDrawSets;
+
+	//! objects on rendering
+	CustomMap<Handle,DrawSet> m_renderingDrawSetMaps;
 
 	// mutex for rendering
 	std::mutex					m_renderingMutex;
@@ -247,34 +250,16 @@ public:
 	*/
 	uint32_t GetSequenceNumber() const;
 
-	/**
-		@brief	メモリ確保関数取得
-	*/
 	MallocFunc GetMallocFunc() const override;
 
-	/**
-		@brief	メモリ確保関数設定
-	*/
 	void SetMallocFunc( MallocFunc func ) override;
 
-	/**
-		@brief	メモリ破棄関数取得
-	*/
 	FreeFunc GetFreeFunc() const override;
 
-	/**
-		@brief	メモリ破棄関数設定
-	*/
 	void SetFreeFunc( FreeFunc func ) override;
 
-	/**
-		@brief	ランダム関数取得
-	*/
 	RandFunc GetRandFunc() const override;
 
-	/**
-		@brief	ランダム関数設定
-	*/
 	void SetRandFunc( RandFunc func ) override;
 
 	/**

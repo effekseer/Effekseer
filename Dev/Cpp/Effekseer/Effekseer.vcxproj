@@ -169,6 +169,7 @@
     <ClInclude Include="Effekseer\Effekseer.Client.h" />
     <ClInclude Include="Effekseer\Effekseer.ClientImplemented.h" />
     <ClInclude Include="Effekseer\Effekseer.Color.h" />
+    <ClInclude Include="Effekseer\Effekseer.CustomAllocator.h" />
     <ClInclude Include="Effekseer\Effekseer.DefaultEffectLoader.h" />
     <ClInclude Include="Effekseer\Effekseer.DefaultFile.h" />
     <ClInclude Include="Effekseer\Effekseer.Effect.h" />
@@ -224,6 +225,7 @@
     <ClCompile Include="Effekseer\Culling\Culling3D.WorldInternal.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Client.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Color.cpp" />
+    <ClCompile Include="Effekseer\Effekseer.CustomAllocator.cpp" />
     <ClCompile Include="Effekseer\Effekseer.DefaultEffectLoader.cpp" />
     <ClCompile Include="Effekseer\Effekseer.DefaultFile.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Effect.cpp" />
