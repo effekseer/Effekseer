@@ -15,6 +15,8 @@ namespace Effekseer.InternalScript
 		RightParentheses,
 		Comma,
 		Equal,
+		Dot,
+		NewLine,
 	}
 	class Token
 	{
@@ -51,6 +53,13 @@ namespace Effekseer.InternalScript
 		{
 			List<Token> tokens = new List<Token>();
 
+			// check special case
+			// ..
+			if(code.Contains(".."))
+			{
+				throw new InvalidTokenException(".", code.IndexOf(".."));
+			}
+
 			int index = 0;
 		
 			while (index < code.Length)
@@ -58,7 +67,26 @@ namespace Effekseer.InternalScript
 				var c = code[index];
 				var type = GetElemenetType(c);
 
-				if (StartLabel(code, index))
+				if(type == ElementType.Connect)
+				{
+					if(index + 1 < code.Length && GetElemenetType(code[index]) == ElementType.NewLine)
+					{
+						index += 2;
+					}
+					else
+					{
+						index += 1;
+					}
+				}
+				else if(type == ElementType.NewLine)
+				{
+					var token = new Token();
+					token.Type = TokenType.NewLine;
+					token.Line = index;
+					tokens.Add(token);
+					index++;
+				}
+				else if (StartLabel(code, index))
 				{
 					var token = ParseLabel(code, ref index);
 					tokens.Add(token);
@@ -105,6 +133,14 @@ namespace Effekseer.InternalScript
 					tokens.Add(token);
 					index++;
 				}
+				else if (type == ElementType.Dot)
+				{
+					var token = new Token();
+					token.Type = TokenType.Dot;
+					token.Line = index;
+					tokens.Add(token);
+					index++;
+				}
 				else
 				{
 					if(type == ElementType.Space)
@@ -133,17 +169,24 @@ namespace Effekseer.InternalScript
 			var type = GetElemenetType(c);
 			return type == ElementType.Alphabet || type == ElementType.SpecialLetter;
 		}
+
 		bool StartOperator(string code, int index)
 		{
 			var c = code[index];
 			var type = GetElemenetType(c);
 			return type == ElementType.Operator;
 		}
+
 		bool StartDigit(string code, int index)
 		{
 			var c = code[index];
 			var type = GetElemenetType(c);
-			return type == ElementType.Digit || type == ElementType.Dot;
+
+			if (type == ElementType.Digit) return true;
+
+			if (type == ElementType.Dot && index < code.Count() - 1 && GetElemenetType(code[index + 1]) == ElementType.Digit) return true;
+
+			return false;
 		}
 
 		Token ParseLabel(string code, ref int index)
@@ -159,7 +202,8 @@ namespace Effekseer.InternalScript
 				var c = code[index];
 				var type = GetElemenetType(c);
 
-				if (type != ElementType.Alphabet && type != ElementType.Digit && type != ElementType.SpecialLetter && type != ElementType.Dot) break;
+				// if (type != ElementType.Alphabet && type != ElementType.Digit && type != ElementType.SpecialLetter && type != ElementType.Dot) break;
+				if (type != ElementType.Alphabet && type != ElementType.Digit && type != ElementType.SpecialLetter) break;
 
 				str += c;
 				index++;
@@ -215,6 +259,8 @@ namespace Effekseer.InternalScript
 				if (type == ElementType.RightParentheses) break;
 				if (type == ElementType.Comma) break;
 				if (type == ElementType.Equal) break;
+				if (type == ElementType.NewLine) break;
+				if (type == ElementType.Connect) break;
 
 				if (type == ElementType.Dot)
 				{
@@ -229,12 +275,23 @@ namespace Effekseer.InternalScript
 				index++;
 			}
 			
-			token.Value = float.Parse(str);
+			try
+			{
+				token.Value = float.Parse(str);
+			}
+			catch
+			{
+				throw new InvalidTokenException(".", index);
+			}
+
 			return token;
 		}
 
 		ElementType GetElemenetType(Char c)
 		{
+			if (c == '\n')
+				return ElementType.NewLine;
+			if (c == '\\') return ElementType.Connect;
 			if (Char.IsLetter(c)) return ElementType.Alphabet;
 			if (Char.IsDigit(c)) return ElementType.Digit;
 			if (Char.IsWhiteSpace(c)) return ElementType.Space;
@@ -245,6 +302,7 @@ namespace Effekseer.InternalScript
 			if (c == '.') return ElementType.Dot;
 			if (c == ',') return ElementType.Comma;
 			if (c == '=') return ElementType.Equal;
+
 			return ElementType.Other;
 		}
 
@@ -262,6 +320,8 @@ namespace Effekseer.InternalScript
 			Dot,
 			Comma,
 			Equal,
+			NewLine,
+			Connect,
 		}
 	}
 }

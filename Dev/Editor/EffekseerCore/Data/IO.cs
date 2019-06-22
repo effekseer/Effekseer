@@ -459,28 +459,10 @@ namespace Effekseer.Data
 				e.AppendChild(name);
 			}
 
-			var x = SaveToElement(doc, "X", value.X, isClip);
-			if (x != null)
+			var code = SaveToElement(doc, "Code", value.Code, isClip);
+			if (code != null)
 			{
-				e.AppendChild(x);
-			}
-
-			var y = SaveToElement(doc, "Y", value.Y, isClip);
-			if (y != null)
-			{
-				e.AppendChild(y);
-			}
-
-			var z = SaveToElement(doc, "Z", value.Z, isClip);
-			if (z != null)
-			{
-				e.AppendChild(z);
-			}
-
-			var w = SaveToElement(doc, "W", value.W, isClip);
-			if (w != null)
-			{
-				e.AppendChild(w);
+				e.AppendChild(code);
 			}
 
 			return e.ChildNodes.Count > 0 ? e : null;
@@ -1030,16 +1012,10 @@ namespace Effekseer.Data
 		public static void LoadFromElement(XmlElement e, Data.DynamicVector value, bool isClip)
 		{
 			var e_name = e["Name"] as XmlElement;
-			var e_x = e["X"] as XmlElement;
-			var e_y = e["Y"] as XmlElement;
-			var e_z = e["Z"] as XmlElement;
-			var e_w = e["W"] as XmlElement;
+			var e_x = e["Code"] as XmlElement;
 
 			if (e_name != null) LoadFromElement(e_name, value.Name, isClip);
-			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
-			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
-			if (e_z != null) LoadFromElement(e_z, value.Z, isClip);
-			if (e_w != null) LoadFromElement(e_w, value.W, isClip);
+			if (e_x != null) LoadFromElement(e_x, value.Code, isClip);
 		}
 	}
 }

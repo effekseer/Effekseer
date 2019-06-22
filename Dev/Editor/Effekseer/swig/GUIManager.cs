@@ -871,6 +871,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool InputTextMultiline(string label, string text) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_InputTextMultiline(swigCPtr, label, text);
+    return ret;
+  }
+
   public string GetInputTextResult() {
     string ret = System.Runtime.InteropServices.Marshal.PtrToStringUni(EffekseerNativePINVOKE.GUIManager_GetInputTextResult(swigCPtr));
     return ret;

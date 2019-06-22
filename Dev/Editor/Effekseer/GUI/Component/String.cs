@@ -91,19 +91,39 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Enable(binding);
 
-			if (Manager.NativeManager.InputText(id, initialValue))
+			if(binding.IsMultiLine)
 			{
-				var v = Manager.NativeManager.GetInputTextResult();
+				if (Manager.NativeManager.InputTextMultiline(id, initialValue))
+				{
+					var v = Manager.NativeManager.GetInputTextResult();
 
-				if (EnableUndo)
-				{
-					internalValue = v;
-				}
-				else
-				{
-					throw new Exception();
+					if (EnableUndo)
+					{
+						internalValue = v;
+					}
+					else
+					{
+						throw new Exception();
+					}
 				}
 			}
+			else
+			{
+				if (Manager.NativeManager.InputText(id, initialValue))
+				{
+					var v = Manager.NativeManager.GetInputTextResult();
+
+					if (EnableUndo)
+					{
+						internalValue = v;
+					}
+					else
+					{
+						throw new Exception();
+					}
+				}
+			}
+
 
 			var isActive_Current = Manager.NativeManager.IsItemActive();
 
