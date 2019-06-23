@@ -512,16 +512,13 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 
 			for (size_t dp = 0; dp < dynamicParameters.size(); dp++)
 			{
-				for (int i = 0; i < 4; i++)
-				{
-					int size_ = 0;
-					binaryReader.Read(size_, 0, dynamicBinaryCountMax);
+				int size_ = 0;
+				binaryReader.Read(size_, 0, dynamicBinaryCountMax);
 
-					auto data_ = pos + binaryReader.GetOffset();
-					dynamicParameters[dp].Elements[i].Load(data_, size_);
+				auto data_ = pos + binaryReader.GetOffset();
+				dynamicParameters[dp].Load(data_, size_);
 
-					binaryReader.AddOffset(size_);
-				}
+				binaryReader.AddOffset(size_);
 			}
 		}
 	}

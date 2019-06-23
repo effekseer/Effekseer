@@ -6249,6 +6249,22 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_InputText__
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_InputTextMultiline___(void * jarg1, char16_t * jarg2, char16_t * jarg3) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  arg3 = (char16_t *)jarg3; 
+  result = (bool)(arg1)->InputTextMultiline((char16_t const *)arg2,(char16_t const *)arg3);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT char16_t * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetInputTextResult___(void * jarg1) {
   char16_t * jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;

@@ -36,6 +36,14 @@ namespace Effekseer.InternalScript
 		}
 	}
 
+	public class InvalidOperationException :CompileException
+	{
+		public InvalidOperationException(int line)
+			: base("", line)
+		{
+		}
+	}
+
 	public class ArgSizeException : CompileException
 	{
 		public ArgSizeException(int actual, int expected, int line)
@@ -49,9 +57,25 @@ namespace Effekseer.InternalScript
 		public int Expected = 0;
 	}
 
+	public class InvalidSubstitution : CompileException
+	{
+		public InvalidSubstitution(int line)
+		: base("", line)
+		{
+		}
+	}
+
 	public class UnknownFunctionException : CompileException
 	{
 		public UnknownFunctionException(string message, int line)
+			: base(message, line)
+		{
+		}
+	}
+
+	public class UnknownValueException : CompileException
+	{
+		public UnknownValueException(string message, int line)
 			: base(message, line)
 		{
 		}

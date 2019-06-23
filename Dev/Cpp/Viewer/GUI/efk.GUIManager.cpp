@@ -1423,6 +1423,21 @@ namespace efk
 		return ret;
 	}
 
+	bool GUIManager::InputTextMultiline(const char16_t* label, const char16_t* text)
+	{
+		auto text_ = utf8str<1024>(text);
+
+		char buf[512];
+		memcpy(buf, text_.data, std::min((int32_t)text_.size, 500));
+		buf[std::min((int32_t)text_.size, 500)] = 0;
+
+		auto ret = ImGui::InputTextMultiline(utf8str<512>(label), buf, 512);
+
+		inputTextResult = utf8_to_utf16(buf);
+
+		return ret;
+	}
+
 	const char16_t* GUIManager::GetInputTextResult()
 	{
 		return inputTextResult.c_str();

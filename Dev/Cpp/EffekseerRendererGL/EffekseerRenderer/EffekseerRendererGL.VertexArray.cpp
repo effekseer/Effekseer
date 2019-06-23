@@ -99,8 +99,11 @@ void VertexArray::Init()
 		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer->GetInterface());
 	}
 
-	m_shader->EnableAttribs();
-	m_shader->SetVertex();
+	if (m_vertexBuffer != nullptr)
+	{
+		m_shader->EnableAttribs();
+		m_shader->SetVertex();
+	}
 
 	GLExt::glBindVertexArray(0);
 

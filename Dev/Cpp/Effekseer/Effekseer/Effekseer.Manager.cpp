@@ -1407,14 +1407,11 @@ void ManagerImplemented::UpdateHandle( DrawSet& drawSet, float deltaFrame )
 
 	for (size_t i = 0; i < e->dynamicParameters.size(); i++)
 	{
-		for (size_t j = 0; j < 4; j++)
-		{
-			if (e->dynamicParameters[i].Elements[j].GetRunningPhase() != InternalScript::RunningPhaseType::Global)
-				continue;
+		if (e->dynamicParameters[i].GetRunningPhase() != InternalScript::RunningPhaseType::Global)
+			continue;
 
-			drawSet.GlobalPointer->dynamicParameters[i][j] =
-				e->dynamicParameters[i].Elements[j].Execute(drawSet.GlobalPointer->dynamicInputParameters, globals, std::array<float, 5>());
-		}
+		drawSet.GlobalPointer->dynamicParameters[i] =
+			e->dynamicParameters[i].Execute(drawSet.GlobalPointer->dynamicInputParameters, globals, std::array<float, 5>());
 	}
 
 	if (!drawSet.IsPreupdated)

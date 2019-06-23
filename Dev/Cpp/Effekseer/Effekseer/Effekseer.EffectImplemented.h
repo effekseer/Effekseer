@@ -7,8 +7,8 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.Effect.h"
-#include "Effekseer.Vector3D.h"
 #include "Effekseer.InternalScript.h"
+#include "Effekseer.Vector3D.h"
 #include <assert.h>
 #include <memory>
 
@@ -85,12 +85,6 @@ public:
 	HolderCollection<MaterialData*> materials;
 };
 
-class DynamicParameter
-{
-public:
-	std::array<InternalScript, 4> Elements;
-};
-
 /**
 	@brief	Effect parameter
 */
@@ -140,7 +134,7 @@ protected:
 	std::basic_string<EFK_CHAR> m_materialPath;
 
 	//! dynamic parameters
-	std::vector<DynamicParameter> dynamicParameters;
+	std::vector<InternalScript> dynamicParameters;
 
 	int32_t renderingNodesCount = 0;
 	int32_t renderingNodesThreshold = 0;
