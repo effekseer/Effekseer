@@ -445,12 +445,9 @@ namespace Effekseer.Binary
 
 			foreach (var value in Core.Dynamic.Vectors.Values)
 			{
-				var cx = compiler.Compile(value.X.Value);
-				var cy = compiler.Compile(value.Y.Value);
-				var cz = compiler.Compile(value.Z.Value);
-				var cw = compiler.Compile(value.W.Value);
+				var cx = compiler.Compile(value.Code.Value);
 
-				var cs = new []{ cx, cy, cz, cw };
+				var cs = new []{ cx };
 
 				foreach(var c in cs)
 				{

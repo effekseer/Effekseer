@@ -34,11 +34,6 @@ namespace Effekseer.InternalScript
 
 	class LabelExpression : Expression
 	{
-		/// <summary>
-		/// Unimplemented
-		/// </summary>
-		Expression Parent = null;
-
 		public string Value;
 		public LabelExpression(string value)
 		{
@@ -50,6 +45,12 @@ namespace Effekseer.InternalScript
 	{
 		public string Value;
 		public Expression[] Args = new Expression[0];
+	}
+
+	class AttributeExpression : Expression
+	{
+		public Expression Value = null;
+		public string Attribute = null;
 	}
 
 	/// <summary>
@@ -67,27 +68,71 @@ namespace Effekseer.InternalScript
 	/// <remarks>
 	/// Expr = Term {* Term, / Term}
 	/// Term = Group {+ Group, - Group}
-	/// Group = (Expr), Number, Value
+	/// Group = (Expr), Number, Value {.Value}
 	/// Value = Label {Arg}
 	/// Arg = (Expr, Expr...)
+	/// Sentence = Group {= Group} { NL Sentence }
 	/// </remarks>
 	class Parser
 	{
 		List<Token> tokens = null;
 		int index = 0;
 
-		public Expression Parse(List<Token> tokens)
+		public Expression[] Parse(List<Token> tokens)
 		{
 			this.tokens = tokens;
 			index = 0;
-			return Expr();
+			return Sentence();
+		}
+
+		Expression[] Sentence()
+		{
+			List<Expression> sentences = new List<Expression>();
+
+			while (true)
+			{
+				var empty = Peek();
+				if (empty == null) break;
+				if(empty.Type == TokenType.NewLine)
+				{
+					Next();
+					continue;
+				}
+
+				var lhs = Expr();
+
+				var token = Peek();
+
+				if (token != null)
+				{
+					if(token.Type == TokenType.Equal)
+					{
+						Next();
+						var rhs = Expr();
+						var substitution = new SubstitutionExpression();
+						substitution.Target = lhs;
+						substitution.Value = rhs;
+						sentences.Add(substitution);
+					}
+					else
+					{
+						sentences.Add(lhs);
+					}
+				}
+				else
+				{
+					sentences.Add(lhs);
+					break;
+				}
+			}
+
+			return sentences.ToArray();
 		}
 
 		Expression Expr()
 		{
 			var lhs = Term();
 			
-
 			while (true)
 			{
 				var token = Peek();
@@ -126,9 +171,13 @@ namespace Effekseer.InternalScript
 					{
 						break;
 					}
+					else if (token.Type == TokenType.Equal || token.Type == TokenType.NewLine)
+					{
+						break;
+					}
 					else
 					{
-						throw new CompileException(string.Format("Invalid token {0}", token), token.Line);
+						throw new CompileException(string.Format("Invalid token {0}", token.Type), token.Line);
 					}
 				}
 				else
@@ -182,9 +231,13 @@ namespace Effekseer.InternalScript
 					{
 						break;
 					}
+					else if (token.Type == TokenType.Equal || token.Type == TokenType.NewLine)
+					{
+						break;
+					}
 					else
 					{
-						throw new CompileException(string.Format("Invalid token {0}", token), token.Line);
+						throw new CompileException(string.Format("Invalid token {0}", token.Type), token.Line);
 					}
 				}
 				else
@@ -199,6 +252,7 @@ namespace Effekseer.InternalScript
 		Expression Group()
 		{
 			var token = Peek();
+			Expression value = null;
 
 			if(token != null)
 			{
@@ -211,7 +265,7 @@ namespace Effekseer.InternalScript
 					if (right != null && right.Type == TokenType.RightParentheses)
 					{
 						Next();
-						return center;
+						value = center;
 					}
 					else
 					{
@@ -232,20 +286,20 @@ namespace Effekseer.InternalScript
 					ret.Line = token.Line;
 					ret.Expr = rhs;
 					ret.Operator = (string)token.Value;
-					return ret;
+					value = ret;
 				}
 				else if (token.Type == TokenType.Label)
 				{
 					var ret = Value();
 					ret.Line = token.Line;
-					return ret;
+					value = ret;
 				}
 				else if (token.Type == TokenType.Digit)
 				{
 					Next();
 					var ret = new NumberExpression((float)token.Value);
 					ret.Line = token.Line;
-					return ret;
+					value = ret;
 				}
 				else
 				{
@@ -256,6 +310,37 @@ namespace Effekseer.InternalScript
 			{
 				throw new InvalidEOFException(token.Line);
 			}
+
+			while(true)
+			{
+				var dotToken = Peek();
+
+				if (dotToken != null && dotToken.Type == TokenType.Dot)
+				{
+					var next = Next();
+					if(next == null)
+					{
+						throw new InvalidEOFException(token.Line);
+					}
+					else if(next.Type != TokenType.Label)
+					{
+						throw new CompileException(string.Format("Invalid token {0}", token), token.Line);
+					}
+
+					var v_ = new AttributeExpression();
+					v_.Value = value;
+					v_.Attribute = (string)next.Value;
+					value = v_;
+
+					Next();
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			return value;
 		}
 
 		Expression Value()

@@ -44,15 +44,13 @@ namespace Effekseer.InternalScript
 	}
 	public class Compiler
 	{
-		List<Operator> operators = new List<Operator>();
 		RunningPhaseType runningPhase;
 
 		public CompileResult Compile(string code)
 		{
 			CompileResult compileResult = new CompileResult();
 			runningPhase = RunningPhaseType.Global;
-			operators.Clear();
-
+			
 			if(string.IsNullOrEmpty(code))
 			{
 				return compileResult;
@@ -67,9 +65,117 @@ namespace Effekseer.InternalScript
 				var tokens = lexer.Analyze(code);
 
 				var parser = new Parser();
-				var expr = parser.Parse(tokens.Tokens);
+				var sentense = parser.Parse(tokens.Tokens);
 
-				Compile(expr);
+				var ssaGenerator = new SSAGenerator();
+				ssaGenerator.Eval(sentense);
+				var outputAttribute =ssaGenerator.RootTable.Tables["@O"].Value;
+				var outputValues = new SSAGenerator.Value[4];
+				if(outputAttribute is SSAGenerator.Value)
+				{
+					outputValues[0] = outputAttribute as SSAGenerator.Value;
+					outputValues[1] = outputAttribute as SSAGenerator.Value;
+					outputValues[2] = outputAttribute as SSAGenerator.Value;
+					outputValues[3] = outputAttribute as SSAGenerator.Value;
+				}
+				else if (outputAttribute is SSAGenerator.SymbolTable)
+				{
+					outputValues[0] = (outputAttribute as SSAGenerator.SymbolTable).Tables["x"].Value as SSAGenerator.Value;
+					outputValues[1] = (outputAttribute as SSAGenerator.SymbolTable).Tables["y"].Value as SSAGenerator.Value;
+					outputValues[2] = (outputAttribute as SSAGenerator.SymbolTable).Tables["z"].Value as SSAGenerator.Value;
+					outputValues[3] = (outputAttribute as SSAGenerator.SymbolTable).Tables["w"].Value as SSAGenerator.Value;
+				}
+
+				var nodes = ssaGenerator.GatherNodes(outputValues);
+
+				var registerOffset = 0;
+				var validNodeCount = 0;
+
+				foreach(var node in nodes)
+				{
+					if(node is SSAGenerator.NodePredefined)
+					{
+						var node_ = node as SSAGenerator.NodePredefined;
+						foreach (var v in node.Outputs)
+						{
+							v.RegisterIndex = GetInputIndex(node_.Value);
+						}
+					}
+					else
+					{
+						foreach(var v in node.Outputs)
+						{
+							v.RegisterIndex = registerOffset;
+							registerOffset += 1;
+						}
+						validNodeCount++;
+					}
+				}
+
+				// Operators
+				List<byte[]> dataOp = new List<byte[]>();
+
+				foreach (var node in nodes)
+				{
+					if(node is SSAGenerator.NodeConstantNumber)
+					{
+						var node_ = node as SSAGenerator.NodeConstantNumber;
+
+						dataOp.Add(BitConverter.GetBytes((int)OperatorType.Constant));
+						dataOp.Add(BitConverter.GetBytes((int)node.Inputs.Count));
+						dataOp.Add(BitConverter.GetBytes((int)node.Outputs.Count));
+						dataOp.Add(BitConverter.GetBytes(1));
+
+						foreach (var o in node.Inputs)
+						{
+							dataOp.Add(BitConverter.GetBytes((int)o.RegisterIndex));
+						}
+
+						foreach (var o in node.Outputs)
+						{
+							dataOp.Add(BitConverter.GetBytes((int)o.RegisterIndex));
+						}
+
+						dataOp.Add(BitConverter.GetBytes(node_.Value));
+					}
+					else if (node is SSAGenerator.NodePredefined)
+					{
+						continue;
+					}
+					else if (node is SSAGenerator.NodeOperator)
+					{
+						var node_ = node as SSAGenerator.NodeOperator;
+
+						dataOp.Add(BitConverter.GetBytes((int)node_.Type));
+						dataOp.Add(BitConverter.GetBytes((int)node.Inputs.Count));
+						dataOp.Add(BitConverter.GetBytes((int)node.Outputs.Count));
+						dataOp.Add(BitConverter.GetBytes(0));
+
+						foreach (var o in node.Inputs)
+						{
+							dataOp.Add(BitConverter.GetBytes((int)o.RegisterIndex));
+						}
+
+						foreach (var o in node.Outputs)
+						{
+							dataOp.Add(BitConverter.GetBytes((int)o.RegisterIndex));
+						}
+					}
+				}
+
+				int version = 0;
+				data.Add(BitConverter.GetBytes(version));
+				data.Add(BitConverter.GetBytes((int)runningPhase));
+				data.Add(BitConverter.GetBytes(registerOffset));
+				data.Add(BitConverter.GetBytes(validNodeCount));
+				data.Add(BitConverter.GetBytes(outputValues[0].RegisterIndex));
+				data.Add(BitConverter.GetBytes(outputValues[1].RegisterIndex));
+				data.Add(BitConverter.GetBytes(outputValues[2].RegisterIndex));
+				data.Add(BitConverter.GetBytes(outputValues[3].RegisterIndex));
+				data.Add(dataOp.SelectMany(_ => _).ToArray());
+
+				/*
+				Compile(sentense[0]);
 
 				Dictionary<string, int> variableList = new Dictionary<string, int>();
 				foreach (var opt in operators)
@@ -88,7 +194,7 @@ namespace Effekseer.InternalScript
 				int outputIndex = -1;
 
 				// Output register
-				var outputName = GetOutputName(expr);
+				var outputName = GetOutputName(sentense[0]);
 				if (variableList.ContainsKey(outputName))
 				{
 					outputIndex = variableList[outputName];
@@ -160,6 +266,7 @@ namespace Effekseer.InternalScript
 				data.Add(BitConverter.GetBytes(operators.Count));
 				data.Add(BitConverter.GetBytes(outputIndex));
 				data.Add(dataOp.SelectMany(_=>_).ToArray());
+				*/
 			}
 			catch (CompileException e)
 			{
@@ -172,6 +279,7 @@ namespace Effekseer.InternalScript
 			return compileResult;
 		}
 
+		/*
 		void Compile(Expression expr)
 		{
 			if (expr is BinOpExpression)
@@ -256,7 +364,7 @@ namespace Effekseer.InternalScript
 				operators.Add(o);
 			}
 		}
-
+		*/
 		string GetOutputName(Expression expr)
 		{
 			if(expr is LabelExpression)

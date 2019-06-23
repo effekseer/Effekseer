@@ -79,16 +79,21 @@ bool InternalScript::Load(uint8_t* data, int size)
 	reader.Read(runningPhase);
 	reader.Read(registerCount);
 	reader.Read(operatorCount_);
-	reader.Read(outputRegister_);
+
+	for (size_t i = 0; i < 4; i++)
+		reader.Read(outputRegisters_[i]);
 
 	if (registerCount < 0)
 		return false;
 
 	registers.resize(registerCount);
 
-	if (!IsValidRegister(outputRegister_))
+	for (size_t i = 0; i < 4; i++)
 	{
-		return false;
+		if (!IsValidRegister(outputRegisters_[i]))
+		{
+			return false;
+		}
 	}
 
 	reader.Read(operators, size - reader.GetOffset());
@@ -158,12 +163,16 @@ bool InternalScript::Load(uint8_t* data, int size)
 	return true;
 }
 
-float InternalScript::Execute(const std::array<float, 4>& externals,
-							  const std::array<float, 1>& globals,
-							  const std::array<float, 5>& locals)
+std::array<float, 4>
+InternalScript::Execute(const std::array<float, 4>& externals, const std::array<float, 1>& globals, const std::array<float, 5>& locals)
 {
+	std::array<float, 4> ret;
+	ret.fill(0.0f);
+
 	if (!isValid_)
-		return 0.0f;
+	{
+		return ret;
+	}
 
 	int offset = 0;
 	for (int i = 0; i < operatorCount_; i++)
@@ -232,7 +241,12 @@ float InternalScript::Execute(const std::array<float, 4>& externals,
 		}
 	}
 
-	return GetRegisterValue(outputRegister_, externals, globals, locals);
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret[i] = GetRegisterValue(outputRegisters_[i], externals, globals, locals);
+	}
+	
+	return ret;
 }
 
 } // namespace Effekseer

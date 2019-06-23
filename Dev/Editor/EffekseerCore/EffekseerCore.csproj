@@ -136,6 +136,7 @@
     <Compile Include="InternalScript\Exceptions.cs" />
     <Compile Include="InternalScript\Lexer.cs" />
     <Compile Include="InternalScript\Parser.cs" />
+    <Compile Include="InternalScript\SSAGenerator.cs" />
     <Compile Include="InternalScript\Tests.cs" />
     <Compile Include="Utl\MaterialInformation.cs" />
     <Compile Include="Utl\ModelInformation.cs" />

@@ -451,6 +451,9 @@ namespace efk
 
 		// Input
 		bool InputText(const char16_t* label, const char16_t* text, InputTextFlags flags = InputTextFlags::None);
+
+		bool InputTextMultiline(const char16_t* label, const char16_t* text);
+
 		const char16_t* GetInputTextResult();
 
 		// Color

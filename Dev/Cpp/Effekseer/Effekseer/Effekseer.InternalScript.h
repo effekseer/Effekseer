@@ -40,7 +40,7 @@ private:
 	std::vector<uint8_t> operators;
 	int32_t version_ = 0;
 	int32_t operatorCount_ = 0;
-	int32_t outputRegister_ = 0;
+	std::array <int32_t, 4> outputRegisters_;
 	bool isValid_ = false;
 
 	bool IsValidOperator(int value) const;
@@ -54,7 +54,8 @@ public:
 	InternalScript();
 	virtual ~InternalScript();
 	bool Load(uint8_t* data, int size);
-	float Execute(const std::array<float, 4>& externals, const std::array<float, 1>& globals, const std::array<float, 5>& locals);
+	std::array<float, 4>
+	Execute(const std::array<float, 4>& externals, const std::array<float, 1>& globals, const std::array<float, 5>& locals);
 	RunningPhaseType GetRunningPhase() const { return runningPhase; }
 };
 

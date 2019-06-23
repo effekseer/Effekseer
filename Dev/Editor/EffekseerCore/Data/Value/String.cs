@@ -31,6 +31,11 @@ namespace Effekseer.Data.Value
 			get { return Value != DefaultValue; }
 		}
 
+		/// <summary>
+		/// Is multiline on GUI
+		/// </summary>
+		public bool IsMultiLine = false;
+
 		internal String(string value = "")
 		{
 			_value = value;

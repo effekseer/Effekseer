@@ -22,21 +22,15 @@ namespace Effekseer.Data
 
 		public Value.String Name { get; private set; }
 
-		public Value.String X { get; private set; }
-		public Value.String Y { get; private set; }
-		public Value.String Z { get; private set; }
-		public Value.String W { get; private set; }
+		public Value.String Code { get; private set; }
 
 		DynamicVectorCollection parent = null;
 
 		public DynamicVector(string name, DynamicVectorCollection parent)
 		{
 			Name = new Value.String(name);
-			X = new Value.String();
-			Y = new Value.String();
-			Z = new Value.String();
-			W = new Value.String();
-
+			Code = new Value.String();
+			Code.IsMultiLine = true;
 			this.parent = parent;
 		}
 
@@ -194,28 +188,10 @@ namespace Effekseer.Data
 			ret.Add(vn);
 
 			EditableValue vx = new EditableValue();
-			vx.Value = selected.X;
-			vx.Title = "X";
+			vx.Value = selected.Code;
+			vx.Title = "Code";
 			vx.IsUndoEnabled = true;
 			ret.Add(vx);
-
-			EditableValue vy = new EditableValue();
-			vy.Value = selected.Y;
-			vy.Title = "Y";
-			vy.IsUndoEnabled = true;
-			ret.Add(vy);
-
-			EditableValue vz = new EditableValue();
-			vz.Value = selected.Z;
-			vz.Title = "Z";
-			vz.IsUndoEnabled = true;
-			ret.Add(vz);
-
-			EditableValue vw = new EditableValue();
-			vw.Value = selected.W;
-			vw.Title = "W";
-			vw.IsUndoEnabled = true;
-			ret.Add(vw);
 
 			return ret.ToArray();
 		}

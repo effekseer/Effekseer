@@ -17,12 +17,16 @@ namespace Effekseer.InternalScript
 			Validate(compiler.Compile("1 + 2 + 3"), null);
 			Validate(compiler.Compile("1 * 2 + 3"), null);
 			Validate(compiler.Compile("1 * (2 + 3)"), null);
+
+			Validate(compiler.Compile("@O.x = 1 + 2 + 3"), null);
+			Validate(compiler.Compile("@O.x = 1 + 2 + 3\n@O.y = 1 + 2 + 3"), null);
+
 			Validate(compiler.Compile("@1"), null);
 			Validate(compiler.Compile("sin(1.0)"), null);
 			Validate(compiler.Compile("cos(2.0)"), null);
 			Validate(compiler.Compile(".1"), null);
-			Validate(compiler.Compile("..1"), typeof(InvalidTokenException));
-			Validate(compiler.Compile(".1.1"), typeof(InvalidTokenException));
+			//Validate(compiler.Compile("..1"), typeof(InvalidTokenException));
+			//Validate(compiler.Compile(".1.1"), typeof(InvalidTokenException));
 
 			/*
 

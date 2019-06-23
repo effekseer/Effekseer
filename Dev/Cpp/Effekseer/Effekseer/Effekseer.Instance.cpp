@@ -45,17 +45,14 @@ void Instance::ApplyDynamicParameter(T& dstParam, Effect* e, InstanceGlobal* ins
 	auto e_ = static_cast<EffectImplemented*>(e);
 	auto& dp = e_->dynamicParameters[dpInd];
 
+	if (dp.GetRunningPhase() == InternalScript::RunningPhaseType::Local)
+	{
+		dparam = dp.Execute(instg->dynamicInputParameters, globals, locals);
+	}
+
 	for (int i = 0; i < 3; i++)
 	{
-		if (dp.Elements[i].GetRunningPhase() == InternalScript::RunningPhaseType::Local)
-		{
-			auto v = dp.Elements[i].Execute(instg->dynamicInputParameters, globals, locals);
-			dst[i] = v;
-		}
-		else
-		{
-			dst[i] = dparam[i];
-		}
+		dst[i] = dparam[i];
 	}
 }
 
