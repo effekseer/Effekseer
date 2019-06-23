@@ -155,7 +155,7 @@ public:
 	\~English set loading data
 	\~Japanese	ロード用データを設定する。
 	*/
-	void SetLoadingParameter(ReferenceObject* obj);
+	void SetLoadingParameter(Effect* effect, ReferenceObject* obj);
 
 	/**
 		@brief
