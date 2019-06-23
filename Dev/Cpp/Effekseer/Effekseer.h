@@ -552,6 +552,67 @@ struct MaterialParameter
 //
 //----------------------------------------------------------------------------------
 #endif	// __EFFEKSEER_BASE_PRE_H__
+#ifndef __EFFEKSEER_CUSTOM_ALLOCATOR_H__
+#define __EFFEKSEER_CUSTOM_ALLOCATOR_H__
+
+#include <list>
+#include <map>
+#include <new>
+#include <set>
+#include <vector>
+
+namespace Effekseer
+{
+/**
+	@brief
+	\~English get an allocator
+	\~Japanese メモリ確保関数を取得する。
+*/
+MallocFunc GetMallocFunc();
+
+/**
+	\~English specify an allocator
+	\~Japanese メモリ確保関数を設定する。
+*/
+void SetMallocFunc(MallocFunc func);
+
+/**
+	@brief
+	\~English get a deallocator
+	\~Japanese メモリ破棄関数を取得する。
+*/
+FreeFunc GetFreeFunc();
+
+/**
+	\~English specify a deallocator
+	\~Japanese メモリ破棄関数を設定する。
+*/
+void SetFreeFunc(FreeFunc func);
+
+template <class T> struct CustomAllocator
+{
+	using value_type = T;
+
+	CustomAllocator() {}
+
+	template <class U> CustomAllocator(const CustomAllocator<U>&) {}
+
+	T* allocate(std::size_t n) { return reinterpret_cast<T*>(GetMallocFunc()(sizeof(T) * n)); }
+	void deallocate(T* p, std::size_t n) { GetFreeFunc()(p, sizeof(T) * n); }
+};
+
+template <class T, class U> bool operator==(const CustomAllocator<T>&, const CustomAllocator<U>&) { return true; }
+
+template <class T, class U> bool operator!=(const CustomAllocator<T>&, const CustomAllocator<U>&) { return false; }
+
+template <class T> using CustomVector = std::vector<T, CustomAllocator<T>>;
+template <class T> using CustomList = std::list<T, CustomAllocator<T>>;
+template <class T> using CustomSet = std::set<T, std::less<T>, CustomAllocator<T>>;
+template <class T, class U> using CustomMap = std::map<T, U, std::less<T>, CustomAllocator<std::pair<const T, U>>>;
+
+} // namespace Effekseer
+
+#endif // __EFFEKSEER_BASE_PRE_H__
 #ifndef	__EFFEKSEER_VECTOR2D_H__
 #define	__EFFEKSEER_VECTOR2D_H__
 
@@ -1434,13 +1495,17 @@ struct EffectInstanceTerm
 */
 class EffectFactory : public ReferenceObject
 {
-protected:
+public:
+	EffectFactory();
+
+	virtual ~EffectFactory();
+
 	/**
-	@brief	
+	@brief
 	\~English load body data(parameters of effect) from a binary
 	\~Japanese	バイナリから本体(エフェクトのパラメーター)を読み込む。
 	*/
-	bool LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath); 
+	bool LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath);
 
 	/**
 	@brief
@@ -1471,10 +1536,12 @@ protected:
 	*/
 	void SetMaterial(Effect* effect, int32_t index, MaterialData* data);
 
-public:
-	EffectFactory();
-
-	virtual ~EffectFactory();
+	/**
+	@brief
+	\~English set loading data
+	\~Japanese	ロード用データを設定する。
+	*/
+	void SetLoadingParameter(ReferenceObject* obj);
 
 	/**
 		@brief
@@ -1510,6 +1577,18 @@ public:
 	\~Japanese	リソースを廃棄される時に、このメソッドが呼ばれる。
 	*/
 	virtual void OnUnloadingResource(Effect* effect);
+
+	/**
+	\~English get factory's name
+	\~Japanese	ファクトリーの名称を取得する。
+	*/
+	virtual const char* GetName() const;
+
+	/**
+	\~English get whether resources are loaded automatically when a binary is loaded
+	\~Japanese	バイナリを読み込んだときに自動的にリソースを読み込むか取得する。
+	*/
+	virtual bool GetIsResourcesLoadedAutomatically() const;
 };
 
 /**
@@ -1602,6 +1681,13 @@ public:
 		@brief	エフェクトデータのバージョン取得
 	*/
 	virtual int GetVersion() const = 0;
+
+	/**
+		@brief
+		\~English	Get loading parameter supecfied by EffectFactory. This parameter is not used unless EffectFactory is used
+		\~Japanese	EffectFactoryによって指定されたロード用パラメーターを取得する。EffectFactoryを使用しない限り、子のパラメーターは使用しない。
+	*/
+	virtual ReferenceObject* GetLoadingParameter() const = 0;
 
 	/**
 		@brief	格納されている色画像のポインタを取得する。
@@ -1982,24 +2068,30 @@ public:
 	virtual void Destroy() = 0;
 
 	/**
-		@brief	メモリ確保関数を取得する。
+		@brief
+		\~English get an allocator
+		\~Japanese メモリ確保関数を取得する。
 	*/
 	virtual MallocFunc GetMallocFunc() const = 0;
 
 	/**
-		@brief	メモリ確保関数を設定する。
+		\~English specify an allocator
+		\~Japanese メモリ確保関数を設定する。
 	*/
-	virtual void SetMallocFunc( MallocFunc func ) = 0;
+	virtual void SetMallocFunc(MallocFunc func) = 0;
 
 	/**
-		@brief	メモリ破棄関数を取得する。
+		@brief
+		\~English get a deallocator
+		\~Japanese メモリ破棄関数を取得する。
 	*/
 	virtual FreeFunc GetFreeFunc() const = 0;
 
 	/**
-		@brief	メモリ破棄関数を設定する。
+		\~English specify a deallocator
+		\~Japanese メモリ破棄関数を設定する。
 	*/
-	virtual void SetFreeFunc( FreeFunc func ) = 0;
+	virtual void SetFreeFunc(FreeFunc func) = 0;
 
 	/**
 		@brief	ランダム関数を取得する。

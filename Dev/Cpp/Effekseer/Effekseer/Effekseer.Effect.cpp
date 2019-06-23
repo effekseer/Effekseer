@@ -149,6 +149,12 @@ void EffectFactory::SetMaterial(Effect* effect, int32_t index, MaterialData* dat
 	effect_->materials_[index] = data;
 }
 
+void EffectFactory::SetLoadingParameter(Effect* effect, ReferenceObject* parameter) {
+	auto effect_ = static_cast<EffectImplemented*>(effect);
+	effect_->SetLoadingParameter(parameter);
+}
+
+
 bool EffectFactory::OnCheckIsBinarySupported(const void* data, int32_t size)
 { 
 	// EFKS
@@ -294,6 +300,14 @@ void EffectFactory::OnUnloadingResource(Effect* effect) {
 		}
 	}
 }
+
+const char* EffectFactory::GetName() const 
+{ 
+	static const char* name = "Default";
+	return name;
+}
+
+ bool EffectFactory::GetIsResourcesLoadedAutomatically() const { return true; }
 
 EffectFactory::EffectFactory() {
 }
@@ -740,6 +754,7 @@ EffectImplemented::~EffectImplemented()
 {
 	ResetReloadingBackup();
 	Reset();
+	SetLoadingParameter(nullptr);
 
 	ES_SAFE_RELEASE( m_setting );
 	ES_SAFE_RELEASE( m_pManager );
@@ -818,7 +833,11 @@ bool EffectImplemented::Load( void* pData, int size, float mag, const EFK_CHAR* 
 	// save materialPath for reloading
     if (materialPath != nullptr) m_materialPath = materialPath;
 
-	ReloadResources( pData, size, materialPath);
+	if (factory->GetIsResourcesLoadedAutomatically())
+	{
+		ReloadResources(pData, size, materialPath);
+	}
+
 	return true;
 }
 
@@ -899,9 +918,17 @@ bool EffectImplemented::IsDyanamicMagnificationValid() const
 	return GetVersion() >= 8 || GetVersion() < 2;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+ReferenceObject* EffectImplemented::GetLoadingParameter() const {
+	return loadingObject;
+}
+
+void EffectImplemented::SetLoadingParameter(ReferenceObject* obj)
+{ 
+	ES_SAFE_ADDREF(obj);
+	ES_SAFE_RELEASE(loadingObject);
+	loadingObject = obj;
+}
+
 Manager* EffectImplemented::GetManager() const
 {
 	return m_pManager;	

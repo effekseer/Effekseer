@@ -50,6 +50,27 @@ public:
 	virtual std::vector<int32_t>& GetCurrentMaterialFaceCounts() = 0;
 };
 
+struct Area
+{
+	int MinX = 0;
+	int MinY = 0;
+	int MaxX = 0;
+	int MaxY = 0;
+};
+
+class AreaEstimator
+{
+private:
+	Effekseer::Manager* manager_ = nullptr;
+	Renderer* renderer_ = nullptr;
+
+public:
+	AreaEstimator();
+	virtual ~AreaEstimator();
+
+	Area Estimate(Effekseer::Effect* effect, const Effekseer::Matrix44& cameraMat, const Effekseer::Matrix44& projMat, int32_t time, float rate);
+};
+
 } // namespace EffekseerRendererArea
 
 #endif // __EFFEKSEERRENDERER_GL_RENDERER_H__

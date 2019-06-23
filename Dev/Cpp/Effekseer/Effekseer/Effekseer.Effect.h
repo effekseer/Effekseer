@@ -109,13 +109,17 @@ struct EffectInstanceTerm
 */
 class EffectFactory : public ReferenceObject
 {
-protected:
+public:
+	EffectFactory();
+
+	virtual ~EffectFactory();
+
 	/**
-	@brief	
+	@brief
 	\~English load body data(parameters of effect) from a binary
 	\~Japanese	バイナリから本体(エフェクトのパラメーター)を読み込む。
 	*/
-	bool LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath); 
+	bool LoadBody(Effect* effect, const void* data, int32_t size, float magnification, const EFK_CHAR* materialPath);
 
 	/**
 	@brief
@@ -146,10 +150,12 @@ protected:
 	*/
 	void SetMaterial(Effect* effect, int32_t index, MaterialData* data);
 
-public:
-	EffectFactory();
-
-	virtual ~EffectFactory();
+	/**
+	@brief
+	\~English set loading data
+	\~Japanese	ロード用データを設定する。
+	*/
+	void SetLoadingParameter(ReferenceObject* obj);
 
 	/**
 		@brief
@@ -185,6 +191,18 @@ public:
 	\~Japanese	リソースを廃棄される時に、このメソッドが呼ばれる。
 	*/
 	virtual void OnUnloadingResource(Effect* effect);
+
+	/**
+	\~English get factory's name
+	\~Japanese	ファクトリーの名称を取得する。
+	*/
+	virtual const char* GetName() const;
+
+	/**
+	\~English get whether resources are loaded automatically when a binary is loaded
+	\~Japanese	バイナリを読み込んだときに自動的にリソースを読み込むか取得する。
+	*/
+	virtual bool GetIsResourcesLoadedAutomatically() const;
 };
 
 /**
@@ -277,6 +295,13 @@ public:
 		@brief	エフェクトデータのバージョン取得
 	*/
 	virtual int GetVersion() const = 0;
+
+	/**
+		@brief
+		\~English	Get loading parameter supecfied by EffectFactory. This parameter is not used unless EffectFactory is used
+		\~Japanese	EffectFactoryによって指定されたロード用パラメーターを取得する。EffectFactoryを使用しない限り、子のパラメーターは使用しない。
+	*/
+	virtual ReferenceObject* GetLoadingParameter() const = 0;
 
 	/**
 		@brief	格納されている色画像のポインタを取得する。
