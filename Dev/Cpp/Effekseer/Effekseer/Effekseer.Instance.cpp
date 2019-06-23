@@ -507,14 +507,114 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 	else if( m_pEffectNode->ScalingType == ParameterScalingType_PVA )
 	{
-		scaling_values.random.scale = m_pEffectNode->ScalingPVA.Position.getValue(*instanceGlobal);
-		scaling_values.random.velocity = m_pEffectNode->ScalingPVA.Velocity.getValue(*instanceGlobal);
-		scaling_values.random.acceleration = m_pEffectNode->ScalingPVA.Acceleration.getValue(*instanceGlobal);
+		random_vector3d rvl = m_pEffectNode->ScalingPVA.Position;
+
+		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterPMax >= 0)
+		{
+			ApplyDynamicParameter(rvl.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterPMax,
+								  m_pEffectNode->ScalingPVA.Position.max);
+		}
+
+		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterPMin >= 0)
+		{
+			ApplyDynamicParameter(rvl.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterPMin,
+								  m_pEffectNode->ScalingPVA.Position.min);
+		}
+
+		random_vector3d rvv = m_pEffectNode->ScalingPVA.Velocity;
+
+		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterVMax >= 0)
+		{
+			ApplyDynamicParameter(rvv.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterVMax,
+								  m_pEffectNode->ScalingPVA.Velocity.max);
+		}
+
+		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterVMin >= 0)
+		{
+			ApplyDynamicParameter(rvv.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterVMin,
+								  m_pEffectNode->ScalingPVA.Velocity.min);
+		}
+
+		random_vector3d rva = m_pEffectNode->ScalingPVA.Acceleration;
+
+		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterAMax >= 0)
+		{
+			ApplyDynamicParameter(rva.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterAMax,
+								  m_pEffectNode->ScalingPVA.Acceleration.max);
+		}
+
+		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterAMin >= 0)
+		{
+			ApplyDynamicParameter(rva.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterAMin,
+								  m_pEffectNode->ScalingPVA.Acceleration.min);
+		}
+
+		scaling_values.random.scale = rvl.getValue(*instanceGlobal);
+		scaling_values.random.velocity = rvv.getValue(*instanceGlobal);
+		scaling_values.random.acceleration = rva.getValue(*instanceGlobal);
 	}
 	else if( m_pEffectNode->ScalingType == ParameterScalingType_Easing )
 	{
-		scaling_values.easing.start = m_pEffectNode->ScalingEasing.start.getValue(*instanceGlobal);
-		scaling_values.easing.end = m_pEffectNode->ScalingEasing.end.getValue(*instanceGlobal);
+		random_vector3d rvs = m_pEffectNode->ScalingEasing.Position.start;
+
+		if (m_pEffectNode->ScalingEasing.ReferencedDynamicParameterSMax >= 0)
+		{
+			ApplyDynamicParameter(rvs.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->ScalingEasing.ReferencedDynamicParameterSMax,
+								  m_pEffectNode->ScalingEasing.Position.start.max);
+		}
+
+		if (m_pEffectNode->ScalingEasing.ReferencedDynamicParameterSMin >= 0)
+		{
+			ApplyDynamicParameter(rvs.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->ScalingEasing.ReferencedDynamicParameterSMin,
+								  m_pEffectNode->ScalingEasing.Position.start.min);
+		}
+
+		random_vector3d rve = m_pEffectNode->ScalingEasing.Position.end;
+
+		if (m_pEffectNode->ScalingEasing.ReferencedDynamicParameterEMax >= 0)
+		{
+			ApplyDynamicParameter(rve.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->ScalingEasing.ReferencedDynamicParameterEMax,
+								  m_pEffectNode->ScalingEasing.Position.end.max);
+		}
+
+		if (m_pEffectNode->ScalingEasing.ReferencedDynamicParameterEMin >= 0)
+		{
+			ApplyDynamicParameter(rve.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->ScalingEasing.ReferencedDynamicParameterEMin,
+								  m_pEffectNode->ScalingEasing.Position.end.min);
+		}
+
+		scaling_values.easing.start = rvs.getValue(*instanceGlobal);
+		scaling_values.easing.end = rve.getValue(*instanceGlobal);
 	}
 	else if( m_pEffectNode->ScalingType == ParameterScalingType_SinglePVA )
 	{
@@ -1146,9 +1246,20 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->ScalingType == ParameterScalingType_Fixed )
 		{
-			localScaling.X = m_pEffectNode->ScalingFixed.Position.X;
-			localScaling.Y = m_pEffectNode->ScalingFixed.Position.Y;
-			localScaling.Z = m_pEffectNode->ScalingFixed.Position.Z;
+			if (m_pEffectNode->ScalingFixed.ReferencedDynamicParameter >= 0)
+			{
+				ApplyDynamicParameter(localScaling,
+									  this->m_pEffectNode->m_effect,
+									  this->m_pContainer->GetRootInstance(),
+									  m_pEffectNode->ScalingFixed.ReferencedDynamicParameter,
+									  m_pEffectNode->ScalingFixed.Position);
+			}
+			else
+			{
+				localScaling.X = m_pEffectNode->ScalingFixed.Position.X;
+				localScaling.Y = m_pEffectNode->ScalingFixed.Position.Y;
+				localScaling.Z = m_pEffectNode->ScalingFixed.Position.Z;
+			}
 		}
 		else if( m_pEffectNode->ScalingType == ParameterScalingType_PVA )
 		{
@@ -1167,7 +1278,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->ScalingType == ParameterScalingType_Easing )
 		{
-			m_pEffectNode->ScalingEasing.setValueToArg(
+			m_pEffectNode->ScalingEasing.Position.setValueToArg(
 				localScaling,
 				scaling_values.easing.start,
 				scaling_values.easing.end,

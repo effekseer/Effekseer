@@ -18,15 +18,30 @@ namespace Effekseer.Binary
 
 			if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.Fixed)
 			{
-				var bytes = Scaling_Fixed_Values.Create(value.Fixed,magnification).GetBytes();
-				data.Add(bytes.Count().GetBytes());
-				data.Add(bytes);
+				var refBuf = Core.Dynamic.Vectors.GetIndex(value.Fixed.Scale.DynamicParameter).GetBytes();
+				var mainBuf = Scaling_Fixed_Values.Create(value.Fixed,magnification).GetBytes();
+				data.Add((mainBuf.Count() + refBuf.Count()).GetBytes());
+				data.Add(refBuf);
+				data.Add(mainBuf);
 			}
 			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.PVA)
 			{
-				var bytes = Scaling_PVA_Values.Create(value.PVA, magnification).GetBytes();
-				data.Add(bytes.Count().GetBytes());
-				data.Add(bytes);
+				var refBuf1_1 = Core.Dynamic.Vectors.GetIndex(value.PVA.Scale.DynamicParameterMax).GetBytes();
+				var refBuf1_2 = Core.Dynamic.Vectors.GetIndex(value.PVA.Scale.DynamicParameterMin).GetBytes();
+				var refBuf2_1 = Core.Dynamic.Vectors.GetIndex(value.PVA.Velocity.DynamicParameterMax).GetBytes();
+				var refBuf2_2 = Core.Dynamic.Vectors.GetIndex(value.PVA.Velocity.DynamicParameterMin).GetBytes();
+				var refBuf3_1 = Core.Dynamic.Vectors.GetIndex(value.PVA.Acceleration.DynamicParameterMax).GetBytes();
+				var refBuf3_2 = Core.Dynamic.Vectors.GetIndex(value.PVA.Acceleration.DynamicParameterMin).GetBytes();
+
+				var mainBuf = Scaling_PVA_Values.Create(value.PVA, magnification).GetBytes();
+				data.Add((mainBuf.Count() + refBuf1_1.Count() * 6).GetBytes());
+				data.Add(refBuf1_1);
+				data.Add(refBuf1_2);
+				data.Add(refBuf2_1);
+				data.Add(refBuf2_2);
+				data.Add(refBuf3_1);
+				data.Add(refBuf3_2);
+				data.Add(mainBuf);
 			}
 			else if (value.Type.GetValue() == Data.ScaleValues.ParamaterType.Easing)
 			{
@@ -34,7 +49,16 @@ namespace Effekseer.Binary
 					(float)value.Easing.StartSpeed.Value,
 					(float)value.Easing.EndSpeed.Value);
 
+				var refBuf1_1 = Core.Dynamic.Vectors.GetIndex(value.Easing.Start.DynamicParameterMax).GetBytes();
+				var refBuf1_2 = Core.Dynamic.Vectors.GetIndex(value.Easing.Start.DynamicParameterMin).GetBytes();
+				var refBuf2_1 = Core.Dynamic.Vectors.GetIndex(value.Easing.End.DynamicParameterMax).GetBytes();
+				var refBuf2_2 = Core.Dynamic.Vectors.GetIndex(value.Easing.End.DynamicParameterMin).GetBytes();
+
 				List<byte[]> _data = new List<byte[]>();
+				_data.Add(refBuf1_1);
+				_data.Add(refBuf1_2);
+				_data.Add(refBuf2_1);
+				_data.Add(refBuf2_2);
 				_data.Add(value.Easing.Start.GetBytes(magnification));
 				_data.Add(value.Easing.End.GetBytes(magnification));
 				_data.Add(BitConverter.GetBytes(easing[0]));

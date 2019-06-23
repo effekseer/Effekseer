@@ -330,6 +330,8 @@ enum ParameterScalingType
 //----------------------------------------------------------------------------------
 struct ParameterScalingFixed
 {
+	int32_t ReferencedDynamicParameter = -1;
+
 	Vector3D Position;
 };
 
@@ -338,9 +340,25 @@ struct ParameterScalingFixed
 //----------------------------------------------------------------------------------
 struct ParameterScalingPVA
 {
+	int32_t ReferencedDynamicParameterPMax = -1;
+	int32_t ReferencedDynamicParameterPMin = -1;
+	int32_t ReferencedDynamicParameterVMax = -1;
+	int32_t ReferencedDynamicParameterVMin = -1;
+	int32_t ReferencedDynamicParameterAMax = -1;
+	int32_t ReferencedDynamicParameterAMin = -1;
+
 	random_vector3d Position;
 	random_vector3d Velocity;
 	random_vector3d Acceleration;
+};
+
+struct ParameterScalingEasing
+{
+	int32_t ReferencedDynamicParameterSMax = -1;
+	int32_t ReferencedDynamicParameterSMin = -1;
+	int32_t ReferencedDynamicParameterEMax = -1;
+	int32_t ReferencedDynamicParameterEMin = -1;
+	easing_vector3d Position;
 };
 
 //----------------------------------------------------------------------------------
@@ -940,7 +958,7 @@ public:
 	ParameterScalingType		ScalingType;
 	ParameterScalingFixed		ScalingFixed;
 	ParameterScalingPVA			ScalingPVA;
-	easing_vector3d				ScalingEasing;
+	ParameterScalingEasing ScalingEasing;
 	ParameterScalingSinglePVA	ScalingSinglePVA;
 	easing_float				ScalingSingleEasing;
 	FCurveVector3D*				ScalingFCurve;

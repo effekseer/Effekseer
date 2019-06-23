@@ -340,12 +340,22 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			assert(size == sizeof(ParameterScalingFixed));
-			memcpy(&ScalingFixed, pos, size);
-			pos += size;
 
-			// 無効化
-			if (ScalingFixed.Position.X == 1.0f && ScalingFixed.Position.Y == 1.0f && ScalingFixed.Position.Z == 1.0f)
+			if (ef->GetVersion() >= 14)
+			{
+				assert(size == sizeof(ParameterScalingFixed));
+				memcpy(&ScalingFixed, pos, size);
+				pos += size;
+			}
+			else
+			{
+				memcpy(&ScalingFixed.Position, pos, size);
+				pos += size;
+			}
+
+			// make invalid
+			if (ScalingFixed.ReferencedDynamicParameter >= 0 &&
+				ScalingFixed.Position.X == 1.0f && ScalingFixed.Position.Y == 1.0f && ScalingFixed.Position.Z == 1.0f)
 			{
 				ScalingType = ParameterScalingType_None;
 				EffekseerPrintDebug("ScalingType Change None\n");
@@ -355,16 +365,30 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			assert(size == sizeof(ParameterScalingPVA));
-			memcpy(&ScalingPVA, pos, size);
+			if (ef->GetVersion() >= 14)
+			{
+				assert(size == sizeof(ParameterScalingPVA));
+				memcpy(&ScalingPVA, pos, size);
+			}
+			else
+			{
+				memcpy(&ScalingPVA.Position, pos, size);
+			}
 			pos += size;
 		}
 		else if (ScalingType == ParameterScalingType_Easing)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			assert(size == sizeof(easing_vector3d));
-			memcpy(&ScalingEasing, pos, size);
+			if (ef->GetVersion() >= 14)
+			{
+				assert(size == sizeof(ParameterScalingEasing));
+				memcpy(&ScalingEasing, pos, size);
+			}
+			else
+			{
+				memcpy(&ScalingEasing.Position, pos, size);
+			}
 			pos += size;
 		}
 		else if (ScalingType == ParameterScalingType_SinglePVA)
