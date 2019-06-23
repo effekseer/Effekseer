@@ -461,15 +461,17 @@ void RendererImplemented::BeginShader(Shader* shader)
 
 void RendererImplemented::EndShader(Shader* shader) { currentShader = nullptr; }
 
-void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset) { 
+void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset)
+{
 	assert(currentShader != nullptr);
 	auto p = static_cast<uint8_t*>(currentShader->GetVertexConstantBuffer());
 	p += dstOffset;
 	memcpy(p, data, size);
 }
 
-void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset) { 
-	assert(currentShader != nullptr); 
+void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset)
+{
+	assert(currentShader != nullptr);
 	auto p = static_cast<uint8_t*>(currentShader->GetPixelConstantBuffer());
 	p += dstOffset;
 	memcpy(p, data, size);
@@ -493,4 +495,110 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		m_textures[0] = nullptr;
 	}
 }
+
+AreaEstimator::AreaEstimator()
+{
+	int32_t spriteCount = 10000;
+	manager_ = ::Effekseer::Manager::Create(spriteCount);
+	renderer_ = Renderer::Create();
+
+	::Effekseer::SpriteRenderer* sprite_renderer = renderer_->CreateSpriteRenderer();
+	::Effekseer::RibbonRenderer* ribbon_renderer = renderer_->CreateRibbonRenderer();
+	::Effekseer::RingRenderer* ring_renderer = renderer_->CreateRingRenderer();
+	::Effekseer::ModelRenderer* model_renderer = renderer_->CreateModelRenderer();
+	::Effekseer::TrackRenderer* track_renderer = renderer_->CreateTrackRenderer();
+
+	manager_->SetSpriteRenderer(sprite_renderer);
+	manager_->SetRibbonRenderer(ribbon_renderer);
+	manager_->SetRingRenderer(ring_renderer);
+	manager_->SetModelRenderer(model_renderer);
+	manager_->SetTrackRenderer(track_renderer);
+
+	manager_->SetTextureLoader(renderer_->CreateTextureLoader());
+	manager_->SetModelLoader(renderer_->CreateModelLoader());
+}
+
+AreaEstimator::~AreaEstimator()
+{
+	if (renderer_ != nullptr)
+	{
+		renderer_->Destroy();
+		renderer_ = nullptr;
+	}
+
+	if (manager_ != nullptr)
+	{
+		manager_->Destroy();
+		manager_ = nullptr;
+	}
+}
+
+Area AreaEstimator::Estimate(
+	Effekseer::Effect* effect, const Effekseer::Matrix44& cameraMat, const Effekseer::Matrix44& projMat, int32_t time, float rate)
+{
+
+	std::vector<float> minXs;
+	std::vector<float> minYs;
+	std::vector<float> maxXs;
+	std::vector<float> maxYs;
+
+	renderer_->SetCameraMatrix(cameraMat);
+	renderer_->SetProjectionMatrix(projMat);
+
+	auto handle = manager_->Play(effect, 0, 0, 0);
+
+	for (size_t i = 0; i < time; i++)
+	{
+		manager_->Update();
+		renderer_->BeginRendering();
+		manager_->Draw();
+		renderer_->EndRendering();
+
+		auto& vs = renderer_->GetCurrentVertexes();
+
+		float minX = std::numeric_limits<float>::max();
+		float minY = std::numeric_limits<float>::max();
+		float maxX = -std::numeric_limits<float>::max();
+		float maxY = -std::numeric_limits<float>::max();
+
+		for (auto& v : vs)
+		{
+			minX = Effekseer::Min(minX, v.Pos.X);
+			minY = Effekseer::Min(minY, v.Pos.Y);
+			maxX = Effekseer::Max(maxX, v.Pos.X);
+			maxY = Effekseer::Max(maxY, v.Pos.Y);
+		}
+
+		minXs.push_back(minX);
+		minYs.push_back(minY);
+		maxXs.push_back(maxX);
+		maxYs.push_back(maxY);
+
+		if (!manager_->Exists(handle))
+			break;
+	}
+
+	manager_->StopAllEffects();
+
+	std::sort(minXs.begin(), minXs.end());
+	std::sort(minYs.begin(), minYs.end());
+	std::sort(maxXs.begin(), maxXs.end());
+	std::sort(maxYs.begin(), maxYs.end());
+
+	Area ret;
+
+	if (minXs.size() > 0)
+	{
+		auto index = static_cast<uint32_t>(minXs.size() * rate);
+		index = Effekseer::Clamp(index, minXs.size() - 1, 0);
+
+		ret.MaxX = maxXs[index];
+		ret.MaxY = maxYs[index];
+		ret.MinX = minXs[index];
+		ret.MinY = minYs[index];
+	}
+
+	return ret;
+}
+
 } // namespace EffekseerRendererArea
