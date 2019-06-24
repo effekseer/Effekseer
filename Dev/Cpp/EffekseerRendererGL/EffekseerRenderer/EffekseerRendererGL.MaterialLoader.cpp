@@ -143,6 +143,8 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 	
 	}
 
+	materialData->TextureCount = loader.Textures.size();
+	materialData->UniformCount = loader.Uniforms.size();
 	materialData->UserPtr = shader;
 	return materialData;
 }

@@ -59,7 +59,7 @@ namespace Effekseer.Utl
 
 			while(true)
 			{
-				if (br.Read(buf, 0, 8) != 16)
+				if (br.Read(buf, 0, 8) != 8)
 				{
 					fs.Dispose();
 					br.Close();
@@ -73,16 +73,16 @@ namespace Effekseer.Utl
 				buf[3] == 'e')
 				{
 					var temp = new byte[BitConverter.ToInt32(buf, 4)];
-					if (fs.Read(temp, 0, temp.Length) != temp.Length) return;
+					if (br.Read(temp, 0, temp.Length) != temp.Length) return;
 				}
 
-				if (buf[0] != 'd' ||
-				buf[1] != 'a' ||
-				buf[2] != 't' ||
-				buf[3] != 'a')
+				if (buf[0] == 'd' &&
+				buf[1] == 'a' &&
+				buf[2] == 't' &&
+				buf[3] == 'a')
 				{
 					var temp = new byte[BitConverter.ToInt32(buf, 4)];
-					if (fs.Read(temp, 0, temp.Length) != temp.Length) return;
+					if (br.Read(temp, 0, temp.Length) != temp.Length) return;
 
 					var jsonText = Encoding.UTF8.GetString(temp);
 
