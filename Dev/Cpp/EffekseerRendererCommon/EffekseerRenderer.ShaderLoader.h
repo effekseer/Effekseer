@@ -45,6 +45,8 @@ public:
 
 	std::vector<Uniform> Uniforms;
 
+	bool HasRefraction = false;
+
 	std::string GenericCode;
 
 	virtual bool Load(const uint8_t* data, int32_t size)
@@ -83,6 +85,12 @@ public:
 
 			if (std::string("gene") == std::string(chunk))
 			{
+				int hasRefraction = 0;
+				memcpy(&hasRefraction, data + offset, 4);
+				offset += sizeof(int);
+
+				HasRefraction = hasRefraction > 0;
+
 				int textureCount = 0;
 				memcpy(&textureCount, data + offset, 4);
 				offset += sizeof(int);

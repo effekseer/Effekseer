@@ -66,12 +66,12 @@ namespace Effekseer.InternalScript
 	/// 
 	/// </summary>
 	/// <remarks>
-	/// Expr = Term {* Term, / Term}
-	/// Term = Group {+ Group, - Group}
+	/// Expr = Term {+ Term, - Term}
+	/// Term = Group {* Group, / Group}
 	/// Group = (Expr), Number, Value {.Value}
 	/// Value = Label {Arg}
 	/// Arg = (Expr, Expr...)
-	/// Sentence = Group {= Group} { NL Sentence }
+	/// Sentence = Expr {= Expr} { NL Sentence }
 	/// </remarks>
 	class Parser
 	{
@@ -139,7 +139,7 @@ namespace Effekseer.InternalScript
 
 				if (token != null)
 				{
-					if (token.Type == TokenType.Operator && (string)token.Value == "*")
+					if (token.Type == TokenType.Operator && (string)token.Value == "+")
 					{
 						Next();
 						var rhs = Term();
@@ -151,7 +151,7 @@ namespace Effekseer.InternalScript
 						ret.Operator = (string)token.Value;
 						lhs = ret;
 					}
-					else if (token.Type == TokenType.Operator && (string)token.Value == "/")
+					else if (token.Type == TokenType.Operator && (string)token.Value == "-")
 					{
 						Next();
 						var rhs = Term();
@@ -199,7 +199,7 @@ namespace Effekseer.InternalScript
 
 				if (token != null)
 				{
-					if (token.Type == TokenType.Operator && (string)token.Value == "+")
+					if (token.Type == TokenType.Operator && (string)token.Value == "*")
 					{
 						Next();
 						var rhs = Group();
@@ -211,7 +211,7 @@ namespace Effekseer.InternalScript
 						ret.Operator = (string)token.Value;
 						lhs = ret;
 					}
-					else if (token.Type == TokenType.Operator && (string)token.Value == "-")
+					else if (token.Type == TokenType.Operator && (string)token.Value == "/")
 					{
 						Next();
 						var rhs = Group();
