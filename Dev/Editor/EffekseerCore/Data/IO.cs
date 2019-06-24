@@ -75,7 +75,7 @@ namespace Effekseer.Data
 			var e = doc.CreateElement(element_name);
 			for (int i = 0; i < collection.Values.Count; i++)
 			{
-				var e_node = SaveToElement(doc, collection.Values[i].GetType().Name, collection.Values[i], isClip);
+				var e_node = SaveToElement(doc, collection.Values[i].GetType().Name, collection.Values[i], true);
 				if(e_node != null)
 				{
 					e.AppendChild(e_node);
@@ -160,6 +160,13 @@ namespace Effekseer.Data
 			if (y != null) e.AppendChild(y);
 			if (z != null) e.AppendChild(z);
 
+			var d_ind = Core.Dynamic.Vectors.GetIndex(value.DynamicParameter);
+			if(d_ind >= 0)
+			{
+				var d = doc.CreateTextElement("DynamicParameter", d_ind.ToString());
+				e.AppendChild(d);
+			}
+
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
@@ -228,6 +235,20 @@ namespace Effekseer.Data
 			if (y != null) e.AppendChild(y);
 			if (z != null) e.AppendChild(z);
 			if (da != null) e.AppendChild(da);
+
+			var d_ind_min = Core.Dynamic.Vectors.GetIndex(value.DynamicParameterMin);
+			if (d_ind_min >= 0)
+			{
+				var d = doc.CreateTextElement("DynamicParameterMin", d_ind_min.ToString());
+				e.AppendChild(d);
+			}
+
+			var d_ind_max = Core.Dynamic.Vectors.GetIndex(value.DynamicParameterMax);
+			if (d_ind_max >= 0)
+			{
+				var d = doc.CreateTextElement("DynamicParameterMax", d_ind_max.ToString());
+				e.AppendChild(d);
+			}
 
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
@@ -614,10 +635,22 @@ namespace Effekseer.Data
 			var e_x = e["X"] as XmlElement;
 			var e_y = e["Y"] as XmlElement;
 			var e_z = e["Z"] as XmlElement;
+			var e_d = e["DynamicParameter"] as XmlElement;
 
 			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
 			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
 			if (e_z != null) LoadFromElement(e_z, value.Z, isClip);
+
+			if (e_d != null)
+			{
+				var ind = e_d.GetTextAsInt();
+				if(0 <= ind && ind < Core.Dynamic.Vectors.Values.Count)
+				{
+					var d = Core.Dynamic.Vectors.Values[ind];
+					value.SetDynamicParameter(d);
+					value.IsDynamicParameterEnabled = true;
+				}
+			}
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.Color value, bool isClip)
@@ -756,6 +789,8 @@ namespace Effekseer.Data
 			var e_y = e["Y"] as XmlElement;
 			var e_z = e["Z"] as XmlElement;
 			var e_da = e["DrawnAs"];
+			var e_d_min = e["DynamicParameterMin"] as XmlElement;
+			var e_d_max = e["DynamicParameterMax"] as XmlElement;
 
 			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
 			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
@@ -764,6 +799,28 @@ namespace Effekseer.Data
 			if (e_da != null)
 			{
 				value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
+			}
+
+			if (e_d_min != null)
+			{
+				var ind = e_d_min.GetTextAsInt();
+				if (0 <= ind && ind < Core.Dynamic.Vectors.Values.Count)
+				{
+					var d = Core.Dynamic.Vectors.Values[ind];
+					value.SetDynamicParameterMin(d);
+					value.IsDynamicParameterEnabled = true;
+				}
+			}
+
+			if (e_d_max != null)
+			{
+				var ind = e_d_max.GetTextAsInt();
+				if (0 <= ind && ind < Core.Dynamic.Vectors.Values.Count)
+				{
+					var d = Core.Dynamic.Vectors.Values[ind];
+					value.SetDynamicParameterMax(d);
+					value.IsDynamicParameterEnabled = true;
+				}
 			}
 		}
 
