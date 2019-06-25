@@ -281,12 +281,21 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			assert(size == sizeof(ParameterRotationFixed));
-			memcpy(&RotationFixed, pos, size);
+
+			if (ef->GetVersion() >= 14)
+			{
+				assert(size == sizeof(ParameterRotationFixed));
+				memcpy(&RotationFixed, pos, size);
+			}
+			else
+			{
+				memcpy(&RotationFixed.Position, pos, size);
+			}
 			pos += size;
 
-			// 無効化
-			if (RotationFixed.Position.X == 0.0f && RotationFixed.Position.Y == 0.0f && RotationFixed.Position.Z == 0.0f)
+			// make invalid
+			if (RotationFixed.ReferencedDynamicParameter < 0 && 
+				RotationFixed.Position.X == 0.0f && RotationFixed.Position.Y == 0.0f && RotationFixed.Position.Z == 0.0f)
 			{
 				RotationType = ParameterRotationType_None;
 				EffekseerPrintDebug("RotationType Change None\n");
@@ -296,16 +305,32 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			assert(size == sizeof(ParameterRotationPVA));
-			memcpy(&RotationPVA, pos, size);
+			if (ef->GetVersion() >= 14)
+			{
+				assert(size == sizeof(ParameterRotationPVA));
+				memcpy(&RotationPVA, pos, size);
+			}
+			else
+			{
+				memcpy(&RotationPVA.rotation, pos, size);
+			}
 			pos += size;
 		}
 		else if (RotationType == ParameterRotationType_Easing)
 		{
 			memcpy(&size, pos, sizeof(int));
 			pos += sizeof(int);
-			assert(size == sizeof(easing_vector3d));
-			memcpy(&RotationEasing, pos, size);
+			if (ef->GetVersion() >= 14)
+			{
+				assert(size == sizeof(RotationEasing));
+				memcpy(&RotationEasing, pos, size);
+			}
+			else
+			{
+				assert(size == sizeof(easing_vector3d));
+				memcpy(&RotationEasing.rotation, pos, size);
+			}
+
 			pos += size;
 		}
 		else if (RotationType == ParameterRotationType_AxisPVA)
@@ -354,7 +379,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 
 			// make invalid
-			if (ScalingFixed.ReferencedDynamicParameter >= 0 &&
+			if (ScalingFixed.ReferencedDynamicParameter < 0 &&
 				ScalingFixed.Position.X == 1.0f && ScalingFixed.Position.Y == 1.0f && ScalingFixed.Position.Z == 1.0f)
 			{
 				ScalingType = ParameterScalingType_None;
@@ -533,14 +558,14 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 			else if (RotationType == ParameterRotationType_Easing)
 			{
-				RotationEasing.start.max.x *= -1.0f;
-				RotationEasing.start.min.x *= -1.0f;
-				RotationEasing.start.max.y *= -1.0f;
-				RotationEasing.start.min.y *= -1.0f;
-				RotationEasing.end.max.x *= -1.0f;
-				RotationEasing.end.min.x *= -1.0f;
-				RotationEasing.end.max.y *= -1.0f;
-				RotationEasing.end.min.y *= -1.0f;
+				RotationEasing.rotation.start.max.x *= -1.0f;
+				RotationEasing.rotation.start.min.x *= -1.0f;
+				RotationEasing.rotation.start.max.y *= -1.0f;
+				RotationEasing.rotation.start.min.y *= -1.0f;
+				RotationEasing.rotation.end.max.x *= -1.0f;
+				RotationEasing.rotation.end.min.x *= -1.0f;
+				RotationEasing.rotation.end.max.y *= -1.0f;
+				RotationEasing.rotation.end.min.y *= -1.0f;
 			}
 			else if (RotationType == ParameterRotationType_AxisPVA)
 			{

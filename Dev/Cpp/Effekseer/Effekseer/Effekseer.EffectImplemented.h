@@ -133,6 +133,9 @@ protected:
 	std::u16string name_;
 	std::basic_string<EFK_CHAR> m_materialPath;
 
+	//! dynamic inputs
+	std::array<float, 4> defaultDynamicInputs;
+
 	//! dynamic parameters
 	std::vector<InternalScript> dynamicParameters;
 

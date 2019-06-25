@@ -1623,7 +1623,7 @@ Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_
 
 	// Create root
 	InstanceGlobal* pGlobal = new InstanceGlobal();
-
+	
 	if (e->m_defaultRandomSeed >= 0)
 	{
 		pGlobal->SetSeed(e->m_defaultRandomSeed);
@@ -1632,6 +1632,8 @@ Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_
 	{
 		pGlobal->SetSeed(GetRandFunc()());
 	}
+
+	pGlobal->dynamicInputParameters = e->defaultDynamicInputs;
 
 	pGlobal->RenderedInstanceContainers.resize(e->renderingNodesCount);
 	for (size_t i = 0; i < pGlobal->RenderedInstanceContainers.size(); i++)

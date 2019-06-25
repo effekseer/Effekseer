@@ -502,6 +502,22 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 
 	if (m_version >= 14)
 	{
+		// inputs
+		defaultDynamicInputs.fill(0);
+		int32_t dynamicParameterInputCount = 0;
+		binaryReader.Read(dynamicParameterInputCount, 0, elementCountMax);
+
+		for (size_t i = 0; i < dynamicParameterInputCount; i++)
+		{
+			float param = 0.0f;
+			binaryReader.Read(param);
+
+			if (i < defaultDynamicInputs.size())
+			{
+				defaultDynamicInputs[i] = param;
+			}
+		}
+
 		// dynamic parameter
 		int32_t dynamicParameterCount = 0;
 		binaryReader.Read(dynamicParameterCount, 0, elementCountMax);
@@ -521,6 +537,10 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 				binaryReader.AddOffset(size_);
 			}
 		}
+	}
+	else
+	{
+		defaultDynamicInputs.fill(0);
 	}
 
 	if (m_version >= 13)

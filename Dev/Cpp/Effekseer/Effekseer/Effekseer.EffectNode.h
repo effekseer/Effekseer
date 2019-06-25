@@ -275,6 +275,7 @@ enum ParameterRotationType
 //----------------------------------------------------------------------------------
 struct ParameterRotationFixed
 {
+	int32_t ReferencedDynamicParameter = -1;
 	Vector3D Position;
 };
 
@@ -283,9 +284,24 @@ struct ParameterRotationFixed
 //----------------------------------------------------------------------------------
 struct ParameterRotationPVA
 {
+	int32_t ReferencedDynamicParameterPMax = -1;
+	int32_t ReferencedDynamicParameterPMin = -1;
+	int32_t ReferencedDynamicParameterVMax = -1;
+	int32_t ReferencedDynamicParameterVMin = -1;
+	int32_t ReferencedDynamicParameterAMax = -1;
+	int32_t ReferencedDynamicParameterAMin = -1;
 	random_vector3d	rotation;
 	random_vector3d	velocity;
 	random_vector3d	acceleration;
+};
+
+struct ParameterRotationEasing
+{
+	int32_t ReferencedDynamicParameterSMax = -1;
+	int32_t ReferencedDynamicParameterSMin = -1;
+	int32_t ReferencedDynamicParameterEMax = -1;
+	int32_t ReferencedDynamicParameterEMin = -1;
+	easing_vector3d rotation;
 };
 
 //----------------------------------------------------------------------------------
@@ -689,8 +705,8 @@ struct ParameterRendererCommon
 				pos += sizeof(int);
 
 				Material.MaterialUniforms.resize(uniforms);
-				memcpy(Material.MaterialUniforms.data(), pos, sizeof(int32_t) * uniforms);
-				pos += (sizeof(int32_t) * uniforms);
+				memcpy(Material.MaterialUniforms.data(), pos, sizeof(float) * 4 * uniforms);
+				pos += (sizeof(float) * 4 * uniforms);
 			}
 		}
 		else
@@ -949,7 +965,7 @@ public:
 	ParameterRotationType		RotationType;
 	ParameterRotationFixed		RotationFixed;
 	ParameterRotationPVA		RotationPVA;
-	easing_vector3d				RotationEasing;
+	ParameterRotationEasing RotationEasing;
 	FCurveVector3D*				RotationFCurve;
 
 	ParameterRotationAxisPVA	RotationAxisPVA;

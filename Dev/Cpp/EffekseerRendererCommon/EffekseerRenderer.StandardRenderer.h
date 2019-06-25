@@ -360,7 +360,7 @@ public:
 
 		if (m_state.MaterialPtr != nullptr)
 		{
-			// TODO
+			// specify uniform buffer for vs
 		}
 
 		if (distortion)
@@ -385,6 +385,14 @@ public:
 		{
 			if (m_state.MaterialPtr != nullptr)
 			{
+				// specify uniform buffer for ps
+
+				// time
+				std::array<float, 4> predefined_uniforms;
+				predefined_uniforms.fill(0.5f);
+				m_renderer->SetPixelBufferToShader(predefined_uniforms.data(), 0, sizeof(float) * 4);
+
+				// others
 				for (size_t i = 0; i < m_state.MaterialUniformCount; i++)
 				{					
 					m_renderer->SetPixelBufferToShader(m_state.MaterialUniforms[i].data(), sizeof(float) * 4, sizeof(float) * 4 * i);

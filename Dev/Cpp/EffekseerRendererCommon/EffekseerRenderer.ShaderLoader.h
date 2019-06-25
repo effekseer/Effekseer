@@ -175,6 +175,10 @@ IN mediump vec4 vaTexCoord;
 			maincode << "uniform sampler2D " << texture.Name << ";" << std::endl;
 		}
 
+		// predefined
+
+		maincode << "uniform vec4 predefined_uniform;" << std::endl;
+
 		for (size_t i = 0; i < Uniforms.size(); i++)
 		{
 			auto& uniform = Uniforms[i];
@@ -184,7 +188,7 @@ IN mediump vec4 vaTexCoord;
 				maincode << "uniform vec2 " << uniform.Name << ";" << std::endl;
 			if (uniform.Index == 2)
 				maincode << "uniform vec3 " << uniform.Name << ";" << std::endl;
-			if (uniform.Index == 4)
+			if (uniform.Index == 3)
 				maincode << "uniform vec4 " << uniform.Name << ";" << std::endl;
 		}
 
@@ -193,7 +197,7 @@ IN mediump vec4 vaTexCoord;
 		baseCode = Replace(baseCode, "$F2$", "vec2");
 		baseCode = Replace(baseCode, "$F3$", "vec3");
 		baseCode = Replace(baseCode, "$F4$", "vec4");
-		baseCode = Replace(baseCode, "$TIME$", "time");
+		baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
 		baseCode = Replace(baseCode, "$UV$", "vaTexCoord.xy");
 		baseCode = Replace(baseCode, "$INPUT$", "");
 

@@ -22,8 +22,8 @@ namespace Effekseer
 template<typename T, typename U>
 void Instance::ApplyDynamicParameter(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd, const U& originalParam)
 {
-	static_assert(sizeof(T) == 12, "size is not mismatched");
-	static_assert(sizeof(U) == 12, "size is not mismatched");
+	static_assert(sizeof(T) == sizeof(U), "size is not mismatched");
+	const int count = sizeof(T) / 4;
 
 	EFK_ASSERT(e != nullptr);
 	EFK_ASSERT(0 <= dpInd && dpInd < static_cast<int>(instg->dynamicParameters.size()));
@@ -36,10 +36,17 @@ void Instance::ApplyDynamicParameter(T& dstParam, Effect* e, InstanceGlobal* ins
 	globals[0] = instg->GetUpdatedFrame() / 60.0f;
 
 	std::array<float, 5> locals;
-	locals[0] = src[0];
-	locals[1] = src[1];
-	locals[2] = src[2];
-	locals[3] = 0.0f;
+
+	for (int i = 0; i < count; i++)
+	{
+		locals[i] = src[i];
+	}
+
+	for (int i = count; i < 4; i++)
+	{
+		locals[i] = 0.0f;
+	}
+
 	locals[4] = m_pParent != nullptr ? m_pParent->m_LivingTime / 60.0f : 0.0f;
 
 	auto e_ = static_cast<EffectImplemented*>(e);
@@ -50,7 +57,7 @@ void Instance::ApplyDynamicParameter(T& dstParam, Effect* e, InstanceGlobal* ins
 		dparam = dp.Execute(instg->dynamicInputParameters, globals, locals);
 	}
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < count; i++)
 	{
 		dst[i] = dparam[i];
 	}
@@ -460,20 +467,120 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		translation_values.fcruve.offset.z = m_pEffectNode->TranslationFCurve->Z.GetOffset( *instanceGlobal );
 	}
 	
-	/* 回転 */
+	// Rotation
 	if( m_pEffectNode->RotationType == ParameterRotationType_Fixed )
 	{
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_PVA )
 	{
-		rotation_values.random.rotation = m_pEffectNode->RotationPVA.rotation.getValue(*instanceGlobal);
-		rotation_values.random.velocity = m_pEffectNode->RotationPVA.velocity.getValue(*instanceGlobal);
-		rotation_values.random.acceleration = m_pEffectNode->RotationPVA.acceleration.getValue(*instanceGlobal);
+		random_vector3d rvl = m_pEffectNode->RotationPVA.rotation;
+
+		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterPMax >= 0)
+		{
+			ApplyDynamicParameter(rvl.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterPMax,
+								  m_pEffectNode->RotationPVA.rotation.max);
+		}
+
+		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterPMin >= 0)
+		{
+			ApplyDynamicParameter(rvl.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterPMin,
+								  m_pEffectNode->RotationPVA.rotation.min);
+		}
+
+		random_vector3d rvv = m_pEffectNode->RotationPVA.velocity;
+
+		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterVMax >= 0)
+		{
+			ApplyDynamicParameter(rvv.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterVMax,
+								  m_pEffectNode->RotationPVA.velocity.max);
+		}
+
+		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterVMin >= 0)
+		{
+			ApplyDynamicParameter(rvv.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterVMin,
+								  m_pEffectNode->RotationPVA.velocity.min);
+		}
+
+		random_vector3d rva = m_pEffectNode->RotationPVA.acceleration;
+
+		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterAMax >= 0)
+		{
+			ApplyDynamicParameter(rva.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterAMax,
+								  m_pEffectNode->RotationPVA.acceleration.max);
+		}
+
+		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterAMin >= 0)
+		{
+			ApplyDynamicParameter(rva.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterAMin,
+								  m_pEffectNode->RotationPVA.acceleration.min);
+		}
+
+		rotation_values.random.rotation = rvl.getValue(*instanceGlobal);
+		rotation_values.random.velocity = rvv.getValue(*instanceGlobal);
+		rotation_values.random.acceleration = rva.getValue(*instanceGlobal);
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_Easing )
 	{
-		rotation_values.easing.start = m_pEffectNode->RotationEasing.start.getValue(*instanceGlobal);
-		rotation_values.easing.end = m_pEffectNode->RotationEasing.end.getValue(*instanceGlobal);
+		random_vector3d rvs = m_pEffectNode->RotationEasing.rotation.start;
+
+		if (m_pEffectNode->RotationEasing.ReferencedDynamicParameterSMax >= 0)
+		{
+			ApplyDynamicParameter(rvs.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->RotationEasing.ReferencedDynamicParameterSMax,
+								  m_pEffectNode->RotationEasing.rotation.start.max);
+		}
+
+		if (m_pEffectNode->RotationEasing.ReferencedDynamicParameterSMin >= 0)
+		{
+			ApplyDynamicParameter(rvs.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->RotationEasing.ReferencedDynamicParameterSMin,
+								  m_pEffectNode->RotationEasing.rotation.start.min);
+		}
+
+		random_vector3d rve = m_pEffectNode->RotationEasing.rotation.end;
+
+		if (m_pEffectNode->RotationEasing.ReferencedDynamicParameterEMax >= 0)
+		{
+			ApplyDynamicParameter(rve.max,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->RotationEasing.ReferencedDynamicParameterEMax,
+								  m_pEffectNode->RotationEasing.rotation.end.max);
+		}
+
+		if (m_pEffectNode->RotationEasing.ReferencedDynamicParameterEMin >= 0)
+		{
+			ApplyDynamicParameter(rve.min,
+								  this->m_pEffectNode->m_effect,
+								  this->m_pContainer->GetRootInstance(),
+								  m_pEffectNode->RotationEasing.ReferencedDynamicParameterEMin,
+								  m_pEffectNode->RotationEasing.rotation.end.min);
+		}
+
+		rotation_values.easing.start = rvs.getValue(*instanceGlobal);
+		rotation_values.easing.end = rve.getValue(*instanceGlobal);
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_AxisPVA )
 	{
@@ -501,7 +608,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		rotation_values.fcruve.offset.z = m_pEffectNode->RotationFCurve->Z.GetOffset( *instanceGlobal );
 	}
 
-	/* 拡大縮小 */
+	// Scaling
 	if( m_pEffectNode->ScalingType == ParameterScalingType_Fixed )
 	{
 	}
@@ -1186,9 +1293,20 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->RotationType == ParameterRotationType_Fixed )
 		{
-			localAngle.X = m_pEffectNode->RotationFixed.Position.X;
-			localAngle.Y = m_pEffectNode->RotationFixed.Position.Y;
-			localAngle.Z = m_pEffectNode->RotationFixed.Position.Z;
+			if (m_pEffectNode->RotationFixed.ReferencedDynamicParameter >= 0)
+			{
+				ApplyDynamicParameter(localAngle,
+									  this->m_pEffectNode->m_effect,
+									  this->m_pContainer->GetRootInstance(),
+									  m_pEffectNode->RotationFixed.ReferencedDynamicParameter,
+									  m_pEffectNode->RotationFixed.Position);
+			}
+			else
+			{
+				localAngle.X = m_pEffectNode->RotationFixed.Position.X;
+				localAngle.Y = m_pEffectNode->RotationFixed.Position.Y;
+				localAngle.Z = m_pEffectNode->RotationFixed.Position.Z;
+			}
 		}
 		else if( m_pEffectNode->RotationType == ParameterRotationType_PVA )
 		{
@@ -1208,7 +1326,7 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->RotationType == ParameterRotationType_Easing )
 		{
-			m_pEffectNode->RotationEasing.setValueToArg(
+			m_pEffectNode->RotationEasing.rotation.setValueToArg(
 				localAngle,
 				rotation_values.easing.start,
 				rotation_values.easing.end,

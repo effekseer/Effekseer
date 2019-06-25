@@ -16,25 +16,49 @@ namespace Effekseer.Binary
 
 			if (value.Type.GetValue() == Data.RotationValues.ParamaterType.Fixed)
 			{
-				var bytes = Rotation_Fixed_Values.Create(value.Fixed).GetBytes();
-				data.Add(bytes.Count().GetBytes());
-				data.Add(bytes);
+				var refBuf = Core.Dynamic.Vectors.GetIndex(value.Fixed.Rotation.DynamicParameter).GetBytes();
+				var mainBuf = Rotation_Fixed_Values.Create(value.Fixed).GetBytes();
+				data.Add((mainBuf.Count() + refBuf.Count()).GetBytes());
+				data.Add(refBuf);
+				data.Add(mainBuf);
 			}
 			else if (value.Type.GetValue() == Data.RotationValues.ParamaterType.PVA)
 			{
+				var refBuf1_1 = Core.Dynamic.Vectors.GetIndex(value.PVA.Rotation.DynamicParameterMax).GetBytes();
+				var refBuf1_2 = Core.Dynamic.Vectors.GetIndex(value.PVA.Rotation.DynamicParameterMin).GetBytes();
+				var refBuf2_1 = Core.Dynamic.Vectors.GetIndex(value.PVA.Velocity.DynamicParameterMax).GetBytes();
+				var refBuf2_2 = Core.Dynamic.Vectors.GetIndex(value.PVA.Velocity.DynamicParameterMin).GetBytes();
+				var refBuf3_1 = Core.Dynamic.Vectors.GetIndex(value.PVA.Acceleration.DynamicParameterMax).GetBytes();
+				var refBuf3_2 = Core.Dynamic.Vectors.GetIndex(value.PVA.Acceleration.DynamicParameterMin).GetBytes();
+
 				List<byte[]> _data = new List<byte[]>();
 				_data.Add(value.PVA.Rotation.GetBytes((float)Math.PI / 180.0f));
 				_data.Add(value.PVA.Velocity.GetBytes((float)Math.PI / 180.0f));
 				_data.Add(value.PVA.Acceleration.GetBytes((float)Math.PI / 180.0f));
-				var __data = _data.ToArray().ToArray();
-				data.Add(__data.Count().GetBytes());
-				data.Add(__data);
+				var mainBuf = _data.ToArray().ToArray();
+				data.Add((mainBuf.Count() + refBuf1_1.Count() * 6).GetBytes());
+				data.Add(refBuf1_1);
+				data.Add(refBuf1_2);
+				data.Add(refBuf2_1);
+				data.Add(refBuf2_2);
+				data.Add(refBuf3_1);
+				data.Add(refBuf3_2);
+				data.Add(mainBuf);
 			}
 			else if (value.Type.GetValue() == Data.RotationValues.ParamaterType.Easing)
 			{
 				var easing = Utl.MathUtl.Easing((float)value.Easing.StartSpeed.Value, (float)value.Easing.EndSpeed.Value);
 
+				var refBuf1_1 = Core.Dynamic.Vectors.GetIndex(value.Easing.Start.DynamicParameterMax).GetBytes();
+				var refBuf1_2 = Core.Dynamic.Vectors.GetIndex(value.Easing.Start.DynamicParameterMin).GetBytes();
+				var refBuf2_1 = Core.Dynamic.Vectors.GetIndex(value.Easing.End.DynamicParameterMax).GetBytes();
+				var refBuf2_2 = Core.Dynamic.Vectors.GetIndex(value.Easing.End.DynamicParameterMin).GetBytes();
+
 				List<byte[]> _data = new List<byte[]>();
+				_data.Add(refBuf1_1);
+				_data.Add(refBuf1_2);
+				_data.Add(refBuf2_1);
+				_data.Add(refBuf2_2);
 				_data.Add(value.Easing.Start.GetBytes((float)Math.PI / 180.0f));
 				_data.Add(value.Easing.End.GetBytes((float)Math.PI / 180.0f));
 				_data.Add(BitConverter.GetBytes(easing[0]));

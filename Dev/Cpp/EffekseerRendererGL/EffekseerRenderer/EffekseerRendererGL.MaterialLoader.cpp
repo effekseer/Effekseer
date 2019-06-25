@@ -116,7 +116,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 	int32_t vertexUniformSize = sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4;
 
-	int32_t pixelUniformSize = sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4;
+	int32_t pixelUniformSize = sizeof(float) * 4;
 
 	pixelUniformSize += loader.Uniforms.size() * 4 * sizeof(float);
 
@@ -131,6 +131,9 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 	shader->SetPixelConstantBufferSize(pixelUniformSize);
 
 	int32_t index = 0;
+	shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), sizeof(float) * 4 * index);	
+	index++;
+
 	for (auto uniform : loader.Uniforms)
 	{
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId(uniform.Name.c_str()), sizeof(float) * 4 * index);	

@@ -437,8 +437,16 @@ namespace Effekseer.Binary
 				data.Add(path);
 				data.Add(new byte[] { 0, 0 });
 			}
+#endif
 
 			// export dynamic parameters
+			data.Add(BitConverter.GetBytes(Core.Dynamic.Inputs.Values.Count));
+			foreach (var value in Core.Dynamic.Inputs.Values)
+			{
+				float value_ = value.Input.Value;
+				data.Add(BitConverter.GetBytes(value_));
+			}
+
 			data.Add(BitConverter.GetBytes(Core.Dynamic.Vectors.Values.Count));
 
 			var compiler = new InternalScript.Compiler();
@@ -462,7 +470,6 @@ namespace Effekseer.Binary
 					}
 				}
 			}
-#endif
 
 			// Export the number of nodes
 			data.Add(BitConverter.GetBytes(snode2ind.Count));
