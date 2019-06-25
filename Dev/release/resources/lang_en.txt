@@ -30,6 +30,7 @@ Frame,Frame
 Frequency_Frame,Frequency(Frame)
 Gauss,Gauss
 GenerateAlpha,Generate alpha
+GenerateAlpha2,Generate alpha(Blend+Add)
 Height,Height
 Help,Help
 ImageFilter,png,dds

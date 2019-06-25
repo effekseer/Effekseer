@@ -32,6 +32,7 @@
     "Frequency_Frame": "出力頻度\\n(フレーム毎)",
     "Gauss": "中心,振幅",
     "GenerateAlpha": "生成",
+    "GenerateAlpha2": "生成(ブレンド+加算)",
     "Height": "縦幅",
     "Help": "ヘルプ",
     "ImageFilter": "png,dds",
