@@ -390,12 +390,12 @@ public:
 				// time
 				std::array<float, 4> predefined_uniforms;
 				predefined_uniforms.fill(0.5f);
-				m_renderer->SetPixelBufferToShader(predefined_uniforms.data(), 0, sizeof(float) * 4);
+				m_renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, 0);
 
 				// others
 				for (size_t i = 0; i < m_state.MaterialUniformCount; i++)
 				{					
-					m_renderer->SetPixelBufferToShader(m_state.MaterialUniforms[i].data(), sizeof(float) * 4, sizeof(float) * 4 * i);
+					m_renderer->SetPixelBufferToShader(m_state.MaterialUniforms[i].data(), sizeof(float) * 4, sizeof(float) * 4 * (i + 1));
 				}
 			}
 		}

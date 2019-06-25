@@ -83,6 +83,7 @@
     <Compile Include="GUI\Component\Vector2DWithRandom.cs" />
     <Compile Include="GUI\Component\Vector3D.cs" />
     <Compile Include="GUI\Component\Vector3DWithRandom.cs" />
+    <Compile Include="GUI\Component\Vector4D.cs" />
     <Compile Include="GUI\Dialog\About.cs" />
     <Compile Include="GUI\Dialog\MessageBox.cs" />
     <Compile Include="GUI\Dialog\OpenModel.cs" />

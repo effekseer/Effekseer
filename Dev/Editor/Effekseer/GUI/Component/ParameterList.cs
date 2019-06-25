@@ -519,6 +519,10 @@ namespace Effekseer.GUI.Component
 				{
 					gui = new Vector3DWithRandom(Title);
 				}
+				else if (type == typeof(Data.Value.Vector4D))
+				{
+					gui = new Vector4D(Title);
+				}
 				else if (type == typeof(Data.Value.Color))
 				{
 					gui = new ColorCtrl(Title);

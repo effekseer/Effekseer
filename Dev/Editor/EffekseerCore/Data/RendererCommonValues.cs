@@ -180,15 +180,30 @@ namespace Effekseer.Data
 				}
 				else
 				{
-					var status = new ValueStatus();
-					var value = new Value.Vector3D();
-					status.Name = uniform.Name;
-					status.Description = "";
-					status.IsShown = true;
-					keyToValues.Add(key, value);
-					valueToStatus.Add(value, status);
-					UniformValues.Add(value);
-					isChanged = true;
+					if(uniform.Type == 0)
+					{
+						var status = new ValueStatus();
+						var value = new Value.Float();
+						status.Name = uniform.Name;
+						status.Description = "";
+						status.IsShown = true;
+						keyToValues.Add(key, value);
+						valueToStatus.Add(value, status);
+						UniformValues.Add(value);
+						isChanged = true;
+					}
+					else
+					{
+						var status = new ValueStatus();
+						var value = new Value.Vector4D();
+						status.Name = uniform.Name;
+						status.Description = "";
+						status.IsShown = true;
+						keyToValues.Add(key, value);
+						valueToStatus.Add(value, status);
+						UniformValues.Add(value);
+						isChanged = true;
+					}
 				}
 			}
 

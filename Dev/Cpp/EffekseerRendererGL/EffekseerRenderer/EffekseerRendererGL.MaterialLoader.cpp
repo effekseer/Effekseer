@@ -131,12 +131,12 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 	shader->SetPixelConstantBufferSize(pixelUniformSize);
 
 	int32_t index = 0;
-	shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), sizeof(float) * 4 * index);	
+	shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), sizeof(float) * 4 * index);	
 	index++;
 
 	for (auto uniform : loader.Uniforms)
 	{
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId(uniform.Name.c_str()), sizeof(float) * 4 * index);	
+		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId(uniform.Name.c_str()), sizeof(float) * 4 * index);	
 		index++;
 	}
 

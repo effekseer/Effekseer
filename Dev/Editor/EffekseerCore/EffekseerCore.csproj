@@ -130,6 +130,7 @@
     <Compile Include="Data\Value\Vector3D.cs" />
     <Compile Include="Data\Value\Vector3DWithRandom.cs" />
     <Compile Include="Data\GlobalValues.cs" />
+    <Compile Include="Data\Value\Vector4D.cs" />
     <Compile Include="Define.cs" />
     <Compile Include="Exporter\glTFExporter.cs" />
     <Compile Include="InternalScript\Compiler.cs" />

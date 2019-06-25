@@ -140,6 +140,14 @@ texInfo.Load(texture.Item1.AbsolutePath))
 						floats[2] = (uniform as Data.Value.Vector3D).Z.Value;
 					}
 
+					if (uniform is Data.Value.Vector4D)
+					{
+						floats[0] = (uniform as Data.Value.Vector4D).X.Value;
+						floats[1] = (uniform as Data.Value.Vector4D).Y.Value;
+						floats[2] = (uniform as Data.Value.Vector4D).Z.Value;
+						floats[3] = (uniform as Data.Value.Vector4D).W.Value;
+					}
+
 					data.Add(floats[0].GetBytes());
 					data.Add(floats[1].GetBytes());
 					data.Add(floats[2].GetBytes());
