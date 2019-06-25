@@ -258,9 +258,9 @@ public:
 	/* 更新番号 */
 	uint32_t		m_sequenceNumber;
 
-	//! calculate dynamic param and assign a result
+	//! calculate dynamic equation and assign a result
 	template <typename T, typename U>
-	void ApplyDynamicParameter(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd, const U& originalParam);
+	void ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd, const U& originalParam);
 
 	// コンストラクタ
 	Instance( Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer );

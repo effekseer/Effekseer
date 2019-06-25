@@ -134,16 +134,16 @@ namespace Effekseer.GUI.Component
 
 			isActive = isActive_Current;
 
-			if (binding.IsDynamicParameterEnabled)
+			if (binding.IsDynamicEquationEnabled)
 			{
-				Manager.NativeManager.Text("Dynamic");
+				Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
 				Manager.NativeManager.SameLine();
 
-				var nextParam = DynamicSelector.Select("", "", binding.DynamicParameter, false, false);
+				var nextParam = DynamicSelector.Select("", "", binding.DynamicEquation, false, false);
 
-				if (binding.DynamicParameter != nextParam)
+				if (binding.DynamicEquation != nextParam)
 				{
-					binding.SetDynamicParameter(nextParam);
+					binding.SetDynamicEquation(nextParam);
 				}
 
 				Popup();
@@ -158,17 +158,17 @@ namespace Effekseer.GUI.Component
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-				if (Manager.NativeManager.RadioButton("Default" + id_c + "_1", !binding.IsDynamicParameterEnabled))
+				if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicFixed") + id_c + "_1", !binding.IsDynamicEquationEnabled))
 				{
-					binding.IsDynamicParameterEnabled = false;
-					binding.SetDynamicParameter(null);
+					binding.IsDynamicEquationEnabled = false;
+					binding.SetDynamicEquation(null);
 				}
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.RadioButton("Dynamic" + id_c + "_2", binding.IsDynamicParameterEnabled))
+				if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicDynamic") + id_c + "_2", binding.IsDynamicEquationEnabled))
 				{
-					binding.IsDynamicParameterEnabled = true;
+					binding.IsDynamicEquationEnabled = true;
 				}
 
 				Manager.NativeManager.EndPopup();

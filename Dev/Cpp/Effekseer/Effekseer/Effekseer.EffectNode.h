@@ -190,7 +190,7 @@ enum ParameterTranslationType
 //----------------------------------------------------------------------------------
 struct ParameterTranslationFixed
 {
-	int32_t ReferencedDynamicParameter = -1;
+	int32_t RefEq = -1;
 
 	Vector3D Position;
 };
@@ -200,12 +200,12 @@ struct ParameterTranslationFixed
 //----------------------------------------------------------------------------------
 struct ParameterTranslationPVA
 {
-	int32_t ReferencedDynamicParameterPMax = -1;
-	int32_t ReferencedDynamicParameterPMin = -1;
-	int32_t ReferencedDynamicParameterVMax = -1;
-	int32_t ReferencedDynamicParameterVMin = -1;
-	int32_t ReferencedDynamicParameterAMax = -1;
-	int32_t ReferencedDynamicParameterAMin = -1;
+	int32_t RefEqPMax = -1;
+	int32_t RefEqPMin = -1;
+	int32_t RefEqVMax = -1;
+	int32_t RefEqVMin = -1;
+	int32_t RefEqAMax = -1;
+	int32_t RefEqAMin = -1;
 	random_vector3d	location;
 	random_vector3d	velocity;
 	random_vector3d	acceleration;
@@ -213,10 +213,10 @@ struct ParameterTranslationPVA
 
 struct ParameterTranslationEasing
 {
-	int32_t ReferencedDynamicParameterSMax = -1;
-	int32_t ReferencedDynamicParameterSMin = -1;
-	int32_t ReferencedDynamicParameterEMax = -1;
-	int32_t ReferencedDynamicParameterEMin = -1;
+	int32_t RefEqSMax = -1;
+	int32_t RefEqSMin = -1;
+	int32_t RefEqEMax = -1;
+	int32_t RefEqEMin = -1;
 	easing_vector3d location;
 };
 
@@ -275,7 +275,7 @@ enum ParameterRotationType
 //----------------------------------------------------------------------------------
 struct ParameterRotationFixed
 {
-	int32_t ReferencedDynamicParameter = -1;
+	int32_t RefEq = -1;
 	Vector3D Position;
 };
 
@@ -284,12 +284,12 @@ struct ParameterRotationFixed
 //----------------------------------------------------------------------------------
 struct ParameterRotationPVA
 {
-	int32_t ReferencedDynamicParameterPMax = -1;
-	int32_t ReferencedDynamicParameterPMin = -1;
-	int32_t ReferencedDynamicParameterVMax = -1;
-	int32_t ReferencedDynamicParameterVMin = -1;
-	int32_t ReferencedDynamicParameterAMax = -1;
-	int32_t ReferencedDynamicParameterAMin = -1;
+	int32_t RefEqPMax = -1;
+	int32_t RefEqPMin = -1;
+	int32_t RefEqVMax = -1;
+	int32_t RefEqVMin = -1;
+	int32_t RefEqAMax = -1;
+	int32_t RefEqAMin = -1;
 	random_vector3d	rotation;
 	random_vector3d	velocity;
 	random_vector3d	acceleration;
@@ -297,10 +297,10 @@ struct ParameterRotationPVA
 
 struct ParameterRotationEasing
 {
-	int32_t ReferencedDynamicParameterSMax = -1;
-	int32_t ReferencedDynamicParameterSMin = -1;
-	int32_t ReferencedDynamicParameterEMax = -1;
-	int32_t ReferencedDynamicParameterEMin = -1;
+	int32_t RefEqSMax = -1;
+	int32_t RefEqSMin = -1;
+	int32_t RefEqEMax = -1;
+	int32_t RefEqEMin = -1;
 	easing_vector3d rotation;
 };
 
@@ -346,7 +346,7 @@ enum ParameterScalingType
 //----------------------------------------------------------------------------------
 struct ParameterScalingFixed
 {
-	int32_t ReferencedDynamicParameter = -1;
+	int32_t RefEq = -1;
 
 	Vector3D Position;
 };
@@ -356,12 +356,12 @@ struct ParameterScalingFixed
 //----------------------------------------------------------------------------------
 struct ParameterScalingPVA
 {
-	int32_t ReferencedDynamicParameterPMax = -1;
-	int32_t ReferencedDynamicParameterPMin = -1;
-	int32_t ReferencedDynamicParameterVMax = -1;
-	int32_t ReferencedDynamicParameterVMin = -1;
-	int32_t ReferencedDynamicParameterAMax = -1;
-	int32_t ReferencedDynamicParameterAMin = -1;
+	int32_t RefEqPMax = -1;
+	int32_t RefEqPMin = -1;
+	int32_t RefEqVMax = -1;
+	int32_t RefEqVMin = -1;
+	int32_t RefEqAMax = -1;
+	int32_t RefEqAMin = -1;
 
 	random_vector3d Position;
 	random_vector3d Velocity;
@@ -370,10 +370,10 @@ struct ParameterScalingPVA
 
 struct ParameterScalingEasing
 {
-	int32_t ReferencedDynamicParameterSMax = -1;
-	int32_t ReferencedDynamicParameterSMin = -1;
-	int32_t ReferencedDynamicParameterEMax = -1;
-	int32_t ReferencedDynamicParameterEMin = -1;
+	int32_t RefEqSMax = -1;
+	int32_t RefEqSMin = -1;
+	int32_t RefEqEMax = -1;
+	int32_t RefEqEMin = -1;
 	easing_vector3d Position;
 };
 

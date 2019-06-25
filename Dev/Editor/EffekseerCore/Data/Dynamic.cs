@@ -16,17 +16,17 @@ namespace Effekseer.Data
 		}
 	}
 
-	public class DynamicVector
+	public class DynamicEquation
 	{
-		public const string DefaultName = "Param";
+		public const string DefaultName = "Eq";
 
 		public Value.String Name { get; private set; }
 
 		public Value.String Code { get; private set; }
 
-		DynamicVectorCollection parent = null;
+		DynamicEquationCollection parent = null;
 
-		public DynamicVector(string name, DynamicVectorCollection parent)
+		public DynamicEquation(string name, DynamicEquationCollection parent)
 		{
 			Name = new Value.String(name);
 			Code = new Value.String();
@@ -108,17 +108,17 @@ namespace Effekseer.Data
 		public event ChangedValueEventHandler OnChanged;
 	}
 
-	public class DynamicVectorCollection : IEditableValueCollection
+	public class DynamicEquationCollection : IEditableValueCollection
 	{
-		List<DynamicVector> values = new List<DynamicVector>();
+		List<DynamicEquation> values = new List<DynamicEquation>();
 
-		public int GetIndex(DynamicVector vector)
+		public int GetIndex(DynamicEquation vector)
 		{
 			if (vector == null) return -1;
 			return Values.IndexOf(vector);
 		}
 
-		public List<DynamicVector> Values
+		public List<DynamicEquation> Values
 		{
 			get
 			{
@@ -126,8 +126,8 @@ namespace Effekseer.Data
 			}
 		}
 
-		DynamicVector selected = null;
-		public DynamicVector Selected
+		DynamicEquation selected = null;
+		public DynamicEquation Selected
 		{
 			get
 			{
@@ -148,8 +148,8 @@ namespace Effekseer.Data
 			if (values.Count >= 16) return false;
 
 			var old_value = values;
-			var new_value = new List<DynamicVector>(values);
-			new_value.Add(new DynamicVector(DynamicVector.DefaultName, this));
+			var new_value = new List<DynamicEquation>(values);
+			new_value.Add(new DynamicEquation(DynamicEquation.DefaultName, this));
 
 
 			var cmd = new Command.DelegateCommand(
@@ -203,7 +203,7 @@ namespace Effekseer.Data
 	{
 		public DynamicInputCollection Inputs { get; private set; }
 
-		public DynamicVectorCollection Vectors { get; private set; }
+		public DynamicEquationCollection Equations { get; private set; }
 
 		public DynamicValues()
 		{
@@ -214,7 +214,7 @@ namespace Effekseer.Data
 				Inputs.Add();
 			}
 
-			Vectors = new DynamicVectorCollection();
+			Equations = new DynamicEquationCollection();
 		}
 	}
 }

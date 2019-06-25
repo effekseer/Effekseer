@@ -33,22 +33,22 @@ namespace Effekseer.Data.Value
 
 		internal DrawnAs DefaultDrawnAs { get; private set; }
 
-		bool isDynamicParameterEnabled = false;
-		public bool IsDynamicParameterEnabled
+		bool isDynamicEquationEnabled = false;
+		public bool IsDynamicEquationEnabled
 		{
 			get
 			{
-				return isDynamicParameterEnabled;
+				return isDynamicEquationEnabled;
 			}
 			set
 			{
-				var old_value = isDynamicParameterEnabled;
+				var old_value = isDynamicEquationEnabled;
 				var new_value = value;
 
 				var cmd = new Command.DelegateCommand(
 					() =>
 					{
-						isDynamicParameterEnabled = new_value;
+						isDynamicEquationEnabled = new_value;
 
 						if (OnChanged != null)
 						{
@@ -57,7 +57,7 @@ namespace Effekseer.Data.Value
 					},
 					() =>
 					{
-						isDynamicParameterEnabled = old_value;
+						isDynamicEquationEnabled = old_value;
 
 						if (OnChanged != null)
 						{
@@ -68,23 +68,23 @@ namespace Effekseer.Data.Value
 				Command.CommandManager.Execute(cmd);
 			}
 		}
-		public DynamicVector DynamicParameterMin
+		public DynamicEquation DynamicEquationMin
 		{
 			get;
 			private set;
 		}
 
-		public void SetDynamicParameterMin(DynamicVector param)
+		public void SetDynamicEquationMin(DynamicEquation param)
 		{
-			if (param == DynamicParameterMin) return;
+			if (param == DynamicEquationMin) return;
 
-			var old_value = DynamicParameterMin;
+			var old_value = DynamicEquationMin;
 			var new_value = param;
 
 			var cmd = new Command.DelegateCommand(
 				() =>
 				{
-					DynamicParameterMin = new_value;
+					DynamicEquationMin = new_value;
 
 					if (OnChanged != null)
 					{
@@ -93,7 +93,7 @@ namespace Effekseer.Data.Value
 				},
 				() =>
 				{
-					DynamicParameterMin = old_value;
+					DynamicEquationMin = old_value;
 
 					if (OnChanged != null)
 					{
@@ -104,23 +104,23 @@ namespace Effekseer.Data.Value
 			Command.CommandManager.Execute(cmd);
 		}
 
-		public DynamicVector DynamicParameterMax
+		public DynamicEquation DynamicEquationMax
 		{
 			get;
 			private set;
 		}
 
-		public void SetDynamicParameterMax(DynamicVector param)
+		public void SetDynamicEquationMax(DynamicEquation param)
 		{
-			if (param == DynamicParameterMax) return;
+			if (param == DynamicEquationMax) return;
 
-			var old_value = DynamicParameterMax;
+			var old_value = DynamicEquationMax;
 			var new_value = param;
 
 			var cmd = new Command.DelegateCommand(
 				() =>
 				{
-					DynamicParameterMax = new_value;
+					DynamicEquationMax = new_value;
 
 					if (OnChanged != null)
 					{
@@ -129,7 +129,7 @@ namespace Effekseer.Data.Value
 				},
 				() =>
 				{
-					DynamicParameterMax = old_value;
+					DynamicEquationMax = old_value;
 
 					if (OnChanged != null)
 					{

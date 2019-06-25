@@ -138,6 +138,11 @@
     "Save": "保存",
     "StorageTarget": "設定保存先",
     "StorageGlobal": "Effekseerアプリケーション",
-    "StorageLocal": "プロジェクト"
+    "StorageLocal": "プロジェクト",
+    "DynamicInput": "入力",
+    "DynamicEquation": "式",
+    "DynamicEq": "式",
+    "DynamicFixed": "固定",
+    "DynamicDynamic": "動的"
   }
 }

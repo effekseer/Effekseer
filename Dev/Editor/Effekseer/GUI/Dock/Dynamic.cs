@@ -14,6 +14,8 @@ namespace Effekseer.GUI.Dock
 
 		bool isFiestUpdate = true;
 
+		string compileResult = string.Empty;
+
 		public Dynamic()
 		{
 			Label = Resources.GetString("DynamicParameter_Name") + "###DynamicParameter";
@@ -25,7 +27,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnBeforeNew += Core_OnBeforeNew;
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
-			Core.Dynamic.Vectors.OnChanged += Vectors_OnChanged;
+			Core.Dynamic.Equations.OnChanged += Vectors_OnChanged;
 			Core.Dynamic.Inputs.Values[0].Input.OnChanged += Input_OnChanged;
 			Core.Dynamic.Inputs.Values[1].Input.OnChanged += Input_OnChanged;
 			Core.Dynamic.Inputs.Values[2].Input.OnChanged += Input_OnChanged;
@@ -63,7 +65,7 @@ namespace Effekseer.GUI.Dock
 
 			Core.OnAfterLoad -= OnAfterLoad;
 			Core.OnAfterNew -= OnAfterLoad;
-			Core.Dynamic.Vectors.OnChanged -= Vectors_OnChanged;
+			Core.Dynamic.Equations.OnChanged -= Vectors_OnChanged;
 		}
 
 		protected override void UpdateInternal()
@@ -72,33 +74,56 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
-			Manager.NativeManager.Text("Dynamic Input");
+			Manager.NativeManager.Text(Resources.GetString("DynamicInput"));
 
 			paramerterListInput.Update();
 
 			Manager.NativeManager.Separator();
 
-			Manager.NativeManager.Text("Calculation");
+			Manager.NativeManager.Text(Resources.GetString("DynamicEquation"));
 
-			var nextParam = Component.DynamicSelector.Select("", "", Core.Dynamic.Vectors.Selected, false, true);
+			var nextParam = Component.DynamicSelector.Select("", "", Core.Dynamic.Equations.Selected, false, true);
 
-			if (Core.Dynamic.Vectors.Selected != nextParam)
+			if (Core.Dynamic.Equations.Selected != nextParam)
 			{
-				Core.Dynamic.Vectors.Selected = nextParam;
+				Core.Dynamic.Equations.Selected = nextParam;
 			}
 
 			if(Manager.NativeManager.Button("Add###DynamicAdd"))
 			{
-				Core.Dynamic.Vectors.Add();
+				Core.Dynamic.Equations.Add();
 			}
 
 			paramerterList.Update();
+
+			// TODO make good GUI
+			if (Manager.NativeManager.Button("Compile###DynamicCompile"))
+			{
+				var selected = Core.Dynamic.Equations.Selected;
+				if(selected != null)
+				{
+					var compiler = new InternalScript.Compiler();
+					var result = compiler.Compile(selected.Code.Value);
+
+					if(result.Error != null)
+					{
+						compileResult = result.Error.ToString();
+					}
+					else
+					{
+						compileResult = "OK";
+					}
+				}
+			}
+
+			// show errors
+			Manager.NativeManager.Text(compileResult);
 		}
 
 		void Read()
 		{
 			paramerterListInput.SetValue(Core.Dynamic.Inputs);
-			paramerterList.SetValue(Core.Dynamic.Vectors);
+			paramerterList.SetValue(Core.Dynamic.Equations);
 		}
 
 		private void Core_OnBeforeNew(object sender, EventArgs e)
@@ -107,7 +132,7 @@ namespace Effekseer.GUI.Dock
 			Core.Dynamic.Inputs.Values[1].Input.OnChanged -= Input_OnChanged;
 			Core.Dynamic.Inputs.Values[2].Input.OnChanged -= Input_OnChanged;
 			Core.Dynamic.Inputs.Values[3].Input.OnChanged -= Input_OnChanged;
-			Core.Dynamic.Vectors.OnChanged -= Vectors_OnChanged;
+			Core.Dynamic.Equations.OnChanged -= Vectors_OnChanged;
 			paramerterList.SetValue(null);
 		}
 
@@ -117,13 +142,13 @@ namespace Effekseer.GUI.Dock
 			Core.Dynamic.Inputs.Values[1].Input.OnChanged -= Input_OnChanged;
 			Core.Dynamic.Inputs.Values[2].Input.OnChanged -= Input_OnChanged;
 			Core.Dynamic.Inputs.Values[3].Input.OnChanged -= Input_OnChanged;
-			Core.Dynamic.Vectors.OnChanged -= Vectors_OnChanged;
+			Core.Dynamic.Equations.OnChanged -= Vectors_OnChanged;
 			paramerterList.SetValue(null);
 		}
 
 		void OnAfterLoad(object sender, EventArgs e)
 		{
-			Core.Dynamic.Vectors.OnChanged += Vectors_OnChanged;
+			Core.Dynamic.Equations.OnChanged += Vectors_OnChanged;
 			Core.Dynamic.Inputs.Values[0].Input.OnChanged += Input_OnChanged;
 			Core.Dynamic.Inputs.Values[1].Input.OnChanged += Input_OnChanged;
 			Core.Dynamic.Inputs.Values[2].Input.OnChanged += Input_OnChanged;

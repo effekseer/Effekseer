@@ -138,6 +138,11 @@
     "Save": "Save",
     "StorageTarget": "Setting save destination",
     "StorageGlobal": "Effekseer Application",
-    "StorageLocal": "Effekseer Project"
+    "StorageLocal": "Effekseer Project",
+    "DynamicInput": "Input",
+    "DynamicEquation": "Equation",
+    "DynamicEq": "Eq.",
+    "DynamicFixed": "Fixed",
+    "DynamicDynamic": "Dynamic"
   }
 }

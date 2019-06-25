@@ -2390,7 +2390,7 @@ public:
 		\~English specfiy a dynamic parameter, which changes effect parameters dynamically while playing
 		\~Japanese 再生中にエフェクトのパラメーターを変更する動的パラメーターを設定する。
 	*/
-	virtual void SetDynamicParameter(Handle handle, int32_t index, float value) = 0;
+	virtual void SetDynamicInput(Handle handle, int32_t index, float value) = 0;
 
 	/**
 		@brief	エフェクトのベース行列を取得する。

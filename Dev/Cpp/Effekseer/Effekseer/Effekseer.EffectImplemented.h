@@ -137,7 +137,7 @@ protected:
 	std::array<float, 4> defaultDynamicInputs;
 
 	//! dynamic parameters
-	std::vector<InternalScript> dynamicParameters;
+	std::vector<InternalScript> dynamicEquation;
 
 	int32_t renderingNodesCount = 0;
 	int32_t renderingNodesThreshold = 0;

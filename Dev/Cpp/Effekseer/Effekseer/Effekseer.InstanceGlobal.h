@@ -59,11 +59,11 @@ public:
 	bool		IsGlobalColorSet = false;
 	Color		GlobalColor = Color(255, 255, 255, 255);
 
-	std::array<std::array<float, 4>, 16> dynamicParameters;
+	std::array<std::array<float, 4>, 16> dynamicEqResults;
 
 	std::vector<InstanceContainer*>	RenderedInstanceContainers;
 
-	std::array<float, 4> GetDynamicParameter(int32_t index);
+	std::array<float, 4> GetDynamicEquationResult(int32_t index);
 	void SetSeed(int64_t seed);
 
 	virtual float GetRand() override;

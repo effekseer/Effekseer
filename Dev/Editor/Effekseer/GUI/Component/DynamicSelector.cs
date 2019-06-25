@@ -8,12 +8,12 @@ namespace Effekseer.GUI.Component
 {
 	class DynamicSelector
 	{
-		public static Data.DynamicVector Select(string paramName, string id, Data.DynamicVector currentSelected, bool hasDefault, bool showInvalid)
+		public static Data.DynamicEquation Select(string paramName, string id, Data.DynamicEquation currentSelected, bool hasDefault, bool showInvalid)
 		{
 			var nextSelected = currentSelected;
 
 
-			var v = Core.Dynamic.Vectors.Values.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == currentSelected).FirstOrDefault();
+			var v = Core.Dynamic.Equations.Values.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == currentSelected).FirstOrDefault();
 
 			string selectedID = "";
 
@@ -24,7 +24,7 @@ namespace Effekseer.GUI.Component
 
 			if (v != null)
 			{
-				selectedID = v.Item1.Name.Value + "###DynamicVector" + v.Item2.ToString();
+				selectedID = v.Item1.Name.Value + "###DynamicEquation" + v.Item2.ToString();
 			}
 
 			if (Manager.NativeManager.BeginCombo(paramName + "###Dynamic" + id, selectedID, swig.ComboFlags.None))
@@ -47,27 +47,27 @@ namespace Effekseer.GUI.Component
 					}
 				}
 
-				for (int i = 0; i < Core.Dynamic.Vectors.Values.Count; i++)
+				for (int i = 0; i < Core.Dynamic.Equations.Values.Count; i++)
 				{
-					if (!showInvalid && !Core.Dynamic.Vectors.Values[i].IsValid)
+					if (!showInvalid && !Core.Dynamic.Equations.Values[i].IsValid)
 						continue;
 
-					bool is_selected = (Core.Dynamic.Vectors.Values[i] == currentSelected);
+					bool is_selected = (Core.Dynamic.Equations.Values[i] == currentSelected);
 
 					string name = string.Empty;
 
-					if(Core.Dynamic.Vectors.Values[i].Name.Value == string.Empty)
+					if(Core.Dynamic.Equations.Values[i].Name.Value == string.Empty)
 					{
-						name = "(Noname)" + "###DynamicVector" + i.ToString();
+						name = "(Noname)" + "###DynamicEquation" + i.ToString();
 					}
 					else
 					{
-						name = Core.Dynamic.Vectors.Values[i].Name.Value + "###DynamicVector" + i.ToString();
+						name = Core.Dynamic.Equations.Values[i].Name.Value + "###DynamicEquation" + i.ToString();
 					}
 
 					if (Manager.NativeManager.Selectable(name, is_selected, swig.SelectableFlags.None))
 					{
-						nextSelected = Core.Dynamic.Vectors.Values[i];
+						nextSelected = Core.Dynamic.Equations.Values[i];
 					}
 
 					if (is_selected)

@@ -20,18 +20,18 @@ namespace Effekseer
 {
 
 template<typename T, typename U>
-void Instance::ApplyDynamicParameter(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd, const U& originalParam)
+void Instance::ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd, const U& originalParam)
 {
 	static_assert(sizeof(T) == sizeof(U), "size is not mismatched");
 	const int count = sizeof(T) / 4;
 
 	EFK_ASSERT(e != nullptr);
-	EFK_ASSERT(0 <= dpInd && dpInd < static_cast<int>(instg->dynamicParameters.size()));
+	EFK_ASSERT(0 <= dpInd && dpInd < static_cast<int>(instg->dynamicEqResults.size()));
 
 	auto dst = reinterpret_cast<float*>(&(dstParam));
 	auto src = reinterpret_cast<const float*>(&(originalParam));
 
-	auto dparam = instg->dynamicParameters[dpInd];
+	auto eqresult = instg->dynamicEqResults[dpInd];
 	std::array<float, 1> globals;
 	globals[0] = instg->GetUpdatedFrame() / 60.0f;
 
@@ -50,16 +50,16 @@ void Instance::ApplyDynamicParameter(T& dstParam, Effect* e, InstanceGlobal* ins
 	locals[4] = m_pParent != nullptr ? m_pParent->m_LivingTime / 60.0f : 0.0f;
 
 	auto e_ = static_cast<EffectImplemented*>(e);
-	auto& dp = e_->dynamicParameters[dpInd];
+	auto& dp = e_->dynamicEquation[dpInd];
 
 	if (dp.GetRunningPhase() == InternalScript::RunningPhaseType::Local)
 	{
-		dparam = dp.Execute(instg->dynamicInputParameters, globals, locals);
+		eqresult = dp.Execute(instg->dynamicInputParameters, globals, locals);
 	}
 
 	for (int i = 0; i < count; i++)
 	{
-		dst[i] = dparam[i];
+		dst[i] = eqresult[i];
 	}
 }
 
@@ -348,21 +348,21 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	{
 		random_vector3d rvl = m_pEffectNode->TranslationPVA.location;
 
-		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterPMax >= 0)
+		if (m_pEffectNode->TranslationPVA.RefEqPMax >= 0)
 		{
-			ApplyDynamicParameter(rvl.max,
+			ApplyEq(rvl.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterPMax,
+								  m_pEffectNode->TranslationPVA.RefEqPMax,
 								  m_pEffectNode->TranslationPVA.location.max);
 		}
 
-		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterPMin >= 0)
+		if (m_pEffectNode->TranslationPVA.RefEqPMin >= 0)
 		{
-			ApplyDynamicParameter(rvl.min,
+			ApplyEq(rvl.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterPMin,
+								  m_pEffectNode->TranslationPVA.RefEqPMin,
 								  m_pEffectNode->TranslationPVA.location.min);
 		}
 
@@ -370,21 +370,21 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 
 		random_vector3d rvv = m_pEffectNode->TranslationPVA.velocity;
 
-		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterVMax >= 0)
+		if (m_pEffectNode->TranslationPVA.RefEqVMax >= 0)
 		{
-			ApplyDynamicParameter(rvv.max,
+			ApplyEq(rvv.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterVMax,
+								  m_pEffectNode->TranslationPVA.RefEqVMax,
 								  m_pEffectNode->TranslationPVA.velocity.max);
 		}
 
-		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterVMin >= 0)
+		if (m_pEffectNode->TranslationPVA.RefEqVMin >= 0)
 		{
-			ApplyDynamicParameter(rvv.min,
+			ApplyEq(rvv.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterVMin,
+								  m_pEffectNode->TranslationPVA.RefEqVMin,
 								  m_pEffectNode->TranslationPVA.velocity.min);
 		}
 
@@ -392,21 +392,21 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 
 		random_vector3d rva = m_pEffectNode->TranslationPVA.acceleration;
 
-		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterAMax >= 0)
+		if (m_pEffectNode->TranslationPVA.RefEqAMax >= 0)
 		{
-			ApplyDynamicParameter(rva.max,
+			ApplyEq(rva.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterAMax,
+								  m_pEffectNode->TranslationPVA.RefEqAMax,
 								  m_pEffectNode->TranslationPVA.acceleration.max);
 		}
 
-		if (m_pEffectNode->TranslationPVA.ReferencedDynamicParameterAMin >= 0)
+		if (m_pEffectNode->TranslationPVA.RefEqAMin >= 0)
 		{
-			ApplyDynamicParameter(rva.min,
+			ApplyEq(rva.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.ReferencedDynamicParameterAMin,
+								  m_pEffectNode->TranslationPVA.RefEqAMin,
 								  m_pEffectNode->TranslationPVA.acceleration.min);
 		}
 
@@ -417,41 +417,41 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	{
 		random_vector3d rvs = m_pEffectNode->TranslationEasing.location.start;
 
-		if (m_pEffectNode->TranslationEasing.ReferencedDynamicParameterSMax >= 0)
+		if (m_pEffectNode->TranslationEasing.RefEqSMax >= 0)
 		{
-			ApplyDynamicParameter(rvs.max,
+			ApplyEq(rvs.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationEasing.ReferencedDynamicParameterSMax,
+								  m_pEffectNode->TranslationEasing.RefEqSMax,
 								  m_pEffectNode->TranslationEasing.location.start.max);
 		}
 
-		if (m_pEffectNode->TranslationEasing.ReferencedDynamicParameterSMin >= 0)
+		if (m_pEffectNode->TranslationEasing.RefEqSMin >= 0)
 		{
-			ApplyDynamicParameter(rvs.min,
+			ApplyEq(rvs.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationEasing.ReferencedDynamicParameterSMin,
+								  m_pEffectNode->TranslationEasing.RefEqSMin,
 								  m_pEffectNode->TranslationEasing.location.start.min);
 		}
 
 		random_vector3d rve = m_pEffectNode->TranslationEasing.location.end;
 
-		if (m_pEffectNode->TranslationEasing.ReferencedDynamicParameterEMax >= 0)
+		if (m_pEffectNode->TranslationEasing.RefEqEMax >= 0)
 		{
-			ApplyDynamicParameter(rve.max,
+			ApplyEq(rve.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationEasing.ReferencedDynamicParameterEMax,
+								  m_pEffectNode->TranslationEasing.RefEqEMax,
 								  m_pEffectNode->TranslationEasing.location.end.max);
 		}
 
-		if (m_pEffectNode->TranslationEasing.ReferencedDynamicParameterEMin >= 0)
+		if (m_pEffectNode->TranslationEasing.RefEqEMin >= 0)
 		{
-			ApplyDynamicParameter(rve.min,
+			ApplyEq(rve.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationEasing.ReferencedDynamicParameterEMin,
+								  m_pEffectNode->TranslationEasing.RefEqEMin,
 								  m_pEffectNode->TranslationEasing.location.end.min);
 		}
 
@@ -475,61 +475,61 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	{
 		random_vector3d rvl = m_pEffectNode->RotationPVA.rotation;
 
-		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterPMax >= 0)
+		if (m_pEffectNode->RotationPVA.RefEqPMax >= 0)
 		{
-			ApplyDynamicParameter(rvl.max,
+			ApplyEq(rvl.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterPMax,
+								  m_pEffectNode->RotationPVA.RefEqPMax,
 								  m_pEffectNode->RotationPVA.rotation.max);
 		}
 
-		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterPMin >= 0)
+		if (m_pEffectNode->RotationPVA.RefEqPMin >= 0)
 		{
-			ApplyDynamicParameter(rvl.min,
+			ApplyEq(rvl.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterPMin,
+								  m_pEffectNode->RotationPVA.RefEqPMin,
 								  m_pEffectNode->RotationPVA.rotation.min);
 		}
 
 		random_vector3d rvv = m_pEffectNode->RotationPVA.velocity;
 
-		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterVMax >= 0)
+		if (m_pEffectNode->RotationPVA.RefEqVMax >= 0)
 		{
-			ApplyDynamicParameter(rvv.max,
+			ApplyEq(rvv.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterVMax,
+								  m_pEffectNode->RotationPVA.RefEqVMax,
 								  m_pEffectNode->RotationPVA.velocity.max);
 		}
 
-		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterVMin >= 0)
+		if (m_pEffectNode->RotationPVA.RefEqVMin >= 0)
 		{
-			ApplyDynamicParameter(rvv.min,
+			ApplyEq(rvv.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterVMin,
+								  m_pEffectNode->RotationPVA.RefEqVMin,
 								  m_pEffectNode->RotationPVA.velocity.min);
 		}
 
 		random_vector3d rva = m_pEffectNode->RotationPVA.acceleration;
 
-		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterAMax >= 0)
+		if (m_pEffectNode->RotationPVA.RefEqAMax >= 0)
 		{
-			ApplyDynamicParameter(rva.max,
+			ApplyEq(rva.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterAMax,
+								  m_pEffectNode->RotationPVA.RefEqAMax,
 								  m_pEffectNode->RotationPVA.acceleration.max);
 		}
 
-		if (m_pEffectNode->RotationPVA.ReferencedDynamicParameterAMin >= 0)
+		if (m_pEffectNode->RotationPVA.RefEqAMin >= 0)
 		{
-			ApplyDynamicParameter(rva.min,
+			ApplyEq(rva.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.ReferencedDynamicParameterAMin,
+								  m_pEffectNode->RotationPVA.RefEqAMin,
 								  m_pEffectNode->RotationPVA.acceleration.min);
 		}
 
@@ -541,41 +541,41 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	{
 		random_vector3d rvs = m_pEffectNode->RotationEasing.rotation.start;
 
-		if (m_pEffectNode->RotationEasing.ReferencedDynamicParameterSMax >= 0)
+		if (m_pEffectNode->RotationEasing.RefEqSMax >= 0)
 		{
-			ApplyDynamicParameter(rvs.max,
+			ApplyEq(rvs.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationEasing.ReferencedDynamicParameterSMax,
+								  m_pEffectNode->RotationEasing.RefEqSMax,
 								  m_pEffectNode->RotationEasing.rotation.start.max);
 		}
 
-		if (m_pEffectNode->RotationEasing.ReferencedDynamicParameterSMin >= 0)
+		if (m_pEffectNode->RotationEasing.RefEqSMin >= 0)
 		{
-			ApplyDynamicParameter(rvs.min,
+			ApplyEq(rvs.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationEasing.ReferencedDynamicParameterSMin,
+								  m_pEffectNode->RotationEasing.RefEqSMin,
 								  m_pEffectNode->RotationEasing.rotation.start.min);
 		}
 
 		random_vector3d rve = m_pEffectNode->RotationEasing.rotation.end;
 
-		if (m_pEffectNode->RotationEasing.ReferencedDynamicParameterEMax >= 0)
+		if (m_pEffectNode->RotationEasing.RefEqEMax >= 0)
 		{
-			ApplyDynamicParameter(rve.max,
+			ApplyEq(rve.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationEasing.ReferencedDynamicParameterEMax,
+								  m_pEffectNode->RotationEasing.RefEqEMax,
 								  m_pEffectNode->RotationEasing.rotation.end.max);
 		}
 
-		if (m_pEffectNode->RotationEasing.ReferencedDynamicParameterEMin >= 0)
+		if (m_pEffectNode->RotationEasing.RefEqEMin >= 0)
 		{
-			ApplyDynamicParameter(rve.min,
+			ApplyEq(rve.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationEasing.ReferencedDynamicParameterEMin,
+								  m_pEffectNode->RotationEasing.RefEqEMin,
 								  m_pEffectNode->RotationEasing.rotation.end.min);
 		}
 
@@ -616,61 +616,61 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	{
 		random_vector3d rvl = m_pEffectNode->ScalingPVA.Position;
 
-		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterPMax >= 0)
+		if (m_pEffectNode->ScalingPVA.RefEqPMax >= 0)
 		{
-			ApplyDynamicParameter(rvl.max,
+			ApplyEq(rvl.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterPMax,
+								  m_pEffectNode->ScalingPVA.RefEqPMax,
 								  m_pEffectNode->ScalingPVA.Position.max);
 		}
 
-		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterPMin >= 0)
+		if (m_pEffectNode->ScalingPVA.RefEqPMin >= 0)
 		{
-			ApplyDynamicParameter(rvl.min,
+			ApplyEq(rvl.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterPMin,
+								  m_pEffectNode->ScalingPVA.RefEqPMin,
 								  m_pEffectNode->ScalingPVA.Position.min);
 		}
 
 		random_vector3d rvv = m_pEffectNode->ScalingPVA.Velocity;
 
-		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterVMax >= 0)
+		if (m_pEffectNode->ScalingPVA.RefEqVMax >= 0)
 		{
-			ApplyDynamicParameter(rvv.max,
+			ApplyEq(rvv.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterVMax,
+								  m_pEffectNode->ScalingPVA.RefEqVMax,
 								  m_pEffectNode->ScalingPVA.Velocity.max);
 		}
 
-		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterVMin >= 0)
+		if (m_pEffectNode->ScalingPVA.RefEqVMin >= 0)
 		{
-			ApplyDynamicParameter(rvv.min,
+			ApplyEq(rvv.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterVMin,
+								  m_pEffectNode->ScalingPVA.RefEqVMin,
 								  m_pEffectNode->ScalingPVA.Velocity.min);
 		}
 
 		random_vector3d rva = m_pEffectNode->ScalingPVA.Acceleration;
 
-		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterAMax >= 0)
+		if (m_pEffectNode->ScalingPVA.RefEqAMax >= 0)
 		{
-			ApplyDynamicParameter(rva.max,
+			ApplyEq(rva.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterAMax,
+								  m_pEffectNode->ScalingPVA.RefEqAMax,
 								  m_pEffectNode->ScalingPVA.Acceleration.max);
 		}
 
-		if (m_pEffectNode->ScalingPVA.ReferencedDynamicParameterAMin >= 0)
+		if (m_pEffectNode->ScalingPVA.RefEqAMin >= 0)
 		{
-			ApplyDynamicParameter(rva.min,
+			ApplyEq(rva.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.ReferencedDynamicParameterAMin,
+								  m_pEffectNode->ScalingPVA.RefEqAMin,
 								  m_pEffectNode->ScalingPVA.Acceleration.min);
 		}
 
@@ -682,41 +682,41 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	{
 		random_vector3d rvs = m_pEffectNode->ScalingEasing.Position.start;
 
-		if (m_pEffectNode->ScalingEasing.ReferencedDynamicParameterSMax >= 0)
+		if (m_pEffectNode->ScalingEasing.RefEqSMax >= 0)
 		{
-			ApplyDynamicParameter(rvs.max,
+			ApplyEq(rvs.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingEasing.ReferencedDynamicParameterSMax,
+								  m_pEffectNode->ScalingEasing.RefEqSMax,
 								  m_pEffectNode->ScalingEasing.Position.start.max);
 		}
 
-		if (m_pEffectNode->ScalingEasing.ReferencedDynamicParameterSMin >= 0)
+		if (m_pEffectNode->ScalingEasing.RefEqSMin >= 0)
 		{
-			ApplyDynamicParameter(rvs.min,
+			ApplyEq(rvs.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingEasing.ReferencedDynamicParameterSMin,
+								  m_pEffectNode->ScalingEasing.RefEqSMin,
 								  m_pEffectNode->ScalingEasing.Position.start.min);
 		}
 
 		random_vector3d rve = m_pEffectNode->ScalingEasing.Position.end;
 
-		if (m_pEffectNode->ScalingEasing.ReferencedDynamicParameterEMax >= 0)
+		if (m_pEffectNode->ScalingEasing.RefEqEMax >= 0)
 		{
-			ApplyDynamicParameter(rve.max,
+			ApplyEq(rve.max,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingEasing.ReferencedDynamicParameterEMax,
+								  m_pEffectNode->ScalingEasing.RefEqEMax,
 								  m_pEffectNode->ScalingEasing.Position.end.max);
 		}
 
-		if (m_pEffectNode->ScalingEasing.ReferencedDynamicParameterEMin >= 0)
+		if (m_pEffectNode->ScalingEasing.RefEqEMin >= 0)
 		{
-			ApplyDynamicParameter(rve.min,
+			ApplyEq(rve.min,
 								  this->m_pEffectNode->m_effect,
 								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingEasing.ReferencedDynamicParameterEMin,
+								  m_pEffectNode->ScalingEasing.RefEqEMin,
 								  m_pEffectNode->ScalingEasing.Position.end.min);
 		}
 
@@ -1230,12 +1230,12 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->TranslationType == ParameterTranslationType_Fixed )
 		{
-			if (m_pEffectNode->TranslationFixed.ReferencedDynamicParameter >= 0)
+			if (m_pEffectNode->TranslationFixed.RefEq >= 0)
 			{
-				ApplyDynamicParameter(localPosition,
+				ApplyEq(localPosition,
 									  this->m_pEffectNode->m_effect,
 									  this->m_pContainer->GetRootInstance(),
-									  m_pEffectNode->TranslationFixed.ReferencedDynamicParameter,
+									  m_pEffectNode->TranslationFixed.RefEq,
 									  m_pEffectNode->TranslationFixed.Position);
 			}
 			else
@@ -1293,12 +1293,12 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->RotationType == ParameterRotationType_Fixed )
 		{
-			if (m_pEffectNode->RotationFixed.ReferencedDynamicParameter >= 0)
+			if (m_pEffectNode->RotationFixed.RefEq >= 0)
 			{
-				ApplyDynamicParameter(localAngle,
+				ApplyEq(localAngle,
 									  this->m_pEffectNode->m_effect,
 									  this->m_pContainer->GetRootInstance(),
-									  m_pEffectNode->RotationFixed.ReferencedDynamicParameter,
+									  m_pEffectNode->RotationFixed.RefEq,
 									  m_pEffectNode->RotationFixed.Position);
 			}
 			else
@@ -1364,12 +1364,12 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->ScalingType == ParameterScalingType_Fixed )
 		{
-			if (m_pEffectNode->ScalingFixed.ReferencedDynamicParameter >= 0)
+			if (m_pEffectNode->ScalingFixed.RefEq >= 0)
 			{
-				ApplyDynamicParameter(localScaling,
+				ApplyEq(localScaling,
 									  this->m_pEffectNode->m_effect,
 									  this->m_pContainer->GetRootInstance(),
-									  m_pEffectNode->ScalingFixed.ReferencedDynamicParameter,
+									  m_pEffectNode->ScalingFixed.RefEq,
 									  m_pEffectNode->ScalingFixed.Position);
 			}
 			else

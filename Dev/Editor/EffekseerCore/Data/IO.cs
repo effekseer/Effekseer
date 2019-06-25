@@ -85,7 +85,7 @@ namespace Effekseer.Data
 			return e;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicVectorCollection collection, bool isClip)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicEquationCollection collection, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
 			for (int i = 0; i < collection.Values.Count; i++)
@@ -160,10 +160,10 @@ namespace Effekseer.Data
 			if (y != null) e.AppendChild(y);
 			if (z != null) e.AppendChild(z);
 
-			var d_ind = Core.Dynamic.Vectors.GetIndex(value.DynamicParameter);
+			var d_ind = Core.Dynamic.Equations.GetIndex(value.DynamicEquation);
 			if(d_ind >= 0)
 			{
-				var d = doc.CreateTextElement("DynamicParameter", d_ind.ToString());
+				var d = doc.CreateTextElement("DynamicEquation", d_ind.ToString());
 				e.AppendChild(d);
 			}
 
@@ -236,17 +236,17 @@ namespace Effekseer.Data
 			if (z != null) e.AppendChild(z);
 			if (da != null) e.AppendChild(da);
 
-			var d_ind_min = Core.Dynamic.Vectors.GetIndex(value.DynamicParameterMin);
+			var d_ind_min = Core.Dynamic.Equations.GetIndex(value.DynamicEquationMin);
 			if (d_ind_min >= 0)
 			{
-				var d = doc.CreateTextElement("DynamicParameterMin", d_ind_min.ToString());
+				var d = doc.CreateTextElement("DynamicEquationMin", d_ind_min.ToString());
 				e.AppendChild(d);
 			}
 
-			var d_ind_max = Core.Dynamic.Vectors.GetIndex(value.DynamicParameterMax);
+			var d_ind_max = Core.Dynamic.Equations.GetIndex(value.DynamicEquationMax);
 			if (d_ind_max >= 0)
 			{
-				var d = doc.CreateTextElement("DynamicParameterMax", d_ind_max.ToString());
+				var d = doc.CreateTextElement("DynamicEquationMax", d_ind_max.ToString());
 				e.AppendChild(d);
 			}
 
@@ -471,7 +471,7 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
-		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicVector value, bool isClip)
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicEquation value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
 			var name = SaveToElement(doc, "Name", value.Name, isClip);
@@ -554,14 +554,14 @@ namespace Effekseer.Data
 			}
 		}
 
-		public static void LoadFromElement(XmlElement e, Data.DynamicVectorCollection collection, bool isClip)
+		public static void LoadFromElement(XmlElement e, Data.DynamicEquationCollection collection, bool isClip)
 		{
 			collection.Values.Clear();
 
 			for (var i = 0; i < e.ChildNodes.Count; i++)
 			{
 				var e_child = e.ChildNodes[i] as XmlElement;
-				var element = new DynamicVector(DynamicVector.DefaultName, collection);
+				var element = new DynamicEquation(DynamicEquation.DefaultName, collection);
 				LoadFromElement(e_child, element, isClip);
 				collection.Values.Add(element);
 			}
@@ -635,7 +635,7 @@ namespace Effekseer.Data
 			var e_x = e["X"] as XmlElement;
 			var e_y = e["Y"] as XmlElement;
 			var e_z = e["Z"] as XmlElement;
-			var e_d = e["DynamicParameter"] as XmlElement;
+			var e_d = e["DynamicEquation"] as XmlElement;
 
 			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
 			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
@@ -644,11 +644,11 @@ namespace Effekseer.Data
 			if (e_d != null)
 			{
 				var ind = e_d.GetTextAsInt();
-				if(0 <= ind && ind < Core.Dynamic.Vectors.Values.Count)
+				if(0 <= ind && ind < Core.Dynamic.Equations.Values.Count)
 				{
-					var d = Core.Dynamic.Vectors.Values[ind];
-					value.SetDynamicParameter(d);
-					value.IsDynamicParameterEnabled = true;
+					var d = Core.Dynamic.Equations.Values[ind];
+					value.SetDynamicEquation(d);
+					value.IsDynamicEquationEnabled = true;
 				}
 			}
 		}
@@ -789,8 +789,8 @@ namespace Effekseer.Data
 			var e_y = e["Y"] as XmlElement;
 			var e_z = e["Z"] as XmlElement;
 			var e_da = e["DrawnAs"];
-			var e_d_min = e["DynamicParameterMin"] as XmlElement;
-			var e_d_max = e["DynamicParameterMax"] as XmlElement;
+			var e_d_min = e["DynamicEquationMin"] as XmlElement;
+			var e_d_max = e["DynamicEquationMax"] as XmlElement;
 
 			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
 			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
@@ -804,22 +804,22 @@ namespace Effekseer.Data
 			if (e_d_min != null)
 			{
 				var ind = e_d_min.GetTextAsInt();
-				if (0 <= ind && ind < Core.Dynamic.Vectors.Values.Count)
+				if (0 <= ind && ind < Core.Dynamic.Equations.Values.Count)
 				{
-					var d = Core.Dynamic.Vectors.Values[ind];
-					value.SetDynamicParameterMin(d);
-					value.IsDynamicParameterEnabled = true;
+					var d = Core.Dynamic.Equations.Values[ind];
+					value.SetDynamicEquationMin(d);
+					value.IsDynamicEquationEnabled = true;
 				}
 			}
 
 			if (e_d_max != null)
 			{
 				var ind = e_d_max.GetTextAsInt();
-				if (0 <= ind && ind < Core.Dynamic.Vectors.Values.Count)
+				if (0 <= ind && ind < Core.Dynamic.Equations.Values.Count)
 				{
-					var d = Core.Dynamic.Vectors.Values[ind];
-					value.SetDynamicParameterMax(d);
-					value.IsDynamicParameterEnabled = true;
+					var d = Core.Dynamic.Equations.Values[ind];
+					value.SetDynamicEquationMax(d);
+					value.IsDynamicEquationEnabled = true;
 				}
 			}
 		}
@@ -1066,7 +1066,7 @@ namespace Effekseer.Data
 			if (e_input != null) LoadFromElement(e_input, value.Input, isClip);
 		}
 
-		public static void LoadFromElement(XmlElement e, Data.DynamicVector value, bool isClip)
+		public static void LoadFromElement(XmlElement e, Data.DynamicEquation value, bool isClip)
 		{
 			var e_name = e["Name"] as XmlElement;
 			var e_x = e["Code"] as XmlElement;

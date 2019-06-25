@@ -447,11 +447,11 @@ namespace Effekseer.Binary
 				data.Add(BitConverter.GetBytes(value_));
 			}
 
-			data.Add(BitConverter.GetBytes(Core.Dynamic.Vectors.Values.Count));
+			data.Add(BitConverter.GetBytes(Core.Dynamic.Equations.Values.Count));
 
 			var compiler = new InternalScript.Compiler();
 
-			foreach (var value in Core.Dynamic.Vectors.Values)
+			foreach (var value in Core.Dynamic.Equations.Values)
 			{
 				var cx = compiler.Compile(value.Code.Value);
 

@@ -294,7 +294,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			pos += size;
 
 			// make invalid
-			if (RotationFixed.ReferencedDynamicParameter < 0 && 
+			if (RotationFixed.RefEq < 0 && 
 				RotationFixed.Position.X == 0.0f && RotationFixed.Position.Y == 0.0f && RotationFixed.Position.Z == 0.0f)
 			{
 				RotationType = ParameterRotationType_None;
@@ -379,7 +379,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 
 			// make invalid
-			if (ScalingFixed.ReferencedDynamicParameter < 0 &&
+			if (ScalingFixed.RefEq < 0 &&
 				ScalingFixed.Position.X == 1.0f && ScalingFixed.Position.Y == 1.0f && ScalingFixed.Position.Z == 1.0f)
 			{
 				ScalingType = ParameterScalingType_None;

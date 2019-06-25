@@ -154,7 +154,7 @@ namespace Effekseer.GUI.Component
 
 			if (binding != null)
 			{
-				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicParameterEnabled)
+				if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicEquationEnabled)
 				{
 					internalValue1[0] = binding.X.Center;
 					internalValue1[1] = binding.Y.Center;
@@ -179,7 +179,7 @@ namespace Effekseer.GUI.Component
 			var txt_r1 = string.Empty;
 			var txt_r2 = string.Empty;
 
-			if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicParameterEnabled)
+			if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicEquationEnabled)
 			{
 				txt_r1 = Resources.GetString("Mean");
 				txt_r2 = Resources.GetString("Deviation");
@@ -199,7 +199,7 @@ namespace Effekseer.GUI.Component
 			{
 				if (EnableUndo)
 				{
-					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicParameterEnabled)
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicEquationEnabled)
 					{
 						binding.X.SetCenter(internalValue1[0], isActive);
 						binding.Y.SetCenter(internalValue1[1], isActive);
@@ -225,16 +225,16 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(txt_r1);
 
-			if (binding.IsDynamicParameterEnabled)
+			if (binding.IsDynamicEquationEnabled)
 			{
-				Manager.NativeManager.Text("Dynamic");
+				Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
 				Manager.NativeManager.SameLine();
 
-				var nextParam = DynamicSelector.Select("Max", id_d1, binding.DynamicParameterMax, false, false);
+				var nextParam = DynamicSelector.Select("Max", id_d1, binding.DynamicEquationMax, false, false);
 
-				if (binding.DynamicParameterMax != nextParam)
+				if (binding.DynamicEquationMax != nextParam)
 				{
-					binding.SetDynamicParameterMax(nextParam);
+					binding.SetDynamicEquationMax(nextParam);
 				}
 
 				Popup();
@@ -248,7 +248,7 @@ namespace Effekseer.GUI.Component
 			{
 				if (EnableUndo)
 				{
-					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicParameterEnabled)
+					if (binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude && !binding.IsDynamicEquationEnabled)
 					{
 						binding.X.SetAmplitude(internalValue2[0], isActive);
 						binding.Y.SetAmplitude(internalValue2[1], isActive);
@@ -281,16 +281,16 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.SameLine();
 			Manager.NativeManager.Text(txt_r2);
 
-			if (binding.IsDynamicParameterEnabled)
+			if (binding.IsDynamicEquationEnabled)
 			{
-				Manager.NativeManager.Text("Dynamic");
+				Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
 				Manager.NativeManager.SameLine();
 
-				var nextParam = DynamicSelector.Select("Min", id_d2, binding.DynamicParameterMin, false, false);
+				var nextParam = DynamicSelector.Select("Min", id_d2, binding.DynamicEquationMin, false, false);
 
-				if (binding.DynamicParameterMin != nextParam)
+				if (binding.DynamicEquationMin != nextParam)
 				{
-					binding.SetDynamicParameterMin(nextParam);
+					binding.SetDynamicEquationMin(nextParam);
 				}
 
 				Popup();
@@ -309,21 +309,21 @@ namespace Effekseer.GUI.Component
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
 
-				if (Manager.NativeManager.RadioButton("Default" + id_c + "_1", !binding.IsDynamicParameterEnabled))
+				if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicFixed") + id_c + "_1", !binding.IsDynamicEquationEnabled))
 				{
-					binding.IsDynamicParameterEnabled = false;
-					binding.SetDynamicParameterMin(null);
-					binding.SetDynamicParameterMax(null);
+					binding.IsDynamicEquationEnabled = false;
+					binding.SetDynamicEquationMin(null);
+					binding.SetDynamicEquationMax(null);
 				}
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.RadioButton("Dynamic" + id_c + "_2", binding.IsDynamicParameterEnabled))
+				if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicDynamic") + id_c + "_2", binding.IsDynamicEquationEnabled))
 				{
-					binding.IsDynamicParameterEnabled = true;
+					binding.IsDynamicEquationEnabled = true;
 				}
 
-				if (binding.IsDynamicParameterEnabled)
+				if (binding.IsDynamicEquationEnabled)
 				{
 					// None
 				}

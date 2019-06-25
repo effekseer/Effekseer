@@ -504,10 +504,10 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 	{
 		// inputs
 		defaultDynamicInputs.fill(0);
-		int32_t dynamicParameterInputCount = 0;
-		binaryReader.Read(dynamicParameterInputCount, 0, elementCountMax);
+		int32_t dynamicInputCount = 0;
+		binaryReader.Read(dynamicInputCount, 0, elementCountMax);
 
-		for (size_t i = 0; i < dynamicParameterInputCount; i++)
+		for (size_t i = 0; i < dynamicInputCount; i++)
 		{
 			float param = 0.0f;
 			binaryReader.Read(param);
@@ -519,20 +519,20 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 		}
 
 		// dynamic parameter
-		int32_t dynamicParameterCount = 0;
-		binaryReader.Read(dynamicParameterCount, 0, elementCountMax);
+		int32_t dynamicEquationCount = 0;
+		binaryReader.Read(dynamicEquationCount, 0, elementCountMax);
 
-		if (dynamicParameterCount > 0)
+		if (dynamicEquationCount > 0)
 		{
-			dynamicParameters.resize(dynamicParameterCount);
+			dynamicEquation.resize(dynamicEquationCount);
 
-			for (size_t dp = 0; dp < dynamicParameters.size(); dp++)
+			for (size_t dp = 0; dp < dynamicEquation.size(); dp++)
 			{
 				int size_ = 0;
 				binaryReader.Read(size_, 0, dynamicBinaryCountMax);
 
 				auto data_ = pos + binaryReader.GetOffset();
-				dynamicParameters[dp].Load(data_, size_);
+				dynamicEquation[dp].Load(data_, size_);
 
 				binaryReader.AddOffset(size_);
 			}

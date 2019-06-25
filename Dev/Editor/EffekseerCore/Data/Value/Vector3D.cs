@@ -25,22 +25,22 @@ namespace Effekseer.Data.Value
 			private set;
 		}
 
-        bool isDynamicParameterEnabled = false;
-        public bool IsDynamicParameterEnabled
+        bool isDynamicEquationEnabled = false;
+        public bool IsDynamicEquationEnabled
         {
             get
             {
-                return isDynamicParameterEnabled;
+                return isDynamicEquationEnabled;
             }
             set
             {
-                var old_value = isDynamicParameterEnabled;
+                var old_value = isDynamicEquationEnabled;
                 var new_value = value;
 
                 var cmd = new Command.DelegateCommand(
                     () =>
                     {
-                        isDynamicParameterEnabled = new_value;
+                        isDynamicEquationEnabled = new_value;
 
                         if (OnChanged != null)
                         {
@@ -49,7 +49,7 @@ namespace Effekseer.Data.Value
                     },
                     () =>
                     {
-                        isDynamicParameterEnabled = old_value;
+                        isDynamicEquationEnabled = old_value;
 
                         if (OnChanged != null)
                         {
@@ -60,23 +60,23 @@ namespace Effekseer.Data.Value
                 Command.CommandManager.Execute(cmd);
             }
         }
-		public DynamicVector DynamicParameter
+		public DynamicEquation DynamicEquation
 		{
 			get;
 			private set;
 		}
 
-		public void SetDynamicParameter(DynamicVector param)
+		public void SetDynamicEquation(DynamicEquation param)
 		{
-			if (param == DynamicParameter) return;
+			if (param == DynamicEquation) return;
 
-			var old_value = DynamicParameter;
+			var old_value = DynamicEquation;
 			var new_value = param;
 
 			var cmd = new Command.DelegateCommand(
 				() =>
 				{
-					DynamicParameter = new_value;
+					DynamicEquation = new_value;
 
 					if (OnChanged != null)
 					{
@@ -85,7 +85,7 @@ namespace Effekseer.Data.Value
 				},
 				() =>
 				{
-					DynamicParameter = old_value;
+					DynamicEquation = old_value;
 
 					if (OnChanged != null)
 					{

@@ -40,9 +40,9 @@ InstanceGlobal::~InstanceGlobal()
 	
 }
 
-std::array<float, 4> InstanceGlobal::GetDynamicParameter(int32_t index) {
-	assert(0 <= index && index < dynamicParameters.size());
-	return dynamicParameters[index];
+std::array<float, 4> InstanceGlobal::GetDynamicEquationResult(int32_t index) {
+	assert(0 <= index && index < dynamicEqResults.size());
+	return dynamicEqResults[index];
 }
 
 void InstanceGlobal::SetSeed(int64_t seed)
