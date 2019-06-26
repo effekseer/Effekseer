@@ -268,17 +268,17 @@ namespace Effekseer.Data
 			return ret;
 		}
 
-		string CreateKey(Utl.MaterialInformation.UniformInformation info)
+		public string CreateKey(Utl.MaterialInformation.UniformInformation info)
 		{
 			return info.Name + "@U" + info.Type;
 		}
 
-		string CreateKey(Utl.MaterialInformation.TextureInformation info)
+		public string CreateKey(Utl.MaterialInformation.TextureInformation info)
 		{
 			return info.Name + "@T";
 		}
 
-		class ValueStatus
+		public class ValueStatus
 		{
 			public string Name = string.Empty;
 			public string Description = string.Empty;
