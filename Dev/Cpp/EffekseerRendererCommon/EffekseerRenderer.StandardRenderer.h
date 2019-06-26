@@ -390,6 +390,7 @@ public:
 				// time
 				std::array<float, 4> predefined_uniforms;
 				predefined_uniforms.fill(0.5f);
+				predefined_uniforms[0] = m_renderer->GetTime();
 				m_renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, 0);
 
 				// others

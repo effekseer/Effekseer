@@ -43,4 +43,8 @@ void Renderer::SetBackgroundTextureUVStyle(UVStyle style)
 	impl->SetBackgroundTextureUVStyle(style);
 }
 
+float Renderer::GetTime() const { return impl->GetTime(); }
+
+void Renderer::SetTime(float time) { impl->SetTime(time); }
+
 }

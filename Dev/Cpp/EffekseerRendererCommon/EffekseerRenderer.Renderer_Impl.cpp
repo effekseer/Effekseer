@@ -31,4 +31,8 @@ void Renderer::Impl::ResetDrawCallCount() { drawcallCount = 0; }
 
 void Renderer::Impl::ResetDrawVertexCount() { drawvertexCount = 0; }
 
+float Renderer::Impl::GetTime() const { return time_; }
+
+void Renderer::Impl::SetTime(float time) { time_ = time; }
+
 }

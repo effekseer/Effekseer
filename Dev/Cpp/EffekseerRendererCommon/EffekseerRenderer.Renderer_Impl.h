@@ -1,5 +1,5 @@
-#ifndef	__EFFEKSEERRENDERER_RENDERER_IMPL_H__
-#define	__EFFEKSEERRENDERER_RENDERER_IMPL_H__
+#ifndef __EFFEKSEERRENDERER_RENDERER_IMPL_H__
+#define __EFFEKSEERRENDERER_RENDERER_IMPL_H__
 
 #include <Effekseer.h>
 
@@ -13,8 +13,9 @@ class Renderer::Impl
 private:
 	UVStyle textureUVStyle = UVStyle::Normal;
 	UVStyle backgroundTextureUVStyle = UVStyle::Normal;
-public:
+	float time_ = 0.0f;
 
+public:
 	int32_t drawcallCount = 0;
 	int32_t drawvertexCount = 0;
 
@@ -33,8 +34,12 @@ public:
 	void ResetDrawCallCount();
 
 	void ResetDrawVertexCount();
+
+	float GetTime() const;
+
+	void SetTime(float time);
 };
 
-}
+} // namespace EffekseerRenderer
 
 #endif

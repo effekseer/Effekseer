@@ -898,6 +898,7 @@ bool Native::StepEffect(int frame)
 
 		g_sound->SetMute(mute);
 		g_manager->Update();
+		g_renderer->GetRenderer()->SetTime(m_time / 60.0f);
 	}
 	return true;
 }
@@ -984,6 +985,7 @@ bool Native::StepEffect()
 		}
 
 		g_manager->Update((float)m_step);
+		g_renderer->GetRenderer()->SetTime(m_time / 60.0f);
 
 		for (size_t i = 0; i < g_handles.size(); i++)
 		{
@@ -1328,6 +1330,7 @@ bool Native::Record(RecordingParameter& recordingParameter)
 	std::shared_ptr<RecorderCallback> recorderCallback2;
 
 	RecordingParameter recordingParameter2;
+	int32_t currentTime = 0;
 
 	if (recordingParameter.Transparence == TransparenceType::Generate2)
 	{
@@ -1436,6 +1439,8 @@ bool Native::Record(RecordingParameter& recordingParameter)
 		for (int i = 0; i < recordingParameter.OffsetFrame; i++)
 		{
 			g_manager->Update();
+			g_renderer->GetRenderer()->SetTime(currentTime / 60.0f);
+			currentTime++;
 		}
 	}
 
@@ -1470,6 +1475,8 @@ bool Native::Record(RecordingParameter& recordingParameter)
 			for (int j = 0; j < recordingParameter.Freq; j++)
 			{
 				g_manager->Update();
+				g_renderer->GetRenderer()->SetTime(currentTime / 60.0f);
+				currentTime++;
 			}
 		}
 

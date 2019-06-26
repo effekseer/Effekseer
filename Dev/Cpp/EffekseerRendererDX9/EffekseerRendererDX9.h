@@ -319,6 +319,20 @@ public:
 	\~japanese パーティクルを描画するときの背景のUVの状態を設定する。
 	*/
 	void SetBackgroundTextureUVStyle(UVStyle style);
+
+	/**
+	@brief
+	\~english Get a current time (s)
+	\~japanese 現在の時間を取得する。(秒)
+	*/
+	float GetTime() const;
+
+	/**
+	@brief
+	\~english Set a current time (s)
+	\~japanese 現在の時間を設定する。(秒)
+	*/
+	void SetTime(float time);
 };
 
 //----------------------------------------------------------------------------------
