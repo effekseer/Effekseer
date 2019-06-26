@@ -793,14 +793,18 @@ void RendererImplemented::BeginShader(Shader* shader) { currentShader = shader; 
 //----------------------------------------------------------------------------------
 void RendererImplemented::EndShader(Shader* shader) { currentShader = nullptr; }
 
-void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size)
+void RendererImplemented::SetVertexBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {
-	memcpy(currentShader->GetVertexConstantBuffer(), data, size);
+	assert(currentShader != nullptr);
+	auto p = static_cast<uint8_t*>(currentShader->GetVertexConstantBuffer()) + dstOffset;
+	memcpy(p, data, size);
 }
 
-void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size)
+void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size, int32_t dstOffset)
 {
-	memcpy(currentShader->GetPixelConstantBuffer(), data, size);
+	assert(currentShader != nullptr);
+	auto p = static_cast<uint8_t*>(currentShader->GetPixelConstantBuffer()) + dstOffset;
+	memcpy(p, data, size);
 }
 
 //----------------------------------------------------------------------------------
