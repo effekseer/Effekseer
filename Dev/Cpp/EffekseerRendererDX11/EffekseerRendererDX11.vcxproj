@@ -196,6 +196,7 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.Base.Pre.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.DeviceObject.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.IndexBuffer.h" />
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.MaterialLoader.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.ModelLoader.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.ModelRenderer.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.Renderer.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.DeviceObject.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.IndexBuffer.cpp" />
+    <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.MaterialLoader.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.ModelLoader.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.ModelRenderer.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.Renderer.cpp" />

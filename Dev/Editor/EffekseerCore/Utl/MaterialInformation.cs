@@ -16,13 +16,13 @@ namespace Effekseer.Utl
 
 		public UniformInformation[] Uniforms = new UniformInformation[0];
 
-		public void Load(string path)
+		public bool Load(string path)
 		{
 			if (string.IsNullOrEmpty(path))
-				return;
+				return false;
 
 			System.IO.FileStream fs = null;
-			if (!System.IO.File.Exists(path)) return;
+			if (!System.IO.File.Exists(path)) return false;
 
 			try
 			{
@@ -30,7 +30,7 @@ namespace Effekseer.Utl
 			}
 			catch (System.IO.FileNotFoundException e)
 			{
-				return;
+				return false;
 			}
 
 
@@ -43,7 +43,7 @@ namespace Effekseer.Utl
 			{
 				fs.Dispose();
 				br.Close();
-				return;
+				return false;
 			}
 
 			if(buf[0] != 'e' ||
@@ -51,7 +51,7 @@ namespace Effekseer.Utl
 				buf[2] != 'k' ||
 				buf[3] != 'M')
 			{
-				return;
+				return false;
 			}
 
 			int version = BitConverter.ToInt32(buf, 4);
@@ -73,7 +73,7 @@ namespace Effekseer.Utl
 				buf[3] == 'e')
 				{
 					var temp = new byte[BitConverter.ToInt32(buf, 4)];
-					if (br.Read(temp, 0, temp.Length) != temp.Length) return;
+					if (br.Read(temp, 0, temp.Length) != temp.Length) return false;
 				}
 
 				if (buf[0] == 'd' &&
@@ -82,7 +82,7 @@ namespace Effekseer.Utl
 				buf[3] == 'a')
 				{
 					var temp = new byte[BitConverter.ToInt32(buf, 4)];
-					if (br.Read(temp, 0, temp.Length) != temp.Length) return;
+					if (br.Read(temp, 0, temp.Length) != temp.Length) return false;
 
 					var jsonText = Encoding.UTF8.GetString(temp);
 
@@ -98,7 +98,14 @@ namespace Effekseer.Utl
 					{
 						var name = texture["Name"].Value<string>();
 						var offset = texture["Index"].Value<double>();
+
 						var defaultPath = texture["DefaultPath"].Value<string>();
+
+						// convert a path into absolute
+						Uri basePath = new Uri(path);
+						Uri targetPath = new Uri(basePath, defaultPath);
+						defaultPath = targetPath.ToString();
+
 						var isParam = texture["IsParam"].Value<bool>();
 						var isValueTexture = texture["IsValueTexture"].Value<bool>();
 						var info = new TextureInformation();
@@ -141,6 +148,8 @@ namespace Effekseer.Utl
 					Uniforms = uniforms.ToArray();
 				}
 			}
+
+			return true;
 		}
 
 		public class TextureInformation
