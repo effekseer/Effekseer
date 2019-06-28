@@ -22,11 +22,13 @@ class ModelLoader
 	: public ::Effekseer::ModelLoader
 {
 private:
-	LPDIRECT3DDEVICE9	device;
+	RendererImplemented* renderer_ = nullptr;
+	LPDIRECT3DDEVICE9	device_ = nullptr;
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
 
 public:
+	ModelLoader(RendererImplemented* renderer, ::Effekseer::FileInterface* fileInterface);
 	ModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface );
 	virtual ~ModelLoader();
 

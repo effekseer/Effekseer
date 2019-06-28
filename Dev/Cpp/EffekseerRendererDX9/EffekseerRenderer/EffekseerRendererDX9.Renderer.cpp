@@ -799,7 +799,7 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 ::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader( ::Effekseer::FileInterface* fileInterface )
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(GetDevice(), fileInterface );
+	return new TextureLoader(this, fileInterface );
 #else
 	return NULL;
 #endif
@@ -811,7 +811,7 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 ::Effekseer::ModelLoader* RendererImplemented::CreateModelLoader( ::Effekseer::FileInterface* fileInterface )
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(GetDevice(), fileInterface );
+	return new ModelLoader(this, fileInterface );
 #else
 	return NULL;
 #endif
