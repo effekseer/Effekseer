@@ -20,8 +20,24 @@ namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-TextureLoader::TextureLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface )
-	: device			( device )
+TextureLoader::TextureLoader(RendererImplemented* renderer, ::Effekseer::FileInterface* fileInterface)
+	: renderer_(renderer)
+	, m_fileInterface(fileInterface)
+{
+	ES_SAFE_ADDREF(renderer_);
+
+	if (m_fileInterface == NULL)
+	{
+		m_fileInterface = &m_defaultFileInterface;
+	}
+
+#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
+	pngTextureLoader.Initialize();
+#endif
+}
+
+TextureLoader::TextureLoader( LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface )
+	: device_			( device )
 	, m_fileInterface	( fileInterface )
 {
 	ES_SAFE_ADDREF(device);
@@ -45,7 +61,8 @@ TextureLoader::~TextureLoader()
 	pngTextureLoader.Finalize();
 #endif
 
-	ES_SAFE_RELEASE(device);
+	ES_SAFE_RELEASE(device_);
+	ES_SAFE_RELEASE(renderer_);
 }
 
 //----------------------------------------------------------------------------------
@@ -56,6 +73,21 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 	std::unique_ptr<::Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
 	
+	// get device
+	LPDIRECT3DDEVICE9 device = nullptr;
+	if (device_ != nullptr)
+	{
+		device = device_;
+	}
+	else if (renderer_ != nullptr)
+	{
+		device = renderer_->GetDevice();
+	}
+	else
+	{
+		return nullptr;
+	}
+
 	if( reader.get() != NULL )
 	{
 		size_t size_texture = reader->GetLength();

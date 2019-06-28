@@ -16,12 +16,24 @@ namespace EffekseerRendererDX9
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+ModelLoader::ModelLoader(RendererImplemented* renderer, ::Effekseer::FileInterface* fileInterface)
+	: renderer_(renderer)
+	, m_fileInterface(fileInterface)
+{
+	ES_SAFE_ADDREF(renderer_);
+
+	if (m_fileInterface == NULL)
+	{
+		m_fileInterface = &m_defaultFileInterface;
+	}
+}
+
 ModelLoader::ModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* fileInterface )
-	: device			(device)
+	: device_			(device)
 	, m_fileInterface	( fileInterface )
 {
 	ES_SAFE_ADDREF(device);
-
+	
 	if( m_fileInterface == NULL )
 	{
 		m_fileInterface = &m_defaultFileInterface;
@@ -33,7 +45,8 @@ ModelLoader::ModelLoader(LPDIRECT3DDEVICE9 device, ::Effekseer::FileInterface* f
 //----------------------------------------------------------------------------------
 ModelLoader::~ModelLoader()
 {
-	ES_SAFE_RELEASE(device);
+	ES_SAFE_RELEASE(device_);
+	ES_SAFE_RELEASE(renderer_);
 }
 
 //----------------------------------------------------------------------------------
@@ -44,6 +57,21 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 	std::unique_ptr<::Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
 	if( reader.get() == NULL ) return false;
+
+	// get device
+	LPDIRECT3DDEVICE9 device = nullptr;
+	if (device_ != nullptr)
+	{
+		device = device_;
+	}
+	else if(renderer_ != nullptr)
+	{
+		device = renderer_->GetDevice();
+	}
+	else
+	{
+		return nullptr;
+	}
 
 	if( reader.get() != NULL )
 	{
