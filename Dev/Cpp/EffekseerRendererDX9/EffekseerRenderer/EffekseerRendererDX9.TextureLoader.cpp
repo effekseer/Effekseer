@@ -73,21 +73,6 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 	std::unique_ptr<::Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
 	
-	// get device
-	LPDIRECT3DDEVICE9 device = nullptr;
-	if (device_ != nullptr)
-	{
-		device = device_;
-	}
-	else if (renderer_ != nullptr)
-	{
-		device = renderer_->GetDevice();
-	}
-	else
-	{
-		return nullptr;
-	}
-
 	if( reader.get() != NULL )
 	{
 		size_t size_texture = reader->GetLength();
@@ -104,6 +89,20 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 
 Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effekseer::TextureType textureType) 
 {
+	// get device
+	LPDIRECT3DDEVICE9 device = nullptr;
+	if (device_ != nullptr)
+	{
+		device = device_;
+	}
+	else if (renderer_ != nullptr)
+	{
+		device = renderer_->GetDevice();
+	}
+	else
+	{
+		return nullptr;
+	}
 
 	auto size_texture = size;
 	auto data_texture = (uint8_t*)data;

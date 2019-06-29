@@ -56,23 +56,7 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 {
 	std::unique_ptr<::Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
-	if( reader.get() == NULL ) return false;
-
-	// get device
-	LPDIRECT3DDEVICE9 device = nullptr;
-	if (device_ != nullptr)
-	{
-		device = device_;
-	}
-	else if(renderer_ != nullptr)
-	{
-		device = renderer_->GetDevice();
-	}
-	else
-	{
-		return nullptr;
-	}
-
+	
 	if( reader.get() != NULL )
 	{
 		HRESULT hr;
@@ -93,6 +77,21 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 
 void* ModelLoader::Load(const void* data, int32_t size)
 {
+	// get device
+	LPDIRECT3DDEVICE9 device = nullptr;
+	if (device_ != nullptr)
+	{
+		device = device_;
+	}
+	else if (renderer_ != nullptr)
+	{
+		device = renderer_->GetDevice();
+	}
+	else
+	{
+		return nullptr;
+	}
+
 	HRESULT hr;
 
 	auto model = new Model((uint8_t*)data, size);
