@@ -604,6 +604,11 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 #endif
 }
 
+::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
+{
+	return nullptr;
+}
+
 Effekseer::TextureData* RendererImplemented::GetBackground()
 {
 	if (m_background.UserPtr == nullptr)

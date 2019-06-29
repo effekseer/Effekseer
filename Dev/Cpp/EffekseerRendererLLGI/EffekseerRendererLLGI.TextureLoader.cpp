@@ -4,7 +4,7 @@
 #include "EffekseerRendererLLGI.RendererImplemented.h"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "ThirdParty/stb_image.h"
+#include "../3rdParty/stb/stb_image.h"
 
 namespace EffekseerRendererLLGI
 {

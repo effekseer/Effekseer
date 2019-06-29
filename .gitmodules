@@ -16,3 +16,6 @@
 [submodule "Dev/Cpp/3rdParty/LLGI"]
 	path = Dev/Cpp/3rdParty/LLGI
 	url = https://github.com/altseed/LLGI
+[submodule "Dev/Cpp/3rdParty/stb"]
+	path = Dev/Cpp/3rdParty/stb
+	url = https://github.com/nothings/stb.git
