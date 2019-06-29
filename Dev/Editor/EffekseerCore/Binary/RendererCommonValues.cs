@@ -80,14 +80,16 @@ namespace Effekseer.Binary
 
 				foreach (var texture in textures)
 				{
-					if(texture.Item2)
+					var texture_ = texture.Item1.Value as Data.Value.PathForImage;
+					if (texture.Item2)
 					{
-						if (texture.Item1.RelativePath != string.Empty &&
-normalTexture_and_index.ContainsKey(texture.Item1.RelativePath) &&
-texInfo.Load(texture.Item1.AbsolutePath))
+
+						if (texture_.RelativePath != string.Empty &&
+							normalTexture_and_index.ContainsKey(texture_.RelativePath) &&
+							texInfo.Load(texture_.AbsolutePath))
 						{
 							data.Add((1).GetBytes());
-							data.Add(normalTexture_and_index[texture.Item1.RelativePath].GetBytes());
+							data.Add(normalTexture_and_index[texture_.RelativePath].GetBytes());
 							hasTexture = true;
 						}
 						else
@@ -99,12 +101,12 @@ texInfo.Load(texture.Item1.AbsolutePath))
 					}
 					else
 					{
-						if (texture.Item1.RelativePath != string.Empty &&
-texture_and_index.ContainsKey(texture.Item1.RelativePath) &&
-texInfo.Load(texture.Item1.AbsolutePath))
+						if (texture_.RelativePath != string.Empty &&
+texture_and_index.ContainsKey(texture_.RelativePath) &&
+texInfo.Load(texture_.AbsolutePath))
 						{
 							data.Add((0).GetBytes());
-							data.Add(texture_and_index[texture.Item1.RelativePath].GetBytes());
+							data.Add(texture_and_index[texture_.RelativePath].GetBytes());
 							hasTexture = true;
 						}
 						else
@@ -122,30 +124,17 @@ texInfo.Load(texture.Item1.AbsolutePath))
 				{
 					float[] floats = new float[4];
 					
-					if(uniform is Data.Value.Float)
+					if(uniform.Value is Data.Value.Float)
 					{
-						floats[0] = (uniform as Data.Value.Float).Value;
+						floats[0] = (uniform.Value as Data.Value.Float).Value;
 					}
 
-					if (uniform is Data.Value.Vector2D)
+					if (uniform.Value is Data.Value.Vector4D)
 					{
-						floats[0] = (uniform as Data.Value.Vector2D).X.Value;
-						floats[1] = (uniform as Data.Value.Vector2D).Y.Value;
-					}
-
-					if (uniform is Data.Value.Vector3D)
-					{
-						floats[0] = (uniform as Data.Value.Vector3D).X.Value;
-						floats[1] = (uniform as Data.Value.Vector3D).Y.Value;
-						floats[2] = (uniform as Data.Value.Vector3D).Z.Value;
-					}
-
-					if (uniform is Data.Value.Vector4D)
-					{
-						floats[0] = (uniform as Data.Value.Vector4D).X.Value;
-						floats[1] = (uniform as Data.Value.Vector4D).Y.Value;
-						floats[2] = (uniform as Data.Value.Vector4D).Z.Value;
-						floats[3] = (uniform as Data.Value.Vector4D).W.Value;
+						floats[0] = (uniform.Value as Data.Value.Vector4D).X.Value;
+						floats[1] = (uniform.Value as Data.Value.Vector4D).Y.Value;
+						floats[2] = (uniform.Value as Data.Value.Vector4D).Z.Value;
+						floats[3] = (uniform.Value as Data.Value.Vector4D).W.Value;
 					}
 
 					data.Add(floats[0].GetBytes());

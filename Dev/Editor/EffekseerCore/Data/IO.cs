@@ -70,6 +70,133 @@ namespace Effekseer.Data
 			return e;
 		}
 
+#if MATERIAL_ENABLED
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, MaterialFileParameter mfp, bool isClip)
+		{
+			var e = doc.CreateElement(element_name);
+
+			var e_path = SaveObjectToElement(doc, "Path", mfp.Path, isClip);
+			if(e_path != null)
+			{
+				e.AppendChild(e_path);
+			}
+
+			var e_float1 = doc.CreateElement("Float1");
+			var e_float4 = doc.CreateElement("Float4");
+			var e_texture = doc.CreateElement("Texture");
+
+
+			// check file info
+			var info = new Utl.MaterialInformation();
+			if(info.Load(mfp.Path.AbsolutePath))
+			{
+				var uniforms = mfp.GetUniforms(info);
+
+				foreach(var uniform in uniforms)
+				{
+					var status = uniform;
+
+					if (status.Value is Data.Value.Vector4D)
+					{
+						var v = status.Value as Data.Value.Vector4D;
+						var v_e = SaveToElement(doc, uniform.Key, v, isClip);
+						if(v_e != null)
+						{
+							e_float4.AppendChild(v_e);
+						}
+					}
+					else if (status.Value is Data.Value.Float)
+					{
+						var v = status.Value as Data.Value.Float;
+						var v_e = SaveToElement(doc, uniform.Key, v, isClip);
+						if (v_e != null)
+						{
+							e_float1.AppendChild(v_e);
+						}
+					}
+				}
+
+				var textures = mfp.GetTextures(info);
+
+				foreach (var kv in textures)
+				{
+					var status = kv.Item1;
+					
+					// regard as defalt texture
+					if (!status.IsShown)
+						continue;
+
+					if (status.Value is Data.Value.PathForImage)
+					{
+						var v = status.Value as Data.Value.PathForImage;
+						var v_e = SaveToElement(doc, status.Key, v, isClip);
+						if (v_e != null)
+						{
+							e_texture.AppendChild(v_e);
+						}
+					}
+				}
+			}
+			else
+			{
+				foreach(var kv in mfp.KeyValues)
+				{
+					var key = kv.Key;
+					var status = kv.Value as MaterialFileParameter.ValueStatus;
+
+					if(status.Value is Data.Value.Vector4D)
+					{
+						var v = status.Value as Data.Value.Vector4D;
+						var v_e = SaveToElement(doc, status.Key, v, isClip);
+						if (v_e != null)
+						{
+							e_float4.AppendChild(v_e);
+						}
+					}
+					else if (status.Value is Data.Value.Float)
+					{
+						var v = status.Value as Data.Value.Float;
+						var v_e = SaveToElement(doc, status.Key, v, isClip);
+						if (v_e != null)
+						{
+							e_float1.AppendChild(v_e);
+						}
+					}
+					else if (status.Value is Data.Value.PathForImage)
+					{
+						var v = status.Value as Data.Value.PathForImage;
+
+						// regard as defalt texture
+						if (!status.IsShown)
+							continue;
+
+						var v_e = SaveToElement(doc, status.Key, v, isClip);
+						if (v_e != null)
+						{
+							e_texture.AppendChild(v_e);
+						}
+					}
+				}
+			}
+
+			if(e_float1.ChildNodes.Count > 0)
+			{
+				e.AppendChild(e_float1);
+			}
+
+			if (e_float4.ChildNodes.Count > 0)
+			{
+				e.AppendChild(e_float4);
+			}
+
+			if (e_texture.ChildNodes.Count > 0)
+			{
+				e.AppendChild(e_texture);
+			}
+
+			return e;
+		}
+#endif
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicInputCollection collection, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
@@ -166,6 +293,22 @@ namespace Effekseer.Data
 				var d = doc.CreateTextElement("DynamicEquation", d_ind.ToString());
 				e.AppendChild(d);
 			}
+
+			return e.ChildNodes.Count > 0 ? e : null;
+		}
+
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Vector4D value, bool isClip)
+		{
+			var e = doc.CreateElement(element_name);
+			var x = SaveToElement(doc, "X", value.X, isClip);
+			var y = SaveToElement(doc, "Y", value.Y, isClip);
+			var z = SaveToElement(doc, "Z", value.Z, isClip);
+			var w = SaveToElement(doc, "W", value.W, isClip);
+
+			if (x != null) e.AppendChild(x);
+			if (y != null) e.AppendChild(y);
+			if (z != null) e.AppendChild(z);
+			if (w != null) e.AppendChild(w);
 
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
@@ -541,6 +684,63 @@ namespace Effekseer.Data
 			}
 		}
 
+		public static void LoadFromElement(XmlElement e, MaterialFileParameter mfp, bool isClip)
+		{
+			var e_path = e["Path"] as XmlElement;
+			if(e_path != null)
+			{
+				LoadFromElement(e_path, mfp.Path, isClip);
+			}
+
+			var e_float1 = e["Float1"] as XmlElement;
+			var e_float4 = e["Float4"] as XmlElement;
+			var e_texture = e["Texture"] as XmlElement;
+
+			var kv = mfp.KeyValues;
+
+			if (e_float1 != null)
+			{
+				for (var i = 0; i < e_float1.ChildNodes.Count; i++)
+				{
+					var e_child = e_float1.ChildNodes[i] as XmlElement;
+					if (kv.ContainsKey(mfp.CreateKey<Value.Float>(e_child.Name)))
+					{
+						var vs = kv[mfp.CreateKey<Value.Float>(e_child.Name)] as MaterialFileParameter.ValueStatus;
+						var v = vs.Value as Value.Float;
+						LoadFromElement(e_child, v, isClip);
+					}
+				}
+			}
+
+			if (e_float4 != null)
+			{
+				for (var i = 0; i < e_float4.ChildNodes.Count; i++)
+				{
+					var e_child = e_float4.ChildNodes[i] as XmlElement;
+					if (kv.ContainsKey(mfp.CreateKey<Value.Vector4D>(e_child.Name)))
+					{
+						var vs = kv[mfp.CreateKey<Value.Vector4D>(e_child.Name)] as MaterialFileParameter.ValueStatus;
+						var v = vs.Value as Value.Vector4D;
+						LoadFromElement(e_child, v, isClip);
+					}
+				}
+			}
+
+			if (e_texture != null)
+			{
+				for (var i = 0; i < e_texture.ChildNodes.Count; i++)
+				{
+					var e_child = e_float4.ChildNodes[i] as XmlElement;
+					if (kv.ContainsKey(mfp.CreateKey<Value.PathForImage>(e_child.Name)))
+					{
+						var vs = kv[mfp.CreateKey<Value.PathForImage>(e_child.Name)] as MaterialFileParameter.ValueStatus;
+						var v = vs.Value as Value.PathForImage;
+						LoadFromElement(e_child, v, isClip);
+					}
+				}
+			}
+		}
+
 		public static void LoadFromElement(XmlElement e, Data.DynamicInputCollection collection, bool isClip)
 		{
 			collection.Values.Clear();
@@ -651,6 +851,19 @@ namespace Effekseer.Data
 					value.IsDynamicEquationEnabled = true;
 				}
 			}
+		}
+
+		public static void LoadFromElement(XmlElement e, Value.Vector4D value, bool isClip)
+		{
+			var e_x = e["X"] as XmlElement;
+			var e_y = e["Y"] as XmlElement;
+			var e_z = e["Z"] as XmlElement;
+			var e_w = e["W"] as XmlElement;
+
+			if (e_x != null) LoadFromElement(e_x, value.X, isClip);
+			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
+			if (e_z != null) LoadFromElement(e_z, value.Z, isClip);
+			if (e_w != null) LoadFromElement(e_w, value.W, isClip);
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.Color value, bool isClip)

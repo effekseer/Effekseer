@@ -17,30 +17,19 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Shown(Shown =false)]
-		[Name(language = Language.Japanese, value = "パラメーター")]
-		[Name(language = Language.English, value = "Paramters")]
-		public Value.ValueList TextureValues
+		public Dictionary<string, object> KeyValues
 		{
-			get;
-			private set;
+			get
+			{
+				return keyToValues;
+			}
 		}
 
-		public Value.ValueList UniformValues
-		{
-			get;
-			private set;
-		}
-
-		Dictionary<object, ValueStatus> valueToStatus = new Dictionary<object, ValueStatus>();
 		Dictionary<string, object> keyToValues = new Dictionary<string, object>();
 
 		public MaterialFileParameter()
 		{
 			Path = new Value.PathForMaterial(".efkmat", true);
-			TextureValues = new Value.ValueList();
-			UniformValues = new Value.ValueList();
-
 			Path.OnChanged += Path_OnChanged;
 		}
 
@@ -72,30 +61,17 @@ namespace Effekseer.Data
 			var propPath = EditableValue.Create(Path, this.GetType().GetProperty("Path"));
 			ret.Add(propPath);
 
-			// textures
-			foreach(var v in TextureValues.Values)
+			foreach(var kv in keyToValues)
 			{
 				EditableValue ev = new EditableValue();
-				var status = valueToStatus[v];
-				ev.Value = v;
+				var status = kv.Value as ValueStatus;
+				ev.Value = status.Value;
 				ev.Title = status.Name;
 				ev.Description = status.Description;
 				ev.IsShown = status.IsShown;
 				ev.IsUndoEnabled = true;
 				ret.Add(ev);
-			}
 
-			// uniforms
-			foreach (var v in UniformValues.Values)
-			{
-				EditableValue ev = new EditableValue();
-				var status = valueToStatus[v];
-				ev.Value = v;
-				ev.Title = status.Name;
-				ev.Description = status.Description;
-				ev.IsShown = status.IsShown;
-				ev.IsUndoEnabled = true;
-				ret.Add(ev);
 			}
 
 			return ret.ToArray();
@@ -111,7 +87,7 @@ namespace Effekseer.Data
 			{
 				if(!textureKeys.Contains(kts.Key))
 				{
-					var status = valueToStatus[kts.Value];
+					var status = kts.Value as ValueStatus;
 					if(status.IsShown)
 					{
 						status.IsShown = false;
@@ -126,7 +102,7 @@ namespace Effekseer.Data
 			{
 				if (!uniformKeys.Contains(kts.Key))
 				{
-					var status = valueToStatus[kts.Value];
+					var status = kts.Value as ValueStatus;
 					if (status.IsShown)
 					{
 						status.IsShown = false;
@@ -141,8 +117,7 @@ namespace Effekseer.Data
 
 				if(keyToValues.ContainsKey(key))
 				{
-					var value = keyToValues[key];
-					var status = valueToStatus[value];
+					var status = keyToValues[key] as ValueStatus;
 					if(status.IsShown != texture.IsParam)
 					{
 						status.IsShown = texture.IsParam;
@@ -153,13 +128,13 @@ namespace Effekseer.Data
 				{
 					var status = new ValueStatus();
 					var value = new Value.PathForImage(".png", false);
+					status.Key = key;
+					status.Value = value;
 					status.Name = texture.Name;
 					status.Description = "";
 					status.IsShown = texture.IsParam;
-					keyToValues.Add(key, value);
-					valueToStatus.Add(value, status);
+					keyToValues.Add(key, status);
 					value.SetAbsolutePathDirectly(texture.DefaultPath);
-					TextureValues.Add(value);
 					isChanged = true;
 				}
 			}
@@ -170,8 +145,7 @@ namespace Effekseer.Data
 
 				if (keyToValues.ContainsKey(key))
 				{
-					var value = keyToValues[key];
-					var status = valueToStatus[value];
+					var status = keyToValues[key] as ValueStatus;
 					if (!status.IsShown)
 					{
 						status.IsShown = true;
@@ -183,25 +157,23 @@ namespace Effekseer.Data
 					if(uniform.Type == 0)
 					{
 						var status = new ValueStatus();
-						var value = new Value.Float();
+						status.Key = key;
+						status.Value = new Value.Float();
 						status.Name = uniform.Name;
 						status.Description = "";
 						status.IsShown = true;
-						keyToValues.Add(key, value);
-						valueToStatus.Add(value, status);
-						UniformValues.Add(value);
+						keyToValues.Add(key, status);
 						isChanged = true;
 					}
 					else
 					{
 						var status = new ValueStatus();
-						var value = new Value.Vector4D();
+						status.Key = key;
+						status.Value = new Value.Vector4D();
 						status.Name = uniform.Name;
 						status.Description = "";
 						status.IsShown = true;
-						keyToValues.Add(key, value);
-						valueToStatus.Add(value, status);
-						UniformValues.Add(value);
+						keyToValues.Add(key, status);
 						isChanged = true;
 					}
 				}
@@ -213,9 +185,9 @@ namespace Effekseer.Data
 			}
 		}
 
-		public List<Tuple35<Value.PathForImage, bool>> GetTextures(Utl.MaterialInformation info)
+		public List<Tuple35<ValueStatus, bool>> GetTextures(Utl.MaterialInformation info)
 		{
-			var ret = new List<Tuple35<Value.PathForImage, bool>>();
+			var ret = new List<Tuple35<ValueStatus, bool>>();
 
 			foreach (var texture in info.Textures)
 			{
@@ -225,22 +197,22 @@ namespace Effekseer.Data
 				{
 					if (keyToValues.ContainsKey(key))
 					{
-						ret.Add(Tuple35.Create(keyToValues[key] as Value.PathForImage, true));
+						ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, true));
 					}
 					else
 					{
-						ret.Add(Tuple35.Create((Value.PathForImage)(null), true));
+						ret.Add(Tuple35.Create((ValueStatus)(null), true));
 					}
 				}
 				else
 				{
 					if (keyToValues.ContainsKey(key))
 					{
-						ret.Add(Tuple35.Create(keyToValues[key] as Value.PathForImage, false));
+						ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, false));
 					}
 					else
 					{
-						ret.Add(Tuple35.Create((Value.PathForImage)(null), false));
+						ret.Add(Tuple35.Create((ValueStatus)(null), false));
 					}
 				}
 			}
@@ -248,16 +220,16 @@ namespace Effekseer.Data
 			return ret;
 		}
 
-		public List<object> GetUniforms(Utl.MaterialInformation info)
+		public List<ValueStatus> GetUniforms(Utl.MaterialInformation info)
 		{
-			var ret = new List<object>();
+			var ret = new List<ValueStatus>();
 
 			foreach (var uniform in info.Uniforms)
 			{
 				var key = CreateKey(uniform);
 				if (keyToValues.ContainsKey(key))
 				{
-					ret.Add(keyToValues[key]);
+					ret.Add(keyToValues[key] as ValueStatus);
 				}
 				else
 				{
@@ -268,18 +240,39 @@ namespace Effekseer.Data
 			return ret;
 		}
 
+		public string CreateKey<T>(string name)
+		{
+			if(typeof(T) == typeof(Value.Float))
+			{
+				return name + "__TYPE__U0";
+			}
+
+			if (typeof(T) == typeof(Value.Vector4D))
+			{
+				return name + "__TYPE__U3";
+			}
+
+			if (typeof(T) == typeof(Value.PathForImage))
+			{
+				return name + "__TYPE__T";
+			}
+
+			throw new Exception();
+		}
 		public string CreateKey(Utl.MaterialInformation.UniformInformation info)
 		{
-			return info.Name + "@U" + info.Type;
+			return info.Name + "__TYPE__U" + info.Type;
 		}
 
 		public string CreateKey(Utl.MaterialInformation.TextureInformation info)
 		{
-			return info.Name + "@T";
+			return info.Name + "__TYPE__T";
 		}
 
 		public class ValueStatus
 		{
+			public string Key = string.Empty;
+			public object Value = null;
 			public string Name = string.Empty;
 			public string Description = string.Empty;
 			public bool IsShown = false;

@@ -103,7 +103,7 @@ namespace Effekseer.Binary
 
 								foreach (var texture in textures)
 								{
-									var relative_path = texture.Item1.RelativePath;
+									var relative_path = (texture.Item1.Value as Data.Value.PathForImage).RelativePath;
 									if (relative_path != string.Empty)
 									{
 										if(texture.Item2)
