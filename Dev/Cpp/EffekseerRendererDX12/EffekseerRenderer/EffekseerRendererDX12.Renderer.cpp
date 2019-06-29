@@ -230,6 +230,11 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 	return ::EffekseerRendererLLGI::RendererImplemented::CreateModelLoader(fileInterface);
 }
 
+::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
+{
+	return ::EffekseerRendererLLGI::RendererImplemented::CreateMaterialLoader(fileInterface);
+}
+
 void RendererImplemented::ResetRenderState() { return ::EffekseerRendererLLGI::RendererImplemented::ResetRenderState(); }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
