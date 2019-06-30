@@ -158,7 +158,7 @@ public:
 		@note
 		TODO : support distortion etc
 	*/
-	std::string GenerateShader()
+	virtual std::string GenerateShader()
 	{
 		std::ostringstream maincode;
 

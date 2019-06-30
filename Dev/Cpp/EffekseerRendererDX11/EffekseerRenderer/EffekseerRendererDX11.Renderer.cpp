@@ -17,6 +17,7 @@
 //#include "EffekseerRendererDX11.TrackRenderer.h"
 #include "EffekseerRendererDX11.TextureLoader.h"
 #include "EffekseerRendererDX11.ModelLoader.h"
+#include "EffekseerRendererDX11.MaterialLoader.h"
 
 #include "../../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
@@ -785,6 +786,9 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 	return NULL;
 #endif
 }
+
+::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) { return nullptr; }
+
 
 Effekseer::TextureData* RendererImplemented::GetBackground()
 {
