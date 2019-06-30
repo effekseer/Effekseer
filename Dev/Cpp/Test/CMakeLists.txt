@@ -27,8 +27,8 @@ link_directories(${PROJECT_SOURCE_DIR}/../lib/)
 set(common_lib)
 set(common_inc)
 
-list(APPEND common_lib Effekseer )
-list(APPEND common_lib EffekseerRendererGL )
+list(APPEND common_lib effekseer )
+list(APPEND common_lib effekseer_renderer_gl )
 list(APPEND common_lib EffekseerSoundAL )
 
 list(APPEND common_lib glfw3  )
