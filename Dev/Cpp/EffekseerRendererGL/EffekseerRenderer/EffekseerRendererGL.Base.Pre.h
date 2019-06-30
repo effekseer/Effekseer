@@ -16,6 +16,8 @@
 
 #if _WIN32
 #include <GL/gl.h>
+#elif defined(__APPLE__)
+#include <OpenGL/gl3.h>
 #else
 #include <GL/glew.h>
 #endif
@@ -24,11 +26,12 @@
 
 #if _WIN32
 #include <GL/gl.h>
+#elif defined(__APPLE__)
+#include <OpenGL/gl3.h>
 #else
 #define GLEW_STATIC
 #include <GL/glew.h>
 #endif
-
 
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 
