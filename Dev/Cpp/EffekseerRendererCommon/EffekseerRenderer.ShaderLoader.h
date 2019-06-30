@@ -12,7 +12,7 @@ namespace EffekseerRenderer
 
 class ShaderLoader
 {
-private:
+protected:
 	std::string Replace(std::string target, std::string from_, std::string to_)
 	{
 		std::string::size_type Pos(target.find(from_));
@@ -27,6 +27,9 @@ private:
 	}
 
 public:
+	ShaderLoader() = default;
+	virtual ~ShaderLoader() = default;
+
 	// set uniform
 
 	struct Texture

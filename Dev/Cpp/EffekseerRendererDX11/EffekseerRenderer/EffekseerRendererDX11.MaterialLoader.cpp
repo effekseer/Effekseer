@@ -117,6 +117,89 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 	return shader;
 }
 
+
+class ShaderLoader : public EffekseerRenderer::ShaderLoader
+{
+public:
+	ShaderLoader() = default;
+	virtual ~ShaderLoader() = default;
+
+	virtual std::string GenerateShader()
+	{
+		std::ostringstream maincode;
+
+		auto preCode = R"(
+
+struct PS_Input
+{
+	float4 Pos		: SV_POSITION;
+	float4 Color		: COLOR;
+	float2 UV		: TEXCOORD0;
+};
+
+
+)";
+		maincode << preCode;
+
+		for (size_t i = 0; i < Textures.size(); i++)
+		{
+			auto& texture = Textures[i];
+			maincode << "Texture2D " << texture.Name << "_texture : register(t" << i << ");";
+			maincode << "SamplerState " << texture.Name << "_sampler : register(s" << i << ");";
+		}
+
+		// predefined
+		int cind = 0;
+		maincode << "float4 " << "predefined_uniform" << " : register(c" << cind << ");";
+
+		for (size_t i = 0; i < Uniforms.size(); i++)
+		{
+			auto& uniform = Uniforms[i];
+			maincode << "float4 " << uniform.Name
+					 << " : register(c" << cind << ");";
+			cind++;
+		}
+
+		auto baseCode = GenericCode;
+		baseCode = Replace(baseCode, "$F1$", "float");
+		baseCode = Replace(baseCode, "$F2$", "float2");
+		baseCode = Replace(baseCode, "$F3$", "float3");
+		baseCode = Replace(baseCode, "$F4$", "float4");
+		baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
+		baseCode = Replace(baseCode, "$UV$", "input.UV");
+		baseCode = Replace(baseCode, "$INPUT$", "const PS_Input input");
+
+		// replace textures
+		for (size_t i = 0; i < Textures.size(); i++)
+		{
+			auto& texture = Textures[i];
+			std::string keyP = "$TEX_P" + std::to_string(texture.Index) + "$";
+			std::string keyS = "$TEX_S" + std::to_string(texture.Index) + "$";
+
+			baseCode = Replace(baseCode, keyP, texture.Name + "_texture.Sample(" + texture.Name + "_sampler,");
+			baseCode = Replace(baseCode, keyS, ")");
+		}
+
+		maincode << baseCode;
+
+		auto postCode = R"(
+
+float4 PS( const PS_Input Input ) : SV_Target
+{
+	float4 Output =  Calculate(Input);
+
+	if(Output.a == 0.0f) discard;
+
+	return Output;
+}
+
+)";
+		maincode << postCode;
+
+		return maincode.str();
+	}
+};
+
 MaterialLoader::MaterialLoader(Renderer* renderer, ::Effekseer::FileInterface* fileInterface) : fileInterface_(fileInterface)
 {
 	if (fileInterface == nullptr)
@@ -181,7 +264,6 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 	if (ps == nullptr)
 		return nullptr;
-
 
 	auto shader = Shader::Create(static_cast<RendererImplemented*>(renderer_),
 								 MaterialVS::g_VS,
