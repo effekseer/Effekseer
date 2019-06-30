@@ -71,8 +71,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>$(ProjectName).$(Configuration)</TargetName>
-    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
     <OutDir>..\lib\x64\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -81,8 +79,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName).$(Configuration)</TargetName>
-    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)\Lib\x64;$(LibraryPath)</LibraryPath>
     <OutDir>..\lib\x64\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

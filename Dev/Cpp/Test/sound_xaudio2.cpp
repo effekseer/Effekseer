@@ -8,6 +8,9 @@
 #include "../EffekseerSoundXAudio2/EffekseerSoundXAudio2.h"
 #include "sound.h"
 
+#pragma comment(lib, "xaudio2.lib" )
+#pragma comment(lib, "winmm.lib" )
+
 #if _DEBUG
 #pragma comment(lib, "x86/EffekseerSoundXAudio2.Debug.lib" )
 #else

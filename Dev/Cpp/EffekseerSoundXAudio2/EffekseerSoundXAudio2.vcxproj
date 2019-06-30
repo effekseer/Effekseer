@@ -82,8 +82,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>..\lib\x86</OutDir>
     <TargetName>$(ProjectName).$(Configuration)</TargetName>
-    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>$(ProjectName).$(Configuration)</TargetName>
@@ -94,8 +92,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\lib\x86</OutDir>
     <TargetName>$(ProjectName).$(Configuration)</TargetName>
-    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName).$(Configuration)</TargetName>
@@ -110,7 +106,6 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>..\Effekseer\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;DEBUG;WIN32;_WINDOWS;_DEBUG_EFFEKSEER;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -128,7 +123,6 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>..\Effekseer\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;DEBUG;WIN32;_WINDOWS;_DEBUG_EFFEKSEER;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -148,7 +142,6 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>..\Effekseer\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_NDEBUG;_WINDOWS;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -173,7 +166,6 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>..\Effekseer\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_NDEBUG;_WINDOWS;__EFFEKSEER_RENDERER_INTERNAL_LOADER__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>

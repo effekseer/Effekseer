@@ -58,6 +58,7 @@ endif()
 
 # Setup source codes
 set(effekseer_src
+	Effekseer/Effekseer/Effekseer.CustomAllocator.cpp
 	Effekseer/Effekseer/Effekseer.Client.cpp
 	Effekseer/Effekseer/Effekseer.Color.cpp
 	Effekseer/Effekseer/Effekseer.DefaultEffectLoader.cpp
@@ -75,6 +76,7 @@ set(effekseer_src
 	Effekseer/Effekseer/Effekseer.InstanceContainer.cpp
 	Effekseer/Effekseer/Effekseer.InstanceGlobal.cpp
 	Effekseer/Effekseer/Effekseer.InstanceGroup.cpp
+	Effekseer/Effekseer/Effekseer.InternalScript.cpp
 	Effekseer/Effekseer/Effekseer.Manager.cpp
 	Effekseer/Effekseer/Effekseer.Matrix43.cpp
 	Effekseer/Effekseer/Effekseer.Matrix44.cpp
@@ -110,6 +112,7 @@ set(effekseer_renderer_dx9_src
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.DeviceObject.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.ModelLoader.cpp
+	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.MaterialLoader.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.ModelRenderer.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.Renderer.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.RenderState.cpp
@@ -122,6 +125,7 @@ set(effekseer_renderer_dx11_src
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.IndexBuffer.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.ModelLoader.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.ModelRenderer.cpp
+	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.MaterialLoader.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Renderer.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.RenderState.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Shader.cpp
@@ -134,6 +138,7 @@ set(effekseer_renderer_gl_src
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.IndexBuffer.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelLoader.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelRenderer.cpp
+	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Renderer.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RenderState.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Shader.cpp
