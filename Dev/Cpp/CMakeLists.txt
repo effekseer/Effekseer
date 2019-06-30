@@ -7,6 +7,8 @@ project(Effekseer)
 # Check cmake version
 cmake_minimum_required(VERSION 2.8)
 
+set(CMAKE_CXX_STANDARD 14)
+
 option(BUILD_VIEWER "Build viewer" OFF)
 option(BUILD_TEST "Build test" OFF)
 
@@ -22,10 +24,8 @@ endif()
 
 if (MSVC)
 
-elseif (MINGW)
-	set(CMAKE_CXX_FLAGS "-std=c++11" ${CMAKE_CXX_FLAGS})
 else()
-	set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC" ${CMAKE_CXX_FLAGS})
+	set(CMAKE_CXX_FLAGS " -fPIC" ${CMAKE_CXX_FLAGS})
 endif()
 
 
