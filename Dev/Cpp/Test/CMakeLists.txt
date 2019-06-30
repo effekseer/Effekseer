@@ -31,7 +31,7 @@ list(APPEND common_lib effekseer )
 list(APPEND common_lib effekseer_renderer_gl )
 list(APPEND common_lib EffekseerSoundAL )
 
-list(APPEND common_lib glfw3  )
+list(APPEND common_lib glfw3 z png16 )
 
 if (MSVC)
 
