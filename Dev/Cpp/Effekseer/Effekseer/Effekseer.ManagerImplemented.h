@@ -473,6 +473,8 @@ public:
 	void SetTargetLocation( Handle handle, float x, float y, float z ) override;
 	void SetTargetLocation( Handle handle, const Vector3D& location ) override;
 
+	float GetDynamicInput(Handle handle, int32_t index) override;
+
 	void SetDynamicInput(Handle handle, int32_t index, float value) override;
 
 	Matrix43 GetBaseMatrix( Handle handle ) override;

@@ -1050,6 +1050,21 @@ void ManagerImplemented::SetTargetLocation( Handle handle, const Vector3D& locat
 	}
 }
 
+float ManagerImplemented::GetDynamicInput(Handle handle, int32_t index) 
+{
+	auto it = m_DrawSets.find(handle);
+	if (it != m_DrawSets.end())
+	{
+		auto globalPtr = it->second.GlobalPointer;
+		if (index < 0 || globalPtr->dynamicInputParameters.size() <= index)
+			return 0.0f;
+
+		return globalPtr->dynamicInputParameters[index];
+	}
+
+	return 0.0f;
+}
+
 void ManagerImplemented::SetDynamicInput(Handle handle, int32_t index, float value) {
 	if (m_DrawSets.count(handle) > 0)
 	{
