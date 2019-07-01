@@ -33,7 +33,6 @@
 #include <GL/glew.h>
 #endif
 
-
 #elif defined(__EFFEKSEER_RENDERER_GLES2__)
 
 #if defined(__APPLE__)
@@ -368,42 +367,42 @@ public:
 	\~english Get an UV Style of texture when particles are rendered.
 	\~japanese パーティクルを描画するときのUVの状態を取得する。
 	*/
-	UVStyle GetTextureUVStyle() const;
+	virtual UVStyle GetTextureUVStyle() const;
 
 	/**
 	@brief
 	\~english Set an UV Style of texture when particles are rendered.
 	\~japanese パーティクルを描画するときのUVの状態を設定する。
 	*/
-	void SetTextureUVStyle(UVStyle style);
+	virtual void SetTextureUVStyle(UVStyle style);
 
 	/**
 	@brief
 	\~english Get an UV Style of background when particles are rendered.
 	\~japanese パーティクルを描画するときの背景のUVの状態を取得する。
 	*/
-	UVStyle GetBackgroundTextureUVStyle() const;
+	virtual UVStyle GetBackgroundTextureUVStyle() const;
 
 	/**
 	@brief
 	\~english Set an UV Style of background when particles are rendered.
 	\~japanese パーティクルを描画するときの背景のUVの状態を設定する。
 	*/
-	void SetBackgroundTextureUVStyle(UVStyle style);
+	virtual void SetBackgroundTextureUVStyle(UVStyle style);
 
 	/**
 	@brief
 	\~english Get a current time (s)
 	\~japanese 現在の時間を取得する。(秒)
 	*/
-	float GetTime() const;
+	virtual float GetTime() const;
 
 	/**
 	@brief
 	\~english Set a current time (s)
 	\~japanese 現在の時間を設定する。(秒)
 	*/
-	void SetTime(float time);
+	virtual void SetTime(float time);
 };
 
 //----------------------------------------------------------------------------------
