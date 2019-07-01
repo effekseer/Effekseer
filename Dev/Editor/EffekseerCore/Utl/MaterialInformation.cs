@@ -9,7 +9,6 @@ using System.IO;
 
 namespace Effekseer.Utl
 {
-#if MATERIAL_ENABLED
 	public class MaterialInformation
 	{
 		public TextureInformation[] Textures = new TextureInformation[0];
@@ -169,5 +168,4 @@ namespace Effekseer.Utl
 			public float[] DefaultValues = new float[4];
 		}
 	}
-#endif
 }

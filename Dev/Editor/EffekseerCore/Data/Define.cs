@@ -569,7 +569,7 @@ namespace Effekseer.Data
 			ret.Title = NameAttribute.GetName(attributes);
 			ret.Description = DescriptionAttribute.GetDescription(attributes);
 
-			var undo = attributes.Where(_ => _.GetType() == typeof(Effekseer.Data.UndoAttribute)).FirstOrDefault() as Effekseer.Data.UndoAttribute;
+			var undo = attributes.Where(_ => _.GetType() == typeof(UndoAttribute)).FirstOrDefault() as UndoAttribute;
 			if (undo != null && !undo.Undo)
 			{
 				ret.IsUndoEnabled = false;
@@ -579,7 +579,7 @@ namespace Effekseer.Data
 				ret.IsUndoEnabled = true;
 			}
 
-			var shown = attributes.Where(_ => _.GetType() == typeof(Effekseer.Data.ShownAttribute)).FirstOrDefault() as Effekseer.Data.ShownAttribute;
+			var shown = attributes.Where(_ => _.GetType() == typeof(ShownAttribute)).FirstOrDefault() as ShownAttribute;
 
 			if (shown != null && !shown.Shown)
 			{

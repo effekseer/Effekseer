@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data
 {
-#if MATERIAL_ENABLED
+
 	public class MaterialFileParameter : IEditableValueCollection
 	{
 		[Shown(Shown = true)]
@@ -281,7 +281,6 @@ namespace Effekseer.Data
 		public event ChangedValueEventHandler OnChanged;
 	}
 
-#endif
 	public class RendererCommonValues
 	{
 #if MATERIAL_ENABLED
