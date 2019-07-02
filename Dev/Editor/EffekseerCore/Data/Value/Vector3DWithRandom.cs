@@ -33,111 +33,22 @@ namespace Effekseer.Data.Value
 
 		internal DrawnAs DefaultDrawnAs { get; private set; }
 
-		bool isDynamicEquationEnabled = false;
-		public bool IsDynamicEquationEnabled
+		public Boolean IsDynamicEquationEnabled
 		{
-			get
-			{
-				return isDynamicEquationEnabled;
-			}
-			set
-			{
-				var old_value = isDynamicEquationEnabled;
-				var new_value = value;
-
-				var cmd = new Command.DelegateCommand(
-					() =>
-					{
-						isDynamicEquationEnabled = new_value;
-
-						if (OnChanged != null)
-						{
-							OnChanged(this, new ChangedValueEventArgs(new_value, ChangedValueType.Execute));
-						}
-					},
-					() =>
-					{
-						isDynamicEquationEnabled = old_value;
-
-						if (OnChanged != null)
-						{
-							OnChanged(this, new ChangedValueEventArgs(old_value, ChangedValueType.Unexecute));
-						}
-					});
-
-				Command.CommandManager.Execute(cmd);
-			}
+			get;
+			private set;
 		}
-		public DynamicEquation DynamicEquationMin
+		
+		public DynamicEquationReference DynamicEquationMin
 		{
 			get;
 			private set;
 		}
 
-		public void SetDynamicEquationMin(DynamicEquation param)
-		{
-			if (param == DynamicEquationMin) return;
-
-			var old_value = DynamicEquationMin;
-			var new_value = param;
-
-			var cmd = new Command.DelegateCommand(
-				() =>
-				{
-					DynamicEquationMin = new_value;
-
-					if (OnChanged != null)
-					{
-						OnChanged(this, new ChangedValueEventArgs(new_value, ChangedValueType.Execute));
-					}
-				},
-				() =>
-				{
-					DynamicEquationMin = old_value;
-
-					if (OnChanged != null)
-					{
-						OnChanged(this, new ChangedValueEventArgs(old_value, ChangedValueType.Unexecute));
-					}
-				});
-
-			Command.CommandManager.Execute(cmd);
-		}
-
-		public DynamicEquation DynamicEquationMax
+		public DynamicEquationReference DynamicEquationMax
 		{
 			get;
 			private set;
-		}
-
-		public void SetDynamicEquationMax(DynamicEquation param)
-		{
-			if (param == DynamicEquationMax) return;
-
-			var old_value = DynamicEquationMax;
-			var new_value = param;
-
-			var cmd = new Command.DelegateCommand(
-				() =>
-				{
-					DynamicEquationMax = new_value;
-
-					if (OnChanged != null)
-					{
-						OnChanged(this, new ChangedValueEventArgs(new_value, ChangedValueType.Execute));
-					}
-				},
-				() =>
-				{
-					DynamicEquationMax = old_value;
-
-					if (OnChanged != null)
-					{
-						OnChanged(this, new ChangedValueEventArgs(old_value, ChangedValueType.Unexecute));
-					}
-				});
-
-			Command.CommandManager.Execute(cmd);
 		}
 
 		public event ChangedValueEventHandler OnChanged;
@@ -165,6 +76,9 @@ namespace Effekseer.Data.Value
 			X = new FloatWithRandom(x, x_max, x_min, drawnas, x_step);
 			Y = new FloatWithRandom(y, y_max, y_min, drawnas, y_step);
 			Z = new FloatWithRandom(z, z_max, z_min, drawnas, z_step);
+			IsDynamicEquationEnabled = new Boolean();
+			DynamicEquationMin = new DynamicEquationReference();
+			DynamicEquationMax = new DynamicEquationReference();
 			DrawnAs = drawnas;
 			DefaultDrawnAs = DrawnAs;
 		}

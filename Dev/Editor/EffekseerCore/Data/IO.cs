@@ -247,9 +247,27 @@ namespace Effekseer.Data
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.Float value, bool isClip)
 		{
-			if (value.Value == value.DefaultValue && !isClip) return null;
-			var text = value.GetValue().ToString();
-			return doc.CreateTextElement(element_name, text);
+			if(value.DynamicEquation.Index >= 0)
+			{
+				var e = doc.CreateElement(element_name);
+				var text = value.GetValue().ToString();
+				var value_ = doc.CreateTextElement("Value", text);
+				e.AppendChild(value_);
+
+				var d = SaveToElement(doc, "DynamicEquation", value.DynamicEquation, isClip);
+				if (d != null)
+				{
+					e.AppendChild(d);
+				}
+
+				return e.ChildNodes.Count > 0 ? e : null;
+			}
+			else
+			{
+				if (value.Value == value.DefaultValue && !isClip) return null;
+				var text = value.GetValue().ToString();
+				return doc.CreateTextElement(element_name, text);
+			}
 		}
 
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.IntWithInifinite value, bool isClip)
@@ -260,6 +278,12 @@ namespace Effekseer.Data
 			
 			if (v != null) e.AppendChild(v);
 			if (i != null) e.AppendChild(i);
+
+			var d = SaveToElement(doc, "DynamicEquation", value.DynamicEquation, isClip);
+			if (d != null)
+			{
+				e.AppendChild(d);
+			}
 
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
@@ -287,10 +311,9 @@ namespace Effekseer.Data
 			if (y != null) e.AppendChild(y);
 			if (z != null) e.AppendChild(z);
 
-			var d_ind = Core.Dynamic.Equations.GetIndex(value.DynamicEquation);
-			if(d_ind >= 0)
+			var d = SaveToElement(doc, "DynamicEquation", value.DynamicEquation, isClip);
+			if(d != null)
 			{
-				var d = doc.CreateTextElement("DynamicEquation", d_ind.ToString());
 				e.AppendChild(d);
 			}
 
@@ -337,6 +360,20 @@ namespace Effekseer.Data
 			if (value.DefaultValueMin != value.Min || isClip) e.AppendChild(doc.CreateTextElement("Min", value.Min.ToString()));
 			if (value.DefaultDrawnAs != value.DrawnAs || isClip) e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
 
+			var d_min = SaveToElement(doc, "DynamicEquationMin", value.DynamicEquationMin, isClip);
+
+			if (d_min != null)
+			{
+				e.AppendChild(d_min);
+			}
+
+			var d_max = SaveToElement(doc, "DynamicEquationMax", value.DynamicEquationMax, isClip);
+
+			if (d_max != null)
+			{
+				e.AppendChild(d_max);
+			}
+
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
@@ -348,7 +385,21 @@ namespace Effekseer.Data
 			if (value.DefaultValueMax != value.Max || isClip) e.AppendChild(doc.CreateTextElement("Max", value.Max.ToString()));
 			if (value.DefaultValueMin != value.Min || isClip) e.AppendChild(doc.CreateTextElement("Min", value.Min.ToString()));
 			if (value.DefaultDrawnAs != value.DrawnAs || isClip) e.AppendChild(doc.CreateTextElement("DrawnAs", (int)value.DrawnAs));
-			
+
+			var d_min = SaveToElement(doc, "DynamicEquationMin", value.DynamicEquationMin, isClip);
+
+			if (d_min != null)
+			{
+				e.AppendChild(d_min);
+			}
+
+			var d_max = SaveToElement(doc, "DynamicEquationMax", value.DynamicEquationMax, isClip);
+
+			if (d_max != null)
+			{
+				e.AppendChild(d_max);
+			}
+
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
@@ -379,18 +430,18 @@ namespace Effekseer.Data
 			if (z != null) e.AppendChild(z);
 			if (da != null) e.AppendChild(da);
 
-			var d_ind_min = Core.Dynamic.Equations.GetIndex(value.DynamicEquationMin);
-			if (d_ind_min >= 0)
+			var d_min = SaveToElement(doc, "DynamicEquationMin", value.DynamicEquationMin, isClip);
+
+			if (d_min != null)
 			{
-				var d = doc.CreateTextElement("DynamicEquationMin", d_ind_min.ToString());
-				e.AppendChild(d);
+				e.AppendChild(d_min);
 			}
 
-			var d_ind_max = Core.Dynamic.Equations.GetIndex(value.DynamicEquationMax);
-			if (d_ind_max >= 0)
+			var d_max = SaveToElement(doc, "DynamicEquationMax", value.DynamicEquationMax, isClip);
+
+			if (d_max != null)
 			{
-				var d = doc.CreateTextElement("DynamicEquationMax", d_ind_max.ToString());
-				e.AppendChild(d);
+				e.AppendChild(d_max);
 			}
 
 			return e.ChildNodes.Count > 0 ? e : null;
@@ -632,6 +683,18 @@ namespace Effekseer.Data
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
 
+		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.Value.DynamicEquationReference de, bool isClip)
+		{
+			var d_ind = de.Index;
+			if (d_ind >= 0)
+			{
+				var d = doc.CreateTextElement(element_name, d_ind.ToString());
+				return d;
+			}
+
+			return null;
+		}
+
 		public static void LoadObjectFromElement(XmlElement e, ref object o, bool isClip)
 		{
 			var o_type = o.GetType();
@@ -795,11 +858,33 @@ namespace Effekseer.Data
 
 		public static void LoadFromElement(XmlElement e, Value.Float value, bool isClip)
 		{
-			var text = e.GetText();
-			var parsed = 0.0f;
-			if (float.TryParse(text, System.Globalization.NumberStyles.Float, Setting.NFI, out parsed))
+			if(e.HasChildNodes && e.ChildNodes[0].HasChildNodes)
 			{
-				value.SetValue(parsed);
+				// with dynamic equation
+				var e_value = e["Value"] as XmlElement;
+
+				if(e_value != null)
+				{
+					LoadFromElement(e_value, value, isClip);
+				}
+
+				var e_d = e["DynamicEquation"] as XmlElement;
+
+				if (e_d != null)
+				{
+					LoadFromElement(e_d, value.DynamicEquation, isClip);
+					value.IsDynamicEquationEnabled.SetValue(true);
+				}
+			}
+			else
+			{
+				// without dynamic equation
+				var text = e.GetText();
+				var parsed = 0.0f;
+				if (float.TryParse(text, System.Globalization.NumberStyles.Float, Setting.NFI, out parsed))
+				{
+					value.SetValue(parsed);
+				}
 			}
 		}
 
@@ -818,6 +903,14 @@ namespace Effekseer.Data
 			{
 				if (e_value != null) LoadFromElement(e_value, value.Value, isClip);
 				if (e_infinite != null) LoadFromElement(e_infinite, value.Infinite, isClip);
+			}
+
+			var e_d = e["DynamicEquation"] as XmlElement;
+
+			if (e_d != null)
+			{
+				LoadFromElement(e_d, value.DynamicEquation, isClip);
+				value.IsDynamicEquationEnabled.SetValue(true);
 			}
 		}
 
@@ -841,15 +934,10 @@ namespace Effekseer.Data
 			if (e_y != null) LoadFromElement(e_y, value.Y, isClip);
 			if (e_z != null) LoadFromElement(e_z, value.Z, isClip);
 
-			if (e_d != null)
+			if (e_d != null) 
 			{
-				var ind = e_d.GetTextAsInt();
-				if(0 <= ind && ind < Core.Dynamic.Equations.Values.Count)
-				{
-					var d = Core.Dynamic.Equations.Values[ind];
-					value.SetDynamicEquation(d);
-					value.IsDynamicEquationEnabled = true;
-				}
+				LoadFromElement(e_d, value.DynamicEquation, isClip);
+				value.IsDynamicEquationEnabled.SetValue(true);
 			}
 		}
 
@@ -916,6 +1004,21 @@ namespace Effekseer.Data
 			{
 				value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
 			}
+
+			var e_d_min = e["DynamicEquationMin"] as XmlElement;
+			var e_d_max = e["DynamicEquationMax"] as XmlElement;
+
+			if (e_d_min != null)
+			{
+				LoadFromElement(e_d_min, value.DynamicEquationMin, isClip);
+				value.IsDynamicEquationEnabled.SetValue(true);
+			}
+
+			if (e_d_max != null)
+			{
+				LoadFromElement(e_d_max, value.DynamicEquationMax, isClip);
+				value.IsDynamicEquationEnabled.SetValue(true);
+			}
 		}
 
 		public static void LoadFromElement(XmlElement e, Value.FloatWithRandom value, bool isClip)
@@ -954,6 +1057,21 @@ namespace Effekseer.Data
 			if (e_da != null)
 			{
 				value.DrawnAs = (DrawnAs)e_da.GetTextAsInt();
+			}
+
+			var e_d_min = e["DynamicEquationMin"] as XmlElement;
+			var e_d_max = e["DynamicEquationMax"] as XmlElement;
+
+			if (e_d_min != null)
+			{
+				LoadFromElement(e_d_min, value.DynamicEquationMin, isClip);
+				value.IsDynamicEquationEnabled.SetValue(true);
+			}
+
+			if (e_d_max != null)
+			{
+				LoadFromElement(e_d_max, value.DynamicEquationMax, isClip);
+				value.IsDynamicEquationEnabled.SetValue(true);
 			}
 		}
 
@@ -1016,24 +1134,14 @@ namespace Effekseer.Data
 
 			if (e_d_min != null)
 			{
-				var ind = e_d_min.GetTextAsInt();
-				if (0 <= ind && ind < Core.Dynamic.Equations.Values.Count)
-				{
-					var d = Core.Dynamic.Equations.Values[ind];
-					value.SetDynamicEquationMin(d);
-					value.IsDynamicEquationEnabled = true;
-				}
+				LoadFromElement(e_d_min, value.DynamicEquationMin, isClip);
+				value.IsDynamicEquationEnabled.SetValue(true);
 			}
 
 			if (e_d_max != null)
 			{
-				var ind = e_d_max.GetTextAsInt();
-				if (0 <= ind && ind < Core.Dynamic.Equations.Values.Count)
-				{
-					var d = Core.Dynamic.Equations.Values[ind];
-					value.SetDynamicEquationMax(d);
-					value.IsDynamicEquationEnabled = true;
-				}
+				LoadFromElement(e_d_max, value.DynamicEquationMax, isClip);
+				value.IsDynamicEquationEnabled.SetValue(true);
 			}
 		}
 
@@ -1286,6 +1394,17 @@ namespace Effekseer.Data
 
 			if (e_name != null) LoadFromElement(e_name, value.Name, isClip);
 			if (e_x != null) LoadFromElement(e_x, value.Code, isClip);
+		}
+
+		public static void LoadFromElement(XmlElement e, Data.Value.DynamicEquationReference de, bool isClip)
+		{
+			var ind = e.GetTextAsInt();
+
+			if (0 <= ind && ind < Core.Dynamic.Equations.Values.Count)
+			{
+				var d = Core.Dynamic.Equations.Values[ind];
+				de.SetValue(d);
+			}
 		}
 	}
 }

@@ -9,6 +9,7 @@ namespace Effekseer.GUI.Component
 	class Vector3D : Control, IParameterControl
 	{
 		string id = "";
+		string id_d = "";
 		string id_c = "";
 
 
@@ -58,6 +59,7 @@ namespace Effekseer.GUI.Component
 
 			var rand = new Random();
 			id = "###" + Manager.GetUniqueID().ToString();
+			id_d = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
 		}
 
@@ -139,13 +141,19 @@ namespace Effekseer.GUI.Component
 				Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
 				Manager.NativeManager.SameLine();
 
-				var nextParam = DynamicSelector.Select("", "", binding.DynamicEquation, false, false);
+				var nextParam = DynamicSelector.Select("", "", binding.DynamicEquation.Value, false, false);
 
-				if (binding.DynamicEquation != nextParam)
+				if (binding.DynamicEquation.Value != nextParam)
 				{
-					binding.SetDynamicEquation(nextParam);
+					binding.DynamicEquation.SetValue(nextParam);
 				}
 
+				Popup();
+			}
+
+			if (binding.IsDynamicEquationEnabled)
+			{
+				DynamicSelector.SelectInComponent(id_d, binding.DynamicEquation);
 				Popup();
 			}
 
@@ -158,18 +166,7 @@ namespace Effekseer.GUI.Component
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-				if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicFixed") + id_c + "_1", !binding.IsDynamicEquationEnabled))
-				{
-					binding.IsDynamicEquationEnabled = false;
-					binding.SetDynamicEquation(null);
-				}
-
-				Manager.NativeManager.SameLine();
-
-				if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicDynamic") + id_c + "_2", binding.IsDynamicEquationEnabled))
-				{
-					binding.IsDynamicEquationEnabled = true;
-				}
+				DynamicSelector.Popup(id_c, binding.DynamicEquation, binding.IsDynamicEquationEnabled);
 
 				Manager.NativeManager.EndPopup();
 

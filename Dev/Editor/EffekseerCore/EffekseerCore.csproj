@@ -107,6 +107,7 @@
     <Compile Include="Data\Value\Boolean.cs" />
     <Compile Include="Data\Value\Color.cs" />
     <Compile Include="Data\Value\ColorWithRandom.cs" />
+    <Compile Include="Data\Value\DynamicEquationReference.cs" />
     <Compile Include="Data\Value\Enum.cs" />
     <Compile Include="Data\Value\EnumBase.cs" />
     <Compile Include="Data\Value\FCurve.cs" />

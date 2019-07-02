@@ -50,25 +50,26 @@ public:
 	virtual std::vector<int32_t>& GetCurrentMaterialFaceCounts() = 0;
 };
 
-struct Area
+struct BoundingBox
 {
-	int MinX = 0;
-	int MinY = 0;
-	int MaxX = 0;
-	int MaxY = 0;
+	int Left = 0;
+	int Top = 0;
+	int Right = 0;
+	int Bottom = 0;
 };
 
-class AreaEstimator
+class BoundingBoxEstimator
 {
 private:
 	Effekseer::Manager* manager_ = nullptr;
 	Renderer* renderer_ = nullptr;
 
 public:
-	AreaEstimator();
-	virtual ~AreaEstimator();
+	BoundingBoxEstimator();
+	virtual ~BoundingBoxEstimator();
 
-	Area Estimate(Effekseer::Effect* effect, const Effekseer::Matrix44& cameraMat, const Effekseer::Matrix44& projMat, int32_t time, float rate);
+	BoundingBox
+	Estimate(Effekseer::Effect* effect, const Effekseer::Matrix44& cameraMat, const Effekseer::Matrix44& projMat, int screenWidth, int screenHeight, int32_t time, float rate);
 };
 
 } // namespace EffekseerRendererArea

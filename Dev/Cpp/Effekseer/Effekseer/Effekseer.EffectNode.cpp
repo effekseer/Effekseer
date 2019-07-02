@@ -94,10 +94,15 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		memcpy(&size, pos, sizeof(int));
 		pos += sizeof(int);
 
-		if (m_effect->GetVersion() >= 9)
+		if (ef->GetVersion() >= 14)
 		{
 			assert(size == sizeof(ParameterCommonValues));
 			memcpy(&CommonValues, pos, size);
+			pos += size;
+		}
+		else if (m_effect->GetVersion() >= 9)
+		{
+			memcpy(&CommonValues.MaxGeneration, pos, size);
 			pos += size;
 		}
 		else

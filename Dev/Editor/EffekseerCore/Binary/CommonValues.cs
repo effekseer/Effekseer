@@ -10,6 +10,14 @@ namespace Effekseer.Binary
 	[StructLayout(LayoutKind.Sequential)]
 	struct CommonValues
 	{
+		public int RefEqMaxGeneration;
+		public int RefEqLifeMax;
+		public int RefEqLifeMin;
+		public int RefEqGenerationTimeMax;
+		public int RefEqGenerationTimeMin;
+		public int RefEqGenerationTimeOffsetMax;
+		public int RefEqGenerationTimeOffsetMin;
+
 		public int MaxCreation;
 		public int TranslationEffectType;
 		public int RotationEffectType;
@@ -38,6 +46,14 @@ namespace Effekseer.Binary
 		static public CommonValues Create(Data.CommonValues value)
 		{
 			var s_value = new CommonValues();
+
+			s_value.RefEqMaxGeneration = value.MaxGeneration.DynamicEquation.Index;
+			s_value.RefEqLifeMax = value.Life.DynamicEquationMax.Index;
+			s_value.RefEqLifeMin = value.Life.DynamicEquationMin.Index;
+			s_value.RefEqGenerationTimeMax = value.GenerationTime.DynamicEquationMax.Index;
+			s_value.RefEqGenerationTimeMin = value.GenerationTime.DynamicEquationMin.Index;
+			s_value.RefEqGenerationTimeOffsetMax = value.GenerationTimeOffset.DynamicEquationMax.Index;
+			s_value.RefEqGenerationTimeOffsetMin = value.GenerationTimeOffset.DynamicEquationMin.Index;
 
 			s_value.MaxCreation = value.MaxGeneration.Value;
 			if (value.MaxGeneration.Infinite)

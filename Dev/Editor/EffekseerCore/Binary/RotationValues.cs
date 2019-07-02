@@ -16,7 +16,7 @@ namespace Effekseer.Binary
 
 			if (value.Type.GetValue() == Data.RotationValues.ParamaterType.Fixed)
 			{
-				var refBuf = Core.Dynamic.Equations.GetIndex(value.Fixed.Rotation.DynamicEquation).GetBytes();
+				var refBuf = value.Fixed.Rotation.DynamicEquation.Index.GetBytes();
 				var mainBuf = Rotation_Fixed_Values.Create(value.Fixed).GetBytes();
 				data.Add((mainBuf.Count() + refBuf.Count()).GetBytes());
 				data.Add(refBuf);
@@ -24,12 +24,12 @@ namespace Effekseer.Binary
 			}
 			else if (value.Type.GetValue() == Data.RotationValues.ParamaterType.PVA)
 			{
-				var refBuf1_1 = Core.Dynamic.Equations.GetIndex(value.PVA.Rotation.DynamicEquationMax).GetBytes();
-				var refBuf1_2 = Core.Dynamic.Equations.GetIndex(value.PVA.Rotation.DynamicEquationMin).GetBytes();
-				var refBuf2_1 = Core.Dynamic.Equations.GetIndex(value.PVA.Velocity.DynamicEquationMax).GetBytes();
-				var refBuf2_2 = Core.Dynamic.Equations.GetIndex(value.PVA.Velocity.DynamicEquationMin).GetBytes();
-				var refBuf3_1 = Core.Dynamic.Equations.GetIndex(value.PVA.Acceleration.DynamicEquationMax).GetBytes();
-				var refBuf3_2 = Core.Dynamic.Equations.GetIndex(value.PVA.Acceleration.DynamicEquationMin).GetBytes();
+				var refBuf1_1 = value.PVA.Rotation.DynamicEquationMax.Index.GetBytes();
+				var refBuf1_2 = value.PVA.Rotation.DynamicEquationMin.Index.GetBytes();
+				var refBuf2_1 = value.PVA.Velocity.DynamicEquationMax.Index.GetBytes();
+				var refBuf2_2 = value.PVA.Velocity.DynamicEquationMin.Index.GetBytes();
+				var refBuf3_1 = value.PVA.Acceleration.DynamicEquationMax.Index.GetBytes();
+				var refBuf3_2 = value.PVA.Acceleration.DynamicEquationMin.Index.GetBytes();
 
 				List<byte[]> _data = new List<byte[]>();
 				_data.Add(value.PVA.Rotation.GetBytes((float)Math.PI / 180.0f));
@@ -49,10 +49,10 @@ namespace Effekseer.Binary
 			{
 				var easing = Utl.MathUtl.Easing((float)value.Easing.StartSpeed.Value, (float)value.Easing.EndSpeed.Value);
 
-				var refBuf1_1 = Core.Dynamic.Equations.GetIndex(value.Easing.Start.DynamicEquationMax).GetBytes();
-				var refBuf1_2 = Core.Dynamic.Equations.GetIndex(value.Easing.Start.DynamicEquationMin).GetBytes();
-				var refBuf2_1 = Core.Dynamic.Equations.GetIndex(value.Easing.End.DynamicEquationMax).GetBytes();
-				var refBuf2_2 = Core.Dynamic.Equations.GetIndex(value.Easing.End.DynamicEquationMin).GetBytes();
+				var refBuf1_1 = value.Easing.Start.DynamicEquationMax.Index.GetBytes();
+				var refBuf1_2 = value.Easing.Start.DynamicEquationMin.Index.GetBytes();
+				var refBuf2_1 = value.Easing.End.DynamicEquationMax.Index.GetBytes();
+				var refBuf2_2 = value.Easing.End.DynamicEquationMin.Index.GetBytes();
 
 				List<byte[]> _data = new List<byte[]>();
 				_data.Add(refBuf1_1);

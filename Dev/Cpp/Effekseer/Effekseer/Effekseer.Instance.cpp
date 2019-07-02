@@ -63,6 +63,46 @@ void Instance::ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd,
 	}
 }
 
+random_float Instance::ApplyEq(const RefMinMax& dpInd, random_float originalParam)
+{
+	const auto& e = this->m_pEffectNode->m_effect;
+	const auto& instg = this->m_pContainer->GetRootInstance();
+
+	if (dpInd.Max >= 0)
+	{
+		ApplyEq(originalParam.max, e, instg, dpInd.Max, originalParam.max);
+	}
+
+	if (dpInd.Min >= 0)
+	{
+		ApplyEq(originalParam.min, e, instg, dpInd.Min, originalParam.min);
+	}
+
+	return originalParam;
+}
+
+random_int Instance::ApplyEq(const RefMinMax& dpInd, random_int originalParam)
+{
+	const auto& e = this->m_pEffectNode->m_effect;
+	const auto& instg = this->m_pContainer->GetRootInstance();
+
+	if (dpInd.Max >= 0)
+	{
+		float value = static_cast<float>(originalParam.max);
+		ApplyEq(value, e, instg, dpInd.Max, value);
+		originalParam.max = static_cast<int32_t>(value);
+	}
+
+	if (dpInd.Min >= 0)
+	{
+		float value = static_cast<float>(originalParam.min);
+		ApplyEq(value, e, instg, dpInd.Min, value);
+		originalParam.min = static_cast<int32_t>(value);
+	}
+
+	return originalParam;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -84,6 +124,7 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	, m_sequenceNumber(0)
 {
 	m_generatedChildrenCount = m_fixedGeneratedChildrenCount;
+	maxGenerationChildrenCount = fixedMaxGenerationChildrenCount_;
 	m_nextGenerationTime = m_fixedNextGenerationTime;
 	
 	ColorInheritance = Color(255, 255, 255, 255);
@@ -122,6 +163,11 @@ Instance::~Instance()
 		m_pManager->GetFreeFunc()(m_flexibleGeneratedChildrenCount, sizeof(int32_t) * parameter->GetChildrenCount());
 	}
 
+	if (flexibleMaxGenerationChildrenCount_ != nullptr)
+	{
+		m_pManager->GetFreeFunc()(flexibleMaxGenerationChildrenCount_, sizeof(int32_t) * parameter->GetChildrenCount());
+	}
+
 	if (m_flexibleNextGenerationTime != nullptr)
 	{
 		m_pManager->GetFreeFunc()(m_flexibleNextGenerationTime, sizeof(float) * parameter->GetChildrenCount());
@@ -145,7 +191,7 @@ void Instance::GenerateChildrenInRequired(float currentTime)
 		{
 			// GenerationTimeOffset can be minus value.
 			// Minus frame particles is generated simultaniously at frame 0.
-			if (node->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
+			if (maxGenerationChildrenCount[i] > m_generatedChildrenCount[i] &&
 				m_nextGenerationTime[i] <= currentTime)
 			{
 				// Create a particle
@@ -159,7 +205,9 @@ void Instance::GenerateChildrenInRequired(float currentTime)
 				}
 
 				m_generatedChildrenCount[i]++;
-				m_nextGenerationTime[i] += Max(0.0f, node->CommonValues.GenerationTime.getValue(*instanceGlobal));
+
+				auto gt = ApplyEq(node->CommonValues.RefEqGenerationTime, node->CommonValues.GenerationTime);
+				m_nextGenerationTime[i] += Max(0.0f, gt.getValue(*instanceGlobal));
 			}
 			else
 			{
@@ -204,22 +252,42 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	if (parameter->GetChildrenCount() >= ChildrenMax)
 	{
 		m_flexibleGeneratedChildrenCount = (int32_t*)(m_pManager->GetMallocFunc()(sizeof(int32_t) * parameter->GetChildrenCount()));
+		flexibleMaxGenerationChildrenCount_ = (int32_t*)(m_pManager->GetMallocFunc()(sizeof(int32_t) * parameter->GetChildrenCount()));
 		m_flexibleNextGenerationTime = (float*)(m_pManager->GetMallocFunc()(sizeof(float) * parameter->GetChildrenCount()));
 
 		m_generatedChildrenCount = m_flexibleGeneratedChildrenCount;
+		maxGenerationChildrenCount = flexibleMaxGenerationChildrenCount_;
 		m_nextGenerationTime = m_flexibleNextGenerationTime;
 	}
 
 	// 親の設定
 	m_pParent = parent;
 
-	// 子の初期化
+	// initialize children
 	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++)
 	{
 		auto pNode = (EffectNodeImplemented*) parameter->GetChild(i);
 
 		m_generatedChildrenCount[i] = 0;
-		m_nextGenerationTime[i] = pNode->CommonValues.GenerationTimeOffset.getValue(*instanceGlobal);
+
+		auto gt = ApplyEq(pNode->CommonValues.RefEqGenerationTimeOffset, pNode->CommonValues.GenerationTimeOffset);
+
+		m_nextGenerationTime[i] = gt.getValue(*instanceGlobal);
+
+		if (pNode->CommonValues.RefEqMaxGeneration >= 0)
+		{
+			auto maxGene = static_cast<float>(pNode->CommonValues.MaxGeneration);
+			ApplyEq(maxGene,
+					this->m_pEffectNode->m_effect,
+					this->m_pContainer->GetRootInstance(),
+					pNode->CommonValues.RefEqMaxGeneration,
+					maxGene);
+			maxGenerationChildrenCount[i] = maxGene;
+		}
+		else
+		{
+			maxGenerationChildrenCount[i] = pNode->CommonValues.MaxGeneration;
+		}
 	}
 
 	if( m_pParent == NULL )
@@ -252,10 +320,12 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	// 状態の初期化
 	m_State = INSTANCE_STATE_ACTIVE;
 
-	// 時間周りの初期化
+	// initialize about a lifetime
 	m_LivingTime = 0.0f;
-	m_LivedTime = (float)parameter->CommonValues.life.getValue( *instanceGlobal );
-
+	{
+		auto ri = ApplyEq(parameter->CommonValues.RefEqLife, parameter->CommonValues.life);
+		m_LivedTime = (float)ri.getValue(*instanceGlobal);
+	}
 
 	// SRTの初期化
 	m_pParent->GetGlobalMatrix43().GetTranslation( m_GlobalPosition );
@@ -1074,44 +1144,6 @@ void Instance::Update( float deltaFrame, bool shown )
 	if( is_time_step_allowed && (originalTime <= m_LivedTime || !m_pEffectNode->CommonValues.RemoveWhenLifeIsExtinct) )
 	{
 		GenerateChildrenInRequired(originalTime + deltaFrame);
-
-
-		/*
-		InstanceGroup* group = m_headGroups;
-
-		for (int i = 0; i < m_pEffectNode->GetChildrenCount(); i++, group = group->NextUsedByInstance)
-		{
-			auto pNode = (EffectNodeImplemented*) m_pEffectNode->GetChild(i);
-			auto pContainer = m_pContainer->GetChild( i );
-			assert( group != NULL );
-
-			// Create a particle
-			while (true)
-			{
-				if (pNode->CommonValues.MaxGeneration > m_generatedChildrenCount[i] &&
-					originalTime + deltaFrame >= m_nextGenerationTime[i])
-				{
-					// 生成処理
-					Instance* pNewInstance = group->CreateInstance();
-					if (pNewInstance != NULL)
-					{
-						pNewInstance->Initialize(this, m_generatedChildrenCount[i]);
-					}
-					else
-					{
-						break;
-					}
-
-					m_generatedChildrenCount[i]++;
-					m_nextGenerationTime[i] += Max(0.0f, pNode->CommonValues.GenerationTime.getValue(*instanceGlobal));
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-		*/
 	}
 	
 	// check whether killed?
@@ -1147,13 +1179,7 @@ void Instance::Update( float deltaFrame, bool shown )
 			{
 				auto child = (EffectNodeImplemented*) m_pEffectNode->GetChild(i);
 
-				float last_generation_time = 
-					child->CommonValues.GenerationTime.max *
-					(child->CommonValues.MaxGeneration - 1) +
-					child->CommonValues.GenerationTimeOffset.max +
-					1.0f;
-
-				if( m_LivingTime >= last_generation_time && group->GetInstanceCount() == 0 )
+				if (maxGenerationChildrenCount[i] <= m_generatedChildrenCount[i] && group->GetInstanceCount() == 0)
 				{
 					maxcreate_count++;
 				}
