@@ -23,6 +23,7 @@ namespace Effekseer.Utl
 			System.IO.FileStream fs = null;
 			if (!System.IO.File.Exists(path)) return false;
 
+#if MATERIAL_ENABLED
 			try
 			{
 				fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
@@ -147,7 +148,7 @@ namespace Effekseer.Utl
 					Uniforms = uniforms.ToArray();
 				}
 			}
-
+#endif
 			return true;
 		}
 
