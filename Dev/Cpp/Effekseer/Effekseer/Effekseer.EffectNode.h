@@ -32,6 +32,15 @@ enum class BindType : int32_t
 	Always = 2,
 };
 
+/**!
+	@brief indexes of dynamic parameter
+*/
+struct RefMinMax
+{
+	int32_t Max = -1;
+	int32_t Min = -1;
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -128,6 +137,11 @@ struct ParameterCommonValues_8
 
 struct ParameterCommonValues
 {
+	int32_t RefEqMaxGeneration = -1;
+	RefMinMax RefEqLife;
+	RefMinMax RefEqGenerationTime;
+	RefMinMax RefEqGenerationTimeOffset;
+
 	int MaxGeneration = 1;
 	BindType TranslationBindType = BindType::Always;
 	BindType RotationBindType = BindType::Always;

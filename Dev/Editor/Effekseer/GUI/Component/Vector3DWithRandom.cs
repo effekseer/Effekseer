@@ -227,16 +227,7 @@ namespace Effekseer.GUI.Component
 
 			if (binding.IsDynamicEquationEnabled)
 			{
-				Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
-				Manager.NativeManager.SameLine();
-
-				var nextParam = DynamicSelector.Select("Max", id_d1, binding.DynamicEquationMax, false, false);
-
-				if (binding.DynamicEquationMax != nextParam)
-				{
-					binding.SetDynamicEquationMax(nextParam);
-				}
-
+				DynamicSelector.SelectMaxInComponent(id_d1, binding.DynamicEquationMax);
 				Popup();
 			}
 
@@ -283,16 +274,7 @@ namespace Effekseer.GUI.Component
 
 			if (binding.IsDynamicEquationEnabled)
 			{
-				Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
-				Manager.NativeManager.SameLine();
-
-				var nextParam = DynamicSelector.Select("Min", id_d2, binding.DynamicEquationMin, false, false);
-
-				if (binding.DynamicEquationMin != nextParam)
-				{
-					binding.SetDynamicEquationMin(nextParam);
-				}
-
+				DynamicSelector.SelectMinInComponent(id_d2, binding.DynamicEquationMin);
 				Popup();
 			}
 
@@ -308,20 +290,7 @@ namespace Effekseer.GUI.Component
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-
-				if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicFixed") + id_c + "_1", !binding.IsDynamicEquationEnabled))
-				{
-					binding.IsDynamicEquationEnabled = false;
-					binding.SetDynamicEquationMin(null);
-					binding.SetDynamicEquationMax(null);
-				}
-
-				Manager.NativeManager.SameLine();
-
-				if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicDynamic") + id_c + "_2", binding.IsDynamicEquationEnabled))
-				{
-					binding.IsDynamicEquationEnabled = true;
-				}
+				DynamicSelector.Popup(id_c, binding.DynamicEquationMax, binding.DynamicEquationMin, binding.IsDynamicEquationEnabled);
 
 				if (binding.IsDynamicEquationEnabled)
 				{

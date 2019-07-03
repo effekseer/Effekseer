@@ -91,6 +91,24 @@ namespace Effekseer.Data.Value
 
 		public event ChangedValueEventHandler OnChanged;
 
+		public Boolean IsDynamicEquationEnabled
+		{
+			get;
+			private set;
+		}
+
+		public DynamicEquationReference DynamicEquationMin
+		{
+			get;
+			private set;
+		}
+
+		public DynamicEquationReference DynamicEquationMax
+		{
+			get;
+			private set;
+		}
+
 		internal float DefaultValueCenter { get; private set; }
 		internal float DefaultValueMax { get; private set; }
 		internal float DefaultValueMin { get; private set; }
@@ -108,7 +126,11 @@ namespace Effekseer.Data.Value
 			_value_center = value.Clipping(_max, _min);
 			_value_max = value.Clipping(_max, _min);
 			_value_min = value.Clipping(_max, _min);
-			
+
+			IsDynamicEquationEnabled = new Boolean();
+			DynamicEquationMin = new DynamicEquationReference();
+			DynamicEquationMax = new DynamicEquationReference();
+
 			DrawnAs = drawnas;
 			Step = step;
 

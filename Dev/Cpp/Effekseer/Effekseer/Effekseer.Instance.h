@@ -222,17 +222,26 @@ public:
 	// The number of generated chiledren. (fixed size)
 	int32_t		m_fixedGeneratedChildrenCount[ChildrenMax];
 
+	// The number of maximum generated chiledren. (fixed size)
+	int32_t fixedMaxGenerationChildrenCount_[ChildrenMax];
+
 	// The time to generate next child.  (fixed size)
 	float		m_fixedNextGenerationTime[ChildrenMax];
 
 	// The number of generated chiledren. (flexible size)
 	int32_t*		m_flexibleGeneratedChildrenCount;
 
+	// The number of maximum generated chiledren. (flexible size)
+	int32_t* flexibleMaxGenerationChildrenCount_ = nullptr;
+
 	// The time to generate next child.  (flexible size)
 	float*		m_flexibleNextGenerationTime;
 
 	// The number of generated chiledren. (actually used)
 	int32_t*		m_generatedChildrenCount;
+
+	// The number of maximum generated chiledren. (actually used)
+	int32_t* maxGenerationChildrenCount = nullptr;
 
 	// The time to generate next child.  (actually used)
 	float*			m_nextGenerationTime;
@@ -261,6 +270,12 @@ public:
 	//! calculate dynamic equation and assign a result
 	template <typename T, typename U>
 	void ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd, const U& originalParam);
+
+	//! calculate dynamic equation and return a result
+	random_float ApplyEq(const RefMinMax& dpInd, random_float originalParam);
+
+	//! calculate dynamic equation and return a result
+	random_int ApplyEq(const RefMinMax& dpInd, random_int originalParam);
 
 	// コンストラクタ
 	Instance( Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer );

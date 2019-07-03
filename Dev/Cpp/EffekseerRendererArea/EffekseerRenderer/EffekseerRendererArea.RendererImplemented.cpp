@@ -496,7 +496,7 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 	}
 }
 
-AreaEstimator::AreaEstimator()
+BoundingBoxEstimator::BoundingBoxEstimator()
 {
 	int32_t spriteCount = 10000;
 	manager_ = ::Effekseer::Manager::Create(spriteCount);
@@ -518,7 +518,7 @@ AreaEstimator::AreaEstimator()
 	manager_->SetModelLoader(renderer_->CreateModelLoader());
 }
 
-AreaEstimator::~AreaEstimator()
+BoundingBoxEstimator::~BoundingBoxEstimator()
 {
 	if (renderer_ != nullptr)
 	{
@@ -533,8 +533,13 @@ AreaEstimator::~AreaEstimator()
 	}
 }
 
-Area AreaEstimator::Estimate(
-	Effekseer::Effect* effect, const Effekseer::Matrix44& cameraMat, const Effekseer::Matrix44& projMat, int32_t time, float rate)
+BoundingBox BoundingBoxEstimator::Estimate(Effekseer::Effect* effect,
+										   const Effekseer::Matrix44& cameraMat,
+										   const Effekseer::Matrix44& projMat,
+										   int screenWidth,
+										   int screenHeight,
+										   int32_t time,
+										   float rate)
 {
 
 	std::vector<float> minXs;
@@ -546,6 +551,9 @@ Area AreaEstimator::Estimate(
 	renderer_->SetProjectionMatrix(projMat);
 
 	auto handle = manager_->Play(effect, 0, 0, 0);
+
+	Effekseer::Matrix44 cameraProjMat;
+	Effekseer::Matrix44::Mul(cameraProjMat, cameraMat, projMat);
 
 	for (size_t i = 0; i < time; i++)
 	{
@@ -563,10 +571,15 @@ Area AreaEstimator::Estimate(
 
 		for (auto& v : vs)
 		{
-			minX = Effekseer::Min(minX, v.Pos.X);
-			minY = Effekseer::Min(minY, v.Pos.Y);
-			maxX = Effekseer::Max(maxX, v.Pos.X);
-			maxY = Effekseer::Max(maxY, v.Pos.Y);
+			Effekseer::Vector3D posScreen;
+			Effekseer::Vector3D::Transform(posScreen, v.Pos, cameraProjMat);
+			posScreen.X = (posScreen.X + 1.0f) / 2.0f * screenWidth;
+			posScreen.Y = (1.0f - posScreen.Y) / 2.0f * screenHeight;
+
+			minX = Effekseer::Min(minX, posScreen.X);
+			minY = Effekseer::Min(minY, posScreen.Y);
+			maxX = Effekseer::Max(maxX, posScreen.X);
+			maxY = Effekseer::Max(maxY, posScreen.Y);
 		}
 
 		minXs.push_back(minX);
@@ -585,17 +598,17 @@ Area AreaEstimator::Estimate(
 	std::sort(maxXs.begin(), maxXs.end());
 	std::sort(maxYs.begin(), maxYs.end());
 
-	Area ret;
+	BoundingBox ret;
 
 	if (minXs.size() > 0)
 	{
 		auto index = static_cast<uint32_t>(minXs.size() * rate);
 		index = Effekseer::Clamp(index, minXs.size() - 1, 0);
 
-		ret.MaxX = maxXs[index];
-		ret.MaxY = maxYs[index];
-		ret.MinX = minXs[index];
-		ret.MinY = minYs[index];
+		ret.Right = maxXs[index];
+		ret.Bottom = maxYs[index];
+		ret.Left = minXs[index];
+		ret.Right = minYs[index];
 	}
 
 	return ret;

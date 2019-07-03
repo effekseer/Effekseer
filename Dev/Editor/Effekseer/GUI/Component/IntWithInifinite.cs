@@ -10,6 +10,8 @@ namespace Effekseer.GUI.Component
 	{
 		string id1 = "";
 		string id2 = "";
+		string id_c = "";
+		string id_d = "";
 
 		public string Label { get; set; } = string.Empty;
 
@@ -23,6 +25,8 @@ namespace Effekseer.GUI.Component
 		bool[] isInfinite = new bool[] { false };
 
 		bool isActive = false;
+
+		bool isPopupShown = false;
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -55,7 +59,8 @@ namespace Effekseer.GUI.Component
 
 			id1 = "###" + Manager.GetUniqueID().ToString();
 			id2 = "###" + Manager.GetUniqueID().ToString();
-
+			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_d = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -87,6 +92,8 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
+			isPopupShown = false;
+
 			if (binding != null)
 			{
 				internalValue[0] = binding.Value;
@@ -108,6 +115,8 @@ namespace Effekseer.GUI.Component
 					binding.Value.SetValueDirectly(internalValue[0]);
 				}
 			}
+
+			Popup();
 
 			Manager.NativeManager.PopItemWidth();
 
@@ -135,7 +144,29 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
+			Popup();
+
+			if (binding.IsDynamicEquationEnabled)
+			{
+				DynamicSelector.SelectInComponent(id_d, binding.DynamicEquation);
+				Popup();
+			}
+
 			valueChangingProp.Disable();
+		}
+
+		void Popup()
+		{
+			if (isPopupShown) return;
+
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
+			{
+				DynamicSelector.Popup(id_c, binding.DynamicEquation, binding.IsDynamicEquationEnabled);
+
+				Manager.NativeManager.EndPopup();
+
+				isPopupShown = true;
+			}
 		}
 	}
 }

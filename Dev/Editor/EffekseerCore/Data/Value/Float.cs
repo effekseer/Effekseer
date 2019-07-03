@@ -53,6 +53,18 @@ namespace Effekseer.Data.Value
 
 		public event ChangedValueEventHandler OnChanged;
 
+		public Boolean IsDynamicEquationEnabled
+		{
+			get;
+			private set;
+		}
+
+		public DynamicEquationReference DynamicEquation
+		{
+			get;
+			private set;
+		}
+
 		internal Float(float value = 0, float max = float.MaxValue, float min = float.MinValue, float step = 1.0f)
 		{
 			_max = max;
@@ -60,6 +72,9 @@ namespace Effekseer.Data.Value
 			_value = value.Clipping(_max, _min);
 			Step = step;
 			DefaultValue = _value;
+
+			IsDynamicEquationEnabled = new Boolean();
+			DynamicEquation = new DynamicEquationReference();
 		}
 
 		protected void CallChanged(object value, ChangedValueType type)

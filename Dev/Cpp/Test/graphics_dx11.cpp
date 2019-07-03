@@ -10,6 +10,8 @@
 #include "graphics.h"
 #include "window.h"
 
+#pragma comment(lib, "d3dcompiler.lib")
+
 #if _DEBUG
 #pragma comment(lib, "x86/EffekseerRendererDX11.Debug.lib" )
 #else

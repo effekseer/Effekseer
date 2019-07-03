@@ -12,6 +12,8 @@ namespace Effekseer.GUI.Component
 		string id_r1 = "";
 		string id_r2 = "";
 		string id_c = "";
+		string id_d1 = "";
+		string id_d2 = "";
 
 		public string Label { get; set; } = string.Empty;
 
@@ -22,6 +24,8 @@ namespace Effekseer.GUI.Component
 		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
 
 		bool isActive = false;
+
+		bool isPopupShown = false;
 
 		float[] internalValue = new float[] { 0.0f, 0.0f };
 
@@ -58,6 +62,8 @@ namespace Effekseer.GUI.Component
 			id_r1 = "###" + Manager.GetUniqueID().ToString();
 			id_r2 = "###" + Manager.GetUniqueID().ToString();
 			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_d1 = "###" + Manager.GetUniqueID().ToString();
+			id_d2 = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -100,6 +106,7 @@ namespace Effekseer.GUI.Component
 
 		public override void Update()
 		{
+			isPopupShown = false;
 			if (binding == null) return;
 
 			valueChangingProp.Enable(binding);
@@ -167,6 +174,20 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
+			Popup();
+
+			if (binding.IsDynamicEquationEnabled)
+			{
+				DynamicSelector.SelectMaxInComponent(id_d1, binding.DynamicEquationMax);
+				Popup();
+			}
+
+			if (binding.IsDynamicEquationEnabled)
+			{
+				DynamicSelector.SelectMinInComponent(id_d2, binding.DynamicEquationMin);
+				Popup();
+			}
+
 			var isActive_Current = Manager.NativeManager.IsItemActive();
 
 			if (isActive && !isActive_Current)
@@ -176,27 +197,45 @@ namespace Effekseer.GUI.Component
 
 			isActive = isActive_Current;
 
+			Popup();
+
+			valueChangingProp.Disable();
+		}
+
+		void Popup()
+		{
+			if (isPopupShown) return;
+
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-				var txt_r_r1 = Resources.GetString("Gauss");
-				var txt_r_r2 = Resources.GetString("Range");
+				DynamicSelector.Popup(id_c, binding.DynamicEquationMax, binding.DynamicEquationMin, binding.IsDynamicEquationEnabled);
 
-				if (Manager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
+				if (binding.IsDynamicEquationEnabled)
 				{
-					binding.DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+					// None
 				}
-
-				Manager.NativeManager.SameLine();
-
-				if (Manager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.DrawnAs == Data.DrawnAs.MaxAndMin))
+				else
 				{
-					binding.DrawnAs = Data.DrawnAs.MaxAndMin;
+					var txt_r_r1 = Resources.GetString("Gauss");
+					var txt_r_r2 = Resources.GetString("Range");
+
+					if (Manager.NativeManager.RadioButton(txt_r_r1 + id_r1, binding.DrawnAs == Data.DrawnAs.CenterAndAmplitude))
+					{
+						binding.DrawnAs = Data.DrawnAs.CenterAndAmplitude;
+					}
+
+					Manager.NativeManager.SameLine();
+
+					if (Manager.NativeManager.RadioButton(txt_r_r2 + id_r2, binding.DrawnAs == Data.DrawnAs.MaxAndMin))
+					{
+						binding.DrawnAs = Data.DrawnAs.MaxAndMin;
+					}
 				}
 
 				Manager.NativeManager.EndPopup();
-			}
 
-			valueChangingProp.Disable();
+				isPopupShown = true;
+			}
 		}
 	}
 }

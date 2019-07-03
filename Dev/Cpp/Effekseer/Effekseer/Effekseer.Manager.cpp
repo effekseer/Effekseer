@@ -188,29 +188,21 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 					if( pRootInstance && pRootInstance->GetState() == INSTANCE_STATE_ACTIVE )
 					{
 						int maxcreate_count = 0;
-						for( int i = 0; i < Min(pRootInstance->m_pEffectNode->GetChildrenCount(), Instance::ChildrenMax); i++ )
+						bool canRemoved = true;
+						for( int i = 0; i < pRootInstance->m_pEffectNode->GetChildrenCount(); i++ )
 						{
 							auto child = (EffectNodeImplemented*) pRootInstance->m_pEffectNode->GetChild(i);
 
-							float last_generation_time = 
-								child->CommonValues.GenerationTime.max *
-								(child->CommonValues.MaxGeneration - 1) +
-								child->CommonValues.GenerationTimeOffset.max +
-								1.0f;
-
-							if( pRootInstance->m_LivingTime >= last_generation_time )
+							if (pRootInstance->maxGenerationChildrenCount[i] > pRootInstance->m_generatedChildrenCount[i])
 							{
-								maxcreate_count++;
-							}
-							else
-							{
+								canRemoved = false;
 								break;
 							}
 						}
 					
-						if( maxcreate_count == pRootInstance->m_pEffectNode->GetChildrenCount() )
+						if (canRemoved)
 						{
-							// 音が再生中でないとき
+							// when a sound is not playing.
 							if (!GetSoundPlayer() || !GetSoundPlayer()->CheckPlayingTag(draw_set.GlobalPointer))
 							{
 								isRemoving = true;
