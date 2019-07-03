@@ -255,11 +255,17 @@ bool Initialize(OpenGLDeviceType deviceType)
 	// Some smartphone causes segmentation fault.
 	//GET_PROC(glMapBufferRangeEXT);
 
+#ifdef EMSCRIPTEN
+	g_isSurrpotedBufferRange = false;
+	g_isSurrpotedMapBuffer = false;
+#else
 	GET_PROC(glMapBufferOES);
 	GET_PROC(glUnmapBufferOES);
 	g_isSurrpotedBufferRange = (g_glMapBufferRangeEXT && g_glUnmapBufferOES);
 	g_isSurrpotedMapBuffer = (g_glMapBufferOES && g_glUnmapBufferOES 
 		&& ((glExtensions && strstr(glExtensions, "GL_OES_mapbuffer")) ? true : false));
+#endif
+
 #endif
 
 #else
