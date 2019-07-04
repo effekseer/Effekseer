@@ -272,7 +272,15 @@ public:
 	void ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd, const U& originalParam);
 
 	//! calculate dynamic equation and return a result
+	template <typename S> 
+	Vector3D ApplyEq(const int& dpInd, Vector3D originalParam, const S& scale, const S& scaleInv);
+
+	//! calculate dynamic equation and return a result
 	random_float ApplyEq(const RefMinMax& dpInd, random_float originalParam);
+
+	//! calculate dynamic equation and return a result
+	template <typename S> 
+	random_vector3d ApplyEq(const RefMinMax& dpInd, random_vector3d originalParam, const S& scale, const S& scaleInv);
 
 	//! calculate dynamic equation and return a result
 	random_int ApplyEq(const RefMinMax& dpInd, random_int originalParam);

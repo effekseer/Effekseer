@@ -214,12 +214,9 @@ struct ParameterTranslationFixed
 //----------------------------------------------------------------------------------
 struct ParameterTranslationPVA
 {
-	int32_t RefEqPMax = -1;
-	int32_t RefEqPMin = -1;
-	int32_t RefEqVMax = -1;
-	int32_t RefEqVMin = -1;
-	int32_t RefEqAMax = -1;
-	int32_t RefEqAMin = -1;
+	RefMinMax RefEqP;
+	RefMinMax RefEqV;
+	RefMinMax RefEqA;
 	random_vector3d	location;
 	random_vector3d	velocity;
 	random_vector3d	acceleration;
@@ -227,10 +224,8 @@ struct ParameterTranslationPVA
 
 struct ParameterTranslationEasing
 {
-	int32_t RefEqSMax = -1;
-	int32_t RefEqSMin = -1;
-	int32_t RefEqEMax = -1;
-	int32_t RefEqEMin = -1;
+	RefMinMax RefEqS;
+	RefMinMax RefEqE;
 	easing_vector3d location;
 };
 
@@ -298,12 +293,9 @@ struct ParameterRotationFixed
 //----------------------------------------------------------------------------------
 struct ParameterRotationPVA
 {
-	int32_t RefEqPMax = -1;
-	int32_t RefEqPMin = -1;
-	int32_t RefEqVMax = -1;
-	int32_t RefEqVMin = -1;
-	int32_t RefEqAMax = -1;
-	int32_t RefEqAMin = -1;
+	RefMinMax RefEqP;
+	RefMinMax RefEqV;
+	RefMinMax RefEqA;
 	random_vector3d	rotation;
 	random_vector3d	velocity;
 	random_vector3d	acceleration;
@@ -311,10 +303,8 @@ struct ParameterRotationPVA
 
 struct ParameterRotationEasing
 {
-	int32_t RefEqSMax = -1;
-	int32_t RefEqSMin = -1;
-	int32_t RefEqEMax = -1;
-	int32_t RefEqEMin = -1;
+	RefMinMax RefEqS;
+	RefMinMax RefEqE;
 	easing_vector3d rotation;
 };
 
@@ -370,12 +360,9 @@ struct ParameterScalingFixed
 //----------------------------------------------------------------------------------
 struct ParameterScalingPVA
 {
-	int32_t RefEqPMax = -1;
-	int32_t RefEqPMin = -1;
-	int32_t RefEqVMax = -1;
-	int32_t RefEqVMin = -1;
-	int32_t RefEqAMax = -1;
-	int32_t RefEqAMin = -1;
+	RefMinMax RefEqP;
+	RefMinMax RefEqV;
+	RefMinMax RefEqA;
 
 	random_vector3d Position;
 	random_vector3d Velocity;
@@ -384,10 +371,8 @@ struct ParameterScalingPVA
 
 struct ParameterScalingEasing
 {
-	int32_t RefEqSMax = -1;
-	int32_t RefEqSMin = -1;
-	int32_t RefEqEMax = -1;
-	int32_t RefEqEMin = -1;
+	RefMinMax RefEqS;
+	RefMinMax RefEqE;
 	easing_vector3d Position;
 };
 
@@ -908,6 +893,29 @@ struct ParameterSound
 	random_int		Delay;
 };
 
+/**
+	@brief	a factor to calculate original parameter for dynamic parameter
+*/
+struct DynamicFactorParameter
+{
+	std::array<float, 3> Tra;
+	std::array<float, 3> TraInv;
+	std::array<float, 3> Rot;
+	std::array<float, 3> RotInv;
+	std::array<float, 3> Scale;
+	std::array<float, 3> ScaleInv;
+
+	DynamicFactorParameter()
+	{ 
+		Tra.fill(1.0f);
+		TraInv.fill(1.0f);
+		Rot.fill(1.0f);
+		RotInv.fill(1.0f);
+		Scale.fill(1.0f);
+		ScaleInv.fill(1.0f);
+	}
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1005,6 +1013,8 @@ public:
 	eRenderingOrder				RenderingOrder;
 
 	int32_t						RenderingPriority = -1;
+
+	DynamicFactorParameter DynamicFactor;
 
 	Effect* GetEffect() const override;
 

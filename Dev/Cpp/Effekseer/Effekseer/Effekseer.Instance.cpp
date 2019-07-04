@@ -63,6 +63,26 @@ void Instance::ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd,
 	}
 }
 
+template <typename S> Vector3D Instance::ApplyEq(const int& dpInd, Vector3D originalParam, const S& scale, const S& scaleInv)
+{
+	const auto& e = this->m_pEffectNode->m_effect;
+	const auto& instg = this->m_pContainer->GetRootInstance();
+
+	if (dpInd >= 0)
+	{
+		originalParam.X *= scaleInv[0];
+		originalParam.Y *= scaleInv[1];
+		originalParam.Z *= scaleInv[2];
+
+		ApplyEq(originalParam, e, instg, dpInd, originalParam);
+
+		originalParam.X *= scale[0];
+		originalParam.Y *= scale[1];
+		originalParam.Z *= scale[2];
+	}
+	return originalParam;
+}
+
 random_float Instance::ApplyEq(const RefMinMax& dpInd, random_float originalParam)
 {
 	const auto& e = this->m_pEffectNode->m_effect;
@@ -76,6 +96,41 @@ random_float Instance::ApplyEq(const RefMinMax& dpInd, random_float originalPara
 	if (dpInd.Min >= 0)
 	{
 		ApplyEq(originalParam.min, e, instg, dpInd.Min, originalParam.min);
+	}
+
+	return originalParam;
+}
+
+template <typename S>
+random_vector3d Instance::ApplyEq(const RefMinMax& dpInd, random_vector3d originalParam, const S& scale, const S& scaleInv)
+{
+	const auto& e = this->m_pEffectNode->m_effect;
+	const auto& instg = this->m_pContainer->GetRootInstance();
+
+	if (dpInd.Max >= 0)
+	{
+		originalParam.max.x *= scaleInv[0];
+		originalParam.max.y *= scaleInv[1];
+		originalParam.max.z *= scaleInv[2];
+
+		ApplyEq(originalParam.max, e, instg, dpInd.Max, originalParam.max);
+
+		originalParam.max.x *= scale[0];
+		originalParam.max.y *= scale[1];
+		originalParam.max.z *= scale[2];
+	}
+
+	if (dpInd.Min >= 0)
+	{
+		originalParam.min.x *= scaleInv[0];
+		originalParam.min.y *= scaleInv[1];
+		originalParam.min.z *= scaleInv[2];
+
+		ApplyEq(originalParam.min, e, instg, dpInd.Min, originalParam.min);
+
+		originalParam.min.x *= scale[0];
+		originalParam.min.y *= scale[1];
+		originalParam.min.z *= scale[2];
 	}
 
 	return originalParam;
@@ -416,114 +471,35 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 	else if( m_pEffectNode->TranslationType == ParameterTranslationType_PVA )
 	{
-		random_vector3d rvl = m_pEffectNode->TranslationPVA.location;
-
-		if (m_pEffectNode->TranslationPVA.RefEqPMax >= 0)
-		{
-			ApplyEq(rvl.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.RefEqPMax,
-								  m_pEffectNode->TranslationPVA.location.max);
-		}
-
-		if (m_pEffectNode->TranslationPVA.RefEqPMin >= 0)
-		{
-			ApplyEq(rvl.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.RefEqPMin,
-								  m_pEffectNode->TranslationPVA.location.min);
-		}
-
+		auto rvl = ApplyEq(m_pEffectNode->TranslationPVA.RefEqP,
+						   m_pEffectNode->TranslationPVA.location,
+						   m_pEffectNode->DynamicFactor.Tra,
+						   m_pEffectNode->DynamicFactor.TraInv);
 		translation_values.random.location = rvl.getValue(*this->m_pContainer->GetRootInstance());
 
-		random_vector3d rvv = m_pEffectNode->TranslationPVA.velocity;
-
-		if (m_pEffectNode->TranslationPVA.RefEqVMax >= 0)
-		{
-			ApplyEq(rvv.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.RefEqVMax,
-								  m_pEffectNode->TranslationPVA.velocity.max);
-		}
-
-		if (m_pEffectNode->TranslationPVA.RefEqVMin >= 0)
-		{
-			ApplyEq(rvv.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.RefEqVMin,
-								  m_pEffectNode->TranslationPVA.velocity.min);
-		}
-
+		auto rvv = ApplyEq(m_pEffectNode->TranslationPVA.RefEqV,
+						   m_pEffectNode->TranslationPVA.velocity,
+						   m_pEffectNode->DynamicFactor.Tra,
+						   m_pEffectNode->DynamicFactor.TraInv);
 		translation_values.random.velocity = rvv.getValue(*this->m_pContainer->GetRootInstance());
 
-		random_vector3d rva = m_pEffectNode->TranslationPVA.acceleration;
-
-		if (m_pEffectNode->TranslationPVA.RefEqAMax >= 0)
-		{
-			ApplyEq(rva.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.RefEqAMax,
-								  m_pEffectNode->TranslationPVA.acceleration.max);
-		}
-
-		if (m_pEffectNode->TranslationPVA.RefEqAMin >= 0)
-		{
-			ApplyEq(rva.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationPVA.RefEqAMin,
-								  m_pEffectNode->TranslationPVA.acceleration.min);
-		}
-
+		auto rva = ApplyEq(m_pEffectNode->TranslationPVA.RefEqA,
+						   m_pEffectNode->TranslationPVA.acceleration,
+						   m_pEffectNode->DynamicFactor.Tra,
+						   m_pEffectNode->DynamicFactor.TraInv);
 		translation_values.random.acceleration = rva.getValue(*this->m_pContainer->GetRootInstance());
 
 	}
 	else if( m_pEffectNode->TranslationType == ParameterTranslationType_Easing )
 	{
-		random_vector3d rvs = m_pEffectNode->TranslationEasing.location.start;
-
-		if (m_pEffectNode->TranslationEasing.RefEqSMax >= 0)
-		{
-			ApplyEq(rvs.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationEasing.RefEqSMax,
-								  m_pEffectNode->TranslationEasing.location.start.max);
-		}
-
-		if (m_pEffectNode->TranslationEasing.RefEqSMin >= 0)
-		{
-			ApplyEq(rvs.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationEasing.RefEqSMin,
-								  m_pEffectNode->TranslationEasing.location.start.min);
-		}
-
-		random_vector3d rve = m_pEffectNode->TranslationEasing.location.end;
-
-		if (m_pEffectNode->TranslationEasing.RefEqEMax >= 0)
-		{
-			ApplyEq(rve.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationEasing.RefEqEMax,
-								  m_pEffectNode->TranslationEasing.location.end.max);
-		}
-
-		if (m_pEffectNode->TranslationEasing.RefEqEMin >= 0)
-		{
-			ApplyEq(rve.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->TranslationEasing.RefEqEMin,
-								  m_pEffectNode->TranslationEasing.location.end.min);
-		}
+		auto rvs = ApplyEq(m_pEffectNode->TranslationEasing.RefEqS,
+						   m_pEffectNode->TranslationEasing.location.start,
+						   m_pEffectNode->DynamicFactor.Tra,
+						   m_pEffectNode->DynamicFactor.TraInv);
+		auto rve = ApplyEq(m_pEffectNode->TranslationEasing.RefEqE,
+						   m_pEffectNode->TranslationEasing.location.end,
+						   m_pEffectNode->DynamicFactor.Tra,
+						   m_pEffectNode->DynamicFactor.TraInv);
 
 		translation_values.easing.start = rvs.getValue(*this->m_pContainer->GetRootInstance());
 		translation_values.easing.end = rve.getValue(*this->m_pContainer->GetRootInstance());
@@ -543,65 +519,18 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_PVA )
 	{
-		random_vector3d rvl = m_pEffectNode->RotationPVA.rotation;
-
-		if (m_pEffectNode->RotationPVA.RefEqPMax >= 0)
-		{
-			ApplyEq(rvl.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.RefEqPMax,
-								  m_pEffectNode->RotationPVA.rotation.max);
-		}
-
-		if (m_pEffectNode->RotationPVA.RefEqPMin >= 0)
-		{
-			ApplyEq(rvl.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.RefEqPMin,
-								  m_pEffectNode->RotationPVA.rotation.min);
-		}
-
-		random_vector3d rvv = m_pEffectNode->RotationPVA.velocity;
-
-		if (m_pEffectNode->RotationPVA.RefEqVMax >= 0)
-		{
-			ApplyEq(rvv.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.RefEqVMax,
-								  m_pEffectNode->RotationPVA.velocity.max);
-		}
-
-		if (m_pEffectNode->RotationPVA.RefEqVMin >= 0)
-		{
-			ApplyEq(rvv.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.RefEqVMin,
-								  m_pEffectNode->RotationPVA.velocity.min);
-		}
-
-		random_vector3d rva = m_pEffectNode->RotationPVA.acceleration;
-
-		if (m_pEffectNode->RotationPVA.RefEqAMax >= 0)
-		{
-			ApplyEq(rva.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.RefEqAMax,
-								  m_pEffectNode->RotationPVA.acceleration.max);
-		}
-
-		if (m_pEffectNode->RotationPVA.RefEqAMin >= 0)
-		{
-			ApplyEq(rva.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationPVA.RefEqAMin,
-								  m_pEffectNode->RotationPVA.acceleration.min);
-		}
+		auto rvl = ApplyEq(m_pEffectNode->RotationPVA.RefEqP,
+						   m_pEffectNode->RotationPVA.rotation,
+						   m_pEffectNode->DynamicFactor.Rot,
+						   m_pEffectNode->DynamicFactor.RotInv);
+		auto rvv = ApplyEq(m_pEffectNode->RotationPVA.RefEqV,
+						   m_pEffectNode->RotationPVA.velocity,
+						   m_pEffectNode->DynamicFactor.Rot,
+						   m_pEffectNode->DynamicFactor.RotInv);
+		auto rva = ApplyEq(m_pEffectNode->RotationPVA.RefEqA,
+						   m_pEffectNode->RotationPVA.acceleration,
+						   m_pEffectNode->DynamicFactor.Rot,
+						   m_pEffectNode->DynamicFactor.RotInv);
 
 		rotation_values.random.rotation = rvl.getValue(*instanceGlobal);
 		rotation_values.random.velocity = rvv.getValue(*instanceGlobal);
@@ -609,45 +538,14 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 	else if( m_pEffectNode->RotationType == ParameterRotationType_Easing )
 	{
-		random_vector3d rvs = m_pEffectNode->RotationEasing.rotation.start;
-
-		if (m_pEffectNode->RotationEasing.RefEqSMax >= 0)
-		{
-			ApplyEq(rvs.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationEasing.RefEqSMax,
-								  m_pEffectNode->RotationEasing.rotation.start.max);
-		}
-
-		if (m_pEffectNode->RotationEasing.RefEqSMin >= 0)
-		{
-			ApplyEq(rvs.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationEasing.RefEqSMin,
-								  m_pEffectNode->RotationEasing.rotation.start.min);
-		}
-
-		random_vector3d rve = m_pEffectNode->RotationEasing.rotation.end;
-
-		if (m_pEffectNode->RotationEasing.RefEqEMax >= 0)
-		{
-			ApplyEq(rve.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationEasing.RefEqEMax,
-								  m_pEffectNode->RotationEasing.rotation.end.max);
-		}
-
-		if (m_pEffectNode->RotationEasing.RefEqEMin >= 0)
-		{
-			ApplyEq(rve.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->RotationEasing.RefEqEMin,
-								  m_pEffectNode->RotationEasing.rotation.end.min);
-		}
+		auto rvs = ApplyEq(m_pEffectNode->RotationEasing.RefEqS,
+						   m_pEffectNode->RotationEasing.rotation.start,
+						   m_pEffectNode->DynamicFactor.Rot,
+						   m_pEffectNode->DynamicFactor.RotInv);
+		auto rve = ApplyEq(m_pEffectNode->RotationEasing.RefEqE,
+						   m_pEffectNode->RotationEasing.rotation.end,
+						   m_pEffectNode->DynamicFactor.Rot,
+						   m_pEffectNode->DynamicFactor.RotInv);
 
 		rotation_values.easing.start = rvs.getValue(*instanceGlobal);
 		rotation_values.easing.end = rve.getValue(*instanceGlobal);
@@ -684,65 +582,15 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 	else if( m_pEffectNode->ScalingType == ParameterScalingType_PVA )
 	{
-		random_vector3d rvl = m_pEffectNode->ScalingPVA.Position;
-
-		if (m_pEffectNode->ScalingPVA.RefEqPMax >= 0)
-		{
-			ApplyEq(rvl.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.RefEqPMax,
-								  m_pEffectNode->ScalingPVA.Position.max);
-		}
-
-		if (m_pEffectNode->ScalingPVA.RefEqPMin >= 0)
-		{
-			ApplyEq(rvl.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.RefEqPMin,
-								  m_pEffectNode->ScalingPVA.Position.min);
-		}
-
-		random_vector3d rvv = m_pEffectNode->ScalingPVA.Velocity;
-
-		if (m_pEffectNode->ScalingPVA.RefEqVMax >= 0)
-		{
-			ApplyEq(rvv.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.RefEqVMax,
-								  m_pEffectNode->ScalingPVA.Velocity.max);
-		}
-
-		if (m_pEffectNode->ScalingPVA.RefEqVMin >= 0)
-		{
-			ApplyEq(rvv.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.RefEqVMin,
-								  m_pEffectNode->ScalingPVA.Velocity.min);
-		}
-
-		random_vector3d rva = m_pEffectNode->ScalingPVA.Acceleration;
-
-		if (m_pEffectNode->ScalingPVA.RefEqAMax >= 0)
-		{
-			ApplyEq(rva.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.RefEqAMax,
-								  m_pEffectNode->ScalingPVA.Acceleration.max);
-		}
-
-		if (m_pEffectNode->ScalingPVA.RefEqAMin >= 0)
-		{
-			ApplyEq(rva.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingPVA.RefEqAMin,
-								  m_pEffectNode->ScalingPVA.Acceleration.min);
-		}
+		auto rvl = ApplyEq(m_pEffectNode->ScalingPVA.RefEqP, m_pEffectNode->ScalingPVA.Position, m_pEffectNode->DynamicFactor.Scale, m_pEffectNode->DynamicFactor.ScaleInv);
+		auto rvv = ApplyEq(m_pEffectNode->ScalingPVA.RefEqV,
+						   m_pEffectNode->ScalingPVA.Velocity,
+						   m_pEffectNode->DynamicFactor.Scale,
+						   m_pEffectNode->DynamicFactor.ScaleInv);
+		auto rva = ApplyEq(m_pEffectNode->ScalingPVA.RefEqA,
+						   m_pEffectNode->ScalingPVA.Acceleration,
+						   m_pEffectNode->DynamicFactor.Scale,
+						   m_pEffectNode->DynamicFactor.ScaleInv);
 
 		scaling_values.random.scale = rvl.getValue(*instanceGlobal);
 		scaling_values.random.velocity = rvv.getValue(*instanceGlobal);
@@ -750,45 +598,14 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 	else if( m_pEffectNode->ScalingType == ParameterScalingType_Easing )
 	{
-		random_vector3d rvs = m_pEffectNode->ScalingEasing.Position.start;
-
-		if (m_pEffectNode->ScalingEasing.RefEqSMax >= 0)
-		{
-			ApplyEq(rvs.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingEasing.RefEqSMax,
-								  m_pEffectNode->ScalingEasing.Position.start.max);
-		}
-
-		if (m_pEffectNode->ScalingEasing.RefEqSMin >= 0)
-		{
-			ApplyEq(rvs.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingEasing.RefEqSMin,
-								  m_pEffectNode->ScalingEasing.Position.start.min);
-		}
-
-		random_vector3d rve = m_pEffectNode->ScalingEasing.Position.end;
-
-		if (m_pEffectNode->ScalingEasing.RefEqEMax >= 0)
-		{
-			ApplyEq(rve.max,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingEasing.RefEqEMax,
-								  m_pEffectNode->ScalingEasing.Position.end.max);
-		}
-
-		if (m_pEffectNode->ScalingEasing.RefEqEMin >= 0)
-		{
-			ApplyEq(rve.min,
-								  this->m_pEffectNode->m_effect,
-								  this->m_pContainer->GetRootInstance(),
-								  m_pEffectNode->ScalingEasing.RefEqEMin,
-								  m_pEffectNode->ScalingEasing.Position.end.min);
-		}
+		auto rvs = ApplyEq(m_pEffectNode->ScalingEasing.RefEqS,
+						   m_pEffectNode->ScalingEasing.Position.start,
+						   m_pEffectNode->DynamicFactor.Scale,
+						   m_pEffectNode->DynamicFactor.ScaleInv);
+		auto rve = ApplyEq(m_pEffectNode->ScalingEasing.RefEqE,
+						   m_pEffectNode->ScalingEasing.Position.end,
+						   m_pEffectNode->DynamicFactor.Scale,
+						   m_pEffectNode->DynamicFactor.ScaleInv);
 
 		scaling_values.easing.start = rvs.getValue(*instanceGlobal);
 		scaling_values.easing.end = rve.getValue(*instanceGlobal);
@@ -1256,20 +1073,10 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->TranslationType == ParameterTranslationType_Fixed )
 		{
-			if (m_pEffectNode->TranslationFixed.RefEq >= 0)
-			{
-				ApplyEq(localPosition,
-									  this->m_pEffectNode->m_effect,
-									  this->m_pContainer->GetRootInstance(),
-									  m_pEffectNode->TranslationFixed.RefEq,
-									  m_pEffectNode->TranslationFixed.Position);
-			}
-			else
-			{
-				localPosition.X = m_pEffectNode->TranslationFixed.Position.X;
-				localPosition.Y = m_pEffectNode->TranslationFixed.Position.Y;
-				localPosition.Z = m_pEffectNode->TranslationFixed.Position.Z;
-			}
+			localPosition = ApplyEq(m_pEffectNode->TranslationFixed.RefEq,
+									m_pEffectNode->TranslationFixed.Position,
+									m_pEffectNode->DynamicFactor.Tra,
+									m_pEffectNode->DynamicFactor.TraInv);
 		}
 		else if( m_pEffectNode->TranslationType == ParameterTranslationType_PVA )
 		{
@@ -1319,20 +1126,10 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->RotationType == ParameterRotationType_Fixed )
 		{
-			if (m_pEffectNode->RotationFixed.RefEq >= 0)
-			{
-				ApplyEq(localAngle,
-									  this->m_pEffectNode->m_effect,
-									  this->m_pContainer->GetRootInstance(),
-									  m_pEffectNode->RotationFixed.RefEq,
-									  m_pEffectNode->RotationFixed.Position);
-			}
-			else
-			{
-				localAngle.X = m_pEffectNode->RotationFixed.Position.X;
-				localAngle.Y = m_pEffectNode->RotationFixed.Position.Y;
-				localAngle.Z = m_pEffectNode->RotationFixed.Position.Z;
-			}
+			localAngle = ApplyEq(m_pEffectNode->RotationFixed.RefEq,
+								 m_pEffectNode->RotationFixed.Position,
+								 m_pEffectNode->DynamicFactor.Rot,
+								 m_pEffectNode->DynamicFactor.RotInv);
 		}
 		else if( m_pEffectNode->RotationType == ParameterRotationType_PVA )
 		{
@@ -1390,20 +1187,10 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 		else if( m_pEffectNode->ScalingType == ParameterScalingType_Fixed )
 		{
-			if (m_pEffectNode->ScalingFixed.RefEq >= 0)
-			{
-				ApplyEq(localScaling,
-									  this->m_pEffectNode->m_effect,
-									  this->m_pContainer->GetRootInstance(),
-									  m_pEffectNode->ScalingFixed.RefEq,
-									  m_pEffectNode->ScalingFixed.Position);
-			}
-			else
-			{
-				localScaling.X = m_pEffectNode->ScalingFixed.Position.X;
-				localScaling.Y = m_pEffectNode->ScalingFixed.Position.Y;
-				localScaling.Z = m_pEffectNode->ScalingFixed.Position.Z;
-			}
+			localScaling = ApplyEq(m_pEffectNode->ScalingFixed.RefEq,
+								   m_pEffectNode->ScalingFixed.Position,
+								   m_pEffectNode->DynamicFactor.Scale,
+								   m_pEffectNode->DynamicFactor.ScaleInv);
 		}
 		else if( m_pEffectNode->ScalingType == ParameterScalingType_PVA )
 		{

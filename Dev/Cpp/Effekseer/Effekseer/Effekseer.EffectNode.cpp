@@ -203,6 +203,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		/* 位置拡大処理 */
 		if (ef->IsDyanamicMagnificationValid())
 		{
+			DynamicFactor.Tra[0] *= m_effect->GetMaginification();
+			DynamicFactor.Tra[1] *= m_effect->GetMaginification();
+			DynamicFactor.Tra[2] *= m_effect->GetMaginification();
+
 			if (TranslationType == ParameterTranslationType_Fixed)
 			{
 				TranslationFixed.Position *= m_effect->GetMaginification();
@@ -519,6 +523,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		if (setting->GetCoordinateSystem() == CoordinateSystem::LH)
 		{
 			// Translation
+			DynamicFactor.Tra[2] *= -1.0f;
+
 			if (TranslationType == ParameterTranslationType_Fixed)
 			{
 				TranslationFixed.Position.Z *= -1.0f;
@@ -541,6 +547,9 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 
 			// Rotation
+			DynamicFactor.Rot[0] *= -1.0f;
+			DynamicFactor.Rot[1] *= -1.0f;
+
 			if (RotationType == ParameterRotationType_Fixed)
 			{
 				RotationFixed.Position.X *= -1.0f;
@@ -599,6 +608,22 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 				GenerationLocation.sphere.rotation_y.max *= -1.0f;
 				GenerationLocation.sphere.rotation_y.min *= -1.0f;
 			}
+		}
+
+		// generate inversed parameter
+		for (size_t i = 0; i < DynamicFactor.Tra.size(); i++)
+		{
+			DynamicFactor.TraInv[i] = 1.0f / DynamicFactor.Tra[i];
+		}
+
+		for (size_t i = 0; i < DynamicFactor.Rot.size(); i++)
+		{
+			DynamicFactor.RotInv[i] = 1.0f / DynamicFactor.Rot[i];
+		}
+
+		for (size_t i = 0; i < DynamicFactor.Scale.size(); i++)
+		{
+			DynamicFactor.ScaleInv[i] = 1.0f / DynamicFactor.Scale[i];
 		}
 
 		if (m_effect->GetVersion() >= 3)
