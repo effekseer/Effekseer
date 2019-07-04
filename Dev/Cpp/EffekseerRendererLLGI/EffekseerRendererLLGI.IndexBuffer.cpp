@@ -32,7 +32,7 @@ void IndexBuffer::Lock()
 void IndexBuffer::Unlock()
 {
 	assert(m_isLock);
-
+	indexBuffer->Unlock();
 	m_resource = NULL;
 	m_isLock = false;
 }
