@@ -572,6 +572,12 @@ namespace Effekseer.GUI
 
 		unsafe void Export()
 		{
+			Manager.Viewer.SetDynamicInput(
+				Core.Dynamic.Inputs.Values[0].Input.Value,
+				Core.Dynamic.Inputs.Values[1].Input.Value,
+				Core.Dynamic.Inputs.Values[2].Input.Value,
+				Core.Dynamic.Inputs.Values[3].Input.Value);
+
 			SetLotationVelocity(
 				Core.EffectBehavior.LocationVelocity.X,
 				Core.EffectBehavior.LocationVelocity.Y,
