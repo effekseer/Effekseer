@@ -149,11 +149,19 @@ texInfo.Load(texture_.AbsolutePath))
 			if (value.Distortion.Value)
 			{
 				if (value.ColorTexture.RelativePath != string.Empty &&
-				distortionTexture_and_index.ContainsKey(value.ColorTexture.RelativePath) &&
-				texInfo.Load(value.ColorTexture.AbsolutePath))
+				distortionTexture_and_index.ContainsKey(value.ColorTexture.RelativePath))
 				{
-					data.Add(distortionTexture_and_index[value.ColorTexture.RelativePath].GetBytes());
-					hasTexture = true;
+					if(texInfo.Load(value.ColorTexture.AbsolutePath))
+					{
+						data.Add(distortionTexture_and_index[value.ColorTexture.RelativePath].GetBytes());
+						hasTexture = true;
+					}
+					else
+					{
+						Utils.LogFileNotFound(value.ColorTexture.AbsolutePath);
+						data.Add((-1).GetBytes());
+						hasTexture = false;
+					}
 				}
 				else
 				{
@@ -164,11 +172,19 @@ texInfo.Load(texture_.AbsolutePath))
 			else
 			{
 				if (value.ColorTexture.RelativePath != string.Empty &&
-					texture_and_index.ContainsKey(value.ColorTexture.RelativePath) &&
-					texInfo.Load(value.ColorTexture.AbsolutePath))
+					texture_and_index.ContainsKey(value.ColorTexture.RelativePath))
 				{
-					data.Add(texture_and_index[value.ColorTexture.RelativePath].GetBytes());
-					hasTexture = true;
+					if(texInfo.Load(value.ColorTexture.AbsolutePath))
+					{
+						data.Add(texture_and_index[value.ColorTexture.RelativePath].GetBytes());
+						hasTexture = true;
+					}
+					else
+					{
+						Utils.LogFileNotFound(value.ColorTexture.AbsolutePath);
+						data.Add((-1).GetBytes());
+						hasTexture = false;
+					}
 				}
 				else
 				{

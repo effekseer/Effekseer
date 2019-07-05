@@ -306,16 +306,8 @@ namespace Effekseer.Data
 
 			DistortionType = new Value.Enum<DistortionMethodType>(DistortionMethodType.Current);
 
-            // Switch the language according to the OS settings
-            var culture = System.Globalization.CultureInfo.CurrentCulture;
-            if (culture.Name == "ja-JP")
-            {
-                GuiLanguage = new Value.Enum<Language>(Language.Japanese);
-            }
-            else
-            {
-                GuiLanguage = new Value.Enum<Language>(Language.English);
-            }
+			// Switch the language according to the OS settings
+			GuiLanguage = new Value.Enum<Language>(LanguageGetter.GetLanguage());
 		}
 		
 		public enum RenderMode : int

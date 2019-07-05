@@ -45,6 +45,12 @@ namespace Effekseer
 		}
 	}
 
+	public enum LogLevel
+	{
+		Info,
+		Warning,
+	}
+
 	/// <summary>
 	/// 言語
 	/// </summary>
@@ -56,6 +62,24 @@ namespace Effekseer
         [Name(value = "英語", language = Language.Japanese)]
         [Name(value = "English", language = Language.English)]
 		English,
+	}
+
+	/// <summary>
+	/// a class for get default language
+	/// </summary>
+	public class LanguageGetter
+	{
+		public static Language GetLanguage()
+		{
+			// Switch the language according to the OS settings
+			var culture = System.Globalization.CultureInfo.CurrentCulture;
+			if (culture.Name == "ja-JP")
+			{
+				return Language.Japanese;
+			}
+
+			return Language.English;
+		}
 	}
 
     // アセンブリからリソースファイルをロードする

@@ -31,4 +31,33 @@ namespace Effekseer.Binary
 			Z = z;
 		}
 	}
+
+	class Utils
+	{
+		public static void LogFileNotFound(string path)
+		{
+			if (Core.OnOutputLog != null)
+			{
+				Language language = Language.English;
+
+				if(Core.Option != null && Core.Option.GuiLanguage != null)
+				{
+					language = Core.Option.GuiLanguage.Value;
+				}
+				else
+				{
+					language = LanguageGetter.GetLanguage();
+				}
+
+				if(language == Language.Japanese)
+				{
+					Core.OnOutputLog(LogLevel.Warning, path + " が見つかりません。");
+				}
+				else
+				{
+					Core.OnOutputLog(LogLevel.Warning, path + " is not found.");
+				}
+			}
+		}
+	}
 }

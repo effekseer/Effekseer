@@ -243,6 +243,11 @@ namespace Effekseer
 		public static Action<string> OnOutputMessage;
 
 		/// <summary>
+		/// Output logs
+		/// </summary>
+		public static Action<LogLevel, string> OnOutputLog;
+
+		/// <summary>
 		/// 選択中のノード変更後イベント
 		/// </summary>
 		public static event EventHandler OnAfterSelectNode;
