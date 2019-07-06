@@ -1,20 +1,20 @@
-# Debug Release‚ÉŒÀ’è
+ï»¿# Debug Releaseã«é™å®š
 set(CMAKE_CONFIGURATION_TYPES Debug Release CACHE TYPE INTERNAL FORCE )
 
-# ƒvƒƒWƒFƒNƒg–¼
+# ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆå
 project(Test)
 
-# CMake ƒo[ƒWƒ‡ƒ“ƒ`ƒFƒbƒN
+# CMake ãƒãƒ¼ã‚¸ãƒ§ãƒ³ãƒã‚§ãƒƒã‚¯
 cmake_minimum_required(VERSION 2.8)
 
-# ƒ\[ƒXƒR[ƒhİ’è
+# ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰è¨­å®š
 set(effekseer_test_src
 	graphics_gl.cpp
 	sound_al.cpp
 #	window.cpp
 	main.cpp)
 
-# ƒCƒ“ƒNƒ‹[ƒh‚Ìİ’è
+# ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ã®è¨­å®š
 include_directories(
 	../Effekseer/
 	../EffekseerRendererGL/
@@ -70,11 +70,11 @@ else()
 
 endif()
 
-# ƒRƒ“ƒpƒCƒ‹æ‚ğ’Ç‰Á
+# ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«å…ˆã‚’è¿½åŠ 
 add_executable(effekseer_test ${effekseer_test_src} )
 target_link_libraries(effekseer_test ${common_lib}) 
 
-# ƒtƒ‰ƒOˆ—
+# ãƒ•ãƒ©ã‚°å‡¦ç†
 add_definitions(-D__EFFEKSEER_RENDERER_GL_GLEW__)
 
 add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
@@ -83,7 +83,7 @@ if (APPLE)
 	add_definitions(-D__EFFEKSEER_RENDERER_GL3__)
 endif()
 
-# o—Íæ‚Ìİ’è
+# å‡ºåŠ›å…ˆã®è¨­å®š
 if (MSVC)
 set_target_properties(effekseer_test PROPERTIES OUTPUT_NAME_DEBUG "Test" )
 set_target_properties(effekseer_test PROPERTIES OUTPUT_NAME_RELEASE "Test" )
