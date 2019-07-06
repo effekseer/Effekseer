@@ -261,6 +261,25 @@ Vector3D& Vector3D::Transform( Vector3D& o, const Vector3D& in, const Matrix44& 
 	return o;
 }
 
+Vector3D& Vector3D::TransformWithW(Vector3D& o, const Vector3D& in, const Matrix44& mat)
+{
+	float values[4];
+
+	for (int i = 0; i < 4; i++)
+	{
+		values[i] = 0;
+		values[i] += in.X * mat.Values[0][i];
+		values[i] += in.Y * mat.Values[1][i];
+		values[i] += in.Z * mat.Values[2][i];
+		values[i] += mat.Values[3][i];
+	}
+
+	o.X = values[0] / values[3];
+	o.Y = values[1] / values[3];
+	o.Z = values[2] / values[3];
+	return o;
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

@@ -110,6 +110,8 @@ public:
 	static Vector3D& Transform( Vector3D& o, const Vector3D& in, const Matrix43& mat );
 
 	static Vector3D& Transform( Vector3D& o, const Vector3D& in, const Matrix44& mat );
+
+	static Vector3D& TransformWithW(Vector3D& o, const Vector3D& in, const Matrix44& mat);
 };
 
 //----------------------------------------------------------------------------------

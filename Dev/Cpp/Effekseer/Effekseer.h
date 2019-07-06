@@ -775,6 +775,8 @@ public:
 	static Vector3D& Transform( Vector3D& o, const Vector3D& in, const Matrix43& mat );
 
 	static Vector3D& Transform( Vector3D& o, const Vector3D& in, const Matrix44& mat );
+
+	static Vector3D& TransformWithW(Vector3D& o, const Vector3D& in, const Matrix44& mat);
 };
 
 //----------------------------------------------------------------------------------
@@ -2386,8 +2388,8 @@ public:
 
 	/**
 		@brief
-		\~English specfiy a dynamic parameter, which changes effect parameters dynamically while playing
-		\~Japanese 再生中にエフェクトのパラメーターを変更する動的パラメーターを設定する。
+		\~English get a dynamic parameter, which changes effect parameters dynamically while playing
+		\~Japanese 再生中にエフェクトのパラメーターを変更する動的パラメーターを取得する。
 	*/
 	virtual float GetDynamicInput(Handle handle, int32_t index) = 0;
 

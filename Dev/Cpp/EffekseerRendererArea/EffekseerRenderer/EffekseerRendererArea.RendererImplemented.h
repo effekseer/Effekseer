@@ -20,7 +20,7 @@ class Shader;
 class TextureData
 {
 public:
-	std::u16string Path;
+	void* UserPtr = nullptr;
 };
 
 class TextureLoader : public ::Effekseer::TextureLoader
@@ -28,12 +28,7 @@ class TextureLoader : public ::Effekseer::TextureLoader
 public:
 	::Effekseer::TextureData* Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 	{
-		auto d = new TextureData();
-		d->Path = (const char16_t*)path;
-
 		auto d_ = new ::Effekseer::TextureData();
-		d_->UserPtr = d;
-
 		return d_;
 	}
 

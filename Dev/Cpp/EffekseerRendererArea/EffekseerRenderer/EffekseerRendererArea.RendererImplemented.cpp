@@ -8,7 +8,9 @@
 #include "EffekseerRendererArea.RenderState.h"
 #include "EffekseerRendererArea.Shader.h"
 #include "EffekseerRendererArea.VertexBuffer.h"
+#include <algorithm>
 #include <array>
+#include <functional>
 
 namespace EffekseerRendererArea
 {
@@ -358,7 +360,7 @@ Exit:;
 
 	if (m_textures[0] != nullptr)
 	{
-		material.TexturePath = ((TextureData*)m_textures[0])->Path;
+		material.UserPtr = m_textures[0];
 	}
 
 	material.DepthTest = m_renderState->GetActiveState().DepthTest;
@@ -380,7 +382,7 @@ void RendererImplemented::DrawModel(void* model,
 
 	if (m_textures[0] != nullptr)
 	{
-		material.TexturePath = ((TextureData*)m_textures[0])->Path;
+		material.UserPtr = m_textures[0];
 	}
 
 	material.DepthTest = m_renderState->GetActiveState().DepthTest;
@@ -539,7 +541,9 @@ BoundingBox BoundingBoxEstimator::Estimate(Effekseer::Effect* effect,
 										   int screenWidth,
 										   int screenHeight,
 										   int32_t time,
-										   float rate)
+										   float rate,
+										   float zmin,
+										   float zmax)
 {
 
 	std::vector<float> minXs;
@@ -572,20 +576,25 @@ BoundingBox BoundingBoxEstimator::Estimate(Effekseer::Effect* effect,
 		for (auto& v : vs)
 		{
 			Effekseer::Vector3D posScreen;
-			Effekseer::Vector3D::Transform(posScreen, v.Pos, cameraProjMat);
+			Effekseer::Vector3D::TransformWithW(posScreen, v.Pos, cameraProjMat);
 			posScreen.X = (posScreen.X + 1.0f) / 2.0f * screenWidth;
 			posScreen.Y = (1.0f - posScreen.Y) / 2.0f * screenHeight;
 
+			if (posScreen.Z < zmin || posScreen.Z > zmax)
+				continue;
 			minX = Effekseer::Min(minX, posScreen.X);
 			minY = Effekseer::Min(minY, posScreen.Y);
 			maxX = Effekseer::Max(maxX, posScreen.X);
 			maxY = Effekseer::Max(maxY, posScreen.Y);
 		}
 
-		minXs.push_back(minX);
-		minYs.push_back(minY);
-		maxXs.push_back(maxX);
-		maxYs.push_back(maxY);
+		if (vs.size() > 0)
+		{
+			minXs.push_back(minX);
+			minYs.push_back(minY);
+			maxXs.push_back(maxX);
+			maxYs.push_back(maxY);
+		}
 
 		if (!manager_->Exists(handle))
 			break;
@@ -593,8 +602,8 @@ BoundingBox BoundingBoxEstimator::Estimate(Effekseer::Effect* effect,
 
 	manager_->StopAllEffects();
 
-	std::sort(minXs.begin(), minXs.end());
-	std::sort(minYs.begin(), minYs.end());
+	std::sort(minXs.begin(), minXs.end(), std::greater<float>());
+	std::sort(minYs.begin(), minYs.end(), std::greater<float>());
 	std::sort(maxXs.begin(), maxXs.end());
 	std::sort(maxYs.begin(), maxYs.end());
 
@@ -608,7 +617,7 @@ BoundingBox BoundingBoxEstimator::Estimate(Effekseer::Effect* effect,
 		ret.Right = maxXs[index];
 		ret.Bottom = maxYs[index];
 		ret.Left = minXs[index];
-		ret.Right = minYs[index];
+		ret.Top = minYs[index];
 	}
 
 	return ret;

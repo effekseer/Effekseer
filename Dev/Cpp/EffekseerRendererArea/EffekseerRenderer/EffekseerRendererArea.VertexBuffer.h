@@ -9,9 +9,9 @@ namespace EffekseerRendererArea
 class VertexBuffer : public EffekseerRenderer::VertexBufferBase
 {
 private:
-	uint32_t m_vertexRingStart;
-	uint32_t m_vertexRingOffset;
-	bool m_ringBufferLock;
+	uint32_t m_vertexRingStart = 0;
+	uint32_t m_vertexRingOffset = 0;
+	bool m_ringBufferLock = false;
 
 public:
 	VertexBuffer(int size, bool isDynamic);
