@@ -20,10 +20,6 @@ set(PNG_TESTS OFF CACHE BOOL "" FORCE)
 add_subdirectory(Downloads/libpng)
 set_target_properties(png_static PROPERTIES FOLDER "ThirdParty/png")
 set_target_properties(genfiles PROPERTIES FOLDER "ThirdParty/png")
-set_target_properties(genprebuilt PROPERTIES FOLDER "ThirdParty/png")
-set_target_properties(gensym PROPERTIES FOLDER "ThirdParty/png")
-set_target_properties(genvers PROPERTIES FOLDER "ThirdParty/png")
-set_target_properties(symbol-check PROPERTIES FOLDER "ThirdParty/png")
 
 # glfw
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)

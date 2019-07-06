@@ -42,6 +42,7 @@ endif()
 option(USE_OPENGLES2 "Use OpenGL ES2" OFF)
 option(USE_OPENGLES3 "Use OpenGL ES3" OFF)
 option(USE_OPENGL3 "Use OpenGL 3" OFF)
+option(USE_LLGI "Use LLGI" OFF)
 
 if (MSVC)
 option(USE_OPENAL "Use OpenAL" OFF)
@@ -210,6 +211,11 @@ endif()
 
 if (USE_OSM OR BUILD_VIEWER)
 	add_subdirectory("EffekseerSoundOSMixer")
+endif()
+
+if (USE_LLGI)
+	add_subdirectory(3rdParty/LLGI)
+	add_subdirectory(EffekseerRendererDX12)
 endif()
 
 # Flags
