@@ -11,10 +11,12 @@
 #pragma comment(lib, "xaudio2.lib" )
 #pragma comment(lib, "winmm.lib" )
 
+#ifndef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
 #if _DEBUG
 #pragma comment(lib, "x86/EffekseerSoundXAudio2.Debug.lib" )
 #else
 #pragma comment(lib, "x86/EffekseerSoundXAudio2.Release.lib" )
+#endif
 #endif
 
 //----------------------------------------------------------------------------------

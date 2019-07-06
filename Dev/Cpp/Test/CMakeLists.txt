@@ -10,9 +10,9 @@ cmake_minimum_required(VERSION 2.8)
 # ソースコード設定
 set(effekseer_test_src
 	graphics_gl.cpp
-	sound_al.cpp
 #	window.cpp
 	main.cpp)
+	
 
 # インクルードの設定
 include_directories(
@@ -29,9 +29,17 @@ set(common_inc)
 
 list(APPEND common_lib effekseer )
 list(APPEND common_lib effekseer_renderer_gl )
-list(APPEND common_lib EffekseerSoundAL )
+list(APPEND common_lib glfw zlibstatic png_static)
 
-list(APPEND common_lib glfw3 z png16 )
+if (USE_XAUDIO2)
+	list(APPEND effekseer_test_src sound_xaudio2.cpp)
+	list(APPEND common_lib EffekseerSoundXAudio2)
+endif()
+
+if (USE_OPENAL)
+	list(APPEND effekseer_test_src sound_al.cpp)
+	list(APPEND common_lib EffekseerSoundAL)
+endif()
 
 if (MSVC)
 
@@ -78,6 +86,9 @@ target_link_libraries(effekseer_test ${common_lib})
 add_definitions(-D__EFFEKSEER_RENDERER_GL_GLEW__)
 
 add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
+
+# FIXME: Mixed measures with sln. for VS2015
+add_definitions(-D__EFFEKSEER_TEST_BUILD_AS_CMAKE__)
 
 if (APPLE)
 	add_definitions(-D__EFFEKSEER_RENDERER_GL3__)

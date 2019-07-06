@@ -19,10 +19,12 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
+#ifndef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
 #if _DEBUG
 #pragma comment(lib, "x86/Effekseer.Debug.lib" )
 #else
 #pragma comment(lib, "x86/Effekseer.Release.lib" )
+#endif
 #endif
 
 #else
@@ -99,7 +101,7 @@ void TestManagerPlayAndStop()
 {
 	{
 		auto manager = ::Effekseer::Manager::Create(2000);
-		auto effect = Effekseer::Effect::Create(manager, u"Resource/Laser01.efk");
+		auto effect = Effekseer::Effect::Create(manager, EFK_LOCALFILE(u"Resource/Laser01.efk"));
 		manager->Play(effect, Effekseer::Vector3D());
 		manager->Destroy();
 		effect->Release();
@@ -107,7 +109,7 @@ void TestManagerPlayAndStop()
 
 	{
 		auto manager = ::Effekseer::Manager::Create(2000);
-		auto effect = Effekseer::Effect::Create(manager, u"Resource/Laser01.efk");
+		auto effect = Effekseer::Effect::Create(manager, EFK_LOCALFILE(u"Resource/Laser01.efk"));
 		manager->Play(effect, Effekseer::Vector3D());
 		manager->Flip();
 		manager->Destroy();
@@ -188,21 +190,21 @@ void Init()
 	SetCameraMatrix( ::Effekseer::Matrix44().LookAtRH( g_position, g_focus, ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
 
 #if __DDS_TEST
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser01_dds.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Laser01_dds.efk") ) );
 #elif __CULLING_TEST
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/culling.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/culling.efk") ) );
 #else
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser01.efk").c_str() ) );
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Laser02.efk").c_str() ) );
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ribbon_Parent.efk").c_str() ) );
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ribbon_Sword.efk").c_str() ) );
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ring_Shape1.efk").c_str() ) );
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Ring_Shape2.efk").c_str() ) );
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Sprite_FixedYAxis.efk").c_str() ) );
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Track1.efk").c_str() ) );
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block.efk").c_str() ) );
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/block_simple.efk").c_str() ) );
-	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)ToEFString(L"Resource/Simple_Distortion.efk").c_str() ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Laser01.efk") ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Laser02.efk") ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Simple_Ribbon_Parent.efk") ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Simple_Ribbon_Sword.efk") ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Simple_Ring_Shape1.efk") ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Simple_Ring_Shape2.efk") ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Simple_Sprite_FixedYAxis.efk") ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Simple_Track1.efk") ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/block.efk") ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/block_simple.efk") ) );
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Simple_Distortion.efk") ) );
 #endif
 	PlayEffect();
 }
