@@ -362,7 +362,6 @@ namespace Effekseer.InternalScript
 					var ret = new FunctionExpression();
 					ret.Value = (string)token.Value;
 					ret.Args = Arg();
-					Next();
 					return ret;
 				}
 			}
@@ -383,6 +382,13 @@ namespace Effekseer.InternalScript
 				while(true)
 				{
 					var next = Next();
+					if(next.Type == TokenType.RightParentheses)
+					{
+						// empty arguments
+						Next();
+						return exps.ToArray();
+					}
+
 					var expr = Expr();
 					var next2 = Peek();
 
@@ -397,6 +403,7 @@ namespace Effekseer.InternalScript
 					else if (next2.Type == TokenType.RightParentheses)
 					{
 						exps.Add(expr);
+						Next();
 						return exps.ToArray();
 					}
 				}

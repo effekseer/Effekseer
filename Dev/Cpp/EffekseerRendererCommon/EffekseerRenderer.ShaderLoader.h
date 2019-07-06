@@ -154,6 +154,8 @@ public:
 				break;
 			}
 		}
+
+		return true;
 	}
 
 	/**

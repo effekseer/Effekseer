@@ -554,6 +554,7 @@ BoundingBox BoundingBoxEstimator::Estimate(Effekseer::Effect* effect,
 	renderer_->SetCameraMatrix(cameraMat);
 	renderer_->SetProjectionMatrix(projMat);
 
+	assert(manager_ != nullptr);
 	auto handle = manager_->Play(effect, 0, 0, 0);
 
 	Effekseer::Matrix44 cameraProjMat;

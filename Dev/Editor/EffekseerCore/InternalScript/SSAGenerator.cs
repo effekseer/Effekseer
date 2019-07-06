@@ -165,51 +165,115 @@ namespace Effekseer.InternalScript
 		{
 			var node = new NodeOperator();
 			node.Expression = expr;
-			if (expr.Value == "sin") node.Type = OperatorType.Sine;
-			if (expr.Value == "cos") node.Type = OperatorType.Cos;
-
-			if (expr.Args.Count() != 1) throw new ArgSizeException(expr.Args.Count(), 1, expr.Line);
-
-			var input = Eval(expr.Args[0], null);
-			if (input is Attribute)
+			if (expr.Value == "sin")
 			{
-				input = (input as Attribute).Value;
+				node.Type = OperatorType.Sine;
+				if (expr.Args.Count() != 1) throw new ArgSizeException(expr.Args.Count(), 1, expr.Line);
 			}
 
-			if (input is SymbolTable)
+			if (expr.Value == "cos")
 			{
-				var retTable = new SymbolTable();
-				int ind = 0;
-				foreach (var table in (input as SymbolTable).Tables)
+				node.Type = OperatorType.Cos;
+				if (expr.Args.Count() != 1) throw new ArgSizeException(expr.Args.Count(), 1, expr.Line);
+			}
+
+			if (expr.Value == "rand")
+			{
+				node.Type = OperatorType.Rand;
+				
+				if (expr.Args.Count() == 0)
+				{
+					node.Type = OperatorType.Rand;
+				}
+				else if (expr.Args.Count() == 1)
+				{
+					node.Type = OperatorType.Rand_WithSeed;
+				}
+				else
+				{
+					throw new ArgSizeException(expr.Args.Count(), new[] { 0, 1 }, expr.Line);
+				}
+			}
+
+			// input
+			for(int i = 0; i < expr.Args.Length; i++)
+			{
+				var input = Eval(expr.Args[i], null);
+				if (input is Attribute)
+				{
+					input = (input as Attribute).Value;
+				}
+
+				if (input is SymbolTable)
+				{
+					var retTable = new SymbolTable();
+					int ind = 0;
+					foreach (var table in (input as SymbolTable).Tables)
+					{
+						if (!(table.Value.Value is Value))
+						{
+							throw new InvalidOperationException(expr.Line);
+						}
+
+						node.Inputs.Add(table.Value.Value as Value);
+					}
+					return retTable;
+				}
+				else if (input is Value)
+				{
+					node.Inputs.Add(input as Value);
+				}
+				else
+				{
+					throw new Exception();
+				}
+			}
+
+			// output
+			if (expr.Args.Count() > 0)
+			{
+				var input = Eval(expr.Args[0], null);
+				if (input is Attribute)
+				{
+					input = (input as Attribute).Value;
+				}
+
+				if (input is SymbolTable)
+				{
+					var retTable = new SymbolTable();
+					int ind = 0;
+					foreach (var table in (input as SymbolTable).Tables)
+					{
+						var ret = new Value();
+						ret.Index = ind;
+						ret.Generator = node;
+						node.Outputs.Add(ret);
+						retTable.Tables.Add(table.Key, new Attribute(ret));
+						ind++;
+					}
+					return retTable;
+				}
+				else if (input is Value)
 				{
 					var ret = new Value();
-					ret.Index = ind;
+					ret.Index = 0;
 					ret.Generator = node;
-
-					if (!(table.Value.Value is Value))
-					{
-						throw new InvalidOperationException(expr.Line);
-					}
-
-					node.Inputs.Add(table.Value.Value as Value);
 					node.Outputs.Add(ret);
-					retTable.Tables.Add(table.Key, new Attribute(ret));
-					ind++;
+					return ret;
 				}
-				return retTable;
+				else
+				{
+					throw new Exception();
+				}
+
 			}
-			else if (input is Value)
+			else
 			{
 				var ret = new Value();
 				ret.Index = 0;
 				ret.Generator = node;
-				node.Inputs.Add(input as Value);
 				node.Outputs.Add(ret);
 				return ret;
-			}
-			else
-			{
-				throw new Exception();
 			}
 		}
 

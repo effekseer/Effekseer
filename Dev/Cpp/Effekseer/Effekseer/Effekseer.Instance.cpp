@@ -54,7 +54,7 @@ void Instance::ApplyEq(T& dstParam, Effect* e, InstanceGlobal* instg, int dpInd,
 
 	if (dp.GetRunningPhase() == InternalScript::RunningPhaseType::Local)
 	{
-		eqresult = dp.Execute(instg->dynamicInputParameters, globals, locals);
+		eqresult = dp.Execute(instg->dynamicInputParameters, globals, locals, InstanceGlobal::Rand, InstanceGlobal::RandSeed, instg);
 	}
 
 	for (int i = 0; i < count; i++)

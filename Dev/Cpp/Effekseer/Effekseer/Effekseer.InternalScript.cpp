@@ -13,6 +13,8 @@ bool InternalScript::IsValidOperator(int value) const
 		return true;
 	if (21 <= value && value <= 22)
 		return true;
+	if (31 <= value && value <= 32)
+		return true;
 
 	return false;
 }
@@ -163,8 +165,12 @@ bool InternalScript::Load(uint8_t* data, int size)
 	return true;
 }
 
-std::array<float, 4>
-InternalScript::Execute(const std::array<float, 4>& externals, const std::array<float, 1>& globals, const std::array<float, 5>& locals)
+std::array<float, 4> InternalScript::Execute(const std::array<float, 4>& externals,
+											 const std::array<float, 1>& globals,
+											 const std::array<float, 5>& locals,
+											 RandFuncCallback* randFuncCallback,
+											 RandWithSeedFuncCallback* randSeedFuncCallback,
+											 void* userData)
 {
 	std::array<float, 4> ret;
 	ret.fill(0.0f);
@@ -199,7 +205,9 @@ InternalScript::Execute(const std::array<float, 4>& externals, const std::array<
 		auto attributeOffset = outputOffset + outputCount * sizeof(int);
 		offset = attributeOffset + attributeCount * sizeof(int);
 
-		std::array<float, 4> tempInputs;
+		std::array<float, 8> tempInputs;
+		if (inputCount > tempInputs.size())
+			return ret;
 
 		for (int j = 0; j < inputCount; j++)
 		{
@@ -232,6 +240,14 @@ InternalScript::Execute(const std::array<float, 4>& externals, const std::array<
 				registers[index] = tempInputs[0];
 			else if (type == OperatorType::UnarySub)
 				registers[index] = -tempInputs[0];
+			else if (type == OperatorType::Rand)
+			{
+				registers[index] = randFuncCallback(userData);
+			}
+			else if (type == OperatorType::Rand_WithSeed)
+			{
+				registers[index] = randSeedFuncCallback(userData, tempInputs[0]);
+			}
 			else if (type == OperatorType::Constant)
 			{
 				float att = 0;
@@ -245,7 +261,7 @@ InternalScript::Execute(const std::array<float, 4>& externals, const std::array<
 	{
 		ret[i] = GetRegisterValue(outputRegisters_[i], externals, globals, locals);
 	}
-	
+
 	return ret;
 }
 

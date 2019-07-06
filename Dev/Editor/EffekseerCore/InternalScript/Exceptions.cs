@@ -46,15 +46,22 @@ namespace Effekseer.InternalScript
 
 	public class ArgSizeException : CompileException
 	{
-		public ArgSizeException(int actual, int expected, int line)
+		public ArgSizeException(int actual, int[] expected, int line)
 			: base("", line)
 		{
 			Actual = actual;
 			Expected = expected;
 		}
 
+		public ArgSizeException(int actual, int expected, int line)
+			: base("", line)
+		{
+			Actual = actual;
+			Expected = new[] { expected };
+		}
+
 		public int Actual = 0;
-		public int Expected = 0;
+		public int[] Expected = null;
 	}
 
 	public class InvalidSubstitution : CompileException

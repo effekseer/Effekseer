@@ -91,6 +91,10 @@ public:
 
 	const Vector3D& GetTargetLocation() const;
 	void SetTargetLocation( const Vector3D& location );
+
+	static float Rand(void* userData);
+
+	static float RandSeed(void* userData, float randSeed);
 };
 //----------------------------------------------------------------------------------
 //

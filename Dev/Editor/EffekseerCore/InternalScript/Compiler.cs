@@ -20,6 +20,8 @@ namespace Effekseer.InternalScript
 		Sine = 21,
 		Cos = 22,
 
+		Rand = 31,
+		Rand_WithSeed = 32,
 	}
 
 	public enum RunningPhaseType : int
@@ -146,6 +148,11 @@ namespace Effekseer.InternalScript
 					{
 						var node_ = node as SSAGenerator.NodeOperator;
 
+						if(node_.Type == OperatorType.Rand)
+						{
+							runningPhase = RunningPhaseType.Local;
+						}
+
 						dataOp.Add(BitConverter.GetBytes((int)node_.Type));
 						dataOp.Add(BitConverter.GetBytes((int)node.Inputs.Count));
 						dataOp.Add(BitConverter.GetBytes((int)node.Outputs.Count));
@@ -173,100 +180,6 @@ namespace Effekseer.InternalScript
 				data.Add(BitConverter.GetBytes(outputValues[2].RegisterIndex));
 				data.Add(BitConverter.GetBytes(outputValues[3].RegisterIndex));
 				data.Add(dataOp.SelectMany(_ => _).ToArray());
-
-				/*
-				Compile(sentense[0]);
-
-				Dictionary<string, int> variableList = new Dictionary<string, int>();
-				foreach (var opt in operators)
-				{
-					foreach (var o in opt.Inputs.Concat(opt.Outputs))
-					{
-						if (IsValidLabel(o)) continue;
-
-						if (!variableList.ContainsKey(o))
-						{
-							variableList.Add(o, variableList.Count);
-						}
-					}
-				}
-
-				int outputIndex = -1;
-
-				// Output register
-				var outputName = GetOutputName(sentense[0]);
-				if (variableList.ContainsKey(outputName))
-				{
-					outputIndex = variableList[outputName];
-				}
-				else
-				{
-					outputIndex = GetInputIndex(outputName);
-				}
-
-				// Operators
-				List<byte[]> dataOp = new List<byte[]>();
-
-				foreach (var op in operators)
-				{
-					dataOp.Add(BitConverter.GetBytes((int)op.Type));
-					dataOp.Add(BitConverter.GetBytes((int)op.Inputs.Count));
-					dataOp.Add(BitConverter.GetBytes((int)op.Outputs.Count));
-
-					// Attribute
-					if (op.Type == OperatorType.Constant)
-					{
-						dataOp.Add(BitConverter.GetBytes(1));
-					}
-					else
-					{
-						dataOp.Add(BitConverter.GetBytes(0));
-					}
-
-					foreach (var o in op.Inputs)
-					{
-						if (variableList.ContainsKey(o))
-						{
-							var index = variableList[o];
-							dataOp.Add(BitConverter.GetBytes(index));
-						}
-						else
-						{
-							var index = GetInputIndex(o);
-							dataOp.Add(BitConverter.GetBytes(index));
-						}
-					}
-
-					foreach (var o in op.Outputs)
-					{
-						if (variableList.ContainsKey(o))
-						{
-							var index = variableList[o];
-							dataOp.Add(BitConverter.GetBytes(index));
-						}
-						else
-						{
-							var index = GetInputIndex(o);
-							dataOp.Add(BitConverter.GetBytes(index));
-						}
-					}
-
-					// Attribute
-					if (op.Type == OperatorType.Constant)
-					{
-						var value = (float)op.Attributes["Constant"];
-						dataOp.Add(BitConverter.GetBytes(value));
-					}
-				}
-
-				int version = 0;
-				data.Add(BitConverter.GetBytes(version));
-				data.Add(BitConverter.GetBytes((int)runningPhase));
-				data.Add(BitConverter.GetBytes(variableList.Count));
-				data.Add(BitConverter.GetBytes(operators.Count));
-				data.Add(BitConverter.GetBytes(outputIndex));
-				data.Add(dataOp.SelectMany(_=>_).ToArray());
-				*/
 			}
 			catch (CompileException e)
 			{
@@ -279,92 +192,6 @@ namespace Effekseer.InternalScript
 			return compileResult;
 		}
 
-		/*
-		void Compile(Expression expr)
-		{
-			if (expr is BinOpExpression)
-			{
-				var e = expr as BinOpExpression;
-				var o = new Operator();
-				if (e.Operator == "+") o.Type = OperatorType.Add;
-				if (e.Operator == "-") o.Type = OperatorType.Sub;
-				if (e.Operator == "*") o.Type = OperatorType.Mul;
-				if (e.Operator == "/") o.Type = OperatorType.Div;
-
-				Compile(e.Lhs);
-				Compile(e.Rhs);
-
-				o.Inputs.Add(GetOutputName(e.Lhs));
-				o.Inputs.Add(GetOutputName(e.Rhs));
-				o.Outputs.Add(GetOutputName(e));
-				operators.Add(o);
-			}
-			else if (expr is UnaryOpExpression)
-			{
-				var e = expr as UnaryOpExpression;
-				var o = new Operator();
-				if (e.Operator == "+") o.Type = OperatorType.UnaryAdd;
-				if (e.Operator == "-") o.Type = OperatorType.UnarySub;
-
-				Compile(e.Expr);
-
-				o.Inputs.Add(GetOutputName(e.Expr));
-				o.Outputs.Add(GetOutputName(e));
-				operators.Add(o);
-			}
-			else if (expr is FunctionExpression)
-			{
-				var e = expr as FunctionExpression;
-
-				if(e.Value == "sin")
-				{
-					if (e.Args.Count() != 1) throw new ArgSizeException(e.Args.Count(), 1, e.Line);
-
-					Compile(e.Args[0]);
-
-					var o = new Operator();
-					o.Type = OperatorType.Sine;
-					o.Inputs.Add(GetOutputName(e.Args[0]));
-					o.Outputs.Add(GetOutputName(e));
-					operators.Add(o);
-				}
-				else if (e.Value == "cos")
-				{
-					if (e.Args.Count() != 1) throw new ArgSizeException(e.Args.Count(), 1, e.Line);
-
-					Compile(e.Args[0]);
-
-					var o = new Operator();
-					o.Type = OperatorType.Cos;
-					o.Inputs.Add(GetOutputName(e.Args[0]));
-					o.Outputs.Add(GetOutputName(e));
-					operators.Add(o);
-				}
-				else
-				{
-					throw new UnknownFunctionException(e.Value, e.Line);
-				}
-			}
-			else if (expr is LabelExpression)
-			{
-				var e = expr as LabelExpression;
-				if (!IsValidLabel(e.Value))
-				{
-					throw new CompileException(string.Format("Invalid label {0}", e.Value), e.Line);
-				}
-
-			}
-			else if (expr is NumberExpression)
-			{
-				var e = expr as NumberExpression;
-				var o = new Operator();
-				o.Type = OperatorType.Constant;
-				o.Outputs.Add(GetOutputName(e));
-				o.Attributes.Add("Constant", e.Value);
-				operators.Add(o);
-			}
-		}
-		*/
 		string GetOutputName(Expression expr)
 		{
 			if(expr is LabelExpression)

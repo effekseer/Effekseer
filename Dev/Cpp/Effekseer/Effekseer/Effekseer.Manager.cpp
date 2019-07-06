@@ -1418,7 +1418,13 @@ void ManagerImplemented::UpdateHandle( DrawSet& drawSet, float deltaFrame )
 			continue;
 
 		drawSet.GlobalPointer->dynamicEqResults[i] =
-			e->dynamicEquation[i].Execute(drawSet.GlobalPointer->dynamicInputParameters, globals, std::array<float, 5>());
+			e->dynamicEquation[i].Execute(
+				drawSet.GlobalPointer->dynamicInputParameters,
+				globals,
+				std::array<float, 5>(),
+				InstanceGlobal::Rand, 
+				InstanceGlobal::RandSeed, 
+				drawSet.GlobalPointer);
 	}
 
 	if (!drawSet.IsPreupdated)
