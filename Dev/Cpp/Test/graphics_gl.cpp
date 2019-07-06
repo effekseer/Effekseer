@@ -13,6 +13,7 @@
 #if _GLFW
 #include <GLFW/glfw3.h>
 
+#ifndef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
 #if _WIN32
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "opengl32.lib")
@@ -23,6 +24,7 @@
 #else
 #pragma comment(lib, "Release/glfw3.lib")
 #pragma comment(lib, "x86/EffekseerRendererGL.Release.lib" )
+#endif
 #endif
 
 #else

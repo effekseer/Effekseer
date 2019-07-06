@@ -1,20 +1,20 @@
-# Debug Release‚ÉŒÀ’è
+ï»¿# Debug Releaseã«é™å®š
 set(CMAKE_CONFIGURATION_TYPES Debug Release CACHE TYPE INTERNAL FORCE )
 
-# ƒvƒƒWƒFƒNƒg–¼
+# ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆå
 project(Test)
 
-# CMake ƒo[ƒWƒ‡ƒ“ƒ`ƒFƒbƒN
+# CMake ãƒãƒ¼ã‚¸ãƒ§ãƒ³ãƒã‚§ãƒƒã‚¯
 cmake_minimum_required(VERSION 2.8)
 
-# ƒ\[ƒXƒR[ƒhİ’è
+# ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰è¨­å®š
 set(effekseer_test_src
 	graphics_gl.cpp
-	sound_al.cpp
 #	window.cpp
 	main.cpp)
+	
 
-# ƒCƒ“ƒNƒ‹[ƒh‚Ìİ’è
+# ã‚¤ãƒ³ã‚¯ãƒ«ãƒ¼ãƒ‰ã®è¨­å®š
 include_directories(
 	../Effekseer/
 	../EffekseerRendererGL/
@@ -29,9 +29,17 @@ set(common_inc)
 
 list(APPEND common_lib effekseer )
 list(APPEND common_lib effekseer_renderer_gl )
-list(APPEND common_lib EffekseerSoundAL )
+list(APPEND common_lib glfw zlibstatic png_static)
 
-list(APPEND common_lib glfw3 z png16 )
+if (USE_XAUDIO2)
+	list(APPEND effekseer_test_src sound_xaudio2.cpp)
+	list(APPEND common_lib EffekseerSoundXAudio2)
+endif()
+
+if (USE_OPENAL)
+	list(APPEND effekseer_test_src sound_al.cpp)
+	list(APPEND common_lib EffekseerSoundAL)
+endif()
 
 if (MSVC)
 
@@ -70,20 +78,23 @@ else()
 
 endif()
 
-# ƒRƒ“ƒpƒCƒ‹æ‚ğ’Ç‰Á
+# ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«å…ˆã‚’è¿½åŠ 
 add_executable(effekseer_test ${effekseer_test_src} )
 target_link_libraries(effekseer_test ${common_lib}) 
 
-# ƒtƒ‰ƒOˆ—
+# ãƒ•ãƒ©ã‚°å‡¦ç†
 add_definitions(-D__EFFEKSEER_RENDERER_GL_GLEW__)
 
 add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
+
+# FIXME: Mixed measures with sln. for VS2015
+add_definitions(-D__EFFEKSEER_TEST_BUILD_AS_CMAKE__)
 
 if (APPLE)
 	add_definitions(-D__EFFEKSEER_RENDERER_GL3__)
 endif()
 
-# o—Íæ‚Ìİ’è
+# å‡ºåŠ›å…ˆã®è¨­å®š
 if (MSVC)
 set_target_properties(effekseer_test PROPERTIES OUTPUT_NAME_DEBUG "Test" )
 set_target_properties(effekseer_test PROPERTIES OUTPUT_NAME_RELEASE "Test" )
