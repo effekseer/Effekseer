@@ -29,7 +29,7 @@ namespace Effekseer.Data
 
 		public MaterialFileParameter()
 		{
-			Path = new Value.PathForMaterial(".efkmat", true);
+			Path = new Value.PathForMaterial(Resources.GetString("MaterialFilter"), true);
 			Path.OnChanged += Path_OnChanged;
 		}
 
@@ -127,7 +127,7 @@ namespace Effekseer.Data
 				else
 				{
 					var status = new ValueStatus();
-					var value = new Value.PathForImage(".png", false);
+					var value = new Value.PathForImage(Resources.GetString("ImageFilter"), false);
 					status.Key = key;
 					status.Value = value;
 					status.Name = texture.Name;

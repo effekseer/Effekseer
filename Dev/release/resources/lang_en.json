@@ -143,6 +143,7 @@
     "DynamicEquation": "Equation",
     "DynamicEq": "Eq.",
     "DynamicFixed": "Fixed",
-    "DynamicDynamic": "Dynamic"
+    "DynamicDynamic": "Dynamic",
+    "MaterialFilter": "efkmat"
   }
 }

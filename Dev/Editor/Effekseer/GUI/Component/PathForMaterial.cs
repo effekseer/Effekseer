@@ -121,7 +121,7 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding == null) return;
 
-			var filter = Resources.GetString(".efkmat");
+			var filter = Resources.GetString("MaterialFilter");
 			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
 			if (!string.IsNullOrEmpty(result))

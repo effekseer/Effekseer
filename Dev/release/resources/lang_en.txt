@@ -142,3 +142,4 @@ DynamicEquation,Equation
 DynamicEq,Eq.
 DynamicFixed,Fixed
 DynamicDynamic,Dynamic
+MaterialFilter,efkmat

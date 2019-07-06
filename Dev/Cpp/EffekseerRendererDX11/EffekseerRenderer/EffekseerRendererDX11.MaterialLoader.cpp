@@ -117,7 +117,6 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 	return shader;
 }
 
-
 class ShaderLoader : public EffekseerRenderer::ShaderLoader
 {
 public:
@@ -150,13 +149,15 @@ struct PS_Input
 
 		// predefined
 		int cind = 0;
-		maincode << "float4 " << "predefined_uniform" << " : register(c" << cind << ");";
+		maincode << "float4 "
+				 << "predefined_uniform"
+				 << " : register(c" << cind << ");" << std::endl;
+		cind++;
 
 		for (size_t i = 0; i < Uniforms.size(); i++)
 		{
 			auto& uniform = Uniforms[i];
-			maincode << "float4 " << uniform.Name
-					 << " : register(c" << cind << ");";
+			maincode << "float4 " << uniform.Name << " : register(c" << cind << ");" << std::endl;
 			cind++;
 		}
 
@@ -184,7 +185,7 @@ struct PS_Input
 
 		auto postCode = R"(
 
-float4 PS( const PS_Input Input ) : SV_Target
+float4 main( const PS_Input Input ) : SV_Target
 {
 	float4 Output =  Calculate(Input);
 
@@ -235,7 +236,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 ::Effekseer::MaterialData* MaterialLoader::Load(const void* data, int32_t size)
 {
-	EffekseerRenderer::ShaderLoader loader;
+	ShaderLoader loader;
 	if (!loader.Load((const uint8_t*)data, size))
 	{
 		return nullptr;
@@ -263,8 +264,13 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 	auto ps = CompilePixelShader(shaderCode.c_str(), "PS", macros, log);
 
 	if (ps == nullptr)
+	{
+		std::cout << shaderCode << std::endl;
+		std::cout << log << std::endl;
 		return nullptr;
 
+	}
+	
 	auto shader = Shader::Create(static_cast<RendererImplemented*>(renderer_),
 								 MaterialVS::g_VS,
 								 sizeof(MaterialVS::g_VS),
@@ -286,8 +292,10 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 	pixelUniformSize += loader.Uniforms.size() * 4 * sizeof(float);
 
 	shader->SetVertexConstantBufferSize(vertexUniformSize);
+	shader->SetVertexRegisterCount(8 + 1);
 
 	shader->SetPixelConstantBufferSize(pixelUniformSize);
+	shader->SetPixelRegisterCount(pixelUniformSize / (sizeof(float) * 4));
 
 	materialData->TextureCount = loader.Textures.size();
 	materialData->UniformCount = loader.Uniforms.size();
