@@ -31,7 +31,7 @@ struct RenderedMaterial
 	\~japanese サムネイルを表示するための領域を推定するための描画クラス
 
 */
-class Renderer : public EffekseerRenderer::Renderer, public ::Effekseer::ReferenceObject
+class Renderer : public EffekseerRenderer::Renderer
 {
 protected:
 	Renderer() {}
