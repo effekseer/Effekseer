@@ -75,7 +75,7 @@ namespace Effekseer.Data
 		{
 			var e = doc.CreateElement(element_name);
 
-			var e_path = SaveObjectToElement(doc, "Path", mfp.Path, isClip);
+			var e_path = SaveToElement(doc, "Path", mfp.Path, isClip);
 			if(e_path != null)
 			{
 				e.AppendChild(e_path);
@@ -766,9 +766,9 @@ namespace Effekseer.Data
 				for (var i = 0; i < e_float1.ChildNodes.Count; i++)
 				{
 					var e_child = e_float1.ChildNodes[i] as XmlElement;
-					if (kv.ContainsKey(mfp.CreateKey<Value.Float>(e_child.Name)))
+					if (kv.ContainsKey((e_child.Name)))
 					{
-						var vs = kv[mfp.CreateKey<Value.Float>(e_child.Name)] as MaterialFileParameter.ValueStatus;
+						var vs = kv[e_child.Name] as MaterialFileParameter.ValueStatus;
 						var v = vs.Value as Value.Float;
 						LoadFromElement(e_child, v, isClip);
 					}
@@ -780,9 +780,9 @@ namespace Effekseer.Data
 				for (var i = 0; i < e_float4.ChildNodes.Count; i++)
 				{
 					var e_child = e_float4.ChildNodes[i] as XmlElement;
-					if (kv.ContainsKey(mfp.CreateKey<Value.Vector4D>(e_child.Name)))
+					if (kv.ContainsKey(e_child.Name))
 					{
-						var vs = kv[mfp.CreateKey<Value.Vector4D>(e_child.Name)] as MaterialFileParameter.ValueStatus;
+						var vs = kv[e_child.Name] as MaterialFileParameter.ValueStatus;
 						var v = vs.Value as Value.Vector4D;
 						LoadFromElement(e_child, v, isClip);
 					}
@@ -793,10 +793,10 @@ namespace Effekseer.Data
 			{
 				for (var i = 0; i < e_texture.ChildNodes.Count; i++)
 				{
-					var e_child = e_float4.ChildNodes[i] as XmlElement;
-					if (kv.ContainsKey(mfp.CreateKey<Value.PathForImage>(e_child.Name)))
+					var e_child = e_texture.ChildNodes[i] as XmlElement;
+					if (kv.ContainsKey(e_child.Name))
 					{
-						var vs = kv[mfp.CreateKey<Value.PathForImage>(e_child.Name)] as MaterialFileParameter.ValueStatus;
+						var vs = kv[e_child.Name] as MaterialFileParameter.ValueStatus;
 						var v = vs.Value as Value.PathForImage;
 						LoadFromElement(e_child, v, isClip);
 					}

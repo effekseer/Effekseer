@@ -127,7 +127,7 @@ namespace Effekseer.Data
 				else
 				{
 					var status = new ValueStatus();
-					var value = new Value.PathForImage(Resources.GetString("ImageFilter"), false);
+					var value = new Value.PathForImage(Resources.GetString("ImageFilter"), true);
 					status.Key = key;
 					status.Value = value;
 					status.Name = texture.Name;

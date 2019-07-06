@@ -102,9 +102,16 @@ namespace Effekseer.Utl
 						var defaultPath = texture["DefaultPath"].Value<string>();
 
 						// convert a path into absolute
-						Uri basePath = new Uri(path);
-						Uri targetPath = new Uri(basePath, defaultPath);
-						defaultPath = targetPath.ToString();
+						if(string.IsNullOrEmpty(defaultPath))
+						{
+							defaultPath = string.Empty;
+						}
+						else
+						{
+							Uri basePath = new Uri(path);
+							Uri targetPath = new Uri(basePath, defaultPath);
+							defaultPath = targetPath.ToString();
+						}
 
 						var isParam = texture["IsParam"].Value<bool>();
 						var isValueTexture = texture["IsValueTexture"].Value<bool>();

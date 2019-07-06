@@ -95,13 +95,28 @@ protected:
 				{
 					if (param.MaterialParameterPtr->MaterialTextures[i].Type == 1)
 					{
-						state.MaterialTextures[i] =
-							param.EffectPointer->GetNormalImage(param.MaterialParameterPtr->MaterialTextures[i].Index);
+						if (param.MaterialParameterPtr->MaterialTextures[i].Index >= 0)
+						{
+							state.MaterialTextures[i] =
+								param.EffectPointer->GetNormalImage(param.MaterialParameterPtr->MaterialTextures[i].Index);
+						}
+						else
+						{
+							state.MaterialTextures[i] = nullptr;
+						}
+
 					}
 					else
 					{
-						state.MaterialTextures[i] =
-							param.EffectPointer->GetColorImage(param.MaterialParameterPtr->MaterialTextures[i].Index);
+						if (param.MaterialParameterPtr->MaterialTextures[i].Index >= 0)
+						{
+							state.MaterialTextures[i] =
+								param.EffectPointer->GetColorImage(param.MaterialParameterPtr->MaterialTextures[i].Index);
+						}
+						else
+						{
+							state.MaterialTextures[i] = nullptr;
+						}
 					}
 				}
 			}

@@ -143,8 +143,8 @@ struct PS_Input
 		for (size_t i = 0; i < Textures.size(); i++)
 		{
 			auto& texture = Textures[i];
-			maincode << "Texture2D " << texture.Name << "_texture : register(t" << i << ");";
-			maincode << "SamplerState " << texture.Name << "_sampler : register(s" << i << ");";
+			maincode << "Texture2D " << texture.Name << "_texture : register(t" << i << ");" << std::endl;
+			maincode << "SamplerState " << texture.Name << "_sampler : register(s" << i << ");" << std::endl;
 		}
 
 		// predefined
