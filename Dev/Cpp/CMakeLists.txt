@@ -8,6 +8,7 @@ project(Effekseer)
 cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_DEBUG_POSTFIX ".Debug")
 
 option(BUILD_VIEWER "Build viewer" OFF)
 option(BUILD_TEST "Build test" OFF)
