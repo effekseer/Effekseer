@@ -1,31 +1,94 @@
 cmake_minimum_required(VERSION 3.12)
+include(ExternalProject)
 
 # solution name
 project(Effekseer)
 
-add_subdirectory(Dev)
-
 # zlib
-add_subdirectory(Downloads/zlib)
-set_target_properties(zlib PROPERTIES FOLDER "ThirdParty/zlib")
-set_target_properties(zlibstatic PROPERTIES FOLDER "ThirdParty/zlib")
-set_target_properties(minigzip PROPERTIES FOLDER "ThirdParty/zlib")
-set_target_properties(example PROPERTIES FOLDER "ThirdParty/zlib")
+ExternalProject_Add(
+    ExternalProject_zlib
+    SOURCE_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/zlib
+    PREFIX      ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/zlib
+    INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
+    CMAKE_ARGS  -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
+                -DASM686=off
+                -DAMD64=off
+)
+list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include)
+list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/lib)
 
 # libpng
-set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/zlib ${CMAKE_CURRENT_BINARY_DIR}/Downloads/zlib)
-set(PNG_BUILD_ZLIB ON CACHE BOOL "" FORCE)
-set(PNG_SHARED OFF CACHE BOOL "" FORCE)
-set(PNG_TESTS OFF CACHE BOOL "" FORCE)
-add_subdirectory(Downloads/libpng)
-set_target_properties(png_static PROPERTIES FOLDER "ThirdParty/png")
-set_target_properties(genfiles PROPERTIES FOLDER "ThirdParty/png")
+ExternalProject_Add(
+    ExternalProject_libpng
+    DEPENDS     ExternalProject_zlib
+    SOURCE_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/libpng
+    PREFIX      ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/libpng
+    INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
+    CMAKE_ARGS  -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng
+                -DZLIB_INCLUDE_DIR=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include
+                -DPNG_BUILD_ZLIB=ON
+                -DPNG_SHARED=OFF
+                -DPNG_TESTS=OFF
+)
+list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/include)
+list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib)
+
+# libgd
+ExternalProject_Add(
+    ExternalProject_libgd
+    DEPENDS         ExternalProject_zlib
+    SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/libgd
+    PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/libgd
+    INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd
+    PATCH_COMMAND   ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Dev/3rdPartyPatch/libgd-getopt.c <SOURCE_DIR>/libgd-getopt.c
+    CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd
+                    -DCMAKE_DEBUG_POSTFIX=d
+                    -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
+                    -DBUILD_STATIC_LIBS=ON
+)
+list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd/include)
+list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd/lib)
+
+# glew
+ExternalProject_Add(
+    ExternalProject_glew
+    URL https://sourceforge.net/projects/glew/files/glew/1.13.0/glew-1.13.0.zip
+    DOWNLOAD_DIR    ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Download/glew
+    PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/glew
+    INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew
+    PATCH_COMMAND   ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Dev/3rdPartyPatch/glew-CMakeLists.txt <SOURCE_DIR>/CMakeLists.txt
+    CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew
+)
+list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/include)
+list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/lib)
 
 # glfw
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
-add_subdirectory(Downloads/glfw)
-set_target_properties(glfw PROPERTIES FOLDER "ThirdParty/glfw")
+ExternalProject_Add(
+    ExternalProject_glfw
+    SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/glfw
+    PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/glfw
+    INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw
+    CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw
+                    -DCMAKE_DEBUG_POSTFIX=d
+                    -DGLFW_BUILD_EXAMPLES=OFF
+                    -DGLFW_BUILD_TESTS=OFF
+                    -DGLFW_BUILD_DOCS=OFF
+                    -DGLFW_INSTALL=ON
+)
+list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/include)
+list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/lib)
 
+# OpenSoundMixer
+ExternalProject_Add(
+    ExternalProject_OpenSoundMixer
+    SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer
+    PREFIX          ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Build/OpenSoundMixer
+    INSTALL_DIR     ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer
+    CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer
+                    -DCMAKE_DEBUG_POSTFIX=d
+                    -DUSE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+)
+list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer/src)
+list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer/lib)
+
+add_subdirectory(Dev)
