@@ -19,9 +19,7 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 
-			if (!String.IsNullOrEmpty(Core.FullPath)) {
-				UpdateFileList(Path.GetDirectoryName(Core.FullPath));
-			}
+			UpdateFileListWithProjectPath(Core.FullPath);
 
 			Icon = Images.GetIcon("PanelFileViewer");
 			IconSize = new swig.Vec2(24, 24);
@@ -43,7 +41,7 @@ namespace Effekseer.GUI.Dock
 				if (Manager.NativeManager.Button("↑") &&
 					!String.IsNullOrEmpty(currentPath))
 				{
-					UpdateFileList(Path.GetDirectoryName(currentPath));
+					UpdateFileListWithProjectPath(currentPath);
 				}
 			
 				Manager.NativeManager.SameLine();
@@ -105,7 +103,26 @@ namespace Effekseer.GUI.Dock
 
 		void OnAfterLoad(object sender, EventArgs e)
 		{
-			UpdateFileList(Path.GetDirectoryName(Core.FullPath));
+			UpdateFileListWithProjectPath(Core.FullPath);
+		}
+
+		void UpdateFileListWithProjectPath(string path)
+		{
+			if (string.IsNullOrEmpty(path))
+				return;
+
+			string dirPath = string.Empty;
+
+			try
+			{
+				dirPath = Path.GetDirectoryName(path);
+			}
+			catch(Exception e)
+			{
+				return;
+			}
+
+			UpdateFileList(dirPath);
 		}
 
 		public enum FileType
