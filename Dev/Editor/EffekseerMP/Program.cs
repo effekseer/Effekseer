@@ -86,7 +86,9 @@ namespace Effekseer
 				}
 				catch (Exception e)
 				{
-					System.IO.File.WriteAllText("error.txt", e.ToString());
+					DateTime dt = DateTime.Now;
+					var filename = string.Format("error_{0:D4}_{1:D2}_{2:D2}_{3:D2}_{4:D2}_{5:D2}.txt", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
+					System.IO.File.WriteAllText(filename, e.ToString());
 				}
 			}
 		}
