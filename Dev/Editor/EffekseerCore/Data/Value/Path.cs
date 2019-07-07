@@ -106,9 +106,6 @@ namespace Effekseer.Data.Value
 			Uri path = new Uri(_abspath);
 			var relative_path = basepath.MakeRelativeUri(path).ToString();
 
-#if ESCAPE_URI_ENABLED
-            relative_path = System.Web.HttpUtility.UrlDecode(relative_path);
-#endif
             return relative_path;
 		}
 
