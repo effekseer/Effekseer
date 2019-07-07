@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace Effekseer
 {
@@ -20,6 +21,7 @@ namespace Effekseer
 		}
 
 		[STAThread]
+		[HandleProcessCorruptedStateExceptions]
 		static void Main(string[] args)
 		{
 #if DEBUG
