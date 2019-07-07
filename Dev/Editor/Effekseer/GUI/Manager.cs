@@ -211,9 +211,9 @@ namespace Effekseer.GUI
 				AddControl(effectViewer);
 			}
 
-			if (LoadWindowConfig("config.Dock.xml"))
+			if (LoadWindowConfig(System.IO.Path.Combine(appDirectory, "config.Dock.xml")))
 			{
-				Manager.NativeManager.LoadDock("config.Dock.config");
+				Manager.NativeManager.LoadDock(System.IO.Path.Combine(appDirectory, "config.Dock.config"));
 			}
 			else
 			{
