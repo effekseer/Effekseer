@@ -118,16 +118,24 @@ namespace Effekseer.GUI
 						if (Core.LoadFrom(fullPath))
 						{
 							RecentFiles.AddRecentFile(fullPath);
+							System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(fullPath));
+						}
+						else
+						{
+							if (Core.Language == Language.Japanese)
+							{
+								swig.GUIManager.show(fullPath + "が見つかりません。", "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+							}
+							else
+							{
+								swig.GUIManager.show(fullPath + " is not found.", "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+							}
 						}
 					}
 					catch (Exception e)
 					{
 						swig.GUIManager.show(e.Message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-						//var messageBox = new Dialog.MessageBox();
-						//messageBox.Show("Error", e.Message);
 					}
-
-					System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(fullPath));
 				});
 
 				return true;
@@ -156,8 +164,6 @@ namespace Effekseer.GUI
 				catch (Exception e)
 				{
 					swig.GUIManager.show(e.Message, "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
-					//var messageBox = new Dialog.MessageBox();
-					//messageBox.Show("Error", e.Message);
 				}
 
 				return true;
