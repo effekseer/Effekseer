@@ -256,6 +256,12 @@ namespace Effekseer.GUI.Component
 			if(System.IO.File.Exists(path))
 			{
 				image = Images.Load(Manager.Native, path);
+				if(image == null)
+				{
+					infoText = "";
+					return;
+				}
+
 				infoText = "" + image.GetWidth() + "x" + image.GetHeight();
 			}
 			else

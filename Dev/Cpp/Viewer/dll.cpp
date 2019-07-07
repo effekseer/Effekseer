@@ -1966,21 +1966,31 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 	}
 #endif
 
-	auto resource = std::make_shared<efk::ImageResource>();
+	auto textureData = loader->Load(path, Effekseer::TextureType::Color);
 
-	resource->GetTextureData() = loader->Load(path, Effekseer::TextureType::Color);
-	resource->SetPath(path);
-
-	if (g_imageResources[path] != nullptr)
+	if (textureData != nullptr)
 	{
-		loader->Unload(g_imageResources[path]->GetTextureData());
+		auto resource = std::make_shared<efk::ImageResource>();
+
+		resource->GetTextureData() = textureData;
+		resource->SetPath(path);
+
+		if (g_imageResources[path] != nullptr)
+		{
+			loader->Unload(g_imageResources[path]->GetTextureData());
+		}
+
+		g_imageResources[path] = resource;
+
+		delete loader;
+
+		return resource.get();
 	}
-	
-	g_imageResources[path] = resource;
-
-	delete loader;
-
-	return resource.get();
+	else
+	{
+		delete loader;
+		return nullptr;
+	}
 }
 
 int32_t Native::GetAndResetDrawCall()
