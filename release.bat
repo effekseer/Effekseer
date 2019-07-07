@@ -1,5 +1,5 @@
-SET RDIR=Effekseer143
-SET RDIR_R=EffekseerRuntime143
+SET RDIR=Effekseer143d
+SET RDIR_R=EffekseerRuntime143d
 
 rmdir %RDIR%
 mkdir %RDIR%
