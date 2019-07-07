@@ -194,7 +194,7 @@ namespace Effekseer.Data
 				e.AppendChild(e_texture);
 			}
 
-			return e;
+			return e.ChildNodes.Count > 0 ? e : null;
 		}
 #endif
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicInputCollection collection, bool isClip)

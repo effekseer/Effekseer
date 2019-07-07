@@ -306,7 +306,7 @@ namespace Effekseer.Data
 		}
 
 #if MATERIAL_ENABLED
-		[Selected(ID = 3, Value = 1)]
+		[Selected(ID = 3, Value = (int)MaterialType.File)]
 		[IO(Export = true)]
 		public MaterialFileParameter MaterialFile
 		{
@@ -656,10 +656,10 @@ namespace Effekseer.Data
 		{
 			[Name(value = "標準", language = Language.Japanese)]
 			[Name(value = "Default", language = Language.English)]
-			Default,
+			Default = 0,
 			[Name(value = "ファイル", language = Language.Japanese)]
 			[Name(value = "File", language = Language.English)]
-			File,
+			File = 128,
 		}
 #endif
 		public enum FadeType : int

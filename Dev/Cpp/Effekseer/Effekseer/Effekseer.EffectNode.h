@@ -530,8 +530,8 @@ struct ParameterRendererCommon
 	*/
 	enum class RendererMaterialType : int32_t
 	{
-		Default,
-		File,
+		Default = 0,
+		File = 128,
 	};
 
 	RendererMaterialType MaterialType = RendererMaterialType::Default;
