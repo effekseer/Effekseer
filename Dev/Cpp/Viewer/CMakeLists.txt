@@ -40,8 +40,9 @@ list(APPEND cpps
 	3rdParty/nfd/nfd_win.cpp
 	3rdParty/Boxer/boxer_win.cpp
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
-	3rdParty/imgui_platform/imgui_impl_gl3.cpp
+	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
 	3rdParty/imgui_platform/imgui_impl_dx9.cpp
+	3rdParty/imgui_platform/imgui_impl_dx11.cpp
 	GUI/Platform/efk.Language_Other.cpp
 )
 
@@ -86,11 +87,13 @@ endif()
 if (WIN32)
 FILE(GLOB hs_g
 	Graphics/Platform/DX9/*.h
+	Graphics/Platform/DX11/*.h
 	Graphics/Platform/GL/*.h
 )
 
 FILE(GLOB cpps_g
 	Graphics/Platform/DX9/*.cpp
+	Graphics/Platform/DX11/*.cpp
 	Graphics/Platform/GL/*.cpp
 )
 else()
@@ -171,10 +174,8 @@ if (MSVC)
 	endif()
 endif()
 
-add_library(Viewer SHARED ${cpps} ${hs})
-add_executable(ViewerTest ${cpps} ${hs} test.cpp)
-
 include_directories(
+	${EFK_THIRDPARTY_INCLUDES}
 	3rdParty/imgui/
 	../include/
 	../EffekseerRendererDX9/
@@ -183,16 +184,42 @@ include_directories(
 	../
 )
 
-link_directories(
+add_library(Viewer SHARED ${cpps} ${hs})
+target_link_directories(Viewer PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
+target_link_libraries(Viewer 
+	debug libgd_staticd
+	debug libglew32d
+	debug glfw3d
+	debug OpenSoundMixerd
+	optimized libgd_static
+	optimized libglew32
+	optimized glfw3
+	optimized OpenSoundMixer
+)
 
+add_executable(ViewerTest ${cpps} ${hs} test.cpp)
+target_link_directories(ViewerTest PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
+target_link_libraries(ViewerTest 
+	debug libgd_staticd
+	debug libglew32d
+	debug glfw3d
+	debug OpenSoundMixerd
+	optimized libgd_static
+	optimized libglew32
+	optimized glfw3
+	optimized OpenSoundMixer
+)
+
+link_directories(
+	
     ${PROJECT_SOURCE_DIR}/../lib/
 
 )
 
 if (WIN32)
 
-target_link_libraries(Viewer effekseer effekseer_renderer_dx9 effekseer_renderer_gl EffekseerSoundOSMixer)
-target_link_libraries(ViewerTest effekseer effekseer_renderer_dx9 effekseer_renderer_gl EffekseerSoundOSMixer)
+target_link_libraries(Viewer effekseer effekseer_renderer_dx9 effekseer_renderer_dx11 effekseer_renderer_gl EffekseerSoundOSMixer)
+target_link_libraries(ViewerTest effekseer effekseer_renderer_dx9 effekseer_renderer_dx11 effekseer_renderer_gl EffekseerSoundOSMixer)
 
 elseif(APPLE)
 
@@ -307,3 +334,9 @@ endif()
 
 set_target_properties(Viewer PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(ViewerTest PROPERTIES LINKER_LANGUAGE CXX)
+
+add_custom_command(TARGET Viewer POST_BUILD        # Adds a post-build event to MyTest
+    COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
+	$<TARGET_FILE:Viewer>
+	${CMAKE_SOURCE_DIR}/Dev/release/Viewer.dll )                 # <--this is out-file path
+		

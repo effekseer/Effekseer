@@ -4,12 +4,6 @@
 #ifdef _WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32 1
 
-#if _DEBUG
-#pragma comment(lib,"x86/Debug/glfw3.lib")
-#else
-#pragma comment(lib,"x86/Release/glfw3.lib")
-#endif
-
 #endif
 
 #define GL_GLEXT_PROTOTYPES

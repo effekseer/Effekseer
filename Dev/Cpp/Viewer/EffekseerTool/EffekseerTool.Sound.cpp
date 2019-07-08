@@ -6,12 +6,6 @@
 
 #ifdef _WIN32
 
-#if _DEBUG
-#pragma comment(lib,"x86/Debug/OpenSoundMixer.lib")
-#else
-#pragma comment(lib,"x86/Release/OpenSoundMixer.lib")
-#endif
-
 #endif
 //----------------------------------------------------------------------------------
 //

@@ -10,16 +10,8 @@
 #define MSWIN32 1
 #define BGDWIN32 1
 #endif
-#include <gd/gd.h>
-#include <gd/gdfontmb.h>
-
-#ifdef _WIN32
-#if _DEBUG
-#pragma comment(lib,"x86/Debug/libgd_static.lib")
-#else
-#pragma comment(lib,"x86/Release/libgd_static.lib")
-#endif
-#endif
+#include <gd.h>
+#include <gdfontmb.h>
 
 namespace efk
 {
