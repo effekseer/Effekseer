@@ -68,8 +68,15 @@ public:
 	BoundingBoxEstimator();
 	virtual ~BoundingBoxEstimator();
 
-	BoundingBox
-	Estimate(Effekseer::Effect* effect, const Effekseer::Matrix44& cameraMat, const Effekseer::Matrix44& projMat, int screenWidth, int screenHeight, int32_t time, float rate, float zmin, float zmax);
+	BoundingBox Estimate(Effekseer::Effect* effect,
+						 const Effekseer::Matrix44& cameraMat,
+						 const Effekseer::Matrix44& projMat,
+						 int screenWidth,
+						 int screenHeight,
+						 int32_t time,
+						 float rate,
+						 float zmin,
+						 float zmax);
 };
 
 } // namespace EffekseerRendererArea

@@ -223,11 +223,11 @@ void Init()
 	EffekseerRendererArea::BoundingBoxEstimator bbestimator;
 	bbestimator.Estimate(testManager->effects[0],
 						 ::Effekseer::Matrix44().LookAtRH(g_position, g_focus, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)),
-						 ::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, 4.0f / 3.0f, 1.0f, 50.0f),
+						 ::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, 4.0f / 3.0f, 1.0f, 100.0f),
 						 640,
 						 480,
 						 100,
-						 0.98f,
+						 0.90f,
 		0.0f,
 		1.0f);
 #endif

@@ -556,7 +556,6 @@ BoundingBox BoundingBoxEstimator::Estimate(Effekseer::Effect* effect,
 
 	assert(manager_ != nullptr);
 	auto handle = manager_->Play(effect, 0, 0, 0);
-
 	Effekseer::Matrix44 cameraProjMat;
 	Effekseer::Matrix44::Mul(cameraProjMat, cameraMat, projMat);
 
@@ -568,28 +567,102 @@ BoundingBox BoundingBoxEstimator::Estimate(Effekseer::Effect* effect,
 		renderer_->EndRendering();
 
 		auto& vs = renderer_->GetCurrentVertexes();
+		auto& fs = renderer_->GetCurrentIndexes();
 
 		float minX = std::numeric_limits<float>::max();
 		float minY = std::numeric_limits<float>::max();
 		float maxX = -std::numeric_limits<float>::max();
 		float maxY = -std::numeric_limits<float>::max();
 
-		for (auto& v : vs)
-		{
+		int count = 0;
+
+		auto convert = [&](Effekseer::Vector3D& pos) -> Effekseer::Vector3D {
 			Effekseer::Vector3D posScreen;
-			Effekseer::Vector3D::TransformWithW(posScreen, v.Pos, cameraProjMat);
+			Effekseer::Vector3D::TransformWithW(posScreen, pos, cameraProjMat);
 			posScreen.X = (posScreen.X + 1.0f) / 2.0f * screenWidth;
 			posScreen.Y = (1.0f - posScreen.Y) / 2.0f * screenHeight;
+			return posScreen;
+		};
 
-			if (posScreen.Z < zmin || posScreen.Z > zmax)
-				continue;
-			minX = Effekseer::Min(minX, posScreen.X);
-			minY = Effekseer::Min(minY, posScreen.Y);
-			maxX = Effekseer::Max(maxX, posScreen.X);
-			maxY = Effekseer::Max(maxY, posScreen.Y);
+		std::function<void(std::array<EffekseerRendererArea::Vertex, 3> vs)> checkTriangle;
+
+		checkTriangle = [&](std::array<EffekseerRendererArea::Vertex, 3> vs) -> void {
+			// check vertex colors
+			if (vs[0].Col.A < 16 && vs[1].Col.A < 16 && vs[2].Col.A < 16)
+				return;
+
+			Effekseer::Vector3D vpos[3];
+			vpos[0] = convert(vs[0].Pos);
+			vpos[1] = convert(vs[1].Pos);
+			vpos[2] = convert(vs[2].Pos);
+
+			// check near and far
+			if ((vpos[0].Z < zmin || vpos[0].Z > zmax) && (vpos[1].Z < zmin || vpos[1].Z > zmax) && (vpos[2].Z < zmin || vpos[2].Z > zmax))
+			{
+				return;
+			}
+
+			Effekseer::Vector3D vpos_ss[3];
+
+			for (auto i = 0; i < 3; i++)
+			{
+				vpos_ss[i] = vpos[i];
+				vpos_ss[i].Z = 0.0f;
+			}
+
+			// check length
+			if (Effekseer::Vector3D::Length(vpos_ss[0] - vpos_ss[1]) < 2.0f)
+				return;
+			
+			if (Effekseer::Vector3D::Length(vpos_ss[1] - vpos_ss[2]) < 2.0f)
+				return;
+			
+			if (Effekseer::Vector3D::Length(vpos_ss[2] - vpos_ss[0]) < 2.0f)
+				return;
+
+			// separate
+			if (Effekseer::Vector3D::Length(vpos_ss[0] - vpos_ss[1]) + Effekseer::Vector3D::Length(vpos_ss[1] - vpos_ss[2]) +
+					Effekseer::Vector3D::Length(vpos_ss[2] - vpos_ss[0]) >
+				90)
+			{
+				std::array<EffekseerRendererArea::Vertex, 3> vs_;
+
+				for (int i = 0; i < 3; i++)
+				{
+					vs_[i].Pos = (vs[i].Pos + vs[(i + 1) % 3].Pos) / 2.0f;
+					vs_[i].Col = Effekseer::Color::Lerp(vs[i].Col, vs[(i + 1) % 3].Col, 0.5f);
+				}
+
+				checkTriangle(std::array<EffekseerRendererArea::Vertex, 3>{vs[0], vs_[0], vs_[2]});
+				checkTriangle(std::array<EffekseerRendererArea::Vertex, 3>{vs[1], vs_[1], vs_[0]});
+				checkTriangle(std::array<EffekseerRendererArea::Vertex, 3>{vs[2], vs_[2], vs_[1]});
+				checkTriangle(std::array<EffekseerRendererArea::Vertex, 3>{vs_[0], vs_[1], vs_[2]});
+			}
+			else
+			{
+				for (int i = 0; i < 3; i++)
+				{
+
+					if (vpos[i].Z < zmin || vpos[i].Z > zmax)
+						continue;
+					if (vs[i].Col.A < 16)
+						continue;
+
+					minX = Effekseer::Min(minX, vpos[i].X);
+					minY = Effekseer::Min(minY, vpos[i].Y);
+					maxX = Effekseer::Max(maxX, vpos[i].X);
+					maxY = Effekseer::Max(maxY, vpos[i].Y);
+					count++;
+				}
+			}
+		};
+
+		for (auto& f : fs)
+		{
+			checkTriangle(std::array<EffekseerRendererArea::Vertex, 3>{vs[f[0]], vs[f[1]], vs[f[2]]});
 		}
 
-		if (vs.size() > 0)
+		if (count > 0)
 		{
 			minXs.push_back(minX);
 			minYs.push_back(minY);
