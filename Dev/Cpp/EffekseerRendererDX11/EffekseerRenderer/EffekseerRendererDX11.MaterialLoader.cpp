@@ -3,10 +3,7 @@
 #include "EffekseerRendererDX11.Shader.h"
 
 #include <d3dcompiler.h>
-
-#ifdef _DEBUG
 #include <iostream>
-#endif
 
 namespace EffekseerRendererDX11
 {
