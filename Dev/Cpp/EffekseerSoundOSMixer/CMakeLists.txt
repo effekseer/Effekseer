@@ -28,6 +28,8 @@ endif()
 
 add_library(EffekseerSoundOSMixer STATIC ${effekseer_sound_src})
 
-include_directories(../include/)
+include_directories(
+	../include/
+	../../../Downloads/OpenSoundMixer/src)
 
 set_target_properties(EffekseerSoundOSMixer PROPERTIES LINKER_LANGUAGE CXX)
