@@ -425,9 +425,9 @@
       <Node>
         <CommonValues>
           <Life>
-            <Center>300</Center>
-            <Max>300</Max>
-            <Min>300</Min>
+            <Center>100000</Center>
+            <Max>100000</Max>
+            <Min>100000</Min>
           </Life>
           <GenerationTimeOffset>
             <Center>140</Center>
@@ -441,11 +441,23 @@
           <UV>3</UV>
           <UVScroll>
             <Size>
-              <X>256</X>
-              <Y>256</Y>
+              <X>
+                <Center>256</Center>
+                <Max>256</Max>
+                <Min>256</Min>
+              </X>
+              <Y>
+                <Center>256</Center>
+                <Max>256</Max>
+                <Min>256</Min>
+              </Y>
             </Size>
             <Speed>
-              <Y>-16</Y>
+              <Y>
+                <Center>-16</Center>
+                <Max>-16</Max>
+                <Min>-16</Min>
+              </Y>
             </Speed>
           </UVScroll>
         </RendererCommonValues>
@@ -474,9 +486,9 @@
       <Node>
         <CommonValues>
           <Life>
-            <Center>300</Center>
-            <Max>300</Max>
-            <Min>300</Min>
+            <Center>100000</Center>
+            <Max>100000</Max>
+            <Min>100000</Min>
           </Life>
           <GenerationTimeOffset>
             <Center>140</Center>
@@ -490,11 +502,23 @@
           <UV>3</UV>
           <UVScroll>
             <Size>
-              <X>256</X>
-              <Y>256</Y>
+              <X>
+                <Center>256</Center>
+                <Max>256</Max>
+                <Min>256</Min>
+              </X>
+              <Y>
+                <Center>256</Center>
+                <Max>256</Max>
+                <Min>256</Min>
+              </Y>
             </Size>
             <Speed>
-              <Y>-20</Y>
+              <Y>
+                <Center>-20</Center>
+                <Max>-20</Max>
+                <Min>-20</Min>
+              </Y>
             </Speed>
           </UVScroll>
         </RendererCommonValues>
@@ -533,9 +557,9 @@
       <Node>
         <CommonValues>
           <Life>
-            <Center>300</Center>
-            <Max>300</Max>
-            <Min>300</Min>
+            <Center>100000</Center>
+            <Max>100000</Max>
+            <Min>100000</Min>
           </Life>
           <GenerationTimeOffset>
             <Center>140</Center>
@@ -549,11 +573,23 @@
           <UV>3</UV>
           <UVScroll>
             <Size>
-              <X>256</X>
-              <Y>256</Y>
+              <X>
+                <Center>256</Center>
+                <Max>256</Max>
+                <Min>256</Min>
+              </X>
+              <Y>
+                <Center>256</Center>
+                <Max>256</Max>
+                <Min>256</Min>
+              </Y>
             </Size>
             <Speed>
-              <Y>-24</Y>
+              <Y>
+                <Center>-24</Center>
+                <Max>-24</Max>
+                <Min>-24</Min>
+              </Y>
             </Speed>
           </UVScroll>
         </RendererCommonValues>
@@ -594,9 +630,9 @@
       <Node>
         <CommonValues>
           <Life>
-            <Center>300</Center>
-            <Max>300</Max>
-            <Min>300</Min>
+            <Center>100000</Center>
+            <Max>100000</Max>
+            <Min>100000</Min>
           </Life>
           <GenerationTimeOffset>
             <Center>140</Center>
@@ -618,11 +654,23 @@
           <UV>3</UV>
           <UVScroll>
             <Size>
-              <X>128</X>
-              <Y>128</Y>
+              <X>
+                <Center>128</Center>
+                <Max>128</Max>
+                <Min>128</Min>
+              </X>
+              <Y>
+                <Center>128</Center>
+                <Max>128</Max>
+                <Min>128</Min>
+              </Y>
             </Size>
             <Speed>
-              <Y>28</Y>
+              <Y>
+                <Center>28</Center>
+                <Max>28</Max>
+                <Min>28</Min>
+              </Y>
             </Speed>
           </UVScroll>
         </RendererCommonValues>
@@ -657,9 +705,9 @@
       <Node>
         <CommonValues>
           <Life>
-            <Center>300</Center>
-            <Max>300</Max>
-            <Min>300</Min>
+            <Center>100000</Center>
+            <Max>100000</Max>
+            <Min>100000</Min>
           </Life>
           <GenerationTimeOffset>
             <Center>140</Center>
@@ -681,11 +729,23 @@
           <UV>3</UV>
           <UVScroll>
             <Size>
-              <X>128</X>
-              <Y>64</Y>
+              <X>
+                <Center>128</Center>
+                <Max>128</Max>
+                <Min>128</Min>
+              </X>
+              <Y>
+                <Center>64</Center>
+                <Max>64</Max>
+                <Min>64</Min>
+              </Y>
             </Size>
             <Speed>
-              <Y>16</Y>
+              <Y>
+                <Center>16</Center>
+                <Max>16</Max>
+                <Min>16</Min>
+              </Y>
             </Speed>
           </UVScroll>
         </RendererCommonValues>
@@ -808,7 +868,7 @@
       <Z>0.01</Z>
     </TargetLocation>
   </Behavior>
-  <ToolVersion>0.7CTP1</ToolVersion>
+  <ToolVersion>1.43</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>400</EndFrame>

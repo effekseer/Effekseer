@@ -542,7 +542,7 @@
                   </SinglePVA>
                 </ScalingValues>
                 <RendererCommonValues>
-                  <ColorTexture>Texture/starpart.PNG</ColorTexture>
+                  <ColorTexture>Texture/starpart_.png</ColorTexture>
                   <AlphaBlend>2</AlphaBlend>
                 </RendererCommonValues>
                 <Name>Inner Symbol</Name>

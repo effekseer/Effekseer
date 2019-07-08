@@ -835,7 +835,6 @@
           <Node>
             <CommonValues>
               <MaxGeneration>
-                <Value>0</Value>
                 <Infinite>True</Infinite>
               </MaxGeneration>
               <Life>
@@ -2241,6 +2240,7 @@
               <LocationEffectType>1</LocationEffectType>
               <RotationEffectType>1</RotationEffectType>
               <ScaleEffectType>1</ScaleEffectType>
+              <RemoveWhenAllChildrenAreRemoved>True</RemoveWhenAllChildrenAreRemoved>
               <Life>
                 <Center>300</Center>
                 <Max>300</Max>
@@ -2416,6 +2416,15 @@
                         <InterpolationType>0</InterpolationType>
                       </Key14>
                       <Key15>
+                        <Frame>300</Frame>
+                        <Value>0</Value>
+                        <LeftX>300</LeftX>
+                        <LeftY>0</LeftY>
+                        <RightX>300</RightX>
+                        <RightY>0</RightY>
+                        <InterpolationType>0</InterpolationType>
+                      </Key15>
+                      <Key16>
                         <Frame>359</Frame>
                         <Value>0</Value>
                         <LeftX>344.9796</LeftX>
@@ -2423,23 +2432,14 @@
                         <RightX>364.6839</RightX>
                         <RightY>0</RightY>
                         <InterpolationType>0</InterpolationType>
-                      </Key15>
-                      <Key16>
+                      </Key16>
+                      <Key17>
                         <Frame>535</Frame>
                         <Value>-0.01583928</Value>
                         <LeftX>535</LeftX>
                         <LeftY>-0.01583928</LeftY>
                         <RightX>535</RightX>
                         <RightY>-0.01583928</RightY>
-                        <InterpolationType>0</InterpolationType>
-                      </Key16>
-                      <Key17>
-                        <Frame>300</Frame>
-                        <Value>0</Value>
-                        <LeftX>300</LeftX>
-                        <LeftY>0</LeftY>
-                        <RightX>300</RightX>
-                        <RightY>0</RightY>
                         <InterpolationType>0</InterpolationType>
                       </Key17>
                     </X>
@@ -2708,6 +2708,15 @@
                         <InterpolationType>0</InterpolationType>
                       </Key12>
                       <Key13>
+                        <Frame>300</Frame>
+                        <Value>1.2</Value>
+                        <LeftX>300</LeftX>
+                        <LeftY>1.2</LeftY>
+                        <RightX>300</RightX>
+                        <RightY>1.2</RightY>
+                        <InterpolationType>0</InterpolationType>
+                      </Key13>
+                      <Key14>
                         <Frame>352</Frame>
                         <Value>1.6</Value>
                         <LeftX>322.0646</LeftX>
@@ -2715,23 +2724,14 @@
                         <RightX>360.7152</RightX>
                         <RightY>1.541774</RightY>
                         <InterpolationType>0</InterpolationType>
-                      </Key13>
-                      <Key14>
+                      </Key14>
+                      <Key15>
                         <Frame>532</Frame>
                         <Value>1.501596</Value>
                         <LeftX>532</LeftX>
                         <LeftY>1.501596</LeftY>
                         <RightX>532</RightX>
                         <RightY>1.501596</RightY>
-                        <InterpolationType>0</InterpolationType>
-                      </Key14>
-                      <Key15>
-                        <Frame>300</Frame>
-                        <Value>1.2</Value>
-                        <LeftX>300</LeftX>
-                        <LeftY>1.2</LeftY>
-                        <RightX>300</RightX>
-                        <RightY>1.2</RightY>
                         <InterpolationType>0</InterpolationType>
                       </Key15>
                     </Z>
@@ -2944,6 +2944,15 @@
                         <InterpolationType>0</InterpolationType>
                       </Key7>
                       <Key8>
+                        <Frame>300</Frame>
+                        <Value>14.79589</Value>
+                        <LeftX>300</LeftX>
+                        <LeftY>14.79589</LeftY>
+                        <RightX>842</RightX>
+                        <RightY>14.79589</RightY>
+                        <InterpolationType>0</InterpolationType>
+                      </Key8>
+                      <Key9>
                         <Frame>345</Frame>
                         <Value>0</Value>
                         <LeftX>329.8428</LeftX>
@@ -2951,23 +2960,14 @@
                         <RightX>359.7782</RightX>
                         <RightY>1.192093E-07</RightY>
                         <InterpolationType>0</InterpolationType>
-                      </Key8>
-                      <Key9>
+                      </Key9>
+                      <Key10>
                         <Frame>558</Frame>
                         <Value>-2.91073</Value>
                         <LeftX>558</LeftX>
                         <LeftY>-7.046045</LeftY>
                         <RightX>558</RightX>
                         <RightY>-2.91073</RightY>
-                        <InterpolationType>0</InterpolationType>
-                      </Key9>
-                      <Key10>
-                        <Frame>300</Frame>
-                        <Value>14.79589</Value>
-                        <LeftX>300</LeftX>
-                        <LeftY>14.79589</LeftY>
-                        <RightX>842</RightX>
-                        <RightY>14.79589</RightY>
                         <InterpolationType>0</InterpolationType>
                       </Key10>
                     </Y>
@@ -3046,14 +3046,23 @@
                       </Key7>
                       <Key8>
                         <Frame>300</Frame>
+                        <Value>0</Value>
+                        <LeftX>300</LeftX>
+                        <LeftY>0</LeftY>
+                        <RightX>840</RightX>
+                        <RightY>0</RightY>
+                        <InterpolationType>0</InterpolationType>
+                      </Key8>
+                      <Key9>
+                        <Frame>300</Frame>
                         <Value>58.45496</Value>
                         <LeftX>293.3014</LeftX>
                         <LeftY>58.45496</LeftY>
                         <RightX>304.0192</RightX>
                         <RightY>58.45496</RightY>
                         <InterpolationType>0</InterpolationType>
-                      </Key8>
-                      <Key9>
+                      </Key9>
+                      <Key10>
                         <Frame>352</Frame>
                         <Value>105.8213</Value>
                         <LeftX>338.7375</LeftX>
@@ -3061,8 +3070,8 @@
                         <RightX>366.5509</RightX>
                         <RightY>105.8213</RightY>
                         <InterpolationType>0</InterpolationType>
-                      </Key9>
-                      <Key10>
+                      </Key10>
+                      <Key11>
                         <Frame>354</Frame>
                         <Value>104.5094</Value>
                         <LeftX>315.0369</LeftX>
@@ -3070,8 +3079,8 @@
                         <RightX>359.2233</RightX>
                         <RightY>104.5094</RightY>
                         <InterpolationType>0</InterpolationType>
-                      </Key10>
-                      <Key11>
+                      </Key11>
+                      <Key12>
                         <Frame>375</Frame>
                         <Value>8.824795</Value>
                         <LeftX>369.7767</LeftX>
@@ -3079,23 +3088,14 @@
                         <RightX>378.9175</RightX>
                         <RightY>8.824795</RightY>
                         <InterpolationType>0</InterpolationType>
-                      </Key11>
-                      <Key12>
+                      </Key12>
+                      <Key13>
                         <Frame>550</Frame>
                         <Value>17.21198</Value>
                         <LeftX>544.6351</LeftX>
                         <LeftY>17.21198</LeftY>
                         <RightX>557.4643</RightX>
                         <RightY>17.21198</RightY>
-                        <InterpolationType>0</InterpolationType>
-                      </Key12>
-                      <Key13>
-                        <Frame>300</Frame>
-                        <Value>0</Value>
-                        <LeftX>300</LeftX>
-                        <LeftY>0</LeftY>
-                        <RightX>840</RightX>
-                        <RightY>0</RightY>
                         <InterpolationType>0</InterpolationType>
                       </Key13>
                     </Z>
@@ -6439,7 +6439,7 @@
       <Radius>14</Radius>
     </Sphere>
   </Culling>
-  <ToolVersion>1.30</ToolVersion>
+  <ToolVersion>1.43</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>300</EndFrame>

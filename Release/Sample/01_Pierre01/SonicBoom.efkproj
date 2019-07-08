@@ -5,6 +5,7 @@
     <Children>
       <Node>
         <CommonValues>
+          <RemoveWhenAllChildrenAreRemoved>True</RemoveWhenAllChildrenAreRemoved>
           <Life>
             <Center>180</Center>
             <Max>180</Max>
@@ -1496,9 +1497,9 @@
       </Node>
     </Children>
   </Root>
-  <ToolVersion>1.30</ToolVersion>
+  <ToolVersion>1.43</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
-  <EndFrame>120</EndFrame>
+  <EndFrame>337</EndFrame>
   <IsLoop>True</IsLoop>
 </EffekseerProject>

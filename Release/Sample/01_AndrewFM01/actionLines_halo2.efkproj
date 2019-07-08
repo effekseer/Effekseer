@@ -36,8 +36,6 @@
               <MaxGeneration>
                 <Value>100</Value>
               </MaxGeneration>
-              <LocationEffectType>0</LocationEffectType>
-              <ScaleEffectType>0</ScaleEffectType>
               <GenerationTime>
                 <Center>0.01</Center>
                 <Max>0.01</Max>
@@ -108,9 +106,19 @@
                 <Billboard>2</Billboard>
                 <ColorAll>1</ColorAll>
                 <ColorAll_Random>
+                  <R>
+                    <DrawnAs>0</DrawnAs>
+                  </R>
+                  <G>
+                    <DrawnAs>0</DrawnAs>
+                  </G>
+                  <B>
+                    <DrawnAs>0</DrawnAs>
+                  </B>
                   <A>
                     <Center>127</Center>
                     <Min>0</Min>
+                    <DrawnAs>0</DrawnAs>
                   </A>
                   <DrawnAs>0</DrawnAs>
                 </ColorAll_Random>
@@ -196,8 +204,6 @@
               <MaxGeneration>
                 <Value>100</Value>
               </MaxGeneration>
-              <LocationEffectType>0</LocationEffectType>
-              <ScaleEffectType>0</ScaleEffectType>
               <GenerationTime>
                 <Center>0.001</Center>
                 <Max>0.001</Max>
@@ -260,10 +266,20 @@
                   <A>64</A>
                 </ColorAll_Fixed>
                 <ColorAll_Random>
+                  <R>
+                    <DrawnAs>0</DrawnAs>
+                  </R>
+                  <G>
+                    <DrawnAs>0</DrawnAs>
+                  </G>
+                  <B>
+                    <DrawnAs>0</DrawnAs>
+                  </B>
                   <A>
                     <Center>48</Center>
                     <Max>96</Max>
                     <Min>0</Min>
+                    <DrawnAs>0</DrawnAs>
                   </A>
                   <DrawnAs>0</DrawnAs>
                 </ColorAll_Random>
@@ -336,8 +352,6 @@
               <MaxGeneration>
                 <Value>100</Value>
               </MaxGeneration>
-              <LocationEffectType>0</LocationEffectType>
-              <ScaleEffectType>0</ScaleEffectType>
               <GenerationTime>
                 <Center>0.001</Center>
                 <Max>0.001</Max>
@@ -411,10 +425,20 @@
                   <A>64</A>
                 </ColorAll_Fixed>
                 <ColorAll_Random>
+                  <R>
+                    <DrawnAs>0</DrawnAs>
+                  </R>
+                  <G>
+                    <DrawnAs>0</DrawnAs>
+                  </G>
+                  <B>
+                    <DrawnAs>0</DrawnAs>
+                  </B>
                   <A>
                     <Center>128</Center>
                     <Max>192</Max>
                     <Min>64</Min>
+                    <DrawnAs>0</DrawnAs>
                   </A>
                   <DrawnAs>0</DrawnAs>
                 </ColorAll_Random>
@@ -435,7 +459,7 @@
       <Z>11</Z>
     </TargetLocation>
   </Behavior>
-  <ToolVersion>0.7CTP1</ToolVersion>
+  <ToolVersion>1.43</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>50</EndFrame>
