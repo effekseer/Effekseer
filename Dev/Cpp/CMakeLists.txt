@@ -13,11 +13,6 @@ set(CMAKE_DEBUG_POSTFIX ".Debug")
 option(BUILD_VIEWER "Build viewer" OFF)
 option(BUILD_TEST "Build test" OFF)
 
-# For MSVC
-if (MSVC)
-	option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
-endif()
-
 # For Mac
 if(APPLE)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
