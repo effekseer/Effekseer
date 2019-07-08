@@ -196,7 +196,6 @@ target_link_libraries(Viewer
 	optimized glfw3
 	optimized OpenSoundMixer
 )
-#set_target_properties(Viewer PROPERTIES DEBUG_POSTFIX "")
 
 add_executable(ViewerTest ${cpps} ${hs} test.cpp)
 target_link_directories(ViewerTest PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
@@ -339,5 +338,5 @@ set_target_properties(ViewerTest PROPERTIES LINKER_LANGUAGE CXX)
 add_custom_command(TARGET Viewer POST_BUILD        # Adds a post-build event to MyTest
     COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
 	$<TARGET_FILE:Viewer>
-	${CMAKE_SOURCE_DIR}/Dev/release )                 # <--this is out-file path
+	${CMAKE_SOURCE_DIR}/Dev/release/Viewer.dll )                 # <--this is out-file path
 		
