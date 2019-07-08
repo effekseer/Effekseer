@@ -628,7 +628,7 @@ namespace Effekseer.GUI
 
 		public static void SaveWindowConfig(string path)
 		{
-			var size = Manager.WindowSize;
+			var size = Manager.NativeManager.GetSize();
 
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
