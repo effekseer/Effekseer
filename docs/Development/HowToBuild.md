@@ -1,7 +1,23 @@
-How to build (for Development)
+How to build
 ==========
 
-Windows
+Requirements
+----------
+
+### Windows
+
+- Visual Studio 2015+
+
+### macOS
+
+- Visual Studio for Mac (msbuild)
+
+### Linux
+
+`TODO`
+
+
+Runtime and Viewer
 ----------
 
 Execure following command at the repository root.
@@ -9,17 +25,22 @@ Execure following command at the repository root.
 ```
 mkdir build
 cd build
-cmake .. -G "Visual Studio 15 2017" -DBUILD_TEST=ON -DUSE_XAUDIO2=ON
+cmake .. -G <generator> [options]
 ```
 
-Mac
+### generator
+
+`<generator>` is tested with the following values: 
+- Windows: "Visual Studio 15 2017"
+- MacOS: `TODO`
+- Linux: `TODO`
+
+### options
+
+- `BUILD_VIEWER=ON` : Build the library (Viewer) needed to run the editor. If omitted, only the runtime will be built.
+
+
+Attention
 ----------
 
-TODO
-
-
-Linux
-----------
-
-TODO
-
+- fbxToEffekseerModelConverter is downloaded from https://github.com/effekseer/Effekseer/releases/tag/Prebuild
