@@ -82,12 +82,28 @@
           <UV>3</UV>
           <UVScroll>
             <Size>
-              <X>2048</X>
-              <Y>2048</Y>
+              <X>
+                <Center>2048</Center>
+                <Max>2048</Max>
+                <Min>2048</Min>
+              </X>
+              <Y>
+                <Center>2048</Center>
+                <Max>2048</Max>
+                <Min>2048</Min>
+              </Y>
             </Size>
             <Speed>
-              <X>10</X>
-              <Y>20</Y>
+              <X>
+                <Center>10</Center>
+                <Max>10</Max>
+                <Min>10</Min>
+              </X>
+              <Y>
+                <Center>20</Center>
+                <Max>20</Max>
+                <Min>20</Min>
+              </Y>
             </Speed>
           </UVScroll>
         </RendererCommonValues>
@@ -391,12 +407,28 @@
           <UV>3</UV>
           <UVScroll>
             <Size>
-              <X>1024</X>
-              <Y>1024</Y>
+              <X>
+                <Center>1024</Center>
+                <Max>1024</Max>
+                <Min>1024</Min>
+              </X>
+              <Y>
+                <Center>1024</Center>
+                <Max>1024</Max>
+                <Min>1024</Min>
+              </Y>
             </Size>
             <Speed>
-              <X>5</X>
-              <Y>10</Y>
+              <X>
+                <Center>5</Center>
+                <Max>5</Max>
+                <Min>5</Min>
+              </X>
+              <Y>
+                <Center>10</Center>
+                <Max>10</Max>
+                <Min>10</Min>
+              </Y>
             </Speed>
           </UVScroll>
         </RendererCommonValues>
@@ -582,19 +614,37 @@
               <X>10</X>
               <Y>60</Y>
             </Size>
-            <FrameLength>2</FrameLength>
+            <FrameLength>
+              <Value>2</Value>
+            </FrameLength>
             <FrameCountX>10</FrameCountX>
             <FrameCountY>3</FrameCountY>
             <LoopType>1</LoopType>
           </UVAnimation>
           <UVScroll>
             <Size>
-              <X>2000</X>
-              <Y>2000</Y>
+              <X>
+                <Center>2000</Center>
+                <Max>2000</Max>
+                <Min>2000</Min>
+              </X>
+              <Y>
+                <Center>2000</Center>
+                <Max>2000</Max>
+                <Min>2000</Min>
+              </Y>
             </Size>
             <Speed>
-              <X>6</X>
-              <Y>12</Y>
+              <X>
+                <Center>6</Center>
+                <Max>6</Max>
+                <Min>6</Min>
+              </X>
+              <Y>
+                <Center>12</Center>
+                <Max>12</Max>
+                <Min>12</Min>
+              </Y>
             </Speed>
           </UVScroll>
         </RendererCommonValues>
@@ -713,12 +763,28 @@
           <UV>3</UV>
           <UVScroll>
             <Size>
-              <X>2000</X>
-              <Y>2000</Y>
+              <X>
+                <Center>2000</Center>
+                <Max>2000</Max>
+                <Min>2000</Min>
+              </X>
+              <Y>
+                <Center>2000</Center>
+                <Max>2000</Max>
+                <Min>2000</Min>
+              </Y>
             </Size>
             <Speed>
-              <X>2</X>
-              <Y>8</Y>
+              <X>
+                <Center>2</Center>
+                <Max>2</Max>
+                <Min>2</Min>
+              </X>
+              <Y>
+                <Center>8</Center>
+                <Max>8</Max>
+                <Min>8</Min>
+              </Y>
             </Speed>
           </UVScroll>
         </RendererCommonValues>
@@ -811,12 +877,28 @@
           <UV>3</UV>
           <UVScroll>
             <Size>
-              <X>2000</X>
-              <Y>2000</Y>
+              <X>
+                <Center>2000</Center>
+                <Max>2000</Max>
+                <Min>2000</Min>
+              </X>
+              <Y>
+                <Center>2000</Center>
+                <Max>2000</Max>
+                <Min>2000</Min>
+              </Y>
             </Size>
             <Speed>
-              <X>2</X>
-              <Y>-4</Y>
+              <X>
+                <Center>2</Center>
+                <Max>2</Max>
+                <Min>2</Min>
+              </X>
+              <Y>
+                <Center>-4</Center>
+                <Max>-4</Max>
+                <Min>-4</Min>
+              </Y>
             </Speed>
           </UVScroll>
         </RendererCommonValues>
@@ -872,6 +954,19 @@
             <Min>0.15</Min>
           </GenerationTime>
         </CommonValues>
+        <LocationValues>
+          <Type>2</Type>
+          <Easing>
+            <End>
+              <Y>
+                <Center>-0.5</Center>
+                <Max>-0.5</Max>
+                <Min>-0.5</Min>
+              </Y>
+            </End>
+            <StartSpeed>-10</StartSpeed>
+          </Easing>
+        </LocationValues>
         <ScalingValues>
           <Type>1</Type>
           <Fixed>
@@ -902,7 +997,6 @@
           </PVA>
         </ScalingValues>
         <LocationAbsValues>
-          <Type>2</Type>
           <AttractiveForce>
             <Force>0.003</Force>
             <Control>0.05</Control>
@@ -941,11 +1035,19 @@
                 <Center>217</Center>
                 <Max>217</Max>
                 <Min>217</Min>
+                <DrawnAs>0</DrawnAs>
               </R>
+              <G>
+                <DrawnAs>0</DrawnAs>
+              </G>
+              <B>
+                <DrawnAs>0</DrawnAs>
+              </B>
               <A>
                 <Center>200</Center>
                 <Max>200</Max>
                 <Min>200</Min>
+                <DrawnAs>0</DrawnAs>
               </A>
             </ColorAll_Random>
             <Color>1</Color>
@@ -978,6 +1080,19 @@
             <Min>0.2</Min>
           </GenerationTime>
         </CommonValues>
+        <LocationValues>
+          <Type>2</Type>
+          <Easing>
+            <End>
+              <Y>
+                <Center>-0.4</Center>
+                <Max>-0.4</Max>
+                <Min>-0.4</Min>
+              </Y>
+            </End>
+            <StartSpeed>-10</StartSpeed>
+          </Easing>
+        </LocationValues>
         <ScalingValues>
           <Type>1</Type>
           <Fixed>
@@ -1008,7 +1123,6 @@
           </PVA>
         </ScalingValues>
         <LocationAbsValues>
-          <Type>2</Type>
           <AttractiveForce>
             <Force>0.004</Force>
             <Control>0.05</Control>
@@ -1047,11 +1161,19 @@
                 <Center>217</Center>
                 <Max>217</Max>
                 <Min>217</Min>
+                <DrawnAs>0</DrawnAs>
               </R>
+              <G>
+                <DrawnAs>0</DrawnAs>
+              </G>
+              <B>
+                <DrawnAs>0</DrawnAs>
+              </B>
               <A>
                 <Center>200</Center>
                 <Max>200</Max>
                 <Min>200</Min>
+                <DrawnAs>0</DrawnAs>
               </A>
             </ColorAll_Random>
             <Color>1</Color>
@@ -1183,7 +1305,7 @@
   <Behavior>
     <Distance>0</Distance>
   </Behavior>
-  <ToolVersion>1.00</ToolVersion>
+  <ToolVersion>1.43d</ToolVersion>
   <Version>3</Version>
   <StartFrame>0</StartFrame>
   <EndFrame>600</EndFrame>

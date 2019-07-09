@@ -226,53 +226,6 @@
                 </FCurve>
               </LocationFCurve>
             </LocationValues>
-            <RendererCommonValues>
-              <ColorTexture>Texture/Burst01_2.png</ColorTexture>
-              <AlphaBlend>2</AlphaBlend>
-              <ZTest>False</ZTest>
-              <FadeIn>
-                <Frame>30</Frame>
-              </FadeIn>
-              <FadeOut>
-                <Frame>30</Frame>
-              </FadeOut>
-            </RendererCommonValues>
-            <DrawingValues>
-              <Type>6</Type>
-              <Ribbon>
-                <ViewpointDependent>True</ViewpointDependent>
-                <ColorAll_Fixed>
-                  <R>75</R>
-                  <G>75</G>
-                  <B>75</B>
-                </ColorAll_Fixed>
-                <Position>1</Position>
-                <Position_Fixed_L>-2</Position_Fixed_L>
-                <Position_Fixed_R>2</Position_Fixed_R>
-              </Ribbon>
-              <Track>
-                <TrackSizeFor_Fixed>0</TrackSizeFor_Fixed>
-                <TrackSizeMiddle_Fixed>2</TrackSizeMiddle_Fixed>
-                <ColorLeft_Fixed>
-                  <A>0</A>
-                </ColorLeft_Fixed>
-                <ColorLeftMiddle_Fixed>
-                  <A>0</A>
-                </ColorLeftMiddle_Fixed>
-                <ColorCenter_Fixed>
-                  <A>0</A>
-                </ColorCenter_Fixed>
-                <ColorCenterMiddle_Fixed>
-                  <A>200</A>
-                </ColorCenterMiddle_Fixed>
-                <ColorRight_Fixed>
-                  <A>0</A>
-                </ColorRight_Fixed>
-                <ColorRightMiddle_Fixed>
-                  <A>0</A>
-                </ColorRightMiddle_Fixed>
-              </Track>
-            </DrawingValues>
             <Name>move_curve</Name>
             <Children>
               <Node>
@@ -323,18 +276,18 @@
                   <Type>3</Type>
                   <SinglePVA>
                     <Scale>
-                      <Center>0.1</Center>
+                      <Center>0.09999999</Center>
                       <Max>0.5</Max>
                       <Min>-0.3</Min>
                     </Scale>
                   </SinglePVA>
                 </ScalingValues>
+                <Name>random</Name>
+                <Children />
                 <RendererCommonValues>
                   <ColorTexture>Texture/Particle01.png</ColorTexture>
                   <AlphaBlend>2</AlphaBlend>
                 </RendererCommonValues>
-                <Name>random</Name>
-                <Children />
               </Node>
               <Node>
                 <CommonValues>
@@ -398,6 +351,8 @@
                     </Scale>
                   </SinglePVA>
                 </ScalingValues>
+                <Name>random_stop</Name>
+                <Children />
                 <RendererCommonValues>
                   <ColorTexture>Texture/Particle01.png</ColorTexture>
                   <AlphaBlend>2</AlphaBlend>
@@ -409,10 +364,55 @@
                     </ColorAll_Fixed>
                   </Sprite>
                 </DrawingValues>
-                <Name>random_stop</Name>
-                <Children />
               </Node>
             </Children>
+            <RendererCommonValues>
+              <ColorTexture>Texture/Burst01_2.png</ColorTexture>
+              <AlphaBlend>2</AlphaBlend>
+              <ZTest>False</ZTest>
+              <FadeIn>
+                <Frame>30</Frame>
+              </FadeIn>
+              <FadeOut>
+                <Frame>30</Frame>
+              </FadeOut>
+            </RendererCommonValues>
+            <DrawingValues>
+              <Type>6</Type>
+              <Ribbon>
+                <ViewpointDependent>True</ViewpointDependent>
+                <ColorAll_Fixed>
+                  <R>75</R>
+                  <G>75</G>
+                  <B>75</B>
+                </ColorAll_Fixed>
+                <Position>1</Position>
+                <Position_Fixed_L>-2</Position_Fixed_L>
+                <Position_Fixed_R>2</Position_Fixed_R>
+              </Ribbon>
+              <Track>
+                <TrackSizeFor_Fixed>0</TrackSizeFor_Fixed>
+                <TrackSizeMiddle_Fixed>2</TrackSizeMiddle_Fixed>
+                <ColorLeft_Fixed>
+                  <A>0</A>
+                </ColorLeft_Fixed>
+                <ColorLeftMiddle_Fixed>
+                  <A>0</A>
+                </ColorLeftMiddle_Fixed>
+                <ColorCenter_Fixed>
+                  <A>0</A>
+                </ColorCenter_Fixed>
+                <ColorCenterMiddle_Fixed>
+                  <A>200</A>
+                </ColorCenterMiddle_Fixed>
+                <ColorRight_Fixed>
+                  <A>0</A>
+                </ColorRight_Fixed>
+                <ColorRightMiddle_Fixed>
+                  <A>0</A>
+                </ColorRightMiddle_Fixed>
+              </Track>
+            </DrawingValues>
           </Node>
         </Children>
       </Node>
@@ -627,52 +627,6 @@
                 </FCurve>
               </LocationFCurve>
             </LocationValues>
-            <RendererCommonValues>
-              <ColorTexture>Texture/blue_fire.png</ColorTexture>
-              <AlphaBlend>2</AlphaBlend>
-              <ZTest>False</ZTest>
-              <FadeIn>
-                <Frame>30</Frame>
-              </FadeIn>
-              <FadeOut>
-                <Frame>30</Frame>
-              </FadeOut>
-            </RendererCommonValues>
-            <DrawingValues>
-              <Type>6</Type>
-              <Ribbon>
-                <ViewpointDependent>True</ViewpointDependent>
-                <ColorAll_Fixed>
-                  <R>115</R>
-                  <G>115</G>
-                  <B>115</B>
-                </ColorAll_Fixed>
-                <Position>1</Position>
-                <Position_Fixed_L>-1</Position_Fixed_L>
-                <Position_Fixed_R>1</Position_Fixed_R>
-              </Ribbon>
-              <Track>
-                <TrackSizeFor_Fixed>0</TrackSizeFor_Fixed>
-                <ColorLeft_Fixed>
-                  <A>0</A>
-                </ColorLeft_Fixed>
-                <ColorLeftMiddle_Fixed>
-                  <A>0</A>
-                </ColorLeftMiddle_Fixed>
-                <ColorCenter_Fixed>
-                  <A>0</A>
-                </ColorCenter_Fixed>
-                <ColorCenterMiddle_Fixed>
-                  <A>200</A>
-                </ColorCenterMiddle_Fixed>
-                <ColorRight_Fixed>
-                  <A>0</A>
-                </ColorRight_Fixed>
-                <ColorRightMiddle_Fixed>
-                  <A>0</A>
-                </ColorRightMiddle_Fixed>
-              </Track>
-            </DrawingValues>
             <Name>move_curve</Name>
             <Children>
               <Node>
@@ -729,6 +683,8 @@
                     </Scale>
                   </SinglePVA>
                 </ScalingValues>
+                <Name>random</Name>
+                <Children />
                 <RendererCommonValues>
                   <ColorTexture>Texture/Particle01.png</ColorTexture>
                   <AlphaBlend>2</AlphaBlend>
@@ -749,10 +705,54 @@
                     </ColorAll_Random>
                   </Sprite>
                 </DrawingValues>
-                <Name>random</Name>
-                <Children />
               </Node>
             </Children>
+            <RendererCommonValues>
+              <ColorTexture>Texture/blue_fire.png</ColorTexture>
+              <AlphaBlend>2</AlphaBlend>
+              <ZTest>False</ZTest>
+              <FadeIn>
+                <Frame>30</Frame>
+              </FadeIn>
+              <FadeOut>
+                <Frame>30</Frame>
+              </FadeOut>
+            </RendererCommonValues>
+            <DrawingValues>
+              <Type>6</Type>
+              <Ribbon>
+                <ViewpointDependent>True</ViewpointDependent>
+                <ColorAll_Fixed>
+                  <R>115</R>
+                  <G>115</G>
+                  <B>115</B>
+                </ColorAll_Fixed>
+                <Position>1</Position>
+                <Position_Fixed_L>-1</Position_Fixed_L>
+                <Position_Fixed_R>1</Position_Fixed_R>
+              </Ribbon>
+              <Track>
+                <TrackSizeFor_Fixed>0</TrackSizeFor_Fixed>
+                <ColorLeft_Fixed>
+                  <A>0</A>
+                </ColorLeft_Fixed>
+                <ColorLeftMiddle_Fixed>
+                  <A>0</A>
+                </ColorLeftMiddle_Fixed>
+                <ColorCenter_Fixed>
+                  <A>0</A>
+                </ColorCenter_Fixed>
+                <ColorCenterMiddle_Fixed>
+                  <A>200</A>
+                </ColorCenterMiddle_Fixed>
+                <ColorRight_Fixed>
+                  <A>0</A>
+                </ColorRight_Fixed>
+                <ColorRightMiddle_Fixed>
+                  <A>0</A>
+                </ColorRightMiddle_Fixed>
+              </Track>
+            </DrawingValues>
           </Node>
         </Children>
       </Node>
@@ -831,17 +831,17 @@
             </Scale>
           </SinglePVA>
         </ScalingValues>
+        <Name>particle</Name>
+        <Children />
         <RendererCommonValues>
           <ColorTexture>Texture/Particle02.png</ColorTexture>
           <AlphaBlend>2</AlphaBlend>
         </RendererCommonValues>
-        <Name>particle</Name>
-        <Children />
       </Node>
       <Node>
         <CommonValues>
           <MaxGeneration>
-            <Infinite>True</Infinite>
+            <Value>60</Value>
           </MaxGeneration>
           <Life>
             <Center>300</Center>
@@ -932,6 +932,8 @@
                 </Scale>
               </SinglePVA>
             </ScalingValues>
+            <Name>particle2</Name>
+            <Children />
             <RendererCommonValues>
               <ColorTexture>Texture/Particle02.png</ColorTexture>
               <AlphaBlend>2</AlphaBlend>
@@ -958,14 +960,12 @@
                 </Position_Fixed_UR>
               </Sprite>
             </DrawingValues>
-            <Name>particle2</Name>
-            <Children />
           </Node>
         </Children>
       </Node>
     </Children>
   </Root>
-  <ToolVersion>1.01</ToolVersion>
+  <ToolVersion>1.43d</ToolVersion>
   <Version>3</Version>
   <StartFrame>60</StartFrame>
   <EndFrame>360</EndFrame>
