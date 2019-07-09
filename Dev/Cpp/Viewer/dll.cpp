@@ -23,6 +23,36 @@
 #include <gd.h>
 #include <gdfontmb.h>
 
+#ifdef _WIN32
+#if _DEBUG
+#pragma comment(lib, "x86/Debug/libgd_static.lib")
+#else
+#pragma comment(lib, "x86/Release/libgd_static.lib")
+#endif
+#endif
+
+#ifdef _WIN32
+
+#ifdef _DEBUG
+#pragma comment(lib, "x86/Debug/libglew32d.lib")
+#else
+#pragma comment(lib, "x86/Release/libglew32.lib")
+#endif
+
+#endif
+
+#if _DEBUG
+#pragma comment(lib, "x86/Debug/glfw3.lib")
+#else
+#pragma comment(lib, "x86/Release/glfw3.lib")
+#endif
+
+#if _DEBUG
+#pragma comment(lib, "x86/Debug/OpenSoundMixer.lib")
+#else
+#pragma comment(lib, "x86/Release/OpenSoundMixer.lib")
+#endif
+
 static float g_RotX = 30.0f;
 static float g_RotY = -30.0f;
 static Effekseer::Vector3D g_lightDirection = Effekseer::Vector3D(1, 1, 1);
