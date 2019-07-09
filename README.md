@@ -105,6 +105,11 @@ Update submodule.
 git submodule update --init
 ```
 
+
+* under reconstructing how to build *
+
+[docs/Development/HowToBuild.md](HowToBuild)
+
 Execute python scripts as follows.
 
 ```
