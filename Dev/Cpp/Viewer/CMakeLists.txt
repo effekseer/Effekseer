@@ -332,6 +332,8 @@ target_link_libraries(
 
 endif()
 
+add_definitions(-D__EFFEKSEER_VIEWER_BUILD_AS_CMAKE__)
+
 set_target_properties(Viewer PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(ViewerTest PROPERTIES LINKER_LANGUAGE CXX)
 

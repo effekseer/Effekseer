@@ -1,4 +1,4 @@
-
+﻿
 #include "Graphics/efk.AVIExporter.h"
 #include "Graphics/efk.GifHelper.h"
 #include "Graphics/efk.PNGHelper.h"
@@ -22,6 +22,8 @@
 #endif
 #include <gd.h>
 #include <gdfontmb.h>
+
+#ifndef __EFFEKSEER_VIEWER_BUILD_AS_CMAKE__
 
 #ifdef _WIN32
 #if _DEBUG
@@ -51,6 +53,8 @@
 #pragma comment(lib, "x86/Debug/OpenSoundMixer.lib")
 #else
 #pragma comment(lib, "x86/Release/OpenSoundMixer.lib")
+#endif
+
 #endif
 
 static float g_RotX = 30.0f;
