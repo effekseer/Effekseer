@@ -185,12 +185,18 @@ include_directories(
 )
 
 add_library(Viewer SHARED ${cpps} ${hs})
-target_link_directories(Viewer PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
-target_link_libraries(Viewer 
-	debug libgd_staticd
-	debug libglew32d
+target_link_directories(
+	Viewer
+	PRIVATE
+	${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
+)
+target_link_libraries(Viewer
+	debug gdd
+	debug GLEWd
 	debug glfw3d
 	debug OpenSoundMixerd
+	debug png
+	debug z
 	optimized libgd_static
 	optimized libglew32
 	optimized glfw3
@@ -198,12 +204,18 @@ target_link_libraries(Viewer
 )
 
 add_executable(ViewerTest ${cpps} ${hs} test.cpp)
-target_link_directories(ViewerTest PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
+target_link_directories(
+	ViewerTest
+	PRIVATE
+	${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
+)
 target_link_libraries(ViewerTest 
-	debug libgd_staticd
-	debug libglew32d
+	debug gdd
+	debug GLEWd
 	debug glfw3d
 	debug OpenSoundMixerd
+	debug png
+	debug z
 	optimized libgd_static
 	optimized libglew32
 	optimized glfw3
@@ -239,11 +251,6 @@ target_link_libraries(
 	effekseer
 	effekseer_renderer_gl
 	EffekseerSoundOSMixer
-	glfw3
-	gd
-	z
-	png16
-	OpenSoundMixer
 	${OpenAL_LIBRARY}
 	"-framework OpenAL"
 	${CMAKE_THREAD_LIBS_INIT}
@@ -259,11 +266,6 @@ target_link_libraries(
 	effekseer
 	effekseer_renderer_gl
 	EffekseerSoundOSMixer
-	glfw3
-	gd
-	z
-	png16
-	OpenSoundMixer
 	${OpenAL_LIBRARY}
 	"-framework OpenAL"
 	${CMAKE_THREAD_LIBS_INIT}

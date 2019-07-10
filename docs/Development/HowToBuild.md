@@ -32,8 +32,14 @@ cmake .. -G <generator> [options]
 
 `<generator>` is tested with the following values: 
 - Windows: "Visual Studio 15 2017"
-- MacOS: `TODO`
-- Linux: `TODO`
+- MacOS: `TODO`cmake .. -G "Xcode" -DBUILD_VIEWER=ON
+- Linux: `TODO`cmake .. -G "Unix Makefiles" -DBUILD_VIEWER=ON CMAKE_BUILD_TYPE=Release
+-D"CMAKE_OSX_ARCHITECTURES=x86_64"
+
+msbuild Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86
+msbuild Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86
+
+mono Effekseer.exe
 
 ### options
 
