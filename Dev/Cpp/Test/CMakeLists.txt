@@ -16,6 +16,7 @@ set(effekseer_test_src
 
 # インクルードの設定
 include_directories(
+	${EFK_THIRDPARTY_INCLUDES}
 	../Effekseer/
 	../EffekseerRendererGL/
 	../EffekseerSoundAL/
@@ -29,7 +30,6 @@ set(common_inc)
 
 list(APPEND common_lib effekseer )
 list(APPEND common_lib effekseer_renderer_gl )
-list(APPEND common_lib glfw zlibstatic png_static)
 
 if (USE_XAUDIO2)
 	list(APPEND effekseer_test_src sound_xaudio2.cpp)
@@ -80,7 +80,15 @@ endif()
 
 # コンパイル先を追加
 add_executable(effekseer_test ${effekseer_test_src} )
-target_link_libraries(effekseer_test ${common_lib}) 
+target_link_directories(effekseer_test PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
+target_link_libraries(
+	effekseer_test
+	${common_lib}
+	debug glfw3d
+	debug OpenSoundMixerd
+	optimized glfw3
+	optimized OpenSoundMixer
+)
 
 # フラグ処理
 add_definitions(-D__EFFEKSEER_RENDERER_GL_GLEW__)
