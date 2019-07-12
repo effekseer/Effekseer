@@ -31,11 +31,11 @@ cmake --build . --config Release
 
 ### generator
 
-`<generator>` is tested with the following values: 
+`<generator>` is tested with the following values:
+
 - Windows: "Visual Studio 15 2017"
-- macOS: `TODO`cmake .. -G "Xcode" -DBUILD_VIEWER=ON
-- Linux: `TODO`cmake .. -G "Unix Makefiles" -DBUILD_VIEWER=ON CMAKE_BUILD_TYPE=Release
--D"CMAKE_OSX_ARCHITECTURES=x86_64"
+- macOS: "Xcode"
+- Linux: `TODO`
 
 ### options
 
@@ -63,7 +63,7 @@ Dev\release\Effekseer.exe
 
 macOS:
 ```
-mono Effekseer.exe
+mono Dev/release/Effekseer.exe
 ```
 s
 
