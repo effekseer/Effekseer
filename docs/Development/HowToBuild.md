@@ -26,19 +26,45 @@ Execure following command at the repository root.
 mkdir build
 cd build
 cmake .. -G <generator> [options]
+cmake --build . --config Release
 ```
 
 ### generator
 
-`<generator>` is tested with the following values: 
+`<generator>` is tested with the following values:
+
 - Windows: "Visual Studio 15 2017"
-- MacOS: `TODO`
+- macOS: "Xcode"
 - Linux: `TODO`
 
 ### options
 
-- `BUILD_VIEWER=ON` : Build the library (Viewer) needed to run the editor. If omitted, only the runtime will be built.
+- `-DBUILD_VIEWER=ON` : Build the library (Viewer) needed to run the editor. If omitted, only the runtime will be built.
 
+
+Editor
+----------
+
+Execure following command at the repository root.
+
+`Windows: Use [Visual Studio Developer Command Prompt]`
+
+```
+msbuild Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86
+msbuild Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86
+```
+
+Execute following command to start editor.
+
+Windows:
+```
+Dev\release\Effekseer.exe
+```
+
+macOS:
+```
+mono Dev/release/Effekseer.exe
+```
 
 Attention
 ----------

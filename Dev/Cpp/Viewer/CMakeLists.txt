@@ -185,30 +185,34 @@ include_directories(
 )
 
 add_library(Viewer SHARED ${cpps} ${hs})
-target_link_directories(Viewer PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
-target_link_libraries(Viewer 
-	debug libgd_staticd
-	debug libglew32d
+target_link_directories(
+	Viewer
+	PRIVATE
+	${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
+)
+target_link_libraries(
+	Viewer
 	debug glfw3d
 	debug OpenSoundMixerd
-	optimized libgd_static
-	optimized libglew32
 	optimized glfw3
 	optimized OpenSoundMixer
 )
+add_dependencies(Viewer ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glew ExternalProject_glfw ExternalProject_OpenSoundMixer)
 
 add_executable(ViewerTest ${cpps} ${hs} test.cpp)
-target_link_directories(ViewerTest PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
-target_link_libraries(ViewerTest 
-	debug libgd_staticd
-	debug libglew32d
+target_link_directories(
+	ViewerTest
+	PRIVATE
+	${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
+)
+target_link_libraries(
+	ViewerTest 
 	debug glfw3d
 	debug OpenSoundMixerd
-	optimized libgd_static
-	optimized libglew32
 	optimized glfw3
 	optimized OpenSoundMixer
 )
+add_dependencies(ViewerTest ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glew ExternalProject_glfw ExternalProject_OpenSoundMixer)
 
 link_directories(
 	
@@ -218,8 +222,30 @@ link_directories(
 
 if (WIN32)
 
-target_link_libraries(Viewer effekseer effekseer_renderer_dx9 effekseer_renderer_dx11 effekseer_renderer_gl EffekseerSoundOSMixer)
-target_link_libraries(ViewerTest effekseer effekseer_renderer_dx9 effekseer_renderer_dx11 effekseer_renderer_gl EffekseerSoundOSMixer)
+target_link_libraries(
+	Viewer
+	effekseer
+	effekseer_renderer_dx9
+	effekseer_renderer_dx11
+	effekseer_renderer_gl
+	EffekseerSoundOSMixer
+	debug libgd_staticd
+	debug libglew32d
+	optimized libgd_static
+	optimized libglew32
+)
+target_link_libraries(
+	ViewerTest
+	effekseer
+	effekseer_renderer_dx9
+	effekseer_renderer_dx11
+	effekseer_renderer_gl
+	EffekseerSoundOSMixer
+	debug libgd_staticd
+	debug libglew32d
+	optimized libgd_static
+	optimized libglew32
+)
 
 elseif(APPLE)
 
@@ -239,11 +265,12 @@ target_link_libraries(
 	effekseer
 	effekseer_renderer_gl
 	EffekseerSoundOSMixer
-	glfw3
-	gd
+	debug gdd
+	debug GLEWd
+	optimized gd
+	optimized GLEW
+	png
 	z
-	png16
-	OpenSoundMixer
 	${OpenAL_LIBRARY}
 	"-framework OpenAL"
 	${CMAKE_THREAD_LIBS_INIT}
@@ -259,11 +286,12 @@ target_link_libraries(
 	effekseer
 	effekseer_renderer_gl
 	EffekseerSoundOSMixer
-	glfw3
-	gd
+	debug gdd
+	debug GLEWd
+	optimized gd
+	optimized GLEW
+	png
 	z
-	png16
-	OpenSoundMixer
 	${OpenAL_LIBRARY}
 	"-framework OpenAL"
 	${CMAKE_THREAD_LIBS_INIT}
