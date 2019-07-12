@@ -197,6 +197,7 @@ target_link_libraries(
 	optimized glfw3
 	optimized OpenSoundMixer
 )
+add_dependencies(Viewer ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glew ExternalProject_glfw ExternalProject_OpenSoundMixer)
 
 add_executable(ViewerTest ${cpps} ${hs} test.cpp)
 target_link_directories(
@@ -211,6 +212,7 @@ target_link_libraries(
 	optimized glfw3
 	optimized OpenSoundMixer
 )
+add_dependencies(ViewerTest ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glew ExternalProject_glfw ExternalProject_OpenSoundMixer)
 
 link_directories(
 	
