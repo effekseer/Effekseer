@@ -65,7 +65,6 @@ macOS:
 ```
 mono Dev/release/Effekseer.exe
 ```
-s
 
 Attention
 ----------
