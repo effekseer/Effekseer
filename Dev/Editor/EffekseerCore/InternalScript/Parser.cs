@@ -271,7 +271,7 @@ namespace Effekseer.InternalScript
 					{
 						if (token == null)
 						{
-							throw new InvalidEOFException(token.Line);
+							throw new InvalidEOFException(tokens.LastOrDefault().Line);
 						}
 
 						throw new CompileException(string.Format("Invalid token {0}", token), token.Line);
@@ -308,7 +308,7 @@ namespace Effekseer.InternalScript
 			}
 			else
 			{
-				throw new InvalidEOFException(token.Line);
+				throw new InvalidEOFException(tokens.LastOrDefault().Line);
 			}
 
 			while(true)
@@ -320,7 +320,7 @@ namespace Effekseer.InternalScript
 					var next = Next();
 					if(next == null)
 					{
-						throw new InvalidEOFException(token.Line);
+						throw new InvalidEOFException(tokens.LastOrDefault().Line);
 					}
 					else if(next.Type != TokenType.Label)
 					{
@@ -330,6 +330,7 @@ namespace Effekseer.InternalScript
 					var v_ = new AttributeExpression();
 					v_.Value = value;
 					v_.Attribute = (string)next.Value;
+					v_.Line = next.Line;
 					value = v_;
 
 					Next();
@@ -394,7 +395,7 @@ namespace Effekseer.InternalScript
 
 					if (next2 == null)
 					{
-						throw new InvalidEOFException(token.Line);
+						throw new InvalidEOFException(tokens.LastOrDefault().Line);
 					}
 					else if (next2.Type == TokenType.Comma)
 					{

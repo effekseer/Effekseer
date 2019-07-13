@@ -143,3 +143,11 @@ DynamicEq,式
 DynamicFixed,固定
 DynamicDynamic,動的
 MaterialFilter,efkmat
+CompilePosition, : 行 {0} 列 {1}
+CompileErrror_InvalidToken,無効なトークン {0} が見つかりました
+CompileErrror_InvalidEoF,予期せぬ終了が見つかりました
+CompileError_InvalidOperation,無効な操作が見つかりました
+CompileError_ArgSize,引数の個数が間違っています。要求 {0} 実際 {1}
+CompileError_InvalidSubstitution,無効な代入が見つかりました
+CompileError_UnknownFunction,知らない関数 {0} が見つかりました
+CompileError_UnknownValue,知らない値 {0} が見つかりました

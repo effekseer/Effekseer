@@ -471,30 +471,49 @@ public:
 	virtual void Flip() = 0;
 
 	/**
-		@brief	更新処理を行う。
-		@param	deltaFrame	[in]	更新するフレーム数(60fps基準)	
+		@brief
+		\~English	Update all effects.
+		\~Japanese	全てのエフェクトの更新処理を行う。
+		@param	deltaFrame
+		\~English	passed time (1 is 1/60 seconds)
+		\~Japanese	更新するフレーム数(60fps基準)
 	*/
 	virtual void Update( float deltaFrame = 1.0f ) = 0;
 
 	/**
-		@brief	更新処理を開始する。
+		@brief
+		\~English	Start to update effects.
+		\~Japanese	更新処理を開始する。
 		@note
-		Updateを実行する際は、実行する必要はない。
+		\~English	It is not required if Update is called.
+		\~Japanese	Updateを実行する際は、実行する必要はない。
 	*/
 	virtual void BeginUpdate() = 0;
 
 	/**
-		@brief	更新処理を終了する。
+		@brief
+		\~English	Stop to update effects.
+		\~Japanese	更新処理を終了する。
 		@note
-		Updateを実行する際は、実行する必要はない。
+		\~English	It is not required if Update is called.
+		\~Japanese	Updateを実行する際は、実行する必要はない。
 	*/
 	virtual void EndUpdate() = 0;
 
 	/**
-		@brief	ハンドル単位の更新を行う。
-		@param	handle		[in]	ハンドル
-		@param	deltaFrame	[in]	更新するフレーム数(60fps基準)
+		@brief	
+		\~English	Update an effect by a handle.
+		\~Japanese	ハンドル単位の更新を行う。
+		@param	handle
+		\~English	a handle.
+		\~Japanese	ハンドル
+		@param	deltaFrame
+		\~English	passed time (1 is 1/60 seconds)
+		\~Japanese	更新するフレーム数(60fps基準)
 		@note
+		\~English
+		You need to call BeginUpdate before starting update and EndUpdate after stopping update.
+		\~Japanese	
 		更新する前にBeginUpdate、更新し終わった後にEndUpdateを実行する必要がある。
 	*/
 	virtual void UpdateHandle( Handle handle, float deltaFrame = 1.0f ) = 0;

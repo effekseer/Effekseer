@@ -506,32 +506,12 @@ public:
 	
 	void Flip() override;
 
-	/**
-		@brief	更新処理
-	*/
 	void Update( float deltaFrame ) override;
 
-	/**
-		@brief	更新処理を開始する。
-		@note
-		Updateを実行する際は、実行する必要はない。
-	*/
 	void BeginUpdate() override;
 
-	/**
-		@brief	更新処理を終了する。
-		@note
-		Updateを実行する際は、実行する必要はない。
-	*/
 	void EndUpdate() override;
 
-	/**
-		@brief	ハンドル単位の更新を行う。
-		@param	handle		[in]	ハンドル
-		@param	deltaFrame	[in]	更新するフレーム数(60fps基準)
-		@note
-		更新する前にBeginUpdate、更新し終わった後にEndUpdateを実行する必要がある。
-	*/
 	void UpdateHandle( Handle handle, float deltaFrame = 1.0f ) override;
 
 private:
@@ -540,9 +520,6 @@ private:
 	void Preupdate(DrawSet& drawSet);
 public:
 
-	/**
-		@brief	描画処理
-	*/
 	void Draw() override;
 	
 	void DrawBack() override;

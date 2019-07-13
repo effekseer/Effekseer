@@ -143,3 +143,11 @@ DynamicEq,Eq.
 DynamicFixed,Fixed
 DynamicDynamic,Dynamic
 MaterialFilter,efkmat
+CompilePosition, : Line {0} Col {1}
+CompileErrror_InvalidToken,Invalid token {0} is found
+CompileErrror_InvalidEoF,Unexpected end is found
+CompileError_InvalidOperation,Invalid operation is found
+CompileError_ArgSize,The number of arguments is wrong. Expected {0} Actual {1}
+CompileError_InvalidSubstitution,Invalid substitution is found
+CompileError_UnknownFunction,Unkwon function {0} is found
+CompileError_UnknownValue,Unkwon value {0} is found

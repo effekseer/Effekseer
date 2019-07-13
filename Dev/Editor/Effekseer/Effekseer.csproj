@@ -157,6 +157,7 @@
     <Compile Include="swig\ViewerEffectBehavior.cs" />
     <Compile Include="swig\ViewerParamater.cs" />
     <Compile Include="swig\WindowFlags.cs" />
+    <Compile Include="Utils\CompileErrorGenerator.cs" />
     <Compile Include="Utils\DelayedList.cs" />
     <Compile Include="GUI\Dialog\SaveOnDisposing.cs" />
     <Compile Include="GUI\Dock\BehaviorValues.cs" />

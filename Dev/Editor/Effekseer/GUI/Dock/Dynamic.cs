@@ -107,7 +107,7 @@ namespace Effekseer.GUI.Dock
 
 					if(result.Error != null)
 					{
-						compileResult = result.Error.ToString();
+						compileResult = Utils.CompileErrorGenerator.Generate(selected.Code.Value, result.Error);
 					}
 					else
 					{
