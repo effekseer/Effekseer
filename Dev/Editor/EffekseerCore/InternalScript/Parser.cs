@@ -175,9 +175,13 @@ namespace Effekseer.InternalScript
 					{
 						break;
 					}
+					else if (token.Type == TokenType.Comma)
+					{
+						break;
+					}
 					else
 					{
-						throw new CompileException(string.Format("Invalid token {0}", token.Type), token.Line);
+						throw new InvalidTokenException(token.Value.ToString(), token.Line);
 					}
 				}
 				else
@@ -235,9 +239,13 @@ namespace Effekseer.InternalScript
 					{
 						break;
 					}
+					else if (token.Type == TokenType.Comma)
+					{
+						break;
+					}
 					else
 					{
-						throw new CompileException(string.Format("Invalid token {0}", token.Type), token.Line);
+						throw new InvalidTokenException(token.Value.ToString(), token.Line);
 					}
 				}
 				else
@@ -303,7 +311,7 @@ namespace Effekseer.InternalScript
 				}
 				else
 				{
-					throw new CompileException(string.Format("Invalid token {0}", token), token.Line);
+					throw new InvalidTokenException(token.Value.ToString(), token.Line);
 				}
 			}
 			else
@@ -324,7 +332,7 @@ namespace Effekseer.InternalScript
 					}
 					else if(next.Type != TokenType.Label)
 					{
-						throw new CompileException(string.Format("Invalid token {0}", token), token.Line);
+						throw new InvalidTokenException(token.Value.ToString(), token.Line);
 					}
 
 					var v_ = new AttributeExpression();

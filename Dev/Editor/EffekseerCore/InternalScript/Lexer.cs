@@ -23,6 +23,19 @@ namespace Effekseer.InternalScript
 		public TokenType Type;
 		public object Value;
 		public int Line = 0;
+
+		public override string ToString()
+		{
+			if (Type == TokenType.Digit) return Value.ToString();
+			if (Type == TokenType.Label) return Value.ToString();
+			if (Type == TokenType.Operator) return Value.ToString();
+			if (Type == TokenType.LeftParentheses) return "(";
+			if (Type == TokenType.RightParentheses) return ")";
+			if (Type == TokenType.Comma) return ",";
+			if (Type == TokenType.Equal) return "=";
+			if (Type == TokenType.Dot) return ".";
+			return "?";
+		}
 	}
 
 	enum ErrorType
@@ -149,11 +162,7 @@ namespace Effekseer.InternalScript
 					}
 					else
 					{
-						LexerResult erroresult = new LexerResult();
-						erroresult.Error = ErrorType.InvalidCharacter;
-						erroresult.ErrorInfo.Add("Line", index);
-						erroresult.ErrorInfo.Add("Character", c.ToString());
-						return erroresult;
+						throw new InvalidTokenException(c.ToString(), index);
 					}
 				}
 			}
