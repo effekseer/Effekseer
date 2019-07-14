@@ -65,6 +65,26 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "深度クリップ")]
+		[Description(language = Language.Japanese, value = "指定された値より遠いパーティクルは描画されない。")]
+		[Name(language = Language.English, value = "DepthClipping")]
+		[Description(language = Language.English, value = "Particles farther than the specified value are not rendered.")]
+		public Value.IntWithInifinite DepthClipping
+		{
+			get;
+			private set;
+		}
+
+		[Name(language = Language.Japanese, value = "深度によるスケール変化の抑制")]
+		[Description(language = Language.Japanese, value = "深度が変化したとしても大きさが変わらないようにする。\n1.0だとこのパラメーターを使用せず、0.0だと変化がなくなる。")]
+		[Name(language = Language.English, value = "Suppression of scaling by depth")]
+		[Description(language = Language.English, value = "It makes scaling not to change even if a depth is changed.\nIf it is 1.0, it does not use this parameter, and if it is 0.0, there is no scaling.")]
+		public Value.Float SuppressionOfScalingByDepth
+		{
+			get;
+			private set;
+		}
+
 		[Name(language = Language.Japanese, value = "描画優先度")]
 		[Description(language = Language.Japanese, value = "小さい描画優先度のノードが先に描画される")]
 		[Name(language = Language.English, value = "Drawing priority")]
@@ -93,6 +113,8 @@ namespace Effekseer.Data
 			ZSort = new Value.Enum<ZSortType>(ZSortType.None);
 			DrawingPriority = new Value.Int(0, 255, -255);
 			SoftParticle = new Value.Float(0, float.MaxValue, 0.0f);
+			DepthClipping = new Value.IntWithInifinite(1024, true, int.MaxValue, 16);
+			SuppressionOfScalingByDepth = new Value.Float(1.0f, 1.0f, 0.0f, 0.1f);
         }
     }
 }

@@ -544,6 +544,20 @@ struct MaterialParameter
 	std::vector<std::array<float, 4>> MaterialUniforms;
 };
 
+/**
+	@brief	\~english	Parameters about a depth which is passed into a renderer
+			\~japanese	レンダラーに渡されるデプスに関するパラメーター
+*/
+struct NodeRendererDepthParameter
+{
+	float DepthOffset = 0.0f;
+	bool IsDepthOffsetScaledWithCamera = false;
+	bool IsDepthOffsetScaledWithParticleScale = false;
+	ZSortType ZSort = ZSortType::None;
+	float SuppressionOfScalingByDepth = 1.0f;
+	float DepthClipping = FLT_MAX;
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -2049,6 +2063,19 @@ namespace Effekseer
 class Manager
 	: public IReference
 {
+public:
+	/**
+	@brief
+		@brief
+		\~English Parameters for Manager::Draw and Manager::DrawHandle
+		\~Japanese Manager::Draw and Manager::DrawHandleに使用するパラメーター
+	*/
+	struct DrawParameter
+	{
+		Vector3D CameraPosition;
+		Vector3D CameraDirection;
+	};
+
 protected:
 	Manager() {}
     virtual ~Manager() {}
@@ -2498,30 +2525,49 @@ public:
 	virtual void Flip() = 0;
 
 	/**
-		@brief	更新処理を行う。
-		@param	deltaFrame	[in]	更新するフレーム数(60fps基準)	
+		@brief
+		\~English	Update all effects.
+		\~Japanese	全てのエフェクトの更新処理を行う。
+		@param	deltaFrame
+		\~English	passed time (1 is 1/60 seconds)
+		\~Japanese	更新するフレーム数(60fps基準)
 	*/
 	virtual void Update( float deltaFrame = 1.0f ) = 0;
 
 	/**
-		@brief	更新処理を開始する。
+		@brief
+		\~English	Start to update effects.
+		\~Japanese	更新処理を開始する。
 		@note
-		Updateを実行する際は、実行する必要はない。
+		\~English	It is not required if Update is called.
+		\~Japanese	Updateを実行する際は、実行する必要はない。
 	*/
 	virtual void BeginUpdate() = 0;
 
 	/**
-		@brief	更新処理を終了する。
+		@brief
+		\~English	Stop to update effects.
+		\~Japanese	更新処理を終了する。
 		@note
-		Updateを実行する際は、実行する必要はない。
+		\~English	It is not required if Update is called.
+		\~Japanese	Updateを実行する際は、実行する必要はない。
 	*/
 	virtual void EndUpdate() = 0;
 
 	/**
-		@brief	ハンドル単位の更新を行う。
-		@param	handle		[in]	ハンドル
-		@param	deltaFrame	[in]	更新するフレーム数(60fps基準)
+		@brief	
+		\~English	Update an effect by a handle.
+		\~Japanese	ハンドル単位の更新を行う。
+		@param	handle
+		\~English	a handle.
+		\~Japanese	ハンドル
+		@param	deltaFrame
+		\~English	passed time (1 is 1/60 seconds)
+		\~Japanese	更新するフレーム数(60fps基準)
 		@note
+		\~English
+		You need to call BeginUpdate before starting update and EndUpdate after stopping update.
+		\~Japanese	
 		更新する前にBeginUpdate、更新し終わった後にEndUpdateを実行する必要がある。
 	*/
 	virtual void UpdateHandle( Handle handle, float deltaFrame = 1.0f ) = 0;
@@ -2531,42 +2577,42 @@ public:
 	\~English	Draw particles.
 	\~Japanese	描画処理を行う。
 	*/
-	virtual void Draw() = 0;
+	virtual void Draw(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 	
 	/**
 	@brief
 	\~English	Draw particles in the back of priority 0.
 	\~Japanese	背面の描画処理を行う。
 	*/
-	virtual void DrawBack() = 0;
+	virtual void DrawBack(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 
 	/**
 	@brief
 	\~English	Draw particles in the front of priority 0.
 	\~Japanese	前面の描画処理を行う。
 	*/
-	virtual void DrawFront() = 0;
+	virtual void DrawFront(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 
 	/**
 	@brief
 	\~English	Draw particles with a handle.
 	\~Japanese	ハンドル単位の描画処理を行う。
 	*/
-	virtual void DrawHandle( Handle handle ) = 0;
+	virtual void DrawHandle(Handle handle, const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 
 	/**
 	@brief
 	\~English	Draw particles in the back of priority 0.
 	\~Japanese	背面のハンドル単位の描画処理を行う。
 	*/
-	virtual void DrawHandleBack(Handle handle) = 0;
+	virtual void DrawHandleBack(Handle handle, const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 	
 	/**
 	@brief
 	\~English	Draw particles in the front of priority 0.
 	\~Japanese	前面のハンドル単位の描画処理を行う。
 	*/
-	virtual void DrawHandleFront(Handle handle) = 0;
+	virtual void DrawHandleFront(Handle handle, const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 
 	/**
 		@brief	再生する。
@@ -2680,6 +2726,7 @@ public:
 
 		ZSortType			ZSort;
 
+		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		MaterialParameter* MaterialParameterPtr = nullptr;
 	};
 
@@ -2752,6 +2799,7 @@ namespace Effekseer
 			float				DistortionIntensity;
 
 			int32_t				SplineDivision;
+			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		};
 
 		struct InstanceParameter
@@ -2828,6 +2876,8 @@ public:
 
 		bool				Distortion;
 		float				DistortionIntensity;
+
+		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 
 		float				DepthOffset;
 		bool				IsDepthOffsetScaledWithCamera;
@@ -2910,6 +2960,8 @@ public:
 		bool				Distortion;
 		float				DistortionIntensity;
 
+		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+
 		float				DepthOffset;
 		bool				IsDepthOffsetScaledWithCamera;
 		bool				IsDepthOffsetScaledWithParticleScale;
@@ -2978,6 +3030,8 @@ namespace Effekseer
 			float				DistortionIntensity;
 
 			int32_t				SplineDivision;
+
+			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		};
 
 		struct InstanceGroupParameter

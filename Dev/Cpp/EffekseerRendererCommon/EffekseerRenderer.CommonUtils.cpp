@@ -5,8 +5,15 @@
 
 namespace EffekseerRenderer
 {
-	
-void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Vector3D& cameraFront, const ::Effekseer::Vector3D& cameraPos, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
+
+void ApplyDepthParameters(::Effekseer::Matrix43& mat,
+	const ::Effekseer::Vector3D& cameraFront,
+	const ::Effekseer::Vector3D& cameraPos,
+	float depthOffset,
+	bool isDepthOffsetScaledWithCamera,
+	bool isDepthOffsetScaledWithEffect,
+	::Effekseer::NodeRendererDepthParameter* depthParameter,
+	bool isRightHand)
 {
 	if (depthOffset != 0)
 	{
@@ -73,9 +80,40 @@ void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Vector3D& c
 			mat.Value[3][2] += dir.Z * offset;
 		}
 	}
+
+	if (depthParameter->SuppressionOfScalingByDepth < 1.0f)
+	{
+		auto cx = mat.Value[3][0] - cameraPos.X;
+		auto cy = mat.Value[3][1] - cameraPos.Y;
+		auto cz = mat.Value[3][2] - cameraPos.Z;
+		auto cl = sqrt(cx * cx + cy * cy + cz * cz);
+		//auto cl = cameraFront.X * cx + cameraFront.Y * cy * cameraFront.Z * cz;
+
+
+		if (cl != 0.0)
+		{
+			auto scale = cl / 32.0f * (1.0f - depthParameter->SuppressionOfScalingByDepth) + depthParameter->SuppressionOfScalingByDepth;
+
+			for (auto r = 0; r < 3; r++)
+			{
+				for (auto c = 0; c < 3; c++)
+				{
+					mat.Value[c][r] *= scale;
+				}
+			}
+		}
+	}
 }
 
-void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Vector3D& cameraFront, const ::Effekseer::Vector3D& cameraPos, ::Effekseer::Vector3D& scaleValues, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
+void ApplyDepthParameters(::Effekseer::Matrix43& mat,
+					  const ::Effekseer::Vector3D& cameraFront,
+					  const ::Effekseer::Vector3D& cameraPos,
+					  ::Effekseer::Vector3D& scaleValues,
+					  float depthOffset,
+					  bool isDepthOffsetScaledWithCamera,
+					  bool isDepthOffsetScaledWithEffect,
+						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
+						  bool isRightHand)
 {
 	if (depthOffset != 0)
 	{
@@ -126,9 +164,37 @@ void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Vector3D& c
 			mat.Value[3][2] += dir.Z * offset;
 		}
 	}
+
+	if (depthParameter->SuppressionOfScalingByDepth < 1.0f)
+	{
+		auto cx = mat.Value[3][0] - cameraPos.X;
+		auto cy = mat.Value[3][1] - cameraPos.Y;
+		auto cz = mat.Value[3][2] - cameraPos.Z;
+		auto cl = sqrt(cx * cx + cy * cy + cz * cz);
+
+		if (cl != 0.0)
+		{
+			auto scale = cl / 32.0f * (1.0f - depthParameter->SuppressionOfScalingByDepth) + depthParameter->SuppressionOfScalingByDepth;
+
+			for (auto r = 0; r < 3; r++)
+			{
+				for (auto c = 0; c < 3; c++)
+				{
+					mat.Value[c][r] *= scale;
+				}
+			}
+		}
+	}
 }
 
-void ApplyDepthOffset(::Effekseer::Matrix44& mat, const ::Effekseer::Vector3D& cameraFront, const ::Effekseer::Vector3D& cameraPos, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand)
+void ApplyDepthParameters(::Effekseer::Matrix44& mat,
+						  const ::Effekseer::Vector3D& cameraFront,
+						  const ::Effekseer::Vector3D& cameraPos,
+						  float depthOffset,
+						  bool isDepthOffsetScaledWithCamera,
+						  bool isDepthOffsetScaledWithEffect,
+						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
+						  bool isRightHand)
 {
 	if (depthOffset != 0)
 	{
@@ -195,7 +261,27 @@ void ApplyDepthOffset(::Effekseer::Matrix44& mat, const ::Effekseer::Vector3D& c
 			mat.Values[3][2] += dir.Z * offset;
 		}
 	}
-}
 
+	if (depthParameter->SuppressionOfScalingByDepth < 1.0f)
+	{
+		auto cx = mat.Values[3][0] - cameraPos.X;
+		auto cy = mat.Values[3][1] - cameraPos.Y;
+		auto cz = mat.Values[3][2] - cameraPos.Z;
+		auto cl = sqrt(cx * cx + cy * cy + cz * cz);
+
+		if (cl != 0.0)
+		{
+			auto scale = cl / 32.0f * (1.0f - depthParameter->SuppressionOfScalingByDepth) + depthParameter->SuppressionOfScalingByDepth;
+
+			for (auto r = 0; r < 3; r++)
+			{
+				for (auto c = 0; c < 3; c++)
+				{
+					mat.Values[c][r] *= scale;
+				}
+			}
+		}
+	}
+}
 
 }

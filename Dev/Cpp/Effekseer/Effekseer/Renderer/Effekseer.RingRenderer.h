@@ -40,6 +40,8 @@ public:
 		bool				Distortion;
 		float				DistortionIntensity;
 
+		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+
 		float				DepthOffset;
 		bool				IsDepthOffsetScaledWithCamera;
 		bool				IsDepthOffsetScaledWithParticleScale;

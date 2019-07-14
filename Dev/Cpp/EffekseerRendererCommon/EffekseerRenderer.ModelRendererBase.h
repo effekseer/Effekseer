@@ -457,8 +457,15 @@ public:
 				{
 					vcb->ModelMatrix[num] = m_matrixes[loop+num];
 
-					// DepthOffset
-					ApplyDepthOffset(vcb->ModelMatrix[num], renderer->GetCameraFrontDirection(), renderer->GetCameraPosition(), param.DepthOffset, param.IsDepthOffsetScaledWithCamera, param.IsDepthOffsetScaledWithParticleScale, param.IsRightHand);
+					// DepthParameter
+					ApplyDepthParameters(vcb->ModelMatrix[num],
+										renderer->GetCameraFrontDirection(),
+										renderer->GetCameraPosition(),
+										param.DepthOffset,
+										param.IsDepthOffsetScaledWithCamera,
+										param.IsDepthOffsetScaledWithParticleScale,
+										param.DepthParameterPtr,
+										param.IsRightHand);
 	
 					vcb->ModelUV[num][0] = m_uv[loop+num].X;
 					vcb->ModelUV[num][1] = m_uv[loop+num].Y;
@@ -493,8 +500,10 @@ public:
 				vcb->ModelUV[0][2] = m_uv[loop].Width;
 				vcb->ModelUV[0][3] = m_uv[loop].Height;
 
-				// DepthOffset
-				ApplyDepthOffset(vcb->ModelMatrix[0], renderer->GetCameraFrontDirection(), renderer->GetCameraPosition(), param.DepthOffset, param.IsDepthOffsetScaledWithCamera, param.IsDepthOffsetScaledWithParticleScale, param.IsRightHand);
+				// DepthParameters
+				ApplyDepthParameters(vcb->ModelMatrix[0], renderer->GetCameraFrontDirection(), renderer->GetCameraPosition(), param.DepthOffset, param.IsDepthOffsetScaledWithCamera, param.IsDepthOffsetScaledWithParticleScale,
+									 param.DepthParameterPtr,
+									 param.IsRightHand);
 				
 				ColorToFloat4( m_colors[loop], vcb->ModelColor[0] );
 				shader_->SetConstantBuffer();

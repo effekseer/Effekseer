@@ -152,6 +152,7 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 		m_nodeParameter.SplineDivision = SplineDivision;
+		m_nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 
 		renderer->BeginRendering(m_nodeParameter, count, m_userData);
 	}

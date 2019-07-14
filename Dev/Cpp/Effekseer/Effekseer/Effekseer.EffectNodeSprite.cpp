@@ -158,6 +158,8 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
+		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
+
 		nodeParameter.DepthOffset = DepthValues.DepthOffset;
 		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
 		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
@@ -200,6 +202,8 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 
 		nodeParameter.Distortion = RendererCommon.Distortion;
 		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
+
+		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 
 		nodeParameter.DepthOffset = DepthValues.DepthOffset;
 		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
@@ -314,6 +318,8 @@ void EffectNodeSprite::EndRendering(Manager* manager)
 		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
 		nodeParameter.ZSort = DepthValues.ZSort;
+
+		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 
 		if (RendererCommon.MaterialType == ParameterRendererCommon::RendererMaterialType::Default)
 		{

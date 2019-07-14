@@ -595,6 +595,21 @@ namespace Effekseer.Binary
                 node_data.Add(n.DepthValues.DepthOffset.Value.GetBytes());
 				node_data.Add(BitConverter.GetBytes(n.DepthValues.IsScaleChangedDependingOnDepthOffset.Value ? 1 : 0));
 				node_data.Add(BitConverter.GetBytes(n.DepthValues.IsDepthOffsetChangedDependingOnParticleScale.Value ? 1 : 0));
+
+				if (Version >= 15)
+				{
+					node_data.Add(((float)n.DepthValues.SuppressionOfScalingByDepth.Value).GetBytes());
+
+					if (n.DepthValues.DepthClipping.Infinite)
+					{
+						node_data.Add((float.MaxValue).GetBytes());
+					}
+					else
+					{
+						node_data.Add(((float)n.DepthValues.DepthClipping.Value.Value).GetBytes());
+					}
+				}
+
 				node_data.Add(((int)n.DepthValues.ZSort.Value).GetBytes());
 				node_data.Add(n.DepthValues.DrawingPriority.Value.GetBytes());
 				node_data.Add(n.DepthValues.SoftParticle.Value.GetBytes());

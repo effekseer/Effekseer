@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
+#include "Effekseer.Vector3D.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -22,6 +23,19 @@ namespace Effekseer
 class Manager
 	: public IReference
 {
+public:
+	/**
+	@brief
+		@brief
+		\~English Parameters for Manager::Draw and Manager::DrawHandle
+		\~Japanese Manager::Draw and Manager::DrawHandleに使用するパラメーター
+	*/
+	struct DrawParameter
+	{
+		Vector3D CameraPosition;
+		Vector3D CameraDirection;
+	};
+
 protected:
 	Manager() {}
     virtual ~Manager() {}
@@ -523,42 +537,42 @@ public:
 	\~English	Draw particles.
 	\~Japanese	描画処理を行う。
 	*/
-	virtual void Draw() = 0;
+	virtual void Draw(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 	
 	/**
 	@brief
 	\~English	Draw particles in the back of priority 0.
 	\~Japanese	背面の描画処理を行う。
 	*/
-	virtual void DrawBack() = 0;
+	virtual void DrawBack(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 
 	/**
 	@brief
 	\~English	Draw particles in the front of priority 0.
 	\~Japanese	前面の描画処理を行う。
 	*/
-	virtual void DrawFront() = 0;
+	virtual void DrawFront(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 
 	/**
 	@brief
 	\~English	Draw particles with a handle.
 	\~Japanese	ハンドル単位の描画処理を行う。
 	*/
-	virtual void DrawHandle( Handle handle ) = 0;
+	virtual void DrawHandle(Handle handle, const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 
 	/**
 	@brief
 	\~English	Draw particles in the back of priority 0.
 	\~Japanese	背面のハンドル単位の描画処理を行う。
 	*/
-	virtual void DrawHandleBack(Handle handle) = 0;
+	virtual void DrawHandleBack(Handle handle, const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 	
 	/**
 	@brief
 	\~English	Draw particles in the front of priority 0.
 	\~Japanese	前面のハンドル単位の描画処理を行う。
 	*/
-	virtual void DrawHandleFront(Handle handle) = 0;
+	virtual void DrawHandleFront(Handle handle, const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 
 	/**
 		@brief	再生する。

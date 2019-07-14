@@ -1462,10 +1462,26 @@ void ManagerImplemented::Preupdate(DrawSet& drawSet)
 	drawSet.IsPreupdated = true;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void ManagerImplemented::Draw()
+bool ManagerImplemented::IsClippedWithDepth(DrawSet& drawSet, InstanceContainer* container, const Manager::DrawParameter& drawParameter) {
+	
+	// don't use this parameter
+	if (container->m_pEffectNode->DepthValues.DepthParameter.DepthClipping > FLT_MAX / 10)
+		return false;
+
+	Vector3D pos;
+	drawSet.GlobalMatrix.GetTranslation(pos);
+	auto distance = Vector3D::Dot(drawParameter.CameraPosition - pos, drawParameter.CameraDirection);
+	if (container->m_pEffectNode->DepthValues.DepthParameter.DepthClipping < distance)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 {
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
@@ -1484,6 +1500,9 @@ void ManagerImplemented::Draw()
 				{
 					for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
 					{
+						if (IsClippedWithDepth(drawSet, c, drawParameter))
+							continue;
+
 						c->Draw(false);
 					}
 				}
@@ -1506,6 +1525,9 @@ void ManagerImplemented::Draw()
 				{
 					for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
 					{
+						if (IsClippedWithDepth(drawSet, c, drawParameter))
+							continue;
+
 						c->Draw(false);
 					}
 				}
@@ -1521,7 +1543,7 @@ void ManagerImplemented::Draw()
 	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
 }
 
-void ManagerImplemented::DrawBack()
+void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 {
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 	
@@ -1539,6 +1561,9 @@ void ManagerImplemented::DrawBack()
 				auto e = (EffectImplemented*)drawSet.ParameterPointer;
 				for (int32_t j = 0; j < e->renderingNodesThreshold; j++)
 				{
+					if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[j], drawParameter))
+						continue;
+
 					drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
 				}
 			}
@@ -1555,6 +1580,9 @@ void ManagerImplemented::DrawBack()
 				auto e = (EffectImplemented*)drawSet.ParameterPointer;
 				for (int32_t j = 0; j < e->renderingNodesThreshold; j++)
 				{
+					if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[j], drawParameter))
+						continue;
+
 					drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
 				}
 			}
@@ -1565,7 +1593,7 @@ void ManagerImplemented::DrawBack()
 	m_drawTime = (int)(Effekseer::GetTime() - beginTime);
 }
 
-void ManagerImplemented::DrawFront()
+void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 {
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
@@ -1585,6 +1613,9 @@ void ManagerImplemented::DrawFront()
 					auto e = (EffectImplemented*)drawSet.ParameterPointer;
 					for (size_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
 					{
+						if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[j], drawParameter))
+							continue;
+
 						drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
 					}
 				}
@@ -1608,6 +1639,9 @@ void ManagerImplemented::DrawFront()
 					auto e = (EffectImplemented*)drawSet.ParameterPointer;
 					for (size_t j = e->renderingNodesThreshold; j < drawSet.GlobalPointer->RenderedInstanceContainers.size(); j++)
 					{
+						if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[j], drawParameter))
+							continue;
+
 						drawSet.GlobalPointer->RenderedInstanceContainers[j]->Draw(false);
 					}
 				}
@@ -1671,7 +1705,7 @@ Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_
 	return handle;
 }
 
-void ManagerImplemented::DrawHandle( Handle handle )
+void ManagerImplemented::DrawHandle(Handle handle, const Manager::DrawParameter& drawParameter)
 {
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
@@ -1690,6 +1724,9 @@ void ManagerImplemented::DrawHandle( Handle handle )
 					{
 						for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
 						{
+							if (IsClippedWithDepth(drawSet, c, drawParameter))
+								continue;
+
 							c->Draw(false);
 						}
 					}
@@ -1708,6 +1745,9 @@ void ManagerImplemented::DrawHandle( Handle handle )
 				{
 					for (auto& c : drawSet.GlobalPointer->RenderedInstanceContainers)
 					{
+						if (IsClippedWithDepth(drawSet, c, drawParameter))
+							continue;
+
 						c->Draw(false);
 					}
 				}
@@ -1720,7 +1760,7 @@ void ManagerImplemented::DrawHandle( Handle handle )
 	}
 }
 
-void ManagerImplemented::DrawHandleBack(Handle handle)
+void ManagerImplemented::DrawHandleBack(Handle handle, const Manager::DrawParameter& drawParameter)
 {
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
@@ -1738,6 +1778,9 @@ void ManagerImplemented::DrawHandleBack(Handle handle)
 					auto e = (EffectImplemented*)drawSet.ParameterPointer;
 					for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
 					{
+						if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[i], drawParameter))
+							continue;
+
 						drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
 					}
 				}
@@ -1750,6 +1793,9 @@ void ManagerImplemented::DrawHandleBack(Handle handle)
 				auto e = (EffectImplemented*)drawSet.ParameterPointer;
 				for (int32_t i = 0; i < e->renderingNodesThreshold; i++)
 				{
+					if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[i], drawParameter))
+						continue;
+
 					drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
 				}
 			}
@@ -1757,7 +1803,7 @@ void ManagerImplemented::DrawHandleBack(Handle handle)
 	}
 }
 
-void ManagerImplemented::DrawHandleFront(Handle handle)
+void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParameter& drawParameter)
 {
 	std::lock_guard<std::mutex> lock(m_renderingMutex);
 
@@ -1777,6 +1823,9 @@ void ManagerImplemented::DrawHandleFront(Handle handle)
 						auto e = (EffectImplemented*)drawSet.ParameterPointer;
 						for (size_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
 						{
+							if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[i], drawParameter))
+								continue;
+
 							drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
 						}
 					}
@@ -1796,6 +1845,9 @@ void ManagerImplemented::DrawHandleFront(Handle handle)
 					auto e = (EffectImplemented*)drawSet.ParameterPointer;
 					for (size_t i = e->renderingNodesThreshold; i < drawSet.GlobalPointer->RenderedInstanceContainers.size(); i++)
 					{
+						if (IsClippedWithDepth(drawSet, drawSet.GlobalPointer->RenderedInstanceContainers[i], drawParameter))
+							continue;
+
 						drawSet.GlobalPointer->RenderedInstanceContainers[i]->Draw(false);
 					}
 				}

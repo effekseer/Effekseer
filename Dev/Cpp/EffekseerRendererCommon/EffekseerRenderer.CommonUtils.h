@@ -23,11 +23,33 @@
 namespace EffekseerRenderer
 {
 
-void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Vector3D& cameraFront, const ::Effekseer::Vector3D& cameraPos, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand);
+void ApplyDepthParameters(::Effekseer::Matrix43& mat,
+					  const ::Effekseer::Vector3D& cameraFront,
+					  const ::Effekseer::Vector3D& cameraPos,
+					  float depthOffset,
+					  bool isDepthOffsetScaledWithCamera,
+					  bool isDepthOffsetScaledWithEffect,
+					::Effekseer::NodeRendererDepthParameter* depthParameter,
+					  bool isRightHand);
 
-void ApplyDepthOffset(::Effekseer::Matrix43& mat, const ::Effekseer::Vector3D& cameraFront, const ::Effekseer::Vector3D& cameraPos, ::Effekseer::Vector3D& scaleValues, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand);
+void ApplyDepthParameters(::Effekseer::Matrix43& mat,
+					  const ::Effekseer::Vector3D& cameraFront,
+					  const ::Effekseer::Vector3D& cameraPos,
+					  ::Effekseer::Vector3D& scaleValues,
+					  float depthOffset,
+					  bool isDepthOffsetScaledWithCamera,
+					  bool isDepthOffsetScaledWithEffect,
+						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
+					  bool isRightHand);
 
-void ApplyDepthOffset(::Effekseer::Matrix44& mat, const ::Effekseer::Vector3D& cameraFront, const ::Effekseer::Vector3D& cameraPos, float depthOffset, bool isDepthOffsetScaledWithCamera, bool isDepthOffsetScaledWithEffect, bool isRightHand);
+void ApplyDepthParameters(::Effekseer::Matrix44& mat,
+						  const ::Effekseer::Vector3D& cameraFront,
+						  const ::Effekseer::Vector3D& cameraPos,
+						  float depthOffset,
+						  bool isDepthOffsetScaledWithCamera,
+						  bool isDepthOffsetScaledWithEffect,
+						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
+						  bool isRightHand);
 
 template <typename Vertex>
 inline void TransformStandardVertexes( Vertex* vertexes, int32_t count, const ::Effekseer::Matrix43& mat )

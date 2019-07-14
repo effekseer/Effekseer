@@ -38,6 +38,8 @@ namespace Effekseer
 			float				DistortionIntensity;
 
 			int32_t				SplineDivision;
+
+			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		};
 
 		struct InstanceGroupParameter
