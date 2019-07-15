@@ -199,7 +199,7 @@ namespace ImGui
 		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_X, scale_x);
 		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, scale_y);
 
-		const ImRect innerRect = window->InnerMainRect;
+		const ImRect innerRect = window->InnerRect;
 		float width = innerRect.Max.x - innerRect.Min.x;
 		float height = innerRect.Max.y - innerRect.Min.y;
 
@@ -435,7 +435,7 @@ namespace ImGui
 		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, 1.0f);
 		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, 1.0f);
 
-		const ImRect innerRect = window->InnerMainRect;
+		const ImRect innerRect = window->InnerRect;
 		float width = innerRect.Max.x - innerRect.Min.x;
 		float height = innerRect.Max.y - innerRect.Min.y;
 
@@ -587,7 +587,7 @@ namespace ImGui
 		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, 1.0f);
 		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, 1.0f);
 
-		const ImRect innerRect = window->InnerMainRect;
+		const ImRect innerRect = window->InnerRect;
 		float width = innerRect.Max.x - innerRect.Min.x;
 		float height = innerRect.Max.y - innerRect.Min.y;
 

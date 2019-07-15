@@ -316,6 +316,9 @@
     <ClCompile Include="GUI\efk.FileDialog.cpp">
       <Filter>GUI\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="3rdParty\imgui\imgui_widgets.cpp">
+      <Filter>3rdParty\imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuildStep Include="dll.h" />
