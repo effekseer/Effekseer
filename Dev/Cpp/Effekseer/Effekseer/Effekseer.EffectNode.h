@@ -173,6 +173,8 @@ struct ParameterDepthValues
 	int32_t	DrawingPriority;
 	float	SoftParticle;
 
+	NodeRendererDepthParameter DepthParameter;
+
 	ParameterDepthValues()
 	{
 		DepthOffset = 0;

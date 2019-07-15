@@ -94,6 +94,7 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 
 		m_nodeParameter.Distortion = RendererCommon.Distortion;
 		m_nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
+		m_nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 
 		m_nodeParameter.SplineDivision = SplineDivision;
 

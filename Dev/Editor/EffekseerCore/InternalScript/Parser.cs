@@ -181,7 +181,7 @@ namespace Effekseer.InternalScript
 					}
 					else
 					{
-						throw new InvalidTokenException(token.Value.ToString(), token.Line);
+						throw new InvalidTokenException(token.ToString(), token.Line);
 					}
 				}
 				else
@@ -245,7 +245,7 @@ namespace Effekseer.InternalScript
 					}
 					else
 					{
-						throw new InvalidTokenException(token.Value.ToString(), token.Line);
+						throw new InvalidTokenException(token.ToString(), token.Line);
 					}
 				}
 				else
@@ -311,7 +311,7 @@ namespace Effekseer.InternalScript
 				}
 				else
 				{
-					throw new InvalidTokenException(token.Value.ToString(), token.Line);
+					throw new InvalidTokenException(token.ToString(), token.Line);
 				}
 			}
 			else
@@ -332,7 +332,7 @@ namespace Effekseer.InternalScript
 					}
 					else if(next.Type != TokenType.Label)
 					{
-						throw new InvalidTokenException(token.Value.ToString(), token.Line);
+						throw new InvalidTokenException(token.ToString(), token.Line);
 					}
 
 					var v_ = new AttributeExpression();

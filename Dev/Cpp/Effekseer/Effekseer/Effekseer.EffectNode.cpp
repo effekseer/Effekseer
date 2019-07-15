@@ -129,7 +129,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		memcpy(&TranslationType, pos, sizeof(int));
 		pos += sizeof(int);
 
-		
 		if (TranslationType == ParameterTranslationType_Fixed)
 		{
 			int32_t translationSize = 0;
@@ -153,7 +152,6 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 
 			pos += translationSize;
-
 		}
 		else if (TranslationType == ParameterTranslationType_PVA)
 		{
@@ -303,8 +301,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			pos += size;
 
 			// make invalid
-			if (RotationFixed.RefEq < 0 && 
-				RotationFixed.Position.X == 0.0f && RotationFixed.Position.Y == 0.0f && RotationFixed.Position.Z == 0.0f)
+			if (RotationFixed.RefEq < 0 && RotationFixed.Position.X == 0.0f && RotationFixed.Position.Y == 0.0f &&
+				RotationFixed.Position.Z == 0.0f)
 			{
 				RotationType = ParameterRotationType_None;
 				EffekseerPrintDebug("RotationType Change None\n");
@@ -388,8 +386,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			}
 
 			// make invalid
-			if (ScalingFixed.RefEq < 0 &&
-				ScalingFixed.Position.X == 1.0f && ScalingFixed.Position.Y == 1.0f && ScalingFixed.Position.Z == 1.0f)
+			if (ScalingFixed.RefEq < 0 && ScalingFixed.Position.X == 1.0f && ScalingFixed.Position.Y == 1.0f &&
+				ScalingFixed.Position.Z == 1.0f)
 			{
 				ScalingType = ParameterScalingType_None;
 				EffekseerPrintDebug("ScalingType Change None\n");
@@ -502,12 +500,20 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			memcpy(&IsDepthOffsetScaledWithParticleScale, pos, sizeof(int32_t));
 			pos += sizeof(int32_t);
 
-			DepthValues.IsDepthOffsetScaledWithParticleScale = IsDepthOffsetScaledWithParticleScale > 0;
+			if (m_effect->GetVersion() >= 15)
+			{
+				memcpy(&DepthValues.DepthParameter.SuppressionOfScalingByDepth, pos, sizeof(float));
+				pos += sizeof(float);
 
+				memcpy(&DepthValues.DepthParameter.DepthClipping, pos, sizeof(float));
+				pos += sizeof(float);
+			}
+	
 			if (m_effect->GetVersion() >= 13)
 			{
 				memcpy(&DepthValues.ZSort, pos, sizeof(int32_t));
 				pos += sizeof(int32_t);
+
 				memcpy(&DepthValues.DrawingPriority, pos, sizeof(int32_t));
 				pos += sizeof(int32_t);
 			}
@@ -517,6 +523,15 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 			DepthValues.DepthOffset *= m_effect->GetMaginification();
 			DepthValues.SoftParticle *= m_effect->GetMaginification();
+
+			if (DepthValues.DepthParameter.DepthClipping < FLT_MAX / 10)
+			{
+				DepthValues.DepthParameter.DepthClipping *= m_effect->GetMaginification();
+			}
+
+			DepthValues.DepthParameter.DepthOffset = DepthValues.DepthOffset;
+			DepthValues.DepthParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+			DepthValues.DepthParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 		}
 
 		// Convert right handle coordinate system into left handle coordinate system

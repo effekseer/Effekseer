@@ -518,19 +518,22 @@ private:
 	void UpdateHandle( DrawSet& drawSet, float deltaFrame );
 
 	void Preupdate(DrawSet& drawSet);
-public:
 
-	void Draw() override;
+	//! whether container is disabled while rendering because of a distance between the effect and a camera
+	bool IsClippedWithDepth(DrawSet& drawSet, InstanceContainer* container, const Manager::DrawParameter& drawParameter);
+ public:
+
+	void Draw(const Manager::DrawParameter& drawParameter) override;
 	
-	void DrawBack() override;
+	void DrawBack(const Manager::DrawParameter& drawParameter) override;
 
-	void DrawFront() override;
+	void DrawFront(const Manager::DrawParameter& drawParameter) override;
 
-	void DrawHandle( Handle handle ) override;
+	void DrawHandle(Handle handle, const Manager::DrawParameter& drawParameter) override;
 
-	void DrawHandleBack(Handle handle) override;
+	void DrawHandleBack(Handle handle, const Manager::DrawParameter& drawParameter) override;
 
-	void DrawHandleFront(Handle handle) override;
+	void DrawHandleFront(Handle handle, const Manager::DrawParameter& drawParameter) override;
 
 	Handle Play( Effect* effect, float x, float y, float z ) override;
 

@@ -321,6 +321,8 @@ struct HandleHolder
 };
 
 static ::Effekseer::Manager* g_manager = NULL;
+static Effekseer::Manager::DrawParameter drawParameter;
+
 static ::EffekseerTool::Renderer* g_renderer = NULL;
 static ::Effekseer::Effect* g_effect = NULL;
 static ::EffekseerTool::Sound* g_sound = NULL;
@@ -670,6 +672,8 @@ bool Native::UpdateWindow()
 		::Effekseer::Matrix43::Multiple(mat, mat_rot_x, mat_rot_y);
 		::Effekseer::Vector3D::Transform(position, position, mat);
 
+		Effekseer::Vector3D::Normal(drawParameter.CameraDirection, position);
+
 		position.X += g_focus_position.X;
 		position.Y += g_focus_position.Y;
 		position.Z += g_focus_position.Z;
@@ -677,6 +681,8 @@ bool Native::UpdateWindow()
 		::Effekseer::Matrix44 cameraMat;
 		g_renderer->GetRenderer()->SetCameraMatrix(
 			::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+		drawParameter.CameraPosition = position;
 	}
 	else
 	{
@@ -687,6 +693,8 @@ bool Native::UpdateWindow()
 		::Effekseer::Vector3D temp_focus = g_focus_position;
 		temp_focus.Z = -temp_focus.Z;
 
+		Effekseer::Vector3D::Normal(drawParameter.CameraDirection, position);
+
 		position.X += temp_focus.X;
 		position.Y += temp_focus.Y;
 		position.Z += temp_focus.Z;
@@ -694,6 +702,8 @@ bool Native::UpdateWindow()
 		::Effekseer::Matrix44 cameraMat;
 		g_renderer->GetRenderer()->SetCameraMatrix(
 			::Effekseer::Matrix44().LookAtLH(position, temp_focus, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+		drawParameter.CameraPosition = position;
 	}
 
 	g_sound->SetListener(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
@@ -708,7 +718,7 @@ void Native::RenderWindow()
 
 	if (g_renderer->Distortion == EffekseerTool::eDistortionType::DistortionType_Current)
 	{
-		g_manager->DrawBack();
+		g_manager->DrawBack(drawParameter);
 
 		// HACK
 		g_renderer->GetRenderer()->EndRendering();
@@ -717,11 +727,11 @@ void Native::RenderWindow()
 
 		// HACK
 		g_renderer->GetRenderer()->BeginRendering();
-		g_manager->DrawFront();
+		g_manager->DrawFront(drawParameter);
 	}
 	else
 	{
-		g_manager->Draw();
+		g_manager->Draw(drawParameter);
 	}
 
 	g_renderer->EndRendering();

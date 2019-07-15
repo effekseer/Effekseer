@@ -544,6 +544,20 @@ struct MaterialParameter
 	std::vector<std::array<float, 4>> MaterialUniforms;
 };
 
+/**
+	@brief	\~english	Parameters about a depth which is passed into a renderer
+			\~japanese	レンダラーに渡されるデプスに関するパラメーター
+*/
+struct NodeRendererDepthParameter
+{
+	float DepthOffset = 0.0f;
+	bool IsDepthOffsetScaledWithCamera = false;
+	bool IsDepthOffsetScaledWithParticleScale = false;
+	ZSortType ZSort = ZSortType::None;
+	float SuppressionOfScalingByDepth = 1.0f;
+	float DepthClipping = FLT_MAX;
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

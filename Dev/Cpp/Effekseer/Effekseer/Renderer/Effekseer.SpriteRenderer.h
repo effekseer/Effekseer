@@ -45,6 +45,7 @@ public:
 
 		ZSortType			ZSort;
 
+		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		MaterialParameter* MaterialParameterPtr = nullptr;
 	};
 
