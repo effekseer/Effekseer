@@ -31,7 +31,6 @@ namespace ImGui
 		return ImVec2(lhs.x * rhs, lhs.y * rhs);
 	}
 
-
 	bool TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, bool* v, ImTextureID user_texture, const char* label, const char* label_end)
 	{
 		ImGuiWindow* window = GetCurrentWindow();
@@ -41,41 +40,47 @@ namespace ImGui
 		ImGuiContext& g = *GImGui;
 		const ImGuiStyle& style = g.Style;
 		const bool display_frame = (flags & ImGuiTreeNodeFlags_Framed) != 0;
-		const ImVec2 padding = (display_frame || (flags & ImGuiTreeNodeFlags_FramePadding)) ? style.FramePadding : ImVec2(style.FramePadding.x, 0.0f);
+		const ImVec2 padding =
+			(display_frame || (flags & ImGuiTreeNodeFlags_FramePadding)) ? style.FramePadding : ImVec2(style.FramePadding.x, 0.0f);
 
 		if (!label_end)
 			label_end = FindRenderedTextEnd(label);
 		const ImVec2 label_size = CalcTextSize(label, label_end, false);
 
-
-
 		// We vertically grow up to current line height up the typical widget height.
-		const float text_base_offset_y = ImMax(padding.y, window->DC.CurrentLineTextBaseOffset); // Latch before ItemSize changes it
-		const float frame_height = ImMax(ImMin(window->DC.CurrentLineHeight, g.FontSize + style.FramePadding.y * 2), label_size.y + padding.y * 2);
+		const float text_base_offset_y = ImMax(padding.y, window->DC.CurrLineTextBaseOffset); // Latch before ItemSize changes it
+		const float frame_height =
+			ImMax(ImMin(window->DC.CurrLineSize.y, g.FontSize + style.FramePadding.y * 2), label_size.y + padding.y * 2);
 		const float icon_size = frame_height;
 
-		ImRect frame_bb = ImRect(window->DC.CursorPos, ImVec2(window->Pos.x + GetContentRegionMax().x, window->DC.CursorPos.y + frame_height));
+		ImRect frame_bb = ImRect(window->DC.CursorPos, ImVec2(window->WorkRect.Max.x, window->DC.CursorPos.y + frame_height));
 		if (display_frame)
 		{
 			// Framed header expand a little outside the default padding
-			frame_bb.Min.x -= (float)(int)(window->WindowPadding.x*0.5f) - 1;
-			frame_bb.Max.x += (float)(int)(window->WindowPadding.x*0.5f) - 1;
+			frame_bb.Min.x -= (float)(int)(window->WindowPadding.x * 0.5f - 1.0f);
+			frame_bb.Max.x += (float)(int)(window->WindowPadding.x * 0.5f);
 		}
 
-		const float text_offset_x = (g.FontSize + icon_size + (display_frame ? padding.x * 3 : padding.x * 2));   // Collapser arrow width + Spacing
-		const float text_width = g.FontSize + (label_size.x > 0.0f ? label_size.x + padding.x * 2 : 0.0f);   // Include collapser
-		ItemSize(ImVec2(text_width + icon_size, frame_height), text_base_offset_y);
+		const float text_offset_x =
+			(g.FontSize + icon_size + (display_frame ? padding.x * 3 : padding.x * 2)); // Collapser arrow width + Spacing
+		const float text_width = g.FontSize + icon_size + (label_size.x > 0.0f ? label_size.x + padding.x * 2 : 0.0f); // Include collapser
+		ItemSize(ImVec2(text_width, frame_height), text_base_offset_y);
 
 		// For regular tree nodes, we arbitrary allow to click past 2 worth of ItemSpacing
-		// (Ideally we'd want to add a flag for the user to specify if we want the hit test to be done up to the right side of the content or not)
-		const ImRect interact_bb = display_frame ? frame_bb : ImRect(frame_bb.Min.x, frame_bb.Min.y, frame_bb.Min.x + text_width + style.ItemSpacing.x * 2, frame_bb.Max.y);
+		// (Ideally we'd want to add a flag for the user to specify if we want the hit test to be done up to the right side of the content
+		// or not)
+		const ImRect interact_bb =
+			display_frame ? frame_bb
+						  : ImRect(frame_bb.Min.x, frame_bb.Min.y, frame_bb.Min.x + text_width + style.ItemSpacing.x * 2, frame_bb.Max.y);
 		bool is_open = TreeNodeBehaviorIsOpen(id, flags);
+		bool is_leaf = (flags & ImGuiTreeNodeFlags_Leaf) != 0;
 
-		// Store a flag for the current depth to tell if we will allow closing this node when navigating one of its child. 
+		// Store a flag for the current depth to tell if we will allow closing this node when navigating one of its child.
 		// For this purpose we essentially compare if g.NavIdIsAlive went from 0 to 1 between TreeNode() and TreePop().
 		// This is currently only support 32 level deep and we are fine with (1 << Depth) overflowing into a zero.
-		if (is_open && !g.NavIdIsAlive && (flags & ImGuiTreeNodeFlags_NavLeftJumpsBackHere) && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
-			window->DC.TreeDepthMayJumpToParentOnPop |= (1 << window->DC.TreeDepth);
+		if (is_open && !g.NavIdIsAlive && (flags & ImGuiTreeNodeFlags_NavLeftJumpsBackHere) &&
+			!(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
+			window->DC.TreeStoreMayJumpToParentOnPop |= (1 << window->DC.TreeDepth);
 
 		bool item_add = ItemAdd(interact_bb, id);
 		window->DC.LastItemStatusFlags |= ImGuiItemStatusFlags_HasDisplayRect;
@@ -84,33 +89,46 @@ namespace ImGui
 		if (!item_add)
 		{
 			if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
-				TreePushRawID(id);
+				TreePushOverrideID(id);
+			IMGUI_TEST_ENGINE_ITEM_INFO(window->DC.LastItemId,
+										label,
+										window->DC.ItemFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) |
+											(is_open ? ImGuiItemStatusFlags_Opened : 0));
 			return is_open;
 		}
 
 		// Flags that affects opening behavior:
-		// - 0(default) ..................... single-click anywhere to open
+		// - 0 (default) .................... single-click anywhere to open
 		// - OpenOnDoubleClick .............. double-click anywhere to open
 		// - OpenOnArrow .................... single-click on arrow to open
 		// - OpenOnDoubleClick|OpenOnArrow .. single-click on arrow or double-click anywhere to open
-		ImGuiButtonFlags button_flags = ImGuiButtonFlags_NoKeyModifiers | ((flags & ImGuiTreeNodeFlags_AllowItemOverlap) ? ImGuiButtonFlags_AllowItemOverlap : 0);
-		if (!(flags & ImGuiTreeNodeFlags_Leaf))
-			button_flags |= ImGuiButtonFlags_PressedOnDragDropHold;
+		ImGuiButtonFlags button_flags = ImGuiButtonFlags_NoKeyModifiers;
+		if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
+			button_flags |= ImGuiButtonFlags_AllowItemOverlap;
 		if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
-			button_flags |= ImGuiButtonFlags_PressedOnDoubleClick | ((flags & ImGuiTreeNodeFlags_OpenOnArrow) ? ImGuiButtonFlags_PressedOnClickRelease : 0);
+			button_flags |= ImGuiButtonFlags_PressedOnDoubleClick |
+							((flags & ImGuiTreeNodeFlags_OpenOnArrow) ? ImGuiButtonFlags_PressedOnClickRelease : 0);
+		if (!is_leaf)
+			button_flags |= ImGuiButtonFlags_PressedOnDragDropHold;
 
-		bool hovered, held, pressed = ButtonBehavior(interact_bb, id, &hovered, &held, button_flags);
-		if (!(flags & ImGuiTreeNodeFlags_Leaf))
+		bool selected = (flags & ImGuiTreeNodeFlags_Selected) != 0;
+		const bool was_selected = selected;
+
+		bool hovered, held;
+		bool pressed = ButtonBehavior(interact_bb, id, &hovered, &held, button_flags);
+		bool toggled = false;
+		if (!is_leaf)
 		{
-			bool toggled = false;
 			if (pressed)
 			{
 				toggled = !(flags & (ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) || (g.NavActivateId == id);
 				if (flags & ImGuiTreeNodeFlags_OpenOnArrow)
-					toggled |= IsMouseHoveringRect(interact_bb.Min, ImVec2(interact_bb.Min.x + text_offset_x, interact_bb.Max.y)) && (!g.NavDisableMouseHover);
+					toggled |= IsMouseHoveringRect(interact_bb.Min, ImVec2(interact_bb.Min.x + text_offset_x, interact_bb.Max.y)) &&
+							   (!g.NavDisableMouseHover);
 				if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
 					toggled |= g.IO.MouseDoubleClicked[0];
-				if (g.DragDropActive && is_open) // When using Drag and Drop "hold to open" we keep the node highlighted after opening, but never close it again.
+				if (g.DragDropActive && is_open) // When using Drag and Drop "hold to open" we keep the node highlighted after opening, but
+												 // never close it again.
 					toggled = false;
 			}
 
@@ -119,7 +137,8 @@ namespace ImGui
 				toggled = true;
 				NavMoveRequestCancel();
 			}
-			if (g.NavId == id && g.NavMoveRequest && g.NavMoveDir == ImGuiDir_Right && !is_open) // If there's something upcoming on the line we may want to give it the priority?
+			if (g.NavId == id && g.NavMoveRequest && g.NavMoveDir == ImGuiDir_Right &&
+				!is_open) // If there's something upcoming on the line we may want to give it the priority?
 			{
 				toggled = true;
 				NavMoveRequestCancel();
@@ -134,28 +153,43 @@ namespace ImGui
 		if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
 			SetItemAllowOverlap();
 
+		// In this branch, TreeNodeBehavior() cannot toggle the selection so this will never trigger.
+		if (selected != was_selected) //-V547
+			window->DC.LastItemStatusFlags |= ImGuiItemStatusFlags_ToggledSelection;
+
 		// Render
-		const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+		const ImU32 bg_col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
+		const ImU32 text_col = GetColorU32(ImGuiCol_Text);
 		const ImVec2 text_pos = frame_bb.Min + ImVec2(text_offset_x, text_base_offset_y);
+		ImGuiNavHighlightFlags nav_highlight_flags = ImGuiNavHighlightFlags_TypeThin;
 		if (display_frame)
 		{
 			// Framed type
-			RenderFrame(frame_bb.Min, frame_bb.Max, col, true, style.FrameRounding);
-			RenderNavHighlight(frame_bb, id, ImGuiNavHighlightFlags_TypeThin);
-			RenderArrow(frame_bb.Min + ImVec2(padding.x, text_base_offset_y), is_open ? ImGuiDir_Down : ImGuiDir_Right, 1.0f);
-			
-			window->DrawList->AddImage(user_texture, 
-				frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y), 
-				frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y) + ImVec2(icon_size,icon_size), ImVec2(0, 0), ImVec2(1, 1));
+			RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, true, style.FrameRounding);
+			RenderNavHighlight(frame_bb, id, nav_highlight_flags);
+			RenderArrow(window->DrawList,
+						frame_bb.Min + ImVec2(padding.x, text_base_offset_y),
+						text_col,
+						is_open ? ImGuiDir_Down : ImGuiDir_Right,
+						1.0f);
+			if (flags & ImGuiTreeNodeFlags_ClipLabelForTrailingButton)
+				frame_bb.Max.x -= g.FontSize + style.FramePadding.x;
+
+			window->DrawList->AddImage(user_texture,
+									   frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y),
+									   frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y) + ImVec2(icon_size, icon_size),
+									   ImVec2(0, 0),
+									   ImVec2(1, 1));
 
 			if (g.LogEnabled)
 			{
-				// NB: '##' is normally used to hide text (as a library-wide feature), so we need to specify the text range to make sure the ## aren't stripped out here.
+				// NB: '##' is normally used to hide text (as a library-wide feature), so we need to specify the text range to make sure the
+				// ## aren't stripped out here.
 				const char log_prefix[] = "\n##";
 				const char log_suffix[] = "##";
-				//LogRenderedText(&text_pos, log_prefix, log_prefix + 3);
+				LogRenderedText(&text_pos, log_prefix, log_prefix + 3);
 				RenderTextClipped(text_pos, frame_bb.Max, label, label_end, &label_size);
-				//LogRenderedText(&text_pos, log_suffix + 1, log_suffix + 3);
+				LogRenderedText(&text_pos, log_suffix, log_suffix + 2);
 			}
 			else
 			{
@@ -165,28 +199,37 @@ namespace ImGui
 		else
 		{
 			// Unframed typed for tree nodes
-			if (hovered || (flags & ImGuiTreeNodeFlags_Selected))
+			if (hovered || selected)
 			{
-				RenderFrame(frame_bb.Min, frame_bb.Max, col, false);
-				RenderNavHighlight(frame_bb, id, ImGuiNavHighlightFlags_TypeThin);
+				RenderFrame(frame_bb.Min, frame_bb.Max, bg_col, false);
+				RenderNavHighlight(frame_bb, id, nav_highlight_flags);
 			}
 
 			if (flags & ImGuiTreeNodeFlags_Bullet)
-				RenderBullet(frame_bb.Min + ImVec2(text_offset_x * 0.5f, g.FontSize*0.50f + text_base_offset_y));
-			else if (!(flags & ImGuiTreeNodeFlags_Leaf))
-				RenderArrow(frame_bb.Min + ImVec2(padding.x, g.FontSize*0.15f + text_base_offset_y), is_open ? ImGuiDir_Down : ImGuiDir_Right, 0.70f);
-			//if (g.LogEnabled)
-			//	LogRenderedText(&text_pos, ">");
+				RenderBullet(
+					window->DrawList, frame_bb.Min + ImVec2(text_offset_x * 0.5f, g.FontSize * 0.50f + text_base_offset_y), text_col);
+			else if (!is_leaf)
+				RenderArrow(window->DrawList,
+							frame_bb.Min + ImVec2(padding.x, g.FontSize * 0.15f + text_base_offset_y),
+							text_col,
+							is_open ? ImGuiDir_Down : ImGuiDir_Right,
+							0.70f);
 
 			window->DrawList->AddImage(user_texture,
-				frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y),
-				frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y) + ImVec2(icon_size, icon_size), ImVec2(0, 0), ImVec2(1, 1));
+									   frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y),
+									   frame_bb.Min + ImVec2(padding.x + g.FontSize, text_base_offset_y) + ImVec2(icon_size, icon_size),
+									   ImVec2(0, 0),
+									   ImVec2(1, 1));
 
+			if (g.LogEnabled)
+				LogRenderedText(&text_pos, ">");
 			RenderText(text_pos, label, label_end, false);
 		}
 
 		if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
-			TreePushRawID(id);
+			TreePushOverrideID(id);
+		IMGUI_TEST_ENGINE_ITEM_INFO(
+			id, label, window->DC.ItemFlags | (is_leaf ? 0 : ImGuiItemStatusFlags_Openable) | (is_open ? ImGuiItemStatusFlags_Opened : 0));
 		return is_open;
 	}
 
@@ -261,7 +304,7 @@ namespace ImGui
 		// If we're not showing any slider there's no point in doing any HSV conversions
 		const ImGuiColorEditFlags flags_untouched = flags;
 		if (flags & ImGuiColorEditFlags_NoInputs)
-			flags = (flags & (~ImGuiColorEditFlags__InputsMask)) | ImGuiColorEditFlags_RGB | ImGuiColorEditFlags_NoOptions;
+			flags = (flags & (~ImGuiColorEditFlags__DisplayMask)) | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoOptions;
 
 #ifdef RAW_HSV
 		const bool alpha = (flags & ImGuiColorEditFlags_NoAlpha) == 0;
@@ -279,13 +322,13 @@ namespace ImGui
 #endif
 
 		// Read stored options
-		if (!(flags & ImGuiColorEditFlags__InputsMask))
-			flags |= (g.ColorEditOptions & ImGuiColorEditFlags__InputsMask);
+		if (!(flags & ImGuiColorEditFlags__DisplayMask))
+			flags |= (g.ColorEditOptions & ImGuiColorEditFlags__DisplayMask);
 		if (!(flags & ImGuiColorEditFlags__DataTypeMask))
 			flags |= (g.ColorEditOptions & ImGuiColorEditFlags__DataTypeMask);
 		if (!(flags & ImGuiColorEditFlags__PickerMask))
 			flags |= (g.ColorEditOptions & ImGuiColorEditFlags__PickerMask);
-		flags |= (g.ColorEditOptions & ~(ImGuiColorEditFlags__InputsMask | ImGuiColorEditFlags__DataTypeMask | ImGuiColorEditFlags__PickerMask));
+		flags |= (g.ColorEditOptions & ~(ImGuiColorEditFlags__DisplayMask | ImGuiColorEditFlags__DataTypeMask | ImGuiColorEditFlags__PickerMask));
 
 #ifndef RAW_HSV
 		const bool alpha = (flags & ImGuiColorEditFlags_NoAlpha) == 0;
@@ -402,7 +445,7 @@ namespace ImGui
 					Separator();
 				}
 				ImGuiColorEditFlags picker_flags_to_forward = ImGuiColorEditFlags__DataTypeMask | ImGuiColorEditFlags__PickerMask | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_AlphaBar;
-				ImGuiColorEditFlags picker_flags = (flags_untouched & picker_flags_to_forward) | ImGuiColorEditFlags__InputsMask | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_AlphaPreviewHalf;
+				ImGuiColorEditFlags picker_flags = (flags_untouched & picker_flags_to_forward) | ImGuiColorEditFlags__DisplayMask | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_AlphaPreviewHalf;
 				PushItemWidth(square_sz * 12.0f); // Use 256 + bar sizes?
 
 #ifdef RAW_HSV
@@ -534,7 +577,7 @@ namespace ImGui
 			window->DC.LastItemId = g.ActiveId;
 
 		if (value_changed)
-			MarkItemValueChanged(window->DC.LastItemId);
+			MarkItemEdited(window->DC.LastItemId);
 
 		return value_changed;
 	}
@@ -616,7 +659,7 @@ namespace efk
 		bool value_changed = false;
 		ImGui::BeginGroup();
 		ImGui::PushID(label);
-		ImGui::PushMultiItemsWidths(components);
+		ImGui::PushMultiItemsWidths(components, ImGui::CalcItemWidth());
 
 		const char* display_formats[] = {
 			display_format1,
@@ -653,7 +696,7 @@ namespace efk
 		bool value_changed = false;
 		ImGui::BeginGroup();
 		ImGui::PushID(label);
-		ImGui::PushMultiItemsWidths(components);
+		ImGui::PushMultiItemsWidths(components, ImGui::CalcItemWidth());
 
 		const char* display_formats[] = {
 			display_format1,
@@ -1081,42 +1124,65 @@ namespace efk
 		ImGuiWindow* window = ImGui::GetCurrentWindow();
 		if (window->SkipItems)
 			return;
-		ImGuiContext& g = *GImGui;
 
-		ImGuiSeparatorFlags flags = 0;
-		if ((flags & (ImGuiSeparatorFlags_Horizontal | ImGuiSeparatorFlags_Vertical)) == 0)
-			flags |= (window->DC.LayoutType == ImGuiLayoutType_Horizontal) ? ImGuiSeparatorFlags_Vertical : ImGuiSeparatorFlags_Horizontal;
-		IM_ASSERT(ImIsPowerOfTwo((int)(flags & (ImGuiSeparatorFlags_Horizontal | ImGuiSeparatorFlags_Vertical))));   // Check that only 1 option is selected
+		    ImGuiSeparatorFlags flags =
+			(window->DC.LayoutType == ImGuiLayoutType_Horizontal) ? ImGuiSeparatorFlags_Vertical : ImGuiSeparatorFlags_Horizontal;
+		flags |= ImGuiSeparatorFlags_SpanAllColumns;
+
+		ImGuiContext& g = *GImGui;
+		IM_ASSERT(ImIsPowerOfTwo(flags &
+								 (ImGuiSeparatorFlags_Horizontal | ImGuiSeparatorFlags_Vertical))); // Check that only 1 option is selected
+
+		float thickness_draw = 1.0f;
+		float thickness_layout = 0.0f;
 		if (flags & ImGuiSeparatorFlags_Vertical)
 		{
-			ImGui::VerticalSeparator();
-			return;
+			// Vertical separator, for menu bars (use current line height). Not exposed because it is misleading and it doesn't have an
+			// effect on regular layout.
+			float y1 = window->DC.CursorPos.y;
+			float y2 = window->DC.CursorPos.y + window->DC.CurrLineSize.y;
+			const ImRect bb(ImVec2(window->DC.CursorPos.x, y1), ImVec2(window->DC.CursorPos.x + thickness_draw, y2));
+			ImGui::ItemSize(ImVec2(thickness_layout, 0.0f));
+			if (!ImGui::ItemAdd(bb, 0))
+				return;
+
+			// Draw
+			window->DrawList->AddLine(ImVec2(bb.Min.x, bb.Min.y), ImVec2(bb.Min.x, bb.Max.y), ImGui::GetColorU32(ImGuiCol_Separator));
+			if (g.LogEnabled)
+				ImGui::LogText(" |");
 		}
-
-		// Horizontal Separator
-		if (window->DC.ColumnsSet)
-			ImGui::PopClipRect();
-
-		float x1 = window->Pos.x;
-		float x2 = window->Pos.x + window->Size.x;
-		if (!window->DC.GroupStack.empty())
-			x1 += window->DC.IndentX;
-
-		const ImRect bb(ImVec2(x1, window->DC.CursorPos.y), ImVec2(x2, window->DC.CursorPos.y + 4.0f));
-		ImGui::ItemSize(ImVec2(0.0f, 0.0f)); // NB: we don't provide our width so that it doesn't get feed back into AutoFit, we don't provide height to not alter layout.
-		if (!ImGui::ItemAdd(bb, 0))
+		else if (flags & ImGuiSeparatorFlags_Horizontal)
 		{
-			if (window->DC.ColumnsSet)
-				ImGui::PushColumnClipRect();
-			return;
-		}
+			// Horizontal Separator
+			float x1 = window->Pos.x;
+			float x2 = window->Pos.x + window->Size.x;
+			if (!window->DC.GroupStack.empty())
+				x1 += window->DC.Indent.x;
 
-		window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), 0);
+			ImGuiColumns* columns = (flags & ImGuiSeparatorFlags_SpanAllColumns) ? window->DC.CurrentColumns : NULL;
+			if (columns)
+				ImGui::PushColumnsBackground();
 
-		if (window->DC.ColumnsSet)
-		{
-			ImGui::PushColumnClipRect();
-			window->DC.ColumnsSet->LineMinY = window->DC.CursorPos.y;
+			// We don't provide our width to the layout so that it doesn't get feed back into AutoFit
+			const ImRect bb(ImVec2(x1, window->DC.CursorPos.y), ImVec2(x2, window->DC.CursorPos.y + thickness_draw));
+			ImGui::ItemSize(ImVec2(0.0f, thickness_layout));
+			if (!ImGui::ItemAdd(bb, 0))
+			{
+				if (columns)
+					ImGui::PopColumnsBackground();
+				return;
+			}
+
+			// Draw
+			window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), 0);
+			if (g.LogEnabled)
+				ImGui::LogRenderedText(&bb.Min, "--------------------------------");
+
+			if (columns)
+			{
+				ImGui::PopColumnsBackground();
+				columns->LineMinY = window->DC.CursorPos.y;
+			}
 		}
 	}
 

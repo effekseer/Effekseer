@@ -215,6 +215,7 @@
     <ClCompile Include="3rdParty\Boxer\boxer_win.cpp" />
     <ClCompile Include="3rdParty\imgui\imgui.cpp" />
     <ClCompile Include="3rdParty\imgui\imgui_draw.cpp" />
+    <ClCompile Include="3rdParty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="3rdParty\imgui_addon\fcurve\fcurve.cpp" />
     <ClCompile Include="3rdParty\imgui_addon\imguidock\imguidock.cpp" />
     <ClCompile Include="3rdParty\imgui_addon\imguihelper\imguihelper.cpp" />

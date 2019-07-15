@@ -1422,7 +1422,7 @@ static float CalcMaxPopupHeightFromItemCount(int items_count)
     return (g.FontSize + g.Style.ItemSpacing.y) * items_count - g.Style.ItemSpacing.y + (g.Style.WindowPadding.y * 2);
 }
 
-bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboFlags flags)
+bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboFlags flags, ImTextureID user_texture_id)
 {
     // Always consume the SetNextWindowSizeConstraint() call in our early return paths
     ImGuiContext& g = *GImGui;
@@ -1465,8 +1465,24 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
         RenderArrow(window->DrawList, ImVec2(value_x2 + style.FramePadding.y, frame_bb.Min.y + style.FramePadding.y), text_col, ImGuiDir_Down);
     }
     RenderFrameBorder(frame_bb.Min, frame_bb.Max, style.FrameRounding);
-    if (preview_value != NULL && !(flags & ImGuiComboFlags_NoPreview))
-        RenderTextClipped(frame_bb.Min + style.FramePadding, ImVec2(value_x2, frame_bb.Max.y), preview_value, NULL, NULL, ImVec2(0.0f,0.0f));
+    // original
+	// if (preview_value != NULL && !(flags & ImGuiComboFlags_NoPreview))
+    //     RenderTextClipped(frame_bb.Min + style.FramePadding, ImVec2(value_x2, frame_bb.Max.y), preview_value, NULL, NULL, ImVec2(0.0f,0.0f));
+	if (preview_value != NULL && !(flags & ImGuiComboFlags_NoPreview))
+	{
+		ImVec2 padding(0.0f, 0.0f);
+		if (user_texture_id)
+		{
+			const float icon_size = frame_bb.Max.y - frame_bb.Min.y - style.FramePadding.y * 2;
+			ImVec2 icon_min(frame_bb.Min.x + style.FramePadding.x, frame_bb.Min.y + style.FramePadding.y);
+			ImVec2 icon_max(icon_min.x + icon_size, frame_bb.Max.y - style.FramePadding.y);
+			window->DrawList->AddImage(user_texture_id, icon_min, icon_max);
+			padding.x = icon_size + style.FramePadding.x;
+		}
+
+		RenderTextClipped(
+			frame_bb.Min + style.FramePadding + padding, ImVec2(value_x2, frame_bb.Max.y), preview_value, NULL, NULL, ImVec2(0.0f, 0.0f));
+	}
     if (label_size.x > 0)
         RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
 
@@ -2106,6 +2122,24 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* v, floa
             }
         }
     }
+	
+	if (!temp_input_is_active && hovered && g.IO.MouseReleased[0] && g.IO.MouseClickedPos[0].x == g.IO.MousePos.x &&
+			 g.IO.MouseClickedPos[0].y == g.IO.MousePos.y)
+	{
+		SetActiveID(id, window);
+		SetFocusID(id, window);
+		FocusWindow(window);
+
+		// HACK
+		g.IO.MouseClicked[0] = 1;
+
+		g.ActiveIdAllowNavDirFlags = (1 << ImGuiDir_Up) | (1 << ImGuiDir_Down);
+		{
+			temp_input_start = true;
+			FocusableItemUnregister(window);
+		}
+	}
+	
     if (temp_input_is_active || temp_input_start)
         return TempInputTextScalar(frame_bb, id, label, data_type, v, format);
 
@@ -3683,7 +3717,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             }
             state->OnKeyPressed(STB_TEXTEDIT_K_BACKSPACE | k_mask);
         }
-        else if (IsKeyPressedMap(ImGuiKey_Enter))
+		else if (IsKeyPressedMap(ImGuiKey_Enter) || IsKeyPressedMap(ImGuiKey_NumEnter))
         {
             bool ctrl_enter_for_new_line = (flags & ImGuiInputTextFlags_CtrlEnterForNewLine) != 0;
             if (!is_multiline || (ctrl_enter_for_new_line && !io.KeyCtrl) || (!ctrl_enter_for_new_line && io.KeyCtrl))
@@ -5436,7 +5470,7 @@ bool ImGui::CollapsingHeader(const char* label, bool* p_open, ImGuiTreeNodeFlags
 
 // Tip: pass a non-visible label (e.g. "##dummy") then you can use the space to draw other text or image.
 // But you need to make sure the ID is unique, e.g. enclose calls in PushID/PopID or use ##unique_id.
-bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags flags, const ImVec2& size_arg)
+bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags flags, const ImVec2& size_arg, ImTextureID user_texture_id)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -5540,8 +5574,18 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
         bb.Max.x -= (GetContentRegionMax().x - max_x);
     }
 
+	ImVec2 padding(0.0f, 0.0f);
+	if (user_texture_id)
+	{
+		const float icon_size = bb.Max.y - bb.Min.y;
+		ImVec2 icon_min(bb.Min.x, bb.Min.y);
+		ImVec2 icon_max(icon_min.x + icon_size, bb.Max.y);
+		window->DrawList->AddImage(user_texture_id, icon_min, icon_max);
+		padding.x = icon_size + style.FramePadding.x;
+	}
+
     if (flags & ImGuiSelectableFlags_Disabled) PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]);
-    RenderTextClipped(bb_inner.Min, bb_inner.Max, label, NULL, &label_size, style.SelectableTextAlign, &bb);
+	RenderTextClipped(bb_inner.Min + padding, bb_inner.Max, label, NULL, &label_size, style.SelectableTextAlign, &bb);
     if (flags & ImGuiSelectableFlags_Disabled) PopStyleColor();
 
     // Automatically close popups
@@ -5552,9 +5596,9 @@ bool ImGui::Selectable(const char* label, bool selected, ImGuiSelectableFlags fl
     return pressed;
 }
 
-bool ImGui::Selectable(const char* label, bool* p_selected, ImGuiSelectableFlags flags, const ImVec2& size_arg)
+bool ImGui::Selectable(const char* label, bool* p_selected, ImGuiSelectableFlags flags, const ImVec2& size_arg, ImTextureID user_texture_id)
 {
-    if (Selectable(label, *p_selected, flags, size_arg))
+	if (Selectable(label, *p_selected, flags, size_arg, user_texture_id))
     {
         *p_selected = !*p_selected;
         return true;
@@ -6200,7 +6244,7 @@ void ImGui::EndMenu()
     EndPopup();
 }
 
-bool ImGui::MenuItem(const char* label, const char* shortcut, bool selected, bool enabled)
+bool ImGui::MenuItem(const char* label, const char* shortcut, bool selected, bool enabled, ImTextureID user_texture_id)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -6220,7 +6264,7 @@ bool ImGui::MenuItem(const char* label, const char* shortcut, bool selected, boo
         float w = label_size.x;
         window->DC.CursorPos.x += (float)(int)(style.ItemSpacing.x * 0.5f);
         PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(style.ItemSpacing.x * 2.0f, style.ItemSpacing.y));
-        pressed = Selectable(label, false, flags, ImVec2(w, 0.0f));
+		pressed = Selectable(label, false, flags, ImVec2(w, 0.0f), user_texture_id);
         PopStyleVar();
         window->DC.CursorPos.x += (float)(int)(style.ItemSpacing.x * (-1.0f + 0.5f)); // -1 spacing to compensate the spacing added when Selectable() did a SameLine(). It would also work to call SameLine() ourselves after the PopStyleVar().
     }
@@ -6229,7 +6273,7 @@ bool ImGui::MenuItem(const char* label, const char* shortcut, bool selected, boo
         ImVec2 shortcut_size = shortcut ? CalcTextSize(shortcut, NULL) : ImVec2(0.0f, 0.0f);
         float w = window->MenuColumns.DeclColumns(label_size.x, shortcut_size.x, (float)(int)(g.FontSize * 1.20f)); // Feedback for next frame
         float extra_w = ImMax(0.0f, GetContentRegionAvail().x - w);
-        pressed = Selectable(label, false, flags | ImGuiSelectableFlags_DrawFillAvailWidth, ImVec2(w, 0.0f));
+		pressed = Selectable(label, false, flags | ImGuiSelectableFlags_DrawFillAvailWidth, ImVec2(w, 0.0f), user_texture_id);
         if (shortcut_size.x > 0.0f)
         {
             PushStyleColor(ImGuiCol_Text, g.Style.Colors[ImGuiCol_TextDisabled]);
@@ -6244,9 +6288,9 @@ bool ImGui::MenuItem(const char* label, const char* shortcut, bool selected, boo
     return pressed;
 }
 
-bool ImGui::MenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled)
+bool ImGui::MenuItem(const char* label, const char* shortcut, bool* p_selected, bool enabled, ImTextureID user_texture_id)
 {
-    if (MenuItem(label, shortcut, p_selected ? *p_selected : false, enabled))
+	if (MenuItem(label, shortcut, p_selected ? *p_selected : false, enabled, user_texture_id))
     {
         if (p_selected)
             *p_selected = !*p_selected;
