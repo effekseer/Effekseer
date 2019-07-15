@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.IO;
 
 namespace Effekseer.Utl
@@ -74,81 +72,59 @@ namespace Effekseer.Utl
 				{
 					var temp = new byte[BitConverter.ToInt32(buf, 4)];
 					if (br.Read(temp, 0, temp.Length) != temp.Length) return false;
-				}
 
-				if (buf[0] == 'd' &&
-				buf[1] == 'a' &&
-				buf[2] == 't' &&
-				buf[3] == 'a')
-				{
-					var temp = new byte[BitConverter.ToInt32(buf, 4)];
-					if (br.Read(temp, 0, temp.Length) != temp.Length) return false;
+					var reader = new BinaryReader(temp);
+					bool hasReflection = false;
+					reader.Get(ref hasReflection);
 
-					var jsonText = Encoding.UTF8.GetString(temp);
-
-					var parsed = JObject.Parse(jsonText);
-
-					var params_ = parsed["Params"];
-					var uniforms_ = params_["Uniforms"] as JArray;
-					var textures_ = params_["Textures"] as JArray;
+					int textureCount = 0;
+					reader.Get(ref textureCount);
 
 					List<TextureInformation> textures = new List<TextureInformation>();
 
-					foreach (var texture in textures_)
+					for(int i = 0; i < textureCount; i++)
 					{
-						var name = texture["Name"].Value<string>();
-						var offset = texture["Index"].Value<double>();
+						TextureInformation info = new TextureInformation();
 
-						var defaultPath = texture["DefaultPath"].Value<string>();
+						reader.Get(ref info.Name);
+						reader.Get(ref info.DefaultPath);
+						reader.Get(ref info.Index);
+						reader.Get(ref info.IsParam);
+						reader.Get(ref info.IsValueTexture);
 
 						// convert a path into absolute
-						if(string.IsNullOrEmpty(defaultPath))
+						if (string.IsNullOrEmpty(info.DefaultPath))
 						{
-							defaultPath = string.Empty;
+							info.DefaultPath = string.Empty;
 						}
 						else
 						{
 							Uri basePath = new Uri(path);
-							Uri targetPath = new Uri(basePath, defaultPath);
-							defaultPath = targetPath.ToString();
+							Uri targetPath = new Uri(basePath, info.DefaultPath);
+							info.DefaultPath = targetPath.ToString();
 						}
-
-						var isParam = texture["IsParam"].Value<bool>();
-						var isValueTexture = texture["IsValueTexture"].Value<bool>();
-						var info = new TextureInformation();
-
-						info.Name = name;
-						info.Index = (int)offset;
-						info.DefaultPath = defaultPath;
-						info.IsParam = isParam;
-						info.IsValueTexture = isValueTexture;
 
 						textures.Add(info);
 					}
 
 					Textures = textures.ToArray();
 
+					int uniformCount = 0;
+					reader.Get(ref uniformCount);
+
 					List<UniformInformation> uniforms = new List<UniformInformation>();
 
-					foreach (var uniform in uniforms_)
+					for (int i = 0; i < uniformCount; i++)
 					{
-						var name = uniform["Name"].Value<string>();
-						var offset = uniform["Offset"].Value<double>();
-						var type = uniform["Type"].Value<double>();
-						var defaultValue1 = uniform["DefaultValue1"].Value<double>();
-						var defaultValue2 = uniform["DefaultValue2"].Value<double>();
-						var defaultValue3 = uniform["DefaultValue3"].Value<double>();
-						var defaultValue4 = uniform["DefaultValue4"].Value<double>();
+						UniformInformation info = new UniformInformation();
 
-						var info = new UniformInformation();
-						info.Name = name;
-						info.Offset = (int)offset;
-						info.Type = (int)type;
-						info.DefaultValues[0] = (float)defaultValue1;
-						info.DefaultValues[1] = (float)defaultValue2;
-						info.DefaultValues[2] = (float)defaultValue3;
-						info.DefaultValues[3] = (float)defaultValue4;
-
+						reader.Get(ref info.Name);
+						reader.Get(ref info.Offset);
+						reader.Get(ref info.Type);
+						reader.Get(ref info.DefaultValues[0]);
+						reader.Get(ref info.DefaultValues[1]);
+						reader.Get(ref info.DefaultValues[2]);
+						reader.Get(ref info.DefaultValues[3]);
 						uniforms.Add(info);
 					}
 

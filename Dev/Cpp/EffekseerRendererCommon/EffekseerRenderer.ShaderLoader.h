@@ -100,15 +100,28 @@ public:
 
 				for (auto i = 0; i < textureCount; i++)
 				{
-					int strLength = 0;
-					memcpy(&strLength, data + offset, 4);
+					int strNameLength = 0;
+					memcpy(&strNameLength, data + offset, 4);
 					offset += sizeof(int);
 
 					auto name = std::string((const char*)(data + offset));
-					offset += strLength;
+					offset += strNameLength;
+
+					int strDefaultPathLength = 0;
+					memcpy(&strDefaultPathLength, data + offset, 4);
+					offset += sizeof(int);
+
+					// defaultpath
+					offset += strDefaultPathLength;
 
 					int index = 0;
 					memcpy(&index, data + offset, 4);
+					offset += sizeof(int);
+
+					// param
+					offset += sizeof(int);
+
+					// valuetexture
 					offset += sizeof(int);
 
 					Texture texture;
@@ -130,9 +143,15 @@ public:
 					auto name = std::string((const char*)(data + offset));
 					offset += strLength;
 
+					// offset
+					offset += sizeof(int);
+
 					int type = 0;
 					memcpy(&type, data + offset, 4);
 					offset += sizeof(int);
+
+					// default values
+					offset += sizeof(int) * 4;
 
 					Uniform uniform;
 					uniform.Name = name;
