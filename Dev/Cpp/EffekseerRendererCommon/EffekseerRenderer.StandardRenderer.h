@@ -90,6 +90,69 @@ struct StandardRendererState
 
 		return false;
 	}
+
+	void CopyMaterialFromParameterToState(Effekseer::Effect* effect, Effekseer::MaterialParameter* materialParam, int32_t colorTextureIndex)
+	{
+		if (materialParam != nullptr)
+		{
+			if (materialParam->MaterialIndex >= 0)
+			{
+				MaterialPtr = effect->GetMaterial(materialParam->MaterialIndex);
+
+				MaterialUniformCount = Effekseer::Min(materialParam->MaterialUniforms.size(), MaterialUniforms.size());
+				for (size_t i = 0; i < MaterialUniformCount; i++)
+				{
+					MaterialUniforms[i] = materialParam->MaterialUniforms[i];
+				}
+
+				MaterialTextureCount = Effekseer::Min(materialParam->MaterialTextures.size(), MaterialTextures.size());
+				for (size_t i = 0; i < MaterialTextureCount; i++)
+				{
+					if (materialParam->MaterialTextures[i].Type == 1)
+					{
+						if (materialParam->MaterialTextures[i].Index >= 0)
+						{
+							MaterialTextures[i] =
+								effect->GetNormalImage(materialParam->MaterialTextures[i].Index);
+						}
+						else
+						{
+							MaterialTextures[i] = nullptr;
+						}
+					}
+					else
+					{
+						if (materialParam->MaterialTextures[i].Index >= 0)
+						{
+							MaterialTextures[i] = effect->GetColorImage(materialParam->MaterialTextures[i].Index);
+						}
+						else
+						{
+							MaterialTextures[i] = nullptr;
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			if (colorTextureIndex >= 0)
+			{
+				if (Distortion)
+				{
+					TexturePtr = effect->GetDistortionImage(colorTextureIndex);
+				}
+				else
+				{
+					TexturePtr = effect->GetColorImage(colorTextureIndex);
+				}
+			}
+			else
+			{
+				TexturePtr = nullptr;
+			}
+		}
+	}
 };
 
 template<typename RENDERER, typename SHADER, typename VERTEX, typename VERTEX_DISTORTION>

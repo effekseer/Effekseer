@@ -65,10 +65,10 @@ namespace Effekseer.Utl
 				}
 
 
-				if (buf[0] == 'g' &&
-				buf[1] == 'e' &&
-				buf[2] == 'n' &&
-				buf[3] == 'e')
+				if (buf[0] == 'p' &&
+				buf[1] == 'a' &&
+				buf[2] == 'r' &&
+				buf[3] == 'a')
 				{
 					var temp = new byte[BitConverter.ToInt32(buf, 4)];
 					if (br.Read(temp, 0, temp.Length) != temp.Length) return false;

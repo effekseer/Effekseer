@@ -78,6 +78,8 @@ protected:
 		state.Distortion = param.Distortion;
 		state.DistortionIntensity = param.DistortionIntensity;
 
+		state.CopyMaterialFromParameterToState(param.EffectPointer, param.MaterialParameterPtr, param.ColorTextureIndex);
+		/*
 		if (param.MaterialParameterPtr != nullptr)
 		{
 			if (param.MaterialParameterPtr->MaterialIndex >= 0)
@@ -141,7 +143,7 @@ protected:
 				state.TexturePtr = nullptr;
 			}
 		}
-
+		*/
 		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
 
 		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * 4, m_ringBufferOffset, (void*&) m_ringBufferData);
