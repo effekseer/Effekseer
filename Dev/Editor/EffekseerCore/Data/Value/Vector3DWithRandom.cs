@@ -33,6 +33,8 @@ namespace Effekseer.Data.Value
 
 		internal DrawnAs DefaultDrawnAs { get; private set; }
 
+		public bool CanSelectDynamicEquation = false;
+
 		public Boolean IsDynamicEquationEnabled
 		{
 			get;

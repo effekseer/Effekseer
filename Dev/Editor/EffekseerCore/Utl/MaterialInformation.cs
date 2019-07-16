@@ -74,6 +74,13 @@ namespace Effekseer.Utl
 					if (br.Read(temp, 0, temp.Length) != temp.Length) return false;
 
 					var reader = new BinaryReader(temp);
+
+					int shadingModel = 0;
+					reader.Get(ref shadingModel);
+
+					bool hasNormal = false;
+					reader.Get(ref hasNormal);
+
 					bool hasReflection = false;
 					reader.Get(ref hasReflection);
 

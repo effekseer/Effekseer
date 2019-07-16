@@ -95,6 +95,8 @@ namespace Effekseer.Data.Value
 
 		public event ChangedValueEventHandler OnChanged;
 
+		public bool CanSelectDynamicEquation = false;
+
 		public Boolean IsDynamicEquationEnabled
 		{
 			get;

@@ -53,6 +53,14 @@ namespace Effekseer.Data
 			PVA = new PVAParamater();
 			Easing = new Vector3DEasingParamater();
 			LocationFCurve = new Vector3DFCurveParameter();
+
+			// dynamic parameter
+			Fixed.Location.CanSelectDynamicEquation = true;
+			PVA.Location.CanSelectDynamicEquation = true;
+			PVA.Velocity.CanSelectDynamicEquation = true;
+			PVA.Acceleration.CanSelectDynamicEquation = true;
+			Easing.Start.CanSelectDynamicEquation = true;
+			Easing.End.CanSelectDynamicEquation = true;
 		}
 
 		public class FixedParamater

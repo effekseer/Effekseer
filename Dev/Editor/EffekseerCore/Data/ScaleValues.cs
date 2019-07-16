@@ -100,6 +100,14 @@ namespace Effekseer.Data
 			FCurve.FCurve.X.DefaultValue = 1.0f;
 			FCurve.FCurve.Y.DefaultValue = 1.0f;
 			FCurve.FCurve.Z.DefaultValue = 1.0f;
+
+			// dynamic parameter
+			Fixed.Scale.CanSelectDynamicEquation = true;
+			PVA.Scale.CanSelectDynamicEquation = true;
+			PVA.Velocity.CanSelectDynamicEquation = true;
+			PVA.Acceleration.CanSelectDynamicEquation = true;
+			Easing.Start.CanSelectDynamicEquation = true;
+			Easing.End.CanSelectDynamicEquation = true;
 		}
 
 		public class FixedParamater

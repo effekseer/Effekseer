@@ -25,6 +25,8 @@ namespace Effekseer.Data.Value
 			private set;
 		}
 
+		public bool CanSelectDynamicEquation = false;
+
 		public Boolean IsDynamicEquationEnabled
 		{
 			get;

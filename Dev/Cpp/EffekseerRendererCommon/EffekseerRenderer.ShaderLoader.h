@@ -10,6 +10,76 @@
 namespace EffekseerRenderer
 {
 
+enum class CompiledShaderType : int32_t
+{
+	DirectX9 = 0,
+	// DirectX10 = 1,
+	DirectX11 = 2,
+	DirectX12 = 3,
+	OpenGL2 = 10,
+	OpenGL3 = 11,
+	OpenGLES2 = 15,
+	OpenGLES3 = 16,
+	Metal = 20,
+	Vulkan = 30,
+	PS4 = 40,
+	Switch = 50,
+};
+
+enum class CompilerBinaryType : int32_t
+{
+	Standard = 0,
+	Model = 1,
+};
+
+class CompiledShader
+{
+	struct Binary
+	{
+		std::vector<uint8_t> buffer;
+	};
+
+	std::vector<Binary> binaries;
+
+public:
+	bool Load(const uint8_t* data, int32_t size, CompiledShaderType type)
+	{
+		int offset = 0;
+
+		// header
+		char prefix[5];
+
+		memcpy(prefix, data + offset, 4);
+		offset += sizeof(int);
+
+		prefix[4] = 0;
+
+		if (std::string("eMCB") != std::string(prefix))
+			return false;
+
+		int version = 0;
+		memcpy(&version, data + offset, 4);
+		offset += sizeof(int);
+
+		uint64_t guid = 0;
+		memcpy(&guid, data + offset, 8);
+		offset += sizeof(uint64_t);
+
+		while (0 <= offset && offset < size)
+		{
+			char chunk[5];
+			memcpy(chunk, data + offset, 4);
+			offset += sizeof(int);
+			chunk[4] = 0;
+		}
+
+		// hogehoge
+
+
+		return true;
+	}
+};
+
 class ShaderLoader
 {
 protected:
@@ -88,6 +158,14 @@ public:
 
 			if (std::string("gene") == std::string(chunk))
 			{
+				int shadingModel = 0;
+				memcpy(&shadingModel, data + offset, 4);
+				offset += sizeof(int);
+
+				int hasNormal = 0;
+				memcpy(&hasNormal, data + offset, 4);
+				offset += sizeof(int);
+
 				int hasRefraction = 0;
 				memcpy(&hasRefraction, data + offset, 4);
 				offset += sizeof(int);

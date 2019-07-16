@@ -113,6 +113,12 @@ namespace Effekseer.Data
 			Life = new Value.IntWithRandom(100, int.MaxValue, 1);
 			GenerationTime = new Value.FloatWithRandom(1.0f, float.MaxValue, 0.00001f);
 			GenerationTimeOffset = new Value.FloatWithRandom(0, float.MaxValue, float.MinValue);
+
+			// dynamic parameter
+			MaxGeneration.CanSelectDynamicEquation = true;
+			Life.CanSelectDynamicEquation = true;
+			GenerationTime.CanSelectDynamicEquation = true;
+			GenerationTimeOffset.CanSelectDynamicEquation = true;
 		}
 	}
 }

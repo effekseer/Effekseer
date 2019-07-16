@@ -71,6 +71,14 @@ namespace Effekseer.Data
 			AxisPVA = new AxisPVAParamater();
 			AxisEasing = new AxisEasingParamater();
 			RotationFCurve = new RotationFCurveParamater();
+
+			// dynamic parameter
+			Fixed.Rotation.CanSelectDynamicEquation = true;
+			PVA.Rotation.CanSelectDynamicEquation = true;
+			PVA.Velocity.CanSelectDynamicEquation = true;
+			PVA.Acceleration.CanSelectDynamicEquation = true;
+			Easing.Start.CanSelectDynamicEquation = true;
+			Easing.End.CanSelectDynamicEquation = true;
 		}
 
 		public class FixedParamater
