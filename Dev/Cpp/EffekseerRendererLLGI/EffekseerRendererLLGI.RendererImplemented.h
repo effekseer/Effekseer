@@ -264,8 +264,6 @@ private:
 
 	Shader* currentShader = nullptr;
 
-	FixedShader* fixedShader_ = nullptr;
-
 	bool isReversedDepth_ = false;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* m_standardRenderer;
@@ -299,6 +297,9 @@ private:
 	LLGI::PipelineState* GetOrCreatePiplineState();
 
 public:
+	//! shaders (todo implemented)
+	FixedShader* fixedShader_ = nullptr;
+
 	/**
 		@brief	コンストラクタ
 	*/
@@ -455,10 +456,9 @@ public:
 	*/
 	Effekseer::TextureData* GetBackground() override;
 
-	/**
-		@brief	背景を設定する。
-	*/
 	void SetBackground(LLGI::Texture* background) override;
+
+	void SetBackgroundTexture(Effekseer::TextureData* textuerData) override;
 
 	EffekseerRenderer::DistortingCallback* GetDistortingCallback() override;
 

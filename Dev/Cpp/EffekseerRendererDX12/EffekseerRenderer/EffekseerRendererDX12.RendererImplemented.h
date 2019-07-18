@@ -1,4 +1,5 @@
-﻿
+﻿#if 0
+
 #ifndef __EFFEKSEERRENDERER_SWITCH_RENDERER_IMPLEMENTED_H__
 #define __EFFEKSEERRENDERER_SWITCH_RENDERER_IMPLEMENTED_H__
 
@@ -111,5 +112,7 @@ public:
 };
 
 } // namespace EffekseerRendererDX12
+
+#endif
 
 #endif

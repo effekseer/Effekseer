@@ -8,40 +8,22 @@
 
 namespace EffekseerRendererDX12
 {
-
 /**
-	@brief	A class for render effects
+@brief	Create an instance
+@param	device			directX12 device
+@param int32_t	the number of maximum sprites
+@return	instance
 */
-class Renderer : public ::EffekseerRenderer::Renderer
-{
-protected:
-	Renderer() {}
-	virtual ~Renderer() {}
+::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
+									  int32_t swapBufferCount,
+									  ID3D12CommandQueue* commandQueue,
+									  std::function<void()> flushAndWaitQueueFunc,
+									  bool isReversedDepth,
+									  int32_t squareMaxCount);
 
-public:
-	/**
-	@brief	Create an instance
-	@param	device			directX12 device
-	@param int32_t	the number of maximum sprites
-	@return	instance
-	*/
-	static Renderer* Create(ID3D12Device* device,
-							int32_t swapBufferCount,
-							ID3D12CommandQueue* commandQueue,
-							std::function<void()> flushAndWaitQueueFunc,
-							bool isReversedDepth,
-							int32_t squareMaxCount);
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, ID3D12Resource* texture);
 
-	/**
-	@brief	\~English	notify that new frame is started
-	\~Japanese	新規フレームが始ったことを通知する
-	*/
-	virtual void NewFrame() = 0;
-
-	virtual Effekseer::TextureData* CreateTextureData(ID3D12Resource* texture) = 0;
-
-	virtual void DeleteTextureData(Effekseer::TextureData* textureData) = 0;
-};
+void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData);
 
 } // namespace EffekseerRendererDX12
 

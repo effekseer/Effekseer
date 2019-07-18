@@ -7,8 +7,6 @@
 namespace EffekseerRendererDX12
 {
 
-class Renderer;
-
 }
 
 #endif
