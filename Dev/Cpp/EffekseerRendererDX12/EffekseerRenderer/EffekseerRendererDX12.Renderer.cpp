@@ -1,14 +1,16 @@
-﻿#include "../../3rdParty/LLGI/src/DX12/LLGI.GraphicsDX12.h"
-#include "EffekseerRendererDX12.RendererImplemented.h"
+﻿#include "EffekseerRendererDX12.Renderer.h"
+#include "../../3rdParty/LLGI/src/DX12/LLGI.GraphicsDX12.h"
+#include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 
 namespace EffekseerRendererDX12
 {
-Renderer* Renderer::Create(ID3D12Device* device,
-						   int32_t swapBufferCount,
-						   ID3D12CommandQueue* commandQueue,
-						   std::function<void()> flushAndWaitQueueFunc,
-						   bool isReversedDepth,
-						   int32_t squareMaxCount)
+
+::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
+									  int32_t swapBufferCount,
+									  ID3D12CommandQueue* commandQueue,
+									  std::function<void()> flushAndWaitQueueFunc,
+									  bool isReversedDepth,
+									  int32_t squareMaxCount)
 {
 
 	/*
@@ -25,7 +27,7 @@ Renderer* Renderer::Create(ID3D12Device* device,
 
 	auto graphics = new LLGI::GraphicsDX12(device, getScreenFunc, flushAndWaitQueueFunc, commandQueue, swapBufferCount);
 
-	RendererImplemented* renderer = new RendererImplemented(squareMaxCount);
+	::EffekseerRendererLLGI::RendererImplemented* renderer = new ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount);
 
 	auto allocate_ = [](std::vector<LLGI::DataStructure>& ds, const unsigned char* data, int32_t size) -> void {
 
@@ -66,7 +68,7 @@ Renderer* Renderer::Create(ID3D12Device* device,
 	allocate_(renderer->fixedShader.ModelShaderDistortion_PS, g_model_distortion_no_texture_psData, g_model_distortion_no_texture_psLength);
 	*/
 
-	if (renderer->Initialize(graphics, &(renderer->fixedShader), isReversedDepth))
+	if (renderer->Initialize(graphics, (renderer->fixedShader_), isReversedDepth))
 	{
 		ES_SAFE_RELEASE(graphics);
 		return renderer;
@@ -74,18 +76,13 @@ Renderer* Renderer::Create(ID3D12Device* device,
 
 	ES_SAFE_DELETE(renderer);
 
-	return NULL;
+	return nullptr;
 }
 
-void RendererImplemented::NewFrame()
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, ID3D12Resource* texture)
 {
-	auto g = (LLGI::GraphicsDX12*)GetGraphics();
-	g->NewFrame();
-}
-
-Effekseer::TextureData* RendererImplemented::CreateTextureData(ID3D12Resource* texture)
-{
-	auto g = (LLGI::GraphicsDX12*)GetGraphics();
+	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
+	auto g = static_cast<LLGI::GraphicsDX12*>(r->GetGraphics());
 	auto texture_ = g->CreateTexture((uint64_t)texture);
 
 	auto textureData = new Effekseer::TextureData();
@@ -97,12 +94,14 @@ Effekseer::TextureData* RendererImplemented::CreateTextureData(ID3D12Resource* t
 	return textureData;
 }
 
-void RendererImplemented::DeleteTextureData(Effekseer::TextureData* textureData)
+void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData)
 {
 	auto texture = (LLGI::Texture*)textureData->UserPtr;
 	texture->Release();
 	delete textureData;
 }
+
+#if 0
 
 RendererImplemented::RendererImplemented(int32_t squareMaxCount) : ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount) {}
 
@@ -261,4 +260,7 @@ void RendererImplemented::SetRenderMode(Effekseer::RenderMode renderMode)
 }
 
 Effekseer::RenderMode RendererImplemented::GetRenderMode() { return ::EffekseerRendererLLGI::RendererImplemented::GetRenderMode(); }
+
+#endif
+
 } // namespace EffekseerRendererDX12

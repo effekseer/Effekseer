@@ -604,10 +604,7 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 #endif
 }
 
-::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
-{
-	return nullptr;
-}
+::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) { return nullptr; }
 
 Effekseer::TextureData* RendererImplemented::GetBackground()
 {
@@ -623,6 +620,24 @@ void RendererImplemented::SetBackground(LLGI::Texture* background)
 	auto p = (LLGI::Texture*)m_background.UserPtr;
 	ES_SAFE_RELEASE(p);
 	m_background.UserPtr = background;
+}
+
+void RendererImplemented::SetBackgroundTexture(Effekseer::TextureData* textuerData)
+{
+	if (textuerData == nullptr)
+	{
+		auto back = (LLGI::Texture*)m_background.UserPtr;
+		ES_SAFE_RELEASE(back);
+		m_background.UserPtr = nullptr;
+	}
+
+	auto texture = static_cast<LLGI::Texture*>(textuerData->UserPtr);
+	ES_SAFE_ADDREF(texture);
+
+	auto back = (LLGI::Texture*)m_background.UserPtr;
+	ES_SAFE_RELEASE(back);
+
+	m_background.UserPtr = texture;
 }
 
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback() { return m_distortingCallback; }

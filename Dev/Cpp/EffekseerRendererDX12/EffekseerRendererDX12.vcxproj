@@ -175,6 +175,32 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.BaseDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.CommandListDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.CompilerDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.ConstantBufferDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.DescriptorHeapDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.GraphicsDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.IndexBufferDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.PipelineStateDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.PlatformDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.RenderPassDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.RenderPassPipelineStateDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.ShaderDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.TextureDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.VertexBufferDX12.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Base.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.CommandList.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Compiler.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.ConstantBuffer.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Graphics.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.IndexBuffer.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.PipelineState.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Platform.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Shader.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Texture.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.VertexBuffer.h" />
+    <ClInclude Include="..\3rdParty\LLGI\src\Win\LLGI.WindowWin.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.DXTK.dds.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.DXTK.DDSTextureLoader.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.h" />
@@ -206,6 +232,30 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX12.RendererImplemented.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.CommandListDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.CompilerDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.ConstantBufferDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.DescriptorHeapDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.GraphicsDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.IndexBufferDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.PipelineStateDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.PlatformDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.RenderPassDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.RenderPassPipelineStateDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.ShaderDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.TextureDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.VertexBufferDX12.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.CommandList.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.Compiler.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.ConstantBuffer.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.Graphics.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.IndexBuffer.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.PipelineState.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.Platform.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.Shader.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.Texture.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.VertexBuffer.cpp" />
+    <ClCompile Include="..\3rdParty\LLGI\src\Win\LLGI.WindowWin.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.DXTK.DDSTextureLoader.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.ModelRendererBase.cpp" />
@@ -229,9 +279,6 @@
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX12.Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\3rdParty\LLGI\msvc\LLGI.vcxproj">
-      <Project>{f4edddd6-1631-4f44-b685-733d95ecd678}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Effekseer\Effekseer.vcxproj">
       <Project>{91e36741-5dfc-46e3-a7f3-28a67fd637c8}</Project>
     </ProjectReference>

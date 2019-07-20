@@ -10,8 +10,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffekseerRendererDX12", "Ef
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Effekseer", "Effekseer\Effekseer.vcxproj", "{91E36741-5DFC-46E3-A7F3-28A67FD637C8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LLGI", "3rdParty\LLGI\msvc\LLGI.vcxproj", "{F4EDDDD6-1631-4F44-B685-733D95ECD678}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -36,14 +34,6 @@ Global
 		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Release|Win32.Build.0 = Release|Win32
 		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Release|x64.ActiveCfg = Release|x64
 		{91E36741-5DFC-46E3-A7F3-28A67FD637C8}.Release|x64.Build.0 = Release|x64
-		{F4EDDDD6-1631-4F44-B685-733D95ECD678}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F4EDDDD6-1631-4F44-B685-733D95ECD678}.Debug|Win32.Build.0 = Debug|Win32
-		{F4EDDDD6-1631-4F44-B685-733D95ECD678}.Debug|x64.ActiveCfg = Debug|x64
-		{F4EDDDD6-1631-4F44-B685-733D95ECD678}.Debug|x64.Build.0 = Debug|x64
-		{F4EDDDD6-1631-4F44-B685-733D95ECD678}.Release|Win32.ActiveCfg = Release|Win32
-		{F4EDDDD6-1631-4F44-B685-733D95ECD678}.Release|Win32.Build.0 = Release|Win32
-		{F4EDDDD6-1631-4F44-B685-733D95ECD678}.Release|x64.ActiveCfg = Release|x64
-		{F4EDDDD6-1631-4F44-B685-733D95ECD678}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

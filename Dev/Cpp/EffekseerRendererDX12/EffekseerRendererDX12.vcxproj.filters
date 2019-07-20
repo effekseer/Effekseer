@@ -10,6 +10,15 @@
     <Filter Include="EffekseerRendererLLGI">
       <UniqueIdentifier>{cdb45416-b697-41e2-9b5f-ec2ae41b20ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LLGI">
+      <UniqueIdentifier>{1bcb2da9-60b1-4c38-be28-cb8114230e32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LLGI\DX12">
+      <UniqueIdentifier>{87840094-dd6e-4884-b56a-c94b2368b720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LLGI\Win">
+      <UniqueIdentifier>{9e4eaf3c-246a-4cde-9335-c54291ae9633}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.h">
@@ -99,6 +108,84 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX12.RendererImplemented.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.CommandList.h">
+      <Filter>LLGI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Compiler.h">
+      <Filter>LLGI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.ConstantBuffer.h">
+      <Filter>LLGI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Graphics.h">
+      <Filter>LLGI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.IndexBuffer.h">
+      <Filter>LLGI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.PipelineState.h">
+      <Filter>LLGI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Platform.h">
+      <Filter>LLGI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Shader.h">
+      <Filter>LLGI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Texture.h">
+      <Filter>LLGI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.VertexBuffer.h">
+      <Filter>LLGI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\LLGI.Base.h">
+      <Filter>LLGI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.BaseDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.CommandListDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.CompilerDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.ConstantBufferDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.DescriptorHeapDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.GraphicsDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.IndexBufferDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.PipelineStateDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.PlatformDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.RenderPassDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.RenderPassPipelineStateDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.ShaderDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.TextureDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.VertexBufferDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\Win\LLGI.WindowWin.h">
+      <Filter>LLGI\Win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">
@@ -163,6 +250,78 @@
     </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX12.Renderer.cpp">
       <Filter>EffekseerRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.CommandList.cpp">
+      <Filter>LLGI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.Compiler.cpp">
+      <Filter>LLGI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.ConstantBuffer.cpp">
+      <Filter>LLGI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.Graphics.cpp">
+      <Filter>LLGI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.IndexBuffer.cpp">
+      <Filter>LLGI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.PipelineState.cpp">
+      <Filter>LLGI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.Platform.cpp">
+      <Filter>LLGI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.Shader.cpp">
+      <Filter>LLGI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.Texture.cpp">
+      <Filter>LLGI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\LLGI.VertexBuffer.cpp">
+      <Filter>LLGI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.CommandListDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.CompilerDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.ConstantBufferDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.DescriptorHeapDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.GraphicsDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.IndexBufferDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.PipelineStateDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.PlatformDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.RenderPassDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.RenderPassPipelineStateDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.ShaderDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.TextureDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.VertexBufferDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\Win\LLGI.WindowWin.cpp">
+      <Filter>LLGI\Win</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
