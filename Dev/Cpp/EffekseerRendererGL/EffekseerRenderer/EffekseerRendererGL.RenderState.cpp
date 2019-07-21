@@ -191,10 +191,11 @@ void RenderState::Update( bool forced )
 		GLCheckError();
 		for (int32_t i = 0; i < (int32_t)m_renderer->GetCurrentTextures().size(); i++)
 		{
-			/* テクスチャが設定されていない場合はスキップ */
+			// If a texture is not assigned, skip it.
 			if (m_renderer->GetCurrentTextures()[i] == 0) continue;
 
-			if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
+			// always changes because a flag is assigned into a texture
+			// if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 				GLCheckError();
@@ -208,7 +209,8 @@ void RenderState::Update( bool forced )
 				GLCheckError();
 			}
 
-			if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced)
+			// always changes because a flag is assigned into a texture
+			// if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced)
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 				GLCheckError();
