@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
+#include "Effekseer.Vector3D.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -27,6 +28,30 @@ protected:
     virtual ~Manager() {}
 
 public:
+	/**
+	@brief
+	\~English Parameters for Manager::Draw and Manager::DrawHandle
+	\~Japanese Manager::Draw and Manager::DrawHandleに使用するパラメーター
+	*/
+	struct DrawParameter
+	{
+		//! This parameter is not used in 1.4.
+		Vector3D CameraPosition;
+
+		//! This parameter is not used in 1.4.
+		Vector3D CameraDirection;
+
+		/**
+			@brief
+			\~English A bitmask to show effects
+			\~Japanese エフェクトを表示するためのビットマスク
+			@note
+			\~English For example, if effect's layer is 1 and CameraCullingMask's first bit is 1, this effect is shown.
+			\~Japanese 例えば、エフェクトのレイヤーが0でカリングマスクの最初のビットが1のときエフェクトは表示される。
+		*/
+		int32_t CameraCullingMask = 1;
+	};
+
 	/**
 		@brief マネージャーを生成する。
 		@param	instance_max	[in]	最大インスタンス数
@@ -399,6 +424,23 @@ public:
 	virtual void SetPausedToAllEffects(bool paused) = 0;
 
 	/**
+		@brief
+		\~English	Get a layer index
+		\~Japanese	レイヤーのインデックスを取得する
+		@note
+		\~English For example, if effect's layer is 1 and CameraCullingMask's first bit is 1, this effect is shown.
+		\~Japanese 例えば、エフェクトのレイヤーが0でカリングマスクの最初のビットが1のときエフェクトは表示される。
+	*/
+	virtual int GetLayer(Handle handle) = 0;
+
+	/**
+		@brief	
+		\~English	Set a layer index
+		\~Japanese	レイヤーのインデックスを設定する
+	*/
+	virtual void SetLayer(Handle handle, int32_t layer) = 0;
+
+	/**
 	@brief
 	\~English	Get a playing speed of particle of effect.
 	\~Japanese	エフェクトのパーティクルの再生スピードを取得する。
@@ -464,21 +506,21 @@ public:
 	\~English	Draw particles.
 	\~Japanese	描画処理を行う。
 	*/
-	virtual void Draw() = 0;
+	virtual void Draw(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 	
 	/**
 	@brief
 	\~English	Draw particles in the back of priority 0.
 	\~Japanese	背面の描画処理を行う。
 	*/
-	virtual void DrawBack() = 0;
+	virtual void DrawBack(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 
 	/**
 	@brief
 	\~English	Draw particles in the front of priority 0.
 	\~Japanese	前面の描画処理を行う。
 	*/
-	virtual void DrawFront() = 0;
+	virtual void DrawFront(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) = 0;
 
 	/**
 	@brief

@@ -64,6 +64,7 @@ private:
 
 		bool				IsPreupdated = false;
 		int32_t				StartFrame = 0;
+		int32_t Layer = 0;
 
 		DrawSet( Effect* effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal )
 			: ParameterPointer			( effect )
@@ -505,6 +506,10 @@ public:
 
 	void SetPausedToAllEffects(bool paused) override;
 
+	int GetLayer(Handle handle) override;
+
+	void SetLayer(Handle handle, int32_t layer)  override;
+
 	float GetSpeed(Handle handle) const override;
 
 	void SetSpeed( Handle handle, float speed ) override;
@@ -550,11 +555,11 @@ public:
 	/**
 		@brief	描画処理
 	*/
-	void Draw() override;
+	void Draw(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) override;
 	
-	void DrawBack() override;
+	void DrawBack(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) override;
 
-	void DrawFront() override;
+	void DrawFront(const Manager::DrawParameter& drawParameter = Manager::DrawParameter()) override;
 
 	void DrawHandle( Handle handle ) override;
 
