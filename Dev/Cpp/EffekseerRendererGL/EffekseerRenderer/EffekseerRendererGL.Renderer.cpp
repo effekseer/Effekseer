@@ -341,6 +341,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_vao_no_texture);
 	ES_SAFE_DELETE(m_vao_distortion);
 	ES_SAFE_DELETE(m_vao_no_texture_distortion);
+	ES_SAFE_DELETE(m_vao_wire_frame);
 
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
@@ -349,7 +350,7 @@ RendererImplemented::~RendererImplemented()
 
 	if (isVaoEnabled)
 	{
-		assert(GetRef() == -11);
+		assert(GetRef() == -12);
 	}
 	else
 	{
