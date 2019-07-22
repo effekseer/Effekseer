@@ -25,6 +25,7 @@
 #include <thread>
 #include <mutex>
 #include <array>
+#include <cfloat>
 
 //----------------------------------------------------------------------------------
 //

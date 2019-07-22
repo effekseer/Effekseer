@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <climits>
 #include <vector>
+#include <cfloat>
 
 //----------------------------------------------------------------------------------
 //

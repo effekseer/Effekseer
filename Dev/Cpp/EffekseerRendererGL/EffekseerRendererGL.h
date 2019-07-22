@@ -403,6 +403,26 @@ public:
 	\~japanese 現在の時間を設定する。(秒)
 	*/
 	virtual void SetTime(float time);
+
+	/**
+	@brief
+	\~English	notify that new frame is started.
+	\~Japanese	新規フレームが始ったことを通知する。
+	@note
+	\~English	This function is not required on DirectX9, DirectX11 and OpenGL
+	\~Japanese	この関数はDirectX9、DirectX11、OpenGLでは必要ない。
+	*/
+	virtual void NewFrame();
+
+	/**
+	@brief
+	\~English	Specify a background texture.
+	\~Japanese	背景のテクスチャを設定する。
+	@note
+	\~English	Specified texture is not deleted by the renderer. This function is available except DirectX9, DirectX11 and OpenGL.
+	\~Japanese	設定されたテクスチャはレンダラーによって削除されない。この関数はDirectX9、DirectX11、OpenGL以外で使用できる。
+	*/
+	virtual void SetBackgroundTexture(::Effekseer::TextureData* textureData);
 };
 
 //----------------------------------------------------------------------------------
