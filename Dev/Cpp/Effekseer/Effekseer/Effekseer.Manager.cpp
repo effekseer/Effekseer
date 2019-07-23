@@ -1636,6 +1636,19 @@ Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_
 	return handle;
 }
 
+int ManagerImplemented::GetCameraCullingMaskToShowAllEffects()
+{
+	int mask = 0;
+
+	for (auto& ds : m_DrawSets)
+	{
+		auto layer = 1 << ds.second.Layer;
+		mask |= layer;
+	}
+
+	return mask;
+}
+
 void ManagerImplemented::DrawHandle( Handle handle )
 {
 	std::lock_guard<std::mutex> lock(m_renderingMutex);

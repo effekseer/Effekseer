@@ -570,6 +570,13 @@ public:
 	virtual Handle Play(Effect* effect, const Vector3D& position, int32_t startFrame = 0) = 0;
 
 	/**
+		@brief
+		\~English	Get a camera's culling mask to show all effects
+		\~Japanese	全てのエフェクトを表示するためのカメラのカリングマスクを取得する。
+	*/
+	virtual int GetCameraCullingMaskToShowAllEffects() = 0;
+	
+	/**
 		@brief	Update処理時間を取得。
 	*/
 	virtual int GetUpdateTime() const = 0;

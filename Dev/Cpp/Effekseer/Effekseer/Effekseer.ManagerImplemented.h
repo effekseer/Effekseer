@@ -571,6 +571,8 @@ public:
 
 	Handle Play(Effect* effect, const Vector3D& position, int32_t startFrame) override;
 	
+	int GetCameraCullingMaskToShowAllEffects() override;
+
 	/**
 		@brief	Update処理時間を取得。
 	*/
