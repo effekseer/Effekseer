@@ -18,6 +18,7 @@
 #include "Effekseer.Setting.h"
 
 #include <array>
+#include <functional>
 
 //----------------------------------------------------------------------------------
 //
