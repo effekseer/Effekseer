@@ -34,6 +34,16 @@ public:
 	{
 		Vector3D CameraPosition;
 		Vector3D CameraDirection;
+
+		/**
+			@brief
+			\~English A bitmask to show effects
+			\~Japanese エフェクトを表示するためのビットマスク
+			@note
+			\~English For example, if effect's layer is 1 and CameraCullingMask's first bit is 1, this effect is shown.
+			\~Japanese 例えば、エフェクトのレイヤーが0でカリングマスクの最初のビットが1のときエフェクトは表示される。
+		*/
+		int32_t CameraCullingMask = 1;
 	};
 
 protected:
@@ -453,6 +463,23 @@ public:
 	virtual void SetPausedToAllEffects(bool paused) = 0;
 
 	/**
+		@brief
+		\~English	Get a layer index
+		\~Japanese	レイヤーのインデックスを取得する
+		@note
+		\~English For example, if effect's layer is 1 and CameraCullingMask's first bit is 1, this effect is shown.
+		\~Japanese 例えば、エフェクトのレイヤーが0でカリングマスクの最初のビットが1のときエフェクトは表示される。
+	*/
+	virtual int GetLayer(Handle handle) = 0;
+
+	/**
+		@brief
+		\~English	Set a layer index
+		\~Japanese	レイヤーのインデックスを設定する
+	*/
+	virtual void SetLayer(Handle handle, int32_t layer) = 0;
+
+	/**
 	@brief
 	\~English	Get a playing speed of particle of effect.
 	\~Japanese	エフェクトのパーティクルの再生スピードを取得する。
@@ -599,6 +626,13 @@ public:
 		\~Japanese	途中から再生するための時間
 	*/
 	virtual Handle Play(Effect* effect, const Vector3D& position, int32_t startFrame = 0) = 0;
+
+	/**
+		@brief
+		\~English	Get a camera's culling mask to show all effects
+		\~Japanese	全てのエフェクトを表示するためのカメラのカリングマスクを取得する。
+	*/
+	virtual int GetCameraCullingMaskToShowAllEffects() = 0;
 
 	/**
 		@brief	Update処理時間を取得。

@@ -66,6 +66,8 @@ private:
 		bool				IsPreupdated = false;
 		int32_t				StartFrame = 0;
 
+		int32_t Layer = 0;
+
 		DrawSet( Effect* effect, InstanceContainer* pContainer, InstanceGlobal* pGlobal )
 			: ParameterPointer			( effect )
 			, InstanceContainerPointer	( pContainer )
@@ -498,6 +500,10 @@ public:
 
 	void SetPausedToAllEffects(bool paused) override;
 
+	int GetLayer(Handle handle) override;
+
+	void SetLayer(Handle handle, int32_t layer) override;
+
 	float GetSpeed(Handle handle) const override;
 
 	void SetSpeed( Handle handle, float speed ) override;
@@ -539,6 +545,8 @@ private:
 
 	Handle Play(Effect* effect, const Vector3D& position, int32_t startFrame) override;
 	
+	int GetCameraCullingMaskToShowAllEffects() override;
+
 	/**
 		@brief	Update処理時間を取得。
 	*/

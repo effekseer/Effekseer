@@ -1156,6 +1156,23 @@ void ManagerImplemented::SetPausedToAllEffects(bool paused)
 	}
 }
 
+int ManagerImplemented::GetLayer(Handle handle)
+{
+	if (m_DrawSets.count(handle) > 0)
+	{
+		return m_DrawSets[handle].Layer;
+	}
+	return 0;
+}
+
+void ManagerImplemented::SetLayer(Handle handle, int32_t layer)
+{
+	if (m_DrawSets.count(handle) > 0)
+	{
+		m_DrawSets[handle].Layer = layer;
+	}
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1494,7 +1511,7 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 		{
 			DrawSet& drawSet = *m_culledObjects[i];
 
-			if( drawSet.IsShown && drawSet.IsAutoDrawing )
+			if( drawSet.IsShown && drawSet.IsAutoDrawing && ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) != 0))
 			{
 				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
@@ -1519,7 +1536,7 @@ void ManagerImplemented::Draw(const Manager::DrawParameter& drawParameter)
 		{
 			DrawSet& drawSet = m_renderingDrawSets[i];
 
-			if( drawSet.IsShown && drawSet.IsAutoDrawing )
+			if( drawSet.IsShown && drawSet.IsAutoDrawing && ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) != 0))
 			{
 				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
@@ -1556,7 +1573,7 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 		{
 			DrawSet& drawSet = *m_culledObjects[i];
 
-			if (drawSet.IsShown && drawSet.IsAutoDrawing)
+			if (drawSet.IsShown && drawSet.IsAutoDrawing && ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) != 0))
 			{
 				auto e = (EffectImplemented*)drawSet.ParameterPointer;
 				for (int32_t j = 0; j < e->renderingNodesThreshold; j++)
@@ -1575,7 +1592,7 @@ void ManagerImplemented::DrawBack(const Manager::DrawParameter& drawParameter)
 		{
 			DrawSet& drawSet = m_renderingDrawSets[i];
 
-			if (drawSet.IsShown && drawSet.IsAutoDrawing)
+			if (drawSet.IsShown && drawSet.IsAutoDrawing && ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) != 0))
 			{
 				auto e = (EffectImplemented*)drawSet.ParameterPointer;
 				for (int32_t j = 0; j < e->renderingNodesThreshold; j++)
@@ -1606,7 +1623,7 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 		{
 			DrawSet& drawSet = *m_culledObjects[i];
 
-			if (drawSet.IsShown && drawSet.IsAutoDrawing)
+			if (drawSet.IsShown && drawSet.IsAutoDrawing && ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) != 0))
 			{
 				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
@@ -1632,7 +1649,7 @@ void ManagerImplemented::DrawFront(const Manager::DrawParameter& drawParameter)
 		{
 			DrawSet& drawSet = m_renderingDrawSets[i];
 
-			if (drawSet.IsShown && drawSet.IsAutoDrawing)
+			if (drawSet.IsShown && drawSet.IsAutoDrawing && ((drawParameter.CameraCullingMask & (1 << drawSet.Layer)) != 0))
 			{
 				if (drawSet.GlobalPointer->RenderedInstanceContainers.size() > 0)
 				{
@@ -1703,6 +1720,19 @@ Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_
 	drawSet.StartFrame = startFrame;
 
 	return handle;
+}
+
+int ManagerImplemented::GetCameraCullingMaskToShowAllEffects()
+{
+	int mask = 0;
+
+	for (auto& ds : m_DrawSets)
+	{
+		auto layer = 1 << ds.second.Layer;
+		mask |= layer;
+	}
+
+	return mask;
 }
 
 void ManagerImplemented::DrawHandle(Handle handle, const Manager::DrawParameter& drawParameter)
