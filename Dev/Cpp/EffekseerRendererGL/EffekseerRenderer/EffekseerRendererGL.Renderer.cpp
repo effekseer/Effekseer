@@ -720,10 +720,10 @@ bool RendererImplemented::BeginRendering()
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 
+	m_currentTextures.clear();
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
-	m_currentTextures.clear();
-
+	
 	// reset renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
