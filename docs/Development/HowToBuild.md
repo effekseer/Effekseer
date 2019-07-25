@@ -57,14 +57,20 @@ msbuild Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release 
 Execute following command to start editor.
 
 Windows:
+
 ```
 Dev\release\Effekseer.exe
 ```
 
 macOS:
+
 ```
 mono Dev/release/Effekseer.exe
 ```
+
+### cmake (only windows)
+
+- `-DBUILD_VIEWER=ON -DBUILD_EDITOR=ON` : Build the editor with CMake.
 
 Attention
 ----------
