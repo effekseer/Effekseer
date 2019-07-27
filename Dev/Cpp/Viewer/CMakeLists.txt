@@ -125,9 +125,9 @@ foreach(FILE ${hs})
 
     # Group into "Source Files" and "Header Files"
     if ("${FILE}" MATCHES ".*\\.cpp")
-       set(GROUP "Files${GROUP}")
+       set(GROUP "Files/${GROUP}")
     elseif("${FILE}" MATCHES ".*\\.h")
-       set(GROUP "Files${GROUP}")
+       set(GROUP "Files/${GROUP}")
     endif()
 
     source_group("${GROUP}" FILES "${FILE}")
@@ -145,9 +145,9 @@ foreach(FILE ${cpps})
 
     # Group into "Source Files" and "Header Files"
     if ("${FILE}" MATCHES ".*\\.cpp")
-       set(GROUP "Files${GROUP}")
+       set(GROUP "Files/${GROUP}")
     elseif("${FILE}" MATCHES ".*\\.h")
-       set(GROUP "Files${GROUP}")
+       set(GROUP "Files/${GROUP}")
     endif()
 
     source_group("${GROUP}" FILES "${FILE}")

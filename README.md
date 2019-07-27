@@ -72,75 +72,17 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 
 # For contributor
 
-## How to compile
-
-This project requires as follows
-
-```
-git
-git-lfs
-cmake
-python3.x
-```
-
-On Mac
-
-```
-g++
-mono
-VisualStudio For Mac2017
-```
-
-On Linux
-
-```
-g++
-mono-devel
-libx11-dev libgl1-mesa-dev libxrandr-dev libxi-dev x11proto-xf86vidmode-dev xorg-dev libglu1-mesa-dev libpulse-dev libgtk-3-dev
-```
-
-Update submodule.
-
-```
-git submodule update --init
-```
-
-
-**under reconstructing how to build**
+## How to build
 
 [HowToBuild](docs/Development/HowToBuild.md)
 
-Execute python scripts as follows.
-
-```
-
-Script/build_libgd.py
-
-Script/build_libpng.py
-
-Script/build_glfw.py
-
-Script/build_OpenSoundMixer.py
-
-```
-
-Execute python scripts as follows. (Windows only)
-
-```
-
-Script/build_glew.py
-
-```
+## How to release
 
 * Windows
 
 Visual Studio 2015 are required.
 
-Open ```Dev/Editor/Effekseer.sln```
-
-or
-
-Open ```Dev/Cpp/Test.sln```
+Open ```release.bat```
 
 * Mac
 
@@ -156,4 +98,4 @@ Use cmake to ```Dev/Cpp/CMakeLists.txt```
 
 Execute ```Dev/build.Linux.sh``` to compile and generate binary into Dev/release/
 
-I have not debug Effekseer on Linux yet.
+I have not debuged Effekseer on Linux yet.

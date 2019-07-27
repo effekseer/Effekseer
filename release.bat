@@ -8,8 +8,16 @@ rmdir %RDIR_R%
 mkdir %RDIR_R%
 
 echo Compile Editor
-"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Dev\Editor\Effekseer.sln /p:configuration=Release /t:Rebuild
-"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Dev\Cpp\EffekseerSoundXAudio2.sln /p:configuration=Release /t:Rebuild
+
+mkdir ..\build_release
+cd /d ..\build_release
+
+cmake -A x86 -DBUILD_VIEWER=ON ../
+cmake --build . --config Release
+cd ..
+
+"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x86 /t:Rebuild
+"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild" Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x86 /t:Rebuild
 
 echo Copy application
 
