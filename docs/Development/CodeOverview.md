@@ -52,6 +52,8 @@ Dev/Cpp/EffekseerRendererLLGI
 
 Special renderer to estimate particles's size.
 
+It going to be removed.
+
 ```
 Dev/Cpp/EffekseerRendererArea
 ```

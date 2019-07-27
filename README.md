@@ -74,6 +74,8 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 
 ## How to build
 
+[CodeOverview](docs/Development/CodeOverview.md)
+
 [HowToBuild](docs/Development/HowToBuild.md)
 
 ## How to release
