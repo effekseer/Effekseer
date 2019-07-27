@@ -43,7 +43,9 @@ public:
 			\~English For example, if effect's layer is 1 and CameraCullingMask's first bit is 1, this effect is shown.
 			\~Japanese 例えば、エフェクトのレイヤーが0でカリングマスクの最初のビットが1のときエフェクトは表示される。
 		*/
-		int32_t CameraCullingMask = 1;
+		int32_t CameraCullingMask;
+
+		DrawParameter();
 	};
 
 protected:
