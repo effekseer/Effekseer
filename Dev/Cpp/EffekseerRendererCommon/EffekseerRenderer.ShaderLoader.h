@@ -3,14 +3,17 @@
 #define __EFFEKSEERRENDERER_SHADER_LOADER_H__
 
 #include <Effekseer.h>
+#include <array>
 #include <assert.h>
+#include <map>
 #include <sstream>
 #include <string.h>
+#include <vector>
 
 namespace EffekseerRenderer
 {
 
-enum class CompiledShaderType : int32_t
+enum class CompiledShaderPlatformType : int32_t
 {
 	DirectX9 = 0,
 	// DirectX10 = 1,
@@ -26,23 +29,21 @@ enum class CompiledShaderType : int32_t
 	Switch = 50,
 };
 
-enum class CompilerBinaryType : int32_t
+class CompiledShaderGenerator
 {
-	Standard = 0,
-	Model = 1,
-};
-
-class CompiledShader
-{
-	struct Binary
+	struct Platform
 	{
-		std::vector<uint8_t> buffer;
+		std::vector<uint8_t> standardVS;
+		std::vector<uint8_t> standardPS;
+
+		std::vector<uint8_t> modelVS;
+		std::vector<uint8_t> modelPS;
 	};
 
-	std::vector<Binary> binaries;
+	std::map<CompiledShaderPlatformType, Platform> platforms;
 
 public:
-	bool Load(const uint8_t* data, int32_t size, CompiledShaderType type)
+	bool Load(const uint8_t* data, int32_t size)
 	{
 		int offset = 0;
 
@@ -67,17 +68,214 @@ public:
 
 		while (0 <= offset && offset < size)
 		{
-			char chunk[5];
-			memcpy(chunk, data + offset, 4);
+			int chunk;
+			memcpy(&chunk, data + offset, 4);
 			offset += sizeof(int);
-			chunk[4] = 0;
+
+			int chunk_size = 0;
+			memcpy(&chunk_size, data + offset, 4);
+			offset += sizeof(int);
+
+			Platform platform;
+
+			int standard_vs_size = 0;
+			memcpy(&standard_vs_size, data + offset, 4);
+			offset += sizeof(int);
+
+			platform.standardVS.resize(standard_vs_size);
+			memcpy(platform.standardVS.data(), data + offset, standard_vs_size);
+			offset += standard_vs_size;
+
+			int standard_ps_size = 0;
+			memcpy(&standard_ps_size, data + offset, 4);
+			offset += sizeof(int);
+
+			platform.standardPS.resize(standard_ps_size);
+			memcpy(platform.standardPS.data(), data + offset, standard_ps_size);
+			offset += standard_ps_size;
+
+			int model_vs_size = 0;
+			memcpy(&model_vs_size, data + offset, 4);
+			offset += sizeof(int);
+
+			platform.modelVS.resize(model_vs_size);
+			memcpy(platform.modelVS.data(), data + offset, model_vs_size);
+			offset += model_vs_size;
+
+			int model_ps_size = 0;
+			memcpy(&model_ps_size, data + offset, 4);
+			offset += sizeof(int);
+
+			platform.modelPS.resize(model_ps_size);
+			memcpy(platform.modelPS.data(), data + offset, model_ps_size);
+			offset += model_ps_size;
+
+			platforms[static_cast<CompiledShaderPlatformType>(chunk)] = platform;
 		}
-
-		// hogehoge
-
 
 		return true;
 	}
+
+	void Save(std::vector<uint8_t>& dst, int version, uint64_t guid)
+	{
+		dst.reserve(1024 * 64);
+
+		struct Header
+		{
+			char header[4];
+			int version = 0;
+			uint64_t guid = 0;
+		};
+
+		Header h;
+		h.header[0] = 'e';
+		h.header[1] = 'M';
+		h.header[2] = 'C';
+		h.header[3] = 'B';
+		h.version = version;
+		h.guid = guid;
+
+		dst.resize(sizeof(Header));
+		memcpy(dst.data(), &h, sizeof(Header));
+
+		for (auto& kv : platforms)
+		{
+			int32_t offset = dst.size();
+			int32_t bodySize = sizeof(int) * 4 + kv.second.standardVS.size() + kv.second.standardPS.size() + kv.second.modelVS.size() +
+							   kv.second.modelPS.size();
+			dst.resize(sizeof(int) * 2 + bodySize);
+
+			memcpy(dst.data() + offset, &(kv.first), sizeof(int));
+			offset += sizeof(int);
+
+			memcpy(dst.data() + offset, &(bodySize), sizeof(int));
+			offset += sizeof(int);
+
+			std::array<std::vector<uint8_t>*, 4> bodies = {
+				&(kv.second.standardVS),
+				&(kv.second.standardPS),
+				&(kv.second.modelVS),
+				&(kv.second.modelPS),
+			};
+
+			for (auto& body : bodies)
+			{
+				int32_t bodySize = body->size();
+
+				memcpy(dst.data() + offset, &(bodySize), sizeof(int));
+				offset += sizeof(int);
+
+				memcpy(dst.data() + offset, body->data(), bodySize);
+				offset += bodySize;
+			}
+		}
+	}
+
+	void UpdateData(const std::vector<uint8_t>& standardVS,
+					const std::vector<uint8_t>& standardPS,
+					const std::vector<uint8_t>& modelVS,
+					const std::vector<uint8_t>& modelPS,
+					CompiledShaderPlatformType type)
+	{
+		Platform platform;
+		platform.standardVS = standardVS;
+		platform.standardPS = standardPS;
+		platform.modelVS = modelVS;
+		platform.modelPS = modelPS;
+		platforms[type] = platform;
+	}
+};
+
+class CompiledShader
+{
+	std::vector<uint8_t> standardVS;
+	std::vector<uint8_t> standardPS;
+
+	std::vector<uint8_t> modelVS;
+	std::vector<uint8_t> modelPS;
+
+public:
+	bool Load(const uint8_t* data, int32_t size, CompiledShaderPlatformType type)
+	{
+		int offset = 0;
+
+		// header
+		char prefix[5];
+
+		memcpy(prefix, data + offset, 4);
+		offset += sizeof(int);
+
+		prefix[4] = 0;
+
+		if (std::string("eMCB") != std::string(prefix))
+			return false;
+
+		int version = 0;
+		memcpy(&version, data + offset, 4);
+		offset += sizeof(int);
+
+		uint64_t guid = 0;
+		memcpy(&guid, data + offset, 8);
+		offset += sizeof(uint64_t);
+
+		while (0 <= offset && offset < size)
+		{
+			int chunk;
+			memcpy(&chunk, data + offset, 4);
+			offset += sizeof(int);
+
+			int chunk_size = 0;
+			memcpy(&chunk_size, data + offset, 4);
+			offset += sizeof(int);
+
+			if (chunk != static_cast<int32_t>(type))
+			{
+				offset += chunk_size;
+				continue;
+			}
+
+			int standard_vs_size = 0;
+			memcpy(&standard_vs_size, data + offset, 4);
+			offset += sizeof(int);
+
+			standardVS.resize(standard_vs_size);
+			memcpy(standardVS.data(), data + offset, standard_vs_size);
+			offset += standard_vs_size;
+
+			int standard_ps_size = 0;
+			memcpy(&standard_ps_size, data + offset, 4);
+			offset += sizeof(int);
+
+			standardPS.resize(standard_ps_size);
+			memcpy(standardPS.data(), data + offset, standard_ps_size);
+			offset += standard_ps_size;
+
+			int model_vs_size = 0;
+			memcpy(&model_vs_size, data + offset, 4);
+			offset += sizeof(int);
+
+			modelVS.resize(model_vs_size);
+			memcpy(modelVS.data(), data + offset, model_vs_size);
+			offset += model_vs_size;
+
+			int model_ps_size = 0;
+			memcpy(&model_ps_size, data + offset, 4);
+			offset += sizeof(int);
+
+			modelPS.resize(model_ps_size);
+			memcpy(modelPS.data(), data + offset, model_ps_size);
+			offset += model_ps_size;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	const std::vector<uint8_t>& GetStandardVS() const { return standardVS; }
+	const std::vector<uint8_t>& GetStandardPS() const { return standardPS; }
+	const std::vector<uint8_t>& GetModelVS() const { return modelVS; }
+	const std::vector<uint8_t>& GetModelPS() const { return modelPS; }
 };
 
 class ShaderLoader
@@ -97,6 +295,18 @@ protected:
 	}
 
 public:
+	enum class ShadingModelType : int32_t
+	{
+		Lit,
+		Unlit,
+	};
+
+	enum class ShaderType : int32_t
+	{
+		Standard,
+		Model,
+	};
+
 	ShaderLoader() = default;
 	virtual ~ShaderLoader() = default;
 
@@ -117,6 +327,8 @@ public:
 	std::vector<Texture> Textures;
 
 	std::vector<Uniform> Uniforms;
+
+	ShadingModelType ShadingModel;
 
 	bool HasRefraction = false;
 
@@ -156,10 +368,9 @@ public:
 			memcpy(&chunk_size, data + offset, 4);
 			offset += sizeof(int);
 
-			if (std::string("gene") == std::string(chunk))
+			if (std::string("para") == std::string(chunk))
 			{
-				int shadingModel = 0;
-				memcpy(&shadingModel, data + offset, 4);
+				memcpy(&ShadingModel, data + offset, 4);
 				offset += sizeof(int);
 
 				int hasNormal = 0;
@@ -236,7 +447,9 @@ public:
 					uniform.Index = type;
 					Uniforms.push_back(uniform);
 				}
-
+			}
+			else if (std::string("gene") == std::string(chunk))
+			{
 				int codeLength = 0;
 				memcpy(&codeLength, data + offset, 4);
 				offset += sizeof(int);
@@ -260,73 +473,7 @@ public:
 		@note
 		TODO : support distortion etc
 	*/
-	virtual std::string GenerateShader()
-	{
-		std::ostringstream maincode;
-
-		auto preCode = R"(
-IN lowp vec4 vaColor;
-IN mediump vec4 vaTexCoord;
-
-)";
-		maincode << preCode;
-
-		for (size_t i = 0; i < Textures.size(); i++)
-		{
-			auto& texture = Textures[i];
-			maincode << "uniform sampler2D " << texture.Name << ";" << std::endl;
-		}
-
-		// predefined
-
-		maincode << "uniform vec4 predefined_uniform;" << std::endl;
-
-		for (size_t i = 0; i < Uniforms.size(); i++)
-		{
-			auto& uniform = Uniforms[i];
-			if (uniform.Index == 0)
-				maincode << "uniform float " << uniform.Name << ";" << std::endl;
-			if (uniform.Index == 1)
-				maincode << "uniform vec2 " << uniform.Name << ";" << std::endl;
-			if (uniform.Index == 2)
-				maincode << "uniform vec3 " << uniform.Name << ";" << std::endl;
-			if (uniform.Index == 3)
-				maincode << "uniform vec4 " << uniform.Name << ";" << std::endl;
-		}
-
-		auto baseCode = GenericCode;
-		baseCode = Replace(baseCode, "$F1$", "float");
-		baseCode = Replace(baseCode, "$F2$", "vec2");
-		baseCode = Replace(baseCode, "$F3$", "vec3");
-		baseCode = Replace(baseCode, "$F4$", "vec4");
-		baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
-		baseCode = Replace(baseCode, "$UV$", "vaTexCoord.xy");
-		baseCode = Replace(baseCode, "$INPUT$", "");
-
-		// replace textures
-		for (size_t i = 0; i < Textures.size(); i++)
-		{
-			auto& texture = Textures[i];
-			std::string keyP = "$TEX_P" + std::to_string(texture.Index) + "$";
-			std::string keyS = "$TEX_S" + std::to_string(texture.Index) + "$";
-
-			baseCode = Replace(baseCode, keyP, "TEX2D(" + texture.Name + ",");
-			baseCode = Replace(baseCode, keyS, ")");
-		}
-
-		maincode << baseCode;
-
-		auto postCode = R"(
-
-void main()
-{
-	FRAGCOLOR = Calculate();
-}
-)";
-		maincode << postCode;
-
-		return maincode.str();
-	}
+	virtual std::string GenerateShader(ShaderType shaderType) { return std::string(); }
 };
 
 } // namespace EffekseerRenderer

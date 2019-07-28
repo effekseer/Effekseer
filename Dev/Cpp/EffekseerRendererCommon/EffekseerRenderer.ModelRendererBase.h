@@ -271,102 +271,157 @@ public:
 		state.AlphaBlend = param.AlphaBlend;
 		state.CullingType = param.Culling;
 
-		/*シェーダー選択*/
-		SHADER* shader_ = NULL;
-		if (distortion)
+		// select shader
+		Effekseer::MaterialParameter* materialParam = nullptr;
+		Effekseer::MaterialData* material = nullptr;
+		SHADER* shader_ = nullptr;
+		
+		if (materialParam != nullptr)
 		{
-			if (param.ColorTextureIndex >= 0)
+			material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
+			shader_ = (SHADER*)material->UserPtr;
+
+			// validate
+			if (material->TextureCount != materialParam->MaterialTextures.size() ||
+				material->UniformCount != materialParam->MaterialUniforms.size())
 			{
-				shader_ = shader_distortion_texture;
-			}
-			else
-			{
-				shader_ = shader_distortion;
-			}
-		}
-		else if (param.Lighting)
-		{
-			if (param.NormalTextureIndex >= 0)
-			{
-				if (param.ColorTextureIndex >= 0)
-				{
-					shader_ = shader_lighting_texture_normal;
-				}
-				else
-				{
-					shader_ = shader_lighting_normal;
-				}
-			}
-			else
-			{
-				if (param.ColorTextureIndex >= 0)
-				{
-					shader_ = shader_lighting_texture;
-				}
-				else
-				{
-					shader_ = shader_lighting;
-				}
+				return;			
 			}
 		}
 		else
 		{
-			if (param.ColorTextureIndex >= 0)
+			if (distortion)
 			{
-				shader_ = shader_texture;
+				if (param.ColorTextureIndex >= 0)
+				{
+					shader_ = shader_distortion_texture;
+				}
+				else
+				{
+					shader_ = shader_distortion;
+				}
+			}
+			else if (param.Lighting)
+			{
+				if (param.NormalTextureIndex >= 0)
+				{
+					if (param.ColorTextureIndex >= 0)
+					{
+						shader_ = shader_lighting_texture_normal;
+					}
+					else
+					{
+						shader_ = shader_lighting_normal;
+					}
+				}
+				else
+				{
+					if (param.ColorTextureIndex >= 0)
+					{
+						shader_ = shader_lighting_texture;
+					}
+					else
+					{
+						shader_ = shader_lighting;
+					}
+				}
 			}
 			else
 			{
-				shader_ = shader;
+				if (param.ColorTextureIndex >= 0)
+				{
+					shader_ = shader_texture;
+				}
+				else
+				{
+					shader_ = shader;
+				}
 			}
 		}
 
 		renderer->BeginShader(shader_);
 
 		// Select texture
-		Effekseer::TextureData* textures[2];
-		textures[0] = nullptr;
-		textures[1] = nullptr;
-
-		if (distortion)
+		if (materialParam != nullptr)
 		{
-			if (param.ColorTextureIndex >= 0)
+			if (materialParam->MaterialTextures.size() > 0)
 			{
-				textures[0] = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
-			}
+				std::array<Effekseer::TextureData*, 16> textures;
+				auto effect = param.EffectPointer;
 
-			textures[1] = renderer->GetBackground();
+				for (size_t i = 0; i < Effekseer::Min(materialParam->MaterialTextures.size(), textures.size()); i++)
+				{
+					if (materialParam->MaterialTextures[i].Type == 1)
+					{
+						if (materialParam->MaterialTextures[i].Index >= 0)
+						{
+							textures[i] = effect->GetNormalImage(materialParam->MaterialTextures[i].Index);
+						}
+						else
+						{
+							textures[i] = nullptr;
+						}
+					}
+					else
+					{
+						if (materialParam->MaterialTextures[i].Index >= 0)
+						{
+							textures[i] = effect->GetColorImage(materialParam->MaterialTextures[i].Index);
+						}
+						else
+						{
+							textures[i] = nullptr;
+						}
+					}
+				}
+				renderer->SetTextures(shader_, textures.data(), Effekseer::Min(materialParam->MaterialTextures.size(), textures.size()));
+			}
 		}
 		else
 		{
-			if (param.ColorTextureIndex >= 0)
+			Effekseer::TextureData* textures[2];
+			textures[0] = nullptr;
+			textures[1] = nullptr;
+
+			if (distortion)
 			{
-				textures[0] = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
+				if (param.ColorTextureIndex >= 0)
+				{
+					textures[0] = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
+				}
+
+				textures[1] = renderer->GetBackground();
+			}
+			else
+			{
+				if (param.ColorTextureIndex >= 0)
+				{
+					textures[0] = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
+				}
+
+				if (param.NormalTextureIndex >= 0)
+				{
+					textures[1] = param.EffectPointer->GetNormalImage(param.NormalTextureIndex);
+				}
 			}
 
-			if (param.NormalTextureIndex >= 0)
+			state.TextureFilterTypes[0] = param.TextureFilter;
+			state.TextureWrapTypes[0] = param.TextureWrap;
+
+			if (distortion)
 			{
-				textures[1] = param.EffectPointer->GetNormalImage(param.NormalTextureIndex);
+				state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Nearest;
+				state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
 			}
+			else
+			{
+				state.TextureFilterTypes[1] = param.TextureFilter;
+				state.TextureWrapTypes[1] = param.TextureWrap;
+			}
+
+			renderer->SetTextures(shader_, textures, 2);
 		}
 		
-		
-		renderer->SetTextures(shader_, textures, 2);
-
-		state.TextureFilterTypes[0] = param.TextureFilter;
-		state.TextureWrapTypes[0] = param.TextureWrap;
-
-		if (distortion)
-		{
-			state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Nearest;
-			state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
-		}
-		else
-		{
-			state.TextureFilterTypes[1] = param.TextureFilter;
-			state.TextureWrapTypes[1] = param.TextureWrap;
-		}
-
 		renderer->GetRenderState()->Update(distortion);
 
 		ModelRendererVertexConstantBuffer<InstanceCount>* vcb = (ModelRendererVertexConstantBuffer<InstanceCount>*)shader_->GetVertexConstantBuffer();
@@ -396,6 +451,20 @@ public:
 			{
 				pcb[4 * 1 + 0] = 0;
 				pcb[4 * 1 + 1] = 1;
+			}
+		}
+		else if (materialParam != nullptr)
+		{
+			// time
+			std::array<float, 4> predefined_uniforms;
+			predefined_uniforms.fill(0.5f);
+			predefined_uniforms[0] = renderer->GetTime();
+			renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, 0);
+
+			// others
+			for (size_t i = 0; i < materialParam->MaterialUniforms.size(); i++)
+			{
+				renderer->SetPixelBufferToShader(materialParam->MaterialUniforms[i].data(), sizeof(float) * 4, sizeof(float) * 4 * (i + 1));
 			}
 		}
 		else
