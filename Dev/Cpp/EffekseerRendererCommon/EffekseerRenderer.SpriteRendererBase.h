@@ -53,8 +53,10 @@ public:
 		: m_renderer(renderer)
 		, m_spriteCount(0)
 		, m_ringBufferOffset(0)
-		, m_ringBufferData(NULL)
+		, m_ringBufferData(nullptr)
 	{
+		// reserve buffers
+		instances.reserve(m_renderer->GetSquareMaxCount());
 	}
 
 	virtual ~SpriteRendererBase()

@@ -53,6 +53,11 @@ endif()
 
 
 # Setup source codes
+file(GLOB effekseer_h
+    Effekseer/*.h
+	Effekseer/Effekseer/*.h
+	Effekseer/Effekseer/Culling/*.h)
+
 set(effekseer_src
 	Effekseer/Effekseer/Effekseer.CustomAllocator.cpp
 	Effekseer/Effekseer/Effekseer.Client.cpp
@@ -89,6 +94,9 @@ set(effekseer_src
 	Effekseer/Effekseer/Culling/Culling3D.ReferenceObject.cpp
 	Effekseer/Effekseer/Culling/Culling3D.Vector3DF.cpp
 	Effekseer/Effekseer/Culling/Culling3D.WorldInternal.cpp)
+
+file(GLOB effekseer_renderer_common_h
+    EffekseerRendererCommon/*.h)
 
 set(effekseer_renderer_common_src
 	EffekseerRendererCommon/EffekseerRenderer.CommonUtils.cpp
@@ -143,12 +151,15 @@ set(effekseer_renderer_gl_src
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.cpp)
 
 list(APPEND effekseer_renderer_dx9_src
+    ${effekseer_renderer_common_h}
 	${effekseer_renderer_common_src})
 
 list(APPEND effekseer_renderer_dx11_src
+    ${effekseer_renderer_common_h}
 	${effekseer_renderer_common_src})
 
 list(APPEND effekseer_renderer_gl_src
+    ${effekseer_renderer_common_h}
 	${effekseer_renderer_common_src})
 
 if (USE_INTERNAL_LOADER)
@@ -183,7 +194,9 @@ link_directories(
 	)
 
 # Add compile targets
-add_library( effekseer STATIC ${effekseer_src} )
+add_library( effekseer STATIC
+    ${effekseer_h}
+    ${effekseer_src} )
 
 if (WIN32)
 add_library( effekseer_renderer_dx9 STATIC ${effekseer_renderer_dx9_src} )
