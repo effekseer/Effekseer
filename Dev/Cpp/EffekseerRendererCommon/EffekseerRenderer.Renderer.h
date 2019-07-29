@@ -42,6 +42,20 @@ enum class UVStyle
 	VerticalFlipped,
 };
 
+class CommandList : public ::Effekseer::IReference
+{
+public:
+	CommandList() = default;
+	virtual ~CommandList() = default;
+
+	/**
+		@brief
+		\~English	notify that new frame is started.
+		\~Japanese	新規フレームが始ったことを通知する。
+	*/
+	virtual void NewFrame() {}
+};
+
 class Renderer
 	: public ::Effekseer::IReference
 {
@@ -308,6 +322,13 @@ public:
 	\~Japanese	この関数はDirectX9、DirectX11、OpenGLでは必要ない。
 	*/
 	virtual void NewFrame();
+
+	/**
+	@brief
+	\~English	specify a command list to render.  This function is available except DirectX9, DirectX11 and OpenGL.
+	\~Japanese	描画に使用するコマンドリストを設定する。この関数はDirectX9、DirectX11、OpenGL以外で使用できる。
+	*/
+	virtual void SetCommandList(CommandList* commandList) {}
 
 	/**
 	@brief

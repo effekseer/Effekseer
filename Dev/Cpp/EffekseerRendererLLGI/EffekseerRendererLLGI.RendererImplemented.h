@@ -292,6 +292,8 @@ private:
 
 	Effekseer::RenderMode m_renderMode = Effekseer::RenderMode::Normal;
 
+	CommandList* commandList_ = nullptr;
+
 	LLGI::CommandList* GetCurrentCommandList();
 
 	LLGI::PipelineState* GetOrCreatePiplineState();
@@ -333,6 +335,8 @@ public:
 	bool EndRendering() override;
 
 	void NewFrame() override;
+
+	void SetCommandList(EffekseerRenderer::CommandList* commandList) override;
 
 	LLGI::Graphics* GetGraphics() override { return graphics_; }
 

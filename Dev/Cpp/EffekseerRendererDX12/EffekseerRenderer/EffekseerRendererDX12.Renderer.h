@@ -25,6 +25,14 @@ Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* rendere
 
 void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData);
 
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer);
+
+void BeginCommandList(EffekseerRenderer::CommandList* commandList);
+
+void EndCommandList(EffekseerRenderer::CommandList* commandList);
+
+void ExecuteCommandList(EffekseerRenderer::CommandList* commandList);
+
 } // namespace EffekseerRendererDX12
 
 #endif

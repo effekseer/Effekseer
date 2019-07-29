@@ -82,7 +82,16 @@ Renderer* Renderer::Create(LLGI::Graphics* graphics, FixedShader* fixedShader, b
 	return NULL;
 }
 
-LLGI::CommandList* RendererImplemented::GetCurrentCommandList() { return commandList; }
+LLGI::CommandList* RendererImplemented::GetCurrentCommandList()
+{
+
+	if (commandList_ != nullptr)
+	{
+		return commandList_->GetInternal();
+	}
+
+	return commandList;
+}
 
 LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 {
@@ -216,6 +225,8 @@ RendererImplemented::~RendererImplemented()
 		p.second->Release();
 	}
 	piplineStates.clear();
+
+	ES_SAFE_RELEASE(commandList_);
 
 	LLGI::SafeRelease(commandList);
 
@@ -442,8 +453,11 @@ bool RendererImplemented::BeginRendering()
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update(true);
 
-	GetCurrentCommandList()->Begin();
-	// GetCurrentCommandList()->BeginRenderPass(nullptr);
+	if (commandList_ == nullptr)
+	{
+		GetCurrentCommandList()->Begin();
+		// GetCurrentCommandList()->BeginRenderPass(nullptr);
+	}
 
 	// レンダラーリセット
 	m_standardRenderer->ResetAndRenderingIfRequired();
@@ -458,13 +472,25 @@ bool RendererImplemented::EndRendering()
 	// レンダラーリセット
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
-	// GetCurrentCommandList()->EndRenderPass();
-	GetCurrentCommandList()->End();
-	graphics_->Execute(GetCurrentCommandList());
+	if (commandList_ == nullptr)
+	{
+		// GetCurrentCommandList()->EndRenderPass();
+		GetCurrentCommandList()->End();
+		graphics_->Execute(GetCurrentCommandList());
+	}
 	return true;
 }
 
 void RendererImplemented::NewFrame() { graphics_->NewFrame(); }
+
+void RendererImplemented::SetCommandList(EffekseerRenderer::CommandList* commandList)
+{
+
+	ES_SAFE_ADDREF(commandList);
+	ES_SAFE_RELEASE(commandList_);
+
+	commandList_ = static_cast<CommandList*>(commandList);
+}
 
 VertexBuffer* RendererImplemented::GetVertexBuffer() { return m_vertexBuffer; }
 
