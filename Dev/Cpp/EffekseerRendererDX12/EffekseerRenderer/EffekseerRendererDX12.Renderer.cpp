@@ -101,6 +101,37 @@ void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::Textu
 	delete textureData;
 }
 
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer)
+{
+	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
+	auto g = static_cast<LLGI::GraphicsDX12*>(r->GetGraphics());
+	auto commandList = g->CreateCommandList();
+	auto ret = new EffekseerRendererLLGI::CommandList(commandList);
+	ES_SAFE_RELEASE(commandList);
+	return ret;
+}
+
+void BeginCommandList(EffekseerRenderer::CommandList* commandList)
+{
+	assert(commandList != nullptr);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
+	c->GetInternal()->Begin();
+}
+
+void EndCommandList(EffekseerRenderer::CommandList* commandList)
+{
+	assert(commandList != nullptr);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
+	c->GetInternal()->End();
+}
+
+void ExecuteCommandList(EffekseerRenderer::CommandList* commandList)
+{
+	assert(commandList != nullptr);
+	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
+	c->GetGraphics()->Execute(c->GetInternal());
+}
+
 #if 0
 
 RendererImplemented::RendererImplemented(int32_t squareMaxCount) : ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount) {}

@@ -5,6 +5,7 @@
 #include "../EffekseerRendererCommon/EffekseerRenderer.Renderer.h"
 #include "EffekseerRendererLLGI.Base.h"
 
+#include <LLGI.CommandList.h>
 #include <LLGI.Constantbuffer.h>
 #include <LLGI.Graphics.h>
 #include <LLGI.IndexBuffer.h>
@@ -83,6 +84,34 @@ public:
 				\~Japanese	背景を設定する
 	*/
 	virtual void SetBackground(LLGI::Texture* background) = 0;
+};
+
+class CommandList : public ::EffekseerRenderer::CommandList, public ::Effekseer::ReferenceObject
+{
+private:
+	LLGI::Graphics* graphics_ = nullptr;
+	LLGI::CommandList* commandList_ = nullptr;
+
+public:
+	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList) : graphics_(graphics), commandList_(commandList)
+	{
+		ES_SAFE_ADDREF(graphics_);
+		ES_SAFE_ADDREF(commandList_);
+	}
+
+	virtual ~CommandList()
+	{
+		ES_SAFE_RELEASE(graphics_);
+		ES_SAFE_RELEASE(commandList_);
+	}
+
+	LLGI::Graphics* GetGraphics() { return graphics_; }
+
+	LLGI::CommandList* GetInternal() { return commandList_; }
+
+	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
+	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
+	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
 };
 
 /**
