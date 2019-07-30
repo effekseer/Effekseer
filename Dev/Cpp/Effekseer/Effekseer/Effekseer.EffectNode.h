@@ -541,7 +541,7 @@ struct ParameterRendererCommon
 	/**
 		@brief	texture index in MaterialType::Default
 	*/
-	int32_t				ColorTextureIndex = 0;
+	int32_t				ColorTextureIndex = -1;
 
 	//! material index in MaterialType::File
 	MaterialParameter Material;

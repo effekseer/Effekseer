@@ -282,7 +282,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 ::Effekseer::MaterialData* MaterialLoader::Load(const void* data, int32_t size)
 {
-	EffekseerRenderer::ShaderLoader loader;
+	ShaderLoader loader;
 	if (!loader.Load((const uint8_t*)data, size))
 	{
 		return nullptr;
@@ -343,11 +343,14 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 	{
 		auto shaderCode = loader.GenerateShader(EffekseerRenderer::ShaderLoader::ShaderType::Model);
 
-		auto shader = Shader::Create(
-			renderer_, g_material_sprite_vs_src, sizeof(g_material_sprite_vs_src), shaderCode.c_str(), shaderCode.size(), "CustomMaterial");
+		auto shader =
+			Shader::Create(renderer_, g_model_vs_src, sizeof(g_model_vs_src), shaderCode.c_str(), shaderCode.size(), "CustomMaterial");
 
 		if (shader == nullptr)
+		{
+			std::cout << shaderCode << std::endl;
 			return nullptr;
+		}
 
 		static ShaderAttribInfo g_model_attribs[ModelRenderer::NumAttribs] = {
 			{"a_Position", GL_FLOAT, 3, 0, false},

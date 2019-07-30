@@ -22,7 +22,7 @@ static ID3DBlob* CompileVertexShader(const char* vertexShaderText,
 	ID3DBlob* shader = nullptr;
 	ID3DBlob* error = nullptr;
 
-	UINT flag = D3D10_SHADER_PACK_MATRIX_ROW_MAJOR;
+	UINT flag = D3D10_SHADER_PACK_MATRIX_COLUMN_MAJOR;
 #if !_DEBUG
 	flag = flag | D3D10_SHADER_OPTIMIZATION_LEVEL3;
 #endif
@@ -72,7 +72,7 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 	ID3DBlob* shader = nullptr;
 	ID3DBlob* error = nullptr;
 
-	UINT flag = D3D10_SHADER_PACK_MATRIX_ROW_MAJOR;
+	UINT flag = D3D10_SHADER_PACK_MATRIX_COLUMN_MAJOR;
 #if !_DEBUG
 	flag = flag | D3D10_SHADER_OPTIMIZATION_LEVEL3;
 #endif

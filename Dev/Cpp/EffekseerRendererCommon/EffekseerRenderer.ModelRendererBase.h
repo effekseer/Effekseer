@@ -272,14 +272,15 @@ public:
 		state.CullingType = param.Culling;
 
 		// select shader
-		Effekseer::MaterialParameter* materialParam = nullptr;
+		Effekseer::MaterialParameter* materialParam = param.MaterialParameterPtr;
+		//materialParam = nullptr;
 		Effekseer::MaterialData* material = nullptr;
 		SHADER* shader_ = nullptr;
 		
 		if (materialParam != nullptr)
 		{
 			material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
-			shader_ = (SHADER*)material->UserPtr;
+			shader_ = (SHADER*)material->ModelUserPtr;
 
 			// validate
 			if (material->TextureCount != materialParam->MaterialTextures.size() ||
