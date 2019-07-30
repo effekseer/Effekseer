@@ -186,6 +186,9 @@
     <ClInclude Include="..\3rdParty\LLGI\src\Win\LLGI.WindowWin.h">
       <Filter>LLGI\Win</Filter>
     </ClInclude>
+    <ClInclude Include="..\3rdParty\LLGI\src\DX12\LLGI.SingleFrameMemoryPoolDX12.h">
+      <Filter>LLGI\DX12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">
@@ -322,6 +325,9 @@
     </ClCompile>
     <ClCompile Include="..\3rdParty\LLGI\src\Win\LLGI.WindowWin.cpp">
       <Filter>LLGI\Win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\LLGI\src\DX12\LLGI.SingleFrameMemoryPoolDX12.cpp">
+      <Filter>LLGI\DX12</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
