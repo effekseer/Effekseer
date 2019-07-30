@@ -235,8 +235,6 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 
 private:
 	std::map<PiplineStateKey, LLGI::PipelineState*> piplineStates;
-	LLGI::CommandList* commandList = nullptr;
-
 	LLGI::VertexBuffer* currentVertexBuffer = nullptr;
 	int32_t currentVertexBufferStride = 0;
 	LLGI::TopologyType currentTopologyType = LLGI::TopologyType::Triangle;

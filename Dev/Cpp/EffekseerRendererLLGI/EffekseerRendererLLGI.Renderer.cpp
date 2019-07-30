@@ -84,13 +84,13 @@ Renderer* Renderer::Create(LLGI::Graphics* graphics, FixedShader* fixedShader, b
 
 LLGI::CommandList* RendererImplemented::GetCurrentCommandList()
 {
-
 	if (commandList_ != nullptr)
 	{
 		return commandList_->GetInternal();
 	}
 
-	return commandList;
+	assert(0);
+	return nullptr;
 }
 
 LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
@@ -228,8 +228,6 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_RELEASE(commandList_);
 
-	LLGI::SafeRelease(commandList);
-
 	assert(GetRef() == 0);
 
 	ES_SAFE_DELETE(m_distortingCallback);
@@ -265,9 +263,6 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, FixedShader* fixe
 	isReversedDepth_ = isReversedDepth;
 
 	LLGI::SafeAddRef(graphics_);
-
-	// command list
-	commandList = graphics_->CreateCommandList();
 
 	// 頂点の生成
 	{
@@ -481,7 +476,7 @@ bool RendererImplemented::EndRendering()
 	return true;
 }
 
-void RendererImplemented::NewFrame() { graphics_->NewFrame(); }
+void RendererImplemented::NewFrame() { }
 
 void RendererImplemented::SetCommandList(EffekseerRenderer::CommandList* commandList)
 {
@@ -725,8 +720,7 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 
 	if (currentShader->GetVertexConstantBufferSize() > 0)
 	{
-		constantBufferVS =
-			graphics_->CreateConstantBuffer(currentShader->GetVertexConstantBufferSize(), LLGI::ConstantBufferType::ShortTime);
+		constantBufferVS = commandList_->GetMemoryPooll()->CreateConstantBuffer(currentShader->GetVertexConstantBufferSize());
 		assert(constantBufferVS != nullptr);
 		memcpy(constantBufferVS->Lock(), currentShader->GetVertexConstantBuffer(), currentShader->GetVertexConstantBufferSize());
 		constantBufferVS->Unlock();
@@ -735,8 +729,7 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 
 	if (currentShader->GetPixelConstantBufferSize() > 0)
 	{
-		constantBufferPS =
-			graphics_->CreateConstantBuffer(currentShader->GetPixelConstantBufferSize(), LLGI::ConstantBufferType::ShortTime);
+		constantBufferPS = commandList_->GetMemoryPooll()->CreateConstantBuffer(currentShader->GetPixelConstantBufferSize());
 		assert(constantBufferPS != nullptr);
 		memcpy(constantBufferPS->Lock(), currentShader->GetPixelConstantBuffer(), currentShader->GetPixelConstantBufferSize());
 		constantBufferPS->Unlock();
@@ -775,8 +768,7 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 
 	if (currentShader->GetVertexConstantBufferSize() > 0)
 	{
-		constantBufferVS =
-			graphics_->CreateConstantBuffer(currentShader->GetVertexConstantBufferSize(), LLGI::ConstantBufferType::ShortTime);
+		constantBufferVS = commandList_->GetMemoryPooll()->CreateConstantBuffer(currentShader->GetVertexConstantBufferSize());
 		assert(constantBufferVS != nullptr);
 		memcpy(constantBufferVS->Lock(), currentShader->GetVertexConstantBuffer(), currentShader->GetVertexConstantBufferSize());
 		constantBufferVS->Unlock();
@@ -785,8 +777,7 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 
 	if (currentShader->GetPixelConstantBufferSize() > 0)
 	{
-		constantBufferPS =
-			graphics_->CreateConstantBuffer(currentShader->GetPixelConstantBufferSize(), LLGI::ConstantBufferType::ShortTime);
+		constantBufferPS = commandList_->GetMemoryPooll()->CreateConstantBuffer(currentShader->GetPixelConstantBufferSize());
 		assert(constantBufferPS != nullptr);
 		memcpy(constantBufferPS->Lock(), currentShader->GetPixelConstantBuffer(), currentShader->GetPixelConstantBufferSize());
 		constantBufferPS->Unlock();

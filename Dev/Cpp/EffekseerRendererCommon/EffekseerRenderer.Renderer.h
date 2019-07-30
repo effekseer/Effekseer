@@ -47,6 +47,13 @@ class CommandList : public ::Effekseer::IReference
 public:
 	CommandList() = default;
 	virtual ~CommandList() = default;
+};
+
+class SingleFrameMemoryPool : public ::Effekseer::IReference
+{
+public:
+	SingleFrameMemoryPool() = default;
+	virtual ~SingleFrameMemoryPool() = default;
 
 	/**
 		@brief

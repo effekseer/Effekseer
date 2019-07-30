@@ -86,28 +86,56 @@ public:
 	virtual void SetBackground(LLGI::Texture* background) = 0;
 };
 
+class SingleFrameMemoryPool : public ::EffekseerRenderer::SingleFrameMemoryPool, public ::Effekseer::ReferenceObject
+{
+	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
+
+public:
+	SingleFrameMemoryPool(LLGI::SingleFrameMemoryPool* memoryPool)
+	{
+		memoryPool_ = memoryPool;
+		ES_SAFE_ADDREF(memoryPool_);
+	}
+
+	virtual ~SingleFrameMemoryPool() { ES_SAFE_RELEASE(memoryPool_); }
+
+	void NewFrame() override { memoryPool_->NewFrame(); }
+
+	LLGI::SingleFrameMemoryPool* GetInternal() { return memoryPool_; }
+
+	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
+	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
+	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
+};
+
 class CommandList : public ::EffekseerRenderer::CommandList, public ::Effekseer::ReferenceObject
 {
 private:
 	LLGI::Graphics* graphics_ = nullptr;
 	LLGI::CommandList* commandList_ = nullptr;
+	LLGI::SingleFrameMemoryPool* memoryPool_ = nullptr;
 
 public:
-	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList) : graphics_(graphics), commandList_(commandList)
+	CommandList(LLGI::Graphics* graphics, LLGI::CommandList* commandList, LLGI::SingleFrameMemoryPool* memoryPool)
+		: graphics_(graphics), commandList_(commandList), memoryPool_(memoryPool)
 	{
 		ES_SAFE_ADDREF(graphics_);
 		ES_SAFE_ADDREF(commandList_);
+		ES_SAFE_ADDREF(memoryPool_);
 	}
 
 	virtual ~CommandList()
 	{
 		ES_SAFE_RELEASE(graphics_);
 		ES_SAFE_RELEASE(commandList_);
+		ES_SAFE_RELEASE(memoryPool_);
 	}
 
 	LLGI::Graphics* GetGraphics() { return graphics_; }
 
 	LLGI::CommandList* GetInternal() { return commandList_; }
+
+	LLGI::SingleFrameMemoryPool* GetMemoryPooll() { return memoryPool_; }
 
 	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }

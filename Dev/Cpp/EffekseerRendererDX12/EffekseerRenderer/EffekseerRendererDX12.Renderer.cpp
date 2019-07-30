@@ -101,13 +101,25 @@ void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::Textu
 	delete textureData;
 }
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer)
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
 	auto g = static_cast<LLGI::GraphicsDX12*>(r->GetGraphics());
-	auto commandList = g->CreateCommandList();
-	auto ret = new EffekseerRendererLLGI::CommandList(commandList);
+	auto mp = static_cast<::EffekseerRendererLLGI::SingleFrameMemoryPool*>(memoryPool);
+	auto commandList = g->CreateCommandList(mp->GetInternal());
+	auto ret = new EffekseerRendererLLGI::CommandList(g, commandList, mp->GetInternal());
 	ES_SAFE_RELEASE(commandList);
+	return ret;
+}
+
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer)
+{
+	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
+	auto g = static_cast<LLGI::GraphicsDX12*>(r->GetGraphics());
+	auto mp = g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128);
+	auto ret = new EffekseerRendererLLGI::SingleFrameMemoryPool(mp);
+	ES_SAFE_RELEASE(mp);
 	return ret;
 }
 

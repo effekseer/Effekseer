@@ -25,7 +25,9 @@ Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* rendere
 
 void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData);
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer);
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer, ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
+
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
 
 void BeginCommandList(EffekseerRenderer::CommandList* commandList);
 
