@@ -69,19 +69,6 @@ bool PiplineStateKey::operator<(const PiplineStateKey& v) const
 	return false;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Renderer* Renderer::Create(LLGI::Graphics* graphics, FixedShader* fixedShader, bool isReversedDepth, int32_t squareMaxCount)
-{
-	RendererImplemented* renderer = new RendererImplemented(squareMaxCount);
-	if (renderer->Initialize(graphics, fixedShader, isReversedDepth))
-	{
-		return renderer;
-	}
-	return NULL;
-}
-
 LLGI::CommandList* RendererImplemented::GetCurrentCommandList()
 {
 	if (commandList_ != nullptr)
@@ -256,10 +243,9 @@ void RendererImplemented::OnLostDevice() {}
 
 void RendererImplemented::OnResetDevice() {}
 
-bool RendererImplemented::Initialize(LLGI::Graphics* graphics, FixedShader* fixedShader, bool isReversedDepth)
+bool RendererImplemented::Initialize(LLGI::Graphics* graphics, bool isReversedDepth)
 {
 	graphics_ = graphics;
-	fixedShader_ = fixedShader;
 	isReversedDepth_ = isReversedDepth;
 
 	LLGI::SafeAddRef(graphics_);
@@ -345,10 +331,10 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, FixedShader* fixe
 	layouts_distort.push_back(LLGI::VertexLayoutFormat::R32G32B32_FLOAT);
 
 	m_shader = Shader::Create(this,
-							  fixedShader->StandardTexture_VS.data(),
-							  fixedShader->StandardTexture_VS.size(),
-							  fixedShader->StandardTexture_PS.data(),
-							  fixedShader->StandardTexture_PS.size(),
+							  fixedShader_.StandardTexture_VS.data(),
+							  fixedShader_.StandardTexture_VS.size(),
+							  fixedShader_.StandardTexture_PS.data(),
+							  fixedShader_.StandardTexture_PS.size(),
 							  "StandardRenderer",
 							  layouts);
 	if (m_shader == NULL)
@@ -358,10 +344,10 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, FixedShader* fixe
 	Release();
 
 	m_shader_no_texture = Shader::Create(this,
-										 fixedShader->Standard_VS.data(),
-										 fixedShader->Standard_VS.size(),
-										 fixedShader->Standard_PS.data(),
-										 fixedShader->Standard_PS.size(),
+										 fixedShader_.Standard_VS.data(),
+										 fixedShader_.Standard_VS.size(),
+										 fixedShader_.Standard_PS.data(),
+										 fixedShader_.Standard_PS.size(),
 										 "StandardRenderer No Texture",
 										 layouts);
 
@@ -374,10 +360,10 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, FixedShader* fixe
 	Release();
 
 	m_shader_distortion = Shader::Create(this,
-										 fixedShader->StandardDistortedTexture_VS.data(),
-										 fixedShader->StandardDistortedTexture_VS.size(),
-										 fixedShader->StandardDistortedTexture_PS.data(),
-										 fixedShader->StandardDistortedTexture_PS.size(),
+										 fixedShader_.StandardDistortedTexture_VS.data(),
+										 fixedShader_.StandardDistortedTexture_VS.size(),
+										 fixedShader_.StandardDistortedTexture_PS.data(),
+										 fixedShader_.StandardDistortedTexture_PS.size(),
 										 "StandardRenderer Distortion",
 										 layouts_distort);
 	if (m_shader_distortion == NULL)
@@ -387,10 +373,10 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, FixedShader* fixe
 	Release();
 
 	m_shader_no_texture_distortion = Shader::Create(this,
-													fixedShader->StandardDistorted_VS.data(),
-													fixedShader->StandardDistorted_VS.size(),
-													fixedShader->StandardDistorted_PS.data(),
-													fixedShader->StandardDistorted_PS.size(),
+													fixedShader_.StandardDistorted_VS.data(),
+													fixedShader_.StandardDistorted_VS.size(),
+													fixedShader_.StandardDistorted_PS.data(),
+													fixedShader_.StandardDistorted_PS.size(),
 													"StandardRenderer No Texture Distortion",
 													layouts_distort);
 
@@ -475,8 +461,6 @@ bool RendererImplemented::EndRendering()
 	}
 	return true;
 }
-
-void RendererImplemented::NewFrame() { }
 
 void RendererImplemented::SetCommandList(EffekseerRenderer::CommandList* commandList)
 {
@@ -591,7 +575,7 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer() { return ModelRenderer::Create(this, fixedShader_); }
+::Effekseer::ModelRenderer* RendererImplemented::CreateModelRenderer() { return ModelRenderer::Create(this, &fixedShader_); }
 
 //----------------------------------------------------------------------------------
 //

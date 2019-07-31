@@ -65,12 +65,6 @@ protected:
 	virtual ~Renderer() {}
 
 public:
-	/**
-		@brief Create renderer
-		@param	fixedShader	don't delete before deleting renderer
-	*/
-	static Renderer* Create(LLGI::Graphics* graphics, FixedShader* fixedShader, bool isReversedDepth, int32_t squareMaxCount);
-
 	virtual LLGI::Graphics* GetGraphics() = 0;
 
 	/**

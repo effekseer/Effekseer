@@ -30,8 +30,6 @@ float Renderer::GetTime() const { return impl->GetTime(); }
 
 void Renderer::SetTime(float time) { impl->SetTime(time); }
 
-void Renderer::NewFrame() {}
-
 void Renderer::SetBackgroundTexture(::Effekseer::TextureData* textureData)
 {
 	// not implemented

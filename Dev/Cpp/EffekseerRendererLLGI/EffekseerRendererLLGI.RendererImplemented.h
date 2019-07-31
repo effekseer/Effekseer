@@ -298,7 +298,7 @@ private:
 
 public:
 	//! shaders (todo implemented)
-	FixedShader* fixedShader_ = nullptr;
+	FixedShader fixedShader_;
 
 	/**
 		@brief	コンストラクタ
@@ -316,23 +316,15 @@ public:
 	/**
 		@brief	初期化
 	*/
-	bool Initialize(LLGI::Graphics* graphics, FixedShader* fixedShader, bool isReversedDepth);
+	bool Initialize(LLGI::Graphics* graphics, bool isReversedDepth);
 
 	void Destroy() override;
 
 	void SetRestorationOfStatesFlag(bool flag) override;
 
-	/**
-		@brief	描画開始
-	*/
 	bool BeginRendering() override;
 
-	/**
-		@brief	描画終了
-	*/
 	bool EndRendering() override;
-
-	void NewFrame() override;
 
 	void SetCommandList(EffekseerRenderer::CommandList* commandList) override;
 
