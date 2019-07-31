@@ -101,6 +101,13 @@ void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::Textu
 	delete textureData;
 }
 
+void FlushAndWait(::EffekseerRenderer::Renderer* renderer)
+{
+	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
+	auto g = static_cast<LLGI::GraphicsSwitch*>(r->GetGraphics());
+	g->WaitFinish();
+}
+
 EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
