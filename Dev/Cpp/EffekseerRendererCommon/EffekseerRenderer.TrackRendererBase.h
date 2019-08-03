@@ -132,12 +132,30 @@ namespace EffekseerRenderer
 		std::vector<efkTrackInstanceParam>	instances;
 		Spline								spline;
 
+		enum class VertexType
+		{
+			Normal,
+			Distortion,
+			Dynamic,
+		};
+
+		template <typename V> VertexType GetVertexType(const V* v) { return VertexType::Normal; }
+
+		template <> VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
+
+		template <> VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
+
+		template <> VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+
+
+
 		template<typename VERTEX>
 		void RenderSplines(const ::Effekseer::Matrix44& camera)
 		{
 			auto& parameter = innstancesNodeParam;
 
 			VERTEX* v_origin = (VERTEX*)m_ringBufferData;
+			auto vertexType = GetVertexType(v_origin);
 
 			// Calculate spline
 			if (parameter.SplineDivision > 1)
@@ -389,7 +407,7 @@ namespace EffekseerRenderer
 						mat_rot);
 
 
-					if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+					if (vertexType == VertexType::Distortion)
 					{
 						auto vl_ = (VERTEX_DISTORTION*)(&vl);
 						auto vm_ = (VERTEX_DISTORTION*)(&vm);
@@ -405,6 +423,37 @@ namespace EffekseerRenderer
 						vl_->Tangent = tangent;
 						vm_->Tangent = tangent;
 						vr_->Tangent = tangent;
+					}
+					else if (vertexType == VertexType::Dynamic)
+					{
+						auto vl_ = (DynamicVertex*)(&vl);
+						auto vm_ = (DynamicVertex*)(&vm);
+						auto vr_ = (DynamicVertex*)(&vr);
+
+						::Effekseer::Vector3D tangent;
+						::Effekseer::Vector3D::Normal(tangent, vr_->Pos - vl_->Pos);
+
+						Effekseer::Vector3D normal;
+						Effekseer::Vector3D::Cross(normal, axis, tangent);
+						Effekseer::Vector3D::Normal(normal, normal);
+
+						Effekseer::Color normal_;
+						Effekseer::Color tangent_;
+
+						normal_.R = static_cast<uint8_t>(normal.X * 255);
+						normal_.G = static_cast<uint8_t>(normal.Y * 255);
+						normal_.B = static_cast<uint8_t>(normal.Z * 255);
+						tangent_.R = static_cast<uint8_t>(tangent.X * 255);
+						tangent_.G = static_cast<uint8_t>(tangent.Y * 255);
+						tangent_.B = static_cast<uint8_t>(tangent.Z * 255);
+
+						vl_->Normal = normal_;
+						vm_->Normal = normal_;
+						vr_->Normal = normal_;
+
+						vl_->Tangent = tangent_;
+						vm_->Tangent = tangent_;
+						vr_->Tangent = tangent_;
 					}
 
 					if (isFirst_)
@@ -461,7 +510,13 @@ namespace EffekseerRenderer
 
 		void Rendering_(const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
 		{
-			if (parameter.Distortion)
+			const auto& state = m_renderer->GetStandardRenderer()->GetState();
+
+			if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
+			{
+				Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
+			}
+			else if (parameter.Distortion)
 			{
 				Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
 			}
@@ -781,6 +836,8 @@ namespace EffekseerRenderer
 
 			state.Distortion = param.Distortion;
 			state.DistortionIntensity = param.DistortionIntensity;
+
+			state.CopyMaterialFromParameterToState(param.EffectPointer, param.MaterialParameterPtr, param.ColorTextureIndex);
 
 			if (param.ColorTextureIndex >= 0)
 			{

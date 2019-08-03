@@ -278,6 +278,12 @@ public:
 	const std::vector<uint8_t>& GetModelPS() const { return modelPS; }
 };
 
+struct ShaderData
+{
+	std::string CodeVS;
+	std::string CodePS;
+};
+
 class ShaderLoader
 {
 protected:
@@ -295,12 +301,6 @@ protected:
 	}
 
 public:
-	enum class ShadingModelType : int32_t
-	{
-		Lit,
-		Unlit,
-	};
-
 	enum class ShaderType : int32_t
 	{
 		Standard,
@@ -328,9 +328,11 @@ public:
 
 	std::vector<Uniform> Uniforms;
 
-	ShadingModelType ShadingModel;
+	::Effekseer::ShadingModelType ShadingModel;
 
 	bool HasRefraction = false;
+
+	bool IsSimpleVertex = false;
 
 	std::string GenericCode;
 
@@ -465,6 +467,8 @@ public:
 			}
 		}
 
+		ShadingModel = Effekseer::ShadingModelType::Lit;
+
 		return true;
 	}
 
@@ -473,7 +477,7 @@ public:
 		@note
 		TODO : support distortion etc
 	*/
-	virtual std::string GenerateShader(ShaderType shaderType) { return std::string(); }
+	virtual ShaderData GenerateShader(ShaderType shaderType) { return ShaderData(); }
 };
 
 } // namespace EffekseerRenderer

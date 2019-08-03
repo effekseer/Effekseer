@@ -80,6 +80,8 @@ protected:
 		state.Distortion = param.Distortion;
 		state.DistortionIntensity = param.DistortionIntensity;
 
+		state.CopyMaterialFromParameterToState(param.EffectPointer, param.MaterialParameterPtr, param.ColorTextureIndex);
+
 		if (param.ColorTextureIndex >= 0)
 		{
 			if (state.Distortion)
@@ -102,7 +104,13 @@ protected:
 
 	void Rendering_(const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
 	{
-		if (parameter.Distortion)
+		const auto& state = m_renderer->GetStandardRenderer()->GetState();
+
+		if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
+		{
+			Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
+		}
+		else if (parameter.Distortion)
 		{
 			Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
 		}
@@ -112,6 +120,22 @@ protected:
 		}
 	}
 
+	enum class VertexType
+	{
+		Normal,
+		Distortion,
+		Dynamic,
+	};
+
+	template <typename V> VertexType GetVertexType(const V* v) { return VertexType::Normal; }
+
+	template <> VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
+
+	template <> VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
+
+	template <> VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+
+
 	template<typename VERTEX>
 	void Rendering_Internal( const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
@@ -119,6 +143,9 @@ protected:
 		//Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * vertexCount );
 		
 		VERTEX* verteies = (VERTEX*)m_ringBufferData;
+
+		auto vertexType = GetVertexType(verteies);
+
 		m_ringBufferData += sizeof(VERTEX) * vertexCount;
 
 		const float radian = instanceParameter.ViewingAngle / 180.0f * 3.141592f;
@@ -210,14 +237,14 @@ protected:
 			v[7].UV[0] = texNext;
 			v[7].UV[1] = v3;
 
-			// 歪み処理
-			if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+			// distortion
+			if (vertexType == VertexType::Distortion)
 			{
 				auto vs = (VERTEX_DISTORTION*) &verteies[i];
 				auto binormalCurrent = v[5].Pos - v[0].Pos;
 				auto binormalNext = v[7].Pos - v[2].Pos;
 
-				// 戻す
+				// return back
 				float t_b;
 				t_b = old_c * (stepC) - old_s * (-stepS);
 				auto s_b = old_s * (stepC) + old_c * (-stepS);
@@ -228,7 +255,7 @@ protected:
 				outerBefore.Y = s_b * outerRadius;
 				outerBefore.Z = outerHeight;
 
-				// 次
+				// next
 				auto t_n = cos_ * stepC - sin_ * stepS;
 				auto s_n = sin_ * stepC + cos_ * stepS;
 				auto c_n = t_n;
@@ -263,8 +290,55 @@ protected:
 				vs[6].Binormal = binormalNext;
 				vs[7].Tangent = tangentNext;
 				vs[7].Binormal = binormalNext;
-
 			}
+			else if (vertexType == VertexType::Dynamic)
+			{
+				auto vs = (DynamicVertex*)&verteies[i];
+
+				// return back
+				float t_b;
+				t_b = old_c * (stepC)-old_s * (-stepS);
+				auto s_b = old_s * (stepC) + old_c * (-stepS);
+				auto c_b = t_b;
+
+				::Effekseer::Vector3D outerBefore;
+				outerBefore.X = c_b * outerRadius;
+				outerBefore.Y = s_b * outerRadius;
+				outerBefore.Z = outerHeight;
+
+				// next
+				auto t_n = cos_ * stepC - sin_ * stepS;
+				auto s_n = sin_ * stepC + cos_ * stepS;
+				auto c_n = t_n;
+
+				::Effekseer::Vector3D outerNN;
+				outerNN.X = c_n * outerRadius;
+				outerNN.Y = s_n * outerRadius;
+				outerNN.Z = outerHeight;
+
+				::Effekseer::Vector3D tangent0, tangent1, tangent2;
+				::Effekseer::Vector3D::Normal(tangent0, outerCurrent - outerBefore);
+				::Effekseer::Vector3D::Normal(tangent1, outerNext - outerCurrent);
+				::Effekseer::Vector3D::Normal(tangent2, outerNN - outerNext);
+
+				auto tangentCurrent = (tangent0 + tangent1) / 2.0f;
+				auto tangentNext = (tangent1 + tangent2) / 2.0f;
+
+				vs[0].Tangent.R = static_cast<uint8_t>(tangentCurrent.X * 255);
+				vs[0].Tangent.G = static_cast<uint8_t>(tangentCurrent.Y * 255);
+				vs[0].Tangent.B = static_cast<uint8_t>(tangentCurrent.Z * 255);
+				vs[1].Tangent = vs[0].Tangent;
+				vs[2].Tangent.R = static_cast<uint8_t>(tangentNext.X * 255);
+				vs[2].Tangent.G = static_cast<uint8_t>(tangentNext.Y * 255);
+				vs[2].Tangent.B = static_cast<uint8_t>(tangentNext.Z * 255);
+				vs[3].Tangent = vs[2].Tangent;
+
+				vs[4].Tangent = vs[0].Tangent;
+				vs[5].Tangent = vs[0].Tangent;
+				vs[6].Tangent = vs[2].Tangent;
+				vs[7].Tangent = vs[2].Tangent;
+			}
+
 			outerCurrent = outerNext;
 			innerCurrent = innerNext;
 			centerCurrent = centerNext;

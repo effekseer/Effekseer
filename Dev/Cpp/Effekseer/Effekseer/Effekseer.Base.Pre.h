@@ -506,12 +506,20 @@ struct TextureData
 	int64_t	UserID;
 };
 
+enum class ShadingModelType : int32_t
+{
+	Lit,
+	Unlit,
+};
+
 /**
 	@brief	\~english	Material data
 			\~japanese	マテリアルデータ
 */
 struct MaterialData
 {
+	ShadingModelType ShadingModel = ShadingModelType::Lit;
+	bool IsSimpleVertex = false;
 	int32_t TextureCount = 0;
 	int32_t UniformCount = 0;
 	void* UserPtr = nullptr;

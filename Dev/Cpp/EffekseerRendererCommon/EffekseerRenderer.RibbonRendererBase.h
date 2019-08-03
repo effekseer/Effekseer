@@ -133,12 +133,30 @@ namespace EffekseerRenderer
 		Spline								spline_left;
 		Spline								spline_right;
 
+		enum class VertexType
+		{
+			Normal,
+			Distortion,
+			Dynamic,
+		};
+
+		template <typename V> VertexType GetVertexType(const V* v) { return VertexType::Normal; }
+
+		template <> VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
+
+		template <> VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
+
+		template <> VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+
+
 		template<typename VERTEX>
 		void RenderSplines(const ::Effekseer::Matrix44& camera)
 		{
 			auto& parameter = innstancesNodeParam;
 
 			VERTEX* verteies0 = (VERTEX*)m_ringBufferData;
+
+			auto vertexType = GetVertexType(verteies0);
 
 			// Calculate spline
 			if (parameter.SplineDivision > 1)
@@ -370,7 +388,7 @@ namespace EffekseerRenderer
 			}
 
 			// Apply distortion
-			if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+			if (vertexType == VertexType::Distortion)
 			{
 				VERTEX_DISTORTION* vs_ = (VERTEX_DISTORTION*)verteies0;
 
@@ -445,6 +463,93 @@ namespace EffekseerRenderer
 					}
 				}
 			}
+			else if (vertexType == VertexType::Dynamic)
+			{
+				DynamicVertex* vs_ = (DynamicVertex*)verteies0;
+
+				Effekseer::Vector3D axisBefore;
+
+				for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
+				{
+					bool isFirst_ = (i == 0);
+					bool isLast_ = (i == ((instances.size() - 1) * parameter.SplineDivision));
+
+					Effekseer::Vector3D axis;
+					Effekseer::Vector3D pos;
+
+					if (isFirst_)
+					{
+						axis = (vs_[3].Pos - vs_[1].Pos);
+						Effekseer::Vector3D::Normal(axis, axis);
+						axisBefore = axis;
+					}
+					else if (isLast_)
+					{
+						axis = axisBefore;
+					}
+					else
+					{
+						Effekseer::Vector3D axisOld = axisBefore;
+						axis = (vs_[5].Pos - vs_[3].Pos);
+						Effekseer::Vector3D::Normal(axis, axis);
+						axisBefore = axis;
+
+						axis = (axisBefore + axisOld) / 2.0f;
+						Effekseer::Vector3D::Normal(axis, axis);
+					}
+
+					auto tangent = vs_[1].Pos - vs_[0].Pos;
+					Effekseer::Vector3D::Normal(tangent, tangent);
+
+					Effekseer::Vector3D normal;
+					Effekseer::Vector3D::Cross(normal, axis, tangent);
+					Effekseer::Vector3D::Normal(normal, normal);
+
+					if (isFirst_)
+					{
+						vs_[0].Normal.R = static_cast<uint8_t>(normal.X * 255);
+						vs_[0].Normal.G = static_cast<uint8_t>(normal.Y * 255);
+						vs_[0].Normal.B = static_cast<uint8_t>(normal.Z * 255);						
+						vs_[0].Tangent.R = static_cast<uint8_t>(tangent.X * 255);
+						vs_[0].Tangent.G = static_cast<uint8_t>(tangent.Y * 255);
+						vs_[0].Tangent.B = static_cast<uint8_t>(tangent.Z * 255);
+						vs_[1].Tangent = vs_[0].Tangent;
+						vs_[1].Normal = vs_[0].Normal;
+
+						vs_ += 2;
+					}
+					else if (isLast_)
+					{
+						vs_[0].Normal.R = static_cast<uint8_t>(normal.X * 255);
+						vs_[0].Normal.G = static_cast<uint8_t>(normal.Y * 255);
+						vs_[0].Normal.B = static_cast<uint8_t>(normal.Z * 255);
+						vs_[0].Tangent.R = static_cast<uint8_t>(tangent.X * 255);
+						vs_[0].Tangent.G = static_cast<uint8_t>(tangent.Y * 255);
+						vs_[0].Tangent.B = static_cast<uint8_t>(tangent.Z * 255);
+						vs_[1].Tangent = vs_[0].Tangent;
+						vs_[1].Normal = vs_[0].Normal;
+
+						vs_ += 2;
+					}
+					else
+					{
+						vs_[0].Normal.R = static_cast<uint8_t>(normal.X * 255);
+						vs_[0].Normal.G = static_cast<uint8_t>(normal.Y * 255);
+						vs_[0].Normal.B = static_cast<uint8_t>(normal.Z * 255);
+						vs_[0].Tangent.R = static_cast<uint8_t>(tangent.X * 255);
+						vs_[0].Tangent.G = static_cast<uint8_t>(tangent.Y * 255);
+						vs_[0].Tangent.B = static_cast<uint8_t>(tangent.Z * 255);
+						vs_[1].Tangent = vs_[0].Tangent;
+						vs_[1].Normal = vs_[0].Normal;
+						vs_[2].Tangent = vs_[0].Tangent;
+						vs_[2].Normal = vs_[0].Normal;
+						vs_[3].Tangent = vs_[0].Tangent;
+						vs_[3].Normal = vs_[0].Normal;
+
+						vs_ += 4;
+					}
+				}
+			}
 		}
 
 	public:
@@ -466,7 +571,13 @@ namespace EffekseerRenderer
 
 		void Rendering_(const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
 		{
-			if (parameter.Distortion)
+			const auto& state = m_renderer->GetStandardRenderer()->GetState();
+
+			if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
+			{
+				Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
+			}
+			else if (parameter.Distortion)
 			{
 				Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
 			}
@@ -692,6 +803,8 @@ namespace EffekseerRenderer
 
 			state.Distortion = param.Distortion;
 			state.DistortionIntensity = param.DistortionIntensity;
+
+			state.CopyMaterialFromParameterToState(param.EffectPointer, param.MaterialParameterPtr, param.ColorTextureIndex);
 
 			if (param.ColorTextureIndex >= 0)
 			{
