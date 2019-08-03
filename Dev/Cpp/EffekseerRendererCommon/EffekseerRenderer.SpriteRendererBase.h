@@ -156,7 +156,14 @@ protected:
 	{
 		if (parameter.ZSort == Effekseer::ZSortType::None)
 		{
-			if (parameter.Distortion)
+			auto camera = m_renderer->GetCameraMatrix();
+			const auto& state = m_renderer->GetStandardRenderer()->GetState();
+
+			if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
+			{
+				Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
+			}
+			else if (parameter.Distortion)
 			{
 				Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
 			}
@@ -173,14 +180,31 @@ protected:
 		}
 	}
 
+	enum class VertexType
+	{
+		Normal,
+		Distortion,
+		Dynamic,
+	};
+
+	template <typename V> VertexType GetVertexType(const V* v) { return VertexType::Normal; }
+
+	template <> VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
+
+	template <> VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
+
+	template <> VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+
 	template<typename VERTEX>
 	void Rendering_Internal( const efkSpriteNodeParam& parameter, const efkSpriteInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
-		if( m_ringBufferData == NULL ) return;
-		
+		if( m_ringBufferData == nullptr ) return;
+
 		VERTEX* verteies = (VERTEX*)m_ringBufferData;
 		m_ringBufferData += (sizeof(VERTEX) * 4);
-	
+
+		auto vertexType = GetVertexType(verteies);
+
 		for( int i = 0; i < 4; i++ )
 		{
 			verteies[i].Pos.X = instanceParameter.Positions[i].X;
@@ -202,8 +226,8 @@ protected:
 		verteies[3].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
 		verteies[3].UV[1] = instanceParameter.UV.Y;
 
-		// 歪み処理
-		if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+		// distortion
+		if (vertexType == VertexType::Distortion)
 		{
 			auto vs = (VERTEX_DISTORTION*) verteies;
 			for (auto i = 0; i < 4; i++)
@@ -215,6 +239,29 @@ protected:
 				vs[i].Binormal.Y = 0.0f;
 				vs[i].Binormal.Z = 0.0f;
 			}
+		}
+		else if (vertexType == VertexType::Dynamic)
+		{
+			auto vs = (DynamicVertex*)verteies;
+			for (auto i = 0; i < 4; i++)
+			{
+				vs[i].Normal.R = static_cast<uint8_t>(0.0f * 255);
+				vs[i].Normal.G = static_cast<uint8_t>(0.0f * 255);
+				vs[i].Normal.B = static_cast<uint8_t>(1.0f * 255);
+
+				vs[i].Tangent.R = static_cast<uint8_t>(1.0f * 255);
+				vs[i].Tangent.G = static_cast<uint8_t>(0.0f * 255);
+				vs[i].Tangent.B = static_cast<uint8_t>(0.0f * 255);
+			}
+
+			vs[0].UV2[0] = 0.0f;
+			vs[0].UV2[1] = 1.0f;
+			vs[1].UV2[0] = 1.0f;
+			vs[1].UV2[1] = 1.0f;
+			vs[2].UV2[0] = 0.0f;
+			vs[2].UV2[1] = 0.0f;
+			vs[3].UV2[0] = 1.0f;
+			vs[3].UV2[1] = 0.0f;
 		}
 		
 		if( parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
@@ -340,8 +387,8 @@ protected:
 					verteies[i].Pos,
 					mat);
 
-				// 歪み処理
-				if (sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
+				// distortion
+				if (vertexType == VertexType::Distortion)
 				{
 					auto vs = (VERTEX_DISTORTION*) & verteies[i];
 
@@ -363,6 +410,18 @@ protected:
 
 					::Effekseer::Vector3D::Normal(vs->Tangent, vs->Tangent - zero);
 					::Effekseer::Vector3D::Normal(vs->Binormal, vs->Binormal - zero);
+				}
+				else if (vertexType == VertexType::Dynamic)
+				{
+					auto vs = (DynamicVertex*)&verteies[i];
+					auto tangentX = efkVector3D(mat.Value[0][0], mat.Value[0][1], mat.Value[0][2]);
+					auto tangentZ = efkVector3D(mat.Value[2][0], mat.Value[2][1], mat.Value[2][2]);
+					vs->Normal.R = static_cast<uint8_t>(tangentZ.X * 255.0f);
+					vs->Normal.G = static_cast<uint8_t>(tangentZ.Y * 255.0f);
+					vs->Normal.B = static_cast<uint8_t>(tangentZ.Z * 255.0f);
+					vs->Tangent.R = static_cast<uint8_t>(tangentX.X * 255.0f);
+					vs->Tangent.G = static_cast<uint8_t>(tangentX.Y * 255.0f);
+					vs->Tangent.B = static_cast<uint8_t>(tangentX.Z * 255.0f);
 				}
 			}
 		}
@@ -403,8 +462,13 @@ protected:
 			for (auto& kv : instances)
 			{
 				auto camera = m_renderer->GetCameraMatrix();
+				const auto& state = renderer->GetStandardRenderer()->GetState();
 
-				if (param.Distortion)
+				if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
+				{
+					Rendering_Internal<DynamicVertex>(param, kv.Value, nullptr, camera);
+				}
+				else if (param.Distortion)
 				{
 					Rendering_Internal<VERTEX_DISTORTION>(param, kv.Value, nullptr, camera);
 				}

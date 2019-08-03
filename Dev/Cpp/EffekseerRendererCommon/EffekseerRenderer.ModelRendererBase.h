@@ -277,7 +277,7 @@ public:
 		Effekseer::MaterialData* material = nullptr;
 		SHADER* shader_ = nullptr;
 		
-		if (materialParam != nullptr)
+		if (materialParam != nullptr && param.EffectPointer->GetMaterial(materialParam->MaterialIndex) != nullptr)
 		{
 			material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
 			shader_ = (SHADER*)material->ModelUserPtr;
@@ -425,56 +425,121 @@ public:
 		
 		renderer->GetRenderState()->Update(distortion);
 
-		ModelRendererVertexConstantBuffer<InstanceCount>* vcb = (ModelRendererVertexConstantBuffer<InstanceCount>*)shader_->GetVertexConstantBuffer();
+		std::array<float, 4> uvInversed;
+		std::array<float, 4> uvInversedBack;
 
 		if (renderer->GetTextureUVStyle() == UVStyle::VerticalFlipped)
 		{
-			vcb->UVInversed[0] = 1;
-			vcb->UVInversed[1] = -1;
+			uvInversed[0] = 1.0f;
+			uvInversed[1] = -1.0f;
 		}
 		else
 		{
-			vcb->UVInversed[0] = 0;
-			vcb->UVInversed[1] = 1;
+			uvInversed[0] = 0.0f;
+			uvInversed[1] = 1.0f;
 		}
 
-		if (distortion)
+		if (renderer->GetBackgroundTextureUVStyle() == UVStyle::VerticalFlipped)
 		{
-			float* pcb = (float*) shader_->GetPixelConstantBuffer();
-			pcb[4 * 0 + 0] = param.DistortionIntensity;
-
-			if (renderer->GetBackgroundTextureUVStyle() == UVStyle::VerticalFlipped)
-			{
-				pcb[4 * 1 + 0] = 1;
-				pcb[4 * 1 + 1] = -1;
-			}
-			else
-			{
-				pcb[4 * 1 + 0] = 0;
-				pcb[4 * 1 + 1] = 1;
-			}
+			uvInversedBack[0] = 1.0f;
+			uvInversedBack[1] = -1.0f;
 		}
-		else if (materialParam != nullptr)
+		else
+		{
+			uvInversedBack[0] = 0.0f;
+			uvInversedBack[1] = 1.0f;
+		}
+
+		ModelRendererVertexConstantBuffer<InstanceCount>* vcb =
+			(ModelRendererVertexConstantBuffer<InstanceCount>*)shader_->GetVertexConstantBuffer();
+
+		if (materialParam != nullptr && material != nullptr)
 		{
 			// time
 			std::array<float, 4> predefined_uniforms;
 			predefined_uniforms.fill(0.5f);
 			predefined_uniforms[0] = renderer->GetTime();
-			renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, 0);
 
-			// others
+			// vs
+			int32_t vsOffset = sizeof(Effekseer::Matrix44) + (sizeof(Effekseer::Matrix44) + sizeof(float) * 4 * 2) * InstanceCount;
+
+			renderer->SetVertexBufferToShader(uvInversed.data(), sizeof(float) * 4, vsOffset);
+			vsOffset += (sizeof(float) * 4);
+
+			renderer->SetVertexBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, vsOffset);
+			vsOffset += (sizeof(float) * 4);
+
 			for (size_t i = 0; i < materialParam->MaterialUniforms.size(); i++)
 			{
-				renderer->SetPixelBufferToShader(materialParam->MaterialUniforms[i].data(), sizeof(float) * 4, sizeof(float) * 4 * (i + 1));
+				renderer->SetVertexBufferToShader(materialParam->MaterialUniforms[i].data(), sizeof(float) * 4, vsOffset);
+				vsOffset += (sizeof(float) * 4);
+			}
+
+			// ps
+			int32_t psOffset = 0;
+			renderer->SetPixelBufferToShader(uvInversedBack.data(), sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
+
+			renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
+
+			// shader model
+			material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
+
+			if (material->ShadingModel == ::Effekseer::ShadingModelType::Lit)
+			{
+				float cameraPosition[4];
+				float lightDirection[4];
+				float lightColor[4];
+				float lightAmbientColor[4];
+
+				::Effekseer::Vector3D cameraPosition3 = m_renderer->GetCameraPosition();
+				::Effekseer::Vector3D lightDirection3 = m_renderer->GetLightDirection();
+				::Effekseer::Vector3D::Normal(lightDirection3, lightDirection3);
+				VectorToFloat4(cameraPosition3, cameraPosition);
+				VectorToFloat4(lightDirection3, lightDirection);
+				ColorToFloat4(m_renderer->GetLightColor(), lightColor);
+				ColorToFloat4(m_renderer->GetLightAmbientColor(), lightAmbientColor);
+
+				m_renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
+				psOffset += (sizeof(float) * 4);
+
+				m_renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
+				psOffset += (sizeof(float) * 4);
+
+				m_renderer->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
+				psOffset += (sizeof(float) * 4);
+
+				m_renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
+				psOffset += (sizeof(float) * 4);
+
+			}
+
+			for (size_t i = 0; i < materialParam->MaterialUniforms.size(); i++)
+			{
+				renderer->SetPixelBufferToShader(materialParam->MaterialUniforms[i].data(), sizeof(float) * 4, psOffset);
+				psOffset += (sizeof(float) * 4);
 			}
 		}
 		else
 		{
-			ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*) shader_->GetPixelConstantBuffer();
+			vcb->UVInversed[0] = uvInversed[0];
+			vcb->UVInversed[1] = uvInversed[1];
 
-			// 固定値設定
-			if (param.Lighting)
+			if (distortion)
 			{
+				float* pcb = (float*) shader_->GetPixelConstantBuffer();
+				pcb[4 * 0 + 0] = param.DistortionIntensity;
+
+				pcb[4 * 1 + 0] = uvInversedBack[0];
+				pcb[4 * 1 + 1] = uvInversedBack[1];
+			}
+			else
+			{
+				ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*) shader_->GetPixelConstantBuffer();
+
+				// 固定値設定
+				if (param.Lighting)
 				{
 					::Effekseer::Vector3D lightDirection = renderer->GetLightDirection();
 					::Effekseer::Vector3D::Normal(lightDirection, lightDirection);
@@ -482,18 +547,18 @@ public:
 					VectorToFloat4(lightDirection, pcb->LightDirection);
 				}
 
-			{
-				ColorToFloat4(renderer->GetLightColor(), vcb->LightColor);
-				ColorToFloat4(renderer->GetLightColor(), pcb->LightColor);
-			}
+				{
+					ColorToFloat4(renderer->GetLightColor(), vcb->LightColor);
+					ColorToFloat4(renderer->GetLightColor(), pcb->LightColor);
+				}
 
-			{
-				ColorToFloat4(renderer->GetLightAmbientColor(), vcb->LightAmbientColor);
-				ColorToFloat4(renderer->GetLightAmbientColor(), pcb->LightAmbientColor);
-			}
+				{
+					ColorToFloat4(renderer->GetLightAmbientColor(), vcb->LightAmbientColor);
+					ColorToFloat4(renderer->GetLightAmbientColor(), pcb->LightAmbientColor);
+				}
 			}
 		}
-		
+
 		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
 
 		// Check time

@@ -231,5 +231,11 @@ void TransformVertexes(Vertex& v, int32_t count, const ::Effekseer::Matrix43& ma
 	TransformDistortionVertexes(v, count, mat);
 }
 
+inline void SwapRGBAToBGRA(Effekseer::Color& color)
+{ auto temp = color;
+	color.B = temp.R;
+	color.R = temp.B;
+}
+
 }
 #endif // __EFFEKSEERRENDERER_COMMON_UTILS_H__

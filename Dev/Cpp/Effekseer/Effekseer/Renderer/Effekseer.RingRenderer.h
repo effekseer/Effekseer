@@ -41,6 +41,7 @@ public:
 		float				DistortionIntensity;
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+		MaterialParameter* MaterialParameterPtr = nullptr;
 
 		float				DepthOffset;
 		bool				IsDepthOffsetScaledWithCamera;
