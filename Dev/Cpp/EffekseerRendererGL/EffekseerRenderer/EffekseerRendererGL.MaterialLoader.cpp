@@ -3,9 +3,7 @@
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
 
-#ifdef _DEBUG
 #include <iostream>
-#endif
 
 namespace EffekseerRendererGL
 {
