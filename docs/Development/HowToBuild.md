@@ -48,6 +48,25 @@ Clone -> input https://github.com/effekseer/Effekseer
 Submodule Update -> check init
 ```
 
+Build Runtime, Viewer and Editor
+----------
+
+Execure following command at the repository root.
+
+`Windows: Use [Visual Studio Developer Command Prompt]`
+
+```
+python build.py
+```
+
+To develop ...
+
+- Runtime, Viewer : see `build` folder.
+- Editor : see `Dev/Editor/Effekseer.sln`
+
+If you want to build individually, see the following section.
+
+
 Build Runtime and Viewer
 ----------
 
