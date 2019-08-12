@@ -11,6 +11,8 @@ with aceutils.CurrentDir('build'):
         aceutils.call('cmake .. -G "Visual Studio 15 2017" -DBUILD_VIEWER=ON')
     elif aceutils.isMac():
         aceutils.call('cmake .. -G "Xcode" -DBUILD_VIEWER=ON')
+    else:
+        aceutils.call('cmake .. -G "Unix Makefiles" -DBUILD_VIEWER=ON')
     aceutils.call('cmake --build . --config Release')
 
 
