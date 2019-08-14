@@ -1179,13 +1179,61 @@ namespace efk
 
 	void GUIManager::Text(const char16_t* text)
 	{
-		if (std::char_traits<char16_t>::length(text) < 1024)
+		bool isPersentFound = false;
+		for (size_t i = 0; ; i++)
 		{
-			ImGui::Text(utf8str<1024>(text));
+			if (text[i] == 0)
+			{
+				break;
+			}
+
+			if (text[i] == u'%')
+			{
+				isPersentFound = true;
+				break;
+			}
+		}
+
+		if (isPersentFound)
+		{
+			// HACK
+			std::u16string text_;
+			for (size_t i = 0;; i++)
+			{
+				if (text[i] == 0)
+				{
+					break;
+				}
+
+				if (text[i] == u'%')
+				{
+					text_ += u"%%";
+				}
+				else
+				{
+					text_ += text[i];
+				}
+			}
+
+			if (std::char_traits<char16_t>::length(text_.c_str()) < 1024)
+			{
+				ImGui::Text(utf8str<1024>(text_.c_str()));
+			}
+			else
+			{
+				ImGui::Text(utf16_to_utf8(text_).c_str());
+			}
 		}
 		else
 		{
-			ImGui::Text(utf16_to_utf8(text).c_str());
+			if (std::char_traits<char16_t>::length(text) < 1024)
+			{
+				ImGui::Text(utf8str<1024>(text));
+			}
+			else
+			{
+				ImGui::Text(utf16_to_utf8(text).c_str());
+			}
 		}
 	}
 
