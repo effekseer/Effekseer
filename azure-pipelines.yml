@@ -1,0 +1,75 @@
+trigger:
+
+- master
+
+jobs:
+  - job: Windows
+    pool:
+      vmImage: 'vs2017-win2016'
+    steps:
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            git submodule update --init
+            git lfs install
+            git lfs pull
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '.. -G "Visual Studio 15 2017" -DBUILD_VIEWER=ON'
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '--build . --config Release'
+      - task: NuGetCommand@2
+        inputs:
+          command: 'restore'
+          restoreSolution: 'Dev/Editor/Effekseer.sln'
+          feedsToUse: 'select'
+      - task: MSBuild@1
+        inputs:
+          solution: 'Dev/Editor/EffekseerCore/EffekseerCore.csproj'
+          msbuildArguments: '/t:build /p:Configuration=Release /p:Platform=x86'
+      - task: MSBuild@1
+        inputs:
+          solution: 'Dev/Editor/Effekseer/Effekseer.csproj'
+          msbuildArguments: '/t:build /p:Configuration=Release /p:Platform=x86'
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'dev/release'
+          ArtifactName: 'Windows'
+          publishLocation: 'Container'
+  - job: MacOS
+    pool:
+      vmImage: 'macOS-10.14'
+    steps:
+      - task: PowerShell@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            git submodule update --init
+            git lfs install
+            git lfs pull
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '.. -G "Xcode" -DBUILD_VIEWER=ON'
+      - task: CMake@1
+        inputs:
+          cmakeArgs: '--build . --config Release'
+      - task: NuGetCommand@2
+        inputs:
+          command: 'restore'
+          restoreSolution: 'Dev/Editor/Effekseer.sln'
+          feedsToUse: 'select'
+      - task: MSBuild@1
+        inputs:
+          solution: 'Dev/Editor/EffekseerCore/EffekseerCore.csproj'
+          msbuildArguments: '/t:build /p:Configuration=Release /p:Platform=x86'
+      - task: MSBuild@1
+        inputs:
+          solution: 'Dev/Editor/Effekseer/Effekseer.csproj'
+          msbuildArguments: '/t:build /p:Configuration=Release /p:Platform=x86'
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'dev/release'
+          ArtifactName: 'MacOS'
+          publishLocation: 'Container'
