@@ -56,6 +56,7 @@ endif()
 file(GLOB effekseer_h
     Effekseer/*.h
 	Effekseer/Effekseer/*.h
+	Effekseer/Effekseer/Renderer/*.h
 	Effekseer/Effekseer/Culling/*.h)
 
 set(effekseer_src

@@ -62,6 +62,26 @@ public:
 
 	virtual bool OnDistorting() { return false; }
 };
+
+struct DynamicVertex
+{
+	::Effekseer::Vector3D Pos;
+	::Effekseer::Color Col;
+	//! packed vector
+	::Effekseer::Color Normal;
+	//! packed vector
+	::Effekseer::Color Tangent;
+
+	union
+	{
+		//! UV1 (for template)
+		float UV[2];
+		float UV1[2];
+	};
+
+	float UV2[2];
+};
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 ﻿
-#ifndef	__EFFEKSEERRENDERER_STANDARD_RENDERER_BASE_H__
-#define	__EFFEKSEERRENDERER_STANDARD_RENDERER_BASE_H__
+#ifndef __EFFEKSEERRENDERER_STANDARD_RENDERER_BASE_H__
+#define __EFFEKSEERRENDERER_STANDARD_RENDERER_BASE_H__
 
 //----------------------------------------------------------------------------------
 // Include
@@ -8,8 +8,8 @@
 #include <Effekseer.h>
 #include <vector>
 
-#include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.CommonUtils.h"
+#include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
 
 //-----------------------------------------------------------------------------------
@@ -23,19 +23,19 @@ namespace EffekseerRenderer
 
 struct StandardRendererState
 {
-	bool								DepthTest;
-	bool								DepthWrite;
-	bool								Distortion;
-	float								DistortionIntensity;
-	bool								Wireframe;
+	bool DepthTest;
+	bool DepthWrite;
+	bool Distortion;
+	float DistortionIntensity;
+	bool Wireframe;
 
-	::Effekseer::AlphaBlendType			AlphaBlend;
-	::Effekseer::CullingType			CullingType;
-	::Effekseer::TextureFilterType		TextureFilterType;
-	::Effekseer::TextureWrapType		TextureWrapType;
-	::Effekseer::TextureData*			TexturePtr;
+	::Effekseer::AlphaBlendType AlphaBlend;
+	::Effekseer::CullingType CullingType;
+	::Effekseer::TextureFilterType TextureFilterType;
+	::Effekseer::TextureWrapType TextureWrapType;
+	::Effekseer::TextureData* TexturePtr;
 
-	::Effekseer::MaterialData*			MaterialPtr;
+	::Effekseer::MaterialData* MaterialPtr;
 	int32_t MaterialUniformCount;
 	std::array<std::array<float, 4>, 16> MaterialUniforms;
 	int32_t MaterialTextureCount;
@@ -61,20 +61,32 @@ struct StandardRendererState
 		MaterialTextureCount = 0;
 	}
 
-	bool operator != (const StandardRendererState state)
+	bool operator!=(const StandardRendererState state)
 	{
-		if (DepthTest != state.DepthTest) return true;
-		if (DepthWrite != state.DepthWrite) return true;
-		if (Distortion != state.Distortion) return true;
-		if (DistortionIntensity != state.DistortionIntensity) return true;
-		if (AlphaBlend != state.AlphaBlend) return true;
-		if (CullingType != state.CullingType) return true;
-		if (TextureFilterType != state.TextureFilterType) return true;
-		if (TextureWrapType != state.TextureWrapType) return true;
-		if (TexturePtr != state.TexturePtr) return true;
-		if (MaterialPtr != state.MaterialPtr) return true;
-		if (MaterialUniformCount != state.MaterialUniformCount) return true;
-		if (MaterialTextureCount != state.MaterialTextureCount) return true;
+		if (DepthTest != state.DepthTest)
+			return true;
+		if (DepthWrite != state.DepthWrite)
+			return true;
+		if (Distortion != state.Distortion)
+			return true;
+		if (DistortionIntensity != state.DistortionIntensity)
+			return true;
+		if (AlphaBlend != state.AlphaBlend)
+			return true;
+		if (CullingType != state.CullingType)
+			return true;
+		if (TextureFilterType != state.TextureFilterType)
+			return true;
+		if (TextureWrapType != state.TextureWrapType)
+			return true;
+		if (TexturePtr != state.TexturePtr)
+			return true;
+		if (MaterialPtr != state.MaterialPtr)
+			return true;
+		if (MaterialUniformCount != state.MaterialUniformCount)
+			return true;
+		if (MaterialTextureCount != state.MaterialTextureCount)
+			return true;
 
 		for (int32_t i = 0; i < state.MaterialUniformCount; i++)
 		{
@@ -112,8 +124,7 @@ struct StandardRendererState
 					{
 						if (materialParam->MaterialTextures[i].Index >= 0)
 						{
-							MaterialTextures[i] =
-								effect->GetNormalImage(materialParam->MaterialTextures[i].Index);
+							MaterialTextures[i] = effect->GetNormalImage(materialParam->MaterialTextures[i].Index);
 						}
 						else
 						{
@@ -155,26 +166,26 @@ struct StandardRendererState
 	}
 };
 
-template<typename RENDERER, typename SHADER, typename VERTEX, typename VERTEX_DISTORTION>
-class StandardRenderer
+template <typename RENDERER, typename SHADER, typename VERTEX, typename VERTEX_DISTORTION> class StandardRenderer
 {
 
 private:
-	RENDERER*	m_renderer;
-	SHADER*		m_shader;
-	SHADER*		m_shader_no_texture;
+	RENDERER* m_renderer;
+	SHADER* m_shader;
+	SHADER* m_shader_no_texture;
 
-	SHADER*		m_shader_distortion;
-	SHADER*		m_shader_no_texture_distortion;
+	SHADER* m_shader_distortion;
+	SHADER* m_shader_no_texture_distortion;
 
-	Effekseer::TextureData*		m_texture;
+	Effekseer::TextureData* m_texture;
 
-	StandardRendererState		m_state;
+	StandardRendererState m_state;
 
-	std::vector<uint8_t>		vertexCaches;
-	int32_t						renderVertexMaxSize;
+	std::vector<uint8_t> vertexCaches;
+	int32_t renderVertexMaxSize;
 
-	bool						m_isDistortionMode;
+	bool m_isDistortionMode;
+	bool isDynamicVertexMode_ = false;
 
 	struct VertexConstantBuffer
 	{
@@ -188,11 +199,27 @@ private:
 		float uvInversed[4];
 	};
 
-public:
+	
+	void ColorToFloat4(::Effekseer::Color color, float fc[4])
+	{
+		fc[0] = color.R / 255.0f;
+		fc[1] = color.G / 255.0f;
+		fc[2] = color.B / 255.0f;
+		fc[3] = color.A / 255.0f;
+	}
 
-	StandardRenderer(RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, SHADER* shader_distortion, SHADER* shader_no_texture_distortion)
-		: renderVertexMaxSize(0)
-		, m_isDistortionMode(false)
+	void VectorToFloat4(::Effekseer::Vector3D v, float fc[4])
+	{
+		fc[0] = v.X;
+		fc[1] = v.Y;
+		fc[2] = v.Z;
+		fc[3] = 1.0f;
+	}
+
+public:
+	StandardRenderer(
+		RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, SHADER* shader_distortion, SHADER* shader_no_texture_distortion)
+		: renderVertexMaxSize(0), m_isDistortionMode(false)
 	{
 		m_renderer = renderer;
 		m_shader = shader;
@@ -206,19 +233,33 @@ public:
 
 	void UpdateStateAndRenderingIfRequired(StandardRendererState state)
 	{
-		if(m_state != state)
+		if (m_state != state)
 		{
 			Rendering();
 		}
 
 		m_state = state;
 
+		isDynamicVertexMode_ = m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex;
 		m_isDistortionMode = m_state.Distortion;
 	}
 
 	void BeginRenderingAndRenderingIfRequired(int32_t count, int32_t& offset, void*& data)
 	{
-		if (m_isDistortionMode)
+		if (isDynamicVertexMode_)
+		{
+			if (count * (int32_t)sizeof(DynamicVertex) + (int32_t)vertexCaches.size() > renderVertexMaxSize)
+			{
+				Rendering();
+			}
+
+			auto old = vertexCaches.size();
+			vertexCaches.resize(count * sizeof(DynamicVertex) + vertexCaches.size());
+			offset = (int32_t)old;
+			data = (vertexCaches.data() + old);
+
+		}
+		else if (m_isDistortionMode)
 		{
 			if (count * (int32_t)sizeof(VERTEX_DISTORTION) + (int32_t)vertexCaches.size() > renderVertexMaxSize)
 			{
@@ -252,15 +293,22 @@ public:
 		m_state.TexturePtr = (Effekseer::TextureData*)0x1;
 	}
 
+	const StandardRendererState& GetState() { return m_state; }
+
 	void Rendering(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj)
 	{
-		if (vertexCaches.size() == 0) return;
+		if (vertexCaches.size() == 0)
+			return;
 
 		int32_t offset = 0;
 
 		auto vsize = 0;
 
-		if (m_state.Distortion)
+		if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex)
+		{
+			vsize = sizeof(DynamicVertex);
+		}
+		else if (m_state.Distortion)
 		{
 			vsize = sizeof(VERTEX_DISTORTION);
 		}
@@ -283,7 +331,8 @@ public:
 
 			offset += renderBufferSize;
 
-			if (offset == vertexCaches.size()) break;
+			if (offset == vertexCaches.size())
+				break;
 		}
 
 		vertexCaches.clear();
@@ -403,64 +452,122 @@ public:
 				m_renderer->SetTextures(shader_, textures, 1);
 			}
 		}
-		
-		VertexConstantBuffer vcb;
-		vcb.constantVSBuffer[0] = mCamera;
-		vcb.constantVSBuffer[1] = mProj;
+
+		std::array<float, 4> uvInversed;
+		std::array<float, 4> uvInversedBack;
 
 		if (m_renderer->GetTextureUVStyle() == UVStyle::VerticalFlipped)
 		{
-			vcb.uvInversed[0] = 1;
-			vcb.uvInversed[1] = -1;
+			uvInversed[0] = 1.0f;
+			uvInversed[1] = -1.0f;
 		}
 		else
 		{
-			vcb.uvInversed[0] = 0;
-			vcb.uvInversed[1] = 1;
+			uvInversed[0] = 0.0f;
+			uvInversed[1] = 1.0f;
 		}
 
-		m_renderer->SetVertexBufferToShader(&vcb, sizeof(VertexConstantBuffer), 0);
+		if (m_renderer->GetBackgroundTextureUVStyle() == UVStyle::VerticalFlipped)
+		{
+			uvInversedBack[0] = 1.0f;
+			uvInversedBack[1] = -1.0f;
+		}
+		else
+		{
+			uvInversedBack[0] = 0.0f;
+			uvInversedBack[1] = 1.0f;
+		}
+
 
 		if (m_state.MaterialPtr != nullptr)
 		{
-			// specify uniform buffer for vs
-		}
+			// time
+			std::array<float, 4> predefined_uniforms;
+			predefined_uniforms.fill(0.5f);
+			predefined_uniforms[0] = m_renderer->GetTime();
 
-		if (distortion)
-		{
-			DistortionPixelConstantBuffer pcb;
-			pcb.scale[0] = m_state.DistortionIntensity;
+			// vs
+			int32_t vsOffset = 0;
+			m_renderer->SetVertexBufferToShader(&mCamera, sizeof(Effekseer::Matrix44), vsOffset);
+			vsOffset += sizeof(Effekseer::Matrix44);
 
-			if (m_renderer->GetBackgroundTextureUVStyle() == UVStyle::VerticalFlipped)
+			m_renderer->SetVertexBufferToShader(&mProj, sizeof(Effekseer::Matrix44), vsOffset);
+			vsOffset += sizeof(Effekseer::Matrix44);
+
+			m_renderer->SetVertexBufferToShader(uvInversed.data(), sizeof(float) * 4, vsOffset);
+			vsOffset += (sizeof(float) * 4);
+
+			m_renderer->SetVertexBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, vsOffset);
+			vsOffset += (sizeof(float) * 4);
+			
+			for (size_t i = 0; i < m_state.MaterialUniformCount; i++)
 			{
-				pcb.uvInversed[0] = 1.0f;
-				pcb.uvInversed[1] = -1.0f;
+				m_renderer->SetVertexBufferToShader(m_state.MaterialUniforms[i].data(), sizeof(float) * 4, vsOffset);
+				vsOffset += (sizeof(float) * 4);
 			}
-			else
+			
+			// ps
+			int32_t psOffset = 0;
+			m_renderer->SetPixelBufferToShader(uvInversedBack.data(), sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
+
+			m_renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
+
+			// shader model
+			if (m_state.MaterialPtr->ShadingModel == ::Effekseer::ShadingModelType::Lit)
 			{
-				pcb.uvInversed[0] = 0.0f;
-				pcb.uvInversed[1] = 1.0f;
+				float cameraPosition[4];
+				float lightDirection[4];
+				float lightColor[4];
+				float lightAmbientColor[4];
+
+				::Effekseer::Vector3D cameraPosition3 = m_renderer->GetCameraPosition();
+				::Effekseer::Vector3D lightDirection3 = m_renderer->GetLightDirection();
+				::Effekseer::Vector3D::Normal(lightDirection3, lightDirection3);
+				VectorToFloat4(cameraPosition3, cameraPosition);
+				VectorToFloat4(lightDirection3, lightDirection);
+				ColorToFloat4(m_renderer->GetLightColor(), lightColor);
+				ColorToFloat4(m_renderer->GetLightAmbientColor(), lightAmbientColor);
+
+				m_renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
+				psOffset += (sizeof(float) * 4);
+
+				m_renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
+				psOffset += (sizeof(float) * 4);
+
+				m_renderer->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
+				psOffset += (sizeof(float) * 4);
+
+				m_renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
+				psOffset += (sizeof(float) * 4);
+
 			}
-	
-			m_renderer->SetPixelBufferToShader(&pcb, sizeof(DistortionPixelConstantBuffer), 0);
+
+			for (size_t i = 0; i < m_state.MaterialUniformCount; i++)
+			{
+				m_renderer->SetPixelBufferToShader(m_state.MaterialUniforms[i].data(), sizeof(float) * 4, psOffset);
+				psOffset += (sizeof(float) * 4);
+			}
 		}
 		else
 		{
-			if (m_state.MaterialPtr != nullptr)
+			VertexConstantBuffer vcb;
+			vcb.constantVSBuffer[0] = mCamera;
+			vcb.constantVSBuffer[1] = mProj;
+			vcb.uvInversed[0] = uvInversed[0];
+			vcb.uvInversed[1] = uvInversed[1];
+
+			m_renderer->SetVertexBufferToShader(&vcb, sizeof(VertexConstantBuffer), 0);
+
+			if (distortion)
 			{
-				// specify uniform buffer for ps
+				DistortionPixelConstantBuffer pcb;
+				pcb.scale[0] = m_state.DistortionIntensity;
+				pcb.uvInversed[0] = uvInversed[0];
+				pcb.uvInversed[1] = uvInversed[1];
 
-				// time
-				std::array<float, 4> predefined_uniforms;
-				predefined_uniforms.fill(0.5f);
-				predefined_uniforms[0] = m_renderer->GetTime();
-				m_renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, 0);
-
-				// others
-				for (size_t i = 0; i < m_state.MaterialUniformCount; i++)
-				{					
-					m_renderer->SetPixelBufferToShader(m_state.MaterialUniforms[i].data(), sizeof(float) * 4, sizeof(float) * 4 * (i + 1));
-				}
+				m_renderer->SetPixelBufferToShader(&pcb, sizeof(DistortionPixelConstantBuffer), 0);
 			}
 		}
 
@@ -477,7 +584,14 @@ public:
 
 		m_renderer->GetRenderState()->Update(distortion);
 
-		if (distortion)
+		if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex)
+		{
+			m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), sizeof(DynamicVertex));
+			m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
+			m_renderer->SetLayout(shader_);
+			m_renderer->DrawSprites(vertexSize / sizeof(DynamicVertex) / 4, offsetSize / sizeof(DynamicVertex));
+		}
+		else if (distortion)
 		{
 			m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), sizeof(VERTEX_DISTORTION));
 			m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
@@ -498,17 +612,14 @@ public:
 		m_renderer->GetRenderState()->Pop();
 	}
 
-	void Rendering()
-	{
-		Rendering(m_renderer->GetCameraMatrix(), m_renderer->GetProjectionMatrix());
-	}
+	void Rendering() { Rendering(m_renderer->GetCameraMatrix(), m_renderer->GetProjectionMatrix()); }
 };
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-}
+} // namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#endif	// __EFFEKSEERRENDERER_STANDARD_RENDERER_H__
+#endif // __EFFEKSEERRENDERER_STANDARD_RENDERER_H__

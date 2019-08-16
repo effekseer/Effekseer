@@ -506,12 +506,20 @@ struct TextureData
 	int64_t	UserID;
 };
 
+enum class ShadingModelType : int32_t
+{
+	Lit,
+	Unlit,
+};
+
 /**
 	@brief	\~english	Material data
 			\~japanese	マテリアルデータ
 */
 struct MaterialData
 {
+	ShadingModelType ShadingModel = ShadingModelType::Lit;
+	bool IsSimpleVertex = false;
 	int32_t TextureCount = 0;
 	int32_t UniformCount = 0;
 	void* UserPtr = nullptr;
@@ -2838,6 +2846,7 @@ namespace Effekseer
 
 			int32_t				SplineDivision;
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+			MaterialParameter* MaterialParameterPtr = nullptr;
 		};
 
 		struct InstanceParameter
@@ -2916,6 +2925,7 @@ public:
 		float				DistortionIntensity;
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+		MaterialParameter* MaterialParameterPtr = nullptr;
 
 		float				DepthOffset;
 		bool				IsDepthOffsetScaledWithCamera;
@@ -3071,6 +3081,8 @@ namespace Effekseer
 			int32_t				SplineDivision;
 
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+			MaterialParameter* MaterialParameterPtr = nullptr;
+
 		};
 
 		struct InstanceGroupParameter

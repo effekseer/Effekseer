@@ -40,6 +40,7 @@ namespace Effekseer
 
 			int32_t				SplineDivision;
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+			MaterialParameter* MaterialParameterPtr = nullptr;
 		};
 
 		struct InstanceParameter
