@@ -44,17 +44,6 @@ file(GLOB srcs_third_nfd
     ThirdParty/nfd/nfd_common.c
     ThirdParty/nfd/nfd_win.cpp)
 
-# set include directories
-include_directories(
-    ../include/
-    ${PROJECT_SOURCE_DIR}/../3rdParty/AltseedRHI/include/
-    ../EffekseerMaterial/
-    ThirdParty/imgui_platform/
-    ThirdParty/imgui_main/
-    ThirdParty/picojson/
-    ThirdParty/stb_image/
-    ThirdParty/NodeEditor/Include/)
-
 link_directories(
     ${PROJECT_SOURCE_DIR}/../lib/
     )
@@ -85,6 +74,19 @@ if (MSVC)
 endif()
 
 add_dependencies(EffekseerMaterialEditor ExternalProject_glew ExternalProject_glfw)
+
+target_include_directories(
+    EffekseerMaterialEditor
+	PRIVATE
+	${EFK_THIRDPARTY_INCLUDES}
+    ../include/
+    ${PROJECT_SOURCE_DIR}/../3rdParty/AltseedRHI/include/
+    ../EffekseerMaterial/
+    ThirdParty/imgui_platform/
+    ThirdParty/imgui_main/
+    ThirdParty/picojson/
+    ThirdParty/stb_image/
+    ThirdParty/NodeEditor/Include/)
 
 target_link_directories(
     EffekseerMaterialEditor
