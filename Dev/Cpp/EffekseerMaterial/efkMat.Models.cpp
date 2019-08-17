@@ -6,9 +6,6 @@
 #include "efkMat.Parameters.h"
 #include "efkMat.TextExporter.h"
 
-#include <filesystem>
-namespace fs = std::experimental::filesystem;
-
 std::vector<std::string> Split(const std::string& s, char delim)
 {
 	std::vector<std::string> elems;
@@ -152,7 +149,7 @@ public:
 
 	template <typename U> void Push(const std::vector<U>& value)
 	{
-		Push(value.size());
+		Push(static_cast<int32_t>(value.size()));
 		auto offset = buffer_.size();
 		buffer_.resize(offset + sizeof(U) * value.size());
 		memcpy(buffer_.data() + offset, value.data(), sizeof(U) * value.size());
@@ -823,6 +820,10 @@ std::string Material::Copy(std::vector<std::shared_ptr<Node>> nodes, const char*
 				auto relative = Relative(absStr, basePath);
 				prop_.insert(std::make_pair("Value", picojson::value(relative)));
 			}
+			else if (pp->Type == ValueType::Enum)
+			{
+				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
+			}
 
 			props_.push_back(picojson::value(prop_));
 		}
@@ -967,6 +968,10 @@ void Material::Paste(std::string content, const Vector2DF& pos, std::shared_ptr<
 				auto str = props_[i].get("Value").get<std::string>();
 				auto absolute = Absolute(str, basePath);
 				node->Properties[i]->Str = absolute;
+			}
+			else if (node->Parameter->Properties[i]->Type == ValueType::Enum)
+			{
+				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
 			}
 		}
 	}
@@ -1147,6 +1152,10 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 				auto absolute = Absolute(str, basePath);
 				node->Properties[i]->Str = absolute;
 			}
+			else if (node->Parameter->Properties[i]->Type == ValueType::Enum)
+			{
+				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
+			}
 		}
 	}
 
@@ -1306,6 +1315,10 @@ std::string Material::SaveAsStr(const char* basePath)
 				auto relative = Relative(absStr, basePath);
 				prop_.insert(std::make_pair("Value", picojson::value(relative)));
 			}
+			else if (pp->Type == ValueType::Enum)
+			{
+				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
+			}
 
 			props_.push_back(picojson::value(prop_));
 		}
@@ -1428,25 +1441,24 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	}
 
 	std::shared_ptr<TextExporter> textExporter = std::make_shared<TextExporterGeneric>();
-	auto result = textExporter->Export(shared_from_this(), outputNode);
+	auto result = textExporter->Export(shared_from_this(), outputNode, "$SUFFIX");
 
-	
 	// flag
 
 	// Lit or Unlit(Shading type)
 	// Change normal
 	// refraction
 	BinaryWriter bwParam;
-	bwParam.Push(1);
+	bwParam.Push(result.ShadingModel);
 	bwParam.Push(false);
 	bwParam.Push(result.HasRefraction);
 
-	bwParam.Push(result.Textures.size());
+	bwParam.Push(static_cast<int32_t>(result.Textures.size()));
 
 	for (size_t i = 0; i < result.Textures.size(); i++)
 	{
 		auto& param = result.Textures[i];
-		auto name_ = GetVectorFromStr(param->Name);
+		auto name_ = GetVectorFromStr(Replace(param->Name, "$SUFFIX", ""));
 		bwParam.Push(name_);
 
 		auto defaultPath_ = GetVectorFromStr(param->DefaultPath);
@@ -1456,13 +1468,13 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		bwParam.Push(param->IsValueTexture);
 	}
 
-	bwParam.Push(result.Uniforms.size());
+	bwParam.Push(static_cast<int32_t>(result.Uniforms.size()));
 
 	for (size_t i = 0; i < result.Uniforms.size(); i++)
 	{
 		auto& param = result.Uniforms[i];
 
-		auto name_ = GetVectorFromStr(param->Name);
+		auto name_ = GetVectorFromStr(Replace(param->Name, "$SUFFIX", ""));
 		bwParam.Push(name_);
 
 		bwParam.Push(param->Offset);
@@ -1477,7 +1489,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	}
 
 	char* chunk_para = "para";
-	auto size_para = bwParam.GetBuffer().size();
+	auto size_para = static_cast<int32_t>(bwParam.GetBuffer().size());
 
 	offset = data.size();
 	data.resize(data.size() + 4);
@@ -1499,7 +1511,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	}
 
 	char* chunk_gene = "gene";
-	auto size_gene = bwGene.GetBuffer().size();
+	auto size_gene = static_cast<int32_t>(bwGene.GetBuffer().size());
 
 	offset = data.size();
 	data.resize(data.size() + 4);
@@ -1513,11 +1525,10 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	data.resize(data.size() + bwGene.GetBuffer().size());
 	memcpy(data.data() + offset, bwGene.GetBuffer().data(), bwGene.GetBuffer().size());
 
-
 	// data
 	auto internalJsonVec = GetVectorFromStr(internalJson);
 	char* chunk_data = "data";
-	auto size_data = internalJsonVec.size();
+	auto size_data = static_cast<int32_t>(internalJsonVec.size());
 
 	offset = data.size();
 	data.resize(data.size() + 4);

@@ -18,16 +18,14 @@ UNIFORM
 
 TEXTURE
 
-float4 Calculate(const PS_Input input)
-{
-
-RETURN
-
-}
-
 float4 PS( const PS_Input input ) : SV_Target
 {
-	return Calculate(input);
+	float3 worldNormal = float3(0.0, 0.0, 1.0);
+	float3 worldBinormal = float3(0.0, 1.0, 0.0);
+	float3 worldTangent = float3(1.0, 0.0, 0.0);
+
+	RETURN
+	return vec4(emissive.xyz, opacity);
 }
 
 )";

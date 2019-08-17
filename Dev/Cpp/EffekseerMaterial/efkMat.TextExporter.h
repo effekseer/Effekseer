@@ -56,6 +56,7 @@ struct TextExporterNode
 struct TextExporterResult
 {
 	std::string Code;
+	int32_t ShadingModel = 0;
 	bool HasRefraction = false;
 
 	std::vector<std::shared_ptr<TextExporterUniform>> Uniforms;
@@ -65,15 +66,18 @@ struct TextExporterResult
 class TextExporterOutputOption
 {
 public:
+	int ShadingModel = 0;
 	bool HasRefraction = false;
-
+	bool HasDepth = false;
+	bool HasUV2 = false;
+	bool HasWorldPositionOffset = false;
 };
 
 class TextExporter
 {
 protected:
 public:
-	TextExporterResult Export(std::shared_ptr<Material> material, std::shared_ptr<Node> outputNode);
+	TextExporterResult Export(std::shared_ptr<Material> material, std::shared_ptr<Node> outputNode, std::string suffix = "");
 
 protected:
 	void GatherNodes(std::shared_ptr<Material> material,

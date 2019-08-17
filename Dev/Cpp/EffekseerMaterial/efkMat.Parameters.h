@@ -5,6 +5,13 @@
 
 namespace EffekseerMaterial
 {
+
+enum class ShadingModelType
+{
+	Lit,
+	Unlit,
+};
+
 class PinParameter
 {
 public:
@@ -643,13 +650,35 @@ public:
 		Type = NodeType::Output;
 		TypeName = "Output";
 
+		auto baseColor = std::make_shared<PinParameter>();
+		baseColor->Name = "BaseColor";
+		baseColor->Type = ValueType::Float3;
+		baseColor->Default = DefaultType::Value;
+		baseColor->DefaultValues.fill(0.5f);
+		baseColor->DefaultValues[3] = 1.0f;
+		InputPins.push_back(baseColor);
+
 		auto emissive = std::make_shared<PinParameter>();
 		emissive->Name = "Emissive";
-		emissive->Type = ValueType::Float4;
+		emissive->Type = ValueType::Float3;
 		emissive->Default = DefaultType::Value;
 		emissive->DefaultValues.fill(0.5f);
 		emissive->DefaultValues[3] = 1.0f;
 		InputPins.push_back(emissive);
+
+		auto opacity = std::make_shared<PinParameter>();
+		opacity->Name = "Opacity";
+		opacity->Type = ValueType::Float1;
+		opacity->Default = DefaultType::Value;
+		opacity->DefaultValues.fill(1.0f);
+		InputPins.push_back(opacity);
+
+		auto opacityMask = std::make_shared<PinParameter>();
+		opacityMask->Name = "OpacityMask";
+		opacityMask->Type = ValueType::Float1;
+		opacityMask->Default = DefaultType::Value;
+		opacityMask->DefaultValues.fill(1.0f);
+		InputPins.push_back(opacityMask);
 
 		auto normal = std::make_shared<PinParameter>();
 		normal->Name = "Normal";
@@ -659,6 +688,27 @@ public:
 		normal->DefaultValues[2] = 1.0f;
 		InputPins.push_back(normal);
 
+		auto metallic = std::make_shared<PinParameter>();
+		metallic->Name = "Metallic";
+		metallic->Type = ValueType::Float1;
+		metallic->Default = DefaultType::Value;
+		metallic->DefaultValues.fill(0.5f);
+		InputPins.push_back(metallic);
+
+		auto roughness = std::make_shared<PinParameter>();
+		roughness->Name = "Roughness";
+		roughness->Type = ValueType::Float1;
+		roughness->Default = DefaultType::Value;
+		roughness->DefaultValues.fill(0.5f);
+		InputPins.push_back(roughness);
+
+		auto ambientOcclusion = std::make_shared<PinParameter>();
+		ambientOcclusion->Name = "AmbientOcclusion";
+		ambientOcclusion->Type = ValueType::Float1;
+		ambientOcclusion->Default = DefaultType::Value;
+		ambientOcclusion->DefaultValues.fill(1.0f);
+		InputPins.push_back(ambientOcclusion);
+
 		auto refraction = std::make_shared<PinParameter>();
 		refraction->Name = "Refraction";
 		refraction->Type = ValueType::Float1;
@@ -666,12 +716,19 @@ public:
 		refraction->DefaultValues.fill(0.0f);
 		InputPins.push_back(refraction);
 
-		auto worldOffset = std::make_shared<PinParameter>();
-		worldOffset->Name = "WorldOffset";
-		worldOffset->Type = ValueType::Float1;
-		worldOffset->Default = DefaultType::Value;
-		worldOffset->DefaultValues.fill(0.0f);
-		InputPins.push_back(worldOffset);
+		auto worldPositionOffset = std::make_shared<PinParameter>();
+		worldPositionOffset->Name = "WorldPositionOffset";
+		worldPositionOffset->Type = ValueType::Float3;
+		worldPositionOffset->Default = DefaultType::Value;
+		worldPositionOffset->DefaultValues.fill(0.0f);
+		InputPins.push_back(worldPositionOffset);
+
+		auto shadingProperty = std::make_shared<NodePropertyParameter>();
+		shadingProperty->Name = "ShadingModel";
+		shadingProperty->Type = ValueType::Enum;
+		worldPositionOffset->DefaultValues.fill(1.0f);
+		Properties.push_back(shadingProperty);
+
 	}
 };
 } // namespace EffekseerMaterial

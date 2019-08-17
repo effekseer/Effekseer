@@ -124,7 +124,7 @@ void Editor::Load()
 void Editor::Update()
 {
 	// copy
-	if (ImGui::GetIO().KeyCtrl&& ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
+	if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
 	{
 		ed::NodeId ids[256];
 		auto count = ed::GetSelectedNodes(ids, 256);
@@ -735,6 +735,27 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				}
 
 				material->MakeContentDirty(node);
+			}
+		}
+
+		if (type == ValueType::Enum)
+		{
+			const char* items[] = {"Lit", "Unlit"};
+
+			if (ImGui::BeginCombo(name.c_str(), items[static_cast<int>(floatValues[0])]))
+			{
+				for (size_t i = 0; i < 2; i++)
+				{
+					auto isSelected = static_cast<int>(floatValues[0]) == i;
+					if (ImGui::Selectable(items[i], isSelected))
+					{
+						floatValues[0] = i;
+						material->MakeContentDirty(node);
+					}
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
 			}
 		}
 	};

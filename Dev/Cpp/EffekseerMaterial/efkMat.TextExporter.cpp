@@ -6,7 +6,7 @@
 namespace EffekseerMaterial
 {
 
-TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std::shared_ptr<Node> outputNode)
+TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std::shared_ptr<Node> outputNode, std::string suffix)
 {
 	if (!(outputNode->OutputPins.size() != 0 || outputNode->Parameter->Type == NodeType::Output))
 		return TextExporterResult();
@@ -105,7 +105,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 			{
 				if (node->Parameter->Type == NodeType::Param1 || node->Parameter->Type == NodeType::Param4)
 				{
-					auto paramName = node->Properties[0]->Str;
+					auto paramName = EspcapeUserParamName(node->Properties[0]->Str.c_str());
 					auto values = node->Properties[1]->Floats;
 					auto keyStr = paramName;
 
@@ -238,7 +238,12 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		{
 			if (extractedTexture.second->Name == "")
 			{
-				extractedTexture.second->Name = "default_texture_" + std::to_string(id);
+				extractedTexture.second->Name = "default_texture_" + std::to_string(id) + suffix;
+				usedNames.insert(extractedTexture.second->Name);
+			}
+			else
+			{
+				extractedTexture.second->Name += suffix;
 				usedNames.insert(extractedTexture.second->Name);
 			}
 
@@ -262,24 +267,32 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 				do
 				{
-					candidateName = "default_" + std::to_string(id);
+					candidateName = "default_" + std::to_string(id) + suffix;
 					id++;
 				} while (usedNames.count(candidateName) > 0);
+				extractedUniform.second->Name = candidateName;
+			}
+			else
+			{
+				extractedUniform.second->Name += suffix;
 			}
 
-			extractedUniform.second->Name = candidateName;
-
+			usedNames.insert(extractedUniform.second->Name);
 			extractedUniform.second->Offset = offset;
 			offset += sizeof(float) * 4;
 		}
 	}
 
-		// for output
+	// for output
 	TextExporterOutputOption option;
 	if (outputNode->Parameter->Type == NodeType::Output)
 	{
+		auto worldPositionOffsetInd = outputNode->GetInputPinIndex("WorldPositionOffset");
+		option.HasWorldPositionOffset = material->GetConnectedPins(outputNode->InputPins[worldPositionOffsetInd]).size() != 0;
+
 		auto refractionInd = outputNode->GetInputPinIndex("Refraction");
 		option.HasRefraction = material->GetConnectedPins(outputNode->InputPins[refractionInd]).size() != 0;
+		option.ShadingModel = outputNode->Properties[0]->Floats[0];
 	}
 
 	// Generate outputs
@@ -310,6 +323,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 	TextExporterResult result;
 	result.Code = MergeTemplate(ret.str(), uniform_textures.str());
+	result.ShadingModel = option.ShadingModel;
 	result.Uniforms = uniforms;
 	result.Textures = textures;
 	result.HasRefraction = option.HasRefraction;
@@ -389,44 +403,75 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 
 	if (outputNode->Target->Parameter->Type == NodeType::Output)
 	{
-		ret <<  GetTypeName(ValueType::Float4) << " emissive = " << GetInputArg(ValueType::Float4, outputNode->Inputs[0]) << ";" << std::endl;
+		auto worldPositionOffsetIndex = outputNode->Target->GetInputPinIndex("WorldPositionOffset");
+		auto baseColorIndex = outputNode->Target->GetInputPinIndex("BaseColor");
+		auto emissiveIndex = outputNode->Target->GetInputPinIndex("Emissive");
+		auto refractionIndex = outputNode->Target->GetInputPinIndex("Refraction");
+		auto normalIndex = outputNode->Target->GetInputPinIndex("Normal");
+		auto roughnessIndex = outputNode->Target->GetInputPinIndex("Roughness");
+		auto metallicIndex = outputNode->Target->GetInputPinIndex("Metallic");
+		auto ambientOcclusionIndex = outputNode->Target->GetInputPinIndex("AmbientOcclusion");
+		auto opacityIndex = outputNode->Target->GetInputPinIndex("Opacity");
+		auto opacityMaskIndex = outputNode->Target->GetInputPinIndex("OpacityMask");
 
-		if (option.HasRefraction)
-		{
-			auto refractionIndex = outputNode->Target->GetInputPinIndex("Refraction");
-			auto normalIndex = outputNode->Target->GetInputPinIndex("Normal");
+		ret << GetTypeName(ValueType::Float3) << " pixelNormalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex])
+			<< ";" << std::endl;
+		ret << GetTypeName(ValueType::Float3) << " normalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex]) << ";"
+			<< std::endl;
 
-			ret << GetTypeName(ValueType::Float3) << " normalDir = " << GetInputArg(ValueType::Float4, outputNode->Inputs[normalIndex]) << ";"
-				<< std::endl;
+		ret << GetTypeName(ValueType::Float3) << " tempNormalDir = (normalDir -" << GetTypeName(ValueType::Float3)
+			<< " (0.5, 0.5, 0.5) * 2.0);" << std::endl;
 
-			ret << GetTypeName(ValueType::Float1) << " refraction = " << GetInputArg(ValueType::Float1, outputNode->Inputs[refractionIndex]) << ";"
-				<< std::endl;
+		ret << "pixelNormalDir = tempNormalDir.x * worldTangent + tempNormalDir.y * worldBinormal + tempNormalDir.z * worldNormal;" << std::endl;
 
-			// TODO add code
+		ret << GetTypeName(ValueType::Float3)
+			<< " worldPositionOffset = " << GetInputArg(ValueType::Float3, outputNode->Inputs[worldPositionOffsetIndex]) << ";"
+			<< std::endl;
 
-			ret << "return emissive;" << std::endl; 
-		}
-		else
-		{
-			ret << "return emissive;" << std::endl; 
-		}
+		ret << GetTypeName(ValueType::Float3) << " baseColor = " << GetInputArg(ValueType::Float3, outputNode->Inputs[baseColorIndex])
+			<< ";" << std::endl;
+
+		ret << GetTypeName(ValueType::Float3) << " emissive = " << GetInputArg(ValueType::Float3, outputNode->Inputs[emissiveIndex]) << ";"
+			<< std::endl;
+
+		ret << GetTypeName(ValueType::Float1) << " metallic = " << GetInputArg(ValueType::Float1, outputNode->Inputs[metallicIndex]) << ";"
+			<< std::endl;
+
+		ret << GetTypeName(ValueType::Float1) << " roughness = " << GetInputArg(ValueType::Float1, outputNode->Inputs[roughnessIndex])
+			<< ";" << std::endl;
+
+		ret << GetTypeName(ValueType::Float1)
+			<< " ambientOcclusion = " << GetInputArg(ValueType::Float1, outputNode->Inputs[ambientOcclusionIndex]) << ";" << std::endl;
+
+		ret << GetTypeName(ValueType::Float1) << " opacity = " << GetInputArg(ValueType::Float1, outputNode->Inputs[opacityIndex]) << ";"
+			<< std::endl;
+
+		ret << GetTypeName(ValueType::Float1) << " opacityMask = " << GetInputArg(ValueType::Float1, outputNode->Inputs[opacityMaskIndex])
+			<< ";" << std::endl;
+
+		ret << GetTypeName(ValueType::Float1) << " refraction = " << GetInputArg(ValueType::Float1, outputNode->Inputs[refractionIndex])
+			<< ";" << std::endl;
 	}
 	else
 	{
 		if (outputNode->Target->Parameter->Type == NodeType::ConstantTexture)
 		{
-			ret << "return "
+			ret << GetTypeName(ValueType::Float4) << " emissive = "
 				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName() << ");" << std::endl;
+			ret << "float opacity = emissive.w;" << std::endl;
 		}
 		else if (outputNode->Target->Parameter->Type == NodeType::ParamTexture)
 		{
-			ret << "return "
+			ret << GetTypeName(ValueType::Float4) << " emissive = "
 				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName() << ");" << std::endl;
+			ret << "float opacity = emissive.w;" << std::endl;
 		}
 		else
 		{
-			ret << "return " << ConvertType(ValueType::Float4, outputNode->Outputs[0].Type, outputNode->Outputs[0].Name) << ";"
+			ret << GetTypeName(ValueType::Float4)
+				<< " emissive = " << ConvertType(ValueType::Float4, outputNode->Outputs[0].Type, outputNode->Outputs[0].Name) << ";"
 				<< std::endl;
+			ret << "float opacity = emissive.w;" << std::endl;
 		}
 	}
 

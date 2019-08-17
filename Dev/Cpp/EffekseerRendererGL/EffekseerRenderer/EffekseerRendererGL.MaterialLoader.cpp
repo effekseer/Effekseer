@@ -78,7 +78,9 @@ void main()
 	R"(
 	mat3 modelMatRot = mat3(modelMatrix);
 	vec3 worldPos = (modelMatrix * a_Position).xyz;
-	vec3 worldNormal = modelMatRot * a_Normal.xyz;
+	vec3 worldNormal = normalize(modelMatRot * a_Normal);
+	vec3 worldBinormal = normalize(modelMatRot * a_Binormal);
+	vec3 worldTangent = normalize(modelMatRot * a_Tangent);
 
 	// UV
 	vec2 uv1 = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
@@ -90,9 +92,9 @@ static const char g_material_model_vs_src_suf2[] =
 	worldPos = worldPos + worldPositionOffset;
 
 	v_WorldP = worldPos;
-	v_WorldN = normalize(modelMatRot * a_Normal);
-	v_WorldB = normalize(modelMatRot * a_Binormal);
-	v_WorldT = normalize(modelMatRot * a_Tangent);
+	v_WorldN = worldNormal;
+	v_WorldB = worldBinormal;
+	v_WorldT = worldTangent;
 	v_UV1 = uv1;
 	v_UV2 = uv2;
 	v_VColor = a_Color;
@@ -166,9 +168,13 @@ void main() {
 	vec2 uv2 = uv1;
 
 	// NBT
-	v_WorldN = vec3(0.0, 0.0, 1.0);
-	v_WorldB = vec3(0.0, 1.0, 1.0);
-	v_WorldT = vec3(1.0, 0.0, 1.0);
+	vec3 worldNormal = vec3(0.0, 0.0, 1.0);
+	vec3 worldBinormal = vec3(0.0, 1.0, 1.0);
+	vec3 worldTangent = vec3(1.0, 0.0, 1.0);
+	v_WorldN = worldNormal;
+	v_WorldB = worldBinormal;
+	v_WorldT = worldTangent;
+
 )";
 
 static const char g_material_sprite_vs_src_suf1[] =
@@ -177,7 +183,6 @@ static const char g_material_sprite_vs_src_suf1[] =
 
 void main() {
 	vec3 worldPos = atPosition.xyz;
-	vec3 worldNormal = atNormal.xyz;
 
 	// UV
 	vec2 uv1 = atTexCoord.xy;
@@ -186,9 +191,12 @@ void main() {
 	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
 	// NBT
-	v_WorldN = atNormal;
-	v_WorldB = cross(atNormal, atTangent);
-	v_WorldT =atTangent;
+	vec3 worldNormal = atNormal;
+	vec3 worldBinormal = cross(atNormal, atTangent);
+	vec3 worldTangent = atTangent;
+	v_WorldN = worldNormal;
+	v_WorldB = worldBinormal;
+	v_WorldT = worldTangent;
 )";
 
 static const char g_material_sprite_vs_src_suf2[] =
@@ -235,7 +243,8 @@ void main()
 	vec2 uv2 = v_UV2;
 	vec3 worldPos = v_WorldP;
 	vec3 worldNormal = v_WorldN;
-
+	vec3 worldTangent = v_WorldT;
+	vec3 worldBinormal = v_WorldB;
 )";
 
 static const char g_material_fs_src_suf2_lit[] =
@@ -321,6 +330,9 @@ public:
 				maincode << "uniform vec4 "
 						 << "lightAmbientColor"
 						 << ";" << std::endl;
+				maincode << "uniform vec4 "
+						 << "cameraPosition"
+						 << ";" << std::endl;
 			}
 			else if (ShadingModel == ::Effekseer::ShadingModelType::Unlit)
 			{
@@ -333,7 +345,6 @@ public:
 			baseCode = Replace(baseCode, "$F4$", "vec4");
 			baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
 			baseCode = Replace(baseCode, "$UV$", "uv1.xy");
-			baseCode = Replace(baseCode, "$INPUT$", "");
 			baseCode = Replace(baseCode, "$MOD", "mod");
 			baseCode = Replace(baseCode, "$SUFFIX", "");
 

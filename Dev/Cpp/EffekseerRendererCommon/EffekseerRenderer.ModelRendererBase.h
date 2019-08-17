@@ -493,24 +493,24 @@ public:
 				float lightColor[4];
 				float lightAmbientColor[4];
 
-				::Effekseer::Vector3D cameraPosition3 = m_renderer->GetCameraPosition();
-				::Effekseer::Vector3D lightDirection3 = m_renderer->GetLightDirection();
+				::Effekseer::Vector3D cameraPosition3 = renderer->GetCameraPosition();
+				::Effekseer::Vector3D lightDirection3 = renderer->GetLightDirection();
 				::Effekseer::Vector3D::Normal(lightDirection3, lightDirection3);
 				VectorToFloat4(cameraPosition3, cameraPosition);
 				VectorToFloat4(lightDirection3, lightDirection);
-				ColorToFloat4(m_renderer->GetLightColor(), lightColor);
-				ColorToFloat4(m_renderer->GetLightAmbientColor(), lightAmbientColor);
+				ColorToFloat4(renderer->GetLightColor(), lightColor);
+				ColorToFloat4(renderer->GetLightAmbientColor(), lightAmbientColor);
 
-				m_renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
+				renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
 				psOffset += (sizeof(float) * 4);
 
-				m_renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
+				renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
 				psOffset += (sizeof(float) * 4);
 
-				m_renderer->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
+				renderer->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
 				psOffset += (sizeof(float) * 4);
 
-				m_renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
+				renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
 				psOffset += (sizeof(float) * 4);
 
 			}

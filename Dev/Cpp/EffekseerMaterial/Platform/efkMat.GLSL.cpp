@@ -18,16 +18,14 @@ UNIFORM_TEXTURE
 
 uniform float ps_time;
 
-vec4 Calculate()
-{
-
-RETURN
-
-}
-
 void main() 
 {
-	out_Color = Calculate();
+	vec3 worldNormal = vec3(0.0, 0.0, 1.0);
+	vec3 worldBinormal = vec3(0.0, 1.0, 0.0);
+	vec3 worldTangent = vec3(1.0, 0.0, 0.0);
+
+	RETURN
+	out_Color = vec4(emissive.xyz, opacity);
 }
 
 )";

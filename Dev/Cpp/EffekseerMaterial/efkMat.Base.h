@@ -48,6 +48,7 @@ enum class ValueType
 	Texture,
 	String,
 	Function,
+	Enum,
 	Unknown,
 };
 

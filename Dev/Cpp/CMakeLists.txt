@@ -339,6 +339,13 @@ endif()
 
 if(WIN32)
 	add_subdirectory("3rdParty/AltseedRHI")
+	add_dependencies(AltseedRHI ExternalProject_glew)
+	target_link_directories(
+	    AltseedRHI
+		PRIVATE
+		${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
+	)
+
 	add_subdirectory("EffekseerMaterial")
 	add_subdirectory("EffekseerMaterialEditor")
 endif()

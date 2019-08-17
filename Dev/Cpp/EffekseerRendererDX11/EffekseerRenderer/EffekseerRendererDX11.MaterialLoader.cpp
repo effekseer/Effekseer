@@ -175,6 +175,8 @@ VS_Output main( const VS_Input Input )
 	VS_Output Output = (VS_Output)0;
 	float4 worldPos = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 };
 	float3 worldNormal = float3(0.0, 0.0, 0.0);
+	float3 worldBinormal = float3(0.0, 0.0, 0.0);
+	float3 worldTangent = float3(0.0, 0.0, 0.0);
 
 	// UV
 	float uv1 = Input.UV1;
@@ -184,8 +186,8 @@ VS_Output main( const VS_Input Input )
 
 	// NBT
 	Output.WorldN = worldNormal;
-	Output.WorldB = float3(0.0, 0.0, 0.0);
-	Output.WorldT = float3(0.0, 0.0, 0.0);
+	Output.WorldB = worldBinormal;
+	Output.WorldT = worldTangent;
 )";
 
 static char* material_sprite_vs_suf1 = R"(
@@ -195,6 +197,8 @@ VS_Output main( const VS_Input Input )
 	VS_Output Output = (VS_Output)0;
 	float3 worldPos = Input.Pos;
 	float3 worldNormal = Input.Normal;
+	float3 worldBinormal = cross(Input.Normal, Input.Tangent);
+	float3 worldTangent = Input.Tangent;
 
 	// UV
 	float2 uv1 = Input.UV1;
@@ -204,8 +208,8 @@ VS_Output main( const VS_Input Input )
 
 	// NBT
 	Output.WorldN = worldNormal;
-	Output.WorldB = cross(Input.Normal, Input.Tangent);
-	Output.WorldT = Input.Tangent;
+	Output.WorldB = worldBinormal;
+	Output.WorldT = worldTangent;
 )";
 
 static char* material_sprite_vs_suf2 = R"(
@@ -279,6 +283,8 @@ VS_Output main( const VS_Input Input )
 
 	float3 worldPos = mul( matModel, localPosition ).xyz;
 	float3 worldNormal = normalize( mul( matRotModel, Input.Normal ) );
+	float3 worldBinormal = normalize( mul( matRotModel, Input.Binormal ) );
+	float3 worldTangent = normalize( mul( matRotModel, Input.Tangent ) );
 
 	float2 uv1;
 	uv1.x = Input.UV.x * uv.z + uv.x;
@@ -294,16 +300,10 @@ static char* model_vs_suf2 = R"(
 
 	Output.Position = mul( mCameraProj,  float4(worldPos, 1.0) );
 
-	float4 localBinormal = { 0.0, 0.0, 0.0, 1.0 };
-	localBinormal.xyz = normalize( mul( matRotModel, Input.Binormal ) );
-
-	float4 localTangent = { 0.0, 0.0, 0.0, 1.0 };
-	localTangent.xyz = normalize( mul( matRotModel, Input.Tangent ) );
-
 	Output.WorldP = worldPos;
 	Output.WorldN = worldNormal;
-	Output.WorldB = localBinormal.xyz;
-	Output.WorldT = localTangent.xyz;
+	Output.WorldB = worldBinormal;
+	Output.WorldT = worldTangent;
 
 	Output.VColor = modelColor;
 	Output.UV1 = uv1;
@@ -395,6 +395,8 @@ float4 main( const PS_Input Input ) : SV_Target
 	float2 uv2 = Input.UV2;
 	float3 worldPos = Input.WorldP;
 	float3 worldNormal = Input.WorldN;
+	float3 worldBinormal = Input.WorldB;
+	float3 worldTangent = Input.WorldT;
 )";
 
 static char* g_material_ps_suf2_unlit = R"(
@@ -410,7 +412,7 @@ static char* g_material_ps_suf2_unlit = R"(
 )";
 
 static char* g_material_ps_suf2_lit = R"(
-	float3 viewDir = normalize(worldP - cameraPosition.xyz);
+	float3 viewDir = normalize(worldPos - cameraPosition.xyz);
 	float3 diffuse = calcDirectionalLightDiffuseColor(baseColor, pixelNormalDir, lightDirection.xyz, ambientOcclusion);
 	float3 specular = calcLightingGGX(worldNormal, viewDir, lightDirection, roughness, 0.9);
 
@@ -419,11 +421,12 @@ static char* g_material_ps_suf2_lit = R"(
 	if(opacityMask <= 0.0f) discard;
 
 	// TODO refraction
-
+	/*
 	float airRefraction = 1.0;
 	float2 distortUV = 	pixelNormalDir.xy * (refraction - airRefraction);
 	float2 currentUV = hoge + distortUV;
 	Output += tex(background, hoge) * (1.0 - opacity);
+	*/
 
 	return Output;
 }
@@ -474,6 +477,10 @@ public:
 
 			if (ShadingModel == ::Effekseer::ShadingModelType::Lit)
 			{
+				maincode << "float4 "
+						 << "cameraPosition"
+						 << " : register(c" << cind << ");" << std::endl;
+				cind++;
 				maincode << "float4 "
 						 << "lightDirection"
 						 << " : register(c" << cind << ");" << std::endl;

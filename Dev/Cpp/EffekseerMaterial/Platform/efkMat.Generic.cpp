@@ -9,12 +9,7 @@ std::string TextExporterGeneric::MergeTemplate(std::string code, std::string uni
 {
 	const char template_[] = R"(
 
-$F4$ Calculate($INPUT$)
-{
-
 RETURN
-
-}
 
 )";
 
@@ -53,13 +48,33 @@ std::string TextExporterGeneric::Export(std::shared_ptr<TextExporterNode> node)
 {
 	std::ostringstream ret;
 
-	if (node->Target->Parameter->Type == NodeType::SampleTexture)
+	auto exportInputOrProp = [this](ValueType type_, TextExporterPin& pin_, std::shared_ptr<NodeProperty>& prop_) -> std::string {
+		if (pin_.IsConnected)
+		{
+			return GetInputArg(type_, pin_);
+		}
+		return GetInputArg(pin_.Type, prop_->Floats[0]);
+	};
+
+	auto exportIn2Out2Param2 = [&, this](const char* func, const char* op) -> void {
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << func << "("
+			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[0], node->Target->Properties[0]) << op
+			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[1], node->Target->Properties[1]) << ");" << std::endl;
+	};
+
+	if (node->Target->Parameter->Type == NodeType::FMod)
+	{
+		exportIn2Out2Param2("$MOD", ",");
+
+		return ret.str();
+	}
+	else if (node->Target->Parameter->Type == NodeType::SampleTexture)
 	{
 		assert(node->Inputs[0].TextureValue != nullptr);
 		if (0 <= node->Inputs[0].TextureValue->Index)
 		{
 			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << " = $TEX_P" << node->Inputs[0].TextureValue->Index
-				<< "$" << GetInputArg(ValueType::Float2, node->Inputs[1]) << "$TEX_S" << node->Inputs[0].TextureValue->Index  << "$;"
+				<< "$" << GetInputArg(ValueType::Float2, node->Inputs[1]) << "$TEX_S" << node->Inputs[0].TextureValue->Index << "$;"
 				<< std::endl;
 		}
 		else
