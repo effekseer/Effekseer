@@ -419,8 +419,8 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		ret << GetTypeName(ValueType::Float3) << " normalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex]) << ";"
 			<< std::endl;
 
-		ret << GetTypeName(ValueType::Float3) << " tempNormalDir = (normalDir -" << GetTypeName(ValueType::Float3)
-			<< " (0.5, 0.5, 0.5) * 2.0);" << std::endl;
+		ret << GetTypeName(ValueType::Float3) << " tempNormalDir = ((normalDir -" << GetTypeName(ValueType::Float3)
+			<< " (0.5, 0.5, 0.5)) * 2.0);" << std::endl;
 
 		ret << "pixelNormalDir = tempNormalDir.x * worldTangent + tempNormalDir.y * worldBinormal + tempNormalDir.z * worldNormal;" << std::endl;
 

@@ -412,7 +412,7 @@ static char* g_material_ps_suf2_unlit = R"(
 )";
 
 static char* g_material_ps_suf2_lit = R"(
-	float3 viewDir = normalize(worldPos - cameraPosition.xyz);
+	float3 viewDir = normalize(cameraPosition.xyz - worldPos);
 	float3 diffuse = calcDirectionalLightDiffuseColor(baseColor, pixelNormalDir, lightDirection.xyz, ambientOcclusion);
 	float3 specular = calcLightingGGX(worldNormal, viewDir, lightDirection, roughness, 0.9);
 

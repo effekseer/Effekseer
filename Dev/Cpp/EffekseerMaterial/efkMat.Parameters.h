@@ -684,7 +684,7 @@ public:
 		normal->Name = "Normal";
 		normal->Type = ValueType::Float3;
 		normal->Default = DefaultType::Value;
-		normal->DefaultValues.fill(0.0f);
+		normal->DefaultValues.fill(0.5f);
 		normal->DefaultValues[2] = 1.0f;
 		InputPins.push_back(normal);
 
@@ -726,7 +726,7 @@ public:
 		auto shadingProperty = std::make_shared<NodePropertyParameter>();
 		shadingProperty->Name = "ShadingModel";
 		shadingProperty->Type = ValueType::Enum;
-		worldPositionOffset->DefaultValues.fill(1.0f);
+		shadingProperty->DefaultValues.fill(1.0f);
 		Properties.push_back(shadingProperty);
 
 	}
