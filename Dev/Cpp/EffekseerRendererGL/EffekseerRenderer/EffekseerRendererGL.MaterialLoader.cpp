@@ -237,6 +237,64 @@ uniform vec4 predefined_uniform;
 static const char g_material_fs_src_suf1[] =
 	R"(
 
+float saturate(float v)
+{
+	return max(min(v, 1.0), 0.0);
+}
+
+float calcD_GGX(float roughness, float dotNH)
+{
+	float alpha = roughness*roughness;
+	float alphaSqr = alpha*alpha;
+	float pi = 3.14159;
+	float denom = dotNH * dotNH *(alphaSqr-1.0) + 1.0;
+	return (alpha / denom) * (alpha / denom) / pi;
+}
+
+float calcF(float F0, float dotLH)
+{
+	float dotLH5 = pow(1.0f-dotLH,5);
+	return F0 + (1.0-F0)*(dotLH5);
+}
+
+float calcG_Schlick(float roughness, float dotNV, float dotNL)
+{
+	// UE4
+	float k = (roughness + 1.0) * (roughness + 1.0) / 8.0;
+	// float k = roughness * roughness / 2.0;
+
+	float gV = dotNV*(1.0 - k) + k;
+	float gL = dotNL*(1.0 - k) + k;
+
+	return 1.0 / (gV * gL);
+}
+
+float calcLightingGGX(vec3 N, vec3 V, vec3 L, float roughness, float F0)
+{
+	vec3 H = normalize(V+L);
+
+	float dotNL = saturate( dot(N,L) );
+	float dotLH = saturate( dot(L,H) );
+	float dotNH = saturate( dot(N,H) ) - 0.001;
+	float dotNV = saturate( dot(N,V) ) + 0.001;
+
+	float D = calcD_GGX(roughness, dotNH);
+	float F = calcF(F0, dotLH);
+	float G = calcG_Schlick(roughness, dotNV, dotNL);
+
+	return dotNL * D * F * G / 4.0;
+}
+
+vec3 calcDirectionalLightDiffuseColor(vec3 diffuseColor, vec3 normal, vec3 lightDir, float ao)
+{
+	vec3 color = vec3(0.0,0.0,0.0);
+
+	float NoL = dot(normal,lightDir);
+	color.xyz = lightColor.xyz * max(NoL,0.0) * ao / 3.14;
+	color.xyz = color.xyz * diffuseColor.xyz;
+	return color;
+}
+
 void main()
 {
 	vec2 uv1 = v_UV1;
@@ -250,7 +308,17 @@ void main()
 static const char g_material_fs_src_suf2_lit[] =
 	R"(
 
-	FRAGCOLOR = vec4(emissive, opacity);
+	vec3 viewDir = normalize(cameraPosition.xyz - worldPos);
+	vec3 diffuse = calcDirectionalLightDiffuseColor(baseColor, pixelNormalDir, lightDirection.xyz, ambientOcclusion);
+	vec3 specular = lightColor.xyz * calcLightingGGX(worldNormal, viewDir, lightDirection.xyz, roughness, 0.9);
+
+	vec4 Output =  vec4(metallic * specular + (1.0 - metallic) * diffuse + lightAmbientColor.xyz, opacity);
+
+	if(opacityMask <= 0.0f) discard;
+
+	FRAGCOLOR = Output;
+
+
 }
 
 )";
@@ -527,22 +595,22 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 		int32_t psOffset = 0;
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), psOffset);
+		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), psOffset);
 		psOffset += sizeof(float) * 4;
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), psOffset);
+		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), psOffset);
 		psOffset += sizeof(float) * 4;
 
 		// shiding model
 		if (loader.ShadingModel == ::Effekseer::ShadingModelType::Lit)
 		{
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), psOffset);
 			psOffset += sizeof(float) * 4;
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), psOffset);
 			psOffset += sizeof(float) * 4;
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightColor"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightColor"), psOffset);
 			psOffset += sizeof(float) * 4;
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightAmbientColor"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightAmbientColor"), psOffset);
 			psOffset += sizeof(float) * 4;
 		}
 		else if (loader.ShadingModel == ::Effekseer::ShadingModelType::Unlit)
@@ -639,22 +707,22 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 		int32_t psOffset = 0;
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), psOffset);
+		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), psOffset);
 		psOffset += sizeof(float) * 4;
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), psOffset);
+		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), psOffset);
 		psOffset += sizeof(float) * 4;
 
 		// shiding model
 		if (loader.ShadingModel == ::Effekseer::ShadingModelType::Lit)
 		{
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), psOffset);
 			psOffset += sizeof(float) * 4;
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), psOffset);
 			psOffset += sizeof(float) * 4;
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightColor"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightColor"), psOffset);
 			psOffset += sizeof(float) * 4;
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightAmbientColor"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightAmbientColor"), psOffset);
 			psOffset += sizeof(float) * 4;
 		}
 		else if (loader.ShadingModel == ::Effekseer::ShadingModelType::Unlit)

@@ -127,13 +127,11 @@ protected:
 		Dynamic,
 	};
 
-	template <typename V> VertexType GetVertexType(const V* v) { return VertexType::Normal; }
+	VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
 
-	template <> VertexType GetVertexType(const VERTEX_NORMAL* v) { return VertexType::Normal; }
+	VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
 
-	template <> VertexType GetVertexType(const VERTEX_DISTORTION* v) { return VertexType::Distortion; }
-
-	template <> VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
+	VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
 
 
 	template<typename VERTEX>
