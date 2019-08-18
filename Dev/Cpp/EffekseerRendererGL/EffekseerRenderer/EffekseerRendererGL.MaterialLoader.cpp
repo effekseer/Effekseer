@@ -331,6 +331,14 @@ static const char g_material_fs_src_suf2_unlit[] =
 
 )";
 
+static const char g_material_fs_src_suf2_refraction[] =
+	R"(
+
+	FRAGCOLOR = vec4(emissive, opacity);
+}
+
+)";
+
 class ShaderLoader : public EffekseerRenderer::ShaderLoader
 {
 public:
@@ -347,7 +355,7 @@ public:
 
 			if (stage == 0)
 			{
-				if (shaderType == ShaderType::Standard)
+				if (shaderType == ShaderType::Standard || shaderType == ShaderType::Refraction)
 				{
 					if (IsSimpleVertex)
 					{
@@ -358,7 +366,7 @@ public:
 						maincode << g_material_sprite_vs_src_pre;
 					}
 				}
-				else if (shaderType == ShaderType::Model)
+				else if (shaderType == ShaderType::Model || shaderType == ShaderType::RefractionModel)
 				{
 					maincode << g_material_model_vs_src_pre;
 				}
@@ -385,6 +393,11 @@ public:
 			{
 				auto& texture = Textures[i];
 				maincode << "uniform sampler2D " << texture.Name << ";" << std::endl;
+			}
+
+			for (size_t i = Textures.size(); i < Textures.size() + 1; i++)
+			{
+				maincode << "uniform sampler2D " << "background" << ";" << std::endl;
 			}
 
 			if (ShadingModel == ::Effekseer::ShadingModelType::Lit)
@@ -429,7 +442,7 @@ public:
 
 			if (stage == 0)
 			{
-				if (shaderType == ShaderType::Standard)
+				if (shaderType == ShaderType::Standard || shaderType == ShaderType::Refraction)
 				{
 					if (IsSimpleVertex)
 					{
@@ -440,18 +453,18 @@ public:
 						maincode << g_material_sprite_vs_src_suf1;
 					}
 				}
-				else if (shaderType == ShaderType::Model)
+				else if (shaderType == ShaderType::Model || shaderType == ShaderType::RefractionModel)
 				{
 					maincode << g_material_model_vs_src_suf1;
 				}
 
 				maincode << baseCode;
 
-				if (shaderType == ShaderType::Standard)
+				if (shaderType == ShaderType::Standard || shaderType == ShaderType::Refraction)
 				{
 					maincode << g_material_sprite_vs_src_suf2;
 				}
-				else if (shaderType == ShaderType::Model)
+				else if (shaderType == ShaderType::Model || shaderType == ShaderType::RefractionModel)
 				{
 					maincode << g_material_model_vs_src_suf2;
 				}
@@ -464,13 +477,27 @@ public:
 
 				maincode << baseCode;
 
-				if (ShadingModel == Effekseer::ShadingModelType::Lit)
+				if (shaderType == ShaderType::Refraction || shaderType == ShaderType::RefractionModel)
 				{
-					maincode << g_material_fs_src_suf2_lit;
+					if (ShadingModel == Effekseer::ShadingModelType::Lit)
+					{
+						maincode << g_material_fs_src_suf2_lit;
+					}
+					else if (ShadingModel == Effekseer::ShadingModelType::Unlit)
+					{
+						maincode << g_material_fs_src_suf2_unlit;
+					}
 				}
-				else if (ShadingModel == Effekseer::ShadingModelType::Unlit)
+				else
 				{
-					maincode << g_material_fs_src_suf2_unlit;
+					if (ShadingModel == Effekseer::ShadingModelType::Lit)
+					{
+						maincode << g_material_fs_src_suf2_lit;
+					}
+					else if (ShadingModel == Effekseer::ShadingModelType::Unlit)
+					{
+						maincode << g_material_fs_src_suf2_unlit;
+					}
 				}
 
 				shaderData.CodePS = maincode.str();
@@ -524,8 +551,23 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 	auto materialData = new ::Effekseer::MaterialData();
 	materialData->IsSimpleVertex = loader.IsSimpleVertex;
 
+		std::array<EffekseerRenderer::ShaderLoader::ShaderType, 2> shaderTypes;
+	std::array<EffekseerRenderer::ShaderLoader::ShaderType, 2> shaderTypesModel;
+
+	shaderTypes[0] = EffekseerRenderer::ShaderLoader::ShaderType::Standard;
+	shaderTypes[1] = EffekseerRenderer::ShaderLoader::ShaderType::Refraction;
+	shaderTypesModel[0] = EffekseerRenderer::ShaderLoader::ShaderType::Model;
+	shaderTypesModel[1] = EffekseerRenderer::ShaderLoader::ShaderType::RefractionModel;
+	int32_t shaderTypeCount = 1;
+
+	if (loader.HasRefraction)
 	{
-		auto shaderCode = loader.GenerateShader(EffekseerRenderer::ShaderLoader::ShaderType::Standard);
+		shaderTypeCount = 2;
+	}
+
+	for (int32_t st = 0; st < shaderTypeCount; st++)
+	{
+		auto shaderCode = loader.GenerateShader(shaderTypes[st]);
 
 		auto shader = Shader::Create(renderer_,
 									 shaderCode.CodeVS.c_str(),
@@ -625,18 +667,32 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 		shader->SetPixelConstantBufferSize(psOffset);
 
+		int32_t lastIndex = 0;
 		for (auto texture : loader.Textures)
 		{
 			shader->SetTextureSlot(texture.Index, shader->GetUniformId(texture.Name.c_str()));
+			lastIndex = Effekseer::Max(lastIndex, texture.Index);
 		}
+
+		lastIndex++;
+		shader->SetTextureSlot(lastIndex, shader->GetUniformId("background"));
 
 		materialData->TextureCount = loader.Textures.size();
 		materialData->UniformCount = loader.Uniforms.size();
-		materialData->UserPtr = shader;
+
+		if (st == 0)
+		{
+			materialData->UserPtr = shader;
+		}
+		else
+		{
+			materialData->RefractionUserPtr = shader;
+		}
 	}
 
+	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
-		auto shaderCode = loader.GenerateShader(EffekseerRenderer::ShaderLoader::ShaderType::Model);
+		auto shaderCode = loader.GenerateShader(shaderTypesModel[st]);
 
 		auto shader = Shader::Create(renderer_,
 									 shaderCode.CodeVS.c_str(),
@@ -737,12 +793,24 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 		shader->SetPixelConstantBufferSize(psOffset);
 
+		int32_t lastIndex = 0;
 		for (auto texture : loader.Textures)
 		{
 			shader->SetTextureSlot(texture.Index, shader->GetUniformId(texture.Name.c_str()));
+			lastIndex = Effekseer::Max(lastIndex, texture.Index);
 		}
 
-		materialData->ModelUserPtr = shader;
+		lastIndex++;
+		shader->SetTextureSlot(lastIndex, shader->GetUniformId("background"));
+
+		if (st == 0)
+		{
+			materialData->ModelUserPtr = shader;
+		}
+		else
+		{
+			materialData->RefractionModelUserPtr = shader;
+		}
 	}
 
 	materialData->TextureCount = loader.Textures.size();
@@ -758,9 +826,13 @@ void MaterialLoader::Unload(::Effekseer::MaterialData* data)
 		return;
 	auto shader = reinterpret_cast<Shader*>(data->UserPtr);
 	auto modelShader = reinterpret_cast<Shader*>(data->ModelUserPtr);
+	auto refractionShader = reinterpret_cast<Shader*>(data->RefractionUserPtr);
+	auto refractionModelShader = reinterpret_cast<Shader*>(data->RefractionModelUserPtr);
 
 	ES_SAFE_DELETE(shader);
 	ES_SAFE_DELETE(modelShader);
+	ES_SAFE_DELETE(refractionShader);
+	ES_SAFE_DELETE(refractionModelShader);
 	ES_SAFE_DELETE(data);
 }
 

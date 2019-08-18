@@ -28,6 +28,7 @@ struct StandardRendererState
 	bool Distortion;
 	float DistortionIntensity;
 	bool Wireframe;
+	bool Refraction;
 
 	::Effekseer::AlphaBlendType AlphaBlend;
 	::Effekseer::CullingType CullingType;
@@ -36,9 +37,9 @@ struct StandardRendererState
 	::Effekseer::TextureData* TexturePtr;
 
 	::Effekseer::MaterialData* MaterialPtr;
-	int32_t MaterialUniformCount;
+	uint32_t MaterialUniformCount;
 	std::array<std::array<float, 4>, 16> MaterialUniforms;
-	int32_t MaterialTextureCount;
+	uint32_t MaterialTextureCount;
 	std::array<::Effekseer::TextureData*, 16> MaterialTextures;
 
 	StandardRendererState()
@@ -48,6 +49,7 @@ struct StandardRendererState
 		Distortion = false;
 		DistortionIntensity = 1.0f;
 		Wireframe = true;
+		Refraction = false;
 
 		AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 		CullingType = ::Effekseer::CullingType::Front;
@@ -86,6 +88,8 @@ struct StandardRendererState
 		if (MaterialUniformCount != state.MaterialUniformCount)
 			return true;
 		if (MaterialTextureCount != state.MaterialTextureCount)
+			return true;
+		if (Refraction != state.Refraction)
 			return true;
 
 		for (int32_t i = 0; i < state.MaterialUniformCount; i++)
@@ -162,6 +166,8 @@ struct StandardRendererState
 			{
 				TexturePtr = nullptr;
 			}
+
+			Refraction = false;
 		}
 	}
 };
@@ -300,8 +306,6 @@ public:
 		if (vertexCaches.size() == 0)
 			return;
 
-		int32_t offset = 0;
-
 		auto vsize = 0;
 
 		if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex)
@@ -317,28 +321,46 @@ public:
 			vsize = sizeof(VERTEX);
 		}
 
-		while (true)
+
+		int32_t passNum = 1;
+
+		if (m_state.MaterialPtr != nullptr)
 		{
-			// only sprite
-			int32_t renderBufferSize = (int32_t)vertexCaches.size() - offset;
-
-			if (renderBufferSize > renderVertexMaxSize)
+			if(m_state.MaterialPtr->RefractionUserPtr != nullptr)
 			{
-				renderBufferSize = (Effekseer::Min(renderVertexMaxSize, (int32_t)vertexCaches.size() - offset) / (vsize * 4)) * (vsize * 4);
+				// refraction and standard
+				passNum = 2;
 			}
+		}
 
-			Rendering_(mCamera, mProj, offset, renderBufferSize);
+		for (int32_t passInd = 0; passInd < passNum; passInd++)
+		{
+			int32_t offset = 0;
 
-			offset += renderBufferSize;
+			while (true)
+			{
+				// only sprite
+				int32_t renderBufferSize = (int32_t)vertexCaches.size() - offset;
 
-			if (offset == vertexCaches.size())
-				break;
+				if (renderBufferSize > renderVertexMaxSize)
+				{
+					renderBufferSize =
+						(Effekseer::Min(renderVertexMaxSize, (int32_t)vertexCaches.size() - offset) / (vsize * 4)) * (vsize * 4);
+				}
+
+				Rendering_(mCamera, mProj, offset, renderBufferSize, vsize, passInd);
+
+				offset += renderBufferSize;
+
+				if (offset == vertexCaches.size())
+					break;
+			}
 		}
 
 		vertexCaches.clear();
 	}
 
-	void Rendering_(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj, int32_t bufferOffset, int32_t bufferSize)
+	void Rendering_(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj, int32_t bufferOffset, int32_t bufferSize, int32_t vertexSize_, int32_t renderPass)
 	{
 		if (m_state.Distortion)
 		{
@@ -364,7 +386,8 @@ public:
 
 			void* data = nullptr;
 
-			if (m_state.Distortion)
+			// TODO : improve performance
+			if (vertexSize_ != sizeof(VERTEX))
 			{
 				// For OpenGL ES(Because OpenGL ES 3.2 and later can only realize a vertex layout variable ring buffer)
 				vb->Lock();
@@ -400,8 +423,27 @@ public:
 
 		if (m_state.MaterialPtr != nullptr)
 		{
-			shader_ = (SHADER*)m_state.MaterialPtr->UserPtr;
+			if (m_state.MaterialPtr->RefractionUserPtr != nullptr)
+			{
+				if (renderPass == 0)
+				{
+					if (m_renderer->GetBackground() == 0)
+					{
+						return;
+					}
 
+					shader_ = (SHADER*)m_state.MaterialPtr->RefractionUserPtr;
+				}
+				else
+				{
+					shader_ = (SHADER*)m_state.MaterialPtr->UserPtr;
+				}
+			}
+			else
+			{
+				shader_ = (SHADER*)m_state.MaterialPtr->UserPtr;
+			}
+			
 			// validate
 			if (m_state.MaterialPtr->UniformCount != m_state.MaterialUniformCount)
 				return;
@@ -418,16 +460,22 @@ public:
 
 		if (m_state.MaterialPtr != nullptr)
 		{
+			std::array<Effekseer::TextureData*, 16> textures;
+
 			if (m_state.MaterialTextureCount > 0)
 			{
-				std::array<Effekseer::TextureData*, 16> textures;
-
 				for (size_t i = 0; i < Effekseer::Min(m_state.MaterialTextureCount, textures.size()); i++)
 				{
 					textures[i] = m_state.MaterialTextures[i];
 				}
-				m_renderer->SetTextures(shader_, textures.data(), Effekseer::Min(m_state.MaterialTextureCount, textures.size()));
 			}
+
+			if (m_renderer->GetBackground() == 0)
+			{
+				textures[m_state.MaterialTextureCount] = m_renderer->GetBackground();
+			}
+
+			m_renderer->SetTextures(shader_, textures.data(), Effekseer::Min(m_state.MaterialTextureCount + 1, textures.size()));
 		}
 		else
 		{
@@ -584,28 +632,10 @@ public:
 
 		m_renderer->GetRenderState()->Update(distortion);
 
-		if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex)
-		{
-			m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), sizeof(DynamicVertex));
-			m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
-			m_renderer->SetLayout(shader_);
-			m_renderer->DrawSprites(vertexSize / sizeof(DynamicVertex) / 4, offsetSize / sizeof(DynamicVertex));
-		}
-		else if (distortion)
-		{
-			m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), sizeof(VERTEX_DISTORTION));
-			m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
-			m_renderer->SetLayout(shader_);
-			m_renderer->DrawSprites(vertexSize / sizeof(VERTEX_DISTORTION) / 4, offsetSize / sizeof(VERTEX_DISTORTION));
-		}
-		else
-		{
-			int32_t spriteCount = vertexSize / sizeof(VERTEX) / 4;
-			m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), sizeof(VERTEX));
-			m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
-			m_renderer->SetLayout(shader_);
-			m_renderer->DrawSprites(spriteCount, offsetSize / sizeof(VERTEX));
-		}
+		m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), vertexSize_);
+		m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
+		m_renderer->SetLayout(shader_);
+		m_renderer->DrawSprites(vertexSize / vertexSize_ / 4, offsetSize / vertexSize_);
 
 		m_renderer->EndShader(shader_);
 

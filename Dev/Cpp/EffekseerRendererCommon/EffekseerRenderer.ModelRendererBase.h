@@ -231,8 +231,53 @@ public:
 		m_times.push_back(instanceParameter.Time);
 	}
 
+	template <typename RENDERER, typename SHADER, typename MODEL, bool Instancing, int InstanceCount>
+	void EndRendering_(RENDERER* renderer,
+					   SHADER* shader_lighting_texture_normal,
+					   SHADER* shader_lighting_normal,
+					   SHADER* shader_lighting_texture,
+					   SHADER* shader_lighting,
+					   SHADER* shader_texture,
+					   SHADER* shader,
+					   SHADER* shader_distortion_texture,
+					   SHADER* shader_distortion,
+					   const efkModelNodeParam& param)
+	{
+		if (m_matrixes.size() == 0)
+			return;
+		if (param.ModelIndex < 0)
+			return;
+		
+		int32_t renderPassCount = 1;
+
+		if (param.MaterialParameterPtr != nullptr)
+		{
+			auto materialData = param.EffectPointer->GetMaterial(param.MaterialParameterPtr->MaterialIndex);
+			if (materialData != nullptr && materialData->RefractionModelUserPtr != nullptr)
+			{
+				// refraction, standard
+				renderPassCount = 2;
+			}
+		}
+
+		for (int32_t renderPassInd = 0; renderPassInd < renderPassCount; renderPassInd++)
+		{
+			RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount>(renderer,
+																		   shader_lighting_texture_normal,
+																		   shader_lighting_normal,
+																		   shader_lighting_texture,
+																		   shader_lighting,
+																		   shader_texture,
+																		   shader,
+																		   shader_distortion_texture,
+																		   shader_distortion,
+																		   param,
+																		   renderPassInd);		
+		}
+	}
+
 	template<typename RENDERER, typename SHADER, typename MODEL, bool Instancing, int InstanceCount>
-	void EndRendering_(
+	void RenderPass(
 		RENDERER* renderer, 
 		SHADER* shader_lighting_texture_normal,
 		SHADER* shader_lighting_normal,
@@ -242,7 +287,8 @@ public:
 		SHADER* shader,
 		SHADER* shader_distortion_texture,
 		SHADER* shader_distortion,
-		const efkModelNodeParam& param)
+		const efkModelNodeParam& param,
+		int32_t renderPassInd)
 	{
 		if (m_matrixes.size() == 0) return;
 		if (param.ModelIndex < 0) return;
@@ -280,7 +326,22 @@ public:
 		if (materialParam != nullptr && param.EffectPointer->GetMaterial(materialParam->MaterialIndex) != nullptr)
 		{
 			material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
-			shader_ = (SHADER*)material->ModelUserPtr;
+
+			if (material != nullptr && material->RefractionModelUserPtr != nullptr)
+			{
+				if (renderPassInd == 0)
+				{
+					shader_ = (SHADER*)material->RefractionModelUserPtr;				
+				}
+				else
+				{
+					shader_ = (SHADER*)material->ModelUserPtr;
+				}
+			}
+			else
+			{
+				shader_ = (SHADER*)material->ModelUserPtr;
+			}
 
 			// validate
 			if (material->TextureCount != materialParam->MaterialTextures.size() ||
@@ -375,7 +436,13 @@ public:
 						}
 					}
 				}
-				renderer->SetTextures(shader_, textures.data(), Effekseer::Min(materialParam->MaterialTextures.size(), textures.size()));
+
+				if (renderer->GetBackground() == 0)
+				{
+					textures[materialParam->MaterialTextures.size()] = renderer->GetBackground();
+				}
+
+				renderer->SetTextures(shader_, textures.data(), Effekseer::Min(materialParam->MaterialTextures.size() + 1, textures.size()));
 			}
 		}
 		else
@@ -538,7 +605,7 @@ public:
 			{
 				ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*) shader_->GetPixelConstantBuffer();
 
-				// 固定値設定
+				// specify predefined parameters
 				if (param.Lighting)
 				{
 					::Effekseer::Vector3D lightDirection = renderer->GetLightDirection();

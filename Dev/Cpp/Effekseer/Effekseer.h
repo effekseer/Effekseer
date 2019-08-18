@@ -523,8 +523,9 @@ struct MaterialData
 	int32_t TextureCount = 0;
 	int32_t UniformCount = 0;
 	void* UserPtr = nullptr;
-
 	void* ModelUserPtr = nullptr;
+	void* RefractionUserPtr = nullptr;
+	void* RefractionModelUserPtr = nullptr;
 };
 
 /**

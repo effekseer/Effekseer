@@ -150,6 +150,11 @@ struct DynamicVertex
 	};
 
 	float UV2[2];
+
+	void SetColor(const ::Effekseer::Color& color)
+	{
+		Col = color;
+	}
 };
 
 //-----------------------------------------------------------------------------------

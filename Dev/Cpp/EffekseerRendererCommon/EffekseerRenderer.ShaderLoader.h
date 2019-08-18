@@ -305,6 +305,8 @@ public:
 	{
 		Standard,
 		Model,
+		Refraction,
+		RefractionModel,
 	};
 
 	ShaderLoader() = default;
