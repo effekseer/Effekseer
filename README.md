@@ -30,6 +30,8 @@ Effekseer主要用作遊戲開發,不僅是程序員而且設計師也可進行�
 
 * [ForDXLib](https://github.com/effekseer/EffekseerForDXLib)
 
+* [ToolHelp(Sphinx)](https://github.com/effekseer/docs_tool)
+
 Todo
 =========
 

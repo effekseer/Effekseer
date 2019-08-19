@@ -133,8 +133,6 @@ copy readme_runtime.txt %RDIR_R%\readme.txt
 echo ƒwƒ‹ƒv
 mkdir %RDIR%\Help
 
-robocopy docs\Help_Tool %RDIR%\Help *.html *.css *.efkproj *.png *.gif *.zip /mir /S
-
 mkdir %RDIR_R%\Help
 robocopy docs\Help_Runtime %RDIR_R%\Help *.html *.css *.efkproj *.png /mir /S
 
