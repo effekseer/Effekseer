@@ -45,32 +45,40 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 
 # RoadMap
 
+## 1.5
+
+- Node material
+- Bloom Postprocess in Editor
+- Dynamically changing parameters of Effect from a runtime
+
+## OnGoing
+
+- Support Metal
+- Support DirectX12
+- Support Vulkan
+
+[BackendRepository](https://github.com/altseed/LLGI)
+
 # Todo
 
-** Easy **
-* Add samples (サンプルの追加)
-* Add tutorial documents (チュートリアルのドキュメントの追加)
-* Add tests for a runtime (ランタイムのテストの追加)
-* Translate documents from Japanese into English (ドキュメントの日本語から英語への翻訳)
+## Easy
 
-** Medium
-* Add model exporters for 3D modeling softwares
-* HDR Color
-* Bloom Postprocess in Editor
-* Dynamically changing parameters of Effect from a runtime
+- Add samples (サンプルの追加)
+- Add tutorial documents (チュートリアルのドキュメントの追加)
+- Add tests for a runtime (ランタイムのテストの追加)
+- Translate documents from Japanese into English (ドキュメントの日本語から英語への翻訳)
 
-** Hard
-* Support Metal
-* Support DirectX12
-* Node material
+## Medium
+- Add model exporters for 3D modeling softwares
+- HDR Color
 
-** VeryHard
-* Support Vulkan
-* Support AfterEffects
+## Hard
 
-** Others
-* New method of rotation to match Z and moving direction.
-* Turbulence noise ( https://ics.media/entry/10921 )
+- Support AfterEffects
+
+## Others
+- New method of rotation to match Z and moving direction.
+- Turbulence noise ( https://ics.media/entry/10921 )
 
 # For contributor
 
