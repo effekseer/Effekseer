@@ -470,7 +470,7 @@ public:
 				}
 			}
 
-			if (m_renderer->GetBackground() == 0)
+			if (m_renderer->GetBackground() != 0)
 			{
 				textures[m_state.MaterialTextureCount] = m_renderer->GetBackground();
 			}

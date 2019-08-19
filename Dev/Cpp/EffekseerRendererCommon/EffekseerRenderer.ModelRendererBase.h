@@ -437,7 +437,7 @@ public:
 					}
 				}
 
-				if (renderer->GetBackground() == 0)
+				if (renderer->GetBackground() != 0)
 				{
 					textures[materialParam->MaterialTextures.size()] = renderer->GetBackground();
 				}

@@ -227,7 +227,7 @@ static char* material_sprite_vs_suf2 = R"(
 	Output.UV1 = uv1;
 	Output.UV2 = uv2;
 	Output.ScreenUV = Output.Position.xy / Output.Position.w;
-	Output.ScreenUV.xy = vec2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+	Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
 
 	return Output;
 }
@@ -314,7 +314,7 @@ static char* model_vs_suf2 = R"(
 	Output.UV1 = uv1;
 	Output.UV2 = uv2;
 	Output.ScreenUV = Output.Position.xy / Output.Position.w;
-	Output.ScreenUV.xy = vec2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+	Output.ScreenUV.xy = float2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
 
 	return Output;
 }
@@ -439,7 +439,7 @@ static char* g_material_ps_suf2_refraction = R"(
 	float airRefraction = 1.0;
 	float2 distortUV = 	pixelNormalDir.xy * (refraction - airRefraction);
 
-	float4 bg = background_texture.Sample(background_sampler, Input.ScreeenUV + distortUV);
+	float4 bg = background_texture.Sample(background_sampler, Input.ScreenUV + distortUV);
 	float4 Output = bg;
 
 	if(opacityMask <= 0.0f) discard;
@@ -531,7 +531,6 @@ public:
 			// background
 			for (size_t i = Textures.size(); i < Textures.size() + 1; i++)
 			{
-				auto& texture = Textures[i];
 				maincode << "Texture2D " << "background" << "_texture : register(t" << i << ");" << std::endl;
 				maincode << "SamplerState " << "background" << "_sampler : register(s" << i << ");" << std::endl;
 			}
@@ -559,7 +558,7 @@ public:
 
 			if (stage == 0)
 			{
-				if (shaderType == ShaderType::Standard)
+				if (shaderType == ShaderType::Standard || shaderType == ShaderType::Refraction)
 				{
 					if (IsSimpleVertex)
 					{
@@ -570,7 +569,7 @@ public:
 						maincode << material_sprite_vs_suf1;
 					}
 				}
-				else if (shaderType == ShaderType::Model)
+				else if (shaderType == ShaderType::Model || shaderType == ShaderType::RefractionModel)
 				{
 					maincode << model_vs_suf1;
 				}
@@ -894,8 +893,6 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 		shader->SetPixelConstantBufferSize(pixelUniformSize);
 		shader->SetPixelRegisterCount(pixelUniformSize / (sizeof(float) * 4));
-
-		materialData->ModelUserPtr = shader;
 
 		if (st == 0)
 		{
