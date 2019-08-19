@@ -33,6 +33,8 @@ OUT mediump vec3 v_WorldP;
 OUT mediump vec3 v_WorldN;
 OUT mediump vec3 v_WorldT;
 OUT mediump vec3 v_WorldB;
+OUT mediump vec3 v_WorldB;
+OUT mediump vec2 v_ScreenUV;
 
 )"
 #if defined(MODEL_SOFTWARE_INSTANCING)
@@ -99,6 +101,8 @@ static const char g_material_model_vs_src_suf2[] =
 	v_UV2 = uv2;
 	v_VColor = a_Color;
 	gl_Position = ProjectionMatrix * vec4(worldPos, 1.0);
+	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
+	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, 1.0 - v_ScreenUV.y) * 0.5;
 }
 )";
 
@@ -117,6 +121,7 @@ OUT mediump vec3 v_WorldP;
 OUT mediump vec3 v_WorldN;
 OUT mediump vec3 v_WorldT;
 OUT mediump vec3 v_WorldB;
+OUT mediump vec2 v_ScreenUV;
 )"
 
 	R"(
@@ -145,6 +150,7 @@ OUT mediump vec3 v_WorldP;
 OUT mediump vec3 v_WorldN;
 OUT mediump vec3 v_WorldT;
 OUT mediump vec3 v_WorldB;
+OUT mediump vec2 v_ScreenUV;
 )"
 
 	R"(
@@ -214,6 +220,8 @@ static const char g_material_sprite_vs_src_suf2[] =
 
 	v_UV1 = uv1;
 	v_UV2 = uv2;
+	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
+	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, 1.0 - v_ScreenUV.y) * 0.5;
 }
 
 )";
@@ -228,6 +236,7 @@ IN mediump vec3 v_WorldP;
 IN mediump vec3 v_WorldN;
 IN mediump vec3 v_WorldT;
 IN mediump vec3 v_WorldB;
+IN mediump vec2 v_ScreenUV;
 
 uniform vec4 mUVInversed;
 uniform vec4 predefined_uniform;
@@ -333,8 +342,11 @@ static const char g_material_fs_src_suf2_unlit[] =
 
 static const char g_material_fs_src_suf2_refraction[] =
 	R"(
+	float airRefraction = 1.0;
+	vec2 distortUV = 	pixelNormalDir.xy * (refraction - airRefraction);
 
-	FRAGCOLOR = vec4(emissive, opacity);
+	vec4 bg = TEX2D(background, v_ScreenUV + distortUV);
+	FRAGCOLOR = bg;
 }
 
 )";

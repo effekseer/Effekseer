@@ -127,6 +127,7 @@ struct VS_Output
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
+	float2 ScreenUV : TEXCOORD6;
 };
 
 float4x4 mCamera		: register(c0);
@@ -158,6 +159,7 @@ struct VS_Output
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
+	float2 ScreenUV : TEXCOORD6;
 };
 
 float4x4 mCamera		: register(c0);
@@ -224,6 +226,8 @@ static char* material_sprite_vs_suf2 = R"(
 	Output.VColor = Input.Color;
 	Output.UV1 = uv1;
 	Output.UV2 = uv2;
+	Output.ScreenUV = Output.Position.xy / Output.Position.w;
+	Output.ScreenUV.xy = vec2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
 
 	return Output;
 }
@@ -254,6 +258,7 @@ struct VS_Output
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
+	float2 ScreenUV : TEXCOORD6;
 };
 
 float4x4 mCameraProj		: register( c0 );
@@ -308,6 +313,9 @@ static char* model_vs_suf2 = R"(
 	Output.VColor = modelColor;
 	Output.UV1 = uv1;
 	Output.UV2 = uv2;
+	Output.ScreenUV = Output.Position.xy / Output.Position.w;
+	Output.ScreenUV.xy = vec2(Output.ScreenUV.x + 1.0, 1.0 - Output.ScreenUV.y) * 0.5;
+
 	return Output;
 }
 
@@ -326,6 +334,7 @@ struct PS_Input
 	float3 WorldN : TEXCOORD3;
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
+	float2 ScreenUV : TEXCOORD6;
 };
 
 float4 mUVInversed		: register(c0);
@@ -427,15 +436,11 @@ static char* g_material_ps_suf2_lit = R"(
 
 static char* g_material_ps_suf2_refraction = R"(
 
-	// TODO refraction
-	/*
 	float airRefraction = 1.0;
 	float2 distortUV = 	pixelNormalDir.xy * (refraction - airRefraction);
-	float2 currentUV = hoge + distortUV;
-	Output += tex(background, hoge) * (1.0 - opacity);
-	*/
 
-	float4 Output = float4(emissive, opacity);
+	float4 bg = background_texture.Sample(background_sampler, Input.ScreeenUV + distortUV);
+	float4 Output = bg;
 
 	if(opacityMask <= 0.0f) discard;
 
