@@ -101,7 +101,7 @@ static const char g_material_model_vs_src_suf2[] =
 	v_VColor = a_Color;
 	gl_Position = ProjectionMatrix * vec4(worldPos, 1.0);
 	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
-	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, 1.0 - v_ScreenUV.y) * 0.5;
+	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
 }
 )";
 
@@ -173,9 +173,9 @@ void main() {
 	vec2 uv2 = uv1;
 
 	// NBT
-	vec3 worldNormal = vec3(0.0, 0.0, 1.0);
-	vec3 worldBinormal = vec3(0.0, 1.0, 1.0);
-	vec3 worldTangent = vec3(1.0, 0.0, 1.0);
+	vec3 worldNormal = vec3(0.0, 0.0, 0.0);
+	vec3 worldBinormal = vec3(0.0, 0.0, 0.0);
+	vec3 worldTangent = vec3(0.0, 0.0, 0.0);
 	v_WorldN = worldNormal;
 	v_WorldB = worldBinormal;
 	v_WorldT = worldTangent;
@@ -196,9 +196,10 @@ void main() {
 	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
 	// NBT
-	vec3 worldNormal = atNormal;
-	vec3 worldBinormal = cross(atNormal, atTangent);
-	vec3 worldTangent = atTangent;
+	vec3 worldNormal = (atNormal - vec3(0.5, 0.5, 0.5)) * 2.0;
+	vec3 worldTangent = (atTangent - vec3(0.5, 0.5, 0.5)) * 2.0;
+	vec3 worldBinormal = cross(worldNormal, worldTangent);
+
 	v_WorldN = worldNormal;
 	v_WorldB = worldBinormal;
 	v_WorldT = worldTangent;
@@ -220,7 +221,7 @@ static const char g_material_sprite_vs_src_suf2[] =
 	v_UV1 = uv1;
 	v_UV2 = uv2;
 	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
-	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, 1.0 - v_ScreenUV.y) * 0.5;
+	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
 }
 
 )";
@@ -237,7 +238,7 @@ IN mediump vec3 v_WorldT;
 IN mediump vec3 v_WorldB;
 IN mediump vec2 v_ScreenUV;
 
-uniform vec4 mUVInversed;
+uniform vec4 mUVInversedBack;
 uniform vec4 predefined_uniform;
 
 )";
@@ -342,9 +343,14 @@ static const char g_material_fs_src_suf2_unlit[] =
 static const char g_material_fs_src_suf2_refraction[] =
 	R"(
 	float airRefraction = 1.0;
-	vec2 distortUV = pixelNormalDir.xy * (refraction - airRefraction);
 
-	vec4 bg = TEX2D(background, v_ScreenUV + distortUV);
+	vec3 dir = mat3(cameraMat) * pixelNormalDir;
+	vec2 distortUV = dir.xy * (refraction - airRefraction);
+
+	distortUV += v_ScreenUV;
+	distortUV.y = mUVInversedBack.x + mUVInversedBack.y * distortUV.y;
+
+	vec4 bg = TEX2D(background, distortUV);
 	FRAGCOLOR = bg;
 }
 
@@ -408,7 +414,9 @@ public:
 
 			for (size_t i = Textures.size(); i < Textures.size() + 1; i++)
 			{
-				maincode << "uniform sampler2D " << "background" << ";" << std::endl;
+				maincode << "uniform sampler2D "
+						 << "background"
+						 << ";" << std::endl;
 			}
 
 			if (ShadingModel == ::Effekseer::ShadingModelType::Lit)
@@ -428,6 +436,13 @@ public:
 			}
 			else if (ShadingModel == ::Effekseer::ShadingModelType::Unlit)
 			{
+			}
+
+			if (HasRefraction && stage == 1 && (shaderType == ShaderType::Refraction || shaderType == ShaderType::RefractionModel))
+			{
+				maincode << "uniform mat4 "
+						 << "cameraMat"
+						 << ";" << std::endl;
 			}
 
 			auto baseCode = GenericCode;
@@ -555,7 +570,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 	auto materialData = new ::Effekseer::MaterialData();
 	materialData->IsSimpleVertex = loader.IsSimpleVertex;
 
-		std::array<EffekseerRenderer::ShaderLoader::ShaderType, 2> shaderTypes;
+	std::array<EffekseerRenderer::ShaderLoader::ShaderType, 2> shaderTypes;
 	std::array<EffekseerRenderer::ShaderLoader::ShaderType, 2> shaderTypesModel;
 
 	shaderTypes[0] = EffekseerRenderer::ShaderLoader::ShaderType::Standard;
@@ -641,7 +656,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 		int32_t psOffset = 0;
 
-		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), psOffset);
+		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), psOffset);
 		psOffset += sizeof(float) * 4;
 
 		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), psOffset);
@@ -661,6 +676,12 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 		}
 		else if (loader.ShadingModel == ::Effekseer::ShadingModelType::Unlit)
 		{
+		}
+
+		if (loader.HasRefraction && st == 1)
+		{
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("cameraMat"), psOffset);
+			psOffset += sizeof(float) * 16;
 		}
 
 		for (auto uniform : loader.Uniforms)
@@ -767,7 +788,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 		int32_t psOffset = 0;
 
-		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), psOffset);
+		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), psOffset);
 		psOffset += sizeof(float) * 4;
 
 		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), psOffset);
@@ -787,6 +808,12 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 		}
 		else if (loader.ShadingModel == ::Effekseer::ShadingModelType::Unlit)
 		{
+		}
+
+		if (loader.HasRefraction && st == 1)
+		{
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("cameraMat"), psOffset);
+			psOffset += sizeof(float) * 16;
 		}
 
 		for (auto uniform : loader.Uniforms)

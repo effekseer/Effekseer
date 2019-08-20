@@ -16,7 +16,7 @@ public:
 
 	std::string MergeTemplate(std::string code, std::string uniform_texture) override;
 	std::string GetTypeName(ValueType type) const override;
-	std::string GetUVName() const override;
+	std::string GetUVName(int32_t ind) const override;
 	std::string GetTimeName() const override;
 };
 

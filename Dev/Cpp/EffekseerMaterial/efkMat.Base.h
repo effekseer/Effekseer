@@ -85,6 +85,9 @@ enum class NodeType
 
 	Time,
 
+	VertexNormalWS,
+	PixelNormalWS,
+
 	Fresnel, // not implemented
 
 	Comment,

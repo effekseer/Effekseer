@@ -579,7 +579,14 @@ public:
 
 				renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
 				psOffset += (sizeof(float) * 4);
+			}
 
+			// refraction
+			if (material->RefractionModelUserPtr != nullptr && renderPassInd == 0)
+			{
+				auto mat = renderer->GetCameraMatrix();
+				renderer->SetPixelBufferToShader(&mat, sizeof(float) * 16, psOffset);
+				psOffset += (sizeof(float) * 16);
 			}
 
 			for (size_t i = 0; i < materialParam->MaterialUniforms.size(); i++)

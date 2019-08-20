@@ -433,15 +433,8 @@ namespace EffekseerRenderer
 						Effekseer::Vector3D::Cross(normal, axis, tangent);
 						Effekseer::Vector3D::Normal(normal, normal);
 
-						Effekseer::Color normal_;
-						Effekseer::Color tangent_;
-
-						normal_.R = static_cast<uint8_t>(normal.X * 255);
-						normal_.G = static_cast<uint8_t>(normal.Y * 255);
-						normal_.B = static_cast<uint8_t>(normal.Z * 255);
-						tangent_.R = static_cast<uint8_t>(tangent.X * 255);
-						tangent_.G = static_cast<uint8_t>(tangent.Y * 255);
-						tangent_.B = static_cast<uint8_t>(tangent.Z * 255);
+						Effekseer::Color normal_ = PackVector3DF(normal);
+						Effekseer::Color tangent_ = PackVector3DF(tangent);
 
 						vl_->Normal = normal_;
 						vm_->Normal = normal_;

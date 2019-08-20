@@ -49,7 +49,7 @@ std::string TextExporterHLSL::GetTypeName(ValueType type) const
 	return "";
 }
 
-std::string TextExporterHLSL::GetUVName() const { return "input.UV"; }
+std::string TextExporterHLSL::GetUVName(int32_t ind) const { return "input.UV"; }
 
 std::string TextExporterHLSL::GetTimeName() const { return "ps_time"; }
 

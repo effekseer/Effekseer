@@ -592,6 +592,15 @@ public:
 
 			}
 
+			// refraction
+			if (m_state.MaterialPtr->RefractionUserPtr != nullptr && renderPass == 0)
+			{
+				auto mat = m_renderer->GetCameraMatrix();
+				m_renderer->SetPixelBufferToShader(&mat, sizeof(float) * 16, psOffset);
+				psOffset += (sizeof(float) * 16);
+			}
+
+
 			for (size_t i = 0; i < m_state.MaterialUniformCount; i++)
 			{
 				m_renderer->SetPixelBufferToShader(m_state.MaterialUniforms[i].data(), sizeof(float) * 4, psOffset);

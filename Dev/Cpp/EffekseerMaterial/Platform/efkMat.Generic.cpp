@@ -32,7 +32,13 @@ std::string TextExporterGeneric::GetTypeName(ValueType type) const
 	return "";
 }
 
-std::string TextExporterGeneric::GetUVName() const { return "$UV$"; }
+std::string TextExporterGeneric::GetUVName(int32_t ind) const { 
+	if (ind == 0)
+	{
+		return "$UV$1";
+	}
+	return "$UV$2";
+}
 
 std::string TextExporterGeneric::GetTimeName() const { return "$TIME$"; }
 

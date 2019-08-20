@@ -469,8 +469,6 @@ public:
 			}
 		}
 
-		ShadingModel = Effekseer::ShadingModelType::Lit;
-
 		return true;
 	}
 
