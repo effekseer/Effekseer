@@ -177,17 +177,6 @@ protected:
 		else if (vertexType == VertexType::Dynamic)
 		{
 			auto vs = (DynamicVertex*)verteies;
-			for (auto i = 0; i < 4; i++)
-			{
-				vs[i].Normal.R = static_cast<uint8_t>(0.0f * 255);
-				vs[i].Normal.G = static_cast<uint8_t>(0.0f * 255);
-				vs[i].Normal.B = static_cast<uint8_t>(1.0f * 255);
-
-				vs[i].Tangent.R = static_cast<uint8_t>(1.0f * 255);
-				vs[i].Tangent.G = static_cast<uint8_t>(0.0f * 255);
-				vs[i].Tangent.B = static_cast<uint8_t>(0.0f * 255);
-			}
-
 			vs[0].UV2[0] = 0.0f;
 			vs[0].UV2[1] = 1.0f;
 			vs[1].UV2[0] = 1.0f;
@@ -300,6 +289,16 @@ protected:
 								 parameter.IsRightHand);
 
 			TransformVertexes( verteies, 4, mat_rot );
+
+			if (vertexType == VertexType::Dynamic)
+			{
+				auto vs = (DynamicVertex*)verteies;
+				for (auto i = 0; i < 4; i++)
+				{
+					vs[i].Normal = PackVector3DF(-F);
+					vs[i].Tangent = PackVector3DF(-R);
+				}
+			}
 		}
 		else if( parameter.Billboard == ::Effekseer::BillboardType::Fixed )
 		{
@@ -350,12 +349,8 @@ protected:
 					auto vs = (DynamicVertex*)&verteies[i];
 					auto tangentX = efkVector3D(mat.Value[0][0], mat.Value[0][1], mat.Value[0][2]);
 					auto tangentZ = efkVector3D(mat.Value[2][0], mat.Value[2][1], mat.Value[2][2]);
-					vs->Normal.R = static_cast<uint8_t>(tangentZ.X * 255.0f);
-					vs->Normal.G = static_cast<uint8_t>(tangentZ.Y * 255.0f);
-					vs->Normal.B = static_cast<uint8_t>(tangentZ.Z * 255.0f);
-					vs->Tangent.R = static_cast<uint8_t>(tangentX.X * 255.0f);
-					vs->Tangent.G = static_cast<uint8_t>(tangentX.Y * 255.0f);
-					vs->Tangent.B = static_cast<uint8_t>(tangentX.Z * 255.0f);
+					vs[i].Normal = PackVector3DF(tangentZ);
+					vs[i].Tangent = PackVector3DF(tangentX);
 				}
 			}
 		}

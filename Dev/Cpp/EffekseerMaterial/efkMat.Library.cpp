@@ -28,6 +28,9 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeParamTexture>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstantTexture>>());
 
+	Contents.push_back(std::make_shared<LibraryContent<NodeVertexNormalWS>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodePixelNormalWS>>());
+
 	// Constant
 	Contents.push_back(std::make_shared<LibraryContent<NodeTime>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstant1>>());

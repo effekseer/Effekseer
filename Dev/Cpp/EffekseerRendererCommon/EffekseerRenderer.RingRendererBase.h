@@ -322,13 +322,9 @@ protected:
 				auto tangentCurrent = (tangent0 + tangent1) / 2.0f;
 				auto tangentNext = (tangent1 + tangent2) / 2.0f;
 
-				vs[0].Tangent.R = static_cast<uint8_t>(tangentCurrent.X * 255);
-				vs[0].Tangent.G = static_cast<uint8_t>(tangentCurrent.Y * 255);
-				vs[0].Tangent.B = static_cast<uint8_t>(tangentCurrent.Z * 255);
+				vs[0].Tangent = PackVector3DF(tangentCurrent);
 				vs[1].Tangent = vs[0].Tangent;
-				vs[2].Tangent.R = static_cast<uint8_t>(tangentNext.X * 255);
-				vs[2].Tangent.G = static_cast<uint8_t>(tangentNext.Y * 255);
-				vs[2].Tangent.B = static_cast<uint8_t>(tangentNext.Z * 255);
+				vs[2].Tangent = PackVector3DF(tangentNext);
 				vs[3].Tangent = vs[2].Tangent;
 
 				vs[4].Tangent = vs[0].Tangent;

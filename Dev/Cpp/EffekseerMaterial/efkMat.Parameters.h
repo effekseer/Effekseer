@@ -477,6 +477,12 @@ public:
 		output->Name = "Output";
 		output->Type = ValueType::Float2;
 		OutputPins.push_back(output);
+
+		auto param = std::make_shared<NodePropertyParameter>();
+		param->Name = "Index";
+		param->Type = ValueType::Enum;
+		param->DefaultValues[0] = 0;
+		Properties.push_back(param);
 	}
 };
 
@@ -612,6 +618,38 @@ public:
 	}
 };
 
+class NodeVertexNormalWS : public NodeParameter
+{
+public:
+	NodeVertexNormalWS()
+	{
+		Type = NodeType::VertexNormalWS;
+		TypeName = "VertexNormalWS";
+		// Group = std::vector<std::string>{"Constant"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
+	}
+};
+
+class NodePixelNormalWS : public NodeParameter
+{
+public:
+	NodePixelNormalWS()
+	{
+		Type = NodeType::PixelNormalWS;
+		TypeName = "PixelNormalWS";
+		// Group = std::vector<std::string>{"Constant"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
+	}
+};
+
 class NodeComment : public NodeParameter
 {
 public:
@@ -728,7 +766,6 @@ public:
 		shadingProperty->Type = ValueType::Enum;
 		shadingProperty->DefaultValues.fill(1.0f);
 		Properties.push_back(shadingProperty);
-
 	}
 };
 } // namespace EffekseerMaterial

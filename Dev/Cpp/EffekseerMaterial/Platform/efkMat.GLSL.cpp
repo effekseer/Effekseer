@@ -51,7 +51,7 @@ std::string TextExporterGLSL::GetTypeName(ValueType type) const
 	return "";
 }
 
-std::string TextExporterGLSL::GetUVName() const { return "ps_UV"; }
+std::string TextExporterGLSL::GetUVName(int32_t ind) const { return "ps_UV"; }
 
 std::string TextExporterGLSL::GetTimeName() const { return "ps_time"; }
 

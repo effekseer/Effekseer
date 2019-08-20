@@ -505,12 +505,8 @@ namespace EffekseerRenderer
 
 					if (isFirst_)
 					{
-						vs_[0].Normal.R = static_cast<uint8_t>(normal.X * 255);
-						vs_[0].Normal.G = static_cast<uint8_t>(normal.Y * 255);
-						vs_[0].Normal.B = static_cast<uint8_t>(normal.Z * 255);						
-						vs_[0].Tangent.R = static_cast<uint8_t>(tangent.X * 255);
-						vs_[0].Tangent.G = static_cast<uint8_t>(tangent.Y * 255);
-						vs_[0].Tangent.B = static_cast<uint8_t>(tangent.Z * 255);
+						vs_[0].Normal = PackVector3DF(normal);					
+						vs_[0].Tangent = PackVector3DF(tangent);
 						vs_[1].Tangent = vs_[0].Tangent;
 						vs_[1].Normal = vs_[0].Normal;
 
@@ -518,12 +514,8 @@ namespace EffekseerRenderer
 					}
 					else if (isLast_)
 					{
-						vs_[0].Normal.R = static_cast<uint8_t>(normal.X * 255);
-						vs_[0].Normal.G = static_cast<uint8_t>(normal.Y * 255);
-						vs_[0].Normal.B = static_cast<uint8_t>(normal.Z * 255);
-						vs_[0].Tangent.R = static_cast<uint8_t>(tangent.X * 255);
-						vs_[0].Tangent.G = static_cast<uint8_t>(tangent.Y * 255);
-						vs_[0].Tangent.B = static_cast<uint8_t>(tangent.Z * 255);
+						vs_[0].Normal = PackVector3DF(normal);
+						vs_[0].Tangent = PackVector3DF(tangent);
 						vs_[1].Tangent = vs_[0].Tangent;
 						vs_[1].Normal = vs_[0].Normal;
 
@@ -531,12 +523,8 @@ namespace EffekseerRenderer
 					}
 					else
 					{
-						vs_[0].Normal.R = static_cast<uint8_t>(normal.X * 255);
-						vs_[0].Normal.G = static_cast<uint8_t>(normal.Y * 255);
-						vs_[0].Normal.B = static_cast<uint8_t>(normal.Z * 255);
-						vs_[0].Tangent.R = static_cast<uint8_t>(tangent.X * 255);
-						vs_[0].Tangent.G = static_cast<uint8_t>(tangent.Y * 255);
-						vs_[0].Tangent.B = static_cast<uint8_t>(tangent.Z * 255);
+						vs_[0].Normal = PackVector3DF(normal);
+						vs_[0].Tangent = PackVector3DF(tangent);
 						vs_[1].Tangent = vs_[0].Tangent;
 						vs_[1].Normal = vs_[0].Normal;
 						vs_[2].Tangent = vs_[0].Tangent;

@@ -237,5 +237,15 @@ inline void SwapRGBAToBGRA(Effekseer::Color& color)
 	color.R = temp.B;
 }
 
+inline Effekseer::Color PackVector3DF(const Effekseer::Vector3D& v)
+{
+	Effekseer::Color ret;
+	ret.R = static_cast<uint8_t>((v.X + 1.0f) / 2.0f * 255.0f);
+	ret.G = static_cast<uint8_t>((v.Y + 1.0f) / 2.0f * 255.0f);
+	ret.B = static_cast<uint8_t>((v.Z + 1.0f) / 2.0f * 255.0f);
+	ret.A = 255;
+	return ret;
+}
+
 }
 #endif // __EFFEKSEERRENDERER_COMMON_UTILS_H__

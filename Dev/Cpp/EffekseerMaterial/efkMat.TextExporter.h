@@ -104,7 +104,7 @@ protected:
 
 	virtual std::string GetTypeName(ValueType type) const;
 
-	virtual std::string GetUVName() const;
+	virtual std::string GetUVName(int32_t ind) const;
 
 	virtual std::string GetTimeName() const;
 

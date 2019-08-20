@@ -422,7 +422,8 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		ret << GetTypeName(ValueType::Float3) << " tempNormalDir = ((normalDir -" << GetTypeName(ValueType::Float3)
 			<< " (0.5, 0.5, 0.5)) * 2.0);" << std::endl;
 
-		ret << "pixelNormalDir = tempNormalDir.x * worldTangent + tempNormalDir.y * worldBinormal + tempNormalDir.z * worldNormal;" << std::endl;
+		ret << "pixelNormalDir = tempNormalDir.x * worldTangent + tempNormalDir.y * worldBinormal + tempNormalDir.z * worldNormal;"
+			<< std::endl;
 
 		ret << GetTypeName(ValueType::Float3)
 			<< " worldPositionOffset = " << GetInputArg(ValueType::Float3, outputNode->Inputs[worldPositionOffsetIndex]) << ";"
@@ -457,13 +458,13 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		if (outputNode->Target->Parameter->Type == NodeType::ConstantTexture)
 		{
 			ret << GetTypeName(ValueType::Float4) << " emissive = "
-				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName() << ");" << std::endl;
+				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName(0) << ");" << std::endl;
 			ret << "float opacity = emissive.w;" << std::endl;
 		}
 		else if (outputNode->Target->Parameter->Type == NodeType::ParamTexture)
 		{
 			ret << GetTypeName(ValueType::Float4) << " emissive = "
-				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName() << ");" << std::endl;
+				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName(0) << ");" << std::endl;
 			ret << "float opacity = emissive.w;" << std::endl;
 		}
 		else
@@ -565,7 +566,7 @@ std::string TextExporter::Export(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::UV)
 	{
-		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << GetUVName() << ";" << std::endl;
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << GetUVName(node->Target->Properties[0]->Floats[0]) << ";" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Panner)
@@ -693,6 +694,20 @@ std::string TextExporter::Export(std::shared_ptr<TextExporterNode> node)
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << GetTimeName() << ";" << std::endl;
 	}
 
+	if (node->Target->Parameter->Type == NodeType::VertexNormalWS)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
+			<< "worldNormal"
+			<< ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::PixelNormalWS)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
+			<< "pixelNormalDir"
+			<< ";" << std::endl;
+	}
+
 	return ret.str();
 }
 
@@ -727,7 +742,7 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, TextExporterPin&
 	else
 	{
 		if (pin.Default == DefaultType::UV)
-			return GetUVName();
+			return GetUVName(0);
 
 		if (pin.Default == DefaultType::Time)
 			return GetTimeName();
@@ -824,7 +839,17 @@ std::string TextExporter::GetTypeName(ValueType type) const
 	return "";
 }
 
-std::string TextExporter::GetUVName() const { return "uv"; }
+std::string TextExporter::GetUVName(int32_t ind) const
+{
+	if (ind == 0)
+	{
+		return "uv1";
+	}
+	else
+	{
+		return "uv2";
+	}
+}
 
 std::string TextExporter::GetTimeName() const { return "time"; }
 

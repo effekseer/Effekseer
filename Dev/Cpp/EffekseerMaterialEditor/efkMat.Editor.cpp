@@ -740,22 +740,47 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 		if (type == ValueType::Enum)
 		{
-			const char* items[] = {"Lit", "Unlit"};
-
-			if (ImGui::BeginCombo(name.c_str(), items[static_cast<int>(floatValues[0])]))
+			if (name == std::string("Index"))
 			{
-				for (size_t i = 0; i < 2; i++)
+				const char* items[] = {"1", "2"};
+
+				if (ImGui::BeginCombo(name.c_str(), items[static_cast<int>(floatValues[0])]))
 				{
-					auto isSelected = static_cast<int>(floatValues[0]) == i;
-					if (ImGui::Selectable(items[i], isSelected))
+					for (size_t i = 0; i < 2; i++)
 					{
-						floatValues[0] = i;
-						material->MakeContentDirty(node);
+						auto isSelected = static_cast<int>(floatValues[0]) == i;
+						if (ImGui::Selectable(items[i], isSelected))
+						{
+							floatValues[0] = i;
+							material->ChangeValue(p, floatValues);
+							material->MakeContentDirty(node);
+						}
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
 					}
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
+					ImGui::EndCombo();
 				}
-				ImGui::EndCombo();
+			}
+			else
+			{
+				const char* items[] = {"Lit", "Unlit"};
+
+				if (ImGui::BeginCombo(name.c_str(), items[static_cast<int>(floatValues[0])]))
+				{
+					for (size_t i = 0; i < 2; i++)
+					{
+						auto isSelected = static_cast<int>(floatValues[0]) == i;
+						if (ImGui::Selectable(items[i], isSelected))
+						{
+							floatValues[0] = i;
+							material->ChangeValue(p, floatValues);
+							material->MakeContentDirty(node);
+						}
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
 			}
 		}
 	};

@@ -198,9 +198,9 @@ VS_Output main( const VS_Input Input )
 {
 	VS_Output Output = (VS_Output)0;
 	float3 worldPos = Input.Pos;
-	float3 worldNormal = Input.Normal;
-	float3 worldBinormal = cross(Input.Normal, Input.Tangent);
-	float3 worldTangent = Input.Tangent;
+	float3 worldNormal = (Input.Normal - float3(0.5, 0.5, 0.5)) * 2.0;
+	float3 worldTangent = (Input.Tangent - float3(0.5, 0.5, 0.5)) * 2.0;
+	float3 worldBinormal = cross(worldNormal, worldTangent);
 
 	// UV
 	float2 uv1 = Input.UV1;
@@ -337,7 +337,7 @@ struct PS_Input
 	float2 ScreenUV : TEXCOORD6;
 };
 
-float4 mUVInversed		: register(c0);
+float4 mUVInversedBack	: register(c0);
 float4 predefined_uniform : register(c1);
 
 )";
@@ -437,9 +437,15 @@ static char* g_material_ps_suf2_lit = R"(
 static char* g_material_ps_suf2_refraction = R"(
 
 	float airRefraction = 1.0;
-	float2 distortUV = 	pixelNormalDir.xy * (refraction - airRefraction);
+	float3 dir = mul((float3x3)cameraMat, pixelNormalDir);
+	dir.y = -dir.y;
 
-	float4 bg = background_texture.Sample(background_sampler, Input.ScreenUV + distortUV);
+	float2 distortUV = 	dir.xy * (refraction - airRefraction);
+
+	distortUV += Input.ScreenUV;
+	distortUV.y = mUVInversedBack.x + mUVInversedBack.y * distortUV.y;
+
+	float4 bg = background_texture.Sample(background_sampler, distortUV);
 	float4 Output = bg;
 
 	if(opacityMask <= 0.0f) discard;
@@ -512,6 +518,14 @@ public:
 			}
 			else if (ShadingModel == ::Effekseer::ShadingModelType::Unlit)
 			{
+			}
+
+			if (HasRefraction && stage == 1 && (shaderType == ShaderType::Refraction || shaderType == ShaderType::RefractionModel))
+			{
+				maincode << "float4x4 "
+						 << "cameraMat"
+						 << " : register(c" << cind << ");" << std::endl;
+				cind += 4;
 			}
 
 			for (size_t i = 0; i < Uniforms.size(); i++)
@@ -790,6 +804,11 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 		}
 		else if (loader.ShadingModel == ::Effekseer::ShadingModelType::Unlit)
 		{
+		}
+		
+		if (loader.HasRefraction && st == 1)
+		{
+			pixelUniformSize += sizeof(float) * 16;
 		}
 
 		shader->SetVertexConstantBufferSize(vertexUniformSize);
