@@ -33,7 +33,6 @@ OUT mediump vec3 v_WorldP;
 OUT mediump vec3 v_WorldN;
 OUT mediump vec3 v_WorldT;
 OUT mediump vec3 v_WorldB;
-OUT mediump vec3 v_WorldB;
 OUT mediump vec2 v_ScreenUV;
 
 )"
@@ -343,7 +342,7 @@ static const char g_material_fs_src_suf2_unlit[] =
 static const char g_material_fs_src_suf2_refraction[] =
 	R"(
 	float airRefraction = 1.0;
-	vec2 distortUV = 	pixelNormalDir.xy * (refraction - airRefraction);
+	vec2 distortUV = pixelNormalDir.xy * (refraction - airRefraction);
 
 	vec4 bg = TEX2D(background, v_ScreenUV + distortUV);
 	FRAGCOLOR = bg;
@@ -491,14 +490,7 @@ public:
 
 				if (shaderType == ShaderType::Refraction || shaderType == ShaderType::RefractionModel)
 				{
-					if (ShadingModel == Effekseer::ShadingModelType::Lit)
-					{
-						maincode << g_material_fs_src_suf2_lit;
-					}
-					else if (ShadingModel == Effekseer::ShadingModelType::Unlit)
-					{
-						maincode << g_material_fs_src_suf2_unlit;
-					}
+					maincode << g_material_fs_src_suf2_refraction;
 				}
 				else
 				{
