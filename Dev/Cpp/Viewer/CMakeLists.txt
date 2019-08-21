@@ -209,7 +209,12 @@ target_link_libraries(
 	optimized glfw3
 	optimized OpenSoundMixer
 )
-add_dependencies(Viewer ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glew ExternalProject_glfw ExternalProject_OpenSoundMixer)
+
+add_dependencies(Viewer ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glfw ExternalProject_OpenSoundMixer)
+
+if(NOT APPLE)
+    add_dependencies(Viewer ExternalProject_glew)
+endif()
 
 add_executable(ViewerTest ${cpps} ${hs} test.cpp)
 target_link_directories(
@@ -224,7 +229,11 @@ target_link_libraries(
 	optimized glfw3
 	optimized OpenSoundMixer
 )
-add_dependencies(ViewerTest ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glew ExternalProject_glfw ExternalProject_OpenSoundMixer)
+add_dependencies(ViewerTest ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glfw ExternalProject_OpenSoundMixer)
+
+if(NOT APPLE)
+    add_dependencies(ViewerTest ExternalProject_glew)
+endif()
 
 link_directories(
 	
@@ -280,7 +289,7 @@ target_link_libraries(
 	debug gdd
 	debug GLEWd
 	optimized gd
-	optimized GLEW
+	# optimized GLEW
 	png
 	z
 	${OpenAL_LIBRARY}
@@ -301,7 +310,7 @@ target_link_libraries(
 	debug gdd
 	debug GLEWd
 	optimized gd
-	optimized GLEW
+	# optimized GLEW
 	png
 	z
 	${OpenAL_LIBRARY}
