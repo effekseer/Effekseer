@@ -1204,11 +1204,11 @@ public:
 
 		pixels_out.resize((g_renderer->GuideWidth * recordingParameter_.HorizontalCount) * (g_renderer->GuideHeight * yCount));
 
-		if (recordingParameter_.Transparence == TransparenceType::Original)
+		if (recordingParameter_.Transparence == TransparenceType::None)
 		{
 			for (auto& p : pixels_out)
 			{
-				p = Effekseer::Color(0, 0, 0, 0);
+				p = Effekseer::Color(0, 0, 0, 255);
 			}
 		}
 		else
@@ -1216,7 +1216,7 @@ public:
 		{
 			for (auto& p : pixels_out)
 			{
-				p = Effekseer::Color(0, 0, 0, 255);
+				p = Effekseer::Color(0, 0, 0, 0);
 			}
 		}
 
@@ -1378,7 +1378,7 @@ bool Native::Record(RecordingParameter& recordingParameter)
 		char path8_dst[256];
 		char16_t* path_[256];
 		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)path);
-		sprintf(path8_dst, "%s_add%s", pathWOE, ext_);
+		sprintf(path8_dst, "%s_add", pathWOE);
 		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 256, (const int8_t*)path8_dst);
 		recordingParameter2.SetPath((const char16_t*)path_);
 	}
