@@ -1378,6 +1378,7 @@ bool Native::Record(RecordingParameter& recordingParameter)
 		char path8_dst[256];
 		char16_t* path_[256];
 		Effekseer::ConvertUtf16ToUtf8((int8_t*)pathWOE, 256, (const int16_t*)path);
+		Effekseer::ConvertUtf16ToUtf8((int8_t*)ext_, 256, (const int16_t*)recordingParameter2.GetExt());
 		sprintf(path8_dst, "%s_add%s", pathWOE, ext_);
 		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 256, (const int8_t*)path8_dst);
 		recordingParameter2.SetPath((const char16_t*)path_);
