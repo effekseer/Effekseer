@@ -728,13 +728,37 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 				if (result == NFD_OKAY)
 				{
-					p->Str = outPath;
+					material->ChangeValue(p, outPath);
+					material->FindTexture(p->Str.c_str());
 				}
 				else
 				{
 				}
 
 				material->MakeContentDirty(node);
+			}
+
+			if (p->Str != "")
+			{
+				auto texture = material->FindTexture(p->Str.c_str());
+
+				const char* items[] = {"Color", "Value"};
+
+				if (ImGui::BeginCombo("Type", items[static_cast<int>(texture->Type)]))
+				{
+					for (size_t i = 0; i < 2; i++)
+					{
+						auto isSelected = static_cast<int>(texture->Type) == i;
+						if (ImGui::Selectable(items[i], isSelected))
+						{
+							material->ChangeValueTextureType(texture, static_cast<TextureType>(i));
+							material->MakeContentDirty(node);
+						}
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
 			}
 		}
 

@@ -705,6 +705,8 @@ const std::vector<std::shared_ptr<Node>>& Material::GetNodes() const { return no
 
 const std::vector<std::shared_ptr<Link>>& Material::GetLinks() const { return links; }
 
+const std::map<std::string, std::shared_ptr<TextureInfo>> Material::GetTextures() const { return textures; }
+
 std::shared_ptr<Node> Material::FindNode(uint64_t guid)
 {
 	for (auto node : nodes)
@@ -743,6 +745,27 @@ std::shared_ptr<Pin> Material::FindPin(uint64_t guid)
 	}
 
 	return nullptr;
+}
+
+std::shared_ptr<TextureInfo> Material::FindTexture(const char* path)
+{
+
+	auto key = std::string(path);
+
+	auto kv = textures.find(path);
+
+	if (kv != textures.end())
+	{
+		return kv->second;
+	}
+
+	auto texture = std::shared_ptr<TextureInfo>();
+
+	texture->Type = TextureType::Color;
+	texture->Path = path;
+	textures[key] = texture;
+
+	return texture;
 }
 
 std::string Material::Copy(std::vector<std::shared_ptr<Node>> nodes, const char* basePath)
@@ -1028,6 +1051,17 @@ void Material::ChangeValue(std::shared_ptr<NodeProperty> prop, std::string value
 	CommandManager::GetInstance()->Execute(command);
 }
 
+void Material::ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, TextureType type)
+{
+	auto value_old = prop->Type;
+	auto value_new = type;
+
+	auto command = std::make_shared<DelegateCommand>([prop, value_new]() -> void { prop->Type = value_new; },
+													 [prop, value_old]() -> void { prop->Type = value_old; });
+
+	CommandManager::GetInstance()->Execute(command);
+}
+
 void Material::MakeDirty(std::shared_ptr<Node> node)
 {
 	node->isDirtied = true;
@@ -1080,6 +1114,7 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 
 	nodes.clear();
 	links.clear();
+	textures.clear();
 
 	picojson::value nodes_obj = root_.get("Nodes");
 	picojson::value links_obj = root_.get("Links");
@@ -1191,12 +1226,34 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 			links.push_back(link);
 		}
 	}
+
+	picojson::value textures_obj = root_.get("Textures");
+	
+	if (textures_obj.is<picojson::array>())
+	{
+		picojson::array textures_ = textures_obj.get<picojson::array>();
+
+		for (auto texture_ : textures_)
+		{
+			auto path_obj = texture_.get("Path");
+			auto path = path_obj.get<std::string>();
+			auto absolute = Absolute(path, basePath);
+
+			auto valueTexture_obj = texture_.get("Type");
+			auto valueTexture = path_obj.get<double>();
+
+			textures[absolute]->Path = absolute;
+			textures[absolute]->Type = static_cast<TextureType>(static_cast<int>(valueTexture));
+		}
+	}
 }
 
 std::string Material::SaveAsStr(const char* basePath)
 {
 	picojson::object root_;
 	picojson::array nodes_;
+
+	std::unordered_set<std::string> enabledTextures;
 
 	root_.insert(std::make_pair("Project", picojson::value("EffekseerMaterial")));
 
@@ -1314,6 +1371,7 @@ std::string Material::SaveAsStr(const char* basePath)
 				auto absStr = p->Str;
 				auto relative = Relative(absStr, basePath);
 				prop_.insert(std::make_pair("Value", picojson::value(relative)));
+				enabledTextures.insert(relative);
 			}
 			else if (pp->Type == ValueType::Enum)
 			{
@@ -1352,6 +1410,28 @@ std::string Material::SaveAsStr(const char* basePath)
 	}
 
 	root_.insert(std::make_pair("Links", picojson::value(links_)));
+
+	picojson::array textures_;
+
+	for (auto texture : textures)
+	{
+		picojson::object texture_;
+
+		auto absStr = texture.second->Path;
+		auto relative = Relative(absStr, basePath);
+
+		if (enabledTextures.find(relative) == enabledTextures.end())
+		{
+			continue;
+		}
+
+		texture_.insert(std::make_pair("Path", picojson::value(relative)));
+		texture_.insert(std::make_pair("Type", picojson::value(static_cast<double>(texture.second->Type))));
+
+		textures_.push_back(picojson::value(texture_));
+	}
+
+	root_.insert(std::make_pair("Textures", picojson::value(textures_)));
 
 	auto str_main = picojson::value(root_).serialize();
 
@@ -1465,7 +1545,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		bwParam.Push(defaultPath_);
 		bwParam.Push(param->Index);
 		bwParam.Push(param->IsParam);
-		bwParam.Push(param->IsValueTexture);
+		bwParam.Push(param->Type);
 	}
 
 	bwParam.Push(static_cast<int32_t>(result.Uniforms.size()));

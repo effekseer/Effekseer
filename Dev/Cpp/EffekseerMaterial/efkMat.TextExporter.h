@@ -26,7 +26,7 @@ struct TextExporterTexture
 	int32_t Index;
 	std::string DefaultPath;
 	bool IsParam = false;
-	bool IsValueTexture = false;
+	TextureType Type = TextureType::Color;
 };
 
 struct TextExporterPin

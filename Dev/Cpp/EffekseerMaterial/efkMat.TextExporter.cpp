@@ -65,6 +65,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->Name = paramName;
 						extractedTexture->DefaultPath = path;
 						extractedTexture->IsParam = false;
+						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
 						extractedTextures[keyStr] = extractedTexture;
 					}
 
@@ -89,6 +90,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->Name = paramName;
 						extractedTexture->DefaultPath = path;
 						extractedTexture->IsParam = true;
+						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
 						extractedTextures[keyStr] = extractedTexture;
 					}
 

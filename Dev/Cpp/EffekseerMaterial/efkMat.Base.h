@@ -19,6 +19,13 @@
 
 namespace EffekseerMaterial
 {
+
+enum class TextureType
+{
+	Color,
+	Value,
+};
+
 enum class ConnectResultType
 {
 	OK,

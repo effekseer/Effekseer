@@ -97,6 +97,17 @@ public:
 	Node() {}
 };
 
+class TextureInfo : public std::enable_shared_from_this<TextureInfo>
+{
+public:
+	TextureInfo() {}
+
+	virtual ~TextureInfo() {}
+
+	std::string Path;
+	TextureType Type = TextureType::Color;
+};
+
 class Material : public std::enable_shared_from_this<Material>
 {
 private:
@@ -104,6 +115,8 @@ private:
 
 	std::vector<std::shared_ptr<Node>> nodes;
 	std::vector<std::shared_ptr<Link>> links;
+	std::map<std::string, std::shared_ptr<TextureInfo>> textures;
+
 	uint64_t nextGUID = 0xff;
 
 	uint64_t GetIDAndNext();
@@ -141,11 +154,15 @@ public:
 
 	const std::vector<std::shared_ptr<Link>>& GetLinks() const;
 
+	const std::map<std::string, std::shared_ptr<TextureInfo>> GetTextures() const;
+
 	std::shared_ptr<Node> FindNode(uint64_t guid);
 
 	std::shared_ptr<Link> FindLink(uint64_t guid);
 
 	std::shared_ptr<Pin> FindPin(uint64_t guid);
+
+	std::shared_ptr<TextureInfo> FindTexture(const char* path);
 
 	std::string Copy(std::vector<std::shared_ptr<Node>> nodes, const char* basePath);
 
@@ -154,6 +171,8 @@ public:
 	void ChangeValue(std::shared_ptr<NodeProperty> prop, std::array<float, 4> value);
 
 	void ChangeValue(std::shared_ptr<NodeProperty> prop, std::string value);
+
+	void ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, TextureType type);
 
 	void MakeDirty(std::shared_ptr<Node> node);
 
