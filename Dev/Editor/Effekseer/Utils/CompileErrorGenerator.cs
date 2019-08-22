@@ -85,28 +85,32 @@ namespace Effekseer.Utils
 
 			for(int i = 0; i < sep.Count; i++)
 			{
-				if(i == sep.Count - 1)
+				if(ind < sep[i])
 				{
 					line = i + 1;
-					pos = ind - sep[i];
+
+					if (i == 0)
+					{
+						pos = ind + 1;
+					}
+					else
+					{
+						pos = ind - sep[i - 1];
+					}
 					return;
 				}
-
-				if(sep[i] <= ind && ind < sep[i + 1])
-				{
-					line = i + 1;
-					pos = ind - sep[i];
-				}
 			}
 
-			if(sep.Count == 0)
+			if (sep.Count == 0)
 			{
-				line = 0;
-				pos = ind - line + 1;
+				line = 1;
+				pos = ind + 1;
 			}
-
-			line++;
+			else
+			{
+				line = sep.Count + 1;
+				pos = ind - sep[sep.Count - 1];
+			}
 		}
-
 	}
 }
