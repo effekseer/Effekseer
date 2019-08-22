@@ -246,6 +246,8 @@ uniform vec4 predefined_uniform;
 static const char g_material_fs_src_suf1[] =
 	R"(
 
+#ifdef __MATERIAL_LIT__
+
 float saturate(float v)
 {
 	return max(min(v, 1.0), 0.0);
@@ -303,6 +305,8 @@ vec3 calcDirectionalLightDiffuseColor(vec3 diffuseColor, vec3 normal, vec3 light
 	color.xyz = color.xyz * diffuseColor.xyz;
 	return color;
 }
+
+#endif
 
 void main()
 {
@@ -433,6 +437,8 @@ public:
 				maincode << "uniform vec4 "
 						 << "cameraPosition"
 						 << ";" << std::endl;
+
+				maincode << "#define __MATERIAL_LIT__ 1" << std::endl;
 			}
 			else if (ShadingModel == ::Effekseer::ShadingModelType::Unlit)
 			{
@@ -451,7 +457,7 @@ public:
 			baseCode = Replace(baseCode, "$F3$", "vec3");
 			baseCode = Replace(baseCode, "$F4$", "vec4");
 			baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
-			baseCode = Replace(baseCode, "$UV$", "uv1.xy");
+			baseCode = Replace(baseCode, "$UV$", "uv");
 			baseCode = Replace(baseCode, "$MOD", "mod");
 			baseCode = Replace(baseCode, "$SUFFIX", "");
 

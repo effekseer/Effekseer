@@ -211,6 +211,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture = std::make_shared<TextExporterTexture>();
 						extractedTexture->Name = paramName;
 						extractedTexture->DefaultPath = path;
+						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
 						extractedTextures[keyStr] = extractedTexture;
 					}
 

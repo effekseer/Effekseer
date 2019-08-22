@@ -344,6 +344,8 @@ float4 predefined_uniform : register(c1);
 
 static char* g_material_ps_suf1 = R"(
 
+#ifdef __MATERIAL_LIT__
+
 float calcD_GGX(float roughness, float dotNH)
 {
 	float alpha = roughness*roughness;
@@ -397,6 +399,7 @@ float3 calcDirectionalLightDiffuseColor(float3 diffuseColor, float3 normal, floa
 	return color;
 }
 
+#endif
 
 float4 main( const PS_Input Input ) : SV_Target
 {
@@ -515,6 +518,8 @@ public:
 						 << "lightAmbientColor"
 						 << " : register(c" << cind << ");" << std::endl;
 				cind++;
+
+				maincode << "#define __MATERIAL_LIT__ 1" << std::endl;
 			}
 			else if (ShadingModel == ::Effekseer::ShadingModelType::Unlit)
 			{
@@ -555,7 +560,7 @@ public:
 			baseCode = Replace(baseCode, "$F3$", "float3");
 			baseCode = Replace(baseCode, "$F4$", "float4");
 			baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
-			baseCode = Replace(baseCode, "$UV$", "uv1");
+			baseCode = Replace(baseCode, "$UV$", "uv");
 			baseCode = Replace(baseCode, "$MOD", "fmod");
 			baseCode = Replace(baseCode, "$SUFFIX", "");
 

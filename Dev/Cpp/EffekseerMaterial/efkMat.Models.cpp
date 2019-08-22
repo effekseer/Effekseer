@@ -759,7 +759,7 @@ std::shared_ptr<TextureInfo> Material::FindTexture(const char* path)
 		return kv->second;
 	}
 
-	auto texture = std::shared_ptr<TextureInfo>();
+	auto texture = std::make_shared<TextureInfo>();
 
 	texture->Type = TextureType::Color;
 	texture->Path = path;
@@ -1228,7 +1228,7 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 	}
 
 	picojson::value textures_obj = root_.get("Textures");
-	
+
 	if (textures_obj.is<picojson::array>())
 	{
 		picojson::array textures_ = textures_obj.get<picojson::array>();
@@ -1239,11 +1239,13 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 			auto path = path_obj.get<std::string>();
 			auto absolute = Absolute(path, basePath);
 
-			auto valueTexture_obj = texture_.get("Type");
-			auto valueTexture = path_obj.get<double>();
+			auto textureType_obj = texture_.get("Type");
+			auto textureType = textureType_obj.get<double>();
 
-			textures[absolute]->Path = absolute;
-			textures[absolute]->Type = static_cast<TextureType>(static_cast<int>(valueTexture));
+			auto texture = std::make_shared<TextureInfo>();
+			texture->Path = absolute;
+			texture->Type = static_cast<TextureType>(static_cast<int>(textureType));
+			textures[absolute] = texture;
 		}
 	}
 }

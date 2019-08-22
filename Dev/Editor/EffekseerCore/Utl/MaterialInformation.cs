@@ -7,6 +7,11 @@ using System.IO;
 
 namespace Effekseer.Utl
 {
+	public enum TextureType : int
+	{
+		Color,
+		Value,
+	}
 	public class MaterialInformation
 	{
 		public TextureInformation[] Textures = new TextureInformation[0];
@@ -21,7 +26,6 @@ namespace Effekseer.Utl
 			System.IO.FileStream fs = null;
 			if (!System.IO.File.Exists(path)) return false;
 
-#if MATERIAL_ENABLED
 			try
 			{
 				fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
@@ -97,7 +101,9 @@ namespace Effekseer.Utl
 						reader.Get(ref info.DefaultPath);
 						reader.Get(ref info.Index);
 						reader.Get(ref info.IsParam);
-						reader.Get(ref info.IsValueTexture);
+						int textureType = 0;
+						reader.Get(ref textureType);
+						info.Type = (TextureType)textureType;
 
 						// convert a path into absolute
 						if (string.IsNullOrEmpty(info.DefaultPath))
@@ -106,9 +112,19 @@ namespace Effekseer.Utl
 						}
 						else
 						{
+							Func<string, string> escape = (string s) =>
+							{
+								return s.Replace("%", "%25");
+							};
+
+							Func<string, string> unescape = (string s) =>
+							{
+								return s.Replace("%25", "%");
+							};
+
 							Uri basePath = new Uri(path);
 							Uri targetPath = new Uri(basePath, info.DefaultPath);
-							info.DefaultPath = targetPath.ToString();
+							info.DefaultPath = targetPath.AbsolutePath;
 						}
 
 						textures.Add(info);
@@ -138,7 +154,7 @@ namespace Effekseer.Utl
 					Uniforms = uniforms.ToArray();
 				}
 			}
-#endif
+
 			return true;
 		}
 
@@ -148,7 +164,7 @@ namespace Effekseer.Utl
 			public int Index;
 			public string DefaultPath;
 			public bool IsParam;
-			public bool IsValueTexture;
+			public TextureType Type = TextureType.Color;
 		}
 
 		public class UniformInformation

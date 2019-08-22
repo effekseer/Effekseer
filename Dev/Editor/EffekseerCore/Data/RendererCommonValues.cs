@@ -193,7 +193,7 @@ namespace Effekseer.Data
 			{
 				var key = CreateKey(texture);
 
-				if(texture.IsValueTexture)
+				if(texture.Type == Utl.TextureType.Value)
 				{
 					if (keyToValues.ContainsKey(key))
 					{
@@ -434,7 +434,7 @@ namespace Effekseer.Data
 
 		internal RendererCommonValues()
 		{
-#if MATERIAL_ENABLED
+#if DEBUG
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
 			MaterialFile = new MaterialFileParameter();
 #endif
@@ -650,7 +650,7 @@ namespace Effekseer.Data
 			}
 		}
 
-#if MATERIAL_ENABLED
+#if DEBUG
 		
 		public enum MaterialType : int
 		{
