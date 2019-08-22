@@ -434,7 +434,7 @@ namespace Effekseer.Data
 
 		internal RendererCommonValues()
 		{
-#if DEBUG
+#if MATERIAL_ENABLED
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
 			MaterialFile = new MaterialFileParameter();
 #endif
