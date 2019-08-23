@@ -396,6 +396,8 @@ public:
 	\~Japanese	設定されたテクスチャはレンダラーによって削除されない。この関数はDirectX9、DirectX11、OpenGL以外で使用できる。
 	*/
 	virtual void SetBackgroundTexture(::Effekseer::TextureData* textureData);
+
+
 };
 
 //----------------------------------------------------------------------------------

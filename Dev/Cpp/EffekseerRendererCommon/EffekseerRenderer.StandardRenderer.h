@@ -362,7 +362,13 @@ public:
 
 	void Rendering_(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj, int32_t bufferOffset, int32_t bufferSize, int32_t vertexSize_, int32_t renderPass)
 	{
-		if (m_state.Distortion)
+		bool isBackgroundRequired = false;
+		
+		isBackgroundRequired |= m_state.Distortion;
+		isBackgroundRequired |=
+			(m_state.MaterialPtr != nullptr && m_state.MaterialPtr->IsRefractionRequired && renderPass == 0);
+
+		if (isBackgroundRequired)
 		{
 			auto callback = m_renderer->GetDistortingCallback();
 			if (callback != nullptr)
@@ -374,7 +380,7 @@ public:
 			}
 		}
 
-		if (m_state.Distortion && m_renderer->GetBackground() == 0)
+		if (isBackgroundRequired && m_renderer->GetBackground() == 0)
 		{
 			return;
 		}
@@ -423,7 +429,7 @@ public:
 
 		if (m_state.MaterialPtr != nullptr)
 		{
-			if (m_state.MaterialPtr->RefractionUserPtr != nullptr)
+			if (m_state.MaterialPtr->IsRefractionRequired != nullptr)
 			{
 				if (renderPass == 0)
 				{
@@ -445,6 +451,9 @@ public:
 			}
 			
 			// validate
+			if (shader_ == nullptr)
+				return;
+			
 			if (m_state.MaterialPtr->UniformCount != m_state.MaterialUniformCount)
 				return;
 

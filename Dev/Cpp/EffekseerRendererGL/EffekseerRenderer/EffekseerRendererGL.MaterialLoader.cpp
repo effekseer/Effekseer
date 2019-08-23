@@ -575,6 +575,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 	auto materialData = new ::Effekseer::MaterialData();
 	materialData->IsSimpleVertex = loader.IsSimpleVertex;
+	materialData->IsRefractionRequired = loader.HasRefraction;
 
 	std::array<EffekseerRenderer::ShaderLoader::ShaderType, 2> shaderTypes;
 	std::array<EffekseerRenderer::ShaderLoader::ShaderType, 2> shaderTypesModel;

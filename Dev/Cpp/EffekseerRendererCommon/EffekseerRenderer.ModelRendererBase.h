@@ -253,7 +253,7 @@ public:
 		if (param.MaterialParameterPtr != nullptr)
 		{
 			auto materialData = param.EffectPointer->GetMaterial(param.MaterialParameterPtr->MaterialIndex);
-			if (materialData != nullptr && materialData->RefractionModelUserPtr != nullptr)
+			if (materialData != nullptr && materialData->IsRefractionRequired != nullptr)
 			{
 				// refraction, standard
 				renderPassCount = 2;
@@ -296,10 +296,20 @@ public:
 		MODEL* model = (MODEL*) param.EffectPointer->GetModel(param.ModelIndex);
 		if (model == NULL) return;
 		
-		auto distortion = param.Distortion;
-		if (distortion && renderer->GetBackground() == 0) return;
+		bool isBackgroundRequired = false;
 
-		if (distortion)
+		isBackgroundRequired |= param.Distortion;
+
+		if (param.MaterialParameterPtr != nullptr)
+		{
+			auto materialData = param.EffectPointer->GetMaterial(param.MaterialParameterPtr->MaterialIndex);
+			if (materialData != nullptr && materialData->IsRefractionRequired && renderPassInd == 0)
+			{
+				isBackgroundRequired = true;
+			}
+		}
+
+		if (isBackgroundRequired)
 		{
 			auto callback = renderer->GetDistortingCallback();
 			if (callback != nullptr)
@@ -310,6 +320,11 @@ public:
 				}
 			}
 		}
+
+		auto distortion = param.Distortion;
+
+		if (isBackgroundRequired && renderer->GetBackground() == 0)
+			return;
 
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
 		state.DepthTest = param.ZTest;
@@ -327,7 +342,7 @@ public:
 		{
 			material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
 
-			if (material != nullptr && material->RefractionModelUserPtr != nullptr)
+			if (material != nullptr && material->IsRefractionRequired)
 			{
 				if (renderPassInd == 0)
 				{
@@ -344,6 +359,11 @@ public:
 			}
 
 			// validate
+			if (shader_ == nullptr)
+			{
+				return;
+			}
+
 			if (material->TextureCount != materialParam->MaterialTextures.size() ||
 				material->UniformCount != materialParam->MaterialUniforms.size())
 			{
