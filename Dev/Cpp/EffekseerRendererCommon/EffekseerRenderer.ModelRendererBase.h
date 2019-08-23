@@ -253,7 +253,7 @@ public:
 		if (param.MaterialParameterPtr != nullptr)
 		{
 			auto materialData = param.EffectPointer->GetMaterial(param.MaterialParameterPtr->MaterialIndex);
-			if (materialData != nullptr && materialData->IsRefractionRequired != nullptr)
+			if (materialData != nullptr && materialData->IsRefractionRequired)
 			{
 				// refraction, standard
 				renderPassCount = 2;

@@ -429,7 +429,7 @@ public:
 
 		if (m_state.MaterialPtr != nullptr)
 		{
-			if (m_state.MaterialPtr->IsRefractionRequired != nullptr)
+			if (m_state.MaterialPtr->IsRefractionRequired)
 			{
 				if (renderPass == 0)
 				{
