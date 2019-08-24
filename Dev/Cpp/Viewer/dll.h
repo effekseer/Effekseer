@@ -12,6 +12,7 @@
 
 #include "GUI/efk.ImageResource.h"
 #include "efk.Base.h"
+#include "../IPC/IPC.h"
 
 enum class DistortionType
 {
@@ -214,6 +215,8 @@ private:
 	::Effekseer::Vector3D m_rootRotation;
 	::Effekseer::Vector3D m_rootScale;
 
+	std::shared_ptr<IPC::CommandQueue> commandQueue_;
+
 	::Effekseer::Effect* GetEffect();
 
 public:
@@ -320,6 +323,10 @@ public:
 	void SetBloomParameters(bool enabled, float intensity, float threshold, float softKnee);
 
 	void SetTonemapParameters(int32_t algorithm, float exposure);
+
+	void OpenOrCreateMaterial(const char16_t* path);
+
+	void TerminateMaterialEditor();
 
 #if !SWIG
 	EffekseerRenderer::Renderer* GetRenderer();

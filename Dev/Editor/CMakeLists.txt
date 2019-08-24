@@ -56,7 +56,8 @@ file(GLOB files
     Effekseer/Plugin/*.cs
     Effekseer/Properties/*.cs
     Effekseer/swig/*.cs
-    Effekseer/Utils/*.cs	
+    Effekseer/Utils/*.cs
+	Effekseer/Process/*.cs
 	) 
 
 add_executable(Effekseer

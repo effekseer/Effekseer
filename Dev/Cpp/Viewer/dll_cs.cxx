@@ -2774,6 +2774,24 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetTonemapParameters___
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_OpenOrCreateMaterial___(void * jarg1, char16_t * jarg2) {
+  Native *arg1 = (Native *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  
+  arg1 = (Native *)jarg1; 
+  arg2 = (char16_t *)jarg2; 
+  (arg1)->OpenOrCreateMaterial((char16_t const *)arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_TerminateMaterialEditor___(void * jarg1) {
+  Native *arg1 = (Native *) 0 ;
+  
+  arg1 = (Native *)jarg1; 
+  (arg1)->TerminateMaterialEditor();
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GUIManagerCallback___() {
   void * jresult ;
   efk::GUIManagerCallback *result = 0 ;

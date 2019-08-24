@@ -283,7 +283,6 @@ namespace Effekseer.Data
 
 	public class RendererCommonValues
 	{
-#if MATERIAL_ENABLED
 		[Selector(ID = 3)]
 		[Name(language = Language.Japanese, value = "マテリアル")]
 		[Name(language = Language.English, value = "Material")]
@@ -292,7 +291,6 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
-#endif
 
 		[Selected(ID = 3, Value = 0)]
 		[Name(language = Language.Japanese, value = "色/歪み画像")]
@@ -305,7 +303,6 @@ namespace Effekseer.Data
 			private set;
 		}
 
-#if MATERIAL_ENABLED
 		[Selected(ID = 3, Value = (int)MaterialType.File)]
 		[IO(Export = true)]
 		public MaterialFileParameter MaterialFile
@@ -313,7 +310,6 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
-#endif
 
 		[Name(language = Language.Japanese, value = "ブレンド")]
 		[Name(language = Language.English, value = "Blend")]
@@ -434,10 +430,9 @@ namespace Effekseer.Data
 
 		internal RendererCommonValues()
 		{
-#if MATERIAL_ENABLED
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
 			MaterialFile = new MaterialFileParameter();
-#endif
+
 			ColorTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
 			
 			AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);

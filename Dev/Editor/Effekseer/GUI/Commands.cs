@@ -503,7 +503,7 @@ namespace Effekseer.GUI
 
 			if (File.Exists(helpPath))
 			{
-				Process.Start(helpPath);
+				System.Diagnostics.Process.Start(helpPath);
 			}
 
 			return true;

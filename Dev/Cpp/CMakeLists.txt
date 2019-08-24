@@ -358,7 +358,12 @@ install(
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib)
 
+if (BUILD_VIEWER OR WIN32)
+	add_subdirectory("IPC")
+endif()
+
 if (BUILD_VIEWER)
+
 	add_subdirectory("Viewer")
 endif()
 

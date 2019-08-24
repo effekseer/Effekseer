@@ -804,6 +804,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_SetTonemapParameters___")]
   public static extern void Native_SetTonemapParameters(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, float jarg3);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_OpenOrCreateMaterial___")]
+  public static extern void Native_OpenOrCreateMaterial(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_Native_TerminateMaterialEditor___")]
+  public static extern void Native_TerminateMaterialEditor(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_GUIManagerCallback___")]
   public static extern global::System.IntPtr new_GUIManagerCallback();
 

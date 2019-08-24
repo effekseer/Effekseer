@@ -487,9 +487,19 @@ void Native::ModelLoader::Unload(void* data)
 
 ::Effekseer::Effect* Native::GetEffect() { return g_effect; }
 
-Native::Native() : m_time(0), m_step(1) { g_client = Effekseer::Client::Create(); }
+Native::Native() : m_time(0), m_step(1)
+{
+	g_client = Effekseer::Client::Create();
+	commandQueue_ = std::make_shared<IPC::CommandQueue>();
+	commandQueue_->Start("EffekseerCommand", 1024 * 1024);
+}
 
-Native::~Native() { ES_SAFE_DELETE(g_client); }
+Native::~Native()
+{
+	ES_SAFE_DELETE(g_client);
+	commandQueue_->Stop();
+	commandQueue_.reset();
+}
 
 bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
 {
@@ -1178,7 +1188,6 @@ public:
 		sprintf(path8_dst, "%s.%d%s", pathWOE, index, ext_);
 		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)path8_dst);
 
-
 		efk::PNGHelper pngHelper;
 		pngHelper.Save((char16_t*)path_, g_renderer->GuideWidth, g_renderer->GuideHeight, pixels.data());
 	}
@@ -1238,10 +1247,8 @@ public:
 		Effekseer::ConvertUtf8ToUtf16((int16_t*)path_, 260, (const int8_t*)path8_dst);
 
 		efk::PNGHelper pngHelper;
-		pngHelper.Save(path_,
-					   g_renderer->GuideWidth * recordingParameter_.HorizontalCount,
-					   g_renderer->GuideHeight * yCount,
-					   pixels_out.data());
+		pngHelper.Save(
+			path_, g_renderer->GuideWidth * recordingParameter_.HorizontalCount, g_renderer->GuideHeight * yCount, pixels_out.data());
 	}
 
 	void OnEndFrameRecord(int index, std::vector<Effekseer::Color>& pixels) override
@@ -1801,7 +1808,7 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 	}
 #endif
 
-auto textureData = loader->Load(path, Effekseer::TextureType::Color);
+	auto textureData = loader->Load(path, Effekseer::TextureType::Color);
 
 	if (textureData != nullptr)
 	{
@@ -1894,6 +1901,25 @@ void Native::SetTonemapParameters(int32_t algorithm, float exposure)
 		tonemap->SetEnabled(algorithm != 0);
 		tonemap->SetParameters((efk::TonemapEffect::Algorithm)algorithm, exposure);
 	}
+}
+
+void Native::OpenOrCreateMaterial(const char16_t* path)
+{
+	char u8path[260];
+
+	Effekseer::ConvertUtf16ToUtf8((int8_t*)u8path, 260, (int16_t*)path);
+
+	IPC::CommandData commandData;
+	commandData.Type = IPC::CommandType::OpenOrCreateMaterial;
+	commandData.SetStr(u8path);
+	commandQueue_->Enqueue(&commandData);
+}
+
+void Native::TerminateMaterialEditor() 
+{
+	IPC::CommandData commandData;
+	commandData.Type = IPC::CommandType::Terminate;
+	commandQueue_->Enqueue(&commandData);
 }
 
 EffekseerRenderer::Renderer* Native::GetRenderer() { return g_renderer->GetRenderer(); }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-#if MATERIAL_ENABLED
 namespace Effekseer.GUI.Component
 {
 	class PathForMaterial : Control, IParameterControl
@@ -115,6 +114,11 @@ namespace Effekseer.GUI.Component
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			}
+
+			if (Manager.NativeManager.Button("Open", buttonSizeX))
+			{
+				Process.MaterialEditor.Run();
+			}
 		}
 
 		private void btn_load_Click()
@@ -175,4 +179,3 @@ namespace Effekseer.GUI.Component
 	}
 }
 
-#endif

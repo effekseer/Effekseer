@@ -99,6 +99,7 @@ if (WIN32)
 target_link_libraries(
     EffekseerMaterialEditor
     EffekseerMaterial
+	IPC
     debug glfw3d
     optimized glfw3
     debug libglew32d

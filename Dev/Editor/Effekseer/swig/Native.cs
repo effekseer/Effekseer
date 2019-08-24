@@ -273,6 +273,14 @@ public class Native : global::System.IDisposable {
     EffekseerNativePINVOKE.Native_SetTonemapParameters(swigCPtr, algorithm, exposure);
   }
 
+  public void OpenOrCreateMaterial(string path) {
+    EffekseerNativePINVOKE.Native_OpenOrCreateMaterial(swigCPtr, path);
+  }
+
+  public void TerminateMaterialEditor() {
+    EffekseerNativePINVOKE.Native_TerminateMaterialEditor(swigCPtr);
+  }
+
 }
 
 }

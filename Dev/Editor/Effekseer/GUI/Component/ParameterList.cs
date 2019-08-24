@@ -548,12 +548,10 @@ namespace Effekseer.GUI.Component
 				{
 					gui = new PathForSound(Title);
 				}
-#if MATERIAL_ENABLED
 				else if (type == typeof(Data.Value.PathForMaterial))
 				{
 					gui = new PathForMaterial(Title);
 				}
-#endif
 				else if (type == typeof(Data.Value.FCurveVector2D))
 				{
 					gui = new FCurveButton(Title);

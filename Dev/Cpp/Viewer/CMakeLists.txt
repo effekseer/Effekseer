@@ -250,6 +250,7 @@ target_link_libraries(
 	effekseer_renderer_dx11
 	effekseer_renderer_gl
 	EffekseerSoundOSMixer
+	IPC
 	debug libgd_staticd
 	debug libglew32d
 	optimized libgd_static
@@ -262,6 +263,7 @@ target_link_libraries(
 	effekseer_renderer_dx11
 	effekseer_renderer_gl
 	EffekseerSoundOSMixer
+	IPC
 	debug libgd_staticd
 	debug libglew32d
 	optimized libgd_static
@@ -286,6 +288,7 @@ target_link_libraries(
 	effekseer
 	effekseer_renderer_gl
 	EffekseerSoundOSMixer
+	IPC
 	debug gdd
 	debug GLEWd
 	optimized gd
@@ -307,6 +310,7 @@ target_link_libraries(
 	effekseer
 	effekseer_renderer_gl
 	EffekseerSoundOSMixer
+	IPC
 	debug gdd
 	debug GLEWd
 	optimized gd
@@ -349,6 +353,7 @@ target_link_libraries(
 	effekseer
 	effekseer_renderer_gl
 	EffekseerSoundOSMixer
+	IPC
 	glfw3
 	gd
 	png16
@@ -366,6 +371,7 @@ target_link_libraries(
 	effekseer
 	effekseer_renderer_gl
 	EffekseerSoundOSMixer
+	IPC
 	glfw3
 	gd
 	png16
