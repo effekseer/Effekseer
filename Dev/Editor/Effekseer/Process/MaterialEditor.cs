@@ -17,7 +17,11 @@ namespace Effekseer.Process
 				return;
 
 			var app = new ProcessStartInfo();
-			app.FileName = "EffekseerMaterialEditor";
+
+			string appDirectory = GUI.Manager.GetEntryDirectory();
+			string fullPath = System.IO.Path.Combine(appDirectory, "EffekseerMaterialEditor");
+
+			app.FileName = fullPath;
 			app.UseShellExecute = true;
 
 			process = System.Diagnostics.Process.Start(app);

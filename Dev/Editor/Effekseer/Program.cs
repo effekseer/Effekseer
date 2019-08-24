@@ -240,6 +240,7 @@ namespace Effekseer
 				}
 
 				GUI.Manager.Terminate();
+				Process.MaterialEditor.Terminate();
 			}
 
 			Core.Dispose();

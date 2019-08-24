@@ -51,7 +51,11 @@ public:
 	Editor(std::shared_ptr<EffekseerMaterial::Graphics> graphics);
 	virtual ~Editor();
 
+	void Save(const char* path);
+
 	void Save();
+
+	bool Load(const char* path);
 
 	void Load();
 

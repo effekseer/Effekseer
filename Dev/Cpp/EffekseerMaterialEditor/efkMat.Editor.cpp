@@ -58,6 +58,30 @@ Editor::Editor(std::shared_ptr<EffekseerMaterial::Graphics> graphics)
 
 Editor::~Editor() {}
 
+void Editor::Save(const char* path) {
+	std::vector<uint8_t> data;
+	material->Save(data, path);
+
+	if (fs::path(path).extension().generic_string() == ".efkmat")
+	{
+		std::ofstream fout;
+		fout.open(std::string(path), std::ios::out | std::ios::binary | std::ios::trunc);
+
+		fout.write((char*)data.data(), data.size());
+
+		fout.close();
+	}
+	else
+	{
+		std::ofstream fout;
+		fout.open(std::string(path) + ".efkmat", std::ios::out | std::ios::binary | std::ios::trunc);
+
+		fout.write((char*)data.data(), data.size());
+
+		fout.close();
+	}
+}
+
 void Editor::Save()
 {
 	nfdchar_t* outPath = NULL;
@@ -65,32 +89,32 @@ void Editor::Save()
 
 	if (result == NFD_OKAY)
 	{
-		std::vector<uint8_t> data;
-		material->Save(data, outPath);
-
-		if (fs::path(outPath).extension().generic_string() == ".efkmat")
-		{
-			auto path = std::string(outPath);
-
-			std::ofstream fout;
-			fout.open(std::string(outPath), std::ios::out | std::ios::binary | std::ios::trunc);
-
-			fout.write((char*)data.data(), data.size());
-
-			fout.close();
-		}
-		else
-		{
-			auto path = std::string(outPath);
-
-			std::ofstream fout;
-			fout.open(std::string(outPath) + ".efkmat", std::ios::out | std::ios::binary | std::ios::trunc);
-
-			fout.write((char*)data.data(), data.size());
-
-			fout.close();
-		}
+		Save(outPath);
 	}
+}
+
+bool Editor::Load(const char* path)
+{
+	std::ifstream ifs(path, std::ios::in | std::ios::binary);
+	if (ifs.fail())
+	{
+		return false;
+	}
+
+	std::vector<uint8_t> data;
+
+	while (!ifs.eof())
+	{
+		uint8_t d = 0;
+		ifs.read((char*)&d, 1);
+		data.push_back(d);
+	}
+
+	material->Load(data, library, path);
+
+	isLoading = true;
+
+	return true;
 }
 
 void Editor::Load()
@@ -100,24 +124,7 @@ void Editor::Load()
 
 	if (result == NFD_OKAY)
 	{
-		std::ifstream ifs(outPath, std::ios::in | std::ios::binary);
-		if (ifs.fail())
-		{
-			return;
-		}
-
-		std::vector<uint8_t> data;
-
-		while (!ifs.eof())
-		{
-			uint8_t d = 0;
-			ifs.read((char*)&d, 1);
-			data.push_back(d);
-		}
-
-		material->Load(data, library, outPath);
-
-		isLoading = true;
+		Load(outPath);
 	}
 }
 

@@ -21,6 +21,8 @@
 #endif
 */
 
+#include "../IPC/IPC.h"
+
 #include <AltseedRHI.h>
 #include <GLFW/glfw3.h>
 #include <imgui.h>
@@ -130,7 +132,7 @@ void Application_Frame()
 
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::SetNextWindowPos(ImVec2(0, 25));
-	
+
 	const ImGuiWindowFlags flags = (ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoResize |
 									ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar);
 	const float oldWindowRounding = ImGui::GetStyle().WindowRounding;
@@ -169,7 +171,7 @@ void Application_Frame()
 
 		ed::SetCurrentEditor(g_Context);
 		ed::Begin("My Editor", ImVec2(0.0, 0.0f));
-		//ed::Suspend();
+		// ed::Suspend();
 
 		editor->Update();
 
@@ -225,6 +227,9 @@ int main()
 		return false;
 	}
 
+	auto commandQueue_ = std::make_shared<IPC::CommandQueue>();
+	commandQueue_->Start("EffekseerCommand", 1024 * 1024);
+
 #if __APPLE__
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -263,8 +268,30 @@ int main()
 
 	while (!glfwWindowShouldClose(glfwMainWindow))
 	{
-
 		glfwPollEvents();
+
+		// command event
+		{
+			IPC::CommandData commandData;
+			if (commandQueue_->Dequeue(&commandData))
+			{
+				if (commandData.Type == IPC::CommandType::Terminate)
+				{
+					break;
+				}
+				else if (commandData.Type == IPC::CommandType::OpenMaterial)
+				{
+					editor->Load(commandData.str.data());
+				}
+				else if (commandData.Type == IPC::CommandType::OpenOrCreateMaterial)
+				{
+					if (!editor->Load(commandData.str.data()))
+					{
+						editor->Save(commandData.str.data());
+					}
+				}
+			}
+		}
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -326,4 +353,6 @@ int main()
 		glfwDestroyWindow(glfwMainWindow);
 		glfwTerminate();
 	}
+
+	commandQueue_->Stop();
 }

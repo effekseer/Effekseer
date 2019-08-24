@@ -96,6 +96,7 @@ namespace Effekseer.GUI.Component
 
 			Manager.NativeManager.SameLine();
 
+			// file path
 			Manager.NativeManager.Text(filePath);
 
 			if (Manager.NativeManager.IsItemHovered())
@@ -105,8 +106,15 @@ namespace Effekseer.GUI.Component
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
+			// 
 			if (filePath != string.Empty)
 			{
+				if (Manager.NativeManager.Button("Edit", buttonSizeX))
+				{
+					Process.MaterialEditor.Run();
+					Process.MaterialEditor.OpenOrCreateMaterial(filePath);
+				}
+
 				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
 				{
 					btn_delete_Click();
@@ -114,10 +122,37 @@ namespace Effekseer.GUI.Component
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			}
-
-			if (Manager.NativeManager.Button("Open", buttonSizeX))
+			else
 			{
-				Process.MaterialEditor.Run();
+				if (Manager.NativeManager.Button("Create", buttonSizeX))
+				{
+					var filter = Resources.GetString("MaterialFilter");
+					var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
+
+					if (!string.IsNullOrEmpty(result))
+					{
+						var filepath = result;
+						Process.MaterialEditor.Run();
+						Process.MaterialEditor.OpenOrCreateMaterial(filePath);
+
+						// wait
+						int counter = 0;
+						while(counter < 10)
+						{
+							if (System.IO.File.Exists(filePath))
+								break;
+							counter++;
+							System.Threading.Thread.Sleep(100);
+						}
+
+						if (System.IO.File.Exists(filePath))
+						{
+							LoadFile(filepath, false);
+							Read();
+						}
+						
+					}
+				}
 			}
 		}
 
