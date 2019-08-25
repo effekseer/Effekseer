@@ -2792,6 +2792,18 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_TerminateMaterialEditor
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_GetIsUpdateMaterialRequiredAndReset___(void * jarg1) {
+  unsigned int jresult ;
+  Native *arg1 = (Native *) 0 ;
+  bool result;
+  
+  arg1 = (Native *)jarg1; 
+  result = (bool)(arg1)->GetIsUpdateMaterialRequiredAndReset();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GUIManagerCallback___() {
   void * jresult ;
   efk::GUIManagerCallback *result = 0 ;

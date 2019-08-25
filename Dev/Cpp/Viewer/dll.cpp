@@ -329,6 +329,7 @@ static ::EffekseerTool::Sound* g_sound = NULL;
 static std::map<std::u16string, Effekseer::TextureData*> m_textures;
 static std::map<std::u16string, Effekseer::Model*> m_models;
 static std::map<std::u16string, std::shared_ptr<efk::ImageResource>> g_imageResources;
+static std::map<std::u16string, Effekseer::MaterialData*> g_materials_;
 
 static std::vector<HandleHolder> g_handles;
 
@@ -485,20 +486,133 @@ void Native::ModelLoader::Unload(void* data)
 	*/
 }
 
+Native::MaterialLoader::MaterialLoader(EffekseerRenderer::Renderer* renderer, std::shared_ptr<IPC::KeyValueFileStorage> storage)
+	: renderer_(renderer), storage_(storage)
+{
+	loader_ = renderer_->CreateMaterialLoader();
+}
+
+Native::MaterialLoader::~MaterialLoader() { ES_SAFE_DELETE(loader_); }
+
+Effekseer::MaterialData* Native::MaterialLoader::Load(const EFK_CHAR* path)
+{
+	if (loader_ == nullptr)
+	{
+		return nullptr;
+	}
+
+	char16_t dst[260];
+	Combine(RootPath.c_str(), (const char16_t*)path, dst, 260);
+
+	std::u16string key(dst);
+
+	if (g_materials_.count(key) > 0)
+	{
+		return g_materials_[key];
+	}
+	else
+	{
+		if (storage_ != nullptr)
+		{
+			storage_->Lock();
+
+			char u8path[260];
+			Effekseer::ConvertUtf16ToUtf8((int8_t*)u8path, 260, (int16_t*)path);
+
+			if (storage_->AddRef(u8path))
+			{
+				storageRefs_.insert(path);
+			}
+
+			storage_->Unlock();
+		}
+
+		Effekseer::MaterialData* t = nullptr;
+
+		if (storage_ != nullptr)
+		{
+			storage_->Lock();
+
+			char u8path[260];
+			Effekseer::ConvertUtf16ToUtf8((int8_t*)u8path, 260, (int16_t*)path);
+
+			std::vector<uint8_t> data;
+			data.resize(1024 * 512);
+			auto size = storage_->GetFile(u8path, data.data(), data.size());
+			data.resize(size);
+
+			storage_->Unlock();
+
+			if (data.size() > 0)
+			{
+				t = loader_->Load(data.data(), data.size());
+			}
+		}
+
+		if (t == nullptr)
+		{
+			t = loader_->Load(dst);
+		}
+
+		if (t != nullptr)
+		{
+			g_materials_[key] = t;
+		}
+
+		return t;
+	}
+
+	return nullptr;
+}
+
+void Native::MaterialLoader::ReleaseAll()
+{
+	for (auto it : g_materials_)
+	{
+		((MaterialLoader*)g_manager->GetMaterialLoader())->GetOriginalLoader()->Unload(it.second);
+
+		if (storage_ != nullptr)
+		{
+			if (storageRefs_.count(it.first) > 0)
+			{
+				storage_->Lock();
+				char u8path[260];
+				Effekseer::ConvertUtf16ToUtf8((int8_t*)u8path, 260, (int16_t*)it.first.c_str());
+				storage_->ReleaseRef(u8path);
+
+				storage_->Unlock();
+			}
+		}
+	}
+	g_materials_.clear();
+	storageRefs_.clear();
+}
+
 ::Effekseer::Effect* Native::GetEffect() { return g_effect; }
 
 Native::Native() : m_time(0), m_step(1)
 {
 	g_client = Effekseer::Client::Create();
-	commandQueue_ = std::make_shared<IPC::CommandQueue>();
-	commandQueue_->Start("EffekseerCommand", 1024 * 1024);
+	commandQueueToMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
+	commandQueueToMaterialEditor_->Start("EffekseerCommandToMaterialEditor", 1024 * 1024);
+
+	commandQueueFromMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
+	commandQueueFromMaterialEditor_->Start("EffekseerCommandFromMaterialEditor", 1024 * 1024);
+
+	keyValueFileStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
+	keyValueFileStorage_->Start("EffekseerStorage");
 }
 
 Native::~Native()
 {
 	ES_SAFE_DELETE(g_client);
-	commandQueue_->Stop();
-	commandQueue_.reset();
+	commandQueueToMaterialEditor_->Stop();
+	commandQueueToMaterialEditor_.reset();
+
+	commandQueueFromMaterialEditor_->Stop();
+	commandQueueFromMaterialEditor_.reset();
+
+	keyValueFileStorage_->Stop();
 }
 
 bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
@@ -541,9 +655,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			m_textureLoader = new TextureLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer());
 			g_manager->SetTextureLoader(m_textureLoader);
 			g_manager->SetModelLoader(new ModelLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer()));
-
-			// temp
-			g_manager->SetMaterialLoader(g_renderer->GetRenderer()->CreateMaterialLoader());
+			g_manager->SetMaterialLoader(new MaterialLoader(g_renderer->GetRenderer(), keyValueFileStorage_));
 		}
 
 		// Assign device lost events.
@@ -719,6 +831,18 @@ bool Native::UpdateWindow()
 	g_sound->SetListener(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 	g_sound->Update();
 
+	// command
+	{
+		IPC::CommandData commandDataFromMaterialEditor;
+		while (commandQueueFromMaterialEditor_->Dequeue(&commandDataFromMaterialEditor))
+		{
+			if (commandDataFromMaterialEditor.Type == IPC::CommandType::NotifyUpdate)
+			{
+				isUpdateMaterialRequired_ = true;
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -813,6 +937,7 @@ bool Native::LoadEffect(void* pData, int size, const char16_t* Path)
 
 	((TextureLoader*)g_manager->GetTextureLoader())->RootPath = std::u16string(Path);
 	((ModelLoader*)g_manager->GetModelLoader())->RootPath = std::u16string(Path);
+	((MaterialLoader*)g_manager->GetMaterialLoader())->RootPath = std::u16string(Path);
 
 	SoundLoader* soundLoader = (SoundLoader*)g_manager->GetSoundLoader();
 	if (soundLoader)
@@ -1676,6 +1801,10 @@ bool Native::InvalidateTextureCache()
 		m_models.clear();
 	}
 
+	{
+		((MaterialLoader*)g_manager->GetMaterialLoader())->ReleaseAll();
+	}
+
 	return true;
 }
 
@@ -1912,14 +2041,21 @@ void Native::OpenOrCreateMaterial(const char16_t* path)
 	IPC::CommandData commandData;
 	commandData.Type = IPC::CommandType::OpenOrCreateMaterial;
 	commandData.SetStr(u8path);
-	commandQueue_->Enqueue(&commandData);
+	commandQueueToMaterialEditor_->Enqueue(&commandData);
 }
 
-void Native::TerminateMaterialEditor() 
+void Native::TerminateMaterialEditor()
 {
 	IPC::CommandData commandData;
 	commandData.Type = IPC::CommandType::Terminate;
-	commandQueue_->Enqueue(&commandData);
+	commandQueueToMaterialEditor_->Enqueue(&commandData);
+}
+
+bool Native::GetIsUpdateMaterialRequiredAndReset()
+{
+	auto ret = isUpdateMaterialRequired_;
+	isUpdateMaterialRequired_ = false;
+	return ret;
 }
 
 EffekseerRenderer::Renderer* Native::GetRenderer() { return g_renderer->GetRenderer(); }

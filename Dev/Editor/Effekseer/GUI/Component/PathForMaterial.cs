@@ -137,7 +137,7 @@ namespace Effekseer.GUI.Component
 
 						// wait
 						int counter = 0;
-						while(counter < 10)
+						while(counter < 50)
 						{
 							if (System.IO.File.Exists(filePath))
 								break;

@@ -281,6 +281,11 @@ public class Native : global::System.IDisposable {
     EffekseerNativePINVOKE.Native_TerminateMaterialEditor(swigCPtr);
   }
 
+  public bool GetIsUpdateMaterialRequiredAndReset() {
+    bool ret = EffekseerNativePINVOKE.Native_GetIsUpdateMaterialRequiredAndReset(swigCPtr);
+    return ret;
+  }
+
 }
 
 }

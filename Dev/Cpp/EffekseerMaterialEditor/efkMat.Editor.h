@@ -12,8 +12,13 @@ namespace ed = ax::NodeEditor;
 #include <efkMat.Models.h>
 #include <efkMat.Parameters.h>
 
+#include "../IPC/IPC.h"
+
 namespace EffekseerMaterial
 {
+
+class Editor;
+
 class NodeUserDataObject : public EffekseerMaterial::UserObject
 {
 private:
@@ -28,17 +33,53 @@ public:
 	std::shared_ptr<Preview>& GetPreview() { return preview; }
 };
 
+class EditorContent
+{
+private:
+	Editor* editor_ = nullptr;
+	std::string path_;
+	std::shared_ptr<Material> material_;
+	ed::EditorContext* editorContext_;
+	bool hasStorageRef_ = false;
+
+public:
+	EditorContent(Editor* editor);
+
+	virtual ~EditorContent();
+
+	void Save(const char* path);
+
+	bool Load(const char* path, std::shared_ptr<Library> library);
+
+	void UpdateBinary();
+
+	void UpdatePath(const char* path);
+
+	std::shared_ptr<Material> GetMaterial();
+
+	std::string GetName();
+
+	std::string GetPath();
+
+	ed::EditorContext* GetEditorContext() { return editorContext_; }
+};
+
 class Editor
 {
 private:
 	std::shared_ptr<EffekseerMaterial::Graphics> graphics_;
 	std::chrono::system_clock::time_point startingTime;
+
+	int32_t selectedContentInd_ = -1;
+	std::vector<std::shared_ptr<EditorContent>> contents_;
+
 	bool isLoading = false;
 
 public: // TODO temp
-	std::shared_ptr<Material> material;
 	std::shared_ptr<Library> library;
 	std::shared_ptr<Preview> preview_;
+
+	std::shared_ptr<IPC::KeyValueFileStorage> keyValueFileStorage_;
 
 	ImVec2 popupPosition;
 	ed::NodeId currentNodeID = 0;
@@ -47,17 +88,30 @@ public: // TODO temp
 
 	static bool InputText(const char* label, std::string& text);
 
+	std::shared_ptr<Material> GetSelectedMaterial();
+
 public:
 	Editor(std::shared_ptr<EffekseerMaterial::Graphics> graphics);
 	virtual ~Editor();
 
-	void Save(const char* path);
+	void New();
 
-	void Save();
+	void SaveAs(const char* path);
+
+	void SaveAs();
 
 	bool Load(const char* path);
 
 	void Load();
+
+	/**
+		@brief	if a file is not loaded, open the file, otherwise select the file
+	*/
+	bool LoadOrSelect(const char* path);
+
+	void Save();
+
+	void Close();
 
 	void Update();
 
@@ -76,5 +130,10 @@ public:
 	void UpdateNode(std::shared_ptr<Node> node);
 
 	void UpdateLink(std::shared_ptr<Link> link);
+
+	std::vector<std::shared_ptr<EditorContent>> GetContents() { return contents_; }
+
+	int32_t GetSelectedContentIndex() const { return selectedContentInd_; }
+	void SelectContent(int32_t index) { selectedContentInd_ = index; }
 };
 } // namespace EffekseerMaterial

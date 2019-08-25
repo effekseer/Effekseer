@@ -10,9 +10,9 @@
 #include "EffekseerTool/EffekseerTool.Sound.h"
 #include <Effekseer.h>
 
+#include "../IPC/IPC.h"
 #include "GUI/efk.ImageResource.h"
 #include "efk.Base.h"
-#include "../IPC/IPC.h"
 
 enum class DistortionType
 {
@@ -202,6 +202,27 @@ private:
 		std::u16string RootPath;
 	};
 
+	class MaterialLoader : public ::Effekseer::MaterialLoader
+	{
+	private:
+		EffekseerRenderer::Renderer* renderer_ = nullptr;
+		Effekseer::MaterialLoader* loader_ = nullptr;
+		std::shared_ptr<IPC::KeyValueFileStorage> storage_;
+		std::set<std::u16string> storageRefs_;
+
+	public:
+		MaterialLoader(EffekseerRenderer::Renderer* renderer, std::shared_ptr<IPC::KeyValueFileStorage> storage);
+		virtual ~MaterialLoader();
+
+	public:
+		Effekseer::MaterialData* Load(const EFK_CHAR* path) override;
+		std::u16string RootPath;
+
+		::Effekseer::MaterialLoader* GetOriginalLoader() { return loader_; }
+
+		void ReleaseAll();
+	};
+
 	ViewerEffectBehavior m_effectBehavior;
 	TextureLoader* m_textureLoader;
 
@@ -215,7 +236,11 @@ private:
 	::Effekseer::Vector3D m_rootRotation;
 	::Effekseer::Vector3D m_rootScale;
 
-	std::shared_ptr<IPC::CommandQueue> commandQueue_;
+	std::shared_ptr<IPC::CommandQueue> commandQueueToMaterialEditor_;
+	std::shared_ptr<IPC::CommandQueue> commandQueueFromMaterialEditor_;
+	std::shared_ptr<IPC::KeyValueFileStorage> keyValueFileStorage_;
+
+	bool isUpdateMaterialRequired_ = false;
 
 	::Effekseer::Effect* GetEffect();
 
@@ -327,6 +352,8 @@ public:
 	void OpenOrCreateMaterial(const char16_t* path);
 
 	void TerminateMaterialEditor();
+
+	bool GetIsUpdateMaterialRequiredAndReset();
 
 #if !SWIG
 	EffekseerRenderer::Renderer* GetRenderer();

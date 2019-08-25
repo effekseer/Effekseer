@@ -645,8 +645,6 @@ namespace Effekseer.Data
 			}
 		}
 
-#if DEBUG
-		
 		public enum MaterialType : int
 		{
 			[Name(value = "標準", language = Language.Japanese)]
@@ -656,7 +654,6 @@ namespace Effekseer.Data
 			[Name(value = "File", language = Language.English)]
 			File = 128,
 		}
-#endif
 		public enum FadeType : int
 		{
 			[Name(value = "有り", language = Language.Japanese)]

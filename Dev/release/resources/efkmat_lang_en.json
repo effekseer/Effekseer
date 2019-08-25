@@ -1,9 +1,9 @@
 {
   "File": "File",
-  "Load": "Load",
-  "Save": "Save",
-  "SaveAs": "SaveAs",
   "nan": "nan",
+  "Load": "Load",
+  "SaveAs": "SaveAs",
+  "Save": "Save",
   "Value": "Value",
   "Value1": "Value1",
   "Value2": "Value2",

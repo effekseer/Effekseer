@@ -7,6 +7,8 @@
 namespace EffekseerMaterial
 {
 
+class CommandManager;
+
 class UserObject
 {
 public:
@@ -61,6 +63,7 @@ private:
 	friend class Material;
 	bool isDirtied = true;
 	bool isContentDirtied = false;
+	std::weak_ptr<Material> material_;
 
 public:
 	std::shared_ptr<NodeParameter> Parameter;
@@ -120,6 +123,8 @@ private:
 	uint64_t nextGUID = 0xff;
 
 	uint64_t GetIDAndNext();
+
+	std::shared_ptr<CommandManager> commandManager_ = std::make_shared<CommandManager>();
 
 	bool FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2);
 
@@ -189,6 +194,8 @@ public:
 	bool Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath);
 
 	bool Save(std::vector<uint8_t>& data, const char* basePath);
+
+	std::shared_ptr<CommandManager> GetCommandManager() { return commandManager_; }
 };
 
 } // namespace EffekseerMaterial

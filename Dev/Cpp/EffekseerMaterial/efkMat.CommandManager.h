@@ -64,6 +64,9 @@ private:
 
 	bool isMergeEnabled = false;
 
+	//! to check whether parameters are changed
+	uint64_t historyID = 0;
+
 	static std::shared_ptr<CommandManager> instance;
 
 public:
@@ -84,7 +87,7 @@ public:
 
 	void MakeMergeDisabled();
 
-	static std::shared_ptr<CommandManager> GetInstance();
+	uint64_t GetHistoryID();
 };
 
 } // namespace EffekseerMaterial
