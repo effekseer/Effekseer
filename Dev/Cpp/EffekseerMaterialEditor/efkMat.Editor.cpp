@@ -23,44 +23,26 @@ NodeUserDataObject::NodeUserDataObject() {}
 
 NodeUserDataObject::~NodeUserDataObject() {}
 
-static const char* label_new_node = "##NEW_NODE";
-static const char* label_edit_link = "##EDIT_LINK";
-static const char* label_edit_node = "##EDIT_NODE";
-
-bool Editor::InputText(const char* label, std::string& text)
+EditorContent::EditorContent(Editor* editor) : editor_(editor)
 {
-	char buf[255];
-	memcpy(buf, text.c_str(), text.size());
-	buf[text.size()] = 0;
+	material_ = std::make_shared<EffekseerMaterial::Material>();
+	material_->Initialize();
 
-	if (ImGui::InputText(label, buf, 255))
-	{
-		text = buf;
-		return true;
-	}
-
-	return false;
+	ed::Config config;
+	config.SettingsFile = "nodeEditor.json";
+	editorContext_ = ed::CreateEditor(&config);
 }
 
-Editor::Editor(std::shared_ptr<EffekseerMaterial::Graphics> graphics)
+EditorContent ::~EditorContent()
 {
-	material = std::make_shared<EffekseerMaterial::Material>();
-	material->Initialize();
-
-	library = std::make_shared<Library>();
-	graphics_ = graphics;
-
-	preview_ = std::make_shared<EffekseerMaterial::Preview>();
-	preview_->Initialize(graphics_);
-
-	startingTime = std::chrono::system_clock::now();
+	ed::DestroyEditor(editorContext_);
+	UpdatePath("");
 }
 
-Editor::~Editor() {}
-
-void Editor::Save(const char* path) {
+void EditorContent::Save(const char* path)
+{
 	std::vector<uint8_t> data;
-	material->Save(data, path);
+	material_->Save(data, path);
 
 	if (fs::path(path).extension().generic_string() == ".efkmat")
 	{
@@ -80,20 +62,11 @@ void Editor::Save(const char* path) {
 
 		fout.close();
 	}
+
+	UpdatePath(path);
 }
 
-void Editor::Save()
-{
-	nfdchar_t* outPath = NULL;
-	nfdresult_t result = NFD_SaveDialog("efkmat", "", &outPath);
-
-	if (result == NFD_OKAY)
-	{
-		Save(outPath);
-	}
-}
-
-bool Editor::Load(const char* path)
+bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 {
 	std::ifstream ifs(path, std::ios::in | std::ios::binary);
 	if (ifs.fail())
@@ -110,7 +83,147 @@ bool Editor::Load(const char* path)
 		data.push_back(d);
 	}
 
-	material->Load(data, library, path);
+	material_->Load(data, library, path);
+
+	UpdatePath(path);
+
+	return true;
+}
+
+void EditorContent::UpdateBinary() {
+	if (hasStorageRef_ && path_ != "" && editor_->keyValueFileStorage_ != nullptr)
+	{
+		editor_->keyValueFileStorage_->Lock();
+		
+		std::vector<uint8_t> data;
+		if (material_->Save(data, path_.c_str()))
+		{
+			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());
+		}
+
+		editor_->keyValueFileStorage_->Unlock();
+	}
+}
+
+void EditorContent::UpdatePath(const char* path)
+{
+	if (path_ == path)
+		return;
+
+	if (hasStorageRef_ && path_ != "" && editor_->keyValueFileStorage_ != nullptr)
+	{
+		editor_->keyValueFileStorage_->Lock();
+		editor_->keyValueFileStorage_->ReleaseRef(path_.c_str());
+		editor_->keyValueFileStorage_->Unlock();
+		hasStorageRef_ = false;
+	}
+
+	path_ = path;
+	material_->SetPath(path_);
+
+	if (path_ != "" && editor_->keyValueFileStorage_ != nullptr)
+	{
+		editor_->keyValueFileStorage_->Lock();
+		hasStorageRef_ = editor_->keyValueFileStorage_->AddRef(path_.c_str());
+
+		std::vector<uint8_t> data;
+		if (material_->Save(data, path_.c_str()))
+		{
+			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());	
+		}
+
+		editor_->keyValueFileStorage_->Unlock();
+	}
+}
+
+std::shared_ptr<Material> EditorContent::GetMaterial() { return material_; }
+
+std::string EditorContent::GetName()
+{
+	if (path_ != "")
+	{
+		return path_;
+	}
+	return "New";
+}
+
+std::string EditorContent::GetPath() { return path_; }
+
+static const char* label_new_node = "##NEW_NODE";
+static const char* label_edit_link = "##EDIT_LINK";
+static const char* label_edit_node = "##EDIT_NODE";
+
+bool Editor::InputText(const char* label, std::string& text)
+{
+	char buf[255];
+	memcpy(buf, text.c_str(), text.size());
+	buf[text.size()] = 0;
+
+	if (ImGui::InputText(label, buf, 255))
+	{
+		text = buf;
+		return true;
+	}
+
+	return false;
+}
+
+std::shared_ptr<Material> Editor::GetSelectedMaterial()
+{
+	if (selectedContentInd_ < 0)
+		return nullptr;
+
+	return contents_[selectedContentInd_]->GetMaterial();
+}
+
+Editor::Editor(std::shared_ptr<EffekseerMaterial::Graphics> graphics)
+{
+	// material = std::make_shared<EffekseerMaterial::Material>();
+	// material->Initialize();
+
+	library = std::make_shared<Library>();
+	graphics_ = graphics;
+
+	preview_ = std::make_shared<EffekseerMaterial::Preview>();
+	preview_->Initialize(graphics_);
+
+	startingTime = std::chrono::system_clock::now();
+
+	keyValueFileStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
+	keyValueFileStorage_->Start("EffekseerStorage");
+}
+
+Editor::~Editor() { 
+	contents_.clear(); 
+	keyValueFileStorage_->Stop();
+}
+
+void Editor::New()
+{
+	auto content = std::make_shared<EditorContent>(this);
+	contents_.push_back(content);
+	selectedContentInd_ = contents_.size() - 1;
+}
+
+void Editor::SaveAs(const char* path) { contents_[selectedContentInd_]->Save(path); }
+
+void Editor::SaveAs()
+{
+	nfdchar_t* outPath = NULL;
+	nfdresult_t result = NFD_SaveDialog("efkmat", "", &outPath);
+
+	if (result == NFD_OKAY)
+	{
+		SaveAs(outPath);
+	}
+}
+
+bool Editor::Load(const char* path)
+{
+	auto content = std::make_shared<EditorContent>(this);
+	contents_.push_back(content);
+	content->Load(path, library);
+	selectedContentInd_ = contents_.size() - 1;
 
 	isLoading = true;
 
@@ -128,8 +241,56 @@ void Editor::Load()
 	}
 }
 
+bool Editor::LoadOrSelect(const char* path)
+{
+	for (size_t i = 0; i < contents_.size(); i++)
+	{
+		if (contents_[i]->GetPath() == path)
+		{
+			selectedContentInd_ = i;
+			return true;
+		}
+	}
+
+	return Load(path);
+}
+
+void Editor::Save()
+{
+	auto content = contents_[selectedContentInd_];
+	if (content->GetPath() == "")
+	{
+		SaveAs();
+	}
+	else
+	{
+		content->Save(content->GetPath().c_str());
+	}
+}
+
+void Editor::Close()
+{
+	contents_.erase(contents_.begin() + selectedContentInd_);
+	selectedContentInd_ -= 1;
+	selectedContentInd_ = std::max(0, selectedContentInd_);
+
+	if (contents_.size() > 0)
+	{
+	}
+	else
+	{
+		selectedContentInd_ = -1;
+	}
+}
+
 void Editor::Update()
 {
+	auto material = GetSelectedMaterial();
+	if (material == nullptr)
+	{
+		return;
+	}
+
 	// copy
 	if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
 	{
@@ -148,7 +309,7 @@ void Editor::Update()
 			}
 		}
 
-		auto data = material->Copy(nodes, this->material->GetPath().c_str());
+		auto data = material->Copy(nodes, material->GetPath().c_str());
 		ImGui::SetClipboardText(data.data());
 	}
 
@@ -159,7 +320,7 @@ void Editor::Update()
 		if (text != nullptr)
 		{
 			auto pos = ImGui::GetMousePos();
-			material->Paste(text, Vector2DF(pos.x, pos.y), library, this->material->GetPath().c_str());
+			material->Paste(text, Vector2DF(pos.x, pos.y), library, material->GetPath().c_str());
 		}
 	}
 
@@ -213,6 +374,12 @@ void Editor::Update()
 
 void Editor::UpdateNodes()
 {
+	auto material = GetSelectedMaterial();
+	if (material == nullptr)
+	{
+		return;
+	}
+
 	// Output node
 	{
 		for (auto node : material->GetNodes())
@@ -393,6 +560,12 @@ void Editor::UpdateNodes()
 
 void Editor::UpdatePopup()
 {
+	auto material = GetSelectedMaterial();
+	if (material == nullptr)
+	{
+		return;
+	}
+
 	// Edit node
 	if (ImGui::BeginPopup(label_edit_node))
 	{
@@ -433,7 +606,7 @@ void Editor::UpdatePopup()
 	// New node
 	if (ImGui::BeginPopup(label_new_node))
 	{
-		auto create_node = [this](std::shared_ptr<LibraryContentBase> content) -> void {
+		auto create_node = [&, this](std::shared_ptr<LibraryContentBase> content) -> void {
 			auto nodeParam = content->Create();
 			auto node = material->CreateNode(nodeParam);
 			ed::SetNodePosition(node->GUID, popupPosition);
@@ -518,6 +691,12 @@ void Editor::UpdatePopup()
 
 void Editor::UpdateCreating()
 {
+	auto material = GetSelectedMaterial();
+	if (material == nullptr)
+	{
+		return;
+	}
+
 	std::shared_ptr<EffekseerMaterial::Pin> newLinkPin;
 
 	if (ed::BeginCreate(ImColor(255, 255, 255), 2.0f))
@@ -636,6 +815,12 @@ void Editor::UpdateCreating()
 
 void Editor::UpdateDeleting()
 {
+	auto material = GetSelectedMaterial();
+	if (material == nullptr)
+	{
+		return;
+	}
+
 	if (ed::BeginDelete())
 	{
 		ed::LinkId linkId = 0;
@@ -664,6 +849,12 @@ void Editor::UpdateDeleting()
 
 void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 {
+	auto material = GetSelectedMaterial();
+	if (material == nullptr)
+	{
+		return;
+	}
+
 	// Property
 	auto updateProp = [&, node](ValueType type, std::string name, std::shared_ptr<EffekseerMaterial::NodeProperty> p) -> void {
 		auto floatValues = p->Floats;

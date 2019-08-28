@@ -445,9 +445,19 @@ namespace Effekseer.GUI
 		{
 			if (isViewerShown)
 			{
-				if (IsChanged && (IsPlaying || IsPaused))
+				var isUpdateMaterialRequiredAndReset = native.GetIsUpdateMaterialRequiredAndReset();
+
+				if ((IsChanged && (IsPlaying || IsPaused)) || isUpdateMaterialRequiredAndReset)
 				{
-					Reload(false);
+					if(isUpdateMaterialRequiredAndReset)
+					{
+						Reload(true);
+					}
+					else
+					{
+						Reload(false);
+					}
+
 					IsChanged = false;
 				}
 

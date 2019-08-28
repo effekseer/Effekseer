@@ -305,7 +305,11 @@ void Node::UpdatePos(const Vector2DF& pos)
 
 	auto command = std::make_shared<ChangeNodePosCommand>(shared_from_this(), value_new, value_old);
 
-	CommandManager::GetInstance()->Execute(command);
+	auto material = material_.lock();
+	if (material != nullptr)
+	{
+		material->GetCommandManager()->Execute(command);
+	}
 }
 
 uint64_t Material::GetIDAndNext()
@@ -457,6 +461,7 @@ ValueType Material::GetDesiredPinType(std::shared_ptr<Pin> pin, std::unordered_s
 std::shared_ptr<Node> Material::CreateNode(std::shared_ptr<NodeParameter> parameter, bool isDirectly)
 {
 	auto node = std::make_shared<Node>();
+	node->material_ = this->shared_from_this();
 	node->Parameter = parameter;
 	node->GUID = GetIDAndNext();
 
@@ -512,7 +517,7 @@ std::shared_ptr<Node> Material::CreateNode(std::shared_ptr<NodeParameter> parame
 		auto command = std::make_shared<DelegateCommand>([this, val_new]() -> void { this->nodes = val_new; },
 														 [this, val_old]() -> void { this->nodes = val_old; });
 
-		CommandManager::GetInstance()->Execute(command);
+		commandManager_->Execute(command);
 	}
 
 	return node;
@@ -555,7 +560,7 @@ void Material::RemoveNode(std::shared_ptr<Node> node)
 			this->links = links_old;
 		});
 
-	CommandManager::GetInstance()->Execute(command);
+	commandManager_->Execute(command);
 }
 
 ConnectResultType Material::CanConnectPin(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2)
@@ -675,7 +680,7 @@ ConnectResultType Material::ConnectPin(std::shared_ptr<Pin> pin1, std::shared_pt
 	auto command = std::make_shared<DelegateCommand>([this, links_new]() -> void { this->links = links_new; },
 													 [this, links_old]() -> void { this->links = links_old; });
 
-	CommandManager::GetInstance()->Execute(command);
+	commandManager_->Execute(command);
 
 	return ConnectResultType::OK;
 }
@@ -696,7 +701,7 @@ bool Material::BreakPin(std::shared_ptr<Link> link)
 	auto command = std::make_shared<DelegateCommand>([this, links_new]() -> void { this->links = links_new; },
 													 [this, links_old]() -> void { this->links = links_old; });
 
-	CommandManager::GetInstance()->Execute(command);
+	commandManager_->Execute(command);
 
 	return true;
 }
@@ -924,7 +929,7 @@ void Material::Paste(std::string content, const Vector2DF& pos, std::shared_ptr<
 
 	std::map<uint64_t, uint64_t> oldIDToNewID;
 
-	CommandManager::GetInstance()->StartCollection();
+	commandManager_->StartCollection();
 
 	for (auto node_ : nodes_)
 	{
@@ -1027,7 +1032,7 @@ void Material::Paste(std::string content, const Vector2DF& pos, std::shared_ptr<
 		}
 	}
 
-	CommandManager::GetInstance()->EndCollection();
+	commandManager_->EndCollection();
 }
 
 void Material::ChangeValue(std::shared_ptr<NodeProperty> prop, std::array<float, 4> value)
@@ -1037,7 +1042,7 @@ void Material::ChangeValue(std::shared_ptr<NodeProperty> prop, std::array<float,
 
 	auto command = std::make_shared<ChangeNumberCommand>(prop, value_new, value_old);
 
-	CommandManager::GetInstance()->Execute(command);
+	commandManager_->Execute(command);
 }
 
 void Material::ChangeValue(std::shared_ptr<NodeProperty> prop, std::string value)
@@ -1048,7 +1053,7 @@ void Material::ChangeValue(std::shared_ptr<NodeProperty> prop, std::string value
 	auto command = std::make_shared<DelegateCommand>([prop, value_new]() -> void { prop->Str = value_new; },
 													 [prop, value_old]() -> void { prop->Str = value_old; });
 
-	CommandManager::GetInstance()->Execute(command);
+	commandManager_->Execute(command);
 }
 
 void Material::ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, TextureType type)
@@ -1059,7 +1064,7 @@ void Material::ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, Texture
 	auto command = std::make_shared<DelegateCommand>([prop, value_new]() -> void { prop->Type = value_new; },
 													 [prop, value_old]() -> void { prop->Type = value_old; });
 
-	CommandManager::GetInstance()->Execute(command);
+	commandManager_->Execute(command);
 }
 
 void Material::MakeDirty(std::shared_ptr<Node> node)

@@ -51,8 +51,6 @@ void CommandCollection::Unexecute()
 	}
 }
 
-std::shared_ptr<CommandManager> CommandManager::instance = std::make_shared<CommandManager>();
-
 void CommandManager::StartCollection()
 {
 	if (collectionCount == 0)
@@ -106,6 +104,8 @@ void CommandManager::Execute(std::shared_ptr<ICommand> command)
 		command->Execute();
 		isMergeEnabled = true;
 	}
+
+	historyID++;
 }
 
 void CommandManager::Undo()
@@ -116,6 +116,7 @@ void CommandManager::Undo()
 		return;
 	commands[commandInd - 1]->Unexecute();
 	commandInd--;
+	historyID++;
 }
 
 void CommandManager::Redo()
@@ -126,6 +127,7 @@ void CommandManager::Redo()
 		return;
 	commands[commandInd]->Execute();
 	commandInd++;
+	historyID++;
 }
 
 void CommandManager::Reset()
@@ -133,9 +135,11 @@ void CommandManager::Reset()
 	commands.clear();
 	commandInd = 0;
 	collectionCount = 0;
+	historyID = 0;
 }
 
 void CommandManager::MakeMergeDisabled() { isMergeEnabled = false; }
 
-std::shared_ptr<CommandManager> CommandManager::GetInstance() { return instance; }
+uint64_t CommandManager::GetHistoryID() { return historyID; }
+
 } // namespace EffekseerMaterial
