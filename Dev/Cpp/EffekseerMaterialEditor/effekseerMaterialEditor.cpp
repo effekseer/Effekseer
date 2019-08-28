@@ -41,6 +41,11 @@
 #include <efkMat.CommandManager.h>
 #include <efkMat.StringContainer.h>
 
+#ifdef WIN32
+#include <Windows.h>
+#include <direct.h>
+#endif
+
 namespace ed = ax::NodeEditor;
 
 GLFWwindow* glfwMainWindow = nullptr;
@@ -54,8 +59,38 @@ std::shared_ptr<EffekseerMaterial::Node> g_selectedNode;
 std::array<bool, 512> keyState;
 std::array<bool, 512> keyStatePre;
 
+std::string GetExecutingDirectory()
+{
+	char buf[260];
+
+#ifdef _WIN32
+	int len = GetModuleFileNameA(NULL, buf, 260);
+	if (len <= 0)
+		return "";
+#else
+
+	char temp[32];
+	sprintf(temp, "/proc/%d/exe", getpid());
+	int bytes = std::min(readlink(temp, pBuf, 260), 260 - 1);
+	if (bytes >= 0)
+		buf[bytes] = '\0';
+#endif
+
+	return buf;
+}
+
+void SetCurrentDir(const char* path) {
+#ifdef _WIN32
+	_chdir(path);
+#else
+	chdir(path);
+#endif
+}
+
 int main()
 {
+	SetCurrentDir(GetExecutingDirectory().c_str());
+
 	int32_t width = 1280;
 	int32_t height = 720;
 	char* title = "EffekseerMaterialEditor";
