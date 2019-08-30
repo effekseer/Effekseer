@@ -262,9 +262,9 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		// Apply global Color
 		if (instance.m_pContainer->GetRootInstance()->IsGlobalColorSet)
 		{
-			Color::Mul(_outerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
-			Color::Mul(_centerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
-			Color::Mul(_innerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+			_outerColor = Color::Mul(_outerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+			_centerColor = Color::Mul(_centerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
+			_innerColor = Color::Mul(_innerColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
 		}
 
 		instanceParameter.OuterColor  = _outerColor;
