@@ -41,13 +41,16 @@ private:
 	std::shared_ptr<Material> material_;
 	ed::EditorContext* editorContext_;
 	bool hasStorageRef_ = false;
+	uint64_t previousChangedID_ = 0;
 
 public:
 	EditorContent(Editor* editor);
 
 	virtual ~EditorContent();
 
-	void Save(const char* path);
+	bool Save();
+
+	void SaveAs(const char* path);
 
 	bool Load(const char* path, std::shared_ptr<Library> library);
 
@@ -61,7 +64,13 @@ public:
 
 	std::string GetPath();
 
+	bool GetIsChanged();
+
 	ed::EditorContext* GetEditorContext() { return editorContext_; }
+
+	//! this content will be closed and will show a dialog. This flag is true, dialog is shown and make the flag false 
+	bool WillShowClosingDialog = false;
+	bool IsClosing = false;
 };
 
 class Editor
@@ -111,7 +120,7 @@ public:
 
 	void Save();
 
-	void Close();
+	void CloseContents();
 
 	void Update();
 

@@ -79,7 +79,8 @@ std::string GetExecutingDirectory()
 	return buf;
 }
 
-void SetCurrentDir(const char* path) {
+void SetCurrentDir(const char* path)
+{
 #ifdef _WIN32
 	_chdir(path);
 #else
@@ -87,8 +88,80 @@ void SetCurrentDir(const char* path) {
 #endif
 }
 
-int main()
+class Dialog
 {
+private:
+public:
+	Dialog() = default;
+	virtual ~Dialog() = default;
+
+	virtual const char* GetID() const { return ""; }
+
+	virtual bool Update() { return true; }
+
+	bool IsClosing = false;
+};
+
+class SaveOrCloseDialog : public Dialog
+{
+private:
+	std::shared_ptr<EffekseerMaterial::EditorContent> content_;
+	std::string id_ = "##SaveOrCloseDialog";
+
+public:
+	SaveOrCloseDialog(std::shared_ptr<EffekseerMaterial::EditorContent> content) : content_(content) {}
+
+	virtual ~SaveOrCloseDialog() {}
+
+	const char* GetID() const { return id_.c_str(); }
+
+	bool Update() override
+	{
+		bool open = true;
+		if (ImGui::BeginPopupModal(GetID(), &open))
+		{
+			ImGui::Text("Save?");
+			ImGui::Separator();
+
+			if (ImGui::Button("Yes"))
+			{
+				if (content_->Save())
+				{
+					content_->IsClosing = true;
+				}
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("No"))
+			{
+				content_->IsClosing = true;
+				open = false;
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel"))
+			{
+				content_->IsClosing = false;
+				open = false;
+			}
+
+			ImGui::EndPopup();
+		}
+
+		return open;
+	}
+};
+
+int main(int argc, char* argv[])
+{
+	bool ipcMode = false;
+
+	if (argc >= 2 && std::string(argv[1]) == "ipc")
+	{
+		ipcMode = true;
+	}
+
 	SetCurrentDir(GetExecutingDirectory().c_str());
 
 	int32_t width = 1280;
@@ -159,6 +232,8 @@ int main()
 
 	editor = std::make_shared<EffekseerMaterial::Editor>(graphics);
 	// editor->New();
+
+	std::vector<std::shared_ptr<Dialog>> dialogs;
 
 	keyStatePre.fill(false);
 	keyState.fill(false);
@@ -236,14 +311,17 @@ int main()
 			{
 				if (ImGui::BeginMenu(EffekseerMaterial::StringContainer::GetValue("File").c_str()))
 				{
-					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("New").c_str()))
+					if (!ipcMode)
 					{
-						editor->New();
-					}
+						if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("New").c_str()))
+						{
+							editor->New();
+						}
 
-					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Load").c_str()))
-					{
-						editor->Load();
+						if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Load").c_str()))
+						{
+							editor->Load();
+						}
 					}
 
 					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Save").c_str()))
@@ -291,7 +369,8 @@ int main()
 
 						bool isSelected = editor->GetSelectedContentIndex() == i;
 
-						if (ImGui::BeginTabItem(tabName.c_str(), nullptr, 0))
+						bool isOpen = true;
+						if (ImGui::BeginTabItem(tabName.c_str(), &isOpen, 0))
 						{
 							editor->SelectContent(i);
 
@@ -352,6 +431,19 @@ int main()
 
 							ImGui::EndTabItem();
 						}
+
+						if (!isOpen)
+						{
+							// close item
+							if (editor->GetContents()[i]->GetIsChanged())
+							{
+								editor->GetContents()[i]->WillShowClosingDialog = true;
+							}
+							else
+							{
+								editor->GetContents()[i]->IsClosing = true;
+							}
+						}
 					}
 
 					ImGui::EndTabBar();
@@ -359,6 +451,31 @@ int main()
 
 				ImGui::End();
 			}
+
+			for (size_t i = 0; i < editor->GetContents().size(); i++)
+			{
+				if (editor->GetContents()[i]->WillShowClosingDialog)
+				{
+					auto closeDialog = std::make_shared<SaveOrCloseDialog>(editor->GetContents()[i]);
+					ImGui::OpenPopup(closeDialog->GetID());
+					dialogs.push_back(closeDialog);
+					editor->GetContents()[i]->WillShowClosingDialog = false;
+				}
+			}
+
+			// popup
+			for (auto dialog : dialogs)
+			{
+				if (!dialog->Update())
+				{
+					dialog->IsClosing = true;
+				}
+			}
+
+			auto removed_it =
+				std::remove_if(dialogs.begin(), dialogs.end(), [](std::shared_ptr<Dialog> d) -> bool { return d->IsClosing; });
+
+			dialogs.erase(removed_it, dialogs.end());
 		}
 
 		if (ImGui::Begin("Code_Debug"))
@@ -390,6 +507,8 @@ int main()
 
 			editor->preview_->Render();
 		}
+
+		editor->CloseContents();
 
 		arManager->BeginRendering();
 

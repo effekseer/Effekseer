@@ -1,9 +1,10 @@
 {
   "File": "ファイル",
-  "nan": "nan",
+  "New": "新規",
   "Load": "読み込む",
   "SaveAs": "名前を付けて保存",
   "Save": "上書き保存",
+  "nan": "nan",
   "Value": "値",
   "Value1": "値1",
   "Value2": "値2",

@@ -23,6 +23,7 @@ namespace Effekseer.Process
 
 			app.FileName = fullPath;
 			app.UseShellExecute = true;
+			app.Arguments = "ipc";
 
 			process = System.Diagnostics.Process.Start(app);
 		}

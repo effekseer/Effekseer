@@ -1,5 +1,6 @@
 
 #include "efkMat.Editor.h"
+#include "efkMat.CommandManager.h"
 #include "efkMat.Models.h"
 
 #include "ThirdParty/nfd/nfd.h"
@@ -39,7 +40,29 @@ EditorContent ::~EditorContent()
 	UpdatePath("");
 }
 
-void EditorContent::Save(const char* path)
+bool EditorContent::Save()
+{
+	if (GetPath() == "")
+	{
+		nfdchar_t* outPath = NULL;
+		nfdresult_t result = NFD_SaveDialog("efkmat", "", &outPath);
+
+		if (result == NFD_OKAY)
+		{
+			SaveAs(outPath);
+			return true;
+		}
+
+		return false;
+	}
+	else
+	{
+		SaveAs(GetPath().c_str());
+		return true;
+	}
+}
+
+void EditorContent::SaveAs(const char* path)
 {
 	std::vector<uint8_t> data;
 	material_->Save(data, path);
@@ -64,6 +87,8 @@ void EditorContent::Save(const char* path)
 	}
 
 	UpdatePath(path);
+
+	previousChangedID_ = material_->GetCommandManager()->GetHistoryID();
 }
 
 bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
@@ -87,14 +112,16 @@ bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 
 	UpdatePath(path);
 
+	previousChangedID_ = material_->GetCommandManager()->GetHistoryID();
 	return true;
 }
 
-void EditorContent::UpdateBinary() {
+void EditorContent::UpdateBinary()
+{
 	if (hasStorageRef_ && path_ != "" && editor_->keyValueFileStorage_ != nullptr)
 	{
 		editor_->keyValueFileStorage_->Lock();
-		
+
 		std::vector<uint8_t> data;
 		if (material_->Save(data, path_.c_str()))
 		{
@@ -129,7 +156,7 @@ void EditorContent::UpdatePath(const char* path)
 		std::vector<uint8_t> data;
 		if (material_->Save(data, path_.c_str()))
 		{
-			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());	
+			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());
 		}
 
 		editor_->keyValueFileStorage_->Unlock();
@@ -140,14 +167,32 @@ std::shared_ptr<Material> EditorContent::GetMaterial() { return material_; }
 
 std::string EditorContent::GetName()
 {
+	auto isChanged = previousChangedID_ != material_->GetCommandManager()->GetHistoryID();
+
 	if (path_ != "")
 	{
-		return path_;
+		auto path = path_;
+
+		if (isChanged)
+		{
+			path += " *";
+		}
+		return path;
 	}
-	return "New";
+
+	if (isChanged)
+	{
+		return "New *";
+	}
+	else
+	{
+		return "New";
+	}
 }
 
 std::string EditorContent::GetPath() { return path_; }
+
+bool EditorContent::GetIsChanged() { return previousChangedID_ != material_->GetCommandManager()->GetHistoryID(); }
 
 static const char* label_new_node = "##NEW_NODE";
 static const char* label_edit_link = "##EDIT_LINK";
@@ -193,8 +238,9 @@ Editor::Editor(std::shared_ptr<EffekseerMaterial::Graphics> graphics)
 	keyValueFileStorage_->Start("EffekseerStorage");
 }
 
-Editor::~Editor() { 
-	contents_.clear(); 
+Editor::~Editor()
+{
+	contents_.clear();
 	keyValueFileStorage_->Stop();
 }
 
@@ -205,7 +251,7 @@ void Editor::New()
 	selectedContentInd_ = contents_.size() - 1;
 }
 
-void Editor::SaveAs(const char* path) { contents_[selectedContentInd_]->Save(path); }
+void Editor::SaveAs(const char* path) { contents_[selectedContentInd_]->SaveAs(path); }
 
 void Editor::SaveAs()
 {
@@ -260,26 +306,48 @@ void Editor::Save()
 	auto content = contents_[selectedContentInd_];
 	if (content->GetPath() == "")
 	{
-		SaveAs();
+		Save();
 	}
 	else
 	{
-		content->Save(content->GetPath().c_str());
+		content->SaveAs(content->GetPath().c_str());
 	}
 }
 
-void Editor::Close()
+void Editor::CloseContents()
 {
-	contents_.erase(contents_.begin() + selectedContentInd_);
-	selectedContentInd_ -= 1;
-	selectedContentInd_ = std::max(0, selectedContentInd_);
+	if (contents_.size() == 0)
+		return;
 
-	if (contents_.size() > 0)
+	auto selectedContent = contents_[selectedContentInd_];
+
+	auto removed_it =
+		std::remove_if(contents_.begin(), contents_.end(), [](std::shared_ptr<EditorContent> d) -> bool { return d->IsClosing; });
+	contents_.erase(removed_it, contents_.end());
+
+	if (selectedContent->IsClosing)
 	{
+		selectedContentInd_ -= 1;
+		selectedContentInd_ = std::max(0, selectedContentInd_);
+
+		if (contents_.size() > 0)
+		{
+		}
+		else
+		{
+			selectedContentInd_ = -1;
+		}
 	}
 	else
 	{
-		selectedContentInd_ = -1;
+		for (size_t i = 0; i < contents_.size(); i++)
+		{
+			if (contents_[i] == selectedContent)
+			{
+				selectedContentInd_ = i;
+				break;
+			}
+		}
 	}
 }
 
