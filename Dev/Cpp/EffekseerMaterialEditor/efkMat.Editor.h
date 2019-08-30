@@ -111,7 +111,7 @@ public:
 
 	bool Load(const char* path);
 
-	void Load();
+	bool Load();
 
 	/**
 		@brief	if a file is not loaded, open the file, otherwise select the file

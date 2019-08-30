@@ -276,7 +276,7 @@ bool Editor::Load(const char* path)
 	return true;
 }
 
-void Editor::Load()
+bool Editor::Load()
 {
 	nfdchar_t* outPath = NULL;
 	nfdresult_t result = NFD_OpenDialog("efkmat", "", &outPath);
@@ -284,7 +284,9 @@ void Editor::Load()
 	if (result == NFD_OKAY)
 	{
 		Load(outPath);
+		return true;
 	}
+	return false;
 }
 
 bool Editor::LoadOrSelect(const char* path)

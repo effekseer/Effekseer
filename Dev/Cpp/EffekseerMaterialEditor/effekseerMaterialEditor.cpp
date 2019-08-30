@@ -102,6 +102,51 @@ public:
 	bool IsClosing = false;
 };
 
+class NewOrOpenDialog : public Dialog
+{
+private:
+	std::shared_ptr<EffekseerMaterial::Editor> content_;
+	std::string id_ = "##NewOrOpenDialog";
+
+public:
+	NewOrOpenDialog(std::shared_ptr<EffekseerMaterial::Editor> content) : content_(content) {}
+
+	virtual ~NewOrOpenDialog() {}
+
+	const char* GetID() const { return id_.c_str(); }
+
+	bool Update() override
+	{
+		bool open = true;
+		if (ImGui::BeginPopupModal(GetID(), &open))
+		{
+			ImGui::Text("New of save?");
+			ImGui::Separator();
+
+			if (ImGui::Button("New"))
+			{
+				content_->New();
+				open = false;
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Open"))
+			{
+				if (content_->Load())
+				{
+					return false;
+					open = false;
+				}
+			}
+
+			ImGui::EndPopup();
+		}
+
+		return open;
+	}
+};
+
 class SaveOrCloseDialog : public Dialog
 {
 private:
@@ -231,12 +276,14 @@ int main(int argc, char* argv[])
 	}
 
 	editor = std::make_shared<EffekseerMaterial::Editor>(graphics);
-	// editor->New();
 
 	std::vector<std::shared_ptr<Dialog>> dialogs;
 
 	keyStatePre.fill(false);
 	keyState.fill(false);
+
+	bool isFirstFrame = true;
+	int framecount = 0;
 
 	while (!glfwWindowShouldClose(glfwMainWindow))
 	{
@@ -461,6 +508,18 @@ int main(int argc, char* argv[])
 					dialogs.push_back(closeDialog);
 					editor->GetContents()[i]->WillShowClosingDialog = false;
 				}
+			}
+
+			framecount++;
+			if (isFirstFrame && framecount > 1)
+			{
+				if (!ipcMode)
+				{
+					auto closeDialog = std::make_shared<NewOrOpenDialog>(editor);
+					ImGui::OpenPopup(closeDialog->GetID());
+					dialogs.push_back(closeDialog);
+				}
+				isFirstFrame = false;
 			}
 
 			// popup
