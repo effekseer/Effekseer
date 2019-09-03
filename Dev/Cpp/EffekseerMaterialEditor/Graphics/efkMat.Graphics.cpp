@@ -7,8 +7,12 @@
 #include <GL/glew.h>
 #endif
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
+
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "../ThirdParty/tiny_obj_loader.h"
 
 namespace EffekseerMaterial
 {
@@ -93,6 +97,121 @@ std::shared_ptr<Texture> TextureCache::Load(std::shared_ptr<Graphics> graphics, 
 	return texture;
 }
 
+Mesh::Mesh() {}
+
+Mesh ::~Mesh()
+{
+	ar::SafeDelete(vb);
+	ar::SafeDelete(ib);
+}
+
+std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char* path)
+{
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+
+	std::string warn;
+	std::string err;
+
+	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path);
+
+	if (!warn.empty())
+	{
+		std::cout << warn << std::endl;
+	}
+
+	if (!err.empty())
+	{
+		std::cerr << err << std::endl;
+		return nullptr;
+	}
+
+	if (!ret)
+	{
+		return nullptr;
+	}
+
+	std::vector<Vertex> vertexes;
+	std::vector<uint16_t> indexes;
+
+	// only single object
+	for (size_t s = 0; s < std::min(1u, shapes.size()); s++)
+	{
+		size_t index_offset = 0;
+
+		vertexes.resize(shapes[s].mesh.num_face_vertices.size() * 3);
+		indexes.resize(shapes[s].mesh.num_face_vertices.size() * 3);
+
+		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
+		{
+			for (size_t v = 0; v < shapes[s].mesh.num_face_vertices[f]; v++)
+			{
+				indexes[index_offset + v] = index_offset + v;
+
+				tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+
+				vertexes[index_offset + v].Pos.X = attrib.vertices[3 * idx.vertex_index + 0];
+				vertexes[index_offset + v].Pos.Y = attrib.vertices[3 * idx.vertex_index + 1];
+				vertexes[index_offset + v].Pos.Z = attrib.vertices[3 * idx.vertex_index + 2];
+				vertexes[index_offset + v].Normal.X = attrib.normals[3 * idx.normal_index + 0];
+				vertexes[index_offset + v].Normal.Y = attrib.normals[3 * idx.normal_index + 1];
+				vertexes[index_offset + v].Normal.Z = attrib.normals[3 * idx.normal_index + 2];
+				vertexes[index_offset + v].UV1.X = attrib.texcoords[2 * idx.texcoord_index + 0];
+				vertexes[index_offset + v].UV1.Y = attrib.texcoords[2 * idx.texcoord_index + 1];
+				vertexes[index_offset + v].UV2.X = attrib.texcoords[2 * idx.texcoord_index + 0];
+				vertexes[index_offset + v].UV2.Y = attrib.texcoords[2 * idx.texcoord_index + 1];
+				vertexes[index_offset + v].Color[0] = attrib.colors[3 * idx.vertex_index + 0] * 255;
+				vertexes[index_offset + v].Color[1] = attrib.colors[3 * idx.vertex_index + 1] * 255;
+				vertexes[index_offset + v].Color[2] = attrib.colors[3 * idx.vertex_index + 2] * 255;
+				vertexes[index_offset + v].Color[3] = 255;
+			}
+			index_offset += shapes[s].mesh.num_face_vertices[f];
+		}
+	}
+
+	// calc tangent
+	for (size_t i = 0; i < vertexes.size() / 3; i++)
+	{
+		auto& v0 = vertexes[i * 3 + 0];
+		auto& v1 = vertexes[i * 3 + 1];
+		auto& v2 = vertexes[i * 3 + 2];
+
+		Vector3 binormal;
+		Vector3 tangent;
+
+		CalcTangentSpace(v0, v1, v2, binormal, tangent);
+
+		v0.Tangent = tangent;
+		v1.Tangent = tangent;
+		v2.Tangent = tangent;
+	}
+
+	auto vb = ar::VertexBuffer::Create(graphics->GetManager());
+	vb->Initialize(graphics->GetManager(), sizeof(Vertex), vertexes.size(), false);
+
+	auto ib = ar::IndexBuffer::Create(graphics->GetManager());
+	ib->Initialize(graphics->GetManager(), indexes.size(), false);
+
+	if (!vb->Write(vertexes.data(), vertexes.size() * sizeof(Vertex)))
+	{
+		assert(0);
+	}
+
+	if (!ib->Write(indexes.data(), indexes.size() * sizeof(int16_t)))
+	{
+		assert(0);
+	}
+
+	auto mesh = std::make_shared<Mesh>();
+
+	mesh->vb = vb;
+	mesh->ib = ib;
+	mesh->indexCount = indexes.size();
+
+	return mesh;
+}
+
 Preview::Preview() {}
 
 Preview::~Preview()
@@ -100,7 +219,8 @@ Preview::~Preview()
 	ar::SafeDelete(vb);
 	ar::SafeDelete(ib);
 	ar::SafeDelete(shader);
-	ar::SafeDelete(renderTexture);
+	ar::SafeDelete(renderTarget_);
+	ar::SafeDelete(depthTarget_);
 	ar::SafeDelete(context);
 	ar::SafeDelete(constantBuffer);
 }
@@ -117,27 +237,27 @@ bool Preview::Initialize(std::shared_ptr<Graphics> graphics)
 	Vertex vb_[4];
 	uint16_t ib_[6];
 
-	vb_[0].Pos[0] = -1.0;
-	vb_[0].Pos[1] = +1.0;
-	vb_[0].Pos[2] = 0.5;
-	vb_[1].Pos[0] = +1.0;
-	vb_[1].Pos[1] = +1.0;
-	vb_[1].Pos[2] = 0.5;
-	vb_[2].Pos[0] = +1.0;
-	vb_[2].Pos[1] = -1.0;
-	vb_[2].Pos[2] = 0.5;
-	vb_[3].Pos[0] = -1.0;
-	vb_[3].Pos[1] = -1.0;
-	vb_[3].Pos[2] = 0.5;
+	vb_[0].Pos.X = -1.0;
+	vb_[0].Pos.Y = +1.0;
+	vb_[0].Pos.Z = 0.5;
+	vb_[1].Pos.X = +1.0;
+	vb_[1].Pos.Y = +1.0;
+	vb_[1].Pos.Z = 0.5;
+	vb_[2].Pos.X = +1.0;
+	vb_[2].Pos.Y = -1.0;
+	vb_[2].Pos.Z = 0.5;
+	vb_[3].Pos.X = -1.0;
+	vb_[3].Pos.Y = -1.0;
+	vb_[3].Pos.Z = 0.5;
 
-	vb_[0].UV[0] = 0.0;
-	vb_[0].UV[1] = 0.0;
-	vb_[1].UV[0] = 1.0;
-	vb_[1].UV[1] = 0.0;
-	vb_[2].UV[0] = 1.0;
-	vb_[2].UV[1] = 1.0;
-	vb_[3].UV[0] = 0.0;
-	vb_[3].UV[1] = 1.0;
+	vb_[0].UV1.X = 0.0;
+	vb_[0].UV1.Y = 0.0;
+	vb_[1].UV1.X = 1.0;
+	vb_[1].UV1.Y = 0.0;
+	vb_[2].UV1.X = 1.0;
+	vb_[2].UV1.Y = 1.0;
+	vb_[3].UV1.X = 0.0;
+	vb_[3].UV1.Y = 1.0;
 
 	vb_[0].Color[0] = 255;
 	vb_[0].Color[1] = 255;
@@ -170,11 +290,16 @@ bool Preview::Initialize(std::shared_ptr<Graphics> graphics)
 
 	ib->Write(ib_, sizeof(uint16_t) * 6);
 
-	renderTexture = ar::RenderTexture2D::Create(graphics->GetManager());
-	renderTexture->Initialize(graphics->GetManager(), TextureSize, TextureSize, ar::TextureFormat::R8G8B8A8_UNORM);
+	renderTarget_ = ar::RenderTexture2D::Create(graphics->GetManager());
+	renderTarget_->Initialize(graphics->GetManager(), TextureSize, TextureSize, ar::TextureFormat::R8G8B8A8_UNORM);
+
+	depthTarget_ = ar::DepthTexture::Create(graphics->GetManager());
+	depthTarget_->Initialize(graphics->GetManager(), TextureSize, TextureSize);
 
 	context = ar::Context::Create(graphics_->GetManager());
 	context->Initialize(graphics_->GetManager());
+
+	mesh_ = Mesh::Load(graphics_, "resources/meshes/cube.obj");
 
 	return true;
 }
@@ -204,13 +329,19 @@ bool Preview::CompileShader(std::string& vs,
 
 	shader = ar::Shader::Create(graphics_->GetManager());
 	std::vector<ar::VertexLayout> layout;
-	layout.resize(3);
+	layout.resize(6);
 	layout[0].Name = "Pos";
 	layout[0].LayoutFormat = ar::VertexLayoutFormat::R32G32B32_FLOAT;
-	layout[1].Name = "UV";
+	layout[1].Name = "UV1";
 	layout[1].LayoutFormat = ar::VertexLayoutFormat::R32G32_FLOAT;
-	layout[2].Name = "Color";
-	layout[2].LayoutFormat = ar::VertexLayoutFormat::R8G8B8A8_UNORM;
+	layout[2].Name = "UV2";
+	layout[2].LayoutFormat = ar::VertexLayoutFormat::R32G32_FLOAT;
+	layout[3].Name = "Normal";
+	layout[3].LayoutFormat = ar::VertexLayoutFormat::R32G32B32_FLOAT;
+	layout[4].Name = "Tangent";
+	layout[4].LayoutFormat = ar::VertexLayoutFormat::R32G32B32_FLOAT;
+	layout[5].Name = "Color";
+	layout[5].LayoutFormat = ar::VertexLayoutFormat::R8G8B8A8_UNORM;
 
 	shader->Initialize(graphics_->GetManager(), result, layout, false);
 
@@ -265,6 +396,24 @@ bool Preview::UpdateTime(float time)
 
 	for (auto layout : shader->GetPixelConstantLayouts())
 	{
+		if (layout.first == "projMat")
+		{
+			Matrix44 mat;
+			mat.SetPerspectiveFovRH_OpenGL(30.0f / 180.0f * 3.14f, 1.0, 0.1f, 10.0f);
+			constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
+		}
+
+		if (layout.first == "cameraMat")
+		{
+			Matrix44 mat;
+			mat.SetLookAtRH(Vector3(0, 0, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));
+
+			constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
+		}
+	}
+
+	for (auto layout : shader->GetPixelConstantLayouts())
+	{
 		if (layout.first == "ps_time")
 		{
 			constantBuffer->SetData(&time, layout.second.GetSize(), layout.second.Offset);
@@ -277,7 +426,8 @@ bool Preview::UpdateTime(float time)
 void Preview::Render()
 {
 	ar::SceneParameter sceneParam;
-	sceneParam.RenderTargets[0] = renderTexture;
+	sceneParam.RenderTargets[0] = renderTarget_;
+	sceneParam.DepthTarget = depthTarget_;
 
 	graphics_->GetManager()->BeginScene(sceneParam);
 	graphics_->GetManager()->BeginRendering();
@@ -289,29 +439,56 @@ void Preview::Render()
 	color.G = 0;
 	color.B = 0;
 	color.A = 0;
-	graphics_->GetManager()->Clear(true, false, color);
+	graphics_->GetManager()->Clear(true, true, color);
 
 	if (shader != nullptr)
 	{
-		ar::DrawParameter drawParam;
-		drawParam.AlphaBlend = ar::AlphaBlendMode::Blend;
-		drawParam.Culling = ar::CullingType::Double;
-		drawParam.VertexBufferPtr = vb;
-		drawParam.IndexBufferPtr = ib;
-		drawParam.IndexCount = 6;
-		drawParam.IndexOffset = 0;
-		drawParam.ShaderPtr = shader;
-		drawParam.IsDepthTest = false;
-		drawParam.IsDepthWrite = false;
-		drawParam.PixelConstantBufferPtr = this->constantBuffer;
-
-		for (int i = 0; i < textures_.size(); i++)
+		if (mesh_ != nullptr)
 		{
-			drawParam.PixelShaderTextures[i] = textures_[i] != nullptr ? textures_[i]->GetTexture() : nullptr;
-			drawParam.PixelShaderTextureWraps[i] = ar::TextureWrapType::Repeat;
-		}
+			ar::DrawParameter drawParam;
+			drawParam.AlphaBlend = ar::AlphaBlendMode::Blend;
+			drawParam.Culling = ar::CullingType::Double;
+			drawParam.VertexBufferPtr = mesh_->GetVertexBuffer();
+			drawParam.IndexBufferPtr = mesh_->GetIndexBuffer();
+			drawParam.IndexCount = mesh_->GetIndexCount();
+			drawParam.IndexOffset = 0;
+			drawParam.ShaderPtr = shader;
+			drawParam.IsDepthTest = false;
+			drawParam.IsDepthWrite = false;
+			drawParam.VertexConstantBufferPtr = this->constantBuffer;
+			drawParam.PixelConstantBufferPtr = this->constantBuffer;
 
-		context->Draw(drawParam);
+			for (int i = 0; i < textures_.size(); i++)
+			{
+				drawParam.PixelShaderTextures[i] = textures_[i] != nullptr ? textures_[i]->GetTexture() : nullptr;
+				drawParam.PixelShaderTextureWraps[i] = ar::TextureWrapType::Repeat;
+			}
+
+			context->Draw(drawParam);
+		}
+		else
+		{
+			ar::DrawParameter drawParam;
+			drawParam.AlphaBlend = ar::AlphaBlendMode::Blend;
+			drawParam.Culling = ar::CullingType::Double;
+			drawParam.VertexBufferPtr = vb;
+			drawParam.IndexBufferPtr = ib;
+			drawParam.IndexCount = 6;
+			drawParam.IndexOffset = 0;
+			drawParam.ShaderPtr = shader;
+			drawParam.IsDepthTest = false;
+			drawParam.IsDepthWrite = false;
+			drawParam.VertexConstantBufferPtr = this->constantBuffer;
+			drawParam.PixelConstantBufferPtr = this->constantBuffer;
+
+			for (int i = 0; i < textures_.size(); i++)
+			{
+				drawParam.PixelShaderTextures[i] = textures_[i] != nullptr ? textures_[i]->GetTexture() : nullptr;
+				drawParam.PixelShaderTextureWraps[i] = ar::TextureWrapType::Repeat;
+			}
+
+			context->Draw(drawParam);
+		}
 	}
 
 	context->End();
@@ -322,9 +499,9 @@ void Preview::Render()
 
 uint64_t Preview::GetInternal()
 {
-	if (renderTexture == nullptr)
+	if (renderTarget_ == nullptr)
 		return 0;
-	auto ret = renderTexture->GetInternalObjects()[0];
+	auto ret = renderTarget_->GetInternalObjects()[0];
 
 	// Temp
 	glBindTexture(GL_TEXTURE_2D, ret);

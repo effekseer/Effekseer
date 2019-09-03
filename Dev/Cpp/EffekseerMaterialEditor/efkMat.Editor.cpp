@@ -546,11 +546,11 @@ void Editor::UpdateNodes()
 
 			EffekseerMaterial::TextExporterGLSL exporter_;
 			EffekseerMaterial::TextExporter* exporter = &exporter_;
-			auto code = exporter->Export(material, node);
+			auto result = exporter->Export(material, node);
 
 			auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
 
-			auto textures = code.Textures;
+			auto textures = result.Textures;
 			auto removed_it =
 				std::remove_if(textures.begin(),
 							   textures.end(),
@@ -573,7 +573,7 @@ void Editor::UpdateNodes()
 				textures_.push_back(t_);
 			}
 
-			uobj->GetPreview()->CompileShader(vs, code.Code, textures_, code.Uniforms);
+			uobj->GetPreview()->CompileShader(vs, result.Code, textures_, result.Uniforms);
 			node->UserObj = uobj;
 			material->ClearDirty(node);
 			material->ClearContentDirty(node);
@@ -584,11 +584,11 @@ void Editor::UpdateNodes()
 			auto uobj = (EffekseerMaterial::NodeUserDataObject*)node->UserObj.get();
 			EffekseerMaterial::TextExporterGLSL exporter_;
 			EffekseerMaterial::TextExporter* exporter = &exporter_;
-			auto code = exporter->Export(material, node);
+			auto result = exporter->Export(material, node);
 
 			auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
 
-			auto textures = code.Textures;
+			auto textures = result.Textures;
 			auto removed_it =
 				std::remove_if(textures.begin(),
 							   textures.end(),
@@ -611,7 +611,7 @@ void Editor::UpdateNodes()
 				textures_.push_back(t_);
 			}
 
-			uobj->GetPreview()->UpdateUniforms(textures_, code.Uniforms);
+			uobj->GetPreview()->UpdateUniforms(textures_, result.Uniforms);
 			material->ClearContentDirty(node);
 		}
 

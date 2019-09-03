@@ -59,6 +59,12 @@ std::shared_ptr<EffekseerMaterial::Node> g_selectedNode;
 std::array<bool, 512> keyState;
 std::array<bool, 512> keyStatePre;
 
+std::string GetDirectoryName(const std::string& path)
+{
+	const std::string::size_type pos = std::max<int32_t>(path.find_last_of('/'), path.find_last_of('\\'));
+	return (pos == std::string::npos) ? std::string() : path.substr(0, pos + 1);
+}
+
 std::string GetExecutingDirectory()
 {
 	char buf[260];
@@ -71,12 +77,12 @@ std::string GetExecutingDirectory()
 
 	char temp[32];
 	sprintf(temp, "/proc/%d/exe", getpid());
-	int bytes = std::min(readlink(temp, pBuf, 260), 260 - 1);
+	int bytes = std::min(readlink(temp, buf, 260), 260 - 1);
 	if (bytes >= 0)
 		buf[bytes] = '\0';
 #endif
 
-	return buf;
+	return GetDirectoryName(buf);
 }
 
 void SetCurrentDir(const char* path)
@@ -211,8 +217,12 @@ int main(int argc, char* argv[])
 
 	int32_t width = 1280;
 	int32_t height = 720;
-	char* title = "EffekseerMaterialEditor";
 
+	#if _DEBUG
+	char* title = "EffekseerMaterialEditor - debug";
+	#else
+	char* title = "EffekseerMaterialEditor";
+	#endif
 	if (!glfwInit())
 	{
 		return false;

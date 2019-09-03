@@ -60,18 +60,25 @@ std::string TextExporterGLSL::GetVertexShaderCode()
 	static auto code = R"(
 
 in vec3 Pos;
-in vec2 UV;
+in vec2 UV1;
+in vec2 UV2;
+in vec3 Normal;
+in vec3 Tangent;
 in vec4 Color;
 
 out vec2 ps_UV;
 out vec4 ps_VertexColor;
 
+uniform mat4 projMat;
+uniform mat4 cameraMat;
+uniform float ps_time;
+
 void main()
 {
-	vec4 pos = vec4(Pos.x,Pos.y,Pos.x,1.0);
-	gl_Position = pos;
+	vec4 pos = vec4(Pos.x,Pos.y,Pos.z,1.0);
+	gl_Position = projMat * cameraMat * pos;
 
-	ps_UV = vec2(UV.x,UV.y);
+	ps_UV = vec2(UV1.x,UV1.y);
 	ps_VertexColor = Color;
 }
 
