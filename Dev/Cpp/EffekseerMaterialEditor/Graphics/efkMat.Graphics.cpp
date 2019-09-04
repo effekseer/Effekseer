@@ -154,9 +154,13 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 				vertexes[index_offset + v].Pos.X = attrib.vertices[3 * idx.vertex_index + 0];
 				vertexes[index_offset + v].Pos.Y = attrib.vertices[3 * idx.vertex_index + 1];
 				vertexes[index_offset + v].Pos.Z = attrib.vertices[3 * idx.vertex_index + 2];
-				vertexes[index_offset + v].Normal.X = attrib.normals[3 * idx.normal_index + 0];
-				vertexes[index_offset + v].Normal.Y = attrib.normals[3 * idx.normal_index + 1];
-				vertexes[index_offset + v].Normal.Z = attrib.normals[3 * idx.normal_index + 2];
+				
+				Vector3 normal;
+				normal.X = attrib.normals[3 * idx.normal_index + 0];
+				normal.Y = attrib.normals[3 * idx.normal_index + 1];
+				normal.Z = attrib.normals[3 * idx.normal_index + 2];
+				vertexes[index_offset + v].Normal = Vertex::CreatePacked(normal);
+
 				vertexes[index_offset + v].UV1.X = attrib.texcoords[2 * idx.texcoord_index + 0];
 				vertexes[index_offset + v].UV1.Y = attrib.texcoords[2 * idx.texcoord_index + 1];
 				vertexes[index_offset + v].UV2.X = attrib.texcoords[2 * idx.texcoord_index + 0];
@@ -182,9 +186,7 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 
 		CalcTangentSpace(v0, v1, v2, binormal, tangent);
 
-		v0.Tangent = tangent;
-		v1.Tangent = tangent;
-		v2.Tangent = tangent;
+		v0.Tangent = Vertex::CreatePacked(tangent);
 	}
 
 	auto vb = ar::VertexBuffer::Create(graphics->GetManager());
@@ -299,7 +301,7 @@ bool Preview::Initialize(std::shared_ptr<Graphics> graphics)
 	context = ar::Context::Create(graphics_->GetManager());
 	context->Initialize(graphics_->GetManager());
 
-	mesh_ = Mesh::Load(graphics_, "resources/meshes/cube.obj");
+	mesh_ = Mesh::Load(graphics_, "resources/meshes/sphere.obj");
 
 	return true;
 }
@@ -358,9 +360,9 @@ bool Preview::CompileShader(std::string& vs,
 	layout[2].Name = "atTexCoord2";
 	layout[2].LayoutFormat = ar::VertexLayoutFormat::R32G32_FLOAT;
 	layout[3].Name = "atNormal";
-	layout[3].LayoutFormat = ar::VertexLayoutFormat::R32G32B32_FLOAT;
+	layout[3].LayoutFormat = ar::VertexLayoutFormat::R8G8B8A8_UNORM;
 	layout[4].Name = "atTangent";
-	layout[4].LayoutFormat = ar::VertexLayoutFormat::R32G32B32_FLOAT;
+	layout[4].LayoutFormat = ar::VertexLayoutFormat::R8G8B8A8_UNORM;
 	layout[5].Name = "atColor";
 	layout[5].LayoutFormat = ar::VertexLayoutFormat::R8G8B8A8_UNORM;
 
@@ -450,16 +452,45 @@ bool Preview::UpdateTime(float time)
 			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
 		}
 
-		/*
-					shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), psOffset);
-			psOffset += sizeof(float) * 4;
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), psOffset);
-			psOffset += sizeof(float) * 4;
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightColor"), psOffset);
-			psOffset += sizeof(float) * 4;
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightAmbientColor"), psOffset);
-			psOffset += sizeof(float) * 4;
-		*/
+		if (layout.first == "cameraPosition")
+		{
+			float values[4];
+			values[0] = 0.0f;
+			values[1] = 0.0f;
+			values[2] = 2.0f;
+
+			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+		}
+
+		if (layout.first == "lightDirection")
+		{
+			float values[4];
+			values[0] = 1.0f / sqrt(3.0f);
+			values[1] = 1.0f / sqrt(3.0f);
+			values[2] = 1.0f / sqrt(3.0f);
+
+			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+		}
+
+		if (layout.first == "lightColor")
+		{
+			float values[4];
+			values[0] = 1.0f;
+			values[1] = 1.0f;
+			values[2] = 1.0f;
+
+			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+		}
+
+		if (layout.first == "lightAmbientColor")
+		{
+			float values[4];
+			values[0] = 0.0f;
+			values[1] = 0.0f;
+			values[2] = 0.0f;
+
+			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+		}
 	}
 
 	for (auto layout : shader->GetPixelConstantLayouts())

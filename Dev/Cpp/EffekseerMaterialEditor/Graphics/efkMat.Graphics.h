@@ -172,9 +172,27 @@ struct Vertex
 	Vector3 Pos;
 	Vector2 UV1;
 	Vector2 UV2;
-	Vector3 Normal;
-	Vector3 Tangent;
+	std::array<uint8_t, 4> Normal;
+	std::array<uint8_t, 4> Tangent;
 	uint8_t Color[4];
+
+	static std::array<uint8_t, 4> CreatePacked(const Vector3& v)
+	{ 
+		std::array<uint8_t, 4> ret;
+		ret[0] = static_cast<uint8_t>((v.X + 1.0f) / 2.0f * 255);
+		ret[1] = static_cast<uint8_t>((v.Y + 1.0f) / 2.0f * 255);
+		ret[2] = static_cast<uint8_t>((v.Z + 1.0f) / 2.0f * 255);
+		return ret;
+	}
+
+	static Vector3 CreateUnpacked(const std::array<uint8_t, 4>& v)
+	{
+		Vector3 ret;
+		ret.X = v[0] / 255.0f * 2.0f - 1.0f;
+		ret.Y = v[1] / 255.0f * 2.0f - 1.0f;
+		ret.Z = v[2] / 255.0f * 2.0f - 1.0f;
+		return ret;
+	}
 };
 
 static void CalcTangentSpace(const Vertex& v1, const Vertex& v2, const Vertex& v3, Vector3& binormal, Vector3& tangent)

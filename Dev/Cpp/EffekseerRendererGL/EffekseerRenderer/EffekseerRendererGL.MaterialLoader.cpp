@@ -85,6 +85,8 @@ void main()
 	// UV
 	vec2 uv1 = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
 	vec2 uv2 = uv1;
+
+	vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
 )";
 
 static const char g_material_model_vs_src_suf2[] =
@@ -179,6 +181,8 @@ void main() {
 	v_WorldB = worldBinormal;
 	v_WorldT = worldTangent;
 
+	vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
+
 )";
 
 static const char g_material_sprite_vs_src_suf1[] =
@@ -202,6 +206,7 @@ void main() {
 	v_WorldN = worldNormal;
 	v_WorldB = worldBinormal;
 	v_WorldT = worldTangent;
+	vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
 )";
 
 static const char g_material_sprite_vs_src_suf2[] =
@@ -315,6 +320,7 @@ void main()
 	vec3 worldNormal = v_WorldN;
 	vec3 worldTangent = v_WorldT;
 	vec3 worldBinormal = v_WorldB;
+	vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
 )";
 
 static const char g_material_fs_src_suf2_lit[] =

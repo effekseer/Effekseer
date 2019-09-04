@@ -464,9 +464,9 @@ void Editor::UpdateNodes()
 			if (!node->GetIsDirtied())
 				continue;
 
-			EffekseerMaterial::TextExporterGeneric exporterG_;
+			EffekseerMaterial::TextExporterGeneric exporter;
 			EffekseerRendererGL::ShaderLoader loader;
-			auto ret = (&exporterG_)->Export(material, node);
+			auto ret = (&exporter)->Export(material, node);
 			loader.IsSimpleVertex = false;
 			loader.GenericCode = ret.Code;
 			loader.HasRefraction = ret.HasRefraction;
@@ -487,12 +487,6 @@ void Editor::UpdateNodes()
 			}
 
 			auto data = loader.GenerateShader(EffekseerRenderer::ShaderLoader::ShaderType::Standard);
-
-			// EffekseerMaterial::TextExporterGLSL exporter_;
-			// EffekseerMaterial::TextExporter* exporter = &exporter_;
-			// auto code = exporter->Export(material, node);
-			//
-			// auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
 
 			auto textures = ret.Textures;
 			auto removed_it =
@@ -527,17 +521,13 @@ void Editor::UpdateNodes()
 			if (!node->GetIsContentDirtied())
 				continue;
 
-			EffekseerMaterial::TextExporterGeneric exporterG_;
+			EffekseerMaterial::TextExporterGeneric exporter;
 			EffekseerRendererGL::ShaderLoader loader;
-			auto code = (&exporterG_)->Export(material, node);
-
-			// EffekseerMaterial::TextExporterGLSL exporter_;
-			// EffekseerMaterial::TextExporter* exporter = &exporter_;
-			// auto code = exporter->Export(material, node);
+			auto result = (&exporter)->Export(material, node);
 
 			auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
 
-			auto textures = code.Textures;
+			auto textures = result.Textures;
 			auto removed_it =
 				std::remove_if(textures.begin(),
 							   textures.end(),
@@ -560,7 +550,7 @@ void Editor::UpdateNodes()
 				textures_.push_back(t_);
 			}
 
-			preview_->UpdateUniforms(textures_, code.Uniforms);
+			preview_->UpdateUniforms(textures_, result.Uniforms);
 			material->ClearContentDirty(node);
 		}
 	}
@@ -575,42 +565,36 @@ void Editor::UpdateNodes()
 			uobj->GetPreview() = std::make_shared<EffekseerMaterial::Preview>();
 			uobj->GetPreview()->Initialize(graphics_);
 
-			EffekseerMaterial::TextExporterGeneric exporterG_;
+			EffekseerMaterial::TextExporterGeneric exporter;
 			EffekseerRendererGL::ShaderLoader loader;
-			auto code = (&exporterG_)->Export(material, node);
+			auto result = exporter.Export(material, node);
 			loader.IsSimpleVertex = false;
-			loader.GenericCode = code.Code;
-			loader.HasRefraction = code.HasRefraction;
-			loader.ShadingModel = static_cast<Effekseer::ShadingModelType>(code.ShadingModel);
-			loader.Textures.resize(code.Textures.size());
-			loader.Uniforms.resize(code.Uniforms.size());
+			loader.GenericCode = result.Code;
+			loader.HasRefraction = result.HasRefraction;
+			loader.ShadingModel = static_cast<Effekseer::ShadingModelType>(result.ShadingModel);
+			loader.Textures.resize(result.Textures.size());
+			loader.Uniforms.resize(result.Uniforms.size());
 
 			if (node->Parameter->Type != NodeType::Output)
 			{
 				loader.ShadingModel = Effekseer::ShadingModelType::Unlit;
 			}
 
-			for (size_t i = 0; i < code.Textures.size(); i++)
+			for (size_t i = 0; i < result.Textures.size(); i++)
 			{
-				loader.Textures[i].Name = code.Textures[i]->Name;
+				loader.Textures[i].Name = result.Textures[i]->Name;
 				loader.Textures[i].Index = i;
 			}
 
-			for (size_t i = 0; i < code.Uniforms.size(); i++)
+			for (size_t i = 0; i < result.Uniforms.size(); i++)
 			{
-				loader.Uniforms[i].Name = code.Uniforms[i]->Name;
+				loader.Uniforms[i].Name = result.Uniforms[i]->Name;
 				loader.Uniforms[i].Index = i;
 			}
 
 			auto data = loader.GenerateShader(EffekseerRenderer::ShaderLoader::ShaderType::Standard);
 
-			// EffekseerMaterial::TextExporterGLSL exporter_;
-			// EffekseerMaterial::TextExporter* exporter = &exporter_;
-			// auto result = exporter->Export(material, node);
-			//
-			// auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
-
-			auto textures = code.Textures;
+			auto textures = result.Textures;
 			auto removed_it =
 				std::remove_if(textures.begin(),
 							   textures.end(),
@@ -633,7 +617,7 @@ void Editor::UpdateNodes()
 				textures_.push_back(t_);
 			}
 
-			uobj->GetPreview()->CompileShader(data.CodeVS, data.CodePS, textures_, code.Uniforms);
+			uobj->GetPreview()->CompileShader(data.CodeVS, data.CodePS, textures_, result.Uniforms);
 			node->UserObj = uobj;
 			material->ClearDirty(node);
 			material->ClearContentDirty(node);
@@ -642,13 +626,10 @@ void Editor::UpdateNodes()
 		if ((node->UserObj != nullptr && node->GetIsContentDirtied()) && node->IsOpened)
 		{
 			auto uobj = (EffekseerMaterial::NodeUserDataObject*)node->UserObj.get();
-			// EffekseerMaterial::TextExporterGLSL exporter_;
-			// EffekseerMaterial::TextExporter* exporter = &exporter_;
-			// auto result = exporter->Export(material, node);
-
-			EffekseerMaterial::TextExporterGeneric exporterG_;
+			
+			EffekseerMaterial::TextExporterGeneric exporter;
 			EffekseerRendererGL::ShaderLoader loader;
-			auto result = (&exporterG_)->Export(material, node);
+			auto result = (&exporter)->Export(material, node);
 
 			auto textures = result.Textures;
 			auto removed_it =
@@ -1107,7 +1088,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 						{
 							floatValues[0] = i;
 							material->ChangeValue(p, floatValues);
-							material->MakeContentDirty(node);
+							material->MakeDirty(node);
 						}
 						if (isSelected)
 							ImGui::SetItemDefaultFocus();
@@ -1128,7 +1109,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 						{
 							floatValues[0] = i;
 							material->ChangeValue(p, floatValues);
-							material->MakeContentDirty(node);
+							material->MakeDirty(node);
 						}
 						if (isSelected)
 							ImGui::SetItemDefaultFocus();
@@ -1153,7 +1134,7 @@ void Editor::UpdatePreview()
 	ImVec2 size;
 	size.x = Preview::TextureSize;
 	size.y = Preview::TextureSize;
-	ImGui::Image((void*)preview_->GetInternal(), size);
+	ImGui::Image((void*)preview_->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 }
 
 void Editor::UpdateNode(std::shared_ptr<Node> node)
@@ -1290,7 +1271,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 			ImVec2 size;
 			size.x = Preview::TextureSize;
 			size.y = Preview::TextureSize;
-			ImGui::Image((void*)preview->GetPreview()->GetInternal(), size);
+			ImGui::Image((void*)preview->GetPreview()->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 		}
 		ImGui::TreePop();
 

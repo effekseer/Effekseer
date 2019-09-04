@@ -417,7 +417,7 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		auto opacityIndex = outputNode->Target->GetInputPinIndex("Opacity");
 		auto opacityMaskIndex = outputNode->Target->GetInputPinIndex("OpacityMask");
 
-		ret << GetTypeName(ValueType::Float3) << " pixelNormalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex])
+		ret << " pixelNormalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex])
 			<< ";" << std::endl;
 		ret << GetTypeName(ValueType::Float3) << " normalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex]) << ";"
 			<< std::endl;
