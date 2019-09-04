@@ -307,6 +307,9 @@ public:
 	bool UpdateTime(float time);
 	void Render();
 
+	std::string VS;
+	std::string PS;
+
 	uint64_t GetInternal();
 
 	static const int32_t TextureSize = 128;

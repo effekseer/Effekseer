@@ -1,5 +1,4 @@
 ﻿#include "EffekseerRendererGL.MaterialLoader.h"
-#include "../EffekseerRendererCommon/EffekseerRenderer.ShaderLoader.h"
 #include "EffekseerRendererGL.ModelRenderer.h"
 #include "EffekseerRendererGL.Shader.h"
 
@@ -360,177 +359,170 @@ static const char g_material_fs_src_suf2_refraction[] =
 
 )";
 
-class ShaderLoader : public EffekseerRenderer::ShaderLoader
+EffekseerRenderer::ShaderData ShaderLoader::GenerateShader(ShaderType shaderType)
 {
-public:
-	ShaderLoader() = default;
-	virtual ~ShaderLoader() = default;
+	::EffekseerRenderer::ShaderData shaderData;
 
-	virtual EffekseerRenderer::ShaderData GenerateShader(ShaderType shaderType)
+	for (int stage = 0; stage < 2; stage++)
 	{
-		::EffekseerRenderer::ShaderData shaderData;
+		std::ostringstream maincode;
 
-		for (int stage = 0; stage < 2; stage++)
+		if (stage == 0)
 		{
-			std::ostringstream maincode;
-
-			if (stage == 0)
+			if (shaderType == ShaderType::Standard || shaderType == ShaderType::Refraction)
 			{
-				if (shaderType == ShaderType::Standard || shaderType == ShaderType::Refraction)
+				if (IsSimpleVertex)
 				{
-					if (IsSimpleVertex)
-					{
-						maincode << g_material_sprite_vs_src_pre_simple;
-					}
-					else
-					{
-						maincode << g_material_sprite_vs_src_pre;
-					}
-				}
-				else if (shaderType == ShaderType::Model || shaderType == ShaderType::RefractionModel)
-				{
-					maincode << g_material_model_vs_src_pre;
-				}
-			}
-			else
-			{
-				maincode << g_material_fs_src_pre;
-			}
-
-			for (size_t i = 0; i < Uniforms.size(); i++)
-			{
-				auto& uniform = Uniforms[i];
-				if (uniform.Index == 0)
-					maincode << "uniform float " << uniform.Name << ";" << std::endl;
-				if (uniform.Index == 1)
-					maincode << "uniform vec2 " << uniform.Name << ";" << std::endl;
-				if (uniform.Index == 2)
-					maincode << "uniform vec3 " << uniform.Name << ";" << std::endl;
-				if (uniform.Index == 3)
-					maincode << "uniform vec4 " << uniform.Name << ";" << std::endl;
-			}
-
-			for (size_t i = 0; i < Textures.size(); i++)
-			{
-				auto& texture = Textures[i];
-				maincode << "uniform sampler2D " << texture.Name << ";" << std::endl;
-			}
-
-			for (size_t i = Textures.size(); i < Textures.size() + 1; i++)
-			{
-				maincode << "uniform sampler2D "
-						 << "background"
-						 << ";" << std::endl;
-			}
-
-			if (ShadingModel == ::Effekseer::ShadingModelType::Lit)
-			{
-				maincode << "uniform vec4 "
-						 << "lightDirection"
-						 << ";" << std::endl;
-				maincode << "uniform vec4 "
-						 << "lightColor"
-						 << ";" << std::endl;
-				maincode << "uniform vec4 "
-						 << "lightAmbientColor"
-						 << ";" << std::endl;
-				maincode << "uniform vec4 "
-						 << "cameraPosition"
-						 << ";" << std::endl;
-
-				maincode << "#define __MATERIAL_LIT__ 1" << std::endl;
-			}
-			else if (ShadingModel == ::Effekseer::ShadingModelType::Unlit)
-			{
-			}
-
-			if (HasRefraction && stage == 1 && (shaderType == ShaderType::Refraction || shaderType == ShaderType::RefractionModel))
-			{
-				maincode << "uniform mat4 "
-						 << "cameraMat"
-						 << ";" << std::endl;
-			}
-
-			auto baseCode = GenericCode;
-			baseCode = Replace(baseCode, "$F1$", "float");
-			baseCode = Replace(baseCode, "$F2$", "vec2");
-			baseCode = Replace(baseCode, "$F3$", "vec3");
-			baseCode = Replace(baseCode, "$F4$", "vec4");
-			baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
-			baseCode = Replace(baseCode, "$UV$", "uv");
-			baseCode = Replace(baseCode, "$MOD", "mod");
-			baseCode = Replace(baseCode, "$SUFFIX", "");
-
-			// replace textures
-			for (size_t i = 0; i < Textures.size(); i++)
-			{
-				auto& texture = Textures[i];
-				std::string keyP = "$TEX_P" + std::to_string(texture.Index) + "$";
-				std::string keyS = "$TEX_S" + std::to_string(texture.Index) + "$";
-
-				baseCode = Replace(baseCode, keyP, "TEX2D(" + texture.Name + ",");
-				baseCode = Replace(baseCode, keyS, ")");
-			}
-
-			if (stage == 0)
-			{
-				if (shaderType == ShaderType::Standard || shaderType == ShaderType::Refraction)
-				{
-					if (IsSimpleVertex)
-					{
-						maincode << g_material_sprite_vs_src_suf1_simple;
-					}
-					else
-					{
-						maincode << g_material_sprite_vs_src_suf1;
-					}
-				}
-				else if (shaderType == ShaderType::Model || shaderType == ShaderType::RefractionModel)
-				{
-					maincode << g_material_model_vs_src_suf1;
-				}
-
-				maincode << baseCode;
-
-				if (shaderType == ShaderType::Standard || shaderType == ShaderType::Refraction)
-				{
-					maincode << g_material_sprite_vs_src_suf2;
-				}
-				else if (shaderType == ShaderType::Model || shaderType == ShaderType::RefractionModel)
-				{
-					maincode << g_material_model_vs_src_suf2;
-				}
-
-				shaderData.CodeVS = maincode.str();
-			}
-			else
-			{
-				maincode << g_material_fs_src_suf1;
-
-				maincode << baseCode;
-
-				if (shaderType == ShaderType::Refraction || shaderType == ShaderType::RefractionModel)
-				{
-					maincode << g_material_fs_src_suf2_refraction;
+					maincode << g_material_sprite_vs_src_pre_simple;
 				}
 				else
 				{
-					if (ShadingModel == Effekseer::ShadingModelType::Lit)
-					{
-						maincode << g_material_fs_src_suf2_lit;
-					}
-					else if (ShadingModel == Effekseer::ShadingModelType::Unlit)
-					{
-						maincode << g_material_fs_src_suf2_unlit;
-					}
+					maincode << g_material_sprite_vs_src_pre;
 				}
-
-				shaderData.CodePS = maincode.str();
+			}
+			else if (shaderType == ShaderType::Model || shaderType == ShaderType::RefractionModel)
+			{
+				maincode << g_material_model_vs_src_pre;
 			}
 		}
-		return shaderData;
+		else
+		{
+			maincode << g_material_fs_src_pre;
+		}
+
+		for (size_t i = 0; i < Uniforms.size(); i++)
+		{
+			auto& uniform = Uniforms[i];
+			if (uniform.Index == 0)
+				maincode << "uniform float " << uniform.Name << ";" << std::endl;
+			if (uniform.Index == 1)
+				maincode << "uniform vec2 " << uniform.Name << ";" << std::endl;
+			if (uniform.Index == 2)
+				maincode << "uniform vec3 " << uniform.Name << ";" << std::endl;
+			if (uniform.Index == 3)
+				maincode << "uniform vec4 " << uniform.Name << ";" << std::endl;
+		}
+
+		for (size_t i = 0; i < Textures.size(); i++)
+		{
+			auto& texture = Textures[i];
+			maincode << "uniform sampler2D " << texture.Name << ";" << std::endl;
+		}
+
+		for (size_t i = Textures.size(); i < Textures.size() + 1; i++)
+		{
+			maincode << "uniform sampler2D "
+					 << "background"
+					 << ";" << std::endl;
+		}
+
+		if (ShadingModel == ::Effekseer::ShadingModelType::Lit)
+		{
+			maincode << "uniform vec4 "
+					 << "lightDirection"
+					 << ";" << std::endl;
+			maincode << "uniform vec4 "
+					 << "lightColor"
+					 << ";" << std::endl;
+			maincode << "uniform vec4 "
+					 << "lightAmbientColor"
+					 << ";" << std::endl;
+			maincode << "uniform vec4 "
+					 << "cameraPosition"
+					 << ";" << std::endl;
+
+			maincode << "#define __MATERIAL_LIT__ 1" << std::endl;
+		}
+		else if (ShadingModel == ::Effekseer::ShadingModelType::Unlit)
+		{
+		}
+
+		if (HasRefraction && stage == 1 && (shaderType == ShaderType::Refraction || shaderType == ShaderType::RefractionModel))
+		{
+			maincode << "uniform mat4 "
+					 << "cameraMat"
+					 << ";" << std::endl;
+		}
+
+		auto baseCode = GenericCode;
+		baseCode = Replace(baseCode, "$F1$", "float");
+		baseCode = Replace(baseCode, "$F2$", "vec2");
+		baseCode = Replace(baseCode, "$F3$", "vec3");
+		baseCode = Replace(baseCode, "$F4$", "vec4");
+		baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
+		baseCode = Replace(baseCode, "$UV$", "uv");
+		baseCode = Replace(baseCode, "$MOD", "mod");
+		baseCode = Replace(baseCode, "$SUFFIX", "");
+
+		// replace textures
+		for (size_t i = 0; i < Textures.size(); i++)
+		{
+			auto& texture = Textures[i];
+			std::string keyP = "$TEX_P" + std::to_string(texture.Index) + "$";
+			std::string keyS = "$TEX_S" + std::to_string(texture.Index) + "$";
+
+			baseCode = Replace(baseCode, keyP, "TEX2D(" + texture.Name + ",");
+			baseCode = Replace(baseCode, keyS, ")");
+		}
+
+		if (stage == 0)
+		{
+			if (shaderType == ShaderType::Standard || shaderType == ShaderType::Refraction)
+			{
+				if (IsSimpleVertex)
+				{
+					maincode << g_material_sprite_vs_src_suf1_simple;
+				}
+				else
+				{
+					maincode << g_material_sprite_vs_src_suf1;
+				}
+			}
+			else if (shaderType == ShaderType::Model || shaderType == ShaderType::RefractionModel)
+			{
+				maincode << g_material_model_vs_src_suf1;
+			}
+
+			maincode << baseCode;
+
+			if (shaderType == ShaderType::Standard || shaderType == ShaderType::Refraction)
+			{
+				maincode << g_material_sprite_vs_src_suf2;
+			}
+			else if (shaderType == ShaderType::Model || shaderType == ShaderType::RefractionModel)
+			{
+				maincode << g_material_model_vs_src_suf2;
+			}
+
+			shaderData.CodeVS = maincode.str();
+		}
+		else
+		{
+			maincode << g_material_fs_src_suf1;
+
+			maincode << baseCode;
+
+			if (shaderType == ShaderType::Refraction || shaderType == ShaderType::RefractionModel)
+			{
+				maincode << g_material_fs_src_suf2_refraction;
+			}
+			else
+			{
+				if (ShadingModel == Effekseer::ShadingModelType::Lit)
+				{
+					maincode << g_material_fs_src_suf2_lit;
+				}
+				else if (ShadingModel == Effekseer::ShadingModelType::Unlit)
+				{
+					maincode << g_material_fs_src_suf2_unlit;
+				}
+			}
+
+			shaderData.CodePS = maincode.str();
+		}
 	}
-};
+	return shaderData;
+}
 
 MaterialLoader::MaterialLoader(Renderer* renderer, ::Effekseer::FileInterface* fileInterface) : fileInterface_(fileInterface)
 {

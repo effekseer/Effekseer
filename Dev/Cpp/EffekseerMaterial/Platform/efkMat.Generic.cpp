@@ -50,7 +50,7 @@ std::string TextExporterGeneric::ExportUniformAndTextures(const std::vector<std:
 	return ret.str();
 }
 
-std::string TextExporterGeneric::Export(std::shared_ptr<TextExporterNode> node)
+std::string TextExporterGeneric::ExportNode(std::shared_ptr<TextExporterNode> node)
 {
 	std::ostringstream ret;
 
@@ -93,7 +93,7 @@ std::string TextExporterGeneric::Export(std::shared_ptr<TextExporterNode> node)
 	}
 	else
 	{
-		return TextExporter::Export(node);
+		return TextExporter::ExportNode(node);
 	}
 }
 

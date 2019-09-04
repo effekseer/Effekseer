@@ -1,4 +1,4 @@
-
+#define NOMINMAX
 #include "efkMat.Editor.h"
 #include "efkMat.CommandManager.h"
 #include "efkMat.Models.h"
@@ -10,12 +10,15 @@
 #include <ostream>
 
 #include <Platform/efkMat.GLSL.h>
+#include <Platform/efkMat.Generic.h>
 #include <Platform/efkMat.HLSL.h>
 
 #include <efkMat.StringContainer.h>
 
 #include <filesystem>
 namespace fs = std::experimental::filesystem;
+
+#include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
 
 namespace EffekseerMaterial
 {
@@ -461,13 +464,37 @@ void Editor::UpdateNodes()
 			if (!node->GetIsDirtied())
 				continue;
 
-			EffekseerMaterial::TextExporterGLSL exporter_;
-			EffekseerMaterial::TextExporter* exporter = &exporter_;
-			auto code = exporter->Export(material, node);
+			EffekseerMaterial::TextExporterGeneric exporterG_;
+			EffekseerRendererGL::ShaderLoader loader;
+			auto ret = (&exporterG_)->Export(material, node);
+			loader.IsSimpleVertex = false;
+			loader.GenericCode = ret.Code;
+			loader.HasRefraction = ret.HasRefraction;
+			loader.ShadingModel = static_cast<Effekseer::ShadingModelType>(ret.ShadingModel);
+			loader.Textures.resize(ret.Textures.size());
+			loader.Uniforms.resize(ret.Uniforms.size());
 
-			auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
+			for (size_t i = 0; i < ret.Textures.size(); i++)
+			{
+				loader.Textures[i].Name = ret.Textures[i]->Name;
+				loader.Textures[i].Index = i;
+			}
 
-			auto textures = code.Textures;
+			for (size_t i = 0; i < ret.Uniforms.size(); i++)
+			{
+				loader.Uniforms[i].Name = ret.Uniforms[i]->Name;
+				loader.Uniforms[i].Index = i;
+			}
+
+			auto data = loader.GenerateShader(EffekseerRenderer::ShaderLoader::ShaderType::Standard);
+
+			// EffekseerMaterial::TextExporterGLSL exporter_;
+			// EffekseerMaterial::TextExporter* exporter = &exporter_;
+			// auto code = exporter->Export(material, node);
+			//
+			// auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
+
+			auto textures = ret.Textures;
 			auto removed_it =
 				std::remove_if(textures.begin(),
 							   textures.end(),
@@ -490,7 +517,7 @@ void Editor::UpdateNodes()
 				textures_.push_back(t_);
 			}
 
-			preview_->CompileShader(vs, code.Code, textures_, code.Uniforms);
+			preview_->CompileShader(data.CodeVS, data.CodePS, textures_, ret.Uniforms);
 		}
 
 		for (auto node : material->GetNodes())
@@ -500,9 +527,13 @@ void Editor::UpdateNodes()
 			if (!node->GetIsContentDirtied())
 				continue;
 
-			EffekseerMaterial::TextExporterGLSL exporter_;
-			EffekseerMaterial::TextExporter* exporter = &exporter_;
-			auto code = exporter->Export(material, node);
+			EffekseerMaterial::TextExporterGeneric exporterG_;
+			EffekseerRendererGL::ShaderLoader loader;
+			auto code = (&exporterG_)->Export(material, node);
+
+			// EffekseerMaterial::TextExporterGLSL exporter_;
+			// EffekseerMaterial::TextExporter* exporter = &exporter_;
+			// auto code = exporter->Export(material, node);
 
 			auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
 
@@ -544,13 +575,42 @@ void Editor::UpdateNodes()
 			uobj->GetPreview() = std::make_shared<EffekseerMaterial::Preview>();
 			uobj->GetPreview()->Initialize(graphics_);
 
-			EffekseerMaterial::TextExporterGLSL exporter_;
-			EffekseerMaterial::TextExporter* exporter = &exporter_;
-			auto result = exporter->Export(material, node);
+			EffekseerMaterial::TextExporterGeneric exporterG_;
+			EffekseerRendererGL::ShaderLoader loader;
+			auto code = (&exporterG_)->Export(material, node);
+			loader.IsSimpleVertex = false;
+			loader.GenericCode = code.Code;
+			loader.HasRefraction = code.HasRefraction;
+			loader.ShadingModel = static_cast<Effekseer::ShadingModelType>(code.ShadingModel);
+			loader.Textures.resize(code.Textures.size());
+			loader.Uniforms.resize(code.Uniforms.size());
 
-			auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
+			if (node->Parameter->Type != NodeType::Output)
+			{
+				loader.ShadingModel = Effekseer::ShadingModelType::Unlit;
+			}
 
-			auto textures = result.Textures;
+			for (size_t i = 0; i < code.Textures.size(); i++)
+			{
+				loader.Textures[i].Name = code.Textures[i]->Name;
+				loader.Textures[i].Index = i;
+			}
+
+			for (size_t i = 0; i < code.Uniforms.size(); i++)
+			{
+				loader.Uniforms[i].Name = code.Uniforms[i]->Name;
+				loader.Uniforms[i].Index = i;
+			}
+
+			auto data = loader.GenerateShader(EffekseerRenderer::ShaderLoader::ShaderType::Standard);
+
+			// EffekseerMaterial::TextExporterGLSL exporter_;
+			// EffekseerMaterial::TextExporter* exporter = &exporter_;
+			// auto result = exporter->Export(material, node);
+			//
+			// auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
+
+			auto textures = code.Textures;
 			auto removed_it =
 				std::remove_if(textures.begin(),
 							   textures.end(),
@@ -573,7 +633,7 @@ void Editor::UpdateNodes()
 				textures_.push_back(t_);
 			}
 
-			uobj->GetPreview()->CompileShader(vs, result.Code, textures_, result.Uniforms);
+			uobj->GetPreview()->CompileShader(data.CodeVS, data.CodePS, textures_, code.Uniforms);
 			node->UserObj = uobj;
 			material->ClearDirty(node);
 			material->ClearContentDirty(node);
@@ -582,11 +642,13 @@ void Editor::UpdateNodes()
 		if ((node->UserObj != nullptr && node->GetIsContentDirtied()) && node->IsOpened)
 		{
 			auto uobj = (EffekseerMaterial::NodeUserDataObject*)node->UserObj.get();
-			EffekseerMaterial::TextExporterGLSL exporter_;
-			EffekseerMaterial::TextExporter* exporter = &exporter_;
-			auto result = exporter->Export(material, node);
+			// EffekseerMaterial::TextExporterGLSL exporter_;
+			// EffekseerMaterial::TextExporter* exporter = &exporter_;
+			// auto result = exporter->Export(material, node);
 
-			auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
+			EffekseerMaterial::TextExporterGeneric exporterG_;
+			EffekseerRendererGL::ShaderLoader loader;
+			auto result = (&exporterG_)->Export(material, node);
 
 			auto textures = result.Textures;
 			auto removed_it =

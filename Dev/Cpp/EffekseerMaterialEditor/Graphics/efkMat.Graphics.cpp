@@ -136,7 +136,7 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 	std::vector<uint16_t> indexes;
 
 	// only single object
-	for (size_t s = 0; s < std::min(1u, shapes.size()); s++)
+	for (size_t s = 0; s < std::min(static_cast<size_t>(1), shapes.size()); s++)
 	{
 		size_t index_offset = 0;
 
@@ -304,18 +304,39 @@ bool Preview::Initialize(std::shared_ptr<Graphics> graphics)
 	return true;
 }
 
+static const char g_header_vs_gl3_src[] = ""
+										  "#define lowp\n"
+										  "#define mediump\n"
+										  "#define highp\n"
+										  "#define IN in\n"
+										  "#define OUT out\n";
+
+static const char g_header_fs_gl3_src[] = ""
+										  "#define lowp\n"
+										  "#define mediump\n"
+										  "#define highp\n"
+										  "#define IN in\n"
+										  "#define TEX2D texture\n"
+										  "layout (location = 0) out vec4 FRAGCOLOR;\n";
+
 bool Preview::CompileShader(std::string& vs,
 							std::string& ps,
 							std::vector<std::shared_ptr<Texture>> textures,
 							std::vector<std::shared_ptr<TextExporterUniform>>& uniforms)
 {
+	VS = vs;
+	PS = ps;
+
 	std::cout << "Compile Shader" << std::endl;
+	std::cout << PS << std::endl;
 
 	ar::SafeDelete(shader);
 	ar::SafeDelete(constantBuffer);
 
 	ar::ShaderCompilerParameter param;
+	param.VertexShaderTexts.push_back(g_header_vs_gl3_src);
 	param.VertexShaderTexts.push_back(vs);
+	param.PixelShaderTexts.push_back(g_header_fs_gl3_src);
 	param.PixelShaderTexts.push_back(ps);
 	param.OpenGLVersion = ar::OpenGLVersionType::OpenGL33;
 	ar::ShaderCompilerResult result;
@@ -330,17 +351,17 @@ bool Preview::CompileShader(std::string& vs,
 	shader = ar::Shader::Create(graphics_->GetManager());
 	std::vector<ar::VertexLayout> layout;
 	layout.resize(6);
-	layout[0].Name = "Pos";
+	layout[0].Name = "atPosition";
 	layout[0].LayoutFormat = ar::VertexLayoutFormat::R32G32B32_FLOAT;
-	layout[1].Name = "UV1";
+	layout[1].Name = "atTexCoord";
 	layout[1].LayoutFormat = ar::VertexLayoutFormat::R32G32_FLOAT;
-	layout[2].Name = "UV2";
+	layout[2].Name = "atTexCoord2";
 	layout[2].LayoutFormat = ar::VertexLayoutFormat::R32G32_FLOAT;
-	layout[3].Name = "Normal";
+	layout[3].Name = "atNormal";
 	layout[3].LayoutFormat = ar::VertexLayoutFormat::R32G32B32_FLOAT;
-	layout[4].Name = "Tangent";
+	layout[4].Name = "atTangent";
 	layout[4].LayoutFormat = ar::VertexLayoutFormat::R32G32B32_FLOAT;
-	layout[5].Name = "Color";
+	layout[5].Name = "atColor";
 	layout[5].LayoutFormat = ar::VertexLayoutFormat::R8G8B8A8_UNORM;
 
 	shader->Initialize(graphics_->GetManager(), result, layout, false);
@@ -396,26 +417,57 @@ bool Preview::UpdateTime(float time)
 
 	for (auto layout : shader->GetPixelConstantLayouts())
 	{
-		if (layout.first == "projMat")
+		if (layout.first == "uMatProjection")
 		{
 			Matrix44 mat;
 			mat.SetPerspectiveFovRH_OpenGL(30.0f / 180.0f * 3.14f, 1.0, 0.1f, 10.0f);
 			constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
 		}
 
-		if (layout.first == "cameraMat")
+		if (layout.first == "uMatCamera")
 		{
 			Matrix44 mat;
 			mat.SetLookAtRH(Vector3(0, 0, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
 			constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
 		}
+
+		if (layout.first == "mUVInversed")
+		{
+			float values[4];
+			values[0] = 1.0f;
+			values[1] = -1.0f;
+
+			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+		}
+
+		if (layout.first == "mUVInversedBack")
+		{
+			float values[4];
+			values[0] = 1.0f;
+			values[1] = -1.0f;
+
+			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
+		}
+
+		/*
+					shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), psOffset);
+			psOffset += sizeof(float) * 4;
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), psOffset);
+			psOffset += sizeof(float) * 4;
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightColor"), psOffset);
+			psOffset += sizeof(float) * 4;
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightAmbientColor"), psOffset);
+			psOffset += sizeof(float) * 4;
+		*/
 	}
 
 	for (auto layout : shader->GetPixelConstantLayouts())
 	{
-		if (layout.first == "ps_time")
+		if (layout.first == "predefined_uniform")
 		{
+			float values[4];
+			values[0] = time;
 			constantBuffer->SetData(&time, layout.second.GetSize(), layout.second.Offset);
 		}
 	}

@@ -551,11 +551,12 @@ int main(int argc, char* argv[])
 		{
 			if (material != nullptr && g_selectedNode != nullptr)
 			{
+				auto uobj = (EffekseerMaterial::NodeUserDataObject*)g_selectedNode->UserObj.get();
+
+				if (uobj != nullptr)
 				{
-					EffekseerMaterial::TextExporterGLSL exporter_;
-					EffekseerMaterial::TextExporter* exporter = &exporter_;
-					auto code = exporter->Export(material, g_selectedNode);
-					ImGui::Text(code.Code.c_str());
+					ImGui::Text(uobj->GetPreview()->VS.c_str());
+					ImGui::Text(uobj->GetPreview()->PS.c_str());
 				}
 			}
 

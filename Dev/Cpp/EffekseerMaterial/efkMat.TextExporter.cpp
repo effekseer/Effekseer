@@ -302,7 +302,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	std::ostringstream ret;
 	for (auto wn : exportedNodes)
 	{
-		ret << Export(wn);
+		ret << ExportNode(wn);
 	}
 
 	ret << ExportOutputNode(material, outputExportedNode, option);
@@ -458,6 +458,9 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 	}
 	else
 	{
+		ret << GetTypeName(ValueType::Float3) << " worldPositionOffset = " << GetTypeName(ValueType::Float3) << "(0, 0, 0);"
+			<< std::endl;
+
 		if (outputNode->Target->Parameter->Type == NodeType::ConstantTexture)
 		{
 			ret << GetTypeName(ValueType::Float4) << " emissive = "
@@ -472,17 +475,17 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		}
 		else
 		{
-			ret << GetTypeName(ValueType::Float4)
-				<< " emissive = " << ConvertType(ValueType::Float4, outputNode->Outputs[0].Type, outputNode->Outputs[0].Name) << ";"
+			ret << GetTypeName(ValueType::Float3)
+				<< " emissive = " << ConvertType(ValueType::Float3, outputNode->Outputs[0].Type, outputNode->Outputs[0].Name) << ";"
 				<< std::endl;
-			ret << "float opacity = emissive.w;" << std::endl;
+			ret << "float opacity = 1.0;" << std::endl;
 		}
 	}
 
 	return ret.str();
 }
 
-std::string TextExporter::Export(std::shared_ptr<TextExporterNode> node)
+std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 {
 	auto exportInputOrProp = [this](ValueType type_, TextExporterPin& pin_, std::shared_ptr<NodeProperty>& prop_) -> std::string {
 		if (pin_.IsConnected)
@@ -569,7 +572,8 @@ std::string TextExporter::Export(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::UV)
 	{
-		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << GetUVName(node->Target->Properties[0]->Floats[0]) << ";" << std::endl;
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
+			<< GetUVName(node->Target->Properties[0]->Floats[0]) << ";" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Panner)

@@ -99,6 +99,8 @@ if (WIN32)
 target_link_libraries(
     EffekseerMaterialEditor
     EffekseerMaterial
+	effekseer # to use shader loader
+	effekseer_renderer_gl # to use shader loader
 	IPC
     debug glfw3d
     optimized glfw3
@@ -121,6 +123,9 @@ find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 target_link_libraries(
     EffekseerMaterialEditor
     EffekseerMaterial
+	effekseer # to use shader loader
+	effekseer_renderer_gl # to use shader loader
+	IPC
     glfw3
     AltseedRHI
     png16

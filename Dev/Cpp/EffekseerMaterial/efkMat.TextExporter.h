@@ -91,7 +91,7 @@ protected:
 										 std::shared_ptr<TextExporterNode> outputNode,
 										 const TextExporterOutputOption& option);
 
-	virtual std::string Export(std::shared_ptr<TextExporterNode> node);
+	virtual std::string ExportNode(std::shared_ptr<TextExporterNode> node);
 
 	virtual std::string ExportUniformAndTextures(const std::vector<std::shared_ptr<TextExporterUniform>>& uniformNodes,
 												 const std::vector<std::shared_ptr<TextExporterTexture>>& textureNodes);

@@ -23,6 +23,9 @@ namespace EffekseerMaterial
 class TextExporterGeneric : public TextExporter
 {
 private:
+protected:
+	std::string ExportNode(std::shared_ptr<TextExporterNode> node) override;
+
 public:
 	TextExporterGeneric() = default;
 	virtual ~TextExporterGeneric() = default;
@@ -33,8 +36,6 @@ public:
 	std::string GetTimeName() const override;
 	std::string ExportUniformAndTextures(const std::vector<std::shared_ptr<TextExporterUniform>>& uniformNodes,
 										 const std::vector<std::shared_ptr<TextExporterTexture>>& textureNodes) override;
-
-	std::string Export(std::shared_ptr<TextExporterNode> node) override;
 };
 
 } // namespace EffekseerMaterial

@@ -16,7 +16,7 @@ public:
 
 	std::string MergeTemplate(std::string code, std::string uniform_texture) override;
 
-	std::string Export(std::shared_ptr<TextExporterNode> node) override;
+	std::string ExportNode(std::shared_ptr<TextExporterNode> node) override;
 
 	std::string GetTypeName(ValueType type) const override;
 

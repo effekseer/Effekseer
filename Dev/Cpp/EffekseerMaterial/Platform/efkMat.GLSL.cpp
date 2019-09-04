@@ -36,7 +36,7 @@ void main()
 	return ret;
 }
 
-std::string TextExporterGLSL::Export(std::shared_ptr<TextExporterNode> node) { return TextExporter::Export(node); }
+std::string TextExporterGLSL::ExportNode(std::shared_ptr<TextExporterNode> node) { return TextExporter::ExportNode(node); }
 
 std::string TextExporterGLSL::GetTypeName(ValueType type) const
 {
