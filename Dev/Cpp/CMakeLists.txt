@@ -113,6 +113,9 @@ set(effekseer_renderer_common_src
 	EffekseerRendererCommon/EffekseerRenderer.VertexBufferBase.cpp
 	EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.cpp)
 
+file(GLOB_RECURSE effekseer_renderer_dx9_h
+    EffekseerRendererDX9/*.h)
+
 set(effekseer_renderer_dx9_src
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.DeviceObject.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.cpp
@@ -125,6 +128,9 @@ set(effekseer_renderer_dx9_src
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.TextureLoader.cpp
 	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.cpp)
 
+file(GLOB_RECURSE effekseer_renderer_dx11_h
+    EffekseerRendererDX11/*.h)
+
 set(effekseer_renderer_dx11_src
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.DeviceObject.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.IndexBuffer.cpp
@@ -136,6 +142,9 @@ set(effekseer_renderer_dx11_src
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Shader.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.TextureLoader.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.VertexBuffer.cpp)
+
+file(GLOB_RECURSE effekseer_renderer_gl_h
+    EffekseerRendererGL/*.h)
 
 set(effekseer_renderer_gl_src
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.DeviceObject.cpp
@@ -152,14 +161,17 @@ set(effekseer_renderer_gl_src
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.cpp)
 
 list(APPEND effekseer_renderer_dx9_src
+	${effekseer_renderer_dx9_h}
     ${effekseer_renderer_common_h}
 	${effekseer_renderer_common_src})
 
 list(APPEND effekseer_renderer_dx11_src
+	${effekseer_renderer_dx11_h}
     ${effekseer_renderer_common_h}
 	${effekseer_renderer_common_src})
 
 list(APPEND effekseer_renderer_gl_src
+	${effekseer_renderer_gl_h}
     ${effekseer_renderer_common_h}
 	${effekseer_renderer_common_src})
 
@@ -248,7 +260,15 @@ if (MSVC)
 endif()
 
 # filter
-set(files ${effekseer_h} ${effekseer_src})
+set(files 
+    ${effekseer_h} 
+	${effekseer_src} 
+	${effekseer_renderer_common_h} 
+	${effekseer_renderer_src} 
+	${effekseer_renderer_dx9_src} 
+	${effekseer_renderer_dx11_src} 
+	${effekseer_renderer_gl_src})
+
 foreach(FILE ${files}) 
     # Get the directory of the source file
     get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)
@@ -258,7 +278,7 @@ foreach(FILE ${files})
 
     # Make sure we are using windows slashes
     string(REPLACE "/" "\\" GROUP "${GROUP}")
-    
+        
     # Group into "Source Files" and "Header Files"
     if ("${FILE}" MATCHES ".*\\.cpp")
        set(GROUP "${GROUP}")
