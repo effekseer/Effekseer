@@ -112,7 +112,7 @@ class NewOrOpenDialog : public Dialog
 {
 private:
 	std::shared_ptr<EffekseerMaterial::Editor> content_;
-	std::string id_ = "##NewOrOpenDialog";
+	std::string id_ = "###NewOrOpenDialog";
 
 public:
 	NewOrOpenDialog(std::shared_ptr<EffekseerMaterial::Editor> content) : content_(content) {}
@@ -157,7 +157,7 @@ class SaveOrCloseDialog : public Dialog
 {
 private:
 	std::shared_ptr<EffekseerMaterial::EditorContent> content_;
-	std::string id_ = "##SaveOrCloseDialog";
+	std::string id_ = "###SaveOrCloseDialog";
 
 public:
 	SaveOrCloseDialog(std::shared_ptr<EffekseerMaterial::EditorContent> content) : content_(content) {}
@@ -417,12 +417,12 @@ int main(int argc, char* argv[])
 
 			if (visible)
 			{
-				if (ImGui::BeginTabBar("##MainTab"))
+				if (ImGui::BeginTabBar("###MainTab"))
 				{
 					for (size_t i = 0; i < editor->GetContents().size(); i++)
 					{
 						std::string tabName = editor->GetContents()[i]->GetName();
-						tabName += "##tab" + std::to_string(i);
+						tabName += "###tab" + std::to_string(i);
 
 						bool isSelected = editor->GetSelectedContentIndex() == i;
 
@@ -434,7 +434,7 @@ int main(int argc, char* argv[])
 							ImGui::Columns(2);
 							ImGui::SetColumnWidth(0, 200);
 
-							ImGui::BeginChild("##Left");
+							ImGui::BeginChild("###Left");
 
 							editor->UpdatePreview();
 
@@ -449,7 +449,7 @@ int main(int argc, char* argv[])
 
 							ImGui::NextColumn();
 
-							ImGui::BeginChild("##Right");
+							ImGui::BeginChild("###Right");
 
 							auto& io = ImGui::GetIO();
 
@@ -459,7 +459,7 @@ int main(int argc, char* argv[])
 							}
 
 							ed::SetCurrentEditor(editor->GetContents()[i]->GetEditorContext());
-							ed::Begin("##MainEditor", ImVec2(0.0, 0.0f));
+							ed::Begin("###MainEditor", ImVec2(0.0, 0.0f));
 							// ed::Suspend();
 
 							editor->Update();
