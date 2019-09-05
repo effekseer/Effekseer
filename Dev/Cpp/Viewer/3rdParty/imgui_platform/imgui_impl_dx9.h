@@ -15,12 +15,13 @@
 #include "imgui.h"
 
 struct IDirect3DDevice9;
+typedef struct IDirect3DDevice9 *LPDIRECT3DDEVICE9, *PDIRECT3DDEVICE9;
 
 IMGUI_IMPL_API bool     ImGui_ImplDX9_Init(IDirect3DDevice9* device);
 IMGUI_IMPL_API void     ImGui_ImplDX9_Shutdown();
 IMGUI_IMPL_API void     ImGui_ImplDX9_NewFrame();
 IMGUI_IMPL_API void     ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data);
-
+LPDIRECT3DDEVICE9 ImGui_ImplDX9_GetDevice();
 // Use if you want to reset your rendering device without losing ImGui state.
 IMGUI_IMPL_API bool     ImGui_ImplDX9_CreateDeviceObjects();
 IMGUI_IMPL_API void     ImGui_ImplDX9_InvalidateDeviceObjects();

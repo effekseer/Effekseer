@@ -108,6 +108,8 @@ static void ImGui_ImplDX9_SetupRenderState(ImDrawData* draw_data)
     }
 }
 
+LPDIRECT3DDEVICE9 ImGui_ImplDX9_GetDevice() { return g_pd3dDevice; }
+
 // Render function.
 // (this used to be set in io.RenderDrawListsFn and called by ImGui::Render(), but you can now call this directly from your main loop)
 void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)

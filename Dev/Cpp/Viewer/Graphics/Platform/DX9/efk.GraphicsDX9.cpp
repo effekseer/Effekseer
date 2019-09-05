@@ -99,11 +99,14 @@ namespace efk
 			renderer = nullptr;
 		}
 
-		assert(renderDefaultTarget == nullptr);
+		assert(renderRestoreTarget == nullptr);
 		assert(recordingTarget == nullptr);
 		
 		ES_SAFE_RELEASE(backTarget);
 		ES_SAFE_RELEASE(backTargetTexture);
+
+		ES_SAFE_RELEASE(renderDefaultTarget);
+		ES_SAFE_RELEASE(renderDefaultDepth);
 
 		ES_SAFE_RELEASE(d3d_device);
 		ES_SAFE_RELEASE(d3d);
@@ -165,6 +168,9 @@ namespace efk
 		this->windowHeight = windowHeight;
 
 		renderer = ::EffekseerRendererDX9::Renderer::Create(d3d_device, spriteCount);
+
+		d3d_device->GetRenderTarget(0, &renderDefaultTarget);
+		d3d_device->GetDepthStencilSurface(&renderDefaultDepth);
 
 		return true;
 	}
@@ -335,14 +341,9 @@ namespace efk
 		{
 			d3d_device->SetRenderTarget(0, renderDefaultTarget);
 			d3d_device->SetDepthStencilSurface(renderDefaultDepth);
-			ES_SAFE_RELEASE(renderDefaultTarget);
-			ES_SAFE_RELEASE(renderDefaultDepth);
 		}
 		else
 		{
-			d3d_device->GetRenderTarget(0, &renderDefaultTarget);
-			d3d_device->GetDepthStencilSurface(&renderDefaultDepth);
-
 			if (rt != nullptr)
 			{
 				d3d_device->SetRenderTarget(0, rt->GetSurface());
@@ -370,8 +371,8 @@ namespace efk
 		hr = d3d_device->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &recordingTargetTexture, NULL);
 		if (FAILED(hr)) return;
 
-		d3d_device->GetRenderTarget(0, &renderDefaultTarget);
-		d3d_device->GetDepthStencilSurface(&renderDefaultDepth);
+		d3d_device->GetRenderTarget(0, &renderRestoreTarget);
+		d3d_device->GetDepthStencilSurface(&renderRestoreDepth);
 
 		recordingTargetTexture->GetSurfaceLevel(0, &recordingTarget);
 
@@ -388,10 +389,10 @@ namespace efk
 	{
 		pixels.resize(recordingWidth * recordingHeight);
 
-		d3d_device->SetRenderTarget(0, renderDefaultTarget);
-		d3d_device->SetDepthStencilSurface(renderDefaultDepth);
-		ES_SAFE_RELEASE(renderDefaultTarget);
-		ES_SAFE_RELEASE(renderDefaultDepth);
+		d3d_device->SetRenderTarget(0, renderRestoreTarget);
+		d3d_device->SetDepthStencilSurface(renderRestoreDepth);
+		ES_SAFE_RELEASE(renderRestoreTarget);
+		ES_SAFE_RELEASE(renderRestoreDepth);
 
 		IDirect3DSurface9*	temp_sur = nullptr;
 		
@@ -442,6 +443,9 @@ namespace efk
 		ES_SAFE_RELEASE(backTarget);
 		ES_SAFE_RELEASE(backTargetTexture);
 
+		ES_SAFE_RELEASE(renderDefaultTarget);
+		ES_SAFE_RELEASE(renderDefaultDepth);
+
 		renderer->OnLostDevice();
 
 		if (LostedDevice != nullptr)
@@ -477,6 +481,9 @@ namespace efk
 		}
 
 		renderer->OnResetDevice();
+
+		d3d_device->GetRenderTarget(0, &renderDefaultTarget);
+		d3d_device->GetDepthStencilSurface(&renderDefaultDepth);
 	}
 
 	void* GraphicsDX9::GetBack()

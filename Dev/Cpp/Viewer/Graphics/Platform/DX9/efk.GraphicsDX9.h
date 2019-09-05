@@ -62,8 +62,11 @@ namespace efk
 		LPDIRECT3DDEVICE9	d3d_device = nullptr;
 		bool				isSRGBMode = false;
 
-		IDirect3DSurface9*	renderDefaultTarget = nullptr;
-		IDirect3DSurface9*	renderDefaultDepth = nullptr;
+		IDirect3DSurface9*	renderRestoreTarget = nullptr;
+		IDirect3DSurface9*	renderRestoreDepth = nullptr;
+
+		IDirect3DSurface9* renderDefaultTarget = nullptr;
+		IDirect3DSurface9* renderDefaultDepth = nullptr;
 
 		IDirect3DSurface9*	recordingTarget = nullptr;
 		IDirect3DTexture9*	recordingTargetTexture = nullptr;

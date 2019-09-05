@@ -971,22 +971,30 @@ namespace efk
 	void GUIManager::RenderGUI(bool isValid)
 	{
 		ImGui::EndFrame();
-		ImGui::Render();
+		
 
 		if (isValid)
 		{
 			if (deviceType == DeviceType::OpenGL)
 			{
+				ImGui::Render();
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 			}
 #if _WIN32
 			else if (deviceType == DeviceType::DirectX11)
 			{
+				ImGui::Render();
 				ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 			}
 			else
 			{
+				ImGui_ImplDX9_GetDevice()->SetRenderState(D3DRS_ZENABLE, false);
+				ImGui_ImplDX9_GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+				ImGui_ImplDX9_GetDevice()->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
+				ImGui_ImplDX9_GetDevice()->BeginScene();
+				ImGui::Render();
 				ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
+				ImGui_ImplDX9_GetDevice()->EndScene();
 			}
 #endif
 		}

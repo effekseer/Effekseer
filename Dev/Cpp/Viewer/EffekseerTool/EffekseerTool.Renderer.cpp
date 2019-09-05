@@ -112,7 +112,8 @@ namespace EffekseerTool
 			}
 
 			viewRenderTexture.reset();
-			
+			viewDepthTexture.reset();
+
 			if (LostedDevice != nullptr)
 			{
 				LostedDevice();
