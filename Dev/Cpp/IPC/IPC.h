@@ -46,7 +46,7 @@ struct CommandData
 */
 class CommandQueue
 {
-	std::unique_ptr<Command_Impl> impl = nullptr;
+	std::shared_ptr<Command_Impl> impl = nullptr;
 	bool Write(const void* data, int32_t size);
 	bool Read(void* data, int32_t size);
 
@@ -65,7 +65,7 @@ public:
 */
 class KeyValueFileStorage
 {
-	std::unique_ptr<KeyValueFileStorage_Impl> impl = nullptr;
+	std::shared_ptr<KeyValueFileStorage_Impl> impl = nullptr;
 
 public:
 	KeyValueFileStorage();

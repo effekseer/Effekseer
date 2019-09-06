@@ -117,7 +117,7 @@ public:
 	}
 };
 
-CommandQueue::CommandQueue() { impl = std::unique_ptr<Command_Impl>(new Command_Impl()); }
+CommandQueue::CommandQueue() { impl = std::shared_ptr<Command_Impl>(new Command_Impl()); }
 
 CommandQueue ::~CommandQueue() {}
 
@@ -309,7 +309,7 @@ public:
 	void Unlock() { ipc_sem_increment(&coop_); }
 };
 
-KeyValueFileStorage::KeyValueFileStorage() { impl = std::unique_ptr<KeyValueFileStorage_Impl>(new KeyValueFileStorage_Impl()); }
+KeyValueFileStorage::KeyValueFileStorage() { impl = std::shared_ptr<KeyValueFileStorage_Impl>(new KeyValueFileStorage_Impl()); }
 KeyValueFileStorage ::~KeyValueFileStorage() {}
 
 bool KeyValueFileStorage::Start(const char* name) { return impl->Start(name); }

@@ -290,7 +290,7 @@ target_link_libraries(
 	EffekseerSoundOSMixer
 	IPC
 	debug gdd
-	debug GLEWd
+	# debug GLEWd
 	optimized gd
 	# optimized GLEW
 	png
@@ -312,7 +312,7 @@ target_link_libraries(
 	EffekseerSoundOSMixer
 	IPC
 	debug gdd
-	debug GLEWd
+	# debug GLEWd
 	optimized gd
 	# optimized GLEW
 	png
