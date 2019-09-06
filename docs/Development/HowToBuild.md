@@ -48,6 +48,21 @@ Clone -> input https://github.com/effekseer/Effekseer
 Submodule Update -> check init
 ```
 
+Build to develop Editor
+----------
+
+### Windows
+
+Execure following command at the repository root.
+
+```
+mkdir build
+cd build
+cmake -DBUILD_VIEWER=ON -DBUILD_EDITOR=ON .. 
+```
+
+Open ``` build/Effekseer.sln ```
+
 Build Runtime, Viewer and Editor
 ----------
 
