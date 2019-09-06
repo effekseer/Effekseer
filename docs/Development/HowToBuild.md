@@ -39,6 +39,7 @@ Clone and update submodule.
 git clone https://github.com/effekseer/Effekseer
 cd Effekseer
 git submodule update --init
+git lfs pull
 ```
 
 ### TortoiseGit (Windows)
@@ -62,6 +63,20 @@ cmake -DBUILD_VIEWER=ON -DBUILD_EDITOR=ON ..
 ```
 
 Open ``` build/Effekseer.sln ```
+
+### macOS
+
+Execure following command at the repository root.
+
+```
+mkdir build
+cd build
+cmake -DBUILD_VIEWER=ON .. 
+```
+
+Open ``` build/Effekseer.xcodeproj ``` (C++)
+
+Open ``` Dev/Editor/Effekseer.sln ``` (C#)
 
 Build Runtime, Viewer and Editor
 ----------
