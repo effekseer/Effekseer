@@ -30,17 +30,17 @@ add_library(EffekseerCore
 set_target_properties(EffekseerCore PROPERTIES
     VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq")
 
-set_target_properties(EffekseerCore PROPERTIES
-    VS_DOTNET_REFERENCE_IronPython ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/IronPython.dll
-    VS_DOTNET_REFERENCE_IronPython_Modules ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/IronPython.Modules.dll
-    VS_DOTNET_REFERENCE_Microsoft_Dynamic ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Dynamic.dll
-    VS_DOTNET_REFERENCE_Microsoft_Scripting ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Scripting.dll
-    VS_DOTNET_REFERENCE_Microsoft_Scripting_Metadata ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Scripting.Metadata.dll
-	)
+#set_target_properties(EffekseerCore PROPERTIES
+#    VS_DOTNET_REFERENCE_IronPython ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/IronPython.dll
+#    VS_DOTNET_REFERENCE_IronPython_Modules ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/IronPython.Modules.dll
+#    VS_DOTNET_REFERENCE_Microsoft_Dynamic ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Dynamic.dll
+#    VS_DOTNET_REFERENCE_Microsoft_Scripting ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Scripting.dll
+#    VS_DOTNET_REFERENCE_Microsoft_Scripting_Metadata ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Scripting.Metadata.dll
+#	)
 
 target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED)
 
-set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1") 
+set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
 
 target_compile_options(EffekseerCore PRIVATE "/langversion:6")
 
