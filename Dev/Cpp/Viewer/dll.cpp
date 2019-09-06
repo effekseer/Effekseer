@@ -609,6 +609,8 @@ Native::Native() : m_time(0), m_step(1)
 Native::~Native()
 {
 	ES_SAFE_DELETE(g_client);
+
+#if _WIN32
 	commandQueueToMaterialEditor_->Stop();
 	commandQueueToMaterialEditor_.reset();
 
@@ -616,6 +618,7 @@ Native::~Native()
 	commandQueueFromMaterialEditor_.reset();
 
 	keyValueFileStorage_->Stop();
+#endif
 }
 
 bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
@@ -835,6 +838,7 @@ bool Native::UpdateWindow()
 	g_sound->Update();
 
 	// command
+	if (commandQueueFromMaterialEditor_ != nullptr)
 	{
 		IPC::CommandData commandDataFromMaterialEditor;
 		while (commandQueueFromMaterialEditor_->Dequeue(&commandDataFromMaterialEditor))
@@ -2037,6 +2041,9 @@ void Native::SetTonemapParameters(int32_t algorithm, float exposure)
 
 void Native::OpenOrCreateMaterial(const char16_t* path)
 {
+	if (commandQueueToMaterialEditor_ == nullptr)
+		return;
+
 	char u8path[260];
 
 	Effekseer::ConvertUtf16ToUtf8((int8_t*)u8path, 260, (int16_t*)path);
@@ -2049,6 +2056,9 @@ void Native::OpenOrCreateMaterial(const char16_t* path)
 
 void Native::TerminateMaterialEditor()
 {
+	if (commandQueueToMaterialEditor_ == nullptr)
+		return;
+
 	IPC::CommandData commandData;
 	commandData.Type = IPC::CommandType::Terminate;
 	commandQueueToMaterialEditor_->Enqueue(&commandData);
