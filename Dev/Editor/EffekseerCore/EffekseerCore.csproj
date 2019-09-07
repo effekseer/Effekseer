@@ -175,6 +175,7 @@
     <Compile Include="Utl\BitConverterExtensions.cs" />
     <Compile Include="Utl\Math.cs" />
     <Compile Include="Utl\MathExtensions.cs" />
+    <Compile Include="Utl\RGBHSVColor.cs" />
     <Compile Include="Utl\TextureInformation.cs" />
     <Compile Include="Utl\XmlDocumentExtensions.cs" />
   </ItemGroup>

@@ -85,7 +85,9 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Enable(binding);
 
-			if (Manager.NativeManager.ColorEdit4(id, internalValue, swig.ColorEditFlags.NoOptions))
+			var colorSpace = binding.ColorSpace == Data.ColorSpace.RGBA ? swig.ColorEditFlags.RGB : swig.ColorEditFlags.HSV;
+
+			if (Manager.NativeManager.ColorEdit4(id, internalValue, colorSpace))
 			{
 				if (EnableUndo)
 				{

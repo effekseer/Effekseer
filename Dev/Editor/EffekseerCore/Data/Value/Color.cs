@@ -31,6 +31,15 @@ namespace Effekseer.Data.Value
 			private set;
 		}
 
+		private ColorSpace _colorSpace;
+		public ColorSpace ColorSpace
+		{
+			get
+			{
+				return GetColorSpace();
+			}
+		}
+
 		public bool IsValueChangedFromDefault
 		{
 			get { return 
@@ -38,6 +47,78 @@ namespace Effekseer.Data.Value
 					G.IsValueChangedFromDefault || 
 					B.IsValueChangedFromDefault || 
 					A.IsValueChangedFromDefault; }
+		}
+
+		internal ColorSpace DefaultColorSpace { get; private set; }
+
+		public event ChangedValueEventHandler OnChangedColorSpace;
+
+		public void SetColorSpace(ColorSpace colorSpace, bool isColorConverted, bool isCombined)
+		{
+			ColorSpace oldval = ColorSpace;
+			ColorSpace newval = colorSpace;
+
+			if (oldval == newval) return;
+
+			int old_r = R.Value;
+			int old_g = G.Value;
+			int old_b = B.Value;
+			int old_a = A.Value;
+
+			Utl.RGBHSVColor color;
+
+			color.RH = old_r;
+			color.GS = old_g;
+			color.BV = old_b;
+
+			if (isColorConverted)
+			{
+				if (newval == ColorSpace.HSVA)
+				{
+					color = Utl.RGBHSVColor.RGBToHSV(color);
+				}
+				else
+				{
+					color = Utl.RGBHSVColor.HSVToRGB(color);
+				}
+			}
+
+			var cmd = new Command.DelegateCommand(
+				() =>
+				{
+					_colorSpace = newval;
+
+					R.SetValueDirectly(color.RH);
+					G.SetValueDirectly(color.GS);
+					B.SetValueDirectly(color.BV);
+
+					CallChangedColorSpace(false, ChangedValueType.Execute);
+				},
+				() =>
+				{
+					R.SetValueDirectly(old_r);
+					G.SetValueDirectly(old_g);
+					B.SetValueDirectly(old_b);
+
+					_colorSpace = oldval;
+					CallChangedColorSpace(false, ChangedValueType.Unexecute);
+				},
+				this,
+				isCombined);
+
+			Command.CommandManager.Execute(cmd);
+		}
+		public ColorSpace GetColorSpace()
+		{
+			return _colorSpace;
+		}
+
+		protected void CallChangedColorSpace(object value, ChangedValueType type)
+		{
+			if (OnChangedColorSpace != null)
+			{
+				OnChangedColorSpace(this, new ChangedValueEventArgs(value, type));
+			}
 		}
 
 		internal Color(
@@ -54,6 +135,7 @@ namespace Effekseer.Data.Value
 			byte a_max = byte.MaxValue,
 			byte a_min = byte.MinValue)
 		{
+			DefaultColorSpace = ColorSpace.RGBA;
 			R = new Int(r, r_max, r_min);
 			G = new Int(g, g_max, g_min);
 			B = new Int(b, b_max, b_min);
@@ -103,8 +185,35 @@ namespace Effekseer.Data.Value
 
 		public static implicit operator byte[](Color value)
 		{
-			byte[] values = new byte[sizeof(byte) * 4] { (byte)value.R, (byte)value.G, (byte)value.B, (byte)value.A };
-			return values;
+			if(value.ColorSpace == ColorSpace.RGBA)
+			{
+				byte[] values = new byte[sizeof(byte) * 4] { (byte)value.R, (byte)value.G, (byte)value.B, (byte)value.A };
+				return values;
+			}
+			else
+			{
+				Utl.RGBHSVColor color;
+
+				color.RH = value.R.Value;
+				color.GS = value.G.Value;
+				color.BV = value.B.Value;
+				color = Utl.RGBHSVColor.HSVToRGB(color);
+
+				byte[] values = new byte[sizeof(byte) * 4] { (byte)value.R, (byte)value.G, (byte)value.B, (byte)value.A };
+				return values;
+
+			}
 		}
+
+		public void ChangeColorSpace(ColorSpace colorSpace)
+		{
+			Command.CommandManager.StartCollection();
+
+			SetColorSpace(colorSpace, true, false);
+			CallChangedColorSpace(true, ChangedValueType.Execute);
+
+			Command.CommandManager.EndCollection();
+		}
+
 	}
 }

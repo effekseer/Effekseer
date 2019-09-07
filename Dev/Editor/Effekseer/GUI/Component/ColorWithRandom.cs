@@ -81,14 +81,6 @@ namespace Effekseer.GUI.Component
 					binding.G.OnChanged += Binding_OnChanged;
 					binding.B.OnChanged += Binding_OnChanged;
 					binding.A.OnChanged += Binding_OnChanged;
-
-#if !RAW_HSV
-					if(binding.ColorSpace == Data.ColorSpace.HSVA)
-					{
-						convertHSV2RGB(internalValueMin);
-						convertHSV2RGB(internalValueMax);
-					}
-#endif
 				}
 			}
 		}
@@ -116,59 +108,19 @@ namespace Effekseer.GUI.Component
 
 		public void FixValue()
 		{
-#if RAW_HSV
-							binding.SetMin(
+			binding.SetMin(
 				(int)Math.Round(internalValueMin[0] * 255, MidpointRounding.AwayFromZero),
 				(int)Math.Round(internalValueMin[1] * 255, MidpointRounding.AwayFromZero),
 				(int)Math.Round(internalValueMin[2] * 255, MidpointRounding.AwayFromZero),
 				(int)Math.Round(internalValueMin[3] * 255, MidpointRounding.AwayFromZero),
 				isActive);
 
-				binding.SetMax(
+			binding.SetMax(
 				(int)Math.Round(internalValueMax[0] * 255, MidpointRounding.AwayFromZero),
 				(int)Math.Round(internalValueMax[1] * 255, MidpointRounding.AwayFromZero),
 				(int)Math.Round(internalValueMax[2] * 255, MidpointRounding.AwayFromZero),
 				(int)Math.Round(internalValueMax[3] * 255, MidpointRounding.AwayFromZero),
 				isActive);
-#else
-			if (binding.ColorSpace == Data.ColorSpace.HSVA)
-			{
-				var ivmin = (float[])internalValueMin.Clone();
-				var ivmax = (float[])internalValueMax.Clone();
-				convertRGB2HSV(ivmin);
-				convertRGB2HSV(ivmax);
-
-				binding.SetMin(
-				(int)Math.Round(ivmin[0] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(ivmin[1] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(ivmin[2] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(ivmin[3] * 255, MidpointRounding.AwayFromZero),
-				isActive);
-
-				binding.SetMax(
-				(int)Math.Round(ivmax[0] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(ivmax[1] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(ivmax[2] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(ivmax[3] * 255, MidpointRounding.AwayFromZero),
-				isActive);
-			}
-			else
-			{
-				binding.SetMin(
-				(int)Math.Round(internalValueMin[0] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(internalValueMin[1] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(internalValueMin[2] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(internalValueMin[3] * 255, MidpointRounding.AwayFromZero),
-				isActive);
-
-				binding.SetMax(
-				(int)Math.Round(internalValueMax[0] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(internalValueMax[1] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(internalValueMax[2] * 255, MidpointRounding.AwayFromZero),
-				(int)Math.Round(internalValueMax[3] * 255, MidpointRounding.AwayFromZero),
-				isActive);
-			}
-#endif
 		}
 
 		public override void Update()
@@ -229,6 +181,9 @@ namespace Effekseer.GUI.Component
 			valueChangingProp.Disable();
 		}
 
+		/// <summary>
+		/// Show popup
+		/// </summary>
 		void Popup()
 		{
 			if (isPopupShown) return;
@@ -269,14 +224,6 @@ namespace Effekseer.GUI.Component
 				internalValueMin[1] = binding.G.Min / 255.0f;
 				internalValueMin[2] = binding.B.Min / 255.0f;
 				internalValueMin[3] = binding.A.Min / 255.0f;
-
-#if !RAW_HSV
-				if (binding.ColorSpace == Data.ColorSpace.HSVA)
-				{
-					convertHSV2RGB(internalValueMin);
-					convertHSV2RGB(internalValueMax);
-				}
-#endif
 			}
 		}
 
@@ -294,142 +241,31 @@ namespace Effekseer.GUI.Component
 				internalValueMin[1] = binding.G.Min / 255.0f;
 				internalValueMin[2] = binding.B.Min / 255.0f;
 				internalValueMin[3] = binding.A.Min / 255.0f;
-
-#if !RAW_HSV
-				if (binding.ColorSpace == Data.ColorSpace.HSVA)
-				{
-					convertHSV2RGB(internalValueMin);
-					convertHSV2RGB(internalValueMax);
-				}
-#endif
 			}
 		}
 
 		void convertRGB2HSV(float[] values)
 		{
-			color c = new color();
-			c.R = (int)Math.Round(values[0] * 255, MidpointRounding.AwayFromZero);
-			c.G = (int)Math.Round(values[1] * 255, MidpointRounding.AwayFromZero);
-			c.B = (int)Math.Round(values[2] * 255, MidpointRounding.AwayFromZero);
-			c = RGBToHSV(c);
-			values[0] = c.R / 255.0f;
-			values[1] = c.G / 255.0f;
-			values[2] = c.B / 255.0f;
+			Effekseer.Utl.RGBHSVColor c = new Effekseer.Utl.RGBHSVColor();
+			c.RH = (int)Math.Round(values[0] * 255, MidpointRounding.AwayFromZero);
+			c.GS = (int)Math.Round(values[1] * 255, MidpointRounding.AwayFromZero);
+			c.BV = (int)Math.Round(values[2] * 255, MidpointRounding.AwayFromZero);
+			c = Effekseer.Utl.RGBHSVColor.RGBToHSV(c);
+			values[0] = c.RH / 255.0f;
+			values[1] = c.GS / 255.0f;
+			values[2] = c.BV / 255.0f;
 		}
 
 		void convertHSV2RGB(float[] values)
 		{
-			color c = new color();
-			c.R = (int)Math.Round(values[0] * 255, MidpointRounding.AwayFromZero);
-			c.G = (int)Math.Round(values[1] * 255, MidpointRounding.AwayFromZero);
-			c.B = (int)Math.Round(values[2] * 255, MidpointRounding.AwayFromZero);
-			c = HSVToRGB(c);
-			values[0] = c.R / 255.0f;
-			values[1] = c.G / 255.0f;
-			values[2] = c.B / 255.0f;
-		}
-
-		struct color
-		{
-			public int R;
-			public int G;
-			public int B;
-		}
-
-		static color RGBToHSV(color rgb)
-		{
-			double max;
-			double min;
-			double R, G, B, H, S, V;
-
-			R = (double)rgb.R / 255.0;
-			G = (double)rgb.G / 255.0;
-			B = (double)rgb.B / 255.0;
-
-			if (R >= G && R >= B)
-			{
-				max = R;
-				min = (G < B) ? G : B;
-			}
-			else if (G >= R && G >= B)
-			{
-				max = G;
-				min = (R < B) ? R : B;
-			}
-			else
-			{
-				max = B;
-				min = (R < G) ? R : G;
-			}
-			if (R == G && G == B)
-			{
-				H = 0.0f;
-			}
-			else if (max == R)
-			{
-				H = 60 * (G - B) / (max - min);
-			}
-			else if (max == G)
-			{
-				H = 60 * (B - R) / (max - min) + 120;
-			}
-			else
-			{
-				H = 60 * (R - G) / (max - min) + 240;
-			}
-			if (H < 0.0f)
-			{
-				H += 360.0f;
-			}
-			if (max == 0.0f)
-			{
-				S = 0.0f;
-			}
-			else
-			{
-				S = (max - min) / max;
-			}
-			V = max;
-
-			color ret = new color();
-			ret.R = (int)Math.Round(H / 360 * 252, MidpointRounding.AwayFromZero);
-			ret.G = (int)Math.Round(S * 255, MidpointRounding.AwayFromZero);
-			ret.B = (int)Math.Round(V * 255, MidpointRounding.AwayFromZero);
-			return ret;
-		}
-
-		static color HSVToRGB(color hsv)
-		{
-			int H = hsv.R, S = hsv.G, V = hsv.B;
-			int i, R = 0, G = 0, B = 0, f, p, q, t;
-
-			i = H / 42 % 6;
-			f = H % 42 * 6;
-			p = (V * (256 - S)) >> 8;
-			q = (V * (256 - ((S * f) >> 8))) >> 8;
-			t = (V * (256 - ((S * (252 - f)) >> 8))) >> 8;
-			if (p < 0) p = 0;
-			if (p > 255) p = 255;
-			if (q < 0) q = 0;
-			if (q > 255) q = 255;
-			if (t < 0) t = 0;
-			if (t > 255) t = 255;
-
-			switch (i)
-			{
-				case 0: R = V; G = t; B = p; break;
-				case 1: R = q; G = V; B = p; break;
-				case 2: R = p; G = V; B = t; break;
-				case 3: R = p; G = q; B = V; break;
-				case 4: R = t; G = p; B = V; break;
-				case 5: R = V; G = p; B = q; break;
-			}
-
-			color ret = new color();
-			ret.R = R;
-			ret.G = G;
-			ret.B = B;
-			return ret;
+			Effekseer.Utl.RGBHSVColor c = new Effekseer.Utl.RGBHSVColor();
+			c.RH = (int)Math.Round(values[0] * 255, MidpointRounding.AwayFromZero);
+			c.GS = (int)Math.Round(values[1] * 255, MidpointRounding.AwayFromZero);
+			c.BV = (int)Math.Round(values[2] * 255, MidpointRounding.AwayFromZero);
+			c = Effekseer.Utl.RGBHSVColor.HSVToRGB(c);
+			values[0] = c.RH / 255.0f;
+			values[1] = c.GS / 255.0f;
+			values[2] = c.BV / 255.0f;
 		}
 	}
 }
