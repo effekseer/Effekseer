@@ -1236,9 +1236,8 @@ void RendererImplemented::ResetRenderState()
 
 Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) {
 
-	GLint binded = 0;
-	// correct?
-	glGetIntegerv(GL_TEXTURE_2D, &binded);
+	GLint bound = 0;
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
 
 	std::array<uint8_t, 4> buf;
 
@@ -1272,7 +1271,7 @@ Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRendere
 
 	// Generate mipmap
 	GLExt::glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, binded);
+	glBindTexture(GL_TEXTURE_2D, bound);
 
 	auto textureData = new Effekseer::TextureData();
 	textureData->UserPtr = nullptr;
