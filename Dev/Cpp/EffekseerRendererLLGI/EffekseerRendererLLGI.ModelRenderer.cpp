@@ -12,32 +12,18 @@ namespace EffekseerRendererLLGI
 
 ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 							 Shader* shader_lighting_texture_normal,
-							 Shader* shader_lighting_normal,
-							 Shader* shader_lighting_texture,
-							 Shader* shader_lighting,
 							 Shader* shader_texture,
-							 Shader* shader,
-							 Shader* shader_distortion_texture,
-							 Shader* shader_distortion)
+							 Shader* shader_distortion_texture)
 	: m_renderer(renderer)
 	, m_shader_lighting_texture_normal(shader_lighting_texture_normal)
-	, m_shader_lighting_normal(shader_lighting_normal)
-	, m_shader_lighting_texture(shader_lighting_texture)
-	, m_shader_lighting(shader_lighting)
 	, m_shader_texture(shader_texture)
-	, m_shader(shader)
 	, m_shader_distortion_texture(shader_distortion_texture)
-	, m_shader_distortion(shader_distortion)
 {
-	Shader* shaders[6];
+	std::array<Shader*, 2> shaders;
 	shaders[0] = m_shader_lighting_texture_normal;
-	shaders[1] = m_shader_lighting_normal;
-	shaders[2] = m_shader_lighting_texture;
-	shaders[3] = m_shader_lighting;
-	shaders[4] = m_shader_texture;
-	shaders[5] = m_shader;
+	shaders[1] = m_shader_texture;
 
-	for (int32_t i = 0; i < 6; i++)
+	for (size_t i = 0; i < shaders.size(); i++)
 	{
 		shaders[i]->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
 		shaders[i]->SetVertexRegisterCount(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>) / (sizeof(float) * 4));
@@ -49,24 +35,13 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	m_shader_distortion_texture->SetVertexRegisterCount(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>) / (sizeof(float) * 4));
 	m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion_texture->SetPixelRegisterCount(1 + 1);
-
-	m_shader_distortion->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
-	m_shader_distortion->SetVertexRegisterCount(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>) / (sizeof(float) * 4));
-	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_distortion->SetPixelRegisterCount(1 + 1);
 }
 
 ModelRenderer::~ModelRenderer()
 {
 	ES_SAFE_DELETE(m_shader_lighting_texture_normal);
-	ES_SAFE_DELETE(m_shader_lighting_normal);
-	ES_SAFE_DELETE(m_shader_lighting_texture);
-	ES_SAFE_DELETE(m_shader_lighting);
 	ES_SAFE_DELETE(m_shader_texture);
-	ES_SAFE_DELETE(m_shader);
-
 	ES_SAFE_DELETE(m_shader_distortion_texture);
-	ES_SAFE_DELETE(m_shader_distortion);
 }
 
 ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader* fixedShader)
@@ -92,30 +67,6 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 															"ModelRendererLightingTextureNormal",
 															layouts);
 
-	Shader* shader_lighting_normal = Shader::Create(renderer,
-													fixedShader->ModelShaderLightingNormal_VS.data(),
-													fixedShader->ModelShaderLightingNormal_VS.size(),
-													fixedShader->ModelShaderLightingNormal_PS.data(),
-													fixedShader->ModelShaderLightingNormal_PS.size(),
-													"ModelRendererLightingNormal",
-													layouts);
-
-	Shader* shader_lighting_texture = Shader::Create(renderer,
-													 fixedShader->ModelShaderLightingTexture_VS.data(),
-													 fixedShader->ModelShaderLightingTexture_VS.size(),
-													 fixedShader->ModelShaderLightingTexture_PS.data(),
-													 fixedShader->ModelShaderLightingTexture_PS.size(),
-													 "ModelRendererLightingTexture",
-													 layouts);
-
-	Shader* shader_lighting = Shader::Create(renderer,
-											 fixedShader->ModelShaderLighting_VS.data(),
-											 fixedShader->ModelShaderLighting_VS.size(),
-											 fixedShader->ModelShaderLighting_PS.data(),
-											 fixedShader->ModelShaderLighting_PS.size(),
-											 "ModelRendererLighting",
-											 layouts);
-
 	Shader* shader_texture = Shader::Create(renderer,
 											fixedShader->ModelShaderTexture_VS.data(),
 											fixedShader->ModelShaderTexture_VS.size(),
@@ -123,14 +74,6 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 											fixedShader->ModelShaderTexture_PS.size(),
 											"ModelRendererTexture",
 											layouts);
-
-	Shader* shader = Shader::Create(renderer,
-									fixedShader->ModelShader_VS.data(),
-									fixedShader->ModelShader_VS.size(),
-									fixedShader->ModelShader_PS.data(),
-									fixedShader->ModelShader_PS.size(),
-									"ModelRenderer",
-									layouts);
 
 	auto shader_distortion_texture = Shader::Create(renderer,
 													fixedShader->ModelShaderDistortionTexture_VS.data(),
@@ -140,37 +83,17 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 													"ModelRendererDistortionTexture",
 													layouts);
 
-	auto shader_distortion = Shader::Create(renderer,
-											fixedShader->ModelShaderDistortion_VS.data(),
-											fixedShader->ModelShaderDistortion_VS.size(),
-											fixedShader->ModelShaderDistortion_PS.data(),
-											fixedShader->ModelShaderDistortion_PS.size(),
-											"ModelRendererDistortion",
-											layouts);
-
-	if (shader_lighting_texture_normal == NULL || shader_lighting_normal == NULL || shader_lighting_texture == NULL ||
-		shader_lighting == NULL || shader_texture == NULL || shader == NULL || shader_distortion_texture == NULL ||
-		shader_distortion == NULL)
+	if (shader_lighting_texture_normal == NULL || shader_texture == NULL || shader_distortion_texture == NULL)
 	{
 		ES_SAFE_DELETE(shader_lighting_texture_normal);
-		ES_SAFE_DELETE(shader_lighting_normal);
-		ES_SAFE_DELETE(shader_lighting_texture);
-		ES_SAFE_DELETE(shader_lighting);
 		ES_SAFE_DELETE(shader_texture);
-		ES_SAFE_DELETE(shader);
 		ES_SAFE_DELETE(shader_distortion_texture);
-		ES_SAFE_DELETE(shader_distortion);
 	}
 
 	return new ModelRenderer(renderer,
 							 shader_lighting_texture_normal,
-							 shader_lighting_normal,
-							 shader_lighting_texture,
-							 shader_lighting,
 							 shader_texture,
-							 shader,
-							 shader_distortion_texture,
-							 shader_distortion);
+							 shader_distortion_texture);
 }
 
 void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData)
@@ -187,13 +110,8 @@ void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userD
 {
 	EndRendering_<RendererImplemented, Shader, Model, false, 1>(m_renderer,
 																m_shader_lighting_texture_normal,
-																m_shader_lighting_normal,
-																m_shader_lighting_texture,
-																m_shader_lighting,
 																m_shader_texture,
-																m_shader,
 																m_shader_distortion_texture,
-																m_shader_distortion,
 																parameter);
 }
 

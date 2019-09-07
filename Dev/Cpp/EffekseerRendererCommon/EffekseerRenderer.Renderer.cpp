@@ -10,6 +10,8 @@ Renderer::Renderer() { impl = new Impl(); }
 
 Renderer::~Renderer() { ES_SAFE_DELETE(impl); }
 
+Renderer::Impl* Renderer::GetImpl() { return impl; }
+
 int32_t Renderer::GetDrawCallCount() const { return impl->GetDrawCallCount(); }
 
 int32_t Renderer::GetDrawVertexCount() const { return impl->GetDrawVertexCount(); }
@@ -17,6 +19,10 @@ int32_t Renderer::GetDrawVertexCount() const { return impl->GetDrawVertexCount()
 void Renderer::ResetDrawCallCount() { impl->ResetDrawCallCount(); }
 
 void Renderer::ResetDrawVertexCount() { impl->ResetDrawVertexCount(); }
+
+Effekseer::RenderMode Renderer::GetRenderMode() const { return impl->GetRenderMode(); }
+
+void Renderer::SetRenderMode(Effekseer::RenderMode renderMode) { impl->SetRenderMode(renderMode); }
 
 UVStyle Renderer::GetTextureUVStyle() const { return impl->GetTextureUVStyle(); }
 

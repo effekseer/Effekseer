@@ -31,12 +31,12 @@ public:
 	virtual ~VertexBufferBase();
 
 	virtual void Lock() = 0;
-	virtual bool RingBufferLock( int32_t size, int32_t& offset, void*& data ) = 0;
+	virtual bool RingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment) = 0;
 
 	/**
-		@brief	バッファ全体を再確保せずに、試しに一部をロックしてみる。
+		@brief	try lock as a ring buffer. if failed, it does't lock it.
 	*/
-	virtual bool TryRingBufferLock(int32_t size, int32_t& offset, void*& data) = 0;
+	virtual bool TryRingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment) = 0;
 
 	virtual void Unlock() = 0;
 	virtual void Push( const void* buffer, int size );

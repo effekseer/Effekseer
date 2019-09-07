@@ -54,15 +54,6 @@ namespace Standard_PS
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-namespace StandardNoTexture_PS
-{
-	static
-#include "Shader/EffekseerRenderer.StandardNoTexture_PS.h"
-}
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace Standard_Distortion_VS
 {
 	static
@@ -76,15 +67,6 @@ namespace Standard_Distortion_PS
 {
 	static
 #include "Shader/EffekseerRenderer.Standard_Distortion_PS.h"
-}
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
-namespace StandardNoTexture_Distortion_PS
-{
-	static
-#include "Shader/EffekseerRenderer.StandardNoTexture_Distortion_PS.h"
 }
 
 //-----------------------------------------------------------------------------------
@@ -130,7 +112,6 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_indexBuffer	( NULL )
 	, m_squareMaxCount	( squareMaxCount )
 	, m_coordinateSystem	( ::Effekseer::CoordinateSystem::RH )
-	, m_renderMode	( ::Effekseer::RenderMode::Normal )
 	, m_state_vertexShader( NULL )
 	, m_state_pixelShader( NULL )
 	, m_state_vertexDeclaration	( NULL )
@@ -142,9 +123,7 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 	, m_restorationOfStates( true )
 
 	, m_shader(nullptr)
-	, m_shader_no_texture(nullptr)
 	, m_shader_distortion(nullptr)
-	, m_shader_no_texture_distortion(nullptr)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
@@ -165,6 +144,8 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 //----------------------------------------------------------------------------------
 RendererImplemented::~RendererImplemented()
 {
+	GetImpl()->DeleteProxyTextures(this);
+
 	assert(GetRef() == 0);
 
 	ES_SAFE_DELETE(m_distortingCallback);
@@ -174,10 +155,8 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_DELETE(m_standardRenderer);
 	ES_SAFE_DELETE(m_shader);
-	ES_SAFE_DELETE(m_shader_no_texture);
 
 	ES_SAFE_DELETE(m_shader_distortion);
-	ES_SAFE_DELETE(m_shader_no_texture_distortion);
 
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
@@ -186,7 +165,7 @@ RendererImplemented::~RendererImplemented()
 
 	//ES_SAFE_RELEASE( m_d3d_device );
 
-	assert(GetRef() == -7);
+	assert(GetRef() == -5);
 }
 
 //----------------------------------------------------------------------------------
@@ -198,6 +177,8 @@ void RendererImplemented::OnLostDevice()
 	{
 		device->OnLostDevice();
 	}
+
+	GetImpl()->DeleteProxyTextures(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -217,6 +198,8 @@ void RendererImplemented::OnResetDevice()
 
 		m_isChangedDevice = false;
 	}
+
+	GetImpl()->CreateProxyTextures(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -338,23 +321,6 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 	// 参照カウントの調整
 	Release();
 
-	m_shader_no_texture = Shader::Create(
-		this,
-		Standard_VS::g_vs20_VS,
-		sizeof(Standard_VS::g_vs20_VS),
-		StandardNoTexture_PS::g_ps20_PS,
-		sizeof(StandardNoTexture_PS::g_ps20_PS),
-		"StandardRenderer No Texture",
-		decl);
-
-	if (m_shader_no_texture == NULL)
-	{
-		return false;
-	}
-
-	// 参照カウントの調整
-	Release();
-
 	m_shader_distortion = Shader::Create(
 		this,
 		Standard_Distortion_VS::g_vs20_VS,
@@ -368,27 +334,8 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 	// 参照カウントの調整
 	Release();
 
-	m_shader_no_texture_distortion = Shader::Create(
-		this,
-		Standard_Distortion_VS::g_vs20_VS,
-		sizeof(Standard_Distortion_VS::g_vs20_VS),
-		StandardNoTexture_Distortion_PS::g_ps20_PS,
-		sizeof(StandardNoTexture_Distortion_PS::g_ps20_PS),
-		"StandardRenderer No Texture Distortion",
-		decl_distortion);
-
-	if (m_shader_no_texture_distortion == NULL)
-	{
-		return false;
-	}
-
-	// 参照カウントの調整
-	Release();
-
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader->SetVertexRegisterCount(8 + 1);
-	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader_no_texture->SetVertexRegisterCount(8 + 1);
 
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_distortion->SetVertexRegisterCount(8 + 1);
@@ -396,14 +343,10 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion->SetPixelRegisterCount(1 + 1);
 
-	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader_no_texture_distortion->SetVertexRegisterCount(8 + 1);
-
-	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_no_texture_distortion->SetPixelRegisterCount(1 + 1);
-
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(
-		this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
+		this, m_shader, m_shader_distortion);
+
+	GetImpl()->CreateProxyTextures(this);
 
 	//ES_SAFE_ADDREF( m_d3d_device );
 	return true;
@@ -607,7 +550,7 @@ VertexBuffer* RendererImplemented::GetVertexBuffer()
 //----------------------------------------------------------------------------------
 IndexBuffer* RendererImplemented::GetIndexBuffer()
 {
-	if( m_renderMode == ::Effekseer::RenderMode::Wireframe )
+	if( GetRenderMode() == ::Effekseer::RenderMode::Wireframe )
 	{
 		return m_indexBufferForWireframe;
 	}
@@ -887,11 +830,11 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 	impl->drawcallCount++;
 	impl->drawvertexCount += spriteCount * 4;
 
-	if( m_renderMode == ::Effekseer::RenderMode::Normal )
+	if (GetRenderMode() == ::Effekseer::RenderMode::Normal)
 	{
 		GetDevice()->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, vertexOffset, 0, spriteCount * 4, 0, spriteCount * 2 );
 	}
-	else if( m_renderMode == ::Effekseer::RenderMode::Wireframe )
+	else if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
 		GetDevice()->DrawIndexedPrimitive( D3DPT_LINELIST, vertexOffset, 0, spriteCount * 4, 0, spriteCount * 4 );
 	}
@@ -915,24 +858,24 @@ Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) cons
 {
 	if( useDistortion )
 	{
-		if( useTexture && m_renderMode == Effekseer::RenderMode::Normal )
+		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
 		{
 			return m_shader_distortion;
 		}
 		else
 		{
-			return m_shader_no_texture_distortion;
+			return m_shader_distortion;
 		}
 	}
 	else
 	{
-		if( useTexture && m_renderMode == Effekseer::RenderMode::Normal )
+		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
 		{
 			return m_shader;
 		}
 		else
 		{
-			return m_shader_no_texture;
+			return m_shader;
 		}
 	}
 }
@@ -1009,6 +952,85 @@ void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
+}
+
+Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) 
+{
+	std::array<uint8_t, 4> buf;
+
+	if (type == EffekseerRenderer::ProxyTextureType::White)
+	{
+		buf.fill(255);
+	}
+	else if (type == EffekseerRenderer::ProxyTextureType::Normal)
+	{
+		buf.fill(127);
+		buf[2] = 255;
+		buf[3] = 255;
+	}
+	else
+	{
+		assert(0);
+	}
+
+	HRESULT hr;
+	int32_t width = 1;
+	int32_t height = 1;
+	int32_t mipMapCount = 1;
+	LPDIRECT3DTEXTURE9 texture = nullptr;
+	hr = GetDevice()->CreateTexture(width, height, mipMapCount, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL);
+
+	if (FAILED(hr))
+	{
+		return nullptr;
+	}
+
+	LPDIRECT3DTEXTURE9 tempTexture = nullptr;
+	hr = GetDevice()->CreateTexture(width, height, mipMapCount, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &tempTexture, NULL);
+
+	if (FAILED(hr))
+	{
+		ES_SAFE_RELEASE(texture);
+		return nullptr;
+	}
+
+	D3DLOCKED_RECT locked;
+	if (SUCCEEDED(tempTexture->LockRect(0, &locked, NULL, 0)))
+	{
+		uint8_t* destBits = (uint8_t*)locked.pBits;
+		destBits[0] = buf[2];
+		destBits[2] = buf[0];
+		destBits[1] = buf[1];
+		destBits[3] = buf[3];
+
+		tempTexture->UnlockRect(0);
+	}
+
+	hr = GetDevice()->UpdateTexture(tempTexture, texture);
+	ES_SAFE_RELEASE(tempTexture);
+
+
+	auto textureData = new Effekseer::TextureData();
+	textureData->UserPtr = texture;
+	textureData->UserID = 0;
+	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
+	textureData->Width = width;
+	textureData->Height = height;
+	return textureData;
+}
+
+void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data) 
+{
+	if (data != nullptr && data->UserPtr != nullptr)
+	{
+		IDirect3DTexture9* texture = (IDirect3DTexture9*)data->UserPtr;
+		texture->Release();
+	}
+
+	if (data != nullptr)
+	{
+		delete data;
+	}
 }
 
 //----------------------------------------------------------------------------------

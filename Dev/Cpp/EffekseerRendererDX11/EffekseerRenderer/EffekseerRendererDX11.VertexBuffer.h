@@ -45,8 +45,8 @@ public:	// デバイス復旧用
 
 public:
 	void Lock();
-	bool RingBufferLock( int32_t size, int32_t& offset, void*& data );
-	bool TryRingBufferLock(int32_t size, int32_t& offset, void*& data);
+	bool RingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment) override;
+	bool TryRingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment) override;
 	void Unlock();
 };
 

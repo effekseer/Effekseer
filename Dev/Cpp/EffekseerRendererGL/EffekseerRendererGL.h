@@ -172,6 +172,17 @@ enum class UVStyle
 	VerticalFlipped,
 };
 
+/**
+	@brief
+	\~english A type of texture which is rendered when textures are not assigned.
+	\~japanese テクスチャが設定されていないときに描画されるテクスチャの種類
+*/
+enum class ProxyTextureType
+{
+	White,
+	Normal,
+};
+
 class CommandList : public ::Effekseer::IReference
 {
 public:
@@ -204,6 +215,12 @@ protected:
 	Impl* impl = nullptr;
 
 public:
+
+	/**
+		@brief	only for Effekseer backend developer. Effekseer User doesn't need it.
+	*/
+	Impl* GetImpl();
+
 	/**
 		@brief	デバイスロストが発生した時に実行する。
 	*/
@@ -399,14 +416,18 @@ public:
 	virtual void ResetDrawVertexCount();
 
 	/**
-	@brief	描画モードを設定する。
+	@brief
+	\~english Get a render mode.
+	\~japanese 描画モードを取得する。
 	*/
-	virtual void SetRenderMode( Effekseer::RenderMode renderMode ) = 0;
+	virtual Effekseer::RenderMode GetRenderMode() const;
 
 	/**
-	@brief	描画モードを取得する。
+	@brief	
+	\~english Specify a render mode.
+	\~japanese 描画モードを設定する。
 	*/
-	virtual Effekseer::RenderMode GetRenderMode() = 0;
+	virtual void SetRenderMode(Effekseer::RenderMode renderMode);
 
 	/**
 	@brief
@@ -467,7 +488,19 @@ public:
 	*/
 	virtual void SetBackgroundTexture(::Effekseer::TextureData* textureData);
 
+	/**
+	@brief
+	\~English	Create a proxy texture
+	\~Japanese	代替のテクスチャを生成する
+	*/
+	virtual Effekseer::TextureData* CreateProxyTexture(ProxyTextureType type) { return nullptr; }
 
+	/**
+	@brief
+	\~English	Delete a proxy texture
+	\~Japanese	代替のテクスチャを削除する
+	*/
+	virtual void DeleteProxyTexture(Effekseer::TextureData* data) { }
 };
 
 //----------------------------------------------------------------------------------

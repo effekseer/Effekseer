@@ -1,27 +1,39 @@
 #include "EffekseerRenderer.Renderer_Impl.h"
+#include "EffekseerRenderer.Renderer.h"
 
 namespace EffekseerRenderer
 {
 
-UVStyle Renderer::Impl::GetTextureUVStyle() const
+void Renderer::Impl::CreateProxyTextures(Renderer* renderer)
 {
-	return textureUVStyle;
+	whiteProxyTexture_ = renderer->CreateProxyTexture(::EffekseerRenderer::ProxyTextureType::White);
+	normalProxyTexture_ = renderer->CreateProxyTexture(::EffekseerRenderer::ProxyTextureType::Normal);
 }
 
-void Renderer::Impl::SetTextureUVStyle(UVStyle style)
+void Renderer::Impl::DeleteProxyTextures(Renderer* renderer)
 {
-	textureUVStyle = style;
+	renderer->DeleteProxyTexture(whiteProxyTexture_);
+	renderer->DeleteProxyTexture(normalProxyTexture_);
+	whiteProxyTexture_ = nullptr;
+	normalProxyTexture_ = nullptr;
 }
 
-UVStyle Renderer::Impl::GetBackgroundTextureUVStyle() const
+::Effekseer::TextureData* Renderer::Impl::GetProxyTexture(EffekseerRenderer::ProxyTextureType type)
 {
-	return backgroundTextureUVStyle;
+	if (type == EffekseerRenderer::ProxyTextureType::White)
+		return whiteProxyTexture_;
+	if (type == EffekseerRenderer::ProxyTextureType::Normal)
+		return normalProxyTexture_;
+	return nullptr;
 }
 
-void Renderer::Impl::SetBackgroundTextureUVStyle(UVStyle style)
-{
-	backgroundTextureUVStyle = style;
-}
+UVStyle Renderer::Impl::GetTextureUVStyle() const { return textureUVStyle; }
+
+void Renderer::Impl::SetTextureUVStyle(UVStyle style) { textureUVStyle = style; }
+
+UVStyle Renderer::Impl::GetBackgroundTextureUVStyle() const { return backgroundTextureUVStyle; }
+
+void Renderer::Impl::SetBackgroundTextureUVStyle(UVStyle style) { backgroundTextureUVStyle = style; }
 
 int32_t Renderer::Impl::GetDrawCallCount() const { return drawcallCount; }
 
@@ -35,4 +47,17 @@ float Renderer::Impl::GetTime() const { return time_; }
 
 void Renderer::Impl::SetTime(float time) { time_ = time; }
 
+Effekseer::RenderMode Renderer::Impl::GetRenderMode() const
+{
+	if (!isRenderModeValid)
+	{
+		printf("RenderMode is not implemented.\n");
+		return Effekseer::RenderMode::Normal;
+	}
+
+	return renderMode_;
 }
+
+void Renderer::Impl::SetRenderMode(Effekseer::RenderMode renderMode) { renderMode_ = renderMode; }
+
+} // namespace EffekseerRenderer

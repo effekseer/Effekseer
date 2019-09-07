@@ -26,26 +26,13 @@ class ModelRenderer
 private:
 	RendererImplemented*			m_renderer;
 	Shader*							m_shader_lighting_texture_normal;
-	Shader*							m_shader_lighting_normal;
-
-	Shader*							m_shader_lighting_texture;
-	Shader*							m_shader_lighting;
-
 	Shader*							m_shader_texture;
-	Shader*							m_shader;
-
 	Shader*							m_shader_distortion_texture;
-	Shader*							m_shader_distortion;
 
 	ModelRenderer( RendererImplemented* renderer,
 		Shader* shader_lighting_texture_normal,
-		Shader* shader_lighting_normal,
-		Shader* shader_lighting_texture,
-		Shader* shader_lighting,
 		Shader* shader_texture,
-		Shader* shader,
-		Shader* shader_distortion_texture,
-		Shader* shader_distortion);
+		Shader* shader_distortion_texture);
 public:
 
 	virtual ~ModelRenderer();

@@ -11,6 +11,7 @@
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.Renderer.h"
 #include "EffekseerRenderer.VertexBufferBase.h"
+#include "EffekseerRenderer.Renderer_Impl.h"
 
 //-----------------------------------------------------------------------------------
 //
@@ -92,13 +93,13 @@ struct StandardRendererState
 		if (Refraction != state.Refraction)
 			return true;
 
-		for (int32_t i = 0; i < state.MaterialUniformCount; i++)
+		for (uint32_t i = 0; i < state.MaterialUniformCount; i++)
 		{
 			if (MaterialUniforms[i] != state.MaterialUniforms[i])
 				return true;
 		}
 
-		for (int32_t i = 0; i < state.MaterialTextureCount; i++)
+		for (uint32_t i = 0; i < state.MaterialTextureCount; i++)
 		{
 			if (MaterialTextures[i] != state.MaterialTextures[i])
 				return true;
@@ -178,10 +179,10 @@ template <typename RENDERER, typename SHADER, typename VERTEX, typename VERTEX_D
 private:
 	RENDERER* m_renderer;
 	SHADER* m_shader;
-	SHADER* m_shader_no_texture;
+	//SHADER* m_shader_no_texture;
 
 	SHADER* m_shader_distortion;
-	SHADER* m_shader_no_texture_distortion;
+	//SHADER* m_shader_no_texture_distortion;
 
 	Effekseer::TextureData* m_texture;
 
@@ -224,17 +225,21 @@ private:
 
 public:
 	StandardRenderer(
-		RENDERER* renderer, SHADER* shader, SHADER* shader_no_texture, SHADER* shader_distortion, SHADER* shader_no_texture_distortion)
+		RENDERER* renderer, SHADER* shader, SHADER* shader_distortion)
 		: renderVertexMaxSize(0), m_isDistortionMode(false)
 	{
 		m_renderer = renderer;
 		m_shader = shader;
-		m_shader_no_texture = shader_no_texture;
+		//m_shader_no_texture = shader_no_texture;
 		m_shader_distortion = shader_distortion;
-		m_shader_no_texture_distortion = shader_no_texture_distortion;
+		//m_shader_no_texture_distortion = shader_no_texture_distortion;
 
 		vertexCaches.reserve(m_renderer->GetVertexBuffer()->GetMaxSize());
 		renderVertexMaxSize = m_renderer->GetVertexBuffer()->GetMaxSize();
+	}
+
+	virtual ~StandardRenderer()
+	{
 	}
 
 	void UpdateStateAndRenderingIfRequired(StandardRendererState state)
@@ -360,7 +365,7 @@ public:
 		vertexCaches.clear();
 	}
 
-	void Rendering_(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj, int32_t bufferOffset, int32_t bufferSize, int32_t vertexSize_, int32_t renderPass)
+	void Rendering_(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj, int32_t bufferOffset, int32_t bufferSize, int32_t singleVertexSize, int32_t renderPass)
 	{
 		bool isBackgroundRequired = false;
 		
@@ -386,29 +391,16 @@ public:
 		}
 
 		int32_t vertexSize = bufferSize;
-		int32_t offsetSize = 0;
+		int32_t vbOffset = 0;
 		{
 			VertexBufferBase* vb = m_renderer->GetVertexBuffer();
 
-			void* data = nullptr;
+			void* vbData = nullptr;
 
-			// TODO : improve performance
-			if (vertexSize_ != sizeof(VERTEX))
+			if (vb->RingBufferLock(vertexSize, vbOffset, vbData, singleVertexSize * 4))
 			{
-				// For OpenGL ES(Because OpenGL ES 3.2 and later can only realize a vertex layout variable ring buffer)
-				vb->Lock();
-				data = vb->GetBufferDirect(vertexSize);
-				if (data == nullptr)
-				{
-					return;
-				}
-				memcpy(data, vertexCaches.data() + bufferOffset, vertexSize);
-				vb->Unlock();
-			}
-			else if (vb->RingBufferLock(vertexSize, offsetSize, data))
-			{
-				assert(data != nullptr);
-				memcpy(data, vertexCaches.data() + bufferOffset, vertexSize);
+				assert(vbData != nullptr);
+				memcpy(vbData, vertexCaches.data() + bufferOffset, vertexSize);
 				vb->Unlock();
 			}
 			else
@@ -462,7 +454,7 @@ public:
 		}
 		else
 		{
-			shader_ = m_renderer->GetShader(m_state.TexturePtr != nullptr, distortion);
+			shader_ = m_renderer->GetShader(true, distortion);
 		}
 
 		m_renderer->BeginShader(shader_);
@@ -490,13 +482,13 @@ public:
 		{
 			Effekseer::TextureData* textures[2];
 
-			if (m_state.TexturePtr != nullptr && m_state.TexturePtr != (Effekseer::TextureData*)0x01)
+			if (m_state.TexturePtr != nullptr && m_state.TexturePtr != (Effekseer::TextureData*)0x01 && m_renderer->GetRenderMode() == Effekseer::RenderMode::Normal)
 			{
 				textures[0] = m_state.TexturePtr;
 			}
 			else
 			{
-				textures[0] = nullptr;
+				textures[0] = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 			}
 
 			if (distortion)
@@ -650,10 +642,12 @@ public:
 
 		m_renderer->GetRenderState()->Update(distortion);
 
-		m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), vertexSize_);
+		assert(vbOffset % singleVertexSize == 0);
+
+		m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), singleVertexSize);
 		m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
 		m_renderer->SetLayout(shader_);
-		m_renderer->DrawSprites(vertexSize / vertexSize_ / 4, offsetSize / vertexSize_);
+		m_renderer->DrawSprites(vertexSize / singleVertexSize / 4, vbOffset / singleVertexSize);
 
 		m_renderer->EndShader(shader_);
 
