@@ -228,6 +228,10 @@ namespace Effekseer.GUI.Component
 			if (binding.IsDynamicEquationEnabled)
 			{
 				DynamicSelector.SelectMaxInComponent(id_d1, binding.DynamicEquationMax);
+				if (Manager.NativeManager.IsItemHovered())
+				{
+					ShowDynamicEquationCodeTooltip(binding.DynamicEquationMax);
+				}
 				Popup();
 			}
 
@@ -275,6 +279,10 @@ namespace Effekseer.GUI.Component
 			if (binding.IsDynamicEquationEnabled)
 			{
 				DynamicSelector.SelectMinInComponent(id_d2, binding.DynamicEquationMin);
+				if (Manager.NativeManager.IsItemHovered())
+				{
+					ShowDynamicEquationCodeTooltip(binding.DynamicEquationMin);
+				}
 				Popup();
 			}
 
@@ -282,6 +290,16 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.PopItemWidth();
 
 			valueChangingProp.Disable();
+		}
+
+		void ShowDynamicEquationCodeTooltip(Data.Value.DynamicEquationReference dynamicEquation)
+		{
+			if (dynamicEquation.Index != -1)
+			{
+				Manager.NativeManager.BeginTooltip();
+				Manager.NativeManager.Text(dynamicEquation.Value.Code.Value);
+				Manager.NativeManager.EndTooltip();
+			}
 		}
 
 		void Popup()
