@@ -99,15 +99,13 @@ void VertexBuffer::Lock()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-bool VertexBuffer::RingBufferLock( int32_t size, int32_t& offset, void*& data, int32_t alignment)
+bool VertexBuffer::RingBufferLock( int32_t size, int32_t& offset, void*& data )
 {
 	assert( !m_isLock );
 	assert( !m_ringBufferLock );
 	assert( this->m_isDynamic );
 
 	if( size > m_size ) return false;
-
-	m_vertexRingOffset = (m_vertexRingOffset + alignment - 1) / alignment * alignment;
 
 	if ( (int32_t)m_vertexRingOffset + size > m_size )
 	{
@@ -133,11 +131,11 @@ bool VertexBuffer::RingBufferLock( int32_t size, int32_t& offset, void*& data, i
 	return true;
 }
 
-bool VertexBuffer::TryRingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment)
+bool VertexBuffer::TryRingBufferLock(int32_t size, int32_t& offset, void*& data)
 {
 	if ((int32_t)m_vertexRingOffset + size > m_size) return false;
 
-	return RingBufferLock(size, offset, data, alignment);
+	return RingBufferLock(size, offset, data);
 }
 
 

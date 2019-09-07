@@ -27,18 +27,32 @@ namespace EffekseerRendererLLGI
 struct FixedShader
 {
 	std::vector<LLGI::DataStructure> StandardTexture_VS;
+	std::vector<LLGI::DataStructure> Standard_VS;
 	std::vector<LLGI::DataStructure> StandardDistortedTexture_VS;
+	std::vector<LLGI::DataStructure> StandardDistorted_VS;
 
 	std::vector<LLGI::DataStructure> ModelShaderLightingTextureNormal_VS;
+	std::vector<LLGI::DataStructure> ModelShaderLightingNormal_VS;
+	std::vector<LLGI::DataStructure> ModelShaderLightingTexture_VS;
+	std::vector<LLGI::DataStructure> ModelShaderLighting_VS;
 	std::vector<LLGI::DataStructure> ModelShaderTexture_VS;
+	std::vector<LLGI::DataStructure> ModelShader_VS;
 	std::vector<LLGI::DataStructure> ModelShaderDistortionTexture_VS;
+	std::vector<LLGI::DataStructure> ModelShaderDistortion_VS;
 
 	std::vector<LLGI::DataStructure> StandardTexture_PS;
+	std::vector<LLGI::DataStructure> Standard_PS;
 	std::vector<LLGI::DataStructure> StandardDistortedTexture_PS;
+	std::vector<LLGI::DataStructure> StandardDistorted_PS;
 
 	std::vector<LLGI::DataStructure> ModelShaderLightingTextureNormal_PS;
+	std::vector<LLGI::DataStructure> ModelShaderLightingNormal_PS;
+	std::vector<LLGI::DataStructure> ModelShaderLightingTexture_PS;
+	std::vector<LLGI::DataStructure> ModelShaderLighting_PS;
 	std::vector<LLGI::DataStructure> ModelShaderTexture_PS;
+	std::vector<LLGI::DataStructure> ModelShader_PS;
 	std::vector<LLGI::DataStructure> ModelShaderDistortionTexture_PS;
+	std::vector<LLGI::DataStructure> ModelShaderDistortion_PS;
 };
 
 /**

@@ -234,8 +234,13 @@ public:
 	template <typename RENDERER, typename SHADER, typename MODEL, bool Instancing, int InstanceCount>
 	void EndRendering_(RENDERER* renderer,
 					   SHADER* shader_lighting_texture_normal,
+					   SHADER* shader_lighting_normal,
+					   SHADER* shader_lighting_texture,
+					   SHADER* shader_lighting,
 					   SHADER* shader_texture,
+					   SHADER* shader,
 					   SHADER* shader_distortion_texture,
+					   SHADER* shader_distortion,
 					   const efkModelNodeParam& param)
 	{
 		if (m_matrixes.size() == 0)
@@ -259,13 +264,13 @@ public:
 		{
 			RenderPass<RENDERER, SHADER, MODEL, Instancing, InstanceCount>(renderer,
 																		   shader_lighting_texture_normal,
-																		   //shader_lighting_normal,
-																		   //shader_lighting_texture,
-																		   //shader_lighting,
+																		   shader_lighting_normal,
+																		   shader_lighting_texture,
+																		   shader_lighting,
 																		   shader_texture,
-																		   //shader,
+																		   shader,
 																		   shader_distortion_texture,
-																		   //shader_distortion,
+																		   shader_distortion,
 																		   param,
 																		   renderPassInd);		
 		}
@@ -275,13 +280,13 @@ public:
 	void RenderPass(
 		RENDERER* renderer, 
 		SHADER* shader_lighting_texture_normal,
-		//SHADER* shader_lighting_normal,
-		//SHADER* shader_lighting_texture,
-		//SHADER* shader_lighting,
+		SHADER* shader_lighting_normal,
+		SHADER* shader_lighting_texture,
+		SHADER* shader_lighting,
 		SHADER* shader_texture,
-		//SHADER* shader,
+		SHADER* shader,
 		SHADER* shader_distortion_texture,
-		//SHADER* shader_distortion,
+		SHADER* shader_distortion,
 		const efkModelNodeParam& param,
 		int32_t renderPassInd)
 	{
@@ -369,50 +374,50 @@ public:
 		{
 			if (distortion)
 			{
-				//if (param.ColorTextureIndex >= 0)
-				//{
+				if (param.ColorTextureIndex >= 0)
+				{
 					shader_ = shader_distortion_texture;
-				//}
-				//else
-				//{
-				//	shader_ = shader_distortion;
-				//}
+				}
+				else
+				{
+					shader_ = shader_distortion;
+				}
 			}
 			else if (param.Lighting)
 			{
-				//if (param.NormalTextureIndex >= 0)
-				//{
-				//	if (param.ColorTextureIndex >= 0)
-				//	{
+				if (param.NormalTextureIndex >= 0)
+				{
+					if (param.ColorTextureIndex >= 0)
+					{
 						shader_ = shader_lighting_texture_normal;
-				//	}
-				//	else
-				//	{
-				//		shader_ = shader_lighting_normal;
-				//	}
-				//}
-				//else
-				//{
-				//	if (param.ColorTextureIndex >= 0)
-				//	{
-				//		shader_ = shader_lighting_texture;
-				//	}
-				//	else
-				//	{
-				//		shader_ = shader_lighting;
-				//	}
-				//}
+					}
+					else
+					{
+						shader_ = shader_lighting_normal;
+					}
+				}
+				else
+				{
+					if (param.ColorTextureIndex >= 0)
+					{
+						shader_ = shader_lighting_texture;
+					}
+					else
+					{
+						shader_ = shader_lighting;
+					}
+				}
 			}
 			else
 			{
-				//if (param.ColorTextureIndex >= 0)
-				//{
+				if (param.ColorTextureIndex >= 0)
+				{
 					shader_ = shader_texture;
-				//}
-				//else
-				//{
-				//	shader_ = shader;
-				//}
+				}
+				else
+				{
+					shader_ = shader;
+				}
 			}
 		}
 
@@ -472,10 +477,6 @@ public:
 				{
 					textures[0] = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
 				}
-				else
-				{
-					textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-				}
 
 				textures[1] = renderer->GetBackground();
 			}
@@ -485,18 +486,10 @@ public:
 				{
 					textures[0] = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
 				}
-				else
-				{
-					textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
-				}
 
 				if (param.NormalTextureIndex >= 0)
 				{
 					textures[1] = param.EffectPointer->GetNormalImage(param.NormalTextureIndex);
-				}
-				else
-				{
-					textures[1] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
 				}
 			}
 

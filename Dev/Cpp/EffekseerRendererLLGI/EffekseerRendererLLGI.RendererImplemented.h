@@ -251,8 +251,15 @@ private:
 	IndexBuffer* m_indexBufferForWireframe = nullptr;
 	int32_t m_squareMaxCount;
 
-	Shader* m_shader = nullptr;
-	Shader* m_shader_distortion = nullptr;
+	int32_t drawcallCount = 0;
+	int32_t drawvertexCount = 0;
+
+	Shader* m_shader;
+	Shader* m_shader_no_texture;
+
+	Shader* m_shader_distortion;
+	Shader* m_shader_no_texture_distortion;
+
 	Shader* currentShader = nullptr;
 
 	bool isReversedDepth_ = false;
@@ -477,9 +484,21 @@ public:
 
 	void ResetRenderState() override;
 
-	Effekseer::TextureData* CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) override;
+	int32_t GetDrawCallCount() const override;
 
-	void DeleteProxyTexture(Effekseer::TextureData* data) override;
+	int32_t GetDrawVertexCount() const override;
+
+	void ResetDrawCallCount() override;
+
+	void ResetDrawVertexCount() override;
+
+	void SetRenderMode(Effekseer::RenderMode renderMode) override { m_renderMode = renderMode; }
+
+	Effekseer::RenderMode GetRenderMode() override
+	{
+		printf("Not implemented.\n");
+		return m_renderMode;
+	}
 
 	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }

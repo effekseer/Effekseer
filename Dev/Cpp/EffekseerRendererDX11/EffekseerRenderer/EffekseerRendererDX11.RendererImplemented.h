@@ -122,9 +122,13 @@ private:
 	IndexBuffer*		m_indexBufferForWireframe = nullptr;
 	int32_t				m_squareMaxCount;
 
-	Shader* m_shader = nullptr;
-	Shader* m_shader_distortion = nullptr;
-	Shader* currentShader = nullptr;
+	Shader*							m_shader;
+	Shader*							m_shader_no_texture;
+
+	Shader*							m_shader_distortion;
+	Shader*							m_shader_no_texture_distortion;
+
+	Shader*		currentShader = nullptr;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>*	m_standardRenderer;
 
@@ -156,6 +160,8 @@ private:
 	D3D11_COMPARISON_FUNC	m_depthFunc;
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
+
+	Effekseer::RenderMode m_renderMode = Effekseer::RenderMode::Normal;
 
 public:
 	/**
@@ -352,9 +358,9 @@ public:
 
 	void ResetRenderState();
 
-	Effekseer::TextureData* CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) override;
+	void SetRenderMode(Effekseer::RenderMode renderMode) override { m_renderMode = renderMode; }
 
-	void DeleteProxyTexture(Effekseer::TextureData* data) override;
+	Effekseer::RenderMode GetRenderMode() override { printf("Not implemented.\n"); return m_renderMode; }
 
 	virtual int GetRef() { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() { return ::Effekseer::ReferenceObject::AddRef(); }
