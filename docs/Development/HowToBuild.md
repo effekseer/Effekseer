@@ -76,7 +76,7 @@ cmake -DBUILD_VIEWER=ON ..
 
 Open ``` build/Effekseer.xcodeproj ``` (C++)
 
-Open ``` Dev/Editor/Effekseer.sln ``` (C# 64bit)
+Open ``` Dev/Editor/Effekseer.sln ``` (C#)
 
 
 Build with a script
