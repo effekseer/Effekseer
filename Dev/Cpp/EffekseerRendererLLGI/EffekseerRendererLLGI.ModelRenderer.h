@@ -21,26 +21,13 @@ class ModelRenderer : public ::EffekseerRenderer::ModelRendererBase
 private:
 	RendererImplemented* m_renderer;
 	Shader* m_shader_lighting_texture_normal;
-	Shader* m_shader_lighting_normal;
-
-	Shader* m_shader_lighting_texture;
-	Shader* m_shader_lighting;
-
 	Shader* m_shader_texture;
-	Shader* m_shader;
-
 	Shader* m_shader_distortion_texture;
-	Shader* m_shader_distortion;
 
 	ModelRenderer(RendererImplemented* renderer,
 				  Shader* shader_buf_lighting_texture_normal,
-				  Shader* shader_buf_lighting_normal,
-				  Shader* shader_buf_lighting_texture,
-				  Shader* shader_buf_lighting,
 				  Shader* shader_buf_texture,
-				  Shader* shader_buf,
-				  Shader* shader_buf_distortion_texture,
-				  Shader* shader_buf_distortion);
+				  Shader* shader_buf_distortion_texture);
 
 public:
 	virtual ~ModelRenderer();

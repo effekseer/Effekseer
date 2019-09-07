@@ -183,9 +183,7 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	, m_renderState(NULL)
 
 	, m_shader(nullptr)
-	, m_shader_no_texture(nullptr)
 	, m_shader_distortion(nullptr)
-	, m_shader_no_texture_distortion(nullptr)
 	, m_standardRenderer(nullptr)
 	, m_distortingCallback(nullptr)
 {
@@ -215,6 +213,8 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_RELEASE(commandList_);
 
+	GetImpl()->DeleteProxyTextures(this);
+
 	assert(GetRef() == 0);
 
 	ES_SAFE_DELETE(m_distortingCallback);
@@ -224,10 +224,10 @@ RendererImplemented::~RendererImplemented()
 
 	ES_SAFE_DELETE(m_standardRenderer);
 	ES_SAFE_DELETE(m_shader);
-	ES_SAFE_DELETE(m_shader_no_texture);
+
 
 	ES_SAFE_DELETE(m_shader_distortion);
-	ES_SAFE_DELETE(m_shader_no_texture_distortion);
+
 
 	ES_SAFE_DELETE(m_renderState);
 	ES_SAFE_DELETE(m_vertexBuffer);
@@ -236,7 +236,7 @@ RendererImplemented::~RendererImplemented()
 
 	LLGI::SafeRelease(graphics_);
 
-	assert(GetRef() == -7);
+	assert(GetRef() == -5);
 }
 
 void RendererImplemented::OnLostDevice() {}
@@ -343,22 +343,6 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, bool isReversedDe
 	// 参照カウントの調整
 	Release();
 
-	m_shader_no_texture = Shader::Create(this,
-										 fixedShader_.Standard_VS.data(),
-										 fixedShader_.Standard_VS.size(),
-										 fixedShader_.Standard_PS.data(),
-										 fixedShader_.Standard_PS.size(),
-										 "StandardRenderer No Texture",
-										 layouts);
-
-	if (m_shader_no_texture == NULL)
-	{
-		return false;
-	}
-
-	// 参照カウントの調整
-	Release();
-
 	m_shader_distortion = Shader::Create(this,
 										 fixedShader_.StandardDistortedTexture_VS.data(),
 										 fixedShader_.StandardDistortedTexture_VS.size(),
@@ -372,26 +356,8 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, bool isReversedDe
 	// 参照カウントの調整
 	Release();
 
-	m_shader_no_texture_distortion = Shader::Create(this,
-													fixedShader_.StandardDistorted_VS.data(),
-													fixedShader_.StandardDistorted_VS.size(),
-													fixedShader_.StandardDistorted_PS.data(),
-													fixedShader_.StandardDistorted_PS.size(),
-													"StandardRenderer No Texture Distortion",
-													layouts_distort);
-
-	if (m_shader_no_texture_distortion == NULL)
-	{
-		return false;
-	}
-
-	// 参照カウントの調整
-	Release();
-
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader->SetVertexRegisterCount(8 + 1);
-	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader_no_texture->SetVertexRegisterCount(8 + 1);
 
 	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader_distortion->SetVertexRegisterCount(8 + 1);
@@ -399,14 +365,10 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, bool isReversedDe
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion->SetPixelRegisterCount(1 + 1);
 
-	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader_no_texture_distortion->SetVertexRegisterCount(8 + 1);
-
-	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
-	m_shader_no_texture_distortion->SetPixelRegisterCount(1 + 1);
-
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(
-		this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
+		this, m_shader, m_shader_distortion);
+
+	GetImpl()->CreateProxyTextures(this);
 
 	return true;
 }
@@ -723,8 +685,8 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 	auto piplineState = GetOrCreatePiplineState();
 	GetCurrentCommandList()->SetPipelineState(piplineState);
 
-	drawcallCount++;
-	drawvertexCount += spriteCount * 4;
+	impl->drawcallCount++;
+	impl->drawvertexCount += spriteCount * 4;
 
 	if (m_renderMode == Effekseer::RenderMode::Normal)
 	{
@@ -771,8 +733,8 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 	auto piplineState = GetOrCreatePiplineState();
 	GetCurrentCommandList()->SetPipelineState(piplineState);
 
-	drawcallCount++;
-	drawvertexCount += vertexCount;
+	impl->drawcallCount++;
+	impl->drawvertexCount += vertexCount;
 
 	GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer, currentVertexBufferStride, 0);
 	GetCurrentCommandList()->Draw(indexCount / 3);
@@ -791,7 +753,7 @@ Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) cons
 		}
 		else
 		{
-			return m_shader_no_texture_distortion;
+			return m_shader_distortion;
 		}
 	}
 	else
@@ -802,7 +764,7 @@ Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) cons
 		}
 		else
 		{
-			return m_shader_no_texture;
+			return m_shader;
 		}
 	}
 }
@@ -865,13 +827,56 @@ void RendererImplemented::ResetRenderState()
 	m_renderState->Update(true);
 }
 
-int32_t RendererImplemented::GetDrawCallCount() const { return drawcallCount; }
+Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) {
 
-int32_t RendererImplemented::GetDrawVertexCount() const { return drawvertexCount; }
+	std::array<uint8_t, 4> buf;
 
-void RendererImplemented::ResetDrawCallCount() { drawcallCount = 0; }
+	if (type == EffekseerRenderer::ProxyTextureType::White)
+	{
+		buf.fill(255);
+	}
+	else if (type == EffekseerRenderer::ProxyTextureType::Normal)
+	{
+		buf.fill(127);
+		buf[2] = 255;
+		buf[3] = 255;
+	}
+	else
+	{
+		assert(0);
+	}
 
-void RendererImplemented::ResetDrawVertexCount() { drawvertexCount = 0; }
+	auto texture = graphics_->CreateTexture(LLGI::Vec2I(16, 16), false, false);
+	auto buf_ = reinterpret_cast<uint8_t*>(texture->Lock());
+
+	for (int32_t i = 0; i < 16 * 16; i++)
+	{
+		memcpy(buf_ + i * 4, buf.data(), 4);
+	}
+
+	texture->Unlock();
+
+	auto textureData = new Effekseer::TextureData();
+	textureData->UserPtr = texture;
+	textureData->UserID = 0;
+	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
+	textureData->Width = 1;
+	textureData->Height = 1;
+	return textureData;
+}
+
+void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data) {
+	if (data != nullptr && data->UserPtr != nullptr)
+	{
+		auto texture = (LLGI::Texture*)data->UserPtr;
+		texture->Release();
+	}
+
+	if (data != nullptr)
+	{
+		delete data;
+	}
+}
 
 //----------------------------------------------------------------------------------
 //
