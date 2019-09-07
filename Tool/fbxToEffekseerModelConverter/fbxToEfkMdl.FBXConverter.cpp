@@ -25,7 +25,7 @@ namespace fbxToEfkMdl
 
 		double u[3];
 		double v[3];
-		
+
 		for (int32_t i = 0; i < 3; i++)
 		{
 			auto v1 = cp1[i] - cp0[i];
@@ -55,13 +55,13 @@ namespace fbxToEfkMdl
 		FbxVector4 position;
 
 		auto controlPoints = fbxMesh->GetControlPoints();
-		
+
 		position = controlPoints[ctrlPointIndex];
-	
+
 		return position;
 	}
 
-	FbxVector4 FBXConverter::LoadNormal(FbxLayerElementNormal* normals, int32_t vertexID, int32_t ctrlPointIndex)
+	FbxVector4 FBXConverter::LoadNormal(FbxMesh* fbxMesh, FbxLayerElementNormal* normals, int32_t vertexID, int32_t ctrlPointIndex)
 	{
 		FbxVector4 normal;
 
@@ -77,8 +77,25 @@ namespace fbxToEfkMdl
 				int id = normals->GetIndexArray().GetAt(vertexID);
 				normal = normals->GetDirectArray().GetAt(id);
 			}
-				break;
+			break;
 			}
+		}
+		else if (normals->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+		{
+			int id = 0;
+
+			if (normals->GetReferenceMode() == FbxGeometryElement::eDirect)
+			{
+				id = ctrlPointIndex;
+			}
+
+			if (normals->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+			{
+				id = normals->GetIndexArray().GetAt(ctrlPointIndex);
+			}
+
+			normal = normals->GetDirectArray().GetAt(id);
+
 		}
 
 		return normal;
@@ -90,44 +107,44 @@ namespace fbxToEfkMdl
 
 		switch (uvs->GetMappingMode())
 		{
-			case FbxGeometryElement::eByControlPoint:
-				switch (uvs->GetReferenceMode())
-				{
-					case FbxGeometryElement::eDirect:
-					{
-						uv = uvs->GetDirectArray().GetAt(ctrlPointIndex);
-						break;
-					}
-					case FbxGeometryElement::eIndexToDirect:
-					{
-						 auto id = uvs->GetIndexArray().GetAt(ctrlPointIndex);
-						 uv = uvs->GetDirectArray().GetAt(id);
-						 break;
-					}	
-				}
-				break;
-
-			case FbxGeometryElement::eByPolygonVertex:
+		case FbxGeometryElement::eByControlPoint:
+			switch (uvs->GetReferenceMode())
 			{
-				auto textureUVIndex = fbxMesh->GetTextureUVIndex(polygonIndex, polygonPointIndex);
-				switch (uvs->GetReferenceMode())
-				{
-					case FbxGeometryElement::eDirect:
-					case FbxGeometryElement::eIndexToDirect:
-					{
-						uv = uvs->GetDirectArray().GetAt(textureUVIndex);
-						break;
-					}
-				}
+			case FbxGeometryElement::eDirect:
+			{
+				uv = uvs->GetDirectArray().GetAt(ctrlPointIndex);
 				break;
 			}
+			case FbxGeometryElement::eIndexToDirect:
+			{
+				auto id = uvs->GetIndexArray().GetAt(ctrlPointIndex);
+				uv = uvs->GetDirectArray().GetAt(id);
+				break;
+			}
+			}
+			break;
+
+		case FbxGeometryElement::eByPolygonVertex:
+		{
+			auto textureUVIndex = fbxMesh->GetTextureUVIndex(polygonIndex, polygonPointIndex);
+			switch (uvs->GetReferenceMode())
+			{
+			case FbxGeometryElement::eDirect:
+			case FbxGeometryElement::eIndexToDirect:
+			{
+				uv = uvs->GetDirectArray().GetAt(textureUVIndex);
+				break;
+			}
+			}
+			break;
+		}
 		default:
 			break;
 		}
 
 		// 上下逆
 		uv[1] = 1.0 - uv[1];
-		
+
 		return uv;
 	}
 
@@ -152,7 +169,7 @@ namespace fbxToEfkMdl
 				auto id = colors->GetIndexArray().GetAt(ctrlPointIndex);
 				color = colors->GetDirectArray().GetAt(id);
 			}
-				break;
+			break;
 			default:
 				break;
 			}
@@ -173,7 +190,7 @@ namespace fbxToEfkMdl
 
 			break;
 		}
-		
+
 		return color;
 	}
 
@@ -307,14 +324,14 @@ namespace fbxToEfkMdl
 				Vertex v;
 
 				v.Position = LoadPosition(fbxMesh, ctrlPointIndex);
-				
+
 				v.Weights = vs_temp[ctrlPointIndex].Weights;
 
 				if (normals != nullptr)
 				{
-					v.Normal = LoadNormal(normals, vertexID, ctrlPointIndex);
+					v.Normal = LoadNormal(fbxMesh, normals, vertexID, ctrlPointIndex);
 				}
-		
+
 				if (uvs != nullptr)
 				{
 					v.UV = LoadUV(fbxMesh, uvs, vertexID, ctrlPointIndex, polygonIndex, polygonPointIndex);
@@ -347,7 +364,7 @@ namespace fbxToEfkMdl
 		}
 
 		// メッシュで使用可能な形式に変換
-	
+
 		// 頂点変換テーブル作成
 		int32_t vInd = 0;
 		std::map<Vertex, int32_t> v2ind;
@@ -392,7 +409,7 @@ namespace fbxToEfkMdl
 				f.Index[2] = v2ind[face.Vertecies[2]];
 				mesh->Faces.push_back(f);
 			}
-			
+
 			if (face.Vertecies.size() == 4)
 			{
 				Face f0;
@@ -480,8 +497,8 @@ namespace fbxToEfkMdl
 				if (!mesh->IsTriangleMesh())
 				{
 					FbxGeometryConverter converter(fbxManager);
-					auto mesh_tri = (FbxMesh*) converter.Triangulate(mesh, false);
-				
+					auto mesh_tri = (FbxMesh*)converter.Triangulate(mesh, false);
+
 					if (mesh_tri != nullptr)
 					{
 						mesh = mesh_tri;
@@ -538,7 +555,7 @@ namespace fbxToEfkMdl
 	std::shared_ptr<KeyFrameAnimation> FBXConverter::LoadCurve(FbxAnimCurve* curve, int32_t frameStart, int32_t frameCount)
 	{
 		auto keyFrameAnimation = std::make_shared<KeyFrameAnimation>();
-		
+
 		for (int32_t i = 0; i < frameCount; i++)
 		{
 			FbxTime time;
@@ -664,7 +681,7 @@ namespace fbxToEfkMdl
 			ret.push_back(c);
 		}
 
-		for (auto i = 0; i< fbxNode->GetChildCount(); i++)
+		for (auto i = 0; i < fbxNode->GetChildCount(); i++)
 		{
 			auto kfas = LoadCurve(fbxAnimLayer, fbxNode->GetChild(i), frameStart, frameCount);
 
@@ -690,7 +707,7 @@ namespace fbxToEfkMdl
 		FbxTime endTime = fbxAnimStack->LocalStop;
 
 		int hour, minute, second, frame, field, residual;
-		
+
 		startTime.GetTime(hour, minute, second, frame, field, residual, FbxTime::eFrames60);
 		auto startFrame = 60 * (hour * 60 * 60 + minute * 60 + second) + frame;
 
@@ -705,8 +722,8 @@ namespace fbxToEfkMdl
 		{
 			auto layer = fbxAnimStack->GetMember<FbxAnimLayer>();
 			auto kfas = LoadCurve(layer, fbxRootNode, animClip->StartFrame, animClip->EndFrame - animClip->StartFrame);
-		
-			for(auto a : kfas)
+
+			for (auto a : kfas)
 			{
 				animClip->Animations.push_back(a);
 			}
@@ -714,7 +731,7 @@ namespace fbxToEfkMdl
 
 		animClip->EndFrame = animClip->EndFrame - animClip->StartFrame;
 		animClip->StartFrame = 0;
-		
+
 		return animClip;
 	}
 
@@ -740,7 +757,7 @@ namespace fbxToEfkMdl
 			fbxScene->SetCurrentAnimationStack(animStack);
 			auto animClip = LoadAnimation(animStack, root);
 
-			if(animClip.get() == nullptr) continue;
+			if (animClip.get() == nullptr) continue;
 			scene->AnimationClips.push_back(animClip);
 		}
 
