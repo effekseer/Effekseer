@@ -15,7 +15,7 @@ Requirements
 
 - git
 - git-lfs
-- XCode or g++
+- Xcode
 - mono
 - Visual Studio for Mac (msbuild)
 - cmake
@@ -76,89 +76,27 @@ cmake -DBUILD_VIEWER=ON ..
 
 Open ``` build/Effekseer.xcodeproj ``` (C++)
 
-Open ``` Dev/Editor/Effekseer.sln ``` (C#)
+Open ``` Dev/Editor/Effekseer.sln ``` (C# 64bit)
 
-Build Runtime, Viewer and Editor
+
+Build with a script
 ----------
 
-Execure following command at the repository root.
-
-`Windows: Use [Visual Studio Developer Command Prompt]`
-
-```
-python build.py
-```
-
-To develop ...
-
-- Runtime, Viewer : see `build` folder.
-- Editor : see `Dev/Editor/Effekseer.sln`
-
-If you want to build individually, see the following section.
-
-
-Build Runtime and Viewer
-----------
-
-Execure following command at the repository root.
-
-```
-mkdir build
-cd build
-cmake .. -G <generator> [options]
-cmake --build . --config Release
-```
-
-### generator
-
-`<generator>` is tested with the following values:
-
-- Windows: "Visual Studio 15 2017"
-- macOS: "Xcode"
-- Linux: `TODO`
-
-### options
-
-- `-DBUILD_VIEWER=ON` : Build the library (Viewer) needed to run the editor. If omitted, only the runtime will be built.
-
-
-Editor
-----------
+Execute following command at the repository root.
 
 ### Windows
 
-#### VisualStudio
-
-- `-DBUILD_VIEWER=ON -DBUILD_EDITOR=ON` : Build the editor with CMake.
-
-#### msbuild
-
-Execure following command at the repository root.
-
-`Windows: Use [Visual Studio Developer Command Prompt]`
-
 ```
-msbuild Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x64
-msbuild Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x64
+python3 build.py
+cd Dev/release
+Effekseer.exe
 ```
 
-Execute following command to start the editor.
-
+### macOS, Linux
 ```
-Dev\release\Effekseer.exe
-```
-
-### maxOS
-
-```
-msbuild Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x64
-msbuild Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x64
-```
-
-Execute following command to start the editor.
-
-```
-mono Dev/release/Effekseer.exe
+python3 build.py
+cd Dev/release
+mono Effekseer.exe
 ```
 
 Attention
