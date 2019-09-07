@@ -299,15 +299,11 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceTyp
 	, m_currentVertexArray( NULL )
 
 	, m_shader(nullptr)
-	, m_shader_no_texture(nullptr)
 	, m_shader_distortion(nullptr)
-	, m_shader_no_texture_distortion(nullptr)
 	, m_standardRenderer(nullptr)
 
 	, m_vao(nullptr)
-	, m_vao_no_texture(nullptr)
 	, m_vao_distortion(nullptr)
-	, m_vao_no_texture_distortion(nullptr)
 	, m_vao_wire_frame(nullptr)
 	, m_distortingCallback(nullptr)
 
@@ -328,22 +324,20 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceTyp
 //----------------------------------------------------------------------------------
 RendererImplemented::~RendererImplemented()
 {
+	GetImpl()->DeleteProxyTextures(this);
+
 	assert( GetRef() == 0 );
 
 	ES_SAFE_DELETE(m_distortingCallback);
 
 	ES_SAFE_DELETE(m_standardRenderer);
 	ES_SAFE_DELETE(m_shader);
-	ES_SAFE_DELETE(m_shader_no_texture);
 	ES_SAFE_DELETE(m_shader_distortion);
-	ES_SAFE_DELETE(m_shader_no_texture_distortion);
 
 	auto isVaoEnabled = m_vao != nullptr;
 
 	ES_SAFE_DELETE(m_vao);
-	ES_SAFE_DELETE(m_vao_no_texture);
 	ES_SAFE_DELETE(m_vao_distortion);
-	ES_SAFE_DELETE(m_vao_no_texture_distortion);
 	ES_SAFE_DELETE(m_vao_wire_frame);
 
 	ES_SAFE_DELETE( m_renderState );
@@ -353,11 +347,11 @@ RendererImplemented::~RendererImplemented()
 
 	if (isVaoEnabled)
 	{
-		assert(GetRef() == -12);
+		assert(GetRef() == -8);
 	}
 	else
 	{
-		assert(GetRef() == -7);
+		assert(GetRef() == -5);
 	}
 }
 
@@ -463,35 +457,11 @@ bool RendererImplemented::Initialize()
 	// 参照カウントの調整
 	Release();
 
-	m_shader_no_texture = Shader::Create(this,
-		g_sprite_vs_src, sizeof(g_sprite_vs_src), 
-		g_sprite_fs_no_texture_src, sizeof(g_sprite_fs_no_texture_src), 
-		"Standard NoTex");
-	if (m_shader_no_texture == nullptr)
-	{
-		return false;
-	}
-
-	// 参照カウントの調整
-	Release();
-
 	m_shader_distortion = Shader::Create(this,
 		g_sprite_distortion_vs_src, sizeof(g_sprite_distortion_vs_src), 
 		g_sprite_fs_texture_distortion_src, sizeof(g_sprite_fs_texture_distortion_src), 
 		"Standard Distortion Tex");
 	if (m_shader_distortion == nullptr) return false;
-
-	// 参照カウントの調整
-	Release();
-
-	m_shader_no_texture_distortion = Shader::Create(this,
-		g_sprite_distortion_vs_src, sizeof(g_sprite_distortion_vs_src), 
-		g_sprite_fs_no_texture_distortion_src, sizeof(g_sprite_fs_no_texture_distortion_src), 
-		"Standard Distortion NoTex");
-	if (m_shader_no_texture_distortion == nullptr)
-	{
-		return false;
-	}
 
 	// 参照カウントの調整
 	Release();
@@ -535,35 +505,9 @@ bool RendererImplemented::Initialize()
 
 	m_shader->SetTextureSlot(0, m_shader->GetUniformId("uTexture0"));
 
-	m_shader_no_texture->GetAttribIdList(3, sprite_attribs);
-	m_shader_no_texture->SetVertexSize(sizeof(Vertex));
-	m_shader_no_texture->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	
-	m_shader_no_texture->AddVertexConstantLayout(
-		CONSTANT_TYPE_MATRIX44,
-		m_shader_no_texture->GetUniformId("uMatCamera"),
-		0
-		);
-
-	m_shader_no_texture->AddVertexConstantLayout(
-		CONSTANT_TYPE_MATRIX44,
-		m_shader_no_texture->GetUniformId("uMatProjection"),
-		sizeof(Effekseer::Matrix44)
-		);
-
-	m_shader_no_texture->AddVertexConstantLayout(
-		CONSTANT_TYPE_VECTOR4,
-		m_shader_no_texture->GetUniformId("mUVInversed"),
-		sizeof(Effekseer::Matrix44) * 2
-	);
-
 	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer());
 	// 参照カウントの調整
 	if (m_vao != nullptr) Release();
-
-	m_vao_no_texture = VertexArray::Create(this, m_shader_no_texture, GetVertexBuffer(), GetIndexBuffer());
-	// 参照カウントの調整
-	if (m_vao_no_texture != nullptr) Release();
 
 	// Distortion
 	m_shader_distortion->GetAttribIdList(5, sprite_attribs_distortion);
@@ -605,58 +549,15 @@ bool RendererImplemented::Initialize()
 	m_shader_distortion->SetTextureSlot(0, m_shader_distortion->GetUniformId("uTexture0"));
 	m_shader_distortion->SetTextureSlot(1, m_shader_distortion->GetUniformId("uBackTexture0"));
 
-	m_shader_no_texture_distortion->GetAttribIdList(5, sprite_attribs_distortion);
-	m_shader_no_texture_distortion->SetVertexSize(sizeof(VertexDistortion));
-	m_shader_no_texture_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader_no_texture_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
-
-	m_shader_no_texture_distortion->AddVertexConstantLayout(
-		CONSTANT_TYPE_MATRIX44,
-		m_shader_no_texture_distortion->GetUniformId("uMatCamera"),
-		0
-		);
-
-	m_shader_no_texture_distortion->AddVertexConstantLayout(
-		CONSTANT_TYPE_MATRIX44,
-		m_shader_no_texture_distortion->GetUniformId("uMatProjection"),
-		sizeof(Effekseer::Matrix44)
-		);
-
-	m_shader_no_texture_distortion->AddVertexConstantLayout(
-		CONSTANT_TYPE_VECTOR4,
-		m_shader_no_texture_distortion->GetUniformId("mUVInversed"),
-		sizeof(Effekseer::Matrix44) * 2
-	);
-
-	m_shader_no_texture_distortion->AddPixelConstantLayout(
-		CONSTANT_TYPE_VECTOR4,
-		m_shader_distortion->GetUniformId("g_scale"),
-		0
-		);
-
-	m_shader_no_texture_distortion->AddPixelConstantLayout(
-		CONSTANT_TYPE_VECTOR4,
-		m_shader_no_texture_distortion->GetUniformId("mUVInversedBack"),
-		sizeof(float) * 4
-	);
-
-	m_shader_no_texture_distortion->SetTextureSlot(1, m_shader_no_texture_distortion->GetUniformId("uBackTexture0"));
-
-
 	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer());
 	
 	// 参照カウントの調整
 	if (m_vao_distortion != nullptr) Release();
 
-	m_vao_no_texture_distortion = VertexArray::Create(this, m_shader_no_texture_distortion, GetVertexBuffer(), GetIndexBuffer());
-	
-	// 参照カウントの調整
-	if (m_vao_no_texture_distortion != nullptr) Release();
-
-	m_vao_wire_frame = VertexArray::Create(this, m_shader_no_texture, GetVertexBuffer(), m_indexBufferForWireframe);
+	m_vao_wire_frame = VertexArray::Create(this, m_shader, GetVertexBuffer(), m_indexBufferForWireframe);
 	if (m_vao_wire_frame != nullptr) Release();
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
+	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(this, m_shader, m_shader_distortion);
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
 	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
@@ -665,6 +566,8 @@ bool RendererImplemented::Initialize()
 	{
 		GLExt::glBindVertexArray(currentVAO);
 	}
+
+	GetImpl()->CreateProxyTextures(this);
 
 	return true;
 }
@@ -1144,11 +1047,11 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 	impl->drawcallCount++;
 	impl->drawvertexCount += spriteCount * 4;
 
-	if( m_renderMode == ::Effekseer::RenderMode::Normal )
+	if (GetRenderMode() == ::Effekseer::RenderMode::Normal)
 	{
 		glDrawElements(GL_TRIANGLES, spriteCount * 6, GL_UNSIGNED_SHORT, (void*) (vertexOffset / 4 * 6 * sizeof(GLushort)));
 	}
-	else if( m_renderMode == ::Effekseer::RenderMode::Wireframe )
+	else if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
 		glDrawElements(GL_LINES, spriteCount * 8, GL_UNSIGNED_SHORT, (void*) (vertexOffset / 4 * 8 * sizeof(GLushort)));
 	}
@@ -1178,24 +1081,24 @@ Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) cons
 {
 	if( useDistortion )
 	{
-		if( useTexture && m_renderMode == Effekseer::RenderMode::Normal )
+		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
 		{
 			return m_shader_distortion;
 		}
 		else
 		{
-			return m_shader_no_texture_distortion;
+			return m_shader_distortion;
 		}
 	}
 	else
 	{
-		if( useTexture && m_renderMode == Effekseer::RenderMode::Normal )
+		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
 		{
 			return m_shader;
 		}
 		else
 		{
-			return m_shader_no_texture;
+			return m_shader;
 		}
 	}
 }
@@ -1208,7 +1111,7 @@ void RendererImplemented::BeginShader(Shader* shader)
 	GLCheckError();
 
 	// VAOの切り替え
-	if (m_renderMode == ::Effekseer::RenderMode::Wireframe)
+	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
 		SetVertexArray(m_vao_wire_frame);
 	}
@@ -1216,17 +1119,9 @@ void RendererImplemented::BeginShader(Shader* shader)
 	{
 		SetVertexArray(m_vao);
 	}
-	else if (shader == m_shader_no_texture)
-	{
-		SetVertexArray(m_vao_no_texture);
-	}
 	else if (shader == m_shader_distortion)
 	{
 		SetVertexArray(m_vao_distortion);
-	}
-	else if (shader == m_shader_no_texture_distortion)
-	{
-		SetVertexArray(m_vao_no_texture_distortion);
 	}
 	
 	shader->BeginScene();
@@ -1337,6 +1232,64 @@ void RendererImplemented::ResetRenderState()
 {
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
+}
+
+Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) {
+
+	GLint binded = 0;
+	// correct?
+	glGetIntegerv(GL_TEXTURE_2D, &binded);
+
+	std::array<uint8_t, 4> buf;
+
+	if (type == EffekseerRenderer::ProxyTextureType::White)
+	{
+		buf.fill(255);
+	}
+	else if (type == EffekseerRenderer::ProxyTextureType::Normal)
+	{
+		buf.fill(127);
+		buf[2] = 255;
+		buf[3] = 255;
+	}
+	else
+	{
+		assert(0);
+	}
+
+	GLuint texture = 0;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D,
+				 0,
+				 GL_RGBA,
+				 1,
+				 1,
+				 0,
+				 GL_RGBA,
+				 GL_UNSIGNED_BYTE,
+				 buf.data());
+
+	// Generate mipmap
+	GLExt::glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, binded);
+
+	auto textureData = new Effekseer::TextureData();
+	textureData->UserPtr = nullptr;
+	textureData->UserID = texture;
+	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
+	textureData->Width = 1;
+	textureData->Height = 1;
+	return textureData;
+}
+
+void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data) {
+	if (data != nullptr)
+	{
+		GLuint texture = (GLuint)data->UserID;
+		glDeleteTextures(1, &texture);
+		delete data;
+	}
 }
 
 bool RendererImplemented::IsVertexArrayObjectSupported() const { return GLExt::IsSupportedVertexArray(); }
