@@ -35,8 +35,8 @@ public:
 
 public:
 	void Lock();
-	bool RingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment) override;
-	bool TryRingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment) override;
+	bool RingBufferLock(int32_t size, int32_t& offset, void*& data);
+	bool TryRingBufferLock(int32_t size, int32_t& offset, void*& data);
 	void Unlock();
 };
 

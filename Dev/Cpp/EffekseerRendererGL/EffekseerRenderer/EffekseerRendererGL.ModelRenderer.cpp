@@ -329,12 +329,22 @@ static ShaderUniformInfo g_model_uniforms[ModelRenderer::NumUniforms] = {
 ModelRenderer::ModelRenderer(
 	RendererImplemented* renderer,
 	Shader* shader_lighting_texture_normal,
+	Shader* shader_lighting_normal,
+	Shader* shader_lighting_texture,
+	Shader* shader_lighting,
 	Shader* shader_texture,
-	Shader* shader_distortion_texture)
+	Shader* shader,
+	Shader* shader_distortion_texture,
+	Shader* shader_distortion)
 	: m_renderer(renderer)
 	, m_shader_lighting_texture_normal(shader_lighting_texture_normal)
+	, m_shader_lighting_normal(shader_lighting_normal)
+	, m_shader_lighting_texture(shader_lighting_texture)
+	, m_shader_lighting(shader_lighting)
 	, m_shader_texture(shader_texture)
+	, m_shader(shader)
 	, m_shader_distortion_texture(shader_distortion_texture)
+	, m_shader_distortion(shader_distortion)
 {
 	for (size_t i = 0; i < 8; i++)
 	{
@@ -346,20 +356,45 @@ ModelRenderer::ModelRenderer(
 	shader_lighting_texture_normal->SetTextureSlot(0, shader_lighting_texture_normal->GetUniformId("ColorTexture"));
 	shader_lighting_texture_normal->SetTextureSlot(1, shader_lighting_texture_normal->GetUniformId("NormalTexture"));
 
+
+	shader_lighting_normal->GetAttribIdList(NumAttribs, g_model_attribs);
+	shader_lighting_normal->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[1]);
+	shader_lighting_normal->SetTextureSlot(1, shader_lighting_normal->GetUniformId("NormalTexture"));
+
+
+	shader_lighting_texture->GetAttribIdList(NumAttribs, g_model_attribs);
+	shader_lighting_texture->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[2]);
+	shader_lighting_texture->SetTextureSlot(0, shader_lighting_texture->GetUniformId("ColorTexture"));
+
+	shader_lighting->GetAttribIdList(NumAttribs, g_model_attribs);
+	shader_lighting->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[3]);
+
 	shader_texture->GetAttribIdList(NumAttribs, g_model_attribs);
 	shader_texture->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[4]);
 	shader_texture->SetTextureSlot(0, shader_texture->GetUniformId("ColorTexture"));
 	
+	shader->GetAttribIdList(NumAttribs, g_model_attribs);
+	shader->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[5]);
+
 	shader_distortion_texture->GetAttribIdList(NumAttribs, g_model_attribs);
 	shader_distortion_texture->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[6]);
 	shader_distortion_texture->SetTextureSlot(0, shader_distortion_texture->GetUniformId("uTexture0"));
 	shader_distortion_texture->SetTextureSlot(1, shader_distortion_texture->GetUniformId("uBackTexture0"));
 
-	Shader* shaders[2];
+	shader_distortion->GetAttribIdList(NumAttribs, g_model_attribs);
+	shader_distortion->GetUniformIdList(NumUniforms, g_model_uniforms, m_uniformLoc[7]);
+	shader_distortion->SetTextureSlot(0, shader_distortion->GetUniformId("uTexture0"));
+	shader_distortion->SetTextureSlot(1, shader_distortion->GetUniformId("uBackTexture0"));
+
+	Shader* shaders[6];
 	shaders[0] = m_shader_lighting_texture_normal;
-	shaders[1] = m_shader_texture;
+	shaders[1] = m_shader_lighting_normal;
+	shaders[2] = m_shader_lighting_texture;
+	shaders[3] = m_shader_lighting;
+	shaders[4] = m_shader_texture;
+	shaders[5] = m_shader;
 	
-	for( int32_t i = 0; i < 2; i++ )
+	for( int32_t i = 0; i < 6; i++ )
 	{
 		shaders[i]->SetVertexSize(sizeof(::Effekseer::Model::Vertex));
 
@@ -427,10 +462,11 @@ ModelRenderer::ModelRenderer(
 			);
 	}
 
-	Shader* shaders_d[1];
+	Shader* shaders_d[2];
 	shaders_d[0] = shader_distortion_texture;
+	shaders_d[1] = shader_distortion;
 
-	for (int32_t i = 0; i < 1; i++)
+	for (int32_t i = 0; i < 2; i++)
 	{
 		shaders_d[i]->SetVertexSize(sizeof(::Effekseer::Model::Vertex));
 
@@ -507,8 +543,16 @@ ModelRenderer::ModelRenderer(
 	}
 
 	m_va[0] = VertexArray::Create(renderer, m_shader_lighting_texture_normal, nullptr, nullptr);
+	m_va[1] = VertexArray::Create(renderer, m_shader_lighting_normal, nullptr, nullptr);
+
+	m_va[2] = VertexArray::Create(renderer, m_shader_lighting_texture, nullptr, nullptr);
+	m_va[3] = VertexArray::Create(renderer, m_shader_lighting, nullptr, nullptr);
+
 	m_va[4] = VertexArray::Create(renderer, m_shader_texture, nullptr, nullptr);
+	m_va[5] = VertexArray::Create(renderer, m_shader, nullptr, nullptr);
+
 	m_va[6] = VertexArray::Create(renderer, m_shader_distortion_texture, nullptr, nullptr);
+	m_va[7] = VertexArray::Create(renderer, m_shader_distortion, nullptr, nullptr);
 
 	if (GLExt::IsSupportedVertexArray())
 	{
@@ -527,10 +571,16 @@ ModelRenderer::~ModelRenderer()
 	}
 
 	ES_SAFE_DELETE(m_shader_lighting_texture_normal);
+	ES_SAFE_DELETE(m_shader_lighting_normal);
+
+	ES_SAFE_DELETE(m_shader_lighting_texture);
+	ES_SAFE_DELETE(m_shader_lighting);
 
 	ES_SAFE_DELETE(m_shader_texture);
+	ES_SAFE_DELETE(m_shader);
 
 	ES_SAFE_DELETE(m_shader_distortion_texture);
+	ES_SAFE_DELETE(m_shader_distortion);
 }
 
 //----------------------------------------------------------------------------------
@@ -540,18 +590,41 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 {
 	assert( renderer != NULL );
 
-	Shader* shader_lighting_texture_normal = NULL;		    
+	Shader* shader_lighting_texture_normal = NULL;
+	Shader* shader_lighting_normal = NULL;
+		    
+	Shader* shader_lighting_texture = NULL;
+	Shader* shader_lighting = NULL;
+		    
 	Shader* shader_texture = NULL;
+	Shader* shader = NULL;
+
 	Shader* shader_distortion_texture = NULL;
+	Shader* shader_distortion = NULL;
 
 	std::string vs_ltn_src = g_model_vs_src;
 	std::string fs_ltn_src = g_model_fs_src;
 
+	std::string vs_ln_src = g_model_vs_src;
+	std::string fs_ln_src = g_model_fs_src;
+
+	std::string vs_lt_src = g_model_vs_src;
+	std::string fs_lt_src = g_model_fs_src;
+
+	std::string vs_l_src = g_model_vs_src;
+	std::string fs_l_src = g_model_fs_src;
+
 	std::string vs_t_src = g_model_vs_src;
 	std::string fs_t_src = g_model_fs_src;
 
+	std::string vs_src = g_model_vs_src;
+	std::string fs_src = g_model_fs_src;
+
 	std::string vs_d_t_src = g_model_distortion_vs_src;
 	std::string fs_d_t_src = g_model_distortion_fs_src;
+
+	std::string vs_d_src = g_model_distortion_vs_src;
+	std::string fs_d_src = g_model_distortion_fs_src;
 
 	vs_ltn_src = Replace(vs_ltn_src, "TextureEnable", "true");
 	fs_ltn_src = Replace(fs_ltn_src, "TextureEnable", "true");
@@ -560,6 +633,27 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	vs_ltn_src = Replace(vs_ltn_src, "NormalMapEnable", "true");
 	fs_ltn_src = Replace(fs_ltn_src, "NormalMapEnable", "true");
 
+	vs_ln_src = Replace(vs_ln_src, "TextureEnable", "false");
+	fs_ln_src = Replace(fs_ln_src, "TextureEnable", "false");
+	vs_ln_src = Replace(vs_ln_src, "LightingEnable", "true");
+	fs_ln_src = Replace(fs_ln_src, "LightingEnable", "true");
+	vs_ln_src = Replace(vs_ln_src, "NormalMapEnable", "true");
+	fs_ln_src = Replace(fs_ln_src, "NormalMapEnable", "true");
+
+	vs_lt_src = Replace(vs_lt_src, "TextureEnable", "true");
+	fs_lt_src = Replace(fs_lt_src, "TextureEnable", "true");
+	vs_lt_src = Replace(vs_lt_src, "LightingEnable", "true");
+	fs_lt_src = Replace(fs_lt_src, "LightingEnable", "true");
+	vs_lt_src = Replace(vs_lt_src, "NormalMapEnable", "false");
+	fs_lt_src = Replace(fs_lt_src, "NormalMapEnable", "false");
+
+	vs_l_src = Replace(vs_l_src, "TextureEnable", "false");
+	fs_l_src = Replace(fs_l_src, "TextureEnable", "false");
+	vs_l_src = Replace(vs_l_src, "LightingEnable", "true");
+	fs_l_src = Replace(fs_l_src, "LightingEnable", "true");
+	vs_l_src = Replace(vs_l_src, "NormalMapEnable", "false");
+	fs_l_src = Replace(fs_l_src, "NormalMapEnable", "false");
+
 	vs_t_src = Replace(vs_t_src, "TextureEnable", "true");
 	fs_t_src = Replace(fs_t_src, "TextureEnable", "true");
 	vs_t_src = Replace(vs_t_src, "LightingEnable", "false");
@@ -567,32 +661,76 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	vs_t_src = Replace(vs_t_src, "NormalMapEnable", "false");
 	fs_t_src = Replace(fs_t_src, "NormalMapEnable", "false");
 
+	vs_src = Replace(vs_src, "TextureEnable", "false");
+	fs_src = Replace(fs_src, "TextureEnable", "false");
+	vs_src = Replace(vs_src, "LightingEnable", "false");
+	fs_src = Replace(fs_src, "LightingEnable", "false");
+	vs_src = Replace(vs_src, "NormalMapEnable", "false");
+	fs_src = Replace(fs_src, "NormalMapEnable", "false");
+
 	vs_d_t_src = Replace(vs_d_t_src, "TextureEnable", "true");
 	fs_d_t_src = Replace(fs_d_t_src, "TextureEnable", "true");
+
+	vs_d_src = Replace(vs_d_src, "TextureEnable", "false");
+	fs_d_src = Replace(fs_d_src, "TextureEnable", "false");
 
 	shader_lighting_texture_normal = Shader::Create(renderer,
 		vs_ltn_src.c_str(), vs_ltn_src.length(), fs_ltn_src.c_str(), fs_ltn_src.length(), "ModelRenderer1");
 	if (shader_lighting_texture_normal == NULL) goto End;
 
+	shader_lighting_normal = Shader::Create(renderer,
+		vs_ln_src.c_str(), vs_ln_src.length(), fs_ln_src.c_str(), fs_ln_src.length(), "ModelRenderer2");
+	if (shader_lighting_normal == NULL) goto End;
+
+	shader_lighting_texture = Shader::Create(renderer,
+		vs_lt_src.c_str(), vs_lt_src.length(), fs_lt_src.c_str(), fs_lt_src.length(), "ModelRenderer3");
+	if (shader_lighting_texture == NULL) goto End;
+
+	shader_lighting = Shader::Create(renderer,
+		vs_l_src.c_str(), vs_l_src.length(), fs_l_src.c_str(), fs_l_src.length(), "ModelRenderer4");
+	if (shader_lighting == NULL) goto End;
+
 	shader_texture = Shader::Create(renderer,
 		vs_t_src.c_str(), vs_t_src.length(), fs_t_src.c_str(), fs_t_src.length(), "ModelRenderer5");
 	if (shader_texture == NULL) goto End;
+
+	shader = Shader::Create( renderer, 
+		vs_src.c_str(), vs_src.length(), fs_src.c_str(), fs_src.length(), "ModelRenderer6");
+	if (shader == NULL) goto End;
 
 	shader_distortion_texture = Shader::Create(renderer,
 		vs_d_t_src.c_str(), vs_d_t_src.length(), fs_d_t_src.c_str(), fs_d_t_src.length(), "ModelRenderer7");
 	if (shader_distortion_texture == NULL) goto End;
 
+	shader_distortion = Shader::Create(renderer,
+		vs_d_src.c_str(), vs_d_src.length(), fs_d_src.c_str(), fs_d_src.length(), "ModelRenderer8");
+	if (shader_distortion == NULL) goto End;
+
 	return new ModelRenderer( 
 		renderer, 
 		shader_lighting_texture_normal,
+		shader_lighting_normal,
+		shader_lighting_texture,
+		shader_lighting,
 		shader_texture,
-		shader_distortion_texture);
+		shader,
+		shader_distortion_texture,
+		shader_distortion);
 End:;
 
 	ES_SAFE_DELETE(shader_lighting_texture_normal);
+	ES_SAFE_DELETE(shader_lighting_normal);
+
+	ES_SAFE_DELETE(shader_lighting_texture);
+	ES_SAFE_DELETE(shader_lighting);
+
 	ES_SAFE_DELETE(shader_texture);
+	ES_SAFE_DELETE(shader);
+
 	ES_SAFE_DELETE(shader_distortion_texture);
-	return nullptr;
+	ES_SAFE_DELETE(shader_distortion);
+	return NULL;
+
 }
 
 void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData)
@@ -669,8 +807,13 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		}
 	
 		m_shader_lighting_texture_normal->SetVertexSize(model->GetVertexSize());
+		m_shader_lighting_normal->SetVertexSize(model->GetVertexSize());
+		m_shader_lighting_texture->SetVertexSize(model->GetVertexSize());
+		m_shader_lighting->SetVertexSize(model->GetVertexSize());
 		m_shader_texture->SetVertexSize(model->GetVertexSize());
+		m_shader->SetVertexSize(model->GetVertexSize());
 		m_shader_distortion_texture->SetVertexSize(model->GetVertexSize());
+		m_shader_distortion->SetVertexSize(model->GetVertexSize());
 	}
 
 
@@ -685,8 +828,13 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		20>(
 		m_renderer,
 		m_shader_lighting_texture_normal,
+		m_shader_lighting_normal,
+		m_shader_lighting_texture,
+		m_shader_lighting,
 		m_shader_texture,
+		m_shader,
 		m_shader_distortion_texture,
+		m_shader_distortion,
 		parameter );
 #else
 	EndRendering_<
@@ -697,11 +845,178 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		1>(
 		m_renderer,
 		m_shader_lighting_texture_normal,
+		m_shader_lighting_normal,
+		m_shader_lighting_texture,
+		m_shader_lighting,
 		m_shader_texture,
+		m_shader,
 		m_shader_distortion_texture,
+		m_shader_distortion,
 		parameter );
 #endif
 
+	
+	/*
+	return;
+	
+	if( m_matrixes.size() == 0 ) return;
+	if( parameter.ModelIndex < 0 ) return;
+	
+	Model* model = (Model*)parameter.EffectPointer->GetModel( parameter.ModelIndex );
+	if( model == NULL ) return;
+
+	RenderStateBase::State& state = m_renderer->GetRenderState()->Push();
+	state.DepthTest = parameter.ZTest;
+	state.DepthWrite = parameter.ZWrite;
+	state.AlphaBlend = parameter.AlphaBlend;
+	state.CullingType = parameter.Culling;
+
+	
+	Shader* shader_ = NULL;
+
+	if (parameter.Lighting)
+	{
+		if (parameter.NormalTextureIndex >= 0)
+		{
+			if (parameter.ColorTextureIndex >= 0)
+			{
+				shader_ = m_shader_lighting_texture_normal;
+			}
+			else
+			{
+				shader_ = m_shader_lighting_normal;
+			}
+		}
+		else
+		{
+			if (parameter.ColorTextureIndex >= 0)
+			{
+				shader_ = m_shader_lighting_texture;
+			}
+			else
+			{
+				shader_ = m_shader_lighting;
+			}
+		}
+	}
+	else
+	{
+		if (parameter.ColorTextureIndex >= 0)
+		{
+			shader_ = m_shader_texture;
+		}
+		else
+		{
+			shader_ = m_shader;
+		}
+	}
+
+	m_renderer->BeginShader(shader_);
+	
+
+	GLuint textures[2];
+	textures[0] = 0;
+	textures[1] = 0;
+
+	if( parameter.ColorTextureIndex >= 0 )
+	{
+		// テクスチャ有り
+		textures[0] = (GLuint) parameter.EffectPointer->GetImage(parameter.ColorTextureIndex);
+	}
+	
+	if( parameter.NormalTextureIndex >= 0 )
+	{
+		textures[1] = (GLuint) parameter.EffectPointer->GetImage(parameter.NormalTextureIndex);
+	}
+
+	m_renderer->SetTextures(shader_, textures, 2);
+
+	state.TextureFilterTypes[0] = parameter.TextureFilter;
+	state.TextureWrapTypes[0] = parameter.TextureWrap;
+	state.TextureFilterTypes[1] = parameter.TextureFilter;
+	state.TextureWrapTypes[1] = parameter.TextureWrap;
+
+	m_renderer->GetRenderState()->Update( false );
+	
+	// ここから
+	ModelRendererVertexConstantBuffer<1>* vcb = (ModelRendererVertexConstantBuffer<1>*)shader_->GetVertexConstantBuffer();
+	ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*)shader_->GetPixelConstantBuffer();
+	
+	if( parameter.Lighting )
+	{
+		{
+			::Effekseer::Vector3D lightDirection = m_renderer->GetLightDirection();
+			::Effekseer::Vector3D::Normal( lightDirection, lightDirection );
+			VectorToFloat4(lightDirection, vcb->LightDirection);
+			VectorToFloat4(lightDirection, pcb->LightDirection);
+		}
+
+		{
+			ColorToFloat4(m_renderer->GetLightColor(), vcb->LightColor);
+			ColorToFloat4(m_renderer->GetLightColor(), pcb->LightColor);
+		}
+
+		{
+			ColorToFloat4(m_renderer->GetLightAmbientColor(), vcb->LightAmbientColor);
+			ColorToFloat4(m_renderer->GetLightAmbientColor(), pcb->LightAmbientColor);
+		}
+	}
+	else
+	{
+	}
+
+	vcb->CameraMatrix = m_renderer->GetCameraProjectionMatrix();
+	
+	m_renderer->SetVertexBuffer(model->VertexBuffer, sizeof(Effekseer::Model::VertexWithIndex));
+	m_renderer->SetIndexBuffer(model->IndexBuffer);
+
+	m_renderer->SetLayout(shader_);
+	
+#if defined(MODEL_SOFTWARE_INSTANCING)
+	for( size_t loop = 0; loop < m_matrixes.size(); )
+	{
+		int32_t modelCount = Effekseer::Min( m_matrixes.size() - loop, MaxInstanced );
+		
+		glUniformMatrix4fv( m_uniformLoc[UniformModelMatrix],
+			modelCount, GL_FALSE, &m_matrixes[loop].Values[0][0] );
+		
+		for( int32_t num = 0; num < modelCount; num++ )
+		{
+			glVertexAttrib1f( m_attribLoc[AttribInstanceID], (float)num );
+			
+			float lc[4];
+			ColorToFloat4( m_colors[loop + num], lc );
+			glVertexAttrib4fv( m_attribLoc[AttribModelColor], lc );
+
+			glDrawElements( GL_TRIANGLES, model->IndexCount, GL_UNSIGNED_INT, NULL );
+		}
+
+		loop += modelCount;
+	}
+#else
+	for( size_t loop = 0; loop < m_matrixes.size(); )
+	{
+		vcb->ModelMatrix[0] = m_matrixes[loop];
+		vcb->ModelUV[0][0] = m_uv[loop].X;
+		vcb->ModelUV[0][1] = m_uv[loop].Y;
+		vcb->ModelUV[0][2] = m_uv[loop].Width;
+		vcb->ModelUV[0][3] = m_uv[loop].Height;
+		
+		ColorToFloat4( m_colors[loop], vcb->ModelColor[0] );
+		shader_->SetConstantBuffer();
+		
+		//glDrawElements( GL_TRIANGLES, model->IndexCount, GL_UNSIGNED_INT, NULL );
+		m_renderer->DrawPolygon( model->VertexCount, model->IndexCount );
+
+		loop += 1;
+	}
+#endif
+
+	m_renderer->EndShader(shader_);
+
+	m_renderer->GetRenderState()->Pop();
+
+	//*/
 }
 
 //----------------------------------------------------------------------------------

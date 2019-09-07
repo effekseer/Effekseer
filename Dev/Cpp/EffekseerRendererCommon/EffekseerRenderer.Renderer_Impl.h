@@ -15,21 +15,9 @@ private:
 	UVStyle backgroundTextureUVStyle = UVStyle::Normal;
 	float time_ = 0.0f;
 
-	Effekseer::RenderMode renderMode_ = Effekseer::RenderMode::Normal;
-
-	::Effekseer::TextureData* whiteProxyTexture_ = nullptr;
-	::Effekseer::TextureData* normalProxyTexture_ = nullptr;
-
 public:
 	int32_t drawcallCount = 0;
 	int32_t drawvertexCount = 0;
-	bool isRenderModeValid = true;
-
-	void CreateProxyTextures(Renderer* renderer);
-
-	void DeleteProxyTextures(Renderer* renderer);
-
-	::Effekseer::TextureData* GetProxyTexture(EffekseerRenderer::ProxyTextureType type);
 
 	UVStyle GetTextureUVStyle() const;
 
@@ -50,10 +38,6 @@ public:
 	float GetTime() const;
 
 	void SetTime(float time);
-
-	Effekseer::RenderMode GetRenderMode() const;
-
-	void SetRenderMode(Effekseer::RenderMode renderMode);
 };
 
 } // namespace EffekseerRenderer
