@@ -488,6 +488,7 @@ public:
 	*/
 	virtual void SetBackgroundTexture(::Effekseer::TextureData* textureData);
 
+protected:
 	/**
 	@brief
 	\~English	Create a proxy texture
