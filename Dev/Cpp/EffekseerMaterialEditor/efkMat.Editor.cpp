@@ -23,6 +23,104 @@ namespace fs = std::experimental::filesystem;
 namespace EffekseerMaterial
 {
 
+void Compile(std::shared_ptr<Graphics> graphics,
+			 std::shared_ptr<Material> material,
+			 std::shared_ptr<Node> node,
+			 std::vector<std::shared_ptr<EffekseerMaterial::Texture>>& outputTextures,
+			 std::vector<std::shared_ptr<TextExporterUniform>>& outputUniforms,
+			 std::string& vs,
+			 std::string& ps)
+{
+	EffekseerMaterial::TextExporterGeneric exporter;
+	EffekseerRendererGL::ShaderLoader loader;
+	auto ret = (&exporter)->Export(material, node);
+	loader.IsSimpleVertex = false;
+	loader.GenericCode = ret.Code;
+	loader.HasRefraction = ret.HasRefraction;
+	loader.ShadingModel = static_cast<Effekseer::ShadingModelType>(ret.ShadingModel);
+	loader.Textures.resize(ret.Textures.size());
+	loader.Uniforms.resize(ret.Uniforms.size());
+
+	for (size_t i = 0; i < ret.Textures.size(); i++)
+	{
+		loader.Textures[i].Name = ret.Textures[i]->Name;
+		loader.Textures[i].Index = i;
+	}
+
+	for (size_t i = 0; i < ret.Uniforms.size(); i++)
+	{
+		loader.Uniforms[i].Name = ret.Uniforms[i]->Name;
+		loader.Uniforms[i].Index = i;
+	}
+
+	auto data = loader.GenerateShader(EffekseerRenderer::ShaderLoader::ShaderType::Standard);
+
+	auto textures = ret.Textures;
+	auto removed_it = std::remove_if(textures.begin(),
+									 textures.end(),
+									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
+
+	if (removed_it != textures.end())
+	{
+		textures.erase(removed_it);
+	}
+
+	std::sort(textures.begin(),
+			  textures.end(),
+			  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
+				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
+
+	for (auto t : textures)
+	{
+		auto t_ = EffekseerMaterial::TextureCache::Load(graphics, t->DefaultPath.c_str());
+		outputTextures.push_back(t_);
+	}
+
+	outputUniforms = ret.Uniforms;
+
+	vs = data.CodeVS;
+	ps = data.CodePS;
+}
+
+void ExtractUniforms(std::shared_ptr<Graphics> graphics,
+					 std::shared_ptr<Material> material,
+					 std::shared_ptr<Node> node,
+					 std::vector<std::shared_ptr<EffekseerMaterial::Texture>>& outputTextures,
+					 std::vector<std::shared_ptr<TextExporterUniform>>& outputUniforms)
+{
+	outputTextures.clear();
+	outputUniforms.clear();
+
+	EffekseerMaterial::TextExporterGeneric exporter;
+	EffekseerRendererGL::ShaderLoader loader;
+	auto result = (&exporter)->Export(material, node);
+
+	auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
+
+	auto textures = result.Textures;
+	auto removed_it = std::remove_if(textures.begin(),
+									 textures.end(),
+									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
+
+	if (removed_it != textures.end())
+	{
+		textures.erase(removed_it);
+	}
+
+	std::sort(textures.begin(),
+			  textures.end(),
+			  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
+				 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
+
+	for (auto t : textures)
+	{
+		auto t_ = EffekseerMaterial::TextureCache::Load(graphics, t->DefaultPath.c_str());
+		outputTextures.push_back(t_);
+	}
+
+	outputUniforms = result.Uniforms;
+}
+
 NodeUserDataObject::NodeUserDataObject() {}
 
 NodeUserDataObject::~NodeUserDataObject() {}
@@ -459,59 +557,18 @@ void Editor::UpdateNodes()
 		{
 			if (node->Parameter->Type != NodeType::Output)
 				continue;
-			if (!node->IsOpened)
-				continue;
 			if (!node->GetIsDirtied())
 				continue;
 
-			EffekseerMaterial::TextExporterGeneric exporter;
-			EffekseerRendererGL::ShaderLoader loader;
-			auto ret = (&exporter)->Export(material, node);
-			loader.IsSimpleVertex = false;
-			loader.GenericCode = ret.Code;
-			loader.HasRefraction = ret.HasRefraction;
-			loader.ShadingModel = static_cast<Effekseer::ShadingModelType>(ret.ShadingModel);
-			loader.Textures.resize(ret.Textures.size());
-			loader.Uniforms.resize(ret.Uniforms.size());
+			auto preview = preview_;
 
-			for (size_t i = 0; i < ret.Textures.size(); i++)
-			{
-				loader.Textures[i].Name = ret.Textures[i]->Name;
-				loader.Textures[i].Index = i;
-			}
+			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
+			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures;
+			std::string vs;
+			std::string ps;
+			Compile(graphics_, material, node, textures, uniforms, vs, ps);
 
-			for (size_t i = 0; i < ret.Uniforms.size(); i++)
-			{
-				loader.Uniforms[i].Name = ret.Uniforms[i]->Name;
-				loader.Uniforms[i].Index = i;
-			}
-
-			auto data = loader.GenerateShader(EffekseerRenderer::ShaderLoader::ShaderType::Standard);
-
-			auto textures = ret.Textures;
-			auto removed_it =
-				std::remove_if(textures.begin(),
-							   textures.end(),
-							   [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
-
-			if (removed_it != textures.end())
-			{
-				textures.erase(removed_it);
-			}
-
-			std::sort(textures.begin(),
-					  textures.end(),
-					  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
-						 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
-
-			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures_;
-			for (auto t : textures)
-			{
-				auto t_ = EffekseerMaterial::TextureCache::Load(graphics_, t->DefaultPath.c_str());
-				textures_.push_back(t_);
-			}
-
-			preview_->CompileShader(data.CodeVS, data.CodePS, textures_, ret.Uniforms);
+			preview->CompileShader(vs, ps, textures, uniforms);
 		}
 
 		for (auto node : material->GetNodes())
@@ -521,154 +578,66 @@ void Editor::UpdateNodes()
 			if (!node->GetIsContentDirtied())
 				continue;
 
-			EffekseerMaterial::TextExporterGeneric exporter;
-			EffekseerRendererGL::ShaderLoader loader;
-			auto result = (&exporter)->Export(material, node);
+			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
+			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures;
 
-			auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
+			ExtractUniforms(graphics_, material, node, textures, uniforms);
 
-			auto textures = result.Textures;
-			auto removed_it =
-				std::remove_if(textures.begin(),
-							   textures.end(),
-							   [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
-
-			if (removed_it != textures.end())
-			{
-				textures.erase(removed_it);
-			}
-
-			std::sort(textures.begin(),
-					  textures.end(),
-					  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
-						 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
-
-			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures_;
-			for (auto t : textures)
-			{
-				auto t_ = EffekseerMaterial::TextureCache::Load(graphics_, t->DefaultPath.c_str());
-				textures_.push_back(t_);
-			}
-
-			preview_->UpdateUniforms(textures_, result.Uniforms);
-			material->ClearContentDirty(node);
+			preview_->UpdateUniforms(textures, uniforms);
 		}
 	}
+
+	auto currentTime =
+		std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startingTime).count() / 1000.0f;
 
 	for (auto node : material->GetNodes())
 	{
 		EffekseerMaterial::Editor::UpdateNode(node);
 
-		if ((node->UserObj == nullptr || node->GetIsDirtied()) && node->IsOpened)
+		if ((node->UserObj == nullptr || node->GetIsDirtied()) && (node->IsOpened || node->Parameter->Type == NodeType::Output))
 		{
 			auto uobj = std::make_shared<EffekseerMaterial::NodeUserDataObject>();
 			uobj->GetPreview() = std::make_shared<EffekseerMaterial::Preview>();
 			uobj->GetPreview()->Initialize(graphics_);
 
-			EffekseerMaterial::TextExporterGeneric exporter;
-			EffekseerRendererGL::ShaderLoader loader;
-			auto result = exporter.Export(material, node);
-			loader.IsSimpleVertex = false;
-			loader.GenericCode = result.Code;
-			loader.HasRefraction = result.HasRefraction;
-			loader.ShadingModel = static_cast<Effekseer::ShadingModelType>(result.ShadingModel);
-			loader.Textures.resize(result.Textures.size());
-			loader.Uniforms.resize(result.Uniforms.size());
+			auto preview = uobj->GetPreview();
 
-			if (node->Parameter->Type != NodeType::Output)
-			{
-				loader.ShadingModel = Effekseer::ShadingModelType::Unlit;
-			}
+			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
+			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures;
+			std::string vs;
+			std::string ps;
+			Compile(graphics_, material, node, textures, uniforms, vs, ps);
 
-			for (size_t i = 0; i < result.Textures.size(); i++)
-			{
-				loader.Textures[i].Name = result.Textures[i]->Name;
-				loader.Textures[i].Index = i;
-			}
+			preview->CompileShader(vs, ps, textures, uniforms);
 
-			for (size_t i = 0; i < result.Uniforms.size(); i++)
-			{
-				loader.Uniforms[i].Name = result.Uniforms[i]->Name;
-				loader.Uniforms[i].Index = i;
-			}
-
-			auto data = loader.GenerateShader(EffekseerRenderer::ShaderLoader::ShaderType::Standard);
-
-			auto textures = result.Textures;
-			auto removed_it =
-				std::remove_if(textures.begin(),
-							   textures.end(),
-							   [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
-
-			if (removed_it != textures.end())
-			{
-				textures.erase(removed_it);
-			}
-
-			std::sort(textures.begin(),
-					  textures.end(),
-					  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
-						 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
-
-			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures_;
-			for (auto t : textures)
-			{
-				auto t_ = EffekseerMaterial::TextureCache::Load(graphics_, t->DefaultPath.c_str());
-				textures_.push_back(t_);
-			}
-
-			uobj->GetPreview()->CompileShader(data.CodeVS, data.CodePS, textures_, result.Uniforms);
 			node->UserObj = uobj;
 			material->ClearDirty(node);
 			material->ClearContentDirty(node);
 		}
 
-		if ((node->UserObj != nullptr && node->GetIsContentDirtied()) && node->IsOpened)
+		if ((node->UserObj != nullptr && node->GetIsContentDirtied()) && (node->IsOpened || node->Parameter->Type == NodeType::Output))
 		{
 			auto uobj = (EffekseerMaterial::NodeUserDataObject*)node->UserObj.get();
-			
-			EffekseerMaterial::TextExporterGeneric exporter;
-			EffekseerRendererGL::ShaderLoader loader;
-			auto result = (&exporter)->Export(material, node);
 
-			auto textures = result.Textures;
-			auto removed_it =
-				std::remove_if(textures.begin(),
-							   textures.end(),
-							   [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
+			auto preview = uobj->GetPreview();
 
-			if (removed_it != textures.end())
-			{
-				textures.erase(removed_it);
-			}
+			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
+			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures;
 
-			std::sort(textures.begin(),
-					  textures.end(),
-					  [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& a,
-						 const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& b) -> bool { return a->Index < b->Index; });
+			ExtractUniforms(graphics_, material, node, textures, uniforms);
 
-			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures_;
-			for (auto t : textures)
-			{
-				auto t_ = EffekseerMaterial::TextureCache::Load(graphics_, t->DefaultPath.c_str());
-				textures_.push_back(t_);
-			}
-
-			uobj->GetPreview()->UpdateUniforms(textures_, result.Uniforms);
+			preview->UpdateUniforms(textures, uniforms);
 			material->ClearContentDirty(node);
 		}
-
-		auto currentTime =
-			std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startingTime).count() / 1000.0f;
 
 		if (node->UserObj != nullptr)
 		{
 			auto uobj = (EffekseerMaterial::NodeUserDataObject*)node->UserObj.get();
 			uobj->GetPreview()->UpdateTime(currentTime);
 		}
-
-		preview_->UpdateTime(currentTime);
 	}
+
+	preview_->UpdateTime(currentTime);
 }
 
 void Editor::UpdatePopup()
