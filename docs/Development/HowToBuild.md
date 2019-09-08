@@ -39,6 +39,7 @@ Clone and update submodule.
 git clone https://github.com/effekseer/Effekseer
 cd Effekseer
 git submodule update --init
+git lfs install
 git lfs pull
 ```
 
