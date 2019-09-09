@@ -494,18 +494,21 @@ namespace fbxToEfkMdl
 			case FbxNodeAttribute::eMesh:
 				mesh = fbxNode->GetMesh();
 
-				if (!mesh->IsTriangleMesh())
+				if (mesh->GetLayerCount() > 0)
 				{
-					FbxGeometryConverter converter(fbxManager);
-					auto mesh_tri = (FbxMesh*)converter.Triangulate(mesh, false);
-
-					if (mesh_tri != nullptr)
+					if (!mesh->IsTriangleMesh())
 					{
-						mesh = mesh_tri;
-					}
-				}
+						FbxGeometryConverter converter(fbxManager);
+						auto mesh_tri = (FbxMesh*)converter.Triangulate(mesh, false);
 
-				node->MeshData = LoadMesh(mesh);
+						if (mesh_tri != nullptr)
+						{
+							mesh = mesh_tri;
+						}
+					}
+
+					node->MeshData = LoadMesh(mesh);
+				}
 				break;
 			case FbxNodeAttribute::eSkeleton:
 				break;
