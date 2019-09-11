@@ -20,7 +20,12 @@ file(GLOB files_core
     EffekseerCore/Properties/*.cs
     EffekseerCore/Script/*.cs
     EffekseerCore/Utl/*.cs	
+	EffekseerCore/IO/*.cs	
 	)
+
+list(APPEND files_core
+	EffekseerCore/IO/EfkEfc.cs
+)
 
 add_library(EffekseerCore
   SHARED
