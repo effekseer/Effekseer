@@ -1,5 +1,5 @@
-SET RDIR=Effekseer143
-SET RDIR_R=EffekseerRuntime143
+SET RDIR=Effekseer150b1
+SET RDIR_R=EffekseerRuntime150b1
 
 rmdir %RDIR%
 mkdir %RDIR%
@@ -9,10 +9,10 @@ mkdir %RDIR_R%
 
 echo Compile Editor
 
-mkdir ..\build_release
-cd /d ..\build_release
+mkdir build_release
+cd build_release
 
-cmake -A x86 -DBUILD_VIEWER=ON ../
+cmake -A x64 -D BUILD_VIEWER=ON ../
 cmake --build . --config Release
 cd ..
 

@@ -378,7 +378,7 @@ install(
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib)
 
-if (BUILD_VIEWER OR WIN32)
+if (BUILD_VIEWER)
 	add_subdirectory("IPC")
 endif()
 
@@ -391,7 +391,7 @@ if (BUILD_TEST)
 	add_subdirectory("Test")
 endif()
 
-if(WIN32)
+if(WIN32 AND BUILD_VIEWER)
 	add_subdirectory("3rdParty/AltseedRHI")
 	add_dependencies(AltseedRHI ExternalProject_glew)
 	target_include_directories(
