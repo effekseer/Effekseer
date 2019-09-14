@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <memory>
 #include <string>
+#include <string.h>
 
 #define IPC_IMPLEMENTATION
 #include "..//3rdParty/ipc/ipc.h"

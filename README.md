@@ -32,6 +32,13 @@ Effekseer主要用作遊戲開發,不僅是程序員而且設計師也可進行�
 
 * [ToolHelp(Sphinx)](https://github.com/effekseer/docs_tool)
 
+Development
+=========
+
+[CodeOverview](docs/Development/CodeOverview.md)
+
+[HowToBuild](docs/Development/HowToBuild.md)
+
 Todo
 =========
 
@@ -82,13 +89,7 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 
 # For contributor
 
-## How to build
-
-[CodeOverview](docs/Development/CodeOverview.md)
-
-[HowToBuild](docs/Development/HowToBuild.md)
-
-## How to release
+## How to release (under constructing)
 
 * Windows
 
@@ -106,7 +107,7 @@ or
 
 Use cmake to ```Dev/Cpp/CMakeLists.txt```
 
-* Linux
+* Linux (not work now)
 
 Execute ```Dev/build.Linux.sh``` to compile and generate binary into Dev/release/
 
