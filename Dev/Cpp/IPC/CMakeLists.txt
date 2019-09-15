@@ -10,3 +10,11 @@ add_library(
     IPC.h
     IPC.cpp
 )
+
+if(NOT WIN32 AND NOT APPLE)
+
+    target_link_libraries(
+        IPC
+        rt)
+
+endif()

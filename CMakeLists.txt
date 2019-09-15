@@ -20,7 +20,9 @@ ExternalProject_Add(
                     -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                     -DASM686=off
                     -DAMD64=off
+                    -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
 )
+
 list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include)
 list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/lib)
 
@@ -38,6 +40,7 @@ ExternalProject_Add(
                     -DPNG_BUILD_ZLIB=ON
                     -DPNG_SHARED=OFF
                     -DPNG_TESTS=OFF
+                    -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
 )
 list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/include)
 list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib)
@@ -57,6 +60,7 @@ ExternalProject_Add(
                     -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib
                     -DBUILD_STATIC_LIBS=ON
                     -DBUILD_SHARED_LIBS=OFF
+                    -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
 )
 list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd/include)
 list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd/lib)
@@ -74,6 +78,9 @@ ExternalProject_Add(
                     -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_CURRENT_SOURCE_DIR}/Dev/CFlagOverrides.cmake
                     -DEFK_USE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
                     -DBUILD_SHARED_LIBS=OFF
+                    -DGLEW_BUILD_INFO=OFF
+                    -DBUILD_UTILS=OFF
+                    -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
 )
 list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/include)
 list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/lib)
@@ -93,6 +100,7 @@ ExternalProject_Add(
                     -DGLFW_BUILD_TESTS=OFF
                     -DGLFW_BUILD_DOCS=OFF
                     -DGLFW_INSTALL=ON
+                    -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
 )
 list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/include)
 list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/lib)
@@ -106,6 +114,7 @@ ExternalProject_Add(
     CMAKE_ARGS      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer
                     -DCMAKE_DEBUG_POSTFIX=d
                     -DUSE_MSVC_RUNTIME_LIBRARY_DLL=${USE_MSVC_RUNTIME_LIBRARY_DLL}
+                    -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
 )
 list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer/src)
 list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer/lib)
