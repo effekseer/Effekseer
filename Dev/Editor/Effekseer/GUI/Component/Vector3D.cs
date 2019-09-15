@@ -142,7 +142,10 @@ namespace Effekseer.GUI.Component
 				Manager.NativeManager.SameLine();
 
 				var nextParam = DynamicSelector.Select("", "", binding.DynamicEquation.Value, false, false);
-
+				if (Manager.NativeManager.IsItemHovered())
+				{
+					DynamicEquationCodeTooltip.render(binding.DynamicEquation);
+				}
 				if (binding.DynamicEquation.Value != nextParam)
 				{
 					binding.DynamicEquation.SetValue(nextParam);
