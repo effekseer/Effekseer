@@ -138,11 +138,11 @@ namespace Effekseer.GUI.Component
 				Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
 				Manager.NativeManager.SameLine();
 
-				var nextParam = DynamicSelector.Select("", "", binding.DynamicEquation, false, false);
+				var nextParam = DynamicSelector.Select("", "", binding.DynamicEquation.Value, false, false);
 
-				if (binding.DynamicEquation != nextParam)
+				if (binding.DynamicEquation.Value != nextParam)
 				{
-					binding.SetDynamicEquation(nextParam);
+					binding.DynamicEquation.SetValue(nextParam);
 				}
 
 				Popup();
@@ -155,20 +155,11 @@ namespace Effekseer.GUI.Component
 		{
 			if (isPopupShown) return;
 
+			if (!binding.CanSelectDynamicEquation) return;
+
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-				if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicFixed") + id_c + "_1", !binding.IsDynamicEquationEnabled))
-				{
-					binding.IsDynamicEquationEnabled = false;
-					binding.SetDynamicEquation(null);
-				}
-
-				Manager.NativeManager.SameLine();
-
-				if (Manager.NativeManager.RadioButton(Resources.GetString("DynamicDynamic") + id_c + "_2", binding.IsDynamicEquationEnabled))
-				{
-					binding.IsDynamicEquationEnabled = true;
-				}
+				DynamicSelector.Popup(id_c, binding.DynamicEquation, binding.IsDynamicEquationEnabled);
 
 				Manager.NativeManager.EndPopup();
 

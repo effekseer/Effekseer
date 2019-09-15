@@ -31,75 +31,18 @@ namespace Effekseer.Data.Value
 			private set;
 		}
 
-		bool isDynamicEquationEnabled = false;
-		public bool IsDynamicEquationEnabled
-		{
-			get
-			{
-				return isDynamicEquationEnabled;
-			}
-			set
-			{
-				var old_value = isDynamicEquationEnabled;
-				var new_value = value;
+		public bool CanSelectDynamicEquation = false;
 
-				var cmd = new Command.DelegateCommand(
-					() =>
-					{
-						isDynamicEquationEnabled = new_value;
-
-						if (OnChanged != null)
-						{
-							OnChanged(this, new ChangedValueEventArgs(new_value, ChangedValueType.Execute));
-						}
-					},
-					() =>
-					{
-						isDynamicEquationEnabled = old_value;
-
-						if (OnChanged != null)
-						{
-							OnChanged(this, new ChangedValueEventArgs(old_value, ChangedValueType.Unexecute));
-						}
-					});
-
-				Command.CommandManager.Execute(cmd);
-			}
-		}
-		public DynamicEquation DynamicEquation
+		public Boolean IsDynamicEquationEnabled
 		{
 			get;
 			private set;
 		}
 
-		public void SetDynamicEquation(DynamicEquation param)
+		public DynamicEquationReference DynamicEquation
 		{
-			if (param == DynamicEquation) return;
-
-			var old_value = DynamicEquation;
-			var new_value = param;
-
-			var cmd = new Command.DelegateCommand(
-				() =>
-				{
-					DynamicEquation = new_value;
-
-					if (OnChanged != null)
-					{
-						OnChanged(this, new ChangedValueEventArgs(new_value, ChangedValueType.Execute));
-					}
-				},
-				() =>
-				{
-					DynamicEquation = old_value;
-
-					if (OnChanged != null)
-					{
-						OnChanged(this, new ChangedValueEventArgs(old_value, ChangedValueType.Unexecute));
-					}
-				});
-
-			Command.CommandManager.Execute(cmd);
+			get;
+			private set;
 		}
 
 		public event ChangedValueEventHandler OnChanged;
@@ -132,6 +75,9 @@ namespace Effekseer.Data.Value
 			Y = new Float(y, y_max, y_min, y_step);
 			Z = new Float(z, z_max, z_min, z_step);
 			W = new Float(w, w_max, w_min, w_step);
+
+			IsDynamicEquationEnabled = new Boolean();
+			DynamicEquation = new DynamicEquationReference();
 		}
 
 		public static explicit operator byte[] (Vector4D value)
