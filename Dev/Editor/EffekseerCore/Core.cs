@@ -591,11 +591,11 @@ namespace Effekseer
 			}
 		}
 
-		public static void SaveTo(string path)
+		public static System.Xml.XmlDocument SaveAsXmlDocument(string basePath)
 		{
-			path = System.IO.Path.GetFullPath(path);
+			basePath = System.IO.Path.GetFullPath(basePath);
 
-			FullPath = path;
+			FullPath = basePath;
 
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
@@ -610,7 +610,7 @@ namespace Effekseer
 
 			project_root.AppendChild(element);
 
-			if(behaviorElement != null) project_root.AppendChild(behaviorElement);
+			if (behaviorElement != null) project_root.AppendChild(behaviorElement);
 			if (cullingElement != null) project_root.AppendChild(cullingElement);
 			if (globalElement != null) project_root.AppendChild(globalElement);
 			if (dynamicElement != null) project_root.AppendChild(dynamicElement);
@@ -632,27 +632,34 @@ namespace Effekseer
 
 			var dec = doc.CreateXmlDeclaration("1.0", "utf-8", null);
 			doc.InsertBefore(dec, project_root);
-			doc.Save(path);
+	
 			IsChanged = false;
 
 			if (OnAfterSave != null)
 			{
 				OnAfterSave(null, null);
 			}
+
+			return doc;
 		}
 
-		public static bool LoadFrom(string path)
+		public static void SaveTo(string path)
 		{
-			path = System.IO.Path.GetFullPath(path);
+			var doc = SaveAsXmlDocument(path);
+			doc.Save(path);
+		}
 
-			if (!System.IO.File.Exists(path)) return false;
+		public static bool LoadFromXml(string xml, string basePath)
+		{
+			basePath = System.IO.Path.GetFullPath(basePath);
+
 			SelectedNode = null;
 
-			FullPath = path;
+			FullPath = basePath;
 
 			var doc = new System.Xml.XmlDocument();
 
-			doc.Load(path);
+			doc.LoadXml(xml);
 
 			if (doc.ChildNodes.Count != 2) return false;
 			if (doc.ChildNodes[1].Name != "EffekseerProject") return false;
@@ -672,66 +679,66 @@ namespace Effekseer
 
 				if (toolVersion > ParseVersion(currentVersion))
 				{
-                    switch (Language)
-                    {
-                        case Language.English:
-                            throw new Exception("Version Error : \nThe file is created with a newer version of the tool.\nPlease use the latest version of the tool.");
-                            break;
-                        case Language.Japanese:
-                            throw new Exception("Version Error : \nファイルがより新しいバージョンのツールで作成されています。\n最新バージョンのツールを使用してください。");
-                            break;
-                    }
+					switch (Language)
+					{
+						case Language.English:
+							throw new Exception("Version Error : \nThe file is created with a newer version of the tool.\nPlease use the latest version of the tool.");
+							break;
+						case Language.Japanese:
+							throw new Exception("Version Error : \nファイルがより新しいバージョンのツールで作成されています。\n最新バージョンのツールを使用してください。");
+							break;
+					}
 
-                    
+
 				}
 			}
 
-            // For compatibility
-            {
-                // Stripe→Ribbon
-                var innerText = doc.InnerXml;
+			// For compatibility
+			{
+				// Stripe→Ribbon
+				var innerText = doc.InnerXml;
 				innerText = innerText.Replace("<Stripe>", "<Ribbon>").Replace("</Stripe>", "</Ribbon>");
 				doc = new System.Xml.XmlDocument();
 				doc.LoadXml(innerText);
 			}
 
-            // For compatibility
-            {
-                // GenerationTime
-                // GenerationTimeOffset
+			// For compatibility
+			{
+				// GenerationTime
+				// GenerationTimeOffset
 
-                Action<System.Xml.XmlNode> replace = null;
+				Action<System.Xml.XmlNode> replace = null;
 				replace = (node) =>
+				{
+					if ((node.Name == "GenerationTime" || node.Name == "GenerationTimeOffset") &&
+						node.ChildNodes.Count > 0 &&
+						node.ChildNodes[0] is System.Xml.XmlText)
 					{
-						if ((node.Name == "GenerationTime" || node.Name == "GenerationTimeOffset") &&
-							node.ChildNodes.Count > 0 &&
-							node.ChildNodes[0] is System.Xml.XmlText)
+						var name = node.Name;
+						var value = node.ChildNodes[0].Value;
+
+						node.RemoveAll();
+
+						var center = doc.CreateElement("Center");
+						var max = doc.CreateElement("Max");
+						var min = doc.CreateElement("Min");
+
+						center.AppendChild(doc.CreateTextNode(value));
+						max.AppendChild(doc.CreateTextNode(value));
+						min.AppendChild(doc.CreateTextNode(value));
+
+						node.AppendChild(center);
+						node.AppendChild(max);
+						node.AppendChild(min);
+					}
+					else
+					{
+						for (int i = 0; i < node.ChildNodes.Count; i++)
 						{
-							var name = node.Name;
-							var value = node.ChildNodes[0].Value;
-
-							node.RemoveAll();
-
-							var center = doc.CreateElement("Center");
-							var max = doc.CreateElement("Max");
-							var min = doc.CreateElement("Min");
-
-							center.AppendChild(doc.CreateTextNode(value));
-							max.AppendChild(doc.CreateTextNode(value));
-							min.AppendChild(doc.CreateTextNode(value));
-
-							node.AppendChild(center);
-							node.AppendChild(max);
-							node.AppendChild(min);
+							replace(node.ChildNodes[i]);
 						}
-						else
-						{
-							for(int i = 0; i < node.ChildNodes.Count; i++)
-							{
-								replace(node.ChildNodes[i]);
-							}
-						}
-					};
+					}
+				};
 
 				replace(doc);
 			}
@@ -795,38 +802,38 @@ namespace Effekseer
 			var root_node = new Data.NodeRoot() as object;
 			Data.IO.LoadObjectFromElement(root as System.Xml.XmlElement, ref root_node, false);
 
-            // For compatibility
-            if (version < 3)
+			// For compatibility
+			if (version < 3)
 			{
 				Action<Data.NodeBase> convert = null;
 				convert = (n) =>
+				{
+					var n_ = n as Data.Node;
+
+					if (n_ != null)
 					{
-						var n_ = n as Data.Node;
-
-						if (n_ != null)
+						if (n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite)
 						{
-							if (n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Sprite)
-							{
-								n_.RendererCommonValues.ColorTexture.SetAbsolutePathDirectly(n_.DrawingValues.Sprite.ColorTexture.AbsolutePath);
-								n_.RendererCommonValues.AlphaBlend.SetValueDirectly(n_.DrawingValues.Sprite.AlphaBlend.Value);
-							}
-							else if (n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring)
-							{
-								n_.RendererCommonValues.ColorTexture.SetAbsolutePathDirectly(n_.DrawingValues.Ring.ColorTexture.AbsolutePath);
-								n_.RendererCommonValues.AlphaBlend.SetValueDirectly(n_.DrawingValues.Ring.AlphaBlend.Value);
-							}
-							else if (n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ribbon)
-							{
-								n_.RendererCommonValues.ColorTexture.SetAbsolutePathDirectly(n_.DrawingValues.Ribbon.ColorTexture.AbsolutePath);
-								n_.RendererCommonValues.AlphaBlend.SetValueDirectly(n_.DrawingValues.Ribbon.AlphaBlend.Value);
-							}
+							n_.RendererCommonValues.ColorTexture.SetAbsolutePathDirectly(n_.DrawingValues.Sprite.ColorTexture.AbsolutePath);
+							n_.RendererCommonValues.AlphaBlend.SetValueDirectly(n_.DrawingValues.Sprite.AlphaBlend.Value);
 						}
-
-						for (int i = 0; i < n.Children.Count; i++)
+						else if (n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring)
 						{
-							convert(n.Children[i]);
+							n_.RendererCommonValues.ColorTexture.SetAbsolutePathDirectly(n_.DrawingValues.Ring.ColorTexture.AbsolutePath);
+							n_.RendererCommonValues.AlphaBlend.SetValueDirectly(n_.DrawingValues.Ring.AlphaBlend.Value);
 						}
-					};
+						else if (n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ribbon)
+						{
+							n_.RendererCommonValues.ColorTexture.SetAbsolutePathDirectly(n_.DrawingValues.Ribbon.ColorTexture.AbsolutePath);
+							n_.RendererCommonValues.AlphaBlend.SetValueDirectly(n_.DrawingValues.Ribbon.AlphaBlend.Value);
+						}
+					}
+
+					for (int i = 0; i < n.Children.Count; i++)
+					{
+						convert(n.Children[i]);
+					}
+				};
 
 				convert(root_node as Data.NodeBase);
 			}
@@ -841,6 +848,18 @@ namespace Effekseer
 			}
 
 			return true;
+		}
+
+		public static bool LoadFrom(string path)
+		{
+			var fullpath = System.IO.Path.GetFullPath(path);
+
+			if (!System.IO.File.Exists(fullpath)) return false;
+
+			var doc = new System.Xml.XmlDocument();
+			doc.Load(path);
+
+			return LoadFromXml(doc.InnerXml, path);
 		}
 
 		/// <summary>
