@@ -1,5 +1,5 @@
-SET RDIR=Effekseer143
-SET RDIR_R=EffekseerRuntime143
+SET RDIR=Effekseer150b1
+SET RDIR_R=EffekseerRuntime150b1
 
 rmdir %RDIR%
 mkdir %RDIR%
@@ -9,10 +9,10 @@ mkdir %RDIR_R%
 
 echo Compile Editor
 
-mkdir ..\build_release
-cd /d ..\build_release
+mkdir build_release
+cd build_release
 
-cmake -A x86 -DBUILD_VIEWER=ON ../
+cmake -A x64 -D BUILD_VIEWER=ON ../
 cmake --build . --config Release
 cd ..
 
@@ -199,6 +199,31 @@ cmake.exe -G "Visual Studio 15 Win64"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF 
 cd ..
 
 
+echo Compile VS16
+rmdir /S /Q VS16
+mkdir VS16
+
+cd VS16
+call cmake.bat -G "Visual Studio 16" -A Win32 -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../Dev/Cpp/
+cmake.exe -G "Visual Studio 16" -A Win32 -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../Dev/Cpp/
+
+"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" Effekseer.sln /p:configuration=Debug
+"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" Effekseer.sln /p:configuration=Release
+cd ..
+
+echo Compile VS16WIN64
+rmdir /S /Q VS16WIN64
+mkdir VS16WIN64
+
+cd VS16WIN64
+call cmake.bat -G "Visual Studio 16" -A x64  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../Dev/Cpp/
+cmake.exe -G "Visual Studio 16" -A x64  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../Dev/Cpp/
+
+"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" Effekseer.sln /p:configuration=Debug
+"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" Effekseer.sln /p:configuration=Release
+cd ..
+
+
 mkdir %RDIR_R%\Compiled\\include\
 mkdir %RDIR_R%\Compiled\\lib\
 
@@ -231,6 +256,23 @@ robocopy VS15WIN64\Release %RDIR_R%\Compiled\\lib\VS2017WIN64\Release *.lib /mir
 
 copy VS15WIN64\EffekseerSoundXAudio2\Debug\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2017WIN64\Debug\.
 copy VS15WIN64\EffekseerSoundXAudio2\Release\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2017WIN64\Release\.
+
+mkdir %RDIR_R%\Compiled\\lib\VS2019\
+mkdir %RDIR_R%\Compiled\\lib\VS2019WIN64\
+
+robocopy VS16\Debug %RDIR_R%\Compiled\\lib\VS2019\Debug *.lib /mir /S
+robocopy VS16\Release %RDIR_R%\Compiled\\lib\VS2019\Release *.lib /mir /S
+
+copy VS16\EffekseerSoundXAudio2\Debug\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2019\Debug\.
+copy VS16\EffekseerSoundXAudio2\Release\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2019\Release\.
+
+robocopy VS16WIN64\Debug %RDIR_R%\Compiled\\lib\VS2019WIN64\Debug *.lib /mir /S
+robocopy VS16WIN64\Release %RDIR_R%\Compiled\\lib\VS2019WIN64\Release *.lib /mir /S
+
+copy VS16WIN64\EffekseerSoundXAudio2\Debug\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2019WIN64\Debug\.
+copy VS16WIN64\EffekseerSoundXAudio2\Release\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\\lib\VS2019WIN64\Release\.
+
+
 
 
 copy Dev\Cpp\Effekseer\Effekseer.h %RDIR_R%\Compiled\\include\.

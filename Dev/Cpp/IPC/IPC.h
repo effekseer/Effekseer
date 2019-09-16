@@ -4,6 +4,7 @@
 #include <array>
 #include <memory>
 #include <stdint.h>
+#include <string.h>
 
 namespace IPC
 {

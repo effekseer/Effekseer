@@ -20,13 +20,15 @@ Requirements
 - Visual Studio for Mac (msbuild)
 - cmake
 
-### Linux
+[How to install git-lfs](https://github.com/git-lfs/git-lfs/wiki/Installation)
+
+### Linux (not work now, pelase help it)
 
 - git
 - git-lfs
 - g++
 - mono-devel
-- libx11-dev libgl1-mesa-dev libxrandr-dev libxi-dev x11proto-xf86vidmode-dev xorg-dev libglu1-mesa-dev libpulse-dev libgtk-3-dev
+- libx11-dev libgl1-mesa-dev libxrandr-dev libxi-dev x11proto-xf86vidmode-dev xorg-dev libglu1-mesa-dev libpulse-dev libgtk-3-dev libopenal-dev
 
 Get code and resources
 ----------
@@ -72,7 +74,7 @@ Execure following command at the repository root.
 ```
 mkdir build
 cd build
-cmake -DBUILD_VIEWER=ON .. 
+cmake -DBUILD_VIEWER=ON ..
 ```
 
 Open ``` build/Effekseer.xcodeproj ``` (C++)
@@ -93,7 +95,7 @@ cd Dev/release
 Effekseer.exe
 ```
 
-### macOS, Linux
+### macOS
 ```
 python3 build.py
 cd Dev/release
