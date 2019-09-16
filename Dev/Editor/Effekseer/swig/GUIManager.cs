@@ -174,6 +174,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public void SetNextWindowPos(Vec2 pos, Cond cond, Vec2 pivot) {
+    EffekseerNativePINVOKE.GUIManager_SetNextWindowPos(swigCPtr, Vec2.getCPtr(pos), (int)cond, Vec2.getCPtr(pivot));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+  }
+
   public void SetNextWindowSize(float size_x, float size_y, Cond cond) {
     EffekseerNativePINVOKE.GUIManager_SetNextWindowSize(swigCPtr, size_x, size_y, (int)cond);
   }

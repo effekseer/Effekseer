@@ -3329,6 +3329,28 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetContentRegionA
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextWindowPos___(void * jarg1, void * jarg2, int jarg3, void * jarg4) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Vec2 *arg2 = 0 ;
+  efk::Cond arg3 ;
+  efk::Vec2 *arg4 = 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::Vec2 *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return ;
+  } 
+  arg3 = (efk::Cond)jarg3; 
+  arg4 = (efk::Vec2 *)jarg4;
+  if (!arg4) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "efk::Vec2 const & type is null", 0);
+    return ;
+  } 
+  (arg1)->SetNextWindowPos((efk::Vec2 const &)*arg2,arg3,(efk::Vec2 const &)*arg4);
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetNextWindowSize___(void * jarg1, float jarg2, float jarg3, int jarg4) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   float arg2 ;
