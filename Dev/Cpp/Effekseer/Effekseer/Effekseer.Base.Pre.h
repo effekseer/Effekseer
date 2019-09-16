@@ -12,6 +12,7 @@
 #include <climits>
 #include <vector>
 #include <cfloat>
+#include <array>
 
 //----------------------------------------------------------------------------------
 //
