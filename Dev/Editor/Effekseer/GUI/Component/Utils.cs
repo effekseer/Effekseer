@@ -22,7 +22,7 @@ namespace Effekseer.GUI.Component
 
 		public void Disable()
 		{
-			if(flag)
+			if (flag)
 			{
 				Manager.NativeManager.PopStyleColor();
 				Manager.NativeManager.PopStyleVar();
@@ -35,4 +35,17 @@ namespace Effekseer.GUI.Component
 			Disable();
 		}
 	}
+
+	class DynamicEquationCodeTooltip
+	{
+		public static void render(Data.Value.DynamicEquationReference dynamicEquation)
+		{
+			if (dynamicEquation.Index != -1)
+			{
+				Manager.NativeManager.BeginTooltip();
+				Manager.NativeManager.Text(dynamicEquation.Value.Code.Value);
+				Manager.NativeManager.EndTooltip();
+			}
+		}
+ 	}
 }
