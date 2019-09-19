@@ -128,6 +128,58 @@ namespace Effekseer.IO
 	{
 		const int Version = 0;
 
+
+		class Element
+		{
+			public string Name = null;
+			public UInt16 NameIndex = 0;
+			public object Value = null;
+			public List<Element> Children = null;
+		}
+
+		byte[] Compress(System.Xml.XmlDocument xml)
+		{
+			// visit all nodes
+			Func<System.Xml.XmlNodeList, List<Element>> visit = null;
+			visit = (System.Xml.XmlNodeList xmlNodes) =>
+			{
+				List<Element> elements = new List<Element>();
+
+				for (int i = 0; i < xmlNodes.Count; i++)
+				{
+					Element element = new Element();
+
+					element.Name = xml.ChildNodes[i].Name;
+
+					if (xml.ChildNodes[i].ChildNodes.Count == 1 &&
+					xml.ChildNodes[i].ChildNodes[0].ChildNodes.Count == 0)
+					{
+						var value = xml.ChildNodes[i].ChildNodes[0].Value;
+						element.Value = value;
+					}
+					else
+					{
+						element.Children = visit(xmlNodes[i].ChildNodes);
+					}
+
+					elements.Add(element);
+				}
+
+				return elements;
+			};
+
+			var visits = visit(xml.ChildNodes);
+
+			// compress...
+
+			return Encoding.UTF8.GetBytes(xml.InnerXml);
+		}
+
+		string Decompress(byte[] buffer)
+		{
+			return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+		}
+
 		byte[] GetBinaryStr(string str)
 		{
 			List<byte[]> data = new List<byte[]>();
@@ -183,7 +235,7 @@ namespace Effekseer.IO
 
 			Chunk chunk = new Chunk();
 			chunk.AddChunk("INFO", infoData);
-			chunk.AddChunk("EDIT", Encoding.UTF8.GetBytes(editorData.InnerXml));
+			chunk.AddChunk("EDIT", Compress(editorData));
 			chunk.AddChunk("BIN_", binaryData);
 
 			var chunkData = chunk.Save();
@@ -237,7 +289,7 @@ namespace Effekseer.IO
 				return false;
 			}
 
-			return Core.LoadFromXml(Encoding.UTF8.GetString(editBlock.Buffer, 0, editBlock.Buffer.Length), path);
+			return Core.LoadFromXml(Decompress(editBlock.Buffer), path);
 		}
 	}
 }
