@@ -52,11 +52,14 @@ public:
 		@param	size
 		\~English	the size of data
 		\~Japanese	データの大きさ
+		@param	fileType
+		\~English	file type
+		\~Japanese	ファイルの種類
 		@return
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual MaterialData* Load(const void* data, int32_t size) { return nullptr; }
+	virtual MaterialData* Load(const void* data, int32_t size, MaterialFileType fileType) { return nullptr; }
 
 	/**
 		@brief

@@ -150,6 +150,7 @@
     <Compile Include="GUI\RecentFiles.cs" />
     <Compile Include="swig\ColorEditFlags.cs" />
     <Compile Include="swig\ComboFlags.cs" />
+    <Compile Include="swig\CompiledMaterialGenerator.cs" />
     <Compile Include="swig\Cond.cs" />
     <Compile Include="swig\DeviceType.cs" />
     <Compile Include="swig\DialogButtons.cs" />

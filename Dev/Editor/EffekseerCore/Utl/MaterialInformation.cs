@@ -7,16 +7,101 @@ using System.IO;
 
 namespace Effekseer.Utl
 {
+	public enum CompiledMaterialPlatformType : int
+	{
+		DirectX9 = 0,
+		// DirectX10 = 1,
+		DirectX11 = 2,
+		DirectX12 = 3,
+		OpenGL = 10,
+		Metal = 20,
+		Vulkan = 30,
+		PS4 = 40,
+		Switch = 50,
+		XBoxOne = 60,
+	}
+
 	public enum TextureType : int
 	{
 		Color,
 		Value,
 	}
+
+	/// <summary>
+	/// An information of file of compiled material's header
+	/// </summary>
+	public class CompiledMaterialInformation
+	{
+		public UInt64 GUID;
+		public HashSet<CompiledMaterialPlatformType> Platforms = new HashSet<CompiledMaterialPlatformType>();
+
+		public bool Load(string path)
+		{
+			if (string.IsNullOrEmpty(path))
+				return false;
+
+			System.IO.FileStream fs = null;
+			if (!System.IO.File.Exists(path)) return false;
+
+			try
+			{
+				fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+			}
+			catch (System.IO.FileNotFoundException e)
+			{
+				return false;
+			}
+
+
+			var br = new System.IO.BinaryReader(fs);
+
+			var buf = new byte[1024];
+
+
+			if (br.Read(buf, 0, 20) != 20)
+			{
+				fs.Dispose();
+				br.Close();
+				return false;
+			}
+
+			if (buf[0] != 'e' ||
+				buf[1] != 'M' ||
+				buf[2] != 'C' ||
+				buf[3] != 'B')
+			{
+				return false;
+			}
+
+			int version = BitConverter.ToInt32(buf, 4);
+			GUID = BitConverter.ToUInt64(buf, 8);
+
+			var platformCount = BitConverter.ToInt32(buf, 16);
+
+			for(int i = 0; i < platformCount; i++)
+			{
+				if (br.Read(buf, 0, 4) != 4)
+				{
+					fs.Dispose();
+					br.Close();
+					return false;
+				}
+
+				var type = (CompiledMaterialPlatformType)BitConverter.ToInt32(buf, 0);
+				Platforms.Add(type);
+			}
+
+			return true;
+		}
+	}
+
 	public class MaterialInformation
 	{
 		public TextureInformation[] Textures = new TextureInformation[0];
 
 		public UniformInformation[] Uniforms = new UniformInformation[0];
+
+		public UInt64 GUID;
 
 		public bool Load(string path)
 		{
@@ -57,7 +142,7 @@ namespace Effekseer.Utl
 			}
 
 			int version = BitConverter.ToInt32(buf, 4);
-			UInt64 guid = BitConverter.ToUInt64(buf, 8);
+			GUID = BitConverter.ToUInt64(buf, 8);
 
 			while(true)
 			{

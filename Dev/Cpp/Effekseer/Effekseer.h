@@ -196,6 +196,12 @@ enum class TextureType : int32_t
 	Distortion,
 };
 
+enum class MaterialFileType : int32_t
+{
+	Code,
+	Compiled,
+};
+
 enum class TextureFormatType : int32_t
 {
 	ABGR8,
@@ -433,6 +439,35 @@ public:
 	*/
 	virtual int Release() = 0;
 };
+
+/**
+	@brief	a deleter for IReference
+*/
+template <typename T>
+struct ReferenceDeleter
+{
+	void operator()(T* ptr) const
+	{ 
+		if (ptr != nullptr)
+		{
+			ptr->Release();
+		}
+	}
+};
+
+template<typename T> 
+inline std::unique_ptr<T, ReferenceDeleter<T>> CreateUniqueReference(T* ptr, bool addRef = false)
+{ 
+	if (ptr == nullptr)
+		return std::unique_ptr<T, ReferenceDeleter<T>>(nullptr); 
+
+	if (addRef)
+	{
+		ptr->AddRef();
+	}
+
+	return std::unique_ptr<T, ReferenceDeleter<T>>(ptr); 
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -3406,11 +3441,14 @@ public:
 		@param	size
 		\~English	the size of data
 		\~Japanese	データの大きさ
+		@param	fileType
+		\~English	file type
+		\~Japanese	ファイルの種類
 		@return
 		\~English	a pointer of loaded a material
 		\~Japanese	読み込まれたマテリアルのポインタ
 	*/
-	virtual MaterialData* Load(const void* data, int32_t size) { return nullptr; }
+	virtual MaterialData* Load(const void* data, int32_t size, MaterialFileType fileType) { return nullptr; }
 
 	/**
 		@brief

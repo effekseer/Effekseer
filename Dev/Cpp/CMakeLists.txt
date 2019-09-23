@@ -57,7 +57,8 @@ file(GLOB effekseer_h
     Effekseer/*.h
 	Effekseer/Effekseer/*.h
 	Effekseer/Effekseer/Renderer/*.h
-	Effekseer/Effekseer/Culling/*.h)
+	Effekseer/Effekseer/Culling/*.h
+	Effekseer/Effekseer/Material/*.h)
 
 set(effekseer_src
 	Effekseer/Effekseer/Effekseer.CustomAllocator.cpp
@@ -94,7 +95,11 @@ set(effekseer_src
 	Effekseer/Effekseer/Culling/Culling3D.ObjectInternal.cpp
 	Effekseer/Effekseer/Culling/Culling3D.ReferenceObject.cpp
 	Effekseer/Effekseer/Culling/Culling3D.Vector3DF.cpp
-	Effekseer/Effekseer/Culling/Culling3D.WorldInternal.cpp)
+	Effekseer/Effekseer/Culling/Culling3D.WorldInternal.cpp
+	Effekseer/Effekseer/Material/Effekseer.Material.cpp
+	Effekseer/Effekseer/Material/Effekseer.CompiledMaterial.cpp
+	Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.cpp
+)
 
 file(GLOB effekseer_renderer_common_h
     EffekseerRendererCommon/*.h)
@@ -141,7 +146,11 @@ set(effekseer_renderer_dx11_src
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.RenderState.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Shader.cpp
 	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.TextureLoader.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.VertexBuffer.cpp)
+	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.VertexBuffer.cpp
+	
+	EffekseerMaterialCompiler/DirectX11/EffekseerMaterialCompilerDX11.cpp
+	EffekseerMaterialCompiler/DirectX11/EffekseerMaterialCompilerDX11.h
+	)
 
 file(GLOB_RECURSE effekseer_renderer_gl_h
     EffekseerRendererGL/*.h)
@@ -158,7 +167,11 @@ set(effekseer_renderer_gl_src
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Shader.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.TextureLoader.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexArray.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.cpp)
+	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.cpp
+	
+	EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.cpp
+	EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h
+	)
 
 list(APPEND effekseer_renderer_dx9_src
 	${effekseer_renderer_dx9_h}
@@ -379,13 +392,11 @@ install(
 	LIBRARY DESTINATION lib)
 
 if (BUILD_VIEWER)
-	add_subdirectory("IPC")
-endif()
-
-if (BUILD_VIEWER)
-
 	add_subdirectory("Viewer")
+	add_subdirectory("IPC")
+	add_subdirectory("EffekseerMaterialCompiler")
 endif()
+
 
 if (BUILD_TEST)
 	add_subdirectory("Test")
