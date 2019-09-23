@@ -175,9 +175,11 @@ namespace Effekseer.IO
 			return Encoding.UTF8.GetBytes(xml.InnerXml);
 		}
 
-		string Decompress(byte[] buffer)
+		System.Xml.XmlDocument Decompress(byte[] buffer)
 		{
-			return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+			var doc = new System.Xml.XmlDocument();
+			doc.LoadXml(Encoding.UTF8.GetString(buffer, 0, buffer.Length));
+			return doc;
 		}
 
 		byte[] GetBinaryStr(string str)
