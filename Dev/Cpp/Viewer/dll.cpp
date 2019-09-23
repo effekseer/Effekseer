@@ -545,7 +545,7 @@ Effekseer::MaterialData* Native::MaterialLoader::Load(const EFK_CHAR* path)
 
 			if (data.size() > 0)
 			{
-				t = loader_->Load(data.data(), data.size());
+				t = loader_->Load(data.data(), data.size(), ::Effekseer::MaterialFileType::Code);
 			}
 		}
 

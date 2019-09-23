@@ -58,6 +58,8 @@
     "InternalStop": "停止",
     "InternalUndo": "元に戻す",
     "InternalViewHelp": "ヘルプを表示",
+    "InternalRenameNode": "名称の変更",
+    "RenameNode": "名称の変更",
     "Left": "左",
     "Load": "読込",
     "MakeTransparent": "背景透明化の方法",
@@ -152,6 +154,7 @@
     "CompileError_ArgSize": "引数の個数が間違っています。要求 {0} 実際 {1}",
     "CompileError_InvalidSubstitution": "無効な代入が見つかりました",
     "CompileError_UnknownFunction": "知らない関数 {0} が見つかりました",
-    "CompileError_UnknownValue": "知らない値 {0} が見つかりました"
+    "CompileError_UnknownValue": "知らない値 {0} が見つかりました",
+    "Cancel": "キャンセル"
   }
 }
