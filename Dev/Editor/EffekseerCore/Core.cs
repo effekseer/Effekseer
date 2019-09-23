@@ -651,15 +651,17 @@ namespace Effekseer
 
 		public static bool LoadFromXml(string xml, string basePath)
 		{
+			var doc = new System.Xml.XmlDocument();
+			doc.LoadXml(xml);
+			return LoadFromXml(doc, basePath);
+		}
+		public static bool LoadFromXml(System.Xml.XmlDocument doc, string basePath)
+		{
 			basePath = System.IO.Path.GetFullPath(basePath);
 
 			SelectedNode = null;
 
 			FullPath = basePath;
-
-			var doc = new System.Xml.XmlDocument();
-
-			doc.LoadXml(xml);
 
 			if (doc.ChildNodes.Count != 2) return false;
 			if (doc.ChildNodes[1].Name != "EffekseerProject") return false;

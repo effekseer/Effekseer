@@ -11,6 +11,7 @@ namespace Effekseer.GUI.Component
 		string id1 = "";
 		string id2 = "";
 		string id3 = "";
+		string id4 = "";
 
 		public string Label { get; set; } = string.Empty;
 
@@ -18,8 +19,14 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.PathForMaterial binding = null;
 
-		string filePath = string.Empty;
+		string relativeFilePath = string.Empty;
+		string absoluteFilePath = string.Empty;
+
 		bool isHovered = false;
+
+		Utl.MaterialInformation matInfo = new Utl.MaterialInformation();
+
+		Utl.CompiledMaterialInformation compiledMatInfo = new Utl.CompiledMaterialInformation();
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -49,6 +56,7 @@ namespace Effekseer.GUI.Component
 			id1 = "###" + Manager.GetUniqueID().ToString();
 			id2 = "###" + Manager.GetUniqueID().ToString();
 			id3 = "###" + Manager.GetUniqueID().ToString();
+			id4 = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -96,28 +104,39 @@ namespace Effekseer.GUI.Component
 
 			Manager.NativeManager.SameLine();
 
-			// file path
-			Manager.NativeManager.Text(filePath);
+			// show path
+			Manager.NativeManager.Text(relativeFilePath);
 
 			if (Manager.NativeManager.IsItemHovered())
 			{
-				Manager.NativeManager.SetTooltip(filePath);
+				Manager.NativeManager.SetTooltip(relativeFilePath);
 			}
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 
 			// 
-			if (filePath != string.Empty)
+			if (absoluteFilePath != string.Empty)
 			{
-				if (Manager.NativeManager.Button("Edit", buttonSizeX))
-				{
-					Process.MaterialEditor.Run();
-					Process.MaterialEditor.OpenOrCreateMaterial(filePath);
-				}
 
 				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
 				{
 					btn_delete_Click();
+				}
+
+				if (Manager.NativeManager.Button("Edit", buttonSizeX))
+				{
+					Process.MaterialEditor.Run();
+					Process.MaterialEditor.OpenOrCreateMaterial(absoluteFilePath);
+				}
+
+				if (Manager.NativeManager.Button("GenCache" + id4, buttonSizeX))
+				{
+					GenerateCompiledMaterial();
+				}
+
+				if(Manager.NativeManager.IsItemHovered())
+				{
+					ShowInformation();
 				}
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
@@ -133,19 +152,19 @@ namespace Effekseer.GUI.Component
 					{
 						var filepath = result;
 						Process.MaterialEditor.Run();
-						Process.MaterialEditor.OpenOrCreateMaterial(filePath);
+						Process.MaterialEditor.OpenOrCreateMaterial(absoluteFilePath);
 
 						// wait
 						int counter = 0;
 						while(counter < 50)
 						{
-							if (System.IO.File.Exists(filePath))
+							if (System.IO.File.Exists(absoluteFilePath))
 								break;
 							counter++;
 							System.Threading.Thread.Sleep(100);
 						}
 
-						if (System.IO.File.Exists(filePath))
+						if (System.IO.File.Exists(absoluteFilePath))
 						{
 							LoadFile(filepath, false);
 							Read();
@@ -189,12 +208,35 @@ namespace Effekseer.GUI.Component
 		{
 			if (binding != null)
 			{
-				filePath = binding.GetRelativePath();
+				absoluteFilePath = binding.GetAbsolutePath();
+				relativeFilePath = binding.GetRelativePath();
 			}
 			else
 			{
-				filePath = string.Empty;
+				absoluteFilePath = string.Empty;
+				relativeFilePath = string.Empty;
 			}
+
+			UpdateInformation();
+		}
+
+		void GenerateCompiledMaterial()
+		{
+			var generator = new swig.CompiledMaterialGenerator();
+
+			string appDirectory = GUI.Manager.GetEntryDirectory();
+			string fullPath = System.IO.Path.Combine(appDirectory, "tools/");
+
+			generator.Initialize(fullPath);
+
+			if(absoluteFilePath != string.Empty)
+			{
+				generator.Compile(CreateBinaryFilePath(), binding.GetAbsolutePath());
+			}
+
+			generator.Dispose();
+
+			UpdateInformation();
 		}
 
 		private bool CheckExtension(string path)
@@ -210,6 +252,61 @@ namespace Effekseer.GUI.Component
 			System.IO.Directory.SetCurrentDirectory(System.IO.Path.GetDirectoryName(filepath));
 
 			Manager.Viewer.Reload(true);
+
+			UpdateInformation();
+		}
+
+		void UpdateInformation()
+		{
+			if(binding == null || string.IsNullOrEmpty(binding.GetAbsolutePath()))
+			{
+				matInfo = null;
+				compiledMatInfo = null;
+				return;
+			}
+
+			matInfo = new Utl.MaterialInformation();
+			matInfo.Load(binding.GetAbsolutePath());
+
+			if(System.IO.File.Exists(CreateBinaryFilePath()))
+			{
+				compiledMatInfo = new Utl.CompiledMaterialInformation();
+				compiledMatInfo.Load(CreateBinaryFilePath());
+			}
+			else
+			{
+				compiledMatInfo = null;
+			}
+		}
+
+		void ShowInformation()
+		{
+			Manager.NativeManager.BeginTooltip();
+			if(compiledMatInfo != null)
+			{
+				if(matInfo.GUID != compiledMatInfo.GUID)
+				{
+					Manager.NativeManager.Text("!!!Cache is too old.!!!");
+				}
+				else
+				{
+					foreach(var p in compiledMatInfo.Platforms)
+					{
+						Manager.NativeManager.Text(p.ToString());
+					}
+				}
+			}
+			else
+			{
+				Manager.NativeManager.Text("Cache is not generated.");
+			}
+
+			Manager.NativeManager.EndTooltip();
+		}
+
+		string CreateBinaryFilePath()
+		{
+			return binding.GetAbsolutePath() + "d";
 		}
 	}
 }

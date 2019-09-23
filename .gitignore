@@ -46,3 +46,10 @@ Dev/release/*.xml
 Dev/Cpp/include/
 Dev/Cpp/lib/
 Downloads/*/
+Dev/Editor/packages/
+mono_crash.*.json
+mono_crash.*.blob
+Dev/release/imgui.ini
+Script/__pycache__/aceutils.cpython-37.pyc
+
+

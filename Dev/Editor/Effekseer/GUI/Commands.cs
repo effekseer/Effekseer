@@ -429,6 +429,20 @@ namespace Effekseer.GUI
 		}
 
 		/// <summary>
+		/// Rename node with a dialog
+		/// </summary>
+		/// <returns></returns>
+		[Name(value = "InternalRenameNode")]
+		[UniqueName(value = "Internal.RenameNode")]
+		public static bool RenameNode()
+		{
+			var selected = Core.SelectedNode;
+			var renameNode = new GUI.Dialog.RenameNode();
+			renameNode.Show(selected);
+			return true;
+		}
+
+		/// <summary>
 		/// if to save an effect is required, show disposing dialog box
 		/// </summary>
 		/// <returns></returns>

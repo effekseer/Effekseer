@@ -56,6 +56,8 @@ InternalStep,Step
 InternalStop,Stop
 InternalUndo,Undo
 InternalViewHelp,Manual
+InternalRenameNode,Rename
+RenameNode,Rename
 Left,Left
 Load,Load
 MakeTransparent,Make transparent
@@ -151,3 +153,4 @@ CompileError_ArgSize,The number of arguments is wrong. Expected {0} Actual {1}
 CompileError_InvalidSubstitution,Invalid substitution is found
 CompileError_UnknownFunction,Unkwon function {0} is found
 CompileError_UnknownValue,Unkwon value {0} is found
+Cancel,Cancel

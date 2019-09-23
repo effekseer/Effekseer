@@ -64,8 +64,9 @@ Shader* Shader::Create(
 
 	HRESULT hr;
 
-	ID3D11VertexShader* vs = NULL;
-	ID3D11PixelShader* ps = NULL;
+	ID3D11VertexShader* vs = nullptr;
+	ID3D11PixelShader* ps = nullptr;
+	ID3D11InputLayout* vertexDeclaration = nullptr;
 
 	hr = renderer->GetDevice()->CreateVertexShader(
 		vertexShader,
@@ -75,8 +76,8 @@ Shader* Shader::Create(
 
 	if( FAILED(hr) )
 	{
-		printf( "* %s Error\n", name );
-		return NULL;
+		printf( "* %s VS Error\n", name );
+		goto EXIT;
 	}
 
 	hr = renderer->GetDevice()->CreatePixelShader(
@@ -87,11 +88,9 @@ Shader* Shader::Create(
 
 	if( FAILED(hr) )
 	{
-		printf( "* %s Error\n", name );
-		return NULL;
+		printf( "* %s PS Error\n", name );
+		goto EXIT;
 	}
-
-	ID3D11InputLayout* vertexDeclaration = NULL;
 
 	hr = renderer->GetDevice()->CreateInputLayout(
 		decl, 
@@ -101,11 +100,17 @@ Shader* Shader::Create(
 	
 	if( FAILED(hr) )
 	{
-		printf( "* %s Error\n", name );
-		return NULL;
+		printf( "* %s Layout Error\n", name );
+		goto EXIT;
 	}
 
 	return new Shader( renderer, vs, ps, vertexDeclaration );
+
+EXIT:;
+	ES_SAFE_RELEASE(vs);
+	ES_SAFE_RELEASE(ps);
+	ES_SAFE_RELEASE(vertexDeclaration);
+	return nullptr;
 }
 
 //----------------------------------------------------------------------------------

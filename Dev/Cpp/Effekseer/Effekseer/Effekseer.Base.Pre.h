@@ -196,6 +196,12 @@ enum class TextureType : int32_t
 	Distortion,
 };
 
+enum class MaterialFileType : int32_t
+{
+	Code,
+	Compiled,
+};
+
 enum class TextureFormatType : int32_t
 {
 	ABGR8,
@@ -433,6 +439,35 @@ public:
 	*/
 	virtual int Release() = 0;
 };
+
+/**
+	@brief	a deleter for IReference
+*/
+template <typename T>
+struct ReferenceDeleter
+{
+	void operator()(T* ptr) const
+	{ 
+		if (ptr != nullptr)
+		{
+			ptr->Release();
+		}
+	}
+};
+
+template<typename T> 
+inline std::unique_ptr<T, ReferenceDeleter<T>> CreateUniqueReference(T* ptr, bool addRef = false)
+{ 
+	if (ptr == nullptr)
+		return std::unique_ptr<T, ReferenceDeleter<T>>(nullptr); 
+
+	if (addRef)
+	{
+		ptr->AddRef();
+	}
+
+	return std::unique_ptr<T, ReferenceDeleter<T>>(ptr); 
+}
 
 //----------------------------------------------------------------------------------
 //
