@@ -27,7 +27,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 	return nullptr;
 }
 
-::Effekseer::MaterialData* MaterialLoader::Load(const void* data, int32_t size) { return nullptr; }
+::Effekseer::MaterialData* MaterialLoader::Load(const void* data, int32_t size, Effekseer::MaterialFileType fileType) { return nullptr; }
 
 void MaterialLoader::Unload(::Effekseer::MaterialData* data)
 {

@@ -22,7 +22,7 @@ public:
 
 	::Effekseer::MaterialData* Load(const EFK_CHAR* path) override;
 
-	::Effekseer::MaterialData* Load(const void* data, int32_t size) override;
+	::Effekseer::MaterialData* Load(const void* data, int32_t size, Effekseer::MaterialFileType fileType) override;
 
 	void Unload(::Effekseer::MaterialData* data) override;
 };
