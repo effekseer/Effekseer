@@ -428,6 +428,16 @@ namespace Effekseer.GUI
 			return true;
 		}
 
+		[Name(value = "InternalRenameNode")] // ノードの名前変更
+		[UniqueName(value = "Internal.RenameNode")]
+		public static bool RenameNode()
+		{
+			var selected = Core.SelectedNode;
+			var renameNode = new GUI.Dialog.RenameNode();
+			renameNode.Show(selected);
+			return true;
+		}
+
 		/// <summary>
 		/// if to save an effect is required, show disposing dialog box
 		/// </summary>
