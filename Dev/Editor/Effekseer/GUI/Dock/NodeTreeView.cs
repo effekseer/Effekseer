@@ -52,7 +52,7 @@ namespace Effekseer.GUI.Dock
 			menuItems.Add(create_menu_item_from_commands(Commands.AddNode));
 			menuItems.Add(create_menu_item_from_commands(Commands.InsertNode));
 			menuItems.Add(create_menu_item_from_commands(Commands.RemoveNode));
-
+			menuItems.Add(create_menu_item_from_commands(Commands.RenameNode));
 			menuItems.Add(new Menu.MenuSeparator());
 
 			menuItems.Add(create_menu_item_from_commands(Commands.Copy));

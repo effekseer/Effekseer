@@ -186,6 +186,7 @@
     <Compile Include="GUI\Dock\BehaviorValues.cs" />
     <Compile Include="GUI\Dock\Culling.cs" />
     <Compile Include="GUI\Dock\GlobalValues.cs" />
+    <Compile Include="GUI\Dialog\RenameNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
