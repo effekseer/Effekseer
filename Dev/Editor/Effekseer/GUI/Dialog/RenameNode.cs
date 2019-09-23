@@ -29,11 +29,11 @@ namespace Effekseer.GUI.Dialog
 		{
 			if (isFirstUpdate)
 			{
-				Manager.NativeManager.OpenPopup(Resources.GetString("RenameNode"));
+				Manager.NativeManager.OpenPopup(Resources.GetString("RenameNode") + "###RenameNodeDialog");
 				isFirstUpdate = false;
 			}
 
-			if (Manager.NativeManager.BeginPopupModal(Resources.GetString("RenameNode"), ref opened, swig.WindowFlags.AlwaysAutoResize))
+			if (Manager.NativeManager.BeginPopupModal(Resources.GetString("RenameNode") + "###RenameNodeDialog", ref opened, swig.WindowFlags.AlwaysAutoResize))
 			{
 
 				if (Manager.NativeManager.InputText("", this.name))

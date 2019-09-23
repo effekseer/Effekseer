@@ -428,7 +428,11 @@ namespace Effekseer.GUI
 			return true;
 		}
 
-		[Name(value = "InternalRenameNode")] // ノードの名前変更
+		/// <summary>
+		/// Rename node with a dialog
+		/// </summary>
+		/// <returns></returns>
+		[Name(value = "InternalRenameNode")]
 		[UniqueName(value = "Internal.RenameNode")]
 		public static bool RenameNode()
 		{
