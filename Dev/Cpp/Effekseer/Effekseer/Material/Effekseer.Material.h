@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEER_MATERIAL_H__
 #define __EFFEKSEER_MATERIAL_H__
 
-#include <Effekseer.h>
+#include "../Effekseer.Base.Pre.h"
 #include <array>
 #include <assert.h>
 #include <map>

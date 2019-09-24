@@ -31,6 +31,9 @@
     <Filter Include="Effekseer\InternalScript">
       <UniqueIdentifier>{0382aadc-7e1c-4fb0-bb9b-ae5d4f3f2a87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effekseer\Material">
+      <UniqueIdentifier>{c3571b2e-6d99-469f-8e43-e8b0caa5909c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effekseer\Effekseer.Base.h">
@@ -205,6 +208,15 @@
     <ClInclude Include="Effekseer\Effekseer.CustomAllocator.h">
       <Filter>Effekseer\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Effekseer\Material\Effekseer.CompiledMaterial.h">
+      <Filter>Effekseer\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Material\Effekseer.Material.h">
+      <Filter>Effekseer\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Material\Effekseer.MaterialCompiler.h">
+      <Filter>Effekseer\Material</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp">
@@ -314,6 +326,15 @@
     </ClCompile>
     <ClCompile Include="Effekseer\Effekseer.CustomAllocator.cpp">
       <Filter>Effekseer\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Material\Effekseer.Material.cpp">
+      <Filter>Effekseer\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Material\Effekseer.MaterialCompiler.cpp">
+      <Filter>Effekseer\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Material\Effekseer.CompiledMaterial.cpp">
+      <Filter>Effekseer\Material</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -13,6 +13,7 @@
 #include <vector>
 #include <cfloat>
 #include <array>
+#include <memory>
 
 //----------------------------------------------------------------------------------
 //
