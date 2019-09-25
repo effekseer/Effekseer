@@ -1,5 +1,4 @@
 ﻿#include "EffekseerRendererDX11.MaterialLoader.h"
-#include "../EffekseerRendererCommon/EffekseerRenderer.ShaderLoader.h"
 #include "EffekseerRendererDX11.ModelRenderer.h"
 #include "EffekseerRendererDX11.Shader.h"
 #include <d3dcompiler.h>
