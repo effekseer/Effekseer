@@ -15,15 +15,6 @@ class CompiledMaterialBinary;
 namespace EffekseerRendererGL
 {
 
-class ShaderLoader : public EffekseerRenderer::ShaderLoader
-{
-public:
-	ShaderLoader() = default;
-	virtual ~ShaderLoader() = default;
-
-	EffekseerRenderer::ShaderData GenerateShader(ShaderType shaderType) override;
-};
-
 class MaterialLoader : public ::Effekseer::MaterialLoader
 {
 private:
