@@ -45,6 +45,7 @@ public:
 
 		ZSortType			ZSort;
 
+		RendererMaterialType MaterialType = RendererMaterialType::Default;
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 		MaterialParameter* MaterialParameterPtr = nullptr;
 	};

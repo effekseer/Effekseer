@@ -166,7 +166,8 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 
 		nodeParameter.ZSort = DepthValues.ZSort;
 
-		if (RendererCommon.MaterialType == ParameterRendererCommon::RendererMaterialType::Default)
+		nodeParameter.MaterialType = RendererCommon.MaterialType;
+		if (RendererCommon.MaterialType != RendererMaterialType::File)
 		{
 			nodeParameter.MaterialParameterPtr = nullptr;
 		}
@@ -211,7 +212,8 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 
 		nodeParameter.ZSort = DepthValues.ZSort;
 
-		if (RendererCommon.MaterialType == ParameterRendererCommon::RendererMaterialType::Default)
+		nodeParameter.MaterialType = RendererCommon.MaterialType;
+		if (RendererCommon.MaterialType != RendererMaterialType::File)
 		{
 			nodeParameter.MaterialParameterPtr = nullptr;
 		}
@@ -321,7 +323,8 @@ void EffectNodeSprite::EndRendering(Manager* manager)
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 
-		if (RendererCommon.MaterialType == ParameterRendererCommon::RendererMaterialType::Default)
+		nodeParameter.MaterialType = RendererCommon.MaterialType;
+		if (RendererCommon.MaterialType != RendererMaterialType::File)
 		{
 			nodeParameter.MaterialParameterPtr = nullptr;
 		}

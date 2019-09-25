@@ -660,23 +660,9 @@ namespace Effekseer.Data
 				private set;
 			}
 
-			[Name(language = Language.Japanese, value = "法線画像")]
-			[Description(language = Language.Japanese, value = "法線を表す画像")]
-			[Name(language = Language.English, value = "Normal Map")]
-			[Description(language = Language.English, value = "Image representing normal vectors")]
-			public Value.PathForImage NormalTexture
-			{
-				get;
-				private set;
-			}
-
 			[Name(language = Language.Japanese, value = "配置方法")]
 			[Name(language = Language.English, value = "Configuration")]
 			public Value.Enum<BillboardType> Billboard { get; private set; }
-
-			[Name(language = Language.Japanese, value = "ライティング")]
-			[Name(language = Language.English, value = "Lighting")]
-			public Value.Boolean Lighting { get; private set; }
 
 			[Name(language = Language.Japanese, value = "カリング")]
 			[Name(language = Language.English, value = "Culling")]
@@ -685,11 +671,9 @@ namespace Effekseer.Data
 			public ModelParamater()
 			{
                 Model = new Value.PathForModel(Resources.GetString("ModelFilter"), true, "");
-                NormalTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
 
 				Billboard = new Value.Enum<BillboardType>(BillboardType.Fixed);
 
-				Lighting = new Value.Boolean(true);
 				Culling = new Value.Enum<CullingValues>(Data.CullingValues.Front);
 
 				Color = new Value.Enum<StandardColorType>(StandardColorType.Fixed);

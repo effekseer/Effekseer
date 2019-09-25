@@ -550,6 +550,17 @@ enum class ShadingModelType : int32_t
 };
 
 /**
+	@brief	material type
+*/
+enum class RendererMaterialType : int32_t
+{
+	Default = 0,
+	BackDistortion = 4,
+	Lighting = 5,
+	File = 128,
+};
+
+/**
 	@brief	\~english	Material data
 			\~japanese	マテリアルデータ
 */

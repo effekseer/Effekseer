@@ -527,21 +527,14 @@ struct ParameterGenerationLocation
 
 struct ParameterRendererCommon
 {
-	/**
-		@brief	material type
-	*/
-	enum class RendererMaterialType : int32_t
-	{
-		Default = 0,
-		File = 128,
-	};
 
 	RendererMaterialType MaterialType = RendererMaterialType::Default;
 
-	/**
-		@brief	texture index in MaterialType::Default
-	*/
+	//! texture index except a file
 	int32_t				ColorTextureIndex = -1;
+
+	//! texture index except a file
+	int32_t Texture2Index = -1;
 
 	//! material index in MaterialType::File
 	MaterialParameter Material;
@@ -556,6 +549,7 @@ struct ParameterRendererCommon
 
 	bool				ZTest = false;
 
+	//! this value is not unused
 	bool				Distortion = false;
 
 	float				DistortionIntensity = 0;
@@ -681,9 +675,14 @@ struct ParameterRendererCommon
 			memcpy(&MaterialType, pos, sizeof(int));
 			pos += sizeof(int);
 
-			if (MaterialType == RendererMaterialType::Default)
+			if (MaterialType == RendererMaterialType::Default || 
+				MaterialType == RendererMaterialType::BackDistortion ||
+				MaterialType == RendererMaterialType::Lighting)
 			{
 				memcpy(&ColorTextureIndex, pos, sizeof(int));
+				pos += sizeof(int);
+
+				memcpy(&Texture2Index, pos, sizeof(int));
 				pos += sizeof(int);
 			}
 			else
@@ -836,12 +835,20 @@ struct ParameterRendererCommon
 
 		if (version >= 9)
 		{
-			int32_t distortion = 0;
+			if (version < 15)
+			{
+				int32_t distortion = 0;
 
-			memcpy(&distortion, pos, sizeof(int32_t));
-			pos += sizeof(int32_t);
+				memcpy(&distortion, pos, sizeof(int32_t));
+				pos += sizeof(int32_t);
 
-			Distortion = distortion > 0;
+				Distortion = distortion > 0;
+
+				if (Distortion)
+				{
+					MaterialType = RendererMaterialType::BackDistortion;
+				}
+			}
 
 			memcpy(&DistortionIntensity, pos, sizeof(float));
 			pos += sizeof(float);

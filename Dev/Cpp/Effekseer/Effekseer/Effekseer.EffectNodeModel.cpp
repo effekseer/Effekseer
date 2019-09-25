@@ -46,9 +46,13 @@ namespace Effekseer
 	memcpy( &ModelIndex, pos, sizeof(int) );
 	pos += sizeof(int);
 
-	memcpy( &NormalTextureIndex, pos, sizeof(int) );
-	pos += sizeof(int);
-	EffekseerPrintDebug("NormalTextureIndex : %d\n", NormalTextureIndex );
+	if (m_effect->GetVersion() < 15)
+	{
+		memcpy(&NormalTextureIndex, pos, sizeof(int));
+		pos += sizeof(int);
+		EffekseerPrintDebug("NormalTextureIndex : %d\n", NormalTextureIndex);
+		RendererCommon.Texture2Index = NormalTextureIndex;
+	}
 
 	if (m_effect->GetVersion() >= 12)
 	{
@@ -60,10 +64,14 @@ namespace Effekseer
 		Billboard = BillboardType::Fixed;
 	}
 
-	int32_t lighting;
-	memcpy( &lighting, pos, sizeof(int) );
-	pos += sizeof(int);
-	Lighting = lighting > 0;
+	if (m_effect->GetVersion() < 15)
+	{
+		int32_t lighting;
+		memcpy(&lighting, pos, sizeof(int));
+		pos += sizeof(int);
+		Lighting = lighting > 0;
+		RendererCommon.MaterialType = RendererMaterialType::Lighting;
+	}
 
 	memcpy( &Culling, pos, sizeof(int) );
 	pos += sizeof(int);
@@ -104,7 +112,8 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
 		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
-		if (RendererCommon.MaterialType == ParameterRendererCommon::RendererMaterialType::Default)
+		nodeParameter.MaterialType = RendererCommon.MaterialType;
+		if (RendererCommon.MaterialType != RendererMaterialType::File)
 		{
 			nodeParameter.MaterialParameterPtr = nullptr;
 		}
@@ -151,7 +160,8 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
 		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
-		if (RendererCommon.MaterialType == ParameterRendererCommon::RendererMaterialType::Default)
+		nodeParameter.MaterialType = RendererCommon.MaterialType;
+		if (RendererCommon.MaterialType != RendererMaterialType::File)
 		{
 			nodeParameter.MaterialParameterPtr = nullptr;
 		}
@@ -219,7 +229,8 @@ void EffectNodeModel::EndRendering(Manager* manager)
 		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
 		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
-		if (RendererCommon.MaterialType == ParameterRendererCommon::RendererMaterialType::Default)
+		nodeParameter.MaterialType = RendererCommon.MaterialType;
+		if (RendererCommon.MaterialType != RendererMaterialType::File)
 		{
 			nodeParameter.MaterialParameterPtr = nullptr;
 		}

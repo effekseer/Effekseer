@@ -46,6 +46,8 @@ public:
 		float				DistortionIntensity;
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+
+		RendererMaterialType MaterialType = RendererMaterialType::Default;
 		MaterialParameter* MaterialParameterPtr = nullptr;
 
 		float				DepthOffset;

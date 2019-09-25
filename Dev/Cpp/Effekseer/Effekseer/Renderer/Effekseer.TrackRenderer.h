@@ -40,6 +40,8 @@ namespace Effekseer
 			int32_t				SplineDivision;
 
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+
+			RendererMaterialType MaterialType = RendererMaterialType::Default;
 			MaterialParameter* MaterialParameterPtr = nullptr;
 
 		};
