@@ -29,7 +29,7 @@ namespace efk
 
 	bool RenderTextureGL::Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample)
 	{
-		if (glGetError() != GL_NO_ERROR) return false;
+        GLCheckError();
 
 		GLint glInternalFormat;
 		GLenum glFormat, glType;
@@ -240,7 +240,7 @@ namespace efk
 			glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
 				GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &renderbuffer);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopy);
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
 		}
 		else if (rbtype == GL_TEXTURE_2D) {
@@ -248,7 +248,7 @@ namespace efk
 			glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
 				GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &renderTexture);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopy);
+			glBindFramebuffer(GL_FRAMEBUFFER, frameBufferForCopySrc);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
 		}
 #endif
