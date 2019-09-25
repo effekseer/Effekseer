@@ -88,40 +88,24 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 	if (renderer != NULL)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
 		nodeParameter.TextureFilter = RendererCommon.FilterType;
 		nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
 		nodeParameter.Billboard = Billboard;
-		nodeParameter.Lighting = Lighting;
-		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
 			CoordinateSystem::RH;
 
-		nodeParameter.Distortion = RendererCommon.Distortion;
-		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
-
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
+		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
+		//nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+		//nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
-		nodeParameter.MaterialType = RendererCommon.MaterialType;
-		if (RendererCommon.MaterialType != RendererMaterialType::File)
-		{
-			nodeParameter.MaterialParameterPtr = nullptr;
-		}
-		else
-		{
-			nodeParameter.MaterialParameterPtr = &(RendererCommon.Material);
-		}
-
+		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		renderer->BeginRendering(nodeParameter, count, m_userData);
 	}
 }
@@ -136,39 +120,23 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
 		nodeParameter.TextureFilter = RendererCommon.FilterType;
 		nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
 		nodeParameter.Billboard = Billboard;
-		nodeParameter.Lighting = Lighting;
-		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
 			CoordinateSystem::RH;
 
-		nodeParameter.Distortion = RendererCommon.Distortion;
-		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
-
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
-
-		nodeParameter.MaterialType = RendererCommon.MaterialType;
-		if (RendererCommon.MaterialType != RendererMaterialType::File)
-		{
-			nodeParameter.MaterialParameterPtr = nullptr;
-		}
-		else
-		{
-			nodeParameter.MaterialParameterPtr = &(RendererCommon.Material);
-		}
+		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
+		//nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+		//nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
+		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -192,6 +160,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 			instanceParameter.AllColor = Color::Mul(instanceParameter.AllColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
 		}
 
+		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		renderer->Rendering( nodeParameter, instanceParameter, m_userData );
 	}
 }
@@ -205,40 +174,24 @@ void EffectNodeModel::EndRendering(Manager* manager)
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
 		nodeParameter.TextureFilter = RendererCommon.FilterType;
 		nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
 		nodeParameter.Billboard = Billboard;
-		nodeParameter.Lighting = Lighting;
-		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetSetting()->GetCoordinateSystem() ==
 			CoordinateSystem::RH;
 
-		nodeParameter.Distortion = RendererCommon.Distortion;
-		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
-
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
+		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
+		//nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+		//nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
-		nodeParameter.MaterialType = RendererCommon.MaterialType;
-		if (RendererCommon.MaterialType != RendererMaterialType::File)
-		{
-			nodeParameter.MaterialParameterPtr = nullptr;
-		}
-		else
-		{
-			nodeParameter.MaterialParameterPtr = &(RendererCommon.Material);
-		}
-
+		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		renderer->EndRendering( nodeParameter, m_userData );
 	}
 }

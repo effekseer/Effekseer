@@ -27,23 +27,23 @@ namespace Effekseer
 		struct NodeParameter
 		{
 			Effect*				EffectPointer;
-			int32_t				ColorTextureIndex;
-			AlphaBlendType			AlphaBlend;
+			//int32_t				ColorTextureIndex;
+			//AlphaBlendType			AlphaBlend;
 			TextureFilterType	TextureFilter;
 			TextureWrapType		TextureWrap;
 			bool				ZTest;
 			bool				ZWrite;
 
-			bool				Distortion;
-			float				DistortionIntensity;
+			//bool				Distortion;
+			//float				DistortionIntensity;
 
 			int32_t				SplineDivision;
 
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
 
 			RendererMaterialType MaterialType = RendererMaterialType::Default;
 			MaterialParameter* MaterialParameterPtr = nullptr;
-
 		};
 
 		struct InstanceGroupParameter

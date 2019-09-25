@@ -618,6 +618,20 @@ struct NodeRendererDepthParameter
 	float DepthClipping = FLT_MAX;
 };
 
+/**
+	@brief	\~english	Common parameters which is passed into a renderer
+			\~japanese	レンダラーに渡される共通に関するパラメーター
+*/
+struct NodeRendererBasicParameter
+{
+	RendererMaterialType MaterialType = RendererMaterialType::Default;
+	int32_t Texture1Index = -1;
+	int32_t Texture2Index = -1;
+	float DistortionIntensity = 0.0f;
+	MaterialParameter* MaterialParameterPtr = nullptr;
+	AlphaBlendType AlphaBlend = AlphaBlendType::Blend;
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -2804,8 +2818,8 @@ public:
 	struct NodeParameter
 	{
 		Effect*				EffectPointer;
-		int32_t				ColorTextureIndex;
-		AlphaBlendType			AlphaBlend;
+		//int32_t				ColorTextureIndex;
+		//AlphaBlendType			AlphaBlend;
 		TextureFilterType	TextureFilter;
 		TextureWrapType	TextureWrap;
 		bool				ZTest;
@@ -2813,17 +2827,20 @@ public:
 		BillboardType		Billboard;
 		bool				IsRightHand;
 
-		bool				Distortion;
-		float				DistortionIntensity;
+		//bool				Distortion;
+		//float				DistortionIntensity;
 
-		float				DepthOffset;
-		bool				IsDepthOffsetScaledWithCamera;
-		bool				IsDepthOffsetScaledWithParticleScale;
+		//float				DepthOffset;
+		//bool				IsDepthOffsetScaledWithCamera;
+		//bool				IsDepthOffsetScaledWithParticleScale;
 
 		ZSortType			ZSort;
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
-		MaterialParameter* MaterialParameterPtr = nullptr;
+		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+
+		//RendererMaterialType MaterialType = RendererMaterialType::Default;
+		//MaterialParameter* MaterialParameterPtr = nullptr;
 	};
 
 	struct InstanceParameter
@@ -2883,20 +2900,23 @@ namespace Effekseer
 		struct NodeParameter
 		{
 			Effect*				EffectPointer;
-			int32_t				ColorTextureIndex;
-			AlphaBlendType			AlphaBlend;
+			//int32_t				ColorTextureIndex;
+			//AlphaBlendType			AlphaBlend;
 			TextureFilterType	TextureFilter;
 			TextureWrapType	TextureWrap;
 			bool				ZTest;
 			bool				ZWrite;
 			bool				ViewpointDependent;
 
-			bool				Distortion;
-			float				DistortionIntensity;
+			//bool				Distortion;
+			//float				DistortionIntensity;
 
 			int32_t				SplineDivision;
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
-			MaterialParameter* MaterialParameterPtr = nullptr;
+			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+
+			//RendererMaterialType MaterialType = RendererMaterialType::Default;
+			//MaterialParameter* MaterialParameterPtr = nullptr;
 		};
 
 		struct InstanceParameter
@@ -2961,8 +2981,8 @@ public:
 	struct NodeParameter
 	{
 		Effect*				EffectPointer;
-		int32_t				ColorTextureIndex;
-		AlphaBlendType			AlphaBlend;
+		//int32_t				ColorTextureIndex;
+		//AlphaBlendType			AlphaBlend;
 		TextureFilterType	TextureFilter;
 		TextureWrapType	TextureWrap;
 		bool				ZTest;
@@ -2971,15 +2991,20 @@ public:
 		int32_t				VertexCount;
 		bool				IsRightHand;
 
-		bool				Distortion;
-		float				DistortionIntensity;
+		//bool				Distortion;
+		//float				DistortionIntensity;
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
-		MaterialParameter* MaterialParameterPtr = nullptr;
+		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
 
-		float				DepthOffset;
-		bool				IsDepthOffsetScaledWithCamera;
-		bool				IsDepthOffsetScaledWithParticleScale;
+		//RendererMaterialType MaterialType = RendererMaterialType::Default;
+		//MaterialParameter* MaterialParameterPtr = nullptr;
+
+		//float				DepthOffset;
+		//bool				IsDepthOffsetScaledWithCamera;
+		//bool				IsDepthOffsetScaledWithParticleScale;
+
+		NodeRendererBasicParameter BasicParameter;
 	};
 
 	struct InstanceParameter
@@ -3040,32 +3065,33 @@ public:
 	struct NodeParameter
 	{
 		Effect*				EffectPointer;
-		AlphaBlendType		AlphaBlend;
+		//AlphaBlendType		AlphaBlend;
 		TextureFilterType	TextureFilter;
 		TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
 		BillboardType		Billboard;
 
-		bool				Lighting;
+		//bool				Lighting;
 		CullingType		Culling;
 		int32_t				ModelIndex;
-		int32_t				ColorTextureIndex;
-		int32_t				NormalTextureIndex;
+		//int32_t				ColorTextureIndex;
+		//int32_t				NormalTextureIndex;
 		float				Magnification;
 		bool				IsRightHand;
 
-		bool				Distortion;
-		float				DistortionIntensity;
+		//bool				Distortion;
+		//float				DistortionIntensity;
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
 
-		RendererMaterialType MaterialType = RendererMaterialType::Default;
-		MaterialParameter* MaterialParameterPtr = nullptr;
+		//RendererMaterialType MaterialType = RendererMaterialType::Default;
+		//MaterialParameter* MaterialParameterPtr = nullptr;
 
-		float				DepthOffset;
-		bool				IsDepthOffsetScaledWithCamera;
-		bool				IsDepthOffsetScaledWithParticleScale;
+		//float				DepthOffset;
+		//bool				IsDepthOffsetScaledWithCamera;
+		//bool				IsDepthOffsetScaledWithParticleScale;
 	};
 
 	struct InstanceParameter
@@ -3120,21 +3146,23 @@ namespace Effekseer
 		struct NodeParameter
 		{
 			Effect*				EffectPointer;
-			int32_t				ColorTextureIndex;
-			AlphaBlendType			AlphaBlend;
+			//int32_t				ColorTextureIndex;
+			//AlphaBlendType			AlphaBlend;
 			TextureFilterType	TextureFilter;
 			TextureWrapType		TextureWrap;
 			bool				ZTest;
 			bool				ZWrite;
 
-			bool				Distortion;
-			float				DistortionIntensity;
+			//bool				Distortion;
+			//float				DistortionIntensity;
 
 			int32_t				SplineDivision;
 
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
-			MaterialParameter* MaterialParameterPtr = nullptr;
+			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
 
+			RendererMaterialType MaterialType = RendererMaterialType::Default;
+			MaterialParameter* MaterialParameterPtr = nullptr;
 		};
 
 		struct InstanceGroupParameter

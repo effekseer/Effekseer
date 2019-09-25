@@ -27,8 +27,8 @@ public:
 	struct NodeParameter
 	{
 		Effect*				EffectPointer;
-		int32_t				ColorTextureIndex;
-		AlphaBlendType			AlphaBlend;
+		//int32_t				ColorTextureIndex;
+		//AlphaBlendType			AlphaBlend;
 		TextureFilterType	TextureFilter;
 		TextureWrapType	TextureWrap;
 		bool				ZTest;
@@ -37,17 +37,20 @@ public:
 		int32_t				VertexCount;
 		bool				IsRightHand;
 
-		bool				Distortion;
-		float				DistortionIntensity;
+		//bool				Distortion;
+		//float				DistortionIntensity;
 
 		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
 
-		RendererMaterialType MaterialType = RendererMaterialType::Default;
-		MaterialParameter* MaterialParameterPtr = nullptr;
+		//RendererMaterialType MaterialType = RendererMaterialType::Default;
+		//MaterialParameter* MaterialParameterPtr = nullptr;
 
-		float				DepthOffset;
-		bool				IsDepthOffsetScaledWithCamera;
-		bool				IsDepthOffsetScaledWithParticleScale;
+		//float				DepthOffset;
+		//bool				IsDepthOffsetScaledWithCamera;
+		//bool				IsDepthOffsetScaledWithParticleScale;
+
+		NodeRendererBasicParameter BasicParameter;
 	};
 
 	struct InstanceParameter

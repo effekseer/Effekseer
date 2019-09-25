@@ -245,9 +245,9 @@ public:
 		
 		int32_t renderPassCount = 1;
 
-		if (param.MaterialParameterPtr != nullptr)
+		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr)
 		{
-			auto materialData = param.EffectPointer->GetMaterial(param.MaterialParameterPtr->MaterialIndex);
+			auto materialData = param.EffectPointer->GetMaterial(param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
 			if (materialData != nullptr && materialData->IsRefractionRequired)
 			{
 				// refraction, standard
@@ -293,11 +293,11 @@ public:
 		
 		bool isBackgroundRequired = false;
 
-		isBackgroundRequired |= param.Distortion;
+		isBackgroundRequired |= (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion);
 
-		if (param.MaterialParameterPtr != nullptr)
+		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr)
 		{
-			auto materialData = param.EffectPointer->GetMaterial(param.MaterialParameterPtr->MaterialIndex);
+			auto materialData = param.EffectPointer->GetMaterial(param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
 			if (materialData != nullptr && materialData->IsRefractionRequired && renderPassInd == 0)
 			{
 				isBackgroundRequired = true;
@@ -316,7 +316,7 @@ public:
 			}
 		}
 
-		auto distortion = param.Distortion;
+		auto distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
 
 		if (isBackgroundRequired && renderer->GetBackground() == 0)
 			return;
@@ -324,11 +324,11 @@ public:
 		RenderStateBase::State& state = renderer->GetRenderState()->Push();
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
-		state.AlphaBlend = param.AlphaBlend;
+		state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
 		state.CullingType = param.Culling;
 
 		// select shader
-		Effekseer::MaterialParameter* materialParam = param.MaterialParameterPtr;
+		Effekseer::MaterialParameter* materialParam = param.BasicParameterPtr->MaterialParameterPtr;
 		//materialParam = nullptr;
 		Effekseer::MaterialData* material = nullptr;
 		SHADER* shader_ = nullptr;
@@ -369,7 +369,7 @@ public:
 		{
 			if (distortion)
 			{
-				//if (param.ColorTextureIndex >= 0)
+				//if (param.BasicParameterPtr->Texture1Index >= 0)
 				//{
 					shader_ = shader_distortion_texture;
 				//}
@@ -378,11 +378,11 @@ public:
 				//	shader_ = shader_distortion;
 				//}
 			}
-			else if (param.Lighting)
+			else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 			{
-				//if (param.NormalTextureIndex >= 0)
+				//if (param.BasicParameterPtr->Texture2Index >= 0)
 				//{
-				//	if (param.ColorTextureIndex >= 0)
+				//	if (param.BasicParameterPtr->Texture1Index >= 0)
 				//	{
 						shader_ = shader_lighting_texture_normal;
 				//	}
@@ -393,7 +393,7 @@ public:
 				//}
 				//else
 				//{
-				//	if (param.ColorTextureIndex >= 0)
+				//	if (param.BasicParameterPtr->Texture1Index >= 0)
 				//	{
 				//		shader_ = shader_lighting_texture;
 				//	}
@@ -405,7 +405,7 @@ public:
 			}
 			else
 			{
-				//if (param.ColorTextureIndex >= 0)
+				//if (param.BasicParameterPtr->Texture1Index >= 0)
 				//{
 					shader_ = shader_texture;
 				//}
@@ -468,9 +468,9 @@ public:
 
 			if (distortion)
 			{
-				if (param.ColorTextureIndex >= 0)
+				if (param.BasicParameterPtr->Texture1Index >= 0)
 				{
-					textures[0] = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
+					textures[0] = param.EffectPointer->GetDistortionImage(param.BasicParameterPtr->Texture1Index);
 				}
 				else
 				{
@@ -481,18 +481,18 @@ public:
 			}
 			else
 			{
-				if (param.ColorTextureIndex >= 0)
+				if (param.BasicParameterPtr->Texture1Index >= 0)
 				{
-					textures[0] = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
+					textures[0] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture1Index);
 				}
 				else
 				{
 					textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 				}
 
-				if (param.NormalTextureIndex >= 0)
+				if (param.BasicParameterPtr->Texture2Index >= 0)
 				{
-					textures[1] = param.EffectPointer->GetNormalImage(param.NormalTextureIndex);
+					textures[1] = param.EffectPointer->GetNormalImage(param.BasicParameterPtr->Texture2Index);
 				}
 				else
 				{
@@ -630,7 +630,7 @@ public:
 			if (distortion)
 			{
 				float* pcb = (float*) shader_->GetPixelConstantBuffer();
-				pcb[4 * 0 + 0] = param.DistortionIntensity;
+				pcb[4 * 0 + 0] = param.BasicParameterPtr->DistortionIntensity;
 
 				pcb[4 * 1 + 0] = uvInversedBack[0];
 				pcb[4 * 1 + 1] = uvInversedBack[1];
@@ -640,7 +640,7 @@ public:
 				ModelRendererPixelConstantBuffer* pcb = (ModelRendererPixelConstantBuffer*) shader_->GetPixelConstantBuffer();
 
 				// specify predefined parameters
-				if (param.Lighting)
+				if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 				{
 					::Effekseer::Vector3D lightDirection = renderer->GetLightDirection();
 					::Effekseer::Vector3D::Normal(lightDirection, lightDirection);
@@ -697,9 +697,6 @@ public:
 					ApplyDepthParameters(vcb->ModelMatrix[num],
 										renderer->GetCameraFrontDirection(),
 										renderer->GetCameraPosition(),
-										param.DepthOffset,
-										param.IsDepthOffsetScaledWithCamera,
-										param.IsDepthOffsetScaledWithParticleScale,
 										param.DepthParameterPtr,
 										param.IsRightHand);
 	
@@ -737,7 +734,7 @@ public:
 				vcb->ModelUV[0][3] = m_uv[loop].Height;
 
 				// DepthParameters
-				ApplyDepthParameters(vcb->ModelMatrix[0], renderer->GetCameraFrontDirection(), renderer->GetCameraPosition(), param.DepthOffset, param.IsDepthOffsetScaledWithCamera, param.IsDepthOffsetScaledWithParticleScale,
+				ApplyDepthParameters(vcb->ModelMatrix[0], renderer->GetCameraFrontDirection(), renderer->GetCameraPosition(),
 									 param.DepthParameterPtr,
 									 param.IsRightHand);
 				

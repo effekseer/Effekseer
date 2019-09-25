@@ -556,6 +556,9 @@ struct ParameterRendererCommon
 
 	BindType ColorBindType = BindType::NotBind;
 
+	//! pass into a renderer (to make easy to send parameters, it should be refactored)
+	NodeRendererBasicParameter BasicParameter;
+
 	enum
 	{
 		FADEIN_ON = 1,
@@ -853,6 +856,22 @@ struct ParameterRendererCommon
 			memcpy(&DistortionIntensity, pos, sizeof(float));
 			pos += sizeof(float);
 
+		}
+
+		// copy to basic parameter
+		BasicParameter.AlphaBlend = AlphaBlend;
+		BasicParameter.DistortionIntensity = DistortionIntensity;
+		BasicParameter.MaterialType = MaterialType;
+		BasicParameter.Texture1Index = ColorTextureIndex;
+		BasicParameter.Texture2Index = Texture2Index;
+
+		if (BasicParameter.MaterialType == RendererMaterialType::File)
+		{
+			BasicParameter.MaterialParameterPtr = &Material;
+		}
+		else
+		{
+			BasicParameter.MaterialParameterPtr = nullptr;
 		}
 	}
 

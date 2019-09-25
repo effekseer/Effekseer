@@ -25,13 +25,13 @@ public:
 	struct NodeParameter
 	{
 		Effect*				EffectPointer;
-		int32_t				TextureIndex;
-		AlphaBlendType			AlphaBlend;
+		//int32_t				TextureIndex;
+		//AlphaBlendType			AlphaBlend;
 		TextureFilterType	TextureFilter;
 		TextureWrapType	TextureWrap;
 
-		bool				Distortion;
-		float				DistortionIntensity;
+		//bool				Distortion;
+		//float				DistortionIntensity;
 	};
 
 	struct InstanceParameter

@@ -618,6 +618,20 @@ struct NodeRendererDepthParameter
 	float DepthClipping = FLT_MAX;
 };
 
+/**
+	@brief	\~english	Common parameters which is passed into a renderer
+			\~japanese	レンダラーに渡される共通に関するパラメーター
+*/
+struct NodeRendererBasicParameter
+{
+	RendererMaterialType MaterialType = RendererMaterialType::Default;
+	int32_t Texture1Index = -1;
+	int32_t Texture2Index = -1;
+	float DistortionIntensity = 0.0f;
+	MaterialParameter* MaterialParameterPtr = nullptr;
+	AlphaBlendType AlphaBlend = AlphaBlendType::Blend;
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

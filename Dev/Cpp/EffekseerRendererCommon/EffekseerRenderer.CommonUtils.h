@@ -26,9 +26,6 @@ namespace EffekseerRenderer
 void ApplyDepthParameters(::Effekseer::Matrix43& mat,
 					  const ::Effekseer::Vector3D& cameraFront,
 					  const ::Effekseer::Vector3D& cameraPos,
-					  float depthOffset,
-					  bool isDepthOffsetScaledWithCamera,
-					  bool isDepthOffsetScaledWithEffect,
 					::Effekseer::NodeRendererDepthParameter* depthParameter,
 					  bool isRightHand);
 
@@ -36,18 +33,12 @@ void ApplyDepthParameters(::Effekseer::Matrix43& mat,
 					  const ::Effekseer::Vector3D& cameraFront,
 					  const ::Effekseer::Vector3D& cameraPos,
 					  ::Effekseer::Vector3D& scaleValues,
-					  float depthOffset,
-					  bool isDepthOffsetScaledWithCamera,
-					  bool isDepthOffsetScaledWithEffect,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 					  bool isRightHand);
 
 void ApplyDepthParameters(::Effekseer::Matrix44& mat,
 						  const ::Effekseer::Vector3D& cameraFront,
 						  const ::Effekseer::Vector3D& cameraPos,
-						  float depthOffset,
-						  bool isDepthOffsetScaledWithCamera,
-						  bool isDepthOffsetScaledWithEffect,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand);
 

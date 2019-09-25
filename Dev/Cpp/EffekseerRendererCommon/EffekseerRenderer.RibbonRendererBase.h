@@ -563,7 +563,7 @@ namespace EffekseerRenderer
 			{
 				Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
 			}
-			else if (parameter.Distortion)
+			else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 			{
 				Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
 			}
@@ -780,27 +780,27 @@ namespace EffekseerRenderer
 			if (vertexCount <= 0) return;
 
 			EffekseerRenderer::StandardRendererState state;
-			state.AlphaBlend = param.AlphaBlend;
+			state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
 			state.CullingType = ::Effekseer::CullingType::Double;
 			state.DepthTest = param.ZTest;
 			state.DepthWrite = param.ZWrite;
 			state.TextureFilterType = param.TextureFilter;
 			state.TextureWrapType = param.TextureWrap;
 
-			state.Distortion = param.Distortion;
-			state.DistortionIntensity = param.DistortionIntensity;
+			state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
+			state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
 
-			state.CopyMaterialFromParameterToState(param.EffectPointer, param.MaterialParameterPtr, param.ColorTextureIndex);
+			state.CopyMaterialFromParameterToState(param.EffectPointer, param.BasicParameterPtr->MaterialParameterPtr, param.BasicParameterPtr->Texture1Index);
 
-			if (param.ColorTextureIndex >= 0)
+			if (param.BasicParameterPtr->Texture1Index >= 0)
 			{
 				if (state.Distortion)
 				{
-					state.TexturePtr = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
+					state.TexturePtr = param.EffectPointer->GetDistortionImage(param.BasicParameterPtr->Texture1Index);
 				}
 				else
 				{
-					state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
+					state.TexturePtr = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture1Index);
 				}
 			}
 			else
