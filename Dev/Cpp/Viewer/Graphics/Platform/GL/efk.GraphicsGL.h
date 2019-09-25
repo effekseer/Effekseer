@@ -83,7 +83,8 @@ namespace efk
 		*/
 
 		std::shared_ptr<RenderTextureGL>	backTarget;
-		GLuint	frameBufferForCopy = 0;
+		GLuint	frameBufferForCopySrc = 0;
+		GLuint	frameBufferForCopyDst = 0;
 
 		EffekseerRendererGL::Renderer*	renderer = nullptr;
 
