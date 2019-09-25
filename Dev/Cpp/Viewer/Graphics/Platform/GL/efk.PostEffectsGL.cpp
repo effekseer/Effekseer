@@ -172,19 +172,6 @@ void main() {
 		renderer->EndShader(shader);
 	}
 
-	static void SetTexture(EffekseerRendererGL::Shader* shader, int32_t slot, GLuint texture)
-	{
-		using namespace EffekseerRendererGL;
-
-		GLExt::glActiveTexture(GL_TEXTURE0 + slot);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		GLExt::glUniform1i(shader->GetTextureSlot(slot), slot);
-	}
-
 	BloomEffectGL::BloomEffectGL(Graphics* graphics)
 		: BloomEffect(graphics), blitter(graphics)
 	{
@@ -267,13 +254,11 @@ void main() {
 		using namespace EffekseerRendererGL;
 
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
-		auto renderTexture = graphics->GetRenderTexture();
-		auto depthTexture = graphics->GetDepthTexture();
-
-		if (renderTextureWidth  != renderTexture->GetWidth() || 
-			renderTextureHeight != renderTexture->GetHeight())
+        
+		if (renderTextureWidth  != src->GetWidth() ||
+			renderTextureHeight != src->GetHeight())
 		{
-			SetupBuffers(renderTexture->GetWidth(), renderTexture->GetHeight());
+			SetupBuffers(src->GetWidth(), src->GetHeight());
 		}
 
 		auto& state = renderer->GetRenderState()->Push();
@@ -440,7 +425,7 @@ void main() {
 		// Copy pass
 		{
 			const GLuint textures[] = {
-				src->GetViewID()
+				(GLuint)src->GetViewID()
 			};
 			blitter.Blit(shaderCopy.get(), vaoCopy.get(), 1, textures, 
 				nullptr, 0, dest);
