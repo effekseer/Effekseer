@@ -1,6 +1,5 @@
 #include "CompiledMaterialGenerator.h"
 #include "../Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.h"
-#include "../EffekseerRendererCommon/EffekseerRenderer.ShaderLoader.h"
 #include <fstream>
 
 typedef Effekseer::MaterialCompiler*(EFK_STDCALL* CreateCompilerFunc)();
