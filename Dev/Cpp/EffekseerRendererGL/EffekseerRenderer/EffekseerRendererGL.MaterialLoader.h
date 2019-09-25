@@ -2,7 +2,6 @@
 #ifndef __EFFEKSEERRENDERER_GL_MATERIALLOADER_H__
 #define __EFFEKSEERRENDERER_GL_MATERIALLOADER_H__
 
-#include "../EffekseerRendererCommon/EffekseerRenderer.ShaderLoader.h"
 #include "EffekseerRendererGL.DeviceObject.h"
 #include "EffekseerRendererGL.RendererImplemented.h"
 
