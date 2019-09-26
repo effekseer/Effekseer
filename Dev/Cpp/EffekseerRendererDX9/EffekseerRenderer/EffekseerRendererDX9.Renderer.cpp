@@ -69,6 +69,18 @@ namespace Standard_Distortion_PS
 #include "Shader/EffekseerRenderer.Standard_Distortion_PS.h"
 }
 
+namespace Standard_Lighting_VS
+{
+static
+#include "Shader/EffekseerRenderer.Standard_Lighting_VS.h"
+} // namespace Standard_Distortion_VS
+
+namespace Standard_Lighting_PS
+{
+static
+#include "Shader/EffekseerRenderer.Standard_Lighting_PS.h"
+} // namespace Standard_Distortion_PS
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -157,6 +169,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_shader);
 
 	ES_SAFE_DELETE(m_shader_distortion);
+	ES_SAFE_DELETE(m_shader_lighting);
 
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
@@ -165,7 +178,7 @@ RendererImplemented::~RendererImplemented()
 
 	//ES_SAFE_RELEASE( m_d3d_device );
 
-	assert(GetRef() == -5);
+	assert(GetRef() == -6);
 }
 
 //----------------------------------------------------------------------------------
@@ -342,6 +355,31 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion->SetPixelRegisterCount(1 + 1);
+
+	D3DVERTEXELEMENT9 decl_lighting[] = {{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+										 {0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
+										 {0, 16, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 1},
+										 {0, 20, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 2},
+										 {0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+										 {0, 32, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
+										 D3DDECL_END()};
+
+	m_shader_lighting = Shader::Create(this,
+									   Standard_Lighting_VS::g_vs20_VS,
+									   sizeof(Standard_Lighting_VS::g_vs20_VS),
+									   Standard_Lighting_PS::g_ps20_PS,
+									   sizeof(Standard_Lighting_PS::g_ps20_PS),
+									   "StandardRenderer Lighting",
+									   decl_lighting);
+	if (m_shader_lighting == NULL)
+		return false;
+
+	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
+	m_shader_lighting->SetVertexRegisterCount(8 + 1);
+
+	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
+	m_shader_lighting->SetPixelRegisterCount(12);
+	Release();
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(
 		this, m_shader, m_shader_distortion);
@@ -854,9 +892,9 @@ void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) const
+Shader* RendererImplemented::GetShader(bool useTexture, ::Effekseer::RendererMaterialType materialType) const
 {
-	if( useDistortion )
+	if (materialType == ::Effekseer::RendererMaterialType::BackDistortion)
 	{
 		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
 		{
@@ -865,6 +903,17 @@ Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) cons
 		else
 		{
 			return m_shader_distortion;
+		}
+	}
+	else if (materialType == ::Effekseer::RendererMaterialType::Lighting)
+	{
+		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
+		{
+			return m_shader_lighting;
+		}
+		else
+		{
+			return m_shader_lighting;
 		}
 	}
 	else
