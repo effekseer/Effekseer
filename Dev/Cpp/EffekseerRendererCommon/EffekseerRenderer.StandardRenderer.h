@@ -36,7 +36,9 @@ struct StandardRendererState
 	::Effekseer::TextureFilterType TextureFilterType;
 	::Effekseer::TextureWrapType TextureWrapType;
 	::Effekseer::TextureData* TexturePtr;
+	::Effekseer::TextureData* NormalTexturePtr;
 
+	::Effekseer::RendererMaterialType MaterialType;
 	::Effekseer::MaterialData* MaterialPtr;
 	uint32_t MaterialUniformCount;
 	std::array<std::array<float, 4>, 16> MaterialUniforms;
@@ -57,8 +59,11 @@ struct StandardRendererState
 		TextureFilterType = ::Effekseer::TextureFilterType::Nearest;
 		TextureWrapType = ::Effekseer::TextureWrapType::Repeat;
 		TexturePtr = nullptr;
+		NormalTexturePtr = nullptr;
+
 		MaterialPtr = nullptr;
 
+		MaterialType = ::Effekseer::RendererMaterialType::Default; 
 		MaterialPtr = nullptr;
 		MaterialUniformCount = 0;
 		MaterialTextureCount = 0;
@@ -84,6 +89,10 @@ struct StandardRendererState
 			return true;
 		if (TexturePtr != state.TexturePtr)
 			return true;
+		if (NormalTexturePtr != state.TexturePtr)
+			return true;
+		if (MaterialType != state.MaterialType)
+			return true;
 		if (MaterialPtr != state.MaterialPtr)
 			return true;
 		if (MaterialUniformCount != state.MaterialUniformCount)
@@ -108,7 +117,7 @@ struct StandardRendererState
 		return false;
 	}
 
-	void CopyMaterialFromParameterToState(Effekseer::Effect* effect, Effekseer::MaterialParameter* materialParam, int32_t colorTextureIndex)
+	void CopyMaterialFromParameterToState(Effekseer::Effect* effect, Effekseer::MaterialParameter* materialParam, int32_t colorTextureIndex, int32_t texture2Index)
 	{
 		if (materialParam != nullptr)
 		{
@@ -166,6 +175,15 @@ struct StandardRendererState
 			else
 			{
 				TexturePtr = nullptr;
+			}
+
+			if (texture2Index >= 0)
+			{
+				NormalTexturePtr = effect->GetNormalImage(texture2Index);
+			}
+			else
+			{
+				NormalTexturePtr = nullptr;
 			}
 
 			Refraction = false;
@@ -251,7 +269,8 @@ public:
 
 		m_state = state;
 
-		isDynamicVertexMode_ = m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex;
+		isDynamicVertexMode_ = (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex) || 
+			m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting;
 		m_isDistortionMode = m_state.Distortion;
 	}
 
@@ -302,6 +321,7 @@ public:
 
 		// It is always initialized with the next drawing.
 		m_state.TexturePtr = (Effekseer::TextureData*)0x1;
+		m_state.NormalTexturePtr = (Effekseer::TextureData*)0x1;
 	}
 
 	const StandardRendererState& GetState() { return m_state; }
@@ -313,7 +333,8 @@ public:
 
 		auto vsize = 0;
 
-		if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex)
+		if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex ||
+			m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
 		{
 			vsize = sizeof(DynamicVertex);
 		}
@@ -454,7 +475,7 @@ public:
 		}
 		else
 		{
-			shader_ = m_renderer->GetShader(true, distortion);
+			shader_ = m_renderer->GetShader(true, m_state.MaterialType);
 		}
 
 		m_renderer->BeginShader(shader_);
@@ -491,7 +512,18 @@ public:
 				textures[0] = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
 			}
 
-			if (distortion)
+			if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
+			{
+				textures[1] = m_renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
+
+				if (m_state.NormalTexturePtr != nullptr && m_state.NormalTexturePtr != (Effekseer::TextureData*)0x01)
+				{
+					textures[1] = m_state.NormalTexturePtr;
+				}
+
+				m_renderer->SetTextures(shader_, textures, 2);
+			}
+			else if (distortion)
 			{
 				textures[1] = m_renderer->GetBackground();
 				m_renderer->SetTextures(shader_, textures, 2);
@@ -607,6 +639,38 @@ public:
 				m_renderer->SetPixelBufferToShader(m_state.MaterialUniforms[i].data(), sizeof(float) * 4, psOffset);
 				psOffset += (sizeof(float) * 4);
 			}
+		}
+		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
+		{
+			VertexConstantBuffer vcb;
+			vcb.constantVSBuffer[0] = mCamera;
+			vcb.constantVSBuffer[1] = mProj;
+			vcb.uvInversed[0] = uvInversed[0];
+			vcb.uvInversed[1] = uvInversed[1];
+
+			m_renderer->SetVertexBufferToShader(&vcb, sizeof(VertexConstantBuffer), 0);
+
+			// ps
+			int32_t psOffset = 0;
+			float lightDirection[4];
+			float lightColor[4];
+			float lightAmbientColor[4];
+
+			::Effekseer::Vector3D lightDirection3 = m_renderer->GetLightDirection();
+			::Effekseer::Vector3D::Normal(lightDirection3, lightDirection3);
+			VectorToFloat4(lightDirection3, lightDirection);
+			ColorToFloat4(m_renderer->GetLightColor(), lightColor);
+			ColorToFloat4(m_renderer->GetLightAmbientColor(), lightAmbientColor);
+
+			m_renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
+
+			m_renderer->SetPixelBufferToShader(lightColor, sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
+
+			m_renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
+			
 		}
 		else
 		{

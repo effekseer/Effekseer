@@ -499,7 +499,7 @@ namespace Effekseer.Data
 	}
 
 	/// <summary>
-	/// 選択肢に関する属性
+	/// A value for a selector
 	/// </summary>
 	[AttributeUsage(
 		AttributeTargets.Property | AttributeTargets.Field,
@@ -519,9 +519,12 @@ namespace Effekseer.Data
 		}
 	}
 
+	/// <summary>
+	/// A values which is shown or hidden with a selector
+	/// </summary>
 	[AttributeUsage(
 		AttributeTargets.Property | AttributeTargets.Field,
-	AllowMultiple = false,
+	AllowMultiple = true,
 	Inherited = false)]
 	public class SelectedAttribute : Attribute
 	{
@@ -554,9 +557,17 @@ namespace Effekseer.Data
 		public string Description = string.Empty;
 		public bool IsUndoEnabled;
 		public bool IsShown = true;
-		public int SelectorID = -1;
-		public int SelectedID = -1;
-		public int SelectedValue = -1;
+		public int SelfSelectorID = -1;
+
+		/// <summary>
+		/// If this value is larger than 0, target selector id is used to show it.
+		/// </summary>
+		public int TargetSelectorID = -1;
+
+		/// <summary>
+		/// If selector value is included in this, this value is shown.
+		/// </summary>
+		public int[] RequiredSelectorValues = null;
 
 		public static EditableValue Create(object o, System.Reflection.PropertyInfo info)
 		{
@@ -589,14 +600,20 @@ namespace Effekseer.Data
 			var selector_attribute = (from a in attributes where a is Data.SelectorAttribute select a).FirstOrDefault() as Data.SelectorAttribute;
 			if (selector_attribute != null)
 			{
-				ret.SelectorID = selector_attribute.ID;
+				ret.SelfSelectorID = selector_attribute.ID;
 			}
 
-			var selected_attribute = (from a in attributes where a is Data.SelectedAttribute select a).FirstOrDefault() as Data.SelectedAttribute;
-			if (selected_attribute != null)
+			// collect selected values
+			var selectedAttributes = attributes.OfType<Data.SelectedAttribute>();
+			if (selectedAttributes.Count() > 0)
 			{
-				ret.SelectedID = selected_attribute.ID;
-				ret.SelectedValue = selected_attribute.Value;
+				if(selectedAttributes.Select(_=>_.ID).Distinct().Count() > 1)
+				{
+					throw new Exception("Same IDs are required.");
+				}
+
+				ret.TargetSelectorID = selectedAttributes.First().ID;
+				ret.RequiredSelectorValues = selectedAttributes.Select(_ => _.Value).ToArray();
 			}
 
 			return ret;

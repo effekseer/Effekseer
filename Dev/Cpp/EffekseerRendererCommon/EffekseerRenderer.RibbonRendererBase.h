@@ -559,11 +559,12 @@ namespace EffekseerRenderer
 		{
 			const auto& state = m_renderer->GetStandardRenderer()->GetState();
 
-			if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
+			if ((state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex) ||
+				parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 			{
 				Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
 			}
-			else if (parameter.Distortion)
+			else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 			{
 				Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
 			}
@@ -780,33 +781,21 @@ namespace EffekseerRenderer
 			if (vertexCount <= 0) return;
 
 			EffekseerRenderer::StandardRendererState state;
-			state.AlphaBlend = param.AlphaBlend;
+			state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
 			state.CullingType = ::Effekseer::CullingType::Double;
 			state.DepthTest = param.ZTest;
 			state.DepthWrite = param.ZWrite;
 			state.TextureFilterType = param.TextureFilter;
 			state.TextureWrapType = param.TextureWrap;
 
-			state.Distortion = param.Distortion;
-			state.DistortionIntensity = param.DistortionIntensity;
+			state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
+			state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
+			state.MaterialType = param.BasicParameterPtr->MaterialType;
 
-			state.CopyMaterialFromParameterToState(param.EffectPointer, param.MaterialParameterPtr, param.ColorTextureIndex);
-
-			if (param.ColorTextureIndex >= 0)
-			{
-				if (state.Distortion)
-				{
-					state.TexturePtr = param.EffectPointer->GetDistortionImage(param.ColorTextureIndex);
-				}
-				else
-				{
-					state.TexturePtr = param.EffectPointer->GetColorImage(param.ColorTextureIndex);
-				}
-			}
-			else
-			{
-				state.TexturePtr = nullptr;
-			}
+			state.CopyMaterialFromParameterToState(param.EffectPointer,
+												   param.BasicParameterPtr->MaterialParameterPtr,
+												   param.BasicParameterPtr->Texture1Index,
+												   param.BasicParameterPtr->Texture2Index);
 
 			m_renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
 

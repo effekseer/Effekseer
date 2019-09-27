@@ -9,18 +9,17 @@ namespace Effekseer.Binary
 {
 	public class Exporter
 	{
-#if MATERIAL_ENABLED
 		/// <summary>
 		/// Binary version
 		/// </summary>
 		/// <remarks>
+		/// Version15
+		/// Material
 		/// Version14
 		/// Support dynamic parameter
 		/// </remarks>
 		const int Version = 15;
-#else
-		const int Version = 14;
-#endif
+
 		public HashSet<string> UsedTextures = new HashSet<string>();
 
 		public HashSet<string> UsedNormalTextures = new HashSet<string>();
@@ -56,9 +55,7 @@ namespace Effekseer.Binary
 
 			Models = new HashSet<string>();
 
-#if MATERIAL_ENABLED
 			HashSet<string> materials = new HashSet<string>();
-#endif
 
 			Action<Data.NodeBase> get_textures = null;
 			get_textures = (node) =>
@@ -72,29 +69,49 @@ namespace Effekseer.Binary
 						}
 						else
 						{
-#if MATERIAL_ENABLED
 							if(_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.Default)
 							{
 								var relative_path = _node.RendererCommonValues.ColorTexture.RelativePath;
 								if (relative_path != string.Empty)
 								{
-									if (_node.RendererCommonValues.Distortion.Value)
+									if (!UsedTextures.Contains(relative_path))
 									{
-										if (!UsedDistortionTextures.Contains(relative_path))
-										{
-											UsedDistortionTextures.Add(relative_path);
-										}
-									}
-									else
-									{
-										if (!UsedTextures.Contains(relative_path))
-										{
-											UsedTextures.Add(relative_path);
-										}
+										UsedTextures.Add(relative_path);
 									}
 								}
 							}
-							else if(_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File)
+							if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion )
+							{
+								var relative_path = _node.RendererCommonValues.ColorTexture.RelativePath;
+								if (relative_path != string.Empty)
+								{
+									if (!UsedDistortionTextures.Contains(relative_path))
+									{
+										UsedDistortionTextures.Add(relative_path);
+									}
+								}
+							}
+							if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
+							{
+								var path1 = _node.RendererCommonValues.ColorTexture.RelativePath;
+								if (path1 != string.Empty)
+								{
+									if (!UsedTextures.Contains(path1))
+									{
+										UsedTextures.Add(path1);
+									}
+								}
+
+								var path2 = _node.RendererCommonValues.NormalTexture.RelativePath;
+								if (path2 != string.Empty)
+								{
+									if (!UsedNormalTextures.Contains(path2))
+									{
+										UsedNormalTextures.Add(path2);
+									}
+								}
+							}
+							else if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File)
 							{
 								var materialInfo = new Utl.MaterialInformation();
 								materialInfo.Load(_node.RendererCommonValues.MaterialFile.Path.AbsolutePath);
@@ -106,7 +123,7 @@ namespace Effekseer.Binary
 									var relative_path = (texture.Item1.Value as Data.Value.PathForImage).RelativePath;
 									if (relative_path != string.Empty)
 									{
-										if(texture.Item2)
+										if (texture.Item2)
 										{
 											if (!UsedNormalTextures.Contains(relative_path))
 											{
@@ -120,38 +137,6 @@ namespace Effekseer.Binary
 												UsedTextures.Add(relative_path);
 											}
 										}
-									}
-								}
-							}
-#else
-							{
-								var relative_path = _node.RendererCommonValues.ColorTexture.RelativePath;
-								if (relative_path != string.Empty)
-								{
-									if(_node.RendererCommonValues.Distortion.Value)
-									{
-										if (!UsedDistortionTextures.Contains(relative_path))
-										{
-											UsedDistortionTextures.Add(relative_path);
-										}
-									}
-									else
-									{
-										if (!UsedTextures.Contains(relative_path))
-										{
-											UsedTextures.Add(relative_path);
-										}
-									}
-								}
-							}
-#endif
-							{
-								var relative_path = _node.DrawingValues.Model.NormalTexture.RelativePath;
-								if (relative_path != string.Empty)
-								{
-									if (!UsedNormalTextures.Contains(relative_path))
-									{
-										UsedNormalTextures.Add(relative_path);
 									}
 								}
 							}
@@ -314,7 +299,6 @@ namespace Effekseer.Binary
 				}
 			}
 
-#if MATERIAL_ENABLED
 			Action<Data.NodeBase> get_materials = null;
 			get_materials = (node) =>
 			{
@@ -352,7 +336,6 @@ namespace Effekseer.Binary
 					index++;
 				}
 			}
-#endif
 
 			// get all nodes
 			var nodes = new List<Data.Node>();
@@ -427,7 +410,6 @@ namespace Effekseer.Binary
 				data.Add(new byte[] { 0, 0 });
 			}
 
-#if MATERIAL_ENABLED
 			// export materials to a file
 			data.Add(BitConverter.GetBytes(material_and_index.Count));
 			foreach (var material in material_and_index)
@@ -437,7 +419,6 @@ namespace Effekseer.Binary
 				data.Add(path);
 				data.Add(new byte[] { 0, 0 });
 			}
-#endif
 
 			// export dynamic parameters
 			data.Add(BitConverter.GetBytes(Core.Dynamic.Inputs.Values.Count));
@@ -613,12 +594,8 @@ namespace Effekseer.Binary
 				node_data.Add(((int)n.DepthValues.ZSort.Value).GetBytes());
 				node_data.Add(n.DepthValues.DrawingPriority.Value.GetBytes());
 				node_data.Add(n.DepthValues.SoftParticle.Value.GetBytes());
-
-#if MATERIAL_ENABLED
 				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index, normalTexture_and_index, distortionTexture_and_index, material_and_index));
-#else
-				node_data.Add(RendererCommonValues.GetBytes(n.RendererCommonValues, texture_and_index, distortionTexture_and_index));
-#endif
+
 
 				if (isRenderParamExported)
 				{

@@ -86,12 +86,14 @@ private:
 
 	Shader* m_shader = nullptr;
 	Shader* m_shader_distortion = nullptr;
+	Shader* m_shader_lighting = nullptr;
 	Shader* currentShader = nullptr;
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>*	m_standardRenderer;
 
 	VertexArray* m_vao = nullptr;
 	VertexArray* m_vao_distortion = nullptr;
+	VertexArray* m_vao_lighting = nullptr;
 	VertexArray* m_vao_wire_frame = nullptr;
 
 	::Effekseer::Vector3D	m_lightDirection;
@@ -305,7 +307,7 @@ public:
 	void DrawSprites( int32_t spriteCount, int32_t vertexOffset );
 	void DrawPolygon( int32_t vertexCount, int32_t indexCount);
 
-	Shader* GetShader(bool useTexture, bool useDistortion) const;
+	Shader* GetShader(bool useTexture, ::Effekseer::RendererMaterialType materialType) const;
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 

@@ -139,21 +139,16 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if (renderer != NULL)
 	{
-		m_nodeParameter.AlphaBlend = AlphaBlend;
 		m_nodeParameter.TextureFilter = RendererCommon.FilterType;
 		m_nodeParameter.TextureWrap = RendererCommon.WrapType;
 		m_nodeParameter.ZTest = RendererCommon.ZTest;
 		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
 		m_nodeParameter.ViewpointDependent = ViewpointDependent != 0;
-		m_nodeParameter.ColorTextureIndex = RibbonTexture;
 		m_nodeParameter.EffectPointer = GetEffect();
-
-		m_nodeParameter.Distortion = RendererCommon.Distortion;
-		m_nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 
 		m_nodeParameter.SplineDivision = SplineDivision;
 		m_nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-
+		m_nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		renderer->BeginRendering(m_nodeParameter, count, m_userData);
 	}
 }

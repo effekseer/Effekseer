@@ -423,25 +423,7 @@ namespace Effekseer.Binary
 					data.Add((-1).GetBytes());
 				}
 
-				if (param.NormalTexture.RelativePath != string.Empty)
-				{
-					data.Add(normalTexture_and_index[param.NormalTexture.RelativePath].GetBytes());
-				}
-				else
-				{
-					data.Add((-1).GetBytes());
-				}
-
 				data.Add(param.Billboard);
-
-				if (param.Lighting.Value)
-				{
-					data.Add((1).GetBytes());
-				}
-				else
-				{
-					data.Add((0).GetBytes());
-				}
 
 				data.Add(((int)param.Culling.Value).GetBytes());
 

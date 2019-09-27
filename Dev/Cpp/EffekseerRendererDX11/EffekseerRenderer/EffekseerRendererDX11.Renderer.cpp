@@ -67,6 +67,19 @@ namespace Standard_Distortion_PS
 #include "Shader/EffekseerRenderer.Standard_Distortion_PS.h"
 }
 
+namespace Standard_Lighting_VS
+{
+static
+#include "Shader/EffekseerRenderer.Standard_Lighting_VS.h"
+} // namespace Standard_Distortion_VS
+
+namespace Standard_Lighting_PS
+{
+static
+#include "Shader/EffekseerRenderer.Standard_Lighting_PS.h"
+} // namespace Standard_Distortion_PS
+
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -270,6 +283,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_shader);
 
 	ES_SAFE_DELETE(m_shader_distortion);
+	ES_SAFE_DELETE(m_shader_lighting);
 
 	ES_SAFE_DELETE( m_state );
 
@@ -278,7 +292,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE( m_indexBuffer );
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
 
-	assert(GetRef() == -5);
+	assert(GetRef() == -6);
 }
 
 //----------------------------------------------------------------------------------
@@ -393,6 +407,16 @@ bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 		{ "NORMAL", 2, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
+	D3D11_INPUT_ELEMENT_DESC decl_lighting[] = {
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 1, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 2, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 5, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+	};
+
 	m_shader = Shader::Create(
 		this,
 		Standard_VS::g_VS,
@@ -425,6 +449,25 @@ bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion->SetPixelRegisterCount(1 + 1);
+
+	m_shader_lighting = Shader::Create(this,
+									   Standard_Lighting_VS::g_VS,
+									   sizeof(Standard_Lighting_VS::g_VS),
+									   Standard_Lighting_PS::g_PS,
+									   sizeof(Standard_Lighting_PS::g_PS),
+										 "StandardRenderer Lighting",
+									   decl_lighting,
+									   ARRAYSIZE(decl_lighting));
+	if (m_shader_lighting == NULL)
+		return false;
+
+	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
+	m_shader_lighting->SetVertexRegisterCount(8 + 1);
+
+	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
+	m_shader_lighting->SetPixelRegisterCount(12);
+	
+	Release();
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(
 		this, m_shader, m_shader_distortion);
@@ -855,9 +898,9 @@ void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 		0 );
 }
 
-Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) const
+Shader* RendererImplemented::GetShader(bool useTexture, ::Effekseer::RendererMaterialType materialType) const
 {
-	if (useDistortion)
+	if (materialType == ::Effekseer::RendererMaterialType::BackDistortion)
 	{
 		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
 		{
@@ -866,6 +909,17 @@ Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) cons
 		else
 		{
 			return m_shader_distortion;
+		}
+	}
+	else if (materialType == ::Effekseer::RendererMaterialType::Lighting)
+	{
+		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
+		{
+			return m_shader_lighting;
+		}
+		else
+		{
+			return m_shader_lighting;
 		}
 	}
 	else
