@@ -645,8 +645,11 @@ namespace Effekseer
 
 		public static void SaveTo(string path)
 		{
-			var doc = SaveAsXmlDocument(path);
-			doc.Save(path);
+			var loader = new IO.EfkEfc();
+			loader.Save(path);
+
+			//var doc = SaveAsXmlDocument(path);
+			//doc.Save(path);
 		}
 
 		public static bool LoadFromXml(string xml, string basePath)
@@ -948,6 +951,55 @@ namespace Effekseer
 			var fullpath = System.IO.Path.GetFullPath(path);
 
 			if (!System.IO.File.Exists(fullpath)) return false;
+
+			// new format?
+			bool isNewFormat = false;
+			{
+				if (string.IsNullOrEmpty(path))
+					return false;
+
+				System.IO.FileStream fs = null;
+				if (!System.IO.File.Exists(path)) return false;
+
+				try
+				{
+					fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+				}
+				catch (System.IO.FileNotFoundException e)
+				{
+					return false;
+				}
+
+				var br = new System.IO.BinaryReader(fs);
+
+				var buf = new byte[1024];
+
+
+				if (br.Read(buf, 0, 20) != 20)
+				{
+					fs.Dispose();
+					br.Close();
+					return false;
+				}
+
+				if (buf[0] != 'P' ||
+					buf[1] != 'K' ||
+					buf[2] != 'F' ||
+					buf[3] != 'E')
+				{
+					isNewFormat = false;
+				}
+				else
+				{
+					isNewFormat = true;
+				}
+			}
+
+			if(isNewFormat)
+			{
+				var loader = new IO.EfkEfc();
+				return loader.Load(path);
+			}
 
 			var doc = new System.Xml.XmlDocument();
 			doc.Load(path);

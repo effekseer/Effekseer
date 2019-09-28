@@ -19,6 +19,7 @@
 #include "Renderer/Effekseer.TrackRenderer.h"
 
 #include "Effekseer.Effect.h"
+#include "IO/Effekseer.EfkEfcFactory.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -37,6 +38,9 @@ Setting::Setting()
 {
 	auto effectFactory = new EffectFactory();
 	effectFactories.push_back(effectFactory);
+
+	auto efkefcFactory = new EfkEfcFactory();
+	effectFactories.push_back(efkefcFactory);
 }
 
 //----------------------------------------------------------------------------------
