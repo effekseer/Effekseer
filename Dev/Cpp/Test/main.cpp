@@ -13,10 +13,6 @@
 #include "sound.h"
 #include "common.h"
 
-#ifndef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
-#include "../EffekseerRendererArea/EffekseerRenderer/EffekseerRendererArea.Renderer.h"
-#endif
-
 #if _WIN32
 
 #define _CRTDBG_MAP_ALLOC  
@@ -216,20 +212,6 @@ void Init()
 	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/block.efk") ) );
 	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/block_simple.efk") ) );
 	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Simple_Distortion.efk") ) );
-#endif
-
-#ifndef __EFFEKSEER_TEST_BUILD_AS_CMAKE__ 
-	// test area
-	EffekseerRendererArea::BoundingBoxEstimator bbestimator;
-	bbestimator.Estimate(testManager->effects[0],
-						 ::Effekseer::Matrix44().LookAtRH(g_position, g_focus, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)),
-						 ::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, 4.0f / 3.0f, 1.0f, 100.0f),
-						 640,
-						 480,
-						 100,
-						 0.90f,
-		0.0f,
-		1.0f);
 #endif
 
 	PlayEffect();

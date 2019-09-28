@@ -1,4 +1,4 @@
-﻿
+
 #ifndef	__EFFEKSEERRENDERER_GL_BASE_PRE_H__
 #define	__EFFEKSEERRENDERER_GL_BASE_PRE_H__
 
@@ -17,6 +17,7 @@
 #if _WIN32
 #include <GL/gl.h>
 #elif defined(__APPLE__)
+#define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
 #else
 #include <GL/glew.h>
@@ -27,6 +28,7 @@
 #if _WIN32
 #include <GL/gl.h>
 #elif defined(__APPLE__)
+#define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
 #else
 #define GLEW_STATIC
@@ -55,6 +57,7 @@
 #elif defined(__EFFEKSEER_RENDERER_GL2__)
 
 #if defined(__APPLE__)
+#define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl.h>
 #else
 #include <GL/gl.h>
@@ -63,6 +66,7 @@
 #else
 
 #if defined(__APPLE__)
+#define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
 #else
 #define GL_GLEXT_PROTOTYPES

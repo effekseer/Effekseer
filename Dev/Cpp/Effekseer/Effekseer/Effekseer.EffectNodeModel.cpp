@@ -46,9 +46,13 @@ namespace Effekseer
 	memcpy( &ModelIndex, pos, sizeof(int) );
 	pos += sizeof(int);
 
-	memcpy( &NormalTextureIndex, pos, sizeof(int) );
-	pos += sizeof(int);
-	EffekseerPrintDebug("NormalTextureIndex : %d\n", NormalTextureIndex );
+	if (m_effect->GetVersion() < 15)
+	{
+		memcpy(&NormalTextureIndex, pos, sizeof(int));
+		pos += sizeof(int);
+		EffekseerPrintDebug("NormalTextureIndex : %d\n", NormalTextureIndex);
+		RendererCommon.Texture2Index = NormalTextureIndex;
+	}
 
 	if (m_effect->GetVersion() >= 12)
 	{
@@ -60,10 +64,14 @@ namespace Effekseer
 		Billboard = BillboardType::Fixed;
 	}
 
-	int32_t lighting;
-	memcpy( &lighting, pos, sizeof(int) );
-	pos += sizeof(int);
-	Lighting = lighting > 0;
+	if (m_effect->GetVersion() < 15)
+	{
+		int32_t lighting;
+		memcpy(&lighting, pos, sizeof(int));
+		pos += sizeof(int);
+		Lighting = lighting > 0;
+		RendererCommon.MaterialType = RendererMaterialType::Lighting;
+	}
 
 	memcpy( &Culling, pos, sizeof(int) );
 	pos += sizeof(int);
@@ -80,39 +88,24 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 	if (renderer != NULL)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
 		nodeParameter.TextureFilter = RendererCommon.FilterType;
 		nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
 		nodeParameter.Billboard = Billboard;
-		nodeParameter.Lighting = Lighting;
-		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
 			CoordinateSystem::RH;
 
-		nodeParameter.Distortion = RendererCommon.Distortion;
-		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
-
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
+		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
+		//nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+		//nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
-		if (RendererCommon.MaterialType == ParameterRendererCommon::RendererMaterialType::Default)
-		{
-			nodeParameter.MaterialParameterPtr = nullptr;
-		}
-		else
-		{
-			nodeParameter.MaterialParameterPtr = &(RendererCommon.Material);
-		}
-
+		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		renderer->BeginRendering(nodeParameter, count, m_userData);
 	}
 }
@@ -127,38 +120,23 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
 		nodeParameter.TextureFilter = RendererCommon.FilterType;
 		nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
 		nodeParameter.Billboard = Billboard;
-		nodeParameter.Lighting = Lighting;
-		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
 			CoordinateSystem::RH;
 
-		nodeParameter.Distortion = RendererCommon.Distortion;
-		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
-
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
-
-		if (RendererCommon.MaterialType == ParameterRendererCommon::RendererMaterialType::Default)
-		{
-			nodeParameter.MaterialParameterPtr = nullptr;
-		}
-		else
-		{
-			nodeParameter.MaterialParameterPtr = &(RendererCommon.Material);
-		}
+		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
+		//nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+		//nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
+		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
 		ModelRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
@@ -182,6 +160,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 			instanceParameter.AllColor = Color::Mul(instanceParameter.AllColor, instance.m_pContainer->GetRootInstance()->GlobalColor);
 		}
 
+		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		renderer->Rendering( nodeParameter, instanceParameter, m_userData );
 	}
 }
@@ -195,39 +174,24 @@ void EffectNodeModel::EndRendering(Manager* manager)
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.AlphaBlend = AlphaBlend;
 		nodeParameter.TextureFilter = RendererCommon.FilterType;
 		nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ModelIndex = ModelIndex;
-		nodeParameter.ColorTextureIndex = RendererCommon.ColorTextureIndex;
 		nodeParameter.Culling = Culling;
 		nodeParameter.Billboard = Billboard;
-		nodeParameter.Lighting = Lighting;
-		nodeParameter.NormalTextureIndex = NormalTextureIndex;
 		nodeParameter.Magnification = m_effect->GetMaginification();
 		nodeParameter.IsRightHand = manager->GetSetting()->GetCoordinateSystem() ==
 			CoordinateSystem::RH;
 
-		nodeParameter.Distortion = RendererCommon.Distortion;
-		nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
-
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
+		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
+		//nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
+		//nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 
-		if (RendererCommon.MaterialType == ParameterRendererCommon::RendererMaterialType::Default)
-		{
-			nodeParameter.MaterialParameterPtr = nullptr;
-		}
-		else
-		{
-			nodeParameter.MaterialParameterPtr = &(RendererCommon.Material);
-		}
-
+		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		renderer->EndRendering( nodeParameter, m_userData );
 	}
 }

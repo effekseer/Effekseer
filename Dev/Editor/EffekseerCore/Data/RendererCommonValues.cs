@@ -293,6 +293,8 @@ namespace Effekseer.Data
 		}
 
 		[Selected(ID = 3, Value = 0)]
+		[Selected(ID = 3, Value = 4)]
+		[Selected(ID = 3, Value = 5)]
 		[Name(language = Language.Japanese, value = "色/歪み画像")]
 		[Description(language = Language.Japanese, value = "色/歪みを表す画像")]
 		[Name(language = Language.English, value = "Texture")]
@@ -302,6 +304,22 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
+
+		[Selected(ID = 3, Value = 5)]
+		[Name(language = Language.Japanese, value = "法線画像")]
+		[Description(language = Language.Japanese, value = "法線を表す画像")]
+		[Name(language = Language.English, value = "Normal Map")]
+		[Description(language = Language.English, value = "Image representing normal vectors")]
+		public Value.PathForImage NormalTexture
+		{
+			get;
+			private set;
+		}
+
+		[Selected(ID = 3, Value = 4)]
+		[Name(language = Language.Japanese, value = "歪み強度")]
+		[Name(language = Language.English, value = "Distortion\nIntensity")]
+		public Value.Float DistortionIntensity { get; private set; }
 
 		[Selected(ID = 3, Value = (int)MaterialType.File)]
 		[IO(Export = true)]
@@ -420,21 +438,14 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "歪み")]
-		[Name(language = Language.English, value = "Distortion")]
-		public Value.Boolean Distortion { get; private set; }
-
-		[Name(language = Language.Japanese, value = "歪み強度")]
-		[Name(language = Language.English, value = "Distortion\nIntensity")]
-		public Value.Float DistortionIntensity { get; private set; }
-
 		internal RendererCommonValues()
 		{
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
 			MaterialFile = new MaterialFileParameter();
 
 			ColorTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
-			
+			NormalTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+
 			AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);
 			Wrap = new Value.Enum<WrapType>(WrapType.Repeat);
@@ -460,7 +471,6 @@ namespace Effekseer.Data
 
 			ColorInheritType = new Value.Enum<ParentEffectType>(ParentEffectType.NotBind);
 
-			Distortion = new Value.Boolean(false);
 			DistortionIntensity = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
 		}
 
@@ -650,6 +660,15 @@ namespace Effekseer.Data
 			[Name(value = "標準", language = Language.Japanese)]
 			[Name(value = "Default", language = Language.English)]
 			Default = 0,
+
+			[Name(value = "歪み(背景)", language = Language.Japanese)]
+			[Name(value = "Distortion(Back)", language = Language.English)]
+			BackDistortion = 4,
+
+			[Name(value = "ライティング", language = Language.Japanese)]
+			[Name(value = "Lighting", language = Language.English)]
+			Lighting = 5,
+
 			[Name(value = "ファイル", language = Language.Japanese)]
 			[Name(value = "File", language = Language.English)]
 			File = 128,

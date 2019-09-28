@@ -249,6 +249,104 @@ void main() {
 }
 )";
 
+static const char g_sprite_vs_lighting_src[] =
+	R"(
+IN vec4 atPosition;
+IN vec4 atColor;
+IN vec3 atNormal;
+IN vec3 atTangent;
+IN vec2 atTexCoord;
+IN vec2 atTexCoord2;
+)"
+
+	R"(
+OUT lowp vec4 v_VColor;
+OUT mediump vec2 v_UV1;
+OUT mediump vec2 v_UV2;
+OUT mediump vec3 v_WorldP;
+OUT mediump vec3 v_WorldN;
+OUT mediump vec3 v_WorldT;
+OUT mediump vec3 v_WorldB;
+OUT mediump vec2 v_ScreenUV;
+)"
+
+	R"(
+uniform mat4 uMatCamera;
+uniform mat4 uMatProjection;
+uniform vec4 mUVInversed;
+
+)"
+
+	R"(
+void main() {
+	vec3 worldPos = atPosition.xyz;
+
+	// UV
+	vec2 uv1 = atTexCoord.xy;
+	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	vec2 uv2 = atTexCoord2.xy;
+	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
+
+	// NBT
+	vec3 worldNormal = (atNormal - vec3(0.5, 0.5, 0.5)) * 2.0;
+	vec3 worldTangent = (atTangent - vec3(0.5, 0.5, 0.5)) * 2.0;
+	vec3 worldBinormal = cross(worldNormal, worldTangent);
+
+	v_WorldN = worldNormal;
+	v_WorldB = worldBinormal;
+	v_WorldT = worldTangent;
+	vec3 pixelNormalDir = vec3(0.5, 0.5, 1.0);
+
+	vec4 cameraPos = uMatCamera * vec4(worldPos, 1.0);
+	cameraPos = cameraPos / cameraPos.w;
+
+	gl_Position = uMatProjection * cameraPos;
+
+	v_WorldP = worldPos;
+	v_VColor = atColor;
+
+	v_UV1 = uv1;
+	v_UV2 = uv2;
+	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
+	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
+}
+
+)";
+
+static const char g_sprite_fs_lighting_src[] =
+	R"(
+
+IN lowp vec4 v_VColor;
+IN mediump vec2 v_UV1;
+IN mediump vec2 v_UV2;
+IN mediump vec3 v_WorldP;
+IN mediump vec3 v_WorldN;
+IN mediump vec3 v_WorldT;
+IN mediump vec3 v_WorldB;
+IN mediump vec2 v_ScreenUV;
+
+uniform sampler2D ColorTexture;
+uniform sampler2D NormalTexture;
+uniform vec4 LightDirection;
+uniform vec4 LightColor;
+uniform vec4 LightAmbient;
+
+void main()
+{
+	vec4 diffuse = vec4(1.0);
+	
+	vec3 texNormal = (TEX2D(NormalTexture, v_UV1.xy).xyz - 0.5) * 2.0;
+	mat3 normalMatrix = mat3(v_WorldT.xyz, v_WorldB.xyz, v_WorldN.xyz );
+	vec3 localNormal = normalize( normalMatrix * texNormal );
+	diffuse = vec4(max(0.0, dot(localNormal, LightDirection.xyz)));
+	
+	FRAGCOLOR = v_VColor * TEX2D(ColorTexture, v_UV1.xy);
+	FRAGCOLOR.xyz = FRAGCOLOR.xyz * (diffuse.xyz + LightAmbient.xyz);
+}
+
+
+)";
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -333,12 +431,14 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_standardRenderer);
 	ES_SAFE_DELETE(m_shader);
 	ES_SAFE_DELETE(m_shader_distortion);
+	ES_SAFE_DELETE(m_shader_lighting);
 
 	auto isVaoEnabled = m_vao != nullptr;
 
 	ES_SAFE_DELETE(m_vao);
 	ES_SAFE_DELETE(m_vao_distortion);
 	ES_SAFE_DELETE(m_vao_wire_frame);
+	ES_SAFE_DELETE(m_vao_lighting);
 
 	ES_SAFE_DELETE( m_renderState );
 	ES_SAFE_DELETE( m_vertexBuffer );
@@ -347,11 +447,11 @@ RendererImplemented::~RendererImplemented()
 
 	if (isVaoEnabled)
 	{
-		assert(GetRef() == -8);
+		assert(GetRef() == -10);
 	}
 	else
 	{
-		assert(GetRef() == -5);
+		assert(GetRef() == -6);
 	}
 }
 
@@ -550,9 +650,54 @@ bool RendererImplemented::Initialize()
 	m_shader_distortion->SetTextureSlot(1, m_shader_distortion->GetUniformId("uBackTexture0"));
 
 	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer());
-	
-	// 参照カウントの調整
 	if (m_vao_distortion != nullptr) Release();
+
+
+	// Lighting
+	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[6] = {
+		{"atPosition", GL_FLOAT, 3, 0, false},
+		{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
+		{"atNormal", GL_UNSIGNED_BYTE, 4, 16, true},
+		{"atTangent", GL_UNSIGNED_BYTE, 4, 20, true},
+		{"atTexCoord", GL_FLOAT, 2, 24, false},
+		{"atTexCoord2", GL_FLOAT, 2, 32, false},
+	};
+
+	m_shader_lighting = Shader::Create(this,
+										 g_sprite_vs_lighting_src,
+									   sizeof(g_sprite_vs_lighting_src),
+									   g_sprite_fs_lighting_src,
+									   sizeof(g_sprite_fs_lighting_src),
+										 "Standard Lighting Tex");
+	if (m_shader_lighting == nullptr)
+		return false;
+
+	Release();
+
+	m_shader_lighting->GetAttribIdList(5, sprite_attribs_lighting);
+	m_shader_lighting->SetVertexSize(sizeof(EffekseerRenderer::DynamicVertex));
+	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
+	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
+
+	m_shader_lighting->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, m_shader_lighting->GetUniformId("uMatCamera"), 0);
+
+	m_shader_lighting->AddVertexConstantLayout(
+		CONSTANT_TYPE_MATRIX44, m_shader_lighting->GetUniformId("uMatProjection"), sizeof(Effekseer::Matrix44));
+
+	m_shader_lighting->AddVertexConstantLayout(
+		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("mUVInversed"), sizeof(Effekseer::Matrix44) * 2);
+
+	m_shader_lighting->AddPixelConstantLayout(
+		CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("LightDirection"), sizeof(float[4]) * 0);
+	m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("LightColor"), sizeof(float[4]) * 1);
+	m_shader_lighting->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, m_shader_lighting->GetUniformId("LightAmbient"), sizeof(float[4]) * 2);
+
+	m_shader_lighting->SetTextureSlot(0, m_shader_lighting->GetUniformId("ColorTexture"));
+	m_shader_lighting->SetTextureSlot(1, m_shader_lighting->GetUniformId("NormalTexture"));
+
+	m_vao_lighting = VertexArray::Create(this, m_shader_lighting, GetVertexBuffer(), GetIndexBuffer());
+	if (m_vao_lighting != nullptr)
+		Release();
 
 	m_vao_wire_frame = VertexArray::Create(this, m_shader, GetVertexBuffer(), m_indexBufferForWireframe);
 	if (m_vao_wire_frame != nullptr) Release();
@@ -1077,9 +1222,9 @@ void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) const
+Shader* RendererImplemented::GetShader(bool useTexture, ::Effekseer::RendererMaterialType materialType) const
 {
-	if( useDistortion )
+	if (materialType == ::Effekseer::RendererMaterialType::BackDistortion)
 	{
 		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
 		{
@@ -1088,6 +1233,17 @@ Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) cons
 		else
 		{
 			return m_shader_distortion;
+		}
+	}
+	else if (materialType == ::Effekseer::RendererMaterialType::Lighting)
+	{
+		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
+		{
+			return m_shader_lighting;
+		}
+		else
+		{
+			return m_shader_lighting;
 		}
 	}
 	else

@@ -68,17 +68,18 @@ protected:
 	void BeginRendering_(RENDERER* renderer, int32_t count, const efkSpriteNodeParam& param)
 	{
 		EffekseerRenderer::StandardRendererState state;
-		state.AlphaBlend = param.AlphaBlend;
+		state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
 		state.CullingType = ::Effekseer::CullingType::Double;
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
 		state.TextureFilterType = param.TextureFilter;
 		state.TextureWrapType = param.TextureWrap;
 
-		state.Distortion = param.Distortion;
-		state.DistortionIntensity = param.DistortionIntensity;
+		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
+		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
+		state.MaterialType = param.BasicParameterPtr->MaterialType;
 
-		state.CopyMaterialFromParameterToState(param.EffectPointer, param.MaterialParameterPtr, param.ColorTextureIndex);
+		state.CopyMaterialFromParameterToState(param.EffectPointer, param.BasicParameterPtr->MaterialParameterPtr, param.BasicParameterPtr->Texture1Index, param.BasicParameterPtr->Texture2Index);
 
 		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
 
@@ -95,11 +96,12 @@ protected:
 			auto camera = m_renderer->GetCameraMatrix();
 			const auto& state = m_renderer->GetStandardRenderer()->GetState();
 
-			if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
+			if ((state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex) ||
+				parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 			{
 				Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
 			}
-			else if (parameter.Distortion)
+			else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 			{
 				Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
 			}
@@ -282,9 +284,6 @@ protected:
 								 m_renderer->GetCameraFrontDirection(),
 								 m_renderer->GetCameraPosition(),
 								 s,
-								 parameter.DepthOffset,
-								 parameter.IsDepthOffsetScaledWithCamera,
-								 parameter.IsDepthOffsetScaledWithParticleScale,
 								 parameter.DepthParameterPtr,
 								 parameter.IsRightHand);
 
@@ -307,9 +306,6 @@ protected:
 			ApplyDepthParameters(mat,
 							 m_renderer->GetCameraFrontDirection(),
 							 m_renderer->GetCameraPosition(),
-							 parameter.DepthOffset,
-							 parameter.IsDepthOffsetScaledWithCamera,
-							 parameter.IsDepthOffsetScaledWithParticleScale,
 							 parameter.DepthParameterPtr,
 							 parameter.IsRightHand);
 
@@ -397,7 +393,7 @@ protected:
 				{
 					Rendering_Internal<DynamicVertex>(param, kv.Value, nullptr, camera);
 				}
-				else if (param.Distortion)
+				else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 				{
 					Rendering_Internal<VERTEX_DISTORTION>(param, kv.Value, nullptr, camera);
 				}

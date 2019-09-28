@@ -169,6 +169,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\EffekseerMaterialCompiler\OpenGL\EffekseerMaterialCompilerGL.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.CommonUtils.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.DDSTextureLoader.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.h" />
@@ -203,6 +204,7 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\EffekseerMaterialCompiler\OpenGL\EffekseerMaterialCompilerGL.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.CommonUtils.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.DDSTextureLoader.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.cpp" />

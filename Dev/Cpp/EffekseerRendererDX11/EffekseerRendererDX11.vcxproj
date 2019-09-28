@@ -171,6 +171,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\EffekseerMaterialCompiler\DirectX11\EffekseerMaterialCompilerDX11.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.CommonUtils.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.DDSTextureLoader.h" />
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.DXTK.dds.h" />
@@ -203,6 +204,7 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\EffekseerMaterialCompiler\DirectX11\EffekseerMaterialCompilerDX11.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.CommonUtils.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.DDSTextureLoader.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.DXTK.DDSTextureLoader.cpp" />

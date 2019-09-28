@@ -7,6 +7,12 @@
     <Filter Include="EffekseerRendererCommon">
       <UniqueIdentifier>{78d0391b-4390-43ef-b616-5dde6c474cd3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EffekseerMaterialCompiler">
+      <UniqueIdentifier>{8d21c221-ab48-4faa-a6cd-cca0ff8baf09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EffekseerMaterialCompiler\DirectX11">
+      <UniqueIdentifier>{4f52b609-528d-4ed3-8ac2-9aa0c7e0f32e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.IndexBufferBase.h">
@@ -97,6 +103,9 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererDX11.MaterialLoader.h">
       <Filter>EffekseerRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\EffekseerMaterialCompiler\DirectX11\EffekseerMaterialCompilerDX11.h">
+      <Filter>EffekseerMaterialCompiler\DirectX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">
@@ -170,6 +179,9 @@
     </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererDX11.MaterialLoader.cpp">
       <Filter>EffekseerRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\EffekseerMaterialCompiler\DirectX11\EffekseerMaterialCompilerDX11.cpp">
+      <Filter>EffekseerMaterialCompiler\DirectX11</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

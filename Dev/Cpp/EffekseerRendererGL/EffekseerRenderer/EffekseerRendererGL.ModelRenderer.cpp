@@ -612,9 +612,9 @@ void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const Instance
 
 void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* userData )
 {
-	if (parameter.Distortion)
+	if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 	{
-		if (parameter.ColorTextureIndex >= 0)
+		if (parameter.BasicParameterPtr->Texture1Index >= 0)
 		{
 			m_renderer->SetVertexArray(m_va[6]);
 		}
@@ -623,11 +623,11 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 			m_renderer->SetVertexArray(m_va[7]);
 		}
 	}
-	else if (parameter.Lighting)
+	else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 	{
-		if (parameter.NormalTextureIndex >= 0)
+		if (parameter.BasicParameterPtr->Texture2Index >= 0)
 		{
-			if (parameter.ColorTextureIndex >= 0)
+			if (parameter.BasicParameterPtr->Texture1Index >= 0)
 			{
 				m_renderer->SetVertexArray(m_va[0]);
 			}
@@ -638,7 +638,7 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 			}
 		else
 		{
-			if (parameter.ColorTextureIndex >= 0)
+			if (parameter.BasicParameterPtr->Texture1Index >= 0)
 			{
 				m_renderer->SetVertexArray(m_va[2]);
 			}
@@ -650,7 +650,7 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 	}
 	else
 	{
-		if (parameter.ColorTextureIndex >= 0)
+		if (parameter.BasicParameterPtr->Texture1Index >= 0)
 		{
 			m_renderer->SetVertexArray(m_va[4]);
 		}

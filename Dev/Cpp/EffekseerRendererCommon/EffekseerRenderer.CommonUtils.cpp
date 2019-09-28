@@ -9,12 +9,13 @@ namespace EffekseerRenderer
 void ApplyDepthParameters(::Effekseer::Matrix43& mat,
 	const ::Effekseer::Vector3D& cameraFront,
 	const ::Effekseer::Vector3D& cameraPos,
-	float depthOffset,
-	bool isDepthOffsetScaledWithCamera,
-	bool isDepthOffsetScaledWithEffect,
 	::Effekseer::NodeRendererDepthParameter* depthParameter,
 	bool isRightHand)
 {
+	auto depthOffset = depthParameter->DepthOffset;
+	auto isDepthOffsetScaledWithCamera = depthParameter->IsDepthOffsetScaledWithCamera;
+	auto isDepthOffsetScaledWithEffect = depthParameter->IsDepthOffsetScaledWithParticleScale;
+
 	if (depthOffset != 0)
 	{
 		auto offset = depthOffset;
@@ -109,12 +110,13 @@ void ApplyDepthParameters(::Effekseer::Matrix43& mat,
 					  const ::Effekseer::Vector3D& cameraFront,
 					  const ::Effekseer::Vector3D& cameraPos,
 					  ::Effekseer::Vector3D& scaleValues,
-					  float depthOffset,
-					  bool isDepthOffsetScaledWithCamera,
-					  bool isDepthOffsetScaledWithEffect,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand)
 {
+	auto depthOffset = depthParameter->DepthOffset;
+	auto isDepthOffsetScaledWithCamera = depthParameter->IsDepthOffsetScaledWithCamera;
+	auto isDepthOffsetScaledWithEffect = depthParameter->IsDepthOffsetScaledWithParticleScale;
+
 	if (depthOffset != 0)
 	{
 		auto offset = depthOffset;
@@ -190,12 +192,13 @@ void ApplyDepthParameters(::Effekseer::Matrix43& mat,
 void ApplyDepthParameters(::Effekseer::Matrix44& mat,
 						  const ::Effekseer::Vector3D& cameraFront,
 						  const ::Effekseer::Vector3D& cameraPos,
-						  float depthOffset,
-						  bool isDepthOffsetScaledWithCamera,
-						  bool isDepthOffsetScaledWithEffect,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 						  bool isRightHand)
 {
+	auto depthOffset = depthParameter->DepthOffset;
+	auto isDepthOffsetScaledWithCamera = depthParameter->IsDepthOffsetScaledWithCamera;
+	auto isDepthOffsetScaledWithEffect = depthParameter->IsDepthOffsetScaledWithParticleScale;
+
 	if (depthOffset != 0)
 	{
 		auto offset = depthOffset;

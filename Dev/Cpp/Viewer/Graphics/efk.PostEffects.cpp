@@ -24,7 +24,6 @@ namespace efk
 #endif
 		if (graphics->GetDeviceType() == DeviceType::OpenGL)
 		{
-			return nullptr;
 			return new BloomEffectGL(graphics);
 		}
 
@@ -46,7 +45,7 @@ namespace efk
 #endif
 		if (graphics->GetDeviceType() == DeviceType::OpenGL)
 		{
-			//return new TonemapEffectGL(graphics);
+			return new TonemapEffectGL(graphics);
 		}
 
 		return nullptr;

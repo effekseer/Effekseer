@@ -420,7 +420,7 @@ namespace Effekseer.GUI.Component
 				private set;
 			}
 
-			public int SelectorID
+			public int SelfSelectorID
 			{
 				get;
 				private set;
@@ -436,9 +436,9 @@ namespace Effekseer.GUI.Component
 			}
 
 			/// <summary>
-			/// Selectorに要求するID
+			/// A value which is required to show
 			/// </summary>
-			public int SelectorValue
+			public int[] RequiredSelectorValues
 			{
 				get;
 				private set;
@@ -592,15 +592,15 @@ namespace Effekseer.GUI.Component
 					dgui.Initialize(types[0]);
 				}
 
-				if (editableValue.SelectorID >= 0)
+				if (editableValue.SelfSelectorID >= 0)
 				{
 					IsSelector = true;
-					SelectorID = editableValue.SelectorID;
+					SelfSelectorID = editableValue.SelfSelectorID;
 				}
 				else
 				{
 					IsSelector = false;
-					SelectorID = -1;
+					SelfSelectorID = -1;
 				}
 
 				Control = gui;
@@ -623,14 +623,14 @@ namespace Effekseer.GUI.Component
 			public void SetSelector(List<TypeRow> sameLayerRows)
 			{
 				// Selector
-				if(editableValue.SelectedID >= 0)
+				if(editableValue.TargetSelectorID >= 0)
 				{
-					var selector = sameLayerRows.Where(_ => _.IsSelector && _.SelectorID == editableValue.SelectedID).LastOrDefault();
+					var selector = sameLayerRows.Where(_ => _.IsSelector && _.SelfSelectorID == editableValue.TargetSelectorID).LastOrDefault();
 
 					if (selector != null)
 					{
 						Selector = selector;
-						SelectorValue = editableValue.SelectedValue;
+						RequiredSelectorValues = editableValue.RequiredSelectorValues;
 					}
 				}
 			}
@@ -647,8 +647,7 @@ namespace Effekseer.GUI.Component
 
 				if (value == null) return false;
 
-
-				return SelectorValue == value.GetValueAsInt();
+				return RequiredSelectorValues.Contains(value.GetValueAsInt());
 			}
 		}
 	}

@@ -1,5 +1,4 @@
 ﻿#include "EffekseerRendererDX9.MaterialLoader.h"
-#include "../EffekseerRendererCommon/EffekseerRenderer.ShaderLoader.h"
 #include "EffekseerRendererDX9.Shader.h"
 
 #ifdef _DEBUG

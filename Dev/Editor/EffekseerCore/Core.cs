@@ -745,6 +745,97 @@ namespace Effekseer
 				replace(doc);
 			}
 
+			{
+				Action<System.Xml.XmlNode> replace = null;
+				replace = (node) =>
+				{
+					if ((node.Name == "RenderCommon") && node.ChildNodes.Count > 0)
+					{
+						if(node["Distortion"] != null && node["Distortion"].GetText() == "True")
+						{
+							node.RemoveChild(node["Material"]);
+							node.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.BackDistortion));
+						}
+					}
+					else
+					{
+						for (int i = 0; i < node.ChildNodes.Count; i++)
+						{
+							replace(node.ChildNodes[i]);
+						}
+					}
+				};
+
+				replace(doc);
+			}
+
+			if (toolVersion < ParseVersion("1.50"))
+			{
+				List<System.Xml.XmlNode> nodes = new List<System.Xml.XmlNode>();
+
+				Action<System.Xml.XmlNode> collectNodes = null;
+				collectNodes = (node) =>
+				{
+					if (node.Name == "Node")
+					{
+						nodes.Add(node);
+					}
+
+					for (int i = 0; i < node.ChildNodes.Count; i++)
+					{
+						collectNodes(node.ChildNodes[i]);
+					}
+				};
+
+				collectNodes(doc);
+
+				foreach(var node in nodes)
+				{
+					var rendererCommon = node["RendererCommonValues"];
+					var renderer = node["DrawingValues"];
+
+					if(rendererCommon != null)
+					{
+						if (rendererCommon["Distortion"] != null && rendererCommon["Distortion"].GetText() == "True")
+						{
+							if(node["Material"] != null)
+							{
+								rendererCommon.RemoveChild(node["Material"]);
+							}
+
+							rendererCommon.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.BackDistortion));
+						}
+					}
+
+					if (renderer != null && rendererCommon != null)
+					{
+						if (renderer["Type"] != null && renderer["Type"].GetTextAsInt() == (int)Data.RendererValues.ParamaterType.Model)
+						{
+							if (renderer["Model"]["NormalTexture"] != null)
+							{
+								rendererCommon.AppendChild(doc.CreateTextElement("NormalTexture", renderer["Model"]["NormalTexture"].GetText()));
+							}
+						}
+					}
+
+					if (renderer != null && rendererCommon != null)
+					{
+						if (renderer["Type"] != null && renderer["Type"].GetTextAsInt() == (int)Data.RendererValues.ParamaterType.Model)
+						{
+							if (renderer["Model"]["Lighting"] == null || renderer["Model"]["Lighting"].GetText() == "True")
+							{
+								if (node["Material"] != null)
+								{
+									rendererCommon.RemoveChild(node["Material"]);
+								}
+
+								rendererCommon.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.Lighting));
+							}
+						}
+					}
+				}
+			}
+
 			var root = doc["EffekseerProject"]["Root"];
 			if (root == null) return false;
 
@@ -986,13 +1077,11 @@ namespace Effekseer
 			if (versionText.Length == 3) versionText += "00";
 			if (versionText.Length == 4) versionText += "0";
 
+			versionText = versionText.Replace(".", "");
 			uint version = 0;
-			string[] list = versionText.Split('.');
-			int count = Math.Min(list.Length, 4);
-			for (int i = 0; i < count; i++) {
-				int value = Math.Min(int.Parse(list[i]), 255);
-				version |= (uint)value << ((3 - i) * 8);
-			}
+
+			uint.TryParse(versionText, out version);
+
 			return version;
 		}
 

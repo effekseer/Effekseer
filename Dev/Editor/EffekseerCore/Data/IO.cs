@@ -70,7 +70,6 @@ namespace Effekseer.Data
 			return e;
 		}
 
-#if MATERIAL_ENABLED
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, MaterialFileParameter mfp, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
@@ -196,7 +195,7 @@ namespace Effekseer.Data
 
 			return e.ChildNodes.Count > 0 ? e : null;
 		}
-#endif
+
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Data.DynamicInputCollection collection, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);

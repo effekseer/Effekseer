@@ -84,19 +84,16 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 	TrackRenderer* renderer = manager->GetTrackRenderer();
 	if (renderer != NULL)
 	{
-		m_nodeParameter.AlphaBlend = AlphaBlend;
 		m_nodeParameter.TextureFilter = RendererCommon.FilterType;
 		m_nodeParameter.TextureWrap = RendererCommon.WrapType;
 		m_nodeParameter.ZTest = RendererCommon.ZTest;
 		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
-		m_nodeParameter.ColorTextureIndex = TrackTexture;
 		m_nodeParameter.EffectPointer = GetEffect();
 
-		m_nodeParameter.Distortion = RendererCommon.Distortion;
-		m_nodeParameter.DistortionIntensity = RendererCommon.DistortionIntensity;
 		m_nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 
 		m_nodeParameter.SplineDivision = SplineDivision;
+		m_nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 
 		renderer->BeginRendering(m_nodeParameter, count, m_userData);
 	}
@@ -120,19 +117,6 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 			m_instanceParameter.UV = group->GetFirst()->GetUV();
 		}
 
-		/*
-		SetValues( m_instanceParameter.ColorLeft, instValues.ColorLeft, TrackColorLeft, group->GetTime() );
-		SetValues( m_instanceParameter.ColorCenter,instValues.ColorCenter, TrackColorCenter, group->GetTime() );
-		SetValues( m_instanceParameter.ColorRight,instValues.ColorRight, TrackColorRight, group->GetTime() );
-
-		SetValues( m_instanceParameter.ColorLeftMiddle,instValues.ColorLeftMiddle, TrackColorLeftMiddle, group->GetTime() );
-		SetValues( m_instanceParameter.ColorCenterMiddle,instValues.ColorCenterMiddle, TrackColorCenterMiddle, group->GetTime() );
-		SetValues( m_instanceParameter.ColorRightMiddle,instValues.ColorRightMiddle, TrackColorRightMiddle, group->GetTime() );
-
-		SetValues( m_instanceParameter.SizeFor, instValues.SizeFor, TrackSizeFor, group->GetTime() );
-		SetValues( m_instanceParameter.SizeMiddle, instValues.SizeMiddle, TrackSizeMiddle, group->GetTime() );
-		SetValues( m_instanceParameter.SizeBack, instValues.SizeBack, TrackSizeBack, group->GetTime() );
-		*/
 		renderer->BeginRenderingGroup(m_nodeParameter, group->GetInstanceCount(), m_userData);
 	}
 }

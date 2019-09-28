@@ -13,6 +13,7 @@
 #include <vector>
 #include <cfloat>
 #include <array>
+#include <memory>
 
 //----------------------------------------------------------------------------------
 //
@@ -549,6 +550,17 @@ enum class ShadingModelType : int32_t
 };
 
 /**
+	@brief	material type
+*/
+enum class RendererMaterialType : int32_t
+{
+	Default = 0,
+	BackDistortion = 4,
+	Lighting = 5,
+	File = 128,
+};
+
+/**
 	@brief	\~english	Material data
 			\~japanese	マテリアルデータ
 */
@@ -604,6 +616,20 @@ struct NodeRendererDepthParameter
 	ZSortType ZSort = ZSortType::None;
 	float SuppressionOfScalingByDepth = 1.0f;
 	float DepthClipping = FLT_MAX;
+};
+
+/**
+	@brief	\~english	Common parameters which is passed into a renderer
+			\~japanese	レンダラーに渡される共通に関するパラメーター
+*/
+struct NodeRendererBasicParameter
+{
+	RendererMaterialType MaterialType = RendererMaterialType::Default;
+	int32_t Texture1Index = -1;
+	int32_t Texture2Index = -1;
+	float DistortionIntensity = 0.0f;
+	MaterialParameter* MaterialParameterPtr = nullptr;
+	AlphaBlendType AlphaBlend = AlphaBlendType::Blend;
 };
 
 //----------------------------------------------------------------------------------

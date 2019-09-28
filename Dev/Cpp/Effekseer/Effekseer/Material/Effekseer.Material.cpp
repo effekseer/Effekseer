@@ -138,24 +138,46 @@ bool Material::Load(const uint8_t* data, int32_t size)
 
 ShadingModelType Material::GetShadingModel() const { return shadingModel_; }
 
+void Material::SetShadingModel(ShadingModelType shadingModel) { shadingModel_ = shadingModel; }
+
 bool Material::GetIsSimpleVertex() const { return isSimpleVertex_; }
+
+void Material::SetIsSimpleVertex(bool isSimpleVertex) { isSimpleVertex_ = isSimpleVertex; }
 
 bool Material::GetHasRefraction() const { return hasRefraction_; }
 
+void Material::SetHasRefraction(bool hasRefraction) { hasRefraction_ = hasRefraction; }
+
 const char* Material::GetGenericCode() const { return genericCode_.c_str(); }
+
+void Material::SetGenericCode(const char* code) { genericCode_ = code; }
 
 uint64_t Material::GetGUID() const { return guid_; }
 
+void Material::SetGUID(uint64_t guid) { guid_ = guid; }
+
 int32_t Material::GetTextureIndex(int32_t index) const { return textures_.at(index).Index; }
+
+void Material::SetTextureIndex(int32_t index, int32_t value) { textures_.at(index).Index = value; }
 
 const char* Material::GetTextureName(int32_t index) const { return textures_.at(index).Name.c_str(); }
 
+void Material::SetTextureName(int32_t index, const char* name) { textures_.at(index).Name = name; }
+
 int32_t Material::GetTextureCount() const { return static_cast<int32_t>(textures_.size()); }
+
+void Material::SetTextureCount(int32_t count) { textures_.resize(count); }
 
 int32_t Material::GetUniformIndex(int32_t index) const { return uniforms_.at(index).Index; }
 
+void Material::SetUniformIndex(int32_t index, int32_t value) { uniforms_.at(index).Index = value; }
+
 const char* Material::GetUniformName(int32_t index) const { return uniforms_.at(index).Name.c_str(); }
 
+void Material::SetUniformName(int32_t index, const char* name) { uniforms_.at(index).Name = name; }
+
 int32_t Material::GetUniformCount() const { return static_cast<int32_t>(uniforms_.size()); }
+
+void Material::SetUniformCount(int32_t count) { uniforms_.resize(count); }
 
 } // namespace Effekseer

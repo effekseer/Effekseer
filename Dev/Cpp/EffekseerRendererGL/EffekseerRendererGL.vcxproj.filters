@@ -7,6 +7,12 @@
     <Filter Include="EffekseerRendererCommon">
       <UniqueIdentifier>{da5d8d24-91e6-467d-a3bb-eca0c4360854}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EffekseerMaterialCompiler">
+      <UniqueIdentifier>{f7dba69f-4805-4b2e-9856-b8d59d8bdfec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EffekseerMaterialCompiler\OpenGL">
+      <UniqueIdentifier>{33aab719-29c0-4ea4-a291-2a609bec95fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffekseerRendererGL.h" />
@@ -103,6 +109,9 @@
     <ClInclude Include="..\EffekseerRendererCommon\EffekseerRenderer.ShaderLoader.h">
       <Filter>EffekseerRendererCommon</Filter>
     </ClInclude>
+    <ClInclude Include="..\EffekseerMaterialCompiler\OpenGL\EffekseerMaterialCompilerGL.h">
+      <Filter>EffekseerMaterialCompiler\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">
@@ -179,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.MaterialLoader.cpp">
       <Filter>EffekseerRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\EffekseerMaterialCompiler\OpenGL\EffekseerMaterialCompilerGL.cpp">
+      <Filter>EffekseerMaterialCompiler\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

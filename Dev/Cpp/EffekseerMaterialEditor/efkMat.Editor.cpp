@@ -19,6 +19,8 @@
 namespace fs = std::experimental::filesystem;
 
 #include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
+#include "../Effekseer/Effekseer/Material/Effekseer.Material.h"
+#include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
 
 namespace EffekseerMaterial
 {
@@ -32,30 +34,35 @@ void Compile(std::shared_ptr<Graphics> graphics,
 			 std::string& ps)
 {
 	EffekseerMaterial::TextExporterGeneric exporter;
-	EffekseerRendererGL::ShaderLoader loader;
-	auto ret = (&exporter)->Export(material, node);
-	loader.IsSimpleVertex = false;
-	loader.GenericCode = ret.Code;
-	loader.HasRefraction = ret.HasRefraction;
-	loader.ShadingModel = static_cast<Effekseer::ShadingModelType>(ret.ShadingModel);
-	loader.Textures.resize(ret.Textures.size());
-	loader.Uniforms.resize(ret.Uniforms.size());
+	auto result = (&exporter)->Export(material, node);
+	
+	auto efkMaterial = Effekseer::Material();
+	efkMaterial.SetGenericCode(result.Code.c_str());
+	efkMaterial.SetIsSimpleVertex(false);
+	efkMaterial.SetHasRefraction(result.HasRefraction);
+	efkMaterial.SetShadingModel(static_cast<Effekseer::ShadingModelType>(result.ShadingModel));
+	efkMaterial.SetTextureCount(result.Textures.size());
+	efkMaterial.SetUniformCount(result.Uniforms.size());
 
-	for (size_t i = 0; i < ret.Textures.size(); i++)
+	for (size_t i = 0; i < result.Textures.size(); i++)
 	{
-		loader.Textures[i].Name = ret.Textures[i]->Name;
-		loader.Textures[i].Index = i;
+		efkMaterial.SetTextureIndex(i, i);
+		efkMaterial.SetTextureName(i, result.Textures[i]->Name.c_str());
 	}
 
-	for (size_t i = 0; i < ret.Uniforms.size(); i++)
+	for (size_t i = 0; i < result.Uniforms.size(); i++)
 	{
-		loader.Uniforms[i].Name = ret.Uniforms[i]->Name;
-		loader.Uniforms[i].Index = i;
+		efkMaterial.SetUniformIndex(i, i);
+		efkMaterial.SetUniformName(i, result.Uniforms[i]->Name.c_str());
 	}
 
-	auto data = loader.GenerateShader(EffekseerRenderer::ShaderLoader::ShaderType::Standard);
+	auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
+	auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&efkMaterial));
 
-	auto textures = ret.Textures;
+	vs = reinterpret_cast<const char*>(binary->GetVertexShaderData(Effekseer::MaterialShaderType::Standard));
+	ps = reinterpret_cast<const char*>(binary->GetPixelShaderData(Effekseer::MaterialShaderType::Standard));
+
+	auto textures = result.Textures;
 	auto removed_it = std::remove_if(textures.begin(),
 									 textures.end(),
 									 [](const std::shared_ptr<EffekseerMaterial::TextExporterTexture>& v) -> bool { return v->Index < 0; });
@@ -76,10 +83,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 		outputTextures.push_back(t_);
 	}
 
-	outputUniforms = ret.Uniforms;
-
-	vs = data.CodeVS;
-	ps = data.CodePS;
+	outputUniforms = result.Uniforms;
 }
 
 void ExtractUniforms(std::shared_ptr<Graphics> graphics,
@@ -92,7 +96,6 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	outputUniforms.clear();
 
 	EffekseerMaterial::TextExporterGeneric exporter;
-	EffekseerRendererGL::ShaderLoader loader;
 	auto result = (&exporter)->Export(material, node);
 
 	auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
