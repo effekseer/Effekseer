@@ -18,9 +18,9 @@
 #include <filesystem>
 namespace fs = std::experimental::filesystem;
 
-#include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
 #include "../Effekseer/Effekseer/Material/Effekseer.Material.h"
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
+#include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
 
 namespace EffekseerMaterial
 {
@@ -35,7 +35,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 {
 	EffekseerMaterial::TextExporterGeneric exporter;
 	auto result = (&exporter)->Export(material, node);
-	
+
 	auto efkMaterial = Effekseer::Material();
 	efkMaterial.SetGenericCode(result.Code.c_str());
 	efkMaterial.SetIsSimpleVertex(false);
@@ -1234,8 +1234,12 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 	ImGui::EndHorizontal();
 
 	// show a preview
-	ImGui::SetNextTreeNodeOpen(node->IsOpened, ImGuiCond_Once);
-	if (ImGui::TreeNode("Preview"))
+	if (ImGui::SmallButton("Preview"))
+	{
+		node->IsOpened = !node->IsOpened;
+	}
+
+	if (node->IsOpened)
 	{
 		auto preview = (NodeUserDataObject*)node->UserObj.get();
 		if (preview != nullptr)
@@ -1245,13 +1249,6 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 			size.y = Preview::TextureSize;
 			ImGui::Image((void*)preview->GetPreview()->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 		}
-		ImGui::TreePop();
-
-		node->IsOpened = true;
-	}
-	else
-	{
-		node->IsOpened = false;
 	}
 
 	ImGui::EndVertical();

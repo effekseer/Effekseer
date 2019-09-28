@@ -311,6 +311,7 @@ static const char g_header_vs_gl3_src[] = ""
 										  "#define mediump\n"
 										  "#define highp\n"
 										  "#define IN in\n"
+										  "#define TEX2D texture\n"
 										  "#define OUT out\n";
 
 static const char g_header_fs_gl3_src[] = ""

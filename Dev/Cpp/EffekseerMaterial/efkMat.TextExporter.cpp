@@ -297,6 +297,11 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		option.HasRefraction = material->GetConnectedPins(outputNode->InputPins[refractionInd]).size() != 0;
 		option.ShadingModel = outputNode->Properties[0]->Floats[0];
 	}
+	else
+	{
+		option.HasRefraction = false;
+		option.ShadingModel = 1;		
+	}
 
 	// Generate outputs
 	std::ostringstream ret;
@@ -417,8 +422,7 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		auto opacityIndex = outputNode->Target->GetInputPinIndex("Opacity");
 		auto opacityMaskIndex = outputNode->Target->GetInputPinIndex("OpacityMask");
 
-		ret << " pixelNormalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex])
-			<< ";" << std::endl;
+		ret << " pixelNormalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex]) << ";" << std::endl;
 		ret << GetTypeName(ValueType::Float3) << " normalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex]) << ";"
 			<< std::endl;
 
@@ -458,8 +462,7 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 	}
 	else
 	{
-		ret << GetTypeName(ValueType::Float3) << " worldPositionOffset = " << GetTypeName(ValueType::Float3) << "(0, 0, 0);"
-			<< std::endl;
+		ret << GetTypeName(ValueType::Float3) << " worldPositionOffset = " << GetTypeName(ValueType::Float3) << "(0, 0, 0);" << std::endl;
 
 		if (outputNode->Target->Parameter->Type == NodeType::ConstantTexture)
 		{
