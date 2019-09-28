@@ -44,23 +44,61 @@ namespace Effekseer.Utils
 			buffers.Add((byte[])buffer.Clone());
 		}
 
-		public void Push(string value, Encoding encoding)
+		public void Push(string value, Encoding encoding, bool zeroEnd = true, int bufLenSize = 4)
 		{
 			var strBuf = encoding.GetBytes(value);
-			buffers.Add(BitConverter.GetBytes((strBuf.Count() + 2) / 2));
+			var length = strBuf.Count();
+
+			if(zeroEnd)
+			{
+				if (encoding == Encoding.Unicode)
+				{
+					length += 2;
+				}
+				else if (encoding == Encoding.UTF8)
+				{
+					length += 1;
+				}
+				else
+				{
+					throw new NotImplementedException();
+				}
+			}
+
+			if (encoding == Encoding.Unicode)
+			{
+				length /= 2;
+			}
+
+			if (bufLenSize == 4)
+			{
+				buffers.Add(BitConverter.GetBytes(length));
+			}
+			else if (bufLenSize == 2)
+			{
+				buffers.Add(BitConverter.GetBytes((UInt16)length));
+			}
+			else if (bufLenSize == 1)
+			{
+				buffers.Add(BitConverter.GetBytes((Byte)length));
+			}
+
 			buffers.Add(strBuf);
 
-			if(encoding == Encoding.Unicode)
+			if (zeroEnd)
 			{
-				buffers.Add(new byte[] { 0, 0 });
-			}
-			else if (encoding == Encoding.UTF8)
-			{
-				buffers.Add(new byte[] { 0, 0 });
-			}
-			else
-			{
-				throw new NotImplementedException();
+				if (encoding == Encoding.Unicode)
+				{
+					buffers.Add(new byte[] { 0, 0 });
+				}
+				else if (encoding == Encoding.UTF8)
+				{
+					buffers.Add(new byte[] { 0 });
+				}
+				else
+				{
+					throw new NotImplementedException();
+				}
 			}
 		}
 
