@@ -35,7 +35,7 @@ namespace Effekseer.Utl
 			offset += 4;
 		}
 
-		public void Get(ref string value)
+		public void Get(ref string value, Encoding encoding)
 		{
 			int length = 0;
 			Get(ref length);
@@ -47,7 +47,12 @@ namespace Effekseer.Utl
 				readLength -= 1;
 			}
 
-			value = Encoding.UTF8.GetString(buffer, offset, readLength);
+			if (buffer[offset + length - 2] == 0)
+			{
+				readLength -= 1;
+			}
+
+			value = encoding.GetString(buffer, offset, readLength);
 			offset += length;
 		}
 	}
