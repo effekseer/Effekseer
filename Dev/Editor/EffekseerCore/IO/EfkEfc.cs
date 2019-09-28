@@ -171,8 +171,45 @@ namespace Effekseer.IO
 			var visits = visit(xml.ChildNodes);
 
 			// compress...
+			Dictionary<string, int> keys = new Dictionary<string, int>();
+			Func<List<Element>, byte[]> comp = null;
+			comp = (elements) =>
+			{
+				Utils.BinaryWriter res = new Utils.BinaryWriter();
+				foreach (var item in elements)
+				{
+					if (!keys.ContainsKey(item.Name))
+						keys[item.Name] = keys.Count();
+					res.Push(keys[item.Name]);
 
-			return Encoding.UTF8.GetBytes(xml.InnerXml);
+					if (item.Value is int)
+						res.Push((int)item.Value);
+					else if (item.Value is UInt32)
+						res.Push((UInt32)item.Value);
+					else if (item.Value is Int16)
+						res.Push((Int16)item.Value);
+					else if (item.Value is UInt16)
+						res.Push((UInt16)item.Value);
+					else if (item.Value is byte[])
+						res.Push((byte[])item.Value);
+					else if (item.Value is string)
+						res.Push((string)item.Value, Encoding.UTF8);
+
+					if (item.Children != null)
+						res.Push(comp(item.Children));
+				}
+				return res.GetBinary();
+			};
+
+			Utils.BinaryWriter binary = new Utils.BinaryWriter();
+			foreach (var item in keys)
+			{
+				binary.Push(item.Key, Encoding.UTF8);
+				binary.Push(item.Value);
+			}
+			binary.Push(comp(visits));
+
+			return binary.GetBinary();
 		}
 
 		System.Xml.XmlDocument Decompress(byte[] buffer)
@@ -286,7 +323,7 @@ namespace Effekseer.IO
 			chunk.Load(chunkData);
 
 			var editBlock = chunk.Blocks.FirstOrDefault(_ => _.Chunk == "EDIT");
-			if(editBlock == null)
+			if (editBlock == null)
 			{
 				return false;
 			}
