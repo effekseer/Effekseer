@@ -20,6 +20,7 @@ file(GLOB files_core
     EffekseerCore/Properties/*.cs
     EffekseerCore/Script/*.cs
     EffekseerCore/Utl/*.cs	
+	EffekseerCore/Utils/*.cs	
 	)
 
 add_library(EffekseerCore
