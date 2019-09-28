@@ -500,18 +500,18 @@ public:
 				}
 			}
 
-			state.TextureFilterTypes[0] = param.TextureFilter;
-			state.TextureWrapTypes[0] = param.TextureWrap;
+			state.TextureFilterTypes[0] = param.BasicParameterPtr->TextureFilter1;
+			state.TextureWrapTypes[0] = param.BasicParameterPtr->TextureWrap1;
 
 			if (distortion)
 			{
-				state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Nearest;
+				state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Linear;
 				state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
 			}
 			else
 			{
-				state.TextureFilterTypes[1] = param.TextureFilter;
-				state.TextureWrapTypes[1] = param.TextureWrap;
+				state.TextureFilterTypes[1] = param.BasicParameterPtr->TextureFilter2;
+				state.TextureWrapTypes[1] = param.BasicParameterPtr->TextureWrap2;
 			}
 
 			renderer->SetTextures(shader_, textures, 2);

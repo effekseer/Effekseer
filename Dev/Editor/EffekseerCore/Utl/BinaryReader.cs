@@ -23,6 +23,18 @@ namespace Effekseer.Utl
 			offset += 4;
 		}
 
+		public void Get(ref UInt16 value)
+		{
+			value = BitConverter.ToUInt16(buffer, offset);
+			offset += 2;
+		}
+
+		public void Get(ref Byte value)
+		{
+			value = buffer[offset];
+			offset += 1;
+		}
+
 		public void Get(ref float value)
 		{
 			value = BitConverter.ToSingle(buffer, offset);
@@ -35,21 +47,50 @@ namespace Effekseer.Utl
 			offset += 4;
 		}
 
-		public void Get(ref string value, Encoding encoding)
+		public void Get(ref string value, Encoding encoding, bool zeroEnd = true, int bufLenSize = 4)
 		{
 			int length = 0;
-			Get(ref length);
+
+			if(bufLenSize == 4)
+			{
+				int length4 = 0;
+				Get(ref length4);
+				length = length4;
+			}
+			else if (bufLenSize == 2)
+			{
+				UInt16 length2 = 0;
+				Get(ref length2);
+				length = length2;
+			}
+			else if (bufLenSize == 1)
+			{
+				Byte length1 = 0;
+				Get(ref length1);
+				length = length1;
+			}
 
 			int readLength = length;
 
-			if(buffer[offset + length - 1] == 0)
+			if (zeroEnd)
 			{
-				readLength -= 1;
+				if (encoding == Encoding.Unicode)
+				{
+					readLength -= 2;
+				}
+				else if (encoding == Encoding.UTF8)
+				{
+					readLength -= 1;
+				}
+				else
+				{
+					throw new NotImplementedException();
+				}
 			}
 
-			if (buffer[offset + length - 2] == 0)
+			if (encoding == Encoding.Unicode)
 			{
-				readLength -= 1;
+				readLength *= 2;
 			}
 
 			value = encoding.GetString(buffer, offset, readLength);

@@ -144,8 +144,8 @@ void EffectNodeSprite::BeginRendering(int32_t count, Manager* manager)
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
-		nodeParameter.TextureFilter = RendererCommon.FilterType;
-		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		//nodeParameter.TextureFilter = RendererCommon.FilterType;
+		//nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;
@@ -172,8 +172,8 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
-		nodeParameter.TextureFilter = RendererCommon.FilterType;
-		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		//nodeParameter.TextureFilter = RendererCommon.FilterType;
+		//nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;
@@ -265,8 +265,8 @@ void EffectNodeSprite::EndRendering(Manager* manager)
 	if( renderer != NULL )
 	{
 		SpriteRenderer::NodeParameter nodeParameter;
-		nodeParameter.TextureFilter = RendererCommon.FilterType;
-		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		//nodeParameter.TextureFilter = RendererCommon.FilterType;
+		//nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;

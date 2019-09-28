@@ -687,6 +687,7 @@ public:
 	{
 		Type = NodeType::Output;
 		TypeName = "Output";
+		IsOpened = true;
 
 		auto baseColor = std::make_shared<PinParameter>();
 		baseColor->Name = "BaseColor";

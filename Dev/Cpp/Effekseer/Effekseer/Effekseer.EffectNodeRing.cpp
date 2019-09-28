@@ -180,8 +180,8 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
-		nodeParameter.TextureFilter = RendererCommon.FilterType;
-		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		//nodeParameter.TextureFilter = RendererCommon.FilterType;
+		//nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;
@@ -212,8 +212,8 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 	{
 		RingRenderer::NodeParameter nodeParameter;
 		nodeParameter.EffectPointer = GetEffect();
-		nodeParameter.TextureFilter = RendererCommon.FilterType;
-		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		//nodeParameter.TextureFilter = RendererCommon.FilterType;
+		//nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;
@@ -280,8 +280,8 @@ void EffectNodeRing::EndRendering(Manager* manager)
 	if( renderer != NULL )
 	{
 		RingRenderer::NodeParameter nodeParameter;
-		nodeParameter.TextureFilter = RendererCommon.FilterType;
-		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		//nodeParameter.TextureFilter = RendererCommon.FilterType;
+		//nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;

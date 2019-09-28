@@ -577,9 +577,6 @@ namespace Effekseer.Data
 			var p = info;
 			var attributes = p.GetCustomAttributes(false);
 
-			ret.Title = NameAttribute.GetName(attributes);
-			ret.Description = DescriptionAttribute.GetDescription(attributes);
-
 			var undo = attributes.Where(_ => _.GetType() == typeof(UndoAttribute)).FirstOrDefault() as UndoAttribute;
 			if (undo != null && !undo.Undo)
 			{
@@ -615,6 +612,9 @@ namespace Effekseer.Data
 				ret.TargetSelectorID = selectedAttributes.First().ID;
 				ret.RequiredSelectorValues = selectedAttributes.Select(_ => _.Value).ToArray();
 			}
+
+			ret.Title = NameAttribute.GetName(attributes);
+			ret.Description = DescriptionAttribute.GetDescription(attributes);
 
 			return ret;
 		}

@@ -555,8 +555,8 @@ enum class ShadingModelType : int32_t
 enum class RendererMaterialType : int32_t
 {
 	Default = 0,
-	BackDistortion = 4,
-	Lighting = 5,
+	BackDistortion = 6,
+	Lighting = 7,
 	File = 128,
 };
 
@@ -630,6 +630,11 @@ struct NodeRendererBasicParameter
 	float DistortionIntensity = 0.0f;
 	MaterialParameter* MaterialParameterPtr = nullptr;
 	AlphaBlendType AlphaBlend = AlphaBlendType::Blend;
+
+	TextureFilterType TextureFilter1 = TextureFilterType::Nearest;
+	TextureWrapType TextureWrap1 = TextureWrapType::Repeat;
+	TextureFilterType TextureFilter2 = TextureFilterType::Nearest;
+	TextureWrapType TextureWrap2 = TextureWrapType::Repeat;
 };
 
 //----------------------------------------------------------------------------------

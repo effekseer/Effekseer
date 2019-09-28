@@ -27,8 +27,8 @@ public:
 		Effect*				EffectPointer;
 		//int32_t				TextureIndex;
 		//AlphaBlendType			AlphaBlend;
-		TextureFilterType	TextureFilter;
-		TextureWrapType	TextureWrap;
+		//TextureFilterType	TextureFilter;
+		//TextureWrapType	TextureWrap;
 
 		//bool				Distortion;
 		//float				DistortionIntensity;

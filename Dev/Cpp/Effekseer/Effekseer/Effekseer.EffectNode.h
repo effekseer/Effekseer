@@ -545,6 +545,10 @@ struct ParameterRendererCommon
 
 	TextureWrapType WrapType = TextureWrapType::Repeat;
 
+	TextureFilterType Filter2Type = TextureFilterType::Nearest;
+
+	TextureWrapType Wrap2Type = TextureWrapType::Repeat;
+
 	bool				ZWrite = false;
 
 	bool				ZTest = false;
@@ -727,6 +731,20 @@ struct ParameterRendererCommon
 		memcpy(&WrapType, pos, sizeof(int));
 		pos += sizeof(int);
 
+		if (version >= 15)
+		{
+			memcpy(&Filter2Type, pos, sizeof(int));
+			pos += sizeof(int);
+
+			memcpy(&Wrap2Type, pos, sizeof(int));
+			pos += sizeof(int);
+		}
+		else
+		{
+			Filter2Type = FilterType;
+			Wrap2Type = WrapType;
+		}
+
 		if (version >= 5)
 		{
 			int32_t zwrite, ztest = 0;
@@ -860,6 +878,11 @@ struct ParameterRendererCommon
 
 		// copy to basic parameter
 		BasicParameter.AlphaBlend = AlphaBlend;
+		BasicParameter.TextureFilter1 = FilterType;
+		BasicParameter.TextureFilter2 = Filter2Type;
+		BasicParameter.TextureWrap1 = WrapType;
+		BasicParameter.TextureWrap2 = Wrap2Type;
+
 		BasicParameter.DistortionIntensity = DistortionIntensity;
 		BasicParameter.MaterialType = MaterialType;
 		BasicParameter.Texture1Index = ColorTextureIndex;
@@ -872,6 +895,12 @@ struct ParameterRendererCommon
 		else
 		{
 			BasicParameter.MaterialParameterPtr = nullptr;
+		}
+
+		if (BasicParameter.MaterialType != RendererMaterialType::Lighting)
+		{
+			BasicParameter.TextureFilter2 = TextureFilterType::Nearest;
+			BasicParameter.TextureWrap2 = TextureWrapType::Clamp;
 		}
 	}
 

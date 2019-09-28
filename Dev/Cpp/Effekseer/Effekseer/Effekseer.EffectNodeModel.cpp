@@ -88,8 +88,8 @@ void EffectNodeModel::BeginRendering(int32_t count, Manager* manager)
 	if (renderer != NULL)
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.TextureFilter = RendererCommon.FilterType;
-		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		// nodeParameter.TextureFilter = RendererCommon.FilterType;
+		// nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
@@ -120,8 +120,8 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.TextureFilter = RendererCommon.FilterType;
-		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		//nodeParameter.TextureFilter = RendererCommon.FilterType;
+		//nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
@@ -174,8 +174,8 @@ void EffectNodeModel::EndRendering(Manager* manager)
 	if( renderer != NULL )
 	{
 		ModelRenderer::NodeParameter nodeParameter;
-		nodeParameter.TextureFilter = RendererCommon.FilterType;
-		nodeParameter.TextureWrap = RendererCommon.WrapType;
+		//nodeParameter.TextureFilter = RendererCommon.FilterType;
+		//nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.EffectPointer = GetEffect();
