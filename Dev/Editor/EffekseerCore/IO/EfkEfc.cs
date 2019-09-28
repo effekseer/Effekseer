@@ -307,10 +307,10 @@ namespace Effekseer.IO
 
 			if (allData.Length < 24) return false;
 
-			if (allData[0] != 'E' ||
-	allData[1] != 'F' ||
-	allData[2] != 'K' ||
-	allData[3] != 'P')
+			if (allData[3] != 'E' ||
+	allData[2] != 'F' ||
+	allData[1] != 'K' ||
+	allData[0] != 'P')
 			{
 				return false;
 			}
