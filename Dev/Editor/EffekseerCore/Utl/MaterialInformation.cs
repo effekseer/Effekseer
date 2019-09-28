@@ -182,8 +182,8 @@ namespace Effekseer.Utl
 					{
 						TextureInformation info = new TextureInformation();
 
-						reader.Get(ref info.Name);
-						reader.Get(ref info.DefaultPath);
+						reader.Get(ref info.Name, Encoding.UTF8);
+						reader.Get(ref info.DefaultPath, Encoding.UTF8);
 						reader.Get(ref info.Index);
 						reader.Get(ref info.IsParam);
 						int textureType = 0;
@@ -226,7 +226,7 @@ namespace Effekseer.Utl
 					{
 						UniformInformation info = new UniformInformation();
 
-						reader.Get(ref info.Name);
+						reader.Get(ref info.Name, Encoding.UTF8);
 						reader.Get(ref info.Offset);
 						reader.Get(ref info.Type);
 						reader.Get(ref info.DefaultValues[0]);
