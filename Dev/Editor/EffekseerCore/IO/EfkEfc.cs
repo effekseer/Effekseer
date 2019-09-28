@@ -149,12 +149,12 @@ namespace Effekseer.IO
 				{
 					Element element = new Element();
 
-					element.Name = xml.ChildNodes[i].Name;
+					element.Name = xmlNodes[i].Name;
 
-					if (xml.ChildNodes[i].ChildNodes.Count == 1 &&
-					xml.ChildNodes[i].ChildNodes[0].ChildNodes.Count == 0)
+					if (xmlNodes[i].ChildNodes.Count == 1 &&
+					xmlNodes[i].ChildNodes[0].ChildNodes.Count == 0)
 					{
-						var value = xml.ChildNodes[i].ChildNodes[0].Value;
+						var value = xmlNodes[i].ChildNodes[0].Value;
 						element.Value = value;
 					}
 					else
