@@ -34,6 +34,7 @@ namespace Effekseer.Binary
 					hasTexture = false;
 				}
 
+				// texture2
 				data.Add((-1).GetBytes());
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion)
@@ -51,6 +52,7 @@ namespace Effekseer.Binary
 					hasTexture = false;
 				}
 
+				// texture2
 				data.Add((-1).GetBytes());
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
@@ -170,6 +172,9 @@ texInfo.Load(texture_.AbsolutePath))
 			data.Add(value.AlphaBlend);
 			data.Add(value.Filter);
 			data.Add(value.Wrap);
+
+			data.Add(value.Filter2);
+			data.Add(value.Wrap2);
 
 			if (value.ZTest.GetValue())
 			{

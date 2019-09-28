@@ -139,8 +139,8 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 	RibbonRenderer* renderer = manager->GetRibbonRenderer();
 	if (renderer != NULL)
 	{
-		m_nodeParameter.TextureFilter = RendererCommon.FilterType;
-		m_nodeParameter.TextureWrap = RendererCommon.WrapType;
+		//m_nodeParameter.TextureFilter = RendererCommon.FilterType;
+		//m_nodeParameter.TextureWrap = RendererCommon.WrapType;
 		m_nodeParameter.ZTest = RendererCommon.ZTest;
 		m_nodeParameter.ZWrite = RendererCommon.ZWrite;
 		m_nodeParameter.ViewpointDependent = ViewpointDependent != 0;

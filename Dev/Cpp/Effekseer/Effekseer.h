@@ -555,8 +555,8 @@ enum class ShadingModelType : int32_t
 enum class RendererMaterialType : int32_t
 {
 	Default = 0,
-	BackDistortion = 4,
-	Lighting = 5,
+	BackDistortion = 6,
+	Lighting = 7,
 	File = 128,
 };
 
@@ -630,6 +630,11 @@ struct NodeRendererBasicParameter
 	float DistortionIntensity = 0.0f;
 	MaterialParameter* MaterialParameterPtr = nullptr;
 	AlphaBlendType AlphaBlend = AlphaBlendType::Blend;
+
+	TextureFilterType TextureFilter1 = TextureFilterType::Nearest;
+	TextureWrapType TextureWrap1 = TextureWrapType::Repeat;
+	TextureFilterType TextureFilter2 = TextureFilterType::Nearest;
+	TextureWrapType TextureWrap2 = TextureWrapType::Repeat;
 };
 
 //----------------------------------------------------------------------------------
@@ -2820,8 +2825,8 @@ public:
 		Effect*				EffectPointer;
 		//int32_t				ColorTextureIndex;
 		//AlphaBlendType			AlphaBlend;
-		TextureFilterType	TextureFilter;
-		TextureWrapType	TextureWrap;
+		//TextureFilterType	TextureFilter;
+		//TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
 		BillboardType		Billboard;
@@ -2902,8 +2907,8 @@ namespace Effekseer
 			Effect*				EffectPointer;
 			//int32_t				ColorTextureIndex;
 			//AlphaBlendType			AlphaBlend;
-			TextureFilterType	TextureFilter;
-			TextureWrapType	TextureWrap;
+			//TextureFilterType	TextureFilter;
+			//TextureWrapType	TextureWrap;
 			bool				ZTest;
 			bool				ZWrite;
 			bool				ViewpointDependent;
@@ -2983,8 +2988,8 @@ public:
 		Effect*				EffectPointer;
 		//int32_t				ColorTextureIndex;
 		//AlphaBlendType			AlphaBlend;
-		TextureFilterType	TextureFilter;
-		TextureWrapType	TextureWrap;
+		//TextureFilterType	TextureFilter;
+		//TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
 		BillboardType		Billboard;
@@ -3066,8 +3071,8 @@ public:
 	{
 		Effect*				EffectPointer;
 		//AlphaBlendType		AlphaBlend;
-		TextureFilterType	TextureFilter;
-		TextureWrapType	TextureWrap;
+		//TextureFilterType	TextureFilter;
+		//TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
 		BillboardType		Billboard;
@@ -3148,8 +3153,8 @@ namespace Effekseer
 			Effect*				EffectPointer;
 			//int32_t				ColorTextureIndex;
 			//AlphaBlendType			AlphaBlend;
-			TextureFilterType	TextureFilter;
-			TextureWrapType		TextureWrap;
+			//TextureFilterType	TextureFilter;
+			//TextureWrapType		TextureWrap;
 			bool				ZTest;
 			bool				ZWrite;
 

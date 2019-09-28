@@ -33,8 +33,10 @@ struct StandardRendererState
 
 	::Effekseer::AlphaBlendType AlphaBlend;
 	::Effekseer::CullingType CullingType;
-	::Effekseer::TextureFilterType TextureFilterType;
-	::Effekseer::TextureWrapType TextureWrapType;
+	::Effekseer::TextureFilterType TextureFilter1;
+	::Effekseer::TextureWrapType TextureWrap1;
+	::Effekseer::TextureFilterType TextureFilter2;
+	::Effekseer::TextureWrapType TextureWrap2;
 	::Effekseer::TextureData* TexturePtr;
 	::Effekseer::TextureData* NormalTexturePtr;
 
@@ -56,8 +58,10 @@ struct StandardRendererState
 
 		AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 		CullingType = ::Effekseer::CullingType::Front;
-		TextureFilterType = ::Effekseer::TextureFilterType::Nearest;
-		TextureWrapType = ::Effekseer::TextureWrapType::Repeat;
+		TextureFilter1 = ::Effekseer::TextureFilterType::Nearest;
+		TextureWrap1 = ::Effekseer::TextureWrapType::Repeat;
+		TextureFilter2 = ::Effekseer::TextureFilterType::Nearest;
+		TextureWrap2 = ::Effekseer::TextureWrapType::Repeat;
 		TexturePtr = nullptr;
 		NormalTexturePtr = nullptr;
 
@@ -83,9 +87,13 @@ struct StandardRendererState
 			return true;
 		if (CullingType != state.CullingType)
 			return true;
-		if (TextureFilterType != state.TextureFilterType)
+		if (TextureFilter1 != state.TextureFilter1)
 			return true;
-		if (TextureWrapType != state.TextureWrapType)
+		if (TextureWrap1 != state.TextureWrap1)
+			return true;
+		if (TextureFilter2 != state.TextureFilter2)
+			return true;
+		if (TextureWrap2 != state.TextureWrap2)
 			return true;
 		if (TexturePtr != state.TexturePtr)
 			return true;
@@ -695,13 +703,18 @@ public:
 
 		shader_->SetConstantBuffer();
 
-		state.TextureFilterTypes[0] = m_state.TextureFilterType;
-		state.TextureWrapTypes[0] = m_state.TextureWrapType;
+		state.TextureFilterTypes[0] = m_state.TextureFilter1;
+		state.TextureWrapTypes[0] = m_state.TextureWrap1;
 
 		if (distortion)
 		{
-			state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Nearest;
+			state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Linear;
 			state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
+		}
+		else
+		{
+			state.TextureFilterTypes[1] = m_state.TextureFilter2;
+			state.TextureWrapTypes[1] = m_state.TextureWrap2;
 		}
 
 		m_renderer->GetRenderState()->Update(distortion);

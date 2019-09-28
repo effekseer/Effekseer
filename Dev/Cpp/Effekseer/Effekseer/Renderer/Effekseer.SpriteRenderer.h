@@ -29,8 +29,8 @@ public:
 		Effect*				EffectPointer;
 		//int32_t				ColorTextureIndex;
 		//AlphaBlendType			AlphaBlend;
-		TextureFilterType	TextureFilter;
-		TextureWrapType	TextureWrap;
+		//TextureFilterType	TextureFilter;
+		//TextureWrapType	TextureWrap;
 		bool				ZTest;
 		bool				ZWrite;
 		BillboardType		Billboard;

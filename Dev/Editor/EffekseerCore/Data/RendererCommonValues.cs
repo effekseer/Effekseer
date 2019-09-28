@@ -292,20 +292,35 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Selected(ID = 3, Value = 0)]
-		[Selected(ID = 3, Value = 4)]
-		[Selected(ID = 3, Value = 5)]
+		[Selected(ID = 3, Value = (int)MaterialType.Default)]
+		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
+		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
 		[Name(language = Language.Japanese, value = "色/歪み画像")]
 		[Description(language = Language.Japanese, value = "色/歪みを表す画像")]
 		[Name(language = Language.English, value = "Texture")]
 		[Description(language = Language.English, value = "Image that represents color/distortion")]
+
 		public Value.PathForImage ColorTexture
 		{
 			get;
 			private set;
 		}
 
-		[Selected(ID = 3, Value = 5)]
+		[Selected(ID = 3, Value = (int)MaterialType.Default)]
+		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
+		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
+		[Name(language = Language.Japanese, value = "フィルタ")]
+		[Name(language = Language.English, value = "Filter")]
+		public Value.Enum<FilterType> Filter { get; private set; }
+
+		[Selected(ID = 3, Value = (int)MaterialType.Default)]
+		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
+		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
+		[Name(language = Language.Japanese, value = "外側")]
+		[Name(language = Language.English, value = "Wrap")]
+		public Value.Enum<WrapType> Wrap { get; private set; }
+
+		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
 		[Name(language = Language.Japanese, value = "法線画像")]
 		[Description(language = Language.Japanese, value = "法線を表す画像")]
 		[Name(language = Language.English, value = "Normal Map")]
@@ -315,6 +330,16 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
+
+		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
+		[Name(language = Language.Japanese, value = "フィルタ")]
+		[Name(language = Language.English, value = "Filter")]
+		public Value.Enum<FilterType> Filter2 { get; private set; }
+
+		[Selected(ID = 3, Value = (int)MaterialType.Lighting)]
+		[Name(language = Language.Japanese, value = "外側")]
+		[Name(language = Language.English, value = "Wrap")]
+		public Value.Enum<WrapType> Wrap2 { get; private set; }
 
 		[Selected(ID = 3, Value = 4)]
 		[Name(language = Language.Japanese, value = "歪み強度")]
@@ -332,14 +357,6 @@ namespace Effekseer.Data
 		[Name(language = Language.Japanese, value = "ブレンド")]
 		[Name(language = Language.English, value = "Blend")]
 		public Value.Enum<AlphaBlendType> AlphaBlend { get; private set; }
-
-		[Name(language = Language.Japanese, value = "フィルタ")]
-		[Name(language = Language.English, value = "Filter")]
-		public Value.Enum<FilterType> Filter { get; private set; }
-
-		[Name(language = Language.Japanese, value = "外側")]
-		[Name(language = Language.English, value = "Wrap")]
-		public Value.Enum<WrapType> Wrap { get; private set; }
 
 		[Name(language = Language.Japanese, value = "深度書き込み")]
 		[Name(language = Language.English, value = "Depth Set")]
@@ -444,12 +461,15 @@ namespace Effekseer.Data
 			MaterialFile = new MaterialFileParameter();
 
 			ColorTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
-			NormalTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
-
-			AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);
 			Wrap = new Value.Enum<WrapType>(WrapType.Repeat);
 
+			NormalTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+			Filter2 = new Value.Enum<FilterType>(FilterType.Linear);
+			Wrap2 = new Value.Enum<WrapType>(WrapType.Repeat);
+
+			AlphaBlend = new Value.Enum<AlphaBlendType>(AlphaBlendType.Blend);
+			
 			FadeInType = new Value.Enum<FadeType>(FadeType.None);
 			FadeInNone = new NoneParamater();
 			FadeIn = new FadeInParamater();
@@ -663,11 +683,11 @@ namespace Effekseer.Data
 
 			[Name(value = "歪み(背景)", language = Language.Japanese)]
 			[Name(value = "Distortion(Back)", language = Language.English)]
-			BackDistortion = 4,
+			BackDistortion = 6,
 
 			[Name(value = "ライティング", language = Language.Japanese)]
 			[Name(value = "Lighting", language = Language.English)]
-			Lighting = 5,
+			Lighting = 7,
 
 			[Name(value = "ファイル", language = Language.Japanese)]
 			[Name(value = "File", language = Language.English)]

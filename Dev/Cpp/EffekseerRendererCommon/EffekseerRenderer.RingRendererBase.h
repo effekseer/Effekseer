@@ -75,8 +75,10 @@ protected:
 		state.CullingType = ::Effekseer::CullingType::Double;
 		state.DepthTest = param.ZTest;
 		state.DepthWrite = param.ZWrite;
-		state.TextureFilterType = param.TextureFilter;
-		state.TextureWrapType = param.TextureWrap;
+		state.TextureFilter1 = param.BasicParameterPtr->TextureFilter1;
+		state.TextureWrap1 = param.BasicParameterPtr->TextureWrap1;
+		state.TextureFilter2 = param.BasicParameterPtr->TextureFilter2;
+		state.TextureWrap2 = param.BasicParameterPtr->TextureWrap2;
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;

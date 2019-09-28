@@ -10,7 +10,7 @@ namespace Effekseer
 {
 	public class Core
 	{
-		public const string Version = "1.43b";
+		public const string Version = "1.50CTP1";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -804,6 +804,25 @@ namespace Effekseer
 							}
 
 							rendererCommon.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.BackDistortion));
+						}
+					}
+
+					if (renderer != null && rendererCommon != null)
+					{
+						if (renderer["Type"] != null && renderer["Type"].GetTextAsInt() == (int)Data.RendererValues.ParamaterType.Model)
+						{
+							if (renderer["Model"]["NormalTexture"] != null)
+							{
+								if(rendererCommon["Filter"] != null)
+								{
+									rendererCommon.AppendChild(doc.CreateTextElement("Filter2", rendererCommon["Filter"].GetText()));
+								}
+
+								if (rendererCommon["Wrap"] != null)
+								{
+									rendererCommon.AppendChild(doc.CreateTextElement("Wrap2", rendererCommon["Wrap"].GetText()));
+								}
+							}
 						}
 					}
 
