@@ -85,6 +85,11 @@ protected:
 					 std::vector<std::shared_ptr<Node>>& nodes,
 					 std::unordered_set<std::shared_ptr<Node>>& foundNodes);
 
+	void GatherNodes(std::shared_ptr<Material> material,
+					 std::shared_ptr<Pin> pin,
+					 std::vector<std::shared_ptr<Node>>& nodes,
+					 std::unordered_set<std::shared_ptr<Node>>& foundNodes);
+
 	virtual std::string MergeTemplate(std::string code, std::string uniform_texture);
 
 	virtual std::string ExportOutputNode(std::shared_ptr<Material> material,

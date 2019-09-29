@@ -300,11 +300,52 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	else
 	{
 		option.HasRefraction = false;
-		option.ShadingModel = 1;		
+		option.ShadingModel = 1;
 	}
 
 	// Generate outputs
 	std::ostringstream ret;
+
+	// collect pixelNormalDir and export it first.
+	// it is able to use pixelNormalDir for other calculating
+	if (outputExportedNode->Target->Parameter->Type == NodeType::Output)
+	{
+		auto normalIndex = outputExportedNode->Target->GetInputPinIndex("Normal");
+		if (outputExportedNode->Inputs[normalIndex].IsConnected)
+		{
+			std::vector<std::shared_ptr<Node>> pnNodes;
+			std::unordered_set<std::shared_ptr<Node>> pnFoundNodes;
+
+			GatherNodes(material, outputExportedNode->Target->InputPins[normalIndex], pnNodes, pnFoundNodes);
+
+			// nodes to calculate pixelNormalDir
+			std::vector<std::shared_ptr<TextExporterNode>> pnExportedNodes;
+			std::vector<std::shared_ptr<TextExporterNode>> tempExportedNodes;
+
+			for (auto wn : exportedNodes)
+			{
+				if (pnFoundNodes.find(wn->Target) != pnFoundNodes.end())
+				{
+					pnExportedNodes.push_back(wn);
+				}
+				else
+				{
+					tempExportedNodes.push_back(wn);
+				}
+			}
+
+			exportedNodes = tempExportedNodes;
+
+			// export pixelnormaldir
+			for (auto wn : pnExportedNodes)
+			{
+				ret << ExportNode(wn);
+			}
+
+			ret << " pixelNormalDir = " << GetInputArg(ValueType::Float3, outputExportedNode->Inputs[normalIndex]) << ";" << std::endl;
+		}
+	}
+
 	for (auto wn : exportedNodes)
 	{
 		ret << ExportNode(wn);
@@ -375,6 +416,20 @@ void TextExporter::GatherNodes(std::shared_ptr<Material> material,
 	}
 }
 
+void TextExporter::GatherNodes(std::shared_ptr<Material> material,
+							   std::shared_ptr<Pin> pin,
+							   std::vector<std::shared_ptr<Node>>& nodes,
+							   std::unordered_set<std::shared_ptr<Node>>& foundNodes)
+{
+	auto relatedPins = material->GetConnectedPins(pin);
+
+	for (auto relatedPin : relatedPins)
+	{
+		auto relatedNode = relatedPin->Parent.lock();
+		GatherNodes(material, relatedNode, nodes, foundNodes);
+	}
+}
+
 std::string TextExporter::MergeTemplate(std::string code, std::string uniform_texture)
 {
 	const char template_[] = R"(
@@ -422,7 +477,6 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		auto opacityIndex = outputNode->Target->GetInputPinIndex("Opacity");
 		auto opacityMaskIndex = outputNode->Target->GetInputPinIndex("OpacityMask");
 
-		ret << " pixelNormalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex]) << ";" << std::endl;
 		ret << GetTypeName(ValueType::Float3) << " normalDir = " << GetInputArg(ValueType::Float3, outputNode->Inputs[normalIndex]) << ";"
 			<< std::endl;
 

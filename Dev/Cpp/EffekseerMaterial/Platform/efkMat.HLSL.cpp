@@ -1,3 +1,5 @@
+// Unused
+/*
 #include "efkMat.HLSL.h"
 
 namespace EffekseerMaterial
@@ -55,3 +57,4 @@ std::string TextExporterHLSL::GetTimeName() const { return "ps_time"; }
 
 
 } // namespace EffekseerMaterial
+*/

@@ -1,3 +1,5 @@
+
+/*
 #include "efkMat.GLSL.h"
 #include "../efkMat.Models.h"
 #include "../efkMat.Parameters.h"
@@ -87,3 +89,4 @@ void main()
 }
 
 } // namespace EffekseerMaterial
+*/

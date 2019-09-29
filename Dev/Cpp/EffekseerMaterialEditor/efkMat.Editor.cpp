@@ -98,7 +98,7 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	EffekseerMaterial::TextExporterGeneric exporter;
 	auto result = (&exporter)->Export(material, node);
 
-	auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
+	//auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
 
 	auto textures = result.Textures;
 	auto removed_it = std::remove_if(textures.begin(),

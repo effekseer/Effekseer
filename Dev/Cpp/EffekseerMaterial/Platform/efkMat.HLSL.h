@@ -1,4 +1,6 @@
 
+// Unused
+/*
 #pragma once
 
 #include "../efkMat.TextExporter.h"
@@ -21,3 +23,4 @@ public:
 };
 
 } // namespace EffekseerMaterial
+*/
