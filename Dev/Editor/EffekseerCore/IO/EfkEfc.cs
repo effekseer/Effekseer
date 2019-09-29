@@ -202,7 +202,7 @@ namespace Effekseer.IO
 					bool isHaveValue = item.Value != null && (string)item.Value != "";
 					res.Push(isHaveValue);
 					if (isHaveValue)
-						res.Push((string)item.Value, Encoding.UTF8);
+						res.Push((string)item.Value, Encoding.UTF8, false, 1);
 
 					bool isHaveChildren = item.Children != null && item.Children.Count != 0;
 					res.Push(isHaveChildren);
@@ -219,7 +219,7 @@ namespace Effekseer.IO
 			binary.Push((Int16)keys.Count);
 			foreach (var item in keys)
 			{
-				binary.Push(item.Key, Encoding.UTF8);
+				binary.Push(item.Key, Encoding.UTF8, false, 1);
 				binary.Push(item.Value);
 			}
 
@@ -240,7 +240,7 @@ namespace Effekseer.IO
 			{
 				Int16 key = -1;
 				string name = "";
-				reader.Get(ref name, Encoding.UTF8);
+				reader.Get(ref name, Encoding.UTF8, false, 1);
 				reader.Get(ref key);
 				keys.Add(key, name);
 			}
@@ -262,7 +262,7 @@ namespace Effekseer.IO
 					if (isHaveValue)
 					{
 						string value = "";
-						reader.Get(ref value, Encoding.UTF8);
+						reader.Get(ref value, Encoding.UTF8, false, 1);
 						var valueNode = doc.CreateNode(System.Xml.XmlNodeType.Text, "", "");
 						valueNode.Value = value;
 						element.AppendChild(valueNode);
@@ -338,7 +338,10 @@ namespace Effekseer.IO
 
 			Chunk chunk = new Chunk();
 			chunk.AddChunk("INFO", infoData);
-			chunk.AddChunk("EDIT", Compress(editorData));
+			byte[] buffer = Compress(editorData);
+			Console.WriteLine(buffer.Length);
+			Console.WriteLine(Encoding.UTF8.GetBytes(editorData.InnerXml).Length);
+			chunk.AddChunk("EDIT", buffer);
 			chunk.AddChunk("BIN_", binaryData);
 
 			var chunkData = chunk.Save();
