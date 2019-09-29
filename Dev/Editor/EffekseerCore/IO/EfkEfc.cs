@@ -147,12 +147,15 @@ namespace Effekseer.IO
 
 				for (int i = 0; i < xmlNodes.Count; i++)
 				{
+					if (xmlNodes[i].NodeType == System.Xml.XmlNodeType.XmlDeclaration)
+						continue;
+
 					Element element = new Element();
 
 					element.Name = xmlNodes[i].Name;
 
 					if (xmlNodes[i].ChildNodes.Count == 1 &&
-					xmlNodes[i].ChildNodes[0].ChildNodes.Count == 0)
+					xmlNodes[i].ChildNodes[0].NodeType == System.Xml.XmlNodeType.Text)
 					{
 						var value = xmlNodes[i].ChildNodes[0].Value;
 						element.Value = value;
@@ -176,38 +179,51 @@ namespace Effekseer.IO
 			comp = (elements) =>
 			{
 				Utils.BinaryWriter res = new Utils.BinaryWriter();
+
+				res.Push((Int16)elements.Count);
 				foreach (var item in elements)
 				{
 					if (!keys.ContainsKey(item.Name))
 						keys[item.Name] = (Int16)keys.Count();
 					res.Push(keys[item.Name]);
 
-					if (item.Value is int)
-						res.Push((int)item.Value);
-					else if (item.Value is UInt32)
-						res.Push((UInt32)item.Value);
-					else if (item.Value is Int16)
-						res.Push((Int16)item.Value);
-					else if (item.Value is UInt16)
-						res.Push((UInt16)item.Value);
-					else if (item.Value is byte[])
-						res.Push((byte[])item.Value);
-					else if (item.Value is string)
+					//if (item.Value is int)
+					//	res.Push((int)item.Value);
+					//else if (item.Value is UInt32)
+					//	res.Push((UInt32)item.Value);
+					//else if (item.Value is Int16)
+					//	res.Push((Int16)item.Value);
+					//else if (item.Value is UInt16)
+					//	res.Push((UInt16)item.Value);
+					//else if (item.Value is byte[])
+					//	res.Push((byte[])item.Value);
+					//else if (item.Value is string)
+
+					bool isHaveValue = item.Value != null && (string)item.Value != "";
+					res.Push(isHaveValue);
+					if (isHaveValue)
 						res.Push((string)item.Value, Encoding.UTF8);
 
-					if (item.Children != null)
-						res.Push(comp(item.Children));
+					bool isHaveChildren = item.Children != null && item.Children.Count != 0;
+					res.Push(isHaveChildren);
+					if (isHaveChildren)
+						res.PushDirectly(comp(item.Children));
 				}
 				return res.GetBinary();
 			};
 
 			Utils.BinaryWriter binary = new Utils.BinaryWriter();
+
+			var valueBuf = comp(visits);
+
+			binary.Push((Int16)keys.Count);
 			foreach (var item in keys)
 			{
 				binary.Push(item.Key, Encoding.UTF8);
 				binary.Push(item.Value);
 			}
-			binary.Push(comp(visits));
+
+			binary.PushDirectly(valueBuf);
 
 			return binary.GetBinary();
 		}
@@ -215,7 +231,55 @@ namespace Effekseer.IO
 		System.Xml.XmlDocument Decompress(byte[] buffer)
 		{
 			var doc = new System.Xml.XmlDocument();
-			doc.LoadXml(Encoding.UTF8.GetString(buffer, 0, buffer.Length));
+			var reader = new Utl.BinaryReader(buffer);
+
+			var keys = new Dictionary<Int16, string>();
+			Int16 keySize = -1;
+			reader.Get(ref keySize);
+			for (int i = 0; i < keySize; i++)
+			{
+				Int16 key = -1;
+				string name = "";
+				reader.Get(ref name, Encoding.UTF8);
+				reader.Get(ref key);
+				keys.Add(key, name);
+			}
+
+			Action<System.Xml.XmlNode> decomp = null;
+			decomp = (node) =>
+			{
+				Int16 elementSize = 0;
+				reader.Get(ref elementSize);
+				for (int i = 0; i < elementSize; i++)
+				{
+					Int16 nameKey = -1;
+					reader.Get(ref nameKey);
+					var element = doc.CreateElement(keys[nameKey]);
+					node.AppendChild(element);
+
+					bool isHaveValue = false;
+					reader.Get(ref isHaveValue);
+					if (isHaveValue)
+					{
+						string value = "";
+						reader.Get(ref value, Encoding.UTF8);
+						var valueNode = doc.CreateNode(System.Xml.XmlNodeType.Text, "", "");
+						valueNode.Value = value;
+						element.AppendChild(valueNode);
+					}
+
+					bool isHaveChildren = false;
+					reader.Get(ref isHaveChildren);
+					if (isHaveChildren)
+						decomp(element);
+				}
+			};
+
+
+			var declare = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+			doc.AppendChild(declare);
+			decomp(doc);
+
 			return doc;
 		}
 
