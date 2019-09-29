@@ -71,7 +71,7 @@ add_executable(Effekseer
 )
 
 set_target_properties(Effekseer PROPERTIES
-    VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp")
+    VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
 
 target_link_libraries(Effekseer EffekseerCore Viewer)
 target_compile_options(Effekseer PRIVATE "/unsafe")

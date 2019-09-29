@@ -238,13 +238,33 @@ namespace Effekseer.IO
 
 			binary.PushDirectly(valueBuf);
 
-			return binary.GetBinary();
+			using (var compressStream = new System.IO.MemoryStream())
+			using (var compressor = new System.IO.Compression.DeflateStream(compressStream, System.IO.Compression.CompressionMode.Compress))
+			{
+				byte[] buffer = binary.GetBinary();
+				compressor.Write(buffer, 0, buffer.Count());
+				compressor.Close();
+				return compressStream.ToArray();
+			}
 		}
 
 		System.Xml.XmlDocument Decompress(byte[] buffer)
 		{
+			List<byte> decompressBuffer = new List<byte>();
+			using (var decompressStream = new System.IO.MemoryStream(buffer))
+			using (var decompressor = new System.IO.Compression.DeflateStream(decompressStream, System.IO.Compression.CompressionMode.Decompress))
+			{
+				while (true)
+				{
+					byte[] temp = new byte[1024];
+					int readSize = decompressor.Read(temp, 0, temp.Length);
+					if (readSize == 0) break;
+					decompressBuffer.AddRange(temp.Take(readSize));
+				}
+			}
+
 			var doc = new System.Xml.XmlDocument();
-			var reader = new Utl.BinaryReader(buffer);
+			var reader = new Utl.BinaryReader(decompressBuffer.ToArray());
 
 			var keys = new Dictionary<Int16, string>();
 			Int16 keySize = -1;
@@ -363,10 +383,7 @@ namespace Effekseer.IO
 
 			Chunk chunk = new Chunk();
 			chunk.AddChunk("INFO", infoData);
-			byte[] buffer = Compress(editorData);
-			Console.WriteLine(buffer.Length);
-			Console.WriteLine(Encoding.UTF8.GetBytes(editorData.InnerXml).Length);
-			chunk.AddChunk("EDIT", buffer);
+			chunk.AddChunk("EDIT", Compress(editorData));
 			chunk.AddChunk("BIN_", binaryData);
 
 			var chunkData = chunk.Save();
