@@ -171,7 +171,7 @@ namespace Effekseer.IO
 			var visits = visit(xml.ChildNodes);
 
 			// compress...
-			Dictionary<string, int> keys = new Dictionary<string, int>();
+			Dictionary<string, Int16> keys = new Dictionary<string, Int16>();
 			Func<List<Element>, byte[]> comp = null;
 			comp = (elements) =>
 			{
@@ -179,7 +179,7 @@ namespace Effekseer.IO
 				foreach (var item in elements)
 				{
 					if (!keys.ContainsKey(item.Name))
-						keys[item.Name] = keys.Count();
+						keys[item.Name] = (Int16)keys.Count();
 					res.Push(keys[item.Name]);
 
 					if (item.Value is int)
