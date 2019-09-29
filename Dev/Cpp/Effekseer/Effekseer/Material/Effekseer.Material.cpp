@@ -71,6 +71,9 @@ bool Material::Load(const uint8_t* data, int32_t size)
 				// defaultpath
 				offset += strDefaultPathLength;
 
+				// priority
+				offset += sizeof(int);
+
 				int index = 0;
 				memcpy(&index, data + offset, 4);
 				offset += sizeof(int);
@@ -81,9 +84,15 @@ bool Material::Load(const uint8_t* data, int32_t size)
 				// valuetexture
 				offset += sizeof(int);
 
+				// sampler
+				int sampler = 0;
+				memcpy(&sampler, data + offset, 4);
+				offset += sizeof(int);
+
 				Texture texture;
 				texture.Name = name;
 				texture.Index = index;
+				texture.Wrap = static_cast<TextureWrapType>(sampler);
 				textures_.push_back(texture);
 			}
 
@@ -101,6 +110,9 @@ bool Material::Load(const uint8_t* data, int32_t size)
 				offset += strLength;
 
 				// offset
+				offset += sizeof(int);
+
+				// priority
 				offset += sizeof(int);
 
 				int type = 0;
@@ -155,6 +167,10 @@ void Material::SetGenericCode(const char* code) { genericCode_ = code; }
 uint64_t Material::GetGUID() const { return guid_; }
 
 void Material::SetGUID(uint64_t guid) { guid_ = guid; }
+
+TextureWrapType Material::GetTextureWrap(int32_t index) const { return textures_.at(index).Wrap; }
+
+void Material::SetTextureWrap(int32_t index, TextureWrapType value) { textures_.at(index).Wrap = value; }
 
 int32_t Material::GetTextureIndex(int32_t index) const { return textures_.at(index).Index; }
 

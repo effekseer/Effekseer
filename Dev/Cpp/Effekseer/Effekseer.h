@@ -571,6 +571,8 @@ struct MaterialData
 	bool IsRefractionRequired = false;
 	int32_t TextureCount = 0;
 	int32_t UniformCount = 0;
+	//! TODO remove magic number
+	std::array<TextureWrapType, 16> TextureWrapTypes;
 	void* UserPtr = nullptr;
 	void* ModelUserPtr = nullptr;
 	void* RefractionUserPtr = nullptr;

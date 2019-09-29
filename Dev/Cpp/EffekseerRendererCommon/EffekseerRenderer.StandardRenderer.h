@@ -497,6 +497,8 @@ public:
 				for (size_t i = 0; i < Effekseer::Min(m_state.MaterialTextureCount, textures.size()); i++)
 				{
 					textures[i] = m_state.MaterialTextures[i];
+					state.TextureFilterTypes[i] = Effekseer::TextureFilterType::Linear;
+					state.TextureWrapTypes[i] = m_state.MaterialPtr->TextureWrapTypes[i];
 				}
 			}
 

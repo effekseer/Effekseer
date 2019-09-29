@@ -125,6 +125,18 @@ public:
 	//! default value
 	bool IsOpened = false;
 
+	int32_t GetPropertyIndex(const std::string& name)
+	{
+		for (size_t i = 0; i < Properties.size(); i++)
+		{
+			if (Properties[i]->Name == name)
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	virtual ValueType
 	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const
 	{
@@ -181,6 +193,12 @@ public:
 		paramName->Type = ValueType::String;
 		Properties.push_back(paramName);
 
+		auto paramPriority = std::make_shared<NodePropertyParameter>();
+		paramPriority->Name = "Priority";
+		paramPriority->Type = ValueType::Int;
+		paramPriority->DefaultValues[0] = 1;
+		Properties.push_back(paramPriority);
+
 		auto param = std::make_shared<NodePropertyParameter>();
 		param->Name = "Value";
 		param->Type = ValueType::Float1;
@@ -207,6 +225,12 @@ public:
 		paramName->Name = "Name";
 		paramName->Type = ValueType::String;
 		Properties.push_back(paramName);
+
+		auto paramPriority = std::make_shared<NodePropertyParameter>();
+		paramPriority->Name = "Priority";
+		paramPriority->Type = ValueType::Int;
+		paramPriority->DefaultValues[0] = 1;
+		Properties.push_back(paramPriority);
 
 		auto param = std::make_shared<NodePropertyParameter>();
 		param->Name = "Value";
@@ -562,6 +586,12 @@ public:
 		paramName->Type = ValueType::String;
 		Properties.push_back(paramName);
 
+		auto paramPriority = std::make_shared<NodePropertyParameter>();
+		paramPriority->Name = "Priority";
+		paramPriority->Type = ValueType::Int;
+		paramPriority->DefaultValues[0] = 1;
+		Properties.push_back(paramPriority);
+
 		auto param = std::make_shared<NodePropertyParameter>();
 		param->Name = "Value";
 		param->Type = ValueType::Texture;
@@ -597,6 +627,12 @@ public:
 		param->Name = "Texture";
 		param->Type = ValueType::Texture;
 		Properties.push_back(param);
+
+		auto paramSampler = std::make_shared<NodePropertyParameter>();
+		paramSampler->Name = "Sampler";
+		paramSampler->Type = ValueType::Enum;
+		paramSampler->DefaultValues[0] = 0;
+		Properties.push_back(paramSampler);
 
 		IsOpened = true;
 	}

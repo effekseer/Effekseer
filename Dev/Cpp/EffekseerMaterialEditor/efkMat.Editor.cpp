@@ -944,6 +944,17 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 	auto updateProp = [&, node](ValueType type, std::string name, std::shared_ptr<EffekseerMaterial::NodeProperty> p) -> void {
 		auto floatValues = p->Floats;
 
+		if (type == ValueType::Int)
+		{
+			int32_t value = static_cast<int32_t>(floatValues[0]);
+			if (ImGui::DragInt(name.c_str(), &value, 1, 1, 100))
+			{
+				floatValues[0] = value;
+				material->ChangeValue(p, floatValues);
+				material->MakeDirty(node);
+			}
+		}
+
 		if (type == ValueType::Float1)
 		{
 			if (ImGui::DragFloat(name.c_str(), floatValues.data(), 0.01f))
@@ -1034,7 +1045,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 						auto isSelected = static_cast<int>(texture->Type) == i;
 						if (ImGui::Selectable(items[i], isSelected))
 						{
-							material->ChangeValueTextureType(texture, static_cast<TextureType>(i));
+							material->ChangeValueTextureType(texture, static_cast<TextureValueType>(i));
 							material->MakeContentDirty(node);
 						}
 						if (isSelected)
@@ -1050,6 +1061,27 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 			if (name == std::string("Index"))
 			{
 				const char* items[] = {"1", "2"};
+
+				if (ImGui::BeginCombo(name.c_str(), items[static_cast<int>(floatValues[0])]))
+				{
+					for (size_t i = 0; i < 2; i++)
+					{
+						auto isSelected = static_cast<int>(floatValues[0]) == i;
+						if (ImGui::Selectable(items[i], isSelected))
+						{
+							floatValues[0] = i;
+							material->ChangeValue(p, floatValues);
+							material->MakeDirty(node);
+						}
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
+			}
+			if (name == std::string("Sampler"))
+			{
+				const char* items[] = {"Repeat", "Clamp"};
 
 				if (ImGui::BeginCombo(name.c_str(), items[static_cast<int>(floatValues[0])]))
 				{

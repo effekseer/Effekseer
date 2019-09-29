@@ -108,7 +108,7 @@ public:
 	virtual ~TextureInfo() {}
 
 	std::string Path;
-	TextureType Type = TextureType::Color;
+	TextureValueType Type = TextureValueType::Color;
 };
 
 class Material : public std::enable_shared_from_this<Material>
@@ -177,7 +177,7 @@ public:
 
 	void ChangeValue(std::shared_ptr<NodeProperty> prop, std::string value);
 
-	void ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, TextureType type);
+	void ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, TextureValueType type);
 
 	void MakeDirty(std::shared_ptr<Node> node);
 

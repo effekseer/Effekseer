@@ -91,6 +91,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->DefaultPath = path;
 						extractedTexture->IsParam = true;
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
+						extractedTexture->Priority = static_cast<int32_t>(node->Properties[2]->Floats[0]);
 						extractedTextures[keyStr] = extractedTexture;
 					}
 
@@ -122,6 +123,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedUniform = std::make_shared<TextExporterUniform>();
 						extractedUniform->Name = paramName;
 						extractedUniform->DefaultConstants = values;
+						extractedUniform->Priority = static_cast<int32_t>(node->Properties[2]->Floats[0]);
 
 						if (node->Parameter->Type == NodeType::Param1)
 						{
@@ -214,6 +216,9 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
 						extractedTextures[keyStr] = extractedTexture;
 					}
+
+					// assign a sampler
+					extractedTexture->Sampler = static_cast<TextureSamplerType>((int)node->Properties[node->Parameter->GetPropertyIndex("Sampler")]->Floats[0]);
 
 					tePin.TextureValue = extractedTexture;
 				}

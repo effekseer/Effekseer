@@ -258,6 +258,11 @@ namespace EffekseerRendererGL
 	materialData->UniformCount = material.GetUniformCount();
 	materialData->ShadingModel = material.GetShadingModel();
 
+	for (int32_t i = 0; i < materialData->TextureCount; i++)
+	{
+		materialData->TextureWrapTypes.at(i) = material.GetTextureWrap(i);
+	}
+
 	return materialData;
 }
 

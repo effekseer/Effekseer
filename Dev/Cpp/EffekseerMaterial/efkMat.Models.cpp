@@ -766,7 +766,7 @@ std::shared_ptr<TextureInfo> Material::FindTexture(const char* path)
 
 	auto texture = std::make_shared<TextureInfo>();
 
-	texture->Type = TextureType::Color;
+	texture->Type = TextureValueType::Color;
 	texture->Path = path;
 	textures[key] = texture;
 
@@ -842,6 +842,10 @@ std::string Material::Copy(std::vector<std::shared_ptr<Node>> nodes, const char*
 			{
 				prop_.insert(std::make_pair("Value", picojson::value(p->Str)));
 			}
+			else if (pp->Type == ValueType::Int)
+			{
+				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
+			}
 			else if (pp->Type == ValueType::Texture)
 			{
 				auto absStr = p->Str;
@@ -851,6 +855,10 @@ std::string Material::Copy(std::vector<std::shared_ptr<Node>> nodes, const char*
 			else if (pp->Type == ValueType::Enum)
 			{
 				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
+			}
+			else
+			{
+				assert(0);
 			}
 
 			props_.push_back(picojson::value(prop_));
@@ -991,6 +999,10 @@ void Material::Paste(std::string content, const Vector2DF& pos, std::shared_ptr<
 				auto str = props_[i].get("Value").get<std::string>();
 				node->Properties[i]->Str = str;
 			}
+			if (node->Parameter->Properties[i]->Type == ValueType::Int)
+			{
+				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
+			}
 			else if (node->Parameter->Properties[i]->Type == ValueType::Texture)
 			{
 				auto str = props_[i].get("Value").get<std::string>();
@@ -1000,6 +1012,10 @@ void Material::Paste(std::string content, const Vector2DF& pos, std::shared_ptr<
 			else if (node->Parameter->Properties[i]->Type == ValueType::Enum)
 			{
 				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
+			}
+			else
+			{
+				assert(0);
 			}
 		}
 	}
@@ -1056,7 +1072,7 @@ void Material::ChangeValue(std::shared_ptr<NodeProperty> prop, std::string value
 	commandManager_->Execute(command);
 }
 
-void Material::ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, TextureType type)
+void Material::ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, TextureValueType type)
 {
 	auto value_old = prop->Type;
 	auto value_new = type;
@@ -1186,6 +1202,10 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 				auto str = props_[i].get("Value").get<std::string>();
 				node->Properties[i]->Str = str;
 			}
+			if (node->Parameter->Properties[i]->Type == ValueType::Int)
+			{
+				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
+			}
 			else if (node->Parameter->Properties[i]->Type == ValueType::Texture)
 			{
 				auto str = props_[i].get("Value").get<std::string>();
@@ -1195,6 +1215,10 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 			else if (node->Parameter->Properties[i]->Type == ValueType::Enum)
 			{
 				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
+			}
+			else
+			{
+				assert(0);
 			}
 		}
 	}
@@ -1249,7 +1273,7 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 
 			auto texture = std::make_shared<TextureInfo>();
 			texture->Path = absolute;
-			texture->Type = static_cast<TextureType>(static_cast<int>(textureType));
+			texture->Type = static_cast<TextureValueType>(static_cast<int>(textureType));
 			textures[absolute] = texture;
 		}
 	}
@@ -1373,6 +1397,10 @@ std::string Material::SaveAsStr(const char* basePath)
 			{
 				prop_.insert(std::make_pair("Value", picojson::value(p->Str)));
 			}
+			else if (pp->Type == ValueType::Int)
+			{
+				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
+			}
 			else if (pp->Type == ValueType::Texture)
 			{
 				auto absStr = p->Str;
@@ -1383,6 +1411,10 @@ std::string Material::SaveAsStr(const char* basePath)
 			else if (pp->Type == ValueType::Enum)
 			{
 				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
+			}
+			else
+			{
+				assert(0);
 			}
 
 			props_.push_back(picojson::value(prop_));
@@ -1551,8 +1583,10 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		auto defaultPath_ = GetVectorFromStr(param->DefaultPath);
 		bwParam.Push(defaultPath_);
 		bwParam.Push(param->Index);
+		bwParam.Push(param->Priority);
 		bwParam.Push(param->IsParam);
 		bwParam.Push(param->Type);
+		bwParam.Push(param->Sampler);
 	}
 
 	bwParam.Push(static_cast<int32_t>(result.Uniforms.size()));
@@ -1565,7 +1599,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		bwParam.Push(name_);
 
 		bwParam.Push(param->Offset);
-
+		bwParam.Push(param->Priority);
 		int type = (int)(param->Type);
 		bwParam.Push(type);
 

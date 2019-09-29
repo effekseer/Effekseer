@@ -15,6 +15,7 @@ struct TextExporterUniform
 	std::string Name;
 	std::array<float, 4> DefaultConstants;
 	int32_t Offset;
+	int32_t Priority = 1;
 };
 
 /**
@@ -26,7 +27,9 @@ struct TextExporterTexture
 	int32_t Index;
 	std::string DefaultPath;
 	bool IsParam = false;
-	TextureType Type = TextureType::Color;
+	TextureValueType Type = TextureValueType::Color;
+	TextureSamplerType Sampler;
+	int32_t Priority = 1;
 };
 
 struct TextExporterPin

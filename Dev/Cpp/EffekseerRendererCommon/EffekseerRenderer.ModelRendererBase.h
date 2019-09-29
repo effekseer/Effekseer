@@ -450,6 +450,9 @@ public:
 							textures[i] = nullptr;
 						}
 					}
+
+					state.TextureFilterTypes[i] = Effekseer::TextureFilterType::Linear;
+					state.TextureWrapTypes[i] = material->TextureWrapTypes[i];
 				}
 
 				if (renderer->GetBackground() != 0)

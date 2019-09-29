@@ -181,14 +181,18 @@ namespace Effekseer.Utl
 					for(int i = 0; i < textureCount; i++)
 					{
 						TextureInformation info = new TextureInformation();
+						int priority = 0;
 
 						reader.Get(ref info.Name, Encoding.UTF8);
 						reader.Get(ref info.DefaultPath, Encoding.UTF8);
 						reader.Get(ref info.Index);
+						reader.Get(ref priority);
 						reader.Get(ref info.IsParam);
 						int textureType = 0;
 						reader.Get(ref textureType);
 						info.Type = (TextureType)textureType;
+						int sampler = 0;
+						reader.Get(ref sampler);
 
 						// convert a path into absolute
 						if (string.IsNullOrEmpty(info.DefaultPath))
@@ -225,9 +229,11 @@ namespace Effekseer.Utl
 					for (int i = 0; i < uniformCount; i++)
 					{
 						UniformInformation info = new UniformInformation();
+						int priority = 0;
 
 						reader.Get(ref info.Name, Encoding.UTF8);
 						reader.Get(ref info.Offset);
+						reader.Get(ref priority);
 						reader.Get(ref info.Type);
 						reader.Get(ref info.DefaultValues[0]);
 						reader.Get(ref info.DefaultValues[1]);

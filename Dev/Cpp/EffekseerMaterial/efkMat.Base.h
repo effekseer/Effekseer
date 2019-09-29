@@ -20,10 +20,16 @@
 namespace EffekseerMaterial
 {
 
-enum class TextureType
+enum class TextureValueType
 {
 	Color,
 	Value,
+};
+
+enum class TextureSamplerType
+{
+	Repeat,
+	Wrap,
 };
 
 enum class ConnectResultType
@@ -56,6 +62,7 @@ enum class ValueType
 	String,
 	Function,
 	Enum,
+	Int,
 	Unknown,
 };
 

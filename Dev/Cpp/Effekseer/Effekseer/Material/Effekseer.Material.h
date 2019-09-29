@@ -20,6 +20,7 @@ private:
 	{
 		std::string Name;
 		int32_t Index;
+		TextureWrapType Wrap;
 	};
 
 	struct Uniform
@@ -67,6 +68,10 @@ public:
 	virtual uint64_t GetGUID() const;
 
 	virtual void SetGUID(uint64_t guid);
+
+	virtual TextureWrapType GetTextureWrap(int32_t index) const;
+
+	virtual void SetTextureWrap(int32_t index, TextureWrapType value);
 
 	virtual int32_t GetTextureIndex(int32_t index) const;
 
