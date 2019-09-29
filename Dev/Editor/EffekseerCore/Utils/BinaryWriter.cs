@@ -80,7 +80,7 @@ namespace Effekseer.Utils
 			}
 			else if (bufLenSize == 1)
 			{
-				buffers.Add(BitConverter.GetBytes((Byte)length));
+				buffers.Add(new[] { (Byte)length });
 			}
 
 			buffers.Add(strBuf);
