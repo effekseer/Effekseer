@@ -175,6 +175,7 @@ namespace Effekseer.IO
 
 			// compress...
 			Dictionary<string, Int16> keys = new Dictionary<string, Int16>();
+			Dictionary<string, Int16> values = new Dictionary<string, Int16>();
 			Func<List<Element>, byte[]> comp = null;
 			comp = (elements) =>
 			{
@@ -202,7 +203,12 @@ namespace Effekseer.IO
 					bool isHaveValue = item.Value != null && (string)item.Value != "";
 					res.Push(isHaveValue);
 					if (isHaveValue)
-						res.Push((string)item.Value, Encoding.UTF8, false, 1);
+					{
+						var value = (string)item.Value;
+						if (!values.ContainsKey(value))
+							values[value] = (Int16)values.Count();
+						res.Push(values[value]);
+					}
 
 					bool isHaveChildren = item.Children != null && item.Children.Count != 0;
 					res.Push(isHaveChildren);
@@ -218,6 +224,13 @@ namespace Effekseer.IO
 
 			binary.Push((Int16)keys.Count);
 			foreach (var item in keys)
+			{
+				binary.Push(item.Key, Encoding.UTF8, false, 1);
+				binary.Push(item.Value);
+			}
+
+			binary.Push((Int16)values.Count);
+			foreach (var item in values)
 			{
 				binary.Push(item.Key, Encoding.UTF8, false, 1);
 				binary.Push(item.Value);
@@ -245,6 +258,18 @@ namespace Effekseer.IO
 				keys.Add(key, name);
 			}
 
+			var values = new Dictionary<Int16, string>();
+			Int16 valueSize = -1;
+			reader.Get(ref valueSize);
+			for (int i = 0; i < valueSize; i++)
+			{
+				Int16 key = -1;
+				string value = "";
+				reader.Get(ref value, Encoding.UTF8, false, 1);
+				reader.Get(ref key);
+				values.Add(key, value);
+			}
+
 			Action<System.Xml.XmlNode> decomp = null;
 			decomp = (node) =>
 			{
@@ -261,10 +286,10 @@ namespace Effekseer.IO
 					reader.Get(ref isHaveValue);
 					if (isHaveValue)
 					{
-						string value = "";
-						reader.Get(ref value, Encoding.UTF8, false, 1);
+						Int16 value = -1;
+						reader.Get(ref value);
 						var valueNode = doc.CreateNode(System.Xml.XmlNodeType.Text, "", "");
-						valueNode.Value = value;
+						valueNode.Value = values[value];
 						element.AppendChild(valueNode);
 					}
 
