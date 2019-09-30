@@ -20,8 +20,13 @@ file(GLOB files_core
     EffekseerCore/Properties/*.cs
     EffekseerCore/Script/*.cs
     EffekseerCore/Utl/*.cs	
-	EffekseerCore/Utils/*.cs	
+    EffekseerCore/IO/*.cs	
+    EffekseerCore/Utils/*.cs	
 	)
+
+list(APPEND files_core
+	EffekseerCore/IO/EfkEfc.cs
+)
 
 add_library(EffekseerCore
   SHARED
@@ -66,7 +71,7 @@ add_executable(Effekseer
 )
 
 set_target_properties(Effekseer PROPERTIES
-    VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp")
+    VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
 
 target_link_libraries(Effekseer EffekseerCore Viewer)
 target_compile_options(Effekseer PRIVATE "/unsafe")

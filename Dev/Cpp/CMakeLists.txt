@@ -99,6 +99,7 @@ set(effekseer_src
 	Effekseer/Effekseer/Material/Effekseer.Material.cpp
 	Effekseer/Effekseer/Material/Effekseer.CompiledMaterial.cpp
 	Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.cpp
+	Effekseer/Effekseer/IO/Effekseer.EfkEfcFactory.cpp
 )
 
 file(GLOB effekseer_renderer_common_h

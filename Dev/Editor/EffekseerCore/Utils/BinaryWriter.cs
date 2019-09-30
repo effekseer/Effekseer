@@ -38,6 +38,11 @@ namespace Effekseer.Utils
 			buffers.Add(BitConverter.GetBytes(value));
 		}
 
+		public void Push(bool value)
+		{
+			buffers.Add(BitConverter.GetBytes(value ? 1 : 0));
+		}
+
 		public void Push(byte[] buffer)
 		{
 			Push(buffer.Count());
@@ -49,7 +54,7 @@ namespace Effekseer.Utils
 			var strBuf = encoding.GetBytes(value);
 			var length = strBuf.Count();
 
-			if(zeroEnd)
+			if (zeroEnd)
 			{
 				if (encoding == Encoding.Unicode)
 				{
