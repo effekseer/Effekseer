@@ -58,7 +58,8 @@ file(GLOB effekseer_h
 	Effekseer/Effekseer/*.h
 	Effekseer/Effekseer/Renderer/*.h
 	Effekseer/Effekseer/Culling/*.h
-	Effekseer/Effekseer/Material/*.h)
+	Effekseer/Effekseer/Material/*.h
+	Effekseer/Effekseer/IO/*.h)
 
 set(effekseer_src
 	Effekseer/Effekseer/Effekseer.CustomAllocator.cpp
@@ -404,7 +405,12 @@ if (BUILD_TEST)
 endif()
 
 if(WIN32 AND BUILD_VIEWER)
+
+    set(BUILD_TEST_TEMP ${BUILD_TEST})
+    set(BUILD_TEST OFF)
 	add_subdirectory("3rdParty/AltseedRHI")
+    set(BUILD_TEST ${BUILD_TEST_TEMP})
+
 	add_dependencies(AltseedRHI ExternalProject_glew)
 	target_include_directories(
 	    AltseedRHI

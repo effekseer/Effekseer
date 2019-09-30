@@ -48,6 +48,8 @@
 
 #define __CULLING_TEST 0
 
+#define __SOUND_TEST 0
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -148,10 +150,18 @@ int main()
 
 #if _WIN32
 	InitGraphics(g_window_width, g_window_height);
+
+#if __SOUND_TEST
 	InitSound();
+#endif
+
 #else
 	InitGraphics( g_window_width, g_window_height);
+
+#if __SOUND_TEST
 	InitSound();
+#endif
+
 #endif
 
 	Init();
@@ -172,7 +182,9 @@ int main()
 		ES_SAFE_RELEASE(testManager->effects[i]);
 	}
 
+#if __SOUND_TEST
 	TermSound();
+#endif
 
 	TermGraphics();
 	

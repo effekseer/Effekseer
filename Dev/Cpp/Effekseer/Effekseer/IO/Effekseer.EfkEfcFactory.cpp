@@ -26,13 +26,21 @@ bool EfkEfcFactory::OnLoading(Effect* effect, const void* data, int32_t size, fl
 		int chunkSize = 0;
 		binaryReader.Read(chunkSize);
 
-		if (memcmp(&head, "BIN_", 4) == 0)
+		if (memcmp(&chunk, "INFO", 4) == 0)
+		{
+		}
+
+		if (memcmp(&chunk, "EDIT", 4) == 0)
+		{
+		}
+
+		if (memcmp(&chunk, "BIN_", 4) == 0)
 		{
 			return LoadBody(
 				effect, reinterpret_cast<const uint8_t*>(data) + binaryReader.GetOffset(), chunkSize, magnification, materialPath);
 		}
 
-		binaryReader.AddOffset(size);
+		binaryReader.AddOffset(chunkSize);
 	}
 
 	return false;
@@ -73,7 +81,7 @@ bool EfkEfcProperty::Load(const void* data, int32_t size)
 		int chunkSize = 0;
 		binaryReader.Read(chunkSize);
 
-		if (memcmp(&head, "INFO", 4) == 0)
+		if (memcmp(&chunk, "INFO", 4) == 0)
 		{
 			auto loadStr = [this, &binaryReader](std::vector<std::u16string>& dst) {
 				int32_t dataCount = 0;
@@ -99,7 +107,7 @@ bool EfkEfcProperty::Load(const void* data, int32_t size)
 			loadStr(sounds_);
 		}
 
-		binaryReader.AddOffset(size);
+		binaryReader.AddOffset(chunkSize);
 	}
 
 	return false;

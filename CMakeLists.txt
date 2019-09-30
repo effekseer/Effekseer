@@ -9,6 +9,9 @@ if (MSVC)
 	option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
 endif()
 
+# 1.6
+option(BUILD_16 "Build as Effekseer1.6" OFF)
+
 # zlib
 ExternalProject_Add(
     ExternalProject_zlib

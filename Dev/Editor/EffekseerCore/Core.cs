@@ -648,6 +648,7 @@ namespace Effekseer
 #if EFFEKSEER16
 			var loader = new IO.EfkEfc();
 			loader.Save(path);
+			return;
 #else
 			var doc = SaveAsXmlDocument(path);
 			doc.Save(path);

@@ -399,6 +399,7 @@ void TermGraphics()
 	MakeContextNone();
 
 #if _GLFW
+	glfwDestroyWindow(window);
 	glfwTerminate();
 #elif
 	DestroyContext();

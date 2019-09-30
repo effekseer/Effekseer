@@ -44,7 +44,11 @@ set_target_properties(EffekseerCore PROPERTIES
 #    VS_DOTNET_REFERENCE_Microsoft_Scripting_Metadata ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Scripting.Metadata.dll
 #	)
 
-target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED)
+if(BUILD_16)
+    target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED;EFFEKSEER16)
+else()
+    target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED)
+endif()
 
 set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
 
@@ -73,7 +77,9 @@ add_executable(Effekseer
 set_target_properties(Effekseer PROPERTIES
     VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
 
+add_dependencies(Effekseer EffekseerCore Viewer)
 target_link_libraries(Effekseer EffekseerCore Viewer)
+
 target_compile_options(Effekseer PRIVATE "/unsafe")
 target_compile_options(Effekseer PRIVATE "/langversion:6")
 set_property(TARGET Effekseer PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")

@@ -39,10 +39,9 @@ Setting::Setting()
 	auto effectFactory = new EffectFactory();
 	effectFactories.push_back(effectFactory);
 
-#ifdef EFFEKSEER16
+	// this function is for 1.6
 	auto efkefcFactory = new EfkEfcFactory();
 	effectFactories.push_back(efkefcFactory);
-#endif //  EFFEKSEER16
 }
 
 //----------------------------------------------------------------------------------
