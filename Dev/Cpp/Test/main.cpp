@@ -71,41 +71,6 @@ static ::Effekseer::Vector3D			g_focus;
 
 std::unique_ptr<TestManager> testManager;
 
-#ifdef _WIN32
-typedef wchar_t efchar;
-typedef std::wstring efstring;
-#else 
-typedef uint16_t efchar;
-typedef std::basic_string<uint16_t> efstring;
-#endif
-
-static efstring ToEFString(const wchar_t* src)
-{
-	if (sizeof(wchar_t)== 2)
-	{
-#ifdef _WIN32
-		return efstring(src);
-#else
-		return efstring((uint16_t*)src);
-#endif
-	}
-	if (sizeof(wchar_t)== 4)
-	{
-#ifndef _WIN32
-		uint16_t temp[2048];
-		int32_t length = 0;
-		while (src[length] != 0 && length < 2047)
-		{
-			temp[length] = (uint16_t)src[length];
-			length++;
-		}
-		temp[length] = 0;
-		return efstring(temp);
-#endif
-	}
-	return efstring();
-}
-
 void TestManagerPlayAndStop()
 {
 	{
@@ -138,11 +103,12 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
+	
 	testManager = std::unique_ptr<TestManager>(new TestManager());
 	
 	TestManagerPlayAndStop();
-
-	g_manager = ::Effekseer::Manager::Create( 2000 );
+	
+	g_manager = ::Effekseer::Manager::Create(2000);
 
 #if __CULLING_TEST
 	g_manager->CreateCullingWorld(200, 200, 200, 4);
@@ -150,7 +116,6 @@ int main()
 
 #if _WIN32
 	InitGraphics(g_window_width, g_window_height);
-
 #if __SOUND_TEST
 	InitSound();
 #endif
@@ -175,8 +140,6 @@ int main()
 		Rendering();
 	}
 
-	g_manager->Destroy();
-
 	for (size_t i = 0; i < testManager->effects.size(); i++)
 	{
 		ES_SAFE_RELEASE(testManager->effects[i]);
@@ -187,10 +150,11 @@ int main()
 #endif
 
 	TermGraphics();
-	
+
+	g_manager->Destroy();
 
 	testManager.reset();
-
+	
 #if _WIN32
 	_CrtDumpMemoryLeaks();
 #endif
