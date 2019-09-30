@@ -18,6 +18,8 @@
 //#include "../3rdParty/imgui_glfw_gl3/imgui_impl_glfw_gl3.h"
 #include "../3rdParty/imgui_addon/imguidock/imguidock.h"
 
+#include "../../3rdParty/imgui_markdown/imgui_markdown.h"
+
 class Native;
 
 namespace efk
@@ -290,6 +292,8 @@ namespace efk
 		virtual bool Closing() { return true; }
 		virtual void Iconify(int f) {}
 
+		virtual bool ClickLink(const char16_t* path) { return false; }
+
 		const char16_t* GetPath()
 		{
 			return path.c_str();
@@ -309,6 +313,10 @@ namespace efk
 		efk::DeviceType deviceType;
 		std::u16string	clipboard;
 		float			fontScale = 1.0f;
+
+		ImGui::MarkdownConfig markdownConfig_;
+
+		static void MarkdownLinkCallback(ImGui::MarkdownLinkCallbackData data);
 
 	public:
 		GUIManager();
@@ -584,5 +592,8 @@ namespace efk
 
 		// Language
 		static int GetLanguage();
+
+		// Markdown
+		void Markdown(const char16_t* text);
 	};
 }

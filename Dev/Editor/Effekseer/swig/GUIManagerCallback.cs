@@ -69,6 +69,11 @@ public class GUIManagerCallback : global::System.IDisposable {
     if (SwigDerivedClassHasMethod("Iconify", swigMethodTypes4)) EffekseerNativePINVOKE.GUIManagerCallback_IconifySwigExplicitGUIManagerCallback(swigCPtr, f); else EffekseerNativePINVOKE.GUIManagerCallback_Iconify(swigCPtr, f);
   }
 
+  public virtual bool ClickLink(string path) {
+    bool ret = (SwigDerivedClassHasMethod("ClickLink", swigMethodTypes5) ? EffekseerNativePINVOKE.GUIManagerCallback_ClickLinkSwigExplicitGUIManagerCallback(swigCPtr, path) : EffekseerNativePINVOKE.GUIManagerCallback_ClickLink(swigCPtr, path));
+    return ret;
+  }
+
   public string GetPath() {
     string ret = System.Runtime.InteropServices.Marshal.PtrToStringUni(EffekseerNativePINVOKE.GUIManagerCallback_GetPath(swigCPtr));
     return ret;
@@ -89,7 +94,9 @@ public class GUIManagerCallback : global::System.IDisposable {
       swigDelegate3 = new SwigDelegateGUIManagerCallback_3(SwigDirectorMethodClosing);
     if (SwigDerivedClassHasMethod("Iconify", swigMethodTypes4))
       swigDelegate4 = new SwigDelegateGUIManagerCallback_4(SwigDirectorMethodIconify);
-    EffekseerNativePINVOKE.GUIManagerCallback_director_connect(swigCPtr, swigDelegate0, swigDelegate1, swigDelegate2, swigDelegate3, swigDelegate4);
+    if (SwigDerivedClassHasMethod("ClickLink", swigMethodTypes5))
+      swigDelegate5 = new SwigDelegateGUIManagerCallback_5(SwigDirectorMethodClickLink);
+    EffekseerNativePINVOKE.GUIManagerCallback_director_connect(swigCPtr, swigDelegate0, swigDelegate1, swigDelegate2, swigDelegate3, swigDelegate4, swigDelegate5);
   }
 
   private bool SwigDerivedClassHasMethod(string methodName, global::System.Type[] methodTypes) {
@@ -118,23 +125,30 @@ public class GUIManagerCallback : global::System.IDisposable {
     Iconify(f);
   }
 
+  private bool SwigDirectorMethodClickLink(System.IntPtr path) {
+    return ClickLink(System.Runtime.InteropServices.Marshal.PtrToStringUni(path));
+  }
+
   public delegate void SwigDelegateGUIManagerCallback_0(int x, int y);
   public delegate void SwigDelegateGUIManagerCallback_1();
   public delegate void SwigDelegateGUIManagerCallback_2();
   public delegate bool SwigDelegateGUIManagerCallback_3();
   public delegate void SwigDelegateGUIManagerCallback_4(int f);
+  public delegate bool SwigDelegateGUIManagerCallback_5(System.IntPtr path);
 
   private SwigDelegateGUIManagerCallback_0 swigDelegate0;
   private SwigDelegateGUIManagerCallback_1 swigDelegate1;
   private SwigDelegateGUIManagerCallback_2 swigDelegate2;
   private SwigDelegateGUIManagerCallback_3 swigDelegate3;
   private SwigDelegateGUIManagerCallback_4 swigDelegate4;
+  private SwigDelegateGUIManagerCallback_5 swigDelegate5;
 
   private static global::System.Type[] swigMethodTypes0 = new global::System.Type[] { typeof(int), typeof(int) };
   private static global::System.Type[] swigMethodTypes1 = new global::System.Type[] {  };
   private static global::System.Type[] swigMethodTypes2 = new global::System.Type[] {  };
   private static global::System.Type[] swigMethodTypes3 = new global::System.Type[] {  };
   private static global::System.Type[] swigMethodTypes4 = new global::System.Type[] { typeof(int) };
+  private static global::System.Type[] swigMethodTypes5 = new global::System.Type[] { typeof(string) };
 }
 
 }

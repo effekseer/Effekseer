@@ -855,6 +855,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_IconifySwigExplicitGUIManagerCallback___")]
   public static extern void GUIManagerCallback_IconifySwigExplicitGUIManagerCallback(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_ClickLink___")]
+  public static extern bool GUIManagerCallback_ClickLink(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_ClickLinkSwigExplicitGUIManagerCallback___")]
+  public static extern bool GUIManagerCallback_ClickLinkSwigExplicitGUIManagerCallback(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_GetPath___")]
   public static extern System.IntPtr GUIManagerCallback_GetPath(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -862,7 +868,7 @@ class EffekseerNativePINVOKE {
   public static extern void GUIManagerCallback_SetPath(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManagerCallback_director_connect___")]
-  public static extern void GUIManagerCallback_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, GUIManagerCallback.SwigDelegateGUIManagerCallback_0 delegate0, GUIManagerCallback.SwigDelegateGUIManagerCallback_1 delegate1, GUIManagerCallback.SwigDelegateGUIManagerCallback_2 delegate2, GUIManagerCallback.SwigDelegateGUIManagerCallback_3 delegate3, GUIManagerCallback.SwigDelegateGUIManagerCallback_4 delegate4);
+  public static extern void GUIManagerCallback_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, GUIManagerCallback.SwigDelegateGUIManagerCallback_0 delegate0, GUIManagerCallback.SwigDelegateGUIManagerCallback_1 delegate1, GUIManagerCallback.SwigDelegateGUIManagerCallback_2 delegate2, GUIManagerCallback.SwigDelegateGUIManagerCallback_3 delegate3, GUIManagerCallback.SwigDelegateGUIManagerCallback_4 delegate4, GUIManagerCallback.SwigDelegateGUIManagerCallback_5 delegate5);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_GUIManager___")]
   public static extern global::System.IntPtr new_GUIManager();
@@ -1673,6 +1679,9 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetLanguage___")]
   public static extern int GUIManager_GetLanguage();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Markdown___")]
+  public static extern void GUIManager_Markdown(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_FileDialog_OpenDialog___")]
   public static extern System.IntPtr FileDialog_OpenDialog([global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);

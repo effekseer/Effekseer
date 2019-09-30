@@ -72,6 +72,20 @@ namespace Effekseer.GUI
 		{
 			base.Iconify(f);
 		}
+
+		public override bool ClickLink(string path)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start(path);
+			}
+			catch
+			{
+				return false;
+			}
+
+			return true;
+		}
 	}
 
 	public class Manager

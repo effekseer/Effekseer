@@ -88,7 +88,7 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterWStringCallback_$module(SWIG_CSharpWStri
 //%typemap(typecheck) char16_t = char;
 
 // char16_t *
-%typemap(ctype) char16_t * "char16_t *"
+%typemap(ctype) char16_t * "void *"
 %typemap(imtype, inattributes="[global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]", out="System.IntPtr" ) char16_t * "string"
 %typemap(cstype) char16_t * "string"
 
@@ -109,5 +109,9 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterWStringCallback_$module(SWIG_CSharpWStri
 
 %typemap(in) char16_t * %{ $1 = ($1_ltype)$input; %}
 %typemap(out) char16_t * %{ $result = (char16_t *)$1; %}
+
+%typemap(csdirectorin) char16_t* "System.Runtime.InteropServices.Marshal.PtrToStringUni($1)"
+
+%typemap(csdirectorout) char16_t* %{ $result = (int)$input; %}
 
 //%typemap(typecheck) char16_t * = char *;

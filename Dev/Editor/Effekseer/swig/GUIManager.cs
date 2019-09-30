@@ -1320,6 +1320,10 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public void Markdown(string text) {
+    EffekseerNativePINVOKE.GUIManager_Markdown(swigCPtr, text);
+  }
+
 }
 
 }

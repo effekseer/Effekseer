@@ -720,7 +720,15 @@ namespace efk
 		return value_changed;
 	}
 
+	void GUIManager::MarkdownLinkCallback(ImGui::MarkdownLinkCallbackData data) { 
+		
+	    std::string url(data.link, data.linkLength);
+		auto url16 = utf8_to_utf16(url);
 
+		auto self = reinterpret_cast<GUIManager*>(data.userData);
+
+		self->callback->ClickLink(url16.c_str());
+	}
 
 	GUIManager::GUIManager()
 	{}
@@ -865,6 +873,8 @@ namespace efk
 		style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
 		style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.9f);
 
+		markdownConfig_.userData = this;
+		markdownConfig_.linkCallback = GUIManager::MarkdownLinkCallback;
 	}
 
 	void GUIManager::SetTitle(const char16_t* title)
@@ -1707,6 +1717,11 @@ namespace efk
 		size_pixels = roundf(size_pixels * fontScale);
 
 		io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels, nullptr, glyphRangesJapanese);
+
+		markdownConfig_.headingFormats[1].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.1);
+		markdownConfig_.headingFormats[2].font = markdownConfig_.headingFormats[1].font;
+		markdownConfig_.headingFormats[0].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.2);
+
 	}
 
 	bool GUIManager::BeginChildFrame(uint32_t id, const Vec2& size, WindowFlags flags)
@@ -2008,5 +2023,12 @@ namespace efk
 	int GUIManager::GetLanguage()
 	{
 		return (int32_t)GetEfkLanguage();
+	}
+	
+	void GUIManager::Markdown(const char16_t* text) 
+	{ 
+		utf8str<2048> textUtf8(text);
+
+		::ImGui::Markdown(textUtf8, strlen(textUtf8), markdownConfig_);
 	}
 }

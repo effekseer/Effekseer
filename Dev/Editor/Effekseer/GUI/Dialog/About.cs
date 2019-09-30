@@ -19,7 +19,7 @@ namespace Effekseer.GUI.Dialog
 		string license = @"
 The MIT License
 
-Copyright (c) 2011-2015 Effekseer Project 
+Copyright (c) 2011-2019 Effekseer Project 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the ""Software""), to deal
@@ -39,16 +39,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-------------------------------------------------------------
-Dock Panel Suite
+[Official Website](http://effekseer.github.io/)
 
- The MIT License
+[Github](https://github.com/effekseer/Effekseer)
 
- Copyright (c) 2007 Weifen Luo (email: weifenluo @yahoo.com) 
-
- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the ""Software""), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: 
- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. 
- THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ";
 
         public bool ShouldBeRemoved { get; private set; } = false;
@@ -83,23 +77,12 @@ Dock Panel Suite
 
 				Manager.NativeManager.Separator();
 
-                Manager.NativeManager.TextWrapped(license);
-				
-				Manager.NativeManager.Separator();
-				
-                if(Manager.NativeManager.Button("Website: http://effekseer.github.io/"))
-                {
-                    System.Diagnostics.Process.Start("http://effekseer.github.io/");
-                }
-				
-                if (Manager.NativeManager.Button("Repository: https://github.com/effekseer/Effekseer"))
-                {
-                    System.Diagnostics.Process.Start("https://github.com/effekseer/Effekseer");
-                }
+				Manager.NativeManager.Markdown(license);
 				
 				Manager.NativeManager.Separator();
 				
 				Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - 100 / 2);
+
                 if (Manager.NativeManager.Button("OK", 100))
                 {
                     ShouldBeRemoved = true;
