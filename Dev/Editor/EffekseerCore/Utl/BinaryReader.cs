@@ -29,6 +29,12 @@ namespace Effekseer.Utl
 			offset += 2;
 		}
 
+		public void Get(ref Int16 value)
+		{
+			value = BitConverter.ToInt16(buffer, offset);
+			offset += 2;
+		}
+
 		public void Get(ref Byte value)
 		{
 			value = buffer[offset];
