@@ -1266,7 +1266,7 @@ void RendererImplemented::BeginShader(Shader* shader)
 {
 	GLCheckError();
 
-	// VAOの切り替え
+	// change VAO with shader
 	if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
 		SetVertexArray(m_vao_wire_frame);
@@ -1279,7 +1279,11 @@ void RendererImplemented::BeginShader(Shader* shader)
 	{
 		SetVertexArray(m_vao_distortion);
 	}
-	
+	else if (shader == m_shader_lighting)
+	{
+		SetVertexArray(m_vao_lighting);
+	}
+
 	shader->BeginScene();
 
 	if (m_currentVertexArray)

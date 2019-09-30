@@ -614,50 +614,15 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 {
 	if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
 	{
-		if (parameter.BasicParameterPtr->Texture1Index >= 0)
-		{
-			m_renderer->SetVertexArray(m_va[6]);
-		}
-		else
-		{
-			m_renderer->SetVertexArray(m_va[7]);
-		}
+		m_renderer->SetVertexArray(m_va[6]);
 	}
 	else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 	{
-		if (parameter.BasicParameterPtr->Texture2Index >= 0)
-		{
-			if (parameter.BasicParameterPtr->Texture1Index >= 0)
-			{
-				m_renderer->SetVertexArray(m_va[0]);
-			}
-			else
-			{
-				m_renderer->SetVertexArray(m_va[1]);
-			}
-			}
-		else
-		{
-			if (parameter.BasicParameterPtr->Texture1Index >= 0)
-			{
-				m_renderer->SetVertexArray(m_va[2]);
-			}
-			else
-			{
-				m_renderer->SetVertexArray(m_va[3]);
-			}
-		}
+		m_renderer->SetVertexArray(m_va[0]);
 	}
 	else
 	{
-		if (parameter.BasicParameterPtr->Texture1Index >= 0)
-		{
-			m_renderer->SetVertexArray(m_va[4]);
-		}
-		else
-		{
-			m_renderer->SetVertexArray(m_va[5]);
-		}
+		m_renderer->SetVertexArray(m_va[4]);
 	}
 
 	auto model = (Model*) parameter.EffectPointer->GetModel(parameter.ModelIndex);

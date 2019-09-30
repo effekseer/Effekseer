@@ -341,7 +341,7 @@ public:
 
 		auto vsize = 0;
 
-		if (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex ||
+		if ((m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex) ||
 			m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
 		{
 			vsize = sizeof(DynamicVertex);

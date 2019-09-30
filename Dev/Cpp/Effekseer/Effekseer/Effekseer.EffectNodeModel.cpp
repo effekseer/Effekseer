@@ -52,6 +52,9 @@ namespace Effekseer
 		pos += sizeof(int);
 		EffekseerPrintDebug("NormalTextureIndex : %d\n", NormalTextureIndex);
 		RendererCommon.Texture2Index = NormalTextureIndex;
+		RendererCommon.BasicParameter.Texture2Index = NormalTextureIndex;
+		RendererCommon.BasicParameter.TextureFilter2 = RendererCommon.BasicParameter.TextureFilter1;
+		RendererCommon.BasicParameter.TextureWrap2 = RendererCommon.BasicParameter.TextureWrap1;
 	}
 
 	if (m_effect->GetVersion() >= 12)
@@ -70,7 +73,12 @@ namespace Effekseer
 		memcpy(&lighting, pos, sizeof(int));
 		pos += sizeof(int);
 		Lighting = lighting > 0;
-		RendererCommon.MaterialType = RendererMaterialType::Lighting;
+
+		if (Lighting)
+		{
+			RendererCommon.MaterialType = RendererMaterialType::Lighting;
+			RendererCommon.BasicParameter.MaterialType = RendererMaterialType::Lighting;
+		}
 	}
 
 	memcpy( &Culling, pos, sizeof(int) );

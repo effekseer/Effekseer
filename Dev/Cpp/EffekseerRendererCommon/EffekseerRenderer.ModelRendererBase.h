@@ -488,16 +488,19 @@ public:
 				{
 					textures[0] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture1Index);
 				}
-				else
+				
+				if (textures[0] == nullptr)
 				{
-					textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+					textures[0] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);	
 				}
+				
 
 				if (param.BasicParameterPtr->Texture2Index >= 0)
 				{
 					textures[1] = param.EffectPointer->GetNormalImage(param.BasicParameterPtr->Texture2Index);
 				}
-				else
+				
+				if (textures[1] == nullptr)
 				{
 					textures[1] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
 				}

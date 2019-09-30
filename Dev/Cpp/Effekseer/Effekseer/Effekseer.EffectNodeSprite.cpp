@@ -51,6 +51,7 @@ namespace Effekseer
 		memcpy(&AlphaBlend, pos, sizeof(int));
 		pos += sizeof(int);
 		RendererCommon.AlphaBlend = AlphaBlend;
+		RendererCommon.BasicParameter.AlphaBlend = AlphaBlend;
 	}
 
 	memcpy(&Billboard, pos, sizeof(int));
@@ -112,6 +113,7 @@ namespace Effekseer
 		memcpy(&SpriteTexture, pos, sizeof(int));
 		pos += sizeof(int);
 		RendererCommon.ColorTextureIndex = SpriteTexture;
+		RendererCommon.BasicParameter.Texture1Index = SpriteTexture;
 	}
 
 	// 右手系左手系変換
