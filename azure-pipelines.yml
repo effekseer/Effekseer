@@ -73,3 +73,15 @@ jobs:
           PathtoPublish: 'dev/release'
           ArtifactName: 'MacOS'
           publishLocation: 'Container'
+      - task: ShellScript@2
+        inputs:
+          targetType: 'inline'
+          script: |
+            nohup mono ./Dev/release/Effekseer.exe --fixed-seed 100 --frame 10 ./Sample/Laser02.efkproj &
+            screencapture -T 5 ./Dev/release/test.jpg
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'dev/release'
+          ArtifactName: 'MacOS-Screenshot'
+          publishLocation: 'Container'

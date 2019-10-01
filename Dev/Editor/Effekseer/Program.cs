@@ -28,12 +28,14 @@ namespace Effekseer
 			var test = new Effekseer.InternalScript.Tests();
 #endif
 			StartDirectory = System.IO.Directory.GetCurrentDirectory();
-
+			
 			bool gui = true;
 			string input = string.Empty;
 			string output = string.Empty;
 			string format = "efk";
 			string export = string.Empty;
+			int frame_number = 0;
+			bool fixed_seed = false;
 			float magnification = 0.0f;
 
 			for (int i = 0; i < args.Length; i++)
@@ -82,6 +84,18 @@ namespace Effekseer
 						float.TryParse(args[i], out magnification);
 					}
 				}
+				else if (args[i] == "--frame")
+				{
+					i++;
+					if (i < args.Length)
+					{
+						int.TryParse(args[i], out frame_number);
+					}
+				}
+				else if (args[i] == "--fixed-seed")
+				{
+					fixed_seed = true;
+				}
 				else
 				{
 					input = args[i];
@@ -90,13 +104,13 @@ namespace Effekseer
 
 			if (System.Diagnostics.Debugger.IsAttached)
 			{
-				Exec(gui, input, output, export, format, magnification);
+				Exec(gui, input, output, export, format, magnification, frame_number, fixed_seed);
 			}
 			else
 			{
 				try
 				{
-					Exec(gui, input, output, export, format, magnification);
+					Exec(gui, input, output, export, format, magnification, frame_number, fixed_seed);
 				}
 				catch (Exception e)
 				{
@@ -105,7 +119,7 @@ namespace Effekseer
 			}
 		}
 
-		static void Exec(bool gui, string input, string output, string export, string format, float magnification)
+		static void Exec(bool gui, string input, string output, string export, string format, float magnification, int frame_number, bool fixed_seed)
 		{
 			var languageIndex = swig.GUIManager.GetLanguage();
 			Language? language = null;
@@ -232,6 +246,14 @@ namespace Effekseer
 				System.Console.Error.WriteLine(e.Message);
 			}
 
+			if (frame_number != 0)
+			{
+				GUI.Manager.Viewer.Current = frame_number;
+			}
+			if (fixed_seed)
+			{
+				GUI.Manager.Viewer.fixed_seed = true;
+			}
 			if (gui)
 			{
 				while (GUI.Manager.NativeManager.DoEvents())

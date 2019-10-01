@@ -12,6 +12,7 @@ namespace Effekseer.GUI
 		bool isViewerShown = false;
 
 		int random_seed = 0;
+		public bool fixed_seed = false;
 		Random rand = new Random();
 
 		int current = 0;
@@ -97,7 +98,11 @@ namespace Effekseer.GUI
 
 		public bool SetRandomSeed(int seed)
 		{
-			return native.SetRandomSeed(seed);
+			if (!fixed_seed)
+			{
+				return native.SetRandomSeed(seed);
+			}
+			return native.SetRandomSeed(0);
 		}
 
 		public bool LoadEffectFunc()

@@ -46,6 +46,7 @@ namespace Effekseer.GUI
 			register(AddNode);
 			register(InsertNode);
 			register(RemoveNode);
+
 		}
 
 		[Name(value = "InternalNew")]
@@ -442,7 +443,7 @@ namespace Effekseer.GUI
 		/// if to save an effect is required, show disposing dialog box
 		/// </summary>
 		/// <returns></returns>
-        /*
+		/*
 		static public bool SaveOnDisposing()
 		{
 			if (Core.IsChanged)
