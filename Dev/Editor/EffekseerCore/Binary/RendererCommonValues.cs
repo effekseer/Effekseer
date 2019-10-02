@@ -15,73 +15,51 @@ namespace Effekseer.Binary
 			List<byte[]> data = new List<byte[]>();
 
 			var texInfo = new TextureInformation();
-			var hasTexture = true;
 
 			data.Add(((int)value.Material.Value).GetBytes());
 
-			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default)
+			Func<Data.Value.PathForImage, int, Dictionary<string,int>, int> getColorTexIDAndStoreSize = (Data.Value.PathForImage path, int number, Dictionary<string, int> texAndInd) =>
 			{
-				if (value.ColorTexture.RelativePath != string.Empty &&
-	texture_and_index.ContainsKey(value.ColorTexture.RelativePath) &&
-	texInfo.Load(value.ColorTexture.AbsolutePath))
+				var tempTexInfo = new TextureInformation();
+
+				if (texAndInd.ContainsKey(path.RelativePath) && tempTexInfo.Load(path.AbsolutePath))
 				{
-					data.Add(texture_and_index[value.ColorTexture.RelativePath].GetBytes());
-					hasTexture = true;
+					if(value.UVTextureReferenceTarget.Value != Data.UVTextureReferenceTargetType.None && number == (int)value.UVTextureReferenceTarget.Value)
+					{
+						texInfo.Load(path.AbsolutePath);
+					}
+
+					return texAndInd[value.ColorTexture.RelativePath];
 				}
 				else
 				{
-					data.Add((-1).GetBytes());
-					hasTexture = false;
+					return -1;
 				}
+			};
+
+			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default)
+			{
+				// texture1
+				data.Add(getColorTexIDAndStoreSize(value.ColorTexture, 1, texture_and_index).GetBytes());
 
 				// texture2
 				data.Add((-1).GetBytes());
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion)
 			{
-				if (value.ColorTexture.RelativePath != string.Empty &&
-					distortionTexture_and_index.ContainsKey(value.ColorTexture.RelativePath) &&
-					texInfo.Load(value.ColorTexture.AbsolutePath))
-				{
-					data.Add(distortionTexture_and_index[value.ColorTexture.RelativePath].GetBytes());
-					hasTexture = true;
-				}
-				else
-				{
-					data.Add((-1).GetBytes());
-					hasTexture = false;
-				}
+				// texture1
+				data.Add(getColorTexIDAndStoreSize(value.ColorTexture, 1, distortionTexture_and_index).GetBytes());
 
 				// texture2
 				data.Add((-1).GetBytes());
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
 			{
-				if (value.ColorTexture.RelativePath != string.Empty &&
-	texture_and_index.ContainsKey(value.ColorTexture.RelativePath) &&
-	texInfo.Load(value.ColorTexture.AbsolutePath))
-				{
-					data.Add(texture_and_index[value.ColorTexture.RelativePath].GetBytes());
-					hasTexture = true;
-				}
-				else
-				{
-					data.Add((-1).GetBytes());
-					hasTexture = false;
-				}
+				// texture1
+				data.Add(getColorTexIDAndStoreSize(value.ColorTexture, 1, texture_and_index).GetBytes());
 
-				if (value.NormalTexture.RelativePath != string.Empty &&
-	normalTexture_and_index.ContainsKey(value.NormalTexture.RelativePath) &&
-	texInfo.Load(value.NormalTexture.AbsolutePath))
-				{
-					data.Add(normalTexture_and_index[value.NormalTexture.RelativePath].GetBytes());
-					hasTexture = true;
-				}
-				else
-				{
-					data.Add((-1).GetBytes());
-					hasTexture = false;
-				}
+				// texture2
+				data.Add(getColorTexIDAndStoreSize(value.ColorTexture, 2, normalTexture_and_index).GetBytes());
 			}
 			else
 			{
@@ -108,38 +86,14 @@ namespace Effekseer.Binary
 					var texture_ = texture.Item1.Value as Data.Value.PathForImage;
 					if (texture.Item2)
 					{
-
-						if (texture_.RelativePath != string.Empty &&
-							normalTexture_and_index.ContainsKey(texture_.RelativePath) &&
-							texInfo.Load(texture_.AbsolutePath))
-						{
-							data.Add((1).GetBytes());
-							data.Add(normalTexture_and_index[texture_.RelativePath].GetBytes());
-							hasTexture = true;
-						}
-						else
-						{
-							data.Add((1).GetBytes());
-							data.Add((-1).GetBytes());
-							hasTexture = false;
-						}
+						data.Add((1).GetBytes());
+						data.Add(getColorTexIDAndStoreSize(texture_, texture.Item1.Priority, normalTexture_and_index).GetBytes());
 					}
 					else
 					{
-						if (texture_.RelativePath != string.Empty &&
-texture_and_index.ContainsKey(texture_.RelativePath) &&
-texInfo.Load(texture_.AbsolutePath))
-						{
-							data.Add((0).GetBytes());
-							data.Add(texture_and_index[texture_.RelativePath].GetBytes());
-							hasTexture = true;
-						}
-						else
-						{
-							data.Add((0).GetBytes());
-							data.Add((-1).GetBytes());
-							hasTexture = false;
-						}
+						data.Add((0).GetBytes());
+						data.Add(getColorTexIDAndStoreSize(texture_, texture.Item1.Priority, texture_and_index).GetBytes());
+
 					}
 				}
 
@@ -216,88 +170,89 @@ texInfo.Load(texture_.AbsolutePath))
 				data.Add(BitConverter.GetBytes(easing[2]));
 			}
 
-			if (hasTexture)
+			// sprcification change(1.5)
+			float width = 256.0f;
+			float height = 256.0f;
+
+			if (texInfo.Width > 0 && texInfo.Height > 0)
 			{
-				var width = (float)texInfo.Width;
-				var height = (float)texInfo.Height;
+				width = (float)texInfo.Width;
+				height = (float)texInfo.Height;
+			}
 
-				data.Add(value.UV);
-				if (value.UV.Value == Data.RendererCommonValues.UVType.Default)
+			data.Add(value.UV);
+			if (value.UV.Value == Data.RendererCommonValues.UVType.Default)
+			{
+			}
+			else if (value.UV.Value == Data.RendererCommonValues.UVType.Fixed)
+			{
+				var value_ = value.UVFixed;
+				data.Add((value_.Start.X / width).GetBytes());
+				data.Add((value_.Start.Y / height).GetBytes());
+				data.Add((value_.Size.X / width).GetBytes());
+				data.Add((value_.Size.Y / height).GetBytes());
+			}
+			else if (value.UV.Value == Data.RendererCommonValues.UVType.Animation)
+			{
+				var value_ = value.UVAnimation;
+				data.Add((value_.Start.X / width).GetBytes());
+				data.Add((value_.Start.Y / height).GetBytes());
+				data.Add((value_.Size.X / width).GetBytes());
+				data.Add((value_.Size.Y / height).GetBytes());
+
+				if (value_.FrameLength.Infinite)
 				{
+					var inf = int.MaxValue / 100;
+					data.Add(inf.GetBytes());
 				}
-				else if (value.UV.Value == Data.RendererCommonValues.UVType.Fixed)
+				else
 				{
-					var value_ = value.UVFixed;
-					data.Add((value_.Start.X / width).GetBytes());
-					data.Add((value_.Start.Y / height).GetBytes());
-					data.Add((value_.Size.X / width).GetBytes());
-					data.Add((value_.Size.Y / height).GetBytes());
+					data.Add(value_.FrameLength.Value.Value.GetBytes());
 				}
-				else if (value.UV.Value == Data.RendererCommonValues.UVType.Animation)
+			
+				data.Add(value_.FrameCountX.Value.GetBytes());
+				data.Add(value_.FrameCountY.Value.GetBytes());
+				data.Add(value_.LoopType);
+
+				data.Add(value_.StartSheet.Max.GetBytes());
+				data.Add(value_.StartSheet.Min.GetBytes());
+
+			}
+			else if (value.UV.Value == Data.RendererCommonValues.UVType.Scroll)
+			{
+				var value_ = value.UVScroll;
+				data.Add((value_.Start.X.Max / width).GetBytes());
+				data.Add((value_.Start.Y.Max / height).GetBytes());
+				data.Add((value_.Start.X.Min / width).GetBytes());
+				data.Add((value_.Start.Y.Min / height).GetBytes());
+
+				data.Add((value_.Size.X.Max / width).GetBytes());
+				data.Add((value_.Size.Y.Max / height).GetBytes());
+				data.Add((value_.Size.X.Min / width).GetBytes());
+				data.Add((value_.Size.Y.Min / height).GetBytes());
+
+				data.Add((value_.Speed.X.Max / width).GetBytes());
+				data.Add((value_.Speed.Y.Max / height).GetBytes());
+				data.Add((value_.Speed.X.Min / width).GetBytes());
+				data.Add((value_.Speed.Y.Min / height).GetBytes());
+			}
+			else if (value.UV.Value == Data.RendererCommonValues.UVType.FCurve)
+			{
 				{
-					var value_ = value.UVAnimation;
-					data.Add((value_.Start.X / width).GetBytes());
-					data.Add((value_.Start.Y / height).GetBytes());
-					data.Add((value_.Size.X / width).GetBytes());
-					data.Add((value_.Size.Y / height).GetBytes());
-
-					if (value_.FrameLength.Infinite)
-					{
-						var inf = int.MaxValue / 100;
-						data.Add(inf.GetBytes());
-					}
-					else
-					{
-						data.Add(value_.FrameLength.Value.Value.GetBytes());
-					}
-				
-					data.Add(value_.FrameCountX.Value.GetBytes());
-					data.Add(value_.FrameCountY.Value.GetBytes());
-					data.Add(value_.LoopType);
-
-					data.Add(value_.StartSheet.Max.GetBytes());
-					data.Add(value_.StartSheet.Min.GetBytes());
-
+					var value_ = value.UVFCurve.Start;
+					var bytes1 = value_.GetBytes(1.0f / width);
+					List<byte[]> _data = new List<byte[]>();
+					data.Add(bytes1);
 				}
-				else if (value.UV.Value == Data.RendererCommonValues.UVType.Scroll)
+
 				{
-					var value_ = value.UVScroll;
-					data.Add((value_.Start.X.Max / width).GetBytes());
-					data.Add((value_.Start.Y.Max / height).GetBytes());
-					data.Add((value_.Start.X.Min / width).GetBytes());
-					data.Add((value_.Start.Y.Min / height).GetBytes());
-
-					data.Add((value_.Size.X.Max / width).GetBytes());
-					data.Add((value_.Size.Y.Max / height).GetBytes());
-					data.Add((value_.Size.X.Min / width).GetBytes());
-					data.Add((value_.Size.Y.Min / height).GetBytes());
-
-					data.Add((value_.Speed.X.Max / width).GetBytes());
-					data.Add((value_.Speed.Y.Max / height).GetBytes());
-					data.Add((value_.Speed.X.Min / width).GetBytes());
-					data.Add((value_.Speed.Y.Min / height).GetBytes());
-				}
-				else if (value.UV.Value == Data.RendererCommonValues.UVType.FCurve)
-				{
-					{
-						var value_ = value.UVFCurve.Start;
-						var bytes1 = value_.GetBytes(1.0f / width);
-						List<byte[]> _data = new List<byte[]>();
-						data.Add(bytes1);
-					}
-
-					{
-						var value_ = value.UVFCurve.Size;
-						var bytes1 = value_.GetBytes(1.0f / height);
-						List<byte[]> _data = new List<byte[]>();
-						data.Add(bytes1);
-					}
+					var value_ = value.UVFCurve.Size;
+					var bytes1 = value_.GetBytes(1.0f / height);
+					List<byte[]> _data = new List<byte[]>();
+					data.Add(bytes1);
 				}
 			}
-			else
-			{
-				data.Add(((int)Data.RendererCommonValues.UVType.Default).GetBytes());
-			}
+			
 
 			// Inheritance
 			data.Add(value.ColorInheritType.GetValueAsInt().GetBytes());

@@ -5,6 +5,54 @@ using System.Text;
 
 namespace Effekseer.Data
 {
+	public enum UVTextureReferenceTargetType
+	{
+		[Name(language = Language.Japanese, value = "なし(256x256)")]
+		[Name(language = Language.English, value = "None(256x256)")]
+		None = 0,
+		[Name(language = Language.Japanese, value = "画像1")]
+		[Name(language = Language.English, value = "Image1")]
+		Texture1 = 1,
+		[Name(language = Language.Japanese, value = "画像2")]
+		[Name(language = Language.English, value = "Image2")]
+		Texture2 = 2,
+		[Name(language = Language.Japanese, value = "画像3")]
+		[Name(language = Language.English, value = "Image3")]
+		Texture3 = 3,
+		[Name(language = Language.Japanese, value = "画像4")]
+		[Name(language = Language.English, value = "Image4")]
+		Texture4 = 4,
+	}
+
+	public enum CustomDataType
+	{
+		Fixed,
+		Easing,
+		FCurve,
+	}
+
+	public class CustomDataParameter
+	{
+		public Value.Enum<CustomDataType> CustomData
+		{
+			get;
+			private set;
+		}
+
+		public Value.Vector2D Fixed { get; private set; }
+
+		public Vector2DEasingParamater Easing { get; private set; }
+
+		public Value.FCurveVector2D FCurve { get; private set; }
+
+		public CustomDataParameter()
+		{
+			CustomData = new Value.Enum<CustomDataType>();
+			Fixed = new Value.Vector2D();
+			Easing = new Vector2DEasingParamater();
+			FCurve = new Value.FCurveVector2D();
+		}
+	}
 
 	public class MaterialFileParameter : IEditableValueCollection
 	{
@@ -61,17 +109,16 @@ namespace Effekseer.Data
 			var propPath = EditableValue.Create(Path, this.GetType().GetProperty("Path"));
 			ret.Add(propPath);
 
-			foreach(var kv in keyToValues)
+			foreach (var v in keyToValues.Values.OrderBy(_ => (_ as ValueStatus).Priority))
 			{
 				EditableValue ev = new EditableValue();
-				var status = kv.Value as ValueStatus;
+				var status = v as ValueStatus;
 				ev.Value = status.Value;
 				ev.Title = status.Name;
 				ev.Description = status.Description;
 				ev.IsShown = status.IsShown;
 				ev.IsUndoEnabled = true;
 				ret.Add(ev);
-
 			}
 
 			return ret.ToArray();
@@ -133,6 +180,7 @@ namespace Effekseer.Data
 					status.Name = texture.Name;
 					status.Description = "";
 					status.IsShown = texture.IsParam;
+					status.Priority = texture.Priority;
 					keyToValues.Add(key, status);
 					value.SetAbsolutePathDirectly(texture.DefaultPath);
 					isChanged = true;
@@ -162,6 +210,7 @@ namespace Effekseer.Data
 						status.Name = uniform.Name;
 						status.Description = "";
 						status.IsShown = true;
+						status.Priority = uniform.Priority;
 						keyToValues.Add(key, status);
 						isChanged = true;
 					}
@@ -173,6 +222,7 @@ namespace Effekseer.Data
 						status.Name = uniform.Name;
 						status.Description = "";
 						status.IsShown = true;
+						status.Priority = uniform.Priority;
 						keyToValues.Add(key, status);
 						isChanged = true;
 					}
@@ -276,6 +326,7 @@ namespace Effekseer.Data
 			public string Name = string.Empty;
 			public string Description = string.Empty;
 			public bool IsShown = false;
+			public int Priority = 1;
 		}
 
 		public event ChangedValueEventHandler OnChanged;
@@ -425,6 +476,18 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "参照画像")]
+		[Name(language = Language.English, value = "Referenced")]
+		[Selected(ID = 2, Value = 1)]
+		[Selected(ID = 2, Value = 2)]
+		[Selected(ID = 2, Value = 3)]
+		[IO(Export = true)]
+		public Value.Enum<UVTextureReferenceTargetType> UVTextureReferenceTarget
+		{
+			get;
+			private set;
+		}
+
 		[Selected(ID = 2, Value = 0)]
 		[IO(Export = true)]
 		public UVDefaultParamater UVDefault { get; private set; }
@@ -479,6 +542,8 @@ namespace Effekseer.Data
 			FadeOut = new FadeOutParamater();
 
 			UV = new Value.Enum<UVType>();
+
+			UVTextureReferenceTarget = new Value.Enum<UVTextureReferenceTargetType>(UVTextureReferenceTargetType.Texture1);
 
 			UVDefault = new UVDefaultParamater();
 			UVFixed = new UVFixedParamater();

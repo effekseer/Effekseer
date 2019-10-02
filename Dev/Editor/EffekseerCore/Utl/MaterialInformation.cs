@@ -186,7 +186,7 @@ namespace Effekseer.Utl
 						reader.Get(ref info.Name, Encoding.UTF8);
 						reader.Get(ref info.DefaultPath, Encoding.UTF8);
 						reader.Get(ref info.Index);
-						reader.Get(ref priority);
+						reader.Get(ref info.Priority);
 						reader.Get(ref info.IsParam);
 						int textureType = 0;
 						reader.Get(ref textureType);
@@ -233,7 +233,7 @@ namespace Effekseer.Utl
 
 						reader.Get(ref info.Name, Encoding.UTF8);
 						reader.Get(ref info.Offset);
-						reader.Get(ref priority);
+						reader.Get(ref info.Priority);
 						reader.Get(ref info.Type);
 						reader.Get(ref info.DefaultValues[0]);
 						reader.Get(ref info.DefaultValues[1]);
@@ -256,6 +256,7 @@ namespace Effekseer.Utl
 			public string DefaultPath;
 			public bool IsParam;
 			public TextureType Type = TextureType.Color;
+			public int Priority = 1;
 		}
 
 		public class UniformInformation
@@ -264,6 +265,7 @@ namespace Effekseer.Utl
 			public int Offset;
 			public int Type = 0;
 			public float[] DefaultValues = new float[4];
+			public int Priority = 1;
 		}
 	}
 }
