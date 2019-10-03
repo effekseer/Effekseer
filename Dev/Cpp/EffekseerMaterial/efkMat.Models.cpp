@@ -84,6 +84,12 @@ std::string Relative(const std::string& targetPath, const std::string& basePath)
 
 std::string Absolute(const std::string& targetPath, const std::string& basePath)
 {
+	if (targetPath == "")
+		return "";
+
+	if (basePath == "")
+		return targetPath;
+
 	auto targetPaths = Split(Replace(targetPath, "\\", "/"), '/');
 	auto basePaths = Split(Replace(basePath, "\\", "/"), '/');
 
@@ -464,6 +470,12 @@ std::shared_ptr<Node> Material::CreateNode(std::shared_ptr<NodeParameter> parame
 	node->material_ = this->shared_from_this();
 	node->Parameter = parameter;
 	node->GUID = GetIDAndNext();
+	node->IsPreviewOpened = parameter->IsPreviewOpened;
+
+	if (parameter->HasDescription)
+	{
+		node->Descriptions.resize(static_cast<int32_t>(LanguageType::Max));
+	}
 
 	for (auto i = 0; i < parameter->InputPins.size(); i++)
 	{
@@ -514,8 +526,15 @@ std::shared_ptr<Node> Material::CreateNode(std::shared_ptr<NodeParameter> parame
 	}
 	else
 	{
-		auto command = std::make_shared<DelegateCommand>([this, val_new]() -> void { this->nodes = val_new; },
-														 [this, val_old]() -> void { this->nodes = val_old; });
+		auto command = std::make_shared<DelegateCommand>(
+			[this, val_new]() -> void {
+				this->nodes = val_new;
+				this->UpdateWarnings();
+			},
+			[this, val_old]() -> void {
+				this->nodes = val_old;
+				this->UpdateWarnings();
+			});
 
 		commandManager_->Execute(command);
 	}
@@ -554,10 +573,14 @@ void Material::RemoveNode(std::shared_ptr<Node> node)
 		[this, nodes_new, links_new]() -> void {
 			this->nodes = nodes_new;
 			this->links = links_new;
+			this->UpdateWarnings();
+
 		},
 		[this, nodes_old, links_old]() -> void {
 			this->nodes = nodes_old;
 			this->links = links_old;
+			this->UpdateWarnings();
+
 		});
 
 	commandManager_->Execute(command);
@@ -677,8 +700,15 @@ ConnectResultType Material::ConnectPin(std::shared_ptr<Pin> pin1, std::shared_pt
 
 	MakeDirty(p1->Parent.lock());
 
-	auto command = std::make_shared<DelegateCommand>([this, links_new]() -> void { this->links = links_new; },
-													 [this, links_old]() -> void { this->links = links_old; });
+	auto command = std::make_shared<DelegateCommand>(
+		[this, links_new]() -> void {
+			this->links = links_new;
+			this->UpdateWarnings();
+		},
+		[this, links_old]() -> void {
+			this->links = links_old;
+			this->UpdateWarnings();
+		});
 
 	commandManager_->Execute(command);
 
@@ -698,8 +728,15 @@ bool Material::BreakPin(std::shared_ptr<Link> link)
 		MakeDirty(inputNode);
 	}
 
-	auto command = std::make_shared<DelegateCommand>([this, links_new]() -> void { this->links = links_new; },
-													 [this, links_old]() -> void { this->links = links_old; });
+	auto command = std::make_shared<DelegateCommand>(
+		[this, links_new]() -> void {
+			this->links = links_new;
+			this->UpdateWarnings();
+		},
+		[this, links_old]() -> void {
+			this->links = links_old;
+			this->UpdateWarnings();
+		});
 
 	commandManager_->Execute(command);
 
@@ -803,6 +840,16 @@ std::string Material::Copy(std::vector<std::shared_ptr<Node>> nodes, const char*
 		node_.insert(std::make_pair("PosX", picojson::value(node->Pos.X - upperLeftPos.X)));
 		node_.insert(std::make_pair("PosY", picojson::value(node->Pos.Y - upperLeftPos.Y)));
 
+		picojson::array descs_;
+
+		for (size_t i = 0; i < node->Descriptions.size(); i++)
+		{
+			picojson::object desc_;
+			desc_.insert(std::make_pair("Name", picojson::value(node->Descriptions[i].Name)));
+			desc_.insert(std::make_pair("Desc", picojson::value(node->Descriptions[i].Description)));
+			descs_.push_back(picojson::value(desc_));
+		}
+
 		picojson::array props_;
 
 		for (size_t i = 0; i < node->Parameter->Properties.size(); i++)
@@ -865,6 +912,11 @@ std::string Material::Copy(std::vector<std::shared_ptr<Node>> nodes, const char*
 		}
 
 		node_.insert(std::make_pair("Props", picojson::value(props_)));
+
+		if (node->Descriptions.size() > 0)
+		{
+			node_.insert(std::make_pair("Descs", picojson::value(descs_)));
+		}
 
 		nodes_.push_back(picojson::value(node_));
 	}
@@ -962,6 +1014,18 @@ void Material::Paste(std::string content, const Vector2DF& pos, std::shared_ptr<
 
 		oldIDToNewID[guid] = node->GUID;
 		// node->GUID = guid;
+
+		if (node_.contains("Descs"))
+		{
+			auto descs_obj = node_.get("Descs");
+			auto descs_ = descs_obj.get<picojson::array>();
+
+			for (int32_t i = 0; i < descs_.size(); i++)
+			{
+				node->Descriptions[i].Name = descs_[i].get("Name").get<std::string>();
+				node->Descriptions[i].Description = descs_[i].get("Desc").get<std::string>();
+			}
+		}
 
 		auto props_obj = node_.get("Props");
 		auto props_ = props_obj.get<picojson::array>();
@@ -1117,6 +1181,14 @@ void Material::MakeContentDirty(std::shared_ptr<Node> node)
 
 void Material::ClearContentDirty(std::shared_ptr<Node> node) { node->isContentDirtied = false; }
 
+void Material::UpdateWarnings()
+{
+	for (auto& node : nodes)
+	{
+		node->CurrentWarning = node->Parameter->GetWarning(this->shared_from_this(), node);
+	}
+}
+
 void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, const char* basePath)
 {
 	picojson::value root_;
@@ -1165,6 +1237,18 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 		node->Pos.Y = (float)pos_y_obj.get<double>();
 
 		node->GUID = guid;
+
+		if (node_.contains("Descs"))
+		{
+			auto descs_obj = node_.get("Descs");
+			auto descs_ = descs_obj.get<picojson::array>();
+
+			for (int32_t i = 0; i < descs_.size(); i++)
+			{
+				node->Descriptions[i].Name = descs_[i].get("Name").get<std::string>();
+				node->Descriptions[i].Description = descs_[i].get("Desc").get<std::string>();
+			}
+		}
 
 		auto props_obj = node_.get("Props");
 		auto props_ = props_obj.get<picojson::array>();
@@ -1358,6 +1442,16 @@ std::string Material::SaveAsStr(const char* basePath)
 		node_.insert(std::make_pair("PosX", picojson::value(node->Pos.X)));
 		node_.insert(std::make_pair("PosY", picojson::value(node->Pos.Y)));
 
+		picojson::array descs_;
+
+		for (size_t i = 0; i < node->Descriptions.size(); i++)
+		{
+			picojson::object desc_;
+			desc_.insert(std::make_pair("Name", picojson::value(node->Descriptions[i].Name)));
+			desc_.insert(std::make_pair("Desc", picojson::value(node->Descriptions[i].Description)));
+			descs_.push_back(picojson::value(desc_));
+		}
+
 		picojson::array props_;
 
 		for (size_t i = 0; i < node->Parameter->Properties.size(); i++)
@@ -1421,6 +1515,11 @@ std::string Material::SaveAsStr(const char* basePath)
 		}
 
 		node_.insert(std::make_pair("Props", picojson::value(props_)));
+
+		if (node->Descriptions.size() > 0)
+		{
+			node_.insert(std::make_pair("Descs", picojson::value(descs_)));
+		}
 
 		nodes_.push_back(picojson::value(node_));
 	}

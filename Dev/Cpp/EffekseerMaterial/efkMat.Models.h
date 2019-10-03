@@ -7,6 +7,13 @@
 namespace EffekseerMaterial
 {
 
+enum class LanguageType
+{
+	Japanese,
+	English,
+	Max,
+};
+
 class CommandManager;
 
 class UserObject
@@ -57,6 +64,13 @@ public:
 	std::weak_ptr<Node> Parent;
 };
 
+struct NodeDescription
+{
+public:
+	std::string Name;
+	std::string Description;
+};
+
 class Node : public std::enable_shared_from_this<Node>
 {
 private:
@@ -78,7 +92,13 @@ public:
 	Vector2DF Pos;
 
 	//! is node opened and show a preview
-	bool IsOpened = false;
+	bool IsPreviewOpened = false;
+
+	//! descriptons for other editors
+	std::vector<NodeDescription> Descriptions;
+
+	//! warning
+	WarningType CurrentWarning = WarningType::None;
 
 	bool isPosDirty = true;
 
@@ -187,6 +207,8 @@ public:
 
 	void ClearContentDirty(std::shared_ptr<Node> node);
 
+	void UpdateWarnings();
+
 	void LoadFromStr(const char* json, std::shared_ptr<Library> library, const char* basePath);
 
 	std::string SaveAsStr(const char* basePath);
@@ -194,6 +216,8 @@ public:
 	bool Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath);
 
 	bool Save(std::vector<uint8_t>& data, const char* basePath);
+
+	LanguageType Language = LanguageType::Japanese;
 
 	std::shared_ptr<CommandManager> GetCommandManager() { return commandManager_; }
 };

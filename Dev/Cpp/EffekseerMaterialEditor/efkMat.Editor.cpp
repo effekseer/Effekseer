@@ -98,7 +98,7 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	EffekseerMaterial::TextExporterGeneric exporter;
 	auto result = (&exporter)->Export(material, node);
 
-	//auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
+	// auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
 
 	auto textures = result.Textures;
 	auto removed_it = std::remove_if(textures.begin(),
@@ -597,7 +597,7 @@ void Editor::UpdateNodes()
 	{
 		EffekseerMaterial::Editor::UpdateNode(node);
 
-		if ((node->UserObj == nullptr || node->GetIsDirtied()) && (node->IsOpened || node->Parameter->Type == NodeType::Output))
+		if ((node->UserObj == nullptr || node->GetIsDirtied()) && (node->IsPreviewOpened || node->Parameter->Type == NodeType::Output))
 		{
 			auto uobj = std::make_shared<EffekseerMaterial::NodeUserDataObject>();
 			uobj->GetPreview() = std::make_shared<EffekseerMaterial::Preview>();
@@ -618,7 +618,8 @@ void Editor::UpdateNodes()
 			material->ClearContentDirty(node);
 		}
 
-		if ((node->UserObj != nullptr && node->GetIsContentDirtied()) && (node->IsOpened || node->Parameter->Type == NodeType::Output))
+		if ((node->UserObj != nullptr && node->GetIsContentDirtied()) &&
+			(node->IsPreviewOpened || node->Parameter->Type == NodeType::Output))
 		{
 			auto uobj = (EffekseerMaterial::NodeUserDataObject*)node->UserObj.get();
 
@@ -1004,7 +1005,10 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 		if (type == ValueType::String)
 		{
+			// is memory safe?
+
 			auto str = p->Str;
+			str.resize(str.size() + 16, 0);
 
 			// Shader result doesn't change
 			if (InputText(name.c_str(), str))
@@ -1130,6 +1134,46 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		auto pp = node->Parameter->Properties[i];
 
 		updateProp(pp->Type, pp->Name, p);
+	}
+
+	//
+
+	if (node->Parameter->HasDescription)
+	{
+		const char* languages[] = {"Jp", "En"};
+
+		if (ImGui::BeginCombo("Lang", languages[static_cast<int>(material->Language)]))
+		{
+			for (size_t i = 0; i < 2; i++)
+			{
+				auto isSelected = static_cast<int>(material->Language) == i;
+				if (ImGui::Selectable(languages[i], isSelected))
+				{
+					material->Language = static_cast<LanguageType>(i);
+				}
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		// is memory safe?
+		auto name = node->Descriptions[static_cast<int>(material->Language)].Name;
+		name.resize(name.size() + 16, 0);
+
+		auto desc = node->Descriptions[static_cast<int>(material->Language)].Description;
+		desc.resize(desc.size() + 16, 0);
+
+		if (ImGui::InputText("Name", const_cast<char*>(name.data()), name.size()))
+		{
+			node->Descriptions[static_cast<int>(material->Language)].Name = name;
+		}
+
+		if (ImGui::InputTextMultiline("Desc", const_cast<char*>(desc.data()), desc.size()))
+		{
+			node->Descriptions[static_cast<int>(material->Language)].Description = desc;
+		}
 	}
 }
 
@@ -1268,10 +1312,10 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 	// show a preview
 	if (ImGui::SmallButton("Preview"))
 	{
-		node->IsOpened = !node->IsOpened;
+		node->IsPreviewOpened = !node->IsPreviewOpened;
 	}
 
-	if (node->IsOpened)
+	if (node->IsPreviewOpened)
 	{
 		auto preview = (NodeUserDataObject*)node->UserObj.get();
 		if (preview != nullptr)
@@ -1281,6 +1325,12 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 			size.y = Preview::TextureSize;
 			ImGui::Image((void*)preview->GetPreview()->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 		}
+	}
+
+	// show an warning
+	if (node->CurrentWarning != WarningType::None)
+	{
+		ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), "warning");
 	}
 
 	ImGui::EndVertical();

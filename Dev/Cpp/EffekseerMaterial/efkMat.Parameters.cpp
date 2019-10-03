@@ -4,6 +4,49 @@
 namespace EffekseerMaterial
 {
 
+bool ExtractTextureParameter(std::shared_ptr<Material> material, std::shared_ptr<Node> node, ExtractedTextureParameter& result)
+{
+
+	if (node->Parameter->Type == NodeType::SampleTexture)
+	{
+		auto texPin = node->InputPins[0];
+		auto texProp = node->Properties[0];
+		auto sampleProp = node->Properties[1];
+
+		auto connected = material->GetConnectedPins(texPin);
+
+		if (connected.size() > 0)
+		{
+			auto parent = connected[0]->Parent.lock();
+			ExtractTextureParameter(material, parent, result);
+			result.Sampler = static_cast<TextureSamplerType>((int32_t)sampleProp->Floats[0]);
+			return true;
+		}
+		else
+		{
+			result.Path = texProp->Str;
+			result.Sampler = static_cast<TextureSamplerType>((int32_t)sampleProp->Floats[0]);
+			return true;
+		}
+	}
+	else if (node->Parameter->Type == NodeType::ConstantTexture)
+	{
+		auto texProp = node->Properties[0];
+		result.Path = texProp->Str;
+		result.Sampler = TextureSamplerType::Unknown;
+		return true;
+	}
+	else if (node->Parameter->Type == NodeType::ParamTexture)
+	{
+		auto texProp = node->Properties[0];
+		result.GUID = node->GUID;
+		result.Sampler = TextureSamplerType::Unknown;
+		return true;
+	}
+
+	return false;
+}
+
 ValueType NodeParameter::GetOutputTypeIn1Out1(const std::vector<ValueType>& inputTypes) const { return inputTypes[0]; }
 
 ValueType NodeParameter::GetOutputTypeIn2Out1Param2(const std::vector<ValueType>& inputTypes) const
@@ -29,6 +72,51 @@ WarningType NodeParameter::GetWarningIn2Out1Param2(std::shared_ptr<Material> mat
 		WarningType::None;
 
 	return type1 == type2 ? WarningType::None : WarningType::WrongInputType;
+}
+
+WarningType NodeParameter::GetWarningSampler(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+{
+
+	if (node->Parameter->Type == NodeType::SampleTexture)
+	{
+		// collect textures
+
+		ExtractedTextureParameter currentParam;
+		ExtractTextureParameter(material, node, currentParam);
+
+		for (auto& n : material->GetNodes())
+		{
+			ExtractedTextureParameter param;
+			if (ExtractTextureParameter(material, n, param))
+			{
+				if (param.Sampler == TextureSamplerType::Unknown)
+					continue;
+
+				if (currentParam.Path == param.Path && currentParam.Path != "")
+				{
+					if (param.Sampler != currentParam.Sampler)
+					{
+						return WarningType::DifferentSampler;
+					}
+				}
+
+				if (currentParam.GUID == param.GUID)
+				{
+					if (param.Sampler != currentParam.Sampler)
+					{
+						return WarningType::DifferentSampler;
+					}
+				}
+			}
+		}
+
+		return WarningType::None;
+	}
+	else
+	{
+		assert(0);
+	}
+	return WarningType::None;
 }
 
 NodeConstant1::NodeConstant1()

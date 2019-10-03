@@ -30,6 +30,7 @@ enum class TextureSamplerType
 {
 	Repeat,
 	Wrap,
+	Unknown,
 };
 
 enum class ConnectResultType
@@ -47,7 +48,8 @@ enum class WarningType
 {
 	None,
 	WrongInputType,
-	WrongProperty
+	WrongProperty,
+	DifferentSampler,
 };
 
 enum class ValueType
