@@ -143,14 +143,14 @@ namespace Effekseer.IO
 			Func<System.Xml.XmlNodeList, List<Element>> visit = null;
 			visit = (System.Xml.XmlNodeList xmlNodes) =>
 			{
-				List<Element> elements = new List<Element>();
+				var elements = new List<Element>();
 
 				for (int i = 0; i < xmlNodes.Count; i++)
 				{
 					if (xmlNodes[i].NodeType == System.Xml.XmlNodeType.XmlDeclaration)
 						continue;
 
-					Element element = new Element();
+					var element = new Element();
 
 					element.Name = xmlNodes[i].Name;
 
@@ -173,9 +173,9 @@ namespace Effekseer.IO
 
 			var visits = visit(xml.ChildNodes);
 
-			// compress...
-			Dictionary<string, Int16> keys = new Dictionary<string, Int16>();
-			Dictionary<string, Int16> values = new Dictionary<string, Int16>();
+			// compress
+			var keys = new Dictionary<string, Int16>();
+			var values = new Dictionary<string, Int16>();
 			Func<List<Element>, byte[]> comp = null;
 			comp = (elements) =>
 			{
@@ -188,14 +188,14 @@ namespace Effekseer.IO
 						keys[item.Name] = (Int16)keys.Count();
 					res.Push(keys[item.Name]);
 
-					bool isHaveValue = item.Value != null && (string)item.Value != "";
+					var valueStr = item.Value as string;
+					bool isHaveValue = !string.IsNullOrEmpty(valueStr);
 					res.Push(isHaveValue);
 					if (isHaveValue)
 					{
-						var value = (string)item.Value;
-						if (!values.ContainsKey(value))
-							values[value] = (Int16)values.Count();
-						res.Push(values[value]);
+						if (!values.ContainsKey(valueStr))
+							values[valueStr] = (Int16)values.Count();
+						res.Push(values[valueStr]);
 					}
 
 					bool isHaveChildren = item.Children != null && item.Children.Count != 0;
@@ -206,7 +206,7 @@ namespace Effekseer.IO
 				return res.GetBinary();
 			};
 
-			Utils.BinaryWriter binary = new Utils.BinaryWriter();
+			var binary = new Utils.BinaryWriter();
 
 			var valueBuf = comp(visits);
 
@@ -229,7 +229,7 @@ namespace Effekseer.IO
 			using (var compressStream = new System.IO.MemoryStream())
 			using (var compressor = new System.IO.Compression.DeflateStream(compressStream, System.IO.Compression.CompressionMode.Compress))
 			{
-				byte[] buffer = binary.GetBinary();
+				var buffer = binary.GetBinary();
 				compressor.Write(buffer, 0, buffer.Count());
 				compressor.Close();
 				return compressStream.ToArray();
@@ -238,7 +238,7 @@ namespace Effekseer.IO
 
 		System.Xml.XmlDocument Decompress(byte[] buffer)
 		{
-			List<byte> decompressBuffer = new List<byte>();
+			var decompressBuffer = new List<byte>();
 			using (var decompressStream = new System.IO.MemoryStream(buffer))
 			using (var decompressor = new System.IO.Compression.DeflateStream(decompressStream, System.IO.Compression.CompressionMode.Decompress))
 			{
@@ -369,7 +369,7 @@ namespace Effekseer.IO
 				headerData = data.SelectMany(_ => _).ToArray();
 			}
 
-			Chunk chunk = new Chunk();
+			var chunk = new Chunk();
 			chunk.AddChunk("INFO", infoData);
 			chunk.AddChunk("EDIT", Compress(editorData));
 			chunk.AddChunk("BIN_", binaryData);
@@ -405,9 +405,9 @@ namespace Effekseer.IO
 			if (allData.Length < 24) return false;
 
 			if (allData[3] != 'E' ||
-	allData[2] != 'F' ||
-	allData[1] != 'K' ||
-	allData[0] != 'P')
+				allData[2] != 'F' ||
+				allData[1] != 'K' ||
+				allData[0] != 'P')
 			{
 				return false;
 			}
