@@ -1,6 +1,4 @@
-﻿#define RAW_HSV
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +14,11 @@ namespace Effekseer.GUI.Component
 		string id_r1 = "";
 		string id_r2 = "";
 
+		/// <summary>
+		/// a popup is shown in this frame.
+		/// it prevent from showing a popup twice
+		/// this flag is reset at the first of update
+		/// </summary>
 		bool isPopupShown = false;
 
 		public string Label { get; set; } = string.Empty;
@@ -24,19 +27,27 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.ColorWithRandom binding = null;
 
+		/// <summary>
+		/// function. A border is shown when value is changed.
+		/// </summary>
 		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
 
 		bool isActive = false;
+
+		/// <summary>
+		/// on writing.
+		/// It prevents to read values while writing
+		/// </summary>
 		bool isWriting = false;
 
 		float[] internalValueMax = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
 		float[] internalValueMin = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
 
-		/// <summary>
-		/// This parameter is unused.
-		/// </summary>
 		public bool EnableUndo { get; set; } = true;
 
+		/// <summary>
+		/// a parameter which is bound this instance
+		/// </summary>
 		public Data.Value.ColorWithRandom Binding
 		{
 			get
@@ -211,6 +222,11 @@ namespace Effekseer.GUI.Component
 
 		}
 
+		/// <summary>
+		/// Which is called when a color space is changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Binding_OnChangedColorSpace(object sender, ChangedValueEventArgs e)
 		{
 			if (binding != null)
@@ -227,6 +243,11 @@ namespace Effekseer.GUI.Component
 			}
 		}
 
+		/// <summary>
+		/// Which is called when a color space is changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Binding_OnChanged(object sender, ChangedValueEventArgs e)
 		{
 			if (isWriting) return;
@@ -242,30 +263,6 @@ namespace Effekseer.GUI.Component
 				internalValueMin[2] = binding.B.Min / 255.0f;
 				internalValueMin[3] = binding.A.Min / 255.0f;
 			}
-		}
-
-		void convertRGB2HSV(float[] values)
-		{
-			Effekseer.Utl.RGBHSVColor c = new Effekseer.Utl.RGBHSVColor();
-			c.RH = (int)Math.Round(values[0] * 255, MidpointRounding.AwayFromZero);
-			c.GS = (int)Math.Round(values[1] * 255, MidpointRounding.AwayFromZero);
-			c.BV = (int)Math.Round(values[2] * 255, MidpointRounding.AwayFromZero);
-			c = Effekseer.Utl.RGBHSVColor.RGBToHSV(c);
-			values[0] = c.RH / 255.0f;
-			values[1] = c.GS / 255.0f;
-			values[2] = c.BV / 255.0f;
-		}
-
-		void convertHSV2RGB(float[] values)
-		{
-			Effekseer.Utl.RGBHSVColor c = new Effekseer.Utl.RGBHSVColor();
-			c.RH = (int)Math.Round(values[0] * 255, MidpointRounding.AwayFromZero);
-			c.GS = (int)Math.Round(values[1] * 255, MidpointRounding.AwayFromZero);
-			c.BV = (int)Math.Round(values[2] * 255, MidpointRounding.AwayFromZero);
-			c = Effekseer.Utl.RGBHSVColor.HSVToRGB(c);
-			values[0] = c.RH / 255.0f;
-			values[1] = c.GS / 255.0f;
-			values[2] = c.BV / 255.0f;
 		}
 	}
 }

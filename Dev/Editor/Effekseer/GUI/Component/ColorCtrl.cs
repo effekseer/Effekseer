@@ -16,6 +16,9 @@ namespace Effekseer.GUI.Component
 
 		Data.Value.Color binding = null;
 
+		/// <summary>
+		/// function. A border is shown when value is changed.
+		/// </summary>
 		ValueChangingProperty valueChangingProp = new ValueChangingProperty();
 
 		float[] internalValue = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -24,6 +27,9 @@ namespace Effekseer.GUI.Component
 
 		public bool EnableUndo { get; set; } = true;
 
+		/// <summary>
+		/// a parameter which is bound this instance
+		/// </summary>
 		public Data.Value.Color Binding
 		{
 			get
