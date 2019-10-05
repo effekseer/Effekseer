@@ -6,6 +6,21 @@
 namespace EffekseerMaterial
 {
 
+struct ExtractedTextureParameter
+{
+	//! parameter GUID
+	uint64_t GUID = 0;
+
+	//! fixed path
+	std::string Path;
+
+	//! sampler
+	TextureSamplerType Sampler;
+};
+
+//! extract output texture or sampled texture
+bool ExtractTextureParameter(std::shared_ptr<Material> material, std::shared_ptr<Node> node, ExtractedTextureParameter& result);
+
 enum class ShadingModelType
 {
 	Lit,
@@ -69,6 +84,9 @@ protected:
 	*/
 	WarningType GetWarningIn2Out1Param2(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const;
 
+	//! get warning about a sampler
+	WarningType GetWarningSampler(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const;
+
 	void InitializeAstOutputTypeIn1Out1()
 	{
 		auto input = std::make_shared<PinParameter>();
@@ -122,8 +140,11 @@ public:
 	std::vector<std::shared_ptr<NodePropertyParameter>> Properties;
 	std::vector<std::shared_ptr<NodeFunctionParameter>> Funcs;
 
-	//! default value
-	bool IsOpened = false;
+	//! is preview opened as default
+	bool IsPreviewOpened = false;
+
+	//! has a description for other editor
+	bool HasDescription = false;
 
 	int32_t GetPropertyIndex(const std::string& name)
 	{
@@ -182,6 +203,7 @@ public:
 		TypeName = "Param1";
 		Description = "Param value...";
 		Group = std::vector<std::string>{"Param"};
+		HasDescription = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -215,6 +237,7 @@ public:
 		TypeName = "Param4";
 		Description = "Param value...";
 		Group = std::vector<std::string>{"Param"};
+		HasDescription = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -575,6 +598,7 @@ public:
 	{
 		Type = NodeType::ParamTexture;
 		TypeName = "ParamTexture";
+		HasDescription = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -634,8 +658,10 @@ public:
 		paramSampler->DefaultValues[0] = 0;
 		Properties.push_back(paramSampler);
 
-		IsOpened = true;
+		IsPreviewOpened = true;
 	}
+
+	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const { return GetWarningSampler(material, node); }
 };
 
 class NodeTime : public NodeParameter
@@ -723,7 +749,8 @@ public:
 	{
 		Type = NodeType::Output;
 		TypeName = "Output";
-		IsOpened = true;
+		IsPreviewOpened = true;
+		HasDescription = true;
 
 		auto baseColor = std::make_shared<PinParameter>();
 		baseColor->Name = "BaseColor";
