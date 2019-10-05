@@ -369,6 +369,353 @@ bool Material::FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2)
 	return visit(p1->Parent);
 }
 
+std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes,
+										std::vector<std::shared_ptr<Link>> links,
+										const char* basePath,
+										bool doMoveZero,
+										bool doExportTextures)
+{
+	// calculate left pos
+	Vector2DF upperLeftPos = Vector2DF(FLT_MAX, FLT_MAX);
+
+	if (doMoveZero)
+	{
+		for (auto node : nodes)
+		{
+			upperLeftPos.X = std::min(upperLeftPos.X, node->Pos.X);
+			upperLeftPos.Y = std::min(upperLeftPos.Y, node->Pos.Y);
+		}
+	}
+	else
+	{
+		upperLeftPos.X = 0.0f;
+		upperLeftPos.Y = 0.0f;
+	}
+
+	picojson::object root_;
+	picojson::array nodes_;
+
+	std::unordered_set<std::string> enabledTextures;
+
+	root_.insert(std::make_pair("Project", picojson::value("EffekseerMaterial")));
+
+	for (auto node : nodes)
+	{
+		picojson::object node_;
+		node_.insert(std::make_pair("GUID", picojson::value((double)node->GUID)));
+		node_.insert(std::make_pair("Type", picojson::value(node->Parameter->TypeName.c_str())));
+		node_.insert(std::make_pair("PosX", picojson::value(node->Pos.X - upperLeftPos.X)));
+		node_.insert(std::make_pair("PosY", picojson::value(node->Pos.Y - upperLeftPos.Y)));
+
+		picojson::array descs_;
+
+		for (size_t i = 0; i < node->Descriptions.size(); i++)
+		{
+			picojson::object desc_;
+			desc_.insert(std::make_pair("Name", picojson::value(node->Descriptions[i].Name)));
+			desc_.insert(std::make_pair("Desc", picojson::value(node->Descriptions[i].Description)));
+			descs_.push_back(picojson::value(desc_));
+		}
+
+		picojson::array props_;
+
+		for (size_t i = 0; i < node->Parameter->Properties.size(); i++)
+		{
+			picojson::object prop_;
+
+			auto pp = node->Parameter->Properties[i];
+			auto p = node->Properties[i];
+
+			if (pp->Type == ValueType::Float1)
+			{
+				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
+			}
+			else if (pp->Type == ValueType::Float2)
+			{
+				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
+				prop_.insert(std::make_pair("Value2", picojson::value((double)p->Floats[1])));
+			}
+			else if (pp->Type == ValueType::Float3)
+			{
+				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
+				prop_.insert(std::make_pair("Value2", picojson::value((double)p->Floats[1])));
+				prop_.insert(std::make_pair("Value3", picojson::value((double)p->Floats[2])));
+			}
+			else if (pp->Type == ValueType::Float4)
+			{
+				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
+				prop_.insert(std::make_pair("Value2", picojson::value((double)p->Floats[1])));
+				prop_.insert(std::make_pair("Value3", picojson::value((double)p->Floats[2])));
+				prop_.insert(std::make_pair("Value4", picojson::value((double)p->Floats[3])));
+			}
+			else if (pp->Type == ValueType::Bool)
+			{
+				prop_.insert(std::make_pair("Value", picojson::value(p->Floats[0] > 0)));
+			}
+			else if (pp->Type == ValueType::String)
+			{
+				prop_.insert(std::make_pair("Value", picojson::value(p->Str)));
+			}
+			else if (pp->Type == ValueType::Int)
+			{
+				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
+			}
+			else if (pp->Type == ValueType::Texture)
+			{
+				auto absStr = p->Str;
+				auto relative = Relative(absStr, basePath);
+				prop_.insert(std::make_pair("Value", picojson::value(relative)));
+				enabledTextures.insert(relative);
+			}
+			else if (pp->Type == ValueType::Enum)
+			{
+				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
+			}
+			else
+			{
+				assert(0);
+			}
+
+			props_.push_back(picojson::value(prop_));
+		}
+
+		node_.insert(std::make_pair("Props", picojson::value(props_)));
+
+		if (node->Descriptions.size() > 0)
+		{
+			node_.insert(std::make_pair("Descs", picojson::value(descs_)));
+		}
+
+		nodes_.push_back(picojson::value(node_));
+	}
+
+	root_.insert(std::make_pair("Nodes", picojson::value(nodes_)));
+
+	picojson::array links_;
+
+	for (auto link : links)
+	{
+		picojson::object link_;
+		link_.insert(std::make_pair("GUID", picojson::value((double)link->GUID)));
+
+		auto inputNode = link->InputPin->Parent.lock();
+		auto inputName = inputNode->Parameter->InputPins[link->InputPin->PinIndex]->Name;
+
+		auto outputNode = link->OutputPin->Parent.lock();
+		auto outputName = outputNode->Parameter->OutputPins[link->OutputPin->PinIndex]->Name;
+
+		link_.insert(std::make_pair("InputGUID", picojson::value((double)link->InputPin->Parent.lock()->GUID)));
+		link_.insert(std::make_pair("InputPin", picojson::value(inputName)));
+		link_.insert(std::make_pair("OutputGUID", picojson::value((double)link->OutputPin->Parent.lock()->GUID)));
+		link_.insert(std::make_pair("OutputPin", picojson::value(outputName)));
+
+		links_.push_back(picojson::value(link_));
+	}
+
+	root_.insert(std::make_pair("Links", picojson::value(links_)));
+
+	if (doExportTextures)
+	{
+		picojson::array textures_;
+
+		for (auto texture : textures)
+		{
+			picojson::object texture_;
+
+			auto absStr = texture.second->Path;
+			auto relative = Relative(absStr, basePath);
+
+			if (enabledTextures.find(relative) == enabledTextures.end())
+			{
+				continue;
+			}
+
+			texture_.insert(std::make_pair("Path", picojson::value(relative)));
+			texture_.insert(std::make_pair("Type", picojson::value(static_cast<double>(texture.second->Type))));
+
+			textures_.push_back(picojson::value(texture_));
+		}
+
+		root_.insert(std::make_pair("Textures", picojson::value(textures_)));
+	}
+
+	auto str_main = picojson::value(root_).serialize();
+
+	return str_main;
+}
+
+void Material::LoadFromStrInternal(
+	const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, bool hasTextures)
+{
+	picojson::value root_;
+	auto err = picojson::parse(root_, json);
+	if (!err.empty())
+	{
+		std::cerr << err << std::endl;
+		return;
+	}
+
+	// check project
+	picojson::value project_name_obj = root_.get("Project");
+	auto project_name = project_name_obj.get<std::string>();
+	if (project_name != "EffekseerMaterial")
+		return;
+
+	picojson::value nodes_obj = root_.get("Nodes");
+	picojson::value links_obj = root_.get("Links");
+
+	picojson::array nodes_ = nodes_obj.get<picojson::array>();
+	picojson::array links_ = links_obj.get<picojson::array>();
+
+	std::map<uint64_t, uint64_t> oldIDToNewID;
+
+	for (auto node_ : nodes_)
+	{
+		auto guid_obj = node_.get("GUID");
+		auto guid = (uint64_t)guid_obj.get<double>();
+
+		auto type_obj = node_.get("Type");
+		auto type = type_obj.get<std::string>();
+
+		auto node_library = library->FindContentWithTypeName(type.c_str());
+		if (node_library == nullptr)
+			continue;
+
+		auto node_parameter = node_library->Create();
+		auto node = CreateNode(node_parameter);
+
+		auto pos_x_obj = node_.get("PosX");
+		node->Pos.X = (float)pos_x_obj.get<double>() + offset.X;
+
+		auto pos_y_obj = node_.get("PosY");
+		node->Pos.Y = (float)pos_y_obj.get<double>() + offset.Y;
+
+		oldIDToNewID[guid] = node->GUID;
+		//node->GUID = guid; // OK?
+
+		if (node_.contains("Descs"))
+		{
+			auto descs_obj = node_.get("Descs");
+			auto descs_ = descs_obj.get<picojson::array>();
+
+			for (int32_t i = 0; i < descs_.size(); i++)
+			{
+				node->Descriptions[i].Name = descs_[i].get("Name").get<std::string>();
+				node->Descriptions[i].Description = descs_[i].get("Desc").get<std::string>();
+			}
+		}
+
+		auto props_obj = node_.get("Props");
+		auto props_ = props_obj.get<picojson::array>();
+
+		for (int32_t i = 0; i < props_.size(); i++)
+		{
+			if (node->Parameter->Properties[i]->Type == ValueType::Float1)
+			{
+				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
+			}
+			else if (node->Parameter->Properties[i]->Type == ValueType::Float2)
+			{
+				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
+				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
+			}
+			else if (node->Parameter->Properties[i]->Type == ValueType::Float3)
+			{
+				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
+				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
+				node->Properties[i]->Floats[2] = props_[i].get("Value3").get<double>();
+			}
+			else if (node->Parameter->Properties[i]->Type == ValueType::Float4)
+			{
+				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
+				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
+				node->Properties[i]->Floats[2] = props_[i].get("Value3").get<double>();
+				node->Properties[i]->Floats[3] = props_[i].get("Value4").get<double>();
+			}
+			else if (node->Parameter->Properties[i]->Type == ValueType::Bool)
+			{
+				node->Properties[i]->Floats[0] = props_[i].get("Value").get<bool>() ? 1.0f : 0.0f;
+			}
+			else if (node->Parameter->Properties[i]->Type == ValueType::String)
+			{
+				auto str = props_[i].get("Value").get<std::string>();
+				node->Properties[i]->Str = str;
+			}
+			else if (node->Parameter->Properties[i]->Type == ValueType::Int)
+			{
+				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
+			}
+			else if (node->Parameter->Properties[i]->Type == ValueType::Texture)
+			{
+				auto str = props_[i].get("Value").get<std::string>();
+				auto absolute = Absolute(str, basePath);
+				node->Properties[i]->Str = absolute;
+			}
+			else if (node->Parameter->Properties[i]->Type == ValueType::Enum)
+			{
+				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
+			}
+			else
+			{
+				assert(0);
+			}
+		}
+	}
+
+	for (auto link_ : links_)
+	{
+		auto guid_obj = link_.get("GUID");
+		auto guid = (uint64_t)guid_obj.get<double>();
+
+		auto InputGUID_obj = link_.get("InputGUID");
+		auto InputGUID = (uint64_t)InputGUID_obj.get<double>();
+
+		auto InputPin_obj = link_.get("InputPin");
+		auto InputPin = InputPin_obj.get<std::string>();
+
+		auto OutputGUID_obj = link_.get("OutputGUID");
+		auto OutputGUID = (uint64_t)OutputGUID_obj.get<double>();
+
+		auto OutputPin_obj = link_.get("OutputPin");
+		auto OutputPin = OutputPin_obj.get<std::string>();
+		
+		auto inputNode = FindNode(oldIDToNewID[InputGUID]);
+		auto outputNode = FindNode(oldIDToNewID[OutputGUID]);
+		auto InputPinIndex = inputNode->GetInputPinIndex(InputPin);
+		auto OutputPinIndex = outputNode->GetOutputPinIndex(OutputPin);
+
+		if (InputPinIndex >= 0 && OutputPinIndex >= 0)
+		{
+			ConnectPin(inputNode->InputPins[InputPinIndex], outputNode->OutputPins[OutputPinIndex]);
+		}
+	}
+
+	if (hasTextures)
+	{
+		picojson::value textures_obj = root_.get("Textures");
+
+		if (textures_obj.is<picojson::array>())
+		{
+			picojson::array textures_ = textures_obj.get<picojson::array>();
+
+			for (auto texture_ : textures_)
+			{
+				auto path_obj = texture_.get("Path");
+				auto path = path_obj.get<std::string>();
+				auto absolute = Absolute(path, basePath);
+
+				auto textureType_obj = texture_.get("Type");
+				auto textureType = textureType_obj.get<double>();
+
+				auto texture = std::make_shared<TextureInfo>();
+				texture->Path = absolute;
+				texture->Type = static_cast<TextureValueType>(static_cast<int>(textureType));
+				textures[absolute] = texture;
+			}
+		}
+	}
+}
+
 Material::Material() {}
 
 Material::~Material() {}
@@ -574,13 +921,11 @@ void Material::RemoveNode(std::shared_ptr<Node> node)
 			this->nodes = nodes_new;
 			this->links = links_new;
 			this->UpdateWarnings();
-
 		},
 		[this, nodes_old, links_old]() -> void {
 			this->nodes = nodes_old;
 			this->links = links_old;
 			this->UpdateWarnings();
-
 		});
 
 	commandManager_->Execute(command);
@@ -812,116 +1157,12 @@ std::shared_ptr<TextureInfo> Material::FindTexture(const char* path)
 
 std::string Material::Copy(std::vector<std::shared_ptr<Node>> nodes, const char* basePath)
 {
-	// calculate left pos
-	Vector2DF upperLeftPos = Vector2DF(FLT_MAX, FLT_MAX);
-
-	for (auto node : nodes)
-	{
-		upperLeftPos.X = std::min(upperLeftPos.X, node->Pos.X);
-		upperLeftPos.Y = std::min(upperLeftPos.Y, node->Pos.Y);
-	}
-
-	// TODO : remove copy codes
-	picojson::object root_;
-	picojson::array nodes_;
-	picojson::array links_;
-
-	root_.insert(std::make_pair("Project", picojson::value("EffekseerMaterial")));
-
 	std::unordered_set<std::shared_ptr<Node>> setNodes;
 
 	for (auto node : nodes)
 	{
 		setNodes.insert(node);
-
-		picojson::object node_;
-		node_.insert(std::make_pair("GUID", picojson::value((double)node->GUID)));
-		node_.insert(std::make_pair("Type", picojson::value(node->Parameter->TypeName.c_str())));
-		node_.insert(std::make_pair("PosX", picojson::value(node->Pos.X - upperLeftPos.X)));
-		node_.insert(std::make_pair("PosY", picojson::value(node->Pos.Y - upperLeftPos.Y)));
-
-		picojson::array descs_;
-
-		for (size_t i = 0; i < node->Descriptions.size(); i++)
-		{
-			picojson::object desc_;
-			desc_.insert(std::make_pair("Name", picojson::value(node->Descriptions[i].Name)));
-			desc_.insert(std::make_pair("Desc", picojson::value(node->Descriptions[i].Description)));
-			descs_.push_back(picojson::value(desc_));
-		}
-
-		picojson::array props_;
-
-		for (size_t i = 0; i < node->Parameter->Properties.size(); i++)
-		{
-			picojson::object prop_;
-
-			auto pp = node->Parameter->Properties[i];
-			auto p = node->Properties[i];
-
-			if (pp->Type == ValueType::Float1)
-			{
-				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
-			}
-			else if (pp->Type == ValueType::Float2)
-			{
-				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
-				prop_.insert(std::make_pair("Value2", picojson::value((double)p->Floats[1])));
-			}
-			else if (pp->Type == ValueType::Float3)
-			{
-				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
-				prop_.insert(std::make_pair("Value2", picojson::value((double)p->Floats[1])));
-				prop_.insert(std::make_pair("Value3", picojson::value((double)p->Floats[2])));
-			}
-			else if (pp->Type == ValueType::Float4)
-			{
-				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
-				prop_.insert(std::make_pair("Value2", picojson::value((double)p->Floats[1])));
-				prop_.insert(std::make_pair("Value3", picojson::value((double)p->Floats[2])));
-				prop_.insert(std::make_pair("Value4", picojson::value((double)p->Floats[3])));
-			}
-			else if (pp->Type == ValueType::Bool)
-			{
-				prop_.insert(std::make_pair("Value", picojson::value(p->Floats[0] > 0)));
-			}
-			else if (pp->Type == ValueType::String)
-			{
-				prop_.insert(std::make_pair("Value", picojson::value(p->Str)));
-			}
-			else if (pp->Type == ValueType::Int)
-			{
-				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
-			}
-			else if (pp->Type == ValueType::Texture)
-			{
-				auto absStr = p->Str;
-				auto relative = Relative(absStr, basePath);
-				prop_.insert(std::make_pair("Value", picojson::value(relative)));
-			}
-			else if (pp->Type == ValueType::Enum)
-			{
-				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
-			}
-			else
-			{
-				assert(0);
-			}
-
-			props_.push_back(picojson::value(prop_));
-		}
-
-		node_.insert(std::make_pair("Props", picojson::value(props_)));
-
-		if (node->Descriptions.size() > 0)
-		{
-			node_.insert(std::make_pair("Descs", picojson::value(descs_)));
-		}
-
-		nodes_.push_back(picojson::value(node_));
 	}
-
-	root_.insert(std::make_pair("Nodes", picojson::value(nodes_)));
 
 	std::unordered_set<std::shared_ptr<Link>> collectedLinks;
 
@@ -939,178 +1180,20 @@ std::string Material::Copy(std::vector<std::shared_ptr<Node>> nodes, const char*
 		}
 	}
 
+	std::vector<std::shared_ptr<Link>> links;
 	for (auto link : collectedLinks)
 	{
-		picojson::object link_;
-		link_.insert(std::make_pair("GUID", picojson::value((double)link->GUID)));
-
-		auto inputNode = link->InputPin->Parent.lock();
-		auto inputName = inputNode->Parameter->InputPins[link->InputPin->PinIndex]->Name;
-
-		auto outputNode = link->OutputPin->Parent.lock();
-		auto outputName = outputNode->Parameter->OutputPins[link->OutputPin->PinIndex]->Name;
-
-		link_.insert(std::make_pair("InputGUID", picojson::value((double)link->InputPin->Parent.lock()->GUID)));
-		link_.insert(std::make_pair("InputPin", picojson::value(inputName)));
-		link_.insert(std::make_pair("OutputGUID", picojson::value((double)link->OutputPin->Parent.lock()->GUID)));
-		link_.insert(std::make_pair("OutputPin", picojson::value(outputName)));
-
-		links_.push_back(picojson::value(link_));
+		links.push_back(link);
 	}
 
-	root_.insert(std::make_pair("Links", picojson::value(links_)));
-
-	auto str_main = picojson::value(root_).serialize();
-
-	return str_main;
+	return SaveAsStrInternal(nodes, links, basePath, true, false);
 }
 
 void Material::Paste(std::string content, const Vector2DF& pos, std::shared_ptr<Library> library, const char* basePath)
 {
-	picojson::value root_;
-	auto err = picojson::parse(root_, content);
-	if (!err.empty())
-	{
-		std::cerr << err << std::endl;
-		return;
-	}
-
-	// check project
-	picojson::value project_name_obj = root_.get("Project");
-	auto project_name = project_name_obj.get<std::string>();
-	if (project_name != "EffekseerMaterial")
-		return;
-
-	picojson::value nodes_obj = root_.get("Nodes");
-	picojson::value links_obj = root_.get("Links");
-
-	picojson::array nodes_ = nodes_obj.get<picojson::array>();
-	picojson::array links_ = links_obj.get<picojson::array>();
-
-	std::map<uint64_t, uint64_t> oldIDToNewID;
-
 	commandManager_->StartCollection();
 
-	for (auto node_ : nodes_)
-	{
-		auto guid_obj = node_.get("GUID");
-		auto guid = (uint64_t)guid_obj.get<double>();
-
-		auto type_obj = node_.get("Type");
-		auto type = type_obj.get<std::string>();
-
-		auto node_library = library->FindContentWithTypeName(type.c_str());
-		if (node_library == nullptr)
-			continue;
-
-		auto node_parameter = node_library->Create();
-		auto node = CreateNode(node_parameter);
-
-		auto pos_x_obj = node_.get("PosX");
-		node->Pos.X = (float)pos_x_obj.get<double>() + pos.X;
-
-		auto pos_y_obj = node_.get("PosY");
-		node->Pos.Y = (float)pos_y_obj.get<double>() + pos.Y;
-
-		oldIDToNewID[guid] = node->GUID;
-		// node->GUID = guid;
-
-		if (node_.contains("Descs"))
-		{
-			auto descs_obj = node_.get("Descs");
-			auto descs_ = descs_obj.get<picojson::array>();
-
-			for (int32_t i = 0; i < descs_.size(); i++)
-			{
-				node->Descriptions[i].Name = descs_[i].get("Name").get<std::string>();
-				node->Descriptions[i].Description = descs_[i].get("Desc").get<std::string>();
-			}
-		}
-
-		auto props_obj = node_.get("Props");
-		auto props_ = props_obj.get<picojson::array>();
-
-		for (int32_t i = 0; i < props_.size(); i++)
-		{
-			if (node->Parameter->Properties[i]->Type == ValueType::Float1)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Float2)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
-				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Float3)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
-				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
-				node->Properties[i]->Floats[2] = props_[i].get("Value3").get<double>();
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Float4)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
-				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
-				node->Properties[i]->Floats[2] = props_[i].get("Value3").get<double>();
-				node->Properties[i]->Floats[3] = props_[i].get("Value4").get<double>();
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Bool)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value").get<bool>() ? 1.0f : 0.0f;
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::String)
-			{
-				auto str = props_[i].get("Value").get<std::string>();
-				node->Properties[i]->Str = str;
-			}
-			if (node->Parameter->Properties[i]->Type == ValueType::Int)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Texture)
-			{
-				auto str = props_[i].get("Value").get<std::string>();
-				auto absolute = Absolute(str, basePath);
-				node->Properties[i]->Str = absolute;
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Enum)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
-			}
-			else
-			{
-				assert(0);
-			}
-		}
-	}
-
-	for (auto link_ : links_)
-	{
-		auto guid_obj = link_.get("GUID");
-		auto guid = (uint64_t)guid_obj.get<double>();
-
-		auto InputGUID_obj = link_.get("InputGUID");
-		auto InputGUID = (uint64_t)InputGUID_obj.get<double>();
-
-		auto InputPin_obj = link_.get("InputPin");
-		auto InputPin = InputPin_obj.get<std::string>();
-
-		auto OutputGUID_obj = link_.get("OutputGUID");
-		auto OutputGUID = (uint64_t)OutputGUID_obj.get<double>();
-
-		auto OutputPin_obj = link_.get("OutputPin");
-		auto OutputPin = OutputPin_obj.get<std::string>();
-
-		auto inputNode = FindNode(oldIDToNewID[InputGUID]);
-		auto outputNode = FindNode(oldIDToNewID[OutputGUID]);
-		auto InputPinIndex = inputNode->GetInputPinIndex(InputPin);
-		auto OutputPinIndex = outputNode->GetOutputPinIndex(OutputPin);
-
-		if (InputPinIndex >= 0 && OutputPinIndex >= 0)
-		{
-			ConnectPin(inputNode->InputPins[InputPinIndex], outputNode->OutputPins[OutputPinIndex]);
-		}
-	}
+	LoadFromStrInternal(content.c_str(), pos, library, basePath, false);
 
 	commandManager_->EndCollection();
 }
@@ -1191,389 +1274,18 @@ void Material::UpdateWarnings()
 
 void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, const char* basePath)
 {
-	picojson::value root_;
-	auto err = picojson::parse(root_, json);
-	if (!err.empty())
-	{
-		std::cerr << err << std::endl;
-		return;
-	}
-
-	// check project
-	picojson::value project_name_obj = root_.get("Project");
-	auto project_name = project_name_obj.get<std::string>();
-	if (project_name != "EffekseerMaterial")
-		return;
+	// TODO check valid
 
 	nodes.clear();
 	links.clear();
 	textures.clear();
 
-	picojson::value nodes_obj = root_.get("Nodes");
-	picojson::value links_obj = root_.get("Links");
-
-	picojson::array nodes_ = nodes_obj.get<picojson::array>();
-	picojson::array links_ = links_obj.get<picojson::array>();
-
-	for (auto node_ : nodes_)
-	{
-		auto guid_obj = node_.get("GUID");
-		auto guid = (uint64_t)guid_obj.get<double>();
-
-		auto type_obj = node_.get("Type");
-		auto type = type_obj.get<std::string>();
-
-		auto node_library = library->FindContentWithTypeName(type.c_str());
-		if (node_library == nullptr)
-			continue;
-
-		auto node_parameter = node_library->Create();
-		auto node = CreateNode(node_parameter);
-
-		auto pos_x_obj = node_.get("PosX");
-		node->Pos.X = (float)pos_x_obj.get<double>();
-
-		auto pos_y_obj = node_.get("PosY");
-		node->Pos.Y = (float)pos_y_obj.get<double>();
-
-		node->GUID = guid;
-
-		if (node_.contains("Descs"))
-		{
-			auto descs_obj = node_.get("Descs");
-			auto descs_ = descs_obj.get<picojson::array>();
-
-			for (int32_t i = 0; i < descs_.size(); i++)
-			{
-				node->Descriptions[i].Name = descs_[i].get("Name").get<std::string>();
-				node->Descriptions[i].Description = descs_[i].get("Desc").get<std::string>();
-			}
-		}
-
-		auto props_obj = node_.get("Props");
-		auto props_ = props_obj.get<picojson::array>();
-
-		for (int32_t i = 0; i < props_.size(); i++)
-		{
-			if (node->Parameter->Properties[i]->Type == ValueType::Float1)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Float2)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
-				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Float3)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
-				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
-				node->Properties[i]->Floats[2] = props_[i].get("Value3").get<double>();
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Float4)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value1").get<double>();
-				node->Properties[i]->Floats[1] = props_[i].get("Value2").get<double>();
-				node->Properties[i]->Floats[2] = props_[i].get("Value3").get<double>();
-				node->Properties[i]->Floats[3] = props_[i].get("Value4").get<double>();
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Bool)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value").get<bool>() ? 1.0f : 0.0f;
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::String)
-			{
-				auto str = props_[i].get("Value").get<std::string>();
-				node->Properties[i]->Str = str;
-			}
-			if (node->Parameter->Properties[i]->Type == ValueType::Int)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Texture)
-			{
-				auto str = props_[i].get("Value").get<std::string>();
-				auto absolute = Absolute(str, basePath);
-				node->Properties[i]->Str = absolute;
-			}
-			else if (node->Parameter->Properties[i]->Type == ValueType::Enum)
-			{
-				node->Properties[i]->Floats[0] = props_[i].get("Value").get<double>();
-			}
-			else
-			{
-				assert(0);
-			}
-		}
-	}
-
-	for (auto link_ : links_)
-	{
-		auto guid_obj = link_.get("GUID");
-		auto guid = (uint64_t)guid_obj.get<double>();
-
-		auto InputGUID_obj = link_.get("InputGUID");
-		auto InputGUID = (uint64_t)InputGUID_obj.get<double>();
-
-		auto InputPin_obj = link_.get("InputPin");
-		auto InputPin = InputPin_obj.get<std::string>();
-
-		auto OutputGUID_obj = link_.get("OutputGUID");
-		auto OutputGUID = (uint64_t)OutputGUID_obj.get<double>();
-
-		auto OutputPin_obj = link_.get("OutputPin");
-		auto OutputPin = OutputPin_obj.get<std::string>();
-
-		auto link = std::make_shared<Link>();
-
-		auto inputNode = FindNode(InputGUID);
-		auto outputNode = FindNode(OutputGUID);
-		auto InputPinIndex = inputNode->GetInputPinIndex(InputPin);
-		auto OutputPinIndex = outputNode->GetOutputPinIndex(OutputPin);
-
-		if (InputPinIndex >= 0 && OutputPinIndex >= 0)
-		{
-			link->InputPin = inputNode->InputPins[InputPinIndex];
-			link->OutputPin = outputNode->OutputPins[OutputPinIndex];
-			link->GUID = GetIDAndNext();
-			links.push_back(link);
-		}
-	}
-
-	picojson::value textures_obj = root_.get("Textures");
-
-	if (textures_obj.is<picojson::array>())
-	{
-		picojson::array textures_ = textures_obj.get<picojson::array>();
-
-		for (auto texture_ : textures_)
-		{
-			auto path_obj = texture_.get("Path");
-			auto path = path_obj.get<std::string>();
-			auto absolute = Absolute(path, basePath);
-
-			auto textureType_obj = texture_.get("Type");
-			auto textureType = textureType_obj.get<double>();
-
-			auto texture = std::make_shared<TextureInfo>();
-			texture->Path = absolute;
-			texture->Type = static_cast<TextureValueType>(static_cast<int>(textureType));
-			textures[absolute] = texture;
-		}
-	}
+	LoadFromStrInternal(json, Vector2DF(), library, basePath, true);
 }
 
 std::string Material::SaveAsStr(const char* basePath)
 {
-	picojson::object root_;
-	picojson::array nodes_;
-
-	std::unordered_set<std::string> enabledTextures;
-
-	root_.insert(std::make_pair("Project", picojson::value("EffekseerMaterial")));
-
-	// param by run textexporter
-	/*
-	{
-		std::shared_ptr<Node> outputNode;
-		for (auto node : nodes)
-		{
-			if (node->Parameter->Type == NodeType::Output)
-			{
-				outputNode = node;
-			}
-		}
-
-		TextExporter textExporter;
-		auto result = textExporter.Export(shared_from_this(), outputNode);
-
-		picojson::object params_;
-		picojson::array textures_;
-		picojson::array uniforms_;
-
-		for (auto& param : result.Textures)
-		{
-			picojson::object node_;
-			node_.insert(std::make_pair("Name", picojson::value(param->Name)));
-			node_.insert(std::make_pair("Index", picojson::value((double)param->Index)));
-
-			{
-				auto absStr = param->DefaultPath;
-				if (absStr == "")
-				{
-					node_.insert(std::make_pair("DefaultPath", picojson::value("")));
-				}
-				else
-				{
-					auto relative = Relative(absStr, basePath);
-					node_.insert(std::make_pair("DefaultPath", picojson::value(relative)));
-				}
-			}
-
-			node_.insert(std::make_pair("IsParam", picojson::value(param->IsParam)));
-			node_.insert(std::make_pair("IsValueTexture", picojson::value(param->IsValueTexture)));
-			textures_.push_back(picojson::value(node_));
-		}
-
-		for (auto& param : result.Uniforms)
-		{
-			picojson::object node_;
-			node_.insert(std::make_pair("Name", picojson::value(param->Name)));
-			node_.insert(std::make_pair("Offset", picojson::value((double)param->Offset)));
-			node_.insert(std::make_pair("Type", picojson::value((double)param->Type)));
-			node_.insert(std::make_pair("DefaultValue1", picojson::value(param->DefaultConstants[0])));
-			node_.insert(std::make_pair("DefaultValue2", picojson::value(param->DefaultConstants[1])));
-			node_.insert(std::make_pair("DefaultValue3", picojson::value(param->DefaultConstants[2])));
-			node_.insert(std::make_pair("DefaultValue4", picojson::value(param->DefaultConstants[3])));
-			uniforms_.push_back(picojson::value(node_));
-		}
-
-		params_.insert(std::make_pair("Textures", picojson::value(textures_)));
-		params_.insert(std::make_pair("Uniforms", picojson::value(uniforms_)));
-		root_.insert(std::make_pair("Params", picojson::value(params_)));
-	}
-	*/
-
-	for (auto node : nodes)
-	{
-		picojson::object node_;
-		node_.insert(std::make_pair("GUID", picojson::value((double)node->GUID)));
-		node_.insert(std::make_pair("Type", picojson::value(node->Parameter->TypeName.c_str())));
-		node_.insert(std::make_pair("PosX", picojson::value(node->Pos.X)));
-		node_.insert(std::make_pair("PosY", picojson::value(node->Pos.Y)));
-
-		picojson::array descs_;
-
-		for (size_t i = 0; i < node->Descriptions.size(); i++)
-		{
-			picojson::object desc_;
-			desc_.insert(std::make_pair("Name", picojson::value(node->Descriptions[i].Name)));
-			desc_.insert(std::make_pair("Desc", picojson::value(node->Descriptions[i].Description)));
-			descs_.push_back(picojson::value(desc_));
-		}
-
-		picojson::array props_;
-
-		for (size_t i = 0; i < node->Parameter->Properties.size(); i++)
-		{
-			picojson::object prop_;
-
-			auto pp = node->Parameter->Properties[i];
-			auto p = node->Properties[i];
-
-			if (pp->Type == ValueType::Float1)
-			{
-				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
-			}
-			else if (pp->Type == ValueType::Float2)
-			{
-				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
-				prop_.insert(std::make_pair("Value2", picojson::value((double)p->Floats[1])));
-			}
-			else if (pp->Type == ValueType::Float3)
-			{
-				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
-				prop_.insert(std::make_pair("Value2", picojson::value((double)p->Floats[1])));
-				prop_.insert(std::make_pair("Value3", picojson::value((double)p->Floats[2])));
-			}
-			else if (pp->Type == ValueType::Float4)
-			{
-				prop_.insert(std::make_pair("Value1", picojson::value((double)p->Floats[0])));
-				prop_.insert(std::make_pair("Value2", picojson::value((double)p->Floats[1])));
-				prop_.insert(std::make_pair("Value3", picojson::value((double)p->Floats[2])));
-				prop_.insert(std::make_pair("Value4", picojson::value((double)p->Floats[3])));
-			}
-			else if (pp->Type == ValueType::Bool)
-			{
-				prop_.insert(std::make_pair("Value", picojson::value(p->Floats[0] > 0)));
-			}
-			else if (pp->Type == ValueType::String)
-			{
-				prop_.insert(std::make_pair("Value", picojson::value(p->Str)));
-			}
-			else if (pp->Type == ValueType::Int)
-			{
-				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
-			}
-			else if (pp->Type == ValueType::Texture)
-			{
-				auto absStr = p->Str;
-				auto relative = Relative(absStr, basePath);
-				prop_.insert(std::make_pair("Value", picojson::value(relative)));
-				enabledTextures.insert(relative);
-			}
-			else if (pp->Type == ValueType::Enum)
-			{
-				prop_.insert(std::make_pair("Value", picojson::value((double)p->Floats[0])));
-			}
-			else
-			{
-				assert(0);
-			}
-
-			props_.push_back(picojson::value(prop_));
-		}
-
-		node_.insert(std::make_pair("Props", picojson::value(props_)));
-
-		if (node->Descriptions.size() > 0)
-		{
-			node_.insert(std::make_pair("Descs", picojson::value(descs_)));
-		}
-
-		nodes_.push_back(picojson::value(node_));
-	}
-
-	root_.insert(std::make_pair("Nodes", picojson::value(nodes_)));
-
-	picojson::array links_;
-
-	for (auto link : links)
-	{
-		picojson::object link_;
-		link_.insert(std::make_pair("GUID", picojson::value((double)link->GUID)));
-
-		auto inputNode = link->InputPin->Parent.lock();
-		auto inputName = inputNode->Parameter->InputPins[link->InputPin->PinIndex]->Name;
-
-		auto outputNode = link->OutputPin->Parent.lock();
-		auto outputName = outputNode->Parameter->OutputPins[link->OutputPin->PinIndex]->Name;
-
-		link_.insert(std::make_pair("InputGUID", picojson::value((double)link->InputPin->Parent.lock()->GUID)));
-		link_.insert(std::make_pair("InputPin", picojson::value(inputName)));
-		link_.insert(std::make_pair("OutputGUID", picojson::value((double)link->OutputPin->Parent.lock()->GUID)));
-		link_.insert(std::make_pair("OutputPin", picojson::value(outputName)));
-
-		links_.push_back(picojson::value(link_));
-	}
-
-	root_.insert(std::make_pair("Links", picojson::value(links_)));
-
-	picojson::array textures_;
-
-	for (auto texture : textures)
-	{
-		picojson::object texture_;
-
-		auto absStr = texture.second->Path;
-		auto relative = Relative(absStr, basePath);
-
-		if (enabledTextures.find(relative) == enabledTextures.end())
-		{
-			continue;
-		}
-
-		texture_.insert(std::make_pair("Path", picojson::value(relative)));
-		texture_.insert(std::make_pair("Type", picojson::value(static_cast<double>(texture.second->Type))));
-
-		textures_.push_back(picojson::value(texture_));
-	}
-
-	root_.insert(std::make_pair("Textures", picojson::value(textures_)));
-
-	auto str_main = picojson::value(root_).serialize();
-
-	return str_main;
+	return SaveAsStrInternal(nodes, links, basePath, false, true);
 }
 
 bool Material::Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath)

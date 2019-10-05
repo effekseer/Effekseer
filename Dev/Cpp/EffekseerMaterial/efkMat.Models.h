@@ -148,6 +148,15 @@ private:
 
 	bool FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2);
 
+	std::string SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes,
+								  std::vector<std::shared_ptr<Link>> links,
+								  const char* basePath,
+								  bool doMoveZero,
+								  bool doExportTextures);
+
+	
+	void LoadFromStrInternal(const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, bool hasTextures);
+
 public:
 	Material();
 
