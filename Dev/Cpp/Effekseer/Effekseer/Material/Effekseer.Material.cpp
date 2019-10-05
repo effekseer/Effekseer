@@ -15,7 +15,7 @@ bool Material::Load(const uint8_t* data, int32_t size)
 
 	prefix[4] = 0;
 
-	if (std::string("efkM") != std::string(prefix))
+	if (std::string("EFKM") != std::string(prefix))
 		return false;
 
 	int version = 0;
@@ -36,7 +36,7 @@ bool Material::Load(const uint8_t* data, int32_t size)
 		memcpy(&chunk_size, data + offset, 4);
 		offset += sizeof(int);
 
-		if (std::string("para") == std::string(chunk))
+		if (std::string("PRM_") == std::string(chunk))
 		{
 			memcpy(&shadingModel_, data + offset, 4);
 			offset += sizeof(int);
@@ -128,7 +128,7 @@ bool Material::Load(const uint8_t* data, int32_t size)
 				uniforms_.push_back(uniform);
 			}
 		}
-		else if (std::string("gene") == std::string(chunk))
+		else if (std::string("GENE") == std::string(chunk))
 		{
 			int codeLength = 0;
 			memcpy(&codeLength, data + offset, 4);
@@ -141,7 +141,6 @@ bool Material::Load(const uint8_t* data, int32_t size)
 		else
 		{
 			offset += chunk_size;
-			break;
 		}
 	}
 

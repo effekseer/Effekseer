@@ -92,6 +92,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->IsParam = true;
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
 						extractedTexture->Priority = static_cast<int32_t>(node->Properties[2]->Floats[0]);
+						extractedTexture->Descriptions = node->Descriptions;
 						extractedTextures[keyStr] = extractedTexture;
 					}
 
@@ -124,6 +125,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedUniform->Name = paramName;
 						extractedUniform->DefaultConstants = values;
 						extractedUniform->Priority = static_cast<int32_t>(node->Properties[2]->Floats[0]);
+						extractedUniform->Descriptions = node->Descriptions;
 
 						if (node->Parameter->Type == NodeType::Param1)
 						{

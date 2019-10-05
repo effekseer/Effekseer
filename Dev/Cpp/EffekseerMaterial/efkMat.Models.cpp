@@ -591,7 +591,7 @@ void Material::LoadFromStrInternal(
 		node->Pos.Y = (float)pos_y_obj.get<double>() + offset.Y;
 
 		oldIDToNewID[guid] = node->GUID;
-		//node->GUID = guid; // OK?
+		// node->GUID = guid; // OK?
 
 		if (node_.contains("Descs"))
 		{
@@ -678,7 +678,7 @@ void Material::LoadFromStrInternal(
 
 		auto OutputPin_obj = link_.get("OutputPin");
 		auto OutputPin = OutputPin_obj.get<std::string>();
-		
+
 		auto inputNode = FindNode(oldIDToNewID[InputGUID]);
 		auto outputNode = FindNode(oldIDToNewID[OutputGUID]);
 		auto InputPinIndex = inputNode->GetInputPinIndex(InputPin);
@@ -1283,10 +1283,7 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 	LoadFromStrInternal(json, Vector2DF(), library, basePath, true);
 }
 
-std::string Material::SaveAsStr(const char* basePath)
-{
-	return SaveAsStrInternal(nodes, links, basePath, false, true);
-}
+std::string Material::SaveAsStr(const char* basePath) { return SaveAsStrInternal(nodes, links, basePath, false, true); }
 
 bool Material::Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath)
 {
@@ -1301,7 +1298,7 @@ bool Material::Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library
 
 	prefix[4] = 0;
 
-	if (std::string("efkM") != std::string(prefix))
+	if (std::string("EFKM") != std::string(prefix))
 		return false;
 
 	int version = 0;
@@ -1323,7 +1320,7 @@ bool Material::Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library
 		memcpy(&chunk_size, data.data() + offset, 4);
 		offset += sizeof(int);
 
-		if (std::string("data") == std::string(chunk))
+		if (std::string("DATA") == std::string(chunk))
 		{
 			LoadFromStr((const char*)(data.data() + offset), library, basePath);
 		}
@@ -1338,7 +1335,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 {
 	// header
 
-	char* prefix = "efkM";
+	char* prefix = "EFKM";
 	int version = 1;
 
 	int offset = 0;
@@ -1359,8 +1356,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	data.resize(data.size() + sizeof(uint64_t));
 	memcpy(data.data() + offset, &guid, sizeof(uint64_t));
 
-	// generic
-
+	// find output node
 	std::shared_ptr<Node> outputNode;
 	for (auto node : nodes)
 	{
@@ -1370,6 +1366,38 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		}
 	}
 
+	if (outputNode == nullptr)
+	{
+		assert(0);
+		return false;
+	}
+
+	// description
+	BinaryWriter bwDescs;
+	bwDescs.Push(static_cast<uint32_t>(outputNode->Descriptions.size()));
+	for (size_t descInd = 0; descInd < outputNode->Descriptions.size(); descInd++)
+	{		
+		bwDescs.Push(static_cast<uint32_t>(descInd));
+		bwDescs.Push(GetVectorFromStr(outputNode->Descriptions[descInd].Name));
+		bwDescs.Push(GetVectorFromStr(outputNode->Descriptions[descInd].Description));
+	}
+
+	char* chunk_desc = "DESC";
+	auto size_descs = static_cast<int32_t>(bwDescs.GetBuffer().size());
+
+	offset = data.size();
+	data.resize(data.size() + 4);
+	memcpy(data.data() + offset, chunk_desc, 4);
+
+	offset = data.size();
+	data.resize(data.size() + sizeof(int32_t));
+	memcpy(data.data() + offset, &size_descs, sizeof(int32_t));
+
+	offset = data.size();
+	data.resize(data.size() + bwDescs.GetBuffer().size());
+	memcpy(data.data() + offset, bwDescs.GetBuffer().data(), bwDescs.GetBuffer().size());
+
+	// generic
 	std::shared_ptr<TextExporter> textExporter = std::make_shared<TextExporterGeneric>();
 	auto result = textExporter->Export(shared_from_this(), outputNode, "$SUFFIX");
 
@@ -1420,7 +1448,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		bwParam.Push(param->DefaultConstants[3]);
 	}
 
-	char* chunk_para = "para";
+	char* chunk_para = "PRM_";
 	auto size_para = static_cast<int32_t>(bwParam.GetBuffer().size());
 
 	offset = data.size();
@@ -1435,6 +1463,53 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	data.resize(data.size() + bwParam.GetBuffer().size());
 	memcpy(data.data() + offset, bwParam.GetBuffer().data(), bwParam.GetBuffer().size());
 
+	// param 2
+	BinaryWriter bwParam2;
+
+	bwParam2.Push(static_cast<int32_t>(result.Textures.size()));
+
+	for (size_t i = 0; i < result.Textures.size(); i++)
+	{
+		bwParam2.Push(static_cast<int32_t>(result.Textures[i]->Descriptions.size()));
+
+		for (size_t descInd = 0; descInd < result.Textures[i]->Descriptions.size(); descInd++)
+		{
+			bwParam2.Push(static_cast<uint32_t>(descInd));
+			bwParam2.Push(GetVectorFromStr(result.Textures[i]->Descriptions[descInd].Name));
+			bwParam2.Push(GetVectorFromStr(result.Textures[i]->Descriptions[descInd].Description));
+		}
+	}
+
+	bwParam2.Push(static_cast<int32_t>(result.Uniforms.size()));
+
+	for (size_t i = 0; i < result.Uniforms.size(); i++)
+	{
+		bwParam2.Push(static_cast<int32_t>(result.Uniforms[i]->Descriptions.size()));
+
+		for (size_t descInd = 0; descInd < result.Uniforms[i]->Descriptions.size(); descInd++)
+		{
+			bwParam2.Push(static_cast<uint32_t>(descInd));
+			bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Descriptions[descInd].Name));
+			bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Descriptions[descInd].Description));
+		}
+	}
+
+	char* chunk_para2 = "PRM2";
+	auto size_para2 = static_cast<int32_t>(bwParam2.GetBuffer().size());
+
+	offset = data.size();
+	data.resize(data.size() + 4);
+	memcpy(data.data() + offset, chunk_para2, 4);
+
+	offset = data.size();
+	data.resize(data.size() + sizeof(int32_t));
+	memcpy(data.data() + offset, &size_para2, sizeof(int32_t));
+
+	offset = data.size();
+	data.resize(data.size() + bwParam2.GetBuffer().size());
+	memcpy(data.data() + offset, bwParam2.GetBuffer().data(), bwParam2.GetBuffer().size());
+
+
 	BinaryWriter bwGene;
 
 	{
@@ -1442,7 +1517,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		bwGene.Push(code_);
 	}
 
-	char* chunk_gene = "gene";
+	char* chunk_gene = "GENE";
 	auto size_gene = static_cast<int32_t>(bwGene.GetBuffer().size());
 
 	offset = data.size();
@@ -1459,7 +1534,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 
 	// data
 	auto internalJsonVec = GetVectorFromStr(internalJson);
-	char* chunk_data = "data";
+	char* chunk_data = "DATA";
 	auto size_data = static_cast<int32_t>(internalJsonVec.size());
 
 	offset = data.size();

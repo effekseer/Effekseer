@@ -1165,7 +1165,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		auto desc = node->Descriptions[static_cast<int>(material->Language)].Description;
 		desc.resize(desc.size() + 16, 0);
 
-		if (ImGui::InputText("Name", const_cast<char*>(name.data()), name.size()))
+		if (ImGui::InputText("Name###DescName", const_cast<char*>(name.data()), name.size()))
 		{
 			node->Descriptions[static_cast<int>(material->Language)].Name = name;
 		}

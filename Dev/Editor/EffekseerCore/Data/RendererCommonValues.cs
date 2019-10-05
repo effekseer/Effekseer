@@ -162,7 +162,34 @@ namespace Effekseer.Data
 			{
 				var key = CreateKey(texture);
 
-				if(keyToValues.ContainsKey(key))
+				Func<string> getName = () =>
+				{
+					var ret = "";
+					if (texture.Names.ContainsKey(Core.Language))
+					{
+						ret = texture.Names[Core.Language];
+					}
+
+					if (string.IsNullOrEmpty(ret))
+					{
+						ret = texture.Name;
+					}
+
+					return ret;
+				};
+
+				Func<string> getDesc = () =>
+				{
+					var ret = "";
+					if (texture.Descriptions.ContainsKey(Core.Language))
+					{
+						ret = texture.Descriptions[Core.Language];
+					}
+
+					return ret;
+				};
+
+				if (keyToValues.ContainsKey(key))
 				{
 					var status = keyToValues[key] as ValueStatus;
 					if(status.IsShown != texture.IsParam)
@@ -177,8 +204,8 @@ namespace Effekseer.Data
 					var value = new Value.PathForImage(Resources.GetString("ImageFilter"), true);
 					status.Key = key;
 					status.Value = value;
-					status.Name = texture.Name;
-					status.Description = "";
+					status.Name = getName();
+					status.Description = getDesc();
 					status.IsShown = texture.IsParam;
 					status.Priority = texture.Priority;
 					keyToValues.Add(key, status);
@@ -190,6 +217,33 @@ namespace Effekseer.Data
 			foreach(var uniform in info.Uniforms)
 			{
 				var key = CreateKey(uniform);
+
+				Func<string> getName = () =>
+				{
+					var ret = "";
+					if(uniform.Names.ContainsKey(Core.Language))
+					{
+						ret = uniform.Names[Core.Language];
+					}
+
+					if(string.IsNullOrEmpty(ret))
+					{
+						ret = uniform.Name;
+					}
+
+					return ret;
+				};
+
+				Func<string> getDesc = () =>
+				{
+					var ret = "";
+					if (uniform.Descriptions.ContainsKey(Core.Language))
+					{
+						ret = uniform.Descriptions[Core.Language];
+					}
+
+					return ret;
+				};
 
 				if (keyToValues.ContainsKey(key))
 				{
@@ -207,8 +261,9 @@ namespace Effekseer.Data
 						var status = new ValueStatus();
 						status.Key = key;
 						status.Value = new Value.Float();
-						status.Name = uniform.Name;
-						status.Description = "";
+
+						status.Name = getName();
+						status.Description = getDesc();
 						status.IsShown = true;
 						status.Priority = uniform.Priority;
 						keyToValues.Add(key, status);
@@ -219,8 +274,8 @@ namespace Effekseer.Data
 						var status = new ValueStatus();
 						status.Key = key;
 						status.Value = new Value.Vector4D();
-						status.Name = uniform.Name;
-						status.Description = "";
+						status.Name = getName();
+						status.Description = getDesc();
 						status.IsShown = true;
 						status.Priority = uniform.Priority;
 						keyToValues.Add(key, status);

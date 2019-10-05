@@ -103,6 +103,10 @@ namespace Effekseer.Utl
 
 		public UInt64 GUID;
 
+		public Dictionary<Language, string> Names = new Dictionary<Language, string>();
+
+		public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
+
 		public bool Load(string path)
 		{
 			if (string.IsNullOrEmpty(path))
@@ -133,9 +137,9 @@ namespace Effekseer.Utl
 				return false;
 			}
 
-			if(buf[0] != 'e' ||
-				buf[1] != 'f' ||
-				buf[2] != 'k' ||
+			if(buf[0] != 'E' ||
+				buf[1] != 'F' ||
+				buf[2] != 'K' ||
 				buf[3] != 'M')
 			{
 				return false;
@@ -144,7 +148,7 @@ namespace Effekseer.Utl
 			int version = BitConverter.ToInt32(buf, 4);
 			GUID = BitConverter.ToUInt64(buf, 8);
 
-			while(true)
+			while (true)
 			{
 				if (br.Read(buf, 0, 8) != 8)
 				{
@@ -153,11 +157,36 @@ namespace Effekseer.Utl
 					break;
 				}
 
+				if (buf[0] == 'D' &&
+				buf[1] == 'E' &&
+				buf[2] == 'S' &&
+				buf[3] == 'C')
+				{
+					var temp = new byte[BitConverter.ToInt32(buf, 4)];
+					if (br.Read(temp, 0, temp.Length) != temp.Length) return false;
 
-				if (buf[0] == 'p' &&
-				buf[1] == 'a' &&
-				buf[2] == 'r' &&
-				buf[3] == 'a')
+					var reader = new BinaryReader(temp);
+
+					int count = 0;
+					reader.Get(ref count);
+
+					for (int i = 0; i < count; i++)
+					{
+						int lang = 0;
+						string name = null;
+						string desc = null;
+						reader.Get(ref lang);
+						reader.Get(ref name, Encoding.UTF8);
+						reader.Get(ref desc, Encoding.UTF8);
+						Names.Add((Language)lang, name);
+						Descriptions.Add((Language)lang, desc);
+					}
+				}
+
+				if (buf[0] == 'P' &&
+				buf[1] == 'R' &&
+				buf[2] == 'M' &&
+				buf[3] == '_')
 				{
 					var temp = new byte[BitConverter.ToInt32(buf, 4)];
 					if (br.Read(temp, 0, temp.Length) != temp.Length) return false;
@@ -178,10 +207,9 @@ namespace Effekseer.Utl
 
 					List<TextureInformation> textures = new List<TextureInformation>();
 
-					for(int i = 0; i < textureCount; i++)
+					for (int i = 0; i < textureCount; i++)
 					{
 						TextureInformation info = new TextureInformation();
-						int priority = 0;
 
 						reader.Get(ref info.Name, Encoding.UTF8);
 						reader.Get(ref info.DefaultPath, Encoding.UTF8);
@@ -229,7 +257,6 @@ namespace Effekseer.Utl
 					for (int i = 0; i < uniformCount; i++)
 					{
 						UniformInformation info = new UniformInformation();
-						int priority = 0;
 
 						reader.Get(ref info.Name, Encoding.UTF8);
 						reader.Get(ref info.Offset);
@@ -244,6 +271,59 @@ namespace Effekseer.Utl
 
 					Uniforms = uniforms.ToArray();
 				}
+
+				if (buf[0] == 'P' &&
+				buf[1] == 'R' &&
+				buf[2] == 'M' &&
+				buf[3] == '2')
+				{
+					var temp = new byte[BitConverter.ToInt32(buf, 4)];
+					if (br.Read(temp, 0, temp.Length) != temp.Length) return false;
+
+					var reader = new BinaryReader(temp);
+
+					int textureCount = 0;
+					reader.Get(ref textureCount);
+
+					for (int j = 0; j < textureCount; j++)
+					{
+						int count = 0;
+						reader.Get(ref count);
+
+						for (int i = 0; i < count; i++)
+						{
+							int lang = 0;
+							string name = null;
+							string desc = null;
+							reader.Get(ref lang);
+							reader.Get(ref name, Encoding.UTF8);
+							reader.Get(ref desc, Encoding.UTF8);
+							Textures[j].Names.Add((Language)lang, name);
+							Textures[j].Descriptions.Add((Language)lang, desc);
+						}
+					}
+
+					int uniformCount = 0;
+					reader.Get(ref uniformCount);
+
+					for (int j = 0; j < uniformCount; j++)
+					{
+						int count = 0;
+						reader.Get(ref count);
+
+						for (int i = 0; i < count; i++)
+						{
+							int lang = 0;
+							string name = null;
+							string desc = null;
+							reader.Get(ref lang);
+							reader.Get(ref name, Encoding.UTF8);
+							reader.Get(ref desc, Encoding.UTF8);
+							Uniforms[j].Names.Add((Language)lang, name);
+							Uniforms[j].Descriptions.Add((Language)lang, desc);
+						}
+					}
+				}
 			}
 
 			return true;
@@ -257,6 +337,9 @@ namespace Effekseer.Utl
 			public bool IsParam;
 			public TextureType Type = TextureType.Color;
 			public int Priority = 1;
+
+			public Dictionary<Language, string> Names = new Dictionary<Language, string>();
+			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
 		}
 
 		public class UniformInformation
@@ -266,6 +349,9 @@ namespace Effekseer.Utl
 			public int Type = 0;
 			public float[] DefaultValues = new float[4];
 			public int Priority = 1;
+
+			public Dictionary<Language, string> Names = new Dictionary<Language, string>();
+			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
 		}
 	}
 }
