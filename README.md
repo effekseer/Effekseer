@@ -35,6 +35,16 @@ Effekseer主要用作遊戲開發,不僅是程序員而且設計師也可進行�
 Development
 =========
 
+### Branch
+
+* master 1.5(WIP)
+
+* [1.4x](https://github.com/effekseer/Effekseer/tree/14x)
+
+* [1.3x](https://github.com/effekseer/Effekseer/tree/13x)
+
+### Documents
+
 [CodeOverview](docs/Development/CodeOverview.md)
 
 [CodingRule](docs/Development/CodingRule_En.md)
