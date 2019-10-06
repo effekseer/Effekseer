@@ -37,7 +37,11 @@ Development
 
 [CodeOverview](docs/Development/CodeOverview.md)
 
+[CodingRule](docs/Development/CodingRule_En.md)
+
 [HowToBuild](docs/Development/HowToBuild.md)
+
+[コーディングルール](docs/Development/CodingRule_Ja.md)
 
 Todo
 =========

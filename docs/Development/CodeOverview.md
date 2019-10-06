@@ -48,16 +48,6 @@ This module renders particles with LLGI(in 3rdParty)
 Dev/Cpp/EffekseerRendererLLGI
 ```
 
-## EffekseerRendererArea
-
-Special renderer to estimate particles's size.
-
-It going to be removed.
-
-```
-Dev/Cpp/EffekseerRendererArea
-```
-
 ## EffekseerSoundAL,DSound,XAudio2,OSMixer
 
 Sound module for OpenAL, DirectSound, XAudio, OpenSoundMixter(in Downloads)
@@ -76,6 +66,31 @@ A dll for the editor
 ```
 Dev/Cpp/Viewer
 ```
+
+## MaterialEditor
+
+A material editor
+
+- Model
+
+```
+Dev/Cpp/EffekseerMaterial
+```
+
+- View
+
+```
+Dev/Cpp/EffekseerMaterialEditor
+```
+
+## MaterialCompiler
+
+Material compilers for editor and runtime
+
+```
+Dev/Cpp/EffekseerMaterialCompiler
+```
+
 
 # C#
 

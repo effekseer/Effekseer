@@ -1,2 +1,0 @@
-
-#include "EffekseerRendererArea.IndexBuffer.h"
