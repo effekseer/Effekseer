@@ -213,21 +213,21 @@ namespace Effekseer.IO
 			binary.Push((Int16)keys.Count);
 			foreach (var item in keys)
 			{
-				binary.Push(item.Key, Encoding.UTF8, false, 1);
+				binary.Push(item.Key, Encoding.UTF8, false, 2);
 				binary.Push(item.Value);
 			}
 
 			binary.Push((Int16)values.Count);
 			foreach (var item in values)
 			{
-				binary.Push(item.Key, Encoding.UTF8, false, 1);
+				binary.Push(item.Key, Encoding.UTF8, false, 2);
 				binary.Push(item.Value);
 			}
 
 			binary.PushDirectly(valueBuf);
 
 			using (var compressStream = new System.IO.MemoryStream())
-			using (var compressor = new System.IO.Compression.DeflateStream(compressStream, System.IO.Compression.CompressionMode.Compress))
+			using (var compressor = new System.IO.Compression.DeflateStream(compressStream, System.IO.Compression.CompressionLevel.Optimal))
 			{
 				var buffer = binary.GetBinary();
 				compressor.Write(buffer, 0, buffer.Count());
@@ -261,7 +261,7 @@ namespace Effekseer.IO
 			{
 				Int16 key = -1;
 				string name = "";
-				reader.Get(ref name, Encoding.UTF8, false, 1);
+				reader.Get(ref name, Encoding.UTF8, false, 2);
 				reader.Get(ref key);
 				keys.Add(key, name);
 			}
@@ -273,7 +273,7 @@ namespace Effekseer.IO
 			{
 				Int16 key = -1;
 				string value = "";
-				reader.Get(ref value, Encoding.UTF8, false, 1);
+				reader.Get(ref value, Encoding.UTF8, false, 2);
 				reader.Get(ref key);
 				values.Add(key, value);
 			}
