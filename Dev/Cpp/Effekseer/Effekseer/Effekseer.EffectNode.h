@@ -525,6 +525,77 @@ struct ParameterGenerationLocation
 	}
 };
 
+enum ParameterCustomDataType : int32_t
+{
+	Fixed = 0,
+	Easing = 1,
+	FCurveType = 2,	//! fcurve type (TODO : rename)
+	Unknown,
+};
+
+struct ParameterCustomDataFixed
+{
+	vector2d Values;
+};
+
+struct ParameterCustomDataEasing
+{
+	easing_vector2d Values;
+};
+
+struct ParameterCustomDataFCurve
+{
+	FCurveVector2D* Values;
+};
+
+struct ParameterCustomData
+{
+	ParameterCustomDataType Type = ParameterCustomDataType::Unknown;
+
+	union {
+		ParameterCustomDataFixed Fixed;
+		ParameterCustomDataEasing Easing;
+		ParameterCustomDataFCurve FCurve;
+	};
+
+	ParameterCustomData() = default;
+
+	~ParameterCustomData() 
+	{
+		if (Type == ParameterCustomDataType::FCurveType)
+		{
+			ES_SAFE_DELETE(FCurve.Values);
+		}
+	}
+
+	void load(uint8_t*& pos, int32_t version)
+	{
+		memcpy(&Type, pos, sizeof(int));
+		pos += sizeof(int);
+
+		if (Type == ParameterCustomDataType::Fixed)
+		{
+			memcpy(&Fixed.Values, pos, sizeof(Fixed));
+			pos += sizeof(Fixed);
+		}
+		else if (Type == ParameterCustomDataType::Easing)
+		{
+			memcpy(&Easing.Values, pos, sizeof(Easing));
+			pos += sizeof(Easing);
+		}
+		else if (Type == ParameterCustomDataType::FCurveType)
+		{
+			FCurve.Values = new FCurveVector2D();
+			pos += FCurve.Values->Load(pos, version);
+		}
+		else
+		{
+			assert(0);
+		}
+	}
+};
+
+
 struct ParameterRendererCommon
 {
 
@@ -562,6 +633,8 @@ struct ParameterRendererCommon
 
 	//! pass into a renderer (to make easy to send parameters, it should be refactored)
 	NodeRendererBasicParameter BasicParameter;
+
+	ParameterCustomData CustomData;
 
 	enum
 	{
@@ -665,6 +738,15 @@ struct ParameterRendererCommon
 		FadeInType = FADEIN_OFF;
 		FadeOutType = FADEOUT_OFF;
 		UVType = UV_DEFAULT;
+	}
+
+	~ParameterRendererCommon()
+	{
+		if (UVType == UV_FCURVE)
+		{
+			ES_SAFE_DELETE(UV.FCurve.Position);
+			ES_SAFE_DELETE(UV.FCurve.Size);
+		}
 	}
 
 	void reset()
@@ -873,7 +955,11 @@ struct ParameterRendererCommon
 
 			memcpy(&DistortionIntensity, pos, sizeof(float));
 			pos += sizeof(float);
+		}
 
+		if (version >= 15)
+		{
+			CustomData.load(pos, version);
 		}
 
 		// copy to basic parameter
@@ -901,15 +987,6 @@ struct ParameterRendererCommon
 		{
 			BasicParameter.TextureFilter2 = TextureFilterType::Nearest;
 			BasicParameter.TextureWrap2 = TextureWrapType::Clamp;
-		}
-	}
-
-	void destroy()
-	{
-		if (UVType == UV_FCURVE)
-		{
-			ES_SAFE_DELETE(UV.FCurve.Position);
-			ES_SAFE_DELETE(UV.FCurve.Size);
 		}
 	}
 };
@@ -972,6 +1049,7 @@ struct DynamicFactorParameter
 		ScaleInv.fill(1.0f);
 	}
 };
+
 
 //----------------------------------------------------------------------------------
 //

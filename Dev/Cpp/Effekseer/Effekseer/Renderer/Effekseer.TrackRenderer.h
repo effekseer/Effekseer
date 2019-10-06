@@ -70,6 +70,7 @@ namespace Effekseer
 			float	SizeBack;
 
 			RectF	UV;
+			Vector2D CustomData;
 		};
 
 	public:

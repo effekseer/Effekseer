@@ -36,6 +36,22 @@ class Instance : public IntrusiveList<Instance>::Node
 	friend class Manager;
 	friend class InstanceContainer;
 
+protected:
+
+	//! custom data
+	union {
+		struct
+		{
+			vector2d start;
+			vector2d end;
+		} easing;
+
+		struct
+		{
+			vector2d offset;
+		} fcruve;
+
+	} customDataValues;
 
 public:
 	static const int32_t ChildrenMax = 16;
@@ -328,6 +344,9 @@ public:
 		@brief	UVの位置取得
 	*/
 	RectF GetUV() const;
+
+	//! get custom data
+	Vector2D GetCustomData() const;
 
 private:
 	/**

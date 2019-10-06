@@ -115,6 +115,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 		if (group->GetFirst() != nullptr)
 		{
 			m_instanceParameter.UV = group->GetFirst()->GetUV();
+			m_instanceParameter.CustomData = group->GetFirst()->GetCustomData();
 		}
 
 		renderer->BeginRenderingGroup(m_nodeParameter, group->GetInstanceCount(), m_userData);

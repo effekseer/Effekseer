@@ -889,6 +889,22 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		uvAreaOffset.Height = m_pEffectNode->RendererCommon.UV.FCurve.Size->Y.GetOffset(*instanceGlobal);
 	}
 
+	// CustomData
+	if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::Fixed)
+	{
+		// none
+	}
+	else if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::Easing)
+	{
+		customDataValues.easing.start = m_pEffectNode->RendererCommon.CustomData.Easing.Values.start.getValue(*instanceGlobal);
+		customDataValues.easing.end = m_pEffectNode->RendererCommon.CustomData.Easing.Values.end.getValue(*instanceGlobal);
+	}
+	else if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::FCurveType)
+	{
+		customDataValues.fcruve.offset.x = m_pEffectNode->RendererCommon.CustomData.FCurve.Values->X.GetOffset(*instanceGlobal);
+		customDataValues.fcruve.offset.y = m_pEffectNode->RendererCommon.CustomData.FCurve.Values->Y.GetOffset(*instanceGlobal);
+	}
+
 	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
 
 	// Generate zero frame effect
@@ -1563,6 +1579,36 @@ RectF Instance::GetUV() const
 
 
 	return RectF( 0.0f, 0.0f, 1.0f, 1.0f );
+}
+
+Vector2D Instance::GetCustomData() const 
+{
+	if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::Fixed)
+	{
+		auto v = m_pEffectNode->RendererCommon.CustomData.Fixed.Values;
+		return Vector2D(v.x, v.y);
+	}
+	else if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::Easing)
+	{
+		vector2d ret;
+		m_pEffectNode->RendererCommon.CustomData.Easing.Values.setValueToArg(
+			ret, customDataValues.easing.start, customDataValues.easing.end, m_LivingTime / m_LivedTime);
+		return Vector2D(ret.x, ret.y);
+	}
+	else if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::FCurveType)
+	{
+		auto time = (int32_t)m_LivingTime + uvTimeOffset;
+
+		return Vector2D(
+			customDataValues.fcruve.offset.x + m_pEffectNode->RendererCommon.CustomData.FCurve.Values->X.GetValue(time), 
+			customDataValues.fcruve.offset.y + m_pEffectNode->RendererCommon.CustomData.FCurve.Values->Y.GetValue(time));
+	}
+	else
+	{
+		assert(0);
+	}
+
+	Vector2D();
 }
 
 //----------------------------------------------------------------------------------

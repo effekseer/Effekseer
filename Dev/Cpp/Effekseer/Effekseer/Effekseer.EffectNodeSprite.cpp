@@ -254,6 +254,8 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 		}
 
 		instanceParameter.UV = instance.GetUV();
+		instanceParameter.CustomData = instance.GetCustomData();
+
 		renderer->Rendering( nodeParameter, instanceParameter, m_userData );
 	}
 }

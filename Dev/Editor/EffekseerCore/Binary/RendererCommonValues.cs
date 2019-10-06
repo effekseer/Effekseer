@@ -260,6 +260,33 @@ namespace Effekseer.Binary
 			// Distortion
 			data.Add(value.DistortionIntensity.GetBytes());
 
+			// Custom data
+			data.Add(value.CustomData.CustomData);
+			if(value.CustomData.CustomData.Value == Data.CustomDataType.Fixed)
+			{
+				data.Add(BitConverter.GetBytes(value.CustomData.Fixed.X.Value));
+				data.Add(BitConverter.GetBytes(value.CustomData.Fixed.Y.Value));
+			}
+			else if (value.CustomData.CustomData.Value == Data.CustomDataType.Easing)
+			{
+				var easing = Utl.MathUtl.Easing((float)value.CustomData.Easing.StartSpeed.Value, (float)value.CustomData.Easing.EndSpeed.Value);
+
+				List<byte[]> _data = new List<byte[]>();
+				_data.Add(value.CustomData.Easing.Start.GetBytes(1.0f));
+				_data.Add(value.CustomData.Easing.End.GetBytes(1.0f));
+				_data.Add(BitConverter.GetBytes(easing[0]));
+				_data.Add(BitConverter.GetBytes(easing[1]));
+				_data.Add(BitConverter.GetBytes(easing[2]));
+				var __data = _data.ToArray().ToArray();
+				data.Add(__data);
+			}
+			else if(value.CustomData.CustomData.Value == Data.CustomDataType.FCurve)
+			{
+				var value_ = value.CustomData.FCurve;
+				var bytes1 = value_.GetBytes(1.0f);
+				data.Add(bytes1);
+			}
+
 			return data.ToArray().ToArray();
 		}
 	}

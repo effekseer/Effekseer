@@ -63,6 +63,7 @@ public:
 		Vector2D	Positions[4];
 
 		RectF	UV;
+		Vector2D CustomData;
 	};
 
 public:

@@ -26,23 +26,27 @@ namespace Effekseer.Data
 
 	public enum CustomDataType
 	{
-		Fixed,
-		Easing,
-		FCurve,
+		Fixed = 0,
+		Easing = 1,
+		FCurve = 2,
 	}
 
 	public class CustomDataParameter
 	{
+		[Selector(ID = 10)]
 		public Value.Enum<CustomDataType> CustomData
 		{
 			get;
 			private set;
 		}
 
+		[Selected(ID = 10, Value = (int)CustomDataType.Fixed)]
 		public Value.Vector2D Fixed { get; private set; }
 
+		[Selected(ID = 10, Value = (int)CustomDataType.Easing)]
 		public Vector2DEasingParamater Easing { get; private set; }
 
+		[Selected(ID = 10, Value = (int)CustomDataType.FCurve)]
 		public Value.FCurveVector2D FCurve { get; private set; }
 
 		public CustomDataParameter()
@@ -481,13 +485,13 @@ namespace Effekseer.Data
 			private set;
 		}
 
-        [Selected(ID = 0, Value = 0)]
-        [IO(Export = true)]
+		[Selected(ID = 0, Value = 0)]
+		[IO(Export = true)]
 		public NoneParamater FadeInNone
-        {
-            get;
-            private set;
-        }
+		{
+			get;
+			private set;
+		}
 
 		[Selected(ID = 0, Value = 1)]
 		[IO(Export = true)]
@@ -573,6 +577,11 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "カスタムデータ")]
+		[Name(language = Language.English, value = "Custom data")]
+		[IO(Export = true)]
+		public CustomDataParameter CustomData { get; private set; }
+
 		internal RendererCommonValues()
 		{
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
@@ -612,6 +621,8 @@ namespace Effekseer.Data
 			ColorInheritType = new Value.Enum<ParentEffectType>(ParentEffectType.NotBind);
 
 			DistortionIntensity = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
+
+			CustomData = new CustomDataParameter();
 		}
 
 		public class NoneParamater

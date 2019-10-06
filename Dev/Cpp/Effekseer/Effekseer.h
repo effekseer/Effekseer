@@ -2861,6 +2861,7 @@ public:
 		Vector2D	Positions[4];
 
 		RectF	UV;
+		Vector2D CustomData;
 	};
 
 public:
@@ -2939,6 +2940,7 @@ namespace Effekseer
 			float	Positions[4];
 
 			RectF	UV;
+			Vector2D CustomData;
 		};
 
 	public:
@@ -3026,6 +3028,7 @@ public:
 		Color		InnerColor;
 		
 		RectF	UV;
+		Vector2D CustomData;
 	};
 
 public:
@@ -3107,6 +3110,7 @@ public:
 		RectF			UV;
 		Color			AllColor;
 		int32_t			Time;
+		Vector2D CustomData;
 	};
 
 public:
@@ -3196,6 +3200,7 @@ namespace Effekseer
 			float	SizeBack;
 
 			RectF	UV;
+			Vector2D CustomData;
 		};
 
 	public:

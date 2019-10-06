@@ -1232,14 +1232,13 @@ namespace Effekseer
 		}
 
 		/// <summary>
-		/// 現在有効なFカーブを含めたノード情報を取得する。
+		/// Collect nodes contains enabled FCurve
 		/// </summary>
 		/// <returns></returns>
 		public static Utl.ParameterTreeNode GetFCurveParameterNode()
 		{
-			// 実行速度を上げるために、全て力技で対応
+			// not smart
 
-			// 値を取得する
 			Func<Data.Node, Tuple35<string, object>[]> getParameters = (node) =>
 				{
 					var list = new List<Tuple35<string, object>>();
@@ -1390,6 +1389,17 @@ namespace Effekseer
 							}
 							list.Add(Tuple35.Create(name, (object)node.DrawingValues.Track.ColorRightMiddle_FCurve.FCurve));
 						}
+					}
+
+					if (node.RendererCommonValues.CustomData.CustomData.Value == Data.CustomDataType.FCurve)
+					{
+						var name = "CustomData";
+						if (Language == Language.Japanese)
+						{
+							name = "カスタムデータ";
+
+						}
+						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData.FCurve));
 					}
 
 					return list.ToArray();

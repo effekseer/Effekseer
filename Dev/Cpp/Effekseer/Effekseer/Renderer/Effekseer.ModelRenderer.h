@@ -62,6 +62,7 @@ public:
 		RectF			UV;
 		Color			AllColor;
 		int32_t			Time;
+		Vector2D CustomData;
 	};
 
 public:

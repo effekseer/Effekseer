@@ -65,6 +65,7 @@ public:
 		Color		InnerColor;
 		
 		RectF	UV;
+		Vector2D CustomData;
 	};
 
 public:
