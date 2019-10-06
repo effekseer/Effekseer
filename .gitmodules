@@ -22,3 +22,6 @@
 [submodule "Dev/Cpp/3rdParty/AltseedRHI"]
 	path = Dev/Cpp/3rdParty/AltseedRHI
 	url = https://github.com/altseed/AltseedRHI.git
+[submodule "TestData"]
+	path = TestData
+	url = https://github.com/effekseer/TestData.git
