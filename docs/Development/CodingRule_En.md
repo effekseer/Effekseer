@@ -5,7 +5,7 @@
 
 A coding rule is conforming to clang-format settings.
 
-Please apply clang-format for only new codes as far as you can.
+Please apply clang-format for only new or fixed codes as far as you can.
 
 Naming rule as follows.
 
@@ -24,7 +24,7 @@ A coding rule is conforming to .editorconfig settings.
 
 This project maintains tab and almost settings are same as VisualStduio.
 
-Please apply .editorconfig for only new codes as far as you can.
+Please apply .editorconfig for only new or fixed codes as far as you can.
 
 ## Exception
 
