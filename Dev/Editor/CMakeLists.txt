@@ -21,7 +21,7 @@ file(GLOB files_core
     EffekseerCore/Script/*.cs
     EffekseerCore/Utl/*.cs	
     EffekseerCore/IO/*.cs	
-    EffekseerCore/Utils/*.cs	
+    EffekseerCore/Utils/*.cs
 	)
 
 list(APPEND files_core
@@ -52,6 +52,7 @@ endif()
 
 set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
 
+target_compile_options(EffekseerCore PRIVATE "/unsafe")
 target_compile_options(EffekseerCore PRIVATE "/langversion:6")
 
 
