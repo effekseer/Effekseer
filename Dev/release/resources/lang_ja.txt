@@ -33,7 +33,6 @@ GenerateAlpha,生成
 GenerateAlpha2,生成(ブレンド+加算)
 Height,縦幅
 Help,ヘルプ
-ImageFilter,png,dds
 Import,入力
 Infinite,無限
 InternalAbout,Effekseerについて
@@ -64,7 +63,6 @@ MakeTransparent,背景透明化の方法
 Max,最大
 Mean,中心
 Min,最小
-ModelFilter,efkmodel,fbx,mqo
 Network,ネットワーク
 NetworkAddress,接続先
 NetworkConnected,状態：接続済
@@ -79,7 +77,6 @@ PlayString,再生
 Port,ポート
 Position,位置
 PoVDistance,視点への距離
-ProjectFilter,efkproj
 Range,最大,最小
 RecentFiles,最近使用したファイル
 Record,録画
@@ -133,6 +130,13 @@ ImageFilter_,画像ファイル (*.png)|*.png
 ModelFilter_,モデルファイル (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
 SoundFilter_,音声ファイル (*.wav)|*.wav
 ProjectFilter_,エフェクトプロジェクト (*.efkproj)|*.efkproj
+Error_NotFound,{0} が見つかりません。
+EffekseerParticleFilter,efkptl
+MaterialFilter,efkmat
+ImageFilter,png,dds
+ModelFilter,efkmodel,fbx,mqo
+ProjectFilter,efkproj
+ProjectFilterNew,efkproj,efkptl
 PostEffect,ポストエフェクト
 Clipping,クリッピング
 Save,保存
@@ -144,7 +148,6 @@ DynamicEquation,式
 DynamicEq,式
 DynamicFixed,固定
 DynamicDynamic,動的
-MaterialFilter,efkmat
 CompilePosition, : 行 {0} 列 {1}
 CompileErrror_InvalidToken,無効なトークン {0} が見つかりました
 CompileErrror_InvalidEoF,予期せぬ終了が見つかりました

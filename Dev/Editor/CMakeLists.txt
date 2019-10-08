@@ -44,12 +44,6 @@ set_target_properties(EffekseerCore PROPERTIES
 #    VS_DOTNET_REFERENCE_Microsoft_Scripting_Metadata ${CMAKE_CURRENT_SOURCE_DIR}/EffekseerCore/Microsoft.Scripting.Metadata.dll
 #	)
 
-if(BUILD_16)
-    target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED;EFFEKSEER16)
-else()
-    target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED)
-endif()
-
 set_property(TARGET EffekseerCore PROPERTY VS_PACKAGE_REFERENCES "Newtonsoft.Json_12.0.1;DynamicLanguageRuntime_1.2.2;IronPython_2.7.9") 
 
 target_compile_options(EffekseerCore PRIVATE "/unsafe")
@@ -69,7 +63,7 @@ file(GLOB files
     Effekseer/swig/*.cs
     Effekseer/Utils/*.cs
 	Effekseer/Process/*.cs
-	) 
+	)
 
 add_executable(Effekseer
   ${files}
@@ -85,6 +79,12 @@ target_compile_options(Effekseer PRIVATE "/unsafe")
 target_compile_options(Effekseer PRIVATE "/langversion:6")
 set_property(TARGET Effekseer PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
 
+if(ENABLED_NEW_FORMAT)
+    target_compile_definitions(Effekseer PRIVATE __NEW_FORMAT__)
+    target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED;__NEW_FORMAT__)
+else()
+    target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED;__NEW_FORMAT__)
+endif()
 
 # specify a startup project
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT Effekseer)

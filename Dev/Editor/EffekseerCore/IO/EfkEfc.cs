@@ -226,33 +226,15 @@ namespace Effekseer.IO
 
 			binary.PushDirectly(valueBuf);
 
-			using (var compressStream = new System.IO.MemoryStream())
-			using (var compressor = new System.IO.Compression.DeflateStream(compressStream, System.IO.Compression.CompressionLevel.Optimal))
-			{
-				var buffer = binary.GetBinary();
-				compressor.Write(buffer, 0, buffer.Count());
-				compressor.Close();
-				return compressStream.ToArray();
-			}
+			return Utils.Zlib.Compress(binary.GetBinary());
 		}
 
 		System.Xml.XmlDocument Decompress(byte[] buffer)
 		{
-			var decompressBuffer = new List<byte>();
-			using (var decompressStream = new System.IO.MemoryStream(buffer))
-			using (var decompressor = new System.IO.Compression.DeflateStream(decompressStream, System.IO.Compression.CompressionMode.Decompress))
-			{
-				while (true)
-				{
-					byte[] temp = new byte[1024];
-					int readSize = decompressor.Read(temp, 0, temp.Length);
-					if (readSize == 0) break;
-					decompressBuffer.AddRange(temp.Take(readSize));
-				}
-			}
+			var decompressBuffer = Utils.Zlib.Decompress(buffer);
 
 			var doc = new System.Xml.XmlDocument();
-			var reader = new Utl.BinaryReader(decompressBuffer.ToArray());
+			var reader = new Utl.BinaryReader(decompressBuffer);
 
 			var keys = new Dictionary<Int16, string>();
 			Int16 keySize = -1;

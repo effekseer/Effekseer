@@ -645,7 +645,7 @@ namespace Effekseer
 
 		public static void SaveTo(string path)
 		{
-#if EFFEKSEER16
+#if __NEW_FORMAT__
 			var loader = new IO.EfkEfc();
 			loader.Save(path);
 			return;
@@ -973,7 +973,7 @@ namespace Effekseer
 			var fullpath = System.IO.Path.GetFullPath(path);
 
 			if (!System.IO.File.Exists(fullpath)) return false;
-#if EFFEKSEER16
+#if __NEW_FORMAT__
 			// new format?
 			bool isNewFormat = false;
 			{

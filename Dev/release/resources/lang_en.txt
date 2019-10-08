@@ -33,7 +33,6 @@ GenerateAlpha,Generate alpha
 GenerateAlpha2,Generate alpha(Blend+Add)
 Height,Height
 Help,Help
-ImageFilter,png,dds
 Import,Import
 Infinite,Infinite
 InternalAbout,About Effekseer
@@ -64,7 +63,6 @@ MakeTransparent,Make transparent
 Max,Max
 Mean,Mean
 Min,Min
-ModelFilter,efkmodel,fbx,mqo
 Network,Network
 NetworkAddress,Address
 NetworkConnected,State：Connected
@@ -79,7 +77,6 @@ PlayString,Play
 Port,Port
 Position,Position
 PoVDistance,PoV Distance
-ProjectFilter,efkproj
 Range,Range
 RecentFiles,Recent Files
 Record,Record
@@ -133,6 +130,13 @@ ImageFilter_,Image File (*.png)|*.png
 ModelFilter_,Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
 SoundFilter_,Sound File (*.wav)|*.wav
 ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
+Error_NotFound,{0} is not found.
+EffekseerParticleFilter,efkptl
+MaterialFilter,efkmat
+ImageFilter,png,dds
+ModelFilter,efkmodel,fbx,mqo
+ProjectFilter,efkproj
+ProjectFilterNew,efkproj,efkptl
 PostEffect,PostEffect
 Clipping,Clipping
 Save,Save
@@ -144,7 +148,6 @@ DynamicEquation,Equation
 DynamicEq,Eq.
 DynamicFixed,Fixed
 DynamicDynamic,Dynamic
-MaterialFilter,efkmat
 CompilePosition, : Line {0} Col {1}
 CompileErrror_InvalidToken,Invalid token {0} is found
 CompileErrror_InvalidEoF,Unexpected end is found

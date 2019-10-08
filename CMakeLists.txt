@@ -10,7 +10,7 @@ if (MSVC)
 endif()
 
 # 1.6
-option(BUILD_16 "Build as Effekseer1.6" OFF)
+option(ENABLED_NEW_FORMAT "Build with new format" OFF)
 
 # zlib
 ExternalProject_Add(

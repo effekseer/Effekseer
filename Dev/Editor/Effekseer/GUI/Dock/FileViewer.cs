@@ -159,6 +159,12 @@ namespace Effekseer.GUI.Dock
 				{
 					Type = FileType.EffekseerProject;
 				}
+#if __NEW_FORMAT__
+				else if (System.IO.Path.GetExtension(filePath).ToLower() == ".efkptl")
+				{
+					Type = FileType.EffekseerProject;
+				}
+#endif
 				else if (System.IO.Path.GetExtension(filePath).ToLower() == ".png")
 				{
 					Type = FileType.Image;
@@ -223,6 +229,13 @@ namespace Effekseer.GUI.Dock
 				// efkproj is opened internal function
 				Commands.Open(fileItem.FilePath);
 			}
+#if __NEW_FORMAT__
+			if (Path.GetExtension(fileItem.FilePath) == ".efkptl")
+			{
+				// efkproj is opened internal function
+				Commands.Open(fileItem.FilePath);
+			}
+#endif
 			else if (Directory.Exists(fileItem.FilePath))
 			{
 				// move directory
