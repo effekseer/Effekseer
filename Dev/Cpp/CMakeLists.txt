@@ -7,7 +7,13 @@ project(Effekseer)
 # Check cmake version
 cmake_minimum_required(VERSION 2.8)
 
-set(CMAKE_CXX_STANDARD 14)
+# C++ version
+if(WIN32)
+    set(CMAKE_CXX_STANDARD 17)
+else()
+    set(CMAKE_CXX_STANDARD 14)
+endif()
+
 set(CMAKE_DEBUG_POSTFIX ".Debug")
 
 option(BUILD_TEST "Build test" OFF)

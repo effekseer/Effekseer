@@ -36,24 +36,21 @@ ModelLoader::~ModelLoader()
 	ES_SAFE_RELEASE(device);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void* ModelLoader::Load( const EFK_CHAR* path )
+void* ModelLoader::Load(const EFK_CHAR* path)
 {
-	std::auto_ptr<::Effekseer::FileReader> 
-		reader( m_fileInterface->OpenRead( path ) );
-	if( reader.get() == NULL ) return false;
+	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
+	if (reader.get() == NULL)
+		return false;
 
-	if( reader.get() != NULL )
+	if (reader.get() != NULL)
 	{
 		size_t size_model = reader->GetLength();
 		uint8_t* data_model = new uint8_t[size_model];
-		reader->Read( data_model, size_model );
+		reader->Read(data_model, size_model);
 
 		Model* model = (Model*)Load(data_model, size_model);
 
-		delete [] data_model;
+		delete[] data_model;
 
 		return (void*)model;
 	}

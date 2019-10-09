@@ -75,13 +75,15 @@ EffectPlatform::~EffectPlatform()
 
 	if (renderer_ != nullptr)
 	{
-		renderer_->Release();
+		renderer_->Destroy();
 		renderer_ = nullptr;
 	}
 
 	if (manager_ != nullptr)
 	{
-		manager_->Release();
+		// TODO release causes memory leaks
+		// manager_->Release();
+		manager_->Destroy();
 		manager_ = nullptr;
 	}
 
@@ -161,7 +163,7 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path)
 
 	buffers_.push_back(data);
 	effects_.push_back(effect);
-
+	//return 0;
 	auto handle = manager_->Play(effect, Effekseer::Vector3D());
 	effectHandles_.push_back(handle);
 	return handle;

@@ -16,7 +16,12 @@
 #include <efkMat.StringContainer.h>
 
 #include <filesystem>
+
+#if _MSC_VER >= 1923
+namespace fs = std::filesystem;
+#else
 namespace fs = std::experimental::filesystem;
+#endif
 
 #include "../Effekseer/Effekseer/Material/Effekseer.Material.h"
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
