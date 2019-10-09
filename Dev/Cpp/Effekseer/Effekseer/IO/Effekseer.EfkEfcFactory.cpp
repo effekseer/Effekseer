@@ -11,7 +11,7 @@ bool EfkEfcFactory::OnLoading(Effect* effect, const void* data, int32_t size, fl
 	// EFKP
 	int head = 0;
 	binaryReader.Read(head);
-	if (memcmp(&head, "PKFE", 4) != 0)
+	if (memcmp(&head, "EFKE", 4) != 0)
 		return false;
 
 	int32_t version = 0;
@@ -53,7 +53,7 @@ bool EfkEfcFactory::OnCheckIsBinarySupported(const void* data, int32_t size)
 	// EFKP
 	int head = 0;
 	binaryReader.Read(head);
-	if (memcmp(&head, "PKFE", 4) != 0)
+	if (memcmp(&head, "EFKE", 4) != 0)
 		return false;
 
 	return true;
@@ -66,7 +66,7 @@ bool EfkEfcProperty::Load(const void* data, int32_t size)
 	// EFKP
 	int head = 0;
 	binaryReader.Read(head);
-	if (memcmp(&head, "PKFE", 4) != 0)
+	if (memcmp(&head, "EFKE", 4) != 0)
 		return false;
 
 	int32_t version = 0;

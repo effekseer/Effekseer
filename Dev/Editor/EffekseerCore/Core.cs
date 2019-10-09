@@ -1004,9 +1004,9 @@ namespace Effekseer
 					return false;
 				}
 
-				if (buf[0] != 'P' ||
-					buf[1] != 'K' ||
-					buf[2] != 'F' ||
+				if (buf[0] != 'E' ||
+					buf[1] != 'F' ||
+					buf[2] != 'K' ||
 					buf[3] != 'E')
 				{
 					isNewFormat = false;
@@ -1391,15 +1391,26 @@ namespace Effekseer
 						}
 					}
 
-					if (node.RendererCommonValues.CustomData.CustomData.Value == Data.CustomDataType.FCurve)
+					if (node.RendererCommonValues.CustomData1.CustomData.Value == Data.CustomDataType.FCurve)
 					{
-						var name = "CustomData";
+						var name = "CustomData1";
 						if (Language == Language.Japanese)
 						{
-							name = "カスタムデータ";
+							name = "カスタムデータ1";
 
 						}
-						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData.FCurve));
+						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData1.FCurve));
+					}
+
+					if (node.RendererCommonValues.CustomData2.CustomData.Value == Data.CustomDataType.FCurve)
+					{
+						var name = "CustomData2";
+						if (Language == Language.Japanese)
+						{
+							name = "カスタムデータ2";
+
+						}
+						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurve));
 					}
 
 					return list.ToArray();

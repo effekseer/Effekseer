@@ -17,6 +17,12 @@ namespace Effekseer
 //
 //----------------------------------------------------------------------------------
 	
+enum class FCurveTimelineType : int
+{
+	Time = 0,
+	Percent = 1,
+};
+
 class FCurve
 {
 private:
@@ -61,6 +67,7 @@ public:
 class FCurveVector2D
 {
 public:
+	FCurveTimelineType Timeline;
 	FCurve X;
 	FCurve Y;
 	
@@ -71,6 +78,7 @@ public:
 class FCurveVector3D
 {
 public:
+	FCurveTimelineType Timeline;
 	FCurve X;
 	FCurve Y;
 	FCurve Z;
@@ -85,6 +93,7 @@ public:
 class FCurveVectorColor
 {
 public:
+	FCurveTimelineType Timeline;
 	FCurve R;
 	FCurve G;
 	FCurve B;

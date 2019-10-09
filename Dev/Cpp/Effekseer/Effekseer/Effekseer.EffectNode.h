@@ -527,9 +527,10 @@ struct ParameterGenerationLocation
 
 enum ParameterCustomDataType : int32_t
 {
-	Fixed = 0,
-	Easing = 1,
-	FCurveType = 2,	//! fcurve type (TODO : rename)
+	None = 0,
+	Fixed = 1,
+	Easing = 2,
+	FCurveType = 3,	//! fcurve type (TODO : rename)
 	Unknown,
 };
 
@@ -550,7 +551,7 @@ struct ParameterCustomDataFCurve
 
 struct ParameterCustomData
 {
-	ParameterCustomDataType Type = ParameterCustomDataType::Unknown;
+	ParameterCustomDataType Type = ParameterCustomDataType::None;
 
 	union {
 		ParameterCustomDataFixed Fixed;
@@ -573,7 +574,10 @@ struct ParameterCustomData
 		memcpy(&Type, pos, sizeof(int));
 		pos += sizeof(int);
 
-		if (Type == ParameterCustomDataType::Fixed)
+		if (Type == ParameterCustomDataType::None)
+		{
+		}
+		else if (Type == ParameterCustomDataType::Fixed)
 		{
 			memcpy(&Fixed.Values, pos, sizeof(Fixed));
 			pos += sizeof(Fixed);
@@ -634,7 +638,8 @@ struct ParameterRendererCommon
 	//! pass into a renderer (to make easy to send parameters, it should be refactored)
 	NodeRendererBasicParameter BasicParameter;
 
-	ParameterCustomData CustomData;
+	ParameterCustomData CustomData1;
+	ParameterCustomData CustomData2;
 
 	enum
 	{
@@ -959,7 +964,8 @@ struct ParameterRendererCommon
 
 		if (version >= 15)
 		{
-			CustomData.load(pos, version);
+			CustomData1.load(pos, version);
+			CustomData2.load(pos, version);
 		}
 
 		// copy to basic parameter

@@ -51,6 +51,13 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 	memcpy( &Billboard, pos, sizeof(int) );
 	pos += sizeof(int);
 	
+	if (m_effect->GetVersion() >= 15)
+	{
+		int32_t ringShape = 0;
+		memcpy(&ringShape, pos, sizeof(int));
+		pos += sizeof(int);
+	}
+
 	memcpy( &VertexCount, pos, sizeof(int) );
 	pos += sizeof(int);
 	

@@ -181,9 +181,9 @@ namespace Effekseer.GUI
 				var filepath = result;
 
 #if __NEW_FORMAT__
-				if (System.IO.Path.GetExtension(filepath) != ".efkptl")
+				if (System.IO.Path.GetExtension(filepath) != ".efkefc")
 				{
-					filepath += ".efkptl";
+					filepath += ".efkefc";
 				}
 #else
 				if (System.IO.Path.GetExtension(filepath) != ".efkproj")

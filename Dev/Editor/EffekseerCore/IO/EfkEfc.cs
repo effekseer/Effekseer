@@ -345,7 +345,7 @@ namespace Effekseer.IO
 			byte[] headerData = null;
 			{
 				var data = new List<byte[]>();
-				data.Add(Encoding.UTF8.GetBytes("PKFE"));
+				data.Add(Encoding.UTF8.GetBytes("EFKE"));
 				data.Add(BitConverter.GetBytes(Version));
 
 				headerData = data.SelectMany(_ => _).ToArray();
@@ -386,10 +386,10 @@ namespace Effekseer.IO
 
 			if (allData.Length < 24) return false;
 
-			if (allData[3] != 'E' ||
-				allData[2] != 'F' ||
-				allData[1] != 'K' ||
-				allData[0] != 'P')
+			if (allData[0] != 'E' ||
+				allData[1] != 'F' ||
+				allData[2] != 'K' ||
+				allData[3] != 'E')
 			{
 				return false;
 			}

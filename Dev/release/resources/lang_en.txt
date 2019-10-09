@@ -131,12 +131,12 @@ ModelFilter_,Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
 SoundFilter_,Sound File (*.wav)|*.wav
 ProjectFilter_,Effekseer Project (*.efkproj)|*.efkproj
 Error_NotFound,{0} is not found.
-EffekseerParticleFilter,efkptl
+EffekseerParticleFilter,efkefc
 MaterialFilter,efkmat
 ImageFilter,png,dds
 ModelFilter,efkmodel,fbx,mqo
 ProjectFilter,efkproj
-ProjectFilterNew,efkproj,efkptl
+ProjectFilterNew,efkproj,efkefc
 PostEffect,PostEffect
 Clipping,Clipping
 Save,Save

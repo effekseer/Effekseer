@@ -33,6 +33,13 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, Setting* settin
 	assert(type == GetType());
 	EffekseerPrintDebug("Renderer : Track\n");
 
+	if (m_effect->GetVersion() >= 15)
+	{
+		int32_t textureUVMode = 0;
+		memcpy(&textureUVMode, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+	}
+
 	LoadValues(TrackSizeFor, pos);
 	LoadValues(TrackSizeMiddle, pos);
 	LoadValues(TrackSizeBack, pos);

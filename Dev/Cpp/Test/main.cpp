@@ -12,6 +12,7 @@
 #include "graphics.h"
 #include "sound.h"
 #include "common.h"
+#include "../Effekseer/Effekseer/IO/Effekseer.EfkEfcFactory.h"
 
 #if _WIN32
 
@@ -91,6 +92,34 @@ void TestManagerPlayAndStop()
 	}
 }
 
+void TestShowEfcAssets() 
+{ 
+	Effekseer::EfkEfcProperty prop;
+	
+	    {
+		FILE* fp = nullptr;
+
+#if _WIN32
+		fopen_s(&fp, "Resource/em.efkefc", "rb");
+#else
+		fp = fopen("Resource/em.efkefc", "rb");
+#endif
+		if (fp == nullptr)
+			return;
+
+		fseek(fp, 0, SEEK_END);
+		auto size = ftell(fp);
+		fseek(fp, 0, SEEK_SET);
+
+		std::vector<uint8_t> data;
+		data.resize(size);
+		fread(data.data(), size, 1, fp);
+		fclose(fp);
+
+		prop.Load(data.data(), data.size());
+	}
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -103,6 +132,7 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
+	//TestShowEfcAssets();
 	
 	testManager = std::unique_ptr<TestManager>(new TestManager());
 	

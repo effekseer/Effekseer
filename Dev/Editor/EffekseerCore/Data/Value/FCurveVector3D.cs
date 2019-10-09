@@ -7,6 +7,7 @@ namespace Effekseer.Data.Value
 {
 	public class FCurveVector3D
 	{
+		public FCurveTimelineType Timeline = FCurveTimelineType.Time;
 		public FCurve<float> X { get; private set; }
 		public FCurve<float> Y { get; private set; }
 		public FCurve<float> Z { get; private set; }
@@ -21,6 +22,7 @@ namespace Effekseer.Data.Value
 		public byte[] GetBytes(float mul = 1.0f)
 		{
 			List<byte[]> data = new List<byte[]>();
+			data.Add(BitConverter.GetBytes((int)Timeline));
 			data.Add(X.GetBytes(mul));
 			data.Add(Y.GetBytes(mul));
 			data.Add(Z.GetBytes(mul));

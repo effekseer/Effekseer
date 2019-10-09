@@ -160,7 +160,7 @@ namespace Effekseer.GUI.Dock
 					Type = FileType.EffekseerProject;
 				}
 #if __NEW_FORMAT__
-				else if (System.IO.Path.GetExtension(filePath).ToLower() == ".efkptl")
+				else if (System.IO.Path.GetExtension(filePath).ToLower() == ".efkefc")
 				{
 					Type = FileType.EffekseerProject;
 				}
@@ -230,7 +230,7 @@ namespace Effekseer.GUI.Dock
 				Commands.Open(fileItem.FilePath);
 			}
 #if __NEW_FORMAT__
-			if (Path.GetExtension(fileItem.FilePath) == ".efkptl")
+			if (Path.GetExtension(fileItem.FilePath) == ".efkefc")
 			{
 				// efkproj is opened internal function
 				Commands.Open(fileItem.FilePath);

@@ -890,19 +890,19 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 
 	// CustomData
-	if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::Fixed)
+	if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::Fixed)
 	{
 		// none
 	}
-	else if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::Easing)
+	else if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::Easing)
 	{
-		customDataValues.easing.start = m_pEffectNode->RendererCommon.CustomData.Easing.Values.start.getValue(*instanceGlobal);
-		customDataValues.easing.end = m_pEffectNode->RendererCommon.CustomData.Easing.Values.end.getValue(*instanceGlobal);
+		customDataValues.easing.start = m_pEffectNode->RendererCommon.CustomData1.Easing.Values.start.getValue(*instanceGlobal);
+		customDataValues.easing.end = m_pEffectNode->RendererCommon.CustomData1.Easing.Values.end.getValue(*instanceGlobal);
 	}
-	else if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::FCurveType)
+	else if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::FCurveType)
 	{
-		customDataValues.fcruve.offset.x = m_pEffectNode->RendererCommon.CustomData.FCurve.Values->X.GetOffset(*instanceGlobal);
-		customDataValues.fcruve.offset.y = m_pEffectNode->RendererCommon.CustomData.FCurve.Values->Y.GetOffset(*instanceGlobal);
+		customDataValues.fcruve.offset.x = m_pEffectNode->RendererCommon.CustomData1.FCurve.Values->X.GetOffset(*instanceGlobal);
+		customDataValues.fcruve.offset.y = m_pEffectNode->RendererCommon.CustomData1.FCurve.Values->Y.GetOffset(*instanceGlobal);
 	}
 
 	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
@@ -1583,25 +1583,29 @@ RectF Instance::GetUV() const
 
 Vector2D Instance::GetCustomData() const 
 {
-	if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::Fixed)
+	if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::None)
 	{
-		auto v = m_pEffectNode->RendererCommon.CustomData.Fixed.Values;
+		return Vector2D();
+	}
+	else if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::Fixed)
+	{
+		auto v = m_pEffectNode->RendererCommon.CustomData1.Fixed.Values;
 		return Vector2D(v.x, v.y);
 	}
-	else if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::Easing)
+	else if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::Easing)
 	{
 		vector2d ret;
-		m_pEffectNode->RendererCommon.CustomData.Easing.Values.setValueToArg(
+		m_pEffectNode->RendererCommon.CustomData1.Easing.Values.setValueToArg(
 			ret, customDataValues.easing.start, customDataValues.easing.end, m_LivingTime / m_LivedTime);
 		return Vector2D(ret.x, ret.y);
 	}
-	else if (m_pEffectNode->RendererCommon.CustomData.Type == ParameterCustomDataType::FCurveType)
+	else if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::FCurveType)
 	{
 		auto time = (int32_t)m_LivingTime + uvTimeOffset;
 
 		return Vector2D(
-			customDataValues.fcruve.offset.x + m_pEffectNode->RendererCommon.CustomData.FCurve.Values->X.GetValue(time), 
-			customDataValues.fcruve.offset.y + m_pEffectNode->RendererCommon.CustomData.FCurve.Values->Y.GetValue(time));
+			customDataValues.fcruve.offset.x + m_pEffectNode->RendererCommon.CustomData1.FCurve.Values->X.GetValue(time), 
+			customDataValues.fcruve.offset.y + m_pEffectNode->RendererCommon.CustomData1.FCurve.Values->Y.GetValue(time));
 	}
 	else
 	{

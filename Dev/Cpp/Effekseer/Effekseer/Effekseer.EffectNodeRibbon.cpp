@@ -33,6 +33,13 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setti
 	assert(type == GetType());
 	EffekseerPrintDebug("Renderer : Ribbon\n");
 
+	if (m_effect->GetVersion() >= 15)
+	{
+		int32_t textureUVMode = 0;
+		memcpy(&textureUVMode, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+	}
+
 	if (m_effect->GetVersion() >= 3)
 	{
 		AlphaBlend = RendererCommon.AlphaBlend;

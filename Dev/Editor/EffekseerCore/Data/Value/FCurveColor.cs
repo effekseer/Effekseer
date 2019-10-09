@@ -7,6 +7,7 @@ namespace Effekseer.Data.Value
 {
 	public class FCurveColorRGBA
 	{
+		public FCurveTimelineType Timeline = FCurveTimelineType.Time;
 		public FCurve<byte> R { get; private set; }
 		public FCurve<byte> G { get; private set; }
 		public FCurve<byte> B { get; private set; }
@@ -23,6 +24,7 @@ namespace Effekseer.Data.Value
 		public byte[] GetBytes(float mul = 1.0f)
 		{
 			List<byte[]> data = new List<byte[]>();
+			data.Add(BitConverter.GetBytes((int)Timeline));
 			data.Add(R.GetBytes(mul));
 			data.Add(G.GetBytes(mul));
 			data.Add(B.GetBytes(mul));

@@ -5,6 +5,48 @@ using System.Text;
 
 namespace Effekseer.Data
 {
+	public enum TextureUVModeType
+	{
+		[Name(value = "Strech", language = Language.English)]
+		Strech = 0,
+	}
+
+	public class TextureUVModeParameter
+	{
+		[Selector(ID = 0)]
+		public Value.Enum<TextureUVModeType> Type
+		{
+			get;
+			private set;
+		}
+
+		public TextureUVModeParameter()
+		{
+			Type = new Value.Enum<TextureUVModeType>(TextureUVModeType.Strech);
+		}
+	}
+
+	public enum RingShapeType
+	{
+		[Name(value = "Donut", language = Language.English)]
+		Donut,
+	}
+
+	public class RingShapeParameter
+	{
+		[Selector(ID = 0)]
+		public Value.Enum<RingShapeType> Type
+		{
+			get;
+			private set;
+		}
+
+		public RingShapeParameter()
+		{
+			Type = new Value.Enum<RingShapeType>(RingShapeType.Donut);
+		}
+	}
+
 	public class RendererValues
 	{
 		[Selector(ID = 0)]
@@ -13,6 +55,11 @@ namespace Effekseer.Data
 			get;
 			private set;
 		}
+
+		[Selected(ID = 0, Value = 3)]
+		[Selected(ID = 0, Value = 6)]
+		[IO(Export = true)]
+		public TextureUVModeParameter TextureUVMode { get; private set; } 
 
 		[Selected(ID = 0, Value = 2)]
 		[IO(Export = true)]
@@ -57,6 +104,8 @@ namespace Effekseer.Data
 		internal RendererValues()
 		{
 			Type = new Value.Enum<ParamaterType>(ParamaterType.Sprite);
+			TextureUVMode = new TextureUVModeParameter();
+
 			Sprite = new SpriteParamater();
             Ribbon = new RibbonParamater();
 			Track = new TrackParameter();
@@ -348,6 +397,10 @@ namespace Effekseer.Data
 
         public class RingParamater
         {
+			[Name(language = Language.English, value = "Shape")]
+			[IO(Export = true)]
+			public RingShapeParameter RingShape { get; private set; }
+
             [Name(language = Language.Japanese, value = "描画順")]
 			[Name(language = Language.English, value = "Rendering Order")]
             public Value.Enum<RenderingOrder> RenderingOrder { get; private set; }
@@ -492,6 +545,7 @@ namespace Effekseer.Data
 
             public RingParamater()
             {
+				RingShape = new RingShapeParameter();
                 RenderingOrder = new Value.Enum<Data.RenderingOrder>(Data.RenderingOrder.FirstCreatedInstanceIsFirst);
 
                 Billboard = new Value.Enum<BillboardType>(BillboardType.Fixed);

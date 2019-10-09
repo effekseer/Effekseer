@@ -171,8 +171,8 @@ namespace Effekseer.Binary
 			}
 
 			// sprcification change(1.5)
-			float width = 256.0f;
-			float height = 256.0f;
+			float width = 128.0f;
+			float height = 128.0f;
 
 			if (texInfo.Width > 0 && texInfo.Height > 0)
 			{
@@ -260,29 +260,56 @@ namespace Effekseer.Binary
 			// Distortion
 			data.Add(value.DistortionIntensity.GetBytes());
 
-			// Custom data
-			data.Add(value.CustomData.CustomData);
-			if(value.CustomData.CustomData.Value == Data.CustomDataType.Fixed)
+			// Custom data1 from 1.5
+			data.Add(value.CustomData1.CustomData);
+			if(value.CustomData1.CustomData.Value == Data.CustomDataType.Fixed)
 			{
-				data.Add(BitConverter.GetBytes(value.CustomData.Fixed.X.Value));
-				data.Add(BitConverter.GetBytes(value.CustomData.Fixed.Y.Value));
+				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.X.Value));
+				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.Y.Value));
 			}
-			else if (value.CustomData.CustomData.Value == Data.CustomDataType.Easing)
+			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.Easing)
 			{
-				var easing = Utl.MathUtl.Easing((float)value.CustomData.Easing.StartSpeed.Value, (float)value.CustomData.Easing.EndSpeed.Value);
+				var easing = Utl.MathUtl.Easing((float)value.CustomData1.Easing.StartSpeed.Value, (float)value.CustomData1.Easing.EndSpeed.Value);
 
 				List<byte[]> _data = new List<byte[]>();
-				_data.Add(value.CustomData.Easing.Start.GetBytes(1.0f));
-				_data.Add(value.CustomData.Easing.End.GetBytes(1.0f));
+				_data.Add(value.CustomData1.Easing.Start.GetBytes(1.0f));
+				_data.Add(value.CustomData1.Easing.End.GetBytes(1.0f));
 				_data.Add(BitConverter.GetBytes(easing[0]));
 				_data.Add(BitConverter.GetBytes(easing[1]));
 				_data.Add(BitConverter.GetBytes(easing[2]));
 				var __data = _data.ToArray().ToArray();
 				data.Add(__data);
 			}
-			else if(value.CustomData.CustomData.Value == Data.CustomDataType.FCurve)
+			else if(value.CustomData1.CustomData.Value == Data.CustomDataType.FCurve)
 			{
-				var value_ = value.CustomData.FCurve;
+				var value_ = value.CustomData1.FCurve;
+				var bytes1 = value_.GetBytes(1.0f);
+				data.Add(bytes1);
+			}
+
+			// Custom data2 from 1.5
+			data.Add(value.CustomData2.CustomData);
+			if (value.CustomData2.CustomData.Value == Data.CustomDataType.Fixed)
+			{
+				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed.X.Value));
+				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed.Y.Value));
+			}
+			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.Easing)
+			{
+				var easing = Utl.MathUtl.Easing((float)value.CustomData2.Easing.StartSpeed.Value, (float)value.CustomData2.Easing.EndSpeed.Value);
+
+				List<byte[]> _data = new List<byte[]>();
+				_data.Add(value.CustomData2.Easing.Start.GetBytes(1.0f));
+				_data.Add(value.CustomData2.Easing.End.GetBytes(1.0f));
+				_data.Add(BitConverter.GetBytes(easing[0]));
+				_data.Add(BitConverter.GetBytes(easing[1]));
+				_data.Add(BitConverter.GetBytes(easing[2]));
+				var __data = _data.ToArray().ToArray();
+				data.Add(__data);
+			}
+			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.FCurve)
+			{
+				var value_ = value.CustomData2.FCurve;
 				var bytes1 = value_.GetBytes(1.0f);
 				data.Add(bytes1);
 			}

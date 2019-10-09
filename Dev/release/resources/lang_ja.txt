@@ -131,12 +131,12 @@ ModelFilter_,モデルファイル (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
 SoundFilter_,音声ファイル (*.wav)|*.wav
 ProjectFilter_,エフェクトプロジェクト (*.efkproj)|*.efkproj
 Error_NotFound,{0} が見つかりません。
-EffekseerParticleFilter,efkptl
+EffekseerParticleFilter,efkefc
 MaterialFilter,efkmat
 ImageFilter,png,dds
 ModelFilter,efkmodel,fbx,mqo
 ProjectFilter,efkproj
-ProjectFilterNew,efkproj,efkptl
+ProjectFilterNew,efkproj,efkefc
 PostEffect,ポストエフェクト
 Clipping,クリッピング
 Save,保存

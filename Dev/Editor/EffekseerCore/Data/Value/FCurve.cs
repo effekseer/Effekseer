@@ -5,6 +5,12 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
+	public enum FCurveTimelineType : int
+	{
+		Time = 0,
+		Percent = 1,
+	}
+
 	public enum FCurveEdge
 	{
 		[Name(language = Language.Japanese, value = "一定")]

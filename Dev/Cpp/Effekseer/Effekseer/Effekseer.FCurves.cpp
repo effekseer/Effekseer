@@ -187,6 +187,13 @@ int32_t FCurveVector2D::Load(void* data, int32_t version)
 	int32_t size = 0;
 	uint8_t* p = (uint8_t*) data;
 
+	if (version >= 15)
+	{
+		memcpy(&Timeline, p, sizeof(int32_t));
+		size += sizeof(int);
+		p += sizeof(int);	
+	}
+
 	int32_t x_size = X.Load(p, version);
 	size += x_size;
 	p += x_size;
@@ -217,6 +224,13 @@ int32_t FCurveVector3D::Load( void* data, int32_t version )
 {
 	int32_t size = 0;
 	uint8_t* p = (uint8_t*)data;
+
+	if (version >= 15)
+	{
+		memcpy(&Timeline, p, sizeof(int32_t));
+		size += sizeof(int);
+		p += sizeof(int);
+	}
 
 	int32_t x_size = X.Load( p, version );
 	size += x_size;
@@ -252,6 +266,13 @@ int32_t FCurveVectorColor::Load( void* data, int32_t version )
 {
 	int32_t size = 0;
 	uint8_t* p = (uint8_t*)data;
+
+	if (version >= 15)
+	{
+		memcpy(&Timeline, p, sizeof(int32_t));
+		size += sizeof(int);
+		p += sizeof(int);
+	}
 
 	int32_t x_size = R.Load( p, version );
 	size += x_size;

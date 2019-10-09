@@ -133,6 +133,9 @@ namespace Effekseer.Binary
 
 				//data.Add(ribbonParamater.AlphaBlend);
 
+				// texture uv mode from 1.5
+				data.Add(BitConverter.GetBytes((int)value.TextureUVMode.Type.Value));
+
 				if (ribbonParamater.ViewpointDependent)
 				{
 					data.Add((1).GetBytes());
@@ -219,6 +222,9 @@ namespace Effekseer.Binary
                 data.Add(ringParamater.RenderingOrder);
                 //data.Add(ringParamater.AlphaBlend);
                 data.Add(ringParamater.Billboard);
+
+				// from 1.5
+				data.Add(((int)ringParamater.RingShape.Type.Value).GetBytes());
 
                 data.Add(ringParamater.VertexCount.Value.GetBytes());
 
@@ -432,6 +438,9 @@ namespace Effekseer.Binary
 			}
 			else if (value.Type.Value == Data.RendererValues.ParamaterType.Track)
 			{
+				// texture uv mode from 1.5
+				data.Add(BitConverter.GetBytes((int)value.TextureUVMode.Type.Value));
+
 				var param = value.Track;
 				data.Add(param.TrackSizeFor);
 				data.Add(BitConverter.GetBytes(param.TrackSizeFor_Fixed.Value));

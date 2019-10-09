@@ -7,8 +7,8 @@ namespace Effekseer.Data
 {
 	public enum UVTextureReferenceTargetType
 	{
-		[Name(language = Language.Japanese, value = "なし(256x256)")]
-		[Name(language = Language.English, value = "None(256x256)")]
+		[Name(language = Language.Japanese, value = "なし(128x128)")]
+		[Name(language = Language.English, value = "None(128x128)")]
 		None = 0,
 		[Name(language = Language.Japanese, value = "画像1")]
 		[Name(language = Language.English, value = "Image1")]
@@ -26,9 +26,10 @@ namespace Effekseer.Data
 
 	public enum CustomDataType
 	{
-		Fixed = 0,
-		Easing = 1,
-		FCurve = 2,
+		None = 0,
+		Fixed = 1,
+		Easing = 2,
+		FCurve = 3,
 	}
 
 	public class CustomDataParameter
@@ -580,8 +581,12 @@ namespace Effekseer.Data
 		[Name(language = Language.Japanese, value = "カスタムデータ")]
 		[Name(language = Language.English, value = "Custom data")]
 		[IO(Export = true)]
-		public CustomDataParameter CustomData { get; private set; }
+		public CustomDataParameter CustomData1 { get; private set; }
 
+		[Name(language = Language.Japanese, value = "カスタムデータ")]
+		[Name(language = Language.English, value = "Custom data")]
+		[IO(Export = true)]
+		public CustomDataParameter CustomData2 { get; private set; }
 		internal RendererCommonValues()
 		{
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
@@ -622,7 +627,9 @@ namespace Effekseer.Data
 
 			DistortionIntensity = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
 
-			CustomData = new CustomDataParameter();
+			CustomData1 = new CustomDataParameter();
+
+			CustomData2 = new CustomDataParameter();
 		}
 
 		public class NoneParamater
