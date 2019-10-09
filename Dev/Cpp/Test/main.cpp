@@ -13,6 +13,7 @@
 #include "sound.h"
 #include "common.h"
 #include "../Effekseer/Effekseer/IO/Effekseer.EfkEfcFactory.h"
+#include "Runtime/RuntimeTest.h"
 
 #if _WIN32
 
@@ -131,6 +132,10 @@ int main()
 	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_WNDW);
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+
+	#if _WIN32
+	//BasicRuntimeTest();
+	#endif
 
 	//TestShowEfcAssets();
 	
