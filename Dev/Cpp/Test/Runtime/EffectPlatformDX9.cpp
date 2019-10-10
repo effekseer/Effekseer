@@ -1,6 +1,7 @@
 #include "EffectPlatformDX9.h"
+#include "../../3rdParty/stb/stb_image_write.h"
 
-EffekseerRenderer::Renderer* EffectPlatformDX9::CreateRenderer() { return nullptr; }
+EffekseerRenderer::Renderer* EffectPlatformDX9::CreateRenderer() { return EffekseerRendererDX9::Renderer::Create(device_, 2000); }
 
 EffectPlatformDX9::~EffectPlatformDX9()
 {
@@ -84,7 +85,42 @@ void EffectPlatformDX9::Present()
 	}
 }
 
-bool EffectPlatformDX9::TakeScreenshot(const char* path) { return false; }
+bool EffectPlatformDX9::TakeScreenshot(const char* path)
+{
+
+	IDirect3DSurface9* surface = nullptr;
+	device_->CreateOffscreenPlainSurface(1280, 720, D3DFMT_X8R8G8B8, D3DPOOL_SYSTEMMEM, &surface, nullptr);
+
+	LPDIRECT3DSURFACE9 backBuf;
+	device_->GetRenderTarget(0, &backBuf);
+
+	device_->GetRenderTargetData(backBuf, surface);
+
+	backBuf->Release();
+
+	D3DLOCKED_RECT locked;
+	RECT rect;
+	rect.left = 0;
+	rect.bottom = 720;
+	rect.top = 0;
+	rect.right = 1280;
+	surface->LockRect(&locked, &rect, 0);
+
+	std::vector<uint8_t> data;
+
+	data.resize(1280 * 720 * 4);
+
+	for (int32_t h = 0; h < 720; h++)
+	{
+		auto dst_ = &(data[h * 1280 * 4]);
+		auto src_ = &(((uint8_t*)locked.pBits)[h * locked.Pitch]);
+		memcpy(dst_, src_, 1280 * 4);
+	}
+
+	surface->UnlockRect();
+
+	return false;
+}
 
 bool EffectPlatformDX9::SetFullscreen(bool isFullscreen)
 {

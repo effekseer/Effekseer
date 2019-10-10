@@ -134,7 +134,9 @@ int main()
 #endif
 
 	#if _WIN32
-	//BasicRuntimeTest();
+	BasicRuntimeDeviceLostTest();
+
+	BasicRuntimeTest();
 	#endif
 
 	//TestShowEfcAssets();

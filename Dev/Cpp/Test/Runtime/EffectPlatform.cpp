@@ -163,7 +163,6 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path)
 
 	buffers_.push_back(data);
 	effects_.push_back(effect);
-	//return 0;
 	auto handle = manager_->Play(effect, Effekseer::Vector3D());
 	effectHandles_.push_back(handle);
 	return handle;

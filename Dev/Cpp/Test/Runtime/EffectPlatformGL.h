@@ -18,4 +18,5 @@ public:
 	void BeginRendering() override;
 	void EndRendering() override;
 	void Present() override;
+	bool TakeScreenshot(const char* path) override;
 };
