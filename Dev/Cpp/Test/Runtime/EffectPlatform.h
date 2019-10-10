@@ -46,9 +46,12 @@ private:
 	EffekseerRenderer::Renderer* renderer_ = nullptr;
 	std::vector<Effekseer::Handle> effectHandles_;
 
+	void CreateCheckeredPattern(int width, int height, uint32_t* pixels);
+
 protected:
 	std::vector<Effekseer::Effect*> effects_;
 	std::vector<std::vector<uint8_t>> buffers_;
+	std::vector<uint32_t> checkeredPattern_;
 
 	EffekseerRenderer::Renderer* GetRenderer() const;
 	void* GetNativePtr(int32_t index);

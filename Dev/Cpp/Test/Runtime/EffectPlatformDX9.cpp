@@ -95,7 +95,6 @@ bool EffectPlatformDX9::TakeScreenshot(const char* path)
 	device_->GetRenderTarget(0, &backBuf);
 
 	device_->GetRenderTargetData(backBuf, surface);
-
 	backBuf->Release();
 
 	D3DLOCKED_RECT locked;
@@ -104,7 +103,7 @@ bool EffectPlatformDX9::TakeScreenshot(const char* path)
 	rect.bottom = 720;
 	rect.top = 0;
 	rect.right = 1280;
-	surface->LockRect(&locked, &rect, 0);
+	surface->LockRect(&locked, &rect, D3DLOCK_NO_DIRTY_UPDATE | D3DLOCK_NOSYSLOCK | D3DLOCK_READONLY);
 
 	std::vector<uint8_t> data;
 
@@ -117,9 +116,19 @@ bool EffectPlatformDX9::TakeScreenshot(const char* path)
 		memcpy(dst_, src_, 1280 * 4);
 	}
 
-	surface->UnlockRect();
+	// HACK for Geforce
+	for (int32_t i = 0; i < 1280 * 720; i++)
+	{
+		data[i * 4 + 3] = 255;
+		std::swap(data[i * 4 + 0], data[i * 4 + 2]);
+	}
 
-	return false;
+	surface->UnlockRect();
+	surface->Release();
+
+	stbi_write_png(path, 1280, 720, 4, data.data(), 1280 * 4);
+
+	return true;
 }
 
 bool EffectPlatformDX9::SetFullscreen(bool isFullscreen)

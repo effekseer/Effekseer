@@ -1,6 +1,19 @@
 
 #include "EffectPlatform.h"
 
+void EffectPlatform::CreateCheckeredPattern(int width, int height, uint32_t* pixels)
+{
+	const uint32_t color[2] = {0x00202020, 0x00808080};
+
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			*pixels++ = color[(x / 20 % 2) ^ (y / 20 % 2)];
+		}
+	}
+}
+
 EffekseerRenderer::Renderer* EffectPlatform::GetRenderer() const { return renderer_; }
 
 void* EffectPlatform::GetNativePtr(int32_t index)
@@ -63,6 +76,9 @@ EffectPlatform::EffectPlatform(bool isOpenGLMode) : isOpenGLMode_(isOpenGLMode)
 	{
 		glfwMakeContextCurrent(window_);
 	}
+
+	checkeredPattern_.resize(1280 * 720);
+	CreateCheckeredPattern(1280, 720, checkeredPattern_.data());
 }
 
 EffectPlatform::~EffectPlatform()

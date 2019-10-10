@@ -40,24 +40,27 @@ void BasicRuntimeDeviceLostTest()
 
 	platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
 
-	for (size_t i = 0; i < 30; i++)
+	for (size_t i = 0; i < 20; i++)
 	{
 		platform->Update();
 	}
+	platform->TakeScreenshot("Lost1.png");
 
 	platform->SetFullscreen(true);
 
-	for (size_t i = 0; i < 30; i++)
+	for (size_t i = 0; i < 20; i++)
 	{
 		platform->Update();
 	}
+	platform->TakeScreenshot("Lost2.png");
 
 	platform->SetFullscreen(false);
 
-	for (size_t i = 0; i < 30; i++)
+	for (size_t i = 0; i < 20; i++)
 	{
 		platform->Update();
 	}
+	platform->TakeScreenshot("Lost3.png");
 
 #endif
 }

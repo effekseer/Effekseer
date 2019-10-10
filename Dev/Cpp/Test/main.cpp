@@ -133,11 +133,10 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	#if _WIN32
+#ifdef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
 	BasicRuntimeDeviceLostTest();
-
 	BasicRuntimeTest();
-	#endif
+#else
 
 	//TestShowEfcAssets();
 	
@@ -191,7 +190,8 @@ int main()
 	g_manager->Destroy();
 
 	testManager.reset();
-	
+#endif
+
 #if _WIN32
 	_CrtDumpMemoryLeaks();
 #endif
