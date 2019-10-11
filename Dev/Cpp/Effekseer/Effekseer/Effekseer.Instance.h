@@ -226,8 +226,8 @@ public:
 	// 生成されてからの時間
 	float		m_LivingTime;
 
-	// The time offset for UV
-	int32_t		uvTimeOffset;
+	//! The time offset for UV animation
+	int32_t uvTimeOffset = 0;
 
 	// Scroll, FCurve area for UV
 	RectF		uvAreaOffset;

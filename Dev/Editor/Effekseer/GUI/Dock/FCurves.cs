@@ -25,6 +25,7 @@ namespace Effekseer.GUI.Dock
 		Utl.ParameterTreeNode paramaterTreeNode = null;
 
 		TreeNode treeNodes = null;
+		List<FCurve> flattenFcurves = new List<FCurve>();
 
 		bool loading = false;
 
@@ -35,6 +36,7 @@ namespace Effekseer.GUI.Dock
 		Component.Enum startCurve = new Component.Enum();
 		Component.Enum endCurve = new Component.Enum();
 		Component.Enum type = new Component.Enum();
+		Component.Enum timeline = new Component.Enum();
 
 		bool isAutoZoomMode = false;
 		float autoZoomRangeMin = float.MaxValue;
@@ -61,6 +63,9 @@ namespace Effekseer.GUI.Dock
 
 			type.Initialize(typeof(Data.Value.FCurveInterpolation));
 			type.Label = type_text + "##Type";
+
+			timeline.Initialize(typeof(Data.Value.FCurveTimelineType));
+			timeline.Label = type_text + "##Timeline";
 
 			OnChanged();
 
@@ -220,7 +225,8 @@ namespace Effekseer.GUI.Dock
 			}
 
 			Manager.NativeManager.Columns(1);
-				
+			
+			// line2
 			Manager.NativeManager.Columns(4);
 
 			// Start curve
@@ -294,14 +300,32 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.InputText(offset_text + "##OffsetMinMax", invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
-			Manager.NativeManager.Columns(1);
-			
-			if(selected.Item1 == null)
+			if (selected.Item1 == null)
 			{
 				startCurve.SetBinding(null);
 				endCurve.SetBinding(null);
 			}
 
+			// line3
+			Manager.NativeManager.Columns(2);
+
+			var fcurveGroups = flattenFcurves.Where(_ => _.Properties.Any(__=>__.IsShown)).ToArray();
+
+			if (fcurveGroups.Any())
+			{
+				// TODO : implement multi select
+				timeline.SetBinding(fcurveGroups.First().GetTimeLineType());
+				timeline.Update();
+			}
+			else
+			{
+				Manager.NativeManager.Text("");
+				timeline.SetBinding(null);
+			}
+
+			// line4
+			Manager.NativeManager.Columns(1);
+			
 			{
 				if (Manager.NativeManager.ImageButton(Images.GetIcon("EnlargeAnchor"), 24, 24))
 				{
@@ -602,6 +626,8 @@ namespace Effekseer.GUI.Dock
 
 		void SetParameters(Utl.ParameterTreeNode paramTreeNodes)
 		{
+			flattenFcurves.Clear();
+
 			List<FCurve> befores = new List<FCurve>();
 			List<FCurve> afters = new List<FCurve>();
 
@@ -775,6 +801,26 @@ namespace Effekseer.GUI.Dock
 			}
 
 			paramaterTreeNode = paramTreeNodes;
+
+			// collect fcurves
+			{
+				Action<TreeNode> recurse = null;
+
+				recurse = (t) =>
+				{
+					foreach (var fcurve in t.FCurves)
+					{
+						flattenFcurves.Add(fcurve);
+					}
+
+					foreach (var c in t.Children)
+					{
+						recurse(c);
+					}
+				};
+
+				recurse(treeNodes);
+			}
 		}
 
 		public void UnselectAll()
@@ -958,12 +1004,15 @@ namespace Effekseer.GUI.Dock
 		{
 			protected int LEFT_SHIFT = 340;
 			protected int RIGHT_SHIFT = 344;
+			protected FCurveProperty[] properties = null;
 
 			public TreeNode ParentNode { get; set; }
 
 			public string Name { get; protected set; }
 
 			public abstract object GetValueAsObject();
+
+			public FCurveProperty[] Properties { get { return properties; } }
 
 			public virtual Tuple35<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve() { return new Tuple35<Data.Value.IFCurve, FCurveProperty>(null, null); }
 
@@ -985,7 +1034,8 @@ namespace Effekseer.GUI.Dock
 						window,
 						converter,
 						float.MinValue,
-						float.MaxValue);
+						float.MaxValue,
+						v_.Timeline);
 				}
 				else if (v.Item2 is Data.Value.FCurveVector3D)
 				{
@@ -1003,7 +1053,8 @@ namespace Effekseer.GUI.Dock
 						window,
 						converter,
 						float.MinValue,
-						float.MaxValue);
+						float.MaxValue,
+						v_.Timeline);
 				}
 				else if (v.Item2 is Data.Value.FCurveColorRGBA)
 				{
@@ -1023,7 +1074,8 @@ namespace Effekseer.GUI.Dock
 						window,
 						converter,
 						0,
-						255);
+						255,
+						v_.Timeline);
 				}
 				
 				return null;
@@ -1056,14 +1108,16 @@ namespace Effekseer.GUI.Dock
 			public virtual void Commit() { }
 
 			public virtual bool IsDirtied() { return false; }
+
+			public virtual Data.Value.Enum<FCurveTimelineType> GetTimeLineType() { return null; }
 		}
 
 		class FCurveTemplate<T> : FCurve where T : struct, IComparable<T>, IEquatable<T>
 		{
-			FCurveProperty[] properties = new FCurveProperty[3];
 			Data.Value.FCurve<T>[] fcurves = new Data.Value.FCurve<T>[3];
 			int[] ids = new int[3];
 			string[] names = null;
+			Data.Value.Enum<FCurveTimelineType> timelineType = null;
 
 			FCurves window = null;
 			Func<float, T> converter = null;
@@ -1073,7 +1127,7 @@ namespace Effekseer.GUI.Dock
 
 			public object Value { get; private set; }
 
-			public FCurveTemplate(int length, FCurve<T>[] fcurves, uint[] colors, string[] names, float defaultValue, object value, string name, FCurves window, Func<float, T> converter, float v_min, float v_max)
+			public FCurveTemplate(int length, FCurve<T>[] fcurves, uint[] colors, string[] names, float defaultValue, object value, string name, FCurves window, Func<float, T> converter, float v_min, float v_max, Data.Value.Enum<FCurveTimelineType> timelineType)
 			{
 				Name = name;
 				Value = value;
@@ -1082,6 +1136,7 @@ namespace Effekseer.GUI.Dock
 				this.converter = converter;
 				this.v_max = v_max;
 				this.v_min = v_min;
+				this.timelineType = timelineType;
 
 				properties = new FCurveProperty[length];
 				ids = new int[length];
@@ -1568,6 +1623,11 @@ namespace Effekseer.GUI.Dock
 				}
 
 				return false;
+			}
+
+			public override Enum<FCurveTimelineType> GetTimeLineType()
+			{
+				return timelineType;
 			}
 		}
 

@@ -7,7 +7,12 @@ namespace Effekseer.Data.Value
 {
 	public enum FCurveTimelineType : int
 	{
+		[Name(language = Language.Japanese, value = "時間(フレーム)")]
+		[Name(language = Language.English, value = "Time(Frame)")]
 		Time = 0,
+
+		[Name(language = Language.Japanese, value = "パーセント(0-100)")]
+		[Name(language = Language.English, value = "Percent(0-100)")]
 		Percent = 1,
 	}
 

@@ -1,23 +1,14 @@
 ﻿
-#ifndef	__EFFEKSEER_FCURVES_H__
-#define	__EFFEKSEER_FCURVES_H__
+#ifndef __EFFEKSEER_FCURVES_H__
+#define __EFFEKSEER_FCURVES_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
 #include "Effekseer.InternalStruct.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-	
-enum class FCurveTimelineType : int
+
+enum class FCurveTimelineType : int32_t
 {
 	Time = 0,
 	Percent = 1,
@@ -26,88 +17,82 @@ enum class FCurveTimelineType : int
 class FCurve
 {
 private:
-	enum eFCurveEdge
+	enum class FCurveEdge : int32_t
 	{
-		FC_EDGE_Constant = 0,
-		FC_EDGE_Loop = 1,
-		FC_EDGE_LoopInversely = 2,
-		FC_EDGE_DWORD = 0x7fffffff,
+		Constant = 0,
+		Loop = 1,
+		LoopInversely = 2,
 	};
 
 private:
-	int32_t				m_offset;
-	int32_t				m_len;
-	int32_t				m_freq;
-	eFCurveEdge			m_start;
-	eFCurveEdge			m_end;
-	std::vector<float>	m_keys;
+	int32_t offset_ = 0;
+	int32_t len_ = 0;
+	int32_t freq_ = 0;
+	FCurveEdge start_ = FCurveEdge::Constant;
+	FCurveEdge end_ = FCurveEdge::Constant;
+	std::vector<float> keys_;
 
-	float				m_defaultValue;
-	float				m_offsetMax;
-	float				m_offsetMin;
+	float defaultValue_ = 0;
+	float offsetMax_ = 0;
+	float offsetMin_ = 0;
+
 public:
-	FCurve( float defaultValue );
-	int32_t Load( void* data, int32_t version );
+	FCurve(float defaultValue);
+	int32_t Load(void* data, int32_t version);
 
-	float GetValue( int32_t frame );
+	float GetValue(float living, float life, FCurveTimelineType type) const;
 
-	float GetOffset( InstanceGlobal& g ) const;
+	float GetOffset(InstanceGlobal& g) const;
 
-	void SetDefaultValue( float value ) { m_defaultValue = value; }
+	void SetDefaultValue(float value) { defaultValue_ = value; }
 
 	void ChangeCoordinate();
 
-	void Maginify(float value );
+	void Maginify(float value);
 };
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 class FCurveVector2D
 {
 public:
-	FCurveTimelineType Timeline;
-	FCurve X;
-	FCurve Y;
-	
-	FCurveVector2D();
+	FCurveTimelineType Timeline = FCurveTimelineType::Percent;
+	FCurve X = FCurve(0);
+	FCurve Y = FCurve(0);
+
 	int32_t Load(void* data, int32_t version);
+
+	std::array<float, 2> GetValues(float living, float life) const;
+	std::array<float, 2> GetOffsets(InstanceGlobal& g) const;
 };
 
 class FCurveVector3D
 {
 public:
-	FCurveTimelineType Timeline;
-	FCurve X;
-	FCurve Y;
-	FCurve Z;
+	FCurveTimelineType Timeline = FCurveTimelineType::Percent;
+	FCurve X = FCurve(0);
+	FCurve Y = FCurve(0);
+	FCurve Z = FCurve(0);
 
-	FCurveVector3D();
-	int32_t Load( void* data, int32_t version );
+	int32_t Load(void* data, int32_t version);
+
+	std::array<float, 3> GetValues(float living, float life) const;
+	std::array<float, 3> GetOffsets(InstanceGlobal& g) const;
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 class FCurveVectorColor
 {
 public:
-	FCurveTimelineType Timeline;
-	FCurve R;
-	FCurve G;
-	FCurve B;
-	FCurve A;
+	FCurveTimelineType Timeline = FCurveTimelineType::Percent;
+	FCurve R = FCurve(255);
+	FCurve G = FCurve(255);
+	FCurve B = FCurve(255);
+	FCurve A = FCurve(255);
 
-	FCurveVectorColor();
-	int32_t Load( void* data, int32_t version );
+	int32_t Load(void* data, int32_t version);
+
+	std::array<float, 4> GetValues(float living, float life) const;
+	std::array<float, 4> GetOffsets(InstanceGlobal& g) const;
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-}
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_FCURVES_H__
+} // namespace Effekseer
+
+#endif // __EFFEKSEER_FCURVES_H__

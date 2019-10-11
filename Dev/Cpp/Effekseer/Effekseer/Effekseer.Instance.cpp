@@ -170,7 +170,6 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	, m_State(INSTANCE_STATE_ACTIVE)
 	, m_LivedTime(0)
 	, m_LivingTime(0)
-	, uvTimeOffset(0)
 	, m_flexibleGeneratedChildrenCount(nullptr)
 	, m_flexibleNextGenerationTime(nullptr)
 	, m_GlobalMatrix43Calculated(false)
@@ -1121,9 +1120,10 @@ void Instance::CalculateMatrix( float deltaFrame )
 		else if( m_pEffectNode->TranslationType == ParameterTranslationType_FCurve )
 		{
 			assert( m_pEffectNode->TranslationFCurve != NULL );
-			localPosition.X = m_pEffectNode->TranslationFCurve->X.GetValue( (int)m_LivingTime ) + translation_values.fcruve.offset.x;
-			localPosition.Y = m_pEffectNode->TranslationFCurve->Y.GetValue( (int)m_LivingTime ) + translation_values.fcruve.offset.y;
-			localPosition.Z = m_pEffectNode->TranslationFCurve->Z.GetValue( (int)m_LivingTime ) + translation_values.fcruve.offset.z;
+			auto fcurve = m_pEffectNode->TranslationFCurve->GetValues(m_LivingTime, m_LivedTime);
+			localPosition.X = fcurve[0] + translation_values.fcruve.offset.x;
+			localPosition.Y = fcurve[1] + translation_values.fcruve.offset.y;
+			localPosition.Z = fcurve[2] + translation_values.fcruve.offset.z;
 		}
 
 		if( !m_pEffectNode->GenerationLocation.EffectsRotation )
@@ -1189,9 +1189,10 @@ void Instance::CalculateMatrix( float deltaFrame )
 		else if( m_pEffectNode->RotationType == ParameterRotationType_FCurve )
 		{
 			assert( m_pEffectNode->RotationFCurve != NULL );
-			localAngle.X = m_pEffectNode->RotationFCurve->X.GetValue( (int)m_LivingTime ) + rotation_values.fcruve.offset.x;
-			localAngle.Y = m_pEffectNode->RotationFCurve->Y.GetValue( (int)m_LivingTime ) + rotation_values.fcruve.offset.y;
-			localAngle.Z = m_pEffectNode->RotationFCurve->Z.GetValue( (int)m_LivingTime ) + rotation_values.fcruve.offset.z;
+			auto fcurve = m_pEffectNode->RotationFCurve->GetValues(m_LivingTime, m_LivedTime);
+			localAngle.X = fcurve[0] + rotation_values.fcruve.offset.x;
+			localAngle.Y = fcurve[1] + rotation_values.fcruve.offset.y;
+			localAngle.Z = fcurve[2] + rotation_values.fcruve.offset.z;
 		}
 
 		/* 拡大の更新(時間から直接求めれるよう対応済み) */
@@ -1255,10 +1256,10 @@ void Instance::CalculateMatrix( float deltaFrame )
 		else if( m_pEffectNode->ScalingType == ParameterScalingType_FCurve )
 		{
 			assert( m_pEffectNode->ScalingFCurve != NULL );
-
-			localScaling.X = m_pEffectNode->ScalingFCurve->X.GetValue( (int32_t)m_LivingTime ) + scaling_values.fcruve.offset.x;
-			localScaling.Y = m_pEffectNode->ScalingFCurve->Y.GetValue( (int32_t)m_LivingTime ) + scaling_values.fcruve.offset.y;
-			localScaling.Z = m_pEffectNode->ScalingFCurve->Z.GetValue( (int32_t)m_LivingTime ) + scaling_values.fcruve.offset.z;
+			auto fcurve = m_pEffectNode->ScalingFCurve->GetValues(m_LivingTime, m_LivedTime);
+			localScaling.X = fcurve[0] + scaling_values.fcruve.offset.x;
+			localScaling.Y = fcurve[1] + scaling_values.fcruve.offset.y;
+			localScaling.Z = fcurve[2] + scaling_values.fcruve.offset.z;
 		}
 
 		/* 描画部分の更新 */
@@ -1558,7 +1559,7 @@ RectF Instance::GetUV() const
 	}
 	else if( m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_SCROLL )
 	{
-		auto time = (int32_t)m_LivingTime + uvTimeOffset;
+		auto time = (int32_t)m_LivingTime;
 
 		return RectF(
 			uvAreaOffset.X + uvScrollSpeed.X * time,
@@ -1568,13 +1569,15 @@ RectF Instance::GetUV() const
 	}
 	else if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_FCURVE)
 	{
-		auto time = (int32_t)m_LivingTime + uvTimeOffset;
+		auto time = (int32_t)m_LivingTime;
 
-		return RectF(
-			uvAreaOffset.X + m_pEffectNode->RendererCommon.UV.FCurve.Position->X.GetValue(time),
-			uvAreaOffset.Y + m_pEffectNode->RendererCommon.UV.FCurve.Position->Y.GetValue(time),
-			uvAreaOffset.Width + m_pEffectNode->RendererCommon.UV.FCurve.Size->X.GetValue(time),
-			uvAreaOffset.Height + m_pEffectNode->RendererCommon.UV.FCurve.Size->Y.GetValue(time));
+		auto fcurvePos = m_pEffectNode->RendererCommon.UV.FCurve.Position->GetValues(m_LivingTime, m_LivedTime);
+		auto fcurveSize = m_pEffectNode->RendererCommon.UV.FCurve.Size->GetValues(m_LivingTime, m_LivedTime);
+
+		return RectF(uvAreaOffset.X + fcurvePos[0],
+					 uvAreaOffset.Y + fcurvePos[1],
+					 uvAreaOffset.Width + fcurveSize[0],
+					 uvAreaOffset.Height + fcurveSize[1]);
 	}
 
 
@@ -1603,16 +1606,15 @@ Vector2D Instance::GetCustomData() const
 	{
 		auto time = (int32_t)m_LivingTime + uvTimeOffset;
 
-		return Vector2D(
-			customDataValues.fcruve.offset.x + m_pEffectNode->RendererCommon.CustomData1.FCurve.Values->X.GetValue(time), 
-			customDataValues.fcruve.offset.y + m_pEffectNode->RendererCommon.CustomData1.FCurve.Values->Y.GetValue(time));
+		assert(0);
+		return Vector2D(0, 0);
 	}
 	else
 	{
 		assert(0);
 	}
 
-	Vector2D();
+	return Vector2D();
 }
 
 //----------------------------------------------------------------------------------

@@ -254,10 +254,7 @@ void EffectNodeTrack::InitializeValues(InstanceGroupValues::Color& value, Standa
 	}
 	else if (param.type == StandardColorParameter::FCurve_RGBA)
 	{
-		value.color.fcurve_rgba.offset[0] = param.fcurve_rgba.FCurve->R.GetOffset(*instanceGlobal);
-		value.color.fcurve_rgba.offset[1] = param.fcurve_rgba.FCurve->G.GetOffset(*instanceGlobal);
-		value.color.fcurve_rgba.offset[2] = param.fcurve_rgba.FCurve->B.GetOffset(*instanceGlobal);
-		value.color.fcurve_rgba.offset[3] = param.fcurve_rgba.FCurve->A.GetOffset(*instanceGlobal);
+		value.color.fcurve_rgba.offset = param.fcurve_rgba.FCurve->GetOffsets(*instanceGlobal);
 	}
 }
 
@@ -296,10 +293,11 @@ void EffectNodeTrack::SetValues(Color& c, const Instance& instance, InstanceGrou
 	}
 	else if (param.type == StandardColorParameter::FCurve_RGBA)
 	{
-		c.R = (uint8_t)Clamp((value.color.fcurve_rgba.offset[0] + param.fcurve_rgba.FCurve->R.GetValue((int32_t)time)), 255, 0);
-		c.G = (uint8_t)Clamp((value.color.fcurve_rgba.offset[1] + param.fcurve_rgba.FCurve->G.GetValue((int32_t)time)), 255, 0);
-		c.B = (uint8_t)Clamp((value.color.fcurve_rgba.offset[2] + param.fcurve_rgba.FCurve->B.GetValue((int32_t)time)), 255, 0);
-		c.A = (uint8_t)Clamp((value.color.fcurve_rgba.offset[3] + param.fcurve_rgba.FCurve->A.GetValue((int32_t)time)), 255, 0);
+		auto fcurveColors = param.fcurve_rgba.FCurve->GetValues(time, livedTime);
+		c.R = (uint8_t)Clamp((value.color.fcurve_rgba.offset[0] + fcurveColors[0]), 255, 0);
+		c.G = (uint8_t)Clamp((value.color.fcurve_rgba.offset[1] + fcurveColors[1]), 255, 0);
+		c.B = (uint8_t)Clamp((value.color.fcurve_rgba.offset[2] + fcurveColors[2]), 255, 0);
+		c.A = (uint8_t)Clamp((value.color.fcurve_rgba.offset[3] + fcurveColors[3]), 255, 0);
 	}
 
 	if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)

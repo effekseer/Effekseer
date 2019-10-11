@@ -106,7 +106,7 @@ public:
 
 			struct
 			{
-				float	offset[4];
+				std::array<float, 4> offset;
 			} fcurve_rgba;
 
 		} allColorValues;
