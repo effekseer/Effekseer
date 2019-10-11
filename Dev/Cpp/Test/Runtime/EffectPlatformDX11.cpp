@@ -2,6 +2,45 @@
 
 #include "../../3rdParty/stb/stb_image_write.h"
 
+void EffectPlatformDX11::CreateCheckedTexture()
+{
+	D3D11_TEXTURE2D_DESC desc;
+	desc.ArraySize = 1;
+	desc.BindFlags = 0;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.Width = 1280;
+	desc.Height = 720;
+	desc.MipLevels = 1;
+	desc.MiscFlags = 0;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_STAGING;
+
+	auto hr = device_->CreateTexture2D(&desc, 0, &checkedTexture_);
+	if (FAILED(hr))
+	{
+		throw "Failed : CreateTexture";
+	}
+
+	D3D11_MAPPED_SUBRESOURCE mr;
+	UINT sr = D3D11CalcSubresource(0, 0, 0);
+	hr = context_->Map(checkedTexture_, sr, D3D11_MAP_READ_WRITE, 0, &mr);
+
+	std::vector<uint8_t> data;
+
+	data.resize(1280 * 720 * 4);
+
+	for (int32_t h = 0; h < 720; h++)
+	{
+		auto src_ = &(checkeredPattern_[h * 1280]);
+		auto dst_ = &(((uint8_t*)mr.pData)[h * mr.RowPitch]);
+		memcpy(dst_, src_, 1280 * 4);
+	}
+
+	context_->Unmap(checkedTexture_, sr);
+}
+
 EffekseerRenderer::Renderer* EffectPlatformDX11::CreateRenderer()
 {
 	return EffekseerRendererDX11::Renderer::Create(device_, context_, 2000);
@@ -9,6 +48,7 @@ EffekseerRenderer::Renderer* EffectPlatformDX11::CreateRenderer()
 
 EffectPlatformDX11::~EffectPlatformDX11()
 {
+	ES_SAFE_RELEASE(checkedTexture_);
 	ES_SAFE_RELEASE(renderTargetView_);
 	ES_SAFE_RELEASE(backBuffer_);
 	ES_SAFE_RELEASE(depthStencilView_);
@@ -118,6 +158,8 @@ void EffectPlatformDX11::InitializeDevice(const EffectPlatformInitializingParame
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	context_->RSSetViewports(1, &vp);
+
+	CreateCheckedTexture();
 }
 
 void EffectPlatformDX11::BeginRendering()
@@ -125,6 +167,8 @@ void EffectPlatformDX11::BeginRendering()
 	float ClearColor[] = {0.0f, 0.0f, 0.0f, 1.0f};
 	context_->ClearRenderTargetView(renderTargetView_, ClearColor);
 	context_->ClearDepthStencilView(depthStencilView_, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	context_->CopyResource(backBuffer_, checkedTexture_);
 }
 
 void EffectPlatformDX11::EndRendering() {}
@@ -177,6 +221,13 @@ bool EffectPlatformDX11::TakeScreenshot(const char* path)
 	context_->Unmap(cpuTexture, sr);
 
 	cpuTexture->Release();
+
+	// HACK for intel
+	for (int32_t i = 0; i < 1280 * 720; i++)
+	{
+		data[i * 4 + 3] = 255;
+	}
+
 
 	stbi_write_png(path, 1280, 720, 4, data.data(), 1280 * 4);
 

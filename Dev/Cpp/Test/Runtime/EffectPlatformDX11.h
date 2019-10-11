@@ -16,6 +16,9 @@ private:
 	ID3D11Texture2D* depthBuffer_ = nullptr;
 	ID3D11RenderTargetView* renderTargetView_ = nullptr;
 	ID3D11DepthStencilView* depthStencilView_ = nullptr;
+	ID3D11Texture2D* checkedTexture_ = nullptr;
+
+	void CreateCheckedTexture();
 
 protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;

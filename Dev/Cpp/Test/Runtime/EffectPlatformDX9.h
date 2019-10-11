@@ -10,6 +10,9 @@ private:
 	LPDIRECT3DDEVICE9 device_ = nullptr;
 	bool vsync_ = false;
 	bool fullscreen_ = false;
+	IDirect3DSurface9* checkedSurface_ = nullptr;
+
+	void CreateCheckedSurface();
 
 protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;

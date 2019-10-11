@@ -1,10 +1,20 @@
 #include "EffectPlatformDX9.h"
 #include "../../3rdParty/stb/stb_image_write.h"
 
+void EffectPlatformDX9::CreateCheckedSurface()
+{
+	device_->CreateOffscreenPlainSurface(1280, 720, D3DFMT_X8R8G8B8, D3DPOOL_SYSTEMMEM, &checkedSurface_, nullptr);
+	D3DLOCKED_RECT lockedRect;
+	checkedSurface_->LockRect(&lockedRect, nullptr, 0);
+	memcpy(lockedRect.pBits, checkeredPattern_.data(), checkeredPattern_.size() * sizeof(uint32_t));
+	checkedSurface_->UnlockRect();
+}
+
 EffekseerRenderer::Renderer* EffectPlatformDX9::CreateRenderer() { return EffekseerRendererDX9::Renderer::Create(device_, 2000); }
 
 EffectPlatformDX9::~EffectPlatformDX9()
 {
+	ES_SAFE_RELEASE(checkedSurface_);
 	ES_SAFE_RELEASE(d3d_);
 	ES_SAFE_RELEASE(device_);
 }
@@ -45,11 +55,19 @@ void EffectPlatformDX9::InitializeDevice(const EffectPlatformInitializingParamet
 	{
 		throw "Failed : CreateDevice";
 	}
+
+	CreateCheckedSurface();
 }
 
 void EffectPlatformDX9::BeginRendering()
 {
 	device_->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+
+	LPDIRECT3DSURFACE9 targetSurface = nullptr;
+	device_->GetRenderTarget(0, &targetSurface);
+	device_->UpdateSurface(checkedSurface_, NULL, targetSurface, NULL);
+	ES_SAFE_RELEASE(targetSurface);
+
 	device_->BeginScene();
 }
 
@@ -140,6 +158,7 @@ bool EffectPlatformDX9::SetFullscreen(bool isFullscreen)
 
 void EffectPlatformDX9::ResetDevice()
 {
+	ES_SAFE_RELEASE(checkedSurface_);
 
 	auto renderer = static_cast<EffekseerRendererDX9::Renderer*>(GetRenderer());
 
@@ -182,4 +201,6 @@ void EffectPlatformDX9::ResetDevice()
 	{
 		effects_[i]->ReloadResources(buffers_[i].data(), buffers_[i].size());
 	}
+
+	CreateCheckedSurface();
 }
