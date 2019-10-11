@@ -787,26 +787,32 @@ void ModelRenderer::EndRendering( const efkModelNodeParam& parameter, void* user
 		}
 	}
 
-	auto model = (Model*) parameter.EffectPointer->GetModel(parameter.ModelIndex);
-	if(model != nullptr)
+	if (parameter.ModelIndex < 0)
 	{
-		for(auto i = 0; i < model->GetFrameCount(); i++)
-		{
-			model->InternalModels[i].TryDelayLoad();
-		}
-	
-		m_shader_lighting_texture_normal->SetVertexSize(model->GetVertexSize());
-		m_shader_lighting_normal->SetVertexSize(model->GetVertexSize());
-		m_shader_lighting_texture->SetVertexSize(model->GetVertexSize());
-		m_shader_lighting->SetVertexSize(model->GetVertexSize());
-		m_shader_texture->SetVertexSize(model->GetVertexSize());
-		m_shader->SetVertexSize(model->GetVertexSize());
-		m_shader_distortion_texture->SetVertexSize(model->GetVertexSize());
-		m_shader_distortion->SetVertexSize(model->GetVertexSize());
+		return;
 	}
 
+	auto model = (Model*) parameter.EffectPointer->GetModel(parameter.ModelIndex);
 
+	if (model == nullptr)
+	{
+		return;
+	}
 
+	for(auto i = 0; i < model->GetFrameCount(); i++)
+	{
+		model->InternalModels[i].TryDelayLoad();
+	}
+	
+	m_shader_lighting_texture_normal->SetVertexSize(model->GetVertexSize());
+	m_shader_lighting_normal->SetVertexSize(model->GetVertexSize());
+	m_shader_lighting_texture->SetVertexSize(model->GetVertexSize());
+	m_shader_lighting->SetVertexSize(model->GetVertexSize());
+	m_shader_texture->SetVertexSize(model->GetVertexSize());
+	m_shader->SetVertexSize(model->GetVertexSize());
+	m_shader_distortion_texture->SetVertexSize(model->GetVertexSize());
+	m_shader_distortion->SetVertexSize(model->GetVertexSize());
+	
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	EndRendering_<
 		RendererImplemented,
