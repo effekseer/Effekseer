@@ -261,9 +261,10 @@ protected:
 
 		m_ringBufferData += sizeof(VERTEX) * vertexCount;
 
-		const float radian = instanceParameter.ViewingAngle / 180.0f * 3.141592f;
-		const float stepAngle = radian / (parameter.VertexCount);
-		const float beginAngle = -radian / 2.0f;
+		const float circleAngleDegree = (instanceParameter.ViewingAngleEnd - instanceParameter.ViewingAngleStart);
+		const float stepAngleDegree = circleAngleDegree / (parameter.VertexCount);
+		const float stepAngle = (stepAngleDegree) / 180.0f * 3.141592f;
+		const float beginAngle = (instanceParameter.ViewingAngleStart + 90) / 180.0f * 3.141592f;
 		
 		const float outerRadius = instanceParameter.OuterLocation.X;
 		const float innerRadius = instanceParameter.InnerLocation.X;
@@ -276,7 +277,17 @@ protected:
 		::Effekseer::Color outerColor = instanceParameter.OuterColor;
 		::Effekseer::Color innerColor = instanceParameter.InnerColor;
 		::Effekseer::Color centerColor = instanceParameter.CenterColor;
-		
+		::Effekseer::Color outerColorNext = instanceParameter.OuterColor;
+		::Effekseer::Color innerColorNext = instanceParameter.InnerColor;
+		::Effekseer::Color centerColorNext = instanceParameter.CenterColor;
+
+		if (parameter.StartingFade > 0)
+		{
+			outerColor.A = 0;
+			innerColor.A = 0;
+			centerColor.A = 0;
+		}
+
 		const float stepC = cosf(stepAngle);
 		const float stepS = sinf(stepAngle);
 		float cos_ = cosf(beginAngle);
@@ -292,6 +303,10 @@ protected:
 		
 		::Effekseer::Vector3D outerNext, innerNext, centerNext;
 		float texNext;
+
+		float currentAngleDegree = 0;
+		float fadeStartAngle = parameter.StartingFade;
+		float fadeEndingAngle = parameter.EndingFade;
 
 		for( int i = 0; i < vertexCount; i += 8 )
 		{
@@ -313,8 +328,30 @@ protected:
 			centerNext.Y = sin_ * centerRadius;
 			centerNext.Z = centerHeight;
 
+			currentAngleDegree += stepAngleDegree;
+			float alpha = 1.0f;
+			if (currentAngleDegree < fadeStartAngle)
+			{
+				alpha = currentAngleDegree / fadeStartAngle;
+			}
+			else if (currentAngleDegree > circleAngleDegree - fadeEndingAngle)
+			{
+				alpha = 1.0f - (currentAngleDegree - (circleAngleDegree - fadeEndingAngle)) / fadeEndingAngle;
+			}
+
+			outerColorNext = instanceParameter.OuterColor;
+			innerColorNext = instanceParameter.InnerColor;
+			centerColorNext = instanceParameter.CenterColor;
+
+			if (alpha != 1.0f)
+			{
+				outerColorNext.A *= alpha;
+				innerColorNext.A *= alpha;
+				centerColorNext.A *= alpha;
+			}
+
 			texNext = texCurrent + texStep;
-			
+
 			VERTEX* v = &verteies[i];
 			v[0].Pos = outerCurrent;
 			v[0].SetColor( outerColor );
@@ -327,12 +364,12 @@ protected:
 			v[1].UV[1] = v2;
 
 			v[2].Pos = outerNext;
-			v[2].SetColor( outerColor );
+			v[2].SetColor( outerColorNext );
 			v[2].UV[0] = texNext;
 			v[2].UV[1] = v1;
 			
 			v[3].Pos = centerNext;
-			v[3].SetColor( centerColor );
+			v[3].SetColor( centerColorNext );
 			v[3].UV[0] = texNext;
 			v[3].UV[1] = v2;
 
@@ -346,7 +383,7 @@ protected:
 			v[6] = v[3];
 
 			v[7].Pos = innerNext;
-			v[7].SetColor( innerColor );
+			v[7].SetColor( innerColorNext );
 			v[7].UV[0] = texNext;
 			v[7].UV[1] = v3;
 
@@ -479,6 +516,9 @@ protected:
 			innerCurrent = innerNext;
 			centerCurrent = centerNext;
 			texCurrent = texNext;
+			outerColor = outerColorNext;
+			innerColor = innerColorNext;
+			centerColor = centerColorNext;
 		}
 
 		if (CanSingleRendering())

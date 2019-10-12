@@ -56,12 +56,68 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 		int32_t ringShape = 0;
 		memcpy(&ringShape, pos, sizeof(int));
 		pos += sizeof(int);
+
+		Shape.Type = static_cast<RingShapeType>(ringShape);
+
+		if (Shape.Type == RingShapeType::Dount)
+		{
+			Shape.StartingAngle.type = RingSingleParameter::Fixed;
+			Shape.EndingAngle.type = RingSingleParameter::Fixed;
+			Shape.StartingAngle.fixed = 0;
+			Shape.EndingAngle.fixed = 360;
+		}
+		else if (Shape.Type == RingShapeType::Cresient)
+		{
+			memcpy(&Shape.StartingFade, pos, sizeof(float));
+			pos += sizeof(float);
+			memcpy(&Shape.EndingFade, pos, sizeof(float));
+			pos += sizeof(float);
+
+			LoadSingleParameter(pos, Shape.StartingAngle);
+			LoadSingleParameter(pos, Shape.EndingAngle);
+		}
 	}
 
 	memcpy( &VertexCount, pos, sizeof(int) );
 	pos += sizeof(int);
 	
-	LoadSingleParameter( pos, ViewingAngle );
+	// compatiblity
+	{
+		RingSingleParameter viewingAngle;
+		LoadSingleParameter(pos, viewingAngle);
+		if (m_effect->GetVersion() < 15)
+		{
+			Shape.Type = RingShapeType::Cresient;
+			Shape.StartingAngle = viewingAngle;
+			Shape.EndingAngle = viewingAngle;
+
+			if (viewingAngle.type == RingSingleParameter::Fixed)
+			{
+				Shape.StartingAngle.fixed = (360 - viewingAngle.fixed) / 2.0f + 90.0f;
+				Shape.EndingAngle.fixed = 360.0f - (360 - viewingAngle.fixed) / 2.0f + 90.0f;
+			}
+
+			if (viewingAngle.type == RingSingleParameter::Random)
+			{
+				Shape.StartingAngle.random.max = (360 - viewingAngle.random.max) / 2.0f + 90.0f;
+				Shape.StartingAngle.random.min = (360 - viewingAngle.random.min) / 2.0f + 90.0f;
+				Shape.EndingAngle.random.max = 360.0f - (360 - viewingAngle.random.max) / 2.0f + 90.0f;
+				Shape.EndingAngle.random.min = 360.0f - (360 - viewingAngle.random.min) / 2.0f + 90.0f;
+			}
+
+			if (viewingAngle.type == RingSingleParameter::Easing)
+			{
+				Shape.StartingAngle.easing.start.max = (360 - viewingAngle.easing.start.max) / 2.0f + 90.0f;
+				Shape.StartingAngle.easing.start.min = (360 - viewingAngle.easing.start.min) / 2.0f + 90.0f;
+				Shape.StartingAngle.easing.end.max = (360 - viewingAngle.easing.end.max) / 2.0f + 90.0f;
+				Shape.StartingAngle.easing.end.min = (360 - viewingAngle.easing.end.min) / 2.0f + 90.0f;
+				Shape.EndingAngle.easing.start.max = 360.0f - (360 - viewingAngle.easing.start.max) / 2.0f + 90.0f;
+				Shape.EndingAngle.easing.start.min = 360.0f - (360 - viewingAngle.easing.start.min) / 2.0f + 90.0f;
+				Shape.EndingAngle.easing.end.max = 360.0f - (360 - viewingAngle.easing.end.max) / 2.0f + 90.0f;
+				Shape.EndingAngle.easing.end.min = 360.0f - (360 - viewingAngle.easing.end.min) / 2.0f + 90.0f;
+			}
+		}
+	}
 
 	LoadLocationParameter( pos, OuterLocation );
 	
@@ -196,6 +252,8 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
 			CoordinateSystem::RH;
+		nodeParameter.StartingFade = Shape.StartingFade;
+		nodeParameter.EndingFade = Shape.EndingFade;
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
@@ -233,6 +291,8 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		//nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
 		//nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
+		nodeParameter.StartingFade = Shape.StartingFade;
+		nodeParameter.EndingFade = Shape.EndingFade;
 
 		Color _outerColor;
 		Color _centerColor;
@@ -254,7 +314,8 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		RingRenderer::InstanceParameter instanceParameter;
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 
-		instanceParameter.ViewingAngle = instValues.viewingAngle.current;
+		instanceParameter.ViewingAngleStart = instValues.startingAngle.current;
+		instanceParameter.ViewingAngleEnd = instValues.endingAngle.current;
 		
 		instValues.outerLocation.current.setValueToArg( instanceParameter.OuterLocation );
 		instValues.innerLocation.current.setValueToArg( instanceParameter.InnerLocation );
@@ -295,6 +356,8 @@ void EffectNodeRing::EndRendering(Manager* manager)
 		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
 			CoordinateSystem::RH;
+		nodeParameter.StartingFade = Shape.StartingFade;
+		nodeParameter.EndingFade = Shape.EndingFade;
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
@@ -315,7 +378,8 @@ void EffectNodeRing::InitializeRenderedInstance(Instance& instance, Manager* man
 
 	InstanceValues& instValues = instance.rendererValues.ring;
 
-	InitializeSingleValues(ViewingAngle, instValues.viewingAngle, manager, instanceGlobal);
+	InitializeSingleValues(Shape.StartingAngle, instValues.startingAngle, manager, instanceGlobal);
+	InitializeSingleValues(Shape.EndingAngle, instValues.endingAngle, manager, instanceGlobal);
 
 	InitializeLocationValues(OuterLocation, instValues.outerLocation, manager, instanceGlobal);
 	InitializeLocationValues(InnerLocation, instValues.innerLocation, manager, instanceGlobal);
@@ -349,7 +413,8 @@ void EffectNodeRing::UpdateRenderedInstance(Instance& instance, Manager* manager
 {
 	InstanceValues& instValues = instance.rendererValues.ring;
 	
-	UpdateSingleValues( instance, ViewingAngle, instValues.viewingAngle );
+	UpdateSingleValues(instance, Shape.StartingAngle, instValues.startingAngle);
+	UpdateSingleValues(instance, Shape.EndingAngle, instValues.endingAngle);
 
 	UpdateLocationValues( instance, OuterLocation, instValues.outerLocation );
 	UpdateLocationValues( instance, InnerLocation, instValues.innerLocation );
