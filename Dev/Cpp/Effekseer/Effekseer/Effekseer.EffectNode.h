@@ -14,6 +14,7 @@
 #include "Sound/Effekseer.SoundPlayer.h"
 
 #include "Effekseer.Effect.h"
+#include "Parameter/Effekseer.Parameters.h"
 
 //----------------------------------------------------------------------------------
 //

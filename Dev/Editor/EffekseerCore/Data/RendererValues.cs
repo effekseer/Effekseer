@@ -5,24 +5,47 @@ using System.Text;
 
 namespace Effekseer.Data
 {
-	public enum TextureUVModeType
+	public enum TextureUVType
 	{
 		[Name(value = "Strech", language = Language.English)]
+		[Name(value = "ストレッチ", language = Language.Japanese)]
 		Strech = 0,
+		[Name(value = "Tile", language = Language.English)]
+		[Name(value = "タイル", language = Language.Japanese)]
+		Tile = 1,
 	}
 
-	public class TextureUVModeParameter
+	public class TextureUVTypeParameter
 	{
+		[Name(value = "UV Type", language = Language.English)]
+		[Name(value = "UV タイプ", language = Language.Japanese)]
 		[Selector(ID = 0)]
-		public Value.Enum<TextureUVModeType> Type
+		public Value.Enum<TextureUVType> Type
 		{
 			get;
 			private set;
 		}
 
-		public TextureUVModeParameter()
+		[Name(value = "The number of tile on Head", language = Language.English)]
+		[Name(value = "頭のタイル数", language = Language.Japanese)]
+		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
+		public Value.Int TileEdgeHead { get; private set; }
+
+		[Name(value = "The number of tile on Tail", language = Language.English)]
+		[Name(value = "尻尾のタイル数", language = Language.Japanese)]
+		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
+		public Value.Int TileEdgeTail { get; private set; }
+
+		[Name(value = "Looping area", language = Language.English)]
+		[Name(value = "ループ領域", language = Language.Japanese)]
+		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
+		public Value.Vector2D TileLoopingArea { get; private set; }
+		public TextureUVTypeParameter()
 		{
-			Type = new Value.Enum<TextureUVModeType>(TextureUVModeType.Strech);
+			Type = new Value.Enum<TextureUVType>(TextureUVType.Strech);
+			TileEdgeHead = new Value.Int(0, int.MaxValue, 0);
+			TileEdgeTail = new Value.Int(0, int.MaxValue, 0);
+			TileLoopingArea = new Value.Vector2D(0.0f, 1.0f);
 		}
 	}
 
@@ -59,7 +82,7 @@ namespace Effekseer.Data
 		[Selected(ID = 0, Value = 3)]
 		[Selected(ID = 0, Value = 6)]
 		[IO(Export = true)]
-		public TextureUVModeParameter TextureUVMode { get; private set; } 
+		public TextureUVTypeParameter TextureUVType { get; private set; } 
 
 		[Selected(ID = 0, Value = 2)]
 		[IO(Export = true)]
@@ -104,7 +127,7 @@ namespace Effekseer.Data
 		internal RendererValues()
 		{
 			Type = new Value.Enum<ParamaterType>(ParamaterType.Sprite);
-			TextureUVMode = new TextureUVModeParameter();
+			TextureUVType = new TextureUVTypeParameter();
 
 			Sprite = new SpriteParamater();
             Ribbon = new RibbonParamater();

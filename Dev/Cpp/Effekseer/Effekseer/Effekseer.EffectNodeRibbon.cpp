@@ -35,9 +35,7 @@ void EffectNodeRibbon::LoadRendererParameter(unsigned char*& pos, Setting* setti
 
 	if (m_effect->GetVersion() >= 15)
 	{
-		int32_t textureUVMode = 0;
-		memcpy(&textureUVMode, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		TextureUVType.Load(pos, m_effect->GetVersion());
 	}
 
 	if (m_effect->GetVersion() >= 3)
@@ -156,6 +154,8 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.SplineDivision = SplineDivision;
 		m_nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		m_nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
+		m_nodeParameter.TextureUVTypeParameterPtr = &TextureUVType;
+
 		renderer->BeginRendering(m_nodeParameter, count, m_userData);
 	}
 }

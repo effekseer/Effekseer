@@ -16,6 +16,9 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+struct NodeRendererTextureUVTypeParameter;
+
 	//----------------------------------------------------------------------------------
 	//
 	//----------------------------------------------------------------------------------
@@ -41,7 +44,7 @@ namespace Effekseer
 			int32_t				SplineDivision;
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
-
+			NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
 			//RendererMaterialType MaterialType = RendererMaterialType::Default;
 			//MaterialParameter* MaterialParameterPtr = nullptr;
 		};

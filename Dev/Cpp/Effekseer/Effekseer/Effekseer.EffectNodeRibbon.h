@@ -159,6 +159,8 @@ public:
 
 	int32_t	SplineDivision = 1;
 
+	NodeRendererTextureUVTypeParameter TextureUVType;
+
 	EffectNodeRibbon(Effect* effect, unsigned char*& pos)
 		: EffectNodeImplemented(effect, pos)
 	{

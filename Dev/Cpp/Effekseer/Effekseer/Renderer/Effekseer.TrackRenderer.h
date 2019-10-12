@@ -16,6 +16,9 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+struct NodeRendererTextureUVTypeParameter;
+
 	//----------------------------------------------------------------------------------
 	//
 	//----------------------------------------------------------------------------------
@@ -41,6 +44,7 @@ namespace Effekseer
 
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+			NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
 
 			RendererMaterialType MaterialType = RendererMaterialType::Default;
 			MaterialParameter* MaterialParameterPtr = nullptr;
