@@ -4,12 +4,14 @@ export CC="clang -arch i386 -mmacosx-version-min=10.6"
 
 mkdir Mac/Effekseer.app/Contents/Resources/
 
+# mono6.4 has a bug
 (cd release;
-mkbundle -o Effekseer Effekseer.exe --deps --sdk /Library/Frameworks/Mono.framework/Versions/Current;
+mkbundle -o Effekseer Effekseer.exe --deps --sdk /Library/Frameworks/Mono.framework/Versions/5.18.1;
 otool -L Effekseer;)
 
+# mono6.4 has a bug
 (cd release;
-mkbundle -o tools/mqoToEffekseerModelConverter tools/mqoToEffekseerModelConverter.exe --deps --sdk /Library/Frameworks/Mono.framework/Versions/Current;
+mkbundle -o tools/mqoToEffekseerModelConverter tools/mqoToEffekseerModelConverter.exe --deps --sdk /Library/Frameworks/Mono.framework/Versions/5.18.1;
 otool -L tools/mqoToEffekseerModelConverter;)
 
 cp release/Effekseer Mac/Effekseer.app/Contents/Resources/
