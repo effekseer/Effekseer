@@ -152,6 +152,8 @@ struct VS_Input
 	float4 Tangent		: NORMAL2;
 	float2 UV1		: TEXCOORD0;
 	float2 UV2		: TEXCOORD1;
+	//$C_IN1$
+	//$C_IN2$
 };
 
 struct VS_Output
@@ -165,6 +167,8 @@ struct VS_Output
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
 	float2 ScreenUV : TEXCOORD6;
+	//$C_OUT1$
+	//$C_OUT2$
 };
 
 float4x4 mCamera		: register(c0);
@@ -268,6 +272,8 @@ struct VS_Output
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
 	float2 ScreenUV : TEXCOORD6;
+	//$C_OUT1$
+	//$C_OUT2$
 };
 
 float4x4 mCameraProj		: register( c0 );
@@ -278,7 +284,8 @@ float4	fModelColor[40]		: register( c204 );
 float4 mUVInversed		: register(c244);
 float4 predefined_uniform : register(c245);
 
-
+// custom1
+// custom2
 )";
 
 static char* model_vs_suf1 = R"(
@@ -345,6 +352,8 @@ struct PS_Input
 	float3 WorldT : TEXCOORD4;
 	float3 WorldB : TEXCOORD5;
 	float2 ScreenUV : TEXCOORD6;
+	//$C_PIN1$
+	//$C_PIN2$
 };
 
 float4 mUVInversedBack	: register(c0);
@@ -493,15 +502,30 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 {
 	ShaderData shaderData;
 
-	auto cind = 0;
+	auto getType = [](int32_t i) -> std::string {
+		if (i == 1)
+			return "float";
+		if (i == 2)
+			return "float2";
+		if (i == 3)
+			return "float3";
+		if (i == 4)
+			return "float4";
+	};
+
+	bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
+	bool isRefrection =
+		material->GetHasRefraction() && (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
 
 	for (int stage = 0; stage < 2; stage++)
 	{
+		auto cind = 0;
+
 		std::ostringstream maincode;
 
 		if (stage == 0)
 		{
-			if (shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction)
+			if (isSprite)
 			{
 				if (material->GetIsSimpleVertex())
 				{
@@ -513,7 +537,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 				}
 				cind = 10;
 			}
-			else if (shaderType == MaterialShaderType::Model || shaderType == MaterialShaderType::RefractionModel)
+			else
 			{
 				maincode << model_vs_pre;
 				cind = 246;
@@ -550,13 +574,28 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 		{
 		}
 
-		if (material->GetHasRefraction() && stage == 1 &&
-			(shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel))
+		if (isRefrection && stage == 1)
 		{
 			maincode << "float4x4 "
 					 << "cameraMat"
 					 << " : register(c" << cind << ");" << std::endl;
 			cind += 4;
+		}
+
+		if (!isSprite && stage == 0)
+		{
+			if (material->GetCustomData1Count() > 0)
+			{
+				maincode << "float4 customData1_[40]"
+						 << " : register(c" << cind << ");" << std::endl;
+				cind += 40;
+			}
+			if (material->GetCustomData2Count() > 0)
+			{
+				maincode << "float4 customData2_[40]"
+						 << " : register(c" << cind << ");" << std::endl;
+				cind += 40;
+			}
 		}
 
 		for (size_t i = 0; i < material->GetUniformCount(); i++)
@@ -605,7 +644,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 
 		if (stage == 0)
 		{
-			if (shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction)
+			if (isSprite)
 			{
 				if (material->GetIsSimpleVertex())
 				{
@@ -616,25 +655,61 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 					maincode << material_sprite_vs_suf1;
 				}
 			}
-			else if (shaderType == MaterialShaderType::Model || shaderType == MaterialShaderType::RefractionModel)
+			else
 			{
 				maincode << model_vs_suf1;
+			}
+
+			if (material->GetCustomData1Count() > 0)
+			{
+				if (isSprite)
+				{
+					maincode << getType(material->GetCustomData1Count()) + " customData1 = Input.CustomData1;\n";
+				}
+				else
+				{
+					maincode << getType(4) + " customData1 = customData1_[Input.Index.x];\n";
+				}
+				maincode << "Output.CustomData1 = customData1;\n";
+			}
+
+			if (material->GetCustomData2Count() > 0)
+			{
+				if (isSprite)
+				{
+					maincode << getType(material->GetCustomData2Count()) + " customData2 = Input.CustomData2;\n";
+				}
+				else
+				{
+					maincode << getType(4) + " customData2 = customData2_[Input.Index.x];\n";
+				}
+				maincode << "Output.CustomData2 = customData2;\n";
 			}
 		}
 		else
 		{
 			maincode << g_material_ps_suf1;
+
+			if (material->GetCustomData1Count() > 0)
+			{
+				maincode << getType(material->GetCustomData1Count()) + " customData1 = Input.CustomData1;\n";
+			}
+
+			if (material->GetCustomData2Count() > 0)
+			{
+				maincode << getType(material->GetCustomData2Count()) + " customData2 = Input.CustomData2;\n";
+			}
 		}
 
 		maincode << baseCode;
 
 		if (stage == 0)
 		{
-			if (shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction)
+			if (isSprite)
 			{
 				maincode << material_sprite_vs_suf2;
 			}
-			else if (shaderType == MaterialShaderType::Model || shaderType == MaterialShaderType::RefractionModel)
+			else
 			{
 				maincode << model_vs_suf2;
 			}
@@ -670,6 +745,51 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 		{
 			shaderData.CodePS = maincode.str();
 		}
+	}
+
+	// custom data
+	int32_t inputSlot = 2;
+	int32_t outputSlot = 7;
+	if (material->GetCustomData1Count() > 0)
+	{
+		if (isSprite)
+		{
+			shaderData.CodeVS =
+				Replace(shaderData.CodeVS,
+						"//$C_IN1$",
+						getType(material->GetCustomData1Count()) + " CustomData1 : TEXCOORD" + std::to_string(inputSlot) + ";");
+		}
+
+		shaderData.CodeVS =
+			Replace(shaderData.CodeVS,
+					"//$C_OUT1$",
+					getType(material->GetCustomData1Count()) + " CustomData1 : TEXCOORD" + std::to_string(outputSlot) + ";");
+		shaderData.CodePS =
+			Replace(shaderData.CodePS,
+					"//$C_PIN1$",
+					getType(material->GetCustomData1Count()) + " CustomData1 : TEXCOORD" + std::to_string(outputSlot) + ";");
+
+		inputSlot++;
+		outputSlot++;
+	}
+
+	if (material->GetCustomData2Count() > 0)
+	{
+		if (isSprite)
+		{
+			shaderData.CodeVS =
+				Replace(shaderData.CodeVS,
+						"//$C_IN2$",
+						getType(material->GetCustomData1Count()) + " CustomData2 : TEXCOORD" + std::to_string(inputSlot) + ";");
+		}
+		shaderData.CodeVS =
+			Replace(shaderData.CodeVS,
+					"//$C_OUT2$",
+					getType(material->GetCustomData1Count()) + " CustomData2 : TEXCOORD" + std::to_string(outputSlot) + ";");
+		shaderData.CodePS =
+			Replace(shaderData.CodePS,
+					"//$C_PIN2$",
+					getType(material->GetCustomData1Count()) + " CustomData2 : TEXCOORD" + std::to_string(outputSlot) + ";");
 	}
 
 	return shaderData;
@@ -802,6 +922,5 @@ extern "C"
 #endif
 
 	EFK_EXPORT Effekseer::MaterialCompiler* EFK_STDCALL CreateCompiler() { return new Effekseer::MaterialCompilerDX11(); }
-
 }
 #endif

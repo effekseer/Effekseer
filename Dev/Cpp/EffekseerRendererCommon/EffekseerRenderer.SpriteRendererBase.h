@@ -36,7 +36,6 @@ class SpriteRendererBase
 protected:
 	RENDERER*						m_renderer;
 	int32_t							m_spriteCount;
-	int32_t							m_ringBufferOffset;
 	uint8_t*						m_ringBufferData;
 
 	struct KeyValue
@@ -48,13 +47,14 @@ protected:
 	std::vector<KeyValue>				instances;
 	int32_t vertexCount_ = 0;
 	int32_t stride_ = 0;
+	int32_t customData1Count_ = 0;
+	int32_t customData2Count_ = 0;
 
 public:
 
 	SpriteRendererBase(RENDERER* renderer)
 		: m_renderer(renderer)
 		, m_spriteCount(0)
-		, m_ringBufferOffset(0)
 		, m_ringBufferData(nullptr)
 	{
 		// reserve buffers
@@ -85,11 +85,12 @@ protected:
 		state.MaterialType = param.BasicParameterPtr->MaterialType;
 
 		state.CopyMaterialFromParameterToState(param.EffectPointer, param.BasicParameterPtr->MaterialParameterPtr, param.BasicParameterPtr->Texture1Index, param.BasicParameterPtr->Texture2Index);
+		customData1Count_ = state.CustomData1Count;
+		customData2Count_ = state.CustomData2Count;
 
 		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
 
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(
-			count * 4, m_ringBufferOffset, stride_, (void*&)m_ringBufferData);
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * 4, stride_, (void*&)m_ringBufferData);
 		m_spriteCount = 0;
 
 		vertexCount_ = count * 4;
@@ -145,8 +146,7 @@ protected:
 		if( m_ringBufferData == nullptr ) return;
 
 		StrideView<VERTEX> verteies(m_ringBufferData, stride_, 4);
-		m_ringBufferData += (stride_ * 4);
-
+		
 		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
 
 		for( int i = 0; i < 4; i++ )
@@ -359,6 +359,28 @@ protected:
 			}
 		}
 		
+		// custom parameter
+		if (customData1Count_ > 0)
+		{
+			StrideView<float> custom(m_ringBufferData + sizeof(DynamicVertex), stride_, 4);
+			for (int i = 0; i < 4; i++)
+			{
+				auto c = (float*)(&custom[i]);
+				memcpy(c, instanceParameter.CustomData1.data(), sizeof(float) * customData1Count_);
+			}
+		}
+
+		if (customData2Count_ > 0)
+		{
+			StrideView<float> custom(m_ringBufferData + sizeof(DynamicVertex) + sizeof(float) * customData1Count_, stride_, 4);
+			for (int i = 0; i < 4; i++)
+			{
+				auto c = (float*)(&custom[i]);
+				memcpy(c, instanceParameter.CustomData2.data(), sizeof(float) * customData2Count_);
+			}
+		}
+
+		m_ringBufferData += (stride_ * 4);
 		m_spriteCount++;
 	}
 

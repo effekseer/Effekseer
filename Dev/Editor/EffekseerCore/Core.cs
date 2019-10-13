@@ -1439,26 +1439,44 @@ namespace Effekseer
 						}
 					}
 
-					if (node.RendererCommonValues.CustomData1.CustomData.Value == Data.CustomDataType.FCurve)
+					if (node.RendererCommonValues.CustomData1.CustomData.Value == Data.CustomDataType.FCurve2D)
 					{
 						var name = "CustomData1";
 						if (Language == Language.Japanese)
 						{
 							name = "カスタムデータ1";
-
 						}
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData1.FCurve));
 					}
 
-					if (node.RendererCommonValues.CustomData2.CustomData.Value == Data.CustomDataType.FCurve)
+					if (node.RendererCommonValues.CustomData2.CustomData.Value == Data.CustomDataType.FCurve2D)
 					{
 						var name = "CustomData2";
 						if (Language == Language.Japanese)
 						{
 							name = "カスタムデータ2";
-
 						}
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurve));
+					}
+
+					if (node.RendererCommonValues.CustomData1.CustomData.Value == Data.CustomDataType.FCurveColor)
+					{
+						var name = "CustomData1";
+						if (Language == Language.Japanese)
+						{
+							name = "カスタムデータ1";
+						}
+						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData1.FCurveColor));
+					}
+
+					if (node.RendererCommonValues.CustomData2.CustomData.Value == Data.CustomDataType.FCurveColor)
+					{
+						var name = "CustomData2";
+						if (Language == Language.Japanese)
+						{
+							name = "カスタムデータ2";
+						}
+						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurveColor));
 					}
 
 					return list.ToArray();

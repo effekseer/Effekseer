@@ -335,6 +335,9 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		instanceParameter.InnerColor  = _innerColor;
 		
 		instanceParameter.UV = instance.GetUV();
+		
+		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
+
 		renderer->Rendering( nodeParameter, instanceParameter, m_userData );
 	}
 }

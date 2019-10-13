@@ -46,6 +46,8 @@ struct StandardRendererState
 	std::array<std::array<float, 4>, 16> MaterialUniforms;
 	uint32_t MaterialTextureCount;
 	std::array<::Effekseer::TextureData*, 16> MaterialTextures;
+	uint32_t CustomData1Count = 0;
+	uint32_t CustomData2Count = 0;
 
 	StandardRendererState()
 	{
@@ -71,6 +73,8 @@ struct StandardRendererState
 		MaterialPtr = nullptr;
 		MaterialUniformCount = 0;
 		MaterialTextureCount = 0;
+		CustomData1Count = 0;
+		CustomData2Count = 0;
 	}
 
 	bool operator!=(const StandardRendererState state)
@@ -122,6 +126,12 @@ struct StandardRendererState
 				return true;
 		}
 
+		if (CustomData1Count != state.CustomData1Count)
+			return true;
+
+		if (CustomData1Count != state.CustomData1Count)
+			return true;
+
 		return false;
 	}
 
@@ -132,6 +142,9 @@ struct StandardRendererState
 			if (materialParam->MaterialIndex >= 0)
 			{
 				MaterialPtr = effect->GetMaterial(materialParam->MaterialIndex);
+
+				CustomData1Count = MaterialPtr->CustomData1;
+				CustomData2Count = MaterialPtr->CustomData2;
 
 				MaterialUniformCount = Effekseer::Min(materialParam->MaterialUniforms.size(), MaterialUniforms.size());
 				for (size_t i = 0; i < MaterialUniformCount; i++)
@@ -195,6 +208,8 @@ struct StandardRendererState
 			}
 
 			Refraction = false;
+			CustomData1Count = 0;
+			CustomData2Count = 0;
 		}
 	}
 };
@@ -274,6 +289,7 @@ public:
 		if (isDynamicVertexMode_)
 		{
 			stride = (int32_t)sizeof(DynamicVertex);
+			stride += (m_state.CustomData1Count + m_state.CustomData2Count) * sizeof(float);
 		}
 		else if (isDistortionMode_)
 		{
@@ -300,7 +316,7 @@ public:
 		isDistortionMode_ = m_state.Distortion;
 	}
 
-	void BeginRenderingAndRenderingIfRequired(int32_t count, int32_t& offset, int& stride, void*& data)
+	void BeginRenderingAndRenderingIfRequired(int32_t count, int& stride, void*& data)
 	{
 		stride = CalculateCurrentStride();
 
@@ -312,7 +328,6 @@ public:
 
 			auto old = vertexCaches.size();
 			vertexCaches.resize(count * stride + vertexCaches.size());
-			offset = (int32_t)old;
 			data = (vertexCaches.data() + old);
 		}
 	}

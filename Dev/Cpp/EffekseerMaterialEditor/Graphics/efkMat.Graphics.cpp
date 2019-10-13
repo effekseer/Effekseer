@@ -312,7 +312,9 @@ static const char g_header_vs_gl3_src[] = ""
 										  "#define highp\n"
 										  "#define IN in\n"
 										  "#define TEX2D texture\n"
-										  "#define OUT out\n";
+										  "#define OUT out\n"
+										  "uniform vec4 customData1;\n"  // HACK
+										  "uniform vec4 customData2;\n"; // HACK
 
 static const char g_header_fs_gl3_src[] = ""
 										  "#define lowp\n"
@@ -320,7 +322,9 @@ static const char g_header_fs_gl3_src[] = ""
 										  "#define highp\n"
 										  "#define IN in\n"
 										  "#define TEX2D texture\n"
-										  "layout (location = 0) out vec4 FRAGCOLOR;\n";
+										  "layout (location = 0) out vec4 FRAGCOLOR;\n"
+										  "uniform vec4 customData1;\n"  // HACK
+										  "uniform vec4 customData2;\n"; // HACK
 
 bool Preview::CompileShader(std::string& vs,
 							std::string& ps,

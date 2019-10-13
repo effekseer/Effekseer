@@ -569,6 +569,8 @@ struct MaterialData
 	ShadingModelType ShadingModel = ShadingModelType::Lit;
 	bool IsSimpleVertex = false;
 	bool IsRefractionRequired = false;
+	int32_t CustomData1 = 0;
+	int32_t CustomData2 = 0;
 	int32_t TextureCount = 0;
 	int32_t UniformCount = 0;
 	//! TODO remove magic number
@@ -2861,7 +2863,8 @@ public:
 		Vector2D	Positions[4];
 
 		RectF	UV;
-		Vector2D CustomData;
+		std::array<float, 4> CustomData1;
+		std::array<float, 4> CustomData2;
 	};
 
 public:
@@ -2943,7 +2946,8 @@ struct NodeRendererTextureUVTypeParameter;
 			float	Positions[4];
 
 			RectF	UV;
-			Vector2D CustomData;
+			std::array<float, 4> CustomData1;
+			std::array<float, 4> CustomData2;
 		};
 
 	public:
@@ -3033,7 +3037,8 @@ public:
 		Color		InnerColor;
 		
 		RectF	UV;
-		Vector2D CustomData;
+		std::array<float, 4> CustomData1;
+		std::array<float, 4> CustomData2;
 	};
 
 public:
@@ -3115,7 +3120,8 @@ public:
 		RectF			UV;
 		Color			AllColor;
 		int32_t			Time;
-		Vector2D CustomData;
+		std::array<float, 4> CustomData1;
+		std::array<float, 4> CustomData2;
 	};
 
 public:
@@ -3209,7 +3215,8 @@ struct NodeRendererTextureUVTypeParameter;
 			float	SizeBack;
 
 			RectF	UV;
-			Vector2D CustomData;
+			std::array<float, 4> CustomData1;
+			std::array<float, 4> CustomData2;
 		};
 
 	public:

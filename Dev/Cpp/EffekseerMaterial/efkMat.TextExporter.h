@@ -64,7 +64,8 @@ struct TextExporterResult
 	std::string Code;
 	int32_t ShadingModel = 0;
 	bool HasRefraction = false;
-
+	int32_t CustomData1 = 0;
+	int32_t CustomData2 = 0;
 	std::vector<std::shared_ptr<TextExporterUniform>> Uniforms;
 	std::vector<std::shared_ptr<TextExporterTexture>> Textures;
 };

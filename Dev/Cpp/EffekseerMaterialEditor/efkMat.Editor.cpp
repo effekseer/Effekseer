@@ -46,6 +46,11 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	efkMaterial.SetIsSimpleVertex(false);
 	efkMaterial.SetHasRefraction(result.HasRefraction);
 	efkMaterial.SetShadingModel(static_cast<Effekseer::ShadingModelType>(result.ShadingModel));
+	
+	// HACK (adhoc support in the editor)
+	//efkMaterial.SetCustomData1Count(result.CustomData1);
+	//efkMaterial.SetCustomData2Count(result.CustomData2);
+
 	efkMaterial.SetTextureCount(result.Textures.size());
 	efkMaterial.SetUniformCount(result.Uniforms.size());
 

@@ -704,6 +704,25 @@ EffectNodeImplemented::~EffectNodeImplemented()
 	ES_SAFE_DELETE(ScalingFCurve);
 }
 
+void EffectNodeImplemented::CalcCustomData(const Instance* instance, std::array<float, 4>& customData1, std::array<float, 4>& customData2)
+{
+	if (this->RendererCommon.BasicParameter.MaterialParameterPtr != nullptr)
+	{
+		if (this->RendererCommon.BasicParameter.MaterialParameterPtr->MaterialIndex >= 0)
+		{
+			auto material = m_effect->GetMaterial(this->RendererCommon.BasicParameter.MaterialParameterPtr->MaterialIndex);
+			if (material->CustomData1 > 0)
+			{
+				customData1 = instance->GetCustomData(0);
+			}
+			if (material->CustomData2 > 0)
+			{
+				customData2 = instance->GetCustomData(1);
+			}
+		}
+	}
+}
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

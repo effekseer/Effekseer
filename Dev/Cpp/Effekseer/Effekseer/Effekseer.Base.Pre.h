@@ -569,6 +569,8 @@ struct MaterialData
 	ShadingModelType ShadingModel = ShadingModelType::Lit;
 	bool IsSimpleVertex = false;
 	bool IsRefractionRequired = false;
+	int32_t CustomData1 = 0;
+	int32_t CustomData2 = 0;
 	int32_t TextureCount = 0;
 	int32_t UniformCount = 0;
 	//! TODO remove magic number
