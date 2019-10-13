@@ -804,6 +804,20 @@ int32_t ManagerImplemented::GetInstanceCount( Handle handle )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+int32_t ManagerImplemented::GetTotalInstanceCount()
+{
+	int32_t instanceCount = 0;
+	for( auto pair : m_DrawSets )
+	{
+		const DrawSet& drawSet = pair.second;
+		instanceCount += drawSet.GlobalPointer->GetInstanceCount();
+	}
+	return instanceCount;
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 Matrix43 ManagerImplemented::GetMatrix( Handle handle )
 {
 	if( m_DrawSets.count( handle ) > 0 )
