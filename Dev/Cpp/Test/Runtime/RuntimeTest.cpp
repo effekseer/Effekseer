@@ -12,13 +12,11 @@
 
 void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPath, std::string suffix)
 {
+	EffectPlatformInitializingParameter param;
+	platform->Initialize(param);
+
 	auto single10Test = [&](const char16_t* name, const char* savename) -> void {
 		srand(0);
-
-		EffectPlatformInitializingParameter param;
-
-		platform->Initialize(param);
-
 		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/" + name + u".efk").c_str());
 
 		for (size_t i = 0; i < 30; i++)
@@ -26,6 +24,7 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 			platform->Update();
 		}
 		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
+		platform->StopAllEffects();
 	};
 
 	single10Test(u"SimpleLaser", "SimpleLaser");
