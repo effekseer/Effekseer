@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Effekseer.h" />
+    <ClInclude Include="Effekseer.Internal.h" />
     <ClInclude Include="Effekseer\Culling\Culling3D.Grid.h" />
     <ClInclude Include="Effekseer\Culling\Culling3D.h" />
     <ClInclude Include="Effekseer\Culling\Culling3D.Layer.h" />
@@ -207,9 +208,11 @@
     <ClInclude Include="Effekseer\Effekseer.TextureLoader.h" />
     <ClInclude Include="Effekseer\Effekseer.Vector2D.h" />
     <ClInclude Include="Effekseer\Effekseer.Vector3D.h" />
+    <ClInclude Include="Effekseer\IO\Effekseer.EfkEfcFactory.h" />
     <ClInclude Include="Effekseer\Material\Effekseer.CompiledMaterial.h" />
     <ClInclude Include="Effekseer\Material\Effekseer.Material.h" />
     <ClInclude Include="Effekseer\Material\Effekseer.MaterialCompiler.h" />
+    <ClInclude Include="Effekseer\Parameter\Effekseer.Parameters.h" />
     <ClInclude Include="Effekseer\Renderer\Effekseer.ModelRenderer.h" />
     <ClInclude Include="Effekseer\Renderer\Effekseer.ParticleRenderer.h" />
     <ClInclude Include="Effekseer\Renderer\Effekseer.RibbonRenderer.h" />
@@ -255,9 +258,11 @@
     <ClCompile Include="Effekseer\Effekseer.Socket.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Vector2D.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Vector3D.cpp" />
+    <ClCompile Include="Effekseer\IO\Effekseer.EfkEfcFactory.cpp" />
     <ClCompile Include="Effekseer\Material\Effekseer.CompiledMaterial.cpp" />
     <ClCompile Include="Effekseer\Material\Effekseer.Material.cpp" />
     <ClCompile Include="Effekseer\Material\Effekseer.MaterialCompiler.cpp" />
+    <ClCompile Include="Effekseer\Parameter\Effekseer.Parameters.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

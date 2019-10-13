@@ -34,6 +34,12 @@
     <Filter Include="Effekseer\Material">
       <UniqueIdentifier>{c3571b2e-6d99-469f-8e43-e8b0caa5909c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effekseer\Parameter">
+      <UniqueIdentifier>{dbd840c0-393d-4363-90fd-f45fa8427a90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effekseer\IO">
+      <UniqueIdentifier>{dc983779-2340-4bac-9552-df6c23322e9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effekseer\Effekseer.Base.h">
@@ -217,6 +223,13 @@
     <ClInclude Include="Effekseer\Material\Effekseer.MaterialCompiler.h">
       <Filter>Effekseer\Material</Filter>
     </ClInclude>
+    <ClInclude Include="Effekseer.Internal.h" />
+    <ClInclude Include="Effekseer\Parameter\Effekseer.Parameters.h">
+      <Filter>Effekseer\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\IO\Effekseer.EfkEfcFactory.h">
+      <Filter>Effekseer\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp">
@@ -335,6 +348,12 @@
     </ClCompile>
     <ClCompile Include="Effekseer\Material\Effekseer.CompiledMaterial.cpp">
       <Filter>Effekseer\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Parameter\Effekseer.Parameters.cpp">
+      <Filter>Effekseer\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\IO\Effekseer.EfkEfcFactory.cpp">
+      <Filter>Effekseer\IO</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
