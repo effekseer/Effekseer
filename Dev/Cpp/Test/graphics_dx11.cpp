@@ -252,7 +252,7 @@ void InitGraphics(int width, int height )
 	vp.MaxDepth = 1.0f;
 	g_context->RSSetViewports(1, &vp);
 	
-	g_renderer = ::EffekseerRendererDX11::Renderer::Create( g_device, g_context, 2000 );
+	g_renderer = ::EffekseerRendererDX11::Renderer::Create( g_device, g_context, 16384 );
 	g_renderer->SetDistortingCallback(new DistortingCallbackDX11((::EffekseerRendererDX11::Renderer*)g_renderer));
 
 	g_renderer->SetProjectionMatrix( ::Effekseer::Matrix44().PerspectiveFovRH( 90.0f / 180.0f * 3.14f, (float)width / (float)height, 1.0f, 50.0f ) );
