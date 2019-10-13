@@ -134,8 +134,8 @@ int main()
 #endif
 
 #ifdef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
-	BasicRuntimeDeviceLostTest();
 	BasicRuntimeTest();
+	BasicRuntimeDeviceLostTest();
 #else
 
 	//TestShowEfcAssets();

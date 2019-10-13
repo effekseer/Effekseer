@@ -10,7 +10,7 @@ if (MSVC)
 endif()
 
 # 1.6
-option(ENABLED_NEW_FORMAT "Build with new format" OFF)
+set(ENABLED_NEW_FORMAT ON)
 
 # zlib
 ExternalProject_Add(
