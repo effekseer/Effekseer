@@ -2423,6 +2423,16 @@ public:
 	virtual int32_t GetInstanceCount( Handle handle ) = 0;
 
 	/**
+		@brief	全てのエフェクトに使用されているインスタンス数を取得する。
+		@return	インスタンス数
+		@note
+		Rootも個数に含まれる。つまり、Root削除をしていない限り、
+		Managerに残っているインスタンス数+エフェクトに使用されているインスタンス数は存在しているRootの数だけ
+		最初に確保した個数よりも多く存在する。
+	*/
+	virtual int32_t GetTotalInstanceCount() = 0;
+
+	/**
 		@brief	エフェクトのインスタンスに設定されている行列を取得する。
 		@param	handle	[in]	インスタンスのハンドル
 		@return	行列

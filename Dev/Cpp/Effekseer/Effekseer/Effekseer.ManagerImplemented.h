@@ -428,6 +428,8 @@ public:
 
 	int32_t GetInstanceCount( Handle handle ) override;
 
+	int32_t GetTotalInstanceCount() override;
+
 	/**
 		@brief	エフェクトのインスタンスに設定されている行列を取得する。
 		@param	handle	[in]	インスタンスのハンドル
