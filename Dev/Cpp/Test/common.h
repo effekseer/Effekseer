@@ -45,7 +45,8 @@ public:
 	}
 };
 
-#define EFK_LOCALFILE(fileName) TestHelper::GetLocalFileHelper(__FILE__, fileName).c_str()
+//#define EFK_LOCALFILE(fileName) TestHelper::GetLocalFileHelper(__FILE__, fileName).c_str()
+#define EFK_LOCALFILE(fileName) fileName
 
 //----------------------------------------------------------------------------------
 //
