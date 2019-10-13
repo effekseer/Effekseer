@@ -23,6 +23,250 @@
 namespace EffekseerRenderer
 {
 
+struct SimpleVertex
+{
+	::Effekseer::Vector3D Pos;
+	uint8_t Col[4];
+	float UV[2];
+
+	void SetColor(const ::Effekseer::Color& color)
+	{
+		Col[0] = color.R;
+		Col[1] = color.G;
+		Col[2] = color.B;
+		Col[3] = color.A;
+	}
+};
+
+struct SimpleVertexDX9
+{
+	::Effekseer::Vector3D Pos;
+	uint8_t Col[4];
+	float UV[2];
+
+	void SetColor(const ::Effekseer::Color& color)
+	{
+		Col[0] = color.B;
+		Col[1] = color.G;
+		Col[2] = color.R;
+		Col[3] = color.A;
+	}
+};
+
+struct VertexDistortion
+{
+	::Effekseer::Vector3D Pos;
+	uint8_t Col[4];
+	float UV[2];
+	::Effekseer::Vector3D Tangent;
+	::Effekseer::Vector3D Binormal;
+
+	void SetColor(const ::Effekseer::Color& color)
+	{
+		Col[0] = color.R;
+		Col[1] = color.G;
+		Col[2] = color.B;
+		Col[3] = color.A;
+	}
+};
+
+struct VertexDistortionDX9
+{
+	::Effekseer::Vector3D Pos;
+	uint8_t Col[4];
+	float UV[2];
+	::Effekseer::Vector3D Tangent;
+	::Effekseer::Vector3D Binormal;
+
+	void SetColor(const ::Effekseer::Color& color)
+	{
+		Col[0] = color.B;
+		Col[1] = color.G;
+		Col[2] = color.R;
+		Col[3] = color.A;
+	}
+};
+
+/**
+	@brief	a view class to access an array with a stride
+*/
+template <typename T> struct StrideView
+{
+	int32_t stride_;
+	uint8_t* pointer_;
+	uint8_t* pointerOrigin_;
+	
+#if _DEBUG
+	int32_t offset_;
+	int32_t elementCount_;
+#endif
+	
+	StrideView(void* pointer, int32_t stride, int32_t elementCount)
+		: stride_(stride)
+		, pointer_(reinterpret_cast<uint8_t*>(pointer))
+		, pointerOrigin_(reinterpret_cast<uint8_t*>(pointer))
+#if _DEBUG
+		, offset_(0)
+		, elementCount_(elementCount)
+#endif
+	{
+	}
+
+	T& operator[](int i) const { 
+#if _DEBUG
+		assert(i >= 0);
+		assert(i + offset_ < elementCount_);
+#endif
+		return *reinterpret_cast<T*>((pointer_ + stride_ * i)); 
+	}
+
+	StrideView& operator+=(const int& rhs)
+	{
+#if _DEBUG
+		offset_ += rhs;
+#endif
+		pointer_ += stride_ * rhs;
+		return *this;
+	}
+
+	void Reset() { 
+#if _DEBUG
+		offset_ = 0;
+#endif
+		pointer_ = pointerOrigin_; 
+	}
+};
+
+/**
+	@brief	a view class to access an array with a stride
+*/
+template<> struct StrideView<SimpleVertex>
+{
+	static const int32_t stride_ = sizeof(SimpleVertex);
+	uint8_t* pointer_;
+	uint8_t* pointerOrigin_;
+
+#if _DEBUG
+	int32_t offset_;
+	int32_t elementCount_;
+#endif
+
+	StrideView(void* pointer, int32_t stride, int32_t elementCount)
+		: pointer_(reinterpret_cast<uint8_t*>(pointer))
+		, pointerOrigin_(reinterpret_cast<uint8_t*>(pointer))
+#if _DEBUG
+		, offset_(0)
+		, elementCount_(elementCount)
+#endif
+	{
+		assert(stride_ == stride);
+	}
+
+	SimpleVertex& operator[](int i) const
+	{
+#if _DEBUG
+		assert(i >= 0);
+		assert(i + offset_ < elementCount_);
+#endif
+		return *reinterpret_cast<SimpleVertex*>((pointer_ + stride_ * i));
+	}
+
+	StrideView& operator+=(const int& rhs)
+	{
+#if _DEBUG
+		offset_ += rhs;
+#endif
+		pointer_ += stride_ * rhs;
+		return *this;
+	}
+
+	void Reset()
+	{
+#if _DEBUG
+		offset_ = 0;
+#endif
+		pointer_ = pointerOrigin_;
+	}
+};
+
+/**
+	@brief	a view class to access an array with a stride
+*/
+template <> struct StrideView<SimpleVertexDX9>
+{
+	static const int32_t stride_ = sizeof(SimpleVertexDX9);
+	uint8_t* pointer_;
+	uint8_t* pointerOrigin_;
+
+#if _DEBUG
+	int32_t offset_;
+	int32_t elementCount_;
+#endif
+
+	StrideView(void* pointer, int32_t stride, int32_t elementCount)
+		: pointer_(reinterpret_cast<uint8_t*>(pointer))
+		, pointerOrigin_(reinterpret_cast<uint8_t*>(pointer))
+#if _DEBUG
+		, offset_(0)
+		, elementCount_(elementCount)
+#endif
+	{
+		assert(stride_ == stride);
+	}
+
+	SimpleVertexDX9& operator[](int i) const
+	{
+#if _DEBUG
+		assert(i >= 0);
+		assert(i + offset_ < elementCount_);
+#endif
+		return *reinterpret_cast<SimpleVertexDX9*>((pointer_ + stride_ * i));
+	}
+
+	StrideView& operator+=(const int& rhs)
+	{
+#if _DEBUG
+		offset_ += rhs;
+#endif
+		pointer_ += stride_ * rhs;
+		return *this;
+	}
+
+	void Reset()
+	{
+#if _DEBUG
+		offset_ = 0;
+#endif
+		pointer_ = pointerOrigin_;
+	}
+};
+
+
+/**
+	@brief Spline generator
+	@note
+	Reference https://qiita.com/edo_m18/items/f2f0c6bf9032b0ec12d4
+*/
+class SplineGenerator
+{
+	std::vector<Effekseer::Vector3D> a;
+	std::vector<Effekseer::Vector3D> b;
+	std::vector<Effekseer::Vector3D> c;
+	std::vector<Effekseer::Vector3D> d;
+	std::vector<Effekseer::Vector3D> w;
+	std::vector<bool> isSame;
+
+public:
+	void AddVertex(const Effekseer::Vector3D& v);
+
+	void Calculate();
+
+	void Reset();
+
+	Effekseer::Vector3D GetValue(float t) const;
+};
+
+
 void ApplyDepthParameters(::Effekseer::Matrix43& mat,
 					  const ::Effekseer::Vector3D& cameraFront,
 					  const ::Effekseer::Vector3D& cameraPos,
@@ -43,7 +287,7 @@ void ApplyDepthParameters(::Effekseer::Matrix44& mat,
 						  bool isRightHand);
 
 template <typename Vertex>
-inline void TransformStandardVertexes( Vertex* vertexes, int32_t count, const ::Effekseer::Matrix43& mat )
+inline void TransformStandardVertexes( Vertex& vertexes, int32_t count, const ::Effekseer::Matrix43& mat )
 {
 	alignas(16) float Value3[4] = {mat.Value[3][0], mat.Value[3][1], mat.Value[3][2], 0.0f};
 #if defined(EFK_SSE2)
@@ -168,7 +412,7 @@ inline void TransformStandardVertexes( Vertex* vertexes, int32_t count, const ::
 }
 
 template <typename VertexDistortion>
-inline void TransformDistortionVertexes(VertexDistortion* vertexes, int32_t count, const ::Effekseer::Matrix43& mat)
+inline void TransformDistortionVertexes(VertexDistortion& vertexes, int32_t count, const ::Effekseer::Matrix43& mat)
 {
 	TransformStandardVertexes( vertexes, count, mat );
 

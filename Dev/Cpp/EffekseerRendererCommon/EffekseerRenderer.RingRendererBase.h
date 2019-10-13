@@ -42,6 +42,9 @@ protected:
 	::Effekseer::Matrix44			m_singleRenderingMatrix;
 	::Effekseer::RendererMaterialType materialType_ = ::Effekseer::RendererMaterialType::Default;
 
+	int32_t vertexCount_ = 0;
+	int32_t stride_ = 0;
+
 public:
 
 	RingRendererBase(RENDERER* renderer)
@@ -62,7 +65,7 @@ protected:
 	void BeginRendering_(RENDERER* renderer, int32_t count, const efkRingNodeParam& param)
 	{
 		m_spriteCount = 0;
-		int32_t vertexCount = param.VertexCount * 8;
+		int32_t singleVertexCount = param.VertexCount * 8;
 		m_instanceCount = count;
 
 		if (count == 1)
@@ -92,7 +95,10 @@ protected:
 		materialType_ = param.BasicParameterPtr->MaterialType;
 
 		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(
+			count * singleVertexCount, m_ringBufferOffset, stride_, (void*&)m_ringBufferData);
+
+		vertexCount_ = count * singleVertexCount;
 	}
 
 	void Rendering_(const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
@@ -252,14 +258,13 @@ protected:
 								 parameter.IsRightHand);
 		}
 
-		int32_t vertexCount = parameter.VertexCount * 8;
+		int32_t singleVertexCount = parameter.VertexCount * 8;
 		//Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * vertexCount );
 		
-		VERTEX* verteies = (VERTEX*)m_ringBufferData;
+		StrideView<VERTEX> verteies(m_ringBufferData, stride_, singleVertexCount);
+		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
 
-		auto vertexType = GetVertexType(verteies);
-
-		m_ringBufferData += sizeof(VERTEX) * vertexCount;
+		m_ringBufferData += stride_ * singleVertexCount;
 
 		const float circleAngleDegree = (instanceParameter.ViewingAngleEnd - instanceParameter.ViewingAngleStart);
 		const float stepAngleDegree = circleAngleDegree / (parameter.VertexCount);
@@ -308,7 +313,7 @@ protected:
 		float fadeStartAngle = parameter.StartingFade;
 		float fadeEndingAngle = parameter.EndingFade;
 
-		for( int i = 0; i < vertexCount; i += 8 )
+		for( int i = 0; i < singleVertexCount; i += 8 )
 		{
 			float old_c = cos_;
 			float old_s = sin_;
@@ -535,7 +540,7 @@ protected:
 		}
 		else
 		{
-			TransformVertexes(verteies, vertexCount, mat_rot);
+			TransformVertexes(verteies, singleVertexCount, mat_rot);
 		}
 
 		m_spriteCount += 2 * parameter.VertexCount;
