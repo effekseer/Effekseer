@@ -329,6 +329,9 @@ protected:
 			centerNext.Z = centerHeight;
 
 			currentAngleDegree += stepAngleDegree;
+
+			// for floating decimal point error
+			currentAngleDegree = Effekseer::Min(currentAngleDegree, circleAngleDegree);
 			float alpha = 1.0f;
 			if (currentAngleDegree < fadeStartAngle)
 			{

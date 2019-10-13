@@ -99,18 +99,18 @@ void EffectNodeRing::LoadRendererParameter(unsigned char*& pos, Setting* setting
 
 			if (viewingAngle.type == RingSingleParameter::Random)
 			{
-				Shape.StartingAngle.random.max = (360 - viewingAngle.random.max) / 2.0f + 90.0f;
-				Shape.StartingAngle.random.min = (360 - viewingAngle.random.min) / 2.0f + 90.0f;
+				Shape.StartingAngle.random.max = (360 - viewingAngle.random.min) / 2.0f + 90.0f;
+				Shape.StartingAngle.random.min = (360 - viewingAngle.random.max) / 2.0f + 90.0f;
 				Shape.EndingAngle.random.max = 360.0f - (360 - viewingAngle.random.max) / 2.0f + 90.0f;
 				Shape.EndingAngle.random.min = 360.0f - (360 - viewingAngle.random.min) / 2.0f + 90.0f;
 			}
 
 			if (viewingAngle.type == RingSingleParameter::Easing)
 			{
-				Shape.StartingAngle.easing.start.max = (360 - viewingAngle.easing.start.max) / 2.0f + 90.0f;
-				Shape.StartingAngle.easing.start.min = (360 - viewingAngle.easing.start.min) / 2.0f + 90.0f;
-				Shape.StartingAngle.easing.end.max = (360 - viewingAngle.easing.end.max) / 2.0f + 90.0f;
-				Shape.StartingAngle.easing.end.min = (360 - viewingAngle.easing.end.min) / 2.0f + 90.0f;
+				Shape.StartingAngle.easing.start.max = (360 - viewingAngle.easing.start.min) / 2.0f + 90.0f;
+				Shape.StartingAngle.easing.start.min = (360 - viewingAngle.easing.start.max) / 2.0f + 90.0f;
+				Shape.StartingAngle.easing.end.max = (360 - viewingAngle.easing.end.min) / 2.0f + 90.0f;
+				Shape.StartingAngle.easing.end.min = (360 - viewingAngle.easing.end.max) / 2.0f + 90.0f;
 				Shape.EndingAngle.easing.start.max = 360.0f - (360 - viewingAngle.easing.start.max) / 2.0f + 90.0f;
 				Shape.EndingAngle.easing.start.min = 360.0f - (360 - viewingAngle.easing.start.min) / 2.0f + 90.0f;
 				Shape.EndingAngle.easing.end.max = 360.0f - (360 - viewingAngle.easing.end.max) / 2.0f + 90.0f;
