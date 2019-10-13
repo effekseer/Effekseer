@@ -65,6 +65,7 @@ file(GLOB effekseer_h
 	Effekseer/Effekseer/Renderer/*.h
 	Effekseer/Effekseer/Culling/*.h
 	Effekseer/Effekseer/Material/*.h
+	Effekseer/Effekseer/Parameter/*.h
 	Effekseer/Effekseer/IO/*.h)
 
 set(effekseer_src
@@ -107,6 +108,7 @@ set(effekseer_src
 	Effekseer/Effekseer/Material/Effekseer.CompiledMaterial.cpp
 	Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.cpp
 	Effekseer/Effekseer/IO/Effekseer.EfkEfcFactory.cpp
+	Effekseer/Effekseer/Parameter/Effekseer.Parameters.cpp
 )
 
 file(GLOB effekseer_renderer_common_h

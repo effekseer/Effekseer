@@ -10,6 +10,9 @@ class CreateHeader:
 	def __init__(self):
 		self.lines = []
 
+	def addLine(self,line):
+		self.lines.append(line + '\n')
+
 	def readLines(self,path):
 		f = codecs.open(path, 'r','utf-8_sig')
 		line = f.readline()
@@ -63,6 +66,15 @@ effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Server.h')
 effekseerHeader.readLines('Effekseer/Effekseer/Effekseer.Client.h')
 
 effekseerHeader.output('Effekseer/Effekseer.h')
+
+effekseerInternalHeader = CreateHeader()
+effekseerInternalHeader.addLine('#pragma once')
+effekseerInternalHeader.addLine('#include "Effekseer.h"')
+effekseerInternalHeader.addLine('')
+effekseerInternalHeader.addLine('// A header to access internal data of effekseer')
+effekseerInternalHeader.addLine('')
+effekseerInternalHeader.readLines('Effekseer/Effekseer/Parameter/Effekseer.Parameters.h')
+effekseerInternalHeader.output('Effekseer/Effekseer.Internal.h')
 
 effekseerRendererDX9Header = CreateHeader()
 effekseerRendererDX9Header.readLines('EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.Base.Pre.h')

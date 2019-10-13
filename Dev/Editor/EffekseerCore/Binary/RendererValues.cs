@@ -6,6 +6,97 @@ using Effekseer.Utl;
 
 namespace Effekseer.Binary
 {
+	class RingShapeParameter
+	{
+		public static byte[] GetBytes(Data.RingShapeParameter value)
+		{
+			List<byte[]> data = new List<byte[]>();
+			data.Add(BitConverter.GetBytes((int)value.Type.Value));
+
+			if(value.Type.Value == Data.RingShapeType.Donut)
+			{
+			}
+			else if (value.Type.Value == Data.RingShapeType.Crescent)
+			{
+				data.Add(BitConverter.GetBytes(value.Crescent.StartingFade.Value));
+				data.Add(BitConverter.GetBytes(value.Crescent.EndingFade.Value));
+
+				data.Add(((int)value.Crescent.StartingAngle.Value).GetBytes());
+
+				if (value.Crescent.StartingAngle.Value == Data.FixedRandomEasingType.Fixed)
+				{
+					data.Add(value.Crescent.StartingAngle_Fixed.Value.GetBytes());
+				}
+				else if (value.Crescent.StartingAngle.Value == Data.FixedRandomEasingType.Random)
+				{
+					data.Add(value.Crescent.StartingAngle_Random.Max.GetBytes());
+					data.Add(value.Crescent.StartingAngle_Random.Min.GetBytes());
+				}
+				if (value.Crescent.StartingAngle.Value == Data.FixedRandomEasingType.Easing)
+				{
+					var easing = Utl.MathUtl.Easing(
+						(float)value.Crescent.StartingAngle_Easing.StartSpeed.Value,
+						(float)value.Crescent.StartingAngle_Easing.EndSpeed.Value);
+
+					data.Add(value.Crescent.StartingAngle_Easing.Start.Max.GetBytes());
+					data.Add(value.Crescent.StartingAngle_Easing.Start.Min.GetBytes());
+					data.Add(value.Crescent.StartingAngle_Easing.End.Max.GetBytes());
+					data.Add(value.Crescent.StartingAngle_Easing.End.Min.GetBytes());
+					data.Add(BitConverter.GetBytes(easing[0]));
+					data.Add(BitConverter.GetBytes(easing[1]));
+					data.Add(BitConverter.GetBytes(easing[2]));
+				}
+
+				data.Add(((int)value.Crescent.EndingAngle.Value).GetBytes());
+
+				if (value.Crescent.EndingAngle.Value == Data.FixedRandomEasingType.Fixed)
+				{
+					data.Add(value.Crescent.EndingAngle_Fixed.Value.GetBytes());
+				}
+				else if (value.Crescent.EndingAngle.Value == Data.FixedRandomEasingType.Random)
+				{
+					data.Add(value.Crescent.EndingAngle_Random.Max.GetBytes());
+					data.Add(value.Crescent.EndingAngle_Random.Min.GetBytes());
+				}
+				if (value.Crescent.EndingAngle.Value == Data.FixedRandomEasingType.Easing)
+				{
+					var easing = Utl.MathUtl.Easing(
+						(float)value.Crescent.EndingAngle_Easing.StartSpeed.Value,
+						(float)value.Crescent.EndingAngle_Easing.EndSpeed.Value);
+
+					data.Add(value.Crescent.EndingAngle_Easing.Start.Max.GetBytes());
+					data.Add(value.Crescent.EndingAngle_Easing.Start.Min.GetBytes());
+					data.Add(value.Crescent.EndingAngle_Easing.End.Max.GetBytes());
+					data.Add(value.Crescent.EndingAngle_Easing.End.Min.GetBytes());
+					data.Add(BitConverter.GetBytes(easing[0]));
+					data.Add(BitConverter.GetBytes(easing[1]));
+					data.Add(BitConverter.GetBytes(easing[2]));
+				}
+			}
+
+			return data.SelectMany(_ => _).ToArray();
+		}
+	}
+
+	class TextureUVTypeParameter
+	{
+		public static byte[] GetBytes(Data.TextureUVTypeParameter value)
+		{
+			List<byte[]> data = new List<byte[]>();
+			data.Add(BitConverter.GetBytes((int)value.Type.Value));
+
+			if(value.Type.Value == Data.TextureUVType.Tile)
+			{
+				data.Add(value.TileEdgeHead.Value.GetBytes());
+				data.Add(value.TileEdgeTail.Value.GetBytes());
+				data.Add(value.TileLoopingArea.X.Value.GetBytes());
+				data.Add(value.TileLoopingArea.Y.GetBytes());
+			}
+
+			return data.SelectMany(_ => _).ToArray();
+		}
+	}
+
 	class RendererValues
 	{
 		public static byte[] GetBytes(Data.RendererValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> model_and_index)
@@ -134,7 +225,7 @@ namespace Effekseer.Binary
 				//data.Add(ribbonParamater.AlphaBlend);
 
 				// texture uv mode from 1.5
-				data.Add(BitConverter.GetBytes((int)value.TextureUVMode.Type.Value));
+				data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
 
 				if (ribbonParamater.ViewpointDependent)
 				{
@@ -224,10 +315,12 @@ namespace Effekseer.Binary
                 data.Add(ringParamater.Billboard);
 
 				// from 1.5
-				data.Add(((int)ringParamater.RingShape.Type.Value).GetBytes());
+				data.Add(RingShapeParameter.GetBytes(ringParamater.RingShape));
 
                 data.Add(ringParamater.VertexCount.Value.GetBytes());
 
+				// viewing angle (it will removed)
+				
                 data.Add(ringParamater.ViewingAngle);
                 if (ringParamater.ViewingAngle.GetValue() == Data.RendererValues.RingParamater.ViewingAngleType.Fixed)
                 {
@@ -252,6 +345,7 @@ namespace Effekseer.Binary
                     data.Add(BitConverter.GetBytes(easing[1]));
                     data.Add(BitConverter.GetBytes(easing[2]));
                 }
+				
 
                 data.Add(ringParamater.Outer);
                 if (ringParamater.Outer.GetValue() == Data.RendererValues.RingParamater.LocationType.Fixed)
@@ -439,7 +533,7 @@ namespace Effekseer.Binary
 			else if (value.Type.Value == Data.RendererValues.ParamaterType.Track)
 			{
 				// texture uv mode from 1.5
-				data.Add(BitConverter.GetBytes((int)value.TextureUVMode.Type.Value));
+				data.Add(TextureUVTypeParameter.GetBytes(value.TextureUVType));
 
 				var param = value.Track;
 				data.Add(param.TrackSizeFor);

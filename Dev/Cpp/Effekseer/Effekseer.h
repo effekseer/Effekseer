@@ -2897,6 +2897,9 @@ public:
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+struct NodeRendererTextureUVTypeParameter;
+
 	//----------------------------------------------------------------------------------
 	//
 	//----------------------------------------------------------------------------------
@@ -2922,7 +2925,7 @@ namespace Effekseer
 			int32_t				SplineDivision;
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
-
+			NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
 			//RendererMaterialType MaterialType = RendererMaterialType::Default;
 			//MaterialParameter* MaterialParameterPtr = nullptr;
 		};
@@ -2999,7 +3002,8 @@ public:
 		BillboardType		Billboard;
 		int32_t				VertexCount;
 		bool				IsRightHand;
-
+		float StartingFade = 0.0f;
+		float EndingFade = 0.0f;
 		//bool				Distortion;
 		//float				DistortionIntensity;
 
@@ -3019,7 +3023,8 @@ public:
 	struct InstanceParameter
 	{
 		Matrix43	SRTMatrix43;
-		float		ViewingAngle;
+		float ViewingAngleStart;
+		float ViewingAngleEnd;
 		Vector2D	OuterLocation;
 		Vector2D	InnerLocation;
 		float		CenterRatio;
@@ -3146,6 +3151,9 @@ public:
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+struct NodeRendererTextureUVTypeParameter;
+
 	//----------------------------------------------------------------------------------
 	//
 	//----------------------------------------------------------------------------------
@@ -3171,6 +3179,7 @@ namespace Effekseer
 
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+			NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
 
 			RendererMaterialType MaterialType = RendererMaterialType::Default;
 			MaterialParameter* MaterialParameterPtr = nullptr;
