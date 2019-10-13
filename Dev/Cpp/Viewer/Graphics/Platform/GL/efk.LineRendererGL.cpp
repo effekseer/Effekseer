@@ -150,11 +150,11 @@ static const char g_sprite_fs_no_texture_src[] =
 	{
 		EffekseerRendererGL::Vertex v0;
 		v0.Pos = p1;
-		v0.Col = c;
+		v0.SetColor(c);
 
 		EffekseerRendererGL::Vertex v1;
 		v1.Pos = p2;
-		v1.Col = c;
+		v1.SetColor(c);
 
 		vertexies.push_back(v0);
 		vertexies.push_back(v1);

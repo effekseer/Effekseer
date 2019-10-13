@@ -46,6 +46,8 @@ protected:
 	};
 
 	std::vector<KeyValue>				instances;
+	int32_t vertexCount_ = 0;
+	int32_t stride_ = 0;
 
 public:
 
@@ -86,8 +88,11 @@ protected:
 
 		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
 
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * 4, m_ringBufferOffset, (void*&) m_ringBufferData);
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(
+			count * 4, m_ringBufferOffset, stride_, (void*&)m_ringBufferData);
 		m_spriteCount = 0;
+
+		vertexCount_ = count * 4;
 
 		instances.clear();
 	}
@@ -139,10 +144,10 @@ protected:
 	{
 		if( m_ringBufferData == nullptr ) return;
 
-		VERTEX* verteies = (VERTEX*)m_ringBufferData;
-		m_ringBufferData += (sizeof(VERTEX) * 4);
+		StrideView<VERTEX> verteies(m_ringBufferData, stride_, 4);
+		m_ringBufferData += (stride_ * 4);
 
-		auto vertexType = GetVertexType(verteies);
+		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
 
 		for( int i = 0; i < 4; i++ )
 		{
@@ -168,7 +173,7 @@ protected:
 		// distortion
 		if (vertexType == VertexType::Distortion)
 		{
-			auto vs = (VERTEX_DISTORTION*) verteies;
+			StrideView<VERTEX_DISTORTION> vs(verteies.pointerOrigin_, stride_, 4);
 			for (auto i = 0; i < 4; i++)
 			{
 				vs[i].Tangent.X = 1.0f;
@@ -181,7 +186,7 @@ protected:
 		}
 		else if (vertexType == VertexType::Dynamic)
 		{
-			auto vs = (DynamicVertex*)verteies;
+			StrideView<DynamicVertex> vs(verteies.pointerOrigin_, stride_, 4);
 			vs[0].UV2[0] = 0.0f;
 			vs[0].UV2[1] = 1.0f;
 			vs[1].UV2[0] = 1.0f;
@@ -294,7 +299,7 @@ protected:
 
 			if (vertexType == VertexType::Dynamic)
 			{
-				auto vs = (DynamicVertex*)verteies;
+				StrideView<DynamicVertex> vs(verteies.pointerOrigin_, stride_, 4);
 				for (auto i = 0; i < 4; i++)
 				{
 					vs[i].Normal = PackVector3DF(-F);

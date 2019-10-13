@@ -10,48 +10,12 @@
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
 
-//----------------------------------------------------------------------------------
-// Lib
-//----------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace EffekseerRendererGL
 {
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct Vertex
-{
-	::Effekseer::Vector3D	Pos;
-	::Effekseer::Color		Col;
-	float					UV[2];
+using Vertex = EffekseerRenderer::SimpleVertex;
+using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
-	void SetColor( const ::Effekseer::Color& color )
-	{
-		Col = color;
-	}
-};
-
-struct VertexDistortion
-{
-	::Effekseer::Vector3D	Pos;
-	::Effekseer::Color		Col;
-	float					UV[2];
-	::Effekseer::Vector3D	Tangent;
-	::Effekseer::Vector3D	Binormal;
-
-	void SetColor(const ::Effekseer::Color& color)
-	{
-		Col = color;
-	}
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 struct RenderStateSet
 {
 	GLboolean	blend;
@@ -89,7 +53,7 @@ private:
 	Shader* m_shader_lighting = nullptr;
 	Shader* currentShader = nullptr;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>*	m_standardRenderer;
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* m_standardRenderer;
 
 	VertexArray* m_vao = nullptr;
 	VertexArray* m_vao_distortion = nullptr;
@@ -295,7 +259,11 @@ public:
 
 	void SetDistortingCallback(EffekseerRenderer::DistortingCallback* callback) override;
 
-	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>* GetStandardRenderer() { return m_standardRenderer; }
+	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>*
+	GetStandardRenderer()
+	{
+		return m_standardRenderer;
+	}
 
 	void SetVertexBuffer( VertexBuffer* vertexBuffer, int32_t size );
 	void SetVertexBuffer(GLuint vertexBuffer, int32_t size);

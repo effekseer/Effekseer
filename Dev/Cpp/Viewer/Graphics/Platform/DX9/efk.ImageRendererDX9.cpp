@@ -74,7 +74,7 @@ namespace efk
 			s.Verteies[i].Pos = positions[i];
 			s.Verteies[i].UV[0] = uvs[i].X;
 			s.Verteies[i].UV[1] = uvs[i].Y;
-			s.Verteies[i].Col = D3DCOLOR_ARGB(colors[i].A, colors[i].R, colors[i].G, colors[i].B);
+			s.Verteies[i].SetColor(colors[i]);
 		}
 
 		s.TexturePtr = texturePtr;

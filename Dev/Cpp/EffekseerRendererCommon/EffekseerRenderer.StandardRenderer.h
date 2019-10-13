@@ -217,7 +217,7 @@ private:
 	std::vector<uint8_t> vertexCaches;
 	int32_t renderVertexMaxSize;
 
-	bool m_isDistortionMode;
+	bool isDistortionMode_;
 	bool isDynamicVertexMode_ = false;
 
 	struct VertexConstantBuffer
@@ -252,7 +252,7 @@ private:
 public:
 	StandardRenderer(
 		RENDERER* renderer, SHADER* shader, SHADER* shader_distortion)
-		: renderVertexMaxSize(0), m_isDistortionMode(false)
+		: renderVertexMaxSize(0), isDistortionMode_(false)
 	{
 		m_renderer = renderer;
 		m_shader = shader;
@@ -268,6 +268,24 @@ public:
 	{
 	}
 
+	int32_t CalculateCurrentStride() const
+	{
+		int32_t stride = 0;
+		if (isDynamicVertexMode_)
+		{
+			stride = (int32_t)sizeof(DynamicVertex);
+		}
+		else if (isDistortionMode_)
+		{
+			stride = (int32_t)sizeof(VERTEX_DISTORTION);
+		}
+		else
+		{
+			stride = (int32_t)sizeof(VERTEX);
+		}
+		return stride;
+	}
+
 	void UpdateStateAndRenderingIfRequired(StandardRendererState state)
 	{
 		if (m_state != state)
@@ -279,45 +297,21 @@ public:
 
 		isDynamicVertexMode_ = (m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex) || 
 			m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting;
-		m_isDistortionMode = m_state.Distortion;
+		isDistortionMode_ = m_state.Distortion;
 	}
 
-	void BeginRenderingAndRenderingIfRequired(int32_t count, int32_t& offset, void*& data)
+	void BeginRenderingAndRenderingIfRequired(int32_t count, int32_t& offset, int& stride, void*& data)
 	{
-		if (isDynamicVertexMode_)
+		stride = CalculateCurrentStride();
+
 		{
-			if (count * (int32_t)sizeof(DynamicVertex) + (int32_t)vertexCaches.size() > renderVertexMaxSize)
+			if (count * stride + (int32_t)vertexCaches.size() > renderVertexMaxSize)
 			{
 				Rendering();
 			}
 
 			auto old = vertexCaches.size();
-			vertexCaches.resize(count * sizeof(DynamicVertex) + vertexCaches.size());
-			offset = (int32_t)old;
-			data = (vertexCaches.data() + old);
-
-		}
-		else if (m_isDistortionMode)
-		{
-			if (count * (int32_t)sizeof(VERTEX_DISTORTION) + (int32_t)vertexCaches.size() > renderVertexMaxSize)
-			{
-				Rendering();
-			}
-
-			auto old = vertexCaches.size();
-			vertexCaches.resize(count * sizeof(VERTEX_DISTORTION) + vertexCaches.size());
-			offset = (int32_t)old;
-			data = (vertexCaches.data() + old);
-		}
-		else
-		{
-			if (count * (int32_t)sizeof(VERTEX) + (int32_t)vertexCaches.size() > renderVertexMaxSize)
-			{
-				Rendering();
-			}
-
-			auto old = vertexCaches.size();
-			vertexCaches.resize(count * sizeof(VERTEX) + vertexCaches.size());
+			vertexCaches.resize(count * stride + vertexCaches.size());
 			offset = (int32_t)old;
 			data = (vertexCaches.data() + old);
 		}
@@ -339,22 +333,7 @@ public:
 		if (vertexCaches.size() == 0)
 			return;
 
-		auto vsize = 0;
-
-		if ((m_state.MaterialPtr != nullptr && !m_state.MaterialPtr->IsSimpleVertex) ||
-			m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
-		{
-			vsize = sizeof(DynamicVertex);
-		}
-		else if (m_state.Distortion)
-		{
-			vsize = sizeof(VERTEX_DISTORTION);
-		}
-		else
-		{
-			vsize = sizeof(VERTEX);
-		}
-
+		int32_t stride = CalculateCurrentStride();
 
 		int32_t passNum = 1;
 
@@ -379,10 +358,10 @@ public:
 				if (renderBufferSize > renderVertexMaxSize)
 				{
 					renderBufferSize =
-						(Effekseer::Min(renderVertexMaxSize, (int32_t)vertexCaches.size() - offset) / (vsize * 4)) * (vsize * 4);
+						(Effekseer::Min(renderVertexMaxSize, (int32_t)vertexCaches.size() - offset) / (stride * 4)) * (stride * 4);
 				}
 
-				Rendering_(mCamera, mProj, offset, renderBufferSize, vsize, passInd);
+				Rendering_(mCamera, mProj, offset, renderBufferSize, stride, passInd);
 
 				offset += renderBufferSize;
 
@@ -394,7 +373,7 @@ public:
 		vertexCaches.clear();
 	}
 
-	void Rendering_(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj, int32_t bufferOffset, int32_t bufferSize, int32_t singleVertexSize, int32_t renderPass)
+	void Rendering_(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj, int32_t bufferOffset, int32_t bufferSize, int32_t stride, int32_t renderPass)
 	{
 		bool isBackgroundRequired = false;
 		
@@ -426,7 +405,7 @@ public:
 
 			void* vbData = nullptr;
 
-			if (vb->RingBufferLock(vertexSize, vbOffset, vbData, singleVertexSize * 4))
+			if (vb->RingBufferLock(vertexSize, vbOffset, vbData, stride * 4))
 			{
 				assert(vbData != nullptr);
 				memcpy(vbData, vertexCaches.data() + bufferOffset, vertexSize);
@@ -721,12 +700,12 @@ public:
 
 		m_renderer->GetRenderState()->Update(distortion);
 
-		assert(vbOffset % singleVertexSize == 0);
+		assert(vbOffset % stride == 0);
 
-		m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), singleVertexSize);
+		m_renderer->SetVertexBuffer(m_renderer->GetVertexBuffer(), stride);
 		m_renderer->SetIndexBuffer(m_renderer->GetIndexBuffer());
 		m_renderer->SetLayout(shader_);
-		m_renderer->DrawSprites(vertexSize / singleVertexSize / 4, vbOffset / singleVertexSize);
+		m_renderer->DrawSprites(vertexSize / stride / 4, vbOffset / stride);
 
 		m_renderer->EndShader(shader_);
 
