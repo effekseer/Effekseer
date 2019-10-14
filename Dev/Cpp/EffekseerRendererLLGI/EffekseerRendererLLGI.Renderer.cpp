@@ -743,11 +743,11 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 	LLGI::SafeRelease(constantBufferPS);
 }
 
-Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) const
+Shader* RendererImplemented::GetShader(bool useTexture, ::Effekseer::RendererMaterialType materialType) const
 {
-	if (useDistortion)
+	if (materialType == ::Effekseer::RendererMaterialType::BackDistortion)
 	{
-		if (useTexture && m_renderMode == Effekseer::RenderMode::Normal)
+		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
 		{
 			return m_shader_distortion;
 		}
@@ -756,9 +756,24 @@ Shader* RendererImplemented::GetShader(bool useTexture, bool useDistortion) cons
 			return m_shader_distortion;
 		}
 	}
+	else if (materialType == ::Effekseer::RendererMaterialType::Lighting)
+	{
+		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
+		{
+			// TODO : implement
+			return m_shader;
+			//return m_shader_lighting;
+		}
+		else
+		{
+			// TODO : implement
+			return m_shader;
+			//return m_shader_lighting;
+		}
+	}
 	else
 	{
-		if (useTexture && m_renderMode == Effekseer::RenderMode::Normal)
+		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
 		{
 			return m_shader;
 		}
