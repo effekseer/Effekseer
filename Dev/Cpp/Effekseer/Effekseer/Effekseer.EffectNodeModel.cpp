@@ -151,7 +151,7 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		instanceParameter.Time = (int32_t)instance.m_LivingTime;
 
 		instanceParameter.UV = instance.GetUV();
-		instanceParameter.CustomData = instance.GetCustomData();
+		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
 		Color _color;
 		if (RendererCommon.ColorBindType == BindType::Always || RendererCommon.ColorBindType == BindType::WhenCreating)

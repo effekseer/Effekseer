@@ -262,12 +262,12 @@ namespace Effekseer.Binary
 
 			// Custom data1 from 1.5
 			data.Add(value.CustomData1.CustomData);
-			if(value.CustomData1.CustomData.Value == Data.CustomDataType.Fixed)
+			if(value.CustomData1.CustomData.Value == Data.CustomDataType.Fixed2D)
 			{
 				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.X.Value));
 				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.Y.Value));
 			}
-			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.Easing)
+			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.Easing2D)
 			{
 				var easing = Utl.MathUtl.Easing((float)value.CustomData1.Easing.StartSpeed.Value, (float)value.CustomData1.Easing.EndSpeed.Value);
 
@@ -280,21 +280,26 @@ namespace Effekseer.Binary
 				var __data = _data.ToArray().ToArray();
 				data.Add(__data);
 			}
-			else if(value.CustomData1.CustomData.Value == Data.CustomDataType.FCurve)
+			else if(value.CustomData1.CustomData.Value == Data.CustomDataType.FCurve2D)
 			{
 				var value_ = value.CustomData1.FCurve;
 				var bytes1 = value_.GetBytes(1.0f);
 				data.Add(bytes1);
 			}
+			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.FCurveColor)
+			{
+				var bytes = value.CustomData1.FCurveColor.GetBytes();
+				data.Add(bytes);
+			}
 
 			// Custom data2 from 1.5
 			data.Add(value.CustomData2.CustomData);
-			if (value.CustomData2.CustomData.Value == Data.CustomDataType.Fixed)
+			if (value.CustomData2.CustomData.Value == Data.CustomDataType.Fixed2D)
 			{
 				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed.X.Value));
 				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed.Y.Value));
 			}
-			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.Easing)
+			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.Easing2D)
 			{
 				var easing = Utl.MathUtl.Easing((float)value.CustomData2.Easing.StartSpeed.Value, (float)value.CustomData2.Easing.EndSpeed.Value);
 
@@ -307,11 +312,16 @@ namespace Effekseer.Binary
 				var __data = _data.ToArray().ToArray();
 				data.Add(__data);
 			}
-			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.FCurve)
+			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.FCurve2D)
 			{
 				var value_ = value.CustomData2.FCurve;
 				var bytes1 = value_.GetBytes(1.0f);
 				data.Add(bytes1);
+			}
+			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.FCurveColor)
+			{
+				var bytes = value.CustomData2.FCurveColor.GetBytes();
+				data.Add(bytes);
 			}
 
 			return data.ToArray().ToArray();

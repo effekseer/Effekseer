@@ -63,7 +63,8 @@ public:
 		Vector2D	Positions[4];
 
 		RectF	UV;
-		Vector2D CustomData;
+		std::array<float, 4> CustomData1;
+		std::array<float, 4> CustomData2;
 	};
 
 public:

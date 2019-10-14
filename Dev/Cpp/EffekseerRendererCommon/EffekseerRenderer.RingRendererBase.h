@@ -44,6 +44,8 @@ protected:
 
 	int32_t vertexCount_ = 0;
 	int32_t stride_ = 0;
+	int32_t customData1Count_ = 0;
+	int32_t customData2Count_ = 0;
 
 public:
 
@@ -92,11 +94,13 @@ protected:
 											   param.BasicParameterPtr->Texture1Index,
 											   param.BasicParameterPtr->Texture2Index);
 
+		customData1Count_ = state.CustomData1Count;
+		customData2Count_ = state.CustomData2Count;
+
 		materialType_ = param.BasicParameterPtr->MaterialType;
 
 		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(
-			count * singleVertexCount, m_ringBufferOffset, stride_, (void*&)m_ringBufferData);
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * singleVertexCount, stride_, (void*&)m_ringBufferData);
 
 		vertexCount_ = count * singleVertexCount;
 	}
@@ -263,8 +267,6 @@ protected:
 		
 		StrideView<VERTEX> verteies(m_ringBufferData, stride_, singleVertexCount);
 		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
-
-		m_ringBufferData += stride_ * singleVertexCount;
 
 		const float circleAngleDegree = (instanceParameter.ViewingAngleEnd - instanceParameter.ViewingAngleStart);
 		const float stepAngleDegree = circleAngleDegree / (parameter.VertexCount);
@@ -543,7 +545,31 @@ protected:
 			TransformVertexes(verteies, singleVertexCount, mat_rot);
 		}
 
+		// custom parameter
+		if (customData1Count_ > 0)
+		{
+			StrideView<float> custom(m_ringBufferData + sizeof(DynamicVertex), stride_, singleVertexCount);
+			for (int i = 0; i < singleVertexCount; i++)
+			{
+				auto c = (float*)(&custom[i]);
+				memcpy(c, instanceParameter.CustomData1.data(), sizeof(float) * customData1Count_);
+			}
+		}
+
+		if (customData2Count_ > 0)
+		{
+			StrideView<float> custom(
+				m_ringBufferData + sizeof(DynamicVertex) + sizeof(float) * customData1Count_, stride_, singleVertexCount);
+			for (int i = 0; i < singleVertexCount; i++)
+			{
+				auto c = (float*)(&custom[i]);
+				memcpy(c, instanceParameter.CustomData2.data(), sizeof(float) * customData2Count_);
+			}
+		}
+
 		m_spriteCount += 2 * parameter.VertexCount;
+		m_ringBufferData += stride_ * singleVertexCount;
+
 	}
 
 	void EndRendering_(RENDERER* renderer, const efkRingNodeParam& param)

@@ -26,14 +26,31 @@ namespace Effekseer.Data
 
 	public enum CustomDataType
 	{
+		[Name(language = Language.Japanese, value = "なし")]
+		[Name(language = Language.English, value = "None")]
 		None = 0,
-		Fixed = 1,
-		Easing = 2,
-		FCurve = 3,
+
+		[Name(language = Language.Japanese, value = "固定2")]
+		[Name(language = Language.English, value = "Fixed2")]
+		Fixed2D = 20,
+
+		[Name(language = Language.Japanese, value = "イージング2")]
+		[Name(language = Language.English, value = "Easing2")]
+		Easing2D = 22,
+
+		[Name(language = Language.Japanese, value = "Fカーブ2")]
+		[Name(language = Language.English, value = "FCurve2")]
+		FCurve2D = 23,
+
+		[Name(language = Language.Japanese, value = "Fカーブ色")]
+		[Name(language = Language.English, value = "FCurve-Color")]
+		FCurveColor = 53,
 	}
 
 	public class CustomDataParameter
 	{
+		[Name(language = Language.Japanese, value = "カスタムデータ")]
+		[Name(language = Language.English, value = "Custom Data")]
 		[Selector(ID = 10)]
 		public Value.Enum<CustomDataType> CustomData
 		{
@@ -41,14 +58,17 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Selected(ID = 10, Value = (int)CustomDataType.Fixed)]
+		[Selected(ID = 10, Value = (int)CustomDataType.Fixed2D)]
 		public Value.Vector2D Fixed { get; private set; }
 
-		[Selected(ID = 10, Value = (int)CustomDataType.Easing)]
+		[Selected(ID = 10, Value = (int)CustomDataType.Easing2D)]
 		public Vector2DEasingParamater Easing { get; private set; }
 
-		[Selected(ID = 10, Value = (int)CustomDataType.FCurve)]
+		[Selected(ID = 10, Value = (int)CustomDataType.FCurve2D)]
 		public Value.FCurveVector2D FCurve { get; private set; }
+
+		[Selected(ID = 10, Value = (int)CustomDataType.FCurveColor)]
+		public Value.FCurveColorRGBA FCurveColor { get; private set; }
 
 		public CustomDataParameter()
 		{
@@ -56,6 +76,7 @@ namespace Effekseer.Data
 			Fixed = new Value.Vector2D();
 			Easing = new Vector2DEasingParamater();
 			FCurve = new Value.FCurveVector2D();
+			FCurveColor = new Value.FCurveColorRGBA();
 		}
 	}
 

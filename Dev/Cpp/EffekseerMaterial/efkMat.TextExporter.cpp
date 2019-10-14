@@ -20,6 +20,35 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	// Generate wrapper with variables
 	std::reverse(nodes.begin(), nodes.end());
 
+	// Check custom data
+	int32_t customData1Count = 0;
+	int32_t customData2Count = 0;
+
+	for (auto& node : nodes)
+	{
+		if (node->Parameter->Type == NodeType::CustomData1)
+		{
+			for (int32_t i = 0; i < 4; i++)
+			{
+				if (node->Properties[i]->Floats[0] > 0)
+				{
+					customData1Count = std::max(customData1Count, i + 1);
+				}
+			}
+		}
+
+		if (node->Parameter->Type == NodeType::CustomData2)
+		{
+			for (int32_t i = 0; i < 4; i++)
+			{
+				if (node->Properties[i]->Floats[0] > 0)
+				{
+					customData2Count = std::max(customData2Count, i + 1);
+				}
+			}
+		}
+	}
+
 	// Generate exporter node
 	std::vector<std::shared_ptr<TextExporterNode>> exportedNodes;
 	std::unordered_map<std::shared_ptr<Node>, std::shared_ptr<TextExporterNode>> node2exportedNode;
@@ -220,7 +249,8 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 					}
 
 					// assign a sampler
-					extractedTexture->Sampler = static_cast<TextureSamplerType>((int)node->Properties[node->Parameter->GetPropertyIndex("Sampler")]->Floats[0]);
+					extractedTexture->Sampler =
+						static_cast<TextureSamplerType>((int)node->Properties[node->Parameter->GetPropertyIndex("Sampler")]->Floats[0]);
 
 					tePin.TextureValue = extractedTexture;
 				}
@@ -383,7 +413,8 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	result.Uniforms = uniforms;
 	result.Textures = textures;
 	result.HasRefraction = option.HasRefraction;
-
+	result.CustomData1 = customData1Count;
+	result.CustomData2 = customData2Count;
 	return result;
 };
 
@@ -777,6 +808,36 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
 			<< "pixelNormalDir"
 			<< ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::CustomData1 || node->Target->Parameter->Type == NodeType::CustomData2)
+	{
+		std::string dstName;
+
+		if (node->Target->Parameter->Type == NodeType::CustomData1)
+		{
+			dstName = "customData1";
+		}
+		else if (node->Target->Parameter->Type == NodeType::CustomData2)
+		{
+			dstName = "customData2";
+		}
+
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << dstName << ".";
+
+		if (node->Target->Properties[0]->Floats[0] > 0)
+			ret << "x";
+
+		if (node->Target->Properties[1]->Floats[0] > 0)
+			ret << "y";
+
+		if (node->Target->Properties[2]->Floats[0] > 0)
+			ret << "z";
+
+		if (node->Target->Properties[3]->Floats[0] > 0)
+			ret << "w";
+
+		ret << ";" << std::endl;
 	}
 
 	return ret.str();

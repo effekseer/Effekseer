@@ -39,6 +39,9 @@ private:
 
 	ShadingModelType shadingModel_;
 
+	int32_t customData1Count_ = 0;
+	int32_t customData2Count_ = 0;
+
 	std::vector<Texture> textures_;
 
 	std::vector<Uniform> uniforms_;
@@ -96,6 +99,14 @@ public:
 	virtual int32_t GetUniformCount() const;
 
 	virtual void SetUniformCount(int32_t count);
+
+	virtual int32_t GetCustomData1Count() const;
+
+	virtual void SetCustomData1Count(int32_t count);
+
+	virtual int32_t GetCustomData2Count() const;
+
+	virtual void SetCustomData2Count(int32_t count);
 };
 
 } // namespace Effekseer

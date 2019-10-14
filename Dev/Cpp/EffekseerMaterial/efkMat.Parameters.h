@@ -152,7 +152,7 @@ public:
 		{
 			if (Properties[i]->Name == name)
 			{
-				return i;
+				return static_cast<int32_t>(i);
 			}
 		}
 		return -1;
@@ -710,6 +710,86 @@ public:
 		output->Type = ValueType::Float3;
 		OutputPins.push_back(output);
 	}
+};
+
+class NodeCustomData1 : public NodeParameter
+{
+public:
+	NodeCustomData1()
+	{
+		Type = NodeType::CustomData1;
+		TypeName = "CustomData1";
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::FloatN;
+		OutputPins.push_back(output);
+
+		auto val1 = std::make_shared<NodePropertyParameter>();
+		val1->Name = "R";
+		val1->Type = ValueType::Bool;
+		val1->DefaultValues[0] = 1.0f;
+		Properties.push_back(val1);
+
+		auto val2 = std::make_shared<NodePropertyParameter>();
+		val2->Name = "G";
+		val2->Type = ValueType::Bool;
+		val2->DefaultValues[0] = 1.0f;
+		Properties.push_back(val2);
+
+		auto val3 = std::make_shared<NodePropertyParameter>();
+		val3->Name = "B";
+		val3->Type = ValueType::Bool;
+		Properties.push_back(val3);
+
+		auto val4 = std::make_shared<NodePropertyParameter>();
+		val4->Name = "A";
+		val4->Type = ValueType::Bool;
+		Properties.push_back(val4);
+	}
+
+		ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override;
+};
+
+class NodeCustomData2 : public NodeParameter
+{
+public:
+	NodeCustomData2()
+	{
+		Type = NodeType::CustomData1;
+		TypeName = "CustomData2";
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::FloatN;
+		OutputPins.push_back(output);
+
+		auto val1 = std::make_shared<NodePropertyParameter>();
+		val1->Name = "R";
+		val1->Type = ValueType::Bool;
+		val1->DefaultValues[0] = 1.0f;
+		Properties.push_back(val1);
+
+		auto val2 = std::make_shared<NodePropertyParameter>();
+		val2->Name = "G";
+		val2->Type = ValueType::Bool;
+		val2->DefaultValues[0] = 1.0f;
+		Properties.push_back(val2);
+
+		auto val3 = std::make_shared<NodePropertyParameter>();
+		val3->Name = "B";
+		val3->Type = ValueType::Bool;
+		Properties.push_back(val3);
+
+		auto val4 = std::make_shared<NodePropertyParameter>();
+		val4->Name = "A";
+		val4->Type = ValueType::Bool;
+		Properties.push_back(val4);
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override;
 };
 
 class NodeComment : public NodeParameter

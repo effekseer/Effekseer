@@ -202,6 +202,12 @@ namespace Effekseer.Utl
 					bool hasReflection = false;
 					reader.Get(ref hasReflection);
 
+					int customData1Count = 0;
+					reader.Get(ref customData1Count);
+
+					int customData2Count = 0;
+					reader.Get(ref customData2Count);
+
 					int textureCount = 0;
 					reader.Get(ref textureCount);
 

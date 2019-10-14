@@ -529,9 +529,10 @@ struct ParameterGenerationLocation
 enum ParameterCustomDataType : int32_t
 {
 	None = 0,
-	Fixed = 1,
-	Easing = 2,
-	FCurveType = 3,	//! fcurve type (TODO : rename)
+	Fixed2D = 20,
+	Easing2D = 22,
+	FCurve2D = 23,
+	FCurveColor = 53,
 	Unknown,
 };
 
@@ -550,6 +551,11 @@ struct ParameterCustomDataFCurve
 	FCurveVector2D* Values;
 };
 
+struct ParameterCustomDataFCurveColor
+{
+	FCurveVectorColor* Values;
+};
+
 struct ParameterCustomData
 {
 	ParameterCustomDataType Type = ParameterCustomDataType::None;
@@ -558,15 +564,21 @@ struct ParameterCustomData
 		ParameterCustomDataFixed Fixed;
 		ParameterCustomDataEasing Easing;
 		ParameterCustomDataFCurve FCurve;
+		ParameterCustomDataFCurveColor FCurveColor;
 	};
 
 	ParameterCustomData() = default;
 
-	~ParameterCustomData() 
+	~ParameterCustomData()
 	{
-		if (Type == ParameterCustomDataType::FCurveType)
+		if (Type == ParameterCustomDataType::FCurve2D)
 		{
 			ES_SAFE_DELETE(FCurve.Values);
+		}
+
+		if (Type == ParameterCustomDataType::FCurveColor)
+		{
+			ES_SAFE_DELETE(FCurveColor.Values);
 		}
 	}
 
@@ -578,20 +590,25 @@ struct ParameterCustomData
 		if (Type == ParameterCustomDataType::None)
 		{
 		}
-		else if (Type == ParameterCustomDataType::Fixed)
+		else if (Type == ParameterCustomDataType::Fixed2D)
 		{
 			memcpy(&Fixed.Values, pos, sizeof(Fixed));
 			pos += sizeof(Fixed);
 		}
-		else if (Type == ParameterCustomDataType::Easing)
+		else if (Type == ParameterCustomDataType::Easing2D)
 		{
 			memcpy(&Easing.Values, pos, sizeof(Easing));
 			pos += sizeof(Easing);
 		}
-		else if (Type == ParameterCustomDataType::FCurveType)
+		else if (Type == ParameterCustomDataType::FCurve2D)
 		{
 			FCurve.Values = new FCurveVector2D();
 			pos += FCurve.Values->Load(pos, version);
+		}
+		else if (Type == ParameterCustomDataType::FCurveColor)
+		{
+			FCurveColor.Values = new FCurveVectorColor();
+			pos += FCurveColor.Values->Load(pos, version);
 		}
 		else
 		{
@@ -1103,6 +1120,9 @@ protected:
 
 	// 初期化
 	void Initialize();
+
+	//! calculate custom data
+	void CalcCustomData(const Instance* instance, std::array<float, 4>& customData1, std::array<float, 4>& customData2);
 
 public:
 

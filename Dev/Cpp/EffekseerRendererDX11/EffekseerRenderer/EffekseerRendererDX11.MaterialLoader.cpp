@@ -118,8 +118,42 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 				{"NORMAL", 2, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 5, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
-
+				{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			};
+
+			int32_t offset = 40;
+			int count = 6;
+			int index = 2;
+
+			auto getFormat = [](int32_t i) -> DXGI_FORMAT {
+				if (i == 1)
+					return DXGI_FORMAT_R32_FLOAT;
+				if (i == 2)
+					return DXGI_FORMAT_R32G32_FLOAT;
+				if (i == 3)
+					return DXGI_FORMAT_R32G32B32_FLOAT;
+				if (i == 4)
+					return DXGI_FORMAT_R32G32B32A32_FLOAT;
+			};
+			if (material.GetCustomData1Count() > 0)
+			{
+				decl[count].Format = getFormat(material.GetCustomData1Count());
+				decl[count].AlignedByteOffset = offset;
+				decl[count].SemanticIndex = index;
+				index++;
+				count++;
+				offset += sizeof(float) * material.GetCustomData1Count();
+			}
+
+			if (material.GetCustomData2Count() > 0)
+			{
+				decl[count].Format = getFormat(material.GetCustomData1Count());
+				decl[count].AlignedByteOffset = offset;
+				decl[count].SemanticIndex = index;
+				index++;
+				offset += sizeof(float) * material.GetCustomData2Count();
+			}
 
 			shader = Shader::Create(static_cast<RendererImplemented*>(renderer_),
 									(uint8_t*)binary->GetVertexShaderData(shaderTypes[st]),
@@ -128,7 +162,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 									binary->GetPixelShaderSize(shaderTypes[st]),
 									"MaterialStandardRenderer",
 									decl,
-									ARRAYSIZE(decl));
+									count);
 		}
 
 		if (shader == nullptr)
@@ -224,7 +258,19 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 		int32_t vertexUniformSizeCommon = sizeof(float) * 4;
 		int32_t pixelUniformSizeCommon = sizeof(float) * 4;
 
-		int32_t vertexUniformSize = vertexUniformSizeFixed + vertexUniformSizeCommon + vertexUniformSizeModel;
+		// custom data
+		int32_t customUniformSizeModel = 0;
+		if (material.GetCustomData1Count() > 0)
+		{
+			customUniformSizeModel++;
+		}
+		if (material.GetCustomData2Count() > 0)
+		{
+			customUniformSizeModel++;
+		}
+		customUniformSizeModel *= sizeof(float) * 4 * 40;
+
+		int32_t vertexUniformSize = vertexUniformSizeFixed + vertexUniformSizeCommon + customUniformSizeModel + vertexUniformSizeModel;
 		int32_t pixelUniformSize = pixelUniformSizeFixed + pixelUniformSizeCommon + pixelUniformSizeModel;
 
 		// shiding model
@@ -255,6 +301,8 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 		}
 	}
 
+	materialData->CustomData1 = material.GetCustomData1Count();
+	materialData->CustomData2 = material.GetCustomData2Count();
 	materialData->TextureCount = material.GetTextureCount();
 	materialData->UniformCount = material.GetUniformCount();
 	materialData->ShadingModel = material.GetShadingModel();

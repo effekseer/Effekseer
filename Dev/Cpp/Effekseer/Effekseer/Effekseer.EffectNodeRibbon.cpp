@@ -171,7 +171,7 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 		if (group->GetFirst() != nullptr)
 		{
 			m_instanceParameter.UV = group->GetFirst()->GetUV();
-			m_instanceParameter.CustomData = group->GetFirst()->GetCustomData();
+			CalcCustomData(group->GetFirst(), m_instanceParameter.CustomData1, m_instanceParameter.CustomData2);
 		}
 
 		renderer->BeginRenderingGroup(m_nodeParameter, m_instanceParameter.InstanceCount, m_userData);

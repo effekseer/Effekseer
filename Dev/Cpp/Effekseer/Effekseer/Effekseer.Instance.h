@@ -24,21 +24,9 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
-/**
-	@brief	エフェクトの実体
-*/
-class Instance : public IntrusiveList<Instance>::Node
+struct InstanceCustomData
 {
-	friend class Manager;
-	friend class InstanceContainer;
-
-protected:
-
-	//! custom data
 	union {
 		struct
 		{
@@ -51,7 +39,26 @@ protected:
 			vector2d offset;
 		} fcruve;
 
-	} customDataValues;
+		struct
+		{
+			std::array<float, 4> offset;
+		} fcurveColor;
+	};
+};
+
+/**
+	@brief	エフェクトの実体
+*/
+class Instance : public IntrusiveList<Instance>::Node
+{
+	friend class Manager;
+	friend class InstanceContainer;
+
+protected:
+
+	//! custom data
+	InstanceCustomData customDataValues1;
+	InstanceCustomData customDataValues2;
 
 public:
 	static const int32_t ChildrenMax = 16;
@@ -346,7 +353,7 @@ public:
 	RectF GetUV() const;
 
 	//! get custom data
-	Vector2D GetCustomData() const;
+	std::array<float,4> GetCustomData(int32_t index) const;
 
 private:
 	/**

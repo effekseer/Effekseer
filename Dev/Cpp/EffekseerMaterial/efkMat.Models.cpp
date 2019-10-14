@@ -1410,6 +1410,8 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	bwParam.Push(result.ShadingModel);
 	bwParam.Push(false);
 	bwParam.Push(result.HasRefraction);
+	bwParam.Push(result.CustomData1);
+	bwParam.Push(result.CustomData2);
 
 	bwParam.Push(static_cast<int32_t>(result.Textures.size()));
 

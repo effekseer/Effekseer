@@ -46,6 +46,9 @@ namespace EffekseerRenderer
 		int32_t vertexCount_ = 0;
 		int32_t stride_ = 0;
 
+		int32_t customData1Count_ = 0;
+		int32_t customData2Count_ = 0;
+
 		enum class VertexType
 		{
 			Normal,
@@ -530,6 +533,40 @@ namespace EffekseerRenderer
 					}
 				}
 			}
+
+			// custom parameter
+			if (customData1Count_ > 0)
+			{
+				StrideView<float> custom(m_ringBufferData + sizeof(DynamicVertex), stride_, vertexCount_);
+				for (size_t loop = 0; loop < instances.size() - 1; loop++)
+				{
+					auto& param = instances[loop];
+					
+					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+					{
+						auto c = (float*)(&custom[0]);
+						memcpy(c, param.CustomData1.data(), sizeof(float) * customData1Count_);
+						custom += 8;
+					}
+				}
+			}
+
+			if (customData2Count_ > 0)
+			{
+				StrideView<float> custom(
+					m_ringBufferData + sizeof(DynamicVertex) + sizeof(float) * customData1Count_, stride_, vertexCount_);
+				for (size_t loop = 0; loop < instances.size() - 1; loop++)
+				{
+					auto& param = instances[loop];
+
+					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+					{
+						auto c = (float*)(&custom[0]);
+						memcpy(c, param.CustomData2.data(), sizeof(float) * customData1Count_);
+						custom += 8;
+					}
+				}
+			}
 		}
 
 	public:
@@ -625,10 +662,12 @@ namespace EffekseerRenderer
 												   param.BasicParameterPtr->MaterialParameterPtr,
 												   param.BasicParameterPtr->Texture1Index,
 												   param.BasicParameterPtr->Texture2Index);
+			customData1Count_ = state.CustomData1Count;
+			customData2Count_ = state.CustomData2Count;
 
 			m_renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
 
-			m_renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, m_ringBufferOffset, stride_, (void*&)m_ringBufferData);
+			m_renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, stride_, (void*&)m_ringBufferData);
 			vertexCount_ = vertexCount;
 		}
 	};
