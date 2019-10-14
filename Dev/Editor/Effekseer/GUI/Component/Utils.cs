@@ -6,6 +6,45 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
+	class CopyAndPaste : IControl
+	{
+		string elementName = string.Empty;
+		Func<object> getter;
+		
+		public CopyAndPaste(string elementName, Func<object> getter)
+		{
+			this.elementName = elementName;
+			this.getter = getter;
+		}
+
+		public void Update()
+		{
+			if (Manager.NativeManager.Button("Copy"))
+			{
+				var o = getter();
+				if(o != null)
+				{
+					Manager.NativeManager.SetClipboardText(Core.Copy(elementName, o));
+				}
+			}
+
+			Manager.NativeManager.SameLine();
+
+			if (Manager.NativeManager.Button("Paste"))
+			{
+				var str = Manager.NativeManager.GetClipboardText();
+
+				if (!string.IsNullOrEmpty(str))
+				{
+					var o = getter();
+					if (o != null)
+					{
+						Core.Paste(elementName, o, str);
+					}
+				}
+			}
+		}
+	}
 	class ValueChangingProperty : IDisposable
 	{
 		bool flag = false;
@@ -15,7 +54,7 @@ namespace Effekseer.GUI.Component
 			if (Manager.DoesChangeColorOnChangedValue && (value?.IsValueChangedFromDefault ?? false))
 			{
 				flag = true;
-				Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Border, 0xff1111ff);
+				Manager.NativeManager.PushStyleColor(swig.ImGuiColFlags.Border, 0x77ffff11);
 				Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.FrameBorderSize, 1);
 			}
 		}

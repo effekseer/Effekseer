@@ -511,6 +511,17 @@ namespace Effekseer
 			return doc.InnerXml;
 		}
 
+		public static string Copy(string elementName, object o)
+		{
+			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+
+			var element = Data.IO.SaveObjectToElement(doc, elementName, o, true);
+
+			doc.AppendChild(element);
+
+			return doc.InnerXml;
+		}
+
 		/// <summary>
 		/// Check whether data is valid xml?
 		/// </summary>
@@ -544,6 +555,24 @@ namespace Effekseer
 			Command.CommandManager.StartCollection();
 			Data.IO.LoadFromElement(doc.ChildNodes[0] as System.Xml.XmlElement, node, true);
 			Command.CommandManager.EndCollection();
+		}
+
+		public static bool Paste(string elementName, object o, string data)
+		{
+			if (o == null) return false;
+			if (!IsValidXml(data)) return false;
+
+			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+
+			doc.LoadXml(data);
+
+			if (doc.ChildNodes.Count == 0 || doc.ChildNodes[0].Name != elementName) return false;
+
+			Command.CommandManager.StartCollection();
+			Data.IO.LoadObjectFromElement(doc.ChildNodes[0] as System.Xml.XmlElement, ref o, true);
+			Command.CommandManager.EndCollection();
+
+			return true;
 		}
 
 		/// <summary>
