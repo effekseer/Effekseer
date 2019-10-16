@@ -74,7 +74,7 @@ namespace Effekseer
 		pos += sizeof(int);
 		Lighting = lighting > 0;
 
-		if (Lighting)
+		if (Lighting && !RendererCommon.Distortion)
 		{
 			RendererCommon.MaterialType = RendererMaterialType::Lighting;
 			RendererCommon.BasicParameter.MaterialType = RendererMaterialType::Lighting;
