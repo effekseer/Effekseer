@@ -1,5 +1,5 @@
 ﻿#include "Effekseer.InternalScript.h"
-#include "Effekseer.BinaryReader.h"
+#include "Utils/Effekseer.BinaryReader.h"
 #include <assert.h>
 
 namespace Effekseer

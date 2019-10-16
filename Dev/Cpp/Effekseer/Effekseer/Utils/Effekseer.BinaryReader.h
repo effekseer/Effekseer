@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEER_BINARY_READER_H__
 #define __EFFEKSEER_BINARY_READER_H__
 
-#include "Effekseer.Base.h"
+#include "../Effekseer.Base.h"
 
 namespace Effekseer
 {

@@ -14,8 +14,8 @@
 #include "Effekseer.ModelLoader.h"
 #include "Effekseer.MaterialLoader.h"
 #include "Effekseer.DefaultEffectLoader.h"
-#include "Effekseer.BinaryReader.h"
 #include "Effekseer.Setting.h"
+#include "Utils/Effekseer.BinaryReader.h"
 
 #include <array>
 #include <functional>
