@@ -62,7 +62,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 
 	for (size_t i = 0; i < result.Uniforms.size(); i++)
 	{
-		efkMaterial.SetUniformIndex(i, i);
+		efkMaterial.SetUniformIndex(i, (int)result.Uniforms[i]->Type);
 		efkMaterial.SetUniformName(i, result.Uniforms[i]->Name.c_str());
 	}
 

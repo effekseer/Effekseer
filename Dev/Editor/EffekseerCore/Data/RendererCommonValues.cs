@@ -284,10 +284,11 @@ namespace Effekseer.Data
 				{
 					if(uniform.Type == 0)
 					{
+						var value = new Value.Float();
+						value.SetValueDirectly(uniform.DefaultValues[0]);
 						var status = new ValueStatus();
 						status.Key = key;
-						status.Value = new Value.Float();
-
+						status.Value = value;
 						status.Name = getName();
 						status.Description = getDesc();
 						status.IsShown = true;
@@ -297,9 +298,14 @@ namespace Effekseer.Data
 					}
 					else
 					{
+						var value = new Value.Vector4D();
+						value.X.SetValueDirectly(uniform.DefaultValues[0]);
+						value.Y.SetValueDirectly(uniform.DefaultValues[1]);
+						value.Z.SetValueDirectly(uniform.DefaultValues[2]);
+						value.W.SetValueDirectly(uniform.DefaultValues[3]);
 						var status = new ValueStatus();
 						status.Key = key;
-						status.Value = new Value.Vector4D();
+						status.Value = value;
 						status.Name = getName();
 						status.Description = getDesc();
 						status.IsShown = true;

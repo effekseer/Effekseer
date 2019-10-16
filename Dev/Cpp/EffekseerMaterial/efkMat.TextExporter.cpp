@@ -139,7 +139,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 				if (node->Parameter->Type == NodeType::Param1 || node->Parameter->Type == NodeType::Param4)
 				{
 					auto paramName = EspcapeUserParamName(node->Properties[0]->Str.c_str());
-					auto values = node->Properties[1]->Floats;
+					auto values = node->Properties[2]->Floats;
 					auto keyStr = paramName;
 
 					std::shared_ptr<TextExporterUniform> extractedUniform;
@@ -153,7 +153,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedUniform = std::make_shared<TextExporterUniform>();
 						extractedUniform->Name = paramName;
 						extractedUniform->DefaultConstants = values;
-						extractedUniform->Priority = static_cast<int32_t>(node->Properties[2]->Floats[0]);
+						extractedUniform->Priority = static_cast<int32_t>(node->Properties[1]->Floats[0]);
 						extractedUniform->Descriptions = node->Descriptions;
 
 						if (node->Parameter->Type == NodeType::Param1)
