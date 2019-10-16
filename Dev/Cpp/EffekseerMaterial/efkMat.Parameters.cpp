@@ -1,8 +1,14 @@
 #include "efkMat.Parameters.h"
 #include "efkMat.Models.h"
+#include "efkMat.StringContainer.h"
 
 namespace EffekseerMaterial
 {
+
+std::string NodeParameter::GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+{
+	return StringContainer::GetValue((TypeName + "_Name").c_str(), TypeName.c_str());
+}
 
 bool ExtractTextureParameter(std::shared_ptr<Material> material, std::shared_ptr<Node> node, ExtractedTextureParameter& result)
 {

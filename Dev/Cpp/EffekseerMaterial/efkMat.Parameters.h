@@ -163,6 +163,9 @@ public:
 	{
 		return ValueType::Unknown;
 	}
+
+	virtual std::string GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const;
+
 	virtual WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const { return WarningType::None; }
 };
 
@@ -193,6 +196,51 @@ public:
 		Properties.push_back(param);
 	}
 };
+
+class NodeConstant3 : public NodeParameter
+{
+public:
+	NodeConstant3()
+	{
+		Type = NodeType::Constant3;
+		TypeName = "Constant3";
+		Description = "Constant value...";
+		Group = std::vector<std::string>{"Constant"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
+
+		auto param = std::make_shared<NodePropertyParameter>();
+		param->Name = "Value";
+		param->Type = ValueType::Float3;
+		Properties.push_back(param);
+	}
+};
+
+class NodeConstant4 : public NodeParameter
+{
+public:
+	NodeConstant4()
+	{
+		Type = NodeType::Constant4;
+		TypeName = "Constant4";
+		Description = "Constant value...";
+		Group = std::vector<std::string>{"Constant"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float4;
+		OutputPins.push_back(output);
+
+		auto param = std::make_shared<NodePropertyParameter>();
+		param->Name = "Value";
+		param->Type = ValueType::Float4;
+		Properties.push_back(param);
+	}
+};
+
 
 class NodeParam1 : public NodeParameter
 {

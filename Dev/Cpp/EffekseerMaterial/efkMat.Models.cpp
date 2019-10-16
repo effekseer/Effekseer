@@ -728,6 +728,7 @@ void Material::Initialize()
 {
 	auto outputNodeParam = std::make_shared<NodeOutput>();
 	auto outputNode = CreateNode(outputNodeParam, true);
+	outputNode->UpdatePos(Vector2DF(200, 100));
 }
 
 std::vector<std::shared_ptr<Pin>> Material::GetConnectedPins(std::shared_ptr<Pin> pin)

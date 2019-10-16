@@ -363,6 +363,7 @@ void Editor::New()
 	auto content = std::make_shared<EditorContent>(this);
 	contents_.push_back(content);
 	selectedContentInd_ = contents_.size() - 1;
+	isSelectedDirty_ = true;
 }
 
 void Editor::SaveAs(const char* path) { contents_[selectedContentInd_]->SaveAs(path); }
@@ -385,6 +386,7 @@ bool Editor::Load(const char* path)
 	content->Load(path, library);
 	selectedContentInd_ = contents_.size() - 1;
 
+	isSelectedDirty_ = true;
 	isLoading = true;
 
 	return true;
@@ -1240,7 +1242,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 
 	// Header
 	ImGui::BeginHorizontal("header");
-	auto& nodeTypeName = StringContainer::GetValue((node->Parameter->TypeName + "_Name").c_str(), node->Parameter->TypeName.c_str());
+	const auto nodeTypeName = node->Parameter->GetHeader(GetSelectedMaterial(), node);
 	ImGui::Text(nodeTypeName.c_str());
 	ImGui::EndHorizontal();
 
@@ -1364,5 +1366,11 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 }
 
 void Editor::UpdateLink(std::shared_ptr<Link> link) { ed::Link(link->GUID, link->InputPin->GUID, link->OutputPin->GUID); }
+
+bool Editor::GetIsSelectedDirtyAndClear() { 
+	auto ret = isSelectedDirty_;
+	isSelectedDirty_ = false; 
+	return ret;
+}
 
 } // namespace EffekseerMaterial

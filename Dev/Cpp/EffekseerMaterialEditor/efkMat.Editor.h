@@ -84,6 +84,9 @@ private:
 
 	bool isLoading = false;
 
+	//! is selected changed and not applied to gui yet
+	bool isSelectedDirty_ = false;
+
 public: // TODO temp
 	std::shared_ptr<Library> library;
 	std::shared_ptr<Preview> preview_;
@@ -144,5 +147,7 @@ public:
 
 	int32_t GetSelectedContentIndex() const { return selectedContentInd_; }
 	void SelectContent(int32_t index) { selectedContentInd_ = index; }
+
+	bool GetIsSelectedDirtyAndClear();
 };
 } // namespace EffekseerMaterial

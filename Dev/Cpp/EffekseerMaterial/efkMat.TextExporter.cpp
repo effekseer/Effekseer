@@ -558,15 +558,17 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 
 		if (outputNode->Target->Parameter->Type == NodeType::ConstantTexture)
 		{
-			ret << GetTypeName(ValueType::Float4) << " emissive = "
+			ret << GetTypeName(ValueType::Float4) << " emissive_temp = "
 				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName(0) << ");" << std::endl;
-			ret << "float opacity = emissive.w;" << std::endl;
+			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
+			ret << "float opacity = emissive_temp.w;" << std::endl;
 		}
 		else if (outputNode->Target->Parameter->Type == NodeType::ParamTexture)
 		{
-			ret << GetTypeName(ValueType::Float4) << " emissive = "
+			ret << GetTypeName(ValueType::Float4) << " emissive_temp = "
 				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName(0) << ");" << std::endl;
-			ret << "float opacity = emissive.w;" << std::endl;
+			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
+			ret << "float opacity = emissive_temp.w;" << std::endl;
 		}
 		else
 		{
@@ -616,6 +618,20 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	{
 		ret << GetTypeName(ValueType::Float2) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float2) << "("
 			<< node->Target->Properties[0]->Floats[0] << "," << node->Target->Properties[0]->Floats[1] << ");" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Constant3)
+	{
+		auto& floats = node->Target->Properties[0]->Floats;
+		ret << GetTypeName(ValueType::Float3) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float3) << "(" << floats[0]
+			<< "," << floats[1] << "," << floats[2] << ");" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Constant4)
+	{
+		auto& floats = node->Target->Properties[0]->Floats;
+		ret << GetTypeName(ValueType::Float4) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float4) << "(" << floats[0]
+			<< "," << floats[1] << "," << floats[2] << "," << floats[3] << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Param1)

@@ -38,6 +38,8 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeTime>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstant1>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstant2>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeConstant3>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeConstant4>>());
 
 	// Parameter
 	Contents.push_back(std::make_shared<LibraryContent<NodeParam1>>());

@@ -43,5 +43,8 @@
   "Create_Node": "ノードを作成します。",
   "SampleTexture_Name": "画像参照",
   "ParamTexture_Name": "パラメーター画像",
-  "ConstantTexture_Name": "固定画像"
+  "ConstantTexture_Name": "固定画像",
+  "Starting": "開始",
+  "Starting_New": "新規マテリアルを作成する",
+  "Starting_Open": "マテリアルを開く"
 }

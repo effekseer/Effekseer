@@ -78,6 +78,8 @@ enum class NodeType
 {
 	Constant1,
 	Constant2,
+	Constant3,
+	Constant4,
 
 	Param1,
 	Param4,
