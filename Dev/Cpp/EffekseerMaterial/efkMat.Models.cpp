@@ -298,6 +298,14 @@ int32_t Node::GetOutputPinIndex(const std::string& name)
 	return -1;
 }
 
+std::shared_ptr<NodeProperty> Node::GetProperty(const std::string& name) const
+{
+	auto index = Parameter->GetPropertyIndex(name);
+	if (index < 0)
+		return nullptr; 
+	return Properties[index];
+}
+
 void Node::UpdatePos(const Vector2DF& pos)
 {
 
@@ -1377,7 +1385,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	BinaryWriter bwDescs;
 	bwDescs.Push(static_cast<uint32_t>(outputNode->Descriptions.size()));
 	for (size_t descInd = 0; descInd < outputNode->Descriptions.size(); descInd++)
-	{		
+	{
 		bwDescs.Push(static_cast<uint32_t>(descInd));
 		bwDescs.Push(GetVectorFromStr(outputNode->Descriptions[descInd].Name));
 		bwDescs.Push(GetVectorFromStr(outputNode->Descriptions[descInd].Description));
@@ -1511,7 +1519,6 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	offset = data.size();
 	data.resize(data.size() + bwParam2.GetBuffer().size());
 	memcpy(data.data() + offset, bwParam2.GetBuffer().data(), bwParam2.GetBuffer().size());
-
 
 	BinaryWriter bwGene;
 

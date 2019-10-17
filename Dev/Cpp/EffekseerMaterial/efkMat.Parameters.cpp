@@ -10,6 +10,35 @@ std::string NodeParameter::GetHeader(std::shared_ptr<Material> material, std::sh
 	return StringContainer::GetValue((TypeName + "_Name").c_str(), TypeName.c_str());
 }
 
+std::string NodeAdd::GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+{
+	auto ret = StringContainer::GetValue((TypeName + "_Name").c_str(), TypeName.c_str());
+
+	ret += "(";
+
+	if (material->GetConnectedPins(node->InputPins[0]).size() > 0)
+	{
+	}
+	else
+	{
+		ret += std::to_string(node->Properties[0]->Floats[0]);
+	}
+
+	ret += ",";
+
+	if (material->GetConnectedPins(node->InputPins[1]).size() > 0)
+	{
+	}
+	else
+	{
+		ret += std::to_string(node->Properties[1]->Floats[0]);
+	}
+
+	ret += ")";
+
+	return ret;
+}
+
 bool ExtractTextureParameter(std::shared_ptr<Material> material, std::shared_ptr<Node> node, ExtractedTextureParameter& result)
 {
 

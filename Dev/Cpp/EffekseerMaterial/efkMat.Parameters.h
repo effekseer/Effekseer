@@ -133,6 +133,7 @@ public:
 	std::string TypeName;
 	std::string Description;
 	std::vector<std::string> Group;
+	std::vector<std::string> Keywords;
 
 	std::vector<std::shared_ptr<PinParameter>> InputPins;
 	std::vector<std::shared_ptr<PinParameter>> OutputPins;
@@ -240,7 +241,6 @@ public:
 		Properties.push_back(param);
 	}
 };
-
 
 class NodeParam1 : public NodeParameter
 {
@@ -452,6 +452,7 @@ public:
 		Type = NodeType::Add;
 		TypeName = "Add";
 		Group = std::vector<std::string>{"Math"};
+		Keywords.emplace_back("+");
 
 		InitializeAsIn2Out1Param2();
 	}
@@ -465,6 +466,8 @@ public:
 	{
 		return GetWarningIn2Out1Param2(material, node);
 	}
+
+	std::string GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override;
 };
 
 class NodeSubtract : public NodeParameter
@@ -709,7 +712,10 @@ public:
 		IsPreviewOpened = true;
 	}
 
-	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const { return GetWarningSampler(material, node); }
+	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+	{
+		return GetWarningSampler(material, node);
+	}
 };
 
 class NodeTime : public NodeParameter
@@ -796,7 +802,7 @@ public:
 		Properties.push_back(val4);
 	}
 
-		ValueType
+	ValueType
 	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override;
 };
 
