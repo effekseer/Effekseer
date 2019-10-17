@@ -435,6 +435,18 @@ void RendererImplemented::GenerateIndexData()
 //----------------------------------------------------------------------------------
 bool RendererImplemented::Initialize()
 {
+	GLint currentVAO = 0;
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+	}
+
+	int arrayBufferBinding = 0;
+	int elementArrayBufferBinding = 0;
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+
 	SetSquareMaxCount( m_squareMaxCount );
 
 	m_renderState = new RenderState( this );
@@ -643,6 +655,14 @@ bool RendererImplemented::Initialize()
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(this, m_shader, m_shader_no_texture, m_shader_distortion, m_shader_no_texture_distortion);
 
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		GLExt::glBindVertexArray(currentVAO);
+	}
+
 	return true;
 }
 
@@ -686,6 +706,8 @@ bool RendererImplemented::BeginRendering()
 		glGetIntegerv(GL_BLEND_SRC_RGB, &m_originalState.blendSrc);
 		glGetIntegerv(GL_BLEND_DST_RGB, &m_originalState.blendDst);
 		glGetIntegerv(GL_BLEND_EQUATION, &m_originalState.blendEquation);
+		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &m_originalState.arrayBufferBinding);
+		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &m_originalState.elementArrayBufferBinding);
 
 		if (GLExt::IsSupportedVertexArray())
 		{
@@ -722,13 +744,9 @@ bool RendererImplemented::EndRendering()
 	// restore states
 	if(m_restorationOfStates)
 	{
-		if (m_originalState.blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
-		if (m_originalState.cullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
-		if (m_originalState.depthTest) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
-		
-		if (GetDeviceType() == OpenGLDeviceType::OpenGL2)
+		if (GLExt::IsSupportedVertexArray())
 		{
-			if (m_originalState.texture) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
+			GLExt::glBindVertexArray(m_originalState.vao);
 		}
 		
 		glDepthFunc(m_originalState.depthFunc);
@@ -736,6 +754,8 @@ bool RendererImplemented::EndRendering()
 		glCullFace(m_originalState.cullFaceMode);
 		glBlendFunc(m_originalState.blendSrc, m_originalState.blendDst);
 		GLExt::glBlendEquation(m_originalState.blendEquation);
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_originalState.arrayBufferBinding);
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_originalState.elementArrayBufferBinding);
 
 		if (GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 		{
@@ -745,9 +765,13 @@ bool RendererImplemented::EndRendering()
 			}
 		}
 
-		if (GLExt::IsSupportedVertexArray())
+		if (m_originalState.blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
+		if (m_originalState.cullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
+		if (m_originalState.depthTest) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
+
+		if (GetDeviceType() == OpenGLDeviceType::OpenGL2)
 		{
-			GLExt::glBindVertexArray(m_originalState.vao);
+			if (m_originalState.texture) glEnable(GL_TEXTURE_2D); else glDisable(GL_TEXTURE_2D);
 		}
 	}
 
@@ -785,6 +809,11 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetSquareMaxCount(int32_t count)
 {
+	int arrayBufferBinding = 0;
+	int elementArrayBufferBinding = 0;
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+
 	m_squareMaxCount = count;
 
 	if (m_vertexBuffer != nullptr) AddRef();
@@ -823,6 +852,9 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 
 	// インデックスデータの生成
 	GenerateIndexData();
+
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
 }
 
 //----------------------------------------------------------------------------------
