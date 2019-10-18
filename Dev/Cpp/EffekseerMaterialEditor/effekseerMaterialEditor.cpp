@@ -22,7 +22,6 @@
 */
 #include "Dialog/Dialog.h"
 
-
 #include "../IPC/IPC.h"
 
 #include <AltseedRHI.h>
@@ -206,8 +205,12 @@ int main(int argc, char* argv[])
 				}
 				else if (commandDataTOMaterialEditor.Type == IPC::CommandType::OpenOrCreateMaterial)
 				{
+#ifdef _DEBUG
+					std::cout << "OpenOrCreateMaterial : " << commandDataTOMaterialEditor.str.data() << std::endl;
+#endif
 					if (!editor->LoadOrSelect(commandDataTOMaterialEditor.str.data()))
 					{
+						editor->New();
 						editor->SaveAs(commandDataTOMaterialEditor.str.data());
 					}
 				}

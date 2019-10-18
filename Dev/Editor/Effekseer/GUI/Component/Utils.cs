@@ -6,6 +6,18 @@ using System.Threading.Tasks;
 
 namespace Effekseer.GUI.Component
 {
+	class Functions
+	{
+		public static string GetFilepathWithExtentions(string filepath, string extention)
+		{
+			if (System.IO.Path.GetExtension(filepath) != extention)
+			{
+				filepath += extention;
+			}
+
+			return filepath;
+		}
+	}
 	class CopyAndPaste : IControl
 	{
 		string elementName = string.Empty;

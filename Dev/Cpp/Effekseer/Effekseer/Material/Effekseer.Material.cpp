@@ -77,11 +77,11 @@ bool Material::Load(const uint8_t* data, int32_t size)
 				// defaultpath
 				offset += strDefaultPathLength;
 
-				// priority
-				offset += sizeof(int);
-
 				int index = 0;
 				memcpy(&index, data + offset, 4);
+				offset += sizeof(int);
+
+				// priority
 				offset += sizeof(int);
 
 				// param

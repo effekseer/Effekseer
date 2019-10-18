@@ -322,55 +322,41 @@ namespace Effekseer.Data
 			}
 		}
 
-		public List<Tuple35<ValueStatus, bool>> GetTextures(Utl.MaterialInformation info)
+		public List<Tuple35<ValueStatus, Utl.MaterialInformation.TextureInformation>> GetTextures(Utl.MaterialInformation info)
 		{
-			var ret = new List<Tuple35<ValueStatus, bool>>();
+			var ret = new List<Tuple35<ValueStatus, Utl.MaterialInformation.TextureInformation>>();
 
 			foreach (var texture in info.Textures)
 			{
 				var key = CreateKey(texture);
 
-				if(texture.Type == Utl.TextureType.Value)
+				if (keyToValues.ContainsKey(key))
 				{
-					if (keyToValues.ContainsKey(key))
-					{
-						ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, true));
-					}
-					else
-					{
-						ret.Add(Tuple35.Create((ValueStatus)(null), true));
-					}
+					ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, texture));
 				}
 				else
 				{
-					if (keyToValues.ContainsKey(key))
-					{
-						ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, false));
-					}
-					else
-					{
-						ret.Add(Tuple35.Create((ValueStatus)(null), false));
-					}
+					ret.Add(Tuple35.Create((ValueStatus)(null), texture));
 				}
 			}
 
 			return ret;
 		}
 
-		public List<ValueStatus> GetUniforms(Utl.MaterialInformation info)
+		public List<Tuple35<ValueStatus, Utl.MaterialInformation.UniformInformation>> GetUniforms(Utl.MaterialInformation info)
 		{
-			var ret = new List<ValueStatus>();
+			var ret = new List<Tuple35<ValueStatus, Utl.MaterialInformation.UniformInformation>>();
 
 			foreach (var uniform in info.Uniforms)
 			{
 				var key = CreateKey(uniform);
 				if (keyToValues.ContainsKey(key))
 				{
-					ret.Add(keyToValues[key] as ValueStatus);
+					ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, uniform));
 				}
 				else
 				{
-					ret.Add(null);
+					ret.Add(Tuple35.Create((ValueStatus)(null), uniform));
 				}
 			}
 

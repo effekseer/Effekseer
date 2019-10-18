@@ -382,8 +382,14 @@ void Editor::SaveAs()
 bool Editor::Load(const char* path)
 {
 	auto content = std::make_shared<EditorContent>(this);
+
+	if (!content->Load(path, library))
+	{
+		return false;
+	}
+
 	contents_.push_back(content);
-	content->Load(path, library);
+
 	selectedContentInd_ = contents_.size() - 1;
 
 	isSelectedDirty_ = true;

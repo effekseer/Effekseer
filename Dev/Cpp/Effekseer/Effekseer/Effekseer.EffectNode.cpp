@@ -508,7 +508,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 				memcpy(&DepthValues.DepthParameter.DepthClipping, pos, sizeof(float));
 				pos += sizeof(float);
 			}
-	
+
 			if (m_effect->GetVersion() >= 13)
 			{
 				memcpy(&DepthValues.ZSort, pos, sizeof(int32_t));
@@ -711,13 +711,17 @@ void EffectNodeImplemented::CalcCustomData(const Instance* instance, std::array<
 		if (this->RendererCommon.BasicParameter.MaterialParameterPtr->MaterialIndex >= 0)
 		{
 			auto material = m_effect->GetMaterial(this->RendererCommon.BasicParameter.MaterialParameterPtr->MaterialIndex);
-			if (material->CustomData1 > 0)
+
+			if (material != nullptr)
 			{
-				customData1 = instance->GetCustomData(0);
-			}
-			if (material->CustomData2 > 0)
-			{
-				customData2 = instance->GetCustomData(1);
+				if (material->CustomData1 > 0)
+				{
+					customData1 = instance->GetCustomData(0);
+				}
+				if (material->CustomData2 > 0)
+				{
+					customData2 = instance->GetCustomData(1);
+				}
 			}
 		}
 	}

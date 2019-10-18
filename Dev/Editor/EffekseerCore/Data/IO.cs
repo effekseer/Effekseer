@@ -91,23 +91,23 @@ namespace Effekseer.Data
 			{
 				var uniforms = mfp.GetUniforms(info);
 
-				foreach(var uniform in uniforms)
+				foreach(var uniform in uniforms.Where(_=>_.Item1 != null))
 				{
 					var status = uniform;
 
-					if (status.Value is Data.Value.Vector4D)
+					if (status.Item1.Value is Data.Value.Vector4D)
 					{
-						var v = status.Value as Data.Value.Vector4D;
-						var v_e = SaveToElement(doc, uniform.Key, v, isClip);
+						var v = status.Item1.Value as Data.Value.Vector4D;
+						var v_e = SaveToElement(doc, uniform.Item1.Key, v, isClip);
 						if(v_e != null)
 						{
 							e_float4.AppendChild(v_e);
 						}
 					}
-					else if (status.Value is Data.Value.Float)
+					else if (status.Item1.Value is Data.Value.Float)
 					{
-						var v = status.Value as Data.Value.Float;
-						var v_e = SaveToElement(doc, uniform.Key, v, isClip);
+						var v = status.Item1.Value as Data.Value.Float;
+						var v_e = SaveToElement(doc, uniform.Item1.Key, v, isClip);
 						if (v_e != null)
 						{
 							e_float1.AppendChild(v_e);
@@ -120,7 +120,10 @@ namespace Effekseer.Data
 				foreach (var kv in textures)
 				{
 					var status = kv.Item1;
-					
+
+					if (status == null)
+						continue;
+
 					// regard as defalt texture
 					if (!status.IsShown)
 						continue;

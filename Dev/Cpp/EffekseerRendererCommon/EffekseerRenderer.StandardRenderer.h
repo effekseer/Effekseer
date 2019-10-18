@@ -139,7 +139,7 @@ struct StandardRendererState
 	{
 		if (materialParam != nullptr)
 		{
-			if (materialParam->MaterialIndex >= 0)
+			if (materialParam->MaterialIndex >= 0 && effect->GetMaterial(materialParam->MaterialIndex) != nullptr)
 			{
 				MaterialPtr = effect->GetMaterial(materialParam->MaterialIndex);
 
