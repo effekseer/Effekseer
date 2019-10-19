@@ -10,6 +10,8 @@ namespace Effekseer.GUI.Component
 	{
 		string id = "";
 
+		object boundObject = null;
+
 		public string Label { get; set; } = string.Empty;
 
 		public string Description { get; set; } = string.Empty;
@@ -32,6 +34,7 @@ namespace Effekseer.GUI.Component
 
 		public void SetBinding(object o)
 		{
+			boundObject = o;
 		}
 
 		public override void Update()
@@ -39,7 +42,9 @@ namespace Effekseer.GUI.Component
 			
 			if(Manager.NativeManager.Button(Resources.GetString("FCurves") + id))
 			{
-				Manager.SelectOrShowWindow(typeof(Dock.FCurves));
+				var panel = Manager.SelectOrShowWindow(typeof(Dock.FCurves)) as Dock.FCurves;
+				panel?.UnselectAll();
+				panel?.SelectFCurve(boundObject);
 			}	
 		}
 	}

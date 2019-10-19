@@ -825,6 +825,33 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
+		public void SelectFCurve(object o)
+		{
+			Action<TreeNode> recurse = null;
+
+			recurse = (t) =>
+			{
+				foreach (var fcurve in t.FCurves)
+				{
+					if(o == fcurve.GetValueAsObject())
+					{
+						foreach(var prop in fcurve.Properties)
+						{
+							prop.Selected = true;
+							prop.IsShown = true;
+						}
+					}
+				}
+
+				foreach (var c in t.Children)
+				{
+					recurse(c);
+				}
+			};
+
+			recurse(treeNodes);
+		}
+
 		public void UnselectAll()
 		{
 			Action<TreeNode> recurse = null;
