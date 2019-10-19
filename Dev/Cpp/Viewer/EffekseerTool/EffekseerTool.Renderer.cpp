@@ -265,24 +265,26 @@ void Renderer::SetPerspectiveFov( int width, int height )
 	m_renderer->SetProjectionMatrix( proj );
 }
 
-void Renderer::SetOrthographic( int width, int height )
+void Renderer::SetOrthographic(int width, int height)
 {
 	::Effekseer::Matrix44 proj;
 
-	if( IsRightHand )
+	auto scale = 16.0f;
+
+	if (IsRightHand)
 	{
 		// Right hand coordinate
 		proj.OrthographicRH(
-			(float)width / 16.0f / RateOfMagnification, (float)height / 16.0f / RateOfMagnification, ClippingStart, ClippingEnd);
+			(float)width / scale / RateOfMagnification, (float)height / scale / RateOfMagnification, ClippingStart, ClippingEnd);
 	}
 	else
 	{
 		// Left hand coordinate
 		proj.OrthographicLH(
-			(float)width / 16.0f / RateOfMagnification, (float)height / 16.0f / RateOfMagnification, ClippingStart, ClippingEnd);
+			(float)width / scale / RateOfMagnification, (float)height / scale / RateOfMagnification, ClippingStart, ClippingEnd);
 	}
 
-	m_renderer->SetProjectionMatrix( proj );
+	m_renderer->SetProjectionMatrix(proj);
 }
 
 bool Renderer::Resize( int width, int height )
