@@ -87,6 +87,9 @@ void main()
 	vec2 uv1 = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
 	vec2 uv2 = uv1;
 
+	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+
 	vec3 pixelNormalDir = worldNormal;
 )";
 

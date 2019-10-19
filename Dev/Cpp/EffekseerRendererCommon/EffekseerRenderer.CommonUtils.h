@@ -23,11 +23,36 @@
 namespace EffekseerRenderer
 {
 
+struct DynamicVertex
+{
+	::Effekseer::Vector3D Pos;
+	::Effekseer::Color Col;
+	//! packed vector
+	::Effekseer::Color Normal;
+	//! packed vector
+	::Effekseer::Color Tangent;
+
+	union {
+		//! UV1 (for template)
+		float UV[2];
+		float UV1[2];
+	};
+
+	float UV2[2];
+
+	void SetColor(const ::Effekseer::Color& color) { Col = color; }
+};
+
 struct SimpleVertex
 {
 	::Effekseer::Vector3D Pos;
 	uint8_t Col[4];
-	float UV[2];
+
+	union {
+		float UV[2];
+		//! dummy for template
+		float UV2[2];
+	};
 
 	void SetColor(const ::Effekseer::Color& color)
 	{
@@ -42,7 +67,12 @@ struct SimpleVertexDX9
 {
 	::Effekseer::Vector3D Pos;
 	uint8_t Col[4];
-	float UV[2];
+
+	union {
+		float UV[2];
+		//! dummy for template
+		float UV2[2];
+	};
 
 	void SetColor(const ::Effekseer::Color& color)
 	{
@@ -57,7 +87,13 @@ struct VertexDistortion
 {
 	::Effekseer::Vector3D Pos;
 	uint8_t Col[4];
-	float UV[2];
+
+	union {
+		float UV[2];
+		//! dummy for template
+		float UV2[2];
+	};
+
 	::Effekseer::Vector3D Tangent;
 	::Effekseer::Vector3D Binormal;
 
@@ -74,7 +110,13 @@ struct VertexDistortionDX9
 {
 	::Effekseer::Vector3D Pos;
 	uint8_t Col[4];
-	float UV[2];
+
+	union {
+		float UV[2];
+		//! dummy for template
+		float UV2[2];
+	};
+
 	::Effekseer::Vector3D Tangent;
 	::Effekseer::Vector3D Binormal;
 
@@ -441,29 +483,29 @@ inline void TransformDistortionVertexes(VertexDistortion& vertexes, int32_t coun
 	}
 }
 
-template <typename T>
-struct HasDistortion
+inline void TransformVertexes(StrideView<VertexDistortion>& v, int32_t count, const ::Effekseer::Matrix43& mat)
 {
-private:
-	template <typename U>
-	static auto check_has_dist(U v) -> decltype(v.Normal, std::true_type{});
-	static std::false_type check_has_dist(...);
-public:
-	static bool const value = decltype(check_has_dist(std::declval<T>()))::value;
-};
+	TransformDistortionVertexes(v, count, mat);
+}
 
-template <typename Vertex, 
-	typename std::enable_if<!HasDistortion<Vertex>::value>::type* = nullptr>
-void TransformVertexes(Vertex& v, int32_t count, const ::Effekseer::Matrix43& mat)
+inline void TransformVertexes(StrideView<VertexDistortionDX9>& v, int32_t count, const ::Effekseer::Matrix43& mat)
+{
+	TransformDistortionVertexes(v, count, mat);
+}
+
+inline void TransformVertexes(StrideView<SimpleVertex>& v, int32_t count, const ::Effekseer::Matrix43& mat)
 {
 	TransformStandardVertexes(v, count, mat);
 }
 
-template <typename Vertex, 
-	typename std::enable_if<HasDistortion<Vertex>::value>::type* = nullptr>
-void TransformVertexes(Vertex& v, int32_t count, const ::Effekseer::Matrix43& mat)
+inline void TransformVertexes(StrideView<SimpleVertexDX9>& v, int32_t count, const ::Effekseer::Matrix43& mat)
 {
-	TransformDistortionVertexes(v, count, mat);
+	TransformStandardVertexes(v, count, mat);
+}
+
+inline void TransformVertexes(StrideView<DynamicVertex>& v, int32_t count, const ::Effekseer::Matrix43& mat)
+{
+	TransformStandardVertexes(v, count, mat);
 }
 
 inline void SwapRGBAToBGRA(Effekseer::Color& color)

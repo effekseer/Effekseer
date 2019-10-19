@@ -302,14 +302,22 @@ protected:
 		::Effekseer::Vector3D outerCurrent( cos_ * outerRadius, sin_ * outerRadius, outerHeight );
 		::Effekseer::Vector3D innerCurrent( cos_ * innerRadius, sin_ * innerRadius, innerHeight );
 		::Effekseer::Vector3D centerCurrent( cos_ * centerRadius, sin_ * centerRadius, centerHeight );
-		float texCurrent = instanceParameter.UV.X;
-		const float texStep = instanceParameter.UV.Width / parameter.VertexCount;
-		const float v1 = instanceParameter.UV.Y;
-		const float v2 = v1 + instanceParameter.UV.Height * 0.5f;
-		const float v3 = v1 + instanceParameter.UV.Height;
+
+		float uv0Current = instanceParameter.UV.X;
+		const float uv0Step = instanceParameter.UV.Width / parameter.VertexCount;
+		const float uv0v1 = instanceParameter.UV.Y;
+		const float uv0v2 = uv0v1 + instanceParameter.UV.Height * 0.5f;
+		const float uv0v3 = uv0v1 + instanceParameter.UV.Height;
+		float uv0texNext = 0.0f;
 		
+		float uv1Current = 0.0f;
+		const float uv1Step = 1.0f / parameter.VertexCount;
+		const float uv1v1 = 0.0f;
+		const float uv1v2 = uv1v1 + 0.5f;
+		const float uv1v3 = uv1v1 + 1.0f;
+		float uv1texNext = 0.0f;
+
 		::Effekseer::Vector3D outerNext, innerNext, centerNext;
-		float texNext;
 
 		float currentAngleDegree = 0;
 		float fadeStartAngle = parameter.StartingFade;
@@ -360,42 +368,42 @@ protected:
 				centerColorNext.A *= alpha;
 			}
 
-			texNext = texCurrent + texStep;
+			uv0texNext = uv0Current + uv0Step;
 
 			VERTEX* v = &verteies[i];
 			v[0].Pos = outerCurrent;
 			v[0].SetColor( outerColor );
-			v[0].UV[0] = texCurrent;
-			v[0].UV[1] = v1;
+			v[0].UV[0] = uv0Current;
+			v[0].UV[1] = uv0v1;
 
 			v[1].Pos = centerCurrent;
 			v[1].SetColor( centerColor );
-			v[1].UV[0] = texCurrent;
-			v[1].UV[1] = v2;
+			v[1].UV[0] = uv0Current;
+			v[1].UV[1] = uv0v2;
 
 			v[2].Pos = outerNext;
 			v[2].SetColor( outerColorNext );
-			v[2].UV[0] = texNext;
-			v[2].UV[1] = v1;
+			v[2].UV[0] = uv0texNext;
+			v[2].UV[1] = uv0v1;
 			
 			v[3].Pos = centerNext;
 			v[3].SetColor( centerColorNext );
-			v[3].UV[0] = texNext;
-			v[3].UV[1] = v2;
+			v[3].UV[0] = uv0texNext;
+			v[3].UV[1] = uv0v2;
 
 			v[4] = v[1];
 
 			v[5].Pos = innerCurrent;
 			v[5].SetColor( innerColor );
-			v[5].UV[0] = texCurrent;
-			v[5].UV[1] = v3;
+			v[5].UV[0] = uv0Current;
+			v[5].UV[1] = uv0v3;
 
 			v[6] = v[3];
 
 			v[7].Pos = innerNext;
 			v[7].SetColor( innerColorNext );
-			v[7].UV[0] = texNext;
-			v[7].UV[1] = v3;
+			v[7].UV[0] = uv0texNext;
+			v[7].UV[1] = uv0v3;
 
 			// distortion
 			if (vertexType == VertexType::Distortion)
@@ -520,12 +528,40 @@ protected:
 				vs[5].Tangent = vs[0].Tangent;
 				vs[6].Tangent = vs[2].Tangent;
 				vs[7].Tangent = vs[2].Tangent;
+
+				// uv1
+				uv1texNext = uv1Current + uv1Step;
+
+				vs[0].UV2[0] = uv1Current;
+				vs[0].UV2[1] = uv1v1;
+				 
+				vs[1].UV2[0] = uv1Current;
+				vs[1].UV2[1] = uv1v2;
+				 
+				vs[2].UV2[0] = uv1texNext;
+				vs[2].UV2[1] = uv1v1;
+				 
+				vs[3].UV2[0] = uv1texNext;
+				vs[3].UV2[1] = uv1v2;
+				 
+				vs[4].UV2[0] = vs[1].UV2[0];
+				vs[4].UV2[1] = vs[1].UV2[1];
+				 
+				vs[5].UV2[0] = uv1Current;
+				vs[5].UV2[1] = uv1v3;
+				 
+				vs[6].UV2[0] = vs[3].UV2[0];
+				vs[6].UV2[1] = vs[3].UV2[1];
+				 
+				vs[7].UV2[0] = uv1texNext;
+				vs[7].UV2[1] = uv1v3;
 			}
 
 			outerCurrent = outerNext;
 			innerCurrent = innerNext;
 			centerCurrent = centerNext;
-			texCurrent = texNext;
+			uv0Current = uv0texNext;
+			uv1Current = uv1texNext;
 			outerColor = outerColorNext;
 			innerColor = innerColorNext;
 			centerColor = centerColorNext;

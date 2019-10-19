@@ -190,8 +190,8 @@ VS_Output main( const VS_Input Input )
 	float3 worldTangent = float3(0.0, 0.0, 0.0);
 
 	// UV
-	float uv1 = Input.UV1;
-	float uv2 = Input.UV2;
+	float uv1 = Input.UV;
+	float uv2 = Input.UV;
 	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
@@ -215,7 +215,7 @@ VS_Output main( const VS_Input Input )
 
 	// UV
 	float2 uv1 = Input.UV1;
-	float2 uv2 = Input.UV1;
+	float2 uv2 = Input.UV2;
 	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
@@ -310,8 +310,10 @@ VS_Output main( const VS_Input Input )
 	float2 uv1;
 	uv1.x = Input.UV.x * uv.z + uv.x;
 	uv1.y = Input.UV.y * uv.w + uv.y;
+	float2 uv2 = Input.UV;
+
 	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	float uv2 = uv1;
+	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
 	float3 pixelNormalDir = worldNormal;
 )";

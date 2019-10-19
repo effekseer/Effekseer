@@ -62,32 +62,201 @@ namespace EffekseerRenderer
 
 		VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
 
-		template <typename VERTEX> void AssignUV(StrideView<VERTEX>& v, float uvX1, float uvX2, float uvX3, float uvY1, float uvY2)
+		template <typename VERTEX, int TARGET>
+		void AssignUV(StrideView<VERTEX>& v, float uvX1, float uvX2, float uvX3, float uvY1, float uvY2)
 		{
-			v[0].UV[0] = uvX1;
-			v[0].UV[1] = uvY1;
+			if (TARGET == 0)
+			{
+				v[0].UV[0] = uvX1;
+				v[0].UV[1] = uvY1;
 
-			v[1].UV[0] = uvX2;
-			v[1].UV[1] = uvY1;
+				v[1].UV[0] = uvX2;
+				v[1].UV[1] = uvY1;
 
-			v[4].UV[0] = uvX2;
-			v[4].UV[1] = uvY1;
+				v[4].UV[0] = uvX2;
+				v[4].UV[1] = uvY1;
 
-			v[5].UV[0] = uvX3;
-			v[5].UV[1] = uvY1;
+				v[5].UV[0] = uvX3;
+				v[5].UV[1] = uvY1;
 
-			v[2].UV[0] = uvX1;
-			v[2].UV[1] = uvY2;
+				v[2].UV[0] = uvX1;
+				v[2].UV[1] = uvY2;
 
-			v[3].UV[0] = uvX2;
-			v[3].UV[1] = uvY2;
+				v[3].UV[0] = uvX2;
+				v[3].UV[1] = uvY2;
 
-			v[6].UV[0] = uvX2;
-			v[6].UV[1] = uvY2;
+				v[6].UV[0] = uvX2;
+				v[6].UV[1] = uvY2;
 
-			v[7].UV[0] = uvX3;
-			v[7].UV[1] = uvY2;
+				v[7].UV[0] = uvX3;
+				v[7].UV[1] = uvY2;
+			}
+			else
+			{
+				v[0].UV2[0] = uvX1;
+				v[0].UV2[1] = uvY1;
+					   
+				v[1].UV2[0] = uvX2;
+				v[1].UV2[1] = uvY1;
+					   
+				v[4].UV2[0] = uvX2;
+				v[4].UV2[1] = uvY1;
+					   
+				v[5].UV2[0] = uvX3;
+				v[5].UV2[1] = uvY1;
+					   
+				v[2].UV2[0] = uvX1;
+				v[2].UV2[1] = uvY2;
+					   
+				v[3].UV2[0] = uvX2;
+				v[3].UV2[1] = uvY2;
+					   
+				v[6].UV2[0] = uvX2;
+				v[6].UV2[1] = uvY2;
+					   
+				v[7].UV2[0] = uvX3;
+				v[7].UV2[1] = uvY2;
+			}
 		}
+
+		template <typename VERTEX, int TARGET> void AssignUVs(efkTrackNodeParam& parameter, StrideView<VERTEX> verteies) 
+		{
+			float uvx = 0.0f;
+			float uvw = 1.0f;
+			float uvy = 0.0f;
+			float uvh = 1.0f;
+
+			if (parameter.TextureUVTypeParameterPtr->Type == ::Effekseer::TextureUVType::Strech)
+			{
+				verteies.Reset();
+				for (size_t loop = 0; loop < instances.size() - 1; loop++)
+				{
+					const auto& param = instances[loop];
+					if (TARGET == 0)
+					{
+						uvx = param.UV.X;
+						uvw = param.UV.Width;
+						uvy = param.UV.Y;
+						uvh = param.UV.Height;
+					}
+
+					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+					{
+						float percent1 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop) /
+										 (float)((param.InstanceCount - 1) * parameter.SplineDivision);
+
+						float percent2 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop + 1) /
+										 (float)((param.InstanceCount - 1) * parameter.SplineDivision);
+
+						auto uvX1 = uvx;
+						auto uvX2 = uvx + uvw * 0.5f;
+						auto uvX3 = uvx + uvw;
+						auto uvY1 = uvy + percent1 * uvh;
+						auto uvY2 = uvy + percent2 * uvh;
+
+						AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvX3, uvY1, uvY2);
+
+						verteies += 8;
+					}
+				}
+			}
+			else if (parameter.TextureUVTypeParameterPtr->Type == ::Effekseer::TextureUVType::Tile)
+			{
+				const auto& uvParam = *parameter.TextureUVTypeParameterPtr;
+				verteies.Reset();
+
+				for (size_t loop = 0; loop < instances.size() - 1; loop++)
+				{
+					auto& param = instances[loop];
+					if (TARGET == 0)
+					{
+						uvx = param.UV.X;
+						uvw = param.UV.Width;
+						uvy = param.UV.Y;
+						uvh = param.UV.Height;
+					}
+
+					if (loop < uvParam.TileEdgeTail)
+					{
+						float uvBegin = uvy;
+						float uvEnd = uvy + uvh * uvParam.TileLoopAreaBegin;
+
+						for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+						{
+							float percent1 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop) /
+											 (float)((uvParam.TileEdgeTail) * parameter.SplineDivision);
+
+							float percent2 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop + 1) /
+											 (float)((uvParam.TileEdgeTail) * parameter.SplineDivision);
+
+							auto uvX1 = uvx;
+							auto uvX2 = uvx + uvw * 0.5f;
+							auto uvX3 = uvx + uvw;
+							auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
+							auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
+
+							AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvX3, uvY1, uvY2);
+
+							verteies += 8;
+						}
+					}
+					else if (loop >= param.InstanceCount - 1 - uvParam.TileEdgeHead)
+					{
+						float uvBegin = uvy + uvh * uvParam.TileLoopAreaEnd;
+						float uvEnd = uvy + uvh * 1.0f;
+
+						for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+						{
+							float percent1 = (float)((param.InstanceIndex - (param.InstanceCount - 1 - uvParam.TileEdgeHead)) *
+														 parameter.SplineDivision +
+													 sploop) /
+											 (float)((uvParam.TileEdgeHead) * parameter.SplineDivision);
+
+							float percent2 = (float)((param.InstanceIndex - (param.InstanceCount - 1 - uvParam.TileEdgeHead)) *
+														 parameter.SplineDivision +
+													 sploop + 1) /
+											 (float)((uvParam.TileEdgeHead) * parameter.SplineDivision);
+
+							auto uvX1 = uvx;
+							auto uvX2 = uvx + uvw * 0.5f;
+							auto uvX3 = uvx + uvw;
+							auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
+							auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
+
+							AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvX3, uvY1, uvY2);
+
+							verteies += 8;
+						}
+					}
+					else
+					{
+						float uvBegin = uvy + uvh * uvParam.TileLoopAreaBegin;
+						float uvEnd = uvy + uvh * uvParam.TileLoopAreaEnd;
+
+						for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+						{
+							bool isFirst = param.InstanceIndex == 0 && sploop == 0;
+							bool isLast = param.InstanceIndex == (param.InstanceCount - 1);
+
+							float percent1 = (float)(sploop) / (float)(parameter.SplineDivision);
+
+							float percent2 = (float)(sploop + 1) / (float)(parameter.SplineDivision);
+
+							auto uvX1 = uvx;
+							auto uvX2 = uvx + uvx + uvw * 0.5f;
+							auto uvX3 = uvx + uvw;
+							auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
+							auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
+
+							AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvX3, uvY1, uvY2);
+
+							verteies += 8;
+						}
+					}
+				}
+			}
+		}
+
 		template<typename VERTEX>
 		void RenderSplines(const ::Effekseer::Matrix44& camera)
 		{
@@ -418,120 +587,11 @@ namespace EffekseerRenderer
 			}
 
 			// calculate UV
-			if (parameter.TextureUVTypeParameterPtr->Type == ::Effekseer::TextureUVType::Strech)
+			AssignUVs<VERTEX, 0>(parameter, verteies);
+
+			if (vertexType == VertexType::Dynamic) 
 			{
-				verteies.Reset();
-				for (size_t loop = 0; loop < instances.size() - 1; loop++)
-				{
-					const auto& param = instances[loop];
-
-					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
-					{
-						float percent1 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop) /
-										 (float)((param.InstanceCount - 1) * parameter.SplineDivision);
-
-						float percent2 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop + 1) /
-										 (float)((param.InstanceCount - 1) * parameter.SplineDivision);
-
-						auto uvX1 = param.UV.X;
-						auto uvX2 = param.UV.X + param.UV.X + param.UV.Width * 0.5f;
-						auto uvX3 = param.UV.X + param.UV.X + param.UV.Width;
-						auto uvY1 = param.UV.Y + percent1 * param.UV.Height;
-						auto uvY2 = param.UV.Y + percent2 * param.UV.Height;
-
-						AssignUV(verteies, uvX1, uvX2, uvX3, uvY1, uvY2);
-
-						verteies += 8;
-					}
-				}
-			}
-			else if (parameter.TextureUVTypeParameterPtr->Type == ::Effekseer::TextureUVType::Tile)
-			{
-				const auto& uvParam = *parameter.TextureUVTypeParameterPtr;
-				verteies.Reset();
-
-				for (size_t loop = 0; loop < instances.size() - 1; loop++)
-				{
-					auto& param = instances[loop];
-
-					if (loop < uvParam.TileEdgeTail)
-					{
-						float uvBegin = param.UV.Y;
-						float uvEnd = param.UV.Y + param.UV.Height * uvParam.TileLoopAreaBegin;
-
-						for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
-						{
-							float percent1 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop) /
-											 (float)((uvParam.TileEdgeTail) * parameter.SplineDivision);
-
-							float percent2 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop + 1) /
-											 (float)((uvParam.TileEdgeTail) * parameter.SplineDivision);
-
-							auto uvX1 = param.UV.X;
-							auto uvX2 = param.UV.X + param.UV.X + param.UV.Width * 0.5f;
-							auto uvX3 = param.UV.X + param.UV.X + param.UV.Width;
-							auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
-							auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
-
-							AssignUV(verteies, uvX1, uvX2, uvX3, uvY1, uvY2);
-
-							verteies += 8;
-						}
-					}
-					else if (loop >= param.InstanceCount - 1 - uvParam.TileEdgeHead)
-					{
-						float uvBegin = param.UV.Y + param.UV.Height * uvParam.TileLoopAreaEnd;
-						float uvEnd = param.UV.Y + param.UV.Height * 1.0f;
-
-						for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
-						{
-							float percent1 = (float)((param.InstanceIndex - (param.InstanceCount - 1 - uvParam.TileEdgeHead)) *
-														 parameter.SplineDivision +
-													 sploop) /
-											 (float)((uvParam.TileEdgeHead) * parameter.SplineDivision);
-
-							float percent2 = (float)((param.InstanceIndex - (param.InstanceCount - 1 - uvParam.TileEdgeHead)) *
-														 parameter.SplineDivision +
-													 sploop + 1) /
-											 (float)((uvParam.TileEdgeHead) * parameter.SplineDivision);
-
-							auto uvX1 = param.UV.X;
-							auto uvX2 = param.UV.X + param.UV.X + param.UV.Width * 0.5f;
-							auto uvX3 = param.UV.X + param.UV.X + param.UV.Width;
-							auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
-							auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
-
-							AssignUV(verteies, uvX1, uvX2, uvX3, uvY1, uvY2);
-
-							verteies += 8;
-						}
-					}
-					else
-					{
-						float uvBegin = param.UV.Y + param.UV.Height * uvParam.TileLoopAreaBegin;
-						float uvEnd = param.UV.Y + param.UV.Height * uvParam.TileLoopAreaEnd;
-
-						for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
-						{
-							bool isFirst = param.InstanceIndex == 0 && sploop == 0;
-							bool isLast = param.InstanceIndex == (param.InstanceCount - 1);
-
-							float percent1 = (float)(sploop) / (float)(parameter.SplineDivision);
-
-							float percent2 = (float)(sploop + 1) / (float)(parameter.SplineDivision);
-
-							auto uvX1 = param.UV.X;
-							auto uvX2 = param.UV.X + param.UV.X + param.UV.Width * 0.5f;
-							auto uvX3 = param.UV.X + param.UV.X + param.UV.Width;
-							auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
-							auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
-
-							AssignUV(verteies, uvX1, uvX2, uvX3, uvY1, uvY2);
-
-							verteies += 8;
-						}
-					}
-				}
+				AssignUVs<VERTEX, 1>(parameter, verteies);
 			}
 
 			// custom parameter

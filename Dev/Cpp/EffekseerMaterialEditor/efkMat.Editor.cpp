@@ -1157,7 +1157,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 					ImGui::EndCombo();
 				}
 			}
-			if (name == std::string("Sampler"))
+			else if (name == std::string("Sampler"))
 			{
 				const char* items[] = {"Repeat", "Clamp"};
 
