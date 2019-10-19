@@ -856,7 +856,7 @@ void Editor::UpdateCreating()
 		return;
 	}
 
-	// call GetMousePos to get to a relative position because of imgui specification
+	// call GetMousePos to get to a relative position because of imgui specification on this
 	auto posOnEditor = ImGui::GetMousePos();
 	std::shared_ptr<EffekseerMaterial::Pin> newLinkPin;
 
