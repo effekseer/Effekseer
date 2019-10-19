@@ -94,9 +94,9 @@ struct VertexDistortion
 		float UV2[2];
 	};
 
-	::Effekseer::Vector3D Tangent;
 	::Effekseer::Vector3D Binormal;
-
+	::Effekseer::Vector3D Tangent;
+	
 	void SetColor(const ::Effekseer::Color& color)
 	{
 		Col[0] = color.R;
@@ -117,9 +117,9 @@ struct VertexDistortionDX9
 		float UV2[2];
 	};
 
-	::Effekseer::Vector3D Tangent;
 	::Effekseer::Vector3D Binormal;
-
+	::Effekseer::Vector3D Tangent;
+	
 	void SetColor(const ::Effekseer::Color& color)
 	{
 		Col[0] = color.B;
