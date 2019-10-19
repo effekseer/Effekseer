@@ -652,6 +652,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 
 		LoadRendererParameter(pos, m_effect->GetSetting());
 
+		// rescale intensity after 1.5
+		RendererCommon.BasicParameter.DistortionIntensity *= m_effect->GetMaginification();
+		RendererCommon.DistortionIntensity *= m_effect->GetMaginification();
+
 		if (m_effect->GetVersion() >= 1)
 		{
 			// Sound
