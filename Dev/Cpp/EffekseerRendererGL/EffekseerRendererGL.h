@@ -137,34 +137,6 @@ public:
 	virtual bool OnDistorting() { return false; }
 };
 
-struct DynamicVertex
-{
-	::Effekseer::Vector3D Pos;
-	::Effekseer::Color Col;
-	//! packed vector
-	::Effekseer::Color Normal;
-	//! packed vector
-	::Effekseer::Color Tangent;
-
-	union
-	{
-		//! UV1 (for template)
-		float UV[2];
-		float UV1[2];
-	};
-
-	float UV2[2];
-
-	void SetColor(const ::Effekseer::Color& color)
-	{
-		Col = color;
-	}
-};
-
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
-
 /**
 	@brief	
 	\~english A status of UV when particles are rendered.
@@ -492,7 +464,6 @@ public:
 	*/
 	virtual void SetBackgroundTexture(::Effekseer::TextureData* textureData);
 
-protected:
 	/**
 	@brief
 	\~English	Create a proxy texture
