@@ -31,7 +31,7 @@ namespace Effekseer
 /**
 	@brief	エフェクトの実体
 */
-class Instance : public IntrusiveList<Instance>::Node
+class alignas(16) Instance : public IntrusiveList<Instance>::Node
 {
 	friend class Manager;
 	friend class InstanceContainer;
@@ -65,8 +65,11 @@ public:
 	// コンテナ
 	InstanceContainer*	m_pContainer;
 
-	// グループの連結リストの先頭
-	InstanceGroup*	m_headGroups;
+	// 自分が所属するグループ
+	InstanceGroup*	m_ownGroup;
+
+	// 子グループの連結リストの先頭
+	InstanceGroup*	m_childrenGroups;
 
 	// 親
 	Instance*	m_pParent;
@@ -269,7 +272,7 @@ public:
 	Matrix43		m_GlobalMatrix43;
 
 	// 親の変換用行列
-	Matrix43		m_ParentMatrix43;
+	Matrix43		m_ParentMatrix;
 
 	// 変換用行列が計算済かどうか
 	bool			m_GlobalMatrix43Calculated;
@@ -302,7 +305,7 @@ public:
 	random_int ApplyEq(const RefMinMax& dpInd, random_int originalParam);
 
 	// コンストラクタ
-	Instance( Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer );
+	Instance( Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup );
 
 	// デストラクタ
 	virtual ~Instance();

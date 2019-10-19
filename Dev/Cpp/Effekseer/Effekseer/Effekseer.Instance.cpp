@@ -161,12 +161,13 @@ random_int Instance::ApplyEq(const RefMinMax& dpInd, random_int originalParam)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer)
+Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
 	: m_pManager(pManager)
 	, m_pEffectNode((EffectNodeImplemented*)pEffectNode)
 	, m_pContainer(pContainer)
-	, m_headGroups(NULL)
-	, m_pParent(NULL)
+	, m_ownGroup(pGroup)
+	, m_childrenGroups(nullptr)
+	, m_pParent(nullptr)
 	, m_State(INSTANCE_STATE_ACTIVE)
 	, m_LivedTime(0)
 	, m_LivingTime(0)
@@ -192,13 +193,13 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 
 		if( group != NULL )
 		{
-			group->NextUsedByInstance = childContainer->CreateGroup();
+			group->NextUsedByInstance = childContainer->CreateInstanceGroup();
 			group = group->NextUsedByInstance;
 		}
 		else
 		{
-			group = childContainer->CreateGroup();
-			m_headGroups = group;
+			group = childContainer->CreateInstanceGroup();
+			m_childrenGroups = group;
 		}
 	}
 }
@@ -234,7 +235,7 @@ void Instance::GenerateChildrenInRequired(float currentTime)
 
 	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
 
-	InstanceGroup* group = m_headGroups;
+	InstanceGroup* group = m_childrenGroups;
 
 	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 	{
@@ -358,10 +359,9 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		// SRTの初期化
 		m_GenerationLocation.Indentity();
 		m_GlobalMatrix43 = globalMatrix;
-		m_ParentMatrix43.Indentity();
 
 		// 親の初期化
-		m_ParentMatrix43 = GetGlobalMatrix43();
+		m_ParentMatrix.Indentity();
 
 		// Generate zero frame effect
 		GenerateChildrenInRequired(0.0f);
@@ -382,78 +382,21 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 
 	// SRTの初期化
-	m_pParent->GetGlobalMatrix43().GetTranslation( m_GlobalPosition );
+	const Matrix43& parentMatrix = m_pParent->GetGlobalMatrix43();
+	parentMatrix.GetTranslation( m_GlobalPosition );
 	m_GlobalRevisionLocation = Vector3D(0.0f, 0.0f, 0.0f);
 	m_GlobalRevisionVelocity = Vector3D(0.0f, 0.0f, 0.0f);
 	m_GenerationLocation.Indentity();
 	m_GlobalMatrix43 = globalMatrix;
-	m_ParentMatrix43.Indentity();
 
 	// 親の初期化
-	if( parameter->CommonValues.TranslationBindType == BindType::WhenCreating )
-	{
-		m_ParentMatrix43.Value[3][0] = m_pParent->m_GlobalMatrix43.Value[3][0];
-		m_ParentMatrix43.Value[3][1] = m_pParent->m_GlobalMatrix43.Value[3][1];
-		m_ParentMatrix43.Value[3][2] = m_pParent->m_GlobalMatrix43.Value[3][2];
-	}
-
-	if( parameter->CommonValues.RotationBindType == BindType::WhenCreating &&
+	if( parameter->CommonValues.TranslationBindType == BindType::WhenCreating ||
+		parameter->CommonValues.RotationBindType == BindType::WhenCreating ||
 		parameter->CommonValues.ScalingBindType == BindType::WhenCreating )
 	{
-		for( int m = 0; m < 3; m++ )
-		{
-			for( int n = 0; n < 3; n++ )
-			{
-				m_ParentMatrix43.Value[m][n] = m_pParent->m_GlobalMatrix43.Value[m][n];
-			}
-		}
+		m_ParentMatrix = parentMatrix;
 	}
-	else if ( parameter->CommonValues.RotationBindType == BindType::WhenCreating )
-	{
-		for( int m = 0; m < 3; m++ )
-		{
-			for( int n = 0; n < 3; n++ )
-			{
-				m_ParentMatrix43.Value[m][n] = m_pParent->m_GlobalMatrix43.Value[m][n];
-			}
-		}
 
-		float s[3];
-		for( int m = 0; m < 3; m++ )
-		{
-			s[m] = 0;
-			for( int n = 0; n < 3; n++ )
-			{
-				s[m] += m_ParentMatrix43.Value[m][n] * m_ParentMatrix43.Value[m][n];
-			}
-			s[m] = sqrt( s[m] );
-		}
-
-		for( int m = 0; m < 3; m++ )
-		{
-			for( int n = 0; n < 3; n++ )
-			{
-				m_ParentMatrix43.Value[m][n] = m_ParentMatrix43.Value[m][n] / s[m];
-			}
-		}
-	}
-	else if ( parameter->CommonValues.ScalingBindType == BindType::WhenCreating )
-	{
-		float s[3];
-		for( int m = 0; m < 3; m++ )
-		{
-			s[m] = 0;
-			for( int n = 0; n < 3; n++ )
-			{
-				s[m] += m_pParent->m_GlobalMatrix43.Value[m][n] * m_pParent->m_GlobalMatrix43.Value[m][n];
-			}
-			s[m] = sqrt( s[m] );
-		}
-		m_ParentMatrix43.Value[0][0] = s[0];
-		m_ParentMatrix43.Value[1][1] = s[1];
-		m_ParentMatrix43.Value[2][2] = s[2];
-	}
-	
 	// Initialize parent color
 	if (parameter->RendererCommon.ColorBindType == BindType::Always)
 	{
@@ -977,7 +920,12 @@ void Instance::Update( float deltaFrame, bool shown )
 	{
 		GenerateChildrenInRequired(originalTime + deltaFrame);
 	}
-	
+
+	for (InstanceGroup* group = m_childrenGroups; group != nullptr; group = group->NextUsedByInstance)
+	{
+		group->SetParentMatrix( m_GlobalMatrix43 );
+	}
+
 	// check whether killed?
 	bool killed = false;
 	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
@@ -1005,7 +953,7 @@ void Instance::Update( float deltaFrame, bool shown )
 		if( !killed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct )
 		{
 			int maxcreate_count = 0;
-			InstanceGroup* group = m_headGroups;
+			InstanceGroup* group = m_childrenGroups;
 
 			for (int i = 0; i < m_pEffectNode->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 			{
@@ -1072,13 +1020,13 @@ void Instance::CalculateMatrix( float deltaFrame )
 		CalculateParentMatrix( deltaFrame );
 	}
 
-	Vector3D localPosition;
-	Vector3D localAngle;
-	Vector3D localScaling;
-
 	/* 更新処理 */
 	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
 	{
+		Vector3D localPosition;
+		Vector3D localAngle;
+		Vector3D localScaling;
+
 		/* 位置の更新(時間から直接求めれるよう対応済み) */
 		if( m_pEffectNode->TranslationType == ParameterTranslationType_None )
 		{
@@ -1264,58 +1212,48 @@ void Instance::CalculateMatrix( float deltaFrame )
 
 		/* 描画部分の更新 */
 		m_pEffectNode->UpdateRenderedInstance( *this, m_pManager );
-	}
-	
-	// 行列の更新
-	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
-	{
-		m_GlobalMatrix43.Scaling( localScaling.X, localScaling.Y,  localScaling.Z );
 
+		// 回転行列の作成
+		Matrix43 MatRot;
 		if( m_pEffectNode->RotationType == ParameterRotationType_Fixed ||
 			m_pEffectNode->RotationType == ParameterRotationType_PVA ||
 			m_pEffectNode->RotationType == ParameterRotationType_Easing ||
 			m_pEffectNode->RotationType == ParameterRotationType_FCurve )
 		{
-			Matrix43 MatRot;
 			MatRot.RotationZXY( localAngle.Z, localAngle.X, localAngle.Y );
-			Matrix43::Multiple( m_GlobalMatrix43, m_GlobalMatrix43, MatRot );
 		}
 		else if( m_pEffectNode->RotationType == ParameterRotationType_AxisPVA ||
 				 m_pEffectNode->RotationType == ParameterRotationType_AxisEasing )
 		{
-			Matrix43 MatRot;
 			Vector3D axis;
 			axis.X = rotation_values.axis.axis.x;
 			axis.Y = rotation_values.axis.axis.y;
 			axis.Z = rotation_values.axis.axis.z;
 
 			MatRot.RotationAxis( axis, rotation_values.axis.rotation );
-			Matrix43::Multiple( m_GlobalMatrix43, m_GlobalMatrix43, MatRot );
+		}
+		else
+		{
+			MatRot.Indentity();
 		}
 
-		if( localPosition.X != 0.0f ||
-			localPosition.Y != 0.0f || 
-			localPosition.Z != 0.0f )
-		{
-			Matrix43 MatTra;
-			MatTra.Translation( localPosition.X, localPosition.Y, localPosition.Z );
-			Matrix43::Multiple( m_GlobalMatrix43, m_GlobalMatrix43, MatTra );
-		}
+		// 行列の更新
+		m_GlobalMatrix43.SetSRT( localScaling, MatRot, localPosition );
 
 		if( m_pEffectNode->GenerationLocation.EffectsRotation )
 		{
 			Matrix43::Multiple( m_GlobalMatrix43, m_GlobalMatrix43, m_GenerationLocation );
 		}
 
-		Matrix43::Multiple( m_GlobalMatrix43, m_GlobalMatrix43, m_ParentMatrix43 );
-		
-		Vector3D currentPosition;
-		m_GlobalMatrix43.GetTranslation( currentPosition );
-		m_GlobalVelocity = currentPosition - m_GlobalPosition;
-		m_GlobalPosition = currentPosition;
+		Matrix43::Multiple( m_GlobalMatrix43, m_GlobalMatrix43, m_ParentMatrix );
 
 		if( m_pEffectNode->LocationAbs.type != LocationAbsType::None )
 		{
+			Vector3D currentPosition;
+			m_GlobalMatrix43.GetTranslation( currentPosition );
+			m_GlobalVelocity = currentPosition - m_GlobalPosition;
+			m_GlobalPosition = currentPosition;
+
 			ModifyMatrixFromLocationAbs( deltaFrame );
 		}
 	}
@@ -1333,73 +1271,34 @@ void Instance::CalculateParentMatrix( float deltaFrame )
 
 	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
 	{
-		BindType lType = m_pEffectNode->CommonValues.TranslationBindType;
+		BindType tType = m_pEffectNode->CommonValues.TranslationBindType;
 		BindType rType = m_pEffectNode->CommonValues.RotationBindType;
 		BindType sType = m_pEffectNode->CommonValues.ScalingBindType;
 
-		const Instance* rootInstance;
-		InstanceGlobal* instanceGlobal = m_pContainer->GetRootInstance();
-		InstanceContainer* rootContainer = instanceGlobal->GetRootContainer();
-		InstanceGroup* firstGloup = rootContainer->GetFirstGroup();
-		if( firstGloup && firstGloup->GetInstanceCount() > 0 )
+		if( tType != BindType::WhenCreating && rType != BindType::WhenCreating && sType != BindType::WhenCreating )
 		{
-			rootInstance = firstGloup->GetFirst();
+			m_ParentMatrix = m_ownGroup->GetParentMatrix();
 		}
-		else
+		else if( tType == BindType::WhenCreating && rType == BindType::WhenCreating && sType == BindType::WhenCreating )
 		{
-			rootInstance = NULL;
-		}
-		
-		if( (lType == BindType::Always && rType == BindType::Always && sType == BindType::Always) )
-		{
-			m_ParentMatrix43 = m_pParent->GetGlobalMatrix43();
-		}
-		else if ( lType == BindType::NotBind_Root && rType == BindType::NotBind_Root && sType == BindType::NotBind_Root )
-		{
-			m_ParentMatrix43 = rootInstance->GetGlobalMatrix43();
+			// 何もしない
 		}
 		else
 		{
 			Vector3D s, t;
 			Matrix43 r;
 
-			m_ParentMatrix43.GetSRT( s, r, t );
-			
-			if( lType == BindType::Always )
-			{
-				m_pParent->GetGlobalMatrix43().GetTranslation( t );
-			}
-			else if( lType == BindType::NotBind_Root && rootInstance != NULL )
-			{
-				rootInstance->GetGlobalMatrix43().GetTranslation( t );
-			}
-			
-			if( rType == BindType::Always )
-			{
-				m_pParent->GetGlobalMatrix43().GetRotation( r );
-			}
-			else if( rType == BindType::NotBind_Root && rootInstance != NULL )
-			{
-				rootInstance->GetGlobalMatrix43().GetRotation( r );
-			}
-			
+			if( tType == BindType::WhenCreating ) m_ParentMatrix.GetTranslation( t );
+			else t = m_ownGroup->GetParentTranslation();
 
-			if( sType == BindType::Always )
-			{
-				m_pParent->GetGlobalMatrix43().GetScale( s );
-			}
-			else if( sType == BindType::NotBind_Root && rootInstance != NULL )
-			{
-				rootInstance->GetGlobalMatrix43().GetScale( s );
-			}
+			if( rType == BindType::WhenCreating ) m_ParentMatrix.GetRotation( r );
+			else r = m_ownGroup->GetParentRotation();
 
-			m_ParentMatrix43.SetSRT( s, r, t );
+			if( sType == BindType::WhenCreating ) m_ParentMatrix.GetScale( s );
+			else s = m_ownGroup->GetParentScale();
+
+			m_ParentMatrix.SetSRT( s, r, t );
 		}
-	}
-	else
-	{
-		// Rootの場合
-		m_ParentMatrix43 = m_pParent->GetGlobalMatrix43();
 	}
 
 	m_ParentMatrix43Calculated = true;
@@ -1494,7 +1393,7 @@ void Instance::Kill()
 {
 	if( m_State == INSTANCE_STATE_ACTIVE )
 	{
-		for( InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByInstance )
+		for( InstanceGroup* group = m_childrenGroups; group != NULL; group = group->NextUsedByInstance )
 		{
 			group->IsReferencedFromInstance = false;
 		}

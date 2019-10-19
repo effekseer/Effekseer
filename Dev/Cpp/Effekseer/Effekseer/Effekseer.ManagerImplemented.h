@@ -11,6 +11,8 @@
 #include "Effekseer.Matrix44.h"
 #include "Culling/Culling3D.h"
 #include "Effekseer.CustomAllocator.h"
+#include "Effekseer.IntrusiveList.h"
+#include "Effekseer.InstanceChunk.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -137,11 +139,19 @@ private:
 	// 確保済みインスタンス数
 	int m_instance_max;
 
-	// 確保済みインスタンス
-	std::queue<Instance*>	m_reserved_instances;
-
 	// 確保済みインスタンスバッファ
-	uint8_t*				m_reserved_instances_buffer;
+	std::unique_ptr<InstanceChunk[]>		m_reservedChunksBuffer;
+	std::unique_ptr<uint8_t[]>				m_reservedGroupBuffer;
+	std::unique_ptr<uint8_t[]>				m_reservedContainerBuffer;
+	// プールされたインスタンス
+	std::queue<InstanceChunk*>				m_pooledChunks;
+	std::queue<InstanceGroup*>				m_pooledGroups;
+	std::queue<InstanceContainer*>			m_pooledContainers;
+
+	// 世代ごとのインスタンスチャンク
+	static const size_t GenerationsMax = 20;
+	std::array<std::vector<InstanceChunk*>, GenerationsMax> m_instanceChunks;
+	std::array<int32_t, GenerationsMax> m_creatableChunkOffsets;
 
 	// 再生中オブジェクトの組み合わせ集合体
 	std::map<Handle,DrawSet>	m_DrawSets;
@@ -212,9 +222,6 @@ private:
 	// 描画オブジェクト破棄処理
 	void GCDrawSet( bool isRemovingManager );
 
-	// インスタンスコンテナ生成
-	InstanceContainer* CreateInstanceContainer( EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const Matrix43& rootMatrix, Instance* pParent);
-
 	// メモリ確保関数
 	static void* EFK_STDCALL Malloc( unsigned int size );
 
@@ -234,11 +241,14 @@ public:
 	// デストラクタ
 	virtual ~ManagerImplemented();
 
-	/* Root以外の破棄済みインスタンスバッファ回収(Flip,Update,終了時からのみ呼ばれる) */
-	void PushInstance( Instance* instance );
+	/* Root以外のインスタンスバッファ生成(Flip,Update,終了時からのみ呼ばれる) */
+	Instance* CreateInstance( EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup );
 
-	/* Root以外のインスタンスバッファ取得(Flip,Update,終了時からのみ呼ばれる) */
-	Instance* PopInstance();
+	InstanceGroup* CreateInstanceGroup( EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGlobal* pGlobal );
+	void ReleaseGroup( InstanceGroup* group );
+
+	InstanceContainer* CreateInstanceContainer( EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const Matrix43& rootMatrix, Instance* pParent );
+	void ReleaseInstanceContainer( InstanceContainer* container );
 
 	/**
 		@brief マネージャー破棄
@@ -562,7 +572,7 @@ private:
 	/**
 		@brief	残りの確保したインスタンス数を取得する。
 	*/
-	virtual int32_t GetRestInstancesCount() const override { return (int32_t)m_reserved_instances.size(); }
+	virtual int32_t GetRestInstancesCount() const override { return (int32_t)m_pooledChunks.size() * InstanceChunk::InstancesOfChunk; }
 
 	/**
 		@brief	start reload

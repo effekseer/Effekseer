@@ -596,6 +596,11 @@ public:
 	virtual Effect* GetEffect() const = 0;
 
 	/**
+	@brief	ノードツリーの世代を取得する。
+	*/
+	virtual int GetGeneration() const = 0;
+
+	/**
 	@brief	子のノードの数を取得する。
 	*/
 	virtual int GetChildrenCount() const = 0;

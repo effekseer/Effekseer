@@ -1084,6 +1084,9 @@ class EffectNodeImplemented
 protected:
 	// 所属しているパラメーター
 	Effect*	m_effect;
+	
+	// ノードツリーの世代
+	int m_generation;
 
 	// 子ノード
 	std::vector<EffectNodeImplemented*>	m_Nodes;
@@ -1158,6 +1161,8 @@ public:
 	DynamicFactorParameter DynamicFactor;
 
 	Effect* GetEffect() const override;
+
+	int GetGeneration() const override;
 
 	int GetChildrenCount() const override;
 

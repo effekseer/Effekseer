@@ -65,6 +65,7 @@ class EffectNodeModel;
 class InstanceGlobal;
 class InstanceContainer;
 class Instance;
+class InstanceChunk;
 class InstanceGroup;
 
 class ParticleRenderer;
