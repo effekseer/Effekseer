@@ -766,6 +766,7 @@ public:
 	}
 };
 
+#ifdef _DEBUG
 class NodeVertexTangentWS : public NodeParameter
 {
 public:
@@ -781,7 +782,7 @@ public:
 		OutputPins.push_back(output);
 	}
 };
-
+#endif
 
 class NodeCustomData1 : public NodeParameter
 {
