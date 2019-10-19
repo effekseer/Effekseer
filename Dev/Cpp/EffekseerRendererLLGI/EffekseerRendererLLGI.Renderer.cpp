@@ -85,10 +85,10 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 	PiplineStateKey key;
 	key.state = m_renderState->GetActiveState();
 	key.shader = currentShader;
-	key.topologyType = currentTopologyType;
+	key.topologyType = currentTopologyType_;
 
-	auto it = piplineStates.find(key);
-	if (it != piplineStates.end())
+	auto it = piplineStates_.find(key);
+	if (it != piplineStates_.end())
 	{
 		return it->second;
 	}
@@ -113,7 +113,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 	}
 	piplineState->VertexLayoutCount = currentShader->GetVertexLayoutFormat().size();
 
-	piplineState->Topology = currentTopologyType;
+	piplineState->Topology = currentTopologyType_;
 
 	piplineState->IsDepthTestEnabled = key.state.DepthTest;
 	piplineState->IsDepthWriteEnabled = key.state.DepthWrite;
@@ -169,7 +169,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 
 	piplineState->Compile();
 
-	piplineStates[key] = piplineState;
+	piplineStates_[key] = piplineState;
 
 	return piplineState;
 }
@@ -205,11 +205,11 @@ RendererImplemented::~RendererImplemented()
 	// to prevent objects to be disposed before finish renderings.
 	graphics_->WaitFinish();
 
-	for (auto p : piplineStates)
+	for (auto p : piplineStates_)
 	{
 		p.second->Release();
 	}
-	piplineStates.clear();
+	piplineStates_.clear();
 
 	ES_SAFE_RELEASE(commandList_);
 
@@ -615,49 +615,37 @@ void RendererImplemented::SetDistortingCallback(EffekseerRenderer::DistortingCal
 	m_distortingCallback = callback;
 }
 
-void RendererImplemented::SetVertexBuffer(LLGI::VertexBuffer* vertexBuffer, int32_t size)
+void RendererImplemented::SetVertexBuffer(LLGI::VertexBuffer* vertexBuffer, int32_t stride)
 {
-	currentVertexBuffer = vertexBuffer;
-	currentVertexBufferStride = size;
+	currentVertexBuffer_ = vertexBuffer;
+	currentVertexBufferStride_ = stride;
 }
 
-void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t size)
+void RendererImplemented::SetVertexBuffer(VertexBuffer* vertexBuffer, int32_t stride)
 {
-	currentVertexBuffer = vertexBuffer->GetVertexBuffer();
-	currentVertexBufferStride = size;
+	currentVertexBuffer_ = vertexBuffer->GetVertexBuffer();
+	currentVertexBufferStride_ = stride;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void RendererImplemented::SetIndexBuffer(IndexBuffer* indexBuffer)
 {
 	GetCurrentCommandList()->SetIndexBuffer(indexBuffer->GetIndexBuffer());
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void RendererImplemented::SetIndexBuffer(LLGI::IndexBuffer* indexBuffer) { GetCurrentCommandList()->SetIndexBuffer(indexBuffer); }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void RendererImplemented::SetLayout(Shader* shader)
 {
 	if (m_renderMode == Effekseer::RenderMode::Normal)
 	{
-		currentTopologyType = LLGI::TopologyType::Triangle;
+		currentTopologyType_ = LLGI::TopologyType::Triangle;
 	}
 	else
 	{
-		currentTopologyType = LLGI::TopologyType::Line;
+		currentTopologyType_ = LLGI::TopologyType::Line;
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 {
 	// constant buffer
@@ -690,12 +678,12 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 
 	if (m_renderMode == Effekseer::RenderMode::Normal)
 	{
-		GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer, currentVertexBufferStride, vertexOffset * currentVertexBufferStride);
+		GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer_, currentVertexBufferStride_, vertexOffset * currentVertexBufferStride_);
 		GetCurrentCommandList()->Draw(spriteCount * 2);
 	}
 	else
 	{
-		GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer, currentVertexBufferStride, vertexOffset * currentVertexBufferStride);
+		GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer_, currentVertexBufferStride_, vertexOffset * currentVertexBufferStride_);
 		GetCurrentCommandList()->Draw(spriteCount * 4);
 	}
 
@@ -703,9 +691,6 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 	LLGI::SafeRelease(constantBufferPS);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 {
 	// constant buffer
@@ -736,7 +721,7 @@ void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 	impl->drawcallCount++;
 	impl->drawvertexCount += vertexCount;
 
-	GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer, currentVertexBufferStride, 0);
+	GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer_, currentVertexBufferStride_, 0);
 	GetCurrentCommandList()->Draw(indexCount / 3);
 
 	LLGI::SafeRelease(constantBufferVS);
