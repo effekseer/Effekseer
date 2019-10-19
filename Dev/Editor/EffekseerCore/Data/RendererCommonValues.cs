@@ -465,7 +465,7 @@ namespace Effekseer.Data
 		[Name(language = Language.English, value = "Wrap")]
 		public Value.Enum<WrapType> Wrap2 { get; private set; }
 
-		[Selected(ID = 3, Value = 4)]
+		[Selected(ID = 3, Value = (int)MaterialType.BackDistortion)]
 		[Name(language = Language.Japanese, value = "歪み強度")]
 		[Name(language = Language.English, value = "Distortion\nIntensity")]
 		public Value.Float DistortionIntensity { get; private set; }
