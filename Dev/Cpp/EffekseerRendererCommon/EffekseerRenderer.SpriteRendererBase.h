@@ -179,8 +179,8 @@ protected:
 				vs[i].Tangent.X = 1.0f;
 				vs[i].Tangent.Y = 0.0f;
 				vs[i].Tangent.Z = 0.0f;
-				vs[i].Binormal.X = 1.0f;
-				vs[i].Binormal.Y = 0.0f;
+				vs[i].Binormal.X = 0.0f;
+				vs[i].Binormal.Y = 1.0f;
 				vs[i].Binormal.Z = 0.0f;
 			}
 		}
