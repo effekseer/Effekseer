@@ -393,7 +393,7 @@ bool Editor::Load(const char* path)
 	selectedContentInd_ = contents_.size() - 1;
 
 	isSelectedDirty_ = true;
-	isLoading = true;
+	content->IsLoading = true;
 
 	return true;
 }
@@ -562,7 +562,7 @@ void Editor::Update()
 
 	ed::Resume();
 
-	isLoading = false;
+	contents_[GetSelectedContentIndex()]->IsLoading = false;
 }
 
 void Editor::UpdateNodes()
@@ -856,6 +856,8 @@ void Editor::UpdateCreating()
 		return;
 	}
 
+	// call GetMousePos to get to a relative position because of imgui specification
+	auto posOnEditor = ImGui::GetMousePos();
 	std::shared_ptr<EffekseerMaterial::Pin> newLinkPin;
 
 	if (ed::BeginCreate(ImColor(255, 255, 255), 2.0f))
@@ -954,7 +956,7 @@ void Editor::UpdateCreating()
 
 			if (ed::AcceptNewItem())
 			{
-				auto posOnEditor = ImGui::GetMousePos();
+
 				currentPin = newLinkPin;
 
 				ed::Suspend();
@@ -1288,7 +1290,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 
 	ed::BeginNode(node->GUID);
 
-	if (isLoading || node->isPosDirty)
+	if (contents_[GetSelectedContentIndex()]->IsLoading || node->isPosDirty)
 	{
 		ed::SetNodePosition(node->GUID, ImVec2(node->Pos.X, node->Pos.Y));
 	}

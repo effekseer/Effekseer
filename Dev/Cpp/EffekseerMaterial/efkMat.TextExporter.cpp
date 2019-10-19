@@ -819,6 +819,15 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 			<< ";" << std::endl;
 	}
 
+	#ifdef _DEBUG
+	if (node->Target->Parameter->Type == NodeType::VertexTangentWS)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
+			<< "worldTangent"
+			<< ";" << std::endl;
+	}
+	#endif
+
 	if (node->Target->Parameter->Type == NodeType::PixelNormalWS)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="

@@ -766,6 +766,23 @@ public:
 	}
 };
 
+class NodeVertexTangentWS : public NodeParameter
+{
+public:
+	NodeVertexTangentWS()
+	{
+		Type = NodeType::VertexTangentWS;
+		TypeName = "VertexTangentWS";
+		// Group = std::vector<std::string>{"Constant"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
+	}
+};
+
+
 class NodeCustomData1 : public NodeParameter
 {
 public:

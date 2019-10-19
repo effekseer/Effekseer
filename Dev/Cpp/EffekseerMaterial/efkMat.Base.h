@@ -116,6 +116,12 @@ enum class NodeType
 	Output,
 
 	// VectrToRadialValue
+
+	//! not supported on UE4
+#ifdef _DEBUG
+	VertexTangentWS,
+#endif
+
 };
 
 enum class DefaultType

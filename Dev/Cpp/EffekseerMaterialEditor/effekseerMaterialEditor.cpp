@@ -5,21 +5,6 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "gdiplus.lib")
 
-/*
-#ifdef _DEBUG
-
-#pragma comment(lib, "x86/Debug/AltseedRHI.lib")
-#pragma comment(lib, "x86/Debug/glfw3.lib")
-#pragma comment(lib, "x86/Debug/libglew32d.lib")
-
-#else
-
-#pragma comment(lib, "x86/Release/AltseedRHI.lib")
-#pragma comment(lib, "x86/Release/glfw3.lib")
-#pragma comment(lib, "x86/Release/libglew32d.lib")
-
-#endif
-*/
 #include "Dialog/Dialog.h"
 
 #include "../IPC/IPC.h"
@@ -338,60 +323,65 @@ int main(int argc, char* argv[])
 								editor->SelectContent(i);
 							}
 
-							ImGui::Columns(2);
-							ImGui::SetColumnWidth(0, 200);
-
-							ImGui::BeginChild("###Left");
-
-							editor->UpdatePreview();
-
-							ImGui::Separator();
-
-							if (g_selectedNode != nullptr)
+							if (i == editor->GetSelectedContentIndex())
 							{
-								editor->UpdateParameterEditor(g_selectedNode);
-							}
 
-							ImGui::EndChild();
+								ImGui::Columns(2);
+								ImGui::SetColumnWidth(0, 200);
 
-							ImGui::NextColumn();
+								ImGui::BeginChild("###Left");
 
-							ImGui::BeginChild("###Right");
+								editor->UpdatePreview();
 
-							auto& io = ImGui::GetIO();
+								ImGui::Separator();
 
-							if (!io.MouseDown[0])
-							{
-								editor->GetContents()[i]->GetMaterial()->GetCommandManager()->MakeMergeDisabled();
-							}
-
-							ed::SetCurrentEditor(editor->GetContents()[i]->GetEditorContext());
-							ed::Begin("###MainEditor", ImVec2(0.0, 0.0f));
-							// ed::Suspend();
-
-							editor->Update();
-
-							ed::End();
-
-							// Find selected node
-							ax::NodeEditor::NodeId nodeIDs[2];
-							g_selectedNode = nullptr;
-							if (ed::GetSelectedNodes(nodeIDs, 2) > 0)
-							{
-								for (auto node : editor->GetContents()[i]->GetMaterial()->GetNodes())
+								if (g_selectedNode != nullptr)
 								{
-									if (node->GUID == nodeIDs[0].Get())
+									editor->UpdateParameterEditor(g_selectedNode);
+								}
+
+								ImGui::EndChild();
+
+								ImGui::NextColumn();
+
+								ImGui::BeginChild("###Right");
+
+								auto& io = ImGui::GetIO();
+
+								if (!io.MouseDown[0])
+								{
+									editor->GetContents()[i]->GetMaterial()->GetCommandManager()->MakeMergeDisabled();
+								}
+
+								ed::SetCurrentEditor(editor->GetContents()[i]->GetEditorContext());
+								ed::Begin("###MainEditor", ImVec2(0.0, 0.0f));
+								// ed::Suspend();
+
+								editor->Update();
+
+								ed::End();
+
+								// Find selected node
+								ax::NodeEditor::NodeId nodeIDs[2];
+								g_selectedNode = nullptr;
+								if (ed::GetSelectedNodes(nodeIDs, 2) > 0)
+								{
+									for (auto node : editor->GetContents()[i]->GetMaterial()->GetNodes())
 									{
-										g_selectedNode = node;
+										if (node->GUID == nodeIDs[0].Get())
+										{
+											g_selectedNode = node;
+										}
 									}
 								}
+
+								ed::SetCurrentEditor(nullptr);
+
+								ImGui::EndChild();
+
+								ImGui::Columns(1);
 							}
 
-							ed::SetCurrentEditor(nullptr);
-
-							ImGui::EndChild();
-
-							ImGui::Columns(1);
 
 							ImGui::EndTabItem();
 						}

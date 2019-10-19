@@ -42,8 +42,11 @@ private:
 	ed::EditorContext* editorContext_;
 	bool hasStorageRef_ = false;
 	uint64_t previousChangedID_ = 0;
-
+	
 public:
+	//! immediately after loaded
+	bool IsLoading = false;
+
 	EditorContent(Editor* editor);
 
 	virtual ~EditorContent();
@@ -81,8 +84,6 @@ private:
 
 	int32_t selectedContentInd_ = -1;
 	std::vector<std::shared_ptr<EditorContent>> contents_;
-
-	bool isLoading = false;
 
 	//! is selected changed and not applied to gui yet
 	bool isSelectedDirty_ = false;

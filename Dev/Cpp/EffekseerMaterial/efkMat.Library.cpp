@@ -31,6 +31,9 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeVertexNormalWS>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodePixelNormalWS>>());
 
+#ifdef _DEBUG
+	Contents.push_back(std::make_shared<LibraryContent<NodeVertexTangentWS>>());
+#endif
 	Contents.push_back(std::make_shared<LibraryContent<NodeCustomData1>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeCustomData2>>());
 
