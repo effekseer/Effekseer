@@ -19,14 +19,6 @@ namespace Effekseer
 {
 
 
-void* InstanceGroup::operator new(size_t size)
-{
-	assert(sizeof(InstanceGroup) == size);
-	return GetMallocFunc()(size);
-}
-
-void InstanceGroup::operator delete(void* p) { GetFreeFunc()(p, sizeof(InstanceGroup)); }
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -40,7 +32,7 @@ InstanceGroup::InstanceGroup( Manager* manager, EffectNode* effectNode, Instance
 	, NextUsedByInstance	( NULL )
 	, NextUsedByContainer	( NULL )
 {
-
+	m_ParentMatrix.Indentity();
 }
 
 //----------------------------------------------------------------------------------
@@ -54,63 +46,17 @@ InstanceGroup::~InstanceGroup()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGroup::RemoveInvalidInstances()
-{
-	auto it = m_removingInstances.begin();
-
-	while( it != m_removingInstances.end() )
-	{
-		auto instance = *it;
-
-		if( instance->m_State == INSTANCE_STATE_ACTIVE )
-		{
-			assert(0);
-		}
-		else if( instance->m_State == INSTANCE_STATE_REMOVING )
-		{
-			// 削除中処理
-			instance->m_State = INSTANCE_STATE_REMOVED;
-			it++;
-		}
-		else if( instance->m_State == INSTANCE_STATE_REMOVED )
-		{
-			it = m_removingInstances.erase( it );
-
-			// 削除処理
-			if( instance->m_pEffectNode->GetType() == EFFECT_NODE_TYPE_ROOT )
-			{
-				delete instance;
-			}
-			else
-			{
-				instance->~Instance();
-				m_manager->PushInstance( instance );
-			}
-
-			m_global->DecInstanceCount();
-		}
-	}
-}
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Instance* InstanceGroup::CreateInstance()
 {
 	Instance* instance = NULL;
 
-	if( m_effectNode->GetType() == EFFECT_NODE_TYPE_ROOT )
-	{
-		instance = new Instance( m_manager, m_effectNode, m_container );
-	}
-	else
-	{
-		Instance* buf = m_manager->PopInstance();
-		if( buf == NULL ) return NULL;
-		instance = new(buf)Instance( m_manager, m_effectNode, m_container );
-	}
+	instance = m_manager->CreateInstance( m_effectNode, m_container, this );
 	
-	m_instances.push_back( instance );
-	m_global->IncInstanceCount();
+	if( instance )
+	{
+		m_instances.push_back( instance );
+		m_global->IncInstanceCount();
+	}
 	return instance;
 }
 
@@ -137,39 +83,20 @@ int InstanceGroup::GetInstanceCount() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-int InstanceGroup::GetRemovingInstanceCount() const
-{
-	return (int32_t)m_removingInstances.size();
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void InstanceGroup::Update( float deltaFrame, bool shown )
 {
-	RemoveInvalidInstances();
-
-	auto it = m_instances.begin();
-
-	while( it != m_instances.end() )
+	for( auto it = m_instances.begin(); it != m_instances.end(); )
 	{
 		auto instance = *it;
-
-		if( instance->m_State == INSTANCE_STATE_ACTIVE )
+	
+		if( instance->m_State != INSTANCE_STATE_ACTIVE )
 		{
-			// 更新処理
-			instance->Update( deltaFrame, shown );
-
-			// 破棄チェック
-			if( instance->m_State != INSTANCE_STATE_ACTIVE )
-			{
-				it = m_instances.erase( it );
-				m_removingInstances.push_back( instance );
-			}
-			else
-			{
-				it++;
-			}
+			it = m_instances.erase( it );
+			m_global->DecInstanceCount();
+		}
+		else
+		{
+			it++;
 		}
 	}
 
@@ -193,12 +120,67 @@ void InstanceGroup::SetBaseMatrix( const Matrix43& mat )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+void InstanceGroup::SetParentMatrix( const Matrix43& mat )
+{
+	BindType tType = m_effectNode->CommonValues.TranslationBindType;
+	BindType rType = m_effectNode->CommonValues.RotationBindType;
+	BindType sType = m_effectNode->CommonValues.ScalingBindType;
+
+	auto rootGroup = m_global->GetRootContainer()->GetFirstGroup();
+
+	if( tType == BindType::Always && rType == BindType::Always && sType == BindType::Always )
+	{
+		m_ParentMatrix = mat;
+	}
+	else if( tType == BindType::NotBind_Root && rType == BindType::NotBind_Root && sType == BindType::NotBind_Root )
+	{
+		m_ParentMatrix = rootGroup->GetParentMatrix();
+	}
+	else if( tType == BindType::WhenCreating && rType == BindType::WhenCreating && sType == BindType::WhenCreating )
+	{
+		// 何もしない
+	}
+	else
+	{
+		Vector3D s, t;
+		Matrix43 r;
+		mat.GetSRT( s, r, t );
+		
+		if( tType == BindType::Always )
+		{
+			m_ParentTranslation = t;
+		}
+		else if( tType == BindType::NotBind_Root )
+		{
+			m_ParentTranslation = rootGroup->GetParentTranslation();
+		}
+
+		if( rType == BindType::Always )
+		{
+			m_ParentRotation = r;
+		}
+		else if( rType == BindType::NotBind_Root )
+		{
+			m_ParentRotation = rootGroup->GetParentRotation();
+		}
+
+		if( sType == BindType::Always )
+		{
+			m_ParentScale = s;
+		}
+		else if( sType == BindType::NotBind_Root )
+		{
+			m_ParentScale = rootGroup->GetParentScale();
+		}
+	}
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 void InstanceGroup::RemoveForcibly()
 {
 	KillAllInstances();
-
-	RemoveInvalidInstances();
-	RemoveInvalidInstances();
 }
 
 //----------------------------------------------------------------------------------
@@ -214,7 +196,6 @@ void InstanceGroup::KillAllInstances()
 		if (instance->GetState() == INSTANCE_STATE_ACTIVE)
 		{
 			instance->Kill();
-			m_removingInstances.push_back(instance);
 		}
 	}
 }

@@ -33,6 +33,7 @@ namespace Effekseer
 //----------------------------------------------------------------------------------
 EffectNodeImplemented::EffectNodeImplemented(Effect* effect, unsigned char*& pos)
 	: m_effect(effect)
+	, m_generation(0)
 	, m_userData(NULL)
 	, IsRendered(true)
 	, TranslationFCurve(NULL)
@@ -51,6 +52,12 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 	int size = 0;
 	int node_type = 0;
 	auto ef = (EffectImplemented*)m_effect;
+
+	if (parent) {
+		m_generation = parent->GetGeneration() + 1;
+	} else {
+		m_generation = 0;
+	}
 
 	memcpy(&node_type, pos, sizeof(int));
 	pos += sizeof(int);
@@ -735,6 +742,11 @@ void EffectNodeImplemented::CalcCustomData(const Instance* instance, std::array<
 //
 //----------------------------------------------------------------------------------
 Effect* EffectNodeImplemented::GetEffect() const { return m_effect; }
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+int EffectNodeImplemented::GetGeneration() const { return m_generation; }
 
 //----------------------------------------------------------------------------------
 //

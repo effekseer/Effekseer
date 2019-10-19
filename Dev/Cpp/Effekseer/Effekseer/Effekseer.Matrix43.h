@@ -27,7 +27,6 @@ struct Matrix44;
 	[2,0][2,1][2,2]<BR>
 	[3,0][3,1][3,2]<BR>
 */
-#pragma pack(push,1)
 struct Matrix43
 {
 private:
@@ -156,7 +155,6 @@ public:
 	static void Multiple( Matrix43& out, const Matrix43& in1, const Matrix43& in2 );
 };
 
-#pragma pack(pop)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

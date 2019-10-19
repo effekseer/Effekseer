@@ -186,6 +186,7 @@
     <ClInclude Include="Effekseer\Effekseer.FCurves.h" />
     <ClInclude Include="Effekseer\Effekseer.File.h" />
     <ClInclude Include="Effekseer\Effekseer.Instance.h" />
+    <ClInclude Include="Effekseer\Effekseer.InstanceChunk.h" />
     <ClInclude Include="Effekseer\Effekseer.InstanceContainer.h" />
     <ClInclude Include="Effekseer\Effekseer.InstanceGlobal.h" />
     <ClInclude Include="Effekseer\Effekseer.InstanceGroup.h" />
@@ -244,6 +245,7 @@
     <ClCompile Include="Effekseer\Effekseer.EffectNodeTrack.cpp" />
     <ClCompile Include="Effekseer\Effekseer.FCurves.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Instance.cpp" />
+    <ClCompile Include="Effekseer\Effekseer.InstanceChunk.cpp" />
     <ClCompile Include="Effekseer\Effekseer.InstanceContainer.cpp" />
     <ClCompile Include="Effekseer\Effekseer.InstanceGlobal.cpp" />
     <ClCompile Include="Effekseer\Effekseer.InstanceGroup.cpp" />

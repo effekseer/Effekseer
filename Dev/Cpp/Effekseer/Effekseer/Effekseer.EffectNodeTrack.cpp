@@ -183,7 +183,7 @@ void EffectNodeTrack::EndRendering(Manager* manager)
 void EffectNodeTrack::InitializeRenderedInstanceGroup(InstanceGroup& instanceGroup, Manager* manager)
 {
 	InstanceGroupValues& instValues = instanceGroup.rendererValues.track;
-	auto instanceGlobal = instanceGroup.GetInstanceGlobal();
+	auto instanceGlobal = instanceGroup.GetRootInstance();
 
 	InitializeValues(instValues.ColorLeft, TrackColorLeft, instanceGlobal);
 	InitializeValues(instValues.ColorCenter, TrackColorCenter, instanceGlobal);

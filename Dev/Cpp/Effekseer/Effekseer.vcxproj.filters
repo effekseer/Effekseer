@@ -230,6 +230,9 @@
     <ClInclude Include="Effekseer\IO\Effekseer.EfkEfcFactory.h">
       <Filter>Effekseer\IO</Filter>
     </ClInclude>
+    <ClInclude Include="Effekseer\Effekseer.InstanceChunk.h">
+      <Filter>Effekseer\EffectInstance</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp">
@@ -354,6 +357,9 @@
     </ClCompile>
     <ClCompile Include="Effekseer\IO\Effekseer.EfkEfcFactory.cpp">
       <Filter>Effekseer\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Effekseer.InstanceChunk.cpp">
+      <Filter>Effekseer\EffectInstance</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
