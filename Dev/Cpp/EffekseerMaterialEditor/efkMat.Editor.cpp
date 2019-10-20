@@ -781,22 +781,15 @@ void Editor::UpdatePopup()
 		};
 
 		// keyword box
-		ImGui::InputText("Search", searchingKeywords.data(), searchingKeywords.size());
+
+		// focus into a searching textbox
+		if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive())
+			ImGui::SetKeyboardFocusHere(0);
+
+		ImGui::InputText(StringContainer::GetValue("Search").c_str(), searchingKeywords.data(), searchingKeywords.size());
 
 		if (searchingKeywords[0] == 0)
 		{
-
-			// TODO recursive
-			for (auto content : library->Root->Contents)
-			{
-				if (!isShown(content))
-				{
-					continue;
-				}
-
-				showContent(content);
-			}
-
 			for (auto group : library->Root->Groups)
 			{
 				auto& groupName = StringContainer::GetValue((group.first + "_Name").c_str(), group.first.c_str());
@@ -816,9 +809,7 @@ void Editor::UpdatePopup()
 					ImGui::EndMenu();
 				}
 			}
-		}
-		else
-		{
+
 			// TODO recursive
 			for (auto content : library->Root->Contents)
 			{
@@ -829,7 +820,9 @@ void Editor::UpdatePopup()
 
 				showContent(content);
 			}
-
+		}
+		else
+		{
 			for (auto group : library->Root->Groups)
 			{
 				for (auto content : group.second->Contents)
@@ -841,6 +834,17 @@ void Editor::UpdatePopup()
 
 					showContent(content);
 				}
+			}
+
+			// TODO recursive
+			for (auto content : library->Root->Contents)
+			{
+				if (!isShown(content))
+				{
+					continue;
+				}
+
+				showContent(content);
 			}
 		}
 
@@ -1024,7 +1028,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		if (type == ValueType::Int)
 		{
 			int32_t value = static_cast<int32_t>(floatValues[0]);
-			if (ImGui::DragInt(name.c_str(), &value, 1, 1, 100))
+			if (ImGui::DragInt(StringContainer::GetValue(name.c_str()).c_str(), &value, 1, 1, 100))
 			{
 				floatValues[0] = value;
 				material->ChangeValue(p, floatValues);
@@ -1034,7 +1038,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 		if (type == ValueType::Float1)
 		{
-			if (ImGui::DragFloat(name.c_str(), floatValues.data(), 0.01f))
+			if (ImGui::DragFloat(StringContainer::GetValue(name.c_str()).c_str(), floatValues.data(), 0.01f))
 			{
 				material->ChangeValue(p, floatValues);
 				material->MakeDirty(node);
@@ -1043,7 +1047,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 		if (type == ValueType::Float2)
 		{
-			if (ImGui::DragFloat2(name.c_str(), floatValues.data(), 0.01f))
+			if (ImGui::DragFloat2(StringContainer::GetValue(name.c_str()).c_str(), floatValues.data(), 0.01f))
 			{
 				material->ChangeValue(p, floatValues);
 				material->MakeDirty(node);
@@ -1052,7 +1056,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 		if (type == ValueType::Float3)
 		{
-			if (ImGui::DragFloat3(name.c_str(), floatValues.data(), 0.01f))
+			if (ImGui::DragFloat3(StringContainer::GetValue(name.c_str()).c_str(), floatValues.data(), 0.01f))
 			{
 				material->ChangeValue(p, floatValues);
 				material->MakeDirty(node);
@@ -1061,7 +1065,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 		if (type == ValueType::Float4)
 		{
-			if (ImGui::DragFloat4(name.c_str(), floatValues.data(), 0.01f))
+			if (ImGui::DragFloat4(StringContainer::GetValue(name.c_str()).c_str(), floatValues.data(), 0.01f))
 			{
 				material->ChangeValue(p, floatValues);
 				material->MakeDirty(node);
@@ -1071,7 +1075,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		if (type == ValueType::Bool)
 		{
 			bool b = floatValues[0] > 0.0f;
-			if (ImGui::Checkbox(name.c_str(), &b))
+			if (ImGui::Checkbox(StringContainer::GetValue(name.c_str()).c_str(), &b))
 			{
 				floatValues[0] = b ? 1.0f : 0.0f;
 				material->ChangeValue(p, floatValues);
@@ -1087,7 +1091,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 			str.resize(str.size() + 16, 0);
 
 			// Shader result doesn't change
-			if (InputText(name.c_str(), str))
+			if (InputText(StringContainer::GetValue(name.c_str()).c_str(), str))
 			{
 				material->ChangeValue(p, str);
 			}
@@ -1118,7 +1122,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 				const char* items[] = {"Color", "Value"};
 
-				if (ImGui::BeginCombo("Type", items[static_cast<int>(texture->Type)]))
+				if (ImGui::BeginCombo(StringContainer::GetValue(name.c_str()).c_str(), items[static_cast<int>(texture->Type)]))
 				{
 					for (size_t i = 0; i < 2; i++)
 					{
@@ -1142,7 +1146,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 			{
 				const char* items[] = {"1", "2"};
 
-				if (ImGui::BeginCombo(name.c_str(), items[static_cast<int>(floatValues[0])]))
+				if (ImGui::BeginCombo(StringContainer::GetValue(name.c_str()).c_str(), items[static_cast<int>(floatValues[0])]))
 				{
 					for (size_t i = 0; i < 2; i++)
 					{
@@ -1163,7 +1167,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 			{
 				const char* items[] = {"Repeat", "Clamp"};
 
-				if (ImGui::BeginCombo(name.c_str(), items[static_cast<int>(floatValues[0])]))
+				if (ImGui::BeginCombo(StringContainer::GetValue(name.c_str()).c_str(), items[static_cast<int>(floatValues[0])]))
 				{
 					for (size_t i = 0; i < 2; i++)
 					{
@@ -1184,7 +1188,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 			{
 				const char* items[] = {"Lit", "Unlit"};
 
-				if (ImGui::BeginCombo(name.c_str(), items[static_cast<int>(floatValues[0])]))
+				if (ImGui::BeginCombo(StringContainer::GetValue(name.c_str()).c_str(), items[static_cast<int>(floatValues[0])]))
 				{
 					for (size_t i = 0; i < 2; i++)
 					{
@@ -1308,6 +1312,27 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 	ImGui::BeginHorizontal("header");
 	const auto nodeTypeName = node->Parameter->GetHeader(GetSelectedMaterial(), node);
 	ImGui::Text(nodeTypeName.c_str());
+
+	// show preview button
+	ImGui::Spring(1, 0);
+
+	if (node->IsPreviewOpened)
+	{
+		if (ImGui::SmallButton("+"))
+		{
+			node->IsPreviewOpened = !node->IsPreviewOpened;
+		}
+	}
+	else
+	{
+		if (ImGui::SmallButton("-"))
+		{
+			node->IsPreviewOpened = !node->IsPreviewOpened;
+		}
+	}
+
+	ImGui::Spring(0, 0);
+
 	ImGui::EndHorizontal();
 
 	// Input and output
@@ -1335,7 +1360,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 				typeShape = "-";
 			}
 
-			ImGui::Text((typeShape + std::string(" ") + pin->Parameter->Name).c_str());
+			ImGui::Text((typeShape + std::string(" ") + StringContainer::GetValue(pin->Parameter->Name.c_str())).c_str());
 
 			ImGui::EndHorizontal();
 
@@ -1371,7 +1396,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 				typeShape = "-";
 			}
 
-			ImGui::Text((pin->Parameter->Name + std::string(" ") + typeShape).c_str());
+			ImGui::Text((StringContainer::GetValue(pin->Parameter->Name.c_str()) + std::string(" ") + typeShape).c_str());
 
 			ImGui::EndHorizontal();
 
@@ -1386,10 +1411,6 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 	ImGui::EndHorizontal();
 
 	// show a preview
-	if (ImGui::SmallButton("Preview"))
-	{
-		node->IsPreviewOpened = !node->IsPreviewOpened;
-	}
 
 	if (node->IsPreviewOpened)
 	{

@@ -64,14 +64,14 @@ bool ExtractTextureParameter(std::shared_ptr<Material> material, std::shared_ptr
 			return true;
 		}
 	}
-	else if (node->Parameter->Type == NodeType::ConstantTexture)
+	else if (node->Parameter->Type == NodeType::TextureObject)
 	{
 		auto texProp = node->Properties[0];
 		result.Path = texProp->Str;
 		result.Sampler = TextureSamplerType::Unknown;
 		return true;
 	}
-	else if (node->Parameter->Type == NodeType::ParamTexture)
+	else if (node->Parameter->Type == NodeType::TextureObjectParameter)
 	{
 		auto texProp = node->Properties[0];
 		result.GUID = node->GUID;
@@ -162,7 +162,7 @@ NodeConstant1::NodeConstant1()
 	Group = std::vector<std::string>{"Constant"};
 
 	auto output = std::make_shared<PinParameter>();
-	output->Name = "";
+	output->Name = "Output";
 	output->Type = ValueType::Float1;
 	OutputPins.push_back(output);
 
@@ -174,7 +174,7 @@ NodeConstant1::NodeConstant1()
 	auto func1 = std::make_shared<NodeFunctionParameter>();
 	func1->Name = "ConvertParam";
 	func1->Func = [](std::shared_ptr<Material> material, std::shared_ptr<Node> node) -> bool {
-		auto param = std::make_shared<NodeParam1>();
+		auto param = std::make_shared<NodeParameter1>();
 		auto new_node = material->CreateNode(param);
 		auto links = material->GetConnectedPins(node->OutputPins[0]);
 
@@ -244,7 +244,7 @@ WarningType NodeComponentMask::GetWarning(std::shared_ptr<Material> material, st
 }
 
 ValueType
-NodeAppend::GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const
+NodeAppendVector::GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const
 {
 	auto type1 = material->GetDesiredPinType(node->InputPins[0], std::unordered_set<std::shared_ptr<Pin>>());
 	auto type2 = material->GetDesiredPinType(node->InputPins[1], std::unordered_set<std::shared_ptr<Pin>>());
@@ -256,7 +256,7 @@ NodeAppend::GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<No
 	return static_cast<ValueType>(static_cast<int>(ValueType::Float1) + count - 1);
 }
 
-WarningType NodeAppend::GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+WarningType NodeAppendVector::GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
 {
 	auto connected1 = material->GetConnectedPins(node->InputPins[0]);
 	auto connected2 = material->GetConnectedPins(node->InputPins[1]);

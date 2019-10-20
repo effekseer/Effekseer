@@ -103,12 +103,12 @@ protected:
 	void InitializeAsIn2Out1Param2()
 	{
 		auto input1 = std::make_shared<PinParameter>();
-		input1->Name = "A";
+		input1->Name = "Value1";
 		input1->Type = ValueType::FloatN;
 		InputPins.push_back(input1);
 
 		auto input2 = std::make_shared<PinParameter>();
-		input2->Name = "B";
+		input2->Name = "Value2";
 		input2->Type = ValueType::FloatN;
 		InputPins.push_back(input2);
 
@@ -118,12 +118,12 @@ protected:
 		OutputPins.push_back(output);
 
 		auto val1 = std::make_shared<NodePropertyParameter>();
-		val1->Name = "Value1";
+		val1->Name = "ConstValue1";
 		val1->Type = ValueType::Float1;
 		Properties.push_back(val1);
 
 		auto val2 = std::make_shared<NodePropertyParameter>();
-		val2->Name = "Value2";
+		val2->Name = "ConstValue2";
 		val2->Type = ValueType::Float1;
 		Properties.push_back(val2);
 	}
@@ -242,15 +242,15 @@ public:
 	}
 };
 
-class NodeParam1 : public NodeParameter
+class NodeParameter1 : public NodeParameter
 {
 public:
-	NodeParam1()
+	NodeParameter1()
 	{
-		Type = NodeType::Param1;
-		TypeName = "Param1";
+		Type = NodeType::Parameter1;
+		TypeName = "Parameter1";
 		Description = "Param value...";
-		Group = std::vector<std::string>{"Param"};
+		Group = std::vector<std::string>{"Parameter"};
 		HasDescription = true;
 
 		auto output = std::make_shared<PinParameter>();
@@ -276,15 +276,15 @@ public:
 	}
 };
 
-class NodeParam4 : public NodeParameter
+class NodeParameter4 : public NodeParameter
 {
 public:
-	NodeParam4()
+	NodeParameter4()
 	{
-		Type = NodeType::Param4;
-		TypeName = "Param4";
+		Type = NodeType::Parameter4;
+		TypeName = "Parameter4";
 		Description = "Param value...";
-		Group = std::vector<std::string>{"Param"};
+		Group = std::vector<std::string>{"Parameter"};
 		HasDescription = true;
 
 		auto output = std::make_shared<PinParameter>();
@@ -414,13 +414,13 @@ public:
 	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override;
 };
 
-class NodeAppend : public NodeParameter
+class NodeAppendVector : public NodeParameter
 {
 public:
-	NodeAppend()
+	NodeAppendVector()
 	{
-		Type = NodeType::Append;
-		TypeName = "Append";
+		Type = NodeType::AppendVector;
+		TypeName = "AppendVector";
 		Group = std::vector<std::string>{"Math"};
 
 		auto input1 = std::make_shared<PinParameter>();
@@ -478,6 +478,7 @@ public:
 		Type = NodeType::Subtract;
 		TypeName = "Subtract";
 		Group = std::vector<std::string>{"Math"};
+		Keywords.emplace_back("-");
 
 		InitializeAsIn2Out1Param2();
 	}
@@ -501,6 +502,7 @@ public:
 		Type = NodeType::Multiply;
 		TypeName = "Multiply";
 		Group = std::vector<std::string>{"Math"};
+		Keywords.emplace_back("*");
 
 		InitializeAsIn2Out1Param2();
 	}
@@ -524,6 +526,7 @@ public:
 		Type = NodeType::Divide;
 		TypeName = "Divide";
 		Group = std::vector<std::string>{"Math"};
+		Keywords.emplace_back("/");
 
 		InitializeAsIn2Out1Param2();
 	}
@@ -539,13 +542,13 @@ public:
 	}
 };
 
-class NodeFMod : public NodeParameter
+class NodeFmod : public NodeParameter
 {
 public:
-	NodeFMod()
+	NodeFmod()
 	{
 		Type = NodeType::FMod;
-		TypeName = "FMod";
+		TypeName = "Fmod";
 		Group = std::vector<std::string>{"Math"};
 
 		InitializeAsIn2Out1Param2();
@@ -562,14 +565,14 @@ public:
 	}
 };
 
-class NodeUV : public NodeParameter
+class NodeTextureCoordinate : public NodeParameter
 {
 public:
-	NodeUV()
+	NodeTextureCoordinate()
 	{
-		Type = NodeType::UV;
-		TypeName = "UV";
-		Group = std::vector<std::string>{"Coordinate"};
+		Type = NodeType::TextureCoordinate;
+		TypeName = "TextureCoordinate";
+		Group = std::vector<std::string>{"Model"};
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -577,7 +580,7 @@ public:
 		OutputPins.push_back(output);
 
 		auto param = std::make_shared<NodePropertyParameter>();
-		param->Name = "Index";
+		param->Name = "UVIndex";
 		param->Type = ValueType::Enum;
 		param->DefaultValues[0] = 0;
 		Properties.push_back(param);
@@ -591,7 +594,7 @@ public:
 	{
 		Type = NodeType::Panner;
 		TypeName = "Panner";
-		Group = std::vector<std::string>{"Coordinate"};
+		Group = std::vector<std::string>{"Model"};
 
 		auto input1 = std::make_shared<PinParameter>();
 		input1->Name = "UV";
@@ -619,16 +622,23 @@ public:
 		val1->Name = "Speed";
 		val1->Type = ValueType::Float2;
 		Properties.push_back(val1);
+
+		auto param = std::make_shared<NodePropertyParameter>();
+		param->Name = "UVIndex";
+		param->Type = ValueType::Enum;
+		param->DefaultValues[0] = 0;
+		Properties.push_back(param);
 	}
 };
 
-class NodeConstantTexture : public NodeParameter
+class NodeTextureObject : public NodeParameter
 {
 public:
-	NodeConstantTexture()
+	NodeTextureObject()
 	{
-		Type = NodeType::ConstantTexture;
-		TypeName = "ConstantTexture";
+		Type = NodeType::TextureObject;
+		TypeName = "TextureObject";
+		Group = std::vector<std::string>{"Texture"};
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -642,13 +652,14 @@ public:
 	}
 };
 
-class NodeParamTexture : public NodeParameter
+class NodeTextureObjectParameter : public NodeParameter
 {
 public:
-	NodeParamTexture()
+	NodeTextureObjectParameter()
 	{
-		Type = NodeType::ParamTexture;
-		TypeName = "ParamTexture";
+		Type = NodeType::TextureObjectParameter;
+		TypeName = "TextureObjectParameter";
+		Group = std::vector<std::string>{"Texture"};
 		HasDescription = true;
 
 		auto output = std::make_shared<PinParameter>();
@@ -681,6 +692,8 @@ public:
 	{
 		Type = NodeType::SampleTexture;
 		TypeName = "SampleTexture";
+		Group = std::vector<std::string>{"Texture"};
+
 
 		auto inputTexture = std::make_shared<PinParameter>();
 		inputTexture->Name = "Texture";
@@ -741,7 +754,7 @@ public:
 	{
 		Type = NodeType::VertexNormalWS;
 		TypeName = "VertexNormalWS";
-		// Group = std::vector<std::string>{"Constant"};
+		Group = std::vector<std::string>{"Model"};
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -757,7 +770,7 @@ public:
 	{
 		Type = NodeType::PixelNormalWS;
 		TypeName = "PixelNormalWS";
-		// Group = std::vector<std::string>{"Constant"};
+		Group = std::vector<std::string>{"Model"};
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -774,7 +787,7 @@ public:
 	{
 		Type = NodeType::VertexTangentWS;
 		TypeName = "VertexTangentWS";
-		// Group = std::vector<std::string>{"Constant"};
+		Group = std::vector<std::string>{"Model"};
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -791,6 +804,7 @@ public:
 	{
 		Type = NodeType::CustomData1;
 		TypeName = "CustomData1";
+		Group = std::vector<std::string>{"Parameter"};
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -831,6 +845,7 @@ public:
 	{
 		Type = NodeType::CustomData1;
 		TypeName = "CustomData2";
+		Group = std::vector<std::string>{"Parameter"};
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -873,7 +888,7 @@ public:
 		TypeName = "Comment";
 
 		auto paramName = std::make_shared<NodePropertyParameter>();
-		paramName->Name = "Name";
+		paramName->Name = "Comment";
 		paramName->Type = ValueType::String;
 		Properties.push_back(paramName);
 	}

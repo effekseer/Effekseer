@@ -14,19 +14,19 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeSubtract>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeMultiply>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeDivide>>());
-	Contents.push_back(std::make_shared<LibraryContent<NodeFMod>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeFmod>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeAbs>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeComponentMask>>());
-	Contents.push_back(std::make_shared<LibraryContent<NodeAppend>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeAppendVector>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeOneMinus>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeSine>>());
 
-	Contents.push_back(std::make_shared<LibraryContent<NodeUV>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeTextureCoordinate>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodePanner>>());
 
 	Contents.push_back(std::make_shared<LibraryContent<NodeSampleTexture>>());
-	Contents.push_back(std::make_shared<LibraryContent<NodeParamTexture>>());
-	Contents.push_back(std::make_shared<LibraryContent<NodeConstantTexture>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeTextureObjectParameter>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeTextureObject>>());
 
 	Contents.push_back(std::make_shared<LibraryContent<NodeVertexNormalWS>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodePixelNormalWS>>());
@@ -45,8 +45,8 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstant4>>());
 
 	// Parameter
-	Contents.push_back(std::make_shared<LibraryContent<NodeParam1>>());
-	Contents.push_back(std::make_shared<LibraryContent<NodeParam4>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeParameter1>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeParameter4>>());
 
 	// Comment
 	Contents.push_back(std::make_shared<LibraryContent<NodeComment>>());

@@ -81,8 +81,8 @@ enum class NodeType
 	Constant3,
 	Constant4,
 
-	Param1,
-	Param4,
+	Parameter1,
+	Parameter4,
 
 	Abs,
 	Sine,
@@ -93,12 +93,12 @@ enum class NodeType
 	FMod,
 	OneMinus,
 	ComponentMask,
-	Append,
-	UV,
+	AppendVector,
+	TextureCoordinate,
 	Panner,
 
-	ConstantTexture,
-	ParamTexture,
+	TextureObject,
+	TextureObjectParameter,
 	SampleTexture,
 
 	Time,

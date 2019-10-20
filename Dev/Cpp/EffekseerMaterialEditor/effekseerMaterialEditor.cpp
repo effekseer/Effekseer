@@ -42,6 +42,8 @@ std::shared_ptr<EffekseerMaterial::Graphics> graphics;
 std::shared_ptr<EffekseerMaterial::Editor> editor;
 std::shared_ptr<EffekseerMaterial::Node> g_selectedNode;
 
+bool g_showDebugWindow = false;
+
 std::array<bool, 512> keyState;
 std::array<bool, 512> keyStatePre;
 
@@ -274,6 +276,18 @@ int main(int argc, char* argv[])
 					ImGui::EndMenu();
 				}
 
+				#ifdef _DEBUG
+				if (ImGui::BeginMenu("Debug"))
+				{
+					if (ImGui::MenuItem("DebugWindow"))
+					{
+						g_showDebugWindow = true;
+					}
+
+					ImGui::EndMenu();
+				}
+				#endif
+
 				ImGui::EndMainMenuBar();
 			}
 
@@ -444,7 +458,7 @@ int main(int argc, char* argv[])
 			dialogs.erase(removed_it, dialogs.end());
 		}
 
-		if (ImGui::Begin("Code_Debug"))
+		if (g_showDebugWindow && ImGui::Begin("Code_Debug"))
 		{
 			if (material != nullptr && g_selectedNode != nullptr)
 			{

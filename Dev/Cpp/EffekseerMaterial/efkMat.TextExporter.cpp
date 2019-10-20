@@ -76,7 +76,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 				tePin.Name = "unused" + std::to_string(variableInd);
 				tePin.Type = type;
 
-				if (node->Parameter->Type == NodeType::ConstantTexture)
+				if (node->Parameter->Type == NodeType::TextureObject)
 				{
 					auto paramName = GetConstantTextureName(node->GUID);
 					auto path = node->Properties[0]->Str;
@@ -101,7 +101,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 					tePin.TextureValue = extractedTexture;
 				}
 
-				if (node->Parameter->Type == NodeType::ParamTexture)
+				if (node->Parameter->Type == NodeType::TextureObjectParameter)
 				{
 					auto paramName = EspcapeUserParamName(node->GetProperty("Name")->Str.c_str());
 					auto path = node->GetProperty("Value")->Str;
@@ -136,7 +136,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 			}
 			else
 			{
-				if (node->Parameter->Type == NodeType::Param1 || node->Parameter->Type == NodeType::Param4)
+				if (node->Parameter->Type == NodeType::Parameter1 || node->Parameter->Type == NodeType::Parameter4)
 				{
 					auto paramName = EspcapeUserParamName(node->GetProperty("Name")->Str.c_str());
 					auto values = node->GetProperty("Value")->Floats;
@@ -156,11 +156,11 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedUniform->Priority = static_cast<int32_t>(node->GetProperty("Priority")->Floats[0]);
 						extractedUniform->Descriptions = node->Descriptions;
 
-						if (node->Parameter->Type == NodeType::Param1)
+						if (node->Parameter->Type == NodeType::Parameter1)
 						{
 							extractedUniform->Type = ValueType::Float1;
 						}
-						else if (node->Parameter->Type == NodeType::Param4)
+						else if (node->Parameter->Type == NodeType::Parameter4)
 						{
 							extractedUniform->Type = ValueType::Float4;
 						}
@@ -556,14 +556,14 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 	{
 		ret << GetTypeName(ValueType::Float3) << " worldPositionOffset = " << GetTypeName(ValueType::Float3) << "(0, 0, 0);" << std::endl;
 
-		if (outputNode->Target->Parameter->Type == NodeType::ConstantTexture)
+		if (outputNode->Target->Parameter->Type == NodeType::TextureObject)
 		{
 			ret << GetTypeName(ValueType::Float4) << " emissive_temp = "
 				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName(0) << ");" << std::endl;
 			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
 			ret << "float opacity = emissive_temp.w;" << std::endl;
 		}
-		else if (outputNode->Target->Parameter->Type == NodeType::ParamTexture)
+		else if (outputNode->Target->Parameter->Type == NodeType::TextureObjectParameter)
 		{
 			ret << GetTypeName(ValueType::Float4) << " emissive_temp = "
 				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName(0) << ");" << std::endl;
@@ -634,13 +634,13 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 			<< "," << floats[1] << "," << floats[2] << "," << floats[3] << ");" << std::endl;
 	}
 
-	if (node->Target->Parameter->Type == NodeType::Param1)
+	if (node->Target->Parameter->Type == NodeType::Parameter1)
 	{
 		ret << GetTypeName(ValueType::Float1) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->Name << ";"
 			<< std::endl;
 	}
 
-	if (node->Target->Parameter->Type == NodeType::Param4)
+	if (node->Target->Parameter->Type == NodeType::Parameter4)
 	{
 		ret << GetTypeName(ValueType::Float4) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->Name << ";"
 			<< std::endl;
@@ -681,7 +681,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		exportIn2Out2Param2("mod", ",");
 	}
 
-	if (node->Target->Parameter->Type == NodeType::UV)
+	if (node->Target->Parameter->Type == NodeType::TextureCoordinate)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
 			<< GetUVName(node->Target->Properties[0]->Floats[0]) << ";" << std::endl;
@@ -689,12 +689,14 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::Panner)
 	{
+		auto index = node->Target->GetProperty("UVIndex");
+
 		std::array<float, 2> speed_;
 		speed_[0] = node->Target->Properties[0]->Floats[0];
 		speed_[1] = node->Target->Properties[0]->Floats[1];
 
-		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << GetInputArg(ValueType::Float2, node->Inputs[0])
-			<< "+"
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
+			<< (node->Inputs[0].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[0]) : GetUVName(index->Floats[0])) << "+"
 			<< (node->Inputs[2].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[2]) : GetInputArg(ValueType::Float2, speed_))
 			<< "*" << GetInputArg(ValueType::Float1, node->Inputs[1]) << ";" << std::endl;
 	}
@@ -723,7 +725,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		ret << ";" << std::endl;
 	}
 
-	if (node->Target->Parameter->Type == NodeType::Append)
+	if (node->Target->Parameter->Type == NodeType::AppendVector)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << GetTypeName(node->Outputs[0].Type) << "(";
 
@@ -782,12 +784,12 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << ";" << std::endl;
 	}
 
-	if (node->Target->Parameter->Type == NodeType::ConstantTexture)
+	if (node->Target->Parameter->Type == NodeType::TextureObject)
 	{
 		// None
 	}
 
-	if (node->Target->Parameter->Type == NodeType::ParamTexture)
+	if (node->Target->Parameter->Type == NodeType::TextureObjectParameter)
 	{
 		// None
 	}
@@ -819,14 +821,14 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 			<< ";" << std::endl;
 	}
 
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	if (node->Target->Parameter->Type == NodeType::VertexTangentWS)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
 			<< "worldTangent"
 			<< ";" << std::endl;
 	}
-	#endif
+#endif
 
 	if (node->Target->Parameter->Type == NodeType::PixelNormalWS)
 	{
