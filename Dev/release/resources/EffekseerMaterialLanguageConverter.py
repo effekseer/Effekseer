@@ -15,8 +15,8 @@ for book in books:
     for sheet in file.sheet_names:
         parsed = file.parse(sheet)
         for index, row in parsed.iterrows():
-            values_en[str(row[0])] = str(row[1]).replace('\r\n',r'\n').replace('\n',r'\n')
-            values_ja[str(row[0])] = str(row[2]).replace('\r\n',r'\n').replace('\n',r'\n')
+            values_en[str(row[0])] = str(row[1]).replace('\r\n',r'\n')
+            values_ja[str(row[0])] = str(row[2]).replace('\r\n',r'\n')
             
 
 f_en = codecs.open('efkmat_lang_en.json','w', "utf-8")

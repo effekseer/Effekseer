@@ -52,7 +52,7 @@ namespace Effekseer.GUI.Component
 				//Manager.NativeManager.PushItemWidth(100);
 
 				Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() + Manager.TextOffsetY);
-				Manager.NativeManager.Text(c.Label);
+				Manager.NativeManager.Text(controlRows.Internal[i].Label);
 
 				if (Manager.NativeManager.IsItemHovered())
 				{
@@ -60,9 +60,9 @@ namespace Effekseer.GUI.Component
 
 					Manager.NativeManager.BeginTooltip();
 
-					Manager.NativeManager.Text(c.Label);
+					Manager.NativeManager.Text(controlRows.Internal[i].Label);
 					Manager.NativeManager.Separator();
-					Manager.NativeManager.Text(c.Description);
+					Manager.NativeManager.Text(controlRows.Internal[i].Description);
 
 					Manager.NativeManager.EndTooltip();
 				}
@@ -227,6 +227,7 @@ namespace Effekseer.GUI.Component
 						if (objToTypeRow.ContainsKey(propValue))
 						{
 							row = objToTypeRow[propValue];
+							row.UpdateTitleAndDesc(prop);
 							row.SetSelector(localRows);
 							row.SelectorIndent = indent;
 							if (row.Selector != null) row.SelectorIndent++;
@@ -620,6 +621,12 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
+			public void UpdateTitleAndDesc(Data.EditableValue propInfo)
+			{
+				Title = propInfo.Title;
+				Description = propInfo.Description;
+				Label = Title;
+			}
 			public void SetSelector(List<TypeRow> sameLayerRows)
 			{
 				// Selector

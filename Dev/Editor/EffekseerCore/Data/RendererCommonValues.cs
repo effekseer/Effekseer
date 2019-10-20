@@ -82,6 +82,9 @@ namespace Effekseer.Data
 
 	public class MaterialFileParameter : IEditableValueCollection
 	{
+		string selfSummary = string.Empty;
+		string selfDetail = string.Empty;
+
 		[Shown(Shown = true)]
 		[Name(language = Language.Japanese, value = "パス")]
 		[Name(language = Language.English, value = "Path")]
@@ -131,8 +134,18 @@ namespace Effekseer.Data
 				//ret.Add(ev);
 			}
 
-			// need to filter
 			var propPath = EditableValue.Create(Path, this.GetType().GetProperty("Path"));
+
+			if(!string.IsNullOrEmpty(selfSummary))
+			{
+				propPath.Title = selfSummary;
+			}
+
+			if (!string.IsNullOrEmpty(selfDetail))
+			{
+				propPath.Description = selfDetail;
+			}
+
 			ret.Add(propPath);
 
 			foreach (var v in keyToValues.Values.OrderBy(_ => (_ as ValueStatus).Priority))
@@ -153,6 +166,26 @@ namespace Effekseer.Data
 		public void ApplyMaterial(Utl.MaterialInformation info)
 		{
 			bool isChanged = false;
+
+			if (info.Names.ContainsKey(Core.Language))
+			{
+				selfSummary = info.Names[Core.Language];
+			}
+			else
+			{
+				selfSummary = "";
+			}
+
+
+			if (info.Descriptions.ContainsKey(Core.Language))
+			{
+				selfDetail = info.Descriptions[Core.Language];
+			}
+			else
+			{
+				selfDetail = "";
+			}
+
 
 			var textureKeys = info.Textures.Select(_ => CreateKey(_)).ToList();
 

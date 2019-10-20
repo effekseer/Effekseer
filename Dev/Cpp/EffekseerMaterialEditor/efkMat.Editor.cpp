@@ -3,6 +3,7 @@
 #include "efkMat.CommandManager.h"
 #include "efkMat.Models.h"
 
+#include "ThirdParty/imgui_main/imgui_internal.h"
 #include "ThirdParty/nfd/nfd.h"
 
 #include <fstream>
@@ -749,7 +750,7 @@ void Editor::UpdatePopup()
 			}
 
 			// Show a description
-			if (ImGui::IsItemHovered() && c->Description != "")
+			if (ImGui::IsItemHovered() && ImGui::GetCurrentContext()->HoveredIdTimer > 0.25 && c->Description != "")
 			{
 				ImGui::SetTooltip(c->Description.c_str());
 			}
@@ -1216,18 +1217,28 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		updateProp(pp->Type, pp->Name, p);
 	}
 
-	//
+	// name and description for other editor
 
 	if (node->Parameter->HasDescription)
 	{
-		const char* languages[] = {"Jp", "En"};
+		ImGui::Separator();
+		ImGui::Text(StringContainer::GetValue("Description_Name").c_str());
 
-		if (ImGui::BeginCombo("Lang", languages[static_cast<int>(material->Language)]))
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetTooltip(StringContainer::GetValue("Description_Desc").c_str());
+		}
+
+		const char* languages[] = {"Ja", "En"};
+
+		if (ImGui::BeginCombo(StringContainer::GetValue("Language_Name").c_str(),
+				(StringContainer::GetValue(languages[static_cast<int>(material->Language)]) + "###" + languages[static_cast<int>(material->Language)])
+					.c_str()))
 		{
 			for (size_t i = 0; i < 2; i++)
 			{
 				auto isSelected = static_cast<int>(material->Language) == i;
-				if (ImGui::Selectable(languages[i], isSelected))
+				if (ImGui::Selectable((StringContainer::GetValue(languages[i]) + "###" + languages[i]).c_str(), isSelected))
 				{
 					material->Language = static_cast<LanguageType>(i);
 				}
@@ -1239,20 +1250,20 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		}
 
 		// is memory safe?
-		auto name = node->Descriptions[static_cast<int>(material->Language)].Name;
-		name.resize(name.size() + 16, 0);
+		auto name = node->Descriptions[static_cast<int>(material->Language)].Summary;
+		name.resize(name.size() + 256, 0);
 
-		auto desc = node->Descriptions[static_cast<int>(material->Language)].Description;
-		desc.resize(desc.size() + 16, 0);
+		auto desc = node->Descriptions[static_cast<int>(material->Language)].Detail;
+		desc.resize(desc.size() + 256, 0);
 
-		if (ImGui::InputText("Name###DescName", const_cast<char*>(name.data()), name.size()))
+		if (ImGui::InputText(StringContainer::GetValue("Summary_Name").c_str(), const_cast<char*>(name.data()), name.size()))
 		{
-			node->Descriptions[static_cast<int>(material->Language)].Name = name;
+			node->Descriptions[static_cast<int>(material->Language)].Summary = name.c_str();
 		}
 
-		if (ImGui::InputTextMultiline("Desc", const_cast<char*>(desc.data()), desc.size()))
+		if (ImGui::InputTextMultiline(StringContainer::GetValue("Detail_Name").c_str(), const_cast<char*>(desc.data()), desc.size()))
 		{
-			node->Descriptions[static_cast<int>(material->Language)].Description = desc;
+			node->Descriptions[static_cast<int>(material->Language)].Detail = desc.c_str();
 		}
 	}
 }
