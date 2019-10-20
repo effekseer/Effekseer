@@ -1021,7 +1021,11 @@ namespace efk
 			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 			{
 				ImGui::UpdatePlatformWindows();
-				ImGui::RenderPlatformWindowsDefault();
+
+				if (isValid)
+				{
+					ImGui::RenderPlatformWindowsDefault();
+				}
 			}
 
 			if (deviceType == DeviceType::OpenGL)
