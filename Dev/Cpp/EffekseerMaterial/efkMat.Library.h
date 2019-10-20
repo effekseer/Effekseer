@@ -14,6 +14,7 @@ public:
 	std::string Name;
 	std::string Description;
 	std::vector<std::string> Group;
+	std::vector<std::string> Keywords;
 	bool IsShown = true;
 
 	virtual std::shared_ptr<NodeParameter> Create() { return nullptr; }
@@ -28,6 +29,7 @@ public:
 		Name = node->TypeName;
 		Description = node->Description;
 		Group = node->Group;
+		Keywords = node->Keywords;
 
 		if (node->Type == NodeType::Output)
 		{

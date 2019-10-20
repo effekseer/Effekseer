@@ -51,6 +51,12 @@ bool Material::Load(const uint8_t* data, int32_t size)
 
 			hasRefraction_ = hasRefraction > 0;
 
+			memcpy(&customData1Count_, data + offset, 4);
+			offset += sizeof(int);
+
+			memcpy(&customData2Count_, data + offset, 4);
+			offset += sizeof(int);
+
 			int textureCount = 0;
 			memcpy(&textureCount, data + offset, 4);
 			offset += sizeof(int);
@@ -71,11 +77,11 @@ bool Material::Load(const uint8_t* data, int32_t size)
 				// defaultpath
 				offset += strDefaultPathLength;
 
-				// priority
-				offset += sizeof(int);
-
 				int index = 0;
 				memcpy(&index, data + offset, 4);
+				offset += sizeof(int);
+
+				// priority
 				offset += sizeof(int);
 
 				// param
@@ -194,5 +200,13 @@ void Material::SetUniformName(int32_t index, const char* name) { uniforms_.at(in
 int32_t Material::GetUniformCount() const { return static_cast<int32_t>(uniforms_.size()); }
 
 void Material::SetUniformCount(int32_t count) { uniforms_.resize(count); }
+
+int32_t Material::GetCustomData1Count() const { return customData1Count_; }
+
+void Material::SetCustomData1Count(int32_t count) { customData1Count_ = count; }
+
+int32_t Material::GetCustomData2Count() const { return customData2Count_; }
+
+void Material::SetCustomData2Count(int32_t count) { customData2Count_ = count; }
 
 } // namespace Effekseer

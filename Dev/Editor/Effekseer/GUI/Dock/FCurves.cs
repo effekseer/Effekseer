@@ -359,9 +359,11 @@ namespace Effekseer.GUI.Dock
 			{
 				int delete_num = 261;
 
+				// Delete points
 				if(Manager.NativeManager.IsKeyDown(delete_num))
 				{
-					// todo canControl = false;
+					DeleteSelectedPoints();
+					canControl = false;
 				}
 			}
 
@@ -823,6 +825,33 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
+		public void SelectFCurve(object o)
+		{
+			Action<TreeNode> recurse = null;
+
+			recurse = (t) =>
+			{
+				foreach (var fcurve in t.FCurves)
+				{
+					if(o == fcurve.GetValueAsObject())
+					{
+						foreach(var prop in fcurve.Properties)
+						{
+							prop.Selected = true;
+							prop.IsShown = true;
+						}
+					}
+				}
+
+				foreach (var c in t.Children)
+				{
+					recurse(c);
+				}
+			};
+
+			recurse(treeNodes);
+		}
+
 		public void UnselectAll()
 		{
 			Action<TreeNode> recurse = null;
@@ -863,6 +892,25 @@ namespace Effekseer.GUI.Dock
 			recurse(treeNodes);
 		}
 
+		public void DeleteSelectedPoints()
+		{
+			Action<TreeNode> recurse = null;
+
+			recurse = (t) =>
+			{
+				foreach (var fcurve in t.FCurves)
+				{
+					fcurve.DeleteSelectedPoints();
+				}
+
+				foreach (var c in t.Children)
+				{
+					recurse(c);
+				}
+			};
+
+			recurse(treeNodes);
+		}
 		public void ShrinkAnchors()
 		{
 			Action<TreeNode> recurse = null;
@@ -1093,6 +1141,7 @@ namespace Effekseer.GUI.Dock
 
 			public virtual void Move(float x, float y, int changedType, Data.Value.IFCurve except) { }
 
+			public virtual void DeleteSelectedPoints() { }
 			public virtual void ShrinkAnchors() { }
 
 			public virtual void EnlargeAnchors() { }
@@ -1419,6 +1468,34 @@ namespace Effekseer.GUI.Dock
 						properties[j].RightKeys[k] = temp_rk[kis[k].Item2];
 						properties[j].RightValues[k] = temp_rv[kis[k].Item2];
 						properties[j].Interpolations[k] = temp_in[kis[k].Item2];
+					}
+				}
+			}
+
+			public override void DeleteSelectedPoints()
+			{
+				foreach (var prop in properties)
+				{
+					if (!prop.IsShown) continue;
+					if (!prop.Selected) continue;
+
+					for (int i = 0; i < prop.KVSelected.Length - 1;)
+					{
+						if (prop.KVSelected[i] == 0)
+						{
+							i++;
+							continue;
+						}
+
+						prop.LeftKeys = prop.LeftKeys.Where((v, ind) => ind != i).ToArray();
+						prop.LeftValues = prop.LeftValues.Where((v, ind) => ind != i).ToArray();
+						prop.RightKeys = prop.RightKeys.Where((v, ind) => ind != i).ToArray();
+						prop.RightValues = prop.RightValues.Where((v, ind) => ind != i).ToArray();
+						prop.Keys = prop.Keys.Where((v, ind) => ind != i).ToArray();
+						prop.Values = prop.Values.Where((v, ind) => ind != i).ToArray();
+						prop.KVSelected = prop.KVSelected.Where((v, ind) => ind != i).ToArray();
+
+						prop.IsDirtied = true;
 					}
 				}
 			}

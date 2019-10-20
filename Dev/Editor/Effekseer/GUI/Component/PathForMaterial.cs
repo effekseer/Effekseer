@@ -150,21 +150,21 @@ namespace Effekseer.GUI.Component
 
 					if (!string.IsNullOrEmpty(result))
 					{
-						var filepath = result;
+						var filepath = Functions.GetFilepathWithExtentions(result, ".efkmat");
 						Process.MaterialEditor.Run();
-						Process.MaterialEditor.OpenOrCreateMaterial(absoluteFilePath);
+						Process.MaterialEditor.OpenOrCreateMaterial(filepath);
 
 						// wait
 						int counter = 0;
 						while(counter < 50)
 						{
-							if (System.IO.File.Exists(absoluteFilePath))
+							if (System.IO.File.Exists(filepath))
 								break;
 							counter++;
 							System.Threading.Thread.Sleep(100);
 						}
 
-						if (System.IO.File.Exists(absoluteFilePath))
+						if (System.IO.File.Exists(filepath))
 						{
 							LoadFile(filepath, false);
 							Read();

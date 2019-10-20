@@ -14,50 +14,12 @@
 #include <xmmintrin.h>
 #endif
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace EffekseerRendererDX11
 {
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct Vertex
-{
-	::Effekseer::Vector3D	Pos;
-	uint8_t		Col[4];
-	float		UV[2];
+using Vertex = EffekseerRenderer::SimpleVertex;
+using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
-	void SetColor( const ::Effekseer::Color& color )
-	{
-		Col[0] = color.R;
-		Col[1] = color.G;
-		Col[2] = color.B;
-		Col[3] = color.A;
-	}
-};
-
-struct VertexDistortion
-{
-	::Effekseer::Vector3D	Pos;
-	uint8_t		Col[4];
-	float		UV[2];
-	::Effekseer::Vector3D	Tangent;
-	::Effekseer::Vector3D	Binormal;
-
-	void SetColor(const ::Effekseer::Color& color)
-	{
-		Col[0] = color.R;
-		Col[1] = color.G;
-		Col[2] = color.B;
-		Col[3] = color.A;
-	}
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 class OriginalState
 {
 private:

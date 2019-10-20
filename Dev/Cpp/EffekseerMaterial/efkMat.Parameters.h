@@ -133,6 +133,7 @@ public:
 	std::string TypeName;
 	std::string Description;
 	std::vector<std::string> Group;
+	std::vector<std::string> Keywords;
 
 	std::vector<std::shared_ptr<PinParameter>> InputPins;
 	std::vector<std::shared_ptr<PinParameter>> OutputPins;
@@ -152,7 +153,7 @@ public:
 		{
 			if (Properties[i]->Name == name)
 			{
-				return i;
+				return static_cast<int32_t>(i);
 			}
 		}
 		return -1;
@@ -163,6 +164,9 @@ public:
 	{
 		return ValueType::Unknown;
 	}
+
+	virtual std::string GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const;
+
 	virtual WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const { return WarningType::None; }
 };
 
@@ -190,6 +194,50 @@ public:
 		auto param = std::make_shared<NodePropertyParameter>();
 		param->Name = "Value";
 		param->Type = ValueType::Float2;
+		Properties.push_back(param);
+	}
+};
+
+class NodeConstant3 : public NodeParameter
+{
+public:
+	NodeConstant3()
+	{
+		Type = NodeType::Constant3;
+		TypeName = "Constant3";
+		Description = "Constant value...";
+		Group = std::vector<std::string>{"Constant"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
+
+		auto param = std::make_shared<NodePropertyParameter>();
+		param->Name = "Value";
+		param->Type = ValueType::Float3;
+		Properties.push_back(param);
+	}
+};
+
+class NodeConstant4 : public NodeParameter
+{
+public:
+	NodeConstant4()
+	{
+		Type = NodeType::Constant4;
+		TypeName = "Constant4";
+		Description = "Constant value...";
+		Group = std::vector<std::string>{"Constant"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float4;
+		OutputPins.push_back(output);
+
+		auto param = std::make_shared<NodePropertyParameter>();
+		param->Name = "Value";
+		param->Type = ValueType::Float4;
 		Properties.push_back(param);
 	}
 };
@@ -404,6 +452,7 @@ public:
 		Type = NodeType::Add;
 		TypeName = "Add";
 		Group = std::vector<std::string>{"Math"};
+		Keywords.emplace_back("+");
 
 		InitializeAsIn2Out1Param2();
 	}
@@ -417,6 +466,8 @@ public:
 	{
 		return GetWarningIn2Out1Param2(material, node);
 	}
+
+	std::string GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override;
 };
 
 class NodeSubtract : public NodeParameter
@@ -661,7 +712,10 @@ public:
 		IsPreviewOpened = true;
 	}
 
-	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const { return GetWarningSampler(material, node); }
+	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+	{
+		return GetWarningSampler(material, node);
+	}
 };
 
 class NodeTime : public NodeParameter
@@ -710,6 +764,86 @@ public:
 		output->Type = ValueType::Float3;
 		OutputPins.push_back(output);
 	}
+};
+
+class NodeCustomData1 : public NodeParameter
+{
+public:
+	NodeCustomData1()
+	{
+		Type = NodeType::CustomData1;
+		TypeName = "CustomData1";
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::FloatN;
+		OutputPins.push_back(output);
+
+		auto val1 = std::make_shared<NodePropertyParameter>();
+		val1->Name = "R";
+		val1->Type = ValueType::Bool;
+		val1->DefaultValues[0] = 1.0f;
+		Properties.push_back(val1);
+
+		auto val2 = std::make_shared<NodePropertyParameter>();
+		val2->Name = "G";
+		val2->Type = ValueType::Bool;
+		val2->DefaultValues[0] = 1.0f;
+		Properties.push_back(val2);
+
+		auto val3 = std::make_shared<NodePropertyParameter>();
+		val3->Name = "B";
+		val3->Type = ValueType::Bool;
+		Properties.push_back(val3);
+
+		auto val4 = std::make_shared<NodePropertyParameter>();
+		val4->Name = "A";
+		val4->Type = ValueType::Bool;
+		Properties.push_back(val4);
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override;
+};
+
+class NodeCustomData2 : public NodeParameter
+{
+public:
+	NodeCustomData2()
+	{
+		Type = NodeType::CustomData1;
+		TypeName = "CustomData2";
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::FloatN;
+		OutputPins.push_back(output);
+
+		auto val1 = std::make_shared<NodePropertyParameter>();
+		val1->Name = "R";
+		val1->Type = ValueType::Bool;
+		val1->DefaultValues[0] = 1.0f;
+		Properties.push_back(val1);
+
+		auto val2 = std::make_shared<NodePropertyParameter>();
+		val2->Name = "G";
+		val2->Type = ValueType::Bool;
+		val2->DefaultValues[0] = 1.0f;
+		Properties.push_back(val2);
+
+		auto val3 = std::make_shared<NodePropertyParameter>();
+		val3->Name = "B";
+		val3->Type = ValueType::Bool;
+		Properties.push_back(val3);
+
+		auto val4 = std::make_shared<NodePropertyParameter>();
+		val4->Name = "A";
+		val4->Type = ValueType::Bool;
+		Properties.push_back(val4);
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override;
 };
 
 class NodeComment : public NodeParameter

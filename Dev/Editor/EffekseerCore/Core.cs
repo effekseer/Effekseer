@@ -511,6 +511,17 @@ namespace Effekseer
 			return doc.InnerXml;
 		}
 
+		public static string Copy(string elementName, object o)
+		{
+			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+
+			var element = Data.IO.SaveObjectToElement(doc, elementName, o, true);
+
+			doc.AppendChild(element);
+
+			return doc.InnerXml;
+		}
+
 		/// <summary>
 		/// Check whether data is valid xml?
 		/// </summary>
@@ -544,6 +555,24 @@ namespace Effekseer
 			Command.CommandManager.StartCollection();
 			Data.IO.LoadFromElement(doc.ChildNodes[0] as System.Xml.XmlElement, node, true);
 			Command.CommandManager.EndCollection();
+		}
+
+		public static bool Paste(string elementName, object o, string data)
+		{
+			if (o == null) return false;
+			if (!IsValidXml(data)) return false;
+
+			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+
+			doc.LoadXml(data);
+
+			if (doc.ChildNodes.Count == 0 || doc.ChildNodes[0].Name != elementName) return false;
+
+			Command.CommandManager.StartCollection();
+			Data.IO.LoadObjectFromElement(doc.ChildNodes[0] as System.Xml.XmlElement, ref o, true);
+			Command.CommandManager.EndCollection();
+
+			return true;
 		}
 
 		/// <summary>
@@ -944,6 +973,54 @@ namespace Effekseer
 						{
 							n_.RendererCommonValues.ColorTexture.SetAbsolutePathDirectly(n_.DrawingValues.Ribbon.ColorTexture.AbsolutePath);
 							n_.RendererCommonValues.AlphaBlend.SetValueDirectly(n_.DrawingValues.Ribbon.AlphaBlend.Value);
+						}
+					}
+
+					for (int i = 0; i < n.Children.Count; i++)
+					{
+						convert(n.Children[i]);
+					}
+				};
+
+				convert(root_node as Data.NodeBase);
+			}
+
+			if (toolVersion < ParseVersion("1.50"))
+			{
+				Action<Data.NodeBase> convert = null;
+				convert = (n) =>
+				{
+					var n_ = n as Data.Node;
+
+					if (n_ != null && n_.DrawingValues.Type.Value == Data.RendererValues.ParamaterType.Ring)
+					{
+						var rp = n_.DrawingValues.Ring;
+						if (rp.ViewingAngle.Value != Data.RendererValues.RingParamater.ViewingAngleType.Fixed ||
+							rp.ViewingAngle_Fixed.Value != 360)
+						{
+							var rc = rp.RingShape.Crescent;
+							rp.RingShape.Type.SetValue(Data.RingShapeType.Crescent);
+							rc.StartingAngle.SetValue((Data.FixedRandomEasingType)(int)rp.ViewingAngle.Value);
+							rc.EndingAngle.SetValue((Data.FixedRandomEasingType)(int)rp.ViewingAngle.Value);
+
+							rc.StartingAngle_Fixed.SetValue((360 - rp.ViewingAngle_Fixed.Value) / 2 + 90);
+							rc.EndingAngle_Fixed.SetValue(360 - (360 - rp.ViewingAngle_Fixed.Value) / 2 + 90);
+
+							rc.StartingAngle_Random.SetMax((360 - rp.ViewingAngle_Random.Min) / 2 + 90);
+							rc.StartingAngle_Random.SetMin((360 - rp.ViewingAngle_Random.Max) / 2 + 90);
+
+							rc.EndingAngle_Random.SetMax(360 - (360 - rp.ViewingAngle_Random.Max) / 2 + 90);
+							rc.EndingAngle_Random.SetMin(360 - (360 - rp.ViewingAngle_Random.Min) / 2 + 90);
+
+							rc.StartingAngle_Easing.Start.SetMax((360 - rp.ViewingAngle_Easing.Start.Min) / 2 + 90);
+							rc.StartingAngle_Easing.Start.SetMin((360 - rp.ViewingAngle_Easing.Start.Max) / 2 + 90);
+							rc.StartingAngle_Easing.End.SetMax((360 - rp.ViewingAngle_Easing.End.Min) / 2 + 90);
+							rc.StartingAngle_Easing.End.SetMin((360 - rp.ViewingAngle_Easing.End.Max) / 2 + 90);
+
+							rc.EndingAngle_Easing.Start.SetMax(360 - (360 - rp.ViewingAngle_Easing.Start.Max) / 2 + 90);
+							rc.EndingAngle_Easing.Start.SetMin(360 - (360 - rp.ViewingAngle_Easing.Start.Min) / 2 + 90);
+							rc.EndingAngle_Easing.End.SetMax(360 - (360 - rp.ViewingAngle_Easing.End.Max) / 2 + 90);
+							rc.EndingAngle_Easing.End.SetMin(360 - (360 - rp.ViewingAngle_Easing.End.Min) / 2 + 90);
 						}
 					}
 
@@ -1391,26 +1468,44 @@ namespace Effekseer
 						}
 					}
 
-					if (node.RendererCommonValues.CustomData1.CustomData.Value == Data.CustomDataType.FCurve)
+					if (node.RendererCommonValues.CustomData1.CustomData.Value == Data.CustomDataType.FCurve2D)
 					{
 						var name = "CustomData1";
 						if (Language == Language.Japanese)
 						{
 							name = "カスタムデータ1";
-
 						}
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData1.FCurve));
 					}
 
-					if (node.RendererCommonValues.CustomData2.CustomData.Value == Data.CustomDataType.FCurve)
+					if (node.RendererCommonValues.CustomData2.CustomData.Value == Data.CustomDataType.FCurve2D)
 					{
 						var name = "CustomData2";
 						if (Language == Language.Japanese)
 						{
 							name = "カスタムデータ2";
-
 						}
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurve));
+					}
+
+					if (node.RendererCommonValues.CustomData1.CustomData.Value == Data.CustomDataType.FCurveColor)
+					{
+						var name = "CustomData1";
+						if (Language == Language.Japanese)
+						{
+							name = "カスタムデータ1";
+						}
+						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData1.FCurveColor));
+					}
+
+					if (node.RendererCommonValues.CustomData2.CustomData.Value == Data.CustomDataType.FCurveColor)
+					{
+						var name = "CustomData2";
+						if (Language == Language.Japanese)
+						{
+							name = "カスタムデータ2";
+						}
+						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurveColor));
 					}
 
 					return list.ToArray();

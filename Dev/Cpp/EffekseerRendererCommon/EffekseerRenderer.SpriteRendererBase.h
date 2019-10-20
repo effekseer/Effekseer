@@ -36,7 +36,6 @@ class SpriteRendererBase
 protected:
 	RENDERER*						m_renderer;
 	int32_t							m_spriteCount;
-	int32_t							m_ringBufferOffset;
 	uint8_t*						m_ringBufferData;
 
 	struct KeyValue
@@ -46,13 +45,16 @@ protected:
 	};
 
 	std::vector<KeyValue>				instances;
+	int32_t vertexCount_ = 0;
+	int32_t stride_ = 0;
+	int32_t customData1Count_ = 0;
+	int32_t customData2Count_ = 0;
 
 public:
 
 	SpriteRendererBase(RENDERER* renderer)
 		: m_renderer(renderer)
 		, m_spriteCount(0)
-		, m_ringBufferOffset(0)
 		, m_ringBufferData(nullptr)
 	{
 		// reserve buffers
@@ -83,11 +85,15 @@ protected:
 		state.MaterialType = param.BasicParameterPtr->MaterialType;
 
 		state.CopyMaterialFromParameterToState(param.EffectPointer, param.BasicParameterPtr->MaterialParameterPtr, param.BasicParameterPtr->Texture1Index, param.BasicParameterPtr->Texture2Index);
+		customData1Count_ = state.CustomData1Count;
+		customData2Count_ = state.CustomData2Count;
 
 		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
 
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * 4, m_ringBufferOffset, (void*&) m_ringBufferData);
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * 4, stride_, (void*&)m_ringBufferData);
 		m_spriteCount = 0;
+
+		vertexCount_ = count * 4;
 
 		instances.clear();
 	}
@@ -139,10 +145,9 @@ protected:
 	{
 		if( m_ringBufferData == nullptr ) return;
 
-		VERTEX* verteies = (VERTEX*)m_ringBufferData;
-		m_ringBufferData += (sizeof(VERTEX) * 4);
-
-		auto vertexType = GetVertexType(verteies);
+		StrideView<VERTEX> verteies(m_ringBufferData, stride_, 4);
+		
+		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
 
 		for( int i = 0; i < 4; i++ )
 		{
@@ -168,7 +173,7 @@ protected:
 		// distortion
 		if (vertexType == VertexType::Distortion)
 		{
-			auto vs = (VERTEX_DISTORTION*) verteies;
+			StrideView<VERTEX_DISTORTION> vs(verteies.pointerOrigin_, stride_, 4);
 			for (auto i = 0; i < 4; i++)
 			{
 				vs[i].Tangent.X = 1.0f;
@@ -181,7 +186,7 @@ protected:
 		}
 		else if (vertexType == VertexType::Dynamic)
 		{
-			auto vs = (DynamicVertex*)verteies;
+			StrideView<DynamicVertex> vs(verteies.pointerOrigin_, stride_, 4);
 			vs[0].UV2[0] = 0.0f;
 			vs[0].UV2[1] = 1.0f;
 			vs[1].UV2[0] = 1.0f;
@@ -294,7 +299,7 @@ protected:
 
 			if (vertexType == VertexType::Dynamic)
 			{
-				auto vs = (DynamicVertex*)verteies;
+				StrideView<DynamicVertex> vs(verteies.pointerOrigin_, stride_, 4);
 				for (auto i = 0; i < 4; i++)
 				{
 					vs[i].Normal = PackVector3DF(-F);
@@ -354,6 +359,28 @@ protected:
 			}
 		}
 		
+		// custom parameter
+		if (customData1Count_ > 0)
+		{
+			StrideView<float> custom(m_ringBufferData + sizeof(DynamicVertex), stride_, 4);
+			for (int i = 0; i < 4; i++)
+			{
+				auto c = (float*)(&custom[i]);
+				memcpy(c, instanceParameter.CustomData1.data(), sizeof(float) * customData1Count_);
+			}
+		}
+
+		if (customData2Count_ > 0)
+		{
+			StrideView<float> custom(m_ringBufferData + sizeof(DynamicVertex) + sizeof(float) * customData1Count_, stride_, 4);
+			for (int i = 0; i < 4; i++)
+			{
+				auto c = (float*)(&custom[i]);
+				memcpy(c, instanceParameter.CustomData2.data(), sizeof(float) * customData2Count_);
+			}
+		}
+
+		m_ringBufferData += (stride_ * 4);
 		m_spriteCount++;
 	}
 

@@ -8,6 +8,7 @@ namespace Effekseer.GUI.Dock
 {
 	class RendererCommonValues : DockPanel
 	{
+		Component.CopyAndPaste candp = null;
 		Component.ParameterList paramerterList = null;
 
 		bool isFiestUpdate = true;
@@ -19,10 +20,13 @@ namespace Effekseer.GUI.Dock
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RendererCommonValues));
 
+			candp = new Component.CopyAndPaste("BasicRenderSettings", GetTargetObject);
+
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
 			Core.OnAfterSelectNode += OnAfterSelectNode;
 
+			Controls.Add(candp);
 			Controls.Add(paramerterList);
 			
 			Read();
@@ -53,23 +57,20 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		void Read()
+		object GetTargetObject()
 		{
 			if (Core.SelectedNode != null)
 			{
 				if (Core.SelectedNode is Data.Node)
 				{
-					paramerterList.SetValue(((Data.Node)Core.SelectedNode).RendererCommonValues);
-				}
-				else
-				{
-					paramerterList.SetValue(null);
+					return ((Data.Node)Core.SelectedNode).RendererCommonValues;
 				}
 			}
-			else
-			{
-				paramerterList.SetValue(null);
-			}
+			return null;
+		}
+		void Read()
+		{
+			paramerterList.SetValue(GetTargetObject());
 		}
 
 		void OnAfterLoad(object sender, EventArgs e)

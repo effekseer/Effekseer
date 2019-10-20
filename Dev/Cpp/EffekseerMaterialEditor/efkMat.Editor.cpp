@@ -46,6 +46,11 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	efkMaterial.SetIsSimpleVertex(false);
 	efkMaterial.SetHasRefraction(result.HasRefraction);
 	efkMaterial.SetShadingModel(static_cast<Effekseer::ShadingModelType>(result.ShadingModel));
+
+	// HACK (adhoc support in the editor)
+	// efkMaterial.SetCustomData1Count(result.CustomData1);
+	// efkMaterial.SetCustomData2Count(result.CustomData2);
+
 	efkMaterial.SetTextureCount(result.Textures.size());
 	efkMaterial.SetUniformCount(result.Uniforms.size());
 
@@ -57,7 +62,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 
 	for (size_t i = 0; i < result.Uniforms.size(); i++)
 	{
-		efkMaterial.SetUniformIndex(i, i);
+		efkMaterial.SetUniformIndex(i, (int)result.Uniforms[i]->Type);
 		efkMaterial.SetUniformName(i, result.Uniforms[i]->Name.c_str());
 	}
 
@@ -358,6 +363,7 @@ void Editor::New()
 	auto content = std::make_shared<EditorContent>(this);
 	contents_.push_back(content);
 	selectedContentInd_ = contents_.size() - 1;
+	isSelectedDirty_ = true;
 }
 
 void Editor::SaveAs(const char* path) { contents_[selectedContentInd_]->SaveAs(path); }
@@ -376,10 +382,17 @@ void Editor::SaveAs()
 bool Editor::Load(const char* path)
 {
 	auto content = std::make_shared<EditorContent>(this);
+
+	if (!content->Load(path, library))
+	{
+		return false;
+	}
+
 	contents_.push_back(content);
-	content->Load(path, library);
+
 	selectedContentInd_ = contents_.size() - 1;
 
+	isSelectedDirty_ = true;
 	isLoading = true;
 
 	return true;
@@ -537,6 +550,7 @@ void Editor::Update()
 	else if (ed::ShowBackgroundContextMenu())
 	{
 		ImGui::OpenPopup(label_new_node);
+		searchingKeywords.fill(0);
 		currentPin = nullptr;
 		popupPosition = posOnEditor;
 	}
@@ -725,54 +739,108 @@ void Editor::UpdatePopup()
 			}
 		};
 
-		// TODO recursive
-		for (auto content : library->Root->Contents)
-		{
-			if (!content->IsShown)
-			{
-				continue;
-			}
-
-			auto& nodeTypeName = StringContainer::GetValue((content->Name + "_Name").c_str(), content->Name.c_str());
+		auto showContent = [&create_node](std::shared_ptr<LibraryContentBase> c) -> void {
+			auto& nodeTypeName = StringContainer::GetValue((c->Name + "_Name").c_str(), c->Name.c_str());
 
 			if (ImGui::MenuItem(nodeTypeName.c_str()))
 			{
-				create_node(content);
-				break;
+				create_node(c);
+				return;
 			}
 
 			// Show a description
-			if (ImGui::IsItemHovered() && content->Description != "")
+			if (ImGui::IsItemHovered() && c->Description != "")
 			{
-				ImGui::SetTooltip(content->Description.c_str());
+				ImGui::SetTooltip(c->Description.c_str());
+			}
+		};
+
+		auto isShown = [this](std::shared_ptr<LibraryContentBase> c) -> bool {
+			if (!c->IsShown)
+			{
+				return false;
+			}
+
+			if (searchingKeywords[0] == 0)
+			{
+				return true;
+			}
+
+			auto name = c->Name;
+
+			if (name.find(searchingKeywords.data()) != std::string::npos)
+				return true;
+
+			for (auto keyword : c->Keywords)
+			{
+				if (keyword.find(searchingKeywords.data()) != std::string::npos)
+					return true;
+			}
+
+			return false;
+		};
+
+		// keyword box
+		ImGui::InputText("Search", searchingKeywords.data(), searchingKeywords.size());
+
+		if (searchingKeywords[0] == 0)
+		{
+
+			// TODO recursive
+			for (auto content : library->Root->Contents)
+			{
+				if (!isShown(content))
+				{
+					continue;
+				}
+
+				showContent(content);
+			}
+
+			for (auto group : library->Root->Groups)
+			{
+				auto& groupName = StringContainer::GetValue((group.first + "_Name").c_str(), group.first.c_str());
+
+				if (ImGui::BeginMenu(groupName.c_str()))
+				{
+					for (auto content : group.second->Contents)
+					{
+						if (!isShown(content))
+						{
+							continue;
+						}
+
+						showContent(content);
+					}
+
+					ImGui::EndMenu();
+				}
 			}
 		}
-
-		for (auto group : library->Root->Groups)
+		else
 		{
-			auto& groupName = StringContainer::GetValue((group.first + "_Name").c_str(), group.first.c_str());
+			// TODO recursive
+			for (auto content : library->Root->Contents)
+			{
+				if (!isShown(content))
+				{
+					continue;
+				}
 
-			if (ImGui::BeginMenu(groupName.c_str()))
+				showContent(content);
+			}
+
+			for (auto group : library->Root->Groups)
 			{
 				for (auto content : group.second->Contents)
 				{
-					auto& nodeTypeName = StringContainer::GetValue((content->Name + "_Name").c_str(), content->Name.c_str());
-
-					if (ImGui::MenuItem(nodeTypeName.c_str()))
+					if (!isShown(content))
 					{
-						create_node(content);
-
-						break;
+						continue;
 					}
 
-					// Show a description
-					if (ImGui::IsItemHovered() && content->Description != "")
-					{
-						ImGui::SetTooltip(content->Description.c_str());
-					}
+					showContent(content);
 				}
-
-				ImGui::EndMenu();
 			}
 		}
 
@@ -892,6 +960,7 @@ void Editor::UpdateCreating()
 				ed::Suspend();
 				popupPosition = posOnEditor;
 				ImGui::OpenPopup(label_new_node);
+				searchingKeywords.fill(0);
 				ed::Resume();
 			}
 		}
@@ -1088,7 +1157,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 					ImGui::EndCombo();
 				}
 			}
-			if (name == std::string("Sampler"))
+			else if (name == std::string("Sampler"))
 			{
 				const char* items[] = {"Repeat", "Clamp"};
 
@@ -1235,7 +1304,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 
 	// Header
 	ImGui::BeginHorizontal("header");
-	auto& nodeTypeName = StringContainer::GetValue((node->Parameter->TypeName + "_Name").c_str(), node->Parameter->TypeName.c_str());
+	const auto nodeTypeName = node->Parameter->GetHeader(GetSelectedMaterial(), node);
 	ImGui::Text(nodeTypeName.c_str());
 	ImGui::EndHorizontal();
 
@@ -1359,5 +1428,12 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 }
 
 void Editor::UpdateLink(std::shared_ptr<Link> link) { ed::Link(link->GUID, link->InputPin->GUID, link->OutputPin->GUID); }
+
+bool Editor::GetIsSelectedDirtyAndClear()
+{
+	auto ret = isSelectedDirty_;
+	isSelectedDirty_ = false;
+	return ret;
+}
 
 } // namespace EffekseerMaterial

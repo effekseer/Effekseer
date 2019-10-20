@@ -1,8 +1,43 @@
 #include "efkMat.Parameters.h"
 #include "efkMat.Models.h"
+#include "efkMat.StringContainer.h"
 
 namespace EffekseerMaterial
 {
+
+std::string NodeParameter::GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+{
+	return StringContainer::GetValue((TypeName + "_Name").c_str(), TypeName.c_str());
+}
+
+std::string NodeAdd::GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+{
+	auto ret = StringContainer::GetValue((TypeName + "_Name").c_str(), TypeName.c_str());
+
+	ret += "(";
+
+	if (material->GetConnectedPins(node->InputPins[0]).size() > 0)
+	{
+	}
+	else
+	{
+		ret += std::to_string(node->Properties[0]->Floats[0]);
+	}
+
+	ret += ",";
+
+	if (material->GetConnectedPins(node->InputPins[1]).size() > 0)
+	{
+	}
+	else
+	{
+		ret += std::to_string(node->Properties[1]->Floats[0]);
+	}
+
+	ret += ")";
+
+	return ret;
+}
 
 bool ExtractTextureParameter(std::shared_ptr<Material> material, std::shared_ptr<Node> node, ExtractedTextureParameter& result)
 {
@@ -241,6 +276,56 @@ WarningType NodeAppend::GetWarning(std::shared_ptr<Material> material, std::shar
 	}
 
 	return WarningType::None;
+}
+
+ValueType NodeCustomData1::GetOutputType(std::shared_ptr<Material> material,
+										 std::shared_ptr<Node> node,
+										 const std::vector<ValueType>& inputTypes) const
+{
+	int counter = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		if (node->Properties[i]->Floats[0] > 0)
+			counter++;
+	}
+
+	if (counter == 1)
+		return ValueType::Float1;
+
+	if (counter == 2)
+		return ValueType::Float2;
+
+	if (counter == 3)
+		return ValueType::Float3;
+
+	if (counter == 4)
+		return ValueType::Float4;
+	return ValueType::Float1;
+}
+
+ValueType NodeCustomData2::GetOutputType(std::shared_ptr<Material> material,
+										 std::shared_ptr<Node> node,
+										 const std::vector<ValueType>& inputTypes) const
+{
+	int counter = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		if (node->Properties[i]->Floats[0] > 0)
+			counter++;
+	}
+
+	if (counter == 1)
+		return ValueType::Float1;
+
+	if (counter == 2)
+		return ValueType::Float2;
+
+	if (counter == 3)
+		return ValueType::Float3;
+
+	if (counter == 4)
+		return ValueType::Float4;
+	return ValueType::Float1;
 }
 
 } // namespace EffekseerMaterial

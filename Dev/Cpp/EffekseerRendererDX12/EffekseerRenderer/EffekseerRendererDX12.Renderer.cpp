@@ -73,9 +73,9 @@ namespace EffekseerRendererDX12
 				 ID3D12CommandQueue* commandQueue,
 				 int32_t swapBufferCount);
 	*/
-	std::function<std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, ID3D12Resource*>()> getScreenFunc =
-		[]() -> std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, ID3D12Resource*> {
-		return std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, ID3D12Resource*>();
+	std::function<std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*>()> getScreenFunc =
+		[]() -> std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*> {
+		return std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*>();
 	};
 
 	auto graphics = new LLGI::GraphicsDX12(device, getScreenFunc, flushAndWaitQueueFunc, commandQueue, swapBufferCount);

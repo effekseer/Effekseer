@@ -111,6 +111,8 @@ public:
 
 	int32_t GetOutputPinIndex(const std::string& name);
 
+	std::shared_ptr<NodeProperty> GetProperty(const std::string& name) const;
+
 	void UpdatePos(const Vector2DF& pos);
 
 	bool GetIsDirtied() const { return isDirtied; }

@@ -16,6 +16,9 @@
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+struct NodeRendererTextureUVTypeParameter;
+
 	//----------------------------------------------------------------------------------
 	//
 	//----------------------------------------------------------------------------------
@@ -41,6 +44,7 @@ namespace Effekseer
 
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+			NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
 
 			RendererMaterialType MaterialType = RendererMaterialType::Default;
 			MaterialParameter* MaterialParameterPtr = nullptr;
@@ -70,7 +74,8 @@ namespace Effekseer
 			float	SizeBack;
 
 			RectF	UV;
-			Vector2D CustomData;
+			std::array<float, 4> CustomData1;
+			std::array<float, 4> CustomData2;
 		};
 
 	public:

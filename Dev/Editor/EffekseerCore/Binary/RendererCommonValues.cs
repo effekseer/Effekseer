@@ -18,18 +18,18 @@ namespace Effekseer.Binary
 
 			data.Add(((int)value.Material.Value).GetBytes());
 
-			Func<Data.Value.PathForImage, int, Dictionary<string,int>, int> getColorTexIDAndStoreSize = (Data.Value.PathForImage path, int number, Dictionary<string, int> texAndInd) =>
+			Func<Data.Value.PathForImage, int, Dictionary<string,int>, int> getColorTexIDAndStoreSize = (Data.Value.PathForImage image, int number, Dictionary<string, int> texAndInd) =>
 			{
 				var tempTexInfo = new TextureInformation();
 
-				if (texAndInd.ContainsKey(path.RelativePath) && tempTexInfo.Load(path.AbsolutePath))
+				if (texAndInd.ContainsKey(image.RelativePath) && tempTexInfo.Load(image.AbsolutePath))
 				{
 					if(value.UVTextureReferenceTarget.Value != Data.UVTextureReferenceTargetType.None && number == (int)value.UVTextureReferenceTarget.Value)
 					{
-						texInfo.Load(path.AbsolutePath);
+						texInfo.Load(image.AbsolutePath);
 					}
 
-					return texAndInd[value.ColorTexture.RelativePath];
+					return texAndInd[image.RelativePath];
 				}
 				else
 				{
@@ -66,7 +66,7 @@ namespace Effekseer.Binary
 				var materialInfo = new Utl.MaterialInformation();
 				materialInfo.Load(value.MaterialFile.Path.AbsolutePath);
 	
-				var textures = value.MaterialFile.GetTextures(materialInfo);
+				var textures = value.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null).ToArray();
 				var uniforms = value.MaterialFile.GetUniforms(materialInfo);
 
 				if(material_and_index.ContainsKey(value.MaterialFile.Path.RelativePath))
@@ -79,20 +79,20 @@ namespace Effekseer.Binary
 
 				}
 
-				data.Add(textures.Count.GetBytes());
+				data.Add(textures.Length.GetBytes());
 
 				foreach (var texture in textures)
 				{
 					var texture_ = texture.Item1.Value as Data.Value.PathForImage;
-					if (texture.Item2)
+					if (texture.Item2.Type == TextureType.Value)
 					{
 						data.Add((1).GetBytes());
-						data.Add(getColorTexIDAndStoreSize(texture_, texture.Item1.Priority, normalTexture_and_index).GetBytes());
+						data.Add(getColorTexIDAndStoreSize(texture_, texture.Item2.Priority, normalTexture_and_index).GetBytes());
 					}
 					else
 					{
 						data.Add((0).GetBytes());
-						data.Add(getColorTexIDAndStoreSize(texture_, texture.Item1.Priority, texture_and_index).GetBytes());
+						data.Add(getColorTexIDAndStoreSize(texture_, texture.Item2.Priority, texture_and_index).GetBytes());
 
 					}
 				}
@@ -103,17 +103,20 @@ namespace Effekseer.Binary
 				{
 					float[] floats = new float[4];
 					
-					if(uniform.Value is Data.Value.Float)
+					if(uniform.Item1 == null)
 					{
-						floats[0] = (uniform.Value as Data.Value.Float).Value;
+						floats = uniform.Item2.DefaultValues.ToArray();
 					}
-
-					if (uniform.Value is Data.Value.Vector4D)
+					else if(uniform.Item1.Value is Data.Value.Float)
 					{
-						floats[0] = (uniform.Value as Data.Value.Vector4D).X.Value;
-						floats[1] = (uniform.Value as Data.Value.Vector4D).Y.Value;
-						floats[2] = (uniform.Value as Data.Value.Vector4D).Z.Value;
-						floats[3] = (uniform.Value as Data.Value.Vector4D).W.Value;
+						floats[0] = (uniform.Item1.Value as Data.Value.Float).Value;
+					}
+					else if (uniform.Item1.Value is Data.Value.Vector4D)
+					{
+						floats[0] = (uniform.Item1.Value as Data.Value.Vector4D).X.Value;
+						floats[1] = (uniform.Item1.Value as Data.Value.Vector4D).Y.Value;
+						floats[2] = (uniform.Item1.Value as Data.Value.Vector4D).Z.Value;
+						floats[3] = (uniform.Item1.Value as Data.Value.Vector4D).W.Value;
 					}
 
 					data.Add(floats[0].GetBytes());
@@ -262,12 +265,12 @@ namespace Effekseer.Binary
 
 			// Custom data1 from 1.5
 			data.Add(value.CustomData1.CustomData);
-			if(value.CustomData1.CustomData.Value == Data.CustomDataType.Fixed)
+			if(value.CustomData1.CustomData.Value == Data.CustomDataType.Fixed2D)
 			{
 				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.X.Value));
 				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.Y.Value));
 			}
-			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.Easing)
+			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.Easing2D)
 			{
 				var easing = Utl.MathUtl.Easing((float)value.CustomData1.Easing.StartSpeed.Value, (float)value.CustomData1.Easing.EndSpeed.Value);
 
@@ -280,21 +283,26 @@ namespace Effekseer.Binary
 				var __data = _data.ToArray().ToArray();
 				data.Add(__data);
 			}
-			else if(value.CustomData1.CustomData.Value == Data.CustomDataType.FCurve)
+			else if(value.CustomData1.CustomData.Value == Data.CustomDataType.FCurve2D)
 			{
 				var value_ = value.CustomData1.FCurve;
 				var bytes1 = value_.GetBytes(1.0f);
 				data.Add(bytes1);
 			}
+			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.FCurveColor)
+			{
+				var bytes = value.CustomData1.FCurveColor.GetBytes();
+				data.Add(bytes);
+			}
 
 			// Custom data2 from 1.5
 			data.Add(value.CustomData2.CustomData);
-			if (value.CustomData2.CustomData.Value == Data.CustomDataType.Fixed)
+			if (value.CustomData2.CustomData.Value == Data.CustomDataType.Fixed2D)
 			{
 				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed.X.Value));
 				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed.Y.Value));
 			}
-			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.Easing)
+			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.Easing2D)
 			{
 				var easing = Utl.MathUtl.Easing((float)value.CustomData2.Easing.StartSpeed.Value, (float)value.CustomData2.Easing.EndSpeed.Value);
 
@@ -307,11 +315,16 @@ namespace Effekseer.Binary
 				var __data = _data.ToArray().ToArray();
 				data.Add(__data);
 			}
-			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.FCurve)
+			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.FCurve2D)
 			{
 				var value_ = value.CustomData2.FCurve;
 				var bytes1 = value_.GetBytes(1.0f);
 				data.Add(bytes1);
+			}
+			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.FCurveColor)
+			{
+				var bytes = value.CustomData2.FCurveColor.GetBytes();
+				data.Add(bytes);
 			}
 
 			return data.ToArray().ToArray();

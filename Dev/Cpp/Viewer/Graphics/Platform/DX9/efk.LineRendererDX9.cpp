@@ -60,11 +60,11 @@ namespace efk
 	{
 		EffekseerRendererDX9::Vertex v0;
 		v0.Pos = p1;
-		v0.Col = D3DCOLOR_ARGB(c.A, c.R, c.G, c.B);
+		v0.SetColor(c);
 
 		EffekseerRendererDX9::Vertex v1;
 		v1.Pos = p2;
-		v1.Col = D3DCOLOR_ARGB(c.A, c.R, c.G, c.B);
+		v1.SetColor(c);
 
 		vertexies.push_back(v0);
 		vertexies.push_back(v1);

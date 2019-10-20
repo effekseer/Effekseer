@@ -68,7 +68,7 @@ public:
 
 	ed::EditorContext* GetEditorContext() { return editorContext_; }
 
-	//! this content will be closed and will show a dialog. This flag is true, dialog is shown and make the flag false 
+	//! this content will be closed and will show a dialog. This flag is true, dialog is shown and make the flag false
 	bool WillShowClosingDialog = false;
 	bool IsClosing = false;
 };
@@ -83,6 +83,12 @@ private:
 	std::vector<std::shared_ptr<EditorContent>> contents_;
 
 	bool isLoading = false;
+
+	//! is selected changed and not applied to gui yet
+	bool isSelectedDirty_ = false;
+
+	//! popupsed keywords
+	std::array<char, 256> searchingKeywords;
 
 public: // TODO temp
 	std::shared_ptr<Library> library;
@@ -144,5 +150,7 @@ public:
 
 	int32_t GetSelectedContentIndex() const { return selectedContentInd_; }
 	void SelectContent(int32_t index) { selectedContentInd_ = index; }
+
+	bool GetIsSelectedDirtyAndClear();
 };
 } // namespace EffekseerMaterial

@@ -20,6 +20,35 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	// Generate wrapper with variables
 	std::reverse(nodes.begin(), nodes.end());
 
+	// Check custom data
+	int32_t customData1Count = 0;
+	int32_t customData2Count = 0;
+
+	for (auto& node : nodes)
+	{
+		if (node->Parameter->Type == NodeType::CustomData1)
+		{
+			for (int32_t i = 0; i < 4; i++)
+			{
+				if (node->Properties[i]->Floats[0] > 0)
+				{
+					customData1Count = std::max(customData1Count, i + 1);
+				}
+			}
+		}
+
+		if (node->Parameter->Type == NodeType::CustomData2)
+		{
+			for (int32_t i = 0; i < 4; i++)
+			{
+				if (node->Properties[i]->Floats[0] > 0)
+				{
+					customData2Count = std::max(customData2Count, i + 1);
+				}
+			}
+		}
+	}
+
 	// Generate exporter node
 	std::vector<std::shared_ptr<TextExporterNode>> exportedNodes;
 	std::unordered_map<std::shared_ptr<Node>, std::shared_ptr<TextExporterNode>> node2exportedNode;
@@ -74,8 +103,8 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 				if (node->Parameter->Type == NodeType::ParamTexture)
 				{
-					auto paramName = EspcapeUserParamName(node->Properties[0]->Str.c_str());
-					auto path = node->Properties[1]->Str;
+					auto paramName = EspcapeUserParamName(node->GetProperty("Name")->Str.c_str());
+					auto path = node->GetProperty("Value")->Str;
 					auto keyStr = paramName + "@" + path;
 
 					std::shared_ptr<TextExporterTexture> extractedTexture;
@@ -91,7 +120,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->DefaultPath = path;
 						extractedTexture->IsParam = true;
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
-						extractedTexture->Priority = static_cast<int32_t>(node->Properties[2]->Floats[0]);
+						extractedTexture->Priority = static_cast<int32_t>(node->GetProperty("Priority")->Floats[0]);
 						extractedTexture->Descriptions = node->Descriptions;
 						extractedTextures[keyStr] = extractedTexture;
 					}
@@ -109,8 +138,8 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 			{
 				if (node->Parameter->Type == NodeType::Param1 || node->Parameter->Type == NodeType::Param4)
 				{
-					auto paramName = EspcapeUserParamName(node->Properties[0]->Str.c_str());
-					auto values = node->Properties[1]->Floats;
+					auto paramName = EspcapeUserParamName(node->GetProperty("Name")->Str.c_str());
+					auto values = node->GetProperty("Value")->Floats;
 					auto keyStr = paramName;
 
 					std::shared_ptr<TextExporterUniform> extractedUniform;
@@ -124,7 +153,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedUniform = std::make_shared<TextExporterUniform>();
 						extractedUniform->Name = paramName;
 						extractedUniform->DefaultConstants = values;
-						extractedUniform->Priority = static_cast<int32_t>(node->Properties[2]->Floats[0]);
+						extractedUniform->Priority = static_cast<int32_t>(node->GetProperty("Priority")->Floats[0]);
 						extractedUniform->Descriptions = node->Descriptions;
 
 						if (node->Parameter->Type == NodeType::Param1)
@@ -220,7 +249,8 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 					}
 
 					// assign a sampler
-					extractedTexture->Sampler = static_cast<TextureSamplerType>((int)node->Properties[node->Parameter->GetPropertyIndex("Sampler")]->Floats[0]);
+					extractedTexture->Sampler =
+						static_cast<TextureSamplerType>((int)node->Properties[node->Parameter->GetPropertyIndex("Sampler")]->Floats[0]);
 
 					tePin.TextureValue = extractedTexture;
 				}
@@ -383,7 +413,8 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	result.Uniforms = uniforms;
 	result.Textures = textures;
 	result.HasRefraction = option.HasRefraction;
-
+	result.CustomData1 = customData1Count;
+	result.CustomData2 = customData2Count;
 	return result;
 };
 
@@ -527,15 +558,17 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 
 		if (outputNode->Target->Parameter->Type == NodeType::ConstantTexture)
 		{
-			ret << GetTypeName(ValueType::Float4) << " emissive = "
+			ret << GetTypeName(ValueType::Float4) << " emissive_temp = "
 				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName(0) << ");" << std::endl;
-			ret << "float opacity = emissive.w;" << std::endl;
+			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
+			ret << "float opacity = emissive_temp.w;" << std::endl;
 		}
 		else if (outputNode->Target->Parameter->Type == NodeType::ParamTexture)
 		{
-			ret << GetTypeName(ValueType::Float4) << " emissive = "
+			ret << GetTypeName(ValueType::Float4) << " emissive_temp = "
 				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName(0) << ");" << std::endl;
-			ret << "float opacity = emissive.w;" << std::endl;
+			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
+			ret << "float opacity = emissive_temp.w;" << std::endl;
 		}
 		else
 		{
@@ -585,6 +618,20 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	{
 		ret << GetTypeName(ValueType::Float2) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float2) << "("
 			<< node->Target->Properties[0]->Floats[0] << "," << node->Target->Properties[0]->Floats[1] << ");" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Constant3)
+	{
+		auto& floats = node->Target->Properties[0]->Floats;
+		ret << GetTypeName(ValueType::Float3) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float3) << "(" << floats[0]
+			<< "," << floats[1] << "," << floats[2] << ");" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Constant4)
+	{
+		auto& floats = node->Target->Properties[0]->Floats;
+		ret << GetTypeName(ValueType::Float4) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float4) << "(" << floats[0]
+			<< "," << floats[1] << "," << floats[2] << "," << floats[3] << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Param1)
@@ -777,6 +824,36 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
 			<< "pixelNormalDir"
 			<< ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::CustomData1 || node->Target->Parameter->Type == NodeType::CustomData2)
+	{
+		std::string dstName;
+
+		if (node->Target->Parameter->Type == NodeType::CustomData1)
+		{
+			dstName = "customData1";
+		}
+		else if (node->Target->Parameter->Type == NodeType::CustomData2)
+		{
+			dstName = "customData2";
+		}
+
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << dstName << ".";
+
+		if (node->Target->Properties[0]->Floats[0] > 0)
+			ret << "x";
+
+		if (node->Target->Properties[1]->Floats[0] > 0)
+			ret << "y";
+
+		if (node->Target->Properties[2]->Floats[0] > 0)
+			ret << "z";
+
+		if (node->Target->Properties[3]->Floats[0] > 0)
+			ret << "w";
+
+		ret << ";" << std::endl;
 	}
 
 	return ret.str();

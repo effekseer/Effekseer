@@ -42,6 +42,11 @@ protected:
 	::Effekseer::Matrix44			m_singleRenderingMatrix;
 	::Effekseer::RendererMaterialType materialType_ = ::Effekseer::RendererMaterialType::Default;
 
+	int32_t vertexCount_ = 0;
+	int32_t stride_ = 0;
+	int32_t customData1Count_ = 0;
+	int32_t customData2Count_ = 0;
+
 public:
 
 	RingRendererBase(RENDERER* renderer)
@@ -62,7 +67,7 @@ protected:
 	void BeginRendering_(RENDERER* renderer, int32_t count, const efkRingNodeParam& param)
 	{
 		m_spriteCount = 0;
-		int32_t vertexCount = param.VertexCount * 8;
+		int32_t singleVertexCount = param.VertexCount * 8;
 		m_instanceCount = count;
 
 		if (count == 1)
@@ -89,10 +94,15 @@ protected:
 											   param.BasicParameterPtr->Texture1Index,
 											   param.BasicParameterPtr->Texture2Index);
 
+		customData1Count_ = state.CustomData1Count;
+		customData2Count_ = state.CustomData2Count;
+
 		materialType_ = param.BasicParameterPtr->MaterialType;
 
 		renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
-		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * vertexCount, m_ringBufferOffset, (void*&) m_ringBufferData);
+		renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(count * singleVertexCount, stride_, (void*&)m_ringBufferData);
+
+		vertexCount_ = count * singleVertexCount;
 	}
 
 	void Rendering_(const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
@@ -252,18 +262,16 @@ protected:
 								 parameter.IsRightHand);
 		}
 
-		int32_t vertexCount = parameter.VertexCount * 8;
+		int32_t singleVertexCount = parameter.VertexCount * 8;
 		//Vertex* verteies = (Vertex*)m_renderer->GetVertexBuffer()->GetBufferDirect( sizeof(Vertex) * vertexCount );
 		
-		VERTEX* verteies = (VERTEX*)m_ringBufferData;
+		StrideView<VERTEX> verteies(m_ringBufferData, stride_, singleVertexCount);
+		auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
 
-		auto vertexType = GetVertexType(verteies);
-
-		m_ringBufferData += sizeof(VERTEX) * vertexCount;
-
-		const float radian = instanceParameter.ViewingAngle / 180.0f * 3.141592f;
-		const float stepAngle = radian / (parameter.VertexCount);
-		const float beginAngle = -radian / 2.0f;
+		const float circleAngleDegree = (instanceParameter.ViewingAngleEnd - instanceParameter.ViewingAngleStart);
+		const float stepAngleDegree = circleAngleDegree / (parameter.VertexCount);
+		const float stepAngle = (stepAngleDegree) / 180.0f * 3.141592f;
+		const float beginAngle = (instanceParameter.ViewingAngleStart + 90) / 180.0f * 3.141592f;
 		
 		const float outerRadius = instanceParameter.OuterLocation.X;
 		const float innerRadius = instanceParameter.InnerLocation.X;
@@ -276,7 +284,17 @@ protected:
 		::Effekseer::Color outerColor = instanceParameter.OuterColor;
 		::Effekseer::Color innerColor = instanceParameter.InnerColor;
 		::Effekseer::Color centerColor = instanceParameter.CenterColor;
-		
+		::Effekseer::Color outerColorNext = instanceParameter.OuterColor;
+		::Effekseer::Color innerColorNext = instanceParameter.InnerColor;
+		::Effekseer::Color centerColorNext = instanceParameter.CenterColor;
+
+		if (parameter.StartingFade > 0)
+		{
+			outerColor.A = 0;
+			innerColor.A = 0;
+			centerColor.A = 0;
+		}
+
 		const float stepC = cosf(stepAngle);
 		const float stepS = sinf(stepAngle);
 		float cos_ = cosf(beginAngle);
@@ -284,16 +302,28 @@ protected:
 		::Effekseer::Vector3D outerCurrent( cos_ * outerRadius, sin_ * outerRadius, outerHeight );
 		::Effekseer::Vector3D innerCurrent( cos_ * innerRadius, sin_ * innerRadius, innerHeight );
 		::Effekseer::Vector3D centerCurrent( cos_ * centerRadius, sin_ * centerRadius, centerHeight );
-		float texCurrent = instanceParameter.UV.X;
-		const float texStep = instanceParameter.UV.Width / parameter.VertexCount;
-		const float v1 = instanceParameter.UV.Y;
-		const float v2 = v1 + instanceParameter.UV.Height * 0.5f;
-		const float v3 = v1 + instanceParameter.UV.Height;
-		
-		::Effekseer::Vector3D outerNext, innerNext, centerNext;
-		float texNext;
 
-		for( int i = 0; i < vertexCount; i += 8 )
+		float uv0Current = instanceParameter.UV.X;
+		const float uv0Step = instanceParameter.UV.Width / parameter.VertexCount;
+		const float uv0v1 = instanceParameter.UV.Y;
+		const float uv0v2 = uv0v1 + instanceParameter.UV.Height * 0.5f;
+		const float uv0v3 = uv0v1 + instanceParameter.UV.Height;
+		float uv0texNext = 0.0f;
+		
+		float uv1Current = 0.0f;
+		const float uv1Step = 1.0f / parameter.VertexCount;
+		const float uv1v1 = 0.0f;
+		const float uv1v2 = uv1v1 + 0.5f;
+		const float uv1v3 = uv1v1 + 1.0f;
+		float uv1texNext = 0.0f;
+
+		::Effekseer::Vector3D outerNext, innerNext, centerNext;
+
+		float currentAngleDegree = 0;
+		float fadeStartAngle = parameter.StartingFade;
+		float fadeEndingAngle = parameter.EndingFade;
+
+		for( int i = 0; i < singleVertexCount; i += 8 )
 		{
 			float old_c = cos_;
 			float old_s = sin_;
@@ -313,42 +343,67 @@ protected:
 			centerNext.Y = sin_ * centerRadius;
 			centerNext.Z = centerHeight;
 
-			texNext = texCurrent + texStep;
-			
+			currentAngleDegree += stepAngleDegree;
+
+			// for floating decimal point error
+			currentAngleDegree = Effekseer::Min(currentAngleDegree, circleAngleDegree);
+			float alpha = 1.0f;
+			if (currentAngleDegree < fadeStartAngle)
+			{
+				alpha = currentAngleDegree / fadeStartAngle;
+			}
+			else if (currentAngleDegree > circleAngleDegree - fadeEndingAngle)
+			{
+				alpha = 1.0f - (currentAngleDegree - (circleAngleDegree - fadeEndingAngle)) / fadeEndingAngle;
+			}
+
+			outerColorNext = instanceParameter.OuterColor;
+			innerColorNext = instanceParameter.InnerColor;
+			centerColorNext = instanceParameter.CenterColor;
+
+			if (alpha != 1.0f)
+			{
+				outerColorNext.A *= alpha;
+				innerColorNext.A *= alpha;
+				centerColorNext.A *= alpha;
+			}
+
+			uv0texNext = uv0Current + uv0Step;
+
 			VERTEX* v = &verteies[i];
 			v[0].Pos = outerCurrent;
 			v[0].SetColor( outerColor );
-			v[0].UV[0] = texCurrent;
-			v[0].UV[1] = v1;
+			v[0].UV[0] = uv0Current;
+			v[0].UV[1] = uv0v1;
 
 			v[1].Pos = centerCurrent;
 			v[1].SetColor( centerColor );
-			v[1].UV[0] = texCurrent;
-			v[1].UV[1] = v2;
+			v[1].UV[0] = uv0Current;
+			v[1].UV[1] = uv0v2;
 
 			v[2].Pos = outerNext;
-			v[2].SetColor( outerColor );
-			v[2].UV[0] = texNext;
-			v[2].UV[1] = v1;
+			v[2].SetColor( outerColorNext );
+			v[2].UV[0] = uv0texNext;
+			v[2].UV[1] = uv0v1;
 			
 			v[3].Pos = centerNext;
-			v[3].SetColor( centerColor );
-			v[3].UV[0] = texNext;
-			v[3].UV[1] = v2;
+			v[3].SetColor( centerColorNext );
+			v[3].UV[0] = uv0texNext;
+			v[3].UV[1] = uv0v2;
 
 			v[4] = v[1];
 
 			v[5].Pos = innerCurrent;
 			v[5].SetColor( innerColor );
-			v[5].UV[0] = texCurrent;
-			v[5].UV[1] = v3;
+			v[5].UV[0] = uv0Current;
+			v[5].UV[1] = uv0v3;
 
 			v[6] = v[3];
 
 			v[7].Pos = innerNext;
-			v[7].SetColor( innerColor );
-			v[7].UV[0] = texNext;
-			v[7].UV[1] = v3;
+			v[7].SetColor( innerColorNext );
+			v[7].UV[0] = uv0texNext;
+			v[7].UV[1] = uv0v3;
 
 			// distortion
 			if (vertexType == VertexType::Distortion)
@@ -473,12 +528,43 @@ protected:
 				vs[5].Tangent = vs[0].Tangent;
 				vs[6].Tangent = vs[2].Tangent;
 				vs[7].Tangent = vs[2].Tangent;
+
+				// uv1
+				uv1texNext = uv1Current + uv1Step;
+
+				vs[0].UV2[0] = uv1Current;
+				vs[0].UV2[1] = uv1v1;
+				 
+				vs[1].UV2[0] = uv1Current;
+				vs[1].UV2[1] = uv1v2;
+				 
+				vs[2].UV2[0] = uv1texNext;
+				vs[2].UV2[1] = uv1v1;
+				 
+				vs[3].UV2[0] = uv1texNext;
+				vs[3].UV2[1] = uv1v2;
+				 
+				vs[4].UV2[0] = vs[1].UV2[0];
+				vs[4].UV2[1] = vs[1].UV2[1];
+				 
+				vs[5].UV2[0] = uv1Current;
+				vs[5].UV2[1] = uv1v3;
+				 
+				vs[6].UV2[0] = vs[3].UV2[0];
+				vs[6].UV2[1] = vs[3].UV2[1];
+				 
+				vs[7].UV2[0] = uv1texNext;
+				vs[7].UV2[1] = uv1v3;
 			}
 
 			outerCurrent = outerNext;
 			innerCurrent = innerNext;
 			centerCurrent = centerNext;
-			texCurrent = texNext;
+			uv0Current = uv0texNext;
+			uv1Current = uv1texNext;
+			outerColor = outerColorNext;
+			innerColor = innerColorNext;
+			centerColor = centerColorNext;
 		}
 
 		if (CanSingleRendering())
@@ -492,10 +578,34 @@ protected:
 		}
 		else
 		{
-			TransformVertexes(verteies, vertexCount, mat_rot);
+			TransformVertexes(verteies, singleVertexCount, mat_rot);
+		}
+
+		// custom parameter
+		if (customData1Count_ > 0)
+		{
+			StrideView<float> custom(m_ringBufferData + sizeof(DynamicVertex), stride_, singleVertexCount);
+			for (int i = 0; i < singleVertexCount; i++)
+			{
+				auto c = (float*)(&custom[i]);
+				memcpy(c, instanceParameter.CustomData1.data(), sizeof(float) * customData1Count_);
+			}
+		}
+
+		if (customData2Count_ > 0)
+		{
+			StrideView<float> custom(
+				m_ringBufferData + sizeof(DynamicVertex) + sizeof(float) * customData1Count_, stride_, singleVertexCount);
+			for (int i = 0; i < singleVertexCount; i++)
+			{
+				auto c = (float*)(&custom[i]);
+				memcpy(c, instanceParameter.CustomData2.data(), sizeof(float) * customData2Count_);
+			}
 		}
 
 		m_spriteCount += 2 * parameter.VertexCount;
+		m_ringBufferData += stride_ * singleVertexCount;
+
 	}
 
 	void EndRendering_(RENDERER* renderer, const efkRingNodeParam& param)

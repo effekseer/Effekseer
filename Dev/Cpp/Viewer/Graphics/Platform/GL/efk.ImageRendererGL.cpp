@@ -162,7 +162,7 @@ static const char g_sprite_fs_no_texture_src[] =
 			s.Verteies[i].Pos = positions[i];
 			s.Verteies[i].UV[0] = uvs[i].X;
 			s.Verteies[i].UV[1] = uvs[i].Y;
-			s.Verteies[i].Col = colors[i];
+			s.Verteies[i].SetColor(colors[i]);
 		}
 
 		s.TexturePtr = texturePtr;

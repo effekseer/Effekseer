@@ -145,6 +145,8 @@ public:
 
 	int32_t	SplineDivision = 1;
 
+	NodeRendererTextureUVTypeParameter TextureUVType;
+
 	EffectNodeTrack(Effect* effect, unsigned char*& pos)
 		: EffectNodeImplemented(effect, pos)
 		, TrackTexture(-1)

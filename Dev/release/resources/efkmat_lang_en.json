@@ -43,5 +43,8 @@
   "Create_Node": "Create_Node",
   "SampleTexture_Name": "Sample Image",
   "ParamTexture_Name": "Parameter Image",
-  "ConstantTexture_Name": "Constant Image"
+  "ConstantTexture_Name": "Constant Image",
+  "Starting": "Starting",
+  "Starting_New": "Create new material",
+  "Starting_Open": "Open a material"
 }

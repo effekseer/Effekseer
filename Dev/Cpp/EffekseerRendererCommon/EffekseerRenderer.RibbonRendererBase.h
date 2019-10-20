@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include <Effekseer.h>
+#include <Effekseer.Internal.h>
 #include <assert.h>
 #include <string.h>
 
@@ -33,94 +34,6 @@ namespace EffekseerRenderer
 	{
 	private:
 
-		/**
-		@brief Spline generator
-		@note
-		Reference https://qiita.com/edo_m18/items/f2f0c6bf9032b0ec12d4
-		*/
-		class Spline
-		{
-			std::vector<efkVector3D>	a;
-			std::vector<efkVector3D>	b;
-			std::vector<efkVector3D>	c;
-			std::vector<efkVector3D>	d;
-			std::vector<efkVector3D>	w;
-			std::vector<bool>			isSame;
-
-		public:
-
-			void AddVertex(const efkVector3D& v)
-			{
-				a.push_back(v);
-				if (a.size() >= 2)
-				{
-					isSame.push_back(a[a.size() - 1] == a[a.size() - 2]);
-				}
-			}
-
-			void Calculate()
-			{
-				b.resize(a.size());
-				c.resize(a.size());
-				d.resize(a.size());
-				w.resize(a.size());
-
-				for (size_t i = 1; i < a.size() - 1; i++)
-				{
-					c[i] = (a[i - 1] + a[i] * (-2.0) + a[i + 1]) * 3.0;
-				}
-
-				for (size_t i = 1; i < a.size() - 1; i++)
-				{
-					auto tmp = efkVector3D(4.0, 4.0, 4.0) - w[i - 1];
-					c[i] = (c[i] - c[i - 1]) / tmp;
-					w[i] = efkVector3D(1.0, 1.0, 1.0) / tmp;
-				}
-
-				for (size_t i = (a.size() - 1) - 1; i > 0; i--)
-				{
-					c[i] = c[i] - c[i + 1] * w[i];
-				}
-
-				for (size_t i = 0; i < a.size() - 1; i++)
-				{
-					d[i] = (c[i + 1] - c[i]) / 3.0;
-					b[i] = a[i + 1] - a[i] - c[i] - d[i];
-				}
-			}
-
-			void Reset()
-			{
-				a.clear();
-				b.clear();
-				c.clear();
-				d.clear();
-				w.clear();
-				isSame.clear();
-			}
-
-			efkVector3D GetValue(float t)
-			{
-				int32_t j = (int32_t)floorf(t);
-
-				if (j < 0)
-				{
-					j = 0;
-				}
-
-				if (j > (int32_t)a.size())
-				{
-					j = (int32_t)a.size() - 1;
-				}
-
-				auto dt = t - j;
-
-				if (j < (int32_t)isSame.size() && isSame[j]) return a[j];
-
-				return a[j] + (b[j] + (c[j] + d[j] * dt) * dt) * dt;
-			}
-		};
-
 	protected:
 		RENDERER*						m_renderer;
 		int32_t							m_ribbonCount;
@@ -130,8 +43,14 @@ namespace EffekseerRenderer
 
 		efkRibbonNodeParam					innstancesNodeParam;
 		std::vector<efkRibbonInstanceParam>	instances;
-		Spline								spline_left;
-		Spline								spline_right;
+		SplineGenerator spline_left;
+		SplineGenerator spline_right;
+
+		int32_t vertexCount_ = 0;
+		int32_t stride_ = 0;
+
+		int32_t customData1Count_ = 0;
+		int32_t customData2Count_ = 0;
 
 		enum class VertexType
 		{
@@ -146,15 +65,187 @@ namespace EffekseerRenderer
 
 		VertexType GetVertexType(const DynamicVertex* v) { return VertexType::Dynamic; }
 
+		template <typename VERTEX, int TARGET> void AssignUV(StrideView<VERTEX> v, float uvX1, float uvX2, float uvY1, float uvY2)
+		{
+			if (TARGET == 0)
+			{
+				v[0].UV[0] = uvX1;
+				v[0].UV[1] = uvY1;
+
+				v[1].UV[0] = uvX2;
+				v[1].UV[1] = uvY1;
+
+				v[2].UV[0] = uvX1;
+				v[2].UV[1] = uvY2;
+
+				v[3].UV[0] = uvX2;
+				v[3].UV[1] = uvY2;
+			}
+			else
+			{
+				v[0].UV2[0] = uvX1;
+				v[0].UV2[1] = uvY1;
+					   
+				v[1].UV2[0] = uvX2;
+				v[1].UV2[1] = uvY1;
+					   
+				v[2].UV2[0] = uvX1;
+				v[2].UV2[1] = uvY2;
+					   
+				v[3].UV2[0] = uvX2;
+				v[3].UV2[1] = uvY2;
+			}
+		}
+
+		template <typename VERTEX, int TARGET> 
+		void AssignUVs(efkRibbonNodeParam& parameter, StrideView<VERTEX> verteies)
+		{
+			float uvx = 0.0f;
+			float uvw = 1.0f;
+			float uvy = 0.0f;
+			float uvh = 1.0f;
+
+			if (parameter.TextureUVTypeParameterPtr->Type == ::Effekseer::TextureUVType::Strech)
+			{
+				verteies.Reset();
+
+				for (size_t loop = 0; loop < instances.size() - 1; loop++)
+				{
+					const auto& param = instances[loop];
+					if (TARGET == 0)
+					{
+						uvx = param.UV.X;
+						uvw = param.UV.Width;
+						uvy = param.UV.Y;
+						uvh = param.UV.Height;
+					}
+
+					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+					{
+						float percent1 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop) /
+										 (float)((param.InstanceCount - 1) * parameter.SplineDivision);
+
+						float percent2 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop + 1) /
+										 (float)((param.InstanceCount - 1) * parameter.SplineDivision);
+
+						auto uvX1 = uvx;
+						auto uvX2 = uvx + uvw;
+						auto uvY1 = uvy + percent1 * uvh;
+						auto uvY2 = uvy + percent2 * uvh;
+
+						AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvY1, uvY2);
+
+						verteies += 4;
+					}
+				}
+			}
+			else if (parameter.TextureUVTypeParameterPtr->Type == ::Effekseer::TextureUVType::Tile)
+			{
+				const auto& uvParam = *parameter.TextureUVTypeParameterPtr;
+	
+				verteies.Reset();
+
+				for (size_t loop = 0; loop < instances.size() - 1; loop++)
+				{
+					auto& param = instances[loop];
+					if (TARGET == 0)
+					{
+						uvx = param.UV.X;
+						uvw = param.UV.Width;
+						uvy = param.UV.Y;
+						uvh = param.UV.Height;
+					}
+
+					if (loop < uvParam.TileEdgeTail)
+					{
+						float uvBegin = uvy;
+						float uvEnd = uvy + uvh * uvParam.TileLoopAreaBegin;
+
+						for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+						{
+							float percent1 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop) /
+											 (float)((uvParam.TileEdgeTail) * parameter.SplineDivision);
+
+							float percent2 = (float)(param.InstanceIndex * parameter.SplineDivision + sploop + 1) /
+											 (float)((uvParam.TileEdgeTail) * parameter.SplineDivision);
+
+							auto uvX1 = uvx;
+							auto uvX2 = uvx + uvw;
+							auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
+							auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
+
+							AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvY1, uvY2);
+
+							verteies += 4;
+						}
+					}
+					else if (loop >= param.InstanceCount - 1 - uvParam.TileEdgeHead)
+					{
+						float uvBegin = uvy + uvh * uvParam.TileLoopAreaEnd;
+						float uvEnd = uvy + uvh * 1.0f;
+
+						for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+						{
+							float percent1 = (float)((param.InstanceIndex - (param.InstanceCount - 1 - uvParam.TileEdgeHead)) *
+														 parameter.SplineDivision +
+													 sploop) /
+											 (float)((uvParam.TileEdgeHead) * parameter.SplineDivision);
+
+							float percent2 = (float)((param.InstanceIndex - (param.InstanceCount - 1 - uvParam.TileEdgeHead)) *
+														 parameter.SplineDivision +
+													 sploop + 1) /
+											 (float)((uvParam.TileEdgeHead) * parameter.SplineDivision);
+
+							auto uvX1 = uvx;
+							auto uvX2 = uvx + uvw;
+							auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
+							auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
+
+							AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvY1, uvY2);
+
+							verteies += 4;
+						}
+					}
+					else
+					{
+						float uvBegin = uvy + uvh * uvParam.TileLoopAreaBegin;
+						float uvEnd = uvy + uvh * uvParam.TileLoopAreaEnd;
+
+						for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+						{
+							bool isFirst = param.InstanceIndex == 0 && sploop == 0;
+							bool isLast = param.InstanceIndex == (param.InstanceCount - 1);
+
+							float percent1 = (float)(sploop) / (float)(parameter.SplineDivision);
+
+							float percent2 = (float)(sploop + 1) / (float)(parameter.SplineDivision);
+
+							auto uvX1 = uvx;
+							auto uvX2 = uvx + uvw;
+							auto uvY1 = uvBegin + (uvEnd - uvBegin) * percent1;
+							auto uvY2 = uvBegin + (uvEnd - uvBegin) * percent2;
+
+							AssignUV<VERTEX, TARGET>(verteies, uvX1, uvX2, uvY1, uvY2);
+
+							verteies += 4;
+						}
+					}
+				}
+			}
+
+		}
 
 		template<typename VERTEX>
 		void RenderSplines(const ::Effekseer::Matrix44& camera)
 		{
+			if (instances.size() == 0)
+			{
+				return;
+			}
+
 			auto& parameter = innstancesNodeParam;
 
-			VERTEX* verteies0 = (VERTEX*)m_ringBufferData;
-
-			auto vertexType = GetVertexType(verteies0);
+			auto vertexType = GetVertexType((VERTEX*)m_ringBufferData);
 
 			// Calculate spline
 			if (parameter.SplineDivision > 1)
@@ -250,7 +341,7 @@ namespace EffekseerRenderer
 				spline_right.Calculate();
 			}
 
-
+			StrideView<VERTEX> verteies(m_ringBufferData, stride_, vertexCount_);
 			for (size_t loop = 0; loop < instances.size(); loop++)
 			{
 				auto& param = instances[loop];
@@ -259,8 +350,6 @@ namespace EffekseerRenderer
 				{
 					bool isFirst = param.InstanceIndex == 0 && sploop == 0;
 					bool isLast = param.InstanceIndex == (param.InstanceCount - 1);
-
-					VERTEX* verteies = (VERTEX*)m_ringBufferData;
 
 					float percent_instance = sploop / (float)parameter.SplineDivision;
 
@@ -285,12 +374,6 @@ namespace EffekseerRenderer
 
 
 					float percent = (float)(param.InstanceIndex  * parameter.SplineDivision + sploop) / (float)((param.InstanceCount - 1) * parameter.SplineDivision);
-
-					verteies[0].UV[0] = param.UV.X;
-					verteies[0].UV[1] = param.UV.Y + percent * param.UV.Height;
-
-					verteies[1].UV[0] = param.UV.X + param.UV.Width;
-					verteies[1].UV[1] = param.UV.Y + percent * param.UV.Height;
 
 					if (parameter.ViewpointDependent)
 					{
@@ -364,13 +447,13 @@ namespace EffekseerRenderer
 
 					if (isFirst || isLast)
 					{
-						m_ringBufferData += sizeof(VERTEX) * 2;
+						verteies += 2;
 					}
 					else
 					{
 						verteies[2] = verteies[0];
 						verteies[3] = verteies[1];
-						m_ringBufferData += sizeof(VERTEX) * 4;
+						verteies += 4;
 					}
 
 					if (!isFirst)
@@ -385,11 +468,18 @@ namespace EffekseerRenderer
 				}
 			}
 
+			// calculate UV
+			AssignUVs<VERTEX, 0>(parameter, verteies);
+
+			if (vertexType == VertexType::Dynamic)
+			{
+				AssignUVs<VERTEX, 1>(parameter, verteies);
+			}
+
 			// Apply distortion
 			if (vertexType == VertexType::Distortion)
 			{
-				VERTEX_DISTORTION* vs_ = (VERTEX_DISTORTION*)verteies0;
-
+				StrideView<VERTEX_DISTORTION> vs_(m_ringBufferData, stride_, vertexCount_);
 				Effekseer::Vector3D axisBefore;
 
 				for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
@@ -463,8 +553,7 @@ namespace EffekseerRenderer
 			}
 			else if (vertexType == VertexType::Dynamic)
 			{
-				DynamicVertex* vs_ = (DynamicVertex*)verteies0;
-
+				StrideView<DynamicVertex> vs_(m_ringBufferData, stride_, vertexCount_);
 				Effekseer::Vector3D axisBefore;
 
 				for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
@@ -536,6 +625,40 @@ namespace EffekseerRenderer
 					}
 				}
 			}
+
+			// custom parameter
+			if (customData1Count_ > 0)
+			{
+				StrideView<float> custom(m_ringBufferData + sizeof(DynamicVertex), stride_, vertexCount_);
+				for (size_t loop = 0; loop < instances.size() - 1; loop++)
+				{
+					auto& param = instances[loop];
+
+					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+					{
+						auto c = (float*)(&custom[0]);
+						memcpy(c, param.CustomData1.data(), sizeof(float) * customData1Count_);
+						custom += 4;
+					}
+				}
+			}
+
+			if (customData2Count_ > 0)
+			{
+				StrideView<float> custom(
+					m_ringBufferData + sizeof(DynamicVertex) + sizeof(float) * customData1Count_, stride_, vertexCount_);
+				for (size_t loop = 0; loop < instances.size() - 1; loop++)
+				{
+					auto& param = instances[loop];
+
+					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
+					{
+						auto c = (float*)(&custom[0]);
+						memcpy(c, param.CustomData2.data(), sizeof(float) * customData1Count_);
+						custom += 4;
+					}
+				}
+			}
 		}
 
 	public:
@@ -598,178 +721,6 @@ namespace EffekseerRenderer
 			{
 				RenderSplines<VERTEX>(camera);
 			}
-
-			/*
-			VERTEX* verteies = (VERTEX*)m_ringBufferData;
-
-			for( int i = 0; i < 2; i++ )
-			{
-			verteies[i].Pos.X = instanceParameter.Positions[i];
-			verteies[i].Pos.Y = 0.0f;
-			verteies[i].Pos.Z = 0.0f;
-			verteies[i].SetColor( instanceParameter.Colors[i] );
-			}
-
-			float percent = (float) instanceParameter.InstanceIndex / (float) (instanceParameter.InstanceCount - 1);
-
-			verteies[0].UV[0] = instanceParameter.UV.X;
-			verteies[0].UV[1] = instanceParameter.UV.Y + percent * instanceParameter.UV.Height;
-
-			verteies[1].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
-			verteies[1].UV[1] = instanceParameter.UV.Y + percent * instanceParameter.UV.Height;
-
-			if( parameter.ViewpointDependent)
-			{
-			const ::Effekseer::Matrix43& mat = instanceParameter.SRTMatrix43;
-			::Effekseer::Vector3D s;
-			::Effekseer::Matrix43 r;
-			::Effekseer::Vector3D t;
-			mat.GetSRT( s, r, t );
-
-			// 拡大
-			for( int i = 0; i < 2; i++ )
-			{
-			verteies[i].Pos.X = verteies[i].Pos.X * s.X;
-			}
-
-			::Effekseer::Vector3D F;
-			::Effekseer::Vector3D R;
-			::Effekseer::Vector3D U;
-
-			U = ::Effekseer::Vector3D( r.Value[1][0], r.Value[1][1], r.Value[1][2] );
-
-			::Effekseer::Vector3D::Normal( F, ::Effekseer::Vector3D( - camera.Values[0][2], - camera.Values[1][2], - camera.Values[2][2] ) );
-
-			::Effekseer::Vector3D::Normal( R, ::Effekseer::Vector3D::Cross( R, U, F ) );
-			::Effekseer::Vector3D::Normal( F, ::Effekseer::Vector3D::Cross( F, R, U ) );
-
-			::Effekseer::Matrix43 mat_rot;
-
-			mat_rot.Value[0][0] = - R.X;
-			mat_rot.Value[0][1] = - R.Y;
-			mat_rot.Value[0][2] = - R.Z;
-			mat_rot.Value[1][0] = U.X;
-			mat_rot.Value[1][1] = U.Y;
-			mat_rot.Value[1][2] = U.Z;
-			mat_rot.Value[2][0] = F.X;
-			mat_rot.Value[2][1] = F.Y;
-			mat_rot.Value[2][2] = F.Z;
-			mat_rot.Value[3][0] = t.X;
-			mat_rot.Value[3][1] = t.Y;
-			mat_rot.Value[3][2] = t.Z;
-
-			for( int i = 0; i < 2; i++ )
-			{
-			::Effekseer::Vector3D::Transform(
-			verteies[i].Pos,
-			verteies[i].Pos,
-			mat_rot );
-			}
-			}
-			else
-			{
-			for( int i = 0; i < 2; i++ )
-			{
-			::Effekseer::Vector3D::Transform(
-			verteies[i].Pos,
-			verteies[i].Pos,
-			instanceParameter.SRTMatrix43 );
-			}
-			}
-
-			if( isFirst || isLast )
-			{
-			m_ringBufferData += sizeof(VERTEX) * 2;
-			}
-			else
-			{
-			verteies[2] = verteies[0];
-			verteies[3] = verteies[1];
-			m_ringBufferData += sizeof(VERTEX) * 4;
-			}
-
-			if( !isFirst )
-			{
-			m_ribbonCount++;
-			}
-
-			// Apply distortion
-			if (isLast && sizeof(VERTEX) == sizeof(VERTEX_DISTORTION))
-			{
-			VERTEX_DISTORTION* vs_ = (VERTEX_DISTORTION*) (m_ringBufferData - sizeof(VERTEX_DISTORTION) * (instanceParameter.InstanceCount - 1) * 4);
-
-			Effekseer::Vector3D axisBefore;
-
-			for (int32_t i = 0; i < instanceParameter.InstanceCount; i++)
-			{
-			bool isFirst_ = (i == 0);
-			bool isLast_ = (i == (instanceParameter.InstanceCount - 1));
-
-			Effekseer::Vector3D axis;
-			Effekseer::Vector3D pos;
-
-			if (isFirst_)
-			{
-			axis = (vs_[3].Pos - vs_[1].Pos);
-			Effekseer::Vector3D::Normal(axis, axis);
-			axisBefore = axis;
-			}
-			else if (isLast_)
-			{
-			axis = axisBefore;
-			}
-			else
-			{
-			Effekseer::Vector3D axisOld = axisBefore;
-			axis = (vs_[5].Pos - vs_[3].Pos);
-			Effekseer::Vector3D::Normal(axis, axis);
-			axisBefore = axis;
-
-			axis = (axisBefore + axisOld) / 2.0f;
-			Effekseer::Vector3D::Normal(axis, axis);
-			}
-
-			auto tangent = vs_[1].Pos - vs_[0].Pos;
-			Effekseer::Vector3D::Normal(tangent, tangent);
-
-			if (isFirst_)
-			{
-			vs_[0].Binormal = axis;
-			vs_[1].Binormal = axis;
-
-			vs_[0].Tangent = tangent;
-			vs_[1].Tangent = tangent;
-
-			vs_ += 2;
-
-			}
-			else if (isLast_)
-			{
-			vs_[0].Binormal = axis;
-			vs_[1].Binormal = axis;
-
-			vs_[0].Tangent = tangent;
-			vs_[1].Tangent = tangent;
-
-			vs_ += 2;
-			}
-			else
-			{
-			vs_[0].Binormal = axis;
-			vs_[1].Binormal = axis;
-			vs_[2].Binormal = axis;
-			vs_[3].Binormal = axis;
-
-			vs_[0].Tangent = tangent;
-			vs_[1].Tangent = tangent;
-			vs_[2].Tangent = tangent;
-			vs_[3].Tangent = tangent;
-
-			vs_ += 4;
-			}
-			}
-			}
-			*/
 		}
 
 	public:
@@ -799,10 +750,13 @@ namespace EffekseerRenderer
 												   param.BasicParameterPtr->MaterialParameterPtr,
 												   param.BasicParameterPtr->Texture1Index,
 												   param.BasicParameterPtr->Texture2Index);
+			customData1Count_ = state.CustomData1Count;
+			customData2Count_ = state.CustomData2Count;
 
 			m_renderer->GetStandardRenderer()->UpdateStateAndRenderingIfRequired(state);
 
-			m_renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, m_ringBufferOffset, (void*&)m_ringBufferData);
+			m_renderer->GetStandardRenderer()->BeginRenderingAndRenderingIfRequired(vertexCount, stride_, (void*&)m_ringBufferData);
+			vertexCount_ = vertexCount;
 		}
 
 		void Rendering(const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData) override

@@ -78,6 +78,8 @@ enum class NodeType
 {
 	Constant1,
 	Constant2,
+	Constant3,
+	Constant4,
 
 	Param1,
 	Param4,
@@ -103,6 +105,9 @@ enum class NodeType
 
 	VertexNormalWS,
 	PixelNormalWS,
+
+	CustomData1,
+	CustomData2,
 
 	Fresnel, // not implemented
 

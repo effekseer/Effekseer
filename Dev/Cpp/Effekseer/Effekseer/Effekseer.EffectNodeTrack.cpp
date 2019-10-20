@@ -35,9 +35,7 @@ void EffectNodeTrack::LoadRendererParameter(unsigned char*& pos, Setting* settin
 
 	if (m_effect->GetVersion() >= 15)
 	{
-		int32_t textureUVMode = 0;
-		memcpy(&textureUVMode, pos, sizeof(int32_t));
-		pos += sizeof(int32_t);
+		TextureUVType.Load(pos, m_effect->GetVersion());
 	}
 
 	LoadValues(TrackSizeFor, pos);
@@ -101,6 +99,7 @@ void EffectNodeTrack::BeginRendering(int32_t count, Manager* manager)
 
 		m_nodeParameter.SplineDivision = SplineDivision;
 		m_nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
+		m_nodeParameter.TextureUVTypeParameterPtr = &TextureUVType;
 
 		renderer->BeginRendering(m_nodeParameter, count, m_userData);
 	}
@@ -122,7 +121,7 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 		if (group->GetFirst() != nullptr)
 		{
 			m_instanceParameter.UV = group->GetFirst()->GetUV();
-			m_instanceParameter.CustomData = group->GetFirst()->GetCustomData();
+			CalcCustomData(group->GetFirst(), m_instanceParameter.CustomData1, m_instanceParameter.CustomData2);
 		}
 
 		renderer->BeginRenderingGroup(m_nodeParameter, group->GetInstanceCount(), m_userData);

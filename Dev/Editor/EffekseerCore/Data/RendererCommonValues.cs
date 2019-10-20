@@ -26,14 +26,31 @@ namespace Effekseer.Data
 
 	public enum CustomDataType
 	{
+		[Name(language = Language.Japanese, value = "なし")]
+		[Name(language = Language.English, value = "None")]
 		None = 0,
-		Fixed = 1,
-		Easing = 2,
-		FCurve = 3,
+
+		[Name(language = Language.Japanese, value = "固定2")]
+		[Name(language = Language.English, value = "Fixed2")]
+		Fixed2D = 20,
+
+		[Name(language = Language.Japanese, value = "イージング2")]
+		[Name(language = Language.English, value = "Easing2")]
+		Easing2D = 22,
+
+		[Name(language = Language.Japanese, value = "Fカーブ2")]
+		[Name(language = Language.English, value = "FCurve2")]
+		FCurve2D = 23,
+
+		[Name(language = Language.Japanese, value = "Fカーブ色")]
+		[Name(language = Language.English, value = "FCurve-Color")]
+		FCurveColor = 53,
 	}
 
 	public class CustomDataParameter
 	{
+		[Name(language = Language.Japanese, value = "カスタムデータ")]
+		[Name(language = Language.English, value = "Custom Data")]
 		[Selector(ID = 10)]
 		public Value.Enum<CustomDataType> CustomData
 		{
@@ -41,14 +58,17 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Selected(ID = 10, Value = (int)CustomDataType.Fixed)]
+		[Selected(ID = 10, Value = (int)CustomDataType.Fixed2D)]
 		public Value.Vector2D Fixed { get; private set; }
 
-		[Selected(ID = 10, Value = (int)CustomDataType.Easing)]
+		[Selected(ID = 10, Value = (int)CustomDataType.Easing2D)]
 		public Vector2DEasingParamater Easing { get; private set; }
 
-		[Selected(ID = 10, Value = (int)CustomDataType.FCurve)]
+		[Selected(ID = 10, Value = (int)CustomDataType.FCurve2D)]
 		public Value.FCurveVector2D FCurve { get; private set; }
+
+		[Selected(ID = 10, Value = (int)CustomDataType.FCurveColor)]
+		public Value.FCurveColorRGBA FCurveColor { get; private set; }
 
 		public CustomDataParameter()
 		{
@@ -56,6 +76,7 @@ namespace Effekseer.Data
 			Fixed = new Value.Vector2D();
 			Easing = new Vector2DEasingParamater();
 			FCurve = new Value.FCurveVector2D();
+			FCurveColor = new Value.FCurveColorRGBA();
 		}
 	}
 
@@ -263,10 +284,11 @@ namespace Effekseer.Data
 				{
 					if(uniform.Type == 0)
 					{
+						var value = new Value.Float();
+						value.SetValueDirectly(uniform.DefaultValues[0]);
 						var status = new ValueStatus();
 						status.Key = key;
-						status.Value = new Value.Float();
-
+						status.Value = value;
 						status.Name = getName();
 						status.Description = getDesc();
 						status.IsShown = true;
@@ -276,9 +298,14 @@ namespace Effekseer.Data
 					}
 					else
 					{
+						var value = new Value.Vector4D();
+						value.X.SetValueDirectly(uniform.DefaultValues[0]);
+						value.Y.SetValueDirectly(uniform.DefaultValues[1]);
+						value.Z.SetValueDirectly(uniform.DefaultValues[2]);
+						value.W.SetValueDirectly(uniform.DefaultValues[3]);
 						var status = new ValueStatus();
 						status.Key = key;
-						status.Value = new Value.Vector4D();
+						status.Value = value;
 						status.Name = getName();
 						status.Description = getDesc();
 						status.IsShown = true;
@@ -295,55 +322,41 @@ namespace Effekseer.Data
 			}
 		}
 
-		public List<Tuple35<ValueStatus, bool>> GetTextures(Utl.MaterialInformation info)
+		public List<Tuple35<ValueStatus, Utl.MaterialInformation.TextureInformation>> GetTextures(Utl.MaterialInformation info)
 		{
-			var ret = new List<Tuple35<ValueStatus, bool>>();
+			var ret = new List<Tuple35<ValueStatus, Utl.MaterialInformation.TextureInformation>>();
 
 			foreach (var texture in info.Textures)
 			{
 				var key = CreateKey(texture);
 
-				if(texture.Type == Utl.TextureType.Value)
+				if (keyToValues.ContainsKey(key))
 				{
-					if (keyToValues.ContainsKey(key))
-					{
-						ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, true));
-					}
-					else
-					{
-						ret.Add(Tuple35.Create((ValueStatus)(null), true));
-					}
+					ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, texture));
 				}
 				else
 				{
-					if (keyToValues.ContainsKey(key))
-					{
-						ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, false));
-					}
-					else
-					{
-						ret.Add(Tuple35.Create((ValueStatus)(null), false));
-					}
+					ret.Add(Tuple35.Create((ValueStatus)(null), texture));
 				}
 			}
 
 			return ret;
 		}
 
-		public List<ValueStatus> GetUniforms(Utl.MaterialInformation info)
+		public List<Tuple35<ValueStatus, Utl.MaterialInformation.UniformInformation>> GetUniforms(Utl.MaterialInformation info)
 		{
-			var ret = new List<ValueStatus>();
+			var ret = new List<Tuple35<ValueStatus, Utl.MaterialInformation.UniformInformation>>();
 
 			foreach (var uniform in info.Uniforms)
 			{
 				var key = CreateKey(uniform);
 				if (keyToValues.ContainsKey(key))
 				{
-					ret.Add(keyToValues[key] as ValueStatus);
+					ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, uniform));
 				}
 				else
 				{
-					ret.Add(null);
+					ret.Add(Tuple35.Create((ValueStatus)(null), uniform));
 				}
 			}
 

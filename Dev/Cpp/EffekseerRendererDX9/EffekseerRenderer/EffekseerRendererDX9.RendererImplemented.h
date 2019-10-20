@@ -16,51 +16,12 @@
 #include <xmmintrin.h>
 #endif
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace EffekseerRendererDX9
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-struct Vertex
-{
-	::Effekseer::Vector3D	Pos;
-	D3DCOLOR	Col;
-	float		UV[2];
 
-	void SetColor( const ::Effekseer::Color& color )
-	{
-		Col = D3DCOLOR_ARGB(
-			color.A,
-			color.R,
-			color.G,
-			color.B);
-	}
-};
+using Vertex = EffekseerRenderer::SimpleVertexDX9;
+using VertexDistortion = EffekseerRenderer::VertexDistortionDX9;
 
-struct VertexDistortion
-{
-	::Effekseer::Vector3D	Pos;
-	D3DCOLOR	Col;
-	float		UV[2];
-	::Effekseer::Vector3D	Tangent;
-	::Effekseer::Vector3D	Binormal;
-
-	void SetColor(const ::Effekseer::Color& color)
-	{
-		Col = D3DCOLOR_ARGB(
-			color.A,
-			color.R,
-			color.G,
-			color.B);
-	}
-};
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 /**
 	@brief	描画クラス
 	@note

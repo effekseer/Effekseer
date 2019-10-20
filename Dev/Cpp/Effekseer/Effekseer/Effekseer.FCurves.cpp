@@ -2,6 +2,7 @@
 
 #include "Effekseer.FCurves.h"
 #include "Effekseer.InstanceGlobal.h"
+#include <cmath>
 
 namespace Effekseer
 {

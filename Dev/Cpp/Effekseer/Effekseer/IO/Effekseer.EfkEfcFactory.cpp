@@ -1,5 +1,5 @@
 #include "Effekseer.EfkEfcFactory.h"
-#include "../Effekseer.BinaryReader.h"
+#include "../Utils/Effekseer.BinaryReader.h"
 
 namespace Effekseer
 {

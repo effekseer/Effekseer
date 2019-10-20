@@ -20,6 +20,7 @@
 
 #endif
 */
+#include "Dialog/Dialog.h"
 
 #include "../IPC/IPC.h"
 
@@ -94,116 +95,6 @@ void SetCurrentDir(const char* path)
 #endif
 }
 
-class Dialog
-{
-private:
-public:
-	Dialog() = default;
-	virtual ~Dialog() = default;
-
-	virtual const char* GetID() const { return ""; }
-
-	virtual bool Update() { return true; }
-
-	bool IsClosing = false;
-};
-
-class NewOrOpenDialog : public Dialog
-{
-private:
-	std::shared_ptr<EffekseerMaterial::Editor> content_;
-	std::string id_ = "###NewOrOpenDialog";
-
-public:
-	NewOrOpenDialog(std::shared_ptr<EffekseerMaterial::Editor> content) : content_(content) {}
-
-	virtual ~NewOrOpenDialog() {}
-
-	const char* GetID() const { return id_.c_str(); }
-
-	bool Update() override
-	{
-		bool open = true;
-		if (ImGui::BeginPopupModal(GetID(), &open))
-		{
-			ImGui::Text("New of save?");
-			ImGui::Separator();
-
-			if (ImGui::Button("New"))
-			{
-				content_->New();
-				open = false;
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Open"))
-			{
-				if (content_->Load())
-				{
-					return false;
-					open = false;
-				}
-			}
-
-			ImGui::EndPopup();
-		}
-
-		return open;
-	}
-};
-
-class SaveOrCloseDialog : public Dialog
-{
-private:
-	std::shared_ptr<EffekseerMaterial::EditorContent> content_;
-	std::string id_ = "###SaveOrCloseDialog";
-
-public:
-	SaveOrCloseDialog(std::shared_ptr<EffekseerMaterial::EditorContent> content) : content_(content) {}
-
-	virtual ~SaveOrCloseDialog() {}
-
-	const char* GetID() const { return id_.c_str(); }
-
-	bool Update() override
-	{
-		bool open = true;
-		if (ImGui::BeginPopupModal(GetID(), &open))
-		{
-			ImGui::Text("Save?");
-			ImGui::Separator();
-
-			if (ImGui::Button("Yes"))
-			{
-				if (content_->Save())
-				{
-					content_->IsClosing = true;
-				}
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("No"))
-			{
-				content_->IsClosing = true;
-				open = false;
-			}
-
-			ImGui::SameLine();
-			if (ImGui::Button("Cancel"))
-			{
-				content_->IsClosing = false;
-				open = false;
-			}
-
-			ImGui::EndPopup();
-		}
-
-		return open;
-	}
-};
-
 int main(int argc, char* argv[])
 {
 	bool ipcMode = false;
@@ -218,11 +109,11 @@ int main(int argc, char* argv[])
 	int32_t width = 1280;
 	int32_t height = 720;
 
-	#if _DEBUG
+#if _DEBUG
 	char* title = "EffekseerMaterialEditor - debug";
-	#else
+#else
 	char* title = "EffekseerMaterialEditor";
-	#endif
+#endif
 	if (!glfwInit())
 	{
 		return false;
@@ -287,7 +178,7 @@ int main(int argc, char* argv[])
 
 	editor = std::make_shared<EffekseerMaterial::Editor>(graphics);
 
-	std::vector<std::shared_ptr<Dialog>> dialogs;
+	std::vector<std::shared_ptr<EffekseerMaterial::Dialog>> dialogs;
 
 	keyStatePre.fill(false);
 	keyState.fill(false);
@@ -314,8 +205,12 @@ int main(int argc, char* argv[])
 				}
 				else if (commandDataTOMaterialEditor.Type == IPC::CommandType::OpenOrCreateMaterial)
 				{
+#ifdef _DEBUG
+					std::cout << "OpenOrCreateMaterial : " << commandDataTOMaterialEditor.str.data() << std::endl;
+#endif
 					if (!editor->LoadOrSelect(commandDataTOMaterialEditor.str.data()))
 					{
+						editor->New();
 						editor->SaveAs(commandDataTOMaterialEditor.str.data());
 					}
 				}
@@ -419,6 +314,8 @@ int main(int argc, char* argv[])
 			{
 				if (ImGui::BeginTabBar("###MainTab"))
 				{
+					bool isSelectedNow = editor->GetIsSelectedDirtyAndClear();
+
 					for (size_t i = 0; i < editor->GetContents().size(); i++)
 					{
 						std::string tabName = editor->GetContents()[i]->GetName();
@@ -426,10 +323,20 @@ int main(int argc, char* argv[])
 
 						bool isSelected = editor->GetSelectedContentIndex() == i;
 
-						bool isOpen = true;
-						if (ImGui::BeginTabItem(tabName.c_str(), &isOpen, 0))
+						ImGuiTabItemFlags tabItemFlags = 0;
+						if (isSelected && isSelectedNow)
 						{
-							editor->SelectContent(i);
+							tabItemFlags |= ImGuiTabItemFlags_SetSelected;
+						}
+
+						bool isOpen = true;
+						if (ImGui::BeginTabItem(tabName.c_str(), &isOpen, tabItemFlags))
+						{
+							// avoid to select when selected contents is changed
+							if (!isSelectedNow)
+							{
+								editor->SelectContent(i);
+							}
 
 							ImGui::Columns(2);
 							ImGui::SetColumnWidth(0, 200);
@@ -513,7 +420,7 @@ int main(int argc, char* argv[])
 			{
 				if (editor->GetContents()[i]->WillShowClosingDialog)
 				{
-					auto closeDialog = std::make_shared<SaveOrCloseDialog>(editor->GetContents()[i]);
+					auto closeDialog = std::make_shared<EffekseerMaterial::SaveOrCloseDialog>(editor->GetContents()[i]);
 					ImGui::OpenPopup(closeDialog->GetID());
 					dialogs.push_back(closeDialog);
 					editor->GetContents()[i]->WillShowClosingDialog = false;
@@ -525,7 +432,7 @@ int main(int argc, char* argv[])
 			{
 				if (!ipcMode)
 				{
-					auto closeDialog = std::make_shared<NewOrOpenDialog>(editor);
+					auto closeDialog = std::make_shared<EffekseerMaterial::NewOrOpenDialog>(editor);
 					ImGui::OpenPopup(closeDialog->GetID());
 					dialogs.push_back(closeDialog);
 				}
@@ -541,8 +448,8 @@ int main(int argc, char* argv[])
 				}
 			}
 
-			auto removed_it =
-				std::remove_if(dialogs.begin(), dialogs.end(), [](std::shared_ptr<Dialog> d) -> bool { return d->IsClosing; });
+			auto removed_it = std::remove_if(
+				dialogs.begin(), dialogs.end(), [](std::shared_ptr<EffekseerMaterial::Dialog> d) -> bool { return d->IsClosing; });
 
 			dialogs.erase(removed_it, dialogs.end());
 		}

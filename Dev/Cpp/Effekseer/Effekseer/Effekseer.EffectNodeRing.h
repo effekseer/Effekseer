@@ -170,6 +170,21 @@ struct RingColorValues
 	};
 };
 
+enum class RingShapeType : int32_t
+{
+	Dount,
+	Cresient,
+};
+
+struct RingShapeParameter
+{
+	RingShapeType Type = RingShapeType::Dount;
+	float StartingFade = 0.0f;
+	float EndingFade = 0.0f;
+	RingSingleParameter StartingAngle;
+	RingSingleParameter EndingAngle;
+};
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -184,7 +199,8 @@ public:
 
 	struct InstanceValues
 	{
-		RingSingleValues viewingAngle;
+		RingSingleValues startingAngle;
+		RingSingleValues endingAngle;
 		RingLocationValues outerLocation;
 		RingLocationValues innerLocation;
 		RingSingleValues centerRatio;
@@ -200,7 +216,8 @@ public:
 
 	int32_t	VertexCount;
 
-	RingSingleParameter	ViewingAngle;
+	RingShapeParameter Shape;
+	//RingSingleParameter	ViewingAngle;
 
 	RingLocationParameter	OuterLocation;
 	RingLocationParameter	InnerLocation;

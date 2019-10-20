@@ -113,6 +113,11 @@ EffectPlatform::~EffectPlatform()
 
 void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param)
 {
+	if (isInitialized_)
+	{
+		return;
+	}
+
 	InitializeDevice(param);
 
 	manager_ = ::Effekseer::Manager::Create(8000);
@@ -144,6 +149,8 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 
 	manager_->SetTextureLoader(renderer_->CreateTextureLoader());
 	manager_->SetModelLoader(renderer_->CreateModelLoader());
+
+	isInitialized_ = true;
 }
 
 Effekseer::Handle EffectPlatform::Play(const char16_t* path)
@@ -213,4 +220,12 @@ bool EffectPlatform::Update()
 	}
 
 	return true;
+}
+
+void EffectPlatform::StopAllEffects()
+{
+	if (manager_ != nullptr)
+	{
+		manager_->StopAllEffects();
+	}
 }

@@ -4,6 +4,7 @@
 
 #include "../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
+#include "../EffekseerRendererCommon/EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRendererLLGI.Base.h"
 #include "EffekseerRendererLLGI.Renderer.h"
 #include <LLGI.CommandList.h>
@@ -22,38 +23,10 @@
 namespace EffekseerRendererLLGI
 {
 
-struct Vertex
-{
-	::Effekseer::Vector3D Pos;
-	uint8_t Col[4];
-	float UV[2];
+using Vertex = EffekseerRenderer::SimpleVertex;
+using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
-	void SetColor(const ::Effekseer::Color& color)
-	{
-		Col[0] = color.R;
-		Col[1] = color.G;
-		Col[2] = color.B;
-		Col[3] = color.A;
-	}
-};
-
-struct VertexDistortion
-{
-	::Effekseer::Vector3D Pos;
-	uint8_t Col[4];
-	float UV[2];
-	::Effekseer::Vector3D Tangent;
-	::Effekseer::Vector3D Binormal;
-
-	void SetColor(const ::Effekseer::Color& color)
-	{
-		Col[0] = color.R;
-		Col[1] = color.G;
-		Col[2] = color.B;
-		Col[3] = color.A;
-	}
-};
-
+/*
 inline void TransformVertexes(Vertex* vertexes, int32_t count, const ::Effekseer::Matrix43& mat)
 {
 #if 0
@@ -214,6 +187,7 @@ inline void TransformVertexes(VertexDistortion* vertexes, int32_t count, const :
 		::Effekseer::Vector3D::Normal(vs->Binormal, vs->Binormal - zero);
 	}
 }
+*/
 
 class PiplineStateKey
 {
@@ -465,7 +439,7 @@ public:
 	void DrawSprites(int32_t spriteCount, int32_t vertexOffset);
 	void DrawPolygon(int32_t vertexCount, int32_t indexCount);
 
-	Shader* GetShader(bool useTexture, bool useDistortion) const;
+	Shader* GetShader(bool useTexture, ::Effekseer::RendererMaterialType materialType) const;
 	void BeginShader(Shader* shader);
 	void EndShader(Shader* shader);
 

@@ -57,6 +57,11 @@ protected:
 	std::vector<Effekseer::RectF>		m_uv;
 	std::vector<Effekseer::Color>		m_colors;
 	std::vector<int32_t>				m_times;
+	std::vector<std::array<float, 4>> customData1_;
+	std::vector<std::array<float, 4>> customData2_;
+
+	int32_t customData1Count_ = 0;
+	int32_t customData2Count_ = 0;
 
 	void ColorToFloat4(::Effekseer::Color color, float fc[4])
 	{
@@ -89,6 +94,22 @@ public:
 		m_uv.clear();
 		m_colors.clear();
 		m_times.clear();
+		customData1_.clear();
+		customData2_.clear();
+
+		if (parameter.BasicParameterPtr->MaterialType == ::Effekseer::RendererMaterialType::File &&
+			parameter.BasicParameterPtr->MaterialParameterPtr != nullptr &&
+			parameter.EffectPointer->GetMaterial(parameter.BasicParameterPtr->MaterialParameterPtr->MaterialIndex) != nullptr)
+		{
+			auto material = parameter.EffectPointer->GetMaterial(parameter.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
+			customData1Count_ = material->CustomData1;
+			customData2Count_ = material->CustomData2;
+		}
+		else
+		{
+			customData1Count_ = 0;
+			customData2Count_ = 0;
+		}
 
 		renderer->GetStandardRenderer()->ResetAndRenderingIfRequired();
 	}
@@ -229,6 +250,16 @@ public:
 		m_uv.push_back(instanceParameter.UV);
 		m_colors.push_back(instanceParameter.AllColor);
 		m_times.push_back(instanceParameter.Time);
+		
+		if (customData1Count_ > 0)
+		{
+			customData1_.push_back(instanceParameter.CustomData1);
+		}
+
+		if (customData2Count_ > 0)
+		{
+			customData2_.push_back(instanceParameter.CustomData2);
+		}
 	}
 
 	template <typename RENDERER, typename SHADER, typename MODEL, bool Instancing, int InstanceCount>
@@ -553,6 +584,9 @@ public:
 		ModelRendererVertexConstantBuffer<InstanceCount>* vcb =
 			(ModelRendererVertexConstantBuffer<InstanceCount>*)shader_->GetVertexConstantBuffer();
 
+		float* cutomData1Ptr = nullptr;
+		float* cutomData2Ptr = nullptr;
+
 		if (materialParam != nullptr && material != nullptr)
 		{
 			// time
@@ -568,6 +602,20 @@ public:
 
 			renderer->SetVertexBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
+
+
+			// vs - custom data
+			if (customData1Count_ > 0)
+			{
+				cutomData1Ptr = (float*)((uint8_t*)shader_->GetVertexConstantBuffer() + vsOffset);
+				vsOffset += (sizeof(float) * 4) * InstanceCount;
+			}
+
+			if (customData2Count_ > 0)
+			{
+				cutomData2Ptr = (float*)((uint8_t*)shader_->GetVertexConstantBuffer() + vsOffset);
+				vsOffset += (sizeof(float) * 4) * InstanceCount;
+			}
 
 			for (size_t i = 0; i < materialParam->MaterialUniforms.size(); i++)
 			{
@@ -712,6 +760,22 @@ public:
 					vcb->ModelUV[num][3] = m_uv[loop+num].Height;
 
 					ColorToFloat4(m_colors[loop+num],vcb->ModelColor[num]);
+
+					if (cutomData1Ptr != nullptr)
+					{
+						cutomData1Ptr[num * 4 + 0] = customData1_[loop + num][0];
+						cutomData1Ptr[num * 4 + 1] = customData1_[loop + num][1];
+						cutomData1Ptr[num * 4 + 2] = customData1_[loop + num][2];
+						cutomData1Ptr[num * 4 + 3] = customData1_[loop + num][3];
+					}
+
+					if (cutomData2Ptr != nullptr)
+					{
+						cutomData2Ptr[num * 4 + 0] = customData2_[loop + num][0];
+						cutomData2Ptr[num * 4 + 1] = customData2_[loop + num][1];
+						cutomData2Ptr[num * 4 + 2] = customData2_[loop + num][2];
+						cutomData2Ptr[num * 4 + 3] = customData2_[loop + num][3];
+					}
 				}
 
 				shader_->SetConstantBuffer();
@@ -745,6 +809,23 @@ public:
 									 param.IsRightHand);
 				
 				ColorToFloat4( m_colors[loop], vcb->ModelColor[0] );
+
+									if (cutomData1Ptr != nullptr)
+				{
+					cutomData1Ptr[0] = customData1_[loop][0];
+					cutomData1Ptr[1] = customData1_[loop][1];
+					cutomData1Ptr[2] = customData1_[loop][2];
+					cutomData1Ptr[3] = customData1_[loop][3];
+				}
+
+				if (cutomData2Ptr != nullptr)
+				{
+					cutomData2Ptr[0] = customData2_[loop][0];
+					cutomData2Ptr[1] = customData2_[loop][1];
+					cutomData2Ptr[2] = customData2_[loop][2];
+					cutomData2Ptr[3] = customData2_[loop][3];
+				}
+
 				shader_->SetConstantBuffer();
 				renderer->DrawPolygon(imodel.VertexCount, imodel.IndexCount);
 

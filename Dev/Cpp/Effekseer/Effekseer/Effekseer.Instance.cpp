@@ -832,19 +832,43 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 
 	// CustomData
-	if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::Fixed)
+	for (int32_t index = 0; index < 2; index++)
 	{
-		// none
-	}
-	else if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::Easing)
-	{
-		customDataValues.easing.start = m_pEffectNode->RendererCommon.CustomData1.Easing.Values.start.getValue(*instanceGlobal);
-		customDataValues.easing.end = m_pEffectNode->RendererCommon.CustomData1.Easing.Values.end.getValue(*instanceGlobal);
-	}
-	else if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::FCurveType)
-	{
-		customDataValues.fcruve.offset.x = m_pEffectNode->RendererCommon.CustomData1.FCurve.Values->X.GetOffset(*instanceGlobal);
-		customDataValues.fcruve.offset.y = m_pEffectNode->RendererCommon.CustomData1.FCurve.Values->Y.GetOffset(*instanceGlobal);
+		ParameterCustomData* parameterCustomData = nullptr;
+		InstanceCustomData* instanceCustomData = nullptr;
+
+		if (index == 0)
+		{
+			parameterCustomData = &m_pEffectNode->RendererCommon.CustomData1;
+			instanceCustomData = &customDataValues1;
+		}
+		else if (index == 1)
+		{
+			parameterCustomData = &m_pEffectNode->RendererCommon.CustomData2;
+			instanceCustomData = &customDataValues2;
+		}
+
+		if (parameterCustomData->Type == ParameterCustomDataType::Fixed2D)
+		{
+			// none
+		}
+		else if (parameterCustomData->Type == ParameterCustomDataType::Easing2D)
+		{
+			instanceCustomData->easing.start = parameterCustomData->Easing.Values.start.getValue(*instanceGlobal);
+			instanceCustomData->easing.end = parameterCustomData->Easing.Values.end.getValue(*instanceGlobal);
+		}
+		else if (parameterCustomData->Type == ParameterCustomDataType::FCurve2D)
+		{
+			instanceCustomData->fcruve.offset.x = parameterCustomData->FCurve.Values->X.GetOffset(*instanceGlobal);
+			instanceCustomData->fcruve.offset.y = parameterCustomData->FCurve.Values->Y.GetOffset(*instanceGlobal);
+		}
+		else if (parameterCustomData->Type == ParameterCustomDataType::FCurveColor)
+		{
+			instanceCustomData->fcurveColor.offset[0] = parameterCustomData->FCurveColor.Values->R.GetOffset(*instanceGlobal);
+			instanceCustomData->fcurveColor.offset[1] = parameterCustomData->FCurveColor.Values->G.GetOffset(*instanceGlobal);
+			instanceCustomData->fcurveColor.offset[2] = parameterCustomData->FCurveColor.Values->B.GetOffset(*instanceGlobal);
+			instanceCustomData->fcurveColor.offset[3] = parameterCustomData->FCurveColor.Values->A.GetOffset(*instanceGlobal);
+		}
 	}
 
 	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
@@ -1483,37 +1507,63 @@ RectF Instance::GetUV() const
 	return RectF( 0.0f, 0.0f, 1.0f, 1.0f );
 }
 
-Vector2D Instance::GetCustomData() const 
+std::array<float, 4> Instance::GetCustomData(int32_t index) const
 {
-	if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::None)
-	{
-		return Vector2D();
-	}
-	else if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::Fixed)
-	{
-		auto v = m_pEffectNode->RendererCommon.CustomData1.Fixed.Values;
-		return Vector2D(v.x, v.y);
-	}
-	else if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::Easing)
-	{
-		vector2d ret;
-		m_pEffectNode->RendererCommon.CustomData1.Easing.Values.setValueToArg(
-			ret, customDataValues.easing.start, customDataValues.easing.end, m_LivingTime / m_LivedTime);
-		return Vector2D(ret.x, ret.y);
-	}
-	else if (m_pEffectNode->RendererCommon.CustomData1.Type == ParameterCustomDataType::FCurveType)
-	{
-		auto time = (int32_t)m_LivingTime + uvTimeOffset;
+	assert(0 <= index && index < 2);
 
-		assert(0);
-		return Vector2D(0, 0);
+	ParameterCustomData* parameterCustomData = nullptr;
+	const InstanceCustomData* instanceCustomData = nullptr;
+
+	if (index == 0)
+	{
+		parameterCustomData = &m_pEffectNode->RendererCommon.CustomData1;
+		instanceCustomData = &customDataValues1;
+	}
+	else if (index == 1)
+	{
+		parameterCustomData = &m_pEffectNode->RendererCommon.CustomData2;
+		instanceCustomData = &customDataValues2;
 	}
 	else
 	{
-		assert(0);
+		return std::array<float, 4>{0.0f, 0.0f, 0, 0};
 	}
 
-	return Vector2D();
+	if (parameterCustomData->Type == ParameterCustomDataType::None)
+	{
+		return std::array<float, 4>{0, 0, 0, 0};
+	}
+	else if (parameterCustomData->Type == ParameterCustomDataType::Fixed2D)
+	{
+		auto v = parameterCustomData->Fixed.Values;
+		return std::array<float, 4>{v.x, v.y, 0, 0};
+	}
+	else if (parameterCustomData->Type == ParameterCustomDataType::Easing2D)
+	{
+		vector2d v;
+		parameterCustomData->Easing.Values.setValueToArg(
+			v, instanceCustomData->easing.start, instanceCustomData->easing.end, m_LivingTime / m_LivedTime);
+		return std::array<float, 4>{v.x, v.y, 0, 0};
+	}
+	else if (parameterCustomData->Type == ParameterCustomDataType::FCurve2D)
+	{
+		auto values = parameterCustomData->FCurve.Values->GetValues(m_LivingTime, m_LivedTime);
+		return std::array<float, 4>{values[0] + instanceCustomData->fcruve.offset.x, values[1] + instanceCustomData->fcruve.offset.y, 0, 0};
+	}
+	else if (parameterCustomData->Type == ParameterCustomDataType::FCurveColor)
+	{
+		auto values = parameterCustomData->FCurveColor.Values->GetValues(m_LivingTime, m_LivedTime);
+		return std::array<float, 4>{(values[0] + instanceCustomData->fcurveColor.offset[0]) / 255.0f,
+									(values[1] + instanceCustomData->fcurveColor.offset[1]) / 255.0f,
+									(values[2] + instanceCustomData->fcurveColor.offset[2]) / 255.0f,
+									(values[3] + instanceCustomData->fcurveColor.offset[3]) / 255.0f};
+	}
+	else
+	{
+		assert(false);
+	}
+
+	return std::array<float, 4>{0, 0, 0, 0};
 }
 
 //----------------------------------------------------------------------------------

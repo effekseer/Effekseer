@@ -40,6 +40,7 @@ struct EffectPlatformInitializingParameter
 class EffectPlatform
 {
 private:
+	bool isInitialized_ = false;
 	bool isOpenGLMode_ = false;
 	GLFWwindow* window_ = nullptr;
 	Effekseer::Manager* manager_ = nullptr;
@@ -70,6 +71,8 @@ public:
 	Effekseer::Handle Play(const char16_t* path);
 
 	bool Update();
+
+	void StopAllEffects();
 
 	virtual bool TakeScreenshot(const char* path) { return false; }
 

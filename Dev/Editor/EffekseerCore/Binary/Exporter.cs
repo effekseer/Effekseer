@@ -116,14 +116,14 @@ namespace Effekseer.Binary
 								var materialInfo = new Utl.MaterialInformation();
 								materialInfo.Load(_node.RendererCommonValues.MaterialFile.Path.AbsolutePath);
 
-								var textures = _node.RendererCommonValues.MaterialFile.GetTextures(materialInfo);
+								var textures = _node.RendererCommonValues.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null);
 
 								foreach (var texture in textures)
 								{
 									var relative_path = (texture.Item1.Value as Data.Value.PathForImage).RelativePath;
 									if (relative_path != string.Empty)
 									{
-										if (texture.Item2)
+										if (texture.Item2.Type == TextureType.Value)
 										{
 											if (!UsedNormalTextures.Contains(relative_path))
 											{

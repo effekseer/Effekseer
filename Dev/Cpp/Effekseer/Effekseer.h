@@ -569,6 +569,8 @@ struct MaterialData
 	ShadingModelType ShadingModel = ShadingModelType::Lit;
 	bool IsSimpleVertex = false;
 	bool IsRefractionRequired = false;
+	int32_t CustomData1 = 0;
+	int32_t CustomData2 = 0;
 	int32_t TextureCount = 0;
 	int32_t UniformCount = 0;
 	//! TODO remove magic number
@@ -2871,7 +2873,8 @@ public:
 		Vector2D	Positions[4];
 
 		RectF	UV;
-		Vector2D CustomData;
+		std::array<float, 4> CustomData1;
+		std::array<float, 4> CustomData2;
 	};
 
 public:
@@ -2907,6 +2910,9 @@ public:
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+struct NodeRendererTextureUVTypeParameter;
+
 	//----------------------------------------------------------------------------------
 	//
 	//----------------------------------------------------------------------------------
@@ -2932,7 +2938,7 @@ namespace Effekseer
 			int32_t				SplineDivision;
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
-
+			NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
 			//RendererMaterialType MaterialType = RendererMaterialType::Default;
 			//MaterialParameter* MaterialParameterPtr = nullptr;
 		};
@@ -2950,7 +2956,8 @@ namespace Effekseer
 			float	Positions[4];
 
 			RectF	UV;
-			Vector2D CustomData;
+			std::array<float, 4> CustomData1;
+			std::array<float, 4> CustomData2;
 		};
 
 	public:
@@ -3009,7 +3016,8 @@ public:
 		BillboardType		Billboard;
 		int32_t				VertexCount;
 		bool				IsRightHand;
-
+		float StartingFade = 0.0f;
+		float EndingFade = 0.0f;
 		//bool				Distortion;
 		//float				DistortionIntensity;
 
@@ -3029,7 +3037,8 @@ public:
 	struct InstanceParameter
 	{
 		Matrix43	SRTMatrix43;
-		float		ViewingAngle;
+		float ViewingAngleStart;
+		float ViewingAngleEnd;
 		Vector2D	OuterLocation;
 		Vector2D	InnerLocation;
 		float		CenterRatio;
@@ -3038,7 +3047,8 @@ public:
 		Color		InnerColor;
 		
 		RectF	UV;
-		Vector2D CustomData;
+		std::array<float, 4> CustomData1;
+		std::array<float, 4> CustomData2;
 	};
 
 public:
@@ -3120,7 +3130,8 @@ public:
 		RectF			UV;
 		Color			AllColor;
 		int32_t			Time;
-		Vector2D CustomData;
+		std::array<float, 4> CustomData1;
+		std::array<float, 4> CustomData2;
 	};
 
 public:
@@ -3156,6 +3167,9 @@ public:
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+struct NodeRendererTextureUVTypeParameter;
+
 	//----------------------------------------------------------------------------------
 	//
 	//----------------------------------------------------------------------------------
@@ -3181,6 +3195,7 @@ namespace Effekseer
 
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+			NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
 
 			RendererMaterialType MaterialType = RendererMaterialType::Default;
 			MaterialParameter* MaterialParameterPtr = nullptr;
@@ -3210,7 +3225,8 @@ namespace Effekseer
 			float	SizeBack;
 
 			RectF	UV;
-			Vector2D CustomData;
+			std::array<float, 4> CustomData1;
+			std::array<float, 4> CustomData2;
 		};
 
 	public:

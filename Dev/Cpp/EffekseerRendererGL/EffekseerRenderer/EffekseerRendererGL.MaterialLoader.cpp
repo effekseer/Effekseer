@@ -48,17 +48,42 @@ namespace EffekseerRendererGL
 		}
 		else
 		{
-			EffekseerRendererGL::ShaderAttribInfo sprite_attribs[6] = {
+			EffekseerRendererGL::ShaderAttribInfo sprite_attribs[8] = {
 				{"atPosition", GL_FLOAT, 3, 0, false},
 				{"atColor", GL_UNSIGNED_BYTE, 4, 12, true},
 				{"atNormal", GL_UNSIGNED_BYTE, 4, 16, true},
 				{"atTangent", GL_UNSIGNED_BYTE, 4, 20, true},
 				{"atTexCoord", GL_FLOAT, 2, 24, false},
 				{"atTexCoord2", GL_FLOAT, 2, 32, false},
+				{"", GL_FLOAT, 0, 0, false},
+				{"", GL_FLOAT, 0, 0, false},
 			};
 
-			shader->GetAttribIdList(6, sprite_attribs);
-			shader->SetVertexSize(sizeof(EffekseerRenderer::DynamicVertex));
+			int32_t offset = 40;
+			int count = 6;
+			char* customData1Name = "atCustomData1";
+			char* customData2Name = "atCustomData2";
+
+			if (material.GetCustomData1Count() > 0)
+			{
+				sprite_attribs[count].name = customData1Name;
+				sprite_attribs[count].count = material.GetCustomData1Count();
+				sprite_attribs[count].offset = offset;
+				count++;
+				offset += sizeof(float) * material.GetCustomData1Count();
+			}
+
+			if (material.GetCustomData2Count() > 0)
+			{
+				sprite_attribs[count].name = customData2Name;
+				sprite_attribs[count].count = material.GetCustomData2Count();
+				sprite_attribs[count].offset = offset;
+				count++;
+				offset += sizeof(float) * material.GetCustomData2Count();
+			}
+
+			shader->GetAttribIdList(count, sprite_attribs);
+			shader->SetVertexSize(sizeof(EffekseerRenderer::DynamicVertex) + sizeof(float) * (material.GetCustomData1Count() + material.GetCustomData2Count()));
 		}
 
 		int32_t vsOffset = 0;
@@ -188,6 +213,18 @@ namespace EffekseerRendererGL
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), vsOffset);
 		vsOffset += sizeof(float) * 4;
 
+		if (material.GetCustomData1Count() > 0)
+		{
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("customData1"), vsOffset);
+			vsOffset += sizeof(float) * 4;
+		}
+
+		if (material.GetCustomData1Count() > 0)
+		{
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("customData1"), vsOffset);
+			vsOffset += sizeof(float) * 4;
+		}
+
 		for (int32_t ui = 0; ui < material.GetUniformCount(); ui++)
 		{
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId(material.GetUniformName(ui)), vsOffset);
@@ -254,6 +291,8 @@ namespace EffekseerRendererGL
 		}
 	}
 
+	materialData->CustomData1 = material.GetCustomData1Count();
+	materialData->CustomData2 = material.GetCustomData2Count();
 	materialData->TextureCount = material.GetTextureCount();
 	materialData->UniformCount = material.GetUniformCount();
 	materialData->ShadingModel = material.GetShadingModel();

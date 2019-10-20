@@ -5,35 +5,133 @@ using System.Text;
 
 namespace Effekseer.Data
 {
-	public enum TextureUVModeType
+	public enum TextureUVType
 	{
 		[Name(value = "Strech", language = Language.English)]
+		[Name(value = "ストレッチ", language = Language.Japanese)]
 		Strech = 0,
+		[Name(value = "Tile", language = Language.English)]
+		[Name(value = "タイル", language = Language.Japanese)]
+		Tile = 1,
 	}
 
-	public class TextureUVModeParameter
+	public class TextureUVTypeParameter
 	{
+		[Name(value = "UV Type", language = Language.English)]
+		[Name(value = "UV タイプ", language = Language.Japanese)]
 		[Selector(ID = 0)]
-		public Value.Enum<TextureUVModeType> Type
+		public Value.Enum<TextureUVType> Type
 		{
 			get;
 			private set;
 		}
 
-		public TextureUVModeParameter()
+		[Name(value = "The number of tile on Head", language = Language.English)]
+		[Name(value = "頭のタイル数", language = Language.Japanese)]
+		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
+		public Value.Int TileEdgeHead { get; private set; }
+
+		[Name(value = "The number of tile on Tail", language = Language.English)]
+		[Name(value = "尻尾のタイル数", language = Language.Japanese)]
+		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
+		public Value.Int TileEdgeTail { get; private set; }
+
+		[Name(value = "Looping area", language = Language.English)]
+		[Name(value = "ループ領域", language = Language.Japanese)]
+		[Selected(ID = 0, Value = (int)TextureUVType.Tile)]
+		public Value.Vector2D TileLoopingArea { get; private set; }
+		public TextureUVTypeParameter()
 		{
-			Type = new Value.Enum<TextureUVModeType>(TextureUVModeType.Strech);
+			Type = new Value.Enum<TextureUVType>(TextureUVType.Strech);
+			TileEdgeHead = new Value.Int(0, int.MaxValue, 0);
+			TileEdgeTail = new Value.Int(0, int.MaxValue, 0);
+			TileLoopingArea = new Value.Vector2D(0.0f, 1.0f);
 		}
 	}
 
 	public enum RingShapeType
 	{
+		[Name(value = "ドーナツ", language = Language.Japanese)]
 		[Name(value = "Donut", language = Language.English)]
-		Donut,
+		Donut = 0,
+
+		[Name(value = "三日月", language = Language.Japanese)]
+		[Name(value = "Crescent", language = Language.English)]
+		Crescent = 1,
+	}
+
+	public enum FixedRandomEasingType : int
+	{
+		[Name(value = "固定", language = Language.Japanese)]
+		[Name(value = "Fixed", language = Language.English)]
+		Fixed = 0,
+		[Name(value = "ランダム", language = Language.Japanese)]
+		[Name(value = "Random", language = Language.English)]
+		Random = 1,
+		[Name(value = "イージング", language = Language.Japanese)]
+		[Name(value = "Easing", language = Language.English)]
+		Easing = 2,
+	}
+
+	public class RingShapeCrescentParameter
+	{
+		[Name(language = Language.Japanese, value = "開始フェード(度)")]
+		[Name(language = Language.English, value = "Starting fade(Deg.)")]
+		public Value.Float StartingFade { get; private set; }
+		[Name(language = Language.Japanese, value = "終了フェード(度)")]
+		[Name(language = Language.English, value = "Ending fade(Deg.)")]
+		public Value.Float EndingFade { get; private set; }
+
+		[Selector(ID = 0)]
+		[Name(language = Language.Japanese, value = "開始角度")]
+		[Name(language = Language.English, value = "Starting Angle")]
+		public Value.Enum<FixedRandomEasingType> StartingAngle { get; private set; }
+
+		[Selected(ID = 0, Value = 0)]
+		public Value.Float StartingAngle_Fixed { get; private set; }
+
+		[Selected(ID = 0, Value = 1)]
+		public Value.FloatWithRandom StartingAngle_Random { get; private set; }
+
+		[Selected(ID = 0, Value = 2)]
+		[IO(Export = true)]
+		public FloatEasingParamater StartingAngle_Easing { get; private set; }
+
+		[Selector(ID = 1)]
+		[Name(language = Language.Japanese, value = "終了角度")]
+		[Name(language = Language.English, value = "Ending Angle")]
+		public Value.Enum<FixedRandomEasingType> EndingAngle { get; private set; }
+
+		[Selected(ID = 1, Value = 0)]
+		public Value.Float EndingAngle_Fixed { get; private set; }
+
+		[Selected(ID = 1, Value = 1)]
+		public Value.FloatWithRandom EndingAngle_Random { get; private set; }
+
+		[Selected(ID = 1, Value = 2)]
+		[IO(Export = true)]
+		public FloatEasingParamater EndingAngle_Easing { get; private set; }
+
+		public RingShapeCrescentParameter()
+		{
+			StartingFade = new Value.Float(0, 360, 0);
+			EndingFade = new Value.Float(0, 360, 0);
+			StartingAngle = new Value.Enum<FixedRandomEasingType>();
+			StartingAngle_Fixed = new Value.Float(0);
+			StartingAngle_Random = new Value.FloatWithRandom();
+			StartingAngle_Easing = new FloatEasingParamater();
+
+			EndingAngle = new Value.Enum<FixedRandomEasingType>();
+			EndingAngle_Fixed = new Value.Float(360);
+			EndingAngle_Random = new Value.FloatWithRandom(360);
+			EndingAngle_Easing = new FloatEasingParamater(360);
+		}
 	}
 
 	public class RingShapeParameter
 	{
+		[Name(language = Language.Japanese, value = "形状")]
+		[Name(language = Language.English, value = "Shape")]
 		[Selector(ID = 0)]
 		public Value.Enum<RingShapeType> Type
 		{
@@ -41,9 +139,14 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[IO(Export = true)]
+		[Selected(ID = 0, Value=(int)RingShapeType.Crescent)]
+		public RingShapeCrescentParameter Crescent { get; private set; }
+
 		public RingShapeParameter()
 		{
 			Type = new Value.Enum<RingShapeType>(RingShapeType.Donut);
+			Crescent = new RingShapeCrescentParameter();
 		}
 	}
 
@@ -59,7 +162,7 @@ namespace Effekseer.Data
 		[Selected(ID = 0, Value = 3)]
 		[Selected(ID = 0, Value = 6)]
 		[IO(Export = true)]
-		public TextureUVModeParameter TextureUVMode { get; private set; } 
+		public TextureUVTypeParameter TextureUVType { get; private set; } 
 
 		[Selected(ID = 0, Value = 2)]
 		[IO(Export = true)]
@@ -104,7 +207,7 @@ namespace Effekseer.Data
 		internal RendererValues()
 		{
 			Type = new Value.Enum<ParamaterType>(ParamaterType.Sprite);
-			TextureUVMode = new TextureUVModeParameter();
+			TextureUVType = new TextureUVTypeParameter();
 
 			Sprite = new SpriteParamater();
             Ribbon = new RibbonParamater();
@@ -419,20 +522,41 @@ namespace Effekseer.Data
 			[Name(language = Language.English, value = "Vertex Count")]
             public Value.Int VertexCount { get; private set; }
 
+			/// <summary>
+			/// for compatibility
+			/// </summary>
             [Selector(ID = 0)]
+			[Shown(Shown = false)]
+			[IO(Export = false)]
             [Name(language = Language.Japanese, value = "表示角度")]
 			[Name(language = Language.English, value = "Viewing Angle")]
             public Value.Enum<ViewingAngleType> ViewingAngle { get; private set; }
 
-            [Selected(ID = 0, Value = 0)]
-            public Value.Float ViewingAngle_Fixed { get; private set; }
+			/// <summary>
+			/// for compatibility
+			/// </summary>
+			[Selected(ID = 0, Value = 0)]
+			[Shown(Shown = false)]
+			[IO(Export = false)]
+			public Value.Float ViewingAngle_Fixed { get; private set; }
 
-            [Selected(ID = 0, Value = 1)]
-            public Value.FloatWithRandom ViewingAngle_Random { get; private set; }
+			/// <summary>
+			/// for compatibility
+			/// </summary>
+			[Selected(ID = 0, Value = 1)]
+			[Shown(Shown = false)]
+			[IO(Export = false)]
 
-            [Selected(ID = 0, Value = 2)]
-            [IO(Export = true)]
-            public FloatEasingParamater ViewingAngle_Easing { get; private set; }
+			public Value.FloatWithRandom ViewingAngle_Random { get; private set; }
+
+			/// <summary>
+			/// for compatibility
+			/// </summary>
+			[Selected(ID = 0, Value = 2)]
+			[Shown(Shown = false)]
+			[IO(Export = false)]
+			public FloatEasingParamater ViewingAngle_Easing { get; private set; }
+			
 
             [Selector(ID = 1)]
             [Name(language = Language.Japanese, value = "外輪")]
@@ -553,10 +677,12 @@ namespace Effekseer.Data
 
                 VertexCount = new Value.Int(16, 256, 3);
 
-                ViewingAngle = new Value.Enum<ViewingAngleType>(ViewingAngleType.Fixed);
+				/// for compatibility
+				ViewingAngle = new Value.Enum<ViewingAngleType>(ViewingAngleType.Fixed);
                 ViewingAngle_Fixed = new Value.Float(360.0f, 360.0f, 0.0f);
                 ViewingAngle_Random = new Value.FloatWithRandom(360.0f, 360.0f, 0.0f);
                 ViewingAngle_Easing = new FloatEasingParamater(360.0f, 360.0f, 0.0f);
+				
 
                 Outer = new Value.Enum<LocationType>(LocationType.Fixed);
                 Outer_Fixed = new FixedLocation(2.0f, 0.0f);
@@ -591,7 +717,10 @@ namespace Effekseer.Data
                 ColorTexture = new Value.Path(Resources.GetString("ImageFilter"), true, "");
             }
 
-            public enum ViewingAngleType : int
+			/// <summary>
+			/// for compatibility
+			/// </summary>
+			public enum ViewingAngleType : int
             {
                 [Name(value = "位置", language = Language.Japanese)]
 				[Name(value = "Fixed", language = Language.English)]
@@ -603,6 +732,7 @@ namespace Effekseer.Data
 				[Name(value = "Easing", language = Language.English)]
                 Easing = 2,
             }
+			
 
             public enum LocationType : int
             {
