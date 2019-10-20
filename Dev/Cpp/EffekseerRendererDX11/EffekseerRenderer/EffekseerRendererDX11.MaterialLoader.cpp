@@ -152,6 +152,8 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 				decl[count].AlignedByteOffset = offset;
 				decl[count].SemanticIndex = index;
 				index++;
+				count++;
+
 				offset += sizeof(float) * material.GetCustomData2Count();
 			}
 

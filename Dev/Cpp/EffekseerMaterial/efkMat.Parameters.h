@@ -843,7 +843,7 @@ class NodeCustomData2 : public NodeParameter
 public:
 	NodeCustomData2()
 	{
-		Type = NodeType::CustomData1;
+		Type = NodeType::CustomData2;
 		TypeName = "CustomData2";
 		Group = std::vector<std::string>{"Parameter"};
 
