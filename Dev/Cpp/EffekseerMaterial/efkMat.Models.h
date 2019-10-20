@@ -133,6 +133,16 @@ public:
 	TextureValueType Type = TextureValueType::Color;
 };
 
+class CustomDataProperty
+{
+public:
+	CustomDataProperty() { Values.fill(0.0f); }
+
+	virtual ~CustomDataProperty() {}
+	
+	std::array<float, 4> Values;
+};
+
 class Material : public std::enable_shared_from_this<Material>
 {
 private:
@@ -141,7 +151,7 @@ private:
 	std::vector<std::shared_ptr<Node>> nodes;
 	std::vector<std::shared_ptr<Link>> links;
 	std::map<std::string, std::shared_ptr<TextureInfo>> textures;
-
+	
 	uint64_t nextGUID = 0xff;
 
 	uint64_t GetIDAndNext();
@@ -154,10 +164,10 @@ private:
 								  std::vector<std::shared_ptr<Link>> links,
 								  const char* basePath,
 								  bool doMoveZero,
-								  bool doExportTextures);
+								  bool doExportGlobal);
 
 	
-	void LoadFromStrInternal(const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, bool hasTextures);
+	void LoadFromStrInternal(const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, bool hasGlobal);
 
 public:
 	Material();
@@ -210,7 +220,7 @@ public:
 
 	void ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, TextureValueType type);
 
-	void MakeDirty(std::shared_ptr<Node> node);
+	void MakeDirty(std::shared_ptr<Node> node, bool doesUpdateWarnings = true);
 
 	void ClearDirty(std::shared_ptr<Node> node);
 
@@ -229,6 +239,8 @@ public:
 	bool Save(std::vector<uint8_t>& data, const char* basePath);
 
 	LanguageType Language = LanguageType::Japanese;
+
+	std::array<CustomDataProperty, 2> CustomData;
 
 	std::shared_ptr<CommandManager> GetCommandManager() { return commandManager_; }
 };

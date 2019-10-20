@@ -45,7 +45,7 @@ private:
 	
 public:
 	//! immediately after loaded
-	bool IsLoading = false;
+	bool IsLoading = true;
 
 	EditorContent(Editor* editor);
 

@@ -177,7 +177,7 @@ struct Vertex
 	uint8_t Color[4];
 
 	static std::array<uint8_t, 4> CreatePacked(const Vector3& v)
-	{ 
+	{
 		std::array<uint8_t, 4> ret;
 		ret[0] = static_cast<uint8_t>((v.X + 1.0f) / 2.0f * 255);
 		ret[1] = static_cast<uint8_t>((v.Y + 1.0f) / 2.0f * 255);
@@ -270,6 +270,14 @@ public:
 	static std::shared_ptr<Texture> Load(std::shared_ptr<Graphics> graphics, const char* path);
 };
 
+class TextureWithSampler
+{
+private:
+public:
+	std::shared_ptr<Texture> TexturePtr;
+	EffekseerMaterial::TextureSamplerType SamplerType;
+};
+
 class TextureCache
 {
 private:
@@ -310,7 +318,7 @@ private:
 	ar::IndexBuffer* ib = nullptr;
 	ar::ConstantBuffer* constantBuffer = nullptr;
 	ar::Context* context = nullptr;
-	std::vector<std::shared_ptr<Texture>> textures_;
+	std::vector<std::shared_ptr<TextureWithSampler>> textures_;
 	std::shared_ptr<Mesh> mesh_;
 
 public:
@@ -319,10 +327,11 @@ public:
 	bool Initialize(std::shared_ptr<Graphics> graphics);
 	bool CompileShader(std::string& vs,
 					   std::string& ps,
-					   std::vector<std::shared_ptr<Texture>> textures,
+					   std::vector<std::shared_ptr<TextureWithSampler>> textures,
 					   std::vector<std::shared_ptr<TextExporterUniform>>& uniforms);
-	bool UpdateUniforms(std::vector<std::shared_ptr<Texture>> textures, std::vector<std::shared_ptr<TextExporterUniform>>& uniforms);
-	bool UpdateTime(float time);
+	bool UpdateUniforms(std::vector<std::shared_ptr<TextureWithSampler>> textures,
+						std::vector<std::shared_ptr<TextExporterUniform>>& uniforms);
+	bool UpdateConstantValues(float time, std::array<float, 4> customData1, std::array<float, 4> customData2);
 	void Render();
 
 	std::string VS;

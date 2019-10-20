@@ -101,10 +101,10 @@ WarningType NodeParameter::GetWarningIn2Out1Param2(std::shared_ptr<Material> mat
 	auto type2 = material->GetDesiredPinType(node->InputPins[1], std::unordered_set<std::shared_ptr<Pin>>());
 
 	if (type1 == ValueType::Float1)
-		WarningType::None;
+		return WarningType::None;
 
 	if (type2 == ValueType::Float1)
-		WarningType::None;
+		return WarningType::None;
 
 	return type1 == type2 ? WarningType::None : WarningType::WrongInputType;
 }

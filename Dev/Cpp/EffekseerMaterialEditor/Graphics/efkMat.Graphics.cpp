@@ -154,7 +154,7 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 				vertexes[index_offset + v].Pos.X = attrib.vertices[3 * idx.vertex_index + 0];
 				vertexes[index_offset + v].Pos.Y = attrib.vertices[3 * idx.vertex_index + 1];
 				vertexes[index_offset + v].Pos.Z = attrib.vertices[3 * idx.vertex_index + 2];
-				
+
 				Vector3 normal;
 				normal.X = attrib.normals[3 * idx.normal_index + 0];
 				normal.Y = attrib.normals[3 * idx.normal_index + 1];
@@ -328,7 +328,7 @@ static const char g_header_fs_gl3_src[] = ""
 
 bool Preview::CompileShader(std::string& vs,
 							std::string& ps,
-							std::vector<std::shared_ptr<Texture>> textures,
+							std::vector<std::shared_ptr<TextureWithSampler>> textures,
 							std::vector<std::shared_ptr<TextExporterUniform>>& uniforms)
 {
 	VS = vs;
@@ -393,7 +393,8 @@ bool Preview::CompileShader(std::string& vs,
 	return true;
 }
 
-bool Preview::UpdateUniforms(std::vector<std::shared_ptr<Texture>> textures, std::vector<std::shared_ptr<TextExporterUniform>>& uniforms)
+bool Preview::UpdateUniforms(std::vector<std::shared_ptr<TextureWithSampler>> textures,
+							 std::vector<std::shared_ptr<TextExporterUniform>>& uniforms)
 {
 	std::cout << "Update Uniforms" << std::endl;
 
@@ -417,7 +418,7 @@ bool Preview::UpdateUniforms(std::vector<std::shared_ptr<Texture>> textures, std
 	return true;
 }
 
-bool Preview::UpdateTime(float time)
+bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1, std::array<float, 4> customData2)
 {
 	if (shader == nullptr)
 		return false;
@@ -506,6 +507,20 @@ bool Preview::UpdateTime(float time)
 			values[0] = time;
 			constantBuffer->SetData(&time, layout.second.GetSize(), layout.second.Offset);
 		}
+
+		if (layout.first == "customData1")
+		{
+			float values[4];
+			values[0] = time;
+			constantBuffer->SetData(customData1.data(), layout.second.GetSize(), layout.second.Offset);
+		}
+
+		if (layout.first == "customData2")
+		{
+			float values[4];
+			values[0] = time;
+			constantBuffer->SetData(customData1.data(), layout.second.GetSize(), layout.second.Offset);
+		}
 	}
 
 	return true;
@@ -548,8 +563,9 @@ void Preview::Render()
 
 			for (int i = 0; i < textures_.size(); i++)
 			{
-				drawParam.PixelShaderTextures[i] = textures_[i] != nullptr ? textures_[i]->GetTexture() : nullptr;
-				drawParam.PixelShaderTextureWraps[i] = ar::TextureWrapType::Repeat;
+				drawParam.PixelShaderTextures[i] = (textures_[i]->TexturePtr != nullptr) ? textures_[i]->TexturePtr->GetTexture() : nullptr;
+				drawParam.PixelShaderTextureWraps[i] =
+					textures_[i]->SamplerType == TextureSamplerType::Repeat ? ar::TextureWrapType::Repeat : ar::TextureWrapType::Clamp;
 			}
 
 			context->Draw(drawParam);
@@ -571,8 +587,9 @@ void Preview::Render()
 
 			for (int i = 0; i < textures_.size(); i++)
 			{
-				drawParam.PixelShaderTextures[i] = textures_[i] != nullptr ? textures_[i]->GetTexture() : nullptr;
-				drawParam.PixelShaderTextureWraps[i] = ar::TextureWrapType::Repeat;
+				drawParam.PixelShaderTextures[i] = (textures_[i]->TexturePtr != nullptr) ? textures_[i]->TexturePtr->GetTexture() : nullptr;
+				drawParam.PixelShaderTextureWraps[i] =
+					textures_[i]->SamplerType == TextureSamplerType::Repeat ? ar::TextureWrapType::Repeat : ar::TextureWrapType::Clamp;
 			}
 
 			context->Draw(drawParam);
