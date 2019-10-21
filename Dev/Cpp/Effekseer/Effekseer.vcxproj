@@ -212,6 +212,7 @@
     <ClInclude Include="Effekseer\Material\Effekseer.CompiledMaterial.h" />
     <ClInclude Include="Effekseer\Material\Effekseer.Material.h" />
     <ClInclude Include="Effekseer\Material\Effekseer.MaterialCompiler.h" />
+    <ClInclude Include="Effekseer\Parameter\Effekseer.Parameters.h" />
     <ClInclude Include="Effekseer\Renderer\Effekseer.ModelRenderer.h" />
     <ClInclude Include="Effekseer\Renderer\Effekseer.ParticleRenderer.h" />
     <ClInclude Include="Effekseer\Renderer\Effekseer.RibbonRenderer.h" />
@@ -262,6 +263,7 @@
     <ClCompile Include="Effekseer\Material\Effekseer.CompiledMaterial.cpp" />
     <ClCompile Include="Effekseer\Material\Effekseer.Material.cpp" />
     <ClCompile Include="Effekseer\Material\Effekseer.MaterialCompiler.cpp" />
+    <ClCompile Include="Effekseer\Parameter\Effekseer.Parameters.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
