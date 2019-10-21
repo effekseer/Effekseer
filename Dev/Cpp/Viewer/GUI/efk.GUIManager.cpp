@@ -1959,6 +1959,8 @@ namespace efk
 			changedType);
 	}
 
+	bool GUIManager::StartSelectingAreaFCurve() { return ImGui::StartSelectingAreaFCurve(); }
+
 	bool GUIManager::BeginDragDropSource()
 	{
 		return ImGui::BeginDragDropSource();

@@ -7,6 +7,28 @@ using Effekseer.Data.Value;
 
 namespace Effekseer.GUI.Dock
 {
+	public class FCurveCopiedData
+	{
+		public class Point
+		{
+			public float Key;
+			public float Value;
+			public float LeftKey;
+			public float LeftValue;
+			public float RightKey;
+			public float RightValue;
+			public int Interpolation;
+		}
+
+		public class Curve
+		{
+			public string Name;
+			public List<Point> Points = new List<Point>();
+		}
+
+		public List<Curve> Curves = new List<Curve>();
+	}
+
 	class FCurves : DockPanel
 	{
 
@@ -348,6 +370,16 @@ namespace Effekseer.GUI.Dock
 				{
 					Manager.NativeManager.SetTooltip(Resources.GetString("ShrinkAnchor") + "\n" + Resources.GetString("ShrinkAnchor_Desc"));
 				}
+
+				if(Manager.NativeManager.Button("Copy"))
+				{
+					Copy();
+				}
+
+				if (Manager.NativeManager.Button("Paste"))
+				{
+					Paste();
+				}
 			}
 
 			//Manager.NativeManager.BeginGroup();
@@ -417,6 +449,11 @@ namespace Effekseer.GUI.Dock
 			// Reset area
 			autoZoomRangeMin = float.MaxValue;
 			autoZoomRangeMax = float.MinValue;
+
+			if(canControl)
+			{
+				Manager.NativeManager.StartSelectingAreaFCurve();
+			}
 
 			Manager.NativeManager.EndFCurve();
 
@@ -976,6 +1013,121 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
+		public void Copy()
+		{
+			System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
+			System.IO.StringWriter writer = new System.IO.StringWriter();
+			serializer.Serialize(writer, CopyAsClass());
+			Manager.NativeManager.SetClipboardText(writer.ToString());
+		}
+
+		public FCurveCopiedData CopyAsClass()
+		{
+			FCurveCopiedData data = new FCurveCopiedData();
+
+			var flatten = flattenFcurves;
+
+			foreach(var curve in flatten)
+			{
+				for(int ind = 0; ind < curve.Properties.Length; ind++)
+				{
+					var prop = curve.Properties[ind];
+
+					if(!prop.KVSelected.Any(_=>_ > 0))
+					{
+						continue;
+					}
+
+					FCurveCopiedData.Curve copiedCurve = new FCurveCopiedData.Curve();
+
+					copiedCurve.Name = ind.ToString();
+
+					for(int i = 0; i < prop.KVSelected.Length; i++)
+					{
+						if(prop.KVSelected[i] > 0)
+						{
+							var p = new FCurveCopiedData.Point();
+							p.Key = prop.Keys[i];
+							p.Value = prop.Values[i];
+							p.LeftKey = prop.LeftKeys[i];
+							p.LeftValue = prop.LeftValues[i];
+							p.RightKey = prop.RightKeys[i];
+							p.RightValue = prop.RightValues[i];
+							p.Interpolation = prop.Interpolations[i];
+							copiedCurve.Points.Add(p);
+						}
+					}
+
+					data.Curves.Add(copiedCurve);
+				}
+			}
+
+			var xmin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Key);
+			var ymin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Value);
+
+			foreach(var curve in data.Curves)
+			{
+				foreach(var p in curve.Points)
+				{
+					p.Key -= xmin;
+					p.LeftKey -= xmin;
+					p.RightKey -= xmin;
+					p.Value -= ymin;
+					p.LeftValue -= ymin;
+					p.RightValue -= ymin;
+				}
+			}
+
+			return data;
+		}
+
+		public void Paste()
+		{
+			System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
+			var o = serializer.Deserialize(new System.IO.StringReader(Manager.NativeManager.GetClipboardText())) as FCurveCopiedData;
+			Paste(o);
+		}
+
+		public void Paste(FCurveCopiedData data)
+		{
+			var flatten = flattenFcurves.ToArray();
+
+			foreach (var curve in flatten)
+			{
+
+				for (int ind = 0; ind < curve.Properties.Length; ind++)
+				{
+					var prop = curve.Properties[ind];
+
+					var name = ind.ToString();
+
+					var copiedCurved = data.Curves.FirstOrDefault(_ => _.Name == name);
+
+					if(copiedCurved != null)
+					{
+
+						for(int i = 0; i < copiedCurved.Points.Count; i++)
+						{
+							prop.KVSelected = new byte[] { 0 }.Concat(prop.KVSelected).ToArray();
+						}
+
+						prop.Keys = copiedCurved.Points.Select(_ => _.Key).Concat(prop.Keys).ToArray();
+						prop.Values = copiedCurved.Points.Select(_ => _.Value).Concat(prop.Values).ToArray();
+						prop.LeftKeys = copiedCurved.Points.Select(_ => _.LeftKey).Concat(prop.LeftKeys).ToArray();
+						prop.LeftValues = copiedCurved.Points.Select(_ => _.LeftValue).Concat(prop.LeftValues).ToArray();
+						prop.RightKeys = copiedCurved.Points.Select(_ => _.RightKey).Concat(prop.RightKeys).ToArray();
+						prop.RightValues = copiedCurved.Points.Select(_ => _.RightValue).Concat(prop.RightValues).ToArray();
+						prop.Interpolations = copiedCurved.Points.Select(_ => _.Interpolation).Concat(prop.Interpolations).ToArray();
+
+						prop.SolveContradiction();
+						prop.IsDirtied = true;
+					}
+				}
+
+				curve.Commit();
+			}
+		}
+
 		Tuple35<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve()
 		{
 			List<Tuple35<Data.Value.IFCurve, FCurveProperty>> rets = new List<Tuple35<IFCurve, FCurveProperty>>();
@@ -1159,6 +1311,8 @@ namespace Effekseer.GUI.Dock
 			public virtual bool IsDirtied() { return false; }
 
 			public virtual Data.Value.Enum<FCurveTimelineType> GetTimeLineType() { return null; }
+
+
 		}
 
 		class FCurveTemplate<T> : FCurve where T : struct, IComparable<T>, IEquatable<T>
