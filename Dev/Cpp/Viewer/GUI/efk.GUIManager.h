@@ -390,7 +390,7 @@ namespace efk
 
 		void Separator();
 
-		void HiddenSeparator();
+		void HiddenSeparator(float thicknessDraw, float thicknessItem);
 
 		void SameLine();
 

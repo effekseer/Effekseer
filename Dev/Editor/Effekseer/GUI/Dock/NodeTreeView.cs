@@ -142,7 +142,11 @@ namespace Effekseer.GUI.Dock
 				}
 				else if (pair.Item3 == MovingNodeEventType.Insert)
 				{
-					Core.MoveNode(n1.Node as Data.Node, n2.Node.Parent, n2.Node.Parent.Children.Internal.IndexOf(n2.Node as Data.Node));
+					// to avoid root node
+					if(n2.Node is Data.Node)
+					{
+						Core.MoveNode(n1.Node as Data.Node, n2.Node.Parent, n2.Node.Parent.Children.Internal.IndexOf(n2.Node as Data.Node));
+					}
 				}
 				else if (pair.Item3 == MovingNodeEventType.AddAsChild)
 				{
@@ -514,7 +518,9 @@ namespace Effekseer.GUI.Dock
 		void UpdateDDTargetSeparator(bool isEnd)
 		{
 			// Hidden separator is a target to be dropped
-			Manager.NativeManager.HiddenSeparator();
+			// adjust a position
+			Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() - 6);
+			Manager.NativeManager.HiddenSeparator(12, 6);
 
 			if (Manager.NativeManager.BeginDragDropTarget())
 			{
