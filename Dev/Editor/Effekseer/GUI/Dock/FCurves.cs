@@ -341,7 +341,7 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.Text("");
+				Manager.NativeManager.InputText("Timeline" + "##Timeline", invalidValue, swig.InputTextFlags.ReadOnly);
 				timeline.SetBinding(null);
 			}
 
@@ -371,10 +371,14 @@ namespace Effekseer.GUI.Dock
 					Manager.NativeManager.SetTooltip(Resources.GetString("ShrinkAnchor") + "\n" + Resources.GetString("ShrinkAnchor_Desc"));
 				}
 
-				if(Manager.NativeManager.Button("Copy"))
+				Manager.NativeManager.SameLine();
+
+				if (Manager.NativeManager.Button("Copy"))
 				{
 					Copy();
 				}
+
+				Manager.NativeManager.SameLine();
 
 				if (Manager.NativeManager.Button("Paste"))
 				{
@@ -1083,14 +1087,23 @@ namespace Effekseer.GUI.Dock
 
 		public void Paste()
 		{
-			System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
-			var o = serializer.Deserialize(new System.IO.StringReader(Manager.NativeManager.GetClipboardText())) as FCurveCopiedData;
-			Paste(o);
+			FCurveCopiedData data = null;
+			try
+			{
+				System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
+				data = serializer.Deserialize(new System.IO.StringReader(Manager.NativeManager.GetClipboardText())) as FCurveCopiedData;
+			}
+			finally
+			{
+			}
+			
+			Paste(data);
 		}
 
 		public void Paste(FCurveCopiedData data)
 		{
 			var flatten = flattenFcurves.ToArray();
+			var offsetTime = Manager.Viewer.Current;
 
 			foreach (var curve in flatten)
 			{
@@ -1105,17 +1118,17 @@ namespace Effekseer.GUI.Dock
 
 					if(copiedCurved != null)
 					{
-
+						
 						for(int i = 0; i < copiedCurved.Points.Count; i++)
 						{
 							prop.KVSelected = new byte[] { 0 }.Concat(prop.KVSelected).ToArray();
 						}
 
-						prop.Keys = copiedCurved.Points.Select(_ => _.Key).Concat(prop.Keys).ToArray();
+						prop.Keys = copiedCurved.Points.Select(_ => _.Key + offsetTime).Concat(prop.Keys).ToArray();
 						prop.Values = copiedCurved.Points.Select(_ => _.Value).Concat(prop.Values).ToArray();
-						prop.LeftKeys = copiedCurved.Points.Select(_ => _.LeftKey).Concat(prop.LeftKeys).ToArray();
+						prop.LeftKeys = copiedCurved.Points.Select(_ => _.LeftKey + offsetTime).Concat(prop.LeftKeys).ToArray();
 						prop.LeftValues = copiedCurved.Points.Select(_ => _.LeftValue).Concat(prop.LeftValues).ToArray();
-						prop.RightKeys = copiedCurved.Points.Select(_ => _.RightKey).Concat(prop.RightKeys).ToArray();
+						prop.RightKeys = copiedCurved.Points.Select(_ => _.RightKey + offsetTime).Concat(prop.RightKeys).ToArray();
 						prop.RightValues = copiedCurved.Points.Select(_ => _.RightValue).Concat(prop.RightValues).ToArray();
 						prop.Interpolations = copiedCurved.Points.Select(_ => _.Interpolation).Concat(prop.Interpolations).ToArray();
 
