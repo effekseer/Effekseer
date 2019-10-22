@@ -10,12 +10,10 @@
 
 namespace Effekseer.swig {
 
-public class EffekseerNative {
-  public static SystemLanguage GetSystemLanguage() {
-    SystemLanguage ret = (SystemLanguage)EffekseerNativePINVOKE.GetSystemLanguage();
-    return ret;
-  }
-
+public enum SystemLanguage {
+  Japanese = 0,
+  English = 1,
+  Unknown = -1
 }
 
 }

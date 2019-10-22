@@ -1,9 +1,12 @@
-#include "efk.Language.h"
+#include "../PlatformMisc.h
 
 #import <Foundation/NSLocale.h>
 #import <Cocoa/Cocoa.h>
 
-EfkLanguage GetEfkLanguage()
+namespace Effekseer
+{
+
+SystemLanguage GetSystemLanguage()
 {
 	NSString *localeIdentifier = [[NSLocale currentLocale] localeIdentifier];
     NSArray *languages = [NSLocale preferredLanguages];
@@ -13,10 +16,12 @@ EfkLanguage GetEfkLanguage()
     
 	if ([languageID hasPrefix:@"ja-"])
 	{
-		return EfkLanguage::Japanese;
+		return SystemLanguage::Japanese;
 	}
 	else
 	{
-        return EfkLanguage::English;
+        return SystemLanguage::English;
 	}
+}
+
 }

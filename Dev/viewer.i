@@ -7,6 +7,7 @@
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
 #include "CompiledMaterialGenerator.h"
+#include <Platform/PlatformMisc.h>
 %}
 
 //-----------------------------------------------------------------------------------
@@ -88,3 +89,4 @@ class"
 %include "Cpp/Viewer/GUI/efk.FileDialog.h"
 %include "Cpp/Viewer/CompiledMaterialGenerator.h"
 
+%include "Cpp/EditorCommon/Platform/PlatformMisc.h"

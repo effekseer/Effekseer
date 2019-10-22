@@ -384,6 +384,7 @@ namespace Swig {
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
 #include "CompiledMaterialGenerator.h"
+#include <Platform/PlatformMisc.h>
 
 
 #include <stdint.h>		// Use the C99 official header
@@ -7721,16 +7722,6 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SetIniFilename___(v
 }
 
 
-SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetLanguage___() {
-  int jresult ;
-  int result;
-  
-  result = (int)efk::GUIManager::GetLanguage();
-  jresult = result; 
-  return jresult;
-}
-
-
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Markdown___(void * jarg1, void * jarg2) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   char16_t *arg2 = (char16_t *) 0 ;
@@ -7831,6 +7822,16 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_CompiledMaterialGenera
   arg3 = (char *)jarg3; 
   result = (bool)(arg1)->Compile((char const *)arg2,(char const *)arg3);
   jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GetSystemLanguage___() {
+  int jresult ;
+  Effekseer::SystemLanguage result;
+  
+  result = (Effekseer::SystemLanguage)Effekseer::GetSystemLanguage();
+  jresult = (int)result; 
   return jresult;
 }
 

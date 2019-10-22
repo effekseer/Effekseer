@@ -592,9 +592,6 @@ namespace efk
 
 		static void SetIniFilename(const char16_t* filename);
 
-		// Language
-		static int GetLanguage();
-
 		// Markdown
 		void Markdown(const char16_t* text);
 	};

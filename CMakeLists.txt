@@ -122,4 +122,42 @@ ExternalProject_Add(
 list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer/src)
 list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer/lib)
 
+# a function to generate filters by folders
+function(FilterFolder srcs)
+    foreach(FILE ${srcs}) 
+        # Get the directory of the source file
+        get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)
+    
+        # Remove common directory prefix to make the group
+        string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+    
+        # Make sure we are using windows slashes
+        string(REPLACE "/" "\\" GROUP "${GROUP}")
+    
+        # Group into "Source Files" and "Header Files"
+        if ("${FILE}" MATCHES ".*\\.cpp")
+           set(GROUP "${GROUP}")
+        elseif("${FILE}" MATCHES ".*\\.c")
+           set(GROUP "${GROUP}")
+        elseif("${FILE}" MATCHES ".*\\.cxx")
+           set(GROUP "${GROUP}")
+        elseif("${FILE}" MATCHES ".*\\.h")
+           set(GROUP "${GROUP}")
+        elseif("${FILE}" MATCHES ".*\\.mm")
+           set(GROUP "${GROUP}")
+        endif()
+    
+        source_group("${GROUP}" FILES "${FILE}")
+    endforeach()
+endfunction(FilterFolder)
+
 add_subdirectory(Dev)
+
+# specify filters
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+set_target_properties (ExternalProject_zlib PROPERTIES FOLDER thirdparty)
+set_target_properties (ExternalProject_libpng PROPERTIES FOLDER thirdparty)
+set_target_properties (ExternalProject_libgd PROPERTIES FOLDER thirdparty)
+set_target_properties (ExternalProject_glfw PROPERTIES FOLDER thirdparty)
+set_target_properties (ExternalProject_OpenSoundMixer PROPERTIES FOLDER thirdparty)

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using EfkN = Effekseer.swig.EffekseerNative;
 
 namespace Effekseer
 {
@@ -108,12 +109,12 @@ namespace Effekseer
 
 		static void Exec(bool gui, string input, string output, string export, string format, float magnification)
 		{
-			var languageIndex = swig.GUIManager.GetLanguage();
+			var systemLanguage = EfkN.GetSystemLanguage();
 			Language? language = null;
 
-			if(languageIndex >= 0)
+			if(systemLanguage != swig.SystemLanguage.Unknown)
 			{
-				language = (Language)languageIndex;
+				language = (Language)systemLanguage;
 			}
 
 			Core.OnOutputMessage += new Action<string>(Core_OnOutputMessage);

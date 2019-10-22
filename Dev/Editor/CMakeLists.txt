@@ -65,6 +65,10 @@ file(GLOB files
 	Effekseer/Process/*.cs
 	)
 
+list(APPEND files
+    Effekseer/swig/SystemLanguage.cs
+)
+
 add_executable(Effekseer
   ${files}
 )
