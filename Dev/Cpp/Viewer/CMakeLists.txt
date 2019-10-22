@@ -146,6 +146,7 @@ target_link_directories(
 )
 target_link_libraries(
 	Viewer
+    EditorCommon
 	debug glfw3d
 	debug OpenSoundMixerd
 	optimized glfw3
@@ -168,7 +169,6 @@ if (WIN32)
 
 target_link_libraries(
 	Viewer
-    EditorCommon
 	effekseer
 	effekseer_renderer_dx9
 	effekseer_renderer_dx11
