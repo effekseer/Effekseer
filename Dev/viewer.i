@@ -7,7 +7,7 @@
 #include "GUI/efk.GUIManager.h"
 #include "GUI/efk.FileDialog.h"
 #include "CompiledMaterialGenerator.h"
-#include <Platform/PlatformMisc.h>
+#include "../EditorCommon/Platform/PlatformMisc.h"
 %}
 
 //-----------------------------------------------------------------------------------
