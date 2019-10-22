@@ -413,14 +413,14 @@ namespace Effekseer.GUI
 			}
 
 			Bloom_OnChanged(null, null);
-			Core.PostEffect.BloomSwitch.OnChanged += Bloom_OnChanged;
-			Core.PostEffect.Bloom.Intensity.OnChanged += Bloom_OnChanged;
-			Core.PostEffect.Bloom.Threshold.OnChanged += Bloom_OnChanged;
-			Core.PostEffect.Bloom.SoftKnee.OnChanged += Bloom_OnChanged;
+			Core.Environment.PostEffect.BloomSwitch.OnChanged += Bloom_OnChanged;
+			Core.Environment.PostEffect.Bloom.Intensity.OnChanged += Bloom_OnChanged;
+			Core.Environment.PostEffect.Bloom.Threshold.OnChanged += Bloom_OnChanged;
+			Core.Environment.PostEffect.Bloom.SoftKnee.OnChanged += Bloom_OnChanged;
 			
 			Tonemap_OnChanged(null, null);
-			Core.PostEffect.TonemapSelector.OnChanged += Tonemap_OnChanged;
-			Core.PostEffect.TonemapReinhard.Exposure.OnChanged += Tonemap_OnChanged;
+			Core.Environment.PostEffect.TonemapSelector.OnChanged += Tonemap_OnChanged;
+			Core.Environment.PostEffect.TonemapReinhard.Exposure.OnChanged += Tonemap_OnChanged;
 			
 			return true;
 		}
@@ -430,13 +430,13 @@ namespace Effekseer.GUI
 			if (!isViewerShown) return;
 			isViewerShown = false;
 			
-			Core.PostEffect.BloomSwitch.OnChanged -= Bloom_OnChanged;
-			Core.PostEffect.Bloom.Intensity.OnChanged -= Bloom_OnChanged;
-			Core.PostEffect.Bloom.Threshold.OnChanged -= Bloom_OnChanged;
-			Core.PostEffect.Bloom.SoftKnee.OnChanged -= Bloom_OnChanged;
+			Core.Environment.PostEffect.BloomSwitch.OnChanged -= Bloom_OnChanged;
+			Core.Environment.PostEffect.Bloom.Intensity.OnChanged -= Bloom_OnChanged;
+			Core.Environment.PostEffect.Bloom.Threshold.OnChanged -= Bloom_OnChanged;
+			Core.Environment.PostEffect.Bloom.SoftKnee.OnChanged -= Bloom_OnChanged;
 			
-			Core.PostEffect.TonemapSelector.OnChanged -= Tonemap_OnChanged;
-			Core.PostEffect.TonemapReinhard.Exposure.OnChanged -= Tonemap_OnChanged;
+			Core.Environment.PostEffect.TonemapSelector.OnChanged -= Tonemap_OnChanged;
+			Core.Environment.PostEffect.TonemapReinhard.Exposure.OnChanged -= Tonemap_OnChanged;
 			
 			native.DestroyWindow();
 		}
@@ -466,12 +466,13 @@ namespace Effekseer.GUI
 					StepViewer(true);
 				}
 
+				// update environment
 				native.SetBackgroundColor(
-				(byte)Core.Option.BackgroundColor.R,
-				(byte)Core.Option.BackgroundColor.G,
-				(byte)Core.Option.BackgroundColor.B);
+				(byte)Core.Environment.Background.BackgroundColor.R,
+				(byte)Core.Environment.Background.BackgroundColor.G,
+				(byte)Core.Environment.Background.BackgroundColor.B);
 
-				native.SetBackgroundImage(Core.Option.BackgroundImage.AbsolutePath);
+				native.SetBackgroundImage(Core.Environment.Background.BackgroundImage.AbsolutePath);
 
 				native.SetGridColor(
 				(byte)Core.Option.GridColor.R,
@@ -489,21 +490,21 @@ namespace Effekseer.GUI
 					Core.Option.IsYZGridShown);
 
 				native.SetLightDirection(
-					Core.Option.LightDirection.X,
-					Core.Option.LightDirection.Y,
-					Core.Option.LightDirection.Z);
+					Core.Environment.Lighting.LightDirection.X,
+					Core.Environment.Lighting.LightDirection.Y,
+					Core.Environment.Lighting.LightDirection.Z);
 
 				native.SetLightColor(
-					(byte)Core.Option.LightColor.R,
-					(byte)Core.Option.LightColor.G,
-					(byte)Core.Option.LightColor.B,
-					(byte)Core.Option.LightColor.A);
+					(byte)Core.Environment.Lighting.LightColor.R,
+					(byte)Core.Environment.Lighting.LightColor.G,
+					(byte)Core.Environment.Lighting.LightColor.B,
+					(byte)Core.Environment.Lighting.LightColor.A);
 
 				native.SetLightAmbientColor(
-					(byte)Core.Option.LightAmbientColor.R,
-					(byte)Core.Option.LightAmbientColor.G,
-					(byte)Core.Option.LightAmbientColor.B,
-					(byte)Core.Option.LightAmbientColor.A);
+					(byte)Core.Environment.Lighting.LightAmbientColor.R,
+					(byte)Core.Environment.Lighting.LightAmbientColor.G,
+					(byte)Core.Environment.Lighting.LightAmbientColor.B,
+					(byte)Core.Environment.Lighting.LightAmbientColor.A);
 
 				native.SetMouseInverseFlag(
 					Core.Option.MouseRotInvX,
@@ -648,9 +649,9 @@ namespace Effekseer.GUI
 			SetEffectDistance(Core.EffectBehavior.Distance);
 
 			SetBackgroundColor(
-				(byte)Core.Option.BackgroundColor.R,
-				(byte)Core.Option.BackgroundColor.G,
-				(byte)Core.Option.BackgroundColor.B);
+				(byte)Core.Environment.Background.BackgroundColor.R,
+				(byte)Core.Environment.Background.BackgroundColor.G,
+				(byte)Core.Environment.Background.BackgroundColor.B);
 
 			SetGridLength(
 				Core.Option.GridLength);
@@ -790,20 +791,20 @@ namespace Effekseer.GUI
 		
 		private void Bloom_OnChanged(object sender, ChangedValueEventArgs e)
 		{
-			bool enabled = Core.PostEffect.BloomSwitch.Value == Data.PostEffectValues.EffectSwitch.On;
+			bool enabled = Core.Environment.PostEffect.BloomSwitch.Value == Data.EnvironmentPostEffectValues.EffectSwitch.On;
 
 			native.SetBloomParameters(enabled, 
-				Core.PostEffect.Bloom.Intensity.Value,
-				Core.PostEffect.Bloom.Threshold.Value,
-				Core.PostEffect.Bloom.SoftKnee.Value);
+				Core.Environment.PostEffect.Bloom.Intensity.Value,
+				Core.Environment.PostEffect.Bloom.Threshold.Value,
+				Core.Environment.PostEffect.Bloom.SoftKnee.Value);
 		}
 		
 		private void Tonemap_OnChanged(object sender, ChangedValueEventArgs e)
 		{
-			int algorithm = (int)Core.PostEffect.TonemapSelector.Value;
+			int algorithm = (int)Core.Environment.PostEffect.TonemapSelector.Value;
 
 			native.SetTonemapParameters(algorithm, 
-				Core.PostEffect.TonemapReinhard.Exposure.Value);
+				Core.Environment.PostEffect.TonemapReinhard.Exposure.Value);
 		}
 	}
 }

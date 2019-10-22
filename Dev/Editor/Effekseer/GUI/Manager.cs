@@ -140,7 +140,7 @@ namespace Effekseer.GUI
 			typeof(Dock.ViewPoint),
 			typeof(Dock.Recorder),
 			typeof(Dock.Option),
-			typeof(Dock.PostEffect),
+			typeof(Dock.Environement),
 			typeof(Dock.GlobalValues),
 			typeof(Dock.BehaviorValues),
 			typeof(Dock.Culling),
@@ -282,10 +282,6 @@ namespace Effekseer.GUI
 			Core.Option.Magnification.OnChanged += OnChanged;
 			Core.Option.IsGridShown.OnChanged += OnChanged;
 			Core.Option.GridLength.OnChanged += OnChanged;
-			Core.Option.BackgroundColor.R.OnChanged += OnChanged;
-			Core.Option.BackgroundColor.G.OnChanged += OnChanged;
-			Core.Option.BackgroundColor.B.OnChanged += OnChanged;
-			Core.Option.BackgroundColor.A.OnChanged += OnChanged;
 			Core.Option.GridColor.R.OnChanged += OnChanged;
 			Core.Option.GridColor.G.OnChanged += OnChanged;
 			Core.Option.GridColor.B.OnChanged += OnChanged;
@@ -295,7 +291,11 @@ namespace Effekseer.GUI
 			Core.Option.DistortionType.OnChanged += OnChanged;
 			Core.Option.Coordinate.OnChanged += OnChanged;
 
-			Core.Option.BackgroundImage.OnChanged += OnChanged;
+			Core.Environment.Background.BackgroundColor.R.OnChanged += OnChanged;
+			Core.Environment.Background.BackgroundColor.G.OnChanged += OnChanged;
+			Core.Environment.Background.BackgroundColor.B.OnChanged += OnChanged;
+			Core.Environment.Background.BackgroundColor.A.OnChanged += OnChanged;
+			Core.Environment.Background.BackgroundImage.OnChanged += OnChanged;
 
 			Core.Culling.IsShown.OnChanged += OnChanged;
 			Core.Culling.Type.OnChanged += OnChanged;

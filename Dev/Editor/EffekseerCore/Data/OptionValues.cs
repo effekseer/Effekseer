@@ -86,39 +86,6 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "ライト方向")]
-		[Description(language = Language.Japanese, value = "ディレクショナルライトの向き")]
-		[Name(language = Language.English, value = "Light Direction")]
-		[Description(language = Language.English, value = "Orientation of the directional light")]
-		[Undo(Undo = false)]
-		public Value.Vector3D LightDirection
-		{
-			get;
-			private set;
-		}
-
-		[Name(language = Language.Japanese, value = "ライト色")]
-		[Description(language = Language.Japanese, value = "ライトのディフュージョン色")]
-		[Name(language = Language.English, value = "Light Color")]
-		[Description(language = Language.English, value = "Diffuse color of the light")]
-		[Undo(Undo = false)]
-		public Value.Color LightColor
-		{
-			get;
-			private set;
-		}
-
-		[Name(language = Language.Japanese, value = "アンビエント色")]
-		[Description(language = Language.Japanese, value = "ライトのアンビエント色")]
-		[Name(language = Language.English, value = "Ambient Color")]
-		[Description(language = Language.English, value = "Ambient color of the light")]
-		[Undo(Undo = false)]
-		public Value.Color LightAmbientColor
-		{
-			get;
-			private set;
-		}
-
 		[Name(language = Language.Japanese, value = "出力時の拡大率")]
 		[Description(language = Language.Japanese, value = "出力時の拡大率")]
 		[Name(language = Language.English, value = "Output Magnification")]
@@ -163,40 +130,6 @@ namespace Effekseer.Data
 		{
 			get;
 			private set;
-		}
-
-		[Name(language = Language.Japanese, value = "背景色")]
-		[Description(language = Language.Japanese, value = "背景色")]
-		[Name(language = Language.English, value = "Background Color")]
-		[Description(language = Language.English, value = "Background color")]
-		[Undo(Undo = false)]
-		public Value.Color BackgroundColor
-		{
-			get;
-			private set;
-		}
-
-
-        /// <summary>
-        /// this value is initialized lazily because it cannot decide using language in the constructor
-        /// </summary>
-        Value.PathForImage LasyBackgroundImage;
-
-		[Name(language = Language.Japanese, value = "背景画像")]
-		[Description(language = Language.Japanese, value = "背景画像")]
-		[Name(language = Language.English, value = "Background Image")]
-		[Description(language = Language.English, value = "Background image")]
-		[Undo(Undo = false)]
-		public Value.PathForImage BackgroundImage
-		{
-            get
-            {
-                if(LasyBackgroundImage == null)
-                {
-                    LasyBackgroundImage = new Value.PathForImage(Resources.GetString("ImageFilter"), false, "");
-                }
-                return LasyBackgroundImage;
-            }
 		}
 
 		[Name(language = Language.Japanese, value = "カラースペース")]
@@ -280,7 +213,6 @@ namespace Effekseer.Data
         public OptionValues()
 		{
 			RenderingMode = new Value.Enum<RenderMode>(RenderMode.Normal);
-			BackgroundColor = new Value.Color(0, 0, 0, 255);
 			GridColor = new Value.Color(255, 255, 255, 255);
 			
 			IsGridShown = new Value.Boolean(true);
@@ -289,9 +221,7 @@ namespace Effekseer.Data
 			IsYZGridShown = new Value.Boolean(false);
 
 			GridLength = new Value.Float(2, float.MaxValue, 0.1f);
-			LightDirection = new Value.Vector3D(1, 1, 1, 1, -1, 1, -1, 1, -1, 0.1f, 0.1f, 0.1f);
-			LightColor = new Value.Color(215, 215, 215, 255);
-			LightAmbientColor = new Value.Color(40, 40, 40, 255);
+
 			Magnification = new Value.Float(1, float.MaxValue, 0.00001f);
 			ExternalMagnification = new Value.Float(1, float.MaxValue, 0.00001f);
 			FPS = new Value.Enum<FPSType>(FPSType._60FPS);

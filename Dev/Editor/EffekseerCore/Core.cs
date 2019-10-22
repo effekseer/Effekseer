@@ -18,7 +18,7 @@ namespace Effekseer
 
 		static Data.OptionValues option;
 
-		static Data.PostEffectValues postEffect;
+		static Data.EnvironmentValues environments;
 
 		static Data.EffectBehaviorValues effectBehavior = new Data.EffectBehaviorValues();
 
@@ -190,9 +190,9 @@ namespace Effekseer
 			get { return recording; }
 		}
 
-		public static Data.PostEffectValues PostEffect
+		public static Data.EnvironmentValues Environment
 		{
-			get { return postEffect; }
+			get { return environments; }
 		}
 
 		public static Data.EffectBehaviorValues EffectBehavior
@@ -484,7 +484,7 @@ namespace Effekseer
 			{
 				dir = System.IO.Path.GetDirectoryName(
 				System.IO.Path.GetFullPath(
-				Environment.GetCommandLineArgs()[0]));
+				System.Environment.GetCommandLineArgs()[0]));
 			}
 
 			return dir;
@@ -1116,7 +1116,7 @@ namespace Effekseer
 		static public Data.OptionValues LoadOption(Language? defaultLanguage)
 		{
             Data.OptionValues res = new Data.OptionValues();
-			postEffect = new Data.PostEffectValues();
+			environments = new Data.EnvironmentValues();
 
 			var path = System.IO.Path.Combine(GetEntryDirectory(), OptionFilePath);
 
@@ -1143,10 +1143,10 @@ namespace Effekseer
 				Data.IO.LoadObjectFromElement(optionElement as System.Xml.XmlElement, ref o, false);
 			}
 
-			var postEffectElement = doc["EffekseerProject"]["PostEffect"];
-			if (postEffectElement != null) {
-				var o = postEffect as object;
-				Data.IO.LoadObjectFromElement(postEffectElement as System.Xml.XmlElement, ref o, false);
+			var environment = doc["EffekseerProject"]["Environment"];
+			if (environment != null) {
+				var o = environments as object;
+				Data.IO.LoadObjectFromElement(environment as System.Xml.XmlElement, ref o, false);
 			}
 
 			var recordingElement = doc["EffekseerProject"]["Recording"];
@@ -1168,11 +1168,11 @@ namespace Effekseer
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
 			var optionElement = Data.IO.SaveObjectToElement(doc, "Option", Option, false);
-			var postEffectElement = Data.IO.SaveObjectToElement(doc, "PostEffect", PostEffect, false);
+			var environmentElement = Data.IO.SaveObjectToElement(doc, "Environment", Environment, false);
 
 			System.Xml.XmlElement project_root = doc.CreateElement("EffekseerProject");
 			if(optionElement != null) project_root.AppendChild(optionElement);
-			if(postEffectElement != null) project_root.AppendChild(postEffectElement);
+			if(environmentElement != null) project_root.AppendChild(environmentElement);
 
 			// recording option (this option is stored in local or global)
 			if (recording.RecordingStorageTarget.Value == Data.RecordingStorageTargetTyoe.Global)

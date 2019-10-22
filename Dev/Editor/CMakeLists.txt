@@ -25,7 +25,8 @@ file(GLOB files_core
 	)
 
 list(APPEND files_core
-	EffekseerCore/IO/EfkEfc.cs
+    EffekseerCore/IO/EfkEfc.cs
+    EffekseerCore/Data/EnvironmentValues.cs
 )
 
 add_library(EffekseerCore
@@ -67,6 +68,7 @@ file(GLOB files
 
 list(APPEND files
     Effekseer/swig/SystemLanguage.cs
+    Effekseer/GUI/Dock/Environment.cs
 )
 
 add_executable(Effekseer
