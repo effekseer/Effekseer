@@ -216,7 +216,7 @@ namespace Effekseer
 		}
 
 		/// <summary>
-		/// 選択中のノード
+		/// Selected node
 		/// </summary>
 		public static Data.NodeBase SelectedNode
 		{
@@ -1302,8 +1302,18 @@ namespace Effekseer
 			}
 
 			Command.CommandManager.StartCollection();
+		
+			// because a node is unselected when removed
+			var isNodeSelected = SelectedNode == movedNode;
+
 			movedNode.Parent.RemoveChild(movedNode);
 			targetParent.AddChild(movedNode, targetIndex);
+
+			if(isNodeSelected)
+			{
+				SelectedNode = movedNode;
+			}
+
 			Command.CommandManager.EndCollection();
 			return true;
 		}

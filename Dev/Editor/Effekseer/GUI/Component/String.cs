@@ -60,8 +60,18 @@ namespace Effekseer.GUI.Component
 
 		public void SetBinding(object o)
 		{
+			if(Binding != null)
+			{
+				Binding.OnChanged -= Binding_OnChanged;
+			}
+
 			var o_ = o as Data.Value.String;
 			Binding = o_;
+
+			if(Binding != null)
+			{
+				Binding.OnChanged += Binding_OnChanged;
+			}
 		}
 
 		public void FixValue()
@@ -136,5 +146,10 @@ namespace Effekseer.GUI.Component
 
 			valueChangingProp.Disable();
 		}
+		private void Binding_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			internalValue = binding.Value;
+		}
+
 	}
 }

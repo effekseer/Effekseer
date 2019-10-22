@@ -42,19 +42,16 @@ namespace Effekseer.GUI.Dialog
 				}
 				Manager.NativeManager.Separator();
 
-				Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X - 200);
-
-				if (Manager.NativeManager.Button(Resources.GetString("Cancel"), 100))
+				if (Manager.NativeManager.Button("OK", 100))
 				{
-					
+					this.selectedNode.Name.Value = this.name;
 					ShouldBeRemoved = true;
 				}
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("OK", 100))
+				if (Manager.NativeManager.Button(Resources.GetString("Cancel"), 100))
 				{
-					this.selectedNode.Name.Value = this.name;
 					ShouldBeRemoved = true;
 				}
 
