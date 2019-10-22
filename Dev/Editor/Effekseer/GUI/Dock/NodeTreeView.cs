@@ -22,9 +22,12 @@ namespace Effekseer.GUI.Dock
 		internal string treePyloadName = "NodeTreeNode";
 		internal byte[] treePyload = new byte[4];
 
-		internal List<Tuple<int, int>> exchangeEvents = new List<Tuple<int, int>>();
+		internal List<Tuple<int, int, MovingNodeEventType>> exchangeEvents = new List<Tuple<int, int, MovingNodeEventType>>();
 
-		internal int exchangeTargetID_Offset = -0x10fff;
+		/// <summary>
+		/// For maintain parameters when removing and adding immediately
+		/// </summary>
+		internal Dictionary<Effekseer.Data.NodeBase, NodeTreeViewNode> temporalRemovingNodeTreeViews = new Dictionary<Data.NodeBase, NodeTreeViewNode>();
 
 		public NodeTreeView()
         {
@@ -115,13 +118,13 @@ namespace Effekseer.GUI.Dock
 			{
 				Func<int, List<NodeTreeViewNode>, NodeTreeViewNode> findNode = null;
 
-				findNode = (int id, List<NodeTreeViewNode> ns) => 
+				findNode = (int id, List<NodeTreeViewNode> ns) =>
 				{
-					foreach(var n in ns)
+					foreach (var n in ns)
 					{
 						if (n.UniqueID == id) return n;
 						var ret = findNode(id, n.Children.Internal);
-						if(ret != null)
+						if (ret != null)
 						{
 							return ret;
 						}
@@ -132,15 +135,26 @@ namespace Effekseer.GUI.Dock
 
 				var n1 = findNode(pair.Item1, Children.Internal);
 				var n2 = findNode(pair.Item2, Children.Internal);
-				var n2_end = findNode(pair.Item2 - exchangeTargetID_Offset, Children.Internal);
 
-				if(n2_end != null)
+				if (pair.Item3 == MovingNodeEventType.AddLast)
 				{
-					Core.MoveNode(n1.Node as Data.Node, n2_end.Node.Parent, int.MaxValue);
+					Core.MoveNode(n1.Node as Data.Node, n2.Node.Parent, int.MaxValue);
 				}
-				else if(n2 != null)
+				else if (pair.Item3 == MovingNodeEventType.Insert)
 				{
-					Core.MoveNode(n1.Node as Data.Node, n2.Node.Parent, n2.Node.Parent.Children.Internal.IndexOf(n2.Node as Data.Node));
+					// to avoid root node
+					if(n2.Node is Data.Node)
+					{
+						Core.MoveNode(n1.Node as Data.Node, n2.Node.Parent, n2.Node.Parent.Children.Internal.IndexOf(n2.Node as Data.Node));
+					}
+				}
+				else if (pair.Item3 == MovingNodeEventType.AddAsChild)
+				{
+					Core.MoveNode(n1.Node as Data.Node, n2.Node, int.MaxValue);
+				}
+				else
+				{
+					throw new Exception();
 				}
 			}
 			exchangeEvents.Clear();
@@ -150,6 +164,8 @@ namespace Effekseer.GUI.Dock
 			{
 				isVisibleChanging = false;
 			}
+
+			temporalRemovingNodeTreeViews.Clear();
 		}
 
         /// <summary>
@@ -207,16 +223,6 @@ namespace Effekseer.GUI.Dock
             };
 
             set_nodes(Children[0], Core.Root);
-
-            ExpandAll();
-        }
-
-        public void ExpandAll()
-        {
-			foreach(var child in Children.Internal)
-			{
-				child.ExpandAll();
-			}
         }
 
 		internal void Popup()
@@ -270,6 +276,13 @@ namespace Effekseer.GUI.Dock
 		{
 			ReadSelect();
 		}
+	}
+
+	enum MovingNodeEventType
+	{
+		Insert,
+		AddLast,
+		AddAsChild,
 	}
 
     class NodeTreeViewNode : IControl
@@ -412,7 +425,7 @@ namespace Effekseer.GUI.Dock
 				flag = flag | swig.TreeNodeFlags.Leaf;
 			}
 
-			UpdateDDTarget(false);
+			UpdateDDTargetSeparator(false);
 
 			if(requiredToExpand)
 			{
@@ -442,63 +455,50 @@ namespace Effekseer.GUI.Dock
 
 			// Extend clickable space
 			var name = Node.Name + "                                                                " + id;
-			if (Manager.NativeManager.TreeNodeEx(name, temp, Images.GetIcon(iconString), flag))
-            {
-				IsExpanding = true;
+			IsExpanding = Manager.NativeManager.TreeNodeEx(name, temp, Images.GetIcon(iconString), flag);
 
-				SelectNodeIfClicked();
+			SelectNodeIfClicked();
 
-				treeView.Popup();
-				
-				// D&D Source
-				if(Manager.NativeManager.BeginDragDropSource())
+			treeView.Popup();
+
+			// D&D Source
+			if (Manager.NativeManager.BeginDragDropSource())
+			{
+				byte[] idBuf = BitConverter.GetBytes(UniqueID);
+				if (Manager.NativeManager.SetDragDropPayload(treeView.treePyloadName, idBuf, idBuf.Length))
 				{
-					byte[] idBuf = BitConverter.GetBytes(UniqueID);
-					if(Manager.NativeManager.SetDragDropPayload(treeView.treePyloadName, idBuf, idBuf.Length))
-					{
-					}
-					Manager.NativeManager.Text(this.Node.Name);
-
-					Manager.NativeManager.EndDragDropSource();
 				}
+				Manager.NativeManager.Text(this.Node.Name);
 
-				Manager.NativeManager.NextColumn();
+				Manager.NativeManager.EndDragDropSource();
+			}
 
-				UpdateVisibleButton();
-				
-				Manager.NativeManager.NextColumn();
+			UpdateDDTargetNode();
 
+			Manager.NativeManager.NextColumn();
+
+			UpdateVisibleButton();
+
+			Manager.NativeManager.NextColumn();
+
+			if (IsExpanding)
+			{
 				Children.Lock();
 
-                foreach (var child in Children.Internal)
-                {
-                    child.Update();
-                }
+				foreach (var child in Children.Internal)
+				{
+					child.Update();
+				}
 
 				Children.Unlock();
 
-				if(Children.Count != 0)
+				if (Children.Count != 0)
 				{
-					Children.Internal.Last().UpdateDDTarget(true);
+					Children.Internal.Last().UpdateDDTargetSeparator(true);
 				}
 
+				// pair with TreeNodeEx
 				Manager.NativeManager.TreePop();
-            }
-			else
-			{
-				IsExpanding = false;
-
-				SelectNodeIfClicked();
-
-				//UpdateDDTarget(true);
-
-				treeView.Popup();
-
-				Manager.NativeManager.NextColumn();
-
-				UpdateVisibleButton();
-
-				Manager.NativeManager.NextColumn();
 			}
 		}
 
@@ -512,12 +512,15 @@ namespace Effekseer.GUI.Dock
 		}
 
 		/// <summary>
-		/// Update D&D Target
+		/// Update D&D Target between nodes
 		/// </summary>
 		/// <param name="isEnd"></param>
-		void UpdateDDTarget(bool isEnd)
+		void UpdateDDTargetSeparator(bool isEnd)
 		{
-			Manager.NativeManager.HiddenSeparator();
+			// Hidden separator is a target to be dropped
+			// adjust a position
+			Manager.NativeManager.SetCursorPosY(Manager.NativeManager.GetCursorPosY() - 6);
+			Manager.NativeManager.HiddenSeparator(12, 6);
 
 			if (Manager.NativeManager.BeginDragDropTarget())
 			{
@@ -526,23 +529,33 @@ namespace Effekseer.GUI.Dock
 				{
 					var sourceID = BitConverter.ToInt32(treeView.treePyload, 0);
 					treeView.exchangeEvents.Add(
-						new Tuple<int, int>(sourceID, UniqueID + (isEnd ? treeView.exchangeTargetID_Offset : 0)));
+						Tuple.Create(sourceID, UniqueID, (isEnd ? MovingNodeEventType.AddLast : MovingNodeEventType.Insert)));
 				}
 
 				Manager.NativeManager.EndDragDropTarget();
 			}
 		}
 
-        public void ExpandAll()
-        {
-			Expand();
-			foreach(var child in Children.Internal)
+		/// <summary>
+		/// Update nodes as D&D target
+		/// </summary>
+		void UpdateDDTargetNode()
+		{
+			if (Manager.NativeManager.BeginDragDropTarget())
 			{
-				child.ExpandAll();
-			}
-        }
+				int size = 0;
+				if (Manager.NativeManager.AcceptDragDropPayload(treeView.treePyloadName, treeView.treePyload, treeView.treePyload.Length, ref size))
+				{
+					var sourceID = BitConverter.ToInt32(treeView.treePyload, 0);
+					treeView.exchangeEvents.Add(
+						Tuple.Create(sourceID, UniqueID, MovingNodeEventType.AddAsChild));
+				}
 
-        void OnAfterAddNode(object sender, ChangedValueEventArgs e)
+				Manager.NativeManager.EndDragDropTarget();
+			}
+		}
+
+		void OnAfterAddNode(object sender, ChangedValueEventArgs e)
         {
             var node = e.Value as Data.NodeBase;
 
@@ -554,16 +567,24 @@ namespace Effekseer.GUI.Dock
                 if (node == Node.Children[ind]) break;
             }
 
+			NodeTreeViewNode treeViewNode = null;
+			if(treeView.temporalRemovingNodeTreeViews.ContainsKey(node))
+			{
+				treeViewNode = treeView.temporalRemovingNodeTreeViews[node];
+			}
+			else
+			{
+				treeViewNode = new NodeTreeViewNode(treeView, node, true);
+			}
+
             if (ind == Children.Count)
             {
-                Children.Add(new NodeTreeViewNode(treeView ,node, true));
+                Children.Add(treeViewNode);
             }
             else
             {
-                Children.Insert(ind, new NodeTreeViewNode(treeView, node, true));
+                Children.Insert(ind, treeViewNode);
             }
-
-            ExpandAll();
         }
 
         void OnAfterRemoveNode(object sender, ChangedValueEventArgs e)
@@ -579,6 +600,7 @@ namespace Effekseer.GUI.Dock
                 {
                     treenode.RemoveEvent(true);
                     Children.Remove(treenode);
+					treeView.temporalRemovingNodeTreeViews.Add(treenode.Node, treenode);
                     return;
                 }
             }
@@ -622,8 +644,6 @@ namespace Effekseer.GUI.Dock
 
             Children.Insert(ind1, new NodeTreeViewNode(treeView, node2, true));
             Children.RemoveAt(ind1 + 1);
-
-            ExpandAll();
         }
     }
 }

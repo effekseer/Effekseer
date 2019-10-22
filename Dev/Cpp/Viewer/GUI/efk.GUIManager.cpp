@@ -1144,7 +1144,7 @@ namespace efk
 		ImGui::Separator();
 	}
 
-	void GUIManager::HiddenSeparator()
+	void GUIManager::HiddenSeparator(float thicknessDraw, float thicknessItem)
 	{
 		ImGuiWindow* window = ImGui::GetCurrentWindow();
 		if (window->SkipItems)
@@ -1189,15 +1189,15 @@ namespace efk
 				ImGui::PushColumnsBackground();
 
 			// We don't provide our width to the layout so that it doesn't get feed back into AutoFit
-			const ImRect bb(ImVec2(x1, window->DC.CursorPos.y), ImVec2(x2, window->DC.CursorPos.y + thickness_draw));
-			ImGui::ItemSize(ImVec2(0.0f, thickness_layout));
+			const ImRect bb(ImVec2(x1, window->DC.CursorPos.y), ImVec2(x2, window->DC.CursorPos.y + thicknessDraw));
+			ImGui::ItemSize(ImVec2(0.0f, thicknessItem));
 			if (!ImGui::ItemAdd(bb, 0))
 			{
 				if (columns)
 					ImGui::PopColumnsBackground();
 				return;
 			}
-
+			
 			// Draw
 			window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), 0);
 			if (g.LogEnabled)

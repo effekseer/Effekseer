@@ -3516,11 +3516,15 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Separator___(void *
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_HiddenSeparator___(void * jarg1) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_HiddenSeparator___(void * jarg1, float jarg2, float jarg3) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  float arg3 ;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  (arg1)->HiddenSeparator();
+  arg2 = (float)jarg2; 
+  arg3 = (float)jarg3; 
+  (arg1)->HiddenSeparator(arg2,arg3);
 }
 
 

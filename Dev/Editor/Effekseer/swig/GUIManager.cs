@@ -228,8 +228,8 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_Separator(swigCPtr);
   }
 
-  public void HiddenSeparator() {
-    EffekseerNativePINVOKE.GUIManager_HiddenSeparator(swigCPtr);
+  public void HiddenSeparator(float thicknessDraw, float thicknessItem) {
+    EffekseerNativePINVOKE.GUIManager_HiddenSeparator(swigCPtr, thicknessDraw, thicknessItem);
   }
 
   public void SameLine() {
