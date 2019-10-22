@@ -115,6 +115,7 @@
     <Compile Include="GUI\Dock\DockPanel.cs" />
     <Compile Include="GUI\Dock\Dynamic.cs" />
     <Compile Include="GUI\Dock\EffectViwer.cs" />
+    <Compile Include="GUI\Dock\Environment.cs" />
     <Compile Include="GUI\Dock\FCurves.cs" />
     <Compile Include="GUI\Dock\FileViewer.cs" />
     <Compile Include="GUI\Dock\GenerationLocationValues.cs" />
