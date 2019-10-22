@@ -34,7 +34,7 @@ namespace EffekseerMaterial
 void Compile(std::shared_ptr<Graphics> graphics,
 			 std::shared_ptr<Material> material,
 			 std::shared_ptr<Node> node,
-			 std::vector<std::shared_ptr<EffekseerMaterial::Texture>>& outputTextures,
+			 std::vector<std::shared_ptr<TextureWithSampler>>& outputTextures,
 			 std::vector<std::shared_ptr<TextExporterUniform>>& outputUniforms,
 			 std::string& vs,
 			 std::string& ps)
@@ -91,7 +91,10 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	for (auto t : textures)
 	{
 		auto t_ = EffekseerMaterial::TextureCache::Load(graphics, t->DefaultPath.c_str());
-		outputTextures.push_back(t_);
+		auto ts = std::make_shared<TextureWithSampler>();
+		ts->TexturePtr = t_;
+		ts->SamplerType = t->Sampler;
+		outputTextures.push_back(ts);
 	}
 
 	outputUniforms = result.Uniforms;
@@ -100,7 +103,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 					 std::shared_ptr<Material> material,
 					 std::shared_ptr<Node> node,
-					 std::vector<std::shared_ptr<EffekseerMaterial::Texture>>& outputTextures,
+					 std::vector<std::shared_ptr<TextureWithSampler>>& outputTextures,
 					 std::vector<std::shared_ptr<TextExporterUniform>>& outputUniforms)
 {
 	outputTextures.clear();
@@ -129,7 +132,10 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	for (auto t : textures)
 	{
 		auto t_ = EffekseerMaterial::TextureCache::Load(graphics, t->DefaultPath.c_str());
-		outputTextures.push_back(t_);
+		auto ts = std::make_shared<TextureWithSampler>();
+		ts->TexturePtr = t_;
+		ts->SamplerType = t->Sampler;
+		outputTextures.push_back(ts);
 	}
 
 	outputUniforms = result.Uniforms;
@@ -431,7 +437,7 @@ void Editor::Save()
 	auto content = contents_[selectedContentInd_];
 	if (content->GetPath() == "")
 	{
-		Save();
+		SaveAs();
 	}
 	else
 	{
@@ -586,7 +592,7 @@ void Editor::UpdateNodes()
 			auto preview = preview_;
 
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
-			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures;
+			std::vector<std::shared_ptr<TextureWithSampler>> textures;
 			std::string vs;
 			std::string ps;
 			Compile(graphics_, material, node, textures, uniforms, vs, ps);
@@ -602,7 +608,7 @@ void Editor::UpdateNodes()
 				continue;
 
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
-			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures;
+			std::vector<std::shared_ptr<TextureWithSampler>> textures;
 
 			ExtractUniforms(graphics_, material, node, textures, uniforms);
 
@@ -626,7 +632,7 @@ void Editor::UpdateNodes()
 			auto preview = uobj->GetPreview();
 
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
-			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures;
+			std::vector<std::shared_ptr<TextureWithSampler>> textures;
 			std::string vs;
 			std::string ps;
 			Compile(graphics_, material, node, textures, uniforms, vs, ps);
@@ -646,7 +652,7 @@ void Editor::UpdateNodes()
 			auto preview = uobj->GetPreview();
 
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
-			std::vector<std::shared_ptr<EffekseerMaterial::Texture>> textures;
+			std::vector<std::shared_ptr<TextureWithSampler>> textures;
 
 			ExtractUniforms(graphics_, material, node, textures, uniforms);
 
@@ -657,11 +663,11 @@ void Editor::UpdateNodes()
 		if (node->UserObj != nullptr)
 		{
 			auto uobj = (EffekseerMaterial::NodeUserDataObject*)node->UserObj.get();
-			uobj->GetPreview()->UpdateTime(currentTime);
+			uobj->GetPreview()->UpdateConstantValues(currentTime, material->CustomData[0].Values, material->CustomData[1].Values);
 		}
 	}
 
-	preview_->UpdateTime(currentTime);
+	preview_->UpdateConstantValues(currentTime, material->CustomData[0].Values, material->CustomData[1].Values);
 }
 
 void Editor::UpdatePopup()
@@ -1026,65 +1032,61 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 	auto updateProp = [&, node](ValueType type, std::string name, std::shared_ptr<EffekseerMaterial::NodeProperty> p) -> void {
 		auto floatValues = p->Floats;
 
+		auto nameStr = StringContainer::GetValue((name + "_Name").c_str());
+
 		if (type == ValueType::Int)
 		{
 			int32_t value = static_cast<int32_t>(floatValues[0]);
-			if (ImGui::DragInt(StringContainer::GetValue(name.c_str()).c_str(), &value, 1, 1, 100))
+			if (ImGui::DragInt(nameStr.c_str(), &value, 1, 1, 100))
 			{
 				floatValues[0] = value;
 				material->ChangeValue(p, floatValues);
 				material->MakeDirty(node);
 			}
 		}
-
-		if (type == ValueType::Float1)
+		else if (type == ValueType::Float1)
 		{
-			if (ImGui::DragFloat(StringContainer::GetValue(name.c_str()).c_str(), floatValues.data(), 0.01f))
+			if (ImGui::DragFloat(nameStr.c_str(), floatValues.data(), 0.01f))
 			{
 				material->ChangeValue(p, floatValues);
 				material->MakeDirty(node);
 			}
 		}
-
-		if (type == ValueType::Float2)
+		else if (type == ValueType::Float2)
 		{
-			if (ImGui::DragFloat2(StringContainer::GetValue(name.c_str()).c_str(), floatValues.data(), 0.01f))
+			if (ImGui::DragFloat2(nameStr.c_str(), floatValues.data(), 0.01f))
 			{
 				material->ChangeValue(p, floatValues);
 				material->MakeDirty(node);
 			}
 		}
-
-		if (type == ValueType::Float3)
+		else if (type == ValueType::Float3)
 		{
-			if (ImGui::DragFloat3(StringContainer::GetValue(name.c_str()).c_str(), floatValues.data(), 0.01f))
+			if (ImGui::DragFloat3(nameStr.c_str(), floatValues.data(), 0.01f))
 			{
 				material->ChangeValue(p, floatValues);
 				material->MakeDirty(node);
 			}
 		}
-
-		if (type == ValueType::Float4)
+		else if (type == ValueType::Float4)
 		{
-			if (ImGui::DragFloat4(StringContainer::GetValue(name.c_str()).c_str(), floatValues.data(), 0.01f))
+			if (ImGui::DragFloat4(nameStr.c_str(), floatValues.data(), 0.01f))
 			{
 				material->ChangeValue(p, floatValues);
 				material->MakeDirty(node);
 			}
 		}
-
-		if (type == ValueType::Bool)
+		else if (type == ValueType::Bool)
 		{
 			bool b = floatValues[0] > 0.0f;
-			if (ImGui::Checkbox(StringContainer::GetValue(name.c_str()).c_str(), &b))
+			if (ImGui::Checkbox(nameStr.c_str(), &b))
 			{
 				floatValues[0] = b ? 1.0f : 0.0f;
 				material->ChangeValue(p, floatValues);
 				material->MakeDirty(node);
 			}
 		}
-
-		if (type == ValueType::String)
+		else if (type == ValueType::String)
 		{
 			// is memory safe?
 
@@ -1092,15 +1094,14 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 			str.resize(str.size() + 16, 0);
 
 			// Shader result doesn't change
-			if (InputText(StringContainer::GetValue(name.c_str()).c_str(), str))
+			if (InputText(nameStr.c_str(), str))
 			{
 				material->ChangeValue(p, str);
 			}
 		}
-
-		if (type == ValueType::Texture)
+		else if (type == ValueType::Texture)
 		{
-			if (ImGui::Button("Open"))
+			if (ImGui::Button(nameStr.c_str()))
 			{
 				nfdchar_t* outPath = NULL;
 				nfdresult_t result = NFD_OpenDialog("png", "", &outPath);
@@ -1123,7 +1124,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 				const char* items[] = {"Color", "Value"};
 
-				if (ImGui::BeginCombo(StringContainer::GetValue(name.c_str()).c_str(), items[static_cast<int>(texture->Type)]))
+				if (ImGui::BeginCombo(nameStr.c_str(), items[static_cast<int>(texture->Type)]))
 				{
 					for (size_t i = 0; i < 2; i++)
 					{
@@ -1140,14 +1141,13 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				}
 			}
 		}
-
-		if (type == ValueType::Enum)
+		else if (type == ValueType::Enum)
 		{
 			if (name == std::string("Index"))
 			{
 				const char* items[] = {"1", "2"};
 
-				if (ImGui::BeginCombo(StringContainer::GetValue(name.c_str()).c_str(), items[static_cast<int>(floatValues[0])]))
+				if (ImGui::BeginCombo(nameStr.c_str(), items[static_cast<int>(floatValues[0])]))
 				{
 					for (size_t i = 0; i < 2; i++)
 					{
@@ -1168,7 +1168,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 			{
 				const char* items[] = {"Repeat", "Clamp"};
 
-				if (ImGui::BeginCombo(StringContainer::GetValue(name.c_str()).c_str(), items[static_cast<int>(floatValues[0])]))
+				if (ImGui::BeginCombo(nameStr.c_str(), items[static_cast<int>(floatValues[0])]))
 				{
 					for (size_t i = 0; i < 2; i++)
 					{
@@ -1189,7 +1189,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 			{
 				const char* items[] = {"Lit", "Unlit"};
 
-				if (ImGui::BeginCombo(StringContainer::GetValue(name.c_str()).c_str(), items[static_cast<int>(floatValues[0])]))
+				if (ImGui::BeginCombo(nameStr.c_str(), items[static_cast<int>(floatValues[0])]))
 				{
 					for (size_t i = 0; i < 2; i++)
 					{
@@ -1207,6 +1207,17 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				}
 			}
 		}
+		else
+		{
+			assert(0);
+		}
+
+		auto descStr = StringContainer::GetValue((name + "_Desc").c_str(), "");
+
+		if (ImGui::IsItemHovered() && !ImGui::IsItemActive() && descStr != "")
+		{
+			ImGui::SetTooltip(descStr.c_str());
+		}
 	};
 
 	for (size_t i = 0; i < node->Properties.size(); i++)
@@ -1215,6 +1226,20 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		auto pp = node->Parameter->Properties[i];
 
 		updateProp(pp->Type, pp->Name, p);
+	}
+
+	// cutomdata
+	if (node->Parameter->Type == NodeType::CustomData1)
+	{
+		if (ImGui::DragFloat4(StringContainer::GetValue("Value_Name").c_str(), material->CustomData[0].Values.data(), 0.01f))
+		{
+		}
+	}
+	if (node->Parameter->Type == NodeType::CustomData2)
+	{
+		if (ImGui::DragFloat4(StringContainer::GetValue("Value_Name").c_str(), material->CustomData[0].Values.data(), 0.01f))
+		{
+		}
 	}
 
 	// name and description for other editor
@@ -1232,8 +1257,9 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		const char* languages[] = {"Ja", "En"};
 
 		if (ImGui::BeginCombo(StringContainer::GetValue("Language_Name").c_str(),
-				(StringContainer::GetValue(languages[static_cast<int>(material->Language)]) + "###" + languages[static_cast<int>(material->Language)])
-					.c_str()))
+							  (StringContainer::GetValue(languages[static_cast<int>(material->Language)]) + "###" +
+							   languages[static_cast<int>(material->Language)])
+								  .c_str()))
 		{
 			for (size_t i = 0; i < 2; i++)
 			{
@@ -1438,7 +1464,22 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 	// show an warning
 	if (node->CurrentWarning != WarningType::None)
 	{
-		ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), "warning");
+		if (node->CurrentWarning == WarningType::DifferentSampler)
+		{
+			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), StringContainer::GetValue("Warning_DifferentSampler").c_str());
+		}
+		else if (node->CurrentWarning == WarningType::WrongInputType)
+		{
+			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), StringContainer::GetValue("Warning_WrongInputType").c_str());
+		}
+		else if (node->CurrentWarning == WarningType::WrongProperty)
+		{
+			ImGui::TextColored(ImColor(1.0f, 0.0f, 0.0f, 1.0f), StringContainer::GetValue("Warning_WrongProperty").c_str());
+		}
+		else
+		{
+			assert(0);
+		}
 	}
 
 	ImGui::EndVertical();

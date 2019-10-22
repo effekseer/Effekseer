@@ -172,6 +172,7 @@ int main(int argc, char* argv[])
 
 	bool isFirstFrame = true;
 	int framecount = 0;
+	int leftWidth = 220;
 
 	while (!glfwWindowShouldClose(glfwMainWindow))
 	{
@@ -276,7 +277,7 @@ int main(int argc, char* argv[])
 					ImGui::EndMenu();
 				}
 
-				#ifdef _DEBUG
+#ifdef _DEBUG
 				if (ImGui::BeginMenu("Debug"))
 				{
 					if (ImGui::MenuItem("DebugWindow"))
@@ -286,7 +287,7 @@ int main(int argc, char* argv[])
 
 					ImGui::EndMenu();
 				}
-				#endif
+#endif
 
 				ImGui::EndMainMenuBar();
 			}
@@ -341,7 +342,15 @@ int main(int argc, char* argv[])
 							{
 
 								ImGui::Columns(2);
-								ImGui::SetColumnWidth(0, 200);
+
+								if (editor->GetContents()[i]->IsLoading)
+								{
+									ImGui::SetColumnWidth(0, leftWidth);
+								}
+								else
+								{
+									leftWidth= ImGui::GetColumnWidth(0);
+								}
 
 								ImGui::BeginChild("###Left");
 
@@ -396,7 +405,6 @@ int main(int argc, char* argv[])
 								ImGui::Columns(1);
 							}
 
-
 							ImGui::EndTabItem();
 						}
 
@@ -431,16 +439,15 @@ int main(int argc, char* argv[])
 				}
 			}
 
-			framecount++;
-			if (isFirstFrame && framecount > 1)
+			// HACK because of imgui specification
+			if (framecount == 3)
 			{
 				if (!ipcMode)
 				{
-					auto closeDialog = std::make_shared<EffekseerMaterial::NewOrOpenDialog>(editor);
-					ImGui::OpenPopup(closeDialog->GetID());
-					dialogs.push_back(closeDialog);
+					auto creatDialog = std::make_shared<EffekseerMaterial::NewOrOpenDialog>(editor);
+					ImGui::OpenPopup(creatDialog->GetID());
+					dialogs.push_back(creatDialog);
 				}
-				isFirstFrame = false;
 			}
 
 			// popup
@@ -456,6 +463,9 @@ int main(int argc, char* argv[])
 				dialogs.begin(), dialogs.end(), [](std::shared_ptr<EffekseerMaterial::Dialog> d) -> bool { return d->IsClosing; });
 
 			dialogs.erase(removed_it, dialogs.end());
+
+			framecount++;
+			isFirstFrame = false;
 		}
 
 		if (g_showDebugWindow && ImGui::Begin("Code_Debug"))

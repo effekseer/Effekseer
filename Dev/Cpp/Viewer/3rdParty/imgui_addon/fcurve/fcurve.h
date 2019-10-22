@@ -22,6 +22,8 @@ namespace ImGui
 
 	void EndFCurve();
 
+	bool StartSelectingAreaFCurve();
+
 	bool AddPointFCurve(
 		float* keys, float* values,
 		float* leftHandleKeys, float* leftHandleValues,

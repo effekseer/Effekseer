@@ -1273,6 +1273,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool StartSelectingAreaFCurve() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_StartSelectingAreaFCurve(swigCPtr);
+    return ret;
+  }
+
   public bool BeginDragDropSource() {
     bool ret = EffekseerNativePINVOKE.GUIManager_BeginDragDropSource(swigCPtr);
     return ret;

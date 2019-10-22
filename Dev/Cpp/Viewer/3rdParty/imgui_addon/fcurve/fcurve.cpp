@@ -65,6 +65,12 @@ namespace ImGui
 		DELTA_X,
 		DELTA_Y,
 		OVER_Y,
+		IS_SELECTING_AREA,
+		IS_SELECTING_AREA_FINISHED,
+		IS_SELECTING_AREA_BEGIN_X,
+		IS_SELECTING_AREA_BEGIN_Y,
+		IS_SELECTING_AREA_END_X,
+		IS_SELECTING_AREA_END_Y,
 	};
 
 	bool IsHovered(const ImVec2& v1, const ImVec2& v2, float radius)
@@ -401,13 +407,92 @@ namespace ImGui
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OVER_Y, 0);
 		}
 
+		auto isSelectingArea = window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA, false);
+
+		if (isSelectingArea)
+		{
+			auto fpos = transform_s2f(ImGui::GetMousePos());
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_X, fpos.x);
+			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_Y, fpos.y);
+
+			if (ImGui::IsMouseReleased(0))
+			{
+				window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA, false);
+				window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_FINISHED, true);
+			}
+			else
+			{
+				// draw area
+				float xBegin = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_X);
+				float yBegin = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_Y);
+				float xEnd = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_X);
+				float yEnd = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_Y);
+
+				if (xBegin > xEnd)
+					std::swap(xBegin, xEnd);
+
+				if (yBegin > yEnd)
+					std::swap(yBegin, yEnd);
+
+				auto begin = transform_f2s(ImVec2(xBegin, yBegin));
+				auto end = transform_f2s(ImVec2(xEnd, yEnd));
+
+				window->DrawList->AddRect(begin, end, ImColor(0, 0, 128, 128));
+			}
+		}
+
 		return true;
 	}
 
 	void EndFCurve()
 	{
+		ImGuiWindow* window = GetCurrentWindow();
+		window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_FINISHED, false);
+
 		EndChildFrame();
 	}
+
+	bool StartSelectingAreaFCurve()
+	{
+		ImGuiWindow* window = GetCurrentWindow();
+
+		if (!IsMouseDragging(0))
+		{	
+			return false;
+		}
+
+		auto isSelecting = window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA, false);
+		if (isSelecting)
+		{
+			return true;
+		}
+
+		float offset_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, 0.0f);
+		float offset_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_Y, 0.0f);
+
+		float scale_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_X, 1.0f);
+		float scale_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SCALE_Y, 1.0f);
+
+		const ImRect innerRect = window->InnerRect;
+		float width = innerRect.Max.x - innerRect.Min.x;
+		float height = innerRect.Max.y - innerRect.Min.y;
+
+		auto transform_f2s = [&](const ImVec2& p) -> ImVec2 {
+			return ImVec2((p.x - offset_x) * scale_x + innerRect.Min.x, (-p.y - offset_y) * scale_y + innerRect.Min.y + height / 2);
+		};
+
+		auto transform_s2f = [&](const ImVec2& p) -> ImVec2 {
+			return ImVec2((p.x - innerRect.Min.x) / scale_x + offset_x, -((p.y - innerRect.Min.y - height / 2) / scale_y + offset_y));
+		};
+
+		window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA, true);
+		auto fpos = transform_s2f(ImGui::GetMousePos());
+		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_X, fpos.x);
+		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_Y, fpos.y);
+
+		return true;
+	}
+
 
 	bool NoPointFCurve(
 		int fcurve_id,
@@ -613,6 +698,40 @@ namespace ImGui
 		if (isLocked)
 		{
 			hasControlled = true;
+		}
+
+		auto isAreaSelecting = window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA, false);
+		auto isAreaSelectingFinished = window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_FINISHED, false);
+
+		if (isAreaSelecting)
+		{
+			hasControlled = false;
+		}
+		else if (isAreaSelectingFinished)
+		{
+			hasControlled = false;
+			
+			// select area
+
+			float xBegin = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_X);
+			float yBegin = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_Y);
+			float xEnd = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_X);
+			float yEnd = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_Y);
+
+			if (xBegin > xEnd)
+				std::swap(xBegin, xEnd);
+
+			if (yBegin > yEnd)
+				std::swap(yBegin, yEnd);
+
+			for (int i = 0; i < count; i++)
+			{
+				if (xBegin <= keys[i] && keys[i] <= xEnd && yBegin <= values[i] && values[i] <= yEnd)
+				{
+					kv_selected[i] = true;
+				}
+			}
+
 		}
 
 		auto dx = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::DELTA_X, 0.0f);

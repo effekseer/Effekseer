@@ -574,6 +574,8 @@ namespace efk
 			float* movedY,
 			int* changedType);
 
+		bool StartSelectingAreaFCurve();
+
 		// Drag
 		bool BeginDragDropSource();
 		bool SetDragDropPayload(const char* type, uint8_t* data, int size);

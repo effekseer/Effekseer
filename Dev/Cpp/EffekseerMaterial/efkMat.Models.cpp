@@ -302,7 +302,7 @@ std::shared_ptr<NodeProperty> Node::GetProperty(const std::string& name) const
 {
 	auto index = Parameter->GetPropertyIndex(name);
 	if (index < 0)
-		return nullptr; 
+		return nullptr;
 	return Properties[index];
 }
 
@@ -381,7 +381,7 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 										std::vector<std::shared_ptr<Link>> links,
 										const char* basePath,
 										bool doMoveZero,
-										bool doExportTextures)
+										bool doExportGlobal)
 {
 	// calculate left pos
 	Vector2DF upperLeftPos = Vector2DF(FLT_MAX, FLT_MAX);
@@ -522,7 +522,24 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 
 	root_.insert(std::make_pair("Links", picojson::value(links_)));
 
-	if (doExportTextures)
+	if (doExportGlobal)
+	{
+		picojson::array customdata;
+
+		for (size_t i = 0; i < CustomData.size(); i++)
+		{
+			picojson::object cd;
+			cd.insert(std::make_pair("Value1", picojson::value(CustomData[i].Values[0])));
+			cd.insert(std::make_pair("Value2", picojson::value(CustomData[i].Values[1])));
+			cd.insert(std::make_pair("Value3", picojson::value(CustomData[i].Values[2])));
+			cd.insert(std::make_pair("Value4", picojson::value(CustomData[i].Values[3])));
+			customdata.push_back(picojson::value(cd));
+		}
+
+		root_.insert(std::make_pair("CustomData", picojson::value(customdata)));
+	}
+
+	if (doExportGlobal)
 	{
 		picojson::array textures_;
 
@@ -553,7 +570,7 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 }
 
 void Material::LoadFromStrInternal(
-	const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, bool hasTextures)
+	const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, bool hasGlobal)
 {
 	picojson::value root_;
 	auto err = picojson::parse(root_, json);
@@ -698,7 +715,24 @@ void Material::LoadFromStrInternal(
 		}
 	}
 
-	if (hasTextures)
+	if (hasGlobal)
+	{
+		picojson::value customdata_obj = root_.get("CustomData");
+		if (customdata_obj.is<picojson::array>())
+		{
+			picojson::array customdata = customdata_obj.get<picojson::array>();
+
+			for (int i = 0; i < 2; i++)
+			{
+				CustomData[i].Values[0] = customdata[i].get("Value1").get<double>();
+				CustomData[i].Values[1] = customdata[i].get("Value2").get<double>();
+				CustomData[i].Values[2] = customdata[i].get("Value3").get<double>();
+				CustomData[i].Values[3] = customdata[i].get("Value4").get<double>();
+			}
+		}
+	}
+
+	if (hasGlobal)
 	{
 		picojson::value textures_obj = root_.get("Textures");
 
@@ -1239,7 +1273,7 @@ void Material::ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, Texture
 	commandManager_->Execute(command);
 }
 
-void Material::MakeDirty(std::shared_ptr<Node> node)
+void Material::MakeDirty(std::shared_ptr<Node> node, bool doesUpdateWarnings)
 {
 	node->isDirtied = true;
 
@@ -1249,8 +1283,13 @@ void Material::MakeDirty(std::shared_ptr<Node> node)
 
 		for (auto c : connected)
 		{
-			MakeDirty(c->Parent.lock());
+			MakeDirty(c->Parent.lock(), false);
 		}
+	}
+
+	if (doesUpdateWarnings)
+	{
+		UpdateWarnings();
 	}
 }
 
