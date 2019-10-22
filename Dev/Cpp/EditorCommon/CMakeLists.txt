@@ -16,13 +16,13 @@ if(WIN32)
 elseif(APPLE)
 
     list(APPEND srcs
-        Platform/Windows/PlatformMisc.mm
+        Platform/MacOSX/PlatformMisc.mm
     )
 
 else()
 
     list(APPEND srcs
-        Platform/Windows/PlatformMisc.cpp
+        Platform/Linux/PlatformMisc.cpp
     )
 
 endif()

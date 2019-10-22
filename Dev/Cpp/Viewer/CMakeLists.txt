@@ -58,7 +58,6 @@ list(APPEND cpps
 	3rdParty/Boxer/boxer_osx.mm
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
-	GUI/Platform/efk.Language_osx.mm
 )
 
 else()
