@@ -5,6 +5,7 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "gdiplus.lib")
 
+#include "Config.h"
 #include "Dialog/Dialog.h"
 
 #include "../IPC/IPC.h"
@@ -93,8 +94,14 @@ int main(int argc, char* argv[])
 
 	SetCurrentDir(GetExecutingDirectory().c_str());
 
-	int32_t width = 1280;
-	int32_t height = 720;
+	auto config = std::make_shared<EffekseerMaterial::Config>();
+	config->Load("config.EffekseerMaterial.json");
+
+	if (config->WindowWidth == 0)
+	{
+		config->WindowWidth = 1280;
+		config->WindowHeight = 720;
+	}
 
 #if _DEBUG
 	char* title = "EffekseerMaterialEditor - debug";
@@ -120,12 +127,18 @@ int main(int argc, char* argv[])
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-	glfwMainWindow = glfwCreateWindow(width, height, title, NULL, NULL);
+	glfwMainWindow = glfwCreateWindow(config->WindowWidth, config->WindowHeight, title, NULL, NULL);
+
+	if (config->WindowPosX >= 0)
+	{
+		glfwSetWindowPos(glfwMainWindow, config->WindowPosX, config->WindowPosY);
+	}
+
 	glfwMakeContextCurrent(glfwMainWindow);
 	glfwSwapInterval(1);
 
 	graphics = std::make_shared<EffekseerMaterial::Graphics>();
-	graphics->Initialize(width, height);
+	graphics->Initialize(config->WindowWidth, config->WindowHeight);
 	context = ar::Context::Create(graphics->GetManager());
 	auto arManager = graphics->GetManager();
 
@@ -148,7 +161,16 @@ int main(int argc, char* argv[])
 
 	ImGui::StyleColorsDark();
 
-	FILE* fp = fopen("resources/efkmat_lang_ja.json", "rb");
+	FILE* fp = nullptr;
+
+	if (config->Language == Effekseer::SystemLanguage::Japanese)
+	{
+		fp = fopen("resources/efkmat_lang_ja.json", "rb");
+	}
+	else
+	{
+		fp = fopen("resources/efkmat_lang_en.json", "rb");
+	}
 
 	if (fp != nullptr)
 	{
@@ -349,7 +371,7 @@ int main(int argc, char* argv[])
 								}
 								else
 								{
-									leftWidth= ImGui::GetColumnWidth(0);
+									leftWidth = ImGui::GetColumnWidth(0);
 								}
 
 								ImGui::BeginChild("###Left");
@@ -538,10 +560,21 @@ int main(int argc, char* argv[])
 
 	if (glfwMainWindow != nullptr)
 	{
+		int xpos, ypos, width, height = 0;
+		glfwGetWindowPos(glfwMainWindow, &xpos, &ypos);
+		glfwGetWindowSize(glfwMainWindow, &width, &height);
+
+		config->WindowWidth = width;
+		config->WindowHeight = height;
+		config->WindowPosX = xpos;
+		config->WindowPosY = ypos;
+
 		glfwDestroyWindow(glfwMainWindow);
 		glfwTerminate();
 	}
 
 	commandQueueToMaterialEditor_->Stop();
 	commandQueueFromMaterialEditor_->Stop();
+
+	config->Save("config.EffekseerMaterial.json");
 }

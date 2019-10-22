@@ -28,6 +28,7 @@ file(GLOB srcs
 
 file(GLOB hs 
     *.h
+    Dialog/*.h
     Graphics/*.h)
 
 file(GLOB srcs_third_imgui
@@ -94,14 +95,21 @@ target_link_directories(
     ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
 )
 
+target_link_libraries(
+    EffekseerMaterialEditor
+    PRIVATE
+    EditorCommon
+)
+
 if (WIN32)
 
 target_link_libraries(
     EffekseerMaterialEditor
+    PRIVATE
     EffekseerMaterial
-	effekseer # to use shader loader
-	effekseer_renderer_gl # to use shader loader
-	IPC
+    effekseer # to use shader loader
+    effekseer_renderer_gl # to use shader loader
+    IPC
     debug glfw3d
     optimized glfw3
     debug libglew32d
@@ -122,10 +130,11 @@ find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 
 target_link_libraries(
     EffekseerMaterialEditor
+    PRIVATE
     EffekseerMaterial
-	effekseer # to use shader loader
-	effekseer_renderer_gl # to use shader loader
-	IPC
+    effekseer # to use shader loader
+    effekseer_renderer_gl # to use shader loader
+    IPC
     glfw3
     AltseedRHI
     png16
