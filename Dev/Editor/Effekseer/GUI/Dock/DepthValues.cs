@@ -9,6 +9,7 @@ namespace Effekseer.GUI.Dock
 	class DepthValues : DockPanel
 	{
 		Component.ParameterList paramerterList = null;
+		Component.CopyAndPaste candp = null;
 
 		bool isFiestUpdate = true;
 
@@ -18,6 +19,7 @@ namespace Effekseer.GUI.Dock
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.DepthValues));
+			candp = new Component.CopyAndPaste("Depth", GetTargetObject);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
@@ -50,26 +52,27 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
+			candp.Update();
+
 			paramerterList.Update();
 		}
 
-		void Read()
+		object GetTargetObject()
 		{
 			if (Core.SelectedNode != null)
 			{
 				if (Core.SelectedNode is Data.Node)
 				{
-					paramerterList.SetValue(((Data.Node)Core.SelectedNode).DepthValues);
-				}
-				else
-				{
-					paramerterList.SetValue(null);
+					return ((Data.Node)Core.SelectedNode).DepthValues;
 				}
 			}
-			else
-			{
-				paramerterList.SetValue(null);
-			}
+			return null;
+		}
+
+
+		void Read()
+		{
+			paramerterList.SetValue(GetTargetObject());
 		}
 
 		void OnAfterLoad(object sender, EventArgs e)

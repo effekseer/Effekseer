@@ -33,6 +33,8 @@ namespace Effekseer.GUI.Dock
 
 	class CommonValues : DockPanel
 	{
+		Component.CopyAndPaste candp = null;
+
 		Component.ParameterList paramerterList_Common = null;
 		Component.ParameterList paramerterList_Node = null;
 
@@ -46,6 +48,8 @@ namespace Effekseer.GUI.Dock
 			paramerterList_Node.SetType(typeof(Data.NodeBase));
 			paramerterList_Common = new Component.ParameterList();
 			paramerterList_Common.SetType(typeof(Data.CommonValues));
+
+			candp = new Component.CopyAndPaste("BasicSettings", GetTargetObject);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;
@@ -79,9 +83,24 @@ namespace Effekseer.GUI.Dock
 			{
 			}
 
+			candp.Update();
+
 			paramerterList_Node.Update();
 			paramerterList_Common.Update();
 		}
+
+		object GetTargetObject()
+		{
+			if (Core.SelectedNode != null)
+			{
+				if (Core.SelectedNode is Data.Node)
+				{
+					return ((Data.Node)Core.SelectedNode).CommonValues;
+				}
+			}
+			return null;
+		}
+
 
 		void Read()
 		{
@@ -89,14 +108,7 @@ namespace Effekseer.GUI.Dock
 			{
 				paramerterList_Node.SetValue(new NodeBaseValues(Core.SelectedNode));
 
-				if (Core.SelectedNode is Data.Node)
-				{
-					paramerterList_Common.SetValue(((Data.Node)Core.SelectedNode).CommonValues);
-				}
-				else
-				{
-					paramerterList_Common.SetValue(null);
-				}
+				paramerterList_Common.SetValue(GetTargetObject());
 			}
 			else
 			{
