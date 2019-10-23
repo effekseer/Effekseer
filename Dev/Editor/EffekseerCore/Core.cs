@@ -829,7 +829,23 @@ namespace Effekseer
 					var rendererCommon = node["RendererCommonValues"];
 					var renderer = node["DrawingValues"];
 
-					if(rendererCommon != null)
+					if (renderer != null && rendererCommon != null)
+					{
+						if (renderer["Type"] != null && renderer["Type"].GetTextAsInt() == (int)Data.RendererValues.ParamaterType.Model)
+						{
+							if (renderer["Model"]["Lighting"] == null || renderer["Model"]["Lighting"].GetText() == "True")
+							{
+								if (node["Material"] != null)
+								{
+									rendererCommon.RemoveChild(node["Material"]);
+								}
+
+								rendererCommon.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.Lighting));
+							}
+						}
+					}
+
+					if (rendererCommon != null)
 					{
 						if (rendererCommon["Distortion"] != null && rendererCommon["Distortion"].GetText() == "True")
 						{
@@ -868,22 +884,6 @@ namespace Effekseer
 							if (renderer["Model"]["NormalTexture"] != null)
 							{
 								rendererCommon.AppendChild(doc.CreateTextElement("NormalTexture", renderer["Model"]["NormalTexture"].GetText()));
-							}
-						}
-					}
-
-					if (renderer != null && rendererCommon != null)
-					{
-						if (renderer["Type"] != null && renderer["Type"].GetTextAsInt() == (int)Data.RendererValues.ParamaterType.Model)
-						{
-							if (renderer["Model"]["Lighting"] == null || renderer["Model"]["Lighting"].GetText() == "True")
-							{
-								if (node["Material"] != null)
-								{
-									rendererCommon.RemoveChild(node["Material"]);
-								}
-
-								rendererCommon.AppendChild(doc.CreateTextElement("Material", (int)Data.RendererCommonValues.MaterialType.Lighting));
 							}
 						}
 					}
