@@ -151,85 +151,11 @@ protected:
 			parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard ||
 			parameter.Billboard == ::Effekseer::BillboardType::YAxisFixed)
 		{
-			const ::Effekseer::Matrix43& mat = instanceParameter.SRTMatrix43;
-			::Effekseer::Vector3D s;
-			::Effekseer::Matrix43 r;
-			::Effekseer::Vector3D t;
+			Effekseer::Vector3D s;
+			Effekseer::Vector3D R;
+			Effekseer::Vector3D F;
 
-			mat.GetSRT(s, r, t);
-
-			::Effekseer::Vector3D F;
-			::Effekseer::Vector3D R;
-			::Effekseer::Vector3D U;
-
-			if (parameter.Billboard == ::Effekseer::BillboardType::Billboard)
-			{
-				::Effekseer::Vector3D Up(0.0f, 1.0f, 0.0f);
-
-				::Effekseer::Vector3D::Normal(F, -m_renderer->GetCameraFrontDirection());
-
-				::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, Up, F));
-				::Effekseer::Vector3D::Normal(U, ::Effekseer::Vector3D::Cross(U, F, R));
-			}
-			else if (parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard)
-			{
-				::Effekseer::Vector3D Up(0.0f, 1.0f, 0.0f);
-
-				::Effekseer::Vector3D::Normal(F, -m_renderer->GetCameraFrontDirection());
-
-				::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, Up, F));
-				::Effekseer::Vector3D::Normal(U, ::Effekseer::Vector3D::Cross(U, F, R));
-
-				float c_zx = sqrt(1.0f - r.Value[2][1] * r.Value[2][1]);
-				float s_z = 0.0f;
-				float c_z = 0.0f;
-
-				if (fabsf(c_zx) > 0.05f)
-				{
-					s_z = -r.Value[0][1] / c_zx;
-					c_z = sqrt(1.0f - s_z * s_z);
-					if (r.Value[1][1] < 0.0f)
-						c_z = -c_z;
-				}
-				else
-				{
-					s_z = 0.0f;
-					c_z = 1.0f;
-				}
-
-				::Effekseer::Vector3D r_temp = R;
-				::Effekseer::Vector3D u_temp = U;
-
-				R.X = r_temp.X * c_z + u_temp.X * s_z;
-				R.Y = r_temp.Y * c_z + u_temp.Y * s_z;
-				R.Z = r_temp.Z * c_z + u_temp.Z * s_z;
-
-				U.X = u_temp.X * c_z - r_temp.X * s_z;
-				U.Y = u_temp.Y * c_z - r_temp.Y * s_z;
-				U.Z = u_temp.Z * c_z - r_temp.Z * s_z;
-			}
-			else if (parameter.Billboard == ::Effekseer::BillboardType::YAxisFixed)
-			{
-				U = ::Effekseer::Vector3D(r.Value[1][0], r.Value[1][1], r.Value[1][2]);
-
-				::Effekseer::Vector3D::Normal(F, -m_renderer->GetCameraFrontDirection());
-
-				::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, U, F));
-				::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D::Cross(F, R, U));
-			}
-
-			mat_rot.Value[0][0] = -R.X;
-			mat_rot.Value[0][1] = -R.Y;
-			mat_rot.Value[0][2] = -R.Z;
-			mat_rot.Value[1][0] = U.X;
-			mat_rot.Value[1][1] = U.Y;
-			mat_rot.Value[1][2] = U.Z;
-			mat_rot.Value[2][0] = F.X;
-			mat_rot.Value[2][1] = F.Y;
-			mat_rot.Value[2][2] = F.Z;
-			mat_rot.Value[3][0] = t.X;
-			mat_rot.Value[3][1] = t.Y;
-			mat_rot.Value[3][2] = t.Z;
+			CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection());
 
 			ApplyDepthParameters(mat_rot,
 								 m_renderer->GetCameraFrontDirection(),

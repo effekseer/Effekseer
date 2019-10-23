@@ -283,6 +283,13 @@ template <> struct StrideView<SimpleVertexDX9>
 	}
 };
 
+void CalcBillboard(::Effekseer::BillboardType billboardType,
+				   Effekseer::Matrix43& dst,
+				   ::Effekseer::Vector3D& s,
+				   ::Effekseer::Vector3D& R,
+				   ::Effekseer::Vector3D& F,
+				   const ::Effekseer::Matrix43& src,
+				   const ::Effekseer::Vector3D& frontDirection);
 
 /**
 	@brief Spline generator

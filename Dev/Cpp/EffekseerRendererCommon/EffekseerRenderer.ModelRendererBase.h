@@ -120,102 +120,7 @@ public:
 		::Effekseer::BillboardType btype = parameter.Billboard;
 		Effekseer::Matrix44 mat44;
 
-		if (btype == ::Effekseer::BillboardType::Billboard ||
-			btype == ::Effekseer::BillboardType::RotatedBillboard ||
-			btype == ::Effekseer::BillboardType::YAxisFixed)
-		{
-			const ::Effekseer::Matrix43& mat = instanceParameter.SRTMatrix43;
-			::Effekseer::Vector3D s;
-			::Effekseer::Matrix43 r;
-			::Effekseer::Vector3D t;
-			mat.GetSRT(s, r, t);
-
-			::Effekseer::Vector3D F;
-			::Effekseer::Vector3D R;
-			::Effekseer::Vector3D U;
-
-			if (btype == ::Effekseer::BillboardType::Billboard)
-			{
-				::Effekseer::Vector3D Up(0.0f, 1.0f, 0.0f);
-
-				::Effekseer::Vector3D::Normal(F, -renderer->GetCameraFrontDirection());
-				::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, Up, F));
-				::Effekseer::Vector3D::Normal(U, ::Effekseer::Vector3D::Cross(U, F, R));
-			}
-			else if (btype == ::Effekseer::BillboardType::RotatedBillboard)
-			{
-				::Effekseer::Vector3D Up(0.0f, 1.0f, 0.0f);
-
-				::Effekseer::Vector3D::Normal(F, -renderer->GetCameraFrontDirection());
-
-				::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, Up, F));
-				::Effekseer::Vector3D::Normal(U, ::Effekseer::Vector3D::Cross(U, F, R));
-
-				float c_zx = sqrt(1.0f - r.Value[2][1] * r.Value[2][1]);
-				float s_z = 0.0f;
-				float c_z = 0.0f;
-
-				if (fabsf(c_zx) > 0.05f)
-				{
-					s_z = -r.Value[0][1] / c_zx;
-					c_z = sqrt(1.0f - s_z * s_z);
-					if (r.Value[1][1] < 0.0f) c_z = -c_z;
-				}
-				else
-				{
-					s_z = 0.0f;
-					c_z = 1.0f;
-				}
-
-				::Effekseer::Vector3D r_temp = R;
-				::Effekseer::Vector3D u_temp = U;
-
-				R.X = r_temp.X * c_z + u_temp.X * s_z;
-				R.Y = r_temp.Y * c_z + u_temp.Y * s_z;
-				R.Z = r_temp.Z * c_z + u_temp.Z * s_z;
-
-				U.X = u_temp.X * c_z - r_temp.X * s_z;
-				U.Y = u_temp.Y * c_z - r_temp.Y * s_z;
-				U.Z = u_temp.Z * c_z - r_temp.Z * s_z;
-			}
-			else if (btype == ::Effekseer::BillboardType::YAxisFixed)
-			{
-				U = ::Effekseer::Vector3D(r.Value[1][0], r.Value[1][1], r.Value[1][2]);
-
-				::Effekseer::Vector3D::Normal(F, -renderer->GetCameraFrontDirection());
-
-				::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, U, F));
-				::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D::Cross(F, R, U));
-			}
-
-			::Effekseer::Matrix43 mat_rot;
-
-			mat_rot.Value[0][0] = -R.X;
-			mat_rot.Value[0][1] = -R.Y;
-			mat_rot.Value[0][2] = -R.Z;
-			mat_rot.Value[1][0] = U.X;
-			mat_rot.Value[1][1] = U.Y;
-			mat_rot.Value[1][2] = U.Z;
-			mat_rot.Value[2][0] = F.X;
-			mat_rot.Value[2][1] = F.Y;
-			mat_rot.Value[2][2] = F.Z;
-			mat_rot.Value[3][0] = t.X;
-			mat_rot.Value[3][1] = t.Y;
-			mat_rot.Value[3][2] = t.Z;
-
-			::Effekseer::Matrix43 mat_scale;
-			mat_scale.Scaling(s.X, s.Y, s.Z);
-			::Effekseer::Matrix43::Multiple(mat_rot, mat_scale, mat_rot);
-
-			for (int32_t r_ = 0; r_ < 4; r_++)
-			{
-				for (int32_t c_ = 0; c_ < 3; c_++)
-				{
-					mat44.Values[r_][c_] = mat_rot.Value[r_][c_];
-				}
-			}
-		}
-		else if (btype == ::Effekseer::BillboardType::Fixed)
+		if (btype == ::Effekseer::BillboardType::Fixed)
 		{
 			for (int32_t r_ = 0; r_ < 4; r_++)
 			{
@@ -225,7 +130,28 @@ public:
 				}
 			}
 		}
+		else
+		{
+			Effekseer::Matrix43 mat43;
+			Effekseer::Vector3D s;
+			Effekseer::Vector3D R;
+			Effekseer::Vector3D F;
 
+			CalcBillboard(btype, mat43, s ,R, F, instanceParameter.SRTMatrix43, renderer->GetCameraFrontDirection());
+
+			::Effekseer::Matrix43 mat_scale;
+			mat_scale.Scaling(s.X, s.Y, s.Z);
+			::Effekseer::Matrix43::Multiple(mat43, mat_scale, mat43);
+
+			for (int32_t r_ = 0; r_ < 4; r_++)
+			{
+				for (int32_t c_ = 0; c_ < 3; c_++)
+				{
+					mat44.Values[r_][c_] = mat43.Value[r_][c_];
+				}
+			}
+		}
+		
 		if (parameter.Magnification != 1.0f)
 		{
 			Effekseer::Matrix44 mat_scale;

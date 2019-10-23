@@ -2,9 +2,97 @@
 
 #include "EffekseerRenderer.CommonUtils.h"
 
-
 namespace EffekseerRenderer
 {
+
+void CalcBillboard(::Effekseer::BillboardType billboardType,
+				   Effekseer::Matrix43& dst,
+				   ::Effekseer::Vector3D& s,
+				   ::Effekseer::Vector3D& R,
+				   ::Effekseer::Vector3D& F,
+				   const ::Effekseer::Matrix43& src,
+				   const ::Effekseer::Vector3D& frontDirection)
+{
+	auto frontDir = frontDirection;
+
+	if (billboardType == ::Effekseer::BillboardType::Billboard || billboardType == ::Effekseer::BillboardType::RotatedBillboard ||
+		billboardType == ::Effekseer::BillboardType::YAxisFixed)
+	{
+		::Effekseer::Matrix43 r;
+		::Effekseer::Vector3D t;
+		src.GetSRT(s, r, t);
+
+		::Effekseer::Vector3D U;
+
+		if (billboardType == ::Effekseer::BillboardType::Billboard)
+		{
+			::Effekseer::Vector3D Up(0.0f, 1.0f, 0.0f);
+
+			::Effekseer::Vector3D::Normal(F, -frontDir);
+			::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, Up, F));
+			::Effekseer::Vector3D::Normal(U, ::Effekseer::Vector3D::Cross(U, F, R));
+		}
+		else if (billboardType == ::Effekseer::BillboardType::RotatedBillboard)
+		{
+			::Effekseer::Vector3D Up(0.0f, 1.0f, 0.0f);
+
+			::Effekseer::Vector3D::Normal(F, -frontDir);
+
+			::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, Up, F));
+			::Effekseer::Vector3D::Normal(U, ::Effekseer::Vector3D::Cross(U, F, R));
+
+			float c_zx = sqrt(1.0f - r.Value[2][1] * r.Value[2][1]);
+			float s_z = 0.0f;
+			float c_z = 0.0f;
+
+			if (fabsf(c_zx) > 0.05f)
+			{
+				s_z = -r.Value[0][1] / c_zx;
+				c_z = sqrt(1.0f - s_z * s_z);
+				if (r.Value[1][1] < 0.0f)
+					c_z = -c_z;
+			}
+			else
+			{
+				s_z = 0.0f;
+				c_z = 1.0f;
+			}
+
+			::Effekseer::Vector3D r_temp = R;
+			::Effekseer::Vector3D u_temp = U;
+
+			R.X = r_temp.X * c_z + u_temp.X * s_z;
+			R.Y = r_temp.Y * c_z + u_temp.Y * s_z;
+			R.Z = r_temp.Z * c_z + u_temp.Z * s_z;
+
+			U.X = u_temp.X * c_z - r_temp.X * s_z;
+			U.Y = u_temp.Y * c_z - r_temp.Y * s_z;
+			U.Z = u_temp.Z * c_z - r_temp.Z * s_z;
+		}
+		else if (billboardType == ::Effekseer::BillboardType::YAxisFixed)
+		{
+			U = ::Effekseer::Vector3D(r.Value[1][0], r.Value[1][1], r.Value[1][2]);
+
+			::Effekseer::Vector3D::Normal(F, -frontDir);
+
+			::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, U, F));
+			::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D::Cross(F, R, U));
+		}
+
+		dst.Value[0][0] = -R.X;
+		dst.Value[0][1] = -R.Y;
+		dst.Value[0][2] = -R.Z;
+		dst.Value[1][0] = U.X;
+		dst.Value[1][1] = U.Y;
+		dst.Value[1][2] = U.Z;
+		dst.Value[2][0] = F.X;
+		dst.Value[2][1] = F.Y;
+		dst.Value[2][2] = F.Z;
+		dst.Value[3][0] = t.X;
+		dst.Value[3][1] = t.Y;
+		dst.Value[3][2] = t.Z;
+	}
+}
 
 void SplineGenerator::AddVertex(const Effekseer::Vector3D& v)
 {
@@ -359,4 +447,4 @@ void ApplyDepthParameters(::Effekseer::Matrix44& mat,
 	}
 }
 
-}
+} // namespace EffekseerRenderer
