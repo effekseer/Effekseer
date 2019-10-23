@@ -44,6 +44,9 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single10Test(u"Ribbon_Parameters1", "Ribbon_Parameters1");
 	single10Test(u"Ring_Parameters1", "Ring_Parameters1");
 	single10Test(u"Track_Parameters1", "Track_Parameters1");
+	single10Test(u"Sprite_Parameters1", "Sprite_Parameters1");
+	single10Test(u"Distortions1", "Distortions1");
+
 	single14Test(u"Model_Parameters1", "Model_Parameters1");
 }
 
