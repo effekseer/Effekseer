@@ -124,7 +124,7 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 
 	renderer_ = CreateRenderer();
 
-	auto position = ::Effekseer::Vector3D(10.0f, 5.0f, 10.0f) / 1.0f;
+	auto position = ::Effekseer::Vector3D(10.0f, 5.0f, 10.0f) / 2.0f;
 	auto focus = ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f);
 
 	renderer_->SetCameraMatrix(::Effekseer::Matrix44().LookAtRH(position, focus, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));

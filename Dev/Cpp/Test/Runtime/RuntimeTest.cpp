@@ -27,11 +27,24 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		platform->StopAllEffects();
 	};
 
+		auto single14Test = [&](const char16_t* name, const char* savename) -> void {
+		srand(0);
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/14/" + name + u".efk").c_str());
+
+		for (size_t i = 0; i < 30; i++)
+		{
+			platform->Update();
+		}
+		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
+		platform->StopAllEffects();
+	};
+
 	single10Test(u"SimpleLaser", "SimpleLaser");
 	single10Test(u"FCurve_Parameters1", "FCurve_Parameters1");
 	single10Test(u"Ribbon_Parameters1", "Ribbon_Parameters1");
 	single10Test(u"Ring_Parameters1", "Ring_Parameters1");
 	single10Test(u"Track_Parameters1", "Track_Parameters1");
+	single14Test(u"Model_Parameters1", "Model_Parameters1");
 }
 
 void BasicRuntimeDeviceLostTest()
