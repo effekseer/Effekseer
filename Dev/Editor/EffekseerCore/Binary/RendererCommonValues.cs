@@ -18,7 +18,7 @@ namespace Effekseer.Binary
 
 			data.Add(((int)value.Material.Value).GetBytes());
 
-			Func<Data.Value.PathForImage, int, Dictionary<string,int>, int> getColorTexIDAndStoreSize = (Data.Value.PathForImage image, int number, Dictionary<string, int> texAndInd) =>
+			Func<Data.Value.PathForImage, int, Dictionary<string,int>, int> getTexIDAndStoreSize = (Data.Value.PathForImage image, int number, Dictionary<string, int> texAndInd) =>
 			{
 				var tempTexInfo = new TextureInformation();
 
@@ -40,7 +40,7 @@ namespace Effekseer.Binary
 			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default)
 			{
 				// texture1
-				data.Add(getColorTexIDAndStoreSize(value.ColorTexture, 1, texture_and_index).GetBytes());
+				data.Add(getTexIDAndStoreSize(value.ColorTexture, 1, texture_and_index).GetBytes());
 
 				// texture2
 				data.Add((-1).GetBytes());
@@ -48,7 +48,7 @@ namespace Effekseer.Binary
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion)
 			{
 				// texture1
-				data.Add(getColorTexIDAndStoreSize(value.ColorTexture, 1, distortionTexture_and_index).GetBytes());
+				data.Add(getTexIDAndStoreSize(value.ColorTexture, 1, distortionTexture_and_index).GetBytes());
 
 				// texture2
 				data.Add((-1).GetBytes());
@@ -56,10 +56,10 @@ namespace Effekseer.Binary
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
 			{
 				// texture1
-				data.Add(getColorTexIDAndStoreSize(value.ColorTexture, 1, texture_and_index).GetBytes());
+				data.Add(getTexIDAndStoreSize(value.ColorTexture, 1, texture_and_index).GetBytes());
 
 				// texture2
-				data.Add(getColorTexIDAndStoreSize(value.ColorTexture, 2, normalTexture_and_index).GetBytes());
+				data.Add(getTexIDAndStoreSize(value.NormalTexture, 2, normalTexture_and_index).GetBytes());
 			}
 			else
 			{
@@ -87,12 +87,12 @@ namespace Effekseer.Binary
 					if (texture.Item2.Type == TextureType.Value)
 					{
 						data.Add((1).GetBytes());
-						data.Add(getColorTexIDAndStoreSize(texture_, texture.Item2.Priority, normalTexture_and_index).GetBytes());
+						data.Add(getTexIDAndStoreSize(texture_, texture.Item2.Priority, normalTexture_and_index).GetBytes());
 					}
 					else
 					{
 						data.Add((0).GetBytes());
-						data.Add(getColorTexIDAndStoreSize(texture_, texture.Item2.Priority, texture_and_index).GetBytes());
+						data.Add(getTexIDAndStoreSize(texture_, texture.Item2.Priority, texture_and_index).GetBytes());
 
 					}
 				}
