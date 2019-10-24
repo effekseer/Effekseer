@@ -565,6 +565,63 @@ public:
 	}
 };
 
+class NodeCeil : public NodeParameter
+{
+public:
+	NodeCeil()
+	{
+		Type = NodeType::Ceil;
+		TypeName = "Ceil";
+		Group = std::vector<std::string>{"Math"};
+
+		InitializeAstOutputTypeIn1Out1();
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return GetOutputTypeIn1Out1(inputTypes);
+	}
+};
+
+class NodeFloor : public NodeParameter
+{
+public:
+	NodeFloor()
+	{
+		Type = NodeType::Floor;
+		TypeName = "Floor";
+		Group = std::vector<std::string>{"Math"};
+
+		InitializeAstOutputTypeIn1Out1();
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return GetOutputTypeIn1Out1(inputTypes);
+	}
+};
+
+class NodeFrac : public NodeParameter
+{
+public:
+	NodeFrac()
+	{
+		Type = NodeType::Frac;
+		TypeName = "Frac";
+		Group = std::vector<std::string>{"Math"};
+
+		InitializeAstOutputTypeIn1Out1();
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return GetOutputTypeIn1Out1(inputTypes);
+	}
+};
+
 class NodeTextureCoordinate : public NodeParameter
 {
 public:

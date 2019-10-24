@@ -15,6 +15,9 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeMultiply>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeDivide>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeFmod>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeCeil>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeFloor>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeFrac>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeAbs>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeComponentMask>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeAppendVector>>());

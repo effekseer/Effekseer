@@ -681,6 +681,21 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		exportIn2Out2Param2("mod", ",");
 	}
 
+	if (node->Target->Parameter->Type == NodeType::Ceil)
+	{
+		exportIn1Out1("ceil");
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Floor)
+	{
+		exportIn1Out1("floor");
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Frac)
+	{
+		exportIn1Out1("fract");
+	}
+
 	if (node->Target->Parameter->Type == NodeType::TextureCoordinate)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="

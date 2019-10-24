@@ -91,6 +91,11 @@ enum class NodeType
 	Multiply,
 	Divide,
 	FMod,
+
+	Ceil,
+	Floor,
+	Frac,
+
 	OneMinus,
 	ComponentMask,
 	AppendVector,
