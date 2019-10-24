@@ -1,84 +1,54 @@
 ﻿
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 #include "Effekseer.InstanceChunk.h"
 #include <assert.h>
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-InstanceChunk::InstanceChunk()
-{
-	std::fill( m_instancesAlive.begin(), m_instancesAlive.end(), false );
-}
+InstanceChunk::InstanceChunk() { std::fill(instancesAlive_.begin(), instancesAlive_.end(), false); }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-InstanceChunk::~InstanceChunk()
-{
-}
+InstanceChunk::~InstanceChunk() {}
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void InstanceChunk::UpdateInstances( float deltaFrame )
+void InstanceChunk::UpdateInstances(float deltaFrame)
 {
-	for( int32_t i = 0; i < InstancesOfChunk; i++ )
+	for (int32_t i = 0; i < InstancesOfChunk; i++)
 	{
-		if( m_instancesAlive[i] )
+		if (instancesAlive_[i])
 		{
-			Instance* instance = reinterpret_cast<Instance*>( m_instances[i] );
+			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
 
-			if( instance->m_State == INSTANCE_STATE_ACTIVE )
+			if (instance->m_State == INSTANCE_STATE_ACTIVE)
 			{
-				instance->Update( deltaFrame, true );
+				instance->Update(deltaFrame, true);
 			}
-			else if( instance->m_State == INSTANCE_STATE_REMOVING )
+			else if (instance->m_State == INSTANCE_STATE_REMOVING)
 			{
-				// 削除中処理
+				// start to remove
 				instance->m_State = INSTANCE_STATE_REMOVED;
 			}
-			else if( instance->m_State == INSTANCE_STATE_REMOVED )
+			else if (instance->m_State == INSTANCE_STATE_REMOVED)
 			{
 				instance->~Instance();
-				m_instancesAlive[i] = false;
-				m_aliveCount--;
+				instancesAlive_[i] = false;
+				aliveCount_--;
 			}
 		}
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Instance* InstanceChunk::CreateInstance( Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup )
+Instance* InstanceChunk::CreateInstance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
 {
-	for( int32_t i = 0; i < InstancesOfChunk; i++ )
+	for (int32_t i = 0; i < InstancesOfChunk; i++)
 	{
-		if( !m_instancesAlive[i] )
+		if (!instancesAlive_[i])
 		{
-			m_instancesAlive[i] = true;
-			m_aliveCount++;
-			return new( m_instances[i] ) Instance( pManager, pEffectNode, pContainer, pGroup );
+			instancesAlive_[i] = true;
+			aliveCount_++;
+			return new (instances_[i]) Instance(pManager, pEffectNode, pContainer, pGroup);
 		}
 	}
 	return nullptr;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+} // namespace Effekseer

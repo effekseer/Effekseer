@@ -165,8 +165,8 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	: m_pManager(pManager)
 	, m_pEffectNode((EffectNodeImplemented*)pEffectNode)
 	, m_pContainer(pContainer)
-	, m_ownGroup(pGroup)
-	, m_childrenGroups(nullptr)
+	, ownGroup_(pGroup)
+	, childrenGroups_(nullptr)
 	, m_pParent(nullptr)
 	, m_State(INSTANCE_STATE_ACTIVE)
 	, m_LivedTime(0)
@@ -199,7 +199,7 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 		else
 		{
 			group = childContainer->CreateInstanceGroup();
-			m_childrenGroups = group;
+			childrenGroups_ = group;
 		}
 	}
 }
@@ -235,7 +235,7 @@ void Instance::GenerateChildrenInRequired(float currentTime)
 
 	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
 
-	InstanceGroup* group = m_childrenGroups;
+	InstanceGroup* group = childrenGroups_;
 
 	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 	{
@@ -945,9 +945,9 @@ void Instance::Update( float deltaFrame, bool shown )
 		GenerateChildrenInRequired(originalTime + deltaFrame);
 	}
 
-	for (InstanceGroup* group = m_childrenGroups; group != nullptr; group = group->NextUsedByInstance)
+	for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
 	{
-		group->SetParentMatrix( m_GlobalMatrix43 );
+		group->SetParentMatrix(m_GlobalMatrix43);
 	}
 
 	// check whether killed?
@@ -977,7 +977,7 @@ void Instance::Update( float deltaFrame, bool shown )
 		if( !killed && m_pEffectNode->CommonValues.RemoveWhenChildrenIsExtinct )
 		{
 			int maxcreate_count = 0;
-			InstanceGroup* group = m_childrenGroups;
+			InstanceGroup* group = childrenGroups_;
 
 			for (int i = 0; i < m_pEffectNode->GetChildrenCount(); i++, group = group->NextUsedByInstance)
 			{
@@ -1301,7 +1301,7 @@ void Instance::CalculateParentMatrix( float deltaFrame )
 
 		if( tType != BindType::WhenCreating && rType != BindType::WhenCreating && sType != BindType::WhenCreating )
 		{
-			m_ParentMatrix = m_ownGroup->GetParentMatrix();
+			m_ParentMatrix = ownGroup_->GetParentMatrix();
 		}
 		else if( tType == BindType::WhenCreating && rType == BindType::WhenCreating && sType == BindType::WhenCreating )
 		{
@@ -1313,13 +1313,13 @@ void Instance::CalculateParentMatrix( float deltaFrame )
 			Matrix43 r;
 
 			if( tType == BindType::WhenCreating ) m_ParentMatrix.GetTranslation( t );
-			else t = m_ownGroup->GetParentTranslation();
+			else t = ownGroup_->GetParentTranslation();
 
 			if( rType == BindType::WhenCreating ) m_ParentMatrix.GetRotation( r );
-			else r = m_ownGroup->GetParentRotation();
+			else r = ownGroup_->GetParentRotation();
 
 			if( sType == BindType::WhenCreating ) m_ParentMatrix.GetScale( s );
-			else s = m_ownGroup->GetParentScale();
+			else s = ownGroup_->GetParentScale();
 
 			m_ParentMatrix.SetSRT( s, r, t );
 		}
@@ -1417,7 +1417,7 @@ void Instance::Kill()
 {
 	if( m_State == INSTANCE_STATE_ACTIVE )
 	{
-		for( InstanceGroup* group = m_childrenGroups; group != NULL; group = group->NextUsedByInstance )
+		for( InstanceGroup* group = childrenGroups_; group != NULL; group = group->NextUsedByInstance )
 		{
 			group->IsReferencedFromInstance = false;
 		}

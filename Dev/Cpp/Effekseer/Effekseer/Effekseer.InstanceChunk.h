@@ -1,27 +1,18 @@
 ﻿
-#ifndef	__EFFEKSEER_INSTANCECHUNK_H__
-#define	__EFFEKSEER_INSTANCECHUNK_H__
+#ifndef __EFFEKSEER_INSTANCECHUNK_H__
+#define __EFFEKSEER_INSTANCECHUNK_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
-#include <array>
 #include "Effekseer.Base.h"
 #include "Effekseer.Instance.h"
+#include <array>
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace Effekseer
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 
 /**
-	@brief	インスタンス共通部分
+	@brief	a group of allocated instances
 	@note
-	生成されたインスタンスの全てから参照できる部分
+	instances are allocated as a group because of memory optimization
 */
 class alignas(32) InstanceChunk
 {
@@ -29,27 +20,27 @@ public:
 	static const int32_t InstancesOfChunk = 16;
 
 	InstanceChunk();
-	
+
 	~InstanceChunk();
 
-	void UpdateInstances( float deltaFrame );
+	void UpdateInstances(float deltaFrame);
 
-	Instance* CreateInstance( Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup );
+	Instance* CreateInstance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 
-	int32_t GetAliveCount() const { return m_aliveCount; }
+	int32_t GetAliveCount() const { return aliveCount_; }
 
-	bool IsInstanceCreatable() const { return m_aliveCount < InstancesOfChunk; }
+	bool IsInstanceCreatable() const { return aliveCount_ < InstancesOfChunk; }
 
 private:
-	std::array<uint8_t[sizeof(Instance)], InstancesOfChunk> m_instances;
-	std::array<bool, InstancesOfChunk> m_instancesAlive;
-	int32_t m_aliveCount = 0;
+	std::array<uint8_t[sizeof(Instance)], InstancesOfChunk> instances_;
+
+	//! flags whether are instances alive
+	std::array<bool, InstancesOfChunk> instancesAlive_;
+
+	//! the number of living instances
+	int32_t aliveCount_ = 0;
 };
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-}
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-#endif	// __EFFEKSEER_INSTANCECHUNK_H__
+
+} // namespace Effekseer
+
+#endif // __EFFEKSEER_INSTANCECHUNK_H__

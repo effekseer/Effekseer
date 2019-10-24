@@ -139,19 +139,23 @@ private:
 	// 確保済みインスタンス数
 	int m_instance_max;
 
-	// 確保済みインスタンスバッファ
-	std::unique_ptr<InstanceChunk[]>		m_reservedChunksBuffer;
-	std::unique_ptr<uint8_t[]>				m_reservedGroupBuffer;
-	std::unique_ptr<uint8_t[]>				m_reservedContainerBuffer;
-	// プールされたインスタンス
-	std::queue<InstanceChunk*>				m_pooledChunks;
-	std::queue<InstanceGroup*>				m_pooledGroups;
-	std::queue<InstanceContainer*>			m_pooledContainers;
+	// buffers which is allocated while initializing
+	// 初期化中に確保されたバッファ
+	std::unique_ptr<InstanceChunk[]> reservedChunksBuffer_;
+	std::unique_ptr<uint8_t[]> reservedGroupBuffer_;
+	std::unique_ptr<uint8_t[]> reservedContainerBuffer_;
 
+	// pooled instances. Thease are not used and waiting to be used.
+	// プールされたインスタンス。使用されておらず、使用されてるのを待っている。
+	std::queue<InstanceChunk*> pooledChunks_;
+	std::queue<InstanceGroup*> pooledGroups_;
+	std::queue<InstanceContainer*> pooledContainers_;
+
+	// instance chunks by generations
 	// 世代ごとのインスタンスチャンク
 	static const size_t GenerationsMax = 20;
-	std::array<std::vector<InstanceChunk*>, GenerationsMax> m_instanceChunks;
-	std::array<int32_t, GenerationsMax> m_creatableChunkOffsets;
+	std::array<std::vector<InstanceChunk*>, GenerationsMax> instanceChunks_;
+	std::array<int32_t, GenerationsMax> creatableChunkOffsets_;
 
 	// 再生中オブジェクトの組み合わせ集合体
 	std::map<Handle,DrawSet>	m_DrawSets;
@@ -438,7 +442,7 @@ public:
 
 	int32_t GetInstanceCount( Handle handle ) override;
 
-	int32_t GetTotalInstanceCount() override;
+	int32_t GetTotalInstanceCount() const override;
 
 	/**
 		@brief	エフェクトのインスタンスに設定されている行列を取得する。
@@ -572,7 +576,7 @@ private:
 	/**
 		@brief	残りの確保したインスタンス数を取得する。
 	*/
-	virtual int32_t GetRestInstancesCount() const override { return (int32_t)m_pooledChunks.size() * InstanceChunk::InstancesOfChunk; }
+	virtual int32_t GetRestInstancesCount() const override { return (int32_t)pooledChunks_.size() * InstanceChunk::InstancesOfChunk; }
 
 	/**
 		@brief	start reload

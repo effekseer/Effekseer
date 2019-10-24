@@ -72,11 +72,13 @@ public:
 	// コンテナ
 	InstanceContainer*	m_pContainer;
 
+	// a group which the instance belongs to
 	// 自分が所属するグループ
-	InstanceGroup*	m_ownGroup;
+	InstanceGroup* ownGroup_;
 
+	// a head of list in children group
 	// 子グループの連結リストの先頭
-	InstanceGroup*	m_childrenGroups;
+	InstanceGroup* childrenGroups_;
 
 	// 親
 	Instance*	m_pParent;

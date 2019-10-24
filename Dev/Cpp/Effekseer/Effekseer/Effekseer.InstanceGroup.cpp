@@ -32,7 +32,7 @@ InstanceGroup::InstanceGroup( Manager* manager, EffectNode* effectNode, Instance
 	, NextUsedByInstance	( NULL )
 	, NextUsedByContainer	( NULL )
 {
-	m_ParentMatrix.Indentity();
+	parentMatrix_.Indentity();
 }
 
 //----------------------------------------------------------------------------------
@@ -85,13 +85,13 @@ int InstanceGroup::GetInstanceCount() const
 //----------------------------------------------------------------------------------
 void InstanceGroup::Update( float deltaFrame, bool shown )
 {
-	for( auto it = m_instances.begin(); it != m_instances.end(); )
+	for (auto it = m_instances.begin(); it != m_instances.end();)
 	{
 		auto instance = *it;
-	
-		if( instance->m_State != INSTANCE_STATE_ACTIVE )
+
+		if (instance->m_State != INSTANCE_STATE_ACTIVE)
 		{
-			it = m_instances.erase( it );
+			it = m_instances.erase(it);
 			m_global->DecInstanceCount();
 		}
 		else
@@ -117,10 +117,7 @@ void InstanceGroup::SetBaseMatrix( const Matrix43& mat )
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void InstanceGroup::SetParentMatrix( const Matrix43& mat )
+void InstanceGroup::SetParentMatrix(const Matrix43& mat)
 {
 	BindType tType = m_effectNode->CommonValues.TranslationBindType;
 	BindType rType = m_effectNode->CommonValues.RotationBindType;
@@ -128,49 +125,49 @@ void InstanceGroup::SetParentMatrix( const Matrix43& mat )
 
 	auto rootGroup = m_global->GetRootContainer()->GetFirstGroup();
 
-	if( tType == BindType::Always && rType == BindType::Always && sType == BindType::Always )
+	if (tType == BindType::Always && rType == BindType::Always && sType == BindType::Always)
 	{
-		m_ParentMatrix = mat;
+		parentMatrix_ = mat;
 	}
-	else if( tType == BindType::NotBind_Root && rType == BindType::NotBind_Root && sType == BindType::NotBind_Root )
+	else if (tType == BindType::NotBind_Root && rType == BindType::NotBind_Root && sType == BindType::NotBind_Root)
 	{
-		m_ParentMatrix = rootGroup->GetParentMatrix();
+		parentMatrix_ = rootGroup->GetParentMatrix();
 	}
-	else if( tType == BindType::WhenCreating && rType == BindType::WhenCreating && sType == BindType::WhenCreating )
+	else if (tType == BindType::WhenCreating && rType == BindType::WhenCreating && sType == BindType::WhenCreating)
 	{
-		// 何もしない
+		// don't do anything
 	}
 	else
 	{
 		Vector3D s, t;
 		Matrix43 r;
-		mat.GetSRT( s, r, t );
-		
-		if( tType == BindType::Always )
+		mat.GetSRT(s, r, t);
+
+		if (tType == BindType::Always)
 		{
-			m_ParentTranslation = t;
+			parentTranslation_ = t;
 		}
-		else if( tType == BindType::NotBind_Root )
+		else if (tType == BindType::NotBind_Root)
 		{
-			m_ParentTranslation = rootGroup->GetParentTranslation();
+			parentTranslation_ = rootGroup->GetParentTranslation();
 		}
 
-		if( rType == BindType::Always )
+		if (rType == BindType::Always)
 		{
-			m_ParentRotation = r;
+			parentRotation_ = r;
 		}
-		else if( rType == BindType::NotBind_Root )
+		else if (rType == BindType::NotBind_Root)
 		{
-			m_ParentRotation = rootGroup->GetParentRotation();
+			parentRotation_ = rootGroup->GetParentRotation();
 		}
 
-		if( sType == BindType::Always )
+		if (sType == BindType::Always)
 		{
-			m_ParentScale = s;
+			parentScale_ = s;
 		}
-		else if( sType == BindType::NotBind_Root )
+		else if (sType == BindType::NotBind_Root)
 		{
-			m_ParentScale = rootGroup->GetParentScale();
+			parentScale_ = rootGroup->GetParentScale();
 		}
 	}
 }

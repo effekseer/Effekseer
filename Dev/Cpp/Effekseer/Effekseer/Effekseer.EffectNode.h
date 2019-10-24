@@ -1103,8 +1103,8 @@ protected:
 	// 所属しているパラメーター
 	Effect*	m_effect;
 	
-	// ノードツリーの世代
-	int m_generation;
+	//! a generation in the node tree
+	int generation_;
 
 	// 子ノード
 	std::vector<EffectNodeImplemented*>	m_Nodes;

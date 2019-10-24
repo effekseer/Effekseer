@@ -35,10 +35,10 @@ private:
 	InstanceGlobal*		m_global;
 	int32_t				m_time;
 
-	Matrix43			m_ParentMatrix;
-	Matrix43			m_ParentRotation;
-	Vector3D			m_ParentTranslation;
-	Vector3D			m_ParentScale;
+	Matrix43 parentMatrix_;
+	Matrix43 parentRotation_;
+	Vector3D parentTranslation_;
+	Vector3D parentScale_;
 
 	// インスタンスの実体
 	IntrusiveList<Instance> m_instances;
@@ -96,10 +96,10 @@ public:
 
 	InstanceGlobal* GetRootInstance() const { return m_global; }
 
-	const Matrix43& GetParentMatrix() const { return m_ParentMatrix; }
-	const Vector3D& GetParentTranslation() const { return m_ParentTranslation; }
-	const Matrix43& GetParentRotation() const { return m_ParentRotation; }
-	const Vector3D& GetParentScale() const { return m_ParentScale; }
+	const Matrix43& GetParentMatrix() const { return parentMatrix_; }
+	const Vector3D& GetParentTranslation() const { return parentTranslation_; }
+	const Matrix43& GetParentRotation() const { return parentRotation_; }
+	const Vector3D& GetParentScale() const { return parentScale_; }
 };
 //----------------------------------------------------------------------------------
 //

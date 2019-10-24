@@ -240,12 +240,12 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 //----------------------------------------------------------------------------------
 InstanceContainer* ManagerImplemented::CreateInstanceContainer( EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const Matrix43& rootMatrix, Instance* pParent )
 {
-	if( m_pooledContainers.empty() )
+	if( pooledContainers_.empty() )
 	{
 		return nullptr;
 	}
-	InstanceContainer* memory = m_pooledContainers.front();
-	m_pooledContainers.pop();
+	InstanceContainer* memory = pooledContainers_.front();
+	pooledContainers_.pop();
 	InstanceContainer* pContainer = new(memory) InstanceContainer( this, pEffectNode, pGlobal );
 
 	for (int i = 0; i < pEffectNode->GetChildrenCount(); i++)
@@ -274,7 +274,7 @@ InstanceContainer* ManagerImplemented::CreateInstanceContainer( EffectNode* pEff
 void ManagerImplemented::ReleaseInstanceContainer( InstanceContainer* container )
 {
 	container->~InstanceContainer();
-	m_pooledContainers.push( container );
+	pooledContainers_.push( container );
 }
 
 //----------------------------------------------------------------------------------
@@ -370,29 +370,29 @@ ManagerImplemented::ManagerImplemented( int instance_max, bool autoFlip )
 	m_renderingDrawSets.reserve( 64 );
 
 	int chunk_max = (m_instance_max + InstanceChunk::InstancesOfChunk - 1) / InstanceChunk::InstancesOfChunk;
-	m_reservedChunksBuffer.reset( new InstanceChunk[chunk_max] );
-	for( int i = 0; i < chunk_max; i++ )
+	reservedChunksBuffer_.reset(new InstanceChunk[chunk_max]);
+	for (int i = 0; i < chunk_max; i++)
 	{
-		m_pooledChunks.push( &m_reservedChunksBuffer[i] );
+		pooledChunks_.push(&reservedChunksBuffer_[i]);
 	}
-	for( auto& chunks : m_instanceChunks )
+	for (auto& chunks : instanceChunks_)
 	{
-		chunks.reserve( chunk_max );
+		chunks.reserve(chunk_max);
 	}
-	std::fill( m_creatableChunkOffsets.begin(), m_creatableChunkOffsets.end(), 0 );
+	std::fill(creatableChunkOffsets_.begin(), creatableChunkOffsets_.end(), 0);
 
 	// Pooling InstanceGroup
-	m_reservedGroupBuffer.reset( new uint8_t[instance_max * sizeof(InstanceGroup)] );
+	reservedGroupBuffer_.reset( new uint8_t[instance_max * sizeof(InstanceGroup)] );
 	for( int i = 0; i < instance_max; i++ )
 	{
-		m_pooledGroups.push( (InstanceGroup*)&m_reservedGroupBuffer[i * sizeof(InstanceGroup)] );
+		pooledGroups_.push( (InstanceGroup*)&reservedGroupBuffer_[i * sizeof(InstanceGroup)] );
 	}
 
 	// Pooling InstanceGroup
-	m_reservedContainerBuffer.reset( new uint8_t[instance_max * sizeof(InstanceGroup)] );
+	reservedContainerBuffer_.reset( new uint8_t[instance_max * sizeof(InstanceGroup)] );
 	for( int i = 0; i < instance_max; i++ )
 	{
-		m_pooledContainers.push( (InstanceContainer*)&m_reservedContainerBuffer[i * sizeof(InstanceGroup)] );
+		pooledContainers_.push( (InstanceContainer*)&reservedContainerBuffer_[i * sizeof(InstanceGroup)] );
 	}
 
 	m_setting->SetEffectLoader(new DefaultEffectLoader());
@@ -435,29 +435,27 @@ ManagerImplemented::~ManagerImplemented()
 Instance* ManagerImplemented::CreateInstance( EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup )
 {
 	int32_t generationNumber = pEffectNode->GetGeneration();
-	
-	auto& chunks = m_instanceChunks[generationNumber];
-	
-	int32_t offset = m_creatableChunkOffsets[generationNumber];
-	
-	auto it = std::find_if( chunks.begin() + offset, chunks.end(), 
-		[]( const InstanceChunk* chunk ){ return chunk->IsInstanceCreatable(); }
-	);
-	
-	m_creatableChunkOffsets[generationNumber] = (int32_t)std::distance( chunks.begin(), it );
-	
-	if( it != chunks.end() )
+
+	auto& chunks = instanceChunks_[generationNumber];
+
+	int32_t offset = creatableChunkOffsets_[generationNumber];
+
+	auto it = std::find_if(chunks.begin() + offset, chunks.end(), [](const InstanceChunk* chunk) { return chunk->IsInstanceCreatable(); });
+
+	creatableChunkOffsets_[generationNumber] = (int32_t)std::distance(chunks.begin(), it);
+
+	if (it != chunks.end())
 	{
 		auto chunk = *it;
-		return chunk->CreateInstance( this, pEffectNode, pContainer, pGroup );
+		return chunk->CreateInstance(this, pEffectNode, pContainer, pGroup);
 	}
 
-	if( !m_pooledChunks.empty() )
+	if (!pooledChunks_.empty())
 	{
-		auto chunk = m_pooledChunks.front();
-		m_pooledChunks.pop();
-		chunks.push_back( chunk );
-		return chunk->CreateInstance( this, pEffectNode, pContainer, pGroup );
+		auto chunk = pooledChunks_.front();
+		pooledChunks_.pop();
+		chunks.push_back(chunk);
+		return chunk->CreateInstance(this, pEffectNode, pContainer, pGroup);
 	}
 
 	return nullptr;
@@ -468,22 +466,19 @@ Instance* ManagerImplemented::CreateInstance( EffectNode* pEffectNode, InstanceC
 //----------------------------------------------------------------------------------
 InstanceGroup* ManagerImplemented::CreateInstanceGroup( EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGlobal* pGlobal )
 {
-	if( m_pooledGroups.empty() )
+	if( pooledGroups_.empty() )
 	{
 		return nullptr;
 	}
-	InstanceGroup* memory = m_pooledGroups.front();
-	m_pooledGroups.pop();
+	InstanceGroup* memory = pooledGroups_.front();
+	pooledGroups_.pop();
 	return new(memory) InstanceGroup( this, pEffectNode, pContainer, pGlobal );
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void ManagerImplemented::ReleaseGroup( InstanceGroup* group )
+void ManagerImplemented::ReleaseGroup(InstanceGroup* group)
 {
 	group->~InstanceGroup();
-	m_pooledGroups.push( group );
+	pooledGroups_.push(group);
 }
 
 //----------------------------------------------------------------------------------
@@ -864,13 +859,10 @@ int32_t ManagerImplemented::GetInstanceCount( Handle handle )
 	return 0;
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-int32_t ManagerImplemented::GetTotalInstanceCount()
+int32_t ManagerImplemented::GetTotalInstanceCount() const
 {
 	int32_t instanceCount = 0;
-	for( auto pair : m_DrawSets )
+	for (auto pair : m_DrawSets)
 	{
 		const DrawSet& drawSet = pair.second;
 		instanceCount += drawSet.GlobalPointer->GetInstanceCount();
@@ -1445,30 +1437,29 @@ void ManagerImplemented::Update( float deltaFrame )
 	// start to measure time
 	int64_t beginTime = ::Effekseer::GetTime();
 
-	std::fill( m_creatableChunkOffsets.begin(), m_creatableChunkOffsets.end(), 0 );
-	for( auto& chunks : m_instanceChunks )
+	std::fill(creatableChunkOffsets_.begin(), creatableChunkOffsets_.end(), 0);
+	for (auto& chunks : instanceChunks_)
 	{
-		for( auto chunk : chunks )
+		for (auto chunk : chunks)
 		{
-			chunk->UpdateInstances( deltaFrame );
+			chunk->UpdateInstances(deltaFrame);
 		}
 
 		auto first = chunks.begin();
 		auto last = chunks.end();
-		while( first != last )
+		while (first != last)
 		{
-			auto it = std::find_if( first, last, 
-				[]( const InstanceChunk* chunk ){ return chunk->GetAliveCount() == 0; }
-			);
-			if( it != last )
+			auto it = std::find_if(first, last, [](const InstanceChunk* chunk) { return chunk->GetAliveCount() == 0; });
+			if (it != last)
 			{
-				m_pooledChunks.push( *it );
-				if( it != last - 1 ) *it = *(last - 1);
+				pooledChunks_.push(*it);
+				if (it != last - 1)
+					*it = *(last - 1);
 				last--;
 			}
 			first = it;
 		}
-		chunks.erase( last, chunks.end() );
+		chunks.erase(last, chunks.end());
 	}
 
 	for (auto& drawSet : m_DrawSets)
