@@ -145,7 +145,7 @@ protected:
 	template<typename VERTEX>
 	void Rendering_Internal( const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera )
 	{
-		::Effekseer::Matrix43 mat_rot;
+		::Effekseer::Matrix43 mat43;
 
 		if (parameter.Billboard == ::Effekseer::BillboardType::Billboard ||
 			parameter.Billboard == ::Effekseer::BillboardType::RotatedBillboard ||
@@ -155,9 +155,9 @@ protected:
 			Effekseer::Vector3D R;
 			Effekseer::Vector3D F;
 
-			CalcBillboard(parameter.Billboard, mat_rot, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection());
+			CalcBillboard(parameter.Billboard, mat43, s, R, F, instanceParameter.SRTMatrix43, m_renderer->GetCameraFrontDirection());
 
-			ApplyDepthParameters(mat_rot,
+			ApplyDepthParameters(mat43,
 								 m_renderer->GetCameraFrontDirection(),
 								 m_renderer->GetCameraPosition(),
 								 s,
@@ -168,20 +168,20 @@ protected:
 			{
 				::Effekseer::Matrix43 mat_scale;
 				mat_scale.Scaling(s.X, s.Y, s.Z);
-				::Effekseer::Matrix43::Multiple(mat_rot, mat_scale, mat_rot);
+				::Effekseer::Matrix43::Multiple(mat43, mat_scale, mat43);
 			}
 			else
 			{
 				::Effekseer::Matrix43 mat_scale;
 				mat_scale.Scaling(s.X, s.Y, s.Z);
-				::Effekseer::Matrix43::Multiple(mat_rot, mat_scale, mat_rot);
+				::Effekseer::Matrix43::Multiple(mat43, mat_scale, mat43);
 			}
 		}
 		else if (parameter.Billboard == ::Effekseer::BillboardType::Fixed)
 		{
-			mat_rot = instanceParameter.SRTMatrix43;
+			mat43 = instanceParameter.SRTMatrix43;
 
-			ApplyDepthParameters(mat_rot,
+			ApplyDepthParameters(mat43,
 								 m_renderer->GetCameraFrontDirection(),
 								 m_renderer->GetCameraPosition(),
 								 parameter.DepthParameterPtr,
@@ -430,10 +430,15 @@ protected:
 				::Effekseer::Vector3D::Normal(normalNext, normalNext);
 
 				// rotate directions
-				::Effekseer::Vector3D::Transform(normalCurrent, normalCurrent, mat_rot);
-				::Effekseer::Vector3D::Transform(normalNext, normalNext, mat_rot);
-				::Effekseer::Vector3D::Transform(tangentCurrent, tangentCurrent, mat_rot);
-				::Effekseer::Vector3D::Transform(tangentNext, tangentNext, mat_rot);
+				::Effekseer::Matrix43 matRot = mat43;
+				matRot.Value[3][0] = 0.0f;
+				matRot.Value[3][1] = 0.0f;
+				matRot.Value[3][2] = 0.0f;
+
+				::Effekseer::Vector3D::Transform(normalCurrent, normalCurrent, matRot);
+				::Effekseer::Vector3D::Transform(normalNext, normalNext, matRot);
+				::Effekseer::Vector3D::Transform(tangentCurrent, tangentCurrent, matRot);
+				::Effekseer::Vector3D::Transform(tangentNext, tangentNext, matRot);
 
 				vs[0].Normal = PackVector3DF(normalCurrent);
 				vs[1].Normal = vs[0].Normal;
@@ -497,14 +502,14 @@ protected:
 		{
 			for (int32_t i = 0; i < 4; i++)
 			{
-				m_singleRenderingMatrix.Values[i][0] = mat_rot.Value[i][0];
-				m_singleRenderingMatrix.Values[i][1] = mat_rot.Value[i][1];
-				m_singleRenderingMatrix.Values[i][2] = mat_rot.Value[i][2];
+				m_singleRenderingMatrix.Values[i][0] = mat43.Value[i][0];
+				m_singleRenderingMatrix.Values[i][1] = mat43.Value[i][1];
+				m_singleRenderingMatrix.Values[i][2] = mat43.Value[i][2];
 			}
 		}
 		else
 		{
-			TransformVertexes(verteies, singleVertexCount, mat_rot);
+			TransformVertexes(verteies, singleVertexCount, mat43);
 		}
 
 		// custom parameter

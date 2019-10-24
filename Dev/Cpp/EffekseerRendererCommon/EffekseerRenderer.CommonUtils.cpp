@@ -28,7 +28,7 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 		{
 			::Effekseer::Vector3D Up(0.0f, 1.0f, 0.0f);
 
-			::Effekseer::Vector3D::Normal(F, -frontDir);
+			::Effekseer::Vector3D::Normal(F, frontDir);
 			::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, Up, F));
 			::Effekseer::Vector3D::Normal(U, ::Effekseer::Vector3D::Cross(U, F, R));
 		}
@@ -36,7 +36,7 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 		{
 			::Effekseer::Vector3D Up(0.0f, 1.0f, 0.0f);
 
-			::Effekseer::Vector3D::Normal(F, -frontDir);
+			::Effekseer::Vector3D::Normal(F, frontDir);
 
 			::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, Up, F));
 			::Effekseer::Vector3D::Normal(U, ::Effekseer::Vector3D::Cross(U, F, R));
@@ -73,15 +73,15 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 		{
 			U = ::Effekseer::Vector3D(r.Value[1][0], r.Value[1][1], r.Value[1][2]);
 
-			::Effekseer::Vector3D::Normal(F, -frontDir);
+			::Effekseer::Vector3D::Normal(F, frontDir);
 
 			::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, U, F));
 			::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D::Cross(F, R, U));
 		}
 
-		dst.Value[0][0] = -R.X;
-		dst.Value[0][1] = -R.Y;
-		dst.Value[0][2] = -R.Z;
+		dst.Value[0][0] = R.X;
+		dst.Value[0][1] = R.Y;
+		dst.Value[0][2] = R.Z;
 		dst.Value[1][0] = U.X;
 		dst.Value[1][1] = U.Y;
 		dst.Value[1][2] = U.Z;

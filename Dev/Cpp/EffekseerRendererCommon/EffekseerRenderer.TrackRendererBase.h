@@ -537,7 +537,7 @@ namespace EffekseerRenderer
 						::Effekseer::Vector3D::Normal(tangent, vr_->Pos - vl_->Pos);
 
 						Effekseer::Vector3D normal;
-						Effekseer::Vector3D::Cross(normal, axis, tangent);
+						Effekseer::Vector3D::Cross(normal, tangent, axis);
 						Effekseer::Vector3D::Normal(normal, normal);
 
 						Effekseer::Color normal_ = PackVector3DF(normal);
