@@ -435,6 +435,7 @@ ManagerImplemented::~ManagerImplemented()
 Instance* ManagerImplemented::CreateInstance( EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup )
 {
 	int32_t generationNumber = pEffectNode->GetGeneration();
+	assert(generationNumber < GenerationsMax);
 
 	auto& chunks = instanceChunks_[generationNumber];
 

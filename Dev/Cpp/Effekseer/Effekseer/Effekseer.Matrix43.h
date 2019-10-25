@@ -147,6 +147,11 @@ public:
 	void ToMatrix44(Matrix44& dst);
 
 	/**
+		@brief	check whether all values are not valid number(not nan, not inf)
+	*/
+	bool IsValid() const;
+
+	/**
 		@brief	行列同士の乗算を行う。
 		@param	out	[out]	結果
 		@param	in1	[in]	乗算の左側

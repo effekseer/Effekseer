@@ -113,6 +113,7 @@ void InstanceGroup::SetBaseMatrix( const Matrix43& mat )
 		if (instance->m_State == INSTANCE_STATE_ACTIVE)
 		{
 			Matrix43::Multiple(instance->m_GlobalMatrix43, instance->m_GlobalMatrix43, mat);
+			assert(instance->m_GlobalMatrix43.IsValid());
 		}
 	}
 }
@@ -151,6 +152,10 @@ void InstanceGroup::SetParentMatrix(const Matrix43& mat)
 		{
 			parentTranslation_ = rootGroup->GetParentTranslation();
 		}
+		else if (tType == BindType::NotBind)
+		{
+			parentTranslation_ = Vector3D(0.0f, 0.0f, 0.0f);
+		}
 
 		if (rType == BindType::Always)
 		{
@@ -160,6 +165,10 @@ void InstanceGroup::SetParentMatrix(const Matrix43& mat)
 		{
 			parentRotation_ = rootGroup->GetParentRotation();
 		}
+		else if (rType == BindType::NotBind)
+		{
+			parentRotation_.Indentity();
+		}
 
 		if (sType == BindType::Always)
 		{
@@ -168,6 +177,10 @@ void InstanceGroup::SetParentMatrix(const Matrix43& mat)
 		else if (sType == BindType::NotBind_Root)
 		{
 			parentScale_ = rootGroup->GetParentScale();
+		}
+		else if (sType == BindType::NotBind)
+		{
+			parentScale_ = Vector3D(1.0f, 1.0f, 1.0f);
 		}
 	}
 }

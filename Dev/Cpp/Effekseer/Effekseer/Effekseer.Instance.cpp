@@ -359,6 +359,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		// SRTの初期化
 		m_GenerationLocation.Indentity();
 		m_GlobalMatrix43 = globalMatrix;
+		assert(m_GlobalMatrix43.IsValid());
 
 		// 親の初期化
 		m_ParentMatrix.Indentity();
@@ -388,6 +389,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	m_GlobalRevisionVelocity = Vector3D(0.0f, 0.0f, 0.0f);
 	m_GenerationLocation.Indentity();
 	m_GlobalMatrix43 = globalMatrix;
+	assert(m_GlobalMatrix43.IsValid());
 
 	// 親の初期化
 	if( parameter->CommonValues.TranslationBindType == BindType::WhenCreating ||
@@ -395,6 +397,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		parameter->CommonValues.ScalingBindType == BindType::WhenCreating )
 	{
 		m_ParentMatrix = parentMatrix;
+		assert(m_ParentMatrix.IsValid());
 	}
 
 	// Initialize parent color
@@ -1263,18 +1266,23 @@ void Instance::CalculateMatrix( float deltaFrame )
 
 		// 行列の更新
 		m_GlobalMatrix43.SetSRT( localScaling, MatRot, localPosition );
+		assert(m_GlobalMatrix43.IsValid());
 
 		if( m_pEffectNode->GenerationLocation.EffectsRotation )
 		{
 			Matrix43::Multiple( m_GlobalMatrix43, m_GlobalMatrix43, m_GenerationLocation );
+			assert(m_GlobalMatrix43.IsValid());
 		}
 
 		Matrix43::Multiple( m_GlobalMatrix43, m_GlobalMatrix43, m_ParentMatrix );
+		assert(m_GlobalMatrix43.IsValid());
 
 		if( m_pEffectNode->LocationAbs.type != LocationAbsType::None )
 		{
 			Vector3D currentPosition;
 			m_GlobalMatrix43.GetTranslation( currentPosition );
+			assert(m_GlobalMatrix43.IsValid());
+
 			m_GlobalVelocity = currentPosition - m_GlobalPosition;
 			m_GlobalPosition = currentPosition;
 
@@ -1302,6 +1310,7 @@ void Instance::CalculateParentMatrix( float deltaFrame )
 		if( tType != BindType::WhenCreating && rType != BindType::WhenCreating && sType != BindType::WhenCreating )
 		{
 			m_ParentMatrix = ownGroup_->GetParentMatrix();
+			assert(m_ParentMatrix.IsValid());
 		}
 		else if( tType == BindType::WhenCreating && rType == BindType::WhenCreating && sType == BindType::WhenCreating )
 		{
@@ -1322,6 +1331,7 @@ void Instance::CalculateParentMatrix( float deltaFrame )
 			else s = ownGroup_->GetParentScale();
 
 			m_ParentMatrix.SetSRT( s, r, t );
+			assert(m_ParentMatrix.IsValid());
 		}
 	}
 
@@ -1391,6 +1401,7 @@ void Instance::ModifyMatrixFromLocationAbs( float deltaFrame )
 	Matrix43 MatTraGlobal;
 	MatTraGlobal.Translation( m_GlobalRevisionLocation.X, m_GlobalRevisionLocation.Y, m_GlobalRevisionLocation.Z );
 	Matrix43::Multiple( m_GlobalMatrix43, m_GlobalMatrix43, MatTraGlobal );
+	assert(m_GlobalMatrix43.IsValid());
 }
 
 //----------------------------------------------------------------------------------
