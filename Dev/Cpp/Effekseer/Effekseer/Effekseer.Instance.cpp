@@ -1301,36 +1301,42 @@ void Instance::CalculateParentMatrix( float deltaFrame )
 	// 親の行列を計算
 	m_pParent->CalculateMatrix( deltaFrame );
 
-	if( m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT )
+	if (m_pEffectNode->GetType() != EFFECT_NODE_TYPE_ROOT)
 	{
 		BindType tType = m_pEffectNode->CommonValues.TranslationBindType;
 		BindType rType = m_pEffectNode->CommonValues.RotationBindType;
 		BindType sType = m_pEffectNode->CommonValues.ScalingBindType;
 
-		if( tType != BindType::WhenCreating && rType != BindType::WhenCreating && sType != BindType::WhenCreating )
+		if (tType == BindType::WhenCreating && rType == BindType::WhenCreating && sType == BindType::WhenCreating)
+		{
+			// do not do anything
+		}
+		else if (tType == BindType::Always && rType == BindType::Always && sType == BindType::Always)
 		{
 			m_ParentMatrix = ownGroup_->GetParentMatrix();
 			assert(m_ParentMatrix.IsValid());
-		}
-		else if( tType == BindType::WhenCreating && rType == BindType::WhenCreating && sType == BindType::WhenCreating )
-		{
-			// 何もしない
 		}
 		else
 		{
 			Vector3D s, t;
 			Matrix43 r;
 
-			if( tType == BindType::WhenCreating ) m_ParentMatrix.GetTranslation( t );
-			else t = ownGroup_->GetParentTranslation();
+			if (tType == BindType::WhenCreating)
+				m_ParentMatrix.GetTranslation(t);
+			else
+				t = ownGroup_->GetParentTranslation();
 
-			if( rType == BindType::WhenCreating ) m_ParentMatrix.GetRotation( r );
-			else r = ownGroup_->GetParentRotation();
+			if (rType == BindType::WhenCreating)
+				m_ParentMatrix.GetRotation(r);
+			else
+				r = ownGroup_->GetParentRotation();
 
-			if( sType == BindType::WhenCreating ) m_ParentMatrix.GetScale( s );
-			else s = ownGroup_->GetParentScale();
+			if (sType == BindType::WhenCreating)
+				m_ParentMatrix.GetScale(s);
+			else
+				s = ownGroup_->GetParentScale();
 
-			m_ParentMatrix.SetSRT( s, r, t );
+			m_ParentMatrix.SetSRT(s, r, t);
 			assert(m_ParentMatrix.IsValid());
 		}
 	}
