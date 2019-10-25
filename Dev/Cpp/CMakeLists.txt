@@ -84,6 +84,7 @@ set(effekseer_src
 	Effekseer/Effekseer/Effekseer.EffectNodeTrack.cpp
 	Effekseer/Effekseer/Effekseer.FCurves.cpp
 	Effekseer/Effekseer/Effekseer.Instance.cpp
+	Effekseer/Effekseer/Effekseer.InstanceChunk.cpp
 	Effekseer/Effekseer/Effekseer.InstanceContainer.cpp
 	Effekseer/Effekseer/Effekseer.InstanceGlobal.cpp
 	Effekseer/Effekseer/Effekseer.InstanceGroup.cpp

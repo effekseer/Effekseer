@@ -6,6 +6,7 @@
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Matrix44.h"
+#include <limits>
 
 //----------------------------------------------------------------------------------
 //
@@ -543,6 +544,21 @@ void Matrix43::ToMatrix44(Matrix44& dst)
 	}
 
 	dst.Values[3][3] = 1.0f;
+}
+
+bool Matrix43::IsValid() const
+{
+	for (int m = 0; m < 4; m++)
+	{
+		for (int n = 0; n < 3; n++)
+		{
+			if (isinf(Value[m][n]))
+				return false;
+			if (isnan(Value[m][n]))
+				return false;
+		}
+	}
+	return true;
 }
 
 //----------------------------------------------------------------------------------

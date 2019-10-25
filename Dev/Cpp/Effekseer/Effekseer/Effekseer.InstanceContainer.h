@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.Base.h"
+#include "Effekseer.IntrusiveList.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -21,14 +22,14 @@ namespace Effekseer
 	@note
 
 */
-class InstanceContainer
+class InstanceContainer : public IntrusiveList<InstanceContainer>::Node
 {
 	friend class ManagerImplemented;
 
 private:
 
 	// マネージャ
-	Manager*	m_pManager;
+	ManagerImplemented*	m_pManager;
 
 	// パラメーター
 	EffectNodeImplemented* m_pEffectNode;
@@ -37,10 +38,7 @@ private:
 	InstanceGlobal*	m_pGlobal;
 
 	// 子のコンテナ
-	InstanceContainer**	m_Children;
-
-	// インスタンスの子の数
-	int	m_ChildrenCount;
+	IntrusiveList<InstanceContainer>	m_Children;
 
 	// グループの連結リストの先頭
 	InstanceGroup*	m_headGroups;
@@ -48,35 +46,20 @@ private:
 	// グループの連結リストの最後
 	InstanceGroup*	m_tailGroups;
 
-	// placement new
-	static void* operator new( size_t size, Manager* pManager );
-
-	// placement delete
-	static void operator delete( void* p, Manager* pManager );
-
-	// default delete
-	static void operator delete( void* p ){}
-
 	// コンストラクタ
-	InstanceContainer( Manager* pManager, EffectNode* pEffectNode, InstanceGlobal* pGlobal, int ChildrenCount );
+	InstanceContainer( ManagerImplemented* pManager, EffectNode* pEffectNode, InstanceGlobal* pGlobal );
 
 	// デストラクタ
 	virtual ~InstanceContainer();
-
-	// 指定した番号にコンテナを設定
-	void SetChild( int num, InstanceContainer* pContainter );
 
 	// 無効なグループの破棄
 	void RemoveInvalidGroups();
 
 public:
-	// 指定した番号のコンテナを取得
-	InstanceContainer* GetChild( int num );
-
 	/**
 		@brief	グループの作成
 	*/
-	InstanceGroup* CreateGroup();
+	InstanceGroup* CreateInstanceGroup();
 
 	/**
 		@brief	グループの先頭取得
@@ -94,6 +77,10 @@ public:
 	void KillAllInstances(  bool recursive );
 
 	InstanceGlobal* GetRootInstance();
+
+	void AddChild( InstanceContainer* pContainter );
+
+	InstanceContainer* GetChild( int index );
 };
 
 //----------------------------------------------------------------------------------

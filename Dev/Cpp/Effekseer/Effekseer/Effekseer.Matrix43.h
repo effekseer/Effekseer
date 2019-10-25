@@ -27,7 +27,6 @@ struct Matrix44;
 	[2,0][2,1][2,2]<BR>
 	[3,0][3,1][3,2]<BR>
 */
-#pragma pack(push,1)
 struct Matrix43
 {
 private:
@@ -148,6 +147,11 @@ public:
 	void ToMatrix44(Matrix44& dst);
 
 	/**
+		@brief	check whether all values are not valid number(not nan, not inf)
+	*/
+	bool IsValid() const;
+
+	/**
 		@brief	行列同士の乗算を行う。
 		@param	out	[out]	結果
 		@param	in1	[in]	乗算の左側
@@ -156,7 +160,6 @@ public:
 	static void Multiple( Matrix43& out, const Matrix43& in1, const Matrix43& in2 );
 };
 
-#pragma pack(pop)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

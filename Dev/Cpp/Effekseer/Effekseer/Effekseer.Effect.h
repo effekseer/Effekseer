@@ -596,6 +596,13 @@ public:
 	virtual Effect* GetEffect() const = 0;
 
 	/**
+	@brief	
+	\~English	Get a generation in the node tree. The generation increases by 1 as it moves a child node.
+	\~Japanese	ノードツリーの世代を取得する。世代は子のノードになるにしたがって1増える。
+	*/
+	virtual int GetGeneration() const = 0;
+
+	/**
 	@brief	子のノードの数を取得する。
 	*/
 	virtual int GetChildrenCount() const = 0;

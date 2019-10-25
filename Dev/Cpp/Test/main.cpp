@@ -28,11 +28,11 @@
 #pragma comment(lib, "x86/Effekseer.Release.lib" )
 #endif
 
-#if _DEBUG
-#pragma comment(lib, "x86/EffekseerRendererArea.Debug.lib")
-#else
-#pragma comment(lib, "x86/EffekseerRendererArea.Release.lib")
-#endif
+//#if _DEBUG
+//#pragma comment(lib, "x86/EffekseerRendererArea.Debug.lib")
+//#else
+//#pragma comment(lib, "x86/EffekseerRendererArea.Release.lib")
+//#endif
 
 #endif
 
@@ -43,8 +43,8 @@
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-#define __NormalMode 1
-#define __PerformanceCheckMode 0
+#define __NormalMode 0
+#define __PerformanceCheckMode 1
 
 #define __DDS_TEST 0
 
@@ -144,7 +144,7 @@ int main()
 	
 	TestManagerPlayAndStop();
 	
-	g_manager = ::Effekseer::Manager::Create(2000);
+	g_manager = ::Effekseer::Manager::Create(32768);
 
 #if __CULLING_TEST
 	g_manager->CreateCullingWorld(200, 200, 200, 4);
@@ -213,6 +213,8 @@ void Init()
 	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Laser01_dds.efk") ) );
 #elif __CULLING_TEST
 	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/culling.efk") ) );
+#elif __PerformanceCheckMode
+	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Benediction.efk") ) );
 #else
 	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Laser01.efk") ) );
 	testManager->effects.push_back( Effekseer::Effect::Create( g_manager, EFK_LOCALFILE(u"Resource/Laser02.efk") ) );
@@ -240,17 +242,14 @@ void Loop()
 #endif
 
 #if __PerformanceCheckMode
-	static int count = 0;
-
-	if( count % 10 == 1 && count < 100 )
+	int32_t instanceCount = g_manager->GetTotalInstanceCount();
+	if( instanceCount > 0 )
 	{
-		auto updateTime = g_manager->GetUpdateTime();
-		auto drawTime = g_manager->GetDrawTime();
+		int32_t updateTime = g_manager->GetUpdateTime();
+		int32_t drawTime = g_manager->GetDrawTime();
 
-		printf("UpdateTime %d, DrawTime %d\n", updateTime, drawTime );
+		printf("%d\t%d\t%d\n", instanceCount, updateTime, drawTime );
 	}
-
-	count++;
 #endif
 }
 
@@ -274,16 +273,17 @@ void PlayEffect()
 #endif
 
 #if __PerformanceCheckMode
-	
-	for( float y = -10.0f; y <= 10.0f; y += 2.0f )
+	static int target = 0;
+	printf("-------- Performance Mesuring --------\n");
+	printf("Instances\tUpdate\tDraw\n");
+	for( float y = -2.0f; y <= 2.0f; y += 2.0f )
 	{
-		for( float x = -10.0f; x <= 10.0f; x += 2.0f )
+		for( float x = -2.0f; x <= 2.0f; x += 2.0f )
 		{
-			auto handle = g_manager->Play( g_effect, x, y, 0 );
+			auto handle = g_manager->Play( testManager->effects[target], x, y, 0 );
 			//g_manager->SetShown( handle, false );
 		}
 	}
-	//g_manager->Play( g_effect, 0, 0, 0 );
 #endif
 }
 

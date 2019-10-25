@@ -26,6 +26,7 @@ namespace Effekseer
 class InstanceGroup
 {
 friend class InstanceContainer;
+friend class ManagerImplemented;
 
 private:
 	ManagerImplemented*		m_manager;
@@ -34,21 +35,18 @@ private:
 	InstanceGlobal*		m_global;
 	int32_t				m_time;
 
+	Matrix43 parentMatrix_;
+	Matrix43 parentRotation_;
+	Vector3D parentTranslation_;
+	Vector3D parentScale_;
+
 	// インスタンスの実体
 	IntrusiveList<Instance> m_instances;
 	IntrusiveList<Instance> m_removingInstances;
 
-		//! placement new
-	static void* operator new(size_t size);
-
-	//! placement delete
-	static void operator delete(void* p);
-
 	InstanceGroup( Manager* manager, EffectNode* effectNode, InstanceContainer* container, InstanceGlobal* global );
 
 	~InstanceGroup();
-
-	void RemoveInvalidInstances();
 
 public:
 
@@ -69,11 +67,11 @@ public:
 
 	int GetInstanceCount() const;
 
-	int GetRemovingInstanceCount() const;
-
 	void Update( float deltaFrame, bool shown );
 
 	void SetBaseMatrix( const Matrix43& mat );
+
+	void SetParentMatrix( const Matrix43& mat );
 
 	void RemoveForcibly();
 
@@ -96,8 +94,12 @@ public:
 	*/
 	InstanceGroup*	NextUsedByContainer;
 
-	InstanceGlobal* GetInstanceGlobal() const { return m_global; }
+	InstanceGlobal* GetRootInstance() const { return m_global; }
 
+	const Matrix43& GetParentMatrix() const { return parentMatrix_; }
+	const Vector3D& GetParentTranslation() const { return parentTranslation_; }
+	const Matrix43& GetParentRotation() const { return parentRotation_; }
+	const Vector3D& GetParentScale() const { return parentScale_; }
 };
 //----------------------------------------------------------------------------------
 //

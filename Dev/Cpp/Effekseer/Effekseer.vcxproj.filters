@@ -40,6 +40,9 @@
     <Filter Include="Effekseer\IO">
       <UniqueIdentifier>{dc983779-2340-4bac-9552-df6c23322e9d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effekseer\Parameter">
+      <UniqueIdentifier>{c87649d2-3c0a-4c54-8f18-0bf107519c34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effekseer\Effekseer.Base.h">
@@ -230,6 +233,12 @@
     <ClInclude Include="Effekseer\IO\Effekseer.EfkEfcFactory.h">
       <Filter>Effekseer\IO</Filter>
     </ClInclude>
+    <ClInclude Include="Effekseer\Effekseer.InstanceChunk.h">
+      <Filter>Effekseer\EffectInstance</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Parameter\Effekseer.Parameters.h">
+      <Filter>Effekseer\Parameter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effekseer\Effekseer.Manager.cpp">
@@ -354,6 +363,12 @@
     </ClCompile>
     <ClCompile Include="Effekseer\IO\Effekseer.EfkEfcFactory.cpp">
       <Filter>Effekseer\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Effekseer.InstanceChunk.cpp">
+      <Filter>Effekseer\EffectInstance</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Parameter\Effekseer.Parameters.cpp">
+      <Filter>Effekseer\Parameter</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
