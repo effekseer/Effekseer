@@ -80,7 +80,7 @@ namespace EffekseerTool
 		, CullingRadius(0.0f)
 		, CullingPosition()
 
-		, Distortion(eDistortionType::DistortionType_Current)
+		, Distortion(DistortionType::Current)
 		, RenderingMode(Effekseer::RenderMode::Normal)
 
 		, m_isSRGBMode(isSRGBMode)
@@ -430,8 +430,8 @@ bool Renderer::BeginRendering()
 		m_renderer->SetProjectionMatrix(proj);
 	}
 	
-	/*// Distoriton
-	if (Distortion == eDistortionType::DistortionType_Current)
+	// Distoriton
+	if (Distortion == DistortionType::Current)
 	{
 		CopyToBackground();
 		
@@ -456,7 +456,7 @@ bool Renderer::BeginRendering()
 		m_distortionCallback->Blit = false;
 		m_distortionCallback->IsEnabled = true;
 	}
-	else if (Distortion == eDistortionType::DistortionType_Effekseer120)
+	else if (Distortion == DistortionType::Effekseer120)
 	{
 		m_distortionCallback->Blit = true;
 		m_distortionCallback->IsEnabled = true;
@@ -483,7 +483,7 @@ bool Renderer::BeginRendering()
 
 		m_distortionCallback->Blit = false;
 		m_distortionCallback->IsEnabled = false;
-	}*/
+	}
 
 	m_renderer->SetRenderMode(RenderingMode);
 

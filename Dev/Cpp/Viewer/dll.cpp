@@ -857,7 +857,7 @@ void Native::RenderWindow()
 {
 	g_renderer->BeginRendering();
 
-	if (g_renderer->Distortion == EffekseerTool::eDistortionType::DistortionType_Current)
+	if (g_renderer->Distortion == EffekseerTool::DistortionType::Current)
 	{
 		g_manager->DrawBack(drawParameter);
 
@@ -1755,7 +1755,7 @@ void Native::SetViewerParamater(ViewerParamater& paramater)
 	g_Distance = paramater.Distance;
 	g_renderer->RendersGuide = paramater.RendersGuide;
 
-	g_renderer->Distortion = (::EffekseerTool::eDistortionType)paramater.Distortion;
+	g_renderer->Distortion = (::EffekseerTool::DistortionType)paramater.Distortion;
 	g_renderer->RenderingMode = (::Effekseer::RenderMode)paramater.RenderingMode;
 }
 

@@ -210,7 +210,7 @@ public:
 	/**
 		@brief	The type of distortion
 	*/
-	eDistortionType		Distortion;
+	DistortionType Distortion;
 
 	/**
 		@brief	背景色
