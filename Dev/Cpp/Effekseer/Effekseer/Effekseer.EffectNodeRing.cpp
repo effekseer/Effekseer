@@ -242,25 +242,17 @@ void EffectNodeRing::BeginRendering(int32_t count, Manager* manager)
 	RingRenderer* renderer = manager->GetRingRenderer();
 	if( renderer != NULL )
 	{
-		RingRenderer::NodeParameter nodeParameter;
-		//nodeParameter.TextureFilter = RendererCommon.FilterType;
-		//nodeParameter.TextureWrap = RendererCommon.WrapType;
+		nodeParameter.EffectPointer = GetEffect();
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;
 		nodeParameter.VertexCount = VertexCount;
-		nodeParameter.EffectPointer = GetEffect();
-		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
-			CoordinateSystem::RH;
-		nodeParameter.StartingFade = Shape.StartingFade;
-		nodeParameter.EndingFade = Shape.EndingFade;
+		nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		//nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		//nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
-
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
+		nodeParameter.StartingFade = Shape.StartingFade;
+		nodeParameter.EndingFade = Shape.EndingFade;
 
 		renderer->BeginRendering( nodeParameter, count, m_userData );
 	}
@@ -275,10 +267,7 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 	RingRenderer* renderer = manager->GetRingRenderer();
 	if( renderer != NULL )
 	{
-		RingRenderer::NodeParameter nodeParameter;
 		nodeParameter.EffectPointer = GetEffect();
-		//nodeParameter.TextureFilter = RendererCommon.FilterType;
-		//nodeParameter.TextureWrap = RendererCommon.WrapType;
 		nodeParameter.ZTest = RendererCommon.ZTest;
 		nodeParameter.ZWrite = RendererCommon.ZWrite;
 		nodeParameter.Billboard = Billboard;
@@ -287,9 +276,6 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 			CoordinateSystem::RH;
 
 		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		//nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		//nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
 		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		nodeParameter.StartingFade = Shape.StartingFade;
 		nodeParameter.EndingFade = Shape.EndingFade;
@@ -350,24 +336,6 @@ void EffectNodeRing::EndRendering(Manager* manager)
 	RingRenderer* renderer = manager->GetRingRenderer();
 	if( renderer != NULL )
 	{
-		RingRenderer::NodeParameter nodeParameter;
-		//nodeParameter.TextureFilter = RendererCommon.FilterType;
-		//nodeParameter.TextureWrap = RendererCommon.WrapType;
-		nodeParameter.ZTest = RendererCommon.ZTest;
-		nodeParameter.ZWrite = RendererCommon.ZWrite;
-		nodeParameter.Billboard = Billboard;
-		nodeParameter.EffectPointer = GetEffect();
-		nodeParameter.IsRightHand = manager->GetCoordinateSystem() ==
-			CoordinateSystem::RH;
-		nodeParameter.StartingFade = Shape.StartingFade;
-		nodeParameter.EndingFade = Shape.EndingFade;
-
-		nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
-		//nodeParameter.DepthOffset = DepthValues.DepthOffset;
-		//nodeParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
-		//nodeParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
-
-		nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		renderer->EndRendering( nodeParameter, m_userData );
 	}
 }

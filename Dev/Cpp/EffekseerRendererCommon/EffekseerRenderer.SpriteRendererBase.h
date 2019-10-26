@@ -67,6 +67,26 @@ public:
 
 protected:
 
+	void RenderingInstance(const efkSpriteInstanceParam& inst,
+						   const efkSpriteNodeParam& param,
+						   const StandardRendererState& state,
+						   const ::Effekseer::Matrix44& camera)
+	{
+		if ((state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex) ||
+			param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+		{
+			Rendering_Internal<DynamicVertex>(param, inst, nullptr, camera);
+		}
+		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
+		{
+			Rendering_Internal<VERTEX_DISTORTION>(param, inst, nullptr, camera);
+		}
+		else
+		{
+			Rendering_Internal<VERTEX_NORMAL>(param, inst, nullptr, camera);
+		}
+	}
+
 	void BeginRendering_(RENDERER* renderer, int32_t count, const efkSpriteNodeParam& param)
 	{
 		EffekseerRenderer::StandardRendererState state;
@@ -105,19 +125,7 @@ protected:
 			auto camera = m_renderer->GetCameraMatrix();
 			const auto& state = m_renderer->GetStandardRenderer()->GetState();
 
-			if ((state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex) ||
-				parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
-			{
-				Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
-			}
-			else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
-			{
-				Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
-			}
-			else
-			{
-				Rendering_Internal<VERTEX_NORMAL>(parameter, instanceParameter, userData, camera);
-			}
+			RenderingInstance(instanceParameter, parameter, state, camera);
 		}
 		else
 		{
@@ -345,18 +353,7 @@ protected:
 				auto camera = m_renderer->GetCameraMatrix();
 				const auto& state = renderer->GetStandardRenderer()->GetState();
 
-				if (state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex)
-				{
-					Rendering_Internal<DynamicVertex>(param, kv.Value, nullptr, camera);
-				}
-				else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
-				{
-					Rendering_Internal<VERTEX_DISTORTION>(param, kv.Value, nullptr, camera);
-				}
-				else
-				{
-					Rendering_Internal<VERTEX_NORMAL>(param, kv.Value, nullptr, camera);
-				}
+				RenderingInstance(kv.Value, param, state, camera);
 			}
 		}
 	}

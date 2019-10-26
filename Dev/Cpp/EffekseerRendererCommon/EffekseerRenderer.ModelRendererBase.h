@@ -53,10 +53,25 @@ class ModelRendererBase
 	: public ::Effekseer::ModelRenderer
 {
 protected:
-	std::vector<Effekseer::Matrix44>	m_matrixes;
-	std::vector<Effekseer::RectF>		m_uv;
-	std::vector<Effekseer::Color>		m_colors;
-	std::vector<int32_t>				m_times;
+	struct KeyValue
+	{
+		float Key;
+		int Value;
+	};
+
+	std::vector<KeyValue> keyValues_;
+	
+	std::vector<Effekseer::Matrix44> matrixesSorted_;
+	std::vector<Effekseer::RectF> uvSorted_;
+	std::vector<Effekseer::Color> colorsSorted_;
+	std::vector<int32_t> timesSorted_;
+	std::vector<std::array<float, 4>> customData1Sorted_;
+	std::vector<std::array<float, 4>> customData2Sorted_;
+
+	std::vector<Effekseer::Matrix44> m_matrixes;
+	std::vector<Effekseer::RectF> m_uv;
+	std::vector<Effekseer::Color> m_colors;
+	std::vector<int32_t> m_times;
 	std::vector<std::array<float, 4>> customData1_;
 	std::vector<std::array<float, 4>> customData2_;
 
@@ -90,12 +105,21 @@ public:
 	template<typename RENDERER>
 	void BeginRendering_(RENDERER* renderer, const efkModelNodeParam& parameter, int32_t count, void* userData)
 	{
+		keyValues_.clear();
+
 		m_matrixes.clear();
 		m_uv.clear();
 		m_colors.clear();
 		m_times.clear();
 		customData1_.clear();
 		customData2_.clear();
+
+		matrixesSorted_.clear();
+		uvSorted_.clear();
+		colorsSorted_.clear();
+		timesSorted_.clear();
+		customData1Sorted_.clear();
+		customData2Sorted_.clear();
 
 		if (parameter.BasicParameterPtr->MaterialType == ::Effekseer::RendererMaterialType::File &&
 			parameter.BasicParameterPtr->MaterialParameterPtr != nullptr &&
@@ -210,6 +234,83 @@ public:
 				// refraction, standard
 				renderPassCount = 2;
 			}
+		}
+
+		// sort
+		if (param.DepthParameterPtr->ZSort != Effekseer::ZSortType::None)
+		{
+			keyValues_.resize(m_matrixes.size());
+			for (size_t i = 0; i < keyValues_.size(); i++)
+			{
+				efkVector3D t;
+				t.X = m_matrixes[i].Values[3][0];
+				t.Y = m_matrixes[i].Values[3][1];
+				t.Z = m_matrixes[i].Values[3][2];
+
+				auto frontDirection = renderer->GetCameraFrontDirection();
+				if (!param.IsRightHand)
+				{
+					frontDirection.Z = -frontDirection.Z;
+				}
+
+				keyValues_[i].Key = Effekseer::Vector3D::Dot(t, frontDirection);
+				keyValues_[i].Value = i;
+			}
+			
+			if (param.DepthParameterPtr->ZSort == Effekseer::ZSortType::NormalOrder)
+			{
+				std::sort(keyValues_.begin(), keyValues_.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key < b.Key; });
+			}
+			else
+			{
+				std::sort(keyValues_.begin(), keyValues_.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key > b.Key; });
+			}
+
+			matrixesSorted_.resize(m_matrixes.size());
+			uvSorted_.resize(m_matrixes.size());
+			colorsSorted_.resize(m_matrixes.size());
+			timesSorted_.resize(m_matrixes.size());
+
+			if (customData1Count_ > 0)
+			{
+				customData1Sorted_.resize(m_matrixes.size());
+			}
+
+			if (customData2Count_ > 0)
+			{
+				customData2Sorted_.resize(m_matrixes.size());
+			}
+
+			for (size_t i = 0; i < keyValues_.size(); i++)
+			{
+				matrixesSorted_[keyValues_[i].Value] = m_matrixes[i];
+				uvSorted_[keyValues_[i].Value] = m_uv[i];
+				colorsSorted_[keyValues_[i].Value] = m_colors[i];
+				timesSorted_[keyValues_[i].Value] = m_times[i];
+			}
+
+			if (customData1Count_ > 0)
+			{
+				for (size_t i = 0; i < keyValues_.size(); i++)
+				{
+					customData1Sorted_[keyValues_[i].Value] = customData1_[i];
+				}
+			}
+
+			if (customData2Count_ > 0)
+			{
+				for (size_t i = 0; i < keyValues_.size(); i++)
+				{
+					customData2Sorted_[keyValues_[i].Value] = customData2_[i];
+				}
+			}
+
+			m_matrixes = matrixesSorted_;
+			m_uv = uvSorted_;
+			m_colors = colorsSorted_;
+			m_times = timesSorted_;
+			customData1_ = customData1Sorted_;
+			customData2_ = customData2Sorted_;
 		}
 
 		for (int32_t renderPassInd = 0; renderPassInd < renderPassCount; renderPassInd++)

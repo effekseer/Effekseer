@@ -33,6 +33,14 @@ class RingRendererBase
 	: public ::Effekseer::RingRenderer
 {
 protected:
+
+	struct KeyValue
+	{
+		float Key;
+		efkRingInstanceParam Value;
+	};
+	std::vector<KeyValue> instances_;
+
 	RENDERER*						m_renderer;
 	int32_t							m_ringBufferOffset;
 	uint8_t*						m_ringBufferData;
@@ -64,11 +72,38 @@ public:
 
 protected:
 
+	void RenderingInstance(const efkRingInstanceParam& inst,
+						   const efkRingNodeParam& param,
+						   const StandardRendererState& state,
+						   const ::Effekseer::Matrix44& camera)
+	{
+		if ((state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex) ||
+			param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
+		{
+			Rendering_Internal<DynamicVertex>(param, inst, nullptr, camera);
+		}
+		else if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
+		{
+			Rendering_Internal<VERTEX_DISTORTION>(param, inst, nullptr, camera);
+		}
+		else
+		{
+			Rendering_Internal<VERTEX_NORMAL>(param, inst, nullptr, camera);
+		}
+	}
+
 	void BeginRendering_(RENDERER* renderer, int32_t count, const efkRingNodeParam& param)
 	{
 		m_spriteCount = 0;
 		int32_t singleVertexCount = param.VertexCount * 8;
 		m_instanceCount = count;
+
+		instances_.clear();
+
+		if (param.DepthParameterPtr->ZSort != Effekseer::ZSortType::None)
+		{
+			instances_.reserve(count);
+		}
 
 		if (count == 1)
 		{
@@ -107,20 +142,17 @@ protected:
 
 	void Rendering_(const efkRingNodeParam& parameter, const efkRingInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
 	{
-		const auto& state = m_renderer->GetStandardRenderer()->GetState();
+		if (parameter.DepthParameterPtr->ZSort == Effekseer::ZSortType::None || CanSingleRendering())
+		{
+			const auto& state = m_renderer->GetStandardRenderer()->GetState();
 
-		if ((state.MaterialPtr != nullptr && !state.MaterialPtr->IsSimpleVertex) || 
-			parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
-		{
-			Rendering_Internal<DynamicVertex>(parameter, instanceParameter, userData, camera);
-		}
-		else if (parameter.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion)
-		{
-			Rendering_Internal<VERTEX_DISTORTION>(parameter, instanceParameter, userData, camera);
+			RenderingInstance(instanceParameter, parameter, state, camera);
 		}
 		else
 		{
-			Rendering_Internal<VERTEX_NORMAL>(parameter, instanceParameter, userData, camera);
+			KeyValue kv;
+			kv.Value = instanceParameter;
+			instances_.push_back(kv);
 		}
 	}
 
@@ -539,15 +571,51 @@ protected:
 
 	}
 
-	void EndRendering_(RENDERER* renderer, const efkRingNodeParam& param)
+	void EndRendering_(RENDERER* renderer, const efkRingNodeParam& param, void* userData, const ::Effekseer::Matrix44& camera)
 	{
 		if (CanSingleRendering())
 		{
-
 			::Effekseer::Matrix44 mat;
 			::Effekseer::Matrix44::Mul(mat, m_singleRenderingMatrix, renderer->GetCameraMatrix());
 
 			renderer->GetStandardRenderer()->Rendering(mat, renderer->GetProjectionMatrix());
+		}
+
+		if (param.DepthParameterPtr->ZSort != Effekseer::ZSortType::None && !CanSingleRendering())
+		{
+			for (auto& kv : instances_)
+			{
+				efkVector3D t;
+				t.X = kv.Value.SRTMatrix43.Value[3][0];
+				t.Y = kv.Value.SRTMatrix43.Value[3][1];
+				t.Z = kv.Value.SRTMatrix43.Value[3][2];
+
+				auto frontDirection = m_renderer->GetCameraFrontDirection();
+				if (!param.IsRightHand)
+				{
+					frontDirection.Z = -frontDirection.Z;
+				}
+
+				kv.Key = Effekseer::Vector3D::Dot(t, frontDirection);
+			}
+
+			if (param.DepthParameterPtr->ZSort == Effekseer::ZSortType::NormalOrder)
+			{
+				std::sort(instances_.begin(), instances_.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key < b.Key; });
+			}
+			else
+			{
+				std::sort(instances_.begin(), instances_.end(), [](const KeyValue& a, const KeyValue& b) -> bool { return a.Key > b.Key; });
+			}
+
+
+			const auto& state = m_renderer->GetStandardRenderer()->GetState();
+
+			for (auto& kv : instances_)
+			{
+				RenderingInstance(kv.Value, param, state, camera);
+			}
+			
 		}
 	}
 
@@ -567,9 +635,10 @@ public:
 	{
 		if (m_ringBufferData == NULL) return;
 
-		if (m_spriteCount == 0) return;
+		if (m_spriteCount == 0 && parameter.DepthParameterPtr->ZSort == Effekseer::ZSortType::None)
+			return;
 
-		EndRendering_(m_renderer, parameter);
+		EndRendering_(m_renderer, parameter, userData, m_renderer->GetCameraMatrix());
 	}
 };
 //----------------------------------------------------------------------------------

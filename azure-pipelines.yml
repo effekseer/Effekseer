@@ -39,20 +39,6 @@ jobs:
           ArtifactName: 'Windows'
           publishLocation: 'Container'
 
-      - task: PowerShell@2
-        inputs:
-          targetType: 'inline'
-          script: |
-            cd TestData
-            ../build/Dev/Cpp/Test/Release/Test.exe
-            cd ..
-
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: 'TestData'
-          ArtifactName: 'screenshots'
-          publishLocation: 'Container'
-
   - job: MacOS
     pool:
       vmImage: 'macOS-10.14'

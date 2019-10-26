@@ -541,6 +541,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			DepthValues.DepthParameter.DepthOffset = DepthValues.DepthOffset;
 			DepthValues.DepthParameter.IsDepthOffsetScaledWithCamera = DepthValues.IsDepthOffsetScaledWithCamera;
 			DepthValues.DepthParameter.IsDepthOffsetScaledWithParticleScale = DepthValues.IsDepthOffsetScaledWithParticleScale;
+			DepthValues.DepthParameter.ZSort = DepthValues.ZSort;
 		}
 
 		// Convert right handle coordinate system into left handle coordinate system

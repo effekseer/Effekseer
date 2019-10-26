@@ -6,6 +6,7 @@
 // Include
 //----------------------------------------------------------------------------------
 #include "Effekseer.EffectNode.h"
+#include "Renderer/Effekseer.RingRenderer.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -229,6 +230,8 @@ public:
 	RingColorParameter InnerColor;
 
 	int RingTexture;
+
+	RingRenderer::NodeParameter nodeParameter;
 
 	EffectNodeRing( Effect* effect, unsigned char*& pos )
 		: EffectNodeImplemented(effect, pos)
