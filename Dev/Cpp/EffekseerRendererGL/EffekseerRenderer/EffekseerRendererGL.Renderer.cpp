@@ -757,6 +757,8 @@ bool RendererImplemented::BeginRendering()
 		glGetIntegerv(GL_BLEND_SRC_RGB, &m_originalState.blendSrc);
 		glGetIntegerv(GL_BLEND_DST_RGB, &m_originalState.blendDst);
 		glGetIntegerv(GL_BLEND_EQUATION, &m_originalState.blendEquation);
+		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &m_originalState.arrayBufferBinding);
+		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &m_originalState.elementArrayBufferBinding);
 
 		if (GLExt::IsSupportedVertexArray())
 		{
@@ -793,6 +795,11 @@ bool RendererImplemented::EndRendering()
 	// restore states
 	if(m_restorationOfStates)
 	{
+		if (GLExt::IsSupportedVertexArray())
+		{
+			GLExt::glBindVertexArray(m_originalState.vao);
+		}
+
 		if (m_originalState.blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
 		if (m_originalState.cullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
 		if (m_originalState.depthTest) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
@@ -808,17 +815,15 @@ bool RendererImplemented::EndRendering()
 		glBlendFunc(m_originalState.blendSrc, m_originalState.blendDst);
 		GLExt::glBlendEquation(m_originalState.blendEquation);
 
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, m_originalState.arrayBufferBinding);
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_originalState.elementArrayBufferBinding);
+
 		if (GetDeviceType() == OpenGLDeviceType::OpenGL3 || GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 		{
 			for( int32_t i = 0; i < 4; i++ )
 			{
 				GLExt::glBindSampler(i, 0);
 			}
-		}
-
-		if (GLExt::IsSupportedVertexArray())
-		{
-			GLExt::glBindVertexArray(m_originalState.vao);
 		}
 	}
 

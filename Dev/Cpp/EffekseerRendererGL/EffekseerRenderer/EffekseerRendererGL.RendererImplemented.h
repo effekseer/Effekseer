@@ -29,6 +29,8 @@ struct RenderStateSet
 	GLint		blendDst;
 	GLint		blendEquation;
 	GLint		vao;
+	GLint arrayBufferBinding;
+	GLint elementArrayBufferBinding;
 };
 
 /**
