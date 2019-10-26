@@ -109,6 +109,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_SetCallback(swigCPtr, GUIManagerCallback.getCPtr(callback));
   }
 
+  public void InvalidateFont() {
+    EffekseerNativePINVOKE.GUIManager_InvalidateFont(swigCPtr);
+  }
+
   public void ResetGUI() {
     EffekseerNativePINVOKE.GUIManager_ResetGUI(swigCPtr);
   }

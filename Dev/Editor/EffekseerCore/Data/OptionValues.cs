@@ -5,6 +5,16 @@ using System.Text;
 
 namespace Effekseer.Data
 {
+	public enum FontType
+	{
+		[Name(value = "普通", language = Language.Japanese)]
+		[Name(value = "Normal", language = Language.English)]
+		Normal,
+
+		[Name(value = "太い", language = Language.Japanese)]
+		[Name(value = "Bold", language = Language.English)]
+		Bold,
+	}
 	public class OptionValues
 	{
 		[Name(language = Language.Japanese, value = "描画モード")]
@@ -143,6 +153,28 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "フォント")]
+		[Description(language = Language.Japanese, value = "フォント")]
+		[Name(language = Language.English, value = "Font")]
+		[Description(language = Language.English, value = "Font")]
+		[Undo(Undo = false)]
+		public Value.Enum<FontType> Font
+		{
+			get;
+			private set;
+		}
+
+		[Name(language = Language.Japanese, value = "フォントサイズ")]
+		[Description(language = Language.Japanese, value = "フォントサイズ")]
+		[Name(language = Language.English, value = "Font size")]
+		[Description(language = Language.English, value = "Font size")]
+		[Undo(Undo = false)]
+		public Value.Int FontSize
+		{
+			get;
+			private set;
+		}
+
 		[Name(language = Language.Japanese, value = "マウスの回転方向(X)")]
 		[Description(language = Language.Japanese, value = "マウスの回転方向を逆にする。")]
 		[Name(language = Language.English, value = "Mouse Rotation (X)")]
@@ -187,18 +219,6 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		[Name(language = Language.Japanese, value = "歪み方法")]
-		[Description(language = Language.Japanese, value = "歪み方法")]
-		[Name(language = Language.English, value = "Distortion method")]
-		[Description(language = Language.English, value = "Distortion method")]
-		[Undo(Undo = false)]
-		public Value.Enum<DistortionMethodType> DistortionType
-		{
-			get;
-			private set;
-		}
-
-
         [Name(language = Language.Japanese, value = "言語設定")]
         [Description(language = Language.Japanese, value = "言語設定")]
         [Name(language = Language.English, value = "Language")]
@@ -210,7 +230,18 @@ namespace Effekseer.Data
             private set;
         }
 
-        public OptionValues()
+		[Name(language = Language.Japanese, value = "歪み方法")]
+		[Description(language = Language.Japanese, value = "歪み方法")]
+		[Name(language = Language.English, value = "Distortion method")]
+		[Description(language = Language.English, value = "Distortion method")]
+		[Undo(Undo = false)]
+		public Value.Enum<DistortionMethodType> DistortionType
+		{
+			get;
+			private set;
+		}
+
+		public OptionValues()
 		{
 			RenderingMode = new Value.Enum<RenderMode>(RenderMode.Normal);
 			GridColor = new Value.Color(255, 255, 255, 255);
@@ -235,6 +266,9 @@ namespace Effekseer.Data
 			MouseSlideInvY = new Value.Boolean(false);
 
 			DistortionType = new Value.Enum<DistortionMethodType>(DistortionMethodType.Current);
+
+			Font = new Value.Enum<FontType>(FontType.Normal);
+			FontSize = new Value.Int(16, 32, 8);
 
 			// Switch the language according to the OS settings
 			GuiLanguage = new Value.Enum<Language>(LanguageGetter.GetLanguage());

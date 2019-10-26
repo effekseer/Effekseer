@@ -47,9 +47,16 @@ namespace Effekseer.GUI.Dock
 				isFiestUpdate = false;
 
 				Core.Option.GuiLanguage.OnChanged += GuiLanguage_OnChanged;
+				Core.Option.FontSize.OnChanged += FontSize_OnChanged;
+				Core.Option.Font.OnChanged += FontSize_OnChanged;
 			}
 
 			paramerterList.Update();
+		}
+
+		private void FontSize_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			Manager.UpdateFontSize();
 		}
 
 		private void GuiLanguage_OnChanged(object sender, ChangedValueEventArgs e_)

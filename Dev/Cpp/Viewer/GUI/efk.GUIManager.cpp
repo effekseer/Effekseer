@@ -955,6 +955,24 @@ namespace efk
 		this->callback = callback;
 	}
 
+	void GUIManager::InvalidateFont()
+	{
+		if (deviceType == DeviceType::OpenGL)
+		{
+			ImGui_ImplOpenGL3_DestroyFontsTexture();
+		}
+#if _WIN32
+		else if (deviceType == DeviceType::DirectX11)
+		{
+			ImGui_ImplDX11_InvalidateDeviceObjects();
+		}
+		else
+		{
+			ImGui_ImplDX9_NewFrame();
+		}
+#endif
+	}
+
 	void GUIManager::ResetGUI()
 	{
 		if (deviceType == DeviceType::OpenGL)
@@ -1718,6 +1736,7 @@ namespace efk
 		
 		size_pixels = roundf(size_pixels * fontScale);
 
+		io.Fonts->Clear();
 		io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels, nullptr, glyphRangesJapanese);
 
 		markdownConfig_.headingFormats[1].font = io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels * 1.1);

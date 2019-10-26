@@ -34,7 +34,7 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.Columns(2);
 
 			var columnWidth = Manager.NativeManager.GetColumnWidth(0);
-			Manager.NativeManager.SetColumnWidth(0, 120);
+			Manager.NativeManager.SetColumnWidth(0, 120 * Manager.GetUIScaleBasedOnFontSize());
 
 			for (int i = 0; i < controlRows.Internal.Count; i++)
 			{

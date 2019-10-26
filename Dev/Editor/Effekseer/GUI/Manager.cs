@@ -97,6 +97,8 @@ namespace Effekseer.GUI
 
 		static int nextID = 10;
 
+		static bool isFontSizeDirtied = true;
+
 		public static Viewer Viewer;
 
 		internal static Network Network;
@@ -196,7 +198,7 @@ namespace Effekseer.GUI
 			var appDirectory = Manager.GetEntryDirectory();
 
 			// Load font
-			NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, "resources/GenShinGothic-Monospace-Normal.ttf"), 16);
+			UpdateFontSize();
 
 			// Load window icon
 			NativeManager.SetWindowIcon(System.IO.Path.Combine(appDirectory, "resources/icon.png"));
@@ -312,6 +314,12 @@ namespace Effekseer.GUI
 			var entryDirectory = GetEntryDirectory();
 			swig.GUIManager.SetIniFilename(entryDirectory + "/imgui.ini");
 
+			// check files
+			if(!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf")))
+			{
+				throw new Exception("Please update resource files with official document.");
+			}
+
 			return true;
 		}
 
@@ -348,6 +356,10 @@ namespace Effekseer.GUI
 			Images.Unload();
 		}
 
+		public static void UpdateFontSize()
+		{
+			isFontSizeDirtied = true;
+		}
 		public static void AddControl(IRemovableControl control)
 		{
 			Controls.Add(control);
@@ -359,6 +371,23 @@ namespace Effekseer.GUI
 
 		public static void Update()
 		{
+			if (isFontSizeDirtied)
+			{
+				NativeManager.InvalidateFont();
+				var appDirectory = Manager.GetEntryDirectory();
+				var type = Core.Option.Font.Value;
+
+				if(type == Data.FontType.Normal)
+				{
+					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, "resources/GenShinGothic-Monospace-Normal.ttf"), Core.Option.FontSize.Value);
+				}
+				else if (type == Data.FontType.Bold)
+				{
+					NativeManager.AddFontFromFileTTF(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf"), Core.Option.FontSize.Value);
+				}
+				isFontSizeDirtied = false;
+			}
+
 			// Reset
 			NativeManager.SetNextDockRate(0.5f);
 			NativeManager.SetNextDock(swig.DockSlot.Tab);
@@ -572,6 +601,15 @@ namespace Effekseer.GUI
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// get a scale based on font size for margin, etc.
+		/// </summary>
+		/// <returns></returns>
+		public static float GetUIScaleBasedOnFontSize()
+		{
+			return Core.Option.FontSize.Value / 16.0f;
 		}
 
 		static void Core_OnAfterLoad(object sender, EventArgs e)

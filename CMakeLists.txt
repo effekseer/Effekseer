@@ -161,3 +161,17 @@ set_target_properties (ExternalProject_libpng PROPERTIES FOLDER thirdparty)
 set_target_properties (ExternalProject_libgd PROPERTIES FOLDER thirdparty)
 set_target_properties (ExternalProject_glfw PROPERTIES FOLDER thirdparty)
 set_target_properties (ExternalProject_OpenSoundMixer PROPERTIES FOLDER thirdparty)
+
+# resource
+if (BUILD_VIEWER)
+    find_package(PythonInterp 3)
+
+    add_custom_target(ResourData
+        SOURCES ResourData.dummy
+    )
+
+    add_custom_command(
+        OUTPUT ResourData.dummy
+        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Script/setup.py
+    )
+endif()

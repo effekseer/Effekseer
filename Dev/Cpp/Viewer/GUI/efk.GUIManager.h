@@ -351,6 +351,8 @@ namespace efk
 
 		void SetCallback(GUIManagerCallback* callback);
 
+		void InvalidateFont();
+
 		void ResetGUI();
 
 		void RenderGUI(bool isValid = true);
