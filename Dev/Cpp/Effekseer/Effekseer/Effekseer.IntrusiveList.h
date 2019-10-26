@@ -52,7 +52,7 @@ public:
 		Type* operator*() const { assert( m_Node != nullptr ); return m_Node; }
 		Type* operator->() const { assert( m_Node != nullptr ); return m_Node; }
 		ReverseIterator& operator++() { assert( m_Node != nullptr ); m_Node = m_Node->m_PrevNode; return *this; }
-		ReverseIterator operator++(int) { assert( m_Node != nullptr ); ReverseIterator it(m_Node); m_Node = m_Node->m_NextNode; return it; }
+		ReverseIterator operator++(int) { assert( m_Node != nullptr ); ReverseIterator it(m_Node); m_Node = m_Node->m_PrevNode; return it; }
 		bool operator==( const ReverseIterator& rhs ) const { return m_Node == rhs.m_Node; }
 		bool operator!=( const ReverseIterator& rhs ) const { return m_Node != rhs.m_Node; }
 	};
