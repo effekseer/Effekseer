@@ -41,6 +41,7 @@ struct NodeRendererTextureUVTypeParameter;
 			//bool				Distortion;
 			//float				DistortionIntensity;
 
+			bool IsRightHand;
 			int32_t				SplineDivision;
 			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
 			NodeRendererBasicParameter* BasicParameterPtr = nullptr;

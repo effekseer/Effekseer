@@ -229,6 +229,30 @@ Instance::~Instance()
 	}
 }
 
+bool Instance::IsRequiredToCreateChildren(float currentTime)
+{
+	auto instanceGlobal = this->m_pContainer->GetRootInstance();
+
+	auto parameter = (EffectNodeImplemented*)m_pEffectNode;
+
+	InstanceGroup* group = childrenGroups_;
+
+	for (int32_t i = 0; i < parameter->GetChildrenCount(); i++, group = group->NextUsedByInstance)
+	{
+		auto node = (EffectNodeImplemented*)parameter->GetChild(i);
+		assert(group != NULL);
+
+		// GenerationTimeOffset can be minus value.
+		// Minus frame particles is generated simultaniously at frame 0.
+		if (maxGenerationChildrenCount[i] > m_generatedChildrenCount[i] && m_nextGenerationTime[i] <= currentTime)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Instance::GenerateChildrenInRequired(float currentTime)
 {
 	auto instanceGlobal = this->m_pContainer->GetRootInstance();
@@ -269,6 +293,14 @@ void Instance::GenerateChildrenInRequired(float currentTime)
 				break;
 			}
 		}
+	}
+}
+
+void Instance::UpdateChildrenGroupMatrix()
+{
+	for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
+	{
+		group->SetParentMatrix(m_GlobalMatrix43);
 	}
 }
 
@@ -369,9 +401,6 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		return;
 	}
 	
-	// 親の行列を計算
-	m_pParent->CalculateMatrix( 0 );
-
 	// 状態の初期化
 	m_State = INSTANCE_STATE_ACTIVE;
 
@@ -382,7 +411,11 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		m_LivedTime = (float)ri.getValue(*instanceGlobal);
 	}
 
-	// SRTの初期化
+	// initialize SRT
+
+	// calculate parent matrixt to get matrix
+	m_pParent->CalculateMatrix(0);
+	
 	const Matrix43& parentMatrix = m_pParent->GetGlobalMatrix43();
 	parentMatrix.GetTranslation( m_GlobalPosition );
 	m_GlobalRevisionLocation = Vector3D(0.0f, 0.0f, 0.0f);
@@ -876,8 +909,14 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 
 	m_pEffectNode->InitializeRenderedInstance(*this, m_pManager);
 
-	// Generate zero frame effect
-	GenerateChildrenInRequired(0.0f);
+	if (IsRequiredToCreateChildren(0.0f))
+	{
+		// for new children
+		UpdateChildrenGroupMatrix();
+
+		// Generate zero frame effect
+		GenerateChildrenInRequired(0.0f);
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -948,10 +987,13 @@ void Instance::Update( float deltaFrame, bool shown )
 		GenerateChildrenInRequired(originalTime + deltaFrame);
 	}
 
+	UpdateChildrenGroupMatrix();
+	/*
 	for (InstanceGroup* group = childrenGroups_; group != nullptr; group = group->NextUsedByInstance)
 	{
 		group->SetParentMatrix(m_GlobalMatrix43);
 	}
+	*/
 
 	// check whether killed?
 	bool killed = false;

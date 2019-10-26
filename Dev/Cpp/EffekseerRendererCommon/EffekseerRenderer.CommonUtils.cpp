@@ -205,9 +205,9 @@ void ApplyDepthParameters(::Effekseer::Matrix43& mat,
 
 		if (isDepthOffsetScaledWithCamera)
 		{
-			auto cx = mat.Value[3][0] + cameraPos.X;
-			auto cy = mat.Value[3][1] + cameraPos.Y;
-			auto cz = mat.Value[3][2] + cameraPos.Z;
+			auto cx = mat.Value[3][0] - cameraPos.X;
+			auto cy = mat.Value[3][1] - cameraPos.Y;
+			auto cz = mat.Value[3][2] - cameraPos.Z;
 			auto cl = sqrt(cx * cx + cy * cy + cz * cz);
 
 			if (cl != 0.0)
@@ -267,6 +267,88 @@ void ApplyDepthParameters(::Effekseer::Matrix43& mat,
 }
 
 void ApplyDepthParameters(::Effekseer::Matrix43& mat,
+						  ::Effekseer::Vector3D& translationValues,
+						  ::Effekseer::Vector3D& scaleValues,
+						  const ::Effekseer::Vector3D& cameraFront,
+						  const ::Effekseer::Vector3D& cameraPos,
+						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
+						  bool isRightHand)
+{
+	auto depthOffset = depthParameter->DepthOffset;
+	auto isDepthOffsetScaledWithCamera = depthParameter->IsDepthOffsetScaledWithCamera;
+	auto isDepthOffsetScaledWithEffect = depthParameter->IsDepthOffsetScaledWithParticleScale;
+
+	if (depthOffset != 0)
+	{
+		auto offset = depthOffset;
+
+		if (isDepthOffsetScaledWithEffect)
+		{
+			auto scale = (scaleValues.X + scaleValues.Y + scaleValues.Z) / 3.0f;
+
+			offset *= scale;
+		}
+
+		if (isDepthOffsetScaledWithCamera)
+		{
+			auto cx = translationValues.X - cameraPos.X;
+			auto cy = translationValues.Y - cameraPos.Y;
+			auto cz = translationValues.Z - cameraPos.Z;
+			auto cl = sqrt(cx * cx + cy * cy + cz * cz);
+
+			if (cl != 0.0)
+			{
+				auto scale = (cl - offset) / cl;
+
+				scaleValues.X *= scale;
+				scaleValues.Y *= scale;
+				scaleValues.Z *= scale;
+			}
+		}
+
+		auto objPos = translationValues;
+		auto dir = cameraPos - objPos;
+		Effekseer::Vector3D::Normal(dir, dir);
+
+		if (isRightHand)
+		{
+			translationValues.X += dir.X * offset;
+			translationValues.Y += dir.Y * offset;
+			translationValues.Z += dir.Z * offset;
+		}
+		else
+		{
+			translationValues.X += dir.X * offset;
+			translationValues.Y += dir.Y * offset;
+			translationValues.Z += dir.Z * offset;
+		}
+	}
+
+	if (depthParameter->SuppressionOfScalingByDepth < 1.0f)
+	{
+		auto cx = translationValues.X - cameraPos.X;
+		auto cy = translationValues.Y - cameraPos.Y;
+		auto cz = translationValues.Z - cameraPos.Z;
+		auto cl = sqrt(cx * cx + cy * cy + cz * cz);
+
+		if (cl != 0.0)
+		{
+			auto scale = cl / 32.0f * (1.0f - depthParameter->SuppressionOfScalingByDepth) + depthParameter->SuppressionOfScalingByDepth;
+
+			for (auto r = 0; r < 3; r++)
+			{
+				for (auto c = 0; c < 3; c++)
+				{
+					scaleValues.X *= scale;
+					scaleValues.Y *= scale;
+					scaleValues.Z *= scale;
+				}
+			}
+		}
+	}
+}
+
+void ApplyDepthParameters(::Effekseer::Matrix43& mat,
 					  const ::Effekseer::Vector3D& cameraFront,
 					  const ::Effekseer::Vector3D& cameraPos,
 					  ::Effekseer::Vector3D& scaleValues,
@@ -290,9 +372,9 @@ void ApplyDepthParameters(::Effekseer::Matrix43& mat,
 
 		if (isDepthOffsetScaledWithCamera)
 		{
-			auto cx = mat.Value[3][0] + cameraPos.X;
-			auto cy = mat.Value[3][1] + cameraPos.Y;
-			auto cz = mat.Value[3][2] + cameraPos.Z;
+			auto cx = mat.Value[3][0] - cameraPos.X;
+			auto cy = mat.Value[3][1] - cameraPos.Y;
+			auto cz = mat.Value[3][2] - cameraPos.Z;
 			auto cl = sqrt(cx * cx + cy * cy + cz * cz);
 
 			if (cl != 0.0)
@@ -388,9 +470,9 @@ void ApplyDepthParameters(::Effekseer::Matrix44& mat,
 
 		if (isDepthOffsetScaledWithCamera)
 		{
-			auto cx = mat.Values[3][0] + cameraPos.X;
-			auto cy = mat.Values[3][1] + cameraPos.Y;
-			auto cz = mat.Values[3][2] + cameraPos.Z;
+			auto cx = mat.Values[3][0] - cameraPos.X;
+			auto cy = mat.Values[3][1] - cameraPos.Y;
+			auto cz = mat.Values[3][2] - cameraPos.Z;
 			auto cl = sqrt(cx * cx + cy * cy + cz * cz);
 
 			if (cl != 0.0)

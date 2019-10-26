@@ -155,7 +155,7 @@ void EffectNodeRibbon::BeginRendering(int32_t count, Manager* manager)
 		m_nodeParameter.DepthParameterPtr = &DepthValues.DepthParameter;
 		m_nodeParameter.BasicParameterPtr = &RendererCommon.BasicParameter;
 		m_nodeParameter.TextureUVTypeParameterPtr = &TextureUVType;
-
+		m_nodeParameter.IsRightHand = manager->GetCoordinateSystem() == CoordinateSystem::RH;
 		renderer->BeginRendering(m_nodeParameter, count, m_userData);
 	}
 }

@@ -319,7 +319,11 @@ public:
 	// デストラクタ
 	virtual ~Instance();
 
+	bool IsRequiredToCreateChildren(float currentTime);
+
 	void GenerateChildrenInRequired(float currentTime);
+
+	void UpdateChildrenGroupMatrix();
 
 public:
 	/**

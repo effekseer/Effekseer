@@ -507,6 +507,8 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 			memcpy(&IsDepthOffsetScaledWithParticleScale, pos, sizeof(int32_t));
 			pos += sizeof(int32_t);
 
+			DepthValues.IsDepthOffsetScaledWithParticleScale = IsDepthOffsetScaledWithParticleScale > 0;
+
 			if (m_effect->GetVersion() >= 15)
 			{
 				memcpy(&DepthValues.DepthParameter.SuppressionOfScalingByDepth, pos, sizeof(float));

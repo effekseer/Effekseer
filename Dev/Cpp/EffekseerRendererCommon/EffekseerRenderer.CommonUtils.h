@@ -329,6 +329,14 @@ void ApplyDepthParameters(::Effekseer::Matrix43& mat,
 						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
 					  bool isRightHand);
 
+void ApplyDepthParameters(::Effekseer::Matrix43& mat,
+						  ::Effekseer::Vector3D& translationValues,
+						  ::Effekseer::Vector3D& scaleValues,
+						  const ::Effekseer::Vector3D& cameraFront,
+						  const ::Effekseer::Vector3D& cameraPos,
+						  ::Effekseer::NodeRendererDepthParameter* depthParameter,
+						  bool isRightHand);
+
 void ApplyDepthParameters(::Effekseer::Matrix44& mat,
 						  const ::Effekseer::Vector3D& cameraFront,
 						  const ::Effekseer::Vector3D& cameraPos,

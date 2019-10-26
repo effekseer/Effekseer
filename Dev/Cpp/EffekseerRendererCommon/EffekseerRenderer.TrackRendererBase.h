@@ -279,9 +279,20 @@ namespace EffekseerRenderer
 					auto p = efkVector3D();
 					auto& param = instances[loop];
 
-					p.X = param.SRTMatrix43.Value[3][0];
-					p.Y = param.SRTMatrix43.Value[3][1];
-					p.Z = param.SRTMatrix43.Value[3][2];
+					auto mat = param.SRTMatrix43;
+
+					::Effekseer::Vector3D s;
+
+					ApplyDepthParameters(mat,
+										 m_renderer->GetCameraFrontDirection(),
+										 m_renderer->GetCameraPosition(),
+										 //s,
+										 parameter.DepthParameterPtr,
+										 parameter.IsRightHand);
+
+					p.X = mat.Value[3][0];
+					p.Y = mat.Value[3][1];
+					p.Z = mat.Value[3][2];
 
 					spline.AddVertex(p);
 				}
@@ -297,6 +308,21 @@ namespace EffekseerRenderer
 
 				for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
 				{
+					auto mat = param.SRTMatrix43;
+
+					::Effekseer::Vector3D s;
+					::Effekseer::Matrix43 r;
+					::Effekseer::Vector3D t;
+					mat.GetSRT(s, r, t);
+
+					ApplyDepthParameters(r,
+										 t,
+										 s,
+										 m_renderer->GetCameraFrontDirection(),
+										 m_renderer->GetCameraPosition(),
+										 parameter.DepthParameterPtr,
+										 parameter.IsRightHand);
+
 					bool isFirst = param.InstanceIndex == 0 && sploop == 0;
 					bool isLast = param.InstanceIndex == (param.InstanceCount - 1);
 
@@ -350,12 +376,6 @@ namespace EffekseerRenderer
 						rightColor.A = (uint8_t)Effekseer::Clamp(param.ColorRight.A + (param.ColorRightMiddle.A - param.ColorRight.A) * l, 255, 0);
 					}
 
-					const ::Effekseer::Matrix43& mat = param.SRTMatrix43;
-					::Effekseer::Vector3D s;
-					::Effekseer::Matrix43 r;
-					::Effekseer::Vector3D t;
-					mat.GetSRT(s, r, t);
-
 					VERTEX v[3];
 
 					v[0].Pos.X = (-size / 2.0f) * s.X;
@@ -379,9 +399,9 @@ namespace EffekseerRenderer
 					}
 					else
 					{
-						v[1].Pos.X = param.SRTMatrix43.Value[3][0];
-						v[1].Pos.Y = param.SRTMatrix43.Value[3][1];
-						v[1].Pos.Z = param.SRTMatrix43.Value[3][2];
+						v[1].Pos.X = t.X;
+						v[1].Pos.Y = t.Y;
+						v[1].Pos.Z = t.Z;
 					}
 
 					if (isFirst)

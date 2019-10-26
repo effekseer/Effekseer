@@ -270,11 +270,19 @@ namespace EffekseerRenderer
 
 					if (parameter.ViewpointDependent)
 					{
-						const ::Effekseer::Matrix43& mat = param.SRTMatrix43;
+						::Effekseer::Matrix43 mat = param.SRTMatrix43;
 						::Effekseer::Vector3D s;
 						::Effekseer::Matrix43 r;
 						::Effekseer::Vector3D t;
 						mat.GetSRT(s, r, t);
+
+						ApplyDepthParameters(r,
+											 t,
+											 s,
+											 m_renderer->GetCameraFrontDirection(),
+											 m_renderer->GetCameraPosition(),
+											 parameter.DepthParameterPtr,
+											 parameter.IsRightHand);
 
 						// extend
 						pl.X = pl.X * s.X;
@@ -322,15 +330,26 @@ namespace EffekseerRenderer
 					}
 					else
 					{
+						::Effekseer::Matrix43 mat = param.SRTMatrix43;
+
+						::Effekseer::Vector3D s;
+
+						ApplyDepthParameters(mat,
+											 m_renderer->GetCameraFrontDirection(),
+											 m_renderer->GetCameraPosition(),
+											 //s,
+											 parameter.DepthParameterPtr,
+											 parameter.IsRightHand);
+
 						::Effekseer::Vector3D::Transform(
 							pl,
 							pl,
-							param.SRTMatrix43);
+							mat);
 
 						::Effekseer::Vector3D::Transform(
 							pr,
-							pr,
-							param.SRTMatrix43);
+							pr, 
+							mat);
 
 						spline_left.AddVertex(pl);
 						spline_right.AddVertex(pr);
@@ -377,11 +396,19 @@ namespace EffekseerRenderer
 
 					if (parameter.ViewpointDependent)
 					{
-						const ::Effekseer::Matrix43& mat = param.SRTMatrix43;
+						::Effekseer::Matrix43 mat = param.SRTMatrix43;
 						::Effekseer::Vector3D s;
 						::Effekseer::Matrix43 r;
 						::Effekseer::Vector3D t;
 						mat.GetSRT(s, r, t);
+
+						ApplyDepthParameters(r,
+											 t,
+											 s,
+											 m_renderer->GetCameraFrontDirection(),
+											 m_renderer->GetCameraPosition(),
+											 parameter.DepthParameterPtr,
+											 parameter.IsRightHand);
 
 						if (parameter.SplineDivision > 1)
 						{
@@ -435,12 +462,24 @@ namespace EffekseerRenderer
 						}
 						else
 						{
+							::Effekseer::Matrix43 mat = param.SRTMatrix43;
+
+							::Effekseer::Vector3D s;
+	
+							ApplyDepthParameters(mat,
+												 m_renderer->GetCameraFrontDirection(),
+												 m_renderer->GetCameraPosition(),
+												 //s,
+												 parameter.DepthParameterPtr,
+												 parameter.IsRightHand);
+
+
 							for (int i = 0; i < 2; i++)
 							{
 								::Effekseer::Vector3D::Transform(
 									verteies[i].Pos,
 									verteies[i].Pos,
-									param.SRTMatrix43);
+									mat);
 							}
 						}
 					}
