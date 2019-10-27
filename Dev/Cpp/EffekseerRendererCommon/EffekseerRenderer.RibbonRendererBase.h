@@ -675,9 +675,12 @@ namespace EffekseerRenderer
 
 					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
 					{
-						auto c = (float*)(&custom[0]);
-						memcpy(c, param.CustomData1.data(), sizeof(float) * customData1Count_);
-						custom += 4;
+						for (size_t i = 0; i < 4; i++)
+						{
+							auto c = (float*)(&custom[0]);
+							memcpy(c, param.CustomData1.data(), sizeof(float) * customData1Count_);
+							custom += 1;						
+						}
 					}
 				}
 			}
@@ -692,9 +695,12 @@ namespace EffekseerRenderer
 
 					for (int32_t sploop = 0; sploop < parameter.SplineDivision; sploop++)
 					{
-						auto c = (float*)(&custom[0]);
-						memcpy(c, param.CustomData2.data(), sizeof(float) * customData1Count_);
-						custom += 4;
+						for (size_t i = 0; i < 4; i++)
+						{
+							auto c = (float*)(&custom[0]);
+							memcpy(c, param.CustomData2.data(), sizeof(float) * customData2Count_);
+							custom += 1;
+						}
 					}
 				}
 			}

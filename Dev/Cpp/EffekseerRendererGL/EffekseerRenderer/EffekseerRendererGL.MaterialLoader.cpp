@@ -219,9 +219,9 @@ namespace EffekseerRendererGL
 			vsOffset += sizeof(float) * 4;
 		}
 
-		if (material.GetCustomData1Count() > 0)
+		if (material.GetCustomData2Count() > 0)
 		{
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("customData1"), vsOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("customData2"), vsOffset);
 			vsOffset += sizeof(float) * 4;
 		}
 

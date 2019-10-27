@@ -236,8 +236,8 @@ protected:
 				StrideView<DynamicVertex> vs(verteies.pointerOrigin_, stride_, 4);
 				for (auto i = 0; i < 4; i++)
 				{
-					vs[i].Normal = PackVector3DF(-F);
-					vs[i].Tangent = PackVector3DF(-R);
+					vs[i].Normal = PackVector3DF(F);
+					vs[i].Tangent = PackVector3DF(R);
 				}
 			}
 		}

@@ -367,6 +367,8 @@ static char* g_material_ps_suf1 = R"(
 
 #ifdef __MATERIAL_LIT__
 
+#define lightScale 3.14
+
 float calcD_GGX(float roughness, float dotNH)
 {
 	float alpha = roughness*roughness;
@@ -415,7 +417,7 @@ float3 calcDirectionalLightDiffuseColor(float3 diffuseColor, float3 normal, floa
 	float3 color = float3(0.0,0.0,0.0);
 
 	float NoL = dot(normal,lightDir);
-	color.xyz = lightColor.xyz * max(NoL,0.0) * ao / 3.14;
+	color.xyz = lightColor.xyz * lightScale * max(NoL,0.0) * ao / 3.14;
 	color.xyz = color.xyz * diffuseColor.xyz;
 	return color;
 }
@@ -449,7 +451,7 @@ static char* g_material_ps_suf2_unlit = R"(
 static char* g_material_ps_suf2_lit = R"(
 	float3 viewDir = normalize(cameraPosition.xyz - worldPos);
 	float3 diffuse = calcDirectionalLightDiffuseColor(baseColor, pixelNormalDir, lightDirection.xyz, ambientOcclusion);
-	float3 specular = lightColor.xyz * calcLightingGGX(worldNormal, viewDir, lightDirection.xyz, roughness, 0.9);
+	float3 specular = lightColor.xyz * lightScale * calcLightingGGX(worldNormal, viewDir, lightDirection.xyz, roughness, 0.9);
 
 	float4 Output =  float4(metallic * specular + (1.0 - metallic) * diffuse, opacity);
 
@@ -782,16 +784,16 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 			shaderData.CodeVS =
 				Replace(shaderData.CodeVS,
 						"//$C_IN2$",
-						getType(material->GetCustomData1Count()) + " CustomData2 : TEXCOORD" + std::to_string(inputSlot) + ";");
+						getType(material->GetCustomData2Count()) + " CustomData2 : TEXCOORD" + std::to_string(inputSlot) + ";");
 		}
 		shaderData.CodeVS =
 			Replace(shaderData.CodeVS,
 					"//$C_OUT2$",
-					getType(material->GetCustomData1Count()) + " CustomData2 : TEXCOORD" + std::to_string(outputSlot) + ";");
+					getType(material->GetCustomData2Count()) + " CustomData2 : TEXCOORD" + std::to_string(outputSlot) + ";");
 		shaderData.CodePS =
 			Replace(shaderData.CodePS,
 					"//$C_PIN2$",
-					getType(material->GetCustomData1Count()) + " CustomData2 : TEXCOORD" + std::to_string(outputSlot) + ";");
+					getType(material->GetCustomData2Count()) + " CustomData2 : TEXCOORD" + std::to_string(outputSlot) + ";");
 	}
 
 	return shaderData;

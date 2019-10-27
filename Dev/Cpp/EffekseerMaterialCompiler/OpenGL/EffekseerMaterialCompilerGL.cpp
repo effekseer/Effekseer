@@ -262,6 +262,8 @@ static const char g_material_fs_src_suf1[] =
 
 #ifdef __MATERIAL_LIT__
 
+const float lightScale = 3.14;
+
 float saturate(float v)
 {
 	return max(min(v, 1.0), 0.0);
@@ -315,7 +317,7 @@ vec3 calcDirectionalLightDiffuseColor(vec3 diffuseColor, vec3 normal, vec3 light
 	vec3 color = vec3(0.0,0.0,0.0);
 
 	float NoL = dot(normal,lightDir);
-	color.xyz = lightColor.xyz * max(NoL,0.0) * ao / 3.14;
+	color.xyz = lightColor.xyz * lightScale * max(NoL,0.0) * ao / 3.14;
 	color.xyz = color.xyz * diffuseColor.xyz;
 	return color;
 }
@@ -338,7 +340,7 @@ static const char g_material_fs_src_suf2_lit[] =
 
 	vec3 viewDir = normalize(cameraPosition.xyz - worldPos);
 	vec3 diffuse = calcDirectionalLightDiffuseColor(baseColor, pixelNormalDir, lightDirection.xyz, ambientOcclusion);
-	vec3 specular = lightColor.xyz * calcLightingGGX(worldNormal, viewDir, lightDirection.xyz, roughness, 0.9);
+	vec3 specular = lightColor.xyz * lightScale * calcLightingGGX(worldNormal, viewDir, lightDirection.xyz, roughness, 0.9);
 
 	vec4 Output =  vec4(metallic * specular + (1.0 - metallic) * diffuse + lightAmbientColor.xyz, opacity);
 
@@ -637,12 +639,12 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 		if (isSprite)
 		{
 			shaderData.CodeVS =
-				Replace(shaderData.CodeVS, "//$C_IN2$", "IN " + getType(material->GetCustomData1Count()) + " atCustomData2;");
+				Replace(shaderData.CodeVS, "//$C_IN2$", "IN " + getType(material->GetCustomData2Count()) + " atCustomData2;");
 		}
 		shaderData.CodeVS =
-			Replace(shaderData.CodeVS, "//$C_OUT2$", "OUT mediump " + getType(material->GetCustomData1Count()) + " v_CustomData2;");
+			Replace(shaderData.CodeVS, "//$C_OUT2$", "OUT mediump " + getType(material->GetCustomData2Count()) + " v_CustomData2;");
 		shaderData.CodePS =
-			Replace(shaderData.CodePS, "//$C_PIN2$", "IN mediump " + getType(material->GetCustomData1Count()) + " v_CustomData2;");
+			Replace(shaderData.CodePS, "//$C_PIN2$", "IN mediump " + getType(material->GetCustomData2Count()) + " v_CustomData2;");
 	}
 
 	return shaderData;

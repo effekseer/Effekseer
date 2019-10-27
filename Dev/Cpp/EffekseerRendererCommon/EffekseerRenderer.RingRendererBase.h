@@ -328,7 +328,7 @@ protected:
 
 			uv0texNext = uv0Current + uv0Step;
 
-			VERTEX* v = &verteies[i];
+			StrideView<VERTEX> v(&verteies[i], stride_, 8);
 			v[0].Pos = outerCurrent;
 			v[0].SetColor( outerColor );
 			v[0].UV[0] = uv0Current;
@@ -366,7 +366,7 @@ protected:
 			// distortion
 			if (vertexType == VertexType::Distortion)
 			{
-				auto vs = (VERTEX_DISTORTION*) &verteies[i];
+				StrideView<VERTEX_DISTORTION> vs(&verteies[i], stride_, 8);
 				auto binormalCurrent = v[5].Pos - v[0].Pos;
 				auto binormalNext = v[7].Pos - v[2].Pos;
 
@@ -419,7 +419,7 @@ protected:
 			}
 			else if (vertexType == VertexType::Dynamic)
 			{
-				auto vs = (DynamicVertex*)&verteies[i];
+				StrideView<DynamicVertex> vs(&verteies[i], stride_, 8);
 
 				// return back
 				float t_b;

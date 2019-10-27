@@ -148,7 +148,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 			if (material.GetCustomData2Count() > 0)
 			{
-				decl[count].Format = getFormat(material.GetCustomData1Count());
+				decl[count].Format = getFormat(material.GetCustomData2Count());
 				decl[count].AlignedByteOffset = offset;
 				decl[count].SemanticIndex = index;
 				index++;
