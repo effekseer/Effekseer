@@ -9,6 +9,8 @@ if (MSVC)
 	option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
 endif()
 
+option(FROM_CI "from ci" OFF)
+
 # zlib
 ExternalProject_Add(
     ExternalProject_zlib
