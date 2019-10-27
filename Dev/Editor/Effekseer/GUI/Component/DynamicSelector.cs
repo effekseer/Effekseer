@@ -48,6 +48,11 @@ namespace Effekseer.GUI.Component
 
 			var nextParam = DynamicSelector.Select("", id, reference.Value, false, false);
 
+			if (Manager.NativeManager.IsItemHovered())
+			{
+				DynamicEquationCodeTooltip.Render(reference);
+			}
+
 			if (reference.Value != nextParam)
 			{
 				reference.SetValue(nextParam);
@@ -62,6 +67,11 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.SameLine();
 
 			var nextParam = DynamicSelector.Select(Resources.GetString("Max") , id, reference.Value, false, false);
+
+			if (Manager.NativeManager.IsItemHovered())
+			{
+				DynamicEquationCodeTooltip.Render(reference);
+			}
 
 			if (reference.Value != nextParam)
 			{
@@ -79,6 +89,11 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.SameLine();
 
 			var nextParam = DynamicSelector.Select(Resources.GetString("Min"), id, reference.Value, false, false);
+
+			if (Manager.NativeManager.IsItemHovered())
+			{
+				DynamicEquationCodeTooltip.Render(reference);
+			}
 
 			if (reference.Value != nextParam)
 			{

@@ -89,7 +89,7 @@ namespace Effekseer.GUI.Component
 
 	class DynamicEquationCodeTooltip
 	{
-		public static void render(Data.Value.DynamicEquationReference dynamicEquation)
+		public static void Render(Data.Value.DynamicEquationReference dynamicEquation)
 		{
 			if (dynamicEquation.Index != -1)
 			{

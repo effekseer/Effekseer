@@ -151,17 +151,6 @@ function(FilterFolder srcs)
     endforeach()
 endfunction(FilterFolder)
 
-add_subdirectory(Dev)
-
-# specify filters
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-set_target_properties (ExternalProject_zlib PROPERTIES FOLDER thirdparty)
-set_target_properties (ExternalProject_libpng PROPERTIES FOLDER thirdparty)
-set_target_properties (ExternalProject_libgd PROPERTIES FOLDER thirdparty)
-set_target_properties (ExternalProject_glfw PROPERTIES FOLDER thirdparty)
-set_target_properties (ExternalProject_OpenSoundMixer PROPERTIES FOLDER thirdparty)
-
 # resource
 if (BUILD_VIEWER)
     find_package(PythonInterp 3)
@@ -175,3 +164,15 @@ if (BUILD_VIEWER)
         COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Script/setup.py
     )
 endif()
+
+add_subdirectory(Dev)
+
+# specify filters
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+set_target_properties (ExternalProject_zlib PROPERTIES FOLDER thirdparty)
+set_target_properties (ExternalProject_libpng PROPERTIES FOLDER thirdparty)
+set_target_properties (ExternalProject_libgd PROPERTIES FOLDER thirdparty)
+set_target_properties (ExternalProject_glfw PROPERTIES FOLDER thirdparty)
+set_target_properties (ExternalProject_OpenSoundMixer PROPERTIES FOLDER thirdparty)
+

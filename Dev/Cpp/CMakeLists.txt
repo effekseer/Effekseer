@@ -379,9 +379,10 @@ install(
 
 if (BUILD_VIEWER)
     add_subdirectory("EditorCommon")
-	add_subdirectory("Viewer")
-	add_subdirectory("IPC")
-	add_subdirectory("EffekseerMaterialCompiler")
+    add_subdirectory("Viewer")
+    add_subdirectory("IPC")
+    add_subdirectory("EffekseerMaterialCompiler")
+    add_dependencies(Viewer ResourceData)
 endif()
 
 

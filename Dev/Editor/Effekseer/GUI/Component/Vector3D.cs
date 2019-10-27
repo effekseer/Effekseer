@@ -138,24 +138,6 @@ namespace Effekseer.GUI.Component
 
 			if (binding.IsDynamicEquationEnabled)
 			{
-				Manager.NativeManager.Text(Resources.GetString("DynamicEq"));
-				Manager.NativeManager.SameLine();
-
-				var nextParam = DynamicSelector.Select("", "", binding.DynamicEquation.Value, false, false);
-				if (Manager.NativeManager.IsItemHovered())
-				{
-					DynamicEquationCodeTooltip.render(binding.DynamicEquation);
-				}
-				if (binding.DynamicEquation.Value != nextParam)
-				{
-					binding.DynamicEquation.SetValue(nextParam);
-				}
-
-				Popup();
-			}
-
-			if (binding.IsDynamicEquationEnabled)
-			{
 				DynamicSelector.SelectInComponent(id_d, binding.DynamicEquation);
 				Popup();
 			}
