@@ -674,14 +674,9 @@ namespace Effekseer
 
 		public static void SaveTo(string path)
 		{
-#if __NEW_FORMAT__
 			var loader = new IO.EfkEfc();
 			loader.Save(path);
 			return;
-#else
-			var doc = SaveAsXmlDocument(path);
-			doc.Save(path);
-#endif
 		}
 
 		public static bool LoadFromXml(string xml, string basePath)
@@ -1050,7 +1045,7 @@ namespace Effekseer
 			var fullpath = System.IO.Path.GetFullPath(path);
 
 			if (!System.IO.File.Exists(fullpath)) return false;
-#if __NEW_FORMAT__
+
 			// new format?
 			bool isNewFormat = false;
 			{
@@ -1099,7 +1094,6 @@ namespace Effekseer
 				var loader = new IO.EfkEfc();
 				return loader.Load(path);
 			}
-#endif
 
 			var doc = new System.Xml.XmlDocument();
 			doc.Load(path);

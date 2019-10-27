@@ -85,12 +85,7 @@ target_compile_options(Effekseer PRIVATE "/unsafe")
 target_compile_options(Effekseer PRIVATE "/langversion:6")
 set_property(TARGET Effekseer PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
 
-if(ENABLED_NEW_FORMAT)
-    target_compile_definitions(Effekseer PRIVATE __NEW_FORMAT__)
-    target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED;__NEW_FORMAT__)
-else()
-    target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED;__NEW_FORMAT__)
-endif()
+target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED;__NEW_FORMAT__)
 
 # specify a startup project
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT Effekseer)
