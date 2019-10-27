@@ -135,7 +135,7 @@ WarningType NodeParameter::GetWarningSampler(std::shared_ptr<Material> material,
 					}
 				}
 
-				if (currentParam.GUID == param.GUID)
+				if (currentParam.GUID == param.GUID && param.GUID != 0)
 				{
 					if (param.Sampler != currentParam.Sampler)
 					{

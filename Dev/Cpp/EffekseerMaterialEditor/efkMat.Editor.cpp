@@ -1124,7 +1124,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 				const char* items[] = {"Color", "Value"};
 
-				if (ImGui::BeginCombo(nameStr.c_str(), items[static_cast<int>(texture->Type)]))
+				if (ImGui::BeginCombo("ColorType", items[static_cast<int>(texture->Type)]))
 				{
 					for (size_t i = 0; i < 2; i++)
 					{
@@ -1237,7 +1237,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 	}
 	if (node->Parameter->Type == NodeType::CustomData2)
 	{
-		if (ImGui::DragFloat4(StringContainer::GetValue("Value_Name").c_str(), material->CustomData[0].Values.data(), 0.01f))
+		if (ImGui::DragFloat4(StringContainer::GetValue("Value_Name").c_str(), material->CustomData[1].Values.data(), 0.01f))
 		{
 		}
 	}

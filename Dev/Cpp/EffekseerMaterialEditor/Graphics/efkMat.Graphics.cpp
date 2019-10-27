@@ -511,15 +511,13 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 		if (layout.first == "customData1")
 		{
 			float values[4];
-			values[0] = time;
 			constantBuffer->SetData(customData1.data(), layout.second.GetSize(), layout.second.Offset);
 		}
 
 		if (layout.first == "customData2")
 		{
 			float values[4];
-			values[0] = time;
-			constantBuffer->SetData(customData1.data(), layout.second.GetSize(), layout.second.Offset);
+			constantBuffer->SetData(customData2.data(), layout.second.GetSize(), layout.second.Offset);
 		}
 	}
 
