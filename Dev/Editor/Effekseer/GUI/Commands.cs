@@ -72,11 +72,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.Open")]
 		public static bool Open()
 		{
-#if __NEW_FORMAT__
 			var filter = Resources.GetString("ProjectFilterNew");
-#else
-			var filter = Resources.GetString("ProjectFilter");
-#endif
 			var result = swig.FileDialog.OpenDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
             if(!string.IsNullOrEmpty(result))
@@ -168,11 +164,7 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.SaveAs")]
 		public static bool SaveAs()
 		{
-#if __NEW_FORMAT__
 			var filter = Resources.GetString("EffekseerParticleFilter");
-#else
-			var filter = Resources.GetString("ProjectFilter");
-#endif
 
 			var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
 
@@ -180,17 +172,10 @@ namespace Effekseer.GUI
 			{
 				var filepath = result;
 
-#if __NEW_FORMAT__
 				if (System.IO.Path.GetExtension(filepath) != ".efkefc")
 				{
 					filepath += ".efkefc";
 				}
-#else
-				if (System.IO.Path.GetExtension(filepath) != ".efkproj")
-				{
-					filepath += ".efkproj";
-				}
-#endif
 
 				Core.SaveTo(filepath);
 				RecentFiles.AddRecentFile(filepath);
@@ -429,11 +414,7 @@ namespace Effekseer.GUI
 		{
 			string rootDir = Path.GetDirectoryName(Manager.GetEntryDirectory());
 
-#if __NEW_FORMAT__
 			var filter = Resources.GetString("ProjectFilterNew");
-#else
-			var filter = Resources.GetString("ProjectFilter");
-#endif
 
 			var result = swig.FileDialog.OpenDialog(filter, Path.Combine(rootDir, @"Sample"));
 

@@ -9,9 +9,6 @@ if (MSVC)
 	option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
 endif()
 
-# 1.6
-set(ENABLED_NEW_FORMAT ON)
-
 # zlib
 ExternalProject_Add(
     ExternalProject_zlib
