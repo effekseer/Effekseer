@@ -13,6 +13,8 @@
 #include "EffectPlatformGL.h"
 #endif
 
+#include "../Effekseer/Effekseer/SIMD/Effekseer.ConversionSIMD.h"
+#include "../Effekseer/Effekseer/SIMD/Effekseer.Mat44fBlock4.h"
 #include "../TestHelper.h"
 
 void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPath, std::string suffix)
@@ -277,4 +279,56 @@ void CustomAllocatorTest()
 
 	Effekseer::CustomMap<int, int> m;
 	m[1] = 10;
+}
+
+void SIMDTest()
+{
+	// block mul
+	{
+
+		Effekseer::Matrix44 mat1[4];
+		Effekseer::Matrix44 mat2[4];
+		for (int i = 0; i < 4; i++)
+		{
+			mat1[i].Scaling(i * 1.0f, i * 2.0f, i * 3.0f);
+			mat2[i].Translation(1.0f * i, i * 2.0f, i * i);
+		}
+
+		Effekseer::Mat44f smat1[4];
+		Effekseer::Mat44f smat2[4];
+		for (int i = 0; i < 4; i++)
+		{
+			smat1[i] = Effekseer::ToSIMD(mat1[i]);
+			smat2[i] = Effekseer::ToSIMD(mat2[i]);
+		}
+
+		Effekseer::Mat44fBlock4 block, block1, block2;
+		block1.Set(smat1[0], smat1[1], smat1[2], smat1[3]);
+		block2.Set(smat2[0], smat2[1], smat2[2], smat2[3]);
+		Effekseer::Mat44fBlock4::Mul(block, block1, block2);
+
+		Effekseer::Mat44f sresult[4];
+		block.Get(sresult[0], sresult[1], sresult[2], sresult[3]);
+
+		Effekseer::Matrix44 result[4];
+		for (int i = 0; i < 4; i++)
+		{
+			Effekseer::Matrix44::Mul(result[i], mat1[i], mat2[i]);
+		}
+
+		float diff = 0.0f;
+		
+		for (int k = 0; k < 4; k++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					diff += (result[k].Values[j][i] - Effekseer::ToStruct(sresult[k]).Values[j][i]);
+				}
+			}
+		}
+
+		assert(diff < 0.1f);
+	}
 }

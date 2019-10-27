@@ -8,6 +8,9 @@
 #include "Effekseer.Matrix44.h"
 #include <limits>
 
+#include "SIMD/Effekseer.Mat44f.h"
+#include "SIMD/Effekseer.Mat44fBlock4.h"
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -393,6 +396,34 @@ void Matrix43::GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const
 //----------------------------------------------------------------------------------
 void Matrix43::GetScale( Vector3D& s ) const
 {
+#ifdef SSE_MODULE
+	Mat44f mat;
+	mat.X.SetX(Value[0][0]);
+	mat.X.SetY(Value[0][1]);
+	mat.X.SetZ(Value[0][2]);
+	mat.Y.SetX(Value[1][0]);
+	mat.Y.SetY(Value[1][1]);
+	mat.Y.SetZ(Value[1][2]);
+	mat.Z.SetX(Value[2][0]);
+	mat.Z.SetY(Value[2][1]);
+	mat.Z.SetZ(Value[2][2]);
+	mat.W.SetX(0.0f);
+	mat.W.SetY(0.0f);
+	mat.W.SetZ(0.0f);
+
+	mat.Transpose();
+
+	auto x2 = mat.X * mat.X;
+	auto y2 = mat.Y * mat.Y;
+	auto z2 = mat.Z * mat.Z;
+	auto s2 = x2 + y2 + z2;
+	auto sq = sqrt(s2);
+	s.X = sq.GetX();
+	s.Y = sq.GetY();
+	s.Z = sq.GetZ();
+
+#else
+
 #if defined(EFK_SSE2)
 	__m128 v0 = _mm_loadu_ps(&Value[0][0]);
 	__m128 v1 = _mm_loadu_ps(&Value[1][0]);
@@ -435,6 +466,8 @@ void Matrix43::GetScale( Vector3D& s ) const
 	s.X = sc[0];
 	s.Y = sc[1];
 	s.Z = sc[2];
+#endif
+
 #endif
 }
 
