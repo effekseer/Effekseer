@@ -22,7 +22,8 @@ namespace Effekseer.GUI.Dock
 
 		public class Curve
 		{
-			public string Name;
+			public int Index;
+			public int ID;
 			public List<Point> Points = new List<Point>();
 		}
 
@@ -1044,8 +1045,9 @@ namespace Effekseer.GUI.Dock
 
 					FCurveCopiedData.Curve copiedCurve = new FCurveCopiedData.Curve();
 
-					copiedCurve.Name = ind.ToString();
-
+					copiedCurve.Index = ind;
+					copiedCurve.ID = curve.ID;
+					
 					for(int i = 0; i < prop.KVSelected.Length; i++)
 					{
 						if(prop.KVSelected[i] > 0)
@@ -1067,7 +1069,6 @@ namespace Effekseer.GUI.Dock
 			}
 
 			var xmin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Key);
-			var ymin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Value);
 
 			foreach(var curve in data.Curves)
 			{
@@ -1076,9 +1077,6 @@ namespace Effekseer.GUI.Dock
 					p.Key -= xmin;
 					p.LeftKey -= xmin;
 					p.RightKey -= xmin;
-					p.Value -= ymin;
-					p.LeftValue -= ymin;
-					p.RightValue -= ymin;
 				}
 			}
 
@@ -1107,30 +1105,37 @@ namespace Effekseer.GUI.Dock
 
 			foreach (var curve in flatten)
 			{
-
 				for (int ind = 0; ind < curve.Properties.Length; ind++)
 				{
 					var prop = curve.Properties[ind];
 
-					var name = ind.ToString();
+					if (!prop.IsShown) continue;
+					if (!prop.Selected) continue;
 
-					var copiedCurved = data.Curves.FirstOrDefault(_ => _.Name == name);
+					var candidates = data.Curves.Where(_ => _.Index == ind);
 
-					if(copiedCurved != null)
+					var copiedCurve = candidates.FirstOrDefault(_ => _.ID == curve.ID);
+
+					if(copiedCurve == null)
+					{
+						copiedCurve = data.Curves.FirstOrDefault(_ => _.Index == ind);
+					}
+
+					if (copiedCurve != null)
 					{
 						
-						for(int i = 0; i < copiedCurved.Points.Count; i++)
+						for(int i = 0; i < copiedCurve.Points.Count; i++)
 						{
 							prop.KVSelected = new byte[] { 0 }.Concat(prop.KVSelected).ToArray();
 						}
 
-						prop.Keys = copiedCurved.Points.Select(_ => _.Key + offsetTime).Concat(prop.Keys).ToArray();
-						prop.Values = copiedCurved.Points.Select(_ => _.Value).Concat(prop.Values).ToArray();
-						prop.LeftKeys = copiedCurved.Points.Select(_ => _.LeftKey + offsetTime).Concat(prop.LeftKeys).ToArray();
-						prop.LeftValues = copiedCurved.Points.Select(_ => _.LeftValue).Concat(prop.LeftValues).ToArray();
-						prop.RightKeys = copiedCurved.Points.Select(_ => _.RightKey + offsetTime).Concat(prop.RightKeys).ToArray();
-						prop.RightValues = copiedCurved.Points.Select(_ => _.RightValue).Concat(prop.RightValues).ToArray();
-						prop.Interpolations = copiedCurved.Points.Select(_ => _.Interpolation).Concat(prop.Interpolations).ToArray();
+						prop.Keys = copiedCurve.Points.Select(_ => _.Key + offsetTime).Concat(prop.Keys).ToArray();
+						prop.Values = copiedCurve.Points.Select(_ => _.Value).Concat(prop.Values).ToArray();
+						prop.LeftKeys = copiedCurve.Points.Select(_ => _.LeftKey + offsetTime).Concat(prop.LeftKeys).ToArray();
+						prop.LeftValues = copiedCurve.Points.Select(_ => _.LeftValue).Concat(prop.LeftValues).ToArray();
+						prop.RightKeys = copiedCurve.Points.Select(_ => _.RightKey + offsetTime).Concat(prop.RightKeys).ToArray();
+						prop.RightValues = copiedCurve.Points.Select(_ => _.RightValue).Concat(prop.RightValues).ToArray();
+						prop.Interpolations = copiedCurve.Points.Select(_ => _.Interpolation).Concat(prop.Interpolations).ToArray();
 
 						prop.SolveContradiction();
 						prop.IsDirtied = true;
@@ -1213,8 +1218,59 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		abstract class FCurve
+
+		interface IFCurveConverter
 		{
+			IFCurveKey CreateKey(int key, float value, float leftKey, float leftValue, float rightKey, float rightValue);
+
+			void SetKeys(IFCurve fcurve, IFCurveKey[] keys);
+		}
+
+		class FloatFCurveConverter : IFCurveConverter
+		{
+			public IFCurveKey CreateKey(int key, float value, float leftKey, float leftValue, float rightKey, float rightValue)
+			{
+				var fcurveKey = new FCurveKey<float>(key, value);
+				fcurveKey.SetLeftDirectly(leftKey, leftValue);
+				fcurveKey.SetRightDirectly(rightKey, rightValue);
+				return fcurveKey;
+			}
+
+			public void SetKeys(IFCurve fcurve, IFCurveKey[] keys)
+			{
+				var fc = fcurve as FCurve<float>;
+				fc.SetKeys(keys.OfType<FCurveKey<float>>().ToArray());
+			}
+		}
+
+		class ByteFCurveConverter : IFCurveConverter
+		{
+			public IFCurveKey CreateKey(int key, float value, float leftKey, float leftValue, float rightKey, float rightValue)
+			{
+				var fcurveKey = new FCurveKey<byte>(key, (byte)value);
+				fcurveKey.SetLeftDirectly(leftKey, leftValue);
+				fcurveKey.SetRightDirectly(rightKey, rightValue);
+				return fcurveKey;
+			}
+
+			public void SetKeys(IFCurve fcurve, IFCurveKey[] keys)
+			{
+				var fc = fcurve as FCurve<byte>;
+				fc.SetKeys(keys.OfType<FCurveKey<byte>>().ToArray());
+			}
+		}
+
+		class FCurve
+		{
+			/// <summary>
+			/// next id for copy and paste
+			/// </summary>
+			static int nextID = 0;
+
+			/// <summary>
+			/// for copy and paste
+			/// </summary>
+			public int ID { get; private set; }
 			protected int LEFT_SHIFT = 340;
 			protected int RIGHT_SHIFT = 344;
 			protected FCurveProperty[] properties = null;
@@ -1223,20 +1279,14 @@ namespace Effekseer.GUI.Dock
 
 			public string Name { get; protected set; }
 
-			public abstract object GetValueAsObject();
-
 			public FCurveProperty[] Properties { get { return properties; } }
-
-			public virtual Tuple35<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve() { return new Tuple35<Data.Value.IFCurve, FCurveProperty>(null, null); }
 
 			static public FCurve Create(Tuple35<string, object> v, FCurves window)
 			{
 				if (v.Item2 is Data.Value.FCurveVector2D)
 				{
-					Func<float, float> converter = (float pre) => { return pre; };
-
 					var v_ = (Data.Value.FCurveVector2D)v.Item2;
-					return new FCurveTemplate<float>(
+					return new FCurve(
 						2,
 						new[] { v_.X, v_.Y },
 						new[] { 0xff0000ff, 0xff00ff00 },
@@ -1245,7 +1295,7 @@ namespace Effekseer.GUI.Dock
 						v_,
 						v.Item1,
 						window,
-						converter,
+						new FloatFCurveConverter(),
 						float.MinValue,
 						float.MaxValue,
 						v_.Timeline);
@@ -1255,28 +1305,24 @@ namespace Effekseer.GUI.Dock
 					Func<float, float> converter = (float pre) => { return pre; };
 
 					var v_ = (Data.Value.FCurveVector3D)v.Item2;
-					return new FCurveTemplate<float>(
-						3, 
-						new[] { v_.X, v_.Y, v_.Z}, 
+					return new FCurve(
+						3,
+						new[] { v_.X, v_.Y, v_.Z },
 						new[] { 0xff0000ff, 0xff00ff00, 0xffff0000 },
 						new string[] { "X", "Y", "Z" },
 						0,
 						v_,
-						v.Item1, 
+						v.Item1,
 						window,
-						converter,
+						new FloatFCurveConverter(),
 						float.MinValue,
 						float.MaxValue,
 						v_.Timeline);
 				}
 				else if (v.Item2 is Data.Value.FCurveColorRGBA)
 				{
-					Func<float, byte> converter = (float pre) => {
-						return (byte)Math.Min(255, Math.Max(0, pre));
-					};
-
 					var v_ = (Data.Value.FCurveColorRGBA)v.Item2;
-					return new FCurveTemplate<byte>(
+					return new FCurve(
 						4,
 						new[] { v_.R, v_.G, v_.B, v_.A },
 						new[] { 0xff0000ff, 0xff00ff00, 0xffff0000, 0xffaaaaaa },
@@ -1285,66 +1331,34 @@ namespace Effekseer.GUI.Dock
 						v_,
 						v.Item1,
 						window,
-						converter,
+						new ByteFCurveConverter(),
 						0,
 						255,
 						v_.Timeline);
 				}
-				
+
 				return null;
 			}
 
-			public FCurve()
-			{
-			}
 
-			public abstract void GetRange(out float value_min, out float value_max);
-
-			public virtual void OnAdded() {}
-
-			public virtual void OnRemoved() {}
-
-			public virtual void Move(float x, float y, int changedType, Data.Value.IFCurve except) { }
-
-			public virtual void DeleteSelectedPoints() { }
-			public virtual void ShrinkAnchors() { }
-
-			public virtual void EnlargeAnchors() { }
-
-			public virtual void Unselect() { }
-
-			public virtual void UpdateTree() { }
-
-			public virtual void UpdateGraph(ref bool canControl) { }
-
-			public virtual void Hide() { }
-
-			public virtual void Commit() { }
-
-			public virtual bool IsDirtied() { return false; }
-
-			public virtual Data.Value.Enum<FCurveTimelineType> GetTimeLineType() { return null; }
-
-
-		}
-
-		class FCurveTemplate<T> : FCurve where T : struct, IComparable<T>, IEquatable<T>
-		{
-			Data.Value.FCurve<T>[] fcurves = new Data.Value.FCurve<T>[3];
+			Data.Value.IFCurve[] fcurves = null;
 			int[] ids = new int[3];
 			string[] names = null;
 			Data.Value.Enum<FCurveTimelineType> timelineType = null;
 
 			FCurves window = null;
-			Func<float, T> converter = null;
+			IFCurveConverter converter = null;
 			float v_min;
 			float v_max;
 			float defaultValue = 0;
 
 			public object Value { get; private set; }
 
-			public FCurveTemplate(int length, FCurve<T>[] fcurves, uint[] colors, string[] names, float defaultValue, object value, string name, FCurves window, Func<float, T> converter, float v_min, float v_max, Data.Value.Enum<FCurveTimelineType> timelineType)
+			public FCurve(int length, IFCurve[] fcurves, uint[] colors, string[] names, float defaultValue, object value, string name, FCurves window, IFCurveConverter converter, float v_min, float v_max, Data.Value.Enum<FCurveTimelineType> timelineType)
 			{
+				ID = nextID;
+				nextID++;
+
 				Name = name;
 				Value = value;
 				this.defaultValue = defaultValue;
@@ -1368,7 +1382,7 @@ namespace Effekseer.GUI.Dock
 				this.fcurves = fcurves;
 			}
 
-			public override void GetRange(out float value_min, out float value_max)
+			public void GetRange(out float value_min, out float value_max)
 			{
 				value_min = float.MaxValue;
 				value_max = float.MinValue;
@@ -1406,12 +1420,12 @@ namespace Effekseer.GUI.Dock
 				*/
 			}
 
-			public override object GetValueAsObject()
+			public object GetValueAsObject()
 			{
 				return Value;
 			}
 
-			public override Tuple35<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve()
+			public Tuple35<Data.Value.IFCurve, FCurveProperty> GetSelectedFCurve()
 			{
 				int count = properties.Count(_ => _.Selected);
 				if (count != 1) return new Tuple35<Data.Value.IFCurve, FCurveProperty>(null, null);
@@ -1427,7 +1441,7 @@ namespace Effekseer.GUI.Dock
 				return new Tuple35<Data.Value.IFCurve, FCurveProperty>(null, null);
 			}
 
-			public override void UpdateTree()
+			public void UpdateTree()
 			{
 
 				for(int i = 0; i < properties.Length; i++)
@@ -1469,7 +1483,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public override void UpdateGraph(ref bool canControl)
+			public void UpdateGraph(ref bool canControl)
 			{
 				for(int i = 0; i < properties.Length; i++)
 				{
@@ -1525,7 +1539,7 @@ namespace Effekseer.GUI.Dock
 						{
 							if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
 							{
-								properties[i].Selected = true;
+								properties[i].Selected = !properties[i].Selected;
 							}
 							else
 							{
@@ -1569,7 +1583,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public override void Move(float x, float y, int changedType, IFCurve except)
+			public void Move(float x, float y, int changedType, IFCurve except)
 			{
 				for (int j = 0; j < properties.Length; j++)
 				{
@@ -1639,7 +1653,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public override void DeleteSelectedPoints()
+			public void DeleteSelectedPoints()
 			{
 				foreach (var prop in properties)
 				{
@@ -1667,7 +1681,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public override void ShrinkAnchors()
+			public void ShrinkAnchors()
 			{
 				foreach (var prop in properties)
 				{
@@ -1689,7 +1703,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public override void EnlargeAnchors()
+			public void EnlargeAnchors()
 			{
 				foreach(var prop in properties)
 				{
@@ -1745,7 +1759,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public override void OnAdded()
+			public void OnAdded()
 			{
 				fcurves[0].OnChanged += OnChanged_1;
 				if (fcurves.Length >= 2) fcurves[1].OnChanged += OnChanged_2;
@@ -1753,7 +1767,7 @@ namespace Effekseer.GUI.Dock
 				if (fcurves.Length >= 4) fcurves[3].OnChanged += OnChanged_4;
 			}
 
-			public override void OnRemoved()
+			public void OnRemoved()
 			{
 				fcurves[0].OnChanged -= OnChanged_1;
 				if (fcurves.Length >= 2) fcurves[1].OnChanged -= OnChanged_2;
@@ -1794,7 +1808,7 @@ namespace Effekseer.GUI.Dock
 				properties[i].CopyValuesFromDataIfSizeDifferent(fcurves[i]);
 			}
 
-			public override void Unselect()
+			public void Unselect()
 			{
 				foreach(var prop in properties)
 				{
@@ -1802,7 +1816,7 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public override void Hide()
+			public void Hide()
 			{
 				foreach (var prop in properties)
 				{
@@ -1810,13 +1824,15 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-			public override void Commit()
+			public void Commit()
 			{
+				Command.CommandManager.StartCollection();
+
 				for(int i = 0; i < properties.Length; i++)
 				{
 					if (!properties[i].IsDirtied) continue;
 					
-					var keys = new List<Data.Value.FCurveKey<T>>();
+					var keys = new List<IFCurveKey>();
 
 					// Change value format into int
 					for (int j = 0; j < properties[i].Keys.Length - 1; j++)
@@ -1836,30 +1852,18 @@ namespace Effekseer.GUI.Dock
 					for (int j = 0; j < properties[i].Keys.Length - 1; j++)
 					{
 						var v = properties[i].Values[j];
-						var v_ = converter(v);
-
-						Data.Value.FCurveKey<T> key = new FCurveKey<T>(
-							(int)properties[i].Keys[j],
-							v_);
-
-						key.SetLeftDirectly(
-							properties[i].LeftKeys[j],
-							properties[i].LeftValues[j]);
-
-						key.SetRightDirectly(
-							properties[i].RightKeys[j],
-							properties[i].RightValues[j]);
-
+						var key = converter.CreateKey((int)properties[i].Keys[j], v, properties[i].LeftKeys[j], properties[i].LeftValues[j], properties[i].RightKeys[j], properties[i].RightValues[j]);
 						keys.Add(key);
 					}
 
-					fcurves[i].SetKeys(keys.ToArray());
-
+					converter.SetKeys(fcurves[i], keys.ToArray());
 					properties[i].IsDirtied = false;
 				}
+
+				Command.CommandManager.EndCollection();
 			}
 
-			public override bool IsDirtied()
+			public bool IsDirtied()
 			{
 				for (int i = 0; i < properties.Length; i++)
 				{
@@ -1869,7 +1873,7 @@ namespace Effekseer.GUI.Dock
 				return false;
 			}
 
-			public override Enum<FCurveTimelineType> GetTimeLineType()
+			public Enum<FCurveTimelineType> GetTimeLineType()
 			{
 				return timelineType;
 			}
@@ -1975,43 +1979,38 @@ namespace Effekseer.GUI.Dock
 				return -1;
 			}
 
-			public void CopyValuesFromDataIfSizeDifferent<T>(Data.Value.FCurve<T> fcurve) where T : struct, IComparable<T>, IEquatable<T>
+			public void CopyValuesFromDataIfSizeDifferent(Data.Value.IFCurve fcurve)
 			{
 				var plength = fcurve.Keys.Count() + 1;
+				var keyFrames = fcurve.Keys.ToArray();
 
 				if (Keys.Length != plength)
 				{
-					var keyFrames = fcurve.Keys.ToArray();
 					Keys = keyFrames.Select(_ => (float)_.Frame).Concat(new float[] { 0.0f }).ToArray();
 				}
 
 				if (Values.Length != plength)
 				{
-					var keyFrames = fcurve.Keys.ToArray();
 					Values = keyFrames.Select(_ => _.ValueAsFloat).Concat(new float[] { 0.0f }).ToArray();
 				}
 
 				if (LeftKeys.Length != plength)
 				{
-					var keyFrames = fcurve.Keys.ToArray();
 					LeftKeys = keyFrames.Select(_ => _.LeftX).Concat(new float[] { 0.0f }).ToArray();
 				}
 
 				if (LeftValues.Length != plength)
 				{
-					var keyFrames = fcurve.Keys.ToArray();
 					LeftValues = keyFrames.Select(_ => _.LeftY).Concat(new float[] { 0.0f }).ToArray();
 				}
 
 				if (RightKeys.Length != plength)
 				{
-					var keyFrames = fcurve.Keys.ToArray();
 					RightKeys = keyFrames.Select(_ => _.RightX).Concat(new float[] { 0.0f }).ToArray();
 				}
 
 				if (RightValues.Length != plength)
 				{
-					var keyFrames = fcurve.Keys.ToArray();
 					RightValues = keyFrames.Select(_ => _.RightY).Concat(new float[] { 0.0f }).ToArray();
 				}
 
@@ -2024,8 +2023,6 @@ namespace Effekseer.GUI.Dock
 
 				if (Interpolations.Length != plength)
 				{
-					var keyFrames = fcurve.Keys.ToArray();
-
 					var new_interpolations = new int[keyFrames.Length + 1];
 					Interpolations.CopyTo(new_interpolations, 0);
 					Interpolations = new_interpolations;

@@ -49,6 +49,8 @@ namespace Effekseer.Data.Value
 		Float OffsetMax { get; }
 		Float OffsetMin { get; }
 		Int Sampling { get; }
+
+		event ChangedValueEventHandler OnChanged;
 	}
 
 	public class FCurve<T> : IFCurve where T : struct, IComparable<T>, IEquatable<T>
@@ -713,6 +715,8 @@ namespace Effekseer.Data.Value
 
 		void SetLeft(float x, float y);
 		void SetRight(float x, float y);
+
+		event ChangedValueEventHandler OnChanged;
 	}
 
 	public class FCurveKey<T> : IFCurveKey where T : struct, IComparable<T>, IEquatable<T>

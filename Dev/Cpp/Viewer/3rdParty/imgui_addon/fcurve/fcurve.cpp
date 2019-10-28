@@ -6,6 +6,84 @@
 
 namespace ImGui
 {
+
+enum FCurveContextState : int32_t
+{
+	None,
+	SelectingWithArea,
+	FinishedSelectingWithArea,
+};
+
+enum class FCurveStorageValues : ImGuiID
+{
+	SCALE_X = 100,
+	SCALE_Y,
+	OFFSET_X,
+	OFFSET_Y,
+	IS_PANNING,
+	START_X,
+	START_Y,
+	DELTA_X,
+	DELTA_Y,
+	OVER_Y,
+	SELECTING_AREA_START_X,
+	SELECTING_AREA_START_Y,
+	SELECTING_AREA_END_X,
+	SELECTING_AREA_END_Y,
+	STATE,
+};
+
+class FCurveContext
+{
+
+public:
+	FCurveContextState State;
+	float AreaStartingX;
+	float AreaStartingY;
+	float AreaEndingX;
+	float AreaEndingY;
+
+	void Load(ImGuiWindow* window)
+	{
+		State = (FCurveContextState)(int)window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::STATE);
+		AreaStartingX = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SELECTING_AREA_START_X);
+		AreaStartingY = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SELECTING_AREA_START_Y);
+		AreaEndingX = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SELECTING_AREA_END_X);
+		AreaEndingY = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::SELECTING_AREA_END_Y);
+
+	}
+
+	void Store(ImGuiWindow* window)
+	{
+		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::STATE, (int)State);
+		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SELECTING_AREA_START_X, AreaStartingX);
+		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SELECTING_AREA_START_Y, AreaStartingY);
+		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SELECTING_AREA_END_X, AreaEndingX);
+		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::SELECTING_AREA_END_Y, AreaEndingY);
+	}
+
+	void GetSelectingArea(ImVec2& begin, ImVec2& end)
+	{
+		float xBegin = AreaStartingX;
+		float yBegin = AreaStartingY;
+		float xEnd = AreaEndingX;
+		float yEnd = AreaEndingY;
+
+		if (xBegin > xEnd)
+			std::swap(xBegin, xEnd);
+
+		if (yBegin > yEnd)
+			std::swap(yBegin, yEnd);
+
+		begin = ImVec2(xBegin, yBegin);
+		end = ImVec2(xEnd, yEnd);
+	}
+};
+
+}
+
+namespace ImGui
+{
 	static ImVec2 operator+(const ImVec2& lhs, const ImVec2& rhs)
 	{
 		return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y);
@@ -52,26 +130,6 @@ namespace ImGui
 	{
 		return log(x) / log(base);
 	}
-
-	enum class FCurveStorageValues : ImGuiID
-	{
-		SCALE_X = 100,
-		SCALE_Y,
-		OFFSET_X,
-		OFFSET_Y,
-		IS_PANNING,
-		START_X,
-		START_Y,
-		DELTA_X,
-		DELTA_Y,
-		OVER_Y,
-		IS_SELECTING_AREA,
-		IS_SELECTING_AREA_FINISHED,
-		IS_SELECTING_AREA_BEGIN_X,
-		IS_SELECTING_AREA_BEGIN_Y,
-		IS_SELECTING_AREA_END_X,
-		IS_SELECTING_AREA_END_Y,
-	};
 
 	bool IsHovered(const ImVec2& v1, const ImVec2& v2, float radius)
 	{
@@ -195,6 +253,9 @@ namespace ImGui
 		{
 			return false;
 		}
+
+		FCurveContext context;
+		context.Load(window);
 
 		bool isGridShown = true;
 		float offset_x = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OFFSET_X, 0.0f);
@@ -407,39 +468,31 @@ namespace ImGui
 			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::OVER_Y, 0);
 		}
 
-		auto isSelectingArea = window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA, false);
-
-		if (isSelectingArea)
+		if (context.State == FCurveContextState::SelectingWithArea)
 		{
 			auto fpos = transform_s2f(ImGui::GetMousePos());
-			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_X, fpos.x);
-			window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_Y, fpos.y);
+			context.AreaEndingX = fpos.x;
+			context.AreaEndingY = fpos.y;
 
 			if (ImGui::IsMouseReleased(0))
 			{
-				window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA, false);
-				window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_FINISHED, true);
+				context.State = FCurveContextState::FinishedSelectingWithArea;
 			}
 			else
 			{
 				// draw area
-				float xBegin = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_X);
-				float yBegin = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_Y);
-				float xEnd = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_X);
-				float yEnd = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_Y);
+				ImVec2 begin;
+				ImVec2 end;
+				context.GetSelectingArea(begin, end);
 
-				if (xBegin > xEnd)
-					std::swap(xBegin, xEnd);
+				begin = transform_f2s(begin);
+				end = transform_f2s(end);
 
-				if (yBegin > yEnd)
-					std::swap(yBegin, yEnd);
-
-				auto begin = transform_f2s(ImVec2(xBegin, yBegin));
-				auto end = transform_f2s(ImVec2(xEnd, yEnd));
-
-				window->DrawList->AddRect(begin, end, ImColor(0, 0, 128, 128));
+				window->DrawList->AddRect(begin, end, ImColor(64, 64, 255, 128));
 			}
 		}
+
+		context.Store(window);
 
 		return true;
 	}
@@ -447,7 +500,16 @@ namespace ImGui
 	void EndFCurve()
 	{
 		ImGuiWindow* window = GetCurrentWindow();
-		window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_FINISHED, false);
+
+		FCurveContext context;
+		context.Load(window);
+
+		if (context.State == FCurveContextState::FinishedSelectingWithArea)
+		{
+			context.State = FCurveContextState::None;
+		}
+
+		context.Store(window);
 
 		EndChildFrame();
 	}
@@ -461,8 +523,10 @@ namespace ImGui
 			return false;
 		}
 
-		auto isSelecting = window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA, false);
-		if (isSelecting)
+		FCurveContext context;
+		context.Load(window);
+
+		if (context.State == FCurveContextState::SelectingWithArea)
 		{
 			return true;
 		}
@@ -485,11 +549,12 @@ namespace ImGui
 			return ImVec2((p.x - innerRect.Min.x) / scale_x + offset_x, -((p.y - innerRect.Min.y - height / 2) / scale_y + offset_y));
 		};
 
-		window->StateStorage.SetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA, true);
 		auto fpos = transform_s2f(ImGui::GetMousePos());
-		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_X, fpos.x);
-		window->StateStorage.SetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_Y, fpos.y);
 
+		context.State = FCurveContextState::SelectingWithArea;
+		context.AreaStartingX = fpos.x;
+		context.AreaStartingY = fpos.y;
+		context.Store(window);
 		return true;
 	}
 
@@ -700,33 +765,33 @@ namespace ImGui
 			hasControlled = true;
 		}
 
-		auto isAreaSelecting = window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA, false);
-		auto isAreaSelectingFinished = window->StateStorage.GetBool((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_FINISHED, false);
+		FCurveContext context;
+		context.Load(window);
 
-		if (isAreaSelecting)
+		if (context.State == FCurveContextState::SelectingWithArea)
 		{
-			hasControlled = false;
+			hasControlled = true;
 		}
-		else if (isAreaSelectingFinished)
+		else if (context.State == FCurveContextState::FinishedSelectingWithArea && selected)
 		{
-			hasControlled = false;
+			hasControlled = true;
 			
 			// select area
+			ImVec2 begin;
+			ImVec2 end;
+			context.GetSelectingArea(begin, end);
 
-			float xBegin = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_X);
-			float yBegin = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_BEGIN_Y);
-			float xEnd = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_X);
-			float yEnd = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::IS_SELECTING_AREA_END_Y);
-
-			if (xBegin > xEnd)
-				std::swap(xBegin, xEnd);
-
-			if (yBegin > yEnd)
-				std::swap(yBegin, yEnd);
+			if (!GetIO().KeyShift)
+			{
+				for (int j = 0; j < count; j++)
+				{
+					kv_selected[j] = false;
+				}
+			}
 
 			for (int i = 0; i < count; i++)
 			{
-				if (xBegin <= keys[i] && keys[i] <= xEnd && yBegin <= values[i] && values[i] <= yEnd)
+				if (begin.x <= keys[i] && keys[i] <= end.x && begin.y <= values[i] && values[i] <= end.y)
 				{
 					kv_selected[i] = true;
 				}
@@ -775,6 +840,7 @@ namespace ImGui
 					}
 
 					kv_selected[i] = !kv_selected[i];
+					hasControlled = true;
 				}
 
 				if (IsItemActive() && IsMouseDragging(0))
