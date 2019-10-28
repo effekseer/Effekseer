@@ -802,6 +802,7 @@ namespace ImGui
 		auto dx = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::DELTA_X, 0.0f);
 		auto dy = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::DELTA_Y, 0.0f);
 		auto over_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OVER_Y, 0.0f);
+		bool isOnPoint = false;
 
 		// move points
 		if (!hasControlled && selected)
@@ -827,6 +828,7 @@ namespace ImGui
 				if (IsItemHovered())
 				{
 					isDrawPositionRequired = true;
+					isOnPoint = true;
 				}
 
 				if (IsItemActive() && IsMouseClicked(0))
@@ -1010,6 +1012,7 @@ namespace ImGui
 				if (IsItemHovered())
 				{
 					isDrawPositionRequired = true;
+					isOnPoint = true;
 				}
 
 				if (IsItemActive() && IsMouseClicked(0))
@@ -1101,6 +1104,7 @@ namespace ImGui
 				if (IsItemHovered())
 				{
 					isDrawPositionRequired = true;
+					isOnPoint = true;
 				}
 
 				if (IsItemActive() && IsMouseClicked(0))
@@ -1444,7 +1448,7 @@ namespace ImGui
 		}
 
 		// is line selected
-		if (newSelected != nullptr && !hasControlled && !isLocked && IsMouseClicked(0))
+		if (newSelected != nullptr && !hasControlled && !isLocked &&!isOnPoint && IsMouseClicked(0))
 		{
 			if (isLineHovered)
 			{
