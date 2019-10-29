@@ -18,7 +18,7 @@ std::string NodeParameterBehaviorComponentTwoInputMath::GetHeader(std::shared_pt
 	}
 	else
 	{
-		ret << std::to_string(node->Properties[0]->Floats[0]);
+		ret << node->Properties[0]->Floats[0];
 	}
 
 	ret << ",";
@@ -28,7 +28,7 @@ std::string NodeParameterBehaviorComponentTwoInputMath::GetHeader(std::shared_pt
 	}
 	else
 	{
-		ret << std::to_string(node->Properties[1]->Floats[0]);
+		ret << node->Properties[1]->Floats[0];
 	}
 
 	ret << ")";

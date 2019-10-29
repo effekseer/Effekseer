@@ -581,6 +581,8 @@ public:
 
 		InitializeAsIn2Out1Param2();
 
+		Properties[1]->DefaultValues[0] = 1;
+
 		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
 	}
 
@@ -605,6 +607,8 @@ public:
 		Group = std::vector<std::string>{"Math"};
 
 		InitializeAsIn2Out1Param2();
+
+		Properties[1]->DefaultValues[0] = 1;
 
 		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
 	}
