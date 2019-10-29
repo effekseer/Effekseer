@@ -5,38 +5,81 @@
 namespace EffekseerMaterial
 {
 
-std::string NodeParameter::GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+std::string NodeParameterBehaviorComponentTwoInputMath::GetHeader(std::shared_ptr<Material> material,
+																  std::shared_ptr<NodeParameter> parameter,
+																  std::shared_ptr<Node> node) const
 {
-	return StringContainer::GetValue((TypeName + "_Name").c_str(), TypeName.c_str());
-}
-
-std::string NodeAdd::GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
-{
-	auto ret = StringContainer::GetValue((TypeName + "_Name").c_str(), TypeName.c_str());
-
-	ret += "(";
+	std::ostringstream ret;
+	ret << StringContainer::GetValue((parameter->TypeName + "_Name").c_str(), parameter->TypeName.c_str());
+	ret << "(";
 
 	if (material->GetConnectedPins(node->InputPins[0]).size() > 0)
 	{
 	}
 	else
 	{
-		ret += std::to_string(node->Properties[0]->Floats[0]);
+		ret << std::to_string(node->Properties[0]->Floats[0]);
 	}
 
-	ret += ",";
+	ret << ",";
 
 	if (material->GetConnectedPins(node->InputPins[1]).size() > 0)
 	{
 	}
 	else
 	{
-		ret += std::to_string(node->Properties[1]->Floats[0]);
+		ret << std::to_string(node->Properties[1]->Floats[0]);
 	}
 
-	ret += ")";
+	ret << ")";
 
-	return ret;
+	return ret.str();
+}
+
+std::string NodeParameterBehaviorComponentMask::GetHeader(std::shared_ptr<Material> material,
+														  std::shared_ptr<NodeParameter> parameter,
+														  std::shared_ptr<Node> node) const
+{
+	std::ostringstream ret;
+	ret << StringContainer::GetValue((parameter->TypeName + "_Name").c_str(), parameter->TypeName.c_str());
+	ret << "(";
+
+	if (node->Properties[0]->Floats[0] > 0)
+		ret << "R";
+
+	if (node->Properties[1]->Floats[0] > 0)
+		ret << "G";
+
+	if (node->Properties[2]->Floats[0] > 0)
+		ret << "B";
+
+	if (node->Properties[3]->Floats[0] > 0)
+		ret << "A";
+
+	ret << ")";
+
+	return ret.str();
+}
+
+std::string NodeParameterBehaviorComponentName::GetHeader(std::shared_ptr<Material> material,
+														  std::shared_ptr<NodeParameter> parameter,
+														  std::shared_ptr<Node> node) const
+{
+	std::ostringstream ret;
+
+	assert(node->Parameter->Properties[0]->Name == "Name");
+
+	ret << StringContainer::GetValue((parameter->TypeName + "_Name").c_str(), parameter->TypeName.c_str());
+	ret << "(";
+	ret << node->Properties[0]->Str;
+	ret << ")";
+
+	return ret.str();
+}
+
+std::string NodeParameter::GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+{
+	return StringContainer::GetValue((TypeName + "_Name").c_str(), TypeName.c_str());
 }
 
 bool ExtractTextureParameter(std::shared_ptr<Material> material, std::shared_ptr<Node> node, ExtractedTextureParameter& result)
@@ -243,8 +286,9 @@ WarningType NodeComponentMask::GetWarning(std::shared_ptr<Material> material, st
 	return WarningType::None;
 }
 
-ValueType
-NodeAppendVector::GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const
+ValueType NodeAppendVector::GetOutputType(std::shared_ptr<Material> material,
+										  std::shared_ptr<Node> node,
+										  const std::vector<ValueType>& inputTypes) const
 {
 	auto type1 = material->GetDesiredPinType(node->InputPins[0], std::unordered_set<std::shared_ptr<Pin>>());
 	auto type2 = material->GetDesiredPinType(node->InputPins[1], std::unordered_set<std::shared_ptr<Pin>>());

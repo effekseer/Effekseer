@@ -558,6 +558,7 @@ void Editor::Update()
 	{
 		ImGui::OpenPopup(label_new_node);
 		searchingKeywords.fill(0);
+		searchingKeywordsActual.fill(0);
 		currentPin = nullptr;
 		popupPosition = posOnEditor;
 	}
@@ -756,9 +757,12 @@ void Editor::UpdatePopup()
 			}
 
 			// Show a description
-			if (ImGui::IsItemHovered() && ImGui::GetCurrentContext()->HoveredIdTimer > 0.25 && c->Description != "")
+			if (ImGui::IsItemHovered() && ImGui::GetCurrentContext()->HoveredIdTimer > 0.25)
 			{
-				ImGui::SetTooltip(c->Description.c_str());
+				auto desc = std::string("Key : ") + c->KeywordsShown + "\n";
+				desc += c->Description;
+
+				ImGui::SetTooltip(desc.c_str());
 			}
 		};
 
@@ -768,19 +772,19 @@ void Editor::UpdatePopup()
 				return false;
 			}
 
-			if (searchingKeywords[0] == 0)
+			if (searchingKeywordsActual[0] == 0)
 			{
 				return true;
 			}
 
 			auto name = c->Name;
 
-			if (name.find(searchingKeywords.data()) != std::string::npos)
+			if (name.find(searchingKeywordsActual.data()) != std::string::npos)
 				return true;
 
 			for (auto keyword : c->Keywords)
 			{
-				if (keyword.find(searchingKeywords.data()) != std::string::npos)
+				if (keyword.find(searchingKeywordsActual.data()) != std::string::npos)
 					return true;
 			}
 
@@ -795,7 +799,14 @@ void Editor::UpdatePopup()
 
 		ImGui::InputText(StringContainer::GetValue("Search").c_str(), searchingKeywords.data(), searchingKeywords.size());
 
-		if (searchingKeywords[0] == 0)
+		for (size_t c = 0; c < searchingKeywords.size(); c++)
+		{
+			searchingKeywordsActual[c] = tolower(searchingKeywords[c]);
+			if (searchingKeywordsActual[c] == 0)
+				break;
+		}
+
+		if (searchingKeywordsActual[0] == 0)
 		{
 			for (auto group : library->Root->Groups)
 			{
@@ -974,6 +985,7 @@ void Editor::UpdateCreating()
 				popupPosition = posOnEditor;
 				ImGui::OpenPopup(label_new_node);
 				searchingKeywords.fill(0);
+				searchingKeywordsActual.fill(0);
 				ed::Resume();
 			}
 		}
@@ -1347,8 +1359,24 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 
 	// Header
 	ImGui::BeginHorizontal("header");
-	const auto nodeTypeName = node->Parameter->GetHeader(GetSelectedMaterial(), node);
-	ImGui::Text(nodeTypeName.c_str());
+
+	std::string headerName;
+	bool found = false;
+	for (auto& behavior : node->Parameter->BehaviorComponents)
+	{
+		if (behavior->IsGetHeaderInherited)
+		{
+			headerName = behavior->GetHeader(GetSelectedMaterial(), node->Parameter, node);
+			found = true;
+		}
+	}
+
+	if (!found)
+	{
+		headerName = node->Parameter->GetHeader(GetSelectedMaterial(), node);
+	}
+
+	ImGui::Text(headerName.c_str());
 
 	// show preview button
 	ImGui::Spring(1, 0);

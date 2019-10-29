@@ -4,6 +4,7 @@
 #include "efkMat.Base.h"
 #include "efkMat.Models.h"
 #include "efkMat.Parameters.h"
+#include <cctype>
 
 namespace EffekseerMaterial
 {
@@ -15,6 +16,10 @@ public:
 	std::string Description;
 	std::vector<std::string> Group;
 	std::vector<std::string> Keywords;
+
+	//! shown in editor
+	std::string KeywordsShown;
+
 	bool IsShown = true;
 
 	virtual std::shared_ptr<NodeParameter> Create() { return nullptr; }
@@ -22,6 +27,12 @@ public:
 
 template <class NT> class LibraryContent : public LibraryContentBase
 {
+	std::string tolower(std::string s)
+	{
+		std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::tolower(c); });
+		return s;
+	}
+
 public:
 	LibraryContent()
 	{
@@ -29,11 +40,26 @@ public:
 		Name = node->TypeName;
 		Description = node->Description;
 		Group = node->Group;
-		Keywords = node->Keywords;
+
+		Keywords.push_back(tolower(node->TypeName));
+
+		for (auto key : node->Keywords)
+		{
+			Keywords.push_back(tolower(key));
+		}
 
 		if (node->Type == NodeType::Output)
 		{
 			IsShown = false;
+		}
+
+		for (size_t i = 0; i < Keywords.size(); i++)
+		{
+			KeywordsShown += Keywords[i];
+			if (i != Keywords.size() - 1)
+			{
+				KeywordsShown += ", ";
+			}
 		}
 	}
 

@@ -90,6 +90,7 @@ private:
 
 	//! popupsed keywords
 	std::array<char, 256> searchingKeywords;
+	std::array<char, 256> searchingKeywordsActual;
 
 public: // TODO temp
 	std::shared_ptr<Library> library;

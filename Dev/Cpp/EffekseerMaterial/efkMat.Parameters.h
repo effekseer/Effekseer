@@ -58,6 +58,45 @@ public:
 	std::function<bool(std::shared_ptr<Material>, std::shared_ptr<Node>)> Func;
 };
 
+class NodeParameterBehaviorComponent
+{
+public:
+	bool IsGetHeaderInherited = false;
+
+	virtual std::string
+	GetHeader(std::shared_ptr<Material> material, std::shared_ptr<NodeParameter> parameter, std::shared_ptr<Node> node) const
+	{
+		return "";
+	}
+};
+
+class NodeParameterBehaviorComponentTwoInputMath : public NodeParameterBehaviorComponent
+{
+public:
+	NodeParameterBehaviorComponentTwoInputMath() { IsGetHeaderInherited = true; }
+
+	std::string
+	GetHeader(std::shared_ptr<Material> material, std::shared_ptr<NodeParameter> parameter, std::shared_ptr<Node> node) const override;
+};
+
+class NodeParameterBehaviorComponentMask : public NodeParameterBehaviorComponent
+{
+public:
+	NodeParameterBehaviorComponentMask() { IsGetHeaderInherited = true; }
+
+	std::string
+	GetHeader(std::shared_ptr<Material> material, std::shared_ptr<NodeParameter> parameter, std::shared_ptr<Node> node) const override;
+};
+
+class NodeParameterBehaviorComponentName : public NodeParameterBehaviorComponent
+{
+public:
+	NodeParameterBehaviorComponentName() { IsGetHeaderInherited = true; }
+
+	std::string
+	GetHeader(std::shared_ptr<Material> material, std::shared_ptr<NodeParameter> parameter, std::shared_ptr<Node> node) const override;
+};
+
 class NodeParameter
 {
 protected:
@@ -129,6 +168,8 @@ protected:
 	}
 
 public:
+	std::vector<std::shared_ptr<NodeParameterBehaviorComponent>> BehaviorComponents;
+
 	NodeType Type;
 	std::string TypeName;
 	std::string Description;
@@ -273,6 +314,8 @@ public:
 		param->Name = "Value";
 		param->Type = ValueType::Float1;
 		Properties.push_back(param);
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentName>()};
 	}
 };
 
@@ -307,6 +350,8 @@ public:
 		param->Name = "Value";
 		param->Type = ValueType::Float4;
 		Properties.push_back(param);
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentName>()};
 	}
 };
 
@@ -407,6 +452,8 @@ public:
 		val4->Name = "A";
 		val4->Type = ValueType::Bool;
 		Properties.push_back(val4);
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentMask>()};
 	}
 
 	ValueType
@@ -455,6 +502,8 @@ public:
 		Keywords.emplace_back("+");
 
 		InitializeAsIn2Out1Param2();
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
 	}
 
 	ValueType
@@ -466,8 +515,6 @@ public:
 	{
 		return GetWarningIn2Out1Param2(material, node);
 	}
-
-	std::string GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override;
 };
 
 class NodeSubtract : public NodeParameter
@@ -481,6 +528,8 @@ public:
 		Keywords.emplace_back("-");
 
 		InitializeAsIn2Out1Param2();
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
 	}
 
 	ValueType
@@ -505,6 +554,8 @@ public:
 		Keywords.emplace_back("*");
 
 		InitializeAsIn2Out1Param2();
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
 	}
 
 	ValueType
@@ -529,6 +580,8 @@ public:
 		Keywords.emplace_back("/");
 
 		InitializeAsIn2Out1Param2();
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
 	}
 
 	ValueType
@@ -552,6 +605,8 @@ public:
 		Group = std::vector<std::string>{"Math"};
 
 		InitializeAsIn2Out1Param2();
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
 	}
 
 	ValueType
@@ -739,6 +794,8 @@ public:
 		param->Name = "Value";
 		param->Type = ValueType::Texture;
 		Properties.push_back(param);
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentName>()};
 	}
 };
 
@@ -750,7 +807,6 @@ public:
 		Type = NodeType::SampleTexture;
 		TypeName = "SampleTexture";
 		Group = std::vector<std::string>{"Texture"};
-
 
 		auto inputTexture = std::make_shared<PinParameter>();
 		inputTexture->Name = "Texture";
@@ -889,6 +945,8 @@ public:
 		val4->Name = "A";
 		val4->Type = ValueType::Bool;
 		Properties.push_back(val4);
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentMask>()};
 	}
 
 	ValueType
@@ -930,6 +988,8 @@ public:
 		val4->Name = "A";
 		val4->Type = ValueType::Bool;
 		Properties.push_back(val4);
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentMask>()};
 	}
 
 	ValueType
