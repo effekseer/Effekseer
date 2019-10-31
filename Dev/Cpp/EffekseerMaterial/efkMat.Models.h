@@ -214,6 +214,8 @@ public:
 
 	void Paste(std::string content, const Vector2DF& pos, std::shared_ptr<Library> library, const char* basePath);
 
+	void ApplyMoveNodesMultiply(std::vector<std::shared_ptr<Node>> nodes, std::vector<Vector2DF>& poses);
+
 	void ChangeValue(std::shared_ptr<NodeProperty> prop, std::array<float, 4> value);
 
 	void ChangeValue(std::shared_ptr<NodeProperty> prop, std::string value);

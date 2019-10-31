@@ -620,6 +620,8 @@ void Editor::UpdateNodes()
 	auto currentTime =
 		std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startingTime).count() / 1000.0f;
 
+	UpdateToRecordMovingCommand();
+
 	for (auto node : material->GetNodes())
 	{
 		EffekseerMaterial::Editor::UpdateNode(node);
@@ -1314,6 +1316,40 @@ void Editor::UpdatePreview()
 	ImGui::Image((void*)preview_->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 }
 
+void Editor::UpdateToRecordMovingCommand()
+{
+	auto material = GetSelectedMaterial();
+	if (material == nullptr)
+	{
+		return;
+	}
+
+	std::vector<std::shared_ptr<Node>> nodes;
+	std::vector<Vector2DF> poses;
+
+	for (auto node : material->GetNodes())
+	{
+		if (contents_[GetSelectedContentIndex()]->IsLoading || node->isPosDirty) continue;
+		
+		auto nodePos = ed::GetNodePosition(node->GUID);
+		if (nodePos.x != node->Pos.X || nodePos.y != node->Pos.Y)
+		{
+			nodes.push_back(node);
+			poses.push_back(Vector2DF(nodePos.x, nodePos.y));
+
+		}
+	}
+
+	if (nodes.size() == 1)
+	{
+		nodes[0]->UpdatePos(Vector2DF(poses[0].X, poses[0].Y));
+	}
+	else if (nodes.size() > 0)
+	{
+		material->ApplyMoveNodesMultiply(nodes, poses);
+	}
+}
+
 void Editor::UpdateNode(std::shared_ptr<Node> node)
 {
 	if (node->Parameter->Type == NodeType::Comment)
@@ -1349,8 +1385,9 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 	}
 	else
 	{
-		auto nodePos = ed::GetNodePosition(node->GUID);
-		node->UpdatePos(Vector2DF(nodePos.x, nodePos.y));
+		// do in UpdateToRecordMovingCommand
+		// auto nodePos = ed::GetNodePosition(node->GUID);
+		// node->UpdatePos(Vector2DF(nodePos.x, nodePos.y));
 	}
 
 	ImGui::PushID(node->GUID);

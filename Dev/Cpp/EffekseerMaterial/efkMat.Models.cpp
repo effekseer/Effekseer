@@ -168,6 +168,8 @@ static const char* tag_changeNumberCommand = "ChangeNumberCommand";
 
 static const char* tag_changeNodePosCommand = "ChangeNodePosCommand";
 
+static const char* tag_changeMultiNodePosCommand = "ChangeMultiNodePosCommand";
+
 static std::vector<char> GetVectorFromStr(std::string& s)
 {
 	std::vector<char> ret;
@@ -272,6 +274,65 @@ public:
 	}
 
 	virtual const char* GetTag() { return tag_changeNodePosCommand; }
+};
+
+class ChangeMultiNodePosCommand : public ICommand
+{
+private:
+	std::vector<std::shared_ptr<Node>> nodes_;
+	std::vector<Vector2DF> newValues_;
+	std::vector<Vector2DF> oldValues_;
+
+public:
+	ChangeMultiNodePosCommand(std::vector<std::shared_ptr<Node>> nodes, std::vector<Vector2DF> newValues, std::vector<Vector2DF> oldValues)
+		: nodes_(nodes), newValues_(newValues), oldValues_(oldValues)
+	{
+	}
+
+	virtual ~ChangeMultiNodePosCommand() {}
+
+	void Execute() override
+	{
+		for (size_t i = 0; i < nodes_.size(); i++)
+		{
+			nodes_[i]->Pos = newValues_[i];
+			nodes_[i]->isPosDirty = true;
+		}
+	}
+
+	void Unexecute() override
+	{
+		for (size_t i = 0; i < nodes_.size(); i++)
+		{
+			nodes_[i]->Pos = oldValues_[i];
+			nodes_[i]->isPosDirty = true;
+		}
+	}
+
+	bool Merge(ICommand* command)
+	{
+
+		if (command->GetTag() != this->GetTag())
+			return false;
+
+		auto command_ = static_cast<ChangeMultiNodePosCommand*>(command);
+		if (this->nodes_.size() != command_->nodes_.size())
+		{
+			return false;
+		}
+
+		for (size_t i = 0; i < nodes_.size(); i++)
+		{
+			if (nodes_[i] != command_->nodes_[i])
+				return false;
+		}
+
+		this->oldValues_ = command_->oldValues_;
+
+		return true;
+	}
+
+	virtual const char* GetTag() { return tag_changeMultiNodePosCommand; }
 };
 
 int32_t Node::GetInputPinIndex(const std::string& name)
@@ -1239,6 +1300,37 @@ void Material::Paste(std::string content, const Vector2DF& pos, std::shared_ptr<
 	LoadFromStrInternal(content.c_str(), pos, library, basePath, false);
 
 	commandManager_->EndCollection();
+}
+
+void Material::ApplyMoveNodesMultiply(std::vector<std::shared_ptr<Node>> nodes, std::vector<Vector2DF>& poses)
+{
+
+	assert(nodes.size() == poses.size());
+
+	if (nodes.size() == 0)
+		return;
+
+	bool same = true;
+	for (size_t i = 0; i < nodes.size(); i++)
+	{
+		if (nodes[i]->Pos.X != poses[i].X || nodes[i]->Pos.Y != poses[i].Y)
+		{
+			same = false;
+		}
+	}
+
+	if (same)
+		return;
+
+	std::vector<Vector2DF> olds;
+	for (size_t i = 0; i < nodes.size(); i++)
+	{
+		olds.push_back(nodes[i]->Pos);
+	}
+
+	auto command = std::make_shared<ChangeMultiNodePosCommand>(nodes, poses, olds);
+
+	commandManager_->Execute(command);
 }
 
 void Material::ChangeValue(std::shared_ptr<NodeProperty> prop, std::array<float, 4> value)

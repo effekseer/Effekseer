@@ -144,6 +144,11 @@ public:
 
 	void UpdatePreview();
 
+	/**
+		@brief	to record positions of nodes to realize undo. Moving positions are caused on View and multiple nodes are moved simultaniously.
+	*/
+	void UpdateToRecordMovingCommand();
+
 	void UpdateNode(std::shared_ptr<Node> node);
 
 	void UpdateLink(std::shared_ptr<Link> link);
