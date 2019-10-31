@@ -402,16 +402,16 @@ uint64_t Material::GetIDAndNext()
 
 bool Material::FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2)
 {
-	auto p1 = pin1;
-	auto p2 = pin2;
-
-	if (p1->PinDirection == PinDirectionType::Output)
+	auto inputPin = pin1;
+	auto outputPin = pin2;
+	
+	if (inputPin->PinDirection == PinDirectionType::Output)
 	{
-		std::swap(p1, p2);
+		std::swap(inputPin, outputPin);
 	}
 
 	std::unordered_set<std::shared_ptr<Pin>> visited;
-	visited.insert(p2);
+	visited.insert(outputPin);
 
 	std::function<bool(std::weak_ptr<Node>)> visit;
 
@@ -420,8 +420,12 @@ bool Material::FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2)
 
 		for (auto p : locked_node->OutputPins)
 		{
-			if (visited.count(p) > 0)
+			if (p == outputPin)
 				return true;
+			
+			if (visited.count(p) > 0)
+				continue;
+
 			visited.insert(p);
 
 			auto connected_pins = GetConnectedPins(p);
@@ -435,7 +439,7 @@ bool Material::FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2)
 		return false;
 	};
 
-	return visit(p1->Parent);
+	return visit(inputPin->Parent);
 }
 
 std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes,
