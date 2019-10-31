@@ -92,6 +92,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	{
 		auto t_ = EffekseerMaterial::TextureCache::Load(graphics, t->DefaultPath.c_str());
 		auto ts = std::make_shared<TextureWithSampler>();
+		ts->Name = t->Name;
 		ts->TexturePtr = t_;
 		ts->SamplerType = t->Sampler;
 		outputTextures.push_back(ts);
@@ -133,6 +134,7 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	{
 		auto t_ = EffekseerMaterial::TextureCache::Load(graphics, t->DefaultPath.c_str());
 		auto ts = std::make_shared<TextureWithSampler>();
+		ts->Name = t->Name;
 		ts->TexturePtr = t_;
 		ts->SamplerType = t->Sampler;
 		outputTextures.push_back(ts);
@@ -1329,7 +1331,7 @@ void Editor::UpdateToRecordMovingCommand()
 
 	for (auto node : material->GetNodes())
 	{
-		if (contents_[GetSelectedContentIndex()]->IsLoading || node->isPosDirty) continue;
+		if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied()) continue;
 		
 		auto nodePos = ed::GetNodePosition(node->GUID);
 		if (nodePos.x != node->Pos.X || nodePos.y != node->Pos.Y)
@@ -1379,7 +1381,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 
 	ed::BeginNode(node->GUID);
 
-	if (contents_[GetSelectedContentIndex()]->IsLoading || node->isPosDirty)
+	if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied())
 	{
 		ed::SetNodePosition(node->GUID, ImVec2(node->Pos.X, node->Pos.Y));
 	}
@@ -1564,7 +1566,7 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 							   ed::GetStyle().NodeRounding,
 							   ImDrawCornerFlags_Top);
 
-	node->isPosDirty = false;
+	node->ClearPosDirtied();
 }
 
 void Editor::UpdateLink(std::shared_ptr<Link> link) { ed::Link(link->GUID, link->InputPin->GUID, link->OutputPin->GUID); }

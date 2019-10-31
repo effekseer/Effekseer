@@ -226,7 +226,7 @@ NodeConstant1::NodeConstant1()
 			material->ConnectPin(new_node->OutputPins[0], link);
 		}
 
-		new_node->isPosDirty = true;
+		new_node->MakePosDirtied();
 		new_node->Pos = node->Pos;
 		new_node->Properties[1]->Floats = node->Properties[0]->Floats;
 		material->RemoveNode(node);

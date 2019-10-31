@@ -274,6 +274,7 @@ class TextureWithSampler
 {
 private:
 public:
+	std::string Name;
 	std::shared_ptr<Texture> TexturePtr;
 	EffekseerMaterial::TextureSamplerType SamplerType;
 };

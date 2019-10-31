@@ -559,11 +559,20 @@ void Preview::Render()
 			drawParam.VertexConstantBufferPtr = this->constantBuffer;
 			drawParam.PixelConstantBufferPtr = this->constantBuffer;
 
+			auto pixelLayouts = shader->GetPixelTextureLayouts();
+
 			for (int i = 0; i < textures_.size(); i++)
 			{
-				drawParam.PixelShaderTextures[i] = (textures_[i]->TexturePtr != nullptr) ? textures_[i]->TexturePtr->GetTexture() : nullptr;
-				drawParam.PixelShaderTextureWraps[i] =
-					textures_[i]->SamplerType == TextureSamplerType::Repeat ? ar::TextureWrapType::Repeat : ar::TextureWrapType::Clamp;
+				if (pixelLayouts.count(textures_[i]->Name) > 0)
+				{
+					auto ind = pixelLayouts[textures_[i]->Name].Index;
+
+					drawParam.PixelShaderTextures[ind] =
+						(textures_[i]->TexturePtr != nullptr) ? textures_[i]->TexturePtr->GetTexture() : nullptr;
+					drawParam.PixelShaderTextureWraps[ind] =
+						textures_[i]->SamplerType == TextureSamplerType::Repeat ? ar::TextureWrapType::Repeat : ar::TextureWrapType::Clamp;
+
+				}
 			}
 
 			context->Draw(drawParam);
@@ -583,11 +592,19 @@ void Preview::Render()
 			drawParam.VertexConstantBufferPtr = this->constantBuffer;
 			drawParam.PixelConstantBufferPtr = this->constantBuffer;
 
+			auto pixelLayouts = shader->GetPixelTextureLayouts();
+
 			for (int i = 0; i < textures_.size(); i++)
 			{
-				drawParam.PixelShaderTextures[i] = (textures_[i]->TexturePtr != nullptr) ? textures_[i]->TexturePtr->GetTexture() : nullptr;
-				drawParam.PixelShaderTextureWraps[i] =
-					textures_[i]->SamplerType == TextureSamplerType::Repeat ? ar::TextureWrapType::Repeat : ar::TextureWrapType::Clamp;
+				if (pixelLayouts.count(textures_[i]->Name) > 0)
+				{
+					auto ind = pixelLayouts[textures_[i]->Name].Index;
+
+					drawParam.PixelShaderTextures[ind] =
+						(textures_[i]->TexturePtr != nullptr) ? textures_[i]->TexturePtr->GetTexture() : nullptr;
+					drawParam.PixelShaderTextureWraps[ind] =
+						textures_[i]->SamplerType == TextureSamplerType::Repeat ? ar::TextureWrapType::Repeat : ar::TextureWrapType::Clamp;
+				}
 			}
 
 			context->Draw(drawParam);

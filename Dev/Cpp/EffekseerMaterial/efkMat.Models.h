@@ -77,6 +77,8 @@ private:
 	friend class Material;
 	bool isDirtied = true;
 	bool isContentDirtied = false;
+	bool isPosDirtied_ = true;
+
 	std::weak_ptr<Material> material_;
 
 public:
@@ -100,8 +102,6 @@ public:
 	//! warning
 	WarningType CurrentWarning = WarningType::None;
 
-	bool isPosDirty = true;
-
 	//! For gui
 	std::shared_ptr<UserObject> UserObj;
 
@@ -115,9 +115,15 @@ public:
 
 	void UpdatePos(const Vector2DF& pos);
 
+	bool GetIsPosDirtied() const { return isPosDirtied_; }
+
 	bool GetIsDirtied() const { return isDirtied; }
 
 	bool GetIsContentDirtied() const { return isContentDirtied; }
+
+	void MakePosDirtied() { isPosDirtied_ = true; }
+
+	void ClearPosDirtied() { isPosDirtied_ = false; }
 
 	Node() {}
 };
@@ -139,7 +145,7 @@ public:
 	CustomDataProperty() { Values.fill(0.0f); }
 
 	virtual ~CustomDataProperty() {}
-	
+
 	std::array<float, 4> Values;
 };
 
@@ -151,7 +157,7 @@ private:
 	std::vector<std::shared_ptr<Node>> nodes;
 	std::vector<std::shared_ptr<Link>> links;
 	std::map<std::string, std::shared_ptr<TextureInfo>> textures;
-	
+
 	uint64_t nextGUID = 0xff;
 
 	uint64_t GetIDAndNext();
@@ -166,7 +172,6 @@ private:
 								  bool doMoveZero,
 								  bool doExportGlobal);
 
-	
 	void LoadFromStrInternal(const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, bool hasGlobal);
 
 public:

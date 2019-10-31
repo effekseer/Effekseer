@@ -249,13 +249,13 @@ public:
 	void Execute() override
 	{
 		node_->Pos = newValue_;
-		node_->isPosDirty = true;
+		node_->MakePosDirtied();
 	}
 
 	void Unexecute() override
 	{
 		node_->Pos = oldValue_;
-		node_->isPosDirty = true;
+		node_->MakePosDirtied();
 	}
 
 	bool Merge(ICommand* command)
@@ -296,7 +296,7 @@ public:
 		for (size_t i = 0; i < nodes_.size(); i++)
 		{
 			nodes_[i]->Pos = newValues_[i];
-			nodes_[i]->isPosDirty = true;
+			nodes_[i]->MakePosDirtied();
 		}
 	}
 
@@ -305,7 +305,7 @@ public:
 		for (size_t i = 0; i < nodes_.size(); i++)
 		{
 			nodes_[i]->Pos = oldValues_[i];
-			nodes_[i]->isPosDirty = true;
+			nodes_[i]->MakePosDirtied();
 		}
 	}
 
