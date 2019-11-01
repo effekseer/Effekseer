@@ -83,7 +83,8 @@ namespace EffekseerRendererGL
 			}
 
 			shader->GetAttribIdList(count, sprite_attribs);
-			shader->SetVertexSize(sizeof(EffekseerRenderer::DynamicVertex) + sizeof(float) * (material.GetCustomData1Count() + material.GetCustomData2Count()));
+			shader->SetVertexSize(sizeof(EffekseerRenderer::DynamicVertex) +
+								  sizeof(float) * (material.GetCustomData1Count() + material.GetCustomData2Count()));
 		}
 
 		int32_t vsOffset = 0;
@@ -176,6 +177,17 @@ namespace EffekseerRendererGL
 									 (const char*)binary->GetPixelShaderData(shaderTypesModel[st]),
 									 binary->GetPixelShaderSize(shaderTypesModel[st]),
 									 "CustomMaterial");
+
+		if (shader == nullptr)
+		{
+			std::cout << "Vertex shader" << std::endl; 
+			std::cout << (const char*)binary->GetVertexShaderData(shaderTypesModel[st]) << std::endl;
+
+						std::cout << "Pixel shader" << std::endl;
+			std::cout << (const char*)binary->GetPixelShaderData(shaderTypesModel[st]) << std::endl;
+
+			return nullptr;
+		}
 
 		static ShaderAttribInfo g_model_attribs[ModelRenderer::NumAttribs] = {
 			{"a_Position", GL_FLOAT, 3, 0, false},

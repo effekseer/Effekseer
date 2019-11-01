@@ -410,6 +410,18 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 			return "vec4";
 	};
 
+		auto getElement = [](int32_t i) -> std::string {
+		if (i == 1)
+			return ".x";
+		if (i == 2)
+			return ".xy";
+		if (i == 3)
+			return ".xyz";
+		if (i == 4)
+			return ".xyzw";
+	};
+
+
 	bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
 	bool isRefrection =
 		material->GetHasRefraction() && (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
@@ -560,7 +572,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 				{
 					maincode << getType(material->GetCustomData1Count()) + " customData1 = atCustomData1;\n";
 				}
-				maincode << "v_CustomData1 = customData1;\n";
+				maincode << "v_CustomData1 = customData1" + getElement(material->GetCustomData1Count()) + ";\n";
 			}
 
 			if (material->GetCustomData2Count() > 0)
@@ -569,7 +581,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 				{
 					maincode << getType(material->GetCustomData2Count()) + " customData2 = atCustomData2;\n";
 				}
-				maincode << "v_CustomData2 = customData2;\n";
+				maincode << "v_CustomData2 = customData2" + getElement(material->GetCustomData2Count()) + ";\n";
 			}
 
 			maincode << baseCode;
