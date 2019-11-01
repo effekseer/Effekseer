@@ -600,6 +600,20 @@ void Editor::UpdateNodes()
 			std::string ps;
 			Compile(graphics_, material, node, textures, uniforms, vs, ps);
 
+			// update pin state
+			for (auto behavior : node->Parameter->BehaviorComponents)
+			{
+				if (!behavior->IsGetIsInputPinEnabledInherited)
+					continue;
+
+				for (auto pin : node->InputPins)
+				{
+					auto enabled = behavior->GetIsInputPinEnabled(material, node->Parameter, node, pin);
+					pin->IsEnabled = enabled;
+				}
+			}
+
+
 			preview->CompileShader(vs, ps, textures, uniforms);
 		}
 
@@ -641,6 +655,19 @@ void Editor::UpdateNodes()
 			std::string vs;
 			std::string ps;
 			Compile(graphics_, material, node, textures, uniforms, vs, ps);
+
+			// update pin state
+			for (auto behavior : node->Parameter->BehaviorComponents)
+			{
+				if (!behavior->IsGetIsInputPinEnabledInherited)
+					continue;
+
+				for (auto pin : node->InputPins)
+				{
+					auto enabled = behavior->GetIsInputPinEnabled(material, node->Parameter, node, pin);
+					pin->IsEnabled = enabled;
+				}
+			}
 
 			preview->CompileShader(vs, ps, textures, uniforms);
 
@@ -1464,7 +1491,17 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 				typeShape = "-";
 			}
 
-			ImGui::Text((typeShape + std::string(" ") + StringContainer::GetValue(pin->Parameter->Name.c_str())).c_str());
+			auto text = typeShape + std::string(" ") + StringContainer::GetValue(pin->Parameter->Name.c_str());
+
+			if (pin->IsEnabled)
+			{
+				ImGui::Text(text.c_str());
+			}
+			else
+			{
+				ImGui::TextColored(ImColor(100, 100, 100), text.c_str());
+			}
+
 
 			ImGui::EndHorizontal();
 

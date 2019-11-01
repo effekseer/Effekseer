@@ -77,6 +77,28 @@ std::string NodeParameterBehaviorComponentName::GetHeader(std::shared_ptr<Materi
 	return ret.str();
 }
 
+bool NodeParameterBehaviorComponentOutput::GetIsInputPinEnabled(std::shared_ptr<Material> material,
+																std::shared_ptr<NodeParameter> parameter,
+																std::shared_ptr<Node> node,
+																std::shared_ptr<Pin> pin)
+{
+	assert(node->Parameter->Properties[0]->Name == "ShadingModel");
+
+	auto shadingModel = (ShadingModelType)(int)node->Properties[0]->Floats[0];
+
+	if (shadingModel == ShadingModelType::Lit)
+	{
+		return true;
+	}
+
+	if (pin->Parameter->Name != "BaseColor" && pin->Parameter->Name != "Roughness" && pin->Parameter->Name != "Metallic")
+	{
+		return true;
+	}
+
+	return false;
+}
+
 std::string NodeParameter::GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
 {
 	return StringContainer::GetValue((TypeName + "_Name").c_str(), TypeName.c_str());

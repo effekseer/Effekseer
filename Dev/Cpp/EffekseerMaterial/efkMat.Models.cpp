@@ -404,7 +404,7 @@ bool Material::FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2)
 {
 	auto inputPin = pin1;
 	auto outputPin = pin2;
-	
+
 	if (inputPin->PinDirection == PinDirectionType::Output)
 	{
 		std::swap(inputPin, outputPin);
@@ -422,7 +422,7 @@ bool Material::FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2)
 		{
 			if (p == outputPin)
 				return true;
-			
+
 			if (visited.count(p) > 0)
 				continue;
 
@@ -479,6 +479,7 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 		node_.insert(std::make_pair("Type", picojson::value(node->Parameter->TypeName.c_str())));
 		node_.insert(std::make_pair("PosX", picojson::value(node->Pos.X - upperLeftPos.X)));
 		node_.insert(std::make_pair("PosY", picojson::value(node->Pos.Y - upperLeftPos.Y)));
+		node_.insert(std::make_pair("IsPreviewOpened", picojson::value(node->IsPreviewOpened)));
 
 		picojson::array descs_;
 
@@ -679,6 +680,12 @@ void Material::LoadFromStrInternal(
 
 		auto pos_y_obj = node_.get("PosY");
 		node->Pos.Y = (float)pos_y_obj.get<double>() + offset.Y;
+
+		auto is_preview_opened_obj = node_.get("IsPreviewOpened");
+		if (is_preview_opened_obj.is<bool>())
+		{
+			node->IsPreviewOpened = is_preview_opened_obj.get<bool>();
+		}
 
 		oldIDToNewID[guid] = node->GUID;
 		// node->GUID = guid; // OK?
@@ -1151,16 +1158,16 @@ ConnectResultType Material::ConnectPin(std::shared_ptr<Pin> pin1, std::shared_pt
 
 	links_new.push_back(link);
 
-	MakeDirty(p1->Parent.lock());
-
 	auto command = std::make_shared<DelegateCommand>(
-		[this, links_new]() -> void {
+		[this, links_new, p1]() -> void {
 			this->links = links_new;
 			this->UpdateWarnings();
+			this->MakeDirty(p1->Parent.lock());
 		},
-		[this, links_old]() -> void {
+		[this, links_old, p1]() -> void {
 			this->links = links_old;
 			this->UpdateWarnings();
+			this->MakeDirty(p1->Parent.lock());
 		});
 
 	commandManager_->Execute(command);
@@ -1176,19 +1183,23 @@ bool Material::BreakPin(std::shared_ptr<Link> link)
 	links_new.erase(std::remove(links_new.begin(), links_new.end(), link), links_new.end());
 
 	auto inputNode = link->InputPin->Parent.lock();
-	if (inputNode != nullptr)
-	{
-		MakeDirty(inputNode);
-	}
 
 	auto command = std::make_shared<DelegateCommand>(
-		[this, links_new]() -> void {
+		[this, links_new, inputNode]() -> void {
 			this->links = links_new;
 			this->UpdateWarnings();
+			if (inputNode != nullptr)
+			{
+				MakeDirty(inputNode);
+			}
 		},
-		[this, links_old]() -> void {
+		[this, links_old, inputNode]() -> void {
 			this->links = links_old;
 			this->UpdateWarnings();
+			if (inputNode != nullptr)
+			{
+				MakeDirty(inputNode);
+			}
 		});
 
 	commandManager_->Execute(command);

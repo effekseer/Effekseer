@@ -61,7 +61,17 @@ public:
 class NodeParameterBehaviorComponent
 {
 public:
+	bool IsGetIsInputPinEnabledInherited = false;
+
 	bool IsGetHeaderInherited = false;
+
+	virtual bool GetIsInputPinEnabled(std::shared_ptr<Material> material,
+									  std::shared_ptr<NodeParameter> parameter,
+									  std::shared_ptr<Node> node,
+									  std::shared_ptr<Pin> pin)
+	{
+		return true;
+	}
 
 	virtual std::string
 	GetHeader(std::shared_ptr<Material> material, std::shared_ptr<NodeParameter> parameter, std::shared_ptr<Node> node) const
@@ -95,6 +105,17 @@ public:
 
 	std::string
 	GetHeader(std::shared_ptr<Material> material, std::shared_ptr<NodeParameter> parameter, std::shared_ptr<Node> node) const override;
+};
+
+class NodeParameterBehaviorComponentOutput : public NodeParameterBehaviorComponent
+{
+public:
+	NodeParameterBehaviorComponentOutput() { IsGetIsInputPinEnabledInherited = true; }
+
+	bool GetIsInputPinEnabled(std::shared_ptr<Material> material,
+							  std::shared_ptr<NodeParameter> parameter,
+							  std::shared_ptr<Node> node,
+							  std::shared_ptr<Pin> pin) override;
 };
 
 class NodeParameter
@@ -1044,7 +1065,7 @@ public:
 		baseColor->Name = "BaseColor";
 		baseColor->Type = ValueType::Float3;
 		baseColor->Default = DefaultType::Value;
-		baseColor->DefaultValues.fill(0.5f);
+		//baseColor->DefaultValues.fill(0.5f);
 		baseColor->DefaultValues[3] = 1.0f;
 		InputPins.push_back(baseColor);
 
@@ -1052,7 +1073,7 @@ public:
 		emissive->Name = "Emissive";
 		emissive->Type = ValueType::Float3;
 		emissive->Default = DefaultType::Value;
-		emissive->DefaultValues.fill(0.5f);
+		//emissive->DefaultValues.fill(0.5f);
 		emissive->DefaultValues[3] = 1.0f;
 		InputPins.push_back(emissive);
 
@@ -1118,6 +1139,8 @@ public:
 		shadingProperty->Type = ValueType::Enum;
 		shadingProperty->DefaultValues.fill(1.0f);
 		Properties.push_back(shadingProperty);
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentOutput>()};
 	}
 };
 } // namespace EffekseerMaterial

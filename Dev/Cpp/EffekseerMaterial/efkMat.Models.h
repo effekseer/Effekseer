@@ -47,6 +47,9 @@ public:
 
 	//! For visualization
 	uint64_t GUID = 0;
+
+	//! whether is this pin enabled.
+	bool IsEnabled = true;
 };
 
 class NodeProperty
