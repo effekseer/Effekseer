@@ -58,13 +58,13 @@ class TextureLoader;
 
 #if _WIN32
 #pragma comment(lib, "glu32.lib")
-#ifdef _DEBUG
+#ifndef NDEBUG
 #define GLCheckError()		{ int __code = glGetError(); if(__code != GL_NO_ERROR) { printf("GLError filename = %s , line = %d, error = %s\n", __FILE__, __LINE__, (const char*)gluErrorString(__code) ); }  }
 #else
 #define GLCheckError()
 #endif
 #elif EMSCRIPTEN
-#ifdef _DEBUG
+#ifndef NDEBUG
 #define GLCheckError()		{ int __code = glGetError(); if(__code != GL_NO_ERROR) { EM_ASM_ARGS({console.log("GLError filename = " + Pointer_stringify($0) + " , line = " + $1);}, __FILE__, __LINE__); } }
 #else
 #define GLCheckError()

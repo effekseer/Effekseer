@@ -484,6 +484,7 @@ public:
 		if (m_state.MaterialPtr != nullptr)
 		{
 			std::array<Effekseer::TextureData*, 16> textures;
+			textures.fill(nullptr);
 
 			if (m_state.MaterialTextureCount > 0)
 			{
@@ -506,7 +507,8 @@ public:
 		}
 		else
 		{
-			Effekseer::TextureData* textures[2];
+			std::array<Effekseer::TextureData*, 2> textures;
+			textures.fill(nullptr);
 
 			if (m_state.TexturePtr != nullptr && m_state.TexturePtr != (Effekseer::TextureData*)0x01 && m_renderer->GetRenderMode() == Effekseer::RenderMode::Normal)
 			{
@@ -526,16 +528,16 @@ public:
 					textures[1] = m_state.NormalTexturePtr;
 				}
 
-				m_renderer->SetTextures(shader_, textures, 2);
+				m_renderer->SetTextures(shader_, textures.data(), 2);
 			}
 			else if (distortion)
 			{
 				textures[1] = m_renderer->GetBackground();
-				m_renderer->SetTextures(shader_, textures, 2);
+				m_renderer->SetTextures(shader_, textures.data(), 2);
 			}
 			else
 			{
-				m_renderer->SetTextures(shader_, textures, 1);
+				m_renderer->SetTextures(shader_, textures.data(), 1);
 			}
 		}
 

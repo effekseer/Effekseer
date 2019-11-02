@@ -596,6 +596,8 @@ void Shader::SetConstantBuffer()
 				(const GLfloat*)data);
 		}
 	}
+
+	GLCheckError();
 }
 
 

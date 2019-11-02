@@ -834,7 +834,7 @@ public:
 				
 				ColorToFloat4( m_colors[loop], vcb->ModelColor[0] );
 
-									if (cutomData1Ptr != nullptr)
+				if (cutomData1Ptr != nullptr)
 				{
 					cutomData1Ptr[0] = customData1_[loop][0];
 					cutomData1Ptr[1] = customData1_[loop][1];

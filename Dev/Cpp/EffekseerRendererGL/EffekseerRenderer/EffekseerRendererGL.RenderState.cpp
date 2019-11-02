@@ -158,11 +158,22 @@ void RenderState::Update( bool forced )
 
 	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
-		for (int32_t i = 0; i < 4; i++)
+		for (int32_t i = 0; i < (int32_t)m_renderer->GetCurrentTextures().size(); i++)
 		{
+			// If a texture is not assigned, skip it.
+			if (m_renderer->GetCurrentTextures()[i] == 0)
+				continue;
+
 			if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
+
+				// for webngl
+#ifndef NDEBUG
+				GLint bound = 0;
+				glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
+				assert(bound > 0);
+#endif
 
 				int32_t filter_ = (int32_t) m_next.TextureFilterTypes[i];
 
@@ -199,6 +210,13 @@ void RenderState::Update( bool forced )
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 				GLCheckError();
+
+				// for webngl
+#ifndef NDEBUG
+				GLint bound = 0;
+				glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
+				assert(bound > 0);
+#endif
 
 				int32_t filter_ = (int32_t) m_next.TextureFilterTypes[i];
 

@@ -221,11 +221,11 @@ namespace EffekseerRendererGL
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ProjectionMatrix"), 0);
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ModelMatrix"), sizeof(Effekseer::Matrix44));
+		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ModelMatrix"), vsOffset);
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("UVOffset"), sizeof(Effekseer::Matrix44) * 2);
-		vsOffset += sizeof(Effekseer::Matrix44);
+		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("UVOffset"), vsOffset);
+		vsOffset += sizeof(float) * 4;
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("ModelColor"), vsOffset);
 		vsOffset += sizeof(float) * 4;
@@ -238,19 +238,19 @@ namespace EffekseerRendererGL
 
 		if (material.GetCustomData1Count() > 0)
 		{
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("customData1"), vsOffset);
+			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData1"), vsOffset);
 			vsOffset += sizeof(float) * 4;
 		}
 
 		if (material.GetCustomData2Count() > 0)
 		{
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("customData2"), vsOffset);
+			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData2"), vsOffset);
 			vsOffset += sizeof(float) * 4;
 		}
 
 		for (int32_t ui = 0; ui < material.GetUniformCount(); ui++)
 		{
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId(material.GetUniformName(ui)), vsOffset);
+			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId(material.GetUniformName(ui)), vsOffset);
 			vsOffset += sizeof(float) * 4;
 		}
 
