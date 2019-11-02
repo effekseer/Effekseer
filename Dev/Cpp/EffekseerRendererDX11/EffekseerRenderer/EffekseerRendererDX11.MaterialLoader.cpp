@@ -334,7 +334,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 		// compiled
 		Effekseer::Material material;
-		material.Load((const uint8_t*)compiled.GetOriginalData().data(), compiled.GetOriginalData().size());
+		material.Load((const uint8_t*)compiled.GetOriginalData().data(), static_cast<int32_t>(compiled.GetOriginalData().size()));
 		auto binary = compiled.GetBinary(::Effekseer::CompiledMaterialPlatformType::DirectX11);
 
 		return LoadAcutually(material, binary);

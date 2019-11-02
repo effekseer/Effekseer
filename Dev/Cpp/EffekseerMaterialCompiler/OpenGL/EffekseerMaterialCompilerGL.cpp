@@ -408,6 +408,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 			return "vec3";
 		if (i == 4)
 			return "vec4";
+		assert(0);
+		return "";
 	};
 
 		auto getElement = [](int32_t i) -> std::string {
@@ -419,6 +421,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 			return ".xyz";
 		if (i == 4)
 			return ".xyzw";
+		assert(0);
+		return "";
 	};
 
 

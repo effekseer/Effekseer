@@ -516,6 +516,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 			return "float3";
 		if (i == 4)
 			return "float4";
+		assert(0);
+		return "";
 	};
 
 	auto getElement = [](int32_t i) -> std::string {
@@ -527,6 +529,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 			return ".xyz";
 		if (i == 4)
 			return ".xyzw";
+		assert(0);
+		return "";
 	};
 
 	bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;

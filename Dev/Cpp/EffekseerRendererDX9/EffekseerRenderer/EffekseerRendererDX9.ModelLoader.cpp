@@ -57,22 +57,20 @@ void* ModelLoader::Load( const EFK_CHAR* path )
 	std::unique_ptr<::Effekseer::FileReader> 
 		reader( m_fileInterface->OpenRead( path ) );
 	
-	if( reader.get() != NULL )
+	if (reader.get() != nullptr)
 	{
-		HRESULT hr;
-
 		size_t size_model = reader->GetLength();
 		uint8_t* data_model = new uint8_t[size_model];
 		reader->Read( data_model, size_model );
 
-		auto model = (Model*)Load(data_model, size_model);
+		auto model = (Model*)Load(data_model, static_cast<int32_t>(size_model));
 
 		delete [] data_model;
 
 		return (void*)model;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void* ModelLoader::Load(const void* data, int32_t size)

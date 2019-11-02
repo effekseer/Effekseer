@@ -1389,21 +1389,27 @@ public:
 };
 
 /**
-	@brief	ファイルアクセス用のファクトリクラス
+	@brief
+	\~English	factory class for io
+	\~Japanese	IOのためのファクトリークラス
 */
 class FileInterface
 {
 private:
-
 public:
-	virtual FileReader* OpenRead( const EFK_CHAR* path ) = 0;
+	virtual FileReader* OpenRead(const EFK_CHAR* path) = 0;
 
-	virtual FileWriter* OpenWrite( const EFK_CHAR* path ) = 0;
+	/**
+		@brief
+		\~English	try to open a reader. It need not to succeeds in opening it.
+		\~Japanese	リーダーを開くことを試します。成功する必要はありません。
+	*/
+	virtual FileReader* TryOpenRead(const EFK_CHAR* path) { return OpenRead(path); }
+
+	virtual FileWriter* OpenWrite(const EFK_CHAR* path) = 0;
 };
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+
  } 
 //----------------------------------------------------------------------------------
 //

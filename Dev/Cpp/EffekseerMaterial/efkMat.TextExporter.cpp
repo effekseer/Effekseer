@@ -608,30 +608,47 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << ");" << std::endl;
 	};
 
+	// for opengl es
+	auto getNum = [](float f) -> std::string {
+		
+		std::ostringstream ret;
+		if (f == (int)f)
+		{
+			ret << f << ".0";
+		}
+		else
+		{
+			ret << f;
+		}
+
+		return ret.str();
+	};
+
+
 	if (node->Target->Parameter->Type == NodeType::Constant1)
 	{
-		ret << GetTypeName(ValueType::Float1) << " " << node->Outputs[0].Name << "=" << node->Target->Properties[0]->Floats[0] << ";"
+		ret << GetTypeName(ValueType::Float1) << " " << node->Outputs[0].Name << "=" << getNum(node->Target->Properties[0]->Floats[0]) << ";"
 			<< std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Constant2)
 	{
 		ret << GetTypeName(ValueType::Float2) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float2) << "("
-			<< node->Target->Properties[0]->Floats[0] << "," << node->Target->Properties[0]->Floats[1] << ");" << std::endl;
+			<< getNum(node->Target->Properties[0]->Floats[0]) << "," << getNum(node->Target->Properties[0]->Floats[1]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Constant3)
 	{
 		auto& floats = node->Target->Properties[0]->Floats;
-		ret << GetTypeName(ValueType::Float3) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float3) << "(" << floats[0]
-			<< "," << floats[1] << "," << floats[2] << ");" << std::endl;
+		ret << GetTypeName(ValueType::Float3) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float3) << "(" << getNum(floats[0])
+			<< "," << getNum(floats[1]) << "," << getNum(floats[2]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Constant4)
 	{
 		auto& floats = node->Target->Properties[0]->Floats;
-		ret << GetTypeName(ValueType::Float4) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float4) << "(" << floats[0]
-			<< "," << floats[1] << "," << floats[2] << "," << floats[3] << ");" << std::endl;
+		ret << GetTypeName(ValueType::Float4) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float4) << "(" << getNum(floats[0])
+			<< "," << getNum(floats[1]) << "," << getNum(floats[2]) << "," << getNum(floats[3]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Parameter1)
@@ -915,6 +932,23 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, TextExporterPin&
 	}
 	else
 	{
+		// for opengl es
+		auto getNum = [&pin](int i) -> std::string {
+			auto f = pin.NumberValue[i];
+
+			std::ostringstream ret;
+			if (f == (int)f)
+			{
+				ret << f << ".0";
+			}
+			else
+			{
+				ret << f;
+			}
+
+			return ret.str();
+		};
+
 		if (pin.Default == DefaultType::UV)
 			return GetUVName(0);
 
@@ -925,20 +959,19 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, TextExporterPin&
 
 		if (pin.Type == ValueType::Float1)
 		{
-			ret << GetTypeName(pin.Type) << "(" << pin.NumberValue[0] << ")";
+			ret << GetTypeName(pin.Type) << "(" << getNum(0) << ")";
 		}
 		if (pin.Type == ValueType::Float2)
 		{
-			ret << GetTypeName(pin.Type) << "(" << pin.NumberValue[0] << "," << pin.NumberValue[1] << ")";
+			ret << GetTypeName(pin.Type) << "(" << getNum(0) << "," << getNum(1) << ")";
 		}
 		if (pin.Type == ValueType::Float3)
 		{
-			ret << GetTypeName(pin.Type) << "(" << pin.NumberValue[0] << "," << pin.NumberValue[1] << "," << pin.NumberValue[2] << ")";
+			ret << GetTypeName(pin.Type) << "(" << getNum(0) << "," << getNum(1) << "," << getNum(2) << ")";
 		}
 		if (pin.Type == ValueType::Float4)
 		{
-			ret << GetTypeName(pin.Type) << "(" << pin.NumberValue[0] << "," << pin.NumberValue[1] << "," << pin.NumberValue[2] << ","
-				<< pin.NumberValue[3] << ")";
+			ret << GetTypeName(pin.Type) << "(" << getNum(0) << "," << getNum(1) << "," << getNum(2) << "," << getNum(3) << ")";
 		}
 
 		if (pin.Type == pinType)

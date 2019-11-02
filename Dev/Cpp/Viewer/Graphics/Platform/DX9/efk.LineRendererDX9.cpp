@@ -76,7 +76,7 @@ namespace efk
 
 		renderer->GetVertexBuffer()->Lock();
 
-		auto vs = (EffekseerRendererDX9::Vertex*)renderer->GetVertexBuffer()->GetBufferDirect(sizeof(EffekseerRendererDX9::Vertex) * vertexies.size());
+		auto vs = (EffekseerRendererDX9::Vertex*)renderer->GetVertexBuffer()->GetBufferDirect(sizeof(EffekseerRendererDX9::Vertex) * static_cast<int32_t>(vertexies.size()));
 
 		memcpy(vs, vertexies.data(), sizeof(EffekseerRendererDX9::Vertex) * vertexies.size());
 

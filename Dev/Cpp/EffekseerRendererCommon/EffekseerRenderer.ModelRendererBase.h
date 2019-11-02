@@ -2,9 +2,6 @@
 #ifndef	__EFFEKSEERRENDERER_MODEL_RENDERER_BASE_H__
 #define	__EFFEKSEERRENDERER_MODEL_RENDERER_BASE_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include <Effekseer.h>
 #include <assert.h>
 #include <string.h>
@@ -254,7 +251,7 @@ public:
 				}
 
 				keyValues_[i].Key = Effekseer::Vector3D::Dot(t, frontDirection);
-				keyValues_[i].Value = i;
+				keyValues_[i].Value = static_cast<int32_t>(i);
 			}
 			
 			if (param.DepthParameterPtr->ZSort == Effekseer::ZSortType::NormalOrder)
@@ -518,7 +515,7 @@ public:
 					textures[materialParam->MaterialTextures.size()] = renderer->GetBackground();
 				}
 
-				renderer->SetTextures(shader_, textures.data(), Effekseer::Min(materialParam->MaterialTextures.size() + 1, textures.size()));
+				renderer->SetTextures(shader_, textures.data(), static_cast<int32_t>(Effekseer::Min(materialParam->MaterialTextures.size() + 1, textures.size())));
 			}
 		}
 		else
@@ -768,7 +765,7 @@ public:
 
 			for( size_t loop = 0; loop < m_matrixes.size(); )
 			{
-				int32_t modelCount = Effekseer::Min( m_matrixes.size() - loop, model->ModelCount );
+				int32_t modelCount = Effekseer::Min(static_cast<int32_t>(m_matrixes.size()) - loop, model->ModelCount);
 				
 				for( int32_t num = 0; num < modelCount; num++ )
 				{

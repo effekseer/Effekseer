@@ -28,7 +28,7 @@ namespace EffekseerRendererGL
 //----------------------------------------------------------------------------------
 struct ShaderAttribInfo
 {
-	char*	name;
+	const char*	name;
 	GLenum		type;
 	uint16_t	count;
 	uint16_t	offset;

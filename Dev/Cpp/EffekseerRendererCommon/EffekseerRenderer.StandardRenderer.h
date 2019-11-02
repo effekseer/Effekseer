@@ -2,11 +2,10 @@
 #ifndef __EFFEKSEERRENDERER_STANDARD_RENDERER_BASE_H__
 #define __EFFEKSEERRENDERER_STANDARD_RENDERER_BASE_H__
 
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
 #include <Effekseer.h>
 #include <vector>
+#include <algorithm>
+#include <functional>
 
 #include "EffekseerRenderer.CommonUtils.h"
 #include "EffekseerRenderer.Renderer.h"
@@ -42,12 +41,12 @@ struct StandardRendererState
 
 	::Effekseer::RendererMaterialType MaterialType;
 	::Effekseer::MaterialData* MaterialPtr;
-	uint32_t MaterialUniformCount;
+	int32_t MaterialUniformCount = 0;
 	std::array<std::array<float, 4>, 16> MaterialUniforms;
-	uint32_t MaterialTextureCount;
+	int32_t MaterialTextureCount = 0;
 	std::array<::Effekseer::TextureData*, 16> MaterialTextures;
-	uint32_t CustomData1Count = 0;
-	uint32_t CustomData2Count = 0;
+	int32_t CustomData1Count = 0;
+	int32_t CustomData2Count = 0;
 
 	StandardRendererState()
 	{
@@ -114,13 +113,13 @@ struct StandardRendererState
 		if (Refraction != state.Refraction)
 			return true;
 
-		for (uint32_t i = 0; i < state.MaterialUniformCount; i++)
+		for (int32_t i = 0; i < state.MaterialUniformCount; i++)
 		{
 			if (MaterialUniforms[i] != state.MaterialUniforms[i])
 				return true;
 		}
 
-		for (uint32_t i = 0; i < state.MaterialTextureCount; i++)
+		for (int32_t i = 0; i < state.MaterialTextureCount; i++)
 		{
 			if (MaterialTextures[i] != state.MaterialTextures[i])
 				return true;
@@ -146,13 +145,13 @@ struct StandardRendererState
 				CustomData1Count = MaterialPtr->CustomData1;
 				CustomData2Count = MaterialPtr->CustomData2;
 
-				MaterialUniformCount = Effekseer::Min(materialParam->MaterialUniforms.size(), MaterialUniforms.size());
+				MaterialUniformCount = static_cast<int32_t>(Effekseer::Min(materialParam->MaterialUniforms.size(), MaterialUniforms.size()));
 				for (size_t i = 0; i < MaterialUniformCount; i++)
 				{
 					MaterialUniforms[i] = materialParam->MaterialUniforms[i];
 				}
 
-				MaterialTextureCount = Effekseer::Min(materialParam->MaterialTextures.size(), MaterialTextures.size());
+				MaterialTextureCount = static_cast<int32_t>(Effekseer::Min(materialParam->MaterialTextures.size(), MaterialTextures.size()));
 				for (size_t i = 0; i < MaterialTextureCount; i++)
 				{
 					if (materialParam->MaterialTextures[i].Type == 1)
@@ -488,7 +487,9 @@ public:
 
 			if (m_state.MaterialTextureCount > 0)
 			{
-				for (size_t i = 0; i < Effekseer::Min(m_state.MaterialTextureCount, textures.size()); i++)
+				auto textureSize = static_cast<int32_t>(textures.size());
+
+				for (size_t i = 0; i < Effekseer::Min(m_state.MaterialTextureCount, textureSize); i++)
 				{
 					textures[i] = m_state.MaterialTextures[i];
 					state.TextureFilterTypes[i] = Effekseer::TextureFilterType::Linear;
@@ -501,7 +502,7 @@ public:
 				textures[m_state.MaterialTextureCount] = m_renderer->GetBackground();
 			}
 
-			m_renderer->SetTextures(shader_, textures.data(), Effekseer::Min(m_state.MaterialTextureCount + 1, textures.size()));
+			m_renderer->SetTextures(shader_, textures.data(), Effekseer::Min(m_state.MaterialTextureCount + 1, static_cast<int32_t>(textures.size())));
 		}
 		else
 		{

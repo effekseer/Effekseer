@@ -65,26 +65,22 @@ TextureLoader::~TextureLoader()
 	ES_SAFE_RELEASE(renderer_);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
-	std::unique_ptr<::Effekseer::FileReader> 
-		reader( m_fileInterface->OpenRead( path ) );
-	
-	if( reader.get() != NULL )
+	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
+
+	if (reader.get() != nullptr)
 	{
 		size_t size_texture = reader->GetLength();
 		char* data_texture = new char[size_texture];
-		reader->Read( data_texture, size_texture );
+		reader->Read(data_texture, size_texture);
 
-		Effekseer::TextureData* textureData = Load(data_texture, size_texture, textureType);
-		delete [] data_texture;
+		Effekseer::TextureData* textureData = Load(data_texture, static_cast<int32_t>(size_texture), textureType);
+		delete[] data_texture;
 		return textureData;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Effekseer::TextureData* TextureLoader::Load(const void* data, int32_t size, Effekseer::TextureType textureType) 

@@ -321,9 +321,9 @@ protected:
 
 			if (alpha != 1.0f)
 			{
-				outerColorNext.A *= alpha;
-				innerColorNext.A *= alpha;
-				centerColorNext.A *= alpha;
+				outerColorNext.A = static_cast<uint8_t>(outerColorNext.A * alpha);
+				innerColorNext.A = static_cast<uint8_t>(innerColorNext.A * alpha);
+				centerColorNext.A = static_cast<uint8_t>(centerColorNext.A * alpha);
 			}
 
 			uv0texNext = uv0Current + uv0Step;

@@ -39,6 +39,17 @@ namespace EffekseerRendererGL
 									 binary->GetPixelShaderSize(shaderTypes[st]),
 									 "CustomMaterial");
 
+		if (shader == nullptr)
+		{
+			std::cout << "Vertex shader error" << std::endl;
+			std::cout << (const char*)binary->GetVertexShaderData(shaderTypesModel[st]) << std::endl;
+
+			std::cout << "Pixel shader error" << std::endl;
+			std::cout << (const char*)binary->GetPixelShaderData(shaderTypesModel[st]) << std::endl;
+
+			return nullptr;
+		}
+
 		if (materialData->IsSimpleVertex)
 		{
 			EffekseerRendererGL::ShaderAttribInfo sprite_attribs[3] = {
@@ -61,8 +72,8 @@ namespace EffekseerRendererGL
 
 			int32_t offset = 40;
 			int count = 6;
-			char* customData1Name = "atCustomData1";
-			char* customData2Name = "atCustomData2";
+			const char* customData1Name = "atCustomData1";
+			const char* customData2Name = "atCustomData2";
 
 			if (material.GetCustomData1Count() > 0)
 			{
@@ -180,10 +191,10 @@ namespace EffekseerRendererGL
 
 		if (shader == nullptr)
 		{
-			std::cout << "Vertex shader" << std::endl; 
+			std::cout << "Vertex shader error" << std::endl;
 			std::cout << (const char*)binary->GetVertexShaderData(shaderTypesModel[st]) << std::endl;
 
-						std::cout << "Pixel shader" << std::endl;
+			std::cout << "Pixel shader error" << std::endl;
 			std::cout << (const char*)binary->GetPixelShaderData(shaderTypesModel[st]) << std::endl;
 
 			return nullptr;
@@ -335,7 +346,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 	// code file
 	{
 		auto binaryPath = std::u16string(path) + u"d";
-		std::unique_ptr<Effekseer::FileReader> reader(fileInterface_->OpenRead(binaryPath.c_str()));
+		std::unique_ptr<Effekseer::FileReader> reader(fileInterface_->TryOpenRead(binaryPath.c_str()));
 
 		if (reader.get() != nullptr)
 		{
@@ -390,7 +401,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 		// compiled
 		Effekseer::Material material;
-		material.Load((const uint8_t*)compiled.GetOriginalData().data(), compiled.GetOriginalData().size());
+		material.Load((const uint8_t*)compiled.GetOriginalData().data(), static_cast<int32_t>(compiled.GetOriginalData().size()));
 		auto binary = compiled.GetBinary(::Effekseer::CompiledMaterialPlatformType::OpenGL);
 
 		return LoadAcutually(material, binary);
