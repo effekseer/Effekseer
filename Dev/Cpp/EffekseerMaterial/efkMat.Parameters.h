@@ -783,7 +783,7 @@ public:
 		OutputPins.push_back(output);
 
 		auto param = std::make_shared<NodePropertyParameter>();
-		param->Name = "Value";
+		param->Name = "Texture";
 		param->Type = ValueType::Texture;
 		Properties.push_back(param);
 	}
@@ -816,7 +816,7 @@ public:
 		Properties.push_back(paramPriority);
 
 		auto param = std::make_shared<NodePropertyParameter>();
-		param->Name = "Value";
+		param->Name = "Texture";
 		param->Type = ValueType::Texture;
 		Properties.push_back(param);
 

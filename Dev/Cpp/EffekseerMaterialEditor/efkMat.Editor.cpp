@@ -613,7 +613,6 @@ void Editor::UpdateNodes()
 				}
 			}
 
-
 			preview->CompileShader(vs, ps, textures, uniforms);
 		}
 
@@ -1163,6 +1162,20 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 			if (p->Str != "")
 			{
+				auto t = EffekseerMaterial::TextureCache::Load(graphics_, p->Str.c_str());
+				ImVec2 size;
+				size.x = Preview::TextureSize;
+				size.y = Preview::TextureSize;
+				ImGui::Image((void*)t->GetTexture()->GetInternalObjects()[0], size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+
+				// adhoc 
+				glBindTexture(GL_TEXTURE_2D, (GLuint)t->GetTexture()->GetInternalObjects()[0]);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			}
+
+			if (p->Str != "")
+			{
 				auto texture = material->FindTexture(p->Str.c_str());
 
 				const char* items[] = {"Color", "Value"};
@@ -1358,14 +1371,14 @@ void Editor::UpdateToRecordMovingCommand()
 
 	for (auto node : material->GetNodes())
 	{
-		if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied()) continue;
-		
+		if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied())
+			continue;
+
 		auto nodePos = ed::GetNodePosition(node->GUID);
 		if (nodePos.x != node->Pos.X || nodePos.y != node->Pos.Y)
 		{
 			nodes.push_back(node);
 			poses.push_back(Vector2DF(nodePos.x, nodePos.y));
-
 		}
 	}
 
@@ -1501,7 +1514,6 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 			{
 				ImGui::TextColored(ImColor(100, 100, 100), text.c_str());
 			}
-
 
 			ImGui::EndHorizontal();
 

@@ -1363,8 +1363,15 @@ void Material::ChangeValue(std::shared_ptr<NodeProperty> prop, std::string value
 	auto value_old = prop->Str;
 	auto value_new = value;
 
-	auto command = std::make_shared<DelegateCommand>([prop, value_new]() -> void { prop->Str = value_new; },
-													 [prop, value_old]() -> void { prop->Str = value_old; });
+	auto command = std::make_shared<DelegateCommand>(
+		[prop, value_new, this]() -> void {
+			prop->Str = value_new;
+			MakeContentDirty(prop->Parent.lock());
+		},
+		[prop, value_old, this]() -> void {
+			prop->Str = value_old;
+			MakeContentDirty(prop->Parent.lock());
+		});
 
 	commandManager_->Execute(command);
 }
@@ -1374,8 +1381,15 @@ void Material::ChangeValueTextureType(std::shared_ptr<TextureInfo> prop, Texture
 	auto value_old = prop->Type;
 	auto value_new = type;
 
-	auto command = std::make_shared<DelegateCommand>([prop, value_new]() -> void { prop->Type = value_new; },
-													 [prop, value_old]() -> void { prop->Type = value_old; });
+	auto command = std::make_shared<DelegateCommand>(
+		[prop, value_new, this]() -> void {
+			prop->Type = value_new;
+			// TODO make content dirty
+		},
+		[prop, value_old, this]() -> void {
+			prop->Type = value_old;
+			// TODO make content dirty
+		});
 
 	commandManager_->Execute(command);
 }

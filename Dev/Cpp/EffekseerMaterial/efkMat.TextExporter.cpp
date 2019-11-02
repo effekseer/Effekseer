@@ -104,7 +104,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 				if (node->Parameter->Type == NodeType::TextureObjectParameter)
 				{
 					auto paramName = EspcapeUserParamName(node->GetProperty("Name")->Str.c_str());
-					auto path = node->GetProperty("Value")->Str;
+					auto path = node->GetProperty("Texture")->Str;
 					auto keyStr = paramName + "@" + path;
 
 					std::shared_ptr<TextExporterTexture> extractedTexture;
