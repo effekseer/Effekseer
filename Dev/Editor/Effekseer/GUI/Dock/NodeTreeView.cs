@@ -310,9 +310,7 @@ namespace Effekseer.GUI.Dock
 			this.treeView = treeView;
             this.Node = node;
 
-            node.OnAfterAddNode += OnAfterAddNode;
-            node.OnAfterRemoveNode += OnAfterRemoveNode;
-            node.OnAfterExchangeNodes += OnAfterExchangeNodes;
+			AddEvent(false);
 
             if (createChildren)
             {
@@ -360,6 +358,25 @@ namespace Effekseer.GUI.Dock
 
 		}
 
+		public void AddEvent(bool recursion)
+		{
+			if (Node is Data.Node)
+			{
+				var realNode = (Data.Node)Node;
+			}
+
+			Node.OnAfterAddNode += OnAfterAddNode;
+			Node.OnAfterRemoveNode += OnAfterRemoveNode;
+			Node.OnAfterExchangeNodes += OnAfterExchangeNodes;
+			if (recursion)
+			{
+				for (int i = 0; i < Children.Count; i++)
+				{
+					(Children[i]).AddEvent(true);
+				}
+			}
+		}
+		
 		public void RemoveEvent(bool recursion)
         {
             if (Node is Data.Node)
@@ -577,7 +594,9 @@ namespace Effekseer.GUI.Dock
 				treeViewNode = new NodeTreeViewNode(treeView, node, true);
 			}
 
-            if (ind == Children.Count)
+			treeViewNode.AddEvent(true);
+
+			if (ind == Children.Count)
             {
                 Children.Add(treeViewNode);
             }
