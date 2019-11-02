@@ -62,6 +62,9 @@ private:
 	VertexArray* m_vao_lighting = nullptr;
 	VertexArray* m_vao_wire_frame = nullptr;
 
+	//! default vao (alsmot for material)
+	GLuint defaultVertexArray_ = 0;
+
 	::Effekseer::Vector3D	m_lightDirection;
 	::Effekseer::Color		m_lightColor;
 	::Effekseer::Color		m_lightAmbient;

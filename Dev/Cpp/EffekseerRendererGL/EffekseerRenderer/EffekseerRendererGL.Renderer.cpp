@@ -445,6 +445,12 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE( m_indexBuffer );
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
 
+	if (GLExt::IsSupportedVertexArray() && defaultVertexArray_ > 0)
+	{
+		GLExt::glDeleteVertexArrays(1, &defaultVertexArray_);
+		defaultVertexArray_ = 0;
+	}
+
 	if (isVaoEnabled)
 	{
 		assert(GetRef() == -10);
@@ -713,6 +719,11 @@ bool RendererImplemented::Initialize()
 	}
 
 	GetImpl()->CreateProxyTextures(this);
+
+	if (GLExt::IsSupportedVertexArray())
+	{
+		GLExt::glGenVertexArrays(1, &defaultVertexArray_);
+	}
 
 	return true;
 }
@@ -1288,6 +1299,15 @@ void RendererImplemented::BeginShader(Shader* shader)
 	{
 		SetVertexArray(m_vao_lighting);
 	}
+	else
+	{
+		m_currentVertexArray = nullptr;
+
+		if (defaultVertexArray_ > 0)
+		{
+			GLExt::glBindVertexArray(defaultVertexArray_);
+		}
+	}
 
 	shader->BeginScene();
 
@@ -1340,6 +1360,11 @@ void RendererImplemented::EndShader(Shader* shader)
 
 		GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 		GLCheckError();
+
+		if (defaultVertexArray_ > 0)
+		{
+			GLExt::glBindVertexArray(0);
+		}
 	}
 
 	shader->EndScene();
