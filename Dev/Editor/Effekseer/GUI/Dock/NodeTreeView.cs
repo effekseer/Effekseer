@@ -310,8 +310,6 @@ namespace Effekseer.GUI.Dock
 			this.treeView = treeView;
             this.Node = node;
 
-			AddEvent(false);
-
             if (createChildren)
             {
                 for(int i = 0; i < node.Children.Count; i++)
@@ -320,7 +318,9 @@ namespace Effekseer.GUI.Dock
                     Children.Add(newNode);
                 }
             }
-        }
+
+			AddEvent(false);
+		}
 
 		public void Expand()
 		{
@@ -588,13 +588,12 @@ namespace Effekseer.GUI.Dock
 			if(treeView.temporalRemovingNodeTreeViews.ContainsKey(node))
 			{
 				treeViewNode = treeView.temporalRemovingNodeTreeViews[node];
+				treeViewNode.AddEvent(true);
 			}
 			else
 			{
 				treeViewNode = new NodeTreeViewNode(treeView, node, true);
 			}
-
-			treeViewNode.AddEvent(true);
 
 			if (ind == Children.Count)
             {
