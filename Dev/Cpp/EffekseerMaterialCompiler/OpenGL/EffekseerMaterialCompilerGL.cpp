@@ -260,7 +260,7 @@ uniform vec4 predefined_uniform;
 static const char g_material_fs_src_suf1[] =
 	R"(
 
-#ifdef __MATERIAL_LIT__
+#ifdef _MATERIAL_LIT_
 
 const float lightScale = 3.14;
 
@@ -280,7 +280,7 @@ float calcD_GGX(float roughness, float dotNH)
 
 float calcF(float F0, float dotLH)
 {
-	float dotLH5 = pow(1.0f-dotLH,5);
+	float dotLH5 = pow(1.0-dotLH,5.0);
 	return F0 + (1.0-F0)*(dotLH5);
 }
 
@@ -345,7 +345,7 @@ static const char g_material_fs_src_suf2_lit[] =
 	vec4 Output =  vec4(metallic * specular + (1.0 - metallic) * diffuse + lightAmbientColor.xyz, opacity);
 	Output.xyz = Output.xyz + emissive.xyz;
 
-	if(opacityMask <= 0.0f) discard;
+	if(opacityMask <= 0.0) discard;
 
 	FRAGCOLOR = Output;
 
@@ -504,7 +504,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 					 << "cameraPosition"
 					 << ";" << std::endl;
 
-			maincode << "#define __MATERIAL_LIT__ 1" << std::endl;
+			maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
 		}
 		else if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
 		{

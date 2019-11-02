@@ -25,6 +25,7 @@ static const char g_header_vs_gl3_src [] =
 "#define mediump\n" \
 "#define highp\n" \
 "#define IN in\n" \
+"#define TEX2D texture\n" \
 "#define OUT out\n";
 
 static const char g_header_fs_gl3_src [] =
@@ -40,6 +41,7 @@ static const char g_header_vs_gles3_src [] =
 "#version 300 es\n" \
 "precision mediump float;\n" \
 "#define IN in\n" \
+"#define TEX2D texture\n" \
 "#define OUT out\n";
 
 static const char g_header_fs_gles3_src [] =
@@ -52,6 +54,7 @@ static const char g_header_fs_gles3_src [] =
 static const char g_header_vs_gles2_src [] =
 "precision mediump float;\n" \
 "#define IN attribute\n" \
+"#define TEX2D texture2D\n" \
 "#define OUT varying\n";
 
 static const char g_header_fs_gles2_src [] =
@@ -66,6 +69,7 @@ static const char g_header_vs_gl2_src [] =
 "#define mediump\n" \
 "#define highp\n" \
 "#define IN attribute\n" \
+"#define TEX2D texture2D\n" \
 "#define OUT varying\n";
 
 static const char g_header_fs_gl2_src [] =

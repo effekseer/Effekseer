@@ -365,7 +365,7 @@ float4 predefined_uniform : register(c1);
 
 static char* g_material_ps_suf1 = R"(
 
-#ifdef __MATERIAL_LIT__
+#ifdef _MATERIAL_LIT_
 
 #define lightScale 3.14
 
@@ -380,7 +380,7 @@ float calcD_GGX(float roughness, float dotNH)
 
 float calcF(float F0, float dotLH)
 {
-	float dotLH5 = pow(1.0f-dotLH,5);
+	float dotLH5 = pow(1.0-dotLH,5.0);
 	return F0 + (1.0-F0)*(dotLH5);
 }
 
@@ -456,7 +456,7 @@ static char* g_material_ps_suf2_lit = R"(
 	float4 Output =  float4(metallic * specular + (1.0 - metallic) * diffuse, opacity);
 	Output.xyz = Output.xyz + emissive.xyz;
 
-	if(opacityMask <= 0.0f) discard;
+	if(opacityMask <= 0.0) discard;
 
 	return Output;
 }
@@ -477,7 +477,7 @@ static char* g_material_ps_suf2_refraction = R"(
 	float4 bg = background_texture.Sample(background_sampler, distortUV);
 	float4 Output = bg;
 
-	if(opacityMask <= 0.0f) discard;
+	if(opacityMask <= 0.0) discard;
 
 	return Output;
 }
@@ -588,7 +588,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 					 << " : register(c" << cind << ");" << std::endl;
 			cind++;
 
-			maincode << "#define __MATERIAL_LIT__ 1" << std::endl;
+			maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
 		}
 		else if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
 		{

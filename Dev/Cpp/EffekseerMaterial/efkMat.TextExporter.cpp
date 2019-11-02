@@ -985,21 +985,38 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, float value)
 {
 	std::ostringstream ret;
 
+	// for opengl es
+	auto getNum = [](float f) -> std::string {
+		std::ostringstream ret;
+		if (f == (int)f)
+		{
+			ret << f << ".0";
+		}
+		else
+		{
+			ret << f;
+		}
+
+		return ret.str();
+	};
+
+	auto valueStr = getNum(value);
+
 	if (pinType == ValueType::Float1)
 	{
-		ret << GetTypeName(pinType) << "(" << value << ")";
+		ret << GetTypeName(pinType) << "(" << valueStr << ")";
 	}
 	if (pinType == ValueType::Float2)
 	{
-		ret << GetTypeName(pinType) << "(" << value << "," << value << ")";
+		ret << GetTypeName(pinType) << "(" << valueStr << "," << valueStr << ")";
 	}
 	if (pinType == ValueType::Float3)
 	{
-		ret << GetTypeName(pinType) << "(" << value << "," << value << "," << value << ")";
+		ret << GetTypeName(pinType) << "(" << valueStr << "," << valueStr << "," << valueStr << ")";
 	}
 	if (pinType == ValueType::Float4)
 	{
-		ret << GetTypeName(pinType) << "(" << value << "," << value << "," << value << "," << value << ")";
+		ret << GetTypeName(pinType) << "(" << valueStr << "," << valueStr << "," << valueStr << "," << valueStr << ")";
 	}
 
 	return ret.str();
@@ -1007,25 +1024,41 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, float value)
 
 std::string TextExporter::GetInputArg(const ValueType& pinType, std::array<float, 2> value)
 {
+	// for opengl es
+	auto getNum = [](float f) -> std::string {
+		std::ostringstream ret;
+		if (f == (int)f)
+		{
+			ret << f << ".0";
+		}
+		else
+		{
+			ret << f;
+		}
+
+		return ret.str();
+	};
+
+
 	std::ostringstream ret;
 
 	if (pinType == ValueType::Float1)
 	{
-		ret << GetTypeName(pinType) << "(" << value[0] << ")";
+		ret << GetTypeName(pinType) << "(" << getNum(value[0]) << ")";
 	}
 	if (pinType == ValueType::Float2)
 	{
-		ret << GetTypeName(pinType) << "(" << value[0] << "," << value[1] << ")";
+		ret << GetTypeName(pinType) << "(" << getNum(value[0]) << "," << getNum(value[1]) << ")";
 	}
 	if (pinType == ValueType::Float3)
 	{
-		ret << GetTypeName(pinType) << "(" << value[0] << ".x ," << value[1] << ".y ,"
+		ret << GetTypeName(pinType) << "(" << getNum(value[0]) << ".x ," << getNum(value[1]) << ".y ,"
 			<< "0.0"
 			<< ")";
 	}
 	if (pinType == ValueType::Float4)
 	{
-		ret << GetTypeName(pinType) << "(" << value[0] << ".x ," << value[1] << ".y ,"
+		ret << GetTypeName(pinType) << "(" << getNum(value[0]) << ".x ," << getNum(value[1]) << ".y ,"
 			<< "0.0, 1.0"
 			<< ")";
 	}
