@@ -2,6 +2,8 @@
 
 #include "../3rdParty/LLGI/src/LLGI.Base.h"
 #include "../3rdParty/LLGI/src/LLGI.Graphics.h"
+#include "../3rdParty/LLGI/src/Utils/LLGI.CommandListPool.h"
+
 #include "EffectPlatform.h"
 
 #if defined(WIN32) || defined(__APPLE__) || defined(__linux__)
@@ -83,6 +85,7 @@ protected:
 	LLGI::Graphics* graphics_ = nullptr;
 	LLGI::SingleFrameMemoryPool* sfMemoryPool_ = nullptr;
 	LLGI::CommandList* commandList_ = nullptr;
+	std::shared_ptr<LLGI::CommandListPool> commandListPool_ = nullptr;
 
 	void Present() override;
 	bool DoEvent() override;

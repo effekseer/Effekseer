@@ -11,7 +11,7 @@ endif()
 
 option(FROM_CI "from ci" OFF)
 
-if (WIN32)
+if (WIN32 AND NOT FROM_CI)
     set(BUILD_DX12 ON)
 else()
     set(BUILD_DX12 OFF)

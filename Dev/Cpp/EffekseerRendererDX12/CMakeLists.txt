@@ -9,11 +9,13 @@ source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
 
 file(GLOB_RECURSE LOCAL_HEADERS_DX12 *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_DX12 *.cpp)
-source_group("EffekseerRenderer" FILES ${LOCAL_HEADERS_DX12} ${LOCAL_SOURCES_DX12})
+FilterFolder("${LOCAL_HEADERS_DX12}")
+FilterFolder("${LOCAL_SOURCES_DX12}")
 
 file(GLOB_RECURSE LOCAL_SOURCES_LLGI
     ../EffekseerRendererLLGI/*.h
-	../EffekseerRendererLLGI/*.cpp)
+    ../EffekseerRendererLLGI/*.cpp)
+
 source_group("EffekseerRendererLLGI" FILES ${LOCAL_SOURCES_LLGI})
 
 set(LOCAL_SOURCES

@@ -24,7 +24,7 @@ EffectPlatformLLGI::EffectPlatformLLGI()
 	platform_ = LLGI::CreatePlatform(LLGI::DeviceType::Default, llgiWindow_);
 	graphics_ = platform_->CreateGraphics();
 	sfMemoryPool_ = graphics_->CreateSingleFrameMemoryPool(1024 * 1024, 128);
-	commandList_ = graphics_->CreateCommandList(sfMemoryPool_);
+	commandListPool_ = std::make_shared<LLGI::CommandListPool>(graphics_, sfMemoryPool_, 3);
 }
 
 EffectPlatformLLGI ::~EffectPlatformLLGI()
@@ -34,7 +34,7 @@ EffectPlatformLLGI ::~EffectPlatformLLGI()
 	DestroyInternal();
 
 	LLGI::SafeRelease(sfMemoryPool_);
-	LLGI::SafeRelease(commandList_);
+	commandListPool_.reset();
 	LLGI::SafeRelease(graphics_);
 	LLGI::SafeRelease(platform_);
 
@@ -56,17 +56,13 @@ void EffectPlatformLLGI::Present()
 
 bool EffectPlatformLLGI::DoEvent()
 {
-	if (glfwWindowShouldClose(glfwWindow_) == GL_TRUE)
-	{
-		return false;
-	}
-
-	glfwPollEvents();
-
 	if (!platform_->NewFrame())
 		return false;
 
+	glfwPollEvents();
+
 	sfMemoryPool_->NewFrame();
+	commandList_ = commandListPool_->Get();
 
 	return true;
 }
