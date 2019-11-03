@@ -57,6 +57,8 @@ private:
 	*/
 
 	LLGI::Graphics* graphics_;
+	LLGI::RenderPassPipelineState* renderPassPipelineState_ = nullptr;
+
 	VertexBuffer* m_vertexBuffer;
 	IndexBuffer* m_indexBuffer;
 	IndexBuffer* m_indexBufferForWireframe = nullptr;
@@ -104,23 +106,14 @@ public:
 	//! shaders (todo implemented)
 	FixedShader fixedShader_;
 
-	/**
-		@brief	コンストラクタ
-	*/
 	RendererImplemented(int32_t squareMaxCount);
 
-	/**
-		@brief	デストラクタ
-	*/
 	~RendererImplemented();
 
 	void OnLostDevice() override;;
 	void OnResetDevice() override;;
 
-	/**
-		@brief	初期化
-	*/
-	bool Initialize(LLGI::Graphics* graphics, bool isReversedDepth);
+	bool Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth);
 
 	void Destroy() override;
 

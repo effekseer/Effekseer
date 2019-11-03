@@ -5,7 +5,7 @@ set(CMAKE_CONFIGURATION_TYPES Debug Release CACHE TYPE INTERNAL FORCE )
 project(Effekseer)
 
 # Check cmake version
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 
 # C++ version
 if(WIN32)
@@ -55,6 +55,26 @@ if (WIN32)
 option(USE_XAUDIO2 "Use XAudio2" OFF)
 option(USE_DSOUND "Use DirectSound" OFF)
 option(USE_OSM "Use OpenSoundMixer" OFF)
+endif()
+
+# Flags
+if (MSVC)
+	if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
+		foreach (flag CMAKE_C_FLAGS
+			CMAKE_C_FLAGS_DEBUG
+			CMAKE_C_FLAGS_RELEASE
+			CMAKE_CXX_FLAGS
+			CMAKE_CXX_FLAGS_DEBUG
+			CMAKE_CXX_FLAGS_RELEASE)
+
+			if (${flag} MATCHES "/MD")
+				string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
+			endif()
+			if (${flag} MATCHES "/MDd")
+				string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
+			endif()
+		endforeach()
+	endif()
 endif()
 
 
@@ -242,6 +262,17 @@ endif()
 
 add_library( effekseer_renderer_gl STATIC ${effekseer_renderer_gl_src} )
 
+if (BUILD_DX12)
+    set(BUILD_TEST_TEMP ${BUILD_TEST})
+    set(BUILD_TEST OFF)
+    add_subdirectory(3rdParty/LLGI)
+    set(BUILD_TEST ${BUILD_TEST_TEMP})
+endif()
+
+if (BUILD_DX12)
+    add_subdirectory(EffekseerRendererDX12)
+endif()
+
 if (USE_OPENAL)
 	add_subdirectory(EffekseerSoundAL)
 endif()
@@ -256,31 +287,6 @@ endif()
 
 if (USE_OSM OR BUILD_VIEWER)
 	add_subdirectory("EffekseerSoundOSMixer")
-endif()
-
-if (USE_LLGI)
-	add_subdirectory(3rdParty/LLGI)
-	add_subdirectory(EffekseerRendererDX12)
-endif()
-
-# Flags
-if (MSVC)
-	if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
-		foreach (flag CMAKE_C_FLAGS
-			CMAKE_C_FLAGS_DEBUG
-			CMAKE_C_FLAGS_RELEASE
-			CMAKE_CXX_FLAGS
-			CMAKE_CXX_FLAGS_DEBUG
-			CMAKE_CXX_FLAGS_RELEASE)
-
-			if (${flag} MATCHES "/MD")
-				string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
-			endif()
-			if (${flag} MATCHES "/MDd")
-				string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
-			endif()
-		endforeach()
-	endif()
 endif()
 
 # filter

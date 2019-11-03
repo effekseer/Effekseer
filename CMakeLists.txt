@@ -11,6 +11,12 @@ endif()
 
 option(FROM_CI "from ci" OFF)
 
+if (WIN32)
+    set(BUILD_DX12 ON)
+else()
+    set(BUILD_DX12 OFF)
+endif()
+
 # zlib
 ExternalProject_Add(
     ExternalProject_zlib

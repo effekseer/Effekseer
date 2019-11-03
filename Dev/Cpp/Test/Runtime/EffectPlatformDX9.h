@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../EffekseerRendererDX9/EffekseerRendererDX9.h"
-#include "EffectPlatform.h"
+#include "EffectPlatformGLFW.h"
 
-class EffectPlatformDX9 final : public EffectPlatform
+class EffectPlatformDX9 final : public EffectPlatformGLFW
 {
 private:
 	LPDIRECT3D9 d3d_ = nullptr;
@@ -18,7 +18,7 @@ protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;
 
 public:
-	EffectPlatformDX9() : EffectPlatform(false) {}
+	EffectPlatformDX9() : EffectPlatformGLFW(false) {}
 
 	~EffectPlatformDX9();
 

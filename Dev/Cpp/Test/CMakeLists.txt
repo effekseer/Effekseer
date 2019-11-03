@@ -8,11 +8,27 @@ set(effekseer_test_src
     TestHelper.cpp
     Runtime/EffectPlatform.h
     Runtime/EffectPlatform.cpp
+    Runtime/EffectPlatformGLFW.h
+    Runtime/EffectPlatformGLFW.cpp
     Runtime/EffectPlatformGL.h
     Runtime/EffectPlatformGL.cpp
     Runtime/RuntimeTest.h
     Runtime/RuntimeTest.cpp
 )
+
+if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
+    list(APPEND effekseer_test_src
+        Runtime/EffectPlatformLLGI.h
+        Runtime/EffectPlatformLLGI.cpp
+    )
+endif()
+
+if(BUILD_DX12)
+    list(APPEND effekseer_test_src
+        Runtime/EffectPlatformDX12.h
+        Runtime/EffectPlatformDX12.cpp
+    )
+endif()
 
 if(WIN32)
     list(APPEND effekseer_test_src
@@ -51,6 +67,11 @@ endif()
 if (USE_OPENAL)
     list(APPEND effekseer_test_src sound_al.cpp)
     list(APPEND common_lib EffekseerSoundAL)
+endif()
+
+if(BUILD_DX12)
+    list(APPEND common_lib LLGI)
+	list(APPEND common_lib EffekseerRendererDX12)
 endif()
 
 if (MSVC)

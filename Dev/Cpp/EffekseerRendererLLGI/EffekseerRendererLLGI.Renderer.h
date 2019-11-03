@@ -14,14 +14,8 @@
 namespace EffekseerRendererLLGI
 {
 
-/**
-@brief	テクスチャ読込クラスを生成する。
-*/
 ::Effekseer::TextureLoader* CreateTextureLoader(LLGI::Graphics* graphics, ::Effekseer::FileInterface* fileInterface = NULL);
 
-/**
-@brief	モデル読込クラスを生成する。
-*/
 ::Effekseer::ModelLoader* CreateModelLoader(LLGI::Graphics* graphics, ::Effekseer::FileInterface* fileInterface = NULL);
 
 struct FixedShader

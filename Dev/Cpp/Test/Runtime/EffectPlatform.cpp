@@ -1,5 +1,6 @@
 
 #include "EffectPlatform.h"
+#include <assert.h>
 
 void EffectPlatform::CreateCheckeredPattern(int width, int height, uint32_t* pixels)
 {
@@ -16,73 +17,18 @@ void EffectPlatform::CreateCheckeredPattern(int width, int height, uint32_t* pix
 
 EffekseerRenderer::Renderer* EffectPlatform::GetRenderer() const { return renderer_; }
 
-void* EffectPlatform::GetNativePtr(int32_t index)
+EffectPlatform::EffectPlatform()
 {
-#ifdef _WIN32
-	if (index == 0)
-	{
-		return glfwGetWin32Window(window_);
-	}
-
-	return (HINSTANCE)GetModuleHandle(0);
-#endif
-
-#ifdef __APPLE__
-	return glfwGetCocoaWindow(window_);
-#endif
-
-#ifdef __linux__
-	if (index == 0)
-	{
-		return glfwGetX11Display();
-	}
-
-	return reinterpret_cast<void*>(glfwGetX11Window(window_));
-#endif
-
-	return nullptr;
-}
-
-EffectPlatform::EffectPlatform(bool isOpenGLMode) : isOpenGLMode_(isOpenGLMode)
-{
-	if (!glfwInit())
-	{
-		throw "Failed to initialize glfw";
-	}
-
-	if (isOpenGLMode)
-	{
-#if !_WIN32
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
-	}
-	else
-	{
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	}
-
-	window_ = glfwCreateWindow(1280, 720, "Example glfw", nullptr, nullptr);
-
-	if (window_ == nullptr)
-	{
-		glfwTerminate();
-		throw "Failed to create an window.";
-	}
-
-	if (isOpenGLMode)
-	{
-		glfwMakeContextCurrent(window_);
-	}
-
 	checkeredPattern_.resize(1280 * 720);
 	CreateCheckeredPattern(1280, 720, checkeredPattern_.data());
 }
 
 EffectPlatform::~EffectPlatform()
 {
+
+}
+
+void EffectPlatform::DestroyInternal() {
 	for (auto& effect : effects_)
 	{
 		effect->Release();
@@ -103,12 +49,7 @@ EffectPlatform::~EffectPlatform()
 		manager_ = nullptr;
 	}
 
-	if (window_ != nullptr)
-	{
-		glfwDestroyWindow(window_);
-		glfwTerminate();
-		window_ = nullptr;
-	}
+	DestroyDevice();
 }
 
 void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param)
@@ -149,6 +90,7 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 
 	manager_->SetTextureLoader(renderer_->CreateTextureLoader());
 	manager_->SetModelLoader(renderer_->CreateModelLoader());
+	manager_->SetMaterialLoader(renderer_->CreateMaterialLoader());
 
 	isInitialized_ = true;
 }
@@ -166,7 +108,7 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path)
 
 	if (filePtr == nullptr)
 	{
-		throw "Failed to load an effect buffer";
+		assert(0);
 	}
 
 	fseek(filePtr, SEEK_END, 0);
@@ -181,7 +123,7 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path)
 	auto effect = Effekseer::Effect::Create(manager_, path);
 	if (effect == nullptr)
 	{
-		throw "Failed to load an effect";
+		assert(0);
 	}
 
 	buffers_.push_back(data);
@@ -193,12 +135,8 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path)
 
 bool EffectPlatform::Update()
 {
-	if (glfwWindowShouldClose(window_) == GL_TRUE)
-	{
+	if (!DoEvent())
 		return false;
-	}
-
-	glfwPollEvents();
 
 	manager_->Update();
 
@@ -210,14 +148,7 @@ bool EffectPlatform::Update()
 
 	EndRendering();
 
-	if (isOpenGLMode_)
-	{
-		glfwSwapBuffers(window_);
-	}
-	else
-	{
-		Present();
-	}
+	Present();
 
 	return true;
 }

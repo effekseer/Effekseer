@@ -21,8 +21,6 @@ void EffectPlatformGL::BeginRendering()
 
 void EffectPlatformGL::EndRendering() {}
 
-void EffectPlatformGL::Present() {}
-
 bool EffectPlatformGL::TakeScreenshot(const char* path)
 {
 	glFlush();

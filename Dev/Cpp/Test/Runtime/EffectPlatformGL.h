@@ -1,22 +1,21 @@
 #pragma once
 
 #include "../../EffekseerRendererGL/EffekseerRendererGL.h"
-#include "EffectPlatform.h"
+#include "EffectPlatformGLFW.h"
 
-class EffectPlatformGL final : public EffectPlatform
+class EffectPlatformGL final : public EffectPlatformGLFW
 {
 private:
 protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;
 
 public:
-	EffectPlatformGL() : EffectPlatform(true) {}
+	EffectPlatformGL() : EffectPlatformGLFW(true) {}
 
 	~EffectPlatformGL();
 
 	void InitializeDevice(const EffectPlatformInitializingParameter& param) override;
 	void BeginRendering() override;
 	void EndRendering() override;
-	void Present() override;
 	bool TakeScreenshot(const char* path) override;
 };

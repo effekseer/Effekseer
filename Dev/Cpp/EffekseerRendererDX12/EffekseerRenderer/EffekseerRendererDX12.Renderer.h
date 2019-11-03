@@ -15,9 +15,11 @@ namespace EffekseerRendererDX12
 @return	instance
 */
 ::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
-									  int32_t swapBufferCount,
 									  ID3D12CommandQueue* commandQueue,
-									  std::function<void()> flushAndWaitQueueFunc,
+									  int32_t swapBufferCount,
+									  DXGI_FORMAT* renderTargetFormats,
+									  int32_t renderTargetCount,
+									  bool hasDepth,
 									  bool isReversedDepth,
 									  int32_t squareMaxCount);
 
@@ -27,15 +29,14 @@ void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::Textu
 
 void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer, ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
 
-void BeginCommandList(EffekseerRenderer::CommandList* commandList);
+void BeginCommandList(EffekseerRenderer::CommandList* commandList, ID3D12GraphicsCommandList* dx12CommandList);
 
 void EndCommandList(EffekseerRenderer::CommandList* commandList);
-
-void ExecuteCommandList(EffekseerRenderer::CommandList* commandList);
 
 } // namespace EffekseerRendererDX12
 

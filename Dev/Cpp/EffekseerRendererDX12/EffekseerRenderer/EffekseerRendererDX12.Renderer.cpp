@@ -1,4 +1,5 @@
 ﻿#include "EffekseerRendererDX12.Renderer.h"
+#include "../../3rdParty/LLGI/src/DX12/LLGI.CommandListDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.GraphicsDX12.h"
 #include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 
@@ -54,31 +55,25 @@ static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
 } // namespace ShaderDistortionTexture_
 
-
 namespace EffekseerRendererDX12
 {
 
 ::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
-									  int32_t swapBufferCount,
 									  ID3D12CommandQueue* commandQueue,
-									  std::function<void()> flushAndWaitQueueFunc,
+									  int32_t swapBufferCount,
+									  DXGI_FORMAT* renderTargetFormats,
+									  int32_t renderTargetCount,
+									  bool hasDepth,
 									  bool isReversedDepth,
 									  int32_t squareMaxCount)
 {
-
-	/*
-	ID3D12Device* device,
-				 std::function<std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, ID3D12Resource*>()> getScreenFunc,
-				 std::function<void()> waitFunc,
-				 ID3D12CommandQueue* commandQueue,
-				 int32_t swapBufferCount);
-	*/
 	std::function<std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*>()> getScreenFunc =
 		[]() -> std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*> {
 		return std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*>();
 	};
 
-	auto graphics = new LLGI::GraphicsDX12(device, getScreenFunc, flushAndWaitQueueFunc, commandQueue, swapBufferCount);
+	auto graphics = new LLGI::GraphicsDX12(
+		device, getScreenFunc, []() -> void {}, commandQueue, swapBufferCount);
 
 	::EffekseerRendererLLGI::RendererImplemented* renderer = new ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount);
 
@@ -98,17 +93,39 @@ namespace EffekseerRendererDX12
 	allocate_(renderer->fixedShader_.ModelShaderTexture_VS, ShaderTexture_::g_VS, sizeof(ShaderTexture_::g_VS));
 	allocate_(renderer->fixedShader_.ModelShaderTexture_PS, ShaderTexture_::g_PS, sizeof(ShaderTexture_::g_PS));
 
-	allocate_(renderer->fixedShader_.ModelShaderLightingTextureNormal_VS, ShaderLightingTextureNormal_::g_VS, sizeof(ShaderLightingTextureNormal_::g_VS));
-	allocate_(renderer->fixedShader_.ModelShaderLightingTextureNormal_PS, ShaderLightingTextureNormal_::g_PS, sizeof(ShaderLightingTextureNormal_::g_PS));
+	allocate_(renderer->fixedShader_.ModelShaderLightingTextureNormal_VS,
+			  ShaderLightingTextureNormal_::g_VS,
+			  sizeof(ShaderLightingTextureNormal_::g_VS));
+	allocate_(renderer->fixedShader_.ModelShaderLightingTextureNormal_PS,
+			  ShaderLightingTextureNormal_::g_PS,
+			  sizeof(ShaderLightingTextureNormal_::g_PS));
 
-	allocate_(renderer->fixedShader_.ModelShaderDistortionTexture_VS, ShaderDistortionTexture_::g_VS, sizeof(ShaderDistortionTexture_::g_VS));
-	allocate_(renderer->fixedShader_.ModelShaderDistortionTexture_PS, ShaderDistortionTexture_::g_PS, sizeof(ShaderDistortionTexture_::g_PS));
+	allocate_(
+		renderer->fixedShader_.ModelShaderDistortionTexture_VS, ShaderDistortionTexture_::g_VS, sizeof(ShaderDistortionTexture_::g_VS));
+	allocate_(
+		renderer->fixedShader_.ModelShaderDistortionTexture_PS, ShaderDistortionTexture_::g_PS, sizeof(ShaderDistortionTexture_::g_PS));
 
-	if (renderer->Initialize(graphics, isReversedDepth))
+	LLGI::RenderPassPipelineStateKey key;
+	key.RenderTargetFormats.resize(renderTargetCount);
+
+	for (size_t i = 0; i < key.RenderTargetFormats.size(); i++)
+	{
+		key.RenderTargetFormats.at(i) = LLGI::ConvertFormat(renderTargetFormats[i]);
+	}
+
+	key.HasDepth = hasDepth;
+
+	auto pipelineState = graphics->CreateRenderPassPipelineState(key);
+
+	if (renderer->Initialize(graphics, pipelineState, isReversedDepth))
 	{
 		ES_SAFE_RELEASE(graphics);
+		ES_SAFE_RELEASE(pipelineState);
 		return renderer;
 	}
+
+	ES_SAFE_RELEASE(graphics);
+	ES_SAFE_RELEASE(pipelineState);
 
 	ES_SAFE_DELETE(renderer);
 
@@ -166,25 +183,22 @@ EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effeksee
 	return ret;
 }
 
-void BeginCommandList(EffekseerRenderer::CommandList* commandList)
+void BeginCommandList(EffekseerRenderer::CommandList* commandList, ID3D12GraphicsCommandList* dx12CommandList)
 {
 	assert(commandList != nullptr);
+
+	LLGI::PlatformContextDX12 context;
+	context.commandList = dx12CommandList;
+
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
-	c->GetInternal()->Begin();
+	c->GetInternal()->BeginWithPlatform(&context);
 }
 
 void EndCommandList(EffekseerRenderer::CommandList* commandList)
 {
 	assert(commandList != nullptr);
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
-	c->GetInternal()->End();
-}
-
-void ExecuteCommandList(EffekseerRenderer::CommandList* commandList)
-{
-	assert(commandList != nullptr);
-	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
-	c->GetGraphics()->Execute(c->GetInternal());
+	c->GetInternal()->EndWithPlatform();
 }
 
 } // namespace EffekseerRendererDX12

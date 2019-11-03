@@ -167,6 +167,8 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 		piplineState->BlendEquationAlpha = LLGI::BlendEquationType::Add;
 	}
 
+	piplineState->SetRenderPassPipelineState(renderPassPipelineState_);
+
 	piplineState->Compile();
 
 	piplineStates_[key] = piplineState;
@@ -211,6 +213,8 @@ RendererImplemented::~RendererImplemented()
 	}
 	piplineStates_.clear();
 
+	ES_SAFE_RELEASE(renderPassPipelineState_);
+
 	ES_SAFE_RELEASE(commandList_);
 
 	GetImpl()->DeleteProxyTextures(this);
@@ -243,12 +247,14 @@ void RendererImplemented::OnLostDevice() {}
 
 void RendererImplemented::OnResetDevice() {}
 
-bool RendererImplemented::Initialize(LLGI::Graphics* graphics, bool isReversedDepth)
+bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth)
 {
 	graphics_ = graphics;
+	renderPassPipelineState_ = renderPassPipelineState;
 	isReversedDepth_ = isReversedDepth;
 
 	LLGI::SafeAddRef(graphics_);
+	LLGI::SafeAddRef(renderPassPipelineState_);
 
 	// 頂点の生成
 	{
@@ -596,6 +602,7 @@ void RendererImplemented::SetBackgroundTexture(Effekseer::TextureData* textuerDa
 		auto back = (LLGI::Texture*)m_background.UserPtr;
 		ES_SAFE_RELEASE(back);
 		m_background.UserPtr = nullptr;
+		return;
 	}
 
 	auto texture = static_cast<LLGI::Texture*>(textuerData->UserPtr);

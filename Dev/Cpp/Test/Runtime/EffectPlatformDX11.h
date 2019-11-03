@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../EffekseerRendererDX11/EffekseerRendererDX11.h"
-#include "EffectPlatform.h"
+#include "EffectPlatformGLFW.h"
 
-class EffectPlatformDX11 final : public EffectPlatform
+class EffectPlatformDX11 final : public EffectPlatformGLFW
 {
 private:
 	ID3D11Device* device_ = nullptr;
@@ -24,7 +24,7 @@ protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;
 
 public:
-	EffectPlatformDX11() : EffectPlatform(false) {}
+	EffectPlatformDX11() : EffectPlatformGLFW(false) {}
 
 	~EffectPlatformDX11();
 
