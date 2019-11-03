@@ -1,8 +1,8 @@
-Texture2D	g_texture		: register(t0);
-SamplerState	g_sampler		: register(s0);
+Texture2D	g_texture		: register(t8);
+SamplerState	g_sampler		: register(s8);
 
-Texture2D		g_backTexture		: register(t1);
-SamplerState	g_backSampler		: register(s1);
+Texture2D		g_backTexture		: register(t9);
+SamplerState	g_backSampler		: register(s9);
 
 float4		g_scale			: register(c0);
 float4 mUVInversedBack		: register(c1);

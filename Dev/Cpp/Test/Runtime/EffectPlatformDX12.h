@@ -18,7 +18,7 @@ protected:
 public:
 	EffectPlatformDX12() : EffectPlatformLLGI() {}
 
-	~EffectPlatformDX12();
+	virtual ~EffectPlatformDX12();
 
 	void InitializeDevice(const EffectPlatformInitializingParameter& param) override;
 	void DestroyDevice() override;

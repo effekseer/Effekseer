@@ -30,6 +30,7 @@ void EffectPlatformDX12::InitializeDevice(const EffectPlatformInitializingParame
 
 void EffectPlatformDX12::DestroyDevice()
 {
+	EffectPlatformLLGI::DestroyDevice();
 	ES_SAFE_RELEASE(commandListEfk_);
 	ES_SAFE_RELEASE(sfMemoryPoolEfk_);
 }

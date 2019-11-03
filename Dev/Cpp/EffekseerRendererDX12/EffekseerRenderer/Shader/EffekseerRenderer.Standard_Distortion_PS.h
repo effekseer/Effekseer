@@ -23,10 +23,10 @@
 //
 // Name                                 Type  Format         Dim Slot Elements
 // ------------------------------ ---------- ------- ----------- ---- --------
-// g_sampler                         sampler      NA          NA    0        1
-// g_backSampler                     sampler      NA          NA    1        1
-// g_texture                         texture  float4          2d    0        1
-// g_backTexture                     texture  float4          2d    1        1
+// g_sampler                         sampler      NA          NA    8        1
+// g_backSampler                     sampler      NA          NA    9        1
+// g_texture                         texture  float4          2d    8        1
+// g_backTexture                     texture  float4          2d    9        1
 // $Globals                          cbuffer      NA          NA    0        1
 //
 //
@@ -61,8 +61,8 @@
 //
 // Target Sampler Source Sampler  Source Resource
 // -------------- --------------- ----------------
-// s0             s0              t0               
-// s1             s1              t1               
+// s0             s8              t8               
+// s1             s9              t9               
 //
 //
 // Level9 shader bytecode:
@@ -104,10 +104,10 @@
 // approximately 23 instruction slots used (2 texture, 21 arithmetic)
 ps_4_0
 dcl_constantbuffer cb0[2], immediateIndexed
-dcl_sampler s0, mode_default
-dcl_sampler s1, mode_default
-dcl_resource_texture2d (float,float,float,float) t0
-dcl_resource_texture2d (float,float,float,float) t1
+dcl_sampler s8, mode_default
+dcl_sampler s9, mode_default
+dcl_resource_texture2d (float,float,float,float) t8
+dcl_resource_texture2d (float,float,float,float) t9
 dcl_input_ps linear v1.xyw
 dcl_input_ps linear v2.xy
 dcl_input_ps linear v3.xyw
@@ -115,7 +115,7 @@ dcl_input_ps linear v4.xyw
 dcl_input_ps linear v5.xyw
 dcl_output o0.xyzw
 dcl_temps 3
-sample r0.xyzw, v2.xyxx, t0.xyzw, s0
+sample r0.xyzw, v2.xyxx, t8.xyzw, s8
 mul r0.z, r0.w, v1.w
 eq r0.w, r0.z, l(0.000000)
 discard r0.w
@@ -133,7 +133,7 @@ add r0.xy, r0.xyxx, l(1.000000, 1.000000, 0.000000, 0.000000)
 mul r1.x, r0.x, l(0.500000)
 mad r0.x, -r0.y, l(0.500000), l(1.000000)
 mad r1.z, cb0[1].y, r0.x, cb0[1].x
-sample r1.xyzw, r1.xzxx, t1.xyzw, s1
+sample r1.xyzw, r1.xzxx, t9.xyzw, s9
 mov o0.xyz, r1.xyzx
 mov o0.w, r0.z
 ret 
@@ -142,10 +142,10 @@ ret
 
 const BYTE g_PS[] =
 {
-     68,  88,  66,  67, 103,  86, 
-    239,  10,  58, 240, 209,  73, 
-    182,  89, 161, 130, 157,   1, 
-    147,  91,   1,   0,   0,   0, 
+     68,  88,  66,  67, 210,  95, 
+    224, 186, 126,  88, 140, 125, 
+     44, 235, 169,  63, 110, 109, 
+    186, 202,   1,   0,   0,   0, 
     212,   8,   0,   0,   6,   0, 
       0,   0,  56,   0,   0,   0, 
     120,   2,   0,   0, 196,   5, 
@@ -158,8 +158,8 @@ const BYTE g_PS[] =
       0,   0,   1,   0,  44,   0, 
       0,   0,  56,   0,   0,   0, 
      56,   0,   2,   0,  36,   0, 
-      0,   0,  56,   0,   0,   0, 
-      0,   0,   1,   1,   1,   0, 
+      0,   0,  56,   0,   8,   8, 
+      0,   0,   9,   9,   1,   0, 
       0,   0,   0,   0,   2,   0, 
       0,   0,   0,   0,   0,   0, 
       1,   2, 255, 255,  81,   0, 
@@ -254,13 +254,13 @@ const BYTE g_PS[] =
      32,   0,   0,   0,   0,   0, 
       2,   0,   0,   0,  90,   0, 
       0,   3,   0,  96,  16,   0, 
-      0,   0,   0,   0,  90,   0, 
+      8,   0,   0,   0,  90,   0, 
       0,   3,   0,  96,  16,   0, 
-      1,   0,   0,   0,  88,  24, 
+      9,   0,   0,   0,  88,  24, 
       0,   4,   0, 112,  16,   0, 
-      0,   0,   0,   0,  85,  85, 
+      8,   0,   0,   0,  85,  85, 
       0,   0,  88,  24,   0,   4, 
-      0, 112,  16,   0,   1,   0, 
+      0, 112,  16,   0,   9,   0, 
       0,   0,  85,  85,   0,   0, 
      98,  16,   0,   3, 178,  16, 
      16,   0,   1,   0,   0,   0, 
@@ -279,8 +279,8 @@ const BYTE g_PS[] =
     242,   0,  16,   0,   0,   0, 
       0,   0,  70,  16,  16,   0, 
       2,   0,   0,   0,  70, 126, 
-     16,   0,   0,   0,   0,   0, 
-      0,  96,  16,   0,   0,   0, 
+     16,   0,   8,   0,   0,   0, 
+      0,  96,  16,   0,   8,   0, 
       0,   0,  56,   0,   0,   7, 
      66,   0,  16,   0,   0,   0, 
       0,   0,  58,   0,  16,   0, 
@@ -378,9 +378,9 @@ const BYTE g_PS[] =
       0,   9, 242,   0,  16,   0, 
       1,   0,   0,   0, 134,   0, 
      16,   0,   1,   0,   0,   0, 
-     70, 126,  16,   0,   1,   0, 
+     70, 126,  16,   0,   9,   0, 
       0,   0,   0,  96,  16,   0, 
-      1,   0,   0,   0,  54,   0, 
+      9,   0,   0,   0,  54,   0, 
       0,   5, 114,  32,  16,   0, 
       0,   0,   0,   0,  70,   2, 
      16,   0,   1,   0,   0,   0, 
@@ -418,23 +418,23 @@ const BYTE g_PS[] =
       0,   0,   3,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   0,   0,   1,   0, 
+      8,   0,   0,   0,   1,   0, 
       0,   0,   1,   0,   0,   0, 
     198,   0,   0,   0,   3,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   1,   0,   0,   0, 
+      0,   0,   9,   0,   0,   0, 
       1,   0,   0,   0,   1,   0, 
       0,   0, 212,   0,   0,   0, 
       2,   0,   0,   0,   5,   0, 
       0,   0,   4,   0,   0,   0, 
-    255, 255, 255, 255,   0,   0, 
+    255, 255, 255, 255,   8,   0, 
       0,   0,   1,   0,   0,   0, 
      13,   0,   0,   0, 222,   0, 
       0,   0,   2,   0,   0,   0, 
       5,   0,   0,   0,   4,   0, 
       0,   0, 255, 255, 255, 255, 
-      1,   0,   0,   0,   1,   0, 
+      9,   0,   0,   0,   1,   0, 
       0,   0,  13,   0,   0,   0, 
     236,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 

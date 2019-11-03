@@ -67,8 +67,6 @@ EffectPlatformGLFW::EffectPlatformGLFW(bool isOpenGLMode)
 
 EffectPlatformGLFW ::~EffectPlatformGLFW()
 {
-	DestroyInternal();
-
 	if (glfwWindow_ != nullptr)
 	{
 		glfwDestroyWindow(glfwWindow_);

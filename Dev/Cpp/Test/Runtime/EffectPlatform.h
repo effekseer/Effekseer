@@ -16,6 +16,7 @@ class EffectPlatform
 {
 private:
 	bool isInitialized_ = false;
+	bool isTerminated_ = false;
 
 	Effekseer::Manager* manager_ = nullptr;
 	EffekseerRenderer::Renderer* renderer_ = nullptr;
@@ -25,7 +26,7 @@ private:
 
 protected:
 	bool isOpenGLMode_ = false;
-
+	
 protected:
 	std::vector<Effekseer::Effect*> effects_;
 	std::vector<std::vector<uint8_t>> buffers_;
@@ -35,20 +36,19 @@ protected:
 	virtual void* GetNativePtr(int32_t index) { return nullptr; }
 	virtual EffekseerRenderer::Renderer* CreateRenderer() = 0;
 	virtual void InitializeDevice(const EffectPlatformInitializingParameter& param) {}
+	virtual void PreDestroyDevice() {}
 	virtual void DestroyDevice() {}
 	virtual void BeginRendering() {}
 	virtual void EndRendering() {}
 	virtual void Present() {}
 	virtual bool DoEvent() { return false; }
 	
-	//! for platform
-	void DestroyInternal();
-
 public:
 	EffectPlatform();
 	virtual ~EffectPlatform();
 
 	void Initialize(const EffectPlatformInitializingParameter& param);
+	void Terminate();
 
 	Effekseer::Handle Play(const char16_t* path);
 

@@ -89,6 +89,8 @@ protected:
 
 	void Present() override;
 	bool DoEvent() override;
+	void PreDestroyDevice() override;
+	void DestroyDevice() override;
 
 public:
 	EffectPlatformLLGI();

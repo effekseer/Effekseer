@@ -4,10 +4,10 @@ float4	fLightColor		: register( c1 );
 float4	fLightAmbient		: register( c2 );
 #endif
 
-Texture2D	g_colorTexture		: register( t0 );
-SamplerState	g_colorSampler		: register( s0 );
-Texture2D	g_normalTexture		: register( t1 );
-SamplerState	g_normalSampler		: register( s1 );
+Texture2D	g_colorTexture		: register( t8 );
+SamplerState	g_colorSampler		: register( s8 );
+Texture2D	g_normalTexture		: register( t9 );
+SamplerState	g_normalSampler		: register( s9 );
 
 struct PS_Input
 {

@@ -27,26 +27,7 @@ EffectPlatformLLGI::EffectPlatformLLGI()
 	commandListPool_ = std::make_shared<LLGI::CommandListPool>(graphics_, sfMemoryPool_, 3);
 }
 
-EffectPlatformLLGI ::~EffectPlatformLLGI()
-{
-	graphics_->WaitFinish();
-
-	DestroyInternal();
-
-	LLGI::SafeRelease(sfMemoryPool_);
-	commandListPool_.reset();
-	LLGI::SafeRelease(graphics_);
-	LLGI::SafeRelease(platform_);
-
-	ES_SAFE_DELETE(llgiWindow_);
-
-	if (glfwWindow_ != nullptr)
-	{
-		glfwDestroyWindow(glfwWindow_);
-		glfwTerminate();
-		glfwWindow_ = nullptr;
-	}
-}
+EffectPlatformLLGI ::~EffectPlatformLLGI() {}
 
 void EffectPlatformLLGI::Present()
 {
@@ -65,6 +46,25 @@ bool EffectPlatformLLGI::DoEvent()
 	commandList_ = commandListPool_->Get();
 
 	return true;
+}
+
+void EffectPlatformLLGI::PreDestroyDevice() { graphics_->WaitFinish(); }
+
+void EffectPlatformLLGI::DestroyDevice()
+{
+	LLGI::SafeRelease(sfMemoryPool_);
+	commandListPool_.reset();
+	LLGI::SafeRelease(graphics_);
+	LLGI::SafeRelease(platform_);
+
+	ES_SAFE_DELETE(llgiWindow_);
+
+	if (glfwWindow_ != nullptr)
+	{
+		glfwDestroyWindow(glfwWindow_);
+		glfwTerminate();
+		glfwWindow_ = nullptr;
+	}
 }
 
 bool EffectPlatformLLGI::TakeScreenshot(const char* path) { return false; }

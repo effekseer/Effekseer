@@ -25,33 +25,11 @@ EffectPlatform::EffectPlatform()
 
 EffectPlatform::~EffectPlatform()
 {
-
+	if (isInitialized_ && !isTerminated_)
+	{
+		assert(0);
+	}
 }
-
-void EffectPlatform::DestroyInternal() {
-	for (auto& effect : effects_)
-	{
-		effect->Release();
-	}
-	effects_.clear();
-
-	if (renderer_ != nullptr)
-	{
-		renderer_->Destroy();
-		renderer_ = nullptr;
-	}
-
-	if (manager_ != nullptr)
-	{
-		// TODO release causes memory leaks
-		// manager_->Release();
-		manager_->Destroy();
-		manager_ = nullptr;
-	}
-
-	DestroyDevice();
-}
-
 void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param)
 {
 	if (isInitialized_)
@@ -93,6 +71,35 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 	manager_->SetMaterialLoader(renderer_->CreateMaterialLoader());
 
 	isInitialized_ = true;
+}
+
+void EffectPlatform::Terminate()
+{
+	PreDestroyDevice();
+
+	for (auto& effect : effects_)
+	{
+		effect->Release();
+	}
+	effects_.clear();
+
+	if (renderer_ != nullptr)
+	{
+		renderer_->Destroy();
+		renderer_ = nullptr;
+	}
+
+	if (manager_ != nullptr)
+	{
+		// TODO release causes memory leaks
+		// manager_->Release();
+		manager_->Destroy();
+		manager_ = nullptr;
+	}
+
+	DestroyDevice();
+
+	isTerminated_ = true;
 }
 
 Effekseer::Handle EffectPlatform::Play(const char16_t* path)

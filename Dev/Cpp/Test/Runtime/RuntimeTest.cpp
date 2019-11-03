@@ -1,4 +1,5 @@
 #ifdef _WIN32
+#include "EffectPlatformDX12.h"
 #include "EffectPlatformDX11.h"
 #include "EffectPlatformDX9.h"
 #include "EffectPlatformGL.h"
@@ -14,7 +15,7 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 {
 	EffectPlatformInitializingParameter param;
 	platform->Initialize(param);
-
+	
 	auto single10Test = [&](const char16_t* name, const char* savename) -> void {
 		srand(0);
 		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/" + name + u".efk").c_str());
@@ -85,36 +86,50 @@ void BasicRuntimeDeviceLostTest()
 	}
 	platform->TakeScreenshot("0_Lost3.png");
 
+	platform->Terminate();
 #endif
 }
 
 void BasicRuntimeTest()
 {
 #ifdef _WIN32
+	/*
+	{
+		auto platform = std::make_shared<EffectPlatformDX12>();
+		BasicRuntimeTestPlatform(platform.get(), "", "_DX12");
+		platform->Terminate();
+	}
+	*/
+	
 	{
 		auto platform = std::make_shared<EffectPlatformDX9>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_DX9");
+		platform->Terminate();
 	}
-
+	
 	{
 		auto platform = std::make_shared<EffectPlatformDX11>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_DX11");
+		platform->Terminate();
 	}
-
+	
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
+		platform->Terminate();
 	}
-
+	
 #elif defined(__APPLE__)
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
+		platform->Terminate();
 	}
 #else
 	{
 		auto platform = std::make_shared<EffectPlatformGL>();
 		BasicRuntimeTestPlatform(platform.get(), "", "_GL");
+		platform->Terminate();
 	}
 #endif
 }

@@ -12,8 +12,8 @@
 //
 // Name                                 Type  Format         Dim Slot Elements
 // ------------------------------ ---------- ------- ----------- ---- --------
-// g_colorSampler                    sampler      NA          NA    0        1
-// g_colorTexture                    texture  float4          2d    0        1
+// g_colorSampler                    sampler      NA          NA    8        1
+// g_colorTexture                    texture  float4          2d    8        1
 //
 //
 //
@@ -40,7 +40,7 @@
 //
 // Target Sampler Source Sampler  Source Resource
 // -------------- --------------- ----------------
-// s0             s0              t0               
+// s0             s8              t8               
 //
 //
 // Level9 shader bytecode:
@@ -59,13 +59,13 @@
 
 // approximately 6 instruction slots used (1 texture, 5 arithmetic)
 ps_4_0
-dcl_sampler s0, mode_default
-dcl_resource_texture2d (float,float,float,float) t0
+dcl_sampler s8, mode_default
+dcl_resource_texture2d (float,float,float,float) t8
 dcl_input_ps linear v1.xy
 dcl_input_ps linear v5.xyzw
 dcl_output o0.xyzw
 dcl_temps 2
-sample r0.xyzw, v1.xyxx, t0.xyzw, s0
+sample r0.xyzw, v1.xyxx, t8.xyzw, s8
 mul r0.xyzw, r0.xyzw, v5.xyzw
 eq r1.x, r0.w, l(0.000000)
 discard r1.x
@@ -76,10 +76,10 @@ ret
 
 const BYTE g_PS[] =
 {
-     68,  88,  66,  67, 198, 196, 
-    239,  66, 143, 161, 223,  82, 
-     96, 143, 149,  33, 195, 157, 
-     99,   3,   1,   0,   0,   0, 
+     68,  88,  66,  67, 107, 125, 
+     46,  82, 147, 125, 190, 200, 
+     42, 102, 181,  36,   8,  85, 
+     25, 164,   1,   0,   0,   0, 
     252,   3,   0,   0,   6,   0, 
       0,   0,  56,   0,   0,   0, 
       4,   1,   0,   0, 220,   1, 
@@ -92,7 +92,7 @@ const BYTE g_PS[] =
       0,   0,   0,   0,  40,   0, 
       0,   0,  40,   0,   0,   0, 
      40,   0,   1,   0,  36,   0, 
-      0,   0,  40,   0,   0,   0, 
+      0,   0,  40,   0,   8,   8, 
       0,   0,   1,   2, 255, 255, 
      81,   0,   0,   5,   0,   0, 
      15, 160,   0,   0, 128, 191, 
@@ -123,9 +123,9 @@ const BYTE g_PS[] =
     208,   0,   0,   0,  64,   0, 
       0,   0,  52,   0,   0,   0, 
      90,   0,   0,   3,   0,  96, 
-     16,   0,   0,   0,   0,   0, 
+     16,   0,   8,   0,   0,   0, 
      88,  24,   0,   4,   0, 112, 
-     16,   0,   0,   0,   0,   0, 
+     16,   0,   8,   0,   0,   0, 
      85,  85,   0,   0,  98,  16, 
       0,   3,  50,  16,  16,   0, 
       1,   0,   0,   0,  98,  16, 
@@ -138,8 +138,8 @@ const BYTE g_PS[] =
      16,   0,   0,   0,   0,   0, 
      70,  16,  16,   0,   1,   0, 
       0,   0,  70, 126,  16,   0, 
-      0,   0,   0,   0,   0,  96, 
-     16,   0,   0,   0,   0,   0, 
+      8,   0,   0,   0,   0,  96, 
+     16,   0,   8,   0,   0,   0, 
      56,   0,   0,   7, 242,   0, 
      16,   0,   0,   0,   0,   0, 
      70,  14,  16,   0,   0,   0, 
@@ -185,12 +185,12 @@ const BYTE g_PS[] =
      92,   0,   0,   0,   3,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   0,   0,   0,   0, 
+      0,   0,   8,   0,   0,   0, 
       1,   0,   0,   0,   1,   0, 
       0,   0, 107,   0,   0,   0, 
       2,   0,   0,   0,   5,   0, 
       0,   0,   4,   0,   0,   0, 
-    255, 255, 255, 255,   0,   0, 
+    255, 255, 255, 255,   8,   0, 
       0,   0,   1,   0,   0,   0, 
      13,   0,   0,   0, 103,  95, 
      99, 111, 108, 111, 114,  83, 

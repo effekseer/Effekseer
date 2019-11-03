@@ -127,9 +127,6 @@ void TestShowEfcAssets()
 int main()
 {
 #if _WIN32
-	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_WNDW);
-	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_WNDW);
-	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_WNDW);
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
@@ -193,7 +190,7 @@ int main()
 #endif
 
 #if _WIN32
-	_CrtDumpMemoryLeaks();
+	//_CrtDumpMemoryLeaks();
 #endif
 
 	return 0;
