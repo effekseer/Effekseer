@@ -107,11 +107,13 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 	piplineState->SetShader(LLGI::ShaderStageType::Vertex, currentShader->GetVertexShader());
 	piplineState->SetShader(LLGI::ShaderStageType::Pixel, currentShader->GetPixelShader());
 
-	for (auto i = 0; i < currentShader->GetVertexLayoutFormat().size(); i++)
+	for (auto i = 0; i < currentShader->GetVertexLayouts().size(); i++)
 	{
-		piplineState->VertexLayouts[i] = currentShader->GetVertexLayoutFormat()[i];
+		piplineState->VertexLayouts[i] = currentShader->GetVertexLayouts()[i].Format;
+		piplineState->VertexLayoutNames[i] = currentShader->GetVertexLayouts()[i].Name;
+		piplineState->VertexLayoutSemantics[i] = currentShader->GetVertexLayouts()[i].Semantic;
 	}
-	piplineState->VertexLayoutCount = currentShader->GetVertexLayoutFormat().size();
+	piplineState->VertexLayoutCount = currentShader->GetVertexLayouts().size();
 
 	piplineState->Topology = currentTopologyType_;
 
@@ -229,9 +231,7 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_standardRenderer);
 	ES_SAFE_DELETE(m_shader);
 
-
 	ES_SAFE_DELETE(m_shader_distortion);
-
 
 	ES_SAFE_DELETE(m_renderState);
 	ES_SAFE_DELETE(m_vertexBuffer);
@@ -322,19 +322,19 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassP
 
 	m_renderState = new RenderState(this);
 
-	// シェーダー
-	// 座標(3) 色(1) UV(2)
-	std::vector<LLGI::VertexLayoutFormat> layouts;
-	layouts.push_back(LLGI::VertexLayoutFormat::R32G32B32_FLOAT);
-	layouts.push_back(LLGI::VertexLayoutFormat::R8G8B8A8_UNORM);
-	layouts.push_back(LLGI::VertexLayoutFormat::R32G32_FLOAT);
+	// shader
+	// pos(3) color(1) uv(2)
+	std::vector<VertexLayout> layouts;
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 0});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
 
-	std::vector<LLGI::VertexLayoutFormat> layouts_distort;
-	layouts_distort.push_back(LLGI::VertexLayoutFormat::R32G32B32_FLOAT);
-	layouts_distort.push_back(LLGI::VertexLayoutFormat::R8G8B8A8_UNORM);
-	layouts_distort.push_back(LLGI::VertexLayoutFormat::R32G32_FLOAT);
-	layouts_distort.push_back(LLGI::VertexLayoutFormat::R32G32B32_FLOAT);
-	layouts_distort.push_back(LLGI::VertexLayoutFormat::R32G32B32_FLOAT);
+	std::vector<VertexLayout> layouts_distort;
+	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
+	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 0});
+	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
+	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 1});
+	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 2});
 
 	m_shader = Shader::Create(this,
 							  fixedShader_.StandardTexture_VS.data(),
@@ -371,8 +371,8 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassP
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion->SetPixelRegisterCount(1 + 1);
 
-	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(
-		this, m_shader, m_shader_distortion);
+	m_standardRenderer =
+		new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(this, m_shader, m_shader_distortion);
 
 	GetImpl()->CreateProxyTextures(this);
 
@@ -685,12 +685,14 @@ void RendererImplemented::DrawSprites(int32_t spriteCount, int32_t vertexOffset)
 
 	if (m_renderMode == Effekseer::RenderMode::Normal)
 	{
-		GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer_, currentVertexBufferStride_, vertexOffset * currentVertexBufferStride_);
+		GetCurrentCommandList()->SetVertexBuffer(
+			currentVertexBuffer_, currentVertexBufferStride_, vertexOffset * currentVertexBufferStride_);
 		GetCurrentCommandList()->Draw(spriteCount * 2);
 	}
 	else
 	{
-		GetCurrentCommandList()->SetVertexBuffer(currentVertexBuffer_, currentVertexBufferStride_, vertexOffset * currentVertexBufferStride_);
+		GetCurrentCommandList()->SetVertexBuffer(
+			currentVertexBuffer_, currentVertexBufferStride_, vertexOffset * currentVertexBufferStride_);
 		GetCurrentCommandList()->Draw(spriteCount * 4);
 	}
 
@@ -754,13 +756,13 @@ Shader* RendererImplemented::GetShader(bool useTexture, ::Effekseer::RendererMat
 		{
 			// TODO : implement
 			return m_shader;
-			//return m_shader_lighting;
+			// return m_shader_lighting;
 		}
 		else
 		{
 			// TODO : implement
 			return m_shader;
-			//return m_shader_lighting;
+			// return m_shader_lighting;
 		}
 	}
 	else
@@ -834,7 +836,8 @@ void RendererImplemented::ResetRenderState()
 	m_renderState->Update(true);
 }
 
-Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) {
+Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type)
+{
 
 	std::array<uint8_t, 4> buf;
 
@@ -872,7 +875,8 @@ Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRendere
 	return textureData;
 }
 
-void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data) {
+void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
+{
 	if (data != nullptr && data->UserPtr != nullptr)
 	{
 		auto texture = (LLGI::Texture*)data->UserPtr;

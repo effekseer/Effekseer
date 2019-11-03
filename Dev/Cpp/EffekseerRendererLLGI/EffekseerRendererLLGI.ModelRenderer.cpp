@@ -32,7 +32,8 @@ ModelRenderer::ModelRenderer(RendererImplemented* renderer,
 	}
 
 	m_shader_distortion_texture->SetVertexConstantBufferSize(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>));
-	m_shader_distortion_texture->SetVertexRegisterCount(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>) / (sizeof(float) * 4));
+	m_shader_distortion_texture->SetVertexRegisterCount(sizeof(::EffekseerRenderer::ModelRendererVertexConstantBuffer<1>) /
+														(sizeof(float) * 4));
 	m_shader_distortion_texture->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion_texture->SetPixelRegisterCount(1 + 1);
 }
@@ -50,14 +51,14 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 	assert(renderer != NULL);
 	assert(renderer->GetGraphics() != NULL);
 
-	std::vector<LLGI::VertexLayoutFormat> layouts;
-	layouts.push_back(LLGI::VertexLayoutFormat::R32G32B32_FLOAT);
-	layouts.push_back(LLGI::VertexLayoutFormat::R32G32B32_FLOAT);
-	layouts.push_back(LLGI::VertexLayoutFormat::R32G32B32_FLOAT);
-	layouts.push_back(LLGI::VertexLayoutFormat::R32G32B32_FLOAT);
-	layouts.push_back(LLGI::VertexLayoutFormat::R32G32_FLOAT);
-	layouts.push_back(LLGI::VertexLayoutFormat::R8G8B8A8_UNORM);
-	layouts.push_back(LLGI::VertexLayoutFormat::R8G8B8A8_UNORM);
+	std::vector<VertexLayout> layouts;
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 0});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 1});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 2});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 3});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "BLENDINDICES", 0});
 
 	Shader* shader_lighting_texture_normal = Shader::Create(renderer,
 															fixedShader->ModelShaderLightingTextureNormal_VS.data(),
@@ -90,10 +91,7 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 		ES_SAFE_DELETE(shader_distortion_texture);
 	}
 
-	return new ModelRenderer(renderer,
-							 shader_lighting_texture_normal,
-							 shader_texture,
-							 shader_distortion_texture);
+	return new ModelRenderer(renderer, shader_lighting_texture_normal, shader_texture, shader_distortion_texture);
 }
 
 void ModelRenderer::BeginRendering(const efkModelNodeParam& parameter, int32_t count, void* userData)
@@ -108,11 +106,8 @@ void ModelRenderer::Rendering(const efkModelNodeParam& parameter, const Instance
 
 void ModelRenderer::EndRendering(const efkModelNodeParam& parameter, void* userData)
 {
-	EndRendering_<RendererImplemented, Shader, Model, false, 1>(m_renderer,
-																m_shader_lighting_texture_normal,
-																m_shader_texture,
-																m_shader_distortion_texture,
-																parameter);
+	EndRendering_<RendererImplemented, Shader, Model, false, 1>(
+		m_renderer, m_shader_lighting_texture_normal, m_shader_texture, m_shader_distortion_texture, parameter);
 }
 
 } // namespace EffekseerRendererLLGI

@@ -8,11 +8,11 @@ namespace EffekseerRendererLLGI
 Shader::Shader(RendererImplemented* renderer,
 			   LLGI::Shader* vertexShader,
 			   LLGI::Shader* pixelShader,
-			   const std::vector<LLGI::VertexLayoutFormat>& layoutFormats)
+			   const std::vector<VertexLayout>& layouts)
 	: DeviceObject(renderer)
 	, vertexShader_(vertexShader)
 	, pixelShader_(pixelShader)
-	, layoutFormats(layoutFormats)
+	, layouts_(layouts)
 	, m_vertexConstantBuffer(NULL)
 	, m_pixelConstantBuffer(NULL)
 	, m_vertexRegisterCount(0)
@@ -34,7 +34,7 @@ Shader* Shader::Create(RendererImplemented* renderer,
 					   LLGI::DataStructure* pixelData,
 					   int32_t pixelDataCount,
 					   const char* name,
-					   const std::vector<LLGI::VertexLayoutFormat>& layoutFormats)
+					   const std::vector<VertexLayout>& layouts)
 {
 	assert(renderer != NULL);
 	assert(renderer->GetGraphics() != NULL);
@@ -42,7 +42,7 @@ Shader* Shader::Create(RendererImplemented* renderer,
 	auto vertexShader = renderer->GetGraphics()->CreateShader(vertexData, vertexDataCount);
 	auto pixelShader = renderer->GetGraphics()->CreateShader(pixelData, pixelDataCount);
 
-	return new Shader(renderer, vertexShader, pixelShader, layoutFormats);
+	return new Shader(renderer, vertexShader, pixelShader, layouts);
 }
 
 void Shader::SetVertexConstantBufferSize(int32_t size)
