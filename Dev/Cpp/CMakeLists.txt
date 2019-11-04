@@ -14,21 +14,10 @@ else()
     set(CMAKE_CXX_STANDARD 14)
 endif()
 
-set(CMAKE_DEBUG_POSTFIX ".Debug")
-
-option(BUILD_TEST "Build test" OFF)
-
 # For Mac
 if(APPLE)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
 endif()
-
-if (MSVC)
-
-else()
-	set(CMAKE_CXX_FLAGS " -fPIC" ${CMAKE_CXX_FLAGS})
-endif()
-
 
 option(USE_INTERNAL_LOADER "Use Internal Loader" ON)
 
@@ -274,16 +263,9 @@ link_directories(
 	)
 
 # Add compile targets
-add_library( effekseer STATIC
+add_library(Effekseer STATIC
     ${effekseer_h}
     ${effekseer_src} )
-
-if (WIN32)
-add_library( effekseer_renderer_dx9 STATIC ${effekseer_renderer_dx9_src} )
-add_library( effekseer_renderer_dx11 STATIC ${effekseer_renderer_dx11_src} )
-endif()
-
-add_library( effekseer_renderer_gl STATIC ${effekseer_renderer_gl_src} )
 
 if (BUILD_DX12)
     set(BUILD_TEST_TEMP ${BUILD_TEST})
@@ -295,6 +277,13 @@ endif()
 if (BUILD_DX12)
     add_subdirectory(EffekseerRendererDX12)
 endif()
+
+if (WIN32)
+    add_library(EffekseerRendererDX9 STATIC ${effekseer_renderer_dx9_src} )
+    add_library(EffekseerRendererDX11 STATIC ${effekseer_renderer_dx11_src} )
+endif()
+
+add_library(EffekseerRendererGL STATIC ${effekseer_renderer_gl_src} )
 
 if (USE_OPENAL)
 	add_subdirectory(EffekseerSoundAL)
@@ -324,60 +313,27 @@ set(files
 
 FilterFolder("${files}")
 
-# set exported directory
-if (MSVC)
-set_target_properties(effekseer PROPERTIES OUTPUT_NAME_DEBUG "Effekseer" )
-set_target_properties(effekseer PROPERTIES OUTPUT_NAME_RELEASE "Effekseer" )
-else()
-set_target_properties(effekseer PROPERTIES OUTPUT_NAME "Effekseer" )
-endif()
-
-if (MSVC)
-if (MSVC)
-set_target_properties(effekseer_renderer_dx9 PROPERTIES OUTPUT_NAME_DEBUG "EffekseerRendererDX9" )
-set_target_properties(effekseer_renderer_dx9 PROPERTIES OUTPUT_NAME_RELEASE "EffekseerRendererDX9" )
-else()
-set_target_properties(effekseer_renderer_dx9 PROPERTIES OUTPUT_NAME "EffekseerRendererDX9" )
-endif()
-endif()
-
-if (MSVC)
-if (MSVC)
-set_target_properties(effekseer_renderer_dx11 PROPERTIES OUTPUT_NAME_DEBUG "EffekseerRendererDX11" )
-set_target_properties(effekseer_renderer_dx11 PROPERTIES OUTPUT_NAME_RELEASE "EffekseerRendererDX11" )
-else()
-set_target_properties(effekseer_renderer_dx11 PROPERTIES OUTPUT_NAME "EffekseerRendererDX11" )
-endif()
-endif()
-
-if (MSVC)
-set_target_properties(effekseer_renderer_gl PROPERTIES OUTPUT_NAME_DEBUG "EffekseerRendererGL" )
-set_target_properties(effekseer_renderer_gl PROPERTIES OUTPUT_NAME_RELEASE "EffekseerRendererGL" )
-else()
-set_target_properties(effekseer_renderer_gl PROPERTIES OUTPUT_NAME "EffekseerRendererGL" )
-endif()
-
 install(
-	TARGETS effekseer
+	TARGETS Effekseer
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib)
 
 if (MSVC)
 install(
-	TARGETS effekseer_renderer_dx9
+	TARGETS EffekseerRendererDX9
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib)
 endif()
 
 if (MSVC)
 install(
-	TARGETS effekseer_renderer_dx11
+	TARGETS EffekseerRendererDX11
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib)
 endif()
 
 install(
-	TARGETS effekseer_renderer_gl
+	TARGETS EffekseerRendererGL
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib)
 

@@ -14,12 +14,11 @@ if(APPLE)
     set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
 endif()
 
-if (MSVC)
-
-elseif (MINGW)
-    set(CMAKE_CXX_FLAGS "-std=c++11" ${CMAKE_CXX_FLAGS})
+# C++ version
+if(WIN32)
+    set(CMAKE_CXX_STANDARD 17)
 else()
-    set(CMAKE_CXX_FLAGS "-std=c++11 -fPIC" ${CMAKE_CXX_FLAGS})
+    set(CMAKE_CXX_STANDARD 14)
 endif()
 
 file(GLOB_RECURSE srcs *.cpp)

@@ -160,19 +160,17 @@ if(NOT APPLE)
 endif()
 
 link_directories(
-	
     ${PROJECT_SOURCE_DIR}/../lib/
-
 )
 
 if (WIN32)
 
 target_link_libraries(
 	Viewer
-	effekseer
-	effekseer_renderer_dx9
-	effekseer_renderer_dx11
-	effekseer_renderer_gl
+	Effekseer
+	EffekseerRendererDX9
+	EffekseerRendererDX11
+	EffekseerRendererGL
 	EffekseerSoundOSMixer
 	IPC
 	debug libgd_staticd
@@ -196,8 +194,8 @@ find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 
 target_link_libraries(
 	Viewer
-	effekseer
-	effekseer_renderer_gl
+	Effekseer
+	EffekseerRendererGL
 	EffekseerSoundOSMixer
 	IPC
 	debug gdd
@@ -239,8 +237,8 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 
 target_link_libraries(
 	Viewer
-	effekseer
-	effekseer_renderer_gl
+	Effekseer
+	EffekseerRendererGL
 	EffekseerSoundOSMixer
 	IPC
 	glfw3
@@ -261,19 +259,6 @@ add_definitions(-D__EFFEKSEER_VIEWER_BUILD_AS_CMAKE__)
 
 set_target_properties(Viewer PROPERTIES LINKER_LANGUAGE CXX)
 
-if (WIN32)
-	add_custom_command(TARGET Viewer POST_BUILD        # Adds a post-build event to MyTest
-	    COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
-		$<TARGET_FILE:Viewer>
-		${CMAKE_SOURCE_DIR}/Dev/release/Viewer.dll )                 # <--this is out-file path
-elseif(APPLE)
-	add_custom_command(TARGET Viewer POST_BUILD        # Adds a post-build event to MyTest
-	    COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
-		$<TARGET_FILE:Viewer>
-		${CMAKE_SOURCE_DIR}/Dev/release/libViewer.dylib )                 # <--this is out-file path
-else()
-	add_custom_command(TARGET Viewer POST_BUILD        # Adds a post-build event to MyTest
-	    COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
-		$<TARGET_FILE:Viewer>
-		${CMAKE_SOURCE_DIR}/Dev/release/libViewer.so )                 # <--this is out-file path
-endif()
+set_target_properties(Viewer PROPERTIES RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_SOURCE_DIR}/Dev/release )
+set_target_properties(Viewer PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${CMAKE_SOURCE_DIR}/Dev/release )
+set_target_properties(Viewer PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE  ${CMAKE_SOURCE_DIR}/Dev/release )

@@ -14,12 +14,11 @@ if(APPLE)
     set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
 endif()
 
-if (MSVC)
-
-elseif (MINGW)
-    set(CMAKE_CXX_FLAGS "-std=c++14" ${CMAKE_CXX_FLAGS})
+# C++ version
+if(WIN32)
+    set(CMAKE_CXX_STANDARD 17)
 else()
-    set(CMAKE_CXX_FLAGS "-std=c++14 -fPIC" ${CMAKE_CXX_FLAGS})
+    set(CMAKE_CXX_STANDARD 14)
 endif()
 
 file(GLOB srcs 
@@ -107,8 +106,8 @@ target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
     EffekseerMaterial
-    effekseer # to use shader loader
-    effekseer_renderer_gl # to use shader loader
+    Effekseer # to use shader loader
+    EffekseerRendererGL # to use shader loader
     IPC
     debug glfw3d
     optimized glfw3
@@ -132,8 +131,8 @@ target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
     EffekseerMaterial
-    effekseer # to use shader loader
-    effekseer_renderer_gl # to use shader loader
+    Effekseer # to use shader loader
+    EffekseerRendererGL # to use shader loader
     IPC
     glfw3
     AltseedRHI
@@ -182,20 +181,3 @@ endforeach()
 set_target_properties( EffekseerMaterialEditor PROPERTIES RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_SOURCE_DIR}/Dev/release )
 set_target_properties( EffekseerMaterialEditor PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${CMAKE_SOURCE_DIR}/Dev/release )
 set_target_properties( EffekseerMaterialEditor PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE  ${CMAKE_SOURCE_DIR}/Dev/release )
-
-if (WIN32)
-    add_custom_command(TARGET EffekseerMaterialEditor POST_BUILD        # Adds a post-build event to MyTest
-        COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
-        $<TARGET_FILE:EffekseerMaterialEditor>
-        ${CMAKE_SOURCE_DIR}/Dev/release/EffekseerMaterialEditor.exe)                 # <--this is out-file path
-elseif(APPLE)
-    add_custom_command(TARGET EffekseerMaterialEditor POST_BUILD        # Adds a post-build event to MyTest
-        COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
-        $<TARGET_FILE:EffekseerMaterialEditor>
-        ${CMAKE_SOURCE_DIR}/Dev/release/EffekseerMaterialEditor )                 # <--this is out-file path
-else()
-    add_custom_command(TARGET EffekseerMaterialEditor POST_BUILD        # Adds a post-build event to MyTest
-        COMMAND ${CMAKE_COMMAND} -E copy  # which executes "cmake - E copy_if_different..."
-        $<TARGET_FILE:EffekseerMaterialEditor>
-        ${CMAKE_SOURCE_DIR}/Dev/release/EffekseerMaterialEditor )                 # <--this is out-file path
-endif()

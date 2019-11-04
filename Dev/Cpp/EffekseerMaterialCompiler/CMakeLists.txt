@@ -8,7 +8,7 @@ add_library(
 
 target_link_libraries(
     EffekseerMaterialCompilerGL
-    effekseer
+    Effekseer
 )
 
 target_compile_definitions(EffekseerMaterialCompilerGL PRIVATE __SHARED_OBJECT__=1)
@@ -31,12 +31,13 @@ if(WIN32)
 
     target_link_libraries(
         EffekseerMaterialCompilerDX11
-        effekseer
+        Effekseer
     )
 
     target_compile_definitions(EffekseerMaterialCompilerDX11 PRIVATE __SHARED_OBJECT__=1)
 
-    set_target_properties( EffekseerMaterialCompilerDX11
+    set_target_properties(
+        EffekseerMaterialCompilerDX11
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"

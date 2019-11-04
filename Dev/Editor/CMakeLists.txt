@@ -71,22 +71,26 @@ list(APPEND files
     Effekseer/GUI/Dock/Environment.cs
 )
 
-add_executable(Effekseer
-  ${files}
+add_executable(EffekseerEditor
+    ${files}
 )
 
-set_target_properties(Effekseer PROPERTIES
+set_target_properties(EffekseerEditor PROPERTIES
     VS_DOTNET_REFERENCES "System;System.Xml;System.Xml.Linq;System.Text.RegularExpressions;Microsoft.CSharp;System.IO.Compression")
 
-add_dependencies(Effekseer EffekseerCore Viewer)
-target_link_libraries(Effekseer EffekseerCore Viewer)
+add_dependencies(EffekseerEditor EffekseerCore Viewer)
+target_link_libraries(EffekseerEditor EffekseerCore Viewer)
 
-target_compile_options(Effekseer PRIVATE "/unsafe")
-target_compile_options(Effekseer PRIVATE "/langversion:6")
-set_property(TARGET Effekseer PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
+target_compile_options(EffekseerEditor PRIVATE "/unsafe")
+target_compile_options(EffekseerEditor PRIVATE "/langversion:6")
+set_property(TARGET EffekseerEditor PROPERTY VS_GLOBAL_ApplicationIcon "${CMAKE_CURRENT_SOURCE_DIR}/Effekseer/icon.ico")
 
-target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED;__NEW_FORMAT__)
+target_compile_definitions(EffekseerCore PRIVATE SCRIPT_ENABLED)
 
 # specify a startup project
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT Effekseer)
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT EffekseerEditor)
 
+if (MSVC)
+    set_target_properties(EffekseerEditor PROPERTIES OUTPUT_NAME_DEBUG "Effekseer" )
+    set_target_properties(EffekseerEditor PROPERTIES OUTPUT_NAME_RELEASE "Effekseer" )
+endif()
