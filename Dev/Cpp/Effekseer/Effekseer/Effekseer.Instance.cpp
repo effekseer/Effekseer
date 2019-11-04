@@ -397,6 +397,10 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		m_ParentMatrix.Indentity();
 
 		// Generate zero frame effect
+
+		// for new children
+		UpdateChildrenGroupMatrix();
+
 		GenerateChildrenInRequired(0.0f);
 		return;
 	}
@@ -911,6 +915,9 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 
 	if (IsRequiredToCreateChildren(0.0f))
 	{
+		// calculate myself to update children group matrix
+		CalculateMatrix(0);
+
 		// for new children
 		UpdateChildrenGroupMatrix();
 
