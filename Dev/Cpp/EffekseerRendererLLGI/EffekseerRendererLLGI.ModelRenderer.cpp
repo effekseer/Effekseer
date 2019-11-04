@@ -58,7 +58,7 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 2});
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 3});
-	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "BLENDINDICES", 0});
+	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UINT, "BLENDINDICES", 0});
 
 	Shader* shader_lighting_texture_normal = Shader::Create(renderer,
 															fixedShader->ModelShaderLightingTextureNormal_VS.data(),

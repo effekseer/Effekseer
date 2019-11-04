@@ -1,15 +1,15 @@
 
 float4x4 mCameraProj		: register( c0 );
-float4x4 mModel[40]		: register( c4 );
-float4	fUV[40]			: register( c164 );
-float4	fModelColor[40]		: register( c204 );
+float4x4 mModel		: register( c4 );
+float4	fUV			: register( c8 );
+float4	fModelColor		: register( c9 );
 
 #ifdef ENABLE_LIGHTING
-float4	fLightDirection		: register( c244 );
-float4	fLightColor		: register( c245 );
-float4	fLightAmbient		: register( c246 );
+float4	fLightDirection		: register( c10 );
+float4	fLightColor		: register( c11 );
+float4	fLightAmbient		: register( c12 );
 #endif
-float4 mUVInversed		: register(c247);
+float4 mUVInversed		: register(c13);
 
 
 struct VS_Input
@@ -36,9 +36,9 @@ struct VS_Output
 
 VS_Output VS( const VS_Input Input )
 {
-	float4x4 matModel = mModel[Input.Index.x];
-	float4 uv = fUV[Input.Index.x];
-	float4 modelColor = fModelColor[Input.Index.x] * Input.Color;
+	float4x4 matModel = mModel;
+	float4 uv = fUV;
+	float4 modelColor = fModelColor * Input.Color;
 
 	VS_Output Output = (VS_Output)0;
 	float4 localPosition = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 }; 

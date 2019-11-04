@@ -1,9 +1,9 @@
 
 float4x4 mCameraProj		: register( c0 );
-float4x4 mModel[40]		: register( c4 );
-float4	fUV[40]			: register( c164 );
-float4	fModelColor[40]		: register( c204 );
-float4 mUVInversed		: register(c247);
+float4x4 mModel		: register( c4 );
+float4	fUV		: register( c8 );
+float4	fModelColor		: register( c9 );
+float4 mUVInversed		: register(c10);
 
 struct VS_Input
 {
@@ -29,9 +29,9 @@ struct VS_Output
 
 VS_Output VS( const VS_Input Input )
 {
-	float4x4 matModel = mModel[Input.Index.x];
-		float4 uv = fUV[Input.Index.x];
-		float4 modelColor = fModelColor[Input.Index.x];
+	float4x4 matModel = mModel;
+	float4 uv = fUV;
+	float4 modelColor = fModelColor;
 
 		VS_Output Output = (VS_Output) 0;
 	float4 localPosition = { Input.Pos.x, Input.Pos.y, Input.Pos.z, 1.0 };
