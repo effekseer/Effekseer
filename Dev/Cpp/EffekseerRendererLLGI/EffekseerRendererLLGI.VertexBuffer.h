@@ -16,7 +16,7 @@ private:
 	int32_t currentIndex = 0;
 	std::vector<LLGI::VertexBuffer*> vertexBuffers;
 
-	void* m_lockedResource;
+	void* lockedResource_;
 
 	uint32_t m_vertexRingOffset;
 	bool m_ringBufferLock;

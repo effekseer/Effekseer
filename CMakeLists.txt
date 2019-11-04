@@ -17,6 +17,11 @@ else()
     set(BUILD_DX12 OFF)
 endif()
 
+
+if (BUILD_DX12)
+    add_definitions(-D__EFFEKSEER_BUILD_DX12__)
+endif()
+
 # zlib
 ExternalProject_Add(
     ExternalProject_zlib

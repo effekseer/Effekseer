@@ -88,6 +88,12 @@ effekseerRendererDX11Header.readLines('EffekseerRendererCommon/EffekseerRenderer
 effekseerRendererDX11Header.readLines('EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Renderer.h')
 effekseerRendererDX11Header.output('EffekseerRendererDX11/EffekseerRendererDX11.h')
 
+effekseerRendererDX12Header = CreateHeader()
+effekseerRendererDX12Header.readLines('EffekseerRendererDX12/EffekseerRenderer/EffekseerRendererDX12.Base.Pre.h')
+effekseerRendererDX12Header.readLines('EffekseerRendererCommon/EffekseerRenderer.Renderer.h')
+effekseerRendererDX12Header.readLines('EffekseerRendererDX12/EffekseerRenderer/EffekseerRendererDX12.Renderer.h')
+effekseerRendererDX12Header.output('EffekseerRendererDX12/EffekseerRendererDX12.h')
+
 effekseerRendererGLHeader = CreateHeader()
 effekseerRendererGLHeader.readLines('EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Base.Pre.h')
 effekseerRendererGLHeader.readLines('EffekseerRendererCommon/EffekseerRenderer.Renderer.h')
