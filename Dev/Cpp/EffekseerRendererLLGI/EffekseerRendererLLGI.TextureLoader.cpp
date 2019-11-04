@@ -43,7 +43,9 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 
 		if (width > 0)
 		{
-			auto texture = graphics->CreateTexture(LLGI::Vec2I(width, height), false, false);
+			LLGI::TextureInitializationParameter texParam;
+			texParam.Size = LLGI::Vec2I(width, height);
+			auto texture = graphics->CreateTexture(texParam);
 			auto buf = texture->Lock();
 
 			if (bpp == 4)
