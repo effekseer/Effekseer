@@ -77,6 +77,29 @@ if (MSVC)
 	endif()
 endif()
 
+if (USE_INTERNAL_LOADER)
+	add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
+endif()
+
+if (USE_GLEW_STATIC)
+	add_definitions(-D__EFFEKSEER_RENDERER_GL_GLEW_S__)
+endif()
+
+if (USE_GLEW_DLL)
+	add_definitions(-D__EFFEKSEER_RENDERER_GL_GLEW__)
+endif()
+
+if (USE_OPENGLES2)
+	add_definitions(-D__EFFEKSEER_RENDERER_GLES2__)
+endif()
+
+if (USE_OPENGLES3)
+	add_definitions(-D__EFFEKSEER_RENDERER_GLES3__)
+endif()
+
+if (USE_OPENGL3)
+	add_definitions(-D__EFFEKSEER_RENDERER_GL3__)
+endif()
 
 # Setup source codes
 file(GLOB effekseer_h
@@ -300,31 +323,6 @@ set(files
 	${effekseer_renderer_gl_src})
 
 FilterFolder("${files}")
-
-if (USE_INTERNAL_LOADER)
-	add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
-endif()
-
-if (USE_GLEW_STATIC)
-	add_definitions(-D__EFFEKSEER_RENDERER_GL_GLEW_S__)
-endif()
-
-if (USE_GLEW_DLL)
-	add_definitions(-D__EFFEKSEER_RENDERER_GL_GLEW__)
-endif()
-
-if (USE_OPENGLES2)
-	add_definitions(-D__EFFEKSEER_RENDERER_GLES2__)
-endif()
-
-if (USE_OPENGLES3)
-	add_definitions(-D__EFFEKSEER_RENDERER_GLES3__)
-endif()
-
-if (USE_OPENGL3)
-	add_definitions(-D__EFFEKSEER_RENDERER_GL3__)
-endif()
-
 
 # set exported directory
 if (MSVC)

@@ -62,5 +62,3 @@ void EffectPlatformDX12::EndRendering()
 	commandList_->EndRenderPass();
 	commandList_->End();
 }
-
-bool EffectPlatformDX12::TakeScreenshot(const char* path) { return false; }

@@ -870,8 +870,8 @@ Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRendere
 	textureData->UserPtr = texture;
 	textureData->UserID = 0;
 	textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-	textureData->Width = 1;
-	textureData->Height = 1;
+	textureData->Width = 16;
+	textureData->Height = 16;
 	return textureData;
 }
 

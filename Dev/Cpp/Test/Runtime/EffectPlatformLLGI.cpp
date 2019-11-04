@@ -2,6 +2,8 @@
 #include "../3rdParty/LLGI/src/LLGI.CommandList.h"
 #include "../3rdParty/LLGI/src/LLGI.Platform.h"
 
+#include "../../3rdParty/stb/stb_image_write.h"
+
 EffectPlatformLLGI::EffectPlatformLLGI()
 {
 	if (!glfwInit())
@@ -67,4 +69,20 @@ void EffectPlatformLLGI::DestroyDevice()
 	}
 }
 
-bool EffectPlatformLLGI::TakeScreenshot(const char* path) { return false; }
+bool EffectPlatformLLGI::TakeScreenshot(const char* path)
+{
+	commandList_->WaitUntilCompleted();
+
+	LLGI::Color8 color;
+	color.R = 255;
+	color.G = 255;
+	color.B = 255;
+	color.A = 255;
+
+	auto texture = platform_->GetCurrentScreen(color, true)->GetRenderTexture(0);
+	auto data = graphics_->CaptureRenderTarget(texture);
+
+	stbi_write_png(path, 1280, 720, 4, data.data(), 1280 * 4);
+
+	return true;
+}

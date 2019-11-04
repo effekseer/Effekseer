@@ -24,5 +24,4 @@ public:
 	void DestroyDevice() override;
 	void BeginRendering() override;
 	void EndRendering() override;
-	bool TakeScreenshot(const char* path) override;
 };

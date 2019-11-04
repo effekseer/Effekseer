@@ -24,7 +24,7 @@ TextureLoader::~TextureLoader() { ES_SAFE_RELEASE(graphics); }
 
 Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
-	std::auto_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
+	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
 
 	if (reader.get() != NULL)
 	{

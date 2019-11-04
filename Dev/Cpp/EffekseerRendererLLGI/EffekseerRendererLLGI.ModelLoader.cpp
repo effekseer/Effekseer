@@ -23,7 +23,7 @@ ModelLoader::~ModelLoader() { LLGI::SafeRelease(graphics); }
 
 void* ModelLoader::Load(const EFK_CHAR* path)
 {
-	std::auto_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
+	std::unique_ptr<::Effekseer::FileReader> reader(m_fileInterface->OpenRead(path));
 	if (reader.get() == NULL)
 		return nullptr;
 
