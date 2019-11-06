@@ -693,8 +693,8 @@ public:
 			{
 				DistortionPixelConstantBuffer pcb;
 				pcb.scale[0] = m_state.DistortionIntensity;
-				pcb.uvInversed[0] = uvInversed[0];
-				pcb.uvInversed[1] = uvInversed[1];
+				pcb.uvInversed[0] = uvInversedBack[0];
+				pcb.uvInversed[1] = uvInversedBack[1];
 
 				m_renderer->SetPixelBufferToShader(&pcb, sizeof(DistortionPixelConstantBuffer), 0);
 			}
