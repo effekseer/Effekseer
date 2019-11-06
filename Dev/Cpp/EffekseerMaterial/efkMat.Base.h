@@ -95,6 +95,13 @@ enum class NodeType
 	Ceil,
 	Floor,
 	Frac,
+	Max,   // TODO
+	Min,   // TODO
+	Power, // TODO
+	Clamp,		  // TODO
+	DotProduct,   // TODO
+	CrossProduct, // TODO
+	LinearInterpolate, // TODO
 
 	OneMinus,
 	ComponentMask,
@@ -120,9 +127,9 @@ enum class NodeType
 	Function, // Unimplemented
 	Output,
 
-	// VectrToRadialValue
+// VectrToRadialValue
 
-	//! not supported on UE4
+//! not supported on UE4
 #ifdef _DEBUG
 	VertexTangentWS,
 #endif

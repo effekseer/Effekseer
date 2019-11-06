@@ -610,7 +610,6 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	// for opengl es
 	auto getNum = [](float f) -> std::string {
-		
 		std::ostringstream ret;
 		if (f == (int)f)
 		{
@@ -624,11 +623,10 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		return ret.str();
 	};
 
-
 	if (node->Target->Parameter->Type == NodeType::Constant1)
 	{
-		ret << GetTypeName(ValueType::Float1) << " " << node->Outputs[0].Name << "=" << getNum(node->Target->Properties[0]->Floats[0]) << ";"
-			<< std::endl;
+		ret << GetTypeName(ValueType::Float1) << " " << node->Outputs[0].Name << "=" << getNum(node->Target->Properties[0]->Floats[0])
+			<< ";" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Constant2)
@@ -640,15 +638,15 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	if (node->Target->Parameter->Type == NodeType::Constant3)
 	{
 		auto& floats = node->Target->Properties[0]->Floats;
-		ret << GetTypeName(ValueType::Float3) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float3) << "(" << getNum(floats[0])
-			<< "," << getNum(floats[1]) << "," << getNum(floats[2]) << ");" << std::endl;
+		ret << GetTypeName(ValueType::Float3) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float3) << "("
+			<< getNum(floats[0]) << "," << getNum(floats[1]) << "," << getNum(floats[2]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Constant4)
 	{
 		auto& floats = node->Target->Properties[0]->Floats;
-		ret << GetTypeName(ValueType::Float4) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float4) << "(" << getNum(floats[0])
-			<< "," << getNum(floats[1]) << "," << getNum(floats[2]) << "," << getNum(floats[3]) << ");" << std::endl;
+		ret << GetTypeName(ValueType::Float4) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float4) << "("
+			<< getNum(floats[0]) << "," << getNum(floats[1]) << "," << getNum(floats[2]) << "," << getNum(floats[3]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Parameter1)
@@ -711,6 +709,52 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	if (node->Target->Parameter->Type == NodeType::Frac)
 	{
 		exportIn1Out1("fract");
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Min)
+	{
+		exportIn2Out2Param2("min", ",");
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Max)
+	{
+		exportIn2Out2Param2("max", ",");
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Power)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= power("
+			<< GetInputArg(node->Outputs[0].Type, node->Inputs[0]) << ","
+			<< exportInputOrProp(ValueType::Float1, node->Inputs[1], node->Target->Properties[0]) << ");" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Clamp)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= clamp("
+			<< GetInputArg(node->Outputs[0].Type, node->Inputs[0]) << ","
+			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[1], node->Target->Properties[1]) << ","
+			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[2], node->Target->Properties[2]) << ");" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::DotProduct)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= dot("
+			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << "," << GetInputArg(node->Inputs[1].Type, node->Inputs[1]) << ");"
+			<< std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::CrossProduct)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= cross("
+			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << "," << GetInputArg(node->Inputs[1].Type, node->Inputs[1]) << ");"
+			<< std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::LinearInterpolate)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= lerp("
+			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << "," << GetInputArg(node->Inputs[1].Type, node->Inputs[1])
+			<< GetInputArg(node->Inputs[2].Type, node->Inputs[2]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::TextureCoordinate)
@@ -1038,7 +1082,6 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, std::array<float
 
 		return ret.str();
 	};
-
 
 	std::ostringstream ret;
 

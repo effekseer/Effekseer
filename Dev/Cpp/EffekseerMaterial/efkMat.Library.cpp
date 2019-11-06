@@ -18,6 +18,16 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeCeil>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeFloor>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeFrac>>());
+
+	Contents.push_back(std::make_shared<LibraryContent<NodeMin>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeMax>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodePower>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeClamp>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeDotProduct>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeCrossProduct>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeLinearInterpolate>>());
+
+
 	Contents.push_back(std::make_shared<LibraryContent<NodeAbs>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeComponentMask>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeAppendVector>>());

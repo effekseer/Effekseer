@@ -2,6 +2,7 @@
 #pragma once
 
 #include "efkMat.Base.h"
+#include "efkMat.Models.h"
 
 namespace EffekseerMaterial
 {
@@ -702,6 +703,250 @@ public:
 	}
 };
 
+class NodeMax : public NodeParameter
+{
+public:
+	NodeMax()
+	{
+		Type = NodeType::Max;
+		TypeName = "Max";
+		Group = std::vector<std::string>{"Math"};
+
+		InitializeAsIn2Out1Param2();
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return GetOutputTypeIn2Out1Param2(inputTypes);
+	}
+	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override
+	{
+		return GetWarningIn2Out1Param2(material, node);
+	}
+};
+
+class NodeMin : public NodeParameter
+{
+public:
+	NodeMin()
+	{
+		Type = NodeType::Min;
+		TypeName = "Min";
+		Group = std::vector<std::string>{"Math"};
+
+		InitializeAsIn2Out1Param2();
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return GetOutputTypeIn2Out1Param2(inputTypes);
+	}
+	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override
+	{
+		return GetWarningIn2Out1Param2(material, node);
+	}
+};
+
+class NodePower : public NodeParameter
+{
+public:
+	NodePower()
+	{
+		Type = NodeType::Power;
+		TypeName = "Power";
+		Group = std::vector<std::string>{"Math"};
+
+		auto input1 = std::make_shared<PinParameter>();
+		input1->Name = "Base";
+		input1->Type = ValueType::FloatN;
+		InputPins.push_back(input1);
+
+		auto input2 = std::make_shared<PinParameter>();
+		input2->Name = "Exp";
+		input2->Type = ValueType::Float1;
+		InputPins.push_back(input2);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::FloatN;
+		OutputPins.push_back(output);
+
+		auto paramExp = std::make_shared<NodePropertyParameter>();
+		paramExp->Name = "Exp";
+		paramExp->Type = ValueType::Float1;
+		Properties.push_back(paramExp);
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return inputTypes[0];
+	}
+};
+
+class NodeClamp : public NodeParameter
+{
+public:
+	NodeClamp()
+	{
+		Type = NodeType::Clamp;
+		TypeName = "Clamp";
+		Group = std::vector<std::string>{"Math"};
+
+		auto input1 = std::make_shared<PinParameter>();
+		input1->Name = "Input";
+		input1->Type = ValueType::FloatN;
+		InputPins.push_back(input1);
+
+		auto input2 = std::make_shared<PinParameter>();
+		input2->Name = "Min";
+		input2->Type = ValueType::FloatN;
+		InputPins.push_back(input2);
+
+		auto input3 = std::make_shared<PinParameter>();
+		input3->Name = "Max";
+		input3->Type = ValueType::FloatN;
+		InputPins.push_back(input3);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::FloatN;
+		OutputPins.push_back(output);
+
+		auto paramMin = std::make_shared<NodePropertyParameter>();
+		paramMin->Name = "Min";
+		paramMin->Type = ValueType::Float1;
+		Properties.push_back(paramMin);
+
+		auto paramMax = std::make_shared<NodePropertyParameter>();
+		paramMax->Name = "Max";
+		paramMax->Type = ValueType::Float1;
+		paramMax->DefaultValues[0] = 1.0f;
+		Properties.push_back(paramMax);
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return inputTypes[0];
+	}
+};
+
+class NodeDotProduct : public NodeParameter
+{
+public:
+	NodeDotProduct()
+	{
+		Type = NodeType::DotProduct;
+		TypeName = "DotProduct";
+		Group = std::vector<std::string>{"Math"};
+
+		auto input1 = std::make_shared<PinParameter>();
+		input1->Name = "Value1";
+		input1->Type = ValueType::FloatN;
+		InputPins.push_back(input1);
+
+		auto input2 = std::make_shared<PinParameter>();
+		input2->Name = "Value2";
+		input2->Type = ValueType::FloatN;
+		InputPins.push_back(input2);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float1;
+		OutputPins.push_back(output);
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return inputTypes[0];
+
+	}
+	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override
+	{
+		auto type1 = material->GetDesiredPinType(node->InputPins[0], std::unordered_set<std::shared_ptr<Pin>>());
+		auto type2 = material->GetDesiredPinType(node->InputPins[1], std::unordered_set<std::shared_ptr<Pin>>());
+		return type1 == type2 ? WarningType::None : WarningType::WrongInputType;
+	}
+};
+
+class NodeCrossProduct : public NodeParameter
+{
+public:
+	NodeCrossProduct()
+	{
+		Type = NodeType::CrossProduct;
+		TypeName = "CrossProduct";
+		Group = std::vector<std::string>{"Math"};
+
+		auto input1 = std::make_shared<PinParameter>();
+		input1->Name = "Value1";
+		input1->Type = ValueType::Float3;
+		InputPins.push_back(input1);
+
+		auto input2 = std::make_shared<PinParameter>();
+		input2->Name = "Value2";
+		input2->Type = ValueType::Float3;
+		InputPins.push_back(input2);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
+	}
+};
+
+class NodeLinearInterpolate : public NodeParameter
+{
+public:
+	NodeLinearInterpolate()
+	{
+		Type = NodeType::LinearInterpolate;
+		TypeName = "LinearInterpolate";
+		Group = std::vector<std::string>{"Math"};
+
+		auto input1 = std::make_shared<PinParameter>();
+		input1->Name = "Value1";
+		input1->Type = ValueType::FloatN;
+		InputPins.push_back(input1);
+
+		auto input2 = std::make_shared<PinParameter>();
+		input2->Name = "Value2";
+		input2->Type = ValueType::FloatN;
+		InputPins.push_back(input2);
+
+		auto inputAlpha = std::make_shared<PinParameter>();
+		inputAlpha->Name = "Alpha";
+		inputAlpha->Type = ValueType::Float1;
+		InputPins.push_back(inputAlpha);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::FloatN;
+		OutputPins.push_back(output);
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return GetOutputTypeIn2Out1Param2(inputTypes);
+	}
+
+	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override
+	{
+		return GetWarningIn2Out1Param2(material, node);
+	}
+};
+
 class NodeTextureCoordinate : public NodeParameter
 {
 public:
@@ -1065,7 +1310,7 @@ public:
 		baseColor->Name = "BaseColor";
 		baseColor->Type = ValueType::Float3;
 		baseColor->Default = DefaultType::Value;
-		//baseColor->DefaultValues.fill(0.5f);
+		// baseColor->DefaultValues.fill(0.5f);
 		baseColor->DefaultValues[3] = 1.0f;
 		InputPins.push_back(baseColor);
 
@@ -1073,7 +1318,7 @@ public:
 		emissive->Name = "Emissive";
 		emissive->Type = ValueType::Float3;
 		emissive->Default = DefaultType::Value;
-		//emissive->DefaultValues.fill(0.5f);
+		// emissive->DefaultValues.fill(0.5f);
 		emissive->DefaultValues[3] = 1.0f;
 		InputPins.push_back(emissive);
 
