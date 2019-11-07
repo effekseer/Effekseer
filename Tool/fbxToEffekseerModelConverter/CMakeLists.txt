@@ -8,6 +8,7 @@ set (CMAKE_CXX_STANDARD 11)
 set(srcs
 	fbxToEfkMdl.FBXConverter.cpp
 	fbxToMdl.VertexAnimation.cpp
+	Utils.cpp
 	main.cpp)
 
 # Flags

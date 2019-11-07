@@ -4,10 +4,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="fbxToEfkMdl.FBXConverter.cpp" />
     <ClCompile Include="fbxToMdl.VertexAnimation.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fbxToEfkMdl.Base.h" />
     <ClInclude Include="fbxToEfkMdl.FBXConverter.h" />
     <ClInclude Include="fbxToMdl.VertexAnimation.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
 </Project>

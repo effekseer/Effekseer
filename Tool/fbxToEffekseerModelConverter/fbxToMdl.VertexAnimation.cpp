@@ -1,85 +1,11 @@
 
 #include "fbxToMdl.VertexAnimation.h"
-
+#include "Utils.h"
 #include <fstream>
 #include <iostream>
 
 namespace fbxToEfkMdl
 {
-	struct BoneConnectorState
-	{
-		int32_t							NodeIndex;
-	};
-
-	struct MeshState
-	{
-		std::shared_ptr<Mesh>			Target;
-		std::vector<BoneConnectorState>	Connectors;
-	};
-
-	struct NodeState
-	{
-		float Values[9];
-		std::shared_ptr<KeyFrameAnimation>	Animations[9];
-
-		FbxMatrix	MatLocal;
-		FbxMatrix	MatGlobal;
-		std::shared_ptr<Node>	ParentNode;
-		std::shared_ptr<Node>	TargetNode;
-	};
-
-	std::vector<MeshState> GetAllMeshes(std::shared_ptr<Node> node)
-	{
-		std::vector<MeshState> ret;
-
-		if (node->MeshData != nullptr)
-		{
-			MeshState m;
-			m.Target = node->MeshData;
-
-			for (auto b : m.Target->BoneConnectors)
-			{
-				BoneConnectorState bs;
-				bs.NodeIndex = -1;
-				m.Connectors.push_back(bs);
-			}
-
-			ret.push_back(m);
-		}
-
-		for (auto c : node->Children)
-		{
-			auto ms = GetAllMeshes(c);
-
-			for (auto m : ms)
-			{
-				ret.push_back(m);
-			}
-		}
-
-		return ret;
-	}
-
-	std::vector<NodeState> GetAllNodes(std::shared_ptr<Node> node, std::shared_ptr<Node> parentNode)
-	{
-		std::vector<NodeState> ret;
-		ret.push_back(NodeState());
-		(ret.end() - 1)->ParentNode = parentNode;
-		(ret.end() - 1)->TargetNode = node;
-
-		for (auto c : node->Children)
-		{
-			auto ms = GetAllNodes(c, node);
-
-			for (auto m : ms)
-			{
-				ret.push_back(m);
-			}
-		}
-
-		return ret;
-	}
-
 	void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene, float modelScale)
 	{
 		auto meshes = GetAllMeshes(scene->Root);
@@ -139,23 +65,13 @@ namespace fbxToEfkMdl
 			// Calculate values
 			for (auto& node : nodes)
 			{
+				node.AssignDefaultValues();
+
 				for (int32_t j = 0; j < 9; j++)
 				{
 					if (node.Animations[j] != nullptr)
 					{
 						node.Values[j] = node.Animations[j]->Values[frame];
-					}
-					else
-					{
-						if (j == 0) node.Values[j] = node.TargetNode->Translation[0];
-						if (j == 1) node.Values[j] = node.TargetNode->Translation[1];
-						if (j == 2) node.Values[j] = node.TargetNode->Translation[2];
-						if (j == 3) node.Values[j] = node.TargetNode->Rotation[0];
-						if (j == 4) node.Values[j] = node.TargetNode->Rotation[1];
-						if (j == 5) node.Values[j] = node.TargetNode->Rotation[2];
-						if (j == 6) node.Values[j] = node.TargetNode->Scaling[0];
-						if (j == 7) node.Values[j] = node.TargetNode->Scaling[1];
-						if (j == 8) node.Values[j] = node.TargetNode->Scaling[2];
 					}
 				}
 			}
@@ -163,52 +79,14 @@ namespace fbxToEfkMdl
 			// Calculate local matrix
 			for (auto& node : nodes)
 			{
-				FbxRotationOrder ro;
-				ro.SetOrder(node.TargetNode->RotationOrder);
-				FbxVector4 rv;
-				rv[0] = node.Values[(int32_t)AnimationTarget::RX];
-				rv[1] = node.Values[(int32_t)AnimationTarget::RY];
-				rv[2] = node.Values[(int32_t)AnimationTarget::RZ];
-				rv[3] = 1.0f;
-				FbxAMatrix rm;
-				ro.V2M(rm, rv);
-				auto q = rm.GetQ();
-				FbxVector4 r;
-				r.SetXYZ(q);
-				
-				FbxMatrix mat;
-
-				FbxVector4 t;
-				t[0] = node.Values[(int32_t)AnimationTarget::TX];
-				t[1] = node.Values[(int32_t)AnimationTarget::TY];
-				t[2] = node.Values[(int32_t)AnimationTarget::TZ];
-
-				FbxVector4 s;
-				s[0] = node.Values[(int32_t)AnimationTarget::SX];
-				s[1] = node.Values[(int32_t)AnimationTarget::SY];
-				s[2] = node.Values[(int32_t)AnimationTarget::SZ];
-
-				mat.SetTRS(t, r, s);
-
-				node.MatLocal = mat;
+				node.CalculateLocalMatrix();
 				node.MatGlobal.SetIdentity();
 			}
 		
-			// Calculate global matrix
-			for (auto& node : nodes)
-			{
-				for (auto& node2 : nodes)
-				{
-					if (node2.TargetNode == node.ParentNode)
-					{
-						node.MatGlobal = node2.MatGlobal * node.MatLocal;
-					}
-				}
-			}
+			CalculateAllGlobalMateixes(nodes);
+
 
 			// Edit mesh
-
-
 			int32_t vcount = 0;
 			int32_t fcount = 0;
 

@@ -156,4 +156,91 @@ namespace fbxToEfkMdl
 		std::shared_ptr<Node> Root;
 		std::vector<std::shared_ptr<AnimationClip>>	AnimationClips;
 	};
+
+	struct BoneConnectorState
+	{
+		int32_t NodeIndex;
+	};
+
+	struct MeshState
+	{
+		std::shared_ptr<Mesh> Target;
+		std::vector<BoneConnectorState> Connectors;
+	};
+
+
+
+}
+
+namespace fbxToEfkMdl
+{
+
+struct NodeState
+{
+	float Values[9];
+	std::shared_ptr<KeyFrameAnimation> Animations[9];
+
+	FbxMatrix MatLocal;
+	FbxMatrix MatGlobal;
+	std::shared_ptr<Node> ParentNode;
+	std::shared_ptr<Node> TargetNode;
+
+	void AssignDefaultValues()
+	{
+		for (int32_t j = 0; j < 9; j++)
+		{
+			if (j == 0)
+				Values[j] = TargetNode->Translation[0];
+			if (j == 1)
+				Values[j] = TargetNode->Translation[1];
+			if (j == 2)
+				Values[j] = TargetNode->Translation[2];
+			if (j == 3)
+				Values[j] = TargetNode->Rotation[0];
+			if (j == 4)
+				Values[j] = TargetNode->Rotation[1];
+			if (j == 5)
+				Values[j] = TargetNode->Rotation[2];
+			if (j == 6)
+				Values[j] = TargetNode->Scaling[0];
+			if (j == 7)
+				Values[j] = TargetNode->Scaling[1];
+			if (j == 8)
+				Values[j] = TargetNode->Scaling[2];
+		}
+	}
+
+	void CalculateLocalMatrix()
+	{
+		FbxRotationOrder ro;
+		ro.SetOrder(TargetNode->RotationOrder);
+		FbxVector4 rv;
+		rv[0] = Values[(int32_t)AnimationTarget::RX];
+		rv[1] = Values[(int32_t)AnimationTarget::RY];
+		rv[2] = Values[(int32_t)AnimationTarget::RZ];
+		rv[3] = 1.0f;
+		FbxAMatrix rm;
+		ro.V2M(rm, rv);
+		auto q = rm.GetQ();
+		FbxVector4 r;
+		r.SetXYZ(q);
+
+		FbxMatrix mat;
+
+		FbxVector4 t;
+		t[0] = Values[(int32_t)AnimationTarget::TX];
+		t[1] = Values[(int32_t)AnimationTarget::TY];
+		t[2] = Values[(int32_t)AnimationTarget::TZ];
+
+		FbxVector4 s;
+		s[0] = Values[(int32_t)AnimationTarget::SX];
+		s[1] = Values[(int32_t)AnimationTarget::SY];
+		s[2] = Values[(int32_t)AnimationTarget::SZ];
+
+		mat.SetTRS(t, r, s);
+
+		MatLocal = mat;
+	}
+};
+
 }
