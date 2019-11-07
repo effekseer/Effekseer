@@ -544,7 +544,7 @@ void Preview::Render()
 
 	if (shader != nullptr)
 	{
-		if (mesh_ != nullptr)
+		if (mesh_ != nullptr && ModelType != PreviewModelType::Screen)
 		{
 			ar::DrawParameter drawParam;
 			drawParam.AlphaBlend = ar::AlphaBlendMode::Blend;

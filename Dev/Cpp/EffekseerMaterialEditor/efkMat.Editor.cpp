@@ -354,6 +354,7 @@ Editor::Editor(std::shared_ptr<EffekseerMaterial::Graphics> graphics)
 
 	preview_ = std::make_shared<EffekseerMaterial::Preview>();
 	preview_->Initialize(graphics_);
+	preview_->ModelType = PreviewModelType::Sphere;
 
 	startingTime = std::chrono::system_clock::now();
 
@@ -644,10 +645,19 @@ void Editor::UpdateNodes()
 		if ((node->UserObj == nullptr || node->GetIsDirtied()) && (node->IsPreviewOpened || node->Parameter->Type == NodeType::Output))
 		{
 			auto uobj = std::make_shared<EffekseerMaterial::NodeUserDataObject>();
-			uobj->GetPreview() = std::make_shared<EffekseerMaterial::Preview>();
-			uobj->GetPreview()->Initialize(graphics_);
+
+			if (uobj->GetPreview() == nullptr)
+			{
+				uobj->GetPreview() = std::make_shared<EffekseerMaterial::Preview>();
+				uobj->GetPreview()->Initialize(graphics_);
+			}
 
 			auto preview = uobj->GetPreview();
+
+			if (node->Parameter->Type == NodeType::Output)
+			{
+				preview->ModelType = PreviewModelType::Sphere;
+			}
 
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
 			std::vector<std::shared_ptr<TextureWithSampler>> textures;
@@ -1168,7 +1178,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				size.y = Preview::TextureSize;
 				ImGui::Image((void*)t->GetTexture()->GetInternalObjects()[0], size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
-				// adhoc 
+				// adhoc
 				glBindTexture(GL_TEXTURE_2D, (GLuint)t->GetTexture()->GetInternalObjects()[0]);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1356,6 +1366,17 @@ void Editor::UpdatePreview()
 	size.x = Preview::TextureSize;
 	size.y = Preview::TextureSize;
 	ImGui::Image((void*)preview_->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+	if (ImGui::Button("1"))
+	{
+		preview_->ModelType = PreviewModelType::Screen;
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("2"))
+	{
+		preview_->ModelType = PreviewModelType::Sphere;
+	}
 }
 
 void Editor::UpdateToRecordMovingCommand()
@@ -1574,6 +1595,18 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 			size.x = Preview::TextureSize;
 			size.y = Preview::TextureSize;
 			ImGui::Image((void*)preview->GetPreview()->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+
+			if (ImGui::Button("1"))
+			{
+				preview->GetPreview()->ModelType = PreviewModelType::Screen;
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("2"))
+			{
+				preview->GetPreview()->ModelType = PreviewModelType::Sphere;
+			}
 		}
 	}
 

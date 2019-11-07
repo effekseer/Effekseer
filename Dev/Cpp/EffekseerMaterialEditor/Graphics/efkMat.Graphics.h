@@ -7,6 +7,12 @@
 namespace EffekseerMaterial
 {
 
+enum class PreviewModelType
+{
+	Screen,
+	Sphere,
+};
+
 struct Vector2
 {
 	float X;
@@ -337,6 +343,8 @@ public:
 
 	std::string VS;
 	std::string PS;
+
+	PreviewModelType ModelType = PreviewModelType::Screen;
 
 	uint64_t GetInternal();
 

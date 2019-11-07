@@ -22,6 +22,7 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeMin>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeMax>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodePower>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeSquareRoot>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeClamp>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeDotProduct>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeCrossProduct>>());

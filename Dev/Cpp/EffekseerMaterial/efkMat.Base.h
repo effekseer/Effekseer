@@ -95,13 +95,14 @@ enum class NodeType
 	Ceil,
 	Floor,
 	Frac,
-	Max,   // TODO
-	Min,   // TODO
-	Power, // TODO
-	Clamp,		  // TODO
-	DotProduct,   // TODO
-	CrossProduct, // TODO
-	LinearInterpolate, // TODO
+	Max,
+	Min,
+	Power,
+	SquareRoot,
+	Clamp,
+	DotProduct,
+	CrossProduct,
+	LinearInterpolate,
 
 	OneMinus,
 	ComponentMask,

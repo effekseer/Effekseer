@@ -790,6 +790,25 @@ public:
 	}
 };
 
+class NodeSquareRoot : public NodeParameter
+{
+public:
+	NodeSquareRoot()
+	{
+		Type = NodeType::SquareRoot;
+		TypeName = "SquareRoot";
+		Group = std::vector<std::string>{"Math"};
+
+		InitializeAstOutputTypeIn1Out1();
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return GetOutputTypeIn1Out1(inputTypes);
+	}
+};
+
 class NodeClamp : public NodeParameter
 {
 public:

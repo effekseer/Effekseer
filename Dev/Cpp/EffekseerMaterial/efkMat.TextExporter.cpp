@@ -723,23 +723,30 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::Power)
 	{
-		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= power("
+		assert(node->Inputs[1].Type == ValueType::Float1);
+
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= pow("
 			<< GetInputArg(node->Outputs[0].Type, node->Inputs[0]) << ","
-			<< exportInputOrProp(ValueType::Float1, node->Inputs[1], node->Target->Properties[0]) << ");" << std::endl;
+			<< exportInputOrProp(node->Inputs[1].Type, node->Inputs[1], node->Target->Properties[0]) << ");" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::SquareRoot)
+	{
+		exportIn1Out1("sqrt");
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Clamp)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= clamp("
 			<< GetInputArg(node->Outputs[0].Type, node->Inputs[0]) << ","
-			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[1], node->Target->Properties[1]) << ","
-			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[2], node->Target->Properties[2]) << ");" << std::endl;
+			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[1], node->Target->Properties[0]) << ","
+			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[2], node->Target->Properties[1]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::DotProduct)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= dot("
-			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << "," << GetInputArg(node->Inputs[1].Type, node->Inputs[1]) << ");"
+			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << "," << GetInputArg(node->Inputs[0].Type, node->Inputs[1]) << ");"
 			<< std::endl;
 	}
 
@@ -752,8 +759,10 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::LinearInterpolate)
 	{
-		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= lerp("
-			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << "," << GetInputArg(node->Inputs[1].Type, node->Inputs[1])
+		assert(node->Inputs[2].Type == ValueType::Float1);
+
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= mix("
+			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << "," << GetInputArg(node->Inputs[0].Type, node->Inputs[1]) << ","
 			<< GetInputArg(node->Inputs[2].Type, node->Inputs[2]) << ");" << std::endl;
 	}
 
