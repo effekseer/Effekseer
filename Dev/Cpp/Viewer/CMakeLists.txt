@@ -261,6 +261,8 @@ set_target_properties(Viewer PROPERTIES LINKER_LANGUAGE CXX)
 
 
 set_target_properties(Viewer PROPERTIES LIBRARY_OUTPUT_DIRECTORY  ${CMAKE_SOURCE_DIR}/Dev/release )
+set_target_properties(Viewer PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG  ${CMAKE_SOURCE_DIR}/Dev/release )
+set_target_properties(Viewer PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE  ${CMAKE_SOURCE_DIR}/Dev/release )
 
 set_target_properties(Viewer PROPERTIES RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_SOURCE_DIR}/Dev/release )
 set_target_properties(Viewer PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${CMAKE_SOURCE_DIR}/Dev/release )
