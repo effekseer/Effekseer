@@ -1,4 +1,4 @@
-﻿
+
 //----------------------------------------------------------------------------------
 // Include
 //----------------------------------------------------------------------------------
@@ -1299,6 +1299,10 @@ void RendererImplemented::BeginShader(Shader* shader)
 	{
 		SetVertexArray(m_vao_lighting);
 	}
+    else if(m_currentVertexArray != nullptr)
+    {
+        SetVertexArray(m_currentVertexArray);
+    }
 	else
 	{
 		m_currentVertexArray = nullptr;
