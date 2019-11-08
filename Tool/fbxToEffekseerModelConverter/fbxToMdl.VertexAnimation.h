@@ -3,20 +3,19 @@
 
 namespace fbxToEfkMdl
 {
-	class VertexAnimationSetting
-	{
-	public:
-		int32_t	FrameCount;
-	};
+class VertexAnimationSetting
+{
+public:
+	int32_t FrameCount;
+};
 
-	class VertexAnimation
-	{
-	private:
+class VertexAnimation
+{
+private:
+public:
+	VertexAnimation() = default;
+	virtual ~VertexAnimation() = default;
 
-	public:
-		VertexAnimation() = default;
-		virtual ~VertexAnimation() = default;
-
-		void Export(const char* path, std::shared_ptr<Scene> scene, float modelScale);
-	};
-}
+	void Export(const char* path, std::shared_ptr<Scene> scene, float modelScale);
+};
+} // namespace fbxToEfkMdl

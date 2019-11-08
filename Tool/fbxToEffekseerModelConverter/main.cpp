@@ -1,29 +1,29 @@
 
+#include "Utils.h"
 #include "fbxToEfkMdl.Base.h"
 #include "fbxToEfkMdl.FBXConverter.h"
 #include "fbxToMdl.VertexAnimation.h"
-#include "Utils.h"
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 #if _DEBUG
-#pragma comment(lib,"debug/libfbxsdk-mt.lib")
+#pragma comment(lib, "debug/libfbxsdk-mt.lib")
 #else
-#pragma comment(lib,"release/libfbxsdk-mt.lib")
+#pragma comment(lib, "release/libfbxsdk-mt.lib")
 #endif
 
-
 #ifdef _WIN32
-#include <windows.h>
-#include <string>
 #include <cstring>
+#include <string>
+#include <windows.h>
 
-std::string ANSI_to_UTF8(std::string inANSI) {
-    wchar_t tempWideChar[1024];
+std::string ANSI_to_UTF8(std::string inANSI)
+{
+	wchar_t tempWideChar[1024];
 	char outUTF8[1024];
-    MultiByteToWideChar( CP_ACP, 0, inANSI.c_str(), -1, tempWideChar, 1024);
-    WideCharToMultiByte( CP_UTF8, 0, tempWideChar, -1, outUTF8, 1024, NULL, NULL);
+	MultiByteToWideChar(CP_ACP, 0, inANSI.c_str(), -1, tempWideChar, 1024);
+	WideCharToMultiByte(CP_UTF8, 0, tempWideChar, -1, outUTF8, 1024, NULL, NULL);
 	return outUTF8;
 }
 
@@ -33,7 +33,7 @@ bool ExportStaticMesh(const char* path, std::shared_ptr<fbxToEfkMdl::Scene> scen
 
 int main(int argc, char** argv)
 {
-	if(argc == 1)
+	if (argc == 1)
 	{
 		printf("Effekseer Model Conveter\n");
 		printf("Usage: fbxToEffekseerModelConverter InputFile(*.fbx) {OutputFile(*.efkmodel)} {options}\n");
@@ -137,7 +137,7 @@ int main(int argc, char** argv)
 	fbxImporter->Import(fbxScene);
 
 	auto scene = converter.LoadScene(fbxScene, sdkManager);
-	
+
 	fbxScene->Destroy();
 	fbxImporter->Destroy();
 	sdkManager->Destroy();
@@ -150,13 +150,13 @@ int main(int argc, char** argv)
 
 		return 0;
 	}
-	
-	if(ExportStaticMesh(exportPath.c_str(), scene, modelCount, modelScale))
+
+	if (ExportStaticMesh(exportPath.c_str(), scene, modelCount, modelScale))
 	{
 		return 0;
 	}
 
-    return -1;
+	return -1;
 }
 
 bool ExportStaticMesh(const char* path, std::shared_ptr<fbxToEfkMdl::Scene> scene, int modelCount, float modelScale)
