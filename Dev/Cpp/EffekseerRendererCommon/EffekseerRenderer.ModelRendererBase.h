@@ -120,6 +120,7 @@ public:
 
 		if (parameter.BasicParameterPtr->MaterialType == ::Effekseer::RendererMaterialType::File &&
 			parameter.BasicParameterPtr->MaterialParameterPtr != nullptr &&
+			parameter.BasicParameterPtr->MaterialParameterPtr->MaterialIndex >= 0 &&
 			parameter.EffectPointer->GetMaterial(parameter.BasicParameterPtr->MaterialParameterPtr->MaterialIndex) != nullptr)
 		{
 			auto material = parameter.EffectPointer->GetMaterial(parameter.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);

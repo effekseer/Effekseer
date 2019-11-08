@@ -284,7 +284,7 @@ protected:
 				}
 				else if (vertexType == VertexType::Dynamic)
 				{
-					auto vs = (DynamicVertex*)&verteies[i];
+					StrideView<DynamicVertex> vs(verteies.pointerOrigin_, stride_, 4);
 					auto tangentX = efkVector3D(mat.Value[0][0], mat.Value[0][1], mat.Value[0][2]);
 					auto tangentZ = efkVector3D(mat.Value[2][0], mat.Value[2][1], mat.Value[2][2]);
 					vs[i].Normal = PackVector3DF(tangentZ);
