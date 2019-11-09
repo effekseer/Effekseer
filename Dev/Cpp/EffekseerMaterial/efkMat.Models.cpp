@@ -1590,7 +1590,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		auto name_ = GetVectorFromStr(Replace(param->Name, "$SUFFIX", ""));
 		bwParam.Push(name_);
 
-		auto defaultPath_ = GetVectorFromStr(param->DefaultPath);
+		auto defaultPath_ = GetVectorFromStr(Relative(param->DefaultPath, basePath));
 		bwParam.Push(defaultPath_);
 		bwParam.Push(param->Index);
 		bwParam.Push(param->Priority);

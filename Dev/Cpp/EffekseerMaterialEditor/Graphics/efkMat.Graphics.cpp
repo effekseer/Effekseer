@@ -71,7 +71,7 @@ std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, const
 
 	auto texture = ar::Texture2D::Create(graphics->GetManager());
 
-	texture->Initialize(graphics->GetManager(), buffer.data(), buffer.size(), false, true);
+	texture->Initialize(graphics->GetManager(), buffer.data(), buffer.size(), false, false);
 	obj->texture = texture;
 
 	return obj;
