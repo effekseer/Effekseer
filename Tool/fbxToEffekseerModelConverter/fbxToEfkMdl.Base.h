@@ -178,6 +178,7 @@ struct BoneConnectorState
 struct MeshState
 {
 	std::shared_ptr<Mesh> Target;
+	std::shared_ptr<Node> MeshNode;
 	std::vector<BoneConnectorState> Connectors;
 };
 
@@ -193,6 +194,7 @@ struct NodeState
 
 	FbxMatrix MatLocal;
 	FbxMatrix MatGlobal;
+	FbxMatrix MatGlobalDefault;
 	std::shared_ptr<Node> ParentNode;
 	std::shared_ptr<Node> TargetNode;
 

@@ -216,7 +216,7 @@ void FBXConverter::LoadSkin(FbxMesh* fbxMesh, std::vector<BoneConnector>& bcs, s
 			if (cluster->GetLink() == nullptr)
 				continue;
 
-			// ƒ{[ƒ“Žæ“¾
+			// get bone
 			auto name = cluster->GetLink()->GetName();
 
 			FbxAMatrix m1, m2;

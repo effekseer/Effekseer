@@ -41,6 +41,8 @@ void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene, flo
 		}
 	}
 
+	AssignAllDefaultGlobalMateixes(nodes);
+
 	// Export model.
 	// Preliminary
 	const int Version = 5;
@@ -102,7 +104,18 @@ void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene, flo
 			std::vector<FbxMatrix> boneMat;
 			for (int32_t i = 0; i < mesh.Connectors.size(); i++)
 			{
-				auto m = nodes[mesh.Connectors[i].NodeIndex].MatGlobal * mesh.Target->BoneConnectors[i].OffsetMatrix;
+				fbxToEfkMdl::NodeState nodeState;
+				for (auto node : nodes)
+				{
+					if (node.TargetNode == mesh.MeshNode)
+					{
+						nodeState = node;
+						break;
+					}
+				}
+
+				auto m = nodes[mesh.Connectors[i].NodeIndex].MatGlobal * mesh.Target->BoneConnectors[i].OffsetMatrix * nodeState.MatGlobal *
+						 nodeState.MatGlobalDefault.Inverse();
 				boneMat.push_back(m);
 			}
 

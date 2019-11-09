@@ -18,6 +18,27 @@ void CalculateAllGlobalMateixes(std::vector<NodeState>& nodes)
 	}
 }
 
+void AssignAllDefaultGlobalMateixes(std::vector<NodeState>& nodes)
+{
+	for (auto& node : nodes)
+	{
+		node.AssignDefaultValues();
+	}
+
+	for (auto& node : nodes)
+	{
+		node.CalculateLocalMatrix();
+		node.MatGlobal.SetIdentity();
+	}
+
+	CalculateAllGlobalMateixes(nodes);
+
+	for (auto& node : nodes)
+	{
+		node.MatGlobalDefault = node.MatGlobal;
+	}
+}
+
 std::vector<MeshState> GetAllMeshes(std::shared_ptr<Node> node)
 {
 	std::vector<MeshState> ret;
@@ -26,6 +47,7 @@ std::vector<MeshState> GetAllMeshes(std::shared_ptr<Node> node)
 	{
 		MeshState m;
 		m.Target = node->MeshData;
+		m.MeshNode = node;
 
 		for (auto b : m.Target->BoneConnectors)
 		{
