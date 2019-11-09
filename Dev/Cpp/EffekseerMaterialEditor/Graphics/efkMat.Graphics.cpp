@@ -427,9 +427,18 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 	{
 		if (layout.first == "uMatProjection")
 		{
-			Matrix44 mat;
-			mat.SetPerspectiveFovRH_OpenGL(30.0f / 180.0f * 3.14f, 1.0, 0.1f, 10.0f);
-			constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
+			if (ModelType == PreviewModelType::Screen)
+			{
+				Matrix44 mat;
+				mat.OrthographicRH(2.0f, 2.0f, 0.1f, 10.0f);
+				constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
+			}
+			else
+			{
+				Matrix44 mat;
+				mat.SetPerspectiveFovRH_OpenGL(30.0f / 180.0f * 3.14f, 1.0, 0.1f, 10.0f);
+				constantBuffer->SetData(mat.Values, layout.second.GetSize(), layout.second.Offset);
+			}
 		}
 
 		if (layout.first == "uMatCamera")
@@ -571,7 +580,6 @@ void Preview::Render()
 						(textures_[i]->TexturePtr != nullptr) ? textures_[i]->TexturePtr->GetTexture() : nullptr;
 					drawParam.PixelShaderTextureWraps[ind] =
 						textures_[i]->SamplerType == TextureSamplerType::Repeat ? ar::TextureWrapType::Repeat : ar::TextureWrapType::Clamp;
-
 				}
 			}
 

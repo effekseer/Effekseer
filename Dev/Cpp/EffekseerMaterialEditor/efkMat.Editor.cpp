@@ -1172,16 +1172,20 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 
 			if (p->Str != "")
 			{
-				auto t = EffekseerMaterial::TextureCache::Load(graphics_, p->Str.c_str());
+				auto texture = EffekseerMaterial::TextureCache::Load(graphics_, p->Str.c_str());
 				ImVec2 size;
 				size.x = Preview::TextureSize;
 				size.y = Preview::TextureSize;
-				ImGui::Image((void*)t->GetTexture()->GetInternalObjects()[0], size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
-				// adhoc
-				glBindTexture(GL_TEXTURE_2D, (GLuint)t->GetTexture()->GetInternalObjects()[0]);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				if (texture != nullptr)
+				{
+					ImGui::Image((void*)texture->GetTexture()->GetInternalObjects()[0], size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+
+					// adhoc
+					glBindTexture(GL_TEXTURE_2D, (GLuint)texture->GetTexture()->GetInternalObjects()[0]);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				}
 			}
 
 			if (p->Str != "")
