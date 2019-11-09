@@ -155,6 +155,8 @@ EditorContent::EditorContent(Editor* editor) : editor_(editor)
 	ed::Config config;
 	config.SettingsFile = "nodeEditor.json";
 	editorContext_ = ed::CreateEditor(&config);
+
+	ClearIsChanged();
 }
 
 EditorContent ::~EditorContent()
@@ -235,7 +237,7 @@ bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 
 	UpdatePath(path);
 
-	previousChangedID_ = material_->GetCommandManager()->GetHistoryID();
+	ClearIsChanged();
 	return true;
 }
 
@@ -316,6 +318,8 @@ std::string EditorContent::GetName()
 std::string EditorContent::GetPath() { return path_; }
 
 bool EditorContent::GetIsChanged() { return previousChangedID_ != material_->GetCommandManager()->GetHistoryID(); }
+
+void EditorContent::ClearIsChanged() { previousChangedID_ = material_->GetCommandManager()->GetHistoryID(); }
 
 static const char* label_new_node = "##NEW_NODE";
 static const char* label_edit_link = "##EDIT_LINK";
@@ -1419,11 +1423,21 @@ void Editor::UpdateToRecordMovingCommand()
 
 void Editor::UpdateNode(std::shared_ptr<Node> node)
 {
+	auto applyPosition = [&]() -> void {
+		if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied())
+		{
+			ed::SetNodePosition(node->GUID, ImVec2(node->Pos.X, node->Pos.Y));
+		}
+	};
+
 	if (node->Parameter->Type == NodeType::Comment)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.5f);
 
 		ed::BeginNode(node->GUID);
+
+		applyPosition();
+
 		ImGui::BeginVertical("content");
 		ImGui::BeginHorizontal("horizontal");
 		ImGui::Text(node->Properties[0]->Str.c_str());
@@ -1441,21 +1455,17 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 		{
 			ed::EndGroupHint();
 		}
+
+		node->ClearPosDirtied();
+
 		return;
 	}
 
+	// except a comment node
+
 	ed::BeginNode(node->GUID);
 
-	if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied())
-	{
-		ed::SetNodePosition(node->GUID, ImVec2(node->Pos.X, node->Pos.Y));
-	}
-	else
-	{
-		// do in UpdateToRecordMovingCommand
-		// auto nodePos = ed::GetNodePosition(node->GUID);
-		// node->UpdatePos(Vector2DF(nodePos.x, nodePos.y));
-	}
+	applyPosition();
 
 	ImGui::PushID(node->GUID);
 

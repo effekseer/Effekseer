@@ -3,6 +3,7 @@
 
 #include "../efkMat.Editor.h"
 #include <efkMat.StringContainer.h>
+#include <functional>
 
 namespace EffekseerMaterial
 {
@@ -67,10 +68,14 @@ class SaveOrCloseDialog : public Dialog
 {
 private:
 	std::shared_ptr<EffekseerMaterial::EditorContent> content_;
+	std::function<void()> onClosed_;
 	std::string id_ = "###SaveOrCloseDialog";
 
 public:
-	SaveOrCloseDialog(std::shared_ptr<EffekseerMaterial::EditorContent> content) : content_(content) {}
+	SaveOrCloseDialog(std::shared_ptr<EffekseerMaterial::EditorContent> content, std::function<void()> onClosed)
+		: content_(content), onClosed_(onClosed)
+	{
+	}
 
 	virtual ~SaveOrCloseDialog() {}
 
@@ -89,6 +94,11 @@ public:
 				if (content_->Save())
 				{
 					content_->IsClosing = true;
+
+					if (onClosed_ != nullptr)
+					{
+						onClosed_();
+					}
 				}
 			}
 
@@ -98,6 +108,12 @@ public:
 			{
 				content_->IsClosing = true;
 				open = false;
+				content_->ClearIsChanged();
+
+				if (onClosed_ != nullptr)
+				{
+					onClosed_();
+				}
 			}
 
 			ImGui::SameLine();

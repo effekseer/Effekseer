@@ -83,6 +83,47 @@ void SetCurrentDir(const char* path)
 #endif
 }
 
+std::vector<std::shared_ptr<EffekseerMaterial::Dialog>> newDialogs;
+std::vector<std::shared_ptr<EffekseerMaterial::Dialog>> dialogs;
+
+void GLFLW_CloseCallback(GLFWwindow* w)
+{
+	bool isChanged = false;
+
+	for (size_t i = 0; i < editor->GetContents().size(); i++)
+	{
+		if (editor->GetContents()[i]->GetIsChanged())
+		{
+			auto closeIfCan = [w]() -> void {
+				bool isChanged = false;
+
+				for (size_t i = 0; i < editor->GetContents().size(); i++)
+				{
+					if (editor->GetContents()[i]->GetIsChanged())
+					{
+						isChanged = true;
+					}
+				}
+
+				if (!isChanged)
+				{
+					glfwSetWindowShouldClose(w, GL_TRUE);
+				}
+			};
+
+			auto closeDialog =
+				std::make_shared<EffekseerMaterial::SaveOrCloseDialog>(editor->GetContents()[i], [closeIfCan]() { closeIfCan(); });
+			newDialogs.push_back(closeDialog);
+			isChanged = true;
+		}
+	}
+
+	if (isChanged)
+	{
+		glfwSetWindowShouldClose(w, GL_FALSE);
+	}
+}
+
 int main(int argc, char* argv[])
 {
 	bool ipcMode = false;
@@ -133,6 +174,8 @@ int main(int argc, char* argv[])
 	{
 		glfwSetWindowPos(glfwMainWindow, config->WindowPosX, config->WindowPosY);
 	}
+
+	glfwSetWindowCloseCallback(glfwMainWindow, GLFLW_CloseCallback);
 
 	glfwMakeContextCurrent(glfwMainWindow);
 	glfwSwapInterval(1);
@@ -186,8 +229,6 @@ int main(int argc, char* argv[])
 	}
 
 	editor = std::make_shared<EffekseerMaterial::Editor>(graphics);
-
-	std::vector<std::shared_ptr<EffekseerMaterial::Dialog>> dialogs;
 
 	keyStatePre.fill(false);
 	keyState.fill(false);
@@ -435,7 +476,10 @@ int main(int argc, char* argv[])
 							// close item
 							if (editor->GetContents()[i]->GetIsChanged())
 							{
-								editor->GetContents()[i]->WillShowClosingDialog = true;
+								auto closeDialog =
+									std::make_shared<EffekseerMaterial::SaveOrCloseDialog>(editor->GetContents()[i], []() {});
+								// ImGui::OpenPopup(closeDialog->GetID());
+								newDialogs.push_back(closeDialog);
 							}
 							else
 							{
@@ -450,29 +494,25 @@ int main(int argc, char* argv[])
 				ImGui::End();
 			}
 
-			for (size_t i = 0; i < editor->GetContents().size(); i++)
-			{
-				if (editor->GetContents()[i]->WillShowClosingDialog)
-				{
-					auto closeDialog = std::make_shared<EffekseerMaterial::SaveOrCloseDialog>(editor->GetContents()[i]);
-					ImGui::OpenPopup(closeDialog->GetID());
-					dialogs.push_back(closeDialog);
-					editor->GetContents()[i]->WillShowClosingDialog = false;
-				}
-			}
-
 			// HACK because of imgui specification
 			if (framecount == 3)
 			{
 				if (!ipcMode)
 				{
 					auto creatDialog = std::make_shared<EffekseerMaterial::NewOrOpenDialog>(editor);
-					ImGui::OpenPopup(creatDialog->GetID());
-					dialogs.push_back(creatDialog);
+					// ImGui::OpenPopup(creatDialog->GetID());
+					newDialogs.push_back(creatDialog);
 				}
 			}
 
 			// popup
+			if (dialogs.size() == 0 && newDialogs.size() > 0)
+			{
+				ImGui::OpenPopup(newDialogs[0]->GetID());
+				dialogs.push_back(newDialogs[0]);
+				newDialogs.erase(newDialogs.begin(), newDialogs.begin() + 1);
+			}
+
 			for (auto dialog : dialogs)
 			{
 				if (!dialog->Update())

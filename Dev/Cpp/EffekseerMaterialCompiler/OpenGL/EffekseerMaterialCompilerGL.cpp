@@ -357,6 +357,8 @@ static const char g_material_fs_src_suf2_lit[] =
 static const char g_material_fs_src_suf2_unlit[] =
 	R"(
 
+	if(opacityMask <= 0.0) discard;
+
 	FRAGCOLOR = vec4(emissive, opacity);
 }
 
@@ -374,6 +376,8 @@ static const char g_material_fs_src_suf2_refraction[] =
 
 	vec4 bg = TEX2D(background, distortUV);
 	FRAGCOLOR = bg;
+
+	if(opacityMask <= 0.0) discard;
 }
 
 )";

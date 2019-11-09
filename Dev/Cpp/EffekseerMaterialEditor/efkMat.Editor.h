@@ -69,6 +69,8 @@ public:
 
 	bool GetIsChanged();
 
+	void ClearIsChanged();
+
 	ed::EditorContext* GetEditorContext() { return editorContext_; }
 
 	//! this content will be closed and will show a dialog. This flag is true, dialog is shown and make the flag false
