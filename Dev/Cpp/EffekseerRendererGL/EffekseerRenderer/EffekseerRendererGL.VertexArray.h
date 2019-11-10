@@ -25,13 +25,13 @@ private:
 	VertexBuffer*			m_vertexBuffer;
 	IndexBuffer*			m_indexBuffer;
 
-	VertexArray( RendererImplemented* renderer, Shader* shader, 
-		VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer );
+	VertexArray(RendererImplemented* renderer, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount);
+
 public:
 	virtual ~VertexArray();
 
-	static VertexArray* Create( RendererImplemented* renderer, Shader* shader, 
-		VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer );
+	static VertexArray*
+	Create(RendererImplemented* renderer, Shader* shader, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount);
 
 	GLuint GetInterface() const { return m_vertexArray; }
 

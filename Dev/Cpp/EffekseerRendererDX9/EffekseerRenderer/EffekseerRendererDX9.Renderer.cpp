@@ -220,7 +220,7 @@ void RendererImplemented::OnResetDevice()
 //----------------------------------------------------------------------------------
 void RendererImplemented::GenerateIndexData()
 {
-	// インデックスの生成
+	// generate an index buffer
 	if( m_indexBuffer != NULL )
 	{
 		m_indexBuffer->Lock();
@@ -269,9 +269,9 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 {
 	m_d3d_device = device;
 
-	// 頂点の生成
+	// generate a vertex buffer
 	{
-		// 最大でfloat * 10 と仮定
+		// assume max vertex size is smaller than float * 10
 		m_vertexBuffer = VertexBuffer::Create( this, sizeof(float) * 10 * m_squareMaxCount * 4, true );
 		if( m_vertexBuffer == NULL ) return false;
 	}
@@ -279,7 +279,7 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 	// 参照カウントの調整
 	Release();
 
-	// インデックスの生成
+	// generate an index buffer
 	{
 		m_indexBuffer = IndexBuffer::Create( this, m_squareMaxCount * 6, false );
 		if( m_indexBuffer == NULL ) return false;
@@ -288,7 +288,7 @@ bool RendererImplemented::Initialize( LPDIRECT3DDEVICE9 device )
 	// 参照カウントの調整
 	Release();
 
-	// ワイヤーフレーム用インデックスの生成
+	// generate an index buffer for a wireframe
 	{
 		m_indexBufferForWireframe = IndexBuffer::Create( this, m_squareMaxCount * 8, false );
 		if( m_indexBufferForWireframe == NULL ) return false;

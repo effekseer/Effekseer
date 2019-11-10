@@ -129,12 +129,12 @@ static const char g_sprite_fs_no_texture_src[] =
 		this->shader = shader_no_texture_;
 		ES_SAFE_DELETE(shader_);
 
-		vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 1024, true);
+		vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 1024, true, true);
         
         vao = EffekseerRendererGL::VertexArray::Create(
                this->renderer,shader_no_texture_,
                (EffekseerRendererGL::VertexBuffer*)vertexBuffer,
-               nullptr);
+               nullptr, true);
 	}
 
 	LineRendererGL::~LineRendererGL()

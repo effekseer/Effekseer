@@ -480,6 +480,8 @@ public:
 			if (materialParam->MaterialTextures.size() > 0)
 			{
 				std::array<Effekseer::TextureData*, 16> textures;
+				int32_t textureCount = Effekseer::Min(materialParam->MaterialTextures.size(), textures.size() - 1);
+
 				auto effect = param.EffectPointer;
 
 				for (size_t i = 0; i < Effekseer::Min(materialParam->MaterialTextures.size(), textures.size()); i++)
@@ -513,10 +515,13 @@ public:
 
 				if (renderer->GetBackground() != 0)
 				{
-					textures[materialParam->MaterialTextures.size()] = renderer->GetBackground();
+					textures[textureCount] = renderer->GetBackground();
+					state.TextureFilterTypes[textureCount] = Effekseer::TextureFilterType::Linear;
+					state.TextureWrapTypes[textureCount] = Effekseer::TextureWrapType::Clamp;
+					textureCount += 1;
 				}
 
-				renderer->SetTextures(shader_, textures.data(), static_cast<int32_t>(Effekseer::Min(materialParam->MaterialTextures.size() + 1, textures.size())));
+				renderer->SetTextures(shader_, textures.data(), textureCount);
 			}
 		}
 		else

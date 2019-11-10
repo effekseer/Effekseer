@@ -1,46 +1,34 @@
 ﻿
-//----------------------------------------------------------------------------------
-// Include
-//----------------------------------------------------------------------------------
-#include "EffekseerRendererGL.RendererImplemented.h"
 #include "EffekseerRendererGL.DeviceObject.h"
+#include "EffekseerRendererGL.DeviceObjectCollection.h"
+#include "EffekseerRendererGL.RendererImplemented.h"
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 namespace EffekseerRendererGL
 {
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-DeviceObject::DeviceObject( RendererImplemented* renderer )
-	: m_renderer	( renderer )
+
+DeviceObject::DeviceObject(RendererImplemented* renderer, DeviceObjectCollection* deviceObjectCollection, bool hasRefCount)
+	: renderer_(renderer), deviceObjectCollection_(deviceObjectCollection), hasRefCount_(hasRefCount)
 {
-	ES_SAFE_ADDREF( m_renderer );
-	m_renderer->m_deviceObjects.insert( this );
+	if (hasRefCount_)
+	{
+		ES_SAFE_ADDREF(renderer_);
+		ES_SAFE_ADDREF(deviceObjectCollection_);	
+	}
+
+	deviceObjectCollection_->Register(this);
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 DeviceObject::~DeviceObject()
 {
-	m_renderer->m_deviceObjects.erase( this );
-	ES_SAFE_RELEASE( m_renderer );
+	deviceObjectCollection_->Unregister(this);
+
+	if (hasRefCount_)
+	{
+		ES_SAFE_RELEASE(renderer_);
+		ES_SAFE_RELEASE(deviceObjectCollection_);
+	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-RendererImplemented* DeviceObject::GetRenderer() const
-{
-	return m_renderer;
-}
+RendererImplemented* DeviceObject::GetRenderer() const { return renderer_; }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-}
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+} // namespace EffekseerRendererGL

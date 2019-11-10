@@ -6,6 +6,7 @@
 
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
 #include "Effekseer/Material/Effekseer.CompiledMaterial.h"
+#include "EffekseerRendererGL.DeviceObjectCollection.h"
 
 namespace EffekseerRendererGL
 {
@@ -32,12 +33,14 @@ namespace EffekseerRendererGL
 
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
-		auto shader = Shader::Create(renderer_,
+		auto shader = Shader::Create(deviceType_,
+									 deviceObjectCollection_,
 									 (const char*)binary->GetVertexShaderData(shaderTypes[st]),
 									 binary->GetVertexShaderSize(shaderTypes[st]),
 									 (const char*)binary->GetPixelShaderData(shaderTypes[st]),
 									 binary->GetPixelShaderSize(shaderTypes[st]),
-									 "CustomMaterial");
+									 "CustomMaterial",
+									 true);
 
 		if (shader == nullptr)
 		{
@@ -182,12 +185,14 @@ namespace EffekseerRendererGL
 
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
-		auto shader = Shader::Create(renderer_,
+		auto shader = Shader::Create(deviceType_,
+									 deviceObjectCollection_,
 									 (const char*)binary->GetVertexShaderData(shaderTypesModel[st]),
 									 binary->GetVertexShaderSize(shaderTypesModel[st]),
 									 (const char*)binary->GetPixelShaderData(shaderTypesModel[st]),
 									 binary->GetPixelShaderSize(shaderTypesModel[st]),
-									 "CustomMaterial");
+									 "CustomMaterial",
+									 true);
 
 		if (shader == nullptr)
 		{
@@ -328,18 +333,31 @@ namespace EffekseerRendererGL
 	return materialData;
 }
 
-MaterialLoader::MaterialLoader(Renderer* renderer, ::Effekseer::FileInterface* fileInterface) : fileInterface_(fileInterface)
+MaterialLoader::MaterialLoader(OpenGLDeviceType deviceType,
+							   Renderer* renderer,
+							   DeviceObjectCollection* deviceObjectCollection,
+							   ::Effekseer::FileInterface* fileInterface)
+	: fileInterface_(fileInterface)
 {
 	if (fileInterface == nullptr)
 	{
 		fileInterface_ = &defaultFileInterface_;
 	}
 
+	deviceType_ = deviceType;
+
 	renderer_ = renderer;
 	ES_SAFE_ADDREF(renderer_);
+
+	deviceObjectCollection_ = deviceObjectCollection;
+	ES_SAFE_ADDREF(deviceObjectCollection_);
 }
 
-MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
+MaterialLoader ::~MaterialLoader()
+{
+	ES_SAFE_RELEASE(renderer_);
+	ES_SAFE_RELEASE(deviceObjectCollection_);
+}
 
 ::Effekseer::MaterialData* MaterialLoader::Load(const EFK_CHAR* path)
 {

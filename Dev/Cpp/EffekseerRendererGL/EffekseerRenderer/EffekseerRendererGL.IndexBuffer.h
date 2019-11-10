@@ -23,12 +23,12 @@ class IndexBuffer
 private:
 	GLuint					m_buffer;
 
-	IndexBuffer( RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic );
+	IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, bool hasRefCount);
 
 public:
 	virtual ~IndexBuffer();
 
-	static IndexBuffer* Create( RendererImplemented* renderer, int maxCount, bool isDynamic );
+	static IndexBuffer* Create(RendererImplemented* renderer, int maxCount, bool isDynamic, bool hasRefCount);
 
 	GLuint GetInterface() { return m_buffer; }
 

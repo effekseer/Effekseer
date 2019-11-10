@@ -211,7 +211,9 @@ set(effekseer_renderer_gl_src
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.TextureLoader.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexArray.cpp
 	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.cpp
-	
+	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.cpp
+	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.DeviceObjectCollection.cpp
+
 	EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.cpp
 	EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h
 	)

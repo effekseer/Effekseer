@@ -1987,9 +1987,21 @@ void ManagerImplemented::DrawHandleFront(Handle handle, const Manager::DrawParam
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+int ManagerImplemented::GetUpdateTime() const 
+{
+	return m_updateTime; 
+};
+
+int ManagerImplemented::GetDrawTime() const 
+{
+	return m_drawTime; 
+};
+
+int32_t ManagerImplemented::GetRestInstancesCount() const
+{
+	return static_cast<int32_t>(pooledChunks_.size()) * InstanceChunk::InstancesOfChunk;
+}
+
 void ManagerImplemented::BeginReloadEffect( Effect* effect, bool doLockThread)
 {
 	if (doLockThread)

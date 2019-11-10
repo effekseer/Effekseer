@@ -485,6 +485,7 @@ public:
 		{
 			std::array<Effekseer::TextureData*, 16> textures;
 			textures.fill(nullptr);
+			int32_t textureCount = Effekseer::Min(m_state.MaterialTextureCount, textures.size() - 1);
 
 			if (m_state.MaterialTextureCount > 0)
 			{
@@ -500,10 +501,13 @@ public:
 
 			if (m_renderer->GetBackground() != 0)
 			{
-				textures[m_state.MaterialTextureCount] = m_renderer->GetBackground();
+				textures[textureCount] = m_renderer->GetBackground();
+				state.TextureFilterTypes[textureCount] = Effekseer::TextureFilterType::Linear;
+				state.TextureWrapTypes[textureCount] = Effekseer::TextureWrapType::Clamp;
+				textureCount += 1;
 			}
 
-			m_renderer->SetTextures(shader_, textures.data(), Effekseer::Min(m_state.MaterialTextureCount + 1, static_cast<int32_t>(textures.size())));
+			m_renderer->SetTextures(shader_, textures.data(), textureCount);
 		}
 		else
 		{

@@ -131,16 +131,16 @@ static const char g_sprite_fs_no_texture_src[] =
 		this->shader = shader_;
 		this->shader_no_texture = shader_no_texture_;
         
-		vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 12, true);
+		vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 12, true, true);
 
         vao = EffekseerRendererGL::VertexArray::Create(
                                                        this->renderer,shader_,
 														(EffekseerRendererGL::VertexBuffer*)vertexBuffer,
-                                                       this->renderer->GetIndexBuffer());
+                                                       this->renderer->GetIndexBuffer(), true);
         vao_nt = EffekseerRendererGL::VertexArray::Create(
                                                        this->renderer,shader_no_texture_,
 														(EffekseerRendererGL::VertexBuffer*)vertexBuffer,
-                                                       this->renderer->GetIndexBuffer());
+                                                       this->renderer->GetIndexBuffer(), true);
 
 	}
 

@@ -17,11 +17,11 @@ namespace EffekseerRendererGL
 //
 //-----------------------------------------------------------------------------------
 VertexArray::VertexArray( RendererImplemented* renderer, Shader* shader, 
-	VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer )
-	: DeviceObject		( renderer )
-	, m_shader			( shader )
-	, m_vertexBuffer	( vertexBuffer )
-	, m_indexBuffer		( indexBuffer )
+	VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount)
+	: DeviceObject(renderer, renderer->GetDeviceObjectCollection(), hasRefCount)
+	, m_shader(shader)
+	, m_vertexBuffer(vertexBuffer)
+	, m_indexBuffer(indexBuffer)
 {
 	Init();
 }
@@ -38,11 +38,11 @@ VertexArray::~VertexArray()
 //
 //-----------------------------------------------------------------------------------
 VertexArray* VertexArray::Create( RendererImplemented* renderer, Shader* shader, 
-	VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer )
+	VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, bool hasRefCount)
 {
 	if (GLExt::IsSupportedVertexArray())
 	{
-		return new VertexArray( renderer, shader, vertexBuffer, indexBuffer );
+		return new VertexArray( renderer, shader, vertexBuffer, indexBuffer, hasRefCount);
 	}
 	return nullptr;
 }

@@ -109,9 +109,10 @@ void main() {
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
 
 		// Generate vertex data
-		vertexBuffer.reset(VertexBuffer::Create(renderer, 
-			sizeof(Vertex) * 4, true));
-		vertexBuffer->Lock(); {
+		vertexBuffer.reset(VertexBuffer::Create(renderer, sizeof(Vertex) * 4, true, true));
+
+		vertexBuffer->Lock();
+		{
 			Vertex* verteces = (Vertex*)vertexBuffer->GetBufferDirect(sizeof(Vertex) * 4);
 			verteces[0] = Vertex{-1.0f,  1.0f, 0.0f, 1.0f};
 			verteces[1] = Vertex{-1.0f, -1.0f, 0.0f, 0.0f};
@@ -131,8 +132,7 @@ void main() {
 		using namespace EffekseerRendererGL;
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
 
-		return std::unique_ptr<VertexArray>(VertexArray::Create(
-			renderer, shader, vertexBuffer.get(), renderer->GetIndexBuffer()));
+		return std::unique_ptr<VertexArray>(VertexArray::Create(renderer, shader, vertexBuffer.get(), renderer->GetIndexBuffer(), true));
 	}
 
 	void BlitterGL::Blit(EffekseerRendererGL::Shader* shader, EffekseerRendererGL::VertexArray* vao,

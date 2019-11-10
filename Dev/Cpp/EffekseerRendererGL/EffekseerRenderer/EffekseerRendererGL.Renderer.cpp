@@ -368,16 +368,12 @@ void main()
 #endif
 }
 
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
+Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType, DeviceObjectCollection* deviceObjectCollection)
 {
 	GLExt::Initialize(deviceType);
 
-	RendererImplemented* renderer = new RendererImplemented( squareMaxCount, deviceType );
-	if( renderer->Initialize() )
+	RendererImplemented* renderer = new RendererImplemented(squareMaxCount, deviceType, deviceObjectCollection);
+	if (renderer->Initialize())
 	{
 		return renderer;
 	}
@@ -387,7 +383,9 @@ Renderer* Renderer::Create(int32_t squareMaxCount, OpenGLDeviceType deviceType)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceType deviceType)
+RendererImplemented::RendererImplemented(int32_t squareMaxCount,
+										 OpenGLDeviceType deviceType,
+										 DeviceObjectCollection* deviceObjectCollection)
 	: m_vertexBuffer( NULL )
 	, m_indexBuffer	( NULL )
 	, m_indexBufferForWireframe	( NULL )
@@ -406,6 +404,7 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceTyp
 	, m_distortingCallback(nullptr)
 
 	, m_deviceType(deviceType)
+	, deviceObjectCollection_(deviceObjectCollection)
 {
 	::Effekseer::Vector3D direction( 1.0f, 1.0f, 1.0f );
 	SetLightDirection( direction );
@@ -415,6 +414,15 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceTyp
 	SetLightAmbientColor( lightAmbient );
 
 	m_background.UserID = 0;
+
+	if (deviceObjectCollection == nullptr)
+	{
+		deviceObjectCollection_ = new DeviceObjectCollection();
+	}
+	else
+	{
+		ES_SAFE_ADDREF(deviceObjectCollection_);
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -423,8 +431,6 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount, OpenGLDeviceTyp
 RendererImplemented::~RendererImplemented()
 {
 	GetImpl()->DeleteProxyTextures(this);
-
-	assert( GetRef() == 0 );
 
 	ES_SAFE_DELETE(m_distortingCallback);
 
@@ -440,57 +446,37 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_vao_wire_frame);
 	ES_SAFE_DELETE(m_vao_lighting);
 
-	ES_SAFE_DELETE( m_renderState );
-	ES_SAFE_DELETE( m_vertexBuffer );
-	ES_SAFE_DELETE( m_indexBuffer );
+	ES_SAFE_DELETE(m_renderState);
+	ES_SAFE_DELETE(m_vertexBuffer);
+	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
+
+	ES_SAFE_RELEASE(deviceObjectCollection_);
 
 	if (GLExt::IsSupportedVertexArray() && defaultVertexArray_ > 0)
 	{
 		GLExt::glDeleteVertexArrays(1, &defaultVertexArray_);
 		defaultVertexArray_ = 0;
 	}
-
-	if (isVaoEnabled)
-	{
-		assert(GetRef() == -10);
-	}
-	else
-	{
-		assert(GetRef() == -6);
-	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void RendererImplemented::OnLostDevice()
 {
-	for (auto& device : m_deviceObjects)
-	{
-		device->OnLostDevice();
-	}
+	if (deviceObjectCollection_ != nullptr)
+		deviceObjectCollection_->OnLostDevice();
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
 void RendererImplemented::OnResetDevice()
 {
-	for (auto& device : m_deviceObjects)
-	{
-		device->OnResetDevice();
-	}
+	if (deviceObjectCollection_ != nullptr)
+		deviceObjectCollection_->OnResetDevice();
 
 	GenerateIndexData();
 }
 
-//----------------------------------------------------------------------------------
-// インデックスデータの生成
-//----------------------------------------------------------------------------------
 void RendererImplemented::GenerateIndexData()
 {
-	// インデックスの生成
+	// generate an index buffer
 	if( m_indexBuffer != NULL )
 	{
 		m_indexBuffer->Lock();
@@ -510,7 +496,7 @@ void RendererImplemented::GenerateIndexData()
 		m_indexBuffer->Unlock();
 	}
 
-	// ワイヤーフレーム用インデックスの生成
+	// generate an index buffer for a wireframe
 	if( m_indexBufferForWireframe != NULL )
 	{
 		m_indexBufferForWireframe->Lock();
@@ -554,23 +540,19 @@ bool RendererImplemented::Initialize()
 
 	m_renderState = new RenderState( this );
 
-	m_shader = Shader::Create(this,
+	m_shader = Shader::Create(this->GetDeviceType(),
+							  this->GetDeviceObjectCollection(),
 		g_sprite_vs_src, sizeof(g_sprite_vs_src), 
 		g_sprite_fs_texture_src, sizeof(g_sprite_fs_texture_src), 
-		"Standard Tex");
+		"Standard Tex", false);
 	if (m_shader == nullptr) return false;
 
-	// 参照カウントの調整
-	Release();
-
-	m_shader_distortion = Shader::Create(this,
+	m_shader_distortion = Shader::Create(this->GetDeviceType(),
+										 this->GetDeviceObjectCollection(),
 		g_sprite_distortion_vs_src, sizeof(g_sprite_distortion_vs_src), 
 		g_sprite_fs_texture_distortion_src, sizeof(g_sprite_fs_texture_distortion_src), 
-		"Standard Distortion Tex");
+		"Standard Distortion Tex", false);
 	if (m_shader_distortion == nullptr) return false;
-
-	// 参照カウントの調整
-	Release();
 
 	static ShaderAttribInfo sprite_attribs[3] = {
 		{ "atPosition", GL_FLOAT, 3, 0, false },
@@ -611,9 +593,7 @@ bool RendererImplemented::Initialize()
 
 	m_shader->SetTextureSlot(0, m_shader->GetUniformId("uTexture0"));
 
-	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer());
-	// 参照カウントの調整
-	if (m_vao != nullptr) Release();
+	m_vao = VertexArray::Create(this, m_shader, GetVertexBuffer(), GetIndexBuffer(), false);
 
 	// Distortion
 	m_shader_distortion->GetAttribIdList(5, sprite_attribs_distortion);
@@ -655,9 +635,7 @@ bool RendererImplemented::Initialize()
 	m_shader_distortion->SetTextureSlot(0, m_shader_distortion->GetUniformId("uTexture0"));
 	m_shader_distortion->SetTextureSlot(1, m_shader_distortion->GetUniformId("uBackTexture0"));
 
-	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer());
-	if (m_vao_distortion != nullptr) Release();
-
+	m_vao_distortion = VertexArray::Create(this, m_shader_distortion, GetVertexBuffer(), GetIndexBuffer(), false);
 
 	// Lighting
 	EffekseerRendererGL::ShaderAttribInfo sprite_attribs_lighting[6] = {
@@ -669,16 +647,14 @@ bool RendererImplemented::Initialize()
 		{"atTexCoord2", GL_FLOAT, 2, 32, false},
 	};
 
-	m_shader_lighting = Shader::Create(this,
-										 g_sprite_vs_lighting_src,
+	m_shader_lighting = Shader::Create(this->GetDeviceType(),
+									   this->GetDeviceObjectCollection(),
+									   g_sprite_vs_lighting_src,
 									   sizeof(g_sprite_vs_lighting_src),
 									   g_sprite_fs_lighting_src,
 									   sizeof(g_sprite_fs_lighting_src),
-										 "Standard Lighting Tex");
-	if (m_shader_lighting == nullptr)
-		return false;
-
-	Release();
+									   "Standard Lighting Tex",
+									   false);
 
 	m_shader_lighting->GetAttribIdList(5, sprite_attribs_lighting);
 	m_shader_lighting->SetVertexSize(sizeof(EffekseerRenderer::DynamicVertex));
@@ -701,13 +677,10 @@ bool RendererImplemented::Initialize()
 	m_shader_lighting->SetTextureSlot(0, m_shader_lighting->GetUniformId("ColorTexture"));
 	m_shader_lighting->SetTextureSlot(1, m_shader_lighting->GetUniformId("NormalTexture"));
 
-	m_vao_lighting = VertexArray::Create(this, m_shader_lighting, GetVertexBuffer(), GetIndexBuffer());
-	if (m_vao_lighting != nullptr)
-		Release();
+	m_vao_lighting = VertexArray::Create(this, m_shader_lighting, GetVertexBuffer(), GetIndexBuffer(), false);
 
-	m_vao_wire_frame = VertexArray::Create(this, m_shader, GetVertexBuffer(), m_indexBufferForWireframe);
-	if (m_vao_wire_frame != nullptr) Release();
-
+	m_vao_wire_frame = VertexArray::Create(this, m_shader, GetVertexBuffer(), m_indexBufferForWireframe, false);
+	
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(this, m_shader, m_shader_distortion);
 
 	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
@@ -884,34 +857,24 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 	ES_SAFE_DELETE(m_vertexBuffer);
 	ES_SAFE_DELETE(m_indexBuffer);
 
-	// 頂点の生成
+	// generate a vertex buffer
 	{
-		// 最大でfloat * 10 と仮定
-		m_vertexBuffer = VertexBuffer::Create(this, sizeof(Vertex) * m_squareMaxCount * 4, true);
+		// assume max vertex size is smaller than float * 10
+		m_vertexBuffer = VertexBuffer::Create(this, sizeof(Vertex) * m_squareMaxCount * 4, true, false);
 		if (m_vertexBuffer == NULL) return;
 	}
 
-	// 参照カウントの調整
-	Release();
-
-
-	// インデックスの生成
+	// generate an index buffer
 	{
-		m_indexBuffer = IndexBuffer::Create(this, m_squareMaxCount * 6, false);
-		if (m_indexBuffer == NULL) return;
+		m_indexBuffer = IndexBuffer::Create(this, m_squareMaxCount * 6, false, false);
+		if (m_indexBuffer == nullptr) return;
 	}
 
-	// 参照カウントの調整
-	Release();
-
-	// ワイヤーフレーム用インデックスの生成
+	// generate an index buffer for a wireframe
 	{
-		m_indexBufferForWireframe = IndexBuffer::Create( this, m_squareMaxCount * 8, false );
-		if( m_indexBufferForWireframe == NULL ) return;
+		m_indexBufferForWireframe = IndexBuffer::Create( this, m_squareMaxCount * 8, false, false);
+		if( m_indexBufferForWireframe == nullptr) return;
 	}
-
-	// 参照カウントの調整
-	Release();
 
 	// generate index data
 	GenerateIndexData();
@@ -1107,7 +1070,7 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 
 ::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new MaterialLoader(this, fileInterface);
+	return new MaterialLoader(this->GetDeviceType(), this, this->GetDeviceObjectCollection(), fileInterface);
 #else
 	return nullptr;
 #endif
