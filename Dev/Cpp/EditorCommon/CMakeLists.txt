@@ -4,13 +4,17 @@ cmake_minimum_required(VERSION 3.0)
 project(EditorCommon)
 
 set(srcs
+    Common/StringHelper.h
     Platform/PlatformMisc.h
     GUI/JapaneseFont.h
     IO/IO.h
     IO/StaticFile.h
+    IO/StaticFile.cpp
     IO/FileReader.h
     IO/DefaultFileReader.h
+    IO/DefaultFileReader.cpp
     IO/IPCFileReader.h
+    IO/IPCFileReader.cpp
 )
 
 if(WIN32)
