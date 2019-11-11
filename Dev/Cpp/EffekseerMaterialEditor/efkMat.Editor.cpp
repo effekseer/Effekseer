@@ -68,7 +68,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	}
 
 	auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
-	auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&efkMaterial));
+	auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&efkMaterial, 1024));
 
 	vs = reinterpret_cast<const char*>(binary->GetVertexShaderData(Effekseer::MaterialShaderType::Standard));
 	ps = reinterpret_cast<const char*>(binary->GetPixelShaderData(Effekseer::MaterialShaderType::Standard));
@@ -597,8 +597,6 @@ void Editor::UpdateNodes()
 			if (!node->GetIsDirtied())
 				continue;
 
-			auto preview = preview_;
-
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
 			std::vector<std::shared_ptr<TextureWithSampler>> textures;
 			std::string vs;
@@ -618,7 +616,8 @@ void Editor::UpdateNodes()
 				}
 			}
 
-			preview->CompileShader(vs, ps, textures, uniforms);
+			preview_->CompileShader(vs, ps, textures, uniforms);
+			previewTextureCount_ = textures.size();
 		}
 
 		for (auto node : material->GetNodes())
@@ -634,6 +633,7 @@ void Editor::UpdateNodes()
 			ExtractUniforms(graphics_, material, node, textures, uniforms);
 
 			preview_->UpdateUniforms(textures, uniforms);
+			previewTextureCount_ = textures.size();
 		}
 	}
 
@@ -1384,6 +1384,15 @@ void Editor::UpdatePreview()
 	if (ImGui::Button("2"))
 	{
 		preview_->ModelType = PreviewModelType::Sphere;
+	}
+
+	if (previewTextureCount_ > Effekseer::UserTextureSlotMax)
+	{
+		ImGui::TextColored(ImColor(255, 0, 0, 255), "Texture %d / %d", previewTextureCount_, Effekseer::UserTextureSlotMax);
+	}
+	else
+	{
+		ImGui::Text("Texture %d / %d", previewTextureCount_, Effekseer::UserTextureSlotMax);
 	}
 }
 

@@ -26,16 +26,8 @@ void RenderStateBase::State::Reset()
 	DepthWrite = false;
 	AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 	CullingType = ::Effekseer::CullingType::Double;
-
-	TextureFilterTypes[0] = ::Effekseer::TextureFilterType::Nearest;
-	TextureFilterTypes[1] = ::Effekseer::TextureFilterType::Nearest;
-	TextureFilterTypes[2] = ::Effekseer::TextureFilterType::Nearest;
-	TextureFilterTypes[3] = ::Effekseer::TextureFilterType::Nearest;
-	
-	TextureWrapTypes[0] = ::Effekseer::TextureWrapType::Clamp;
-	TextureWrapTypes[1] = ::Effekseer::TextureWrapType::Clamp;
-	TextureWrapTypes[2] = ::Effekseer::TextureWrapType::Clamp;
-	TextureWrapTypes[3] = ::Effekseer::TextureWrapType::Clamp;	
+	TextureFilterTypes.fill(::Effekseer::TextureFilterType::Nearest);
+	TextureWrapTypes.fill(::Effekseer::TextureWrapType::Clamp);
 }
 
 //-----------------------------------------------------------------------------------
@@ -47,15 +39,8 @@ void RenderStateBase::State::CopyTo( State& state )
 	state.DepthWrite = DepthWrite;
 	state.AlphaBlend = AlphaBlend;
 	state.CullingType = CullingType;
-	state.TextureFilterTypes[0] = TextureFilterTypes[0];
-	state.TextureFilterTypes[1] = TextureFilterTypes[1];
-	state.TextureFilterTypes[2] = TextureFilterTypes[2];
-	state.TextureFilterTypes[3] = TextureFilterTypes[3];
-
-	state.TextureWrapTypes[0] = TextureWrapTypes[0];
-	state.TextureWrapTypes[1] = TextureWrapTypes[1];
-	state.TextureWrapTypes[2] = TextureWrapTypes[2];
-	state.TextureWrapTypes[3] = TextureWrapTypes[3];
+	state.TextureFilterTypes = TextureFilterTypes;
+	state.TextureWrapTypes = TextureWrapTypes;
 }
 
 //-----------------------------------------------------------------------------------

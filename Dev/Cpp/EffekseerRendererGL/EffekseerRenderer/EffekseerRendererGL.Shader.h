@@ -102,8 +102,8 @@ private:
 	std::vector<ConstantLayout>	m_vertexConstantLayout;
 	std::vector<ConstantLayout>	m_pixelConstantLayout;
 
-	GLuint	m_textureSlots[4];
-	bool	m_textureSlotEnables[4];
+	std::array<GLuint, Effekseer::TextureSlotMax> m_textureSlots;
+	std::array<bool, Effekseer::TextureSlotMax> m_textureSlotEnables;
 
 	std::vector<char>	m_vsSrc;
 	std::vector<char>	m_psSrc;

@@ -23,11 +23,11 @@ using VertexDistortion = EffekseerRenderer::VertexDistortion;
 class OriginalState
 {
 private:
-	ID3D11SamplerState*	m_samplers[4];
+	std::array<ID3D11SamplerState*, Effekseer::TextureSlotMax> m_samplers;
 
 	ID3D11BlendState*	m_blendState;
-	float				m_blendFactor[4];
-	UINT				m_blendSampleMask;
+	std::array<float, Effekseer::TextureSlotMax> m_blendFactor;
+	UINT m_blendSampleMask;
 
 	ID3D11DepthStencilState*	m_depthStencilState;
 	UINT						m_depthStencilStateRef;
@@ -43,7 +43,7 @@ private:
 	ID3D11InputLayout*			m_layout;
 	D3D11_PRIMITIVE_TOPOLOGY	m_topology;
 
-	ID3D11ShaderResourceView*	m_psSRVs[4];
+	std::array<ID3D11ShaderResourceView*, Effekseer::TextureSlotMax> m_psSRVs;
 
 	ID3D11Buffer*				m_pVB;
 	UINT						m_vbStrides;

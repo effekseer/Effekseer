@@ -20,6 +20,8 @@
 namespace EffekseerMaterial
 {
 
+const int UserTextureSlotMax = 6;
+
 enum class TextureValueType
 {
 	Color,

@@ -219,7 +219,7 @@ void RenderState::Update( bool forced )
 		m_renderer->GetContext()->OMSetBlendState(m_bStates[alphaBlend], blendFactor, 0xFFFFFFFF);
 	}
 	
-	for( int32_t i = 0; i < 4; i++ )
+	for( int32_t i = 0; i < Effekseer::TextureSlotMax; i++ )
 	{
 		bool changeSampler = forced;
 

@@ -22,7 +22,7 @@ RenderState::RenderState( RendererImplemented* renderer )
 {
 	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
-		GLExt::glGenSamplers(4, m_samplers);
+		GLExt::glGenSamplers(Effekseer::TextureSlotMax, m_samplers.data());
 	}
 
 	GLint frontFace = 0;
@@ -41,7 +41,7 @@ RenderState::~RenderState()
 {
 	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
-		GLExt::glDeleteSamplers(4, m_samplers);
+		GLExt::glDeleteSamplers(Effekseer::TextureSlotMax, m_samplers.data());
 	}
 }
 

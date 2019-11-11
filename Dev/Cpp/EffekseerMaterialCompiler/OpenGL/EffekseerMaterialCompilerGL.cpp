@@ -401,7 +401,7 @@ struct ShaderData
 	std::string CodePS;
 };
 
-ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
+ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int32_t maximumTextureCount)
 {
 	auto getType = [](int32_t i) -> std::string {
 		if (i == 1)
@@ -416,7 +416,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 		return "";
 	};
 
-		auto getElement = [](int32_t i) -> std::string {
+	auto getElement = [](int32_t i) -> std::string {
 		if (i == 1)
 			return ".x";
 		if (i == 2)
@@ -428,7 +428,6 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 		assert(0);
 		return "";
 	};
-
 
 	bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
 	bool isRefrection =
@@ -478,7 +477,9 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 				maincode << "uniform vec4 " << uniformName << ";" << std::endl;
 		}
 
-		for (size_t i = 0; i < material->GetTextureCount(); i++)
+		int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
+
+		for (size_t i = 0; i < actualTextureCount; i++)
 		{
 			auto textureIndex = material->GetTextureIndex(i);
 			auto textureName = material->GetTextureName(i);
@@ -486,7 +487,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 			maincode << "uniform sampler2D " << textureName << ";" << std::endl;
 		}
 
-		for (size_t i = material->GetTextureCount(); i < material->GetTextureCount() + 1; i++)
+		for (size_t i = actualTextureCount; i < actualTextureCount + 1; i++)
 		{
 			maincode << "uniform sampler2D "
 					 << "background"
@@ -544,7 +545,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 		baseCode = Replace(baseCode, "$SUFFIX", "");
 
 		// replace textures
-		for (size_t i = 0; i < material->GetTextureCount(); i++)
+		for (size_t i = 0; i < actualTextureCount; i++)
 		{
 			auto textureIndex = material->GetTextureIndex(i);
 			auto textureName = std::string(material->GetTextureName(i));
@@ -554,6 +555,20 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 
 			baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",");
 			baseCode = Replace(baseCode, keyS, ")");
+		}
+
+		// invalid texture
+		for (size_t i = actualTextureCount; i < material->GetTextureCount(); i++)
+		{
+			auto textureIndex = material->GetTextureIndex(i);
+			auto textureName = std::string(material->GetTextureName(i));
+
+			std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
+			std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
+
+			baseCode = Replace(baseCode, keyP, "vec4(");
+			baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
+
 		}
 
 		if (stage == 0)
@@ -712,7 +727,7 @@ public:
 	int GetRef() override { return ReferenceObject::GetRef(); }
 };
 
-CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material)
+CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material, int32_t maximumTextureCount)
 {
 	auto binary = new CompiledMaterialBinaryGL();
 
@@ -724,8 +739,8 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material)
 		return ret;
 	};
 
-	auto saveBinary = [&material, &binary, &convertToVector](MaterialShaderType type) {
-		auto shader = GL::GenerateShader(material, type);
+	auto saveBinary = [&material, &binary, &convertToVector, &maximumTextureCount](MaterialShaderType type) {
+		auto shader = GL::GenerateShader(material, type, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVector(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVector(shader.CodePS));
 	};
@@ -741,6 +756,8 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material)
 
 	return binary;
 }
+
+CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
 
 } // namespace Effekseer
 
