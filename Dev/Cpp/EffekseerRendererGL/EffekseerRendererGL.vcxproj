@@ -190,6 +190,7 @@
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.Base.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.Base.Pre.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.DeviceObject.h" />
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.DeviceObjectCollection.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.GLExtension.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.IndexBuffer.h" />
     <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.MaterialLoader.h" />
@@ -219,6 +220,7 @@
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.TrackRendererBase.cpp" />
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.DeviceObject.cpp" />
+    <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.DeviceObjectCollection.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.GLExtension.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.IndexBuffer.cpp" />
     <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.MaterialLoader.cpp" />

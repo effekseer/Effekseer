@@ -336,8 +336,9 @@ namespace EffekseerRendererGL
 MaterialLoader::MaterialLoader(OpenGLDeviceType deviceType,
 							   Renderer* renderer,
 							   DeviceObjectCollection* deviceObjectCollection,
-							   ::Effekseer::FileInterface* fileInterface)
-	: fileInterface_(fileInterface)
+							   ::Effekseer::FileInterface* fileInterface,
+							   bool canLoadFromCache)
+	: fileInterface_(fileInterface), canLoadFromCache_(canLoadFromCache)
 {
 	if (fileInterface == nullptr)
 	{
@@ -362,6 +363,7 @@ MaterialLoader ::~MaterialLoader()
 ::Effekseer::MaterialData* MaterialLoader::Load(const EFK_CHAR* path)
 {
 	// code file
+	if (canLoadFromCache_)
 	{
 		auto binaryPath = std::u16string(path) + u"d";
 		std::unique_ptr<Effekseer::FileReader> reader(fileInterface_->TryOpenRead(binaryPath.c_str()));

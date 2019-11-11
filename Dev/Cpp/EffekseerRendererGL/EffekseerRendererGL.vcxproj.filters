@@ -112,6 +112,9 @@
     <ClInclude Include="..\EffekseerMaterialCompiler\OpenGL\EffekseerMaterialCompilerGL.h">
       <Filter>EffekseerMaterialCompiler\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="EffekseerRenderer\EffekseerRendererGL.DeviceObjectCollection.h">
+      <Filter>EffekseerRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\EffekseerRendererCommon\EffekseerRenderer.VertexBufferBase.cpp">
@@ -191,6 +194,9 @@
     </ClCompile>
     <ClCompile Include="..\EffekseerMaterialCompiler\OpenGL\EffekseerMaterialCompilerGL.cpp">
       <Filter>EffekseerMaterialCompiler\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="EffekseerRenderer\EffekseerRendererGL.DeviceObjectCollection.cpp">
+      <Filter>EffekseerRenderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
