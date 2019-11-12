@@ -224,7 +224,7 @@ public:
 		
 		int32_t renderPassCount = 1;
 
-		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr)
+		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr && param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex >= 0)
 		{
 			auto materialData = param.EffectPointer->GetMaterial(param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
 			if (materialData != nullptr && materialData->IsRefractionRequired)
@@ -351,7 +351,7 @@ public:
 
 		isBackgroundRequired |= (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion);
 
-		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr)
+		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr && param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex >= 0)
 		{
 			auto materialData = param.EffectPointer->GetMaterial(param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
 			if (materialData != nullptr && materialData->IsRefractionRequired && renderPassInd == 0)
