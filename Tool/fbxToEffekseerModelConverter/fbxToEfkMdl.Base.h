@@ -30,6 +30,11 @@ public:
 	float Rotation[4];
 	float Scaling[3];
 
+	FbxVector4 RotationOffset;
+	FbxVector4 RotationPivot;
+	FbxVector4 ScalingOffset;
+	FbxVector4 ScalingPivot;
+
 	std::vector<std::shared_ptr<Node>> Children;
 };
 
@@ -238,8 +243,6 @@ struct NodeState
 		FbxVector4 r;
 		r.SetXYZ(q);
 
-		FbxMatrix mat;
-
 		FbxVector4 t;
 		t[0] = Values[(int32_t)AnimationTarget::TX];
 		t[1] = Values[(int32_t)AnimationTarget::TY];
@@ -250,9 +253,41 @@ struct NodeState
 		s[1] = Values[(int32_t)AnimationTarget::SY];
 		s[2] = Values[(int32_t)AnimationTarget::SZ];
 
-		mat.SetTRS(t, r, s);
+		// old
+		// FbxMatrix mat;
+		// mat.SetTRS(t, r, s);
+		// MatLocal = mat;
 
-		MatLocal = mat;
+		FbxVector4 zero;
+		for (size_t i = 0; i < 4; i++)
+			zero[i] = 0.0f;
+
+		FbxVector4 one;
+		for (size_t i = 0; i < 4; i++)
+			one[i] = 1.0f;
+
+		FbxMatrix matT;
+		matT.SetTRS(t, zero, one);
+
+		FbxMatrix matR;
+		matR.SetTRS(zero, r, one);
+
+		FbxMatrix matS;
+		matS.SetTRS(zero, zero, s);
+
+		FbxMatrix matSOffset;
+		matSOffset.SetTRS(this->TargetNode->ScalingOffset, zero, one);
+
+		FbxMatrix matSPivot;
+		matSPivot.SetTRS(this->TargetNode->ScalingPivot, zero, one);
+
+		FbxMatrix matROffset;
+		matROffset.SetTRS(this->TargetNode->RotationOffset, zero, one);
+
+		FbxMatrix matRPivot;
+		matRPivot.SetTRS(this->TargetNode->RotationPivot, zero, one);
+
+		MatLocal = matT * matROffset * matRPivot * matR * matRPivot.Inverse() * matSOffset * matSPivot * matS * matSPivot.Inverse();
 	}
 };
 
