@@ -91,6 +91,8 @@ void main()
 	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 
 	vec3 pixelNormalDir = worldNormal;
+	
+	vec4 vcolor = modelColor;
 )";
 
 static const char g_material_model_vs_src_suf2[] =
@@ -103,7 +105,7 @@ static const char g_material_model_vs_src_suf2[] =
 	v_WorldT = worldTangent;
 	v_UV1 = uv1;
 	v_UV2 = uv2;
-	v_VColor = a_Color;
+	v_VColor = vcolor;
 	gl_Position = ProjectionMatrix * vec4(worldPos, 1.0);
 	v_ScreenUV.xy = gl_Position.xy / gl_Position.w;
 	v_ScreenUV.xy = vec2(v_ScreenUV.x + 1.0, v_ScreenUV.y + 1.0) * 0.5;
@@ -190,7 +192,7 @@ void main() {
 	v_WorldT = worldTangent;
 
 	vec3 pixelNormalDir = worldNormal;
-
+	vec4 vcolor = atColor;
 )";
 
 static const char g_material_sprite_vs_src_suf1[] =
@@ -215,6 +217,7 @@ void main() {
 	v_WorldB = worldBinormal;
 	v_WorldT = worldTangent;
 	vec3 pixelNormalDir = worldNormal;
+	vec4 vcolor = atColor;
 )";
 
 static const char g_material_sprite_vs_src_suf2[] =
@@ -228,7 +231,7 @@ static const char g_material_sprite_vs_src_suf2[] =
 	gl_Position = uMatProjection * cameraPos;
 
 	v_WorldP = worldPos;
-	v_VColor = atColor;
+	v_VColor = vcolor;
 
 	v_UV1 = uv1;
 	v_UV2 = uv2;
@@ -333,6 +336,8 @@ void main()
 	vec3 worldTangent = v_WorldT;
 	vec3 worldBinormal = v_WorldB;
 	vec3 pixelNormalDir = worldNormal;
+	vec4 vcolor = v_VColor;
+
 )";
 
 static const char g_material_fs_src_suf2_lit[] =

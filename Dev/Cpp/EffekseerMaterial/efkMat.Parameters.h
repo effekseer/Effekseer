@@ -1181,6 +1181,41 @@ public:
 	}
 };
 
+class NodeVertexColor : public NodeParameter
+{
+public:
+	NodeVertexColor()
+	{
+		Type = NodeType::VertexColor;
+		TypeName = "VertexColor";
+		Group = std::vector<std::string>{"Model"};
+
+		auto rgb = std::make_shared<PinParameter>();
+		rgb->Name = "RGB";
+		rgb->Type = ValueType::Float3;
+		OutputPins.push_back(rgb);
+
+		auto r = std::make_shared<PinParameter>();
+		r->Name = "R";
+		r->Type = ValueType::Float1;
+		OutputPins.push_back(r);
+
+		auto g = std::make_shared<PinParameter>();
+		g->Name = "G";
+		g->Type = ValueType::Float1;
+		OutputPins.push_back(g);
+
+		auto b = std::make_shared<PinParameter>();
+		b->Name = "B";
+		b->Type = ValueType::Float1;
+		OutputPins.push_back(b);
+
+		auto a = std::make_shared<PinParameter>();
+		a->Name = "A";
+		a->Type = ValueType::Float1;
+		OutputPins.push_back(a);	}
+};
+
 #ifdef _DEBUG
 class NodeVertexTangentWS : public NodeParameter
 {

@@ -65,7 +65,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		for (auto pin : node->OutputPins)
 		{
 			TextExporterPin tePin;
-			tePin.IsConnected = true;
+			tePin.IsConnected = material->GetConnectedPins(pin).size() > 0;
 
 			std::unordered_set<std::shared_ptr<Pin>> visited;
 			auto type = material->GetDesiredPinType(pin, visited);
@@ -926,6 +926,35 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
 			<< "pixelNormalDir"
 			<< ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::VertexColor)
+	{
+		if (node->Outputs[0].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= vcolor.xyz;" << std::endl;
+		}
+
+		if (node->Outputs[1].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[1].Type) << " " << node->Outputs[1].Name << "= vcolor.x;" << std::endl;
+		}
+
+		if (node->Outputs[2].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[2].Type) << " " << node->Outputs[2].Name << "= vcolor.y;" << std::endl;
+		}
+
+		if (node->Outputs[3].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[3].Type) << " " << node->Outputs[3].Name << "= vcolor.z;" << std::endl;
+		}
+
+		if (node->Outputs[4].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[4].Type) << " " << node->Outputs[4].Name << "= vcolor.w;" << std::endl;
+		}
+
 	}
 
 	if (node->Target->Parameter->Type == NodeType::CustomData1 || node->Target->Parameter->Type == NodeType::CustomData2)

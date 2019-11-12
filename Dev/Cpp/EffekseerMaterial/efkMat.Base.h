@@ -121,6 +121,8 @@ enum class NodeType
 	VertexNormalWS,
 	PixelNormalWS,
 
+	VertexColor,
+
 	CustomData1,
 	CustomData2,
 

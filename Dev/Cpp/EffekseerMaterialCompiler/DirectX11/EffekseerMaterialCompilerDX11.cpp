@@ -203,6 +203,7 @@ VS_Output main( const VS_Input Input )
 	Output.WorldT = worldTangent;
 
 	float3 pixelNormalDir = worldNormal;
+	float4 vcolor = Input.Color;
 )";
 
 static char* material_sprite_vs_suf1 = R"(
@@ -227,6 +228,7 @@ VS_Output main( const VS_Input Input )
 	Output.WorldT = worldTangent;
 
 	float3 pixelNormalDir = worldNormal;
+	float4 vcolor = Input.Color;
 )";
 
 static char* material_sprite_vs_suf2 = R"(
@@ -318,6 +320,7 @@ VS_Output main( const VS_Input Input )
 	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
 	float3 pixelNormalDir = worldNormal;
+	float4 vcolor = modelColor;
 )";
 
 static char* model_vs_suf2 = R"(
@@ -436,6 +439,7 @@ float4 main( const PS_Input Input ) : SV_Target
 	float3 worldTangent = Input.WorldT;
 
 	float3 pixelNormalDir = worldNormal;
+	float4 vcolor = Input.VColor;
 )";
 
 static char* g_material_ps_suf2_unlit = R"(
