@@ -9,7 +9,7 @@
 
 #include "efk.GUIManager.h"
 
-#include "efk.JapaneseFont.h"
+#include "../EditorCommon/GUI/JapaneseFont.h"
 
 #include "../3rdParty/imgui_addon/fcurve/fcurve.h"
 

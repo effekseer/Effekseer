@@ -5,6 +5,7 @@ project(EditorCommon)
 
 set(srcs
     Platform/PlatformMisc.h
+    GUI/JapaneseFont.h
 )
 
 if(WIN32)

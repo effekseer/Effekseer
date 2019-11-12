@@ -27,6 +27,7 @@
 
 #include <efkMat.CommandManager.h>
 #include <efkMat.StringContainer.h>
+#include <GUI/JapaneseFont.h>
 
 #ifdef WIN32
 #include <Windows.h>
@@ -199,8 +200,7 @@ int main(int argc, char* argv[])
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	ImGuiIO& io = ImGui::GetIO();
-	ImFont* font1 =
-		io.Fonts->AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 20, nullptr, io.Fonts->GetGlyphRangesJapanese());
+	ImFont* font1 = io.Fonts->AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 20, nullptr, glyphRangesJapanese);
 
 	ImGui::StyleColorsDark();
 
