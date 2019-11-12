@@ -97,6 +97,7 @@ private:
 public: // TODO temp
 	std::shared_ptr<Library> library;
 	std::shared_ptr<Preview> preview_;
+	int32_t previewTextureCount_ = 0;
 
 	std::shared_ptr<IPC::KeyValueFileStorage> keyValueFileStorage_;
 

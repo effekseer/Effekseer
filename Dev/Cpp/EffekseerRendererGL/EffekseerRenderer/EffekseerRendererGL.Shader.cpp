@@ -200,11 +200,8 @@ Shader::Shader(
 	, m_vertexConstantBuffer	( NULL )
 	, m_pixelConstantBuffer		( NULL )
 {
-	for (int32_t i = 0; i < 4; i++)
-	{
-		m_textureSlots[i] = 0;
-		m_textureSlotEnables[i] = false;
-	}
+	m_textureSlots.fill(0);
+	m_textureSlotEnables.fill(false);
 
 	m_vsSrc.resize(vertexShaderSize);
 	memcpy(m_vsSrc.data(), vs_src, vertexShaderSize );

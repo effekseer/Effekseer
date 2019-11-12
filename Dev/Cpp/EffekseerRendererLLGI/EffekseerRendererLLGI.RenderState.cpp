@@ -49,7 +49,7 @@ void RenderState::Update(bool forced)
 		auto alphaBlend = (int32_t)m_next.AlphaBlend;
 	}
 
-	for (int32_t i = 0; i < 4; i++)
+	for (int32_t i = 0; i < Effekseer::TextureSlotMax; i++)
 	{
 		bool changeSampler = forced;
 

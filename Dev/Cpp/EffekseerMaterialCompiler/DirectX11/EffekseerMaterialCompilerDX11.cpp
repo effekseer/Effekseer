@@ -6,6 +6,8 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
+#undef min
+
 namespace Effekseer
 {
 namespace DX11
@@ -503,7 +505,7 @@ struct ShaderData
 	std::string CodePS;
 };
 
-ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
+ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int32_t maximumTextureCount)
 {
 	ShaderData shaderData;
 
@@ -624,7 +626,9 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 			cind++;
 		}
 
-		for (size_t i = 0; i < material->GetTextureCount(); i++)
+		int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
+
+		for (size_t i = 0; i < actualTextureCount; i++)
 		{
 			maincode << "Texture2D " << material->GetTextureName(i) << "_texture : register(t" << i << ");" << std::endl;
 			maincode << "SamplerState " << material->GetTextureName(i) << "_sampler : register(s" << i << ");" << std::endl;
@@ -652,7 +656,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 		baseCode = Replace(baseCode, "$SUFFIX", "");
 
 		// replace textures
-		for (size_t i = 0; i < material->GetTextureCount(); i++)
+		for (size_t i = 0; i < actualTextureCount; i++)
 		{
 			std::string keyP = "$TEX_P" + std::to_string(material->GetTextureIndex(i)) + "$";
 			std::string keyS = "$TEX_S" + std::to_string(material->GetTextureIndex(i)) + "$";
@@ -661,6 +665,20 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 				baseCode, keyP, std::string(material->GetTextureName(i)) + "_texture.Sample(" + material->GetTextureName(i) + "_sampler,");
 			baseCode = Replace(baseCode, keyS, ")");
 		}
+
+		// invalid texture
+		for (size_t i = actualTextureCount; i < material->GetTextureCount(); i++)
+		{
+			auto textureIndex = material->GetTextureIndex(i);
+			auto textureName = std::string(material->GetTextureName(i));
+
+			std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
+			std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
+
+			baseCode = Replace(baseCode, keyP, "float4(");
+			baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
+		}
+
 
 		if (stage == 0)
 		{
@@ -856,7 +874,7 @@ public:
 	int GetRef() override { return ReferenceObject::GetRef(); }
 };
 
-CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material)
+CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_t maximumTextureCount)
 {
 	auto binary = new CompiledMaterialBinaryDX11();
 
@@ -910,8 +928,8 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material)
 		return ret;
 	};
 
-	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS](MaterialShaderType type) {
-		auto shader = DX11::GenerateShader(material, type);
+	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
+		auto shader = DX11::GenerateShader(material, type, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
 	};
@@ -927,6 +945,8 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material)
 
 	return binary;
 }
+
+CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
 
 } // namespace Effekseer
 

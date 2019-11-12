@@ -143,8 +143,8 @@ OriginalState::~OriginalState()
 //----------------------------------------------------------------------------------
 void OriginalState::SaveState(ID3D11Device* device, ID3D11DeviceContext* context )
 {
-	context->PSGetSamplers( 0, 4, m_samplers );
-	context->OMGetBlendState( &m_blendState, m_blendFactor, &m_blendSampleMask );
+	context->PSGetSamplers(0, Effekseer::TextureSlotMax, m_samplers.data());
+	context->OMGetBlendState( &m_blendState, m_blendFactor.data(), &m_blendSampleMask );
 	context->OMGetDepthStencilState( &m_depthStencilState, &m_depthStencilStateRef );
 	context->RSGetState(&m_pRasterizerState);
 
@@ -158,7 +158,7 @@ void OriginalState::SaveState(ID3D11Device* device, ID3D11DeviceContext* context
 
 	context->IAGetPrimitiveTopology(&m_topology);
 
-	context->PSGetShaderResources(0, 4, m_psSRVs);
+	context->PSGetShaderResources(0, Effekseer::TextureSlotMax, m_psSRVs.data());
 
 	context->IAGetVertexBuffers(0, 1, &m_pVB, &m_vbStrides, &m_vbOffset);
 	context->IAGetIndexBuffer(&m_pIB, &m_ibFormat, &m_ibOffset);
@@ -169,8 +169,8 @@ void OriginalState::SaveState(ID3D11Device* device, ID3D11DeviceContext* context
 //----------------------------------------------------------------------------------
 void OriginalState::LoadState(ID3D11Device* device, ID3D11DeviceContext* context )
 {
-	context->PSSetSamplers(0, 4, m_samplers );
-	context->OMSetBlendState( m_blendState, m_blendFactor, m_blendSampleMask );
+	context->PSSetSamplers(0, Effekseer::TextureSlotMax, m_samplers.data());
+	context->OMSetBlendState( m_blendState, m_blendFactor.data(), m_blendSampleMask );
 	context->OMSetDepthStencilState( m_depthStencilState, m_depthStencilStateRef );
 	context->RSSetState(m_pRasterizerState);
 
@@ -184,7 +184,7 @@ void OriginalState::LoadState(ID3D11Device* device, ID3D11DeviceContext* context
 
 	context->IASetPrimitiveTopology(m_topology);
 
-	context->PSSetShaderResources(0, 4, m_psSRVs);
+	context->PSSetShaderResources(0, Effekseer::TextureSlotMax, m_psSRVs.data());
 
 	context->IASetVertexBuffers(0, 1, &m_pVB, &m_vbStrides, &m_vbOffset);
 	context->IASetIndexBuffer(m_pIB, m_ibFormat, m_ibOffset);
@@ -195,25 +195,25 @@ void OriginalState::LoadState(ID3D11Device* device, ID3D11DeviceContext* context
 //----------------------------------------------------------------------------------
 void OriginalState::ReleaseState()
 {	
-	for( int32_t i = 0; i < 4; i++ )
+	for (size_t i = 0; i < m_samplers.size(); i++)
 	{
-		ES_SAFE_RELEASE( m_samplers[i] );
+		ES_SAFE_RELEASE(m_samplers[i]);
 	}
-	ES_SAFE_RELEASE( m_blendState );
+	ES_SAFE_RELEASE(m_blendState);
 
-	ES_SAFE_RELEASE( m_depthStencilState );
+	ES_SAFE_RELEASE(m_depthStencilState);
 
 	ES_SAFE_RELEASE(m_pRasterizerState);
 
-	ES_SAFE_RELEASE( m_vertexConstantBuffer );
-	ES_SAFE_RELEASE( m_pixelConstantBuffer );
+	ES_SAFE_RELEASE(m_vertexConstantBuffer);
+	ES_SAFE_RELEASE(m_pixelConstantBuffer);
 
 	ES_SAFE_RELEASE(m_pVS);
 	ES_SAFE_RELEASE(m_pPS);
 
-	ES_SAFE_RELEASE( m_layout );
+	ES_SAFE_RELEASE(m_layout);
 
-	for (int32_t i = 0; i < 4; i++)
+	for (size_t i = 0; i < m_psSRVs.size(); i++)
 	{
 		ES_SAFE_RELEASE(m_psSRVs[i]);
 	}
@@ -969,7 +969,7 @@ void RendererImplemented::SetPixelBufferToShader(const void* data, int32_t size,
 //----------------------------------------------------------------------------------
 void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** textures, int32_t count)
 {
-	ID3D11ShaderResourceView* srv[4];
+	std::array<ID3D11ShaderResourceView*, Effekseer::TextureSlotMax> srv;
 	for (int32_t i = 0; i < count; i++)
 	{
 		if (textures[i] == nullptr)
@@ -981,7 +981,7 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 			srv[i] = (ID3D11ShaderResourceView*)textures[i]->UserPtr;
 		}
 	}
-	GetContext()->PSSetShaderResources(0, count, srv);
+	GetContext()->PSSetShaderResources(0, count, srv.data());
 }
 
 void RendererImplemented::ResetRenderState()
