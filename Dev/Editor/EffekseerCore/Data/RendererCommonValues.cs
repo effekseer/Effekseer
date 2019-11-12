@@ -42,6 +42,10 @@ namespace Effekseer.Data
 		[Name(language = Language.English, value = "FCurve2")]
 		FCurve2D = 23,
 
+		[Name(language = Language.Japanese, value = "固定4")]
+		[Name(language = Language.English, value = "Fixed4")]
+		Fixed4D = 40,
+
 		[Name(language = Language.Japanese, value = "Fカーブ色")]
 		[Name(language = Language.English, value = "FCurve-Color")]
 		FCurveColor = 53,
@@ -67,6 +71,9 @@ namespace Effekseer.Data
 		[Selected(ID = 10, Value = (int)CustomDataType.FCurve2D)]
 		public Value.FCurveVector2D FCurve { get; private set; }
 
+		[Selected(ID = 10, Value = (int)CustomDataType.Fixed4D)]
+		public Value.Vector4D Fixed4 { get; private set; }
+
 		[Selected(ID = 10, Value = (int)CustomDataType.FCurveColor)]
 		public Value.FCurveColorRGBA FCurveColor { get; private set; }
 
@@ -76,6 +83,7 @@ namespace Effekseer.Data
 			Fixed = new Value.Vector2D();
 			Easing = new Vector2DEasingParamater();
 			FCurve = new Value.FCurveVector2D();
+			Fixed4 = new Value.Vector4D();
 			FCurveColor = new Value.FCurveColorRGBA();
 		}
 	}

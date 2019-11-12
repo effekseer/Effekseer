@@ -289,6 +289,13 @@ namespace Effekseer.Binary
 				var bytes1 = value_.GetBytes(1.0f);
 				data.Add(bytes1);
 			}
+			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.Fixed4D)
+			{
+				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed4.X.Value));
+				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed4.Y.Value));
+				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed4.Z.Value));
+				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed4.W.Value));
+			}
 			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.FCurveColor)
 			{
 				var bytes = value.CustomData1.FCurveColor.GetBytes();
@@ -320,6 +327,13 @@ namespace Effekseer.Binary
 				var value_ = value.CustomData2.FCurve;
 				var bytes1 = value_.GetBytes(1.0f);
 				data.Add(bytes1);
+			}
+			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.Fixed4D)
+			{
+				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed4.X.Value));
+				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed4.Y.Value));
+				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed4.Z.Value));
+				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed4.W.Value));
 			}
 			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.FCurveColor)
 			{
