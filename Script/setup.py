@@ -14,5 +14,4 @@ if pf == 'Windows':
 if pf == 'Darwin':
     shutil.copyfile("../ResourceData/tool/tools/mac/fbxToEffekseerModelConverter", "../Dev/release/tools/fbxToEffekseerModelConverter")
     shutil.copyfile("../ResourceData/tool/tools/mac/libfbxsdk.dylib", "../Dev/release/tools/libfbxsdk.dylib")
-
-    
+    shutil.copyfile("../ResourceData/tool/tools/mac/mqoToEffekseerModelConverter", "../Dev/release/tools/mqoToEffekseerModelConverter")
