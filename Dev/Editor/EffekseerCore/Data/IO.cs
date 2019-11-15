@@ -607,7 +607,7 @@ namespace Effekseer.Data
 
 			int index = 0;
 
-			Action<Value.FCurve<byte>, XmlElement> setValues = (v, xml) =>
+			Action<Value.FCurve<int>, XmlElement> setValues = (v, xml) =>
 			{
 				index = 0;
 
@@ -1319,7 +1319,7 @@ namespace Effekseer.Data
 
 		public static void LoadFromElement(XmlElement e, Value.FCurveColorRGBA value, bool isClip)
 		{
-			Action<Data.Value.FCurve<byte>, XmlElement> import = (v_, e_) =>
+			Action<Data.Value.FCurve<int>, XmlElement> import = (v_, e_) =>
 				{
 					foreach (XmlElement r in e_.ChildNodes)
 					{
@@ -1333,7 +1333,7 @@ namespace Effekseer.Data
 							var ry = r.GetTextAsFloat("RightY");
 							var i = r.GetTextAsInt("InterpolationType");
 
-							var t = new Value.FCurveKey<byte>(f, (byte)v);
+							var t = new Value.FCurveKey<int>(f, (int)v);
 							t.SetLeftDirectly(lx, ly);
 							t.SetRightDirectly(rx, ry);
 							t.InterpolationType.SetValue(i);

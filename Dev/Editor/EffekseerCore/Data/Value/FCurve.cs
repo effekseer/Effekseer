@@ -61,9 +61,9 @@ namespace Effekseer.Data.Value
 
             if (o is float) return (float)o;
 
-            if (v is byte)
+            if (v is int)
             {
-                var b = (byte)o;
+                var b = (int)o;
                 return (float)b;
             }
 
@@ -272,7 +272,7 @@ namespace Effekseer.Data.Value
 						data.Add(BitConverter.GetBytes(v));
 					}
 				}
-				else if (typeof(T) == typeof(byte))
+				else if (typeof(T) == typeof(int))
 				{
 					for (int f = keys.First().Frame; f < keys.Last().Frame; f += freq)
 					{
@@ -742,9 +742,9 @@ namespace Effekseer.Data.Value
 
             if (o is float) return (float)o;
 
-            if (v is byte)
+            if (v is int)
             {
-                var b = (byte)o;
+                var b = (int)o;
                 return (float)b;
             }
 
@@ -989,7 +989,7 @@ namespace Effekseer.Data.Value
 
 		public void SetValueAsFloat(float value)
 		{
-			if (typeof(T) == typeof(byte))
+			if (typeof(T) == typeof(int))
 			{
 				value = (float)Math.Round((double)value);
 				value = Math.Max(0, value);

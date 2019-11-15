@@ -1243,11 +1243,11 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		class ByteFCurveConverter : IFCurveConverter
+		class IntFCurveConverter : IFCurveConverter
 		{
 			public IFCurveKey CreateKey(int key, float value, float leftKey, float leftValue, float rightKey, float rightValue)
 			{
-				var fcurveKey = new FCurveKey<byte>(key, (byte)value);
+				var fcurveKey = new FCurveKey<int>(key, (int)value);
 				fcurveKey.SetLeftDirectly(leftKey, leftValue);
 				fcurveKey.SetRightDirectly(rightKey, rightValue);
 				return fcurveKey;
@@ -1255,8 +1255,8 @@ namespace Effekseer.GUI.Dock
 
 			public void SetKeys(IFCurve fcurve, IFCurveKey[] keys)
 			{
-				var fc = fcurve as FCurve<byte>;
-				fc.SetKeys(keys.OfType<FCurveKey<byte>>().ToArray());
+				var fc = fcurve as FCurve<int>;
+				fc.SetKeys(keys.OfType<FCurveKey<int>>().ToArray());
 			}
 		}
 
@@ -1331,9 +1331,9 @@ namespace Effekseer.GUI.Dock
 						v_,
 						v.Item1,
 						window,
-						new ByteFCurveConverter(),
+						new IntFCurveConverter(),
 						0,
-						255,
+						int.MaxValue,
 						v_.Timeline);
 				}
 
