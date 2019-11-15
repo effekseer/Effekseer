@@ -389,7 +389,8 @@ public:
 		Effekseer::MaterialData* material = nullptr;
 		SHADER* shader_ = nullptr;
 		
-		if (materialParam != nullptr && param.EffectPointer->GetMaterial(materialParam->MaterialIndex) != nullptr)
+		if (materialParam != nullptr && materialParam->MaterialIndex >= 0 &&
+			param.EffectPointer->GetMaterial(materialParam->MaterialIndex) != nullptr)
 		{
 			material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
 
