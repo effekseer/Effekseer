@@ -8,6 +8,8 @@
 #include "Effekseer/Material/Effekseer.CompiledMaterial.h"
 #include "EffekseerRendererGL.DeviceObjectCollection.h"
 
+#undef min
+
 namespace EffekseerRendererGL
 {
 
@@ -321,7 +323,7 @@ namespace EffekseerRendererGL
 
 	materialData->CustomData1 = material.GetCustomData1Count();
 	materialData->CustomData2 = material.GetCustomData2Count();
-	materialData->TextureCount = material.GetTextureCount();
+	materialData->TextureCount = std::min(material.GetTextureCount(), Effekseer::UserTextureSlotMax);
 	materialData->UniformCount = material.GetUniformCount();
 	materialData->ShadingModel = material.GetShadingModel();
 
