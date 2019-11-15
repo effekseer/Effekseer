@@ -175,6 +175,38 @@ namespace Effekseer.Data
 			return true;
 		}
 
+		public bool Delete(DynamicEquation o)
+		{
+			if (o == null)
+				return false;
+
+			var old_value = values;
+			var new_value = new List<DynamicEquation>(values);
+			new_value.Remove(o);
+
+			var cmd = new Command.DelegateCommand(
+				() =>
+				{
+					values = new_value;
+					if (OnChanged != null)
+					{
+						OnChanged(this, null);
+					}
+				},
+				() =>
+				{
+					values = old_value;
+					if (OnChanged != null)
+					{
+						OnChanged(this, null);
+					}
+				});
+
+			Command.CommandManager.Execute(cmd);
+
+			return true;
+		}
+
 		public EditableValue[] GetValues()
 		{
 			List<EditableValue> ret = new List<EditableValue>();

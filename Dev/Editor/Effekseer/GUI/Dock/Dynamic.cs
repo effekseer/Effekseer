@@ -94,6 +94,14 @@ namespace Effekseer.GUI.Dock
 				Core.Dynamic.Equations.Add();
 			}
 
+			Manager.NativeManager.SameLine();
+
+			if (Manager.NativeManager.Button("Delete###DynamicDelete"))
+			{
+				Core.Dynamic.Equations.Delete(Core.Dynamic.Equations.Selected);
+				Core.Dynamic.Equations.Selected = null;
+			}
+
 			paramerterList.Update();
 
 			// TODO make good GUI
