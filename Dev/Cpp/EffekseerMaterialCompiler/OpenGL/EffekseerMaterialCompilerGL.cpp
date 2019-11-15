@@ -7,6 +7,13 @@ namespace Effekseer
 namespace GL
 {
 
+static char* material_common_define = R"(
+#define MOD mod
+#define FRAC fract
+#define LERP mix
+
+)";
+
 static const char g_material_model_vs_src_pre[] =
 	R"(
 IN vec4 a_Position;
@@ -54,6 +61,17 @@ uniform mat4 ProjectionMatrix;
 uniform vec4 mUVInversed;
 uniform vec4 predefined_uniform;
 
+vec2 GetUV(vec2 uv)
+{
+	uv.y = mUVInversed.x + mUVInversed.y * uv.y;
+	return uv;
+}
+
+vec2 GetUVBack(vec2 uv)
+{
+	uv.y = mUVInversed.z + mUVInversed.w * uv.y;
+	return uv;
+}
 
 )";
 
@@ -87,8 +105,8 @@ void main()
 	vec2 uv1 = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
 	vec2 uv2 = uv1;
 
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 
 	vec3 pixelNormalDir = worldNormal;
 	
@@ -136,6 +154,18 @@ uniform mat4 uMatProjection;
 uniform vec4 mUVInversed;
 uniform vec4 predefined_uniform;
 
+vec2 GetUV(vec2 uv)
+{
+	uv.y = mUVInversed.x + mUVInversed.y * uv.y;
+	return uv;
+}
+
+vec2 GetUVBack(vec2 uv)
+{
+	uv.y = mUVInversed.z + mUVInversed.w * uv.y;
+	return uv;
+}
+
 )";
 
 static const char g_material_sprite_vs_src_pre[] =
@@ -169,6 +199,18 @@ uniform mat4 uMatProjection;
 uniform vec4 mUVInversed;
 uniform vec4 predefined_uniform;
 
+vec2 GetUV(vec2 uv)
+{
+	uv.y = mUVInversed.x + mUVInversed.y * uv.y;
+	return uv;
+}
+
+vec2 GetUVBack(vec2 uv)
+{
+	uv.y = mUVInversed.z + mUVInversed.w * uv.y;
+	return uv;
+}
+
 )";
 
 static const char g_material_sprite_vs_src_suf1_simple[] =
@@ -180,7 +222,7 @@ void main() {
 
 	// UV
 	vec2 uv1 = atTexCoord.xy;
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 	vec2 uv2 = uv1;
 
 	// NBT
@@ -204,9 +246,9 @@ void main() {
 
 	// UV
 	vec2 uv1 = atTexCoord.xy;
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
 	vec2 uv2 = atTexCoord2.xy;
-	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
+	//uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
 	// NBT
 	vec3 worldNormal = (atNormal - vec3(0.5, 0.5, 0.5)) * 2.0;
@@ -257,6 +299,19 @@ IN mediump vec2 v_ScreenUV;
 
 uniform vec4 mUVInversedBack;
 uniform vec4 predefined_uniform;
+
+vec2 GetUV(vec2 uv)
+{
+	uv.y = mUVInversedBack.x + mUVInversedBack.y * uv.y;
+	return uv;
+}
+
+vec2 GetUVBack(vec2 uv)
+{
+	uv.y = mUVInversedBack.z + mUVInversedBack.w * uv.y;
+	return uv;
+}
+
 
 )";
 
@@ -377,7 +432,7 @@ static const char g_material_fs_src_suf2_refraction[] =
 	vec2 distortUV = dir.xy * (refraction - airRefraction);
 
 	distortUV += v_ScreenUV;
-	distortUV.y = mUVInversedBack.x + mUVInversedBack.y * distortUV.y;
+	distortUV = GetUVBack(distortUV);	
 
 	vec4 bg = TEX2D(background, distortUV);
 	FRAGCOLOR = bg;
@@ -443,6 +498,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 	for (int stage = 0; stage < 2; stage++)
 	{
 		std::ostringstream maincode;
+
+		maincode << material_common_define;
 
 		if (stage == 0)
 		{
@@ -558,8 +615,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
 			std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
 
-			baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",");
-			baseCode = Replace(baseCode, keyS, ")");
+			baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",GetUV(");
+			baseCode = Replace(baseCode, keyS, "))");
 		}
 
 		// invalid texture
@@ -573,7 +630,6 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
 			baseCode = Replace(baseCode, keyP, "vec4(");
 			baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
-
 		}
 
 		if (stage == 0)

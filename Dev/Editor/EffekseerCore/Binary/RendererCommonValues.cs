@@ -69,6 +69,12 @@ namespace Effekseer.Binary
 				var textures = value.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null).ToArray();
 				var uniforms = value.MaterialFile.GetUniforms(materialInfo);
 
+				// maximum slot limitation
+				if(textures.Length > Constant.UserTextureSlotCount)
+				{
+					textures = textures.Take(Constant.UserTextureSlotCount).ToArray();
+				}
+
 				if(material_and_index.ContainsKey(value.MaterialFile.Path.RelativePath))
 				{
 					data.Add(material_and_index[value.MaterialFile.Path.RelativePath].GetBytes());

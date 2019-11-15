@@ -1350,20 +1350,20 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		}
 
 		// is memory safe?
-		auto name = node->Descriptions[static_cast<int>(material->Language)].Summary;
+		auto name = node->Descriptions[static_cast<int>(material->Language)]->Summary;
 		name.resize(name.size() + 256, 0);
 
-		auto desc = node->Descriptions[static_cast<int>(material->Language)].Detail;
+		auto desc = node->Descriptions[static_cast<int>(material->Language)]->Detail;
 		desc.resize(desc.size() + 256, 0);
 
 		if (ImGui::InputText(StringContainer::GetValue("Summary_Name").c_str(), const_cast<char*>(name.data()), name.size()))
 		{
-			node->Descriptions[static_cast<int>(material->Language)].Summary = name.c_str();
+			node->Descriptions[static_cast<int>(material->Language)]->Summary = name.c_str();
 		}
 
 		if (ImGui::InputTextMultiline(StringContainer::GetValue("Detail_Name").c_str(), const_cast<char*>(desc.data()), desc.size()))
 		{
-			node->Descriptions[static_cast<int>(material->Language)].Detail = desc.c_str();
+			node->Descriptions[static_cast<int>(material->Language)]->Detail = desc.c_str();
 		}
 	}
 }

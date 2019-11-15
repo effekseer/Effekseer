@@ -115,6 +115,13 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 	return shader;
 }
 
+static char* material_common_define = R"(
+#define MOD fmod
+#define FRAC frac
+#define LERP lerp
+
+)";
+
 static char* material_sprite_vs_pre_simple = R"(
 
 struct VS_Input
@@ -141,6 +148,18 @@ float4x4 mCamera		: register(c0);
 float4x4 mProj			: register(c4);
 float4 mUVInversed		: register(c8);
 float4 predefined_uniform : register(c9);
+
+float2 GetUV(float2 uv)
+{
+	uv.y = mUVInversed.x + mUVInversed.y * uv.y;
+	return uv;
+}
+
+float2 GetUVBack(float2 uv)
+{
+	uv.y = mUVInversed.z + mUVInversed.w * uv.y;
+	return uv;
+}
 
 )";
 
@@ -178,6 +197,18 @@ float4x4 mProj			: register(c4);
 float4 mUVInversed		: register(c8);
 float4 predefined_uniform : register(c9);
 
+float2 GetUV(float2 uv)
+{
+	uv.y = mUVInversed.x + mUVInversed.y * uv.y;
+	return uv;
+}
+
+float2 GetUVBack(float2 uv)
+{
+	uv.y = mUVInversed.z + mUVInversed.w * uv.y;
+	return uv;
+}
+
 )";
 
 static char* material_sprite_vs_suf1_simple = R"(
@@ -194,8 +225,8 @@ VS_Output main( const VS_Input Input )
 	// UV
 	float uv1 = Input.UV;
 	float uv2 = Input.UV;
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
+	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	//uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
 	// NBT
 	Output.WorldN = worldNormal;
@@ -219,8 +250,8 @@ VS_Output main( const VS_Input Input )
 	// UV
 	float2 uv1 = Input.UV1;
 	float2 uv2 = Input.UV2;
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
+	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	//uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
 	// NBT
 	Output.WorldN = worldNormal;
@@ -290,6 +321,19 @@ float4 predefined_uniform : register(c245);
 
 // custom1
 // custom2
+
+float2 GetUV(float2 uv)
+{
+	uv.y = mUVInversed.x + mUVInversed.y * uv.y;
+	return uv;
+}
+
+float2 GetUVBack(float2 uv)
+{
+	uv.y = mUVInversed.z + mUVInversed.w * uv.y;
+	return uv;
+}
+
 )";
 
 static char* model_vs_suf1 = R"(
@@ -316,8 +360,8 @@ VS_Output main( const VS_Input Input )
 	uv1.y = Input.UV.y * uv.w + uv.y;
 	float2 uv2 = Input.UV;
 
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
+	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	//uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
 	float3 pixelNormalDir = worldNormal;
 	float4 vcolor = modelColor;
@@ -365,6 +409,18 @@ struct PS_Input
 
 float4 mUVInversedBack	: register(c0);
 float4 predefined_uniform : register(c1);
+
+float2 GetUV(float2 uv)
+{
+	uv.y = mUVInversedBack.x + mUVInversedBack.y * uv.y;
+	return uv;
+}
+
+float2 GetUVBack(float2 uv)
+{
+	uv.y = mUVInversedBack.z + mUVInversedBack.w * uv.y;
+	return uv;
+}
 
 )";
 
@@ -478,7 +534,7 @@ static char* g_material_ps_suf2_refraction = R"(
 	float2 distortUV = 	dir.xy * (refraction - airRefraction);
 
 	distortUV += Input.ScreenUV;
-	distortUV.y = mUVInversedBack.x + mUVInversedBack.y * distortUV.y;
+	distortUV = GetUVBack(distortUV);	
 
 	float4 bg = background_texture.Sample(background_sampler, distortUV);
 	float4 Output = bg;
@@ -548,6 +604,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 		auto cind = 0;
 
 		std::ostringstream maincode;
+
+		maincode << material_common_define;
 
 		if (stage == 0)
 		{
@@ -666,8 +724,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			std::string keyS = "$TEX_S" + std::to_string(material->GetTextureIndex(i)) + "$";
 
 			baseCode = Replace(
-				baseCode, keyP, std::string(material->GetTextureName(i)) + "_texture.Sample(" + material->GetTextureName(i) + "_sampler,");
-			baseCode = Replace(baseCode, keyS, ")");
+				baseCode, keyP, std::string(material->GetTextureName(i)) + "_texture.Sample(" + material->GetTextureName(i) + "_sampler,GetUV(");
+			baseCode = Replace(baseCode, keyS, "))");
 		}
 
 		// invalid texture

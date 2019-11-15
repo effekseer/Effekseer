@@ -699,7 +699,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::FMod)
 	{
-		exportIn2Out2Param2("mod", ",");
+		exportIn2Out2Param2("MOD", ",");
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Ceil)
@@ -714,7 +714,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::Frac)
 	{
-		exportIn1Out1("fract");
+		exportIn1Out1("FRAC");
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Min)
@@ -767,7 +767,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	{
 		assert(node->Inputs[2].Type == ValueType::Float1);
 
-		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= mix("
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= LERP("
 			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << "," << GetInputArg(node->Inputs[0].Type, node->Inputs[1]) << ","
 			<< GetInputArg(node->Inputs[2].Type, node->Inputs[2]) << ");" << std::endl;
 	}

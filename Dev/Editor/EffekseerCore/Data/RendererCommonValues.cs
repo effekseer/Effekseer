@@ -51,8 +51,12 @@ namespace Effekseer.Data
 		FCurveColor = 53,
 	}
 
-	public class CustomDataParameter
+	public class CustomDataParameter : IEditableValueCollection
 	{
+		int customDataNum = 0;
+		internal string Name = string.Empty;
+		internal string Desc = string.Empty;
+
 		[Name(language = Language.Japanese, value = "カスタムデータ")]
 		[Name(language = Language.English, value = "Custom Data")]
 		[Selector(ID = 10)]
@@ -77,14 +81,66 @@ namespace Effekseer.Data
 		[Selected(ID = 10, Value = (int)CustomDataType.FCurveColor)]
 		public Value.FCurveColorRGBA FCurveColor { get; private set; }
 
-		public CustomDataParameter()
+		public CustomDataParameter(int customDataNum)
 		{
+			this.customDataNum = customDataNum;
 			CustomData = new Value.Enum<CustomDataType>();
 			Fixed = new Value.Vector2D();
 			Easing = new Vector2DEasingParamater();
 			FCurve = new Value.FCurveVector2D();
 			Fixed4 = new Value.Vector4D();
 			FCurveColor = new Value.FCurveColorRGBA();
+		}
+
+		public EditableValue[] GetValues()
+		{
+			var ret = new List<EditableValue>();
+
+			EditableValue ev = new EditableValue();
+			ev.Value = CustomData;
+
+			if(Name != string.Empty)
+			{
+				ev.Title = Name;
+				ev.Description = Desc;
+			}
+			else
+			{
+				if (Core.Language == Language.English)
+				{
+					ev.Title = "CustomData" + customDataNum.ToString();
+				}
+
+				if (Core.Language == Language.Japanese)
+				{
+					ev.Title = "カスタムデータ" + customDataNum.ToString();
+				}
+
+				ev.Description = "";
+			}
+
+			ev.IsShown = true;
+			ev.IsUndoEnabled = true;
+			ev.SelfSelectorID = 10;
+			ret.Add(ev);
+
+			ret.Add(EditableValue.Create(Fixed, this.GetType().GetProperty("Fixed")));
+			ret.Add(EditableValue.Create(Easing, this.GetType().GetProperty("Easing")));
+			ret.Add(EditableValue.Create(FCurve, this.GetType().GetProperty("FCurve")));
+			ret.Add(EditableValue.Create(Fixed4, this.GetType().GetProperty("Fixed4")));
+			ret.Add(EditableValue.Create(FCurveColor, this.GetType().GetProperty("FCurveColor")));
+
+			return ret.ToArray();
+		}
+
+		public event ChangedValueEventHandler OnChanged;
+
+		public void Changed()
+		{
+			if(OnChanged != null)
+			{
+				OnChanged(this, null);
+			}
 		}
 	}
 
@@ -111,9 +167,11 @@ namespace Effekseer.Data
 		}
 
 		Dictionary<string, object> keyToValues = new Dictionary<string, object>();
+		RendererCommonValues rcValues = null;
 
-		public MaterialFileParameter()
+		public MaterialFileParameter(RendererCommonValues rcValues)
 		{
+			this.rcValues = rcValues;
 			Path = new Value.PathForMaterial(Resources.GetString("MaterialFilter"), true);
 			Path.OnChanged += Path_OnChanged;
 		}
@@ -125,6 +183,31 @@ namespace Effekseer.Data
 			info.Load(Path.GetAbsolutePath());
 
 			ApplyMaterial(info);
+
+			if(info.CustomData.Count() > 0)
+			{
+				rcValues.CustomData1.Name = info.CustomData[0].Names[Core.Language];
+				rcValues.CustomData1.Desc = info.CustomData[0].Descriptions[Core.Language];
+			}
+			else
+			{
+				rcValues.CustomData1.Name = string.Empty;
+				rcValues.CustomData1.Desc = string.Empty;
+			}
+
+			if (info.CustomData.Count() > 1)
+			{
+				rcValues.CustomData2.Name = info.CustomData[1].Names[Core.Language];
+				rcValues.CustomData2.Desc = info.CustomData[1].Descriptions[Core.Language];
+			}
+			else
+			{
+				rcValues.CustomData2.Name = string.Empty;
+				rcValues.CustomData2.Desc = string.Empty;
+			}
+
+			rcValues.CustomData1.Changed();
+			rcValues.CustomData2.Changed();
 		}
 
 		public EditableValue[] GetValues()
@@ -644,7 +727,7 @@ namespace Effekseer.Data
 		internal RendererCommonValues()
 		{
 			Material = new Value.Enum<MaterialType>(MaterialType.Default);
-			MaterialFile = new MaterialFileParameter();
+			MaterialFile = new MaterialFileParameter(this);
 
 			ColorTexture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
 			Filter = new Value.Enum<FilterType>(FilterType.Linear);
@@ -681,9 +764,8 @@ namespace Effekseer.Data
 
 			DistortionIntensity = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
 
-			CustomData1 = new CustomDataParameter();
-
-			CustomData2 = new CustomDataParameter();
+			CustomData1 = new CustomDataParameter(1);
+			CustomData2 = new CustomDataParameter(2);
 		}
 
 		public class NoneParamater

@@ -101,6 +101,8 @@ namespace Effekseer.Utl
 
 		public UniformInformation[] Uniforms = new UniformInformation[0];
 
+		public CustomDataInformation[] CustomData = new CustomDataInformation[0];
+
 		public UInt64 GUID;
 
 		public Dictionary<Language, string> Names = new Dictionary<Language, string>();
@@ -288,6 +290,34 @@ namespace Effekseer.Utl
 
 					var reader = new BinaryReader(temp);
 
+					if(version >= 2)
+					{
+						int customDataCount = 0;
+						reader.Get(ref customDataCount);
+
+						CustomData = new CustomDataInformation[customDataCount];
+
+						for (int j = 0; j < customDataCount; j++)
+						{
+							CustomData[j] = new CustomDataInformation();
+
+							int count = 0;
+							reader.Get(ref count);
+
+							for (int i = 0; i < count; i++)
+							{
+								int lang = 0;
+								string name = null;
+								string desc = null;
+								reader.Get(ref lang);
+								reader.Get(ref name, Encoding.UTF8);
+								reader.Get(ref desc, Encoding.UTF8);
+								CustomData[j].Names.Add((Language)lang, name);
+								CustomData[j].Descriptions.Add((Language)lang, desc);
+							}
+						}
+					}
+
 					int textureCount = 0;
 					reader.Get(ref textureCount);
 
@@ -334,6 +364,13 @@ namespace Effekseer.Utl
 
 			return true;
 		}
+
+		public class CustomDataInformation
+		{
+			public Dictionary<Language, string> Names = new Dictionary<Language, string>();
+			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
+		}
+
 
 		public class TextureInformation
 		{

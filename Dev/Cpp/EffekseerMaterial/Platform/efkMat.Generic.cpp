@@ -68,13 +68,7 @@ std::string TextExporterGeneric::ExportNode(std::shared_ptr<TextExporterNode> no
 			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[1], node->Target->Properties[1]) << ");" << std::endl;
 	};
 
-	if (node->Target->Parameter->Type == NodeType::FMod)
-	{
-		exportIn2Out2Param2("$MOD", ",");
-
-		return ret.str();
-	}
-	else if (node->Target->Parameter->Type == NodeType::SampleTexture)
+	if (node->Target->Parameter->Type == NodeType::SampleTexture)
 	{
 		assert(node->Inputs[0].TextureValue != nullptr);
 		if (0 <= node->Inputs[0].TextureValue->Index)

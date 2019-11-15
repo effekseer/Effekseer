@@ -483,12 +483,15 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 
 		picojson::array descs_;
 
-		for (size_t i = 0; i < node->Descriptions.size(); i++)
+		if (node->Parameter->IsDescriptionExported)
 		{
-			picojson::object desc_;
-			desc_.insert(std::make_pair("Summary", picojson::value(node->Descriptions[i].Summary)));
-			desc_.insert(std::make_pair("Detail", picojson::value(node->Descriptions[i].Detail)));
-			descs_.push_back(picojson::value(desc_));
+			for (size_t i = 0; i < node->Descriptions.size(); i++)
+			{
+				picojson::object desc_;
+				desc_.insert(std::make_pair("Summary", picojson::value(node->Descriptions[i]->Summary)));
+				desc_.insert(std::make_pair("Detail", picojson::value(node->Descriptions[i]->Detail)));
+				descs_.push_back(picojson::value(desc_));
+			}
 		}
 
 		picojson::array props_;
@@ -555,7 +558,7 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 
 		node_.insert(std::make_pair("Props", picojson::value(props_)));
 
-		if (node->Descriptions.size() > 0)
+		if (node->Descriptions.size() > 0 && node->Parameter->IsDescriptionExported)
 		{
 			node_.insert(std::make_pair("Descs", picojson::value(descs_)));
 		}
@@ -697,8 +700,9 @@ void Material::LoadFromStrInternal(
 
 			for (int32_t i = 0; i < descs_.size(); i++)
 			{
-				node->Descriptions[i].Summary = descs_[i].get("Summary").get<std::string>();
-				node->Descriptions[i].Detail = descs_[i].get("Detail").get<std::string>();
+				node->Descriptions[i] = std::make_shared<NodeDescription>();
+				node->Descriptions[i]->Summary = descs_[i].get("Summary").get<std::string>();
+				node->Descriptions[i]->Detail = descs_[i].get("Detail").get<std::string>();
 			}
 		}
 
@@ -802,6 +806,40 @@ void Material::LoadFromStrInternal(
 				CustomData[i].Values[3] = customdata[i].get("Value4").get<double>();
 			}
 		}
+
+		picojson::value customdata_desc_obj = root_.get("CustomDataDescs");
+		if (customdata_desc_obj.is<picojson::array>())
+		{
+			picojson::array customdata = customdata_desc_obj.get<picojson::array>();
+
+			for (int n = 0; n < 2; n++)
+			{
+				if (customdata[n].is<picojson::array>())
+				{
+					picojson::array descs_ = customdata_desc_obj.get<picojson::array>();
+					for (int32_t i = 0; i < descs_.size(); i++)
+					{
+
+						CustomData[n].Descriptions[i] = std::make_shared<NodeDescription>();
+						CustomData[n].Descriptions[i]->Summary = descs_[i].get("Summary").get<std::string>();
+						CustomData[n].Descriptions[i]->Detail = descs_[i].get("Detail").get<std::string>();
+					}
+				}
+			}
+		}
+
+		for (auto node : nodes)
+		{
+			if (node->Parameter->Type == NodeType::CustomData1)
+			{
+				node->Descriptions = this->CustomData[0].Descriptions;
+			}
+
+			if (node->Parameter->Type == NodeType::CustomData2)
+			{
+				node->Descriptions = this->CustomData[1].Descriptions;
+			}
+		}
 	}
 
 	if (hasGlobal)
@@ -843,6 +881,16 @@ void Material::Initialize()
 	auto outputNodeParam = std::make_shared<NodeOutput>();
 	auto outputNode = CreateNode(outputNodeParam, true);
 	outputNode->UpdatePos(Vector2DF(200, 100));
+
+	for (size_t ci = 0; ci < CustomData.size(); ci++)
+	{
+		CustomData[ci].Descriptions.resize(static_cast<int32_t>(LanguageType::Max));
+
+		for (size_t i = 0; i < CustomData[ci].Descriptions.size(); i++)
+		{
+			CustomData[ci].Descriptions[i] = std::make_shared<NodeDescription>();
+		}
+	}
 }
 
 std::vector<std::shared_ptr<Pin>> Material::GetConnectedPins(std::shared_ptr<Pin> pin)
@@ -936,7 +984,23 @@ std::shared_ptr<Node> Material::CreateNode(std::shared_ptr<NodeParameter> parame
 
 	if (parameter->HasDescription)
 	{
-		node->Descriptions.resize(static_cast<int32_t>(LanguageType::Max));
+		if (parameter->Type == NodeType::CustomData1)
+		{
+			node->Descriptions = this->CustomData[0].Descriptions;
+		}
+		else if (parameter->Type == NodeType::CustomData2)
+		{
+			node->Descriptions = this->CustomData[1].Descriptions;
+		}
+		else
+		{
+			node->Descriptions.resize(static_cast<int32_t>(LanguageType::Max));
+
+			for (size_t i = 0; i < node->Descriptions.size(); i++)
+			{
+				node->Descriptions[i] = std::make_shared<NodeDescription>();
+			}
+		}
 	}
 
 	for (auto i = 0; i < parameter->InputPins.size(); i++)
@@ -1505,7 +1569,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	// header
 
 	char* prefix = "EFKM";
-	int version = 1;
+	int version = 2;
 
 	int offset = 0;
 
@@ -1547,8 +1611,8 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	for (size_t descInd = 0; descInd < outputNode->Descriptions.size(); descInd++)
 	{
 		bwDescs.Push(static_cast<uint32_t>(descInd));
-		bwDescs.Push(GetVectorFromStr(outputNode->Descriptions[descInd].Summary));
-		bwDescs.Push(GetVectorFromStr(outputNode->Descriptions[descInd].Detail));
+		bwDescs.Push(GetVectorFromStr(outputNode->Descriptions[descInd]->Summary));
+		bwDescs.Push(GetVectorFromStr(outputNode->Descriptions[descInd]->Detail));
 	}
 
 	char* chunk_desc = "DESC";
@@ -1637,6 +1701,23 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	// param 2
 	BinaryWriter bwParam2;
 
+	if (version >= 2)
+	{
+		bwParam2.Push(static_cast<int32_t>(CustomData.size()));
+
+		for (size_t ci = 0; ci < CustomData.size(); ci++)
+		{
+			bwParam2.Push(static_cast<int32_t>(CustomData[ci].Descriptions.size()));
+
+			for (size_t descInd = 0; descInd < CustomData[ci].Descriptions.size(); descInd++)
+			{
+				bwParam2.Push(static_cast<uint32_t>(descInd));
+				bwParam2.Push(GetVectorFromStr(CustomData[ci].Descriptions[descInd]->Summary));
+				bwParam2.Push(GetVectorFromStr(CustomData[ci].Descriptions[descInd]->Detail));
+			}
+		}
+	}
+
 	bwParam2.Push(static_cast<int32_t>(result.Textures.size()));
 
 	for (size_t i = 0; i < result.Textures.size(); i++)
@@ -1646,8 +1727,8 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		for (size_t descInd = 0; descInd < result.Textures[i]->Descriptions.size(); descInd++)
 		{
 			bwParam2.Push(static_cast<uint32_t>(descInd));
-			bwParam2.Push(GetVectorFromStr(result.Textures[i]->Descriptions[descInd].Summary));
-			bwParam2.Push(GetVectorFromStr(result.Textures[i]->Descriptions[descInd].Detail));
+			bwParam2.Push(GetVectorFromStr(result.Textures[i]->Descriptions[descInd]->Summary));
+			bwParam2.Push(GetVectorFromStr(result.Textures[i]->Descriptions[descInd]->Detail));
 		}
 	}
 
@@ -1660,8 +1741,8 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		for (size_t descInd = 0; descInd < result.Uniforms[i]->Descriptions.size(); descInd++)
 		{
 			bwParam2.Push(static_cast<uint32_t>(descInd));
-			bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Descriptions[descInd].Summary));
-			bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Descriptions[descInd].Detail));
+			bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Descriptions[descInd]->Summary));
+			bwParam2.Push(GetVectorFromStr(result.Uniforms[i]->Descriptions[descInd]->Detail));
 		}
 	}
 

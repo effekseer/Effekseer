@@ -210,6 +210,9 @@ public:
 	//! has a description for other editor
 	bool HasDescription = false;
 
+	//! is a description exported to json
+	bool IsDescriptionExported = false;
+
 	int32_t GetPropertyIndex(const std::string& name)
 	{
 		for (size_t i = 0; i < Properties.size(); i++)
@@ -315,6 +318,7 @@ public:
 		Description = "Param value...";
 		Group = std::vector<std::string>{"Parameter"};
 		HasDescription = true;
+		IsDescriptionExported = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -351,6 +355,7 @@ public:
 		Description = "Param value...";
 		Group = std::vector<std::string>{"Parameter"};
 		HasDescription = true;
+		IsDescriptionExported = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -888,7 +893,6 @@ public:
 	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
 	{
 		return inputTypes[0];
-
 	}
 	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override
 	{
@@ -1062,6 +1066,7 @@ public:
 		TypeName = "TextureObjectParameter";
 		Group = std::vector<std::string>{"Texture"};
 		HasDescription = true;
+		IsDescriptionExported = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -1213,7 +1218,8 @@ public:
 		auto a = std::make_shared<PinParameter>();
 		a->Name = "A";
 		a->Type = ValueType::Float1;
-		OutputPins.push_back(a);	}
+		OutputPins.push_back(a);
+	}
 };
 
 #ifdef _DEBUG
@@ -1242,6 +1248,7 @@ public:
 		Type = NodeType::CustomData1;
 		TypeName = "CustomData1";
 		Group = std::vector<std::string>{"Parameter"};
+		HasDescription = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -1285,6 +1292,7 @@ public:
 		Type = NodeType::CustomData2;
 		TypeName = "CustomData2";
 		Group = std::vector<std::string>{"Parameter"};
+		HasDescription = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -1359,6 +1367,7 @@ public:
 		TypeName = "Output";
 		IsPreviewOpened = true;
 		HasDescription = true;
+		IsDescriptionExported = true;
 
 		auto baseColor = std::make_shared<PinParameter>();
 		baseColor->Name = "BaseColor";

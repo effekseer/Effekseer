@@ -454,6 +454,8 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 			float values[4];
 			values[0] = 1.0f;
 			values[1] = -1.0f;
+			values[2] = 1.0f;
+			values[3] = -1.0f;
 
 			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
 		}
@@ -463,6 +465,8 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 			float values[4];
 			values[0] = 1.0f;
 			values[1] = -1.0f;
+			values[2] = 1.0f;
+			values[3] = -1.0f;
 
 			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
 		}

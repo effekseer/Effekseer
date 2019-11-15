@@ -8,6 +8,14 @@ using System.Threading;
 
 namespace Effekseer
 {
+	class Constant
+	{
+		/// <summary>
+		///  the maximum number of texture slot which can be specified by an user
+		/// </summary>
+		public const int UserTextureSlotCount = 6;
+	}
+
 	/// <summary>
 	/// 値が変化したときのイベント
 	/// </summary>
