@@ -3,7 +3,7 @@
 #include <codecvt>
 #include <locale>
 
-namespace altseed {
+namespace Effekseer {
 
 // http://hasenpfote36.blogspot.jp/2016/09/stdcodecvt.html
 static constexpr std::codecvt_mode mode = std::codecvt_mode::little_endian;
