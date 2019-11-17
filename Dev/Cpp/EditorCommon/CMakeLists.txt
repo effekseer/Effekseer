@@ -8,6 +8,7 @@ set(srcs
     Platform/PlatformMisc.h
     GUI/JapaneseFont.h
     IO/IO.h
+    IO/IO.cpp
     IO/StaticFile.h
     IO/StaticFile.cpp
     IO/FileReader.h

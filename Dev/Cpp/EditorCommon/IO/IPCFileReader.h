@@ -1,7 +1,8 @@
 #pragma once
 
-#include "FileReader.h"
 #include "../IPC/IPC.h"
+#include "FileReader.h"
+#include <memory>
 
 namespace Effekseer
 {
@@ -9,10 +10,10 @@ namespace Effekseer
 class IPCFileReader : public FileReader
 {
 private:
-	IPC::KeyValueFileStorage* storage_;
+	std::vector<uint8_t> buffer_;
 
 public:
-	IPCFileReader(const std::u16string& path);
+	IPCFileReader(const std::u16string& path, std::shared_ptr<IPC::KeyValueFileStorage> storage);
 	virtual ~IPCFileReader();
 
 	int64_t GetSize() override;
