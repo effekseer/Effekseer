@@ -162,12 +162,12 @@ namespace Effekseer
 					var appDirectory = GUI.Manager.GetEntryDirectory();
 					if (Core.Language == Language.Japanese)
 					{
-						var fullPath = Path.Combine(appDirectory, "resources/lang_ja.txt");
+						var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_ja.txt");
 						Resources.LoadLanguageFile(fullPath);
 					}
 					if (Core.Language == Language.English)
 					{
-						var fullPath = Path.Combine(appDirectory, "resources/lang_en.txt");
+						var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_en.txt");
 						Resources.LoadLanguageFile(fullPath);
 					}
 				}
@@ -268,9 +268,9 @@ namespace Effekseer
 
 		public static Dictionary<string, swig.ImageResource> tempImages = new Dictionary<string, swig.ImageResource>();
 
-		public static swig.ImageResource Load(swig.Native native, string path)
+		public static swig.ImageResource Load(swig.Native native, string path, bool isRequiredToReload = false)
 		{
-			if(tempImages.ContainsKey(path))
+			if(tempImages.ContainsKey(path) && !isRequiredToReload)
 			{
 				return tempImages[path];
 			}

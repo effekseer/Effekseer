@@ -255,7 +255,7 @@ namespace Effekseer.GUI.Component
 
 			if(System.IO.File.Exists(path))
 			{
-				image = Images.Load(Manager.Native, path);
+				image = Images.Load(Manager.Native, path, true);
 				if (image == null)
 				{
 					infoText = "";

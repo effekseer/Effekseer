@@ -1581,6 +1581,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsItemClicked___")]
   public static extern bool GUIManager_IsItemClicked(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsAnyItemActive___")]
+  public static extern bool GUIManager_IsAnyItemActive(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_IsWindowHovered___")]
   public static extern bool GUIManager_IsWindowHovered(global::System.Runtime.InteropServices.HandleRef jarg1);
 

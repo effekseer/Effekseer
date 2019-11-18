@@ -123,18 +123,22 @@ namespace Effekseer.GUI.Component
 					btn_delete_Click();
 				}
 
+				Manager.NativeManager.SameLine();
+
 				if (Manager.NativeManager.Button("Edit", buttonSizeX))
 				{
 					Process.MaterialEditor.Run();
 					Process.MaterialEditor.OpenOrCreateMaterial(absoluteFilePath);
 				}
 
-				if (Manager.NativeManager.Button("GenCache" + id4, buttonSizeX))
+				Manager.NativeManager.SameLine();
+
+				if (Manager.NativeManager.Button(Resources.GetString("Material_GenCache_Name") + id4, buttonSizeX * 2.2f))
 				{
 					GenerateCompiledMaterial();
 				}
 
-				if(Manager.NativeManager.IsItemHovered())
+				if (Manager.NativeManager.IsItemHovered())
 				{
 					ShowInformation();
 				}
@@ -143,7 +147,7 @@ namespace Effekseer.GUI.Component
 			}
 			else
 			{
-				if (Manager.NativeManager.Button("Create", buttonSizeX))
+				if (Manager.NativeManager.Button(Resources.GetString("Material_Create_Name"), buttonSizeX))
 				{
 					var filter = Resources.GetString("MaterialFilter");
 					var result = swig.FileDialog.SaveDialog(filter, System.IO.Directory.GetCurrentDirectory());
@@ -156,7 +160,7 @@ namespace Effekseer.GUI.Component
 
 						// wait
 						int counter = 0;
-						while(counter < 50)
+						while (counter < 50)
 						{
 							if (System.IO.File.Exists(filepath))
 								break;
@@ -166,11 +170,16 @@ namespace Effekseer.GUI.Component
 
 						if (System.IO.File.Exists(filepath))
 						{
-							LoadFile(filepath, false);
+							LoadFile(filepath);
 							Read();
 						}
-						
+
 					}
+				}
+
+				if (Manager.NativeManager.IsItemHovered())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("Material_Create_Desc"));
 				}
 			}
 		}
@@ -185,7 +194,7 @@ namespace Effekseer.GUI.Component
 			if (!string.IsNullOrEmpty(result))
 			{
 				var filepath = result;
-				LoadFile(filepath, false);
+				LoadFile(filepath);
 			}
 			else
 			{
@@ -245,7 +254,7 @@ namespace Effekseer.GUI.Component
 			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
 		}
 
-		void LoadFile(string filepath, bool isReloading)
+		void LoadFile(string filepath)
 		{
 			binding.SetAbsolutePath(filepath);
 
@@ -282,11 +291,14 @@ namespace Effekseer.GUI.Component
 		void ShowInformation()
 		{
 			Manager.NativeManager.BeginTooltip();
-			if(compiledMatInfo != null)
+
+			Manager.NativeManager.Text(Resources.GetString("Material_GenCache_Desc"));
+
+			if (compiledMatInfo != null)
 			{
 				if(matInfo.GUID != compiledMatInfo.GUID)
 				{
-					Manager.NativeManager.Text("!!!Cache is too old.!!!");
+					Manager.NativeManager.Text(Resources.GetString("Material_OldCache"));
 				}
 				else
 				{
@@ -298,7 +310,7 @@ namespace Effekseer.GUI.Component
 			}
 			else
 			{
-				Manager.NativeManager.Text("Cache is not generated.");
+				Manager.NativeManager.Text(Resources.GetString("Material_NoneCache"));
 			}
 
 			Manager.NativeManager.EndTooltip();

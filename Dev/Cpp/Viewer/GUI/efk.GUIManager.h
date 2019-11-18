@@ -526,6 +526,7 @@ namespace efk
 		bool IsItemActive();
 		bool IsItemFocused();
 		bool IsItemClicked(int mouse_button);
+		bool IsAnyItemActive();
 		bool IsWindowHovered();
 		bool IsAnyWindowHovered();
 		MouseCursor GetMouseCursor();

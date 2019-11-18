@@ -8,6 +8,10 @@ Imgui is revised on Effekseer.
 
 Imgui is revised on Effekseer.
 
+- Save with Ctrl + S in EffekseerEditor.
+
+Imgui is revised on EffekseerEditor.
+
 # Package
 
 ## Windows 

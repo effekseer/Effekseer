@@ -1166,6 +1166,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsAnyItemActive() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsAnyItemActive(swigCPtr);
+    return ret;
+  }
+
   public bool IsWindowHovered() {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsWindowHovered(swigCPtr);
     return ret;

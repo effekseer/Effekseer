@@ -497,36 +497,47 @@ void Editor::Update()
 		return;
 	}
 
-	// copy
-	if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
+	if (!ImGui::IsAnyItemActive())
 	{
-		ed::NodeId ids[256];
-		auto count = ed::GetSelectedNodes(ids, 256);
-
-		std::vector<std::shared_ptr<Node>> nodes;
-
-		for (size_t i = 0; i < count; i++)
+		// copy
+		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_C]] &&
+			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
 		{
-			auto id = ids[i];
-			auto node = material->FindNode(id.Get());
-			if (node != nullptr)
+			ed::NodeId ids[256];
+			auto count = ed::GetSelectedNodes(ids, 256);
+
+			std::vector<std::shared_ptr<Node>> nodes;
+
+			for (size_t i = 0; i < count; i++)
 			{
-				nodes.push_back(node);
+				auto id = ids[i];
+				auto node = material->FindNode(id.Get());
+				if (node != nullptr)
+				{
+					nodes.push_back(node);
+				}
+			}
+
+			auto data = material->Copy(nodes, material->GetPath().c_str());
+			ImGui::SetClipboardText(data.data());
+		}
+
+		// paste
+		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_V]] &&
+			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_V]] == 0)
+		{
+			auto text = ImGui::GetClipboardText();
+			if (text != nullptr)
+			{
+				auto pos = ImGui::GetMousePos();
+				material->Paste(text, Vector2DF(pos.x, pos.y), library, material->GetPath().c_str());
 			}
 		}
 
-		auto data = material->Copy(nodes, material->GetPath().c_str());
-		ImGui::SetClipboardText(data.data());
-	}
-
-	// paste
-	if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_V]] == 0)
-	{
-		auto text = ImGui::GetClipboardText();
-		if (text != nullptr)
+		// save
+		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] && ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_S]] == 0)
 		{
-			auto pos = ImGui::GetMousePos();
-			material->Paste(text, Vector2DF(pos.x, pos.y), library, material->GetPath().c_str());
+			Save();
 		}
 	}
 

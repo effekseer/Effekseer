@@ -406,8 +406,7 @@ namespace Effekseer.GUI
 			var handle = false;
 			if(!handle)
 			{
-				var cursor = Manager.NativeManager.GetMouseCursor();
-				if (cursor == swig.MouseCursor.None || cursor == swig.MouseCursor.Arrow)
+				if (!NativeManager.IsAnyItemActive())
 				{
 					Shortcuts.ProcessCmdKey(ref handle);
 				}

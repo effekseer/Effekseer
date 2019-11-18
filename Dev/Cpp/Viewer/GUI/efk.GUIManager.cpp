@@ -1790,6 +1790,11 @@ namespace efk
 		return ImGui::IsItemClicked(mouse_button);
 	}
 
+	bool GUIManager::IsAnyItemActive() 
+	{
+		return ImGui::IsAnyItemActive();
+	}
+
 	bool GUIManager::IsWindowHovered()
 	{
 		return ImGui::IsWindowHovered();

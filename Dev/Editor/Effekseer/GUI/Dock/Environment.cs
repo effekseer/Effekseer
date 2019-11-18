@@ -63,19 +63,19 @@ namespace Effekseer.GUI.Dock
 
 			candp.Update();
 
-			if (Manager.NativeManager.TreeNode("Background"))
+			if (Manager.NativeManager.TreeNode(Resources.GetString("Environment_Background")))
 			{
 				paramerterListBackground.Update();
 				Manager.NativeManager.TreePop();
 			}
 
-			if (Manager.NativeManager.TreeNode("Lighting"))
+			if (Manager.NativeManager.TreeNode(Resources.GetString("Environment_Lighting")))
 			{
 				paramerterListLighting.Update();
 				Manager.NativeManager.TreePop();
 			}
 
-			if (Manager.NativeManager.TreeNode("PostEffect"))
+			if (Manager.NativeManager.TreeNode(Resources.GetString("Environment_PostEffect")))
 			{
 				paramerterListPostEffect.Update();
 				Manager.NativeManager.TreePop();

@@ -105,7 +105,7 @@ namespace Effekseer.GUI.Dock
 			paramerterList.Update();
 
 			// TODO make good GUI
-			if (Manager.NativeManager.Button("Compile###DynamicCompile"))
+			if (Manager.NativeManager.Button(Resources.GetString("Compile") + "###DynamicCompile"))
 			{
 				var selected = Core.Dynamic.Equations.Selected;
 				if(selected != null)

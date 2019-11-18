@@ -1273,6 +1273,9 @@ namespace Effekseer.GUI.Dock
 			public int ID { get; private set; }
 			protected int LEFT_SHIFT = 340;
 			protected int RIGHT_SHIFT = 344;
+			protected int LEFT_ALT = 342;
+			protected int RIGHT_ALT = 346;
+
 			protected FCurveProperty[] properties = null;
 
 			public TreeNode ParentNode { get; set; }
@@ -1540,6 +1543,10 @@ namespace Effekseer.GUI.Dock
 							if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
 							{
 								properties[i].Selected = !properties[i].Selected;
+							}
+							else if (Manager.NativeManager.IsKeyDown(LEFT_ALT) || Manager.NativeManager.IsKeyDown(RIGHT_ALT))
+							{
+								properties[i].Selected = true;
 							}
 							else
 							{
