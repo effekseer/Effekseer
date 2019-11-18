@@ -17,7 +17,7 @@ namespace Effekseer.GUI.Dock
 
 		public Environement()
 		{
-			Label = Resources.GetString("PostEffect") + "###PostEffect";
+			Label = Resources.GetString("Environment_Name") + "###Environment";
 			
 			paramerterListBackground = new Component.ParameterList();
 			paramerterListBackground.SetType(typeof(Data.EnvironmentBackgroundValues));
@@ -33,9 +33,9 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;
 
-			Icon = Images.GetIcon("PanelPostEffect");
+			Icon = Images.GetIcon("PanelEnvironment");
 			IconSize = new swig.Vec2(24, 24);
-			TabToolTip = Resources.GetString("Options");
+			TabToolTip = Resources.GetString("Environment_Name");
 		}
 
 		public void FixValues()

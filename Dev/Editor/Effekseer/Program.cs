@@ -322,7 +322,7 @@ namespace Effekseer
 			Icons["PanelNetwork"] = LoadAppResource(native, "resources/icons/Panel_Network.png");
 			Icons["PanelNodeTree"] = LoadAppResource(native, "resources/icons/Panel_NodeTree.png");
 			Icons["PanelOption"] = LoadAppResource(native, "resources/icons/Panel_Option.png");
-			Icons["PanelPostEffect"] = LoadAppResource(native, "resources/icons/Panel_PostEffect.png");
+			Icons["PanelEnvironment"] = LoadAppResource(native, "resources/icons/Panel_Environment.png");
 			Icons["PanelRecorder"] = LoadAppResource(native, "resources/icons/Panel_Recorder.png");
 			Icons["PanelRenderer"] = LoadAppResource(native, "resources/icons/Panel_Renderer.png");
 			Icons["PanelRendererCommon"] = LoadAppResource(native, "resources/icons/Panel_RendererCommon.png");

@@ -137,7 +137,6 @@ ImageFilter,png,dds
 ModelFilter,efkmodel,fbx,mqo
 ProjectFilter,efkproj
 ProjectFilterNew,efkproj,efkefc
-PostEffect,PostEffect
 Clipping,Clipping
 Save,Save
 StorageTarget,Setting save destination
@@ -157,3 +156,4 @@ CompileError_InvalidSubstitution,Invalid substitution is found
 CompileError_UnknownFunction,Unkwon function {0} is found
 CompileError_UnknownValue,Unkwon value {0} is found
 Cancel,Cancel
+Environment_Name,Environment
