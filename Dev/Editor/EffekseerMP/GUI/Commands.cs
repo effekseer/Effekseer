@@ -493,17 +493,27 @@ namespace Effekseer.GUI
 		[UniqueName(value = "Internal.ViewHelp")]
 		static public bool ViewHelp()
 		{
-			string rootDir = Path.GetDirectoryName(Manager.GetEntryDirectory());
-			string helpPath = Path.Combine(rootDir, @"Help\index_en.html");
+			string helpPath =  @"https://effekseer.github.io/Help_Tool_14x/en/index.html";
 
 			if (Core.Language == Language.Japanese)
 			{
-				helpPath = Path.Combine(rootDir, @"Help\index_ja.html");
+				helpPath = @"https://effekseer.github.io/Help_Tool_14x/ja/index.html";
 			}
 
-			if (File.Exists(helpPath))
+			try
 			{
 				Process.Start(helpPath);
+			}
+			catch
+			{
+				if (Core.Language == Language.Japanese)
+				{
+					swig.GUIManager.show("ヘルプを開けませんでした。公式サイトからご覧ください。", "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+				}
+				else
+				{
+					swig.GUIManager.show("Could not open help. Please see from the official website.", "Error", swig.DialogStyle.Error, swig.DialogButtons.OK);
+				}
 			}
 
 			return true;
