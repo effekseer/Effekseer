@@ -239,7 +239,8 @@ void RenderState::Update( bool forced )
 			auto wrap = (int32_t) m_next.TextureWrapTypes[i];
 
 			ID3D11SamplerState* samplerTbl [] = { m_sStates[filter][wrap] };
-			m_renderer->GetContext()->PSSetSamplers( i, 1, samplerTbl );
+			m_renderer->GetContext()->VSSetSamplers(i, 1, samplerTbl);
+			m_renderer->GetContext()->PSSetSamplers(i, 1, samplerTbl);
 		}
 	}
 	

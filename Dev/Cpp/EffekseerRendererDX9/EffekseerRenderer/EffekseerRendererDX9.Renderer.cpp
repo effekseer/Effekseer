@@ -977,6 +977,8 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 			GetDevice()->SetTexture(i, (IDirect3DTexture9*)textures[i]->UserPtr);
 		}
 	}
+
+	// VTF is not supported
 }
 
 //----------------------------------------------------------------------------------

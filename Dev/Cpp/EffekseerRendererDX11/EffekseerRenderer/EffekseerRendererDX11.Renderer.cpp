@@ -981,6 +981,8 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 			srv[i] = (ID3D11ShaderResourceView*)textures[i]->UserPtr;
 		}
 	}
+
+	GetContext()->VSSetShaderResources(0, count, srv.data());
 	GetContext()->PSSetShaderResources(0, count, srv.data());
 }
 

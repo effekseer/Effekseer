@@ -763,12 +763,15 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		if (textures[i] == nullptr)
 		{
 			GetCurrentCommandList()->SetTexture(
+				nullptr, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
+			GetCurrentCommandList()->SetTexture(
 				nullptr, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
 		}
 		else
 		{
 			auto t = (LLGI::Texture*)(textures[i]->UserPtr);
-
+			GetCurrentCommandList()->SetTexture(
+				t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
 			GetCurrentCommandList()->SetTexture(
 				t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
 		}
