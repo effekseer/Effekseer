@@ -311,7 +311,7 @@ static const char g_header_vs_gl3_src[] = ""
 										  "#define mediump\n"
 										  "#define highp\n"
 										  "#define IN in\n"
-										  "#define TEX2D texture\n"
+										  "#define TEX2D textureLod\n"
 										  "#define OUT out\n"
 										  "uniform vec4 customData1;\n"  // HACK
 										  "uniform vec4 customData2;\n"; // HACK

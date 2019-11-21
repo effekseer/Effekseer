@@ -615,8 +615,16 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
 			std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
 
-			baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",GetUV(");
-			baseCode = Replace(baseCode, keyS, "))");
+			if (stage == 0)
+			{
+				baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",GetUV(");
+				baseCode = Replace(baseCode, keyS, "), 0.0)");
+			}
+			else
+			{
+				baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",GetUV(");
+				baseCode = Replace(baseCode, keyS, "))");	
+			}
 		}
 
 		// invalid texture
