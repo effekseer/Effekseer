@@ -2069,6 +2069,24 @@ bool ImGui::DragScalar(const char* label, ImGuiDataType data_type, void* v, floa
             }
         }
     }
+
+	if (!temp_input_is_active && hovered && g.IO.MouseReleased[0] && g.IO.MouseClickedPos[0].x == g.IO.MousePos.x &&
+		g.IO.MouseClickedPos[0].y == g.IO.MousePos.y)
+	{
+		SetActiveID(id, window);
+		SetFocusID(id, window);
+		FocusWindow(window);
+
+		// HACK
+		g.IO.MouseClicked[0] = 1;
+
+		g.ActiveIdAllowNavDirFlags = (1 << ImGuiDir_Up) | (1 << ImGuiDir_Down);
+		{
+			temp_input_start = true;
+			FocusableItemUnregister(window);
+		}
+	}
+
     if (temp_input_is_active || temp_input_start)
         return TempInputTextScalar(frame_bb, id, label, data_type, v, format);
 
@@ -3646,7 +3664,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             }
             state->OnKeyPressed(STB_TEXTEDIT_K_BACKSPACE | k_mask);
         }
-        else if (IsKeyPressedMap(ImGuiKey_Enter))
+		else if (IsKeyPressedMap(ImGuiKey_Enter) || IsKeyPressedMap(ImGuiKey_NumEnter))
         {
             bool ctrl_enter_for_new_line = (flags & ImGuiInputTextFlags_CtrlEnterForNewLine) != 0;
             if (!is_multiline || (ctrl_enter_for_new_line && !io.KeyCtrl) || (!ctrl_enter_for_new_line && io.KeyCtrl))
