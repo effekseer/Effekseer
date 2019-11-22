@@ -340,13 +340,6 @@ void InitGraphics(int width, int height)
 
 	MakeContextCurrent();
 
-#if !_WIN32
-	if (glewInit() != GLEW_OK)
-	{
-		assert(0);
-	}
-#endif
-
 	g_width = width;
 	g_height = height;
 	

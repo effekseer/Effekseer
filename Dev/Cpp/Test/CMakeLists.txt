@@ -46,8 +46,6 @@ include_directories(
     ../EffekseerSoundAL/
     )
 
-link_directories(${PROJECT_SOURCE_DIR}/../lib/)
-
 set(common_lib)
 set(common_inc)
 
@@ -113,6 +111,8 @@ endif()
 
 add_executable(Test ${effekseer_test_src} )
 target_link_directories(Test PRIVATE ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES})
+
+if (MSVC)
 target_link_libraries(
     Test
     ${common_lib}
@@ -121,6 +121,16 @@ target_link_libraries(
     optimized glfw3
     optimized OpenSoundMixer
 )
+else()
+target_link_libraries(
+    Test
+    ${common_lib}
+    glfw3
+    OpenSoundMixer
+    png
+    z
+)
+endif()
 
 add_definitions(-D__EFFEKSEER_RENDERER_INTERNAL_LOADER__)
 

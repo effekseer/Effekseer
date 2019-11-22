@@ -109,7 +109,7 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path)
 	_wfopen_s(&filePtr, (const wchar_t*)path, L"rb");
 #else
 	int8_t path8[256];
-	ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
+	Effekseer::ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
 	filePtr = fopen((const char*)path8, "rb");
 #endif
 
