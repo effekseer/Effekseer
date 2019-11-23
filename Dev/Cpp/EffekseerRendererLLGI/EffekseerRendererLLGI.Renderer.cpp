@@ -97,11 +97,11 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 
 	if (isReversedDepth_)
 	{
-		piplineState->DepthFunc = LLGI::DepthFuncType::Greater;
+		piplineState->DepthFunc = LLGI::DepthFuncType::GreaterEqual;
 	}
 	else
 	{
-		piplineState->DepthFunc = LLGI::DepthFuncType::Less;
+		piplineState->DepthFunc = LLGI::DepthFuncType::LessEqual;
 	}
 
 	piplineState->SetShader(LLGI::ShaderStageType::Vertex, currentShader->GetVertexShader());
