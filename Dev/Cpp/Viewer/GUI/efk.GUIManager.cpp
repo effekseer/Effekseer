@@ -1810,6 +1810,11 @@ namespace efk
 		return (MouseCursor)ImGui::GetMouseCursor();
 	}
 
+	float GUIManager::GetHoveredIDTimer() 
+	{ 
+		return ImGui::GetCurrentContext()->HoveredIdTimer;
+	}
+
 	void GUIManager::DrawLineBackground(float height, uint32_t col)
 	{
 		ImGuiWindow* window = ImGui::GetCurrentWindow();

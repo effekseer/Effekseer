@@ -141,6 +141,8 @@ Save,Save
 StorageTarget,Setting save destination
 StorageGlobal,Effekseer Application
 StorageLocal,Effekseer Project
+Panel_Copy_Desc,It copies parameters by panels.
+Panel_Paste_Desc,It pastes parameters by panels.
 DynamicParameter_Name,Dynamic parameter
 DynamicParameter_Desc,
 DynamicInput,Input

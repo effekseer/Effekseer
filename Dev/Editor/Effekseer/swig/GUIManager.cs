@@ -1186,6 +1186,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public float GetHoveredIDTimer() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetHoveredIDTimer(swigCPtr);
+    return ret;
+  }
+
   public void DrawLineBackground(float height, uint col) {
     EffekseerNativePINVOKE.GUIManager_DrawLineBackground(swigCPtr, height, col);
   }

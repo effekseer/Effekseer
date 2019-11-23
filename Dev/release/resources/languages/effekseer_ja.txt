@@ -141,6 +141,8 @@ Save,保存
 StorageTarget,設定保存先
 StorageGlobal,Effekseerアプリケーション
 StorageLocal,プロジェクト
+Panel_Copy_Desc,パネル単位でパラメーターをコピーします。
+Panel_Paste_Desc,パネル単位でパラメーターを貼り付けます。
 DynamicParameter_Name,動的パラメーター
 DynamicParameter_Desc,
 DynamicInput,入力

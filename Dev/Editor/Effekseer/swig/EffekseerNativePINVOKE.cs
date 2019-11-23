@@ -1593,6 +1593,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetMouseCursor___")]
   public static extern int GUIManager_GetMouseCursor(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_GetHoveredIDTimer___")]
+  public static extern float GUIManager_GetHoveredIDTimer(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_DrawLineBackground___")]
   public static extern void GUIManager_DrawLineBackground(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, uint jarg3);
 

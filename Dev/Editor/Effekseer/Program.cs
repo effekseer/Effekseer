@@ -306,6 +306,9 @@ namespace Effekseer
 			Step = LoadAppResource(native, "resources/Step.png");
 			BackStep = LoadAppResource(native, "resources/BackStep.png");
 
+			Icons["Copy"] = LoadAppResource(native, "resources/icons/Copy.png");
+			Icons["Paste"] = LoadAppResource(native, "resources/icons/Paste.png");
+
 			Icons["AppIcon"] = LoadAppResource(native, "resources/icon.png");
 			Icons["NodeEmpty"] = LoadAppResource(native, "resources/icons/NodeType_Empty.png");
 			Icons["NodeModel"] = LoadAppResource(native, "resources/icons/NodeType_Model.png");

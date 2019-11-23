@@ -531,6 +531,9 @@ namespace efk
 		bool IsAnyWindowHovered();
 		MouseCursor GetMouseCursor();
 
+		// Context
+		float GetHoveredIDTimer();
+
 		// Design
 		void DrawLineBackground(float height, uint32_t col);
 

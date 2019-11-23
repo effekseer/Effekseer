@@ -7262,6 +7262,18 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetMouseCursor___(vo
 }
 
 
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetHoveredIDTimer___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetHoveredIDTimer();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_DrawLineBackground___(void * jarg1, float jarg2, unsigned int jarg3) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   float arg2 ;

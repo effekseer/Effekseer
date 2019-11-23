@@ -317,14 +317,7 @@ namespace Effekseer.GUI
 			// check files
 			if(!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf")))
 			{
-				if(Core.Option.GuiLanguage.Value == Language.Japanese)
-				{
-					throw new Exception("リソースファイルを更新してください。Script/setup.pyを呼ぶか、cmakeを使用し、ResourceDataをリビルドしてください。");
-				}
-				else
-				{
-					throw new Exception("Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.");
-				}
+				ErrorUtils.ThrowFileNotfound();
 			}
 
 			return true;
