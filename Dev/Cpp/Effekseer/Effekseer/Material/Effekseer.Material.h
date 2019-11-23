@@ -16,6 +16,9 @@ namespace Effekseer
 class Material
 {
 private:
+
+	static const int32_t customDataMinCount = 2;
+
 	struct Texture
 	{
 		std::string Name;

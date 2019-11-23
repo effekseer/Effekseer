@@ -286,6 +286,11 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 		{
 		}
 
+		if (material.GetHasRefraction() && st == 1)
+		{
+			pixelUniformSize += sizeof(float) * 16;
+		}
+
 		vertexUniformSize += material.GetUniformCount() * 4 * sizeof(float);
 		pixelUniformSize += material.GetUniformCount() * 4 * sizeof(float);
 

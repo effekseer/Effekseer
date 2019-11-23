@@ -416,8 +416,8 @@ public:
 				return;
 			}
 
-			if (material->TextureCount != materialParam->MaterialTextures.size() ||
-				material->UniformCount != materialParam->MaterialUniforms.size())
+			if (material != nullptr && (material->TextureCount != materialParam->MaterialTextures.size() ||
+				material->UniformCount != materialParam->MaterialUniforms.size()))
 			{
 				return;			
 			}
@@ -476,7 +476,7 @@ public:
 		renderer->BeginShader(shader_);
 
 		// Select texture
-		if (materialParam != nullptr)
+		if (materialParam != nullptr && material != nullptr)
 		{
 			if (materialParam->MaterialTextures.size() > 0)
 			{
@@ -589,7 +589,8 @@ public:
 
 		std::array<float, 4> uvInversed;
 		std::array<float, 4> uvInversedBack;
-
+		std::array<float, 4> uvInversedMaterial;
+		
 		if (renderer->GetTextureUVStyle() == UVStyle::VerticalFlipped)
 		{
 			uvInversed[0] = 1.0f;
@@ -612,6 +613,11 @@ public:
 			uvInversedBack[1] = 1.0f;
 		}
 
+		uvInversedMaterial[0] = uvInversed[0];
+		uvInversedMaterial[1] = uvInversed[1];
+		uvInversedMaterial[2] = uvInversedBack[0];
+		uvInversedMaterial[3] = uvInversedBack[1];
+
 		ModelRendererVertexConstantBuffer<InstanceCount>* vcb =
 			(ModelRendererVertexConstantBuffer<InstanceCount>*)shader_->GetVertexConstantBuffer();
 
@@ -628,7 +634,7 @@ public:
 			// vs
 			int32_t vsOffset = sizeof(Effekseer::Matrix44) + (sizeof(Effekseer::Matrix44) + sizeof(float) * 4 * 2) * InstanceCount;
 
-			renderer->SetVertexBufferToShader(uvInversed.data(), sizeof(float) * 4, vsOffset);
+			renderer->SetVertexBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
 
 			renderer->SetVertexBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, vsOffset);
@@ -656,7 +662,7 @@ public:
 
 			// ps
 			int32_t psOffset = 0;
-			renderer->SetPixelBufferToShader(uvInversedBack.data(), sizeof(float) * 4, psOffset);
+			renderer->SetPixelBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
 			renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, psOffset);

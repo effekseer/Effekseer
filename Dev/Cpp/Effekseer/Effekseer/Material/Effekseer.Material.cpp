@@ -201,11 +201,25 @@ int32_t Material::GetUniformCount() const { return static_cast<int32_t>(uniforms
 
 void Material::SetUniformCount(int32_t count) { uniforms_.resize(count); }
 
-int32_t Material::GetCustomData1Count() const { return customData1Count_; }
+int32_t Material::GetCustomData1Count() const
+{
+	if (customData1Count_ == 0)
+		return 0;
+
+	// because opengl doesn't support swizzle with float
+	return std::max(customDataMinCount, customData1Count_);
+}
 
 void Material::SetCustomData1Count(int32_t count) { customData1Count_ = count; }
 
-int32_t Material::GetCustomData2Count() const { return customData2Count_; }
+int32_t Material::GetCustomData2Count() const
+{
+	if (customData2Count_ == 0)
+		return 0;
+
+	// because opengl doesn't support swizzle with float
+	return std::max(customDataMinCount, customData2Count_);
+}
 
 void Material::SetCustomData2Count(int32_t count) { customData2Count_ = count; }
 

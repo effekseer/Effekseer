@@ -162,14 +162,14 @@ namespace EffekseerRendererGL
 
 		shader->SetPixelConstantBufferSize(psOffset);
 
-		int32_t lastIndex = 0;
+		int32_t lastIndex = -1;
 		for (int32_t ti = 0; ti < material.GetTextureCount(); ti++)
 		{
 			shader->SetTextureSlot(material.GetTextureIndex(ti), shader->GetUniformId(material.GetTextureName(ti)));
 			lastIndex = Effekseer::Max(lastIndex, material.GetTextureIndex(ti));
 		}
 
-		lastIndex++;
+		lastIndex += 1;
 		shader->SetTextureSlot(lastIndex, shader->GetUniformId("background"));
 
 		materialData->TextureCount = material.GetTextureCount();
@@ -301,14 +301,14 @@ namespace EffekseerRendererGL
 
 		shader->SetPixelConstantBufferSize(psOffset);
 
-		int32_t lastIndex = 0;
+		int32_t lastIndex = -1;
 		for (int32_t ti = 0; ti < material.GetTextureCount(); ti++)
 		{
 			shader->SetTextureSlot(material.GetTextureIndex(ti), shader->GetUniformId(material.GetTextureName(ti)));
 			lastIndex = Effekseer::Max(lastIndex, material.GetTextureIndex(ti));
 		}
 
-		lastIndex++;
+		lastIndex += 1;
 		shader->SetTextureSlot(lastIndex, shader->GetUniformId("background"));
 
 		if (st == 0)

@@ -30,7 +30,8 @@ namespace EffekseerRendererDX11
 		rsDesc.CullMode = cullTbl[ct];
 		rsDesc.FillMode = D3D11_FILL_SOLID; 
 		rsDesc.DepthClipEnable = TRUE;
-		rsDesc.FrontCounterClockwise = depthFunc == D3D11_COMPARISON_GREATER_EQUAL ? TRUE : FALSE;
+		rsDesc.FrontCounterClockwise =
+			(depthFunc == D3D11_COMPARISON_GREATER_EQUAL || depthFunc == D3D11_COMPARISON_GREATER) ? TRUE : FALSE;
 		m_renderer->GetDevice()->CreateRasterizerState( &rsDesc, &m_rStates[ct] );
 	}
 
