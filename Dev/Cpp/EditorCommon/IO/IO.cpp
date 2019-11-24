@@ -33,8 +33,11 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 	auto file = std::make_shared<StaticFile>(reader);
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
-	changedFileInfos.erase(info);
-	notifiedFileInfos.erase(info);
+	{
+		std::lock_guard<std::mutex> lock(mtx_);
+		changedFileInfos_.erase(info);
+		notifiedFileInfos_.erase(info);
+	}
 
 	auto time = std::filesystem::last_write_time(path).time_since_epoch().count();
 	fileUpdateDates_[info] = time;
@@ -51,8 +54,11 @@ std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 	auto file = std::make_shared<StaticFile>(reader);
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
-	changedFileInfos.erase(info);
-	notifiedFileInfos.erase(info);
+	{
+		std::lock_guard<std::mutex> lock(mtx_);
+		changedFileInfos_.erase(info);
+		notifiedFileInfos_.erase(info);
+	}
 
 	auto time = 0; // TODO:Get IPC file's last write time.
 	fileUpdateDates_[info] = time;
@@ -69,13 +75,14 @@ bool IO::GetIsExistLatestFile(std::shared_ptr<StaticFile> staticFile)
 
 void IO::Update()
 {
-	for (auto& i : changedFileInfos)
+	std::lock_guard<std::mutex> lock(mtx_);
+	for (auto& i : changedFileInfos_)
 	{
 		OnFileChanged(i.fileType_, i.path_);
-		notifiedFileInfos.insert(i);
+		notifiedFileInfos_.insert(i);
 	}
 
-	changedFileInfos.clear();
+	changedFileInfos_.clear();
 }
 
 int IO::GetFileLastWriteTime(const FileInfo& fileInfo)
@@ -100,9 +107,14 @@ void IO::CheckFile(int interval)
 		for (auto& i : fileUpdateDates_)
 		{
 			auto time = GetFileLastWriteTime(i.first);
-			if (time > fileUpdateDates_[i.first] && changedFileInfos.count(i.first) > 0 && notifiedFileInfos.count(i.first) > 0)
-				changedFileInfos.insert(i.first);
+			if (time > fileUpdateDates_[i.first] && changedFileInfos_.count(i.first) > 0 && notifiedFileInfos_.count(i.first) > 0)
+			{
+				std::lock_guard<std::mutex> lock(mtx_);
+				changedFileInfos_.insert(i.first);
+			}
 		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(interval));
 	}
 }
 

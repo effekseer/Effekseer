@@ -7,6 +7,7 @@
 #include <memory>
 #include <thread>
 #include <set>
+#include <mutex>
 
 namespace Effekseer
 {
@@ -31,8 +32,9 @@ private:
 	std::thread checkFileThread;
 	bool isFinishCheckFile_ = false;
 	
-	std::set<FileInfo> changedFileInfos;
-	std::set<FileInfo> notifiedFileInfos;
+	std::set<FileInfo> changedFileInfos_;
+	std::set<FileInfo> notifiedFileInfos_;
+	std::mutex mtx_;
 
 public:
 	IO(int checkFileInterval = 0);
