@@ -1,4 +1,5 @@
 #include "DefaultFileReader.h"
+#include "../Common/StringHelper.h"
 #include <cassert>
 
 namespace Effekseer
