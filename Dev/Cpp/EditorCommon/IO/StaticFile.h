@@ -19,6 +19,8 @@ public:
 
 	void* GetData();
 	int GetSize();
+	std::u16string GetPath();
+	FileType GetFileType();
 };
 
 } // namespace Effekseer

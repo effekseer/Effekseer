@@ -18,6 +18,8 @@ public:
 
 	int64_t GetSize() override;
 	void GetData(std::vector<uint8_t>& buffer) override;
+
+	FileType GetFileType() override { return FileType::IPC; }
 };
 
 } // namespace Effekseer

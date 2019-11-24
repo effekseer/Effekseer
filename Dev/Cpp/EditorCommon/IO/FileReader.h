@@ -5,6 +5,12 @@
 
 namespace Effekseer
 {
+enum class FileType
+{
+	Default,
+	IPC,
+};
+
 class FileReader
 {
 protected:
@@ -19,6 +25,8 @@ public:
 
 	virtual int64_t GetSize() = 0;
 	virtual void GetData(std::vector<uint8_t>& buffer) = 0;
+
+	virtual FileType GetFileType() = 0;
 };
 
 } // namespace Effekseer
