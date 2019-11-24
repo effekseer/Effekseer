@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public enum FCurveTimelineType : int
+	public enum FCurveTimelineMode : int
 	{
 		[Name(language = Language.Japanese, value = "時間(フレーム)")]
 		[Name(language = Language.English, value = "Time(Frame)")]
@@ -108,7 +108,7 @@ namespace Effekseer.Data.Value
 			OffsetMax = new Float();
 			OffsetMin = new Float();
 
-			Sampling = new Int(5, int.MaxValue, 1, 1);
+			Sampling = new Int(10, int.MaxValue, 1, 1);
 		}
 
 		public void SetKeys(FCurveKey<T>[] keys)

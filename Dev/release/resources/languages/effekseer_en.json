@@ -124,6 +124,8 @@
     "EnlargeAnchor_Desc": "To make the value change smoothly,\\nextend the anchor",
     "ShrinkAnchor": "Shrink anchor",
     "ShrinkAnchor_Desc": "To make the value change suddenly\\nmove the anchor to the position of the key",
+    "FCurve_TimelineMode_Name": "Timeline Mode",
+    "FCurve_TimelineMode_Desc": "It specifies whether the timeline is set for real time or as a percentage of particle lifetime.",
     "FCurve_Copy_Desc": "It copies key points.",
     "FCurve_Paste_Desc": "It pastes key points.",
     "AutoZoom": "AutoZoom",

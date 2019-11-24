@@ -131,6 +131,8 @@ ShrinkAnchor_Desc,"To make the value change suddenly
 move the anchor to the position of the key","値が急に変化するように
 アンカーをキーの位置に移動させる"
 ,,
+FCurve_TimelineMode_Name,Timeline Mode,タイムラインの種類
+FCurve_TimelineMode_Desc,It specifies whether the timeline is set for real time or as a percentage of particle lifetime.,タイムラインを実時間に対して設定するか、パーティクルの生存時間に対する割合で設定するか指定します。
 FCurve_Copy_Desc,It copies key points.,キーポイントをコピーします。
 FCurve_Paste_Desc,It pastes key points.,キーポイントを貼り付けます。
 ,,

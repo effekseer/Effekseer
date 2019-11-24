@@ -42,6 +42,8 @@ namespace Effekseer.GUI.Dock
 		string left_text = Resources.GetString("Left");
 		string right_text = Resources.GetString("Right");
 		string offset_text = Resources.GetString("Offset");
+		string timelineMode_Name = Resources.GetString("FCurve_TimelineMode_Name");
+		string timelineMode_Desc = Resources.GetString("FCurve_TimelineMode_Desc");
 		string offset_min_text = Resources.GetString("Min");
 		string offset_max_text = Resources.GetString("Max");
 
@@ -79,16 +81,16 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfterLoad;
 
 			startCurve.Initialize(typeof(Data.Value.FCurveEdge));
-			startCurve.Label = start_text + "##Start";
+			startCurve.InternalLabel = start_text + "##Start";
 
 			endCurve.Initialize(typeof(Data.Value.FCurveEdge));
-			endCurve.Label = end_text + "##End";
+			endCurve.InternalLabel = end_text + "##End";
 
 			type.Initialize(typeof(Data.Value.FCurveInterpolation));
-			type.Label = type_text + "##Type";
+			type.InternalLabel = type_text + "##Type";
 
-			timeline.Initialize(typeof(Data.Value.FCurveTimelineType));
-			timeline.Label = type_text + "##Timeline";
+			timeline.Initialize(typeof(Data.Value.FCurveTimelineMode));
+			timeline.InternalLabel = timelineMode_Name + "##Timeline";
 
 			OnChanged();
 
@@ -330,7 +332,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// line3
-			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.Columns(3);
 
 			var fcurveGroups = flattenFcurves.Where(_ => _.Properties.Any(__=>__.IsShown)).ToArray();
 
@@ -342,8 +344,13 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText("Timeline" + "##Timeline", invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(timelineMode_Name + "##Timeline", invalidValue, swig.InputTextFlags.ReadOnly);
 				timeline.SetBinding(null);
+			}
+
+			if(Component.Functions.CanShowTip())
+			{
+				Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_TimelineMode_Desc"));
 			}
 
 			// line4
@@ -1363,7 +1370,7 @@ namespace Effekseer.GUI.Dock
 			Data.Value.IFCurve[] fcurves = null;
 			int[] ids = new int[3];
 			string[] names = null;
-			Data.Value.Enum<FCurveTimelineType> timelineType = null;
+			Data.Value.Enum<FCurveTimelineMode> timelineType = null;
 
 			FCurves window = null;
 			IFCurveConverter converter = null;
@@ -1373,7 +1380,7 @@ namespace Effekseer.GUI.Dock
 
 			public object Value { get; private set; }
 
-			public FCurve(int length, IFCurve[] fcurves, uint[] colors, string[] names, float defaultValue, object value, string name, FCurves window, IFCurveConverter converter, float v_min, float v_max, Data.Value.Enum<FCurveTimelineType> timelineType)
+			public FCurve(int length, IFCurve[] fcurves, uint[] colors, string[] names, float defaultValue, object value, string name, FCurves window, IFCurveConverter converter, float v_min, float v_max, Data.Value.Enum<FCurveTimelineMode> timelineType)
 			{
 				ID = nextID;
 				nextID++;
@@ -1896,7 +1903,7 @@ namespace Effekseer.GUI.Dock
 				return false;
 			}
 
-			public Enum<FCurveTimelineType> GetTimeLineType()
+			public Enum<FCurveTimelineMode> GetTimeLineType()
 			{
 				return timelineType;
 			}

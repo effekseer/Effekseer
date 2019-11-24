@@ -7,13 +7,13 @@ namespace Effekseer.Data.Value
 {
 	public class FCurveVector2D
 	{
-		public Value.Enum<FCurveTimelineType> Timeline = new Enum<FCurveTimelineType>();
+		public Value.Enum<FCurveTimelineMode> Timeline = new Enum<FCurveTimelineMode>();
 		public FCurve<float> X { get; private set; }
 		public FCurve<float> Y { get; private set; }
 
 		public FCurveVector2D()
 		{
-			Timeline = new Enum<FCurveTimelineType>();
+			Timeline = new Enum<FCurveTimelineMode>(FCurveTimelineMode.Percent);
 			X = new FCurve<float>(0);
 			Y = new FCurve<float>(0);
 		}

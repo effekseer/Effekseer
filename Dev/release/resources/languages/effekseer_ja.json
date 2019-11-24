@@ -124,6 +124,8 @@
     "EnlargeAnchor_Desc": "値が滑らかに変化するように\\nアンカーを広げる",
     "ShrinkAnchor": "アンカーの縮退",
     "ShrinkAnchor_Desc": "値が急に変化するように\\nアンカーをキーの位置に移動させる",
+    "FCurve_TimelineMode_Name": "タイムラインの種類",
+    "FCurve_TimelineMode_Desc": "タイムラインを実時間に対して設定するか、パーティクルの生存時間に対する割合で設定するか指定します。",
     "FCurve_Copy_Desc": "キーポイントをコピーします。",
     "FCurve_Paste_Desc": "キーポイントを貼り付けます。",
     "AutoZoom": "自動ズーム",

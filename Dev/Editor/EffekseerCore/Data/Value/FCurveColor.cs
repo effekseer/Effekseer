@@ -7,7 +7,7 @@ namespace Effekseer.Data.Value
 {
 	public class FCurveColorRGBA
 	{
-		public Value.Enum<FCurveTimelineType> Timeline = new Enum<FCurveTimelineType>();
+		public Value.Enum<FCurveTimelineMode> Timeline = new Enum<FCurveTimelineMode>();
 		public FCurve<int> R { get; private set; }
 		public FCurve<int> G { get; private set; }
 		public FCurve<int> B { get; private set; }
@@ -15,7 +15,7 @@ namespace Effekseer.Data.Value
 
 		public FCurveColorRGBA()
 		{
-			Timeline = new Enum<FCurveTimelineType>();
+			Timeline = new Enum<FCurveTimelineMode>(FCurveTimelineMode.Percent);
 			R = new FCurve<int>(255);
 			G = new FCurve<int>(255);
 			B = new FCurve<int>(255);
