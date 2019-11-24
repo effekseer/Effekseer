@@ -2,7 +2,6 @@
 
 #include "../IPC/IPC.h"
 #include "StaticFile.h"
-#include <filesystem>
 #include <map>
 #include <memory>
 #include <thread>
