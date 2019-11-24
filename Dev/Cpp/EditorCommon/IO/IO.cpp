@@ -5,13 +5,24 @@
 
 namespace Effekseer
 {
-IO::IO(bool isEnableAutoUpdate)
+IO::IO(int checkFileInterval)
 {
 	ipcStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
 	ipcStorage_->Start("EffekseerStorage");
+
+	if (checkFileInterval > 0)
+	{
+		checkFileThread = std::thread([&] { CheckFile(checkFileInterval); });
+	}
 }
 
-IO::~IO() { ipcStorage_->Stop(); }
+IO::~IO()
+{
+	ipcStorage_->Stop();
+	if (checkFileThread.joinable())
+		isFinishCheckFile_ = true;
+	checkFileThread.join();
+}
 
 std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 {
@@ -21,8 +32,12 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 	std::shared_ptr<FileReader> reader = std::make_shared<DefaultFileReader>(path);
 	auto file = std::make_shared<StaticFile>(reader);
 
+	auto info = FileInfo(file->GetFileType(), file->GetPath());
+	changedFileInfos.erase(info);
+	notifiedFileInfos.erase(info);
+
 	auto time = std::filesystem::last_write_time(path).time_since_epoch().count();
-	fileUpdateDates_[FileInfo(file->GetFileType(), file->GetPath())] = time;
+	fileUpdateDates_[info] = time;
 
 	return file;
 }
@@ -35,28 +50,60 @@ std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 	std::shared_ptr<FileReader> reader = std::make_shared<IPCFileReader>(path, GetIPCStorage());
 	auto file = std::make_shared<StaticFile>(reader);
 
+	auto info = FileInfo(file->GetFileType(), file->GetPath());
+	changedFileInfos.erase(info);
+	notifiedFileInfos.erase(info);
+
 	auto time = 0; // TODO:Get IPC file's last write time.
-	fileUpdateDates_[FileInfo(file->GetFileType(), file->GetPath())] = time;
+	fileUpdateDates_[info] = time;
 
 	return file;
 }
 
 bool IO::GetIsExistLatestFile(std::shared_ptr<StaticFile> staticFile)
 {
-	int time;
-	switch (staticFile->GetFileType())
+	auto info = FileInfo(staticFile->GetFileType(), staticFile->GetPath());
+	auto time = GetFileLastWriteTime(info);
+	return time > fileUpdateDates_[info];
+}
+
+void IO::Update()
+{
+	for (auto& i : changedFileInfos)
+	{
+		OnFileChanged(i.fileType_, i.path_);
+		notifiedFileInfos.insert(i);
+	}
+
+	changedFileInfos.clear();
+}
+
+int IO::GetFileLastWriteTime(const FileInfo& fileInfo)
+{
+	int time = 0;
+	switch (fileInfo.fileType_)
 	{
 	case FileType::Default:
-		time = std::filesystem::last_write_time(staticFile->GetPath()).time_since_epoch().count();
+		time = std::filesystem::last_write_time(fileInfo.path_).time_since_epoch().count();
 		break;
 	case FileType::IPC:
 		// TODO:Get IPC file's last write time.
 		break;
-	default:
-		return nullptr;
 	}
+	return time;
+}
 
-	return time > fileUpdateDates_[FileInfo(staticFile->GetFileType(), staticFile->GetPath())];
+void IO::CheckFile(int interval)
+{
+	while (!isFinishCheckFile_)
+	{
+		for (auto& i : fileUpdateDates_)
+		{
+			auto time = GetFileLastWriteTime(i.first);
+			if (time > fileUpdateDates_[i.first] && changedFileInfos.count(i.first) > 0 && notifiedFileInfos.count(i.first) > 0)
+				changedFileInfos.insert(i.first);
+		}
+	}
 }
 
 } // namespace Effekseer
