@@ -207,7 +207,7 @@ int32_t Material::GetCustomData1Count() const
 		return 0;
 
 	// because opengl doesn't support swizzle with float
-	return std::max(customDataMinCount, customData1Count_);
+	return std::max(customDataMinCount_, customData1Count_);
 }
 
 void Material::SetCustomData1Count(int32_t count) { customData1Count_ = count; }
@@ -218,7 +218,7 @@ int32_t Material::GetCustomData2Count() const
 		return 0;
 
 	// because opengl doesn't support swizzle with float
-	return std::max(customDataMinCount, customData2Count_);
+	return std::max(customDataMinCount_, customData2Count_);
 }
 
 void Material::SetCustomData2Count(int32_t count) { customData2Count_ = count; }

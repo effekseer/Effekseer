@@ -24,8 +24,8 @@ namespace efk
 		virtual ~RenderTextureGL();
 		bool Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample = 1);
 
-		int32_t GetWidth() { return width; }
-		int32_t GetHeight() { return height; }
+		int32_t GetWidth() override { return width; }
+		int32_t GetHeight() override { return height; }
 		bool IsMultisample() { return multisample > 1; }
 		GLuint GetTexture() { return texture; }
 		GLuint GetBuffer() { return renderbuffer; }

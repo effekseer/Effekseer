@@ -26,8 +26,8 @@ namespace efk
 		virtual ~RenderTextureDX11();
 		bool Initialize(int32_t width, int32_t height, TextureFormat format, uint32_t multisample = 1);
 
-		int32_t GetWidth() { return width; }
-		int32_t GetHeight() { return height; }
+		int32_t GetWidth() override { return width; }
+		int32_t GetHeight() override { return height; }
 
 		ID3D11Texture2D* GetTexture() const { return texture; }
 

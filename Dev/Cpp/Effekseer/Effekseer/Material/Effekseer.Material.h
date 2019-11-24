@@ -17,7 +17,7 @@ class Material
 {
 private:
 
-	static const int32_t customDataMinCount = 2;
+	const int32_t customDataMinCount_ = 2;
 
 	struct Texture
 	{
