@@ -16,13 +16,11 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
 #include "Shader/Vulkan/standard.vert.spv.inl"
     };
     shader->StandardTexture_VS = { { standard_vert.data(), (int32_t)standard_vert.size() } };
-    //shader->Standard_VS = { { standard_vert.data(), standard_vert.size() } };
 
     static const std::vector<uint8_t> standard_distorted_vert = {
 #include "Shader/Vulkan/standard_distortion.vert.spv.inl"
     };
     shader->StandardDistortedTexture_VS = { { standard_distorted_vert.data(), (int32_t)standard_distorted_vert.size() } };
-    //shader->StandardDistorted_VS = { { standard_distorted_vert.data(), standard_distorted_vert.size() } };
 
     static const std::vector<uint8_t> standard_frag = {
 #include "Shader/Vulkan/standard.frag.spv.inl"
@@ -32,7 +30,6 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
     static const std::vector<uint8_t> standard_no_texture_frag = {
 #include "Shader/Vulkan/standard_no_texture.frag.spv.inl"
     };
-    //shader->Standard_PS = { { standard_no_texture_frag.data(), standard_no_texture_frag.size() } };
 
     static const std::vector<uint8_t> standard_distortion_frag = {
 #include "Shader/Vulkan/standard_distortion.frag.spv.inl"
@@ -42,13 +39,37 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
     static const std::vector<uint8_t> standard_distortion_no_texture_frag = {
 #include "Shader/Vulkan/standard_distortion_no_texture.frag.spv.inl"
     };
-    //shader->StandardDistorted_PS = { { standard_distortion_no_texture_frag.data(), standard_distortion_no_texture_frag.size() } };
 }
 
-::EffekseerRenderer::Renderer* Create(int32_t squareMaxCount)
+::EffekseerRenderer::Renderer* Create(
+    VkPhysicalDevice physicalDevice,
+    VkDevice device,
+    VkQueue transfarQueue,
+    VkCommandPool transfarCommandPool, 
+    int32_t swapBufferCount,
+    int32_t squareMaxCount)
 {
-    throw "Not implemented.";
-	return nullptr;
+    LLGI::Graphics* graphics = new LLGI::GraphicsVulkan(
+        vk::Device(device),
+        vk::Queue(transfarQueue),
+        vk::CommandPool(transfarCommandPool),
+        vk::PhysicalDevice(physicalDevice),
+        swapBufferCount,
+        [](vk::CommandBuffer, vk::Fence) -> void {},
+        nullptr,
+        nullptr);
+
+    ::EffekseerRendererLLGI::RendererImplemented* renderer = new ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount);
+    CreateFixedShaderForVulkan(&renderer->fixedShader_);
+    if (!renderer->Initialize(graphics, nullptr, false)) {
+        ES_SAFE_RELEASE(renderer);
+        ES_SAFE_RELEASE(graphics);
+        return nullptr;
+    }
+
+    ES_SAFE_RELEASE(graphics);
+
+	return renderer;
 }
 
 Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, VkImage texture)
