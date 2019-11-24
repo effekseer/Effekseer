@@ -374,16 +374,26 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("Copy"))
+				if (Manager.NativeManager.ImageButton(Images.Icons["Copy"], 24, 24))
 				{
 					Copy();
 				}
 
+				if (Component.Functions.CanShowTip())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Copy_Desc"));
+				}
+
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("Paste"))
+				if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], 24, 24))
 				{
 					Paste();
+				}
+
+				if (Component.Functions.CanShowTip())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Paste_Desc"));
 				}
 			}
 
@@ -492,7 +502,13 @@ namespace Effekseer.GUI.Dock
 
 			//Manager.NativeManager.SameLine();
 
-			Manager.NativeManager.Text(Resources.GetString("FCurveCtrl_Desc"));
+			Manager.NativeManager.Text(Resources.GetString("FCurve_Operation_Instruction_Desc"));
+
+			// if (Component.Functions.CanShowTip())
+			if(Manager.NativeManager.IsItemHovered())
+			{
+				Manager.NativeManager.SetTooltip(Resources.GetString("FCurveCtrl_Desc"));
+			}
 
 			isFirstUpdate = false;
 		}

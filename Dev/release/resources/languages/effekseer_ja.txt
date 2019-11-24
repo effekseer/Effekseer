@@ -122,9 +122,12 @@ EnlargeAnchor,アンカーの展開
 EnlargeAnchor_Desc,値が滑らかに変化するように\nアンカーを広げる
 ShrinkAnchor,アンカーの縮退
 ShrinkAnchor_Desc,値が急に変化するように\nアンカーをキーの位置に移動させる
+FCurve_Copy_Desc,キーポイントをコピーします。
+FCurve_Paste_Desc,キーポイントを貼り付けます。
 AutoZoom,自動ズーム
 AutoZoom_Desc,自動的にグラフの高さを調節する
-FCurveCtrl_Desc,ダブルクリック-点の追加,削除, Alt+ホイール-横方向拡大, Ctrl+ホイール-縦方向拡大
+FCurve_Operation_Instruction_Desc,操作説明 (マウスオーバー)
+FCurveCtrl_Desc,ダブルクリック-点の追加、削除\nAlt+ホイール - 横方向拡大\nCtrl+ホイール - 縦方向拡大\nAlt+左クリック - 複数選択と編集\nShift+左クリック - 選択切り替え\nラベルのダブルクリック - 表示範囲自動変更
 ImageFilter_,画像ファイル (*.png)|*.png
 ModelFilter_,モデルファイル (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
 SoundFilter_,音声ファイル (*.wav)|*.wav

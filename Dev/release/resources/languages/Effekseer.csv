@@ -131,9 +131,23 @@ ShrinkAnchor_Desc,"To make the value change suddenly
 move the anchor to the position of the key","値が急に変化するように
 アンカーをキーの位置に移動させる"
 ,,
+FCurve_Copy_Desc,It copies key points.,キーポイントをコピーします。
+FCurve_Paste_Desc,It pastes key points.,キーポイントを貼り付けます。
+,,
 AutoZoom,AutoZoom,自動ズーム
 AutoZoom_Desc,Adjust graph's height automatically,自動的にグラフの高さを調節する
-FCurveCtrl_Desc,"Double click - Add,Remove points, Alt+Wheel - Zoom horizontal, Ctrl+Wheel Zoom vertical","ダブルクリック-点の追加,削除, Alt+ホイール-横方向拡大, Ctrl+ホイール-縦方向拡大"
+FCurve_Operation_Instruction_Desc,Operating Instructions(Mouse Over),操作説明 (マウスオーバー)
+FCurveCtrl_Desc,"- Double click - Add, Remove points
+Alt+Wheel - Zoom horizontal
+Ctrl+Wheel - Zoom vertical
+Alt+LeftClick - Select multiple points and edit
+Shift+LeftClick - Switch selecting points
+Double click with labels - Change viewing area automatically","ダブルクリック-点の追加、削除
+Alt+ホイール - 横方向拡大
+Ctrl+ホイール - 縦方向拡大
+Alt+左クリック - 複数選択と編集
+Shift+左クリック - 選択切り替え
+ラベルのダブルクリック - 表示範囲自動変更"
 ,,
 ImageFilter_,Image File (*.png)|*.png,画像ファイル (*.png)|*.png
 ModelFilter_,"Model File (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo","モデルファイル (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo"
