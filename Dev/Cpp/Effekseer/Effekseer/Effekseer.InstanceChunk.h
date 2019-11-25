@@ -25,6 +25,8 @@ public:
 
 	void UpdateInstances(float deltaFrame);
 
+	void UpdateInstancesByInstanceGlobal(InstanceGlobal* global, float deltaFrame);
+
 	Instance* CreateInstance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 
 	int32_t GetAliveCount() const { return aliveCount_; }

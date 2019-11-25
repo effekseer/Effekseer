@@ -1433,19 +1433,55 @@ void ManagerImplemented::Flip()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::Update( float deltaFrame )
 {
-	BeginUpdate();
-
 	// start to measure time
 	int64_t beginTime = ::Effekseer::GetTime();
 
-	std::fill(creatableChunkOffsets_.begin(), creatableChunkOffsets_.end(), 0);
+	BeginUpdate();
+
 	for (auto& chunks : instanceChunks_)
 	{
 		for (auto chunk : chunks)
 		{
 			chunk->UpdateInstances(deltaFrame);
 		}
+	}
 
+	for (auto& drawSet : m_DrawSets)
+	{
+		UpdateHandle(drawSet.second, deltaFrame);
+	}
+
+	EndUpdate();
+
+	// end to measure time
+	m_updateTime = (int)(Effekseer::GetTime() - beginTime);
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void ManagerImplemented::BeginUpdate()
+{
+	m_renderingMutex.lock();
+	m_isLockedWithRenderingMutex = true;
+
+	if( m_autoFlip )
+	{
+		Flip();
+	}
+
+	m_sequenceNumber++;
+
+	std::fill(creatableChunkOffsets_.begin(), creatableChunkOffsets_.end(), 0);
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+void ManagerImplemented::EndUpdate()
+{
+	for (auto& chunks : instanceChunks_)
+	{
 		auto first = chunks.begin();
 		auto last = chunks.end();
 		while (first != last)
@@ -1463,38 +1499,6 @@ void ManagerImplemented::Update( float deltaFrame )
 		chunks.erase(last, chunks.end());
 	}
 
-	for (auto& drawSet : m_DrawSets)
-	{
-		UpdateHandle(drawSet.second, deltaFrame);
-	}
-
-	// end to measure time
-	m_updateTime = (int)(Effekseer::GetTime() - beginTime);
-
-	EndUpdate();
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void ManagerImplemented::BeginUpdate()
-{
-	m_renderingMutex.lock();
-	m_isLockedWithRenderingMutex = true;
-
-	if( m_autoFlip )
-	{
-		Flip();
-	}
-
-	m_sequenceNumber++;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void ManagerImplemented::EndUpdate()
-{
 	m_renderingMutex.unlock();
 	m_isLockedWithRenderingMutex = false;
 }
@@ -1504,10 +1508,18 @@ void ManagerImplemented::EndUpdate()
 //----------------------------------------------------------------------------------
 void ManagerImplemented::UpdateHandle( Handle handle, float deltaFrame )
 {
-	std::map<Handle,DrawSet>::iterator it = m_DrawSets.find( handle );
+	auto it = m_DrawSets.find( handle );
 	if( it != m_DrawSets.end() )
 	{
 		DrawSet& drawSet = it->second;
+
+		for (auto& chunks : instanceChunks_)
+		{
+			for (auto chunk : chunks)
+			{
+				chunk->UpdateInstancesByInstanceGlobal(drawSet.GlobalPointer, deltaFrame);
+			}
+		}
 
 		UpdateHandle( drawSet, deltaFrame );
 	}
