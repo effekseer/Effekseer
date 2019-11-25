@@ -172,6 +172,8 @@ Environment_Lighting,ライティング
 Environment_PostEffect,ポストエフェクト
 Material_Create_Name,生成
 Material_Create_Desc,新しいマテリアルファイルを作成し、それをマテリアルエディタで開きます。
+Material_Edit_Name,編集
+Material_Edit_Desc,設定されているマテリアルをマテリアルエディタで編集します。
 Material_GenCache_Name,キャッシュ生成
 Material_GenCache_Desc,キャッシュを生成します。\n生成されたキャッシュをマテリアルファイルと同じディレクトリに配置すると読み込みが速くなります。\n一部のプラットフォームではキャッシュを使用しないとエフェクトを再生できません。\nWindowsでキャッシュを生成した後、キャッシュが存在する状態で\nMacでキャッシュを生成すると、WindowsでもMacでも使用できるキャッシュが生成されます。\n
 Material_NoneCache,キャッシュ - なし

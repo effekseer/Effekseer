@@ -207,6 +207,8 @@ Environment_PostEffect,PostEffect,ポストエフェクト
 ,,
 Material_Create_Name,Create,生成
 Material_Create_Desc,Create new material file and open it with the material editor,新しいマテリアルファイルを作成し、それをマテリアルエディタで開きます。
+Material_Edit_Name,Edit,編集
+Material_Edit_Desc,Edit spceified material file with the material editor,設定されているマテリアルをマテリアルエディタで編集します。
 Material_GenCache_Name,Gen. Cache,キャッシュ生成
 Material_GenCache_Desc,"It generates caches.
 If the generated cache is placed in the same directory as the material file, loading will be faster.

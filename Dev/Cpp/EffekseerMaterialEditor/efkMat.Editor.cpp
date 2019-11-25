@@ -1099,7 +1099,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 	auto updateProp = [&, node](ValueType type, std::string name, std::shared_ptr<EffekseerMaterial::NodeProperty> p) -> void {
 		auto floatValues = p->Floats;
 
-		auto nameStr = StringContainer::GetValue((name + "_Name").c_str());
+		auto nameStr = StringContainer::GetValue((name + "_Name").c_str(), name.c_str());
 
 		if (type == ValueType::Int)
 		{

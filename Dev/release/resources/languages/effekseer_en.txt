@@ -172,6 +172,8 @@ Environment_Lighting,Lighting
 Environment_PostEffect,PostEffect
 Material_Create_Name,Create
 Material_Create_Desc,Create new material file and open it with the material editor
+Material_Edit_Name,Edit
+Material_Edit_Desc,Edit spceified material file with the material editor
 Material_GenCache_Name,Gen. Cache
 Material_GenCache_Desc,It generates caches.\nIf the generated cache is placed in the same directory as the material file, loading will be faster.\nOn some platforms, effects cannot be played without using cache.\nA cache that can be used on both Windows and Mac is generated \nby generating the cache on Mac after generating the cache on Windows.
 Material_NoneCache,Cache - None

@@ -208,11 +208,11 @@ int main(int argc, char* argv[])
 
 	if (config->Language == Effekseer::SystemLanguage::Japanese)
 	{
-		fp = fopen("resources/efkmat_lang_ja.json", "rb");
+		fp = fopen("resources/languages/effekseer_material_ja.json", "rb");
 	}
 	else
 	{
-		fp = fopen("resources/efkmat_lang_en.json", "rb");
+		fp = fopen("resources/languages/effekseer_material_en.json", "rb");
 	}
 
 	if (fp != nullptr)
