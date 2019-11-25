@@ -1,0 +1,127 @@
+﻿key,en,ja
+File,File,ファイル
+New,New,新規
+Load,Load,読み込む
+SaveAs,SaveAs,名前を付けて保存
+Save,Save,上書き保存
+Search,Search,検索
+Ja,日本語,日本語
+En,English,English
+,,
+Description_Name,Description,説明
+Description_Desc,"These parameters are shown on other editors.
+Summary is shown as a label.
+Detail is shown when clicking or mouse is over  in almost cases.","これらのパラメーターは他のエディタで表示されます。
+概要はラベルとして表示されます。
+多くの場合、詳細はクリックしたりマウスが重なると表示されます。"
+Language_Name,Lang.,言語
+Summary_Name,Summary,概要
+Detail_Name,Detail,詳細
+,,
+,,
+,,
+Value_Name,V.,値
+Value1_Name,V.1,値1
+Value2_Name,V.2,値2
+Value3_Name,V.3,値3
+Value4_Name,V.4,値4
+ConstValue1_Name,V.1,値1
+ConstValue2_Name,V.2,値2
+Name_Name,Name,名称
+Output_Name,Out.,出力
+Comment_Name,Comment,コメント
+Priority_Name,Priority,優先度
+Priority_Desc,"The lower the priority, the higher the screen is shown in other editors.",低い優先度ほど、他のエディタの画面の上の位置に表示されます。
+Sampler_Name,Sampler,サンプラ
+Sampler_Desc,"Specify how to treat an out of image.
+Repeat - repeat from opposite side
+Clamp - maintain the color of edge","画像の外の扱い方を指定します。
+Repeat - 反対側の端から繰り返します。
+Clamp - 端の色を維持します。"
+UVIndex_Name,UV Index,UV番号
+,,
+ShadingModel_Name,ShadingModel,"シェーディング
+モデル"
+Lit_Name,Lit,ライティング
+Unlit_Name,Unlit,非ライティング
+Speed_Name,Speed,速度
+ConstSpeed_Name,ConstSpeed,速度
+,,
+Math_Name,Math,計算
+Add_Name,Add,足し算
+Subtract_Name,Subtract,引き算
+Multiply_Name,Multiply,掛け算
+Divide_Name,Divide,割り算
+Fmod_Name,Mod,余り
+,,
+Abs_Name,Abs,絶対値
+ComponentMask_Name,Mask,要素抽出
+AppendVector_Name,Append,要素結合
+OneMinus_Name,OneMinus,1-値
+Sine_Name,Sine,Sine
+Ceil_Name,Round up,切り上げ
+Floor_Name,Round down,切り捨て
+Clamp_Name,Clamp,クランプ
+Frac_Name,Decimal part,少数部
+Min_Name,Minimum,最小
+Max_Name,Maximum,最大
+Power_Name,Power,乗数
+SquareRoot_Name,SquareRoot,平方根
+DotProduct_Name,Dot,内積
+CrossProduct_Name,Cross,外積
+LinearInterpolate_Name,LinearInterpolate,線形補完
+,,
+Model_Name,Model,モデル
+TextureCoordinate_Name,UV,UV座標
+Panner_Name,MovingUV,移動UV座標
+VertexNormalWS_Name,VertexNormal,頂点法線
+PixelNormalWS_Name,PixelNormal,画素法線
+VertexTangentWS_Name,VertexTangent,頂点接線
+VertexColor_Name,VertexColor,頂点色
+,,
+Texture_Name,Image,画像
+SampleTexture_Name,Sample Image,画像参照
+TextureObjectParameter_Name,Parameter Image,パラメーター画像
+TextureObject_Name,Constant Image,固定画像
+,,
+Output_Name,Output,出力
+Comment_Name,Comment,コメント
+,,
+Constant_Name,Constant,定数
+Time_Name,Time,時間
+Constant1_Name,Constant1,定数1
+Constant2_Name,Constant2,定数2
+Constant3_Name,Constant3,定数3
+Constant4_Name,Constant4,定数4
+,,
+Parameter_Name,Param,パラメーター
+Parameter1_Name,Param1,パラメーター1
+Parameter4_Name,Param4,パラメーター4
+CustomData1_Name,CustomData1,カスタムデータ1
+CustomData2_Name,CustomData2,カスタムデータ2
+,,
+,,
+Error_SameNode,Error_SameNode,×　同じノードには接続できません。
+Error_SamePin,Error_SamePin,×　同じピンには接続できません。
+Error_SameDirection,Error_SameDirection,×　同じ方向には接続できません。
+Error_Loop,Error_Loop,×　ループが発生しています。
+Error_Type,Error_Type,×　型が異なります。
+Create_Link,Create_Link,接続します。
+Create_Node,Create_Node,ノードを作成します。
+,,
+,,
+,,
+,,
+,,
+,,
+,,
+Starting,Starting,開始
+Starting_New,Create new material,新規マテリアルを作成する
+Starting_Open,Open a material,マテリアルを開く
+,,
+Warning_WrongInputType,An input type is invalid,入力の型が無効です。
+Warning_WrongProperty,A propery is invalid,プロパティが無効です。
+Warning_DifferentSampler,"Different samplers are 
+assigned in a same image.","同じ画像に異なるサンプラが
+設定されています。"
+,,
