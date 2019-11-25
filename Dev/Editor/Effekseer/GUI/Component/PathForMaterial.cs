@@ -125,10 +125,15 @@ namespace Effekseer.GUI.Component
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("Edit", buttonSizeX))
+				if (Manager.NativeManager.Button(Resources.GetString("Material_Edit_Name") + id3, buttonSizeX))
 				{
 					Process.MaterialEditor.Run();
 					Process.MaterialEditor.OpenOrCreateMaterial(absoluteFilePath);
+				}
+
+				if (Functions.CanShowTip())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("Material_Edit_Desc"));
 				}
 
 				Manager.NativeManager.SameLine();
@@ -138,7 +143,7 @@ namespace Effekseer.GUI.Component
 					GenerateCompiledMaterial();
 				}
 
-				if (Manager.NativeManager.IsItemHovered())
+				if (Functions.CanShowTip())
 				{
 					ShowInformation();
 				}

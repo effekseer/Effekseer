@@ -26,11 +26,11 @@ for csv_file in csv_files:
 values_en['kv'] = kv_en
 values_ja['kv'] = kv_ja
 
-f_en = codecs.open('effekseer_en.json','w', "utf-8")
-json.dump(values_en,f_en, ensure_ascii=False, indent=2)
+#f_en = codecs.open('effekseer_en.json','w', "utf-8")
+#json.dump(values_en,f_en, ensure_ascii=False, indent=2)
 
-f_ja = codecs.open('effekseer_ja.json','w', "utf-8")
-json.dump(values_ja,f_ja, ensure_ascii=False, indent=2)
+#f_ja = codecs.open('effekseer_ja.json','w', "utf-8")
+#json.dump(values_ja,f_ja, ensure_ascii=False, indent=2)
 
 ftxt_en = codecs.open('effekseer_en.txt','w', "utf-8")
 for k,v in kv_en.items():
