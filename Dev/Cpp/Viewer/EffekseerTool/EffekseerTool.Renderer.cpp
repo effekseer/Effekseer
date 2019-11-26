@@ -376,20 +376,7 @@ bool Renderer::BeginRendering()
 	// Render background (the size of texture is ignored)
 	if( !m_recording && backgroundData != nullptr)
 	{
-		if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
-		{
-			m_background->Rendering((void*)backgroundData->UserID, 1024, 1024);
-		}
-#ifdef _WIN32
-		else if (graphics->GetDeviceType() == efk::DeviceType::DirectX11)
-		{
-			m_background->Rendering((ID3D11ShaderResourceView*)backgroundData->UserPtr, 1024, 1024);
-		}
-		else
-		{
-			m_background->Rendering((IDirect3DTexture9*)backgroundData->UserPtr, 1024, 1024);
-		}
-#endif
+		m_background->Rendering(backgroundData, 1024, 1024);
 	}
 	else if(!m_recording)
 	{

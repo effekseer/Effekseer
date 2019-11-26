@@ -65,7 +65,7 @@ namespace efk
 		ES_SAFE_DELETE(shader_no_texture);
 	}
 
-	void ImageRendererDX9::Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], void* texturePtr)
+	void ImageRendererDX9::Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], ::Effekseer::TextureData* texturePtr)
 	{
 		Sprite s;
 
@@ -131,10 +131,15 @@ namespace efk
 
 			shader_->SetConstantBuffer();
 
+			if (sprites[i].TexturePtr != nullptr)
+			{
+				renderer->SetTextures(shader_, &(sprites[i]).TexturePtr, 1);
+			}
+
 			renderer->GetRenderState()->Update(true);
 
 			renderer->SetLayout(shader_);
-			renderer->GetDevice()->SetTexture(0, (IDirect3DTexture9*)sprites[i].TexturePtr);
+			//renderer->GetDevice()->SetTexture(0, (IDirect3DTexture9*)sprites[i].TexturePtr);
 			renderer->GetDevice()->SetStreamSource(0, renderer->GetVertexBuffer()->GetInterface(), 0, sizeof(EffekseerRendererDX9::Vertex));
 			renderer->GetDevice()->SetIndices(renderer->GetIndexBuffer()->GetInterface());
 			renderer->GetDevice()->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2);

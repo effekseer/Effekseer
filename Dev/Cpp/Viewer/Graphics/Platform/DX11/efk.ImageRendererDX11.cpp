@@ -63,7 +63,7 @@ namespace efk
 		ES_SAFE_DELETE(shader_no_texture);
 	}
 
-	void ImageRendererDX11::Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], void* texturePtr)
+	void ImageRendererDX11::Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], ::Effekseer::TextureData* texturePtr)
 	{
 		Sprite s;
 
@@ -129,13 +129,18 @@ namespace efk
 
 			shader_->SetConstantBuffer();
 
+			if (sprites[i].TexturePtr != nullptr)
+			{
+				renderer->SetTextures(shader_, &(sprites[i]).TexturePtr, 1);
+			}
+
 			renderer->GetRenderState()->Update(true);
 
 			renderer->SetLayout(shader_);
 
-			ID3D11ShaderResourceView* srv[1];
-			srv[0] = (ID3D11ShaderResourceView*)sprites[i].TexturePtr;
-			renderer->GetContext()->PSSetShaderResources(0, 1, srv);
+			//ID3D11ShaderResourceView* srv[1];
+			//srv[0] = (ID3D11ShaderResourceView*)sprites[i].TexturePtr;
+			//renderer->GetContext()->PSSetShaderResources(0, 1, srv);
 			
 			{
 				ID3D11Buffer* vBuf = renderer->GetVertexBuffer()->GetInterface();
