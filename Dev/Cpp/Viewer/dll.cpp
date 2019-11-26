@@ -1925,22 +1925,22 @@ void Native::SetCullingParameter(bool isCullingShown, float cullingRadius, float
 
 efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 {
-	Effekseer::TextureLoader* loader = nullptr;
+	std::unique_ptr<Effekseer::TextureLoader> loader = nullptr;
 	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
 		auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
-		loader = EffekseerRendererGL::CreateTextureLoader();
+		loader = std::unique_ptr<Effekseer::TextureLoader> (EffekseerRendererGL::CreateTextureLoader());
 	}
 #ifdef _WIN32
 	else if (g_deviceType == efk::DeviceType::DirectX11)
 	{
 		auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
-		loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
+		loader = std::unique_ptr<Effekseer::TextureLoader> (EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext()));
 	}
 	else
 	{
 		auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
-		loader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
+		loader = std::unique_ptr<Effekseer::TextureLoader> (EffekseerRendererDX9::CreateTextureLoader(r->GetDevice()));
 	}
 #endif
 
@@ -1959,16 +1959,10 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 		}
 
 		g_imageResources[path] = resource;
-
-		delete loader;
-
 		return resource.get();
 	}
-	else
-	{
-		delete loader;
-		return nullptr;
-	}
+
+	return nullptr;
 }
 
 int32_t Native::GetAndResetDrawCall()
