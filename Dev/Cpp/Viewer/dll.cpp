@@ -673,32 +673,9 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 				e->UnloadResources();
 			}
 
+			for (auto& resource : g_imageResources)
 			{
-				Effekseer::TextureLoader* loader = nullptr;
-				if (g_deviceType == efk::DeviceType::OpenGL)
-				{
-					auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
-					loader = EffekseerRendererGL::CreateTextureLoader();
-				}
-#ifdef _WIN32
-				else if (g_deviceType == efk::DeviceType::DirectX11)
-				{
-					auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
-					loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
-				}
-				else
-				{
-					auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
-					loader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
-				}
-#endif
-				for (auto& resource : g_imageResources)
-				{
-					loader->Unload(resource.second->GetTextureData());
-					resource.second->GetTextureData() = nullptr;
-				}
-
-				delete loader;
+				resource.second->Invalidate();
 			}
 
 			{
@@ -724,31 +701,9 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 				e->ReloadResources();
 			}
 
+			for (auto& resource : g_imageResources)
 			{
-				Effekseer::TextureLoader* loader = nullptr;
-				if (g_deviceType == efk::DeviceType::OpenGL)
-				{
-					auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
-					loader = EffekseerRendererGL::CreateTextureLoader();
-				}
-#ifdef _WIN32
-				else if (g_deviceType == efk::DeviceType::DirectX11)
-				{
-					auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
-					loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
-				}
-				else
-				{
-					auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
-					loader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
-				}
-#endif
-				for (auto& resource : g_imageResources)
-				{
-					resource.second->GetTextureData() = loader->Load(resource.second->GetPath(), Effekseer::TextureType::Color);
-				}
-
-				delete loader;
+				resource.second->Validate();
 			}
 
 			{
@@ -901,32 +856,7 @@ bool Native::DestroyWindow()
 
 	InvalidateTextureCache();
 
-	{
-		Effekseer::TextureLoader* loader = nullptr;
-		if (g_deviceType == efk::DeviceType::OpenGL)
-		{
-			auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
-			loader = EffekseerRendererGL::CreateTextureLoader();
-		}
-#ifdef _WIN32
-		else if (g_deviceType == efk::DeviceType::DirectX11)
-		{
-			auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
-			loader = EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext());
-		}
-		else
-		{
-			auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
-			loader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
-		}
-#endif
-		for (auto& resource : g_imageResources)
-		{
-			loader->Unload(resource.second->GetTextureData());
-		}
-
-		delete loader;
-	}
+	g_imageResources.clear();
 
 	ES_SAFE_RELEASE(g_effect);
 
@@ -1925,39 +1855,30 @@ void Native::SetCullingParameter(bool isCullingShown, float cullingRadius, float
 
 efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 {
-	std::unique_ptr<Effekseer::TextureLoader> loader = nullptr;
+	std::shared_ptr<Effekseer::TextureLoader> loader = nullptr;
 	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
 		auto r = (EffekseerRendererGL::Renderer*)g_renderer->GetRenderer();
-		loader = std::unique_ptr<Effekseer::TextureLoader> (EffekseerRendererGL::CreateTextureLoader());
+		loader = std::shared_ptr<Effekseer::TextureLoader>(EffekseerRendererGL::CreateTextureLoader());
 	}
 #ifdef _WIN32
 	else if (g_deviceType == efk::DeviceType::DirectX11)
 	{
 		auto r = (EffekseerRendererDX11::Renderer*)g_renderer->GetRenderer();
-		loader = std::unique_ptr<Effekseer::TextureLoader> (EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext()));
+		loader = std::shared_ptr<Effekseer::TextureLoader>(EffekseerRendererDX11::CreateTextureLoader(r->GetDevice(), r->GetContext()));
 	}
 	else
 	{
 		auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
-		loader = std::unique_ptr<Effekseer::TextureLoader> (EffekseerRendererDX9::CreateTextureLoader(r->GetDevice()));
+		loader = std::shared_ptr<Effekseer::TextureLoader>(EffekseerRendererDX9::CreateTextureLoader(r->GetDevice()));
 	}
 #endif
 
-	auto textureData = loader->Load(path, Effekseer::TextureType::Color);
+	auto resource = std::make_shared<efk::ImageResource>(loader);
+	resource->SetPath(path);
 
-	if (textureData != nullptr)
+	if (resource->Validate())
 	{
-		auto resource = std::make_shared<efk::ImageResource>();
-
-		resource->GetTextureData() = textureData;
-		resource->SetPath(path);
-
-		if (g_imageResources[path] != nullptr)
-		{
-			loader->Unload(g_imageResources[path]->GetTextureData());
-		}
-
 		g_imageResources[path] = resource;
 		return resource.get();
 	}

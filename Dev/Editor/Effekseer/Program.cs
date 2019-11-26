@@ -276,15 +276,16 @@ namespace Effekseer
 			}
 			else
 			{
+				if (tempImages.ContainsKey(path))
+				{
+					tempImages[path].Invalidate();
+					tempImages[path].Validate();
+					return tempImages[path];
+				}
+
 				var img = native.LoadImageResource(path);
 				if(img != null)
 				{
-					if(tempImages.ContainsKey(path))
-					{
-						tempImages[path].Dispose();
-						tempImages.Remove(path);
-					}
-
 					tempImages.Add(path, img);
 				}
 				return img;
