@@ -37,6 +37,8 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 		return;
 	}
 
+	initParam_ = param;
+
 	InitializeDevice(param);
 
 	manager_ = ::Effekseer::Manager::Create(8000);
@@ -145,7 +147,21 @@ bool EffectPlatform::Update()
 	if (!DoEvent())
 		return false;
 
-	manager_->Update();
+	if (this->initParam_.IsUpdatedByHandle)
+	{
+		manager_->BeginUpdate();
+
+		for (auto h : effectHandles_)
+		{
+			manager_->UpdateHandle(h);
+		}
+
+		manager_->EndUpdate();
+	}
+	else
+	{
+		manager_->Update();
+	}
 
 	BeginRendering();
 
