@@ -237,7 +237,7 @@ namespace Effekseer.Utl
 						}
 						else
 						{
-							info.DefaultPath = Utils.Misc.GetAbsolutePath(Core.FullPath, info.DefaultPath);
+							info.DefaultPath = Utils.Misc.GetAbsolutePath(path, info.DefaultPath);
 						}
 
 						textures.Add(info);
