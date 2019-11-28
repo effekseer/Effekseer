@@ -332,11 +332,15 @@ namespace Effekseer.IO
 					}
 				};
 
+				int infoVersion = 1500;
+				data.Add(BitConverter.GetBytes(infoVersion));
+
 				exportStrs(binaryExporter.UsedTextures);
 				exportStrs(binaryExporter.UsedNormalTextures);
 				exportStrs(binaryExporter.UsedDistortionTextures);
 				exportStrs(binaryExporter.Models);
 				exportStrs(binaryExporter.Sounds);
+				exportStrs(binaryExporter.Materials);
 
 				infoData = data.SelectMany(_ => _).ToArray();
 			}
