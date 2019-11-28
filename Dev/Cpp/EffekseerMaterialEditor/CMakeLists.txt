@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.0)
 # For MSVC
 if (MSVC)
     option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /SUBSYSTEM:WINDOWS")
 endif()
 
 # For Mac
