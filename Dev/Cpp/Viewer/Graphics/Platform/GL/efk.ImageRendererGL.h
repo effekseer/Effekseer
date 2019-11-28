@@ -19,7 +19,7 @@ namespace efk
 		struct Sprite
 		{
 			std::array<EffekseerRendererGL::Vertex, 4>	Verteies;
-			void*	TexturePtr = nullptr;
+			::Effekseer::TextureData* TexturePtr = nullptr;
 		};
 
 		EffekseerRendererGL::RendererImplemented*	renderer = nullptr;
@@ -36,7 +36,7 @@ namespace efk
 
 		virtual ~ImageRendererGL();
 
-		void Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], void* texturePtr) override;
+		void Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], ::Effekseer::TextureData* texturePtr) override;
 
 		void Render() override;
 

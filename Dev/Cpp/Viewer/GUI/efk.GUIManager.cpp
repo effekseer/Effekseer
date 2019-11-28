@@ -1335,12 +1335,12 @@ namespace efk
 		ImGui::SetColumnOffset(column_index, offset_x);
 	}
 
-	void GUIManager::Text(const char16_t* text)
+	void CallWithEscaped(const std::function<void(const char*)>& f, const char16_t* text)
 	{
 		bool isPersentFound = false;
-		for (size_t i = 0; ; i++)
+		for (size_t i = 0;; i++)
 		{
-			if (text[i] == 0)	
+			if (text[i] == 0)
 			{
 				break;
 			}
@@ -1375,24 +1375,30 @@ namespace efk
 
 			if (std::char_traits<char16_t>::length(text_.c_str()) < 1024)
 			{
-				ImGui::Text(utf8str<1024>(text_.c_str()));
+				f(utf8str<1024>(text_.c_str()));
 			}
 			else
 			{
-				ImGui::Text(utf16_to_utf8(text_).c_str());
+				f(utf16_to_utf8(text_).c_str());
 			}
 		}
 		else
 		{
 			if (std::char_traits<char16_t>::length(text) < 1024)
 			{
-				ImGui::Text(utf8str<1024>(text));
+				f(utf8str<1024>(text));
 			}
 			else
 			{
-				ImGui::Text(utf16_to_utf8(text).c_str());
+				f(utf16_to_utf8(text).c_str());
 			}
 		}
+	}
+
+	void GUIManager::Text(const char16_t* text)
+	{
+		auto func = [](const char* c) -> void { ImGui::Text(c); };
+		CallWithEscaped(func, text);
 	}
 
 	void GUIManager::TextWrapped(const char16_t* text)
@@ -1658,7 +1664,8 @@ namespace efk
 
 	void GUIManager::SetTooltip(const char16_t* text)
 	{
-		ImGui::SetTooltip(utf8str<256>(text));
+		auto func = [](const char* c) -> void { ImGui::SetTooltip(c); };
+		CallWithEscaped(func, text);
 	}
 
 	void GUIManager::BeginTooltip()

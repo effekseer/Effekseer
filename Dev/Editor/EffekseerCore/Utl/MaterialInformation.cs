@@ -237,19 +237,7 @@ namespace Effekseer.Utl
 						}
 						else
 						{
-							Func<string, string> escape = (string s) =>
-							{
-								return s.Replace("%", "%25");
-							};
-
-							Func<string, string> unescape = (string s) =>
-							{
-								return s.Replace("%25", "%");
-							};
-
-							Uri basePath = new Uri(path);
-							Uri targetPath = new Uri(basePath, info.DefaultPath);
-							info.DefaultPath = targetPath.AbsolutePath;
+							info.DefaultPath = Utils.Misc.GetAbsolutePath(path, info.DefaultPath);
 						}
 
 						textures.Add(info);

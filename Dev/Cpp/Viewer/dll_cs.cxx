@@ -591,6 +591,34 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vec2___(void * jarg1) {
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ImageResource___(void * jarg1) {
+  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
+  
+  arg1 = (efk::ImageResource *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_Validate___(void * jarg1) {
+  unsigned int jresult ;
+  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
+  bool result;
+  
+  arg1 = (efk::ImageResource *)jarg1; 
+  result = (bool)(arg1)->Validate();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_Invalidate___(void * jarg1) {
+  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
+  
+  arg1 = (efk::ImageResource *)jarg1; 
+  (arg1)->Invalidate();
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetPath___(void * jarg1) {
   void * jresult ;
   efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
@@ -634,14 +662,6 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ImageResource___() {
   result = (efk::ImageResource *)new efk::ImageResource();
   jresult = (void *)result; 
   return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ImageResource___(void * jarg1) {
-  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
-  
-  arg1 = (efk::ImageResource *)jarg1; 
-  delete arg1;
 }
 
 

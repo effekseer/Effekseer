@@ -13,7 +13,7 @@ namespace efk
 
 		virtual ~ImageRenderer() {}
 
-		virtual void Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], void* texturePtr) = 0;
+		virtual void Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], ::Effekseer::TextureData* texturePtr) = 0;
 
 		virtual void Render() = 0;
 
