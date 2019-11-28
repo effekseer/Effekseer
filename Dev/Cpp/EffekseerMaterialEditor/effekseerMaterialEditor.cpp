@@ -25,9 +25,9 @@
 #include <Platform/efkMat.GLSL.h>
 #include <Platform/efkMat.HLSL.h>
 
+#include <GUI/JapaneseFont.h>
 #include <efkMat.CommandManager.h>
 #include <efkMat.StringContainer.h>
-#include <GUI/JapaneseFont.h>
 
 #ifdef WIN32
 #include <Windows.h>
@@ -125,7 +125,7 @@ void GLFLW_CloseCallback(GLFWwindow* w)
 	}
 }
 
-int main(int argc, char* argv[])
+int mainLoop(int argc, char* argv[])
 {
 	bool ipcMode = false;
 
@@ -618,3 +618,12 @@ int main(int argc, char* argv[])
 
 	config->Save("config.EffekseerMaterial.json");
 }
+
+#if defined(NDEBUG) && defined(_WIN32)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int nShowCmd)
+{
+	return mainLoop(__argc, __argv);
+}
+#else
+int main(int argc, char* argv[]) { return mainLoop(argc, argv); }
+#endif
