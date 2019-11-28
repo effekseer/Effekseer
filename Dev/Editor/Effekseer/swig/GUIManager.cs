@@ -286,6 +286,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public float GetDpiScale() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetDpiScale(swigCPtr);
+    return ret;
+  }
+
   public void Columns(int count, string id, bool border) {
     EffekseerNativePINVOKE.GUIManager_Columns__SWIG_0(swigCPtr, count, id, border);
   }

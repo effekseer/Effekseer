@@ -31,7 +31,6 @@ namespace Effekseer.GUI.Dock
 			Read();
 
 			Icon = Images.GetIcon("PanelSound");
-			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("Sound");
 		}
 

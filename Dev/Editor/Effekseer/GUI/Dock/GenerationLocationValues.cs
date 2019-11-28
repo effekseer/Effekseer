@@ -29,7 +29,6 @@ namespace Effekseer.GUI.Dock
 			Read();
 
 			Icon = Images.GetIcon("PanelGenerationLocation");
-			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("SpawningMethod");
 		}
 

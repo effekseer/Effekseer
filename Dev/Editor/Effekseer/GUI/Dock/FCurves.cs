@@ -95,7 +95,6 @@ namespace Effekseer.GUI.Dock
 			OnChanged();
 
 			Icon = Images.GetIcon("PanelFCurve");
-			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("FCurves");
 
 			// auto zoom event
@@ -357,7 +356,10 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Columns(1);
 			
 			{
-				if (Manager.NativeManager.ImageButton(Images.GetIcon("EnlargeAnchor"), 24, 24))
+				float dpiScale = Manager.DpiScale;
+				swig.Vec2 size = new swig.Vec2(24 * dpiScale, 24 * dpiScale);
+
+				if (Manager.NativeManager.ImageButton(Images.GetIcon("EnlargeAnchor"), size.X, size.Y))
 				{
 					EnlargeAnchors();
 				}
@@ -369,7 +371,7 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.ImageButton(Images.GetIcon("ShrinkAnchor"), 24, 24))
+				if (Manager.NativeManager.ImageButton(Images.GetIcon("ShrinkAnchor"), size.X, size.Y))
 				{
 					ShrinkAnchors();
 				}
@@ -381,7 +383,7 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.ImageButton(Images.Icons["Copy"], 24, 24))
+				if (Manager.NativeManager.ImageButton(Images.Icons["Copy"], size.X, size.Y))
 				{
 					Copy();
 				}
@@ -393,7 +395,7 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], 24, 24))
+				if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], size.X, size.Y))
 				{
 					Paste();
 				}
@@ -424,7 +426,7 @@ namespace Effekseer.GUI.Dock
 
 			if (isFirstUpdate)
 			{
-				Manager.NativeManager.SetColumnWidth(0, 200);
+				Manager.NativeManager.SetColumnWidth(0, 200 * Manager.DpiScale);
 			}
 			//Manager.NativeManager.BeginChild("##FCurveGroup_Tree");
 

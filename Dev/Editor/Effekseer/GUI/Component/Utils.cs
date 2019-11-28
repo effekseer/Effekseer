@@ -36,12 +36,15 @@ namespace Effekseer.GUI.Component
 
 		public void Update()
 		{
-			if(!Images.Icons.ContainsKey("Copy"))
+			float dpiScale = Manager.DpiScale;
+			swig.Vec2 size = new swig.Vec2(18 * dpiScale, 18 * dpiScale);
+
+			if (!Images.Icons.ContainsKey("Copy"))
 			{
 				ErrorUtils.ThrowFileNotfound();
 			}
 
-			if (Manager.NativeManager.ImageButton(Images.Icons["Copy"], 20, 20))
+			if (Manager.NativeManager.ImageButton(Images.Icons["Copy"], size.X, size.Y))
 			{
 				var o = getter();
 				if(o != null)
@@ -57,7 +60,7 @@ namespace Effekseer.GUI.Component
 
 			Manager.NativeManager.SameLine();
 
-			if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], 20, 20))
+			if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], size.X, size.Y))
 			{
 				var str = Manager.NativeManager.GetClipboardText();
 

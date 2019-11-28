@@ -70,13 +70,12 @@ namespace Effekseer.GUI.Dock
 			Renew();
 
 			Icon = Images.GetIcon("PanelNodeTree");
-			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("NodeTree");
 		}
 
 		override protected void UpdateInternal()
 		{
-			const int showHideButtonOffset = 50;
+			float showHideButtonOffset = 32 * Manager.DpiScale;
 
 			isPopupShown = false;
 

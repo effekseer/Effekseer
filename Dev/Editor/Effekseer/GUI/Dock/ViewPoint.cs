@@ -39,7 +39,6 @@ namespace Effekseer.GUI.Dock
             id_ce = "###" + Manager.GetUniqueID().ToString();
 
             Icon = Images.GetIcon("PanelViewPoint");
-			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("CameraSettings");
 		}
 

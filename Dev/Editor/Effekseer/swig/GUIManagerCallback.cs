@@ -69,8 +69,12 @@ public class GUIManagerCallback : global::System.IDisposable {
     if (SwigDerivedClassHasMethod("Iconify", swigMethodTypes4)) EffekseerNativePINVOKE.GUIManagerCallback_IconifySwigExplicitGUIManagerCallback(swigCPtr, f); else EffekseerNativePINVOKE.GUIManagerCallback_Iconify(swigCPtr, f);
   }
 
+  public virtual void DpiChanged(float scale) {
+    if (SwigDerivedClassHasMethod("DpiChanged", swigMethodTypes5)) EffekseerNativePINVOKE.GUIManagerCallback_DpiChangedSwigExplicitGUIManagerCallback(swigCPtr, scale); else EffekseerNativePINVOKE.GUIManagerCallback_DpiChanged(swigCPtr, scale);
+  }
+
   public virtual bool ClickLink(string path) {
-    bool ret = (SwigDerivedClassHasMethod("ClickLink", swigMethodTypes5) ? EffekseerNativePINVOKE.GUIManagerCallback_ClickLinkSwigExplicitGUIManagerCallback(swigCPtr, path) : EffekseerNativePINVOKE.GUIManagerCallback_ClickLink(swigCPtr, path));
+    bool ret = (SwigDerivedClassHasMethod("ClickLink", swigMethodTypes6) ? EffekseerNativePINVOKE.GUIManagerCallback_ClickLinkSwigExplicitGUIManagerCallback(swigCPtr, path) : EffekseerNativePINVOKE.GUIManagerCallback_ClickLink(swigCPtr, path));
     return ret;
   }
 
@@ -94,9 +98,11 @@ public class GUIManagerCallback : global::System.IDisposable {
       swigDelegate3 = new SwigDelegateGUIManagerCallback_3(SwigDirectorMethodClosing);
     if (SwigDerivedClassHasMethod("Iconify", swigMethodTypes4))
       swigDelegate4 = new SwigDelegateGUIManagerCallback_4(SwigDirectorMethodIconify);
-    if (SwigDerivedClassHasMethod("ClickLink", swigMethodTypes5))
-      swigDelegate5 = new SwigDelegateGUIManagerCallback_5(SwigDirectorMethodClickLink);
-    EffekseerNativePINVOKE.GUIManagerCallback_director_connect(swigCPtr, swigDelegate0, swigDelegate1, swigDelegate2, swigDelegate3, swigDelegate4, swigDelegate5);
+    if (SwigDerivedClassHasMethod("DpiChanged", swigMethodTypes5))
+      swigDelegate5 = new SwigDelegateGUIManagerCallback_5(SwigDirectorMethodDpiChanged);
+    if (SwigDerivedClassHasMethod("ClickLink", swigMethodTypes6))
+      swigDelegate6 = new SwigDelegateGUIManagerCallback_6(SwigDirectorMethodClickLink);
+    EffekseerNativePINVOKE.GUIManagerCallback_director_connect(swigCPtr, swigDelegate0, swigDelegate1, swigDelegate2, swigDelegate3, swigDelegate4, swigDelegate5, swigDelegate6);
   }
 
   private bool SwigDerivedClassHasMethod(string methodName, global::System.Type[] methodTypes) {
@@ -125,6 +131,10 @@ public class GUIManagerCallback : global::System.IDisposable {
     Iconify(f);
   }
 
+  private void SwigDirectorMethodDpiChanged(float scale) {
+    DpiChanged(scale);
+  }
+
   private bool SwigDirectorMethodClickLink(System.IntPtr path) {
     return ClickLink(System.Runtime.InteropServices.Marshal.PtrToStringUni(path));
   }
@@ -134,7 +144,8 @@ public class GUIManagerCallback : global::System.IDisposable {
   public delegate void SwigDelegateGUIManagerCallback_2();
   public delegate bool SwigDelegateGUIManagerCallback_3();
   public delegate void SwigDelegateGUIManagerCallback_4(int f);
-  public delegate bool SwigDelegateGUIManagerCallback_5(System.IntPtr path);
+  public delegate void SwigDelegateGUIManagerCallback_5(float scale);
+  public delegate bool SwigDelegateGUIManagerCallback_6(System.IntPtr path);
 
   private SwigDelegateGUIManagerCallback_0 swigDelegate0;
   private SwigDelegateGUIManagerCallback_1 swigDelegate1;
@@ -142,13 +153,15 @@ public class GUIManagerCallback : global::System.IDisposable {
   private SwigDelegateGUIManagerCallback_3 swigDelegate3;
   private SwigDelegateGUIManagerCallback_4 swigDelegate4;
   private SwigDelegateGUIManagerCallback_5 swigDelegate5;
+  private SwigDelegateGUIManagerCallback_6 swigDelegate6;
 
   private static global::System.Type[] swigMethodTypes0 = new global::System.Type[] { typeof(int), typeof(int) };
   private static global::System.Type[] swigMethodTypes1 = new global::System.Type[] {  };
   private static global::System.Type[] swigMethodTypes2 = new global::System.Type[] {  };
   private static global::System.Type[] swigMethodTypes3 = new global::System.Type[] {  };
   private static global::System.Type[] swigMethodTypes4 = new global::System.Type[] { typeof(int) };
-  private static global::System.Type[] swigMethodTypes5 = new global::System.Type[] { typeof(string) };
+  private static global::System.Type[] swigMethodTypes5 = new global::System.Type[] { typeof(float) };
+  private static global::System.Type[] swigMethodTypes6 = new global::System.Type[] { typeof(string) };
 }
 
 }

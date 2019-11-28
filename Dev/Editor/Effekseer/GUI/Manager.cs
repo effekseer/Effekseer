@@ -73,6 +73,11 @@ namespace Effekseer.GUI
 			base.Iconify(f);
 		}
 
+		public override void DpiChanged(float f)
+		{
+			Manager.UpdateFontSize();
+		}
+
 		public override bool ClickLink(string path)
 		{
 			try
@@ -108,6 +113,14 @@ namespace Effekseer.GUI
 		internal static bool DoesChangeColorOnChangedValue = true;
 
 		public static float TextOffsetY {get; private set;}
+
+		public static float DpiScale
+		{
+			get
+			{
+				return NativeManager.GetDpiScale();
+			}
+		}
 
 		static int resetCount = 0;
 		internal static int resizedCount = 0;
@@ -608,7 +621,7 @@ namespace Effekseer.GUI
 		/// <returns></returns>
 		public static float GetUIScaleBasedOnFontSize()
 		{
-			return Core.Option.FontSize.Value / 16.0f;
+			return Core.Option.FontSize.Value / 16.0f * DpiScale;
 		}
 
 		static void Core_OnAfterLoad(object sender, EventArgs e)

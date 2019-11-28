@@ -13,7 +13,6 @@ namespace Effekseer.GUI.Dock
 			Label = Resources.GetString("Network") + "###Network";
 
 			Icon = Images.GetIcon("PanelNetwork");
-			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("Network");
 		}
 

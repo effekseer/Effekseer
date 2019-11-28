@@ -24,7 +24,12 @@ namespace Effekseer.GUI.Dock
 
 		internal swig.ImageResource Icon;
 
-		internal swig.Vec2 IconSize;
+		internal swig.Vec2 IconSize { get
+			{
+				float scale = Manager.DpiScale;
+				return new swig.Vec2(18 * scale, 18 * scale);
+			}
+		}
 
 		internal string TabToolTip = string.Empty;
 

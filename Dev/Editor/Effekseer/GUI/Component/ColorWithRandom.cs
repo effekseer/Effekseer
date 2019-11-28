@@ -144,7 +144,7 @@ namespace Effekseer.GUI.Component
 
 			var colorSpace = binding.ColorSpace == Data.ColorSpace.RGBA ? swig.ColorEditFlags.RGB : swig.ColorEditFlags.HSV;
 			
-			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 60);
+			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
 
 			if (Manager.NativeManager.ColorEdit4(id1, internalValueMin, swig.ColorEditFlags.NoOptions | colorSpace))
 			{
