@@ -538,7 +538,8 @@ Effekseer::MaterialData* Native::MaterialLoader::Load(const EFK_CHAR* path)
 
 			std::vector<uint8_t> data;
 			data.resize(1024 * 512);
-			auto size = storage_->GetFile(u8path, data.data(), data.size());
+			int timestamp = 0;
+			auto size = storage_->GetFile(u8path, data.data(), data.size(), timestamp);
 			data.resize(size);
 
 			storage_->Unlock();

@@ -250,7 +250,7 @@ void EditorContent::UpdateBinary()
 		std::vector<uint8_t> data;
 		if (material_->Save(data, path_.c_str()))
 		{
-			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());
+			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size(), 0);
 		}
 
 		editor_->keyValueFileStorage_->Unlock();
@@ -281,7 +281,7 @@ void EditorContent::UpdatePath(const char* path)
 		std::vector<uint8_t> data;
 		if (material_->Save(data, path_.c_str()))
 		{
-			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());
+			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size(), 0);
 		}
 
 		editor_->keyValueFileStorage_->Unlock();
