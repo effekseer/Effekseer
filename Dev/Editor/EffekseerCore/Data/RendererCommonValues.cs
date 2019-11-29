@@ -70,6 +70,7 @@ namespace Effekseer.Data
 		public Value.Vector2D Fixed { get; private set; }
 
 		[Selected(ID = 10, Value = (int)CustomDataType.Easing2D)]
+		[IO(Export = true)]
 		public Vector2DEasingParamater Easing { get; private set; }
 
 		[Selected(ID = 10, Value = (int)CustomDataType.FCurve2D)]
