@@ -974,7 +974,7 @@ struct DockContext
 		if (dock_tab->active && close_button)	{
 		    size.x += 16 + GetStyle().ItemSpacing.x;
 		    SameLine();
-		    tab_closed = InvisibleButton("close", ImVec2(16, 16));
+		    tab_closed = InvisibleButton("close", ImVec2(16, size.y));
 		    ImVec2 center = (GetItemRectMin() + GetItemRectMax()) * 0.5f;
 
 			
