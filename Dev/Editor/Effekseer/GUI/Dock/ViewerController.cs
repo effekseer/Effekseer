@@ -62,7 +62,15 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.SameLine();
 			if(Manager.NativeManager.ImageButton(Images.Stop, buttonSizeX, buttonSizeY))
 			{
-				Commands.Stop();
+				if(Manager.Viewer.IsPlaying && !Manager.Viewer.IsPaused)
+				{
+					Commands.Stop();
+					Commands.Play();
+				}
+				else
+				{
+					Commands.Stop();
+				}
 			}
 
 			Manager.NativeManager.SameLine();
