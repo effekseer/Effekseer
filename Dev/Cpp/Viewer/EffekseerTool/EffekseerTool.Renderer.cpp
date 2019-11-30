@@ -691,8 +691,15 @@ void Renderer::CopyToBackground()
 
 	if (graphics->GetDeviceType() == efk::DeviceType::OpenGL)
 	{
+		::Effekseer::TextureData textureData;
+		textureData.HasMipmap = false;
+		textureData.Width = 1024; // dummy
+		textureData.Height = 1024; // dummy
+		textureData.TextureFormat = Effekseer::TextureFormatType::ABGR8;
+		textureData.UserPtr = nullptr;
+		textureData.UserID = (GLuint)(size_t)graphics->GetBack();
 		auto r = (::EffekseerRendererGL::Renderer*)graphics->GetRenderer();
-		r->SetBackground((GLuint)(size_t)graphics->GetBack());
+		r->SetBackgroundTexture(&textureData);
 	}
 #ifdef _WIN32
 	else if (graphics->GetDeviceType() == efk::DeviceType::DirectX11)

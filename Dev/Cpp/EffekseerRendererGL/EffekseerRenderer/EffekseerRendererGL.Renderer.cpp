@@ -754,7 +754,7 @@ bool RendererImplemented::BeginRendering()
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 
-	m_currentTextures.clear();
+	currentTextures_.clear();
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
 	
@@ -1081,6 +1081,8 @@ void RendererImplemented::SetBackground(GLuint background)
 	m_background.UserID = background;
 }
 
+void RendererImplemented::SetBackgroundTexture(::Effekseer::TextureData* textureData) { m_background = *textureData; }
+
 EffekseerRenderer::DistortingCallback* RendererImplemented::GetDistortingCallback()
 {
 	return m_distortingCallback;
@@ -1356,8 +1358,8 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 {
 	GLCheckError();
 
-	m_currentTextures.clear();
-	m_currentTextures.resize(count);
+	currentTextures_.clear();
+	currentTextures_.resize(count);
 
 	for (int32_t i = 0; i < count; i++)
 	{
@@ -1370,8 +1372,16 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		GLExt::glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, id);
 		
-		m_currentTextures[i] = id;
-
+		if (textures[i] != nullptr)
+		{
+			currentTextures_[i] = *textures[i];
+		}
+		else
+		{
+			currentTextures_[i].UserID = 0;
+			currentTextures_[i].UserPtr = nullptr;
+		}
+		
 		if (shader->GetTextureSlotEnable(i))
 		{
 			GLExt::glUniform1i(shader->GetTextureSlot(i), i);
