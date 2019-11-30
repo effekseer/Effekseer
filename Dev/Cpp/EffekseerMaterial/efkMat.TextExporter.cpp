@@ -65,7 +65,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		for (auto pin : node->OutputPins)
 		{
 			TextExporterPin tePin;
-			tePin.IsConnected = true;
+			tePin.IsConnected = material->GetConnectedPins(pin).size() > 0;
 
 			std::unordered_set<std::shared_ptr<Pin>> visited;
 			auto type = material->GetDesiredPinType(pin, visited);
@@ -699,7 +699,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::FMod)
 	{
-		exportIn2Out2Param2("mod", ",");
+		exportIn2Out2Param2("MOD", ",");
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Ceil)
@@ -714,7 +714,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::Frac)
 	{
-		exportIn1Out1("fract");
+		exportIn1Out1("FRAC");
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Min)
@@ -765,11 +765,9 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::LinearInterpolate)
 	{
-		assert(node->Inputs[2].Type == ValueType::Float1);
-
-		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= mix("
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= LERP("
 			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << "," << GetInputArg(node->Inputs[0].Type, node->Inputs[1]) << ","
-			<< GetInputArg(node->Inputs[2].Type, node->Inputs[2]) << ");" << std::endl;
+			<< GetInputArg(ValueType::Float1, node->Inputs[2]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::TextureCoordinate)
@@ -926,6 +924,35 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
 			<< "pixelNormalDir"
 			<< ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::VertexColor)
+	{
+		if (node->Outputs[0].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= vcolor.xyz;" << std::endl;
+		}
+
+		if (node->Outputs[1].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[1].Type) << " " << node->Outputs[1].Name << "= vcolor.x;" << std::endl;
+		}
+
+		if (node->Outputs[2].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[2].Type) << " " << node->Outputs[2].Name << "= vcolor.y;" << std::endl;
+		}
+
+		if (node->Outputs[3].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[3].Type) << " " << node->Outputs[3].Name << "= vcolor.z;" << std::endl;
+		}
+
+		if (node->Outputs[4].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[4].Type) << " " << node->Outputs[4].Name << "= vcolor.w;" << std::endl;
+		}
+
 	}
 
 	if (node->Target->Parameter->Type == NodeType::CustomData1 || node->Target->Parameter->Type == NodeType::CustomData2)

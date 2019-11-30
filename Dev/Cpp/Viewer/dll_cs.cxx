@@ -463,6 +463,18 @@ void SwigDirector_GUIManagerCallback::Iconify(int f) {
   }
 }
 
+void SwigDirector_GUIManagerCallback::DpiChanged(float scale) {
+  float jscale  ;
+  
+  if (!swig_callbackDpiChanged) {
+    efk::GUIManagerCallback::DpiChanged(scale);
+    return;
+  } else {
+    jscale = scale;
+    swig_callbackDpiChanged(jscale);
+  }
+}
+
 bool SwigDirector_GUIManagerCallback::ClickLink(char16_t const *path) {
   bool c_result = SwigValueInit< bool >() ;
   unsigned int jresult = 0 ;
@@ -478,12 +490,13 @@ bool SwigDirector_GUIManagerCallback::ClickLink(char16_t const *path) {
   return c_result;
 }
 
-void SwigDirector_GUIManagerCallback::swig_connect_director(SWIG_Callback0_t callbackResized, SWIG_Callback1_t callbackDroped, SWIG_Callback2_t callbackFocused, SWIG_Callback3_t callbackClosing, SWIG_Callback4_t callbackIconify, SWIG_Callback5_t callbackClickLink) {
+void SwigDirector_GUIManagerCallback::swig_connect_director(SWIG_Callback0_t callbackResized, SWIG_Callback1_t callbackDroped, SWIG_Callback2_t callbackFocused, SWIG_Callback3_t callbackClosing, SWIG_Callback4_t callbackIconify, SWIG_Callback5_t callbackDpiChanged, SWIG_Callback6_t callbackClickLink) {
   swig_callbackResized = callbackResized;
   swig_callbackDroped = callbackDroped;
   swig_callbackFocused = callbackFocused;
   swig_callbackClosing = callbackClosing;
   swig_callbackIconify = callbackIconify;
+  swig_callbackDpiChanged = callbackDpiChanged;
   swig_callbackClickLink = callbackClickLink;
 }
 
@@ -493,6 +506,7 @@ void SwigDirector_GUIManagerCallback::swig_init_callbacks() {
   swig_callbackFocused = 0;
   swig_callbackClosing = 0;
   swig_callbackIconify = 0;
+  swig_callbackDpiChanged = 0;
   swig_callbackClickLink = 0;
 }
 
@@ -577,6 +591,34 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vec2___(void * jarg1) {
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ImageResource___(void * jarg1) {
+  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
+  
+  arg1 = (efk::ImageResource *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_Validate___(void * jarg1) {
+  unsigned int jresult ;
+  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
+  bool result;
+  
+  arg1 = (efk::ImageResource *)jarg1; 
+  result = (bool)(arg1)->Validate();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_Invalidate___(void * jarg1) {
+  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
+  
+  arg1 = (efk::ImageResource *)jarg1; 
+  (arg1)->Invalidate();
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetPath___(void * jarg1) {
   void * jresult ;
   efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
@@ -620,14 +662,6 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ImageResource___() {
   result = (efk::ImageResource *)new efk::ImageResource();
   jresult = (void *)result; 
   return jresult;
-}
-
-
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ImageResource___(void * jarg1) {
-  efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
-  
-  arg1 = (efk::ImageResource *)jarg1; 
-  delete arg1;
 }
 
 
@@ -2945,6 +2979,26 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_IconifySwig
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_DpiChanged___(void * jarg1, float jarg2) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->DpiChanged(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_DpiChangedSwigExplicitGUIManagerCallback___(void * jarg1, float jarg2) {
+  efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::GUIManagerCallback *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->efk::GUIManagerCallback::DpiChanged(arg2);
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_ClickLink___(void * jarg1, void * jarg2) {
   unsigned int jresult ;
   efk::GUIManagerCallback *arg1 = (efk::GUIManagerCallback *) 0 ;
@@ -2995,10 +3049,10 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_SetPath___(
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_director_connect___(void *objarg, SwigDirector_GUIManagerCallback::SWIG_Callback0_t callback0, SwigDirector_GUIManagerCallback::SWIG_Callback1_t callback1, SwigDirector_GUIManagerCallback::SWIG_Callback2_t callback2, SwigDirector_GUIManagerCallback::SWIG_Callback3_t callback3, SwigDirector_GUIManagerCallback::SWIG_Callback4_t callback4, SwigDirector_GUIManagerCallback::SWIG_Callback5_t callback5) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManagerCallback_director_connect___(void *objarg, SwigDirector_GUIManagerCallback::SWIG_Callback0_t callback0, SwigDirector_GUIManagerCallback::SWIG_Callback1_t callback1, SwigDirector_GUIManagerCallback::SWIG_Callback2_t callback2, SwigDirector_GUIManagerCallback::SWIG_Callback3_t callback3, SwigDirector_GUIManagerCallback::SWIG_Callback4_t callback4, SwigDirector_GUIManagerCallback::SWIG_Callback5_t callback5, SwigDirector_GUIManagerCallback::SWIG_Callback6_t callback6) {
   efk::GUIManagerCallback *obj = (efk::GUIManagerCallback *)objarg;
   SwigDirector_GUIManagerCallback *director = static_cast<SwigDirector_GUIManagerCallback *>(obj);
-  director->swig_connect_director(callback0, callback1, callback2, callback3, callback4, callback5);
+  director->swig_connect_director(callback0, callback1, callback2, callback3, callback4, callback5, callback6);
 }
 
 
@@ -3647,6 +3701,18 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetFrameHeightWith
   
   arg1 = (efk::GUIManager *)jarg1; 
   result = (float)(arg1)->GetFrameHeightWithSpacing();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetDpiScale___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)((efk::GUIManager const *)arg1)->GetDpiScale();
   jresult = result; 
   return jresult;
 }
@@ -7214,6 +7280,18 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsItemClick
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsAnyItemActive___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->IsAnyItemActive();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsWindowHovered___(void * jarg1) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -7246,6 +7324,18 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetMouseCursor___(vo
   arg1 = (efk::GUIManager *)jarg1; 
   result = (efk::MouseCursor)(arg1)->GetMouseCursor();
   jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetHoveredIDTimer___(void * jarg1) {
+  float jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (float)(arg1)->GetHoveredIDTimer();
+  jresult = result; 
   return jresult;
 }
 

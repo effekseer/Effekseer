@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------------
 #include "EffekseerRendererGL.Base.h"
 #include "EffekseerRendererGL.Renderer.h"
+#include "EffekseerRendererGL.DeviceObjectCollection.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.StandardRenderer.h"
 
@@ -45,6 +46,8 @@ class RendererImplemented
 friend class DeviceObject;
 
 private:
+	DeviceObjectCollection* deviceObjectCollection_ = nullptr;
+
 	VertexBuffer*		m_vertexBuffer;
 	IndexBuffer*		m_indexBuffer = nullptr;
 	IndexBuffer*		m_indexBufferForWireframe = nullptr;
@@ -80,8 +83,6 @@ private:
 
 	Effekseer::TextureData	m_background;
 
-	std::set<DeviceObject*>	m_deviceObjects;
-
 	OpenGLDeviceType		m_deviceType;
 
 	// ステート保存用
@@ -100,7 +101,7 @@ public:
 	/**
 		@brief	コンストラクタ
 	*/
-	RendererImplemented(int32_t squareMaxCount, OpenGLDeviceType deviceType);
+	RendererImplemented(int32_t squareMaxCount, OpenGLDeviceType deviceType, DeviceObjectCollection* deviceObjectCollection);
 
 	/**
 		@brief	デストラクタ
@@ -301,6 +302,8 @@ public:
 	OpenGLDeviceType GetDeviceType() const override { return m_deviceType; }
 
 	bool IsVertexArrayObjectSupported() const override;
+
+	DeviceObjectCollection* GetDeviceObjectCollection() const { return deviceObjectCollection_; }
 
 	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }

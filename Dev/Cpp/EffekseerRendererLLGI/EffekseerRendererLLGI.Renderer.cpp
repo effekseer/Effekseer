@@ -97,11 +97,11 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 
 	if (isReversedDepth_)
 	{
-		piplineState->DepthFunc = LLGI::DepthFuncType::Greater;
+		piplineState->DepthFunc = LLGI::DepthFuncType::GreaterEqual;
 	}
 	else
 	{
-		piplineState->DepthFunc = LLGI::DepthFuncType::Less;
+		piplineState->DepthFunc = LLGI::DepthFuncType::LessEqual;
 	}
 
 	piplineState->SetShader(LLGI::ShaderStageType::Vertex, currentShader->GetVertexShader());
@@ -763,12 +763,15 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		if (textures[i] == nullptr)
 		{
 			GetCurrentCommandList()->SetTexture(
+				nullptr, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
+			GetCurrentCommandList()->SetTexture(
 				nullptr, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
 		}
 		else
 		{
 			auto t = (LLGI::Texture*)(textures[i]->UserPtr);
-
+			GetCurrentCommandList()->SetTexture(
+				t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Vertex);
 			GetCurrentCommandList()->SetTexture(
 				t, ws[(int)state.TextureWrapTypes[i]], fs[(int)state.TextureFilterTypes[i]], i, LLGI::ShaderStageType::Pixel);
 		}

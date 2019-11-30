@@ -10,6 +10,7 @@
 struct EffectPlatformInitializingParameter
 {
 	bool VSync = true;
+	bool IsUpdatedByHandle = false;
 };
 
 class EffectPlatform
@@ -17,6 +18,7 @@ class EffectPlatform
 private:
 	bool isInitialized_ = false;
 	bool isTerminated_ = false;
+	EffectPlatformInitializingParameter initParam_;
 
 	Effekseer::Manager* manager_ = nullptr;
 	EffekseerRenderer::Renderer* renderer_ = nullptr;

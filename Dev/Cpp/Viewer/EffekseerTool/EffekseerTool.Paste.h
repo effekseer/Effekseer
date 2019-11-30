@@ -30,7 +30,7 @@ public:
 	static Paste* Create(efk::Graphics* graphics);
 
 public:
-	void Rendering(void* texture, int32_t width, int32_t height);
+	void Rendering(::Effekseer::TextureData* texture, int32_t width, int32_t height);
 };
 //----------------------------------------------------------------------------------
 //

@@ -532,6 +532,7 @@ enum ParameterCustomDataType : int32_t
 	Fixed2D = 20,
 	Easing2D = 22,
 	FCurve2D = 23,
+	Fixed4D = 40,
 	FCurveColor = 53,
 	Unknown,
 };
@@ -564,6 +565,7 @@ struct ParameterCustomData
 		ParameterCustomDataFixed Fixed;
 		ParameterCustomDataEasing Easing;
 		ParameterCustomDataFCurve FCurve;
+		std::array<float, 4> Fixed4D;
 		ParameterCustomDataFCurveColor FCurveColor;
 	};
 
@@ -604,6 +606,11 @@ struct ParameterCustomData
 		{
 			FCurve.Values = new FCurveVector2D();
 			pos += FCurve.Values->Load(pos, version);
+		}
+		else if (Type == ParameterCustomDataType::Fixed4D)
+		{
+			memcpy(Fixed4D.data(), pos, sizeof(float) * 4);
+			pos += sizeof(float) * 4;
 		}
 		else if (Type == ParameterCustomDataType::FCurveColor)
 		{

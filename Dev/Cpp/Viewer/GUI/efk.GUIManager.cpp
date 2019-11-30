@@ -9,7 +9,7 @@
 
 #include "efk.GUIManager.h"
 
-#include "efk.JapaneseFont.h"
+#include "../EditorCommon/GUI/JapaneseFont.h"
 
 #include "../3rdParty/imgui_addon/fcurve/fcurve.h"
 
@@ -789,6 +789,17 @@ namespace efk
 			}
 		};
 
+		window->DpiChanged = [this](float scale) -> void
+		{
+			this->dpiScale = scale;
+			this->ResetGUIStyle();
+
+			if (this->callback != nullptr)
+			{
+				this->callback->DpiChanged(scale);
+			}
+		};
+
 		if (deviceType == DeviceType::OpenGL)
 		{
 			window->MakeCurrent();
@@ -802,7 +813,7 @@ namespace efk
 		// Calculate font scale from DPI
 		HDC screen = GetDC(0);
 		int dpiX = GetDeviceCaps(screen, LOGPIXELSX);
-		fontScale = (float)dpiX / 96.0f;
+		dpiScale = (float)dpiX / 96.0f;
 #endif
 		
 		return true;
@@ -847,16 +858,24 @@ namespace efk
 #endif
 
 		ImGui::StyleColorsDark();
+		ResetGUIStyle();
 
+		markdownConfig_.userData = this;
+		markdownConfig_.linkCallback = GUIManager::MarkdownLinkCallback;
+	}
+
+	void GUIManager::ResetGUIStyle()
+	{
 		ImGuiStyle& style = ImGui::GetStyle();
 
+		style = ImGuiStyle();
 		style.ChildRounding = 3.f;
 		style.GrabRounding = 3.f;
 		style.WindowRounding = 3.f;
 		style.ScrollbarRounding = 3.f;
 		style.FrameRounding = 3.f;
 		style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
-
+		style.ScaleAllSizes(dpiScale);
 		// mono tone
 
 		for (int32_t i = 0; i < ImGuiCol_COUNT; i++)
@@ -870,9 +889,6 @@ namespace efk
 		style.Colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.80f, 1.00f);
 		style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
 		style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.9f);
-
-		markdownConfig_.userData = this;
-		markdownConfig_.linkCallback = GUIManager::MarkdownLinkCallback;
 	}
 
 	void GUIManager::SetTitle(const char16_t* title)
@@ -1284,6 +1300,11 @@ namespace efk
 		return ImGui::GetFrameHeightWithSpacing();
 	}
 
+	float GUIManager::GetDpiScale() const
+	{
+		return dpiScale;
+	}
+
 	void GUIManager::Columns(int count, const char* id, bool border)
 	{
 		ImGui::Columns(count, id, border);
@@ -1314,12 +1335,12 @@ namespace efk
 		ImGui::SetColumnOffset(column_index, offset_x);
 	}
 
-	void GUIManager::Text(const char16_t* text)
+	void CallWithEscaped(const std::function<void(const char*)>& f, const char16_t* text)
 	{
 		bool isPersentFound = false;
-		for (size_t i = 0; ; i++)
+		for (size_t i = 0;; i++)
 		{
-			if (text[i] == 0)	
+			if (text[i] == 0)
 			{
 				break;
 			}
@@ -1354,24 +1375,30 @@ namespace efk
 
 			if (std::char_traits<char16_t>::length(text_.c_str()) < 1024)
 			{
-				ImGui::Text(utf8str<1024>(text_.c_str()));
+				f(utf8str<1024>(text_.c_str()));
 			}
 			else
 			{
-				ImGui::Text(utf16_to_utf8(text_).c_str());
+				f(utf16_to_utf8(text_).c_str());
 			}
 		}
 		else
 		{
 			if (std::char_traits<char16_t>::length(text) < 1024)
 			{
-				ImGui::Text(utf8str<1024>(text));
+				f(utf8str<1024>(text));
 			}
 			else
 			{
-				ImGui::Text(utf16_to_utf8(text).c_str());
+				f(utf16_to_utf8(text).c_str());
 			}
 		}
+	}
+
+	void GUIManager::Text(const char16_t* text)
+	{
+		auto func = [](const char* c) -> void { ImGui::Text(c); };
+		CallWithEscaped(func, text);
 	}
 
 	void GUIManager::TextWrapped(const char16_t* text)
@@ -1637,7 +1664,8 @@ namespace efk
 
 	void GUIManager::SetTooltip(const char16_t* text)
 	{
-		ImGui::SetTooltip(utf8str<256>(text));
+		auto func = [](const char* c) -> void { ImGui::SetTooltip(c); };
+		CallWithEscaped(func, text);
 	}
 
 	void GUIManager::BeginTooltip()
@@ -1734,7 +1762,7 @@ namespace efk
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		
-		size_pixels = roundf(size_pixels * fontScale);
+		size_pixels = roundf(size_pixels * dpiScale);
 
 		io.Fonts->Clear();
 		io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels, nullptr, glyphRangesJapanese);
@@ -1790,6 +1818,11 @@ namespace efk
 		return ImGui::IsItemClicked(mouse_button);
 	}
 
+	bool GUIManager::IsAnyItemActive() 
+	{
+		return ImGui::IsAnyItemActive();
+	}
+
 	bool GUIManager::IsWindowHovered()
 	{
 		return ImGui::IsWindowHovered();
@@ -1803,6 +1836,11 @@ namespace efk
 	MouseCursor GUIManager::GetMouseCursor()
 	{
 		return (MouseCursor)ImGui::GetMouseCursor();
+	}
+
+	float GUIManager::GetHoveredIDTimer() 
+	{ 
+		return ImGui::GetCurrentContext()->HoveredIdTimer;
 	}
 
 	void GUIManager::DrawLineBackground(float height, uint32_t col)

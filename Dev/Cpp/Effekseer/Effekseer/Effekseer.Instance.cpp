@@ -307,6 +307,14 @@ void Instance::UpdateChildrenGroupMatrix()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+InstanceGlobal* Instance::GetInstanceGlobal()
+{
+	return m_pContainer->GetRootInstance();
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
 eInstanceState Instance::GetState() const
 {
 	return m_State;
@@ -1615,6 +1623,10 @@ std::array<float, 4> Instance::GetCustomData(int32_t index) const
 	{
 		auto values = parameterCustomData->FCurve.Values->GetValues(m_LivingTime, m_LivedTime);
 		return std::array<float, 4>{values[0] + instanceCustomData->fcruve.offset.x, values[1] + instanceCustomData->fcruve.offset.y, 0, 0};
+	}
+	else if (parameterCustomData->Type == ParameterCustomDataType::Fixed4D)
+	{
+		return parameterCustomData->Fixed4D;
 	}
 	else if (parameterCustomData->Type == ParameterCustomDataType::FCurveColor)
 	{

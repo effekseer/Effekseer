@@ -24,7 +24,7 @@ private:
 	RendererImplemented*	m_renderer;
 	bool					m_isCCW = true;
 
-	GLuint					m_samplers[4];
+	std::array<GLuint, Effekseer::TextureSlotMax> m_samplers;
 
 
 public:

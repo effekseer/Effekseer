@@ -36,7 +36,6 @@ namespace Effekseer.GUI.Dock
 			Read();
 
 			Icon = Images.GetIcon("PanelCulling");
-			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("Culling");
 		}
 
@@ -94,10 +93,18 @@ namespace Effekseer.GUI.Dock
 				Core.Dynamic.Equations.Add();
 			}
 
+			Manager.NativeManager.SameLine();
+
+			if (Manager.NativeManager.Button("Delete###DynamicDelete"))
+			{
+				Core.Dynamic.Equations.Delete(Core.Dynamic.Equations.Selected);
+				Core.Dynamic.Equations.Selected = null;
+			}
+
 			paramerterList.Update();
 
 			// TODO make good GUI
-			if (Manager.NativeManager.Button("Compile###DynamicCompile"))
+			if (Manager.NativeManager.Button(Resources.GetString("Compile") + "###DynamicCompile"))
 			{
 				var selected = Core.Dynamic.Equations.Selected;
 				if(selected != null)

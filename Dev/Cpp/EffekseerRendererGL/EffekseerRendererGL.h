@@ -504,6 +504,9 @@ public:
 //----------------------------------------------------------------------------------
 namespace EffekseerRendererGL
 {
+
+class DeviceObjectCollection;
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -530,12 +533,25 @@ protected:
 
 public:
 	/**
-		@brief	インスタンスを生成する。
-		@param	squareMaxCount		最大描画スプライト数
-		@param	OpenGLDeviceType	デバイスの種類
-		@return	インスタンス
+	@brief
+	\~english	Create an instance
+	\~japanese	インスタンスを生成する。
+	@param	squareMaxCount
+	\~english	the number of maximum sprites
+	\~japanese	最大描画スプライト数
+	@param	deviceType
+	\~english	device type of opengl
+	\~japanese	デバイスの種類
+	@param	deviceObjectCollection
+	\~english	for a middleware. it should be nullptr.
+	\~japanese	ミドルウェア向け。 nullptrにすべきである。
+	@return
+	\~english	instance
+	\~japanese	インスタンス
 	*/
-	static Renderer* Create(int32_t squareMaxCount, OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2);
+	static Renderer* Create(int32_t squareMaxCount,
+							OpenGLDeviceType deviceType = OpenGLDeviceType::OpenGL2,
+							DeviceObjectCollection* deviceObjectCollection = nullptr);
 
 	/**
 		@brief	最大描画スプライト数を取得する。

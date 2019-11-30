@@ -664,7 +664,9 @@ public:
 	virtual int GetDrawTime() const = 0;
 
 	/**
-		@brief	残りの確保したインスタンス数を取得する。
+		@brief
+		\~English	Gets the number of remaining allocated instances.
+		\~Japanese	残りの確保したインスタンス数を取得する。
 	*/
 	virtual int32_t GetRestInstancesCount() const = 0;
 

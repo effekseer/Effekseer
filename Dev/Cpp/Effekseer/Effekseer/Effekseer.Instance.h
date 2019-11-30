@@ -325,6 +325,8 @@ public:
 
 	void UpdateChildrenGroupMatrix();
 
+	InstanceGlobal* GetInstanceGlobal();
+
 public:
 	/**
 		@brief	状態の取得

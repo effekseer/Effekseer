@@ -506,9 +506,9 @@ ModelRenderer::ModelRenderer(
 		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
 	}
 
-	m_va[0] = VertexArray::Create(renderer, m_shader_lighting_texture_normal, nullptr, nullptr);
-	m_va[4] = VertexArray::Create(renderer, m_shader_texture, nullptr, nullptr);
-	m_va[6] = VertexArray::Create(renderer, m_shader_distortion_texture, nullptr, nullptr);
+	m_va[0] = VertexArray::Create(renderer, m_shader_lighting_texture_normal, nullptr, nullptr, true);
+	m_va[4] = VertexArray::Create(renderer, m_shader_texture, nullptr, nullptr, true);
+	m_va[6] = VertexArray::Create(renderer, m_shader_distortion_texture, nullptr, nullptr, true);
 
 	if (GLExt::IsSupportedVertexArray())
 	{
@@ -570,17 +570,19 @@ ModelRenderer* ModelRenderer::Create( RendererImplemented* renderer )
 	vs_d_t_src = Replace(vs_d_t_src, "TextureEnable", "true");
 	fs_d_t_src = Replace(fs_d_t_src, "TextureEnable", "true");
 
-	shader_lighting_texture_normal = Shader::Create(renderer,
-		vs_ltn_src.c_str(), vs_ltn_src.length(), fs_ltn_src.c_str(), fs_ltn_src.length(), "ModelRenderer1");
-	if (shader_lighting_texture_normal == NULL) goto End;
+	shader_lighting_texture_normal =
+		Shader::Create(renderer, vs_ltn_src.c_str(), vs_ltn_src.length(), fs_ltn_src.c_str(), fs_ltn_src.length(), "ModelRenderer1");
+	if (shader_lighting_texture_normal == NULL)
+		goto End;
 
-	shader_texture = Shader::Create(renderer,
-		vs_t_src.c_str(), vs_t_src.length(), fs_t_src.c_str(), fs_t_src.length(), "ModelRenderer5");
-	if (shader_texture == NULL) goto End;
+	shader_texture = Shader::Create(renderer, vs_t_src.c_str(), vs_t_src.length(), fs_t_src.c_str(), fs_t_src.length(), "ModelRenderer5");
+	if (shader_texture == NULL)
+		goto End;
 
-	shader_distortion_texture = Shader::Create(renderer,
-		vs_d_t_src.c_str(), vs_d_t_src.length(), fs_d_t_src.c_str(), fs_d_t_src.length(), "ModelRenderer7");
-	if (shader_distortion_texture == NULL) goto End;
+	shader_distortion_texture =
+		Shader::Create(renderer, vs_d_t_src.c_str(), vs_d_t_src.length(), fs_d_t_src.c_str(), fs_d_t_src.length(), "ModelRenderer7");
+	if (shader_distortion_texture == NULL)
+		goto End;
 
 	return new ModelRenderer( 
 		renderer, 

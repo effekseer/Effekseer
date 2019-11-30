@@ -30,6 +30,8 @@ namespace Effekseer.Binary
 
 		public HashSet<string> Models = new HashSet<string>();
 
+		public HashSet<string> Materials = new HashSet<string>();
+
 		/// <summary>
 		/// エフェクトデータの出力
 		/// </summary>
@@ -55,7 +57,7 @@ namespace Effekseer.Binary
 
 			Models = new HashSet<string>();
 
-			HashSet<string> materials = new HashSet<string>();
+			Materials = new HashSet<string>();
 
 			Action<Data.NodeBase> get_textures = null;
 			get_textures = (node) =>
@@ -311,9 +313,9 @@ namespace Effekseer.Binary
 						var relative_path = _node.RendererCommonValues.MaterialFile.Path.RelativePath;
 						if (relative_path != string.Empty)
 						{
-							if (!materials.Contains(relative_path))
+							if (!Materials.Contains(relative_path))
 							{
-								materials.Add(relative_path);
+								Materials.Add(relative_path);
 							}
 						}
 					}
@@ -330,7 +332,7 @@ namespace Effekseer.Binary
 			Dictionary<string, int> material_and_index = new Dictionary<string, int>();
 			{
 				int index = 0;
-				foreach (var wave in materials.ToList().OrderBy(_ => _))
+				foreach (var wave in Materials.ToList().OrderBy(_ => _))
 				{
 					material_and_index.Add(wave, index);
 					index++;

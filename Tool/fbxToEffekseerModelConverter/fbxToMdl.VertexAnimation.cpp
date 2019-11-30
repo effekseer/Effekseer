@@ -6,12 +6,20 @@
 
 namespace fbxToEfkMdl
 {
-void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene, float modelScale)
+void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene, std::shared_ptr<AnimationClip> anim, float modelScale)
 {
 	auto meshes = GetAllMeshes(scene->Root);
-	auto anim = scene->AnimationClips[0];
 	auto nodes = GetAllNodes(scene->Root, nullptr);
-	auto frameCount = anim->EndFrame - anim->StartFrame;
+	int32_t frameCount = 1;
+	int32_t startFrame = 0;
+	int32_t endFrame = 1;
+
+	if (anim != nullptr)
+	{
+		startFrame = anim->StartFrame;
+		endFrame = anim->EndFrame;
+		frameCount = anim->EndFrame - anim->StartFrame;
+	}
 
 	// CalcIndex
 	for (auto& mesh : meshes)
@@ -30,14 +38,17 @@ void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene, flo
 	}
 
 	// Assign animations
-	for (auto a : anim->Animations)
+	if (anim != nullptr)
 	{
-		for (auto& node : nodes)
+		for (auto a : anim->Animations)
 		{
-			if (a->Name != node.TargetNode->Name)
-				continue;
-			node.Animations[(int32_t)a->Target] = a;
-			break;
+			for (auto& node : nodes)
+			{
+				if (a->Name != node.TargetNode->Name)
+					continue;
+				node.Animations[(int32_t)a->Target] = a;
+				break;
+			}
 		}
 	}
 
@@ -62,7 +73,7 @@ void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene, flo
 	fout.write((const char*)&modelCount, sizeof(int32_t));
 	fout.write((const char*)&frameCount, sizeof(int32_t));
 
-	for (int32_t frame = anim->StartFrame; frame < anim->EndFrame; frame++)
+	for (int32_t frame = startFrame; frame < endFrame; frame++)
 	{
 		// Calculate values
 		for (auto& node : nodes)
@@ -101,19 +112,19 @@ void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene, flo
 
 		for (auto& mesh : meshes)
 		{
+			fbxToEfkMdl::NodeState nodeState;
+			for (auto node : nodes)
+			{
+				if (node.TargetNode == mesh.MeshNode)
+				{
+					nodeState = node;
+					break;
+				}
+			}
+
 			std::vector<FbxMatrix> boneMat;
 			for (int32_t i = 0; i < mesh.Connectors.size(); i++)
 			{
-				fbxToEfkMdl::NodeState nodeState;
-				for (auto node : nodes)
-				{
-					if (node.TargetNode == mesh.MeshNode)
-					{
-						nodeState = node;
-						break;
-					}
-				}
-
 				auto m = nodes[mesh.Connectors[i].NodeIndex].MatGlobal * mesh.Target->BoneConnectors[i].OffsetMatrix * nodeState.MatGlobal *
 						 nodeState.MatGlobalDefault.Inverse();
 				boneMat.push_back(m);
@@ -122,10 +133,8 @@ void VertexAnimation::Export(const char* path, std::shared_ptr<Scene> scene, flo
 			for (auto v : mesh.Target->Vertexes)
 			{
 				auto getBoneMat = [&](int32_t i) -> FbxMatrix {
-					FbxMatrix ret;
-					ret.SetIdentity();
 					if (i < 0)
-						return ret;
+						return nodeState.MatGlobal;
 					return boneMat[i];
 				};
 

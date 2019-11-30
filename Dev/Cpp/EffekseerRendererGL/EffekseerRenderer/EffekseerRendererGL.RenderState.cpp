@@ -22,7 +22,7 @@ RenderState::RenderState( RendererImplemented* renderer )
 {
 	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
-		GLExt::glGenSamplers(4, m_samplers);
+		GLExt::glGenSamplers(Effekseer::TextureSlotMax, m_samplers.data());
 	}
 
 	GLint frontFace = 0;
@@ -41,7 +41,7 @@ RenderState::~RenderState()
 {
 	if (m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3 || m_renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3)
 	{
-		GLExt::glDeleteSamplers(4, m_samplers);
+		GLExt::glDeleteSamplers(Effekseer::TextureSlotMax, m_samplers.data());
 	}
 }
 
@@ -170,9 +170,9 @@ void RenderState::Update( bool forced )
 
 				// for webngl
 #ifndef NDEBUG
-				GLint bound = 0;
-				glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
-				assert(bound > 0);
+				//GLint bound = 0;
+				//glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
+				//assert(bound > 0);
 #endif
 
 				int32_t filter_ = (int32_t) m_next.TextureFilterTypes[i];

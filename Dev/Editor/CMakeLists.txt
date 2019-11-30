@@ -26,7 +26,6 @@ file(GLOB files_core
 
 list(APPEND files_core
     EffekseerCore/IO/EfkEfc.cs
-    EffekseerCore/Data/EnvironmentValues.cs
 )
 
 add_library(EffekseerCore

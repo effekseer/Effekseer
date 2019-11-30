@@ -75,6 +75,8 @@ namespace efk
 		std::function<bool()> Closing;
 
 		std::function<void(int)> Iconify;
+
+		std::function<void(float)> DpiChanged;
 	};
 
 }

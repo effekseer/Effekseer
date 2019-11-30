@@ -88,6 +88,7 @@ private:
 		int32_t			Offset;
 	};
 
+	OpenGLDeviceType deviceType_;
 	GLuint m_program;
 
 	std::vector<GLint>		m_aid;
@@ -101,8 +102,8 @@ private:
 	std::vector<ConstantLayout>	m_vertexConstantLayout;
 	std::vector<ConstantLayout>	m_pixelConstantLayout;
 
-	GLuint	m_textureSlots[4];
-	bool	m_textureSlotEnables[4];
+	std::array<GLuint, Effekseer::TextureSlotMax> m_textureSlots;
+	std::array<bool, Effekseer::TextureSlotMax> m_textureSlotEnables;
 
 	std::vector<char>	m_vsSrc;
 	std::vector<char>	m_psSrc;
@@ -112,7 +113,7 @@ private:
 	std::vector<ShaderUniformInfoInternal>	uniforms;
 
 	static bool CompileShader(
-		Renderer* renderer,
+		OpenGLDeviceType deviceType,
 		GLuint& program,
 		const char* vs_src,
 		size_t vertexShaderSize,
@@ -120,14 +121,16 @@ private:
 		size_t pixelShaderSize,
 		const char* name);
 
-	Shader(
-		Renderer* renderer, 
+	Shader(OpenGLDeviceType deviceType, 
+		Renderer* renderer,
+		DeviceObjectCollection* deviceObjectCollection,
 		GLuint program,
 		const char* vs_src,
 		size_t vertexShaderSize,
 		const char* fs_src,
 		size_t pixelShaderSize,
-		const char* name);
+		const char* name,
+		bool hasRefCount);
 
 	GLint GetAttribId(const char* name) const;
 
@@ -138,14 +141,24 @@ public:
 	virtual ~Shader();
 
 	static Shader* Create(
-		Renderer* renderer,
-		const char* vs_src,
-		size_t vertexShaderSize,
-		const char* fs_src,
-		size_t pixelShaderSize,
-		const char* name);
+		OpenGLDeviceType deviceType,
+		DeviceObjectCollection* deviceObjectCollection,
+						  const char* vs_src,
+						  size_t vertexShaderSize,
+						  const char* fs_src,
+						  size_t pixelShaderSize,
+						  const char* name,
+						  bool hasRefCount);
 
-public:	// デバイス復旧用
+	static Shader* Create(
+					  Renderer* renderer,
+					  const char* vs_src,
+					  size_t vertexShaderSize,
+					  const char* fs_src,
+					  size_t pixelShaderSize,
+					  const char* name);
+
+public:
 	virtual void OnLostDevice() override;
 	virtual void OnResetDevice() override;
 	virtual void OnChangeDevice();

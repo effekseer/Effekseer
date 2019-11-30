@@ -36,6 +36,36 @@ void InstanceChunk::UpdateInstances(float deltaFrame)
 		}
 	}
 }
+void InstanceChunk::UpdateInstancesByInstanceGlobal(InstanceGlobal* global, float deltaFrame)
+{
+	for (int32_t i = 0; i < InstancesOfChunk; i++)
+	{
+		if (instancesAlive_[i])
+		{
+			Instance* instance = reinterpret_cast<Instance*>(instances_[i]);
+			
+			if (global != instance->GetInstanceGlobal()) {
+				continue;
+			}
+
+			if (instance->m_State == INSTANCE_STATE_ACTIVE)
+			{
+				instance->Update(deltaFrame, true);
+			}
+			else if (instance->m_State == INSTANCE_STATE_REMOVING)
+			{
+				// start to remove
+				instance->m_State = INSTANCE_STATE_REMOVED;
+			}
+			else if (instance->m_State == INSTANCE_STATE_REMOVED)
+			{
+				instance->~Instance();
+				instancesAlive_[i] = false;
+				aliveCount_--;
+			}
+		}
+	}
+}
 
 Instance* InstanceChunk::CreateInstance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup)
 {

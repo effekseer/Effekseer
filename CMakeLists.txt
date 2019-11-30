@@ -6,13 +6,19 @@ project(Effekseer)
 
 # For MSVC
 if (MSVC)
-	option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
+    option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" OFF)
 endif()
 
 option(BUILD_VIEWER "Build viewer" OFF)
 option(BUILD_EDITOR "Build editor" OFF)
 option(BUILD_TEST "Build test" OFF)
 option(FROM_CI "from ci" OFF)
+option(SANITIZE_ENABLED "is sanitizer enabled" OFF)
+
+
+if(SANITIZE_ENABLED)
+    set(CMAKE_CXX_FLAGS " -fsanitize=undefined,address" ${CMAKE_CXX_FLAGS})
+endif()
 
 if (WIN32 AND NOT FROM_CI)
     set(BUILD_DX12 ON)

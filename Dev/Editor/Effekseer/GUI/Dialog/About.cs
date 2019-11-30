@@ -60,7 +60,7 @@ THE SOFTWARE.
 			if (isFirstUpdate)
 			{
 				Manager.NativeManager.OpenPopup(id);
-				Manager.NativeManager.SetNextWindowSize(600, 400, swig.Cond.Appearing);
+				Manager.NativeManager.SetNextWindowSize(600 * Manager.DpiScale, 400 * Manager.DpiScale, swig.Cond.Appearing);
 				isFirstUpdate = false;
 			}
 

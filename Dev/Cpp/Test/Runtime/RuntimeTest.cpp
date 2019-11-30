@@ -44,6 +44,18 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 		platform->StopAllEffects();
 	};
 
+	auto single15Test = [&](const char16_t* name, const char* savename) -> void {
+		srand(0);
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/15/" + name + u".efkefc").c_str());
+
+		for (size_t i = 0; i < 30; i++)
+		{
+			platform->Update();
+		}
+		platform->TakeScreenshot((std::string(baseResultPath) + savename + suffix + ".png").c_str());
+		platform->StopAllEffects();
+	};
+
 	single10Test(u"SimpleLaser", "SimpleLaser");
 	single10Test(u"FCurve_Parameters1", "FCurve_Parameters1");
 	single10Test(u"Ribbon_Parameters1", "Ribbon_Parameters1");
@@ -53,6 +65,7 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 	single10Test(u"Distortions1", "Distortions1");
 
 	single14Test(u"Model_Parameters1", "Model_Parameters1");
+	single15Test(u"Material_Refraction", "Material_Refraction");
 }
 
 void BasicRuntimeDeviceLostTest()
@@ -92,6 +105,54 @@ void BasicRuntimeDeviceLostTest()
 
 	platform->Terminate();
 #endif
+}
+
+void UpdateHandleTest()
+{
+	{
+		srand(0);
+		auto platform = std::make_shared<EffectPlatformGL>();
+
+		EffectPlatformInitializingParameter param;
+
+		platform->Initialize(param);
+
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/Ribbon_Parameters1.efk").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/Parents1.efk").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/Parents1.efk").c_str());
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Update();
+		}
+		platform->TakeScreenshot("UpdateHandle_0.png");
+
+		platform->Terminate();
+	}
+
+	{
+		srand(0);
+		auto platform = std::make_shared<EffectPlatformGL>();
+
+		EffectPlatformInitializingParameter param;
+		param.IsUpdatedByHandle = true;
+
+		platform->Initialize(param);
+
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/Ribbon_Parameters1.efk").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/Parents1.efk").c_str());
+		platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/Parents1.efk").c_str());
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Update();
+		}
+		platform->TakeScreenshot("UpdateHandle_1.png");
+
+		platform->Terminate();
+	}
 }
 
 void BasicRuntimeTest()

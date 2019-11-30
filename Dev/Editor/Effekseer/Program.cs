@@ -162,12 +162,12 @@ namespace Effekseer
 					var appDirectory = GUI.Manager.GetEntryDirectory();
 					if (Core.Language == Language.Japanese)
 					{
-						var fullPath = Path.Combine(appDirectory, "resources/lang_ja.txt");
+						var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_ja.txt");
 						Resources.LoadLanguageFile(fullPath);
 					}
 					if (Core.Language == Language.English)
 					{
-						var fullPath = Path.Combine(appDirectory, "resources/lang_en.txt");
+						var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_en.txt");
 						Resources.LoadLanguageFile(fullPath);
 					}
 				}
@@ -268,14 +268,21 @@ namespace Effekseer
 
 		public static Dictionary<string, swig.ImageResource> tempImages = new Dictionary<string, swig.ImageResource>();
 
-		public static swig.ImageResource Load(swig.Native native, string path)
+		public static swig.ImageResource Load(swig.Native native, string path, bool isRequiredToReload = false)
 		{
-			if(tempImages.ContainsKey(path))
+			if(tempImages.ContainsKey(path) && !isRequiredToReload)
 			{
 				return tempImages[path];
 			}
 			else
 			{
+				if (tempImages.ContainsKey(path))
+				{
+					tempImages[path].Invalidate();
+					tempImages[path].Validate();
+					return tempImages[path];
+				}
+
 				var img = native.LoadImageResource(path);
 				if(img != null)
 				{
@@ -300,6 +307,9 @@ namespace Effekseer
 			Step = LoadAppResource(native, "resources/Step.png");
 			BackStep = LoadAppResource(native, "resources/BackStep.png");
 
+			Icons["Copy"] = LoadAppResource(native, "resources/icons/Copy.png");
+			Icons["Paste"] = LoadAppResource(native, "resources/icons/Paste.png");
+
 			Icons["AppIcon"] = LoadAppResource(native, "resources/icon.png");
 			Icons["NodeEmpty"] = LoadAppResource(native, "resources/icons/NodeType_Empty.png");
 			Icons["NodeModel"] = LoadAppResource(native, "resources/icons/NodeType_Model.png");
@@ -322,7 +332,7 @@ namespace Effekseer
 			Icons["PanelNetwork"] = LoadAppResource(native, "resources/icons/Panel_Network.png");
 			Icons["PanelNodeTree"] = LoadAppResource(native, "resources/icons/Panel_NodeTree.png");
 			Icons["PanelOption"] = LoadAppResource(native, "resources/icons/Panel_Option.png");
-			Icons["PanelPostEffect"] = LoadAppResource(native, "resources/icons/Panel_PostEffect.png");
+			Icons["PanelEnvironment"] = LoadAppResource(native, "resources/icons/Panel_Environment.png");
 			Icons["PanelRecorder"] = LoadAppResource(native, "resources/icons/Panel_Recorder.png");
 			Icons["PanelRenderer"] = LoadAppResource(native, "resources/icons/Panel_Renderer.png");
 			Icons["PanelRendererCommon"] = LoadAppResource(native, "resources/icons/Panel_RendererCommon.png");

@@ -44,6 +44,7 @@ Library::Library()
 
 	Contents.push_back(std::make_shared<LibraryContent<NodeVertexNormalWS>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodePixelNormalWS>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeVertexColor>>());
 
 #ifdef _DEBUG
 	Contents.push_back(std::make_shared<LibraryContent<NodeVertexTangentWS>>());

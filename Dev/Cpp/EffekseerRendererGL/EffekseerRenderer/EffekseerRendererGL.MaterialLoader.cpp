@@ -6,6 +6,9 @@
 
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
 #include "Effekseer/Material/Effekseer.CompiledMaterial.h"
+#include "EffekseerRendererGL.DeviceObjectCollection.h"
+
+#undef min
 
 namespace EffekseerRendererGL
 {
@@ -32,12 +35,14 @@ namespace EffekseerRendererGL
 
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
-		auto shader = Shader::Create(renderer_,
+		auto shader = Shader::Create(deviceType_,
+									 deviceObjectCollection_,
 									 (const char*)binary->GetVertexShaderData(shaderTypes[st]),
 									 binary->GetVertexShaderSize(shaderTypes[st]),
 									 (const char*)binary->GetPixelShaderData(shaderTypes[st]),
 									 binary->GetPixelShaderSize(shaderTypes[st]),
-									 "CustomMaterial");
+									 "CustomMaterial",
+									 true);
 
 		if (shader == nullptr)
 		{
@@ -157,14 +162,14 @@ namespace EffekseerRendererGL
 
 		shader->SetPixelConstantBufferSize(psOffset);
 
-		int32_t lastIndex = 0;
+		int32_t lastIndex = -1;
 		for (int32_t ti = 0; ti < material.GetTextureCount(); ti++)
 		{
 			shader->SetTextureSlot(material.GetTextureIndex(ti), shader->GetUniformId(material.GetTextureName(ti)));
 			lastIndex = Effekseer::Max(lastIndex, material.GetTextureIndex(ti));
 		}
 
-		lastIndex++;
+		lastIndex += 1;
 		shader->SetTextureSlot(lastIndex, shader->GetUniformId("background"));
 
 		materialData->TextureCount = material.GetTextureCount();
@@ -182,12 +187,14 @@ namespace EffekseerRendererGL
 
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
-		auto shader = Shader::Create(renderer_,
+		auto shader = Shader::Create(deviceType_,
+									 deviceObjectCollection_,
 									 (const char*)binary->GetVertexShaderData(shaderTypesModel[st]),
 									 binary->GetVertexShaderSize(shaderTypesModel[st]),
 									 (const char*)binary->GetPixelShaderData(shaderTypesModel[st]),
 									 binary->GetPixelShaderSize(shaderTypesModel[st]),
-									 "CustomMaterial");
+									 "CustomMaterial",
+									 true);
 
 		if (shader == nullptr)
 		{
@@ -294,14 +301,14 @@ namespace EffekseerRendererGL
 
 		shader->SetPixelConstantBufferSize(psOffset);
 
-		int32_t lastIndex = 0;
+		int32_t lastIndex = -1;
 		for (int32_t ti = 0; ti < material.GetTextureCount(); ti++)
 		{
 			shader->SetTextureSlot(material.GetTextureIndex(ti), shader->GetUniformId(material.GetTextureName(ti)));
 			lastIndex = Effekseer::Max(lastIndex, material.GetTextureIndex(ti));
 		}
 
-		lastIndex++;
+		lastIndex += 1;
 		shader->SetTextureSlot(lastIndex, shader->GetUniformId("background"));
 
 		if (st == 0)
@@ -316,7 +323,7 @@ namespace EffekseerRendererGL
 
 	materialData->CustomData1 = material.GetCustomData1Count();
 	materialData->CustomData2 = material.GetCustomData2Count();
-	materialData->TextureCount = material.GetTextureCount();
+	materialData->TextureCount = std::min(material.GetTextureCount(), Effekseer::UserTextureSlotMax);
 	materialData->UniformCount = material.GetUniformCount();
 	materialData->ShadingModel = material.GetShadingModel();
 
@@ -328,22 +335,37 @@ namespace EffekseerRendererGL
 	return materialData;
 }
 
-MaterialLoader::MaterialLoader(Renderer* renderer, ::Effekseer::FileInterface* fileInterface) : fileInterface_(fileInterface)
+MaterialLoader::MaterialLoader(OpenGLDeviceType deviceType,
+							   Renderer* renderer,
+							   DeviceObjectCollection* deviceObjectCollection,
+							   ::Effekseer::FileInterface* fileInterface,
+							   bool canLoadFromCache)
+	: fileInterface_(fileInterface), canLoadFromCache_(canLoadFromCache)
 {
 	if (fileInterface == nullptr)
 	{
 		fileInterface_ = &defaultFileInterface_;
 	}
 
+	deviceType_ = deviceType;
+
 	renderer_ = renderer;
 	ES_SAFE_ADDREF(renderer_);
+
+	deviceObjectCollection_ = deviceObjectCollection;
+	ES_SAFE_ADDREF(deviceObjectCollection_);
 }
 
-MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
+MaterialLoader ::~MaterialLoader()
+{
+	ES_SAFE_RELEASE(renderer_);
+	ES_SAFE_RELEASE(deviceObjectCollection_);
+}
 
 ::Effekseer::MaterialData* MaterialLoader::Load(const EFK_CHAR* path)
 {
 	// code file
+	if (canLoadFromCache_)
 	{
 		auto binaryPath = std::u16string(path) + u"d";
 		std::unique_ptr<Effekseer::FileReader> reader(fileInterface_->TryOpenRead(binaryPath.c_str()));

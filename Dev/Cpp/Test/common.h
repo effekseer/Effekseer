@@ -8,6 +8,7 @@
 #include "../Effekseer/Effekseer.h"
 
 #include <assert.h>
+#include <string>
 
 void PlayEffect();
 extern ::Effekseer::Manager* g_manager;

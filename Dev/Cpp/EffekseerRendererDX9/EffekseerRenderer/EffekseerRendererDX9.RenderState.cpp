@@ -127,7 +127,7 @@ void RenderState::Update( bool forced )
 		}
 	}
 	
-	for( int32_t i = 0; i < 4; i++ )
+	for( int32_t i = 0; i < Effekseer::TextureSlotMax; i++ )
 	{
 		if( m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced )
 		{
@@ -147,6 +147,8 @@ void RenderState::Update( bool forced )
 			};
 
 			int32_t filter_ = (int32_t)m_next.TextureFilterTypes[i];
+
+			// VTF is not supported
 
 			m_renderer->GetDevice()->SetSamplerState( i, D3DSAMP_MINFILTER, MinFilterTable[filter_] );
 			m_renderer->GetDevice()->SetSamplerState( i, D3DSAMP_MAGFILTER, MagFilterTable[filter_] );

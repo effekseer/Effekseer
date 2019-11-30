@@ -708,7 +708,7 @@ namespace Effekseer.GUI
 		}
 
 		/// <summary>
-		/// 状態はそのまま、エフェクトのデータだけ差し替え
+		/// reload an effect including resources
 		/// </summary>
 		public unsafe void Reload(bool isResourceReloaded)
 		{

@@ -131,16 +131,16 @@ static const char g_sprite_fs_no_texture_src[] =
 		this->shader = shader_;
 		this->shader_no_texture = shader_no_texture_;
         
-		vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 12, true);
+		vertexBuffer = EffekseerRendererGL::VertexBuffer::Create(this->renderer, sizeof(EffekseerRendererGL::Vertex) * 12, true, true);
 
         vao = EffekseerRendererGL::VertexArray::Create(
                                                        this->renderer,shader_,
 														(EffekseerRendererGL::VertexBuffer*)vertexBuffer,
-                                                       this->renderer->GetIndexBuffer());
+                                                       this->renderer->GetIndexBuffer(), true);
         vao_nt = EffekseerRendererGL::VertexArray::Create(
                                                        this->renderer,shader_no_texture_,
 														(EffekseerRendererGL::VertexBuffer*)vertexBuffer,
-                                                       this->renderer->GetIndexBuffer());
+                                                       this->renderer->GetIndexBuffer(), true);
 
 	}
 
@@ -153,7 +153,7 @@ static const char g_sprite_fs_no_texture_src[] =
 		ES_SAFE_DELETE(vertexBuffer);
 	}
 
-	void ImageRendererGL::Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], void* texturePtr)
+	void ImageRendererGL::Draw(const Effekseer::Vector3D positions[], const Effekseer::Vector2D uvs[], const Effekseer::Color colors[], ::Effekseer::TextureData* texturePtr)
 	{
 		Sprite s;
 
@@ -223,14 +223,19 @@ static const char g_sprite_fs_no_texture_src[] =
 
 			shader_->SetConstantBuffer();
 
+			if (sprites[i].TexturePtr != nullptr)
+			{
+				renderer->SetTextures(shader_, &(sprites[i]).TexturePtr, 1);
+			}
+
 			renderer->GetRenderState()->Update(true);
 
 			renderer->SetVertexBuffer((EffekseerRendererGL::VertexBuffer*)vertexBuffer, sizeof(EffekseerRendererGL::Vertex));
 
 			renderer->SetLayout(shader_);
 
-			EffekseerRendererGL::GLExt::glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, (GLuint)(size_t)sprites[i].TexturePtr);
+			//EffekseerRendererGL::GLExt::glActiveTexture(GL_TEXTURE0);
+			//glBindTexture(GL_TEXTURE_2D, (GLuint)(size_t)sprites[i].TexturePtr);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
 
 			renderer->EndShader(shader_);

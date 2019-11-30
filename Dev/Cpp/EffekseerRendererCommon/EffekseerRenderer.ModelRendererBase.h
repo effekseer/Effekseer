@@ -224,7 +224,7 @@ public:
 		
 		int32_t renderPassCount = 1;
 
-		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr)
+		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr && param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex >= 0)
 		{
 			auto materialData = param.EffectPointer->GetMaterial(param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
 			if (materialData != nullptr && materialData->IsRefractionRequired)
@@ -351,7 +351,7 @@ public:
 
 		isBackgroundRequired |= (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion);
 
-		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr)
+		if (param.BasicParameterPtr->MaterialParameterPtr != nullptr && param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex >= 0)
 		{
 			auto materialData = param.EffectPointer->GetMaterial(param.BasicParameterPtr->MaterialParameterPtr->MaterialIndex);
 			if (materialData != nullptr && materialData->IsRefractionRequired && renderPassInd == 0)
@@ -389,7 +389,8 @@ public:
 		Effekseer::MaterialData* material = nullptr;
 		SHADER* shader_ = nullptr;
 		
-		if (materialParam != nullptr && param.EffectPointer->GetMaterial(materialParam->MaterialIndex) != nullptr)
+		if (materialParam != nullptr && materialParam->MaterialIndex >= 0 &&
+			param.EffectPointer->GetMaterial(materialParam->MaterialIndex) != nullptr)
 		{
 			material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
 
@@ -415,8 +416,8 @@ public:
 				return;
 			}
 
-			if (material->TextureCount != materialParam->MaterialTextures.size() ||
-				material->UniformCount != materialParam->MaterialUniforms.size())
+			if (material != nullptr && (material->TextureCount != materialParam->MaterialTextures.size() ||
+				material->UniformCount != materialParam->MaterialUniforms.size()))
 			{
 				return;			
 			}
@@ -475,11 +476,13 @@ public:
 		renderer->BeginShader(shader_);
 
 		// Select texture
-		if (materialParam != nullptr)
+		if (materialParam != nullptr && material != nullptr)
 		{
 			if (materialParam->MaterialTextures.size() > 0)
 			{
 				std::array<Effekseer::TextureData*, 16> textures;
+				int32_t textureCount = Effekseer::Min(materialParam->MaterialTextures.size(), textures.size() - 1);
+
 				auto effect = param.EffectPointer;
 
 				for (size_t i = 0; i < Effekseer::Min(materialParam->MaterialTextures.size(), textures.size()); i++)
@@ -513,10 +516,13 @@ public:
 
 				if (renderer->GetBackground() != 0)
 				{
-					textures[materialParam->MaterialTextures.size()] = renderer->GetBackground();
+					textures[textureCount] = renderer->GetBackground();
+					state.TextureFilterTypes[textureCount] = Effekseer::TextureFilterType::Linear;
+					state.TextureWrapTypes[textureCount] = Effekseer::TextureWrapType::Clamp;
+					textureCount += 1;
 				}
 
-				renderer->SetTextures(shader_, textures.data(), static_cast<int32_t>(Effekseer::Min(materialParam->MaterialTextures.size() + 1, textures.size())));
+				renderer->SetTextures(shader_, textures.data(), textureCount);
 			}
 		}
 		else
@@ -583,7 +589,8 @@ public:
 
 		std::array<float, 4> uvInversed;
 		std::array<float, 4> uvInversedBack;
-
+		std::array<float, 4> uvInversedMaterial;
+		
 		if (renderer->GetTextureUVStyle() == UVStyle::VerticalFlipped)
 		{
 			uvInversed[0] = 1.0f;
@@ -606,6 +613,11 @@ public:
 			uvInversedBack[1] = 1.0f;
 		}
 
+		uvInversedMaterial[0] = uvInversed[0];
+		uvInversedMaterial[1] = uvInversed[1];
+		uvInversedMaterial[2] = uvInversedBack[0];
+		uvInversedMaterial[3] = uvInversedBack[1];
+
 		ModelRendererVertexConstantBuffer<InstanceCount>* vcb =
 			(ModelRendererVertexConstantBuffer<InstanceCount>*)shader_->GetVertexConstantBuffer();
 
@@ -622,7 +634,7 @@ public:
 			// vs
 			int32_t vsOffset = sizeof(Effekseer::Matrix44) + (sizeof(Effekseer::Matrix44) + sizeof(float) * 4 * 2) * InstanceCount;
 
-			renderer->SetVertexBufferToShader(uvInversed.data(), sizeof(float) * 4, vsOffset);
+			renderer->SetVertexBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
 
 			renderer->SetVertexBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, vsOffset);
@@ -650,7 +662,7 @@ public:
 
 			// ps
 			int32_t psOffset = 0;
-			renderer->SetPixelBufferToShader(uvInversedBack.data(), sizeof(float) * 4, psOffset);
+			renderer->SetPixelBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
 			renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, psOffset);

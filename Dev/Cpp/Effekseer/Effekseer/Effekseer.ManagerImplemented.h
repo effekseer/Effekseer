@@ -563,20 +563,11 @@ private:
 	
 	int GetCameraCullingMaskToShowAllEffects() override;
 
-	/**
-		@brief	Update処理時間を取得。
-	*/
-	int GetUpdateTime() const override {return m_updateTime;};
+	int GetUpdateTime() const override;
 	
-	/**
-		@brief	Draw処理時間を取得。
-	*/
-	int GetDrawTime() const override {return m_drawTime;};
+	int GetDrawTime() const override;
 
-	/**
-		@brief	残りの確保したインスタンス数を取得する。
-	*/
-	virtual int32_t GetRestInstancesCount() const override { return (int32_t)pooledChunks_.size() * InstanceChunk::InstancesOfChunk; }
+	int32_t GetRestInstancesCount() const override;
 
 	/**
 		@brief	start reload

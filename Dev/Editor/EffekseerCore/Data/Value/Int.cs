@@ -50,6 +50,16 @@ namespace Effekseer.Data.Value
 			set;
 		}
 
+		/// <summary>
+		/// Is a value assigned once at least (to maintain compatibility)
+		/// We don't recommend to use it without reading this code.
+		/// </summary>
+		public bool IsValueAssigned
+		{
+			get;
+			private set;
+		} = false;
+
 		public event ChangedValueEventHandler OnChanged;
 
 		public int DefaultValue { get; private set; }
@@ -90,17 +100,20 @@ namespace Effekseer.Data.Value
 
 			int old_value = _value;
 			int new_value = value;
+			bool old_IsValueAssigned = IsValueAssigned;
 
 			var cmd = new Command.DelegateCommand(
 				() =>
 				{
 					_value = new_value;
+					IsValueAssigned = true;
 
 					CallChanged(new_value, ChangedValueType.Execute);
 				},
 				() =>
 				{
 					_value = old_value;
+					IsValueAssigned = old_IsValueAssigned;
 
 					CallChanged(old_value, ChangedValueType.Unexecute);
 				},
@@ -112,10 +125,11 @@ namespace Effekseer.Data.Value
 
 		public void SetValueDirectly(int value)
 		{
+			IsValueAssigned = true;
+
 			var converted = value.Clipping(_max, _min);
 			if (_value == converted) return;
 			_value = converted;
-
 			CallChanged(_value, ChangedValueType.Execute);
 		}
 

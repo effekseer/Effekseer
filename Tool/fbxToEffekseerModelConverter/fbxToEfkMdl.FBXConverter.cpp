@@ -543,6 +543,11 @@ std::shared_ptr<Node> FBXConverter::LoadHierarchy(std::shared_ptr<Node> parent, 
 	node->Scaling[1] = lclS[1];
 	node->Scaling[2] = lclS[2];
 
+	node->RotationPivot = fbxNode->GetRotationPivot(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
+	node->RotationOffset = fbxNode->GetRotationOffset(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
+	node->ScalingPivot = fbxNode->GetScalingPivot(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
+	node->ScalingOffset = fbxNode->GetScalingOffset(fbxsdk::FbxNode::EPivotSet::eSourcePivot);
+
 	for (auto i = 0; i < fbxNode->GetChildCount(); i++)
 	{
 		auto childNode = LoadHierarchy(node, fbxNode->GetChild(i), fbxManager);

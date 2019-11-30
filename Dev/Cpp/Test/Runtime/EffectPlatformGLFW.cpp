@@ -13,7 +13,7 @@ void* EffectPlatformGLFW::GetNativePtr(int32_t index)
 #endif
 
 #ifdef __APPLE__
-	return glfwGetCocoaWindow(window_);
+	return glfwGetCocoaWindow(glfwWindow_);
 #endif
 
 #ifdef __linux__
@@ -22,7 +22,7 @@ void* EffectPlatformGLFW::GetNativePtr(int32_t index)
 		return glfwGetX11Display();
 	}
 
-	return reinterpret_cast<void*>(glfwGetX11Window(window_));
+	return reinterpret_cast<void*>(glfwGetX11Window(glfwWindow_));
 #endif
 
 	return nullptr;

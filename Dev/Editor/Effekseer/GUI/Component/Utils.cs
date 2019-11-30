@@ -17,6 +17,11 @@ namespace Effekseer.GUI.Component
 
 			return filepath;
 		}
+
+		public static bool CanShowTip()
+		{
+			return Manager.NativeManager.IsItemHovered() && Manager.NativeManager.GetHoveredIDTimer() > 0.25f;
+		}
 	}
 	class CopyAndPaste : IControl
 	{
@@ -31,7 +36,15 @@ namespace Effekseer.GUI.Component
 
 		public void Update()
 		{
-			if (Manager.NativeManager.Button("Copy"))
+			float dpiScale = Manager.DpiScale;
+			swig.Vec2 size = new swig.Vec2(18 * dpiScale, 18 * dpiScale);
+
+			if (!Images.Icons.ContainsKey("Copy"))
+			{
+				ErrorUtils.ThrowFileNotfound();
+			}
+
+			if (Manager.NativeManager.ImageButton(Images.Icons["Copy"], size.X, size.Y))
 			{
 				var o = getter();
 				if(o != null)
@@ -40,9 +53,14 @@ namespace Effekseer.GUI.Component
 				}
 			}
 
+			if(Functions.CanShowTip())
+			{
+				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Copy_Desc"));
+			}
+
 			Manager.NativeManager.SameLine();
 
-			if (Manager.NativeManager.Button("Paste"))
+			if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], size.X, size.Y))
 			{
 				var str = Manager.NativeManager.GetClipboardText();
 
@@ -54,6 +72,11 @@ namespace Effekseer.GUI.Component
 						Core.Paste(elementName, o, str);
 					}
 				}
+			}
+
+			if (Functions.CanShowTip())
+			{
+				Manager.NativeManager.SetTooltip(Resources.GetString("Panel_Paste_Desc"));
 			}
 		}
 	}

@@ -84,7 +84,7 @@ void main() {
 static const char g_blur_v_fs_src[] =
 R"(
 IN vec2 v_TexCoord;
-uniform lowp sampler2D u_Texture0;
+uniform sampler2D u_Texture0;
 void main() {
 	vec4 color = TEX2D    (u_Texture0, v_TexCoord              ) * 0.312500;
 	color += textureOffset(u_Texture0, v_TexCoord, ivec2(0, -3)) * 0.015625;
@@ -94,6 +94,19 @@ void main() {
 	color += textureOffset(u_Texture0, v_TexCoord, ivec2(0,  2)) * 0.093750;
 	color += textureOffset(u_Texture0, v_TexCoord, ivec2(0,  3)) * 0.015625;
 	FRAGCOLOR = vec4(color.rgb, 1.0);
+}
+)";
+
+static const char g_tonemap_reinhard_fs_src[] =
+R"(
+IN mediump vec2 v_TexCoord;
+uniform sampler2D u_Texture0;
+uniform vec4 u_Exposure;
+void main() {
+	vec3 color = texture(u_Texture0, v_TexCoord).rgb;
+	float lum = u_Exposure.x * dot(color, vec3(0.299, 0.587, 0.114));
+	lum = lum / (1.0 + lum);
+	FRAGCOLOR = vec4(lum * color, 1.0f);
 }
 )";
 
@@ -109,9 +122,10 @@ void main() {
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
 
 		// Generate vertex data
-		vertexBuffer.reset(VertexBuffer::Create(renderer, 
-			sizeof(Vertex) * 4, true));
-		vertexBuffer->Lock(); {
+		vertexBuffer.reset(VertexBuffer::Create(renderer, sizeof(Vertex) * 4, true, true));
+
+		vertexBuffer->Lock();
+		{
 			Vertex* verteces = (Vertex*)vertexBuffer->GetBufferDirect(sizeof(Vertex) * 4);
 			verteces[0] = Vertex{-1.0f,  1.0f, 0.0f, 1.0f};
 			verteces[1] = Vertex{-1.0f, -1.0f, 0.0f, 0.0f};
@@ -131,8 +145,7 @@ void main() {
 		using namespace EffekseerRendererGL;
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
 
-		return std::unique_ptr<VertexArray>(VertexArray::Create(
-			renderer, shader, vertexBuffer.get(), renderer->GetIndexBuffer()));
+		return std::unique_ptr<VertexArray>(VertexArray::Create(renderer, shader, vertexBuffer.get(), renderer->GetIndexBuffer(), true));
 	}
 
 	void BlitterGL::Blit(EffekseerRendererGL::Shader* shader, EffekseerRendererGL::VertexArray* vao,
@@ -394,14 +407,29 @@ void main() {
 		auto renderer = (RendererImplemented*)graphics->GetRenderer();
 
 		// Copy shader
-		shaderCopy.reset(
-			Shader::Create(renderer, g_basic_vs_src, sizeof(g_basic_vs_src), g_copy_fs_src, sizeof(g_copy_fs_src), "Bloom copy"));
+		shaderCopy.reset(Shader::Create(renderer, 
+			g_basic_vs_src, sizeof(g_basic_vs_src), 
+			g_copy_fs_src, sizeof(g_copy_fs_src), 
+			"Tonemap copy"));
 		shaderCopy->GetAttribIdList(2, BlitterGL::shaderAttributes);
 		shaderCopy->SetVertexSize(sizeof(BlitterGL::Vertex));
 		shaderCopy->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
 
+		// Reinhard shader
+		shaderReinhard.reset(Shader::Create(renderer,
+			g_basic_vs_src, sizeof(g_basic_vs_src), 
+			g_tonemap_reinhard_fs_src, sizeof(g_tonemap_reinhard_fs_src), 
+			"Tonemap Reinhard"));
+		shaderReinhard->GetAttribIdList(2, BlitterGL::shaderAttributes);
+		shaderReinhard->SetVertexSize(sizeof(BlitterGL::Vertex));
+		shaderReinhard->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
+		shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
+		shaderReinhard->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, 
+			shaderReinhard->GetUniformId("u_Exposure"), 0);
+
 		// Setup VAOs
 		vaoCopy = blitter.CreateVAO(shaderCopy.get());
+		vaoReinhard = blitter.CreateVAO(shaderReinhard.get());
 	}
 
 	TonemapEffectGL::~TonemapEffectGL()
@@ -422,13 +450,15 @@ void main() {
 		renderer->GetRenderState()->Update(false);
 		renderer->SetRenderMode(RenderMode::Normal);
 
-		// Copy pass
-		{
-			const GLuint textures[] = {
-				(GLuint)src->GetViewID()
-			};
-			blitter.Blit(shaderCopy.get(), vaoCopy.get(), 1, textures, 
-				nullptr, 0, dest);
+		const GLuint textures[] = {
+			(GLuint)src->GetViewID()
+		};
+
+		if (algorithm == Algorithm::Off) {
+			blitter.Blit(shaderCopy.get(), vaoCopy.get(), 1, textures, nullptr, 0, dest);
+		} else if (algorithm == Algorithm::Reinhard) {
+			const float constantData[4] = {exposure, 16.0f * 16.0f};
+			blitter.Blit(shaderReinhard.get(), vaoReinhard.get(), 1, textures, constantData, sizeof(constantData), dest);
 		}
 
 		GLExt::glActiveTexture(GL_TEXTURE0);

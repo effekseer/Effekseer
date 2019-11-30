@@ -68,7 +68,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	}
 
 	auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
-	auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&efkMaterial));
+	auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&efkMaterial, 1024));
 
 	vs = reinterpret_cast<const char*>(binary->GetVertexShaderData(Effekseer::MaterialShaderType::Standard));
 	ps = reinterpret_cast<const char*>(binary->GetPixelShaderData(Effekseer::MaterialShaderType::Standard));
@@ -250,7 +250,7 @@ void EditorContent::UpdateBinary()
 		std::vector<uint8_t> data;
 		if (material_->Save(data, path_.c_str()))
 		{
-			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());
+			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size(), 0);
 		}
 
 		editor_->keyValueFileStorage_->Unlock();
@@ -281,7 +281,7 @@ void EditorContent::UpdatePath(const char* path)
 		std::vector<uint8_t> data;
 		if (material_->Save(data, path_.c_str()))
 		{
-			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());
+			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size(), 0);
 		}
 
 		editor_->keyValueFileStorage_->Unlock();
@@ -497,36 +497,47 @@ void Editor::Update()
 		return;
 	}
 
-	// copy
-	if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
+	if (!ImGui::IsAnyItemActive())
 	{
-		ed::NodeId ids[256];
-		auto count = ed::GetSelectedNodes(ids, 256);
-
-		std::vector<std::shared_ptr<Node>> nodes;
-
-		for (size_t i = 0; i < count; i++)
+		// copy
+		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_C]] &&
+			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
 		{
-			auto id = ids[i];
-			auto node = material->FindNode(id.Get());
-			if (node != nullptr)
+			ed::NodeId ids[256];
+			auto count = ed::GetSelectedNodes(ids, 256);
+
+			std::vector<std::shared_ptr<Node>> nodes;
+
+			for (size_t i = 0; i < count; i++)
 			{
-				nodes.push_back(node);
+				auto id = ids[i];
+				auto node = material->FindNode(id.Get());
+				if (node != nullptr)
+				{
+					nodes.push_back(node);
+				}
+			}
+
+			auto data = material->Copy(nodes, material->GetPath().c_str());
+			ImGui::SetClipboardText(data.data());
+		}
+
+		// paste
+		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_V]] &&
+			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_V]] == 0)
+		{
+			auto text = ImGui::GetClipboardText();
+			if (text != nullptr)
+			{
+				auto pos = ImGui::GetMousePos();
+				material->Paste(text, Vector2DF(pos.x, pos.y), library, material->GetPath().c_str());
 			}
 		}
 
-		auto data = material->Copy(nodes, material->GetPath().c_str());
-		ImGui::SetClipboardText(data.data());
-	}
-
-	// paste
-	if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_V]] == 0)
-	{
-		auto text = ImGui::GetClipboardText();
-		if (text != nullptr)
+		// save
+		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] && ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_S]] == 0)
 		{
-			auto pos = ImGui::GetMousePos();
-			material->Paste(text, Vector2DF(pos.x, pos.y), library, material->GetPath().c_str());
+			Save();
 		}
 	}
 
@@ -597,8 +608,6 @@ void Editor::UpdateNodes()
 			if (!node->GetIsDirtied())
 				continue;
 
-			auto preview = preview_;
-
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
 			std::vector<std::shared_ptr<TextureWithSampler>> textures;
 			std::string vs;
@@ -618,7 +627,8 @@ void Editor::UpdateNodes()
 				}
 			}
 
-			preview->CompileShader(vs, ps, textures, uniforms);
+			preview_->CompileShader(vs, ps, textures, uniforms);
+			previewTextureCount_ = textures.size();
 		}
 
 		for (auto node : material->GetNodes())
@@ -634,6 +644,7 @@ void Editor::UpdateNodes()
 			ExtractUniforms(graphics_, material, node, textures, uniforms);
 
 			preview_->UpdateUniforms(textures, uniforms);
+			previewTextureCount_ = textures.size();
 		}
 	}
 
@@ -1088,7 +1099,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 	auto updateProp = [&, node](ValueType type, std::string name, std::shared_ptr<EffekseerMaterial::NodeProperty> p) -> void {
 		auto floatValues = p->Floats;
 
-		auto nameStr = StringContainer::GetValue((name + "_Name").c_str());
+		auto nameStr = StringContainer::GetValue((name + "_Name").c_str(), name.c_str());
 
 		if (type == ValueType::Int)
 		{
@@ -1350,20 +1361,20 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		}
 
 		// is memory safe?
-		auto name = node->Descriptions[static_cast<int>(material->Language)].Summary;
+		auto name = node->Descriptions[static_cast<int>(material->Language)]->Summary;
 		name.resize(name.size() + 256, 0);
 
-		auto desc = node->Descriptions[static_cast<int>(material->Language)].Detail;
+		auto desc = node->Descriptions[static_cast<int>(material->Language)]->Detail;
 		desc.resize(desc.size() + 256, 0);
 
 		if (ImGui::InputText(StringContainer::GetValue("Summary_Name").c_str(), const_cast<char*>(name.data()), name.size()))
 		{
-			node->Descriptions[static_cast<int>(material->Language)].Summary = name.c_str();
+			node->Descriptions[static_cast<int>(material->Language)]->Summary = name.c_str();
 		}
 
 		if (ImGui::InputTextMultiline(StringContainer::GetValue("Detail_Name").c_str(), const_cast<char*>(desc.data()), desc.size()))
 		{
-			node->Descriptions[static_cast<int>(material->Language)].Detail = desc.c_str();
+			node->Descriptions[static_cast<int>(material->Language)]->Detail = desc.c_str();
 		}
 	}
 }
@@ -1384,6 +1395,15 @@ void Editor::UpdatePreview()
 	if (ImGui::Button("2"))
 	{
 		preview_->ModelType = PreviewModelType::Sphere;
+	}
+
+	if (previewTextureCount_ > Effekseer::UserTextureSlotMax)
+	{
+		ImGui::TextColored(ImColor(255, 0, 0, 255), "Texture %d / %d", previewTextureCount_, Effekseer::UserTextureSlotMax);
+	}
+	else
+	{
+		ImGui::Text("Texture %d / %d", previewTextureCount_, Effekseer::UserTextureSlotMax);
 	}
 }
 

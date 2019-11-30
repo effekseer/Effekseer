@@ -286,6 +286,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public float GetDpiScale() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetDpiScale(swigCPtr);
+    return ret;
+  }
+
   public void Columns(int count, string id, bool border) {
     EffekseerNativePINVOKE.GUIManager_Columns__SWIG_0(swigCPtr, count, id, border);
   }
@@ -1166,6 +1171,11 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsAnyItemActive() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsAnyItemActive(swigCPtr);
+    return ret;
+  }
+
   public bool IsWindowHovered() {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsWindowHovered(swigCPtr);
     return ret;
@@ -1178,6 +1188,11 @@ public class GUIManager : global::System.IDisposable {
 
   public MouseCursor GetMouseCursor() {
     MouseCursor ret = (MouseCursor)EffekseerNativePINVOKE.GUIManager_GetMouseCursor(swigCPtr);
+    return ret;
+  }
+
+  public float GetHoveredIDTimer() {
+    float ret = EffekseerNativePINVOKE.GUIManager_GetHoveredIDTimer(swigCPtr);
     return ret;
   }
 

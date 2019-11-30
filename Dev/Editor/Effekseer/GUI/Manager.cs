@@ -73,6 +73,11 @@ namespace Effekseer.GUI
 			base.Iconify(f);
 		}
 
+		public override void DpiChanged(float f)
+		{
+			Manager.UpdateFontSize();
+		}
+
 		public override bool ClickLink(string path)
 		{
 			try
@@ -108,6 +113,14 @@ namespace Effekseer.GUI
 		internal static bool DoesChangeColorOnChangedValue = true;
 
 		public static float TextOffsetY {get; private set;}
+
+		public static float DpiScale
+		{
+			get
+			{
+				return NativeManager.GetDpiScale();
+			}
+		}
 
 		static int resetCount = 0;
 		internal static int resizedCount = 0;
@@ -317,14 +330,7 @@ namespace Effekseer.GUI
 			// check files
 			if(!System.IO.File.Exists(System.IO.Path.Combine(appDirectory, "resources/fonts/GenShinGothic-Monospace-Bold.ttf")))
 			{
-				if(Core.Option.GuiLanguage.Value == Language.Japanese)
-				{
-					throw new Exception("リソースファイルを更新してください。Script/setup.pyを呼ぶか、cmakeを使用し、ResourceDataをリビルドしてください。");
-				}
-				else
-				{
-					throw new Exception("Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.");
-				}
+				ErrorUtils.ThrowFileNotfound();
 			}
 
 			return true;
@@ -406,8 +412,7 @@ namespace Effekseer.GUI
 			var handle = false;
 			if(!handle)
 			{
-				var cursor = Manager.NativeManager.GetMouseCursor();
-				if (cursor == swig.MouseCursor.None || cursor == swig.MouseCursor.Arrow)
+				if (!NativeManager.IsAnyItemActive())
 				{
 					Shortcuts.ProcessCmdKey(ref handle);
 				}
@@ -616,7 +621,7 @@ namespace Effekseer.GUI
 		/// <returns></returns>
 		public static float GetUIScaleBasedOnFontSize()
 		{
-			return Core.Option.FontSize.Value / 16.0f;
+			return Core.Option.FontSize.Value / 16.0f * DpiScale;
 		}
 
 		static void Core_OnAfterLoad(object sender, EventArgs e)

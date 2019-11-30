@@ -17,7 +17,7 @@ namespace Effekseer.GUI.Dock
 
 		public Environement()
 		{
-			Label = Resources.GetString("PostEffect") + "###PostEffect";
+			Label = Resources.GetString("Environment_Name") + "###Environment";
 			
 			paramerterListBackground = new Component.ParameterList();
 			paramerterListBackground.SetType(typeof(Data.EnvironmentBackgroundValues));
@@ -33,9 +33,8 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;
 
-			Icon = Images.GetIcon("PanelPostEffect");
-			IconSize = new swig.Vec2(24, 24);
-			TabToolTip = Resources.GetString("Options");
+			Icon = Images.GetIcon("PanelEnvironment");
+			TabToolTip = Resources.GetString("Environment_Name");
 		}
 
 		public void FixValues()
@@ -63,19 +62,19 @@ namespace Effekseer.GUI.Dock
 
 			candp.Update();
 
-			if (Manager.NativeManager.TreeNode("Background"))
+			if (Manager.NativeManager.TreeNode(Resources.GetString("Environment_Background")))
 			{
 				paramerterListBackground.Update();
 				Manager.NativeManager.TreePop();
 			}
 
-			if (Manager.NativeManager.TreeNode("Lighting"))
+			if (Manager.NativeManager.TreeNode(Resources.GetString("Environment_Lighting")))
 			{
 				paramerterListLighting.Update();
 				Manager.NativeManager.TreePop();
 			}
 
-			if (Manager.NativeManager.TreeNode("PostEffect"))
+			if (Manager.NativeManager.TreeNode(Resources.GetString("Environment_PostEffect")))
 			{
 				paramerterListPostEffect.Update();
 				Manager.NativeManager.TreePop();

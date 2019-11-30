@@ -44,6 +44,15 @@ public class ImageResource : global::System.IDisposable {
     }
   }
 
+  public bool Validate() {
+    bool ret = EffekseerNativePINVOKE.ImageResource_Validate(swigCPtr);
+    return ret;
+  }
+
+  public void Invalidate() {
+    EffekseerNativePINVOKE.ImageResource_Invalidate(swigCPtr);
+  }
+
   public string GetPath() {
     string ret = System.Runtime.InteropServices.Marshal.PtrToStringUni(EffekseerNativePINVOKE.ImageResource_GetPath(swigCPtr));
     return ret;

@@ -132,6 +132,7 @@ int main()
 
 #ifdef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
 	BasicRuntimeTest();
+	UpdateHandleTest();
 	//BasicRuntimeDeviceLostTest();
 #else
 

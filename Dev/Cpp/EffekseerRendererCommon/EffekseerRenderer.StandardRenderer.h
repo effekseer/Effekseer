@@ -485,6 +485,7 @@ public:
 		{
 			std::array<Effekseer::TextureData*, 16> textures;
 			textures.fill(nullptr);
+			int32_t textureCount = Effekseer::Min(m_state.MaterialTextureCount, textures.size() - 1);
 
 			if (m_state.MaterialTextureCount > 0)
 			{
@@ -500,10 +501,13 @@ public:
 
 			if (m_renderer->GetBackground() != 0)
 			{
-				textures[m_state.MaterialTextureCount] = m_renderer->GetBackground();
+				textures[textureCount] = m_renderer->GetBackground();
+				state.TextureFilterTypes[textureCount] = Effekseer::TextureFilterType::Linear;
+				state.TextureWrapTypes[textureCount] = Effekseer::TextureWrapType::Clamp;
+				textureCount += 1;
 			}
 
-			m_renderer->SetTextures(shader_, textures.data(), Effekseer::Min(m_state.MaterialTextureCount + 1, static_cast<int32_t>(textures.size())));
+			m_renderer->SetTextures(shader_, textures.data(), textureCount);
 		}
 		else
 		{
@@ -543,7 +547,8 @@ public:
 
 		std::array<float, 4> uvInversed;
 		std::array<float, 4> uvInversedBack;
-
+		std::array<float, 4> uvInversedMaterial;
+		
 		if (m_renderer->GetTextureUVStyle() == UVStyle::VerticalFlipped)
 		{
 			uvInversed[0] = 1.0f;
@@ -566,6 +571,10 @@ public:
 			uvInversedBack[1] = 1.0f;
 		}
 
+		uvInversedMaterial[0] = uvInversed[0];
+		uvInversedMaterial[1] = uvInversed[1];
+		uvInversedMaterial[2] = uvInversedBack[0];
+		uvInversedMaterial[3] = uvInversedBack[1];
 
 		if (m_state.MaterialPtr != nullptr)
 		{
@@ -582,7 +591,7 @@ public:
 			m_renderer->SetVertexBufferToShader(&mProj, sizeof(Effekseer::Matrix44), vsOffset);
 			vsOffset += sizeof(Effekseer::Matrix44);
 
-			m_renderer->SetVertexBufferToShader(uvInversed.data(), sizeof(float) * 4, vsOffset);
+			m_renderer->SetVertexBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
 
 			m_renderer->SetVertexBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, vsOffset);
@@ -596,7 +605,7 @@ public:
 			
 			// ps
 			int32_t psOffset = 0;
-			m_renderer->SetPixelBufferToShader(uvInversedBack.data(), sizeof(float) * 4, psOffset);
+			m_renderer->SetPixelBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
 			m_renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, psOffset);

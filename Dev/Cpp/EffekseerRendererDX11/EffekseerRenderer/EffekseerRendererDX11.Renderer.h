@@ -51,7 +51,7 @@ public:
 		ID3D11Device* device, 
 		ID3D11DeviceContext* context, 
 		int32_t squareMaxCount, 
-		D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS);
+		D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS_EQUAL);
 
 	virtual ID3D11Device* GetDevice() = 0;
 

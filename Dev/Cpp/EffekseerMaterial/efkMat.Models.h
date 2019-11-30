@@ -100,7 +100,7 @@ public:
 	bool IsPreviewOpened = false;
 
 	//! descriptons for other editors
-	std::vector<NodeDescription> Descriptions;
+	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
 
 	//! warning
 	WarningType CurrentWarning = WarningType::None;
@@ -148,6 +148,9 @@ public:
 	CustomDataProperty() { Values.fill(0.0f); }
 
 	virtual ~CustomDataProperty() {}
+
+	//! descriptons for other editors
+	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
 
 	std::array<float, 4> Values;
 };

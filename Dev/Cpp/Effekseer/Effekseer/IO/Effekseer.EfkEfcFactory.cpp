@@ -83,9 +83,19 @@ bool EfkEfcProperty::Load(const void* data, int32_t size)
 
 		if (memcmp(&chunk, "INFO", 4) == 0)
 		{
-			auto loadStr = [this, &binaryReader](std::vector<std::u16string>& dst) {
+			int32_t version = 0;
+
+			auto loadStr = [this, &binaryReader, &version](std::vector<std::u16string>& dst) {
 				int32_t dataCount = 0;
 				binaryReader.Read(dataCount);
+
+				// compatibility
+				if (dataCount >= 1500)
+				{
+					version = dataCount;
+					binaryReader.Read(dataCount);
+				}
+
 				dst.resize(dataCount);
 
 				std::vector<char16_t> strBuf;
@@ -105,6 +115,11 @@ bool EfkEfcProperty::Load(const void* data, int32_t size)
 			loadStr(distortionImages_);
 			loadStr(models_);
 			loadStr(sounds_);
+
+			if (version >= 1500)
+			{
+				loadStr(materials_);
+			}
 		}
 
 		binaryReader.AddOffset(chunkSize);

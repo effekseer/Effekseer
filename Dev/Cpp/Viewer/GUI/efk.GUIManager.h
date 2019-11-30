@@ -291,6 +291,7 @@ namespace efk
 		virtual void Focused() {}
 		virtual bool Closing() { return true; }
 		virtual void Iconify(int f) {}
+		virtual void DpiChanged(float scale) {}
 
 		virtual bool ClickLink(const char16_t* path) { return false; }
 
@@ -312,7 +313,7 @@ namespace efk
 		efk::Window*	window = nullptr;
 		efk::DeviceType deviceType;
 		std::u16string	clipboard;
-		float			fontScale = 1.0f;
+		float			dpiScale = 1.0f;
 
 		ImGui::MarkdownConfig markdownConfig_;
 
@@ -326,6 +327,8 @@ namespace efk
 		bool Initialize(const char16_t* title, int32_t width, int32_t height, efk::DeviceType deviceType, bool isSRGBMode);
 
 		void InitializeGUI(Native* native);
+
+		void ResetGUIStyle();
 
 		void SetTitle(const char16_t* title);
 
@@ -407,6 +410,7 @@ namespace efk
 		float GetTextLineHeightWithSpacing();
 		float GetFrameHeight();
 		float GetFrameHeightWithSpacing();
+		float GetDpiScale() const;
 
 		// Column
 		void  Columns(int count = 1, const char* id = NULL, bool border = true);
@@ -526,9 +530,13 @@ namespace efk
 		bool IsItemActive();
 		bool IsItemFocused();
 		bool IsItemClicked(int mouse_button);
+		bool IsAnyItemActive();
 		bool IsWindowHovered();
 		bool IsAnyWindowHovered();
 		MouseCursor GetMouseCursor();
+
+		// Context
+		float GetHoveredIDTimer();
 
 		// Design
 		void DrawLineBackground(float height, uint32_t col);

@@ -7,7 +7,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../3rdParty/stb/stb_image_write.h"
 
-
+#if defined(_WIN32)
 static std::wstring ToWide(const char* text)
 {
 	int Len = ::MultiByteToWideChar(CP_ACP, 0, text, -1, NULL, 0);
@@ -19,6 +19,7 @@ static std::wstring ToWide(const char* text)
 
 	return Out;
 }
+#endif
 
 std::string GetDirectoryPath(const char* path)
 {

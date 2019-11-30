@@ -210,6 +210,9 @@ public:
 	//! has a description for other editor
 	bool HasDescription = false;
 
+	//! is a description exported to json
+	bool IsDescriptionExported = false;
+
 	int32_t GetPropertyIndex(const std::string& name)
 	{
 		for (size_t i = 0; i < Properties.size(); i++)
@@ -315,6 +318,7 @@ public:
 		Description = "Param value...";
 		Group = std::vector<std::string>{"Parameter"};
 		HasDescription = true;
+		IsDescriptionExported = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -351,6 +355,7 @@ public:
 		Description = "Param value...";
 		Group = std::vector<std::string>{"Parameter"};
 		HasDescription = true;
+		IsDescriptionExported = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -888,7 +893,6 @@ public:
 	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
 	{
 		return inputTypes[0];
-
 	}
 	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override
 	{
@@ -1062,6 +1066,7 @@ public:
 		TypeName = "TextureObjectParameter";
 		Group = std::vector<std::string>{"Texture"};
 		HasDescription = true;
+		IsDescriptionExported = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -1181,6 +1186,42 @@ public:
 	}
 };
 
+class NodeVertexColor : public NodeParameter
+{
+public:
+	NodeVertexColor()
+	{
+		Type = NodeType::VertexColor;
+		TypeName = "VertexColor";
+		Group = std::vector<std::string>{"Model"};
+
+		auto rgb = std::make_shared<PinParameter>();
+		rgb->Name = "RGB";
+		rgb->Type = ValueType::Float3;
+		OutputPins.push_back(rgb);
+
+		auto r = std::make_shared<PinParameter>();
+		r->Name = "R";
+		r->Type = ValueType::Float1;
+		OutputPins.push_back(r);
+
+		auto g = std::make_shared<PinParameter>();
+		g->Name = "G";
+		g->Type = ValueType::Float1;
+		OutputPins.push_back(g);
+
+		auto b = std::make_shared<PinParameter>();
+		b->Name = "B";
+		b->Type = ValueType::Float1;
+		OutputPins.push_back(b);
+
+		auto a = std::make_shared<PinParameter>();
+		a->Name = "A";
+		a->Type = ValueType::Float1;
+		OutputPins.push_back(a);
+	}
+};
+
 #ifdef _DEBUG
 class NodeVertexTangentWS : public NodeParameter
 {
@@ -1207,6 +1248,7 @@ public:
 		Type = NodeType::CustomData1;
 		TypeName = "CustomData1";
 		Group = std::vector<std::string>{"Parameter"};
+		HasDescription = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -1250,6 +1292,7 @@ public:
 		Type = NodeType::CustomData2;
 		TypeName = "CustomData2";
 		Group = std::vector<std::string>{"Parameter"};
+		HasDescription = true;
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -1324,6 +1367,7 @@ public:
 		TypeName = "Output";
 		IsPreviewOpened = true;
 		HasDescription = true;
+		IsDescriptionExported = true;
 
 		auto baseColor = std::make_shared<PinParameter>();
 		baseColor->Name = "BaseColor";

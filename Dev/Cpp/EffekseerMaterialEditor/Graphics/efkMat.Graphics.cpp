@@ -311,7 +311,7 @@ static const char g_header_vs_gl3_src[] = ""
 										  "#define mediump\n"
 										  "#define highp\n"
 										  "#define IN in\n"
-										  "#define TEX2D texture\n"
+										  "#define TEX2D textureLod\n"
 										  "#define OUT out\n"
 										  "uniform vec4 customData1;\n"  // HACK
 										  "uniform vec4 customData2;\n"; // HACK
@@ -454,6 +454,8 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 			float values[4];
 			values[0] = 1.0f;
 			values[1] = -1.0f;
+			values[2] = 1.0f;
+			values[3] = -1.0f;
 
 			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
 		}
@@ -463,6 +465,8 @@ bool Preview::UpdateConstantValues(float time, std::array<float, 4> customData1,
 			float values[4];
 			values[0] = 1.0f;
 			values[1] = -1.0f;
+			values[2] = 1.0f;
+			values[3] = -1.0f;
 
 			constantBuffer->SetData(values, layout.second.GetSize(), layout.second.Offset);
 		}

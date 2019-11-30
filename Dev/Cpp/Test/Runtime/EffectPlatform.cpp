@@ -37,6 +37,8 @@ void EffectPlatform::Initialize(const EffectPlatformInitializingParameter& param
 		return;
 	}
 
+	initParam_ = param;
+
 	InitializeDevice(param);
 
 	manager_ = ::Effekseer::Manager::Create(8000);
@@ -109,7 +111,7 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path)
 	_wfopen_s(&filePtr, (const wchar_t*)path, L"rb");
 #else
 	int8_t path8[256];
-	ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
+	Effekseer::ConvertUtf16ToUtf8(path8, 256, (const int16_t*)path);
 	filePtr = fopen((const char*)path8, "rb");
 #endif
 
@@ -145,7 +147,21 @@ bool EffectPlatform::Update()
 	if (!DoEvent())
 		return false;
 
-	manager_->Update();
+	if (this->initParam_.IsUpdatedByHandle)
+	{
+		manager_->BeginUpdate();
+
+		for (auto h : effectHandles_)
+		{
+			manager_->UpdateHandle(h);
+		}
+
+		manager_->EndUpdate();
+	}
+	else
+	{
+		manager_->Update();
+	}
 
 	BeginRendering();
 

@@ -2,7 +2,6 @@
 #ifndef __EFFEKSEERRENDERER_GL_MATERIALLOADER_H__
 #define __EFFEKSEERRENDERER_GL_MATERIALLOADER_H__
 
-#include "EffekseerRendererGL.DeviceObject.h"
 #include "EffekseerRendererGL.RendererImplemented.h"
 
 namespace Effekseer
@@ -14,17 +13,27 @@ class CompiledMaterialBinary;
 namespace EffekseerRendererGL
 {
 
+class DeviceObjectCollection;
+
 class MaterialLoader : public ::Effekseer::MaterialLoader
 {
 private:
+	OpenGLDeviceType deviceType_;
 	Renderer* renderer_ = nullptr;
+	DeviceObjectCollection* deviceObjectCollection_ = nullptr;
+	bool canLoadFromCache_ = false;
+
 	::Effekseer::FileInterface* fileInterface_ = nullptr;
 	::Effekseer::DefaultFileInterface defaultFileInterface_;
 
 	::Effekseer::MaterialData* LoadAcutually(::Effekseer::Material& material, ::Effekseer::CompiledMaterialBinary* binary);
 
 public:
-	MaterialLoader(Renderer* renderer, ::Effekseer::FileInterface* fileInterface);
+	MaterialLoader(OpenGLDeviceType deviceType,
+				   Renderer* renderer,
+				   DeviceObjectCollection* deviceObjectCollection,
+				   ::Effekseer::FileInterface* fileInterface,
+				   bool canLoadFromCache = true);
 	virtual ~MaterialLoader();
 
 	::Effekseer::MaterialData* Load(const EFK_CHAR* path) override;

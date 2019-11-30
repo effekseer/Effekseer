@@ -117,15 +117,19 @@ YRotation,Y軸回転
 Zoom,画面拡大率
 Depth,深度
 Global,全体
-nan,nan
-DynamicParameter_Name,動的パラメーター
+,
 EnlargeAnchor,アンカーの展開
 EnlargeAnchor_Desc,値が滑らかに変化するように\nアンカーを広げる
 ShrinkAnchor,アンカーの縮退
 ShrinkAnchor_Desc,値が急に変化するように\nアンカーをキーの位置に移動させる
+FCurve_TimelineMode_Name,タイムラインの種類
+FCurve_TimelineMode_Desc,タイムラインを実時間に対して設定するか、パーティクルの生存時間に対する割合で設定するか指定します。
+FCurve_Copy_Desc,キーポイントをコピーします。
+FCurve_Paste_Desc,キーポイントを貼り付けます。
 AutoZoom,自動ズーム
 AutoZoom_Desc,自動的にグラフの高さを調節する
-FCurveCtrl_Desc,ダブルクリック-点の追加,削除, Alt+ホイール-横方向拡大, Ctrl+ホイール-縦方向拡大
+FCurve_Operation_Instruction_Desc,操作説明 (マウスオーバー)
+FCurveCtrl_Desc,ダブルクリック-点の追加、削除\nAlt+ホイール - 横方向拡大\nCtrl+ホイール - 縦方向拡大\nAlt+左クリック - 複数選択と編集\nShift+左クリック - 選択切り替え\nラベルのダブルクリック - 表示範囲自動変更
 ImageFilter_,画像ファイル (*.png)|*.png
 ModelFilter_,モデルファイル (*.efkmodel,fbx,mqo)|*.efkmodel;*.fbx;*mqo
 SoundFilter_,音声ファイル (*.wav)|*.wav
@@ -137,17 +141,21 @@ ImageFilter,png,dds
 ModelFilter,efkmodel,fbx,mqo
 ProjectFilter,efkproj
 ProjectFilterNew,efkproj,efkefc
-PostEffect,ポストエフェクト
 Clipping,クリッピング
 Save,保存
 StorageTarget,設定保存先
 StorageGlobal,Effekseerアプリケーション
 StorageLocal,プロジェクト
+Panel_Copy_Desc,パネル単位でパラメーターをコピーします。
+Panel_Paste_Desc,パネル単位でパラメーターを貼り付けます。
+DynamicParameter_Name,動的パラメーター
+DynamicParameter_Desc,
 DynamicInput,入力
 DynamicEquation,式
 DynamicEq,式
 DynamicFixed,固定
 DynamicDynamic,動的
+Compile,コンパイル
 CompilePosition, : 行 {0} 列 {1}
 CompileErrror_InvalidToken,無効なトークン {0} が見つかりました
 CompileErrror_InvalidEoF,予期せぬ終了が見つかりました
@@ -157,3 +165,16 @@ CompileError_InvalidSubstitution,無効な代入が見つかりました
 CompileError_UnknownFunction,知らない関数 {0} が見つかりました
 CompileError_UnknownValue,知らない値 {0} が見つかりました
 Cancel,キャンセル
+Environment_Name,環境
+Environment_Desc,
+Environment_Background,背景
+Environment_Lighting,ライティング
+Environment_PostEffect,ポストエフェクト
+Material_Create_Name,生成
+Material_Create_Desc,新しいマテリアルファイルを作成し、それをマテリアルエディタで開きます。
+Material_Edit_Name,編集
+Material_Edit_Desc,設定されているマテリアルをマテリアルエディタで編集します。
+Material_GenCache_Name,キャッシュ生成
+Material_GenCache_Desc,キャッシュを生成します。\n生成されたキャッシュをマテリアルファイルと同じディレクトリに配置すると読み込みが速くなります。\n一部のプラットフォームではキャッシュを使用しないとエフェクトを再生できません。\nWindowsでキャッシュを生成した後、キャッシュが存在する状態で\nMacでキャッシュを生成すると、WindowsでもMacでも使用できるキャッシュが生成されます。\n
+Material_NoneCache,キャッシュ - なし
+Material_OldCache,キャッシュ - 古い

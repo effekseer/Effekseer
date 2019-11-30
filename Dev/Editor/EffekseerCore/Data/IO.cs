@@ -492,6 +492,7 @@ namespace Effekseer.Data
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveVector2D value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
+			var timeline = SaveToElement(doc, "Timeline", value.Timeline, isClip);
 			var keys = doc.CreateElement("Keys");
 			var x = doc.CreateElement("X");
 			var y = doc.CreateElement("Y");
@@ -534,6 +535,7 @@ namespace Effekseer.Data
 			setValues(value.X, x);
 			setValues(value.Y, y);
 
+			if (timeline != null) keys.AppendChild(timeline);
 			if (x.ChildNodes.Count > 0) keys.AppendChild(x);
 			if (y.ChildNodes.Count > 0) keys.AppendChild(y);
 			if (keys.ChildNodes.Count > 0) e.AppendChild(keys);
@@ -544,6 +546,7 @@ namespace Effekseer.Data
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveVector3D value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
+			var timeline = SaveToElement(doc, "Timeline", value.Timeline, isClip);
 			var keys = doc.CreateElement("Keys");
 			var x = doc.CreateElement("X");
 			var y = doc.CreateElement("Y");
@@ -588,6 +591,7 @@ namespace Effekseer.Data
 			setValues(value.Y, y);
 			setValues(value.Z, z);
 
+			if (timeline != null) keys.AppendChild(timeline);
 			if (x.ChildNodes.Count > 0) keys.AppendChild(x);
 			if (y.ChildNodes.Count > 0) keys.AppendChild(y);
 			if (z.ChildNodes.Count > 0) keys.AppendChild(z);
@@ -599,6 +603,7 @@ namespace Effekseer.Data
 		public static XmlElement SaveToElement(XmlDocument doc, string element_name, Value.FCurveColorRGBA value, bool isClip)
 		{
 			var e = doc.CreateElement(element_name);
+			var timeline = SaveToElement(doc, "Timeline", value.Timeline, isClip);
 			var keys = doc.CreateElement("Keys");
 			var r = doc.CreateElement("R");
 			var g = doc.CreateElement("G");
@@ -607,7 +612,7 @@ namespace Effekseer.Data
 
 			int index = 0;
 
-			Action<Value.FCurve<byte>, XmlElement> setValues = (v, xml) =>
+			Action<Value.FCurve<int>, XmlElement> setValues = (v, xml) =>
 			{
 				index = 0;
 
@@ -645,6 +650,7 @@ namespace Effekseer.Data
 			setValues(value.B, b);
 			setValues(value.A, a);
 
+			if (timeline != null) keys.AppendChild(timeline);
 			if (r.ChildNodes.Count > 0) keys.AppendChild(r);
 			if (g.ChildNodes.Count > 0) keys.AppendChild(g);
 			if (b.ChildNodes.Count > 0) keys.AppendChild(b);
@@ -1197,6 +1203,7 @@ namespace Effekseer.Data
 			var e_keys = e["Keys"] as XmlElement;
 			if (e_keys == null) return;
 
+			var e_timeline = e_keys["Timeline"] as XmlElement;
 			var e_x = e_keys["X"] as XmlElement;
 			var e_y = e_keys["Y"] as XmlElement;
 
@@ -1250,6 +1257,7 @@ namespace Effekseer.Data
 				}
 			};
 
+			if (e_timeline != null) LoadFromElement(e_timeline, value.Timeline, isClip);
 			if (e_x != null) import(value.X, e_x);
 			if (e_y != null) import(value.Y, e_y);
 		}
@@ -1259,6 +1267,7 @@ namespace Effekseer.Data
 			var e_keys = e["Keys"] as XmlElement;
 			if (e_keys == null) return;
 
+			var e_timeline = e_keys["Timeline"] as XmlElement;
 			var e_x = e_keys["X"] as XmlElement;
 			var e_y = e_keys["Y"] as XmlElement;
 			var e_z = e_keys["Z"] as XmlElement;
@@ -1312,6 +1321,7 @@ namespace Effekseer.Data
 				}
 			};
 
+			if (e_timeline != null) LoadFromElement(e_timeline, value.Timeline, isClip);
 			if (e_x != null) import(value.X, e_x);
 			if (e_y != null) import(value.Y, e_y);
 			if (e_z != null) import(value.Z, e_z);
@@ -1319,7 +1329,7 @@ namespace Effekseer.Data
 
 		public static void LoadFromElement(XmlElement e, Value.FCurveColorRGBA value, bool isClip)
 		{
-			Action<Data.Value.FCurve<byte>, XmlElement> import = (v_, e_) =>
+			Action<Data.Value.FCurve<int>, XmlElement> import = (v_, e_) =>
 				{
 					foreach (XmlElement r in e_.ChildNodes)
 					{
@@ -1333,7 +1343,7 @@ namespace Effekseer.Data
 							var ry = r.GetTextAsFloat("RightY");
 							var i = r.GetTextAsInt("InterpolationType");
 
-							var t = new Value.FCurveKey<byte>(f, (byte)v);
+							var t = new Value.FCurveKey<int>(f, (int)v);
 							t.SetLeftDirectly(lx, ly);
 							t.SetRightDirectly(rx, ry);
 							t.InterpolationType.SetValue(i);
@@ -1372,11 +1382,13 @@ namespace Effekseer.Data
 			var e_keys = e["Keys"] as XmlElement;
 			if (e_keys == null) return;
 
+			var e_timeline = e_keys["Timeline"] as XmlElement;
 			var e_r = e_keys["R"] as XmlElement;
 			var e_g = e_keys["G"] as XmlElement;
 			var e_b = e_keys["B"] as XmlElement;
 			var e_a = e_keys["A"] as XmlElement;
 
+			if (e_timeline != null) LoadFromElement(e_timeline, value.Timeline, isClip);
 			if (e_r != null) import(value.R, e_r);
 			if (e_g != null) import(value.G, e_g);
 			if (e_b != null) import(value.B, e_b);

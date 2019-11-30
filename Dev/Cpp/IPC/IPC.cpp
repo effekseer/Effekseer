@@ -160,6 +160,7 @@ private:
 	{
 		int32_t count = 0;
 		char key[260];
+		int32_t timestamp;
 		int32_t offset;
 		int32_t size = 0;
 	};
@@ -264,7 +265,7 @@ public:
 		return false;
 	}
 
-	bool UpdateFile(const char* key, const void* data, int32_t size)
+	bool UpdateFile(const char* key, const void* data, int32_t size, int32_t timestamp)
 	{
 		if (size > fileSize)
 		{
@@ -280,6 +281,7 @@ public:
 			{
 				header->keys[i].offset = sizeof(Header) + fileSize * i;
 				header->keys[i].size = size;
+				header->keys[i].timestamp = timestamp;
 				memcpy(mem_.data + header->keys[i].offset, data, size);
 				return true;
 			}
@@ -288,7 +290,7 @@ public:
 		return false;
 	}
 
-	int32_t GetFile(const char* key, void* data, int32_t size)
+	int32_t GetFile(const char* key, void* data, int32_t size, int32_t& timestamp)
 	{
 		auto header = reinterpret_cast<Header*>(mem_.data);
 		auto key_ = std::string(key);
@@ -299,6 +301,7 @@ public:
 			{
 				int32_t s = std::min(size, header->keys[i].size);
 				memcpy(data, mem_.data + header->keys[i].offset, s);
+				timestamp = header->keys[i].timestamp;
 				return s;
 			}
 		}
@@ -321,8 +324,14 @@ bool KeyValueFileStorage::AddRef(const char* key) { return impl->AddRef(key); }
 
 bool KeyValueFileStorage::ReleaseRef(const char* key) { return impl->ReleaseRef(key); }
 
-void KeyValueFileStorage::UpdateFile(const char* key, const void* data, int32_t size) { impl->UpdateFile(key, data, size); }
-int32_t KeyValueFileStorage::GetFile(const char* key, void* data, int32_t size) { return impl->GetFile(key, data, size); }
+void KeyValueFileStorage::UpdateFile(const char* key, const void* data, int32_t size, int32_t timestamp)
+{
+	impl->UpdateFile(key, data, size, timestamp);
+}
+int32_t KeyValueFileStorage::GetFile(const char* key, void* data, int32_t size, int32_t timestamp)
+{
+	return impl->GetFile(key, data, size, timestamp);
+}
 void KeyValueFileStorage::Lock() { impl->Lock(); }
 void KeyValueFileStorage::Unlock() { impl->Unlock(); }
 

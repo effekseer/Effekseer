@@ -25,7 +25,7 @@ static const char g_header_vs_gl3_src [] =
 "#define mediump\n" \
 "#define highp\n" \
 "#define IN in\n" \
-"#define TEX2D texture\n" \
+"#define TEX2D textureLod\n" \
 "#define OUT out\n";
 
 static const char g_header_fs_gl3_src [] =
@@ -41,7 +41,7 @@ static const char g_header_vs_gles3_src [] =
 "#version 300 es\n" \
 "precision mediump float;\n" \
 "#define IN in\n" \
-"#define TEX2D texture\n" \
+"#define TEX2D textureLod\n" \
 "#define OUT out\n";
 
 static const char g_header_fs_gles3_src [] =
@@ -54,7 +54,7 @@ static const char g_header_fs_gles3_src [] =
 static const char g_header_vs_gles2_src [] =
 "precision mediump float;\n" \
 "#define IN attribute\n" \
-"#define TEX2D texture2D\n" \
+"#define TEX2D texture2DLod\n" \
 "#define OUT varying\n";
 
 static const char g_header_fs_gles2_src [] =
@@ -69,7 +69,7 @@ static const char g_header_vs_gl2_src [] =
 "#define mediump\n" \
 "#define highp\n" \
 "#define IN attribute\n" \
-"#define TEX2D texture2D\n" \
+"#define TEX2D texture2DLod\n" \
 "#define OUT varying\n";
 
 static const char g_header_fs_gl2_src [] =
@@ -85,7 +85,7 @@ static const char g_header_fs_gl2_src [] =
 //
 //-----------------------------------------------------------------------------------
 bool Shader::CompileShader(
-	Renderer* renderer,
+	OpenGLDeviceType deviceType,
 	GLuint& program,
 	const char* vs_src,
 	size_t vertexShaderSize,
@@ -100,11 +100,12 @@ bool Shader::CompileShader(
 	GLint res_vs, res_fs, res_link;
 	
 
-	// バーテックスシェーダをコンパイル
-	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3) src_data[0] = g_header_vs_gl3_src;
-	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL2) src_data[0] = g_header_vs_gl2_src;
-	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3) src_data[0] = g_header_vs_gles3_src;
-	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES2 || renderer->GetDeviceType() == OpenGLDeviceType::Emscripten) src_data[0] = g_header_vs_gles2_src;
+	// compile a vertex shader
+	if (deviceType == OpenGLDeviceType::OpenGL3) src_data[0] = g_header_vs_gl3_src;
+	if (deviceType == OpenGLDeviceType::OpenGL2) src_data[0] = g_header_vs_gl2_src;
+	if (deviceType == OpenGLDeviceType::OpenGLES3) src_data[0] = g_header_vs_gles3_src;
+	if (deviceType == OpenGLDeviceType::OpenGLES2 || deviceType == OpenGLDeviceType::Emscripten)
+		src_data[0] = g_header_vs_gles2_src;
 
 	src_size[0] = (GLint) strlen(src_data[0]);
 	src_data[1] = vs_src;
@@ -115,11 +116,12 @@ bool Shader::CompileShader(
 	GLExt::glCompileShader(vert_shader);
 	GLExt::glGetShaderiv(vert_shader, GL_COMPILE_STATUS, &res_vs);
 
-	// フラグメントシェーダをコンパイル
-	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL3) src_data[0] = g_header_fs_gl3_src;
-	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGL2) src_data[0] = g_header_fs_gl2_src;
-	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES3) src_data[0] = g_header_fs_gles3_src;
-	if (renderer->GetDeviceType() == OpenGLDeviceType::OpenGLES2 || renderer->GetDeviceType() == OpenGLDeviceType::Emscripten) src_data[0] = g_header_fs_gles2_src;
+	// compile a fragment shader
+	if (deviceType == OpenGLDeviceType::OpenGL3) src_data[0] = g_header_fs_gl3_src;
+	if (deviceType == OpenGLDeviceType::OpenGL2) src_data[0] = g_header_fs_gl2_src;
+	if (deviceType == OpenGLDeviceType::OpenGLES3) src_data[0] = g_header_fs_gles3_src;
+	if (deviceType == OpenGLDeviceType::OpenGLES2 || deviceType == OpenGLDeviceType::Emscripten)
+		src_data[0] = g_header_fs_gles2_src;
 
 	src_size[0] = (GLint) strlen(src_data[0]);
 	src_data[1] = fs_src;
@@ -130,18 +132,18 @@ bool Shader::CompileShader(
 	GLExt::glCompileShader(frag_shader);
 	GLExt::glGetShaderiv(frag_shader, GL_COMPILE_STATUS, &res_fs);
 	
-	// シェーダプログラムの作成
+	// create shader program
 	program = GLExt::glCreateProgram();
 	GLExt::glAttachShader(program, vert_shader);
 	GLExt::glAttachShader(program, frag_shader);
 	
-	// シェーダプログラムのリンク
+	// link shaders
 	GLExt::glLinkProgram(program);
 	GLExt::glGetProgramiv(program, GL_LINK_STATUS, &res_link);
 
 #ifndef NDEBUG
 	{
-		// エラー出力
+		// output errors
 		char log[512];
 		int32_t log_size;
 		GLExt::glGetShaderInfoLog(vert_shader, sizeof(log), &log_size, log);
@@ -164,7 +166,7 @@ bool Shader::CompileShader(
 		}
 	}
 #endif
-	// シェーダオブジェクトの削除
+	// dispose shader objects
 	GLExt::glDeleteShader(frag_shader);
 	GLExt::glDeleteShader(vert_shader);
 
@@ -181,24 +183,25 @@ bool Shader::CompileShader(
 //
 //-----------------------------------------------------------------------------------
 Shader::Shader( 
+	OpenGLDeviceType deviceType,
 	Renderer* renderer,
+	DeviceObjectCollection* deviceObjectCollection,
 	GLuint program,
 	const char* vs_src,
 	size_t vertexShaderSize,
 	const char* fs_src,
 	size_t pixelShaderSize,
-	const char* name)
-	: DeviceObject(static_cast<RendererImplemented*>(renderer))
+	const char* name,
+	bool hasRefCount)
+	: DeviceObject(static_cast<RendererImplemented*>(renderer), deviceObjectCollection, hasRefCount)
+	, deviceType_(deviceType)
 	, m_program			( program )
 	, m_vertexSize		( 0 )
 	, m_vertexConstantBuffer	( NULL )
 	, m_pixelConstantBuffer		( NULL )
 {
-	for (int32_t i = 0; i < 4; i++)
-	{
-		m_textureSlots[i] = 0;
-		m_textureSlotEnables[i] = false;
-	}
+	m_textureSlots.fill(0);
+	m_textureSlotEnables.fill(false);
 
 	m_vsSrc.resize(vertexShaderSize);
 	memcpy(m_vsSrc.data(), vs_src, vertexShaderSize );
@@ -237,38 +240,21 @@ Shader::~Shader()
 	ES_SAFE_DELETE_ARRAY( m_pixelConstantBuffer );
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
-Shader* Shader::Create(
-	Renderer* renderer,
-		const char* vs_src,
-		size_t vertexShaderSize,
-		const char* fs_src,
-		size_t pixelShaderSize,
-		const char* name)
+Shader* Shader::Create(OpenGLDeviceType deviceType,
+
+	DeviceObjectCollection* deviceObjectCollection,
+					  const char* vs_src,
+					  size_t vertexShaderSize,
+					  const char* fs_src,
+					  size_t pixelShaderSize,
+					  const char* name,
+					  bool hasRefCount)
 {
 	GLuint program;
-	
-	assert( renderer != NULL );
 
-	if(CompileShader(
-		renderer,
-		program,
-		vs_src,
-		vertexShaderSize,
-		fs_src,
-		pixelShaderSize,
-		name))
+	if (CompileShader(deviceType, program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name))
 	{
-		return new Shader( 
-			renderer, 
-			program,
-			vs_src,
-			vertexShaderSize,
-			fs_src,
-			pixelShaderSize, 
-			name);
+		return new Shader(deviceType, nullptr, deviceObjectCollection, program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name, hasRefCount);
 	}
 	else
 	{
@@ -276,9 +262,32 @@ Shader* Shader::Create(
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
+Shader* Shader::Create(
+	Renderer* renderer, const char* vs_src, size_t vertexShaderSize, const char* fs_src, size_t pixelShaderSize, const char* name)
+{
+	GLuint program;
+
+	auto r = static_cast<RendererImplemented*>(renderer);
+
+	if (CompileShader(r->GetDeviceType(), program, vs_src, vertexShaderSize, fs_src, pixelShaderSize, name))
+	{
+		return new Shader(r->GetDeviceType(),
+						  renderer,
+						  r->GetDeviceObjectCollection(),
+						  program,
+						  vs_src,
+						  vertexShaderSize,
+						  fs_src,
+						  pixelShaderSize,
+						  name,
+						  true);
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
 void Shader::OnLostDevice()
 {
 	GLExt::glDeleteProgram(m_program);
@@ -295,7 +304,7 @@ void Shader::OnResetDevice()
 	GLuint program;
 	
 	if(CompileShader(
-		GetRenderer(),
+		deviceType_,
 		program,
 		(const char*)(m_vsSrc.data()),
 		m_vsSrc.size(),
@@ -322,7 +331,7 @@ void Shader::OnChangeDevice()
 	GLuint program;
 	
 	if(CompileShader(
-		GetRenderer(),
+		deviceType_,
 		program,
 		(const char*)&(m_vsSrc[0]),
 		m_vsSrc.size(),

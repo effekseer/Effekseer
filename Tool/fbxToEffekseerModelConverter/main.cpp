@@ -146,11 +146,19 @@ int main(int argc, char** argv)
 	if (scene->AnimationClips.size() > 0)
 	{
 		fbxToEfkMdl::VertexAnimation va;
-		va.Export(exportPath.c_str(), scene, modelScale);
+		va.Export(exportPath.c_str(), scene, scene->AnimationClips[0], modelScale);
+
+		return 0;
+	}
+	else
+	{
+		fbxToEfkMdl::VertexAnimation va;
+		va.Export(exportPath.c_str(), scene, nullptr, modelScale);
 
 		return 0;
 	}
 
+	// not used
 	if (ExportStaticMesh(exportPath.c_str(), scene, modelCount, modelScale))
 	{
 		return 0;

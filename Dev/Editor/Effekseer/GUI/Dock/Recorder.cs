@@ -53,7 +53,6 @@ namespace Effekseer.GUI.Dock
 			Label = Resources.GetString("Recorder") + "###Recorder";
 
 			Icon = Images.GetIcon("PanelRecorder");
-			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("Recorder");
 		}
 
@@ -64,7 +63,8 @@ namespace Effekseer.GUI.Dock
             viewerParameter.GuideHeight = Core.Recording.RecordingHeight.Value;
             viewerParameter.RendersGuide = Core.Recording.IsRecordingGuideShown;
 
-            var w = new int [] { Manager.Viewer.GetViewerParamater().GuideWidth };
+			float dpiScale = Manager.DpiScale;
+			var w = new int [] { Manager.Viewer.GetViewerParamater().GuideWidth };
 			var h = new int [] { Manager.Viewer.GetViewerParamater().GuideHeight };
 			var showGuide = new bool[] { Manager.Viewer.GetViewerParamater().RendersGuide };
 
@@ -83,7 +83,7 @@ namespace Effekseer.GUI.Dock
 			selectedStorageTarget = Core.Recording.RecordingStorageTarget.GetValueAsInt();
 
 			// Recordingwindow
-			Manager.NativeManager.BeginChild("##RecordRes", new swig.Vec2(0,120), true, swig.WindowFlags.MenuBar);
+			Manager.NativeManager.BeginChild("##RecordRes", new swig.Vec2(0, 120 * dpiScale), true, swig.WindowFlags.MenuBar);
 			if (Manager.NativeManager.BeginMenuBar())
 			{
 				if (Manager.NativeManager.BeginMenu(areaTitle + "##RecordResTitle"))
@@ -95,7 +95,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			Manager.NativeManager.Columns(2);
-			Manager.NativeManager.SetColumnWidth(0, 120);
+			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
 			Manager.NativeManager.Text(Resources.GetString("Width"));
 
@@ -136,7 +136,7 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.EndChild();
 
 			// Recordingwindow
-			Manager.NativeManager.BeginChild("##OutputFrame", new swig.Vec2(0, 120), true, swig.WindowFlags.MenuBar);
+			Manager.NativeManager.BeginChild("##OutputFrame", new swig.Vec2(0, 130 * dpiScale), true, swig.WindowFlags.MenuBar);
 			if (Manager.NativeManager.BeginMenuBar())
 			{
 				if (Manager.NativeManager.BeginMenu(exportedFrameTitle + "##OutputFrameTitle"))
@@ -148,7 +148,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			Manager.NativeManager.Columns(2);
-			Manager.NativeManager.SetColumnWidth(0, 120);
+			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
 			Manager.NativeManager.Text(Resources.GetString("StartFrame"));
 
@@ -186,7 +186,7 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.EndChild();
 
 			// Recordingwindow
-			Manager.NativeManager.BeginChild("##OutputType", new swig.Vec2(0, 100), true, swig.WindowFlags.MenuBar);
+			Manager.NativeManager.BeginChild("##OutputType", new swig.Vec2(0, 100 * dpiScale), true, swig.WindowFlags.MenuBar);
 			if (Manager.NativeManager.BeginMenuBar())
 			{
 				if (Manager.NativeManager.BeginMenu(typeTitle + "##OutputTypeTitle"))
@@ -198,7 +198,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			Manager.NativeManager.Columns(2);
-			Manager.NativeManager.SetColumnWidth(0, 120);
+			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
 			Manager.NativeManager.Text(Resources.GetString("XCount"));
 
@@ -235,7 +235,7 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.EndChild();
 
 			// Recordingwindow
-			Manager.NativeManager.BeginChild("##Option", new swig.Vec2(0, 60), true, swig.WindowFlags.MenuBar);
+			Manager.NativeManager.BeginChild("##Option", new swig.Vec2(0, 60 * dpiScale), true, swig.WindowFlags.MenuBar);
 			if (Manager.NativeManager.BeginMenuBar())
 			{
 				if (Manager.NativeManager.BeginMenu(optionsTitle + "##OptionTitle"))
@@ -247,7 +247,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			Manager.NativeManager.Columns(2);
-			Manager.NativeManager.SetColumnWidth(0, 120);
+			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
 			Manager.NativeManager.Text(Resources.GetString("MakeTransparent"));
 
@@ -273,9 +273,9 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.EndChild();
 
 			// Storage
-			Manager.NativeManager.BeginChild("##Storage", new swig.Vec2(0, 60), true, swig.WindowFlags.MenuBar);
+			Manager.NativeManager.BeginChild("##Storage", new swig.Vec2(0, 60 * dpiScale), true, swig.WindowFlags.MenuBar);
 			Manager.NativeManager.Columns(2);
-			Manager.NativeManager.SetColumnWidth(0, 120);
+			Manager.NativeManager.SetColumnWidth(0, 120 * dpiScale);
 
 			Manager.NativeManager.Text(Resources.GetString("StorageTarget"));
 

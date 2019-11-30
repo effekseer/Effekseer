@@ -13,8 +13,8 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBuffer::VertexBuffer( RendererImplemented* renderer, int size, bool isDynamic )
-	: DeviceObject		( renderer )
+VertexBuffer::VertexBuffer(RendererImplemented* renderer, int size, bool isDynamic, bool hasRefCount)
+	: DeviceObject(renderer, renderer->GetDeviceObjectCollection(), hasRefCount)
 	, VertexBufferBase	( size, isDynamic )
 	, m_vertexRingStart		( 0 )
 	, m_vertexRingOffset	( 0 )
@@ -45,9 +45,9 @@ VertexBuffer::~VertexBuffer()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-VertexBuffer* VertexBuffer::Create( RendererImplemented* renderer, int size, bool isDynamic )
+VertexBuffer* VertexBuffer::Create(RendererImplemented* renderer, int size, bool isDynamic, bool hasRefCount)
 {
-	return new VertexBuffer( renderer, size, isDynamic );
+	return new VertexBuffer( renderer, size, isDynamic, hasRefCount);
 }
 
 GLuint VertexBuffer::GetInterface()

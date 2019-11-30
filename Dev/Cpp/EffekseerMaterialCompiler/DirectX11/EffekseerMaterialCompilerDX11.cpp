@@ -6,6 +6,8 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
+#undef min
+
 namespace Effekseer
 {
 namespace DX11
@@ -113,6 +115,13 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 	return shader;
 }
 
+static char* material_common_define = R"(
+#define MOD fmod
+#define FRAC frac
+#define LERP lerp
+
+)";
+
 static char* material_sprite_vs_pre_simple = R"(
 
 struct VS_Input
@@ -139,6 +148,18 @@ float4x4 mCamera		: register(c0);
 float4x4 mProj			: register(c4);
 float4 mUVInversed		: register(c8);
 float4 predefined_uniform : register(c9);
+
+float2 GetUV(float2 uv)
+{
+	uv.y = mUVInversed.x + mUVInversed.y * uv.y;
+	return uv;
+}
+
+float2 GetUVBack(float2 uv)
+{
+	uv.y = mUVInversed.z + mUVInversed.w * uv.y;
+	return uv;
+}
 
 )";
 
@@ -176,6 +197,18 @@ float4x4 mProj			: register(c4);
 float4 mUVInversed		: register(c8);
 float4 predefined_uniform : register(c9);
 
+float2 GetUV(float2 uv)
+{
+	uv.y = mUVInversed.x + mUVInversed.y * uv.y;
+	return uv;
+}
+
+float2 GetUVBack(float2 uv)
+{
+	uv.y = mUVInversed.z + mUVInversed.w * uv.y;
+	return uv;
+}
+
 )";
 
 static char* material_sprite_vs_suf1_simple = R"(
@@ -192,8 +225,8 @@ VS_Output main( const VS_Input Input )
 	// UV
 	float uv1 = Input.UV;
 	float uv2 = Input.UV;
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
+	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	//uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
 	// NBT
 	Output.WorldN = worldNormal;
@@ -201,6 +234,7 @@ VS_Output main( const VS_Input Input )
 	Output.WorldT = worldTangent;
 
 	float3 pixelNormalDir = worldNormal;
+	float4 vcolor = Input.Color;
 )";
 
 static char* material_sprite_vs_suf1 = R"(
@@ -216,8 +250,8 @@ VS_Output main( const VS_Input Input )
 	// UV
 	float2 uv1 = Input.UV1;
 	float2 uv2 = Input.UV2;
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
+	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	//uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
 	// NBT
 	Output.WorldN = worldNormal;
@@ -225,6 +259,7 @@ VS_Output main( const VS_Input Input )
 	Output.WorldT = worldTangent;
 
 	float3 pixelNormalDir = worldNormal;
+	float4 vcolor = Input.Color;
 )";
 
 static char* material_sprite_vs_suf2 = R"(
@@ -286,6 +321,19 @@ float4 predefined_uniform : register(c245);
 
 // custom1
 // custom2
+
+float2 GetUV(float2 uv)
+{
+	uv.y = mUVInversed.x + mUVInversed.y * uv.y;
+	return uv;
+}
+
+float2 GetUVBack(float2 uv)
+{
+	uv.y = mUVInversed.z + mUVInversed.w * uv.y;
+	return uv;
+}
+
 )";
 
 static char* model_vs_suf1 = R"(
@@ -312,10 +360,11 @@ VS_Output main( const VS_Input Input )
 	uv1.y = Input.UV.y * uv.w + uv.y;
 	float2 uv2 = Input.UV;
 
-	uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
-	uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
+	//uv1.y = mUVInversed.x + mUVInversed.y * uv1.y;
+	//uv2.y = mUVInversed.x + mUVInversed.y * uv2.y;
 
 	float3 pixelNormalDir = worldNormal;
+	float4 vcolor = modelColor;
 )";
 
 static char* model_vs_suf2 = R"(
@@ -360,6 +409,18 @@ struct PS_Input
 
 float4 mUVInversedBack	: register(c0);
 float4 predefined_uniform : register(c1);
+
+float2 GetUV(float2 uv)
+{
+	uv.y = mUVInversedBack.x + mUVInversedBack.y * uv.y;
+	return uv;
+}
+
+float2 GetUVBack(float2 uv)
+{
+	uv.y = mUVInversedBack.z + mUVInversedBack.w * uv.y;
+	return uv;
+}
 
 )";
 
@@ -434,6 +495,7 @@ float4 main( const PS_Input Input ) : SV_Target
 	float3 worldTangent = Input.WorldT;
 
 	float3 pixelNormalDir = worldNormal;
+	float4 vcolor = Input.VColor;
 )";
 
 static char* g_material_ps_suf2_unlit = R"(
@@ -472,7 +534,7 @@ static char* g_material_ps_suf2_refraction = R"(
 	float2 distortUV = 	dir.xy * (refraction - airRefraction);
 
 	distortUV += Input.ScreenUV;
-	distortUV.y = mUVInversedBack.x + mUVInversedBack.y * distortUV.y;
+	distortUV = GetUVBack(distortUV);	
 
 	float4 bg = background_texture.Sample(background_sampler, distortUV);
 	float4 Output = bg;
@@ -503,7 +565,7 @@ struct ShaderData
 	std::string CodePS;
 };
 
-ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
+ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int32_t maximumTextureCount)
 {
 	ShaderData shaderData;
 
@@ -542,6 +604,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 		auto cind = 0;
 
 		std::ostringstream maincode;
+
+		maincode << material_common_define;
 
 		if (stage == 0)
 		{
@@ -624,7 +688,9 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 			cind++;
 		}
 
-		for (size_t i = 0; i < material->GetTextureCount(); i++)
+		int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
+
+		for (size_t i = 0; i < actualTextureCount; i++)
 		{
 			maincode << "Texture2D " << material->GetTextureName(i) << "_texture : register(t" << i << ");" << std::endl;
 			maincode << "SamplerState " << material->GetTextureName(i) << "_sampler : register(s" << i << ");" << std::endl;
@@ -652,15 +718,42 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType)
 		baseCode = Replace(baseCode, "$SUFFIX", "");
 
 		// replace textures
-		for (size_t i = 0; i < material->GetTextureCount(); i++)
+		for (size_t i = 0; i < actualTextureCount; i++)
 		{
 			std::string keyP = "$TEX_P" + std::to_string(material->GetTextureIndex(i)) + "$";
 			std::string keyS = "$TEX_S" + std::to_string(material->GetTextureIndex(i)) + "$";
 
-			baseCode = Replace(
-				baseCode, keyP, std::string(material->GetTextureName(i)) + "_texture.Sample(" + material->GetTextureName(i) + "_sampler,");
-			baseCode = Replace(baseCode, keyS, ")");
+			if (stage == 0)
+			{
+				baseCode = Replace(baseCode,
+								   keyP,
+								   std::string(material->GetTextureName(i)) + "_texture.SampleLevel(" + material->GetTextureName(i) +
+									   "_sampler,GetUV(");
+				baseCode = Replace(baseCode, keyS, "),0)");
+			}
+			else
+			{
+				baseCode = Replace(baseCode,
+								   keyP,
+								   std::string(material->GetTextureName(i)) + "_texture.Sample(" + material->GetTextureName(i) +
+									   "_sampler,GetUV(");
+				baseCode = Replace(baseCode, keyS, "))");
+			}
 		}
+
+		// invalid texture
+		for (size_t i = actualTextureCount; i < material->GetTextureCount(); i++)
+		{
+			auto textureIndex = material->GetTextureIndex(i);
+			auto textureName = std::string(material->GetTextureName(i));
+
+			std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
+			std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
+
+			baseCode = Replace(baseCode, keyP, "float4(");
+			baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
+		}
+
 
 		if (stage == 0)
 		{
@@ -856,7 +949,7 @@ public:
 	int GetRef() override { return ReferenceObject::GetRef(); }
 };
 
-CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material)
+CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_t maximumTextureCount)
 {
 	auto binary = new CompiledMaterialBinaryDX11();
 
@@ -910,8 +1003,8 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material)
 		return ret;
 	};
 
-	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS](MaterialShaderType type) {
-		auto shader = DX11::GenerateShader(material, type);
+	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
+		auto shader = DX11::GenerateShader(material, type, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
 	};
@@ -927,6 +1020,8 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material)
 
 	return binary;
 }
+
+CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
 
 } // namespace Effekseer
 

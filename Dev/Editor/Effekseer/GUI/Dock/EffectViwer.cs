@@ -24,13 +24,15 @@ namespace Effekseer.GUI.Dock
 
 		protected override void UpdateInternal()
 		{
+			float dpiScale = Manager.DpiScale;
+
 			IsHovered = false;
 
 			var windowSize = Manager.NativeManager.GetWindowSize();
 
 			// Menu
-			windowSize.X = System.Math.Max(1, windowSize.X - 20);
-			windowSize.Y = System.Math.Max(1, windowSize.Y - 50);
+			windowSize.X = System.Math.Max(1, windowSize.X - 20 * dpiScale);
+			windowSize.Y = System.Math.Max(1, windowSize.Y - 44 * dpiScale);
 
 			var p = Manager.Native.RenderView((int)windowSize.X, (int)windowSize.Y);
 			Manager.NativeManager.Image(p, (int)windowSize.X, (int)windowSize.Y);

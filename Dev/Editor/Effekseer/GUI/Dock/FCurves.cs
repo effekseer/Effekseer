@@ -42,6 +42,8 @@ namespace Effekseer.GUI.Dock
 		string left_text = Resources.GetString("Left");
 		string right_text = Resources.GetString("Right");
 		string offset_text = Resources.GetString("Offset");
+		string timelineMode_Name = Resources.GetString("FCurve_TimelineMode_Name");
+		string timelineMode_Desc = Resources.GetString("FCurve_TimelineMode_Desc");
 		string offset_min_text = Resources.GetString("Min");
 		string offset_max_text = Resources.GetString("Max");
 
@@ -79,21 +81,20 @@ namespace Effekseer.GUI.Dock
 			Core.OnAfterLoad += OnAfterLoad;
 
 			startCurve.Initialize(typeof(Data.Value.FCurveEdge));
-			startCurve.Label = start_text + "##Start";
+			startCurve.InternalLabel = start_text + "##Start";
 
 			endCurve.Initialize(typeof(Data.Value.FCurveEdge));
-			endCurve.Label = end_text + "##End";
+			endCurve.InternalLabel = end_text + "##End";
 
 			type.Initialize(typeof(Data.Value.FCurveInterpolation));
-			type.Label = type_text + "##Type";
+			type.InternalLabel = type_text + "##Type";
 
-			timeline.Initialize(typeof(Data.Value.FCurveTimelineType));
-			timeline.Label = type_text + "##Timeline";
+			timeline.Initialize(typeof(Data.Value.FCurveTimelineMode));
+			timeline.InternalLabel = timelineMode_Name + "##Timeline";
 
 			OnChanged();
 
 			Icon = Images.GetIcon("PanelFCurve");
-			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("FCurves");
 
 			// auto zoom event
@@ -330,7 +331,7 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// line3
-			Manager.NativeManager.Columns(2);
+			Manager.NativeManager.Columns(3);
 
 			var fcurveGroups = flattenFcurves.Where(_ => _.Properties.Any(__=>__.IsShown)).ToArray();
 
@@ -342,15 +343,23 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				Manager.NativeManager.InputText("Timeline" + "##Timeline", invalidValue, swig.InputTextFlags.ReadOnly);
+				Manager.NativeManager.InputText(timelineMode_Name + "##Timeline", invalidValue, swig.InputTextFlags.ReadOnly);
 				timeline.SetBinding(null);
+			}
+
+			if(Component.Functions.CanShowTip())
+			{
+				Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_TimelineMode_Desc"));
 			}
 
 			// line4
 			Manager.NativeManager.Columns(1);
 			
 			{
-				if (Manager.NativeManager.ImageButton(Images.GetIcon("EnlargeAnchor"), 24, 24))
+				float dpiScale = Manager.DpiScale;
+				swig.Vec2 size = new swig.Vec2(24 * dpiScale, 24 * dpiScale);
+
+				if (Manager.NativeManager.ImageButton(Images.GetIcon("EnlargeAnchor"), size.X, size.Y))
 				{
 					EnlargeAnchors();
 				}
@@ -362,7 +371,7 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.ImageButton(Images.GetIcon("ShrinkAnchor"), 24, 24))
+				if (Manager.NativeManager.ImageButton(Images.GetIcon("ShrinkAnchor"), size.X, size.Y))
 				{
 					ShrinkAnchors();
 				}
@@ -374,16 +383,26 @@ namespace Effekseer.GUI.Dock
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("Copy"))
+				if (Manager.NativeManager.ImageButton(Images.Icons["Copy"], size.X, size.Y))
 				{
 					Copy();
 				}
 
+				if (Component.Functions.CanShowTip())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Copy_Desc"));
+				}
+
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("Paste"))
+				if (Manager.NativeManager.ImageButton(Images.Icons["Paste"], size.X, size.Y))
 				{
 					Paste();
+				}
+
+				if (Component.Functions.CanShowTip())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Paste_Desc"));
 				}
 			}
 
@@ -407,7 +426,7 @@ namespace Effekseer.GUI.Dock
 
 			if (isFirstUpdate)
 			{
-				Manager.NativeManager.SetColumnWidth(0, 200);
+				Manager.NativeManager.SetColumnWidth(0, 200 * Manager.DpiScale);
 			}
 			//Manager.NativeManager.BeginChild("##FCurveGroup_Tree");
 
@@ -492,7 +511,13 @@ namespace Effekseer.GUI.Dock
 
 			//Manager.NativeManager.SameLine();
 
-			Manager.NativeManager.Text(Resources.GetString("FCurveCtrl_Desc"));
+			Manager.NativeManager.Text(Resources.GetString("FCurve_Operation_Instruction_Desc"));
+
+			// if (Component.Functions.CanShowTip())
+			if(Manager.NativeManager.IsItemHovered())
+			{
+				Manager.NativeManager.SetTooltip(Resources.GetString("FCurveCtrl_Desc"));
+			}
 
 			isFirstUpdate = false;
 		}
@@ -1243,11 +1268,11 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		class ByteFCurveConverter : IFCurveConverter
+		class IntFCurveConverter : IFCurveConverter
 		{
 			public IFCurveKey CreateKey(int key, float value, float leftKey, float leftValue, float rightKey, float rightValue)
 			{
-				var fcurveKey = new FCurveKey<byte>(key, (byte)value);
+				var fcurveKey = new FCurveKey<int>(key, (int)value);
 				fcurveKey.SetLeftDirectly(leftKey, leftValue);
 				fcurveKey.SetRightDirectly(rightKey, rightValue);
 				return fcurveKey;
@@ -1255,8 +1280,8 @@ namespace Effekseer.GUI.Dock
 
 			public void SetKeys(IFCurve fcurve, IFCurveKey[] keys)
 			{
-				var fc = fcurve as FCurve<byte>;
-				fc.SetKeys(keys.OfType<FCurveKey<byte>>().ToArray());
+				var fc = fcurve as FCurve<int>;
+				fc.SetKeys(keys.OfType<FCurveKey<int>>().ToArray());
 			}
 		}
 
@@ -1273,6 +1298,9 @@ namespace Effekseer.GUI.Dock
 			public int ID { get; private set; }
 			protected int LEFT_SHIFT = 340;
 			protected int RIGHT_SHIFT = 344;
+			protected int LEFT_ALT = 342;
+			protected int RIGHT_ALT = 346;
+
 			protected FCurveProperty[] properties = null;
 
 			public TreeNode ParentNode { get; set; }
@@ -1331,9 +1359,9 @@ namespace Effekseer.GUI.Dock
 						v_,
 						v.Item1,
 						window,
-						new ByteFCurveConverter(),
+						new IntFCurveConverter(),
 						0,
-						255,
+						int.MaxValue,
 						v_.Timeline);
 				}
 
@@ -1344,7 +1372,7 @@ namespace Effekseer.GUI.Dock
 			Data.Value.IFCurve[] fcurves = null;
 			int[] ids = new int[3];
 			string[] names = null;
-			Data.Value.Enum<FCurveTimelineType> timelineType = null;
+			Data.Value.Enum<FCurveTimelineMode> timelineType = null;
 
 			FCurves window = null;
 			IFCurveConverter converter = null;
@@ -1354,7 +1382,7 @@ namespace Effekseer.GUI.Dock
 
 			public object Value { get; private set; }
 
-			public FCurve(int length, IFCurve[] fcurves, uint[] colors, string[] names, float defaultValue, object value, string name, FCurves window, IFCurveConverter converter, float v_min, float v_max, Data.Value.Enum<FCurveTimelineType> timelineType)
+			public FCurve(int length, IFCurve[] fcurves, uint[] colors, string[] names, float defaultValue, object value, string name, FCurves window, IFCurveConverter converter, float v_min, float v_max, Data.Value.Enum<FCurveTimelineMode> timelineType)
 			{
 				ID = nextID;
 				nextID++;
@@ -1540,6 +1568,10 @@ namespace Effekseer.GUI.Dock
 							if (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))
 							{
 								properties[i].Selected = !properties[i].Selected;
+							}
+							else if (Manager.NativeManager.IsKeyDown(LEFT_ALT) || Manager.NativeManager.IsKeyDown(RIGHT_ALT))
+							{
+								properties[i].Selected = true;
 							}
 							else
 							{
@@ -1873,7 +1905,7 @@ namespace Effekseer.GUI.Dock
 				return false;
 			}
 
-			public Enum<FCurveTimelineType> GetTimeLineType()
+			public Enum<FCurveTimelineMode> GetTimeLineType()
 			{
 				return timelineType;
 			}

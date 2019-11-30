@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public enum FCurveTimelineType : int
+	public enum FCurveTimelineMode : int
 	{
 		[Name(language = Language.Japanese, value = "時間(フレーム)")]
 		[Name(language = Language.English, value = "Time(Frame)")]
@@ -61,9 +61,9 @@ namespace Effekseer.Data.Value
 
             if (o is float) return (float)o;
 
-            if (v is byte)
+            if (v is int)
             {
-                var b = (byte)o;
+                var b = (int)o;
                 return (float)b;
             }
 
@@ -108,7 +108,7 @@ namespace Effekseer.Data.Value
 			OffsetMax = new Float();
 			OffsetMin = new Float();
 
-			Sampling = new Int(5, int.MaxValue, 1, 1);
+			Sampling = new Int(10, int.MaxValue, 1, 1);
 		}
 
 		public void SetKeys(FCurveKey<T>[] keys)
@@ -272,7 +272,7 @@ namespace Effekseer.Data.Value
 						data.Add(BitConverter.GetBytes(v));
 					}
 				}
-				else if (typeof(T) == typeof(byte))
+				else if (typeof(T) == typeof(int))
 				{
 					for (int f = keys.First().Frame; f < keys.Last().Frame; f += freq)
 					{
@@ -742,9 +742,9 @@ namespace Effekseer.Data.Value
 
             if (o is float) return (float)o;
 
-            if (v is byte)
+            if (v is int)
             {
-                var b = (byte)o;
+                var b = (int)o;
                 return (float)b;
             }
 
@@ -989,7 +989,7 @@ namespace Effekseer.Data.Value
 
 		public void SetValueAsFloat(float value)
 		{
-			if (typeof(T) == typeof(byte))
+			if (typeof(T) == typeof(int))
 			{
 				value = (float)Math.Round((double)value);
 				value = Math.Max(0, value);

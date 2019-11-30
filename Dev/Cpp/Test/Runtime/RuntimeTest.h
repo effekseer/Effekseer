@@ -3,3 +3,5 @@
 void BasicRuntimeDeviceLostTest();
 
 void BasicRuntimeTest();
+
+void UpdateHandleTest();

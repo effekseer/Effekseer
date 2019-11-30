@@ -13,10 +13,8 @@ namespace EffekseerRendererGL
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer::IndexBuffer( RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic )
-	: DeviceObject		( renderer )
-	, IndexBufferBase	( maxCount, isDynamic )
-	, m_buffer			( buffer )
+IndexBuffer::IndexBuffer(RendererImplemented* renderer, GLuint buffer, int maxCount, bool isDynamic, bool hasRefCount)
+	: DeviceObject(renderer, renderer->GetDeviceObjectCollection(), hasRefCount), IndexBufferBase(maxCount, isDynamic), m_buffer(buffer)
 {
 	m_resource = new uint8_t[m_indexMaxCount * sizeof(uint16_t)];
 }
@@ -33,11 +31,11 @@ IndexBuffer::~IndexBuffer()
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-IndexBuffer* IndexBuffer::Create( RendererImplemented* renderer, int maxCount, bool isDynamic )
+IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bool isDynamic, bool hasRefCount)
 {
 	GLuint ib;
 	GLExt::glGenBuffers(1, &ib);
-	return new IndexBuffer( renderer, ib, maxCount, isDynamic );
+	return new IndexBuffer(renderer, ib, maxCount, isDynamic, hasRefCount);
 }
 
 //-----------------------------------------------------------------------------------

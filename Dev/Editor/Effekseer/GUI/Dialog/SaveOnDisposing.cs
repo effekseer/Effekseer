@@ -39,6 +39,8 @@ namespace Effekseer.GUI.Dialog
 
 		public void Update()
 		{
+			float buttonSizeX = 100 * Manager.DpiScale;
+
 			if (isFirstUpdate)
             {
                 Manager.NativeManager.OpenPopup(id);
@@ -51,7 +53,7 @@ namespace Effekseer.GUI.Dialog
 
 				Manager.NativeManager.Separator();
 
-                if (Manager.NativeManager.Button("Yes", 100))
+                if (Manager.NativeManager.Button("Yes", buttonSizeX))
 				{
 					if(Commands.Overwrite())
 					{
@@ -62,7 +64,7 @@ namespace Effekseer.GUI.Dialog
 
 				Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("No", 100))
+				if (Manager.NativeManager.Button("No", buttonSizeX))
                 {
                     ShouldBeRemoved = true;
 					disposed();        
@@ -70,7 +72,7 @@ namespace Effekseer.GUI.Dialog
                 
                 Manager.NativeManager.SameLine();
 
-				if (Manager.NativeManager.Button("Cancel", 100))
+				if (Manager.NativeManager.Button("Cancel", buttonSizeX))
                 {
                     ShouldBeRemoved = true;
                 }

@@ -30,7 +30,8 @@ namespace EffekseerRendererDX11
 		rsDesc.CullMode = cullTbl[ct];
 		rsDesc.FillMode = D3D11_FILL_SOLID; 
 		rsDesc.DepthClipEnable = TRUE;
-		rsDesc.FrontCounterClockwise = depthFunc == D3D11_COMPARISON_GREATER_EQUAL ? TRUE : FALSE;
+		rsDesc.FrontCounterClockwise =
+			(depthFunc == D3D11_COMPARISON_GREATER_EQUAL || depthFunc == D3D11_COMPARISON_GREATER) ? TRUE : FALSE;
 		m_renderer->GetDevice()->CreateRasterizerState( &rsDesc, &m_rStates[ct] );
 	}
 
@@ -219,7 +220,7 @@ void RenderState::Update( bool forced )
 		m_renderer->GetContext()->OMSetBlendState(m_bStates[alphaBlend], blendFactor, 0xFFFFFFFF);
 	}
 	
-	for( int32_t i = 0; i < 4; i++ )
+	for( int32_t i = 0; i < Effekseer::TextureSlotMax; i++ )
 	{
 		bool changeSampler = forced;
 
@@ -239,7 +240,8 @@ void RenderState::Update( bool forced )
 			auto wrap = (int32_t) m_next.TextureWrapTypes[i];
 
 			ID3D11SamplerState* samplerTbl [] = { m_sStates[filter][wrap] };
-			m_renderer->GetContext()->PSSetSamplers( i, 1, samplerTbl );
+			m_renderer->GetContext()->VSSetSamplers(i, 1, samplerTbl);
+			m_renderer->GetContext()->PSSetSamplers(i, 1, samplerTbl);
 		}
 	}
 	

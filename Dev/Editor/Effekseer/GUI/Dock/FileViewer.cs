@@ -22,7 +22,6 @@ namespace Effekseer.GUI.Dock
 			UpdateFileListWithProjectPath(Core.FullPath);
 
 			Icon = Images.GetIcon("PanelFileViewer");
-			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("FileViewer");
 		}
 

@@ -21,7 +21,6 @@ namespace Effekseer.GUI.Dock
             Read();
 
 			Icon = Images.GetIcon("PanelGlobal");
-			IconSize = new swig.Vec2(24, 24);
 			TabToolTip = Resources.GetString("Global");
 		}
 

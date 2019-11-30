@@ -10,7 +10,7 @@ namespace Effekseer
 {
 	public class Core
 	{
-		public const string Version = "1.50CTP1";
+		public const string Version = "1.50β1";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -1029,6 +1029,55 @@ namespace Effekseer
 			}
 
 			Root = root_node as Data.NodeRoot;
+
+			if (toolVersion < ParseVersion("1.50"))
+			{
+				// Fcurve
+				var fcurves = GetFCurveParameterNode();
+
+				Action<ParameterTreeNode> convert = null;
+				convert = (n) =>
+				{
+					foreach (var fcurve in n.Parameters)
+					{
+						var fcurve2 = fcurve.Item2 as Data.Value.FCurveVector2D;
+						var fcurve3 = fcurve.Item2 as Data.Value.FCurveVector3D;
+						var fcurvecolor = fcurve.Item2 as Data.Value.FCurveColorRGBA;
+
+						if (fcurve2 != null)
+						{
+							fcurve2.Timeline.SetValue(Data.Value.FCurveTimelineMode.Time);
+							if (!fcurve2.X.Sampling.IsValueAssigned) fcurve2.X.Sampling.SetValue(5);
+							if (!fcurve2.Y.Sampling.IsValueAssigned) fcurve2.Y.Sampling.SetValue(5);
+						}
+
+						if (fcurve3 != null)
+						{
+							fcurve3.Timeline.SetValue(Data.Value.FCurveTimelineMode.Time);
+							if (!fcurve3.X.Sampling.IsValueAssigned) fcurve3.X.Sampling.SetValue(5);
+							if (!fcurve3.Y.Sampling.IsValueAssigned) fcurve3.Y.Sampling.SetValue(5);
+							if (!fcurve3.Z.Sampling.IsValueAssigned) fcurve3.Z.Sampling.SetValue(5);
+						}
+
+						if (fcurvecolor != null)
+						{
+							fcurvecolor.Timeline.SetValue(Data.Value.FCurveTimelineMode.Time);
+							if (!fcurvecolor.R.Sampling.IsValueAssigned) fcurvecolor.R.Sampling.SetValue(5);
+							if (!fcurvecolor.G.Sampling.IsValueAssigned) fcurvecolor.G.Sampling.SetValue(5);
+							if (!fcurvecolor.B.Sampling.IsValueAssigned) fcurvecolor.B.Sampling.SetValue(5);
+							if (!fcurvecolor.A.Sampling.IsValueAssigned) fcurvecolor.A.Sampling.SetValue(5);
+						}
+					}
+
+					foreach(var c in n.Children)
+					{
+						convert(c);
+					}
+				};
+
+				convert(fcurves);
+			}
+			
 			Command.CommandManager.Clear();
 			IsChanged = false;
 

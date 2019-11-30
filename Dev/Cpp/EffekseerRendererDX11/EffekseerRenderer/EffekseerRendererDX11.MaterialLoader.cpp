@@ -7,6 +7,8 @@
 #include "../EffekseerMaterialCompiler/DirectX11/EffekseerMaterialCompilerDX11.h"
 #include "Effekseer/Material/Effekseer.CompiledMaterial.h"
 
+#undef min
+
 namespace EffekseerRendererDX11
 {
 
@@ -284,6 +286,11 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 		{
 		}
 
+		if (material.GetHasRefraction() && st == 1)
+		{
+			pixelUniformSize += sizeof(float) * 16;
+		}
+
 		vertexUniformSize += material.GetUniformCount() * 4 * sizeof(float);
 		pixelUniformSize += material.GetUniformCount() * 4 * sizeof(float);
 
@@ -305,7 +312,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 	materialData->CustomData1 = material.GetCustomData1Count();
 	materialData->CustomData2 = material.GetCustomData2Count();
-	materialData->TextureCount = material.GetTextureCount();
+	materialData->TextureCount = std::min(material.GetTextureCount(), Effekseer::UserTextureSlotMax);
 	materialData->UniformCount = material.GetUniformCount();
 	materialData->ShadingModel = material.GetShadingModel();
 

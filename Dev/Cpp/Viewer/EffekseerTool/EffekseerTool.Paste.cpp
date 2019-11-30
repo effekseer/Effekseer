@@ -19,7 +19,7 @@ Paste* Paste::Create(efk::Graphics* graphics)
 	return new Paste(graphics);
 }
 
-void Paste::Rendering(void* texture, int32_t width, int32_t height)
+void Paste::Rendering(::Effekseer::TextureData* texture, int32_t width, int32_t height)
 {
 	if (texture == nullptr) return;
 

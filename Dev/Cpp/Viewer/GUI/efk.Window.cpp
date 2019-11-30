@@ -78,6 +78,15 @@ namespace efk
 		}
 	}
 
+	void GLFW_ContentScaleCallback(GLFWwindow* w, float xscale, float yscale)
+	{
+		auto w_ = (Window*)glfwGetWindowUserPointer(w);
+		if (w_->DpiChanged != nullptr)
+		{
+			w_->DpiChanged(xscale);
+		}
+	}
+
 	Window::Window()
 	{}
 
@@ -140,6 +149,7 @@ namespace efk
 		glfwSetWindowFocusCallback(window, GLFW_WindowFocusCallback);
 		glfwSetWindowCloseCallback(window, GLFLW_CloseCallback);
 		glfwSetWindowIconifyCallback(window, GLFW_IconifyCallback);
+		glfwSetWindowContentScaleCallback(window, GLFW_ContentScaleCallback);
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(1);
 

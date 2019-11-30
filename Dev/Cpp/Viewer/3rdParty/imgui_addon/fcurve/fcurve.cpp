@@ -781,7 +781,7 @@ namespace ImGui
 			ImVec2 end;
 			context.GetSelectingArea(begin, end);
 
-			if (!GetIO().KeyShift)
+			if (!GetIO().KeyShift && !GetIO().KeyAlt)
 			{
 				for (int j = 0; j < count; j++)
 				{
@@ -833,7 +833,7 @@ namespace ImGui
 
 				if (IsItemActive() && IsMouseClicked(0))
 				{
-					if (!GetIO().KeyShift)
+					if (!GetIO().KeyShift && !GetIO().KeyAlt)
 					{
 						for (int j = 0; j < count; j++)
 						{
@@ -841,7 +841,15 @@ namespace ImGui
 						}
 					}
 
-					kv_selected[i] = !kv_selected[i];
+					if (GetIO().KeyAlt)
+					{
+						kv_selected[i] = true;
+					}
+					else
+					{
+						kv_selected[i] = !kv_selected[i];
+					}
+
 					hasControlled = true;
 				}
 
