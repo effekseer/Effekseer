@@ -406,10 +406,9 @@ static const char g_material_fs_src_suf2_lit[] =
 	Output.xyz = Output.xyz + emissive.xyz;
 
 	if(opacityMask <= 0.0) discard;
+	if(opacity <= 0.0) discard;
 
 	FRAGCOLOR = Output;
-
-
 }
 
 )";
@@ -418,6 +417,7 @@ static const char g_material_fs_src_suf2_unlit[] =
 	R"(
 
 	if(opacityMask <= 0.0) discard;
+	if(opacity <= 0.0) discard;
 
 	FRAGCOLOR = vec4(emissive, opacity);
 }
@@ -438,6 +438,7 @@ static const char g_material_fs_src_suf2_refraction[] =
 	FRAGCOLOR = bg;
 
 	if(opacityMask <= 0.0) discard;
+	if(opacity <= 0.0) discard;
 }
 
 )";
