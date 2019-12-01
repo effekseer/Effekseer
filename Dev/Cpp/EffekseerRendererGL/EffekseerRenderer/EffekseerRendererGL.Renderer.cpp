@@ -743,6 +743,14 @@ bool RendererImplemented::BeginRendering()
 		glGetIntegerv(GL_BLEND_EQUATION, &m_originalState.blendEquation);
 		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &m_originalState.arrayBufferBinding);
 		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &m_originalState.elementArrayBufferBinding);
+		
+		for (size_t i = 0; i < m_originalState.boundTextures.size(); i++)
+		{
+			GLint bound = 0;
+			GLExt::glActiveTexture(GL_TEXTURE0 + i);
+			glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
+			m_originalState.boundTextures[i] = bound;
+		}
 
 		if (GLExt::IsSupportedVertexArray())
 		{
@@ -783,6 +791,13 @@ bool RendererImplemented::EndRendering()
 		{
 			GLExt::glBindVertexArray(m_originalState.vao);
 		}
+
+		for (size_t i = 0; i < m_originalState.boundTextures.size(); i++)
+		{
+			GLExt::glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, m_originalState.boundTextures[i]);
+		}
+		GLExt::glActiveTexture(GL_TEXTURE0);
 
 		if (m_originalState.blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
 		if (m_originalState.cullFace) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
@@ -1404,6 +1419,7 @@ void RendererImplemented::ResetRenderState()
 Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRenderer::ProxyTextureType type) {
 
 	GLint bound = 0;
+	GLExt::glActiveTexture(GL_TEXTURE0);
 	glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound);
 
 	std::array<uint8_t, 4> buf;
