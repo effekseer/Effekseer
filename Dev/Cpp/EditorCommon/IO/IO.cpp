@@ -1,7 +1,8 @@
 #include "IO.h"
+#include "../Common/StringHelper.h"
+#include "../Platform/FileSystem.h"
 #include "DefaultFileReader.h"
 #include "IPCFileReader.h"
-#include "../Platform/FileSystem.h"
 
 namespace Effekseer
 {
@@ -60,7 +61,7 @@ std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 		notifiedFileInfos_.erase(info);
 	}
 
-	auto time = 0; // TODO:Get IPC file's last write time.
+	auto time = std::dynamic_pointer_cast<IPCFileReader>(reader)->GetUpdateTime();
 	fileUpdateDates_[info] = time;
 
 	return file;
@@ -94,7 +95,9 @@ int IO::GetFileLastWriteTime(const FileInfo& fileInfo)
 		time = FileSystem::GetLastWriteTime(fileInfo.path_);
 		break;
 	case FileType::IPC:
-		// TODO:Get IPC file's last write time.
+		char data;
+		if (ipcStorage_->GetFile(utf16_to_utf8(fileInfo.path_).c_str(), &data, 1, time) == 0)
+			return 0;
 		break;
 	}
 	return time;

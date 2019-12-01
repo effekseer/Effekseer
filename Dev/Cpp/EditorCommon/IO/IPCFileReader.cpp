@@ -11,7 +11,7 @@ IPCFileReader::IPCFileReader(const std::u16string& path, std::shared_ptr<IPC::Ke
 	storage->Lock();
 
 	buffer_.resize(MAX_STORAGE);
-	length_ = storage->GetFile(utf16_to_utf8(path).c_str(), buffer_.data(), MAX_STORAGE);
+	length_ = storage->GetFile(utf16_to_utf8(path).c_str(), buffer_.data(), MAX_STORAGE, time_);
 	buffer_.resize(length_);
 
 	storage->Unlock();

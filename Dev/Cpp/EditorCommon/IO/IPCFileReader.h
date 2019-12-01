@@ -11,6 +11,7 @@ class IPCFileReader : public FileReader
 {
 private:
 	std::vector<uint8_t> buffer_;
+	int time_;
 
 public:
 	IPCFileReader(const std::u16string& path, std::shared_ptr<IPC::KeyValueFileStorage> storage);
@@ -20,6 +21,8 @@ public:
 	void GetData(std::vector<uint8_t>& buffer) override;
 
 	FileType GetFileType() override { return FileType::IPC; }
+
+	int GetUpdateTime() { return time_; }
 };
 
 } // namespace Effekseer
