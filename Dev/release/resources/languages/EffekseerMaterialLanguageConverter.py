@@ -19,8 +19,8 @@ for csv_file in csv_files:
             if len(row) < 3:
                 print('error ' + str(line))
                 break
-            kv_en[str(row[0])] = str(row[1]).replace('\r\n',r'\n').replace('\n',r'\n')
-            kv_ja[str(row[0])] = str(row[2]).replace('\r\n',r'\n').replace('\n',r'\n')
+            kv_en[str(row[0])] = str(row[1]).replace('\r\n',r'\n')
+            kv_ja[str(row[0])] = str(row[2]).replace('\r\n',r'\n')
             line += 1
 
 values_en = kv_en

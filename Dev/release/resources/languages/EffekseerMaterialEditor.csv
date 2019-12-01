@@ -100,6 +100,7 @@ Parameter4_Name,Param4,パラメーター4
 CustomData1_Name,CustomData1,カスタムデータ1
 CustomData2_Name,CustomData2,カスタムデータ2
 ,,
+ConvertParam_Name,Convert to parameter,パラメーターに変換 
 ,,
 Error_SameNode,Error_SameNode,×　同じノードには接続できません。
 Error_SamePin,Error_SamePin,×　同じピンには接続できません。

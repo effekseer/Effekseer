@@ -245,67 +245,19 @@ public:
 class NodeConstant2 : public NodeParameter
 {
 public:
-	NodeConstant2()
-	{
-		Type = NodeType::Constant2;
-		TypeName = "Constant2";
-		Description = "Constant value...";
-		Group = std::vector<std::string>{"Constant"};
-
-		auto output = std::make_shared<PinParameter>();
-		output->Name = "Output";
-		output->Type = ValueType::Float2;
-		OutputPins.push_back(output);
-
-		auto param = std::make_shared<NodePropertyParameter>();
-		param->Name = "Value";
-		param->Type = ValueType::Float2;
-		Properties.push_back(param);
-	}
+	NodeConstant2();
 };
 
 class NodeConstant3 : public NodeParameter
 {
 public:
-	NodeConstant3()
-	{
-		Type = NodeType::Constant3;
-		TypeName = "Constant3";
-		Description = "Constant value...";
-		Group = std::vector<std::string>{"Constant"};
-
-		auto output = std::make_shared<PinParameter>();
-		output->Name = "Output";
-		output->Type = ValueType::Float3;
-		OutputPins.push_back(output);
-
-		auto param = std::make_shared<NodePropertyParameter>();
-		param->Name = "Value";
-		param->Type = ValueType::Float3;
-		Properties.push_back(param);
-	}
+	NodeConstant3();
 };
 
 class NodeConstant4 : public NodeParameter
 {
 public:
-	NodeConstant4()
-	{
-		Type = NodeType::Constant4;
-		TypeName = "Constant4";
-		Description = "Constant value...";
-		Group = std::vector<std::string>{"Constant"};
-
-		auto output = std::make_shared<PinParameter>();
-		output->Name = "Output";
-		output->Type = ValueType::Float4;
-		OutputPins.push_back(output);
-
-		auto param = std::make_shared<NodePropertyParameter>();
-		param->Name = "Value";
-		param->Type = ValueType::Float4;
-		Properties.push_back(param);
-	}
+	NodeConstant4();
 };
 
 class NodeParameter1 : public NodeParameter

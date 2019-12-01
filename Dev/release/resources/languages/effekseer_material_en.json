@@ -9,7 +9,7 @@
   "En": "English",
   "": "",
   "Description_Name": "Description",
-  "Description_Desc": "These parameters are shown on other editors.\\nSummary is shown as a label.\\nDetail is shown when clicking or mouse is over  in almost cases.",
+  "Description_Desc": "These parameters are shown on other editors.\nSummary is shown as a label.\nDetail is shown when clicking or mouse is over  in almost cases.",
   "Language_Name": "Lang.",
   "Summary_Name": "Summary",
   "Detail_Name": "Detail",
@@ -26,7 +26,7 @@
   "Priority_Name": "Priority",
   "Priority_Desc": "The lower the priority, the higher the screen is shown in other editors.",
   "Sampler_Name": "Sampler",
-  "Sampler_Desc": "Specify how to treat an out of image.\\nRepeat - repeat from opposite side\\nClamp - maintain the color of edge",
+  "Sampler_Desc": "Specify how to treat an out of image.\nRepeat - repeat from opposite side\nClamp - maintain the color of edge",
   "UVIndex_Name": "UV Index",
   "ShadingModel_Name": "ShadingModel",
   "Lit_Name": "Lit",
@@ -77,6 +77,7 @@
   "Parameter4_Name": "Param4",
   "CustomData1_Name": "CustomData1",
   "CustomData2_Name": "CustomData2",
+  "ConvertParam_Name": "Convert to parameter",
   "Error_SameNode": "Error_SameNode",
   "Error_SamePin": "Error_SamePin",
   "Error_SameDirection": "Error_SameDirection",
@@ -89,5 +90,5 @@
   "Starting_Open": "Open a material",
   "Warning_WrongInputType": "An input type is invalid",
   "Warning_WrongProperty": "A propery is invalid",
-  "Warning_DifferentSampler": "Different samplers are \\nassigned in a same image."
+  "Warning_DifferentSampler": "Different samplers are \nassigned in a same image."
 }

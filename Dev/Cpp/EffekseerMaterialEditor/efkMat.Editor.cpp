@@ -535,7 +535,8 @@ void Editor::Update()
 		}
 
 		// save
-		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] && ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_S]] == 0)
+		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] &&
+			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_S]] == 0)
 		{
 			Save();
 		}
@@ -739,20 +740,20 @@ void Editor::UpdatePopup()
 	{
 		auto node = material->FindNode(currentNodeID.Get());
 
-		if (node != nullptr && node->Parameter->Type != NodeType::Output)
-		{
-			if (ImGui::MenuItem("Delete"))
-			{
-				material->RemoveNode(node);
-			}
-		}
-
 		// Special node
 		for (auto func : node->Parameter->Funcs)
 		{
-			if (ImGui::MenuItem(func->Name.c_str()))
+			if (ImGui::MenuItem(StringContainer::GetValue((func->Name + "_Name").c_str(), func->Name.c_str()).c_str()))
 			{
 				func->Func(material, node);
+			}
+		}
+
+		if (node != nullptr && node->Parameter->Type != NodeType::Output)
+		{
+			if (ImGui::MenuItem(StringContainer::GetValue("Delete_Name", "Delete").c_str()))
+			{
+				material->RemoveNode(node);
 			}
 		}
 
