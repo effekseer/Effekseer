@@ -6,6 +6,7 @@ project(EditorCommon)
 set(srcs
     Common/StringHelper.h
     Platform/PlatformMisc.h
+    Platform/FileSystem.h
     GUI/JapaneseFont.h
     IO/IO.h
     IO/IO.cpp
@@ -22,18 +23,21 @@ if(WIN32)
 
     list(APPEND srcs
         Platform/Windows/PlatformMisc.cpp
+        Platform/Windows/FileSystem.cpp
     )
 
 elseif(APPLE)
 
     list(APPEND srcs
         Platform/MacOSX/PlatformMisc.mm
+        Platform/MacOSX/FileSystem.cpp
     )
 
 else()
 
     list(APPEND srcs
         Platform/Linux/PlatformMisc.cpp
+        Platform/Linux/FileSystem.cpp
     )
 
 endif()
