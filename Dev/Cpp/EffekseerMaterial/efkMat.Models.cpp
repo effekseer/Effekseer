@@ -606,6 +606,25 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 		}
 
 		root_.insert(std::make_pair("CustomData", picojson::value(customdata)));
+
+		picojson::array customdata_desc;
+
+		for (size_t i = 0; i < CustomData.size(); i++)
+		{
+			picojson::array customdata_lang;
+
+			for (size_t j = 0; j < CustomData[i].Descriptions.size(); j++)
+			{
+				picojson::object cd;
+				cd.insert(std::make_pair("Summary", picojson::value(CustomData[i].Descriptions[j]->Summary)));
+				cd.insert(std::make_pair("Detail", picojson::value(CustomData[i].Descriptions[j]->Detail)));
+				customdata_lang.push_back(picojson::value(cd));
+			}
+
+			customdata_desc.push_back(picojson::value(customdata_lang));
+		}
+
+		root_.insert(std::make_pair("CustomDataDescs", picojson::value(customdata_desc)));
 	}
 
 	if (doExportGlobal)
@@ -816,7 +835,7 @@ void Material::LoadFromStrInternal(
 			{
 				if (customdata[n].is<picojson::array>())
 				{
-					picojson::array descs_ = customdata_desc_obj.get<picojson::array>();
+					picojson::array descs_ = customdata[n].get<picojson::array>();
 					for (int32_t i = 0; i < descs_.size(); i++)
 					{
 

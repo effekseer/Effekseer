@@ -617,6 +617,8 @@ int mainLoop(int argc, char* argv[])
 	commandQueueFromMaterialEditor_->Stop();
 
 	config->Save("config.EffekseerMaterial.json");
+
+	return 0;
 }
 
 #if defined(NDEBUG) && defined(_WIN32)
