@@ -1,13 +1,7 @@
 #include "IO.h"
 #include "DefaultFileReader.h"
 #include "IPCFileReader.h"
-
-#include <filesystem>
-#if defined(_WIN32)
-namespace fs = std::filesystem;
-#else
-namespace fs = std::__fs::filesystem;
-#endif
+#include "../Platform/FileSystem.h"
 
 namespace Effekseer
 {
@@ -32,7 +26,7 @@ IO::~IO()
 
 std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 {
-	if (!fs::is_regular_file(path))
+	if (!FileSystem::GetIsFile(path))
 		return nullptr;
 
 	std::shared_ptr<FileReader> reader = std::make_shared<DefaultFileReader>(path);
@@ -45,7 +39,7 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 		notifiedFileInfos_.erase(info);
 	}
 
-	auto time = fs::last_write_time(path).time_since_epoch().count();
+	auto time = FileSystem::GetLastWriteTime(path);
 	fileUpdateDates_[info] = time;
 
 	return file;
@@ -53,7 +47,7 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 
 std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 {
-	if (!fs::is_regular_file(path))
+	if (!FileSystem::GetIsFile(path))
 		return nullptr;
 
 	std::shared_ptr<FileReader> reader = std::make_shared<IPCFileReader>(path, GetIPCStorage());
@@ -97,7 +91,7 @@ int IO::GetFileLastWriteTime(const FileInfo& fileInfo)
 	switch (fileInfo.fileType_)
 	{
 	case FileType::Default:
-		time = fs::last_write_time(fileInfo.path_).time_since_epoch().count();
+		time = FileSystem::GetLastWriteTime(fileInfo.path_);
 		break;
 	case FileType::IPC:
 		// TODO:Get IPC file's last write time.
