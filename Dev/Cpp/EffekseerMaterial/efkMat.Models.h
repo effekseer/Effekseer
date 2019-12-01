@@ -96,6 +96,9 @@ public:
 	//! For visualization
 	Vector2DF Pos;
 
+	//! For visualization (comment)
+	Vector2DF CommentSize = Vector2DF(100, 100);
+
 	//! is node opened and show a preview
 	bool IsPreviewOpened = false;
 

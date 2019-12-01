@@ -481,6 +481,12 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 		node_.insert(std::make_pair("PosY", picojson::value(node->Pos.Y - upperLeftPos.Y)));
 		node_.insert(std::make_pair("IsPreviewOpened", picojson::value(node->IsPreviewOpened)));
 
+		if (node->Parameter->Type == NodeType::Comment)
+		{
+			node_.insert(std::make_pair("CommentSizeX", picojson::value(node->CommentSize.X)));
+			node_.insert(std::make_pair("CommentSizeY", picojson::value(node->CommentSize.Y)));
+		}
+
 		picojson::array descs_;
 
 		if (node->Parameter->IsDescriptionExported)
@@ -707,6 +713,21 @@ void Material::LoadFromStrInternal(
 		if (is_preview_opened_obj.is<bool>())
 		{
 			node->IsPreviewOpened = is_preview_opened_obj.get<bool>();
+		}
+
+		if (node->Parameter->Type == NodeType::Comment)
+		{
+			auto comment_size_x_obj = node_.get("CommentSizeX");
+			if (comment_size_x_obj.is<double>())
+			{
+				node->CommentSize.X = (float)comment_size_x_obj.get<double>();
+			}
+
+			auto comment_size_y_obj = node_.get("CommentSizeY");
+			if (comment_size_y_obj.is<double>())
+			{
+				node->CommentSize.Y = (float)comment_size_y_obj.get<double>();
+			}
 		}
 
 		oldIDToNewID[guid] = node->GUID;

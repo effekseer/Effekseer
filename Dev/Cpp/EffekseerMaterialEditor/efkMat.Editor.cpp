@@ -1464,8 +1464,18 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 		ImGui::Text(node->Properties[0]->Str.c_str());
 		ImGui::EndHorizontal();
 		auto size = ed::GetNodeSize(node->GUID);
-		size.x = size.x < 100 ? 100 : size.x;
-		size.y = size.y < 100 ? 100 : size.y;
+
+		// initialize
+		if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied())
+		{
+			size.x = node->CommentSize.X;
+			size.y = node->CommentSize.Y;
+		}
+
+		size.x = size.x < 64 ? 64 : size.x;
+		size.y = size.y < 64 ? 64 : size.y;
+		node->CommentSize.X = size.x;
+		node->CommentSize.Y = size.y;
 		ed::Group(size);
 		ImGui::EndVertical();
 		ed::EndNode();
