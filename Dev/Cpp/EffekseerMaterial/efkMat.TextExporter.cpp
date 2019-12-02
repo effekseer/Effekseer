@@ -197,6 +197,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 			if (connectedPins.size() > 0)
 			{
 				// value from connected
+				assert(connectedPins.size() <= 1);
 				for (auto connectedPin : connectedPins)
 				{
 					auto connectedNode = connectedPin->Parent.lock();
@@ -204,6 +205,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 					auto outputPin = connectedExportedNode->Outputs[connectedPin->PinIndex];
 					enode->Inputs.push_back(outputPin);
+					break;
 				}
 			}
 			else
@@ -248,10 +250,6 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTextures[keyStr] = extractedTexture;
 					}
 
-					// assign a sampler
-					extractedTexture->Sampler =
-						static_cast<TextureSamplerType>((int)node->Properties[node->Parameter->GetPropertyIndex("Sampler")]->Floats[0]);
-
 					tePin.TextureValue = extractedTexture;
 				}
 				else
@@ -260,6 +258,17 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 				}
 
 				enode->Inputs.push_back(tePin);
+			}
+
+			{
+				auto& tePin = enode->Inputs.back();
+
+				if (tePin.Type == ValueType::Texture)
+				{
+					// assign a sampler
+					tePin.TextureValue->Sampler =
+						static_cast<TextureSamplerType>((int)node->Properties[node->Parameter->GetPropertyIndex("Sampler")]->Floats[0]);
+				}
 			}
 		}
 	}
@@ -952,7 +961,6 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		{
 			ret << GetTypeName(node->Outputs[4].Type) << " " << node->Outputs[4].Name << "= vcolor.w;" << std::endl;
 		}
-
 	}
 
 	if (node->Target->Parameter->Type == NodeType::CustomData1 || node->Target->Parameter->Type == NodeType::CustomData2)

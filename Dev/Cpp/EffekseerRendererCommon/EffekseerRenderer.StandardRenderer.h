@@ -718,18 +718,21 @@ public:
 
 		shader_->SetConstantBuffer();
 
-		state.TextureFilterTypes[0] = m_state.TextureFilter1;
-		state.TextureWrapTypes[0] = m_state.TextureWrap1;
+		if (m_state.MaterialPtr == nullptr)
+		{
+			state.TextureFilterTypes[0] = m_state.TextureFilter1;
+			state.TextureWrapTypes[0] = m_state.TextureWrap1;
 
-		if (distortion)
-		{
-			state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Linear;
-			state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
-		}
-		else
-		{
-			state.TextureFilterTypes[1] = m_state.TextureFilter2;
-			state.TextureWrapTypes[1] = m_state.TextureWrap2;
+			if (distortion)
+			{
+				state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Linear;
+				state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
+			}
+			else
+			{
+				state.TextureFilterTypes[1] = m_state.TextureFilter2;
+				state.TextureWrapTypes[1] = m_state.TextureWrap2;
+			}
 		}
 
 		m_renderer->GetRenderState()->Update(distortion);
