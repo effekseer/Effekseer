@@ -557,7 +557,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 					 << ";" << std::endl;
 		}
 
-		if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
+		if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 		{
 			maincode << "uniform vec4 "
 					 << "lightDirection"

@@ -431,15 +431,10 @@ public:
 			}
 		}
 
-		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();
-		state.DepthTest = m_state.DepthTest;
-		state.DepthWrite = m_state.DepthWrite;
-		state.CullingType = m_state.CullingType;
-		state.AlphaBlend = m_state.AlphaBlend;
-
 		SHADER* shader_ = nullptr;
 
 		bool distortion = m_state.Distortion;
+		bool renderDistortedBackground = false;
 
 		if (m_state.MaterialPtr != nullptr)
 		{
@@ -453,6 +448,7 @@ public:
 					}
 
 					shader_ = (SHADER*)m_state.MaterialPtr->RefractionUserPtr;
+					renderDistortedBackground = true;
 				}
 				else
 				{
@@ -477,6 +473,17 @@ public:
 		else
 		{
 			shader_ = m_renderer->GetShader(true, m_state.MaterialType);
+		}
+
+		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();
+		state.DepthTest = m_state.DepthTest;
+		state.DepthWrite = m_state.DepthWrite;
+		state.CullingType = m_state.CullingType;
+		state.AlphaBlend = m_state.AlphaBlend;
+
+		if (renderDistortedBackground)
+		{
+			state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 		}
 
 		m_renderer->BeginShader(shader_);

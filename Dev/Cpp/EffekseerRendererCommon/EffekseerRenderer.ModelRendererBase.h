@@ -377,18 +377,13 @@ public:
 		if (isBackgroundRequired && renderer->GetBackground() == 0)
 			return;
 
-		RenderStateBase::State& state = renderer->GetRenderState()->Push();
-		state.DepthTest = param.ZTest;
-		state.DepthWrite = param.ZWrite;
-		state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
-		state.CullingType = param.Culling;
-
 		// select shader
 		Effekseer::MaterialParameter* materialParam = param.BasicParameterPtr->MaterialParameterPtr;
 		//materialParam = nullptr;
 		Effekseer::MaterialData* material = nullptr;
 		SHADER* shader_ = nullptr;
-		
+		bool renderDistortedBackground = false;
+
 		if (materialParam != nullptr && materialParam->MaterialIndex >= 0 &&
 			param.EffectPointer->GetMaterial(materialParam->MaterialIndex) != nullptr)
 		{
@@ -398,7 +393,8 @@ public:
 			{
 				if (renderPassInd == 0)
 				{
-					shader_ = (SHADER*)material->RefractionModelUserPtr;				
+					shader_ = (SHADER*)material->RefractionModelUserPtr;
+					renderDistortedBackground = true;
 				}
 				else
 				{
@@ -473,19 +469,32 @@ public:
 			}
 		}
 
+		RenderStateBase::State& state = renderer->GetRenderState()->Push();
+		state.DepthTest = param.ZTest;
+		state.DepthWrite = param.ZWrite;
+		state.AlphaBlend = param.BasicParameterPtr->AlphaBlend;
+		state.CullingType = param.Culling;
+
+		if (renderDistortedBackground)
+		{
+			state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
+		}
+
 		renderer->BeginShader(shader_);
 
 		// Select texture
 		if (materialParam != nullptr && material != nullptr)
 		{
+			int32_t textureCount = 0;
+			std::array<Effekseer::TextureData*, ::Effekseer::TextureSlotMax> textures;
+
 			if (materialParam->MaterialTextures.size() > 0)
 			{
-				std::array<Effekseer::TextureData*, 16> textures;
-				int32_t textureCount = Effekseer::Min(materialParam->MaterialTextures.size(), textures.size() - 1);
+				textureCount = Effekseer::Min(materialParam->MaterialTextures.size(), ::Effekseer::UserTextureSlotMax);
 
 				auto effect = param.EffectPointer;
 
-				for (size_t i = 0; i < Effekseer::Min(materialParam->MaterialTextures.size(), textures.size()); i++)
+				for (size_t i = 0; i < textureCount; i++)
 				{
 					if (materialParam->MaterialTextures[i].Type == 1)
 					{
@@ -513,16 +522,19 @@ public:
 					state.TextureFilterTypes[i] = Effekseer::TextureFilterType::Linear;
 					state.TextureWrapTypes[i] = material->TextureWrapTypes[i];
 				}
+			}
 
-				if (renderer->GetBackground() != 0)
-				{
-					textures[textureCount] = renderer->GetBackground();
-					state.TextureFilterTypes[textureCount] = Effekseer::TextureFilterType::Linear;
-					state.TextureWrapTypes[textureCount] = Effekseer::TextureWrapType::Clamp;
-					textureCount += 1;
-				}
+			if (renderer->GetBackground() != 0)
+			{
+				textures[textureCount] = renderer->GetBackground();
+				state.TextureFilterTypes[textureCount] = Effekseer::TextureFilterType::Linear;
+				state.TextureWrapTypes[textureCount] = Effekseer::TextureWrapType::Clamp;
+				textureCount += 1;
+			}
 
-				renderer->SetTextures(shader_, textures.data(), textureCount);
+			if (textureCount > 0)
+			{
+				renderer->SetTextures(shader_, textures.data(), textureCount);			
 			}
 		}
 		else

@@ -636,7 +636,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			cind = 2;
 		}
 
-		if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
+		if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 		{
 			maincode << "float4 "
 					 << "cameraPosition"
