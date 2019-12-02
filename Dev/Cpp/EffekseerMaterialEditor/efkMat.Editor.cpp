@@ -58,13 +58,13 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	for (size_t i = 0; i < result.Textures.size(); i++)
 	{
 		efkMaterial.SetTextureIndex(i, i);
-		efkMaterial.SetTextureName(i, result.Textures[i]->Name.c_str());
+		efkMaterial.SetTextureName(i, result.Textures[i]->UniformName.c_str());
 	}
 
 	for (size_t i = 0; i < result.Uniforms.size(); i++)
 	{
 		efkMaterial.SetUniformIndex(i, (int)result.Uniforms[i]->Type);
-		efkMaterial.SetUniformName(i, result.Uniforms[i]->Name.c_str());
+		efkMaterial.SetUniformName(i, result.Uniforms[i]->UniformName.c_str());
 	}
 
 	auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
@@ -92,7 +92,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	{
 		auto t_ = EffekseerMaterial::TextureCache::Load(graphics, t->DefaultPath.c_str());
 		auto ts = std::make_shared<TextureWithSampler>();
-		ts->Name = t->Name;
+		ts->Name = t->UniformName;
 		ts->TexturePtr = t_;
 		ts->SamplerType = t->Sampler;
 		outputTextures.push_back(ts);
@@ -134,7 +134,7 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	{
 		auto t_ = EffekseerMaterial::TextureCache::Load(graphics, t->DefaultPath.c_str());
 		auto ts = std::make_shared<TextureWithSampler>();
-		ts->Name = t->Name;
+		ts->Name = t->UniformName;
 		ts->TexturePtr = t_;
 		ts->SamplerType = t->Sampler;
 		outputTextures.push_back(ts);

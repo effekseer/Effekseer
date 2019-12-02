@@ -1609,7 +1609,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	// header
 
 	char* prefix = "EFKM";
-	int version = 2;
+	int version = 3;
 
 	int offset = 0;
 
@@ -1694,6 +1694,10 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		auto name_ = GetVectorFromStr(Replace(param->Name, "$SUFFIX", ""));
 		bwParam.Push(name_);
 
+		// name is for human, uniformName is a variable name after 3
+		auto uniformName = GetVectorFromStr(param->UniformName);
+		bwParam.Push(uniformName);
+
 		auto defaultPath_ = GetVectorFromStr(Relative(param->DefaultPath, basePath));
 		bwParam.Push(defaultPath_);
 		bwParam.Push(param->Index);
@@ -1711,6 +1715,10 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 
 		auto name_ = GetVectorFromStr(Replace(param->Name, "$SUFFIX", ""));
 		bwParam.Push(name_);
+
+		// name is for human, uniformName is a variable name after 3
+		auto uniformName = GetVectorFromStr(param->UniformName);
+		bwParam.Push(uniformName);
 
 		bwParam.Push(param->Offset);
 		bwParam.Push(param->Priority);

@@ -53,8 +53,8 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	std::vector<std::shared_ptr<TextExporterNode>> exportedNodes;
 	std::unordered_map<std::shared_ptr<Node>, std::shared_ptr<TextExporterNode>> node2exportedNode;
 
-	std::map<std::string, std::shared_ptr<TextExporterTexture>> extractedTextures;
-	std::map<std::string, std::shared_ptr<TextExporterUniform>> extractedUniforms;
+	std::map<uint64_t, std::shared_ptr<TextExporterTexture>> extractedTextures;
+	std::map<uint64_t, std::shared_ptr<TextExporterUniform>> extractedUniforms;
 
 	int32_t variableInd = 0;
 	for (auto node : nodes)
@@ -80,13 +80,12 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 				{
 					auto paramName = GetConstantTextureName(node->GUID);
 					auto path = node->Properties[0]->Str;
-					auto keyStr = paramName + "@" + path;
 
 					std::shared_ptr<TextExporterTexture> extractedTexture;
 
-					if (extractedTextures.count(keyStr) > 0)
+					if (extractedTextures.count(node->GUID) > 0)
 					{
-						extractedTexture = extractedTextures[keyStr];
+						extractedTexture = extractedTextures[node->GUID];
 					}
 					else
 					{
@@ -95,7 +94,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->DefaultPath = path;
 						extractedTexture->IsParam = false;
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
-						extractedTextures[keyStr] = extractedTexture;
+						extractedTextures[node->GUID] = extractedTexture;
 					}
 
 					tePin.TextureValue = extractedTexture;
@@ -103,15 +102,14 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 				if (node->Parameter->Type == NodeType::TextureObjectParameter)
 				{
-					auto paramName = EspcapeUserParamName(node->GetProperty("Name")->Str.c_str());
+					auto paramName = node->GetProperty("Name")->Str;
 					auto path = node->GetProperty("Texture")->Str;
-					auto keyStr = paramName + "@" + path;
 
 					std::shared_ptr<TextExporterTexture> extractedTexture;
 
-					if (extractedTextures.count(keyStr) > 0)
+					if (extractedTextures.count(node->GUID) > 0)
 					{
-						extractedTexture = extractedTextures[keyStr];
+						extractedTexture = extractedTextures[node->GUID];
 					}
 					else
 					{
@@ -122,7 +120,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
 						extractedTexture->Priority = static_cast<int32_t>(node->GetProperty("Priority")->Floats[0]);
 						extractedTexture->Descriptions = node->Descriptions;
-						extractedTextures[keyStr] = extractedTexture;
+						extractedTextures[node->GUID] = extractedTexture;
 					}
 
 					tePin.TextureValue = extractedTexture;
@@ -140,13 +138,12 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 				{
 					auto paramName = EspcapeUserParamName(node->GetProperty("Name")->Str.c_str());
 					auto values = node->GetProperty("Value")->Floats;
-					auto keyStr = paramName;
-
+					
 					std::shared_ptr<TextExporterUniform> extractedUniform;
 
-					if (extractedUniforms.count(keyStr) > 0)
+					if (extractedUniforms.count(node->GUID) > 0)
 					{
-						extractedUniform = extractedUniforms[keyStr];
+						extractedUniform = extractedUniforms[node->GUID];
 					}
 					else
 					{
@@ -165,7 +162,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 							extractedUniform->Type = ValueType::Float4;
 						}
 
-						extractedUniforms[keyStr] = extractedUniform;
+						extractedUniforms[node->GUID] = extractedUniform;
 					}
 
 					tePin.UniformValue = extractedUniform;
@@ -233,13 +230,11 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						assert(0);
 					}
 
-					auto keyStr = paramName + "@" + path;
-
 					std::shared_ptr<TextExporterTexture> extractedTexture;
 
-					if (extractedTextures.count(keyStr) > 0)
+					if (extractedTextures.count(node->GUID) > 0)
 					{
-						extractedTexture = extractedTextures[keyStr];
+						extractedTexture = extractedTextures[node->GUID];
 					}
 					else
 					{
@@ -247,7 +242,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->Name = paramName;
 						extractedTexture->DefaultPath = path;
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
-						extractedTextures[keyStr] = extractedTexture;
+						extractedTextures[node->GUID] = extractedTexture;
 					}
 
 					tePin.TextureValue = extractedTexture;
@@ -276,26 +271,13 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	// get output node
 	auto outputExportedNode = node2exportedNode[outputNode];
 
-	std::unordered_set<std::string> usedNames;
-
 	// Assign texture index
-
 	{
 		int id = 0;
 
 		for (auto& extractedTexture : extractedTextures)
 		{
-			if (extractedTexture.second->Name == "")
-			{
-				extractedTexture.second->Name = "default_texture_" + std::to_string(id) + suffix;
-				usedNames.insert(extractedTexture.second->Name);
-			}
-			else
-			{
-				extractedTexture.second->Name += suffix;
-				usedNames.insert(extractedTexture.second->Name);
-			}
-
+			extractedTexture.second->UniformName = "efk_texture_" + std::to_string(id);
 			extractedTexture.second->Index = id;
 			id++;
 		}
@@ -304,31 +286,13 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	// Assign Uniform
 	{
 		int32_t offset = 0;
+		int32_t ind = 0;
 		for (auto& extractedUniform : extractedUniforms)
 		{
-			std::string candidateName;
-
-			candidateName = extractedUniform.second->Name;
-
-			if (candidateName == "")
-			{
-				int id = 0;
-
-				do
-				{
-					candidateName = "default_" + std::to_string(id) + suffix;
-					id++;
-				} while (usedNames.count(candidateName) > 0);
-				extractedUniform.second->Name = candidateName;
-			}
-			else
-			{
-				extractedUniform.second->Name += suffix;
-			}
-
-			usedNames.insert(extractedUniform.second->Name);
+			extractedUniform.second->UniformName = "efk_uniform_" + std::to_string(ind);
 			extractedUniform.second->Offset = offset;
 			offset += sizeof(float) * 4;
+			ind += 1;
 		}
 	}
 
@@ -568,7 +532,7 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		if (outputNode->Target->Parameter->Type == NodeType::TextureObject)
 		{
 			ret << GetTypeName(ValueType::Float4) << " emissive_temp = "
-				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName(0) << ");" << std::endl;
+				<< "texture(" << outputNode->Outputs[0].TextureValue->UniformName << ", " << GetUVName(0) << ");" << std::endl;
 			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
 			ret << "float opacity = emissive_temp.w;" << std::endl;
 
@@ -577,7 +541,7 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		else if (outputNode->Target->Parameter->Type == NodeType::TextureObjectParameter)
 		{
 			ret << GetTypeName(ValueType::Float4) << " emissive_temp = "
-				<< "texture(" << outputNode->Outputs[0].TextureValue->Name << ", " << GetUVName(0) << ");" << std::endl;
+				<< "texture(" << outputNode->Outputs[0].TextureValue->UniformName << ", " << GetUVName(0) << ");" << std::endl;
 			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
 			ret << "float opacity = emissive_temp.w;" << std::endl;
 
@@ -666,13 +630,13 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::Parameter1)
 	{
-		ret << GetTypeName(ValueType::Float1) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->Name << ";"
+		ret << GetTypeName(ValueType::Float1) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->UniformName << ";"
 			<< std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Parameter4)
 	{
-		ret << GetTypeName(ValueType::Float4) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->Name << ";"
+		ret << GetTypeName(ValueType::Float4) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->UniformName << ";"
 			<< std::endl;
 	}
 
@@ -897,7 +861,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		assert(node->Inputs[0].TextureValue != nullptr);
 		if (0 <= node->Inputs[0].TextureValue->Index)
 		{
-			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=texture(" << node->Inputs[0].TextureValue->Name
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=texture(" << node->Inputs[0].TextureValue->UniformName
 				<< "," << GetInputArg(ValueType::Float2, node->Inputs[1]) << ");" << std::endl;
 		}
 		else

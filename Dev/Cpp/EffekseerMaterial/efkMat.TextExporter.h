@@ -14,6 +14,7 @@ struct TextExporterUniform
 {
 	ValueType Type;
 	std::string Name;
+	std::string UniformName;
 	std::array<float, 4> DefaultConstants;
 	int32_t Offset;
 	int32_t Priority = 1;
@@ -26,6 +27,7 @@ struct TextExporterUniform
 struct TextExporterTexture
 {
 	std::string Name;
+	std::string UniformName;
 	int32_t Index;
 	std::string DefaultPath;
 	bool IsParam = false;
