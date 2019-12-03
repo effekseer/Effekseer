@@ -134,6 +134,7 @@ int main()
 	BasicRuntimeTest();
 	UpdateHandleTest();
 	//BasicRuntimeDeviceLostTest();
+	CustomAllocatorTest();
 #else
 
 	//TestShowEfcAssets();

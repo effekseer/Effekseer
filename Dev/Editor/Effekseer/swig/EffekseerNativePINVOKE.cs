@@ -237,6 +237,9 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_Vec2___")]
   public static extern void delete_Vec2(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ImageResource___")]
+  public static extern global::System.IntPtr new_ImageResource();
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_ImageResource___")]
   public static extern void delete_ImageResource(global::System.Runtime.InteropServices.HandleRef jarg1);
 
@@ -254,9 +257,6 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ImageResource_GetHeight___")]
   public static extern int ImageResource_GetHeight(global::System.Runtime.InteropServices.HandleRef jarg1);
-
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ImageResource___")]
-  public static extern global::System.IntPtr new_ImageResource();
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_GuideWidth_set___")]
   public static extern void ViewerParamater_GuideWidth_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
@@ -889,10 +889,13 @@ class EffekseerNativePINVOKE {
   public static extern void delete_GUIManager(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Initialize___")]
-  public static extern bool GUIManager_Initialize(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2, int jarg3, int jarg4, int jarg5, bool jarg6);
+  public static extern bool GUIManager_Initialize(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, int jarg3);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_InitializeGUI___")]
   public static extern void GUIManager_InitializeGUI(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_ResetGUIStyle___")]
+  public static extern void GUIManager_ResetGUIStyle(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SetTitle___")]
   public static extern void GUIManager_SetTitle(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
@@ -1733,6 +1736,63 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GetSystemLanguage___")]
   public static extern int GetSystemLanguage();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindowState_PosX_set___")]
+  public static extern void MainWindowState_PosX_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindowState_PosX_get___")]
+  public static extern int MainWindowState_PosX_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindowState_PosY_set___")]
+  public static extern void MainWindowState_PosY_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindowState_PosY_get___")]
+  public static extern int MainWindowState_PosY_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindowState_Width_set___")]
+  public static extern void MainWindowState_Width_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindowState_Width_get___")]
+  public static extern int MainWindowState_Width_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindowState_Height_set___")]
+  public static extern void MainWindowState_Height_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindowState_Height_get___")]
+  public static extern int MainWindowState_Height_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindowState_IsMaximumMode_set___")]
+  public static extern void MainWindowState_IsMaximumMode_set(global::System.Runtime.InteropServices.HandleRef jarg1, bool jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindowState_IsMaximumMode_get___")]
+  public static extern bool MainWindowState_IsMaximumMode_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_MainWindowState___")]
+  public static extern global::System.IntPtr new_MainWindowState();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_MainWindowState___")]
+  public static extern void delete_MainWindowState(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_MainWindow___")]
+  public static extern global::System.IntPtr new_MainWindow();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_MainWindow___")]
+  public static extern void delete_MainWindow(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindow_GetInstance___")]
+  public static extern global::System.IntPtr MainWindow_GetInstance();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindow_GetState___")]
+  public static extern global::System.IntPtr MainWindow_GetState(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindow_SetState___")]
+  public static extern void MainWindow_SetState(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindow_Initialize___")]
+  public static extern bool MainWindow_Initialize([global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, bool jarg3, bool jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindow_Terminate___")]
+  public static extern void MainWindow_Terminate();
 }
 
 }

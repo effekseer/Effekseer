@@ -8,6 +8,8 @@ set(srcs
     Platform/PlatformMisc.h
     Platform/FileSystem.h
     GUI/JapaneseFont.h
+    GUI/MainWindow.h
+    GUI/MainWindow.cpp
     IO/IO.h
     IO/IO.cpp
     IO/StaticFile.h
@@ -50,6 +52,26 @@ target_link_libraries(
     EditorCommon
     PRIVATE
     IPC)
+
+
+if (WIN32)
+
+target_link_libraries(
+    EditorCommon
+    PUBLIC
+    debug glfw3d
+    optimized glfw3
+)
+
+else()
+
+target_link_libraries(
+    EditorCommon
+    PUBLIC
+    glfw3
+)
+
+endif()
 
 set_target_properties(EditorCommon PROPERTIES LINKER_LANGUAGE CXX)
 

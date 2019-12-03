@@ -385,9 +385,21 @@ namespace Swig {
 #include "GUI/efk.FileDialog.h"
 #include "CompiledMaterialGenerator.h"
 #include "../EditorCommon/Platform/PlatformMisc.h"
+#include "../EditorCommon/GUI/MainWindow.h"
+
 
 
 #include <stdint.h>		// Use the C99 official header
+
+
+struct SWIG_null_deleter {
+  void operator() (void const *) const {
+  }
+};
+#define SWIG_NO_NULL_DELETER_0 , SWIG_null_deleter()
+#define SWIG_NO_NULL_DELETER_1
+#define SWIG_NO_NULL_DELETER_SWIG_POINTER_NEW
+#define SWIG_NO_NULL_DELETER_SWIG_POINTER_OWN
 
 
 
@@ -591,6 +603,16 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_Vec2___(void * jarg1) {
 }
 
 
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ImageResource___() {
+  void * jresult ;
+  efk::ImageResource *result = 0 ;
+  
+  result = (efk::ImageResource *)new efk::ImageResource();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_ImageResource___(void * jarg1) {
   efk::ImageResource *arg1 = (efk::ImageResource *) 0 ;
   
@@ -651,16 +673,6 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ImageResource_GetHeight___(void
   arg1 = (efk::ImageResource *)jarg1; 
   result = (int32_t)((efk::ImageResource const *)arg1)->GetHeight();
   jresult = result; 
-  return jresult;
-}
-
-
-SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ImageResource___() {
-  void * jresult ;
-  efk::ImageResource *result = 0 ;
-  
-  result = (efk::ImageResource *)new efk::ImageResource();
-  jresult = (void *)result; 
   return jresult;
 }
 
@@ -3074,23 +3086,17 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_GUIManager___(void * ja
 }
 
 
-SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Initialize___(void * jarg1, void * jarg2, int jarg3, int jarg4, int jarg5, unsigned int jarg6) {
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Initialize___(void * jarg1, void * jarg2, int jarg3) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
-  char16_t *arg2 = (char16_t *) 0 ;
-  int32_t arg3 ;
-  int32_t arg4 ;
-  efk::DeviceType arg5 ;
-  bool arg6 ;
+  std::shared_ptr< Effekseer::MainWindow > arg2 ;
+  efk::DeviceType arg3 ;
   bool result;
   
   arg1 = (efk::GUIManager *)jarg1; 
-  arg2 = (char16_t *)jarg2; 
-  arg3 = (int32_t)jarg3; 
-  arg4 = (int32_t)jarg4; 
-  arg5 = (efk::DeviceType)jarg5; 
-  arg6 = jarg6 ? true : false; 
-  result = (bool)(arg1)->Initialize((char16_t const *)arg2,arg3,arg4,arg5,arg6);
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::MainWindow > *)jarg2; 
+  arg3 = (efk::DeviceType)jarg3; 
+  result = (bool)(arg1)->Initialize(arg2,arg3);
   jresult = result; 
   return jresult;
 }
@@ -3103,6 +3109,14 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_InitializeGUI___(vo
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (Native *)jarg2; 
   (arg1)->InitializeGUI(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_ResetGUIStyle___(void * jarg1) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  (arg1)->ResetGUIStyle();
 }
 
 
@@ -7935,6 +7949,228 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GetSystemLanguage___() {
   result = (Effekseer::SystemLanguage)Effekseer::GetSystemLanguage();
   jresult = (int)result; 
   return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_PosX_set___(void * jarg1, int jarg2) {
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->PosX = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_PosX_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  result = (int32_t) ((arg1)->PosX);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_PosY_set___(void * jarg1, int jarg2) {
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->PosY = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_PosY_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  result = (int32_t) ((arg1)->PosY);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_Width_set___(void * jarg1, int jarg2) {
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->Width = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_Width_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  result = (int32_t) ((arg1)->Width);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_Height_set___(void * jarg1, int jarg2) {
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  int32_t arg2 ;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  arg2 = (int32_t)jarg2; 
+  if (arg1) (arg1)->Height = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_Height_get___(void * jarg1) {
+  int jresult ;
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  int32_t result;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  result = (int32_t) ((arg1)->Height);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_IsMaximumMode_set___(void * jarg1, unsigned int jarg2) {
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  bool arg2 ;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  arg2 = jarg2 ? true : false; 
+  if (arg1) (arg1)->IsMaximumMode = arg2;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainWindowState_IsMaximumMode_get___(void * jarg1) {
+  unsigned int jresult ;
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  bool result;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  result = (bool) ((arg1)->IsMaximumMode);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_MainWindowState___() {
+  void * jresult ;
+  Effekseer::MainWindowState *result = 0 ;
+  
+  result = (Effekseer::MainWindowState *)new Effekseer::MainWindowState();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_MainWindowState___(void * jarg1) {
+  Effekseer::MainWindowState *arg1 = (Effekseer::MainWindowState *) 0 ;
+  
+  arg1 = (Effekseer::MainWindowState *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_MainWindow___() {
+  void * jresult ;
+  Effekseer::MainWindow *result = 0 ;
+  
+  result = (Effekseer::MainWindow *)new Effekseer::MainWindow();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::MainWindow >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_MainWindow___(void * jarg1) {
+  Effekseer::MainWindow *arg1 = (Effekseer::MainWindow *) 0 ;
+  std::shared_ptr< Effekseer::MainWindow > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::MainWindow > *)jarg1;
+  arg1 = (Effekseer::MainWindow *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_MainWindow_GetInstance___() {
+  void * jresult ;
+  std::shared_ptr< Effekseer::MainWindow > result;
+  
+  result = Effekseer::MainWindow::GetInstance();
+  jresult = result ? new std::shared_ptr< Effekseer::MainWindow >(result) : 0; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_MainWindow_GetState___(void * jarg1) {
+  void * jresult ;
+  Effekseer::MainWindow *arg1 = (Effekseer::MainWindow *) 0 ;
+  std::shared_ptr< Effekseer::MainWindow > *smartarg1 = 0 ;
+  Effekseer::MainWindowState result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::MainWindow > *)jarg1;
+  arg1 = (Effekseer::MainWindow *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (arg1)->GetState();
+  jresult = new Effekseer::MainWindowState((const Effekseer::MainWindowState &)result); 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainWindow_SetState___(void * jarg1, void * jarg2) {
+  Effekseer::MainWindow *arg1 = (Effekseer::MainWindow *) 0 ;
+  Effekseer::MainWindowState *arg2 = 0 ;
+  std::shared_ptr< Effekseer::MainWindow > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::MainWindow > *)jarg1;
+  arg1 = (Effekseer::MainWindow *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (Effekseer::MainWindowState *)jarg2;
+  if (!arg2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Effekseer::MainWindowState const & type is null", 0);
+    return ;
+  } 
+  (arg1)->SetState((Effekseer::MainWindowState const &)*arg2);
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainWindow_Initialize___(void * jarg1, void * jarg2, unsigned int jarg3, unsigned int jarg4) {
+  unsigned int jresult ;
+  char16_t *arg1 = (char16_t *) 0 ;
+  Effekseer::MainWindowState arg2 ;
+  bool arg3 ;
+  bool arg4 ;
+  Effekseer::MainWindowState *argp2 ;
+  bool result;
+  
+  arg1 = (char16_t *)jarg1; 
+  argp2 = (Effekseer::MainWindowState *)jarg2; 
+  if (!argp2) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to dereference null Effekseer::MainWindowState", 0);
+    return 0;
+  }
+  arg2 = *argp2; 
+  arg3 = jarg3 ? true : false; 
+  arg4 = jarg4 ? true : false; 
+  result = (bool)Effekseer::MainWindow::Initialize((char16_t const *)arg1,arg2,arg3,arg4);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainWindow_Terminate___() {
+  Effekseer::MainWindow::Terminate();
 }
 
 

@@ -198,3 +198,18 @@ void BasicRuntimeTest()
 	}
 #endif
 }
+
+void CustomAllocatorTest()
+{
+	Effekseer::CustomVector<int> v;
+	v.push_back(10);
+
+	Effekseer::CustomList<int> l;
+	l.push_back(10);
+
+	Effekseer::CustomSet<int> s;
+	s.insert(10);
+
+	Effekseer::CustomMap<int, int> m;
+	m[1] = 10;
+}

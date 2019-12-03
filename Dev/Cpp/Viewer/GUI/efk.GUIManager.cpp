@@ -734,13 +734,13 @@ namespace efk
 	GUIManager::~GUIManager()
 	{}
 
-	bool GUIManager::Initialize(const char16_t* title, int32_t width, int32_t height, efk::DeviceType deviceType, bool isSRGBMode)
+	bool GUIManager::Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, efk::DeviceType deviceType)
 	{
 		window = new efk::Window();
 
 		this->deviceType = deviceType;
 
-		if (!window->Initialize(title, width, height, isSRGBMode, deviceType))
+		if (!window->Initialize(mainWindow, deviceType))
 		{
 			ES_SAFE_DELETE(window);
 			return false;

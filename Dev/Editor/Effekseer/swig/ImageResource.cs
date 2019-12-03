@@ -44,6 +44,9 @@ public class ImageResource : global::System.IDisposable {
     }
   }
 
+  public ImageResource() : this(EffekseerNativePINVOKE.new_ImageResource(), true) {
+  }
+
   public bool Validate() {
     bool ret = EffekseerNativePINVOKE.ImageResource_Validate(swigCPtr);
     return ret;
@@ -66,9 +69,6 @@ public class ImageResource : global::System.IDisposable {
   public int GetHeight() {
     int ret = EffekseerNativePINVOKE.ImageResource_GetHeight(swigCPtr);
     return ret;
-  }
-
-  public ImageResource() : this(EffekseerNativePINVOKE.new_ImageResource(), true) {
   }
 
 }

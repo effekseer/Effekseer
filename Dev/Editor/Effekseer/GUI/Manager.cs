@@ -97,6 +97,7 @@ namespace Effekseer.GUI
 	{
 		public static swig.GUIManager NativeManager;
 		public static swig.Native Native;
+		public static swig.MainWindow MainWindow;
 
 		static GUIManagerCallback guiManagerCallback;
 
@@ -176,8 +177,36 @@ namespace Effekseer.GUI
 
 		public static bool Initialize(int width, int height, swig.DeviceType deviceType)
 		{
+			var appDirectory = Manager.GetEntryDirectory();
+
+			swig.MainWindowState state = new swig.MainWindowState();
+
+			// TODO : refactor
+			var windowConfig = new Configs.WindowConfig();
+			if(windowConfig.Load(System.IO.Path.Combine(appDirectory, "config.Dock.xml")))
+			{
+				state.PosX = windowConfig.WindowPosX;
+				state.PosY = windowConfig.WindowPosY;
+				state.Width = windowConfig.WindowWidth;
+				state.Height = windowConfig.WindowHeight;
+				state.IsMaximumMode = windowConfig.WindowIsMaximumMode;
+			}
+			else
+			{
+				state.PosX = -10000; // nodata
+				state.Width = 1280;
+				state.Height = 720;
+				windowConfig = null;
+			}
+			
+			if(!swig.MainWindow.Initialize("Effekseer", state, false, deviceType == swig.DeviceType.OpenGL))
+			{
+				return false;
+			}
+			MainWindow = swig.MainWindow.GetInstance();
+
 			var mgr = new swig.GUIManager();
-			if (mgr.Initialize("Effekseer", 1280, 720, deviceType, false))
+			if (mgr.Initialize(MainWindow, deviceType))
 			{
 			}
 			else
@@ -190,7 +219,7 @@ namespace Effekseer.GUI
 			Native = new swig.Native();
 
 			Viewer = new Viewer(Native);
-			if (!Viewer.ShowViewer(mgr.GetNativeHandle(), 1280, 720, deviceType))
+			if (!Viewer.ShowViewer(mgr.GetNativeHandle(), state.Width, state.Height, deviceType))
 			{
 				mgr.Dispose();
 				mgr = null;
@@ -207,8 +236,6 @@ namespace Effekseer.GUI
 			NativeManager.SetCallback(guiManagerCallback);
 
 			panels = new Dock.DockPanel[dockTypes.Length];
-
-			var appDirectory = Manager.GetEntryDirectory();
 
 			// Load font
 			UpdateFontSize();
@@ -240,6 +267,7 @@ namespace Effekseer.GUI
 				AddControl(effectViewer);
 			}
 
+			// TODO : refactor
 			if (LoadWindowConfig(System.IO.Path.Combine(appDirectory, "config.Dock.xml")))
 			{
 				Manager.NativeManager.LoadDock(System.IO.Path.Combine(appDirectory, "config.Dock.config"));
@@ -367,6 +395,10 @@ namespace Effekseer.GUI
 			NativeManager.Terminate();
 
 			Images.Unload();
+
+			swig.MainWindow.Terminate();
+			MainWindow.Dispose();
+			MainWindow = null;
 		}
 
 		public static void UpdateFontSize()
@@ -654,6 +686,11 @@ namespace Effekseer.GUI
 			}
 		}
 
+		/// <summary>
+		/// TODO refactor
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
 		public static bool LoadWindowConfig(string path)
 		{
 			if (!System.IO.File.Exists(path)) return false;
@@ -669,7 +706,7 @@ namespace Effekseer.GUI
 			var windowWidth = doc["Root"]["WindowWidth"]?.GetTextAsInt() ?? 1280;
 			var windowHeight = doc["Root"]["WindowHeight"]?.GetTextAsInt() ?? 720;
 
-			Manager.NativeManager.SetSize(windowWidth, windowHeight);
+			//Manager.NativeManager.SetSize(windowWidth, windowHeight);
 
 			var docks = doc["Root"]["Docks"];
 
@@ -690,15 +727,24 @@ namespace Effekseer.GUI
 			return true;
 		}
 
+		/// <summary>
+		/// TODO refactor
+		/// </summary>
+		/// <param name="path"></param>
 		public static void SaveWindowConfig(string path)
 		{
 			var size = Manager.NativeManager.GetSize();
 
+			var state = MainWindow.GetState();
+
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
 			System.Xml.XmlElement project_root = doc.CreateElement("Root");
-			project_root.AppendChild(doc.CreateTextElement("WindowWidth", size.X.ToString()));
-			project_root.AppendChild(doc.CreateTextElement("WindowHeight", size.Y.ToString()));
+			project_root.AppendChild(doc.CreateTextElement("WindowWidth", state.Width.ToString()));
+			project_root.AppendChild(doc.CreateTextElement("WindowHeight", state.Height.ToString()));
+			project_root.AppendChild(doc.CreateTextElement("WindowPosX", state.PosX.ToString()));
+			project_root.AppendChild(doc.CreateTextElement("WindowPosY", state.PosY.ToString()));
+			project_root.AppendChild(doc.CreateTextElement("WindowIsMaximumMode", state.IsMaximumMode ? "1" : "0"));
 
 			System.Xml.XmlElement docks = doc.CreateElement("Docks");
 

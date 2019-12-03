@@ -8,6 +8,8 @@
 #include "GUI/efk.FileDialog.h"
 #include "CompiledMaterialGenerator.h"
 #include "../EditorCommon/Platform/PlatformMisc.h"
+#include "../EditorCommon/GUI/MainWindow.h"
+
 %}
 
 //-----------------------------------------------------------------------------------
@@ -18,6 +20,7 @@
 %include "char16.i"
 %include "typemaps.i"
 %include "arrays_csharp.i"
+%include <std_shared_ptr.i>
 
 %pragma(csharp) imclassclassmodifiers="
 [System.Security.SuppressUnmanagedCodeSecurity]
@@ -78,6 +81,8 @@ class"
 
 %feature("director") GUIManagerCallback;
 
+%shared_ptr(Effekseer::MainWindow);
+
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
@@ -90,3 +95,4 @@ class"
 %include "Cpp/Viewer/CompiledMaterialGenerator.h"
 
 %include "Cpp/EditorCommon/Platform/PlatformMisc.h"
+%include "Cpp/EditorCommon/GUI/MainWindow.h"
