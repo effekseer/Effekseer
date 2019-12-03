@@ -32,6 +32,7 @@ struct RenderStateSet
 	GLint		vao;
 	GLint arrayBufferBinding;
 	GLint elementArrayBufferBinding;
+	std::array<GLuint, ::Effekseer::TextureSlotMax> boundTextures;
 };
 
 /**
@@ -92,8 +93,8 @@ private:
 
 	EffekseerRenderer::DistortingCallback* m_distortingCallback;
 
-	/* 現在設定されているテクスチャ */
-	std::vector<GLuint>	m_currentTextures;
+	// textures which are specified currently
+	std::vector<::Effekseer::TextureData> currentTextures_;
 
 	VertexArray*	m_currentVertexArray;
 
@@ -256,10 +257,9 @@ public:
 		return &m_background;
 	}
 
-	/**
-	@brief	背景を設定する。
-	*/
 	void SetBackground(GLuint background) override;
+
+	void SetBackgroundTexture(::Effekseer::TextureData* textureData) override;
 
 	EffekseerRenderer::DistortingCallback* GetDistortingCallback() override;
 
@@ -297,7 +297,7 @@ public:
 
 	void DeleteProxyTexture(Effekseer::TextureData* data) override;
 
-	std::vector<GLuint>& GetCurrentTextures() { return m_currentTextures; }
+	const std::vector<::Effekseer::TextureData>& GetCurrentTextures() const { return currentTextures_; }
 
 	OpenGLDeviceType GetDeviceType() const override { return m_deviceType; }
 

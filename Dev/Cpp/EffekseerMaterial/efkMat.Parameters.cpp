@@ -250,7 +250,124 @@ NodeConstant1::NodeConstant1()
 
 		new_node->MakePosDirtied();
 		new_node->Pos = node->Pos;
-		new_node->Properties[1]->Floats = node->Properties[0]->Floats;
+		new_node->Properties[new_node->Parameter->GetPropertyIndex("Value")]->Floats = node->Properties[0]->Floats;
+		material->RemoveNode(node);
+		return true;
+	};
+
+	Funcs.push_back(func1);
+}
+
+NodeConstant2::NodeConstant2()
+{
+	Type = NodeType::Constant2;
+	TypeName = "Constant2";
+	Description = "Constant value...";
+	Group = std::vector<std::string>{"Constant"};
+
+	auto output = std::make_shared<PinParameter>();
+	output->Name = "Output";
+	output->Type = ValueType::Float2;
+	OutputPins.push_back(output);
+
+	auto param = std::make_shared<NodePropertyParameter>();
+	param->Name = "Value";
+	param->Type = ValueType::Float2;
+	Properties.push_back(param);
+
+	auto func1 = std::make_shared<NodeFunctionParameter>();
+	func1->Name = "ConvertParam";
+	func1->Func = [](std::shared_ptr<Material> material, std::shared_ptr<Node> node) -> bool {
+		auto param = std::make_shared<NodeParameter4>();
+		auto new_node = material->CreateNode(param);
+		auto links = material->GetConnectedPins(node->OutputPins[0]);
+
+		for (auto link : links)
+		{
+			material->ConnectPin(new_node->OutputPins[0], link);
+		}
+
+		new_node->MakePosDirtied();
+		new_node->Pos = node->Pos;
+		new_node->Properties[new_node->Parameter->GetPropertyIndex("Value")]->Floats = node->Properties[0]->Floats;
+		material->RemoveNode(node);
+		return true;
+	};
+
+	Funcs.push_back(func1);
+}
+
+NodeConstant3::NodeConstant3()
+{
+	Type = NodeType::Constant3;
+	TypeName = "Constant3";
+	Description = "Constant value...";
+	Group = std::vector<std::string>{"Constant"};
+
+	auto output = std::make_shared<PinParameter>();
+	output->Name = "Output";
+	output->Type = ValueType::Float3;
+	OutputPins.push_back(output);
+
+	auto param = std::make_shared<NodePropertyParameter>();
+	param->Name = "Value";
+	param->Type = ValueType::Float3;
+	Properties.push_back(param);
+
+	auto func1 = std::make_shared<NodeFunctionParameter>();
+	func1->Name = "ConvertParam";
+	func1->Func = [](std::shared_ptr<Material> material, std::shared_ptr<Node> node) -> bool {
+		auto param = std::make_shared<NodeParameter4>();
+		auto new_node = material->CreateNode(param);
+		auto links = material->GetConnectedPins(node->OutputPins[0]);
+
+		for (auto link : links)
+		{
+			material->ConnectPin(new_node->OutputPins[0], link);
+		}
+
+		new_node->MakePosDirtied();
+		new_node->Pos = node->Pos;
+		new_node->Properties[new_node->Parameter->GetPropertyIndex("Value")]->Floats = node->Properties[0]->Floats;
+		material->RemoveNode(node);
+		return true;
+	};
+
+	Funcs.push_back(func1);
+}
+
+NodeConstant4::NodeConstant4()
+{
+	Type = NodeType::Constant4;
+	TypeName = "Constant4";
+	Description = "Constant value...";
+	Group = std::vector<std::string>{"Constant"};
+
+	auto output = std::make_shared<PinParameter>();
+	output->Name = "Output";
+	output->Type = ValueType::Float4;
+	OutputPins.push_back(output);
+
+	auto param = std::make_shared<NodePropertyParameter>();
+	param->Name = "Value";
+	param->Type = ValueType::Float4;
+	Properties.push_back(param);
+
+	auto func1 = std::make_shared<NodeFunctionParameter>();
+	func1->Name = "ConvertParam";
+	func1->Func = [](std::shared_ptr<Material> material, std::shared_ptr<Node> node) -> bool {
+		auto param = std::make_shared<NodeParameter4>();
+		auto new_node = material->CreateNode(param);
+		auto links = material->GetConnectedPins(node->OutputPins[0]);
+
+		for (auto link : links)
+		{
+			material->ConnectPin(new_node->OutputPins[0], link);
+		}
+
+		new_node->MakePosDirtied();
+		new_node->Pos = node->Pos;
+		new_node->Properties[new_node->Parameter->GetPropertyIndex("Value")]->Floats = node->Properties[0]->Floats;
 		material->RemoveNode(node);
 		return true;
 	};

@@ -29,6 +29,8 @@
 #include <efkMat.CommandManager.h>
 #include <efkMat.StringContainer.h>
 
+#include <GUI/MainWindow.h>
+
 #ifdef WIN32
 #include <Windows.h>
 #include <direct.h>
@@ -146,14 +148,23 @@ int mainLoop(int argc, char* argv[])
 	}
 
 #if _DEBUG
-	char* title = "EffekseerMaterialEditor - debug";
+	char16_t* title = u"EffekseerMaterialEditor - debug";
 #else
-	char* title = "EffekseerMaterialEditor";
+	char16_t* title = u"EffekseerMaterialEditor";
 #endif
-	if (!glfwInit())
+	
+	Effekseer::MainWindowState mainWindowState;
+	mainWindowState.Width = config->WindowWidth;
+	mainWindowState.Height = config->WindowHeight;
+	mainWindowState.PosX = config->WindowPosX;
+	mainWindowState.PosY = config->WindowPosY;
+	mainWindowState.IsMaximumMode = config->WindowIsMaximumMode;
+	if (!Effekseer::MainWindow::Initialize(title, mainWindowState, false, true))
 	{
-		return false;
+		return 0;
 	}
+
+	auto mainWindow = Effekseer::MainWindow::GetInstance();
 
 	auto commandQueueToMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
 	commandQueueToMaterialEditor_->Start("EffekseerCommandToMaterialEditor", 1024 * 1024);
@@ -163,18 +174,7 @@ int mainLoop(int argc, char* argv[])
 
 	uint64_t previousHistoryID = 0;
 
-#if __APPLE__
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-	glfwMainWindow = glfwCreateWindow(config->WindowWidth, config->WindowHeight, title, NULL, NULL);
-
-	if (config->WindowPosX >= 0)
-	{
-		glfwSetWindowPos(glfwMainWindow, config->WindowPosX, config->WindowPosY);
-	}
+	glfwMainWindow = mainWindow->GetGLFWWindows();
 
 	glfwSetWindowCloseCallback(glfwMainWindow, GLFLW_CloseCallback);
 
@@ -600,30 +600,28 @@ int mainLoop(int argc, char* argv[])
 
 	if (glfwMainWindow != nullptr)
 	{
-		int xpos, ypos, width, height = 0;
-		glfwGetWindowPos(glfwMainWindow, &xpos, &ypos);
-		glfwGetWindowSize(glfwMainWindow, &width, &height);
+		mainWindowState = mainWindow->GetState();
 
-		config->WindowWidth = width;
-		config->WindowHeight = height;
-		config->WindowPosX = xpos;
-		config->WindowPosY = ypos;
-
-		glfwDestroyWindow(glfwMainWindow);
-		glfwTerminate();
+		config->WindowWidth = mainWindowState.Width;
+		config->WindowHeight = mainWindowState.Height;
+		config->WindowPosX = mainWindowState.PosX;
+		config->WindowPosY = mainWindowState.PosY;
+		config->WindowIsMaximumMode = mainWindowState.IsMaximumMode;
 	}
 
 	commandQueueToMaterialEditor_->Stop();
 	commandQueueFromMaterialEditor_->Stop();
 
 	config->Save("config.EffekseerMaterial.json");
+
+	Effekseer::MainWindow::Terminate();
+	mainWindow = nullptr;
+
+	return 0;
 }
 
 #if defined(NDEBUG) && defined(_WIN32)
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int nShowCmd)
-{
-	return mainLoop(__argc, __argv);
-}
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpszCmdLine, int nShowCmd) { return mainLoop(__argc, __argv); }
 #else
 int main(int argc, char* argv[]) { return mainLoop(argc, argv); }
 #endif

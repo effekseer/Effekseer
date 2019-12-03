@@ -67,7 +67,10 @@ file(GLOB files
 
 list(APPEND files
     Effekseer/swig/SystemLanguage.cs
+    Effekseer/swig/MainWindow.cs
+    Effekseer/swig/MainWindowState.cs
     Effekseer/GUI/Dock/Environment.cs
+    Effekseer/Configs/WindowConfig.cs
 )
 
 add_executable(EffekseerEditor

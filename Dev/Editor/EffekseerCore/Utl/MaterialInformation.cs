@@ -220,6 +220,13 @@ namespace Effekseer.Utl
 						TextureInformation info = new TextureInformation();
 
 						reader.Get(ref info.Name, Encoding.UTF8);
+
+						// name is for human, uniformName is a variable name after 3
+						if (version >= 3)
+						{
+							reader.Get(ref info.Name, Encoding.UTF8);
+						}
+
 						reader.Get(ref info.DefaultPath, Encoding.UTF8);
 						reader.Get(ref info.Index);
 						reader.Get(ref info.Priority);
@@ -255,6 +262,13 @@ namespace Effekseer.Utl
 						UniformInformation info = new UniformInformation();
 
 						reader.Get(ref info.Name, Encoding.UTF8);
+
+						// name is for human, uniformName is a variable name after 3
+						if (version >= 3)
+						{
+							reader.Get(ref info.Name, Encoding.UTF8);
+						}
+
 						reader.Get(ref info.Offset);
 						reader.Get(ref info.Priority);
 						reader.Get(ref info.Type);

@@ -431,15 +431,10 @@ public:
 			}
 		}
 
-		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();
-		state.DepthTest = m_state.DepthTest;
-		state.DepthWrite = m_state.DepthWrite;
-		state.CullingType = m_state.CullingType;
-		state.AlphaBlend = m_state.AlphaBlend;
-
 		SHADER* shader_ = nullptr;
 
 		bool distortion = m_state.Distortion;
+		bool renderDistortedBackground = false;
 
 		if (m_state.MaterialPtr != nullptr)
 		{
@@ -453,6 +448,7 @@ public:
 					}
 
 					shader_ = (SHADER*)m_state.MaterialPtr->RefractionUserPtr;
+					renderDistortedBackground = true;
 				}
 				else
 				{
@@ -477,6 +473,17 @@ public:
 		else
 		{
 			shader_ = m_renderer->GetShader(true, m_state.MaterialType);
+		}
+
+		RenderStateBase::State& state = m_renderer->GetRenderState()->Push();
+		state.DepthTest = m_state.DepthTest;
+		state.DepthWrite = m_state.DepthWrite;
+		state.CullingType = m_state.CullingType;
+		state.AlphaBlend = m_state.AlphaBlend;
+
+		if (renderDistortedBackground)
+		{
+			state.AlphaBlend = ::Effekseer::AlphaBlendType::Blend;
 		}
 
 		m_renderer->BeginShader(shader_);
@@ -711,18 +718,21 @@ public:
 
 		shader_->SetConstantBuffer();
 
-		state.TextureFilterTypes[0] = m_state.TextureFilter1;
-		state.TextureWrapTypes[0] = m_state.TextureWrap1;
+		if (m_state.MaterialPtr == nullptr)
+		{
+			state.TextureFilterTypes[0] = m_state.TextureFilter1;
+			state.TextureWrapTypes[0] = m_state.TextureWrap1;
 
-		if (distortion)
-		{
-			state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Linear;
-			state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
-		}
-		else
-		{
-			state.TextureFilterTypes[1] = m_state.TextureFilter2;
-			state.TextureWrapTypes[1] = m_state.TextureWrap2;
+			if (distortion)
+			{
+				state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Linear;
+				state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
+			}
+			else
+			{
+				state.TextureFilterTypes[1] = m_state.TextureFilter2;
+				state.TextureWrapTypes[1] = m_state.TextureWrap2;
+			}
 		}
 
 		m_renderer->GetRenderState()->Update(distortion);

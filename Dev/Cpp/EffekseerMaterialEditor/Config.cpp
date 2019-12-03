@@ -18,8 +18,9 @@ bool Config::Save(const char* path)
 	root.insert(std::make_pair("Project", picojson::value("EffekseerMaterialConfig")));
 	root.insert(std::make_pair("WindowWidth", picojson::value((double)WindowWidth)));
 	root.insert(std::make_pair("WindowHeight", picojson::value((double)WindowHeight)));
-	root.insert(std::make_pair("WindowPosX", picojson::value((double)WindowPosY)));
+	root.insert(std::make_pair("WindowPosX", picojson::value((double)WindowPosX)));
 	root.insert(std::make_pair("WindowPosY", picojson::value((double)WindowPosY)));
+	root.insert(std::make_pair("WindowIsMaximumMode", picojson::value((bool)WindowIsMaximumMode)));
 	root.insert(std::make_pair("Language", picojson::value((double)Language)));
 
 	auto serialized = picojson::value(root).serialize();
@@ -61,6 +62,12 @@ bool Config::Load(const char* path)
 	WindowHeight = root.get("WindowHeight").get<double>();
 	WindowPosX = root.get("WindowPosX").get<double>();
 	WindowPosY = root.get("WindowPosY").get<double>();
+
+	if (root.contains("WindowIsMaximumMode"))
+	{
+		WindowIsMaximumMode = root.get("WindowIsMaximumMode").get<bool>();	
+	}
+
 	Language = static_cast<Effekseer::SystemLanguage>((int)root.get("Language").get<double>());
 
 	return true;

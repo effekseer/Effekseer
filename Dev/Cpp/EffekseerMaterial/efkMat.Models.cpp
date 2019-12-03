@@ -481,6 +481,12 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 		node_.insert(std::make_pair("PosY", picojson::value(node->Pos.Y - upperLeftPos.Y)));
 		node_.insert(std::make_pair("IsPreviewOpened", picojson::value(node->IsPreviewOpened)));
 
+		if (node->Parameter->Type == NodeType::Comment)
+		{
+			node_.insert(std::make_pair("CommentSizeX", picojson::value(node->CommentSize.X)));
+			node_.insert(std::make_pair("CommentSizeY", picojson::value(node->CommentSize.Y)));
+		}
+
 		picojson::array descs_;
 
 		if (node->Parameter->IsDescriptionExported)
@@ -606,6 +612,25 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 		}
 
 		root_.insert(std::make_pair("CustomData", picojson::value(customdata)));
+
+		picojson::array customdata_desc;
+
+		for (size_t i = 0; i < CustomData.size(); i++)
+		{
+			picojson::array customdata_lang;
+
+			for (size_t j = 0; j < CustomData[i].Descriptions.size(); j++)
+			{
+				picojson::object cd;
+				cd.insert(std::make_pair("Summary", picojson::value(CustomData[i].Descriptions[j]->Summary)));
+				cd.insert(std::make_pair("Detail", picojson::value(CustomData[i].Descriptions[j]->Detail)));
+				customdata_lang.push_back(picojson::value(cd));
+			}
+
+			customdata_desc.push_back(picojson::value(customdata_lang));
+		}
+
+		root_.insert(std::make_pair("CustomDataDescs", picojson::value(customdata_desc)));
 	}
 
 	if (doExportGlobal)
@@ -688,6 +713,21 @@ void Material::LoadFromStrInternal(
 		if (is_preview_opened_obj.is<bool>())
 		{
 			node->IsPreviewOpened = is_preview_opened_obj.get<bool>();
+		}
+
+		if (node->Parameter->Type == NodeType::Comment)
+		{
+			auto comment_size_x_obj = node_.get("CommentSizeX");
+			if (comment_size_x_obj.is<double>())
+			{
+				node->CommentSize.X = (float)comment_size_x_obj.get<double>();
+			}
+
+			auto comment_size_y_obj = node_.get("CommentSizeY");
+			if (comment_size_y_obj.is<double>())
+			{
+				node->CommentSize.Y = (float)comment_size_y_obj.get<double>();
+			}
 		}
 
 		oldIDToNewID[guid] = node->GUID;
@@ -816,7 +856,7 @@ void Material::LoadFromStrInternal(
 			{
 				if (customdata[n].is<picojson::array>())
 				{
-					picojson::array descs_ = customdata_desc_obj.get<picojson::array>();
+					picojson::array descs_ = customdata[n].get<picojson::array>();
 					for (int32_t i = 0; i < descs_.size(); i++)
 					{
 
@@ -1569,7 +1609,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	// header
 
 	char* prefix = "EFKM";
-	int version = 2;
+	int version = 3;
 
 	int offset = 0;
 
@@ -1654,6 +1694,10 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		auto name_ = GetVectorFromStr(Replace(param->Name, "$SUFFIX", ""));
 		bwParam.Push(name_);
 
+		// name is for human, uniformName is a variable name after 3
+		auto uniformName = GetVectorFromStr(param->UniformName);
+		bwParam.Push(uniformName);
+
 		auto defaultPath_ = GetVectorFromStr(Relative(param->DefaultPath, basePath));
 		bwParam.Push(defaultPath_);
 		bwParam.Push(param->Index);
@@ -1671,6 +1715,10 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 
 		auto name_ = GetVectorFromStr(Replace(param->Name, "$SUFFIX", ""));
 		bwParam.Push(name_);
+
+		// name is for human, uniformName is a variable name after 3
+		auto uniformName = GetVectorFromStr(param->UniformName);
+		bwParam.Push(uniformName);
 
 		bwParam.Push(param->Offset);
 		bwParam.Push(param->Priority);

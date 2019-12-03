@@ -47,13 +47,17 @@ public class GUIManager : global::System.IDisposable {
   public GUIManager() : this(EffekseerNativePINVOKE.new_GUIManager(), true) {
   }
 
-  public bool Initialize(string title, int width, int height, DeviceType deviceType, bool isSRGBMode) {
-    bool ret = EffekseerNativePINVOKE.GUIManager_Initialize(swigCPtr, title, width, height, (int)deviceType, isSRGBMode);
+  public bool Initialize(MainWindow mainWindow, DeviceType deviceType) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_Initialize(swigCPtr, MainWindow.getCPtr(mainWindow), (int)deviceType);
     return ret;
   }
 
   public void InitializeGUI(Native native) {
     EffekseerNativePINVOKE.GUIManager_InitializeGUI(swigCPtr, Native.getCPtr(native));
+  }
+
+  public void ResetGUIStyle() {
+    EffekseerNativePINVOKE.GUIManager_ResetGUIStyle(swigCPtr);
   }
 
   public void SetTitle(string title) {

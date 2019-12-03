@@ -547,6 +547,9 @@ struct TextureData
 	TextureFormatType	TextureFormat;
 	void*	UserPtr;
 	int64_t	UserID;
+
+	//! for OpenGL, it is ignored in other apis
+	bool HasMipmap = true;
 };
 
 enum class ShadingModelType : int32_t

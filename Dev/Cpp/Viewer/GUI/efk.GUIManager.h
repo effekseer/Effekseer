@@ -19,7 +19,7 @@
 #include "../3rdParty/imgui_addon/imguidock/imguidock.h"
 
 #include "../../3rdParty/imgui_markdown/imgui_markdown.h"
-
+#include <EditorCommon/GUI/MainWindow.h>
 class Native;
 
 namespace efk
@@ -324,7 +324,7 @@ namespace efk
 
 		virtual ~GUIManager();
 
-		bool Initialize(const char16_t* title, int32_t width, int32_t height, efk::DeviceType deviceType, bool isSRGBMode);
+		bool Initialize(std::shared_ptr<Effekseer::MainWindow> mainWindow, efk::DeviceType deviceType);
 
 		void InitializeGUI(Native* native);
 

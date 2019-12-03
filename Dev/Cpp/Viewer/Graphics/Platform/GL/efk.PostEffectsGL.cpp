@@ -3,6 +3,8 @@
 #endif
 
 #include <algorithm>
+#include <iostream>
+
 #include "efk.PostEffectsGL.h"
 
 #include <EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.GLExtension.h>
@@ -168,7 +170,7 @@ void main() {
 		
 		// Set destination texture
 		graphics->SetRenderTarget(dest, nullptr);
-		
+
 		// Set source textures
 		for (int32_t slot = 0; slot < numTextures; slot++) {
 			GLExt::glActiveTexture(GL_TEXTURE0 + slot);
@@ -178,10 +180,13 @@ void main() {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			GLExt::glUniform1i(shader->GetTextureSlot(slot), slot);
+
+			GLCheckError();
 		}
 		
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
-		
+		GLCheckError();
+
 		renderer->EndShader(shader);
 	}
 
@@ -422,7 +427,7 @@ void main() {
 			"Tonemap Reinhard"));
 		shaderReinhard->GetAttribIdList(2, BlitterGL::shaderAttributes);
 		shaderReinhard->SetVertexSize(sizeof(BlitterGL::Vertex));
-		shaderReinhard->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
+		shaderReinhard->SetTextureSlot(0, shaderReinhard->GetUniformId("u_Texture0"));
 		shaderReinhard->SetPixelConstantBufferSize(sizeof(float) * 4);
 		shaderReinhard->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, 
 			shaderReinhard->GetUniformId("u_Exposure"), 0);

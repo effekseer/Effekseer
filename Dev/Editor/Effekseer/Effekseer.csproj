@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configs\WindowConfig.cs" />
     <Compile Include="Data\ViewPoint.cs" />
     <Compile Include="Define.cs" />
     <Compile Include="GUI\Commands.cs" />
@@ -170,6 +171,8 @@
     <Compile Include="swig\ImGuiColFlags.cs" />
     <Compile Include="swig\ImGuiStyleVarFlags.cs" />
     <Compile Include="swig\InputTextFlags.cs" />
+    <Compile Include="swig\MainWindow.cs" />
+    <Compile Include="swig\MainWindowState.cs" />
     <Compile Include="swig\MouseCursor.cs" />
     <Compile Include="swig\Native.cs" />
     <Compile Include="swig\RecordingModeType.cs" />

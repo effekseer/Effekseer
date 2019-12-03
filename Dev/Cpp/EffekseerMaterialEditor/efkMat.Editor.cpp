@@ -58,13 +58,13 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	for (size_t i = 0; i < result.Textures.size(); i++)
 	{
 		efkMaterial.SetTextureIndex(i, i);
-		efkMaterial.SetTextureName(i, result.Textures[i]->Name.c_str());
+		efkMaterial.SetTextureName(i, result.Textures[i]->UniformName.c_str());
 	}
 
 	for (size_t i = 0; i < result.Uniforms.size(); i++)
 	{
 		efkMaterial.SetUniformIndex(i, (int)result.Uniforms[i]->Type);
-		efkMaterial.SetUniformName(i, result.Uniforms[i]->Name.c_str());
+		efkMaterial.SetUniformName(i, result.Uniforms[i]->UniformName.c_str());
 	}
 
 	auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
@@ -92,7 +92,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 	{
 		auto t_ = EffekseerMaterial::TextureCache::Load(graphics, t->DefaultPath.c_str());
 		auto ts = std::make_shared<TextureWithSampler>();
-		ts->Name = t->Name;
+		ts->Name = t->UniformName;
 		ts->TexturePtr = t_;
 		ts->SamplerType = t->Sampler;
 		outputTextures.push_back(ts);
@@ -134,7 +134,7 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	{
 		auto t_ = EffekseerMaterial::TextureCache::Load(graphics, t->DefaultPath.c_str());
 		auto ts = std::make_shared<TextureWithSampler>();
-		ts->Name = t->Name;
+		ts->Name = t->UniformName;
 		ts->TexturePtr = t_;
 		ts->SamplerType = t->Sampler;
 		outputTextures.push_back(ts);
@@ -535,7 +535,8 @@ void Editor::Update()
 		}
 
 		// save
-		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] && ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_S]] == 0)
+		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] &&
+			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_S]] == 0)
 		{
 			Save();
 		}
@@ -739,20 +740,20 @@ void Editor::UpdatePopup()
 	{
 		auto node = material->FindNode(currentNodeID.Get());
 
-		if (node != nullptr && node->Parameter->Type != NodeType::Output)
-		{
-			if (ImGui::MenuItem("Delete"))
-			{
-				material->RemoveNode(node);
-			}
-		}
-
 		// Special node
 		for (auto func : node->Parameter->Funcs)
 		{
-			if (ImGui::MenuItem(func->Name.c_str()))
+			if (ImGui::MenuItem(StringContainer::GetValue((func->Name + "_Name").c_str(), func->Name.c_str()).c_str()))
 			{
 				func->Func(material, node);
+			}
+		}
+
+		if (node != nullptr && node->Parameter->Type != NodeType::Output)
+		{
+			if (ImGui::MenuItem(StringContainer::GetValue("Delete_Name", "Delete").c_str()))
+			{
+				material->RemoveNode(node);
 			}
 		}
 
@@ -1463,8 +1464,18 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 		ImGui::Text(node->Properties[0]->Str.c_str());
 		ImGui::EndHorizontal();
 		auto size = ed::GetNodeSize(node->GUID);
-		size.x = size.x < 100 ? 100 : size.x;
-		size.y = size.y < 100 ? 100 : size.y;
+
+		// initialize
+		if (contents_[GetSelectedContentIndex()]->IsLoading || node->GetIsPosDirtied())
+		{
+			size.x = node->CommentSize.X;
+			size.y = node->CommentSize.Y;
+		}
+
+		size.x = size.x < 64 ? 64 : size.x;
+		size.y = size.y < 64 ? 64 : size.y;
+		node->CommentSize.X = size.x;
+		node->CommentSize.Y = size.y;
 		ed::Group(size);
 		ImGui::EndVertical();
 		ed::EndNode();

@@ -153,6 +153,7 @@ void RenderState::Update( bool forced )
 	GLCheckError();
 	
 	static const GLint glfilterMin[] = { GL_NEAREST, GL_LINEAR_MIPMAP_LINEAR };
+	static const GLint glfilterMin_NoneMipmap[] = {GL_NEAREST, GL_LINEAR};
 	static const GLint glfilterMag[] = { GL_NEAREST, GL_LINEAR };
 	static const GLint glwrap[] = { GL_REPEAT, GL_CLAMP_TO_EDGE };
 
@@ -161,7 +162,7 @@ void RenderState::Update( bool forced )
 		for (int32_t i = 0; i < (int32_t)m_renderer->GetCurrentTextures().size(); i++)
 		{
 			// If a texture is not assigned, skip it.
-			if (m_renderer->GetCurrentTextures()[i] == 0)
+			if (m_renderer->GetCurrentTextures()[i].UserID == 0)
 				continue;
 
 			if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
@@ -178,7 +179,16 @@ void RenderState::Update( bool forced )
 				int32_t filter_ = (int32_t) m_next.TextureFilterTypes[i];
 
 				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
-				GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
+
+				if (m_renderer->GetCurrentTextures()[i].HasMipmap)
+				{
+					GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
+				}
+				else
+				{
+					GLExt::glSamplerParameteri(m_samplers[i], GL_TEXTURE_MIN_FILTER, glfilterMin_NoneMipmap[filter_]);
+				}
+				
 				//glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				//glSamplerParameteri( m_samplers[i],  GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
@@ -203,7 +213,7 @@ void RenderState::Update( bool forced )
 		for (int32_t i = 0; i < (int32_t)m_renderer->GetCurrentTextures().size(); i++)
 		{
 			// If a texture is not assigned, skip it.
-			if (m_renderer->GetCurrentTextures()[i] == 0) continue;
+			if (m_renderer->GetCurrentTextures()[i].UserID == 0) continue;
 
 			// always changes because a flag is assigned into a texture
 			// if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)

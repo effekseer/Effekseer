@@ -9,7 +9,7 @@
   "En": "English",
   "": "",
   "Description_Name": "説明",
-  "Description_Desc": "これらのパラメーターは他のエディタで表示されます。\\n概要はラベルとして表示されます。\\n多くの場合、詳細はクリックしたりマウスが重なると表示されます。",
+  "Description_Desc": "これらのパラメーターは他のエディタで表示されます。\n概要はラベルとして表示されます。\n多くの場合、詳細はクリックしたりマウスが重なると表示されます。",
   "Language_Name": "言語",
   "Summary_Name": "概要",
   "Detail_Name": "詳細",
@@ -26,9 +26,9 @@
   "Priority_Name": "優先度",
   "Priority_Desc": "低い優先度ほど、他のエディタの画面の上の位置に表示されます。",
   "Sampler_Name": "サンプラ",
-  "Sampler_Desc": "画像の外の扱い方を指定します。\\nRepeat - 反対側の端から繰り返します。\\nClamp - 端の色を維持します。",
+  "Sampler_Desc": "画像の外の扱い方を指定します。\nRepeat - 反対側の端から繰り返します。\nClamp - 端の色を維持します。",
   "UVIndex_Name": "UV番号",
-  "ShadingModel_Name": "シェーディング\\nモデル",
+  "ShadingModel_Name": "シェーディング\nモデル",
   "Lit_Name": "ライティング",
   "Unlit_Name": "非ライティング",
   "Speed_Name": "速度",
@@ -77,6 +77,7 @@
   "Parameter4_Name": "パラメーター4",
   "CustomData1_Name": "カスタムデータ1",
   "CustomData2_Name": "カスタムデータ2",
+  "ConvertParam_Name": "パラメーターに変換 ",
   "Error_SameNode": "×　同じノードには接続できません。",
   "Error_SamePin": "×　同じピンには接続できません。",
   "Error_SameDirection": "×　同じ方向には接続できません。",
@@ -89,5 +90,5 @@
   "Starting_Open": "マテリアルを開く",
   "Warning_WrongInputType": "入力の型が無効です。",
   "Warning_WrongProperty": "プロパティが無効です。",
-  "Warning_DifferentSampler": "同じ画像に異なるサンプラが\\n設定されています。"
+  "Warning_DifferentSampler": "同じ画像に異なるサンプラが\n設定されています。"
 }

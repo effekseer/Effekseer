@@ -504,6 +504,7 @@ static char* g_material_ps_suf2_unlit = R"(
 	float4 Output = float4(emissive, opacity);
 
 	if(opacityMask <= 0.0f) discard;
+	if(opacity <= 0.0) discard;
 
 	return Output;
 }
@@ -519,6 +520,7 @@ static char* g_material_ps_suf2_lit = R"(
 	Output.xyz = Output.xyz + emissive.xyz;
 
 	if(opacityMask <= 0.0) discard;
+	if(opacity <= 0.0) discard;
 
 	return Output;
 }
@@ -540,6 +542,7 @@ static char* g_material_ps_suf2_refraction = R"(
 	float4 Output = bg;
 
 	if(opacityMask <= 0.0) discard;
+	if(opacity <= 0.0) discard;
 
 	return Output;
 }
@@ -633,7 +636,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			cind = 2;
 		}
 
-		if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
+		if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 		{
 			maincode << "float4 "
 					 << "cameraPosition"

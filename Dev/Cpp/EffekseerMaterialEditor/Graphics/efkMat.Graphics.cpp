@@ -380,7 +380,7 @@ bool Preview::CompileShader(std::string& vs,
 	{
 		for (auto uni : uniforms)
 		{
-			if (uni->Name == layout.first)
+			if (uni->UniformName == layout.first)
 			{
 				constantBuffer->SetData(uni->DefaultConstants.data(), layout.second.GetSize(), layout.second.Offset);
 				break;
@@ -405,7 +405,7 @@ bool Preview::UpdateUniforms(std::vector<std::shared_ptr<TextureWithSampler>> te
 	{
 		for (auto uni : uniforms)
 		{
-			if (uni->Name == layout.first)
+			if (uni->UniformName == layout.first)
 			{
 				constantBuffer->SetData(uni->DefaultConstants.data(), layout.second.GetSize(), layout.second.Offset);
 				break;

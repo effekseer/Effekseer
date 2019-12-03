@@ -70,6 +70,17 @@ bool Material::Load(const uint8_t* data, int32_t size)
 				auto name = std::string((const char*)(data + offset));
 				offset += strNameLength;
 
+				// name is for human, uniformName is a variable name after 3
+				if (version >= 3)
+				{
+					int strUniformNameLength = 0;
+					memcpy(&strUniformNameLength, data + offset, 4);
+					offset += sizeof(int);
+
+					name = std::string((const char*)(data + offset));
+					offset += strUniformNameLength;
+				}
+
 				int strDefaultPathLength = 0;
 				memcpy(&strDefaultPathLength, data + offset, 4);
 				offset += sizeof(int);
@@ -114,6 +125,17 @@ bool Material::Load(const uint8_t* data, int32_t size)
 
 				auto name = std::string((const char*)(data + offset));
 				offset += strLength;
+
+				// name is for human, uniformName is a variable name after 3
+				if (version >= 3)
+				{
+					int strUniformNameLength = 0;
+					memcpy(&strUniformNameLength, data + offset, 4);
+					offset += sizeof(int);
+
+					name = std::string((const char*)(data + offset));
+					offset += strUniformNameLength;
+				}
 
 				// offset
 				offset += sizeof(int);

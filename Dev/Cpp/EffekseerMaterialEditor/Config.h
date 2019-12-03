@@ -20,8 +20,9 @@ public:
 
 	int32_t WindowWidth = 0;
 	int32_t WindowHeight = 0;
-	int32_t WindowPosX = -1;
-	int32_t WindowPosY = -1;
+	int32_t WindowPosX = -10000;
+	int32_t WindowPosY = -10000;
+	bool WindowIsMaximumMode = false;
 	Effekseer::SystemLanguage Language = Effekseer::SystemLanguage::Unknown;
 };
 
