@@ -75,7 +75,7 @@ endif()
 
 target_include_directories(
     EditorCommon
-    PRIVATE
+    PUBLIC
     ${EFK_THIRDPARTY_INCLUDES})
 
 set_target_properties(EditorCommon PROPERTIES LINKER_LANGUAGE CXX)
