@@ -3,7 +3,6 @@
 #include "../../EffekseerRendererDX12/EffekseerRendererDX12.h"
 #include "EffectPlatformLLGI.h"
 
-
 class EffectPlatformDX12 final : public EffectPlatformLLGI
 {
 private:
@@ -11,6 +10,16 @@ private:
 
 	EffekseerRenderer::CommandList* commandListEfk_ = nullptr;
 	EffekseerRenderer::SingleFrameMemoryPool* sfMemoryPoolEfk_ = nullptr;
+
+	LLGI::RenderPass* renderPass_ = nullptr;
+	LLGI::Texture* colorBuffer_ = nullptr;
+	LLGI::Texture* depthBuffer_ = nullptr;
+	LLGI::Shader* shader_vs_ = nullptr;
+	LLGI::Shader* shader_ps_ = nullptr;
+	LLGI::VertexBuffer* vb_ = nullptr;
+	LLGI::IndexBuffer* ib_ = nullptr;
+	LLGI::PipelineState* pip_ = nullptr;
+	LLGI::RenderPassPipelineState* rppip_ = nullptr;
 
 protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;
