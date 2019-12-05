@@ -392,7 +392,7 @@ uint64_t Material::GetIDAndNext()
 	auto ret = nextGUID;
 	nextGUID++;
 
-	if (nextGUID > 0xefff)
+	if (nextGUID > std::numeric_limits<uint64_t>::max() - 0xff)
 	{
 		nextGUID = 0xff;
 	}
@@ -445,13 +445,12 @@ bool Material::FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2)
 std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes,
 										std::vector<std::shared_ptr<Link>> links,
 										const char* basePath,
-										bool doMoveZero,
-										bool doExportGlobal)
+										SaveLoadAimType aim)
 {
 	// calculate left pos
 	Vector2DF upperLeftPos = Vector2DF(FLT_MAX, FLT_MAX);
 
-	if (doMoveZero)
+	if (aim == SaveLoadAimType::CopyOrPaste)
 	{
 		for (auto node : nodes)
 		{
@@ -546,9 +545,18 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 			else if (pp->Type == ValueType::Texture)
 			{
 				auto absStr = p->Str;
-				auto relative = Relative(absStr, basePath);
-				prop_.insert(std::make_pair("Value", picojson::value(relative)));
-				enabledTextures.insert(relative);
+
+				if (aim == SaveLoadAimType::CopyOrPaste)
+				{
+					prop_.insert(std::make_pair("Value", picojson::value(absStr)));
+					enabledTextures.insert(absStr);
+				}
+				else
+				{
+					auto relative = Relative(absStr, basePath);
+					prop_.insert(std::make_pair("Value", picojson::value(relative)));
+					enabledTextures.insert(relative);
+				}
 			}
 			else if (pp->Type == ValueType::Enum)
 			{
@@ -597,7 +605,7 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 
 	root_.insert(std::make_pair("Links", picojson::value(links_)));
 
-	if (doExportGlobal)
+	if (aim == SaveLoadAimType::IO)
 	{
 		picojson::array customdata;
 
@@ -633,7 +641,7 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 		root_.insert(std::make_pair("CustomDataDescs", picojson::value(customdata_desc)));
 	}
 
-	if (doExportGlobal)
+	if (aim == SaveLoadAimType::IO)
 	{
 		picojson::array textures_;
 
@@ -664,7 +672,7 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 }
 
 void Material::LoadFromStrInternal(
-	const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, bool hasGlobal)
+	const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, SaveLoadAimType aim)
 {
 	picojson::value root_;
 	auto err = picojson::parse(root_, json);
@@ -686,6 +694,24 @@ void Material::LoadFromStrInternal(
 	picojson::array nodes_ = nodes_obj.get<picojson::array>();
 	picojson::array links_ = links_obj.get<picojson::array>();
 
+	// reset id
+	if (aim == SaveLoadAimType::IO)
+	{
+		uint64_t guidMax = 0;
+		for (auto node_ : nodes_)
+		{
+			auto guid_obj = node_.get("GUID");
+			auto guid = (uint64_t)guid_obj.get<double>();
+
+			guidMax = std::max(guidMax, guid);
+		}
+
+		if (guidMax > 255)
+		{
+			nextGUID = guidMax + 1;
+		}
+	}
+
 	std::map<uint64_t, uint64_t> oldIDToNewID;
 
 	for (auto node_ : nodes_)
@@ -701,7 +727,13 @@ void Material::LoadFromStrInternal(
 			continue;
 
 		auto node_parameter = node_library->Create();
-		auto node = CreateNode(node_parameter);
+
+		if (aim == SaveLoadAimType::CopyOrPaste)
+		{
+			guid = 0;
+		}
+
+		std::shared_ptr<Node> node = CreateNode(node_parameter, false, guid);
 
 		auto pos_x_obj = node_.get("PosX");
 		node->Pos.X = (float)pos_x_obj.get<double>() + offset.X;
@@ -789,8 +821,16 @@ void Material::LoadFromStrInternal(
 			else if (node->Parameter->Properties[i]->Type == ValueType::Texture)
 			{
 				auto str = props_[i].get("Value").get<std::string>();
-				auto absolute = Absolute(str, basePath);
-				node->Properties[i]->Str = absolute;
+
+				if (aim == SaveLoadAimType::CopyOrPaste)
+				{
+					node->Properties[i]->Str = str;
+				}
+				else
+				{
+					auto absolute = Absolute(str, basePath);
+					node->Properties[i]->Str = absolute;
+				}
 			}
 			else if (node->Parameter->Properties[i]->Type == ValueType::Enum)
 			{
@@ -831,7 +871,7 @@ void Material::LoadFromStrInternal(
 		}
 	}
 
-	if (hasGlobal)
+	if (aim == SaveLoadAimType::IO)
 	{
 		picojson::value customdata_obj = root_.get("CustomData");
 		if (customdata_obj.is<picojson::array>())
@@ -882,7 +922,7 @@ void Material::LoadFromStrInternal(
 		}
 	}
 
-	if (hasGlobal)
+	if (aim == SaveLoadAimType::IO)
 	{
 		picojson::value textures_obj = root_.get("Textures");
 
@@ -1014,12 +1054,21 @@ ValueType Material::GetDesiredPinType(std::shared_ptr<Pin> pin, std::unordered_s
 	return GetPinType(pin->Parameter->Default);
 }
 
-std::shared_ptr<Node> Material::CreateNode(std::shared_ptr<NodeParameter> parameter, bool isDirectly)
+std::shared_ptr<Node> Material::CreateNode(std::shared_ptr<NodeParameter> parameter, bool isDirectly, uint64_t guid)
 {
 	auto node = std::make_shared<Node>();
 	node->material_ = this->shared_from_this();
 	node->Parameter = parameter;
-	node->GUID = GetIDAndNext();
+
+	if (guid > 0)
+	{
+		node->GUID = guid;
+	}
+	else
+	{
+		node->GUID = GetIDAndNext();
+	}
+
 	node->IsPreviewOpened = parameter->IsPreviewOpened;
 
 	if (parameter->HasDescription)
@@ -1409,14 +1458,14 @@ std::string Material::Copy(std::vector<std::shared_ptr<Node>> nodes, const char*
 		links.push_back(link);
 	}
 
-	return SaveAsStrInternal(nodes, links, basePath, true, false);
+	return SaveAsStrInternal(nodes, links, basePath, SaveLoadAimType::CopyOrPaste);
 }
 
 void Material::Paste(std::string content, const Vector2DF& pos, std::shared_ptr<Library> library, const char* basePath)
 {
 	commandManager_->StartCollection();
 
-	LoadFromStrInternal(content.c_str(), pos, library, basePath, false);
+	LoadFromStrInternal(content.c_str(), pos, library, basePath, SaveLoadAimType::CopyOrPaste);
 
 	commandManager_->EndCollection();
 }
@@ -1553,10 +1602,10 @@ void Material::LoadFromStr(const char* json, std::shared_ptr<Library> library, c
 	links.clear();
 	textures.clear();
 
-	LoadFromStrInternal(json, Vector2DF(), library, basePath, true);
+	LoadFromStrInternal(json, Vector2DF(), library, basePath, SaveLoadAimType::IO);
 }
 
-std::string Material::SaveAsStr(const char* basePath) { return SaveAsStrInternal(nodes, links, basePath, false, true); }
+std::string Material::SaveAsStr(const char* basePath) { return SaveAsStrInternal(nodes, links, basePath, SaveLoadAimType::IO); }
 
 bool Material::Load(std::vector<uint8_t>& data, std::shared_ptr<Library> library, const char* basePath)
 {

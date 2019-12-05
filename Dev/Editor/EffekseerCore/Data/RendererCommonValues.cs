@@ -159,16 +159,26 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		public Dictionary<string, object> KeyValues
+		List<Tuple35<StatusKey, ValueStatus>> keyToValues = new List<Tuple35<StatusKey, ValueStatus>>();
+		RendererCommonValues rcValues = null;
+
+		public ValueStatus[] GetValueStatus()
 		{
-			get
-			{
-				return keyToValues;
-			}
+			return keyToValues.Select(_ => _.Item2).ToArray();
 		}
 
-		Dictionary<string, object> keyToValues = new Dictionary<string, object>();
-		RendererCommonValues rcValues = null;
+		public ValueStatus FindValue(string key, HashSet<ValueStatus> blacklist = null, bool withName = false)
+		{
+			var statusKey = StatusKey.From(key);
+
+			foreach(var kv in keyToValues)
+			{
+				if (blacklist != null && blacklist.Contains(kv.Item2)) continue;
+				if (kv.Item1.IsSame(statusKey, withName)) return kv.Item2;
+			}
+
+			return null;
+		}
 
 		public MaterialFileParameter(RendererCommonValues rcValues)
 		{
@@ -187,7 +197,7 @@ namespace Effekseer.Data
 
 			if(info.CustomData.Count() > 0)
 			{
-				rcValues.CustomData1.Name = info.CustomData[0].Names[Core.Language];
+				rcValues.CustomData1.Name = info.CustomData[0].Summaries[Core.Language];
 				rcValues.CustomData1.Desc = info.CustomData[0].Descriptions[Core.Language];
 			}
 			else
@@ -198,7 +208,7 @@ namespace Effekseer.Data
 
 			if (info.CustomData.Count() > 1)
 			{
-				rcValues.CustomData2.Name = info.CustomData[1].Names[Core.Language];
+				rcValues.CustomData2.Name = info.CustomData[1].Summaries[Core.Language];
 				rcValues.CustomData2.Desc = info.CustomData[1].Descriptions[Core.Language];
 			}
 			else
@@ -240,7 +250,7 @@ namespace Effekseer.Data
 
 			ret.Add(propPath);
 
-			foreach (var v in keyToValues.Values.OrderBy(_ => (_ as ValueStatus).Priority))
+			foreach (var v in keyToValues.Select(_=>_.Item2).OrderBy(_ => (_ as ValueStatus).Priority))
 			{
 				EditableValue ev = new EditableValue();
 				var status = v as ValueStatus;
@@ -278,29 +288,178 @@ namespace Effekseer.Data
 				selfDetail = "";
 			}
 
-
-			var textureKeys = info.Textures.Select(_ => CreateKey(_)).ToList();
-
-			foreach (var kts in keyToValues)
+			HashSet<ValueStatus> usedValueStatuses = new HashSet<ValueStatus>();
+			HashSet<object> finished = new HashSet<object>();
+			
+			foreach (var withNameFlag in new[] { false, true} )
 			{
-				if(!textureKeys.Contains(kts.Key))
+				foreach (var texture in info.Textures)
 				{
-					var status = kts.Value as ValueStatus;
-					if(status.IsShown)
+					if (finished.Contains(texture)) continue;
+
+					var key = StatusKey.From(texture);
+
+					Func<string> getName = () =>
 					{
-						status.IsShown = false;
+						var ret = "";
+						if (texture.Summaries.ContainsKey(Core.Language))
+						{
+							ret = texture.Summaries[Core.Language];
+						}
+
+						if (string.IsNullOrEmpty(ret))
+						{
+							ret = texture.Name;
+						}
+
+						if (string.IsNullOrEmpty(ret))
+						{
+							ret = texture.UniformName;
+						}
+
+						return ret;
+					};
+
+					Func<string> getDesc = () =>
+					{
+						var ret = "";
+						if (texture.Descriptions.ContainsKey(Core.Language))
+						{
+							ret = texture.Descriptions[Core.Language];
+						}
+
+						return ret;
+					};
+
+					ValueStatus status = null;
+
+					var foundValue = FindValue(key.ToString(), usedValueStatuses, withNameFlag);
+					if (foundValue != null)
+					{
+						status = foundValue as ValueStatus;
+						if (status.IsShown != texture.IsParam)
+						{
+							status.IsShown = texture.IsParam;
+							isChanged = true;
+						}
+					}
+					else
+					{
+						// create only when value is not found even if withName flag is true
+						if (!withNameFlag) continue;
+
+						status = new ValueStatus();
+						var value = new Value.PathForImage(Resources.GetString("ImageFilter"), true);
+						status.Value = value;
+						status.IsShown = texture.IsParam;
+						status.Priority = texture.Priority;
+						keyToValues.Add(Tuple35.Create(key, status));
+						value.SetAbsolutePathDirectly(texture.DefaultPath);
 						isChanged = true;
 					}
+
+					status.Key = key.ToString();
+					status.Name = getName();
+					status.Description = getDesc();
+					usedValueStatuses.Add(status);
+					finished.Add(texture);
+				}
+
+				foreach (var uniform in info.Uniforms)
+				{
+					if (finished.Contains(uniform)) continue;
+
+					var key = StatusKey.From(uniform);
+
+					Func<string> getName = () =>
+					{
+						var ret = "";
+						if (uniform.Summaries.ContainsKey(Core.Language))
+						{
+							ret = uniform.Summaries[Core.Language];
+						}
+
+						if (string.IsNullOrEmpty(ret))
+						{
+							ret = uniform.Name;
+						}
+
+						if (string.IsNullOrEmpty(ret))
+						{
+							ret = uniform.UniformName;
+						}
+
+						return ret;
+					};
+
+					Func<string> getDesc = () =>
+					{
+						var ret = "";
+						if (uniform.Descriptions.ContainsKey(Core.Language))
+						{
+							ret = uniform.Descriptions[Core.Language];
+						}
+
+						return ret;
+					};
+
+					ValueStatus status = null;
+
+					var foundValue = FindValue(key.ToString(), usedValueStatuses, withNameFlag);
+					if (foundValue != null)
+					{
+						status = foundValue;
+						if (!status.IsShown)
+						{
+							status.IsShown = true;
+							isChanged = true;
+						}
+					}
+					else
+					{
+						// create only when value is not found even if withName flag is true
+						if (!withNameFlag) continue;
+
+						if (uniform.Type == 0)
+						{
+							status = new ValueStatus();
+							var value = new Value.Float();
+							value.SetValueDirectly(uniform.DefaultValues[0]);
+							status.Value = value;
+							status.IsShown = true;
+							status.Priority = uniform.Priority;
+							keyToValues.Add(Tuple35.Create(key, status));
+							isChanged = true;
+						}
+						else
+						{
+							status = new ValueStatus();
+							var value = new Value.Vector4D();
+							value.X.SetValueDirectly(uniform.DefaultValues[0]);
+							value.Y.SetValueDirectly(uniform.DefaultValues[1]);
+							value.Z.SetValueDirectly(uniform.DefaultValues[2]);
+							value.W.SetValueDirectly(uniform.DefaultValues[3]);
+							status.Value = value;
+							status.IsShown = true;
+							status.Priority = uniform.Priority;
+							keyToValues.Add(Tuple35.Create(key, status));
+							isChanged = true;
+						}
+					}
+
+					status.Key = key.ToString();
+					status.Name = getName();
+					status.Description = getDesc();
+					usedValueStatuses.Add(status);
+					finished.Add(uniform);
 				}
 			}
 
-			var uniformKeys = info.Uniforms.Select(_ => CreateKey(_)).ToList();
-
 			foreach (var kts in keyToValues)
 			{
-				if (!uniformKeys.Contains(kts.Key))
+				if(!usedValueStatuses.Contains(kts.Item2))
 				{
-					var status = kts.Value as ValueStatus;
+					var status = kts.Item2;
 					if (status.IsShown)
 					{
 						status.IsShown = false;
@@ -309,139 +468,7 @@ namespace Effekseer.Data
 				}
 			}
 
-			foreach (var texture in info.Textures)
-			{
-				var key = CreateKey(texture);
-
-				Func<string> getName = () =>
-				{
-					var ret = "";
-					if (texture.Names.ContainsKey(Core.Language))
-					{
-						ret = texture.Names[Core.Language];
-					}
-
-					if (string.IsNullOrEmpty(ret))
-					{
-						ret = texture.Name;
-					}
-
-					return ret;
-				};
-
-				Func<string> getDesc = () =>
-				{
-					var ret = "";
-					if (texture.Descriptions.ContainsKey(Core.Language))
-					{
-						ret = texture.Descriptions[Core.Language];
-					}
-
-					return ret;
-				};
-
-				if (keyToValues.ContainsKey(key))
-				{
-					var status = keyToValues[key] as ValueStatus;
-					if(status.IsShown != texture.IsParam)
-					{
-						status.IsShown = texture.IsParam;
-						isChanged = true;
-					}
-				}
-				else
-				{
-					var status = new ValueStatus();
-					var value = new Value.PathForImage(Resources.GetString("ImageFilter"), true);
-					status.Key = key;
-					status.Value = value;
-					status.Name = getName();
-					status.Description = getDesc();
-					status.IsShown = texture.IsParam;
-					status.Priority = texture.Priority;
-					keyToValues.Add(key, status);
-					value.SetAbsolutePathDirectly(texture.DefaultPath);
-					isChanged = true;
-				}
-			}
-
-			foreach(var uniform in info.Uniforms)
-			{
-				var key = CreateKey(uniform);
-
-				Func<string> getName = () =>
-				{
-					var ret = "";
-					if(uniform.Names.ContainsKey(Core.Language))
-					{
-						ret = uniform.Names[Core.Language];
-					}
-
-					if(string.IsNullOrEmpty(ret))
-					{
-						ret = uniform.Name;
-					}
-
-					return ret;
-				};
-
-				Func<string> getDesc = () =>
-				{
-					var ret = "";
-					if (uniform.Descriptions.ContainsKey(Core.Language))
-					{
-						ret = uniform.Descriptions[Core.Language];
-					}
-
-					return ret;
-				};
-
-				if (keyToValues.ContainsKey(key))
-				{
-					var status = keyToValues[key] as ValueStatus;
-					if (!status.IsShown)
-					{
-						status.IsShown = true;
-						isChanged = true;
-					}
-				}
-				else
-				{
-					if(uniform.Type == 0)
-					{
-						var value = new Value.Float();
-						value.SetValueDirectly(uniform.DefaultValues[0]);
-						var status = new ValueStatus();
-						status.Key = key;
-						status.Value = value;
-						status.Name = getName();
-						status.Description = getDesc();
-						status.IsShown = true;
-						status.Priority = uniform.Priority;
-						keyToValues.Add(key, status);
-						isChanged = true;
-					}
-					else
-					{
-						var value = new Value.Vector4D();
-						value.X.SetValueDirectly(uniform.DefaultValues[0]);
-						value.Y.SetValueDirectly(uniform.DefaultValues[1]);
-						value.Z.SetValueDirectly(uniform.DefaultValues[2]);
-						value.W.SetValueDirectly(uniform.DefaultValues[3]);
-						var status = new ValueStatus();
-						status.Key = key;
-						status.Value = value;
-						status.Name = getName();
-						status.Description = getDesc();
-						status.IsShown = true;
-						status.Priority = uniform.Priority;
-						keyToValues.Add(key, status);
-						isChanged = true;
-					}
-				}
-			}
-
-			if(isChanged && OnChanged != null)
+			if (isChanged && OnChanged != null)
 			{
 				OnChanged(this, null);
 			}
@@ -451,13 +478,17 @@ namespace Effekseer.Data
 		{
 			var ret = new List<Tuple35<ValueStatus, Utl.MaterialInformation.TextureInformation>>();
 
+			HashSet<ValueStatus> usedValueStatuses = new HashSet<ValueStatus>();
+
 			foreach (var texture in info.Textures)
 			{
-				var key = CreateKey(texture);
+				var key = StatusKey.From(texture);
+				var value = FindValue(key.ToString(), usedValueStatuses);
 
-				if (keyToValues.ContainsKey(key))
+				if (value != null)
 				{
-					ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, texture));
+					ret.Add(Tuple35.Create(value, texture));
+					usedValueStatuses.Add(value);
 				}
 				else
 				{
@@ -474,10 +505,12 @@ namespace Effekseer.Data
 
 			foreach (var uniform in info.Uniforms)
 			{
-				var key = CreateKey(uniform);
-				if (keyToValues.ContainsKey(key))
+				var key = StatusKey.From(uniform);
+				var value = FindValue(key.ToString());
+
+				if (value != null)
 				{
-					ret.Add(Tuple35.Create(keyToValues[key] as ValueStatus, uniform));
+					ret.Add(Tuple35.Create(value, uniform));
 				}
 				else
 				{
@@ -488,33 +521,20 @@ namespace Effekseer.Data
 			return ret;
 		}
 
-		public string CreateKey<T>(string name)
+		/// <summary>
+		/// Get key version. For compatiblity
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public static int GetVersionOfKey(string key)
 		{
-			if(typeof(T) == typeof(Value.Float))
-			{
-				return name + "__TYPE__U0";
-			}
-
-			if (typeof(T) == typeof(Value.Vector4D))
-			{
-				return name + "__TYPE__U3";
-			}
-
-			if (typeof(T) == typeof(Value.PathForImage))
-			{
-				return name + "__TYPE__T";
-			}
-
-			throw new Exception();
-		}
-		public string CreateKey(Utl.MaterialInformation.UniformInformation info)
-		{
-			return info.Name + "__TYPE__U" + info.Type;
-		}
-
-		public string CreateKey(Utl.MaterialInformation.TextureInformation info)
-		{
-			return info.Name + "__TYPE__T";
+			if (key.EndsWith("__TYPE__U0")) return 0;
+			if (key.EndsWith("__TYPE__U1")) return 0;
+			if (key.EndsWith("__TYPE__U2")) return 0;
+			if (key.EndsWith("__TYPE__U3")) return 0;
+			if (key.EndsWith("__TYPE__U4")) return 0;
+			if (key.EndsWith("__TYPE__T")) return 0;
+			return 1;
 		}
 
 		public class ValueStatus
@@ -525,6 +545,80 @@ namespace Effekseer.Data
 			public string Description = string.Empty;
 			public bool IsShown = false;
 			public int Priority = 1;
+		}
+
+		public class StatusKey
+		{
+			public string Name = string.Empty;
+			public string UniformName = string.Empty;
+			public string Footer = string.Empty;
+
+			public static StatusKey From(string key)
+			{
+				var version = GetVersionOfKey(key);
+
+				StatusKey status = new StatusKey();
+
+				if(version > 0)
+				{
+					var labels = key.Split(' ');
+					status.Name = System.Net.WebUtility.UrlDecode(labels[0]);
+					status.UniformName = System.Net.WebUtility.UrlDecode(labels[1]);
+					status.Footer = labels[2];
+					return status;
+				}
+				else
+				{
+					if (key.EndsWith("__TYPE__U0")) status.Footer = "TYPE_U0";
+					if (key.EndsWith("__TYPE__U1")) status.Footer = "TYPE_U1";
+					if (key.EndsWith("__TYPE__U2")) status.Footer = "TYPE_U2";
+					if (key.EndsWith("__TYPE__U3")) status.Footer = "TYPE_U3";
+					if (key.EndsWith("__TYPE__U4")) status.Footer = "TYPE_U4";
+					if (key.EndsWith("__TYPE__T")) status.Footer = "TYPE_T";
+
+					key = key.Replace("__TYPE__U0", "");
+					key = key.Replace("__TYPE__U1", "");
+					key = key.Replace("__TYPE__U2", "");
+					key = key.Replace("__TYPE__U3", "");
+					key = key.Replace("__TYPE__U4", "");
+					key = key.Replace("__TYPE__T", "");
+
+					status.Name = key;
+					status.UniformName = key;
+					return status;
+				}
+			}
+
+			public static StatusKey From(Utl.MaterialInformation.UniformInformation info)
+			{
+				StatusKey status = new StatusKey();
+				status.Name = info.Name;
+				status.UniformName = info.UniformName;
+				status.Footer = "TYPE_U" + info.Type;
+				return status;
+			}
+
+			public static StatusKey From(Utl.MaterialInformation.TextureInformation info)
+			{
+				StatusKey status = new StatusKey();
+				status.Name = info.Name;
+				status.UniformName = info.UniformName;
+				status.Footer = "TYPE_T";
+				return status;
+			}
+
+			public bool IsSame(StatusKey statusKey, bool withName)
+			{
+				if (Footer != statusKey.Footer) return false;
+				if (UniformName == statusKey.UniformName) return true;
+				if (withName && Name == statusKey.Name) return true;
+				return false;
+			}
+
+			public override string ToString()
+			{
+				return System.Net.WebUtility.UrlEncode(Name) + " " + System.Net.WebUtility.UrlEncode(UniformName) + " " + Footer;
+			}
 		}
 
 		public event ChangedValueEventHandler OnChanged;

@@ -777,7 +777,7 @@ void Editor::UpdatePopup()
 	{
 		auto create_node = [&, this](std::shared_ptr<LibraryContentBase> content) -> void {
 			auto nodeParam = content->Create();
-			auto node = material->CreateNode(nodeParam);
+			auto node = material->CreateNode(nodeParam, false);
 			ed::SetNodePosition(node->GUID, popupPosition);
 			node->Pos.X = popupPosition.x;
 			node->Pos.Y = popupPosition.y;

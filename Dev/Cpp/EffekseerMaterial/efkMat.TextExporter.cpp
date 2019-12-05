@@ -277,7 +277,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 		for (auto& extractedTexture : extractedTextures)
 		{
-			extractedTexture.second->UniformName = "efk_texture_" + std::to_string(id);
+			extractedTexture.second->UniformName = "efk_texture_" + std::to_string(extractedTexture.first);
 			extractedTexture.second->Index = id;
 			id++;
 		}
@@ -289,7 +289,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 		int32_t ind = 0;
 		for (auto& extractedUniform : extractedUniforms)
 		{
-			extractedUniform.second->UniformName = "efk_uniform_" + std::to_string(ind);
+			extractedUniform.second->UniformName = "efk_uniform_" + std::to_string(extractedUniform.first);
 			extractedUniform.second->Offset = offset;
 			offset += sizeof(float) * 4;
 			ind += 1;
