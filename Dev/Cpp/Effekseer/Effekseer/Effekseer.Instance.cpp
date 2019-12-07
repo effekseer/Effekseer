@@ -1505,13 +1505,15 @@ void Instance::Kill()
 //----------------------------------------------------------------------------------
 RectF Instance::GetUV() const
 {
+	RectF uv(0.0f, 0.0f, 1.0f, 1.0f);
+
 	if( m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_DEFAULT )
 	{
 		return RectF( 0.0f, 0.0f, 1.0f, 1.0f );
 	}
 	else if( m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_FIXED )
 	{
-		return RectF(
+		uv = RectF(
 			m_pEffectNode->RendererCommon.UV.Fixed.Position.x,
 			m_pEffectNode->RendererCommon.UV.Fixed.Position.y,
 			m_pEffectNode->RendererCommon.UV.Fixed.Position.w,
@@ -1548,7 +1550,7 @@ RectF Instance::GetUV() const
 		int32_t frameX = frameNum % m_pEffectNode->RendererCommon.UV.Animation.FrameCountX;
 		int32_t frameY = frameNum / m_pEffectNode->RendererCommon.UV.Animation.FrameCountX;
 
-		return RectF(
+		uv = RectF(
 			m_pEffectNode->RendererCommon.UV.Animation.Position.x + m_pEffectNode->RendererCommon.UV.Animation.Position.w * frameX,
 			m_pEffectNode->RendererCommon.UV.Animation.Position.y + m_pEffectNode->RendererCommon.UV.Animation.Position.h * frameY,
 			m_pEffectNode->RendererCommon.UV.Animation.Position.w,
@@ -1558,7 +1560,7 @@ RectF Instance::GetUV() const
 	{
 		auto time = (int32_t)m_LivingTime;
 
-		return RectF(
+		uv = RectF(
 			uvAreaOffset.X + uvScrollSpeed.X * time,
 			uvAreaOffset.Y + uvScrollSpeed.Y * time,
 			uvAreaOffset.Width,
@@ -1571,14 +1573,36 @@ RectF Instance::GetUV() const
 		auto fcurvePos = m_pEffectNode->RendererCommon.UV.FCurve.Position->GetValues(m_LivingTime, m_LivedTime);
 		auto fcurveSize = m_pEffectNode->RendererCommon.UV.FCurve.Size->GetValues(m_LivingTime, m_LivedTime);
 
-		return RectF(uvAreaOffset.X + fcurvePos[0],
+		uv = RectF(uvAreaOffset.X + fcurvePos[0],
 					 uvAreaOffset.Y + fcurvePos[1],
 					 uvAreaOffset.Width + fcurveSize[0],
 					 uvAreaOffset.Height + fcurveSize[1]);
 	}
 
+	// For webgl bug (it makes slow if sampling points are too far on WebGL)
+	float far = 4.0;
 
-	return RectF( 0.0f, 0.0f, 1.0f, 1.0f );
+	if (uv.X < -far && uv.X + uv.Width < -far)
+	{
+		uv.X += far;
+	}
+
+	if (uv.X > far && uv.X + uv.Width > far)
+	{
+		uv.X -= far;
+	}
+
+	if (uv.Y < -far && uv.Y + uv.Height < -far)
+	{
+		uv.Y += far;
+	}
+
+	if (uv.Y > far && uv.Y + uv.Height > far)
+	{
+		uv.Y -= far;
+	}
+
+	return uv;
 }
 
 std::array<float, 4> Instance::GetCustomData(int32_t index) const
