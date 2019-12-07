@@ -2,7 +2,6 @@
 #include "efk.Window.h"
 #include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
 #include "../Effekseer/Effekseer/Effekseer.DefaultFile.h"
-#include "../Effekseer/Effekseer/Effekseer.CustomAllocator.h"
 
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION

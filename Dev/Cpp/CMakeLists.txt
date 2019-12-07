@@ -98,10 +98,10 @@ file(GLOB effekseer_h
 	Effekseer/Effekseer/Culling/*.h
 	Effekseer/Effekseer/Material/*.h
 	Effekseer/Effekseer/Parameter/*.h
-	Effekseer/Effekseer/IO/*.h)
+	Effekseer/Effekseer/IO/*.h
+	Effekseer/Effekseer/Utils/*.h)
 
 set(effekseer_src
-	Effekseer/Effekseer/Effekseer.CustomAllocator.cpp
 	Effekseer/Effekseer/Effekseer.Client.cpp
 	Effekseer/Effekseer/Effekseer.Color.cpp
 	Effekseer/Effekseer/Effekseer.DefaultEffectLoader.cpp
@@ -142,6 +142,7 @@ set(effekseer_src
 	Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.cpp
 	Effekseer/Effekseer/IO/Effekseer.EfkEfcFactory.cpp
 	Effekseer/Effekseer/Parameter/Effekseer.Parameters.cpp
+	Effekseer/Effekseer/Utils/Effekseer.CustomAllocator.cpp
 )
 
 file(GLOB effekseer_renderer_common_h

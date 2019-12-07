@@ -10,7 +10,7 @@
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Matrix44.h"
 #include "Culling/Culling3D.h"
-#include "Effekseer.CustomAllocator.h"
+#include "Utils/Effekseer.CustomAllocator.h"
 #include "Effekseer.IntrusiveList.h"
 #include "Effekseer.InstanceChunk.h"
 
