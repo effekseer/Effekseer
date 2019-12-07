@@ -93,24 +93,32 @@ namespace Effekseer.Data
 
 				foreach(var uniform in uniforms.Where(_=>_.Item1 != null))
 				{
-					var status = uniform;
+					var status = uniform.Item1;
 
-					if (status.Item1.Value is Data.Value.Vector4D)
+					if (status.Value is Data.Value.Vector4D)
 					{
-						var v = status.Item1.Value as Data.Value.Vector4D;
-						var v_e = SaveToElement(doc, uniform.Item1.Key, v, isClip);
+						var v = status.Value as Data.Value.Vector4D;
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						var v_e = SaveToElement(doc, "Value", v, isClip);
 						if(v_e != null)
 						{
-							e_float4.AppendChild(v_e);
+							var e_root = doc.CreateElement("KeyValue");
+							e_root.AppendChild(v_k);
+							e_root.AppendChild(v_e);
+							e_float4.AppendChild(e_root);
 						}
 					}
-					else if (status.Item1.Value is Data.Value.Float)
+					else if (status.Value is Data.Value.Float)
 					{
-						var v = status.Item1.Value as Data.Value.Float;
-						var v_e = SaveToElement(doc, uniform.Item1.Key, v, isClip);
+						var v = status.Value as Data.Value.Float;
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						var v_e = SaveToElement(doc, "Value", v, isClip);
 						if (v_e != null)
 						{
-							e_float1.AppendChild(v_e);
+							var e_root = doc.CreateElement("KeyValue");
+							e_root.AppendChild(v_k);
+							e_root.AppendChild(v_e);
+							e_float1.AppendChild(e_root);
 						}
 					}
 				}
@@ -131,51 +139,64 @@ namespace Effekseer.Data
 					if (status.Value is Data.Value.PathForImage)
 					{
 						var v = status.Value as Data.Value.PathForImage;
-						var v_e = SaveToElement(doc, status.Key, v, isClip);
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						var v_e = SaveToElement(doc, "Value", v, isClip);
 						if (v_e != null)
 						{
-							e_texture.AppendChild(v_e);
+							var e_root = doc.CreateElement("KeyValue");
+							e_root.AppendChild(v_k);
+							e_root.AppendChild(v_e);
+							e_texture.AppendChild(e_root);
 						}
 					}
 				}
 			}
 			else
 			{
-				foreach(var kv in mfp.KeyValues)
+				foreach(var status in mfp.GetValueStatus())
 				{
-					var key = kv.Key;
-					var status = kv.Value as MaterialFileParameter.ValueStatus;
-
 					if(status.Value is Data.Value.Vector4D)
 					{
 						var v = status.Value as Data.Value.Vector4D;
-						var v_e = SaveToElement(doc, status.Key, v, isClip);
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						var v_e = SaveToElement(doc, "Value", v, isClip);
 						if (v_e != null)
 						{
-							e_float4.AppendChild(v_e);
+							var e_root = doc.CreateElement("KeyValue");
+							e_root.AppendChild(v_k);
+							e_root.AppendChild(v_e);
+							e_float4.AppendChild(e_root);
 						}
 					}
 					else if (status.Value is Data.Value.Float)
 					{
 						var v = status.Value as Data.Value.Float;
-						var v_e = SaveToElement(doc, status.Key, v, isClip);
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						var v_e = SaveToElement(doc, "Value", v, isClip);
 						if (v_e != null)
 						{
-							e_float1.AppendChild(v_e);
+							var e_root = doc.CreateElement("KeyValue");
+							e_root.AppendChild(v_k);
+							e_root.AppendChild(v_e);
+							e_float1.AppendChild(e_root);
 						}
 					}
 					else if (status.Value is Data.Value.PathForImage)
 					{
-						var v = status.Value as Data.Value.PathForImage;
-
 						// regard as defalt texture
 						if (!status.IsShown)
 							continue;
 
-						var v_e = SaveToElement(doc, status.Key, v, isClip);
+						var v = status.Value as Data.Value.PathForImage;
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						var v_e = SaveToElement(doc, "Value", v, isClip);
+
 						if (v_e != null)
 						{
-							e_texture.AppendChild(v_e);
+							var e_root = doc.CreateElement("KeyValue");
+							e_root.AppendChild(v_k);
+							e_root.AppendChild(v_e);
+							e_texture.AppendChild(e_root);
 						}
 					}
 				}
@@ -767,18 +788,36 @@ namespace Effekseer.Data
 			var e_float4 = e["Float4"] as XmlElement;
 			var e_texture = e["Texture"] as XmlElement;
 
-			var kv = mfp.KeyValues;
-
 			if (e_float1 != null)
 			{
 				for (var i = 0; i < e_float1.ChildNodes.Count; i++)
 				{
 					var e_child = e_float1.ChildNodes[i] as XmlElement;
-					if (kv.ContainsKey((e_child.Name)))
+
+					// compatibility
+					string key = string.Empty;
+					XmlElement valueElement = null;
+					if(MaterialFileParameter.GetVersionOfKey(e_child.Name) == 0)
 					{
-						var vs = kv[e_child.Name] as MaterialFileParameter.ValueStatus;
+						key = e_child.Name;
+						valueElement = e_child;
+					}
+					else
+					{
+						var e_k = e_child["Key"] as XmlElement;
+						valueElement = e_child["Value"] as XmlElement;
+						
+						if(e_k != null)
+						{
+							key = e_k.GetText();
+						}
+					}
+
+					var vs = mfp.FindValue(key, null, false);
+					if (vs != null)
+					{
 						var v = vs.Value as Value.Float;
-						LoadFromElement(e_child, v, isClip);
+						LoadFromElement(valueElement, v, isClip);
 					}
 				}
 			}
@@ -788,11 +827,31 @@ namespace Effekseer.Data
 				for (var i = 0; i < e_float4.ChildNodes.Count; i++)
 				{
 					var e_child = e_float4.ChildNodes[i] as XmlElement;
-					if (kv.ContainsKey(e_child.Name))
+
+					// compatibility
+					string key = string.Empty;
+					XmlElement valueElement = null;
+					if (MaterialFileParameter.GetVersionOfKey(e_child.Name) == 0)
 					{
-						var vs = kv[e_child.Name] as MaterialFileParameter.ValueStatus;
+						key = e_child.Name;
+						valueElement = e_child;
+					}
+					else
+					{
+						var e_k = e_child["Key"] as XmlElement;
+						valueElement = e_child["Value"] as XmlElement;
+
+						if (e_k != null)
+						{
+							key = e_k.GetText();
+						}
+					}
+
+					var vs = mfp.FindValue(key, null, false);
+					if (vs != null)
+					{
 						var v = vs.Value as Value.Vector4D;
-						LoadFromElement(e_child, v, isClip);
+						LoadFromElement(valueElement, v, isClip);
 					}
 				}
 			}
@@ -802,11 +861,31 @@ namespace Effekseer.Data
 				for (var i = 0; i < e_texture.ChildNodes.Count; i++)
 				{
 					var e_child = e_texture.ChildNodes[i] as XmlElement;
-					if (kv.ContainsKey(e_child.Name))
+
+					// compatibility
+					string key = string.Empty;
+					XmlElement valueElement = null;
+					if (MaterialFileParameter.GetVersionOfKey(e_child.Name) == 0)
 					{
-						var vs = kv[e_child.Name] as MaterialFileParameter.ValueStatus;
+						key = e_child.Name;
+						valueElement = e_child;
+					}
+					else
+					{
+						var e_k = e_child["Key"] as XmlElement;
+						valueElement = e_child["Value"] as XmlElement;
+
+						if (e_k != null)
+						{
+							key = e_k.GetText();
+						}
+					}
+
+					var vs = mfp.FindValue(key, null, false);
+					if (vs != null)
+					{
 						var v = vs.Value as Value.PathForImage;
-						LoadFromElement(e_child, v, isClip);
+						LoadFromElement(valueElement, v, isClip);
 					}
 				}
 			}
