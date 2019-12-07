@@ -43,6 +43,9 @@
     <Filter Include="Effekseer\Parameter">
       <UniqueIdentifier>{c87649d2-3c0a-4c54-8f18-0bf107519c34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effekseer\Utils">
+      <UniqueIdentifier>{bd265c75-ad30-4559-b273-095a68de4d22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effekseer\Effekseer.Base.h">
@@ -214,9 +217,6 @@
     <ClInclude Include="Effekseer\Effekseer.BinaryReader.h">
       <Filter>Effekseer\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Effekseer\Effekseer.CustomAllocator.h">
-      <Filter>Effekseer\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Effekseer\Material\Effekseer.CompiledMaterial.h">
       <Filter>Effekseer\Material</Filter>
     </ClInclude>
@@ -238,6 +238,9 @@
     </ClInclude>
     <ClInclude Include="Effekseer\Parameter\Effekseer.Parameters.h">
       <Filter>Effekseer\Parameter</Filter>
+    </ClInclude>
+    <ClInclude Include="Effekseer\Utils\Effekseer.CustomAllocator.h">
+      <Filter>Effekseer\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -346,9 +349,6 @@
     <ClCompile Include="Effekseer\Effekseer.InternalScript.cpp">
       <Filter>Effekseer\InternalScript</Filter>
     </ClCompile>
-    <ClCompile Include="Effekseer\Effekseer.CustomAllocator.cpp">
-      <Filter>Effekseer\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="Effekseer\Material\Effekseer.Material.cpp">
       <Filter>Effekseer\Material</Filter>
     </ClCompile>
@@ -369,6 +369,9 @@
     </ClCompile>
     <ClCompile Include="Effekseer\Parameter\Effekseer.Parameters.cpp">
       <Filter>Effekseer\Parameter</Filter>
+    </ClCompile>
+    <ClCompile Include="Effekseer\Utils\Effekseer.CustomAllocator.cpp">
+      <Filter>Effekseer\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
