@@ -1,7 +1,10 @@
 #ifdef ENABLE_LIGHTING
+cbuffer PSConstantBuffer : register(b1)
+{
 float4	fLightDirection		: register( c0 );
 float4	fLightColor		: register( c1 );
 float4	fLightAmbient		: register( c2 );
+};
 #endif
 
 Texture2D	g_colorTexture		: register( t8 );

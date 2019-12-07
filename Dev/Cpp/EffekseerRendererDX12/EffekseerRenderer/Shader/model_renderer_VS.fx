@@ -1,4 +1,6 @@
 
+cbuffer VSConstantBuffer : register(b0)
+{
 float4x4 mCameraProj		: register( c0 );
 float4x4 mModel		: register( c4 );
 float4	fUV			: register( c8 );
@@ -10,7 +12,7 @@ float4	fLightColor		: register( c11 );
 float4	fLightAmbient		: register( c12 );
 #endif
 float4 mUVInversed		: register(c13);
-
+};
 
 struct VS_Input
 {
