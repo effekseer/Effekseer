@@ -93,12 +93,12 @@ namespace Effekseer.Data
 
 				foreach(var uniform in uniforms.Where(_=>_.Item1 != null))
 				{
-					var status = uniform;
+					var status = uniform.Item1;
 
-					if (status.Item1.Value is Data.Value.Vector4D)
+					if (status.Value is Data.Value.Vector4D)
 					{
-						var v = status.Item1.Value as Data.Value.Vector4D;
-						var v_k = doc.CreateTextElement("Key", uniform.Item1.Key);
+						var v = status.Value as Data.Value.Vector4D;
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
 						var v_e = SaveToElement(doc, "Value", v, isClip);
 						if(v_e != null)
 						{
@@ -108,10 +108,10 @@ namespace Effekseer.Data
 							e_float4.AppendChild(e_root);
 						}
 					}
-					else if (status.Item1.Value is Data.Value.Float)
+					else if (status.Value is Data.Value.Float)
 					{
-						var v = status.Item1.Value as Data.Value.Float;
-						var v_k = doc.CreateTextElement("Key", uniform.Item1.Key);
+						var v = status.Value as Data.Value.Float;
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
 						var v_e = SaveToElement(doc, "Value", v, isClip);
 						if (v_e != null)
 						{
@@ -139,7 +139,7 @@ namespace Effekseer.Data
 					if (status.Value is Data.Value.PathForImage)
 					{
 						var v = status.Value as Data.Value.PathForImage;
-						var v_k = doc.CreateTextElement("Key", kv.Item1.Key);
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
 						var v_e = SaveToElement(doc, "Value", v, isClip);
 						if (v_e != null)
 						{
@@ -158,7 +158,7 @@ namespace Effekseer.Data
 					if(status.Value is Data.Value.Vector4D)
 					{
 						var v = status.Value as Data.Value.Vector4D;
-						var v_k = doc.CreateTextElement("Key", status.Key);
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
 						var v_e = SaveToElement(doc, "Value", v, isClip);
 						if (v_e != null)
 						{
@@ -171,7 +171,7 @@ namespace Effekseer.Data
 					else if (status.Value is Data.Value.Float)
 					{
 						var v = status.Value as Data.Value.Float;
-						var v_k = doc.CreateTextElement("Key", status.Key);
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
 						var v_e = SaveToElement(doc, "Value", v, isClip);
 						if (v_e != null)
 						{
@@ -188,7 +188,7 @@ namespace Effekseer.Data
 							continue;
 
 						var v = status.Value as Data.Value.PathForImage;
-						var v_k = doc.CreateTextElement("Key", status.Key);
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
 						var v_e = SaveToElement(doc, "Value", v, isClip);
 
 						if (v_e != null)

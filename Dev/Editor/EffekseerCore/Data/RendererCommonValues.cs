@@ -159,22 +159,22 @@ namespace Effekseer.Data
 			private set;
 		}
 
-		List<Tuple35<StatusKey, ValueStatus>> keyToValues = new List<Tuple35<StatusKey, ValueStatus>>();
+		List<ValueStatus> valueStatuses = new List<ValueStatus>();
 		RendererCommonValues rcValues = null;
 
 		public ValueStatus[] GetValueStatus()
 		{
-			return keyToValues.Select(_ => _.Item2).ToArray();
+			return valueStatuses.ToArray();
 		}
 
 		public ValueStatus FindValue(string key, HashSet<ValueStatus> blacklist = null, bool withName = false)
 		{
 			var statusKey = StatusKey.From(key);
 
-			foreach(var kv in keyToValues)
+			foreach(var kv in valueStatuses)
 			{
-				if (blacklist != null && blacklist.Contains(kv.Item2)) continue;
-				if (kv.Item1.IsSame(statusKey, withName)) return kv.Item2;
+				if (blacklist != null && blacklist.Contains(kv)) continue;
+				if (kv.Key.IsSame(statusKey, withName)) return kv;
 			}
 
 			return null;
@@ -250,7 +250,7 @@ namespace Effekseer.Data
 
 			ret.Add(propPath);
 
-			foreach (var v in keyToValues.Select(_=>_.Item2).OrderBy(_ => (_ as ValueStatus).Priority))
+			foreach (var v in valueStatuses.OrderBy(_ => (_ as ValueStatus).Priority))
 			{
 				EditableValue ev = new EditableValue();
 				var status = v as ValueStatus;
@@ -353,12 +353,12 @@ namespace Effekseer.Data
 						status.Value = value;
 						status.IsShown = texture.IsParam;
 						status.Priority = texture.Priority;
-						keyToValues.Add(Tuple35.Create(key, status));
+						valueStatuses.Add(status);
 						value.SetAbsolutePathDirectly(texture.DefaultPath);
 						isChanged = true;
 					}
 
-					status.Key = key.ToString();
+					status.Key = key;
 					status.Name = getName();
 					status.Description = getDesc();
 					usedValueStatuses.Add(status);
@@ -428,7 +428,7 @@ namespace Effekseer.Data
 							status.Value = value;
 							status.IsShown = true;
 							status.Priority = uniform.Priority;
-							keyToValues.Add(Tuple35.Create(key, status));
+							valueStatuses.Add(status);
 							isChanged = true;
 						}
 						else
@@ -442,12 +442,12 @@ namespace Effekseer.Data
 							status.Value = value;
 							status.IsShown = true;
 							status.Priority = uniform.Priority;
-							keyToValues.Add(Tuple35.Create(key, status));
+							valueStatuses.Add(status);
 							isChanged = true;
 						}
 					}
 
-					status.Key = key.ToString();
+					status.Key = key;
 					status.Name = getName();
 					status.Description = getDesc();
 					usedValueStatuses.Add(status);
@@ -455,11 +455,11 @@ namespace Effekseer.Data
 				}
 			}
 
-			foreach (var kts in keyToValues)
+			foreach (var kts in valueStatuses)
 			{
-				if(!usedValueStatuses.Contains(kts.Item2))
+				if(!usedValueStatuses.Contains(kts))
 				{
-					var status = kts.Item2;
+					var status = kts;
 					if (status.IsShown)
 					{
 						status.IsShown = false;
@@ -539,7 +539,7 @@ namespace Effekseer.Data
 
 		public class ValueStatus
 		{
-			public string Key = string.Empty;
+			public StatusKey Key = new StatusKey();
 			public object Value = null;
 			public string Name = string.Empty;
 			public string Description = string.Empty;
