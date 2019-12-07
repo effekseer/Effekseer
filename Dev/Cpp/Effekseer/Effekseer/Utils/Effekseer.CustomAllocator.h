@@ -2,7 +2,7 @@
 #ifndef __EFFEKSEER_CUSTOM_ALLOCATOR_H__
 #define __EFFEKSEER_CUSTOM_ALLOCATOR_H__
 
-#include "Effekseer.Base.Pre.h"
+#include "../Effekseer.Base.Pre.h"
 #include <list>
 #include <map>
 #include <new>
