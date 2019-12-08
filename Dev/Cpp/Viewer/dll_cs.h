@@ -44,5 +44,19 @@ private:
     void swig_init_callbacks();
 };
 
+class SwigDirector_IO : public Effekseer::IO, public Swig::Director {
+
+public:
+    SwigDirector_IO(int checkFileInterval = 0);
+    virtual void OnFileChanged(Effekseer::IOFileType fileType, std::u16string path);
+
+    typedef void (SWIGSTDCALL* SWIG_Callback0_t)(int, void *);
+    void swig_connect_director(SWIG_Callback0_t callbackOnFileChanged);
+
+private:
+    SWIG_Callback0_t swig_callbackOnFileChanged;
+    void swig_init_callbacks();
+};
+
 
 #endif

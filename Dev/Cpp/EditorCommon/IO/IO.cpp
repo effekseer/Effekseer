@@ -30,7 +30,7 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 	if (!FileSystem::GetIsFile(path))
 		return nullptr;
 
-	std::shared_ptr<FileReader> reader = std::make_shared<DefaultFileReader>(path);
+	std::shared_ptr<IOFileReader> reader = std::make_shared<IODefaultFileReader>(path);
 	auto file = std::make_shared<StaticFile>(reader);
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
@@ -51,7 +51,7 @@ std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 	if (!FileSystem::GetIsFile(path))
 		return nullptr;
 
-	std::shared_ptr<FileReader> reader = std::make_shared<IPCFileReader>(path, GetIPCStorage());
+	std::shared_ptr<IOFileReader> reader = std::make_shared<IPCFileReader>(path, GetIPCStorage());
 	auto file = std::make_shared<StaticFile>(reader);
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
@@ -91,10 +91,10 @@ int IO::GetFileLastWriteTime(const FileInfo& fileInfo)
 	int time = 0;
 	switch (fileInfo.fileType_)
 	{
-	case FileType::Default:
+	case IOFileType::Default:
 		time = FileSystem::GetLastWriteTime(fileInfo.path_);
 		break;
-	case FileType::IPC:
+	case IOFileType::IPC:
 		char data;
 		if (ipcStorage_->GetFile(utf16_to_utf8(fileInfo.path_).c_str(), &data, 1, time) == 0)
 			return 0;

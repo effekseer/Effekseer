@@ -6,7 +6,7 @@ namespace Effekseer
 
 const int MAX_STORAGE = 104857600;
 
-IPCFileReader::IPCFileReader(const std::u16string& path, std::shared_ptr<IPC::KeyValueFileStorage> storage) : FileReader(path)
+IPCFileReader::IPCFileReader(const std::u16string& path, std::shared_ptr<IPC::KeyValueFileStorage> storage) : IOFileReader(path)
 {
 	storage->Lock();
 

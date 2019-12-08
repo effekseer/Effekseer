@@ -171,6 +171,8 @@
     <Compile Include="swig\ImGuiColFlags.cs" />
     <Compile Include="swig\ImGuiStyleVarFlags.cs" />
     <Compile Include="swig\InputTextFlags.cs" />
+    <Compile Include="swig\IO.cs" />
+    <Compile Include="swig\IOFileType.cs" />
     <Compile Include="swig\MainWindow.cs" />
     <Compile Include="swig\MainWindowState.cs" />
     <Compile Include="swig\MouseCursor.cs" />
@@ -179,6 +181,7 @@
     <Compile Include="swig\RecordingParameter.cs" />
     <Compile Include="swig\RenderMode.cs" />
     <Compile Include="swig\SelectableFlags.cs" />
+    <Compile Include="swig\StaticFile.cs" />
     <Compile Include="swig\SystemLanguage.cs" />
     <Compile Include="swig\TransparenceType.cs" />
     <Compile Include="swig\TreeNodeFlags.cs" />

@@ -18,10 +18,10 @@ private:
 
 	struct FileInfo
 	{
-		FileType fileType_;
+		IOFileType fileType_;
 		std::u16string path_;
 
-		FileInfo(FileType fileType, std::u16string path) : fileType_(fileType), path_(path) {}
+		FileInfo(IOFileType fileType, std::u16string path) : fileType_(fileType), path_(path) {}
 
 		bool operator==(const FileInfo& right) { return fileType_ == right.fileType_ && path_ == right.path_; }
 		bool operator<(const FileInfo& right) const { return std::tie(fileType_, path_) < std::tie(right.fileType_, right.path_); }
@@ -44,11 +44,13 @@ public:
 
 	bool GetIsExistLatestFile(std::shared_ptr<StaticFile> staticFile);
 
+#ifndef SWIG
 	std::shared_ptr<IPC::KeyValueFileStorage> GetIPCStorage() { return ipcStorage_; }
+#endif
 
 	void Update();
 
-	virtual void OnFileChanged(FileType fileType, std::u16string path) {}
+	virtual void OnFileChanged(IOFileType fileType, std::u16string path) {}
 
 private:
 	int GetFileLastWriteTime(const FileInfo& fileInfo);

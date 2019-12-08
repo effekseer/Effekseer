@@ -9,6 +9,9 @@
 #include "CompiledMaterialGenerator.h"
 #include "../EditorCommon/Platform/PlatformMisc.h"
 #include "../EditorCommon/GUI/MainWindow.h"
+#include "../EditorCommon/IO/FileReader.h"
+#include "../EditorCommon/IO/StaticFile.h"
+#include "../EditorCommon/IO/IO.h"
 
 %}
 
@@ -18,6 +21,7 @@
 %include "wchar.i"
 %include "stdint.i"
 %include "char16.i"
+%include "u16string.i"
 %include "typemaps.i"
 %include "arrays_csharp.i"
 %include <std_shared_ptr.i>
@@ -80,8 +84,10 @@ class"
 %apply uint8_t INOUT[] { uint8_t* data_output }
 
 %feature("director") GUIManagerCallback;
+%feature("director") IO;
 
 %shared_ptr(Effekseer::MainWindow);
+%shared_ptr(Effekseer::StaticFile);
 
 //-----------------------------------------------------------------------------------
 //
@@ -96,3 +102,7 @@ class"
 
 %include "Cpp/EditorCommon/Platform/PlatformMisc.h"
 %include "Cpp/EditorCommon/GUI/MainWindow.h"
+
+%include "Cpp/EditorCommon/IO/FileReader.h"
+%include "Cpp/EditorCommon/IO/StaticFile.h"
+%include "Cpp/EditorCommon/IO/IO.h"

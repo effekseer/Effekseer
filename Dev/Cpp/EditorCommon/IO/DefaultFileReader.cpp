@@ -4,7 +4,8 @@
 
 namespace Effekseer
 {
-DefaultFileReader::DefaultFileReader(const std::u16string& path) : FileReader(path)
+
+IODefaultFileReader::IODefaultFileReader(const std::u16string& path) : IOFileReader(path)
 {
 #ifdef _WIN32
 	stream_.open((wchar_t*)path.c_str(), std::basic_ios<char>::in | std::basic_ios<char>::binary);
@@ -14,9 +15,9 @@ DefaultFileReader::DefaultFileReader(const std::u16string& path) : FileReader(pa
 	assert(!stream_.fail());
 }
 
-DefaultFileReader::~DefaultFileReader() { stream_.close(); }
+IODefaultFileReader::~IODefaultFileReader() { stream_.close(); }
 
-int64_t DefaultFileReader::GetSize()
+int64_t IODefaultFileReader::GetSize()
 {
 	if (length_ < 0)
 	{
@@ -29,7 +30,7 @@ int64_t DefaultFileReader::GetSize()
 	return length_;
 }
 
-void DefaultFileReader::GetData(std::vector<uint8_t>& buffer)
+void IODefaultFileReader::GetData(std::vector<uint8_t>& buffer)
 {
 	buffer.resize(GetSize());
 	stream_.read(reinterpret_cast<char*>(&buffer[0]), GetSize());

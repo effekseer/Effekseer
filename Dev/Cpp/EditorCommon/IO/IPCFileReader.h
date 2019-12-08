@@ -7,7 +7,7 @@
 namespace Effekseer
 {
 
-class IPCFileReader : public FileReader
+class IPCFileReader : public IOFileReader
 {
 private:
 	std::vector<uint8_t> buffer_;
@@ -20,7 +20,7 @@ public:
 	int64_t GetSize() override;
 	void GetData(std::vector<uint8_t>& buffer) override;
 
-	FileType GetFileType() override { return FileType::IPC; }
+	IOFileType GetFileType() override { return IOFileType::IPC; }
 
 	int GetUpdateTime() { return time_; }
 };
