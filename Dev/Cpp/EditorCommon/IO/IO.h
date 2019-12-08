@@ -37,7 +37,7 @@ private:
 
 public:
 	IO(int checkFileInterval = 0);
-	~IO();
+	virtual ~IO();
 
 	std::shared_ptr<StaticFile> LoadFile(const char16_t* path);
 	std::shared_ptr<StaticFile> LoadIPCFile(const char16_t* path);
