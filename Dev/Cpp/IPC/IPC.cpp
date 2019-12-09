@@ -161,7 +161,7 @@ private:
 	{
 		int32_t count = 0;
 		char key[260];
-		uint16_t timestamp = 0;
+		uint64_t timestamp = 0;
 		int32_t offset;
 		int32_t size = 0;
 	};
@@ -177,7 +177,7 @@ public:
 
 	bool Start(const char* name)
 	{
-		auto size = sizeof(Key) + fileCount * fileSize;
+		auto size = sizeof(Header) + fileCount * fileSize;
 
 		auto sem_name_ = std::string(name) + "_sem";
 		auto mem_name_ = std::string(name) + "_mem";

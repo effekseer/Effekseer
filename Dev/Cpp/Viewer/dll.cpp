@@ -9,7 +9,8 @@
 #endif
 
 #include <IO/IO.h>
-
+#include <unordered_set>
+#include <unordered_map>
 #include "dll.h"
 
 #pragma comment(lib, "d3d9.lib")
@@ -1947,6 +1948,7 @@ void Native::TerminateMaterialEditor()
 
 bool Native::GetIsUpdateMaterialRequiredAndReset()
 {
+	return false;
 	auto ret = isUpdateMaterialRequired_;
 	isUpdateMaterialRequired_ = false;
 	return ret;

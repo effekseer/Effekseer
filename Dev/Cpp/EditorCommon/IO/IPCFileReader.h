@@ -25,7 +25,7 @@ public:
 
 	StaticFileType GetFileType() override { return StaticFileType::IPC; }
 
-	int GetUpdateTime() { return time_; }
+	uint64_t GetUpdateTime() { return time_; }
 };
 
 } // namespace Effekseer

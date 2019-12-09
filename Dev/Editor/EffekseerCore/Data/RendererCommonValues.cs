@@ -269,6 +269,9 @@ namespace Effekseer.Data
 		{
 			bool isChanged = false;
 
+			var previous_selfSummary = selfSummary;
+			var previous_selfDetail = selfDetail;
+
 			if (info.Names.ContainsKey(Core.Language))
 			{
 				selfSummary = info.Names[Core.Language];
@@ -287,6 +290,9 @@ namespace Effekseer.Data
 			{
 				selfDetail = "";
 			}
+
+			if (previous_selfSummary != selfSummary) isChanged = true;
+			if (previous_selfDetail != selfDetail) isChanged = true;
 
 			HashSet<ValueStatus> usedValueStatuses = new HashSet<ValueStatus>();
 			HashSet<object> finished = new HashSet<object>();
@@ -336,7 +342,7 @@ namespace Effekseer.Data
 					var foundValue = FindValue(key.ToString(), usedValueStatuses, withNameFlag);
 					if (foundValue != null)
 					{
-						status = foundValue as ValueStatus;
+						status = foundValue;
 						if (status.IsShown != texture.IsParam)
 						{
 							status.IsShown = texture.IsParam;
@@ -357,6 +363,9 @@ namespace Effekseer.Data
 						value.SetAbsolutePathDirectly(texture.DefaultPath);
 						isChanged = true;
 					}
+
+					if (status.Name != getName()) isChanged = true;
+					if (status.Description != getDesc()) isChanged = true;
 
 					status.Key = key;
 					status.Name = getName();
@@ -446,6 +455,9 @@ namespace Effekseer.Data
 							isChanged = true;
 						}
 					}
+
+					if (status.Name != getName()) isChanged = true;
+					if (status.Description != getDesc()) isChanged = true;
 
 					status.Key = key;
 					status.Name = getName();

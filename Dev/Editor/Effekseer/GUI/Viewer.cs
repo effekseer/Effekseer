@@ -32,6 +32,11 @@ namespace Effekseer.GUI
 		public bool IsChanged { get; set; } = true;
 
 		/// <summary>
+		/// Is required to reload in the next frame
+		/// </summary>
+		public bool IsRequiredToReload { get; set; } = false;
+
+		/// <summary>
 		/// current frame
 		/// </summary>
 		public int Current
@@ -445,11 +450,9 @@ namespace Effekseer.GUI
 		{
 			if (isViewerShown)
 			{
-				var isUpdateMaterialRequiredAndReset = native.GetIsUpdateMaterialRequiredAndReset();
-
-				if ((IsChanged && (IsPlaying || IsPaused)) || isUpdateMaterialRequiredAndReset)
+				if ((IsChanged && (IsPlaying || IsPaused)) || IsRequiredToReload)
 				{
-					if(isUpdateMaterialRequiredAndReset)
+					if(IsRequiredToReload)
 					{
 						Reload(true);
 					}
@@ -459,6 +462,7 @@ namespace Effekseer.GUI
 					}
 
 					IsChanged = false;
+					IsRequiredToReload = false;
 				}
 
 				if (IsPlaying && !IsPaused)

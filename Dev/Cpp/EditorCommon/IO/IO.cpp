@@ -153,7 +153,25 @@ void IO::CheckFile(int interval)
 				if (time > fileUpdateDates_[i.first] && changedFileInfos_.count(i.first) == 0)
 				{
 					changedFileInfos_.insert(i.first);
-					fileUpdateDates_[i.first] = time;
+					i.second = time;
+				}
+
+				// special case for a material
+				// if IPC exists, it should be reload. so call callback forcely.
+				if (i.first.fileType_ == StaticFileType::Default && ipcStorage_ != nullptr)
+				{
+					auto temp = i.first;
+					temp.fileType_ = StaticFileType::IPC;
+					if (fileUpdateDates_.count(temp) == 0)
+					{
+						ipcStorage_->Lock();
+						char data = 0;
+						if (ipcStorage_->GetFile(utf16_to_utf8(temp.path_).c_str(), &data, 1, time) > 0)
+						{
+							changedFileInfos_.insert(i.first);
+						}
+						ipcStorage_->Unlock();
+					}
 				}
 			}
 		}
