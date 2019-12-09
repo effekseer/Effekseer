@@ -14,7 +14,7 @@ namespace Effekseer
 class IOCallback
 {
 public:
-	virtual void OnFileChanged(StaticFileType fileType, const std::u16string& path) {}
+	virtual void OnFileChanged(StaticFileType fileType, const char16_t* path) {}
 };
 
 class IO
@@ -36,12 +36,13 @@ private:
 		bool operator<(const FileInfo& right) const { return std::tie(fileType_, path_) < std::tie(right.fileType_, right.path_); }
 	};
 
-	std::map<FileInfo, int> fileUpdateDates_;
+	std::map<FileInfo, uint64_t> fileUpdateDates_;
 	std::thread checkFileThread;
 	bool isFinishCheckFile_ = false;
+	bool isThreadRunning_ = false;
+	int32_t checkFileInterval_ = -1;
 
 	std::set<FileInfo> changedFileInfos_;
-	std::set<FileInfo> notifiedFileInfos_;
 	std::mutex mtx_;
 
 public:
@@ -68,7 +69,7 @@ public:
 	void AddCallback(std::shared_ptr<IOCallback> callback);
 
 private:
-	int GetFileLastWriteTime(const FileInfo& fileInfo);
+	uint64_t GetFileLastWriteTime(const FileInfo& fileInfo);
 	void CheckFile(int interval);
 };
 

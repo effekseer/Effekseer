@@ -529,7 +529,7 @@ SwigDirector_IOCallback::SwigDirector_IOCallback() : Effekseer::IOCallback(), Sw
   swig_init_callbacks();
 }
 
-void SwigDirector_IOCallback::OnFileChanged(Effekseer::StaticFileType fileType, std::u16string const &path) {
+void SwigDirector_IOCallback::OnFileChanged(Effekseer::StaticFileType fileType, char16_t const *path) {
   int jfileType  ;
   void * jpath = 0 ;
   
@@ -538,7 +538,7 @@ void SwigDirector_IOCallback::OnFileChanged(Effekseer::StaticFileType fileType, 
     return;
   } else {
     jfileType = (int)fileType;
-    jpath = SWIG_csharp_wstring_callback((const wchar_t*)(&path)->c_str()); 
+    jpath = (void *) path; 
     swig_callbackOnFileChanged(jfileType, jpath);
   }
 }
@@ -8288,43 +8288,33 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_StaticFile___(void * ja
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IOCallback_OnFileChanged___(void * jarg1, int jarg2, char16_t * jarg3) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IOCallback_OnFileChanged___(void * jarg1, int jarg2, void * jarg3) {
   Effekseer::IOCallback *arg1 = (Effekseer::IOCallback *) 0 ;
   Effekseer::StaticFileType arg2 ;
-  std::u16string *arg3 = 0 ;
+  char16_t *arg3 = (char16_t *) 0 ;
   std::shared_ptr< Effekseer::IOCallback > *smartarg1 = 0 ;
   
   
   smartarg1 = (std::shared_ptr<  Effekseer::IOCallback > *)jarg1;
   arg1 = (Effekseer::IOCallback *)(smartarg1 ? smartarg1->get() : 0); 
   arg2 = (Effekseer::StaticFileType)jarg2; 
-  if (!jarg3) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null u16string", 0);
-    return ;
-  }
-  ::std::u16string arg3_str(jarg3);
-  arg3 = &arg3_str; 
-  (arg1)->OnFileChanged(arg2,(std::u16string const &)*arg3);
+  arg3 = (char16_t *)jarg3; 
+  (arg1)->OnFileChanged(arg2,(char16_t const *)arg3);
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IOCallback_OnFileChangedSwigExplicitIOCallback___(void * jarg1, int jarg2, char16_t * jarg3) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IOCallback_OnFileChangedSwigExplicitIOCallback___(void * jarg1, int jarg2, void * jarg3) {
   Effekseer::IOCallback *arg1 = (Effekseer::IOCallback *) 0 ;
   Effekseer::StaticFileType arg2 ;
-  std::u16string *arg3 = 0 ;
+  char16_t *arg3 = (char16_t *) 0 ;
   std::shared_ptr< Effekseer::IOCallback > *smartarg1 = 0 ;
   
   
   smartarg1 = (std::shared_ptr<  Effekseer::IOCallback > *)jarg1;
   arg1 = (Effekseer::IOCallback *)(smartarg1 ? smartarg1->get() : 0); 
   arg2 = (Effekseer::StaticFileType)jarg2; 
-  if (!jarg3) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null u16string", 0);
-    return ;
-  }
-  ::std::u16string arg3_str(jarg3);
-  arg3 = &arg3_str; 
-  (arg1)->Effekseer::IOCallback::OnFileChanged(arg2,(std::u16string const &)*arg3);
+  arg3 = (char16_t *)jarg3; 
+  (arg1)->Effekseer::IOCallback::OnFileChanged(arg2,(char16_t const *)arg3);
 }
 
 

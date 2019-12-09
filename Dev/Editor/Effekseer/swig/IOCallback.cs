@@ -65,11 +65,11 @@ public class IOCallback : global::System.IDisposable {
     return hasDerivedMethod;
   }
 
-  private void SwigDirectorMethodOnFileChanged(int fileType, string path) {
-    OnFileChanged((StaticFileType)fileType, path);
+  private void SwigDirectorMethodOnFileChanged(int fileType, System.IntPtr path) {
+    OnFileChanged((StaticFileType)fileType, System.Runtime.InteropServices.Marshal.PtrToStringUni(path));
   }
 
-  public delegate void SwigDelegateIOCallback_0(int fileType, string path);
+  public delegate void SwigDelegateIOCallback_0(int fileType, System.IntPtr path);
 
   private SwigDelegateIOCallback_0 swigDelegate0;
 

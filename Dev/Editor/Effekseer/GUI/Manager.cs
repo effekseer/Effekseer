@@ -98,6 +98,7 @@ namespace Effekseer.GUI
 		public static swig.GUIManager NativeManager;
 		public static swig.Native Native;
 		public static swig.MainWindow MainWindow;
+		public static swig.IO IO;
 
 		static GUIManagerCallback guiManagerCallback;
 
@@ -205,6 +206,10 @@ namespace Effekseer.GUI
 			}
 			MainWindow = swig.MainWindow.GetInstance();
 
+			swig.IO.Initialize(1000);
+			IO = swig.IO.GetInstance();
+			ThumbnailManager.Initialize();
+		
 			var mgr = new swig.GUIManager();
 			if (mgr.Initialize(MainWindow, deviceType))
 			{
@@ -399,6 +404,11 @@ namespace Effekseer.GUI
 			swig.MainWindow.Terminate();
 			MainWindow.Dispose();
 			MainWindow = null;
+
+			ThumbnailManager.Terminate();
+			swig.IO.Terminate();
+			IO.Dispose();
+			IO = null;
 		}
 
 		public static void UpdateFontSize()
@@ -438,6 +448,7 @@ namespace Effekseer.GUI
 			NativeManager.SetNextDock(swig.DockSlot.Tab);
 			NativeManager.ResetNextParentDock();
 
+			IO.Update();
 			Shortcuts.Update();
 			Network.Update();
 

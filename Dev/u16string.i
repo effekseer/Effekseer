@@ -75,7 +75,7 @@ class u16string;
    }
    ::std::u16string $1_str($input);
    $1 = &$1_str; %}
-%typemap(out) const u16string & %{ $result = SWIG_csharp_wstring_callback($1->c_str()); %}
+%typemap(out) const u16string & %{ $result = SWIG_csharp_wstring_callback((const wchar_t*)$1->c_str()); %}
 
 %typemap(csin) const u16string & "$csinput"
 %typemap(csout, excode=SWIGEXCODE) const u16string & {
@@ -105,7 +105,7 @@ class u16string;
       return ret;
     } %}
 
-//%typemap(typecheck) const u16string & = wchar_t *;
+//%typemap(typecheck) const u16string & = char16_t *;
 
 %typemap(throws, canthrow=1) const u16string &
 %{ std::string message($1.begin(), $1.end());

@@ -19,19 +19,25 @@ IO::IO(int checkFileInterval)
 {
 	ipcStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
 	ipcStorage_->Start("EffekseerStorage");
+	this->checkFileInterval_ = checkFileInterval;
 
 	if (checkFileInterval > 0)
 	{
-		checkFileThread = std::thread([&] { CheckFile(checkFileInterval); });
+		checkFileThread = std::thread([this] { CheckFile(checkFileInterval_); });
+		isThreadRunning_ = true;
 	}
 }
 
 IO::~IO()
 {
 	ipcStorage_->Stop();
-	if (checkFileThread.joinable())
-		isFinishCheckFile_ = true;
-	checkFileThread.join();
+
+	if (isThreadRunning_)
+	{
+		if (checkFileThread.joinable())
+			isFinishCheckFile_ = true;
+		checkFileThread.join();
+	}
 }
 
 std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
@@ -39,14 +45,14 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 	if (!FileSystem::GetIsFile(path))
 		return nullptr;
 
+	std::lock_guard<std::mutex> lock(mtx_);
+
 	std::shared_ptr<StaticFileReader> reader = std::make_shared<DefaultStaticFileReader>(path);
 	auto file = std::make_shared<StaticFile>(reader);
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
 	{
-		std::lock_guard<std::mutex> lock(mtx_);
 		changedFileInfos_.erase(info);
-		notifiedFileInfos_.erase(info);
 	}
 
 	auto time = FileSystem::GetLastWriteTime(path);
@@ -60,14 +66,14 @@ std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 	if (!FileSystem::GetIsFile(path))
 		return nullptr;
 
+	std::lock_guard<std::mutex> lock(mtx_);
+
 	std::shared_ptr<StaticFileReader> reader = std::make_shared<IPCFileReader>(path, GetIPCStorage());
 	auto file = std::make_shared<StaticFile>(reader);
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
 	{
-		std::lock_guard<std::mutex> lock(mtx_);
 		changedFileInfos_.erase(info);
-		notifiedFileInfos_.erase(info);
 	}
 
 	auto time = std::dynamic_pointer_cast<IPCFileReader>(reader)->GetUpdateTime();
@@ -78,6 +84,7 @@ std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 
 bool IO::GetIsExistLatestFile(std::shared_ptr<StaticFile> staticFile)
 {
+	std::lock_guard<std::mutex> lock(mtx_);
 	auto info = FileInfo(staticFile->GetFileType(), staticFile->GetPath());
 	auto time = GetFileLastWriteTime(info);
 	return time > fileUpdateDates_[info];
@@ -85,23 +92,25 @@ bool IO::GetIsExistLatestFile(std::shared_ptr<StaticFile> staticFile)
 
 void IO::Update()
 {
-	std::lock_guard<std::mutex> lock(mtx_);
-	for (auto& i : changedFileInfos_)
+	std::set<FileInfo> temp;
+	{
+		std::lock_guard<std::mutex> lock(mtx_);
+		temp = changedFileInfos_;
+		changedFileInfos_.clear();
+	}
+	
+	for (auto& i : temp)
 	{
 		for (auto callback : callbacks_)
 		{
-			callback->OnFileChanged(i.fileType_, i.path_);
+			callback->OnFileChanged(i.fileType_, i.path_.c_str());
 		}
-
-		notifiedFileInfos_.insert(i);
 	}
-
-	changedFileInfos_.clear();
 }
 
-int IO::GetFileLastWriteTime(const FileInfo& fileInfo)
+uint64_t IO::GetFileLastWriteTime(const FileInfo& fileInfo)
 {
-	int time = 0;
+	uint64_t time = 0;
 	switch (fileInfo.fileType_)
 	{
 	case StaticFileType::Default:
@@ -120,13 +129,17 @@ void IO::CheckFile(int interval)
 {
 	while (!isFinishCheckFile_)
 	{
-		for (auto& i : fileUpdateDates_)
 		{
-			auto time = GetFileLastWriteTime(i.first);
-			if (time > fileUpdateDates_[i.first] && changedFileInfos_.count(i.first) > 0 && notifiedFileInfos_.count(i.first) > 0)
+			std::lock_guard<std::mutex> lock(mtx_);
+
+			for (auto& i : fileUpdateDates_)
 			{
-				std::lock_guard<std::mutex> lock(mtx_);
-				changedFileInfos_.insert(i.first);
+				auto time = GetFileLastWriteTime(i.first);
+				if (time > fileUpdateDates_[i.first] && changedFileInfos_.count(i.first) == 0)
+				{
+					changedFileInfos_.insert(i.first);
+					fileUpdateDates_[i.first] = time;
+				}
 			}
 		}
 

@@ -17,7 +17,7 @@ class StaticFileReader
 {
 protected:
 	std::u16string path_;
-	int64_t length_ = 0;
+	int64_t length_ = -1;
 
 public:
 	StaticFileReader(const std::u16string& path) : path_(path) {}

@@ -16,7 +16,7 @@ bool FileSystem::GetIsFile(const std::u16string& path) { return fs::is_regular_f
 
 bool FileSystem::GetIsDirectory(const std::u16string& path) { return fs::is_directory(path); }
 
-int32_t FileSystem::GetLastWriteTime(const std::u16string& path) {
+uint64_t FileSystem::GetLastWriteTime(const std::u16string& path) {
     std::error_code ec;
     return fs::last_write_time(path, ec).time_since_epoch().count();
 }

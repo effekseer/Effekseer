@@ -1,5 +1,6 @@
 
 #include "efk.ImageResource.h"
+#include <IO/IO.h>
 
 namespace efk
 {
@@ -16,8 +17,11 @@ ImageResource::~ImageResource()
 
 bool ImageResource::Validate()
 {
+	auto staticFile = Effekseer::IO::GetInstance()->LoadFile(path.c_str());
+	if (staticFile == nullptr)
+		return false;
 
-	auto loaded = loader_->Load(path.c_str(), Effekseer::TextureType::Color);
+	auto loaded = loader_->Load(staticFile->GetData(), staticFile->GetSize(), Effekseer::TextureType::Color);
 
 	if (loaded == nullptr)
 		return false;

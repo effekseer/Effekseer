@@ -23,8 +23,7 @@ namespace Effekseer.GUI.Component
 		string infoText = string.Empty;
 		bool isHovered = false;
 
-		swig.ImageResource image = null;
-
+		Thumbnail thumbnail = null;
 		public bool EnableUndo { get; set; } = true;
 
 		public Data.Value.PathForImage Binding
@@ -138,7 +137,7 @@ namespace Effekseer.GUI.Component
 
 			isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 			
-			if(image != null)
+			if(thumbnail != null)
 			{
 				if (Manager.NativeManager.Button(Resources.GetString("Delete") + id2, buttonSizeX))
 				{
@@ -157,8 +156,9 @@ namespace Effekseer.GUI.Component
 
 				isHovered = isHovered || Manager.NativeManager.IsItemHovered();
 				
-				if(image != null)
+				if(thumbnail != null)
 				{
+					var image = thumbnail.Image;
 					float imageSizeX = image.GetWidth();
 					float imageSizeY = image.GetHeight();
 					if (imageSizeX < imageSizeY)
@@ -255,18 +255,19 @@ namespace Effekseer.GUI.Component
 
 			if(System.IO.File.Exists(path))
 			{
-				image = Images.Load(Manager.Native, path, true);
-				if (image == null)
+				thumbnail = ThumbnailManager.Load(path);
+				if (thumbnail == null)
 				{
 					infoText = "";
 					return;
 				}
 
+				var image = thumbnail.Image;
 				infoText = "" + image.GetWidth() + "x" + image.GetHeight();
 			}
 			else
 			{
-				image = null;
+				thumbnail = null;
 				infoText = "";
 			}
 		}

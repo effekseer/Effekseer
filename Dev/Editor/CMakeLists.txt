@@ -73,6 +73,7 @@ list(APPEND files
     Effekseer/swig/MainWindowState.cs
     Effekseer/GUI/Dock/Environment.cs
     Effekseer/Configs/WindowConfig.cs
+    Effekseer/GUI/ThumbnailManager.cs
 )
 
 add_executable(EffekseerEditor
