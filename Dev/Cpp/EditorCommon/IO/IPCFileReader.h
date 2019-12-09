@@ -10,8 +10,11 @@ namespace Effekseer
 class IPCFileReader : public StaticFileReader
 {
 private:
+	std::string path_;
+	std::shared_ptr<IPC::KeyValueFileStorage> storage_;
 	std::vector<uint8_t> buffer_;
-	int time_;
+	uint64_t time_ = 0;
+	bool hasRef_ = false;
 
 public:
 	IPCFileReader(const std::u16string& path, std::shared_ptr<IPC::KeyValueFileStorage> storage);

@@ -141,6 +141,7 @@
     <Compile Include="GUI\Menu\Menu.cs" />
     <Compile Include="GUI\Menu\MenuItem.cs" />
     <Compile Include="GUI\Network.cs" />
+    <Compile Include="GUI\ThumbnailManager.cs" />
     <Compile Include="GUI\Viewer.cs" />
     <Compile Include="Plugin\ExportDefault.cs" />
     <Compile Include="Plugin\Exportglb.cs" />

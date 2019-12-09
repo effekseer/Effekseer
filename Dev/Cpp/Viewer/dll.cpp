@@ -8,6 +8,8 @@
 #include "3rdParty/imgui_platform/imgui_impl_dx9.h"
 #endif
 
+#include <IO/IO.h>
+
 #include "dll.h"
 
 #pragma comment(lib, "d3d9.lib")
@@ -486,8 +488,8 @@ void Native::ModelLoader::Unload(void* data)
 	*/
 }
 
-Native::MaterialLoader::MaterialLoader(EffekseerRenderer::Renderer* renderer, std::shared_ptr<IPC::KeyValueFileStorage> storage)
-	: renderer_(renderer), storage_(storage)
+Native::MaterialLoader::MaterialLoader(EffekseerRenderer::Renderer* renderer)
+	: renderer_(renderer)
 {
 	loader_ = renderer_->CreateMaterialLoader();
 }
@@ -512,47 +514,23 @@ Effekseer::MaterialData* Native::MaterialLoader::Load(const EFK_CHAR* path)
 	}
 	else
 	{
-		if (storage_ != nullptr)
+		std::shared_ptr<Effekseer::StaticFile> staticFile;
+		::Effekseer::MaterialData* t = nullptr;
+		
+		if (staticFile == nullptr)
 		{
-			storage_->Lock();
-
-			char u8path[260];
-			Effekseer::ConvertUtf16ToUtf8((int8_t*)u8path, 260, (int16_t*)path);
-
-			if (storage_->AddRef(u8path))
-			{
-				storageRefs_.insert(path);
-			}
-
-			storage_->Unlock();
+			staticFile = ::Effekseer::IO::GetInstance()->LoadIPCFile(dst);
 		}
 
-		Effekseer::MaterialData* t = nullptr;
-
-		if (storage_ != nullptr)
+		if (staticFile == nullptr)
 		{
-			storage_->Lock();
-
-			char u8path[260];
-			Effekseer::ConvertUtf16ToUtf8((int8_t*)u8path, 260, (int16_t*)path);
-
-			std::vector<uint8_t> data;
-			data.resize(1024 * 512);
-			int timestamp = 0;
-			auto size = storage_->GetFile(u8path, data.data(), data.size(), timestamp);
-			data.resize(size);
-
-			storage_->Unlock();
-
-			if (data.size() > 0)
-			{
-				t = loader_->Load(data.data(), data.size(), ::Effekseer::MaterialFileType::Code);
-			}
+			staticFile = ::Effekseer::IO::GetInstance()->LoadFile(dst);
 		}
 
-		if (t == nullptr)
+		if (staticFile != nullptr)
 		{
-			t = loader_->Load(dst);
+			t = loader_->Load(staticFile->GetData(), staticFile->GetSize(), ::Effekseer::MaterialFileType::Code);
+			materialFiles_[dst] = staticFile;
 		}
 
 		if (t != nullptr)
@@ -571,22 +549,9 @@ void Native::MaterialLoader::ReleaseAll()
 	for (auto it : g_materials_)
 	{
 		((MaterialLoader*)g_manager->GetMaterialLoader())->GetOriginalLoader()->Unload(it.second);
-
-		if (storage_ != nullptr)
-		{
-			if (storageRefs_.count(it.first) > 0)
-			{
-				storage_->Lock();
-				char u8path[260];
-				Effekseer::ConvertUtf16ToUtf8((int8_t*)u8path, 260, (int16_t*)it.first.c_str());
-				storage_->ReleaseRef(u8path);
-
-				storage_->Unlock();
-			}
-		}
 	}
 	g_materials_.clear();
-	storageRefs_.clear();
+	materialFiles_.clear();
 }
 
 ::Effekseer::Effect* Native::GetEffect() { return g_effect; }
@@ -662,7 +627,7 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			m_textureLoader = new TextureLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer());
 			g_manager->SetTextureLoader(m_textureLoader);
 			g_manager->SetModelLoader(new ModelLoader((EffekseerRenderer::Renderer*)g_renderer->GetRenderer()));
-			g_manager->SetMaterialLoader(new MaterialLoader(g_renderer->GetRenderer(), keyValueFileStorage_));
+			g_manager->SetMaterialLoader(new MaterialLoader(g_renderer->GetRenderer()));
 		}
 
 		// Assign device lost events.

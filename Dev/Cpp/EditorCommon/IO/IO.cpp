@@ -17,8 +17,10 @@ void IO::Terminate() { instance_ = nullptr; }
 
 IO::IO(int checkFileInterval)
 {
+#if _WIN32
 	ipcStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
 	ipcStorage_->Start("EffekseerStorage");
+#endif
 	this->checkFileInterval_ = checkFileInterval;
 
 	if (checkFileInterval > 0)
@@ -30,7 +32,9 @@ IO::IO(int checkFileInterval)
 
 IO::~IO()
 {
+#if _WIN32
 	ipcStorage_->Stop();
+#endif
 
 	if (isThreadRunning_)
 	{
@@ -63,6 +67,10 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 
 std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 {
+#ifndef _WIN32
+	return nullptr;
+#endif
+
 	if (!FileSystem::GetIsFile(path))
 		return nullptr;
 
@@ -70,6 +78,11 @@ std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 
 	std::shared_ptr<StaticFileReader> reader = std::make_shared<IPCFileReader>(path, GetIPCStorage());
 	auto file = std::make_shared<StaticFile>(reader);
+
+	if (file->GetSize() == 0)
+	{
+		return nullptr;
+	}
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
 	{
@@ -98,7 +111,7 @@ void IO::Update()
 		temp = changedFileInfos_;
 		changedFileInfos_.clear();
 	}
-	
+
 	for (auto& i : temp)
 	{
 		for (auto callback : callbacks_)
@@ -118,8 +131,10 @@ uint64_t IO::GetFileLastWriteTime(const FileInfo& fileInfo)
 		break;
 	case StaticFileType::IPC:
 		char data;
+		ipcStorage_->Lock();
 		if (ipcStorage_->GetFile(utf16_to_utf8(fileInfo.path_).c_str(), &data, 1, time) == 0)
-			return 0;
+			time = 0;
+		ipcStorage_->Unlock();
 		break;
 	}
 	return time;

@@ -9,7 +9,9 @@ namespace Effekseer
 class DefaultStaticFileReader : public StaticFileReader
 {
 private:
+	std::u16string path_;
 	std::ifstream stream_;
+	std::vector<uint8_t> buffer_;
 
 public:
 	DefaultStaticFileReader(const std::u16string& path);
