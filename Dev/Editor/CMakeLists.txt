@@ -67,6 +67,7 @@ file(GLOB files
 
 list(APPEND files
     Effekseer/swig/IO.cs
+    Effekseer/swig/IOCallback.cs
     Effekseer/swig/SystemLanguage.cs
     Effekseer/swig/MainWindow.cs
     Effekseer/swig/MainWindowState.cs

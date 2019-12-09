@@ -73,7 +73,7 @@ class u16string;
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null u16string", 0);
     return $null;
    }
-   ::asd::u16string $1_str($input);
+   ::std::u16string $1_str($input);
    $1 = &$1_str; %}
 %typemap(out) const u16string & %{ $result = SWIG_csharp_wstring_callback($1->c_str()); %}
 
@@ -89,7 +89,7 @@ class u16string;
     return $null;
    }
    /* possible thread/reentrant code problem */
-   static asd::u16string $1_str;
+   static std::u16string $1_str;
    $1_str = $input;
    $result = &$1_str; %}
 

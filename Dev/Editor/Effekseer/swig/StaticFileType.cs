@@ -10,7 +10,7 @@
 
 namespace Effekseer.swig {
 
-public enum IOFileType {
+public enum StaticFileType {
   Default,
   IPC
 }

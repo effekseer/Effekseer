@@ -3,7 +3,7 @@
 namespace Effekseer
 {
 
-StaticFile::StaticFile(std::shared_ptr<IOFileReader>& reader) : reader_(reader) { reader_->GetData(buffer_); }
+StaticFile::StaticFile(std::shared_ptr<StaticFileReader>& reader) : reader_(reader) { reader_->GetData(buffer_); }
 
 StaticFile::~StaticFile() {}
 
@@ -13,6 +13,6 @@ int StaticFile::GetSize() { return buffer_.size(); }
 
 std::u16string StaticFile::GetPath() { return reader_->GetPath(); }
 
-IOFileType StaticFile::GetFileType() { return reader_->GetFileType(); }
+StaticFileType StaticFile::GetFileType() { return reader_->GetFileType(); }
 
 } // namespace Effekseer

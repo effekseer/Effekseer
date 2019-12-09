@@ -6,6 +6,15 @@
 
 namespace Effekseer
 {
+
+std::shared_ptr<IO> IO::instance_;
+
+std::shared_ptr<IO> IO::GetInstance() { return instance_; }
+
+void IO::Initialize(int checkFileInterval) { instance_ = std::make_shared<IO>(checkFileInterval); }
+
+void IO::Terminate() { instance_ = nullptr; }
+
 IO::IO(int checkFileInterval)
 {
 	ipcStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
@@ -30,7 +39,7 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 	if (!FileSystem::GetIsFile(path))
 		return nullptr;
 
-	std::shared_ptr<IOFileReader> reader = std::make_shared<IODefaultFileReader>(path);
+	std::shared_ptr<StaticFileReader> reader = std::make_shared<DefaultStaticFileReader>(path);
 	auto file = std::make_shared<StaticFile>(reader);
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
@@ -51,7 +60,7 @@ std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 	if (!FileSystem::GetIsFile(path))
 		return nullptr;
 
-	std::shared_ptr<IOFileReader> reader = std::make_shared<IPCFileReader>(path, GetIPCStorage());
+	std::shared_ptr<StaticFileReader> reader = std::make_shared<IPCFileReader>(path, GetIPCStorage());
 	auto file = std::make_shared<StaticFile>(reader);
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
@@ -79,7 +88,11 @@ void IO::Update()
 	std::lock_guard<std::mutex> lock(mtx_);
 	for (auto& i : changedFileInfos_)
 	{
-		OnFileChanged(i.fileType_, i.path_);
+		for (auto callback : callbacks_)
+		{
+			callback->OnFileChanged(i.fileType_, i.path_);
+		}
+
 		notifiedFileInfos_.insert(i);
 	}
 
@@ -91,10 +104,10 @@ int IO::GetFileLastWriteTime(const FileInfo& fileInfo)
 	int time = 0;
 	switch (fileInfo.fileType_)
 	{
-	case IOFileType::Default:
+	case StaticFileType::Default:
 		time = FileSystem::GetLastWriteTime(fileInfo.path_);
 		break;
-	case IOFileType::IPC:
+	case StaticFileType::IPC:
 		char data;
 		if (ipcStorage_->GetFile(utf16_to_utf8(fileInfo.path_).c_str(), &data, 1, time) == 0)
 			return 0;
@@ -120,5 +133,7 @@ void IO::CheckFile(int interval)
 		std::this_thread::sleep_for(std::chrono::milliseconds(interval));
 	}
 }
+
+void IO::AddCallback(std::shared_ptr<IOCallback> callback) { callbacks_.push_back(callback); }
 
 } // namespace Effekseer

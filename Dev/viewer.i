@@ -84,10 +84,12 @@ class"
 %apply uint8_t INOUT[] { uint8_t* data_output }
 
 %feature("director") GUIManagerCallback;
-%feature("director") IO;
+%feature("director") IOCallback;
 
 %shared_ptr(Effekseer::MainWindow);
 %shared_ptr(Effekseer::StaticFile);
+%shared_ptr(Effekseer::IO);
+%shared_ptr(Effekseer::IOCallback);
 
 //-----------------------------------------------------------------------------------
 //

@@ -61,8 +61,8 @@ public class StaticFile : global::System.IDisposable {
     return ret;
   }
 
-  public IOFileType GetFileType() {
-    IOFileType ret = (IOFileType)EffekseerNativePINVOKE.StaticFile_GetFileType(swigCPtr);
+  public StaticFileType GetFileType() {
+    StaticFileType ret = (StaticFileType)EffekseerNativePINVOKE.StaticFile_GetFileType(swigCPtr);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }

@@ -10,7 +10,7 @@ namespace Effekseer
 class StaticFile
 {
 private:
-	std::shared_ptr<IOFileReader> reader_;
+	std::shared_ptr<StaticFileReader> reader_;
 	std::vector<uint8_t> buffer_;
 
 public:
@@ -19,14 +19,14 @@ public:
 	StaticFile() = default;
 
 #ifndef SWIG
-	StaticFile(std::shared_ptr<IOFileReader>& reader);
+	StaticFile(std::shared_ptr<StaticFileReader>& reader);
 	~StaticFile();
 #endif
 
 	void* GetData();
 	int GetSize();
 	std::u16string GetPath();
-	IOFileType GetFileType();
+	StaticFileType GetFileType();
 };
 
 } // namespace Effekseer

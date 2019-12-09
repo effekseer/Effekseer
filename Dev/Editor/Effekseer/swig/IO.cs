@@ -12,10 +12,10 @@ namespace Effekseer.swig {
 
 public class IO : global::System.IDisposable {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
-  protected bool swigCMemOwn;
+  private bool swigCMemOwnBase;
 
   internal IO(global::System.IntPtr cPtr, bool cMemoryOwn) {
-    swigCMemOwn = cMemoryOwn;
+    swigCMemOwnBase = cMemoryOwn;
     swigCPtr = new global::System.Runtime.InteropServices.HandleRef(this, cPtr);
   }
 
@@ -35,8 +35,8 @@ public class IO : global::System.IDisposable {
   protected virtual void Dispose(bool disposing) {
     lock(this) {
       if (swigCPtr.Handle != global::System.IntPtr.Zero) {
-        if (swigCMemOwn) {
-          swigCMemOwn = false;
+        if (swigCMemOwnBase) {
+          swigCMemOwnBase = false;
           EffekseerNativePINVOKE.delete_IO(swigCPtr);
         }
         swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
@@ -45,60 +45,59 @@ public class IO : global::System.IDisposable {
   }
 
   public IO(int checkFileInterval) : this(EffekseerNativePINVOKE.new_IO__SWIG_0(checkFileInterval), true) {
-    SwigDirectorConnect();
   }
 
   public IO() : this(EffekseerNativePINVOKE.new_IO__SWIG_1(), true) {
-    SwigDirectorConnect();
+  }
+
+  public static IO GetInstance() {
+    global::System.IntPtr cPtr = EffekseerNativePINVOKE.IO_GetInstance();
+    IO ret = (cPtr == global::System.IntPtr.Zero) ? null : new IO(cPtr, true);
+    return ret;
+  }
+
+  public static void Initialize(int checkFileInterval) {
+    EffekseerNativePINVOKE.IO_Initialize__SWIG_0(checkFileInterval);
+  }
+
+  public static void Initialize() {
+    EffekseerNativePINVOKE.IO_Initialize__SWIG_1();
+  }
+
+  public static void Terminate() {
+    EffekseerNativePINVOKE.IO_Terminate();
   }
 
   public StaticFile LoadFile(string path) {
     global::System.IntPtr cPtr = EffekseerNativePINVOKE.IO_LoadFile(swigCPtr, path);
     StaticFile ret = (cPtr == global::System.IntPtr.Zero) ? null : new StaticFile(cPtr, true);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public StaticFile LoadIPCFile(string path) {
     global::System.IntPtr cPtr = EffekseerNativePINVOKE.IO_LoadIPCFile(swigCPtr, path);
     StaticFile ret = (cPtr == global::System.IntPtr.Zero) ? null : new StaticFile(cPtr, true);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public bool GetIsExistLatestFile(StaticFile staticFile) {
     bool ret = EffekseerNativePINVOKE.IO_GetIsExistLatestFile(swigCPtr, StaticFile.getCPtr(staticFile));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
     return ret;
   }
 
   public void Update() {
     EffekseerNativePINVOKE.IO_Update(swigCPtr);
-  }
-
-  public virtual void OnFileChanged(IOFileType fileType, string path) {
-    if (SwigDerivedClassHasMethod("OnFileChanged", swigMethodTypes0)) EffekseerNativePINVOKE.IO_OnFileChangedSwigExplicitIO(swigCPtr, (int)fileType, path); else EffekseerNativePINVOKE.IO_OnFileChanged(swigCPtr, (int)fileType, path);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
-  private void SwigDirectorConnect() {
-    if (SwigDerivedClassHasMethod("OnFileChanged", swigMethodTypes0))
-      swigDelegate0 = new SwigDelegateIO_0(SwigDirectorMethodOnFileChanged);
-    EffekseerNativePINVOKE.IO_director_connect(swigCPtr, swigDelegate0);
+  public void AddCallback(IOCallback callback) {
+    EffekseerNativePINVOKE.IO_AddCallback(swigCPtr, IOCallback.getCPtr(callback));
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
-  private bool SwigDerivedClassHasMethod(string methodName, global::System.Type[] methodTypes) {
-    global::System.Reflection.MethodInfo methodInfo = this.GetType().GetMethod(methodName, global::System.Reflection.BindingFlags.Public | global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.Instance, null, methodTypes, null);
-    bool hasDerivedMethod = methodInfo.DeclaringType.IsSubclassOf(typeof(IO));
-    return hasDerivedMethod;
-  }
-
-  private void SwigDirectorMethodOnFileChanged(int fileType, string path) {
-    OnFileChanged((IOFileType)fileType, path);
-  }
-
-  public delegate void SwigDelegateIO_0(int fileType, string path);
-
-  private SwigDelegateIO_0 swigDelegate0;
-
-  private static global::System.Type[] swigMethodTypes0 = new global::System.Type[] { typeof(IOFileType), typeof(string) };
 }
 
 }
