@@ -1609,7 +1609,7 @@ namespace Effekseer
 
 				if(n != null)
 				{
-					if (n.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File && n.RendererCommonValues.MaterialFile.Path.GetAbsolutePath() == path)
+					if (n.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File && n.RendererCommonValues.MaterialFile.Path.GetAbsolutePath().Replace('\\', '/') == path)
 					{
 						Utl.MaterialInformation info = new Utl.MaterialInformation();
 						info.Load(path);

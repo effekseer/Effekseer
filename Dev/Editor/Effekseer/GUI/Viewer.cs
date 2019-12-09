@@ -679,7 +679,8 @@ namespace Effekseer.GUI
 			var data = binaryExporter.Export(Core.Option.Magnification);
 			fixed (byte* p = &data[0])
 			{
-				LoadEffect(new IntPtr(p), data.Length, Core.FullPath);
+				// TODO refactor replace
+				LoadEffect(new IntPtr(p), data.Length, Core.FullPath.Replace('\\', '/'));
 			}
 		}
 

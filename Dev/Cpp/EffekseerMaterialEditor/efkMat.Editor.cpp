@@ -285,6 +285,9 @@ void EditorContent::UpdateBinary()
 		std::vector<uint8_t> data;
 		if (material_->Save(data, path_.c_str()))
 		{
+#ifdef _DEBUG
+			std::cout << "UpdateFile : " << path_ << std::endl;
+#endif
 			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());
 		}
 
@@ -294,7 +297,9 @@ void EditorContent::UpdateBinary()
 
 void EditorContent::UpdatePath(const char* path)
 {
-	if (path_ == path)
+	// TODO refactor replace
+	auto p = Replace(path, "\\", "/");
+	if (path_ == p)
 		return;
 
 	if (hasStorageRef_ && path_ != "" && editor_->keyValueFileStorage_ != nullptr)
@@ -305,7 +310,7 @@ void EditorContent::UpdatePath(const char* path)
 		hasStorageRef_ = false;
 	}
 
-	path_ = path;
+	path_ = p;
 	material_->SetPath(path_);
 
 	if (path_ != "" && editor_->keyValueFileStorage_ != nullptr)
@@ -316,6 +321,10 @@ void EditorContent::UpdatePath(const char* path)
 		std::vector<uint8_t> data;
 		if (material_->Save(data, path_.c_str()))
 		{
+#ifdef _DEBUG
+			std::cout << "UpdateFile : " << path_ << std::endl;
+#endif
+
 			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());
 		}
 
