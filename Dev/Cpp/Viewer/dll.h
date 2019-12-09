@@ -10,6 +10,8 @@
 #include "EffekseerTool/EffekseerTool.Sound.h"
 #include <Effekseer.h>
 #include <IO/IO.h>
+#include <unordered_map>
+#include <unordered_set>
 
 #include "../IPC/IPC.h"
 #include "GUI/efk.ImageResource.h"
