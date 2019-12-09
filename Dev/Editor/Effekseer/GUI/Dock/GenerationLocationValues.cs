@@ -20,7 +20,7 @@ namespace Effekseer.GUI.Dock
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.GenerationLocationValues));
 
-			candp = new Component.CopyAndPaste("SpawningMethod", GetTargetObject);
+			candp = new Component.CopyAndPaste("SpawningMethod", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

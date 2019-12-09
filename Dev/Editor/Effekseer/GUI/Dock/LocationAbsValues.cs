@@ -19,7 +19,7 @@ namespace Effekseer.GUI.Dock
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.LocationAbsValues));
-			candp = new Component.CopyAndPaste("AttractionForces", GetTargetObject);
+			candp = new Component.CopyAndPaste("AttractionForces", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

@@ -20,7 +20,7 @@ namespace Effekseer.GUI.Dock
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.ScaleValues));
 
-			candp = new Component.CopyAndPaste("Scale", GetTargetObject);
+			candp = new Component.CopyAndPaste("Scale", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

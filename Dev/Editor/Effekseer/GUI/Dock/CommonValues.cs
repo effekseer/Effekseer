@@ -49,7 +49,7 @@ namespace Effekseer.GUI.Dock
 			paramerterList_Common = new Component.ParameterList();
 			paramerterList_Common.SetType(typeof(Data.CommonValues));
 
-			candp = new Component.CopyAndPaste("BasicSettings", GetTargetObject);
+			candp = new Component.CopyAndPaste("BasicSettings", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

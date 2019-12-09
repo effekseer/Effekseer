@@ -20,7 +20,7 @@ namespace Effekseer.GUI.Dock
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.RendererValues));
 
-			candp = new Component.CopyAndPaste("RenderSettings", GetTargetObject);
+			candp = new Component.CopyAndPaste("RenderSettings", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

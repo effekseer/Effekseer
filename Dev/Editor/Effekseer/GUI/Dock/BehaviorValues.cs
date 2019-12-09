@@ -15,7 +15,7 @@ namespace Effekseer.GUI.Dock
             paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.EffectBehaviorValues));
 
-			candp = new Component.CopyAndPaste("Behavior", GetTargetObject);
+			candp = new Component.CopyAndPaste("Behavior", GetTargetObject, Read);
 
             Core.OnAfterLoad += OnAfterLoad;
             Core.OnAfterNew += OnAfterLoad;
