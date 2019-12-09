@@ -137,8 +137,8 @@ template <typename T> struct StrideView
 	int32_t stride_;
 	uint8_t* pointer_;
 	uint8_t* pointerOrigin_;
-	
-#if _DEBUG
+
+#ifndef NDEBUG
 	int32_t offset_;
 	int32_t elementCount_;
 #endif
@@ -147,7 +147,7 @@ template <typename T> struct StrideView
 		: stride_(stride)
 		, pointer_(reinterpret_cast<uint8_t*>(pointer))
 		, pointerOrigin_(reinterpret_cast<uint8_t*>(pointer))
-#if _DEBUG
+#ifndef NDEBUG
 		, offset_(0)
 		, elementCount_(elementCount)
 #endif
@@ -155,7 +155,7 @@ template <typename T> struct StrideView
 	}
 
 	T& operator[](int i) const { 
-#if _DEBUG
+#ifndef NDEBUG
 		assert(i >= 0);
 		assert(i + offset_ < elementCount_);
 #endif
@@ -164,7 +164,7 @@ template <typename T> struct StrideView
 
 	StrideView& operator+=(const int& rhs)
 	{
-#if _DEBUG
+#ifndef NDEBUG
 		offset_ += rhs;
 #endif
 		pointer_ += stride_ * rhs;
@@ -172,7 +172,7 @@ template <typename T> struct StrideView
 	}
 
 	void Reset() { 
-#if _DEBUG
+#ifndef NDEBUG
 		offset_ = 0;
 #endif
 		pointer_ = pointerOrigin_; 
@@ -188,7 +188,7 @@ template<> struct StrideView<SimpleVertex>
 	uint8_t* pointer_;
 	uint8_t* pointerOrigin_;
 
-#if _DEBUG
+#ifndef NDEBUG
 	int32_t offset_;
 	int32_t elementCount_;
 #endif
@@ -196,7 +196,7 @@ template<> struct StrideView<SimpleVertex>
 	StrideView(void* pointer, int32_t stride, int32_t elementCount)
 		: pointer_(reinterpret_cast<uint8_t*>(pointer))
 		, pointerOrigin_(reinterpret_cast<uint8_t*>(pointer))
-#if _DEBUG
+#ifndef NDEBUG
 		, offset_(0)
 		, elementCount_(elementCount)
 #endif
@@ -206,7 +206,7 @@ template<> struct StrideView<SimpleVertex>
 
 	SimpleVertex& operator[](int i) const
 	{
-#if _DEBUG
+#ifndef NDEBUG
 		assert(i >= 0);
 		assert(i + offset_ < elementCount_);
 #endif
@@ -215,7 +215,7 @@ template<> struct StrideView<SimpleVertex>
 
 	StrideView& operator+=(const int& rhs)
 	{
-#if _DEBUG
+#ifndef NDEBUG
 		offset_ += rhs;
 #endif
 		pointer_ += stride_ * rhs;
@@ -224,7 +224,7 @@ template<> struct StrideView<SimpleVertex>
 
 	void Reset()
 	{
-#if _DEBUG
+#ifndef NDEBUG
 		offset_ = 0;
 #endif
 		pointer_ = pointerOrigin_;
@@ -240,7 +240,7 @@ template <> struct StrideView<SimpleVertexDX9>
 	uint8_t* pointer_;
 	uint8_t* pointerOrigin_;
 
-#if _DEBUG
+#ifndef NDEBUG
 	int32_t offset_;
 	int32_t elementCount_;
 #endif
@@ -248,7 +248,7 @@ template <> struct StrideView<SimpleVertexDX9>
 	StrideView(void* pointer, int32_t stride, int32_t elementCount)
 		: pointer_(reinterpret_cast<uint8_t*>(pointer))
 		, pointerOrigin_(reinterpret_cast<uint8_t*>(pointer))
-#if _DEBUG
+#ifndef NDEBUG
 		, offset_(0)
 		, elementCount_(elementCount)
 #endif
@@ -258,7 +258,7 @@ template <> struct StrideView<SimpleVertexDX9>
 
 	SimpleVertexDX9& operator[](int i) const
 	{
-#if _DEBUG
+#ifndef NDEBUG
 		assert(i >= 0);
 		assert(i + offset_ < elementCount_);
 #endif
@@ -267,7 +267,7 @@ template <> struct StrideView<SimpleVertexDX9>
 
 	StrideView& operator+=(const int& rhs)
 	{
-#if _DEBUG
+#ifndef NDEBUG
 		offset_ += rhs;
 #endif
 		pointer_ += stride_ * rhs;
@@ -276,7 +276,7 @@ template <> struct StrideView<SimpleVertexDX9>
 
 	void Reset()
 	{
-#if _DEBUG
+#ifndef NDEBUG
 		offset_ = 0;
 #endif
 		pointer_ = pointerOrigin_;
