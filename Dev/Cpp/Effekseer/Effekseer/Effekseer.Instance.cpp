@@ -1584,22 +1584,22 @@ RectF Instance::GetUV() const
 
 	if (uv.X < -far && uv.X + uv.Width < -far)
 	{
-		uv.X += far;
+		uv.X += (-static_cast<int32_t>(uv.X) - far);
 	}
 
 	if (uv.X > far && uv.X + uv.Width > far)
 	{
-		uv.X -= far;
+		uv.X -= (static_cast<int32_t>(uv.X) - far);
 	}
 
 	if (uv.Y < -far && uv.Y + uv.Height < -far)
 	{
-		uv.Y += far;
+		uv.Y += (-static_cast<int32_t>(uv.Y) - far);
 	}
 
 	if (uv.Y > far && uv.Y + uv.Height > far)
 	{
-		uv.Y -= far;
+		uv.Y -= (static_cast<int32_t>(uv.Y) - far);
 	}
 
 	return uv;
