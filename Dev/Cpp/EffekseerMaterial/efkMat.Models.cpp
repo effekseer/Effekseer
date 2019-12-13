@@ -1,5 +1,4 @@
 #include "efkMat.Models.h"
-#include "Platform/efkMat.Generic.h"
 #include "ThirdParty/picojson.h"
 #include "efkMat.CommandManager.h"
 #include "efkMat.Library.h"
@@ -1720,7 +1719,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	memcpy(data.data() + offset, bwDescs.GetBuffer().data(), bwDescs.GetBuffer().size());
 
 	// generic
-	std::shared_ptr<TextExporter> textExporter = std::make_shared<TextExporterGeneric>();
+	std::shared_ptr<TextExporter> textExporter = std::make_shared<TextExporter>();
 	auto result = textExporter->Export(shared_from_this(), outputNode, "$SUFFIX");
 
 	// flag

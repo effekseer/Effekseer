@@ -445,21 +445,7 @@ std::string TextExporter::MergeTemplate(std::string code, std::string uniform_te
 {
 	const char template_[] = R"(
 
-UNIFORM
-
-TEXTURE
-
-vec4 calc()
-{
-
 RETURN
-
-}
-
-void main()
-{
-	gl_color = calc();
-}
 
 )";
 
@@ -861,8 +847,9 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		assert(node->Inputs[0].TextureValue != nullptr);
 		if (0 <= node->Inputs[0].TextureValue->Index)
 		{
-			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=texture(" << node->Inputs[0].TextureValue->UniformName
-				<< "," << GetInputArg(ValueType::Float2, node->Inputs[1]) << ");" << std::endl;
+			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << " = $TEX_P" << node->Inputs[0].TextureValue->Index
+				<< "$" << GetInputArg(ValueType::Float2, node->Inputs[1]) << "$TEX_S" << node->Inputs[0].TextureValue->Index << "$;"
+				<< std::endl;
 		}
 		else
 		{
@@ -966,15 +953,15 @@ std::string TextExporter::ExportUniformAndTextures(const std::vector<std::shared
 
 	std::ostringstream ret;
 
-	for (auto node : uniformNodes)
-	{
-		ret << "uniform " << GetTypeName(node->Type) << " " << node->Name << ";" << std::endl;
-	}
-
-	for (auto node : textureNodes)
-	{
-		ret << "uniform sampler2D " << node->Name << ";" << std::endl;
-	}
+	//for (auto node : uniformNodes)
+	//{
+	//	ret << "uniform " << GetTypeName(node->Type) << " " << node->Name << ";" << std::endl;
+	//}
+	//
+	//for (auto node : textureNodes)
+	//{
+	//	ret << "uniform sampler2D " << node->Name << ";" << std::endl;
+	//}
 
 	return ret.str();
 }
@@ -1126,13 +1113,13 @@ std::string TextExporter::GetInputArg(const ValueType& pinType, std::array<float
 std::string TextExporter::GetTypeName(ValueType type) const
 {
 	if (type == ValueType::Float1)
-		return "float";
+		return "$F1$";
 	if (type == ValueType::Float2)
-		return "vec2";
+		return "$F2$";
 	if (type == ValueType::Float3)
-		return "vec3";
+		return "$F3$";
 	if (type == ValueType::Float4)
-		return "vec4";
+		return "$F4$";
 	return "";
 }
 
@@ -1140,15 +1127,12 @@ std::string TextExporter::GetUVName(int32_t ind) const
 {
 	if (ind == 0)
 	{
-		return "uv1";
+		return "$UV$1";
 	}
-	else
-	{
-		return "uv2";
-	}
+	return "$UV$2";
 }
 
-std::string TextExporter::GetTimeName() const { return "time"; }
+std::string TextExporter::GetTimeName() const { return "$TIME$"; }
 
 std::string TextExporter::ConvertType(ValueType dst, ValueType src, const std::string& name) const
 {

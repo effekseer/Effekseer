@@ -10,8 +10,7 @@
 #include <iostream>
 #include <ostream>
 
-#include <Platform/efkMat.Generic.h>
-
+#include <efkMat.TextExporter.h>
 #include <efkMat.StringContainer.h>
 
 #include <filesystem>
@@ -37,7 +36,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 			 std::string& vs,
 			 std::string& ps)
 {
-	EffekseerMaterial::TextExporterGeneric exporter;
+	EffekseerMaterial::TextExporter exporter;
 	auto result = (&exporter)->Export(material, node);
 
 	auto efkMaterial = Effekseer::Material();
@@ -108,7 +107,7 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	outputTextures.clear();
 	outputUniforms.clear();
 
-	EffekseerMaterial::TextExporterGeneric exporter;
+	EffekseerMaterial::TextExporter exporter;
 	auto result = (&exporter)->Export(material, node);
 
 	// auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
