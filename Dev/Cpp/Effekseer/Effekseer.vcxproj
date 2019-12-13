@@ -170,7 +170,6 @@
     <ClInclude Include="Effekseer\Effekseer.Client.h" />
     <ClInclude Include="Effekseer\Effekseer.ClientImplemented.h" />
     <ClInclude Include="Effekseer\Effekseer.Color.h" />
-    <ClInclude Include="Effekseer\Effekseer.CustomAllocator.h" />
     <ClInclude Include="Effekseer\Effekseer.DefaultEffectLoader.h" />
     <ClInclude Include="Effekseer\Effekseer.DefaultFile.h" />
     <ClInclude Include="Effekseer\Effekseer.Effect.h" />
@@ -221,6 +220,7 @@
     <ClInclude Include="Effekseer\Renderer\Effekseer.SpriteRenderer.h" />
     <ClInclude Include="Effekseer\Renderer\Effekseer.TrackRenderer.h" />
     <ClInclude Include="Effekseer\Sound\Effekseer.SoundPlayer.h" />
+    <ClInclude Include="Effekseer\Utils\Effekseer.CustomAllocator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effekseer\Culling\Culling3D.Grid.cpp" />
@@ -232,7 +232,6 @@
     <ClCompile Include="Effekseer\Culling\Culling3D.WorldInternal.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Client.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Color.cpp" />
-    <ClCompile Include="Effekseer\Effekseer.CustomAllocator.cpp" />
     <ClCompile Include="Effekseer\Effekseer.DefaultEffectLoader.cpp" />
     <ClCompile Include="Effekseer\Effekseer.DefaultFile.cpp" />
     <ClCompile Include="Effekseer\Effekseer.Effect.cpp" />
@@ -265,6 +264,7 @@
     <ClCompile Include="Effekseer\Material\Effekseer.Material.cpp" />
     <ClCompile Include="Effekseer\Material\Effekseer.MaterialCompiler.cpp" />
     <ClCompile Include="Effekseer\Parameter\Effekseer.Parameters.cpp" />
+    <ClCompile Include="Effekseer\Utils\Effekseer.CustomAllocator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

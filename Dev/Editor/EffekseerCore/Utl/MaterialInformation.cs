@@ -224,7 +224,11 @@ namespace Effekseer.Utl
 						// name is for human, uniformName is a variable name after 3
 						if (version >= 3)
 						{
-							reader.Get(ref info.Name, Encoding.UTF8);
+							reader.Get(ref info.UniformName, Encoding.UTF8);
+						}
+						else
+						{
+							info.UniformName = info.Name;
 						}
 
 						reader.Get(ref info.DefaultPath, Encoding.UTF8);
@@ -266,7 +270,11 @@ namespace Effekseer.Utl
 						// name is for human, uniformName is a variable name after 3
 						if (version >= 3)
 						{
-							reader.Get(ref info.Name, Encoding.UTF8);
+							reader.Get(ref info.UniformName, Encoding.UTF8);
+						}
+						else
+						{
+							info.UniformName = info.Name;
 						}
 
 						reader.Get(ref info.Offset);
@@ -314,7 +322,7 @@ namespace Effekseer.Utl
 								reader.Get(ref lang);
 								reader.Get(ref name, Encoding.UTF8);
 								reader.Get(ref desc, Encoding.UTF8);
-								CustomData[j].Names.Add((Language)lang, name);
+								CustomData[j].Summaries.Add((Language)lang, name);
 								CustomData[j].Descriptions.Add((Language)lang, desc);
 							}
 						}
@@ -336,7 +344,7 @@ namespace Effekseer.Utl
 							reader.Get(ref lang);
 							reader.Get(ref name, Encoding.UTF8);
 							reader.Get(ref desc, Encoding.UTF8);
-							Textures[j].Names.Add((Language)lang, name);
+							Textures[j].Summaries.Add((Language)lang, name);
 							Textures[j].Descriptions.Add((Language)lang, desc);
 						}
 					}
@@ -357,7 +365,7 @@ namespace Effekseer.Utl
 							reader.Get(ref lang);
 							reader.Get(ref name, Encoding.UTF8);
 							reader.Get(ref desc, Encoding.UTF8);
-							Uniforms[j].Names.Add((Language)lang, name);
+							Uniforms[j].Summaries.Add((Language)lang, name);
 							Uniforms[j].Descriptions.Add((Language)lang, desc);
 						}
 					}
@@ -369,7 +377,7 @@ namespace Effekseer.Utl
 
 		public class CustomDataInformation
 		{
-			public Dictionary<Language, string> Names = new Dictionary<Language, string>();
+			public Dictionary<Language, string> Summaries = new Dictionary<Language, string>();
 			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
 		}
 
@@ -377,25 +385,27 @@ namespace Effekseer.Utl
 		public class TextureInformation
 		{
 			public string Name;
+			public string UniformName;
 			public int Index;
 			public string DefaultPath;
 			public bool IsParam;
 			public TextureType Type = TextureType.Color;
 			public int Priority = 1;
 
-			public Dictionary<Language, string> Names = new Dictionary<Language, string>();
+			public Dictionary<Language, string> Summaries = new Dictionary<Language, string>();
 			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
 		}
 
 		public class UniformInformation
 		{
 			public string Name;
+			public string UniformName;
 			public int Offset;
 			public int Type = 0;
 			public float[] DefaultValues = new float[4];
 			public int Priority = 1;
 
-			public Dictionary<Language, string> Names = new Dictionary<Language, string>();
+			public Dictionary<Language, string> Summaries = new Dictionary<Language, string>();
 			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
 		}
 	}

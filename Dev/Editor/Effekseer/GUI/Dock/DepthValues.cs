@@ -19,7 +19,7 @@ namespace Effekseer.GUI.Dock
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.DepthValues));
-			candp = new Component.CopyAndPaste("Depth", GetTargetObject);
+			candp = new Component.CopyAndPaste("Depth", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

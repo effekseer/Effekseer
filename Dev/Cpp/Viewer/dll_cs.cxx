@@ -386,6 +386,9 @@ namespace Swig {
 #include "CompiledMaterialGenerator.h"
 #include "../EditorCommon/Platform/PlatformMisc.h"
 #include "../EditorCommon/GUI/MainWindow.h"
+#include "../EditorCommon/IO/FileReader.h"
+#include "../EditorCommon/IO/StaticFile.h"
+#include "../EditorCommon/IO/IO.h"
 
 
 
@@ -520,6 +523,32 @@ void SwigDirector_GUIManagerCallback::swig_init_callbacks() {
   swig_callbackIconify = 0;
   swig_callbackDpiChanged = 0;
   swig_callbackClickLink = 0;
+}
+
+SwigDirector_IOCallback::SwigDirector_IOCallback() : Effekseer::IOCallback(), Swig::Director() {
+  swig_init_callbacks();
+}
+
+void SwigDirector_IOCallback::OnFileChanged(Effekseer::StaticFileType fileType, char16_t const *path) {
+  int jfileType  ;
+  void * jpath = 0 ;
+  
+  if (!swig_callbackOnFileChanged) {
+    Effekseer::IOCallback::OnFileChanged(fileType,path);
+    return;
+  } else {
+    jfileType = (int)fileType;
+    jpath = (void *) path; 
+    swig_callbackOnFileChanged(jfileType, jpath);
+  }
+}
+
+void SwigDirector_IOCallback::swig_connect_director(SWIG_Callback0_t callbackOnFileChanged) {
+  swig_callbackOnFileChanged = callbackOnFileChanged;
+}
+
+void SwigDirector_IOCallback::swig_init_callbacks() {
+  swig_callbackOnFileChanged = 0;
 }
 
 
@@ -8171,6 +8200,293 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_MainWindow_Initialize_
 
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainWindow_Terminate___() {
   Effekseer::MainWindow::Terminate();
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_StaticFile___() {
+  void * jresult ;
+  Effekseer::StaticFile *result = 0 ;
+  
+  result = (Effekseer::StaticFile *)new Effekseer::StaticFile();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::StaticFile >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_StaticFile_GetData___(void * jarg1) {
+  void * jresult ;
+  Effekseer::StaticFile *arg1 = (Effekseer::StaticFile *) 0 ;
+  std::shared_ptr< Effekseer::StaticFile > *smartarg1 = 0 ;
+  void *result = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::StaticFile > *)jarg1;
+  arg1 = (Effekseer::StaticFile *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (void *)(arg1)->GetData();
+  {
+    jresult = result; 
+  }
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_StaticFile_GetSize___(void * jarg1) {
+  int jresult ;
+  Effekseer::StaticFile *arg1 = (Effekseer::StaticFile *) 0 ;
+  std::shared_ptr< Effekseer::StaticFile > *smartarg1 = 0 ;
+  int result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::StaticFile > *)jarg1;
+  arg1 = (Effekseer::StaticFile *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (int)(arg1)->GetSize();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_StaticFile_GetPath___(void * jarg1) {
+  void * jresult ;
+  Effekseer::StaticFile *arg1 = (Effekseer::StaticFile *) 0 ;
+  std::shared_ptr< Effekseer::StaticFile > *smartarg1 = 0 ;
+  std::u16string result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::StaticFile > *)jarg1;
+  arg1 = (Effekseer::StaticFile *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (arg1)->GetPath();
+  jresult = SWIG_csharp_wstring_callback((const wchar_t*)(&result)->c_str()); 
+  return jresult;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_StaticFile_GetFileType___(void * jarg1) {
+  int jresult ;
+  Effekseer::StaticFile *arg1 = (Effekseer::StaticFile *) 0 ;
+  std::shared_ptr< Effekseer::StaticFile > *smartarg1 = 0 ;
+  Effekseer::StaticFileType result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::StaticFile > *)jarg1;
+  arg1 = (Effekseer::StaticFile *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (Effekseer::StaticFileType)(arg1)->GetFileType();
+  jresult = (int)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_StaticFile___(void * jarg1) {
+  Effekseer::StaticFile *arg1 = (Effekseer::StaticFile *) 0 ;
+  std::shared_ptr< Effekseer::StaticFile > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::StaticFile > *)jarg1;
+  arg1 = (Effekseer::StaticFile *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IOCallback_OnFileChanged___(void * jarg1, int jarg2, void * jarg3) {
+  Effekseer::IOCallback *arg1 = (Effekseer::IOCallback *) 0 ;
+  Effekseer::StaticFileType arg2 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  std::shared_ptr< Effekseer::IOCallback > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::IOCallback > *)jarg1;
+  arg1 = (Effekseer::IOCallback *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (Effekseer::StaticFileType)jarg2; 
+  arg3 = (char16_t *)jarg3; 
+  (arg1)->OnFileChanged(arg2,(char16_t const *)arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IOCallback_OnFileChangedSwigExplicitIOCallback___(void * jarg1, int jarg2, void * jarg3) {
+  Effekseer::IOCallback *arg1 = (Effekseer::IOCallback *) 0 ;
+  Effekseer::StaticFileType arg2 ;
+  char16_t *arg3 = (char16_t *) 0 ;
+  std::shared_ptr< Effekseer::IOCallback > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::IOCallback > *)jarg1;
+  arg1 = (Effekseer::IOCallback *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (Effekseer::StaticFileType)jarg2; 
+  arg3 = (char16_t *)jarg3; 
+  (arg1)->Effekseer::IOCallback::OnFileChanged(arg2,(char16_t const *)arg3);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_IOCallback___() {
+  void * jresult ;
+  Effekseer::IOCallback *result = 0 ;
+  
+  result = (Effekseer::IOCallback *)new SwigDirector_IOCallback();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::IOCallback >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_IOCallback___(void * jarg1) {
+  Effekseer::IOCallback *arg1 = (Effekseer::IOCallback *) 0 ;
+  std::shared_ptr< Effekseer::IOCallback > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::IOCallback > *)jarg1;
+  arg1 = (Effekseer::IOCallback *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IOCallback_director_connect___(void *objarg, SwigDirector_IOCallback::SWIG_Callback0_t callback0) {
+  std::shared_ptr< Effekseer::IOCallback > *obj = (std::shared_ptr< Effekseer::IOCallback > *)objarg;
+  // Keep a local instance of the smart pointer around while we are using the raw pointer
+  // Avoids using smart pointer specific API.
+  SwigDirector_IOCallback *director = static_cast<SwigDirector_IOCallback *>(obj->operator->());
+  director->swig_connect_director(callback0);
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_IO__SWIG_0___(int jarg1) {
+  void * jresult ;
+  int arg1 ;
+  Effekseer::IO *result = 0 ;
+  
+  arg1 = (int)jarg1; 
+  result = (Effekseer::IO *)new Effekseer::IO(arg1);
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::IO >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_IO__SWIG_1___() {
+  void * jresult ;
+  Effekseer::IO *result = 0 ;
+  
+  result = (Effekseer::IO *)new Effekseer::IO();
+  
+  jresult = result ? new std::shared_ptr<  Effekseer::IO >(result SWIG_NO_NULL_DELETER_1) : 0;
+  
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_delete_IO___(void * jarg1) {
+  Effekseer::IO *arg1 = (Effekseer::IO *) 0 ;
+  std::shared_ptr< Effekseer::IO > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::IO > *)jarg1;
+  arg1 = (Effekseer::IO *)(smartarg1 ? smartarg1->get() : 0); 
+  (void)arg1; delete smartarg1;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_IO_GetInstance___() {
+  void * jresult ;
+  std::shared_ptr< Effekseer::IO > result;
+  
+  result = Effekseer::IO::GetInstance();
+  jresult = result ? new std::shared_ptr< Effekseer::IO >(result) : 0; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IO_Initialize__SWIG_0___(int jarg1) {
+  int arg1 ;
+  
+  arg1 = (int)jarg1; 
+  Effekseer::IO::Initialize(arg1);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IO_Initialize__SWIG_1___() {
+  Effekseer::IO::Initialize();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IO_Terminate___() {
+  Effekseer::IO::Terminate();
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_IO_LoadFile___(void * jarg1, void * jarg2) {
+  void * jresult ;
+  Effekseer::IO *arg1 = (Effekseer::IO *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  std::shared_ptr< Effekseer::IO > *smartarg1 = 0 ;
+  std::shared_ptr< Effekseer::StaticFile > result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::IO > *)jarg1;
+  arg1 = (Effekseer::IO *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (char16_t *)jarg2; 
+  result = (arg1)->LoadFile((char16_t const *)arg2);
+  jresult = result ? new std::shared_ptr< Effekseer::StaticFile >(result) : 0; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_IO_LoadIPCFile___(void * jarg1, void * jarg2) {
+  void * jresult ;
+  Effekseer::IO *arg1 = (Effekseer::IO *) 0 ;
+  char16_t *arg2 = (char16_t *) 0 ;
+  std::shared_ptr< Effekseer::IO > *smartarg1 = 0 ;
+  std::shared_ptr< Effekseer::StaticFile > result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::IO > *)jarg1;
+  arg1 = (Effekseer::IO *)(smartarg1 ? smartarg1->get() : 0); 
+  arg2 = (char16_t *)jarg2; 
+  result = (arg1)->LoadIPCFile((char16_t const *)arg2);
+  jresult = result ? new std::shared_ptr< Effekseer::StaticFile >(result) : 0; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_IO_GetIsExistLatestFile___(void * jarg1, void * jarg2) {
+  unsigned int jresult ;
+  Effekseer::IO *arg1 = (Effekseer::IO *) 0 ;
+  std::shared_ptr< Effekseer::StaticFile > arg2 ;
+  std::shared_ptr< Effekseer::IO > *smartarg1 = 0 ;
+  bool result;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::IO > *)jarg1;
+  arg1 = (Effekseer::IO *)(smartarg1 ? smartarg1->get() : 0); 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::StaticFile > *)jarg2; 
+  result = (bool)(arg1)->GetIsExistLatestFile(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IO_Update___(void * jarg1) {
+  Effekseer::IO *arg1 = (Effekseer::IO *) 0 ;
+  std::shared_ptr< Effekseer::IO > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::IO > *)jarg1;
+  arg1 = (Effekseer::IO *)(smartarg1 ? smartarg1->get() : 0); 
+  (arg1)->Update();
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_IO_AddCallback___(void * jarg1, void * jarg2) {
+  Effekseer::IO *arg1 = (Effekseer::IO *) 0 ;
+  std::shared_ptr< Effekseer::IOCallback > arg2 ;
+  std::shared_ptr< Effekseer::IO > *smartarg1 = 0 ;
+  
+  
+  smartarg1 = (std::shared_ptr<  Effekseer::IO > *)jarg1;
+  arg1 = (Effekseer::IO *)(smartarg1 ? smartarg1->get() : 0); 
+  if (jarg2) arg2 = *(std::shared_ptr< Effekseer::IOCallback > *)jarg2; 
+  (arg1)->AddCallback(arg2);
 }
 
 

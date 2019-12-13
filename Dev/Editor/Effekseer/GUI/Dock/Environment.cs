@@ -28,7 +28,7 @@ namespace Effekseer.GUI.Dock
 			paramerterListPostEffect = new Component.ParameterList();
 			paramerterListPostEffect.SetType(typeof(Data.EnvironmentPostEffectValues));
 
-			candp = new Component.CopyAndPaste("Environment", GetTargetObject);
+			candp = new Component.CopyAndPaste("Environment", GetTargetObject, null);
 
 			Core.OnAfterLoad += OnAfter;
 			Core.OnAfterNew += OnAfter;

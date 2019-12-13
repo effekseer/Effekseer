@@ -44,5 +44,19 @@ private:
     void swig_init_callbacks();
 };
 
+class SwigDirector_IOCallback : public Effekseer::IOCallback, public Swig::Director {
+
+public:
+    SwigDirector_IOCallback();
+    virtual void OnFileChanged(Effekseer::StaticFileType fileType, char16_t const *path);
+
+    typedef void (SWIGSTDCALL* SWIG_Callback0_t)(int, void *);
+    void swig_connect_director(SWIG_Callback0_t callbackOnFileChanged);
+
+private:
+    SWIG_Callback0_t swig_callbackOnFileChanged;
+    void swig_init_callbacks();
+};
+
 
 #endif

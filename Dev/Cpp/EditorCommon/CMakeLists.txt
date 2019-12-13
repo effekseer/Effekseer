@@ -55,27 +55,25 @@ target_link_libraries(
 
 
 if (WIN32)
-
-target_link_libraries(
-    EditorCommon
-    PUBLIC
-    debug glfw3d
-    optimized glfw3
-)
-
+    target_link_libraries(
+        EditorCommon
+        PUBLIC
+        debug glfw3d
+        optimized glfw3
+    )
 else()
-
-target_link_libraries(
-    EditorCommon
-    PUBLIC
-    glfw3
-)
-
+    target_link_libraries(
+        EditorCommon
+        PUBLIC
+        glfw3
+    )
 endif()
+
+add_dependencies(EditorCommon ExternalProject_glfw)
 
 target_include_directories(
     EditorCommon
-    PRIVATE
+    PUBLIC
     ${EFK_THIRDPARTY_INCLUDES})
 
 set_target_properties(EditorCommon PROPERTIES LINKER_LANGUAGE CXX)

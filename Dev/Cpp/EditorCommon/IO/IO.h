@@ -4,54 +4,72 @@
 #include "StaticFile.h"
 #include <map>
 #include <memory>
-#include <thread>
-#include <set>
 #include <mutex>
+#include <set>
+#include <thread>
 
 namespace Effekseer
 {
 
+class IOCallback
+{
+public:
+	virtual void OnFileChanged(StaticFileType fileType, const char16_t* path) {}
+};
+
 class IO
 {
 private:
+	static std::shared_ptr<IO> instance_;
+
 	std::shared_ptr<IPC::KeyValueFileStorage> ipcStorage_;
+	std::vector<std::shared_ptr<IOCallback>> callbacks_;
 
 	struct FileInfo
 	{
-		FileType fileType_;
+		StaticFileType fileType_;
 		std::u16string path_;
 
-		FileInfo(FileType fileType, std::u16string path) : fileType_(fileType), path_(path) {}
+		FileInfo(StaticFileType fileType, std::u16string path) : fileType_(fileType), path_(path) {}
 
 		bool operator==(const FileInfo& right) { return fileType_ == right.fileType_ && path_ == right.path_; }
 		bool operator<(const FileInfo& right) const { return std::tie(fileType_, path_) < std::tie(right.fileType_, right.path_); }
 	};
 
-	std::map<FileInfo, int> fileUpdateDates_;
+	std::map<FileInfo, uint64_t> fileUpdateDates_;
 	std::thread checkFileThread;
 	bool isFinishCheckFile_ = false;
-	
+	bool isThreadRunning_ = false;
+	int32_t checkFileInterval_ = -1;
+
 	std::set<FileInfo> changedFileInfos_;
-	std::set<FileInfo> notifiedFileInfos_;
 	std::mutex mtx_;
 
 public:
 	IO(int checkFileInterval = 0);
-	~IO();
+	virtual ~IO();
+
+	static std::shared_ptr<IO> GetInstance();
+
+	static void Initialize(int checkFileInterval = 0);
+
+	static void Terminate();
 
 	std::shared_ptr<StaticFile> LoadFile(const char16_t* path);
 	std::shared_ptr<StaticFile> LoadIPCFile(const char16_t* path);
 
 	bool GetIsExistLatestFile(std::shared_ptr<StaticFile> staticFile);
 
+#ifndef SWIG
 	std::shared_ptr<IPC::KeyValueFileStorage> GetIPCStorage() { return ipcStorage_; }
+#endif
 
 	void Update();
 
-	virtual void OnFileChanged(FileType fileType, std::u16string path) {}
+	void AddCallback(std::shared_ptr<IOCallback> callback);
 
 private:
-	int GetFileLastWriteTime(const FileInfo& fileInfo);
+	uint64_t GetFileLastWriteTime(const FileInfo& fileInfo);
 	void CheckFile(int interval);
 };
 

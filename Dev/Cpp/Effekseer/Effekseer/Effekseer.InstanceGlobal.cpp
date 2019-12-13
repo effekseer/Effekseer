@@ -4,7 +4,7 @@
 //
 //----------------------------------------------------------------------------------
 #include "Effekseer.InstanceGlobal.h"
-#include "Effekseer.CustomAllocator.h"
+#include "Utils/Effekseer.CustomAllocator.h"
 #include <assert.h>
 
 //----------------------------------------------------------------------------------

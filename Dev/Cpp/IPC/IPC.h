@@ -85,8 +85,8 @@ public:
 	*/
 	bool ReleaseRef(const char* key);
 
-	void UpdateFile(const char* key, const void* data, int32_t size, int32_t timestamp);
-	int32_t GetFile(const char* key, void* data, int32_t size, int32_t timestamp);
+	void UpdateFile(const char* key, const void* data, int32_t size);
+	int32_t GetFile(const char* key, void* data, int32_t size, uint64_t& timestamp);
 	void Lock();
 	void Unlock();
 };

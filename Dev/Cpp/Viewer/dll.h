@@ -9,6 +9,9 @@
 #include "EffekseerTool/EffekseerTool.Renderer.h"
 #include "EffekseerTool/EffekseerTool.Sound.h"
 #include <Effekseer.h>
+#include <IO/IO.h>
+#include <unordered_map>
+#include <unordered_set>
 
 #include "../IPC/IPC.h"
 #include "GUI/efk.ImageResource.h"
@@ -207,11 +210,10 @@ private:
 	private:
 		EffekseerRenderer::Renderer* renderer_ = nullptr;
 		Effekseer::MaterialLoader* loader_ = nullptr;
-		std::shared_ptr<IPC::KeyValueFileStorage> storage_;
-		std::set<std::u16string> storageRefs_;
+		std::unordered_map<std::u16string, std::shared_ptr<Effekseer::StaticFile>> materialFiles_;
 
 	public:
-		MaterialLoader(EffekseerRenderer::Renderer* renderer, std::shared_ptr<IPC::KeyValueFileStorage> storage);
+		MaterialLoader(EffekseerRenderer::Renderer* renderer);
 		virtual ~MaterialLoader();
 
 	public:

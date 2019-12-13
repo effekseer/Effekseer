@@ -9,7 +9,7 @@
 #include "Effekseer.Instance.h"
 #include "Effekseer.InstanceContainer.h"
 #include "Effekseer.InstanceGlobal.h"
-#include "Effekseer.CustomAllocator.h"
+#include "Utils/Effekseer.CustomAllocator.h"
 #include <assert.h>
 
 //----------------------------------------------------------------------------------

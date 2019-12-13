@@ -54,7 +54,7 @@ public:
 class FCurveVector2D
 {
 public:
-	FCurveTimelineType Timeline = FCurveTimelineType::Percent;
+	FCurveTimelineType Timeline = FCurveTimelineType::Time;
 	FCurve X = FCurve(0);
 	FCurve Y = FCurve(0);
 
@@ -67,7 +67,7 @@ public:
 class FCurveVector3D
 {
 public:
-	FCurveTimelineType Timeline = FCurveTimelineType::Percent;
+	FCurveTimelineType Timeline = FCurveTimelineType::Time;
 	FCurve X = FCurve(0);
 	FCurve Y = FCurve(0);
 	FCurve Z = FCurve(0);
@@ -81,7 +81,7 @@ public:
 class FCurveVectorColor
 {
 public:
-	FCurveTimelineType Timeline = FCurveTimelineType::Percent;
+	FCurveTimelineType Timeline = FCurveTimelineType::Time;
 	FCurve R = FCurve(255);
 	FCurve G = FCurve(255);
 	FCurve B = FCurve(255);

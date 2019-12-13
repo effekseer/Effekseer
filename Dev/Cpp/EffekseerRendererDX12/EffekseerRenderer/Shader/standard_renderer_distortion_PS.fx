@@ -5,8 +5,11 @@ SamplerState	g_sampler		: register( s8 );
 Texture2D	g_backTexture		: register( t9 );
 SamplerState	g_backSampler		: register( s9 );
 
+cbuffer PSConstantBuffer : register(b1)
+{
 float4		g_scale			: register(c0);
 float4 mUVInversedBack		: register(c1);
+};
 
 struct PS_Input
 {

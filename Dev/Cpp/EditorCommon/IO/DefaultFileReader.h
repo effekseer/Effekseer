@@ -6,19 +6,21 @@
 namespace Effekseer
 {
 
-class DefaultFileReader : public FileReader
+class DefaultStaticFileReader : public StaticFileReader
 {
 private:
+	std::u16string path_;
 	std::ifstream stream_;
+	std::vector<uint8_t> buffer_;
 
 public:
-	DefaultFileReader(const std::u16string& path);
-	virtual ~DefaultFileReader();
+	DefaultStaticFileReader(const std::u16string& path);
+	virtual ~DefaultStaticFileReader();
 
 	int64_t GetSize() override;
 	void GetData(std::vector<uint8_t>& buffer) override;
 
-	FileType GetFileType() override { return FileType::Default; }
+	StaticFileType GetFileType() override { return StaticFileType::Default; }
 };
 
 } // namespace Effekseer

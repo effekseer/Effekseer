@@ -19,7 +19,7 @@ namespace Effekseer.GUI.Dock
 
 			paramerterList = new Component.ParameterList();
 			paramerterList.SetType(typeof(Data.SoundValues));
-			candp = new Component.CopyAndPaste("Sound", GetTargetObject);
+			candp = new Component.CopyAndPaste("Sound", GetTargetObject, Read);
 
 			Core.OnAfterLoad += OnAfterLoad;
 			Core.OnAfterNew += OnAfterLoad;

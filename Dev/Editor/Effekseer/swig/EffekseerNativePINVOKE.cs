@@ -1793,6 +1793,75 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindow_Terminate___")]
   public static extern void MainWindow_Terminate();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_StaticFile___")]
+  public static extern global::System.IntPtr new_StaticFile();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_StaticFile_GetData___")]
+  public static extern System.IntPtr StaticFile_GetData(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_StaticFile_GetSize___")]
+  public static extern int StaticFile_GetSize(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_StaticFile_GetPath___")]
+  public static extern string StaticFile_GetPath(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_StaticFile_GetFileType___")]
+  public static extern int StaticFile_GetFileType(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_StaticFile___")]
+  public static extern void delete_StaticFile(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IOCallback_OnFileChanged___")]
+  public static extern void IOCallback_OnFileChanged(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IOCallback_OnFileChangedSwigExplicitIOCallback___")]
+  public static extern void IOCallback_OnFileChangedSwigExplicitIOCallback(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_IOCallback___")]
+  public static extern global::System.IntPtr new_IOCallback();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_IOCallback___")]
+  public static extern void delete_IOCallback(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IOCallback_director_connect___")]
+  public static extern void IOCallback_director_connect(global::System.Runtime.InteropServices.HandleRef jarg1, IOCallback.SwigDelegateIOCallback_0 delegate0);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_IO__SWIG_0___")]
+  public static extern global::System.IntPtr new_IO__SWIG_0(int jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_IO__SWIG_1___")]
+  public static extern global::System.IntPtr new_IO__SWIG_1();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_delete_IO___")]
+  public static extern void delete_IO(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IO_GetInstance___")]
+  public static extern global::System.IntPtr IO_GetInstance();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IO_Initialize__SWIG_0___")]
+  public static extern void IO_Initialize__SWIG_0(int jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IO_Initialize__SWIG_1___")]
+  public static extern void IO_Initialize__SWIG_1();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IO_Terminate___")]
+  public static extern void IO_Terminate();
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IO_LoadFile___")]
+  public static extern global::System.IntPtr IO_LoadFile(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IO_LoadIPCFile___")]
+  public static extern global::System.IntPtr IO_LoadIPCFile(global::System.Runtime.InteropServices.HandleRef jarg1, [global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IO_GetIsExistLatestFile___")]
+  public static extern bool IO_GetIsExistLatestFile(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IO_Update___")]
+  public static extern void IO_Update(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_IO_AddCallback___")]
+  public static extern void IO_AddCallback(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
 }
 
 }

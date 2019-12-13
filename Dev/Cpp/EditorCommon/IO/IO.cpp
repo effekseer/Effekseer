@@ -6,23 +6,42 @@
 
 namespace Effekseer
 {
+
+std::shared_ptr<IO> IO::instance_;
+
+std::shared_ptr<IO> IO::GetInstance() { return instance_; }
+
+void IO::Initialize(int checkFileInterval) { instance_ = std::make_shared<IO>(checkFileInterval); }
+
+void IO::Terminate() { instance_ = nullptr; }
+
 IO::IO(int checkFileInterval)
 {
+#if _WIN32
 	ipcStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
 	ipcStorage_->Start("EffekseerStorage");
+#endif
+	this->checkFileInterval_ = checkFileInterval;
 
 	if (checkFileInterval > 0)
 	{
-		checkFileThread = std::thread([&] { CheckFile(checkFileInterval); });
+		checkFileThread = std::thread([this] { CheckFile(checkFileInterval_); });
+		isThreadRunning_ = true;
 	}
 }
 
 IO::~IO()
 {
+#if _WIN32
 	ipcStorage_->Stop();
-	if (checkFileThread.joinable())
-		isFinishCheckFile_ = true;
-	checkFileThread.join();
+#endif
+
+	if (isThreadRunning_)
+	{
+		if (checkFileThread.joinable())
+			isFinishCheckFile_ = true;
+		checkFileThread.join();
+	}
 }
 
 std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
@@ -30,14 +49,14 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 	if (!FileSystem::GetIsFile(path))
 		return nullptr;
 
-	std::shared_ptr<FileReader> reader = std::make_shared<DefaultFileReader>(path);
+	std::lock_guard<std::mutex> lock(mtx_);
+
+	std::shared_ptr<StaticFileReader> reader = std::make_shared<DefaultStaticFileReader>(path);
 	auto file = std::make_shared<StaticFile>(reader);
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
 	{
-		std::lock_guard<std::mutex> lock(mtx_);
 		changedFileInfos_.erase(info);
-		notifiedFileInfos_.erase(info);
 	}
 
 	auto time = FileSystem::GetLastWriteTime(path);
@@ -48,17 +67,26 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 
 std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 {
+#ifndef _WIN32
+	return nullptr;
+#endif
+
 	if (!FileSystem::GetIsFile(path))
 		return nullptr;
 
-	std::shared_ptr<FileReader> reader = std::make_shared<IPCFileReader>(path, GetIPCStorage());
+	std::lock_guard<std::mutex> lock(mtx_);
+
+	std::shared_ptr<StaticFileReader> reader = std::make_shared<IPCFileReader>(path, GetIPCStorage());
 	auto file = std::make_shared<StaticFile>(reader);
+
+	if (file->GetSize() == 0)
+	{
+		return nullptr;
+	}
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
 	{
-		std::lock_guard<std::mutex> lock(mtx_);
 		changedFileInfos_.erase(info);
-		notifiedFileInfos_.erase(info);
 	}
 
 	auto time = std::dynamic_pointer_cast<IPCFileReader>(reader)->GetUpdateTime();
@@ -69,6 +97,7 @@ std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 
 bool IO::GetIsExistLatestFile(std::shared_ptr<StaticFile> staticFile)
 {
+	std::lock_guard<std::mutex> lock(mtx_);
 	auto info = FileInfo(staticFile->GetFileType(), staticFile->GetPath());
 	auto time = GetFileLastWriteTime(info);
 	return time > fileUpdateDates_[info];
@@ -76,28 +105,36 @@ bool IO::GetIsExistLatestFile(std::shared_ptr<StaticFile> staticFile)
 
 void IO::Update()
 {
-	std::lock_guard<std::mutex> lock(mtx_);
-	for (auto& i : changedFileInfos_)
+	std::set<FileInfo> temp;
 	{
-		OnFileChanged(i.fileType_, i.path_);
-		notifiedFileInfos_.insert(i);
+		std::lock_guard<std::mutex> lock(mtx_);
+		temp = changedFileInfos_;
+		changedFileInfos_.clear();
 	}
 
-	changedFileInfos_.clear();
+	for (auto& i : temp)
+	{
+		for (auto callback : callbacks_)
+		{
+			callback->OnFileChanged(i.fileType_, i.path_.c_str());
+		}
+	}
 }
 
-int IO::GetFileLastWriteTime(const FileInfo& fileInfo)
+uint64_t IO::GetFileLastWriteTime(const FileInfo& fileInfo)
 {
-	int time = 0;
+	uint64_t time = 0;
 	switch (fileInfo.fileType_)
 	{
-	case FileType::Default:
+	case StaticFileType::Default:
 		time = FileSystem::GetLastWriteTime(fileInfo.path_);
 		break;
-	case FileType::IPC:
+	case StaticFileType::IPC:
 		char data;
+		ipcStorage_->Lock();
 		if (ipcStorage_->GetFile(utf16_to_utf8(fileInfo.path_).c_str(), &data, 1, time) == 0)
-			return 0;
+			time = 0;
+		ipcStorage_->Unlock();
 		break;
 	}
 	return time;
@@ -107,18 +144,42 @@ void IO::CheckFile(int interval)
 {
 	while (!isFinishCheckFile_)
 	{
-		for (auto& i : fileUpdateDates_)
 		{
-			auto time = GetFileLastWriteTime(i.first);
-			if (time > fileUpdateDates_[i.first] && changedFileInfos_.count(i.first) > 0 && notifiedFileInfos_.count(i.first) > 0)
+			std::lock_guard<std::mutex> lock(mtx_);
+
+			for (auto& i : fileUpdateDates_)
 			{
-				std::lock_guard<std::mutex> lock(mtx_);
-				changedFileInfos_.insert(i.first);
+				auto time = GetFileLastWriteTime(i.first);
+				if (time > fileUpdateDates_[i.first] && changedFileInfos_.count(i.first) == 0)
+				{
+					changedFileInfos_.insert(i.first);
+					i.second = time;
+				}
+
+				// special case for a material
+				// if IPC exists, it should be reload. so call callback forcely.
+				if (i.first.fileType_ == StaticFileType::Default && ipcStorage_ != nullptr)
+				{
+					auto temp = i.first;
+					temp.fileType_ = StaticFileType::IPC;
+					if (fileUpdateDates_.count(temp) == 0)
+					{
+						ipcStorage_->Lock();
+						char data = 0;
+						if (ipcStorage_->GetFile(utf16_to_utf8(temp.path_).c_str(), &data, 1, time) > 0)
+						{
+							changedFileInfos_.insert(i.first);
+						}
+						ipcStorage_->Unlock();
+					}
+				}
 			}
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(interval));
 	}
 }
+
+void IO::AddCallback(std::shared_ptr<IOCallback> callback) { callbacks_.push_back(callback); }
 
 } // namespace Effekseer

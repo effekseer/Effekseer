@@ -245,8 +245,8 @@ static void CalcTangentSpace(const Vertex& v1, const Vertex& v2, const Vertex& v
 	cp2[1] = Vector3(v3.Pos.Y, v3.UV1.X, v3.UV1.Y);
 	cp2[2] = Vector3(v3.Pos.Z, v3.UV1.X, v3.UV1.Y);
 
-	double u[3];
-	double v[3];
+	float u[3];
+	float v[3];
 
 	for (int32_t i = 0; i < 3; i++)
 	{

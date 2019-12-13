@@ -141,6 +141,7 @@
     <Compile Include="GUI\Menu\Menu.cs" />
     <Compile Include="GUI\Menu\MenuItem.cs" />
     <Compile Include="GUI\Network.cs" />
+    <Compile Include="GUI\ThumbnailManager.cs" />
     <Compile Include="GUI\Viewer.cs" />
     <Compile Include="Plugin\ExportDefault.cs" />
     <Compile Include="Plugin\Exportglb.cs" />
@@ -171,6 +172,8 @@
     <Compile Include="swig\ImGuiColFlags.cs" />
     <Compile Include="swig\ImGuiStyleVarFlags.cs" />
     <Compile Include="swig\InputTextFlags.cs" />
+    <Compile Include="swig\IO.cs" />
+    <Compile Include="swig\IOCallback.cs" />
     <Compile Include="swig\MainWindow.cs" />
     <Compile Include="swig\MainWindowState.cs" />
     <Compile Include="swig\MouseCursor.cs" />
@@ -179,6 +182,8 @@
     <Compile Include="swig\RecordingParameter.cs" />
     <Compile Include="swig\RenderMode.cs" />
     <Compile Include="swig\SelectableFlags.cs" />
+    <Compile Include="swig\StaticFile.cs" />
+    <Compile Include="swig\StaticFileType.cs" />
     <Compile Include="swig\SystemLanguage.cs" />
     <Compile Include="swig\TransparenceType.cs" />
     <Compile Include="swig\TreeNodeFlags.cs" />

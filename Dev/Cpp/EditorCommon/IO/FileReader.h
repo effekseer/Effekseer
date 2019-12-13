@@ -5,28 +5,32 @@
 
 namespace Effekseer
 {
-enum class FileType
+enum class StaticFileType
 {
 	Default,
 	IPC,
 };
 
-class FileReader
+#ifndef SWIG
+
+class StaticFileReader
 {
 protected:
 	std::u16string path_;
-	int64_t length_;
+	int64_t length_ = -1;
 
 public:
-	FileReader(const std::u16string& path) : path_(path) {}
-	virtual ~FileReader();
+	StaticFileReader(const std::u16string& path) : path_(path) {}
+	virtual ~StaticFileReader() = default;
 
 	const std::u16string& GetPath() { return path_; }
 
 	virtual int64_t GetSize() = 0;
 	virtual void GetData(std::vector<uint8_t>& buffer) = 0;
 
-	virtual FileType GetFileType() = 0;
+	virtual StaticFileType GetFileType() = 0;
 };
+
+#endif
 
 } // namespace Effekseer

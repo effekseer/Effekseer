@@ -161,6 +161,12 @@ public:
 class Material : public std::enable_shared_from_this<Material>
 {
 private:
+	enum class SaveLoadAimType
+	{
+		IO,
+		CopyOrPaste,
+	};
+
 	std::string path_;
 
 	std::vector<std::shared_ptr<Node>> nodes;
@@ -178,10 +184,10 @@ private:
 	std::string SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes,
 								  std::vector<std::shared_ptr<Link>> links,
 								  const char* basePath,
-								  bool doMoveZero,
-								  bool doExportGlobal);
+								  SaveLoadAimType aim);
 
-	void LoadFromStrInternal(const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, bool hasGlobal);
+	void
+	LoadFromStrInternal(const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, SaveLoadAimType aim);
 
 public:
 	Material();
@@ -200,7 +206,7 @@ public:
 
 	ValueType GetDesiredPinType(std::shared_ptr<Pin> pin, std::unordered_set<std::shared_ptr<Pin>>& visited);
 
-	std::shared_ptr<Node> CreateNode(std::shared_ptr<NodeParameter> parameter, bool isDirectly = false);
+	std::shared_ptr<Node> CreateNode(std::shared_ptr<NodeParameter> parameter, bool isDirectly, uint64_t guid = 0);
 
 	void RemoveNode(std::shared_ptr<Node> node);
 

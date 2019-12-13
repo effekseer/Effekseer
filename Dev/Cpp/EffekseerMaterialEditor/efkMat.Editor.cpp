@@ -10,10 +10,7 @@
 #include <iostream>
 #include <ostream>
 
-#include <Platform/efkMat.GLSL.h>
-#include <Platform/efkMat.Generic.h>
-#include <Platform/efkMat.HLSL.h>
-
+#include <efkMat.TextExporter.h>
 #include <efkMat.StringContainer.h>
 
 #include <filesystem>
@@ -39,7 +36,7 @@ void Compile(std::shared_ptr<Graphics> graphics,
 			 std::string& vs,
 			 std::string& ps)
 {
-	EffekseerMaterial::TextExporterGeneric exporter;
+	EffekseerMaterial::TextExporter exporter;
 	auto result = (&exporter)->Export(material, node);
 
 	auto efkMaterial = Effekseer::Material();
@@ -110,7 +107,7 @@ void ExtractUniforms(std::shared_ptr<Graphics> graphics,
 	outputTextures.clear();
 	outputUniforms.clear();
 
-	EffekseerMaterial::TextExporterGeneric exporter;
+	EffekseerMaterial::TextExporter exporter;
 	auto result = (&exporter)->Export(material, node);
 
 	// auto vs = EffekseerMaterial::TextExporterGLSL::GetVertexShaderCode();
@@ -192,23 +189,47 @@ void EditorContent::SaveAs(const char* path)
 	std::vector<uint8_t> data;
 	material_->Save(data, path);
 
+	char16_t path16[260];
+	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)path);
+
+#ifdef _WIN32
+	if (fs::path((const wchar_t*)path16).extension().generic_string() == ".efkmat")
+#else
 	if (fs::path(path).extension().generic_string() == ".efkmat")
+	#endif
 	{
-		std::ofstream fout;
-		fout.open(std::string(path), std::ios::out | std::ios::binary | std::ios::trunc);
+		FILE* fp = nullptr;
+#ifdef _WIN32
+		_wfopen_s(&fp, (const wchar_t*)path16, L"wb");
+#else
+		fp = fopen(path, "wb");
+#endif
+		if (fp == nullptr)
+		{
+			return;
+		}
 
-		fout.write((char*)data.data(), data.size());
-
-		fout.close();
+		fwrite(data.data(), 1, data.size(), fp);
+		fclose(fp);
 	}
 	else
 	{
-		std::ofstream fout;
-		fout.open(std::string(path) + ".efkmat", std::ios::out | std::ios::binary | std::ios::trunc);
+		char16_t path16[260];
+		Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)(std::string(path) + ".efkmat").c_str());
 
-		fout.write((char*)data.data(), data.size());
+		FILE* fp = nullptr;
+#ifdef _WIN32
+		_wfopen_s(&fp, (const wchar_t*)path16, L"wb");
+#else
+		fp = fopen(path, "wb");
+#endif
+		if (fp == nullptr)
+		{
+			return;
+		}
 
-		fout.close();
+		fwrite(data.data(), 1, data.size(), fp);
+		fclose(fp);
 	}
 
 	UpdatePath(path);
@@ -218,20 +239,31 @@ void EditorContent::SaveAs(const char* path)
 
 bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 {
-	std::ifstream ifs(path, std::ios::in | std::ios::binary);
-	if (ifs.fail())
+
+	char16_t path16[260];
+	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)path);
+
+	FILE* fp = nullptr;
+#ifdef _WIN32
+	_wfopen_s(&fp, (const wchar_t*)path16, L"rb");
+#else
+	fp = fopen(path, "rb");
+#endif
+	if (fp == nullptr)
 	{
 		return false;
 	}
 
 	std::vector<uint8_t> data;
 
-	while (!ifs.eof())
-	{
-		uint8_t d = 0;
-		ifs.read((char*)&d, 1);
-		data.push_back(d);
-	}
+	fseek(fp, 0, SEEK_END);
+	auto datasize = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+
+	data.resize(datasize);
+
+	fread(data.data(), 1, data.size(), fp);
+	fclose(fp);
 
 	material_->Load(data, library, path);
 
@@ -250,7 +282,10 @@ void EditorContent::UpdateBinary()
 		std::vector<uint8_t> data;
 		if (material_->Save(data, path_.c_str()))
 		{
-			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size(), 0);
+#ifdef _DEBUG
+			std::cout << "UpdateFile : " << path_ << std::endl;
+#endif
+			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());
 		}
 
 		editor_->keyValueFileStorage_->Unlock();
@@ -259,7 +294,9 @@ void EditorContent::UpdateBinary()
 
 void EditorContent::UpdatePath(const char* path)
 {
-	if (path_ == path)
+	// TODO refactor replace
+	auto p = Replace(path, "\\", "/");
+	if (path_ == p)
 		return;
 
 	if (hasStorageRef_ && path_ != "" && editor_->keyValueFileStorage_ != nullptr)
@@ -270,7 +307,7 @@ void EditorContent::UpdatePath(const char* path)
 		hasStorageRef_ = false;
 	}
 
-	path_ = path;
+	path_ = p;
 	material_->SetPath(path_);
 
 	if (path_ != "" && editor_->keyValueFileStorage_ != nullptr)
@@ -281,7 +318,11 @@ void EditorContent::UpdatePath(const char* path)
 		std::vector<uint8_t> data;
 		if (material_->Save(data, path_.c_str()))
 		{
-			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size(), 0);
+#ifdef _DEBUG
+			std::cout << "UpdateFile : " << path_ << std::endl;
+#endif
+
+			editor_->keyValueFileStorage_->UpdateFile(path_.c_str(), data.data(), data.size());
 		}
 
 		editor_->keyValueFileStorage_->Unlock();
@@ -777,7 +818,7 @@ void Editor::UpdatePopup()
 	{
 		auto create_node = [&, this](std::shared_ptr<LibraryContentBase> content) -> void {
 			auto nodeParam = content->Create();
-			auto node = material->CreateNode(nodeParam);
+			auto node = material->CreateNode(nodeParam, false);
 			ed::SetNodePosition(node->GUID, popupPosition);
 			node->Pos.X = popupPosition.x;
 			node->Pos.Y = popupPosition.y;

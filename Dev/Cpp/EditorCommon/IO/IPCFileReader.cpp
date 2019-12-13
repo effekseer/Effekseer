@@ -6,18 +6,36 @@ namespace Effekseer
 
 const int MAX_STORAGE = 104857600;
 
-IPCFileReader::IPCFileReader(const std::u16string& path, std::shared_ptr<IPC::KeyValueFileStorage> storage) : FileReader(path)
+IPCFileReader::IPCFileReader(const std::u16string& path, std::shared_ptr<IPC::KeyValueFileStorage> storage) : StaticFileReader(path)
 {
+	path_ = utf16_to_utf8(path);
+
 	storage->Lock();
 
 	buffer_.resize(MAX_STORAGE);
-	length_ = storage->GetFile(utf16_to_utf8(path).c_str(), buffer_.data(), MAX_STORAGE, time_);
+	length_ = storage->GetFile(path_.c_str(), buffer_.data(), MAX_STORAGE, time_);
 	buffer_.resize(length_);
 
+	if (length_ > 0)
+	{
+		hasRef_ = true;
+		storage->AddRef(path_.c_str());
+	}
+
 	storage->Unlock();
+
+	storage_ = storage;
 }
 
-IPCFileReader::~IPCFileReader() {}
+IPCFileReader::~IPCFileReader()
+{
+	if (hasRef_)
+	{
+		storage_->Lock();
+		storage_->ReleaseRef(path_.c_str());
+		storage_->Unlock();
+	}
+}
 
 int64_t IPCFileReader::GetSize() { return length_; }
 

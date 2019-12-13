@@ -10,7 +10,7 @@ namespace Effekseer
 {
 	public class Core
 	{
-		public const string Version = "1.50β2";
+		public const string Version = "1.50β3";
 
 		public const string OptionFilePath = "config.option.xml";
 
@@ -1594,6 +1594,37 @@ namespace Effekseer
 
 
 			return getParameterTreeNodes(Root);
+		}
+
+		/// <summary>
+		/// Update resource paths in all nodes
+		/// </summary>
+		/// <param name="path"></param>
+		public static void UpdateResourcePaths(string path)
+		{
+			Action<Data.NodeBase> convert = null;
+			convert = (node) =>
+			{
+				var n = node as Data.Node;
+
+				if(n != null)
+				{
+					if (n.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File && n.RendererCommonValues.MaterialFile.Path.GetAbsolutePath().Replace('\\', '/') == path)
+					{
+						Utl.MaterialInformation info = new Utl.MaterialInformation();
+						info.Load(path);
+
+						n.RendererCommonValues.MaterialFile.ApplyMaterial(info);
+					}
+				}
+
+				for (int i = 0; i < node.Children.Count; i++)
+				{
+					convert(node.Children[i]);
+				}
+			};
+
+			convert(Root as Data.NodeBase);
 		}
 	}
 }

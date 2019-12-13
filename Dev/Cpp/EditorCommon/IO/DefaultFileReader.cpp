@@ -4,7 +4,8 @@
 
 namespace Effekseer
 {
-DefaultFileReader::DefaultFileReader(const std::u16string& path) : FileReader(path)
+
+DefaultStaticFileReader::DefaultStaticFileReader(const std::u16string& path) : StaticFileReader(path), path_(path)
 {
 #ifdef _WIN32
 	stream_.open((wchar_t*)path.c_str(), std::basic_ios<char>::in | std::basic_ios<char>::binary);
@@ -12,12 +13,7 @@ DefaultFileReader::DefaultFileReader(const std::u16string& path) : FileReader(pa
 	stream_.open(utf16_to_utf8(path).c_str(), std::basic_ios<char>::in | std::basic_ios<char>::binary);
 #endif
 	assert(!stream_.fail());
-}
 
-DefaultFileReader::~DefaultFileReader() { stream_.close(); }
-
-int64_t DefaultFileReader::GetSize()
-{
 	if (length_ < 0)
 	{
 		assert(!stream_.fail());
@@ -26,13 +22,17 @@ int64_t DefaultFileReader::GetSize()
 		stream_.clear();
 		stream_.seekg(0, std::ios_base::beg);
 	}
-	return length_;
+
+	buffer_.resize(GetSize());
+	stream_.read(reinterpret_cast<char*>(&buffer_[0]), GetSize());
+
+	stream_.close();
 }
 
-void DefaultFileReader::GetData(std::vector<uint8_t>& buffer)
-{
-	buffer.resize(GetSize());
-	stream_.read(reinterpret_cast<char*>(&buffer[0]), GetSize());
-}
+DefaultStaticFileReader::~DefaultStaticFileReader() {}
+
+int64_t DefaultStaticFileReader::GetSize() { return length_; }
+
+void DefaultStaticFileReader::GetData(std::vector<uint8_t>& buffer) { buffer = buffer_; }
 
 } // namespace Effekseer

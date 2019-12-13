@@ -26,7 +26,7 @@ bool FileSystem::GetIsDirectory(const std::u16string& path) {
     return (st.st_mode & S_IFMT) == S_IFDIR;
 }
 
-int32_t FileSystem::GetLastWriteTime(const std::u16string& path) {
+uint64_t FileSystem::GetLastWriteTime(const std::u16string& path) {
     struct stat st;
 
     if (stat(utf16_to_utf8(path).c_str(), &st) != 0) {

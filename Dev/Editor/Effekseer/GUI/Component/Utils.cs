@@ -27,11 +27,13 @@ namespace Effekseer.GUI.Component
 	{
 		string elementName = string.Empty;
 		Func<object> getter;
-		
-		public CopyAndPaste(string elementName, Func<object> getter)
+		Action valueChanged;
+
+		public CopyAndPaste(string elementName, Func<object> getter, Action valueChanged)
 		{
 			this.elementName = elementName;
 			this.getter = getter;
+			this.valueChanged = valueChanged;
 		}
 
 		public void Update()
@@ -70,6 +72,7 @@ namespace Effekseer.GUI.Component
 					if (o != null)
 					{
 						Core.Paste(elementName, o, str);
+						valueChanged?.Invoke();
 					}
 				}
 			}
