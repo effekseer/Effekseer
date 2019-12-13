@@ -228,13 +228,11 @@ namespace Effekseer.GUI.Dock
 				// efkproj is opened internal function
 				Commands.Open(fileItem.FilePath);
 			}
-
-			if (Path.GetExtension(fileItem.FilePath) == ".efkefc")
+			else if (Path.GetExtension(fileItem.FilePath) == ".efkefc")
 			{
 				// efkproj is opened internal function
 				Commands.Open(fileItem.FilePath);
 			}
-
 			else if (Directory.Exists(fileItem.FilePath))
 			{
 				// move directory
@@ -242,8 +240,14 @@ namespace Effekseer.GUI.Dock
 			}
 			else
 			{
-				// open process
-				System.Diagnostics.Process.Start(fileItem.FilePath);
+				try
+				{
+					// open process
+					System.Diagnostics.Process.Start(fileItem.FilePath);
+				}
+				catch (Exception e)
+				{
+				}
 			}
 		}
 	}
