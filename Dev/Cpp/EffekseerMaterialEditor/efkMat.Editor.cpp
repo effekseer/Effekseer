@@ -10,9 +10,7 @@
 #include <iostream>
 #include <ostream>
 
-#include <Platform/efkMat.GLSL.h>
 #include <Platform/efkMat.Generic.h>
-#include <Platform/efkMat.HLSL.h>
 
 #include <efkMat.StringContainer.h>
 

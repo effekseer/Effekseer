@@ -22,8 +22,6 @@
 #include <efkMat.TextExporter.h>
 
 #include "efkMat.Editor.h"
-#include <Platform/efkMat.GLSL.h>
-#include <Platform/efkMat.HLSL.h>
 
 #include <GUI/JapaneseFont.h>
 #include <efkMat.CommandManager.h>
