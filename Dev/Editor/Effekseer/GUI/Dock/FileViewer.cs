@@ -37,6 +37,15 @@ namespace Effekseer.GUI.Dock
 
 			// Address bar
 			{
+				// Back directory (BS shortcut key)
+				if (Manager.NativeManager.IsWindowFocused() &&
+					Manager.NativeManager.IsKeyPressed(Manager.NativeManager.GetKeyIndex(swig.Key.Backspace)) &&
+					!String.IsNullOrEmpty(currentPath))
+				{
+					UpdateFileListWithProjectPath(currentPath);
+				}
+
+				// Back directory
 				if (Manager.NativeManager.Button("↑") &&
 					!String.IsNullOrEmpty(currentPath))
 				{
@@ -78,7 +87,10 @@ namespace Effekseer.GUI.Dock
 				{
 				}
 
-				Manager.NativeManager.Image(image, 32, 32);
+				{
+					float iconSize = Manager.NativeManager.GetTextLineHeight();
+					Manager.NativeManager.Image(image, iconSize, iconSize);
+				}
 
 				Manager.NativeManager.SameLine();
 
@@ -87,9 +99,10 @@ namespace Effekseer.GUI.Dock
 				{
 					selectedIndex = i;
 
-					if(Manager.NativeManager.IsMouseDoubleClicked(0))
+					if (Manager.NativeManager.IsMouseDoubleClicked(0) ||
+						Manager.NativeManager.IsKeyDown(Manager.NativeManager.GetKeyIndex(swig.Key.Enter)))
 					{
-						DoubleClick();
+						OnFilePicked();
 					}
 				}
 				
@@ -158,12 +171,10 @@ namespace Effekseer.GUI.Dock
 				{
 					Type = FileType.EffekseerProject;
 				}
-
 				else if (System.IO.Path.GetExtension(filePath).ToLower() == ".efkefc")
 				{
 					Type = FileType.EffekseerProject;
 				}
-
 				else if (System.IO.Path.GetExtension(filePath).ToLower() == ".png")
 				{
 					Type = FileType.Image;
@@ -213,7 +224,7 @@ namespace Effekseer.GUI.Dock
 			}
 		}
 
-		void DoubleClick()
+		private void OnFilePicked()
 		{
 			if (items.Count == 0)
 			{

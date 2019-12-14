@@ -280,6 +280,31 @@ namespace efk
         Error
     };
 
+	enum class Key {
+		Tab,
+		LeftArrow,
+		RightArrow,
+		UpArrow,
+		DownArrow,
+		PageUp,
+		PageDown,
+		Home,
+		End,
+		Insert,
+		Delete,
+		Backspace,
+		Space,
+		Enter,
+		NumEnter,
+		Escape,
+		A,         // for text edit CTRL+A: select all
+		C,         // for text edit CTRL+C: copy
+		V,         // for text edit CTRL+V: paste
+		X,         // for text edit CTRL+X: cut
+		Y,         // for text edit CTRL+Y: redo
+		Z,         // for text edit CTRL+Z: undo
+	};
+
 	class GUIManagerCallback
 	{
 		std::u16string	path;
@@ -522,7 +547,10 @@ namespace efk
 		void EndChildFrame();
 
 		// Inputs
+		int GetKeyIndex(Key key);
 		bool IsKeyDown(int user_key_index);
+		bool IsKeyPressed(int user_key_index);
+		bool IsKeyReleased(int user_key_index);
 		bool IsMouseDown(int button);
 		bool IsMouseDoubleClicked(int button);
 
@@ -532,7 +560,9 @@ namespace efk
 		bool IsItemClicked(int mouse_button);
 		bool IsAnyItemActive();
 		bool IsWindowHovered();
+		bool IsWindowFocused();
 		bool IsAnyWindowHovered();
+		bool IsAnyWindowFocused();
 		MouseCursor GetMouseCursor();
 
 		// Context

@@ -7231,6 +7231,20 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_EndChildFrame___(vo
 }
 
 
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_GetKeyIndex___(void * jarg1, int jarg2) {
+  int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  efk::Key arg2 ;
+  int result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (efk::Key)jarg2; 
+  result = (int)(arg1)->GetKeyIndex(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsKeyDown___(void * jarg1, int jarg2) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -7240,6 +7254,34 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsKeyDown__
   arg1 = (efk::GUIManager *)jarg1; 
   arg2 = (int)jarg2; 
   result = (bool)(arg1)->IsKeyDown(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsKeyPressed___(void * jarg1, int jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  result = (bool)(arg1)->IsKeyPressed(arg2);
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsKeyReleased___(void * jarg1, int jarg2) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  int arg2 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (int)jarg2; 
+  result = (bool)(arg1)->IsKeyReleased(arg2);
   jresult = result; 
   return jresult;
 }
@@ -7347,6 +7389,18 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsWindowHov
 }
 
 
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsWindowFocused___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->IsWindowFocused();
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsAnyWindowHovered___(void * jarg1) {
   unsigned int jresult ;
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
@@ -7354,6 +7408,18 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsAnyWindow
   
   arg1 = (efk::GUIManager *)jarg1; 
   result = (bool)(arg1)->IsAnyWindowHovered();
+  jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_IsAnyWindowFocused___(void * jarg1) {
+  unsigned int jresult ;
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  bool result;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  result = (bool)(arg1)->IsAnyWindowFocused();
   jresult = result; 
   return jresult;
 }

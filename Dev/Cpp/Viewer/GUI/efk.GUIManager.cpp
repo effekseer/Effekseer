@@ -822,10 +822,11 @@ namespace efk
 	void GUIManager::InitializeGUI(Native* native)
 	{
 		ImGui::CreateContext();
+
+		ImGuiIO& io = ImGui::GetIO();
 		
 		if (deviceType == DeviceType::OpenGL)
 		{
-			ImGuiIO& io = ImGui::GetIO();
 			// It causes bugs on some mac pc
 			//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
@@ -842,7 +843,6 @@ namespace efk
 #ifdef _WIN32
 		else if (deviceType == DeviceType::DirectX11)
 		{
-			ImGuiIO& io = ImGui::GetIO();
 			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 			ImGui_ImplGlfw_InitForVulkan(window->GetGLFWWindows(), true);
@@ -856,6 +856,8 @@ namespace efk
 			ImGui_ImplDX9_Init(r->GetDevice());
 		}
 #endif
+		// Enable keyboard navication
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
 		ImGui::StyleColorsDark();
 		ResetGUIStyle();
@@ -1783,9 +1785,24 @@ namespace efk
 		ImGui::EndChildFrame();
 	}
 
+	int GUIManager::GetKeyIndex(Key key)
+	{
+		return ImGui::GetKeyIndex((ImGuiKey)key);
+	}
+
 	bool GUIManager::IsKeyDown(int user_key_index)
 	{
 		return ImGui::IsKeyDown(user_key_index);
+	}
+
+	bool GUIManager::IsKeyPressed(int user_key_index)
+	{
+		return ImGui::IsKeyPressed(user_key_index);
+	}
+
+	bool GUIManager::IsKeyReleased(int user_key_index)
+	{
+		return ImGui::IsKeyReleased(user_key_index);
 	}
 
 	bool GUIManager::IsMouseDown(int button)
@@ -1828,9 +1845,19 @@ namespace efk
 		return ImGui::IsWindowHovered();
 	}
 
+	bool GUIManager::IsWindowFocused()
+	{
+		return ImGui::IsWindowFocused();
+	}
+
 	bool GUIManager::IsAnyWindowHovered()
 	{
 		return ImGui::IsAnyWindowHovered();
+	}
+
+	bool GUIManager::IsAnyWindowFocused()
+	{
+		return ImGui::IsAnyWindowFocused();
 	}
 
 	MouseCursor GUIManager::GetMouseCursor()

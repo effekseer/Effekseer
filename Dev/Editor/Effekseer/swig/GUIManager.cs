@@ -1140,8 +1140,23 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_EndChildFrame(swigCPtr);
   }
 
+  public int GetKeyIndex(Key key) {
+    int ret = EffekseerNativePINVOKE.GUIManager_GetKeyIndex(swigCPtr, (int)key);
+    return ret;
+  }
+
   public bool IsKeyDown(int user_key_index) {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsKeyDown(swigCPtr, user_key_index);
+    return ret;
+  }
+
+  public bool IsKeyPressed(int user_key_index) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsKeyPressed(swigCPtr, user_key_index);
+    return ret;
+  }
+
+  public bool IsKeyReleased(int user_key_index) {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsKeyReleased(swigCPtr, user_key_index);
     return ret;
   }
 
@@ -1185,8 +1200,18 @@ public class GUIManager : global::System.IDisposable {
     return ret;
   }
 
+  public bool IsWindowFocused() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsWindowFocused(swigCPtr);
+    return ret;
+  }
+
   public bool IsAnyWindowHovered() {
     bool ret = EffekseerNativePINVOKE.GUIManager_IsAnyWindowHovered(swigCPtr);
+    return ret;
+  }
+
+  public bool IsAnyWindowFocused() {
+    bool ret = EffekseerNativePINVOKE.GUIManager_IsAnyWindowFocused(swigCPtr);
     return ret;
   }
 
