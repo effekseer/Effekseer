@@ -162,8 +162,11 @@ ValueType NodeParameter::GetOutputTypeIn2Out1Param2(const std::vector<ValueType>
 
 WarningType NodeParameter::GetWarningIn2Out1Param2(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
 {
-	auto type1 = material->GetDesiredPinType(node->InputPins[0], std::unordered_set<std::shared_ptr<Pin>>());
-	auto type2 = material->GetDesiredPinType(node->InputPins[1], std::unordered_set<std::shared_ptr<Pin>>());
+	std::unordered_set<std::shared_ptr<Pin>> visited1;
+	std::unordered_set<std::shared_ptr<Pin>> visited2;
+
+	auto type1 = material->GetDesiredPinType(node->InputPins[0], visited1);
+	auto type2 = material->GetDesiredPinType(node->InputPins[1], visited2);
 
 	if (type1 == ValueType::Float1)
 		return WarningType::None;
@@ -411,7 +414,9 @@ WarningType NodeComponentMask::GetWarning(std::shared_ptr<Material> material, st
 	if (counter == 0)
 		return WarningType::WrongProperty;
 
-	auto type1 = material->GetDesiredPinType(node->InputPins[0], std::unordered_set<std::shared_ptr<Pin>>());
+	std::unordered_set<std::shared_ptr<Pin>> visited;
+
+	auto type1 = material->GetDesiredPinType(node->InputPins[0], visited);
 
 	if (type1 == ValueType::Float1)
 		return WarningType::None;
@@ -429,8 +434,11 @@ ValueType NodeAppendVector::GetOutputType(std::shared_ptr<Material> material,
 										  std::shared_ptr<Node> node,
 										  const std::vector<ValueType>& inputTypes) const
 {
-	auto type1 = material->GetDesiredPinType(node->InputPins[0], std::unordered_set<std::shared_ptr<Pin>>());
-	auto type2 = material->GetDesiredPinType(node->InputPins[1], std::unordered_set<std::shared_ptr<Pin>>());
+	std::unordered_set<std::shared_ptr<Pin>> visited1;
+	std::unordered_set<std::shared_ptr<Pin>> visited2;
+
+	auto type1 = material->GetDesiredPinType(node->InputPins[0], visited1);
+	auto type2 = material->GetDesiredPinType(node->InputPins[1], visited2);
 
 	int counter = 0;
 
@@ -450,8 +458,11 @@ WarningType NodeAppendVector::GetWarning(std::shared_ptr<Material> material, std
 	if (connected2.size() == 0)
 		return WarningType::WrongInputType;
 
-	auto type1 = material->GetDesiredPinType(node->InputPins[0], std::unordered_set<std::shared_ptr<Pin>>());
-	auto type2 = material->GetDesiredPinType(node->InputPins[1], std::unordered_set<std::shared_ptr<Pin>>());
+	std::unordered_set<std::shared_ptr<Pin>> visited1;
+	std::unordered_set<std::shared_ptr<Pin>> visited2;
+
+	auto type1 = material->GetDesiredPinType(node->InputPins[0], visited1);
+	auto type2 = material->GetDesiredPinType(node->InputPins[1], visited2);
 
 	if (GetElementCount(type1) + GetElementCount(type2) > 4)
 	{

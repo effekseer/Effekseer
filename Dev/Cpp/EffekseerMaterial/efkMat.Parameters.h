@@ -190,6 +190,9 @@ protected:
 	}
 
 public:
+	NodeParameter() = default;
+	virtual ~NodeParameter() = default;
+
 	std::vector<std::shared_ptr<NodeParameterBehaviorComponent>> BehaviorComponents;
 
 	NodeType Type;
@@ -848,8 +851,11 @@ public:
 	}
 	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override
 	{
-		auto type1 = material->GetDesiredPinType(node->InputPins[0], std::unordered_set<std::shared_ptr<Pin>>());
-		auto type2 = material->GetDesiredPinType(node->InputPins[1], std::unordered_set<std::shared_ptr<Pin>>());
+		std::unordered_set<std::shared_ptr<Pin>> visited1;
+		std::unordered_set<std::shared_ptr<Pin>> visited2;
+
+		auto type1 = material->GetDesiredPinType(node->InputPins[0], visited1);
+		auto type2 = material->GetDesiredPinType(node->InputPins[1], visited2);
 		return type1 == type2 ? WarningType::None : WarningType::WrongInputType;
 	}
 };

@@ -12,6 +12,9 @@ namespace EffekseerMaterial
 class LibraryContentBase
 {
 public:
+	LibraryContentBase() = default;
+	virtual ~LibraryContentBase() = default;
+
 	std::string Name;
 	std::string Description;
 	std::vector<std::string> Group;

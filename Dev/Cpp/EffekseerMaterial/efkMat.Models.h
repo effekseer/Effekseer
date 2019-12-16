@@ -169,8 +169,8 @@ private:
 
 	std::string path_;
 
-	std::vector<std::shared_ptr<Node>> nodes;
-	std::vector<std::shared_ptr<Link>> links;
+	std::vector<std::shared_ptr<Node>> nodes_;
+	std::vector<std::shared_ptr<Link>> links_;
 	std::map<std::string, std::shared_ptr<TextureInfo>> textures;
 
 	uint64_t nextGUID = 0xff;
