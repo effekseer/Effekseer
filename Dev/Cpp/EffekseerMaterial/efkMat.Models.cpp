@@ -717,7 +717,7 @@ void Material::LoadFromStrInternal(
 	{
 		auto guid_obj = node_.get("GUID");
 		auto guid = (uint64_t)guid_obj.get<double>();
-
+		
 		auto type_obj = node_.get("Type");
 		auto type = type_obj.get<std::string>();
 
@@ -727,12 +727,13 @@ void Material::LoadFromStrInternal(
 
 		auto node_parameter = node_library->Create();
 
+		auto guidNew = guid;
 		if (aim == SaveLoadAimType::CopyOrPaste)
 		{
-			guid = 0;
+			guidNew = 0;
 		}
 
-		std::shared_ptr<Node> node = CreateNode(node_parameter, false, guid);
+		std::shared_ptr<Node> node = CreateNode(node_parameter, false, guidNew);
 
 		auto pos_x_obj = node_.get("PosX");
 		node->Pos.X = (float)pos_x_obj.get<double>() + offset.X;
