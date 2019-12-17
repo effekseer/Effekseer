@@ -15,6 +15,7 @@ option(BUILD_TEST "Build test" OFF)
 option(FROM_CI "from ci" OFF)
 option(SANITIZE_ENABLED "is sanitizer enabled" OFF)
 
+option(BUILD_VERSION16 "is build as version1.6" OFF)
 
 if(SANITIZE_ENABLED)
     set(CMAKE_CXX_FLAGS " -fsanitize=undefined,address" ${CMAKE_CXX_FLAGS})
@@ -28,6 +29,10 @@ endif()
 
 if (BUILD_DX12)
     add_definitions(-D__EFFEKSEER_BUILD_DX12__)
+endif()
+
+if (BUILD_VERSION16)
+    add_definitions(-D__EFFEKSEER_BUILD_VERSION16__)
 endif()
 
 # for linux
