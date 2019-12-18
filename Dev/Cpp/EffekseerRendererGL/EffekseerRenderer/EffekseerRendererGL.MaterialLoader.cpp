@@ -35,6 +35,8 @@ namespace EffekseerRendererGL
 
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
+		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, false, st, 1);
+
 		auto shader = Shader::Create(deviceType_,
 									 deviceObjectCollection_,
 									 (const char*)binary->GetVertexShaderData(shaderTypes[st]),
@@ -104,16 +106,22 @@ namespace EffekseerRendererGL
 		}
 
 		int32_t vsOffset = 0;
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("uMatCamera"), vsOffset);
+		shader->AddVertexConstantLayout(
+			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("uMatCamera"), parameterGenerator.VertexCameraMatrixOffset);
+		assert(parameterGenerator.VertexCameraMatrixOffset == vsOffset);
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("uMatProjection"), vsOffset);
+		shader->AddVertexConstantLayout(
+			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("uMatProjection"), parameterGenerator.VertexProjectionMatrixOffset);
+		assert(parameterGenerator.VertexProjectionMatrixOffset == vsOffset);
 		vsOffset += sizeof(Effekseer::Matrix44);
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), vsOffset);
+		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), parameterGenerator.VertexInversedFlagOffset);
+		assert(parameterGenerator.VertexInversedFlagOffset == vsOffset);
 		vsOffset += sizeof(float) * 4;
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), vsOffset);
+		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.VertexPredefinedOffset);
+		assert(parameterGenerator.VertexPredefinedOffset == vsOffset);
 		vsOffset += sizeof(float) * 4;
 
 		for (int32_t ui = 0; ui < material.GetUniformCount(); ui++)
@@ -122,26 +130,33 @@ namespace EffekseerRendererGL
 			vsOffset += sizeof(float) * 4;
 		}
 
-		shader->SetVertexConstantBufferSize(vsOffset);
+		assert(parameterGenerator.VertexShaderUniformBufferSize == vsOffset);
+		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);
 
 		int32_t psOffset = 0;
 
-		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), psOffset);
+		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), parameterGenerator.PixelInversedFlagOffset);
+		assert(parameterGenerator.PixelInversedFlagOffset == psOffset);
 		psOffset += sizeof(float) * 4;
 
-		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), psOffset);
+		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.PixelPredefinedOffset);
+		assert(parameterGenerator.PixelPredefinedOffset == psOffset);
 		psOffset += sizeof(float) * 4;
 
 		// shiding model
 		if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
 		{
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.PixelCameraPositionOffset);
+			assert(parameterGenerator.PixelCameraPositionOffset == psOffset);
 			psOffset += sizeof(float) * 4;
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), parameterGenerator.PixelLightDirectionOffset);
+			assert(parameterGenerator.PixelLightDirectionOffset == psOffset);
 			psOffset += sizeof(float) * 4;
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightColor"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightColor"), parameterGenerator.PixelLightColorOffset);
+			assert(parameterGenerator.PixelLightColorOffset == psOffset);
 			psOffset += sizeof(float) * 4;
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightAmbientColor"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightAmbientColor"), parameterGenerator.PixelLightAmbientColorOffset);
+			assert(parameterGenerator.PixelLightAmbientColorOffset == psOffset);
 			psOffset += sizeof(float) * 4;
 		}
 		else if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
@@ -150,7 +165,8 @@ namespace EffekseerRendererGL
 
 		if (material.GetHasRefraction() && st == 1)
 		{
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("cameraMat"), psOffset);
+			shader->AddPixelConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("cameraMat"), parameterGenerator.PixelCameraMatrixOffset);
+			assert(parameterGenerator.PixelCameraMatrixOffset == psOffset);
 			psOffset += sizeof(float) * 16;
 		}
 
@@ -187,6 +203,8 @@ namespace EffekseerRendererGL
 
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
+		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, 1);
+
 		auto shader = Shader::Create(deviceType_,
 									 deviceObjectCollection_,
 									 (const char*)binary->GetVertexShaderData(shaderTypesModel[st]),
@@ -226,32 +244,41 @@ namespace EffekseerRendererGL
 
 		int32_t vsOffset = 0;
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ProjectionMatrix"), 0);
+		assert(parameterGenerator.VertexProjectionMatrixOffset == vsOffset);
 		vsOffset += sizeof(Effekseer::Matrix44);
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_MATRIX44, shader->GetUniformId("ModelMatrix"), vsOffset);
+		assert(parameterGenerator.VertexModelMatrixOffset == vsOffset);
 		vsOffset += sizeof(Effekseer::Matrix44);
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("UVOffset"), vsOffset);
+		assert(parameterGenerator.VertexModelUVOffset == vsOffset);
 		vsOffset += sizeof(float) * 4;
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("ModelColor"), vsOffset);
+		assert(parameterGenerator.VertexModelColorOffset == vsOffset);
 		vsOffset += sizeof(float) * 4;
 
 		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), vsOffset);
+		assert(parameterGenerator.VertexInversedFlagOffset == vsOffset);
 		vsOffset += sizeof(float) * 4;
 
-		shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), vsOffset);
+		shader->AddVertexConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.VertexPredefinedOffset);
+		assert(parameterGenerator.VertexPredefinedOffset == vsOffset);
 		vsOffset += sizeof(float) * 4;
 
 		if (material.GetCustomData1Count() > 0)
 		{
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData1"), vsOffset);
+			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData1"), parameterGenerator.VertexModelCustomData1Offset);
+			assert(parameterGenerator.VertexModelCustomData1Offset == vsOffset);
 			vsOffset += sizeof(float) * 4;
 		}
 
 		if (material.GetCustomData2Count() > 0)
 		{
-			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData2"), vsOffset);
+			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("customData2"), parameterGenerator.VertexModelCustomData2Offset);
+			assert(parameterGenerator.VertexModelCustomData2Offset == vsOffset);
 			vsOffset += sizeof(float) * 4;
 		}
 
@@ -261,14 +288,17 @@ namespace EffekseerRendererGL
 			vsOffset += sizeof(float) * 4;
 		}
 
-		shader->SetVertexConstantBufferSize(vsOffset);
+		assert(parameterGenerator.VertexShaderUniformBufferSize == vsOffset);
+		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);
 
 		int32_t psOffset = 0;
 
-		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), psOffset);
+		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), parameterGenerator.PixelInversedFlagOffset);
+		assert(parameterGenerator.PixelInversedFlagOffset == psOffset);
 		psOffset += sizeof(float) * 4;
 
-		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), psOffset);
+		shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.PixelPredefinedOffset);
+		assert(parameterGenerator.PixelPredefinedOffset == psOffset);
 		psOffset += sizeof(float) * 4;
 
 		// shiding model
@@ -299,7 +329,8 @@ namespace EffekseerRendererGL
 			psOffset += sizeof(float) * 4;
 		}
 
-		shader->SetPixelConstantBufferSize(psOffset);
+		assert(parameterGenerator.PixelShaderUniformBufferSize == psOffset);
+		shader->SetPixelConstantBufferSize(parameterGenerator.PixelShaderUniformBufferSize);
 
 		int32_t lastIndex = -1;
 		for (int32_t ti = 0; ti < material.GetTextureCount(); ti++)

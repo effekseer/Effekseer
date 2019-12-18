@@ -91,6 +91,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
 		Shader* shader = nullptr;
+		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, false, st, 40);
 
 		if (materialData->IsSimpleVertex)
 		{
@@ -172,37 +173,8 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 		if (shader == nullptr)
 			return false;
 
-		// vs ps fixed
-		int32_t vertexUniformSizeFixed = sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4;
-		int32_t pixelUniformSizeFixed = sizeof(float) * 4;
-
-		// vs ps shadermodel (light)
-		int32_t vertexUniformSizeModel = 0;
-		int32_t pixelUniformSizeModel = 0;
-
-		// vs ps material common (predefined)
-		int32_t vertexUniformSizeCommon = sizeof(float) * 4;
-		int32_t pixelUniformSizeCommon = sizeof(float) * 4;
-
-		int32_t vertexUniformSize = vertexUniformSizeFixed + vertexUniformSizeCommon + vertexUniformSizeModel;
-		int32_t pixelUniformSize = pixelUniformSizeFixed + pixelUniformSizeCommon + pixelUniformSizeModel;
-
-		vertexUniformSize += material.GetUniformCount() * 4 * sizeof(float);
-		pixelUniformSize += material.GetUniformCount() * 4 * sizeof(float);
-
-		// shiding model
-		if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
-		{
-			pixelUniformSize += sizeof(float) * 16;
-		}
-		else if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
-		{
-		}
-
-		if (material.GetHasRefraction() && st == 1)
-		{
-			pixelUniformSize += sizeof(float) * 16;
-		}
+		auto vertexUniformSize = parameterGenerator.VertexShaderUniformBufferSize;
+		auto pixelUniformSize = parameterGenerator.PixelShaderUniformBufferSize;
 
 		shader->SetVertexConstantBufferSize(vertexUniformSize);
 		shader->SetVertexRegisterCount(vertexUniformSize / (sizeof(float) * 4));
@@ -225,6 +197,8 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 
 	for (int32_t st = 0; st < shaderTypeCount; st++)
 	{
+		auto parameterGenerator = EffekseerRenderer::MaterialShaderParameterGenerator(material, true, st, 40);
+
 		D3D11_INPUT_ELEMENT_DESC decl[] = {
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -249,50 +223,8 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 		if (shader == nullptr)
 			return false;
 
-		// vs ps fixed
-		int32_t vertexUniformSizeFixed =
-			sizeof(Effekseer::Matrix44) + (sizeof(Effekseer::Matrix44) + sizeof(float) * 4 + sizeof(float) * 4) * 40 + sizeof(float) * 4;
-		int32_t pixelUniformSizeFixed = sizeof(float) * 4;
-
-		// vs ps shadermodel (light)
-		int32_t vertexUniformSizeModel = 0;
-		int32_t pixelUniformSizeModel = 0;
-
-		// vs ps material common (predefined)
-		int32_t vertexUniformSizeCommon = sizeof(float) * 4;
-		int32_t pixelUniformSizeCommon = sizeof(float) * 4;
-
-		// custom data
-		int32_t customUniformSizeModel = 0;
-		if (material.GetCustomData1Count() > 0)
-		{
-			customUniformSizeModel++;
-		}
-		if (material.GetCustomData2Count() > 0)
-		{
-			customUniformSizeModel++;
-		}
-		customUniformSizeModel *= sizeof(float) * 4 * 40;
-
-		int32_t vertexUniformSize = vertexUniformSizeFixed + vertexUniformSizeCommon + customUniformSizeModel + vertexUniformSizeModel;
-		int32_t pixelUniformSize = pixelUniformSizeFixed + pixelUniformSizeCommon + pixelUniformSizeModel;
-
-		// shiding model
-		if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
-		{
-			pixelUniformSize += sizeof(float) * 16;
-		}
-		else if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
-		{
-		}
-
-		if (material.GetHasRefraction() && st == 1)
-		{
-			pixelUniformSize += sizeof(float) * 16;
-		}
-
-		vertexUniformSize += material.GetUniformCount() * 4 * sizeof(float);
-		pixelUniformSize += material.GetUniformCount() * 4 * sizeof(float);
+		auto vertexUniformSize = parameterGenerator.VertexShaderUniformBufferSize;
+		auto pixelUniformSize = parameterGenerator.PixelShaderUniformBufferSize;
 
 		shader->SetVertexConstantBufferSize(vertexUniformSize);
 		shader->SetVertexRegisterCount(vertexUniformSize / (sizeof(float) * 4));

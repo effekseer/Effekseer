@@ -152,7 +152,7 @@ int mainLoop(int argc, char* argv[])
 #else
 	char16_t* title = u"EffekseerMaterialEditor";
 #endif
-	
+
 	Effekseer::MainWindowState mainWindowState;
 	mainWindowState.Width = config->WindowWidth;
 	mainWindowState.Height = config->WindowHeight;
@@ -298,14 +298,17 @@ int mainLoop(int argc, char* argv[])
 
 			if (material != nullptr)
 			{
-				if (ImGui::GetIO().KeyCtrl && keyStatePre[GLFW_KEY_Z] && !keyState[GLFW_KEY_Z])
+				if (!ImGui::IsAnyItemActive())
 				{
-					material->GetCommandManager()->Undo();
-				}
+					if (ImGui::GetIO().KeyCtrl && keyStatePre[GLFW_KEY_Z] && !keyState[GLFW_KEY_Z])
+					{
+						material->GetCommandManager()->Undo();
+					}
 
-				if (ImGui::GetIO().KeyCtrl && keyStatePre[GLFW_KEY_Y] && !keyState[GLFW_KEY_Y])
-				{
-					material->GetCommandManager()->Redo();
+					if (ImGui::GetIO().KeyCtrl && keyStatePre[GLFW_KEY_Y] && !keyState[GLFW_KEY_Y])
+					{
+						material->GetCommandManager()->Redo();
+					}
 				}
 			}
 
