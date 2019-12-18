@@ -462,34 +462,157 @@ struct ShaderData
 	std::string CodePS;
 };
 
+std::string GetType(int32_t i)
+{
+	if (i == 1)
+		return "float";
+	if (i == 2)
+		return "vec2";
+	if (i == 3)
+		return "vec3";
+	if (i == 4)
+		return "vec4";
+	if (i == 16)
+		return "mat4";
+	assert(0);
+	return "";
+}
+
+std::string GetElement(int32_t i)
+{
+	if (i == 1)
+		return ".x";
+	if (i == 2)
+		return ".xy";
+	if (i == 3)
+		return ".xyz";
+	if (i == 4)
+		return ".xyzw";
+	assert(0);
+	return "";
+}
+
+void ExportUniform(std::ostringstream& maincode, int32_t type, const char* name)
+{
+	maincode << "uniform " << GetType(type) << " " << name << ";" << std::endl;
+}
+
+void ExportTexture(std::ostringstream& maincode, const char* name) { maincode << "uniform sampler2D " << name << ";" << std::endl; }
+
+void ExportHeader(std::ostringstream& maincode, Material* material, int stage, bool isSprite)
+{
+	maincode << material_common_define;
+
+	if (stage == 0)
+	{
+		if (isSprite)
+		{
+			if (material->GetIsSimpleVertex())
+			{
+				maincode << g_material_sprite_vs_src_pre_simple;
+			}
+			else
+			{
+				maincode << g_material_sprite_vs_src_pre;
+			}
+		}
+		else
+		{
+			maincode << g_material_model_vs_src_pre;
+		}
+	}
+	else
+	{
+		maincode << g_material_fs_src_pre;
+	}
+}
+
+void ExportMain(
+	std::ostringstream& maincode, Material* material, int stage, bool isSprite, MaterialShaderType shaderType, const std::string& baseCode)
+{
+	if (stage == 0)
+	{
+		if (isSprite)
+		{
+			if (material->GetIsSimpleVertex())
+			{
+				maincode << g_material_sprite_vs_src_suf1_simple;
+			}
+			else
+			{
+				maincode << g_material_sprite_vs_src_suf1;
+			}
+		}
+		else
+		{
+			maincode << g_material_model_vs_src_suf1;
+		}
+
+		if (material->GetCustomData1Count() > 0)
+		{
+			if (isSprite)
+			{
+				maincode << GetType(material->GetCustomData1Count()) + " customData1 = atCustomData1;\n";
+			}
+			maincode << "v_CustomData1 = customData1" + GetElement(material->GetCustomData1Count()) + ";\n";
+		}
+
+		if (material->GetCustomData2Count() > 0)
+		{
+			if (isSprite)
+			{
+				maincode << GetType(material->GetCustomData2Count()) + " customData2 = atCustomData2;\n";
+			}
+			maincode << "v_CustomData2 = customData2" + GetElement(material->GetCustomData2Count()) + ";\n";
+		}
+
+		maincode << baseCode;
+
+		if (isSprite)
+		{
+			maincode << g_material_sprite_vs_src_suf2;
+		}
+		else
+		{
+			maincode << g_material_model_vs_src_suf2;
+		}
+	}
+	else
+	{
+		maincode << g_material_fs_src_suf1;
+
+		if (material->GetCustomData1Count() > 0)
+		{
+			maincode << GetType(material->GetCustomData1Count()) + " customData1 = v_CustomData1;\n";
+		}
+
+		if (material->GetCustomData2Count() > 0)
+		{
+			maincode << GetType(material->GetCustomData2Count()) + " customData2 = v_CustomData2;\n";
+		}
+
+		maincode << baseCode;
+
+		if (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel)
+		{
+			maincode << g_material_fs_src_suf2_refraction;
+		}
+		else
+		{
+			if (material->GetShadingModel() == Effekseer::ShadingModelType::Lit)
+			{
+				maincode << g_material_fs_src_suf2_lit;
+			}
+			else if (material->GetShadingModel() == Effekseer::ShadingModelType::Unlit)
+			{
+				maincode << g_material_fs_src_suf2_unlit;
+			}
+		}
+	}
+}
+
 ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int32_t maximumTextureCount)
 {
-	auto getType = [](int32_t i) -> std::string {
-		if (i == 1)
-			return "float";
-		if (i == 2)
-			return "vec2";
-		if (i == 3)
-			return "vec3";
-		if (i == 4)
-			return "vec4";
-		assert(0);
-		return "";
-	};
-
-	auto getElement = [](int32_t i) -> std::string {
-		if (i == 1)
-			return ".x";
-		if (i == 2)
-			return ".xy";
-		if (i == 3)
-			return ".xyz";
-		if (i == 4)
-			return ".xyzw";
-		assert(0);
-		return "";
-	};
-
 	bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
 	bool isRefrection =
 		material->GetHasRefraction() && (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
@@ -500,44 +623,14 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 	{
 		std::ostringstream maincode;
 
-		maincode << material_common_define;
-
-		if (stage == 0)
-		{
-			if (isSprite)
-			{
-				if (material->GetIsSimpleVertex())
-				{
-					maincode << g_material_sprite_vs_src_pre_simple;
-				}
-				else
-				{
-					maincode << g_material_sprite_vs_src_pre;
-				}
-			}
-			else
-			{
-				maincode << g_material_model_vs_src_pre;
-			}
-		}
-		else
-		{
-			maincode << g_material_fs_src_pre;
-		}
+		ExportHeader(maincode, material, stage, isSprite);
 
 		for (int32_t i = 0; i < material->GetUniformCount(); i++)
 		{
 			auto uniformIndex = material->GetUniformIndex(i);
 			auto uniformName = material->GetUniformName(i);
 
-			if (uniformIndex == 0)
-				maincode << "uniform float " << uniformName << ";" << std::endl;
-			if (uniformIndex == 1)
-				maincode << "uniform vec2 " << uniformName << ";" << std::endl;
-			if (uniformIndex == 2)
-				maincode << "uniform vec3 " << uniformName << ";" << std::endl;
-			if (uniformIndex == 3)
-				maincode << "uniform vec4 " << uniformName << ";" << std::endl;
+			ExportUniform(maincode, uniformIndex + 1, uniformName);
 		}
 
 		int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
@@ -547,30 +640,20 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			auto textureIndex = material->GetTextureIndex(i);
 			auto textureName = material->GetTextureName(i);
 
-			maincode << "uniform sampler2D " << textureName << ";" << std::endl;
+			ExportTexture(maincode, textureName);
 		}
 
 		for (size_t i = actualTextureCount; i < actualTextureCount + 1; i++)
 		{
-			maincode << "uniform sampler2D "
-					 << "background"
-					 << ";" << std::endl;
+			ExportTexture(maincode, "background");
 		}
 
 		if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 		{
-			maincode << "uniform vec4 "
-					 << "lightDirection"
-					 << ";" << std::endl;
-			maincode << "uniform vec4 "
-					 << "lightColor"
-					 << ";" << std::endl;
-			maincode << "uniform vec4 "
-					 << "lightAmbientColor"
-					 << ";" << std::endl;
-			maincode << "uniform vec4 "
-					 << "cameraPosition"
-					 << ";" << std::endl;
+			ExportUniform(maincode, 4, "cameraPosition");
+			ExportUniform(maincode, 4, "lightDirection");
+			ExportUniform(maincode, 4, "lightColor");
+			ExportUniform(maincode, 4, "lightAmbientColor");
 
 			maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
 		}
@@ -580,9 +663,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
 		if (isRefrection && stage == 1)
 		{
-			maincode << "uniform mat4 "
-					 << "cameraMat"
-					 << ";" << std::endl;
+			ExportUniform(maincode, 16, "cameraMat");
 		}
 
 		if (!isSprite && stage == 0)
@@ -605,7 +686,6 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 		baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
 		baseCode = Replace(baseCode, "$UV$", "uv");
 		baseCode = Replace(baseCode, "$MOD", "mod");
-		baseCode = Replace(baseCode, "$SUFFIX", "");
 
 		// replace textures
 		for (size_t i = 0; i < actualTextureCount; i++)
@@ -624,7 +704,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			else
 			{
 				baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",GetUV(");
-				baseCode = Replace(baseCode, keyS, "))");	
+				baseCode = Replace(baseCode, keyS, "))");
 			}
 		}
 
@@ -641,87 +721,14 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
 		}
 
+		ExportMain(maincode, material, stage, isSprite, shaderType, baseCode);
+
 		if (stage == 0)
 		{
-			if (isSprite)
-			{
-				if (material->GetIsSimpleVertex())
-				{
-					maincode << g_material_sprite_vs_src_suf1_simple;
-				}
-				else
-				{
-					maincode << g_material_sprite_vs_src_suf1;
-				}
-			}
-			else
-			{
-				maincode << g_material_model_vs_src_suf1;
-			}
-
-			if (material->GetCustomData1Count() > 0)
-			{
-				if (isSprite)
-				{
-					maincode << getType(material->GetCustomData1Count()) + " customData1 = atCustomData1;\n";
-				}
-				maincode << "v_CustomData1 = customData1" + getElement(material->GetCustomData1Count()) + ";\n";
-			}
-
-			if (material->GetCustomData2Count() > 0)
-			{
-				if (isSprite)
-				{
-					maincode << getType(material->GetCustomData2Count()) + " customData2 = atCustomData2;\n";
-				}
-				maincode << "v_CustomData2 = customData2" + getElement(material->GetCustomData2Count()) + ";\n";
-			}
-
-			maincode << baseCode;
-
-			if (isSprite)
-			{
-				maincode << g_material_sprite_vs_src_suf2;
-			}
-			else
-			{
-				maincode << g_material_model_vs_src_suf2;
-			}
-
 			shaderData.CodeVS = maincode.str();
 		}
 		else
 		{
-			maincode << g_material_fs_src_suf1;
-
-			if (material->GetCustomData1Count() > 0)
-			{
-				maincode << getType(material->GetCustomData1Count()) + " customData1 = v_CustomData1;\n";
-			}
-
-			if (material->GetCustomData2Count() > 0)
-			{
-				maincode << getType(material->GetCustomData2Count()) + " customData2 = v_CustomData2;\n";
-			}
-
-			maincode << baseCode;
-
-			if (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel)
-			{
-				maincode << g_material_fs_src_suf2_refraction;
-			}
-			else
-			{
-				if (material->GetShadingModel() == Effekseer::ShadingModelType::Lit)
-				{
-					maincode << g_material_fs_src_suf2_lit;
-				}
-				else if (material->GetShadingModel() == Effekseer::ShadingModelType::Unlit)
-				{
-					maincode << g_material_fs_src_suf2_unlit;
-				}
-			}
-
 			shaderData.CodePS = maincode.str();
 		}
 	}
@@ -732,12 +739,12 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 		if (isSprite)
 		{
 			shaderData.CodeVS =
-				Replace(shaderData.CodeVS, "//$C_IN1$", "IN " + getType(material->GetCustomData1Count()) + " atCustomData1;");
+				Replace(shaderData.CodeVS, "//$C_IN1$", "IN " + GetType(material->GetCustomData1Count()) + " atCustomData1;");
 		}
 		shaderData.CodeVS =
-			Replace(shaderData.CodeVS, "//$C_OUT1$", "OUT mediump " + getType(material->GetCustomData1Count()) + " v_CustomData1;");
+			Replace(shaderData.CodeVS, "//$C_OUT1$", "OUT mediump " + GetType(material->GetCustomData1Count()) + " v_CustomData1;");
 		shaderData.CodePS =
-			Replace(shaderData.CodePS, "//$C_PIN1$", "IN mediump " + getType(material->GetCustomData1Count()) + " v_CustomData1;");
+			Replace(shaderData.CodePS, "//$C_PIN1$", "IN mediump " + GetType(material->GetCustomData1Count()) + " v_CustomData1;");
 	}
 
 	if (material->GetCustomData2Count() > 0)
@@ -745,12 +752,12 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 		if (isSprite)
 		{
 			shaderData.CodeVS =
-				Replace(shaderData.CodeVS, "//$C_IN2$", "IN " + getType(material->GetCustomData2Count()) + " atCustomData2;");
+				Replace(shaderData.CodeVS, "//$C_IN2$", "IN " + GetType(material->GetCustomData2Count()) + " atCustomData2;");
 		}
 		shaderData.CodeVS =
-			Replace(shaderData.CodeVS, "//$C_OUT2$", "OUT mediump " + getType(material->GetCustomData2Count()) + " v_CustomData2;");
+			Replace(shaderData.CodeVS, "//$C_OUT2$", "OUT mediump " + GetType(material->GetCustomData2Count()) + " v_CustomData2;");
 		shaderData.CodePS =
-			Replace(shaderData.CodePS, "//$C_PIN2$", "IN mediump " + getType(material->GetCustomData2Count()) + " v_CustomData2;");
+			Replace(shaderData.CodePS, "//$C_PIN2$", "IN mediump " + GetType(material->GetCustomData2Count()) + " v_CustomData2;");
 	}
 
 	return shaderData;

@@ -894,6 +894,7 @@ public:
 		Type = NodeType::LinearInterpolate;
 		TypeName = "LinearInterpolate";
 		Group = std::vector<std::string>{"Math"};
+		Keywords.emplace_back("lerp");
 
 		auto input1 = std::make_shared<PinParameter>();
 		input1->Name = "Value1";

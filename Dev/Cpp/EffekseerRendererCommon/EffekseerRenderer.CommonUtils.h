@@ -3,6 +3,7 @@
 #define	__EFFEKSEERRENDERER_COMMON_UTILS_H__
 
 #include <Effekseer.h>
+#include <Effekseer/Material/Effekseer.CompiledMaterial.h>
 #include <assert.h>
 #include <string.h>
 #include <math.h>
@@ -538,6 +539,145 @@ inline Effekseer::Color PackVector3DF(const Effekseer::Vector3D& v)
 	ret.A = 255;
 	return ret;
 }
+
+struct MaterialShaderParameterGenerator
+{
+	int32_t VertexSize = 0;
+	int32_t VertexShaderUniformBufferSize = 0;
+	int32_t PixelShaderUniformBufferSize = 0;
+
+	int32_t VertexCameraMatrixOffset = -1;
+	int32_t VertexProjectionMatrixOffset = -1;
+	int32_t VertexInversedFlagOffset = -1;
+	int32_t VertexPredefinedOffset = -1;
+	int32_t VertexUserUniformOffset = -1;
+
+	int32_t PixelInversedFlagOffset = -1;
+	int32_t PixelPredefinedOffset = -1;
+	int32_t PixelCameraPositionOffset = -1;
+	int32_t PixelLightDirectionOffset = -1;
+	int32_t PixelLightColorOffset = -1;
+	int32_t PixelLightAmbientColorOffset = -1;
+	int32_t PixelCameraMatrixOffset = -1;
+	int32_t PixelUserUniformOffset = -1;
+
+	int32_t VertexModelMatrixOffset = -1;
+	int32_t VertexModelUVOffset = -1;
+	int32_t VertexModelColorOffset = -1;
+
+	int32_t VertexModelCustomData1Offset = -1;
+	int32_t VertexModelCustomData2Offset = -1;
+
+	MaterialShaderParameterGenerator(const ::Effekseer::Material& material, bool isModel, int32_t stage, int32_t instanceCount)
+	{
+		if (isModel)
+		{
+			VertexSize = sizeof(::Effekseer::Model::Vertex);
+		}
+		else if (material.GetIsSimpleVertex())
+		{
+			VertexSize = sizeof(EffekseerRenderer::SimpleVertex);
+		}
+		else
+		{
+			VertexSize = sizeof(EffekseerRenderer::DynamicVertex) +
+						 sizeof(float) * (material.GetCustomData1Count() + material.GetCustomData2Count());
+		}
+
+		if (isModel)
+		{
+			int32_t vsOffset = 0;
+			VertexProjectionMatrixOffset = vsOffset;
+			vsOffset += sizeof(Effekseer::Matrix44);
+
+			VertexModelMatrixOffset = vsOffset;
+			vsOffset += sizeof(Effekseer::Matrix44) * instanceCount;
+
+			VertexModelUVOffset = vsOffset;
+			vsOffset += sizeof(float) * 4 * instanceCount;
+
+			VertexModelColorOffset = vsOffset;
+			vsOffset += sizeof(float) * 4 * instanceCount;
+
+			VertexInversedFlagOffset = vsOffset;
+			vsOffset += sizeof(float) * 4;
+
+			VertexPredefinedOffset = vsOffset;
+			vsOffset += sizeof(float) * 4;
+
+			if (material.GetCustomData1Count() > 0)
+			{
+				VertexModelCustomData1Offset = vsOffset;
+				vsOffset += sizeof(float) * 4 * instanceCount;
+			}
+
+			if (material.GetCustomData2Count() > 0)
+			{
+				VertexModelCustomData2Offset = vsOffset;
+				vsOffset += sizeof(float) * 4 * instanceCount;
+			}
+
+			VertexUserUniformOffset = vsOffset;
+			vsOffset += sizeof(float) * 4 * material.GetUniformCount();
+
+			VertexShaderUniformBufferSize = vsOffset;
+		}
+		else
+		{
+			int32_t vsOffset = 0;
+			VertexCameraMatrixOffset = vsOffset;
+			vsOffset += sizeof(Effekseer::Matrix44);
+
+			VertexProjectionMatrixOffset = vsOffset;
+			vsOffset += sizeof(Effekseer::Matrix44);
+
+			VertexInversedFlagOffset = vsOffset;
+			vsOffset += sizeof(float) * 4;
+
+			VertexPredefinedOffset = vsOffset;
+			vsOffset += sizeof(float) * 4;
+
+			VertexUserUniformOffset = vsOffset;
+			vsOffset += sizeof(float) * 4 * material.GetUniformCount();
+
+			VertexShaderUniformBufferSize = vsOffset;
+		}
+
+		int32_t psOffset = 0;
+
+		PixelInversedFlagOffset = psOffset;
+		psOffset += sizeof(float) * 4;
+
+		PixelPredefinedOffset = psOffset;
+		psOffset += sizeof(float) * 4;
+
+		if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
+		{
+			PixelCameraPositionOffset = psOffset;
+			psOffset += sizeof(float) * 4;
+
+			PixelLightDirectionOffset = psOffset;
+			psOffset += sizeof(float) * 4;
+
+			PixelLightColorOffset = psOffset;
+			psOffset += sizeof(float) * 4;
+
+			PixelLightAmbientColorOffset = psOffset;
+			psOffset += sizeof(float) * 4;
+		}
+
+		if (material.GetHasRefraction() && stage == 1)
+		{
+			PixelCameraMatrixOffset = psOffset;
+			psOffset += sizeof(Effekseer::Matrix44);
+		}
+
+		PixelUserUniformOffset = psOffset;
+		psOffset += sizeof(float) * 4 * material.GetUniformCount();
+
+		PixelShaderUniformBufferSize = psOffset;
+	}
+};
 
 }
 #endif // __EFFEKSEERRENDERER_COMMON_UTILS_H__
