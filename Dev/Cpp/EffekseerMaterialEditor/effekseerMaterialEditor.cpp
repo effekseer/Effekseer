@@ -173,6 +173,9 @@ int mainLoop(int argc, char* argv[])
 	uint64_t previousHistoryID = 0;
 
 	glfwMainWindow = mainWindow->GetGLFWWindows();
+	bool isDpiDirtied = true;
+
+	mainWindow->DpiChanged = [&](float scale) -> void { isDpiDirtied = true; };
 
 	glfwSetWindowCloseCallback(glfwMainWindow, GLFLW_CloseCallback);
 
@@ -198,8 +201,6 @@ int mainLoop(int argc, char* argv[])
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	ImGuiIO& io = ImGui::GetIO();
-	ImFont* font1 = io.Fonts->AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 20, nullptr, glyphRangesJapanese);
-
 	ImGui::StyleColorsDark();
 
 	FILE* fp = nullptr;
@@ -237,6 +238,38 @@ int mainLoop(int argc, char* argv[])
 
 	while (!glfwWindowShouldClose(glfwMainWindow))
 	{
+		if (isDpiDirtied)
+		{
+			ImGuiStyle& style = ImGui::GetStyle();
+
+			style = ImGuiStyle();
+			style.ChildRounding = 3.f;
+			style.GrabRounding = 3.f;
+			style.WindowRounding = 3.f;
+			style.ScrollbarRounding = 3.f;
+			style.FrameRounding = 3.f;
+			style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
+			style.ScaleAllSizes(mainWindow->GetDPIScale());
+
+			// mono tone
+			for (int32_t i = 0; i < ImGuiCol_COUNT; i++)
+			{
+				auto v = (style.Colors[i].x + style.Colors[i].y + style.Colors[i].z) / 3.0f;
+				style.Colors[i].x = v;
+				style.Colors[i].y = v;
+				style.Colors[i].z = v;
+			}
+
+			style.Colors[ImGuiCol_Text] = ImVec4(0.80f, 0.80f, 0.80f, 1.00f);
+			style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+			style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.9f);
+
+			ImGui_ImplOpenGL3_DestroyFontsTexture();
+			io.Fonts->Clear();
+			io.Fonts->AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 20 * mainWindow->GetDPIScale(), nullptr, glyphRangesJapanese);
+			isDpiDirtied = false;
+		}
+
 		glfwPollEvents();
 
 		// command event

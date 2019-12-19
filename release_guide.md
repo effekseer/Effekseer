@@ -21,6 +21,19 @@ Execute releae.bat
 
 ## imgui customization
 
+- Navigate
+
+```
+NAV_MAP_KEY(ImGuiKey_Space,     ImGuiNavInput_Activate );
+```
+
+->
+
+```
+NAV_MAP_KEY(ImGuiKey_Enter,     ImGuiNavInput_Activate );
+```
+
+
 - Numkey Enter
 
 add 

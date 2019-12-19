@@ -1,8 +1,24 @@
 #include "MainWindow.h"
 #include "../Common/StringHelper.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 namespace Effekseer
 {
+
+void MainWindow::GLFW_ContentScaleCallback(GLFWwindow* w, float xscale, float yscale)
+{
+	auto mainWindow = (MainWindow*)instance_.get();
+	// auto w_ = (Window*)glfwGetWindowUserPointer(w);
+
+	mainWindow->dpiScale_ = xscale;
+	if (mainWindow->DpiChanged != nullptr)
+	{
+		mainWindow->DpiChanged(xscale);
+	}
+}
 
 std::shared_ptr<MainWindow> MainWindow::instance_ = nullptr;
 
@@ -49,6 +65,16 @@ bool MainWindow::InitializeInternal(const char16_t* title, MainWindowState state
 		glfwSetWindowPos(window_, state.PosX, state.PosY);
 	}
 
+	glfwSetWindowContentScaleCallback(window_, GLFW_ContentScaleCallback);
+
+#ifdef _WIN32
+	GLFWmonitor* primary = glfwGetPrimaryMonitor();
+	float xscale = 1.0f;
+	float yscale = 1.0f;
+	glfwGetMonitorContentScale(primary, &xscale, &yscale);
+	dpiScale_ = xscale;
+#endif
+
 	return true;
 }
 
@@ -91,12 +117,15 @@ void MainWindow::SetState(const MainWindowState& state)
 {
 	glfwSetWindowSize(window_, state.Width, state.Height);
 
-	if(!state.IsMaximumMode) {
+	if (!state.IsMaximumMode)
+	{
 		glfwSetWindowPos(window_, state.PosX, state.PosY);
 	}
-	
+
 	glfwSetWindowAttrib(window_, GLFW_MAXIMIZED, state.IsMaximumMode ? 1 : 0);
 }
+
+float MainWindow::GetDPIScale() const { return dpiScale_; }
 
 void MainWindow::Terminate() { instance_ = nullptr; }
 

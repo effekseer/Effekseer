@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -24,6 +25,9 @@ private:
 	static std::shared_ptr<MainWindow> instance_;
 	GLFWwindow* window_ = nullptr;
 	bool isOpenGLMode_ = false;
+	float dpiScale_ = 1.0f;
+
+	static void GLFW_ContentScaleCallback(GLFWwindow* w, float xscale, float yscale);
 
 	bool InitializeInternal(const char16_t* title, MainWindowState state, bool isSRGBMode, bool isOpenGLMode);
 
@@ -33,14 +37,18 @@ public:
 	static std::shared_ptr<MainWindow> GetInstance();
 
 	MainWindowState GetState();
-	
+
 	void SetState(const MainWindowState& state);
 
+	float GetDPIScale() const;
+
 	static bool Initialize(const char16_t* title, MainWindowState state, bool isSRGBMode, bool isOpenGLMode);
-	
+
 	static void Terminate();
 
 #ifndef SWIG
+	std::function<void(float)> DpiChanged;
+
 	GLFWwindow* GetGLFWWindows() const { return window_; }
 #endif // !SWIG
 };

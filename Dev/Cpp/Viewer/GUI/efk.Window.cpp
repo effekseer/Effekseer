@@ -106,9 +106,13 @@ namespace efk
 		glfwSetWindowFocusCallback(window, GLFW_WindowFocusCallback);
 		glfwSetWindowCloseCallback(window, GLFLW_CloseCallback);
 		glfwSetWindowIconifyCallback(window, GLFW_IconifyCallback);
-		glfwSetWindowContentScaleCallback(window, GLFW_ContentScaleCallback);
+		//glfwSetWindowContentScaleCallback(window, GLFW_ContentScaleCallback);
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(1);
+
+		mainWindow_->DpiChanged = [this](float scale) -> void { 
+			GLFW_ContentScaleCallback(window, scale, 1.0f);
+		};
 
 		return true;
 	}

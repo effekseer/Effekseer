@@ -336,9 +336,9 @@ namespace efk
 	private:
 		GUIManagerCallback*		callback = nullptr;
 		efk::Window*	window = nullptr;
+		std::shared_ptr<Effekseer::MainWindow> mainWindow_;
 		efk::DeviceType deviceType;
 		std::u16string	clipboard;
-		float			dpiScale = 1.0f;
 
 		ImGui::MarkdownConfig markdownConfig_;
 

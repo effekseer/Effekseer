@@ -746,6 +746,8 @@ namespace efk
 			return false;
 		}
 
+		mainWindow_ = mainWindow;
+
 		window->Resized = [this](int x, int y) -> void
 		{
 			if (this->callback != nullptr)
@@ -791,7 +793,6 @@ namespace efk
 
 		window->DpiChanged = [this](float scale) -> void
 		{
-			this->dpiScale = scale;
 			this->ResetGUIStyle();
 
 			if (this->callback != nullptr)
@@ -809,13 +810,6 @@ namespace efk
 #endif
 		}
 
-#ifdef _WIN32
-		// Calculate font scale from DPI
-		HDC screen = GetDC(0);
-		int dpiX = GetDeviceCaps(screen, LOGPIXELSX);
-		dpiScale = (float)dpiX / 96.0f;
-#endif
-		
 		return true;
 	}
 
@@ -877,7 +871,7 @@ namespace efk
 		style.ScrollbarRounding = 3.f;
 		style.FrameRounding = 3.f;
 		style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
-		style.ScaleAllSizes(dpiScale);
+		style.ScaleAllSizes(mainWindow_->GetDPIScale());
 		// mono tone
 
 		for (int32_t i = 0; i < ImGuiCol_COUNT; i++)
@@ -1303,8 +1297,8 @@ namespace efk
 	}
 
 	float GUIManager::GetDpiScale() const
-	{
-		return dpiScale;
+	{ 
+		return mainWindow_->GetDPIScale();
 	}
 
 	void GUIManager::Columns(int count, const char* id, bool border)
@@ -1764,7 +1758,7 @@ namespace efk
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		
-		size_pixels = roundf(size_pixels * dpiScale);
+		size_pixels = roundf(size_pixels * mainWindow_->GetDPIScale());
 
 		io.Fonts->Clear();
 		io.Fonts->AddFontFromFileTTF(utf8str<280>(filename), size_pixels, nullptr, glyphRangesJapanese);
