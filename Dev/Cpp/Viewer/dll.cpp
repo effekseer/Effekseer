@@ -1822,6 +1822,11 @@ void Native::SetCullingParameter(bool isCullingShown, float cullingRadius, float
 
 efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 {
+	auto it = g_imageResources.find(path);
+	if (it != g_imageResources.end()) {
+		return it->second.get();
+	}
+
 	std::shared_ptr<Effekseer::TextureLoader> loader = nullptr;
 	if (g_deviceType == efk::DeviceType::OpenGL)
 	{
