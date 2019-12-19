@@ -88,6 +88,7 @@ enum class NodeType
 
 	Abs,
 	Sine,
+	Arctangent2,
 	Add,
 	Subtract,
 	Multiply,

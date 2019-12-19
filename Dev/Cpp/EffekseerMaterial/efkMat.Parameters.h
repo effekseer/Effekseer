@@ -394,6 +394,34 @@ public:
 	}
 };
 
+class NodeArctangent2 : public NodeParameter
+{
+public:
+	NodeArctangent2()
+	{
+		Type = NodeType::Arctangent2;
+		TypeName = "Arctangent2";
+		Group = std::vector<std::string>{"Math"};
+
+		InitializeAsIn2Out1Param2();
+
+		InputPins[0]->Name = "Y";
+		InputPins[1]->Name = "X";
+		Properties[0]->Name = "Y";
+		Properties[1]->Name = "X";
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return GetOutputTypeIn2Out1Param2(inputTypes);
+	}
+	WarningType GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const override
+	{
+		return GetWarningIn2Out1Param2(material, node);
+	}
+};
+
 class NodeComponentMask : public NodeParameter
 {
 public:

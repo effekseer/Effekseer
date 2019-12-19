@@ -12,6 +12,10 @@ static char* material_common_define = R"(
 #define FRAC fract
 #define LERP mix
 
+float atan2(in float y, in float x) {
+    return x == 0.0 ? sign(y)* 3.141592 / 2.0 : atan(y, x);
+}
+
 )";
 
 static const char g_material_model_vs_src_pre[] =

@@ -631,6 +631,11 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		exportIn1Out1("sin");
 	}
 
+	if (node->Target->Parameter->Type == NodeType::Arctangent2)
+	{
+		exportIn2Out2Param2("atan2", ",");
+	}
+
 	if (node->Target->Parameter->Type == NodeType::Abs)
 	{
 		exportIn1Out1("abs");

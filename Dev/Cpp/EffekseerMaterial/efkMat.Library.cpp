@@ -34,6 +34,7 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeAppendVector>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeOneMinus>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeSine>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeArctangent2>>());
 
 	Contents.push_back(std::make_shared<LibraryContent<NodeTextureCoordinate>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodePanner>>());
