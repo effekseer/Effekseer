@@ -38,6 +38,8 @@ namespace Effekseer.GUI
 			}
 
 			var image = Manager.Native.LoadImageResource(path);
+			if (image == null) return null;
+
 			Thumbnail thumbnail = new Thumbnail();
 			thumbnail.Image = image;
 
