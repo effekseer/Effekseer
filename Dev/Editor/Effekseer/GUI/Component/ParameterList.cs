@@ -17,6 +17,8 @@ namespace Effekseer.GUI.Component
 
 		bool isControlsChanged = false;
 
+		bool isFirstUpdate = true;
+
 		public ParameterList()
 		{
 		}
@@ -34,7 +36,11 @@ namespace Effekseer.GUI.Component
 			Manager.NativeManager.Columns(2);
 
 			var columnWidth = Manager.NativeManager.GetColumnWidth(0);
-			Manager.NativeManager.SetColumnWidth(0, 120 * Manager.GetUIScaleBasedOnFontSize());
+
+			if(isFirstUpdate)
+			{
+				Manager.NativeManager.SetColumnWidth(0, 120 * Manager.GetUIScaleBasedOnFontSize());
+			}
 
 			for (int i = 0; i < controlRows.Internal.Count; i++)
 			{
@@ -87,6 +93,8 @@ namespace Effekseer.GUI.Component
 				SetValue(bindingObject);
 				isControlsChanged = false;
 			}
+
+			isFirstUpdate = false;
 		}
 
 		public void SetType(Type type)
