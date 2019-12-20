@@ -290,13 +290,18 @@ public:
 class Texture
 {
 private:
+	std::string path_;
 	std::shared_ptr<Graphics> graphics_;
-	ar::Texture2D* texture = nullptr;
+	ar::Texture2D* texture_ = nullptr;
 
 public:
 	Texture();
 	virtual ~Texture();
-	ar::Texture2D* GetTexture() { return texture; }
+
+	bool Validate();
+	void Invalidate();
+
+	ar::Texture2D* GetTexture() { return texture_; }
 	static std::shared_ptr<Texture> Load(std::shared_ptr<Graphics> graphics, const char* path);
 };
 
@@ -312,10 +317,12 @@ public:
 class TextureCache
 {
 private:
-	static std::map<std::string, std::shared_ptr<Texture>> textures;
+	static std::map<std::string, std::shared_ptr<Texture>> textures_;
 
 public:
 	static std::shared_ptr<Texture> Load(std::shared_ptr<Graphics> graphics, const char* path);
+
+	static void NotifyFileChanged(const char* path);
 };
 
 class Mesh

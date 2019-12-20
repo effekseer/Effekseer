@@ -1234,7 +1234,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				size.x = Preview::TextureSize;
 				size.y = Preview::TextureSize;
 
-				if (texture != nullptr)
+				if (texture != nullptr && texture->GetTexture() != nullptr)
 				{
 					ImGui::Image((void*)texture->GetTexture()->GetInternalObjects()[0], size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 

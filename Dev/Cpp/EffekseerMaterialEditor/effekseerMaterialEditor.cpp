@@ -7,6 +7,7 @@
 
 #include "Config.h"
 #include "Dialog/Dialog.h"
+#include "Graphics/efkMat.Graphics.h"
 
 #include "../IPC/IPC.h"
 
@@ -27,7 +28,9 @@
 #include <efkMat.CommandManager.h>
 #include <efkMat.StringContainer.h>
 
+#include <Common/StringHelper.h>
 #include <GUI/MainWindow.h>
+#include <IO/IO.h>
 
 #ifdef WIN32
 #include <Windows.h>
@@ -48,6 +51,16 @@ bool g_showDebugWindow = false;
 
 std::array<bool, 512> keyState;
 std::array<bool, 512> keyStatePre;
+
+class IOCallback : public Effekseer::IOCallback
+{
+public:
+	void OnFileChanged(Effekseer::StaticFileType fileType, const char16_t* path)
+	{
+		auto pathu8 = Effekseer::utf16_to_utf8(path);
+		EffekseerMaterial::TextureCache::NotifyFileChanged(pathu8.c_str());
+	}
+};
 
 std::string GetDirectoryName(const std::string& path)
 {
@@ -163,6 +176,8 @@ int mainLoop(int argc, char* argv[])
 	}
 
 	auto mainWindow = Effekseer::MainWindow::GetInstance();
+	Effekseer::IO::Initialize(1000);
+	Effekseer::IO::GetInstance()->AddCallback(std::make_shared<IOCallback>());
 
 	auto commandQueueToMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
 	commandQueueToMaterialEditor_->Start("EffekseerCommandToMaterialEditor", 1024 * 1024);
@@ -238,6 +253,8 @@ int mainLoop(int argc, char* argv[])
 
 	while (!glfwWindowShouldClose(glfwMainWindow))
 	{
+		Effekseer::IO::GetInstance()->Update();
+
 		if (isDpiDirtied)
 		{
 			ImGuiStyle& style = ImGui::GetStyle();
@@ -266,7 +283,8 @@ int mainLoop(int argc, char* argv[])
 
 			ImGui_ImplOpenGL3_DestroyFontsTexture();
 			io.Fonts->Clear();
-			io.Fonts->AddFontFromFileTTF("resources/GenShinGothic-Monospace-Normal.ttf", 20 * mainWindow->GetDPIScale(), nullptr, glyphRangesJapanese);
+			io.Fonts->AddFontFromFileTTF(
+				"resources/GenShinGothic-Monospace-Normal.ttf", 20 * mainWindow->GetDPIScale(), nullptr, glyphRangesJapanese);
 			isDpiDirtied = false;
 		}
 
@@ -647,6 +665,8 @@ int mainLoop(int argc, char* argv[])
 	commandQueueFromMaterialEditor_->Stop();
 
 	config->Save("config.EffekseerMaterial.json");
+
+	Effekseer::IO::Terminate();
 
 	Effekseer::MainWindow::Terminate();
 	mainWindow = nullptr;

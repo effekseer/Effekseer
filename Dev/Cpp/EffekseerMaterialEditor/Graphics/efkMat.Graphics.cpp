@@ -7,6 +7,8 @@
 #include <GL/glew.h>
 #endif
 
+#include <Common/StringHelper.h>
+#include <IO/IO.h>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -46,17 +48,19 @@ Graphics::~Graphics()
 
 Texture::Texture() {}
 
-Texture::~Texture() { ar::SafeDelete(texture); }
+Texture::~Texture() { ar::SafeDelete(texture_); }
 
-std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, const char* path)
+bool Texture::Validate()
 {
+	Invalidate();
+
 	std::vector<uint8_t> buffer;
 
-	std::ifstream fin(path, std::ios::in | std::ios::binary);
+	std::ifstream fin(path_, std::ios::in | std::ios::binary);
 	if (fin.bad())
-		return nullptr;
+		return false;
 	if (fin.fail())
-		return nullptr;
+		return false;
 
 	while (!fin.eof())
 	{
@@ -65,36 +69,79 @@ std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, const
 		buffer.push_back(b);
 	}
 
+	texture_ = ar::Texture2D::Create(graphics_->GetManager());
+	if (texture_ == nullptr)
+	{
+		return false;
+	}
+
+	if (!texture_->Initialize(graphics_->GetManager(), buffer.data(), buffer.size(), false, false))
+	{
+		Invalidate();
+		return false;
+	}
+
+	return true;
+}
+
+void Texture::Invalidate() { ar::SafeDelete(texture_); }
+
+std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, const char* path)
+{
+	std::vector<uint8_t> buffer;
+
+	auto path16 = Effekseer::utf8_to_utf16(path);
+
+	auto file = Effekseer::IO::GetInstance()->LoadFile(path16.c_str());
+	if (file == nullptr)
+	{
+		return nullptr;
+	}
+
+	buffer.resize(file->GetSize());
+	memcpy(buffer.data(), file->GetData(), buffer.size());
+
 	auto obj = std::make_shared<Texture>();
 
 	obj->graphics_ = graphics;
+	obj->path_ = path;
 
-	auto texture = ar::Texture2D::Create(graphics->GetManager());
+	if (obj->Validate())
+	{
+		return obj;
+	}
 
-	texture->Initialize(graphics->GetManager(), buffer.data(), buffer.size(), false, false);
-	obj->texture = texture;
-
-	return obj;
+	return nullptr;
 }
 
-std::map<std::string, std::shared_ptr<Texture>> TextureCache::textures;
+std::map<std::string, std::shared_ptr<Texture>> TextureCache::textures_;
 
 std::shared_ptr<Texture> TextureCache::Load(std::shared_ptr<Graphics> graphics, const char* path)
 {
 	std::string key = path;
 
-	if (textures.count(key) > 0)
+	if (textures_.count(key) > 0)
 	{
-		return textures[key];
+		return textures_[key];
 	}
 
 	auto texture = Texture::Load(graphics, path);
 	if (texture != nullptr)
 	{
-		textures[key] = texture;
+		textures_[key] = texture;
 	}
 
 	return texture;
+}
+
+void TextureCache::NotifyFileChanged(const char* path)
+{
+	auto it = textures_.find(path);
+	if (it != textures_.end())
+	{
+		it->second->Invalidate();
+		it->second->Validate();
+	}
 }
 
 Mesh::Mesh() {}
@@ -313,7 +360,7 @@ static const char g_header_vs_gl3_src[] = ""
 										  "#define IN in\n"
 										  "#define TEX2D textureLod\n"
 										  "#define OUT out\n"
-										  "uniform vec4 customData1;\n"  // HACK
+										  "uniform vec4 customData1;\n"	 // HACK
 										  "uniform vec4 customData2;\n"; // HACK
 
 static const char g_header_fs_gl3_src[] = ""
@@ -323,7 +370,7 @@ static const char g_header_fs_gl3_src[] = ""
 										  "#define IN in\n"
 										  "#define TEX2D texture\n"
 										  "layout (location = 0) out vec4 FRAGCOLOR;\n"
-										  "uniform vec4 customData1;\n"  // HACK
+										  "uniform vec4 customData1;\n"	 // HACK
 										  "uniform vec4 customData2;\n"; // HACK
 
 bool Preview::CompileShader(std::string& vs,
