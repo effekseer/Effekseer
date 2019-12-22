@@ -105,70 +105,44 @@ namespace EffekseerRendererGL
 								  sizeof(float) * (material.GetCustomData1Count() + material.GetCustomData2Count()));
 		}
 
-		int32_t vsOffset = 0;
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("uMatCamera"), parameterGenerator.VertexCameraMatrixOffset);
-		assert(parameterGenerator.VertexCameraMatrixOffset == vsOffset);
-		vsOffset += sizeof(Effekseer::Matrix44);
 
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_MATRIX44, shader->GetUniformId("uMatProjection"), parameterGenerator.VertexProjectionMatrixOffset);
-		assert(parameterGenerator.VertexProjectionMatrixOffset == vsOffset);
-		vsOffset += sizeof(Effekseer::Matrix44);
 
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversed"), parameterGenerator.VertexInversedFlagOffset);
-		assert(parameterGenerator.VertexInversedFlagOffset == vsOffset);
-		vsOffset += sizeof(float) * 4;
 
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.VertexPredefinedOffset);
-		assert(parameterGenerator.VertexPredefinedOffset == vsOffset);
-		vsOffset += sizeof(float) * 4;
 
 		for (int32_t ui = 0; ui < material.GetUniformCount(); ui++)
 		{
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4,
 										   shader->GetUniformId(material.GetUniformName(ui)),
 										   parameterGenerator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
-			assert(parameterGenerator.VertexUserUniformOffset + sizeof(float) * 4 * ui == vsOffset);
-			vsOffset += sizeof(float) * 4;
 		}
 
-		assert(parameterGenerator.VertexShaderUniformBufferSize == vsOffset);
 		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);
-
-		int32_t psOffset = 0;
 
 		shader->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), parameterGenerator.PixelInversedFlagOffset);
-		assert(parameterGenerator.PixelInversedFlagOffset == psOffset);
-		psOffset += sizeof(float) * 4;
 
 		shader->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.PixelPredefinedOffset);
-		assert(parameterGenerator.PixelPredefinedOffset == psOffset);
-		psOffset += sizeof(float) * 4;
 
 		// shiding model
 		if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
 		{
 			shader->AddPixelConstantLayout(
 				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.PixelCameraPositionOffset);
-			assert(parameterGenerator.PixelCameraPositionOffset == psOffset);
-			psOffset += sizeof(float) * 4;
 			shader->AddPixelConstantLayout(
 				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), parameterGenerator.PixelLightDirectionOffset);
-			assert(parameterGenerator.PixelLightDirectionOffset == psOffset);
-			psOffset += sizeof(float) * 4;
 			shader->AddPixelConstantLayout(
 				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightColor"), parameterGenerator.PixelLightColorOffset);
-			assert(parameterGenerator.PixelLightColorOffset == psOffset);
-			psOffset += sizeof(float) * 4;
 			shader->AddPixelConstantLayout(
 				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightAmbientColor"), parameterGenerator.PixelLightAmbientColorOffset);
-			assert(parameterGenerator.PixelLightAmbientColorOffset == psOffset);
-			psOffset += sizeof(float) * 4;
 		}
 		else if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
 		{
@@ -178,8 +152,6 @@ namespace EffekseerRendererGL
 		{
 			shader->AddPixelConstantLayout(
 				CONSTANT_TYPE_MATRIX44, shader->GetUniformId("cameraMat"), parameterGenerator.PixelCameraMatrixOffset);
-			assert(parameterGenerator.PixelCameraMatrixOffset == psOffset);
-			psOffset += sizeof(float) * 16;
 		}
 
 		for (int32_t ui = 0; ui < material.GetUniformCount(); ui++)
@@ -187,11 +159,8 @@ namespace EffekseerRendererGL
 			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4,
 										   shader->GetUniformId(material.GetUniformName(ui)),
 										   parameterGenerator.PixelUserUniformOffset + sizeof(float) * 4 * ui);
-			assert(parameterGenerator.PixelUserUniformOffset + sizeof(float) * 4 * ui == psOffset);
-			psOffset += sizeof(float) * 4;
 		}
 
-		assert(psOffset == parameterGenerator.PixelShaderUniformBufferSize);
 		shader->SetPixelConstantBufferSize(parameterGenerator.PixelShaderUniformBufferSize);
 
 		int32_t lastIndex = -1;
