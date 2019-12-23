@@ -118,6 +118,10 @@ namespace Effekseer
 			{
 				language = (Language)systemLanguage;
 			}
+			else
+			{
+				language = Language.English;
+			}
 
 			Core.OnOutputMessage += new Action<string>(Core_OnOutputMessage);
 			Core.Initialize(language);
