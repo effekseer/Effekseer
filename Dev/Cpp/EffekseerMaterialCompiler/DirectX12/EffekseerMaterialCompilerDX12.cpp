@@ -1,119 +1,49 @@
-#include "EffekseerMaterialCompilerDX11.h"
-
-#include <d3d11.h>
-#include <d3dcompiler.h>
+#include "EffekseerMaterialCompilerDX12.h"
 #include <iostream>
 
-#pragma comment(lib, "d3dcompiler.lib")
+#include "../3rdParty/LLGI/src/LLGI.Compiler.h"
 
 #undef min
 
+#pragma comment(lib, "d3dcompiler.lib")
+
 namespace Effekseer
 {
-namespace DX11
-{
 
-static ID3DBlob* CompileVertexShader(const char* vertexShaderText,
-									 const char* vertexShaderFileName,
-									 const std::vector<D3D_SHADER_MACRO>& macro,
-									 std::string& log)
-{
-	ID3DBlob* shader = nullptr;
-	ID3DBlob* error = nullptr;
+void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& result) { 
+	
+	uint32_t binarySize = 0;
 
-	UINT flag = D3D10_SHADER_PACK_MATRIX_COLUMN_MAJOR;
-#if !_DEBUG
-	flag = flag | D3D10_SHADER_OPTIMIZATION_LEVEL3;
-#endif
+	binarySize += sizeof(uint32_t);
 
-	HRESULT hr;
-
-	hr = D3DCompile(vertexShaderText,
-					strlen(vertexShaderText),
-					vertexShaderFileName,
-					macro.size() > 0 ? (D3D_SHADER_MACRO*)&macro[0] : NULL,
-					NULL,
-					"main",
-					"vs_4_0",
-					flag,
-					0,
-					&shader,
-					&error);
-
-	if (FAILED(hr))
+	for (size_t i = 0; i < result.Binary.size(); i++)
 	{
-		if (hr == E_OUTOFMEMORY)
-		{
-			log += "Out of memory\n";
-		}
-		else
-		{
-			log += "Unknown error\n";
-		}
-
-		if (error != NULL)
-		{
-			log += (const char*)error->GetBufferPointer();
-			error->Release();
-		}
-
-		ES_SAFE_RELEASE(shader);
-		return nullptr;
+		binarySize += sizeof(uint32_t);
+		binarySize += result.Binary[i].size();
 	}
 
-	return shader;
-}
+	dst.resize(binarySize);
 
-static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
-									const char* vertexShaderFileName,
-									const std::vector<D3D_SHADER_MACRO>& macro,
-									std::string& log)
-{
-	ID3DBlob* shader = nullptr;
-	ID3DBlob* error = nullptr;
+	uint32_t offset = 0;
+	uint32_t count = result.Binary.size(); 
+	
+	memcpy(dst.data() + offset, &count, sizeof(int32_t));
+	offset += sizeof(int32_t);
 
-	UINT flag = D3D10_SHADER_PACK_MATRIX_COLUMN_MAJOR;
-#if !_DEBUG
-	flag = flag | D3D10_SHADER_OPTIMIZATION_LEVEL3;
-#endif
-
-	HRESULT hr;
-
-	hr = D3DCompile(vertexShaderText,
-					strlen(vertexShaderText),
-					vertexShaderFileName,
-					macro.size() > 0 ? (D3D_SHADER_MACRO*)&macro[0] : NULL,
-					NULL,
-					"main",
-					"ps_4_0",
-					flag,
-					0,
-					&shader,
-					&error);
-
-	if (FAILED(hr))
+	for (size_t i = 0; i < result.Binary.size(); i++)
 	{
-		if (hr == E_OUTOFMEMORY)
-		{
-			log += "Out of memory\n";
-		}
-		else
-		{
-			log += "Unknown error\n";
-		}
+		uint32_t size = result.Binary[i].size();
 
-		if (error != NULL)
-		{
-			log += (const char*)error->GetBufferPointer();
-			error->Release();
-		}
+		memcpy(dst.data() + offset, &size, sizeof(int32_t));
+		offset += sizeof(int32_t);
 
-		ES_SAFE_RELEASE(shader);
-		return nullptr;
+		memcpy(dst.data() + offset, result.Binary[i].data(), result.Binary[i].size());
+		offset += result.Binary[i].size();
 	}
-
-	return shader;
 }
+
+namespace DX12
+{
 
 static char* material_common_define = R"(
 #define MOD fmod
@@ -728,7 +658,8 @@ void ExportMain(
 	}
 }
 
-ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int32_t maximumTextureCount, int32_t pixelShaderTextureSlotOffset)
+ShaderData
+GenerateShader(Material* material, MaterialShaderType shaderType, int32_t maximumTextureCount, int32_t pixelShaderTextureSlotOffset)
 {
 	ShaderData shaderData;
 
@@ -927,14 +858,14 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 	return shaderData;
 }
 
-} // namespace DX11
+} // namespace DX12
 
 } // namespace Effekseer
 
 namespace Effekseer
 {
 
-class CompiledMaterialBinaryDX11 : public CompiledMaterialBinary, ReferenceObject
+class CompiledMaterialBinaryDX12 : public CompiledMaterialBinary, ReferenceObject
 {
 private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> vertexShaders_;
@@ -942,9 +873,9 @@ private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> pixelShaders_;
 
 public:
-	CompiledMaterialBinaryDX11() {}
+	CompiledMaterialBinaryDX12() {}
 
-	virtual ~CompiledMaterialBinaryDX11() {}
+	virtual ~CompiledMaterialBinaryDX12() {}
 
 	void SetVertexShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
 	{
@@ -968,54 +899,46 @@ public:
 	int GetRef() override { return ReferenceObject::GetRef(); }
 };
 
-CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_t maximumTextureCount)
+CompiledMaterialBinary* MaterialCompilerDX12::Compile(Material* material, int32_t maximumTextureCount)
 {
-	auto binary = new CompiledMaterialBinaryDX11();
+	auto compiler = LLGI::CreateSharedPtr(LLGI::CreateCompiler(LLGI::DeviceType::DirectX12));
 
-	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t> {
+	auto binary = new CompiledMaterialBinaryDX12();
+
+	auto convertToVectorVS = [compiler](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
-		std::string log;
-		std::vector<D3D_SHADER_MACRO> macros;
+		LLGI::CompilerResult result;
+		compiler->Compile(result, str.c_str(), LLGI::ShaderStageType::Vertex);
 
-		auto blob = DX11::CompileVertexShader(str.c_str(), "VS", macros, log);
-
-		if (blob != nullptr)
+		if (result.Binary.size() > 0)
 		{
-			std::cout << str << std::endl;
-			ret.resize(blob->GetBufferSize());
-			memcpy(ret.data(), blob->GetBufferPointer(), ret.size());
-			blob->Release();
+			Serialize(ret, result);
 		}
 		else
 		{
 			std::cout << "VertexShader Compile Error" << std::endl;
-			std::cout << log << std::endl;
+			std::cout << result.Message << std::endl;
 			std::cout << str << std::endl;
 		}
 
 		return ret;
 	};
 
-	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorPS = [compiler](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
-		std::string log;
-		std::vector<D3D_SHADER_MACRO> macros;
+		LLGI::CompilerResult result;
+		compiler->Compile(result, str.c_str(), LLGI::ShaderStageType::Pixel);
 
-		auto blob = DX11::CompilePixelShader(str.c_str(), "PS", macros, log);
-
-		if (blob != nullptr)
+		if (result.Binary.size() > 0)
 		{
-			std::cout << str << std::endl;
-			ret.resize(blob->GetBufferSize());
-			memcpy(ret.data(), blob->GetBufferPointer(), ret.size());
-			blob->Release();
+			Serialize(ret, result);
 		}
 		else
 		{
 			std::cout << "PixelShader Compile Error" << std::endl;
-			std::cout << log << std::endl;
+			std::cout << result.Message << std::endl;
 			std::cout << str << std::endl;
 		}
 
@@ -1023,7 +946,7 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 	};
 
 	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
-		auto shader = DX11::GenerateShader(material, type, maximumTextureCount, 0);
+		auto shader = DX12::GenerateShader(material, type, maximumTextureCount, 8);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
 	};
@@ -1040,7 +963,7 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 	return binary;
 }
 
-CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
+CompiledMaterialBinary* MaterialCompilerDX12::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
 
 } // namespace Effekseer
 
@@ -1055,6 +978,6 @@ extern "C"
 #define EFK_EXPORT
 #endif
 
-	EFK_EXPORT Effekseer::MaterialCompiler* EFK_STDCALL CreateCompiler() { return new Effekseer::MaterialCompilerDX11(); }
+	EFK_EXPORT Effekseer::MaterialCompiler* EFK_STDCALL CreateCompiler() { return new Effekseer::MaterialCompilerDX12(); }
 }
 #endif

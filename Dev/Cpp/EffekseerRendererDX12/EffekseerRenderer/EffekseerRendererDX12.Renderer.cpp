@@ -2,6 +2,7 @@
 #include "../../3rdParty/LLGI/src/DX12/LLGI.CommandListDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.GraphicsDX12.h"
 #include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
+#include "../EffekseerMaterialCompiler/DirectX12/EffekseerMaterialCompilerDX12.h"
 
 namespace Standard_VS
 {
@@ -104,6 +105,9 @@ namespace EffekseerRendererDX12
 		renderer->fixedShader_.ModelShaderDistortionTexture_VS, ShaderDistortionTexture_::g_VS, sizeof(ShaderDistortionTexture_::g_VS));
 	allocate_(
 		renderer->fixedShader_.ModelShaderDistortionTexture_PS, ShaderDistortionTexture_::g_PS, sizeof(ShaderDistortionTexture_::g_PS));
+
+	renderer->platformType_ = Effekseer::CompiledMaterialPlatformType::DirectX12;
+	renderer->materialCompiler_ = new Effekseer::MaterialCompilerDX12();
 
 	LLGI::RenderPassPipelineStateKey key;
 	key.RenderTargetFormats.resize(renderTargetCount);

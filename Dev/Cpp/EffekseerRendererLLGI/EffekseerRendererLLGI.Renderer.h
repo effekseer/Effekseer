@@ -21,6 +21,7 @@ namespace EffekseerRendererLLGI
 struct FixedShader
 {
 	std::vector<LLGI::DataStructure> StandardTexture_VS;
+	std::vector<LLGI::DataStructure> StandardLightingTexture_VS;
 	std::vector<LLGI::DataStructure> StandardDistortedTexture_VS;
 
 	std::vector<LLGI::DataStructure> ModelShaderLightingTextureNormal_VS;
@@ -28,6 +29,7 @@ struct FixedShader
 	std::vector<LLGI::DataStructure> ModelShaderDistortionTexture_VS;
 
 	std::vector<LLGI::DataStructure> StandardTexture_PS;
+	std::vector<LLGI::DataStructure> StandardLightingTexture_PS;
 	std::vector<LLGI::DataStructure> StandardDistortedTexture_PS;
 
 	std::vector<LLGI::DataStructure> ModelShaderLightingTextureNormal_PS;

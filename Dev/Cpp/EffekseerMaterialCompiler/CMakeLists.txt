@@ -46,3 +46,30 @@ if(WIN32)
 )
 
 endif()
+
+if(WIN32)
+    add_library(
+        EffekseerMaterialCompilerDX12
+        SHARED
+        DirectX12/EffekseerMaterialCompilerDX12.h
+        DirectX12/EffekseerMaterialCompilerDX12.cpp
+    )
+
+    target_link_libraries(
+        EffekseerMaterialCompilerDX12
+        Effekseer
+        LLGI
+    )
+
+    target_compile_definitions(EffekseerMaterialCompilerDX12 PRIVATE __SHARED_OBJECT__=1)
+
+    set_target_properties(
+        EffekseerMaterialCompilerDX12
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+)
+
+endif()

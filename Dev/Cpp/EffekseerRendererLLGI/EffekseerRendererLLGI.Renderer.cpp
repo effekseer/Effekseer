@@ -13,6 +13,7 @@
 //#include "EffekseerRendererLLGI.RingRenderer.h"
 #include "EffekseerRendererLLGI.ModelRenderer.h"
 //#include "EffekseerRendererLLGI.TrackRenderer.h"
+#include "EffekseerRendererLLGI.MaterialLoader.h"
 #include "EffekseerRendererLLGI.ModelLoader.h"
 #include "EffekseerRendererLLGI.TextureLoader.h"
 
@@ -226,8 +227,15 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_RELEASE(p);
 
 	ES_SAFE_DELETE(m_standardRenderer);
-	ES_SAFE_DELETE(m_shader);
 
+	int32_t refMinus = -5;
+	if (m_shader_lighting != nullptr)
+	{
+		refMinus--;
+	}
+
+	ES_SAFE_DELETE(m_shader);
+	ES_SAFE_DELETE(m_shader_lighting);
 	ES_SAFE_DELETE(m_shader_distortion);
 
 	ES_SAFE_DELETE(m_renderState);
@@ -235,9 +243,14 @@ RendererImplemented::~RendererImplemented()
 	ES_SAFE_DELETE(m_indexBuffer);
 	ES_SAFE_DELETE(m_indexBufferForWireframe);
 
+	if (materialCompiler_ != nullptr)
+	{
+		materialCompiler_->Release();
+		materialCompiler_ = nullptr;
+	}
 	LLGI::SafeRelease(graphics_);
 
-	assert(GetRef() == -5);
+	assert(GetRef() == refMinus);
 }
 
 void RendererImplemented::OnLostDevice() {}
@@ -357,6 +370,31 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassP
 
 	// adjust a reference counter
 	Release();
+
+	if (fixedShader_.StandardLightingTexture_VS.size() > 0 && fixedShader_.StandardLightingTexture_PS.size() > 0)
+	{
+		std::vector<VertexLayout> layouts_lighting;
+		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "POSITION", 0});
+		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 0});
+		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 1});
+		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 2});
+		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
+		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 1});
+
+		m_shader_lighting = Shader::Create(this,
+										   fixedShader_.StandardLightingTexture_VS.data(),
+										   fixedShader_.StandardLightingTexture_VS.size(),
+										   fixedShader_.StandardLightingTexture_PS.data(),
+										   fixedShader_.StandardLightingTexture_PS.size(),
+										   "StandardRenderer Lighting",
+										   layouts_lighting);
+
+		m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
+		m_shader_lighting->SetVertexRegisterCount(8 + 1);
+
+		m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
+		m_shader_lighting->SetPixelRegisterCount(12);
+	}
 
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader->SetVertexRegisterCount(8 + 1);
@@ -528,7 +566,13 @@ void RendererImplemented::SetCameraParameter(const ::Effekseer::Vector3D& front,
 #endif
 }
 
-::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) { return nullptr; }
+::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) { 
+
+	if (materialCompiler_ == nullptr)
+		return nullptr;
+
+	return new MaterialLoader(this, fileInterface, platformType_, materialCompiler_);
+}
 
 Effekseer::TextureData* RendererImplemented::GetBackground()
 {
@@ -705,15 +749,19 @@ Shader* RendererImplemented::GetShader(bool useTexture, ::Effekseer::RendererMat
 	{
 		if (useTexture && GetRenderMode() == Effekseer::RenderMode::Normal)
 		{
-			// TODO : implement
+			if (m_shader_lighting != nullptr)
+			{
+				return m_shader_lighting;
+			}
 			return m_shader;
-			// return m_shader_lighting;
 		}
 		else
 		{
-			// TODO : implement
+			if (m_shader_lighting != nullptr)
+			{
+				return m_shader_lighting;
+			}
 			return m_shader;
-			// return m_shader_lighting;
 		}
 	}
 	else
@@ -839,4 +887,3 @@ void RendererImplemented::DeleteProxyTexture(Effekseer::TextureData* data)
 }
 
 } // namespace EffekseerRendererLLGI
-

@@ -65,6 +65,7 @@ private:
 	int32_t m_squareMaxCount;
 
 	Shader* m_shader = nullptr;
+	Shader* m_shader_lighting = nullptr;
 	Shader* m_shader_distortion = nullptr;
 	Shader* currentShader = nullptr;
 
@@ -105,6 +106,10 @@ private:
 public:
 	//! shaders (todo implemented)
 	FixedShader fixedShader_;
+
+	::Effekseer::CompiledMaterialPlatformType platformType_;
+
+	::Effekseer::MaterialCompiler* materialCompiler_ = nullptr;
 
 	RendererImplemented(int32_t squareMaxCount);
 
