@@ -8,17 +8,16 @@ namespace Effekseer
 
 SystemLanguage GetSystemLanguage()
 {
-	wchar_t locale[LOCALE_NAME_MAX_LENGTH];
+	auto localeID = GetUserDefaultUILanguage();
+	auto primaryLangID = PRIMARYLANGID(localeID);
 
-	if (GetSystemDefaultLocaleName(locale, LOCALE_NAME_MAX_LENGTH))
+	if (primaryLangID == LANG_JAPANESE)
 	{
-		auto localeStr = std::wstring(locale);
-
-		if (localeStr.find(L"ja-") != std::string::npos)
-			return SystemLanguage::Japanese;
-
-		if (localeStr.find(L"en") != std::string::npos)
-			return SystemLanguage::English;
+		return SystemLanguage::Japanese;
+	}
+	else if (primaryLangID == LANG_ENGLISH)
+	{
+		return SystemLanguage::English;
 	}
 
 	return SystemLanguage::Unknown;
