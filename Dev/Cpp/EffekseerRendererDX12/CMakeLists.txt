@@ -9,6 +9,9 @@ source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
 
 file(GLOB_RECURSE LOCAL_HEADERS_DX12 *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_DX12 *.cpp)
+list(APPEND LOCAL_HEADERS_DX12 ../EffekseerMaterialCompiler/DirectX12/EffekseerMaterialCompilerDX12.h)
+list(APPEND LOCAL_SOURCES_DX12 ../EffekseerMaterialCompiler/DirectX12/EffekseerMaterialCompilerDX12.cpp)
+
 FilterFolder("${LOCAL_HEADERS_DX12}")
 FilterFolder("${LOCAL_SOURCES_DX12}")
 
