@@ -47,7 +47,7 @@ if(WIN32)
 
 endif()
 
-if(WIN32)
+if(WIN32 AND BUILD_DX12)
     add_library(
         EffekseerMaterialCompilerDX12
         SHARED
