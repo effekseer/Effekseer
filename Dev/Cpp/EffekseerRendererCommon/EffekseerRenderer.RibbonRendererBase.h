@@ -26,11 +26,12 @@ namespace EffekseerRenderer
 	//----------------------------------------------------------------------------------
 	typedef ::Effekseer::RibbonRenderer::NodeParameter efkRibbonNodeParam;
 	typedef ::Effekseer::RibbonRenderer::InstanceParameter efkRibbonInstanceParam;
-	typedef ::Effekseer::Vector3D efkVector3D;
+	typedef ::Effekseer::Vec3f efkVector3D;
 
 	template<typename RENDERER, typename VERTEX_NORMAL, typename VERTEX_DISTORTION>
 	class RibbonRendererBase
 		: public ::Effekseer::RibbonRenderer
+		, public ::Effekseer::AlignedAllocationPolicy<16>
 	{
 	private:
 
@@ -236,7 +237,7 @@ namespace EffekseerRenderer
 		}
 
 		template<typename VERTEX>
-		void RenderSplines(const ::Effekseer::Matrix44& camera)
+		void RenderSplines(const ::Effekseer::Mat44f& camera)
 		{
 			if (instances.size() == 0)
 			{
@@ -255,25 +256,17 @@ namespace EffekseerRenderer
 
 				for (size_t loop = 0; loop < instances.size(); loop++)
 				{
-					auto pl = efkVector3D();
-					auto pr = efkVector3D();
-
 					auto& param = instances[loop];
 
-					pl.X = param.Positions[0];
-					pl.Y = 0.0f;
-					pl.Z = 0.0f;
-
-					pr.X = param.Positions[1];
-					pr.Y = 0.0f;
-					pr.Z = 0.0f;
+					efkVector3D pl(param.Positions[0], 0.0f, 0.0f);
+					efkVector3D pr(param.Positions[1], 0.0f, 0.0f);
 
 					if (parameter.ViewpointDependent)
 					{
-						::Effekseer::Matrix43 mat = param.SRTMatrix43;
-						::Effekseer::Vector3D s;
-						::Effekseer::Matrix43 r;
-						::Effekseer::Vector3D t;
+						::Effekseer::Mat43f mat = param.SRTMatrix43;
+						::Effekseer::Vec3f s;
+						::Effekseer::Mat43f r;
+						::Effekseer::Vec3f t;
 						mat.GetSRT(s, r, t);
 
 						ApplyDepthParameters(r,
@@ -285,54 +278,35 @@ namespace EffekseerRenderer
 											 parameter.IsRightHand);
 
 						// extend
-						pl.X = pl.X * s.X;
-						pr.X = pr.X * s.X;
+						pl.SetX(pl.GetX() * s.GetX());
+						pr.SetX(pr.GetX() * s.GetX());
 
-						::Effekseer::Vector3D F;
-						::Effekseer::Vector3D R;
-						::Effekseer::Vector3D U;
+						::Effekseer::Vec3f F;
+						::Effekseer::Vec3f R;
+						::Effekseer::Vec3f U;
 
-						U = ::Effekseer::Vector3D(r.Value[1][0], r.Value[1][1], r.Value[1][2]);
+						U = ::Effekseer::Vec3f(r.X.GetY(), r.Y.GetY(), r.X.GetY());
+						F = ::Effekseer::Vec3f(-m_renderer->GetCameraFrontDirection()).Normalize();
+						R = ::Effekseer::Vec3f::Cross(U, F).Normalize();
+						F = ::Effekseer::Vec3f::Cross(R, U).Normalize();
 
-						::Effekseer::Vector3D::Normal(F, -m_renderer->GetCameraFrontDirection());
+						::Effekseer::Mat43f mat_rot(
+							-R.GetX(), -R.GetY(), -R.GetZ(),
+							 U.GetX(),  U.GetY(),  U.GetZ(),
+							 F.GetX(),  F.GetY(),  F.GetZ(),
+							 t.GetX(),  t.GetY(),  t.GetZ());
 
-						::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, U, F));
-						::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D::Cross(F, R, U));
-
-						::Effekseer::Matrix43 mat_rot;
-
-						mat_rot.Value[0][0] = -R.X;
-						mat_rot.Value[0][1] = -R.Y;
-						mat_rot.Value[0][2] = -R.Z;
-						mat_rot.Value[1][0] = U.X;
-						mat_rot.Value[1][1] = U.Y;
-						mat_rot.Value[1][2] = U.Z;
-						mat_rot.Value[2][0] = F.X;
-						mat_rot.Value[2][1] = F.Y;
-						mat_rot.Value[2][2] = F.Z;
-						mat_rot.Value[3][0] = t.X;
-						mat_rot.Value[3][1] = t.Y;
-						mat_rot.Value[3][2] = t.Z;
-
-
-						::Effekseer::Vector3D::Transform(
-							pl,
-							pl,
-							mat_rot);
-
-						::Effekseer::Vector3D::Transform(
-							pr,
-							pr,
-							mat_rot);
+						pl = ::Effekseer::Vec3f::Transform(pl, mat_rot);
+						pr = ::Effekseer::Vec3f::Transform(pr, mat_rot);
 
 						spline_left.AddVertex(pl);
 						spline_right.AddVertex(pr);
 					}
 					else
 					{
-						::Effekseer::Matrix43 mat = param.SRTMatrix43;
+						::Effekseer::Mat43f mat = param.SRTMatrix43;
 
-						::Effekseer::Vector3D s;
+						::Effekseer::Vec3f s;
 
 						ApplyDepthParameters(mat,
 											 m_renderer->GetCameraFrontDirection(),
@@ -341,15 +315,8 @@ namespace EffekseerRenderer
 											 parameter.DepthParameterPtr,
 											 parameter.IsRightHand);
 
-						::Effekseer::Vector3D::Transform(
-							pl,
-							pl,
-							mat);
-
-						::Effekseer::Vector3D::Transform(
-							pr,
-							pr, 
-							mat);
+						pl = ::Effekseer::Vec3f::Transform(pl, mat);
+						pr = ::Effekseer::Vec3f::Transform(pr, mat);
 
 						spline_left.AddVertex(pl);
 						spline_right.AddVertex(pr);
@@ -374,8 +341,8 @@ namespace EffekseerRenderer
 
 					if (parameter.SplineDivision > 1)
 					{
-						verteies[0].Pos = spline_left.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision);
-						verteies[1].Pos = spline_right.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision);
+						verteies[0].Pos = ToStruct(spline_left.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision));
+						verteies[1].Pos = ToStruct(spline_right.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision));
 
 						verteies[0].SetColor(Effekseer::Color::Lerp(param.Colors[0], param.Colors[2], percent_instance));
 						verteies[1].SetColor(Effekseer::Color::Lerp(param.Colors[1], param.Colors[3], percent_instance));
@@ -396,10 +363,10 @@ namespace EffekseerRenderer
 
 					if (parameter.ViewpointDependent)
 					{
-						::Effekseer::Matrix43 mat = param.SRTMatrix43;
-						::Effekseer::Vector3D s;
-						::Effekseer::Matrix43 r;
-						::Effekseer::Vector3D t;
+						::Effekseer::Mat43f mat = param.SRTMatrix43;
+						::Effekseer::Vec3f s;
+						::Effekseer::Mat43f r;
+						::Effekseer::Vec3f t;
 						mat.GetSRT(s, r, t);
 
 						ApplyDepthParameters(r,
@@ -417,41 +384,28 @@ namespace EffekseerRenderer
 						{
 							for (int i = 0; i < 2; i++)
 							{
-								verteies[i].Pos.X = verteies[i].Pos.X * s.X;
+								verteies[i].Pos.X = verteies[i].Pos.X * s.GetX();
 							}
 
-							::Effekseer::Vector3D F;
-							::Effekseer::Vector3D R;
-							::Effekseer::Vector3D U;
+							::Effekseer::Vec3f F;
+							::Effekseer::Vec3f R;
+							::Effekseer::Vec3f U;
 
-							U = ::Effekseer::Vector3D(r.Value[1][0], r.Value[1][1], r.Value[1][2]);
+							U = ::Effekseer::Vec3f(r.X.GetY(), r.Y.GetY(), r.Z.GetY());
 
-							::Effekseer::Vector3D::Normal(F, -m_renderer->GetCameraFrontDirection());
+							F = ::Effekseer::Vec3f(-m_renderer->GetCameraFrontDirection()).Normalize();
+							R = ::Effekseer::Vec3f::Cross(U, F).Normalize();
+							F = ::Effekseer::Vec3f::Cross(R, U).Normalize();
 
-							::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, U, F));
-							::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D::Cross(F, R, U));
-
-							::Effekseer::Matrix43 mat_rot;
-
-							mat_rot.Value[0][0] = -R.X;
-							mat_rot.Value[0][1] = -R.Y;
-							mat_rot.Value[0][2] = -R.Z;
-							mat_rot.Value[1][0] = U.X;
-							mat_rot.Value[1][1] = U.Y;
-							mat_rot.Value[1][2] = U.Z;
-							mat_rot.Value[2][0] = F.X;
-							mat_rot.Value[2][1] = F.Y;
-							mat_rot.Value[2][2] = F.Z;
-							mat_rot.Value[3][0] = t.X;
-							mat_rot.Value[3][1] = t.Y;
-							mat_rot.Value[3][2] = t.Z;
+							::Effekseer::Mat43f mat_rot(
+								-R.GetX(), -R.GetY(), -R.GetZ(),
+								 U.GetX(),  U.GetY(),  U.GetZ(),
+								 F.GetX(),  F.GetY(),  F.GetZ(),
+								 t.GetX(),  t.GetY(),  t.GetZ());
 
 							for (int i = 0; i < 2; i++)
 							{
-								::Effekseer::Vector3D::Transform(
-									verteies[i].Pos,
-									verteies[i].Pos,
-									mat_rot);
+								verteies[i].Pos = ToStruct(::Effekseer::Vec3f::Transform(verteies[i].Pos, mat_rot));
 							}
 						}
 					}
@@ -462,9 +416,9 @@ namespace EffekseerRenderer
 						}
 						else
 						{
-							::Effekseer::Matrix43 mat = param.SRTMatrix43;
+							::Effekseer::Mat43f mat = param.SRTMatrix43;
 
-							::Effekseer::Vector3D s;
+							::Effekseer::Vec3f s;
 	
 							ApplyDepthParameters(mat,
 												 m_renderer->GetCameraFrontDirection(),
@@ -476,10 +430,7 @@ namespace EffekseerRenderer
 
 							for (int i = 0; i < 2; i++)
 							{
-								::Effekseer::Vector3D::Transform(
-									verteies[i].Pos,
-									verteies[i].Pos,
-									mat);
+								verteies[i].Pos = ToStruct(::Effekseer::Vec3f::Transform(verteies[i].Pos, mat));
 							}
 						}
 					}
@@ -519,20 +470,20 @@ namespace EffekseerRenderer
 			if (vertexType == VertexType::Distortion)
 			{
 				StrideView<VERTEX_DISTORTION> vs_(m_ringBufferData, stride_, vertexCount_);
-				Effekseer::Vector3D axisBefore;
+				Effekseer::Vec3f axisBefore;
 
 				for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
 				{
 					bool isFirst_ = (i == 0);
 					bool isLast_ = (i == ((instances.size() - 1) * parameter.SplineDivision));
 
-					Effekseer::Vector3D axis;
-					Effekseer::Vector3D pos;
+					Effekseer::Vec3f axis;
+					Effekseer::Vec3f pos;
 
 					if (isFirst_)
 					{
 						axis = (vs_[3].Pos - vs_[1].Pos);
-						Effekseer::Vector3D::Normal(axis, axis);
+						axis = axis.Normalize();
 						axisBefore = axis;
 					}
 					else if (isLast_)
@@ -541,51 +492,35 @@ namespace EffekseerRenderer
 					}
 					else
 					{
-						Effekseer::Vector3D axisOld = axisBefore;
+						Effekseer::Vec3f axisOld = axisBefore;
 						axis = (vs_[5].Pos - vs_[3].Pos);
-						Effekseer::Vector3D::Normal(axis, axis);
+						axis = axis.Normalize();
 						axisBefore = axis;
 
 						axis = (axisBefore + axisOld) / 2.0f;
-						Effekseer::Vector3D::Normal(axis, axis);
+						axis = axis.Normalize();
 					}
 
-					auto tangent = vs_[1].Pos - vs_[0].Pos;
-					Effekseer::Vector3D::Normal(tangent, tangent);
+					Effekseer::Vec3f tangent = vs_[1].Pos - vs_[0].Pos;
+					tangent = tangent.Normalize();
 
 					if (isFirst_)
 					{
-						vs_[0].Binormal = axis;
-						vs_[1].Binormal = axis;
-
-						vs_[0].Tangent = tangent;
-						vs_[1].Tangent = tangent;
-
+						vs_[0].Binormal = vs_[1].Binormal = ToStruct(axis);
+						vs_[0].Tangent = vs_[1].Tangent = ToStruct(tangent);
 						vs_ += 2;
 
 					}
 					else if (isLast_)
 					{
-						vs_[0].Binormal = axis;
-						vs_[1].Binormal = axis;
-
-						vs_[0].Tangent = tangent;
-						vs_[1].Tangent = tangent;
-
+						vs_[0].Binormal = vs_[1].Binormal = ToStruct(axis);
+						vs_[0].Tangent = vs_[1].Tangent = ToStruct(tangent);
 						vs_ += 2;
 					}
 					else
 					{
-						vs_[0].Binormal = axis;
-						vs_[1].Binormal = axis;
-						vs_[2].Binormal = axis;
-						vs_[3].Binormal = axis;
-
-						vs_[0].Tangent = tangent;
-						vs_[1].Tangent = tangent;
-						vs_[2].Tangent = tangent;
-						vs_[3].Tangent = tangent;
-
+						vs_[0].Binormal = vs_[1].Binormal = vs_[2].Binormal = vs_[3].Binormal = ToStruct(axis);
+						vs_[0].Tangent = vs_[1].Tangent = vs_[2].Tangent = vs_[3].Tangent = ToStruct(tangent);
 						vs_ += 4;
 					}
 				}
@@ -593,20 +528,20 @@ namespace EffekseerRenderer
 			else if (vertexType == VertexType::Dynamic)
 			{
 				StrideView<DynamicVertex> vs_(m_ringBufferData, stride_, vertexCount_);
-				Effekseer::Vector3D axisBefore;
+				Effekseer::Vec3f axisBefore;
 
 				for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
 				{
 					bool isFirst_ = (i == 0);
 					bool isLast_ = (i == ((instances.size() - 1) * parameter.SplineDivision));
 
-					Effekseer::Vector3D axis;
-					Effekseer::Vector3D pos;
+					Effekseer::Vec3f axis;
+					Effekseer::Vec3f pos;
 
 					if (isFirst_)
 					{
 						axis = (vs_[3].Pos - vs_[1].Pos);
-						Effekseer::Vector3D::Normal(axis, axis);
+						axis = axis.Normalize();
 						axisBefore = axis;
 					}
 					else if (isLast_)
@@ -615,21 +550,20 @@ namespace EffekseerRenderer
 					}
 					else
 					{
-						Effekseer::Vector3D axisOld = axisBefore;
+						Effekseer::Vec3f axisOld = axisBefore;
 						axis = (vs_[5].Pos - vs_[3].Pos);
-						Effekseer::Vector3D::Normal(axis, axis);
+						axis = axis.Normalize();
 						axisBefore = axis;
 
 						axis = (axisBefore + axisOld) / 2.0f;
-						Effekseer::Vector3D::Normal(axis, axis);
+						axis = axis.Normalize();
 					}
 
-					auto tangent = vs_[1].Pos - vs_[0].Pos;
-					Effekseer::Vector3D::Normal(tangent, tangent);
+					Effekseer::Vec3f tangent = vs_[1].Pos - vs_[0].Pos;
+					tangent = tangent.Normalize();
 
-					Effekseer::Vector3D normal;
-					Effekseer::Vector3D::Cross(normal, axis, tangent);
-					Effekseer::Vector3D::Normal(normal, normal);
+					Effekseer::Vec3f normal = Effekseer::Vec3f::Cross(axis, tangent);
+					normal = normal.Normalize();
 
 					if (isFirst_)
 					{
@@ -723,7 +657,7 @@ namespace EffekseerRenderer
 
 	protected:
 
-		void Rendering_(const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+		void Rendering_(const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData, const ::Effekseer::Mat44f& camera)
 		{
 			const auto& state = m_renderer->GetStandardRenderer()->GetState();
 
@@ -743,7 +677,7 @@ namespace EffekseerRenderer
 		}
 
 		template<typename VERTEX>
-		void Rendering_Internal(const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+		void Rendering_Internal(const efkRibbonNodeParam& parameter, const efkRibbonInstanceParam& instanceParameter, void* userData, const ::Effekseer::Mat44f& camera)
 		{
 			if (m_ringBufferData == NULL) return;
 			if (instanceParameter.InstanceCount < 2) return;

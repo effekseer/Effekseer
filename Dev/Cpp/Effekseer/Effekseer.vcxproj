@@ -21,6 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{91E36741-5DFC-46E3-A7F3-28A67FD637C8}</ProjectGuid>
     <RootNamespace>Effekseer</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -219,6 +220,16 @@
     <ClInclude Include="Effekseer\Renderer\Effekseer.RingRenderer.h" />
     <ClInclude Include="Effekseer\Renderer\Effekseer.SpriteRenderer.h" />
     <ClInclude Include="Effekseer\Renderer\Effekseer.TrackRenderer.h" />
+    <ClInclude Include="Effekseer\SIMD\Effekseer.Mat43f.h" />
+    <ClInclude Include="Effekseer\SIMD\Effekseer.Mat44f.h" />
+    <ClInclude Include="Effekseer\SIMD\Effekseer.SIMD4f.h" />
+    <ClInclude Include="Effekseer\SIMD\Effekseer.SIMD4f_Gen.h" />
+    <ClInclude Include="Effekseer\SIMD\Effekseer.SIMD4f_NEON.h" />
+    <ClInclude Include="Effekseer\SIMD\Effekseer.SIMD4f_SSE.h" />
+    <ClInclude Include="Effekseer\SIMD\Effekseer.SIMDUtils.h" />
+    <ClInclude Include="Effekseer\SIMD\Effekseer.Vec2f.h" />
+    <ClInclude Include="Effekseer\SIMD\Effekseer.Vec3f.h" />
+    <ClInclude Include="Effekseer\SIMD\Effekseer.Vec4f.h" />
     <ClInclude Include="Effekseer\Sound\Effekseer.SoundPlayer.h" />
     <ClInclude Include="Effekseer\Utils\Effekseer.CustomAllocator.h" />
   </ItemGroup>
@@ -264,6 +275,8 @@
     <ClCompile Include="Effekseer\Material\Effekseer.Material.cpp" />
     <ClCompile Include="Effekseer\Material\Effekseer.MaterialCompiler.cpp" />
     <ClCompile Include="Effekseer\Parameter\Effekseer.Parameters.cpp" />
+    <ClCompile Include="Effekseer\SIMD\Effekseer.Mat43f.cpp" />
+    <ClCompile Include="Effekseer\SIMD\Effekseer.Mat44f.cpp" />
     <ClCompile Include="Effekseer\Utils\Effekseer.CustomAllocator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

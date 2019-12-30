@@ -8,6 +8,8 @@
 #include "../Effekseer.Base.h"
 #include "../Effekseer.Vector3D.h"
 #include "../Effekseer.Matrix43.h"
+#include "../SIMD/Effekseer.Vec3f.h"
+#include "../SIMD/Effekseer.Mat43f.h"
 #include "../Effekseer.Color.h"
 
 //----------------------------------------------------------------------------------
@@ -36,7 +38,7 @@ public:
 
 	struct InstanceParameter
 	{
-		Vector3D	Position;
+		Vec3f		Position;
 		float		Size;
 		Color		ParticleColor;
 	};

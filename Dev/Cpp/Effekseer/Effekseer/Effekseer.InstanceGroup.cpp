@@ -32,7 +32,7 @@ InstanceGroup::InstanceGroup( Manager* manager, EffectNode* effectNode, Instance
 	, NextUsedByInstance	( NULL )
 	, NextUsedByContainer	( NULL )
 {
-	parentMatrix_.Indentity();
+	parentMatrix_ = Mat43f::Identity;
 }
 
 //----------------------------------------------------------------------------------
@@ -106,19 +106,19 @@ void InstanceGroup::Update(bool shown)
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGroup::SetBaseMatrix( const Matrix43& mat )
+void InstanceGroup::SetBaseMatrix( const Mat43f& mat )
 {
 	for (auto instance : m_instances)
 	{
 		if (instance->m_State == INSTANCE_STATE_ACTIVE)
 		{
-			Matrix43::Multiple(instance->m_GlobalMatrix43, instance->m_GlobalMatrix43, mat);
+			instance->m_GlobalMatrix43 *= mat;
 			assert(instance->m_GlobalMatrix43.IsValid());
 		}
 	}
 }
 
-void InstanceGroup::SetParentMatrix(const Matrix43& mat)
+void InstanceGroup::SetParentMatrix(const Mat43f& mat)
 {
 	BindType tType = m_effectNode->CommonValues.TranslationBindType;
 	BindType rType = m_effectNode->CommonValues.RotationBindType;
@@ -140,8 +140,8 @@ void InstanceGroup::SetParentMatrix(const Matrix43& mat)
 	}
 	else
 	{
-		Vector3D s, t;
-		Matrix43 r;
+		Vec3f s, t;
+		Mat43f r;
 		mat.GetSRT(s, r, t);
 
 		if (tType == BindType::Always)
@@ -154,7 +154,7 @@ void InstanceGroup::SetParentMatrix(const Matrix43& mat)
 		}
 		else if (tType == BindType::NotBind)
 		{
-			parentTranslation_ = Vector3D(0.0f, 0.0f, 0.0f);
+			parentTranslation_ = Vec3f(0.0f, 0.0f, 0.0f);
 		}
 
 		if (rType == BindType::Always)
@@ -167,7 +167,7 @@ void InstanceGroup::SetParentMatrix(const Matrix43& mat)
 		}
 		else if (rType == BindType::NotBind)
 		{
-			parentRotation_.Indentity();
+			parentRotation_ = Mat43f::Identity;
 		}
 
 		if (sType == BindType::Always)
@@ -180,7 +180,7 @@ void InstanceGroup::SetParentMatrix(const Matrix43& mat)
 		}
 		else if (sType == BindType::NotBind)
 		{
-			parentScale_ = Vector3D(1.0f, 1.0f, 1.0f);
+			parentScale_ = Vec3f(1.0f, 1.0f, 1.0f);
 		}
 	}
 }

@@ -18,6 +18,8 @@
 #include "Effekseer.Vector2D.h"
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.Color.h"
+#include "SIMD/Effekseer.Vec2f.h"
+#include "SIMD/Effekseer.Vec3f.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -47,9 +49,7 @@ struct random_float
 
 	float getValue(IRandObject& g) const
 	{
-		float r;
-		r = g.GetRand(min, max);
-		return r;
+		return g.GetRand(min, max);
 	}
 };
 
@@ -82,45 +82,10 @@ struct vector2d
 	float	x;
 	float	y;
 
-	void reset()
+	vector2d& operator*=(float rhs)
 	{
-		assert( sizeof(vector2d) == sizeof(float) * 2 );
-		memset( this, 0, sizeof(vector2d) );
-	};
-
-	void setValueToArg( Vector2D& v ) const
-	{
-		v.X = x;
-		v.Y = y;
-	}
-
-	vector2d operator + ( const vector2d& o ) const
-	{
-		vector2d ret;
-		ret.x = x + o.x;
-		ret.y = y + o.y;
-		return ret;
-	}
-
-	vector2d operator * (const float& o) const
-	{
-		vector2d ret;
-		ret.x = x * o;
-		ret.y = y * o;
-		return ret;
-	}
-
-	vector2d& operator += ( const vector2d& o )
-	{
-		x += o.x;
-		y += o.y;
-		return *this;
-	}
-
-	vector2d& operator *= ( const float& o )
-	{
-		x *= o;
-		y *= o;
+		x *= rhs;
+		y *= rhs;
 		return *this;
 	}
 };
@@ -131,6 +96,7 @@ struct rectf
 	float	y;
 	float	w;
 	float	h;
+
 	void reset()
 	{
 		assert( sizeof(rectf) == sizeof(float) * 4 );
@@ -151,12 +117,12 @@ struct random_vector2d
 		memset( this, 0 , sizeof(random_vector2d) );
 	};
 
-	vector2d getValue(IRandObject& g) const
+	Vec2f getValue(IRandObject& g) const
 	{
-		vector2d r;
-		r.x = g.GetRand(min.x, max.x);
-		r.y = g.GetRand(min.y, max.y);
-		return r;
+		return {
+			g.GetRand(min.x, max.x),
+			g.GetRand(min.y, max.y)
+		};
 	}
 };
 
@@ -188,11 +154,11 @@ struct easing_float
 	float easingB;
 	float easingC;
 
-	void setValueToArg( float& o, const float start_, const float end_, float t ) const
+	float getValue( const float start_, const float end_, float t ) const
 	{
 		float df = end_ - start_;
 		float d = easingA * t * t * t + easingB * t * t + easingC * t;
-		o = start_ + d * df;
+		return start_ + d * df;
 	}
 };
 
@@ -207,22 +173,11 @@ struct easing_vector2d
 	float easingB;
 	float easingC;
 
-	void setValueToArg( vector2d& o, const vector2d& start_, const vector2d& end_, float t ) const
+	Vec2f getValue( const Vec2f& start_, const Vec2f& end_, float t ) const
 	{
-		float d_x = end_.x - start_.x;
-		float d_y = end_.y - start_.y;
+		Vec2f size = end_ - start_;
 		float d = easingA * t * t * t + easingB * t * t + easingC * t;
-		o.x = start_.x + d * d_x;
-		o.y = start_.y + d * d_y;
-	}
-
-	void setValueToArg( Vector2D& o, const vector2d& start_, const vector2d& end_, float t ) const
-	{
-		float d_x = end_.x - start_.x;
-		float d_y = end_.y - start_.y;
-		float d = easingA * t * t * t + easingB * t * t + easingC * t;
-		o.X = start_.x + d * d_x;
-		o.Y = start_.y + d * d_y;
+		return start_ + size * d;
 	}
 };
 
@@ -235,84 +190,11 @@ struct vector3d
 	float	y;
 	float	z;
 
-	void reset()
+	vector3d& operator*=(float rhs)
 	{
-		assert( sizeof(vector3d) == sizeof(float) * 3 );
-		memset( this, 0, sizeof(vector3d) );
-	};
-
-	void normalize()
-	{
-		float len = sqrtf(x * x + y * y + z * z);
-		if (len > 0.0001f)
-		{
-			x /= len;
-			y /= len;
-			z /= len;
-		}
-		else
-		{
-			x = 1.0;
-			y = 0.0;
-			z = 0.0;
-		}
-	}
-
-	void setValueToArg( Vector3D& v ) const
-	{
-		v.X = x;
-		v.Y = y;
-		v.Z = z;
-	}
-
-	vector3d operator + ( const vector3d& o ) const
-	{
-		vector3d ret;
-		ret.x = x + o.x;
-		ret.y = y + o.y;
-		ret.z = z + o.z;
-		return ret;
-	}
-
-	vector3d operator - ( const vector3d& o ) const
-	{
-		vector3d ret;
-		ret.x = x - o.x;
-		ret.y = y - o.y;
-		ret.z = z - o.z;
-		return ret;
-	}
-
-	vector3d operator * ( const float& o ) const
-	{
-		vector3d ret;
-		ret.x = x * o;
-		ret.y = y * o;
-		ret.z = z * o;
-		return ret;
-	}
-
-	vector3d& operator += ( const vector3d& o )
-	{
-		x += o.x;
-		y += o.y;
-		z += o.z;
-		return *this;
-	}
-
-	vector3d& operator -= ( const vector3d& o )
-	{
-		x -= o.x;
-		y -= o.y;
-		z -= o.z;
-		return *this;
-	}
-
-	vector3d& operator *= ( const float& o )
-	{
-		x *= o;
-		y *= o;
-		z *= o;
+		x *= rhs;
+		y *= rhs;
+		z *= rhs;
 		return *this;
 	}
 };
@@ -330,13 +212,13 @@ struct random_vector3d
 		memset( this, 0 , sizeof(random_vector3d) );
 	};
 
-	vector3d getValue(IRandObject& g) const
+	Vec3f getValue(IRandObject& g) const
 	{
-		vector3d r;
-		r.x = g.GetRand(min.x, max.x);
-		r.y = g.GetRand(min.y, max.y);
-		r.z = g.GetRand(min.z, max.z);
-		return r;
+		return {
+			g.GetRand(min.x, max.x),
+			g.GetRand(min.y, max.y),
+			g.GetRand(min.z, max.z)
+		};
 	}
 };
 
@@ -351,26 +233,11 @@ struct easing_vector3d
 	float easingB;
 	float easingC;
 
-	void setValueToArg( vector3d& o, const vector3d& start_, const vector3d& end_, float t ) const
+	Vec3f getValue( const Vec3f& start_, const Vec3f& end_, float t ) const
 	{
-		float d_x = end_.x - start_.x;
-		float d_y = end_.y - start_.y;
-		float d_z = end_.z - start_.z;
+		Vec3f size = end_ - start_;
 		float d = easingA * t * t * t + easingB * t * t + easingC * t;
-		o.x = start_.x + d * d_x;
-		o.y = start_.y + d * d_y;
-		o.z = start_.z + d * d_z;
-	}
-
-	void setValueToArg( Vector3D& o, const vector3d& start_, const vector3d& end_, float t ) const
-	{
-		float d_x = end_.x - start_.x;
-		float d_y = end_.y - start_.y;
-		float d_z = end_.z - start_.z;
-		float d = easingA * t * t * t + easingB * t * t + easingC * t;
-		o.X = start_.x + d * d_x;
-		o.Y = start_.y + d * d_y;
-		o.Z = start_.z + d * d_z;
+		return start_ + size * d;
 	}
 };
 

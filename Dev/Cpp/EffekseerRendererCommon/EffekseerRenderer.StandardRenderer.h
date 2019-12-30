@@ -255,11 +255,9 @@ private:
 		fc[3] = color.A / 255.0f;
 	}
 
-	void VectorToFloat4(::Effekseer::Vector3D v, float fc[4])
+	void VectorToFloat4(const ::Effekseer::Vec3f& v, float fc[4])
 	{
-		fc[0] = v.X;
-		fc[1] = v.Y;
-		fc[2] = v.Z;
+		::Effekseer::SIMD4f::Store3(fc, v.s);
 		fc[3] = 1.0f;
 	}
 
@@ -342,7 +340,7 @@ public:
 
 	const StandardRendererState& GetState() { return m_state; }
 
-	void Rendering(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj)
+	void Rendering(const Effekseer::Mat44f& mCamera, const Effekseer::Mat44f& mProj)
 	{
 		if (vertexCaches.size() == 0)
 			return;
@@ -387,7 +385,7 @@ public:
 		vertexCaches.clear();
 	}
 
-	void Rendering_(const Effekseer::Matrix44& mCamera, const Effekseer::Matrix44& mProj, int32_t bufferOffset, int32_t bufferSize, int32_t stride, int32_t renderPass)
+	void Rendering_(const Effekseer::Mat44f& mCamera, const Effekseer::Mat44f& mProj, int32_t bufferOffset, int32_t bufferSize, int32_t stride, int32_t renderPass)
 	{
 		bool isBackgroundRequired = false;
 		
@@ -585,6 +583,9 @@ public:
 
 		if (m_state.MaterialPtr != nullptr)
 		{
+			Effekseer::Matrix44 mstCamera = ToStruct(mCamera);
+			Effekseer::Matrix44 mstProj = ToStruct(mProj);
+
 			// time
 			std::array<float, 4> predefined_uniforms;
 			predefined_uniforms.fill(0.5f);
@@ -592,10 +593,10 @@ public:
 
 			// vs
 			int32_t vsOffset = 0;
-			m_renderer->SetVertexBufferToShader(&mCamera, sizeof(Effekseer::Matrix44), vsOffset);
+			m_renderer->SetVertexBufferToShader(&mstCamera, sizeof(Effekseer::Matrix44), vsOffset);
 			vsOffset += sizeof(Effekseer::Matrix44);
 
-			m_renderer->SetVertexBufferToShader(&mProj, sizeof(Effekseer::Matrix44), vsOffset);
+			m_renderer->SetVertexBufferToShader(&mstProj, sizeof(Effekseer::Matrix44), vsOffset);
 			vsOffset += sizeof(Effekseer::Matrix44);
 
 			m_renderer->SetVertexBufferToShader(uvInversedMaterial.data(), sizeof(float) * 4, vsOffset);
@@ -626,9 +627,9 @@ public:
 				float lightColor[4];
 				float lightAmbientColor[4];
 
-				::Effekseer::Vector3D cameraPosition3 = m_renderer->GetCameraPosition();
-				::Effekseer::Vector3D lightDirection3 = m_renderer->GetLightDirection();
-				::Effekseer::Vector3D::Normal(lightDirection3, lightDirection3);
+				::Effekseer::Vec3f cameraPosition3 = m_renderer->GetCameraPosition();
+				::Effekseer::Vec3f lightDirection3 = m_renderer->GetLightDirection();
+				lightDirection3 = lightDirection3.Normalize();
 				VectorToFloat4(cameraPosition3, cameraPosition);
 				VectorToFloat4(lightDirection3, lightDirection);
 				ColorToFloat4(m_renderer->GetLightColor(), lightColor);
@@ -666,8 +667,8 @@ public:
 		else if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
 		{
 			VertexConstantBuffer vcb;
-			vcb.constantVSBuffer[0] = mCamera;
-			vcb.constantVSBuffer[1] = mProj;
+			vcb.constantVSBuffer[0] = ToStruct(mCamera);
+			vcb.constantVSBuffer[1] = ToStruct(mProj);
 			vcb.uvInversed[0] = uvInversed[0];
 			vcb.uvInversed[1] = uvInversed[1];
 
@@ -679,8 +680,8 @@ public:
 			float lightColor[4];
 			float lightAmbientColor[4];
 
-			::Effekseer::Vector3D lightDirection3 = m_renderer->GetLightDirection();
-			::Effekseer::Vector3D::Normal(lightDirection3, lightDirection3);
+			::Effekseer::Vec3f lightDirection3 = m_renderer->GetLightDirection();
+			lightDirection3 = lightDirection3.Normalize();
 			VectorToFloat4(lightDirection3, lightDirection);
 			ColorToFloat4(m_renderer->GetLightColor(), lightColor);
 			ColorToFloat4(m_renderer->GetLightAmbientColor(), lightAmbientColor);
@@ -698,8 +699,8 @@ public:
 		else
 		{
 			VertexConstantBuffer vcb;
-			vcb.constantVSBuffer[0] = mCamera;
-			vcb.constantVSBuffer[1] = mProj;
+			vcb.constantVSBuffer[0] = ToStruct(mCamera);
+			vcb.constantVSBuffer[1] = ToStruct(mProj);
 			vcb.uvInversed[0] = uvInversed[0];
 			vcb.uvInversed[1] = uvInversed[1];
 

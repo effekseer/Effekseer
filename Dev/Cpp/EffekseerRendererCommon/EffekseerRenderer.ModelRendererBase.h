@@ -3,6 +3,7 @@
 #define	__EFFEKSEERRENDERER_MODEL_RENDERER_BASE_H__
 
 #include <Effekseer.h>
+#include <Effekseer.Internal.h>
 #include <assert.h>
 #include <string.h>
 #include <algorithm>
@@ -24,7 +25,7 @@ namespace EffekseerRenderer
 //----------------------------------------------------------------------------------
 typedef ::Effekseer::ModelRenderer::NodeParameter efkModelNodeParam;
 typedef ::Effekseer::ModelRenderer::InstanceParameter efkModelInstanceParam;
-typedef ::Effekseer::Vector3D efkVector3D;
+typedef ::Effekseer::Vec3f efkVector3D;
 
 template<int MODEL_COUNT>
 struct ModelRendererVertexConstantBuffer
@@ -49,6 +50,7 @@ struct ModelRendererPixelConstantBuffer
 
 class ModelRendererBase
 	: public ::Effekseer::ModelRenderer
+	, public ::Effekseer::AlignedAllocationPolicy<16>
 {
 protected:
 	struct KeyValue
@@ -84,11 +86,9 @@ protected:
 		fc[3] = color.A / 255.0f;
 	}
 	
-	void VectorToFloat4(::Effekseer::Vector3D v, float fc[4])
+	void VectorToFloat4(const ::Effekseer::Vec3f& v, float fc[4])
 	{
-		fc[0] = v.X;
-		fc[1] = v.Y;
-		fc[2] = v.Z;
+		::Effekseer::SIMD4f::Store3(fc, v.s);
 		fc[3] = 1.0f;
 	}
 
@@ -104,10 +104,10 @@ protected:
 			keyValues_.resize(m_matrixes.size());
 			for (size_t i = 0; i < keyValues_.size(); i++)
 			{
-				efkVector3D t;
-				t.X = m_matrixes[i].Values[3][0];
-				t.Y = m_matrixes[i].Values[3][1];
-				t.Z = m_matrixes[i].Values[3][2];
+				efkVector3D t(
+					m_matrixes[i].Values[3][0],
+					m_matrixes[i].Values[3][1],
+					m_matrixes[i].Values[3][2]);
 
 				auto frontDirection = renderer->GetCameraFrontDirection();
 				if (!param.IsRightHand)
@@ -115,7 +115,7 @@ protected:
 					frontDirection.Z = -frontDirection.Z;
 				}
 
-				keyValues_[i].Key = Effekseer::Vector3D::Dot(t, frontDirection);
+				keyValues_[i].Key = Effekseer::Vec3f::Dot(t, frontDirection);
 				keyValues_[i].Value = static_cast<int32_t>(i);
 			}
 
@@ -221,61 +221,35 @@ public:
 	void Rendering_(RENDERER* renderer, const efkModelNodeParam& parameter, const efkModelInstanceParam& instanceParameter, void* userData)
 	{
 		::Effekseer::BillboardType btype = parameter.Billboard;
-		Effekseer::Matrix44 mat44;
+		Effekseer::Mat44f mat44;
 
 		if (btype == ::Effekseer::BillboardType::Fixed)
 		{
-			for (int32_t r_ = 0; r_ < 4; r_++)
-			{
-				for (int32_t c_ = 0; c_ < 3; c_++)
-				{
-					mat44.Values[r_][c_] = instanceParameter.SRTMatrix43.Value[r_][c_];
-				}
-			}
+			mat44 = instanceParameter.SRTMatrix43;
 		}
 		else
 		{
-			Effekseer::Matrix43 mat43;
-			Effekseer::Vector3D s;
-			Effekseer::Vector3D R;
-			Effekseer::Vector3D F;
+			Effekseer::Mat43f mat43;
+			Effekseer::Vec3f s;
+			Effekseer::Vec3f R;
+			Effekseer::Vec3f F;
 
 			CalcBillboard(btype, mat43, s ,R, F, instanceParameter.SRTMatrix43, renderer->GetCameraFrontDirection());
 
-			::Effekseer::Matrix43 mat_scale;
-			mat_scale.Scaling(s.X, s.Y, s.Z);
-			::Effekseer::Matrix43::Multiple(mat43, mat_scale, mat43);
-
-			for (int32_t r_ = 0; r_ < 4; r_++)
-			{
-				for (int32_t c_ = 0; c_ < 3; c_++)
-				{
-					mat44.Values[r_][c_] = mat43.Value[r_][c_];
-				}
-			}
+			mat44 = ::Effekseer::Mat43f::Scaling(s) * mat43;
 		}
 		
 		if (parameter.Magnification != 1.0f)
 		{
-			Effekseer::Matrix44 mat_scale;
-			mat_scale.Values[0][0] = parameter.Magnification;
-			mat_scale.Values[1][1] = parameter.Magnification;
-			mat_scale.Values[2][2] = parameter.Magnification;
-
-			Effekseer::Matrix44::Mul(mat44, mat_scale, mat44);
+			mat44 = Effekseer::Mat44f::Scaling(::Effekseer::Vec3f(parameter.Magnification)) * mat44;
 		}
 
 		if (!parameter.IsRightHand)
 		{
-			Effekseer::Matrix44 mat_scale;
-			mat_scale.Values[0][0] = 1.0f;
-			mat_scale.Values[1][1] = 1.0f;
-			mat_scale.Values[2][2] = -1.0f;
-
-			Effekseer::Matrix44::Mul(mat44, mat_scale, mat44);
+			mat44 = Effekseer::Mat44f::Scaling(1.0f, 1.0f, -1.0f) * mat44;
 		}
 
-		m_matrixes.push_back(mat44);
+		m_matrixes.push_back(ToStruct(mat44));
 		m_uv.push_back(instanceParameter.UV);
 		m_colors.push_back(instanceParameter.AllColor);
 		m_times.push_back(instanceParameter.Time);
@@ -697,9 +671,9 @@ public:
 				float lightColor[4];
 				float lightAmbientColor[4];
 
-				::Effekseer::Vector3D cameraPosition3 = renderer->GetCameraPosition();
-				::Effekseer::Vector3D lightDirection3 = renderer->GetLightDirection();
-				::Effekseer::Vector3D::Normal(lightDirection3, lightDirection3);
+				::Effekseer::Vec3f cameraPosition3 = renderer->GetCameraPosition();
+				::Effekseer::Vec3f lightDirection3 = renderer->GetLightDirection();
+				lightDirection3 = lightDirection3.Normalize();
 				VectorToFloat4(cameraPosition3, cameraPosition);
 				VectorToFloat4(lightDirection3, lightDirection);
 				ColorToFloat4(renderer->GetLightColor(), lightColor);
@@ -752,8 +726,8 @@ public:
 				// specify predefined parameters
 				if (param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::Lighting)
 				{
-					::Effekseer::Vector3D lightDirection = renderer->GetLightDirection();
-					::Effekseer::Vector3D::Normal(lightDirection, lightDirection);
+					::Effekseer::Vec3f lightDirection = renderer->GetLightDirection();
+					lightDirection = lightDirection.Normalize();
 					VectorToFloat4(lightDirection, vcb->LightDirection);
 					VectorToFloat4(lightDirection, pcb->LightDirection);
 				}
@@ -804,12 +778,14 @@ public:
 					vcb->ModelMatrix[num] = m_matrixes[loop+num];
 
 					// DepthParameter
-					ApplyDepthParameters(vcb->ModelMatrix[num],
+					::Effekseer::Mat44f modelMatrix = vcb->ModelMatrix[num];
+					ApplyDepthParameters(modelMatrix,
 										renderer->GetCameraFrontDirection(),
 										renderer->GetCameraPosition(),
 										param.DepthParameterPtr,
 										param.IsRightHand);
-	
+					vcb->ModelMatrix[num] = ToStruct(modelMatrix);
+
 					vcb->ModelUV[num][0] = m_uv[loop+num].X;
 					vcb->ModelUV[num][1] = m_uv[loop+num].Y;
 					vcb->ModelUV[num][2] = m_uv[loop+num].Width;
@@ -860,10 +836,11 @@ public:
 				vcb->ModelUV[0][3] = m_uv[loop].Height;
 
 				// DepthParameters
-				ApplyDepthParameters(vcb->ModelMatrix[0], renderer->GetCameraFrontDirection(), renderer->GetCameraPosition(),
+				::Effekseer::Mat44f modelMatrix = vcb->ModelMatrix[0];
+				ApplyDepthParameters(modelMatrix, renderer->GetCameraFrontDirection(), renderer->GetCameraPosition(),
 									 param.DepthParameterPtr,
 									 param.IsRightHand);
-				
+				vcb->ModelMatrix[0] = ToStruct(modelMatrix);
 				ColorToFloat4( m_colors[loop], vcb->ModelColor[0] );
 
 				if (cutomData1Ptr != nullptr)

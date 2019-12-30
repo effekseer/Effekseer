@@ -15,6 +15,7 @@
 
 #include "Effekseer.Effect.h"
 #include "Parameter/Effekseer.Parameters.h"
+#include "SIMD/Effekseer.SIMDUtils.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -253,7 +254,7 @@ struct LocationAbsParameter
 
 		} none;
 
-		vector3d	gravity;
+		Vec3f	gravity;
 
 		struct {
 			float	force;
@@ -1101,6 +1102,7 @@ enum eRenderingOrder
 */
 class EffectNodeImplemented
 	: public EffectNode
+	, public AlignedAllocationPolicy<16>
 {
 	friend class Manager;
 	friend class EffectImplemented;

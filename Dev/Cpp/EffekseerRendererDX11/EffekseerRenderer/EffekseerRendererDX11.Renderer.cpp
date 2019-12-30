@@ -504,7 +504,7 @@ bool RendererImplemented::BeginRendering()
 {
 	assert( m_device != NULL );
 
-	::Effekseer::Matrix44::Mul(GetCameraProjectionMatrix(), GetCameraMatrix(), GetProjectionMatrix());
+	m_cameraProj = m_camera * m_proj;
 	
 	// ステートを保存する
 	if( m_restorationOfStates )
@@ -600,9 +600,9 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-const ::Effekseer::Vector3D& RendererImplemented::GetLightDirection() const
+::Effekseer::Vector3D RendererImplemented::GetLightDirection() const
 {
-	return m_lightDirection;
+	return ToStruct(m_lightDirection);
 }
 
 //----------------------------------------------------------------------------------

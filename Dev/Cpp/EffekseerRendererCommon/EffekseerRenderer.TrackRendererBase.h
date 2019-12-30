@@ -26,11 +26,12 @@ namespace EffekseerRenderer
 	//----------------------------------------------------------------------------------
 	typedef ::Effekseer::TrackRenderer::NodeParameter efkTrackNodeParam;
 	typedef ::Effekseer::TrackRenderer::InstanceParameter efkTrackInstanceParam;
-	typedef ::Effekseer::Vector3D efkVector3D;
+	typedef ::Effekseer::Vec3f efkVector3D;
 
 	template<typename RENDERER, typename VERTEX_NORMAL, typename VERTEX_DISTORTION>
 	class TrackRendererBase
 		: public ::Effekseer::TrackRenderer
+		, public ::Effekseer::AlignedAllocationPolicy<16>
 	{
 	protected:
 		RENDERER*						m_renderer;
@@ -258,7 +259,7 @@ namespace EffekseerRenderer
 		}
 
 		template<typename VERTEX>
-		void RenderSplines(const ::Effekseer::Matrix44& camera)
+		void RenderSplines(const ::Effekseer::Mat44f& camera)
 		{
 			if (instances.size() == 0)
 			{
@@ -281,7 +282,7 @@ namespace EffekseerRenderer
 
 					auto mat = param.SRTMatrix43;
 
-					::Effekseer::Vector3D s;
+					::Effekseer::Vec3f s;
 
 					ApplyDepthParameters(mat,
 										 m_renderer->GetCameraFrontDirection(),
@@ -290,10 +291,7 @@ namespace EffekseerRenderer
 										 parameter.DepthParameterPtr,
 										 parameter.IsRightHand);
 
-					p.X = mat.Value[3][0];
-					p.Y = mat.Value[3][1];
-					p.Z = mat.Value[3][2];
-
+					p = mat.GetTranslation();
 					spline.AddVertex(p);
 				}
 
@@ -310,9 +308,9 @@ namespace EffekseerRenderer
 				{
 					auto mat = param.SRTMatrix43;
 
-					::Effekseer::Vector3D s;
-					::Effekseer::Matrix43 r;
-					::Effekseer::Vector3D t;
+					::Effekseer::Vec3f s;
+					::Effekseer::Mat43f r;
+					::Effekseer::Vec3f t;
 					mat.GetSRT(s, r, t);
 
 					ApplyDepthParameters(r,
@@ -378,7 +376,7 @@ namespace EffekseerRenderer
 
 					VERTEX v[3];
 
-					v[0].Pos.X = (-size / 2.0f) * s.X;
+					v[0].Pos.X = (-size / 2.0f) * s.GetX();
 					v[0].Pos.Y = 0.0f;
 					v[0].Pos.Z = 0.0f;
 					v[0].SetColor(leftColor);
@@ -388,20 +386,18 @@ namespace EffekseerRenderer
 					v[1].Pos.Z = 0.0f;
 					v[1].SetColor(centerColor);
 
-					v[2].Pos.X = (size / 2.0f) * s.X;
+					v[2].Pos.X = (size / 2.0f) * s.GetX();
 					v[2].Pos.Y = 0.0f;
 					v[2].Pos.Z = 0.0f;
 					v[2].SetColor(rightColor);
 
 					if (parameter.SplineDivision > 1)
 					{
-						v[1].Pos = spline.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision);
+						v[1].Pos = ToStruct(spline.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision));
 					}
 					else
 					{
-						v[1].Pos.X = t.X;
-						v[1].Pos.Y = t.Y;
-						v[1].Pos.Z = t.Z;
+						v[1].Pos = ToStruct(t);
 					}
 
 					if (isFirst)
@@ -449,19 +445,19 @@ namespace EffekseerRenderer
 			// transform all vertecies
 			{
 				StrideView<VERTEX> vs_(m_ringBufferData, stride_, vertexCount_);
-				Effekseer::Vector3D axisBefore;
+				Effekseer::Vec3f axisBefore;
 
 				for (size_t i = 0; i < (instances.size() - 1) * parameter.SplineDivision + 1; i++)
 				{
 					bool isFirst_ = (i == 0);
 					bool isLast_ = (i == ((instances.size() - 1) * parameter.SplineDivision));
-					Effekseer::Vector3D axis;
-					Effekseer::Vector3D pos;
+					Effekseer::Vec3f axis;
+					Effekseer::Vec3f pos;
 
 					if (isFirst_)
 					{
 						axis = (vs_[3].Pos - vs_[1].Pos);
-						Effekseer::Vector3D::Normal(axis, axis);
+						axis = axis.Normalize();
 						axisBefore = axis;
 					}
 					else if (isLast_)
@@ -470,9 +466,9 @@ namespace EffekseerRenderer
 					}
 					else
 					{
-						Effekseer::Vector3D axisOld = axisBefore;
+						Effekseer::Vec3f axisOld = axisBefore;
 						axis = vs_[9].Pos - vs_[7].Pos;
-						Effekseer::Vector3D::Normal(axis, axis);
+						axis = axis.Normalize();
 						axisBefore = axis;
 
 						axis = (axisBefore + axisOld) / 2.0f;
@@ -488,47 +484,25 @@ namespace EffekseerRenderer
 					vm.Pos.Y = 0.0f;
 					vm.Pos.Z = 0.0f;
 
-					::Effekseer::Vector3D F;
-					::Effekseer::Vector3D R;
-					::Effekseer::Vector3D U;
+					::Effekseer::Vec3f F;
+					::Effekseer::Vec3f R;
+					::Effekseer::Vec3f U;
 
 					U = axis;
 
-					::Effekseer::Vector3D::Normal(F, m_renderer->GetCameraFrontDirection());
+					F = ::Effekseer::Vec3f(m_renderer->GetCameraFrontDirection()).Normalize();
+					R = ::Effekseer::Vec3f::Cross(U, F).Normalize();
+					F = ::Effekseer::Vec3f::Cross(R, U).Normalize();
+					
+					::Effekseer::Mat43f mat_rot(
+						-R.GetX(), -R.GetY(), -R.GetZ(),
+						 U.GetX(),  U.GetY(),  U.GetZ(),
+						 F.GetX(),  F.GetY(),  F.GetZ(),
+						pos.GetX(), pos.GetY(), pos.GetZ());
 
-					::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, U, F));
-					::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D::Cross(F, R, U));
-
-					::Effekseer::Matrix43 mat_rot;
-
-					mat_rot.Value[0][0] = -R.X;
-					mat_rot.Value[0][1] = -R.Y;
-					mat_rot.Value[0][2] = -R.Z;
-					mat_rot.Value[1][0] = U.X;
-					mat_rot.Value[1][1] = U.Y;
-					mat_rot.Value[1][2] = U.Z;
-					mat_rot.Value[2][0] = F.X;
-					mat_rot.Value[2][1] = F.Y;
-					mat_rot.Value[2][2] = F.Z;
-					mat_rot.Value[3][0] = pos.X;
-					mat_rot.Value[3][1] = pos.Y;
-					mat_rot.Value[3][2] = pos.Z;
-
-					::Effekseer::Vector3D::Transform(
-						vl.Pos,
-						vl.Pos,
-						mat_rot);
-
-					::Effekseer::Vector3D::Transform(
-						vm.Pos,
-						vm.Pos,
-						mat_rot);
-
-					::Effekseer::Vector3D::Transform(
-						vr.Pos,
-						vr.Pos,
-						mat_rot);
-
+					vl.Pos = ToStruct(::Effekseer::Vec3f::Transform(vl.Pos, mat_rot));
+					vm.Pos = ToStruct(::Effekseer::Vec3f::Transform(vm.Pos, mat_rot));
+					vr.Pos = ToStruct(::Effekseer::Vec3f::Transform(vr.Pos,mat_rot));
 
 					if (vertexType == VertexType::Distortion)
 					{
@@ -536,16 +510,12 @@ namespace EffekseerRenderer
 						auto vm_ = (VERTEX_DISTORTION*)(&vm);
 						auto vr_ = (VERTEX_DISTORTION*)(&vr);
 
-						vl_->Binormal = axis;
-						vm_->Binormal = axis;
-						vr_->Binormal = axis;
+						vl_->Binormal = vm_->Binormal = vr_->Binormal = ToStruct(axis);
 
-						::Effekseer::Vector3D tangent;
-						::Effekseer::Vector3D::Normal(tangent, vr_->Pos - vl_->Pos);
+						::Effekseer::Vec3f tangent = vr_->Pos - vl_->Pos;
+						tangent.Normalize();
 
-						vl_->Tangent = tangent;
-						vm_->Tangent = tangent;
-						vr_->Tangent = tangent;
+						vl_->Tangent = vm_->Tangent = vr_->Tangent = ToStruct(tangent);
 					}
 					else if (vertexType == VertexType::Dynamic)
 					{
@@ -553,12 +523,8 @@ namespace EffekseerRenderer
 						auto vm_ = (DynamicVertex*)(&vm);
 						auto vr_ = (DynamicVertex*)(&vr);
 
-						::Effekseer::Vector3D tangent;
-						::Effekseer::Vector3D::Normal(tangent, vr_->Pos - vl_->Pos);
-
-						Effekseer::Vector3D normal;
-						Effekseer::Vector3D::Cross(normal, tangent, axis);
-						Effekseer::Vector3D::Normal(normal, normal);
+						::Effekseer::Vec3f tangent = Effekseer::Vec3f(vr_->Pos - vl_->Pos).Normalize();
+						Effekseer::Vec3f normal = Effekseer::Vec3f::Cross(tangent, axis).Normalize();
 
 						Effekseer::Color normal_ = PackVector3DF(normal);
 						Effekseer::Color tangent_ = PackVector3DF(tangent);
@@ -672,7 +638,7 @@ namespace EffekseerRenderer
 
 	protected:
 
-		void Rendering_(const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+		void Rendering_(const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Mat44f& camera)
 		{
 			const auto& state = m_renderer->GetStandardRenderer()->GetState();
 
@@ -692,7 +658,7 @@ namespace EffekseerRenderer
 		}
 
 		template<typename VERTEX>
-		void Rendering_Internal(const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Matrix44& camera)
+		void Rendering_Internal(const efkTrackNodeParam& parameter, const efkTrackInstanceParam& instanceParameter, void* userData, const ::Effekseer::Mat44f& camera)
 		{
 			if (m_ringBufferData == NULL) return;
 			if (instanceParameter.InstanceCount < 2) return;

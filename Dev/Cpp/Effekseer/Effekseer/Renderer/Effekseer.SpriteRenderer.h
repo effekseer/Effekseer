@@ -7,8 +7,10 @@
 //----------------------------------------------------------------------------------
 #include "../Effekseer.Base.h"
 #include "../Effekseer.Vector2D.h"
-#include "../Effekseer.Vector3D.h"
 #include "../Effekseer.Matrix43.h"
+#include "../SIMD/Effekseer.Vec2f.h"
+#include "../SIMD/Effekseer.Vec3f.h"
+#include "../SIMD/Effekseer.Mat43f.h"
 #include "../Effekseer.Color.h"
 
 //----------------------------------------------------------------------------------
@@ -54,15 +56,15 @@ public:
 
 	struct InstanceParameter
 	{
-		Matrix43		SRTMatrix43;
+		Mat43f		SRTMatrix43;
 		Color		AllColor;
 
 		// Lower left, Lower right, Upper left, Upper right
 		Color		Colors[4];
 
-		Vector2D	Positions[4];
+		Vec2f		Positions[4];
 
-		RectF	UV;
+		RectF		UV;
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
 	};

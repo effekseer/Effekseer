@@ -625,7 +625,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-const ::Effekseer::Vector3D& RendererImplemented::GetLightDirection() const
+::Effekseer::Vector3D RendererImplemented::GetLightDirection() const
 {
 	return m_lightDirection;
 }

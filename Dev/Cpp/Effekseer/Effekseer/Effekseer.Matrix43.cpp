@@ -6,10 +6,8 @@
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Matrix44.h"
+#include "Effekseer.Math.h"
 #include <limits>
-
-#include "SIMD/Effekseer.Mat44f.h"
-#include "SIMD/Effekseer.Mat44fBlock4.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -371,7 +369,7 @@ void Matrix43::GetSRT( Vector3D& s, Matrix43& r, Vector3D& t ) const
 	float sc[3];
 	for( int m = 0; m < 3; m++ )
 	{
-		sc[m] = sqrt( Value[m][0] * Value[m][0] + Value[m][1] * Value[m][1] + Value[m][2] * Value[m][2] );
+		sc[m] = std::sqrt( Value[m][0] * Value[m][0] + Value[m][1] * Value[m][1] + Value[m][2] * Value[m][2] );
 	}
 	
 	s.X = sc[0];
@@ -460,7 +458,7 @@ void Matrix43::GetScale( Vector3D& s ) const
 	float sc[3];
 	for( int m = 0; m < 3; m++ )
 	{
-		sc[m] = sqrt( Value[m][0] * Value[m][0] + Value[m][1] * Value[m][1] + Value[m][2] * Value[m][2] );
+		sc[m] = std::sqrt( Value[m][0] * Value[m][0] + Value[m][1] * Value[m][1] + Value[m][2] * Value[m][2] );
 	}
 	
 	s.X = sc[0];
@@ -520,7 +518,7 @@ void Matrix43::GetRotation( Matrix43& r ) const
 	float sc[3];
 	for( int m = 0; m < 3; m++ )
 	{
-		sc[m] = sqrt( Value[m][0] * Value[m][0] + Value[m][1] * Value[m][1] + Value[m][2] * Value[m][2] );
+		sc[m] = std::sqrt( Value[m][0] * Value[m][0] + Value[m][1] * Value[m][1] + Value[m][2] * Value[m][2] );
 	}
 
 	for( int m = 0; m < 3; m++ )

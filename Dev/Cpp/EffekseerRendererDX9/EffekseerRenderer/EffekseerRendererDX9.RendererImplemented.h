@@ -182,7 +182,7 @@ public:
 	/**
 		@brief	ライトの方向を取得する。
 	*/
-	const ::Effekseer::Vector3D& GetLightDirection() const;
+	::Effekseer::Vector3D GetLightDirection() const;
 
 	/**
 		@brief	ライトの方向を設定する。

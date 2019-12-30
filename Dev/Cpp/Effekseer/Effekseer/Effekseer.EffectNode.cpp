@@ -9,6 +9,7 @@
 #include "Effekseer.Manager.h"
 
 #include "Effekseer.Vector3D.h"
+#include "SIMD/Effekseer.SIMDUtils.h"
 
 #include "Effekseer.Instance.h"
 #include "Effekseer.InstanceContainer.h"
@@ -907,7 +908,7 @@ void EffectNodeImplemented::PlaySound_(Instance& instance, SoundTag tag, Manager
 		parameter.Pan = Sound.Pan.getValue(*instanceGlobal);
 
 		parameter.Mode3D = (Sound.PanType == ParameterSoundPanType_3D);
-		Vector3D::Transform(parameter.Position, Vector3D(0.0f, 0.0f, 0.0f), instance.GetGlobalMatrix43());
+		parameter.Position = ToStruct(instance.GetGlobalMatrix43().GetTranslation());
 		parameter.Distance = Sound.Distance;
 
 		player->Play(tag, parameter);

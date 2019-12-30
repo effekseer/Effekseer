@@ -8,6 +8,7 @@
 #include "Effekseer.EffectImplemented.h"
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Vector3D.h"
+#include "SIMD/Effekseer.SIMDUtils.h"
 
 #include "Effekseer.Instance.h"
 #include "Effekseer.InstanceContainer.h"
@@ -81,27 +82,31 @@ namespace Effekseer
 	{
 		if (m_effect->GetVersion() >= 8)
 		{
-			memcpy(&SpritePosition.fixed, pos, sizeof(SpritePosition.fixed));
-			pos += sizeof(SpritePosition.fixed);
+			const Vector2D* fixed = (const Vector2D*)pos;
+			SpritePosition.fixed.ll = fixed[0];
+			SpritePosition.fixed.lr = fixed[1];
+			SpritePosition.fixed.ul = fixed[2];
+			SpritePosition.fixed.ur = fixed[3];
+			pos += sizeof(Vector2D) * 4;
 			SpritePosition.type = SpritePosition.Fixed;
 		}
 		else
 		{
-			SpritePosition.fixed.ll.x = -0.5f;
-			SpritePosition.fixed.ll.y = -0.5f;
-			SpritePosition.fixed.lr.x = 0.5f;
-			SpritePosition.fixed.lr.y = -0.5f;
-			SpritePosition.fixed.ul.x = -0.5f;
-			SpritePosition.fixed.ul.y = 0.5f;
-			SpritePosition.fixed.ur.x = 0.5f;
-			SpritePosition.fixed.ur.y = 0.5f;
+			SpritePosition.fixed.ll = {-0.5f, -0.5f};
+			SpritePosition.fixed.lr = {0.5f, -0.5f};
+			SpritePosition.fixed.ul = {-0.5f, 0.5f};
+			SpritePosition.fixed.ur = {0.5f, 0.5f};
 			SpritePosition.type = SpritePosition.Fixed;
 		}
 	}
 	else if (SpritePosition.type == SpritePosition.Fixed)
 	{
-		memcpy(&SpritePosition.fixed, pos, sizeof(SpritePosition.fixed));
-		pos += sizeof(SpritePosition.fixed);
+		const Vector2D* fixed = (const Vector2D*)pos;
+		SpritePosition.fixed.ll = fixed[0];
+		SpritePosition.fixed.lr = fixed[1];
+		SpritePosition.fixed.ul = fixed[2];
+		SpritePosition.fixed.ur = fixed[3];
+		pos += sizeof(Vector2D) * 4;
 	}
 
 	if (m_effect->GetVersion() >= 3)
@@ -236,21 +241,17 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 
 		if( SpritePosition.type == SpritePosition.Default )
 		{
-			instanceParameter.Positions[0].X = -0.5f;
-			instanceParameter.Positions[0].Y = -0.5f;
-			instanceParameter.Positions[1].X = 0.5f;
-			instanceParameter.Positions[1].Y = -0.5f;
-			instanceParameter.Positions[2].X = -0.5f;
-			instanceParameter.Positions[2].Y = 0.5f;
-			instanceParameter.Positions[3].X = 0.5f;
-			instanceParameter.Positions[3].Y = 0.5f;
+			instanceParameter.Positions[0] = {-0.5f, -0.5f};
+			instanceParameter.Positions[1] = {0.5f, -0.5f};
+			instanceParameter.Positions[2] = {-0.5f, 0.5f};
+			instanceParameter.Positions[3] = {0.5f, 0.5f};
 		}
 		else if( SpritePosition.type == SpritePosition.Fixed )
 		{
-			SpritePosition.fixed.ll.setValueToArg( instanceParameter.Positions[0] );
-			SpritePosition.fixed.lr.setValueToArg( instanceParameter.Positions[1] );
-			SpritePosition.fixed.ul.setValueToArg( instanceParameter.Positions[2] );
-			SpritePosition.fixed.ur.setValueToArg( instanceParameter.Positions[3] );
+			instanceParameter.Positions[0] = SpritePosition.fixed.ll;
+			instanceParameter.Positions[1] = SpritePosition.fixed.lr;
+			instanceParameter.Positions[2] = SpritePosition.fixed.ul;
+			instanceParameter.Positions[3] = SpritePosition.fixed.ur;
 		}
 
 		instanceParameter.UV = instance.GetUV();
