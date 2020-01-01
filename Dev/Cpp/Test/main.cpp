@@ -131,8 +131,10 @@ int main()
 #endif
 
 #ifdef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
-	BasicRuntimeTest();
+	StartingFrameTest();
 	UpdateHandleTest();
+	
+	BasicRuntimeTest();
 	//BasicRuntimeDeviceLostTest();
 	CustomAllocatorTest();
 #else

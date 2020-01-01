@@ -107,6 +107,26 @@ void BasicRuntimeDeviceLostTest()
 #endif
 }
 
+void StartingFrameTest() 
+{
+	srand(0);
+	auto platform = std::make_shared<EffectPlatformGL>();
+
+	EffectPlatformInitializingParameter param;
+
+	platform->Initialize(param);
+
+	platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str(), 30);
+
+	for (size_t i = 0; i < 20; i++)
+	{
+		platform->Update();
+	}
+	platform->TakeScreenshot("StartingFrame_0.png");
+
+	platform->Terminate();
+}
+
 void UpdateHandleTest()
 {
 	{

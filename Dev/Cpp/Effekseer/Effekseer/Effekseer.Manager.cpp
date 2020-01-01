@@ -1580,12 +1580,12 @@ void ManagerImplemented::Preupdate(DrawSet& drawSet)
 
 	drawSet.InstanceContainerPointer = pContainer;
 
+	drawSet.IsPreupdated = true;
+
 	for (int32_t frame = 0; frame < drawSet.StartFrame; frame++)
 	{
 		UpdateHandle(drawSet, 1);
 	}
-
-	drawSet.IsPreupdated = true;
 }
 
 bool ManagerImplemented::IsClippedWithDepth(DrawSet& drawSet, InstanceContainer* container, const Manager::DrawParameter& drawParameter) {

@@ -104,7 +104,7 @@ void EffectPlatform::Terminate()
 	isTerminated_ = true;
 }
 
-Effekseer::Handle EffectPlatform::Play(const char16_t* path)
+Effekseer::Handle EffectPlatform::Play(const char16_t* path, int32_t startFrame)
 {
 	FILE* filePtr = NULL;
 #ifdef _WIN32
@@ -137,7 +137,7 @@ Effekseer::Handle EffectPlatform::Play(const char16_t* path)
 
 	buffers_.push_back(data);
 	effects_.push_back(effect);
-	auto handle = manager_->Play(effect, Effekseer::Vector3D());
+	auto handle = manager_->Play(effect, Effekseer::Vector3D(), startFrame);
 	effectHandles_.push_back(handle);
 	return handle;
 }

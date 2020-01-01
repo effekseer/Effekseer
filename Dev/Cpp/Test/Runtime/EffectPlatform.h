@@ -52,7 +52,7 @@ public:
 	void Initialize(const EffectPlatformInitializingParameter& param);
 	void Terminate();
 
-	Effekseer::Handle Play(const char16_t* path);
+	Effekseer::Handle Play(const char16_t* path, int32_t startFrame = 0);
 
 	bool Update();
 
