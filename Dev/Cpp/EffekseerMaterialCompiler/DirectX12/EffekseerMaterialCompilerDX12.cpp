@@ -240,12 +240,12 @@ struct VS_Output
 cbuffer VSConstantBuffer : register(b0) {
 
 float4x4 mCameraProj		: register( c0 );
-float4x4 mModel[40]		: register( c4 );
-float4	fUV[40]			: register( c164 );
-float4	fModelColor[40]		: register( c204 );
+float4x4 mModel[1]		: register( c4 );
+float4	fUV[1]			: register( c8 );
+float4	fModelColor[1]		: register( c9 );
 
-float4 mUVInversed		: register(c244);
-float4 predefined_uniform : register(c245);
+float4 mUVInversed		: register(c10);
+float4 predefined_uniform : register(c11);
 
 // custom1
 // custom2
@@ -323,7 +323,11 @@ struct PS_Input
 	//$C_PIN2$
 };
 
+#ifdef _DIRECTX11
+cbuffer PSConstantBuffer : register(b0) {
+#else
 cbuffer PSConstantBuffer : register(b1) {
+#endif
 
 )";
 
@@ -706,15 +710,15 @@ GenerateShader(Material* material, MaterialShaderType shaderType, int32_t maximu
 		{
 			if (material->GetCustomData1Count() > 0)
 			{
-				maincode << "float4 customData1_[40]"
+				maincode << "float4 customData1_[1]"
 						 << " : register(c" << cind << ");" << std::endl;
-				cind += 40;
+				cind += 1;
 			}
 			if (material->GetCustomData2Count() > 0)
 			{
-				maincode << "float4 customData2_[40]"
+				maincode << "float4 customData2_[1]"
 						 << " : register(c" << cind << ");" << std::endl;
-				cind += 40;
+				cind += 1;
 			}
 		}
 

@@ -56,6 +56,15 @@ static
 #include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_PS.h"
 } // namespace ShaderDistortionTexture_
 
+namespace ShaderStandardLighting_
+{
+static
+#include "Shader/EffekseerRenderer.Standard_Lighting_VS.h"
+
+	static
+#include "Shader/EffekseerRenderer.Standard_Lighting_PS.h"
+} // namespace ShaderDistortionTexture_
+
 namespace EffekseerRendererDX12
 {
 
@@ -105,6 +114,9 @@ namespace EffekseerRendererDX12
 		renderer->fixedShader_.ModelShaderDistortionTexture_VS, ShaderDistortionTexture_::g_VS, sizeof(ShaderDistortionTexture_::g_VS));
 	allocate_(
 		renderer->fixedShader_.ModelShaderDistortionTexture_PS, ShaderDistortionTexture_::g_PS, sizeof(ShaderDistortionTexture_::g_PS));
+
+	allocate_(renderer->fixedShader_.StandardLightingTexture_VS, ShaderStandardLighting_::g_VS, sizeof(ShaderStandardLighting_::g_VS));
+	allocate_(renderer->fixedShader_.StandardLightingTexture_PS, ShaderStandardLighting_::g_PS, sizeof(ShaderStandardLighting_::g_PS));
 
 	renderer->platformType_ = Effekseer::CompiledMaterialPlatformType::DirectX12;
 	renderer->materialCompiler_ = new Effekseer::MaterialCompilerDX12();

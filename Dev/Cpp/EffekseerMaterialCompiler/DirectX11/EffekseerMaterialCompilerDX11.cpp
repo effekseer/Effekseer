@@ -119,7 +119,7 @@ static char* material_common_define = R"(
 #define MOD fmod
 #define FRAC frac
 #define LERP lerp
-
+#define _DIRECTX11 1
 )";
 
 static char* material_common_vs_functions = R"(
@@ -393,7 +393,11 @@ struct PS_Input
 	//$C_PIN2$
 };
 
+#ifdef _DIRECTX11
+cbuffer PSConstantBuffer : register(b0) {
+#else
 cbuffer PSConstantBuffer : register(b1) {
+#endif
 
 )";
 
