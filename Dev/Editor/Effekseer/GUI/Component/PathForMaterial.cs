@@ -127,8 +127,10 @@ namespace Effekseer.GUI.Component
 
 				if (Manager.NativeManager.Button(Resources.GetString("Material_Edit_Name") + id3, buttonSizeX))
 				{
-					Process.MaterialEditor.Run();
-					Process.MaterialEditor.OpenOrCreateMaterial(absoluteFilePath);
+					if(Process.MaterialEditor.Run())
+					{
+						Process.MaterialEditor.OpenOrCreateMaterial(absoluteFilePath);
+					}
 				}
 
 				if (Functions.CanShowTip())
@@ -160,25 +162,27 @@ namespace Effekseer.GUI.Component
 					if (!string.IsNullOrEmpty(result))
 					{
 						var filepath = Functions.GetFilepathWithExtentions(result, ".efkmat");
-						Process.MaterialEditor.Run();
-						Process.MaterialEditor.OpenOrCreateMaterial(filepath);
 
-						// wait
-						int counter = 0;
-						while (counter < 50)
+						if (Process.MaterialEditor.Run())
 						{
+							Process.MaterialEditor.OpenOrCreateMaterial(filepath);
+
+							// wait
+							int counter = 0;
+							while (counter < 50)
+							{
+								if (System.IO.File.Exists(filepath))
+									break;
+								counter++;
+								System.Threading.Thread.Sleep(100);
+							}
+
 							if (System.IO.File.Exists(filepath))
-								break;
-							counter++;
-							System.Threading.Thread.Sleep(100);
+							{
+								LoadFile(filepath);
+								Read();
+							}
 						}
-
-						if (System.IO.File.Exists(filepath))
-						{
-							LoadFile(filepath);
-							Read();
-						}
-
 					}
 				}
 

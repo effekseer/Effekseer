@@ -11,21 +11,31 @@ namespace Effekseer.Process
 	{
 		static System.Diagnostics.Process process = null;
 
-		public static void Run()
+		public static bool Run()
 		{
 			if (IsRunning)
-				return;
+				return true;
 
-			var app = new ProcessStartInfo();
+			try
+			{
+				var app = new ProcessStartInfo();
 
-			string appDirectory = GUI.Manager.GetEntryDirectory();
-			string fullPath = System.IO.Path.Combine(appDirectory, "EffekseerMaterialEditor");
+				string appDirectory = GUI.Manager.GetEntryDirectory();
+				string fullPath = System.IO.Path.Combine(appDirectory, "EffekseerMaterialEditor");
 
-			app.FileName = fullPath;
-			app.UseShellExecute = true;
-			app.Arguments = "ipc";
+				app.FileName = fullPath;
+				app.UseShellExecute = true;
+				app.Arguments = "ipc";
 
-			process = System.Diagnostics.Process.Start(app);
+				process = System.Diagnostics.Process.Start(app);
+
+				return IsRunning;
+			}
+			catch
+			{
+				process = null;
+				return false;
+			}
 		}
 
 		public static void Terminate()
