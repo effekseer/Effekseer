@@ -170,8 +170,8 @@ namespace Effekseer.GUI.Component
 			}
 			else
 			{
-				txt_r1 = Resources.GetString("Max");
-				txt_r2 = Resources.GetString("Min");
+				txt_r1 = Resources.GetString("Min");
+				txt_r2 = Resources.GetString("Max");
 			}
 
 			Manager.NativeManager.PushItemWidth(Manager.NativeManager.GetColumnWidth() - 48 * Manager.DpiScale);
