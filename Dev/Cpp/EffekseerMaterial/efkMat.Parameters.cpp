@@ -77,6 +77,25 @@ std::string NodeParameterBehaviorComponentName::GetHeader(std::shared_ptr<Materi
 	return ret.str();
 }
 
+std::string NodeParameterBehaviorConstantName::GetHeader(std::shared_ptr<Material> material,
+														 std::shared_ptr<NodeParameter> parameter,
+														 std::shared_ptr<Node> node) const
+{
+	std::ostringstream ret;
+
+	for (int32_t i = 0; i < componentCount_; i++)
+	{
+		ret << node->Properties[0]->Floats[i];
+
+		if (componentCount_ - 1 != i)
+		{
+			ret << ",";
+		}
+	}
+
+	return ret.str();
+}
+
 bool NodeParameterBehaviorComponentOutput::GetIsInputPinEnabled(std::shared_ptr<Material> material,
 																std::shared_ptr<NodeParameter> parameter,
 																std::shared_ptr<Node> node,
@@ -259,6 +278,8 @@ NodeConstant1::NodeConstant1()
 	};
 
 	Funcs.push_back(func1);
+
+	BehaviorComponents = {std::make_shared<NodeParameterBehaviorConstantName>(1)};
 }
 
 NodeConstant2::NodeConstant2()
@@ -298,6 +319,8 @@ NodeConstant2::NodeConstant2()
 	};
 
 	Funcs.push_back(func1);
+
+	BehaviorComponents = {std::make_shared<NodeParameterBehaviorConstantName>(2)};
 }
 
 NodeConstant3::NodeConstant3()
@@ -337,6 +360,8 @@ NodeConstant3::NodeConstant3()
 	};
 
 	Funcs.push_back(func1);
+
+	BehaviorComponents = {std::make_shared<NodeParameterBehaviorConstantName>(3)};
 }
 
 NodeConstant4::NodeConstant4()
@@ -376,6 +401,8 @@ NodeConstant4::NodeConstant4()
 	};
 
 	Funcs.push_back(func1);
+
+	BehaviorComponents = {std::make_shared<NodeParameterBehaviorConstantName>(4)};
 }
 
 ValueType NodeComponentMask::GetOutputType(std::shared_ptr<Material> material,

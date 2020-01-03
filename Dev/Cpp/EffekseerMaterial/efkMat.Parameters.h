@@ -108,6 +108,18 @@ public:
 	GetHeader(std::shared_ptr<Material> material, std::shared_ptr<NodeParameter> parameter, std::shared_ptr<Node> node) const override;
 };
 
+class NodeParameterBehaviorConstantName : public NodeParameterBehaviorComponent
+{
+private:
+	int32_t componentCount_ = 0;
+
+public:
+	NodeParameterBehaviorConstantName(int32_t componentCount) : componentCount_(componentCount) { IsGetHeaderInherited = true; }
+
+	std::string
+	GetHeader(std::shared_ptr<Material> material, std::shared_ptr<NodeParameter> parameter, std::shared_ptr<Node> node) const override;
+};
+
 class NodeParameterBehaviorComponentOutput : public NodeParameterBehaviorComponent
 {
 public:
