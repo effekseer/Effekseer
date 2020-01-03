@@ -518,7 +518,7 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		if (outputNode->Target->Parameter->Type == NodeType::TextureObject)
 		{
 			ret << GetTypeName(ValueType::Float4) << " emissive_temp = "
-				<< "texture(" << outputNode->Outputs[0].TextureValue->UniformName << ", " << GetUVName(0) << ");" << std::endl;
+				<< "texture(" << outputNode->Outputs[0].TextureValue->UniformName << ", GetUV(" << GetUVName(0) << "));" << std::endl;
 			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
 			ret << "float opacity = emissive_temp.w;" << std::endl;
 
@@ -527,7 +527,7 @@ std::string TextExporter::ExportOutputNode(std::shared_ptr<Material> material,
 		else if (outputNode->Target->Parameter->Type == NodeType::TextureObjectParameter)
 		{
 			ret << GetTypeName(ValueType::Float4) << " emissive_temp = "
-				<< "texture(" << outputNode->Outputs[0].TextureValue->UniformName << ", " << GetUVName(0) << ");" << std::endl;
+				<< "texture(" << outputNode->Outputs[0].TextureValue->UniformName << ", GetUV(" << GetUVName(0) << "));" << std::endl;
 			ret << GetTypeName(ValueType::Float3) << " emissive = emissive_temp.xyz;" << std::endl;
 			ret << "float opacity = emissive_temp.w;" << std::endl;
 

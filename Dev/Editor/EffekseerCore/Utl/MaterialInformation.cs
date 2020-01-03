@@ -47,7 +47,7 @@ namespace Effekseer.Utl
 			{
 				fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
 			}
-			catch (System.IO.FileNotFoundException e)
+			catch
 			{
 				return false;
 			}
@@ -121,7 +121,7 @@ namespace Effekseer.Utl
 			{
 				fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
 			}
-			catch (System.IO.FileNotFoundException e)
+			catch
 			{
 				return false;
 			}
