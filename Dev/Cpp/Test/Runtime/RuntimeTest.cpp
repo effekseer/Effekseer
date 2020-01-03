@@ -66,6 +66,7 @@ void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPa
 
 	single14Test(u"Model_Parameters1", "Model_Parameters1");
 	single15Test(u"Material_Refraction", "Material_Refraction");
+	single15Test(u"Material_WorldPositionOffset", "Material_WorldPositionOffset");
 }
 
 void BasicRuntimeDeviceLostTest()

@@ -1,7 +1,7 @@
 #include "EffekseerMaterialCompilerDX12.h"
 #include <iostream>
 
-#include "../3rdParty/LLGI/src/LLGI.Compiler.h"
+#include "../3rdParty/LLGI/src/DX12/LLGI.CompilerDX12.h"
 
 #undef min
 
@@ -901,7 +901,9 @@ public:
 
 CompiledMaterialBinary* MaterialCompilerDX12::Compile(Material* material, int32_t maximumTextureCount)
 {
-	auto compiler = LLGI::CreateSharedPtr(LLGI::CreateCompiler(LLGI::DeviceType::DirectX12));
+	// to use options
+	// auto compiler = LLGI::CreateSharedPtr(LLGI::CreateCompiler(LLGI::DeviceType::DirectX12));
+	auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerDX12(LLGI::CompilerDX12Option::ColumnMajor));
 
 	auto binary = new CompiledMaterialBinaryDX12();
 
