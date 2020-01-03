@@ -233,8 +233,14 @@ void RenderState::Update( bool forced )
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glfilterMag[filter_]);
 				GLCheckError();
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
-				GLCheckError();
+				if (m_renderer->GetCurrentTextures()[i].HasMipmap)
+				{
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glfilterMin[filter_]);
+				}
+				else
+				{
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glfilterMin_NoneMipmap[filter_]);
+				}
 			}
 
 			// always changes because a flag is assigned into a texture

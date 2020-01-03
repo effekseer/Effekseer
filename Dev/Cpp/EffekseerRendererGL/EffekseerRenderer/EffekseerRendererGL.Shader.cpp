@@ -64,7 +64,7 @@ static const char g_header_fs_gles2_src [] =
 "#define FRAGCOLOR gl_FragColor\n";
 
 static const char g_header_vs_gl2_src [] =
-"#version 110\n" \
+"#version 120\n" \
 "#define lowp\n" \
 "#define mediump\n" \
 "#define highp\n" \
@@ -73,7 +73,7 @@ static const char g_header_vs_gl2_src [] =
 "#define OUT varying\n";
 
 static const char g_header_fs_gl2_src [] =
-"#version 110\n" \
+"#version 120\n" \
 "#define lowp\n" \
 "#define mediump\n" \
 "#define highp\n" \

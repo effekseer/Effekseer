@@ -33,7 +33,11 @@ IO::IO(int checkFileInterval)
 IO::~IO()
 {
 #if _WIN32
-	ipcStorage_->Stop();
+	{
+		std::lock_guard<std::mutex> lock(mtx_);
+		ipcStorage_->Stop();
+		ipcStorage_.reset();
+	}
 #endif
 
 	if (isThreadRunning_)

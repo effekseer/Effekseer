@@ -458,19 +458,22 @@ protected:
 
 				::Effekseer::Vector3D::Cross(normalCurrent, tangentCurrent, binormalCurrent);
 				::Effekseer::Vector3D::Cross(normalNext, tangentNext, binormalNext);
-				::Effekseer::Vector3D::Normal(normalCurrent, normalCurrent);
-				::Effekseer::Vector3D::Normal(normalNext, normalNext);
 
 				// rotate directions
-				::Effekseer::Matrix43 matRot = mat43;
-				matRot.Value[3][0] = 0.0f;
-				matRot.Value[3][1] = 0.0f;
-				matRot.Value[3][2] = 0.0f;
+				::Effekseer::Matrix43 matScaleRot = mat43;
+				matScaleRot.Value[3][0] = 0.0f;
+				matScaleRot.Value[3][1] = 0.0f;
+				matScaleRot.Value[3][2] = 0.0f;
 
-				::Effekseer::Vector3D::Transform(normalCurrent, normalCurrent, matRot);
-				::Effekseer::Vector3D::Transform(normalNext, normalNext, matRot);
-				::Effekseer::Vector3D::Transform(tangentCurrent, tangentCurrent, matRot);
-				::Effekseer::Vector3D::Transform(tangentNext, tangentNext, matRot);
+				::Effekseer::Vector3D::Transform(normalCurrent, normalCurrent, matScaleRot);
+				::Effekseer::Vector3D::Transform(normalNext, normalNext, matScaleRot);
+				::Effekseer::Vector3D::Transform(tangentCurrent, tangentCurrent, matScaleRot);
+				::Effekseer::Vector3D::Transform(tangentNext, tangentNext, matScaleRot);
+
+				::Effekseer::Vector3D::Normal(normalCurrent, normalCurrent);
+				::Effekseer::Vector3D::Normal(normalNext, normalNext);
+				::Effekseer::Vector3D::Normal(tangentCurrent, tangentCurrent);
+				::Effekseer::Vector3D::Normal(tangentNext, tangentNext);
 
 				vs[0].Normal = PackVector3DF(normalCurrent);
 				vs[1].Normal = vs[0].Normal;
