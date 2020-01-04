@@ -10,8 +10,8 @@
 #include <iostream>
 #include <ostream>
 
-#include <efkMat.TextExporter.h>
 #include <efkMat.StringContainer.h>
+#include <efkMat.TextExporter.h>
 
 #include <filesystem>
 
@@ -196,7 +196,7 @@ void EditorContent::SaveAs(const char* path)
 	if (fs::path((const wchar_t*)path16).extension().generic_string() == ".efkmat")
 #else
 	if (fs::path(path).extension().generic_string() == ".efkmat")
-	#endif
+#endif
 	{
 		FILE* fp = nullptr;
 #ifdef _WIN32
@@ -1105,11 +1105,23 @@ void Editor::UpdateDeleting()
 
 	if (ed::BeginDelete())
 	{
+		bool foundDelete = false;
+
+		auto startCollection = [&foundDelete, &material]() -> void {
+			if (!foundDelete)
+			{
+				material->GetCommandManager()->StartCollection();
+				foundDelete = true;
+			}
+		};
+
 		ed::LinkId linkId = 0;
 		while (ed::QueryDeletedLink(&linkId))
 		{
 			if (ed::AcceptDeletedItem())
 			{
+				startCollection();
+
 				auto link = material->FindLink(linkId.Get());
 				material->BreakPin(link);
 			}
@@ -1120,9 +1132,16 @@ void Editor::UpdateDeleting()
 		{
 			if (ed::AcceptDeletedItem())
 			{
+				startCollection();
+
 				auto node = material->FindNode(nodeId.Get());
 				material->RemoveNode(node);
 			}
+		}
+
+		if (foundDelete)
+		{
+			material->GetCommandManager()->EndCollection();
 		}
 
 		ed::EndDelete();
