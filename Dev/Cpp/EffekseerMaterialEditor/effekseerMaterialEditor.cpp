@@ -486,7 +486,7 @@ int mainLoop(int argc, char* argv[])
 
 								auto& io = ImGui::GetIO();
 
-								if (!io.MouseDown[0])
+								if (!ImGui::IsAnyItemActive())
 								{
 									editor->GetContents()[i]->GetMaterial()->GetCommandManager()->MakeMergeDisabled();
 								}

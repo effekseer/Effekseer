@@ -165,6 +165,8 @@ public:
 
 static const char* tag_changeNumberCommand = "ChangeNumberCommand";
 
+static const char* tag_changeStringCommand = "ChangeStringCommand";
+
 static const char* tag_changeNodePosCommand = "ChangeNodePosCommand";
 
 static const char* tag_changeMultiNodePosCommand = "ChangeMultiNodePosCommand";
@@ -228,6 +230,58 @@ public:
 	}
 
 	virtual const char* GetTag() { return tag_changeNumberCommand; }
+};
+
+class ChangeStringCommand : public ICommand
+{
+private:
+	std::shared_ptr<NodeProperty> prop_;
+	std::string newValue_;
+	std::string oldValue_;
+
+public:
+	ChangeStringCommand(std::shared_ptr<NodeProperty> prop, std::string newValue, std::string oldValue)
+		: prop_(prop), newValue_(newValue), oldValue_(oldValue)
+	{
+	}
+
+	virtual ~ChangeStringCommand() = default;
+
+	void Execute() override { prop_->Str = newValue_; }
+
+	void Unexecute() override
+	{
+		prop_->Str = oldValue_;
+
+		auto parent = prop_->Parent.lock();
+
+		if (parent != nullptr)
+		{
+			auto parentMaterial = parent->Parent.lock();
+
+			if (parentMaterial != nullptr)
+			{
+				parentMaterial->MakeContentDirty(parent);
+			}
+		}
+	}
+
+	bool Merge(ICommand* command)
+	{
+
+		if (command->GetTag() != this->GetTag())
+			return false;
+
+		auto command_ = static_cast<ChangeStringCommand*>(command);
+		if (command_->prop_ != this->prop_)
+			return false;
+
+		this->oldValue_ = command_->oldValue_;
+
+		return true;
+	}
+
+	virtual const char* GetTag() { return tag_changeStringCommand; }
 };
 
 class ChangeNodePosCommand : public ICommand
@@ -1520,16 +1574,7 @@ void Material::ChangeValue(std::shared_ptr<NodeProperty> prop, std::string value
 	auto value_old = prop->Str;
 	auto value_new = value;
 
-	auto command = std::make_shared<DelegateCommand>(
-		[prop, value_new, this]() -> void {
-			prop->Str = value_new;
-			MakeContentDirty(prop->Parent.lock());
-		},
-		[prop, value_old, this]() -> void {
-			prop->Str = value_old;
-			MakeContentDirty(prop->Parent.lock());
-		});
-
+	auto command = std::make_shared<ChangeStringCommand>(prop, value_new, value_old);
 	commandManager_->Execute(command);
 }
 
