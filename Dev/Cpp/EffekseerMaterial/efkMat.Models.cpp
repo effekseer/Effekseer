@@ -673,6 +673,10 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 void Material::LoadFromStrInternal(
 	const char* json, Vector2DF offset, std::shared_ptr<Library> library, const char* basePath, SaveLoadAimType aim)
 {
+	// offset must be int
+	offset.X = std::floor(offset.X);
+	offset.Y = std::floor(offset.Y);
+
 	picojson::value root_;
 	auto err = picojson::parse(root_, json);
 	if (!err.empty())
