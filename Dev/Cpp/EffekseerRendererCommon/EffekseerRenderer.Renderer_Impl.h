@@ -11,6 +11,13 @@ namespace EffekseerRenderer
 class Renderer::Impl
 {
 private:
+	::Effekseer::Matrix44 projectionMat_;
+	::Effekseer::Matrix44 cameraMat_;
+	::Effekseer::Matrix44 cameraProjMat_;
+
+	::Effekseer::Vector3D cameraPosition_;
+	::Effekseer::Vector3D cameraFrontDirection_;
+
 	UVStyle textureUVStyle = UVStyle::Normal;
 	UVStyle backgroundTextureUVStyle = UVStyle::Normal;
 	float time_ = 0.0f;
@@ -24,6 +31,22 @@ public:
 	int32_t drawcallCount = 0;
 	int32_t drawvertexCount = 0;
 	bool isRenderModeValid = true;
+
+	const ::Effekseer::Matrix44& GetProjectionMatrix() const;
+
+	void SetProjectionMatrix(const ::Effekseer::Matrix44& mat);
+
+	const ::Effekseer::Matrix44& GetCameraMatrix() const;
+
+	void SetCameraMatrix(const ::Effekseer::Matrix44& mat);
+
+	::Effekseer::Vector3D GetCameraFrontDirection() const;
+
+	::Effekseer::Vector3D GetCameraPosition() const;
+
+	void SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position);
+
+	::Effekseer::Matrix44& GetCameraProjectionMatrix();
 
 	void CreateProxyTextures(Renderer* renderer);
 

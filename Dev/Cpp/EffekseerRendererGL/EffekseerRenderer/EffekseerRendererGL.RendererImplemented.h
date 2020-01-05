@@ -73,13 +73,6 @@ private:
 	::Effekseer::Color		m_lightColor;
 	::Effekseer::Color		m_lightAmbient;
 
-	::Effekseer::Matrix44	m_proj;
-	::Effekseer::Matrix44	m_camera;
-	::Effekseer::Matrix44	m_cameraProj;
-
-	::Effekseer::Vector3D	m_cameraPosition;
-	::Effekseer::Vector3D	m_cameraFrontDirection;
-
 	::EffekseerRenderer::RenderStateBase*		m_renderState;
 
 	Effekseer::TextureData	m_background;
@@ -179,37 +172,6 @@ public:
 		@brief	ライトの環境光の色を設定する。
 	*/
 	void SetLightAmbientColor( const ::Effekseer::Color& color ) override;
-
-	/**
-		@brief	投影行列を取得する。
-	*/
-	const ::Effekseer::Matrix44& GetProjectionMatrix() const override;
-
-	/**
-		@brief	投影行列を設定する。
-	*/
-	void SetProjectionMatrix( const ::Effekseer::Matrix44& mat ) override;
-
-	/**
-		@brief	カメラ行列を取得する。
-	*/
-	const ::Effekseer::Matrix44& GetCameraMatrix() const override;
-
-	/**
-		@brief	カメラ行列を設定する。
-	*/
-	void SetCameraMatrix( const ::Effekseer::Matrix44& mat ) override;
-
-	/**
-		@brief	カメラプロジェクション行列を取得する。
-	*/
-	::Effekseer::Matrix44& GetCameraProjectionMatrix() override;
-
-	::Effekseer::Vector3D GetCameraFrontDirection() const override;
-
-	::Effekseer::Vector3D GetCameraPosition() const  override;
-
-	void SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position)  override;
 
 	/**
 		@brief	スプライトレンダラーを生成する。

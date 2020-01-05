@@ -210,37 +210,6 @@ public:
 	void SetLightAmbientColor( const ::Effekseer::Color& color );
 
 	/**
-		@brief	投影行列を取得する。
-	*/
-	const ::Effekseer::Matrix44& GetProjectionMatrix() const;
-
-	/**
-		@brief	投影行列を設定する。
-	*/
-	void SetProjectionMatrix( const ::Effekseer::Matrix44& mat );
-
-	/**
-		@brief	カメラ行列を取得する。
-	*/
-	const ::Effekseer::Matrix44& GetCameraMatrix() const;
-
-	/**
-		@brief	カメラ行列を設定する。
-	*/
-	void SetCameraMatrix( const ::Effekseer::Matrix44& mat );
-
-	/**
-		@brief	カメラプロジェクション行列を取得する。
-	*/
-	::Effekseer::Matrix44& GetCameraProjectionMatrix();
-
-	::Effekseer::Vector3D GetCameraFrontDirection() const override;
-
-	::Effekseer::Vector3D GetCameraPosition() const  override;
-
-	void SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position)  override;
-
-	/**
 		@brief	スプライトレンダラーを生成する。
 	*/
 	::Effekseer::SpriteRenderer* CreateSpriteRenderer();

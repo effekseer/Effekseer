@@ -4,6 +4,38 @@
 namespace EffekseerRenderer
 {
 
+const ::Effekseer::Matrix44& Renderer::Impl::GetProjectionMatrix() const { return projectionMat_; }
+
+void Renderer::Impl::SetProjectionMatrix(const ::Effekseer::Matrix44& mat) { projectionMat_ = mat; }
+
+const ::Effekseer::Matrix44& Renderer::Impl::GetCameraMatrix() const { return cameraMat_; }
+
+void Renderer::Impl::SetCameraMatrix(const ::Effekseer::Matrix44& mat)
+{
+	cameraFrontDirection_ = ::Effekseer::Vector3D(mat.Values[0][2], mat.Values[1][2], mat.Values[2][2]);
+
+	auto localPos = ::Effekseer::Vector3D(-mat.Values[3][0], -mat.Values[3][1], -mat.Values[3][2]);
+	auto f = cameraFrontDirection_;
+	auto r = ::Effekseer::Vector3D(mat.Values[0][0], mat.Values[1][0], mat.Values[2][0]);
+	auto u = ::Effekseer::Vector3D(mat.Values[0][1], mat.Values[1][1], mat.Values[2][1]);
+
+	cameraPosition_ = r * localPos.X + u * localPos.Y + f * localPos.Z;
+
+	cameraMat_ = mat;
+}
+
+::Effekseer::Matrix44& Renderer::Impl::GetCameraProjectionMatrix() { return cameraProjMat_; }
+
+::Effekseer::Vector3D Renderer::Impl::GetCameraFrontDirection() const { return cameraFrontDirection_; }
+
+::Effekseer::Vector3D Renderer::Impl::GetCameraPosition() const { return cameraPosition_; }
+
+void Renderer::Impl::SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position)
+{
+	cameraFrontDirection_ = front;
+	cameraPosition_ = position;
+}
+
 void Renderer::Impl::CreateProxyTextures(Renderer* renderer)
 {
 	whiteProxyTexture_ = renderer->CreateProxyTexture(::EffekseerRenderer::ProxyTextureType::White);
