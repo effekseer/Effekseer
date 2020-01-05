@@ -35,7 +35,7 @@ std::string Replace(std::string target, std::string from_, std::string to_)
 
 std::string Relative(const std::string& targetPath, const std::string& basePath)
 {
-	if (basePath.size() == 0)
+	if (basePath.size() == 0 || targetPath.size() == 0)
 	{
 		return targetPath;
 	}

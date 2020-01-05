@@ -348,6 +348,24 @@ namespace Effekseer.Data
 							status.IsShown = texture.IsParam;
 							isChanged = true;
 						}
+
+						// update default path
+						if(texture.IsParam)
+						{
+							if ((foundValue.Value as Value.PathForImage).AbsolutePath == string.Empty)
+							{
+								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(texture.DefaultPath);
+								isChanged = true;
+							}
+						}
+						else
+						{
+							if((foundValue.Value as Value.PathForImage).AbsolutePath != texture.DefaultPath)
+							{
+								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(texture.DefaultPath);
+								isChanged = true;
+							}
+						}
 					}
 					else
 					{
@@ -360,7 +378,12 @@ namespace Effekseer.Data
 						status.IsShown = texture.IsParam;
 						status.Priority = texture.Priority;
 						valueStatuses.Add(status);
-						value.SetAbsolutePathDirectly(texture.DefaultPath);
+
+						if(!string.IsNullOrEmpty(texture.DefaultPath))
+						{
+							value.SetAbsolutePathDirectly(texture.DefaultPath);
+						}
+
 						isChanged = true;
 					}
 
