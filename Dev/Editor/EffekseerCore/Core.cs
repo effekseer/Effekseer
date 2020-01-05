@@ -238,6 +238,11 @@ namespace Effekseer
 		}
 
 		/// <summary>
+		/// A callback when it is required to load a file
+		/// </summary>
+		public static Func<string, byte[]> OnFileLoaded;
+
+		/// <summary>
 		/// Output message
 		/// </summary>
 		public static Action<string> OnOutputMessage;

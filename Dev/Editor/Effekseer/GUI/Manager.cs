@@ -225,6 +225,23 @@ namespace Effekseer.GUI
 			IO = swig.IO.GetInstance();
 			ioCallback = new ManagerIOCallback();
 			IO.AddCallback(ioCallback);
+
+			Core.OnFileLoaded += (string path) => {
+
+				var f = IO.LoadIPCFile(path);
+				if(f == null)
+				{
+					f = IO.LoadFile(path);
+				}
+
+				if (f == null) return null;
+
+				byte[] ret = new byte[f.GetSize()];
+				System.Runtime.InteropServices.Marshal.Copy(f.GetData(), ret, 0, ret.Length);
+				f.Dispose();
+				return ret;
+			};
+
 			ThumbnailManager.Initialize();
 		
 			var mgr = new swig.GUIManager();

@@ -513,7 +513,7 @@ namespace Effekseer.Binary
 					}
 					else
 					{
-						relative_path = System.IO.Path.GetDirectoryName(relative_path) + "/" + System.IO.Path.GetFileNameWithoutExtension(relative_path) + ".efkmodel";
+						relative_path = System.IO.Path.ChangeExtension(relative_path, ".efkmodel");
 					}
 
 					data.Add(model_and_index[relative_path].GetBytes());

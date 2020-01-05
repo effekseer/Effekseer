@@ -114,27 +114,32 @@ namespace Effekseer.Utl
 			if (string.IsNullOrEmpty(path))
 				return false;
 
-			System.IO.FileStream fs = null;
-			if (!System.IO.File.Exists(path)) return false;
+			byte[] file = null;
 
-			try
+			if(Core.OnFileLoaded != null)
 			{
-				fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+				file = Core.OnFileLoaded(path);
+				if (file == null) return false;
 			}
-			catch
+			else
 			{
-				return false;
+				if (!System.IO.File.Exists(path)) return false;
+
+				try
+				{
+					file = System.IO.File.ReadAllBytes(path);
+				}
+				catch
+				{
+					return false;
+				}
 			}
 
-
-			var br = new System.IO.BinaryReader(fs);
-
+			var br = new System.IO.BinaryReader(new System.IO.MemoryStream(file));
 			var buf = new byte[1024];
-
 
 			if (br.Read(buf, 0, 16) != 16)
 			{
-				fs.Dispose();
 				br.Close();
 				return false;
 			}
@@ -154,7 +159,6 @@ namespace Effekseer.Utl
 			{
 				if (br.Read(buf, 0, 8) != 8)
 				{
-					fs.Dispose();
 					br.Close();
 					break;
 				}

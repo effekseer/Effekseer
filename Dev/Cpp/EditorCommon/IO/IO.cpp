@@ -11,6 +11,24 @@ std::shared_ptr<IO> IO::instance_;
 
 std::shared_ptr<IO> IO::GetInstance() { return instance_; }
 
+std::u16string IO::ReplaceSeparator(const char16_t* path)
+{
+#if _WIN32
+	std::u16string pathSafe = path;
+
+	for (size_t i = 0; i < pathSafe.size(); i++)
+	{
+		if (pathSafe[i] == u'\\')
+		{
+			pathSafe[i] = u'/';
+		}
+	}
+	return pathSafe;
+#endif
+
+	return path;
+}
+
 void IO::Initialize(int checkFileInterval) { instance_ = std::make_shared<IO>(checkFileInterval); }
 
 void IO::Terminate() { instance_ = nullptr; }
@@ -50,12 +68,14 @@ IO::~IO()
 
 std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 {
-	if (!FileSystem::GetIsFile(path))
+	auto pathSafe = ReplaceSeparator(path);
+
+	if (!FileSystem::GetIsFile(pathSafe))
 		return nullptr;
 
 	std::lock_guard<std::mutex> lock(mtx_);
 
-	std::shared_ptr<StaticFileReader> reader = std::make_shared<DefaultStaticFileReader>(path);
+	std::shared_ptr<StaticFileReader> reader = std::make_shared<DefaultStaticFileReader>(pathSafe);
 	auto file = std::make_shared<StaticFile>(reader);
 
 	auto info = FileInfo(file->GetFileType(), file->GetPath());
@@ -63,7 +83,7 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 		changedFileInfos_.erase(info);
 	}
 
-	auto time = FileSystem::GetLastWriteTime(path);
+	auto time = FileSystem::GetLastWriteTime(pathSafe);
 	fileUpdateDates_[info] = time;
 
 	return file;
@@ -71,16 +91,18 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 
 std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 {
+	auto pathSafe = ReplaceSeparator(path);
+
 #ifndef _WIN32
 	return nullptr;
 #endif
 
-	if (!FileSystem::GetIsFile(path))
+	if (!FileSystem::GetIsFile(pathSafe))
 		return nullptr;
 
 	std::lock_guard<std::mutex> lock(mtx_);
 
-	std::shared_ptr<StaticFileReader> reader = std::make_shared<IPCFileReader>(path, GetIPCStorage());
+	std::shared_ptr<StaticFileReader> reader = std::make_shared<IPCFileReader>(pathSafe, GetIPCStorage());
 	auto file = std::make_shared<StaticFile>(reader);
 
 	if (file->GetSize() == 0)

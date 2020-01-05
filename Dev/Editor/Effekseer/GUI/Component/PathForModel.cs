@@ -200,9 +200,8 @@ namespace Effekseer.GUI.Component
 		{
 
 			// Convert file
-			var filenameWE = System.IO.Path.GetDirectoryName(filepath) + "/" + System.IO.Path.GetFileNameWithoutExtension(filepath);
 			var ext = System.IO.Path.GetExtension(filepath).ToLower().Replace(".", "");
-			var newFilepath = filenameWE + ".efkmodel";
+			var newFilepath = System.IO.Path.ChangeExtension(filepath, ".efkmodel");
 
 			Effekseer.Utl.ModelInformation modelInfo = new Utl.ModelInformation();
 			if (modelInfo.Load(newFilepath))
