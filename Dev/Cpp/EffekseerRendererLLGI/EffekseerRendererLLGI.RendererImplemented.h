@@ -32,6 +32,7 @@ public:
 	Shader* shader = nullptr;
 	EffekseerRenderer::RenderStateBase::State state;
 	LLGI::TopologyType topologyType;
+    LLGI::RenderPassPipelineState* renderPassPipelineState = nullptr;
 	bool operator<(const PiplineStateKey& v) const;
 };
 
@@ -123,6 +124,8 @@ public:
 	void Destroy() override;
 
 	void SetRestorationOfStatesFlag(bool flag) override;
+
+    void SetRenderPassPipelineState(LLGI::RenderPassPipelineState* renderPassPipelineState);
 
 	bool BeginRendering() override;
 
