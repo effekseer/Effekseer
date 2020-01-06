@@ -18,6 +18,7 @@ struct TextExporterUniform
 	std::array<float, 4> DefaultConstants;
 	int32_t Offset;
 	int32_t Priority = 1;
+	uint64_t GUID = 0;
 	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
 };
 
@@ -34,6 +35,7 @@ struct TextExporterTexture
 	TextureValueType Type = TextureValueType::Color;
 	TextureSamplerType Sampler = TextureSamplerType::Unknown;
 	int32_t Priority = 1;
+	uint64_t GUID = 0;
 	std::vector<std::shared_ptr<NodeDescription>> Descriptions;
 };
 

@@ -94,6 +94,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->DefaultPath = path;
 						extractedTexture->IsParam = false;
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
+						extractedTexture->GUID = node->GUID;
 						extractedTextures[node->GUID] = extractedTexture;
 					}
 
@@ -120,6 +121,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
 						extractedTexture->Priority = static_cast<int32_t>(node->GetProperty("Priority")->Floats[0]);
 						extractedTexture->Descriptions = node->Descriptions;
+						extractedTexture->GUID = node->GUID;
 						extractedTextures[node->GUID] = extractedTexture;
 					}
 
@@ -152,6 +154,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedUniform->DefaultConstants = values;
 						extractedUniform->Priority = static_cast<int32_t>(node->GetProperty("Priority")->Floats[0]);
 						extractedUniform->Descriptions = node->Descriptions;
+						extractedUniform->GUID = node->GUID;
 
 						if (node->Parameter->Type == NodeType::Parameter1)
 						{
@@ -242,6 +245,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						extractedTexture->Name = paramName;
 						extractedTexture->DefaultPath = path;
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
+						extractedTexture->GUID = node->GUID;
 						extractedTextures[node->GUID] = extractedTexture;
 					}
 
