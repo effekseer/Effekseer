@@ -270,7 +270,7 @@ add_library(Effekseer STATIC
     ${effekseer_h}
     ${effekseer_src} )
 
-if (BUILD_DX12)
+if (BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
     set(BUILD_TEST_TEMP ${BUILD_TEST})
     set(BUILD_TEST OFF)
     add_subdirectory(3rdParty/LLGI)
@@ -280,6 +280,11 @@ endif()
 if (BUILD_DX12)
     add_subdirectory(EffekseerRendererDX12)
 endif()
+
+if (BUILD_METAL)
+    add_subdirectory(EffekseerRendererMetal)
+endif()
+
 if (BUILD_VULKAN)
     add_subdirectory(EffekseerRendererVulkan)
 endif()
