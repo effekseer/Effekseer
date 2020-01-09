@@ -109,6 +109,8 @@ namespace Effekseer.Utl
 
 		public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
 
+		public string Code = string.Empty;
+
 		public bool Load(string path)
 		{
 			if (string.IsNullOrEmpty(path))
@@ -304,7 +306,7 @@ namespace Effekseer.Utl
 
 					var reader = new BinaryReader(temp);
 
-					if(version >= 2)
+					if (version >= 2)
 					{
 						int customDataCount = 0;
 						reader.Get(ref customDataCount);
@@ -373,6 +375,19 @@ namespace Effekseer.Utl
 							Uniforms[j].Descriptions.Add((Language)lang, desc);
 						}
 					}
+				}
+
+				if (buf[0] == 'G' &&
+				buf[1] == 'E' &&
+				buf[2] == 'N' &&
+				buf[3] == 'E')
+				{
+					var temp = new byte[BitConverter.ToInt32(buf, 4)];
+					if (br.Read(temp, 0, temp.Length) != temp.Length) return false;
+
+					var reader = new BinaryReader(temp);
+
+					reader.Get(ref Code, Encoding.UTF8);
 				}
 			}
 
