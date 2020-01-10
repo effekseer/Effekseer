@@ -235,7 +235,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 		}
 
 		if (shader == nullptr)
-			return false;
+			return nullptr;
 
 		auto vertexUniformSize = parameterGenerator.VertexShaderUniformBufferSize;
 		auto pixelUniformSize = parameterGenerator.PixelShaderUniformBufferSize;
@@ -305,7 +305,7 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 									 "MaterialStandardModelRenderer",
 									 layouts);
 		if (shader == nullptr)
-			return false;
+			return nullptr;
 
 		auto vertexUniformSize = parameterGenerator.VertexShaderUniformBufferSize;
 		auto pixelUniformSize = parameterGenerator.PixelShaderUniformBufferSize;

@@ -27,6 +27,12 @@ else()
     set(BUILD_DX12 OFF)
 endif()
 
+if (APPLE)
+    set(BUILD_METAL ON)
+else()
+    set(BUILD_METAL OFF)
+endif()
+
 if (BUILD_DX12)
     add_definitions(-D__EFFEKSEER_BUILD_DX12__)
 endif()
