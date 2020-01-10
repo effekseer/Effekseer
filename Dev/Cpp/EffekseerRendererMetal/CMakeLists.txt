@@ -1,6 +1,17 @@
 cmake_minimum_required (VERSION 3.0.0)
 project(EffekseerRendererMetal)
 
+option(USE_INTERNAL_COMMAND_BUFFER "Use Internal Command Buffer" ON)
+option(USE_INTERNAL_RENDER_PASS "Use Internal Render Pass" ON)
+
+if (USE_INTERNAL_COMMAND_BUFFER)
+	add_definitions(-D__EFFEKSEER_RENDERERMETAL_INTERNAL_COMMAND_BUFFER__)
+endif()
+
+if (USE_INTERNAL_RENDER_PASS)
+	add_definitions(-D__EFFEKSEER_RENDERERMETAL_INTERNAL_RENDER_PASS__)
+endif()
+
 #--------------------
 # Files
 

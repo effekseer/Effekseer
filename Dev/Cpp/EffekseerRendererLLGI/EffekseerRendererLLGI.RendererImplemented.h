@@ -45,7 +45,7 @@ class RendererImplemented : public Renderer, public ::Effekseer::ReferenceObject
 {
 	friend class DeviceObject;
 
-private:
+protected:
 	std::map<PiplineStateKey, LLGI::PipelineState*> piplineStates_;
 	LLGI::VertexBuffer* currentVertexBuffer_ = nullptr;
 	int32_t currentVertexBufferStride_ = 0;
