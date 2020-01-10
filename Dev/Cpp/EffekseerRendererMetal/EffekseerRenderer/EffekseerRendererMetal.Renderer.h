@@ -6,6 +6,8 @@
 #include "EffekseerRendererMetal.Base.h"
 #include <functional>
 
+#import <MetalKit/MetalKit.h>
+
 @class MTLRenderPassDescriptor;
 @protocol MTLDevice, MTLCommandBuffer, MTLRenderCommandEncoder, MTLTexture;
 
@@ -18,9 +20,10 @@ namespace EffekseerRendererMetal
 @param squareMaxCount	the number of maximum sprites
 @return	instance
 */
-::EffekseerRenderer::Renderer* Create(id<MTLDevice> device,
-									  bool isReversedDepth,
-									  int32_t squareMaxCount);
+::EffekseerRenderer::Renderer* Create(int32_t squareMaxCount,
+                                      MTLPixelFormat renderTargetFormat,
+                                      MTLPixelFormat depthStencilFormat,
+									  bool isReversedDepth);
 
 Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture);
 
@@ -32,11 +35,11 @@ EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer*
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
-
+/*
 void BeginCommandList(EffekseerRenderer::CommandList* commandList, id<MTLCommandBuffer> commandBuffer);
 
 void EndCommandList(EffekseerRenderer::CommandList* commandList);
-
+*/
 } // namespace EffekseerRendererMetal
 
 #endif

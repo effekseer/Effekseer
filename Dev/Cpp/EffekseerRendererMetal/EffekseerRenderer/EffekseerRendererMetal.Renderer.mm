@@ -1,81 +1,66 @@
-﻿#include "EffekseerRendererMetal.Renderer.h"
+#include "EffekseerRendererMetal.Renderer.h"
+#include "../EffekseerRendererMetal.RendererImplemented.h"
+
+#include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h"
+#include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.VertexBuffer.h"
+
 #include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.GraphicsMetal.h"
-#include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 
-#import <Metal/Metal.h>
+#include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
+#include "../../3rdParty/LLGI/src/Metal/LLGI.GraphicsMetal.h"
+#include "../../3rdParty/LLGI/src/Metal/LLGI.RenderPassMetal.h"
+#include "../../3rdParty/LLGI/src/Metal/LLGI.Metal_Impl.h"
+
+#include "Shaders.h"
 
 namespace EffekseerRendererMetal
 {
 
-::EffekseerRenderer::Renderer* Create(id<MTLDevice> device,
-									  bool isReversedDepth,
-									  int32_t squareMaxCount)
+::EffekseerRenderer::Renderer* Create(int32_t squareMaxCount,
+                                      MTLPixelFormat renderTargetFormat,
+                                      MTLPixelFormat depthStencilFormat,
+									  bool isReversedDepth)
 {
-	/*
-	std::function<std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*>()> getScreenFunc =
-		[]() -> std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*> {
-		return std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*>();
-	};
+	auto graphics = new LLGI::GraphicsMetal();
+    graphics->Initialize(nullptr);
+    
+    RendererImplemented* renderer = new RendererImplemented(squareMaxCount);
 
-	auto graphics = new LLGI::GraphicsDX12(
-		device, getScreenFunc, []() -> void {}, commandQueue, swapBufferCount);
+    auto allocate_ = [](std::vector<LLGI::DataStructure>& ds, const char* data, int32_t size) -> void {
+        ds.resize(1);
+        ds[0].Size = size;
+        ds[0].Data = data;
+        return;
+    };
+    
+    const char* sources[] = {
+        g_sprite_vs_src, g_sprite_distortion_vs_src, g_model_lighting_vs_src, g_model_texture_vs_src, g_model_distortion_vs_src,
+        g_sprite_fs_texture_src, g_sprite_fs_texture_distortion_src, g_model_lighting_fs_src, g_model_texture_fs_src, g_model_distortion_fs_src
+    };
+    
+    std::vector<LLGI::DataStructure>* dest = &renderer->fixedShader_.StandardTexture_VS;
 
-	::EffekseerRendererLLGI::RendererImplemented* renderer = new ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount);
+    for (int i = 0; i < 10; ++i)
+    {
+        allocate_(dest[i], sources[i], sizeof(sources[i]));
+    }
 
-	auto allocate_ = [](std::vector<LLGI::DataStructure>& ds, const unsigned char* data, int32_t size) -> void {
-		ds.resize(1);
-		ds[0].Size = size;
-		ds[0].Data = data;
-		return;
-	};
+    auto pipelineState = graphics->CreateRenderPassPipelineState(renderTargetFormat, depthStencilFormat).get();
 
-	allocate_(renderer->fixedShader_.StandardTexture_VS, Standard_VS::g_VS, sizeof(Standard_VS::g_VS));
-	allocate_(renderer->fixedShader_.StandardTexture_PS, Standard_PS::g_PS, sizeof(Standard_PS::g_PS));
+    if (renderer->Initialize(graphics, pipelineState, isReversedDepth))
+    {
+        ES_SAFE_RELEASE(graphics);
+        ES_SAFE_RELEASE(pipelineState);
+        return renderer;
+    }
 
-	allocate_(renderer->fixedShader_.StandardDistortedTexture_VS, Standard_Distortion_VS::g_VS, sizeof(Standard_Distortion_VS::g_VS));
-	allocate_(renderer->fixedShader_.StandardDistortedTexture_PS, Standard_Distortion_PS::g_PS, sizeof(Standard_Distortion_PS::g_PS));
+    ES_SAFE_RELEASE(graphics);
+    ES_SAFE_RELEASE(pipelineState);
 
-	allocate_(renderer->fixedShader_.ModelShaderTexture_VS, ShaderTexture_::g_VS, sizeof(ShaderTexture_::g_VS));
-	allocate_(renderer->fixedShader_.ModelShaderTexture_PS, ShaderTexture_::g_PS, sizeof(ShaderTexture_::g_PS));
+    ES_SAFE_DELETE(renderer);
 
-	allocate_(renderer->fixedShader_.ModelShaderLightingTextureNormal_VS,
-			  ShaderLightingTextureNormal_::g_VS,
-			  sizeof(ShaderLightingTextureNormal_::g_VS));
-	allocate_(renderer->fixedShader_.ModelShaderLightingTextureNormal_PS,
-			  ShaderLightingTextureNormal_::g_PS,
-			  sizeof(ShaderLightingTextureNormal_::g_PS));
-
-	allocate_(
-		renderer->fixedShader_.ModelShaderDistortionTexture_VS, ShaderDistortionTexture_::g_VS, sizeof(ShaderDistortionTexture_::g_VS));
-	allocate_(
-		renderer->fixedShader_.ModelShaderDistortionTexture_PS, ShaderDistortionTexture_::g_PS, sizeof(ShaderDistortionTexture_::g_PS));
-
-	LLGI::RenderPassPipelineStateKey key;
-	key.RenderTargetFormats.resize(renderTargetCount);
-
-	for (size_t i = 0; i < key.RenderTargetFormats.size(); i++)
-	{
-		key.RenderTargetFormats.at(i) = LLGI::ConvertFormat(renderTargetFormats[i]);
-	}
-
-	key.HasDepth = hasDepth;
-
-	auto pipelineState = graphics->CreateRenderPassPipelineState(key);
-
-	if (renderer->Initialize(graphics, pipelineState, isReversedDepth))
-	{
-		ES_SAFE_RELEASE(graphics);
-		ES_SAFE_RELEASE(pipelineState);
-		return renderer;
-	}
-
-	ES_SAFE_RELEASE(graphics);
-	ES_SAFE_RELEASE(pipelineState);
-
-	ES_SAFE_DELETE(renderer);
-*/
-	return nullptr;
+    return nullptr;
 }
 
 Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture)
@@ -128,7 +113,7 @@ EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::Effeksee
 	ES_SAFE_RELEASE(mp);
 	return ret;
 }
-
+/*
 void BeginCommandList(EffekseerRenderer::CommandList* commandList, id<MTLCommandBuffer> commandBuffer)
 {
 	assert(commandList != nullptr);
@@ -145,6 +130,75 @@ void EndCommandList(EffekseerRenderer::CommandList* commandList)
 	assert(commandList != nullptr);
 	auto c = static_cast<EffekseerRendererLLGI::CommandList*>(commandList);
 	c->GetInternal()->EndWithPlatform();
+}
+*/
+void RendererImplemented::SetExternalCommandBuffer(id<MTLCommandBuffer> extCommandBuffer)
+{
+    if (commandList_ != nullptr)
+    {
+        auto clm = static_cast<LLGI::CommandListMetal*>(GetCurrentCommandList());
+        clm->GetImpl()->commandBuffer = extCommandBuffer;
+    }
+}
+    
+void RendererImplemented::SetExternalRenderEncoder(id<MTLRenderCommandEncoder> extRenderEncoder)
+{
+    if (commandList_ != nullptr)
+    {
+        auto clm = static_cast<LLGI::CommandListMetal*>(GetCurrentCommandList());
+        clm->GetImpl()->renderEncoder = extRenderEncoder;
+    }
+}
+
+bool RendererImplemented::BeginRendering()
+{
+    assert(graphics_ != NULL);
+
+    ::Effekseer::Matrix44::Mul(m_cameraProj, m_camera, m_proj);
+
+    // initialize states
+    m_renderState->GetActiveState().Reset();
+    m_renderState->Update(true);
+
+    if (commandList_ != nullptr)
+    {
+#ifdef __EFFEKSEER_RENDERERMETAL_INTERNAL_COMMAND_BUFFER__
+        GetCurrentCommandList()->Begin();
+#else
+        GetCurrentCommandList()->CommandList::Begin();
+#endif
+#ifdef __EFFEKSEER_RENDERERMETAL_INTERNAL_RENDER_PASS__
+        auto g = static_cast<LLGI::GraphicsMetal*>(graphics_);
+        GetCurrentCommandList()->BeginRenderPass(g->GetRenderPass());
+#else
+        GetCurrentCommandList()->CommandList::BeginRenderPass(nullptr);
+#endif
+    }
+
+    // reset renderer
+    m_standardRenderer->ResetAndRenderingIfRequired();
+
+    return true;
+}
+
+bool RendererImplemented::EndRendering()
+{
+    assert(graphics_ != NULL);
+
+    // reset renderer
+    m_standardRenderer->ResetAndRenderingIfRequired();
+
+    if (commandList_ != nullptr)
+    {
+#ifdef __EFFEKSEER_RENDERERMETAL_INTERNAL_RENDER_PASS__
+        GetCurrentCommandList()->EndRenderPass();
+#endif
+#ifdef __EFFEKSEER_RENDERERMETAL_INTERNAL_COMMAND_BUFFER__
+        GetCurrentCommandList()->End();
+        graphics_->Execute(GetCurrentCommandList());
+#endif
+    }
+    return true;
 }
 
 } // namespace EffekseerRendererMetal
