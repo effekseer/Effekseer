@@ -31,6 +31,7 @@
 
 #include "Effekseer.ModelLoader.h"
 
+#include <algorithm>
 #include <iostream>
 
 //----------------------------------------------------------------------------------
