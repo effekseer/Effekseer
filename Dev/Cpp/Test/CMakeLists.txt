@@ -67,13 +67,15 @@ if (USE_OPENAL)
     list(APPEND common_lib EffekseerSoundAL)
 endif()
 
-if(BUILD_DX12)
+if(BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
     list(APPEND common_lib LLGI)
-	list(APPEND common_lib EffekseerRendererDX12)
+endif()
+
+if(BUILD_DX12)
+    list(APPEND common_lib EffekseerRendererDX12)
 endif()
 
 if (MSVC)
-
 else()
     find_package(Threads REQUIRED)
     list(APPEND common_lib ${CMAKE_THREAD_LIBS_INIT})
@@ -86,15 +88,21 @@ else()
     list(APPEND common_inc ${OPENAL_INCLUDE_DIR})
     list(APPEND common_lib ${OPENAL_LIBRARY})
 
-     if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-        # used in GLFW
+    if(APPLE)
         find_library(COCOA_FRAMEWORK Cocoa)
-        find_library(COCOA_FRAMEWORK Cocoa)
+        find_library(METAL_LIBRARY Metal)
+        find_library(APPKIT_LIBRARY AppKit)
+        find_library(METALKIT_LIBRARY MetalKit)
+        find_library(QUARTZ_CORE_LIBRARY QuartzCore)
         find_library(IOKIT_FRAMEWORK IOKit)
         find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
         find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
         list(APPEND common_lib
             ${COCOA_FRAMEWORK}
+            ${APPKIT_LIBRARY} 
+            ${METAL_LIBRARY} 
+            ${METALKIT_LIBRARY} 
+            ${QUARTZ_CORE_LIBRARY}
             ${OPENGL_gl_LIBRARY}
             ${OPENGL_glu_LIBRARY}
             ${IOKIT_FRAMEWORK}
