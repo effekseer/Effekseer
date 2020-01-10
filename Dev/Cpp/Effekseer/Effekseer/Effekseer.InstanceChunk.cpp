@@ -1,6 +1,7 @@
 ﻿
 
 #include "Effekseer.InstanceChunk.h"
+#include "Effekseer.InstanceGlobal.h"
 #include <assert.h>
 
 namespace Effekseer
@@ -10,7 +11,7 @@ InstanceChunk::InstanceChunk() { std::fill(instancesAlive_.begin(), instancesAli
 
 InstanceChunk::~InstanceChunk() {}
 
-void InstanceChunk::UpdateInstances(float deltaFrame)
+void InstanceChunk::UpdateInstances()
 {
 	for (int32_t i = 0; i < InstancesOfChunk; i++)
 	{
@@ -20,7 +21,8 @@ void InstanceChunk::UpdateInstances(float deltaFrame)
 
 			if (instance->m_State == INSTANCE_STATE_ACTIVE)
 			{
-				instance->Update(deltaFrame, true);
+				auto deltaTime = instance->GetInstanceGlobal()->NextDeltaFrame;
+				instance->Update(deltaTime, true);
 			}
 			else if (instance->m_State == INSTANCE_STATE_REMOVING)
 			{
@@ -36,7 +38,7 @@ void InstanceChunk::UpdateInstances(float deltaFrame)
 		}
 	}
 }
-void InstanceChunk::UpdateInstancesByInstanceGlobal(InstanceGlobal* global, float deltaFrame)
+void InstanceChunk::UpdateInstancesByInstanceGlobal(const InstanceGlobal* global)
 {
 	for (int32_t i = 0; i < InstancesOfChunk; i++)
 	{
@@ -50,7 +52,8 @@ void InstanceChunk::UpdateInstancesByInstanceGlobal(InstanceGlobal* global, floa
 
 			if (instance->m_State == INSTANCE_STATE_ACTIVE)
 			{
-				instance->Update(deltaFrame, true);
+				auto deltaTime = global->NextDeltaFrame;
+				instance->Update(deltaTime, true);
 			}
 			else if (instance->m_State == INSTANCE_STATE_REMOVING)
 			{

@@ -40,6 +40,14 @@ InstanceGlobal::~InstanceGlobal()
 	
 }
 
+void InstanceGlobal::BeginDeltaFrame(float frame) { NextDeltaFrame = frame; }
+
+void InstanceGlobal::EndDeltaFrame()
+{
+	m_updatedFrame += NextDeltaFrame;
+	NextDeltaFrame = 0.0f;
+}
+
 std::array<float, 4> InstanceGlobal::GetDynamicEquationResult(int32_t index) {
 	assert(0 <= index && index < dynamicEqResults.size());
 	return dynamicEqResults[index];
@@ -65,14 +73,6 @@ float InstanceGlobal::GetRand()
 float InstanceGlobal::GetRand(float min_, float max_)
 {
 	return GetRand() * (max_ - min_) + min_;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void InstanceGlobal::AddUpdatedFrame( float frame )
-{
-	m_updatedFrame += frame;
 }
 
 //----------------------------------------------------------------------------------

@@ -600,6 +600,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicInput4_get___")]
   public static extern float ViewerEffectBehavior_DynamicInput4_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_PlaybackSpeed_set___")]
+  public static extern void ViewerEffectBehavior_PlaybackSpeed_set(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerEffectBehavior_PlaybackSpeed_get___")]
+  public static extern float ViewerEffectBehavior_PlaybackSpeed_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ViewerEffectBehavior___")]
   public static extern global::System.IntPtr new_ViewerEffectBehavior();
 
@@ -1802,6 +1808,9 @@ class EffekseerNativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindow_SetState___")]
   public static extern void MainWindow_SetState(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindow_GetDPIScale___")]
+  public static extern float MainWindow_GetDPIScale(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_MainWindow_Initialize___")]
   public static extern bool MainWindow_Initialize([global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPWStr)]string jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, bool jarg3, bool jarg4);

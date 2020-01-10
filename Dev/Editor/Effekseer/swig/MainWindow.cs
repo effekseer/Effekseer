@@ -64,6 +64,12 @@ public class MainWindow : global::System.IDisposable {
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
   }
 
+  public float GetDPIScale() {
+    float ret = EffekseerNativePINVOKE.MainWindow_GetDPIScale(swigCPtr);
+    if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();
+    return ret;
+  }
+
   public static bool Initialize(string title, MainWindowState state, bool isSRGBMode, bool isOpenGLMode) {
     bool ret = EffekseerNativePINVOKE.MainWindow_Initialize(title, MainWindowState.getCPtr(state), isSRGBMode, isOpenGLMode);
     if (EffekseerNativePINVOKE.SWIGPendingException.Pending) throw EffekseerNativePINVOKE.SWIGPendingException.Retrieve();

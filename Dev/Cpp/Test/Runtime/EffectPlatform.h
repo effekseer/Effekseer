@@ -28,7 +28,7 @@ private:
 
 protected:
 	bool isOpenGLMode_ = false;
-	
+
 protected:
 	std::vector<Effekseer::Effect*> effects_;
 	std::vector<std::vector<uint8_t>> buffers_;
@@ -44,7 +44,7 @@ protected:
 	virtual void EndRendering() {}
 	virtual void Present() {}
 	virtual bool DoEvent() { return false; }
-	
+
 public:
 	EffectPlatform();
 	virtual ~EffectPlatform();
@@ -61,4 +61,6 @@ public:
 	virtual bool TakeScreenshot(const char* path) { return false; }
 
 	virtual bool SetFullscreen(bool isFullscreen) { return false; }
+
+	Effekseer::Manager* GetManager() const { return manager_; }
 };

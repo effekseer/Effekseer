@@ -108,7 +108,7 @@ void BasicRuntimeDeviceLostTest()
 #endif
 }
 
-void StartingFrameTest() 
+void StartingFrameTest()
 {
 	srand(0);
 	auto platform = std::make_shared<EffectPlatformGL>();
@@ -171,6 +171,49 @@ void UpdateHandleTest()
 			platform->Update();
 		}
 		platform->TakeScreenshot("UpdateHandle_1.png");
+
+		platform->Terminate();
+	}
+}
+
+void PlaybackSpeedTest() {
+	{
+		srand(0);
+		auto platform = std::make_shared<EffectPlatformGL>();
+
+		EffectPlatformInitializingParameter param;
+
+		platform->Initialize(param);
+
+		auto h = platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+		platform->GetManager()->SetSpeed(h, 0.5f);
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Update();
+		}
+		platform->TakeScreenshot("PlaybackSpeed_0.png");
+
+		platform->Terminate();
+	}
+
+	{
+		srand(0);
+		auto platform = std::make_shared<EffectPlatformGL>();
+
+		EffectPlatformInitializingParameter param;
+		param.IsUpdatedByHandle = true;
+
+		platform->Initialize(param);
+
+		auto h = platform->Play((GetDirectoryPathAsU16(__FILE__) + u"../../../../TestData/Effects/10/SimpleLaser.efk").c_str());
+		platform->GetManager()->SetSpeed(h, 0.5f);
+
+		for (size_t i = 0; i < 20; i++)
+		{
+			platform->Update();
+		}
+		platform->TakeScreenshot("PlaybackSpeed_1.png");
 
 		platform->Terminate();
 	}

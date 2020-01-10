@@ -133,7 +133,7 @@ int main()
 #ifdef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
 	StartingFrameTest();
 	UpdateHandleTest();
-	
+	PlaybackSpeedTest();
 	BasicRuntimeTest();
 	//BasicRuntimeDeviceLostTest();
 	CustomAllocatorTest();

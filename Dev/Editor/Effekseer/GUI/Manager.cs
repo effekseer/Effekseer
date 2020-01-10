@@ -361,6 +361,8 @@ namespace Effekseer.GUI
 			Core.EffectBehavior.ColorAll.B.OnChanged += OnChanged;
 			Core.EffectBehavior.ColorAll.A.OnChanged += OnChanged;
 
+			Core.EffectBehavior.PlaybackSpeed.OnChanged += OnChanged;
+
 			Core.Option.Magnification.OnChanged += OnChanged;
 			Core.Option.IsGridShown.OnChanged += OnChanged;
 			Core.Option.GridLength.OnChanged += OnChanged;

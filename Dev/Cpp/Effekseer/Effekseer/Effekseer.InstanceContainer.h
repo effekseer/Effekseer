@@ -66,7 +66,7 @@ public:
 	*/
 	InstanceGroup* GetFirstGroup() const;
 
-	void Update( bool recursive, float deltaFrame, bool shown );
+	void Update( bool recursive, bool shown );
 
 	void SetBaseMatrix( bool recursive, const Matrix43& mat );
 

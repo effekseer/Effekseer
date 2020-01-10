@@ -648,6 +648,10 @@ namespace Effekseer.GUI
 				(byte)Core.EffectBehavior.ColorAll.B,
 				(byte)Core.EffectBehavior.ColorAll.A);
 
+			var behavior = native.GetEffectBehavior();
+			behavior.PlaybackSpeed = Core.EffectBehavior.PlaybackSpeed.Value;
+			native.SetViewerEffectBehavior(behavior);
+
 			SetEffectTimeSpan(Core.EffectBehavior.TimeSpan);
 
 			SetEffectDistance(Core.EffectBehavior.Distance);
