@@ -16,6 +16,12 @@ endif()
 # Files
 
 file(GLOB_RECURSE LOCAL_SOURCES_Common ../EffekseerRendererCommon/*.h ../EffekseerRendererCommon/*.cpp)
+
+list(REMOVE_ITEM LOCAL_SOURCES_Common
+  ${CMAKE_CURRENT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp
+)
+
 source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
 
 file(GLOB_RECURSE LOCAL_HEADERS_Metal *.h)
