@@ -5,6 +5,7 @@
 #include <Effekseer.h>
 #include <assert.h>
 #include <string.h>
+#include <algorithm>
 #include <vector>
 
 #include "EffekseerRenderer.Renderer.h"
