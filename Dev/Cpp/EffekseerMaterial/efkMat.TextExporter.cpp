@@ -701,7 +701,7 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= pow("
 			<< GetInputArg(node->Outputs[0].Type, node->Inputs[0]) << ","
-			<< exportInputOrProp(node->Inputs[1].Type, node->Inputs[1], node->Target->Properties[0]) << ");" << std::endl;
+			<< exportInputOrProp(node->Inputs[0].Type, node->Inputs[1], node->Target->Properties[0]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::SquareRoot)
@@ -1176,7 +1176,7 @@ std::string TextExporter::ConvertType(ValueType dst, ValueType src, const std::s
 	{
 		if (src == ValueType::Float1)
 		{
-			return GetTypeName(ValueType::Float4) + "(" + name + "," + name + "," + name + ", 1.0)";
+			return GetTypeName(ValueType::Float4) + "(" + name + "," + name + "," + name + "," + name + ")";
 		}
 		else if (src == ValueType::Float2)
 		{
