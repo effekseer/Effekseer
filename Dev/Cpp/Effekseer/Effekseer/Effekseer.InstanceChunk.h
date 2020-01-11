@@ -23,9 +23,9 @@ public:
 
 	~InstanceChunk();
 
-	void UpdateInstances(float deltaFrame);
+	void UpdateInstances();
 
-	void UpdateInstancesByInstanceGlobal(InstanceGlobal* global, float deltaFrame);
+	void UpdateInstancesByInstanceGlobal(const InstanceGlobal* global);
 
 	Instance* CreateInstance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGroup* pGroup);
 

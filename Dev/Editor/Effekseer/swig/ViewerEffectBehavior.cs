@@ -394,6 +394,16 @@ public class ViewerEffectBehavior : global::System.IDisposable {
     } 
   }
 
+  public float PlaybackSpeed {
+    set {
+      EffekseerNativePINVOKE.ViewerEffectBehavior_PlaybackSpeed_set(swigCPtr, value);
+    } 
+    get {
+      float ret = EffekseerNativePINVOKE.ViewerEffectBehavior_PlaybackSpeed_get(swigCPtr);
+      return ret;
+    } 
+  }
+
   public ViewerEffectBehavior() : this(EffekseerNativePINVOKE.new_ViewerEffectBehavior(), true) {
   }
 

@@ -896,6 +896,7 @@ bool Native::PlayEffect()
 				Effekseer::Matrix43::Multiple(mat, mat, matTra);
 
 				g_manager->SetMatrix(handleHolder.Handle, mat);
+				g_manager->SetSpeed(handleHolder.Handle, m_effectBehavior.PlaybackSpeed);
 
 				g_handles.push_back(handleHolder);
 
@@ -994,6 +995,11 @@ bool Native::StepEffect()
 		g_manager->SetDynamicInput(h.Handle, 3, m_effectBehavior.DynamicInput4);
 	}
 
+	for (auto h : g_handles)
+	{
+		g_manager->SetSpeed(h.Handle, m_effectBehavior.PlaybackSpeed);
+	}
+
 	if (m_time % m_step == 0)
 	{
 		m_rootLocation.X += m_effectBehavior.PositionVelocityX;
@@ -1044,7 +1050,6 @@ bool Native::StepEffect()
 												 m_effectBehavior.TargetPositionX,
 												 m_effectBehavior.TargetPositionY,
 												 m_effectBehavior.TargetPositionZ);
-
 					index++;
 				}
 			}

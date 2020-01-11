@@ -145,12 +145,12 @@ InstanceGroup* InstanceContainer::GetFirstGroup() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceContainer::Update(bool recursive, float deltaFrame, bool shown)
+void InstanceContainer::Update(bool recursive, bool shown)
 {
 	// 更新
 	for (InstanceGroup* group = m_headGroups; group != NULL; group = group->NextUsedByContainer)
 	{
-		group->Update(deltaFrame, shown);
+		group->Update(shown);
 	}
 
 	// 破棄
@@ -160,7 +160,7 @@ void InstanceContainer::Update(bool recursive, float deltaFrame, bool shown)
 	{
 		for (auto child : m_Children)
 		{
-			child->Update(recursive, deltaFrame, shown);
+			child->Update(recursive, shown);
 		}
 	}
 }

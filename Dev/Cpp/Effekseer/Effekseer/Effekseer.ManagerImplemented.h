@@ -537,7 +537,11 @@ public:
 	void UpdateHandle( Handle handle, float deltaFrame = 1.0f ) override;
 
 private:
-	void UpdateHandle( DrawSet& drawSet, float deltaFrame );
+
+	void UpdateInstancesByInstanceGlobal(const DrawSet& drawSet);
+
+	//! update draw sets
+	void UpdateHandleInternal(DrawSet& drawSet);
 
 	void Preupdate(DrawSet& drawSet);
 

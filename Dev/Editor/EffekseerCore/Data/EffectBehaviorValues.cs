@@ -148,6 +148,15 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Name(language = Language.Japanese, value = "再生速度")]
+		[Name(language = Language.English, value = "Playback Speed")]
+		[Undo(Undo = false)]
+		public Value.Float PlaybackSpeed
+		{
+			get;
+			private set;
+		}
+
 		[Name(language = Language.Japanese, value = "ターゲット位置")]
 		[Description(language = Language.Japanese, value = "ターゲット位置または引力位置")]
 		[Name(language = Language.English, value = "Point of\nAttraction")]
@@ -181,6 +190,8 @@ namespace Effekseer.Data
 			ColorAll = new Value.Color(255, 255, 255, 255);
 
 			TargetLocation = new Value.Vector3D();
+
+			PlaybackSpeed = new Value.Float(1.0f, float.MaxValue, 0.0f, 0.1f);
 		}
 
 		/// <summary>
@@ -227,6 +238,8 @@ namespace Effekseer.Data
 			ColorAll.G.SetValueDirectly(255);
 			ColorAll.B.SetValueDirectly(255);
 			ColorAll.A.SetValueDirectly(255);
+
+			PlaybackSpeed.SetValueDirectly(1);
 
 			TargetLocation.X.SetValueDirectly(0.0f);
 			TargetLocation.Y.SetValueDirectly(0.0f);

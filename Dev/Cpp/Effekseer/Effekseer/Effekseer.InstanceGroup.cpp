@@ -83,7 +83,7 @@ int InstanceGroup::GetInstanceCount() const
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void InstanceGroup::Update( float deltaFrame, bool shown )
+void InstanceGroup::Update(bool shown)
 {
 	for (auto it = m_instances.begin(); it != m_instances.end();)
 	{

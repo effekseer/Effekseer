@@ -1956,6 +1956,28 @@ SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_DynamicI
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_PlaybackSpeed_set___(void * jarg1, float jarg2) {
+  ViewerEffectBehavior *arg1 = (ViewerEffectBehavior *) 0 ;
+  float arg2 ;
+  
+  arg1 = (ViewerEffectBehavior *)jarg1; 
+  arg2 = (float)jarg2; 
+  if (arg1) (arg1)->PlaybackSpeed = arg2;
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_ViewerEffectBehavior_PlaybackSpeed_get___(void * jarg1) {
+  float jresult ;
+  ViewerEffectBehavior *arg1 = (ViewerEffectBehavior *) 0 ;
+  float result;
+  
+  arg1 = (ViewerEffectBehavior *)jarg1; 
+  result = (float) ((arg1)->PlaybackSpeed);
+  jresult = result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ViewerEffectBehavior___() {
   void * jresult ;
   ViewerEffectBehavior *result = 0 ;
@@ -8237,6 +8259,21 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_MainWindow_SetState___(void * 
     return ;
   } 
   (arg1)->SetState((Effekseer::MainWindowState const &)*arg2);
+}
+
+
+SWIGEXPORT float SWIGSTDCALL CSharp_Effekseerfswig_MainWindow_GetDPIScale___(void * jarg1) {
+  float jresult ;
+  Effekseer::MainWindow *arg1 = (Effekseer::MainWindow *) 0 ;
+  std::shared_ptr< Effekseer::MainWindow const > *smartarg1 = 0 ;
+  float result;
+  
+  
+  smartarg1 = (std::shared_ptr< const Effekseer::MainWindow > *)jarg1;
+  arg1 = (Effekseer::MainWindow *)(smartarg1 ? smartarg1->get() : 0); 
+  result = (float)((Effekseer::MainWindow const *)arg1)->GetDPIScale();
+  jresult = result; 
+  return jresult;
 }
 
 

@@ -67,7 +67,7 @@ public:
 
 	int GetInstanceCount() const;
 
-	void Update( float deltaFrame, bool shown );
+	void Update(bool shown);
 
 	void SetBaseMatrix( const Matrix43& mat );
 

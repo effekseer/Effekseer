@@ -55,6 +55,12 @@ private:
 	virtual ~InstanceGlobal();
 
 public:
+	//! A delta time for next update
+	float NextDeltaFrame = 0.0f;
+
+	void BeginDeltaFrame(float frame);
+
+	void EndDeltaFrame();
 
 	bool		IsGlobalColorSet = false;
 	Color		GlobalColor = Color(255, 255, 255, 255);
@@ -73,8 +79,6 @@ public:
 	void IncInstanceCount();
 
 	void DecInstanceCount();
-
-	void AddUpdatedFrame( float frame );
 
 	/**
 		@brief	全てのインスタンス数を取得

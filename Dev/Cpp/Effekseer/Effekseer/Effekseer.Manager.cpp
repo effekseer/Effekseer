@@ -1438,17 +1438,23 @@ void ManagerImplemented::Update( float deltaFrame )
 
 	BeginUpdate();
 
+	for (auto& drawSet : m_DrawSets)
+	{	
+		float df = drawSet.second.IsPaused ? 0 : deltaFrame * drawSet.second.Speed;
+		drawSet.second.GlobalPointer->BeginDeltaFrame(df);
+	}
+
 	for (auto& chunks : instanceChunks_)
 	{
 		for (auto chunk : chunks)
 		{
-			chunk->UpdateInstances(deltaFrame);
+			chunk->UpdateInstances();
 		}
 	}
 
 	for (auto& drawSet : m_DrawSets)
 	{
-		UpdateHandle(drawSet.second, deltaFrame);
+		UpdateHandleInternal(drawSet.second);
 	}
 
 	EndUpdate();
@@ -1513,22 +1519,29 @@ void ManagerImplemented::UpdateHandle( Handle handle, float deltaFrame )
 	{
 		DrawSet& drawSet = it->second;
 
-		for (auto& chunks : instanceChunks_)
 		{
-			for (auto chunk : chunks)
-			{
-				chunk->UpdateInstancesByInstanceGlobal(drawSet.GlobalPointer, deltaFrame);
-			}
+			float df = drawSet.IsPaused ? 0 : deltaFrame * drawSet.Speed;
+			drawSet.GlobalPointer->BeginDeltaFrame(df);
 		}
 
-		UpdateHandle( drawSet, deltaFrame );
+		UpdateInstancesByInstanceGlobal(drawSet);
+
+		UpdateHandleInternal(drawSet);
 	}
 }
 
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void ManagerImplemented::UpdateHandle( DrawSet& drawSet, float deltaFrame )
+void ManagerImplemented::UpdateInstancesByInstanceGlobal(const DrawSet& drawSet) 
+{
+	for (auto& chunks : instanceChunks_)
+	{
+		for (auto chunk : chunks)
+		{
+			chunk->UpdateInstancesByInstanceGlobal(drawSet.GlobalPointer);
+		}
+	}
+}
+
+void ManagerImplemented::UpdateHandleInternal(DrawSet& drawSet)
 {
 	// calculate dynamic parameters
 	auto e = static_cast<EffectImplemented*>(drawSet.ParameterPointer);
@@ -1553,21 +1566,16 @@ void ManagerImplemented::UpdateHandle( DrawSet& drawSet, float deltaFrame )
 				drawSet.GlobalPointer);
 	}
 
-	if (!drawSet.IsPreupdated)
-	{
-		Preupdate(drawSet);
-	}
+	Preupdate(drawSet);
 
-	float df = drawSet.IsPaused ? 0 : deltaFrame * drawSet.Speed;
-
-	drawSet.InstanceContainerPointer->Update( true, df, drawSet.IsShown );
+	drawSet.InstanceContainerPointer->Update( true, drawSet.IsShown );
 
 	if( drawSet.DoUseBaseMatrix )
 	{
 		drawSet.InstanceContainerPointer->SetBaseMatrix( true, drawSet.BaseMatrix );
 	}
 
-	drawSet.GlobalPointer->AddUpdatedFrame( df );
+	drawSet.GlobalPointer->EndDeltaFrame();
 }
 
 
@@ -1584,7 +1592,11 @@ void ManagerImplemented::Preupdate(DrawSet& drawSet)
 
 	for (int32_t frame = 0; frame < drawSet.StartFrame; frame++)
 	{
-		UpdateHandle(drawSet, 1);
+		drawSet.GlobalPointer->BeginDeltaFrame(1.0f);
+
+		UpdateInstancesByInstanceGlobal(drawSet);
+
+		UpdateHandleInternal(drawSet);
 	}
 }
 
@@ -2069,14 +2081,24 @@ void ManagerImplemented::EndReloadEffect( Effect* effect, bool doLockThread)
 
 		// Create an instance through a container
 		(*it).second.InstanceContainerPointer = CreateInstanceContainer( ((EffectImplemented*)effect)->GetRoot(), (*it).second.GlobalPointer, true, (*it).second.GlobalMatrix, NULL );
-		
+
 		// skip
 		for( float f = 0; f < (*it).second.GlobalPointer->GetUpdatedFrame() - 1; f+= 1.0f )
 		{
-			(*it).second.InstanceContainerPointer->Update( true, 1.0f, false );
+			(*it).second.GlobalPointer->BeginDeltaFrame(1.0f);
+
+			UpdateInstancesByInstanceGlobal((*it).second);
+
+			(*it).second.InstanceContainerPointer->Update(true, false);
+			(*it).second.GlobalPointer->EndDeltaFrame();
 		}
 
-		(*it).second.InstanceContainerPointer->Update( true, 1.0f, (*it).second.IsShown );
+		(*it).second.GlobalPointer->BeginDeltaFrame(1.0f);
+
+		UpdateInstancesByInstanceGlobal((*it).second);
+
+		(*it).second.InstanceContainerPointer->Update(true, (*it).second.IsShown);
+		(*it).second.GlobalPointer->EndDeltaFrame();
 	}
 
 	if (doLockThread)

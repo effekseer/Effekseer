@@ -111,6 +111,8 @@ public:
 	float DynamicInput3 = 0.0f;
 	float DynamicInput4 = 0.0f;
 
+	float PlaybackSpeed = 1.0f;
+
 	ViewerEffectBehavior();
 };
 
