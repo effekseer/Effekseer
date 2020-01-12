@@ -398,6 +398,9 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassP
 
 		m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
 		m_shader_lighting->SetPixelRegisterCount(12);
+
+		// adjust a reference counter
+		Release();
 	}
 
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
