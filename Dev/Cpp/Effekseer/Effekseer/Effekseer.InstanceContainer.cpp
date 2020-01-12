@@ -116,6 +116,10 @@ void InstanceContainer::RemoveInvalidGroups()
 InstanceGroup* InstanceContainer::CreateInstanceGroup()
 {
 	InstanceGroup* group = m_pManager->CreateInstanceGroup( m_pEffectNode, this, m_pGlobal );
+	if (group == nullptr)
+	{
+		return nullptr;
+	}
 
 	if (m_tailGroups != NULL)
 	{
