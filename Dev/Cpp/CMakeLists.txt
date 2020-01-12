@@ -361,20 +361,23 @@ if (BUILD_TEST)
 	add_subdirectory("Test")
 endif()
 
-if(WIN32 AND BUILD_VIEWER)
+if(BUILD_VIEWER)
 
     set(BUILD_TEST_TEMP ${BUILD_TEST})
     set(BUILD_TEST OFF)
 	add_subdirectory("3rdParty/AltseedRHI")
     set(BUILD_TEST ${BUILD_TEST_TEMP})
 
-	add_dependencies(AltseedRHI ExternalProject_glew)
-	target_include_directories(
-	    AltseedRHI
-		PRIVATE
-		${EFK_THIRDPARTY_INCLUDES}
-	)
+    if(NOT APPLE)
+        add_dependencies(AltseedRHI ExternalProject_glew)
+    endif()
+    
+    target_include_directories(
+        AltseedRHI
+        PRIVATE
+        ${EFK_THIRDPARTY_INCLUDES}
+    )
 
-	add_subdirectory("EffekseerMaterial")
-	add_subdirectory("EffekseerMaterialEditor")
+    add_subdirectory("EffekseerMaterial")
+    add_subdirectory("EffekseerMaterialEditor")
 endif()

@@ -14,13 +14,6 @@
 #include <efkMat.TextExporter.h>
 
 #include <filesystem>
-
-#if _MSC_VER >= 1923
-namespace fs = std::filesystem;
-#else
-namespace fs = std::experimental::filesystem;
-#endif
-
 #include "../Effekseer/Effekseer/Material/Effekseer.Material.h"
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
 #include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
@@ -192,11 +185,10 @@ void EditorContent::SaveAs(const char* path)
 	char16_t path16[260];
 	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)path);
 
-#ifdef _WIN32
-	if (fs::path((const wchar_t*)path16).extension().generic_string() == ".efkmat")
-#else
-	if (fs::path(path).extension().generic_string() == ".efkmat")
-#endif
+    std::string pathstr;
+    int ext_i = pathstr.find_last_of(".");
+    
+	if (pathstr.substr(ext_i,pathstr.size()-ext_i) == ".efkmat")
 	{
 		FILE* fp = nullptr;
 #ifdef _WIN32

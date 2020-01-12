@@ -4,6 +4,7 @@
 #include "efkMat.Library.h"
 #include "efkMat.Parameters.h"
 #include "efkMat.TextExporter.h"
+#include <float.h>
 
 std::vector<std::string> Split(const std::string& s, char delim)
 {
@@ -1006,7 +1007,9 @@ void Material::LoadFromStrInternal(
 	}
 }
 
-Material::Material() {}
+Material::Material() {
+    commandManager_ = std::make_shared<CommandManager>();
+}
 
 Material::~Material() {}
 

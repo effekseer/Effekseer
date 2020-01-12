@@ -11,6 +11,10 @@
 #define IPC_IMPLEMENTATION
 #include "..//3rdParty/ipc/ipc.h"
 
+#ifndef _WIN32
+#include <errno.h>
+#endif
+
 namespace IPC
 {
 class Command_Impl
@@ -34,6 +38,10 @@ public:
 
 		if (ipc_sem_create(&coop_, 1))
 		{
+            #ifndef _WIN32
+            printf("errno=%d: %s\n", errno, strerror(errno));
+            #endif
+            
 			return false;
 		}
 

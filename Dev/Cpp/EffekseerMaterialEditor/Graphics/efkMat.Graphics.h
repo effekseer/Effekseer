@@ -86,7 +86,7 @@ public:
 
 	float Values[4][4];
 
-	Matrix44& Matrix44::OrthographicRH(float width, float height, float zn, float zf)
+	Matrix44& OrthographicRH(float width, float height, float zn, float zf)
 	{
 		Values[0][0] = 2 / width;
 		Values[0][1] = 0;
@@ -110,7 +110,7 @@ public:
 		return *this;
 	}
 
-	Matrix44& Matrix44::SetPerspectiveFovRH(float ovY, float aspect, float zn, float zf)
+	Matrix44& SetPerspectiveFovRH(float ovY, float aspect, float zn, float zf)
 	{
 		float yScale = 1 / tanf(ovY / 2);
 		float xScale = yScale / aspect;
@@ -137,7 +137,7 @@ public:
 		return *this;
 	}
 
-	Matrix44& Matrix44::SetPerspectiveFovRH_OpenGL(float ovY, float aspect, float zn, float zf)
+	Matrix44& SetPerspectiveFovRH_OpenGL(float ovY, float aspect, float zn, float zf)
 	{
 		float yScale = 1 / tanf(ovY / 2);
 		float xScale = yScale / aspect;
@@ -166,7 +166,7 @@ public:
 		return *this;
 	}
 
-	Matrix44& Matrix44::SetLookAtRH(const Vector3& eye, const Vector3& at, const Vector3& up)
+	Matrix44& SetLookAtRH(const Vector3& eye, const Vector3& at, const Vector3& up)
 	{
 		memset(Values, 0, sizeof(float) * 16);
 

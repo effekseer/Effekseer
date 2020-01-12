@@ -41,9 +41,19 @@ file(GLOB srcs_third_imgui_platform
 file(GLOB srcs_third_node
     ThirdParty/NodeEditor/Source/*.cpp)
 
-file(GLOB srcs_third_nfd
-    ThirdParty/nfd/nfd_common.c
-    ThirdParty/nfd/nfd_win.cpp)
+if(WIN32)
+    file(GLOB srcs_third_nfd
+        ThirdParty/nfd/nfd_common.c
+        ThirdParty/nfd/nfd_win.cpp)
+elseif(APPLE)
+    file(GLOB srcs_third_nfd
+        ThirdParty/nfd/nfd_common.c
+        ThirdParty/nfd/nfd_cocoa.m)
+else()
+    file(GLOB srcs_third_nfd
+        ThirdParty/nfd/nfd_common.c
+        ThirdParty/nfd/nfd_gtk.c)
+endif()
 
 link_directories(
     ${PROJECT_SOURCE_DIR}/../lib/
@@ -74,7 +84,9 @@ if (MSVC)
     endif()
 endif()
 
-add_dependencies(EffekseerMaterialEditor ExternalProject_glew ExternalProject_glfw)
+if(NOT APPLE)
+    add_dependencies(EffekseerMaterialEditor ExternalProject_glew ExternalProject_glfw)
+endif()
 
 target_include_directories(
     EffekseerMaterialEditor

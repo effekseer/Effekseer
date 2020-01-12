@@ -147,10 +147,6 @@ target_link_directories(
 target_link_libraries(
 	Viewer
     EditorCommon
-	debug glfw3d
-	debug OpenSoundMixerd
-	optimized glfw3
-	optimized OpenSoundMixer
 )
 
 add_dependencies(Viewer ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glfw ExternalProject_OpenSoundMixer)
@@ -165,54 +161,58 @@ link_directories(
 
 if (WIN32)
 
-target_link_libraries(
-	Viewer
-	Effekseer
-	EffekseerRendererDX9
-	EffekseerRendererDX11
-	EffekseerRendererGL
-	EffekseerSoundOSMixer
-	IPC
-	debug libgd_staticd
-	debug libglew32d
-	optimized libgd_static
-	optimized libglew32
-)
+    target_link_libraries(
+        Viewer
+        Effekseer
+        EffekseerRendererDX9
+        EffekseerRendererDX11
+        EffekseerRendererGL
+        EffekseerSoundOSMixer
+        IPC
+        debug libgd_staticd
+        debug libglew32d
+        debug glfw3d
+        debug OpenSoundMixerd
+        optimized libgd_static
+        optimized libglew32
+        optimized glfw3
+        optimized OpenSoundMixer
+    )
 
 elseif(APPLE)
 
-FIND_PACKAGE(OpenAL REQUIRED)
-FIND_PACKAGE(Threads REQUIRED)
-FIND_PACKAGE(OpenGL REQUIRED)
+    FIND_PACKAGE(OpenAL REQUIRED)
+    FIND_PACKAGE(Threads REQUIRED)
+    FIND_PACKAGE(OpenGL REQUIRED)
 
-# For Mac
-find_library(COCOA_FRAMEWORK Cocoa)
-find_library(COCOA_FRAMEWORK Cocoa)
-find_library(IOKIT_FRAMEWORK IOKit)
-find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
-find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
+    # For Mac
+    find_library(COCOA_FRAMEWORK Cocoa)
+    find_library(COCOA_FRAMEWORK Cocoa)
+    find_library(IOKIT_FRAMEWORK IOKit)
+    find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
+    find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 
-target_link_libraries(
-	Viewer
-	Effekseer
-	EffekseerRendererGL
-	EffekseerSoundOSMixer
-	IPC
-	debug gdd
-	# debug GLEWd
-	optimized gd
-	# optimized GLEW
-	png
-	z
-	${OpenAL_LIBRARY}
-	"-framework OpenAL"
-	${CMAKE_THREAD_LIBS_INIT}
-	${COCOA_FRAMEWORK}
-	${OPENGL_gl_LIBRARY}
-	${OPENGL_glu_LIBRARY}
-	${IOKIT_FRAMEWORK}
-	${CORE_FOUNDATION_FRAMEWORK}
-	${CORE_VIDEO_FRAMEWORK})
+    target_link_libraries(
+        Viewer
+        Effekseer
+        EffekseerRendererGL
+        EffekseerSoundOSMixer
+        IPC
+        glfw3
+        OpenSoundMixer
+        debug gdd
+        optimized gd
+        png
+        z
+        ${OpenAL_LIBRARY}
+        "-framework OpenAL"
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${COCOA_FRAMEWORK}
+        ${OPENGL_gl_LIBRARY}
+        ${OPENGL_glu_LIBRARY}
+        ${IOKIT_FRAMEWORK}
+        ${CORE_FOUNDATION_FRAMEWORK}
+        ${CORE_VIDEO_FRAMEWORK})
 
 else()
 

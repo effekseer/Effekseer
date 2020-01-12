@@ -31,10 +31,14 @@
 #include <Common/StringHelper.h>
 #include <GUI/MainWindow.h>
 #include <IO/IO.h>
+#include <algorithm>
 
 #ifdef WIN32
 #include <Windows.h>
 #include <direct.h>
+#else
+#include <sys/types.h>
+#include <unistd.h>
 #endif
 
 namespace ed = ax::NodeEditor;
@@ -80,7 +84,7 @@ std::string GetExecutingDirectory()
 
 	char temp[32];
 	sprintf(temp, "/proc/%d/exe", getpid());
-	int bytes = std::min(readlink(temp, buf, 260), 260 - 1);
+	int bytes = std::min((int)readlink(temp, buf, 260), 260 - 1);
 	if (bytes >= 0)
 		buf[bytes] = '\0';
 #endif
@@ -159,9 +163,9 @@ int mainLoop(int argc, char* argv[])
 	}
 
 #if _DEBUG
-	char16_t* title = u"EffekseerMaterialEditor - debug";
+	const char16_t* title = u"EffekseerMaterialEditor - debug";
 #else
-	char16_t* title = u"EffekseerMaterialEditor";
+	const char16_t* title = u"EffekseerMaterialEditor";
 #endif
 
 	Effekseer::MainWindowState mainWindowState;
@@ -180,10 +184,10 @@ int mainLoop(int argc, char* argv[])
 	Effekseer::IO::GetInstance()->AddCallback(std::make_shared<IOCallback>());
 
 	auto commandQueueToMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	commandQueueToMaterialEditor_->Start("EffekseerCommandToMaterialEditor", 1024 * 1024);
+	commandQueueToMaterialEditor_->Start("EfkCmdToMatEdit", 1024 * 1024);
 
 	auto commandQueueFromMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	commandQueueFromMaterialEditor_->Start("EffekseerCommandFromMaterialEditor", 1024 * 1024);
+	commandQueueFromMaterialEditor_->Start("EfkCmdFromMatEdit", 1024 * 1024);
 
 	uint64_t previousHistoryID = 0;
 

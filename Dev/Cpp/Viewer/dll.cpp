@@ -1,4 +1,4 @@
-﻿
+
 #include "Graphics/efk.AVIExporter.h"
 #include "Graphics/efk.GifHelper.h"
 #include "Graphics/efk.PNGHelper.h"
@@ -563,10 +563,10 @@ Native::Native() : m_time(0), m_step(1)
 
 #if _WIN32
 	commandQueueToMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	commandQueueToMaterialEditor_->Start("EffekseerCommandToMaterialEditor", 1024 * 1024);
+	commandQueueToMaterialEditor_->Start("EfkCmdToMatEdit", 1024 * 1024);
 
 	commandQueueFromMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	commandQueueFromMaterialEditor_->Start("EffekseerCommandFromMaterialEditor", 1024 * 1024);
+	commandQueueFromMaterialEditor_->Start("EfkCmdFromMatEdit", 1024 * 1024);
 
 	keyValueFileStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
 	keyValueFileStorage_->Start("EffekseerStorage");

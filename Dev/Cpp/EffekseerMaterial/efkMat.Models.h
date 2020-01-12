@@ -177,7 +177,7 @@ private:
 
 	uint64_t GetIDAndNext();
 
-	std::shared_ptr<CommandManager> commandManager_ = std::make_shared<CommandManager>();
+	std::shared_ptr<CommandManager> commandManager_;
 
 	bool FindLoop(std::shared_ptr<Pin> pin1, std::shared_ptr<Pin> pin2);
 
