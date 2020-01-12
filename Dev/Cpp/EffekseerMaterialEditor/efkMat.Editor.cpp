@@ -1289,7 +1289,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		}
 		else if (type == ValueType::Enum)
 		{
-			if (name == std::string("Index"))
+			if (name == std::string("Index") || name == std::string("UVIndex"))
 			{
 				const char* items[] = {"1", "2"};
 
