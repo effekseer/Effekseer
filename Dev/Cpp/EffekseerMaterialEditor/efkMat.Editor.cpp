@@ -185,10 +185,10 @@ void EditorContent::SaveAs(const char* path)
 	char16_t path16[260];
 	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)path);
 
-    std::string pathstr;
+    std::string pathstr = path;
     int ext_i = pathstr.find_last_of(".");
     
-	if (pathstr.substr(ext_i,pathstr.size()-ext_i) == ".efkmat")
+	if (ext_i >= 0 && pathstr.substr(ext_i,pathstr.size()-ext_i) == ".efkmat")
 	{
 		FILE* fp = nullptr;
 #ifdef _WIN32
