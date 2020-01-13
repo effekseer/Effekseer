@@ -162,7 +162,7 @@ namespace efk
 			PostFX_Extract_PS::g_PS, sizeof(PostFX_Extract_PS::g_PS),
 			"Bloom extract", PostFx_ShaderDecl, 2));
 		shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
-		shaderExtract->SetPixelRegisterCount(1);
+		shaderExtract->SetPixelRegisterCount(2);
 
 		// Copy shader
 		shaderCopy.reset(Shader::Create(renderer,
@@ -281,8 +281,8 @@ namespace efk
 
 		// Create high brightness extraction buffer
 		{
-			int32_t bufferWidth  = std::max(1, (width  + 1) / 2);
-			int32_t bufferHeight = std::max(1, (height + 1) / 2);
+			int32_t bufferWidth  = width;
+			int32_t bufferHeight = height;
 			extractBuffer.reset(RenderTexture::Create(graphics));
 			extractBuffer->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
 		}

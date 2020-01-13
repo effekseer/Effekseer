@@ -67,18 +67,25 @@ void main() {
 }
 )";
 
+
+
 static const char g_blur_h_fs_src[] =
 R"(
 IN vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 void main() {
-	vec4 color = TEX2D    (u_Texture0, v_TexCoord              ) * 0.312500;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2(-3, 0)) * 0.015625;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2(-2, 0)) * 0.093750;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2(-1, 0)) * 0.234375;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2( 1, 0)) * 0.234375;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2( 2, 0)) * 0.093750;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2( 3, 0)) * 0.015625;
+
+	ivec2 size = textureSize(u_Texture0, 0);
+	float div = float(size.x);
+
+	vec4 color = TEX2D(u_Texture0, v_TexCoord) * 0.312500;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(-5.5 / div, 0)) * 0.015625;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(-3.5 / div, 0)) * 0.093750;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(-1.5 / div, 0)) * 0.234375;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(+1.5 / div, 0)) * 0.234375;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(+3.5 / div, 0)) * 0.093750;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(+5.5 / div, 0)) * 0.015625;
+
 	FRAGCOLOR = vec4(color.rgb, 1.0);
 }
 )";
@@ -88,13 +95,18 @@ R"(
 IN vec2 v_TexCoord;
 uniform sampler2D u_Texture0;
 void main() {
-	vec4 color = TEX2D    (u_Texture0, v_TexCoord              ) * 0.312500;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2(0, -3)) * 0.015625;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2(0, -2)) * 0.093750;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2(0, -1)) * 0.234375;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2(0,  1)) * 0.234375;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2(0,  2)) * 0.093750;
-	color += textureOffset(u_Texture0, v_TexCoord, ivec2(0,  3)) * 0.015625;
+
+	ivec2 size = textureSize(u_Texture0, 0);
+	float div = float(size.y);
+
+	vec4 color = TEX2D(u_Texture0, v_TexCoord) * 0.312500;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -5.5 / div)) * 0.015625;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -3.5 / div)) * 0.093750;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -1.5 / div)) * 0.234375;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +1.5 / div)) * 0.234375;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +3.5 / div)) * 0.093750;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +5.5 / div)) * 0.015625;
+
 	FRAGCOLOR = vec4(color.rgb, 1.0);
 }
 )";
@@ -173,6 +185,7 @@ void main() {
 
 		// Set source textures
 		for (int32_t slot = 0; slot < numTextures; slot++) {
+			GLExt::glBindSampler(slot, 0);
 			GLExt::glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTexture(GL_TEXTURE_2D, textures[slot]);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -373,8 +386,8 @@ void main() {
 
 		// Create high brightness extraction buffer
 		{
-			int32_t bufferWidth  = std::max(1, (width  + 1) / 2);
-			int32_t bufferHeight = std::max(1, (height + 1) / 2);
+			int32_t bufferWidth  = width;
+			int32_t bufferHeight = height;
 			extractBuffer.reset(RenderTexture::Create(graphics));
 			extractBuffer->Initialize(bufferWidth, bufferHeight, TextureFormat::RGBA16F);
 		}
