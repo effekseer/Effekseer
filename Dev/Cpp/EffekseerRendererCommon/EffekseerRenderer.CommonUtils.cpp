@@ -47,7 +47,7 @@ void CalcBillboard(::Effekseer::BillboardType billboardType,
 
 			if (fabsf(c_zx) > 0.05f)
 			{
-				s_z = -r.Value[0][1] / c_zx;
+				s_z = r.Value[0][1] / c_zx;
 				c_z = sqrt(1.0f - s_z * s_z);
 				if (r.Value[1][1] < 0.0f)
 					c_z = -c_z;

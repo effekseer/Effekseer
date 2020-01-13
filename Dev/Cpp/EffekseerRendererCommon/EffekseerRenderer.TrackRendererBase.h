@@ -494,7 +494,7 @@ namespace EffekseerRenderer
 
 					U = axis;
 
-					::Effekseer::Vector3D::Normal(F, -m_renderer->GetCameraFrontDirection());
+					::Effekseer::Vector3D::Normal(F, m_renderer->GetCameraFrontDirection());
 
 					::Effekseer::Vector3D::Normal(R, ::Effekseer::Vector3D::Cross(R, U, F));
 					::Effekseer::Vector3D::Normal(F, ::Effekseer::Vector3D::Cross(F, R, U));
