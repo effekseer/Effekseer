@@ -119,7 +119,7 @@ namespace EffekseerRendererGL
 
 		for (int32_t ui = 0; ui < material.GetUniformCount(); ui++)
 		{
-			shader->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4,
+			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4,
 										   shader->GetUniformId(material.GetUniformName(ui)),
 										   parameterGenerator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
 		}

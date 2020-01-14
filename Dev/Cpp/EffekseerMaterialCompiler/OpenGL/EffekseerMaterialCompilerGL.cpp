@@ -634,7 +634,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			auto uniformIndex = material->GetUniformIndex(i);
 			auto uniformName = material->GetUniformName(i);
 
-			ExportUniform(maincode, uniformIndex + 1, uniformName);
+			ExportUniform(maincode, 4, uniformName);
 		}
 
 		int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
