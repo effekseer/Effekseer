@@ -74,61 +74,9 @@ if (USE_OPENGL3)
 	add_definitions(-D__EFFEKSEER_RENDERER_GL3__)
 endif()
 
+add_subdirectory(Effekseer)
+
 # Setup source codes
-file(GLOB effekseer_h
-    Effekseer/*.h
-	Effekseer/Effekseer/*.h
-	Effekseer/Effekseer/Renderer/*.h
-	Effekseer/Effekseer/Culling/*.h
-	Effekseer/Effekseer/Material/*.h
-	Effekseer/Effekseer/Parameter/*.h
-	Effekseer/Effekseer/IO/*.h
-	Effekseer/Effekseer/Utils/*.h)
-
-set(effekseer_src
-	Effekseer/Effekseer/Effekseer.Client.cpp
-	Effekseer/Effekseer/Effekseer.Color.cpp
-	Effekseer/Effekseer/Effekseer.DefaultEffectLoader.cpp
-	Effekseer/Effekseer/Effekseer.DefaultFile.cpp
-	Effekseer/Effekseer/Effekseer.Effect.cpp
-	Effekseer/Effekseer/Effekseer.EffectNode.cpp
-	Effekseer/Effekseer/Effekseer.EffectNodeModel.cpp
-	Effekseer/Effekseer/Effekseer.EffectNodeRibbon.cpp
-	Effekseer/Effekseer/Effekseer.EffectNodeRing.cpp
-	Effekseer/Effekseer/Effekseer.EffectNodeRoot.cpp
-	Effekseer/Effekseer/Effekseer.EffectNodeSprite.cpp
-	Effekseer/Effekseer/Effekseer.EffectNodeTrack.cpp
-	Effekseer/Effekseer/Effekseer.FCurves.cpp
-	Effekseer/Effekseer/Effekseer.Instance.cpp
-	Effekseer/Effekseer/Effekseer.InstanceChunk.cpp
-	Effekseer/Effekseer/Effekseer.InstanceContainer.cpp
-	Effekseer/Effekseer/Effekseer.InstanceGlobal.cpp
-	Effekseer/Effekseer/Effekseer.InstanceGroup.cpp
-	Effekseer/Effekseer/Effekseer.InternalScript.cpp
-	Effekseer/Effekseer/Effekseer.Manager.cpp
-	Effekseer/Effekseer/Effekseer.Matrix43.cpp
-	Effekseer/Effekseer/Effekseer.Matrix44.cpp
-	Effekseer/Effekseer/Effekseer.RectF.cpp
-	Effekseer/Effekseer/Effekseer.Setting.cpp
-	Effekseer/Effekseer/Effekseer.Server.cpp
-	Effekseer/Effekseer/Effekseer.Socket.cpp
-	Effekseer/Effekseer/Effekseer.Vector2D.cpp
-	Effekseer/Effekseer/Effekseer.Vector3D.cpp
-	Effekseer/Effekseer/Culling/Culling3D.Grid.cpp
-	Effekseer/Effekseer/Culling/Culling3D.Layer.cpp
-	Effekseer/Effekseer/Culling/Culling3D.Matrix44.cpp
-	Effekseer/Effekseer/Culling/Culling3D.ObjectInternal.cpp
-	Effekseer/Effekseer/Culling/Culling3D.ReferenceObject.cpp
-	Effekseer/Effekseer/Culling/Culling3D.Vector3DF.cpp
-	Effekseer/Effekseer/Culling/Culling3D.WorldInternal.cpp
-	Effekseer/Effekseer/Material/Effekseer.Material.cpp
-	Effekseer/Effekseer/Material/Effekseer.CompiledMaterial.cpp
-	Effekseer/Effekseer/Material/Effekseer.MaterialCompiler.cpp
-	Effekseer/Effekseer/IO/Effekseer.EfkEfcFactory.cpp
-	Effekseer/Effekseer/Parameter/Effekseer.Parameters.cpp
-	Effekseer/Effekseer/Utils/Effekseer.CustomAllocator.cpp
-)
-
 file(GLOB effekseer_renderer_common_h
     EffekseerRendererCommon/*.h)
 
@@ -250,10 +198,6 @@ link_directories(
 	)
 
 # Add compile targets
-add_library(Effekseer STATIC
-    ${effekseer_h}
-    ${effekseer_src} )
-
 if (BUILD_DX12 OR BUILD_METAL OR BUILD_VULKAN)
     set(BUILD_TEST_TEMP ${BUILD_TEST})
     set(BUILD_TEST OFF)
@@ -276,9 +220,12 @@ endif()
 if (WIN32)
     add_library(EffekseerRendererDX9 STATIC ${effekseer_renderer_dx9_src} )
     add_library(EffekseerRendererDX11 STATIC ${effekseer_renderer_dx11_src} )
+	add_dependencies(EffekseerRendererDX9 Effekseer)
+    add_dependencies(EffekseerRendererDX11 Effekseer)
 endif()
 
 add_library(EffekseerRendererGL STATIC ${effekseer_renderer_gl_src} )
+add_dependencies(EffekseerRendererGL Effekseer)
 
 if (USE_OPENAL)
 	add_subdirectory(EffekseerSoundAL)
@@ -298,8 +245,6 @@ endif()
 
 # filter
 set(files 
-    ${effekseer_h} 
-	${effekseer_src} 
 	${effekseer_renderer_common_h} 
 	${effekseer_renderer_src} 
 	${effekseer_renderer_dx9_src} 
@@ -307,11 +252,6 @@ set(files
 	${effekseer_renderer_gl_src})
 
 FilterFolder("${files}")
-
-install(
-	TARGETS Effekseer
-	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib)
 
 if (MSVC)
 install(
