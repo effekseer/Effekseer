@@ -1,16 +1,16 @@
 #include "EffekseerRendererMetal.Renderer.h"
 #include "../EffekseerRendererMetal.RendererImplemented.h"
+#include "EffekseerRendererMetal.MaterialLoader.h"
 
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h"
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.VertexBuffer.h"
 
 #include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.GraphicsMetal.h"
-
-#include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
-#include "../../3rdParty/LLGI/src/Metal/LLGI.GraphicsMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.RenderPassMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.Metal_Impl.h"
+
+#include "../../EffekseerMaterialCompiler/Metal/EffekseerMaterialCompilerMetal.h"
 
 #include "Shaders.h"
 
@@ -26,6 +26,7 @@ namespace EffekseerRendererMetal
     graphics->Initialize(nullptr);
     
     RendererImplemented* renderer = new RendererImplemented(squareMaxCount);
+    renderer->materialCompiler_ = new ::Effekseer::MaterialCompilerMetal();
 
     auto allocate_ = [](std::vector<LLGI::DataStructure>& ds, const char* data, int32_t size) -> void {
         ds.resize(1);
@@ -154,7 +155,7 @@ bool RendererImplemented::BeginRendering()
 {
     assert(graphics_ != NULL);
 
-    ::Effekseer::Matrix44::Mul(m_cameraProj, m_camera, m_proj);
+    ::Effekseer::Matrix44::Mul(GetCameraProjectionMatrix(), GetCameraMatrix(), GetProjectionMatrix());
 
     // initialize states
     m_renderState->GetActiveState().Reset();
@@ -199,6 +200,14 @@ bool RendererImplemented::EndRendering()
 #endif
     }
     return true;
+}
+
+::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) {
+
+    if (materialCompiler_ == nullptr)
+        return nullptr;
+
+    return new MaterialLoader(this, fileInterface, platformType_, materialCompiler_);
 }
 
 } // namespace EffekseerRendererMetal
