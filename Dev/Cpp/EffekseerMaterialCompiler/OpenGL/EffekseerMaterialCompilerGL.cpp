@@ -46,6 +46,8 @@ OUT mediump vec3 v_WorldB;
 OUT mediump vec2 v_ScreenUV;
 //$C_OUT1$
 //$C_OUT2$
+
+uniform mat4 ProjectionMatrix;
 )"
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	R"(
@@ -61,7 +63,6 @@ uniform vec4 ModelColor;
 )"
 #endif
 	R"(
-uniform mat4 ProjectionMatrix;
 uniform vec4 mUVInversed;
 uniform vec4 predefined_uniform;
 
@@ -629,14 +630,6 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
 		ExportHeader(maincode, material, stage, isSprite);
 
-		for (int32_t i = 0; i < material->GetUniformCount(); i++)
-		{
-			auto uniformIndex = material->GetUniformIndex(i);
-			auto uniformName = material->GetUniformName(i);
-
-			ExportUniform(maincode, 4, uniformName);
-		}
-
 		int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
 
 		for (size_t i = 0; i < actualTextureCount; i++)
@@ -680,6 +673,14 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			{
 				maincode << "uniform vec4 customData2;" << std::endl;
 			}
+		}
+
+		for (int32_t i = 0; i < material->GetUniformCount(); i++)
+		{
+			auto uniformIndex = material->GetUniformIndex(i);
+			auto uniformName = material->GetUniformName(i);
+
+			ExportUniform(maincode, 4, uniformName);
 		}
 
 		auto baseCode = std::string(material->GetGenericCode());
