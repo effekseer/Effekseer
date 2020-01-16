@@ -76,114 +76,11 @@ endif()
 
 add_subdirectory(Effekseer)
 
-# Setup source codes
-file(GLOB effekseer_renderer_common_h
-    EffekseerRendererCommon/*.h)
-
-set(effekseer_renderer_common_src
-	EffekseerRendererCommon/EffekseerRenderer.CommonUtils.cpp
-	EffekseerRendererCommon/EffekseerRenderer.IndexBufferBase.cpp
-	EffekseerRendererCommon/EffekseerRenderer.ModelRendererBase.cpp
-	EffekseerRendererCommon/EffekseerRenderer.RenderStateBase.cpp
-	EffekseerRendererCommon/EffekseerRenderer.Renderer.cpp
-	EffekseerRendererCommon/EffekseerRenderer.Renderer_Impl.cpp
-	EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.cpp
-	EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.cpp
-	EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.cpp
-	EffekseerRendererCommon/EffekseerRenderer.TrackRendererBase.cpp
-	EffekseerRendererCommon/EffekseerRenderer.VertexBufferBase.cpp
-	EffekseerRendererCommon/EffekseerRenderer.DDSTextureLoader.cpp)
-
-file(GLOB_RECURSE effekseer_renderer_dx9_h
-    EffekseerRendererDX9/*.h)
-
-set(effekseer_renderer_dx9_src
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.DeviceObject.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.IndexBuffer.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.ModelLoader.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.MaterialLoader.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.ModelRenderer.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.Renderer.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.RenderState.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.Shader.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.TextureLoader.cpp
-	EffekseerRendererDX9/EffekseerRenderer/EffekseerRendererDX9.VertexBuffer.cpp)
-
-file(GLOB_RECURSE effekseer_renderer_dx11_h
-    EffekseerRendererDX11/*.h)
-
-set(effekseer_renderer_dx11_src
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.DeviceObject.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.IndexBuffer.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.ModelLoader.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.ModelRenderer.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.MaterialLoader.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Renderer.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.RenderState.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.Shader.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.TextureLoader.cpp
-	EffekseerRendererDX11/EffekseerRenderer/EffekseerRendererDX11.VertexBuffer.cpp
-	
-	EffekseerMaterialCompiler/DirectX11/EffekseerMaterialCompilerDX11.cpp
-	EffekseerMaterialCompiler/DirectX11/EffekseerMaterialCompilerDX11.h
-	)
-
-file(GLOB_RECURSE effekseer_renderer_gl_h
-    EffekseerRendererGL/*.h)
-
-set(effekseer_renderer_gl_src
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.DeviceObject.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.GLExtension.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.IndexBuffer.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelLoader.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.ModelRenderer.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Renderer.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.RenderState.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Shader.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.TextureLoader.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexArray.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.VertexBuffer.cpp
-	EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.DeviceObjectCollection.cpp
-
-	EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.cpp
-	EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h
-	)
-
-list(APPEND effekseer_renderer_dx9_src
-	${effekseer_renderer_dx9_h}
-    ${effekseer_renderer_common_h}
-	${effekseer_renderer_common_src})
-
-list(APPEND effekseer_renderer_dx11_src
-	${effekseer_renderer_dx11_h}
-    ${effekseer_renderer_common_h}
-	${effekseer_renderer_common_src})
-
-list(APPEND effekseer_renderer_gl_src
-	${effekseer_renderer_gl_h}
-    ${effekseer_renderer_common_h}
-	${effekseer_renderer_common_src})
-
-if (USE_INTERNAL_LOADER)
-set(effekseer_renderer_dx_loader_src
-	EffekseerRendererCommon/EffekseerRenderer.DXTK.DDSTextureLoader.cpp
-	EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp)
-
-set(effekseer_renderer_gl_loader_src
-	EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.cpp)
-
-list(APPEND effekseer_renderer_dx9_src
-	${effekseer_renderer_dx_loader_src})
-
-list(APPEND effekseer_renderer_dx11_src
-	${effekseer_renderer_dx_loader_src})
-
-list(APPEND effekseer_renderer_gl_src
-	${effekseer_renderer_gl_loader_src})
-
+if (WIN32)
+    add_subdirectory(EffekseerRendererDX9)
+    add_subdirectory(EffekseerRendererDX11)
 endif()
+    add_subdirectory(EffekseerRendererGL)
 
 # set include directories
 include_directories(
@@ -192,7 +89,6 @@ include_directories(
 	)
 
 # set lib directories
-
 link_directories(
 	${PROJECT_SOURCE_DIR}/lib/
 	)
@@ -217,16 +113,6 @@ if (BUILD_VULKAN)
     add_subdirectory(EffekseerRendererVulkan)
 endif()
 
-if (WIN32)
-    add_library(EffekseerRendererDX9 STATIC ${effekseer_renderer_dx9_src} )
-    add_library(EffekseerRendererDX11 STATIC ${effekseer_renderer_dx11_src} )
-	add_dependencies(EffekseerRendererDX9 Effekseer)
-    add_dependencies(EffekseerRendererDX11 Effekseer)
-endif()
-
-add_library(EffekseerRendererGL STATIC ${effekseer_renderer_gl_src} )
-add_dependencies(EffekseerRendererGL Effekseer)
-
 if (USE_OPENAL)
 	add_subdirectory(EffekseerSoundAL)
 endif()
@@ -242,35 +128,6 @@ endif()
 if (USE_OSM OR BUILD_VIEWER)
 	add_subdirectory("EffekseerSoundOSMixer")
 endif()
-
-# filter
-set(files 
-	${effekseer_renderer_common_h} 
-	${effekseer_renderer_src} 
-	${effekseer_renderer_dx9_src} 
-	${effekseer_renderer_dx11_src} 
-	${effekseer_renderer_gl_src})
-
-FilterFolder("${files}")
-
-if (MSVC)
-install(
-	TARGETS EffekseerRendererDX9
-	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib)
-endif()
-
-if (MSVC)
-install(
-	TARGETS EffekseerRendererDX11
-	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib)
-endif()
-
-install(
-	TARGETS EffekseerRendererGL
-	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib)
 
 if (BUILD_VIEWER)
     add_subdirectory("EditorCommon")
