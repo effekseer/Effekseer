@@ -1,5 +1,4 @@
-﻿#include "EffekseerRendererLLGI.MaterialLoader.h"
-#include "../3rdParty/LLGI/src/LLGI.Compiler.h"
+#include "EffekseerRendererLLGI.MaterialLoader.h"
 #include "EffekseerRendererLLGI.ModelRenderer.h"
 #include "EffekseerRendererLLGI.Shader.h"
 #include <iostream>
@@ -12,7 +11,7 @@
 namespace EffekseerRendererLLGI
 {
 
-void Deserialize(uint8_t* data, uint32_t datasize, LLGI::CompilerResult& result)
+void MaterialLoader::Deserialize(uint8_t* data, uint32_t datasize, LLGI::CompilerResult& result)
 {
 	if (datasize < 4)
 		return;

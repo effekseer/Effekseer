@@ -1,0 +1,918 @@
+#include "EffekseerMaterialCompilerMetal.h"
+
+#include <iostream>
+
+namespace Effekseer
+{
+namespace Metal
+{
+
+static char* material_common_define = R"(mtlcode
+#include <metal_stdlib>
+#pragma clang diagnostic ignored "-Wparentheses-equality"
+using namespace metal;
+
+)";
+
+static const char g_material_model_vs_src_pre[] =
+    R"(
+struct ShaderInput1 {
+  float4 a_Position [[attribute(0)]];
+  float3 a_Normal [[attribute(1)]];
+  float3 a_Binormal [[attribute(2)]];
+  float3 a_Tangent [[attribute(3)]];
+  float2 a_TexCoord [[attribute(4)]];
+  float4 a_Color [[attribute(5)]];
+//  uint4 a_Index [[attribute(6)]];
+)"
+#if defined(MODEL_SOFTWARE_INSTANCING)
+    R"(
+  float a_InstanceID [[attribute(6)]];
+  float4 a_UVOffset [[attribute(7)]];
+  float4 a_ModelColor [[attribute(8)]];
+)"
+#endif
+    R"(
+
+};
+struct ShaderOutput1 {
+  float4 gl_Position [[position]];
+  float4 v_VColor;
+  float2 v_UV1;
+  float2 v_UV2;
+  float3 v_WorldP;
+  float3 v_WorldN;
+  float3 v_WorldT;
+  float3 v_WorldB;
+  float2 v_ScreenUV;
+  //$C_OUT1$
+  //$C_OUT2$
+};
+struct ShaderUniform1 {
+  float4x4 ProjectionMatrix;
+)"
+#if defined(MODEL_SOFTWARE_INSTANCING)
+    R"(
+  float4x4 ModelMatrix[20];
+  float4 UVOffset[20];
+  float4 ModelColor[20];
+)"
+#else
+    R"(
+  float4x4 ModelMatrix;
+  float4 UVOffset;
+  float4 ModelColor;
+)"
+#endif
+    R"(
+  float4 mUVInversed;
+  float4 predefined_uniform;
+//$UNIFORMS$
+};
+)";
+
+static const char g_material_model_vs_src_suf1[] =
+    R"(
+vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1& u [[buffer(0)]]
+//$IN_TEX$
+)
+{
+    ShaderOutput1 o;
+)"
+#if defined(MODEL_SOFTWARE_INSTANCING)
+    R"(
+    float4x4 modelMatrix = u.ModelMatrix[int(i.a_InstanceID)];
+    float4 uvOffset = i.a_UVOffset;
+    float4 modelColor = i.a_ModelColor;
+)"
+#else
+    R"(
+    float4x4 modelMatrix = u.ModelMatrix;
+    float4 uvOffset = u.UVOffset;
+    float4 modelColor = u.ModelColor * i.a_Color;
+)"
+#endif
+    R"(
+    float3x3 modelMatRot;
+    modelMatRot[0] = modelMatrix[0].xyz;
+    modelMatRot[1] = modelMatrix[1].xyz;
+    modelMatRot[2] = modelMatrix[2].xyz;
+    float3 worldPos = (modelMatrix * i.a_Position).xyz;
+    float3 worldNormal = normalize(modelMatRot * i.a_Normal);
+    float3 worldBinormal = normalize(modelMatRot * i.a_Binormal);
+    float3 worldTangent = normalize(modelMatRot * i.a_Tangent);
+
+    // UV
+    float2 uv1 = i.a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
+    float2 uv2 = uv1;
+
+    float3 pixelNormalDir = worldNormal;
+    
+    float4 vcolor = modelColor;
+)";
+
+static const char g_material_model_vs_src_suf2[] =
+    R"(
+    worldPos = worldPos + worldPositionOffset;
+
+    o.v_WorldP = worldPos;
+    o.v_WorldN = worldNormal;
+    o.v_WorldB = worldBinormal;
+    o.v_WorldT = worldTangent;
+    o.v_UV1 = uv1;
+    o.v_UV2 = uv2;
+    o.v_VColor = vcolor;
+    o.gl_Position = u.ProjectionMatrix * float4(worldPos, 1.0);
+    o.v_ScreenUV.xy = o.gl_Position.xy / o.gl_Position.w;
+    o.v_ScreenUV.xy = float2(o.v_ScreenUV.x + 1.0, o.v_ScreenUV.y + 1.0) * 0.5;
+    return o;
+}
+)";
+
+static const char g_material_sprite_vs_src_pre_simple[] =
+    R"(
+struct ShaderInput1 {
+  float4 atPosition [[attribute(0)]];
+  float4 atColor [[attribute(1)]];
+  float4 atTexCoord [[attribute(2)]];
+};
+struct ShaderOutput1 {
+  float4 gl_Position [[position]];
+  float4 v_VColor;
+  float2 v_UV1;
+  float2 v_UV2;
+  float3 v_WorldP;
+  float3 v_WorldN;
+  float3 v_WorldT;
+  float3 v_WorldB;
+  float2 v_ScreenUV;
+};
+
+struct ShaderUniform1 {
+  float4x4 uMatCamera;
+  float4x4 uMatProjection;
+  float4 mUVInversed;
+  float4 predefined_uniform;
+//$UNIFORMS$
+};
+)";
+
+static const char g_material_sprite_vs_src_pre[] =
+    R"(
+struct ShaderInput1 {
+  float4 atPosition [[attribute(0)]];
+  float4 atColor [[attribute(1)]];
+  float3 atNormal [[attribute(2)]];
+  float3 atTangent [[attribute(3)]];
+  float2 atTexCoord [[attribute(4)]];
+  float2 atTexCoord2 [[attribute(5)]];
+  //$C_IN1$
+  //$C_IN2$
+};
+struct ShaderOutput1 {
+  float4 gl_Position [[position]];
+  float4 v_VColor;
+  float2 v_UV1;
+  float2 v_UV2;
+  float3 v_WorldP;
+  float3 v_WorldN;
+  float3 v_WorldT;
+  float3 v_WorldB;
+  float2 v_ScreenUV;
+  //$C_OUT1$
+  //$C_OUT2$
+};
+struct ShaderUniform1 {
+  float4x4 uMatCamera;
+  float4x4 uMatProjection;
+  float4 mUVInversed;
+  float4 predefined_uniform;
+//$UNIFORMS$
+};
+)";
+
+static const char g_material_sprite_vs_src_suf1_simple[] =
+
+    R"(
+vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1& u [[buffer(0)]]
+//$IN_TEX$
+)
+{
+    ShaderOutput1 o;
+    float3 worldPos = i.atPosition.xyz;
+
+    // UV
+    float2 uv1 = i.atTexCoord.xy;
+    float2 uv2 = uv1;
+
+    // NBT
+    float3 worldNormal = float3(0.0, 0.0, 0.0);
+    float3 worldBinormal = float3(0.0, 0.0, 0.0);
+    float3 worldTangent = float3(0.0, 0.0, 0.0);
+    o.v_WorldN = worldNormal;
+    o.v_WorldB = worldBinormal;
+    o.v_WorldT = worldTangent;
+
+    float3 pixelNormalDir = worldNormal;
+    float4 vcolor = i.atColor;
+)";
+
+static const char g_material_sprite_vs_src_suf1[] =
+
+    R"(
+vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1& u [[buffer(0)]]
+//$IN_TEX$
+)
+{
+    ShaderOutput1 o;
+    float3 worldPos = i.atPosition.xyz;
+
+    // UV
+    float2 uv1 = i.atTexCoord.xy;
+    float2 uv2 = i.atTexCoord2.xy;
+
+    // NBT
+    float3 worldNormal = (i.atNormal - float3(0.5, 0.5, 0.5)) * 2.0;
+    float3 worldTangent = (i.atTangent - float3(0.5, 0.5, 0.5)) * 2.0;
+    float3 worldBinormal = cross(worldNormal, worldTangent);
+
+    o.v_WorldN = worldNormal;
+    o.v_WorldB = worldBinormal;
+    o.v_WorldT = worldTangent;
+    float3 pixelNormalDir = worldNormal;
+    float4 vcolor = i.atColor;
+)";
+
+static const char g_material_sprite_vs_src_suf2[] =
+
+    R"(
+    worldPos = worldPos + worldPositionOffset;
+
+    float4 cameraPos = u.uMatCamera * float4(worldPos, 1.0);
+    cameraPos = cameraPos / cameraPos.w;
+
+    o.gl_Position = u.uMatProjection * cameraPos;
+
+    o.v_WorldP = worldPos;
+    o.v_VColor = vcolor;
+
+    o.v_UV1 = uv1;
+    o.v_UV2 = uv2;
+    o.v_ScreenUV.xy = o.gl_Position.xy / o.gl_Position.w;
+    o.v_ScreenUV.xy = float2(o.v_ScreenUV.x + 1.0, o.v_ScreenUV.y + 1.0) * 0.5;
+    return o;
+}
+
+)";
+
+static const char g_material_fs_src_pre[] =
+    R"(
+struct ShaderInput2 {
+  float4 v_VColor;
+  float2 v_UV1;
+  float2 v_UV2;
+  float3 v_WorldP;
+  float3 v_WorldN;
+  float3 v_WorldT;
+  float3 v_WorldB;
+  float2 v_ScreenUV;
+  //$C_PIN1$
+  //$C_PIN2$
+};
+struct ShaderOutput2 {
+  float4 gl_FragColor;
+};
+struct ShaderUniform2 {
+  float4 mUVInversedBack;
+  float4 predefined_uniform;
+//$UNIFORMS$
+};
+)";
+
+static const char g_material_fs_src_suf1[] =
+    R"(
+
+#ifdef _MATERIAL_LIT_
+
+#define lightScale 3.14
+
+float saturate(float v)
+{
+    return max(min(v, 1.0), 0.0);
+}
+
+float calcD_GGX(float roughness, float dotNH)
+{
+    float alpha = roughness*roughness;
+    float alphaSqr = alpha*alpha;
+    float pi = 3.14159;
+    float denom = dotNH * dotNH *(alphaSqr-1.0) + 1.0;
+    return (alpha / denom) * (alpha / denom) / pi;
+}
+
+float calcF(float F0, float dotLH)
+{
+    float dotLH5 = pow(1.0-dotLH,5.0);
+    return F0 + (1.0-F0)*(dotLH5);
+}
+
+float calcG_Schlick(float roughness, float dotNV, float dotNL)
+{
+    // UE4
+    float k = (roughness + 1.0) * (roughness + 1.0) / 8.0;
+    // float k = roughness * roughness / 2.0;
+
+    float gV = dotNV*(1.0 - k) + k;
+    float gL = dotNL*(1.0 - k) + k;
+
+    return 1.0 / (gV * gL);
+}
+
+float calcLightingGGX(float3 N, float3 V, float3 L, float roughness, float F0)
+{
+    float3 H = normalize(V+L);
+
+    float dotNL = saturate( dot(N,L) );
+    float dotLH = saturate( dot(L,H) );
+    float dotNH = saturate( dot(N,H) ) - 0.001;
+    float dotNV = saturate( dot(N,V) ) + 0.001;
+
+    float D = calcD_GGX(roughness, dotNH);
+    float F = calcF(F0, dotLH);
+    float G = calcG_Schlick(roughness, dotNV, dotNL);
+
+    return dotNL * D * F * G / 4.0;
+}
+
+float3 calcDirectionalLightDiffuseColor(float3 diffuseColor, float3 normal, float3 lightDir, float ao)
+{
+    float3 color = float3(0.0,0.0,0.0);
+
+    float NoL = dot(normal,lightDir);
+    color.xyz = lightColor.xyz * lightScale * max(NoL,0.0) * ao / 3.14;
+    color.xyz = color.xyz * diffuseColor.xyz;
+    return color;
+}
+
+#endif
+
+fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], constant ShaderUniform2& u [[buffer(0)]]
+//$IN_TEX$
+)
+{
+    ShaderOutput2 o;
+    float2 uv1 = i.v_UV1;
+    float2 uv2 = i.v_UV2;
+    float3 worldPos = i.v_WorldP;
+    float3 worldNormal = i.v_WorldN;
+    float3 worldTangent = i.v_WorldT;
+    float3 worldBinormal = i.v_WorldB;
+    float3 pixelNormalDir = worldNormal;
+    float4 vcolor = i.v_VColor;
+
+)";
+
+static const char g_material_fs_src_suf2_lit[] =
+    R"(
+
+    float3 viewDir = normalize(cameraPosition.xyz - worldPos);
+    float3 diffuse = calcDirectionalLightDiffuseColor(baseColor, pixelNormalDir, lightDirection.xyz, ambientOcclusion);
+    float3 specular = lightColor.xyz * lightScale * calcLightingGGX(worldNormal, viewDir, lightDirection.xyz, roughness, 0.9);
+
+    float4 Output =  float4(metallic * specular + (1.0 - metallic) * diffuse + lightAmbientColor.xyz, opacity);
+    Output.xyz = Output.xyz + emissive.xyz;
+
+    if(opacityMask <= 0.0) discard_fragment();
+    if(opacity <= 0.0) discard_fragment();
+
+    o.gl_FragColor = Output;
+    return o;
+}
+
+)";
+
+static const char g_material_fs_src_suf2_unlit[] =
+    R"(
+
+    if(opacityMask <= 0.0) discard_fragment();
+    if(opacity <= 0.0) discard_fragment();
+
+    o.gl_FragColor = float4(emissive, opacity);
+    return o;
+}
+
+)";
+
+static const char g_material_fs_src_suf2_refraction[] =
+    R"(
+    float airRefraction = 1.0;
+
+    float3 dir = float3x3(cameraMat) * pixelNormalDir;
+    float2 distortUV = dir.xy * (refraction - airRefraction);
+
+    distortUV += in.v_ScreenUV;
+    distortUV = float(distortUV.x, u.mUVInversedBack.z + u.mUVInversedBack.w * distortUV.y);
+
+    float4 bg = background.sample(s_background, distortUV);
+    o.gl_FragColor = bg;
+
+    if(opacityMask <= 0.0) discard_fragment();
+    if(opacity <= 0.0) discard_fragment();
+    return o;
+}
+)";
+
+static const char g_getUV_helper_vs[] =
+"float2(IN.x, u.mUVInversed.x + u.mUVInversed.y * IN.y)";
+
+static const char g_getUVBack_helper_vs[] =
+"float2(IN.x, u.mUVInversed.z + u.mUVInversed.w * IN.y)";
+
+static const char g_getUV_helper_fs[] =
+"float2(IN.x, u.mUVInversedBack.x + u.mUVInversedBack.y * IN.y)";
+
+static const char g_getUVBack_helper_fs[] =
+"float2(IN.x, u.mUVInversedBack.z + u.mUVInversedBack.w * IN.y)";
+
+/*
+static const char g_getUV_helper_vs[] = R"(
+    float2 OUT = IN;
+    OUT.y = u.mUVInversed.x + u.mUVInversed.y * OUT.y;
+)";
+
+static const char g_getUVBack_helper_vs[] = R"(
+    float2 OUT = IN;
+    OUT.y = u.mUVInversed.z + u.mUVInversed.w * OUT.y;
+)";
+
+static const char g_getUV_helper_fs[] = R"(
+    float2 OUT = IN;
+    OUT.y = u.mUVInversedBack.x + u.mUVInversedBack.y * OUT.y;
+)";
+
+static const char g_getUVBack_helper_fs[] = R"(
+    float2 OUT = IN;
+    OUT.y = u.mUVInversedBack.z + u.mUVInversedBack.w * OUT.y;
+)";
+*/
+std::string Replace(std::string target, std::string from_, std::string to_)
+{
+    std::string::size_type Pos(target.find(from_));
+
+    while (Pos != std::string::npos)
+    {
+        target.replace(Pos, from_.length(), to_);
+        Pos = target.find(from_, Pos + to_.length());
+    }
+
+    return target;
+}
+
+struct ShaderData
+{
+    std::string CodeVS;
+    std::string CodePS;
+};
+
+std::string GetType(int32_t i)
+{
+    if (i == 1)
+        return "float";
+    if (i == 2)
+        return "float2";
+    if (i == 3)
+        return "float3";
+    if (i == 4)
+        return "float4";
+    if (i == 16)
+        return "float4x4";
+    assert(0);
+    return "";
+}
+
+std::string GetElement(int32_t i)
+{
+    if (i == 1)
+        return ".x";
+    if (i == 2)
+        return ".xy";
+    if (i == 3)
+        return ".xyz";
+    if (i == 4)
+        return ".xyzw";
+    assert(0);
+    return "";
+}
+
+std::string GetUVReplacement(const std::string& varName, int stage)
+{
+    auto helper = (stage == 0)? g_getUV_helper_vs : g_getUV_helper_fs;
+    return Replace(helper, "IN", varName);
+}
+
+std::string GetUVBackReplacement(const std::string& varName, int stage)
+{
+    auto helper = (stage == 0)? g_getUVBack_helper_vs : g_getUVBack_helper_fs;
+    return Replace(helper, "IN", varName);
+}
+
+void ExportUniform(std::ostringstream& maincode, int32_t type, const char* name)
+{
+    maincode << "  " << GetType(type) << " " << name << ";" << std::endl;
+}
+
+void ExportTexture(std::ostringstream& maincode, const char* name, int& index)
+{
+    maincode << ", texture2d<float> " << name << " [[texture(" << index << ")]],";
+    maincode << "sampler s_" << name << " [[sampler(" << index << ")]]" << std::endl;
+    index++;
+}
+
+void ExportHeader(std::ostringstream& maincode, Material* material, int stage, bool isSprite)
+{
+    maincode << material_common_define;
+
+    if (stage == 0)
+    {
+        if (isSprite)
+        {
+            if (material->GetIsSimpleVertex())
+            {
+                maincode << g_material_sprite_vs_src_pre_simple;
+            }
+            else
+            {
+                maincode << g_material_sprite_vs_src_pre;
+            }
+        }
+        else
+        {
+            maincode << g_material_model_vs_src_pre;
+        }
+    }
+    else
+    {
+        maincode << g_material_fs_src_pre;
+    }
+}
+
+void ExportMain(
+    std::ostringstream& maincode, Material* material, int stage, bool isSprite, MaterialShaderType shaderType, const std::string& baseCode, const std::string& textures)
+{
+    std::string suf1;
+    if (stage == 0)
+    {
+        if (isSprite)
+        {
+            if (material->GetIsSimpleVertex())
+            {
+                suf1 = g_material_sprite_vs_src_suf1_simple;
+            }
+            else
+            {
+                suf1 = g_material_sprite_vs_src_suf1;
+            }
+        }
+        else
+        {
+            suf1 = g_material_model_vs_src_suf1;
+        }
+        
+        suf1 = Replace(suf1, "//$IN_TEX$", textures);
+        maincode << suf1;
+        
+        if (material->GetCustomData1Count() > 0)
+        {
+            maincode << GetType(material->GetCustomData1Count()) + " customData1 = ";
+            maincode << (isSprite? "i.atCustomData1;\n" : "u.customData1;\n");
+            maincode << "o.v_CustomData1 = customData1" + GetElement(material->GetCustomData1Count()) + ";\n";
+        }
+
+        if (material->GetCustomData2Count() > 0)
+        {
+            maincode << GetType(material->GetCustomData2Count()) + " customData2 = ";
+            maincode << (isSprite? "i.atCustomData2;\n" : "u.customData2;\n");
+            maincode << "o.v_CustomData2 = customData2" + GetElement(material->GetCustomData2Count()) + ";\n";
+        }
+
+        maincode << baseCode;
+
+        if (isSprite)
+        {
+            maincode << g_material_sprite_vs_src_suf2;
+        }
+        else
+        {
+            maincode << g_material_model_vs_src_suf2;
+        }
+    }
+    else
+    {
+        suf1 = g_material_fs_src_suf1;
+        suf1 = Replace(suf1, "//$IN_TEX$", textures);
+        maincode << suf1;
+
+        if (material->GetCustomData1Count() > 0)
+        {
+            maincode << GetType(material->GetCustomData1Count()) + " customData1 = i.v_CustomData1;\n";
+        }
+
+        if (material->GetCustomData2Count() > 0)
+        {
+            maincode << GetType(material->GetCustomData2Count()) + " customData2 = i.v_CustomData2;\n";
+        }
+
+        maincode << baseCode;
+
+        if (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel)
+        {
+            maincode << g_material_fs_src_suf2_refraction;
+        }
+        else
+        {
+            if (material->GetShadingModel() == Effekseer::ShadingModelType::Lit)
+            {
+                maincode << g_material_fs_src_suf2_lit;
+            }
+            else if (material->GetShadingModel() == Effekseer::ShadingModelType::Unlit)
+            {
+                maincode << g_material_fs_src_suf2_unlit;
+            }
+        }
+    }
+}
+
+ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int32_t maximumTextureCount)
+{
+    bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
+    bool isRefrection =
+        material->GetHasRefraction() && (shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
+
+    ShaderData shaderData;
+
+    for (int stage = 0; stage < 2; stage++)
+    {
+        std::ostringstream maincode;
+
+        ExportHeader(maincode, material, stage, isSprite);
+
+        std::ostringstream userUniforms;
+        std::ostringstream textures;
+        int t_index = 0;
+        
+        if (!isSprite && stage == 0)
+        {
+            if (material->GetCustomData1Count() > 0)
+            {
+                ExportUniform(userUniforms, 4, "customData1");
+            }
+            if (material->GetCustomData2Count() > 0)
+            {
+                ExportUniform(userUniforms, 4, "customData2");
+            }
+        }
+        
+        for (int32_t i = 0; i < material->GetUniformCount(); i++)
+        {
+            //auto uniformIndex = material->GetUniformIndex(i);
+            auto uniformName = material->GetUniformName(i);
+
+            ExportUniform(userUniforms, 4, uniformName);
+        }
+
+        int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
+
+        for (size_t i = 0; i < actualTextureCount; i++)
+        {
+            //auto textureIndex = material->GetTextureIndex(i);
+            auto textureName = material->GetTextureName(i);
+
+            ExportTexture(textures, textureName, t_index);
+        }
+
+        if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
+        {
+            ExportUniform(userUniforms, 4, "cameraPosition");
+            ExportUniform(userUniforms, 4, "lightDirection");
+            ExportUniform(userUniforms, 4, "lightColor");
+            ExportUniform(userUniforms, 4, "lightAmbientColor");
+
+            maincode << "#define _MATERIAL_LIT_ 1" << std::endl;
+        }
+        else if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Unlit)
+        {
+        }
+
+        if (isRefrection && stage == 1)
+        {
+            ExportUniform(maincode, 16, "cameraMat");
+            ExportTexture(textures, "background", t_index);
+        }
+
+        auto baseCode = std::string(material->GetGenericCode());
+        baseCode = Replace(baseCode, "$F1$", "float");
+        baseCode = Replace(baseCode, "$F2$", "float2");
+        baseCode = Replace(baseCode, "$F3$", "float3");
+        baseCode = Replace(baseCode, "$F4$", "float4");
+        baseCode = Replace(baseCode, "$TIME$", "predefined_uniform.x");
+        baseCode = Replace(baseCode, "$UV$", "uv");
+        baseCode = Replace(baseCode, "$MOD", "mod");
+        
+        
+        // replace uniforms
+        for (size_t i = 0; i < material->GetUniformCount(); i++)
+        {
+            auto name = material->GetUniformName(i);
+            baseCode = Replace(baseCode, name, std::string("u.") + name);
+        }
+        baseCode = Replace(baseCode, "predefined_uniform", std::string("u.") + "predefined_uniform");
+
+        // replace textures
+        for (size_t i = 0; i < actualTextureCount; i++)
+        {
+            auto textureIndex = material->GetTextureIndex(i);
+            auto textureName = std::string(material->GetTextureName(i));
+
+            std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
+            std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
+            
+            std::size_t posP = baseCode.find(keyP);
+            while (posP != std::string::npos)
+            {
+                std::size_t posS = baseCode.find(keyS, posP);
+                if (posS == std::string::npos) break;
+                
+                // get var between prefix and suffix
+                std::size_t varPos = posP + keyP.length();
+                std::string varName = baseCode.substr(varPos, posS - varPos);
+
+                std::ostringstream texSample;
+                texSample << textureName << ".sample(s_" << textureName << ", ";
+                texSample << GetUVReplacement(varName, stage) << ")";
+                
+                baseCode = baseCode.replace(posP, posS + keyS.length() - posP, texSample.str());
+                posP = baseCode.find(keyP, posP + texSample.str().length());
+            }
+            
+//            if (stage == 0)
+//            {
+//                baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",GetUV(");
+//                baseCode = Replace(baseCode, keyS, "), 0.0)");
+//            }
+//            else
+//            {
+//                baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",GetUV(");
+//                baseCode = Replace(baseCode, keyS, "))");
+//            }
+        }
+
+        // invalid texture
+        for (size_t i = actualTextureCount; i < material->GetTextureCount(); i++)
+        {
+            auto textureIndex = material->GetTextureIndex(i);
+            auto textureName = std::string(material->GetTextureName(i));
+
+            std::string keyP = "$TEX_P" + std::to_string(textureIndex) + "$";
+            std::string keyS = "$TEX_S" + std::to_string(textureIndex) + "$";
+
+            baseCode = Replace(baseCode, keyP, "float4(");
+            baseCode = Replace(baseCode, keyS, ",0.0,1.0)");
+        }
+        
+        ExportMain(maincode, material, stage, isSprite, shaderType, baseCode, textures.str());
+        
+        maincode.str(Replace(maincode.str(), "//$UNIFORMS$", userUniforms.str()));
+
+        if (stage == 0)
+        {
+            shaderData.CodeVS = maincode.str();
+        }
+        else
+        {
+            shaderData.CodePS = maincode.str();
+        }
+    }
+
+    // custom data
+    if (material->GetCustomData1Count() > 0)
+    {
+        if (isSprite)
+        {
+            shaderData.CodeVS =
+                Replace(shaderData.CodeVS, "//$C_IN1$", GetType(material->GetCustomData1Count()) + " atCustomData1 [[attribute(6)]];");
+        }
+        shaderData.CodeVS =
+            Replace(shaderData.CodeVS, "//$C_OUT1$", GetType(material->GetCustomData1Count()) + " v_CustomData1;");
+        shaderData.CodePS =
+            Replace(shaderData.CodePS, "//$C_PIN1$", GetType(material->GetCustomData1Count()) + " v_CustomData1;");
+    }
+
+    if (material->GetCustomData2Count() > 0)
+    {
+        if (isSprite)
+        {
+            shaderData.CodeVS =
+                Replace(shaderData.CodeVS, "//$C_IN2$", GetType(material->GetCustomData2Count()) + " atCustomData2 [[attribute(7)]];");
+        }
+        shaderData.CodeVS =
+            Replace(shaderData.CodeVS, "//$C_OUT2$", GetType(material->GetCustomData2Count()) + " v_CustomData2;");
+        shaderData.CodePS =
+            Replace(shaderData.CodePS, "//$C_PIN2$", GetType(material->GetCustomData2Count()) + " v_CustomData2;");
+    }
+
+//    printf(shaderData.CodeVS.c_str());
+//    printf("\n\n\n");
+//    printf(shaderData.CodePS.c_str());
+//    printf("\n\n\n");
+    
+    return shaderData;
+}
+
+} // namespace GL
+
+} // namespace Effekseer
+
+namespace Effekseer
+{
+
+class CompiledMaterialBinaryMetal : public CompiledMaterialBinary, ReferenceObject
+{
+private:
+    std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> vertexShaders_;
+
+    std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> pixelShaders_;
+
+public:
+    CompiledMaterialBinaryMetal() {}
+
+    virtual ~CompiledMaterialBinaryMetal() {}
+
+    void SetVertexShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
+    {
+        vertexShaders_.at(static_cast<int>(type)) = data;
+    }
+
+    void SetPixelShaderData(MaterialShaderType type, const std::vector<uint8_t>& data) { pixelShaders_.at(static_cast<int>(type)) = data; }
+
+    const uint8_t* GetVertexShaderData(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).data(); }
+
+    int32_t GetVertexShaderSize(MaterialShaderType type) const override { return vertexShaders_.at(static_cast<int>(type)).size(); }
+
+    const uint8_t* GetPixelShaderData(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).data(); }
+
+    int32_t GetPixelShaderSize(MaterialShaderType type) const override { return pixelShaders_.at(static_cast<int>(type)).size(); }
+
+    int AddRef() override { return ReferenceObject::AddRef(); }
+
+    int Release() override { return ReferenceObject::Release(); }
+
+    int GetRef() override { return ReferenceObject::GetRef(); }
+};
+
+CompiledMaterialBinary* MaterialCompilerMetal::Compile(Material* material, int32_t maximumTextureCount)
+{
+    auto binary = new CompiledMaterialBinaryMetal();
+
+    auto convertToVector = [](const std::string& str) -> std::vector<uint8_t> {
+        std::vector<uint8_t> ret;
+        ret.resize(str.size() + 1);
+        memcpy(ret.data(), str.data(), str.size());
+        ret[str.size()] = 0;
+        return ret;
+    };
+
+    auto saveBinary = [&material, &binary, &convertToVector, &maximumTextureCount](MaterialShaderType type) {
+        auto shader = Metal::GenerateShader(material, type, maximumTextureCount);
+        binary->SetVertexShaderData(type, convertToVector(shader.CodeVS));
+        binary->SetPixelShaderData(type, convertToVector(shader.CodePS));
+    };
+
+    if (material->GetHasRefraction())
+    {
+        saveBinary(MaterialShaderType::Refraction);
+        saveBinary(MaterialShaderType::RefractionModel);
+    }
+
+    saveBinary(MaterialShaderType::Standard);
+    saveBinary(MaterialShaderType::Model);
+
+    return binary;
+}
+
+CompiledMaterialBinary* MaterialCompilerMetal::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
+
+} // namespace Effekseer
+
+#ifdef __SHARED_OBJECT__
+
+extern "C"
+{
+#ifdef _WIN32
+#define EFK_EXPORT __declspec(dllexport)
+#else
+#define EFK_EXPORT
+#endif
+
+    EFK_EXPORT Effekseer::MaterialCompiler* EFK_STDCALL CreateCompiler() { return new Effekseer::MaterialCompilerMetal(); }
+}
+#endif
