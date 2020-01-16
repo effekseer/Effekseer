@@ -16,7 +16,7 @@ bool CompiledMaterialGenerator::Initialize(const char* directory)
 	names[Effekseer::CompiledMaterialPlatformType::DirectX9] = "DX9";
 	names[Effekseer::CompiledMaterialPlatformType::DirectX11] = "DX11";
 	names[Effekseer::CompiledMaterialPlatformType::DirectX12] = "DX12";
-	names[Effekseer::CompiledMaterialPlatformType::Metal] = "MTL";
+	names[Effekseer::CompiledMaterialPlatformType::Metal] = "Metal";
 	names[Effekseer::CompiledMaterialPlatformType::Vulkan] = "VK";
 	names[Effekseer::CompiledMaterialPlatformType::OpenGL] = "GL";
 	names[Effekseer::CompiledMaterialPlatformType::Switch] = "Switch";
