@@ -1,7 +1,6 @@
 #include "efk.PostEffects.h"
 
 #ifdef _WIN32
-//#include "Platform/DX9/efk.PostEffectsDX9.h"
 #include "Platform/DX11/efk.PostEffectsDX11.h"
 #endif
 
@@ -12,11 +11,6 @@ namespace efk
 	BloomEffect* PostEffect::CreateBloom(Graphics* graphics)
 	{
 #ifdef _WIN32
-		if (graphics->GetDeviceType() == DeviceType::DirectX9)
-		{
-			//return new BloomEffectDX9(graphics);
-		}
-
 		if (graphics->GetDeviceType() == DeviceType::DirectX11)
 		{
 			return new BloomEffectDX11(graphics);
@@ -33,11 +27,6 @@ namespace efk
 	TonemapEffect* PostEffect::CreateTonemap(Graphics* graphics)
 	{
 #ifdef _WIN32
-		if (graphics->GetDeviceType() == DeviceType::DirectX9)
-		{
-			//return new TonemapEffectDX9(graphics);
-		}
-
 		if (graphics->GetDeviceType() == DeviceType::DirectX11)
 		{
 			return new TonemapEffectDX11(graphics);

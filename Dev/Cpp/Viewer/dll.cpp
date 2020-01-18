@@ -5,7 +5,6 @@
 
 #ifdef _WIN32
 #include "3rdParty/imgui_platform/imgui_impl_dx11.h"
-#include "3rdParty/imgui_platform/imgui_impl_dx9.h"
 #endif
 
 #include <IO/IO.h>
@@ -357,8 +356,7 @@ Native::TextureLoader::TextureLoader(EffekseerRenderer::Renderer* renderer) : m_
 	}
 	else
 	{
-		auto r = (EffekseerRendererDX9::Renderer*)m_renderer;
-		m_originalTextureLoader = EffekseerRendererDX9::CreateTextureLoader(r->GetDevice());
+		assert(0);
 	}
 #endif
 }
@@ -461,18 +459,8 @@ void* Native::ModelLoader::Load(const EFK_CHAR* path)
 		}
 		else
 		{
-			auto r = (EffekseerRendererDX9::Renderer*)m_renderer;
-			auto loader = ::EffekseerRendererDX9::CreateModelLoader(r->GetDevice());
-			auto m = (Effekseer::Model*)loader->Load((const EFK_CHAR*)dst);
-
-			if (m != nullptr)
-			{
-				m_models[key] = m;
-			}
-
-			ES_SAFE_DELETE(loader);
-
-			return m;
+			assert(0);
+			return nullptr;
 		}
 #endif
 	}
@@ -644,21 +632,6 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			{
 				resource.second->Invalidate();
 			}
-
-			{
-				if (g_deviceType == efk::DeviceType::OpenGL)
-				{
-				}
-#ifdef _WIN32
-				else if (g_deviceType == efk::DeviceType::DirectX11)
-				{
-				}
-				else
-				{
-					ImGui_ImplDX9_InvalidateDeviceObjects();
-				}
-#endif
-			}
 		};
 
 		g_renderer->ResettedDevice = [this]() -> void {
@@ -671,21 +644,6 @@ bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool i
 			for (auto& resource : g_imageResources)
 			{
 				resource.second->Validate();
-			}
-
-			{
-				if (g_deviceType == efk::DeviceType::OpenGL)
-				{
-				}
-#ifdef _WIN32
-				else if (g_deviceType == efk::DeviceType::DirectX11)
-				{
-				}
-				else
-				{
-					ImGui_ImplDX9_CreateDeviceObjects();
-				}
-#endif
 			}
 		};
 	}
@@ -1846,8 +1804,7 @@ efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 	}
 	else
 	{
-		auto r = (EffekseerRendererDX9::Renderer*)g_renderer->GetRenderer();
-		loader = std::shared_ptr<Effekseer::TextureLoader>(EffekseerRendererDX9::CreateTextureLoader(r->GetDevice()));
+		assert(0);
 	}
 #endif
 

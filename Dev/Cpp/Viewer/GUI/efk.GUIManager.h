@@ -11,7 +11,6 @@
 #include "../3rdParty/imgui_platform/imgui_impl_opengl3.h"
 
 #ifdef _WIN32
-#include "../3rdParty/imgui_platform/imgui_impl_dx9.h"
 #include "../3rdParty/imgui_platform/imgui_impl_dx11.h"
 #endif
 

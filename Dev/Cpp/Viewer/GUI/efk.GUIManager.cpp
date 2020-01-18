@@ -845,9 +845,7 @@ namespace efk
 		}
 		else
 		{
-			ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWWindows(), true);
-			auto r = (EffekseerRendererDX9::Renderer*)native->GetRenderer();
-			ImGui_ImplDX9_Init(r->GetDevice());
+			assert(0);
 		}
 #endif
 		// Enable keyboard navication
@@ -920,7 +918,7 @@ namespace efk
 		}
 		else
 		{
-			ImGui_ImplDX9_Shutdown();
+			assert(0);
 		}
 #endif
 
@@ -980,7 +978,7 @@ namespace efk
 		}
 		else
 		{
-			ImGui_ImplDX9_NewFrame();
+			assert(0);
 		}
 #endif
 	}
@@ -998,7 +996,7 @@ namespace efk
 		}
 		else
 		{
-			ImGui_ImplDX9_NewFrame();
+			assert(0);
 		}
 #endif
 
@@ -1026,13 +1024,7 @@ namespace efk
 			}
 			else
 			{
-				ImGui_ImplDX9_GetDevice()->SetRenderState(D3DRS_ZENABLE, false);
-				ImGui_ImplDX9_GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
-				ImGui_ImplDX9_GetDevice()->SetRenderState(D3DRS_SCISSORTESTENABLE, false);
-				ImGui_ImplDX9_GetDevice()->BeginScene();
-				ImGui::Render();
-				ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-				ImGui_ImplDX9_GetDevice()->EndScene();
+				assert(0);
 			}
 #endif
 		}

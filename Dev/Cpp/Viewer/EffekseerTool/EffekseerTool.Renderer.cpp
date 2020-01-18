@@ -42,8 +42,7 @@ namespace EffekseerTool
 			}
 			else
 			{
-				auto r = (::EffekseerRendererDX9::Renderer*)renderer->GetRenderer();
-				r->SetBackground((IDirect3DTexture9*)renderer->GetBack());
+				assert(0);
 			}
 #endif
 		}
@@ -100,7 +99,7 @@ namespace EffekseerTool
 		}
 		else
 		{
-			graphics = new efk::GraphicsDX9();
+			assert(0);
 		}
 #endif
 		graphics->LostedDevice = [this]() -> void
@@ -435,8 +434,7 @@ bool Renderer::BeginRendering()
 		}
 		else
 		{
-			auto r = (EffekseerRendererDX9::RendererImplemented*)m_renderer;
-			r->SetBackground((IDirect3DTexture9*)graphics->GetBack());
+			assert(0);
 		}
 #endif
 
@@ -463,8 +461,7 @@ bool Renderer::BeginRendering()
 		}
 		else
 		{
-			auto r = (EffekseerRendererDX9::RendererImplemented*)m_renderer;
-			r->SetBackground(nullptr);
+			assert(0);
 		}
 #endif
 
@@ -503,8 +500,7 @@ bool Renderer::EndRendering()
 		}
 		else
 		{
-			auto r = (EffekseerRendererDX9::RendererImplemented*)m_renderer;
-			r->SetBackground(nullptr);
+			assert(0);
 		}
 #endif
 	}
@@ -709,8 +705,7 @@ void Renderer::CopyToBackground()
 	}
 	else
 	{
-		auto r = (::EffekseerRendererDX9::Renderer*)graphics->GetRenderer();
-		r->SetBackground((IDirect3DTexture9*)graphics->GetBack());
+		assert(0);
 	}
 #endif
 }

@@ -7,7 +7,6 @@ namespace efk
 {
 	enum class DeviceType
 	{
-		DirectX9,
 		DirectX11,
 		OpenGL,
 	};

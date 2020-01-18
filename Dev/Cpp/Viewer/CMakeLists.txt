@@ -40,7 +40,6 @@ list(APPEND cpps
 	3rdParty/Boxer/boxer_win.cpp
 	3rdParty/imgui_platform/imgui_impl_glfw.cpp
 	3rdParty/imgui_platform/imgui_impl_opengl3.cpp
-	3rdParty/imgui_platform/imgui_impl_dx9.cpp
 	3rdParty/imgui_platform/imgui_impl_dx11.cpp
 )
 
@@ -80,13 +79,11 @@ endif()
 # Graphics
 if (WIN32)
 FILE(GLOB hs_g
-	Graphics/Platform/DX9/*.h
 	Graphics/Platform/DX11/*.h
 	Graphics/Platform/GL/*.h
 )
 
 FILE(GLOB cpps_g
-	Graphics/Platform/DX9/*.cpp
 	Graphics/Platform/DX11/*.cpp
 	Graphics/Platform/GL/*.cpp
 )

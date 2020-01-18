@@ -4,7 +4,6 @@
 #include "EffekseerTool.Base.h"
 
 #ifdef _WIN32
-#include "../Graphics/Platform/DX9/efk.GraphicsDX9.h"
 #include "../Graphics/Platform/DX11/efk.GraphicsDX11.h"
 #endif
 
