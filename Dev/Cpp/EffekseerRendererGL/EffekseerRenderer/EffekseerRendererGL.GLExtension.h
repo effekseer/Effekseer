@@ -80,6 +80,9 @@ bool IsSupportedVertexArray();
 bool IsSupportedBufferRange();
 bool IsSupportedMapBuffer();
 
+//! for some devices to avoid a bug
+void MakeMapBufferInvalid();
+
 void glDeleteBuffers(GLsizei n, const GLuint* buffers);
 GLuint glCreateShader(GLenum type);
 void glBindBuffer(GLenum target, GLuint buffer);

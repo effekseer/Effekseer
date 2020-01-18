@@ -303,6 +303,8 @@ bool IsSupportedMapBuffer()
 	return g_isSurrpotedMapBuffer;
 }
 
+void MakeMapBufferInvalid() { g_isSurrpotedMapBuffer = false; }
+
 void glDeleteBuffers(GLsizei n, const GLuint* buffers)
 {
 #if _WIN32

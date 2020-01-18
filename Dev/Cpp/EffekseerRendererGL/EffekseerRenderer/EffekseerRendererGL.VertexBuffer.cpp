@@ -180,8 +180,24 @@ void VertexBuffer::Unlock()
 #endif // !__ANDROID__
 
 			auto target = (uint8_t*)GLExt::glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-			memcpy(target + m_vertexRingStart, m_resource, m_offset);
-			GLExt::glUnmapBuffer(GL_ARRAY_BUFFER);
+			if (target == nullptr)
+			{
+				GLExt::MakeMapBufferInvalid();
+
+				if (m_vertexRingStart > 0)
+				{
+					GLExt::glBufferSubData(GL_ARRAY_BUFFER, m_vertexRingStart, m_offset, m_resource);
+				}
+				else
+				{
+					GLExt::glBufferData(GL_ARRAY_BUFFER, m_size, m_resource, GL_STREAM_DRAW);
+				}
+			}
+			else
+			{
+				memcpy(target + m_vertexRingStart, m_resource, m_offset);
+				GLExt::glUnmapBuffer(GL_ARRAY_BUFFER);
+			}
 		}
 		else
 		{
