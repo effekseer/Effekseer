@@ -66,18 +66,26 @@ set(files
 
 FilterFolder("${files}")
 
-set(PublicHeader
-    Effekseer.h 
-    Effekseer.Internal.h)
+if(BUILD_UNITYPLUGIN)
+    install(DIRECTORY "${PROJECT_SOURCE_DIR}"
+        DESTINATION "include"
+        FILES_MATCHING
+        PATTERN "*.h"
+    )
+else()
+    set(PublicHeader
+        Effekseer.h 
+        Effekseer.Internal.h)
 
-set_target_properties(
-    ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER 
-    "${PublicHeader}")
+    set_target_properties(
+        ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER 
+        "${PublicHeader}")
+endif()
 
 install(
     TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-export
-    INCLUDES DESTINATION include/Effekseer
+    INCLUDES DESTINATION include
     PUBLIC_HEADER DESTINATION include/Effekseer
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib)

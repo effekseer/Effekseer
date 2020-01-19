@@ -17,6 +17,8 @@ option(SANITIZE_ENABLED "is sanitizer enabled" OFF)
 
 option(BUILD_VERSION16 "is build as version1.6" OFF)
 
+option(BUILD_UNITYPLUGIN "for unity plugin" OFF)
+
 if(SANITIZE_ENABLED)
     set(CMAKE_CXX_FLAGS " -fsanitize=undefined,address" ${CMAKE_CXX_FLAGS})
 endif()

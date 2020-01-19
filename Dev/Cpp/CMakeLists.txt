@@ -80,7 +80,12 @@ if (WIN32)
     add_subdirectory(EffekseerRendererDX9)
     add_subdirectory(EffekseerRendererDX11)
 endif()
-    add_subdirectory(EffekseerRendererGL)
+
+add_subdirectory(EffekseerRendererGL)
+
+if(BUILD_UNITYPLUGIN)
+    add_subdirectory(EffekseerRendererCommon)
+endif()
 
 # set include directories
 include_directories(

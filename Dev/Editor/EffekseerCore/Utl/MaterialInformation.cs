@@ -105,6 +105,12 @@ namespace Effekseer.Utl
 
 		public UInt64 GUID;
 
+		public int CustomData1Count = 0;
+
+		public int CustomData2Count = 0;
+
+		public bool HasRefraction = false;
+
 		public Dictionary<Language, string> Names = new Dictionary<Language, string>();
 
 		public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
@@ -207,14 +213,11 @@ namespace Effekseer.Utl
 					bool hasNormal = false;
 					reader.Get(ref hasNormal);
 
-					bool hasReflection = false;
-					reader.Get(ref hasReflection);
+					reader.Get(ref HasRefraction);
 
-					int customData1Count = 0;
-					reader.Get(ref customData1Count);
+					reader.Get(ref CustomData1Count);
 
-					int customData2Count = 0;
-					reader.Get(ref customData2Count);
+					reader.Get(ref CustomData2Count);
 
 					int textureCount = 0;
 					reader.Get(ref textureCount);
