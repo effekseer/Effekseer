@@ -6,8 +6,8 @@ find_package(Vulkan REQUIRED)
 
 file(GLOB LOCAL_SOURCES "*.h" "*.cpp")
 
-add_definitions(-DEFK_EXAMPLE_VULKAN_ASSETS_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/assets/\")
-add_definitions(-DEFK_EXAMPLE_VULKAN_ASSETS_DIR_U16=u\"${CMAKE_CURRENT_SOURCE_DIR}/assets/\")
+add_definitions(-DEFK_EXAMPLE_VULKAN_ASSETS_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/../Resources/\")
+add_definitions(-DEFK_EXAMPLE_VULKAN_ASSETS_DIR_U16=u\"${CMAKE_CURRENT_SOURCE_DIR}/../Resources/\")
 
 add_executable(${PROJECT_NAME} ${LOCAL_SOURCES})
 

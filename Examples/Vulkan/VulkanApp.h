@@ -1,3 +1,6 @@
+// This code is licensed under [CC0 1.0 Universal] and is based on the following code:
+// https://github.com/Overv/VulkanTutorial
+
 #pragma once
 #include <iostream>
 #include <fstream>
