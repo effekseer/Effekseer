@@ -99,3 +99,9 @@ effekseerRendererGLHeader.readLines('EffekseerRendererGL/EffekseerRenderer/Effek
 effekseerRendererGLHeader.readLines('EffekseerRendererCommon/EffekseerRenderer.Renderer.h')
 effekseerRendererGLHeader.readLines('EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Renderer.h')
 effekseerRendererGLHeader.output('EffekseerRendererGL/EffekseerRendererGL.h')
+
+effekseerRendererMetalHeader = CreateHeader()
+effekseerRendererMetalHeader.readLines('EffekseerRendererMetal/EffekseerRenderer/EffekseerRendererMetal.Base.Pre.h')
+effekseerRendererMetalHeader.readLines('EffekseerRendererCommon/EffekseerRenderer.Renderer.h')
+effekseerRendererMetalHeader.readLines('EffekseerRendererMetal/EffekseerRenderer/EffekseerRendererMetal.Renderer.h')
+effekseerRendererMetalHeader.output('EffekseerRendererMetal/EffekseerRendererMetal.h')
