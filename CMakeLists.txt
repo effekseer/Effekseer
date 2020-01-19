@@ -204,6 +204,7 @@ if (BUILD_VIEWER)
 endif()
 
 add_subdirectory(Dev)
+add_subdirectory(Examples)
 
 # specify filters
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
