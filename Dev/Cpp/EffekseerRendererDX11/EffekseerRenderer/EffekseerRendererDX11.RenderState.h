@@ -35,7 +35,7 @@ private:
 	ID3D11SamplerState*			m_sStates[TextureFilterCount][TextureWrapCount];
 
 public:
-	RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC depthFunc);
+	RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled);
 	virtual ~RenderState();
 
 	void Update( bool forced );

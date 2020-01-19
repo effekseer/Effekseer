@@ -225,10 +225,11 @@ void OriginalState::ReleaseState()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-Renderer* Renderer::Create(ID3D11Device* device, ID3D11DeviceContext* context, int32_t squareMaxCount, D3D11_COMPARISON_FUNC depthFunc)
+Renderer* Renderer::Create(
+	ID3D11Device* device, ID3D11DeviceContext* context, int32_t squareMaxCount, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled)
 {
 	RendererImplemented* renderer = new RendererImplemented( squareMaxCount );
-	if( renderer->Initialize( device, context, depthFunc) )
+	if( renderer->Initialize( device, context, depthFunc, isMSAAEnabled) )
 	{
 		return renderer;
 	}
@@ -321,7 +322,10 @@ void RendererImplemented::OnResetDevice()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* context, D3D11_COMPARISON_FUNC depthFunc)
+bool RendererImplemented::Initialize(ID3D11Device* device,
+									 ID3D11DeviceContext* context,
+									 D3D11_COMPARISON_FUNC depthFunc,
+									 bool isMSAAEnabled)
 {
 	m_device = device;
 	m_context = context;
@@ -388,7 +392,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device, ID3D11DeviceContext* 
 	// 参照カウントの調整
 	Release();
 
-	m_renderState = new RenderState(this, m_depthFunc);
+	m_renderState = new RenderState(this, m_depthFunc, isMSAAEnabled);
 
 
 	// シェーダー

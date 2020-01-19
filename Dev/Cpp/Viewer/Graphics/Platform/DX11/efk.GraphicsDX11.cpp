@@ -343,7 +343,7 @@ namespace efk
 		this->windowWidth = windowWidth;
 		this->windowHeight = windowHeight;
 
-		renderer = ::EffekseerRendererDX11::Renderer::Create(device, context, spriteCount);
+		renderer = ::EffekseerRendererDX11::Renderer::Create(device, context, spriteCount, D3D11_COMPARISON_LESS_EQUAL, true);
 
 		D3D11_RASTERIZER_DESC rasterizerDesc;
 		ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));

@@ -13,7 +13,7 @@ namespace EffekseerRendererDX11
 //-----------------------------------------------------------------------------------
 //
 //-----------------------------------------------------------------------------------
-	RenderState::RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC depthFunc)
+RenderState::RenderState(RendererImplemented* renderer, D3D11_COMPARISON_FUNC depthFunc, bool isMSAAEnabled)
 	: m_renderer	( renderer )
 {
 	D3D11_CULL_MODE cullTbl[] = 
@@ -30,6 +30,12 @@ namespace EffekseerRendererDX11
 		rsDesc.CullMode = cullTbl[ct];
 		rsDesc.FillMode = D3D11_FILL_SOLID; 
 		rsDesc.DepthClipEnable = TRUE;
+
+		if (isMSAAEnabled)
+		{
+			rsDesc.MultisampleEnable = TRUE;
+		}
+
 		rsDesc.FrontCounterClockwise =
 			(depthFunc == D3D11_COMPARISON_GREATER_EQUAL || depthFunc == D3D11_COMPARISON_GREATER) ? TRUE : FALSE;
 		m_renderer->GetDevice()->CreateRasterizerState( &rsDesc, &m_rStates[ct] );

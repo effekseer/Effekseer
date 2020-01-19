@@ -45,13 +45,15 @@ public:
 		@param	context		DirectXのコンテキスト
 		@param	squareMaxCount	最大描画スプライト数
 		@param	depthFunc	奥行きの計算方法
+		@param	isMSAAEnabled whether is MSAA enabled 
 		@return	インスタンス
 	*/
 	static Renderer* Create(
 		ID3D11Device* device, 
 		ID3D11DeviceContext* context, 
 		int32_t squareMaxCount, 
-		D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS_EQUAL);
+		D3D11_COMPARISON_FUNC depthFunc = D3D11_COMPARISON_LESS_EQUAL,
+		bool isMSAAEnabled = false);
 
 	virtual ID3D11Device* GetDevice() = 0;
 

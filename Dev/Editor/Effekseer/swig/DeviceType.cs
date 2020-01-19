@@ -11,7 +11,6 @@
 namespace Effekseer.swig {
 
 public enum DeviceType {
-  DirectX9,
   DirectX11,
   OpenGL
 }
