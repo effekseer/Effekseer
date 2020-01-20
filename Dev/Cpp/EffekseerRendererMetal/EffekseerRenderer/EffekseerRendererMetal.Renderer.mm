@@ -1,5 +1,5 @@
 #include "EffekseerRendererMetal.Renderer.h"
-#include "../EffekseerRendererMetal.RendererImplemented.h"
+#include "EffekseerRendererMetal.RendererImplemented.h"
 #include "EffekseerRendererMetal.MaterialLoader.h"
 
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h"

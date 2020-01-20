@@ -25,7 +25,7 @@ list(REMOVE_ITEM LOCAL_SOURCES_Common
 source_group("EffekseerRendererCommon" FILES ${LOCAL_SOURCES_Common})
 
 file(GLOB_RECURSE LOCAL_HEADERS_Metal *.h)
-file(GLOB_RECURSE LOCAL_SOURCES_Metal *.cpp)
+file(GLOB_RECURSE LOCAL_SOURCES_Metal *.cpp *.mm)
 FilterFolder("${LOCAL_HEADERS_Metal}")
 FilterFolder("${LOCAL_SOURCES_Metal}")
 
