@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Path
+	public class Path : IResettableValue
 	{
 		string _abspath = string.Empty;
 
@@ -127,6 +127,16 @@ namespace Effekseer.Data.Value
 			{
 				throw new Exception(e.ToString() + " Core.FullPath = " + Core.FullPath );
 			}
+		}
+
+		public void ResetValue()
+		{
+			SetAbsolutePath(DefaultValue);
+		}
+
+		internal void SetDefaultAbsolutePath(string abspath)
+		{
+			DefaultValue = abspath;
 		}
 
 		internal void SetAbsolutePathDirectly(string abspath)

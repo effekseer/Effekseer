@@ -12,6 +12,7 @@ namespace Effekseer.GUI.Component
 	{
 		string id1 = "";
 		string id2 = "";
+		string id_c = "";
 
 		public string Label { get; set; } = string.Empty;
 
@@ -22,6 +23,8 @@ namespace Effekseer.GUI.Component
 		string filePath = string.Empty;
 		string infoText = string.Empty;
 		bool isHovered = false;
+
+		bool isPopupShown = false;
 
 		Thumbnail thumbnail = null;
 		public bool EnableUndo { get; set; } = true;
@@ -66,6 +69,7 @@ namespace Effekseer.GUI.Component
 
 			id1 = "###" + Manager.GetUniqueID().ToString();
 			id2 = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -108,6 +112,7 @@ namespace Effekseer.GUI.Component
 		public override void Update()
 		{
 			isHovered = false;
+			isPopupShown = false;
 
 			if (binding == null) return;
 
@@ -119,6 +124,8 @@ namespace Effekseer.GUI.Component
 			{
 				btn_load_Click();
 			}
+
+			Popup();
 
 			if (dd == null) dd = DragAndDrops.UpdateImageDst();
 
@@ -143,6 +150,8 @@ namespace Effekseer.GUI.Component
 				{
 					btn_delete_Click();
 				}
+
+				Popup();
 				
 				if (dd == null) dd = DragAndDrops.UpdateImageDst();
 
@@ -151,6 +160,8 @@ namespace Effekseer.GUI.Component
 				Manager.NativeManager.SameLine();
 
 				Manager.NativeManager.Text(infoText);
+
+				Popup();
 
 				if (dd == null) dd = DragAndDrops.UpdateImageDst();
 
@@ -173,6 +184,8 @@ namespace Effekseer.GUI.Component
 					{
 						Manager.NativeManager.Image(image, 128, 128);
 					}
+
+					Popup();
 				}
 
 				if (dd == null) dd = DragAndDrops.UpdateImageDst();
@@ -276,6 +289,20 @@ namespace Effekseer.GUI.Component
 		{
 			var filters = binding.Filter.Split(',');
 			return filters.Any(_ => "." + _ == System.IO.Path.GetExtension(path).ToLower());
+		}
+
+		void Popup()
+		{
+			if (isPopupShown) return;
+
+			if (Manager.NativeManager.BeginPopupContextItem(id_c))
+			{
+				Functions.ShowReset(binding);
+
+				Manager.NativeManager.EndPopup();
+
+				isPopupShown = true;
+			}
 		}
 	}
 }

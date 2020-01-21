@@ -1910,6 +1910,32 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 	data.resize(data.size() + bwParam2.GetBuffer().size());
 	memcpy(data.data() + offset, bwParam2.GetBuffer().data(), bwParam2.GetBuffer().size());
 
+	// for Editor(CustomData)
+	BinaryWriter bwEditorCD;
+	bwEditorCD.Push(static_cast<int32_t>(CustomData.size()));
+	for (size_t ci = 0; ci < CustomData.size(); ci++)
+	{
+		bwEditorCD.Push(CustomData[ci].Values[0]);
+		bwEditorCD.Push(CustomData[ci].Values[1]);
+		bwEditorCD.Push(CustomData[ci].Values[2]);
+		bwEditorCD.Push(CustomData[ci].Values[3]);
+	}
+
+	char* chunk_EditorCD = "E_CD";
+	auto size_EditorCD = static_cast<int32_t>(bwEditorCD.GetBuffer().size());
+
+	offset = data.size();
+	data.resize(data.size() + 4);
+	memcpy(data.data() + offset, chunk_EditorCD, 4);
+
+	offset = data.size();
+	data.resize(data.size() + sizeof(int32_t));
+	memcpy(data.data() + offset, &size_EditorCD, sizeof(int32_t));
+
+	offset = data.size();
+	data.resize(data.size() + bwEditorCD.GetBuffer().size());
+	memcpy(data.data() + offset, bwEditorCD.GetBuffer().data(), bwEditorCD.GetBuffer().size());
+
 	BinaryWriter bwGene;
 
 	{

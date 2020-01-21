@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Vector4D
+	public class Vector4D : IResettableValue
 	{
 		public Float X
 		{
@@ -78,6 +78,24 @@ namespace Effekseer.Data.Value
 
 			IsDynamicEquationEnabled = new Boolean();
 			DynamicEquation = new DynamicEquationReference();
+		}
+
+		public void ResetValue()
+		{
+			Command.CommandManager.StartCollection();
+			X.ResetValue();
+			Y.ResetValue();
+			Z.ResetValue();
+			W.ResetValue();
+			Command.CommandManager.EndCollection();
+		}
+
+		public void ChangeDefaultValue(float x, float y, float z, float w)
+		{
+			X.ChangeDefaultValue(x);
+			Y.ChangeDefaultValue(y);
+			Z.ChangeDefaultValue(z);
+			W.ChangeDefaultValue(w);
 		}
 
 		public static explicit operator byte[] (Vector4D value)

@@ -313,13 +313,10 @@ namespace Effekseer.Utl
 					{
 						int customDataCount = 0;
 						reader.Get(ref customDataCount);
-
-						CustomData = new CustomDataInformation[customDataCount];
+						AllocateCustomData(customDataCount);
 
 						for (int j = 0; j < customDataCount; j++)
 						{
-							CustomData[j] = new CustomDataInformation();
-
 							int count = 0;
 							reader.Get(ref count);
 
@@ -380,6 +377,29 @@ namespace Effekseer.Utl
 					}
 				}
 
+				if (buf[0] == 'E' &&
+				buf[1] == '_' &&
+				buf[2] == 'C' &&
+				buf[3] == 'D')
+				{
+					var temp = new byte[BitConverter.ToInt32(buf, 4)];
+					if (br.Read(temp, 0, temp.Length) != temp.Length) return false;
+
+					var reader = new BinaryReader(temp);
+
+					int customDataCount = 0;
+					reader.Get(ref customDataCount);
+					AllocateCustomData(customDataCount);
+
+					for (int j = 0; j < customDataCount; j++)
+					{
+						reader.Get(ref CustomData[j].DefaultValues[0]);
+						reader.Get(ref CustomData[j].DefaultValues[1]);
+						reader.Get(ref CustomData[j].DefaultValues[2]);
+						reader.Get(ref CustomData[j].DefaultValues[3]);
+					}
+				}
+				
 				if (buf[0] == 'G' &&
 				buf[1] == 'E' &&
 				buf[2] == 'N' &&
@@ -397,10 +417,23 @@ namespace Effekseer.Utl
 			return true;
 		}
 
+		private void AllocateCustomData(int customDataCount)
+		{
+			if (CustomData.Count() == 0)
+			{
+				CustomData = new CustomDataInformation[customDataCount];
+				for (int j = 0; j < customDataCount; j++)
+				{
+					CustomData[j] = new CustomDataInformation();
+				}
+			}
+		}
+
 		public class CustomDataInformation
 		{
 			public Dictionary<Language, string> Summaries = new Dictionary<Language, string>();
 			public Dictionary<Language, string> Descriptions = new Dictionary<Language, string>();
+			public float[] DefaultValues = new float[4];
 		}
 
 

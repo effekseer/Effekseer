@@ -121,6 +121,8 @@ Depth,Depth,深度
 Global,Global Settings,全体
 ,,
 ,,
+ResetParam_Name,Reset,リセット
+ResetParam_Desc,Reset parameter into a default,パラメーターをデフォルトにリセットします。
 ,,
 EnlargeAnchor,Enlarge anchor,アンカーの展開
 EnlargeAnchor_Desc,"To make the value change smoothly,

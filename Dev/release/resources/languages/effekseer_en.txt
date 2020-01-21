@@ -1,4 +1,4 @@
-AboutEffekseer,About Effekseer
+﻿AboutEffekseer,About Effekseer
 AttractionForces,Attraction Forces
 AutoConnect,Auto-connect
 BasicRenderSettings,Basic Render Settings
@@ -118,6 +118,8 @@ Zoom,Zoom
 Depth,Depth
 Global,Global Settings
 ,
+ResetParam_Name,Reset
+ResetParam_Desc,Reset parameter into a default
 EnlargeAnchor,Enlarge anchor
 EnlargeAnchor_Desc,To make the value change smoothly,\nextend the anchor
 ShrinkAnchor,Shrink anchor

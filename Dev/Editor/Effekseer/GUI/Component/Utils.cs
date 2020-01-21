@@ -22,6 +22,20 @@ namespace Effekseer.GUI.Component
 		{
 			return Manager.NativeManager.IsItemHovered() && Manager.NativeManager.GetHoveredIDTimer() > 0.25f;
 		}
+
+		public static void ShowReset(Data.IResettableValue value)
+		{
+			if (Manager.NativeManager.Button(Resources.GetString("ResetParam_Name")))
+			{
+				value.ResetValue();
+			}
+
+			if(CanShowTip())
+			{
+				Manager.NativeManager.SetTooltip(Resources.GetString("ResetParam_Desc"));
+			}
+		}
+
 	}
 	class CopyAndPaste : IControl
 	{

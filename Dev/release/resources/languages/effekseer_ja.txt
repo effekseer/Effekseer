@@ -1,4 +1,4 @@
-AboutEffekseer,Effekseerについて
+﻿AboutEffekseer,Effekseerについて
 AttractionForces,引力
 AutoConnect,切断時、自動接続を一定時間ごとに行う
 BasicRenderSettings,描画共通
@@ -118,6 +118,8 @@ Zoom,画面拡大率
 Depth,深度
 Global,全体
 ,
+ResetParam_Name,リセット
+ResetParam_Desc,パラメーターをデフォルトにリセットします。
 EnlargeAnchor,アンカーの展開
 EnlargeAnchor_Desc,値が滑らかに変化するように\nアンカーを広げる
 ShrinkAnchor,アンカーの縮退

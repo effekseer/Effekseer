@@ -629,4 +629,9 @@ namespace Effekseer.Data
 
 		event ChangedValueEventHandler OnChanged;
 	}
+
+	public interface IResettableValue
+	{
+		void ResetValue();
+	}
 }

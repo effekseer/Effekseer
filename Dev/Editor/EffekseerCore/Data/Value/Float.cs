@@ -6,7 +6,7 @@ using Effekseer.Utl;
 
 namespace Effekseer.Data.Value
 {
-	public class Float
+	public class Float : IResettableValue
 	{
 		float _value = 0;
 		float _max = float.MaxValue;
@@ -86,6 +86,11 @@ namespace Effekseer.Data.Value
 			}
 		}
 
+		public void ChangeDefaultValue(float value)
+		{
+			DefaultValue = value;
+		}
+
 		public float GetValue()
 		{
 			return _value;
@@ -126,6 +131,11 @@ namespace Effekseer.Data.Value
 			_value = converted;
 
 			CallChanged(_value, ChangedValueType.Execute);
+		}
+
+		public void ResetValue()
+		{
+			SetValue(DefaultValue);
 		}
 
 		public static implicit operator float(Float value)

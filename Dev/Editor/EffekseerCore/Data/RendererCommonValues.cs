@@ -357,6 +357,8 @@ namespace Effekseer.Data
 								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(texture.DefaultPath);
 								isChanged = true;
 							}
+
+							(foundValue.Value as Value.PathForImage).SetDefaultAbsolutePath(texture.DefaultPath);
 						}
 						else
 						{
@@ -365,6 +367,8 @@ namespace Effekseer.Data
 								(foundValue.Value as Value.PathForImage).SetAbsolutePathDirectly(texture.DefaultPath);
 								isChanged = true;
 							}
+
+							(foundValue.Value as Value.PathForImage).SetDefaultAbsolutePath(texture.DefaultPath);
 						}
 					}
 					else
@@ -373,7 +377,7 @@ namespace Effekseer.Data
 						if (!withNameFlag) continue;
 
 						status = new ValueStatus();
-						var value = new Value.PathForImage(Resources.GetString("ImageFilter"), true);
+						var value = new Value.PathForImage(Resources.GetString("ImageFilter"), true, texture.DefaultPath);
 						status.Value = value;
 						status.IsShown = texture.IsParam;
 						status.Priority = texture.Priority;
@@ -445,6 +449,15 @@ namespace Effekseer.Data
 						{
 							status.IsShown = true;
 							isChanged = true;
+
+							if (uniform.Type == 0)
+							{
+								(status.Value as Value.Float).ChangeDefaultValue(uniform.DefaultValues[0]);
+							}
+							else
+							{
+								(status.Value as Value.Vector4D).ChangeDefaultValue(uniform.DefaultValues[0], uniform.DefaultValues[1], uniform.DefaultValues[2], uniform.DefaultValues[3]);
+							}
 						}
 					}
 					else
@@ -455,7 +468,7 @@ namespace Effekseer.Data
 						if (uniform.Type == 0)
 						{
 							status = new ValueStatus();
-							var value = new Value.Float();
+							var value = new Value.Float(uniform.DefaultValues[0]);
 							value.SetValueDirectly(uniform.DefaultValues[0]);
 							status.Value = value;
 							status.IsShown = true;
@@ -466,7 +479,7 @@ namespace Effekseer.Data
 						else
 						{
 							status = new ValueStatus();
-							var value = new Value.Vector4D();
+							var value = new Value.Vector4D(uniform.DefaultValues[0], uniform.DefaultValues[1], uniform.DefaultValues[2], uniform.DefaultValues[3]);
 							value.X.SetValueDirectly(uniform.DefaultValues[0]);
 							value.Y.SetValueDirectly(uniform.DefaultValues[1]);
 							value.Z.SetValueDirectly(uniform.DefaultValues[2]);
@@ -502,6 +515,18 @@ namespace Effekseer.Data
 					}
 				}
 			}
+
+			rcValues.CustomData1.Fixed4.ChangeDefaultValue(
+				info.CustomData[0].DefaultValues[0],
+				info.CustomData[0].DefaultValues[1],
+				info.CustomData[0].DefaultValues[2],
+				info.CustomData[0].DefaultValues[3]);
+
+			rcValues.CustomData2.Fixed4.ChangeDefaultValue(
+				info.CustomData[1].DefaultValues[0],
+				info.CustomData[1].DefaultValues[1],
+				info.CustomData[1].DefaultValues[2],
+				info.CustomData[1].DefaultValues[3]);
 
 			if (isChanged && OnChanged != null)
 			{
