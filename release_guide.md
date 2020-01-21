@@ -21,7 +21,7 @@ Execute releae.bat
 
 ## imgui customization
 
-- Navigate
+- Navigate(editor and material)
 
 ```
 NAV_MAP_KEY(ImGuiKey_Space,     ImGuiNavInput_Activate );

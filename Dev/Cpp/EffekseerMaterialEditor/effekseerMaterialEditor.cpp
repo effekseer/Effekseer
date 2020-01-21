@@ -220,6 +220,7 @@ int mainLoop(int argc, char* argv[])
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	ImGui::StyleColorsDark();
 
 	FILE* fp = nullptr;
