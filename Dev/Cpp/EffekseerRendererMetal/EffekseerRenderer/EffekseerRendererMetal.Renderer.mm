@@ -36,13 +36,13 @@ namespace EffekseerRendererMetal
     };
     
     const char* sources[] = {
-        g_sprite_vs_src, g_sprite_distortion_vs_src, g_model_lighting_vs_src, g_model_texture_vs_src, g_model_distortion_vs_src,
-        g_sprite_fs_texture_src, g_sprite_fs_texture_distortion_src, g_model_lighting_fs_src, g_model_texture_fs_src, g_model_distortion_fs_src
+        g_sprite_vs_src, g_sprite_vs_lighting_src, g_sprite_distortion_vs_src, g_model_lighting_vs_src, g_model_texture_vs_src, g_model_distortion_vs_src,
+        g_sprite_fs_texture_src, g_sprite_fs_lighting_src, g_sprite_fs_texture_distortion_src, g_model_lighting_fs_src, g_model_texture_fs_src, g_model_distortion_fs_src
     };
     
     std::vector<LLGI::DataStructure>* dest = &renderer->fixedShader_.StandardTexture_VS;
 
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < 12; ++i)
     {
         allocate_(dest[i], sources[i], sizeof(sources[i]));
     }
