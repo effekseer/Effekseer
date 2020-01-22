@@ -23,7 +23,6 @@ struct ShaderInput1 {
   float3 a_Tangent [[attribute(3)]];
   float2 a_TexCoord [[attribute(4)]];
   float4 a_Color [[attribute(5)]];
-//  uint4 a_Index [[attribute(6)]];
 )"
 #if defined(MODEL_SOFTWARE_INSTANCING)
     R"(
@@ -671,14 +670,6 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
                 ExportUniform(userUniforms, 4, "customData2");
             }
         }
-        
-        for (int32_t i = 0; i < material->GetUniformCount(); i++)
-        {
-            //auto uniformIndex = material->GetUniformIndex(i);
-            auto uniformName = material->GetUniformName(i);
-
-            ExportUniform(userUniforms, 4, uniformName);
-        }
 
         int32_t actualTextureCount = std::min(maximumTextureCount, material->GetTextureCount());
 
@@ -707,6 +698,13 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
         {
             ExportUniform(maincode, 16, "cameraMat");
             ExportTexture(textures, "background", t_index);
+        }
+        
+        for (int32_t i = 0; i < material->GetUniformCount(); i++)
+        {
+            auto uniformName = material->GetUniformName(i);
+
+            ExportUniform(userUniforms, 4, uniformName);
         }
 
         auto baseCode = std::string(material->GetGenericCode());
@@ -753,17 +751,6 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
                 baseCode = baseCode.replace(posP, posS + keyS.length() - posP, texSample.str());
                 posP = baseCode.find(keyP, posP + texSample.str().length());
             }
-            
-//            if (stage == 0)
-//            {
-//                baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",GetUV(");
-//                baseCode = Replace(baseCode, keyS, "), 0.0)");
-//            }
-//            else
-//            {
-//                baseCode = Replace(baseCode, keyP, "TEX2D(" + textureName + ",GetUV(");
-//                baseCode = Replace(baseCode, keyS, "))");
-//            }
         }
 
         // invalid texture
@@ -819,11 +806,6 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
         shaderData.CodePS =
             Replace(shaderData.CodePS, "//$C_PIN2$", GetType(material->GetCustomData2Count()) + " v_CustomData2;");
     }
-
-//    printf(shaderData.CodeVS.c_str());
-//    printf("\n\n\n");
-//    printf(shaderData.CodePS.c_str());
-//    printf("\n\n\n");
     
     return shaderData;
 }

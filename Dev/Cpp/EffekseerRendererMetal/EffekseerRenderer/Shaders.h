@@ -66,6 +66,110 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
 )";
 
 
+static const char g_sprite_vs_lighting_src[] = R"(mtlcode
+#include <metal_stdlib>
+#pragma clang diagnostic ignored "-Wparentheses-equality"
+using namespace metal;
+struct ShaderInput1 {
+  float4 atPosition [[attribute(0)]];
+  float4 atColor [[attribute(1)]];
+  float3 atNormal [[attribute(2)]];
+  float3 atTangent [[attribute(3)]];
+  float2 atTexCoord [[attribute(4)]];
+  float2 atTexCoord2 [[attribute(5)]];
+};
+struct ShaderOutput1 {
+  float4 gl_Position [[position]];
+  float4 v_VColor;
+  float2 v_UV1;
+  float2 v_UV2;
+  float3 v_WorldP;
+  float3 v_WorldN;
+  float3 v_WorldT;
+  float3 v_WorldB;
+  float2 v_ScreenUV;
+};
+struct ShaderUniform1 {
+  float4x4 uMatCamera;
+  float4x4 uMatProjection;
+  float4 mUVInversed;
+};
+vertex ShaderOutput1 main0 (ShaderInput1 _mtl_i [[stage_in]], constant ShaderUniform1& _mtl_u [[buffer(0)]])
+{
+  ShaderOutput1 _mtl_o;
+  float2 uv2_1 = 0;
+  float2 uv1_2 = 0;
+  float3 tmpvar_3 = 0;
+  tmpvar_3 = _mtl_i.atPosition.xyz;
+  uv1_2.x = _mtl_i.atTexCoord.x;
+  uv1_2.y = (_mtl_u.mUVInversed.x + (_mtl_u.mUVInversed.y * _mtl_i.atTexCoord.y));
+  uv2_1.x = _mtl_i.atTexCoord2.x;
+  uv2_1.y = (_mtl_u.mUVInversed.x + (_mtl_u.mUVInversed.y * _mtl_i.atTexCoord2.y));
+  float3 tmpvar_4 = 0;
+  tmpvar_4 = ((_mtl_i.atNormal - float3(0.5, 0.5, 0.5)) * 2.0);
+  float3 tmpvar_5 = 0;
+  tmpvar_5 = ((_mtl_i.atTangent - float3(0.5, 0.5, 0.5)) * 2.0);
+  _mtl_o.v_WorldN = tmpvar_4;
+  _mtl_o.v_WorldB = ((tmpvar_4.yzx * tmpvar_5.zxy) - (tmpvar_4.zxy * tmpvar_5.yzx));
+  _mtl_o.v_WorldT = tmpvar_5;
+  float4 tmpvar_6 = 0;
+  tmpvar_6.w = 1.0;
+  tmpvar_6.xyz = tmpvar_3;
+  float4 tmpvar_7 = 0;
+  tmpvar_7 = (_mtl_u.uMatCamera * tmpvar_6);
+  _mtl_o.gl_Position = (_mtl_u.uMatProjection * (tmpvar_7 / tmpvar_7.w));
+  _mtl_o.v_WorldP = tmpvar_3;
+  _mtl_o.v_VColor = _mtl_i.atColor;
+  _mtl_o.v_UV1 = uv1_2;
+  _mtl_o.v_UV2 = uv2_1;
+  _mtl_o.v_ScreenUV = (_mtl_o.gl_Position.xy / _mtl_o.gl_Position.w);
+  _mtl_o.v_ScreenUV = ((_mtl_o.v_ScreenUV + float2(1.0, 1.0)) * 0.5);
+  return _mtl_o;
+}
+)";
+
+static const char g_sprite_fs_lighting_src[] = R"(mtlcode
+#include <metal_stdlib>
+#pragma clang diagnostic ignored "-Wparentheses-equality"
+using namespace metal;
+struct ShaderInput2 {
+  float4 v_VColor;
+  float2 v_UV1;
+  float3 v_WorldN;
+  float3 v_WorldT;
+  float3 v_WorldB;
+};
+struct ShaderOutput2 {
+  half4 gl_FragColor;
+};
+struct ShaderUniform2 {
+  float4 LightDirection;
+  float4 LightAmbient;
+};
+fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderUniform2& _mtl_u [[buffer(0)]]
+  ,   texture2d<float> ColorTexture [[texture(0)]], sampler _mtlsmp_ColorTexture [[sampler(0)]]
+  ,   texture2d<float> NormalTexture [[texture(1)]], sampler _mtlsmp_NormalTexture [[sampler(1)]])
+{
+  ShaderOutput2 _mtl_o;
+  half4 tmpvar_1 = 0;
+  tmpvar_1 = half4(NormalTexture.sample(_mtlsmp_NormalTexture, (float2)(_mtl_i.v_UV1)));
+  float3x3 tmpvar_2;
+  tmpvar_2[0] = _mtl_i.v_WorldT;
+  tmpvar_2[1] = _mtl_i.v_WorldB;
+  tmpvar_2[2] = _mtl_i.v_WorldN;
+  half4 tmpvar_3 = 0;
+  tmpvar_3 = half4(ColorTexture.sample(_mtlsmp_ColorTexture, (float2)(_mtl_i.v_UV1)));
+  _mtl_o.gl_FragColor = ((half4)(_mtl_i.v_VColor * (float4)(tmpvar_3)));
+  _mtl_o.gl_FragColor.xyz = (_mtl_o.gl_FragColor.xyz * ((half3)((float3)(half3(max ((half)0.0,
+    ((half)dot ((float3)normalize(((half3)(tmpvar_2 * (float3)((
+      (tmpvar_1.xyz - (half)(0.5))
+     * (half)(2.0)))))), _mtl_u.LightDirection.xyz))
+  ))) + _mtl_u.LightAmbient.xyz)));
+  return _mtl_o;
+}
+)";
+
+
 const char g_sprite_distortion_vs_src[] = R"(mtlcode
 #include <metal_stdlib>
 #pragma clang diagnostic ignored "-Wparentheses-equality"
