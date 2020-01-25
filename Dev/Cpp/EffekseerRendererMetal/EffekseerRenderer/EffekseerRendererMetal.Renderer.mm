@@ -138,6 +138,8 @@ void RendererImplemented::SetExternalCommandBuffer(id<MTLCommandBuffer> extComma
     if (commandList_ != nullptr)
     {
         auto clm = static_cast<LLGI::CommandListMetal*>(GetCurrentCommandList());
+        [extCommandBuffer retain];
+        [clm->GetImpl()->commandBuffer release];
         clm->GetImpl()->commandBuffer = extCommandBuffer;
     }
 }
@@ -147,6 +149,8 @@ void RendererImplemented::SetExternalRenderEncoder(id<MTLRenderCommandEncoder> e
     if (commandList_ != nullptr)
     {
         auto clm = static_cast<LLGI::CommandListMetal*>(GetCurrentCommandList());
+        [extRenderEncoder retain];
+        [clm->GetImpl()->renderEncoder release];
         clm->GetImpl()->renderEncoder = extRenderEncoder;
     }
 }
