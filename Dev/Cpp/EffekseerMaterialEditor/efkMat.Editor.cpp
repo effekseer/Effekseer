@@ -13,7 +13,6 @@
 #include <efkMat.StringContainer.h>
 #include <efkMat.TextExporter.h>
 
-#include <filesystem>
 #include "../Effekseer/Effekseer/Material/Effekseer.Material.h"
 #include "../EffekseerMaterialCompiler/OpenGL/EffekseerMaterialCompilerGL.h"
 #include "../EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.MaterialLoader.h"
