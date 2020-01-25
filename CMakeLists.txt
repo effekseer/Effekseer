@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 include(ExternalProject)
 
-# solution name
+# Solution name
 project(Effekseer)
 
 # For MSVC
@@ -48,6 +48,14 @@ if(UNIX AND NOT APPLE)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
+# detect IDE
+if(CMAKE_GENERATOR MATCHES "Visual Studio|Xcode")
+    message("Build with postfix")
+    set(BUILD_WITH_POSTFIX ON)
+else()
+    set(BUILD_WITH_POSTFIX OFF)
+endif()
+
 if(BUILD_VIEWER)
 
     # zlib
@@ -86,6 +94,17 @@ if(BUILD_VIEWER)
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libpng/lib)
     
+    if(MSVC)
+        set(LIBPNG_LIB_DEBUG "libpng16_staticd")
+        set(LIBPNG_LIB_RELEASE "libpng16_static")
+    elseif(BUILD_WITH_POSTFIX)
+        set(LIBPNG_LIB_DEBUG "png16d")
+        set(LIBPNG_LIB_RELEASE "png16")
+    else()
+        set(LIBPNG_LIB_DEBUG "png16")
+        set(LIBPNG_LIB_RELEASE "png16")
+    endif()
+
     # libgd
     ExternalProject_Add(
         ExternalProject_libgd
@@ -103,6 +122,18 @@ if(BUILD_VIEWER)
                         -DBUILD_SHARED_LIBS=OFF
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
     )
+
+    if(MSVC)
+        set(GD_LIB_DEBUG "libgd_staticd")
+        set(GD_LIB_RELEASE "libgd_static")
+    elseif(BUILD_WITH_POSTFIX)
+        set(GD_LIB_DEBUG "gdd")
+        set(GD_LIB_RELEASE "gd")
+    else()
+        set(GD_LIB_DEBUG "gd")
+        set(GD_LIB_RELEASE "gd")
+    endif()
+
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/libgd/lib)
     
@@ -143,6 +174,15 @@ if(BUILD_VIEWER)
                         -DGLFW_INSTALL=ON
                         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
     )
+
+    if(BUILD_WITH_POSTFIX)
+        set(GLFW3_LIB_DEBUG "glfw3d")
+        set(GLFW3_LIB_RELEASE "glfw3")
+    else()
+        set(GLFW3_LIB_DEBUG "glfw3")
+        set(GLFW3_LIB_RELEASE "glfw3")
+    endif()
+
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glfw/lib)
     

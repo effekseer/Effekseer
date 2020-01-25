@@ -142,8 +142,13 @@ target_link_directories(
 	${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
 )
 target_link_libraries(
-	Viewer
-    EditorCommon
+    Viewer
+    PRIVATE
+	EditorCommon
+	debug "${GLFW3_LIB_DEBUG}"
+	optimized "${GLFW3_LIB_DEBUG}"
+	debug "${GD_LIB_DEBUG}"
+	optimized "${GD_LIB_DEBUG}"	
 )
 
 add_dependencies(Viewer ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glfw ExternalProject_OpenSoundMixer)
@@ -159,20 +164,17 @@ link_directories(
 if (WIN32)
 
     target_link_libraries(
-        Viewer
+		Viewer
+		PRIVATE
         Effekseer
         EffekseerRendererDX9
         EffekseerRendererDX11
         EffekseerRendererGL
         EffekseerSoundOSMixer
         IPC
-        debug libgd_staticd
         debug libglew32d
-        debug glfw3d
         debug OpenSoundMixerd
-        optimized libgd_static
         optimized libglew32
-        optimized glfw3
         optimized OpenSoundMixer
     )
 
@@ -190,15 +192,13 @@ elseif(APPLE)
     find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 
     target_link_libraries(
-        Viewer
+		Viewer
+		PRIVATE
         Effekseer
         EffekseerRendererGL
         EffekseerSoundOSMixer
         IPC
-        glfw3
         OpenSoundMixer
-        debug gdd
-        optimized gd
         png
         z
         ${OpenAL_LIBRARY}
@@ -234,12 +234,11 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 
 target_link_libraries(
 	Viewer
+	PRIVATE
 	Effekseer
 	EffekseerRendererGL
 	EffekseerSoundOSMixer
 	IPC
-	glfw3
-	gd
 	png16
 	z
 	dl
