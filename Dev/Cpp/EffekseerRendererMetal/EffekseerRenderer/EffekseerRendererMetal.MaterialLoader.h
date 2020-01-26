@@ -13,7 +13,7 @@ protected:
     void Deserialize(uint8_t* data, uint32_t datasize, LLGI::CompilerResult& result) override;
     
 public:
-    MaterialLoader(::EffekseerRendererLLGI::Renderer* renderer,
+    MaterialLoader(::EffekseerRendererLLGI::GraphicsDevice* graphicsDevice,
                    ::Effekseer::FileInterface* fileInterface,
                    ::Effekseer::CompiledMaterialPlatformType platformType,
                    ::Effekseer::MaterialCompiler* materialCompiler);

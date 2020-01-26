@@ -157,7 +157,7 @@ void RendererImplemented::SetExternalRenderEncoder(id<MTLRenderCommandEncoder> e
 
 bool RendererImplemented::BeginRendering()
 {
-    assert(graphics_ != NULL);
+    assert(GetGraphics() != NULL);
 
     ::Effekseer::Matrix44::Mul(GetCameraProjectionMatrix(), GetCameraMatrix(), GetProjectionMatrix());
 
@@ -173,7 +173,7 @@ bool RendererImplemented::BeginRendering()
         GetCurrentCommandList()->CommandList::Begin();
 #endif
 #ifdef __EFFEKSEER_RENDERERMETAL_INTERNAL_RENDER_PASS__
-        auto g = static_cast<LLGI::GraphicsMetal*>(graphics_);
+        auto g = static_cast<LLGI::GraphicsMetal*>(GetGraphics());
         GetCurrentCommandList()->BeginRenderPass(g->GetRenderPass());
 #else
         GetCurrentCommandList()->CommandList::BeginRenderPass(nullptr);
@@ -188,7 +188,7 @@ bool RendererImplemented::BeginRendering()
 
 bool RendererImplemented::EndRendering()
 {
-    assert(graphics_ != NULL);
+    assert(GetGraphics() != NULL);
 
     // reset renderer
     m_standardRenderer->ResetAndRenderingIfRequired();
@@ -200,7 +200,7 @@ bool RendererImplemented::EndRendering()
 #endif
 #ifdef __EFFEKSEER_RENDERERMETAL_INTERNAL_COMMAND_BUFFER__
         GetCurrentCommandList()->End();
-        graphics_->Execute(GetCurrentCommandList());
+        GetGraphics()->Execute(GetCurrentCommandList());
 #endif
     }
     return true;
