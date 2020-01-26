@@ -7,20 +7,24 @@
 namespace EffekseerRendererLLGI
 {
 
-/**
-	@brief	デバイスによって生成されるオブジェクト
-*/
+
 class DeviceObject
 {
 private:
-	RendererImplemented* m_renderer;
+	GraphicsDevice* graphicsDevice_ = nullptr;
+
+	//! whether does this instance inc and dec the reference count of renderer
+	bool hasRefCount_ = false;
 
 public:
-	DeviceObject(RendererImplemented* renderer);
+	DeviceObject(GraphicsDevice* graphicsDevice, bool hasRefCount);
 	virtual ~DeviceObject();
 
 public:
-	RendererImplemented* GetRenderer() const;
+	GraphicsDevice* GetGraphicsDevice() const;
+
+	virtual void OnLostDevice() {}
+	virtual void OnResetDevice() {}
 };
 
 } // namespace EffekseerRendererLLGI

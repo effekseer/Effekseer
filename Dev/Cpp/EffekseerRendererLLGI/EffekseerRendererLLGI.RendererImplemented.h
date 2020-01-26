@@ -57,7 +57,7 @@ protected:
 		Shader
 	*/
 
-	LLGI::Graphics* graphics_;
+	GraphicsDevice* graphicsDevice_ = nullptr;
 	LLGI::RenderPassPipelineState* renderPassPipelineState_ = nullptr;
 
 	VertexBuffer* m_vertexBuffer;
@@ -112,6 +112,8 @@ public:
 	void OnLostDevice() override;;
 	void OnResetDevice() override;;
 
+	bool Initialize(GraphicsDevice* graphicsDevice, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth);
+
 	bool Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth);
 
 	void Destroy() override;
@@ -126,7 +128,9 @@ public:
 
 	void SetCommandList(EffekseerRenderer::CommandList* commandList) override;
 
-	LLGI::Graphics* GetGraphics() override { return graphics_; }
+	GraphicsDevice* GetGraphicsDevice() const { return graphicsDevice_; }
+
+	LLGI::Graphics* GetGraphics() const override { return graphicsDevice_->GetGraphics(); }
 
 	/**
 		@brief	頂点バッファ取得

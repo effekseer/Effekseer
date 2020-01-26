@@ -1,8 +1,8 @@
 ﻿#include "EffekseerRendererDX12.Renderer.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.CommandListDX12.h"
 #include "../../3rdParty/LLGI/src/DX12/LLGI.GraphicsDX12.h"
-#include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 #include "../EffekseerMaterialCompiler/DirectX12/EffekseerMaterialCompilerDX12.h"
+#include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
 
 namespace Standard_VS
 {
@@ -63,19 +63,12 @@ static
 
 	static
 #include "Shader/EffekseerRenderer.Standard_Lighting_PS.h"
-} // namespace ShaderDistortionTexture_
+} // namespace ShaderStandardLighting_
 
 namespace EffekseerRendererDX12
 {
 
-::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
-									  ID3D12CommandQueue* commandQueue,
-									  int32_t swapBufferCount,
-									  DXGI_FORMAT* renderTargetFormats,
-									  int32_t renderTargetCount,
-									  bool hasDepth,
-									  bool isReversedDepth,
-									  int32_t squareMaxCount)
+::EffekseerRenderer::GraphicsDevice* CreateDevice(ID3D12Device* device, ID3D12CommandQueue* commandQueue, int32_t swapBufferCount)
 {
 	std::function<std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*>()> getScreenFunc =
 		[]() -> std::tuple<D3D12_CPU_DESCRIPTOR_HANDLE, LLGI::Texture*> {
@@ -85,6 +78,18 @@ namespace EffekseerRendererDX12
 	auto graphics = new LLGI::GraphicsDX12(
 		device, getScreenFunc, []() -> void {}, commandQueue, swapBufferCount);
 
+	auto ret = new EffekseerRendererLLGI::GraphicsDevice(graphics);
+	ES_SAFE_RELEASE(graphics);
+	return ret;
+}
+
+::EffekseerRenderer::Renderer* Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+									  DXGI_FORMAT* renderTargetFormats,
+									  int32_t renderTargetCount,
+									  bool hasDepth,
+									  bool isReversedDepth,
+									  int32_t squareMaxCount)
+{
 	::EffekseerRendererLLGI::RendererImplemented* renderer = new ::EffekseerRendererLLGI::RendererImplemented(squareMaxCount);
 
 	auto allocate_ = [](std::vector<LLGI::DataStructure>& ds, const unsigned char* data, int32_t size) -> void {
@@ -131,16 +136,16 @@ namespace EffekseerRendererDX12
 
 	key.HasDepth = hasDepth;
 
-	auto pipelineState = graphics->CreateRenderPassPipelineState(key);
+	auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
 
-	if (renderer->Initialize(graphics, pipelineState, isReversedDepth))
+	auto pipelineState = gd->GetGraphics()->CreateRenderPassPipelineState(key);
+
+	if (renderer->Initialize(gd, pipelineState, isReversedDepth))
 	{
-		ES_SAFE_RELEASE(graphics);
 		ES_SAFE_RELEASE(pipelineState);
 		return renderer;
 	}
 
-	ES_SAFE_RELEASE(graphics);
 	ES_SAFE_RELEASE(pipelineState);
 
 	ES_SAFE_DELETE(renderer);
@@ -148,11 +153,39 @@ namespace EffekseerRendererDX12
 	return nullptr;
 }
 
+::EffekseerRenderer::Renderer* Create(ID3D12Device* device,
+									  ID3D12CommandQueue* commandQueue,
+									  int32_t swapBufferCount,
+									  DXGI_FORMAT* renderTargetFormats,
+									  int32_t renderTargetCount,
+									  bool hasDepth,
+									  bool isReversedDepth,
+									  int32_t squareMaxCount)
+{
+	auto graphicDevice = CreateDevice(device, commandQueue, swapBufferCount);
+
+	auto ret = Create(graphicDevice, renderTargetFormats, renderTargetCount, hasDepth, isReversedDepth, squareMaxCount);
+
+	if (ret != nullptr)
+	{
+		ES_SAFE_RELEASE(graphicDevice);
+		return ret;
+	}
+
+	ES_SAFE_RELEASE(graphicDevice);
+	return nullptr;
+}
+
 Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, ID3D12Resource* texture)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	auto g = static_cast<LLGI::GraphicsDX12*>(r->GetGraphics());
-	auto texture_ = g->CreateTexture((uint64_t)texture);
+	return CreateTextureData(r->GetGraphicsDevice(), texture);
+}
+
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, ID3D12Resource* texture)
+{
+	auto g = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto texture_ = g->GetGraphics()->CreateTexture((uint64_t)texture);
 
 	auto textureData = new Effekseer::TextureData();
 	textureData->UserPtr = texture_;
@@ -165,6 +198,12 @@ Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* rendere
 
 void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData)
 {
+	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
+	DeleteTextureData(r->GetGraphicsDevice(), textureData);
+}
+
+void DeleteTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, Effekseer::TextureData* textureData)
+{
 	auto texture = (LLGI::Texture*)textureData->UserPtr;
 	texture->Release();
 	delete textureData;
@@ -173,7 +212,13 @@ void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::Textu
 void FlushAndWait(::EffekseerRenderer::Renderer* renderer)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	auto g = static_cast<LLGI::GraphicsDX12*>(r->GetGraphics());
+	FlushAndWait(r->GetGraphicsDevice());
+}
+
+void FlushAndWait(::EffekseerRenderer::GraphicsDevice* graphicsDevice)
+{
+	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto g = static_cast<LLGI::GraphicsDX12*>(gd->GetGraphics());
 	g->WaitFinish();
 }
 
@@ -181,7 +226,14 @@ EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer*
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	auto g = static_cast<LLGI::GraphicsDX12*>(r->GetGraphics());
+	return CreateCommandList(r->GetGraphicsDevice(), memoryPool);
+}
+
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
+{
+	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto g = static_cast<LLGI::GraphicsDX12*>(gd->GetGraphics());
 	auto mp = static_cast<::EffekseerRendererLLGI::SingleFrameMemoryPool*>(memoryPool);
 	auto commandList = g->CreateCommandList(mp->GetInternal());
 	auto ret = new EffekseerRendererLLGI::CommandList(g, commandList, mp->GetInternal());
@@ -192,7 +244,13 @@ EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer*
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	auto g = static_cast<LLGI::GraphicsDX12*>(r->GetGraphics());
+	return CreateSingleFrameMemoryPool(r->GetGraphicsDevice());
+}
+
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::GraphicsDevice* graphicsDevice)
+{
+	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto g = static_cast<LLGI::GraphicsDX12*>(gd->GetGraphics());
 	auto mp = g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128);
 	auto ret = new EffekseerRendererLLGI::SingleFrameMemoryPool(mp);
 	ES_SAFE_RELEASE(mp);

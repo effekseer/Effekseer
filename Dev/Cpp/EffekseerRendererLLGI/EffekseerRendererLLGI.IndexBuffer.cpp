@@ -4,20 +4,20 @@
 namespace EffekseerRendererLLGI
 {
 
-IndexBuffer::IndexBuffer(RendererImplemented* renderer, LLGI::IndexBuffer* buffer, int maxCount, bool isDynamic)
-	: DeviceObject(renderer), IndexBufferBase(maxCount, isDynamic), indexBuffer(buffer)
+IndexBuffer::IndexBuffer(GraphicsDevice* graphicsDevice, LLGI::IndexBuffer* buffer, int maxCount, bool isDynamic, bool hasRefCount)
+	: DeviceObject(graphicsDevice, hasRefCount), IndexBufferBase(maxCount, isDynamic), indexBuffer(buffer)
 {
 }
 
 IndexBuffer::~IndexBuffer() { LLGI::SafeRelease(indexBuffer); }
 
-IndexBuffer* IndexBuffer::Create(RendererImplemented* renderer, int maxCount, bool isDynamic)
+IndexBuffer* IndexBuffer::Create(GraphicsDevice* graphicsDevice, int maxCount, bool isDynamic, bool hasRefCount)
 {
-	auto indexBuffer = renderer->GetGraphics()->CreateIndexBuffer(2, maxCount);
+	auto indexBuffer = graphicsDevice->GetGraphics()->CreateIndexBuffer(2, maxCount);
 	if (indexBuffer == nullptr)
 		return nullptr;
 
-	return new IndexBuffer(renderer, indexBuffer, maxCount, isDynamic);
+	return new IndexBuffer(graphicsDevice, indexBuffer, maxCount, isDynamic, hasRefCount);
 }
 
 void IndexBuffer::Lock()

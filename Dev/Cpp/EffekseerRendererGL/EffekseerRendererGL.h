@@ -127,6 +127,18 @@ enum class ProxyTextureType
 	Normal,
 };
 
+/**
+	@brief
+	\~english A class which contains a graphics device
+	\~japanese グラフィックデバイスを格納しているクラス
+*/
+class GraphicsDevice : public ::Effekseer::IReference
+{
+public:
+	GraphicsDevice() = default;
+	virtual ~GraphicsDevice() = default;
+};	
+	
 class CommandList : public ::Effekseer::IReference
 {
 public:

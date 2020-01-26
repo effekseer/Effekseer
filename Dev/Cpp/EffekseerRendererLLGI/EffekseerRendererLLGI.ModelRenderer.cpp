@@ -60,29 +60,32 @@ ModelRenderer* ModelRenderer::Create(RendererImplemented* renderer, FixedShader*
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 3});
 	layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UINT, "BLENDINDICES", 0});
 
-	Shader* shader_lighting_texture_normal = Shader::Create(renderer,
+	Shader* shader_lighting_texture_normal = Shader::Create(renderer->GetGraphicsDevice(),
 															fixedShader->ModelShaderLightingTextureNormal_VS.data(),
 															fixedShader->ModelShaderLightingTextureNormal_VS.size(),
 															fixedShader->ModelShaderLightingTextureNormal_PS.data(),
 															fixedShader->ModelShaderLightingTextureNormal_PS.size(),
 															"ModelRendererLightingTextureNormal",
-															layouts);
+															layouts,
+															true);
 
-	Shader* shader_texture = Shader::Create(renderer,
+	Shader* shader_texture = Shader::Create(renderer->GetGraphicsDevice(),
 											fixedShader->ModelShaderTexture_VS.data(),
 											fixedShader->ModelShaderTexture_VS.size(),
 											fixedShader->ModelShaderTexture_PS.data(),
 											fixedShader->ModelShaderTexture_PS.size(),
 											"ModelRendererTexture",
-											layouts);
+											layouts,
+											true);
 
-	auto shader_distortion_texture = Shader::Create(renderer,
+	auto shader_distortion_texture = Shader::Create(renderer->GetGraphicsDevice(),
 													fixedShader->ModelShaderDistortionTexture_VS.data(),
 													fixedShader->ModelShaderDistortionTexture_VS.size(),
 													fixedShader->ModelShaderDistortionTexture_PS.data(),
 													fixedShader->ModelShaderDistortionTexture_PS.size(),
 													"ModelRendererDistortionTexture",
-													layouts);
+													layouts,
+													true);
 
 	if (shader_lighting_texture_normal == NULL || shader_texture == NULL || shader_distortion_texture == NULL)
 	{

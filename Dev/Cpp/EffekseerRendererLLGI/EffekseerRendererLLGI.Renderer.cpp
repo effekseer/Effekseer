@@ -25,22 +25,42 @@
 namespace EffekseerRendererLLGI
 {
 
-::Effekseer::TextureLoader* CreateTextureLoader(LLGI::Graphics* graphics, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::TextureLoader* CreateTextureLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(graphics, fileInterface);
+	return new TextureLoader(graphicsDevice, fileInterface);
 #else
 	return NULL;
 #endif
 }
 
-::Effekseer::ModelLoader* CreateModelLoader(LLGI::Graphics* graphics, ::Effekseer::FileInterface* fileInterface)
+::Effekseer::ModelLoader* CreateModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(graphics, fileInterface);
+	return new ModelLoader(graphicsDevice, fileInterface);
 #else
 	return NULL;
 #endif
+}
+
+void GraphicsDevice::Register(DeviceObject* device) { deviceObjects_.insert(device); }
+
+void GraphicsDevice::Unregister(DeviceObject* device) { deviceObjects_.erase(device); }
+
+void GraphicsDevice::OnLostDevice()
+{
+	for (auto& device : deviceObjects_)
+	{
+		device->OnLostDevice();
+	}
+}
+
+void GraphicsDevice::OnResetDevice()
+{
+	for (auto& device : deviceObjects_)
+	{
+		device->OnResetDevice();
+	}
 }
 
 bool PiplineStateKey::operator<(const PiplineStateKey& v) const
@@ -67,8 +87,8 @@ bool PiplineStateKey::operator<(const PiplineStateKey& v) const
 	if (topologyType != v.topologyType)
 		return topologyType < v.topologyType;
 
-    if (renderPassPipelineState != v.renderPassPipelineState)
-        return renderPassPipelineState < v.renderPassPipelineState;
+	if (renderPassPipelineState != v.renderPassPipelineState)
+		return renderPassPipelineState < v.renderPassPipelineState;
 
 	return false;
 }
@@ -90,7 +110,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 	key.state = m_renderState->GetActiveState();
 	key.shader = currentShader;
 	key.topologyType = currentTopologyType_;
-    key.renderPassPipelineState = renderPassPipelineState_;
+	key.renderPassPipelineState = renderPassPipelineState_;
 
 	auto it = piplineStates_.find(key);
 	if (it != piplineStates_.end())
@@ -98,7 +118,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 		return it->second;
 	}
 
-	auto piplineState = graphics_->CreatePiplineState();
+	auto piplineState = GetGraphics()->CreatePiplineState();
 
 	if (isReversedDepth_)
 	{
@@ -184,7 +204,7 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 }
 
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
-	: graphics_(nullptr)
+	: graphicsDevice_(nullptr)
 	, m_vertexBuffer(NULL)
 	, m_indexBuffer(NULL)
 	, m_squareMaxCount(squareMaxCount)
@@ -209,7 +229,7 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 RendererImplemented::~RendererImplemented()
 {
 	// to prevent objects to be disposed before finish renderings.
-	graphics_->WaitFinish();
+	GetGraphics()->WaitFinish();
 
 	for (auto p : piplineStates_)
 	{
@@ -223,20 +243,12 @@ RendererImplemented::~RendererImplemented()
 
 	GetImpl()->DeleteProxyTextures(this);
 
-	assert(GetRef() == 0);
-
 	ES_SAFE_DELETE(m_distortingCallback);
 
 	auto p = (LLGI::Texture*)m_background.UserPtr;
 	ES_SAFE_RELEASE(p);
 
 	ES_SAFE_DELETE(m_standardRenderer);
-
-	int32_t refMinus = -5;
-	if (m_shader_lighting != nullptr)
-	{
-		refMinus--;
-	}
 
 	ES_SAFE_DELETE(m_shader);
 	ES_SAFE_DELETE(m_shader_lighting);
@@ -252,9 +264,7 @@ RendererImplemented::~RendererImplemented()
 		materialCompiler_->Release();
 		materialCompiler_ = nullptr;
 	}
-	LLGI::SafeRelease(graphics_);
-
-	assert(GetRef() == refMinus);
+	LLGI::SafeRelease(graphicsDevice_);
 }
 
 void RendererImplemented::OnLostDevice() {}
@@ -263,27 +273,38 @@ void RendererImplemented::OnResetDevice() {}
 
 bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassPipelineState* renderPassPipelineState, bool isReversedDepth)
 {
-	graphics_ = graphics;
+
+	auto gd = new GraphicsDevice(graphics);
+
+	auto ret = Initialize(gd, renderPassPipelineState, isReversedDepth);
+
+	ES_SAFE_RELEASE(gd);
+
+	return ret;
+}
+
+bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
+									 LLGI::RenderPassPipelineState* renderPassPipelineState,
+									 bool isReversedDepth)
+{
+	graphicsDevice_ = graphicsDevice;
 	renderPassPipelineState_ = renderPassPipelineState;
 	isReversedDepth_ = isReversedDepth;
 
-	LLGI::SafeAddRef(graphics_);
+	LLGI::SafeAddRef(graphicsDevice_);
 	LLGI::SafeAddRef(renderPassPipelineState_);
 
 	// Generate vertex buffer
 	{
 		// assume max vertex size is smaller than float * 10
-		m_vertexBuffer = VertexBuffer::Create(this, sizeof(float) * 10 * m_squareMaxCount * 4, true);
+		m_vertexBuffer = VertexBuffer::Create(graphicsDevice_, sizeof(float) * 10 * m_squareMaxCount * 4, true, false);
 		if (m_vertexBuffer == NULL)
 			return false;
 	}
 
-	// adjust a reference counter
-	Release();
-
 	// Generate index buffer
 	{
-		m_indexBuffer = IndexBuffer::Create(this, m_squareMaxCount * 6, false);
+		m_indexBuffer = IndexBuffer::Create(graphicsDevice_, m_squareMaxCount * 6, false, false);
 		if (m_indexBuffer == NULL)
 			return false;
 
@@ -303,12 +324,9 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassP
 		m_indexBuffer->Unlock();
 	}
 
-	// adjust a reference counter
-	Release();
-
 	// Generate index buffer for rendering wireframes
 	{
-		m_indexBufferForWireframe = IndexBuffer::Create(this, m_squareMaxCount * 8, false);
+		m_indexBufferForWireframe = IndexBuffer::Create(graphicsDevice_, m_squareMaxCount * 8, false, false);
 		if (m_indexBufferForWireframe == NULL)
 			return false;
 
@@ -330,9 +348,6 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassP
 		m_indexBufferForWireframe->Unlock();
 	}
 
-	// adjust a reference counter
-	Release();
-
 	m_renderState = new RenderState(this);
 
 	// shader
@@ -349,31 +364,27 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassP
 	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 1});
 	layouts_distort.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32B32_FLOAT, "NORMAL", 2});
 
-	m_shader = Shader::Create(this,
+	m_shader = Shader::Create(graphicsDevice_,
 							  fixedShader_.StandardTexture_VS.data(),
 							  fixedShader_.StandardTexture_VS.size(),
 							  fixedShader_.StandardTexture_PS.data(),
 							  fixedShader_.StandardTexture_PS.size(),
 							  "StandardRenderer",
-							  layouts);
+							  layouts,
+							  false);
 	if (m_shader == NULL)
 		return false;
 
-	// adjust a reference counter
-	Release();
-
-	m_shader_distortion = Shader::Create(this,
+	m_shader_distortion = Shader::Create(graphicsDevice_,
 										 fixedShader_.StandardDistortedTexture_VS.data(),
 										 fixedShader_.StandardDistortedTexture_VS.size(),
 										 fixedShader_.StandardDistortedTexture_PS.data(),
 										 fixedShader_.StandardDistortedTexture_PS.size(),
 										 "StandardRenderer Distortion",
-										 layouts_distort);
+										 layouts_distort,
+										 false);
 	if (m_shader_distortion == NULL)
 		return false;
-
-	// adjust a reference counter
-	Release();
 
 	if (fixedShader_.StandardLightingTexture_VS.size() > 0 && fixedShader_.StandardLightingTexture_PS.size() > 0)
 	{
@@ -385,22 +396,20 @@ bool RendererImplemented::Initialize(LLGI::Graphics* graphics, LLGI::RenderPassP
 		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
 		layouts_lighting.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 1});
 
-		m_shader_lighting = Shader::Create(this,
+		m_shader_lighting = Shader::Create(graphicsDevice_,
 										   fixedShader_.StandardLightingTexture_VS.data(),
 										   fixedShader_.StandardLightingTexture_VS.size(),
 										   fixedShader_.StandardLightingTexture_PS.data(),
 										   fixedShader_.StandardLightingTexture_PS.size(),
 										   "StandardRenderer Lighting",
-										   layouts_lighting);
+										   layouts_lighting,
+										   false);
 
 		m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 		m_shader_lighting->SetVertexRegisterCount(8 + 1);
 
 		m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
 		m_shader_lighting->SetPixelRegisterCount(12);
-
-		// adjust a reference counter
-		Release();
 	}
 
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
@@ -426,14 +435,14 @@ void RendererImplemented::SetRestorationOfStatesFlag(bool flag) {}
 
 void RendererImplemented::SetRenderPassPipelineState(LLGI::RenderPassPipelineState* renderPassPipelineState)
 {
-    ES_SAFE_RELEASE(renderPassPipelineState_);
-    renderPassPipelineState_ = renderPassPipelineState;
-    LLGI::SafeAddRef(renderPassPipelineState_);
+	ES_SAFE_RELEASE(renderPassPipelineState_);
+	renderPassPipelineState_ = renderPassPipelineState;
+	LLGI::SafeAddRef(renderPassPipelineState_);
 }
 
 bool RendererImplemented::BeginRendering()
 {
-	assert(graphics_ != NULL);
+	assert(graphicsDevice_ != NULL);
 
 	::Effekseer::Matrix44::Mul(GetCameraProjectionMatrix(), GetCameraMatrix(), GetProjectionMatrix());
 
@@ -455,7 +464,7 @@ bool RendererImplemented::BeginRendering()
 
 bool RendererImplemented::EndRendering()
 {
-	assert(graphics_ != NULL);
+	assert(graphicsDevice_ != NULL);
 
 	// reset renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
@@ -464,7 +473,7 @@ bool RendererImplemented::EndRendering()
 	{
 		// GetCurrentCommandList()->EndRenderPass();
 		GetCurrentCommandList()->End();
-		graphics_->Execute(GetCurrentCommandList());
+		GetGraphics()->Execute(GetCurrentCommandList());
 	}
 	return true;
 }
@@ -533,7 +542,7 @@ void RendererImplemented::SetLightAmbientColor(const ::Effekseer::Color& color) 
 ::Effekseer::TextureLoader* RendererImplemented::CreateTextureLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new TextureLoader(this->GetGraphics(), fileInterface);
+	return new TextureLoader(graphicsDevice_, fileInterface);
 #else
 	return NULL;
 #endif
@@ -542,18 +551,19 @@ void RendererImplemented::SetLightAmbientColor(const ::Effekseer::Color& color) 
 ::Effekseer::ModelLoader* RendererImplemented::CreateModelLoader(::Effekseer::FileInterface* fileInterface)
 {
 #ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-	return new ModelLoader(this->GetGraphics(), fileInterface);
+	return new ModelLoader(graphicsDevice_, fileInterface);
 #else
 	return NULL;
 #endif
 }
 
-::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) { 
+::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
+{
 
 	if (materialCompiler_ == nullptr)
 		return nullptr;
 
-	return new MaterialLoader(this, fileInterface, platformType_, materialCompiler_);
+	return new MaterialLoader(graphicsDevice_, fileInterface, platformType_, materialCompiler_);
 }
 
 Effekseer::TextureData* RendererImplemented::GetBackground()
@@ -835,7 +845,7 @@ Effekseer::TextureData* RendererImplemented::CreateProxyTexture(EffekseerRendere
 
 	LLGI::TextureInitializationParameter texParam;
 	texParam.Size = LLGI::Vec2I(16, 16);
-	auto texture = graphics_->CreateTexture(texParam);
+	auto texture = GetGraphics()->CreateTexture(texParam);
 	auto texbuf = reinterpret_cast<uint8_t*>(texture->Lock());
 
 	for (int32_t i = 0; i < 16 * 16; i++)

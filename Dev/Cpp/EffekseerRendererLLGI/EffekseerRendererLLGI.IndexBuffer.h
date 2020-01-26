@@ -14,12 +14,12 @@ class IndexBuffer : public DeviceObject, public ::EffekseerRenderer::IndexBuffer
 private:
 	LLGI::IndexBuffer* indexBuffer = nullptr;
 
-	IndexBuffer(RendererImplemented* renderer, LLGI::IndexBuffer* buffer, int maxCount, bool isDynamic);
+	IndexBuffer(GraphicsDevice* graphicsDevice, LLGI::IndexBuffer* buffer, int maxCount, bool isDynamic, bool hasRefCount);
 
 public:
 	virtual ~IndexBuffer();
 
-	static IndexBuffer* Create(RendererImplemented* renderer, int maxCount, bool isDynamic);
+	static IndexBuffer* Create(GraphicsDevice* graphicsDevice, int maxCount, bool isDynamic, bool hasRefCount);
 
 	LLGI::IndexBuffer* GetIndexBuffer() { return indexBuffer; }
 

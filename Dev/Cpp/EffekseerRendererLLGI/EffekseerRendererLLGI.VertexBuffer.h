@@ -24,12 +24,12 @@ private:
 	int32_t m_ringLockedOffset;
 	int32_t m_ringLockedSize;
 
-	VertexBuffer(RendererImplemented* renderer, LLGI::VertexBuffer* buffer, int size, bool isDynamic);
+	VertexBuffer(GraphicsDevice* graphicsDevice, LLGI::VertexBuffer* buffer, int size, bool isDynamic, bool hasRefCount);
 
 public:
 	virtual ~VertexBuffer();
 
-	static VertexBuffer* Create(RendererImplemented* renderer, int size, bool isDynamic);
+	static VertexBuffer* Create(GraphicsDevice* graphicsDevice, int size, bool isDynamic, bool hasRefCount);
 
 	LLGI::VertexBuffer* GetVertexBuffer() { return vertexBuffers[currentIndex]; }
 

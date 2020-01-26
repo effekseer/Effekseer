@@ -62,6 +62,18 @@ enum class ProxyTextureType
 	Normal,
 };
 
+/**
+	@brief
+	\~english A class which contains a graphics device
+	\~japanese グラフィックデバイスを格納しているクラス
+*/
+class GraphicsDevice : public ::Effekseer::IReference
+{
+public:
+	GraphicsDevice() = default;
+	virtual ~GraphicsDevice() = default;
+};	
+	
 class CommandList : public ::Effekseer::IReference
 {
 public:
@@ -398,6 +410,16 @@ public:
 
 namespace EffekseerRendererDX12
 {
+
+::EffekseerRenderer::GraphicsDevice* CreateDevice(ID3D12Device* device, ID3D12CommandQueue* commandQueue, int32_t swapBufferCount);
+
+::EffekseerRenderer::Renderer* Create(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+									  DXGI_FORMAT* renderTargetFormats,
+									  int32_t renderTargetCount,
+									  bool hasDepth,
+									  bool isReversedDepth,
+									  int32_t squareMaxCount);
+
 /**
 @brief	Create an instance
 @param	device			directX12 device
@@ -415,14 +437,25 @@ namespace EffekseerRendererDX12
 
 Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, ID3D12Resource* texture);
 
+Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, ID3D12Resource* texture);
+
 void DeleteTextureData(::EffekseerRenderer::Renderer* renderer, Effekseer::TextureData* textureData);
 
+void DeleteTextureData(::EffekseerRenderer::GraphicsDevice* graphicsDevice, Effekseer::TextureData* textureData);
+
 void FlushAndWait(::EffekseerRenderer::Renderer* renderer);
+
+void FlushAndWait(::EffekseerRenderer::GraphicsDevice* graphicsDevice);
 
 EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
 
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool);
+
 EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer);
+
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::GraphicsDevice* renderer);
 
 void BeginCommandList(EffekseerRenderer::CommandList* commandList, ID3D12GraphicsCommandList* dx12CommandList);
 

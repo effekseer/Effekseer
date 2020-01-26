@@ -9,10 +9,10 @@
 namespace EffekseerRendererLLGI
 {
 
-TextureLoader::TextureLoader(LLGI::Graphics* graphics, ::Effekseer::FileInterface* fileInterface)
-	: m_fileInterface(fileInterface), graphics(graphics)
+TextureLoader::TextureLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+	: m_fileInterface(fileInterface), graphicsDevice_(graphicsDevice)
 {
-	ES_SAFE_ADDREF(graphics);
+	ES_SAFE_ADDREF(graphicsDevice);
 
 	if (fileInterface == nullptr)
 	{
@@ -20,7 +20,7 @@ TextureLoader::TextureLoader(LLGI::Graphics* graphics, ::Effekseer::FileInterfac
 	}
 }
 
-TextureLoader::~TextureLoader() { ES_SAFE_RELEASE(graphics); }
+TextureLoader::~TextureLoader() { ES_SAFE_RELEASE(graphicsDevice_); }
 
 Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
@@ -45,7 +45,7 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 		{
 			LLGI::TextureInitializationParameter texParam;
 			texParam.Size = LLGI::Vec2I(width, height);
-			auto texture = graphics->CreateTexture(texParam);
+			auto texture = graphicsDevice_->GetGraphics()->CreateTexture(texParam);
 			auto buf = texture->Lock();
 
 			if (bpp == 4)

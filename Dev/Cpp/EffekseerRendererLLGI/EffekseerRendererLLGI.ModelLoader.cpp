@@ -8,10 +8,10 @@
 namespace EffekseerRendererLLGI
 {
 
-ModelLoader::ModelLoader(LLGI::Graphics* graphics, ::Effekseer::FileInterface* fileInterface)
-	: graphics(graphics), m_fileInterface(fileInterface)
+ModelLoader::ModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+	: graphicsDevice_(graphicsDevice), m_fileInterface(fileInterface)
 {
-	LLGI::SafeAddRef(graphics);
+	LLGI::SafeAddRef(graphicsDevice_);
 
 	if (m_fileInterface == NULL)
 	{
@@ -19,7 +19,7 @@ ModelLoader::ModelLoader(LLGI::Graphics* graphics, ::Effekseer::FileInterface* f
 	}
 }
 
-ModelLoader::~ModelLoader() { LLGI::SafeRelease(graphics); }
+ModelLoader::~ModelLoader() { LLGI::SafeRelease(graphicsDevice_); }
 
 void* ModelLoader::Load(const EFK_CHAR* path)
 {
@@ -64,7 +64,7 @@ void* ModelLoader::Load(const EFK_CHAR* path)
 
 				auto vb_size = sizeof(Effekseer::Model::VertexWithIndex) * model->GetVertexCount(f) * model->ModelCount;
 
-				model->InternalModels[f].VertexBuffer = graphics->CreateVertexBuffer(vb_size);
+				model->InternalModels[f].VertexBuffer = graphicsDevice_->GetGraphics()->CreateVertexBuffer(vb_size);
 
 				auto p_ = model->InternalModels[f].VertexBuffer->Lock();
 				memcpy(p_, vs.data(), sizeof(Effekseer::Model::VertexWithIndex) * vs.size());
@@ -88,8 +88,8 @@ void* ModelLoader::Load(const EFK_CHAR* path)
 					}
 				}
 
-				model->InternalModels[f].IndexBuffer =
-					graphics->CreateIndexBuffer(4, sizeof(int32_t) * 3 * model->InternalModels[f].FaceCount * model->ModelCount);
+				model->InternalModels[f].IndexBuffer = graphicsDevice_->GetGraphics()->CreateIndexBuffer(
+					4, sizeof(int32_t) * 3 * model->InternalModels[f].FaceCount * model->ModelCount);
 
 				auto p_ = model->InternalModels[f].IndexBuffer->Lock();
 				memcpy(p_, fs.data(), sizeof(Effekseer::Model::Face) * fs.size());

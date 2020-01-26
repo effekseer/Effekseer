@@ -6,18 +6,26 @@
 namespace EffekseerRendererLLGI
 {
 
-DeviceObject::DeviceObject(RendererImplemented* renderer) : m_renderer(renderer)
+DeviceObject::DeviceObject(GraphicsDevice* graphicsDevice, bool hasRefCount) : graphicsDevice_(graphicsDevice)
 {
-	ES_SAFE_ADDREF(m_renderer);
-	m_renderer->m_deviceObjects.insert(this);
+	if (hasRefCount_)
+	{
+		ES_SAFE_ADDREF(graphicsDevice_);
+	}
+	
+	graphicsDevice_->Register(this);
 }
 
 DeviceObject::~DeviceObject()
 {
-	m_renderer->m_deviceObjects.erase(this);
-	ES_SAFE_RELEASE(m_renderer);
+	graphicsDevice_->Unregister(this);
+
+	if (hasRefCount_)
+	{
+		ES_SAFE_RELEASE(graphicsDevice_);
+	}
 }
 
-RendererImplemented* DeviceObject::GetRenderer() const { return m_renderer; }
+GraphicsDevice* DeviceObject::GetGraphicsDevice() const { return graphicsDevice_; }
 
 } // namespace EffekseerRendererLLGI

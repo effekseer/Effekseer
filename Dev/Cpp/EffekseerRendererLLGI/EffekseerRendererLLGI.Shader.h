@@ -35,21 +35,23 @@ private:
 	int32_t m_vertexRegisterCount;
 	int32_t m_pixelRegisterCount;
 
-	Shader(RendererImplemented* renderer,
+	Shader(GraphicsDevice* graphicsDevice,
 		   LLGI::Shader* vertexShader,
 		   LLGI::Shader* pixelShader,
-		   const std::vector<VertexLayout>& layouts);
+		   const std::vector<VertexLayout>& layouts,
+		   bool hasRefCount);
 
 public:
 	virtual ~Shader();
 
-	static Shader* Create(RendererImplemented* renderer,
+	static Shader* Create(GraphicsDevice* graphicsDevice,
 						  LLGI::DataStructure* vertexData,
 						  int32_t vertexDataCount,
 						  LLGI::DataStructure* pixelData,
 						  int32_t pixelDataCount,
 						  const char* name,
-						  const std::vector<VertexLayout>& layoutFormats);
+						  const std::vector<VertexLayout>& layoutFormats,
+						  bool hasRefCount);
 
 public:
 	LLGI::Shader* GetVertexShader() const { return vertexShader_; }

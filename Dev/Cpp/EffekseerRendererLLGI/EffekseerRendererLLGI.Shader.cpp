@@ -5,11 +5,12 @@
 namespace EffekseerRendererLLGI
 {
 
-Shader::Shader(RendererImplemented* renderer,
+Shader::Shader(GraphicsDevice* graphicsDevice,
 			   LLGI::Shader* vertexShader,
 			   LLGI::Shader* pixelShader,
-			   const std::vector<VertexLayout>& layouts)
-	: DeviceObject(renderer)
+			   const std::vector<VertexLayout>& layouts,
+			   bool hasRefCount)
+	: DeviceObject(graphicsDevice, hasRefCount)
 	, vertexShader_(vertexShader)
 	, pixelShader_(pixelShader)
 	, layouts_(layouts)
@@ -28,21 +29,22 @@ Shader::~Shader()
 	ES_SAFE_DELETE_ARRAY(m_pixelConstantBuffer);
 }
 
-Shader* Shader::Create(RendererImplemented* renderer,
+Shader* Shader::Create(GraphicsDevice* graphicsDevice,
 					   LLGI::DataStructure* vertexData,
 					   int32_t vertexDataCount,
 					   LLGI::DataStructure* pixelData,
 					   int32_t pixelDataCount,
 					   const char* name,
-					   const std::vector<VertexLayout>& layouts)
+					   const std::vector<VertexLayout>& layouts,
+					   bool hasRefCount)
 {
-	assert(renderer != NULL);
-	assert(renderer->GetGraphics() != NULL);
+	assert(graphicsDevice != NULL);
+	assert(graphicsDevice->GetGraphics() != NULL);
 
-	auto vertexShader = renderer->GetGraphics()->CreateShader(vertexData, vertexDataCount);
-	auto pixelShader = renderer->GetGraphics()->CreateShader(pixelData, pixelDataCount);
+	auto vertexShader = graphicsDevice->GetGraphics()->CreateShader(vertexData, vertexDataCount);
+	auto pixelShader = graphicsDevice->GetGraphics()->CreateShader(pixelData, pixelDataCount);
 
-	return new Shader(renderer, vertexShader, pixelShader, layouts);
+	return new Shader(graphicsDevice, vertexShader, pixelShader, layouts, hasRefCount);
 }
 
 void Shader::SetVertexConstantBufferSize(int32_t size)

@@ -14,9 +14,11 @@
 namespace EffekseerRendererLLGI
 {
 
-::Effekseer::TextureLoader* CreateTextureLoader(LLGI::Graphics* graphics, ::Effekseer::FileInterface* fileInterface = NULL);
+class GraphicsDevice;
 
-::Effekseer::ModelLoader* CreateModelLoader(LLGI::Graphics* graphics, ::Effekseer::FileInterface* fileInterface = NULL);
+::Effekseer::TextureLoader* CreateTextureLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
+
+::Effekseer::ModelLoader* CreateModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 
 struct FixedShader
 {
@@ -47,7 +49,7 @@ protected:
 	virtual ~Renderer() {}
 
 public:
-	virtual LLGI::Graphics* GetGraphics() = 0;
+	virtual LLGI::Graphics* GetGraphics() const = 0;
 
 	/**
 		@brief	\~English	Get background
@@ -112,6 +114,60 @@ public:
 	LLGI::CommandList* GetInternal() { return commandList_; }
 
 	LLGI::SingleFrameMemoryPool* GetMemoryPooll() { return memoryPool_; }
+
+	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
+	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }
+	virtual int Release() override { return ::Effekseer::ReferenceObject::Release(); }
+};
+
+class DeviceObject;
+
+class GraphicsDevice : public ::EffekseerRenderer::GraphicsDevice, public ::Effekseer::ReferenceObject
+{
+	friend class DeviceObject;
+
+private:
+	std::set<DeviceObject*> deviceObjects_;
+
+	LLGI::Graphics* graphics_ = nullptr;
+
+	/**
+		@brief	register an object
+	*/
+	void Register(DeviceObject* device);
+
+	/**
+		@brief	unregister an object
+	*/
+	void Unregister(DeviceObject* device);
+
+public:
+	GraphicsDevice(LLGI::Graphics* graphics)
+		: graphics_(graphics)
+	{
+		ES_SAFE_ADDREF(graphics_);
+	}
+
+	virtual ~GraphicsDevice()
+	{
+		ES_SAFE_RELEASE(graphics_);
+	}
+
+	/**
+		@brief
+		\~english Call when device lost causes
+		\~japanese デバイスロストが発生した時に実行する。
+	*/
+	void OnLostDevice();
+
+	/**
+		@brief
+		\~english Call when device reset causes
+		\~japanese デバイスがリセットされた時に実行する。
+	*/
+	void OnResetDevice();
+
+	LLGI::Graphics* GetGraphics() const { return graphics_; }
 
 	virtual int GetRef() override { return ::Effekseer::ReferenceObject::GetRef(); }
 	virtual int AddRef() override { return ::Effekseer::ReferenceObject::AddRef(); }

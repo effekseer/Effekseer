@@ -37,7 +37,7 @@ void MaterialLoader::Deserialize(uint8_t* data, uint32_t datasize, LLGI::Compile
 	}
 }
 
-MaterialLoader::MaterialLoader(Renderer* renderer,
+MaterialLoader::MaterialLoader(GraphicsDevice* graphicsDevice,
 							   ::Effekseer::FileInterface* fileInterface,
 							   ::Effekseer::CompiledMaterialPlatformType platformType,
 							   ::Effekseer::MaterialCompiler* materialCompiler)
@@ -48,11 +48,11 @@ MaterialLoader::MaterialLoader(Renderer* renderer,
 		fileInterface_ = &defaultFileInterface_;
 	}
 
-	renderer_ = renderer;
-	ES_SAFE_ADDREF(renderer_);
+	graphicsDevice_ = graphicsDevice;
+	ES_SAFE_ADDREF(graphicsDevice_);
 }
 
-MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
+MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(graphicsDevice_); }
 
 ::Effekseer::MaterialData* MaterialLoader::Load(const EFK_CHAR* path)
 {
@@ -151,13 +151,14 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 			layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R8G8B8A8_UNORM, "NORMAL", 0});
 			layouts.push_back(VertexLayout{LLGI::VertexLayoutFormat::R32G32_FLOAT, "TEXCOORD", 0});
 
-			shader = Shader::Create(static_cast<RendererImplemented*>(renderer_),
+			shader = Shader::Create(graphicsDevice_,
 									dataVS.data(),
 									resultVS.Binary.size(),
 									dataPS.data(),
 									resultPS.Binary.size(),
 									"MaterialStandardRenderer",
-									layouts);
+									layouts,
+									true);
 		}
 		else
 		{
@@ -224,13 +225,14 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 				offset += sizeof(float) * material.GetCustomData2Count();
 			}
 
-			shader = Shader::Create(static_cast<RendererImplemented*>(renderer_),
+			shader = Shader::Create(graphicsDevice_,
 									dataVS.data(),
 									resultVS.Binary.size(),
 									dataPS.data(),
 									resultPS.Binary.size(),
 									"MaterialStandardRenderer",
-									layouts);
+									layouts,
+									true);
 		}
 
 		if (shader == nullptr)
@@ -296,13 +298,14 @@ MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(renderer_); }
 		// compile
 		std::string log;
 
-		auto shader = Shader::Create(static_cast<RendererImplemented*>(renderer_),
+		auto shader = Shader::Create(graphicsDevice_,
 									 dataVS.data(),
 									 resultVS.Binary.size(),
 									 dataPS.data(),
 									 resultPS.Binary.size(),
 									 "MaterialStandardModelRenderer",
-									 layouts);
+									 layouts,
+									 true);
 		if (shader == nullptr)
 			return nullptr;
 

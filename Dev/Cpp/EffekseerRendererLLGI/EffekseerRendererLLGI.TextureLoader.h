@@ -14,13 +14,13 @@ namespace EffekseerRendererLLGI
 class TextureLoader : public ::Effekseer::TextureLoader
 {
 private:
-	LLGI::Graphics* graphics = nullptr;
+	GraphicsDevice* graphicsDevice_ = nullptr;
 
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
 
 public:
-	TextureLoader(LLGI::Graphics* graphics, ::Effekseer::FileInterface* fileInterface = NULL);
+	TextureLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);
 	virtual ~TextureLoader();
 
 public:
