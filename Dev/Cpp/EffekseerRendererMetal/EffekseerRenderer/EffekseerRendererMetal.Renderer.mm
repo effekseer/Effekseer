@@ -211,7 +211,7 @@ bool RendererImplemented::EndRendering()
     if (materialCompiler_ == nullptr)
         return nullptr;
 
-    return new MaterialLoader(this, fileInterface, platformType_, materialCompiler_);
+    return new MaterialLoader(this->GetGraphicsDevice(), fileInterface, platformType_, materialCompiler_);
 }
 
 } // namespace EffekseerRendererMetal
