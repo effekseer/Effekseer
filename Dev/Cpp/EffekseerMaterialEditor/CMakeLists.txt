@@ -111,6 +111,10 @@ target_link_libraries(
     EffekseerMaterialEditor
     PRIVATE
     EditorCommon
+    debug "${GLFW3_LIB_DEBUG}"
+    optimized "${GLFW3_LIB_RELEASE}"
+	debug "${LIBPNG_LIB_DEBUG}"
+    optimized "${LIBPNG_LIB_RELEASE}"
 )
 
 if (WIN32)
@@ -122,8 +126,6 @@ target_link_libraries(
     Effekseer # to use shader loader
     EffekseerRendererGL # to use shader loader
     IPC
-    debug glfw3d
-    optimized glfw3
     debug libglew32d
     optimized libglew32
     AltseedRHI)
@@ -147,9 +149,7 @@ target_link_libraries(
     Effekseer # to use shader loader
     EffekseerRendererGL # to use shader loader
     IPC
-    glfw3
     AltseedRHI
-    png16
     z
     EffekseerMaterial
     ${CMAKE_THREAD_LIBS_INIT}

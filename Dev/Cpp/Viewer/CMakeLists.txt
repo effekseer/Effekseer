@@ -148,7 +148,9 @@ target_link_libraries(
     debug "${GLFW3_LIB_DEBUG}"
     optimized "${GLFW3_LIB_RELEASE}"
     debug "${GD_LIB_DEBUG}"
-    optimized "${GD_LIB_RELEASE}"	
+	optimized "${GD_LIB_RELEASE}"
+	debug "${LIBPNG_LIB_DEBUG}"
+	optimized "${LIBPNG_LIB_RELEASE}"
 )
 
 add_dependencies(Viewer ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glfw ExternalProject_OpenSoundMixer)
@@ -199,7 +201,6 @@ elseif(APPLE)
         EffekseerSoundOSMixer
         IPC
         OpenSoundMixer
-        png
         z
         ${OpenAL_LIBRARY}
         "-framework OpenAL"
@@ -239,7 +240,6 @@ target_link_libraries(
 	EffekseerRendererGL
 	EffekseerSoundOSMixer
 	IPC
-	png16
 	z
 	dl
 	OpenSoundMixer
