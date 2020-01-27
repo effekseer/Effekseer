@@ -516,17 +516,23 @@ namespace Effekseer.Data
 				}
 			}
 
-			rcValues.CustomData1.Fixed4.ChangeDefaultValue(
-				info.CustomData[0].DefaultValues[0],
-				info.CustomData[0].DefaultValues[1],
-				info.CustomData[0].DefaultValues[2],
-				info.CustomData[0].DefaultValues[3]);
+			if(info.CustomData.Count() > 0)
+			{
+				rcValues.CustomData1.Fixed4.ChangeDefaultValue(
+					info.CustomData[0].DefaultValues[0],
+					info.CustomData[0].DefaultValues[1],
+					info.CustomData[0].DefaultValues[2],
+					info.CustomData[0].DefaultValues[3]);
+			}
 
-			rcValues.CustomData2.Fixed4.ChangeDefaultValue(
-				info.CustomData[1].DefaultValues[0],
-				info.CustomData[1].DefaultValues[1],
-				info.CustomData[1].DefaultValues[2],
-				info.CustomData[1].DefaultValues[3]);
+			if (info.CustomData.Count() > 1)
+			{
+				rcValues.CustomData2.Fixed4.ChangeDefaultValue(
+					info.CustomData[1].DefaultValues[0],
+					info.CustomData[1].DefaultValues[1],
+					info.CustomData[1].DefaultValues[2],
+					info.CustomData[1].DefaultValues[3]);
+			}
 
 			if (isChanged && OnChanged != null)
 			{
