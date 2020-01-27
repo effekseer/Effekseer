@@ -174,7 +174,6 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 
 		if (blob != nullptr)
 		{
-			std::cout << str << std::endl;
 			ret.resize(blob->GetBufferSize());
 			memcpy(ret.data(), blob->GetBufferPointer(), ret.size());
 			blob->Release();
@@ -199,7 +198,6 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 
 		if (blob != nullptr)
 		{
-			std::cout << str << std::endl;
 			ret.resize(blob->GetBufferSize());
 			memcpy(ret.data(), blob->GetBufferPointer(), ret.size());
 			blob->Release();

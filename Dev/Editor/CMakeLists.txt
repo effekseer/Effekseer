@@ -26,6 +26,7 @@ file(GLOB files_core
 
 list(APPEND files_core
     EffekseerCore/IO/EfkEfc.cs
+    EffekseerCore/Utils/ResourceCache.cs
 )
 
 add_library(EffekseerCore

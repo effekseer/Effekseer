@@ -228,6 +228,10 @@ namespace Effekseer.GUI
 
 			Core.OnFileLoaded += (string path) => {
 
+#if DEBUG
+				Console.WriteLine("OnFileLoaded : " + path);
+#endif
+
 				var f = IO.LoadIPCFile(path);
 				if(f == null)
 				{

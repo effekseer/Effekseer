@@ -115,8 +115,11 @@ namespace Effekseer.Binary
 							}
 							else if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File)
 							{
-								var materialInfo = new Utl.MaterialInformation();
-								materialInfo.Load(_node.RendererCommonValues.MaterialFile.Path.AbsolutePath);
+								var materialInfo = Core.ResourceCache.LoadMaterialInformation(_node.RendererCommonValues.MaterialFile.Path.AbsolutePath);
+								if (materialInfo == null)
+								{
+									materialInfo = new MaterialInformation();
+								}
 
 								var textures = _node.RendererCommonValues.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null);
 

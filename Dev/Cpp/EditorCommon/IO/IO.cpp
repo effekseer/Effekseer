@@ -165,10 +165,12 @@ void IO::CheckFile(int interval)
 	{
 		{
 			std::lock_guard<std::mutex> lock(mtx_);
+			std::vector<FileInfo> removing;
 
 			for (auto& i : fileUpdateDates_)
 			{
 				auto time = GetFileLastWriteTime(i.first);
+
 				if (time > fileUpdateDates_[i.first] && changedFileInfos_.count(i.first) == 0)
 				{
 					changedFileInfos_.insert(i.first);
@@ -177,7 +179,7 @@ void IO::CheckFile(int interval)
 
 				// special case for a material
 				// if IPC exists, it should be reload. so call callback forcely.
-				if (i.first.fileType_ == StaticFileType::Default && ipcStorage_ != nullptr)
+				else if (i.first.fileType_ == StaticFileType::Default && ipcStorage_ != nullptr)
 				{
 					auto temp = i.first;
 					temp.fileType_ = StaticFileType::IPC;
@@ -192,6 +194,18 @@ void IO::CheckFile(int interval)
 						ipcStorage_->Unlock();
 					}
 				}
+
+				else if (time == 0)
+				{
+					removing.emplace_back(i.first);
+				}
+			}
+
+			// Files are not found
+			for (const auto& i : removing)
+			{
+				changedFileInfos_.insert(i);
+				fileUpdateDates_.erase(i);
 			}
 		}
 

@@ -14,6 +14,12 @@ namespace Effekseer
 
 		public const string OptionFilePath = "config.option.xml";
 
+		internal static Utils.ResourceCache ResourceCache
+		{
+			get;
+			private set;
+		}
+
 		static Data.NodeBase selected_node = null;
 
 		static Data.OptionValues option;
@@ -304,6 +310,8 @@ namespace Effekseer
 
 		static Core()
 		{
+			ResourceCache = new Utils.ResourceCache();
+
 #if SCRIPT_ENABLED
 			CommandScripts = new Script.ScriptCollection<Script.CommandScript>();
 			SelectedScripts = new Script.ScriptCollection<Script.SelectedScript>();
@@ -1100,6 +1108,8 @@ namespace Effekseer
 
 			if (!System.IO.File.Exists(fullpath)) return false;
 
+			ResourceCache.Reset();
+
 			// new format?
 			bool isNewFormat = false;
 			{
@@ -1607,6 +1617,8 @@ namespace Effekseer
 		/// <param name="path"></param>
 		public static void UpdateResourcePaths(string path)
 		{
+			ResourceCache.Remove(path);
+
 			Action<Data.NodeBase> convert = null;
 			convert = (node) =>
 			{
@@ -1616,8 +1628,13 @@ namespace Effekseer
 				{
 					if (n.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File && n.RendererCommonValues.MaterialFile.Path.GetAbsolutePath().Replace('\\', '/') == path)
 					{
-						Utl.MaterialInformation info = new Utl.MaterialInformation();
-						info.Load(path);
+						Utl.MaterialInformation info = ResourceCache.LoadMaterialInformation(path);
+						
+						// is it correct?
+						if(info == null)
+						{
+							info = new MaterialInformation();
+						}
 
 						n.RendererCommonValues.MaterialFile.ApplyMaterial(info);
 					}

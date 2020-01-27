@@ -63,9 +63,12 @@ namespace Effekseer.Binary
 			}
 			else
 			{
-				var materialInfo = new Utl.MaterialInformation();
-				materialInfo.Load(value.MaterialFile.Path.AbsolutePath);
-	
+				var materialInfo = Core.ResourceCache.LoadMaterialInformation(value.MaterialFile.Path.AbsolutePath);
+				if(materialInfo == null)
+				{
+					materialInfo = new MaterialInformation();
+				}
+
 				var textures = value.MaterialFile.GetTextures(materialInfo).Where(_ => _.Item1 != null).ToArray();
 				var uniforms = value.MaterialFile.GetUniforms(materialInfo);
 
