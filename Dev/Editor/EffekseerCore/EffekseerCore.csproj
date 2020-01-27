@@ -166,6 +166,7 @@
     <Compile Include="IO\EfkEfc.cs" />
     <Compile Include="Utils\BinaryWriter.cs" />
     <Compile Include="Utils\Misc.cs" />
+    <Compile Include="Utils\ResourceCache.cs" />
     <Compile Include="Utils\Zlib.cs" />
     <Compile Include="Utl\BinaryReader.cs" />
     <Compile Include="Utl\MaterialInformation.cs" />
