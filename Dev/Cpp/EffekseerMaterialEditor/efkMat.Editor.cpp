@@ -836,7 +836,7 @@ void Editor::UpdatePopup()
 		};
 
 		auto showContent = [&create_node](std::shared_ptr<LibraryContentBase> c) -> void {
-			auto& nodeTypeName = StringContainer::GetValue((c->Name + "_Name").c_str(), c->Name.c_str());
+			auto& nodeTypeName = StringContainer::GetValue((c->Name + "_Node_Name").c_str(), c->Name.c_str());
 
 			if (ImGui::MenuItem(nodeTypeName.c_str()))
 			{
@@ -848,7 +848,7 @@ void Editor::UpdatePopup()
 			if (ImGui::IsItemHovered() && ImGui::GetCurrentContext()->HoveredIdTimer > 0.25)
 			{
 				auto desc = std::string("Key : ") + c->KeywordsShown + "\n";
-				desc += c->Description;
+				desc += StringContainer::GetValue((c->Name + "_Node_Desc").c_str(), "");
 
 				ImGui::SetTooltip(desc.c_str());
 			}
@@ -1621,7 +1621,8 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 				typeShape = "-";
 			}
 
-			auto text = typeShape + std::string(" ") + StringContainer::GetValue(pin->Parameter->Name.c_str());
+			auto text = typeShape + std::string(" ") +
+						StringContainer::GetValue((pin->Parameter->Name + "_Name").c_str(), pin->Parameter->Name.c_str());
 
 			if (pin->IsEnabled)
 			{
@@ -1666,7 +1667,9 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 				typeShape = "-";
 			}
 
-			ImGui::Text((StringContainer::GetValue(pin->Parameter->Name.c_str()) + std::string(" ") + typeShape).c_str());
+			ImGui::Text(
+				(StringContainer::GetValue((pin->Parameter->Name + "_Name").c_str(), pin->Parameter->Name.c_str()) + std::string(" ") + typeShape)
+					.c_str());
 
 			ImGui::EndHorizontal();
 

@@ -84,9 +84,12 @@ public:
 	bool Update() override
 	{
 		bool open = true;
-		if (ImGui::BeginPopupModal(GetID(), &open))
+		if (ImGui::BeginPopupModal(GetID(), &open, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			ImGui::Text("Save?");
+			auto message = StringContainer::GetValue("ConfirmSaveChanged", "[{0}] has been changed. Do you want to save?");
+			message = Replace(message, "{0}", content_->GetPath());
+
+			ImGui::Text(message.c_str());
 			ImGui::Separator();
 
 			if (ImGui::Button("Yes"))

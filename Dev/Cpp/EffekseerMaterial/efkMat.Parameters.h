@@ -880,8 +880,6 @@ public:
 		output->Name = "Output";
 		output->Type = ValueType::Float1;
 		OutputPins.push_back(output);
-
-		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentTwoInputMath>()};
 	}
 
 	ValueType

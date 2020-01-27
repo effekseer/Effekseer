@@ -10,7 +10,7 @@ std::string NodeParameterBehaviorComponentTwoInputMath::GetHeader(std::shared_pt
 																  std::shared_ptr<Node> node) const
 {
 	std::ostringstream ret;
-	ret << StringContainer::GetValue((parameter->TypeName + "_Name").c_str(), parameter->TypeName.c_str());
+	ret << StringContainer::GetValue((parameter->TypeName + "_Node_Name").c_str(), parameter->TypeName.c_str());
 	ret << "(";
 
 	if (material->GetConnectedPins(node->InputPins[0]).size() > 0)
@@ -41,7 +41,7 @@ std::string NodeParameterBehaviorComponentMask::GetHeader(std::shared_ptr<Materi
 														  std::shared_ptr<Node> node) const
 {
 	std::ostringstream ret;
-	ret << StringContainer::GetValue((parameter->TypeName + "_Name").c_str(), parameter->TypeName.c_str());
+	ret << StringContainer::GetValue((parameter->TypeName + "_Node_Name").c_str(), parameter->TypeName.c_str());
 	ret << "(";
 
 	if (node->Properties[0]->Floats[0] > 0)
@@ -69,7 +69,7 @@ std::string NodeParameterBehaviorComponentName::GetHeader(std::shared_ptr<Materi
 
 	assert(node->Parameter->Properties[0]->Name == "Name");
 
-	ret << StringContainer::GetValue((parameter->TypeName + "_Name").c_str(), parameter->TypeName.c_str());
+	ret << StringContainer::GetValue((parameter->TypeName + "_Node_Name").c_str(), parameter->TypeName.c_str());
 	ret << "(";
 	ret << node->Properties[0]->Str;
 	ret << ")";
@@ -120,7 +120,7 @@ bool NodeParameterBehaviorComponentOutput::GetIsInputPinEnabled(std::shared_ptr<
 
 std::string NodeParameter::GetHeader(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
 {
-	return StringContainer::GetValue((TypeName + "_Name").c_str(), TypeName.c_str());
+	return StringContainer::GetValue((TypeName + "_Node_Name").c_str(), TypeName.c_str());
 }
 
 bool ExtractTextureParameter(std::shared_ptr<Material> material, std::shared_ptr<Node> node, ExtractedTextureParameter& result)

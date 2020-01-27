@@ -7,6 +7,8 @@ Save,Save,上書き保存
 Search,Search,検索
 Ja,日本語,日本語
 En,English,English
+ConfirmSaveChanged,[{0}] has been changed. Do you want to save?,[{0}] は変更されています。保存しますか？
+Cancel,Cancel,キャンセル
 ,,
 Description_Name,Description,説明
 Description_Desc,"These parameters are shown on other editors.
@@ -20,15 +22,17 @@ Detail_Name,Detail,詳細
 ,,
 ,,
 ,,
-Value_Name,V.,値
-Value1_Name,V.1,値1
-Value2_Name,V.2,値2
-Value3_Name,V.3,値3
-Value4_Name,V.4,値4
-ConstValue1_Name,V.1,値1
-ConstValue2_Name,V.2,値2
+Value_Name,V,V
+Value1_Name,V1,V1
+Value2_Name,V2,V2
+Value3_Name,V3,V3
+Value4_Name,V4,V4
+ConstValue1_Name,V1,V1
+ConstValue2_Name,V2,V2
+Alpha_Name,Alpha,アルファ
 Name_Name,Name,名称
-Output_Name,Out.,出力
+Input_Name,V,V
+Output_Name, , 
 Comment_Name,Comment,コメント
 Priority_Name,Priority,優先度
 Priority_Desc,"The lower the priority, the higher the screen is shown in other editors.",低い優先度ほど、他のエディタの画面の上の位置に表示されます。
@@ -48,57 +52,57 @@ Speed_Name,Speed,速度
 ConstSpeed_Name,ConstSpeed,速度
 ,,
 Math_Name,Math,計算
-Add_Name,Add,足し算
-Subtract_Name,Subtract,引き算
-Multiply_Name,Multiply,掛け算
-Divide_Name,Divide,割り算
-Fmod_Name,Mod,余り
+Add_Node_Name,Add,足し算
+Subtract_Node_Name,Subtract,引き算
+Multiply_Node_Name,Multiply,掛け算
+Divide_Node_Name,Divide,割り算
+Fmod_Node_Name,Mod,余り
 ,,
-Abs_Name,Abs,絶対値
-ComponentMask_Name,Mask,要素抽出
-AppendVector_Name,Append,要素結合
-OneMinus_Name,OneMinus,1-値
-Sine_Name,Sine,Sine
-Ceil_Name,Round up,切り上げ
-Floor_Name,Round down,切り捨て
-Clamp_Name,Clamp,クランプ
-Frac_Name,Decimal part,少数部
-Min_Name,Minimum,最小
-Max_Name,Maximum,最大
-Power_Name,Power,乗数
-SquareRoot_Name,SquareRoot,平方根
-DotProduct_Name,Dot,内積
-CrossProduct_Name,Cross,外積
-LinearInterpolate_Name,LinearInterpolate,線形補完
+Abs_Node_Name,Abs,絶対値
+ComponentMask_Node_Name,Mask,要素抽出
+AppendVector_Node_Name,Append,要素結合
+OneMinus_Node_Name,OneMinus,1-値
+Sine_Node_Name,Sine,Sine
+Ceil_Node_Name,Round up,切り上げ
+Floor_Node_Name,Round down,切り捨て
+Clamp_Node_Name,Clamp,クランプ
+Frac_Node_Name,Decimal part,少数部
+Min_Node_Name,Minimum,最小
+Max_Node_Name,Maximum,最大
+Power_Node_Name,Power,乗数
+SquareRoot_Node_Name,SquareRoot,平方根
+DotProduct_Node_Name,Dot,内積
+CrossProduct_Node_Name,Cross,外積
+LinearInterpolate_Node_Name,LinearInterpolate,線形補完
 ,,
 Model_Name,Model,モデル
-TextureCoordinate_Name,UV,UV座標
-Panner_Name,MovingUV,移動UV座標
-VertexNormalWS_Name,VertexNormal,頂点法線
-PixelNormalWS_Name,PixelNormal,画素法線
-VertexTangentWS_Name,VertexTangent,頂点接線
-VertexColor_Name,VertexColor,頂点色
+TextureCoordinate_Node_Name,UV,UV座標
+Panner_Node_Name,MovingUV,移動UV座標
+VertexNormalWS_Node_Name,VertexNormal,頂点法線
+PixelNormalWS_Node_Name,PixelNormal,画素法線
+VertexTangentWS_Node_Name,VertexTangent,頂点接線
+VertexColor_Node_Name,VertexColor,頂点色
 ,,
 Texture_Name,Image,画像
-SampleTexture_Name,Sample Image,画像参照
-TextureObjectParameter_Name,Parameter Image,パラメーター画像
-TextureObject_Name,Constant Image,固定画像
+SampleTexture_Node_Name,Sample Image,画像参照
+TextureObjectParameter_Node_Name,Parameter Image,パラメーター画像
+TextureObject_Node_Name,Constant Image,固定画像
 ,,
-Output_Name,Output,出力
-Comment_Name,Comment,コメント
+Output_Node_Name,Output,出力
+Comment_Node_Name,Comment,コメント
 ,,
 Constant_Name,Constant,定数
-Time_Name,Time,時間
-Constant1_Name,Constant1,定数1
-Constant2_Name,Constant2,定数2
-Constant3_Name,Constant3,定数3
-Constant4_Name,Constant4,定数4
+Time_Node_Name,Time,時間
+Constant1_Node_Name,Constant1,定数1
+Constant2_Node_Name,Constant2,定数2
+Constant3_Node_Name,Constant3,定数3
+Constant4_Node_Name,Constant4,定数4
 ,,
 Parameter_Name,Param,パラメーター
-Parameter1_Name,Param1,パラメーター1
-Parameter4_Name,Param4,パラメーター4
-CustomData1_Name,CustomData1,カスタムデータ1
-CustomData2_Name,CustomData2,カスタムデータ2
+Parameter1_Node_Name,Param1,パラメーター1
+Parameter4_Node_Name,Param4,パラメーター4
+CustomData1_Node_Name,CustomData1,カスタムデータ1
+CustomData2_Node_Name,CustomData2,カスタムデータ2
 ,,
 ConvertParam_Name,Convert to parameter,パラメーターに変換 
 ,,
