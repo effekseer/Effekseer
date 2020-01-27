@@ -733,9 +733,11 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::LinearInterpolate)
 	{
+		
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= LERP("
-			<< GetInputArg(node->Inputs[0].Type, node->Inputs[0]) << "," << GetInputArg(node->Inputs[0].Type, node->Inputs[1]) << ","
-			<< GetInputArg(ValueType::Float1, node->Inputs[2]) << ");" << std::endl;
+			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[0], node->Target->Properties[0]) << ","
+			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[1], node->Target->Properties[1]) << ","
+			<< exportInputOrProp(node->Inputs[2].Type, node->Inputs[2], node->Target->Properties[2]) << ");" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::TextureCoordinate)

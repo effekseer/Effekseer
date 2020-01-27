@@ -951,6 +951,24 @@ public:
 		inputAlpha->Type = ValueType::Float1;
 		InputPins.push_back(inputAlpha);
 
+		auto input1Prop = std::make_shared<NodePropertyParameter>();
+		input1Prop->Name = "Value1";
+		input1Prop->Type = ValueType::Float1;
+		input1Prop->DefaultValues[0] = 0.0f;
+		Properties.push_back(input1Prop);
+
+		auto input2Prop = std::make_shared<NodePropertyParameter>();
+		input2Prop->Name = "Value2";
+		input2Prop->Type = ValueType::Float1;
+		input2Prop->DefaultValues[0] = 1.0f;
+		Properties.push_back(input2Prop);
+
+		auto inputAlphaProp = std::make_shared<NodePropertyParameter>();
+		inputAlphaProp->Name = "Alpha";
+		inputAlphaProp->Type = ValueType::Float1;
+		inputAlphaProp->DefaultValues[0] = 0.5f;
+		Properties.push_back(inputAlphaProp);
+
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
 		output->Type = ValueType::FloatN;
