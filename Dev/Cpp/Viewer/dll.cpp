@@ -549,7 +549,6 @@ Native::Native() : m_time(0), m_step(1)
 {
 	g_client = Effekseer::Client::Create();
 
-#if _WIN32
 	commandQueueToMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
 	commandQueueToMaterialEditor_->Start("EfkCmdToMatEdit", 1024 * 1024);
 
@@ -558,7 +557,6 @@ Native::Native() : m_time(0), m_step(1)
 
 	keyValueFileStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
 	keyValueFileStorage_->Start("EffekseerStorage");
-#endif
 }
 
 Native::~Native()
