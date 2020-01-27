@@ -35,10 +35,9 @@ void IO::Terminate() { instance_ = nullptr; }
 
 IO::IO(int checkFileInterval)
 {
-#if _WIN32
 	ipcStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
-	ipcStorage_->Start("EffekseerStorage");
-#endif
+	ipcStorage_->Start("EfkStorage");
+
 	this->checkFileInterval_ = checkFileInterval;
 
 	if (checkFileInterval > 0)
@@ -50,13 +49,11 @@ IO::IO(int checkFileInterval)
 
 IO::~IO()
 {
-#if _WIN32
 	{
 		std::lock_guard<std::mutex> lock(mtx_);
 		ipcStorage_->Stop();
 		ipcStorage_.reset();
 	}
-#endif
 
 	if (isThreadRunning_)
 	{
@@ -92,10 +89,6 @@ std::shared_ptr<StaticFile> IO::LoadFile(const char16_t* path)
 std::shared_ptr<StaticFile> IO::LoadIPCFile(const char16_t* path)
 {
 	auto pathSafe = ReplaceSeparator(path);
-
-#ifndef _WIN32
-	return nullptr;
-#endif
 
 	if (!FileSystem::GetIsFile(pathSafe))
 		return nullptr;

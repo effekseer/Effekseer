@@ -395,7 +395,7 @@ Editor::Editor(std::shared_ptr<EffekseerMaterial::Graphics> graphics)
 	startingTime = std::chrono::system_clock::now();
 
 	keyValueFileStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
-	keyValueFileStorage_->Start("EffekseerStorage");
+	keyValueFileStorage_->Start("EfkStorage");
 }
 
 Editor::~Editor()
