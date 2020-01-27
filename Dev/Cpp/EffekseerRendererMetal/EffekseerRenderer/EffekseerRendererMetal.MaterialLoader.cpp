@@ -13,11 +13,11 @@ void MaterialLoader::Deserialize(uint8_t* data, uint32_t datasize, LLGI::Compile
     memcpy(result.Binary[0].data(), data, datasize);
 }
 
-MaterialLoader::MaterialLoader(::EffekseerRendererLLGI::Renderer* renderer,
+MaterialLoader::MaterialLoader(::EffekseerRendererLLGI::GraphicsDevice* graphicsDevice,
                                ::Effekseer::FileInterface* fileInterface,
                                ::Effekseer::CompiledMaterialPlatformType platformType,
                                ::Effekseer::MaterialCompiler* materialCompiler)
-    : ::EffekseerRendererLLGI::MaterialLoader(renderer, fileInterface, platformType, materialCompiler)
+    : ::EffekseerRendererLLGI::MaterialLoader(graphicsDevice, fileInterface, platformType, materialCompiler)
 {
 }
 
