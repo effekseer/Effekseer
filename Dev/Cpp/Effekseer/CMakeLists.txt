@@ -54,6 +54,9 @@ set(effekseer_src
     Effekseer/IO/Effekseer.EfkEfcFactory.cpp
     Effekseer/Parameter/Effekseer.Parameters.cpp
     Effekseer/Utils/Effekseer.CustomAllocator.cpp
+    Effekseer/SIMD/Effekseer.Mat43f.cpp
+    Effekseer/SIMD/Effekseer.Mat44f.cpp
+    Effekseer/SIMD/Effekseer.SIMDUtils.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC

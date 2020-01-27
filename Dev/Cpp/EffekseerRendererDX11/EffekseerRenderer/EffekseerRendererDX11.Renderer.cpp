@@ -503,8 +503,8 @@ void RendererImplemented::SetRestorationOfStatesFlag(bool flag)
 bool RendererImplemented::BeginRendering()
 {
 	assert( m_device != NULL );
-
-	m_cameraProj = m_camera * m_proj;
+	
+	impl->CalculateCameraProjectionMatrix();
 	
 	// ステートを保存する
 	if( m_restorationOfStates )

@@ -425,7 +425,7 @@ bool RendererImplemented::BeginRendering()
 {
 	assert( m_d3d_device != NULL );
 
-	::Effekseer::Matrix44::Mul(GetCameraProjectionMatrix(), GetCameraMatrix(), GetProjectionMatrix());
+	impl->CalculateCameraProjectionMatrix();
 	
 	// ステートを保存する
 	if(m_restorationOfStates)

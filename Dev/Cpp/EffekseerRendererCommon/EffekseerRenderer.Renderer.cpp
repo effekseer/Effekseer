@@ -12,15 +12,15 @@ Renderer::~Renderer() { ES_SAFE_DELETE(impl); }
 
 Renderer::Impl* Renderer::GetImpl() { return impl; }
 
-const ::Effekseer::Matrix44& Renderer::GetProjectionMatrix() const { return impl->GetProjectionMatrix(); }
+::Effekseer::Matrix44 Renderer::GetProjectionMatrix() const { return impl->GetProjectionMatrix(); }
 
 void Renderer::SetProjectionMatrix(const ::Effekseer::Matrix44& mat) { impl->SetProjectionMatrix(mat); }
 
-const ::Effekseer::Matrix44& Renderer::GetCameraMatrix() const { return impl->GetCameraMatrix(); }
+::Effekseer::Matrix44 Renderer::GetCameraMatrix() const { return impl->GetCameraMatrix(); }
 
 void Renderer::SetCameraMatrix(const ::Effekseer::Matrix44& mat) { impl->SetCameraMatrix(mat); }
 
-::Effekseer::Matrix44& Renderer::GetCameraProjectionMatrix() { return impl->GetCameraProjectionMatrix(); }
+::Effekseer::Matrix44 Renderer::GetCameraProjectionMatrix() const { return impl->GetCameraProjectionMatrix(); }
 
 ::Effekseer::Vector3D Renderer::GetCameraFrontDirection() const { return impl->GetCameraFrontDirection(); }
 

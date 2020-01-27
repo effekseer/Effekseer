@@ -457,10 +457,6 @@ protected:
 
 				normalCurrent = ::Effekseer::Vec3f::Cross(tangentCurrent, binormalCurrent);
 				normalNext = ::Effekseer::Vec3f::Cross(tangentNext, binormalNext);
-				normalCurrent = normalCurrent.Normalize();
-				normalNext = normalNext.Normalize();
-				tangentCurrent = tangentCurrent.Normalize();
-				tangentNext = tangentNext.Normalize();
 
 				// rotate directions
 				::Effekseer::Mat43f matRot = mat43;
@@ -471,10 +467,10 @@ protected:
 				tangentCurrent = ::Effekseer::Vec3f::Transform(tangentCurrent, matRot);
 				tangentNext = ::Effekseer::Vec3f::Transform(tangentNext, matRot);
 
-				::Effekseer::Vector3D::Normal(normalCurrent, normalCurrent);
-				::Effekseer::Vector3D::Normal(normalNext, normalNext);
-				::Effekseer::Vector3D::Normal(tangentCurrent, tangentCurrent);
-				::Effekseer::Vector3D::Normal(tangentNext, tangentNext);
+				normalCurrent = normalCurrent.Normalize();
+				normalNext = normalNext.Normalize();
+				tangentCurrent = tangentCurrent.Normalize();
+				tangentNext = tangentNext.Normalize();
 
 				vs[0].Normal = PackVector3DF(normalCurrent);
 				vs[1].Normal = vs[0].Normal;

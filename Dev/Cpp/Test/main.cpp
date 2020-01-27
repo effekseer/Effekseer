@@ -134,7 +134,7 @@ int main()
 	StartingFrameTest();
 	UpdateHandleTest();	PlaybackSpeedTest();
 	CustomAllocatorTest();
-	SIMDTest();
+	//SIMDTest();
 	BasicRuntimeTest();
 	UpdateHandleTest();
 	//BasicRuntimeDeviceLostTest();

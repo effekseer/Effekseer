@@ -444,7 +444,7 @@ bool RendererImplemented::BeginRendering()
 {
 	assert(graphicsDevice_ != NULL);
 
-	::Effekseer::Matrix44::Mul(GetCameraProjectionMatrix(), GetCameraMatrix(), GetProjectionMatrix());
+	impl->CalculateCameraProjectionMatrix();
 
 	// initialize states
 	m_renderState->GetActiveState().Reset();

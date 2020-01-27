@@ -721,7 +721,7 @@ bool RendererImplemented::BeginRendering()
 {
 	GLCheckError();
 
-	::Effekseer::Matrix44::Mul(GetCameraProjectionMatrix(), GetCameraMatrix(), GetProjectionMatrix());
+	impl->CalculateCameraProjectionMatrix();
 
 	// store state
 	if(m_restorationOfStates)
