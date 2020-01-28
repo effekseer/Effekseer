@@ -35,11 +35,11 @@ public:
 
 	void CalculateCameraProjectionMatrix();
 
-	const ::Effekseer::Matrix44& GetProjectionMatrix() const;
+	::Effekseer::Matrix44 GetProjectionMatrix() const;
 
 	void SetProjectionMatrix(const ::Effekseer::Matrix44& mat);
 
-	const ::Effekseer::Matrix44& GetCameraMatrix() const;
+	::Effekseer::Matrix44 GetCameraMatrix() const;
 
 	void SetCameraMatrix(const ::Effekseer::Matrix44& mat);
 
@@ -49,7 +49,7 @@ public:
 
 	void SetCameraParameter(const ::Effekseer::Vector3D& front, const ::Effekseer::Vector3D& position);
 
-	::Effekseer::Matrix44& GetCameraProjectionMatrix();
+	::Effekseer::Matrix44 GetCameraProjectionMatrix() const;
 
 	void CreateProxyTextures(Renderer* renderer);
 

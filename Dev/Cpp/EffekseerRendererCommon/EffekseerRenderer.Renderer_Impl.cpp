@@ -5,11 +5,11 @@ namespace EffekseerRenderer
 {
 void Renderer::Impl::CalculateCameraProjectionMatrix() { cameraProjMat_ = cameraMat_ * projectionMat_; }
 
-const ::Effekseer::Matrix44& Renderer::Impl::GetProjectionMatrix() const { return ToStruct(projectionMat_); }
+::Effekseer::Matrix44 Renderer::Impl::GetProjectionMatrix() const { return ToStruct(projectionMat_); }
 
 void Renderer::Impl::SetProjectionMatrix(const ::Effekseer::Matrix44& mat) { projectionMat_ = mat; }
 
-const ::Effekseer::Matrix44& Renderer::Impl::GetCameraMatrix() const { return ToStruct(cameraMat_); }
+::Effekseer::Matrix44 Renderer::Impl::GetCameraMatrix() const { return ToStruct(cameraMat_); }
 
 void Renderer::Impl::SetCameraMatrix(const ::Effekseer::Matrix44& mat)
 {
@@ -25,7 +25,7 @@ void Renderer::Impl::SetCameraMatrix(const ::Effekseer::Matrix44& mat)
 	cameraMat_ = mat;
 }
 
-::Effekseer::Matrix44& Renderer::Impl::GetCameraProjectionMatrix() { return ToStruct(cameraProjMat_); }
+::Effekseer::Matrix44 Renderer::Impl::GetCameraProjectionMatrix() const { return ToStruct(cameraProjMat_); }
 
 ::Effekseer::Vector3D Renderer::Impl::GetCameraFrontDirection() const { return ToStruct(cameraFrontDirection_); }
 
