@@ -889,9 +889,9 @@ public:
 CompiledMaterialBinary* MaterialCompilerMetal::Compile(Material* material, int32_t maximumTextureCount)
 {
     auto binary = new CompiledMaterialBinaryMetal();
-    auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerMetal());
+    //auto compiler = LLGI::CreateSharedPtr(new LLGI::CompilerMetal());
 
-	auto convertToVectorVS = [compiler](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
         std::vector<char> buffer;
@@ -933,7 +933,7 @@ CompiledMaterialBinary* MaterialCompilerMetal::Compile(Material* material, int32
 		return ret;
 	};
 
-	auto convertToVectorPS = [compiler](const std::string& str) -> std::vector<uint8_t> {
+	auto convertToVectorPS = [](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
 
         std::vector<char> buffer;
