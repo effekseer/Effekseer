@@ -1,10 +1,10 @@
 #include "EffekseerRendererMetal.Renderer.h"
 #include "EffekseerRendererMetal.RendererImplemented.h"
-#include "EffekseerRendererMetal.MaterialLoader.h"
+//#include "EffekseerRendererMetal.MaterialLoader.h"
 
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h"
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.VertexBuffer.h"
-
+#include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.MaterialLoader.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.GraphicsMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.RenderPassMetal.h"
@@ -17,14 +17,44 @@
 namespace EffekseerRendererMetal
 {
 
-::EffekseerRenderer::Renderer* Create(int32_t squareMaxCount,
+::Effekseer::TextureLoader* CreateTextureLoader(::EffekseerRenderer::GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+{
+    auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+    return EffekseerRendererLLGI::CreateTextureLoader(gd, fileInterface);
+}
+
+::Effekseer::ModelLoader* CreateModelLoader(::EffekseerRenderer::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+{
+    auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+    return EffekseerRendererLLGI::CreateModelLoader(gd, fileInterface);
+}
+
+::Effekseer::MaterialLoader* CreateMaterialLoader(::EffekseerRenderer::GraphicsDevice*graphicsDevice, ::Effekseer::FileInterface* fileInterface)
+{
+    auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+    auto compiler = new ::Effekseer::MaterialCompilerMetal();
+    auto ret = new ::EffekseerRendererLLGI::MaterialLoader(gd, fileInterface, ::Effekseer::CompiledMaterialPlatformType::Metal, compiler);
+    ES_SAFE_RELEASE(compiler);
+    return ret;
+}
+
+::EffekseerRenderer::GraphicsDevice* CreateDevice()
+{
+    auto graphics = new LLGI::GraphicsMetal();
+    graphics->Initialize(nullptr);
+
+	auto ret = new EffekseerRendererLLGI::GraphicsDevice(graphics);
+	ES_SAFE_RELEASE(graphics);
+	return ret;
+}
+
+::EffekseerRenderer::Renderer* Create(
+                                      ::EffekseerRenderer::GraphicsDevice* graphicsDevice,
+                                      int32_t squareMaxCount,
                                       MTLPixelFormat renderTargetFormat,
                                       MTLPixelFormat depthStencilFormat,
 									  bool isReversedDepth)
 {
-	auto graphics = new LLGI::GraphicsMetal();
-    graphics->Initialize(nullptr);
-    
     RendererImplemented* renderer = new RendererImplemented(squareMaxCount);
     renderer->materialCompiler_ = new ::Effekseer::MaterialCompilerMetal();
 
@@ -47,21 +77,43 @@ namespace EffekseerRendererMetal
         allocate_(dest[i], sources[i], sizeof(sources[i]));
     }
 
-    auto pipelineState = graphics->CreateRenderPassPipelineState(renderTargetFormat, depthStencilFormat).get();
+	auto gd = static_cast<EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+    auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
+    auto pipelineState = g->CreateRenderPassPipelineState(renderTargetFormat, depthStencilFormat).get();
 
-    if (renderer->Initialize(graphics, pipelineState, isReversedDepth))
+    if (renderer->Initialize(gd, pipelineState, isReversedDepth))
     {
-        ES_SAFE_RELEASE(graphics);
         ES_SAFE_RELEASE(pipelineState);
         return renderer;
     }
 
-    ES_SAFE_RELEASE(graphics);
     ES_SAFE_RELEASE(pipelineState);
 
     ES_SAFE_DELETE(renderer);
 
     return nullptr;
+}
+
+::EffekseerRenderer::Renderer* Create(int32_t squareMaxCount,
+                                      MTLPixelFormat renderTargetFormat,
+                                      MTLPixelFormat depthStencilFormat,
+									  bool isReversedDepth)
+{
+	auto graphicDevice = CreateDevice();
+
+	auto ret = Create(graphicDevice, squareMaxCount, renderTargetFormat, depthStencilFormat, isReversedDepth);
+
+	if (ret != nullptr)
+	{
+		ES_SAFE_RELEASE(graphicDevice);
+		return ret;
+	}
+
+	ES_SAFE_RELEASE(graphicDevice);
+	return nullptr;
+
+	auto graphics = new LLGI::GraphicsMetal();
+    graphics->Initialize(nullptr);
 }
 
 Effekseer::TextureData* CreateTextureData(::EffekseerRenderer::Renderer* renderer, id<MTLTexture> texture)
@@ -93,11 +145,11 @@ void FlushAndWait(::EffekseerRenderer::Renderer* renderer)
 	g->WaitFinish();
 }
 
-EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::GraphicsDevice* graphicsDevice,
 												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
-	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	auto g = static_cast<LLGI::GraphicsMetal*>(r->GetGraphics());
+	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
 	auto mp = static_cast<::EffekseerRendererLLGI::SingleFrameMemoryPool*>(memoryPool);
 	auto commandList = g->CreateCommandList(mp->GetInternal());
 	auto ret = new EffekseerRendererLLGI::CommandList(g, commandList, mp->GetInternal());
@@ -105,14 +157,27 @@ EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer*
 	return ret;
 }
 
-EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer)
+EffekseerRenderer::CommandList* CreateCommandList(::EffekseerRenderer::Renderer* renderer,
+												  ::EffekseerRenderer::SingleFrameMemoryPool* memoryPool)
 {
 	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
-	auto g = static_cast<LLGI::GraphicsMetal*>(r->GetGraphics());
+	return CreateCommandList(r->GetGraphicsDevice(), memoryPool);
+}
+
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::GraphicsDevice* graphicsDevice)
+{
+	auto gd = static_cast<::EffekseerRendererLLGI::GraphicsDevice*>(graphicsDevice);
+	auto g = static_cast<LLGI::GraphicsMetal*>(gd->GetGraphics());
 	auto mp = g->CreateSingleFrameMemoryPool(1024 * 1024 * 8, 128);
 	auto ret = new EffekseerRendererLLGI::SingleFrameMemoryPool(mp);
 	ES_SAFE_RELEASE(mp);
 	return ret;
+}
+
+EffekseerRenderer::SingleFrameMemoryPool* CreateSingleFrameMemoryPool(::EffekseerRenderer::Renderer* renderer)
+{
+	auto r = static_cast<::EffekseerRendererLLGI::RendererImplemented*>(renderer);
+    return CreateSingleFrameMemoryPool(r->GetGraphicsDevice());
 }
 /*
 void BeginCommandList(EffekseerRenderer::CommandList* commandList, id<MTLCommandBuffer> commandBuffer)
@@ -206,6 +271,7 @@ bool RendererImplemented::EndRendering()
     return true;
 }
 
+/*
 ::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface) {
 
     if (materialCompiler_ == nullptr)
@@ -213,5 +279,6 @@ bool RendererImplemented::EndRendering()
 
     return new MaterialLoader(this->GetGraphicsDevice(), fileInterface, platformType_, materialCompiler_);
 }
+*/
 
 } // namespace EffekseerRendererMetal

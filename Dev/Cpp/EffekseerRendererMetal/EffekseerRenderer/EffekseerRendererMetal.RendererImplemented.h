@@ -26,7 +26,7 @@ public:
 
 	bool EndRendering() override;
     
-    ::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
+    //::Effekseer::MaterialLoader* CreateMaterialLoader(::Effekseer::FileInterface* fileInterface = nullptr) override;
 };
 
 } // namespace EffekseerRendererMetal

@@ -1,4 +1,4 @@
-
+/*
 #include "EffekseerRendererMetal.MaterialLoader.h"
 
 #include "../../3rdParty/LLGI/src/LLGI.Compiler.h"
@@ -22,3 +22,4 @@ MaterialLoader::MaterialLoader(::EffekseerRendererLLGI::GraphicsDevice* graphics
 }
 
 }
+*/

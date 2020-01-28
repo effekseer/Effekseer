@@ -50,9 +50,13 @@ MaterialLoader::MaterialLoader(GraphicsDevice* graphicsDevice,
 
 	graphicsDevice_ = graphicsDevice;
 	ES_SAFE_ADDREF(graphicsDevice_);
+    ES_SAFE_ADDREF(materialCompiler_);
 }
 
-MaterialLoader ::~MaterialLoader() { ES_SAFE_RELEASE(graphicsDevice_); }
+MaterialLoader ::~MaterialLoader() {
+    ES_SAFE_RELEASE(materialCompiler_);
+    ES_SAFE_RELEASE(graphicsDevice_);
+}
 
 ::Effekseer::MaterialData* MaterialLoader::Load(const EFK_CHAR* path)
 {
