@@ -200,11 +200,11 @@ protected:
 
 			if (CanSingleRendering())
 			{
-				mat43 = ::Effekseer::Mat43f::Scaling(s);
+				mat43 = ::Effekseer::Mat43f::Scaling(s) * mat43;
 			}
 			else
 			{
-				mat43 = ::Effekseer::Mat43f::Scaling(s);
+				mat43 = ::Effekseer::Mat43f::Scaling(s) * mat43;
 			}
 		}
 		else if (parameter.Billboard == ::Effekseer::BillboardType::Fixed)
