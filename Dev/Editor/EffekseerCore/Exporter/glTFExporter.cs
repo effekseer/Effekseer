@@ -18,6 +18,7 @@ namespace Effekseer.Exporter
 		public glTFExporterFormat Format = glTFExporterFormat.glTF;
 		public bool IsContainedTextureAsBinary = false;
 		public float Scale = 1.0f;
+		public float ExternalScale = 1.0f;
 
         /// <summary>
         /// if bindingNode is int, an effect is binding with node index.
@@ -55,7 +56,7 @@ namespace Effekseer.Exporter
 
 			var effekseerExtention = new EffekseerExtention();
 
-			var effect = CreateEffect(option.Scale, option.bindingNode, option.IsContainedTextureAsBinary);
+			var effect = CreateEffect(option.Scale, option.ExternalScale, option.bindingNode, option.IsContainedTextureAsBinary);
 
 			effekseerExtention.effects.Add(effect);
 
@@ -121,7 +122,7 @@ namespace Effekseer.Exporter
 			bufferViews.Add(name, bufferView);
 		}
 
-        EffekseerEffect CreateEffect(float scale, object bindingNode, bool isContainedAsBinary)
+        EffekseerEffect CreateEffect(float scale, float externalScale, object bindingNode, bool isContainedAsBinary)
 		{
 			var effect = new EffekseerEffect();
 
@@ -130,6 +131,8 @@ namespace Effekseer.Exporter
 			{
 				name = "effect";
 			}
+
+			effect.Add("scale", externalScale);
 
 			var bodyName = name + "_body";
 
@@ -271,6 +274,8 @@ namespace Effekseer.Exporter
 				}
 			}
 
+			effect.Add("sounds", sounds);
+
 			List<object> models = new List<object>();
 
 			if (isContainedAsBinary)
@@ -293,8 +298,31 @@ namespace Effekseer.Exporter
 				}
 			}
 
-			effect.Add("sounds", sounds);
 			effect.Add("models", models);
+
+			List<object> materials = new List<object>();
+
+			if (isContainedAsBinary)
+			{
+				foreach (var material in binaryExporter.Materials.ToList().OrderBy(_ => _))
+				{
+					Uri u1 = new Uri(System.IO.Path.GetDirectoryName(Core.FullPath) + System.IO.Path.DirectorySeparatorChar.ToString());
+					Uri u2 = new Uri(u1, material);
+
+					var buf = System.IO.File.ReadAllBytes(u2.LocalPath);
+					AddBufferView(material, buf);
+					materials.Add(CreateAsBufferView(material));
+				}
+			}
+			else
+			{
+				foreach (var material in binaryExporter.Materials.ToList().OrderBy(_ => _))
+				{
+					materials.Add(CreateImageAsURI(material));
+				}
+			}
+
+			effect.Add("materials", materials);
 
 			return effect;
 		}
