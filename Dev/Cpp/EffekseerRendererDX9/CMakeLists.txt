@@ -18,8 +18,8 @@ endif()
 
 file(GLOB_RECURSE LOCAL_HEADERS_DX9 *.h)
 file(GLOB_RECURSE LOCAL_SOURCES_DX9 *.cpp)
-#list(APPEND LOCAL_HEADERS_DX9 ../EffekseerMaterialCompiler/DirectX9/EffekseerMaterialCompilerDX9.h)
-#list(APPEND LOCAL_SOURCES_DX9 ../EffekseerMaterialCompiler/DirectX9/EffekseerMaterialCompilerDX9.cpp)
+list(APPEND LOCAL_HEADERS_DX9 ../EffekseerMaterialCompiler/DirectX9/EffekseerMaterialCompilerDX9.h)
+list(APPEND LOCAL_SOURCES_DX9 ../EffekseerMaterialCompiler/DirectX9/EffekseerMaterialCompilerDX9.cpp)
 
 FilterFolder("${LOCAL_HEADERS_DX9}")
 FilterFolder("${LOCAL_SOURCES_DX9}")

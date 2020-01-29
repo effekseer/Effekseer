@@ -87,6 +87,33 @@ if(WIN32)
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
 
+    add_library(
+        EffekseerMaterialCompilerDX9
+        SHARED
+        DirectX9/EffekseerMaterialCompilerDX9.h
+        DirectX9/EffekseerMaterialCompilerDX9.cpp
+    )
+
+    target_link_libraries(
+        EffekseerMaterialCompilerDX9
+        Effekseer
+    )
+
+    target_compile_definitions(EffekseerMaterialCompilerDX9 PRIVATE __SHARED_OBJECT__=1)
+
+    set_target_properties(
+        EffekseerMaterialCompilerDX9
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+    )
+
+    set_target_properties(EffekseerMaterialCompilerDX9
+        PROPERTIES
+        DEBUG_POSTFIX ".Debug")
+
 endif()
 
 if(WIN32 AND BUILD_DX12)

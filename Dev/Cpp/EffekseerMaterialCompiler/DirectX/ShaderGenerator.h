@@ -18,6 +18,13 @@ struct ShaderData
 	std::string CodePS;
 };
 
+enum class ShaderGeneratorTarget
+{
+	DirectX9,
+	DirectX11,
+	DirectX12,
+};
+
 class ShaderGenerator
 {
 protected:
@@ -36,6 +43,7 @@ protected:
 	const char* ps_suf2_lit_;
 	const char* ps_suf2_unlit_;
 	const char* ps_suf2_refraction_;
+	ShaderGeneratorTarget target_;
 
 	std::string Replace(std::string target, std::string from_, std::string to_)
 	{
@@ -88,7 +96,15 @@ protected:
 	void ExportTexture(std::ostringstream& maincode, const char* name, int32_t registerId)
 	{
 		maincode << "Texture2D " << name << "_texture : register(t" << registerId << ");" << std::endl;
-		maincode << "SamplerState " << name << "_sampler : register(s" << registerId << ");" << std::endl;
+
+		if (target_ == ShaderGeneratorTarget::DirectX9)
+		{
+			maincode << "sampler2D " << name << "_sampler : register(s" << registerId << ");" << std::endl;
+		}
+		else
+		{
+			maincode << "SamplerState " << name << "_sampler : register(s" << registerId << ");" << std::endl;
+		}
 	}
 
 	int32_t ExportHeader(std::ostringstream& maincode, Material* material, int stage, bool isSprite, int instanceCount)
@@ -230,8 +246,8 @@ protected:
 	}
 
 public:
-	ShaderGenerator(const char* common_define, 
-		const char* common_vs_define, 
+	ShaderGenerator(const char* common_define,
+					const char* common_vs_define,
 					const char* sprite_vs_pre,
 					const char* sprite_vs_pre_simple,
 					const char* model_vs_pre,
@@ -244,9 +260,10 @@ public:
 					const char* ps_suf1,
 					const char* ps_suf2_lit,
 					const char* ps_suf2_unlit,
-					const char* ps_suf2_refraction
-	) 
-	: common_define_(common_define), common_vs_define_(common_vs_define)
+					const char* ps_suf2_refraction,
+					ShaderGeneratorTarget target)
+		: common_define_(common_define)
+		, common_vs_define_(common_vs_define)
 		, sprite_vs_pre_(sprite_vs_pre)
 		, sprite_vs_pre_simple_(sprite_vs_pre_simple)
 		, model_vs_pre_(model_vs_pre)
@@ -260,8 +277,8 @@ public:
 		, ps_suf2_lit_(ps_suf2_lit)
 		, ps_suf2_unlit_(ps_suf2_unlit)
 		, ps_suf2_refraction_(ps_suf2_refraction)
+		, target_(target)
 	{
-
 	}
 
 	ShaderData GenerateShader(Material* material,
@@ -371,26 +388,42 @@ public:
 				std::string keyP = "$TEX_P" + std::to_string(material->GetTextureIndex(i)) + "$";
 				std::string keyS = "$TEX_S" + std::to_string(material->GetTextureIndex(i)) + "$";
 
-				if (stage == 0)
+				if (target_ == ShaderGeneratorTarget::DirectX9)
 				{
-					baseCode = Replace(baseCode,
-									   keyP,
-									   std::string(material->GetTextureName(i)) + "_texture.SampleLevel(" + material->GetTextureName(i) +
-										   "_sampler,GetUV(");
-					baseCode = Replace(baseCode, keyS, "),0)");
+					if (stage == 0)
+					{
+						baseCode = Replace(baseCode, keyP, std::string("tex2Dlod(") + material->GetTextureName(i) + "_sampler,float4(GetUV(");
+						baseCode = Replace(baseCode, keyS, "),0,1))");
+					}
+					else
+					{
+						baseCode = Replace(baseCode, keyP, std::string("tex2D(") + material->GetTextureName(i) + "_sampler,GetUV(");
+						baseCode = Replace(baseCode, keyS, "))");
+					}
 				}
 				else
 				{
-					baseCode = Replace(baseCode,
-									   keyP,
-									   std::string(material->GetTextureName(i)) + "_texture.Sample(" + material->GetTextureName(i) +
-										   "_sampler,GetUV(");
-					baseCode = Replace(baseCode, keyS, "))");
+					if (stage == 0)
+					{
+						baseCode = Replace(baseCode,
+										   keyP,
+										   std::string(material->GetTextureName(i)) + "_texture.SampleLevel(" +
+											   material->GetTextureName(i) + "_sampler,GetUV(");
+						baseCode = Replace(baseCode, keyS, "),0)");
+					}
+					else
+					{
+						baseCode = Replace(baseCode,
+										   keyP,
+										   std::string(material->GetTextureName(i)) + "_texture.Sample(" + material->GetTextureName(i) +
+											   "_sampler,GetUV(");
+						baseCode = Replace(baseCode, keyS, "))");
+					}
 				}
 			}
 
 			// invalid texture
-			for (size_t i = actualTextureCount; i < material->GetTextureCount(); i++)
+			for (int32_t i = actualTextureCount; i < material->GetTextureCount(); i++)
 			{
 				auto textureIndex = material->GetTextureIndex(i);
 				auto textureName = std::string(material->GetTextureName(i));

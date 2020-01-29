@@ -1,15 +1,15 @@
 
 float4x4 mCameraProj		: register( c0 );
-float4x4 mModel[40]		: register( c4 );
-float4	fUV[40]			: register( c164 );
-float4	fModelColor[40]		: register( c204 );
+float4x4 mModel[20]		: register( c4 );
+float4	fUV[20]			: register( c84 );
+float4	fModelColor[20]		: register( c104 );
 
 #ifdef ENABLE_LIGHTING
-float4	fLightDirection		: register( c244 );
-float4	fLightColor		: register( c245 );
-float4	fLightAmbient		: register( c246 );
+float4	fLightDirection		: register( c124 );
+float4	fLightColor		: register( c125 );
+float4	fLightAmbient		: register( c126 );
 #endif
-float4 mUVInversed		: register(c247);
+float4 mUVInversed		: register(c127);
 
 
 struct VS_Input

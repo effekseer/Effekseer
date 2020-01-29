@@ -154,7 +154,8 @@ CompiledMaterialBinary* MaterialCompilerDX12::Compile(Material* material, int32_
 												  DX12::g_material_ps_suf1,
 												  DX12::g_material_ps_suf2_lit,
 												  DX12::g_material_ps_suf2_unlit,
-												  DX12::g_material_ps_suf2_refraction);
+												  DX12::g_material_ps_suf2_refraction,
+												  DirectX::ShaderGeneratorTarget::DirectX12);
 
 		auto shader = generator.GenerateShader(material, type, maximumTextureCount, 8, 1);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));

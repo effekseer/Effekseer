@@ -5,7 +5,16 @@ static char* material_common_define = R"(
 #define LERP lerp
 )";
 
-static char* material_common_vs_functions = R"(
+static char* material_common_vs_functions = R"()"
+
+#if defined(_DIRECTX9)
+R"(
+#define POSITION0 POSITION
+#define SV_POSITION POSITION
+)"
+#endif
+
+R"(
 
 float2 GetUV(float2 uv)
 {
@@ -162,7 +171,6 @@ static char* material_sprite_vs_suf2 = R"(
 )";
 
 static char* model_vs_pre = R"(
-
 struct VS_Input
 {
 	float3 Pos		: POSITION0;
@@ -194,8 +202,8 @@ cbuffer VSConstantBuffer : register(b0) {
 
 )"
 
-#ifdef _DIRECTX11
-R"(
+#if defined(_DIRECTX11)
+							R"(
 float4x4 mCameraProj		: register( c0 );
 float4x4 mModel[40]		: register( c4 );
 float4	fUV[40]			: register( c164 );
@@ -203,6 +211,16 @@ float4	fModelColor[40]		: register( c204 );
 
 float4 mUVInversed		: register(c244);
 float4 predefined_uniform : register(c245);
+)"
+#elif defined(_DIRECTX9)
+							R"(
+float4x4 mCameraProj		: register( c0 );
+float4x4 mModel[20]		: register( c4 );
+float4	fUV[20]			: register( c84 );
+float4	fModelColor[20]		: register( c104 );
+
+float4 mUVInversed		: register(c124);
+float4 predefined_uniform : register(c125);
 )"
 #else
 R"(
@@ -275,11 +293,25 @@ static char* model_vs_suf2 = R"(
 
 )";
 
-static char* g_material_ps_pre = R"(
+static char* g_material_ps_pre = R"()"
 
+#if defined(_DIRECTX9)
+R"(
+#define SV_Target COLOR
+)"
+#endif
+
+R"(
 struct PS_Input
 {
+)"
+
+#if defined(_DIRECTX11) || defined(_DIRECTX12)
+								 R"(
 	float4 Position		: SV_POSITION;
+)"
+#endif
+R"(
 	float4 VColor		: COLOR;
 	float2 UV1		: TEXCOORD0;
 	float2 UV2		: TEXCOORD1;
@@ -293,7 +325,7 @@ struct PS_Input
 };
 )"
 
-#ifdef _DIRECTX11
+#if defined(_DIRECTX9) || defined(_DIRECTX11)
 R"(
 cbuffer PSConstantBuffer : register(b0) {
 )";
@@ -431,7 +463,18 @@ static char* g_material_ps_suf2_refraction = R"(
 	distortUV += Input.ScreenUV;
 	distortUV = GetUVBack(distortUV);	
 
+)"
+#if defined(_DIRECTX9)
+R"(
+	float4 bg = tex2D(background_sampler, distortUV);
+)"
+#else
+R"(
 	float4 bg = background_texture.Sample(background_sampler, distortUV);
+)"
+
+#endif
+R"( 
 	float4 Output = bg;
 
 	if(opacityMask <= 0.0) discard;
