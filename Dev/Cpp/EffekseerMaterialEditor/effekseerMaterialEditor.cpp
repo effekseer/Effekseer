@@ -254,7 +254,7 @@ int mainLoop(int argc, char* argv[])
 
 	bool isFirstFrame = true;
 	int framecount = 0;
-	int leftWidth = 220;
+	int leftWidth = 220 * mainWindow->GetDPIScale();
 
 	while (!glfwWindowShouldClose(glfwMainWindow))
 	{
@@ -263,6 +263,8 @@ int mainLoop(int argc, char* argv[])
 		if (isDpiDirtied)
 		{
 			ImGuiStyle& style = ImGui::GetStyle();
+
+			
 
 			style = ImGuiStyle();
 			style.ChildRounding = 3.f;

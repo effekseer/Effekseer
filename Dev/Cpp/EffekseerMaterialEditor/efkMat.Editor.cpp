@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <ostream>
+#include <GUI/MainWindow.h>
 
 #include <efkMat.StringContainer.h>
 #include <efkMat.TextExporter.h>
@@ -1740,9 +1741,10 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 
 	auto bg_drawList = ed::GetNodeBackgroundDrawList(node->GUID);
 
-	// Header backgroud
+	// The background of header
+	auto mainWindow = Effekseer::MainWindow::GetInstance();
 	bg_drawList->AddRectFilled(ImVec2(itemRectMin.x, itemRectMin.y),
-							   ImVec2(itemRectMax.x, itemRectMin.y + 30),
+							   ImVec2(itemRectMax.x, itemRectMin.y + 30 * mainWindow->GetDPIScale()),
 							   IM_COL32(110, 110, 110, 255),
 							   ed::GetStyle().NodeRounding,
 							   ImDrawCornerFlags_Top);
