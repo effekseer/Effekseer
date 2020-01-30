@@ -6,6 +6,12 @@
 #include "EffekseerRendererDX9.RendererImplemented.h"
 #include <memory>
 
+namespace Effekseer
+{
+class Material;
+class CompiledMaterialBinary;
+}
+
 namespace EffekseerRendererDX9
 {
 
@@ -15,6 +21,8 @@ private:
 	Renderer* renderer_ = nullptr;
 	::Effekseer::FileInterface* fileInterface_ = nullptr;
 	::Effekseer::DefaultFileInterface defaultFileInterface_;
+
+	::Effekseer::MaterialData* LoadAcutually(::Effekseer::Material& material, ::Effekseer::CompiledMaterialBinary* binary);
 
 public:
 	MaterialLoader(Renderer* renderer, ::Effekseer::FileInterface* fileInterface);
@@ -27,6 +35,6 @@ public:
 	void Unload(::Effekseer::MaterialData* data) override;
 };
 
-} // namespace EffekseerRendererDX9
+} // namespace EffekseerRendererDX11
 
 #endif // __EFFEKSEERRENDERER_GL_MODELLOADER_H__

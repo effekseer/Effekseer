@@ -1,7 +1,8 @@
-#include "EffekseerMaterialCompilerDX11.h"
+#include "EffekseerMaterialCompilerDX9.h"
 #include "../DirectX/ShaderGenerator.h"
 
 #include <d3d11.h>
+#include <d3d9.h>
 #include <d3dcompiler.h>
 #include <iostream>
 
@@ -11,7 +12,7 @@
 
 namespace Effekseer
 {
-namespace DX11
+namespace DX9
 {
 
 static ID3DBlob* CompileVertexShader(const char* vertexShaderText,
@@ -35,7 +36,7 @@ static ID3DBlob* CompileVertexShader(const char* vertexShaderText,
 					macro.size() > 0 ? (D3D_SHADER_MACRO*)&macro[0] : NULL,
 					NULL,
 					"main",
-					"vs_4_0",
+					"vs_3_0",
 					flag,
 					0,
 					&shader,
@@ -72,7 +73,6 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 {
 	ID3DBlob* shader = nullptr;
 	ID3DBlob* error = nullptr;
-
 	UINT flag = D3D10_SHADER_PACK_MATRIX_COLUMN_MAJOR;
 #if !_DEBUG
 	flag = flag | D3D10_SHADER_OPTIMIZATION_LEVEL3;
@@ -86,7 +86,7 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 					macro.size() > 0 ? (D3D_SHADER_MACRO*)&macro[0] : NULL,
 					NULL,
 					"main",
-					"ps_4_0",
+					"ps_3_0",
 					flag,
 					0,
 					&shader,
@@ -116,17 +116,17 @@ static ID3DBlob* CompilePixelShader(const char* vertexShaderText,
 	return shader;
 }
 
-#define _DIRECTX11 1
+#define _DIRECTX9 1
 #include "../HLSL/HLSL.h"
 
-} // namespace DX11
+} // namespace DX9
 
 } // namespace Effekseer
 
 namespace Effekseer
 {
 
-class CompiledMaterialBinaryDX11 : public CompiledMaterialBinary, ReferenceObject
+class CompiledMaterialBinaryDX9 : public CompiledMaterialBinary, ReferenceObject
 {
 private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> vertexShaders_;
@@ -134,9 +134,9 @@ private:
 	std::array<std::vector<uint8_t>, static_cast<int32_t>(MaterialShaderType::Max)> pixelShaders_;
 
 public:
-	CompiledMaterialBinaryDX11() {}
+	CompiledMaterialBinaryDX9() {}
 
-	virtual ~CompiledMaterialBinaryDX11() {}
+	virtual ~CompiledMaterialBinaryDX9() {}
 
 	void SetVertexShaderData(MaterialShaderType type, const std::vector<uint8_t>& data)
 	{
@@ -160,9 +160,9 @@ public:
 	int GetRef() override { return ReferenceObject::GetRef(); }
 };
 
-CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_t maximumTextureCount)
+CompiledMaterialBinary* MaterialCompilerDX9::Compile(Material* material, int32_t maximumTextureCount)
 {
-	auto binary = new CompiledMaterialBinaryDX11();
+	auto binary = new CompiledMaterialBinaryDX9();
 
 	auto convertToVectorVS = [](const std::string& str) -> std::vector<uint8_t> {
 		std::vector<uint8_t> ret;
@@ -170,7 +170,7 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 		std::string log;
 		std::vector<D3D_SHADER_MACRO> macros;
 
-		auto blob = DX11::CompileVertexShader(str.c_str(), "VS", macros, log);
+		auto blob = DX9::CompileVertexShader(str.c_str(), "VS", macros, log);
 
 		if (blob != nullptr)
 		{
@@ -194,7 +194,7 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 		std::string log;
 		std::vector<D3D_SHADER_MACRO> macros;
 
-		auto blob = DX11::CompilePixelShader(str.c_str(), "PS", macros, log);
+		auto blob = DX9::CompilePixelShader(str.c_str(), "PS", macros, log);
 
 		if (blob != nullptr)
 		{
@@ -213,24 +213,24 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 	};
 
 	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
-		auto generator = DirectX::ShaderGenerator(DX11::material_common_define,
-												  DX11::material_common_vs_functions,
-												  DX11::material_sprite_vs_pre,
-												  DX11::material_sprite_vs_pre_simple,
-												  DX11::model_vs_pre,
-												  DX11::material_sprite_vs_suf1,
-												  DX11::material_sprite_vs_suf1_simple,
-												  DX11::model_vs_suf1,
-												  DX11::material_sprite_vs_suf2,
-												  DX11::model_vs_suf2,
-												  DX11::g_material_ps_pre,
-												  DX11::g_material_ps_suf1,
-												  DX11::g_material_ps_suf2_lit,
-												  DX11::g_material_ps_suf2_unlit,
-												  DX11::g_material_ps_suf2_refraction,
-												  DirectX::ShaderGeneratorTarget::DirectX11);
+		auto generator = DirectX::ShaderGenerator(DX9::material_common_define,
+												  DX9::material_common_vs_functions,
+												  DX9::material_sprite_vs_pre,
+												  DX9::material_sprite_vs_pre_simple,
+												  DX9::model_vs_pre,
+												  DX9::material_sprite_vs_suf1,
+												  DX9::material_sprite_vs_suf1_simple,
+												  DX9::model_vs_suf1,
+												  DX9::material_sprite_vs_suf2,
+												  DX9::model_vs_suf2,
+												  DX9::g_material_ps_pre,
+												  DX9::g_material_ps_suf1,
+												  DX9::g_material_ps_suf2_lit,
+												  DX9::g_material_ps_suf2_unlit,
+												  DX9::g_material_ps_suf2_refraction,
+												  DirectX::ShaderGeneratorTarget::DirectX9);
 
-		auto shader = generator.GenerateShader(material, type, maximumTextureCount, 0, 40);
+		auto shader = generator.GenerateShader(material, type, maximumTextureCount, 0, 20);
 
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
@@ -248,7 +248,7 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 	return binary;
 }
 
-CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
+CompiledMaterialBinary* MaterialCompilerDX9::Compile(Material* material) { return Compile(material, Effekseer::UserTextureSlotMax); }
 
 } // namespace Effekseer
 
@@ -263,6 +263,6 @@ extern "C"
 #define EFK_EXPORT
 #endif
 
-	EFK_EXPORT Effekseer::MaterialCompiler* EFK_STDCALL CreateCompiler() { return new Effekseer::MaterialCompilerDX11(); }
+	EFK_EXPORT Effekseer::MaterialCompiler* EFK_STDCALL CreateCompiler() { return new Effekseer::MaterialCompilerDX9(); }
 }
 #endif

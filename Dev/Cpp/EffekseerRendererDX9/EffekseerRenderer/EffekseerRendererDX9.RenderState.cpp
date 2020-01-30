@@ -157,6 +157,20 @@ void RenderState::Update( bool forced )
 
 		if( m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced )
 		{
+			// for VTF
+			if(i < 4)
+			{
+				m_renderer->GetDevice()->SetSamplerState(
+					i + D3DVERTEXTEXTURESAMPLER0,
+					D3DSAMP_ADDRESSU,
+					m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP);
+
+				m_renderer->GetDevice()->SetSamplerState(
+					i + D3DVERTEXTEXTURESAMPLER0,
+					D3DSAMP_ADDRESSV,
+					m_next.TextureWrapTypes[i] == ::Effekseer::TextureWrapType::Repeat ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP);
+			}
+
 			m_renderer->GetDevice()->SetSamplerState( 
 				i, 
 				D3DSAMP_ADDRESSU, 

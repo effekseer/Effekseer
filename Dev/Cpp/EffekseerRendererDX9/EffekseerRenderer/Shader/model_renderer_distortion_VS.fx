@@ -1,9 +1,9 @@
 
 float4x4 mCameraProj		: register( c0 );
-float4x4 mModel[40]		: register( c4 );
-float4	fUV[40]			: register( c164 );
-float4	fModelColor[40]		: register( c204 );
-float4 mUVInversed		: register(c247);
+float4x4 mModel[20]		: register( c4 );
+float4	fUV[20]			: register( c84 );
+float4	fModelColor[20]		: register( c104 );
+float4 mUVInversed		: register(c127);
 
 struct VS_Input
 {

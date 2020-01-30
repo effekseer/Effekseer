@@ -17,7 +17,7 @@
 //#include "EffekseerRendererDX9.TrackRenderer.h"
 #include "EffekseerRendererDX9.TextureLoader.h"
 #include "EffekseerRendererDX9.ModelLoader.h"
-
+#include "EffekseerRendererDX9.MaterialLoader.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.SpriteRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RibbonRendererBase.h"
 #include "../../EffekseerRendererCommon/EffekseerRenderer.RingRendererBase.h"
@@ -734,6 +734,11 @@ void RendererImplemented::SetLightAmbientColor( const ::Effekseer::Color& color 
 #endif
 }
 
+::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
+{
+	return new MaterialLoader(this, fileInterface);
+}
+
 void RendererImplemented::SetBackground(IDirect3DTexture9* background)
 {
 	ES_SAFE_ADDREF(background);
@@ -805,23 +810,23 @@ void RendererImplemented::DrawSprites( int32_t spriteCount, int32_t vertexOffset
 
 	if (GetRenderMode() == ::Effekseer::RenderMode::Normal)
 	{
-		GetDevice()->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, vertexOffset, 0, spriteCount * 4, 0, spriteCount * 2 );
+	GetDevice()->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, vertexOffset, 0, spriteCount * 4, 0, spriteCount * 2);
 	}
 	else if (GetRenderMode() == ::Effekseer::RenderMode::Wireframe)
 	{
-		GetDevice()->DrawIndexedPrimitive( D3DPT_LINELIST, vertexOffset, 0, spriteCount * 4, 0, spriteCount * 4 );
+	GetDevice()->DrawIndexedPrimitive(D3DPT_LINELIST, vertexOffset, 0, spriteCount * 4, 0, spriteCount * 4);
 	}
 }
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-void RendererImplemented::DrawPolygon( int32_t vertexCount, int32_t indexCount)
+void RendererImplemented::DrawPolygon(int32_t vertexCount, int32_t indexCount)
 {
 	impl->drawcallCount++;
 	impl->drawvertexCount += vertexCount;
 
-	GetDevice()->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, 0, 0, vertexCount, 0, indexCount / 3 );
+	GetDevice()->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, vertexCount, 0, indexCount / 3);
 }
 
 //----------------------------------------------------------------------------------
@@ -903,6 +908,19 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 {
 	for (int32_t i = 0; i < count; i++)
 	{
+		// For VTF
+		if(i < 4)
+		{
+			if (textures[i] == nullptr)
+			{
+				GetDevice()->SetTexture(i + D3DVERTEXTEXTURESAMPLER0, nullptr);
+			}
+			else
+			{
+				GetDevice()->SetTexture(i + D3DVERTEXTEXTURESAMPLER0, (IDirect3DTexture9*)textures[i]->UserPtr);
+			}
+		}
+
 		if (textures[i] == nullptr)
 		{
 			GetDevice()->SetTexture(i, nullptr);
@@ -913,7 +931,6 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		}
 	}
 
-	// VTF is not supported
 }
 
 //----------------------------------------------------------------------------------
