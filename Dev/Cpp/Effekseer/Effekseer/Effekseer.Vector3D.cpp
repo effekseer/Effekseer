@@ -6,6 +6,7 @@
 #if defined(_M_X86) && defined(__x86__)
 #include <emmintrin.h>
 #endif
+#include "SIMD/Effekseer.Vec3f.h"
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.Matrix43.h"
 #include "Effekseer.Matrix44.h"
@@ -14,22 +15,6 @@
 //
 //----------------------------------------------------------------------------------
 namespace Effekseer {
-	
-inline float Rsqrt(float x)
-{
-#if defined(_M_X86) && defined(__x86__)
-	_mm_store_ss(&x, _mm_rsqrt_ss(_mm_load_ss(&x)));
-	return x;
-#else
-	float xhalf = 0.5f * x;
-	int i = *(int*)&x;
-	i = 0x5f3759df - (i >> 1);
-	x = *(float*)&i;
-	x = x * (1.5f - xhalf * x * x);
-	x = x * (1.5f - xhalf * x * x);
-	return x;
-#endif
-}
 
 //----------------------------------------------------------------------------------
 //

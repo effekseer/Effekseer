@@ -179,18 +179,18 @@ int32_t FCurveVector2D::Load(void* data, int32_t version)
 	return size;
 }
 
-std::array<float, 2> FCurveVector2D::GetValues(float living, float life) const
+Vec2f FCurveVector2D::GetValues(float living, float life) const
 {
 	auto x = X.GetValue(living, life, Timeline);
 	auto y = Y.GetValue(living, life, Timeline);
-	return std::array<float, 2>{x, y};
+	return Vec2f{x, y};
 }
 
-std::array<float, 2> FCurveVector2D::GetOffsets(InstanceGlobal& g) const
+Vec2f FCurveVector2D::GetOffsets(InstanceGlobal& g) const
 {
 	auto x = X.GetOffset(g);
 	auto y = Y.GetOffset(g);
-	return std::array<float, 2>{x, y};
+	return Vec2f{x, y};
 }
 
 int32_t FCurveVector3D::Load(void* data, int32_t version)
@@ -220,20 +220,20 @@ int32_t FCurveVector3D::Load(void* data, int32_t version)
 	return size;
 }
 
-std::array<float, 3> FCurveVector3D::GetValues(float living, float life) const
+Vec3f FCurveVector3D::GetValues(float living, float life) const
 {
 	auto x = X.GetValue(living, life, Timeline);
 	auto y = Y.GetValue(living, life, Timeline);
 	auto z = Z.GetValue(living, life, Timeline);
-	return std::array<float, 3>{x, y, z};
+	return {x, y, z};
 }
 
-std::array<float, 3> FCurveVector3D::GetOffsets(InstanceGlobal& g) const
+Vec3f FCurveVector3D::GetOffsets(InstanceGlobal& g) const
 {
 	auto x = X.GetOffset(g);
 	auto y = Y.GetOffset(g);
 	auto z = Z.GetOffset(g);
-	return std::array<float, 3>{x, y, z};
+	return {x, y, z};
 }
 
 int32_t FCurveVectorColor::Load(void* data, int32_t version)

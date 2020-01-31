@@ -68,7 +68,7 @@ public:
 
 	void Update( bool recursive, bool shown );
 
-	void SetBaseMatrix( bool recursive, const Matrix43& mat );
+	void SetBaseMatrix( bool recursive, const Mat43f& mat );
 
 	void RemoveForcibly( bool recursive );
 

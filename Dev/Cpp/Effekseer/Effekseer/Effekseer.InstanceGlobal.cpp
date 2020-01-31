@@ -126,7 +126,7 @@ void InstanceGlobal::SetRootContainer( InstanceContainer* container )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-const Vector3D& InstanceGlobal::GetTargetLocation() const
+const Vec3f& InstanceGlobal::GetTargetLocation() const
 {
 	return m_targetLocation;
 }

@@ -57,9 +57,8 @@ private:
 		bool				GoingToStopRoot;
 		EffectInstanceRemovingCallback	RemovingCallback;
 		
-		Matrix43			BaseMatrix;
-
-		Matrix43			GlobalMatrix;
+		Mat43f				BaseMatrix;
+		Mat43f				GlobalMatrix;
 
 		float				Speed;
 
@@ -107,7 +106,7 @@ private:
 		
 		}
 
-		Matrix43* GetEnabledGlobalMatrix();
+		Mat43f* GetEnabledGlobalMatrix();
 
 		void CopyMatrixFromInstanceToRoot();
 	};
@@ -251,7 +250,7 @@ public:
 	InstanceGroup* CreateInstanceGroup( EffectNode* pEffectNode, InstanceContainer* pContainer, InstanceGlobal* pGlobal );
 	void ReleaseGroup( InstanceGroup* group );
 
-	InstanceContainer* CreateInstanceContainer( EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const Matrix43& rootMatrix, Instance* pParent );
+	InstanceContainer* CreateInstanceContainer( EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const Mat43f& rootMatrix, Instance* pParent );
 	void ReleaseInstanceContainer( InstanceContainer* container );
 
 	/**

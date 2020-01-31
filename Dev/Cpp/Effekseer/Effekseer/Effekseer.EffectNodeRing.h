@@ -120,7 +120,8 @@ struct RingSingleValues
 //----------------------------------------------------------------------------------
 struct RingLocationValues
 {
-	vector2d	current;
+	Vec2f	current;
+
 	union
 	{
 		struct
@@ -130,15 +131,15 @@ struct RingLocationValues
 
 		struct
 		{
-			vector2d  start;
-			vector2d  velocity;
-			vector2d  acceleration;
+			Vec2f  start;
+			Vec2f  velocity;
+			Vec2f  acceleration;
 		} pva;
 
 		struct
 		{
-			vector2d  start;
-			vector2d  end;
+			Vec2f  start;
+			Vec2f  end;
 		} easing;
 	};
 };

@@ -21,6 +21,7 @@ using Vertex = EffekseerRenderer::SimpleVertex;
 using VertexDistortion = EffekseerRenderer::VertexDistortion;
 
 class OriginalState
+	: public ::Effekseer::AlignedAllocationPolicy<16>
 {
 private:
 	std::array<ID3D11SamplerState*, Effekseer::TextureSlotMax> m_samplers;
@@ -72,6 +73,7 @@ public:
 class RendererImplemented
 	: public Renderer
 	, public ::Effekseer::ReferenceObject
+	, public ::Effekseer::AlignedAllocationPolicy<16>
 {
 friend class DeviceObject;
 
@@ -91,7 +93,7 @@ private:
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>*	m_standardRenderer;
 
-	::Effekseer::Vector3D	m_lightDirection;
+	::Effekseer::Vec3f		m_lightDirection;
 	::Effekseer::Color		m_lightColor;
 	::Effekseer::Color		m_lightAmbient;
 
@@ -176,7 +178,7 @@ public:
 	/**
 		@brief	ライトの方向を取得する。
 	*/
-	const ::Effekseer::Vector3D& GetLightDirection() const;
+	::Effekseer::Vector3D GetLightDirection() const;
 
 	/**
 		@brief	ライトの方向を設定する。

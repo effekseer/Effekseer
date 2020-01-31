@@ -7,6 +7,7 @@
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Vector3D.h"
+#include "SIMD/Effekseer.SIMDUtils.h"
 
 #include "Effekseer.Instance.h"
 #include "Effekseer.InstanceContainer.h"
@@ -303,8 +304,8 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		instanceParameter.ViewingAngleStart = instValues.startingAngle.current;
 		instanceParameter.ViewingAngleEnd = instValues.endingAngle.current;
 		
-		instValues.outerLocation.current.setValueToArg( instanceParameter.OuterLocation );
-		instValues.innerLocation.current.setValueToArg( instanceParameter.InnerLocation );
+		instanceParameter.OuterLocation = instValues.outerLocation.current;
+		instanceParameter.InnerLocation = instValues.innerLocation.current;
 
 		instanceParameter.CenterRatio = instValues.centerRatio.current;
 
@@ -566,10 +567,8 @@ void EffectNodeRing::UpdateSingleValues( Instance& instance, const RingSinglePar
 {
 	if( param.type == RingSingleParameter::Easing )
 	{
-		param.easing.setValueToArg(
-			values.current,
-			values.easing.start,
-			values.easing.end,
+		values.current = param.easing.getValue(
+			values.easing.start, values.easing.end,
 			instance.m_LivingTime / instance.m_LivedTime );
 	}
 }
@@ -587,10 +586,8 @@ void EffectNodeRing::UpdateLocationValues( Instance& instance, const RingLocatio
 	}
 	else if( param.type == RingLocationParameter::Easing )
 	{
-		param.easing.setValueToArg(
-			values.current,
-			values.easing.start,
-			values.easing.end,
+		values.current = param.easing.getValue(
+			values.easing.start, values.easing.end,
 			instance.m_LivingTime / instance.m_LivedTime );
 	}
 }

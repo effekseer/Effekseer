@@ -444,7 +444,7 @@ bool RendererImplemented::BeginRendering()
 {
 	assert(graphicsDevice_ != NULL);
 
-	::Effekseer::Matrix44::Mul(GetCameraProjectionMatrix(), GetCameraMatrix(), GetProjectionMatrix());
+	impl->CalculateCameraProjectionMatrix();
 
 	// initialize states
 	m_renderState->GetActiveState().Reset();
@@ -505,7 +505,7 @@ int32_t RendererImplemented::GetSquareMaxCount() const { return m_squareMaxCount
 
 ::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState() { return m_renderState; }
 
-const ::Effekseer::Vector3D& RendererImplemented::GetLightDirection() const { return m_lightDirection; }
+::Effekseer::Vector3D RendererImplemented::GetLightDirection() const { return m_lightDirection; }
 
 void RendererImplemented::SetLightDirection(const ::Effekseer::Vector3D& direction) { m_lightDirection = direction; }
 

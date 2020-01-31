@@ -132,11 +132,12 @@ int main()
 
 #ifdef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
 	StartingFrameTest();
-	UpdateHandleTest();
-	PlaybackSpeedTest();
-	BasicRuntimeTest();
-	//BasicRuntimeDeviceLostTest();
+	UpdateHandleTest();	PlaybackSpeedTest();
 	CustomAllocatorTest();
+	//SIMDTest();
+	BasicRuntimeTest();
+	UpdateHandleTest();
+	//BasicRuntimeDeviceLostTest();
 #else
 
 	//TestShowEfcAssets();

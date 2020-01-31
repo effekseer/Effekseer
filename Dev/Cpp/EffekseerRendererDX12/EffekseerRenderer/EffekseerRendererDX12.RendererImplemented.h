@@ -42,7 +42,7 @@ public:
 
 	bool EndRendering() override;
 
-	const ::Effekseer::Vector3D& GetLightDirection() const override;
+	::Effekseer::Vector3D GetLightDirection() const override;
 
 	void SetLightDirection(const ::Effekseer::Vector3D& direction) override;
 
@@ -56,11 +56,11 @@ public:
 
 	int32_t GetSquareMaxCount() const override;
 
-	const ::Effekseer::Matrix44& GetProjectionMatrix() const override;
+	::Effekseer::Matrix44 GetProjectionMatrix() const override;
 
 	void SetProjectionMatrix(const ::Effekseer::Matrix44& mat) override;
 
-	const ::Effekseer::Matrix44& GetCameraMatrix() const override;
+	::Effekseer::Matrix44 GetCameraMatrix() const override;
 
 	void SetCameraMatrix(const ::Effekseer::Matrix44& mat) override;
 

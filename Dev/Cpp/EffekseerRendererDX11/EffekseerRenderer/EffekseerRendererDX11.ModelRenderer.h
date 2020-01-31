@@ -18,7 +18,7 @@ namespace EffekseerRendererDX11
 //----------------------------------------------------------------------------------
 typedef ::Effekseer::ModelRenderer::NodeParameter efkModelNodeParam;
 typedef ::Effekseer::ModelRenderer::InstanceParameter efkModelInstanceParam;
-typedef ::Effekseer::Vector3D efkVector3D;
+typedef ::Effekseer::Vec3f efkVector3D;
 
 class ModelRenderer
 	: public ::EffekseerRenderer::ModelRendererBase

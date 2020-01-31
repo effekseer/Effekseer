@@ -4,6 +4,8 @@
 
 #include "Effekseer.Base.h"
 #include "Effekseer.InternalStruct.h"
+#include "SIMD/Effekseer.Vec2f.h"
+#include "SIMD/Effekseer.Vec3f.h"
 
 namespace Effekseer
 {
@@ -60,8 +62,8 @@ public:
 
 	int32_t Load(void* data, int32_t version);
 
-	std::array<float, 2> GetValues(float living, float life) const;
-	std::array<float, 2> GetOffsets(InstanceGlobal& g) const;
+	Vec2f GetValues(float living, float life) const;
+	Vec2f GetOffsets(InstanceGlobal& g) const;
 };
 
 class FCurveVector3D
@@ -74,8 +76,8 @@ public:
 
 	int32_t Load(void* data, int32_t version);
 
-	std::array<float, 3> GetValues(float living, float life) const;
-	std::array<float, 3> GetOffsets(InstanceGlobal& g) const;
+	Vec3f GetValues(float living, float life) const;
+	Vec3f GetOffsets(InstanceGlobal& g) const;
 };
 
 class FCurveVectorColor

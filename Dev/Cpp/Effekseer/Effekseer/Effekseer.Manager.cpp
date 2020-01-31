@@ -5,6 +5,7 @@
 //----------------------------------------------------------------------------------
 #include "Effekseer.Effect.h"
 #include "Effekseer.EffectImplemented.h"
+#include "SIMD/Effekseer.SIMDUtils.h"
 
 #include "Effekseer.EffectNode.h"
 #include "Effekseer.Instance.h"
@@ -58,7 +59,7 @@ Manager* Manager::Create( int instance_max, bool autoFlip )
 	return new ManagerImplemented( instance_max, autoFlip );
 }
 
-Matrix43* ManagerImplemented::DrawSet::GetEnabledGlobalMatrix()
+Mat43f* ManagerImplemented::DrawSet::GetEnabledGlobalMatrix()
 {
 	if (IsPreupdated)
 	{
@@ -239,7 +240,7 @@ void ManagerImplemented::GCDrawSet( bool isRemovingManager )
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
-InstanceContainer* ManagerImplemented::CreateInstanceContainer( EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const Matrix43& rootMatrix, Instance* pParent )
+InstanceContainer* ManagerImplemented::CreateInstanceContainer( EffectNode* pEffectNode, InstanceGlobal* pGlobal, bool isRoot, const Mat43f& rootMatrix, Instance* pParent )
 {
 	if( pooledContainers_.empty() )
 	{
@@ -899,7 +900,7 @@ Matrix43 ManagerImplemented::GetMatrix( Handle handle )
 
 		if (mat != nullptr)
 		{
-			return *mat;
+			return ToStruct(*mat);
 		}
 	}
 
@@ -939,9 +940,9 @@ Vector3D ManagerImplemented::GetLocation( Handle handle )
 
 		if (mat_ != nullptr)
 		{
-			location.X = mat_->Value[3][0];
-			location.Y = mat_->Value[3][1];
-			location.Z = mat_->Value[3][2];
+			location.X = mat_->X.GetW();
+			location.Y = mat_->Y.GetW();
+			location.Z = mat_->Z.GetW();
 		}
 	}
 
@@ -960,9 +961,9 @@ void ManagerImplemented::SetLocation( Handle handle, float x, float y, float z )
 
 		if (mat_ != nullptr)
 		{
-			mat_->Value[3][0] = x;
-			mat_->Value[3][1] = y;
-			mat_->Value[3][2] = z;
+			mat_->X.SetW( x );
+			mat_->Y.SetW( y );
+			mat_->Z.SetW( z );
 
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
@@ -990,9 +991,9 @@ void ManagerImplemented::AddLocation( Handle handle, const Vector3D& location )
 
 		if (mat_ != nullptr)
 		{
-			mat_->Value[3][0] += location.X;
-			mat_->Value[3][1] += location.Y;
-			mat_->Value[3][2] += location.Z;
+			mat_->X.SetW( mat_->X.GetW() + location.X );
+			mat_->Y.SetW( mat_->Y.GetW() + location.Y );
+			mat_->Z.SetW( mat_->Z.GetW() + location.Z );
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
 		}
@@ -1012,23 +1013,14 @@ void ManagerImplemented::SetRotation( Handle handle, float x, float y, float z )
 
 		if (mat_ != nullptr)
 		{
-			Matrix43 MatRotX, MatRotY, MatRotZ;
-
-			MatRotX.RotationX(x);
-			MatRotY.RotationY(y);
-			MatRotZ.RotationZ(z);
-
-			Matrix43 r;
-			Vector3D s, t;
+			Mat43f r;
+			Vec3f s, t;
 
 			mat_->GetSRT(s, r, t);
 
-			r.Indentity();
-			Matrix43::Multiple(r, r, MatRotZ);
-			Matrix43::Multiple(r, r, MatRotX);
-			Matrix43::Multiple(r, r, MatRotY);
+			r = Mat43f::RotationZXY(z, x, y);
 
-			mat_->SetSRT(s, r, t);
+			*mat_ = Mat43f::SRT(s, r, t);
 
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
@@ -1049,14 +1041,14 @@ void ManagerImplemented::SetRotation( Handle handle, const Vector3D& axis, float
 
 		if (mat_ != nullptr)
 		{
-			Matrix43 r;
-			Vector3D s, t;
+			Mat43f r;
+			Vec3f s, t;
 
 			mat_->GetSRT(s, r, t);
 
-			r.RotationAxis(axis, angle);
+			r = Mat43f::RotationAxis(axis, angle);
 
-			mat_->SetSRT(s, r, t);
+			*mat_ = Mat43f::SRT(s, r, t);
 
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
@@ -1077,16 +1069,14 @@ void ManagerImplemented::SetScale( Handle handle, float x, float y, float z )
 
 		if (mat_ != nullptr)
 		{
-			Matrix43 r;
-			Vector3D s, t;
+			Mat43f r;
+			Vec3f s, t;
 
 			mat_->GetSRT(s, r, t);
 
-			s.X = x;
-			s.Y = y;
-			s.Z = z;
+			s = Vec3f(x, y, z);
 
-			mat_->SetSRT(s, r, t);
+			*mat_ = Mat43f::SRT(s, r, t);
 
 			drawSet.CopyMatrixFromInstanceToRoot();
 			drawSet.IsParameterChanged = true;
@@ -1167,7 +1157,7 @@ Matrix43 ManagerImplemented::GetBaseMatrix( Handle handle )
 {
 	if( m_DrawSets.count( handle ) > 0 )
 	{
-		return m_DrawSets[handle].BaseMatrix;
+		return ToStruct(m_DrawSets[handle].BaseMatrix);
 	}
 
 	return Matrix43();
@@ -1371,44 +1361,35 @@ void ManagerImplemented::Flip()
 					InstanceContainer* pContainer = ds.InstanceContainerPointer;
 					Instance* pInstance = pContainer->GetFirstGroup()->GetFirst();
 
-					Vector3D pos(
+					Vec3f pos(
 						ds.CullingObjectPointer->GetPosition().X,
 						ds.CullingObjectPointer->GetPosition().Y,
 						ds.CullingObjectPointer->GetPosition().Z);
 
-					Matrix43 pos_;
-					pos_.Translation(pos.X, pos.Y, pos.Z);
-
-					Matrix43::Multiple(pos_, pos_,  pInstance->m_GlobalMatrix43);
+					Mat43f pos_ = Mat43f::Translation(pos);
+					pos_ *= pInstance->m_GlobalMatrix43;
 
 					if(ds.DoUseBaseMatrix)
 					{
-						Matrix43::Multiple(pos_, pos_,  ds.BaseMatrix);
+						pos_ *= ds.BaseMatrix;
 					}
 
-					Culling3D::Vector3DF position;
-					position.X = pos_.Value[3][0];
-					position.Y = pos_.Value[3][1];
-					position.Z = pos_.Value[3][2];
-					ds.CullingObjectPointer->SetPosition(position);
+					Vec3f position = pos_.GetTranslation();
+					ds.CullingObjectPointer->SetPosition(Culling3D::Vector3DF(position.GetX(), position.GetY(), position.GetZ()));
 
 					if(effect->Culling.Shape == CullingShape::Sphere)
 					{
 						float radius = effect->Culling.Sphere.Radius;
 
 						{
-							Vector3D s;
-							pInstance->GetGlobalMatrix43().GetScale(s);
-						
-							radius = radius * sqrt(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
+							Vec3f s = pInstance->GetGlobalMatrix43().GetScale();
+							radius *= s.GetLength();
 						}
 
 						if(ds.DoUseBaseMatrix)
 						{
-							Vector3D s;
-							ds.BaseMatrix.GetScale(s);
-						
-							radius = radius * sqrt(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
+							Vec3f s = ds.BaseMatrix.GetScale();
+							radius *= s.GetLength();
 						}
 
 						ds.CullingObjectPointer->ChangeIntoSphere(radius);
@@ -1621,9 +1602,8 @@ bool ManagerImplemented::IsClippedWithDepth(DrawSet& drawSet, InstanceContainer*
 	if (container->m_pEffectNode->DepthValues.DepthParameter.DepthClipping > FLT_MAX / 10)
 		return false;
 
-	Vector3D pos;
-	drawSet.GlobalMatrix.GetTranslation(pos);
-	auto distance = Vector3D::Dot(drawParameter.CameraPosition - pos, drawParameter.CameraDirection);
+	Vec3f pos = drawSet.GlobalMatrix.GetTranslation();
+	auto distance = Vec3f::Dot(Vec3f(drawParameter.CameraPosition) - pos, Vec3f(drawParameter.CameraDirection));
 	if (container->m_pEffectNode->DepthValues.DepthParameter.DepthClipping < distance)
 	{
 		return true;
@@ -1847,10 +1827,7 @@ Handle ManagerImplemented::Play(Effect* effect, const Vector3D& position, int32_
 
 	auto& drawSet = m_DrawSets[handle];
 
-	drawSet.GlobalMatrix.Indentity();
-	drawSet.GlobalMatrix.Value[3][0] = position.X;
-	drawSet.GlobalMatrix.Value[3][1] = position.Y;
-	drawSet.GlobalMatrix.Value[3][2] = position.Z;
+	drawSet.GlobalMatrix = Mat43f::Translation(position);
 
 	drawSet.IsParameterChanged = true;
 	drawSet.StartFrame = startFrame;
