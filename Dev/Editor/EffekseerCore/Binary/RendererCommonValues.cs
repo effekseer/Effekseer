@@ -9,12 +9,20 @@ namespace Effekseer.Binary
 {
 	class RendererCommonValues
 	{
+#if __EFFEKSEER_BUILD_VERSION16__
+		delegate int GetTexIDAndInfo(Data.Value.PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef);
+#endif
+
 		public static byte[] GetBytes(Data.RendererCommonValues value, Dictionary<string, int> texture_and_index, Dictionary<string, int> normalTexture_and_index, Dictionary<string, int> distortionTexture_and_index, Dictionary<string, int> material_and_index)
 
 		{
 			List<byte[]> data = new List<byte[]>();
 
 			var texInfo = new TextureInformation();
+
+#if __EFFEKSEER_BUILD_VERSION16__
+			var alphaTexInfo = new TextureInformation();
+#endif
 
 			data.Add(((int)value.Material.Value).GetBytes());
 
@@ -37,6 +45,21 @@ namespace Effekseer.Binary
 				}
 			};
 
+#if __EFFEKSEER_BUILD_VERSION16__
+			GetTexIDAndInfo getTexIDAndInfo = (Data.Value.PathForImage image, Dictionary<string, int> texAndInd, ref TextureInformation texInfoRef) =>
+			{
+				var tempTexInfo = new TextureInformation();
+
+				if (texAndInd.ContainsKey(image.RelativePath) && tempTexInfo.Load(image.AbsolutePath))
+				{
+					texInfoRef.Load(image.AbsolutePath);
+					return texAndInd[image.RelativePath];
+				}
+
+				return -1;
+			};
+#endif
+
 			if (value.Material.Value == Data.RendererCommonValues.MaterialType.Default)
 			{
 				// texture1
@@ -44,6 +67,11 @@ namespace Effekseer.Binary
 
 				// texture2
 				data.Add((-1).GetBytes());
+
+#if __EFFEKSEER_BUILD_VERSION16__
+				// alpha texture
+				data.Add(getTexIDAndInfo(value.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+#endif
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion)
 			{
@@ -52,6 +80,11 @@ namespace Effekseer.Binary
 
 				// texture2
 				data.Add((-1).GetBytes());
+
+#if __EFFEKSEER_BUILD_VERSION16__
+				// alpha texture
+				data.Add(getTexIDAndInfo(value.AlphaTextureParam.Texture, distortionTexture_and_index, ref alphaTexInfo).GetBytes());
+#endif
 			}
 			else if (value.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
 			{
@@ -60,6 +93,11 @@ namespace Effekseer.Binary
 
 				// texture2
 				data.Add(getTexIDAndStoreSize(value.NormalTexture, 2, normalTexture_and_index).GetBytes());
+
+#if __EFFEKSEER_BUILD_VERSION16__
+				// alpha texture
+				data.Add(getTexIDAndInfo(value.AlphaTextureParam.Texture, texture_and_index, ref alphaTexInfo).GetBytes());
+#endif
 			}
 			else
 			{
@@ -141,6 +179,11 @@ namespace Effekseer.Binary
 
 			data.Add(value.Filter2);
 			data.Add(value.Wrap2);
+
+#if __EFFEKSEER_BUILD_VERSION16__
+			data.Add(value.AlphaTextureParam.Filter);
+			data.Add(value.AlphaTextureParam.Wrap);
+#endif
 
 			if (value.ZTest.GetValue())
 			{
@@ -264,7 +307,20 @@ namespace Effekseer.Binary
 					data.Add(bytes1);
 				}
 			}
-			
+
+
+#if __EFFEKSEER_BUILD_VERSION16__
+			data.Add(GetUVBytes
+				(
+				alphaTexInfo, 
+				value.AlphaTextureParam.UV,
+				value.AlphaTextureParam.UVFixed, 
+				value.AlphaTextureParam.UVAnimation,
+				value.AlphaTextureParam.UVScroll,
+				value.AlphaTextureParam.UVFCurve
+				));
+#endif
+
 
 			// Inheritance
 			data.Add(value.ColorInheritType.GetValueAsInt().GetBytes());
@@ -352,5 +408,103 @@ namespace Effekseer.Binary
 
 			return data.ToArray().ToArray();
 		}
+
+#if __EFFEKSEER_BUILD_VERSION16__
+		public static byte[] GetUVBytes(TextureInformation _TexInfo,
+						Data.Value.Enum<Data.RendererCommonValues.UVType> _UVType,
+						Data.RendererCommonValues.UVFixedParamater _Fixed,
+						Data.RendererCommonValues.UVAnimationParamater _Animation,
+						Data.RendererCommonValues.UVScrollParamater _Scroll,
+						Data.RendererCommonValues.UVFCurveParamater _FCurve)
+		{
+			List<byte[]> data = new List<byte[]>();
+
+			// sprcification change(1.5)
+			float width = 128.0f;
+			float height = 128.0f;
+
+			if (_TexInfo.Width > width && _TexInfo.Height > height)
+			{
+				width = (float)_TexInfo.Width;
+				height = (float)_TexInfo.Height;
+			}
+
+			data.Add(_UVType);
+			if (_UVType == Data.RendererCommonValues.UVType.Default)
+			{
+			}
+			else if (_UVType == Data.RendererCommonValues.UVType.Fixed)
+			{
+				var value_ = _Fixed;
+				data.Add((value_.Start.X / width).GetBytes());
+				data.Add((value_.Start.Y / height).GetBytes());
+				data.Add((value_.Size.X / width).GetBytes());
+				data.Add((value_.Size.Y / height).GetBytes());
+			}
+			else if (_UVType == Data.RendererCommonValues.UVType.Animation)
+			{
+				var value_ = _Animation;
+				data.Add((value_.Start.X / width).GetBytes());
+				data.Add((value_.Start.Y / height).GetBytes());
+				data.Add((value_.Size.X / width).GetBytes());
+				data.Add((value_.Size.Y / height).GetBytes());
+
+				if (value_.FrameLength.Infinite)
+				{
+					var inf = int.MaxValue / 100;
+					data.Add(inf.GetBytes());
+				}
+				else
+				{
+					data.Add(value_.FrameLength.Value.Value.GetBytes());
+				}
+			
+				data.Add(value_.FrameCountX.Value.GetBytes());
+				data.Add(value_.FrameCountY.Value.GetBytes());
+				data.Add(value_.LoopType);
+
+				data.Add(value_.StartSheet.Max.GetBytes());
+				data.Add(value_.StartSheet.Min.GetBytes());
+
+			}
+			else if (_UVType == Data.RendererCommonValues.UVType.Scroll)
+			{
+				var value_ = _Scroll;
+				data.Add((value_.Start.X.Max / width).GetBytes());
+				data.Add((value_.Start.Y.Max / height).GetBytes());
+				data.Add((value_.Start.X.Min / width).GetBytes());
+				data.Add((value_.Start.Y.Min / height).GetBytes());
+
+				data.Add((value_.Size.X.Max / width).GetBytes());
+				data.Add((value_.Size.Y.Max / height).GetBytes());
+				data.Add((value_.Size.X.Min / width).GetBytes());
+				data.Add((value_.Size.Y.Min / height).GetBytes());
+
+				data.Add((value_.Speed.X.Max / width).GetBytes());
+				data.Add((value_.Speed.Y.Max / height).GetBytes());
+				data.Add((value_.Speed.X.Min / width).GetBytes());
+				data.Add((value_.Speed.Y.Min / height).GetBytes());
+			}
+			else if (_UVType == Data.RendererCommonValues.UVType.FCurve)
+			{
+				{
+					var value_ = _FCurve.Start;
+					var bytes1 = value_.GetBytes(1.0f / width);
+					List<byte[]> _data = new List<byte[]>();
+					data.Add(bytes1);
+				}
+
+				{
+					var value_ = _FCurve.Size;
+					var bytes1 = value_.GetBytes(1.0f / height);
+					List<byte[]> _data = new List<byte[]>();
+					data.Add(bytes1);
+				}
+			}
+
+			return data.ToArray().ToArray();
+		}
 	}
+#endif
+
 }

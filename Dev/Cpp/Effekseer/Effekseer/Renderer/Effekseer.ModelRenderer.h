@@ -63,6 +63,9 @@ public:
 	{
 		Mat43f			SRTMatrix43;
 		RectF			UV;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		RectF			AlphaUV;
+#endif
 		Color			AllColor;
 		int32_t			Time;
 		std::array<float, 4> CustomData1;

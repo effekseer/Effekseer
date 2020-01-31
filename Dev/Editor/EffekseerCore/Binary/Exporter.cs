@@ -18,7 +18,11 @@ namespace Effekseer.Binary
 		/// Version14
 		/// Support dynamic parameter
 		/// </remarks>
+#if __EFFEKSEER_BUILD_VERSION16__
+		const int Version = 16;
+#else
 		const int Version = 15;
+#endif
 
 		public HashSet<string> UsedTextures = new HashSet<string>();
 
@@ -81,6 +85,17 @@ namespace Effekseer.Binary
 										UsedTextures.Add(relative_path);
 									}
 								}
+
+#if __EFFEKSEER_BUILD_VERSION16__
+								var alpha_relative_path = _node.RendererCommonValues.AlphaTextureParam.Texture.RelativePath;
+								if (_node.RendererCommonValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
+								{
+									if (!UsedTextures.Contains(alpha_relative_path))
+									{
+										UsedTextures.Add(alpha_relative_path);
+									}
+								}
+#endif
 							}
 							if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.BackDistortion )
 							{
@@ -92,6 +107,17 @@ namespace Effekseer.Binary
 										UsedDistortionTextures.Add(relative_path);
 									}
 								}
+
+#if __EFFEKSEER_BUILD_VERSION16__
+								var alpha_relative_path = _node.RendererCommonValues.AlphaTextureParam.Texture.RelativePath;
+								if (_node.RendererCommonValues.EnableAlphaTexture && alpha_relative_path != string.Empty)
+								{
+									if (!UsedDistortionTextures.Contains(alpha_relative_path))
+									{
+										UsedDistortionTextures.Add(alpha_relative_path);
+									}
+								}
+#endif
 							}
 							if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.Lighting)
 							{
@@ -112,6 +138,17 @@ namespace Effekseer.Binary
 										UsedNormalTextures.Add(path2);
 									}
 								}
+
+#if __EFFEKSEER_BUILD_VERSION16__
+								var path3 = _node.RendererCommonValues.AlphaTextureParam.Texture.RelativePath;
+								if (_node.RendererCommonValues.EnableAlphaTexture && path3 != string.Empty)
+								{
+									if (!UsedTextures.Contains(path3))
+									{
+										UsedTextures.Add(path3);
+									}
+								}
+#endif
 							}
 							else if (_node.RendererCommonValues.Material.Value == Data.RendererCommonValues.MaterialType.File)
 							{

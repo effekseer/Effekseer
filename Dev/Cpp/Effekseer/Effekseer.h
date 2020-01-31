@@ -615,6 +615,9 @@ struct NodeRendererBasicParameter
 	RendererMaterialType MaterialType = RendererMaterialType::Default;
 	int32_t Texture1Index = -1;
 	int32_t Texture2Index = -1;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	int32_t Texture3Index = -1;
+#endif
 	float DistortionIntensity = 0.0f;
 	MaterialParameter* MaterialParameterPtr = nullptr;
 	AlphaBlendType AlphaBlend = AlphaBlendType::Blend;
@@ -623,6 +626,10 @@ struct NodeRendererBasicParameter
 	TextureWrapType TextureWrap1 = TextureWrapType::Repeat;
 	TextureFilterType TextureFilter2 = TextureFilterType::Nearest;
 	TextureWrapType TextureWrap2 = TextureWrapType::Repeat;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	TextureFilterType TextureFilter3 = TextureFilterType::Nearest;
+	TextureWrapType TextureWrap3 = TextureWrapType::Repeat;
+#endif
 };
 
 //----------------------------------------------------------------------------------
@@ -2823,6 +2830,1898 @@ public:
 //----------------------------------------------------------------------------------
 #endif	// __EFFEKSEER_MANAGER_H__
 
+#ifndef __EFFEKSEER_MATH_H__
+#define __EFFEKSEER_MATH_H__
+
+#include <cstdint>
+#include <cmath>
+
+namespace Effekseer
+{
+	
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+const float DefaultEpsilon = 1e-6f;
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+inline float NormalizeAngle(float angle)
+{
+	union {
+		float f;
+		int32_t i;
+	} ofs, anglebits = {angle};
+
+	ofs.i = (anglebits.i & 0x80000000) | 0x3F000000; 
+	return angle - ((int)(angle * 0.159154943f + ofs.f) * 6.283185307f);
+}
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+inline void SinCos(float x, float& s, float& c)
+{
+	x = NormalizeAngle(x);
+	float x2 = x * x;
+	float x4 = x * x * x * x;
+	float x6 = x * x * x * x * x * x;
+	float x8 = x * x * x * x * x * x * x * x;
+	float x10 = x * x * x * x * x * x * x * x * x * x;
+	s = x * (1.0f - x2 / 6.0f + x4 / 120.0f - x6 / 5040.0f + x8 / 362880.0f - x10 / 39916800.0f);
+	c = 1.0f - x2 / 2.0f + x4 / 24.0f - x6 / 720.0f + x8 / 40320.0f - x10 / 3628800.0f;
+}
+
+}
+
+#endif // __EFFEKSEER_MATH_H__
+#ifndef __EFFEKSEER_SIMD4F_GEN_H__
+#define __EFFEKSEER_SIMD4F_GEN_H__
+
+#include <stdint.h>
+#include <algorithm>
+
+namespace Effekseer
+{
+
+inline float Sqrt(float x)
+{
+	return std::sqrt(x);
+}
+inline float Rsqrt(float x)
+{
+	return 1.0f / std::sqrt(x);
+}
+
+/**
+	@brief	simd class for generic
+*/
+struct alignas(16) SIMD4f
+{
+	union {
+		float f[4];
+		uint32_t i[4];
+	};
+
+	SIMD4f() = default;
+	SIMD4f(const SIMD4f& rhs) = default;
+	SIMD4f(float x, float y, float z, float w) { f[0] = x; f[1] = y; f[2] = z; f[3] = w; }
+	SIMD4f(float i) { f[0] = i; f[1] = i; f[2] = i; f[3] = i; }
+
+	float GetX() const { return f[0]; }
+	float GetY() const { return f[1]; }
+	float GetZ() const { return f[2]; }
+	float GetW() const { return f[3]; }
+
+	void SetX(float o) { f[0] = o; }
+	void SetY(float o) { f[1] = o; }
+	void SetZ(float o) { f[2] = o; }
+	void SetW(float o) { f[3] = o; }
+
+	SIMD4f& operator+=(const SIMD4f& rhs)
+	{
+		for (size_t i = 0; i < 4; i++)
+		{
+			f[i] += rhs.f[i];
+		}
+		return *this;
+	}
+
+	SIMD4f& operator-=(const SIMD4f& rhs)
+	{
+		for (size_t i = 0; i < 4; i++)
+		{
+			f[i] -= rhs.f[i];
+		}
+		return *this;
+	}
+
+	SIMD4f& operator*=(const SIMD4f& rhs)
+	{
+		for (size_t i = 0; i < 4; i++)
+		{
+			f[i] *= rhs.f[i];
+		}
+		return *this;
+	}
+
+	SIMD4f& operator*=(float rhs)
+	{
+		for (size_t i = 0; i < 4; i++)
+		{
+			f[i] *= rhs;
+		}
+		return *this;
+	}
+
+	SIMD4f& operator/=(const SIMD4f& rhs)
+	{
+		for (size_t i = 0; i < 4; i++)
+		{
+			f[i] /= rhs.f[i];
+		}
+		return *this;
+	}
+
+	SIMD4f& operator/=(float rhs)
+	{
+		for (size_t i = 0; i < 4; i++)
+		{
+			f[i] /= rhs;
+		}
+		return *this;
+	}
+
+	static SIMD4f Load2(const void* mem);
+	static void Store2(void* mem, const SIMD4f& i);
+	static SIMD4f Load3(const void* mem);
+	static void Store3(void* mem, const SIMD4f& i);
+	static SIMD4f Load4(const void* mem);
+	static void Store4(void* mem, const SIMD4f& i);
+
+	static SIMD4f SetZero();
+	static SIMD4f SetInt(int32_t x, int32_t y, int32_t z, int32_t w);
+	static SIMD4f SetUInt(uint32_t x, uint32_t y, uint32_t z, uint32_t w);
+	static SIMD4f Sqrt(const SIMD4f& in);
+	static SIMD4f Rsqrt(const SIMD4f& in);
+	static SIMD4f Abs(const SIMD4f& in);
+	static SIMD4f Min(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f Max(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f MulAdd(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
+	static SIMD4f MulSub(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
+
+	template<size_t LANE>
+	static SIMD4f MulLane(const SIMD4f& lhs, const SIMD4f& rhs);
+	template<size_t LANE>
+	static SIMD4f MulAddLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
+	template<size_t LANE>
+	static SIMD4f MulSubLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
+	template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
+	static SIMD4f Swizzle(const SIMD4f& in);
+
+	static SIMD4f Dot3(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f Cross3(const SIMD4f& lhs, const SIMD4f& rhs);
+
+	template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
+	static SIMD4f Mask();
+	static uint32_t MoveMask(const SIMD4f& in);
+	static SIMD4f Equal(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f NotEqual(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f LessThan(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f LessEqual(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f GreaterThan(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f GreaterEqual(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f NearEqual(const SIMD4f& lhs, const SIMD4f& rhs, float epsilon = DefaultEpsilon);
+	static SIMD4f IsZero(const SIMD4f& in, float epsilon = DefaultEpsilon);
+	static void Transpose(SIMD4f& s0, SIMD4f& s1, SIMD4f& s2, SIMD4f& s3);
+};
+
+inline SIMD4f operator+(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = lhs.f[i] + rhs.f[i];
+	}
+	return ret;
+}
+
+inline SIMD4f operator-(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = lhs.f[i] - rhs.f[i];
+	}
+	return ret;
+}
+
+inline SIMD4f operator*(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = lhs.f[i] * rhs.f[i];
+	}
+	return ret;
+}
+
+inline SIMD4f operator*(const SIMD4f& lhs, float rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = lhs.f[i] * rhs;
+	}
+	return ret;
+}
+
+inline SIMD4f operator/(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = lhs.f[i] / rhs.f[i];
+	}
+	return ret;
+}
+
+inline SIMD4f operator/(const SIMD4f& lhs, float rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = lhs.f[i] / rhs;
+	}
+	return ret;
+}
+
+inline SIMD4f operator&(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.i[i] = lhs.i[i] & rhs.i[i];
+	}
+	return ret;
+}
+
+inline SIMD4f operator|(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.i[i] = lhs.i[i] | rhs.i[i];
+	}
+	return ret;
+}
+
+inline bool operator==(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	bool ret = true;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret &= lhs.f[i] == rhs.f[i];
+	}
+	return ret;
+}
+
+inline bool operator!=(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	bool ret = true;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret &= lhs.f[i] == rhs.f[i];
+	}
+	return !ret;
+}
+
+inline SIMD4f SIMD4f::Load2(const void* mem)
+{
+	SIMD4f ret;
+	ret.f[0] = *((float*)mem + 0);
+	ret.f[1] = *((float*)mem + 1);
+	return ret;
+}
+
+inline void SIMD4f::Store2(void* mem, const SIMD4f& i)
+{
+	*((float*)mem + 0) = i.f[0];
+	*((float*)mem + 1) = i.f[1];
+}
+
+inline SIMD4f SIMD4f::Load3(const void* mem)
+{
+	SIMD4f ret;
+	ret.f[0] = *((float*)mem + 0);
+	ret.f[1] = *((float*)mem + 1);
+	ret.f[2] = *((float*)mem + 2);
+	return ret;
+}
+
+inline void SIMD4f::Store3(void* mem, const SIMD4f& i)
+{
+	*((float*)mem + 0) = i.f[0];
+	*((float*)mem + 1) = i.f[1];
+	*((float*)mem + 2) = i.f[2];
+}
+
+inline SIMD4f SIMD4f::Load4(const void* mem)
+{
+	SIMD4f ret;
+	ret.f[0] = *((float*)mem + 0);
+	ret.f[1] = *((float*)mem + 1);
+	ret.f[2] = *((float*)mem + 2);
+	ret.f[3] = *((float*)mem + 3);
+	return ret;
+}
+
+inline void SIMD4f::Store4(void* mem, const SIMD4f& i)
+{
+	*((float*)mem + 0) = i.f[0];
+	*((float*)mem + 1) = i.f[1];
+	*((float*)mem + 2) = i.f[2];
+	*((float*)mem + 3) = i.f[3];
+}
+
+inline SIMD4f SIMD4f::SetZero()
+{
+	SIMD4f ret;
+	ret.f[0] = 0.0f;
+	ret.f[1] = 0.0f;
+	ret.f[2] = 0.0f;
+	ret.f[3] = 0.0f;
+	return ret;
+}
+
+inline SIMD4f SIMD4f::SetInt(int32_t x, int32_t y, int32_t z, int32_t w)
+{
+	SIMD4f ret;
+	ret.i[0] = (uint32_t)x;
+	ret.i[1] = (uint32_t)y;
+	ret.i[2] = (uint32_t)z;
+	ret.i[3] = (uint32_t)w;
+	return ret;
+}
+
+inline SIMD4f SIMD4f::SetUInt(uint32_t x, uint32_t y, uint32_t z, uint32_t w)
+{
+	SIMD4f ret;
+	ret.i[0] = (uint32_t)x;
+	ret.i[1] = (uint32_t)y;
+	ret.i[2] = (uint32_t)z;
+	ret.i[3] = (uint32_t)w;
+	return ret;
+}
+
+inline SIMD4f SIMD4f::Sqrt(const SIMD4f& in)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = std::sqrt(in.f[i]);
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::Rsqrt(const SIMD4f& in)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = 1.0f / std::sqrt(in.f[i]);
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::Abs(const SIMD4f& in)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = std::abs(in.f[i]);
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::Min(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = std::fmin(lhs.f[i], rhs.f[i]);
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::Max(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = std::fmax(lhs.f[i], rhs.f[i]);
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::MulAdd(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = a.f[i] + b.f[i] * c.f[i];
+}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::MulSub(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.f[i] = a.f[i] - b.f[i] * c.f[i];
+}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::Dot3(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f muled = lhs * rhs;
+	return SIMD4f{muled.f[0] + muled.f[1] + muled.f[2], 0.0f, 0.0f, 0.0f};
+}
+
+inline SIMD4f SIMD4f::Cross3(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	return SIMD4f::Swizzle<1,2,0,3>(lhs) * SIMD4f::Swizzle<2,0,1,3>(rhs) -
+		SIMD4f::Swizzle<2,0,1,3>(lhs) * SIMD4f::Swizzle<1,2,0,3>(rhs);
+}
+
+template<size_t LANE>
+static SIMD4f SIMD4f::MulLane(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	static_assert(LANE < 4, "LANE is must be less than 4.");
+	return lhs * rhs.f[LANE];
+}
+
+template<size_t LANE>
+static SIMD4f SIMD4f::MulAddLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
+{
+	static_assert(LANE < 4, "LANE is must be less than 4.");
+	return a + b * c.f[LANE];
+}
+
+template<size_t LANE>
+static SIMD4f SIMD4f::MulSubLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
+{
+	static_assert(LANE < 4, "LANE is must be less than 4.");
+	return a - b * c.f[LANE];
+}
+
+template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
+static SIMD4f SIMD4f::Swizzle(const SIMD4f& in)
+{
+	static_assert(indexX < 4, "indexX is must be less than 4.");
+	static_assert(indexY < 4, "indexY is must be less than 4.");
+	static_assert(indexZ < 4, "indexZ is must be less than 4.");
+	static_assert(indexW < 4, "indexW is must be less than 4.");
+	return SIMD4f{in.f[indexX], in.f[indexY], in.f[indexZ], in.f[indexW]};
+}
+
+
+template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
+inline static SIMD4f SIMD4f::Mask()
+{
+	SIMD4f ret;
+	ret.i[0] = 0xffffffff * X;
+	ret.i[1] = 0xffffffff * Y;
+	ret.i[2] = 0xffffffff * Z;
+	ret.i[3] = 0xffffffff * W;
+	return ret;
+}
+
+inline uint32_t SIMD4f::MoveMask(const SIMD4f& in)
+{
+	return (in.i[0] & 0x1) | (in.i[1] & 0x2) | (in.i[2] & 0x4) | (in.i[3] & 0x8);
+}
+
+inline SIMD4f SIMD4f::Equal(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.i[i] = (lhs.f[i] == rhs.f[i]) ? 0xffffffff : 0;
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::NotEqual(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.i[i] = (lhs.f[i] != rhs.f[i]) ? 0xffffffff : 0;
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::LessThan(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.i[i] = (lhs.f[i] < rhs.f[i]) ? 0xffffffff : 0;
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::LessEqual(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.i[i] = (lhs.f[i] <= rhs.f[i]) ? 0xffffffff : 0;
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::GreaterThan(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.i[i] = (lhs.f[i] > rhs.f[i]) ? 0xffffffff : 0;
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::GreaterEqual(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.i[i] = (lhs.f[i] >= rhs.f[i]) ? 0xffffffff : 0;
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::NearEqual(const SIMD4f& lhs, const SIMD4f& rhs, float epsilon)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.i[i] = (std::abs(lhs.f[i] - rhs.f[i]) <= epsilon) ? 0xffffffff : 0;
+	}
+	return ret;
+}
+
+inline SIMD4f SIMD4f::IsZero(const SIMD4f& in, float epsilon)
+{
+	SIMD4f ret;
+	for (size_t i = 0; i < 4; i++)
+	{
+		ret.i[i] = (std::abs(in.f[i]) <= epsilon) ? 0xffffffff : 0;
+	}
+	return ret;
+}
+
+inline void SIMD4f::Transpose(SIMD4f& s0, SIMD4f& s1, SIMD4f& s2, SIMD4f& s3)
+{
+	std::swap(s0.f[1], s1.f[0]);
+	std::swap(s0.f[2], s2.f[0]);
+	std::swap(s0.f[3], s3.f[0]);
+	std::swap(s1.f[2], s2.f[1]);
+	std::swap(s2.f[3], s3.f[2]);
+	std::swap(s1.f[3], s3.f[1]);
+}
+
+} // namespace Effekseer
+
+#endif // __EFFEKSEER_SIMD4F_GEN_H__
+#ifndef __EFFEKSEER_VEC2F_H__
+#define __EFFEKSEER_VEC2F_H__
+
+
+namespace Effekseer
+{
+
+struct Vector2D;
+struct vector2d;
+
+struct Vec2f
+{
+	SIMD4f s;
+
+	explicit Vec2f() = default;
+	Vec2f(const Vec2f& vec) = default;
+	Vec2f(float x, float y): s(x, y, 0.0f, 1.0f) {}
+	Vec2f(const SIMD4f& vec): s(vec) {}
+	Vec2f(const Vector2D& vec);
+	Vec2f(const vector2d& vec);
+
+	float GetX() const { return s.GetX(); }
+	float GetY() const { return s.GetY(); }
+
+	void SetX(float o) { s.SetX(o); }
+	void SetY(float o) { s.SetY(o); }
+
+	Vec2f& operator+=(const Vec2f& o) { s += o.s; return *this; }
+	Vec2f& operator-=(const Vec2f& o) { s -= o.s; return *this; }
+	Vec2f& operator*=(const Vec2f& o) { s *= o.s; return *this; }
+	Vec2f& operator*=(float o) { s *= o; return *this; }
+	Vec2f& operator/=(const Vec2f& o) { s /= o.s; return *this; }
+	Vec2f& operator/=(float o) { s /= o; return *this; }
+
+	float LengthSq() const;
+	float Length() const;
+	bool IsZero(float range = DefaultEpsilon) const;
+	Vec2f Normalize() const;
+
+	static Vec2f Load(const void* mem);
+	static void Store(void* mem, const Vec2f& i);
+
+	static Vec2f Sqrt(const Vec2f& i);
+	static Vec2f Rsqrt(const Vec2f& i);
+	static Vec2f Abs(const Vec2f& i);
+	static Vec2f Min(const Vec2f& lhs, const Vec2f& rhs);
+	static Vec2f Max(const Vec2f& lhs, const Vec2f& rhs);
+	static bool Equal(const Vec2f& lhs, const Vec2f& rhs, float epsilon);
+};
+
+inline Vec2f operator+(const Vec2f& lhs, const Vec2f& rhs)
+{
+	return Vec2f{lhs.s + rhs.s};
+}
+
+inline Vec2f operator-(const Vec2f& lhs, const Vec2f& rhs)
+{
+	return Vec2f{lhs.s - rhs.s};
+}
+
+inline Vec2f operator*(const Vec2f& lhs, const Vec2f& rhs)
+{
+	return Vec2f{lhs.s * rhs.s};
+}
+
+inline Vec2f operator*(const Vec2f& lhs, float rhs)
+{
+	return Vec2f{lhs.s * rhs};
+}
+
+inline Vec2f operator/(const Vec2f& lhs, const Vec2f& rhs)
+{
+	return Vec2f{lhs.s / rhs.s};
+}
+
+inline Vec2f operator/(const Vec2f& lhs, float rhs)
+{
+	return Vec2f{lhs.s / rhs};
+}
+
+inline bool operator==(const Vec2f& lhs, const Vec2f& rhs)
+{
+	return (SIMD4f::MoveMask(SIMD4f::Equal(lhs.s, rhs.s)) & 0x03) == 0x3;
+}
+
+inline bool operator!=(const Vec2f& lhs, const Vec2f& rhs)
+{
+	return (SIMD4f::MoveMask(SIMD4f::Equal(lhs.s, rhs.s)) & 0x03) != 0x3;
+}
+
+inline Vec2f Vec2f::Load(const void* mem)
+{
+	return SIMD4f::Load2(mem);
+}
+
+inline void Vec2f::Store(void* mem, const Vec2f& i)
+{
+	SIMD4f::Store2(mem, i.s);
+}
+
+inline Vec2f Vec2f::Sqrt(const Vec2f& i)
+{
+	return Vec2f{SIMD4f::Sqrt(i.s)};
+}
+
+inline Vec2f Vec2f::Rsqrt(const Vec2f& i)
+{
+	return Vec2f{SIMD4f::Rsqrt(i.s)};
+}
+
+inline Vec2f Vec2f::Abs(const Vec2f& i)
+{
+	return Vec2f{SIMD4f::Abs(i.s)};
+}
+
+inline Vec2f Vec2f::Min(const Vec2f& lhs, const Vec2f& rhs)
+{
+	return Vec2f{SIMD4f::Min(lhs.s, rhs.s)};
+}
+
+inline Vec2f Vec2f::Max(const Vec2f& lhs, const Vec2f& rhs)
+{
+	return Vec2f{SIMD4f::Max(lhs.s, rhs.s)};
+}
+
+inline bool Vec2f::Equal(const Vec2f& lhs, const Vec2f& rhs, float epsilon)
+{
+	return (SIMD4f::MoveMask(SIMD4f::NearEqual(lhs.s, rhs.s, epsilon)) & 0x3) == 0x3;
+}
+
+inline float Vec2f::LengthSq() const
+{
+	auto o = s * s;
+	return o.GetX() + o.GetY();
+}
+
+inline float Vec2f::Length() const
+{
+	return Effekseer::Sqrt(LengthSq());
+}
+
+inline bool Vec2f::IsZero(float range) const
+{
+	return LengthSq() < range * range;
+}
+
+inline Vec2f Vec2f::Normalize() const
+{
+	return *this * Effekseer::Rsqrt(LengthSq());
+}
+
+} // namespace Effekseer
+
+#endif // __EFFEKSEER_VEC2F_H__
+#ifndef __EFFEKSEER_VEC3F_H__
+#define __EFFEKSEER_VEC3F_H__
+
+
+namespace Effekseer
+{
+
+struct Vector3D;
+struct vector3d;
+struct Mat43f;
+struct Mat44f;
+
+struct Vec3f
+{
+	SIMD4f s;
+
+	explicit Vec3f() = default;
+	Vec3f(const Vec3f& vec) = default;
+	Vec3f(float x, float y, float z): s(x, y, z, 1.0f) {}
+	Vec3f(const SIMD4f& vec): s(vec) {}
+	Vec3f(const Vector3D& vec);
+	Vec3f(const vector3d& vec);
+
+	float GetX() const { return s.GetX(); }
+	float GetY() const { return s.GetY(); }
+	float GetZ() const { return s.GetZ(); }
+
+	void SetX(float o) { s.SetX(o); }
+	void SetY(float o) { s.SetY(o); }
+	void SetZ(float o) { s.SetZ(o); }
+
+	Vec3f& operator+=(const Vec3f& o) { s += o.s; return *this; }
+	Vec3f& operator-=(const Vec3f& o) { s -= o.s; return *this; }
+	Vec3f& operator*=(const Vec3f& o) { s *= o.s; return *this; }
+	Vec3f& operator*=(float o) { s *= o; return *this; }
+	Vec3f& operator/=(const Vec3f& o) { s /= o.s; return *this; }
+	Vec3f& operator/=(float o) { s /= o; return *this; }
+
+	float GetSquaredLength() const;
+	float GetLength() const;
+	bool IsZero(float epsiron = DefaultEpsilon) const;
+	Vec3f Normalize() const;
+
+	static Vec3f Load(const void* mem);
+	static void Store(void* mem, const Vec3f& i);
+
+	static Vec3f Sqrt(const Vec3f& i);
+	static Vec3f Rsqrt(const Vec3f& i);
+	static Vec3f Abs(const Vec3f& i);
+	static Vec3f Min(const Vec3f& lhs, const Vec3f& rhs);
+	static Vec3f Max(const Vec3f& lhs, const Vec3f& rhs);
+	static float Dot(const Vec3f& lhs, const Vec3f& rhs);
+	static Vec3f Cross(const Vec3f& lhs, const Vec3f& rhs);
+	static bool Equal(const Vec3f& lhs, const Vec3f& rhs, float epsilon = DefaultEpsilon);
+	static Vec3f Transform(const Vec3f& lhs, const Mat43f& rhs);
+	static Vec3f Transform(const Vec3f& lhs, const Mat44f& rhs);
+};
+
+inline Vec3f operator+(const Vec3f& lhs, const Vec3f& rhs)
+{
+	return Vec3f{lhs.s + rhs.s};
+}
+
+inline Vec3f operator-(const Vec3f& lhs, const Vec3f& rhs)
+{
+	return Vec3f{lhs.s - rhs.s};
+}
+
+inline Vec3f operator*(const Vec3f& lhs, const Vec3f& rhs)
+{
+	return Vec3f{lhs.s * rhs.s};
+}
+
+inline Vec3f operator*(const Vec3f& lhs, float rhs)
+{
+	return Vec3f{lhs.s * rhs};
+}
+
+inline Vec3f operator/(const Vec3f& lhs, const Vec3f& rhs)
+{
+	return Vec3f{lhs.s / rhs.s};
+}
+
+inline Vec3f operator/(const Vec3f& lhs, float rhs)
+{
+	return Vec3f{lhs.s / rhs};
+}
+
+inline bool operator==(const Vec3f& lhs, const Vec3f& rhs)
+{
+	return (SIMD4f::MoveMask(SIMD4f::Equal(lhs.s, rhs.s)) & 0x07) == 0x7;
+}
+
+inline bool operator!=(const Vec3f& lhs, const Vec3f& rhs)
+{
+	return (SIMD4f::MoveMask(SIMD4f::Equal(lhs.s, rhs.s)) & 0x07) != 0x7;
+}
+
+inline Vec3f Vec3f::Load(const void* mem)
+{
+	return SIMD4f::Load3(mem);
+}
+
+inline void Vec3f::Store(void* mem, const Vec3f& i)
+{
+	SIMD4f::Store3(mem, i.s);
+}
+
+inline Vec3f Vec3f::Sqrt(const Vec3f& i)
+{
+	return Vec3f{SIMD4f::Sqrt(i.s)};
+}
+
+inline Vec3f Vec3f::Rsqrt(const Vec3f& i)
+{
+	return Vec3f{SIMD4f::Rsqrt(i.s)};
+}
+
+inline Vec3f Vec3f::Abs(const Vec3f& i)
+{
+	return Vec3f{SIMD4f::Abs(i.s)};
+}
+
+inline Vec3f Vec3f::Min(const Vec3f& lhs, const Vec3f& rhs)
+{
+	return Vec3f{SIMD4f::Min(lhs.s, rhs.s)};
+}
+
+inline Vec3f Vec3f::Max(const Vec3f& lhs, const Vec3f& rhs)
+{
+	return Vec3f{SIMD4f::Max(lhs.s, rhs.s)};
+}
+
+inline float Vec3f::Dot(const Vec3f& lhs, const Vec3f& rhs)
+{
+	return SIMD4f::Dot3(lhs.s, rhs.s).GetX();
+}
+
+inline Vec3f Vec3f::Cross(const Vec3f& lhs, const Vec3f& rhs)
+{
+	return SIMD4f::Cross3(lhs.s, rhs.s);
+}
+
+inline bool Vec3f::Equal(const Vec3f& lhs, const Vec3f& rhs, float epsilon)
+{
+	return (SIMD4f::MoveMask(SIMD4f::NearEqual(lhs.s, rhs.s, epsilon)) & 0x7) == 0x7;
+}
+
+inline float Vec3f::GetSquaredLength() const
+{
+	auto o = s * s;
+	return o.GetX() + o.GetY() + o.GetZ();
+}
+
+inline float Vec3f::GetLength() const
+{
+	return Effekseer::Sqrt(GetSquaredLength());
+}
+
+inline bool Vec3f::IsZero(float epsiron) const
+{
+	return (SIMD4f::MoveMask(SIMD4f::IsZero(epsiron)) & 0x7) != 0;
+}
+
+inline Vec3f Vec3f::Normalize() const
+{
+	return *this * Effekseer::Rsqrt(GetSquaredLength());
+}
+
+} // namespace Effekseer
+
+#endif // __EFFEKSEER_VEC3F_H__
+#ifndef __EFFEKSEER_VEC4F_H__
+#define __EFFEKSEER_VEC4F_H__
+
+
+namespace Effekseer
+{
+
+struct Vec4f
+{
+	SIMD4f s;
+
+	Vec4f() = default;
+	Vec4f(const Vec4f& vec) = default;
+	Vec4f(const SIMD4f& vec): s(vec) {}
+
+	float GetX() const { return s.GetX(); }
+	float GetY() const { return s.GetY(); }
+	float GetZ() const { return s.GetZ(); }
+	float GetW() const { return s.GetW(); }
+
+	void SetX(float o) { s.SetX(o); }
+	void SetY(float o) { s.SetY(o); }
+	void SetZ(float o) { s.SetZ(o); }
+	void SetW(float o) { s.SetW(o); }
+
+	Vec4f& operator+=(const Vec4f& o)
+	{
+		this->s = this->s + o.s;
+		return *this;
+	}
+
+	Vec4f& operator-=(const Vec4f& o)
+	{
+		this->s = this->s - o.s;
+		return *this;
+	}
+
+	Vec4f& operator*=(const Vec4f& o)
+	{
+		this->s = this->s * o.s;
+		return *this;
+	}
+
+	Vec4f& operator/=(const Vec4f& o)
+	{
+		this->s = this->s / o.s;
+		return *this;
+	}
+
+	static Vec4f Sqrt(const Vec4f& i);
+	static Vec4f Rsqrt(const Vec4f& i);
+	static Vec4f Abs(const Vec4f& i);
+	static Vec4f Min(const Vec4f& lhs, const Vec4f& rhs);
+	static Vec4f Max(const Vec4f& lhs, const Vec4f& rhs);
+	static bool Equal(const Vec4f& lhs, const Vec4f& rhs, float epsilon);
+	static Vec4f Transform(const Vec4f& lhs, const Mat43f& rhs);
+	static Vec4f Transform(const Vec4f& lhs, const Mat44f& rhs);
+};
+
+inline Vec4f operator+(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s + rhs.s}; }
+
+inline Vec4f operator-(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s - rhs.s}; }
+
+inline Vec4f operator*(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s * rhs.s}; }
+
+inline Vec4f operator/(const Vec4f& lhs, const Vec4f& rhs) { return Vec4f{lhs.s / rhs.s}; }
+
+inline bool operator==(const Vec4f& lhs, const Vec4f& rhs)
+{
+	return SIMD4f::MoveMask(SIMD4f::Equal(lhs.s, rhs.s)) == 0xf;
+}
+
+inline bool operator!=(const Vec4f& lhs, const Vec4f& rhs)
+{
+	return SIMD4f::MoveMask(SIMD4f::Equal(lhs.s, rhs.s)) != 0xf;
+}
+
+inline Vec4f Vec4f::Sqrt(const Vec4f& i)
+{
+	return Vec4f{SIMD4f::Sqrt(i.s)};
+}
+
+inline Vec4f Vec4f::Rsqrt(const Vec4f& i)
+{
+	return Vec4f{SIMD4f::Rsqrt(i.s)};
+}
+
+inline Vec4f Vec4f::Abs(const Vec4f& i)
+{
+	return Vec4f{SIMD4f::Abs(i.s)};
+}
+
+inline Vec4f Vec4f::Min(const Vec4f& lhs, const Vec4f& rhs)
+{
+	return Vec4f{SIMD4f::Min(lhs.s, rhs.s)};
+}
+
+inline Vec4f Vec4f::Max(const Vec4f& lhs, const Vec4f& rhs)
+{
+	return Vec4f{SIMD4f::Max(lhs.s, rhs.s)};
+}
+
+inline bool Vec4f::Equal(const Vec4f& lhs, const Vec4f& rhs, float epsilon)
+{
+	return (SIMD4f::MoveMask(SIMD4f::NearEqual(lhs.s, rhs.s, epsilon)) & 0xf) == 0xf;
+}
+
+} // namespace Effekseer
+
+#endif // __EFFEKSEER_VEC4F_H__
+#ifndef __EFFEKSEER_MAT43F_H__
+#define __EFFEKSEER_MAT43F_H__
+
+
+namespace Effekseer
+{
+
+struct Matrix43;
+
+struct Mat43f
+{
+	SIMD4f X;
+	SIMD4f Y;
+	SIMD4f Z;
+
+	Mat43f() = default;
+	Mat43f(const Mat43f& rhs) = default;
+	Mat43f(float m11, float m12, float m13,
+		   float m21, float m22, float m23,
+		   float m31, float m32, float m33,
+		   float m41, float m42, float m43);
+	Mat43f(const Matrix43& mat);
+
+	bool IsValid() const;
+
+	Vec3f GetScale() const;
+
+	Mat43f GetRotation() const;
+
+	Vec3f GetTranslation() const;
+
+	void GetSRT(Vec3f& s, Mat43f& r, Vec3f& t) const;
+
+	void SetTranslation(const Vec3f& t);
+
+	Mat43f& operator*=(const Mat43f& rhs);
+
+	Mat43f& operator*=(float rhs);
+
+	static const Mat43f Identity;
+
+	static bool Equal(const Mat43f& lhs, const Mat43f& rhs, float epsilon = DefaultEpsilon);
+
+	static Mat43f SRT(const Vec3f& s, const Mat43f& r, const Vec3f& t);
+
+	static Mat43f Scaling(float x, float y, float z);
+
+	static Mat43f Scaling(const Vec3f& scale);
+
+	static Mat43f RotationX(float angle);
+
+	static Mat43f RotationY(float angle);
+
+	static Mat43f RotationZ(float angle);
+
+	static Mat43f RotationXYZ(float rx, float ry, float rz);
+
+	static Mat43f RotationZXY(float rz, float rx, float ry);
+
+	static Mat43f RotationAxis(const Vec3f& axis, float angle);
+
+	static Mat43f RotationAxis(const Vec3f& axis, float s, float c);
+
+	static Mat43f Translation(float x, float y, float z);
+
+	static Mat43f Translation(const Vec3f& pos);
+};
+
+inline Mat43f::Mat43f(
+	float m11, float m12, float m13,
+	float m21, float m22, float m23,
+	float m31, float m32, float m33,
+	float m41, float m42, float m43)
+	: X(m11, m21, m31, m41)
+	, Y(m12, m22, m32, m42)
+	, Z(m13, m23, m33, m43)
+{
+}
+
+inline bool operator==(const Mat43f& lhs, const Mat43f& rhs)
+{
+	return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
+}
+
+inline bool operator!=(const Mat43f& lhs, const Mat43f& rhs)
+{
+	return lhs.X != rhs.X && lhs.Y != rhs.Y && lhs.Z != rhs.Z;
+}
+
+inline Mat43f operator*(const Mat43f& lhs, const Mat43f& rhs)
+{
+	const SIMD4f mask = SIMD4f::SetUInt(0, 0, 0, 0xffffffff);
+
+	Mat43f res;
+	res.X = mask & rhs.X;
+	res.X = SIMD4f::MulAddLane<0>(res.X, lhs.X, rhs.X);
+	res.X = SIMD4f::MulAddLane<1>(res.X, lhs.Y, rhs.X);
+	res.X = SIMD4f::MulAddLane<2>(res.X, lhs.Z, rhs.X);
+
+	res.Y = mask & rhs.Y;
+	res.Y = SIMD4f::MulAddLane<0>(res.Y, lhs.X, rhs.Y);
+	res.Y = SIMD4f::MulAddLane<1>(res.Y, lhs.Y, rhs.Y);
+	res.Y = SIMD4f::MulAddLane<2>(res.Y, lhs.Z, rhs.Y);
+
+	res.Z = mask & rhs.Z;
+	res.Z = SIMD4f::MulAddLane<0>(res.Z, lhs.X, rhs.Z);
+	res.Z = SIMD4f::MulAddLane<1>(res.Z, lhs.Y, rhs.Z);
+	res.Z = SIMD4f::MulAddLane<2>(res.Z, lhs.Z, rhs.Z);
+	return res;
+}
+
+inline Vec3f Vec3f::Transform(const Vec3f& lhs, const Mat43f& rhs)
+{
+	SIMD4f s0 = rhs.X;
+	SIMD4f s1 = rhs.Y;
+	SIMD4f s2 = rhs.Z;
+	SIMD4f s3 = SIMD4f::SetZero();
+	SIMD4f::Transpose(s0, s1, s2, s3);
+
+	SIMD4f res = SIMD4f::MulAddLane<0>(s3, s0, lhs.s);
+	res = SIMD4f::MulAddLane<1>(res, s1, lhs.s);
+	res = SIMD4f::MulAddLane<2>(res, s2, lhs.s);
+	return Vec3f{res};
+}
+
+inline Vec4f Vec4f::Transform(const Vec4f& lhs, const Mat43f& rhs)
+{
+	SIMD4f s0 = rhs.X;
+	SIMD4f s1 = rhs.Y;
+	SIMD4f s2 = rhs.Z;
+	SIMD4f s3 = SIMD4f(0.0f, 0.0f, 0.0f, 1.0f);
+	SIMD4f::Transpose(s0, s1, s2, s3);
+
+	SIMD4f res = SIMD4f::MulLane<0>(s0, lhs.s);
+	res = SIMD4f::MulAddLane<1>(res, s1, lhs.s);
+	res = SIMD4f::MulAddLane<2>(res, s2, lhs.s);
+	res = SIMD4f::MulAddLane<3>(res, s3, lhs.s);
+	return res;
+}
+
+inline Mat43f& Mat43f::operator*=(const Mat43f& rhs)
+{
+	*this = *this * rhs;
+	return *this;
+}
+
+inline Mat43f& Mat43f::operator*=(float rhs)
+{
+	X *= rhs;
+	Y *= rhs;
+	Z *= rhs;
+	return *this;
+}
+
+} // namespace Effekseer
+
+#endif // __EFFEKSEER_MAT43F_H__
+#ifndef __EFFEKSEER_MAT44F_H__
+#define __EFFEKSEER_MAT44F_H__
+
+
+namespace Effekseer
+{
+
+struct Matrix44;
+
+struct Mat44f
+{
+	SIMD4f X;
+	SIMD4f Y;
+	SIMD4f Z;
+	SIMD4f W;
+	
+	Mat44f() = default;
+	Mat44f(const Mat44f& rhs) = default;
+	Mat44f(float m11, float m12, float m13, float m14,
+		   float m21, float m22, float m23, float m24,
+		   float m31, float m32, float m33, float m34,
+		   float m41, float m42, float m43, float m44);
+	Mat44f(const Mat43f& mat);
+	Mat44f(const Matrix44& mat);
+
+	bool IsValid() const;
+
+	Vec3f GetScale() const;
+
+	Mat44f GetRotation() const;
+
+	Vec3f GetTranslation() const;
+
+	void GetSRT(Vec3f& s, Mat44f& r, Vec3f& t) const;
+
+	void SetTranslation(const Vec3f& t);
+
+	Mat44f Transpose() const;
+
+	Mat44f& operator*=(const Mat44f& rhs);
+	
+	Mat44f& operator*=(float rhs);
+
+	static const Mat44f Identity;
+
+	static bool Equal(const Mat44f& lhs, const Mat44f& rhs, float epsilon = DefaultEpsilon);
+
+	static Mat44f SRT(const Vec3f& s, const Mat44f& r, const Vec3f& t);
+
+	static Mat44f Scaling(float x, float y, float z);
+
+	static Mat44f Scaling(const Vec3f& scale);
+
+	static Mat44f RotationX(float angle);
+
+	static Mat44f RotationY(float angle);
+
+	static Mat44f RotationZ(float angle);
+
+	static Mat44f RotationXYZ(float rx, float ry, float rz);
+
+	static Mat44f RotationZXY(float rz, float rx, float ry);
+
+	static Mat44f RotationAxis(const Vec3f& axis, float angle);
+
+	static Mat44f RotationAxis(const Vec3f& axis, float s, float c);
+
+	static Mat44f Translation(float x, float y, float z);
+
+	static Mat44f Translation(const Vec3f& pos);
+};
+
+inline Mat44f::Mat44f(
+	float m11, float m12, float m13, float m14,
+	float m21, float m22, float m23, float m24,
+	float m31, float m32, float m33, float m34,
+	float m41, float m42, float m43, float m44)
+	: X(m11, m21, m31, m41)
+	, Y(m12, m22, m32, m42)
+	, Z(m13, m23, m33, m43)
+	, W(m14, m24, m34, m44)
+{
+}
+
+inline Mat44f::Mat44f(const Mat43f& mat)
+	: X(mat.X)
+	, Y(mat.Y)
+	, Z(mat.Z)
+	, W(0.0f, 0.0f, 0.0f, 1.0f)
+{
+}
+
+inline bool operator==(const Mat44f& lhs, const Mat44f& rhs)
+{
+	return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z && lhs.W == rhs.W;
+}
+
+inline bool operator!=(const Mat44f& lhs, const Mat44f& rhs)
+{
+	return lhs.X != rhs.X && lhs.Y != rhs.Y && lhs.Z != rhs.Z && lhs.W != rhs.W;
+}
+
+inline Mat44f operator*(const Mat44f& lhs, const Mat44f& rhs)
+{
+	Mat44f res;
+	res.X = SIMD4f::MulLane<0>(lhs.X, rhs.X);
+	res.X = SIMD4f::MulAddLane<1>(res.X, lhs.Y, rhs.X);
+	res.X = SIMD4f::MulAddLane<2>(res.X, lhs.Z, rhs.X);
+	res.X = SIMD4f::MulAddLane<3>(res.X, lhs.W, rhs.X);
+
+	res.Y = SIMD4f::MulLane<0>(lhs.X, rhs.Y);
+	res.Y = SIMD4f::MulAddLane<1>(res.Y, lhs.Y, rhs.Y);
+	res.Y = SIMD4f::MulAddLane<2>(res.Y, lhs.Z, rhs.Y);
+	res.Y = SIMD4f::MulAddLane<3>(res.Y, lhs.W, rhs.Y);
+
+	res.Z = SIMD4f::MulLane<0>(lhs.X, rhs.Z);
+	res.Z = SIMD4f::MulAddLane<1>(res.Z, lhs.Y, rhs.Z);
+	res.Z = SIMD4f::MulAddLane<2>(res.Z, lhs.Z, rhs.Z);
+	res.Z = SIMD4f::MulAddLane<3>(res.Z, lhs.W, rhs.Z);
+
+	res.W = SIMD4f::MulLane<0>(lhs.X, rhs.W);
+	res.W = SIMD4f::MulAddLane<1>(res.W, lhs.Y, rhs.W);
+	res.W = SIMD4f::MulAddLane<2>(res.W, lhs.Z, rhs.W);
+	res.W = SIMD4f::MulAddLane<3>(res.W, lhs.W, rhs.W);
+	return res;
+}
+
+inline Vec3f Vec3f::Transform(const Vec3f& lhs, const Mat44f& rhs)
+{
+	SIMD4f s0 = rhs.X;
+	SIMD4f s1 = rhs.Y;
+	SIMD4f s2 = rhs.Z;
+	SIMD4f s3 = rhs.W;
+	SIMD4f::Transpose(s0, s1, s2, s3);
+
+	SIMD4f res = SIMD4f::MulAddLane<0>(s3, s0, lhs.s);
+	res = SIMD4f::MulAddLane<1>(res, s1, lhs.s);
+	res = SIMD4f::MulAddLane<2>(res, s2, lhs.s);
+	return Vec3f{res};
+}
+
+inline Vec4f Vec4f::Transform(const Vec4f& lhs, const Mat44f& rhs)
+{
+	SIMD4f s0 = rhs.X;
+	SIMD4f s1 = rhs.Y;
+	SIMD4f s2 = rhs.Z;
+	SIMD4f s3 = rhs.W;
+	SIMD4f::Transpose(s0, s1, s2, s3);
+
+	SIMD4f res = SIMD4f::MulLane<0>(s0, lhs.s);
+	res = SIMD4f::MulAddLane<1>(res, s1, lhs.s);
+	res = SIMD4f::MulAddLane<2>(res, s2, lhs.s);
+	res = SIMD4f::MulAddLane<3>(res, s3, lhs.s);
+	return res;
+}
+
+inline Mat44f& Mat44f::operator*=(const Mat44f& rhs)
+{
+	*this = *this * rhs;
+	return *this;
+}
+
+inline Mat44f& Mat44f::operator*=(float rhs)
+{
+	X *= rhs;
+	Y *= rhs;
+	Z *= rhs;
+	W *= rhs;
+	return *this;
+}
+
+} // namespace Effekseer
+
+#endif // __EFFEKSEER_VEC4F_H__
+#ifndef __EFFEKSEER_SIMD_UTILS_H__
+#define __EFFEKSEER_SIMD_UTILS_H__
+
+#include <stdlib.h>
+
+namespace Effekseer
+{
+	
+template <size_t align>
+class AlignedAllocationPolicy {
+public:
+	static void* operator new(size_t size) {
+#ifdef _MSC_VER
+		return _mm_malloc(size, align);
+#else
+		void *ptr = nullptr;
+		posix_memalign(&ptr, align, size);
+		return ptr;
+#endif
+	}
+	static void operator delete(void* ptr) {
+#ifdef _MSC_VER
+		_mm_free(ptr);
+#else
+		return free(ptr);
+#endif
+	}
+};
+
+inline Vector2D ToStruct(const Vec2f& o)
+{
+	Vector2D ret;
+	Vec2f::Store(&ret, o);
+	return ret;
+}
+
+inline Vector3D ToStruct(const Vec3f& o)
+{
+	Vector3D ret;
+	Vec3f::Store(&ret, o);
+	return ret;
+}
+
+inline Matrix43 ToStruct(const Mat43f& o)
+{
+	SIMD4f tx = o.X;
+	SIMD4f ty = o.Y;
+	SIMD4f tz = o.Z;
+	SIMD4f tw = SIMD4f::SetZero();
+	SIMD4f::Transpose(tx, ty, tz, tw);
+
+	Matrix43 ret;
+	SIMD4f::Store3(ret.Value[0], tx);
+	SIMD4f::Store3(ret.Value[1], ty);
+	SIMD4f::Store3(ret.Value[2], tz);
+	SIMD4f::Store3(ret.Value[3], tw);
+	return ret;
+}
+
+inline Matrix44 ToStruct(const Mat44f& o)
+{
+	SIMD4f tx = o.X;
+	SIMD4f ty = o.Y;
+	SIMD4f tz = o.Z;
+	SIMD4f tw = o.W;
+	SIMD4f::Transpose(tx, ty, tz, tw);
+
+	Matrix44 ret;
+	SIMD4f::Store4(ret.Values[0], tx);
+	SIMD4f::Store4(ret.Values[1], ty);
+	SIMD4f::Store4(ret.Values[2], tz);
+	SIMD4f::Store4(ret.Values[3], tw);
+	return ret;
+}
+
+} // namespace Effekseer
+
+#endif
+
+#ifndef	__EFFEKSEER_SPRITE_RENDERER_H__
+#define	__EFFEKSEER_SPRITE_RENDERER_H__
+
+//----------------------------------------------------------------------------------
+// Include
+//----------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+namespace Effekseer
+{
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+
+class SpriteRenderer
+{
+public:
+
+	struct NodeParameter
+	{
+		Effect*				EffectPointer;
+		//int32_t				ColorTextureIndex;
+		//AlphaBlendType			AlphaBlend;
+		//TextureFilterType	TextureFilter;
+		//TextureWrapType	TextureWrap;
+		bool				ZTest;
+		bool				ZWrite;
+		BillboardType		Billboard;
+		bool				IsRightHand;
+
+		//bool				Distortion;
+		//float				DistortionIntensity;
+
+		//float				DepthOffset;
+		//bool				IsDepthOffsetScaledWithCamera;
+		//bool				IsDepthOffsetScaledWithParticleScale;
+
+		ZSortType			ZSort;
+
+		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+
+		//RendererMaterialType MaterialType = RendererMaterialType::Default;
+		//MaterialParameter* MaterialParameterPtr = nullptr;
+	};
+
+	struct InstanceParameter
+	{
+		Mat43f		SRTMatrix43;
+		Color		AllColor;
+
+		// Lower left, Lower right, Upper left, Upper right
+		Color		Colors[4];
+
+		Vec2f		Positions[4];
+
+		RectF		UV;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		RectF		AlphaUV;
+#endif
+
+		std::array<float, 4> CustomData1;
+		std::array<float, 4> CustomData2;
+	};
+
+public:
+	SpriteRenderer() {}
+
+	virtual ~SpriteRenderer() {}
+
+	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
+
+	virtual void Rendering( const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData ) {}
+
+	virtual void EndRendering( const NodeParameter& parameter, void* userData ) {}
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+}
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#endif	// __EFFEKSEER_SPRITE_RENDERER_H__
+
+#ifndef	__EFFEKSEER_RIBBON_RENDERER_H__
+#define	__EFFEKSEER_RIBBON_RENDERER_H__
+
+//----------------------------------------------------------------------------------
+// Include
+//----------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+namespace Effekseer
+{
+
+struct NodeRendererTextureUVTypeParameter;
+
+	//----------------------------------------------------------------------------------
+	//
+	//----------------------------------------------------------------------------------
+
+	class RibbonRenderer
+	{
+	public:
+
+		struct NodeParameter
+		{
+			Effect*				EffectPointer;
+			//int32_t				ColorTextureIndex;
+			//AlphaBlendType			AlphaBlend;
+			//TextureFilterType	TextureFilter;
+			//TextureWrapType	TextureWrap;
+			bool				ZTest;
+			bool				ZWrite;
+			bool				ViewpointDependent;
+
+			//bool				Distortion;
+			//float				DistortionIntensity;
+
+			bool IsRightHand;
+			int32_t				SplineDivision;
+			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+			NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
+			//RendererMaterialType MaterialType = RendererMaterialType::Default;
+			//MaterialParameter* MaterialParameterPtr = nullptr;
+		};
+
+		struct InstanceParameter
+		{
+			int32_t			InstanceCount;
+			int32_t			InstanceIndex;
+			Mat43f			SRTMatrix43;
+			Color			AllColor;
+
+			// Lower left, Lower right, Upper left, Upper right
+			Color	Colors[4];
+
+			float	Positions[4];
+
+			RectF	UV;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			RectF	AlphaUV;
+#endif
+			std::array<float, 4> CustomData1;
+			std::array<float, 4> CustomData2;
+		};
+
+	public:
+		RibbonRenderer() {}
+
+		virtual ~RibbonRenderer() {}
+
+		virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) {}
+
+		virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData) {}
+
+		virtual void EndRendering(const NodeParameter& parameter, void* userData) {}
+
+		virtual void BeginRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData) {}
+
+		virtual void EndRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData) {}
+	};
+
+	//----------------------------------------------------------------------------------
+	//
+	//----------------------------------------------------------------------------------
+}
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#endif	// __EFFEKSEER_RIBBON_RENDERER_H__
+#ifndef	__EFFEKSEER_RING_RENDERER_H__
+#define	__EFFEKSEER_RING_RENDERER_H__
+
+//----------------------------------------------------------------------------------
+// Include
+//----------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+namespace Effekseer
+{
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+
+class RingRenderer
+{
+public:
+
+	struct NodeParameter
+	{
+		Effect*				EffectPointer;
+		//int32_t				ColorTextureIndex;
+		//AlphaBlendType			AlphaBlend;
+		//TextureFilterType	TextureFilter;
+		//TextureWrapType	TextureWrap;
+		bool				ZTest;
+		bool				ZWrite;
+		BillboardType		Billboard;
+		int32_t				VertexCount;
+		bool				IsRightHand;
+		float StartingFade = 0.0f;
+		float EndingFade = 0.0f;
+		//bool				Distortion;
+		//float				DistortionIntensity;
+
+		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+
+		//RendererMaterialType MaterialType = RendererMaterialType::Default;
+		//MaterialParameter* MaterialParameterPtr = nullptr;
+
+		//float				DepthOffset;
+		//bool				IsDepthOffsetScaledWithCamera;
+		//bool				IsDepthOffsetScaledWithParticleScale;
+
+		NodeRendererBasicParameter BasicParameter;
+	};
+
+	struct InstanceParameter
+	{
+		Mat43f		SRTMatrix43;
+		Vec2f		OuterLocation;
+		Vec2f		InnerLocation;
+		float		ViewingAngleStart;
+		float		ViewingAngleEnd;
+		float		CenterRatio;
+		Color		OuterColor;
+		Color		CenterColor;
+		Color		InnerColor;
+		
+		RectF	UV;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		RectF	AlphaUV;
+#endif
+		std::array<float, 4> CustomData1;
+		std::array<float, 4> CustomData2;
+	};
+
+public:
+	RingRenderer() {}
+
+	virtual ~RingRenderer() {}
+
+	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
+
+	virtual void Rendering( const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData ) {}
+
+	virtual void EndRendering( const NodeParameter& parameter, void* userData ) {}
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+}
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#endif	// __EFFEKSEER_RING_RENDERER_H__
+
+#ifndef	__EFFEKSEER_MODEL_RENDERER_H__
+#define	__EFFEKSEER_MODEL_RENDERER_H__
+
+//----------------------------------------------------------------------------------
+// Include
+//----------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+namespace Effekseer
+{
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+
+class ModelRenderer
+{
+public:
+
+	struct NodeParameter
+	{
+		Effect*				EffectPointer;
+		//AlphaBlendType		AlphaBlend;
+		//TextureFilterType	TextureFilter;
+		//TextureWrapType	TextureWrap;
+		bool				ZTest;
+		bool				ZWrite;
+		BillboardType		Billboard;
+
+		//bool				Lighting;
+		CullingType		Culling;
+		int32_t				ModelIndex;
+		//int32_t				ColorTextureIndex;
+		//int32_t				NormalTextureIndex;
+		float				Magnification;
+		bool				IsRightHand;
+
+		//bool				Distortion;
+		//float				DistortionIntensity;
+
+		NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+		NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+
+		//RendererMaterialType MaterialType = RendererMaterialType::Default;
+		//MaterialParameter* MaterialParameterPtr = nullptr;
+
+		//float				DepthOffset;
+		//bool				IsDepthOffsetScaledWithCamera;
+		//bool				IsDepthOffsetScaledWithParticleScale;
+	};
+
+	struct InstanceParameter
+	{
+		Mat43f			SRTMatrix43;
+		RectF			UV;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		RectF			AlphaUV;
+#endif
+		Color			AllColor;
+		int32_t			Time;
+		std::array<float, 4> CustomData1;
+		std::array<float, 4> CustomData2;
+	};
+
+public:
+	ModelRenderer() {}
+
+	virtual ~ModelRenderer() {}
+
+	virtual void BeginRendering( const NodeParameter& parameter, int32_t count, void* userData ) {}
+
+	virtual void Rendering( const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData ) {}
+
+	virtual void EndRendering( const NodeParameter& parameter, void* userData ) {}
+};
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+}
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#endif	// __EFFEKSEER_MODEL_RENDERER_H__
+
+#ifndef	__EFFEKSEER_TRACK_RENDERER_H__
+#define	__EFFEKSEER_TRACK_RENDERER_H__
+
+//----------------------------------------------------------------------------------
+// Include
+//----------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+namespace Effekseer
+{
+
+struct NodeRendererTextureUVTypeParameter;
+
+	//----------------------------------------------------------------------------------
+	//
+	//----------------------------------------------------------------------------------
+
+	class TrackRenderer
+	{
+	public:
+
+		struct NodeParameter
+		{
+			Effect*				EffectPointer;
+			//int32_t				ColorTextureIndex;
+			//AlphaBlendType			AlphaBlend;
+			//TextureFilterType	TextureFilter;
+			//TextureWrapType		TextureWrap;
+			bool				ZTest;
+			bool				ZWrite;
+
+			//bool				Distortion;
+			//float				DistortionIntensity;
+
+			int32_t				SplineDivision;
+
+			bool IsRightHand;
+			NodeRendererDepthParameter* DepthParameterPtr = nullptr;
+			NodeRendererBasicParameter* BasicParameterPtr = nullptr;
+			NodeRendererTextureUVTypeParameter* TextureUVTypeParameterPtr = nullptr;
+
+			RendererMaterialType MaterialType = RendererMaterialType::Default;
+			MaterialParameter* MaterialParameterPtr = nullptr;
+		};
+
+		struct InstanceGroupParameter
+		{
+
+		};
+
+		struct InstanceParameter
+		{
+			int32_t			InstanceCount;
+			int32_t			InstanceIndex;
+			Mat43f			SRTMatrix43;
+
+			Color	ColorLeft;
+			Color	ColorCenter;
+			Color	ColorRight;
+
+			Color	ColorLeftMiddle;
+			Color	ColorCenterMiddle;
+			Color	ColorRightMiddle;
+
+			float	SizeFor;
+			float	SizeMiddle;
+			float	SizeBack;
+
+			RectF	UV;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			RectF	AlphaUV;
+#endif
+			std::array<float, 4> CustomData1;
+			std::array<float, 4> CustomData2;
+		};
+
+	public:
+		TrackRenderer() {}
+
+		virtual ~TrackRenderer() {}
+
+		virtual void BeginRendering(const NodeParameter& parameter, int32_t count, void* userData) {}
+
+		virtual void Rendering(const NodeParameter& parameter, const InstanceParameter& instanceParameter, void* userData) {}
+
+		virtual void EndRendering(const NodeParameter& parameter, void* userData) {}
+
+		virtual void BeginRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData) {}
+
+		virtual void EndRenderingGroup(const NodeParameter& parameter, int32_t count, void* userData) {}
+	};
+
+	//----------------------------------------------------------------------------------
+	//
+	//----------------------------------------------------------------------------------
+}
+//----------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------
+#endif	// __EFFEKSEER_TRACK_RENDERER_H__
 #ifndef	__EFFEKSEER_EFFECTLOADER_H__
 #define	__EFFEKSEER_EFFECTLOADER_H__
 

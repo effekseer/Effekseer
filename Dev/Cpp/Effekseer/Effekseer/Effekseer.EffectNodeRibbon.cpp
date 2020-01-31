@@ -171,7 +171,12 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 
 		if (group->GetFirst() != nullptr)
 		{
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			m_instanceParameter.UV = group->GetFirst()->GetUV(0);
+			m_instanceParameter.AlphaUV = group->GetFirst()->GetUV(1);
+#else
 			m_instanceParameter.UV = group->GetFirst()->GetUV();
+#endif
 			CalcCustomData(group->GetFirst(), m_instanceParameter.CustomData1, m_instanceParameter.CustomData2);
 		}
 

@@ -33,6 +33,10 @@ struct DynamicVertex
 
 	float UV2[2];
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	float AlphaUV[2];
+#endif
+
 	void SetColor(const VertexColor& color) { Col = color; }
 };
 
@@ -46,6 +50,10 @@ struct SimpleVertex
 		//! dummy for template
 		float UV2[2];
 	};
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	float AlphaUV[2];
+#endif
 
 	void SetColor(const ::Effekseer::Color& color)
 	{
@@ -66,6 +74,10 @@ struct SimpleVertexDX9
 		//! dummy for template
 		float UV2[2];
 	};
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	float AlphaUV[2];
+#endif
 
 	void SetColor(const ::Effekseer::Color& color)
 	{
@@ -89,6 +101,10 @@ struct VertexDistortion
 
 	VertexFloat3 Binormal;
 	VertexFloat3 Tangent;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	float AlphaUV[2];
+#endif
 	
 	void SetColor(const ::Effekseer::Color& color)
 	{
@@ -113,6 +129,10 @@ struct VertexDistortionDX9
 	VertexFloat3 Binormal;
 	VertexFloat3 Tangent;
 	
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	float AlphaUV[2];
+#endif
+
 	void SetColor(const ::Effekseer::Color& color)
 	{
 		Col[0] = color.B;
