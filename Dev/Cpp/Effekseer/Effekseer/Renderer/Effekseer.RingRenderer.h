@@ -70,6 +70,9 @@ public:
 		Color		InnerColor;
 		
 		RectF	UV;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		RectF	AlphaUV;
+#endif
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
 	};

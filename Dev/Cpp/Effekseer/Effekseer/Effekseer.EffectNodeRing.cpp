@@ -321,7 +321,12 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		instanceParameter.CenterColor = _centerColor;
 		instanceParameter.InnerColor  = _innerColor;
 		
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		instanceParameter.UV = instance.GetUV(0);
+		instanceParameter.AlphaUV = instance.GetUV(1);
+#else
 		instanceParameter.UV = instance.GetUV();
+#endif
 		
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 

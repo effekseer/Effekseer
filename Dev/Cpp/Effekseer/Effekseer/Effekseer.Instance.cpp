@@ -820,6 +820,39 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	}
 
 	// UV
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	const int32_t ArraySize = sizeof(m_pEffectNode->RendererCommon.UVTypes) / sizeof(m_pEffectNode->RendererCommon.UVTypes[0]);
+	for (int32_t i = 0; i < ArraySize; i++)
+	{
+		const auto& UVType = m_pEffectNode->RendererCommon.UVTypes[i];
+		const auto& UV = m_pEffectNode->RendererCommon.UVs[i];
+
+		if (UVType == ParameterRendererCommon::UV_ANIMATION)
+		{
+			uvTimeOffset = (int32_t)UV.Animation.StartFrame.getValue(*instanceGlobal);
+			uvTimeOffset *= UV.Animation.FrameLength;
+		}
+		else if (UVType == ParameterRendererCommon::UV_SCROLL)
+		{
+			auto xy = UV.Scroll.Position.getValue(*instanceGlobal);
+			auto zw = UV.Scroll.Size.getValue(*instanceGlobal);
+
+			uvAreaOffset.X = xy.GetX();
+			uvAreaOffset.Y = xy.GetY();
+			uvAreaOffset.Width = zw.GetX();
+			uvAreaOffset.Height = zw.GetY();
+
+			uvScrollSpeed = UV.Scroll.Speed.getValue(*instanceGlobal);
+		}
+		else if (UVType == ParameterRendererCommon::UV_FCURVE)
+		{
+			uvAreaOffset.X = UV.FCurve.Position->X.GetOffset(*instanceGlobal);
+			uvAreaOffset.Y = UV.FCurve.Position->Y.GetOffset(*instanceGlobal);
+			uvAreaOffset.Width = UV.FCurve.Size->X.GetOffset(*instanceGlobal);
+			uvAreaOffset.Height = UV.FCurve.Size->Y.GetOffset(*instanceGlobal);
+		}
+	}
+#else
 	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_ANIMATION)
 	{
 		uvTimeOffset = (int32_t)m_pEffectNode->RendererCommon.UV.Animation.StartFrame.getValue(*instanceGlobal);
@@ -846,6 +879,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		uvAreaOffset.Width = m_pEffectNode->RendererCommon.UV.FCurve.Size->X.GetOffset(*instanceGlobal);
 		uvAreaOffset.Height = m_pEffectNode->RendererCommon.UV.FCurve.Size->Y.GetOffset(*instanceGlobal);
 	}
+#endif
 
 	// CustomData
 	for (int32_t index = 0; index < 2; index++)
@@ -1403,6 +1437,112 @@ void Instance::Kill()
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+RectF Instance::GetUV(const int32_t index) const
+{
+	RectF uv(0.0f, 0.0f, 1.0f, 1.0f);
+
+	const auto& UVType = m_pEffectNode->RendererCommon.UVTypes[index];
+	const auto& UV = m_pEffectNode->RendererCommon.UVs[index];
+
+	if( UVType == ParameterRendererCommon::UV_DEFAULT )
+	{
+		return RectF( 0.0f, 0.0f, 1.0f, 1.0f );
+	}
+	else if( UVType == ParameterRendererCommon::UV_FIXED )
+	{
+		uv = RectF(
+			UV.Fixed.Position.x,
+			UV.Fixed.Position.y,
+			UV.Fixed.Position.w,
+			UV.Fixed.Position.h );
+	}
+	else if( UVType == ParameterRendererCommon::UV_ANIMATION )
+	{
+		auto time = m_LivingTime + uvTimeOffset;
+
+		int32_t frameNum = (int32_t)(time / UV.Animation.FrameLength);
+		int32_t frameCount = UV.Animation.FrameCountX * UV.Animation.FrameCountY;
+
+		if( UV.Animation.LoopType == UV.Animation.LOOPTYPE_ONCE )
+		{
+			if( frameNum >= frameCount )
+			{
+				frameNum = frameCount - 1;
+			}
+		}
+		else if ( UV.Animation.LoopType == UV.Animation.LOOPTYPE_LOOP )
+		{
+			frameNum %= frameCount;
+		}
+		else if ( UV.Animation.LoopType == UV.Animation.LOOPTYPE_REVERSELOOP )
+		{
+			bool rev = (frameNum / frameCount) % 2 == 1;
+			frameNum %= frameCount;
+			if( rev )
+			{
+				frameNum = frameCount - 1 - frameNum;
+			}
+		}
+
+		int32_t frameX = frameNum % UV.Animation.FrameCountX;
+		int32_t frameY = frameNum / UV.Animation.FrameCountX;
+
+		uv = RectF(
+			UV.Animation.Position.x + UV.Animation.Position.w * frameX,
+			UV.Animation.Position.y + UV.Animation.Position.h * frameY,
+			UV.Animation.Position.w,
+			UV.Animation.Position.h );
+	}
+	else if( UVType == ParameterRendererCommon::UV_SCROLL )
+	{
+		auto time = (int32_t)m_LivingTime;
+
+		uv = RectF(
+			uvAreaOffset.X + uvScrollSpeed.GetX() * time,
+			uvAreaOffset.Y + uvScrollSpeed.GetY() * time,
+			uvAreaOffset.Width,
+			uvAreaOffset.Height);
+	}
+	else if ( UVType == ParameterRendererCommon::UV_FCURVE)
+	{
+		auto time = (int32_t)m_LivingTime;
+
+		auto fcurvePos = UV.FCurve.Position->GetValues(m_LivingTime, m_LivedTime);
+		auto fcurveSize = UV.FCurve.Size->GetValues(m_LivingTime, m_LivedTime);
+
+		uv = RectF(uvAreaOffset.X + fcurvePos.GetX(),
+				   uvAreaOffset.Y + fcurvePos.GetY(),
+				   uvAreaOffset.Width + fcurveSize.GetX(),
+				   uvAreaOffset.Height + fcurveSize.GetY());
+	}
+
+	// For webgl bug (it makes slow if sampling points are too far on WebGL)
+	float far = 4.0;
+
+	if (uv.X < -far && uv.X + uv.Width < -far)
+	{
+		uv.X += (-static_cast<int32_t>(uv.X) - far);
+	}
+
+	if (uv.X > far && uv.X + uv.Width > far)
+	{
+		uv.X -= (static_cast<int32_t>(uv.X) - far);
+	}
+
+	if (uv.Y < -far && uv.Y + uv.Height < -far)
+	{
+		uv.Y += (-static_cast<int32_t>(uv.Y) - far);
+	}
+
+	if (uv.Y > far && uv.Y + uv.Height > far)
+	{
+		uv.Y -= (static_cast<int32_t>(uv.Y) - far);
+	}
+
+	return uv;
+}
+#else
 RectF Instance::GetUV() const
 {
 	RectF uv(0.0f, 0.0f, 1.0f, 1.0f);
@@ -1504,6 +1644,7 @@ RectF Instance::GetUV() const
 
 	return uv;
 }
+#endif
 
 std::array<float, 4> Instance::GetCustomData(int32_t index) const
 {

@@ -151,7 +151,12 @@ void EffectNodeModel::Rendering(const Instance& instance, const Instance* next_i
 		instanceParameter.SRTMatrix43 = instance.GetGlobalMatrix43();
 		instanceParameter.Time = (int32_t)instance.m_LivingTime;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		instanceParameter.UV = instance.GetUV(0);
+		instanceParameter.AlphaUV = instance.GetUV(1);
+#else
 		instanceParameter.UV = instance.GetUV();
+#endif
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
 		Color _color;

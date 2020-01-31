@@ -4,6 +4,11 @@ SamplerState	g_sampler		: register(s0);
 Texture2D		g_backTexture		: register(t1);
 SamplerState	g_backSampler		: register(s1);
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+Texture2D g_alphaTexture : register(t2);
+SamplerState g_alphaSampler : register(s2);
+#endif
+
 float4		g_scale			: register(c0);
 float4 mUVInversedBack		: register(c1);
 
@@ -16,6 +21,9 @@ struct PS_Input
 	float4 Tangent		: TEXCOORD3;
 	float4 Pos		: TEXCOORD4;
 	float4 Color		: COLOR0;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV : TEXCOORD5;
+#endif
 };
 
 float4 PS( const PS_Input Input ) : SV_Target
@@ -26,6 +34,10 @@ float4 PS( const PS_Input Input ) : SV_Target
 	float4 Output = float4(1.0, 1.0, 1.0, 1.0);
 #endif
 	Output.a = Output.a * Input.Color.a;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;
+#endif
 
 	if (Output.a == 0.0f) discard;
 

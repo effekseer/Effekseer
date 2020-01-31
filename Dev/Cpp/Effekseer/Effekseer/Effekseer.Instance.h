@@ -366,7 +366,11 @@ public:
 	/**
 		@brief	UVの位置取得
 	*/
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	RectF GetUV(const int32_t index) const;
+#else
 	RectF GetUV() const;
+#endif
 
 	//! get custom data
 	std::array<float,4> GetCustomData(int32_t index) const;
