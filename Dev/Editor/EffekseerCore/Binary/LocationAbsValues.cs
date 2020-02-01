@@ -12,6 +12,30 @@ namespace Effekseer.Binary
 		public static byte[] GetBytes(Data.LocationAbsValues value, Data.ParentEffectType parentEffectType)
 		{
 			List<byte[]> data = new List<byte[]>();
+
+			// Force field
+			List<Data.LocalForceField> lffs = new List<Data.LocalForceField>
+			{
+				value.LocalForceField1,
+				value.LocalForceField2,
+				value.LocalForceField3,
+			};
+
+			data.Add((lffs.Count).GetBytes());
+
+			foreach(var lff in lffs)
+			{
+				data.Add(lff.Type.GetValueAsInt().GetBytes());
+
+				if(lff.Type.Value == Data.LocalForceFieldType.Turbulence)
+				{
+					data.Add(lff.Turbulence.Seed.Value.GetBytes());
+					data.Add(lff.Turbulence.FieldScale.Value.GetBytes());
+					data.Add(lff.Turbulence.Strength.Value.GetBytes());
+					data.Add(lff.Turbulence.Octave.Value.GetBytes());
+				}
+			}
+
 			data.Add(value.Type.GetValueAsInt().GetBytes());
 
 			if (value.Type.GetValue() == Data.LocationAbsValues.ParamaterType.Gravity)

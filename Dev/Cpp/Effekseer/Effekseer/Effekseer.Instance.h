@@ -96,6 +96,9 @@ public:
 	Vec3f	m_GlobalRevisionLocation;
 	Vec3f	m_GlobalRevisionVelocity;
 	
+	//! for noise
+	Vec3f modifyWithNoise_;
+
 	// Color for binding
 	Color		ColorInheritance;
 

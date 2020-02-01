@@ -13,7 +13,9 @@
 #include "EffectPlatformGL.h"
 #endif
 
+#include "../Effekseer/Effekseer/Noise/CurlNoise.h"
 #include "../TestHelper.h"
+#include <iostream>
 
 void BasicRuntimeTestPlatform(EffectPlatform* platform, std::string baseResultPath, std::string suffix)
 {
@@ -177,7 +179,8 @@ void UpdateHandleTest()
 	}
 }
 
-void PlaybackSpeedTest() {
+void PlaybackSpeedTest()
+{
 	{
 		srand(0);
 		auto platform = std::make_shared<EffectPlatformGL>();

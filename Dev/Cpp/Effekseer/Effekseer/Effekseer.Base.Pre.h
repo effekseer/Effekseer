@@ -124,6 +124,8 @@ const int32_t UserTextureSlotMax = 6;
 //! the maximum number of texture slot including textures system specified
 const int32_t TextureSlotMax = 8;
 
+const int32_t LocalFieldSlotMax = 4;
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------

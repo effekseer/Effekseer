@@ -19,15 +19,52 @@
 #include "Effekseer.EffectNodeRing.h"
 #include "Effekseer.EffectNodeRoot.h"
 #include "Effekseer.EffectNodeSprite.h"
-#include "Sound/Effekseer.SoundPlayer.h"
-
 #include "Effekseer.Setting.h"
+#include "Sound/Effekseer.SoundPlayer.h"
+#include "Utils/Effekseer.BinaryReader.h"
 
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
 namespace Effekseer
 {
+
+LocalForceFieldTurbulenceParameter::LocalForceFieldTurbulenceParameter(int32_t seed, float scale, float strength, int octave) : Noise(seed)
+{
+	Noise.Octave = octave;
+	Noise.Scale = scale;
+	Strength = strength;
+}
+
+bool LocalForceFieldParameter::Load(uint8_t*& pos, int32_t version)
+{
+	auto br = BinaryReader<false>(pos, std::numeric_limits<int>::max());
+
+	LocalForceFieldType type{};
+	br.Read(type);
+
+	if (type == LocalForceFieldType::Turbulence)
+	{
+		int32_t seed{};
+		float scale{};
+		float strength{};
+		int octave{};
+
+		br.Read(seed);
+		br.Read(scale);
+		br.Read(strength);
+		br.Read(octave);
+
+		scale = 1.0f / scale;
+
+		Turbulence =
+			std::unique_ptr<LocalForceFieldTurbulenceParameter>(new LocalForceFieldTurbulenceParameter(seed, scale, strength, octave));
+	}
+
+	pos += br.GetOffset();
+
+	return true;
+}
 
 //----------------------------------------------------------------------------------
 //
@@ -54,9 +91,12 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 	int node_type = 0;
 	auto ef = (EffectImplemented*)m_effect;
 
-	if (parent) {
+	if (parent)
+	{
 		generation_ = parent->GetGeneration() + 1;
-	} else {
+	}
+	else
+	{
 		generation_ = 0;
 	}
 
@@ -238,6 +278,19 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 				TranslationFCurve->X.Maginify(m_effect->GetMaginification());
 				TranslationFCurve->Y.Maginify(m_effect->GetMaginification());
 				TranslationFCurve->Z.Maginify(m_effect->GetMaginification());
+			}
+		}
+
+		// Local force field
+		if (ef->GetVersion() >= 15) // FIX IT
+		{
+			int32_t count = 0;
+			memcpy(&count, pos, sizeof(int));
+			pos += sizeof(int);
+
+			for (int32_t i = 0; i < count; i++)
+			{
+				LocalForceFields[i].Load(pos, ef->GetVersion());
 			}
 		}
 
@@ -667,7 +720,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 #ifndef __EFFEKSEER_FOR_UE4__ // Hack for EffekseerForUE4
 		RendererCommon.BasicParameter.DistortionIntensity *= m_effect->GetMaginification();
 		RendererCommon.DistortionIntensity *= m_effect->GetMaginification();
-#endif // !__EFFEKSEER_FOR_UE4__ 
+#endif // !__EFFEKSEER_FOR_UE4__
 
 		if (m_effect->GetVersion() >= 1)
 		{

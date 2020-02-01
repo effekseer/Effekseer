@@ -10,7 +10,8 @@ file(GLOB effekseer_h
     Effekseer/Material/*.h
     Effekseer/Parameter/*.h
     Effekseer/IO/*.h
-    Effekseer/Utils/*.h)
+    Effekseer/Utils/*.h
+    Effekseer/Noise/*.h)
 
 set(effekseer_src
     Effekseer/Effekseer.Client.cpp
@@ -57,6 +58,8 @@ set(effekseer_src
     Effekseer/SIMD/Effekseer.Mat43f.cpp
     Effekseer/SIMD/Effekseer.Mat44f.cpp
     Effekseer/SIMD/Effekseer.SIMDUtils.cpp
+    Effekseer/Noise/CurlNoise.cpp
+    Effekseer/Noise/PerlinNoise.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC

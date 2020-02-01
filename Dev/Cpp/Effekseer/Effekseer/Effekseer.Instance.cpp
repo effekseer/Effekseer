@@ -428,6 +428,7 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 	m_GlobalPosition = parentMatrix.GetTranslation();
 	m_GlobalRevisionLocation = Vec3f(0.0f, 0.0f, 0.0f);
 	m_GlobalRevisionVelocity = Vec3f(0.0f, 0.0f, 0.0f);
+	modifyWithNoise_ = Vec3f(0.0f, 0.0f, 0.0f);
 	m_GenerationLocation = Mat43f::Identity;
 	m_GlobalMatrix43 = globalMatrix;
 	assert(m_GlobalMatrix43.IsValid());
@@ -972,7 +973,10 @@ void Instance::Update( float deltaFrame, bool shown )
 	{
 		CalculateMatrix( deltaFrame );
 	}
-	else if( m_pEffectNode->LocationAbs.type != LocationAbsType::None )
+	else if (m_pEffectNode->LocationAbs.type != LocationAbsType::None 
+		|| m_pEffectNode->LocalForceFields[0].Turbulence != nullptr 
+		|| m_pEffectNode->LocalForceFields[1].Turbulence != nullptr 
+		|| m_pEffectNode->LocalForceFields[2].Turbulence != nullptr)
 	{
 		// If attraction forces are not default, updating is needed in each frame.
 		CalculateMatrix( deltaFrame );
@@ -1236,6 +1240,19 @@ void Instance::CalculateMatrix( float deltaFrame )
 			auto fcurve = m_pEffectNode->ScalingFCurve->GetValues(m_LivingTime, m_LivedTime);
 			localScaling = fcurve + scaling_values.fcruve.offset;
 		}
+
+		// update local fields
+		auto currentPosition = localPosition + modifyWithNoise_;
+		for (const auto& field : m_pEffectNode->LocalForceFields)
+		{
+			if (field.Turbulence != nullptr)
+			{
+				auto mag = static_cast<EffectImplemented*>(m_pEffectNode->GetEffect())->GetMaginification();
+				modifyWithNoise_ += field.Turbulence->Noise.Get(currentPosition / mag) * field.Turbulence->Strength * mag;
+			}
+
+		}
+		localPosition += modifyWithNoise_;
 
 		/* 描画部分の更新 */
 		m_pEffectNode->UpdateRenderedInstance( *this, m_pManager );
