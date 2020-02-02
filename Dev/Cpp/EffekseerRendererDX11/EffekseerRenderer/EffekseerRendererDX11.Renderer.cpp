@@ -34,33 +34,25 @@
 namespace EffekseerRendererDX11
 {
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 namespace Standard_VS
 {
 	static
 #include "Shader/EffekseerRenderer.Standard_VS.h"
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace Standard_PS
 {
 	static
 #include "Shader/EffekseerRenderer.Standard_PS.h"
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace Standard_Distortion_VS
 {
 	static
 #include "Shader/EffekseerRenderer.Standard_Distortion_VS.h"
 }
 
-//-----------------------------------------------------------------------------------
-//
-//-----------------------------------------------------------------------------------
 namespace Standard_Distortion_PS
 {
 	static
@@ -79,6 +71,45 @@ static
 #include "Shader/EffekseerRenderer.Standard_Lighting_PS.h"
 } // namespace Standard_Distortion_PS
 
+#else
+
+namespace Standard_VS
+{
+static
+#include "Shader_15/EffekseerRenderer.Standard_VS.h"
+} // namespace Standard_VS
+
+namespace Standard_PS
+{
+static
+#include "Shader_15/EffekseerRenderer.Standard_PS.h"
+} // namespace Standard_PS
+
+namespace Standard_Distortion_VS
+{
+static
+#include "Shader_15/EffekseerRenderer.Standard_Distortion_VS.h"
+} // namespace Standard_Distortion_VS
+
+namespace Standard_Distortion_PS
+{
+static
+#include "Shader_15/EffekseerRenderer.Standard_Distortion_PS.h"
+} // namespace Standard_Distortion_PS
+
+namespace Standard_Lighting_VS
+{
+static
+#include "Shader_15/EffekseerRenderer.Standard_Lighting_VS.h"
+} // namespace Standard_Lighting_VS
+
+namespace Standard_Lighting_PS
+{
+static
+#include "Shader_15/EffekseerRenderer.Standard_Lighting_PS.h"
+} // namespace Standard_Lighting_PS
+
+#endif
 
 //-----------------------------------------------------------------------------------
 //

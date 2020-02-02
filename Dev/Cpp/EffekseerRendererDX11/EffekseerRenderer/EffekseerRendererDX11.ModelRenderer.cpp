@@ -13,6 +13,8 @@
 namespace EffekseerRendererDX11
 {
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+
 namespace ShaderLightingTextureNormal_
 {
 static
@@ -26,20 +28,53 @@ static
 namespace ShaderTexture_
 {
 static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
 
 static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
 }
 
 namespace ShaderDistortionTexture_
 {
 static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
 
 static
-#include "Shader/EffekseerRenderer.ModelRenderer.ShaderDistortionTexture_PS.h"
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortionTexture_PS.h"
 }
+
+#else
+
+namespace ShaderLightingTextureNormal_
+{
+static
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_VS.h"
+
+static
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderLightingTextureNormal_PS.h"
+
+} // namespace ShaderLightingTextureNormal_
+
+namespace ShaderTexture_
+{
+static
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_VS.h"
+
+static
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderTexture_PS.h"
+} // namespace ShaderTexture_
+
+namespace ShaderDistortionTexture_
+{
+static
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortion_VS.h"
+
+static
+#include "Shader_15/EffekseerRenderer.ModelRenderer.ShaderDistortionTexture_PS.h"
+}
+
+
+#endif
 
 
 ModelRenderer::ModelRenderer( 
