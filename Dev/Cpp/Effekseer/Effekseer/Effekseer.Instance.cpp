@@ -908,6 +908,10 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 			instanceCustomData->easing.start = parameterCustomData->Easing.Values.start.getValue(*instanceGlobal);
 			instanceCustomData->easing.end = parameterCustomData->Easing.Values.end.getValue(*instanceGlobal);
 		}
+		else if (parameterCustomData->Type == ParameterCustomDataType::Random2D)
+		{
+			instanceCustomData->random.value = parameterCustomData->Random.Values.getValue(*instanceGlobal);
+		}
 		else if (parameterCustomData->Type == ParameterCustomDataType::FCurve2D)
 		{
 			instanceCustomData->fcruve.offset = parameterCustomData->FCurve.Values->GetOffsets(*instanceGlobal);
@@ -1693,6 +1697,11 @@ std::array<float, 4> Instance::GetCustomData(int32_t index) const
 	{
 		auto v = parameterCustomData->Fixed.Values;
 		return std::array<float, 4>{v.x, v.y, 0, 0};
+	}
+	else if (parameterCustomData->Type == ParameterCustomDataType::Random2D)
+	{
+		auto v = instanceCustomData->random.value;
+		return std::array<float, 4>{v.GetX(), v.GetY(), 0, 0};
 	}
 	else if (parameterCustomData->Type == ParameterCustomDataType::Easing2D)
 	{

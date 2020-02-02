@@ -170,6 +170,8 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 		std::string log;
 		std::vector<D3D_SHADER_MACRO> macros;
 
+		std::cout << str << std::endl;
+
 		auto blob = DX11::CompileVertexShader(str.c_str(), "VS", macros, log);
 
 		if (blob != nullptr)
@@ -193,6 +195,7 @@ CompiledMaterialBinary* MaterialCompilerDX11::Compile(Material* material, int32_
 
 		std::string log;
 		std::vector<D3D_SHADER_MACRO> macros;
+		std::cout << str << std::endl;
 
 		auto blob = DX11::CompilePixelShader(str.c_str(), "PS", macros, log);
 

@@ -555,6 +555,7 @@ enum ParameterCustomDataType : int32_t
 {
 	None = 0,
 	Fixed2D = 20,
+	Random2D = 21,
 	Easing2D = 22,
 	FCurve2D = 23,
 	Fixed4D = 40,
@@ -565,6 +566,11 @@ enum ParameterCustomDataType : int32_t
 struct ParameterCustomDataFixed
 {
 	vector2d Values;
+};
+
+struct ParameterCustomDataRandom
+{
+	random_vector2d Values;
 };
 
 struct ParameterCustomDataEasing
@@ -588,6 +594,7 @@ struct ParameterCustomData
 
 	union {
 		ParameterCustomDataFixed Fixed;
+		ParameterCustomDataRandom Random;
 		ParameterCustomDataEasing Easing;
 		ParameterCustomDataFCurve FCurve;
 		std::array<float, 4> Fixed4D;
@@ -621,6 +628,11 @@ struct ParameterCustomData
 		{
 			memcpy(&Fixed.Values, pos, sizeof(Fixed));
 			pos += sizeof(Fixed);
+		}
+		else if (Type == ParameterCustomDataType::Random2D)
+		{
+			memcpy(&Random.Values, pos, sizeof(Random));
+			pos += sizeof(Random);
 		}
 		else if (Type == ParameterCustomDataType::Easing2D)
 		{

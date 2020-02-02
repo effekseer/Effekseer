@@ -34,6 +34,10 @@ namespace Effekseer.Data
 		[Name(language = Language.English, value = "Fixed2")]
 		Fixed2D = 20,
 
+		[Name(language = Language.Japanese, value = "ランダム2")]
+		[Name(language = Language.English, value = "Random2")]
+		Random2D = 21,
+
 		[Name(language = Language.Japanese, value = "イージング2")]
 		[Name(language = Language.English, value = "Easing2")]
 		Easing2D = 22,
@@ -69,6 +73,9 @@ namespace Effekseer.Data
 		[Selected(ID = 10, Value = (int)CustomDataType.Fixed2D)]
 		public Value.Vector2D Fixed { get; private set; }
 
+		[Selected(ID = 10, Value = (int)CustomDataType.Random2D)]
+		public Value.Vector2DWithRandom Random { get; private set; }
+
 		[Selected(ID = 10, Value = (int)CustomDataType.Easing2D)]
 		[IO(Export = true)]
 		public Vector2DEasingParamater Easing { get; private set; }
@@ -87,6 +94,7 @@ namespace Effekseer.Data
 			this.customDataNum = customDataNum;
 			CustomData = new Value.Enum<CustomDataType>();
 			Fixed = new Value.Vector2D();
+			Random = new Value.Vector2DWithRandom();
 			Easing = new Vector2DEasingParamater();
 			FCurve = new Value.FCurveVector2D();
 			Fixed4 = new Value.Vector4D();
@@ -126,6 +134,7 @@ namespace Effekseer.Data
 			ret.Add(ev);
 
 			ret.Add(EditableValue.Create(Fixed, this.GetType().GetProperty("Fixed")));
+			ret.Add(EditableValue.Create(Random, this.GetType().GetProperty("Random")));
 			ret.Add(EditableValue.Create(Easing, this.GetType().GetProperty("Easing")));
 			ret.Add(EditableValue.Create(FCurve, this.GetType().GetProperty("FCurve")));
 			ret.Add(EditableValue.Create(Fixed4, this.GetType().GetProperty("Fixed4")));

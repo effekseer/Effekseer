@@ -41,6 +41,11 @@ struct InstanceCustomData
 
 		struct
 		{
+			Vec2f value;
+		} random;
+
+		struct
+		{
 			Vec2f offset;
 		} fcruve;
 

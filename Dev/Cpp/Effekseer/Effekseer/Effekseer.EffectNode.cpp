@@ -282,7 +282,7 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		}
 
 		// Local force field
-		if (ef->GetVersion() >= 15) // FIX IT
+		if (ef->GetVersion() >= 1500)
 		{
 			int32_t count = 0;
 			memcpy(&count, pos, sizeof(int));

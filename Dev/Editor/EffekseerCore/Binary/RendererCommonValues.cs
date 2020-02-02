@@ -335,6 +335,12 @@ namespace Effekseer.Binary
 				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.X.Value));
 				data.Add(BitConverter.GetBytes(value.CustomData1.Fixed.Y.Value));
 			}
+			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.Random2D)
+			{
+				var value_ = value.CustomData1.Random;
+				var bytes1 = value_.GetBytes(1.0f);
+				data.Add(bytes1);
+			}
 			else if (value.CustomData1.CustomData.Value == Data.CustomDataType.Easing2D)
 			{
 				var easing = Utl.MathUtl.Easing((float)value.CustomData1.Easing.StartSpeed.Value, (float)value.CustomData1.Easing.EndSpeed.Value);
@@ -373,6 +379,12 @@ namespace Effekseer.Binary
 			{
 				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed.X.Value));
 				data.Add(BitConverter.GetBytes(value.CustomData2.Fixed.Y.Value));
+			}
+			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.Random2D)
+			{
+				var value_ = value.CustomData2.Random;
+				var bytes1 = value_.GetBytes(1.0f);
+				data.Add(bytes1);
 			}
 			else if (value.CustomData2.CustomData.Value == Data.CustomDataType.Easing2D)
 			{

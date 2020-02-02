@@ -19,9 +19,9 @@ namespace Effekseer.Binary
 		/// Support dynamic parameter
 		/// </remarks>
 #if __EFFEKSEER_BUILD_VERSION16__
-		const int Version = 16;
+		const int Version = 1600;
 #else
-		const int Version = 15;
+		const int Version = 1500;
 #endif
 
 		public HashSet<string> UsedTextures = new HashSet<string>();
