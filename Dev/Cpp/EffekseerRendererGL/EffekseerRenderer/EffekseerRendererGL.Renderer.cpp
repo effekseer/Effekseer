@@ -414,6 +414,7 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount,
 	SetLightAmbientColor( lightAmbient );
 
 	m_background.UserID = 0;
+	m_background.HasMipmap = false;
 
 	if (deviceObjectCollection == nullptr)
 	{
