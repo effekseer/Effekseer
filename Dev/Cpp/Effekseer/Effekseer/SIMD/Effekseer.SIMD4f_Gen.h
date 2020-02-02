@@ -402,28 +402,28 @@ inline SIMD4f SIMD4f::Cross3(const SIMD4f& lhs, const SIMD4f& rhs)
 }
 
 template<size_t LANE>
-static SIMD4f SIMD4f::MulLane(const SIMD4f& lhs, const SIMD4f& rhs)
+SIMD4f SIMD4f::MulLane(const SIMD4f& lhs, const SIMD4f& rhs)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 	return lhs * rhs.f[LANE];
 }
 
 template<size_t LANE>
-static SIMD4f SIMD4f::MulAddLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
+SIMD4f SIMD4f::MulAddLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 	return a + b * c.f[LANE];
 }
 
 template<size_t LANE>
-static SIMD4f SIMD4f::MulSubLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
+SIMD4f SIMD4f::MulSubLane(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
 	return a - b * c.f[LANE];
 }
 
 template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
-static SIMD4f SIMD4f::Swizzle(const SIMD4f& in)
+SIMD4f SIMD4f::Swizzle(const SIMD4f& in)
 {
 	static_assert(indexX < 4, "indexX is must be less than 4.");
 	static_assert(indexY < 4, "indexY is must be less than 4.");
@@ -434,7 +434,7 @@ static SIMD4f SIMD4f::Swizzle(const SIMD4f& in)
 
 
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
-inline static SIMD4f SIMD4f::Mask()
+SIMD4f SIMD4f::Mask()
 {
 	SIMD4f ret;
 	ret.i[0] = 0xffffffff * X;
