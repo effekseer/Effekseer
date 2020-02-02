@@ -59,6 +59,12 @@ bool CompiledMaterial::Load(const uint8_t* data, int32_t size)
 	memcpy(&version, data + offset, 4);
 	offset += sizeof(int);
 
+	// bacause of camera position node, structure of uniform is changed
+	if (version == 0)
+	{
+		return false;
+	}
+
 	uint64_t guid = 0;
 	memcpy(&guid, data + offset, 8);
 	offset += sizeof(uint64_t);
@@ -143,7 +149,7 @@ void CompiledMaterial::Save(std::vector<uint8_t>& dst, uint64_t guid, std::vecto
 	struct Header
 	{
 		char header[4];
-		int version = 0;
+		int version = Version;
 		uint64_t guid = 0;
 	};
 

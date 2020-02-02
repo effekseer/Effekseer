@@ -27,6 +27,7 @@ namespace Effekseer.GUI.Component
 		Utl.MaterialInformation matInfo = new Utl.MaterialInformation();
 
 		Utl.CompiledMaterialInformation compiledMatInfo = new Utl.CompiledMaterialInformation();
+		Utl.CompiledMaterialInformationErrorCode errorCode = Utl.CompiledMaterialInformationErrorCode.OK;
 
 		public bool EnableUndo { get; set; } = true;
 
@@ -289,7 +290,7 @@ namespace Effekseer.GUI.Component
 			if(System.IO.File.Exists(CreateBinaryFilePath()))
 			{
 				compiledMatInfo = new Utl.CompiledMaterialInformation();
-				compiledMatInfo.Load(CreateBinaryFilePath());
+				errorCode = compiledMatInfo.Load(CreateBinaryFilePath());
 			}
 			else
 			{
@@ -308,6 +309,10 @@ namespace Effekseer.GUI.Component
 				if(matInfo.GUID != compiledMatInfo.GUID)
 				{
 					Manager.NativeManager.Text(Resources.GetString("Material_OldCache"));
+				}
+				else if(errorCode == Utl.CompiledMaterialInformationErrorCode.TooOldFormat)
+				{
+					Manager.NativeManager.Text(Resources.GetString("Material_OldFomatCache"));
 				}
 				else
 				{

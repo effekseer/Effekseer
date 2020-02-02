@@ -101,6 +101,7 @@ struct ShaderUniform1 {
     R"(
   float4 mUVInversed;
   float4 predefined_uniform;
+  float4 cameraPosition;
 //$UNIFORMS$
 };
 )";
@@ -135,6 +136,11 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
     float3 worldNormal = normalize(modelMatRot * i.a_Normal);
     float3 worldBinormal = normalize(modelMatRot * i.a_Binormal);
     float3 worldTangent = normalize(modelMatRot * i.a_Tangent);
+    float3 objectScale = float3(1.0, 1.0, 1.0);
+	// Calculate ObjectScale
+	objectScale.x = length(modelMatRot * float3(1.0, 0.0, 0.0));
+	objectScale.y = length(modelMatRot * float3(0.0, 1.0, 0.0));
+	objectScale.z = length(modelMatRot * float3(0.0, 0.0, 1.0));
 
     // UV
     float2 uv1 = i.a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
@@ -187,6 +193,7 @@ struct ShaderUniform1 {
   float4x4 uMatProjection;
   float4 mUVInversed;
   float4 predefined_uniform;
+  float4 cameraPosition;
 //$UNIFORMS$
 };
 )";
@@ -221,6 +228,7 @@ struct ShaderUniform1 {
   float4x4 uMatProjection;
   float4 mUVInversed;
   float4 predefined_uniform;
+  float4 cameraPosition;
 //$UNIFORMS$
 };
 )";
@@ -234,6 +242,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
 {
     ShaderOutput1 o;
     float3 worldPos = i.atPosition.xyz;
+    float3 objectScale = float3(1.0, 1.0, 1.0);
 
     // UV
     float2 uv1 = i.atTexCoord.xy;
@@ -260,6 +269,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 i [[stage_in]], constant ShaderUniform1
 {
     ShaderOutput1 o;
     float3 worldPos = i.atPosition.xyz;
+    float3 objectScale = float3(1.0, 1.0, 1.0);
 
     // UV
     float2 uv1 = i.atTexCoord.xy;
@@ -319,6 +329,7 @@ struct ShaderOutput2 {
 struct ShaderUniform2 {
   float4 mUVInversedBack;
   float4 predefined_uniform;
+  float4 cameraPosition;
 //$UNIFORMS$
 };
 )";
@@ -403,7 +414,7 @@ fragment ShaderOutput2 main0 (ShaderInput2 i [[stage_in]], constant ShaderUnifor
     float3 worldBinormal = i.v_WorldB;
     float3 pixelNormalDir = worldNormal;
     float4 vcolor = i.v_VColor;
-
+    float3 objectScale = float3(1.0, 1.0, 1.0);
 )";
 
 static const char g_material_fs_src_suf2_lit[] =
@@ -718,7 +729,6 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
         if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
         {
-            ExportUniform(userUniforms, 4, "cameraPosition");
             ExportUniform(userUniforms, 4, "lightDirection");
             ExportUniform(userUniforms, 4, "lightColor");
             ExportUniform(userUniforms, 4, "lightAmbientColor");

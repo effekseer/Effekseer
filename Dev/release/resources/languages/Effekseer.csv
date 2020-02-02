@@ -224,3 +224,6 @@ Macでキャッシュを生成すると、WindowsでもMacでも使用できる�
 "
 Material_NoneCache,Cache - None,キャッシュ - なし
 Material_OldCache,Cache - Old,キャッシュ - 古い
+Material_OldFomatCache,"Cache - OldFormat
+Please regenerate.","キャッシュ - 古いフォーマット
+再生成してください。"

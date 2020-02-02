@@ -105,6 +105,7 @@ enum class NodeType
 	Clamp,
 	DotProduct,
 	CrossProduct,
+	Normalize,	//! 1500
 	LinearInterpolate,
 
 	OneMinus,
@@ -118,11 +119,15 @@ enum class NodeType
 	SampleTexture,
 
 	Time,
+	CameraPositionWS, //! 1500
 
 	VertexNormalWS,
 	PixelNormalWS,
 
+	WorldPosition, //! 1500
 	VertexColor,
+	ObjectScale, //! 1500
+	
 
 	CustomData1,
 	CustomData2,

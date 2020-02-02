@@ -924,6 +924,33 @@ public:
 	}
 };
 
+class NodeNormalize : public NodeParameter
+{
+public:
+	NodeNormalize()
+	{
+		Type = NodeType::Normalize;
+		TypeName = "Normalize";
+		Group = std::vector<std::string>{"Math"};
+
+		auto input1 = std::make_shared<PinParameter>();
+		input1->Name = "Value";
+		input1->Type = ValueType::FloatN;
+		InputPins.push_back(input1);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::FloatN;
+		OutputPins.push_back(output);
+	}
+
+	ValueType
+	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override
+	{
+		return GetOutputTypeIn1Out1(inputTypes);
+	}
+};
+
 class NodeLinearInterpolate : public NodeParameter
 {
 public:
@@ -1169,6 +1196,22 @@ public:
 	}
 };
 
+class NodeCameraPositionWS : public NodeParameter
+{
+public:
+	NodeCameraPositionWS()
+	{
+		Type = NodeType::CameraPositionWS;
+		TypeName = "CameraPositionWS";
+		Group = std::vector<std::string>{"Constant"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
+	}
+};
+
 class NodeVertexNormalWS : public NodeParameter
 {
 public:
@@ -1192,6 +1235,22 @@ public:
 	{
 		Type = NodeType::PixelNormalWS;
 		TypeName = "PixelNormalWS";
+		Group = std::vector<std::string>{"Model"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
+	}
+};
+
+class NodeWorldPosition : public NodeParameter
+{
+public:
+	NodeWorldPosition()
+	{
+		Type = NodeType::WorldPosition;
+		TypeName = "WorldPosition";
 		Group = std::vector<std::string>{"Model"};
 
 		auto output = std::make_shared<PinParameter>();
@@ -1234,6 +1293,22 @@ public:
 		a->Name = "A";
 		a->Type = ValueType::Float1;
 		OutputPins.push_back(a);
+	}
+};
+
+class NodeObjectScale : public NodeParameter
+{
+public:
+	NodeObjectScale()
+	{
+		Type = NodeType::ObjectScale;
+		TypeName = "ObjectScale";
+		Group = std::vector<std::string>{"Model"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "XYZ";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
 	}
 };
 

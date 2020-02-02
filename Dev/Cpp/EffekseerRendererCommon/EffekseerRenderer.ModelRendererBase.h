@@ -685,6 +685,11 @@ public:
 
 		if (materialParam != nullptr && material != nullptr)
 		{
+			// camera
+			float cameraPosition[4];
+			::Effekseer::Vec3f cameraPosition3 = renderer->GetCameraPosition();
+			VectorToFloat4(cameraPosition3, cameraPosition);
+
 			// time
 			std::array<float, 4> predefined_uniforms;
 			predefined_uniforms.fill(0.5f);
@@ -697,6 +702,9 @@ public:
 			vsOffset += (sizeof(float) * 4);
 
 			renderer->SetVertexBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, vsOffset);
+			vsOffset += (sizeof(float) * 4);
+
+			renderer->SetVertexBufferToShader(cameraPosition, sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
 
 
@@ -727,26 +735,24 @@ public:
 			renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
+			renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
+
 			// shader model
 			material = param.EffectPointer->GetMaterial(materialParam->MaterialIndex);
 
 			if (material->ShadingModel == ::Effekseer::ShadingModelType::Lit)
 			{
-				float cameraPosition[4];
 				float lightDirection[4];
 				float lightColor[4];
 				float lightAmbientColor[4];
 
-				::Effekseer::Vec3f cameraPosition3 = renderer->GetCameraPosition();
 				::Effekseer::Vec3f lightDirection3 = renderer->GetLightDirection();
 				lightDirection3 = lightDirection3.Normalize();
-				VectorToFloat4(cameraPosition3, cameraPosition);
+				
 				VectorToFloat4(lightDirection3, lightDirection);
 				ColorToFloat4(renderer->GetLightColor(), lightColor);
 				ColorToFloat4(renderer->GetLightAmbientColor(), lightAmbientColor);
-
-				renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
-				psOffset += (sizeof(float) * 4);
 
 				renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
 				psOffset += (sizeof(float) * 4);
