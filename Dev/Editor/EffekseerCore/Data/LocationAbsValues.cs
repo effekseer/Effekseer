@@ -5,8 +5,124 @@ using System.Text;
 
 namespace Effekseer.Data
 {
+	public enum LocalForceFieldType
+	{
+		[Name(value = "無し", language = Language.Japanese)]
+		[Name(value = "None", language = Language.English)]
+		None = 0,
+
+		[Name(value = "乱流", language = Language.Japanese)]
+		[Name(value = "Turbulence", language = Language.English)]
+		Turbulence = 1,
+	}
+
+	public class LocalForceFieldTurbulence
+	{
+		[Name(value = "ランダムシード", language = Language.Japanese)]
+		[Name(value = "Random Seed", language = Language.English)]
+		public Value.Int Seed { get; private set; }
+
+		[Name(value = "領域の大きさ", language = Language.Japanese)]
+		[Name(value = "Field scale", language = Language.English)]
+		public Value.Float FieldScale { get; private set; }
+
+		[Name(value = "強さ", language = Language.Japanese)]
+		[Name(value = "Strength", language = Language.English)]
+		public Value.Float Strength { get; private set; }
+
+		[Name(value = "複雑さ", language = Language.Japanese)]
+		[Name(value = "Complexity", language = Language.English)]
+		public Value.Int Octave { get; private set; }
+
+		public LocalForceFieldTurbulence()
+		{
+			Seed = new Value.Int(1, int.MaxValue, 0, 1);
+			FieldScale = new Value.Float(5.0f, float.MaxValue, 0, 0.1f);
+			Strength = new Value.Float(0.1f, float.MaxValue, 0, 0.1f);
+			Octave = new Value.Int(1, 10, 1, 1);
+		}
+	}
+	public class LocalForceField : IEditableValueCollection
+	{
+		[Selector(ID = 10)]
+		public Value.Enum<LocalForceFieldType> Type
+		{
+			get;
+			private set;
+		}
+
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
+		public LocalForceFieldTurbulence Turbulence
+		{
+			get;
+			private set;
+		}
+
+		int number = 1;
+		public LocalForceField(int number)
+		{
+			this.number = number;
+			Type = new Value.Enum<LocalForceFieldType>();
+			Turbulence = new LocalForceFieldTurbulence();
+		}
+
+		public EditableValue[] GetValues()
+		{
+			var ret = new List<EditableValue>();
+
+			EditableValue ev = new EditableValue();
+			ev.Value = Type;
+
+			{
+				if (Core.Language == Language.English)
+				{
+					ev.Title = "ForceField" + number.ToString();
+				}
+
+				if (Core.Language == Language.Japanese)
+				{
+					ev.Title = "力場" + number.ToString();
+				}
+
+				ev.Description = "";
+			}
+
+			ev.IsShown = true;
+			ev.IsUndoEnabled = true;
+			ev.SelfSelectorID = 10;
+			ret.Add(ev);
+
+			ret.Add(EditableValue.Create(Turbulence, this.GetType().GetProperty("Turbulence")));
+			return ret.ToArray();
+		}
+
+		public event ChangedValueEventHandler OnChanged;
+
+		public void Changed()
+		{
+			if (OnChanged != null)
+			{
+				OnChanged(this, null);
+			}
+		}
+	}
+
 	public class LocationAbsValues
 	{
+		[IO(Export = true)]
+		public LocalForceField LocalForceField1 { get; private set; }
+
+		[IO(Export = true)]
+		public LocalForceField LocalForceField2 { get; private set; }
+
+		[IO(Export = true)]
+		public LocalForceField LocalForceField3 { get; private set; }
+
+
+		[Name(value = "力場(1.4)", language = Language.Japanese)]
+		[Name(value = "ForceField(1.4)", language = Language.English)]
+		[Description(language = Language.Japanese, value = "バージョン1.4以前の力場の機能です。")]
+		[Description(language = Language.English, value = "ForceField before 1.4")]
 		[Selector(ID = 0)]
 		public Value.Enum<ParamaterType> Type
 		{
@@ -40,6 +156,10 @@ namespace Effekseer.Data
 
 		internal LocationAbsValues()
 		{
+			LocalForceField1 = new LocalForceField(1);
+			LocalForceField2 = new LocalForceField(2);
+			LocalForceField3 = new LocalForceField(3);
+
 			Type = new Value.Enum<ParamaterType>(ParamaterType.None);
 			None = new NoneParamater();
 			Gravity = new GravityParamater();
