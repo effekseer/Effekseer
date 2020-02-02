@@ -100,13 +100,21 @@ protected:
 		state.TextureWrap1 = param.BasicParameterPtr->TextureWrap1;
 		state.TextureFilter2 = param.BasicParameterPtr->TextureFilter2;
 		state.TextureWrap2 = param.BasicParameterPtr->TextureWrap2;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
+		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
+#endif
 
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
 		state.MaterialType = param.BasicParameterPtr->MaterialType;
 
-		state.CopyMaterialFromParameterToState(param.EffectPointer, param.BasicParameterPtr->MaterialParameterPtr, param.BasicParameterPtr->Texture1Index, param.BasicParameterPtr->Texture2Index);
+		state.CopyMaterialFromParameterToState(param.EffectPointer, param.BasicParameterPtr->MaterialParameterPtr, param.BasicParameterPtr->Texture1Index, param.BasicParameterPtr->Texture2Index
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+											   , param.BasicParameterPtr->Texture3Index
+#endif
+		);
 		customData1Count_ = state.CustomData1Count;
 		customData2Count_ = state.CustomData2Count;
 
@@ -179,6 +187,20 @@ protected:
 	
 		verteies[3].UV[0] = instanceParameter.UV.X + instanceParameter.UV.Width;
 		verteies[3].UV[1] = instanceParameter.UV.Y;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		verteies[0].AlphaUV[0] = instanceParameter.AlphaUV.X;
+		verteies[0].AlphaUV[1] = instanceParameter.AlphaUV.Y +  instanceParameter.AlphaUV.Height;
+		
+		verteies[1].AlphaUV[0] = instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width;
+		verteies[1].AlphaUV[1] = instanceParameter.AlphaUV.Y + instanceParameter.AlphaUV.Height;
+		
+		verteies[2].AlphaUV[0] = instanceParameter.AlphaUV.X;
+		verteies[2].AlphaUV[1] = instanceParameter.AlphaUV.Y;
+
+		verteies[3].AlphaUV[0] = instanceParameter.AlphaUV.X + instanceParameter.AlphaUV.Width;
+		verteies[3].AlphaUV[1] = instanceParameter.AlphaUV.Y;
+#endif
 
 		// distortion
 		if (vertexType == VertexType::Distortion)

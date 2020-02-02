@@ -1,3 +1,19 @@
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+
+float4x4 mCameraProj		: register( c0 );
+float4x4 mModel[40]		    : register( c4 );
+float4	fUV[40]			    : register( c164 );
+float4	fAlphaUV[40]	    : register( c204 );
+float4	fModelColor[40]		: register( c244 );
+
+#ifdef ENABLE_LIGHTING
+float4	fLightDirection		: register( c284 );
+float4	fLightColor		    : register( c285 );
+float4	fLightAmbient		: register( c286 );
+#endif
+float4 mUVInversed		    : register( c287 );
+
+#else
 
 float4x4 mCameraProj		: register( c0 );
 float4x4 mModel[40]		: register( c4 );
@@ -10,6 +26,8 @@ float4	fLightColor		: register( c245 );
 float4	fLightAmbient		: register( c246 );
 #endif
 float4 mUVInversed		: register(c247);
+
+#endif
 
 
 struct VS_Input
@@ -32,6 +50,17 @@ struct VS_Output
 	 half3 Normal		: TEXCOORD1;
 	half3 Binormal		: TEXCOORD2;
 	half3 Tangent		: TEXCOORD3;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV  : TEXCOORD4;
+#endif
+    
+#else
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV  : TEXCOORD1;
+#endif
+    
 #endif
 	float4 Color		: COLOR;
 };
@@ -40,6 +69,9 @@ VS_Output VS( const VS_Input Input )
 {
 	float4x4 matModel = mModel[Input.Index.x];
 	float4 uv = fUV[Input.Index.x];
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float4 alphaUV = fAlphaUV[Input.Index.x];
+#endif
 	float4 modelColor = fModelColor[Input.Index.x] * Input.Color;
 
 	VS_Output Output = (VS_Output)0;
@@ -49,6 +81,11 @@ VS_Output VS( const VS_Input Input )
 
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
 	Output.UV.y = Input.UV.y * uv.w + uv.y;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    Output.AlphaUV.x = Input.UV.x * alphaUV.z + alphaUV.x;
+	Output.AlphaUV.y = Input.UV.y * alphaUV.w + alphaUV.y;
+#endif
 
 #if ENABLE_LIGHTING
 	float3x3 lightMat = (float3x3)matModel;
@@ -86,6 +123,9 @@ VS_Output VS( const VS_Input Input )
 #endif
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    Output.AlphaUV.y = mUVInversed.x + mUVInversed.y * Output.AlphaUV.y;
+#endif
 
 	return Output;
 }

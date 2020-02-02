@@ -33,6 +33,9 @@ struct ModelRendererVertexConstantBuffer
 	Effekseer::Matrix44		CameraMatrix;
 	Effekseer::Matrix44		ModelMatrix[MODEL_COUNT];
 	float	ModelUV[MODEL_COUNT][4];
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	float	ModelAlphaUV[MODEL_COUNT][4];
+#endif
 	float	ModelColor[MODEL_COUNT][4];
 
 	float	LightDirection[4];
@@ -63,6 +66,9 @@ protected:
 	
 	std::vector<Effekseer::Matrix44> matrixesSorted_;
 	std::vector<Effekseer::RectF> uvSorted_;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	std::vector<Effekseer::RectF> alphaUVSorted_;
+#endif
 	std::vector<Effekseer::Color> colorsSorted_;
 	std::vector<int32_t> timesSorted_;
 	std::vector<std::array<float, 4>> customData1Sorted_;
@@ -70,6 +76,9 @@ protected:
 
 	std::vector<Effekseer::Matrix44> m_matrixes;
 	std::vector<Effekseer::RectF> m_uv;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	std::vector<Effekseer::RectF> m_alphaUV;
+#endif
 	std::vector<Effekseer::Color> m_colors;
 	std::vector<int32_t> m_times;
 	std::vector<std::array<float, 4>> customData1_;
@@ -130,6 +139,9 @@ protected:
 
 			matrixesSorted_.resize(m_matrixes.size());
 			uvSorted_.resize(m_matrixes.size());
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			alphaUVSorted_.resize(m_matrixes.size());
+#endif
 			colorsSorted_.resize(m_matrixes.size());
 			timesSorted_.resize(m_matrixes.size());
 
@@ -147,6 +159,9 @@ protected:
 			{
 				matrixesSorted_[keyValues_[i].Value] = m_matrixes[i];
 				uvSorted_[keyValues_[i].Value] = m_uv[i];
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				alphaUVSorted_[keyValues_[i].Value] = m_alphaUV[i];
+#endif
 				colorsSorted_[keyValues_[i].Value] = m_colors[i];
 				timesSorted_[keyValues_[i].Value] = m_times[i];
 			}
@@ -169,6 +184,9 @@ protected:
 
 			m_matrixes = matrixesSorted_;
 			m_uv = uvSorted_;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			m_alphaUV = alphaUVSorted_;
+#endif
 			m_colors = colorsSorted_;
 			m_times = timesSorted_;
 			customData1_ = customData1Sorted_;
@@ -187,6 +205,9 @@ public:
 
 		m_matrixes.clear();
 		m_uv.clear();
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		m_alphaUV.clear();
+#endif
 		m_colors.clear();
 		m_times.clear();
 		customData1_.clear();
@@ -194,6 +215,9 @@ public:
 
 		matrixesSorted_.clear();
 		uvSorted_.clear();
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		alphaUVSorted_.clear();
+#endif
 		colorsSorted_.clear();
 		timesSorted_.clear();
 		customData1Sorted_.clear();
@@ -251,6 +275,9 @@ public:
 
 		m_matrixes.push_back(ToStruct(mat44));
 		m_uv.push_back(instanceParameter.UV);
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		m_alphaUV.push_back(instanceParameter.AlphaUV);
+#endif
 		m_colors.push_back(instanceParameter.AllColor);
 		m_times.push_back(instanceParameter.Time);
 		
@@ -520,9 +547,16 @@ public:
 		}
 		else
 		{
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			Effekseer::TextureData* textures[3];
+			textures[0] = nullptr;
+			textures[1] = nullptr;
+			textures[2] = nullptr;
+#else
 			Effekseer::TextureData* textures[2];
 			textures[0] = nullptr;
 			textures[1] = nullptr;
+#endif
 
 			if (distortion)
 			{
@@ -536,6 +570,17 @@ public:
 				}
 
 				textures[1] = renderer->GetBackground();
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				if (param.BasicParameterPtr->Texture3Index >= 0)
+				{
+					textures[2] = param.EffectPointer->GetDistortionImage(param.BasicParameterPtr->Texture3Index);
+				}
+				else
+				{
+					textures[2] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);
+				}
+#endif
 			}
 			else
 			{
@@ -559,6 +604,18 @@ public:
 				{
 					textures[1] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::Normal);
 				}
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				if (param.BasicParameterPtr->Texture3Index >= 0)
+				{
+					textures[2] = param.EffectPointer->GetColorImage(param.BasicParameterPtr->Texture3Index);
+				}
+
+				if (textures[2] == nullptr)
+				{
+					textures[2] = renderer->GetImpl()->GetProxyTexture(EffekseerRenderer::ProxyTextureType::White);	
+				}
+#endif
 			}
 
 			state.TextureFilterTypes[0] = param.BasicParameterPtr->TextureFilter1;
@@ -575,7 +632,16 @@ public:
 				state.TextureWrapTypes[1] = param.BasicParameterPtr->TextureWrap2;
 			}
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			state.TextureFilterTypes[2] = param.BasicParameterPtr->TextureFilter3;
+			state.TextureWrapTypes[2] = param.BasicParameterPtr->TextureWrap3;
+#endif
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			renderer->SetTextures(shader_, textures, 3);
+#else
 			renderer->SetTextures(shader_, textures, 2);
+#endif
 		}
 		
 		renderer->GetRenderState()->Update(distortion);
@@ -791,6 +857,13 @@ public:
 					vcb->ModelUV[num][2] = m_uv[loop+num].Width;
 					vcb->ModelUV[num][3] = m_uv[loop+num].Height;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+					vcb->ModelAlphaUV[num][0] = m_alphaUV[loop + num].X;
+					vcb->ModelAlphaUV[num][1] = m_alphaUV[loop + num].Y;
+					vcb->ModelAlphaUV[num][2] = m_alphaUV[loop + num].Width;
+					vcb->ModelAlphaUV[num][3] = m_alphaUV[loop + num].Height;
+#endif
+
 					ColorToFloat4(m_colors[loop+num],vcb->ModelColor[num]);
 
 					if (cutomData1Ptr != nullptr)
@@ -834,6 +907,13 @@ public:
 				vcb->ModelUV[0][1] = m_uv[loop].Y;
 				vcb->ModelUV[0][2] = m_uv[loop].Width;
 				vcb->ModelUV[0][3] = m_uv[loop].Height;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				vcb->ModelAlphaUV[0][0] = m_alphaUV[loop].X;
+				vcb->ModelAlphaUV[0][1] = m_alphaUV[loop].Y;
+				vcb->ModelAlphaUV[0][2] = m_alphaUV[loop].Width;
+				vcb->ModelAlphaUV[0][3] = m_alphaUV[loop].Height;
+#endif
 
 				// DepthParameters
 				::Effekseer::Mat44f modelMatrix = vcb->ModelMatrix[0];

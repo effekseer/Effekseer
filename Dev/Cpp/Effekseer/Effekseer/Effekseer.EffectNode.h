@@ -637,6 +637,11 @@ struct ParameterRendererCommon
 	//! texture index except a file
 	int32_t Texture2Index = -1;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	//! texture index except a file
+	int32_t AlphaTextureIndex = -1;
+#endif
+
 	//! material index in MaterialType::File
 	MaterialParameter Material;
 
@@ -649,6 +654,12 @@ struct ParameterRendererCommon
 	TextureFilterType Filter2Type = TextureFilterType::Nearest;
 
 	TextureWrapType Wrap2Type = TextureWrapType::Repeat;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	TextureFilterType Filter3Type = TextureFilterType::Nearest;
+
+	TextureWrapType Wrap3Type = TextureWrapType::Repeat;
+#endif
 
 	bool				ZWrite = false;
 
@@ -704,8 +715,11 @@ struct ParameterRendererCommon
 		UV_FCURVE = 4,
 
 		UV_DWORD = 0x7fffffff,
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	} UVTypes[2];
+#else
 	} UVType;
-
+#endif
 
 	/**
 	@brief	UV Parameter
@@ -762,22 +776,46 @@ struct ParameterRendererCommon
 			FCurveVector2D* Size;
 		} FCurve;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	} UVs[2];
+#else
 	} UV;
+#endif
 
 	ParameterRendererCommon()
 	{
 		FadeInType = FADEIN_OFF;
 		FadeOutType = FADEOUT_OFF;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		const int32_t ArraySize = sizeof(UVTypes) / sizeof(UVTypes[0]);
+		for (int32_t i = 0; i < ArraySize; i++)
+		{
+			UVTypes[i] = UV_DEFAULT;
+		}
+#else
 		UVType = UV_DEFAULT;
+#endif
 	}
 
 	~ParameterRendererCommon()
 	{
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		const int32_t ArraySize = sizeof(UVTypes) / sizeof(UVTypes[0]);
+		for (int32_t i = 0; i < ArraySize; i++)
+		{
+			if (UVTypes[i] == UV_FCURVE)
+			{
+				ES_SAFE_DELETE(UVs[i].FCurve.Position);
+				ES_SAFE_DELETE(UVs[i].FCurve.Size);
+			}
+		}
+#else
 		if (UVType == UV_FCURVE)
 		{
 			ES_SAFE_DELETE(UV.FCurve.Position);
 			ES_SAFE_DELETE(UV.FCurve.Size);
 		}
+#endif
 	}
 
 	void reset()
@@ -804,6 +842,11 @@ struct ParameterRendererCommon
 
 				memcpy(&Texture2Index, pos, sizeof(int));
 				pos += sizeof(int);
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				memcpy(&AlphaTextureIndex, pos, sizeof(int));
+				pos += sizeof(int);
+#endif
 			}
 			else
 			{
@@ -858,6 +901,22 @@ struct ParameterRendererCommon
 			Wrap2Type = WrapType;
 		}
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		if (version >= 16)
+		{
+			memcpy(&Filter3Type, pos, sizeof(int));
+			pos += sizeof(int);
+
+			memcpy(&Wrap3Type, pos, sizeof(int));
+			pos += sizeof(int);
+		}
+		else
+		{
+			Filter3Type = FilterType;
+			Wrap3Type = WrapType;
+		}
+#endif
+
 		if (version >= 5)
 		{
 			int32_t zwrite, ztest = 0;
@@ -895,9 +954,57 @@ struct ParameterRendererCommon
 			pos += sizeof(FadeOut);
 		}
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		memcpy(&UVTypes[0], pos, sizeof(int));
+#else
 		memcpy(&UVType, pos, sizeof(int));
+#endif
 		pos += sizeof(int);
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		if (version >= 16)
+		{
+			auto LoadUVParameter = [&](const int UVIndex)
+			{
+				const auto& UVType = UVTypes[UVIndex];
+				auto& UV = UVs[UVIndex];
+
+				if (UVType == UV_DEFAULT)
+				{
+				}
+				else if (UVType == UV_FIXED)
+				{
+					memcpy(&UV.Fixed, pos, sizeof(UV.Fixed));
+					pos += sizeof(UV.Fixed);
+				}
+				else if (UVType == UV_ANIMATION)
+				{
+					memcpy(&UV.Animation, pos, sizeof(UV.Animation));
+					pos += sizeof(UV.Animation);
+				}
+				else if (UVType == UV_SCROLL)
+				{
+					memcpy(&UV.Scroll, pos, sizeof(UV.Scroll));
+					pos += sizeof(UV.Scroll);
+				}
+				else if (UVType == UV_FCURVE)
+				{
+					UV.FCurve.Position = new FCurveVector2D();
+					UV.FCurve.Size = new FCurveVector2D();
+					pos += UV.FCurve.Position->Load(pos, version);
+					pos += UV.FCurve.Size->Load(pos, version);
+				}
+			};
+
+			LoadUVParameter(0);
+
+			memcpy(&UVTypes[1], pos, sizeof(int));
+			pos += sizeof(int);
+
+			LoadUVParameter(1);
+		}
+
+#else
 		if (UVType == UV_DEFAULT)
 		{
 		}
@@ -956,6 +1063,7 @@ struct ParameterRendererCommon
 			pos += UV.FCurve.Position->Load(pos, version);
 			pos += UV.FCurve.Size->Load(pos, version);
 		}
+#endif
 
 		if (version >= 10)
 		{
@@ -998,13 +1106,22 @@ struct ParameterRendererCommon
 		BasicParameter.AlphaBlend = AlphaBlend;
 		BasicParameter.TextureFilter1 = FilterType;
 		BasicParameter.TextureFilter2 = Filter2Type;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		BasicParameter.TextureFilter3 = Filter3Type;
+#endif
 		BasicParameter.TextureWrap1 = WrapType;
 		BasicParameter.TextureWrap2 = Wrap2Type;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		BasicParameter.TextureWrap3 = Wrap3Type;
+#endif
 
 		BasicParameter.DistortionIntensity = DistortionIntensity;
 		BasicParameter.MaterialType = MaterialType;
 		BasicParameter.Texture1Index = ColorTextureIndex;
 		BasicParameter.Texture2Index = Texture2Index;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		BasicParameter.Texture3Index = AlphaTextureIndex;
+#endif
 
 		if (BasicParameter.MaterialType == RendererMaterialType::File)
 		{

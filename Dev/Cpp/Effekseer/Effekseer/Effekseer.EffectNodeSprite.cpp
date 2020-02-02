@@ -254,7 +254,12 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 			instanceParameter.Positions[3] = SpritePosition.fixed.ur;
 		}
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		instanceParameter.UV = instance.GetUV(0);
+		instanceParameter.AlphaUV = instance.GetUV(1);
+#else
 		instanceParameter.UV = instance.GetUV();
+#endif
 		CalcCustomData(&instance, instanceParameter.CustomData1, instanceParameter.CustomData2);
 
 		renderer->Rendering( nodeParameter, instanceParameter, m_userData );

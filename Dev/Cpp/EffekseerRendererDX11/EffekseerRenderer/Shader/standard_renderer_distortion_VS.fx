@@ -11,6 +11,10 @@ struct VS_Input
 
 	float3 Binormal		: NORMAL1;
 	float3 Tangent		: NORMAL2;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV  : TEXCOORD1;
+#endif
 };
 
 struct VS_Output
@@ -22,6 +26,10 @@ struct VS_Output
 	float4 Pos		: TEXCOORD1;
 	float4 PosU		: TEXCOORD2;
 	float4 PosR		: TEXCOORD3;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV  : TEXCOORD4;
+#endif
 };
 
 VS_Output VS( const VS_Input Input )
@@ -59,6 +67,11 @@ VS_Output VS( const VS_Input Input )
 	Output.UV = Input.UV;
 
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Input.UV.y;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    Output.AlphaUV = Input.AlphaUV;
+    Output.AlphaUV.y = mUVInversed.x + mUVInversed.y * Input.AlphaUV.y;
+#endif
 
 	return Output;
 }

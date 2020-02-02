@@ -876,6 +876,77 @@ namespace Effekseer.Data
 			private set;
 		}
 
+#if __EFFEKSEER_BUILD_VERSION16__
+		[Selector(ID = 100)]
+		[IO(Export = true)]
+		[Name(language = Language.Japanese, value = "アルファ画像を有効")]
+		public Value.Boolean EnableAlphaTexture { get; private set; }
+
+		[IO(Export = true)]
+		[Selected(ID = 100, Value = 0)]
+		public AlphaTextureParameter AlphaTextureParam { get; private set; }
+
+		public class AlphaTextureParameter
+		{
+			[Name(language = Language.Japanese, value = "アルファ画像")]
+			[Name(language = Language.English, value = "α Texture")]
+			public Value.PathForImage Texture
+			{
+				get; private set;
+			}
+
+			[Name(language = Language.Japanese, value = "フィルタ(アルファ画像)")]
+			[Name(language = Language.English, value = "Filter(α Texture)")]
+			public Value.Enum<FilterType> Filter { get; private set; }
+
+			[Name(language = Language.Japanese, value = "外側(アルファ画像)")]
+			[Name(language = Language.English, value = "Wrap(α Texture)")]
+			public Value.Enum<WrapType> Wrap { get; private set; }
+
+			[Selector(ID = 101)]
+			[Name(language = Language.Japanese, value = "UV(アルファ画像)")]
+			[Name(language = Language.English, value = "UV(α Texture)")]
+			public Value.Enum<UVType> UV
+			{
+				get;
+				private set;
+			}
+
+			[Selected(ID = 101, Value = 0)]
+			[IO(Export = true)]
+			public UVDefaultParamater UVDefault { get; private set; }
+
+			[Selected(ID = 101, Value = 1)]
+			[IO(Export = true)]
+			public UVFixedParamater UVFixed { get; private set; }
+
+			[Selected(ID = 101, Value = 2)]
+			[IO(Export = true)]
+			public UVAnimationParamater UVAnimation { get; private set; }
+
+			[Selected(ID = 101, Value = 3)]
+			[IO(Export = true)]
+			public UVScrollParamater UVScroll { get; private set; }
+
+			[Selected(ID = 101, Value = 4)]
+			[IO(Export = true)]
+			public UVFCurveParamater UVFCurve { get; private set; }
+
+			public AlphaTextureParameter()
+			{
+				Texture = new Value.PathForImage(Resources.GetString("ImageFilter"), true, "");
+				Filter = new Value.Enum<FilterType>(FilterType.Linear);
+				Wrap = new Value.Enum<WrapType>(WrapType.Repeat);
+				UV = new Value.Enum<UVType>();
+				UVDefault = new UVDefaultParamater();
+				UVFixed = new UVFixedParamater();
+				UVAnimation = new UVAnimationParamater();
+				UVScroll = new UVScrollParamater();
+				UVFCurve = new UVFCurveParamater();
+			}
+		}
+#endif
+
 		[Name(language = Language.Japanese, value = "カスタムデータ")]
 		[Name(language = Language.English, value = "Custom data")]
 		[IO(Export = true)]
@@ -924,6 +995,11 @@ namespace Effekseer.Data
 			ColorInheritType = new Value.Enum<ParentEffectType>(ParentEffectType.NotBind);
 
 			DistortionIntensity = new Value.Float(1.0f, float.MaxValue, float.MinValue, 0.1f);
+
+#if __EFFEKSEER_BUILD_VERSION16__
+			EnableAlphaTexture = new Value.Boolean(false);
+			AlphaTextureParam = new AlphaTextureParameter();
+#endif
 
 			CustomData1 = new CustomDataParameter(1);
 			CustomData2 = new CustomDataParameter(2);

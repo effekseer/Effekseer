@@ -121,6 +121,10 @@ protected:
 		state.TextureWrap1 = param.BasicParameterPtr->TextureWrap1;
 		state.TextureFilter2 = param.BasicParameterPtr->TextureFilter2;
 		state.TextureWrap2 = param.BasicParameterPtr->TextureWrap2;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
+		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
+#endif
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
 		state.DistortionIntensity = param.BasicParameterPtr->DistortionIntensity;
@@ -129,7 +133,11 @@ protected:
 		state.CopyMaterialFromParameterToState(param.EffectPointer,
 											   param.BasicParameterPtr->MaterialParameterPtr,
 											   param.BasicParameterPtr->Texture1Index,
-											   param.BasicParameterPtr->Texture2Index);
+											   param.BasicParameterPtr->Texture2Index
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+											   , param.BasicParameterPtr->Texture3Index
+#endif
+		);
 
 		customData1Count_ = state.CustomData1Count;
 		customData2Count_ = state.CustomData2Count;
@@ -273,6 +281,15 @@ protected:
 		const float uv1v3 = uv1v1 + 1.0f;
 		float uv1texNext = 0.0f;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		float alphaUVCurrent = instanceParameter.AlphaUV.X;
+		const float alphaUVStep = instanceParameter.AlphaUV.Width / parameter.VertexCount;
+		const float alphaUVv1 = instanceParameter.AlphaUV.Y;
+		const float alphaUVv2 = alphaUVv1 + instanceParameter.AlphaUV.Height * 0.5f;
+		const float alphaUVv3 = alphaUVv1 + instanceParameter.AlphaUV.Height;
+		float alphaUVtexNext = 0.0f;
+#endif
+
 		::Effekseer::Vec3f outerNext, innerNext, centerNext;
 
 		float currentAngleDegree = 0;
@@ -363,6 +380,32 @@ protected:
 			v[7].SetColor( innerColorNext );
 			v[7].UV[0] = uv0texNext;
 			v[7].UV[1] = uv0v3;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			alphaUVtexNext = alphaUVCurrent + alphaUVStep;
+
+			v[0].AlphaUV[0] = alphaUVCurrent;
+			v[0].AlphaUV[1] = alphaUVv1;
+
+			v[1].AlphaUV[0] = alphaUVCurrent;
+			v[1].AlphaUV[1] = alphaUVv2;
+
+			v[2].AlphaUV[0] = alphaUVtexNext;
+			v[2].AlphaUV[1] = alphaUVv1;
+
+			v[3].AlphaUV[0] = alphaUVtexNext;
+			v[3].AlphaUV[1] = alphaUVv2;
+
+			v[4] = v[1];
+
+			v[5].AlphaUV[0] = alphaUVCurrent;
+			v[5].AlphaUV[1] = alphaUVv3;
+
+			v[6] = v[3];
+
+			v[7].AlphaUV[0] = alphaUVtexNext;
+			v[7].AlphaUV[1] = alphaUVv3;
+#endif
 
 			// distortion
 			if (vertexType == VertexType::Distortion)
@@ -525,6 +568,9 @@ protected:
 			centerCurrent = centerNext;
 			uv0Current = uv0texNext;
 			uv1Current = uv1texNext;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			alphaUVCurrent = alphaUVtexNext;
+#endif
 			outerColor = outerColorNext;
 			innerColor = innerColorNext;
 			centerColor = centerColorNext;

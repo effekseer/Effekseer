@@ -106,6 +106,11 @@ public:
 		Vec2f		Positions[4];
 
 		RectF		UV;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		RectF		AlphaUV;
+#endif
+
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
 	};
@@ -190,6 +195,9 @@ struct NodeRendererTextureUVTypeParameter;
 			float	Positions[4];
 
 			RectF	UV;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			RectF	AlphaUV;
+#endif
 			std::array<float, 4> CustomData1;
 			std::array<float, 4> CustomData2;
 		};
@@ -281,6 +289,9 @@ public:
 		Color		InnerColor;
 		
 		RectF	UV;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		RectF	AlphaUV;
+#endif
 		std::array<float, 4> CustomData1;
 		std::array<float, 4> CustomData2;
 	};
@@ -362,6 +373,9 @@ public:
 	{
 		Mat43f			SRTMatrix43;
 		RectF			UV;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		RectF			AlphaUV;
+#endif
 		Color			AllColor;
 		int32_t			Time;
 		std::array<float, 4> CustomData1;
@@ -460,6 +474,9 @@ struct NodeRendererTextureUVTypeParameter;
 			float	SizeBack;
 
 			RectF	UV;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			RectF	AlphaUV;
+#endif
 			std::array<float, 4> CustomData1;
 			std::array<float, 4> CustomData2;
 		};

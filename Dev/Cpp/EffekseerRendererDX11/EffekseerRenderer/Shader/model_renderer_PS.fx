@@ -14,6 +14,12 @@ Texture2D	g_normalTexture		: register( t1 );
 SamplerState	g_normalSampler		: register( s1 );
 #endif
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+Texture2D	    g_alphaTexture		: register( t2 );
+SamplerState	g_alphaSampler		: register( s2 );
+#endif
+
+
 struct PS_Input
 {
 	float4 Pos		: SV_POSITION;
@@ -22,6 +28,17 @@ struct PS_Input
 	half3 Normal	: TEXCOORD1;
 	half3 Binormal	: TEXCOORD2;
 	half3 Tangent	: TEXCOORD3;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV  : TEXCOORD4;
+#endif
+    
+#else
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV  : TEXCOORD1;
+#endif
+    
 #endif
 	float4 Color	: COLOR;
 };
@@ -52,6 +69,10 @@ float4 PS( const PS_Input Input ) : SV_Target
 
 #if ENABLE_LIGHTING
 	Output.xyz = Output.xyz + fLightAmbient.xyz;
+#endif
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;
 #endif
 
 	if( Output.a == 0.0 ) discard;
