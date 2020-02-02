@@ -675,6 +675,10 @@ public:
 			Effekseer::Matrix44 mstCamera = ToStruct(mCamera);
 			Effekseer::Matrix44 mstProj = ToStruct(mProj);
 
+			// camera
+			float cameraPosition[4];
+			::Effekseer::Vec3f cameraPosition3 = m_renderer->GetCameraPosition();
+			VectorToFloat4(cameraPosition3, cameraPosition);
 			// time
 			std::array<float, 4> predefined_uniforms;
 			predefined_uniforms.fill(0.5f);
@@ -694,6 +698,9 @@ public:
 			m_renderer->SetVertexBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, vsOffset);
 			vsOffset += (sizeof(float) * 4);
 			
+			m_renderer->SetVertexBufferToShader(cameraPosition, sizeof(float) * 4, vsOffset);
+			vsOffset += (sizeof(float) * 4);
+			
 			for (size_t i = 0; i < m_state.MaterialUniformCount; i++)
 			{
 				m_renderer->SetVertexBufferToShader(m_state.MaterialUniforms[i].data(), sizeof(float) * 4, vsOffset);
@@ -708,24 +715,22 @@ public:
 			m_renderer->SetPixelBufferToShader(predefined_uniforms.data(), sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 
+			m_renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
+			psOffset += (sizeof(float) * 4);
+
 			// shader model
 			if (m_state.MaterialPtr->ShadingModel == ::Effekseer::ShadingModelType::Lit)
 			{
-				float cameraPosition[4];
+				
 				float lightDirection[4];
 				float lightColor[4];
 				float lightAmbientColor[4];
 
-				::Effekseer::Vec3f cameraPosition3 = m_renderer->GetCameraPosition();
 				::Effekseer::Vec3f lightDirection3 = m_renderer->GetLightDirection();
 				lightDirection3 = lightDirection3.Normalize();
-				VectorToFloat4(cameraPosition3, cameraPosition);
 				VectorToFloat4(lightDirection3, lightDirection);
 				ColorToFloat4(m_renderer->GetLightColor(), lightColor);
 				ColorToFloat4(m_renderer->GetLightAmbientColor(), lightAmbientColor);
-
-				m_renderer->SetPixelBufferToShader(cameraPosition, sizeof(float) * 4, psOffset);
-				psOffset += (sizeof(float) * 4);
 
 				m_renderer->SetPixelBufferToShader(lightDirection, sizeof(float) * 4, psOffset);
 				psOffset += (sizeof(float) * 4);

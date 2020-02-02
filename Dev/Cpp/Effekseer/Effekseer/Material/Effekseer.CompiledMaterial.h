@@ -29,12 +29,14 @@ enum class CompiledMaterialPlatformType : int32_t
 
 class CompiledMaterial
 {
+	static const int32_t Version = 1;
+
 	std::map<CompiledMaterialPlatformType, std::unique_ptr<CompiledMaterialBinary, ReferenceDeleter<CompiledMaterialBinary>>> platforms;
 	std::vector<uint8_t> originalData;
 
 public:
 	uint64_t GUID = 0;
-
+	
 	const std::vector<uint8_t>& GetOriginalData() const;
 
 	bool Load(const uint8_t* data, int32_t size);

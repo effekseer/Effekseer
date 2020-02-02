@@ -58,6 +58,7 @@ float4x4 mCamera		: register(c0);
 float4x4 mProj			: register(c4);
 float4 mUVInversed		: register(c8);
 float4 predefined_uniform : register(c9);
+float4 cameraPosition : register(c10);
 
 )";
 
@@ -96,6 +97,7 @@ float4x4 mCamera		: register(c0);
 float4x4 mProj			: register(c4);
 float4 mUVInversed		: register(c8);
 float4 predefined_uniform : register(c9);
+float4 cameraPosition : register(c10);
 
 )";
 
@@ -109,6 +111,7 @@ VS_Output main( const VS_Input Input )
 	float3 worldNormal = float3(0.0, 0.0, 0.0);
 	float3 worldBinormal = float3(0.0, 0.0, 0.0);
 	float3 worldTangent = float3(0.0, 0.0, 0.0);
+	float3 objectScale = float3(1.0, 1.0, 1.0);
 
 	// UV
 	float uv1 = Input.UV;
@@ -134,6 +137,7 @@ VS_Output main( const VS_Input Input )
 	float3 worldNormal = (Input.Normal - float3(0.5, 0.5, 0.5)) * 2.0;
 	float3 worldTangent = (Input.Tangent - float3(0.5, 0.5, 0.5)) * 2.0;
 	float3 worldBinormal = cross(worldNormal, worldTangent);
+	float3 objectScale = float3(1.0, 1.0, 1.0);
 
 	// UV
 	float2 uv1 = Input.UV1;
@@ -211,6 +215,8 @@ float4	fModelColor[40]		: register( c204 );
 
 float4 mUVInversed		: register(c244);
 float4 predefined_uniform : register(c245);
+float4 cameraPosition : register(c246);
+
 )"
 #elif defined(_DIRECTX9)
 							R"(
@@ -221,6 +227,8 @@ float4	fModelColor[20]		: register( c104 );
 
 float4 mUVInversed		: register(c124);
 float4 predefined_uniform : register(c125);
+float4 cameraPosition : register(c126);
+
 )"
 #else
 R"(
@@ -231,6 +239,8 @@ float4	fModelColor[1]		: register( c9 );
 
 float4 mUVInversed		: register(c10);
 float4 predefined_uniform : register(c11);
+float4 cameraPosition : register(c12);
+
 )"
 #endif
 
@@ -257,6 +267,12 @@ VS_Output main( const VS_Input Input )
 	float3 worldNormal = normalize( mul( matRotModel, Input.Normal ) );
 	float3 worldBinormal = normalize( mul( matRotModel, Input.Binormal ) );
 	float3 worldTangent = normalize( mul( matRotModel, Input.Tangent ) );
+	float3 objectScale = float3(1.0, 1.0, 1.0);
+
+	// Calculate ObjectScale
+	objectScale.x = length(mul(matRotModel, float3(1.0, 0.0, 0.0)));
+	objectScale.y = length(mul(matRotModel, float3(0.0, 1.0, 0.0)));
+	objectScale.z = length(mul(matRotModel, float3(0.0, 0.0, 1.0)));
 
 	float2 uv1;
 	uv1.x = Input.UV.x * uv.z + uv.x;
@@ -418,6 +434,7 @@ float4 main( const PS_Input Input ) : SV_Target
 	float3 worldNormal = Input.WorldN;
 	float3 worldBinormal = Input.WorldB;
 	float3 worldTangent = Input.WorldT;
+	float3 objectScale = float3(1.0, 1.0, 1.0);
 
 	float3 pixelNormalDir = worldNormal;
 	float4 vcolor = Input.VColor;

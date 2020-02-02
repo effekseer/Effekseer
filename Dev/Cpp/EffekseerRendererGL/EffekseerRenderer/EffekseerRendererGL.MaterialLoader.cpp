@@ -117,11 +117,14 @@ namespace EffekseerRendererGL
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.VertexPredefinedOffset);
 
+		shader->AddVertexConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.VertexCameraPositionOffset);
+
 		for (int32_t ui = 0; ui < material.GetUniformCount(); ui++)
 		{
 			shader->AddVertexConstantLayout(CONSTANT_TYPE_VECTOR4,
-										   shader->GetUniformId(material.GetUniformName(ui)),
-										   parameterGenerator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
+											shader->GetUniformId(material.GetUniformName(ui)),
+											parameterGenerator.VertexUserUniformOffset + sizeof(float) * 4 * ui);
 		}
 
 		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);
@@ -132,11 +135,12 @@ namespace EffekseerRendererGL
 		shader->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.PixelPredefinedOffset);
 
+		shader->AddPixelConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.PixelCameraPositionOffset);
+
 		// shiding model
 		if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
 		{
-			shader->AddPixelConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.PixelCameraPositionOffset);
 			shader->AddPixelConstantLayout(
 				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), parameterGenerator.PixelLightDirectionOffset);
 			shader->AddPixelConstantLayout(
@@ -244,6 +248,9 @@ namespace EffekseerRendererGL
 		shader->AddVertexConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.VertexPredefinedOffset);
 
+		shader->AddVertexConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.VertexCameraPositionOffset);
+
 		if (material.GetCustomData1Count() > 0)
 		{
 			shader->AddVertexConstantLayout(
@@ -265,18 +272,18 @@ namespace EffekseerRendererGL
 
 		shader->SetVertexConstantBufferSize(parameterGenerator.VertexShaderUniformBufferSize);
 
-
 		shader->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("mUVInversedBack"), parameterGenerator.PixelInversedFlagOffset);
 
 		shader->AddPixelConstantLayout(
 			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("predefined_uniform"), parameterGenerator.PixelPredefinedOffset);
 
+		shader->AddPixelConstantLayout(
+			CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.PixelCameraPositionOffset);
+
 		// shiding model
 		if (material.GetShadingModel() == ::Effekseer::ShadingModelType::Lit)
 		{
-			shader->AddPixelConstantLayout(
-				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("cameraPosition"), parameterGenerator.PixelCameraPositionOffset);
 			shader->AddPixelConstantLayout(
 				CONSTANT_TYPE_VECTOR4, shader->GetUniformId("lightDirection"), parameterGenerator.PixelLightDirectionOffset);
 			shader->AddPixelConstantLayout(

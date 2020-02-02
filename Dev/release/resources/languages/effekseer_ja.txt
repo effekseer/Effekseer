@@ -1,4 +1,4 @@
-﻿AboutEffekseer,Effekseerについて
+AboutEffekseer,Effekseerについて
 AttractionForces,引力
 AutoConnect,切断時、自動接続を一定時間ごとに行う
 BasicRenderSettings,描画共通
@@ -180,3 +180,4 @@ Material_GenCache_Name,キャッシュ生成
 Material_GenCache_Desc,キャッシュを生成します。\n生成されたキャッシュをマテリアルファイルと同じディレクトリに配置すると読み込みが速くなります。\n一部のプラットフォームではキャッシュを使用しないとエフェクトを再生できません。\nWindowsでキャッシュを生成した後、キャッシュが存在する状態で\nMacでキャッシュを生成すると、WindowsでもMacでも使用できるキャッシュが生成されます。\n
 Material_NoneCache,キャッシュ - なし
 Material_OldCache,キャッシュ - 古い
+Material_OldFomatCache,キャッシュ - 古いフォーマット\n再生成してください。

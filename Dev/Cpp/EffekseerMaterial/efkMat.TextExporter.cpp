@@ -140,7 +140,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 				{
 					auto paramName = EspcapeUserParamName(node->GetProperty("Name")->Str.c_str());
 					auto values = node->GetProperty("Value")->Floats;
-					
+
 					std::shared_ptr<TextExporterUniform> extractedUniform;
 
 					if (extractedUniforms.count(node->GUID) > 0)
@@ -620,8 +620,8 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::Parameter1)
 	{
-		ret << GetTypeName(ValueType::Float1) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->UniformName << ".x" << ";"
-			<< std::endl;
+		ret << GetTypeName(ValueType::Float1) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->UniformName << ".x"
+			<< ";" << std::endl;
 	}
 
 	if (node->Target->Parameter->Type == NodeType::Parameter4)
@@ -731,9 +731,14 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 			<< std::endl;
 	}
 
+	if (node->Target->Parameter->Type == NodeType::Normalize)
+	{
+		exportIn1Out1("normalize");
+	}
+
 	if (node->Target->Parameter->Type == NodeType::LinearInterpolate)
 	{
-		
+
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= LERP("
 			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[0], node->Target->Properties[0]) << ","
 			<< exportInputOrProp(node->Outputs[0].Type, node->Inputs[1], node->Target->Properties[1]) << ","
@@ -874,6 +879,20 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << GetTimeName() << ";" << std::endl;
 	}
 
+	if (node->Target->Parameter->Type == NodeType::CameraPositionWS)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
+			<< "cameraPosition.xyz"
+			<< ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::WorldPosition)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
+			<< "worldPos"
+			<< ";" << std::endl;
+	}
+
 	if (node->Target->Parameter->Type == NodeType::VertexNormalWS)
 	{
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
@@ -925,6 +944,13 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		}
 	}
 
+	if (node->Target->Parameter->Type == NodeType::ObjectScale)
+	{
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "="
+			<< "objectScale"
+			<< ";" << std::endl;
+	}
+
 	if (node->Target->Parameter->Type == NodeType::CustomData1 || node->Target->Parameter->Type == NodeType::CustomData2)
 	{
 		std::string dstName;
@@ -964,12 +990,12 @@ std::string TextExporter::ExportUniformAndTextures(const std::vector<std::shared
 
 	std::ostringstream ret;
 
-	//for (auto node : uniformNodes)
+	// for (auto node : uniformNodes)
 	//{
 	//	ret << "uniform " << GetTypeName(node->Type) << " " << node->Name << ";" << std::endl;
 	//}
 	//
-	//for (auto node : textureNodes)
+	// for (auto node : textureNodes)
 	//{
 	//	ret << "uniform sampler2D " << node->Name << ";" << std::endl;
 	//}

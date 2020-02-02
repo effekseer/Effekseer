@@ -65,6 +65,7 @@ uniform vec4 ModelColor;
 	R"(
 uniform vec4 mUVInversed;
 uniform vec4 predefined_uniform;
+uniform vec4 cameraPosition;
 
 vec2 GetUV(vec2 uv)
 {
@@ -105,6 +106,12 @@ void main()
 	vec3 worldNormal = normalize(modelMatRot * a_Normal);
 	vec3 worldBinormal = normalize(modelMatRot * a_Binormal);
 	vec3 worldTangent = normalize(modelMatRot * a_Tangent);
+	vec3 objectScale = vec3(1.0, 1.0, 1.0);
+
+	// Calculate ObjectScale
+	objectScale.x = length(modelMatRot * vec3(1.0, 0.0, 0.0));
+	objectScale.y = length(modelMatRot * vec3(0.0, 1.0, 0.0));
+	objectScale.z = length(modelMatRot * vec3(0.0, 0.0, 1.0));
 
 	// UV
 	vec2 uv1 = a_TexCoord.xy * uvOffset.zw + uvOffset.xy;
@@ -158,6 +165,7 @@ uniform mat4 uMatCamera;
 uniform mat4 uMatProjection;
 uniform vec4 mUVInversed;
 uniform vec4 predefined_uniform;
+uniform vec4 cameraPosition;
 
 vec2 GetUV(vec2 uv)
 {
@@ -203,6 +211,7 @@ uniform mat4 uMatCamera;
 uniform mat4 uMatProjection;
 uniform vec4 mUVInversed;
 uniform vec4 predefined_uniform;
+uniform vec4 cameraPosition;
 
 vec2 GetUV(vec2 uv)
 {
@@ -224,6 +233,7 @@ static const char g_material_sprite_vs_src_suf1_simple[] =
 
 void main() {
 	vec3 worldPos = atPosition.xyz;
+	vec3 objectScale = vec3(1.0, 1.0, 1.0);
 
 	// UV
 	vec2 uv1 = atTexCoord.xy;
@@ -248,6 +258,7 @@ static const char g_material_sprite_vs_src_suf1[] =
 
 void main() {
 	vec3 worldPos = atPosition.xyz;
+	vec3 objectScale = vec3(1.0, 1.0, 1.0);
 
 	// UV
 	vec2 uv1 = atTexCoord.xy;
@@ -304,6 +315,7 @@ IN mediump vec2 v_ScreenUV;
 
 uniform vec4 mUVInversedBack;
 uniform vec4 predefined_uniform;
+uniform vec4 cameraPosition;
 
 vec2 GetUV(vec2 uv)
 {
@@ -397,7 +409,7 @@ void main()
 	vec3 worldBinormal = v_WorldB;
 	vec3 pixelNormalDir = worldNormal;
 	vec4 vcolor = v_VColor;
-
+	vec3 objectScale = vec3(1.0, 1.0, 1.0);
 )";
 
 static const char g_material_fs_src_suf2_lit[] =
@@ -647,7 +659,6 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
 		if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 		{
-			ExportUniform(maincode, 4, "cameraPosition");
 			ExportUniform(maincode, 4, "lightDirection");
 			ExportUniform(maincode, 4, "lightColor");
 			ExportUniform(maincode, 4, "lightAmbientColor");

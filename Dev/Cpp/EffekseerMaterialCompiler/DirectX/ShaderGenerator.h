@@ -125,12 +125,12 @@ protected:
 				{
 					maincode << sprite_vs_pre_;
 				}
-				cind = 10;
+				cind = 11;
 			}
 			else
 			{
 				maincode << model_vs_pre_;
-				cind = 6 + instanceCount * 6;
+				cind = 7 + instanceCount * 6;
 			}
 		}
 		else
@@ -303,12 +303,12 @@ public:
 			{
 				ExportUniform(maincode, 4, "mUVInversedBack", 0);
 				ExportUniform(maincode, 4, "predefined_uniform", 1);
+				ExportUniform(maincode, 4, "cameraPosition", cind);
+				cind++;
 			}
 
 			if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
 			{
-				ExportUniform(maincode, 4, "cameraPosition", cind);
-				cind++;
 				ExportUniform(maincode, 4, "lightDirection", cind);
 				cind++;
 				ExportUniform(maincode, 4, "lightColor", cind);

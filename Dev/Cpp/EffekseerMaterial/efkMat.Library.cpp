@@ -5,8 +5,7 @@ namespace EffekseerMaterial
 
 Library::Library()
 {
-	
-	
+
 	Contents.push_back(std::make_shared<LibraryContent<NodeOutput>>());
 
 	// Math
@@ -26,8 +25,8 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeClamp>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeDotProduct>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeCrossProduct>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeNormalize>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeLinearInterpolate>>());
-
 
 	Contents.push_back(std::make_shared<LibraryContent<NodeAbs>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeComponentMask>>());
@@ -43,9 +42,11 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeTextureObjectParameter>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeTextureObject>>());
 
+	Contents.push_back(std::make_shared<LibraryContent<NodeWorldPosition>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeVertexNormalWS>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodePixelNormalWS>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeVertexColor>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeObjectScale>>());
 
 #ifdef _DEBUG
 	Contents.push_back(std::make_shared<LibraryContent<NodeVertexTangentWS>>());
@@ -55,6 +56,7 @@ Library::Library()
 
 	// Constant
 	Contents.push_back(std::make_shared<LibraryContent<NodeTime>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeCameraPositionWS>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstant1>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstant2>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeConstant3>>());

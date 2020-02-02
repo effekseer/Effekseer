@@ -27,6 +27,15 @@ namespace Effekseer.Utl
 		Value,
 	}
 
+	public enum CompiledMaterialInformationErrorCode
+	{
+		OK,
+		TooOldFormat,
+		NotFound,
+		FailedToOpen,
+		InvalidFormat,
+	}
+
 	/// <summary>
 	/// An information of file of compiled material's header
 	/// </summary>
@@ -35,13 +44,13 @@ namespace Effekseer.Utl
 		public UInt64 GUID;
 		public HashSet<CompiledMaterialPlatformType> Platforms = new HashSet<CompiledMaterialPlatformType>();
 
-		public bool Load(string path)
+		public CompiledMaterialInformationErrorCode Load(string path)
 		{
 			if (string.IsNullOrEmpty(path))
-				return false;
+				return CompiledMaterialInformationErrorCode.NotFound;
 
 			System.IO.FileStream fs = null;
-			if (!System.IO.File.Exists(path)) return false;
+			if (!System.IO.File.Exists(path)) return CompiledMaterialInformationErrorCode.NotFound;
 
 			try
 			{
@@ -49,7 +58,7 @@ namespace Effekseer.Utl
 			}
 			catch
 			{
-				return false;
+				return CompiledMaterialInformationErrorCode.FailedToOpen;
 			}
 
 
@@ -62,7 +71,7 @@ namespace Effekseer.Utl
 			{
 				fs.Dispose();
 				br.Close();
-				return false;
+				return CompiledMaterialInformationErrorCode.InvalidFormat;
 			}
 
 			if (buf[0] != 'e' ||
@@ -70,10 +79,19 @@ namespace Effekseer.Utl
 				buf[2] != 'C' ||
 				buf[3] != 'B')
 			{
-				return false;
+				return CompiledMaterialInformationErrorCode.InvalidFormat;
 			}
 
 			int version = BitConverter.ToInt32(buf, 4);
+
+			// bacause of camera position node, structure of uniform is changed
+			if (version == 0)
+			{
+				return CompiledMaterialInformationErrorCode.TooOldFormat;
+			}
+
+			int fversion = BitConverter.ToInt32(buf, 4);
+
 			GUID = BitConverter.ToUInt64(buf, 8);
 
 			var platformCount = BitConverter.ToInt32(buf, 16);
@@ -84,14 +102,14 @@ namespace Effekseer.Utl
 				{
 					fs.Dispose();
 					br.Close();
-					return false;
+					return CompiledMaterialInformationErrorCode.InvalidFormat;
 				}
 
 				var type = (CompiledMaterialPlatformType)BitConverter.ToInt32(buf, 0);
 				Platforms.Add(type);
 			}
 
-			return true;
+			return CompiledMaterialInformationErrorCode.OK;
 		}
 	}
 

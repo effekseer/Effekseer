@@ -1,4 +1,4 @@
-﻿AboutEffekseer,About Effekseer
+AboutEffekseer,About Effekseer
 AttractionForces,Attraction Forces
 AutoConnect,Auto-connect
 BasicRenderSettings,Basic Render Settings
@@ -180,3 +180,4 @@ Material_GenCache_Name,Gen. Cache
 Material_GenCache_Desc,It generates caches.\nIf the generated cache is placed in the same directory as the material file, loading will be faster.\nOn some platforms, effects cannot be played without using cache.\nA cache that can be used on both Windows and Mac is generated \nby generating the cache on Mac after generating the cache on Windows.
 Material_NoneCache,Cache - None
 Material_OldCache,Cache - Old
+Material_OldFomatCache,Cache - OldFormat\nPlease regenerate.
