@@ -1,5 +1,5 @@
 AboutEffekseer,Effekseerについて
-AttractionForces,引力
+AttractionForces,力場(ローカル)
 AutoConnect,切断時、自動接続を一定時間ごとに行う
 BasicRenderSettings,描画共通
 BasicSettings,共通

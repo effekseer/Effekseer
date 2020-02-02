@@ -1,5 +1,5 @@
 AboutEffekseer,About Effekseer
-AttractionForces,Attraction Forces
+AttractionForces,Force field (Local)
 AutoConnect,Auto-connect
 BasicRenderSettings,Basic Render Settings
 BasicSettings,Basic Settings

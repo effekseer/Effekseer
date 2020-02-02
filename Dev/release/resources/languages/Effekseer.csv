@@ -1,6 +1,6 @@
 ﻿key,en,ja
 AboutEffekseer,About Effekseer,Effekseerについて
-AttractionForces,Attraction Forces,引力
+AttractionForces,Force field (Local),力場(ローカル)
 AutoConnect,Auto-connect,切断時、自動接続を一定時間ごとに行う
 BasicRenderSettings,Basic Render Settings,描画共通
 BasicSettings,Basic Settings,共通
