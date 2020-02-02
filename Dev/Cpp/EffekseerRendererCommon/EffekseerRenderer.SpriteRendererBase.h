@@ -301,6 +301,8 @@ protected:
 					StrideView<DynamicVertex> vs(verteies.pointerOrigin_, stride_, 4);
 					auto tangentX = efkVector3D(mat.X.GetX(), mat.Y.GetX(), mat.Z.GetX());
 					auto tangentZ = efkVector3D(mat.X.GetZ(), mat.Y.GetZ(), mat.Z.GetZ());
+					tangentX = tangentX.Normalize();
+					tangentZ = tangentZ.Normalize();
 					vs[i].Normal = PackVector3DF(tangentZ);
 					vs[i].Tangent = PackVector3DF(tangentX);
 				}

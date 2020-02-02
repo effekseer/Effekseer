@@ -585,7 +585,7 @@ namespace EffekseerRenderer
 
 						vl_->Binormal = vm_->Binormal = vr_->Binormal = ToStruct(axis);
 
-						::Effekseer::Vec3f tangent = vr_->Pos - vl_->Pos;
+						::Effekseer::Vec3f tangent = vl_->Pos - vr_->Pos;
 						tangent.Normalize();
 
 						vl_->Tangent = vm_->Tangent = vr_->Tangent = ToStruct(tangent);
@@ -596,7 +596,7 @@ namespace EffekseerRenderer
 						auto vm_ = (DynamicVertex*)(&vm);
 						auto vr_ = (DynamicVertex*)(&vr);
 
-						::Effekseer::Vec3f tangent = Effekseer::Vec3f(vr_->Pos - vl_->Pos).Normalize();
+						::Effekseer::Vec3f tangent = Effekseer::Vec3f(vl_->Pos - vr_->Pos).Normalize();
 						Effekseer::Vec3f normal = Effekseer::Vec3f::Cross(tangent, axis).Normalize();
 
 						Effekseer::Color normal_ = PackVector3DF(normal);
