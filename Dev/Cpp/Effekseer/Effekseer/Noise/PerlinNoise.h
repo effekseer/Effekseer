@@ -19,15 +19,39 @@ class PerlinNoise
 	using Pint = std::uint_fast8_t;
 	std::array<Pint, 512> p{{}};
 
+	uint32_t seed_ = 0;
+
+	float GetRand()
+	{
+		const int a = 1103515245;
+		const int c = 12345;
+		const int m = 2147483647;
+
+		seed_ = (seed_ * a + c) & m;
+		auto ret = seed_ % 0x7fff;
+
+		return (float)ret / (float)(0x7fff - 1);
+	}
+
+	float GetRand(int32_t min_, int32_t max_) { return GetRand() * (max_ - min_) + min_; }
+
 public:
 	constexpr PerlinNoise() = default;
-	explicit PerlinNoise(const std::uint_fast32_t seed_) { this->setSeed(seed_); }
+	explicit PerlinNoise(const std::uint_fast32_t seed) { this->setSeed(seed); }
 
-	void setSeed(const std::uint_fast32_t seed_)
+	void setSeed(const std::uint_fast32_t seed)
 	{
+		seed_ = seed;
+
 		for (std::size_t i{}; i < 256; ++i)
 			this->p[i] = static_cast<Pint>(i);
-		std::shuffle(this->p.begin(), this->p.begin() + 256, std::default_random_engine(seed_));
+
+		for (std::size_t i{}; i < 256; ++i)
+		{
+			auto target = GetRand(0, 255);
+			std::swap(p[i], p[target]);			
+		}
+		
 		for (std::size_t i{}; i < 256; ++i)
 			this->p[256 + i] = this->p[i];
 	}
@@ -88,7 +112,6 @@ public:
 
 	template <typename... Args> float Noise(const Args... args_) const noexcept { return this->SetNoise(args_...) * 0.5 + 0.5; }
 
-
 private:
 	float SetOctaveNoise(const std::size_t octaves_, float x_, float y_, float z_) const noexcept
 	{
@@ -110,7 +133,6 @@ public:
 	{
 		return this->SetOctaveNoise(octaves_, args_...) * 0.5 + 0.5;
 	}
-
 };
 
 } // namespace Effekseer
