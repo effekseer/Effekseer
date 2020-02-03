@@ -73,15 +73,18 @@ Power_Node_Name,Power,乗数
 SquareRoot_Node_Name,SquareRoot,平方根
 DotProduct_Node_Name,Dot,内積
 CrossProduct_Node_Name,Cross,外積
+Normalize_Node_Name,Normalize,正規化
 LinearInterpolate_Node_Name,LinearInterpolate,線形補完
 ,,
 Model_Name,Model,モデル
+WorldPosition_Node_Name,VertexPosition,頂点座標
 TextureCoordinate_Node_Name,UV,UV座標
 Panner_Node_Name,MovingUV,移動UV座標
 VertexNormalWS_Node_Name,VertexNormal,頂点法線
 PixelNormalWS_Node_Name,PixelNormal,画素法線
 VertexTangentWS_Node_Name,VertexTangent,頂点接線
 VertexColor_Node_Name,VertexColor,頂点色
+ObjectScale_Node_Name,ObjectScale,オブジェクト拡大率
 ,,
 Texture_Name,Image,画像
 SampleTexture_Node_Name,Sample Image,画像参照
@@ -93,6 +96,7 @@ Comment_Node_Name,Comment,コメント
 ,,
 Constant_Name,Constant,定数
 Time_Node_Name,Time,時間
+CameraPositionWS_Node_Name,CameraPosition,カメラ位置
 Constant1_Node_Name,Constant1,定数1
 Constant2_Node_Name,Constant2,定数2
 Constant3_Node_Name,Constant3,定数3

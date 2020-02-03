@@ -20,18 +20,26 @@ namespace Effekseer.Data
 	{
 		[Name(value = "ランダムシード", language = Language.Japanese)]
 		[Name(value = "Random Seed", language = Language.English)]
+		[Description(language = Language.Japanese, value = "数値に応じて乱流の流れ方が変わります。")]
+		[Description(language = Language.English, value = "The flow of turbulence changes according to the value.")]
 		public Value.Int Seed { get; private set; }
 
 		[Name(value = "領域の大きさ", language = Language.Japanese)]
 		[Name(value = "Field scale", language = Language.English)]
+		[Description(language = Language.Japanese, value = "値を大きくすると乱流の幅が大きくなります。")]
+		[Description(language = Language.English, value = "Larger value ​​increases the turbulence width.")]
 		public Value.Float FieldScale { get; private set; }
 
 		[Name(value = "強さ", language = Language.Japanese)]
 		[Name(value = "Strength", language = Language.English)]
+		[Description(language = Language.Japanese, value = "乱流がパーティクルに与える力の強さです。")]
+		[Description(language = Language.English, value = "The strength of turbulence on particles.")]
 		public Value.Float Strength { get; private set; }
 
 		[Name(value = "複雑さ", language = Language.Japanese)]
 		[Name(value = "Complexity", language = Language.English)]
+		[Description(language = Language.Japanese, value = "値を大きくすると乱流が複雑になります。ただし、処理が重くなります。")]
+		[Description(language = Language.English, value = "Larger value ​​complicates turbulence. However, processing becomes heavy.")]
 		public Value.Int Octave { get; private set; }
 
 		public LocalForceFieldTurbulence()
