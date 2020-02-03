@@ -219,7 +219,7 @@ public:
 		return &m_background;
 	}
 
-	void SetBackground(GLuint background) override;
+	void SetBackground(GLuint background, bool hasMipmap) override;
 
 	void SetBackgroundTexture(::Effekseer::TextureData* textureData) override;
 

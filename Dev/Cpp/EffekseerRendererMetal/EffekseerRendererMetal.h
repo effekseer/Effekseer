@@ -144,7 +144,7 @@ public:
 	/**
 		@brief	ライトの方向を取得する。
 	*/
-	virtual const ::Effekseer::Vector3D& GetLightDirection() const = 0;
+	virtual ::Effekseer::Vector3D GetLightDirection() const = 0;
 
 	/**
 		@brief	ライトの方向を設定する。
@@ -179,7 +179,7 @@ public:
 	/**
 		@brief	Get a projection matrix
 	*/
-	virtual const ::Effekseer::Matrix44& GetProjectionMatrix() const;
+	virtual ::Effekseer::Matrix44 GetProjectionMatrix() const;
 
 	/**
 		@brief	Set a projection matrix
@@ -189,7 +189,7 @@ public:
 	/**
 		@brief	Get a camera matrix
 	*/
-	virtual const ::Effekseer::Matrix44& GetCameraMatrix() const;
+	virtual ::Effekseer::Matrix44 GetCameraMatrix() const;
 
 	/**
 		@brief	Set a camera matrix
@@ -199,7 +199,7 @@ public:
 	/**
 		@brief	Get a camera projection matrix
 	*/
-	virtual ::Effekseer::Matrix44& GetCameraProjectionMatrix();
+	virtual ::Effekseer::Matrix44 GetCameraProjectionMatrix() const;
 
 	/**
 		@brief	Get a front direction of camera

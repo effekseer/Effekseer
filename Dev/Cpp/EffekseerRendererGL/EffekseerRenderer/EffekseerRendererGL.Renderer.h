@@ -79,14 +79,18 @@ public:
 	virtual void SetSquareMaxCount(int32_t count) = 0;
 
 	/**
-	@brief	背景を取得する。
+	@brief
+	\~english	Get a background.
+	\~japanese	背景を取得する。
 	*/
 	virtual Effekseer::TextureData* GetBackground() = 0;
 
 	/**
-	@brief	背景を設定する。
+	@brief	
+	\~english	Specify a background.
+	\~japanese	背景を設定する。
 	*/
-	virtual void SetBackground(GLuint background) = 0;
+	virtual void SetBackground(GLuint background, bool hasMipmap = false) = 0;
 
 	/**
 	@brief	

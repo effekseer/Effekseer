@@ -1027,9 +1027,10 @@ void RendererImplemented::SetLightAmbientColor( const ::Effekseer::Color& color 
 #endif
 }
 
-void RendererImplemented::SetBackground(GLuint background)
+void RendererImplemented::SetBackground(GLuint background, bool hasMipmap)
 {
 	m_background.UserID = background;
+	m_background.HasMipmap = hasMipmap;
 }
 
 void RendererImplemented::SetBackgroundTexture(::Effekseer::TextureData* textureData) { m_background = *textureData; }

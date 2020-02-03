@@ -245,7 +245,7 @@ public:
 	/**
 		@brief	Get a projection matrix
 	*/
-	virtual ::Effekseer::Matrix44 GetProjectionMatrix() const = 0;
+	virtual ::Effekseer::Matrix44 GetProjectionMatrix() const;
 
 	/**
 		@brief	Set a projection matrix
@@ -255,7 +255,7 @@ public:
 	/**
 		@brief	Get a camera matrix
 	*/
-	virtual ::Effekseer::Matrix44 GetCameraMatrix() const = 0;
+	virtual ::Effekseer::Matrix44 GetCameraMatrix() const;
 
 	/**
 		@brief	Set a camera matrix
@@ -265,7 +265,7 @@ public:
 	/**
 		@brief	Get a camera projection matrix
 	*/
-	virtual ::Effekseer::Matrix44 GetCameraProjectionMatrix() = 0;
+	virtual ::Effekseer::Matrix44 GetCameraProjectionMatrix() const;
 
 	/**
 		@brief	Get a front direction of camera
@@ -546,14 +546,18 @@ public:
 	virtual void SetSquareMaxCount(int32_t count) = 0;
 
 	/**
-	@brief	背景を取得する。
+	@brief
+	\~english	Get a background.
+	\~japanese	背景を取得する。
 	*/
 	virtual Effekseer::TextureData* GetBackground() = 0;
 
 	/**
-	@brief	背景を設定する。
+	@brief	
+	\~english	Specify a background.
+	\~japanese	背景を設定する。
 	*/
-	virtual void SetBackground(GLuint background) = 0;
+	virtual void SetBackground(GLuint background, bool hasMipmap = false) = 0;
 
 	/**
 	@brief	
