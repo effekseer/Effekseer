@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Vector2D
+	public class Vector2D : IResettableValue
 	{
 		public Float X
 		{
@@ -36,6 +36,20 @@ namespace Effekseer.Data.Value
 		{
 			X = new Float(x, x_max, x_min, x_step);
 			Y = new Float(y, y_max, y_min, y_step);
+		}
+
+		public void ResetValue()
+		{
+			Command.CommandManager.StartCollection();
+			X.ResetValue();
+			Y.ResetValue();
+			Command.CommandManager.EndCollection();
+		}
+
+		public void ChangeDefaultValue(float x, float y)
+		{
+			X.ChangeDefaultValue(x);
+			Y.ChangeDefaultValue(y);
 		}
 
 		public static explicit operator byte[](Vector2D value)

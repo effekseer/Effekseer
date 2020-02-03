@@ -84,6 +84,8 @@ enum class NodeType
 	Constant4,
 
 	Parameter1,
+	Parameter2,
+	Parameter3,
 	Parameter4,
 
 	Abs,

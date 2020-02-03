@@ -81,6 +81,8 @@ namespace Effekseer.Data
 			}
 
 			var e_float1 = doc.CreateElement("Float1");
+			var e_float2 = doc.CreateElement("Float2");
+			var e_float3 = doc.CreateElement("Float3");
 			var e_float4 = doc.CreateElement("Float4");
 			var e_texture = doc.CreateElement("Texture");
 
@@ -106,6 +108,32 @@ namespace Effekseer.Data
 							e_root.AppendChild(v_k);
 							e_root.AppendChild(v_e);
 							e_float4.AppendChild(e_root);
+						}
+					}
+					else if (status.Value is Data.Value.Vector3D)
+					{
+						var v = status.Value as Data.Value.Vector3D;
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						var v_e = SaveToElement(doc, "Value", v, isClip);
+						if (v_e != null)
+						{
+							var e_root = doc.CreateElement("KeyValue");
+							e_root.AppendChild(v_k);
+							e_root.AppendChild(v_e);
+							e_float3.AppendChild(e_root);
+						}
+					}
+					if (status.Value is Data.Value.Vector2D)
+					{
+						var v = status.Value as Data.Value.Vector2D;
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						var v_e = SaveToElement(doc, "Value", v, isClip);
+						if (v_e != null)
+						{
+							var e_root = doc.CreateElement("KeyValue");
+							e_root.AppendChild(v_k);
+							e_root.AppendChild(v_e);
+							e_float2.AppendChild(e_root);
 						}
 					}
 					else if (status.Value is Data.Value.Float)
@@ -168,6 +196,32 @@ namespace Effekseer.Data
 							e_float4.AppendChild(e_root);
 						}
 					}
+					if (status.Value is Data.Value.Vector3D)
+					{
+						var v = status.Value as Data.Value.Vector3D;
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						var v_e = SaveToElement(doc, "Value", v, isClip);
+						if (v_e != null)
+						{
+							var e_root = doc.CreateElement("KeyValue");
+							e_root.AppendChild(v_k);
+							e_root.AppendChild(v_e);
+							e_float3.AppendChild(e_root);
+						}
+					}
+					if (status.Value is Data.Value.Vector2D)
+					{
+						var v = status.Value as Data.Value.Vector2D;
+						var v_k = doc.CreateTextElement("Key", status.Key.ToString());
+						var v_e = SaveToElement(doc, "Value", v, isClip);
+						if (v_e != null)
+						{
+							var e_root = doc.CreateElement("KeyValue");
+							e_root.AppendChild(v_k);
+							e_root.AppendChild(v_e);
+							e_float2.AppendChild(e_root);
+						}
+					}
 					else if (status.Value is Data.Value.Float)
 					{
 						var v = status.Value as Data.Value.Float;
@@ -205,6 +259,16 @@ namespace Effekseer.Data
 			if(e_float1.ChildNodes.Count > 0)
 			{
 				e.AppendChild(e_float1);
+			}
+
+			if (e_float2.ChildNodes.Count > 0)
+			{
+				e.AppendChild(e_float2);
+			}
+
+			if (e_float3.ChildNodes.Count > 0)
+			{
+				e.AppendChild(e_float3);
 			}
 
 			if (e_float4.ChildNodes.Count > 0)
@@ -785,6 +849,8 @@ namespace Effekseer.Data
 			}
 
 			var e_float1 = e["Float1"] as XmlElement;
+			var e_float2 = e["Float2"] as XmlElement;
+			var e_float3 = e["Float3"] as XmlElement;
 			var e_float4 = e["Float4"] as XmlElement;
 			var e_texture = e["Texture"] as XmlElement;
 
@@ -817,6 +883,74 @@ namespace Effekseer.Data
 					if (vs != null)
 					{
 						var v = vs.Value as Value.Float;
+						LoadFromElement(valueElement, v, isClip);
+					}
+				}
+			}
+
+			if (e_float2 != null)
+			{
+				for (var i = 0; i < e_float2.ChildNodes.Count; i++)
+				{
+					var e_child = e_float2.ChildNodes[i] as XmlElement;
+
+					// compatibility
+					string key = string.Empty;
+					XmlElement valueElement = null;
+					if (MaterialFileParameter.GetVersionOfKey(e_child.Name) == 0)
+					{
+						key = e_child.Name;
+						valueElement = e_child;
+					}
+					else
+					{
+						var e_k = e_child["Key"] as XmlElement;
+						valueElement = e_child["Value"] as XmlElement;
+
+						if (e_k != null)
+						{
+							key = e_k.GetText();
+						}
+					}
+
+					var vs = mfp.FindValue(key, null, false);
+					if (vs != null)
+					{
+						var v = vs.Value as Value.Vector2D;
+						LoadFromElement(valueElement, v, isClip);
+					}
+				}
+			}
+
+			if (e_float3 != null)
+			{
+				for (var i = 0; i < e_float3.ChildNodes.Count; i++)
+				{
+					var e_child = e_float3.ChildNodes[i] as XmlElement;
+
+					// compatibility
+					string key = string.Empty;
+					XmlElement valueElement = null;
+					if (MaterialFileParameter.GetVersionOfKey(e_child.Name) == 0)
+					{
+						key = e_child.Name;
+						valueElement = e_child;
+					}
+					else
+					{
+						var e_k = e_child["Key"] as XmlElement;
+						valueElement = e_child["Value"] as XmlElement;
+
+						if (e_k != null)
+						{
+							key = e_k.GetText();
+						}
+					}
+
+					var vs = mfp.FindValue(key, null, false);
+					if (vs != null)
+					{
+						var v = vs.Value as Value.Vector3D;
 						LoadFromElement(valueElement, v, isClip);
 					}
 				}

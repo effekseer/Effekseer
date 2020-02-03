@@ -158,6 +158,17 @@ namespace Effekseer.Binary
 					{
 						floats[0] = (uniform.Item1.Value as Data.Value.Float).Value;
 					}
+					else if (uniform.Item1.Value is Data.Value.Vector2D)
+					{
+						floats[0] = (uniform.Item1.Value as Data.Value.Vector2D).X.Value;
+						floats[1] = (uniform.Item1.Value as Data.Value.Vector2D).Y.Value;
+					}
+					else if (uniform.Item1.Value is Data.Value.Vector3D)
+					{
+						floats[0] = (uniform.Item1.Value as Data.Value.Vector3D).X.Value;
+						floats[1] = (uniform.Item1.Value as Data.Value.Vector3D).Y.Value;
+						floats[2] = (uniform.Item1.Value as Data.Value.Vector3D).Z.Value;
+					}
 					else if (uniform.Item1.Value is Data.Value.Vector4D)
 					{
 						floats[0] = (uniform.Item1.Value as Data.Value.Vector4D).X.Value;

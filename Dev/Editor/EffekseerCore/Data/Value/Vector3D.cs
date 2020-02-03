@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Effekseer.Data.Value
 {
-	public class Vector3D
+	public class Vector3D : IResettableValue
 	{
 		public Float X
 		{
@@ -67,6 +67,22 @@ namespace Effekseer.Data.Value
 
 			IsDynamicEquationEnabled = new Boolean();
 			DynamicEquation = new DynamicEquationReference();
+		}
+
+		public void ResetValue()
+		{
+			Command.CommandManager.StartCollection();
+			X.ResetValue();
+			Y.ResetValue();
+			Z.ResetValue();
+			Command.CommandManager.EndCollection();
+		}
+
+		public void ChangeDefaultValue(float x, float y, float z)
+		{
+			X.ChangeDefaultValue(x);
+			Y.ChangeDefaultValue(y);
+			Z.ChangeDefaultValue(z);
 		}
 
 		public static explicit operator byte[](Vector3D value)

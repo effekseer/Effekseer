@@ -454,20 +454,27 @@ namespace Effekseer.Data
 					if (foundValue != null)
 					{
 						status = foundValue;
-						if (!status.IsShown)
-						{
-							status.IsShown = true;
-							isChanged = true;
+						
+						status.IsShown = true;
+						isChanged = true;
 
-							if (uniform.Type == 0)
-							{
-								(status.Value as Value.Float).ChangeDefaultValue(uniform.DefaultValues[0]);
-							}
-							else
-							{
-								(status.Value as Value.Vector4D).ChangeDefaultValue(uniform.DefaultValues[0], uniform.DefaultValues[1], uniform.DefaultValues[2], uniform.DefaultValues[3]);
-							}
+						if (uniform.Type == 0)
+						{
+							(status.Value as Value.Float).ChangeDefaultValue(uniform.DefaultValues[0]);
 						}
+						else if (uniform.Type == 1)
+						{
+							(status.Value as Value.Vector2D).ChangeDefaultValue(uniform.DefaultValues[0], uniform.DefaultValues[1]);
+						}
+						else if (uniform.Type == 2)
+						{
+							(status.Value as Value.Vector3D).ChangeDefaultValue(uniform.DefaultValues[0], uniform.DefaultValues[1], uniform.DefaultValues[2]);
+						}
+						else
+						{
+							(status.Value as Value.Vector4D).ChangeDefaultValue(uniform.DefaultValues[0], uniform.DefaultValues[1], uniform.DefaultValues[2], uniform.DefaultValues[3]);
+						}
+						
 					}
 					else
 					{
@@ -479,6 +486,31 @@ namespace Effekseer.Data
 							status = new ValueStatus();
 							var value = new Value.Float(uniform.DefaultValues[0]);
 							value.SetValueDirectly(uniform.DefaultValues[0]);
+							status.Value = value;
+							status.IsShown = true;
+							status.Priority = uniform.Priority;
+							valueStatuses.Add(status);
+							isChanged = true;
+						}
+						else if(uniform.Type == 1)
+						{
+							status = new ValueStatus();
+							var value = new Value.Vector2D(uniform.DefaultValues[0], uniform.DefaultValues[1]);
+							value.X.SetValueDirectly(uniform.DefaultValues[0]);
+							value.Y.SetValueDirectly(uniform.DefaultValues[1]);
+							status.Value = value;
+							status.IsShown = true;
+							status.Priority = uniform.Priority;
+							valueStatuses.Add(status);
+							isChanged = true;
+						}
+						else if (uniform.Type == 2)
+						{
+							status = new ValueStatus();
+							var value = new Value.Vector3D(uniform.DefaultValues[0], uniform.DefaultValues[1], uniform.DefaultValues[2]);
+							value.X.SetValueDirectly(uniform.DefaultValues[0]);
+							value.Y.SetValueDirectly(uniform.DefaultValues[1]);
+							value.Z.SetValueDirectly(uniform.DefaultValues[2]);
 							status.Value = value;
 							status.IsShown = true;
 							status.Priority = uniform.Priority;

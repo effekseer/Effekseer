@@ -136,7 +136,8 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 			}
 			else
 			{
-				if (node->Parameter->Type == NodeType::Parameter1 || node->Parameter->Type == NodeType::Parameter4)
+				if (node->Parameter->Type == NodeType::Parameter1 || node->Parameter->Type == NodeType::Parameter2 ||
+					node->Parameter->Type == NodeType::Parameter3 || node->Parameter->Type == NodeType::Parameter4)
 				{
 					auto paramName = EspcapeUserParamName(node->GetProperty("Name")->Str.c_str());
 					auto values = node->GetProperty("Value")->Floats;
@@ -159,6 +160,14 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 						if (node->Parameter->Type == NodeType::Parameter1)
 						{
 							extractedUniform->Type = ValueType::Float1;
+						}
+						else if (node->Parameter->Type == NodeType::Parameter2)
+						{
+							extractedUniform->Type = ValueType::Float2;
+						}
+						else if (node->Parameter->Type == NodeType::Parameter3)
+						{
+							extractedUniform->Type = ValueType::Float3;
 						}
 						else if (node->Parameter->Type == NodeType::Parameter4)
 						{
@@ -621,6 +630,18 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 	if (node->Target->Parameter->Type == NodeType::Parameter1)
 	{
 		ret << GetTypeName(ValueType::Float1) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->UniformName << ".x"
+			<< ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Parameter2)
+	{
+		ret << GetTypeName(ValueType::Float2) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->UniformName << ".xy"
+			<< ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Parameter3)
+	{
+		ret << GetTypeName(ValueType::Float3) << " " << node->Outputs[0].Name << "=" << node->Outputs[0].UniformValue->UniformName << ".xyz"
 			<< ";" << std::endl;
 	}
 

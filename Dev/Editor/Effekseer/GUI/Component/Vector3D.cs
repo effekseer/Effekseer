@@ -149,11 +149,14 @@ namespace Effekseer.GUI.Component
 		{
 			if (isPopupShown) return;
 
-			if (!binding.CanSelectDynamicEquation) return;
-
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-				DynamicSelector.Popup(id_c, binding.DynamicEquation, binding.IsDynamicEquationEnabled);
+				Functions.ShowReset(binding);
+
+				if (binding.CanSelectDynamicEquation)
+				{
+					DynamicSelector.Popup(id_c, binding.DynamicEquation, binding.IsDynamicEquationEnabled);
+				}
 
 				Manager.NativeManager.EndPopup();
 

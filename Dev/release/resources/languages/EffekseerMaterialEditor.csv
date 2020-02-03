@@ -104,6 +104,8 @@ Constant4_Node_Name,Constant4,定数4
 ,,
 Parameter_Name,Param,パラメーター
 Parameter1_Node_Name,Param1,パラメーター1
+Parameter2_Node_Name,Param2,パラメーター2
+Parameter3_Node_Name,Param3,パラメーター3
 Parameter4_Node_Name,Param4,パラメーター4
 CustomData1_Node_Name,CustomData1,カスタムデータ1
 CustomData2_Node_Name,CustomData2,カスタムデータ2

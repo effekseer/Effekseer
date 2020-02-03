@@ -312,6 +312,80 @@ public:
 	}
 };
 
+class NodeParameter2 : public NodeParameter
+{
+public:
+	NodeParameter2()
+	{
+		Type = NodeType::Parameter2;
+		TypeName = "Parameter2";
+		Description = "Param value...";
+		Group = std::vector<std::string>{"Parameter"};
+		HasDescription = true;
+		IsDescriptionExported = true;
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float2;
+		OutputPins.push_back(output);
+
+		auto paramName = std::make_shared<NodePropertyParameter>();
+		paramName->Name = "Name";
+		paramName->Type = ValueType::String;
+		Properties.push_back(paramName);
+
+		auto paramPriority = std::make_shared<NodePropertyParameter>();
+		paramPriority->Name = "Priority";
+		paramPriority->Type = ValueType::Int;
+		paramPriority->DefaultValues[0] = 1;
+		Properties.push_back(paramPriority);
+
+		auto param = std::make_shared<NodePropertyParameter>();
+		param->Name = "Value";
+		param->Type = ValueType::Float2;
+		Properties.push_back(param);
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentName>()};
+	}
+};
+
+class NodeParameter3 : public NodeParameter
+{
+public:
+	NodeParameter3()
+	{
+		Type = NodeType::Parameter3;
+		TypeName = "Parameter3";
+		Description = "Param value...";
+		Group = std::vector<std::string>{"Parameter"};
+		HasDescription = true;
+		IsDescriptionExported = true;
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float3;
+		OutputPins.push_back(output);
+
+		auto paramName = std::make_shared<NodePropertyParameter>();
+		paramName->Name = "Name";
+		paramName->Type = ValueType::String;
+		Properties.push_back(paramName);
+
+		auto paramPriority = std::make_shared<NodePropertyParameter>();
+		paramPriority->Name = "Priority";
+		paramPriority->Type = ValueType::Int;
+		paramPriority->DefaultValues[0] = 1;
+		Properties.push_back(paramPriority);
+
+		auto param = std::make_shared<NodePropertyParameter>();
+		param->Name = "Value";
+		param->Type = ValueType::Float3;
+		Properties.push_back(param);
+
+		BehaviorComponents = {std::make_shared<NodeParameterBehaviorComponentName>()};
+	}
+};
+
 class NodeParameter4 : public NodeParameter
 {
 public:

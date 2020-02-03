@@ -64,6 +64,8 @@ Library::Library()
 
 	// Parameter
 	Contents.push_back(std::make_shared<LibraryContent<NodeParameter1>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeParameter2>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeParameter3>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeParameter4>>());
 
 	// Comment
