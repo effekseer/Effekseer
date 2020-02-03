@@ -37,7 +37,7 @@ namespace Effekseer.Data
 		public LocalForceFieldTurbulence()
 		{
 			Seed = new Value.Int(1, int.MaxValue, 0, 1);
-			FieldScale = new Value.Float(5.0f, float.MaxValue, 0, 0.1f);
+			FieldScale = new Value.Float(4.0f, float.MaxValue, 0, 0.1f);
 			Strength = new Value.Float(0.1f, float.MaxValue, 0, 0.1f);
 			Octave = new Value.Int(1, 10, 1, 1);
 		}
