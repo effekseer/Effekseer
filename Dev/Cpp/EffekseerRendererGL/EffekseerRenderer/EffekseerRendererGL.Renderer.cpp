@@ -1433,12 +1433,16 @@ bool Model::InternalModel::TryDelayLoad()
 {
 	if(VertexBuffer > 0) return false;
 	
+	int arrayBufferBinding = 0;
+	int elementArrayBufferBinding = 0;
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+
 	GLExt::glGenBuffers(1, &VertexBuffer);
 	if (VertexBuffer > 0)
 	{
 		GLExt::glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
 		GLExt::glBufferData(GL_ARRAY_BUFFER, delayVertexBuffer.size(), delayVertexBuffer.data(), GL_STATIC_DRAW);
-		GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 	
 	GLExt::glGenBuffers(1, &IndexBuffer);
@@ -1446,8 +1450,10 @@ bool Model::InternalModel::TryDelayLoad()
 	{
 		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBuffer);
 		GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, delayIndexBuffer.size(), delayIndexBuffer.data(), GL_STATIC_DRAW);
-		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
+
+	GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+	GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
 
 	return true;
 }
@@ -1471,11 +1477,16 @@ Model::Model(void* data, int32_t size)
 		
 		GLExt::glGenBuffers(1, &InternalModels[f].VertexBuffer);
 		size_t vertexSize = vertexCount * sizeof(::Effekseer::Model::Vertex);
+
+		int arrayBufferBinding = 0;
+		int elementArrayBufferBinding = 0;
+		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBufferBinding);
+		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBufferBinding);
+
 		if (InternalModels[f].VertexBuffer > 0)
 		{
 			GLExt::glBindBuffer(GL_ARRAY_BUFFER, InternalModels[f].VertexBuffer);
 			GLExt::glBufferData(GL_ARRAY_BUFFER, vertexSize, vertexData, GL_STATIC_DRAW);
-			GLExt::glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 		InternalModels[f].delayVertexBuffer.resize(vertexSize);
 		memcpy(InternalModels[f].delayVertexBuffer.data(), vertexData, vertexSize);
@@ -1487,8 +1498,11 @@ Model::Model(void* data, int32_t size)
 		{
 			GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, InternalModels[f].IndexBuffer);
 			GLExt::glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize, faceData, GL_STATIC_DRAW);
-			GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
+
+		GLExt::glBindBuffer(GL_ARRAY_BUFFER, arrayBufferBinding);
+		GLExt::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferBinding);
+
 		InternalModels[f].delayIndexBuffer.resize(indexSize);
 		memcpy(InternalModels[f].delayIndexBuffer.data(), faceData, indexSize);
 	}
