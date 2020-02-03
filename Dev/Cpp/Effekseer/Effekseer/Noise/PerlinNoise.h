@@ -77,9 +77,38 @@ private:
 public:
 	float SetNoise(float x, float y, float z) const noexcept
 	{
-		const std::size_t x_int{static_cast<std::size_t>(static_cast<std::size_t>(std::floor(x)) & 255)};
-		const std::size_t y_int{static_cast<std::size_t>(static_cast<std::size_t>(std::floor(y)) & 255)};
-		const std::size_t z_int{static_cast<std::size_t>(static_cast<std::size_t>(std::floor(z)) & 255)};
+		// it causes bugs in emscripten
+		//const std::size_t x_int{static_cast<std::size_t>(static_cast<std::size_t>(std::floor(x)) & 255)};
+		//const std::size_t y_int{static_cast<std::size_t>(static_cast<std::size_t>(std::floor(y)) & 255)};
+		//const std::size_t z_int{static_cast<std::size_t>(static_cast<std::size_t>(std::floor(z)) & 255)};
+
+		
+		int64_t x_int{static_cast<int64_t>(std::floor(x))};
+		int64_t y_int{static_cast<int64_t>(std::floor(y))};
+		int64_t z_int{static_cast<int64_t>(std::floor(z))};
+
+		if (x_int < 0)
+			x_int += ((std::abs(x_int) / 256 + 1) * 256);
+
+		if (y_int < 0)
+			y_int += ((std::abs(y_int) / 256 + 1) * 256);
+
+		if (z_int < 0)
+			z_int += ((std::abs(z_int) / 256 + 1) * 256);
+
+		x_int %= 256;
+		y_int %= 256;
+		z_int %= 256;
+
+		// Debug code (it should be removed)
+		//const std::size_t x_int_{static_cast<std::size_t>(static_cast<std::size_t>(std::floor(x)) & 255)};
+		//const std::size_t y_int_{static_cast<std::size_t>(static_cast<std::size_t>(std::floor(y)) & 255)};
+		//const std::size_t z_int_{static_cast<std::size_t>(static_cast<std::size_t>(std::floor(z)) & 255)};
+		//assert(x_int_ == x_int);
+		//assert(y_int_ == y_int);
+		//assert(z_int_ == z_int);
+
+
 		x -= std::floor(x);
 		y -= std::floor(y);
 		z -= std::floor(z);
