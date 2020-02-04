@@ -79,6 +79,8 @@ namespace Effekseer.Utl
 				buf[2] != 'C' ||
 				buf[3] != 'B')
 			{
+				fs.Dispose();
+				br.Close();
 				return CompiledMaterialInformationErrorCode.InvalidFormat;
 			}
 
@@ -87,6 +89,8 @@ namespace Effekseer.Utl
 			// bacause of camera position node, structure of uniform is changed
 			if (version == 0)
 			{
+				fs.Dispose();
+				br.Close();
 				return CompiledMaterialInformationErrorCode.TooOldFormat;
 			}
 
@@ -109,6 +113,8 @@ namespace Effekseer.Utl
 				Platforms.Add(type);
 			}
 
+			fs.Dispose();
+			br.Close();
 			return CompiledMaterialInformationErrorCode.OK;
 		}
 	}
