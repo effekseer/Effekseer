@@ -1151,6 +1151,9 @@ namespace Effekseer
 				{
 					isNewFormat = true;
 				}
+
+				fs.Dispose();
+				br.Close();
 			}
 
 			if(isNewFormat)
