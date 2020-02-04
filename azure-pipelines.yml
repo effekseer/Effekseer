@@ -7,32 +7,14 @@ jobs:
     pool:
       vmImage: 'vs2017-win2016'
     steps:
-      - task: PowerShell@2
+      - task: Bash@3
         inputs:
           targetType: 'inline'
           script: |
             git submodule update --init
             git lfs install
             git lfs pull
-      - task: CMake@1
-        inputs:
-          cmakeArgs: '.. -G "Visual Studio 15 2017" -A x64 -DBUILD_VIEWER=ON -DBUILD_TEST=ON -DBUILD_EDITOR=ON -D FROM_CI=ON'
-      - task: CMake@1
-        inputs:
-          cmakeArgs: '--build . --config Release'
-      - task: NuGetCommand@2
-        inputs:
-          command: 'restore'
-          restoreSolution: 'Dev/Editor/Effekseer.sln'
-          feedsToUse: 'select'
-      - task: MSBuild@1
-        inputs:
-          solution: 'Dev/Editor/EffekseerCore/EffekseerCore.csproj'
-          msbuildArguments: '/t:build /p:Configuration=Release /p:Platform=x64'
-      - task: MSBuild@1
-        inputs:
-          solution: 'Dev/Editor/Effekseer/Effekseer.csproj'
-          msbuildArguments: '/t:build /p:Configuration=Release /p:Platform=x64'
+            python build.py
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: 'dev/release'
@@ -43,34 +25,21 @@ jobs:
     pool:
       vmImage: 'macOS-10.14'
     steps:
-      - task: PowerShell@2
+      - task: Bash@3
         inputs:
           targetType: 'inline'
           script: |
             git submodule update --init
             git lfs install
             git lfs pull
-      - task: CMake@1
-        inputs:
-          cmakeArgs: '.. -G "Xcode" -DBUILD_VIEWER=ON'
-      - task: CMake@1
-        inputs:
-          cmakeArgs: '--build . --config Release'
-      - task: NuGetCommand@2
-        inputs:
-          command: 'restore'
-          restoreSolution: 'Dev/Editor/Effekseer.sln'
-          feedsToUse: 'select'
-      - task: MSBuild@1
-        inputs:
-          solution: 'Dev/Editor/EffekseerCore/EffekseerCore.csproj'
-          msbuildArguments: '/t:build /p:Configuration=Release /p:Platform=x64'
-      - task: MSBuild@1
-        inputs:
-          solution: 'Dev/Editor/Effekseer/Effekseer.csproj'
-          msbuildArguments: '/t:build /p:Configuration=Release /p:Platform=x64'
+            ACKAGEING_FOR_MAC=1 python3 build.py
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: 'dev/release'
+          ArtifactName: 'MacOS'
+          publishLocation: 'Container'
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'dev/Mac'
           ArtifactName: 'MacOS'
           publishLocation: 'Container'
