@@ -9,6 +9,8 @@
   "En": "English",
   "ConfirmSaveChanged": "[{0}] は変更されています。保存しますか？",
   "Cancel": "キャンセル",
+  "TextureCount": "画像枚数",
+  "Delete_Name": "削除",
   "": "",
   "Description_Name": "説明",
   "Description_Desc": "これらのパラメーターは他のエディタで表示されます。\n概要はラベルとして表示されます。\n多くの場合、詳細はクリックしたりマウスが重なると表示されます。",

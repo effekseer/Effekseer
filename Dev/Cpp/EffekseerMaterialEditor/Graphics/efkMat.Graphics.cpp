@@ -86,6 +86,23 @@ bool Texture::Validate()
 
 void Texture::Invalidate() { ar::SafeDelete(texture_); }
 
+uint64_t Texture::GetInternal()
+{
+	if (texture_ == nullptr)
+		return 0;
+	auto ret = texture_->GetInternalObjects()[0];
+
+	// Temp
+	glBindTexture(GL_TEXTURE_2D, ret);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return ret;
+}
+
 std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, const char* path)
 {
 	std::vector<uint8_t> buffer;
@@ -360,7 +377,7 @@ static const char g_header_vs_gl3_src[] = ""
 										  "#define IN in\n"
 										  "#define TEX2D textureLod\n"
 										  "#define OUT out\n"
-										  "uniform vec4 customData1;\n"	 // HACK
+										  "uniform vec4 customData1;\n"  // HACK
 										  "uniform vec4 customData2;\n"; // HACK
 
 static const char g_header_fs_gl3_src[] = ""
@@ -370,7 +387,7 @@ static const char g_header_fs_gl3_src[] = ""
 										  "#define IN in\n"
 										  "#define TEX2D texture\n"
 										  "layout (location = 0) out vec4 FRAGCOLOR;\n"
-										  "uniform vec4 customData1;\n"	 // HACK
+										  "uniform vec4 customData1;\n"  // HACK
 										  "uniform vec4 customData2;\n"; // HACK
 
 bool Preview::CompileShader(std::string& vs,

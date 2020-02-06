@@ -9,6 +9,8 @@ Ja,日本語,日本語
 En,English,English
 ConfirmSaveChanged,[{0}] has been changed. Do you want to save?,[{0}] は変更されています。保存しますか？
 Cancel,Cancel,キャンセル
+TextureCount,Image,画像枚数
+Delete_Name,Delete,削除
 ,,
 Description_Name,Description,説明
 Description_Desc,"These parameters are shown on other editors.

@@ -94,6 +94,8 @@ private:
 	std::array<char, 256> searchingKeywords;
 	std::array<char, 256> searchingKeywordsActual;
 
+	std::vector<std::shared_ptr<Texture>> previewTypeButtons_;
+
 public: // TODO temp
 	std::shared_ptr<Library> library;
 	std::shared_ptr<Preview> preview_;

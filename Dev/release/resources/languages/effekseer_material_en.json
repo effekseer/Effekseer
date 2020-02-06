@@ -9,6 +9,8 @@
   "En": "English",
   "ConfirmSaveChanged": "[{0}] has been changed. Do you want to save?",
   "Cancel": "Cancel",
+  "TextureCount": "Image",
+  "Delete_Name": "Delete",
   "": "",
   "Description_Name": "Description",
   "Description_Desc": "These parameters are shown on other editors.\nSummary is shown as a label.\nDetail is shown when clicking or mouse is over  in almost cases.",
