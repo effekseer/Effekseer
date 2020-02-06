@@ -561,6 +561,41 @@ public:
 		}
 		else
 		{
+            state.TextureFilterTypes[0] = m_state.TextureFilter1;
+            state.TextureWrapTypes[0] = m_state.TextureWrap1;
+
+            if (distortion)
+            {
+                state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Linear;
+                state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+                state.TextureFilterTypes[2] = m_state.TextureFilter3;
+                state.TextureWrapTypes[2] = m_state.TextureWrap3;
+#endif
+            }
+            else
+            {
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+                if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
+                {
+                    state.TextureFilterTypes[1] = m_state.TextureFilter2;
+                    state.TextureWrapTypes[1] = m_state.TextureWrap2;
+
+                    state.TextureFilterTypes[2] = m_state.TextureFilter3;
+                    state.TextureWrapTypes[2] = m_state.TextureWrap3;
+                }
+                else
+                {
+                    state.TextureFilterTypes[1] = m_state.TextureFilter3;
+                    state.TextureWrapTypes[1] = m_state.TextureWrap3;
+                }
+#else
+                state.TextureFilterTypes[1] = m_state.TextureFilter2;
+                state.TextureWrapTypes[1] = m_state.TextureWrap2;
+#endif
+            }
+            
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			std::array<Effekseer::TextureData*, 3> textures;
 #else
@@ -812,44 +847,6 @@ public:
 		}
 
 		shader_->SetConstantBuffer();
-
-		if (m_state.MaterialPtr == nullptr)
-		{
-			state.TextureFilterTypes[0] = m_state.TextureFilter1;
-			state.TextureWrapTypes[0] = m_state.TextureWrap1;
-
-			if (distortion)
-			{
-				state.TextureFilterTypes[1] = Effekseer::TextureFilterType::Linear;
-				state.TextureWrapTypes[1] = Effekseer::TextureWrapType::Clamp;
-
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-				state.TextureFilterTypes[2] = m_state.TextureFilter3;
-				state.TextureWrapTypes[2] = m_state.TextureWrap3;
-#endif
-			}
-			else
-			{
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-				if (m_state.MaterialType == ::Effekseer::RendererMaterialType::Lighting)
-				{
-					state.TextureFilterTypes[1] = m_state.TextureFilter2;
-					state.TextureWrapTypes[1] = m_state.TextureWrap2;
-
-					state.TextureFilterTypes[2] = m_state.TextureFilter3;
-					state.TextureWrapTypes[2] = m_state.TextureWrap3;
-				}
-				else
-				{
-					state.TextureFilterTypes[1] = m_state.TextureFilter3;
-					state.TextureWrapTypes[1] = m_state.TextureWrap3;
-				}
-#else
-				state.TextureFilterTypes[1] = m_state.TextureFilter2;
-				state.TextureWrapTypes[1] = m_state.TextureWrap2;
-#endif
-			}
-		}
 
 		m_renderer->GetRenderState()->Update(distortion);
 
