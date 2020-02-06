@@ -244,49 +244,61 @@ inline bool operator!=(const SIMD4f& lhs, const SIMD4f& rhs)
 inline SIMD4f SIMD4f::Load2(const void* mem)
 {
 	SIMD4f ret;
-	ret.f[0] = *((float*)mem + 0);
-	ret.f[1] = *((float*)mem + 1);
+	memcpy(ret.f, mem, sizeof(float) * 2);
+	// This code causes bugs in asmjs
+	// ret.f[0] = *((float*)mem + 0);
+	// ret.f[1] = *((float*)mem + 1);
 	return ret;
 }
 
 inline void SIMD4f::Store2(void* mem, const SIMD4f& i)
 {
-	*((float*)mem + 0) = i.f[0];
-	*((float*)mem + 1) = i.f[1];
+	memcpy(mem, i.f, sizeof(float) * 2);
+	// This code causes bugs in asmjs
+	// *((float*)mem + 0) = i.f[0];
+	// *((float*)mem + 1) = i.f[1];
 }
 
 inline SIMD4f SIMD4f::Load3(const void* mem)
 {
 	SIMD4f ret;
-	ret.f[0] = *((float*)mem + 0);
-	ret.f[1] = *((float*)mem + 1);
-	ret.f[2] = *((float*)mem + 2);
+	memcpy(ret.f, mem, sizeof(float) * 3);
+	// This code causes bugs in asmjs
+	// ret.f[0] = *((float*)mem + 0);
+	// ret.f[1] = *((float*)mem + 1);
+	// ret.f[2] = *((float*)mem + 2);
 	return ret;
 }
 
 inline void SIMD4f::Store3(void* mem, const SIMD4f& i)
 {
-	*((float*)mem + 0) = i.f[0];
-	*((float*)mem + 1) = i.f[1];
-	*((float*)mem + 2) = i.f[2];
+	memcpy(mem, i.f, sizeof(float) * 3);
+	// This code causes bugs in asmjs
+	// *((float*)mem + 0) = i.f[0];
+	// *((float*)mem + 1) = i.f[1];
+	// *((float*)mem + 2) = i.f[2];
 }
 
 inline SIMD4f SIMD4f::Load4(const void* mem)
 {
 	SIMD4f ret;
-	ret.f[0] = *((float*)mem + 0);
-	ret.f[1] = *((float*)mem + 1);
-	ret.f[2] = *((float*)mem + 2);
-	ret.f[3] = *((float*)mem + 3);
+	memcpy(ret.f, mem, sizeof(float) * 4);
+	// This code causes bugs in emscripten
+	// ret.f[0] = *((float*)mem + 0);
+	// ret.f[1] = *((float*)mem + 1);
+	// ret.f[2] = *((float*)mem + 2);
+	// ret.f[3] = *((float*)mem + 3);
 	return ret;
 }
 
 inline void SIMD4f::Store4(void* mem, const SIMD4f& i)
 {
-	*((float*)mem + 0) = i.f[0];
-	*((float*)mem + 1) = i.f[1];
-	*((float*)mem + 2) = i.f[2];
-	*((float*)mem + 3) = i.f[3];
+	memcpy(mem, i.f, sizeof(float) * 4);
+	// This code causes bugs in asmjs
+	// *((float*)mem + 0) = i.f[0];
+	// *((float*)mem + 1) = i.f[1];
+	// *((float*)mem + 2) = i.f[2];
+	// *((float*)mem + 3) = i.f[3];
 }
 
 inline SIMD4f SIMD4f::SetZero()
