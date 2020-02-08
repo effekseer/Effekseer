@@ -1,9 +1,44 @@
 #include "EffectPlatformGL.h"
 #include "../../3rdParty/stb/stb_image_write.h"
 
+class DistortingCallbackGL : public EffekseerRenderer::DistortingCallback
+{
+	::EffekseerRendererGL::Renderer* renderer = nullptr;
+	GLuint texture = 0;
+	int32_t width_ = 0;
+	int32_t height_ = 0;
+
+public:
+	DistortingCallbackGL(::EffekseerRendererGL::Renderer* renderer, int width, int height)
+		: renderer(renderer), width_(width), height_(height)
+	{
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width_, height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	virtual ~DistortingCallbackGL() { glDeleteTextures(1, &texture); }
+
+	virtual bool OnDistorting() override
+	{
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, width_, height_);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		renderer->SetBackground(texture);
+
+		return true;
+	}
+};
+
 EffekseerRenderer::Renderer* EffectPlatformGL::CreateRenderer()
 {
-	return EffekseerRendererGL::Renderer::Create(2000, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+	auto ret = EffekseerRendererGL::Renderer::Create(2000, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+
+	ret->SetDistortingCallback(new DistortingCallbackGL(ret, 1280, 720));
+
+	return ret;
 }
 
 EffectPlatformGL::~EffectPlatformGL() {}
