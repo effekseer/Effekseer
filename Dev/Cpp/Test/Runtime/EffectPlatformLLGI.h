@@ -96,4 +96,6 @@ public:
 	EffectPlatformLLGI();
 	virtual ~EffectPlatformLLGI();
 	bool TakeScreenshot(const char* path);
+
+	LLGI::Graphics* GetGraphics() const { return graphics_; }
 };

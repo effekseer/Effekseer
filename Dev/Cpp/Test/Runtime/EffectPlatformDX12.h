@@ -20,6 +20,7 @@ private:
 	LLGI::IndexBuffer* ib_ = nullptr;
 	LLGI::PipelineState* pip_ = nullptr;
 	LLGI::RenderPassPipelineState* rppip_ = nullptr;
+	LLGI::Texture* checkTexture_ = nullptr;
 
 protected:
 	EffekseerRenderer::Renderer* CreateRenderer() override;
@@ -33,4 +34,6 @@ public:
 	void DestroyDevice() override;
 	void BeginRendering() override;
 	void EndRendering() override;
+
+	LLGI::Texture* GetCheckedTexture() const;
 };

@@ -4,7 +4,7 @@
 
 void EffectPlatform::CreateCheckeredPattern(int width, int height, uint32_t* pixels)
 {
-	const uint32_t color[2] = {0x00202020, 0x00808080};
+	const uint32_t color[2] = {0xFF202020, 0xFF808080};
 
 	for (int y = 0; y < height; y++)
 	{
