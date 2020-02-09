@@ -1,15 +1,15 @@
 #ifndef __EFFEKSEERRENDERER_RENDERER_IMPL_H__
 #define __EFFEKSEERRENDERER_RENDERER_IMPL_H__
 
-#include <Effekseer.h>
 #include <Effekseer.Internal.h>
+#include <Effekseer.h>
 
 #include "EffekseerRenderer.Renderer.h"
 
 namespace EffekseerRenderer
 {
 
-class Renderer::Impl
+class Renderer::Impl : public ::Effekseer::AlignedAllocationPolicy<16>
 {
 private:
 	::Effekseer::Mat44f projectionMat_;
