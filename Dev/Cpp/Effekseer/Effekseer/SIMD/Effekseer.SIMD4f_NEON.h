@@ -1,6 +1,7 @@
 
 #ifndef __EFFEKSEER_SIMD4F_NEON_H__
 #define __EFFEKSEER_SIMD4F_NEON_H__
+#if defined(__ARM_NEON__) || defined(__ARM_NEON)
 
 #include <stdint.h>
 #include <math.h>
@@ -391,4 +392,5 @@ inline SIMD4f SIMD4f::SwizzleZXY(const SIMD4f& in)
 
 } // namespace Effekseer
 
+#endif
 #endif // __EFFEKSEER_SIMD4F_NEON_H__

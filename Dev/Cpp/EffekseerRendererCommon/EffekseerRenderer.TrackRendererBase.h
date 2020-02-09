@@ -355,8 +355,6 @@ namespace EffekseerRenderer
 
 					auto mat = param.SRTMatrix43;
 
-					::Effekseer::Vec3f s;
-
 					ApplyDepthParameters(mat,
 										 m_renderer->GetCameraFrontDirection(),
 										 m_renderer->GetCameraPosition(),

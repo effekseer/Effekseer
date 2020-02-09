@@ -2,6 +2,12 @@
 #ifndef __EFFEKSEER_SIMD4F_GEN_H__
 #define __EFFEKSEER_SIMD4F_GEN_H__
 
+#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+// not arm
+#elif (defined(_M_AMD64) || defined(_M_X64)) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) || defined(__SSE__)
+// not x86
+#else
+
 #include <stdint.h>
 #include <algorithm>
 #include "../Effekseer.Math.h"
@@ -552,5 +558,7 @@ inline void SIMD4f::Transpose(SIMD4f& s0, SIMD4f& s1, SIMD4f& s2, SIMD4f& s3)
 }
 
 } // namespace Effekseer
+
+#endif
 
 #endif // __EFFEKSEER_SIMD4F_GEN_H__

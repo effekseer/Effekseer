@@ -2,6 +2,8 @@
 #ifndef __EFFEKSEER_SIMD4F_SSE_H__
 #define __EFFEKSEER_SIMD4F_SSE_H__
 
+#if (defined(_M_AMD64) || defined(_M_X64)) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) || defined(__SSE__)
+
 #include <stdint.h>
 #ifdef _MSC_VER
 #include <intrin.h>
@@ -362,5 +364,7 @@ inline void SIMD4f::Transpose(SIMD4f& s0, SIMD4f& s1, SIMD4f& s2, SIMD4f& s3)
 }
 
 } // namespace Effekseer
+
+#endif
 
 #endif // __EFFEKSEER_SIMD4F_SSE_H__
