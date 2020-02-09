@@ -60,15 +60,15 @@ Multiply_Node_Name,Multiply,掛け算
 Divide_Node_Name,Divide,割り算
 Fmod_Node_Name,Mod,余り
 ,,
-Abs_Node_Name,Abs,絶対値
-ComponentMask_Node_Name,Mask,要素抽出
-AppendVector_Node_Name,Append,要素結合
+Abs_Node_Name,Absolute,絶対値
+ComponentMask_Node_Name,MaskElements,要素抽出
+AppendVector_Node_Name,MergeElements,要素結合
 OneMinus_Node_Name,OneMinus,1-値
 Sine_Node_Name,Sine,Sine
 Ceil_Node_Name,Round up,切り上げ
 Floor_Node_Name,Round down,切り捨て
 Clamp_Node_Name,Clamp,クランプ
-Frac_Node_Name,Decimal part,少数部
+Frac_Node_Name,Fractional part,少数部
 Min_Node_Name,Minimum,最小
 Max_Node_Name,Maximum,最大
 Power_Node_Name,Power,乗数
