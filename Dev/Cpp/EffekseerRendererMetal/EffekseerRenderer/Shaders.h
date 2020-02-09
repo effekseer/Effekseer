@@ -305,11 +305,13 @@ struct ShaderOutput1 {
   float4 v_Color;
 };
 struct ShaderUniform1 {
+  float4x4 ProjectionMatrix;
   float4x4 ModelMatrix;
   float4 UVOffset;
   float4 ModelColor;
-  float4x4 ProjectionMatrix;
+  float4 LightDirection;
   float4 LightColor;
+  float4 LightAmbient;
   float4 mUVInversed;
 };
 vertex ShaderOutput1 main0 (ShaderInput1 _mtl_i [[stage_in]], constant ShaderUniform1& _mtl_u [[buffer(0)]])
@@ -359,6 +361,7 @@ struct ShaderOutput2 {
 };
 struct ShaderUniform2 {
   float4 LightDirection;
+  float4 LightColor;
   float4 LightAmbient;
 };
 fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderUniform2& _mtl_u [[buffer(0)]]
@@ -399,10 +402,13 @@ struct ShaderOutput1 {
   float4 v_Color;
 };
 struct ShaderUniform1 {
+  float4x4 ProjectionMatrix;
   float4x4 ModelMatrix;
   float4 UVOffset;
   float4 ModelColor;
-  float4x4 ProjectionMatrix;
+  float4 LightDirection;
+  float4 LightColor;
+  float4 LightAmbient;
   float4 mUVInversed;
 };
 vertex ShaderOutput1 main0 (ShaderInput1 _mtl_i [[stage_in]], constant ShaderUniform1& _mtl_u [[buffer(0)]])
@@ -429,6 +435,9 @@ struct ShaderOutput2 {
   half4 gl_FragColor;
 };
 struct ShaderUniform2 {
+  float4 LightDirection;
+  float4 LightColor;
+  float4 LightAmbient;
 };
 fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderUniform2& _mtl_u [[buffer(0)]]
   ,   texture2d<float> ColorTexture [[texture(0)]], sampler _mtlsmp_ColorTexture [[sampler(0)]])
@@ -465,10 +474,13 @@ struct ShaderOutput1 {
   float4 v_Color;
 };
 struct ShaderUniform1 {
+  float4x4 ProjectionMatrix;
   float4x4 ModelMatrix;
   float4 UVOffset;
   float4 ModelColor;
-  float4x4 ProjectionMatrix;
+  float4 LightDirection;
+  float4 LightColor;
+  float4 LightAmbient;
   float4 mUVInversed;
 };
 vertex ShaderOutput1 main0 (ShaderInput1 _mtl_i [[stage_in]], constant ShaderUniform1& _mtl_u [[buffer(0)]])
