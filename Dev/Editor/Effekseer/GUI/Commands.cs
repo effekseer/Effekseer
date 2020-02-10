@@ -296,6 +296,13 @@ namespace Effekseer.GUI
 						var node = selected.AddChild();
 						Core.Paste(node, data);
 						Command.CommandManager.EndCollection();
+
+
+						if (Core.Root.GetFinalGeneration() > Constant.NodeGenerationLimit)
+						{
+							Command.CommandManager.Undo(true);
+							ErrorUtils.ShowErrorByNodeGenerationLimit();
+						}
 					}
 				}
 
@@ -332,7 +339,14 @@ namespace Effekseer.GUI
 
 			if (selected != null)
 			{
-				selected.AddChild();
+				if (selected.GetGeneration() < Constant.NodeGenerationLimit)
+				{
+					selected.AddChild();
+				}
+				else
+				{
+					ErrorUtils.ShowErrorByNodeGenerationLimit();
+				}
 			}
 
 			return true;
@@ -346,7 +360,14 @@ namespace Effekseer.GUI
 
 			if (selected != null && selected.Parent != null)
 			{
-				selected.InsertParent();
+				if (Core.Root.GetFinalGeneration() < Constant.NodeGenerationLimit)
+				{
+					selected.InsertParent();
+				}
+				else
+				{
+					ErrorUtils.ShowErrorByNodeGenerationLimit();
+				}
 			}
 
 			return true;

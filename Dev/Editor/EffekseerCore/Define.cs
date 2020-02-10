@@ -8,8 +8,13 @@ using System.Threading;
 
 namespace Effekseer
 {
-	class Constant
+	public class Constant
 	{
+		/// <summary>
+		///  the maximum number of generation of node
+		/// </summary>
+		public const int NodeGenerationLimit = 20;
+
 		/// <summary>
 		///  the maximum number of texture slot which can be specified by an user
 		/// </summary>

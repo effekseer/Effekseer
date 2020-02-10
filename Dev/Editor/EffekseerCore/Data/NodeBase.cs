@@ -308,6 +308,33 @@ namespace Effekseer.Data
 		}
 
 		/// <summary>
+		/// 世代数を取得
+		/// </summary>
+		/// <returns>世代数</returns>
+		public int GetGeneration()
+		{
+			if (Parent != null)
+			{
+				return 1 + Parent.GetGeneration();
+			}
+			else
+			{
+				return 1;
+			}
+		}
+
+		public int GetFinalGeneration()
+		{
+			int maxGen = 0;
+			foreach (var child in children)
+			{
+				int gen = child.GetFinalGeneration();
+				if (gen > maxGen) maxGen = gen;
+			}
+			return maxGen + 1;
+		}
+
+		/// <summary>
 		/// 子ノード群
 		/// </summary>
 		public class ChildrenCollection
