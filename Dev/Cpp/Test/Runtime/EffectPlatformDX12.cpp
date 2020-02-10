@@ -41,8 +41,8 @@ VS_OUTPUT main(VS_INPUT input){
 )";
 
 static auto code_dx_ps = R"(
-Texture2D txt : register(t8);
-SamplerState smp : register(s8);
+Texture2D txt : register(t0);
+SamplerState smp : register(s0);
 
 struct PS_INPUT
 {
@@ -117,8 +117,7 @@ EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
 	auto renderer =
 		EffekseerRendererDX12::Create(g->GetDevice(), g->GetCommandQueue(), g->GetSwapBufferCount(), &format, 1, true, false, 10000);
 
-	// TODO
-	//renderer->SetDistortingCallback(new DistortingCallbackDX12(this, renderer));
+	renderer->SetDistortingCallback(new DistortingCallbackDX12(this, renderer));
 
 	sfMemoryPoolEfk_ = EffekseerRendererDX12::CreateSingleFrameMemoryPool(renderer);
 	commandListEfk_ = EffekseerRendererDX12::CreateCommandList(renderer, sfMemoryPoolEfk_);

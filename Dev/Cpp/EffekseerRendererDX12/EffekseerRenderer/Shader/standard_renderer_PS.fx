@@ -1,6 +1,6 @@
 
-Texture2D	g_texture		: register( t8 );
-SamplerState	g_sampler		: register( s8 );
+Texture2D	g_texture		: register( t0 );
+SamplerState	g_sampler		: register( s0 );
 
 
 struct PS_Input
