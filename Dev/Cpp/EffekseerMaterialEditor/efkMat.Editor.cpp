@@ -398,8 +398,8 @@ Editor::Editor(std::shared_ptr<EffekseerMaterial::Graphics> graphics)
 	keyValueFileStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
 	keyValueFileStorage_->Start("EfkStorage");
 
-	previewTypeButtons_.emplace_back(TextureCache::Load(graphics, "resources/icons/AutoZoom_Off.png"));
-	previewTypeButtons_.emplace_back(TextureCache::Load(graphics, "resources/icons/AutoZoom_On.png"));
+	previewTypeButtons_.emplace_back(TextureCache::Load(graphics, "resources/icons/Material_Icon_Squre.png"));
+	previewTypeButtons_.emplace_back(TextureCache::Load(graphics, "resources/icons/Material_Icon_Sphere.png"));
 }
 
 Editor::~Editor()

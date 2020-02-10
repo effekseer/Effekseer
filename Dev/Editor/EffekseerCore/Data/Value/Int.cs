@@ -58,7 +58,7 @@ namespace Effekseer.Data.Value
 		{
 			get;
 			private set;
-		} = false;
+		}
 
 		public event ChangedValueEventHandler OnChanged;
 
@@ -77,6 +77,7 @@ namespace Effekseer.Data.Value
 			Step = step;
 
 			DefaultValue = value;
+			IsValueAssigned = false;
 		}
 
 		protected void CallChanged(object value, ChangedValueType type)

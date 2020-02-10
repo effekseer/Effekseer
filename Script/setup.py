@@ -18,3 +18,7 @@ if pf == 'Darwin':
 
 shutil.copyfile("../ResourceData/tool/resources/icons/Copy.png", "../Dev/release/resources/icons/Copy.png")
 shutil.copyfile("../ResourceData/tool/resources/icons/Paste.png", "../Dev/release/resources/icons/Paste.png")
+
+shutil.copyfile("../ResourceData/tool/resources/icons/Panel_DynamicParameter.png","../Dev/release/resources/icons/Panel_DynamicParameter.png")
+shutil.copyfile("../ResourceData/tool/resources/icons/Material_Icon_Sphere.png","../Dev/release/resources/icons/Material_Icon_Sphere.png")
+shutil.copyfile("../ResourceData/tool/resources/icons/Material_Icon_Squre.png","../Dev/release/resources/icons/Material_Icon_Squre.png")

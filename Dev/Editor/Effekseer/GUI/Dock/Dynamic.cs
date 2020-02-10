@@ -35,8 +35,8 @@ namespace Effekseer.GUI.Dock
 
 			Read();
 
-			Icon = Images.GetIcon("PanelCulling");
-			TabToolTip = Resources.GetString("Culling");
+			Icon = Images.GetIcon("PanelDynamicParameter");
+			TabToolTip = Resources.GetString("DynamicParameter");
 		}
 
 		private void Input_OnChanged(object sender, ChangedValueEventArgs e)
