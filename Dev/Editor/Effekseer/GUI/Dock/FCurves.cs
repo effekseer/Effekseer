@@ -462,7 +462,7 @@ namespace Effekseer.GUI.Dock
 
 			if (selectedInd >= 0)
 			{
-				if (Manager.NativeManager.BeginCombo(type.Label, type.FieldNames[selected.Item2.Interpolations[selectedInd]], swig.ComboFlags.None))
+				if (Manager.NativeManager.BeginCombo(type_text, type.FieldNames[selected.Item2.Interpolations[selectedInd]], swig.ComboFlags.None))
 				{
 					for (int i = 0; i < type.FieldNames.Count; i++)
 					{
@@ -490,6 +490,8 @@ namespace Effekseer.GUI.Dock
 				Manager.NativeManager.InputText(type_text, invalidValue, swig.InputTextFlags.ReadOnly);
 			}
 
+			Manager.NativeManager.Separator();
+
 			// Start curve
 			if (selected.Item1 != null)
 			{
@@ -505,7 +507,6 @@ namespace Effekseer.GUI.Dock
 			}
 
 			// End curve
-
 			if (selected.Item1 != null)
 			{
 				endCurve.SetBinding(selected.Item1.EndType);
@@ -1001,9 +1002,15 @@ namespace Effekseer.GUI.Dock
 
 		public void Copy()
 		{
+			var copiedData = CopyAsClass();
+			if (copiedData == null)
+			{
+				return;
+			}
+
 			System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
 			System.IO.StringWriter writer = new System.IO.StringWriter();
-			serializer.Serialize(writer, CopyAsClass());
+			serializer.Serialize(writer, copiedData);
 			Manager.NativeManager.SetClipboardText(writer.ToString());
 		}
 
@@ -1049,6 +1056,11 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
+			if (data.Curves.Count == 0)
+			{
+				return null;
+			}
+
 			var xmin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Key);
 
 			foreach(var curve in data.Curves)
@@ -1066,17 +1078,16 @@ namespace Effekseer.GUI.Dock
 
 		public void Paste()
 		{
-			FCurveCopiedData data = null;
 			try
 			{
 				System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
-				data = serializer.Deserialize(new System.IO.StringReader(Manager.NativeManager.GetClipboardText())) as FCurveCopiedData;
+				FCurveCopiedData data = serializer.Deserialize(new System.IO.StringReader(Manager.NativeManager.GetClipboardText())) as FCurveCopiedData;
+				Paste(data);
 			}
-			finally
+			catch
 			{
+				return;
 			}
-			
-			Paste(data);
 		}
 
 		public void Paste(FCurveCopiedData data)
