@@ -11,6 +11,7 @@ def call( cmd , env=None):
 	p = subprocess.Popen(cmd, shell=True, env=env)
 	ret = p.wait()
 	if ret != 0:
+	print("Failed {}".format(cmd))
 		raise Exception
 
 env = os.environ.copy()
@@ -34,6 +35,7 @@ if env['IGNORE_BUILD'] == '0':
         reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
         key = winreg.OpenKey(reg, r"SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0")
         msbuild_path = winreg.QueryValueEx(key, 'MSBuildToolsPath')[0] + 'MSBuild.exe'
+		msbuild_path = 'msbuild'
     else:
         msbuild_path = 'msbuild'
 
