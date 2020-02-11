@@ -4,15 +4,15 @@ import Script.aceutils as aceutils
 import os
 
 def call( cmd , env=None):
-	""" call command line.
-	"""
+    """ call command line.
+    """
 
-	print( cmd )
-	p = subprocess.Popen(cmd, shell=True, env=env)
-	ret = p.wait()
-	if ret != 0:
-	print("Failed {}".format(cmd))
-		raise Exception
+    print( cmd )
+    p = subprocess.Popen(cmd, shell=True, env=env)
+    ret = p.wait()
+    if ret != 0:
+        print("Failed {}".format(cmd))
+        raise Exception
 
 env = os.environ.copy()
 
