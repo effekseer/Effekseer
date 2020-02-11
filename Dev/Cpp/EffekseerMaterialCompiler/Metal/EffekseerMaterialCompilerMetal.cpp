@@ -769,6 +769,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
             baseCode = Replace(baseCode, name, std::string("u.") + name);
         }
         baseCode = Replace(baseCode, "predefined_uniform", std::string("u.") + "predefined_uniform");
+        baseCode = Replace(baseCode, "cameraPosition", std::string("u.") + "cameraPosition");
 
         // replace textures
         for (size_t i = 0; i < actualTextureCount; i++)
