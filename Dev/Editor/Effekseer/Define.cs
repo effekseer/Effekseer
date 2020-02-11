@@ -20,16 +20,16 @@ namespace Effekseer
 			}
 		}
 
-		public static void ShowErrorByNodeGenerationLimit()
+		public static void ShowErrorByNodeLayerLimit()
 		{
 			var mb = new GUI.Dialog.MessageBox();
 			if (Core.Option.GuiLanguage.Value == Language.Japanese)
 			{
-				mb.Show("Error", "ノードツリーはルートを含めて" + Constant.NodeGenerationLimit + "世代までに制限されています。");
+				mb.Show("Error", "ノードツリーはルートを含めて" + Constant.NodeLayerLimit + "レイヤーまでに制限されています。");
 			}
 			else
 			{
-				mb.Show("Error", "The node tree is limited to " + Constant.NodeGenerationLimit + " generations, including the root.");
+				mb.Show("Error", "The node tree is limited to " + Constant.NodeLayerLimit + " layers, including the root.");
 			}
 		}
 	}

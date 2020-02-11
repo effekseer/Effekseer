@@ -308,14 +308,14 @@ namespace Effekseer.Data
 		}
 
 		/// <summary>
-		/// 世代数を取得
+		/// Get the layer number in the hierarchy
 		/// </summary>
-		/// <returns>世代数</returns>
-		public int GetGeneration()
+		/// <returns>the layer number</returns>
+		public int GetLayerNumber()
 		{
 			if (Parent != null)
 			{
-				return 1 + Parent.GetGeneration();
+				return 1 + Parent.GetLayerNumber();
 			}
 			else
 			{
@@ -323,19 +323,23 @@ namespace Effekseer.Data
 			}
 		}
 
-		public int GetFinalGeneration()
+		/// <summary>
+		/// Get the number of the deepest layer in chidren 
+		/// </summary>
+		/// <returns></returns>
+		public int GetDeepestLayerNumberInChildren()
 		{
 			int maxGen = 0;
 			foreach (var child in children)
 			{
-				int gen = child.GetFinalGeneration();
+				int gen = child.GetDeepestLayerNumberInChildren();
 				if (gen > maxGen) maxGen = gen;
 			}
 			return maxGen + 1;
 		}
 
 		/// <summary>
-		/// 子ノード群
+		/// Children
 		/// </summary>
 		public class ChildrenCollection
 		{

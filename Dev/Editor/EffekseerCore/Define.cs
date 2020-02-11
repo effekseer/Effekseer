@@ -13,7 +13,7 @@ namespace Effekseer
 		/// <summary>
 		///  the maximum number of generation of node
 		/// </summary>
-		public const int NodeGenerationLimit = 20;
+		public const int NodeLayerLimit = 20;
 
 		/// <summary>
 		///  the maximum number of texture slot which can be specified by an user

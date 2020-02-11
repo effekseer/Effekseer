@@ -298,10 +298,10 @@ namespace Effekseer.GUI
 						Command.CommandManager.EndCollection();
 
 
-						if (Core.Root.GetFinalGeneration() > Constant.NodeGenerationLimit)
+						if (Core.Root.GetDeepestLayerNumberInChildren() > Constant.NodeLayerLimit)
 						{
 							Command.CommandManager.Undo(true);
-							ErrorUtils.ShowErrorByNodeGenerationLimit();
+							ErrorUtils.ShowErrorByNodeLayerLimit();
 						}
 					}
 				}
@@ -339,13 +339,13 @@ namespace Effekseer.GUI
 
 			if (selected != null)
 			{
-				if (selected.GetGeneration() < Constant.NodeGenerationLimit)
+				if (selected.GetLayerNumber() < Constant.NodeLayerLimit)
 				{
 					selected.AddChild();
 				}
 				else
 				{
-					ErrorUtils.ShowErrorByNodeGenerationLimit();
+					ErrorUtils.ShowErrorByNodeLayerLimit();
 				}
 			}
 
@@ -360,13 +360,13 @@ namespace Effekseer.GUI
 
 			if (selected != null && selected.Parent != null)
 			{
-				if (Core.Root.GetFinalGeneration() < Constant.NodeGenerationLimit)
+				if (Core.Root.GetDeepestLayerNumberInChildren() < Constant.NodeLayerLimit)
 				{
 					selected.InsertParent();
 				}
 				else
 				{
-					ErrorUtils.ShowErrorByNodeGenerationLimit();
+					ErrorUtils.ShowErrorByNodeLayerLimit();
 				}
 			}
 
