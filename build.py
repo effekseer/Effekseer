@@ -31,11 +31,26 @@ env["IGNORE_BUILD"] = os.getenv('IGNORE_BUILD', '0')
 if env['IGNORE_BUILD'] == '0':
     aceutils.mkdir('build')
     if aceutils.isWin():
-        import winreg
-        reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
-        key = winreg.OpenKey(reg, r"SOFTWARE\Microsoft\MSBuild\ToolsVersions\4.0")
-        msbuild_path = winreg.QueryValueEx(key, 'MSBuildToolsPath')[0] + 'MSBuild.exe'
-		msbuild_path = 'msbuild'
+        #import winreg
+        #reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+        #key = winreg.OpenKey(reg, r"SOFTWARE\Microsoft\MSBuild\ToolsVersions\12.0")
+        #msbuild_path = winreg.QueryValueEx(key, 'MSBuildToolsPath')[0] + 'MSBuild.exe'
+
+        candidates = [
+        r"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe",
+        r"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\MSBuild.exe",
+        r"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe",
+        ]
+
+        candidate = None
+        for candidate in candidates:
+            if os.path.exists(candidate):
+                msbuild_path = candidate
+                break
+
+        if candidate is None:
+            raise Exception("MSBuild is not found")
+
     else:
         msbuild_path = 'msbuild'
 
