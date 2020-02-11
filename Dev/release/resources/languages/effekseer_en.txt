@@ -153,10 +153,12 @@ Panel_Paste_Desc,It pastes parameters by panels.
 DynamicParameter_Name,Dynamic parameter
 DynamicParameter_Desc,
 DynamicInput,Input
-DynamicEquation,Equation
-DynamicEq,Eq.
+DynamicEquation,Expression
+DynamicEq,Ex.
 DynamicFixed,Fixed
 DynamicDynamic,Dynamic
+DynamicAdd,Add
+DynamicDelete,Del
 Compile,Compile
 CompilePosition, : Line {0} Col {1}
 CompileErrror_InvalidToken,Invalid token {0} is found

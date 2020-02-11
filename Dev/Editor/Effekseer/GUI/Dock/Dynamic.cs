@@ -88,14 +88,14 @@ namespace Effekseer.GUI.Dock
 				Core.Dynamic.Equations.Selected = nextParam;
 			}
 
-			if(Manager.NativeManager.Button("Add###DynamicAdd"))
+			if(Manager.NativeManager.Button(Resources.GetString("DynamicAdd") + "###DynamicAdd"))
 			{
 				Core.Dynamic.Equations.Add();
 			}
 
 			Manager.NativeManager.SameLine();
 
-			if (Manager.NativeManager.Button("Delete###DynamicDelete"))
+			if (Manager.NativeManager.Button(Resources.GetString("DynamicDelete") + "###DynamicDelete"))
 			{
 				Core.Dynamic.Equations.Delete(Core.Dynamic.Equations.Selected);
 				Core.Dynamic.Equations.Selected = null;
