@@ -215,13 +215,13 @@ namespace Effekseer.Data
 
 			EditableValue vn = new EditableValue();
 			vn.Value = selected.Name;
-			vn.Title = "Name";
+			vn.Title = Resources.GetString("DynamicName");
 			vn.IsUndoEnabled = true;
 			ret.Add(vn);
 
 			EditableValue vx = new EditableValue();
 			vx.Value = selected.Code;
-			vx.Title = "Code";
+			vx.Title = Resources.GetString("DynamicEq");
 			vx.IsUndoEnabled = true;
 			ret.Add(vx);
 

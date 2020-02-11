@@ -153,6 +153,7 @@ Panel_Paste_Desc,パネル単位でパラメーターを貼り付けます。
 DynamicParameter_Name,動的パラメーター
 DynamicParameter_Desc,
 DynamicInput,入力
+DynamicName,名称
 DynamicEquation,式
 DynamicEq,式
 DynamicFixed,固定

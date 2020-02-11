@@ -153,6 +153,7 @@ Panel_Paste_Desc,It pastes parameters by panels.
 DynamicParameter_Name,Dynamic parameter
 DynamicParameter_Desc,
 DynamicInput,Input
+DynamicName,Name
 DynamicEquation,Expression
 DynamicEq,Ex.
 DynamicFixed,Fixed
