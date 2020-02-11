@@ -2,6 +2,17 @@ import subprocess
 import Script.aceutils as aceutils
 
 import os
+
+def call( cmd , env=None):
+	""" call command line.
+	"""
+
+	print( cmd )
+	p = subprocess.Popen(cmd, shell=True, env=env)
+	ret = p.wait()
+	if ret != 0:
+		raise Exception
+
 env = os.environ.copy()
 
 env = os.environ.copy()
@@ -43,8 +54,8 @@ if env['IGNORE_BUILD'] == '0':
     else:
         aceutils.call('mono ./build/nuget.exe restore Dev/Editor/Effekseer.sln')
 
-    aceutils.call('"' + msbuild_path + '"' + ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x64')
-    aceutils.call('"' + msbuild_path + '"' + ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x64')
+    call('"' + msbuild_path + '"' + ' Dev/Editor/EffekseerCore/EffekseerCore.csproj /t:build /p:Configuration=Release /p:Platform=x64')
+    call('"' + msbuild_path + '"' + ' Dev/Editor/Effekseer/Effekseer.csproj /t:build /p:Configuration=Release /p:Platform=x64')
 
 if env['PACKAGEING_FOR_MAC'] == '1':
 
