@@ -35,6 +35,9 @@ namespace Effekseer.GUI.Dock
 
 		internal int IsInitialized = -1;
 
+		protected bool NoPadding = false;
+		protected bool NoScrollBar = false;
+
 		public DockPanel()
 		{
 		}
@@ -62,12 +65,26 @@ namespace Effekseer.GUI.Dock
 						Manager.NativeManager.SetNextDockIcon(Icon, IconSize);
 					}
 
-					if(TabToolTip != null)
+					if(!String.IsNullOrEmpty(TabToolTip))
 					{
 						Manager.NativeManager.SetNextDockTabToolTip(TabToolTip);
 					}
 
-					if (Manager.NativeManager.BeginDock(Label, ref opened, swig.WindowFlags.None, InitialDockSize))
+					
+					swig.WindowFlags flags = swig.WindowFlags.None;
+
+					if (NoScrollBar)
+					{
+						flags = swig.WindowFlags.NoScrollbar;
+					}
+
+					if (NoPadding) Manager.NativeManager.PushStyleVar(swig.ImGuiStyleVarFlags.WindowPadding, new swig.Vec2(0.0f, 0.0f));
+
+					bool dockEnabled = Manager.NativeManager.BeginDock(Label, ref opened, flags, InitialDockSize);
+
+					if (NoPadding) Manager.NativeManager.PopStyleVar();
+
+					if (dockEnabled)
 					{
 						UpdateInternal();
 

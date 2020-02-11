@@ -20,6 +20,9 @@ namespace Effekseer.GUI.Dock
 			renderMode = new Component.Enum();
 			renderMode.Initialize(typeof(Data.OptionValues.RenderMode));
 			renderMode.SetBinding(Core.Option.RenderingMode);
+
+			NoPadding = true;
+			NoScrollBar = true;
 		}
 
 		protected override void UpdateInternal()
@@ -28,14 +31,14 @@ namespace Effekseer.GUI.Dock
 
 			IsHovered = false;
 
-			var windowSize = Manager.NativeManager.GetWindowSize();
+			var contentSize = Manager.NativeManager.GetContentRegionAvail();
 
 			// Menu
-			windowSize.X = System.Math.Max(1, windowSize.X - 20 * dpiScale);
-			windowSize.Y = System.Math.Max(1, windowSize.Y - 44 * dpiScale);
+			contentSize.X = System.Math.Max(1, contentSize.X);
+			contentSize.Y = System.Math.Max(1, contentSize.Y - 30 * dpiScale);
 
-			var p = Manager.Native.RenderView((int)windowSize.X, (int)windowSize.Y);
-			Manager.NativeManager.Image(p, (int)windowSize.X, (int)windowSize.Y);
+			var p = Manager.Native.RenderView((int)contentSize.X, (int)contentSize.Y);
+			Manager.NativeManager.Image(p, (int)contentSize.X, (int)contentSize.Y);
 
 			IsHovered = Manager.NativeManager.IsWindowHovered();
 
@@ -48,7 +51,7 @@ namespace Effekseer.GUI.Dock
 			Manager.NativeManager.Text("Draw : " + Manager.Native.GetAndResetDrawCall().ToString());
 
 			Manager.NativeManager.SameLine();
-
+			
 			// DrawCall
 			Manager.NativeManager.Text("Vertex : " + Manager.Native.GetAndResetVertexCount().ToString());
 
@@ -57,6 +60,7 @@ namespace Effekseer.GUI.Dock
 			// DrawCall
 			Manager.NativeManager.Text("Particle : " + Manager.Native.GetInstanceCount().ToString());
 
+			Manager.NativeManager.Spacing();
 		}
 	}
 }
