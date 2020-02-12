@@ -3,6 +3,19 @@
 
 namespace EffekseerRenderer
 {
+
+::Effekseer::Vector3D Renderer::Impl::GetLightDirection() const {return ToStruct(lightDirection_); }
+
+void Renderer::Impl::SetLightDirection(const ::Effekseer::Vector3D& direction) { lightDirection_ = direction; }
+
+const ::Effekseer::Color& Renderer::Impl::GetLightColor() const { return lightColor_; }
+
+void Renderer::Impl::SetLightColor(const ::Effekseer::Color& color) { lightColor_ = color; }
+
+const ::Effekseer::Color& Renderer::Impl::GetLightAmbientColor() const { return lightAmbient_; }
+
+void Renderer::Impl::SetLightAmbientColor(const ::Effekseer::Color& color) { lightAmbient_ = color; }
+
 void Renderer::Impl::CalculateCameraProjectionMatrix() { cameraProjMat_ = cameraMat_ * projectionMat_; }
 
 ::Effekseer::Matrix44 Renderer::Impl::GetProjectionMatrix() const { return ToStruct(projectionMat_); }

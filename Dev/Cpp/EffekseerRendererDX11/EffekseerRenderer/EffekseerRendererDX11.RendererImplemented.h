@@ -93,10 +93,6 @@ private:
 
 	EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>*	m_standardRenderer;
 
-	::Effekseer::Vec3f		m_lightDirection;
-	::Effekseer::Color		m_lightColor;
-	::Effekseer::Color		m_lightAmbient;
-
 	// 座標系
 	::Effekseer::CoordinateSystem			m_coordinateSystem;
 
@@ -174,36 +170,6 @@ public:
 	int32_t GetSquareMaxCount() const;
 
 	::EffekseerRenderer::RenderStateBase* GetRenderState();
-
-	/**
-		@brief	ライトの方向を取得する。
-	*/
-	::Effekseer::Vector3D GetLightDirection() const;
-
-	/**
-		@brief	ライトの方向を設定する。
-	*/
-	void SetLightDirection( const ::Effekseer::Vector3D& direction );
-
-	/**
-		@brief	ライトの色を取得する。
-	*/
-	const ::Effekseer::Color& GetLightColor() const;
-
-	/**
-		@brief	ライトの色を設定する。
-	*/
-	void SetLightColor( const ::Effekseer::Color& color );
-
-	/**
-		@brief	ライトの環境光の色を取得する。
-	*/
-	const ::Effekseer::Color& GetLightAmbientColor() const;
-
-	/**
-		@brief	ライトの環境光の色を設定する。
-	*/
-	void SetLightAmbientColor( const ::Effekseer::Color& color );
 
 	/**
 		@brief	スプライトレンダラーを生成する。

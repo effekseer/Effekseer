@@ -12,6 +12,18 @@ Renderer::~Renderer() { ES_SAFE_DELETE(impl); }
 
 Renderer::Impl* Renderer::GetImpl() { return impl; }
 
+::Effekseer::Vector3D Renderer::GetLightDirection() const { return impl->GetLightDirection(); }
+
+void Renderer::SetLightDirection(const ::Effekseer::Vector3D& direction) { impl->SetLightDirection(direction); }
+
+const ::Effekseer::Color& Renderer::GetLightColor() const { return impl->GetLightColor(); }
+
+void Renderer::SetLightColor(const ::Effekseer::Color& color) { impl->SetLightColor(color); }
+
+const ::Effekseer::Color& Renderer::GetLightAmbientColor() const { return impl->GetLightAmbientColor(); }
+
+void Renderer::SetLightAmbientColor(const ::Effekseer::Color& color) { impl->SetLightAmbientColor(color); }
+
 ::Effekseer::Matrix44 Renderer::GetProjectionMatrix() const { return impl->GetProjectionMatrix(); }
 
 void Renderer::SetProjectionMatrix(const ::Effekseer::Matrix44& mat) { impl->SetProjectionMatrix(mat); }
