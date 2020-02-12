@@ -797,6 +797,7 @@ namespace Effekseer.GUI
 			var size = Manager.NativeManager.GetSize();
 
 			var state = MainWindow.GetState();
+			if (state.Width <= 0 || state.Height <= 0) return;
 
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
