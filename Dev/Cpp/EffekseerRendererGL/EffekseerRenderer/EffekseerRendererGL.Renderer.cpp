@@ -333,15 +333,13 @@ uniform vec4 LightAmbient;
 
 void main()
 {
-	vec4 diffuse = vec4(1.0);
-	
 	vec3 texNormal = (TEX2D(NormalTexture, v_UV1.xy).xyz - 0.5) * 2.0;
 	mat3 normalMatrix = mat3(v_WorldT.xyz, v_WorldB.xyz, v_WorldN.xyz );
 	vec3 localNormal = normalize( normalMatrix * texNormal );
-	diffuse = vec4(max(0.0, dot(localNormal, LightDirection.xyz)));
+	float diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
 	
 	FRAGCOLOR = v_VColor * TEX2D(ColorTexture, v_UV1.xy);
-	FRAGCOLOR.xyz = FRAGCOLOR.xyz * (diffuse.xyz + LightAmbient.xyz);
+	FRAGCOLOR.xyz = FRAGCOLOR.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
 }
 
 

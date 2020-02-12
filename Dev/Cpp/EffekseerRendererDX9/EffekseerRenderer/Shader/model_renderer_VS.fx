@@ -47,6 +47,8 @@ VS_Output VS( const VS_Input Input )
 	localPosition = mul( matModel, localPosition );
 	Output.Pos = mul( mCameraProj, localPosition );
 
+	Output.Color = modelColor;
+
 	Output.UV.x = Input.UV.x * uv.z + uv.x;
 	Output.UV.y = Input.UV.y * uv.w + uv.y;
 
@@ -57,8 +59,6 @@ VS_Output VS( const VS_Input Input )
 	float4 localNormal = { 0.0, 0.0, 0.0, 1.0 };
 	localNormal.xyz = normalize( mul( lightMat, Input.Normal ) );
 
-#if ENABLE_NORMAL_TEXTURE
-	
 	float4 localBinormal = { 0.0, 0.0, 0.0, 1.0 };
 	localBinormal.xyz = normalize( mul( lightMat, Input.Binormal ) );
 
@@ -67,23 +67,6 @@ VS_Output VS( const VS_Input Input )
 	Output.Normal = localNormal.xyz;
 	Output.Binormal = localBinormal.xyz;
 	Output.Tangent = localTangent.xyz;
-
-#endif
-
-
-#if ENABLE_NORMAL_TEXTURE
-	float diffuse = 1.0;
-#else
-	float diffuse = max( dot( fLightDirection.xyz, localNormal.xyz ), 0.0 );
-#endif
-
-	Output.Color.r = diffuse;
-	Output.Color.g = diffuse;
-	Output.Color.b = diffuse;
-	Output.Color.a = 1.0;
-	Output.Color = Output.Color * fLightColor * modelColor;
-#else	
-	Output.Color = modelColor;
 #endif
 
 	return Output;

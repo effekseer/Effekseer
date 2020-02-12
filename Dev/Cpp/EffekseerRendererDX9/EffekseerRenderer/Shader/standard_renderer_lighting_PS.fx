@@ -23,15 +23,13 @@ sampler2D	g_normalSampler		: register( s1 );
 
 float4 PS( const PS_Input Input ) : COLOR
 {
-	float diffuse = 1.0;
-
 	half3 texNormal = (tex2D(g_normalSampler, Input.UV1).xyz - 0.5) * 2.0;
 	half3 localNormal = (half3)normalize(mul(texNormal, half3x3((half3)Input.WorldT, (half3)Input.WorldB, (half3)Input.WorldN)));
 
-	diffuse = max(dot(fLightDirection.xyz, localNormal.xyz), 0.0);
+	float diffuse = max(dot(fLightDirection.xyz, localNormal.xyz), 0.0);
 
 	float4 Output = tex2D(g_colorSampler, Input.UV1) * Input.VColor;
-	Output.xyz = Output.xyz * (float3(diffuse, diffuse, diffuse) + fLightAmbient);
+	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient);
 
 	if (Output.a == 0.0)
 		discard;

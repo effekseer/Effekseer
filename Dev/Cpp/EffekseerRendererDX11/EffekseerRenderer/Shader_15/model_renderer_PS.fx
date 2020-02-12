@@ -28,7 +28,7 @@ struct PS_Input
 
 float4 PS( const PS_Input Input ) : SV_Target
 {
-	float diffuse = 1.0;
+	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV) * Input.Color;
 
 #if ENABLE_LIGHTING && ENABLE_NORMAL_TEXTURE
 	half3 texNormal = (g_normalTexture.Sample(g_normalSampler, Input.UV).xyz  - 0.5) * 2.0;
@@ -39,19 +39,8 @@ float4 PS( const PS_Input Input ) : SV_Target
 
 	//return float4( localNormal , 1.0 );
 
-	diffuse = max( dot( fLightDirection.xyz, localNormal.xyz ), 0.0 );
-#endif
-
-#ifdef ENABLE_COLOR_TEXTURE
-	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV) * Input.Color;
-	Output.xyz = Output.xyz * diffuse;
-#else
-	float4 Output = Input.Color;
-	Output.xyz = Output.xyz * diffuse;
-#endif
-
-#if ENABLE_LIGHTING
-	Output.xyz = Output.xyz + fLightAmbient.xyz;
+	float diffuse = max( dot( fLightDirection.xyz, localNormal.xyz ), 0.0 );
+	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient.xyz);
 #endif
 
 	if( Output.a == 0.0 ) discard;
