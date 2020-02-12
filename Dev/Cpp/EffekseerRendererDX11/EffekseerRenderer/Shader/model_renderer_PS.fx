@@ -1,8 +1,23 @@
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+
+cbuffer PS_ConstanBuffer : register(b0)
+{
+    float4	fLightDirection;
+    float4	fLightColor;
+    float4	fLightAmbient;
+
+    float4  fFlipbookParameter; // x:enable, y:interpolationType
+};
+
+#else // else __EFFEKSEER_BUILD_VERSION16__
+
 #ifdef ENABLE_LIGHTING
 float4	fLightDirection		: register( c0 );
 float4	fLightColor		: register( c1 );
 float4	fLightAmbient		: register( c2 );
 #endif
+
+#endif // end __EFFEKSEER_BUILD_VERSION16__
 
 #ifdef ENABLE_COLOR_TEXTURE
 Texture2D	g_colorTexture		: register( t0 );
@@ -31,15 +46,21 @@ struct PS_Input
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV  : TEXCOORD4;
+    
+    float FlipbookRate  : TEXCOORD5;
+    float2 FlipbookNextIndexUV : TEXCOORD6;
 #endif
     
-#else
+#else // else ENABLE_NORMAL_TEXTURE
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV  : TEXCOORD1;
+    
+    float FlipbookRate  : TEXCOORD2;
+    float2 FlipbookNextIndexUV : TEXCOORD3;
 #endif
     
-#endif
+#endif // end ENABLE_NORMAL_TEXTURE
 	float4 Color	: COLOR;
 };
 
@@ -61,6 +82,21 @@ float4 PS( const PS_Input Input ) : SV_Target
 
 #ifdef ENABLE_COLOR_TEXTURE
 	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV) * Input.Color;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    if(fFlipbookParameter.x > 0)
+    {
+        float4 NextPixelColor = g_colorTexture.Sample(g_colorSampler, Input.FlipbookNextIndexUV) * Input.Color;
+        
+        if(fFlipbookParameter.y == 1)
+        {
+            Output = lerp(Output, NextPixelColor, Input.FlipbookRate);
+        }
+    }
+    
+    Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;
+#endif
+    
 	Output.xyz = Output.xyz * diffuse;
 #else
 	float4 Output = Input.Color;
@@ -69,10 +105,6 @@ float4 PS( const PS_Input Input ) : SV_Target
 
 #if ENABLE_LIGHTING
 	Output.xyz = Output.xyz + fLightAmbient.xyz;
-#endif
-    
-#ifdef __EFFEKSEER_BUILD_VERSION16__
-    Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;
 #endif
 
 	if( Output.a == 0.0 ) discard;

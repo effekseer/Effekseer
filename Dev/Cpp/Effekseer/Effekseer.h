@@ -631,6 +631,12 @@ struct NodeRendererBasicParameter
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	TextureFilterType TextureFilter3 = TextureFilterType::Nearest;
 	TextureWrapType TextureWrap3 = TextureWrapType::Repeat;
+
+	bool EnableInterpolation = false;
+	int32_t UVLoopType = 0;
+	int32_t InterpolationType = 0;
+	int32_t FlipbookDivideX = 1;
+	int32_t FlipbookDivideY = 1;
 #endif
 };
 

@@ -433,7 +433,8 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 			{ "NORMAL", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 4, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-			{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // AlphaTextureUV
+			{ "TEXCOORD", 2, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0 },	   // FlipbookIndexAndNextRate
 #endif
 	};
 
@@ -444,7 +445,8 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{ "NORMAL", 1, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 2, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 9, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // AlphaTextureUV
+		{ "TEXCOORD", 2, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 14, D3D11_INPUT_PER_VERTEX_DATA, 0 },	// FlipbookIndexAndNextRate
 #endif
 	};
 
@@ -456,7 +458,8 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 6, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(float) * 10, D3D11_INPUT_PER_VERTEX_DATA, 0}, // AlphaTextureUVs
+		{"TEXCOORD", 3, DXGI_FORMAT_R32_FLOAT, 0, sizeof(float) * 12, D3D11_INPUT_PER_VERTEX_DATA, 0},	  // FlipbookIndexAndNextRate
 #endif
 
 	};
@@ -485,6 +488,19 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 	// 参照カウントの調整
 	Release();
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
+	m_shader->SetVertexRegisterCount(8 + 1 + 1);
+
+	m_shader->SetPixelConstantBufferSize(sizeof(float) * 4 * 1);
+	m_shader->SetPixelRegisterCount(1);
+
+	m_shader_distortion->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
+	m_shader_distortion->SetVertexRegisterCount(8 + 1 + 1);
+
+	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4 + sizeof(float) * 4);
+	m_shader_distortion->SetPixelRegisterCount(1 + 1 + 1);
+#else
 	m_shader->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
 	m_shader->SetVertexRegisterCount(8 + 1);
 
@@ -493,6 +509,7 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 
 	m_shader_distortion->SetPixelConstantBufferSize(sizeof(float) * 4 + sizeof(float) * 4);
 	m_shader_distortion->SetPixelRegisterCount(1 + 1);
+#endif
 
 	m_shader_lighting = Shader::Create(this,
 									   Standard_Lighting_VS::g_VS,
@@ -505,12 +522,20 @@ bool RendererImplemented::Initialize(ID3D11Device* device,
 	if (m_shader_lighting == NULL)
 		return false;
 
-	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4);
-	m_shader_lighting->SetVertexRegisterCount(8 + 1);
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
+	m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);
+
+	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 4);
+	m_shader_lighting->SetPixelRegisterCount(4);
+#else
+	m_shader_lighting->SetVertexConstantBufferSize(sizeof(Effekseer::Matrix44) * 2 + sizeof(float) * 4 + sizeof(float) * 4);
+	m_shader_lighting->SetVertexRegisterCount(8 + 1 + 1);
 
 	m_shader_lighting->SetPixelConstantBufferSize(sizeof(float) * 4 * 3);
 	m_shader_lighting->SetPixelRegisterCount(12);
-	
+#endif
+
 	Release();
 
 	m_standardRenderer = new EffekseerRenderer::StandardRenderer<RendererImplemented, Shader, Vertex, VertexDistortion>(

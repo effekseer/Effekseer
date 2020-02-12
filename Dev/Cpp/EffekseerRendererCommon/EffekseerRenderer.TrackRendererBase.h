@@ -464,6 +464,12 @@ namespace EffekseerRenderer
 					v[2].Pos.Z = 0.0f;
 					v[2].SetColor(rightColor);
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+					v[0].FlipbookIndexAndNextRate = param.FlipbookIndexAndNextRate;
+					v[1].FlipbookIndexAndNextRate = param.FlipbookIndexAndNextRate;
+					v[2].FlipbookIndexAndNextRate = param.FlipbookIndexAndNextRate;
+#endif
+
 					if (parameter.SplineDivision > 1)
 					{
 						v[1].Pos = ToStruct(spline.GetValue(param.InstanceIndex + sploop / (float)parameter.SplineDivision));
@@ -785,6 +791,12 @@ namespace EffekseerRenderer
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
 			state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
+
+			state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
+			state.UVLoopType = param.BasicParameterPtr->UVLoopType;
+			state.InterpolationType = param.BasicParameterPtr->InterpolationType;
+			state.FlipbookDivideX = param.BasicParameterPtr->FlipbookDivideX;
+			state.FlipbookDivideY = param.BasicParameterPtr->FlipbookDivideY;
 #endif
 
 			state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;

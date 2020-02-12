@@ -257,6 +257,8 @@ void EffectNodeSprite::Rendering(const Instance& instance, const Instance* next_
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		instanceParameter.UV = instance.GetUV(0);
 		instanceParameter.AlphaUV = instance.GetUV(1);
+
+		instanceParameter.FlipbookIndexAndNextRate = instance.m_flipbookIndexAndNextRate;
 #else
 		instanceParameter.UV = instance.GetUV();
 #endif

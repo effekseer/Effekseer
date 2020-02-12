@@ -28,13 +28,32 @@ typedef ::Effekseer::ModelRenderer::InstanceParameter efkModelInstanceParam;
 typedef ::Effekseer::Vec3f efkVector3D;
 
 template<int MODEL_COUNT>
-struct ModelRendererVertexConstantBuffer
+ struct ModelRendererVertexConstantBuffer
 {
 	Effekseer::Matrix44		CameraMatrix;
 	Effekseer::Matrix44		ModelMatrix[MODEL_COUNT];
 	float	ModelUV[MODEL_COUNT][4];
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	float	ModelAlphaUV[MODEL_COUNT][4];
+
+	struct
+	{
+		union
+		{
+			float Buffer[4];
+
+			struct
+			{
+				float EnableInterpolation;
+				float LoopType;
+				float DivideX;
+				float DivideY;
+			};
+		};
+	} ModelFlipbookParameter;
+	
+	float	ModelFlipbookIndexAndNextRate[MODEL_COUNT][4];
+
 #endif
 	float	ModelColor[MODEL_COUNT][4];
 
@@ -49,6 +68,22 @@ struct ModelRendererPixelConstantBuffer
 	float	LightDirection[4];
 	float	LightColor[4];
 	float	LightAmbientColor[4];
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	struct
+	{
+		union
+		{
+			float Buffer[4];
+
+			struct
+			{
+				float EnableInterpolation;
+				float InterpolationType;
+			};
+		};
+	} ModelFlipbookParameter;
+#endif
 };
 
 class ModelRendererBase
@@ -68,6 +103,7 @@ protected:
 	std::vector<Effekseer::RectF> uvSorted_;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	std::vector<Effekseer::RectF> alphaUVSorted_;
+	std::vector<float> flipbookIndexAndNextRateSorted_;
 #endif
 	std::vector<Effekseer::Color> colorsSorted_;
 	std::vector<int32_t> timesSorted_;
@@ -78,6 +114,7 @@ protected:
 	std::vector<Effekseer::RectF> m_uv;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	std::vector<Effekseer::RectF> m_alphaUV;
+	std::vector<float> m_flipbookIndexAndNextRate;
 #endif
 	std::vector<Effekseer::Color> m_colors;
 	std::vector<int32_t> m_times;
@@ -141,6 +178,7 @@ protected:
 			uvSorted_.resize(m_matrixes.size());
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			alphaUVSorted_.resize(m_matrixes.size());
+			flipbookIndexAndNextRateSorted_.resize(m_matrixes.size());
 #endif
 			colorsSorted_.resize(m_matrixes.size());
 			timesSorted_.resize(m_matrixes.size());
@@ -161,6 +199,7 @@ protected:
 				uvSorted_[keyValues_[i].Value] = m_uv[i];
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 				alphaUVSorted_[keyValues_[i].Value] = m_alphaUV[i];
+				flipbookIndexAndNextRateSorted_[keyValues_[i].Value] = m_flipbookIndexAndNextRate[i];
 #endif
 				colorsSorted_[keyValues_[i].Value] = m_colors[i];
 				timesSorted_[keyValues_[i].Value] = m_times[i];
@@ -186,6 +225,7 @@ protected:
 			m_uv = uvSorted_;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			m_alphaUV = alphaUVSorted_;
+			m_flipbookIndexAndNextRate = flipbookIndexAndNextRateSorted_;
 #endif
 			m_colors = colorsSorted_;
 			m_times = timesSorted_;
@@ -207,6 +247,7 @@ public:
 		m_uv.clear();
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		m_alphaUV.clear();
+		m_flipbookIndexAndNextRate.clear();
 #endif
 		m_colors.clear();
 		m_times.clear();
@@ -217,6 +258,7 @@ public:
 		uvSorted_.clear();
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		alphaUVSorted_.clear();
+		flipbookIndexAndNextRateSorted_.clear();
 #endif
 		colorsSorted_.clear();
 		timesSorted_.clear();
@@ -277,6 +319,7 @@ public:
 		m_uv.push_back(instanceParameter.UV);
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		m_alphaUV.push_back(instanceParameter.AlphaUV);
+		m_flipbookIndexAndNextRate.push_back(instanceParameter.FlipbookIndexAndNextRate);
 #endif
 		m_colors.push_back(instanceParameter.AllColor);
 		m_times.push_back(instanceParameter.Time);
@@ -790,6 +833,11 @@ public:
 
 				pcb[4 * 1 + 0] = uvInversedBack[0];
 				pcb[4 * 1 + 1] = uvInversedBack[1];
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				pcb[4 * 2 + 0] = param.BasicParameterPtr->EnableInterpolation;
+				pcb[4 * 2 + 1] = param.BasicParameterPtr->InterpolationType;
+#endif
 			}
 			else
 			{
@@ -813,10 +861,22 @@ public:
 					ColorToFloat4(renderer->GetLightAmbientColor(), vcb->LightAmbientColor);
 					ColorToFloat4(renderer->GetLightAmbientColor(), pcb->LightAmbientColor);
 				}
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				pcb->ModelFlipbookParameter.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
+				pcb->ModelFlipbookParameter.InterpolationType = param.BasicParameterPtr->InterpolationType;
+#endif
 			}
 		}
 
 		vcb->CameraMatrix = renderer->GetCameraProjectionMatrix();
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		vcb->ModelFlipbookParameter.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
+		vcb->ModelFlipbookParameter.LoopType = param.BasicParameterPtr->UVLoopType;
+		vcb->ModelFlipbookParameter.DivideX =  param.BasicParameterPtr->FlipbookDivideX;
+		vcb->ModelFlipbookParameter.DivideY =  param.BasicParameterPtr->FlipbookDivideY;
+#endif
 
 		// Check time
 		auto stTime0 = m_times[0] % model->GetFrameCount();
@@ -868,6 +928,8 @@ public:
 					vcb->ModelAlphaUV[num][1] = m_alphaUV[loop + num].Y;
 					vcb->ModelAlphaUV[num][2] = m_alphaUV[loop + num].Width;
 					vcb->ModelAlphaUV[num][3] = m_alphaUV[loop + num].Height;
+
+					vcb->ModelFlipbookIndexAndNextRate[num][0] = m_flipbookIndexAndNextRate[loop + num];
 #endif
 
 					ColorToFloat4(m_colors[loop+num],vcb->ModelColor[num]);
@@ -919,6 +981,8 @@ public:
 				vcb->ModelAlphaUV[0][1] = m_alphaUV[loop].Y;
 				vcb->ModelAlphaUV[0][2] = m_alphaUV[loop].Width;
 				vcb->ModelAlphaUV[0][3] = m_alphaUV[loop].Height;
+
+				vcb->ModelFlipbookIndexAndNextRate[0][0] = m_flipbookIndexAndNextRate[loop];
 #endif
 
 				// DepthParameters

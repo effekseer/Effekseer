@@ -124,6 +124,12 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
 		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
+
+		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
+		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
+		state.InterpolationType = param.BasicParameterPtr->InterpolationType;
+		state.FlipbookDivideX = param.BasicParameterPtr->FlipbookDivideX;
+		state.FlipbookDivideY = param.BasicParameterPtr->FlipbookDivideY;
 #endif
 
 		state.Distortion = param.BasicParameterPtr->MaterialType == Effekseer::RendererMaterialType::BackDistortion;
@@ -405,6 +411,15 @@ protected:
 
 			v[7].AlphaUV[0] = alphaUVtexNext;
 			v[7].AlphaUV[1] = alphaUVv3;
+
+			v[0].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
+			v[1].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
+			v[2].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
+			v[3].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
+			v[4].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
+			v[5].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
+			v[6].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
+			v[7].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
 #endif
 
 			// distortion
