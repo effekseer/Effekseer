@@ -767,6 +767,8 @@ bool RendererImplemented::BeginRendering()
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
 	
+	m_renderState->GetActiveState().TextureIDs.fill(0);
+
 	// reset renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
@@ -1310,7 +1312,11 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 {
 	GLCheckError();
 
-	currentTextures_.clear();
+	for (int i = count; i < currentTextures_.size(); i++)
+	{
+		m_renderState->GetActiveState().TextureIDs[i] = 0;
+	}
+
 	currentTextures_.resize(count);
 
 	for (int32_t i = 0; i < count; i++)
@@ -1326,12 +1332,14 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		
 		if (textures[i] != nullptr)
 		{
+			m_renderState->GetActiveState().TextureIDs[i] = textures[i]->UserID;
 			currentTextures_[i] = *textures[i];
 		}
 		else
 		{
 			currentTextures_[i].UserID = 0;
 			currentTextures_[i].UserPtr = nullptr;
+			m_renderState->GetActiveState().TextureIDs[i] = 0;
 		}
 		
 		if (shader->GetTextureSlotEnable(i))

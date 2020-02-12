@@ -165,7 +165,7 @@ void RenderState::Update( bool forced )
 			if (m_renderer->GetCurrentTextures()[i].UserID == 0)
 				continue;
 
-			if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced)
+			if (m_active.TextureFilterTypes[i] != m_next.TextureFilterTypes[i] || forced || m_active.TextureIDs[i] != m_next.TextureIDs[i])
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 
@@ -195,7 +195,7 @@ void RenderState::Update( bool forced )
 				GLExt::glBindSampler(i, m_samplers[i]);
 			}
 
-			if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced)
+			if (m_active.TextureWrapTypes[i] != m_next.TextureWrapTypes[i] || forced || m_active.TextureIDs[i] != m_next.TextureIDs[i])
 			{
 				GLExt::glActiveTexture(GL_TEXTURE0 + i);
 

@@ -43,7 +43,17 @@ EffekseerRenderer::Renderer* EffectPlatformGL::CreateRenderer()
 
 EffectPlatformGL::~EffectPlatformGL() {}
 
-void EffectPlatformGL::InitializeDevice(const EffectPlatformInitializingParameter& param) {}
+void EffectPlatformGL::InitializeDevice(const EffectPlatformInitializingParameter& param)
+{
+	// flip checker pattern
+	for (size_t y = 0; y < 720 / 2; y++)
+	{
+		for (size_t x = 0; x < 1280; x++)
+		{
+			std::swap(checkeredPattern_[x + y * 1280], checkeredPattern_[x + (720 - 1 - y) * 1280]);
+		}
+	}
+}
 
 void EffectPlatformGL::BeginRendering()
 {

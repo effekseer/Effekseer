@@ -28,6 +28,7 @@ void RenderStateBase::State::Reset()
 	CullingType = ::Effekseer::CullingType::Double;
 	TextureFilterTypes.fill(::Effekseer::TextureFilterType::Nearest);
 	TextureWrapTypes.fill(::Effekseer::TextureWrapType::Clamp);
+	TextureIDs.fill(0);
 }
 
 //-----------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ void RenderStateBase::State::CopyTo( State& state )
 	state.CullingType = CullingType;
 	state.TextureFilterTypes = TextureFilterTypes;
 	state.TextureWrapTypes = TextureWrapTypes;
+	state.TextureIDs = TextureIDs;
 }
 
 //-----------------------------------------------------------------------------------
