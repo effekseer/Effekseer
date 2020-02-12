@@ -226,9 +226,9 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 				vertexes[index_offset + v].Normal = Vertex::CreatePacked(normal);
 
 				vertexes[index_offset + v].UV1.X = attrib.texcoords[2 * idx.texcoord_index + 0];
-				vertexes[index_offset + v].UV1.Y = attrib.texcoords[2 * idx.texcoord_index + 1];
+				vertexes[index_offset + v].UV1.Y = 1.0f - attrib.texcoords[2 * idx.texcoord_index + 1];
 				vertexes[index_offset + v].UV2.X = attrib.texcoords[2 * idx.texcoord_index + 0];
-				vertexes[index_offset + v].UV2.Y = attrib.texcoords[2 * idx.texcoord_index + 1];
+				vertexes[index_offset + v].UV2.Y = 1.0f - attrib.texcoords[2 * idx.texcoord_index + 1];
 				vertexes[index_offset + v].Color[0] = attrib.colors[3 * idx.vertex_index + 0] * 255;
 				vertexes[index_offset + v].Color[1] = attrib.colors[3 * idx.vertex_index + 1] * 255;
 				vertexes[index_offset + v].Color[2] = attrib.colors[3 * idx.vertex_index + 2] * 255;
@@ -377,7 +377,7 @@ static const char g_header_vs_gl3_src[] = ""
 										  "#define IN in\n"
 										  "#define TEX2D textureLod\n"
 										  "#define OUT out\n"
-										  "uniform vec4 customData1;\n"  // HACK
+										  "uniform vec4 customData1;\n"	 // HACK
 										  "uniform vec4 customData2;\n"; // HACK
 
 static const char g_header_fs_gl3_src[] = ""
@@ -387,7 +387,7 @@ static const char g_header_fs_gl3_src[] = ""
 										  "#define IN in\n"
 										  "#define TEX2D texture\n"
 										  "layout (location = 0) out vec4 FRAGCOLOR;\n"
-										  "uniform vec4 customData1;\n"  // HACK
+										  "uniform vec4 customData1;\n"	 // HACK
 										  "uniform vec4 customData2;\n"; // HACK
 
 bool Preview::CompileShader(std::string& vs,
@@ -610,14 +610,14 @@ void Preview::Render()
 	graphics_->GetManager()->BeginScene(sceneParam);
 	graphics_->GetManager()->BeginRendering();
 
-	context->Begin();
-
 	ar::Color color;
 	color.R = 0;
 	color.G = 0;
 	color.B = 0;
 	color.A = 0;
 	graphics_->GetManager()->Clear(true, true, color);
+
+	context->Begin();
 
 	if (shader != nullptr)
 	{
