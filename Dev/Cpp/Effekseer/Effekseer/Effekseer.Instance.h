@@ -251,6 +251,7 @@ public:
 	// 生成されてからの時間
 	float		m_LivingTime;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
 	//! The time offset for UV animation
 	int32_t		uvTimeOffsets[ParameterRendererCommon::UVParameterNum];
 
@@ -259,6 +260,16 @@ public:
 
 	// Scroll speed for UV
 	Vec2f		uvScrollSpeeds[ParameterRendererCommon::UVParameterNum];
+#else
+	//! The time offset for UV animation
+	int32_t uvTimeOffset = 0;
+
+	// Scroll, FCurve area for UV
+	RectF		uvAreaOffset;
+
+	// Scroll speed for UV
+	Vec2f	uvScrollSpeed;
+#endif
 
 	// The number of generated chiledren. (fixed size)
 	int32_t		m_fixedGeneratedChildrenCount[ChildrenMax];
