@@ -12,8 +12,12 @@ Config::~Config() {}
 
 bool Config::Save(const char* path)
 {
-
 	picojson::object root;
+
+	if (WindowWidth <= 0 || WindowHeight <= 0)
+	{
+		return false;
+	}
 
 	root.insert(std::make_pair("Project", picojson::value("EffekseerMaterialConfig")));
 	root.insert(std::make_pair("WindowWidth", picojson::value((double)WindowWidth)));
@@ -65,7 +69,7 @@ bool Config::Load(const char* path)
 
 	if (root.contains("WindowIsMaximumMode"))
 	{
-		WindowIsMaximumMode = root.get("WindowIsMaximumMode").get<bool>();	
+		WindowIsMaximumMode = root.get("WindowIsMaximumMode").get<bool>();
 	}
 
 	Language = static_cast<Effekseer::SystemLanguage>((int)root.get("Language").get<double>());

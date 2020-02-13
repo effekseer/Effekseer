@@ -143,12 +143,6 @@ RendererImplemented::RendererImplemented( int32_t squareMaxCount )
 
 	SetRestorationOfStatesFlag(m_restorationOfStates);
 	
-	::Effekseer::Vector3D direction( 1.0f, 1.0f, 1.0f );
-	SetLightDirection( direction );
-	::Effekseer::Color lightColor( 255, 255, 255, 255 );
-	SetLightColor( lightColor );
-	::Effekseer::Color lightAmbient( 0, 0, 0, 0 );
-	SetLightAmbientColor( lightAmbient );
 }
 
 //----------------------------------------------------------------------------------
@@ -620,54 +614,6 @@ int32_t RendererImplemented::GetSquareMaxCount() const
 ::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState()
 {
 	return m_renderState;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-::Effekseer::Vector3D RendererImplemented::GetLightDirection() const
-{
-	return m_lightDirection;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetLightDirection( const ::Effekseer::Vector3D& direction )
-{
-	m_lightDirection = direction;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-const ::Effekseer::Color& RendererImplemented::GetLightColor() const
-{
-	return m_lightColor;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetLightColor( const ::Effekseer::Color& color )
-{
-	m_lightColor = color;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-const ::Effekseer::Color& RendererImplemented::GetLightAmbientColor() const
-{
-	return m_lightAmbient;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetLightAmbientColor( const ::Effekseer::Color& color )
-{
-	m_lightAmbient = color;
 }
 
 //----------------------------------------------------------------------------------

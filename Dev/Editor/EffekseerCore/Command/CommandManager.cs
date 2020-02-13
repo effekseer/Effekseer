@@ -180,7 +180,7 @@ namespace Effekseer.Command
 		/// ロールバック
 		/// </summary>
 		/// <returns></returns>
-		public static bool Undo()
+		public static bool Undo(bool removeCommand = false)
 		{
 			if (cmd_collections_count > 0)
 			{
@@ -198,6 +198,11 @@ namespace Effekseer.Command
 					if (Changed != null)
 					{
 						Changed(null, null);
+					}
+
+					if (removeCommand)
+					{
+						cmds.RemoveAt(cmds.Count - 1);
 					}
 
 					return true;

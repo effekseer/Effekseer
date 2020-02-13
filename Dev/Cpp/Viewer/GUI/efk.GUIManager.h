@@ -421,6 +421,7 @@ namespace efk
 
 		void HiddenSeparator(float thicknessDraw, float thicknessItem);
 
+		void Spacing();
 		void SameLine();
 
 		void BeginGroup();

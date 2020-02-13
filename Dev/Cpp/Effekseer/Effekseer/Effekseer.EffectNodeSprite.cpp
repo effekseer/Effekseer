@@ -82,7 +82,11 @@ namespace Effekseer
 	{
 		if (m_effect->GetVersion() >= 8)
 		{
-			const Vector2D* fixed = (const Vector2D*)pos;
+			std::array<Vector2D, 4> fixed;
+			memcpy(fixed.data(), pos, sizeof(Vector2D) * 4);
+
+			// This code causes bugs on asmjs
+			// const Vector2D* fixed = (const Vector2D*)pos;
 			SpritePosition.fixed.ll = fixed[0];
 			SpritePosition.fixed.lr = fixed[1];
 			SpritePosition.fixed.ul = fixed[2];
@@ -101,7 +105,11 @@ namespace Effekseer
 	}
 	else if (SpritePosition.type == SpritePosition.Fixed)
 	{
-		const Vector2D* fixed = (const Vector2D*)pos;
+		std::array<Vector2D, 4> fixed;
+		memcpy(fixed.data(), pos, sizeof(Vector2D) * 4);
+		
+		// This code causes bugs on asmjs
+		// const Vector2D* fixed = (const Vector2D*)pos;
 		SpritePosition.fixed.ll = fixed[0];
 		SpritePosition.fixed.lr = fixed[1];
 		SpritePosition.fixed.ul = fixed[2];

@@ -296,6 +296,13 @@ namespace Effekseer.GUI
 						var node = selected.AddChild();
 						Core.Paste(node, data);
 						Command.CommandManager.EndCollection();
+
+
+						if (Core.Root.GetDeepestLayerNumberInChildren() > Constant.NodeLayerLimit)
+						{
+							Command.CommandManager.Undo(true);
+							ErrorUtils.ShowErrorByNodeLayerLimit();
+						}
 					}
 				}
 
@@ -332,7 +339,14 @@ namespace Effekseer.GUI
 
 			if (selected != null)
 			{
-				selected.AddChild();
+				if (selected.GetLayerNumber() < Constant.NodeLayerLimit)
+				{
+					selected.AddChild();
+				}
+				else
+				{
+					ErrorUtils.ShowErrorByNodeLayerLimit();
+				}
 			}
 
 			return true;
@@ -346,7 +360,14 @@ namespace Effekseer.GUI
 
 			if (selected != null && selected.Parent != null)
 			{
-				selected.InsertParent();
+				if (Core.Root.GetDeepestLayerNumberInChildren() < Constant.NodeLayerLimit)
+				{
+					selected.InsertParent();
+				}
+				else
+				{
+					ErrorUtils.ShowErrorByNodeLayerLimit();
+				}
 			}
 
 			return true;

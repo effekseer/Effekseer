@@ -41,8 +41,8 @@ VS_OUTPUT main(VS_INPUT input){
 )";
 
 static auto code_dx_ps = R"(
-Texture2D txt : register(t8);
-SamplerState smp : register(s8);
+Texture2D txt : register(t0);
+SamplerState smp : register(s0);
 
 struct PS_INPUT
 {
@@ -59,7 +59,53 @@ float4 main(PS_INPUT input) : SV_TARGET
 }
 )";
 
-void EffectPlatformDX12::CreateCheckedTexture() {}
+class DistortingCallbackDX12 : public EffekseerRenderer::DistortingCallback
+{
+	EffectPlatformDX12* platform_ = nullptr;
+	::EffekseerRenderer::Renderer* renderer_ = nullptr;
+	Effekseer::TextureData* textureData_ = nullptr;
+
+public:
+	DistortingCallbackDX12(EffectPlatformDX12* platform, ::EffekseerRenderer::Renderer* renderer) : platform_(platform), renderer_(renderer) {}
+
+	virtual ~DistortingCallbackDX12() { 
+	
+		if (textureData_ != nullptr)
+		{
+			EffekseerRendererDX12::DeleteTextureData(renderer_, textureData_);
+		}
+	}
+
+	
+	virtual bool OnDistorting() override { 
+	
+		if (textureData_ == nullptr)
+		{
+			auto tex = (LLGI::TextureDX12*)(platform_->GetCheckedTexture());
+			textureData_ = EffekseerRendererDX12::CreateTextureData(renderer_, tex->Get());
+		}
+
+		renderer_->SetBackgroundTexture(textureData_);
+
+		return true;
+	}
+};
+
+void EffectPlatformDX12::CreateCheckedTexture()
+{
+	auto g = static_cast<LLGI::GraphicsDX12*>(graphics_);
+
+	LLGI::TextureInitializationParameter param;
+	param.Size.X = 1280;
+	param.Size.Y = 720;
+	checkTexture_ = g->CreateTexture(param);
+
+	auto b = (uint8_t*)checkTexture_->Lock();
+
+	memcpy(b, checkeredPattern_.data(), param.Size.X * param.Size.Y * 4);
+
+	checkTexture_->Unlock();
+}
 
 EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
 {
@@ -70,6 +116,8 @@ EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
 
 	auto renderer =
 		EffekseerRendererDX12::Create(g->GetDevice(), g->GetCommandQueue(), g->GetSwapBufferCount(), &format, 1, true, false, 10000);
+
+	renderer->SetDistortingCallback(new DistortingCallbackDX12(this, renderer));
 
 	sfMemoryPoolEfk_ = EffekseerRendererDX12::CreateSingleFrameMemoryPool(renderer);
 	commandListEfk_ = EffekseerRendererDX12::CreateCommandList(renderer, sfMemoryPoolEfk_);
@@ -156,7 +204,8 @@ EffekseerRenderer::Renderer* EffectPlatformDX12::CreateRenderer()
 		pip_->VertexLayoutNames[1] = "UV";
 		pip_->VertexLayoutNames[2] = "COLOR";
 		pip_->VertexLayoutCount = 3;
-
+		pip_->IsDepthTestEnabled = false;
+		pip_->IsDepthWriteEnabled = false;
 		pip_->Culling = LLGI::CullingMode::DoubleSide;
 		pip_->SetShader(LLGI::ShaderStageType::Vertex, shader_vs_);
 		pip_->SetShader(LLGI::ShaderStageType::Pixel, shader_ps_);
@@ -185,6 +234,7 @@ void EffectPlatformDX12::DestroyDevice()
 	ES_SAFE_RELEASE(ib_);
 	ES_SAFE_RELEASE(rppip_);
 	ES_SAFE_RELEASE(pip_);
+	ES_SAFE_RELEASE(checkTexture_);
 }
 
 void EffectPlatformDX12::BeginRendering()
@@ -204,6 +254,14 @@ void EffectPlatformDX12::BeginRendering()
 
 	commandList_->Begin();
 	commandList_->BeginRenderPass(renderPass_);
+
+	// check
+	commandList_->SetVertexBuffer(vb_, sizeof(SimpleVertex), 0);
+	commandList_->SetIndexBuffer(ib_);
+	commandList_->SetPipelineState(pip_);
+	commandList_->SetTexture(
+		checkTexture_, LLGI::TextureWrapMode::Repeat, LLGI::TextureMinMagFilter::Nearest, 0, LLGI::ShaderStageType::Pixel);
+	commandList_->Draw(2);
 
 	EffekseerRendererDX12::BeginCommandList(commandListEfk_, cl->GetCommandList());
 	GetRenderer()->SetCommandList(commandListEfk_);
@@ -228,3 +286,5 @@ void EffectPlatformDX12::EndRendering()
 
 	commandList_->End();
 }
+
+LLGI::Texture* EffectPlatformDX12::GetCheckedTexture() const { return checkTexture_; }

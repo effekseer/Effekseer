@@ -308,7 +308,38 @@ namespace Effekseer.Data
 		}
 
 		/// <summary>
-		/// 子ノード群
+		/// Get the layer number in the hierarchy
+		/// </summary>
+		/// <returns>the layer number</returns>
+		public int GetLayerNumber()
+		{
+			if (Parent != null)
+			{
+				return 1 + Parent.GetLayerNumber();
+			}
+			else
+			{
+				return 1;
+			}
+		}
+
+		/// <summary>
+		/// Get the number of the deepest layer in chidren 
+		/// </summary>
+		/// <returns></returns>
+		public int GetDeepestLayerNumberInChildren()
+		{
+			int maxGen = 0;
+			foreach (var child in children)
+			{
+				int gen = child.GetDeepestLayerNumberInChildren();
+				if (gen > maxGen) maxGen = gen;
+			}
+			return maxGen + 1;
+		}
+
+		/// <summary>
+		/// Children
 		/// </summary>
 		public class ChildrenCollection
 		{

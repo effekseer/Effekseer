@@ -464,6 +464,12 @@ namespace Effekseer.GUI
 
 		static bool isFirstUpdate = true;
 
+		protected static int LEFT_SHIFT = 340;
+		protected static int RIGHT_SHIFT = 344;
+
+		protected static int LEFT_CONTROL = 341;
+		protected static int RIGHT_CONTROL = 345;
+
 		public static void Update()
 		{
 			if (isFontSizeDirtied)
@@ -510,25 +516,29 @@ namespace Effekseer.GUI
 
 			if((effectViewer == null && !NativeManager.IsAnyWindowHovered()) || (effectViewer != null && effectViewer.IsHovered))
 			{
-				if (NativeManager.GetMouseButton(2) > 0)
+				if (NativeManager.GetMouseButton(2) > 0 || (NativeManager.GetMouseButton(1) > 0 && (Manager.NativeManager.IsKeyDown(LEFT_SHIFT) || Manager.NativeManager.IsKeyDown(RIGHT_SHIFT))))
 				{
 					var dx = mousePos.X - mousePos_pre.X;
 					var dy = mousePos.Y - mousePos_pre.Y;
 
 					Viewer.Slide(dx / 30.0f, dy / 30.0f);
 				}
-
-				if (NativeManager.GetMouseButton(1) > 0)
+				else if (NativeManager.GetMouseWheel() != 0)
+				{
+					Viewer.Zoom(NativeManager.GetMouseWheel());
+				}
+				else if (NativeManager.GetMouseButton(1) > 0 && (NativeManager.GetMouseButton(1) > 0 && (Manager.NativeManager.IsKeyDown(LEFT_CONTROL) || Manager.NativeManager.IsKeyDown(RIGHT_CONTROL))))
+				{
+					var dx = mousePos.X - mousePos_pre.X;
+					var dy = mousePos.Y - mousePos_pre.Y;
+					Viewer.Zoom(dy * 0.25f);
+				}
+				else if (NativeManager.GetMouseButton(1) > 0)
 				{
 					var dx = mousePos.X - mousePos_pre.X;
 					var dy = mousePos.Y - mousePos_pre.Y;
 
 					Viewer.Rotate(dx, dy);
-				}
-
-				if (NativeManager.GetMouseWheel() != 0)
-				{
-					Viewer.Zoom(NativeManager.GetMouseWheel());
 				}
 			}
 
@@ -787,6 +797,7 @@ namespace Effekseer.GUI
 			var size = Manager.NativeManager.GetSize();
 
 			var state = MainWindow.GetState();
+			if (state.Width <= 0 || state.Height <= 0) return;
 
 			System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 

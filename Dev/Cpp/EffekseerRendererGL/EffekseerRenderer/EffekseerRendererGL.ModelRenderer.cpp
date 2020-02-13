@@ -103,24 +103,13 @@ R"(
 	{
 		mat3 lightMatrix = mat3(modelMatrix[0].xyz, modelMatrix[1].xyz, modelMatrix[2].xyz);
 		vec3 localNormal = normalize( lightMatrix * a_Normal.xyz );
-		float diffuse = 1.0;
-		if (NormalMapEnable)
-		{
-			v_Normal = vec4(localNormal, 1.0);
-			v_Binormal = vec4(normalize( lightMatrix * a_Binormal.xyz ), 1.0);
-			v_Tangent = vec4(normalize( lightMatrix * a_Tangent.xyz ), 1.0);
-		}
-		else
-		{
-			diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
-		}
-		v_Color = modelColor * vec4(diffuse * LightColor.rgb, 1.0);
-	}
-	else
-	{
-		v_Color = modelColor;
+
+		v_Normal = vec4(localNormal, 1.0);
+		v_Binormal = vec4(normalize( lightMatrix * a_Binormal.xyz ), 1.0);
+		v_Tangent = vec4(normalize( lightMatrix * a_Tangent.xyz ), 1.0);
 	}
 
+	v_Color = modelColor;
 	v_TexCoord.y = mUVInversed.x + mUVInversed.y * v_TexCoord.y;
 }
 )";
@@ -142,27 +131,15 @@ uniform vec4 LightAmbient;
 
 void main()
 {
-	vec4 diffuse = vec4(1.0);
-	if (LightingEnable && NormalMapEnable)
+	FRAGCOLOR = v_Color * TEX2D(ColorTexture, v_TexCoord.xy);
+
+	if (LightingEnable)
 	{
 		vec3 texNormal = (TEX2D(NormalTexture, v_TexCoord.xy).xyz - 0.5) * 2.0;
 		mat3 normalMatrix = mat3(v_Tangent.xyz, v_Binormal.xyz, v_Normal.xyz );
 		vec3 localNormal = normalize( normalMatrix * texNormal );
-		diffuse = vec4(max(0.0, dot(localNormal, LightDirection.xyz)));
-	}
-	if (TextureEnable)
-	{
-		FRAGCOLOR = v_Color * TEX2D(ColorTexture, v_TexCoord.xy);
-		FRAGCOLOR.xyz = FRAGCOLOR.xyz * diffuse.xyz;
-	} else
-	{
-		FRAGCOLOR = v_Color;
-		FRAGCOLOR.xyz = FRAGCOLOR.xyz * diffuse.xyz;
-	}
-  
-	if (LightingEnable)
-	{
-		FRAGCOLOR.xyz = FRAGCOLOR.xyz + LightAmbient.xyz;
+		float diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
+		FRAGCOLOR.xyz = FRAGCOLOR.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
 	}
 }
 

@@ -240,6 +240,10 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_HiddenSeparator(swigCPtr, thicknessDraw, thicknessItem);
   }
 
+  public void Spacing() {
+    EffekseerNativePINVOKE.GUIManager_Spacing(swigCPtr);
+  }
+
   public void SameLine() {
     EffekseerNativePINVOKE.GUIManager_SameLine(swigCPtr);
   }

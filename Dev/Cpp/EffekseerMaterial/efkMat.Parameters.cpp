@@ -302,7 +302,7 @@ NodeConstant2::NodeConstant2()
 	auto func1 = std::make_shared<NodeFunctionParameter>();
 	func1->Name = "ConvertParam";
 	func1->Func = [](std::shared_ptr<Material> material, std::shared_ptr<Node> node) -> bool {
-		auto param = std::make_shared<NodeParameter4>();
+		auto param = std::make_shared<NodeParameter2>();
 		auto new_node = material->CreateNode(param, false);
 		auto links = material->GetConnectedPins(node->OutputPins[0]);
 
@@ -343,7 +343,7 @@ NodeConstant3::NodeConstant3()
 	auto func1 = std::make_shared<NodeFunctionParameter>();
 	func1->Name = "ConvertParam";
 	func1->Func = [](std::shared_ptr<Material> material, std::shared_ptr<Node> node) -> bool {
-		auto param = std::make_shared<NodeParameter4>();
+		auto param = std::make_shared<NodeParameter3>();
 		auto new_node = material->CreateNode(param, false);
 		auto links = material->GetConnectedPins(node->OutputPins[0]);
 

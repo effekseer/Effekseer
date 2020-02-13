@@ -153,10 +153,13 @@ Panel_Paste_Desc,パネル単位でパラメーターを貼り付けます。
 DynamicParameter_Name,動的パラメーター
 DynamicParameter_Desc,
 DynamicInput,入力
+DynamicName,名称
 DynamicEquation,式
 DynamicEq,式
 DynamicFixed,固定
 DynamicDynamic,動的
+DynamicAdd,追加
+DynamicDelete,削除
 Compile,コンパイル
 CompilePosition, : 行 {0} 列 {1}
 CompileErrror_InvalidToken,無効なトークン {0} が見つかりました

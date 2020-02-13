@@ -336,7 +336,7 @@ namespace Effekseer.GUI.Menu
 				setDockWindow(Resources.GetString("Culling"), typeof(Dock.Culling), Images.GetIcon("PanelCulling"));
                 setDockWindow(Resources.GetString("Network"), typeof(Dock.Network), Images.GetIcon("PanelNetwork"));
 				setDockWindow(Resources.GetString("FileViewer"), typeof(Dock.FileViewer), Images.GetIcon("PanelFileViewer"));
-				setDockWindow(Resources.GetString("DynamicParameter_Name"), typeof(Dock.Dynamic), Images.GetIcon("PanelFileViewer"));
+				setDockWindow(Resources.GetString("DynamicParameter_Name"), typeof(Dock.Dynamic), Images.GetIcon("PanelDynamicParameter"));
 
 				this.Controls.Add(menu);
 			}

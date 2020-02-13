@@ -51,12 +51,12 @@ def isWin():
 def isMac():
 	return platform.system() == 'Darwin'
 
-def call( cmd ):
+def call( cmd , env=None):
 	""" call command line.
 	"""
 
 	print( cmd )
-	p = subprocess.Popen(cmd, shell=True)
+	p = subprocess.Popen(cmd, shell=True, env=env)
 	ret = p.wait()
 	print('')
 

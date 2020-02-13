@@ -6,10 +6,10 @@
 #include "ThirdParty/imgui_main/imgui_internal.h"
 #include "ThirdParty/nfd/nfd.h"
 
+#include <GUI/MainWindow.h>
 #include <fstream>
 #include <iostream>
 #include <ostream>
-#include <GUI/MainWindow.h>
 
 #include <efkMat.StringContainer.h>
 #include <efkMat.TextExporter.h>
@@ -185,10 +185,10 @@ void EditorContent::SaveAs(const char* path)
 	char16_t path16[260];
 	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)path);
 
-    std::string pathstr = path;
-    int ext_i = pathstr.find_last_of(".");
-    
-	if (ext_i >= 0 && pathstr.substr(ext_i,pathstr.size()-ext_i) == ".efkmat")
+	std::string pathstr = path;
+	int ext_i = pathstr.find_last_of(".");
+
+	if (ext_i >= 0 && pathstr.substr(ext_i, pathstr.size() - ext_i) == ".efkmat")
 	{
 		FILE* fp = nullptr;
 #ifdef _WIN32
@@ -397,6 +397,9 @@ Editor::Editor(std::shared_ptr<EffekseerMaterial::Graphics> graphics)
 
 	keyValueFileStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
 	keyValueFileStorage_->Start("EfkStorage");
+
+	previewTypeButtons_.emplace_back(TextureCache::Load(graphics, "resources/icons/Material_Icon_Squre.png"));
+	previewTypeButtons_.emplace_back(TextureCache::Load(graphics, "resources/icons/Material_Icon_Sphere.png"));
 }
 
 Editor::~Editor()
@@ -796,7 +799,7 @@ void Editor::UpdatePopup()
 	// Edit link
 	if (ImGui::BeginPopup(label_edit_link))
 	{
-		if (ImGui::MenuItem("Delete"))
+		if (ImGui::MenuItem(StringContainer::GetValue("Delete_Name", "Delete").c_str()))
 		{
 			auto link = material->FindLink(currentLinkID.Get());
 			material->BreakPin(link);
@@ -1438,25 +1441,29 @@ void Editor::UpdatePreview()
 	size.x = Preview::TextureSize;
 	size.y = Preview::TextureSize;
 	ImGui::Image((void*)preview_->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	if (ImGui::Button("1"))
+
+	if (ImGui::ImageButton((ImTextureID)previewTypeButtons_[0]->GetInternal(), ImVec2(20.0, 20.0), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0)))
 	{
 		preview_->ModelType = PreviewModelType::Screen;
 	}
 
 	ImGui::SameLine();
 
-	if (ImGui::Button("2"))
+	if (ImGui::ImageButton((ImTextureID)previewTypeButtons_[1]->GetInternal(), ImVec2(20.0, 20.0), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0)))
 	{
 		preview_->ModelType = PreviewModelType::Sphere;
 	}
 
+	auto textureNumHeader = StringContainer::GetValue("TextureCount", "Texture");
+
 	if (previewTextureCount_ > Effekseer::UserTextureSlotMax)
 	{
-		ImGui::TextColored(ImColor(255, 0, 0, 255), "Texture %d / %d", previewTextureCount_, Effekseer::UserTextureSlotMax);
+		ImGui::TextColored(
+			ImColor(255, 0, 0, 255), (textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
 	}
 	else
 	{
-		ImGui::Text("Texture %d / %d", previewTextureCount_, Effekseer::UserTextureSlotMax);
+		ImGui::Text((textureNumHeader + " %d / %d").c_str(), previewTextureCount_, Effekseer::UserTextureSlotMax);
 	}
 }
 
@@ -1668,9 +1675,9 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 				typeShape = "-";
 			}
 
-			ImGui::Text(
-				(StringContainer::GetValue((pin->Parameter->Name + "_Name").c_str(), pin->Parameter->Name.c_str()) + std::string(" ") + typeShape)
-					.c_str());
+			ImGui::Text((StringContainer::GetValue((pin->Parameter->Name + "_Name").c_str(), pin->Parameter->Name.c_str()) +
+						 std::string(" ") + typeShape)
+							.c_str());
 
 			ImGui::EndHorizontal();
 
@@ -1685,7 +1692,6 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 	ImGui::EndHorizontal();
 
 	// show a preview
-
 	if (node->IsPreviewOpened)
 	{
 		auto preview = (NodeUserDataObject*)node->UserObj.get();
@@ -1696,14 +1702,16 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 			size.y = Preview::TextureSize;
 			ImGui::Image((void*)preview->GetPreview()->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
-			if (ImGui::Button("1"))
+			if (ImGui::ImageButton(
+					(ImTextureID)previewTypeButtons_[0]->GetInternal(), ImVec2(20.0, 20.0), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0)))
 			{
 				preview->GetPreview()->ModelType = PreviewModelType::Screen;
 			}
 
 			ImGui::SameLine();
 
-			if (ImGui::Button("2"))
+			if (ImGui::ImageButton(
+					(ImTextureID)previewTypeButtons_[1]->GetInternal(), ImVec2(20.0, 20.0), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0)))
 			{
 				preview->GetPreview()->ModelType = PreviewModelType::Sphere;
 			}

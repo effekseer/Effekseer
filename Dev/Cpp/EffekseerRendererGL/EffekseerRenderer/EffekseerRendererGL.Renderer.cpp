@@ -333,15 +333,13 @@ uniform vec4 LightAmbient;
 
 void main()
 {
-	vec4 diffuse = vec4(1.0);
-	
 	vec3 texNormal = (TEX2D(NormalTexture, v_UV1.xy).xyz - 0.5) * 2.0;
 	mat3 normalMatrix = mat3(v_WorldT.xyz, v_WorldB.xyz, v_WorldN.xyz );
 	vec3 localNormal = normalize( normalMatrix * texNormal );
-	diffuse = vec4(max(0.0, dot(localNormal, LightDirection.xyz)));
+	float diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
 	
 	FRAGCOLOR = v_VColor * TEX2D(ColorTexture, v_UV1.xy);
-	FRAGCOLOR.xyz = FRAGCOLOR.xyz * (diffuse.xyz + LightAmbient.xyz);
+	FRAGCOLOR.xyz = FRAGCOLOR.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
 }
 
 
@@ -406,13 +404,6 @@ RendererImplemented::RendererImplemented(int32_t squareMaxCount,
 	, m_deviceType(deviceType)
 	, deviceObjectCollection_(deviceObjectCollection)
 {
-	::Effekseer::Vector3D direction( 1.0f, 1.0f, 1.0f );
-	SetLightDirection( direction );
-	::Effekseer::Color lightColor( 255, 255, 255, 255 );
-	SetLightColor( lightColor );
-	::Effekseer::Color lightAmbient( 40, 40, 40, 255 );
-	SetLightAmbientColor( lightAmbient );
-
 	m_background.UserID = 0;
 	m_background.HasMipmap = false;
 
@@ -767,6 +758,8 @@ bool RendererImplemented::BeginRendering()
 	m_renderState->GetActiveState().Reset();
 	m_renderState->Update( true );
 	
+	m_renderState->GetActiveState().TextureIDs.fill(0);
+
 	// reset renderer
 	m_standardRenderer->ResetAndRenderingIfRequired();
 
@@ -905,54 +898,6 @@ void RendererImplemented::SetSquareMaxCount(int32_t count)
 ::EffekseerRenderer::RenderStateBase* RendererImplemented::GetRenderState()
 {
 	return m_renderState;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-::Effekseer::Vector3D RendererImplemented::GetLightDirection() const
-{
-	return m_lightDirection;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetLightDirection( const ::Effekseer::Vector3D& direction )
-{
-	m_lightDirection = direction;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-const ::Effekseer::Color& RendererImplemented::GetLightColor() const
-{
-	return m_lightColor;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetLightColor( const ::Effekseer::Color& color )
-{
-	m_lightColor = color;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-const ::Effekseer::Color& RendererImplemented::GetLightAmbientColor() const
-{
-	return m_lightAmbient;
-}
-
-//----------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------
-void RendererImplemented::SetLightAmbientColor( const ::Effekseer::Color& color )
-{
-	m_lightAmbient = color;
 }
 
 //----------------------------------------------------------------------------------
@@ -1310,7 +1255,11 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 {
 	GLCheckError();
 
-	currentTextures_.clear();
+	for (int i = count; i < currentTextures_.size(); i++)
+	{
+		m_renderState->GetActiveState().TextureIDs[i] = 0;
+	}
+
 	currentTextures_.resize(count);
 
 	for (int32_t i = 0; i < count; i++)
@@ -1326,12 +1275,14 @@ void RendererImplemented::SetTextures(Shader* shader, Effekseer::TextureData** t
 		
 		if (textures[i] != nullptr)
 		{
+			m_renderState->GetActiveState().TextureIDs[i] = textures[i]->UserID;
 			currentTextures_[i] = *textures[i];
 		}
 		else
 		{
 			currentTextures_[i].UserID = 0;
 			currentTextures_[i].UserPtr = nullptr;
+			m_renderState->GetActiveState().TextureIDs[i] = 0;
 		}
 		
 		if (shader->GetTextureSlotEnable(i))

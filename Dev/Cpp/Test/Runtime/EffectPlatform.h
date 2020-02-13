@@ -18,6 +18,7 @@ class EffectPlatform
 private:
 	bool isInitialized_ = false;
 	bool isTerminated_ = false;
+	float time_ = 0;
 	EffectPlatformInitializingParameter initParam_;
 
 	Effekseer::Manager* manager_ = nullptr;

@@ -1,5 +1,45 @@
 #include "EffectPlatformDX9.h"
 #include "../../3rdParty/stb/stb_image_write.h"
+#include <assert.h>
+
+class DistortingCallbackDX9 : public EffekseerRenderer::DistortingCallback
+{
+	::EffekseerRendererDX9::Renderer* renderer = nullptr;
+	LPDIRECT3DDEVICE9 device = nullptr;
+	LPDIRECT3DTEXTURE9 texture = nullptr;
+
+public:
+	DistortingCallbackDX9(::EffekseerRendererDX9::Renderer* renderer, LPDIRECT3DDEVICE9 device, int texWidth, int texHeight)
+		: renderer(renderer), device(device)
+	{
+		device->CreateTexture(texWidth, texHeight, 1, D3DUSAGE_RENDERTARGET, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL);
+	}
+
+	virtual ~DistortingCallbackDX9() { ES_SAFE_RELEASE(texture); }
+
+	virtual bool OnDistorting() override
+	{
+		IDirect3DSurface9* targetSurface = nullptr;
+		IDirect3DSurface9* texSurface = nullptr;
+		HRESULT hr = S_OK;
+
+		hr = texture->GetSurfaceLevel(0, &texSurface);
+		assert(SUCCEEDED(hr));
+
+		hr = device->GetRenderTarget(0, &targetSurface);
+		assert(SUCCEEDED(hr));
+
+		hr = device->StretchRect(targetSurface, NULL, texSurface, NULL, D3DTEXF_NONE);
+		assert(SUCCEEDED(hr));
+
+		ES_SAFE_RELEASE(texSurface);
+		ES_SAFE_RELEASE(targetSurface);
+
+		renderer->SetBackground(texture);
+
+		return true;
+	}
+};
 
 void EffectPlatformDX9::CreateCheckedSurface()
 {
@@ -10,7 +50,11 @@ void EffectPlatformDX9::CreateCheckedSurface()
 	checkedSurface_->UnlockRect();
 }
 
-EffekseerRenderer::Renderer* EffectPlatformDX9::CreateRenderer() { return EffekseerRendererDX9::Renderer::Create(device_, 2000); }
+EffekseerRenderer::Renderer* EffectPlatformDX9::CreateRenderer() { 
+	auto ret = EffekseerRendererDX9::Renderer::Create(device_, 2000); 
+	ret->SetDistortingCallback(new DistortingCallbackDX9((EffekseerRendererDX9::Renderer*)ret, device_, 1280, 720));
+	return ret;
+}
 
 EffectPlatformDX9::~EffectPlatformDX9()
 {

@@ -38,10 +38,14 @@ namespace Effekseer.GUI.Dialog
             {
                 Manager.NativeManager.Text(message);
 
-                if(Manager.NativeManager.Button("OK?"))
-                {
-                    ShouldBeRemoved = true;
-                }
+				Manager.NativeManager.Separator();
+
+				Manager.NativeManager.SetCursorPosX(Manager.NativeManager.GetContentRegionAvail().X / 2 - 100 / 2);
+
+				if (Manager.NativeManager.Button("OK", 100))
+				{
+					ShouldBeRemoved = true;
+				}
 
                 Manager.NativeManager.EndPopup();
             }

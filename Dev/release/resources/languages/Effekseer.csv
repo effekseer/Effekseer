@@ -183,10 +183,13 @@ Panel_Paste_Desc,It pastes parameters by panels.,パネル単位でパラメー�
 DynamicParameter_Name,Dynamic parameter,動的パラメーター
 DynamicParameter_Desc,,
 DynamicInput,Input,入力
-DynamicEquation,Equation,式
-DynamicEq,Eq.,式
+DynamicName,Name,名称
+DynamicEquation,Expression,式
+DynamicEq,Ex.,式
 DynamicFixed,Fixed,固定
 DynamicDynamic,Dynamic,動的
+DynamicAdd,Add,追加
+DynamicDelete,Del,削除
 Compile,Compile,コンパイル
 ,,
 CompilePosition, : Line {0} Col {1}, : 行 {0} 列 {1}

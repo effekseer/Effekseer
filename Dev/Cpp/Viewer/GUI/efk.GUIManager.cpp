@@ -1233,6 +1233,11 @@ namespace efk
 		}
 	}
 
+	void GUIManager::Spacing()
+	{
+		ImGui::Spacing();
+	}
+
 	void GUIManager::SameLine()
 	{
 		ImGui::SameLine();

@@ -7,10 +7,10 @@ float4	fLightAmbient		: register( c2 );
 };
 #endif
 
-Texture2D	g_colorTexture		: register( t8 );
-SamplerState	g_colorSampler		: register( s8 );
-Texture2D	g_normalTexture		: register( t9 );
-SamplerState	g_normalSampler		: register( s9 );
+Texture2D	g_colorTexture		: register( t0 );
+SamplerState	g_colorSampler		: register( s0 );
+Texture2D	g_normalTexture		: register( t1 );
+SamplerState	g_normalSampler		: register( s1 );
 
 struct PS_Input
 {
@@ -24,7 +24,7 @@ struct PS_Input
 
 float4 PS( const PS_Input Input ) : SV_Target
 {
-	float diffuse = 1.0;
+	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV) * Input.Color;
 
 #if ENABLE_LIGHTING
 	half3 texNormal = (g_normalTexture.Sample(g_normalSampler, Input.UV).xyz  - 0.5) * 2.0;
@@ -33,16 +33,8 @@ float4 PS( const PS_Input Input ) : SV_Target
 		texNormal ,
 		half3x3( (half3)Input.Tangent, (half3)Input.Binormal, (half3)Input.Normal ) ) );
 
-	//return float4( localNormal , 1.0 );
-
-	diffuse = max( dot( fLightDirection.xyz, localNormal.xyz ), 0.0 );
-#endif
-
-	float4 Output = g_colorTexture.Sample(g_colorSampler, Input.UV) * Input.Color;
-	Output.xyz = Output.xyz * diffuse;
-
-#if ENABLE_LIGHTING
-	Output.xyz = Output.xyz + fLightAmbient.xyz;
+	float diffuse = max(dot(fLightDirection.xyz, localNormal.xyz), 0.0);
+	Output.xyz = Output.xyz * (fLightColor.xyz * diffuse + fLightAmbient.xyz);
 #endif
 
 	if( Output.a == 0.0 ) discard;

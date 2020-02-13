@@ -4,7 +4,7 @@
 
 void EffectPlatform::CreateCheckeredPattern(int width, int height, uint32_t* pixels)
 {
-	const uint32_t color[2] = {0x00202020, 0x00808080};
+	const uint32_t color[2] = {0xFF202020, 0xFF808080};
 
 	for (int y = 0; y < height; y++)
 	{
@@ -106,6 +106,9 @@ void EffectPlatform::Terminate()
 
 Effekseer::Handle EffectPlatform::Play(const char16_t* path, int32_t startFrame)
 {
+	// reset time
+	time_ = 0;
+
 	FILE* filePtr = NULL;
 #ifdef _WIN32
 	_wfopen_s(&filePtr, (const wchar_t*)path, L"rb");
@@ -165,6 +168,7 @@ bool EffectPlatform::Update()
 
 	BeginRendering();
 
+	renderer_->SetTime(time_);
 	renderer_->BeginRendering();
 	manager_->Draw();
 	renderer_->EndRendering();
@@ -172,6 +176,8 @@ bool EffectPlatform::Update()
 	EndRendering();
 
 	Present();
+
+	time_ += 1.0f / 60.0f;
 
 	return true;
 }

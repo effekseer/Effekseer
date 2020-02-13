@@ -19,6 +19,19 @@ namespace Effekseer
 				throw new Exception("Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.");
 			}
 		}
+
+		public static void ShowErrorByNodeLayerLimit()
+		{
+			var mb = new GUI.Dialog.MessageBox();
+			if (Core.Option.GuiLanguage.Value == Language.Japanese)
+			{
+				mb.Show("Error", "ノードツリーはルートを含めて" + Constant.NodeLayerLimit + "レイヤーまでに制限されています。");
+			}
+			else
+			{
+				mb.Show("Error", "The node tree is limited to " + Constant.NodeLayerLimit + " layers, including the root.");
+			}
+		}
 	}
 
 	/// <summary>

@@ -1,15 +1,15 @@
 #ifndef __EFFEKSEERRENDERER_RENDERER_IMPL_H__
 #define __EFFEKSEERRENDERER_RENDERER_IMPL_H__
 
-#include <Effekseer.h>
 #include <Effekseer.Internal.h>
+#include <Effekseer.h>
 
 #include "EffekseerRenderer.Renderer.h"
 
 namespace EffekseerRenderer
 {
 
-class Renderer::Impl
+class Renderer::Impl : public ::Effekseer::AlignedAllocationPolicy<16>
 {
 private:
 	::Effekseer::Mat44f projectionMat_;
@@ -18,6 +18,10 @@ private:
 
 	::Effekseer::Vec3f cameraPosition_;
 	::Effekseer::Vec3f cameraFrontDirection_;
+
+	::Effekseer::Vec3f lightDirection_ = ::Effekseer::Vec3f(1.0f, 1.0f, 1.0f);
+	::Effekseer::Color lightColor_ = ::Effekseer::Color(255, 255, 255, 255);
+	::Effekseer::Color lightAmbient_ = ::Effekseer::Color(40, 40, 40, 255);
 
 	UVStyle textureUVStyle = UVStyle::Normal;
 	UVStyle backgroundTextureUVStyle = UVStyle::Normal;
@@ -32,6 +36,18 @@ public:
 	int32_t drawcallCount = 0;
 	int32_t drawvertexCount = 0;
 	bool isRenderModeValid = true;
+
+	::Effekseer::Vector3D GetLightDirection() const;
+
+	void SetLightDirection(const ::Effekseer::Vector3D& direction);
+
+	const ::Effekseer::Color& GetLightColor() const;
+
+	void SetLightColor(const ::Effekseer::Color& color);
+
+	const ::Effekseer::Color& GetLightAmbientColor() const;
+
+	void SetLightAmbientColor(const ::Effekseer::Color& color);
 
 	void CalculateCameraProjectionMatrix();
 

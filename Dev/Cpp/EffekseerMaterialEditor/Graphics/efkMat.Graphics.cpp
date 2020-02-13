@@ -86,6 +86,23 @@ bool Texture::Validate()
 
 void Texture::Invalidate() { ar::SafeDelete(texture_); }
 
+uint64_t Texture::GetInternal()
+{
+	if (texture_ == nullptr)
+		return 0;
+	auto ret = texture_->GetInternalObjects()[0];
+
+	// Temp
+	glBindTexture(GL_TEXTURE_2D, ret);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return ret;
+}
+
 std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, const char* path)
 {
 	std::vector<uint8_t> buffer;
@@ -209,9 +226,9 @@ std::shared_ptr<Mesh> Mesh::Load(std::shared_ptr<Graphics> graphics, const char*
 				vertexes[index_offset + v].Normal = Vertex::CreatePacked(normal);
 
 				vertexes[index_offset + v].UV1.X = attrib.texcoords[2 * idx.texcoord_index + 0];
-				vertexes[index_offset + v].UV1.Y = attrib.texcoords[2 * idx.texcoord_index + 1];
+				vertexes[index_offset + v].UV1.Y = 1.0f - attrib.texcoords[2 * idx.texcoord_index + 1];
 				vertexes[index_offset + v].UV2.X = attrib.texcoords[2 * idx.texcoord_index + 0];
-				vertexes[index_offset + v].UV2.Y = attrib.texcoords[2 * idx.texcoord_index + 1];
+				vertexes[index_offset + v].UV2.Y = 1.0f - attrib.texcoords[2 * idx.texcoord_index + 1];
 				vertexes[index_offset + v].Color[0] = attrib.colors[3 * idx.vertex_index + 0] * 255;
 				vertexes[index_offset + v].Color[1] = attrib.colors[3 * idx.vertex_index + 1] * 255;
 				vertexes[index_offset + v].Color[2] = attrib.colors[3 * idx.vertex_index + 2] * 255;
@@ -593,14 +610,14 @@ void Preview::Render()
 	graphics_->GetManager()->BeginScene(sceneParam);
 	graphics_->GetManager()->BeginRendering();
 
-	context->Begin();
-
 	ar::Color color;
 	color.R = 0;
 	color.G = 0;
 	color.B = 0;
 	color.A = 0;
 	graphics_->GetManager()->Clear(true, true, color);
+
+	context->Begin();
 
 	if (shader != nullptr)
 	{

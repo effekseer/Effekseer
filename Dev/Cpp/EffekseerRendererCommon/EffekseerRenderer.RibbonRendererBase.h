@@ -355,8 +355,6 @@ namespace EffekseerRenderer
 					{
 						::Effekseer::Mat43f mat = param.SRTMatrix43;
 
-						::Effekseer::Vec3f s;
-
 						ApplyDepthParameters(mat,
 											 m_renderer->GetCameraFrontDirection(),
 											 m_renderer->GetCameraPosition(),
@@ -471,8 +469,6 @@ namespace EffekseerRenderer
 						{
 							::Effekseer::Mat43f mat = param.SRTMatrix43;
 
-							::Effekseer::Vec3f s;
-	
 							ApplyDepthParameters(mat,
 												 m_renderer->GetCameraFrontDirection(),
 												 m_renderer->GetCameraPosition(),
@@ -535,7 +531,6 @@ namespace EffekseerRenderer
 					bool isLast_ = (i == ((instances.size() - 1) * parameter.SplineDivision));
 
 					Effekseer::Vec3f axis;
-					Effekseer::Vec3f pos;
 
 					if (isFirst_)
 					{
@@ -593,7 +588,6 @@ namespace EffekseerRenderer
 					bool isLast_ = (i == ((instances.size() - 1) * parameter.SplineDivision));
 
 					Effekseer::Vec3f axis;
-					Effekseer::Vec3f pos;
 
 					if (isFirst_)
 					{

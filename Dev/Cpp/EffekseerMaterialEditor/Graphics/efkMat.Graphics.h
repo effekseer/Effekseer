@@ -301,6 +301,8 @@ public:
 	bool Validate();
 	void Invalidate();
 
+	uint64_t GetInternal();
+
 	ar::Texture2D* GetTexture() { return texture_; }
 	static std::shared_ptr<Texture> Load(std::shared_ptr<Graphics> graphics, const char* path);
 };

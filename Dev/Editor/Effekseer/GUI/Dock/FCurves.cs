@@ -97,6 +97,9 @@ namespace Effekseer.GUI.Dock
 			Icon = Images.GetIcon("PanelFCurve");
 			TabToolTip = Resources.GetString("FCurves");
 
+			//NoPadding = true;
+			NoScrollBar = true;
+
 			// auto zoom event
 			moved += (x, y) =>
 			{
@@ -122,241 +125,24 @@ namespace Effekseer.GUI.Dock
 		protected override void UpdateInternal()
 		{
 			canControl = true;
+			float dpiScale = Manager.DpiScale;
+			var contentSize = Manager.NativeManager.GetContentRegionAvail();
 
-			var selected = GetSelectedFCurve();
-
-			var invalidValue = "/";
-			var selectedInd = selected.Item1 != null ? selected.Item2.GetSelectedIndex() : -1;
-
-			// line 1
-			Manager.NativeManager.Columns(5);
-
-			if (selectedInd >= 0)
-			{
-				var frameKey = new int[] { (int)selected.Item2.Keys[selectedInd] };
-				if (Manager.NativeManager.DragInt(frame_text, frameKey))
-				{
-					var diff = frameKey[0] - selected.Item2.Keys[selectedInd];
-
-					selected.Item2.Keys[selectedInd] = (int)frameKey[0];
-					selected.Item2.LeftKeys[selectedInd] += diff;
-					selected.Item2.RightKeys[selectedInd] += diff;
-					selected.Item2.IsDirtied = true;
-					selected.Item2.SolveContradiction();
-				}
-
-				if (Manager.NativeManager.IsItemActive()) canControl = false;
-			}
-			else
-			{
-				Manager.NativeManager.InputText(frame_text, invalidValue, swig.InputTextFlags.ReadOnly);
-			}
-
-			Manager.NativeManager.NextColumn();
-
-			if (selectedInd >= 0)
-			{
-				var frameValue = new float[] { selected.Item2.Values[selectedInd] };
-				if (Manager.NativeManager.DragFloat(value_text, frameValue))
-				{
-					var diff = frameValue[0] - selected.Item2.Values[selectedInd];
-
-					selected.Item2.Values[selectedInd] = frameValue[0];
-					selected.Item2.LeftValues[selectedInd] += diff;
-					selected.Item2.RightValues[selectedInd] += diff;
-					selected.Item2.IsDirtied = true;
-				}
-
-				if (Manager.NativeManager.IsItemActive()) canControl = false;
-			}
-			else
-			{
-				Manager.NativeManager.InputText(value_text, invalidValue, swig.InputTextFlags.ReadOnly);
-			}
-
-			Manager.NativeManager.NextColumn();
-
-			// Left key
-			if (selectedInd >= 0)
-			{
-				var leftValues = new float[] { selected.Item2.LeftKeys[selectedInd], selected.Item2.LeftValues[selectedInd] };
-				if (Manager.NativeManager.DragFloat2(left_text, leftValues))
-				{
-					selected.Item2.LeftKeys[selectedInd] = leftValues[0];
-					selected.Item2.LeftValues[selectedInd] = leftValues[1];
-					selected.Item2.Clip(selectedInd);
-					selected.Item2.IsDirtied = true;
-				}
-
-				if (Manager.NativeManager.IsItemActive()) canControl = false;
-			}
-			else
-			{
-				Manager.NativeManager.InputText(left_text, invalidValue, swig.InputTextFlags.ReadOnly);
-			}
-
-			Manager.NativeManager.NextColumn();
-
-			// Right key
-			if (selectedInd >= 0)
-			{
-				var rightValues = new float[] { selected.Item2.RightKeys[selectedInd], selected.Item2.RightValues[selectedInd] };
-				if (Manager.NativeManager.DragFloat2(right_text, rightValues))
-				{
-					selected.Item2.RightKeys[selectedInd] = rightValues[0];
-					selected.Item2.RightValues[selectedInd] = rightValues[1];
-					selected.Item2.Clip(selectedInd);
-					selected.Item2.IsDirtied = true;
-				}
-
-				if (Manager.NativeManager.IsItemActive()) canControl = false;
-			}
-			else
-			{
-				Manager.NativeManager.InputText(right_text, invalidValue, swig.InputTextFlags.ReadOnly);
-			}
-
-			Manager.NativeManager.NextColumn();
-
-			if (selectedInd >= 0)
-			{
-				if (Manager.NativeManager.BeginCombo(type.Label, type.FieldNames[selected.Item2.Interpolations[selectedInd]], swig.ComboFlags.None))
-				{
-					for (int i = 0; i < type.FieldNames.Count; i++)
-					{
-						bool is_selected = (type.FieldNames[(int)selected.Item2.Interpolations[selectedInd]] == type.FieldNames[i]);
-
-						if (Manager.NativeManager.Selectable(type.FieldNames[i], is_selected, swig.SelectableFlags.None))
-						{
-							selected.Item2.Interpolations[selectedInd] = i;
-							selected.Item2.IsDirtied = true;
-						}
-
-						if (is_selected)
-						{
-							Manager.NativeManager.SetItemDefaultFocus();
-						}
-					}
-
-					Manager.NativeManager.EndCombo();
-				}
-
-				if (Manager.NativeManager.IsItemActive()) canControl = false;
-			}
-			else
-			{
-				Manager.NativeManager.InputText(type_text, invalidValue, swig.InputTextFlags.ReadOnly);
-			}
-
-			Manager.NativeManager.Columns(1);
-			
-			// line2
-			Manager.NativeManager.Columns(4);
-
-			// Start curve
-			if(selected.Item1 != null)
-			{
-				startCurve.SetBinding(selected.Item1.StartType);
-				startCurve.Update();
-				selected.Item2.StartEdge = (Data.Value.FCurveEdge)selected.Item1.StartType;
-
-				if (Manager.NativeManager.IsItemActive()) canControl = false;
-			}
-			else
-			{
-				Manager.NativeManager.InputText(start_text, invalidValue, swig.InputTextFlags.ReadOnly);
-			}
-
-			Manager.NativeManager.NextColumn();
-
-			// End curve
-
-			if (selected.Item1 != null)
-			{
-				endCurve.SetBinding(selected.Item1.EndType);
-				endCurve.Update();
-				selected.Item2.EndEdge = (Data.Value.FCurveEdge)selected.Item1.EndType;
-
-				if (Manager.NativeManager.IsItemActive()) canControl = false;
-			}
-			else
-			{
-				Manager.NativeManager.InputText(end_text, invalidValue, swig.InputTextFlags.ReadOnly);
-			}
-
-			Manager.NativeManager.NextColumn();
-
-			// Sampling
-			if (selected.Item1 != null)
-			{
-				var sampling = new int[] { selected.Item1.Sampling };
-
-				if (Manager.NativeManager.InputInt(sampling_text + "##SamplingText", sampling))
-				{
-					selected.Item1.Sampling.SetValue(sampling[0]);
-				}
-
-				if (Manager.NativeManager.IsItemActive()) canControl = false;
-			}
-			else
-			{
-				Manager.NativeManager.InputText(sampling_text + "##SamplingText", invalidValue, swig.InputTextFlags.ReadOnly);
-			}
-
-			Manager.NativeManager.NextColumn();
-
-			// Offset label
-			if (selected.Item1 != null)
-			{
-				var offset_id = offset_text + "##OffsetMinMax";
-				var offsets = new float[] { selected.Item1.OffsetMin, selected.Item1.OffsetMax };
-
-				if (Manager.NativeManager.DragFloat2(offset_id, offsets))
-				{
-					selected.Item1.OffsetMin.SetValue(offsets[0]);
-					selected.Item1.OffsetMax.SetValue(offsets[1]);
-				}
-
-				if (Manager.NativeManager.IsItemActive()) canControl = false;
-			}
-			else
-			{
-				Manager.NativeManager.InputText(offset_text + "##OffsetMinMax", invalidValue, swig.InputTextFlags.ReadOnly);
-			}
-
-			if (selected.Item1 == null)
-			{
-				startCurve.SetBinding(null);
-				endCurve.SetBinding(null);
-			}
-
-			// line3
-			Manager.NativeManager.Columns(3);
-
-			var fcurveGroups = flattenFcurves.Where(_ => _.Properties.Any(__=>__.IsShown)).ToArray();
-
-			if (fcurveGroups.Any())
-			{
-				// TODO : implement multi select
-				timeline.SetBinding(fcurveGroups.First().GetTimeLineType());
-				timeline.Update();
-			}
-			else
-			{
-				Manager.NativeManager.InputText(timelineMode_Name + "##Timeline", invalidValue, swig.InputTextFlags.ReadOnly);
-				timeline.SetBinding(null);
-			}
-
-			if(Component.Functions.CanShowTip())
+			if (Component.Functions.CanShowTip())
 			{
 				Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_TimelineMode_Desc"));
 			}
 
-			// line4
-			Manager.NativeManager.Columns(1);
-			
+			Manager.NativeManager.Columns(3);
+
+			if (isFirstUpdate)
 			{
-				float dpiScale = Manager.DpiScale;
+				Manager.NativeManager.SetColumnWidth(0, contentSize.X * 0.24f);
+				Manager.NativeManager.SetColumnWidth(1, contentSize.X * 0.5f);
+				Manager.NativeManager.SetColumnWidth(2, contentSize.X * 0.26f);
+			}
+
+			{
 				swig.Vec2 size = new swig.Vec2(24 * dpiScale, 24 * dpiScale);
 
 				if (Manager.NativeManager.ImageButton(Images.GetIcon("EnlargeAnchor"), size.X, size.Y))
@@ -404,11 +190,17 @@ namespace Effekseer.GUI.Dock
 				{
 					Manager.NativeManager.SetTooltip(Resources.GetString("FCurve_Paste_Desc"));
 				}
+
+				Manager.NativeManager.SameLine();
+
+				Manager.NativeManager.Button("?");
+				
+				// if (Component.Functions.CanShowTip())
+				if (Manager.NativeManager.IsItemHovered())
+				{
+					Manager.NativeManager.SetTooltip(Resources.GetString("FCurveCtrl_Desc"));
+				}
 			}
-
-			//Manager.NativeManager.BeginGroup();
-
-			Manager.NativeManager.Columns(2);
 
 			// hot key
 			if (IsDockActive() && canControl)
@@ -423,23 +215,14 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
-
-			if (isFirstUpdate)
-			{
-				Manager.NativeManager.SetColumnWidth(0, 200 * Manager.DpiScale);
-			}
-			//Manager.NativeManager.BeginChild("##FCurveGroup_Tree");
-
+			Manager.NativeManager.BeginChild("##FCurveTree", new swig.Vec2());
 			if (treeNodes != null)
 			{
 				UpdateTreeNode(treeNodes);
 			}
-
-			//Manager.NativeManager.EndChild();
+			Manager.NativeManager.EndChild();
 
 			Manager.NativeManager.NextColumn();
-
-			//Manager.NativeManager.BeginChild("##FCurveGroup_Graph");
 
 			if(isAutoZoomMode)
 			{
@@ -461,7 +244,6 @@ namespace Effekseer.GUI.Dock
 			var graphSize = Manager.NativeManager.GetContentRegionAvail();
 			graphSize.X = Math.Max(graphSize.X, 32);
 			graphSize.Y = Math.Max(graphSize.Y, 32);
-			graphSize.Y -= 28;
 
 			var scale = new swig.Vec2(12, 4);
 
@@ -481,43 +263,9 @@ namespace Effekseer.GUI.Dock
 
 			Manager.NativeManager.EndFCurve();
 
-			//Manager.NativeManager.EndChild();
+			Manager.NativeManager.NextColumn();
 
-			//Manager.NativeManager.EndGroup();
-
-			Manager.NativeManager.Columns(1);
-
-			/*
-			if (isAutoZoomMode)
-			{
-				if (Manager.NativeManager.ImageButton(Images.GetIcon("AutoZoom_On"), 24, 24))
-				{
-					isAutoZoomMode = false;
-				}
-			}
-			else
-			{
-				if (Manager.NativeManager.ImageButton(Images.GetIcon("AutoZoom_Off"), 24, 24))
-				{
-					isAutoZoomMode = true;
-				}
-			}
-			*/
-
-			//if (Manager.NativeManager.IsItemHovered())
-			//{
-			//	Manager.NativeManager.SetTooltip(Resources.GetString("AutoZoom") + "\n" + Resources.GetString("AutoZoom_Desc"));
-			//}
-
-			//Manager.NativeManager.SameLine();
-
-			Manager.NativeManager.Text(Resources.GetString("FCurve_Operation_Instruction_Desc"));
-
-			// if (Component.Functions.CanShowTip())
-			if(Manager.NativeManager.IsItemHovered())
-			{
-				Manager.NativeManager.SetTooltip(Resources.GetString("FCurveCtrl_Desc"));
-			}
+			UpdateDetails();
 
 			isFirstUpdate = false;
 		}
@@ -621,6 +369,215 @@ namespace Effekseer.GUI.Dock
 			}
 
 			canCurveControl = canControl;
+		}
+
+		void UpdateDetails()
+		{
+			var selected = GetSelectedFCurve();
+
+			var invalidValue = "/";
+			var selectedInd = selected.Item1 != null ? selected.Item2.GetSelectedIndex() : -1;
+
+			Manager.NativeManager.BeginChild("##FCurveDetails", new swig.Vec2());
+			Manager.NativeManager.PushItemWidth(80 * Manager.DpiScale);
+
+			if (selectedInd >= 0)
+			{
+				var frameKey = new int[] { (int)selected.Item2.Keys[selectedInd] };
+				if (Manager.NativeManager.DragInt(frame_text, frameKey))
+				{
+					var diff = frameKey[0] - selected.Item2.Keys[selectedInd];
+
+					selected.Item2.Keys[selectedInd] = (int)frameKey[0];
+					selected.Item2.LeftKeys[selectedInd] += diff;
+					selected.Item2.RightKeys[selectedInd] += diff;
+					selected.Item2.IsDirtied = true;
+					selected.Item2.SolveContradiction();
+				}
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(frame_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			if (selectedInd >= 0)
+			{
+				var frameValue = new float[] { selected.Item2.Values[selectedInd] };
+				if (Manager.NativeManager.DragFloat(value_text, frameValue))
+				{
+					var diff = frameValue[0] - selected.Item2.Values[selectedInd];
+
+					selected.Item2.Values[selectedInd] = frameValue[0];
+					selected.Item2.LeftValues[selectedInd] += diff;
+					selected.Item2.RightValues[selectedInd] += diff;
+					selected.Item2.IsDirtied = true;
+				}
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(value_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			// Left key
+			if (selectedInd >= 0)
+			{
+				var leftValues = new float[] { selected.Item2.LeftKeys[selectedInd], selected.Item2.LeftValues[selectedInd] };
+				if (Manager.NativeManager.DragFloat2(left_text, leftValues))
+				{
+					selected.Item2.LeftKeys[selectedInd] = leftValues[0];
+					selected.Item2.LeftValues[selectedInd] = leftValues[1];
+					selected.Item2.Clip(selectedInd);
+					selected.Item2.IsDirtied = true;
+				}
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(left_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			// Right key
+			if (selectedInd >= 0)
+			{
+				var rightValues = new float[] { selected.Item2.RightKeys[selectedInd], selected.Item2.RightValues[selectedInd] };
+				if (Manager.NativeManager.DragFloat2(right_text, rightValues))
+				{
+					selected.Item2.RightKeys[selectedInd] = rightValues[0];
+					selected.Item2.RightValues[selectedInd] = rightValues[1];
+					selected.Item2.Clip(selectedInd);
+					selected.Item2.IsDirtied = true;
+				}
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(right_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			if (selectedInd >= 0)
+			{
+				if (Manager.NativeManager.BeginCombo(type_text, type.FieldNames[selected.Item2.Interpolations[selectedInd]], swig.ComboFlags.None))
+				{
+					for (int i = 0; i < type.FieldNames.Count; i++)
+					{
+						bool is_selected = (type.FieldNames[(int)selected.Item2.Interpolations[selectedInd]] == type.FieldNames[i]);
+
+						if (Manager.NativeManager.Selectable(type.FieldNames[i], is_selected, swig.SelectableFlags.None))
+						{
+							selected.Item2.Interpolations[selectedInd] = i;
+							selected.Item2.IsDirtied = true;
+						}
+
+						if (is_selected)
+						{
+							Manager.NativeManager.SetItemDefaultFocus();
+						}
+					}
+
+					Manager.NativeManager.EndCombo();
+				}
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(type_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			Manager.NativeManager.Separator();
+
+			// Start curve
+			if (selected.Item1 != null)
+			{
+				startCurve.SetBinding(selected.Item1.StartType);
+				startCurve.Update();
+				selected.Item2.StartEdge = (Data.Value.FCurveEdge)selected.Item1.StartType;
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(start_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			// End curve
+			if (selected.Item1 != null)
+			{
+				endCurve.SetBinding(selected.Item1.EndType);
+				endCurve.Update();
+				selected.Item2.EndEdge = (Data.Value.FCurveEdge)selected.Item1.EndType;
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(end_text, invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			// Sampling
+			if (selected.Item1 != null)
+			{
+				var sampling = new int[] { selected.Item1.Sampling };
+
+				if (Manager.NativeManager.InputInt(sampling_text + "##SamplingText", sampling))
+				{
+					selected.Item1.Sampling.SetValue(sampling[0]);
+				}
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(sampling_text + "##SamplingText", invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			// Offset label
+			if (selected.Item1 != null)
+			{
+				var offset_id = offset_text + "##OffsetMinMax";
+				var offsets = new float[] { selected.Item1.OffsetMin, selected.Item1.OffsetMax };
+
+				if (Manager.NativeManager.DragFloat2(offset_id, offsets))
+				{
+					selected.Item1.OffsetMin.SetValue(offsets[0]);
+					selected.Item1.OffsetMax.SetValue(offsets[1]);
+				}
+
+				if (Manager.NativeManager.IsItemActive()) canControl = false;
+			}
+			else
+			{
+				Manager.NativeManager.InputText(offset_text + "##OffsetMinMax", invalidValue, swig.InputTextFlags.ReadOnly);
+			}
+
+			if (selected.Item1 == null)
+			{
+				startCurve.SetBinding(null);
+				endCurve.SetBinding(null);
+			}
+
+			var fcurveGroups = flattenFcurves.Where(_ => _.Properties.Any(__ => __.IsShown)).ToArray();
+
+			if (fcurveGroups.Any())
+			{
+				// TODO : implement multi select
+				timeline.SetBinding(fcurveGroups.First().GetTimeLineType());
+				timeline.Update();
+			}
+			else
+			{
+				Manager.NativeManager.InputText(timelineMode_Name + "##Timeline", invalidValue, swig.InputTextFlags.ReadOnly);
+				timeline.SetBinding(null);
+			}
+
+			Manager.NativeManager.PopItemWidth();
+			Manager.NativeManager.EndChild();
 		}
 
 		void GetRange(TreeNode treeNode, out float min_value, out float max_value)
@@ -1045,9 +1002,15 @@ namespace Effekseer.GUI.Dock
 
 		public void Copy()
 		{
+			var copiedData = CopyAsClass();
+			if (copiedData == null)
+			{
+				return;
+			}
+
 			System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
 			System.IO.StringWriter writer = new System.IO.StringWriter();
-			serializer.Serialize(writer, CopyAsClass());
+			serializer.Serialize(writer, copiedData);
 			Manager.NativeManager.SetClipboardText(writer.ToString());
 		}
 
@@ -1093,6 +1056,11 @@ namespace Effekseer.GUI.Dock
 				}
 			}
 
+			if (data.Curves.Count == 0)
+			{
+				return null;
+			}
+
 			var xmin = data.Curves.SelectMany(_ => _.Points).Min(_ => _.Key);
 
 			foreach(var curve in data.Curves)
@@ -1110,17 +1078,16 @@ namespace Effekseer.GUI.Dock
 
 		public void Paste()
 		{
-			FCurveCopiedData data = null;
 			try
 			{
 				System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(FCurveCopiedData));
-				data = serializer.Deserialize(new System.IO.StringReader(Manager.NativeManager.GetClipboardText())) as FCurveCopiedData;
+				FCurveCopiedData data = serializer.Deserialize(new System.IO.StringReader(Manager.NativeManager.GetClipboardText())) as FCurveCopiedData;
+				Paste(data);
 			}
-			finally
+			catch
 			{
+				return;
 			}
-			
-			Paste(data);
 		}
 
 		public void Paste(FCurveCopiedData data)

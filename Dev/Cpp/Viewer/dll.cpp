@@ -59,10 +59,16 @@
 
 #endif
 
+const float DistanceBase = 15.0f;
+const float ZoomDistanceFactor = 1.125f;
+const float MaxZoom = 40.0f;
+const float MinZoom = -40.0f;
+
 static float g_RotX = 30.0f;
 static float g_RotY = -30.0f;
 static Effekseer::Vector3D g_lightDirection = Effekseer::Vector3D(1, 1, 1);
-static float g_Distance = 15.0f;
+static float g_Distance = DistanceBase;
+static float g_Zoom = 0.0f;
 const float PI = 3.14159265f;
 
 static bool g_mouseRotDirectionInvX = false;
@@ -255,6 +261,12 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 		pixelsAdd[i].B = Effekseer::Clamp(colors[2][0] * 255.0f, 255.0f, 0.0f);
 		pixelsAdd[i].A = 255.0f;
 	}
+}
+
+void SetZoom(float zoom)
+{
+	g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom));
+	g_Distance = DistanceBase * powf(ZoomDistanceFactor, g_Zoom);
 }
 
 ViewerParamater::ViewerParamater()
@@ -1104,16 +1116,18 @@ bool Native::Slide(float x, float y)
 	v.X = up.X + right.X;
 	v.Y = up.Y + right.Y;
 	v.Z = up.Z + right.Z;
-	g_focus_position.X += v.X;
-	g_focus_position.Y += v.Y;
-	g_focus_position.Z += v.Z;
+
+	float moveFactor = powf(ZoomDistanceFactor, g_Zoom);
+	g_focus_position.X += v.X * moveFactor;
+	g_focus_position.Y += v.Y * moveFactor;
+	g_focus_position.Z += v.Z * moveFactor;
 
 	return true;
 }
 
 bool Native::Zoom(float zoom)
 {
-	g_Distance -= zoom;
+	SetZoom(g_Zoom - zoom);
 
 	return true;
 }
@@ -1610,9 +1624,10 @@ void Native::SetViewerParamater(ViewerParamater& paramater)
 	g_focus_position.Z = paramater.FocusZ;
 	g_RotX = paramater.AngleX;
 	g_RotY = paramater.AngleY;
-	g_Distance = paramater.Distance;
-	g_renderer->RendersGuide = paramater.RendersGuide;
+	
+	SetZoom(logf(Effekseer::Max(FLT_MIN, paramater.Distance / DistanceBase)) / logf(ZoomDistanceFactor));
 
+	g_renderer->RendersGuide = paramater.RendersGuide;
 	g_renderer->Distortion = (::EffekseerTool::DistortionType)paramater.Distortion;
 	g_renderer->RenderingMode = (::Effekseer::RenderMode)paramater.RenderingMode;
 }

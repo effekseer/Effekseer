@@ -30,6 +30,9 @@ public:
 		std::array<::Effekseer::TextureFilterType, Effekseer::TextureSlotMax> TextureFilterTypes;
 		std::array<::Effekseer::TextureWrapType, Effekseer::TextureSlotMax> TextureWrapTypes;
 
+		//! for OpenGL
+		std::array<uint64_t, Effekseer::TextureSlotMax> TextureIDs;
+
 		State();
 
 		void Reset();

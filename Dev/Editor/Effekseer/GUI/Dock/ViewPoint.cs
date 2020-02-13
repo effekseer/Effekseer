@@ -72,50 +72,60 @@ namespace Effekseer.GUI.Dock
             var cs = new float[] { viewerParameter.ClippingStart };
             var ce = new float[] { viewerParameter.ClippingEnd };
 
+			bool dirty = false;
+
             if (Manager.NativeManager.DragFloat3(Resources.GetString("Viewpoint") + id_f, f))
 			{
 				viewerParameter.FocusX = f[0];
 				viewerParameter.FocusY = f[1];
 				viewerParameter.FocusZ = f[2];
+				dirty = true;
 			}
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("XRotation") + id_rx, rx_))
 			{
 				viewerParameter.AngleX = rx_[0];
+				dirty = true;
 			}
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("YRotation") + id_ry, ry_))
 			{
 				viewerParameter.AngleY = ry_[0];
+				dirty = true;
 			}
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("PoVDistance") + id_d, d))
 			{
 				viewerParameter.Distance = d[0];
+				dirty = true;
 			}
 
 			if (Manager.NativeManager.DragFloat(Resources.GetString("Zoom") + id_s, s))
 			{
 				viewerParameter.RateOfMagnification = s[0];
+				dirty = true;
 			}
 
-            if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("Start") + id_cs, cs))
+			if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("Start") + id_cs, cs))
             {
                 viewerParameter.ClippingStart = cs[0];
-            }
+				dirty = true;
+			}
 
-            if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("End") + id_ce, ce))
+			if (Manager.NativeManager.DragFloat(Resources.GetString("Clipping") + "\n" + Resources.GetString("End") + id_ce, ce))
             {
                 viewerParameter.ClippingEnd = ce[0];
-            }
+				dirty = true;
+			}
 
-            if (Manager.NativeManager.BeginCombo(Resources.GetString("CameraMode") + id_t, viewTypes[viewerParameter.IsPerspective ? 0 : 1], swig.ComboFlags.None))
+			if (Manager.NativeManager.BeginCombo(Resources.GetString("CameraMode") + id_t, viewTypes[viewerParameter.IsPerspective ? 0 : 1], swig.ComboFlags.None))
 			{
 				if(Manager.NativeManager.Selectable(viewTypes[0]))
 				{
 					viewerParameter.IsPerspective = true;
 					viewerParameter.IsOrthographic = false;
 					Manager.NativeManager.SetItemDefaultFocus();
+					dirty = true;
 				}
 
 				if (Manager.NativeManager.Selectable(viewTypes[1]))
@@ -123,6 +133,7 @@ namespace Effekseer.GUI.Dock
 					viewerParameter.IsOrthographic = true;
 					viewerParameter.IsPerspective = false;
 					Manager.NativeManager.SetItemDefaultFocus();
+					dirty = true;
 				}
 
 				Manager.NativeManager.EndCombo();
@@ -182,9 +193,13 @@ namespace Effekseer.GUI.Dock
 						viewerParameter.RateOfMagnification = viewPoint.RateOfMagnification;
 					}
                 }
-            }
+				dirty = true;
+			}
 
-            Manager.Viewer.SetViewerParamater(viewerParameter);
+			if (dirty)
+			{
+				Manager.Viewer.SetViewerParamater(viewerParameter);
+			}
 		}
 	}
 }
