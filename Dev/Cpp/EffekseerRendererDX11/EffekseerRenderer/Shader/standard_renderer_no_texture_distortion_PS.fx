@@ -14,6 +14,11 @@ struct PS_Input
 	float4 Pos		: TEXCOORD1;
 	float4 PosU		: TEXCOORD2;
 	float4 PosR		: TEXCOORD3;
+    
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+    float2 AlphaUV  : TEXCOORD4;
+    float FlipbookIndex : TEXCOORD5;
+#endif
 };
 
 

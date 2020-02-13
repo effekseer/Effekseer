@@ -103,6 +103,12 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		state.TextureFilter3 = param.BasicParameterPtr->TextureFilter3;
 		state.TextureWrap3 = param.BasicParameterPtr->TextureWrap3;
+
+		state.EnableInterpolation = param.BasicParameterPtr->EnableInterpolation;
+		state.UVLoopType = param.BasicParameterPtr->UVLoopType;
+		state.InterpolationType = param.BasicParameterPtr->InterpolationType;
+		state.FlipbookDivideX = param.BasicParameterPtr->FlipbookDivideX;
+		state.FlipbookDivideY = param.BasicParameterPtr->FlipbookDivideY;
 #endif
 
 
@@ -174,6 +180,10 @@ protected:
 			verteies[i].Pos.Z = 0.0f;
 	
 			verteies[i].SetColor( instanceParameter.Colors[i] );
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			verteies[i].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
+#endif
 		}
 		
 		verteies[0].UV[0] = instanceParameter.UV.X;

@@ -1,20 +1,23 @@
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+cbuffer VS_ConstantBuffer : register(b0)
+{
+    float4x4 mCameraProj;
+    float4x4 mModel[40];
+    float4 fUV[40];
+    float4 fAlphaUV[40];
 
-float4x4 mCameraProj		: register( c0 );
-float4x4 mModel[40]		    : register( c4 );
-float4	fUV[40]			    : register( c164 );
-float4	fAlphaUV[40]	    : register( c204 );
-float4	fModelColor[40]		: register( c244 );
+    float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+    float4 fFlipbookIndexAndNextRate[40];
 
-#ifdef ENABLE_LIGHTING
-float4	fLightDirection		: register( c284 );
-float4	fLightColor		    : register( c285 );
-float4	fLightAmbient		: register( c286 );
-#endif
-float4 mUVInversed		    : register( c287 );
-
+    float4 fModelColor[40];
+    
+    float4 fLightDirection;
+    float4 fLightColor;
+    float4 fLightAmbient;
+    
+    float4 mUVInversed;
+};
 #else
-
 float4x4 mCameraProj		: register( c0 );
 float4x4 mModel[40]		: register( c4 );
 float4	fUV[40]			: register( c164 );
@@ -26,7 +29,6 @@ float4	fLightColor		: register( c245 );
 float4	fLightAmbient		: register( c246 );
 #endif
 float4 mUVInversed		: register(c247);
-
 #endif
 
 
@@ -52,18 +54,28 @@ struct VS_Output
 	half3 Tangent		: TEXCOORD3;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV  : TEXCOORD4;
+    float2 AlphaUV      : TEXCOORD4;
+    
+    float FlipbookRate  : TEXCOORD5;
+    float2 FlipbookNextIndexUV : TEXCOORD6;
 #endif
     
-#else
+#else // else ENABLE_NORMAL_TEXTURE
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-    float2 AlphaUV  : TEXCOORD1;
+    float2 AlphaUV      : TEXCOORD1;
+    
+    float FlipbookRate  : TEXCOORD2;
+    float2 FlipbookNextIndexUV : TEXCOORD3;
 #endif
     
-#endif
+#endif // end ENABLE_NORMAL_TEXTURE
 	float4 Color		: COLOR;
 };
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "FlipbookInterpolationUtils.fx"
+#endif
 
 VS_Output VS( const VS_Input Input )
 {
@@ -83,8 +95,45 @@ VS_Output VS( const VS_Input Input )
 	Output.UV.y = Input.UV.y * uv.w + uv.y;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+    // alpha texture
     Output.AlphaUV.x = Input.UV.x * alphaUV.z + alphaUV.x;
 	Output.AlphaUV.y = Input.UV.y * alphaUV.w + alphaUV.y;
+    
+    // flipbook interpolation
+    if(fFlipbookParameter.x > 0)
+    {
+        float FlipbookIndexAndNextRate = fFlipbookIndexAndNextRate[Input.Index.x].x;
+    
+        Output.FlipbookRate = frac(FlipbookIndexAndNextRate);
+    
+        float NextIndex = floor(FlipbookIndexAndNextRate) + 1;
+        
+        // loop none 
+        if(fFlipbookParameter.y == 0)
+        {
+            if (NextIndex >= fFlipbookParameter.z * fFlipbookParameter.w)
+			{
+				NextIndex = (fFlipbookParameter.z * fFlipbookParameter.w) - 1;
+			}
+        }
+        // loop
+        else if(fFlipbookParameter.y == 1)
+        {
+            NextIndex %= (fFlipbookParameter.z * fFlipbookParameter.w);
+        }
+        // loop reverse
+        else if(fFlipbookParameter.y == 2)
+        {
+            bool Reverse = (floor(NextIndex) / (fFlipbookParameter.z * fFlipbookParameter.w)) % 2 == 1;
+            NextIndex = int(NextIndex) % (fFlipbookParameter.z * fFlipbookParameter.w);
+            if(Reverse)
+            {
+                NextIndex = fFlipbookParameter.z * fFlipbookParameter.w - 1 - NextIndex;
+            }
+        }
+    
+        Output.FlipbookNextIndexUV = GetFlipbookUVForIndex(Input.UV, NextIndex, fFlipbookParameter.z, fFlipbookParameter.w);
+    }
 #endif
 
 #if ENABLE_LIGHTING

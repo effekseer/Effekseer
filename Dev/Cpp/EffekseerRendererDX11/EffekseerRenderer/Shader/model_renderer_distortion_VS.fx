@@ -1,10 +1,22 @@
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-float4x4 mCameraProj	: register( c0 );
-float4x4 mModel[40]		: register( c4 );
-float4 fUV[40]			: register( c164 );
-float4 fAlphaUV[40]	    : register( c204 );
-float4 fModelColor[40]	: register( c244 );
-float4 mUVInversed		: register( c287 );
+cbuffer VS_ConstantBuffer : register(b0)
+{
+    float4x4 mCameraProj;
+    float4x4 mModel[40];
+    float4 fUV[40];
+    float4 fAlphaUV[40];
+
+    float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
+    float4 fFlipbookIndexAndNextRate[40];
+
+    float4 fModelColor[40];
+
+    float4 fLightDirection;
+    float4 fLightColor;
+    float4 fLightAmbient;
+    
+    float4 mUVInversed;
+};
 #else
 float4x4 mCameraProj		: register( c0 );
 float4x4 mModel[40]		: register( c4 );
@@ -35,8 +47,14 @@ struct VS_Output
 	float4 Color		: COLOR0;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV : TEXCOORD5;
+    float FlipbookRate  : TEXCOORD6;
+    float2 FlipbookNextIndexUV : TEXCOORD7;
 #endif
 };
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+#include "FlipbookInterpolationUtils.fx"
+#endif
 
 VS_Output VS( const VS_Input Input )
 {
@@ -82,6 +100,42 @@ VS_Output VS( const VS_Input Input )
 	Output.UV.y = mUVInversed.x + mUVInversed.y * Output.UV.y;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     Output.AlphaUV.y =  mUVInversed.x + mUVInversed.y * Output.AlphaUV.y;
+    
+    // flipbook interpolation
+    if(fFlipbookParameter.x > 0)
+    {
+        float FlipbookIndexAndNextRate = fFlipbookIndexAndNextRate[Input.Index.x].x;
+    
+        Output.FlipbookRate = frac(FlipbookIndexAndNextRate);
+    
+        float NextIndex = floor(FlipbookIndexAndNextRate) + 1;
+        
+        // loop none 
+        if(fFlipbookParameter.y == 0)
+        {
+            if (NextIndex >= fFlipbookParameter.z * fFlipbookParameter.w)
+			{
+				NextIndex = (fFlipbookParameter.z * fFlipbookParameter.w) - 1;
+			}
+        }
+        // loop
+        else if(fFlipbookParameter.y == 1)
+        {
+            NextIndex %= (fFlipbookParameter.z * fFlipbookParameter.w);
+        }
+        // loop reverse
+        else if(fFlipbookParameter.y == 2)
+        {
+            bool Reverse = (floor(NextIndex) / (fFlipbookParameter.z * fFlipbookParameter.w)) % 2 == 1;
+            NextIndex = int(NextIndex) % (fFlipbookParameter.z * fFlipbookParameter.w);
+            if(Reverse)
+            {
+                NextIndex = fFlipbookParameter.z * fFlipbookParameter.w - 1 - NextIndex;
+            }
+        }
+    
+        Output.FlipbookNextIndexUV = GetFlipbookUVForIndex(Input.UV, NextIndex, fFlipbookParameter.z, fFlipbookParameter.w);
+    }
 #endif
 
 	return Output;

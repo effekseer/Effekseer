@@ -46,6 +46,14 @@ struct StandardRendererState
 	::Effekseer::TextureData* AlphaTexturePtr;
 #endif
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	int32_t EnableInterpolation;
+	int32_t UVLoopType;
+	int32_t InterpolationType;
+	int32_t FlipbookDivideX;
+	int32_t FlipbookDivideY;
+#endif
+
 	::Effekseer::RendererMaterialType MaterialType;
 	::Effekseer::MaterialData* MaterialPtr;
 	int32_t MaterialUniformCount = 0;
@@ -78,6 +86,14 @@ struct StandardRendererState
 		NormalTexturePtr = nullptr;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		AlphaTexturePtr = nullptr;
+#endif
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		EnableInterpolation = 0;
+		UVLoopType = 0;
+		InterpolationType = 0;
+		FlipbookDivideX = 0;
+		FlipbookDivideY = 0;
 #endif
 
 		MaterialPtr = nullptr;
@@ -122,6 +138,22 @@ struct StandardRendererState
 			return true;
 		if (NormalTexturePtr != state.TexturePtr)
 			return true;
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		if (AlphaTexturePtr != state.AlphaTexturePtr)
+			return true;
+#endif
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		if (EnableInterpolation != state.EnableInterpolation)
+			return true;
+		if (UVLoopType != state.UVLoopType)
+			return true;
+		if (InterpolationType != state.InterpolationType)
+			return true;
+		if (FlipbookDivideX != state.FlipbookDivideX)
+			return true;
+		if (FlipbookDivideY != state.FlipbookDivideY)
+			return true;
+#endif
 		if (MaterialType != state.MaterialType)
 			return true;
 		if (MaterialPtr != state.MaterialPtr)
@@ -257,7 +289,6 @@ struct StandardRendererState
 
 template <typename RENDERER, typename SHADER, typename VERTEX, typename VERTEX_DISTORTION> class StandardRenderer
 {
-
 private:
 	RENDERER* m_renderer;
 	SHADER* m_shader;
@@ -280,15 +311,67 @@ private:
 	{
 		Effekseer::Matrix44 constantVSBuffer[2];
 		float uvInversed[4];
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		struct
+		{
+			union
+			{
+				float Buffer[4];
+
+				struct
+				{
+					float enableInterpolation;
+					float loopType;
+					float divideX;
+					float divideY;
+				};
+			};
+		} flipbookParameter;
+#endif
 	};
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	struct PixelConstantBuffer
+	{
+		struct
+		{
+			union
+			{
+				float Buffer[4];
+
+				struct
+				{
+					float enableInterpolation;
+					float interpolationType;
+				};
+			};
+		} flipbookParameter;
+	};
+#endif
 
 	struct DistortionPixelConstantBuffer
 	{
 		float scale[4];
 		float uvInversed[4];
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		struct
+		{
+			union
+			{
+				float Buffer[4];
+
+				struct
+				{
+					float enableInterpolation;
+					float interpolationType;
+				};
+			};
+		} flipbookParameter;
+#endif
 	};
 
-	
 	void ColorToFloat4(::Effekseer::Color color, float fc[4])
 	{
 		fc[0] = color.R / 255.0f;
@@ -801,6 +884,13 @@ public:
 			vcb.uvInversed[0] = uvInversed[0];
 			vcb.uvInversed[1] = uvInversed[1];
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			vcb.flipbookParameter.enableInterpolation = static_cast<float>(m_state.EnableInterpolation);
+			vcb.flipbookParameter.loopType = static_cast<float>(m_state.UVLoopType);
+			vcb.flipbookParameter.divideX = static_cast<float>(m_state.FlipbookDivideX);
+			vcb.flipbookParameter.divideY = static_cast<float>(m_state.FlipbookDivideY);
+#endif
+
 			m_renderer->SetVertexBufferToShader(&vcb, sizeof(VertexConstantBuffer), 0);
 
 			// ps
@@ -824,6 +914,13 @@ public:
 			m_renderer->SetPixelBufferToShader(lightAmbientColor, sizeof(float) * 4, psOffset);
 			psOffset += (sizeof(float) * 4);
 			
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			PixelConstantBuffer pcb;
+			pcb.flipbookParameter.enableInterpolation = static_cast<float>(m_state.EnableInterpolation);
+			pcb.flipbookParameter.interpolationType = static_cast<float>(m_state.InterpolationType);
+
+			m_renderer->SetPixelBufferToShader(&pcb.flipbookParameter, sizeof(float) * 4, psOffset);
+#endif
 		}
 		else
 		{
@@ -832,6 +929,15 @@ public:
 			vcb.constantVSBuffer[1] = ToStruct(mProj);
 			vcb.uvInversed[0] = uvInversed[0];
 			vcb.uvInversed[1] = uvInversed[1];
+			vcb.uvInversed[2] = 0.0f;
+			vcb.uvInversed[3] = 0.0f;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			vcb.flipbookParameter.enableInterpolation = static_cast<float>(m_state.EnableInterpolation);
+			vcb.flipbookParameter.loopType = static_cast<float>(m_state.UVLoopType);
+			vcb.flipbookParameter.divideX = static_cast<float>(m_state.FlipbookDivideX);
+			vcb.flipbookParameter.divideY = static_cast<float>(m_state.FlipbookDivideY);
+#endif
 
 			m_renderer->SetVertexBufferToShader(&vcb, sizeof(VertexConstantBuffer), 0);
 
@@ -842,8 +948,23 @@ public:
 				pcb.uvInversed[0] = uvInversedBack[0];
 				pcb.uvInversed[1] = uvInversedBack[1];
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+				pcb.flipbookParameter.enableInterpolation = static_cast<float>(m_state.EnableInterpolation);
+				pcb.flipbookParameter.interpolationType = static_cast<float>(m_state.InterpolationType);
+#endif
+
 				m_renderer->SetPixelBufferToShader(&pcb, sizeof(DistortionPixelConstantBuffer), 0);
 			}
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			else
+			{
+				PixelConstantBuffer pcb;
+				pcb.flipbookParameter.enableInterpolation = static_cast<float>(m_state.EnableInterpolation);
+				pcb.flipbookParameter.interpolationType = static_cast<float>(m_state.InterpolationType);
+
+				m_renderer->SetPixelBufferToShader(&pcb, sizeof(PixelConstantBuffer), 0);
+			}
+#endif
 		}
 
 		shader_->SetConstantBuffer();

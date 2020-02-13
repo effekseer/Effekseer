@@ -124,6 +124,8 @@ void EffectNodeTrack::BeginRenderingGroup(InstanceGroup* group, Manager* manager
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			m_instanceParameter.UV = group->GetFirst()->GetUV(0);
 			m_instanceParameter.AlphaUV = group->GetFirst()->GetUV(1);
+
+			m_instanceParameter.FlipbookIndexAndNextRate = group->GetFirst()->m_flipbookIndexAndNextRate;
 #else
 			m_instanceParameter.UV = group->GetFirst()->GetUV();
 #endif

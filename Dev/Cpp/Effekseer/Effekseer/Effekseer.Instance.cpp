@@ -174,6 +174,9 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	, m_ParentMatrix43Calculated(false)
 	, is_time_step_allowed(false)
 	, m_sequenceNumber(0)
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	, m_flipbookIndexAndNextRate(0)
+#endif
 {
 	m_generatedChildrenCount = m_fixedGeneratedChildrenCount;
 	maxGenerationChildrenCount = fixedMaxGenerationChildrenCount_;
@@ -199,6 +202,13 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 			childrenGroups_ = group;
 		}
 	}
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	for (auto& it : uvTimeOffsets)
+	{
+		it = 0;
+	}
+#endif
 }
 
 //----------------------------------------------------------------------------------
@@ -822,19 +832,22 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 
 	// UV
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	const int32_t ArraySize = sizeof(m_pEffectNode->RendererCommon.UVTypes) / sizeof(m_pEffectNode->RendererCommon.UVTypes[0]);
-	for (int32_t i = 0; i < ArraySize; i++)
+	for (int32_t i = 0; i < ParameterRendererCommon::UVParameterNum; i++)
 	{
 		const auto& UVType = m_pEffectNode->RendererCommon.UVTypes[i];
 		const auto& UV = m_pEffectNode->RendererCommon.UVs[i];
 
 		if (UVType == ParameterRendererCommon::UV_ANIMATION)
 		{
+			auto& uvTimeOffset = uvTimeOffsets[i];
 			uvTimeOffset = (int32_t)UV.Animation.StartFrame.getValue(*instanceGlobal);
 			uvTimeOffset *= UV.Animation.FrameLength;
 		}
 		else if (UVType == ParameterRendererCommon::UV_SCROLL)
 		{
+			auto& uvAreaOffset = uvAreaOffsets[i];
+			auto& uvScrollSpeed = uvScrollSpeeds[i];
+
 			auto xy = UV.Scroll.Position.getValue(*instanceGlobal);
 			auto zw = UV.Scroll.Size.getValue(*instanceGlobal);
 
@@ -847,6 +860,8 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 		}
 		else if (UVType == ParameterRendererCommon::UV_FCURVE)
 		{
+			auto& uvAreaOffset = uvAreaOffsets[i];
+
 			uvAreaOffset.X = UV.FCurve.Position->X.GetOffset(*instanceGlobal);
 			uvAreaOffset.Y = UV.FCurve.Position->Y.GetOffset(*instanceGlobal);
 			uvAreaOffset.Width = UV.FCurve.Size->X.GetOffset(*instanceGlobal);
@@ -1065,6 +1080,58 @@ void Instance::Update( float deltaFrame, bool shown )
 			}
 		}
 	}
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	{
+		auto& CommonValue = m_pEffectNode->RendererCommon;
+		auto& UV = CommonValue.UVs[0];
+		int UVType = CommonValue.UVTypes[0];
+
+		if (UVType == ParameterRendererCommon::UV_ANIMATION)
+		{
+			auto time = m_LivingTime + uvTimeOffsets[0];
+
+			// 経過時間を取得
+			if (m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_RIBBON ||
+				m_pEffectNode->GetType() == eEffectNodeType::EFFECT_NODE_TYPE_TRACK)
+			{
+				auto baseInstance = this->m_pContainer->GetFirstGroup()->GetFirst();
+				if (baseInstance != nullptr)
+				{
+					time = baseInstance->m_LivingTime + baseInstance->uvTimeOffsets[0];
+				}
+			}
+
+			float fFrameNum = time / (float)UV.Animation.FrameLength;
+			int32_t frameNum = (int32_t)fFrameNum;
+			int32_t frameCount = UV.Animation.FrameCountX * UV.Animation.FrameCountY;
+
+			if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_ONCE)
+			{
+				if (frameNum >= frameCount)
+				{
+					frameNum = frameCount - 1;
+				}
+			}
+			else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_LOOP)
+			{
+				frameNum %= frameCount;
+			}
+			else if (UV.Animation.LoopType == UV.Animation.LOOPTYPE_REVERSELOOP)
+			{
+				bool rev = (frameNum / frameCount) % 2 == 1;
+				frameNum %= frameCount;
+				if (rev)
+				{
+					frameNum = frameCount - 1 - frameNum;
+				}
+			}
+
+			m_flipbookIndexAndNextRate = static_cast<float>(frameNum);
+			m_flipbookIndexAndNextRate += fFrameNum - static_cast<float>(frameNum);
+		}
+	}
+#endif
 
 	if(killed)
 	{
@@ -1480,6 +1547,8 @@ RectF Instance::GetUV(const int32_t index) const
 	}
 	else if( UVType == ParameterRendererCommon::UV_ANIMATION )
 	{
+		auto& uvTimeOffset = uvTimeOffsets[index];
+
 		auto time = m_LivingTime + uvTimeOffset;
 
 		int32_t frameNum = (int32_t)(time / UV.Animation.FrameLength);
@@ -1517,6 +1586,9 @@ RectF Instance::GetUV(const int32_t index) const
 	}
 	else if( UVType == ParameterRendererCommon::UV_SCROLL )
 	{
+		auto& uvAreaOffset = uvAreaOffsets[index];
+		auto& uvScrollSpeed = uvScrollSpeeds[index];
+
 		auto time = (int32_t)m_LivingTime;
 
 		uv = RectF(
@@ -1527,6 +1599,8 @@ RectF Instance::GetUV(const int32_t index) const
 	}
 	else if ( UVType == ParameterRendererCommon::UV_FCURVE)
 	{
+		auto& uvAreaOffset = uvAreaOffsets[index];
+
 		auto time = (int32_t)m_LivingTime;
 
 		auto fcurvePos = UV.FCurve.Position->GetValues(m_LivingTime, m_LivedTime);

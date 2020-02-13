@@ -283,6 +283,10 @@ namespace Effekseer.Binary
 				data.Add(value_.StartSheet.Max.GetBytes());
 				data.Add(value_.StartSheet.Min.GetBytes());
 
+#if __EFFEKSEER_BUILD_VERSION16__
+				data.Add(value_.FlipbookInterpolationType);
+#endif
+
 			}
 			else if (value.UV.Value == Data.RendererCommonValues.UVType.Scroll)
 			{

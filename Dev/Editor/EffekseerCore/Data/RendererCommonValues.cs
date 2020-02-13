@@ -1174,6 +1174,11 @@ namespace Effekseer.Data
 			[Name(value = "Start Sheet", language = Language.English)]
 			public Value.IntWithRandom StartSheet { get; private set; }
 
+#if __EFFEKSEER_BUILD_VERSION16__
+			[Name(value = "アニメーション補間", language = Language.Japanese)]
+			public Value.Enum<FlipbookInterpolationType> FlipbookInterpolationType { get; private set; }
+#endif
+
 			public UVAnimationParamater()
 			{
 				Start = new Value.Vector2D();
@@ -1183,6 +1188,10 @@ namespace Effekseer.Data
 				FrameCountY = new Value.Int(1, int.MaxValue, 1);
 				LoopType = new Value.Enum<LoopType>(RendererCommonValues.LoopType.Once);
 				StartSheet = new Value.IntWithRandom(0, int.MaxValue, 0);
+
+#if __EFFEKSEER_BUILD_VERSION16__
+				FlipbookInterpolationType = new Value.Enum<FlipbookInterpolationType>(RendererCommonValues.FlipbookInterpolationType.None);
+#endif
 			}
 		}
 
@@ -1306,5 +1315,19 @@ namespace Effekseer.Data
 			[Name(value = "Reverse Loop", language = Language.English)]
 			ReverceLoop = 2,
 		}
+
+#if __EFFEKSEER_BUILD_VERSION16__
+		public enum FlipbookInterpolationType : int
+		{
+			[Name(value = "なし", language = Language.Japanese)]
+			[Name(value = "None", language = Language.English)]
+			None = 0,
+
+			[Name(value = "線形補間", language = Language.Japanese)]
+			[Name(value = "Lerp", language = Language.English)]
+			Lerp = 1,
+		}
+#endif
+
 	}
 }

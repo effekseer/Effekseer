@@ -664,6 +664,9 @@ struct ParameterCustomData
 
 struct ParameterRendererCommon
 {
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	static const int32_t UVParameterNum = 2;
+#endif
 
 	RendererMaterialType MaterialType = RendererMaterialType::Default;
 
@@ -752,7 +755,7 @@ struct ParameterRendererCommon
 
 		UV_DWORD = 0x7fffffff,
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	} UVTypes[2];
+	} UVTypes[UVParameterNum];
 #else
 	} UVType;
 #endif
@@ -797,6 +800,14 @@ struct ParameterRendererCommon
 
 			random_int	StartFrame;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+			enum
+			{
+				NONE = 0,
+				LERP = 1,
+			} InterpolationType;
+#endif
+
 		} Animation;
 
 		struct
@@ -813,7 +824,7 @@ struct ParameterRendererCommon
 		} FCurve;
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
-	} UVs[2];
+	} UVs[UVParameterNum];
 #else
 	} UV;
 #endif
@@ -869,7 +880,7 @@ struct ParameterRendererCommon
 			memcpy(&MaterialType, pos, sizeof(int));
 			pos += sizeof(int);
 
-			if (MaterialType == RendererMaterialType::Default || 
+			if (MaterialType == RendererMaterialType::Default ||
 				MaterialType == RendererMaterialType::BackDistortion ||
 				MaterialType == RendererMaterialType::Lighting)
 			{
@@ -895,7 +906,7 @@ struct ParameterRendererCommon
 				memcpy(&textures, pos, sizeof(int));
 				pos += sizeof(int);
 
-				
+
 				Material.MaterialTextures.resize(textures);
 				memcpy(Material.MaterialTextures.data(), pos, sizeof(MaterialTextureParameter) * textures);
 				pos += (sizeof(MaterialTextureParameter) * textures);
@@ -913,7 +924,7 @@ struct ParameterRendererCommon
 			memcpy(&ColorTextureIndex, pos, sizeof(int));
 			pos += sizeof(int);
 		}
-		
+
 		memcpy(&AlphaBlend, pos, sizeof(int));
 		pos += sizeof(int);
 
@@ -1157,6 +1168,21 @@ struct ParameterRendererCommon
 		BasicParameter.Texture2Index = Texture2Index;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		BasicParameter.Texture3Index = AlphaTextureIndex;
+#endif
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		if (UVTypes[0] == UV_ANIMATION)
+		{
+			BasicParameter.EnableInterpolation = (UVs[0].Animation.InterpolationType != UVs[0].Animation.NONE);
+			BasicParameter.UVLoopType = UVs[0].Animation.LoopType;
+			BasicParameter.InterpolationType = UVs[0].Animation.InterpolationType;
+			BasicParameter.FlipbookDivideX = UVs[0].Animation.FrameCountX;
+			BasicParameter.FlipbookDivideY = UVs[0].Animation.FrameCountY;
+		}
+		else
+		{
+			BasicParameter.EnableInterpolation = false;
+		}
 #endif
 
 		if (BasicParameter.MaterialType == RendererMaterialType::File)

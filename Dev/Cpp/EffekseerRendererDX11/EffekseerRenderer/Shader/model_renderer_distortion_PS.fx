@@ -9,8 +9,18 @@ Texture2D g_alphaTexture : register(t2);
 SamplerState g_alphaSampler : register(s2);
 #endif
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+cbuffer PS_ConstanBuffer : register(b0)
+{
+    float4	g_scale;
+    float4	mUVInversedBack;
+
+    float4  fFlipbookParameter; // x:enable, y:interpolationType
+};
+#else
 float4		g_scale			: register(c0);
 float4 mUVInversedBack		: register(c1);
+#endif
 
 struct PS_Input
 {
@@ -23,6 +33,8 @@ struct PS_Input
 	float4 Color		: COLOR0;
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV : TEXCOORD5;
+    float FlipbookRate  : TEXCOORD6;
+    float2 FlipbookNextIndexUV : TEXCOORD7;
 #endif
 };
 
@@ -36,6 +48,16 @@ float4 PS( const PS_Input Input ) : SV_Target
 	Output.a = Output.a * Input.Color.a;
     
 #ifdef __EFFEKSEER_BUILD_VERSION16__
+    if(fFlipbookParameter.x > 0)
+    {
+        float4 NextPixelColor = g_backTexture.Sample(g_backSampler, Input.FlipbookNextIndexUV) * Input.Color;
+        
+        if(fFlipbookParameter.y == 1)
+        {
+            Output = lerp(Output, NextPixelColor, Input.FlipbookRate);
+        }
+    }
+    
     Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;
 #endif
 

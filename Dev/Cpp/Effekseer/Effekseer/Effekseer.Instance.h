@@ -251,6 +251,16 @@ public:
 	// 生成されてからの時間
 	float		m_LivingTime;
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	//! The time offset for UV animation
+	int32_t		uvTimeOffsets[ParameterRendererCommon::UVParameterNum];
+
+	// Scroll, FCurve area for UV
+	RectF		uvAreaOffsets[ParameterRendererCommon::UVParameterNum];
+
+	// Scroll speed for UV
+	Vec2f		uvScrollSpeeds[ParameterRendererCommon::UVParameterNum];
+#else
 	//! The time offset for UV animation
 	int32_t uvTimeOffset = 0;
 
@@ -259,6 +269,7 @@ public:
 
 	// Scroll speed for UV
 	Vec2f	uvScrollSpeed;
+#endif
 
 	// The number of generated chiledren. (fixed size)
 	int32_t		m_fixedGeneratedChildrenCount[ChildrenMax];
@@ -307,6 +318,10 @@ public:
 
 	/* 更新番号 */
 	uint32_t		m_sequenceNumber;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	float			m_flipbookIndexAndNextRate;
+#endif
 
 	//! calculate dynamic equation and assign a result
 	template <typename T, typename U>
