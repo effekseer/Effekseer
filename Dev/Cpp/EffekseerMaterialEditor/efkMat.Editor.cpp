@@ -1252,6 +1252,11 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				{
 					ImGui::Image((void*)texture->GetTexture()->GetInternalObjects()[0], size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
+					if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
+					{
+						ImGui::SetTooltip(texture->GetPath().c_str());
+					}
+
 					// adhoc
 					glBindTexture(GL_TEXTURE_2D, (GLuint)texture->GetTexture()->GetInternalObjects()[0]);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
