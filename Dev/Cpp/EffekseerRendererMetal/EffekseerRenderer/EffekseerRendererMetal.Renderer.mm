@@ -1,9 +1,9 @@
 #include "EffekseerRendererMetal.Renderer.h"
 #include "EffekseerRendererMetal.RendererImplemented.h"
 //#include "EffekseerRendererMetal.MaterialLoader.h"
+#include "EffekseerRendererMetal.VertexBuffer.h"
 
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.Shader.h"
-#include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.VertexBuffer.h"
 #include "../../EffekseerRendererLLGI/EffekseerRendererLLGI.MaterialLoader.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.CommandListMetal.h"
 #include "../../3rdParty/LLGI/src/Metal/LLGI.GraphicsMetal.h"
@@ -198,6 +198,14 @@ void EndCommandList(EffekseerRenderer::CommandList* commandList)
 	c->GetInternal()->EndWithPlatform();
 }
 */
+
+void RendererImplemented::GenerateVertexBuffer()
+{
+    // Metal doesn't need to update buffer to make sure it has the correct size
+    // this will buffer 1.2mb of memory in total for a start
+    m_vertexBuffer = VertexBuffer::Create(graphicsDevice_, 400000, true, false);
+}
+
 void RendererImplemented::SetExternalCommandBuffer(id<MTLCommandBuffer> extCommandBuffer)
 {
     if (commandList_ != nullptr)

@@ -11,7 +11,7 @@ namespace EffekseerRendererLLGI
 
 class VertexBuffer : public DeviceObject, public ::EffekseerRenderer::VertexBufferBase
 {
-private:
+protected:
 	// TODO make ring buffer
 	int32_t currentIndex = 0;
 	std::vector<LLGI::VertexBuffer*> vertexBuffers;
@@ -34,10 +34,10 @@ public:
 	LLGI::VertexBuffer* GetVertexBuffer() { return vertexBuffers[currentIndex]; }
 
 public:
-	void Lock();
+	void Lock() override;
 	bool RingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment) override;
 	bool TryRingBufferLock(int32_t size, int32_t& offset, void*& data, int32_t alignment) override;
-	void Unlock();
+	void Unlock() override;
 };
 
 } // namespace EffekseerRendererLLGI

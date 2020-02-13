@@ -203,6 +203,12 @@ LLGI::PipelineState* RendererImplemented::GetOrCreatePiplineState()
 	return piplineState;
 }
 
+void RendererImplemented::GenerateVertexBuffer()
+{
+    // assume max vertex size is smaller than float * 10
+    m_vertexBuffer = VertexBuffer::Create(graphicsDevice_, sizeof(float) * 10 * m_squareMaxCount * 4, true, false);
+}
+
 RendererImplemented::RendererImplemented(int32_t squareMaxCount)
 	: graphicsDevice_(nullptr)
 	, m_vertexBuffer(NULL)
@@ -289,8 +295,7 @@ bool RendererImplemented::Initialize(GraphicsDevice* graphicsDevice,
 
 	// Generate vertex buffer
 	{
-		// assume max vertex size is smaller than float * 10
-		m_vertexBuffer = VertexBuffer::Create(graphicsDevice_, sizeof(float) * 10 * m_squareMaxCount * 4, true, false);
+        GenerateVertexBuffer();
 		if (m_vertexBuffer == NULL)
 			return false;
 	}
