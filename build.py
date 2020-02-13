@@ -78,27 +78,16 @@ if env['PACKAGEING_FOR_MAC'] == '1':
 
     if aceutils.isMac():
         aceutils.cd('Dev')
-
-        aceutils.mkdir('Mac/Effekseer.app/Contents/Resources/')
         aceutils.call('cd release;mkbundle -o Effekseer Effekseer.exe --deps --sdk $MONO_SDK_PATH;otool -L Effekseer', env=env)
-        aceutils.call('cd release;mkbundle -o tools/mqoToEffekseerModelConverter tools/mqoToEffekseerModelConverter.exe --deps --sdk $MONO_SDK_PATH;otool -L tools/mqoToEffekseerModelConverter;', env=env)
-
+        aceutils.mkdir('Mac/Effekseer.app/Contents/Resources/')
         aceutils.copy('release/Effekseer', 'Mac/Effekseer.app/Contents/Resources/')
         aceutils.copy('release/Effekseer.exe', 'Mac/Effekseer.app/Contents/Resources/')
         aceutils.copy('release/libViewer.dylib', 'Mac/Effekseer.app/Contents/Resources/')
         aceutils.copy('release/EffekseerCore.dll', 'Mac/Effekseer.app/Contents/Resources/')
+        aceutils.copy('release/EffekseerMaterialEditor', 'Mac/Effekseer.app/Contents/Resources/')
         
         aceutils.copytree('release/resources', 'Mac/Effekseer.app/Contents/Resources/resources')
         aceutils.copytree('release/scripts', 'Mac/Effekseer.app/Contents/Resources/scripts')
+        aceutils.copytree('release/tools', 'Mac/Effekseer.app/Contents/Resources/tools')
         
-        aceutils.mkdir('Mac/Effekseer.app/Contents/Resources/tools')
-
-        aceutils.copy('release/tools/mqoToEffekseerModelConverter', 'Mac/Effekseer.app/Contents/Resources/tools')
-        aceutils.rmdir('fbxToEffekseerModelConverterMac')
-        aceutils.rmdir('__MACOSX')
-        aceutils.wget('https://github.com/effekseer/Effekseer/releases/download/Prebuild/fbxToEffekseerModelConverterMac.zip')
-        aceutils.unzip('fbxToEffekseerModelConverterMac.zip')
-
-        aceutils.copy('fbxToEffekseerModelConverterMac/fbxToEffekseerModelConverter', 'Mac/Effekseer.app/Contents/Resources/tools/')
-        aceutils.copy('fbxToEffekseerModelConverterMac/libfbxsdk.dylib', 'Mac/Effekseer.app/Contents/Resources/tools/')
         aceutils.call('chmod +x Mac/Effekseer.app/Contents/MacOS/script.sh')
