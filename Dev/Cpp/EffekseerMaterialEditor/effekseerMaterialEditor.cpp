@@ -44,6 +44,10 @@
 #include <unistd.h>
 #endif
 
+#if defined(__APPLE__)
+#include <mach-o/dyld.h>
+#endif
+
 namespace ed = ax::NodeEditor;
 
 GLFWwindow* glfwMainWindow = nullptr;
@@ -83,6 +87,12 @@ std::string GetExecutingDirectory()
 	int len = GetModuleFileNameA(NULL, buf, 260);
 	if (len <= 0)
 		return "";
+#elif defined(__APPLE__)
+	uint32_t size = 260;
+	if (_NSGetExecutablePath(buf, &size) != 0)
+	{
+		buf[0] = 0;
+	}
 #else
 
 	char temp[32];
@@ -700,6 +710,8 @@ int mainLoop(int argc, char* argv[])
 
 	Effekseer::MainWindow::Terminate();
 	mainWindow = nullptr;
+
+	spdlog::info("End MaterialEditor");
 
 	return 0;
 }

@@ -12,8 +12,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -1944,6 +1944,7 @@ bool Native::GetIsUpdateMaterialRequiredAndReset()
 void Native::SetFileLogger(const char16_t* path)
 {
 	auto fileLogger = spdlog::basic_logger_mt("logger", "Effekseer.log.txt");
+	spdlog::set_level(spdlog::level::trace);
 	spdlog::set_default_logger(fileLogger);
 }
 
