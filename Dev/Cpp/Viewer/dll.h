@@ -359,6 +359,8 @@ public:
 
 	bool GetIsUpdateMaterialRequiredAndReset();
 
+	static void SetFileLogger(const char16_t* path);
+
 #if !SWIG
 	EffekseerRenderer::Renderer* GetRenderer();
 #endif

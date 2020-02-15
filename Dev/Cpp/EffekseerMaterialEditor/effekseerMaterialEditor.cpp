@@ -33,6 +33,9 @@
 #include <IO/IO.h>
 #include <algorithm>
 
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
+
 #ifdef WIN32
 #include <Windows.h>
 #include <direct.h>
@@ -153,6 +156,30 @@ int mainLoop(int argc, char* argv[])
 
 	SetCurrentDir(GetExecutingDirectory().c_str());
 
+	// check debug mode
+	bool isDebugMode = false;
+	{
+		auto debugfp = fopen("debug.txt", "rb");
+		if (debugfp != nullptr)
+		{
+			isDebugMode = true;
+			fclose(debugfp);
+		}
+	}
+
+#ifndef NDEBUG
+	isDebugMode = true;
+#endif
+
+	if (isDebugMode)
+	{
+		auto fileLogger = spdlog::basic_logger_mt("logger", "EffekseerMaterialEditor.log.txt");
+		spdlog::set_default_logger(fileLogger);
+		spdlog::set_level(spdlog::level::trace);
+	}
+
+	spdlog::info("Start MaterialEditor");
+
 	auto config = std::make_shared<EffekseerMaterial::Config>();
 	config->Load("config.EffekseerMaterial.json");
 
@@ -264,8 +291,6 @@ int mainLoop(int argc, char* argv[])
 		{
 			ImGuiStyle& style = ImGui::GetStyle();
 
-			
-
 			style = ImGuiStyle();
 			style.ChildRounding = 3.f;
 			style.GrabRounding = 3.f;
@@ -304,17 +329,17 @@ int mainLoop(int argc, char* argv[])
 			{
 				if (commandDataTOMaterialEditor.Type == IPC::CommandType::Terminate)
 				{
+					spdlog::trace("ICP - Receive - Terminate");
 					break;
 				}
 				else if (commandDataTOMaterialEditor.Type == IPC::CommandType::OpenMaterial)
 				{
+					spdlog::trace("ICP - Receive - OpenMaterial : {}", (const char*)(commandDataTOMaterialEditor.str.data()));
 					editor->LoadOrSelect(commandDataTOMaterialEditor.str.data());
 				}
 				else if (commandDataTOMaterialEditor.Type == IPC::CommandType::OpenOrCreateMaterial)
 				{
-#ifdef _DEBUG
-					std::cout << "OpenOrCreateMaterial : " << commandDataTOMaterialEditor.str.data() << std::endl;
-#endif
+					spdlog::trace("ICP - Receive - OpenOrCreateMaterial : {}", (const char*)(commandDataTOMaterialEditor.str.data()));
 					if (!editor->LoadOrSelect(commandDataTOMaterialEditor.str.data()))
 					{
 						editor->New();
@@ -328,10 +353,7 @@ int mainLoop(int argc, char* argv[])
 		if (material != nullptr && material->GetCommandManager()->GetHistoryID() != previousHistoryID)
 		{
 			auto content = editor->GetContents()[editor->GetSelectedContentIndex()];
-#ifdef _DEBUG
-			std::cout << "NotifyUpdate : " << material->GetPath() << std::endl;
-#endif
-
+			spdlog::trace("ICP - Send - NotifyUpdate : {}", material->GetPath());
 			content->UpdateBinary();
 
 			previousHistoryID = material->GetCommandManager()->GetHistoryID();

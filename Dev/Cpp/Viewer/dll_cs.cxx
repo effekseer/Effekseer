@@ -2924,6 +2924,14 @@ SWIGEXPORT unsigned int SWIGSTDCALL CSharp_Effekseerfswig_Native_GetIsUpdateMate
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_Native_SetFileLogger___(void * jarg1) {
+  char16_t *arg1 = (char16_t *) 0 ;
+  
+  arg1 = (char16_t *)jarg1; 
+  Native::SetFileLogger((char16_t const *)arg1);
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_GUIManagerCallback___() {
   void * jresult ;
   efk::GUIManagerCallback *result = 0 ;
