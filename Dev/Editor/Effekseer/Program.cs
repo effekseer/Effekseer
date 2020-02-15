@@ -116,7 +116,7 @@ namespace Effekseer
 #if DEBUG
 			isDebugMode = true;
 #endif
-			if(System.IO.File.Exists("debug.txt") && isDebugMode)
+			if(System.IO.File.Exists("debug.txt") || isDebugMode)
 			{
 				swig.Native.SetFileLogger("Effekseer.log.txt");	
 			}

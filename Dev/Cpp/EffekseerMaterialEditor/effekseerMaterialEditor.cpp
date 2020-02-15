@@ -102,6 +102,7 @@ void SetCurrentDir(const char* path)
 #else
 	chdir(path);
 #endif
+	spdlog::info("SetCurrentDir : {}", path);
 }
 
 std::vector<std::shared_ptr<EffekseerMaterial::Dialog>> newDialogs;
