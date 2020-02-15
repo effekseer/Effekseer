@@ -134,6 +134,10 @@ if (USE_OSM OR BUILD_VIEWER)
 	add_subdirectory("EffekseerSoundOSMixer")
 endif()
 
+if(BUILD_VIEWER OR BUILD_TEST)
+    add_subdirectory(3rdParty/spdlog EXCLUDE_FROM_ALL)
+endif()
+
 if (BUILD_VIEWER)
     add_subdirectory("EditorCommon")
     add_subdirectory("Viewer")

@@ -28,3 +28,6 @@
 [submodule "ResourceData"]
 	path = ResourceData
 	url = https://github.com/effekseer/ResourceData.git
+[submodule "Dev/Cpp/3rdParty/spdlog"]
+	path = Dev/Cpp/3rdParty/spdlog
+	url = https://github.com/gabime/spdlog.git
