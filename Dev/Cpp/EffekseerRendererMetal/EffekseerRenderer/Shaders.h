@@ -144,6 +144,7 @@ struct ShaderOutput2 {
 };
 struct ShaderUniform2 {
   float4 LightDirection;
+  float4 LightColor;
   float4 LightAmbient;
 };
 fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderUniform2& _mtl_u [[buffer(0)]]
@@ -160,7 +161,7 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   half4 tmpvar_3 = 0;
   tmpvar_3 = half4(ColorTexture.sample(_mtlsmp_ColorTexture, (float2)(_mtl_i.v_UV1)));
   _mtl_o.gl_FragColor = ((half4)(_mtl_i.v_VColor * (float4)(tmpvar_3)));
-  _mtl_o.gl_FragColor.xyz = (_mtl_o.gl_FragColor.xyz * ((half3)((float3)(half3(max ((half)0.0,
+  _mtl_o.gl_FragColor.xyz = (_mtl_o.gl_FragColor.xyz * ((half3)(_mtl_u.LightColor.xyz * (float3)(half3(max ((half)0.0,
     ((half)dot ((float3)normalize(((half3)(tmpvar_2 * (float3)((
       (tmpvar_1.xyz - (half)(0.5))
      * (half)(2.0)))))), _mtl_u.LightDirection.xyz))
@@ -335,10 +336,7 @@ vertex ShaderOutput1 main0 (ShaderInput1 _mtl_i [[stage_in]], constant ShaderUni
   tmpvar_4.w = 1.0;
   tmpvar_4.xyz = normalize((tmpvar_1 * _mtl_i.a_Tangent.xyz));
   _mtl_o.v_Tangent = tmpvar_4;
-  float4 tmpvar_5 = 0;
-  tmpvar_5.w = 1.0;
-  tmpvar_5.xyz = _mtl_u.LightColor.xyz;
-  _mtl_o.v_Color = ((_mtl_u.ModelColor * _mtl_i.a_Color) * tmpvar_5);
+  _mtl_o.v_Color = _mtl_u.ModelColor * _mtl_i.a_Color;
   _mtl_o.v_TexCoord.y = (_mtl_u.mUVInversed.x + (_mtl_u.mUVInversed.y * _mtl_o.v_TexCoord.y));
   return _mtl_o;
 }
@@ -378,7 +376,7 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   half4 tmpvar_3 = 0;
   tmpvar_3 = half4(ColorTexture.sample(_mtlsmp_ColorTexture, (float2)(_mtl_i.v_TexCoord.xy)));
   _mtl_o.gl_FragColor = ((half4)(_mtl_i.v_Color * (float4)(tmpvar_3)));
-  _mtl_o.gl_FragColor.xyz = (_mtl_o.gl_FragColor.xyz * half3(max ((half)0.0, ((half)dot ((float3)
+  _mtl_o.gl_FragColor.xyz = (_mtl_o.gl_FragColor.xyz * half3(_mtl_u.LightColor.xyz * max ((half)0.0, ((half)dot ((float3)
     normalize(((half3)(tmpvar_2 * (float3)(((tmpvar_1.xyz - (half)(0.5)) * (half)(2.0))))))
   , _mtl_u.LightDirection.xyz)))));
   _mtl_o.gl_FragColor.xyz = ((half3)((float3)(_mtl_o.gl_FragColor.xyz) + _mtl_u.LightAmbient.xyz));
@@ -446,7 +444,6 @@ fragment ShaderOutput2 main0 (ShaderInput2 _mtl_i [[stage_in]], constant ShaderU
   half4 tmpvar_1 = 0;
   tmpvar_1 = half4(ColorTexture.sample(_mtlsmp_ColorTexture, (float2)(_mtl_i.v_TexCoord.xy)));
   _mtl_o.gl_FragColor = ((half4)(_mtl_i.v_Color * (float4)(tmpvar_1)));
-  _mtl_o.gl_FragColor.xyz = _mtl_o.gl_FragColor.xyz;
   return _mtl_o;
 }
 )";
