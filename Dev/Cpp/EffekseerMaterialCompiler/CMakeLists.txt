@@ -21,9 +21,11 @@ set_target_properties( EffekseerMaterialCompilerGL
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
     RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+    LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
 )
 
-if(MSVC)
+if(MSVC OR APPLE)
     set_target_properties(EffekseerMaterialCompilerGL
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
@@ -51,9 +53,11 @@ set_target_properties( EffekseerMaterialCompilerMetal
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
     RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+    LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
 )
 
-if(MSVC)
+if(MSVC OR APPLE)
     set_target_properties(EffekseerMaterialCompilerMetal
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
