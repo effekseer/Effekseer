@@ -1224,6 +1224,14 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		}
 		else if (type == ValueType::Texture)
 		{
+			auto showPath = [&p]() -> void {
+
+				if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
+				{
+					ImGui::SetTooltip(p->Str.c_str());
+				}
+			};
+
 			if (ImGui::Button(nameStr.c_str()))
 			{
 				nfdchar_t* outPath = NULL;
@@ -1241,6 +1249,8 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				material->MakeContentDirty(node);
 			}
 
+			showPath();
+
 			if (p->Str != "")
 			{
 				auto texture = EffekseerMaterial::TextureCache::Load(graphics_, p->Str.c_str());
@@ -1252,10 +1262,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				{
 					ImGui::Image((void*)texture->GetTexture()->GetInternalObjects()[0], size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
-					if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
-					{
-						ImGui::SetTooltip(texture->GetPath().c_str());
-					}
+					showPath();
 
 					// adhoc
 					glBindTexture(GL_TEXTURE_2D, (GLuint)texture->GetTexture()->GetInternalObjects()[0]);
