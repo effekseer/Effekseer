@@ -93,6 +93,8 @@ std::string Absolute(const std::string& targetPath, const std::string& basePath)
 	auto targetPaths = Split(Replace(targetPath, "\\", "/"), '/');
 	auto basePaths = Split(Replace(basePath, "\\", "/"), '/');
 
+    bool isSlashFirst = basePath[0] == '/';
+    
 	if (*(basePath.end() - 1) != '/' && *(basePath.end() - 1) != '\\')
 	{
 		basePaths.pop_back();
@@ -128,6 +130,11 @@ std::string Absolute(const std::string& targetPath, const std::string& basePath)
 			ret += "/";
 		}
 	}
+    
+    if(isSlashFirst)
+    {
+        ret = '/' + ret;
+    }
 
 	return ret;
 }
