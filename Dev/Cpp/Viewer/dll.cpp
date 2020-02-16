@@ -577,7 +577,6 @@ Native::~Native()
 {
 	ES_SAFE_DELETE(g_client);
 
-#if _WIN32
 	commandQueueToMaterialEditor_->Stop();
 	commandQueueToMaterialEditor_.reset();
 
@@ -585,7 +584,6 @@ Native::~Native()
 	commandQueueFromMaterialEditor_.reset();
 
 	keyValueFileStorage_->Stop();
-#endif
 }
 
 bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)

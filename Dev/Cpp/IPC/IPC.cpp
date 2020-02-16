@@ -26,7 +26,7 @@ private:
 
 public:
 	Command_Impl() {}
-	virtual ~Command_Impl() { assert(!running_); }
+    virtual ~Command_Impl() { Stop(); }
 
 	bool Start(const char* name, int32_t size)
 	{
@@ -47,18 +47,18 @@ public:
 
 		ipc_sem_decrement(&coop_);
 
-		if (ipc_mem_open_existing(&mem_))
+		if (ipc_mem_open_existing(&mem_) != 0)
 		{
-			if (ipc_mem_create(&mem_))
-			{
-				ipc_sem_close(&coop_);
-				ipc_sem_increment(&coop_);
-				return false;
-			}
+            if (ipc_mem_create(&mem_))
+            {
+                ipc_sem_close(&coop_);
+                ipc_sem_increment(&coop_);
+                return false;
+            }
 
-			uint32_t* params = reinterpret_cast<uint32_t*>(mem_.data);
-			params[0] = size;
-			params[1] = 0;
+            uint32_t* params = reinterpret_cast<uint32_t*>(mem_.data);
+            params[0] = size;
+            params[1] = 0;
 		}
 
 		ipc_sem_increment(&coop_);
@@ -70,8 +70,11 @@ public:
 
 	void Stop()
 	{
-		ipc_mem_close(&mem_);
-		ipc_sem_close(&coop_);
+        if(running_)
+        {
+            ipc_mem_close(&mem_);
+            ipc_sem_close(&coop_);
+        }
 		running_ = false;
 	}
 
@@ -181,7 +184,7 @@ private:
 
 public:
 	KeyValueFileStorage_Impl() {}
-	virtual ~KeyValueFileStorage_Impl() { assert(!running_); }
+    virtual ~KeyValueFileStorage_Impl() { Stop(); }
 
 	bool Start(const char* name)
 	{
@@ -223,8 +226,11 @@ public:
 
 	void Stop()
 	{
-		ipc_mem_close(&mem_);
-		ipc_sem_close(&coop_);
+        if(running_)
+        {
+            ipc_mem_close(&mem_);
+            ipc_sem_close(&coop_);
+        }
 		running_ = false;
 	}
 

@@ -222,10 +222,16 @@ int mainLoop(int argc, char* argv[])
 	Effekseer::IO::GetInstance()->AddCallback(std::make_shared<IOCallback>());
 
 	auto commandQueueToMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	commandQueueToMaterialEditor_->Start("EfkCmdToMatEdit", 1024 * 1024);
+	if(!commandQueueToMaterialEditor_->Start("EfkCmdToMatEdit", 1024 * 1024))
+    {
+        spdlog::warn("Failed to start EfkCmdToMatEdit");
+    }
 
 	auto commandQueueFromMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	commandQueueFromMaterialEditor_->Start("EfkCmdFromMatEdit", 1024 * 1024);
+	if(!commandQueueFromMaterialEditor_->Start("EfkCmdFromMatEdit", 1024 * 1024))
+    {
+        spdlog::warn("Failed to start EfkCmdFromMatEdit");
+    }
 
 	uint64_t previousHistoryID = 0;
 
