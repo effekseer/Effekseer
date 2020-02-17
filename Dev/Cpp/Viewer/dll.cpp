@@ -5,6 +5,7 @@
 
 #ifdef _WIN32
 #include "3rdParty/imgui_platform/imgui_impl_dx11.h"
+#include <filesystem>
 #endif
 
 #include "dll.h"
@@ -572,6 +573,8 @@ Native::Native() : m_time(0), m_step(1)
 
 Native::~Native()
 {
+	spdlog::trace("Begin Native::~Native()");
+
 	ES_SAFE_DELETE(g_client);
 
 	commandQueueToMaterialEditor_->Stop();
@@ -579,6 +582,8 @@ Native::~Native()
 
 	commandQueueFromMaterialEditor_->Stop();
 	commandQueueFromMaterialEditor_.reset();
+
+	spdlog::trace("End Native::~Native()");
 }
 
 bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
@@ -1936,7 +1941,15 @@ bool Native::GetIsUpdateMaterialRequiredAndReset()
 
 void Native::SetFileLogger(const char16_t* path)
 {
-	auto fileLogger = spdlog::basic_logger_mt("logger", "Effekseer.log.txt");
+#if defined(_WIN32)
+	auto wpath = std::filesystem::path(reinterpret_cast<const wchar_t*>(path));
+	auto fileLogger = spdlog::basic_logger_mt("logger", wpath.generic_string().c_str());
+#else
+	char cpath[512];
+	Effekseer::ConvertUtf16ToUtf8(reinterpret_cast<int8_t*>(cpath), 512, reinterpret_cast<const int16_t*>(path));
+	auto fileLogger = spdlog::basic_logger_mt("logger", cpath);
+#endif
+
 	spdlog::set_level(spdlog::level::trace);
 	spdlog::set_default_logger(fileLogger);
 }

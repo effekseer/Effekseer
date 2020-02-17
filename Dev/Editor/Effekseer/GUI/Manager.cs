@@ -414,8 +414,8 @@ namespace Effekseer.GUI
 			var entryDirectory = GetEntryDirectory();
 			System.IO.Directory.SetCurrentDirectory(entryDirectory);
 
-			Manager.NativeManager.SaveDock("config.Dock.config");
-			SaveWindowConfig("config.Dock.xml");
+			Manager.NativeManager.SaveDock(entryDirectory + "/config.Dock.config");
+			SaveWindowConfig(entryDirectory + "/config.Dock.xml");
 
 			foreach (var p in panels)
 			{

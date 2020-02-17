@@ -11,6 +11,11 @@ add_library(
     IPC.cpp
 )
 
+target_include_directories(
+    IPC
+    PRIVATE
+    ${EFK_THIRDPARTY_INCLUDES})
+
 if(NOT WIN32 AND NOT APPLE)
 
     target_link_libraries(

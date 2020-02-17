@@ -118,7 +118,7 @@ namespace Effekseer
 #endif
 			if(System.IO.File.Exists("debug.txt") || isDebugMode)
 			{
-				swig.Native.SetFileLogger("Effekseer.log.txt");	
+				swig.Native.SetFileLogger(Path.Combine(GUI.Manager.GetEntryDirectory(),"Effekseer.log.txt"));	
 			}
 
 			var systemLanguage = EfkN.GetSystemLanguage();

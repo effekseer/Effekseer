@@ -184,7 +184,7 @@ int mainLoop(int argc, char* argv[])
 
 	if (isDebugMode)
 	{
-		auto fileLogger = spdlog::basic_logger_mt("logger", "EffekseerMaterialEditor.log.txt");
+		auto fileLogger = spdlog::basic_logger_mt("logger", GetExecutingDirectory() + "EffekseerMaterialEditor.log.txt");
 		spdlog::set_default_logger(fileLogger);
 		spdlog::set_level(spdlog::level::trace);
 	}
@@ -727,7 +727,7 @@ int mainLoop(int argc, char* argv[])
 	commandQueueToMaterialEditor_->Stop();
 	commandQueueFromMaterialEditor_->Stop();
 
-	config->Save("config.EffekseerMaterial.json");
+	config->Save((GetExecutingDirectory() + "config.EffekseerMaterial.json").c_str());
 
 	Effekseer::IO::Terminate();
 
