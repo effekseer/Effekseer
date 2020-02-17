@@ -416,10 +416,18 @@ void Editor::New()
 	isSelectedDirty_ = true;
 }
 
-void Editor::SaveAs(const char* path) { contents_[selectedContentInd_]->SaveAs(path); }
+void Editor::SaveAs(const char* path)
+{
+	if (selectedContentInd_ <= 0 || selectedContentInd_ >= contents_.size())
+		return;
+	contents_[selectedContentInd_]->SaveAs(path);
+}
 
 void Editor::SaveAs()
 {
+	if (selectedContentInd_ <= 0 || selectedContentInd_ >= contents_.size())
+		return;
+
 	nfdchar_t* outPath = NULL;
 	nfdresult_t result = NFD_SaveDialog("efkmat", "", &outPath);
 
@@ -477,6 +485,9 @@ bool Editor::LoadOrSelect(const char* path)
 
 void Editor::Save()
 {
+	if (selectedContentInd_ <= 0 || selectedContentInd_ >= contents_.size())
+		return;
+
 	auto content = contents_[selectedContentInd_];
 	if (content->GetPath() == "")
 	{
@@ -1225,7 +1236,6 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		else if (type == ValueType::Texture)
 		{
 			auto showPath = [&p]() -> void {
-
 				if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
 				{
 					ImGui::SetTooltip(p->Str.c_str());
