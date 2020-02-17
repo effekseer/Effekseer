@@ -1,5 +1,5 @@
-SET RDIR=Effekseer150b1
-SET RDIR_R=EffekseerRuntime150b1
+SET RDIR=Effekseer150RC1
+SET RDIR_R=EffekseerRuntime150RC1
 
 rmdir %RDIR%
 mkdir %RDIR%
@@ -148,66 +148,20 @@ copy docs\readme_sample.txt %RDIR%\Sample\readme.txt
 
 echo VS
 
-mkdir %RDIR_R%\Compiled\
-
-echo Compile VS15
-rmdir /S /Q VS15
-mkdir VS15
-
-cd VS15
-call cmake.bat -G "Visual Studio 15"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../
-cmake.exe -G "Visual Studio 15"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../
-
-"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\bin\MSBuild.exe" Effekseer.sln /p:configuration=Debug
-"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\bin\MSBuild.exe" Effekseer.sln /p:configuration=Release
-cd ..
-
-echo Compile VS15WIN64
-rmdir /S /Q VS15WIN64
-mkdir VS15WIN64
-
-cd VS15WIN64
-call cmake.bat -G "Visual Studio 15 Win64"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../
-cmake.exe -G "Visual Studio 15 Win64"  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../
-
-"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\bin\MSBuild.exe" Effekseer.sln /p:configuration=Debug
-"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\bin\MSBuild.exe" Effekseer.sln /p:configuration=Release
-cd ..
-
-
-echo Compile VS16
-rmdir /S /Q VS16
-mkdir VS16
-
-cd VS16
-call cmake.bat -G "Visual Studio 16" -A Win32 -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../
-cmake.exe -G "Visual Studio 16" -A Win32 -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../
-
-"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" Effekseer.sln /p:configuration=Debug
-"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" Effekseer.sln /p:configuration=Release
-cd ..
-
-echo Compile VS16WIN64
-rmdir /S /Q VS16WIN64
-mkdir VS16WIN64
-
-cd VS16WIN64
-call cmake.bat -G "Visual Studio 16" -A x64  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../
-cmake.exe -G "Visual Studio 16" -A x64  -D USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=OFF -D USE_XAUDIO2=ON ../
-
-"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" Effekseer.sln /p:configuration=Debug
-"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" Effekseer.sln /p:configuration=Release
-cd ..
-
-
 mkdir %RDIR_R%\Compiled\include\
 mkdir %RDIR_R%\Compiled\lib\
 
 mkdir %RDIR_R%\Compiled\lib\VS2017\
 mkdir %RDIR_R%\Compiled\lib\VS2017WIN64\
 
-robocopy VS15\Dev\Cpp\Debug %RDIR_R%\Compiled\lib\VS2017\Debug *.lib /S
-robocopy VS15\Dev\Cpp\Release %RDIR_R%\Compiled\lib\VS2017\Release *.lib /S
+robocopy VS15\Dev\Cpp\Effekseer\Debug %RDIR_R%\Compiled\lib\VS2017\Debug *.lib /S
+robocopy VS15\Dev\Cpp\Effekseer\Release %RDIR_R%\Compiled\lib\VS2017\Release *.lib /S
+
+robocopy VS15\Dev\Cpp\EffekseerRendererDX9\Debug %RDIR_R%\Compiled\lib\VS2017\Debug *.lib /S
+robocopy VS15\Dev\Cpp\EffekseerRendererDX9\Release %RDIR_R%\Compiled\lib\VS2017\Release *.lib /S
+
+robocopy VS15\Dev\Cpp\EffekseerRendererDX11\Debug %RDIR_R%\Compiled\lib\VS2017\Debug *.lib /S
+robocopy VS15\Dev\Cpp\EffekseerRendererDX11\Release %RDIR_R%\Compiled\lib\VS2017\Release *.lib /S
 
 robocopy VS15\Dev\Cpp\3rdParty\LLGI\src\Debug %RDIR_R%\Compiled\lib\VS2017\Debug *.lib /S
 robocopy VS15\Dev\Cpp\3rdParty\LLGI\src\Release %RDIR_R%\Compiled\lib\VS2017\Release *.lib /S
@@ -218,8 +172,14 @@ robocopy VS15\Dev\Cpp\EffekseerRendererDX12\Release %RDIR_R%\Compiled\lib\VS2017
 copy VS15\Dev\Cpp\EffekseerSoundXAudio2\Debug\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\lib\VS2017\Debug\.
 copy VS15\Dev\Cpp\EffekseerSoundXAudio2\Release\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\lib\VS2017\Release\.
 
-robocopy VS15WIN64\Dev\Cpp\Debug %RDIR_R%\Compiled\lib\VS2017WIN64\Debug *.lib /S
-robocopy VS15WIN64\Dev\Cpp\Release %RDIR_R%\Compiled\lib\VS2017WIN64\Release *.lib /S
+robocopy VS15WIN64\Dev\Cpp\Effekseer\Debug %RDIR_R%\Compiled\lib\VS2017WIN64\Debug *.lib /S
+robocopy VS15WIN64\Dev\Cpp\Effekseer\Release %RDIR_R%\Compiled\lib\VS2017WIN64\Release *.lib /S
+
+robocopy VS15WIN64\Dev\Cpp\EffekseerRendererDX9\Debug %RDIR_R%\Compiled\lib\VS2017WIN64\Debug *.lib /S
+robocopy VS15WIN64\Dev\Cpp\EffekseerRendererDX9\Release %RDIR_R%\Compiled\lib\VS2017WIN64\Release *.lib /S
+
+robocopy VS15WIN64\Dev\Cpp\EffekseerRendererDX11\Debug %RDIR_R%\Compiled\lib\VS2017WIN64\Debug *.lib /S
+robocopy VS15WIN64\Dev\Cpp\EffekseerRendererDX11\Release %RDIR_R%\Compiled\lib\VS2017WIN64\Release *.lib /S
 
 robocopy VS15WIN64\Dev\Cpp\3rdParty\LLGI\src\Debug %RDIR_R%\Compiled\lib\VS2017WIN64\Debug *.lib /S
 robocopy VS15WIN64\Dev\Cpp\3rdParty\LLGI\src\Release %RDIR_R%\Compiled\lib\VS2017WIN64\Release *.lib /S
@@ -233,8 +193,14 @@ copy VS15WIN64\Dev\Cpp\EffekseerSoundXAudio2\Release\EffekseerSoundXAudio2.lib %
 mkdir %RDIR_R%\Compiled\lib\VS2019\
 mkdir %RDIR_R%\Compiled\lib\VS2019WIN64\
 
-robocopy VS16\Dev\Cpp\Debug %RDIR_R%\Compiled\lib\VS2019\Debug *.lib /S
-robocopy VS16\Dev\Cpp\Release %RDIR_R%\Compiled\lib\VS2019\Release *.lib /S
+robocopy VS16\Dev\Cpp\Effekseer\Debug %RDIR_R%\Compiled\lib\VS2019\Debug *.lib /S
+robocopy VS16\Dev\Cpp\Effekseer\Release %RDIR_R%\Compiled\lib\VS2019\Release *.lib /S
+
+robocopy VS16\Dev\Cpp\EffekseerRendererDX9\Debug %RDIR_R%\Compiled\lib\VS2019\Debug *.lib /S
+robocopy VS16\Dev\Cpp\EffekseerRendererDX9\Release %RDIR_R%\Compiled\lib\VS2019\Release *.lib /S
+
+robocopy VS16\Dev\Cpp\EffekseerRendererDX11\Debug %RDIR_R%\Compiled\lib\VS2019\Debug *.lib /S
+robocopy VS16\Dev\Cpp\EffekseerRendererDX11\Release %RDIR_R%\Compiled\lib\VS2019\Release *.lib /S
 
 robocopy VS16\Dev\Cpp\3rdParty\LLGI\src\Debug %RDIR_R%\Compiled\lib\VS2019\Debug *.lib /S
 robocopy VS16\Dev\Cpp\3rdParty\LLGI\src\Release %RDIR_R%\Compiled\lib\VS2019\Release *.lib /S
@@ -245,8 +211,14 @@ robocopy VS16WIN64\Dev\Cpp\EffekseerRendererDX12\Release %RDIR_R%\Compiled\lib\V
 copy VS16\Dev\Cpp\EffekseerSoundXAudio2\Debug\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\lib\VS2019\Debug\.
 copy VS16\Dev\Cpp\EffekseerSoundXAudio2\Release\EffekseerSoundXAudio2.lib %RDIR_R%\Compiled\lib\VS2019\Release\.
 
-robocopy VS16WIN64\Dev\Cpp\Debug %RDIR_R%\Compiled\lib\VS2019WIN64\Debug *.lib /S
-robocopy VS16WIN64\Dev\Cpp\Release %RDIR_R%\Compiled\lib\VS2019WIN64\Release *.lib /S
+robocopy VS16WIN64\Dev\Cpp\Effekseer\Debug %RDIR_R%\Compiled\lib\VS2019WIN64\Debug *.lib /S
+robocopy VS16WIN64\Dev\Cpp\Effekseer\Release %RDIR_R%\Compiled\lib\VS2019WIN64\Release *.lib /S
+
+robocopy VS16WIN64\Dev\Cpp\EffekseerRendererDX9\Debug %RDIR_R%\Compiled\lib\VS2019WIN64\Debug *.lib /S
+robocopy VS16WIN64\Dev\Cpp\EffekseerRendererDX9\Release %RDIR_R%\Compiled\lib\VS2019WIN64\Release *.lib /S
+
+robocopy VS16WIN64\Dev\Cpp\EffekseerRendererDX11\Debug %RDIR_R%\Compiled\lib\VS2019WIN64\Debug *.lib /S
+robocopy VS16WIN64\Dev\Cpp\EffekseerRendererDX11\Release %RDIR_R%\Compiled\lib\VS2019WIN64\Release *.lib /S
 
 robocopy VS16WIN64\Dev\Cpp\3rdParty\LLGI\src\Debug %RDIR_R%\Compiled\lib\VS2019WIN64\Debug *.lib /S
 robocopy VS16WIN64\Dev\Cpp\3rdParty\LLGI\src\Release %RDIR_R%\Compiled\lib\VS2019WIN64\Release *.lib /S
@@ -267,4 +239,3 @@ copy Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h %RDIR_R%\Compiled\inc
 copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR_R%\Compiled\include\.
 
 pause
-
