@@ -33,8 +33,8 @@ option(USE_OPENAL "Use OpenAL" ON)
 endif()
 
 if (WIN32)
-option(USE_XAUDIO2 "Use XAudio2" OFF)
-option(USE_DSOUND "Use DirectSound" OFF)
+option(USE_XAUDIO2 "Use XAudio2" ON)
+option(USE_DSOUND "Use DirectSound" ON)
 option(USE_OSM "Use OpenSoundMixer" OFF)
 endif()
 
