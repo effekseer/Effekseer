@@ -568,9 +568,6 @@ Native::Native() : m_time(0), m_step(1)
 
 	commandQueueFromMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
 	commandQueueFromMaterialEditor_->Start("EfkCmdFromMatEdit", 1024 * 1024);
-
-	keyValueFileStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
-	keyValueFileStorage_->Start("EffekseerStorage");
 }
 
 Native::~Native()
@@ -582,8 +579,6 @@ Native::~Native()
 
 	commandQueueFromMaterialEditor_->Stop();
 	commandQueueFromMaterialEditor_.reset();
-
-	keyValueFileStorage_->Stop();
 }
 
 bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)

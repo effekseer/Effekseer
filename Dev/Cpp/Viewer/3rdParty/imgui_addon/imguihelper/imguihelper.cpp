@@ -900,6 +900,12 @@ public:
     void close() {if (f) fclose(f);f=NULL;}
     bool isValid() const {return (f);}
     int print(const char* fmt, ...) {
+        // Extend null check it
+		if (f == nullptr)
+		{
+			return 0;
+		}
+
         va_list args;va_start(args, fmt);
         const int rv = vfprintf(f,fmt,args);
         va_end(args);

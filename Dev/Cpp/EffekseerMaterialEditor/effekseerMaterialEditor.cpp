@@ -222,16 +222,16 @@ int mainLoop(int argc, char* argv[])
 	Effekseer::IO::GetInstance()->AddCallback(std::make_shared<IOCallback>());
 
 	auto commandQueueToMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	if(!commandQueueToMaterialEditor_->Start("EfkCmdToMatEdit", 1024 * 1024))
-    {
-        spdlog::warn("Failed to start EfkCmdToMatEdit");
-    }
+	if (!commandQueueToMaterialEditor_->Start("EfkCmdToMatEdit", 1024 * 1024))
+	{
+		spdlog::warn("Failed to start EfkCmdToMatEdit");
+	}
 
 	auto commandQueueFromMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	if(!commandQueueFromMaterialEditor_->Start("EfkCmdFromMatEdit", 1024 * 1024))
-    {
-        spdlog::warn("Failed to start EfkCmdFromMatEdit");
-    }
+	if (!commandQueueFromMaterialEditor_->Start("EfkCmdFromMatEdit", 1024 * 1024))
+	{
+		spdlog::warn("Failed to start EfkCmdFromMatEdit");
+	}
 
 	uint64_t previousHistoryID = 0;
 
@@ -266,6 +266,10 @@ int mainLoop(int argc, char* argv[])
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	ImGui::StyleColorsDark();
+
+	// Specify imgui setting
+	std::string imguiConfigPath = GetExecutingDirectory() + "imgui.material.ini";
+	ImGui::GetIO().IniFilename = imguiConfigPath.c_str();
 
 	FILE* fp = nullptr;
 
@@ -425,15 +429,28 @@ int mainLoop(int argc, char* argv[])
 						}
 					}
 
-					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Save").c_str()))
+#ifdef __APPLE__
+					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Save").c_str(), "Command+S"))
 					{
 						editor->Save();
 					}
 
-					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("SaveAs").c_str()))
+					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("SaveAs").c_str(), "Command+S"))
 					{
 						editor->SaveAs();
 					}
+#else
+					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Save").c_str(), "Ctrl+S"))
+					{
+						editor->Save();
+					}
+
+					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("SaveAs").c_str(), "Ctrl+S"))
+					{
+						editor->SaveAs();
+					}
+
+#endif
 
 					ImGui::EndMenu();
 				}

@@ -143,7 +143,7 @@ EditorContent::EditorContent(Editor* editor) : editor_(editor)
 	material_->Initialize();
 
 	ed::Config config;
-	config.SettingsFile = "nodeEditor.json";
+	config.SettingsFile = "config.EffekseerMaterial.Node.json";
 	editorContext_ = ed::CreateEditor(&config);
 
 	ClearIsChanged();
@@ -546,8 +546,16 @@ void Editor::Update()
 
 	if (!ImGui::IsAnyItemActive())
 	{
+		bool isCtrlPressed = false;
+		// TODO refactoring
+#ifdef __APPLE__
+		isCtrlPressed = ImGui::GetIO().KeySuper;
+#else
+		isCtrlPressed = ImGui::GetIO().KeyCtrl;
+#endif
+
 		// copy
-		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_C]] &&
+		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_C]] &&
 			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
 		{
 			ed::NodeId ids[256];
@@ -570,7 +578,7 @@ void Editor::Update()
 		}
 
 		// paste
-		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_V]] &&
+		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_V]] &&
 			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_V]] == 0)
 		{
 			auto text = ImGui::GetClipboardText();
@@ -582,7 +590,7 @@ void Editor::Update()
 		}
 
 		// save
-		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] &&
+		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] &&
 			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_S]] == 0)
 		{
 			Save();
