@@ -1941,6 +1941,7 @@ bool Native::GetIsUpdateMaterialRequiredAndReset()
 
 void Native::SetFileLogger(const char16_t* path)
 {
+	spdlog::set_level(spdlog::level::trace);
 	spdlog::trace("Begin Native::SetFileLogger");
 
 #if defined(_WIN32)
@@ -1952,8 +1953,13 @@ void Native::SetFileLogger(const char16_t* path)
 	auto fileLogger = spdlog::basic_logger_mt("logger", cpath);
 #endif
 
-	spdlog::set_level(spdlog::level::trace);
 	spdlog::set_default_logger(fileLogger);
+
+	#if defined(_WIN32)
+	spdlog::trace("Native::SetFileLogger : {}", wpath.generic_string().c_str());
+	#else
+	spdlog::trace("Native::SetFileLogger : {}", cpath);
+	#endif
 
 	spdlog::trace("End Native::SetFileLogger");
 }

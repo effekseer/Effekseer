@@ -418,14 +418,14 @@ void Editor::New()
 
 void Editor::SaveAs(const char* path)
 {
-	if (selectedContentInd_ <= 0 || selectedContentInd_ >= contents_.size())
+	if (selectedContentInd_ < 0 || selectedContentInd_ >= contents_.size())
 		return;
 	contents_[selectedContentInd_]->SaveAs(path);
 }
 
 void Editor::SaveAs()
 {
-	if (selectedContentInd_ <= 0 || selectedContentInd_ >= contents_.size())
+	if (selectedContentInd_ < 0 || selectedContentInd_ >= contents_.size())
 		return;
 
 	nfdchar_t* outPath = NULL;
@@ -485,7 +485,7 @@ bool Editor::LoadOrSelect(const char* path)
 
 void Editor::Save()
 {
-	if (selectedContentInd_ <= 0 || selectedContentInd_ >= contents_.size())
+	if (selectedContentInd_ < 0 || selectedContentInd_ >= contents_.size())
 		return;
 
 	auto content = contents_[selectedContentInd_];
