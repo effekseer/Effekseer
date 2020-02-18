@@ -1941,6 +1941,8 @@ bool Native::GetIsUpdateMaterialRequiredAndReset()
 
 void Native::SetFileLogger(const char16_t* path)
 {
+	spdlog::trace("Begin Native::SetFileLogger");
+
 #if defined(_WIN32)
 	auto wpath = std::filesystem::path(reinterpret_cast<const wchar_t*>(path));
 	auto fileLogger = spdlog::basic_logger_mt("logger", wpath.generic_string().c_str());
@@ -1952,6 +1954,8 @@ void Native::SetFileLogger(const char16_t* path)
 
 	spdlog::set_level(spdlog::level::trace);
 	spdlog::set_default_logger(fileLogger);
+
+	spdlog::trace("End Native::SetFileLogger");
 }
 
 EffekseerRenderer::Renderer* Native::GetRenderer() { return g_renderer->GetRenderer(); }
