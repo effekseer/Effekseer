@@ -53,6 +53,20 @@ public:
 	void Maginify(float value);
 };
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+class FCurveScalar
+{
+public:
+	FCurveTimelineType Timeline = FCurveTimelineType::Time;
+	FCurve S = FCurve(0);
+
+	int32_t Load(void* data, int32_t version);
+
+	float GetValues(float living, float life) const;
+	float GetOffsets(InstanceGlobal& g) const;
+};
+#endif
+
 class FCurveVector2D
 {
 public:

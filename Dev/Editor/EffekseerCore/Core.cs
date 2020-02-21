@@ -1580,6 +1580,18 @@ namespace Effekseer
 						list.Add(Tuple35.Create(name, (object)node.RendererCommonValues.CustomData2.FCurveColor));
 					}
 
+#if __EFFEKSEER_BUILD_VERSION16__
+					if (node.AlphaCrunchValues.Type == Data.AlphaCrunchValues.ParameterType.FCurve)
+					{
+						var name = "AlphaThreshold";
+						if (Language == Language.Japanese)
+						{
+							name = "アルファ閾値";
+						}
+						list.Add(Tuple35.Create(name, (object)node.AlphaCrunchValues.FCurve));
+					}
+#endif
+
 					return list.ToArray();
 				};
 

@@ -412,14 +412,11 @@ protected:
 			v[7].AlphaUV[0] = alphaUVtexNext;
 			v[7].AlphaUV[1] = alphaUVv3;
 
-			v[0].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
-			v[1].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
-			v[2].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
-			v[3].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
-			v[4].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
-			v[5].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
-			v[6].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
-			v[7].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
+			for (int32_t i = 0; i < 8; i++)
+			{
+				v[i].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
+				v[i].AlphaThreshold = instanceParameter.AlphaThreshold;
+			}
 #endif
 
 			// distortion

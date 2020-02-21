@@ -405,6 +405,7 @@ namespace EffekseerRenderer
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 							verteies[i].FlipbookIndexAndNextRate = param.FlipbookIndexAndNextRate;
+							verteies[i].AlphaThreshold = param.AlphaThreshold;
 #endif
 						}
 					}

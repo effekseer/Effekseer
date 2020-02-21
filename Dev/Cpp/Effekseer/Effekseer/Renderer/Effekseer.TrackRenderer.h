@@ -82,6 +82,8 @@ struct NodeRendererTextureUVTypeParameter;
 			RectF	AlphaUV;
 
 			float	FlipbookIndexAndNextRate;
+
+			float	AlphaThreshold;
 #endif
 			std::array<float, 4> CustomData1;
 			std::array<float, 4> CustomData2;

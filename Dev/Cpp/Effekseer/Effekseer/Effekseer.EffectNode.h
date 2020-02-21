@@ -1202,6 +1202,83 @@ struct ParameterRendererCommon
 	}
 };
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+struct ParameterAlphaCrunch
+{
+	enum EType : int32_t
+	{
+		FIXED,
+		FOUR_POINT_INTERPOLATION,
+		EASING,
+		F_CURVE,
+
+		FPI = FOUR_POINT_INTERPOLATION,
+	} Type;
+
+	union
+	{
+		struct
+		{
+			int32_t RefEq;
+			float Threshold;
+		} Fixed;
+
+		struct
+		{
+			random_float BeginThreshold;
+			random_int TransitionFrameNum;
+			random_float No2Threshold;
+			random_float No3Threshold;
+			random_int TransitionFrameNum2;
+			random_float EndThreshold;
+		} FourPointInterpolation;
+
+		struct
+		{
+			RefMinMax RefEqS;
+			RefMinMax RefEqE;
+			easing_float Threshold;
+		} Easing;
+
+		struct
+		{
+			FCurveScalar* Threshold;
+		} FCurve;
+	};
+
+	ParameterAlphaCrunch()
+	{}
+
+	~ParameterAlphaCrunch()
+	{
+		if (Type == EType::F_CURVE)
+		{
+			ES_SAFE_DELETE(FCurve.Threshold);
+		}
+	}
+
+	void load(uint8_t*& pos, int32_t version)
+	{
+		memcpy(&Type, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+
+		int32_t BufferSize = 0;
+		memcpy(&BufferSize, pos, sizeof(int32_t));
+		pos += sizeof(int32_t);
+
+		switch (Type)
+		{
+		case Effekseer::ParameterAlphaCrunch::EType::FIXED: memcpy(&Fixed, pos, BufferSize); break;
+		case Effekseer::ParameterAlphaCrunch::EType::FPI: memcpy(&FourPointInterpolation, pos, BufferSize); break;
+		case Effekseer::ParameterAlphaCrunch::EType::EASING: memcpy(&Easing, pos, BufferSize); break;
+		case Effekseer::ParameterAlphaCrunch::EType::F_CURVE: FCurve.Threshold = new FCurveScalar();  FCurve.Threshold->Load(pos, version); break;
+		}
+
+		pos += BufferSize;
+	}
+};
+#endif
+
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -1360,6 +1437,10 @@ public:
 	ParameterDepthValues		DepthValues;
 
 	ParameterRendererCommon		RendererCommon;
+
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+	ParameterAlphaCrunch		AlphaCrunch;
+#endif
 
 	ParameterSoundType			SoundType;
 	ParameterSound				Sound;

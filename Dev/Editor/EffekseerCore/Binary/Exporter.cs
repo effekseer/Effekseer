@@ -648,6 +648,13 @@ namespace Effekseer.Binary
 					node_data.Add(RendererValues.GetBytes(null, texture_and_index, normalTexture_and_index, model_and_index));
 				}
 
+#if __EFFEKSEER_BUILD_VERSION16__
+				if (Version >= 1600)
+				{
+					node_data.Add(AlphaCrunchValues.GetBytes(n.AlphaCrunchValues));
+				}
+#endif
+
 				data.Add(node_data.ToArray().ToArray());
 
 				data.Add(SoundValues.GetBytes(n.SoundValues, wave_and_index));

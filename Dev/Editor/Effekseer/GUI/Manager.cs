@@ -179,6 +179,9 @@ namespace Effekseer.GUI
 			typeof(Dock.Network),
 			typeof(Dock.FileViewer),
 			typeof(Dock.Dynamic),
+#if __EFFEKSEER_BUILD_VERSION16__
+			typeof(Dock.AlphaCrunchValues),
+#endif
 		};
 
 		static Dock.DockManager dockManager = null;

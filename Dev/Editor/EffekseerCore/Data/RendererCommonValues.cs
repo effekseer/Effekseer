@@ -986,6 +986,11 @@ namespace Effekseer.Data
 				UVFCurve = new UVFCurveParamater();
 			}
 		}
+
+		[Name(language = Language.Japanese, value = "アルファクランチ")]
+		[Name(language = Language.English, value = "Alpha Crunch")]
+		[IO(Export = true)]
+		public Value.Enum<AlphaCrunchType> AlphaCrunchTypeValue { get; private set; }
 #endif
 
 		[Name(language = Language.Japanese, value = "カスタムデータ")]
@@ -1040,6 +1045,8 @@ namespace Effekseer.Data
 #if __EFFEKSEER_BUILD_VERSION16__
 			EnableAlphaTexture = new Value.Boolean(false);
 			AlphaTextureParam = new AlphaTextureParameter();
+
+			AlphaCrunchTypeValue = new Value.Enum<AlphaCrunchType>(RendererCommonValues.AlphaCrunchType.None);
 #endif
 
 			CustomData1 = new CustomDataParameter(1);
@@ -1326,6 +1333,29 @@ namespace Effekseer.Data
 			[Name(value = "線形補間", language = Language.Japanese)]
 			[Name(value = "Lerp", language = Language.English)]
 			Lerp = 1,
+		}
+
+		public enum AlphaCrunchType : int
+		{
+			[Name(value = "なし", language = Language.Japanese)]
+			[Name(value = "None", language = Language.English)]
+			None = 0,
+
+			[Name(value = "アルファ閾値", language = Language.Japanese)]
+			[Name(value = "Alpha Threshold", language = Language.English)]
+			AlphaThreashold = 1,
+
+			[Name(value = "4点補間", language = Language.Japanese)]
+			[Name(value = "Four Point Interpolation", language = Language.English)]
+			FourPointInterpolation = 2,
+
+			[Name(value = "イージング", language = Language.Japanese)]
+			[Name(value = "Easing", language = Language.English)]
+			Easing = 3,
+
+			[Name(value = "Fカーブ", language = Language.Japanese)]
+			[Name(value = "F Curve", language = Language.English)]
+			FCurve = 4,
 		}
 #endif
 

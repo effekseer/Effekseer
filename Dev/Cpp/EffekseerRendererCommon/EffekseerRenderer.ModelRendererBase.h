@@ -54,6 +54,8 @@ template<int MODEL_COUNT>
 	
 	float	ModelFlipbookIndexAndNextRate[MODEL_COUNT][4];
 
+	float	ModelAlphaThreshold[MODEL_COUNT][4];
+
 #endif
 	float	ModelColor[MODEL_COUNT][4];
 
@@ -104,6 +106,7 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	std::vector<Effekseer::RectF> alphaUVSorted_;
 	std::vector<float> flipbookIndexAndNextRateSorted_;
+	std::vector<float> alphaThresholdSorted_;
 #endif
 	std::vector<Effekseer::Color> colorsSorted_;
 	std::vector<int32_t> timesSorted_;
@@ -115,6 +118,7 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	std::vector<Effekseer::RectF> m_alphaUV;
 	std::vector<float> m_flipbookIndexAndNextRate;
+	std::vector<float> m_alphaThreshold;
 #endif
 	std::vector<Effekseer::Color> m_colors;
 	std::vector<int32_t> m_times;
@@ -200,6 +204,7 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 				alphaUVSorted_[keyValues_[i].Value] = m_alphaUV[i];
 				flipbookIndexAndNextRateSorted_[keyValues_[i].Value] = m_flipbookIndexAndNextRate[i];
+				alphaThresholdSorted_[keyValues_[i].Value] = m_alphaThreshold[i];
 #endif
 				colorsSorted_[keyValues_[i].Value] = m_colors[i];
 				timesSorted_[keyValues_[i].Value] = m_times[i];
@@ -226,6 +231,7 @@ protected:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			m_alphaUV = alphaUVSorted_;
 			m_flipbookIndexAndNextRate = flipbookIndexAndNextRateSorted_;
+			m_alphaThreshold = alphaThresholdSorted_;
 #endif
 			m_colors = colorsSorted_;
 			m_times = timesSorted_;
@@ -248,6 +254,7 @@ public:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		m_alphaUV.clear();
 		m_flipbookIndexAndNextRate.clear();
+		m_alphaThreshold.clear();
 #endif
 		m_colors.clear();
 		m_times.clear();
@@ -259,6 +266,7 @@ public:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		alphaUVSorted_.clear();
 		flipbookIndexAndNextRateSorted_.clear();
+		alphaThresholdSorted_.clear();
 #endif
 		colorsSorted_.clear();
 		timesSorted_.clear();
@@ -320,6 +328,7 @@ public:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 		m_alphaUV.push_back(instanceParameter.AlphaUV);
 		m_flipbookIndexAndNextRate.push_back(instanceParameter.FlipbookIndexAndNextRate);
+		m_alphaThreshold.push_back(instanceParameter.AlphaThreshold);
 #endif
 		m_colors.push_back(instanceParameter.AllColor);
 		m_times.push_back(instanceParameter.Time);
@@ -930,6 +939,8 @@ public:
 					vcb->ModelAlphaUV[num][3] = m_alphaUV[loop + num].Height;
 
 					vcb->ModelFlipbookIndexAndNextRate[num][0] = m_flipbookIndexAndNextRate[loop + num];
+
+					vcb->ModelAlphaThreshold[num][0] = m_alphaThreshold[loop + num];
 #endif
 
 					ColorToFloat4(m_colors[loop+num],vcb->ModelColor[num]);
@@ -983,6 +994,8 @@ public:
 				vcb->ModelAlphaUV[0][3] = m_alphaUV[loop].Height;
 
 				vcb->ModelFlipbookIndexAndNextRate[0][0] = m_flipbookIndexAndNextRate[loop];
+
+				vcb->ModelAlphaThreshold[0][0] = m_alphaThreshold[loop];
 #endif
 
 				// DepthParameters
