@@ -3,10 +3,13 @@
 #include "IPC.h"
 #include <array>
 #include <assert.h>
-#include <memory>
-#include <string>
-#include <string.h>
 #include <chrono>
+#include <memory>
+#include <string.h>
+#include <string>
+
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
 
 #define IPC_IMPLEMENTATION
 #include "..//3rdParty/ipc/ipc.h"
@@ -26,7 +29,7 @@ private:
 
 public:
 	Command_Impl() {}
-	virtual ~Command_Impl() { assert(!running_); }
+	virtual ~Command_Impl() { Stop(); }
 
 	bool Start(const char* name, int32_t size)
 	{
@@ -38,19 +41,30 @@ public:
 
 		if (ipc_sem_create(&coop_, 1))
 		{
-            #ifndef _WIN32
-            printf("errno=%d: %s\n", errno, strerror(errno));
-            #endif
-            
+#ifdef _WIN32
+			spdlog::warn("Failed ipc_sem_create : {}", name);
+#else
+			spdlog::warn("Failed ipc_sem_create : {} {} {}", name, errno, strerror(errno));
+#endif
 			return false;
 		}
 
 		ipc_sem_decrement(&coop_);
 
-		if (ipc_mem_open_existing(&mem_))
+		if (ipc_mem_open_existing(&mem_) != 0)
 		{
+#ifdef _WIN32
+			spdlog::warn("Failed ipc_mem_open_existing : {}", name);
+#else
+			spdlog::warn("Failed ipc_mem_open_existing : {} {} {}", name, errno, strerror(errno));
+#endif
 			if (ipc_mem_create(&mem_))
 			{
+#ifdef _WIN32
+				spdlog::warn("Failed ipc_mem_create : {}", name);
+#else
+				spdlog::warn("Failed ipc_mem_create : {} {} {}", name, errno, strerror(errno));
+#endif
 				ipc_sem_close(&coop_);
 				ipc_sem_increment(&coop_);
 				return false;
@@ -70,8 +84,11 @@ public:
 
 	void Stop()
 	{
-		ipc_mem_close(&mem_);
-		ipc_sem_close(&coop_);
+		if (running_)
+		{
+			ipc_mem_close(&mem_);
+			ipc_sem_close(&coop_);
+		}
 		running_ = false;
 	}
 
@@ -181,7 +198,7 @@ private:
 
 public:
 	KeyValueFileStorage_Impl() {}
-	virtual ~KeyValueFileStorage_Impl() { assert(!running_); }
+	virtual ~KeyValueFileStorage_Impl() { Stop(); }
 
 	bool Start(const char* name)
 	{
@@ -195,6 +212,11 @@ public:
 
 		if (ipc_sem_create(&coop_, 1))
 		{
+#ifdef _WIN32
+			spdlog::warn("Failed ipc_sem_create : {}", name);
+#else
+			spdlog::warn("Failed ipc_sem_create : {} {} {}", name, errno, strerror(errno));
+#endif
 			return false;
 		}
 
@@ -202,8 +224,19 @@ public:
 
 		if (ipc_mem_open_existing(&mem_))
 		{
+#ifdef _WIN32
+			spdlog::warn("Failed ipc_mem_open_existing : {}", name);
+#else
+			spdlog::warn("Failed ipc_mem_open_existing : {} {} {}", name, errno, strerror(errno));
+#endif
+
 			if (ipc_mem_create(&mem_))
 			{
+#ifdef _WIN32
+				spdlog::warn("Failed ipc_mem_create : {}", name);
+#else
+				spdlog::warn("Failed ipc_mem_create : {} {} {}", name, errno, strerror(errno));
+#endif
 				ipc_sem_close(&coop_);
 				ipc_sem_increment(&coop_);
 				return false;
@@ -223,8 +256,11 @@ public:
 
 	void Stop()
 	{
-		ipc_mem_close(&mem_);
-		ipc_sem_close(&coop_);
+		if (running_)
+		{
+			ipc_mem_close(&mem_);
+			ipc_sem_close(&coop_);
+		}
 		running_ = false;
 	}
 
@@ -335,10 +371,7 @@ bool KeyValueFileStorage::AddRef(const char* key) { return impl->AddRef(key); }
 
 bool KeyValueFileStorage::ReleaseRef(const char* key) { return impl->ReleaseRef(key); }
 
-void KeyValueFileStorage::UpdateFile(const char* key, const void* data, int32_t size)
-{
-	impl->UpdateFile(key, data, size);
-}
+void KeyValueFileStorage::UpdateFile(const char* key, const void* data, int32_t size) { impl->UpdateFile(key, data, size); }
 int32_t KeyValueFileStorage::GetFile(const char* key, void* data, int32_t size, uint64_t& timestamp)
 {
 	return impl->GetFile(key, data, size, timestamp);

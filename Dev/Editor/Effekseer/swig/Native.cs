@@ -290,6 +290,10 @@ public class Native : global::System.IDisposable {
     return ret;
   }
 
+  public static void SetFileLogger(string path) {
+    EffekseerNativePINVOKE.Native_SetFileLogger(path);
+  }
+
 }
 
 }

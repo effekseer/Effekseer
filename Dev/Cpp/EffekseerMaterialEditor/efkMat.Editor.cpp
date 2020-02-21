@@ -143,7 +143,7 @@ EditorContent::EditorContent(Editor* editor) : editor_(editor)
 	material_->Initialize();
 
 	ed::Config config;
-	config.SettingsFile = "nodeEditor.json";
+	config.SettingsFile = "config.EffekseerMaterial.Node.json";
 	editorContext_ = ed::CreateEditor(&config);
 
 	ClearIsChanged();
@@ -416,10 +416,18 @@ void Editor::New()
 	isSelectedDirty_ = true;
 }
 
-void Editor::SaveAs(const char* path) { contents_[selectedContentInd_]->SaveAs(path); }
+void Editor::SaveAs(const char* path)
+{
+	if (selectedContentInd_ < 0 || selectedContentInd_ >= contents_.size())
+		return;
+	contents_[selectedContentInd_]->SaveAs(path);
+}
 
 void Editor::SaveAs()
 {
+	if (selectedContentInd_ < 0 || selectedContentInd_ >= contents_.size())
+		return;
+
 	nfdchar_t* outPath = NULL;
 	nfdresult_t result = NFD_SaveDialog("efkmat", "", &outPath);
 
@@ -477,6 +485,9 @@ bool Editor::LoadOrSelect(const char* path)
 
 void Editor::Save()
 {
+	if (selectedContentInd_ < 0 || selectedContentInd_ >= contents_.size())
+		return;
+
 	auto content = contents_[selectedContentInd_];
 	if (content->GetPath() == "")
 	{
@@ -535,8 +546,16 @@ void Editor::Update()
 
 	if (!ImGui::IsAnyItemActive())
 	{
+		bool isCtrlPressed = false;
+		// TODO refactoring
+#ifdef __APPLE__
+		isCtrlPressed = ImGui::GetIO().KeySuper;
+#else
+		isCtrlPressed = ImGui::GetIO().KeyCtrl;
+#endif
+
 		// copy
-		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_C]] &&
+		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_C]] &&
 			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_C]] == 0)
 		{
 			ed::NodeId ids[256];
@@ -559,7 +578,7 @@ void Editor::Update()
 		}
 
 		// paste
-		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_V]] &&
+		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_V]] &&
 			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_V]] == 0)
 		{
 			auto text = ImGui::GetClipboardText();
@@ -571,7 +590,7 @@ void Editor::Update()
 		}
 
 		// save
-		if (ImGui::GetIO().KeyCtrl && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] &&
+		if (isCtrlPressed && ImGui::GetIO().KeysDown[ImGui::GetIO().KeyMap[ImGuiKey_S]] &&
 			ImGui::GetIO().KeysDownDuration[ImGui::GetIO().KeyMap[ImGuiKey_S]] == 0)
 		{
 			Save();
@@ -1224,6 +1243,13 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 		}
 		else if (type == ValueType::Texture)
 		{
+			auto showPath = [&p]() -> void {
+				if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
+				{
+					ImGui::SetTooltip(p->Str.c_str());
+				}
+			};
+
 			if (ImGui::Button(nameStr.c_str()))
 			{
 				nfdchar_t* outPath = NULL;
@@ -1241,6 +1267,8 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				material->MakeContentDirty(node);
 			}
 
+			showPath();
+
 			if (p->Str != "")
 			{
 				auto texture = EffekseerMaterial::TextureCache::Load(graphics_, p->Str.c_str());
@@ -1252,10 +1280,7 @@ void Editor::UpdateParameterEditor(std::shared_ptr<Node> node)
 				{
 					ImGui::Image((void*)texture->GetTexture()->GetInternalObjects()[0], size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
-					if (ImGui::IsItemHovered() && !ImGui::IsItemActive())
-					{
-						ImGui::SetTooltip(texture->GetPath().c_str());
-					}
+					showPath();
 
 					// adhoc
 					glBindTexture(GL_TEXTURE_2D, (GLuint)texture->GetTexture()->GetInternalObjects()[0]);

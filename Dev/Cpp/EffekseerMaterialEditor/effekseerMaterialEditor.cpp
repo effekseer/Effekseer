@@ -33,12 +33,19 @@
 #include <IO/IO.h>
 #include <algorithm>
 
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
+
 #ifdef WIN32
 #include <Windows.h>
 #include <direct.h>
 #else
 #include <sys/types.h>
 #include <unistd.h>
+#endif
+
+#if defined(__APPLE__)
+#include <mach-o/dyld.h>
 #endif
 
 namespace ed = ax::NodeEditor;
@@ -80,6 +87,12 @@ std::string GetExecutingDirectory()
 	int len = GetModuleFileNameA(NULL, buf, 260);
 	if (len <= 0)
 		return "";
+#elif defined(__APPLE__)
+	uint32_t size = 260;
+	if (_NSGetExecutablePath(buf, &size) != 0)
+	{
+		buf[0] = 0;
+	}
 #else
 
 	char temp[32];
@@ -99,6 +112,7 @@ void SetCurrentDir(const char* path)
 #else
 	chdir(path);
 #endif
+	spdlog::info("SetCurrentDir : {}", path);
 }
 
 std::vector<std::shared_ptr<EffekseerMaterial::Dialog>> newDialogs;
@@ -153,6 +167,30 @@ int mainLoop(int argc, char* argv[])
 
 	SetCurrentDir(GetExecutingDirectory().c_str());
 
+	// check debug mode
+	bool isDebugMode = false;
+	{
+		auto debugfp = fopen("debug.txt", "rb");
+		if (debugfp != nullptr)
+		{
+			isDebugMode = true;
+			fclose(debugfp);
+		}
+	}
+
+#ifndef NDEBUG
+	isDebugMode = true;
+#endif
+
+	if (isDebugMode)
+	{
+		auto fileLogger = spdlog::basic_logger_mt("logger", GetExecutingDirectory() + "EffekseerMaterialEditor.log.txt");
+		spdlog::set_default_logger(fileLogger);
+		spdlog::set_level(spdlog::level::trace);
+	}
+
+	spdlog::info("Start MaterialEditor");
+
 	auto config = std::make_shared<EffekseerMaterial::Config>();
 	config->Load("config.EffekseerMaterial.json");
 
@@ -184,10 +222,16 @@ int mainLoop(int argc, char* argv[])
 	Effekseer::IO::GetInstance()->AddCallback(std::make_shared<IOCallback>());
 
 	auto commandQueueToMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	commandQueueToMaterialEditor_->Start("EfkCmdToMatEdit", 1024 * 1024);
+	if (!commandQueueToMaterialEditor_->Start("EfkCmdToMatEdit", 1024 * 1024))
+	{
+		spdlog::warn("Failed to start EfkCmdToMatEdit");
+	}
 
 	auto commandQueueFromMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
-	commandQueueFromMaterialEditor_->Start("EfkCmdFromMatEdit", 1024 * 1024);
+	if (!commandQueueFromMaterialEditor_->Start("EfkCmdFromMatEdit", 1024 * 1024))
+	{
+		spdlog::warn("Failed to start EfkCmdFromMatEdit");
+	}
 
 	uint64_t previousHistoryID = 0;
 
@@ -222,6 +266,10 @@ int mainLoop(int argc, char* argv[])
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	ImGui::StyleColorsDark();
+
+	// Specify imgui setting
+	std::string imguiConfigPath = GetExecutingDirectory() + "imgui.material.ini";
+	ImGui::GetIO().IniFilename = imguiConfigPath.c_str();
 
 	FILE* fp = nullptr;
 
@@ -264,8 +312,6 @@ int mainLoop(int argc, char* argv[])
 		{
 			ImGuiStyle& style = ImGui::GetStyle();
 
-			
-
 			style = ImGuiStyle();
 			style.ChildRounding = 3.f;
 			style.GrabRounding = 3.f;
@@ -304,17 +350,17 @@ int mainLoop(int argc, char* argv[])
 			{
 				if (commandDataTOMaterialEditor.Type == IPC::CommandType::Terminate)
 				{
+					spdlog::trace("ICP - Receive - Terminate");
 					break;
 				}
 				else if (commandDataTOMaterialEditor.Type == IPC::CommandType::OpenMaterial)
 				{
+					spdlog::trace("ICP - Receive - OpenMaterial : {}", (const char*)(commandDataTOMaterialEditor.str.data()));
 					editor->LoadOrSelect(commandDataTOMaterialEditor.str.data());
 				}
 				else if (commandDataTOMaterialEditor.Type == IPC::CommandType::OpenOrCreateMaterial)
 				{
-#ifdef _DEBUG
-					std::cout << "OpenOrCreateMaterial : " << commandDataTOMaterialEditor.str.data() << std::endl;
-#endif
+					spdlog::trace("ICP - Receive - OpenOrCreateMaterial : {}", (const char*)(commandDataTOMaterialEditor.str.data()));
 					if (!editor->LoadOrSelect(commandDataTOMaterialEditor.str.data()))
 					{
 						editor->New();
@@ -328,10 +374,7 @@ int mainLoop(int argc, char* argv[])
 		if (material != nullptr && material->GetCommandManager()->GetHistoryID() != previousHistoryID)
 		{
 			auto content = editor->GetContents()[editor->GetSelectedContentIndex()];
-#ifdef _DEBUG
-			std::cout << "NotifyUpdate : " << material->GetPath() << std::endl;
-#endif
-
+			spdlog::trace("ICP - Send - NotifyUpdate : {}", material->GetPath());
 			content->UpdateBinary();
 
 			previousHistoryID = material->GetCommandManager()->GetHistoryID();
@@ -386,15 +429,28 @@ int mainLoop(int argc, char* argv[])
 						}
 					}
 
-					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Save").c_str()))
+#ifdef __APPLE__
+					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Save").c_str(), "Command+S"))
 					{
 						editor->Save();
 					}
 
-					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("SaveAs").c_str()))
+					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("SaveAs").c_str(), "Command+S"))
 					{
 						editor->SaveAs();
 					}
+#else
+					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("Save").c_str(), "Ctrl+S"))
+					{
+						editor->Save();
+					}
+
+					if (ImGui::MenuItem(EffekseerMaterial::StringContainer::GetValue("SaveAs").c_str(), "Ctrl+S"))
+					{
+						editor->SaveAs();
+					}
+
+#endif
 
 					ImGui::EndMenu();
 				}
@@ -671,12 +727,14 @@ int mainLoop(int argc, char* argv[])
 	commandQueueToMaterialEditor_->Stop();
 	commandQueueFromMaterialEditor_->Stop();
 
-	config->Save("config.EffekseerMaterial.json");
+	config->Save((GetExecutingDirectory() + "config.EffekseerMaterial.json").c_str());
 
 	Effekseer::IO::Terminate();
 
 	Effekseer::MainWindow::Terminate();
 	mainWindow = nullptr;
+
+	spdlog::info("End MaterialEditor");
 
 	return 0;
 }

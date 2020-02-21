@@ -125,6 +125,7 @@ typedef struct ipc_sharedmemory_
     HANDLE        handle;
 #else
     int           fd;
+    int created;
 #endif
 } ipc_sharedmemory;
 
@@ -318,12 +319,15 @@ int ipc_mem_open_existing(ipc_sharedmemory *mem)
 {
     mem->fd = shm_open(mem->name, O_RDWR, 0755);
     if (mem->fd < 0)
+    {
         return -1;
+    }
 
     mem->data = (unsigned char *)mmap(NULL, mem->size, PROT_READ | PROT_WRITE, MAP_SHARED, mem->fd, 0);
     if (!mem->data)
         return -1;
 
+    mem->created = 0;
     return 0;
 }
 
@@ -344,6 +348,7 @@ int ipc_mem_create(ipc_sharedmemory *mem)
     if (!mem->data)
         return -1;
 
+    mem->created = 1;
     return 0;
 }
 
@@ -353,7 +358,10 @@ void ipc_mem_close(ipc_sharedmemory *mem)
     {
         munmap(mem->data, mem->size);
         close(mem->fd);
-        shm_unlink(mem->name);
+        if(mem->created > 0)
+        {
+            shm_unlink(mem->name);
+        }
     }
     IPC_FREE(mem->name);
     mem->name = NULL;

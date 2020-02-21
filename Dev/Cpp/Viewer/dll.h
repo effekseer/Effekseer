@@ -242,7 +242,6 @@ private:
 
 	std::shared_ptr<IPC::CommandQueue> commandQueueToMaterialEditor_;
 	std::shared_ptr<IPC::CommandQueue> commandQueueFromMaterialEditor_;
-	std::shared_ptr<IPC::KeyValueFileStorage> keyValueFileStorage_;
 
 	bool isUpdateMaterialRequired_ = false;
 
@@ -358,6 +357,8 @@ public:
 	void TerminateMaterialEditor();
 
 	bool GetIsUpdateMaterialRequiredAndReset();
+
+	static void SetFileLogger(const char16_t* path);
 
 #if !SWIG
 	EffekseerRenderer::Renderer* GetRenderer();

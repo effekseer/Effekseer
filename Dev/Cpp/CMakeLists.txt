@@ -33,8 +33,8 @@ option(USE_OPENAL "Use OpenAL" ON)
 endif()
 
 if (WIN32)
-option(USE_XAUDIO2 "Use XAudio2" OFF)
-option(USE_DSOUND "Use DirectSound" OFF)
+option(USE_XAUDIO2 "Use XAudio2" ON)
+option(USE_DSOUND "Use DirectSound" ON)
 option(USE_OSM "Use OpenSoundMixer" OFF)
 endif()
 
@@ -131,7 +131,12 @@ if (USE_XAUDIO2)
 endif()
 
 if (USE_OSM OR BUILD_VIEWER)
-	add_subdirectory("EffekseerSoundOSMixer")
+    add_subdirectory("EffekseerSoundOSMixer")
+endif()
+
+if(BUILD_VIEWER OR BUILD_TEST)
+    add_subdirectory(3rdParty/spdlog EXCLUDE_FROM_ALL)
+    list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include/)
 endif()
 
 if (BUILD_VIEWER)

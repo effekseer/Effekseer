@@ -148,17 +148,9 @@ OriginalState::OriginalState()
 	, m_pPS(nullptr)
 	, m_pVB(nullptr)
 	, m_pIB(nullptr)
-
 {
-	for( int32_t i = 0; i < 4; i++ )
-	{
-		m_samplers[i] = NULL;
-	}
-
-	for (int32_t i = 0; i < 4; i++)
-	{
-		m_psSRVs[i] = nullptr;
-	}
+	m_samplers.fill(nullptr);
+	m_psSRVs.fill(nullptr);
 }
 
 //----------------------------------------------------------------------------------

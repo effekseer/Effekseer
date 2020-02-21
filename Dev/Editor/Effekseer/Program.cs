@@ -111,6 +111,16 @@ namespace Effekseer
 
 		static void Exec(bool gui, string input, string output, string export, string format, float magnification)
 		{
+			// Debug
+			bool isDebugMode = false;
+#if DEBUG
+			isDebugMode = true;
+#endif
+			if(System.IO.File.Exists("debug.txt") || isDebugMode)
+			{
+				swig.Native.SetFileLogger(Path.Combine(GUI.Manager.GetEntryDirectory(),"Effekseer.log.txt"));	
+			}
+
 			var systemLanguage = EfkN.GetSystemLanguage();
 			Language? language = null;
 

@@ -5,12 +5,16 @@
 
 #ifdef _WIN32
 #include "3rdParty/imgui_platform/imgui_impl_dx11.h"
+#include <filesystem>
 #endif
 
-#include <IO/IO.h>
-#include <unordered_set>
-#include <unordered_map>
 #include "dll.h"
+#include <IO/IO.h>
+#include <unordered_map>
+#include <unordered_set>
+
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -489,8 +493,7 @@ void Native::ModelLoader::Unload(void* data)
 	*/
 }
 
-Native::MaterialLoader::MaterialLoader(EffekseerRenderer::Renderer* renderer)
-	: renderer_(renderer)
+Native::MaterialLoader::MaterialLoader(EffekseerRenderer::Renderer* renderer) : renderer_(renderer)
 {
 	loader_ = renderer_->CreateMaterialLoader();
 }
@@ -517,7 +520,7 @@ Effekseer::MaterialData* Native::MaterialLoader::Load(const EFK_CHAR* path)
 	{
 		std::shared_ptr<Effekseer::StaticFile> staticFile;
 		::Effekseer::MaterialData* t = nullptr;
-		
+
 		if (staticFile == nullptr)
 		{
 			staticFile = ::Effekseer::IO::GetInstance()->LoadIPCFile(dst);
@@ -566,24 +569,21 @@ Native::Native() : m_time(0), m_step(1)
 
 	commandQueueFromMaterialEditor_ = std::make_shared<IPC::CommandQueue>();
 	commandQueueFromMaterialEditor_->Start("EfkCmdFromMatEdit", 1024 * 1024);
-
-	keyValueFileStorage_ = std::make_shared<IPC::KeyValueFileStorage>();
-	keyValueFileStorage_->Start("EffekseerStorage");
 }
 
 Native::~Native()
 {
+	spdlog::trace("Begin Native::~Native()");
+
 	ES_SAFE_DELETE(g_client);
 
-#if _WIN32
 	commandQueueToMaterialEditor_->Stop();
 	commandQueueToMaterialEditor_.reset();
 
 	commandQueueFromMaterialEditor_->Stop();
 	commandQueueFromMaterialEditor_.reset();
 
-	keyValueFileStorage_->Stop();
-#endif
+	spdlog::trace("End Native::~Native()");
 }
 
 bool Native::CreateWindow_Effekseer(void* pHandle, int width, int height, bool isSRGBMode, efk::DeviceType deviceType)
@@ -1624,7 +1624,7 @@ void Native::SetViewerParamater(ViewerParamater& paramater)
 	g_focus_position.Z = paramater.FocusZ;
 	g_RotX = paramater.AngleX;
 	g_RotY = paramater.AngleY;
-	
+
 	SetZoom(logf(Effekseer::Max(FLT_MIN, paramater.Distance / DistanceBase)) / logf(ZoomDistanceFactor));
 
 	g_renderer->RendersGuide = paramater.RendersGuide;
@@ -1799,7 +1799,8 @@ void Native::SetCullingParameter(bool isCullingShown, float cullingRadius, float
 efk::ImageResource* Native::LoadImageResource(const char16_t* path)
 {
 	auto it = g_imageResources.find(path);
-	if (it != g_imageResources.end()) {
+	if (it != g_imageResources.end())
+	{
 		return it->second.get();
 	}
 
@@ -1914,6 +1915,8 @@ void Native::OpenOrCreateMaterial(const char16_t* path)
 	commandData.Type = IPC::CommandType::OpenOrCreateMaterial;
 	commandData.SetStr(u8path);
 	commandQueueToMaterialEditor_->Enqueue(&commandData);
+
+	spdlog::trace("ICP - Send - OpenOrCreateMaterial : {}", u8path);
 }
 
 void Native::TerminateMaterialEditor()
@@ -1924,6 +1927,8 @@ void Native::TerminateMaterialEditor()
 	IPC::CommandData commandData;
 	commandData.Type = IPC::CommandType::Terminate;
 	commandQueueToMaterialEditor_->Enqueue(&commandData);
+
+	spdlog::trace("ICP - Send - Terminate");
 }
 
 bool Native::GetIsUpdateMaterialRequiredAndReset()
@@ -1932,6 +1937,31 @@ bool Native::GetIsUpdateMaterialRequiredAndReset()
 	auto ret = isUpdateMaterialRequired_;
 	isUpdateMaterialRequired_ = false;
 	return ret;
+}
+
+void Native::SetFileLogger(const char16_t* path)
+{
+	spdlog::set_level(spdlog::level::trace);
+	spdlog::trace("Begin Native::SetFileLogger");
+
+#if defined(_WIN32)
+	auto wpath = std::filesystem::path(reinterpret_cast<const wchar_t*>(path));
+	auto fileLogger = spdlog::basic_logger_mt("logger", wpath.generic_string().c_str());
+#else
+	char cpath[512];
+	Effekseer::ConvertUtf16ToUtf8(reinterpret_cast<int8_t*>(cpath), 512, reinterpret_cast<const int16_t*>(path));
+	auto fileLogger = spdlog::basic_logger_mt("logger", cpath);
+#endif
+
+	spdlog::set_default_logger(fileLogger);
+
+	#if defined(_WIN32)
+	spdlog::trace("Native::SetFileLogger : {}", wpath.generic_string().c_str());
+	#else
+	spdlog::trace("Native::SetFileLogger : {}", cpath);
+	#endif
+
+	spdlog::trace("End Native::SetFileLogger");
 }
 
 EffekseerRenderer::Renderer* Native::GetRenderer() { return g_renderer->GetRenderer(); }
