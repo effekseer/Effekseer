@@ -1278,6 +1278,26 @@ namespace Effekseer.GUI.Dock
 
 			static public FCurve Create(Tuple35<string, object> v, FCurves window)
 			{
+#if __EFFEKSEER_BUILD_VERSION16__
+				if (v.Item2 is Data.Value.FCurveScalar)
+				{
+					var v_ = (Data.Value.FCurveScalar)v.Item2;
+					return new FCurve(
+						1,
+						new[] { v_.S },
+						new[] { 0xffffffff },
+						new string[] { "S" },
+						0,
+						v_,
+						v.Item1,
+						window,
+						new FloatFCurveConverter(),
+						v_.S.DefaultValueRangeMin,
+						v_.S.DefaultValueRangeMax,
+						v_.Timeline);
+				}
+				else
+#endif
 				if (v.Item2 is Data.Value.FCurveVector2D)
 				{
 					var v_ = (Data.Value.FCurveVector2D)v.Item2;

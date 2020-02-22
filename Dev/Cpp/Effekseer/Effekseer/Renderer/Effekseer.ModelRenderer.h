@@ -67,6 +67,8 @@ public:
 		RectF			AlphaUV;
 
 		float			FlipbookIndexAndNextRate;
+
+		float			AlphaThreshold;
 #endif
 		Color			AllColor;
 		int32_t			Time;

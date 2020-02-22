@@ -26,6 +26,7 @@ struct VS_Input
 #ifdef __EFFEKSEER_BUILD_VERSION16__
     float2 AlphaUV  : TEXCOORD1;
     float FlipbookIndex : TEXCOORD2;
+    float AlphaThreshold : TEXCOORD3;
 #endif
 };
 
@@ -43,6 +44,7 @@ struct VS_Output
     float2 AlphaUV  : TEXCOORD4;
     float FlipbookRate : TEXCOORD5;
     float2 FlipbookNextIndexUV : TEXCOORD6;
+    float AlphaThreshold : TEXCOORD7;
 #endif
 };
 
@@ -128,6 +130,9 @@ VS_Output VS( const VS_Input Input )
         float2 OriginUV = GetFlipbookOriginUV(Input.UV, Index, mflipbookParameter.z, mflipbookParameter.w);
         Output.FlipbookNextIndexUV = GetFlipbookUVForIndex(OriginUV, NextIndex, mflipbookParameter.z, mflipbookParameter.w);
     }
+    
+    // alpha threshold
+    Output.AlphaThreshold = Input.AlphaThreshold;
 #endif
 
 	return Output;

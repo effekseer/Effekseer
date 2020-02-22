@@ -35,6 +35,7 @@ struct PS_Input
     float2 AlphaUV : TEXCOORD5;
     float FlipbookRate  : TEXCOORD6;
     float2 FlipbookNextIndexUV : TEXCOORD7;
+    float AlphaThreshold : TEXCOORD8;
 #endif
 };
 
@@ -59,6 +60,12 @@ float4 PS( const PS_Input Input ) : SV_Target
     }
     
     Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;
+    
+    // alpha threshold
+    if(Output.a <= Input.AlphaThreshold)
+    {
+        discard;
+    }
 #endif
 
 	if (Output.a == 0.0f) discard;

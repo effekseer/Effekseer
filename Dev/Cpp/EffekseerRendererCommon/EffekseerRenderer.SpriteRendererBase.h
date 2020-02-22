@@ -183,6 +183,7 @@ protected:
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 			verteies[i].FlipbookIndexAndNextRate = instanceParameter.FlipbookIndexAndNextRate;
+			verteies[i].AlphaThreshold = instanceParameter.AlphaThreshold;
 #endif
 		}
 		

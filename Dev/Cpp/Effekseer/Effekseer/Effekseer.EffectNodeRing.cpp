@@ -326,6 +326,8 @@ void EffectNodeRing::Rendering(const Instance& instance, const Instance* next_in
 		instanceParameter.AlphaUV = instance.GetUV(1);
 
 		instanceParameter.FlipbookIndexAndNextRate = instance.m_flipbookIndexAndNextRate;
+
+		instanceParameter.AlphaThreshold = instance.m_AlphaThreshold;
 #else
 		instanceParameter.UV = instance.GetUV();
 #endif

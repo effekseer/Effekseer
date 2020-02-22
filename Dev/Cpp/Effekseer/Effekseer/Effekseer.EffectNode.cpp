@@ -722,6 +722,10 @@ void EffectNodeImplemented::LoadParameter(unsigned char*& pos, EffectNode* paren
 		RendererCommon.DistortionIntensity *= m_effect->GetMaginification();
 #endif // !__EFFEKSEER_FOR_UE4__
 
+#ifdef __EFFEKSEER_BUILD_VERSION16__
+		AlphaCrunch.load(pos, m_effect->GetVersion());
+#endif
+
 		if (m_effect->GetVersion() >= 1)
 		{
 			// Sound

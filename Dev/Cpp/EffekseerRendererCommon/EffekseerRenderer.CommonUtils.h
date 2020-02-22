@@ -37,6 +37,8 @@ struct DynamicVertex
 	float AlphaUV[2];
 
 	float FlipbookIndexAndNextRate;
+
+	float AlphaThreshold;
 #endif
 
 	void SetColor(const VertexColor& color) { Col = color; }
@@ -57,6 +59,8 @@ struct SimpleVertex
 	float AlphaUV[2];
 
 	float FlipbookIndexAndNextRate;
+
+	float AlphaThreshold;
 #endif
 
 	void SetColor(const ::Effekseer::Color& color)
@@ -83,6 +87,8 @@ struct SimpleVertexDX9
 	float AlphaUV[2];
 
 	float FlipbookIndexAndNextRate;
+
+	float AlphaThreshold;
 #endif
 
 	void SetColor(const ::Effekseer::Color& color)
@@ -112,6 +118,8 @@ struct VertexDistortion
 	float AlphaUV[2];
 
 	float FlipbookIndexAndNextRate;
+
+	float AlphaThreshold;
 #endif
 	
 	void SetColor(const ::Effekseer::Color& color)
@@ -141,6 +149,8 @@ struct VertexDistortionDX9
 	float AlphaUV[2];
 
 	float FlipbookIndexAndNextRate;
+
+	float AlphaThreshold;
 #endif
 
 	void SetColor(const ::Effekseer::Color& color)

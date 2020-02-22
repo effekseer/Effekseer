@@ -579,6 +579,12 @@ namespace Effekseer.GUI.Component
 				{
 					gui = new PathForMaterial(Title);
 				}
+#if __EFFEKSEER_BUILD_VERSION16__
+				else if (type == typeof(Data.Value.FCurveScalar))
+				{
+					gui = new FCurveButton(Title);
+				}
+#endif
 				else if (type == typeof(Data.Value.FCurveVector2D))
 				{
 					gui = new FCurveButton(Title);

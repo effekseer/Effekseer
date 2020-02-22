@@ -78,6 +78,15 @@ namespace Effekseer.Data
             private set;
         }
 
+#if __EFFEKSEER_BUILD_VERSION16__
+		[IO(Export = true)]
+		public AlphaCrunchValues AlphaCrunchValues
+		{
+			get;
+			private set;
+		}
+#endif
+
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
@@ -95,6 +104,9 @@ namespace Effekseer.Data
 			RendererCommonValues = new Data.RendererCommonValues();
             DrawingValues = new RendererValues();
             SoundValues = new SoundValues();
+#if __EFFEKSEER_BUILD_VERSION16__
+			AlphaCrunchValues = new Data.AlphaCrunchValues();
+#endif
 		}
 	}
 }

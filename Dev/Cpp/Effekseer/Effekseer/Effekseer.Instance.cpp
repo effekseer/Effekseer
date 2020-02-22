@@ -176,6 +176,7 @@ Instance::Instance(Manager* pManager, EffectNode* pEffectNode, InstanceContainer
 	, m_sequenceNumber(0)
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	, m_flipbookIndexAndNextRate(0)
+	, m_AlphaThreshold(0.0f)
 #endif
 {
 	m_generatedChildrenCount = m_fixedGeneratedChildrenCount;
@@ -878,6 +879,42 @@ void Instance::Initialize( Instance* parent, int32_t instanceNumber, int32_t par
 			uvAreaOffset.Height = UV.FCurve.Size->Y.GetOffset(*instanceGlobal);
 		}
 	}
+
+	// Alpha Crunch
+	if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::FIXED)
+	{
+		if (m_pEffectNode->AlphaCrunch.Fixed.RefEq < 0)
+		{
+			m_AlphaThreshold = m_pEffectNode->AlphaCrunch.Fixed.Threshold;
+		}
+	}
+	else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::FPI)
+	{
+		auto& fpiValue = alpha_crunch_values.four_point_interpolation;
+		auto& nodeAlphaCrunchValue = m_pEffectNode->AlphaCrunch.FourPointInterpolation;
+
+		fpiValue.begin_threshold	= nodeAlphaCrunchValue.BeginThreshold.getValue(*instanceGlobal);
+		fpiValue.transition_frame	= nodeAlphaCrunchValue.TransitionFrameNum.getValue(*instanceGlobal);
+		fpiValue.no2_threshold		= nodeAlphaCrunchValue.No2Threshold.getValue(*instanceGlobal);
+		fpiValue.no3_threshold		= nodeAlphaCrunchValue.No3Threshold.getValue(*instanceGlobal);
+		fpiValue.transition_frame2	= nodeAlphaCrunchValue.TransitionFrameNum2.getValue(*instanceGlobal);
+		fpiValue.end_threshold		= nodeAlphaCrunchValue.EndThreshold.getValue(*instanceGlobal);
+	}
+	else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::EASING)
+	{
+		auto& easingValue = alpha_crunch_values.easing;
+		auto& nodeAlphaCrunchValue = m_pEffectNode->AlphaCrunch.Easing;
+
+		easingValue.start = nodeAlphaCrunchValue.Threshold.start.getValue(*instanceGlobal);
+		easingValue.end = nodeAlphaCrunchValue.Threshold.end.getValue(*instanceGlobal);
+	}
+	else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::F_CURVE)
+	{
+		auto& fcurveValue = alpha_crunch_values.fcurve;
+		auto& nodeAlphaCrunchValue = m_pEffectNode->AlphaCrunch.FCurve;
+
+		fcurveValue.offset = nodeAlphaCrunchValue.Threshold->GetOffsets(*instanceGlobal);
+	}
 #else
 	if (m_pEffectNode->RendererCommon.UVType == ParameterRendererCommon::UV_ANIMATION)
 	{
@@ -1139,6 +1176,61 @@ void Instance::Update( float deltaFrame, bool shown )
 
 			m_flipbookIndexAndNextRate = static_cast<float>(frameNum);
 			m_flipbookIndexAndNextRate += fFrameNum - static_cast<float>(frameNum);
+		}
+	}
+
+	{
+		if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::FIXED)
+		{
+			if (m_pEffectNode->AlphaCrunch.Fixed.RefEq >= 0)
+			{
+				auto alphaThreshold = static_cast<float>(m_pEffectNode->AlphaCrunch.Fixed.Threshold);
+				ApplyEq(alphaThreshold,
+						this->m_pEffectNode->m_effect,
+						this->m_pContainer->GetRootInstance(),
+						m_pEffectNode->AlphaCrunch.Fixed.RefEq,
+						alphaThreshold);
+
+				m_AlphaThreshold = alphaThreshold;
+			}
+		}
+		else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::FPI)
+		{
+			float t = m_LivingTime / m_LivedTime;
+			auto val = alpha_crunch_values.four_point_interpolation;
+
+			float p[4][2] =
+			{
+				0.0f, val.begin_threshold, 
+				float(val.transition_frame) / m_LivedTime, val.no2_threshold,
+				(m_LivedTime - float(val.transition_frame2)) / m_LivedTime, val.no3_threshold,
+				1.0f, val.end_threshold
+			};
+
+			for (int32_t i = 1; i < 4; i++)
+			{
+				if (0 < p[i][0] && p[i - 1][0] <= t && t <= p[i][0])
+				{
+					float r = (t - p[i - 1][0]) / (p[i][0] - p[i - 1][0]);
+					m_AlphaThreshold = p[i - 1][1] + (p[i][1] - p[i - 1][1]) * r;
+					break;
+				}
+			}
+		}
+		else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::EASING)
+		{
+			m_AlphaThreshold = m_pEffectNode->AlphaCrunch.Easing.Threshold.getValue
+			(
+				alpha_crunch_values.easing.start,
+				alpha_crunch_values.easing.end,
+				m_LivingTime / m_LivedTime
+			);
+		}
+		else if (m_pEffectNode->AlphaCrunch.Type == ParameterAlphaCrunch::EType::F_CURVE)
+		{
+			auto fcurve = m_pEffectNode->AlphaCrunch.FCurve.Threshold->GetValues(m_LivingTime, m_LivedTime);
+			m_AlphaThreshold = fcurve + alpha_crunch_values.fcurve.offset;
+			m_AlphaThreshold /= 100.0f;
 		}
 	}
 #endif

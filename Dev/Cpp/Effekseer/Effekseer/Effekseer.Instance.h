@@ -321,6 +321,37 @@ public:
 
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	float			m_flipbookIndexAndNextRate;
+
+	union
+	{
+		struct
+		{
+		} fixed;
+
+		struct
+		{
+			float begin_threshold;
+			int32_t transition_frame;
+			float no2_threshold;
+			float no3_threshold;
+			int32_t transition_frame2;
+			float end_threshold;
+		} four_point_interpolation;
+
+		struct
+		{
+			float start;
+			float end;
+		} easing;
+
+		struct
+		{
+			float offset;
+		} fcurve;
+
+	} alpha_crunch_values;
+
+	float m_AlphaThreshold;
 #endif
 
 	//! calculate dynamic equation and assign a result

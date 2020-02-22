@@ -9,6 +9,8 @@ cbuffer VS_ConstantBuffer : register(b0)
     float4 fFlipbookParameter; // x:enable, y:loopType, z:divideX, w:divideY
     float4 fFlipbookIndexAndNextRate[40];
 
+    float4 fModelAlphaThreshold[40];
+
     float4 fModelColor[40];
 
     float4 fLightDirection;
@@ -49,6 +51,7 @@ struct VS_Output
     float2 AlphaUV : TEXCOORD5;
     float FlipbookRate  : TEXCOORD6;
     float2 FlipbookNextIndexUV : TEXCOORD7;
+    float AlphaThreshold : TEXCOORD8;
 #endif
 };
 
@@ -136,6 +139,9 @@ VS_Output VS( const VS_Input Input )
     
         Output.FlipbookNextIndexUV = GetFlipbookUVForIndex(Input.UV, NextIndex, fFlipbookParameter.z, fFlipbookParameter.w);
     }
+    
+    // alpha threshold
+    Output.AlphaThreshold = fModelAlphaThreshold[Input.Index.x].x;
 #endif
 
 	return Output;

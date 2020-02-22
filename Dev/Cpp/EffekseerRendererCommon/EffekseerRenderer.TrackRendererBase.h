@@ -466,6 +466,10 @@ namespace EffekseerRenderer
 					v[0].FlipbookIndexAndNextRate = param.FlipbookIndexAndNextRate;
 					v[1].FlipbookIndexAndNextRate = param.FlipbookIndexAndNextRate;
 					v[2].FlipbookIndexAndNextRate = param.FlipbookIndexAndNextRate;
+
+					v[0].AlphaThreshold = param.AlphaThreshold;
+					v[1].AlphaThreshold = param.AlphaThreshold;
+					v[2].AlphaThreshold = param.AlphaThreshold;
 #endif
 
 					if (parameter.SplineDivision > 1)

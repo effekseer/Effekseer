@@ -337,6 +337,9 @@ namespace Effekseer.GUI.Menu
                 setDockWindow(Resources.GetString("Network"), typeof(Dock.Network), Images.GetIcon("PanelNetwork"));
 				setDockWindow(Resources.GetString("FileViewer"), typeof(Dock.FileViewer), Images.GetIcon("PanelFileViewer"));
 				setDockWindow(Resources.GetString("DynamicParameter_Name"), typeof(Dock.Dynamic), Images.GetIcon("PanelDynamicParameter"));
+#if __EFFEKSEER_BUILD_VERSION16__
+				setDockWindow(Resources.GetString("AlphaCrunch"), typeof(Dock.AlphaCrunchValues), Images.GetIcon("PanelAlphaCrunch"));
+#endif
 
 				this.Controls.Add(menu);
 			}

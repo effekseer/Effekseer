@@ -13,6 +13,7 @@ struct PS_Input
     float2 AlphaUV : TEXCOORD7;
     float FlipbookRate : TEXCOORD8;
     float2 FlipbookNextIndexUV : TEXCOORD9;
+    float AlphaThreshold : TEXCOORD10;
 #endif
 };
 
@@ -70,6 +71,11 @@ float4 PS(const PS_Input Input) : SV_Target
     // alpha texture
 	Output.a *= g_alphaTexture.Sample(g_alphaSampler, Input.AlphaUV).a;
     
+    // alpha threshold
+    if(Output.a <= Input.AlphaThreshold)
+    {
+        discard;
+    }
 #endif
 	Output.xyz = Output.xyz * (float3(diffuse, diffuse, diffuse) + fLightAmbient);
 

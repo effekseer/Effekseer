@@ -176,6 +176,8 @@ void EffectNodeRibbon::BeginRenderingGroup(InstanceGroup* group, Manager* manage
 			m_instanceParameter.AlphaUV = group->GetFirst()->GetUV(1);
 
 			m_instanceParameter.FlipbookIndexAndNextRate = group->GetFirst()->m_flipbookIndexAndNextRate;
+
+			m_instanceParameter.AlphaThreshold = group->GetFirst()->m_AlphaThreshold;
 #else
 			m_instanceParameter.UV = group->GetFirst()->GetUV();
 #endif
