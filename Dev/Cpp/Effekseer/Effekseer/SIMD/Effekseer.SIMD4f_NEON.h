@@ -18,11 +18,7 @@ inline float Sqrt(float x)
 
 inline float Rsqrt(float x)
 {
-#if defined(__APPLE__)
 	return 1.0f / sqrt(x);
-#else
-	return vrsqrtes_f32(x);
-#endif
 }
 
 /**
