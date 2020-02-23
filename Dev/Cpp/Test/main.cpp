@@ -131,8 +131,10 @@ int main()
 #endif
 
 #ifdef __EFFEKSEER_TEST_BUILD_AS_CMAKE__
+	StringAndPathHelperTest();
 	StartingFrameTest();
-	UpdateHandleTest();	PlaybackSpeedTest();
+	UpdateHandleTest();
+	PlaybackSpeedTest();
 	CustomAllocatorTest();
 	//SIMDTest();
 	BasicRuntimeTest();

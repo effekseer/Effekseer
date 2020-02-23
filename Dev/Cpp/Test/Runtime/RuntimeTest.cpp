@@ -13,6 +13,7 @@
 #include "EffectPlatformGL.h"
 #endif
 
+#include "../Effekseer/Effekseer/Effekseer.Base.h"
 #include "../Effekseer/Effekseer/Noise/CurlNoise.h"
 #include "../TestHelper.h"
 #include <iostream>
@@ -282,4 +283,32 @@ void CustomAllocatorTest()
 
 	Effekseer::CustomMap<int, int> m;
 	m[1] = 10;
+}
+
+void StringAndPathHelperTest()
+{
+
+	if (Effekseer::StringHelper::To<char16_t>("hoge") != std::u16string(u"hoge"))
+		throw "";
+
+	if (Effekseer::StringHelper::To<char32_t>("hoge") != std::u32string(U"hoge"))
+		throw "";
+
+	if (Effekseer::PathHelper::Normalize(std::u16string(u"/a/../b/c")) != std::u16string(u"/b/c"))
+		throw "";
+
+	if (Effekseer::PathHelper::Normalize(std::u16string(u"a/../b/c")) != std::u16string(u"b/c"))
+		throw "";
+
+	if (Effekseer::PathHelper::Normalize(std::u16string(u"../b/c")) != std::u16string(u"../b/c"))
+		throw "";
+
+	if (Effekseer::PathHelper::Absolute(std::u16string(u"d/c"), std::u16string(u"/a/b/c")) != std::u16string(u"/a/b/d/c"))
+		throw "";
+
+	if (Effekseer::PathHelper::Absolute(std::u16string(u"../d/c"), std::u16string(u"/a/b/c")) != std::u16string(u"/a/d/c"))
+		throw "";
+
+	if (Effekseer::PathHelper::Relative(std::u16string(u"/a/b/e"), std::u16string(u"/a/b/c")) != std::u16string(u"e"))
+		throw "";
 }
