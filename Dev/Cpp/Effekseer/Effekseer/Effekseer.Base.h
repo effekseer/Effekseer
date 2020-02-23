@@ -150,7 +150,7 @@ public:
 	template <typename T>
 	static std::basic_string<T> Replace(std::basic_string<T> target, std::basic_string<T> from_, std::basic_string<T> to_)
 	{
-		std::basic_string<T>::size_type Pos(target.find(from_));
+		auto Pos = target.find(from_);
 
 		while (Pos != std::basic_string<T>::npos)
 		{
