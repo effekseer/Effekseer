@@ -190,6 +190,7 @@ int main(int argc, char **argv)
     // Set the resource reading function from the rendering instance.
     g_manager->SetTextureLoader(g_renderer->CreateTextureLoader());
     g_manager->SetModelLoader(g_renderer->CreateModelLoader());
+    g_manager->SetMaterialLoader(g_renderer->CreateMaterialLoader());
 
     // View position.
     g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
