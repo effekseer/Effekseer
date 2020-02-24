@@ -11,6 +11,7 @@ namespace Effekseer
 namespace Vulkan
 {	
 static char* material_common_define = R"(
+#version 450
 #define MOD mod
 #define FRAC fract
 #define LERP mix
@@ -23,51 +24,54 @@ float atan2(in float y, in float x) {
 
 static const char g_material_model_vs_src_pre[] =
 	R"(
-IN vec4 a_Position;
-IN vec3 a_Normal;
-IN vec3 a_Binormal;
-IN vec3 a_Tangent;
-IN vec2 a_TexCoord;
-IN vec4 a_Color;
+layout(location = 0) in vec4 a_Position;
+layout(location = 1) in vec3 a_Normal;
+layout(location = 2) in vec3 a_Binormal;
+layout(location = 3) in vec3 a_Tangent;
+layout(location = 4) in vec2 a_TexCoord;
+layout(location = 5) in vec4 a_Color;
 )"
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	R"(
-IN float a_InstanceID;
-IN vec4 a_UVOffset;
-IN vec4 a_ModelColor;
+in float a_InstanceID;
+in vec4 a_UVOffset;
+in vec4 a_ModelColor;
 )"
 #endif
 	R"(
 
-OUT lowp vec4 v_VColor;
-OUT mediump vec2 v_UV1;
-OUT mediump vec2 v_UV2;
-OUT mediump vec3 v_WorldP;
-OUT mediump vec3 v_WorldN;
-OUT mediump vec3 v_WorldT;
-OUT mediump vec3 v_WorldB;
-OUT mediump vec2 v_ScreenUV;
+layout(location = 0) out lowp vec4 v_VColor;
+layout(location = 1) out mediump vec2 v_UV1;
+layout(location = 2) out mediump vec2 v_UV2;
+layout(location = 3) out mediump vec3 v_WorldP;
+layout(location = 4) out mediump vec3 v_WorldN;
+layout(location = 5) out mediump vec3 v_WorldT;
+layout(location = 6) out mediump vec3 v_WorldB;
+layout(location = 7) out mediump vec2 v_ScreenUV;
 //$C_OUT1$
 //$C_OUT2$
 
-uniform mat4 ProjectionMatrix;
+layout(set = 0, binding = 0) uniform Block
+{
+    uniform mat4 ProjectionMatrix;
 )"
 #if defined(MODEL_SOFTWARE_INSTANCING)
 	R"(
-uniform mat4 ModelMatrix[20];
-uniform vec4 UVOffset[20];
-uniform vec4 ModelColor[20];
+    uniform mat4 ModelMatrix[20];
+    uniform vec4 UVOffset[20];
+    uniform vec4 ModelColor[20];
 )"
 #else
 	R"(
-uniform mat4 ModelMatrix;
-uniform vec4 UVOffset;
-uniform vec4 ModelColor;
+    uniform mat4 ModelMatrix;
+    uniform vec4 UVOffset;
+    uniform vec4 ModelColor;
 )"
 #endif
 	R"(
-uniform vec4 mUVInversed;
-uniform vec4 predefined_uniform;
+    uniform vec4 mUVInversed;
+    uniform vec4 predefined_uniform;
+};
 
 vec2 GetUV(vec2 uv)
 {
@@ -140,27 +144,29 @@ static const char g_material_model_vs_src_suf2[] =
 
 static const char g_material_sprite_vs_src_pre_simple[] =
 	R"(
-IN vec4 atPosition;
-IN vec4 atColor;
-IN vec4 atTexCoord;
+layout(location = 0) in vec4 atPosition;
+layout(location = 1) in vec4 atColor;
+layout(location = 2) in vec4 atTexCoord;
 )"
 
 	R"(
-OUT lowp vec4 v_VColor;
-OUT mediump vec2 v_UV1;
-OUT mediump vec2 v_UV2;
-OUT mediump vec3 v_WorldP;
-OUT mediump vec3 v_WorldN;
-OUT mediump vec3 v_WorldT;
-OUT mediump vec3 v_WorldB;
-OUT mediump vec2 v_ScreenUV;
+layout(location = 0) out lowp vec4 v_VColor;
+layout(location = 1) out mediump vec2 v_UV1;
+layout(location = 2) out mediump vec2 v_UV2;
+layout(location = 3) out mediump vec3 v_WorldP;
+layout(location = 4) out mediump vec3 v_WorldN;
+layout(location = 5) out mediump vec3 v_WorldT;
+layout(location = 6) out mediump vec3 v_WorldB;
+layout(location = 7) out mediump vec2 v_ScreenUV;
 )"
 
 	R"(
-uniform mat4 uMatCamera;
-uniform mat4 uMatProjection;
-uniform vec4 mUVInversed;
-uniform vec4 predefined_uniform;
+layout(set = 0, binding = 0) uniform Block {
+    uniform mat4 uMatCamera;
+    uniform mat4 uMatProjection;
+    uniform vec4 mUVInversed;
+    uniform vec4 predefined_uniform;
+};
 
 vec2 GetUV(vec2 uv)
 {
@@ -178,34 +184,36 @@ vec2 GetUVBack(vec2 uv)
 
 static const char g_material_sprite_vs_src_pre[] =
 	R"(
-IN vec4 atPosition;
-IN vec4 atColor;
-IN vec3 atNormal;
-IN vec3 atTangent;
-IN vec2 atTexCoord;
-IN vec2 atTexCoord2;
+layout(location = 0) in vec4 atPosition;
+layout(location = 1) in vec4 atColor;
+layout(location = 2) in vec3 atNormal;
+layout(location = 3) in vec3 atTangent;
+layout(location = 4) in vec2 atTexCoord;
+layout(location = 5) in vec2 atTexCoord2;
 //$C_IN1$
 //$C_IN2$
 )"
 
 	R"(
-OUT lowp vec4 v_VColor;
-OUT mediump vec2 v_UV1;
-OUT mediump vec2 v_UV2;
-OUT mediump vec3 v_WorldP;
-OUT mediump vec3 v_WorldN;
-OUT mediump vec3 v_WorldT;
-OUT mediump vec3 v_WorldB;
-OUT mediump vec2 v_ScreenUV;
+layout(location = 0) out lowp vec4 v_VColor;
+layout(location = 1) out mediump vec2 v_UV1;
+layout(location = 2) out mediump vec2 v_UV2;
+layout(location = 3) out mediump vec3 v_WorldP;
+layout(location = 4) out mediump vec3 v_WorldN;
+layout(location = 5) out mediump vec3 v_WorldT;
+layout(location = 6) out mediump vec3 v_WorldB;
+layout(location = 7) out mediump vec2 v_ScreenUV;
 //$C_OUT1$
 //$C_OUT2$
 )"
 
 	R"(
-uniform mat4 uMatCamera;
-uniform mat4 uMatProjection;
-uniform vec4 mUVInversed;
-uniform vec4 predefined_uniform;
+layout(set = 0, binding = 0) uniform Block {
+    uniform mat4 uMatCamera;
+    uniform mat4 uMatProjection;
+    uniform vec4 mUVInversed;
+    uniform vec4 predefined_uniform;
+};
 
 vec2 GetUV(vec2 uv)
 {
@@ -294,19 +302,24 @@ static const char g_material_sprite_vs_src_suf2[] =
 static const char g_material_fs_src_pre[] =
 	R"(
 
-IN lowp vec4 v_VColor;
-IN mediump vec2 v_UV1;
-IN mediump vec2 v_UV2;
-IN mediump vec3 v_WorldP;
-IN mediump vec3 v_WorldN;
-IN mediump vec3 v_WorldT;
-IN mediump vec3 v_WorldB;
-IN mediump vec2 v_ScreenUV;
+layout(location = 0) in vec4 v_VColor;
+layout(location = 1) in vec2 v_UV1;
+layout(location = 2) in vec2 v_UV2;
+layout(location = 3) in vec3 v_WorldP;
+layout(location = 4) in vec3 v_WorldN;
+layout(location = 5) in vec3 v_WorldT;
+layout(location = 6) in vec3 v_WorldB;
+layout(location = 7) in vec2 v_ScreenUV;
 //$C_PIN1$
 //$C_PIN2$
 
-uniform vec4 mUVInversedBack;
-uniform vec4 predefined_uniform;
+layout(location = 0) out vec4 out_flagColor;
+
+layout(set = 1, binding = 0) uniform Block
+{
+    vec4 mUVInversedBack;
+    vec4 predefined_uniform;
+};
 
 vec2 GetUV(vec2 uv)
 {
@@ -416,7 +429,7 @@ static const char g_material_fs_src_suf2_lit[] =
 	if(opacityMask <= 0.0) discard;
 	if(opacity <= 0.0) discard;
 
-	FRAGCOLOR = Output;
+	out_flagColor = Output;
 }
 
 )";
@@ -427,7 +440,7 @@ static const char g_material_fs_src_suf2_unlit[] =
 	if(opacityMask <= 0.0) discard;
 	if(opacity <= 0.0) discard;
 
-	FRAGCOLOR = vec4(emissive, opacity);
+	out_flagColor = vec4(emissive, opacity);
 }
 
 )";
@@ -443,7 +456,7 @@ static const char g_material_fs_src_suf2_refraction[] =
 	distortUV = GetUVBack(distortUV);	
 
 	vec4 bg = TEX2D(background, distortUV);
-	FRAGCOLOR = bg;
+	out_flagColor = bg;
 
 	if(opacityMask <= 0.0) discard;
 	if(opacity <= 0.0) discard;
@@ -505,7 +518,7 @@ void ExportUniform(std::ostringstream& maincode, int32_t type, const char* name)
 	maincode << "uniform " << GetType(type) << " " << name << ";" << std::endl;
 }
 
-void ExportTexture(std::ostringstream& maincode, const char* name) { maincode << "uniform sampler2D " << name << ";" << std::endl; }
+void ExportTexture(std::ostringstream& maincode, int bindingIndex, const char* name) { maincode << "layout(binding = " << bindingIndex << ") uniform sampler2D " << name << ";" << std::endl; }
 
 void ExportHeader(std::ostringstream& maincode, Material* material, int stage, bool isSprite)
 {
@@ -640,12 +653,12 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 			auto textureIndex = material->GetTextureIndex(i);
 			auto textureName = material->GetTextureName(i);
 
-			ExportTexture(maincode, textureName);
+			ExportTexture(maincode, i + 1, textureName);
 		}
 
 		for (size_t i = actualTextureCount; i < actualTextureCount + 1; i++)
 		{
-			ExportTexture(maincode, "background");
+			ExportTexture(maincode, i + 1, "background");
 		}
 
 		if (material->GetShadingModel() == ::Effekseer::ShadingModelType::Lit && stage == 1)
@@ -747,12 +760,12 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 		if (isSprite)
 		{
 			shaderData.CodeVS =
-				Replace(shaderData.CodeVS, "//$C_IN1$", "IN " + GetType(material->GetCustomData1Count()) + " atCustomData1;");
+				Replace(shaderData.CodeVS, "//$C_IN1$", "in " + GetType(material->GetCustomData1Count()) + " atCustomData1;");
 		}
 		shaderData.CodeVS =
-			Replace(shaderData.CodeVS, "//$C_OUT1$", "OUT mediump " + GetType(material->GetCustomData1Count()) + " v_CustomData1;");
+			Replace(shaderData.CodeVS, "//$C_OUT1$", "out mediump " + GetType(material->GetCustomData1Count()) + " v_CustomData1;");
 		shaderData.CodePS =
-			Replace(shaderData.CodePS, "//$C_PIN1$", "IN mediump " + GetType(material->GetCustomData1Count()) + " v_CustomData1;");
+			Replace(shaderData.CodePS, "//$C_PIN1$", "in mediump " + GetType(material->GetCustomData1Count()) + " v_CustomData1;");
 	}
 
 	if (material->GetCustomData2Count() > 0)
@@ -760,12 +773,12 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 		if (isSprite)
 		{
 			shaderData.CodeVS =
-				Replace(shaderData.CodeVS, "//$C_IN2$", "IN " + GetType(material->GetCustomData2Count()) + " atCustomData2;");
+				Replace(shaderData.CodeVS, "//$C_IN2$", "in " + GetType(material->GetCustomData2Count()) + " atCustomData2;");
 		}
 		shaderData.CodeVS =
-			Replace(shaderData.CodeVS, "//$C_OUT2$", "OUT mediump " + GetType(material->GetCustomData2Count()) + " v_CustomData2;");
+			Replace(shaderData.CodeVS, "//$C_OUT2$", "out mediump " + GetType(material->GetCustomData2Count()) + " v_CustomData2;");
 		shaderData.CodePS =
-			Replace(shaderData.CodePS, "//$C_PIN2$", "IN mediump " + GetType(material->GetCustomData2Count()) + " v_CustomData2;");
+			Replace(shaderData.CodePS, "//$C_PIN2$", "in mediump " + GetType(material->GetCustomData2Count()) + " v_CustomData2;");
 	}
 
 	return shaderData;
@@ -912,7 +925,7 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material, int3
 	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
 		auto shader = Vulkan::GenerateShader(material, type, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
-		binary->SetPixelShaderData(type, convertToVectorVS(shader.CodePS));
+		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
 	};
 
 	if (material->GetHasRefraction())
