@@ -141,6 +141,8 @@ namespace Effekseer.Utl
 
 		public string Code = string.Empty;
 
+		public int ShadingModel = 0;
+
 		public bool Load(string path)
 		{
 			if (string.IsNullOrEmpty(path))
@@ -231,8 +233,7 @@ namespace Effekseer.Utl
 
 					var reader = new BinaryReader(temp);
 
-					int shadingModel = 0;
-					reader.Get(ref shadingModel);
+					reader.Get(ref ShadingModel);
 
 					bool hasNormal = false;
 					reader.Get(ref hasNormal);
