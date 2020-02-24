@@ -1,4 +1,5 @@
 ﻿#include "EffekseerRendererVulkan.Renderer.h"
+#include "EffekseerMaterialCompilerVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.CommandListVulkan.h"
 #include "../../3rdParty/LLGI/src/Vulkan/LLGI.GraphicsVulkan.h"
 #include "../EffekseerRendererLLGI/EffekseerRendererLLGI.RendererImplemented.h"
@@ -66,6 +67,9 @@ static void CreateFixedShaderForVulkan(EffekseerRendererLLGI::FixedShader* shade
         ES_SAFE_RELEASE(graphics);
         return nullptr;
     }
+
+    renderer->platformType_ = Effekseer::CompiledMaterialPlatformType::DirectX12;
+    renderer->materialCompiler_ = new Effekseer::MaterialCompilerVulkan();
 
     ES_SAFE_RELEASE(graphics);
 
