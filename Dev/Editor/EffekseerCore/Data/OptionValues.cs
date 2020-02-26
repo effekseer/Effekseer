@@ -18,11 +18,22 @@ namespace Effekseer.Data
 	public class OptionValues
 	{
 		[Name(language = Language.Japanese, value = "描画モード")]
-		[Description(language = Language.Japanese, value = "エフェクトの通常モードの設定")]
+		[Description(language = Language.Japanese, value = "ビュワーのエフェクト描画モードの設定")]
 		[Name(language = Language.English, value = "Render Mode")]
-		[Description(language = Language.English, value = "Set the Render Mode of effects")]
+		[Description(language = Language.English, value = "Render Mode of effects")]
 		[Undo(Undo = false)]
 		public Value.Enum<RenderMode> RenderingMode
+		{
+			get;
+			private set;
+		}
+
+		[Name(language = Language.Japanese, value = "表示モード")]
+		[Description(language = Language.Japanese, value = "ビュワーの表示モードの設定")]
+		[Name(language = Language.English, value = "View Mode")]
+		[Description(language = Language.English, value = "View Mode of effect viewer.")]
+		[Undo(Undo = false)]
+		public Value.Enum<ViewMode> ViewerMode
 		{
 			get;
 			private set;
@@ -244,6 +255,7 @@ namespace Effekseer.Data
 		public OptionValues()
 		{
 			RenderingMode = new Value.Enum<RenderMode>(RenderMode.Normal);
+			ViewerMode = new Value.Enum<ViewMode>(ViewMode._3D);
 			GridColor = new Value.Color(255, 255, 255, 255);
 			
 			IsGridShown = new Value.Boolean(true);
@@ -282,6 +294,16 @@ namespace Effekseer.Data
 			[Name(value = "ワイヤーフレーム", language = Language.Japanese)]
 			[Name(value = "Wireframe", language = Language.English)]
 			Wireframe = 1,
+		}
+
+		public enum ViewMode : int
+		{
+			[Name(value = "3D", language = Language.Japanese)]
+			[Name(value = "3D", language = Language.English)]
+			_3D = 0,
+			[Name(value = "2D", language = Language.Japanese)]
+			[Name(value = "2D", language = Language.English)]
+			_2D = 1,
 		}
 
 		public enum FPSType : int

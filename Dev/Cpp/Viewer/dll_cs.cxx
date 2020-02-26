@@ -1168,6 +1168,28 @@ SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_RenderingMode_g
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ViewerMode_set___(void * jarg1, int jarg2) {
+  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
+  ViewMode arg2 ;
+  
+  arg1 = (ViewerParamater *)jarg1; 
+  arg2 = (ViewMode)jarg2; 
+  if (arg1) (arg1)->ViewerMode = arg2;
+}
+
+
+SWIGEXPORT int SWIGSTDCALL CSharp_Effekseerfswig_ViewerParamater_ViewerMode_get___(void * jarg1) {
+  int jresult ;
+  ViewerParamater *arg1 = (ViewerParamater *) 0 ;
+  ViewMode result;
+  
+  arg1 = (ViewerParamater *)jarg1; 
+  result = (ViewMode) ((arg1)->ViewerMode);
+  jresult = (int)result; 
+  return jresult;
+}
+
+
 SWIGEXPORT void * SWIGSTDCALL CSharp_Effekseerfswig_new_ViewerParamater___() {
   void * jresult ;
   ViewerParamater *result = 0 ;
@@ -3663,6 +3685,16 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_HiddenSeparator___(
 }
 
 
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Indent___(void * jarg1, float jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->Indent(arg2);
+}
+
+
 SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Spacing___(void * jarg1) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   
@@ -3671,7 +3703,29 @@ SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_Spacing___(void * j
 }
 
 
-SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SameLine___(void * jarg1) {
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_0___(void * jarg1, float jarg2, float jarg3) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  float arg3 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  arg3 = (float)jarg3; 
+  (arg1)->SameLine(arg2,arg3);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_1___(void * jarg1, float jarg2) {
+  efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
+  float arg2 ;
+  
+  arg1 = (efk::GUIManager *)jarg1; 
+  arg2 = (float)jarg2; 
+  (arg1)->SameLine(arg2);
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_2___(void * jarg1) {
   efk::GUIManager *arg1 = (efk::GUIManager *) 0 ;
   
   arg1 = (efk::GUIManager *)jarg1; 

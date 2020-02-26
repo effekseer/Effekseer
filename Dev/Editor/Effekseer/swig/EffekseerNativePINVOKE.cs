@@ -384,6 +384,12 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_RenderingMode_get___")]
   public static extern int ViewerParamater_RenderingMode_get(global::System.Runtime.InteropServices.HandleRef jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_ViewerMode_set___")]
+  public static extern void ViewerParamater_ViewerMode_set(global::System.Runtime.InteropServices.HandleRef jarg1, int jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_ViewerParamater_ViewerMode_get___")]
+  public static extern int ViewerParamater_ViewerMode_get(global::System.Runtime.InteropServices.HandleRef jarg1);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_new_ViewerParamater___")]
   public static extern global::System.IntPtr new_ViewerParamater();
 
@@ -1029,11 +1035,20 @@ class EffekseerNativePINVOKE {
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_HiddenSeparator___")]
   public static extern void GUIManager_HiddenSeparator(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, float jarg3);
 
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Indent___")]
+  public static extern void GUIManager_Indent(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_Spacing___")]
   public static extern void GUIManager_Spacing(global::System.Runtime.InteropServices.HandleRef jarg1);
 
-  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SameLine___")]
-  public static extern void GUIManager_SameLine(global::System.Runtime.InteropServices.HandleRef jarg1);
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_0___")]
+  public static extern void GUIManager_SameLine__SWIG_0(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2, float jarg3);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_1___")]
+  public static extern void GUIManager_SameLine__SWIG_1(global::System.Runtime.InteropServices.HandleRef jarg1, float jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_SameLine__SWIG_2___")]
+  public static extern void GUIManager_SameLine__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1);
 
   [global::System.Runtime.InteropServices.DllImport("Viewer", EntryPoint="CSharp_Effekseerfswig_GUIManager_BeginGroup___")]
   public static extern void GUIManager_BeginGroup(global::System.Runtime.InteropServices.HandleRef jarg1);

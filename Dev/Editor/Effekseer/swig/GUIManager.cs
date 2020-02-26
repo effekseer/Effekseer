@@ -240,12 +240,24 @@ public class GUIManager : global::System.IDisposable {
     EffekseerNativePINVOKE.GUIManager_HiddenSeparator(swigCPtr, thicknessDraw, thicknessItem);
   }
 
+  public void Indent(float indent_w) {
+    EffekseerNativePINVOKE.GUIManager_Indent(swigCPtr, indent_w);
+  }
+
   public void Spacing() {
     EffekseerNativePINVOKE.GUIManager_Spacing(swigCPtr);
   }
 
+  public void SameLine(float offset_from_start_x, float spacing) {
+    EffekseerNativePINVOKE.GUIManager_SameLine__SWIG_0(swigCPtr, offset_from_start_x, spacing);
+  }
+
+  public void SameLine(float offset_from_start_x) {
+    EffekseerNativePINVOKE.GUIManager_SameLine__SWIG_1(swigCPtr, offset_from_start_x);
+  }
+
   public void SameLine() {
-    EffekseerNativePINVOKE.GUIManager_SameLine(swigCPtr);
+    EffekseerNativePINVOKE.GUIManager_SameLine__SWIG_2(swigCPtr);
   }
 
   public void BeginGroup() {

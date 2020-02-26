@@ -121,7 +121,10 @@ namespace Effekseer.GUI.Component
 				selectedValues = -1;
 			}
 
-			valueChangingProp.Enable(binding);
+			if (EnableUndo)
+			{
+				valueChangingProp.Enable(binding);
+			}
 
 			var v = enums.Select((_, i) => Tuple.Create(_, i)).Where(_ => _.Item1 == selectedValues).FirstOrDefault();
 
@@ -147,7 +150,10 @@ namespace Effekseer.GUI.Component
 				Manager.NativeManager.EndCombo();
 			}
 
-			valueChangingProp.Disable();
+			if (EnableUndo)
+			{
+				valueChangingProp.Disable();
+			}
 		}
 	}
 }
