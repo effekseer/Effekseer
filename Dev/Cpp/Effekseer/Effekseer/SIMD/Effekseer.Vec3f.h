@@ -59,6 +59,8 @@ struct Vec3f
 	static Vec3f Transform(const Vec3f& lhs, const Mat44f& rhs);
 };
 
+inline Vec3f operator-(const Vec3f& i) { return Vec3f(-i.GetX(), -i.GetY(), -i.GetZ()); }
+
 inline Vec3f operator+(const Vec3f& lhs, const Vec3f& rhs)
 {
 	return Vec3f{lhs.s + rhs.s};

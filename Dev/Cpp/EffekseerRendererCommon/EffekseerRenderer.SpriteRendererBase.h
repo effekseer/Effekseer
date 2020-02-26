@@ -268,6 +268,11 @@ protected:
 
 			if (vertexType == VertexType::Dynamic)
 			{
+				if (!parameter.IsRightHand)
+				{
+					F = -F;
+				}
+
 				StrideView<DynamicVertex> vs(verteies.pointerOrigin_, stride_, 4);
 				for (auto i = 0; i < 4; i++)
 				{
@@ -314,6 +319,12 @@ protected:
 					auto tangentZ = efkVector3D(mat.X.GetZ(), mat.Y.GetZ(), mat.Z.GetZ());
 					tangentX = tangentX.Normalize();
 					tangentZ = tangentZ.Normalize();
+
+					if (!parameter.IsRightHand)
+					{
+						tangentZ = -tangentZ;
+					}
+
 					vs[i].Normal = PackVector3DF(tangentZ);
 					vs[i].Tangent = PackVector3DF(tangentX);
 				}

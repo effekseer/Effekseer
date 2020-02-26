@@ -617,6 +617,11 @@ namespace EffekseerRenderer
 					Effekseer::Vec3f normal = Effekseer::Vec3f::Cross(axis, tangent);
 					normal = normal.Normalize();
 
+					if (!parameter.IsRightHand)
+					{
+						normal = -normal;
+					}
+
 					if (isFirst_)
 					{
 						vs_[0].Normal = PackVector3DF(normal);					

@@ -607,6 +607,11 @@ namespace EffekseerRenderer
 						::Effekseer::Vec3f tangent = Effekseer::Vec3f(vl_->Pos - vr_->Pos).Normalize();
 						Effekseer::Vec3f normal = Effekseer::Vec3f::Cross(tangent, axis).Normalize();
 
+						if (!parameter.IsRightHand)
+						{
+							normal = -normal;
+						}
+
 						Effekseer::Color normal_ = PackVector3DF(normal);
 						Effekseer::Color tangent_ = PackVector3DF(tangent);
 

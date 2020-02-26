@@ -513,6 +513,12 @@ protected:
 				normalCurrent = ::Effekseer::Vec3f::Cross(tangentCurrent, binormalCurrent);
 				normalNext = ::Effekseer::Vec3f::Cross(tangentNext, binormalNext);
 
+				if (!parameter.IsRightHand)
+				{
+					normalCurrent = -normalCurrent;
+					normalNext = -normalNext;
+				}
+
 				// rotate directions
 				::Effekseer::Mat43f matRot = mat43;
 				matRot.SetTranslation({0.0f, 0.0f, 0.0f});
