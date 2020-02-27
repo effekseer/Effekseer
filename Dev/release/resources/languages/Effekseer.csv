@@ -231,3 +231,15 @@ Material_OldCache,Cache - Old,キャッシュ - 古い
 Material_OldFomatCache,"Cache - OldFormat
 Please regenerate.","キャッシュ - 古いフォーマット
 再生成してください。"
+DefaultFormat,Default format,標準形式
+ExportDefaultFormat,Export as default format,標準形式で出力する。
+DefaultFormatExample,Default format (*.efk)|*.efk,標準形式 (*.efk)|*.efk
+Maginification,Maginification,拡大率
+GlbFormat,glb format,glb形式
+ExportAsGlbFormat,Export as glb format,glb形式で出力する。
+GlbFormatExample,glb format (*.glb)|*.glb,glb形式 (*.glb)|*.glb
+GlTFFormat,glTF format,glTF形式
+ExportAsGlTFFormat,Export as glTF format,glTF形式で出力する。
+GlTFFormatExample,glTF format (*.glTF)|*.glTF,glTF形式 (*.glTF)|*.glTF
+MismatchResourceError,Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.,リソースファイルを更新してください。Script/setup.pyを呼ぶか、cmakeを使用し、ResourceDataをリビルドしてください。
+LayerLimitError,"The node tree is limited to {0} layers, including the root.",ノードツリーはルートを含めて {0} レイヤーまでに制限されています。

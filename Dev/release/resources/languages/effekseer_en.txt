@@ -185,3 +185,15 @@ Material_GenCache_Desc,It generates caches.\nIf the generated cache is placed in
 Material_NoneCache,Cache - None
 Material_OldCache,Cache - Old
 Material_OldFomatCache,Cache - OldFormat\nPlease regenerate.
+DefaultFormat,Default format
+ExportDefaultFormat,Export as default format
+DefaultFormatExample,Default format (*.efk)|*.efk
+Maginification,Maginification
+GlbFormat,glb format
+ExportAsGlbFormat,Export as glb format
+GlbFormatExample,glb format (*.glb)|*.glb
+GlTFFormat,glTF format
+ExportAsGlTFFormat,Export as glTF format
+GlTFFormatExample,glTF format (*.glTF)|*.glTF
+MismatchResourceError,Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.
+LayerLimitError,The node tree is limited to {0} layers, including the root.

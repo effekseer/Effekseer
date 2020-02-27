@@ -28,26 +28,23 @@ namespace Effekseer.Plugin
         {
             get
             {
-                if (Effekseer.Core.Language == Effekseer.Language.Japanese) return "glb形式";
-                return "glb format";
-            }
+				return Resources.GetString("GlbFormat");
+			}
         }
 
         public static string Description
         {
             get
             {
-                if (Effekseer.Core.Language == Effekseer.Language.Japanese) return "glb形式で出力する。";
-                return "Export as glb format";
-            }
+				return Resources.GetString("ExportAsGlbFormat");
+			}
         }
 
         public static string Filter
         {
             get
             {
-                if (Effekseer.Core.Language == Effekseer.Language.Japanese) return "glb形式 (*.glb)|*.glb";
-                return "glb format (*.glb)|*.glb";
+				return Resources.GetString("GlbFormatExample");
             }
         }
 
@@ -79,16 +76,9 @@ namespace Effekseer.Plugin
 
             public void Show(string path)
             {
-                if (Effekseer.Core.Language == Effekseer.Language.Japanese)
-                {
-                    this.title = "拡大率";
-                }
-                else
-                {
-                    this.title = "Maginification";
-                }
+                this.title = Resources.GetString("Maginification");
 
-                this.path = path;
+				this.path = path;
                 mag[0] = Effekseer.Core.Option.ExternalMagnification.GetValue();
                 Effekseer.GUI.Manager.AddControl(this);
             }
@@ -108,10 +98,9 @@ namespace Effekseer.Plugin
 
                     }
 
-                    var save_text = "Save";
-                    if (Effekseer.Core.Language == Effekseer.Language.Japanese) save_text = "保存";
+                    var save_text = Resources.GetString("Save");
 
-                    if (Effekseer.GUI.Manager.NativeManager.Button(save_text))
+					if (Effekseer.GUI.Manager.NativeManager.Button(save_text))
                     {
                         var option = new Effekseer.Exporter.glTFExporterOption();
                         option.Scale = mag[0];
@@ -122,10 +111,10 @@ namespace Effekseer.Plugin
                         ShouldBeRemoved = true;
                     }
 
-                    var cancel_text = "Cancel";
-                    if (Effekseer.Core.Language == Effekseer.Language.Japanese) cancel_text = "キャンセル";
+					var cancel_text = Resources.GetString("Cancel");
 
-                    if (Effekseer.GUI.Manager.NativeManager.Button(cancel_text))
+
+					if (Effekseer.GUI.Manager.NativeManager.Button(cancel_text))
                     {
                         ShouldBeRemoved = true;
                     }

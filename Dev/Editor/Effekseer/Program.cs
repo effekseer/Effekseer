@@ -138,6 +138,20 @@ namespace Effekseer
 
 			if (gui)
 			{
+				{
+					var appDirectory = GUI.Manager.GetEntryDirectory();
+					if (Core.Language == Language.Japanese)
+					{
+						var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_ja.txt");
+						Resources.LoadLanguageFile(fullPath);
+					}
+					if (Core.Language == Language.English)
+					{
+						var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_en.txt");
+						Resources.LoadLanguageFile(fullPath);
+					}
+				}
+
 				// Failed to compile script
 				if (Core.ExportScripts.Count == 0)
 				{
@@ -172,19 +186,7 @@ namespace Effekseer
                     Core.ExportScripts.Add(glbExporter);
                 }
 
-                {
-					var appDirectory = GUI.Manager.GetEntryDirectory();
-					if (Core.Language == Language.Japanese)
-					{
-						var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_ja.txt");
-						Resources.LoadLanguageFile(fullPath);
-					}
-					if (Core.Language == Language.English)
-					{
-						var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_en.txt");
-						Resources.LoadLanguageFile(fullPath);
-					}
-				}
+                
 
 				System.OperatingSystem os = System.Environment.OSVersion;
 				swig.DeviceType deviceType = swig.DeviceType.DirectX11;

@@ -10,27 +10,13 @@ namespace Effekseer
 	{
 		public static void ThrowFileNotfound()
 		{
-			if (Core.Option.GuiLanguage.Value == Language.Japanese)
-			{
-				throw new Exception("リソースファイルを更新してください。Script/setup.pyを呼ぶか、cmakeを使用し、ResourceDataをリビルドしてください。");
-			}
-			else
-			{
-				throw new Exception("Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.");
-			}
+			throw new Exception(Resources.GetString("MismatchResourceError"));
 		}
 
 		public static void ShowErrorByNodeLayerLimit()
 		{
 			var mb = new GUI.Dialog.MessageBox();
-			if (Core.Option.GuiLanguage.Value == Language.Japanese)
-			{
-				mb.Show("Error", "ノードツリーはルートを含めて" + Constant.NodeLayerLimit + "レイヤーまでに制限されています。");
-			}
-			else
-			{
-				mb.Show("Error", "The node tree is limited to " + Constant.NodeLayerLimit + " layers, including the root.");
-			}
+			mb.Show("Error", String.Format(Resources.GetString("LayerLimitError"), Constant.NodeLayerLimit));
 		}
 	}
 
