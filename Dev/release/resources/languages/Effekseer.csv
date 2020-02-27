@@ -241,3 +241,5 @@ GlbFormatExample,glb format (*.glb)|*.glb,glb形式 (*.glb)|*.glb
 GlTFFormat,glTF format,glTF形式
 ExportAsGlTFFormat,Export as glTF format,glTF形式で出力する。
 GlTFFormatExample,glTF format (*.glTF)|*.glTF,glTF形式 (*.glTF)|*.glTF
+MismatchResourceError,Please update resource files!. call Script/setup.py or use cmake and rebuild ResourceData.,リソースファイルを更新してください。Script/setup.pyを呼ぶか、cmakeを使用し、ResourceDataをリビルドしてください。
+LayerLimitError,"The node tree is limited to {0} layers, including the root.",ノードツリーはルートを含めて {0} レイヤーまでに制限されています。

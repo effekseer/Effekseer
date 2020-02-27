@@ -195,3 +195,5 @@ GlbFormatExample,glb形式 (*.glb)|*.glb
 GlTFFormat,glTF形式
 ExportAsGlTFFormat,glTF形式で出力する。
 GlTFFormatExample,glTF形式 (*.glTF)|*.glTF
+MismatchResourceError,リソースファイルを更新してください。Script/setup.pyを呼ぶか、cmakeを使用し、ResourceDataをリビルドしてください。
+LayerLimitError,ノードツリーはルートを含めて {0} レイヤーまでに制限されています。
