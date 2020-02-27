@@ -20,10 +20,15 @@ if (MSVC)
     endif()
 endif()
 
+add_definitions(-DEFK_EXAMPLE_ASSETS_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/Resources/\")
+add_definitions(-DEFK_EXAMPLE_ASSETS_DIR_U16=u\"${CMAKE_CURRENT_SOURCE_DIR}/Resources/\")
+
 add_subdirectory(Utils)
 
 if(WIN32)
+    add_subdirectory(DirectX9)
     add_subdirectory(DirectX11)
+    add_subdirectory(DirectX12)
 endif()
 
 if (BUILD_VULKAN)

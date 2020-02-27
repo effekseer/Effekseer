@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 	// Specify a projection matrix
 	// 投影行列を設定
 	renderer->SetProjectionMatrix(::Effekseer::Matrix44().PerspectiveFovRH(
-		90.0f / 180.0f * 3.14f, (float)g_window->GetWindowSize().X / (float)g_window->GetWindowSize().Y, 1.0f, 50.0f));
+		90.0f / 180.0f * 3.14f, (float)g_window->GetWindowSize().X / (float)g_window->GetWindowSize().Y, 1.0f, 500.0f));
 
 	// Specify a camera matrix
 	// カメラ行列を設定
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 
 	// Load an effect
 	// エフェクトの読込
-	auto g_effect = Effekseer::Effect::Create(manager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efk");
+	auto effect = Effekseer::Effect::Create(manager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efk");
 
 	int32_t time = 0;
 	Effekseer::Handle handle = 0;
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
 		{
 			// Play an effect
 			// エフェクトの再生
-			handle = manager->Play(g_effect, 0, 0, 0);
+			handle = manager->Play(effect, 0, 0, 0);
 		}
 
 		if (time % 120 == 119)
@@ -138,7 +138,7 @@ int main(int argc, char** argv)
 
 	// Release effects
 	// エフェクトの解放
-	ES_SAFE_RELEASE(g_effect);
+	ES_SAFE_RELEASE(effect);
 
 	// Dispose the manager
 	// マネージャーの破棄
