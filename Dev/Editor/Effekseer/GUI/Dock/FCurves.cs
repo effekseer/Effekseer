@@ -1304,8 +1304,8 @@ namespace Effekseer.GUI.Dock
 					return new FCurve(
 						2,
 						new[] { v_.X, v_.Y },
-						new[] { 0xff0000ff, 0xff00ff00 },
-						new string[] { "X", "Y", "Z" },
+						new[] { 0xff5234ff, 0xff00e682 },
+						new string[] { "X", "Y" },
 						0,
 						v_,
 						v.Item1,
@@ -1323,7 +1323,7 @@ namespace Effekseer.GUI.Dock
 					return new FCurve(
 						3,
 						new[] { v_.X, v_.Y, v_.Z },
-						new[] { 0xff0000ff, 0xff00ff00, 0xffff0000 },
+						new[] { 0xff5234ff, 0xff00e682, 0xffff9028 },
 						new string[] { "X", "Y", "Z" },
 						0,
 						v_,
@@ -1340,7 +1340,7 @@ namespace Effekseer.GUI.Dock
 					return new FCurve(
 						4,
 						new[] { v_.R, v_.G, v_.B, v_.A },
-						new[] { 0xff0000ff, 0xff00ff00, 0xffff0000, 0xffaaaaaa },
+						new[] { 0xff5234ff, 0xff00e682, 0xffff9028, 0xffc0c0c0 },
 						new string[] { "R", "G", "B", "A" },
 						255.0f,
 						v_,

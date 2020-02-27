@@ -207,12 +207,13 @@ namespace ImGui
 		return isHovered;
 	}
 
-	void DrawMaker(ImGuiWindow* window, ImVec2 pos, int32_t size, uint32_t color, int32_t thickness)
+	void DrawMaker(ImGuiWindow* window, ImVec2 pos, float size, uint32_t color, int32_t thickness)
 	{
-		window->DrawList->AddLine(ImVec2(pos.x + size, pos.y), ImVec2(pos.x, pos.y - size), color, thickness);
-		window->DrawList->AddLine(ImVec2(pos.x - size, pos.y), ImVec2(pos.x, pos.y + size), color, thickness);
-		window->DrawList->AddLine(ImVec2(pos.x + size, pos.y), ImVec2(pos.x, pos.y + size), color, thickness);
-		window->DrawList->AddLine(ImVec2(pos.x - size, pos.y), ImVec2(pos.x, pos.y - size), color, thickness);
+		window->DrawList->AddCircleFilled(pos, size, color, 8);
+		//window->DrawList->AddLine(ImVec2(pos.x + size, pos.y), ImVec2(pos.x, pos.y - size), color, thickness);
+		//window->DrawList->AddLine(ImVec2(pos.x - size, pos.y), ImVec2(pos.x, pos.y + size), color, thickness);
+		//window->DrawList->AddLine(ImVec2(pos.x + size, pos.y), ImVec2(pos.x, pos.y + size), color, thickness);
+		//window->DrawList->AddLine(ImVec2(pos.x - size, pos.y), ImVec2(pos.x, pos.y - size), color, thickness);
 	}
 
 	void ClampHandles(
@@ -488,7 +489,8 @@ namespace ImGui
 				begin = transform_f2s(begin);
 				end = transform_f2s(end);
 
-				window->DrawList->AddRect(begin, end, ImColor(64, 64, 255, 128));
+				window->DrawList->AddRectFilled(begin, end, ImColor(220, 220, 220, 32));
+				window->DrawList->AddRect(begin, end, ImColor(220, 220, 220, 255));
 			}
 		}
 
@@ -804,6 +806,297 @@ namespace ImGui
 		auto over_y = window->StateStorage.GetFloat((ImGuiID)FCurveStorageValues::OVER_Y, 0.0f);
 		bool isOnPoint = false;
 
+
+		bool isLineHovered = false;
+		{
+			auto checkHovered = [&](float offset, bool isReversed) -> void
+			{
+				if (isReversed)
+				{
+					auto distance = keys[count - 1] - keys[0];
+					offset += distance;
+
+					for (int i = 0; i < count - 1; i++)
+					{
+						auto v1 = ImVec2(-keys[i + 0] + offset, values[i + 0]);
+						auto v2 = ImVec2(-keys[i + 1] + offset, values[i + 1]);
+
+						auto cp1 = ImVec2(-rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
+						auto cp2 = ImVec2(-leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
+
+						if (interporations[i] == ImFCurveInterporationType::Cubic)
+						{
+							isLineHovered = isLineHovered | IsHoveredOnBezierCurve(
+								GetMousePos(), window,
+								transform_f2s(v1),
+								transform_f2s(cp1),
+								transform_f2s(cp2),
+								transform_f2s(v2),
+								col,
+								2);
+						}
+						else
+						{
+							isLineHovered = isLineHovered | IsHoveredOnLine(
+								GetMousePos(), window,
+								transform_f2s(v1),
+								transform_f2s(v2),
+								col,
+								2);
+						}
+
+						if (isLineHovered) break;
+					}
+				}
+				else
+				{
+					for (int i = 0; i < count - 1; i++)
+					{
+						auto v1 = ImVec2(keys[i + 0] + offset, values[i + 0]);
+						auto v2 = ImVec2(keys[i + 1] + offset, values[i + 1]);
+
+						auto cp1 = ImVec2(rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
+						auto cp2 = ImVec2(leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
+
+						if (interporations[i] == ImFCurveInterporationType::Cubic)
+						{
+							isLineHovered = isLineHovered | IsHoveredOnBezierCurve(
+								GetMousePos(), window,
+								transform_f2s(v1),
+								transform_f2s(cp1),
+								transform_f2s(cp2),
+								transform_f2s(v2),
+								col,
+								2);
+						}
+						else
+						{
+							isLineHovered = isLineHovered | IsHoveredOnLine(
+								GetMousePos(), window,
+								transform_f2s(v1),
+								transform_f2s(v2),
+								col,
+								2);
+						}
+
+						if (isLineHovered) break;
+					}
+				}
+			};
+
+			// start
+			{
+				auto v1 = ImVec2(keys[0], values[0]);
+				auto v2 = ImVec2(transform_s2f(innerRect.Min).x, values[0]);
+
+				if (startEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
+				{
+					isLineHovered = isLineHovered | IsHoveredOnLine(
+						GetMousePos(), window,
+						transform_f2s(v1),
+						transform_f2s(v2),
+						col,
+						2);
+				}
+				else if (startEdge == ImFCurveEdgeType::Loop)
+				{
+					auto distance = keys[count - 1] - keys[0];
+					while (v1.x > v2.x)
+					{
+						v1.x -= distance;
+						checkHovered(v1.x - keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
+					}
+				}
+				else
+				{
+					auto distance = keys[count - 1] - keys[0];
+					while (v1.x > v2.x)
+					{
+						v1.x -= distance;
+						checkHovered(v1.x + keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
+					}
+				}
+			}
+
+			// center
+			checkHovered(0, false);
+
+			// end
+			{
+				auto v1 = ImVec2(keys[count - 1], values[count - 1]);
+				auto v2 = ImVec2(transform_s2f(innerRect.Max).x, values[count - 1]);
+
+				if (endEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
+				{
+					isLineHovered = isLineHovered | IsHoveredOnLine(
+						GetMousePos(), window,
+						transform_f2s(v1),
+						transform_f2s(v2),
+						col,
+						2);
+				}
+				else if (endEdge == ImFCurveEdgeType::Loop)
+				{
+					auto distance = keys[count - 1] - keys[0];
+					while (v1.x < v2.x)
+					{
+						checkHovered(v1.x - keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
+						v1.x += distance;
+					}
+				}
+				else
+				{
+					auto distance = keys[count - 1] - keys[0];
+					while (v1.x < v2.x)
+					{
+						checkHovered(v1.x + keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
+						v1.x += distance;
+					}
+				}
+			}
+		}
+
+		auto lineThiness = 1.5f;
+		if (selected) lineThiness++;
+		if (isLineHovered) lineThiness++;
+
+		// render curve
+		auto renderCurve = [&](float offset, bool isReversed) -> void
+		{
+			if (isReversed)
+			{
+				auto distance = keys[count - 1] - keys[0];
+				offset += distance;
+
+				for (int i = 0; i < count - 1; i++)
+				{
+					auto v1 = ImVec2(-keys[i + 0] + offset, values[i + 0]);
+					auto v2 = ImVec2(-keys[i + 1] + offset, values[i + 1]);
+
+					auto cp1 = ImVec2(-rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
+					auto cp2 = ImVec2(-leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
+
+					if (interporations[i] == ImFCurveInterporationType::Cubic)
+					{
+						window->DrawList->AddBezierCurve(
+							transform_f2s(v1),
+							transform_f2s(cp1),
+							transform_f2s(cp2),
+							transform_f2s(v2),
+							col,
+							lineThiness);
+					}
+					else
+					{
+						window->DrawList->AddLine(
+							transform_f2s(v1),
+							transform_f2s(v2),
+							col,
+							lineThiness);
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < count - 1; i++)
+				{
+					auto v1 = ImVec2(keys[i + 0] + offset, values[i + 0]);
+					auto v2 = ImVec2(keys[i + 1] + offset, values[i + 1]);
+
+					auto cp1 = ImVec2(rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
+					auto cp2 = ImVec2(leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
+
+					if (interporations[i] == ImFCurveInterporationType::Cubic)
+					{
+						window->DrawList->AddBezierCurve(
+							transform_f2s(v1),
+							transform_f2s(cp1),
+							transform_f2s(cp2),
+							transform_f2s(v2),
+							col,
+							lineThiness);
+					}
+					else
+					{
+						window->DrawList->AddLine(
+							transform_f2s(v1),
+							transform_f2s(v2),
+							col,
+							lineThiness);
+
+					}
+				}
+			}
+		};
+		// start
+		{
+			auto v1 = ImVec2(keys[0], values[0]);
+			auto v2 = ImVec2(transform_s2f(innerRect.Min).x, values[0]);
+
+			if (startEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
+			{
+				window->DrawList->AddLine(
+					transform_f2s(v1),
+					transform_f2s(v2),
+					col,
+					lineThiness);
+			}
+			else if (startEdge == ImFCurveEdgeType::Loop)
+			{
+				auto distance = keys[count - 1] - keys[0];
+				while (v1.x > v2.x)
+				{
+					v1.x -= distance;
+					renderCurve(v1.x - keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
+				}
+			}
+			else
+			{
+				auto distance = keys[count - 1] - keys[0];
+				while (v1.x > v2.x)
+				{
+					v1.x -= distance;
+					renderCurve(v1.x + keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
+				}
+			}
+		}
+
+		// center
+		renderCurve(0, false);
+
+		// end
+		{
+			auto v1 = ImVec2(keys[count - 1], values[count - 1]);
+			auto v2 = ImVec2(transform_s2f(innerRect.Max).x, values[count - 1]);
+
+			if (endEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
+			{
+				window->DrawList->AddLine(
+					transform_f2s(v1),
+					transform_f2s(v2),
+					col,
+					lineThiness);
+			}
+			else if(endEdge == ImFCurveEdgeType::Loop)
+			{
+				auto distance = keys[count - 1] - keys[0];
+				while (v1.x < v2.x)
+				{
+					renderCurve(v1.x - keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
+					v1.x += distance;
+				}
+			}
+			else
+			{
+				auto distance = keys[count - 1] - keys[0];
+				while (v1.x < v2.x)
+				{
+					renderCurve(v1.x + keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
+					v1.x += distance;
+				}
+			}
+		}
+
 		// move points
 		if (!hasControlled && selected)
 		{
@@ -863,11 +1156,11 @@ namespace ImGui
 
 				if (isDrawPositionRequired)
 				{
-					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 2);
+					//DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 2);
 
 					char text[255];
 					sprintf(text, "(%.3f, %.3f)", keys[i], values[i]);
-					window->DrawList->AddText(pos + ImVec2(20, 5), 0x55FFFFFF, text);
+					window->DrawList->AddText(pos + ImVec2(0, -5), 0x55FFFFFF, text);
 				}
 
 				PopID();
@@ -1005,7 +1298,7 @@ namespace ImGui
 				if (!kv_selected[i]) continue;
 
 				auto isChanged = false;
-				float pointSize = 4;
+				float pointSize = 3;
 
 				auto pos = transform_f2s(ImVec2(leftHandleKeys[i], leftHandleValues[i]));
 				auto cursorPos = GetCursorPos();
@@ -1097,7 +1390,7 @@ namespace ImGui
 				if (!kv_selected[i]) continue;
 
 				auto isChanged = false;
-				float pointSize = 4;
+				float pointSize = 3;
 
 				auto pos = transform_f2s(ImVec2(rightHandleKeys[i], rightHandleValues[i]));
 				auto cursorPos = GetCursorPos();
@@ -1176,156 +1469,6 @@ namespace ImGui
 					}
 
 					rightHandleKeys[i] = std::max(rightHandleKeys[i], keys[i]);
-				}
-			}
-		}
-
-
-		bool isLineHovered = false;
-		{
-			auto checkHovered = [&](float offset, bool isReversed) -> void
-			{
-				if (isReversed)
-				{
-					auto distance = keys[count - 1] - keys[0];
-					offset += distance;
-
-					for (int i = 0; i < count - 1; i++)
-					{
-						auto v1 = ImVec2(-keys[i + 0] + offset, values[i + 0]);
-						auto v2 = ImVec2(-keys[i + 1] + offset, values[i + 1]);
-
-						auto cp1 = ImVec2(-rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
-						auto cp2 = ImVec2(-leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
-
-						if (interporations[i] == ImFCurveInterporationType::Cubic)
-						{
-							isLineHovered = isLineHovered | IsHoveredOnBezierCurve(
-								GetMousePos(), window,
-								transform_f2s(v1),
-								transform_f2s(cp1),
-								transform_f2s(cp2),
-								transform_f2s(v2),
-								col,
-								2);
-						}
-						else
-						{
-							isLineHovered = isLineHovered | IsHoveredOnLine(
-								GetMousePos(), window,
-								transform_f2s(v1),
-								transform_f2s(v2),
-								col,
-								2);
-						}
-						
-						if (isLineHovered) break;
-					}
-				}
-				else
-				{
-					for (int i = 0; i < count - 1; i++)
-					{
-						auto v1 = ImVec2(keys[i + 0] + offset, values[i + 0]);
-						auto v2 = ImVec2(keys[i + 1] + offset, values[i + 1]);
-
-						auto cp1 = ImVec2(rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
-						auto cp2 = ImVec2(leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
-
-						if (interporations[i] == ImFCurveInterporationType::Cubic)
-						{
-							isLineHovered = isLineHovered | IsHoveredOnBezierCurve(
-								GetMousePos(), window,
-								transform_f2s(v1),
-								transform_f2s(cp1),
-								transform_f2s(cp2),
-								transform_f2s(v2),
-								col,
-								2);
-						}
-						else
-						{
-							isLineHovered = isLineHovered | IsHoveredOnLine(
-								GetMousePos(), window,
-								transform_f2s(v1),
-								transform_f2s(v2),
-								col,
-								2);
-						}
-
-						if (isLineHovered) break;
-					}
-				}
-			};
-
-			// start
-			{
-				auto v1 = ImVec2(keys[0], values[0]);
-				auto v2 = ImVec2(transform_s2f(innerRect.Min).x, values[0]);
-
-				if (startEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
-				{
-					isLineHovered = isLineHovered | IsHoveredOnLine(
-						GetMousePos(), window,
-						transform_f2s(v1),
-						transform_f2s(v2),
-						col,
-						2);
-				}
-				else if (startEdge == ImFCurveEdgeType::Loop)
-				{
-					auto distance = keys[count - 1] - keys[0];
-					while (v1.x > v2.x)
-					{
-						v1.x -= distance;
-						checkHovered(v1.x - keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
-					}
-				}
-				else
-				{
-					auto distance = keys[count - 1] - keys[0];
-					while (v1.x > v2.x)
-					{
-						v1.x -= distance;
-						checkHovered(v1.x + keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
-					}
-				}
-			}
-
-			// center
-			checkHovered(0, false);
-
-			// end
-			{
-				auto v1 = ImVec2(keys[count - 1], values[count - 1]);
-				auto v2 = ImVec2(transform_s2f(innerRect.Max).x, values[count - 1]);
-
-				if (endEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
-				{
-					isLineHovered = isLineHovered | IsHoveredOnLine(
-						GetMousePos(), window,
-						transform_f2s(v1),
-						transform_f2s(v2),
-						col,
-						2);
-				}
-				else if (endEdge == ImFCurveEdgeType::Loop)
-				{
-					auto distance = keys[count - 1] - keys[0];
-					while (v1.x < v2.x)
-					{
-						checkHovered(v1.x - keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
-						v1.x += distance;
-					}
-				}
-				else
-				{
-					auto distance = keys[count - 1] - keys[0];
-					while (v1.x < v2.x)
-					{
-						checkHovered(v1.x + keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
-						v1.x += distance;
-					}
 				}
 			}
 		}
@@ -1465,150 +1608,6 @@ namespace ImGui
 			}
 		}
 
-		auto lineThiness = 1;
-		if (selected) lineThiness++;
-		if (isLineHovered) lineThiness++;
-
-
-		// render curve
-		auto renderCurve = [&](float offset, bool isReversed) -> void
-		{
-			if (isReversed)
-			{
-				auto distance = keys[count - 1] - keys[0];
-				offset += distance;
-
-				for (int i = 0; i < count - 1; i++)
-				{
-					auto v1 = ImVec2(-keys[i + 0] + offset, values[i + 0]);
-					auto v2 = ImVec2(-keys[i + 1] + offset, values[i + 1]);
-
-					auto cp1 = ImVec2(-rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
-					auto cp2 = ImVec2(-leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
-
-					if (interporations[i] == ImFCurveInterporationType::Cubic)
-					{
-						window->DrawList->AddBezierCurve(
-							transform_f2s(v1),
-							transform_f2s(cp1),
-							transform_f2s(cp2),
-							transform_f2s(v2),
-							col,
-							lineThiness);
-					}
-					else
-					{
-						window->DrawList->AddLine(
-							transform_f2s(v1),
-							transform_f2s(v2),
-							col,
-							lineThiness);
-					}
-				}
-			}
-			else
-			{
-				for (int i = 0; i < count - 1; i++)
-				{
-					auto v1 = ImVec2(keys[i + 0] + offset, values[i + 0]);
-					auto v2 = ImVec2(keys[i + 1] + offset, values[i + 1]);
-
-					auto cp1 = ImVec2(rightHandleKeys[i + 0] + offset, rightHandleValues[i + 0]);
-					auto cp2 = ImVec2(leftHandleKeys[i + 1] + offset, leftHandleValues[i + 1]);
-
-					if (interporations[i] == ImFCurveInterporationType::Cubic)
-					{
-						window->DrawList->AddBezierCurve(
-							transform_f2s(v1),
-							transform_f2s(cp1),
-							transform_f2s(cp2),
-							transform_f2s(v2),
-							col,
-							lineThiness);
-					}
-					else
-					{
-						window->DrawList->AddLine(
-							transform_f2s(v1),
-							transform_f2s(v2),
-							col,
-							lineThiness);
-
-					}
-				}
-			}
-		};
-		// start
-		{
-			auto v1 = ImVec2(keys[0], values[0]);
-			auto v2 = ImVec2(transform_s2f(innerRect.Min).x, values[0]);
-
-			if (startEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
-			{
-				window->DrawList->AddLine(
-					transform_f2s(v1),
-					transform_f2s(v2),
-					col,
-					lineThiness);
-			}
-			else if (startEdge == ImFCurveEdgeType::Loop)
-			{
-				auto distance = keys[count - 1] - keys[0];
-				while (v1.x > v2.x)
-				{
-					v1.x -= distance;
-					renderCurve(v1.x - keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
-				}
-			}
-			else
-			{
-				auto distance = keys[count - 1] - keys[0];
-				while (v1.x > v2.x)
-				{
-					v1.x -= distance;
-					renderCurve(v1.x + keys[0], startEdge == ImFCurveEdgeType::LoopInversely);
-				}
-			}
-		}
-
-
-
-		// center
-		renderCurve(0, false);
-
-		// end
-		{
-			auto v1 = ImVec2(keys[count - 1], values[count - 1]);
-			auto v2 = ImVec2(transform_s2f(innerRect.Max).x, values[count - 1]);
-
-			if (endEdge == ImFCurveEdgeType::Constant || count == 1 || keys[0] == keys[count - 1])
-			{
-				window->DrawList->AddLine(
-					transform_f2s(v1),
-					transform_f2s(v2),
-					col,
-					lineThiness);
-			}
-			else if(endEdge == ImFCurveEdgeType::Loop)
-			{
-				auto distance = keys[count - 1] - keys[0];
-				while (v1.x < v2.x)
-				{
-					renderCurve(v1.x - keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
-					v1.x += distance;
-				}
-			}
-			else
-			{
-				auto distance = keys[count - 1] - keys[0];
-				while (v1.x < v2.x)
-				{
-					renderCurve(v1.x + keys[0], endEdge == ImFCurveEdgeType::LoopInversely);
-					v1.x += distance;
-				}
-			}
-		}
-
 		// render points
 		if (selected)
 		{
@@ -1616,7 +1615,7 @@ namespace ImGui
 			{
 				if (kv_selected[i])
 				{
-					int pointSize = 3;
+					float pointSize = 4;
 					auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 
 					DrawMaker(window, pos, pointSize, 0xEEFFFFFF, 3);
@@ -1626,7 +1625,7 @@ namespace ImGui
 				}
 				else
 				{
-					int pointSize = 2;
+					float pointSize = 3;
 					auto pos = transform_f2s(ImVec2(keys[i], values[i]));
 
 					DrawMaker(window, pos, pointSize, 0xAAFFFFFF, 2);
