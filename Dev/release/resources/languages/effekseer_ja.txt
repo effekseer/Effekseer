@@ -185,3 +185,13 @@ Material_GenCache_Desc,キャッシュを生成します。\n生成されたキ�
 Material_NoneCache,キャッシュ - なし
 Material_OldCache,キャッシュ - 古い
 Material_OldFomatCache,キャッシュ - 古いフォーマット\n再生成してください。
+DefaultFormat,標準形式
+ExportDefaultFormat,標準形式で出力する。
+DefaultFormatExample,標準形式 (*.efk)|*.efk
+Maginification,拡大率
+GlbFormat,glb形式
+ExportAsGlbFormat,glb形式で出力する。
+GlbFormatExample,glb形式 (*.glb)|*.glb
+GlTFFormat,glTF形式
+ExportAsGlTFFormat,glTF形式で出力する。
+GlTFFormatExample,glTF形式 (*.glTF)|*.glTF
