@@ -468,9 +468,9 @@ inline void SwapRGBAToBGRA(Effekseer::Color& color)
 inline Effekseer::Color PackVector3DF(const Effekseer::Vec3f& v)
 {
 	Effekseer::Color ret;
-	ret.R = static_cast<uint8_t>((v.GetX() + 1.0f) / 2.0f * 255.0f);
-	ret.G = static_cast<uint8_t>((v.GetY() + 1.0f) / 2.0f * 255.0f);
-	ret.B = static_cast<uint8_t>((v.GetZ() + 1.0f) / 2.0f * 255.0f);
+	ret.R = static_cast<uint8_t>(Effekseer::Clamp(((v.GetX() + 1.0f) / 2.0f + 0.5f / 255.0f) * 255.0f, 255, 0));
+	ret.G = static_cast<uint8_t>(Effekseer::Clamp(((v.GetY() + 1.0f) / 2.0f + 0.5f / 255.0f) * 255.0f, 255, 0));
+	ret.B = static_cast<uint8_t>(Effekseer::Clamp(((v.GetZ() + 1.0f) / 2.0f + 0.5f / 255.0f) * 255.0f, 255, 0));
 	ret.A = 255;
 	return ret;
 }
