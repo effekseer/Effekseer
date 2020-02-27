@@ -28,8 +28,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				if (Effekseer.Core.Language == Effekseer.Language.Japanese) return "標準形式";
-				return "Default format";
+				return Resources.GetString("DefaultFormat");
 			}
 		}
 
@@ -37,8 +36,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				if (Effekseer.Core.Language == Effekseer.Language.Japanese) return "標準形式で出力する。";
-				return "Export as default format";
+				return Resources.GetString("ExportDefaultFormat");
 			}
 		}
 
@@ -46,8 +44,7 @@ namespace Effekseer.Plugin
 		{
 			get
 			{
-				if (Effekseer.Core.Language == Effekseer.Language.Japanese) return "標準形式 (*.efk)|*.efk";
-				return "Default format (*.efk)|*.efk";
+				return Resources.GetString("DefaultFormatExample");
 			}
 		}
 
@@ -79,15 +76,8 @@ namespace Effekseer.Plugin
 
 			public void Show(string path)
 			{
-				if(Effekseer.Core.Language == Effekseer.Language.Japanese)
-				{
-					this.title = "拡大率";
-				}
-				else
-				{
-					this.title = "Maginification";
-				}
-				
+				this.title = Resources.GetString("Maginification");
+
 				this.path = path;
 				mag[0] = Effekseer.Core.Option.ExternalMagnification.GetValue();
 				Effekseer.GUI.Manager.AddControl(this);
