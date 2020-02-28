@@ -1415,13 +1415,13 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 
 		// update local fields
-		auto currentPosition = localPosition + modifyWithNoise_;
+		auto currentLocalPosition = localPosition + modifyWithNoise_;
 		for (const auto& field : m_pEffectNode->LocalForceFields)
 		{
 			if (field.Turbulence != nullptr)
 			{
 				auto mag = static_cast<EffectImplemented*>(m_pEffectNode->GetEffect())->GetMaginification();
-				modifyWithNoise_ += field.Turbulence->Noise.Get(currentPosition / mag) * field.Turbulence->Strength * mag;
+				modifyWithNoise_ += field.Turbulence->Noise.Get(currentLocalPosition / mag) * field.Turbulence->Strength * mag;
 			}
 
 		}
@@ -1466,11 +1466,11 @@ void Instance::CalculateMatrix( float deltaFrame )
 
 		if( m_pEffectNode->LocationAbs.type != LocationAbsType::None )
 		{
-			Vec3f currentPosition = m_GlobalMatrix43.GetTranslation();
+			Vec3f currentTranslation = m_GlobalMatrix43.GetTranslation();
 			assert(m_GlobalMatrix43.IsValid());
 
-			m_GlobalVelocity = currentPosition - m_GlobalPosition;
-			m_GlobalPosition = currentPosition;
+			m_GlobalVelocity = currentTranslation - m_GlobalPosition;
+			m_GlobalPosition = currentTranslation;
 
 			ModifyMatrixFromLocationAbs( deltaFrame );
 		}

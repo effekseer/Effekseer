@@ -32,7 +32,7 @@ class CompiledMaterial
 	static const int32_t Version = 1;
 
 	std::map<CompiledMaterialPlatformType, std::unique_ptr<CompiledMaterialBinary, ReferenceDeleter<CompiledMaterialBinary>>> platforms;
-	std::vector<uint8_t> originalData;
+	std::vector<uint8_t> originalData_;
 
 public:
 	uint64_t GUID = 0;

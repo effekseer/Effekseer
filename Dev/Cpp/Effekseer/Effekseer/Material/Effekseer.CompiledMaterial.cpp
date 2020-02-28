@@ -37,7 +37,7 @@ public:
 	int GetRef() override { return ReferenceObject::GetRef(); }
 };
 
-const std::vector<uint8_t>& CompiledMaterial::GetOriginalData() const { return originalData; }
+const std::vector<uint8_t>& CompiledMaterial::GetOriginalData() const { return originalData_; }
 
 bool CompiledMaterial::Load(const uint8_t* data, int32_t size)
 {
@@ -81,8 +81,8 @@ bool CompiledMaterial::Load(const uint8_t* data, int32_t size)
 	memcpy(&originalDataSize, data + offset, 4);
 	offset += sizeof(uint32_t);
 
-	originalData.resize(originalDataSize);
-	memcpy(originalData.data(), data + offset, originalDataSize);
+	originalData_.resize(originalDataSize);
+	memcpy(originalData_.data(), data + offset, originalDataSize);
 
 	offset += originalDataSize;
 
@@ -234,14 +234,14 @@ void CompiledMaterial::Save(std::vector<uint8_t>& dst, uint64_t guid, std::vecto
 
 		for (size_t i = 0; i < 8; i++)
 		{
-			int32_t bodySize = bodySizes[i];
+			int32_t bodySize2 = bodySizes[i];
 
 			dst.resize(dst.size() + sizeof(int));
-			memcpy(dst.data() + offset, &(bodySize), sizeof(int));
+			memcpy(dst.data() + offset, &(bodySize2), sizeof(int));
 			offset = dst.size();
 
-			dst.resize(dst.size() + bodySize);
-			memcpy(dst.data() + offset, bodies[i], bodySize);
+			dst.resize(dst.size() + bodySize2);
+			memcpy(dst.data() + offset, bodies[i], bodySize2);
 			offset = dst.size();
 		}
 	}
