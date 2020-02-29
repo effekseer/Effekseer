@@ -31,6 +31,8 @@ if(WIN32)
     add_subdirectory(DirectX12)
 endif()
 
+add_subdirectory(OpenGL)
+
 if (BUILD_VULKAN)
     add_subdirectory(Vulkan)
 endif()
