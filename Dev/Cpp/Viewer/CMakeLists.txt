@@ -188,7 +188,6 @@ elseif(APPLE)
 
     # For Mac
     find_library(COCOA_FRAMEWORK Cocoa)
-    find_library(COCOA_FRAMEWORK Cocoa)
     find_library(IOKIT_FRAMEWORK IOKit)
     find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
     find_library(CORE_VIDEO_FRAMEWORK CoreVideo)

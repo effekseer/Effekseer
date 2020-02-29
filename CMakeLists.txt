@@ -12,6 +12,7 @@ endif()
 option(BUILD_VIEWER "Build viewer" OFF)
 option(BUILD_EDITOR "Build editor" OFF)
 option(BUILD_TEST "Build test" OFF)
+option(BUILD_EXAMPLES "Build examples" ON)
 option(FROM_CI "from ci" OFF)
 option(SANITIZE_ENABLED "is sanitizer enabled" OFF)
 
@@ -157,7 +158,9 @@ if(BUILD_VIEWER)
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/glew/lib)
     endif()
+endif()
     
+if(BUILD_VIEWER OR BUILD_EXAMPLES)
     # glfw
     ExternalProject_Add(
         ExternalProject_glfw
@@ -199,8 +202,8 @@ if(BUILD_VIEWER)
     )
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/Downloads/OpenSoundMixer/src)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/OpenSoundMixer/lib)
-
 endif()
+
 
 # a function to generate filters by folders
 function(FilterFolder srcs)
@@ -246,7 +249,10 @@ if (BUILD_VIEWER)
 endif()
 
 add_subdirectory(Dev)
-add_subdirectory(Examples)
+
+if(BUILD_EXAMPLES)
+    add_subdirectory(Examples)
+endif()
 
 # specify filters
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
