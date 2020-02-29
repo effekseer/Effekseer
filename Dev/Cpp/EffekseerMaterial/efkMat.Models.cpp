@@ -1716,7 +1716,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 {
 	// header
 
-	char* prefix = "EFKM";
+	const char* prefix = "EFKM";
 	int version = 3;
 
 	int offset = 0;
@@ -1763,7 +1763,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		bwDescs.Push(GetVectorFromStr(outputNode->Descriptions[descInd]->Detail));
 	}
 
-	char* chunk_desc = "DESC";
+	const char* chunk_desc = "DESC";
 	auto size_descs = static_cast<int32_t>(bwDescs.GetBuffer().size());
 
 	offset = data.size();
@@ -1839,7 +1839,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		bwParam.Push(param->DefaultConstants[3]);
 	}
 
-	char* chunk_para = "PRM_";
+	const char* chunk_para = "PRM_";
 	auto size_para = static_cast<int32_t>(bwParam.GetBuffer().size());
 
 	offset = data.size();
@@ -1902,7 +1902,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		}
 	}
 
-	char* chunk_para2 = "PRM2";
+	const char* chunk_para2 = "PRM2";
 	auto size_para2 = static_cast<int32_t>(bwParam2.GetBuffer().size());
 
 	offset = data.size();
@@ -1928,7 +1928,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		bwEditorCD.Push(CustomData[ci].Values[3]);
 	}
 
-	char* chunk_EditorCD = "E_CD";
+	const char* chunk_EditorCD = "E_CD";
 	auto size_EditorCD = static_cast<int32_t>(bwEditorCD.GetBuffer().size());
 
 	offset = data.size();
@@ -1950,7 +1950,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		bwGene.Push(code_);
 	}
 
-	char* chunk_gene = "GENE";
+	const char* chunk_gene = "GENE";
 	auto size_gene = static_cast<int32_t>(bwGene.GetBuffer().size());
 
 	offset = data.size();
@@ -1967,7 +1967,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 
 	// data
 	auto internalJsonVec = GetVectorFromStr(internalJson);
-	char* chunk_data = "DATA";
+	const char* chunk_data = "DATA";
 	auto size_data = static_cast<int32_t>(internalJsonVec.size());
 
 	offset = data.size();
