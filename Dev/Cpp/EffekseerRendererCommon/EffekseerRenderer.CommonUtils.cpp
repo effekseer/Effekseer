@@ -266,8 +266,8 @@ void ApplyDepthParameters(::Effekseer::Mat43f& mat,
 
 	if (depthParameter->SuppressionOfScalingByDepth < 1.0f)
 	{
-		auto c = translationValues - cameraPos;
-		auto cl = c.GetLength();
+		auto cam2t = translationValues - cameraPos;
+		auto cl = cam2t.GetLength();
 
 		if (cl != 0.0)
 		{
