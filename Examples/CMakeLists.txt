@@ -1,5 +1,12 @@
 ﻿cmake_minimum_required (VERSION 3.0.0)
 
+# C++ version
+if(WIN32)
+    set(CMAKE_CXX_STANDARD 17)
+else()
+    set(CMAKE_CXX_STANDARD 14)
+endif()
+
 # MSVC Flag
 if (MSVC)
     if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
@@ -32,6 +39,7 @@ if(WIN32)
 endif()
 
 add_subdirectory(OpenGL)
+add_subdirectory(OpenAL)
 
 if (BUILD_VULKAN)
     add_subdirectory(Vulkan)

@@ -3,14 +3,14 @@
 #import <Cocoa/Cocoa.h>
 #import <MetalKit/MetalKit.h>
 
-@interface LLGIApplication : NSApplication
+@interface UtilsApplication : NSApplication
 {
 	NSArray* nibObjects;
 }
 
 @end
 
-@implementation LLGIApplication
+@implementation UtilsApplication
 
 - (void)sendEvent:(NSEvent*)event
 {
@@ -23,10 +23,10 @@
 
 @end
 
-@interface LLGIApplicationDelegate : NSObject
+@interface UtilsApplicationDelegate : NSObject
 @end
 
-@implementation LLGIApplicationDelegate
+@implementation UtilsApplicationDelegate
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {
@@ -53,16 +53,15 @@
 
 @end
 
-namespace LLGI
-{
-
+namespace Utils {
+	
 struct Cocoa_Impl
 {
 	static void initialize()
 	{
 		if (NSApp)
 			return;
-		[LLGIApplication sharedApplication];
+		[UtilsApplication sharedApplication];
 
 		[NSThread detachNewThreadSelector:@selector(doNothing:) toTarget:NSApp withObject:nil];
 
@@ -71,7 +70,7 @@ struct Cocoa_Impl
 		NSMenu* menubar = [NSMenu new];
 		[NSApp setMainMenu:menubar];
 
-		id delegate = [[LLGIApplicationDelegate alloc] init];
+		id delegate = [[UtilsApplicationDelegate alloc] init];
 
 		[NSApp setDelegate:delegate];
 
@@ -174,4 +173,4 @@ Vec2I WindowMac::GetWindowSize() const
     return windowSize_;
 }
     
-} // namespace LLGI
+} // namespace Utils

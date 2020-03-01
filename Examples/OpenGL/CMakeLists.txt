@@ -26,3 +26,33 @@ target_link_directories(
     PRIVATE
     ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
 )
+
+if(NOT WIN32)
+    find_package(Threads REQUIRED)
+    find_package(OpenGL REQUIRED)
+    target_link_libraries(
+        Example_OpenGL
+        PRIVATE
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${OPENGL_gl_LIBRARY}
+        debug "${LIBPNG_LIB_DEBUG}"
+        optimized "${LIBPNG_LIB_RELEASE}"
+        z
+    )
+endif()
+
+if(APPLE)
+    find_library(COCOA_FRAMEWORK Cocoa)
+    find_library(IOKIT_FRAMEWORK IOKit)
+    find_library(CORE_FOUNDATION_FRAMEWORK CoreFoundation)
+    find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
+
+    target_link_libraries(
+        Example_OpenGL
+        PRIVATE
+        ${COCOA_FRAMEWORK}
+        ${IOKIT_FRAMEWORK}
+        ${CORE_FOUNDATION_FRAMEWORK}
+        ${CORE_VIDEO_FRAMEWORK}
+    )
+endif()
