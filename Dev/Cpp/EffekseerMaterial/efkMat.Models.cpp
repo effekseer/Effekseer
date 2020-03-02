@@ -34,111 +34,6 @@ std::string Replace(std::string target, std::string from_, std::string to_)
 	return target;
 }
 
-std::string Relative(const std::string& targetPath, const std::string& basePath)
-{
-	if (basePath.size() == 0 || targetPath.size() == 0)
-	{
-		return targetPath;
-	}
-
-	auto targetPaths = Split(Replace(targetPath, "\\", "/"), '/');
-	auto basePaths = Split(Replace(basePath, "\\", "/"), '/');
-
-	if (*(basePath.end() - 1) != '/' && *(basePath.end() - 1) != '\\')
-	{
-		basePaths.pop_back();
-	}
-
-	int32_t offset = 0;
-	while (targetPaths.size() > offset && basePaths.size() > offset)
-	{
-		if (targetPaths[offset] == basePaths[offset])
-		{
-			offset++;
-		}
-		else
-		{
-			break;
-		}
-	}
-
-	std::string ret;
-
-	for (size_t i = offset; i < basePaths.size(); i++)
-	{
-		ret += "../";
-	}
-
-	for (size_t i = offset; i < targetPaths.size(); i++)
-	{
-		ret += targetPaths[i];
-
-		if (i != targetPaths.size() - 1)
-		{
-			ret += "/";
-		}
-	}
-
-	return ret;
-}
-
-std::string Absolute(const std::string& targetPath, const std::string& basePath)
-{
-	if (targetPath == "")
-		return "";
-
-	if (basePath == "")
-		return targetPath;
-
-	auto targetPaths = Split(Replace(targetPath, "\\", "/"), '/');
-	auto basePaths = Split(Replace(basePath, "\\", "/"), '/');
-
-    bool isSlashFirst = basePath[0] == '/';
-    
-	if (*(basePath.end() - 1) != '/' && *(basePath.end() - 1) != '\\')
-	{
-		basePaths.pop_back();
-	}
-
-	for (size_t i = 0; i < targetPaths.size(); i++)
-	{
-		if (targetPaths[i] == "..")
-		{
-			if (basePaths.size() > 0 && basePaths.back() != "..")
-			{
-				basePaths.pop_back();
-			}
-			else
-			{
-				basePaths.push_back("..");
-			}
-		}
-		else
-		{
-			basePaths.push_back(targetPaths[i]);
-		}
-	}
-
-	std::string ret;
-
-	for (size_t i = 0; i < basePaths.size(); i++)
-	{
-		ret += basePaths[i];
-
-		if (i != basePaths.size() - 1)
-		{
-			ret += "/";
-		}
-	}
-    
-    if(isSlashFirst)
-    {
-        ret = '/' + ret;
-    }
-
-	return ret;
-}
-
 namespace EffekseerMaterial
 {
 
@@ -614,7 +509,7 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 				}
 				else
 				{
-					auto relative = Relative(absStr, basePath);
+					auto relative = PathHelper::Relative(absStr, std::string(basePath));
 					prop_.insert(std::make_pair("Value", picojson::value(relative)));
 					enabledTextures.insert(relative);
 				}
@@ -711,7 +606,7 @@ std::string Material::SaveAsStrInternal(std::vector<std::shared_ptr<Node>> nodes
 			picojson::object texture_;
 
 			auto absStr = texture.second->Path;
-			auto relative = Relative(absStr, basePath);
+			auto relative = PathHelper::Relative(absStr, std::string(basePath));
 
 			if (enabledTextures.find(relative) == enabledTextures.end())
 			{
@@ -783,7 +678,7 @@ void Material::LoadFromStrInternal(
 	{
 		auto guid_obj = node_.get("GUID");
 		auto guid = (uint64_t)guid_obj.get<double>();
-		
+
 		auto type_obj = node_.get("Type");
 		auto type = type_obj.get<std::string>();
 
@@ -894,7 +789,7 @@ void Material::LoadFromStrInternal(
 				}
 				else
 				{
-					auto absolute = Absolute(str, basePath);
+					auto absolute = PathHelper::Absolute(str, std::string(basePath));
 					node->Properties[i]->Str = absolute;
 				}
 			}
@@ -928,6 +823,16 @@ void Material::LoadFromStrInternal(
 
 		auto inputNode = FindNode(oldIDToNewID[InputGUID]);
 		auto outputNode = FindNode(oldIDToNewID[OutputGUID]);
+
+		// Compatibility (TODO : refactor)
+		if (outputNode->Parameter->TypeName == "SampleTexture")
+		{
+			if (OutputPin == "Output")
+			{
+				OutputPin = "RGBA";
+			}
+		}
+		
 		auto InputPinIndex = inputNode->GetInputPinIndex(InputPin);
 		auto OutputPinIndex = outputNode->GetOutputPinIndex(OutputPin);
 
@@ -1000,7 +905,7 @@ void Material::LoadFromStrInternal(
 			{
 				auto path_obj = texture_.get("Path");
 				auto path = path_obj.get<std::string>();
-				auto absolute = Absolute(path, basePath);
+				auto absolute = PathHelper::Absolute(path, std::string(basePath));
 
 				auto textureType_obj = texture_.get("Type");
 				auto textureType = textureType_obj.get<double>();
@@ -1014,9 +919,7 @@ void Material::LoadFromStrInternal(
 	}
 }
 
-Material::Material() {
-    commandManager_ = std::make_shared<CommandManager>();
-}
+Material::Material() { commandManager_ = std::make_shared<CommandManager>(); }
 
 Material::~Material() {}
 
@@ -1806,7 +1709,7 @@ bool Material::Save(std::vector<uint8_t>& data, const char* basePath)
 		auto uniformName = GetVectorFromStr(param->UniformName);
 		bwParam.Push(uniformName);
 
-		auto defaultPath_ = GetVectorFromStr(Relative(param->DefaultPath, basePath));
+		auto defaultPath_ = GetVectorFromStr(PathHelper::Relative(param->DefaultPath, std::string(basePath)));
 		bwParam.Push(defaultPath_);
 		bwParam.Push(param->Index);
 		bwParam.Push(param->Priority);

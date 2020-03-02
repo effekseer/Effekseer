@@ -1229,10 +1229,41 @@ public:
 		inputUV->Default = DefaultType::UV;
 		InputPins.push_back(inputUV);
 
-		auto output = std::make_shared<PinParameter>();
-		output->Name = "Output";
-		output->Type = ValueType::Float4;
-		OutputPins.push_back(output);
+		auto rgb = std::make_shared<PinParameter>();
+		rgb->Name = "RGB";
+		rgb->Type = ValueType::Float3;
+		OutputPins.push_back(rgb);
+
+		auto r = std::make_shared<PinParameter>();
+		r->Name = "R";
+		r->Type = ValueType::Float1;
+		OutputPins.push_back(r);
+
+		auto g = std::make_shared<PinParameter>();
+		g->Name = "G";
+		g->Type = ValueType::Float1;
+		OutputPins.push_back(g);
+
+		auto b = std::make_shared<PinParameter>();
+		b->Name = "B";
+		b->Type = ValueType::Float1;
+		OutputPins.push_back(b);
+
+		auto a = std::make_shared<PinParameter>();
+		a->Name = "A";
+		a->Type = ValueType::Float1;
+		OutputPins.push_back(a);
+
+		auto rgba = std::make_shared<PinParameter>();
+		rgba->Name = "RGBA";
+		rgba->Type = ValueType::Float4;
+		OutputPins.push_back(rgba);
+
+		// compatibility
+		// auto output = std::make_shared<PinParameter>();
+		// output->Name = "Output";
+		// output->Type = ValueType::Float4;
+		// OutputPins.push_back(output);
 
 		auto param = std::make_shared<NodePropertyParameter>();
 		param->Name = "Texture";

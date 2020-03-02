@@ -1637,7 +1637,6 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 	// Input and output
 	ImGui::BeginHorizontal("inout_");
 
-	if (0 < node->InputPins.size())
 	{
 		ImGui::BeginVertical("inputs", ImVec2(0, 0), 0.0f);
 		ed::PushStyleVar(ed::StyleVar_PivotAlignment, ImVec2(0, 0.5f));
@@ -1674,6 +1673,19 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 			ImGui::EndHorizontal();
 
 			ed::EndPin();
+		}
+
+		// To save space, put under inputs
+		if (node->IsPreviewOpened)
+		{
+			auto preview = (NodeUserDataObject*)node->UserObj.get();
+			if (preview != nullptr)
+			{
+				ImVec2 size;
+				size.x = Preview::TextureSize;
+				size.y = Preview::TextureSize;
+				ImGui::Image((void*)preview->GetPreview()->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+			}
 		}
 
 		ed::PopStyleVar(2);
@@ -1727,11 +1739,6 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 		auto preview = (NodeUserDataObject*)node->UserObj.get();
 		if (preview != nullptr)
 		{
-			ImVec2 size;
-			size.x = Preview::TextureSize;
-			size.y = Preview::TextureSize;
-			ImGui::Image((void*)preview->GetPreview()->GetInternal(), size, ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-
 			if (ImGui::ImageButton(
 					(ImTextureID)previewTypeButtons_[0]->GetInternal(), ImVec2(20.0, 20.0), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0)))
 			{

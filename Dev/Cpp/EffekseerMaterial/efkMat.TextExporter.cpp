@@ -881,17 +881,53 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::SampleTexture)
 	{
+		int32_t rgbInd = 0;
+		assert(node->Target->GetOutputPinIndex("RGB") == rgbInd);
+
+		int32_t rgbaInd = 5;
+		assert(node->Target->GetOutputPinIndex("RGBA") == rgbaInd);
+
 		assert(node->Inputs[0].TextureValue != nullptr);
 		if (0 <= node->Inputs[0].TextureValue->Index)
 		{
-			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << " = $TEX_P" << node->Inputs[0].TextureValue->Index
-				<< "$" << GetInputArg(ValueType::Float2, node->Inputs[1]) << "$TEX_S" << node->Inputs[0].TextureValue->Index << "$;"
-				<< std::endl;
+			ret << GetTypeName(node->Outputs[rgbaInd].Type) << " " << node->Outputs[rgbaInd].Name << " = $TEX_P"
+				<< node->Inputs[0].TextureValue->Index << "$" << GetInputArg(ValueType::Float2, node->Inputs[1]) << "$TEX_S"
+				<< node->Inputs[0].TextureValue->Index << "$;" << std::endl;
 		}
 		else
 		{
-			ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << GetTypeName(ValueType::Float4)
+			ret << GetTypeName(node->Outputs[rgbaInd].Type) << " " << node->Outputs[rgbaInd].Name << "=" << GetTypeName(ValueType::Float4)
 				<< "(1.0,1.0,1.0,1.0);" << std::endl;
+		}
+
+		if (node->Outputs[1].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[1].Type) << " " << node->Outputs[1].Name << "=" << node->Outputs[rgbaInd].Name << ".x;"
+				<< std::endl;
+		}
+
+		if (node->Outputs[2].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[2].Type) << " " << node->Outputs[2].Name << "=" << node->Outputs[rgbaInd].Name << ".y;"
+				<< std::endl;
+		}
+
+		if (node->Outputs[3].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[3].Type) << " " << node->Outputs[3].Name << "=" << node->Outputs[rgbaInd].Name << ".z;"
+				<< std::endl;
+		}
+
+		if (node->Outputs[4].IsConnected)
+		{
+			ret << GetTypeName(node->Outputs[4].Type) << " " << node->Outputs[4].Name << "=" << node->Outputs[rgbaInd].Name << ".w;"
+				<< std::endl;
+		}
+
+		// for compatiblity and preview
+		{
+			ret << GetTypeName(node->Outputs[rgbInd].Type) << " " << node->Outputs[rgbInd].Name << "=" << node->Outputs[rgbaInd].Name
+				<< ".xyz;" << std::endl;
 		}
 	}
 
