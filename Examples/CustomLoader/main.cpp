@@ -1,0 +1,298 @@
+﻿
+#include <stdio.h>
+#include <string>
+
+#include <Effekseer.h>
+#include <EffekseerRendererGL.h>
+
+// A helper function to load an image
+// イメージを読み込むためのヘルパー関数
+#define STB_IMAGE_EFK_IMPLEMENTATION
+#include <stb_image_utils.h>
+
+bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight);
+bool DoEvent();
+void TerminateWindowAndDevice();
+void ClearScreen();
+void PresentDevice();
+
+/**
+Effekseer supports basic loading, but it is not designed to be loadable from other game engine packages.
+So add a loader class and extend the file loading method.
+
+Effekseerでは基本的な読込はサポートしていますが、他のゲームエンジンのパッケージから読み込めるようになっていません。
+そのため、ローダークラスを追加し、ファイルの読込方法を拡張します。
+*/
+
+class CustomTextureLoader : public ::Effekseer::TextureLoader
+{
+private:
+	::Effekseer::FileInterface* fileInterface_;
+	::Effekseer::DefaultFileInterface defaultFileInterface_;
+
+public:
+	// FileInterface is a binary loader. A behavior can be changed with a inheritance
+	// FileInterfaceはバイナリローダーです。振る舞いを継承により変更できます。
+	CustomTextureLoader(::Effekseer::FileInterface* fileInterface = nullptr) : fileInterface_(fileInterface)
+	{
+		if (fileInterface_ == nullptr)
+		{
+			fileInterface_ = &defaultFileInterface_;
+		}
+	}
+	virtual ~CustomTextureLoader() = default;
+
+public:
+	Effekseer::TextureData* Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType) override
+	{
+		std::unique_ptr<::Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
+
+		if (reader.get() != nullptr)
+		{
+			size_t size_texture = reader->GetLength();
+			std::vector<char> data_texture;
+			data_texture.resize(size_texture);
+			reader->Read(data_texture.data(), size_texture);
+
+			// load an image with the helper function
+			// ヘルパー関数で画像を読み込む
+			int width;
+			int height;
+			int bpp;
+			uint8_t* pixels = (uint8_t*)EffekseerUtils::stbi_load_from_memory(
+				(EffekseerUtils::stbi_uc const*)data_texture.data(), static_cast<int>(size_texture), &width, &height, &bpp, 0);
+			
+			if (width == 0 || bpp < 3)
+			{
+				// Not supported
+				EffekseerUtils::stbi_image_free(pixels);
+				return nullptr;
+			}
+
+			// Load a image to GPU actually. Please see a code of each backends if you want to know what should be returned
+			// 実際にGPUに画像を読み込む。何を返すべきか知りたい場合、、各バックエンドのコードを読んでください。
+			GLuint texture = 0;
+			glGenTextures(1, &texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+
+	
+			if (bpp == 4)
+			{
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+			}
+			else if (bpp == 3)
+			{
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+			}
+
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+			auto textureData = new Effekseer::TextureData();
+			textureData->UserPtr = nullptr;
+			textureData->UserID = texture;
+			textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
+			textureData->Width = width;
+			textureData->Height = height;
+			textureData->HasMipmap = false;
+
+			EffekseerUtils::stbi_image_free(pixels);
+			return textureData;
+		}
+
+		return nullptr;
+	}
+
+	void Unload(Effekseer::TextureData* data) override
+	{
+		if (data != nullptr && data->UserPtr != nullptr)
+		{
+			GLuint texture = static_cast<GLuint>(data->UserID);
+			glDeleteTextures(1, &texture);
+		}
+
+		if (data != nullptr)
+		{
+			delete data;
+		}
+	}
+};
+
+int main(int argc, char** argv)
+{
+	int32_t windowWidth = 1280;
+	int32_t windowHeight = 720;
+	InitializeWindowAndDevice(windowWidth, windowHeight);
+
+	// Create a renderer of effects
+	// エフェクトのレンダラーの作成
+	auto renderer = ::EffekseerRendererGL::Renderer::Create(8000, EffekseerRendererGL::OpenGLDeviceType::OpenGL3);
+
+	// Create a manager of effects
+	// エフェクトのマネージャーの作成
+	auto manager = ::Effekseer::Manager::Create(8000);
+
+	// Sprcify rendering modules
+	// 描画モジュールの設定
+	manager->SetSpriteRenderer(renderer->CreateSpriteRenderer());
+	manager->SetRibbonRenderer(renderer->CreateRibbonRenderer());
+	manager->SetRingRenderer(renderer->CreateRingRenderer());
+	manager->SetTrackRenderer(renderer->CreateTrackRenderer());
+	manager->SetModelRenderer(renderer->CreateModelRenderer());
+
+	// Specify a texture, model and material loader
+	// The texture loader is extended by yourself.
+	// テクスチャ、モデル、マテリアルローダーの設定する。
+	// テクスチャローダーがで拡張されている。
+	manager->SetTextureLoader(new CustomTextureLoader());
+	manager->SetModelLoader(renderer->CreateModelLoader());
+	manager->SetMaterialLoader(renderer->CreateMaterialLoader());
+
+	// Specify a position of view
+	// 視点位置を確定
+	auto g_position = ::Effekseer::Vector3D(10.0f, 5.0f, 20.0f);
+
+	// Specify a projection matrix
+	// 投影行列を設定
+	renderer->SetProjectionMatrix(
+		::Effekseer::Matrix44().PerspectiveFovRH(90.0f / 180.0f * 3.14f, (float)windowWidth / (float)windowHeight, 1.0f, 500.0f));
+
+	// Specify a camera matrix
+	// カメラ行列を設定
+	renderer->SetCameraMatrix(
+		::Effekseer::Matrix44().LookAtRH(g_position, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+	// Load an effect
+	// エフェクトの読込
+	auto effect = Effekseer::Effect::Create(manager, EFK_EXAMPLE_ASSETS_DIR_U16 "Laser01.efk");
+
+	int32_t time = 0;
+	Effekseer::Handle handle = 0;
+
+	while (DoEvent())
+	{
+		if (time % 120 == 0)
+		{
+			// Play an effect
+			// エフェクトの再生
+			handle = manager->Play(effect, 0, 0, 0);
+		}
+
+		if (time % 120 == 119)
+		{
+			// Stop effects
+			// エフェクトの停止
+			manager->StopEffect(handle);
+		}
+
+		// Move the effect
+		// エフェクトの移動
+		manager->AddLocation(handle, ::Effekseer::Vector3D(0.2f, 0.0f, 0.0f));
+
+		// Update the manager
+		// マネージャーの更新
+		manager->Update();
+
+		// Ececute functions about DirectX
+		// DirectXの処理
+		ClearScreen();
+
+		// Begin to rendering effects
+		// エフェクトの描画開始処理を行う。
+		renderer->BeginRendering();
+
+		// Render effects
+		// エフェクトの描画を行う。
+		manager->Draw();
+
+		// Finish to rendering effects
+		// エフェクトの描画終了処理を行う。
+		renderer->EndRendering();
+
+		// Ececute functions about DirectX
+		// DirectXの処理
+		PresentDevice();
+
+		time++;
+	}
+
+	// Release effects
+	// エフェクトの解放
+	ES_SAFE_RELEASE(effect);
+
+	// Dispose the manager
+	// マネージャーの破棄
+	manager->Destroy();
+
+	// Dispose the renderer
+	// レンダラーの破棄
+	renderer->Destroy();
+
+	TerminateWindowAndDevice();
+
+	return 0;
+}
+
+// I use glfw to easy to write
+// 簡単に書くために、glfwを使用します。
+// https://www.glfw.org/
+#include <GLFW/glfw3.h>
+static GLFWwindow* glfwWindow = nullptr;
+
+bool InitializeWindowAndDevice(int32_t windowWidth, int32_t windowHeight)
+{
+	// Initialize Window
+	// ウインドウの初期化
+	if (!glfwInit())
+	{
+		throw "Failed to initialize glfw";
+	}
+
+#if !_WIN32
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#endif
+
+	glfwWindow = glfwCreateWindow(windowWidth, windowHeight, "OpenGL", nullptr, nullptr);
+
+	if (glfwWindow == nullptr)
+	{
+		glfwTerminate();
+		throw "Failed to create an window.";
+	}
+
+	glfwMakeContextCurrent(glfwWindow);
+	glfwSwapInterval(1);
+	return true;
+}
+
+bool DoEvent()
+{
+	if (glfwWindowShouldClose(glfwWindow) == GL_TRUE)
+	{
+		return false;
+	}
+
+	glfwPollEvents();
+
+	return true;
+}
+
+void TerminateWindowAndDevice()
+{
+	if (glfwWindow != nullptr)
+	{
+		glfwDestroyWindow(glfwWindow);
+		glfwTerminate();
+		glfwWindow = nullptr;
+	}
+}
+
+void ClearScreen()
+{
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void PresentDevice() { glfwSwapBuffers(glfwWindow); }

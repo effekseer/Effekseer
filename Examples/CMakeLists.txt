@@ -45,3 +45,5 @@ if (BUILD_VULKAN)
     add_subdirectory(Vulkan)
 endif()
 
+add_subdirectory(CustomLoader)
+
