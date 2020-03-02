@@ -31,7 +31,7 @@ if(NOT WIN32)
     find_package(Threads REQUIRED)
     find_package(OpenGL REQUIRED)
     target_link_libraries(
-        Example_OpenGL
+        Example_CustomLoader
         PRIVATE
         ${CMAKE_THREAD_LIBS_INIT}
         ${OPENGL_gl_LIBRARY}
@@ -48,7 +48,7 @@ if(APPLE)
     find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
 
     target_link_libraries(
-        Example_OpenGL
+        Example_CustomLoader
         PRIVATE
         ${COCOA_FRAMEWORK}
         ${IOKIT_FRAMEWORK}
