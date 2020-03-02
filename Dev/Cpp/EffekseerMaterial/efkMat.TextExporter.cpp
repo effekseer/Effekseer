@@ -691,6 +691,16 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 		exportIn2Out2Param2("MOD", ",");
 	}
 
+	if (node->Target->Parameter->Type == NodeType::Step)
+	{
+		assert(node->Inputs[0].Type == ValueType::Float1);
+		assert(node->Inputs[1].Type == ValueType::Float1);
+
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= min(1.0,ceil("
+			<< GetInputArg(node->Outputs[0].Type, node->Inputs[1]) << "-" << GetInputArg(node->Outputs[0].Type, node->Inputs[0]) << "));"
+			<< std::endl;
+	}
+
 	if (node->Target->Parameter->Type == NodeType::Ceil)
 	{
 		exportIn1Out1("ceil");

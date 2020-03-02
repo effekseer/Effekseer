@@ -17,6 +17,7 @@ Library::Library()
 	Contents.push_back(std::make_shared<LibraryContent<NodeCeil>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeFloor>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeFrac>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeStep>>());
 
 	Contents.push_back(std::make_shared<LibraryContent<NodeMin>>());
 	Contents.push_back(std::make_shared<LibraryContent<NodeMax>>());

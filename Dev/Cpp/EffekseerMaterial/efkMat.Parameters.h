@@ -720,6 +720,32 @@ public:
 	}
 };
 
+class NodeStep : public NodeParameter
+{
+public:
+	NodeStep()
+	{
+		Type = NodeType::Step;
+		TypeName = "Step";
+		Group = std::vector<std::string>{"Math"};
+
+		auto edge = std::make_shared<PinParameter>();
+		edge->Name = "Edge";
+		edge->Type = ValueType::Float1;
+		InputPins.push_back(edge);
+
+		auto value = std::make_shared<PinParameter>();
+		value->Name = "Value";
+		value->Type = ValueType::Float1;
+		InputPins.push_back(value);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float1;
+		OutputPins.push_back(output);
+	}
+};
+
 class NodeCeil : public NodeParameter
 {
 public:

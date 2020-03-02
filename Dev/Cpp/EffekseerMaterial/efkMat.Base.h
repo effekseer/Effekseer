@@ -97,6 +97,7 @@ enum class NodeType
 	Divide,
 	FMod,
 
+	Step,
 	Ceil,
 	Floor,
 	Frac,
