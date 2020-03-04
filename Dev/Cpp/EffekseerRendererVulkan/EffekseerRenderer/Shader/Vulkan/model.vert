@@ -11,7 +11,7 @@ layout(location = 2) in vec4 a_Binormal;
 layout(location = 3) in vec4 a_Tangent;
 layout(location = 4) in vec4 a_TexCoord;
 layout(location = 5) in vec4 a_Color;
-layout(location = 6) in vec4 a_InstanceID;
+layout(location = 6) in uvec4 a_InstanceID;
 
 #if defined(MODEL_SOFTWARE_INSTANCING)
 layout(location = 6) in float a_InstanceID;
@@ -55,7 +55,7 @@ void main()
 {
 
 #if defined(MODEL_SOFTWARE_INSTANCING)
-	mat4 modelMatrix = ModelMatrix[int(a_InstanceID)];
+	mat4 modelMatrix = ModelMatrix[int(a_InstanceID.x)];
 	vec4 uvOffset = a_UVOffset;
 	vec4 modelColor = a_ModelColor;
 #else
