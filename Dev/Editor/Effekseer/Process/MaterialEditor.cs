@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Effekseer.Process
 {
@@ -57,6 +58,23 @@ namespace Effekseer.Process
 		public static void OpenOrCreateMaterial(string path)
 		{
 			GUI.Manager.Native.OpenOrCreateMaterial(path);
+
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+			{
+				if (IsIconic(process.MainWindowHandle))
+					ShowWindow(process.MainWindowHandle, 9);
+				else
+					SetForegroundWindow(process.MainWindowHandle);
+			}
 		}
-    }
+
+		[DllImport("user32.dll")]
+		private static extern bool SetForegroundWindow(IntPtr hWnd);
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool IsIconic(IntPtr hWnd);
+	}
 }
