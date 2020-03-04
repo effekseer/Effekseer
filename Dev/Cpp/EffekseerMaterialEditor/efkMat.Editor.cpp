@@ -463,7 +463,7 @@ bool Editor::Load()
 
 	if (result == NFD_OKAY)
 	{
-		Load(outPath);
+		LoadOrSelect(outPath);
 		return true;
 	}
 	return false;
@@ -471,16 +471,18 @@ bool Editor::Load()
 
 bool Editor::LoadOrSelect(const char* path)
 {
+	auto p = Replace(path, "\\", "/");
+
 	for (size_t i = 0; i < contents_.size(); i++)
 	{
-		if (contents_[i]->GetPath() == path)
+		if (contents_[i]->GetPath() == p)
 		{
 			selectedContentInd_ = i;
 			return true;
 		}
 	}
 
-	return Load(path);
+	return Load(p.c_str());
 }
 
 void Editor::Save()
