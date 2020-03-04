@@ -329,13 +329,14 @@ std::string EditorContent::GetName()
 
 	if (path_ != "")
 	{
-		auto path = path_;
+		auto it = path_.find_last_of('/');
+		std::string name = (it != path_.npos) ? path_.substr(it + 1) : path_;
 
 		if (isChanged)
 		{
-			path += " *";
+			name += " *";
 		}
-		return path;
+		return name;
 	}
 
 	if (isChanged)
