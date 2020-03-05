@@ -718,7 +718,15 @@ void Editor::UpdateNodes()
 
 		if ((node->UserObj == nullptr || node->GetIsDirtied()) && (node->IsPreviewOpened || node->Parameter->Type == NodeType::Output))
 		{
-			auto uobj = std::make_shared<EffekseerMaterial::NodeUserDataObject>();
+			bool isGenerated = false;
+
+			if (node->UserObj == nullptr)
+			{
+				isGenerated = true;
+				node->UserObj = std::make_shared<EffekseerMaterial::NodeUserDataObject>();
+			}
+			
+			auto uobj = (EffekseerMaterial::NodeUserDataObject*)node->UserObj.get();
 
 			if (uobj->GetPreview() == nullptr)
 			{
@@ -728,7 +736,7 @@ void Editor::UpdateNodes()
 
 			auto preview = uobj->GetPreview();
 
-			if (node->Parameter->Type == NodeType::Output)
+			if (isGenerated && node->Parameter->Type == NodeType::Output)
 			{
 				preview->ModelType = PreviewModelType::Sphere;
 			}
@@ -754,7 +762,6 @@ void Editor::UpdateNodes()
 
 			preview->CompileShader(vs, ps, textures, uniforms);
 
-			node->UserObj = uobj;
 			material->ClearDirty(node);
 			material->ClearContentDirty(node);
 		}
