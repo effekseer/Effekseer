@@ -5,6 +5,28 @@
 namespace EffekseerMaterial
 {
 
+ValueType InferOutputTypeIn1Out1(const std::vector<ValueType>& inputTypes) { return inputTypes[0]; }
+
+ValueType InferOutputTypeIn2Out1Param2(const std::vector<ValueType>& inputTypes)
+{
+	if (inputTypes[0] == ValueType::Float1)
+		return inputTypes[1];
+
+	if (inputTypes[1] == ValueType::Float1)
+		return inputTypes[0];
+
+	return inputTypes[0];
+}
+
+ValueType InferOutputTypeInAppendVector(const std::vector<ValueType>& inputTypes)
+{
+	int counter = 0;
+
+	auto count = std::min(4, GetElementCount(inputTypes[0]) + GetElementCount(inputTypes[0]));
+
+	return static_cast<ValueType>(static_cast<int>(ValueType::Float1) + count - 1);
+}
+
 std::string NodeParameterBehaviorComponentTwoInputMath::GetHeader(std::shared_ptr<Material> material,
 																  std::shared_ptr<NodeParameter> parameter,
 																  std::shared_ptr<Node> node) const
@@ -467,11 +489,7 @@ ValueType NodeAppendVector::GetOutputType(std::shared_ptr<Material> material,
 	auto type1 = material->GetDesiredPinType(node->InputPins[0], visited1);
 	auto type2 = material->GetDesiredPinType(node->InputPins[1], visited2);
 
-	int counter = 0;
-
-	auto count = std::min(4, GetElementCount(type1) + GetElementCount(type2));
-
-	return static_cast<ValueType>(static_cast<int>(ValueType::Float1) + count - 1);
+	return InferOutputTypeInAppendVector({type1, type2});
 }
 
 WarningType NodeAppendVector::GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const

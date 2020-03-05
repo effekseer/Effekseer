@@ -135,7 +135,9 @@ enum class NodeType
 	CustomData1,
 	CustomData2,
 
-	Fresnel, // not implemented
+	Fresnel,
+	Rotator,
+	PolarCoords,
 
 	Comment,
 	Function, // Unimplemented

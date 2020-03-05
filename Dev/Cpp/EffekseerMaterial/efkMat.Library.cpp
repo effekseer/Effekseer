@@ -72,6 +72,10 @@ Library::Library()
 	// Comment
 	Contents.push_back(std::make_shared<LibraryContent<NodeComment>>());
 
+	Contents.push_back(std::make_shared<LibraryContent<NodeFresnel>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodeRotator>>());
+	Contents.push_back(std::make_shared<LibraryContent<NodePolarCoords>>());
+
 	MakeGroups();
 }
 

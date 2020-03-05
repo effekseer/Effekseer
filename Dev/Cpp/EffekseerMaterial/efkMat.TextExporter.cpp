@@ -6,10 +6,377 @@
 namespace EffekseerMaterial
 {
 
+/**
+	@brief	Refactor with it
+*/
+class TextCompiler
+{
+private:
+	struct Variable
+	{
+		std::string Name;
+		ValueType Type;
+	};
+
+	TextExporter* exporter_;
+	std::ostringstream str_;
+	int32_t variableID_ = 0;
+
+	std::unordered_map<int32_t, Variable> variables_;
+
+	int32_t cameraPositionID_ = 0;
+	int32_t worldPositionID_ = 0;
+	int32_t pixelNormalDirID_ = 0;
+
+	ValueType GetType(int32_t id) const { return variables_.at(id).Type; }
+
+	std::string GetNameWithCast(int32_t id, ValueType type) const
+	{
+		return exporter_->ConvertType(type, GetType(id), variables_.at(id).Name);
+	}
+
+	void ExportVariable(int32_t id, const std::string& content)
+	{
+		str_ << exporter_->GetTypeName(variables_[id].Type) << " " << variables_[id].Name << " = " << content << ";" << std::endl;
+	}
+
+	ValueType Broadcast(ValueType type1, ValueType type2)
+	{
+		ValueType type = ValueType::Unknown;
+		if (type1 == type2)
+		{
+			type = type1;
+		}
+		else if (type1 == ValueType::Float1)
+		{
+			type = type2;
+		}
+		else if (type2 == ValueType::Float1)
+		{
+			type = type1;
+		}
+		return type;
+	}
+
+public:
+	TextCompiler(TextExporter* exporter) : exporter_(exporter)
+	{
+		cameraPositionID_ = AddVariable(ValueType::Float3, "cameraPosition.xyz");
+		worldPositionID_ = AddVariable(ValueType::Float3, "worldPos");
+		pixelNormalDirID_ = AddVariable(ValueType::Float3, "pixelNormalDir");
+	}
+
+	std::string GetName(int32_t id) const { return variables_.at(id).Name; }
+
+	void Clear() { str_ = std::ostringstream(); }
+
+	std::string Str() const { return str_.str(); }
+
+	int32_t AddVariable(ValueType type, const std::string& name = "")
+	{
+		std::string n;
+		if (name == "")
+		{
+			n = exporter_->GenerateTempName();
+		}
+		else
+		{
+			n = name;
+		}
+
+		auto selfID = variableID_;
+		Variable variable;
+		variable.Type = type;
+		variable.Name = n;
+		variables_[selfID] = variable;
+
+		variableID_ += 1;
+
+		return selfID;
+	}
+
+	int32_t AddConstant(float value, const std::string& name = "")
+	{
+		std::array<float, 4> values;
+		values.fill(0.0f);
+		values[0] = value;
+		return AddConstant(ValueType::Float1, values, name);
+	}
+
+	int32_t AddConstant(std::array<float, 2> value, const std::string& name = "")
+	{
+		std::array<float, 4> values;
+		values.fill(0.0f);
+		values[0] = value[0];
+		values[1] = value[1];
+		return AddConstant(ValueType::Float2, values, name);
+	}
+
+	int32_t AddConstant(ValueType type, std::array<float, 4> values, const std::string& name = "")
+	{
+		// for opengl es
+		auto getNum = [](float f) -> std::string {
+			std::ostringstream ret;
+			if (f == (int)f)
+			{
+				ret << f << ".0";
+			}
+			else
+			{
+				ret << f;
+			}
+
+			return ret.str();
+		};
+
+		auto selfID = AddVariable(type, name);
+
+		if (type == ValueType::Float1)
+		{
+			str_ << exporter_->GetTypeName(variables_[selfID].Type) << " " << variables_[selfID].Name << " = "
+				 << exporter_->GetTypeName(variables_[selfID].Type) << "(" << getNum(values[0]) << ");" << std::endl;
+		}
+		else if (type == ValueType::Float2)
+		{
+			str_ << exporter_->GetTypeName(variables_[selfID].Type) << " " << variables_[selfID].Name << " = "
+				 << exporter_->GetTypeName(variables_[selfID].Type) << "(" << getNum(values[0]) << "," << getNum(values[1]) << ");"
+				 << std::endl;
+		}
+		else if (type == ValueType::Float3)
+		{
+			str_ << exporter_->GetTypeName(variables_[selfID].Type) << " " << variables_[selfID].Name << " = "
+				 << exporter_->GetTypeName(variables_[selfID].Type) << "(" << getNum(values[0]) << "," << getNum(values[1]) << ","
+				 << getNum(values[2]) << ");" << std::endl;
+		}
+		else if (type == ValueType::Float4)
+		{
+			str_ << exporter_->GetTypeName(variables_[selfID].Type) << " " << variables_[selfID].Name << " = "
+				 << exporter_->GetTypeName(variables_[selfID].Type) << "(" << getNum(values[0]) << "," << getNum(values[1]) << ","
+				 << getNum(values[2]) << "," << getNum(values[3]) << ");" << std::endl;
+		}
+		else
+		{
+			assert(0);
+		}
+
+		return selfID;
+	}
+
+	int32_t Add(int32_t id1, int32_t id2, const std::string& name = "")
+	{
+		auto type = InferOutputTypeIn2Out1Param2({GetType(id1), GetType(id2)});
+		auto selfID = AddVariable(type, name);
+		ExportVariable(selfID, "(" + GetNameWithCast(id1, type) + "+" + GetNameWithCast(id2, type) + ")");
+		return selfID;
+	}
+
+	int32_t Subtract(int32_t id1, int32_t id2, const std::string& name = "")
+	{
+		auto type = InferOutputTypeIn2Out1Param2({GetType(id1), GetType(id2)});
+		auto selfID = AddVariable(type, name);
+		ExportVariable(selfID, "(" + GetNameWithCast(id1, type) + "-" + GetNameWithCast(id2, type) + ")");
+		return selfID;
+	}
+
+	int32_t Mul(int32_t id1, int32_t id2, const std::string& name = "")
+	{
+		auto type = InferOutputTypeIn2Out1Param2({GetType(id1), GetType(id2)});
+		auto selfID = AddVariable(type, name);
+		ExportVariable(selfID, "(" + GetNameWithCast(id1, type) + "*" + GetNameWithCast(id2, type) + ")");
+		return selfID;
+	}
+
+	int32_t Div(int32_t id1, int32_t id2, const std::string& name = "")
+	{
+		auto type = InferOutputTypeIn2Out1Param2({GetType(id1), GetType(id2)});
+		auto selfID = AddVariable(type, name);
+		ExportVariable(selfID, "(" + GetNameWithCast(id1, type) + "/" + GetNameWithCast(id2, type) + ")");
+		return selfID;
+	}
+
+	int32_t Min(int32_t id1, int32_t id2, const std::string& name = "")
+	{
+		auto type = InferOutputTypeIn2Out1Param2({GetType(id1), GetType(id2)});
+		auto selfID = AddVariable(type, name);
+		ExportVariable(selfID, "min(" + GetNameWithCast(id1, type) + "," + GetNameWithCast(id2, type) + ")");
+		return selfID;
+	}
+
+	int32_t Max(int32_t id1, int32_t id2, const std::string& name = "")
+	{
+		auto type = InferOutputTypeIn2Out1Param2({GetType(id1), GetType(id2)});
+		auto selfID = AddVariable(type, name);
+		ExportVariable(selfID, "max(" + GetNameWithCast(id1, type) + "," + GetNameWithCast(id2, type) + ")");
+		return selfID;
+	}
+
+	int32_t Abs(int32_t id, const std::string& name = "")
+	{
+		auto type = GetType(id);
+		auto selfID = AddVariable(type, name);
+		ExportVariable(selfID, "abs(" + GetName(id) + ")");
+		return selfID;
+	}
+
+	int32_t Pow(int32_t id, int32_t base, const std::string& name = "")
+	{
+		auto type = GetType(id);
+		assert(GetType(base) == ValueType::Float1);
+
+		auto selfID = AddVariable(type, name);
+		ExportVariable(selfID, "pow(" + GetName(id) + "," + GetName(base) + ")");
+		return selfID;
+	}
+
+	int32_t Sin(int32_t id, const std::string& name = "")
+	{
+		auto selfID = AddVariable(variables_[id].Type, name);
+		ExportVariable(selfID, "sin(" + GetName(id) + ")");
+		return selfID;
+	}
+
+	int32_t Cos(int32_t id, const std::string& name = "")
+	{
+		auto selfID = AddVariable(variables_[id].Type, name);
+		ExportVariable(selfID, "cos(" + GetName(id) + ")");
+		return selfID;
+	}
+
+	int32_t Atan2(int32_t y, int32_t x, const std::string& name = "")
+	{
+		auto type = InferOutputTypeIn2Out1Param2({GetType(y), GetType(x)});
+		auto selfID = AddVariable(type, name);
+		ExportVariable(selfID, "atan2(" + GetNameWithCast(y, type) + "," + GetNameWithCast(x, type) + ")");
+		return selfID;
+	}
+
+	int32_t Dot(int32_t id1, int32_t id2, const std::string& name = "")
+	{
+		auto selfID = AddVariable(ValueType::Float1, name);
+		ExportVariable(selfID, "dot(" + GetName(id1) + "," + GetName(id2) + ")");
+		return selfID;
+	}
+
+	int32_t Normalize(int32_t id, const std::string& name = "")
+	{
+		auto selfID = AddVariable(GetType(id), name);
+		ExportVariable(selfID, "normalize(" + GetName(id) + ")");
+		return selfID;
+	}
+
+	int32_t Sqrt(int32_t id, const std::string& name = "")
+	{
+		auto selfID = AddVariable(GetType(id), name);
+		ExportVariable(selfID, "sqrt(" + GetName(id) + ")");
+		return selfID;
+	}
+
+	int32_t AppendVector(int32_t id1, int32_t id2, const std::string& name = "")
+	{
+		auto allCount = GetElementCount(GetType(id1)) + GetElementCount(GetType(id2));
+		auto type = InferOutputTypeInAppendVector({GetType(id1), GetType(id2)});
+
+		auto selfID = AddVariable(type, name);
+
+		str_ << exporter_->GetTypeName(type) << " " << GetName(selfID) << " = " << exporter_->GetTypeName(type) << "(";
+
+		auto getElmName = [](int n) -> std::string {
+			if (n == 0)
+				return ".x";
+			if (n == 1)
+				return ".y";
+			if (n == 2)
+				return ".z";
+			if (n == 3)
+				return ".w";
+			return "";
+		};
+
+		auto v1Count = GetElementCount(GetType(id1));
+		auto v2Count = allCount - v1Count;
+
+		for (int i = 0; i < v1Count; i++)
+		{
+			if (GetType(id1) == ValueType::Float1)
+			{
+				str_ << GetName(id1);
+			}
+			else
+			{
+				str_ << GetName(id1) << getElmName(i);
+			}
+
+			if (i < allCount - 1)
+				str_ << ",";
+		}
+
+		for (int i = 0; i < v2Count; i++)
+		{
+			if (GetType(id2) == ValueType::Float1)
+			{
+				str_ << GetName(id2);
+			}
+			else
+			{
+				str_ << GetName(id2) << getElmName(i);
+			}
+
+			if (v1Count + i < allCount - 1)
+				str_ << ",";
+		}
+
+		str_ << ");" << std::endl;
+
+		return selfID;
+	}
+
+	int32_t ComponentMask(int32_t id, std::array<bool, 4> mask, const std::string& name = "")
+	{
+		int elmCount = 0;
+		for (size_t i = 0; i < 4; i++)
+		{
+			if (mask[i])
+			{
+				elmCount++;
+			}
+		}
+
+		auto type = static_cast<ValueType>(static_cast<int>(ValueType::Float1) + elmCount - 1);
+		auto selfID = AddVariable(type, name);
+
+		str_ << exporter_->GetTypeName(type) << " " << GetName(selfID) << "=" << GetName(id) << ".";
+
+		if (mask[0])
+			str_ << "x";
+
+		if (mask[1])
+			str_ << "y";
+
+		if (mask[2])
+			str_ << "z";
+
+		if (mask[3])
+			str_ << "w";
+
+		str_ << ";" << std::endl;
+
+		return selfID;
+	}
+
+	int32_t CameraPosition() { return cameraPositionID_; }
+
+	int32_t WorldPosition() { return worldPositionID_; }
+
+	int32_t NormalPixelDir() { return pixelNormalDirID_; }
+};
+
 TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std::shared_ptr<Node> outputNode, std::string suffix)
 {
 	if (!(outputNode->OutputPins.size() != 0 || outputNode->Parameter->Type == NodeType::Output))
 		return TextExporterResult();
+
+	// Init
+	compiler = std::make_shared<TextCompiler>(this);
 
 	// Gather node
 	std::vector<std::shared_ptr<Node>> nodes;
@@ -403,6 +770,14 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	result.CustomData2 = customData2Count;
 	return result;
 };
+
+std::string TextExporter::GenerateTempName()
+{
+	std::ostringstream ret;
+	ret << "temp_" << tempID;
+	tempID++;
+	return ret.str();
+}
 
 void TextExporter::GatherNodes(std::shared_ptr<Material> material,
 							   std::shared_ptr<Node> node,
@@ -1046,6 +1421,119 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 			ret << "w";
 
 		ret << ";" << std::endl;
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Fresnel)
+	{
+		int exponentArg = 0;
+		int baseReflectFractionArg = 0;
+
+		if (node->Inputs[0].IsConnected)
+		{
+			exponentArg = compiler->AddVariable(node->Inputs[0].Type, node->Inputs[0].Name);
+		}
+		else
+		{
+			exponentArg = compiler->AddConstant(node->Target->Properties[0]->Floats[0]);
+		}
+
+		if (node->Inputs[1].IsConnected)
+		{
+			baseReflectFractionArg = compiler->AddVariable(node->Inputs[1].Type, node->Inputs[1].Name);
+		}
+		else
+		{
+			baseReflectFractionArg = compiler->AddConstant(node->Target->Properties[1]->Floats[0]);
+		}
+
+		auto dotArg = compiler->Dot(compiler->Normalize(compiler->Subtract(compiler->CameraPosition(), compiler->WorldPosition())),
+									compiler->NormalPixelDir());
+		auto maxminusabsArg =
+			compiler->Abs(compiler->Subtract(compiler->AddConstant(1.0f), compiler->Max(compiler->AddConstant(0.0f), dotArg)));
+		auto powArg = compiler->Pow(maxminusabsArg, exponentArg);
+		compiler->Add(compiler->Mul(powArg, compiler->Subtract(compiler->AddConstant(1.0f), baseReflectFractionArg)),
+					  baseReflectFractionArg,
+					  node->Outputs[0].Name);
+		ret << compiler->Str();
+		compiler->Clear();
+	}
+
+	if (node->Target->Parameter->Type == NodeType::Rotator)
+	{
+		auto time = GenerateTempName();
+		auto uv = GenerateTempName();
+
+		ret << GetTypeName(ValueType::Float2) << " " << uv << " = "
+			<< (node->Inputs[0].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[0]) : GetUVName(0)) << ";" << std::endl;
+
+		ret << GetTypeName(ValueType::Float1) << " " << time << " = "
+			<< (node->Inputs[1].IsConnected ? GetInputArg(ValueType::Float1, node->Inputs[1]) : GetTimeName()) << ";" << std::endl;
+
+		auto centerArg = compiler->AddConstant(ValueType::Float2, node->Target->Properties[0]->Floats);
+		auto speedArg = compiler->AddConstant(ValueType::Float1, node->Target->Properties[1]->Floats);
+		auto uvArg = compiler->AddVariable(ValueType::Float2, uv);
+		auto timeArg = compiler->AddVariable(ValueType::Float1, time);
+		auto sinArg = compiler->Sin(compiler->Mul(speedArg, timeArg));
+		auto cosArg = compiler->Cos(compiler->Mul(speedArg, timeArg));
+		auto matUArg = compiler->AppendVector(cosArg, compiler->Subtract(compiler->AddConstant(0.0f), sinArg));
+		auto matLArg = compiler->AppendVector(sinArg, cosArg);
+		auto resultUArg = compiler->Dot(matUArg, compiler->Subtract(uvArg, centerArg));
+		auto resultLArg = compiler->Dot(matLArg, compiler->Subtract(uvArg, centerArg));
+		auto matResultArg = compiler->AppendVector(resultUArg, resultLArg);
+		auto sumArg = compiler->Add(matResultArg, centerArg, node->Outputs[0].Name);
+
+		ret << compiler->Str();
+
+		compiler->Clear();
+	}
+
+	if (node->Target->Parameter->Type == NodeType::PolarCoords)
+	{
+		auto biasedUV = GenerateTempName();
+		auto biasedUV2 = GenerateTempName();
+		auto atanFrac = GenerateTempName();
+		auto sqrtUV = GenerateTempName();
+		auto polar = GenerateTempName();
+
+		ret << GetTypeName(ValueType::Float2) << " " << biasedUV << " = " << GetUVName(0) << " * 2.0 - 1.0;" << std::endl;
+		ret << GetTypeName(ValueType::Float2) << " " << biasedUV2 << " = " << biasedUV << " * " << biasedUV << ";" << std::endl;
+		ret << GetTypeName(ValueType::Float1) << " " << atanFrac << " = "
+			<< "FRAC(atan2(" << biasedUV << ".y, " << biasedUV << ".x) / 6.283);" << std::endl;
+		ret << GetTypeName(ValueType::Float1) << " " << sqrtUV << " = sqrt(" << biasedUV2 << ".x + " << biasedUV2 << ".y);" << std::endl;
+		ret << GetTypeName(node->Outputs[0].Type) << " " << polar << " = " << GetTypeName(node->Outputs[0].Type) << "(" << atanFrac << ","
+			<< sqrtUV << ");" << std::endl;
+
+		auto last = compiler->AddVariable(ValueType::Float2, polar);
+
+		// Tile
+		{
+			auto tile = node->Inputs[0].IsConnected ? compiler->AddVariable(ValueType::Float2, node->Inputs[0].Name)
+													: compiler->AddConstant(ValueType::Float2, node->Target->Properties[0]->Floats);
+			last = compiler->Mul(last, tile);
+		}
+
+		// Offset
+		{
+			auto offset = node->Inputs[1].IsConnected ? compiler->AddVariable(ValueType::Float2, node->Inputs[1].Name)
+													  : compiler->AddConstant(ValueType::Float2, node->Target->Properties[1]->Floats);
+			last = compiler->Add(last, offset);
+		}
+
+		// Pitch(V)
+		{
+			auto exp = node->Inputs[2].IsConnected ? compiler->AddVariable(ValueType::Float1, node->Inputs[2].Name)
+												   : compiler->AddConstant(ValueType::Float1, node->Target->Properties[2]->Floats);
+			auto h = compiler->ComponentMask(last, {true, false, false, false});
+			auto v = compiler->ComponentMask(last, {false, true, false, false});
+			v = compiler->Pow(v, exp);
+			last = compiler->AppendVector(h, v);
+		}
+
+		ret << compiler->Str();
+
+		compiler->Clear();
+
+		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "=" << compiler->GetName(last) << ";" << std::endl;
 	}
 
 	return ret.str();

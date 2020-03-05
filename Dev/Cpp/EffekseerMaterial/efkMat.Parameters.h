@@ -7,6 +7,12 @@
 namespace EffekseerMaterial
 {
 
+ValueType InferOutputTypeIn1Out1(const std::vector<ValueType>& inputTypes);
+
+ValueType InferOutputTypeIn2Out1Param2(const std::vector<ValueType>& inputTypes);
+
+ValueType InferOutputTypeInAppendVector(const std::vector<ValueType>& inputTypes);
+
 struct ExtractedTextureParameter
 {
 	//! parameter GUID
@@ -1547,6 +1553,138 @@ public:
 
 	ValueType
 	GetOutputType(std::shared_ptr<Material> material, std::shared_ptr<Node> node, const std::vector<ValueType>& inputTypes) const override;
+};
+
+class NodeFresnel : public NodeParameter
+{
+public:
+	NodeFresnel()
+	{
+		Type = NodeType::Fresnel;
+		TypeName = "Fresnel";
+		Group = std::vector<std::string>{"Others"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float1;
+		OutputPins.push_back(output);
+
+		auto exponentPin = std::make_shared<PinParameter>();
+		exponentPin->Name = "Exponent";
+		exponentPin->Type = ValueType::Float1;
+		InputPins.push_back(exponentPin);
+
+		auto baseReflectFractionPin = std::make_shared<PinParameter>();
+		baseReflectFractionPin->Name = "BaseReflectFraction";
+		baseReflectFractionPin->Type = ValueType::Float1;
+		InputPins.push_back(baseReflectFractionPin);
+
+		auto val1 = std::make_shared<NodePropertyParameter>();
+		val1->Name = "Exponent";
+		val1->Type = ValueType::Float1;
+		val1->DefaultValues[0] = 5.0f;
+		Properties.push_back(val1);
+
+		auto val2 = std::make_shared<NodePropertyParameter>();
+		val2->Name = "BaseReflectFraction";
+		val2->Type = ValueType::Float1;
+		val2->DefaultValues[0] = 0.04f;
+		Properties.push_back(val2);
+	}
+};
+
+class NodeRotator : public NodeParameter
+{
+public:
+	NodeRotator()
+	{
+		Type = NodeType::Rotator;
+		TypeName = "Rotator";
+		Group = std::vector<std::string>{"Others"};
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "Output";
+		output->Type = ValueType::Float2;
+		OutputPins.push_back(output);
+
+		auto exponentPin = std::make_shared<PinParameter>();
+		exponentPin->Name = "Coordinate";
+		exponentPin->Type = ValueType::Float2;
+		InputPins.push_back(exponentPin);
+
+		auto baseReflectFractionPin = std::make_shared<PinParameter>();
+		baseReflectFractionPin->Name = "Time";
+		baseReflectFractionPin->Type = ValueType::Float1;
+		InputPins.push_back(baseReflectFractionPin);
+
+		auto val1 = std::make_shared<NodePropertyParameter>();
+		val1->Name = "Center";
+		val1->Type = ValueType::Float2;
+		val1->DefaultValues[0] = 0.5f;
+		val1->DefaultValues[1] = 0.5f;
+		Properties.push_back(val1);
+
+		auto val2 = std::make_shared<NodePropertyParameter>();
+		val2->Name = "Speed";
+		val2->Type = ValueType::Float1;
+		val2->DefaultValues[0] = 0.25f;
+		Properties.push_back(val2);
+	}
+};
+
+class NodePolarCoords : public NodeParameter
+{
+public:
+	NodePolarCoords()
+	{
+		Type = NodeType::PolarCoords;
+		TypeName = "PolarCoords";
+		Group = std::vector<std::string>{"Others"};
+
+		auto tilePin = std::make_shared<PinParameter>();
+		tilePin->Name = "Tile";
+		tilePin->Type = ValueType::Float2;
+		tilePin->DefaultValues[0] = 1.0f;
+		tilePin->DefaultValues[1] = 1.0f;
+		InputPins.push_back(tilePin);
+
+		auto offsetPin = std::make_shared<PinParameter>();
+		offsetPin->Name = "Offset";
+		offsetPin->Type = ValueType::Float2;
+		offsetPin->DefaultValues[0] = 0.0f;
+		offsetPin->DefaultValues[1] = 0.0f;
+		InputPins.push_back(offsetPin);
+
+		auto pitchVPin = std::make_shared<PinParameter>();
+		pitchVPin->Name = "PitchV";
+		pitchVPin->Type = ValueType::Float1;
+		pitchVPin->DefaultValues[0] = 1.0f;
+		InputPins.push_back(pitchVPin);
+
+		auto val1 = std::make_shared<NodePropertyParameter>();
+		val1->Name = "Tile";
+		val1->Type = ValueType::Float2;
+		val1->DefaultValues[0] = 1.0f;
+		val1->DefaultValues[1] = 1.0f;
+		Properties.push_back(val1);
+
+		auto val2 = std::make_shared<NodePropertyParameter>();
+		val2->Name = "Offset";
+		val2->Type = ValueType::Float2;
+		val2->DefaultValues[0] = 0.0f;
+		Properties.push_back(val2);
+
+		auto val3 = std::make_shared<NodePropertyParameter>();
+		val3->Name = "PitchV";
+		val3->Type = ValueType::Float1;
+		val3->DefaultValues[0] = 1.0f;
+		Properties.push_back(val3);
+
+		auto output = std::make_shared<PinParameter>();
+		output->Name = "RadicalCoordinates";
+		output->Type = ValueType::Float2;
+		OutputPins.push_back(output);
+	}
 };
 
 class NodeComment : public NodeParameter
