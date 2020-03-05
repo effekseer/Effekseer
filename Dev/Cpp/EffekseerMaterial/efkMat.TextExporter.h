@@ -84,13 +84,21 @@ public:
 	bool HasWorldPositionOffset = false;
 };
 
+class TextCompiler;
+
 class TextExporter
 {
-protected:
+	friend class TextCompiler;
+
 public:
 	TextExporterResult Export(std::shared_ptr<Material> material, std::shared_ptr<Node> outputNode, std::string suffix = "");
 
 protected:
+	int32_t tempID = 0;
+	std::shared_ptr<TextCompiler> compiler;
+
+	std::string GenerateTempName();
+
 	void GatherNodes(std::shared_ptr<Material> material,
 					 std::shared_ptr<Node> node,
 					 std::vector<std::shared_ptr<Node>>& nodes,
