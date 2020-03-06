@@ -286,8 +286,7 @@ void EditorContent::UpdateBinary()
 
 void EditorContent::UpdatePath(const char* path)
 {
-	// TODO refactor replace
-	auto p = Replace(path, "\\", "/");
+	auto p = ResolvePath(path);
 	if (path_ == p)
 		return;
 
@@ -472,7 +471,7 @@ bool Editor::Load()
 
 bool Editor::LoadOrSelect(const char* path)
 {
-	auto p = Replace(path, "\\", "/");
+	auto p = ResolvePath(path);
 
 	for (size_t i = 0; i < contents_.size(); i++)
 	{
