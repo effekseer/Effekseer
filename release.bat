@@ -66,26 +66,31 @@ copy Dev\Cpp\EffekseerRendererDX11.sln %RDIR_R%\src\.
 copy Dev\Cpp\EffekseerRendererGL.sln %RDIR_R%\src\.
 
 mkdir %RDIR_R%\src\Effekseer
-robocopy Dev\Cpp\Effekseer %RDIR_R%\src\Effekseer *.h *.cpp *.filters *.vcxproj *.fx /S
+robocopy Dev\Cpp\Effekseer %RDIR_R%\src\Effekseer *.h *.cpp *.filters *.vcxproj *.fx CMakeLists.txt /S
 
 mkdir %RDIR_R%\src\EffekseerRendererDX9
-robocopy Dev\Cpp\EffekseerRendererDX9 %RDIR_R%\src\EffekseerRendererDX9 *.h *.cpp *.filters *.vcxproj *.fx /S
+robocopy Dev\Cpp\EffekseerRendererDX9 %RDIR_R%\src\EffekseerRendererDX9 *.h *.cpp *.filters *.vcxproj *.fx CMakeLists.txt /S
 
 mkdir %RDIR_R%\src\EffekseerRendererDX11
-robocopy Dev\Cpp\EffekseerRendererDX11 %RDIR_R%\src\EffekseerRendererDX11 *.h *.cpp *.filters *.vcxproj *.fx /S
+robocopy Dev\Cpp\EffekseerRendererDX11 %RDIR_R%\src\EffekseerRendererDX11 *.h *.cpp *.filters *.vcxproj *.fx CMakeLists.txt /S
 
 mkdir %RDIR_R%\src\EffekseerRendererGL
-robocopy Dev\Cpp\EffekseerRendererGL %RDIR_R%\src\EffekseerRendererGL *.h *.cpp *.filters *.vcxproj *.fx /S
+robocopy Dev\Cpp\EffekseerRendererGL %RDIR_R%\src\EffekseerRendererGL *.h *.cpp *.filters *.vcxproj *.fx CMakeLists.txt /S
 
 mkdir %RDIR_R%\src\EffekseerRendererCommon
-robocopy Dev\Cpp\EffekseerRendererCommon %RDIR_R%\src\EffekseerRendererCommon *.h *.cpp *.filters *.vcxproj *.fx /S
+robocopy Dev\Cpp\EffekseerRendererCommon %RDIR_R%\src\EffekseerRendererCommon *.h *.cpp *.filters *.vcxproj *.fx CMakeLists.txt /S
 
 mkdir %RDIR_R%\src\EffekseerSoundXAudio2
-robocopy Dev\Cpp\EffekseerSoundXAudio2 %RDIR_R%\src\EffekseerSoundXAudio2 *.h *.cpp *.filters *.vcxproj *.fx /S
+robocopy Dev\Cpp\EffekseerSoundXAudio2 %RDIR_R%\src\EffekseerSoundXAudio2 *.h *.cpp *.filters *.vcxproj *.fx CMakeLists.txt /S
 
 mkdir %RDIR_R%\src\EffekseerSoundAL
-robocopy Dev\Cpp\EffekseerSoundAL %RDIR_R%\src\EffekseerSoundAL *.h *.cpp *.filters *.vcxproj *.fx /S
+robocopy Dev\Cpp\EffekseerSoundAL %RDIR_R%\src\EffekseerSoundAL *.h *.cpp *.filters *.vcxproj *.fx CMakeLists.txt /S
 
+mkdir %RDIR_R%\src\EffekseerSoundDSound
+robocopy Dev\Cpp\EffekseerSoundDSound %RDIR_R%\src\EffekseerSoundDSound *.h *.cpp *.filters *.vcxproj *.fx CMakeLists.txt /S
+
+mkdir %RDIR_R%\src\EffekseerMaterialCompiler
+robocopy Dev\Cpp\EffekseerMaterialCompiler %RDIR_R%\src\EffekseerMaterialCompiler *.h *.cpp CMakeLists.txt /S
 
 echo Samples for runtimes
 robocopy Release\RuntimeSample %RDIR_R%\RuntimeSample\ *.h *.cpp *.filters *.vcxproj *.fx *.efk *.wav *.png *.sln /S
@@ -237,5 +242,7 @@ copy Dev\Cpp\EffekseerRendererDX12\EffekseerRendererDX12.h %RDIR_R%\Compiled\inc
 copy Dev\Cpp\EffekseerRendererGL\EffekseerRendererGL.h %RDIR_R%\Compiled\include\.
 copy Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h %RDIR_R%\Compiled\include\.
 copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR_R%\Compiled\include\.
+
+copy Release\CMakeLists.txt %RDIR_R%\.
 
 pause
