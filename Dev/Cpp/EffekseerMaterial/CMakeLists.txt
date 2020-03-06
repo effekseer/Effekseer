@@ -21,8 +21,13 @@ else()
     set(CMAKE_CXX_STANDARD 14)
 endif()
 
-file(GLOB_RECURSE srcs *.cpp)
 file(GLOB_RECURSE hs *.h)
+
+if(APPLE)
+    file(GLOB_RECURSE srcs *.mm *.cpp)
+else()
+    file(GLOB_RECURSE srcs *.cpp)
+endif()
 
 # set include directories
 include_directories(../include/)
