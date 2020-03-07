@@ -217,5 +217,7 @@ copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR_R%\Compiled\include\.
 
 copy Release\CMakeLists.txt %RDIR_R%\.
 robocopy Downloads\glfw %RDIR_R%\RuntimeSample\Utils\glfw\. /S
+copy Release\build_msvc2017.bat %RDIR_R%\build_msvc2017.bat
+copy Release\build_msvc2019.bat %RDIR_R%\build_msvc2019.bat
 
 pause
