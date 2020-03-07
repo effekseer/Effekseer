@@ -22,6 +22,10 @@ You can integrate Effekseer as a subdirectory
 
 ### When integrate an application which is not compiled with Cmake
 
+For VisualStudio, you can build the library by executing a batch file.
+The built library file (.lib) is created in the install folder.
+(For Visual Studio 2019, the batch file is build_msvc2019.bat and the install folder is install_msvc2019)
+
 #### Generate a project
 
 Execute bat of sh which depends on your environment.

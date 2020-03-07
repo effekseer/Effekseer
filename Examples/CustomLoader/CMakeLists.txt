@@ -5,8 +5,8 @@ add_executable(Example_CustomLoader main.cpp)
 target_include_directories(
     Example_CustomLoader
     PRIVATE
-    ../../Dev/Cpp/Effekseer
-    ../../Dev/Cpp/EffekseerRendererGL
+    ${EFK_RUNTIME_ROOT}/Effekseer
+    ${EFK_RUNTIME_ROOT}/EffekseerRendererGL
     ../Utils
 	${EFK_THIRDPARTY_INCLUDES}
 )
@@ -17,8 +17,7 @@ target_link_libraries(
     Effekseer
     EffekseerRendererGL
     Example_Utils
-    debug "${GLFW3_LIB_DEBUG}"
-    optimized "${GLFW3_LIB_RELEASE}"
+    ${EFK_EXAMPLES_GLFW}
 )
 
 target_link_directories(

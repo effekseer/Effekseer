@@ -23,6 +23,10 @@ subdirectoryとして、Effekseerを追加することで使用できます。
 
 ### Cmakeを使用していないプロジェクトに組み込む場合
 
+VisualStudio の場合、バッチファイルを実行することでライブラリをビルドできます。
+ビルドされたライブラリファイル (.lib) は、install フォルダ内に作成されます。
+(Visual Studio 2019 の場合、バッチファイルは build_msvc2019.bat、install フォルダは install_msvc2019 です)
+
 #### プロジェクトの生成
 
 環境に応じてbatやshファイルを実行します。

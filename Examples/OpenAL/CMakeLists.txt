@@ -10,9 +10,9 @@ if(OpenAL_FOUND)
     target_include_directories(
         Example_OpenAL
         PRIVATE
-        ../../Dev/Cpp/Effekseer
-        ../../Dev/Cpp/EffekseerRendererGL
-        ../../Dev/Cpp/EffekseerSoundAL
+        ${EFK_RUNTIME_ROOT}/Effekseer
+        ${EFK_RUNTIME_ROOT}/EffekseerRendererGL
+        ${EFK_RUNTIME_ROOT}/EffekseerSoundAL
         ../Utils
         ${EFK_THIRDPARTY_INCLUDES}
         ${OPENAL_INCLUDE_DIR}
