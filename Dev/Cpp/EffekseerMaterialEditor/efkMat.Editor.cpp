@@ -237,7 +237,7 @@ bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)path);
 	_wfopen_s(&fp, (const wchar_t*)path16, L"rb");
 #else
-	fp = fopen(rpath.c_str(), "rb");
+	fp = fopen(path, "rb");
 #endif
 	if (fp == nullptr)
 	{
