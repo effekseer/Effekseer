@@ -43,7 +43,7 @@ if(WIN32)
     add_subdirectory(Multithread)
     add_subdirectory(NetworkServer)
     add_subdirectory(NetworkClient)
-    
+    add_subdirectory(SortHandle)
 endif()
 
 add_subdirectory(OpenGL)

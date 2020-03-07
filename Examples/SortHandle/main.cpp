@@ -20,16 +20,6 @@
 #include <EffekseerRendererDX9.h>
 #include <EffekseerSoundXAudio2.h>
 
-#if _DEBUG
-#pragma comment(lib, "VS2015/Debug/Effekseer.lib" )
-#pragma comment(lib, "VS2015/Debug/EffekseerRendererDX9.lib" )
-#pragma comment(lib, "VS2015/Debug/EffekseerSoundXAudio2.lib" )
-#else
-#pragma comment(lib, "VS2015/Release/Effekseer.lib" )
-#pragma comment(lib, "VS2015/Release/EffekseerRendererDX9.lib" )
-#pragma comment(lib, "VS2015/Release/EffekseerSoundXAudio2.lib" )
-#endif
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -317,9 +307,9 @@ int main(int argc, char **argv)
 		::Effekseer::Matrix44().LookAtRH( g_position, ::Effekseer::Vector3D( 0.0f, 0.0f, 0.0f ), ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
 	
 	// エフェクトの読込
-	g_effects[0] = Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"r_square.efk" );
-	g_effects[1] = Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"g_square.efk" );
-	g_effects[2] = Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"b_square.efk" );
+	g_effects[0] = Effekseer::Effect::Create( g_manager, EFK_EXAMPLE_ASSETS_DIR_U16 u"r_square.efk" );
+	g_effects[1] = Effekseer::Effect::Create( g_manager, EFK_EXAMPLE_ASSETS_DIR_U16 u"g_square.efk" );
+	g_effects[2] = Effekseer::Effect::Create( g_manager, EFK_EXAMPLE_ASSETS_DIR_U16 u"b_square.efk" );
 
 	MainLoop();
 
