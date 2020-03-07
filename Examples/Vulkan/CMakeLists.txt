@@ -14,9 +14,9 @@ add_executable(${PROJECT_NAME} ${LOCAL_SOURCES})
 target_include_directories(
     ${PROJECT_NAME} PRIVATE
     ${Vulkan_INCLUDE_DIRS}
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../Dev/Cpp/Effekseer"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../Dev/Cpp/3rdParty/LLGI/src"
-    "${EFK_THIRDPARTY_INCLUDES}"
+    ${EFK_RUNTIME_ROOT}/Effekseer
+    ${EFK_RUNTIME_ROOT}/3rdParty/LLGI/src
+    ${EFK_THIRDPARTY_INCLUDES}
 )
 
 target_link_directories(

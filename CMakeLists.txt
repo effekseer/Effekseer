@@ -251,6 +251,7 @@ endif()
 add_subdirectory(Dev)
 
 if(BUILD_EXAMPLES)
+    set(EFK_RUNTIME_ROOT ${CMAKE_CURRENT_LIST_DIR}/Dev/Cpp)
     add_subdirectory(Examples)
 endif()
 

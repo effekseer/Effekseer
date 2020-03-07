@@ -5,8 +5,8 @@ add_executable(Example_CustomLoader main.cpp)
 target_include_directories(
     Example_CustomLoader
     PRIVATE
-    ../../Dev/Cpp/Effekseer
-    ../../Dev/Cpp/EffekseerRendererGL
+    ${EFK_RUNTIME_ROOT}/Effekseer
+    ${EFK_RUNTIME_ROOT}/EffekseerRendererGL
     ../Utils
 	${EFK_THIRDPARTY_INCLUDES}
 )

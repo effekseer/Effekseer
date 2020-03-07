@@ -5,9 +5,9 @@ add_executable(Example_DirectX12 main.cpp)
 target_include_directories(
     Example_DirectX12
     PRIVATE
-    ../../Dev/Cpp/Effekseer
-    ../../Dev/Cpp/EffekseerRendererDX12
-    ../../Dev/Cpp/EffekseerSoundXAudio2
+    ${EFK_RUNTIME_ROOT}/Effekseer
+    ${EFK_RUNTIME_ROOT}/EffekseerRendererDX12
+    ${EFK_RUNTIME_ROOT}/EffekseerSoundXAudio2
 	../../Dev/Cpp/3rdParty/LLGI/src/
     ../Utils
 )
