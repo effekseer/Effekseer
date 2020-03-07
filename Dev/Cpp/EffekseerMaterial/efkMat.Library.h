@@ -74,7 +74,7 @@ class LibraryContentGroup
 public:
 	std::string Name;
 	std::vector<std::shared_ptr<LibraryContentBase>> Contents;
-	std::map<std::string, std::shared_ptr<LibraryContentGroup>> Groups;
+	std::vector<std::shared_ptr<LibraryContentGroup>> Groups;
 };
 
 class Library

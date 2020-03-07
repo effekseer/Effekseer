@@ -34,7 +34,7 @@ ConstValue2_Name,V2,V2
 Alpha_Name,Alpha,アルファ
 Name_Name,Name,名称
 Input_Name,V,V
-Output_Name, , 
+Output_Name," "," "
 Comment_Name,Comment,コメント
 Priority_Name,Priority,優先度
 Priority_Desc,"The lower the priority, the higher the screen is shown in other editors.",低い優先度ほど、他のエディタの画面の上の位置に表示されます。
@@ -74,6 +74,9 @@ Fmod_Node_Name,Mod,余り
 Fmod_Node_Desc,"Outputs the remainder when V1 is divided by V2.
 If the input is not connected, use the value of the property.","V1をV2で割った余りを出力します。
 入力が接続されてない場合、プロパティの値を使用します。"
+,,
+Step_Node_Name,Step,ステップ
+Step_Node_Desc,"Outputs 1 if the value input to V is larger than Edge, and outputs 0 if it is smaller.",Vに入力された値がEdgeより大きい場合、1を、小さい場合、0を出力します。
 ,,
 Abs_Node_Name,Absolute,絶対値
 Abs_Node_Desc,Outputs the absolute value of V.,Vの絶対値を出力します。
@@ -228,7 +231,25 @@ The summary and details specified in the parameters are displayed in Effekseer a
 このパラメーターはパーティクルごとに異なる値を設定できます。
 パラメーターに設定された概要と詳細はEffekseerや外部のツールに表示されます。"
 ,,
-ConvertParam_Name,Convert to parameter,パラメーターに変換 
+Others_Name,Others,その他
+,,
+Fresnel_Node_Name,Fresnel,フレネル
+Fresnel_Node_Desc,"The larger the surface direction is from the front, the larger the value is output.
+You can specify the intensity in the properties.
+","面の向きが正面から離れるほど、大きな値を出力します。
+プロパティで強度を設定できます。"
+Rotator_Node_Name,Rotator,回転
+Rotator_Node_Desc,"The input value (mainly UV) is rotated and output.
+Used to rotate an image on a material.
+An angle is expressed as 1 per lap.","入力された値(主にUV)を回転させて出力します。
+マテリアル上で画像を回転させるときに使用します。
+角度は一周あたり1で表現します。"
+PolarCoords_Node_Name,PolarCoords,極座標
+PolarCoords_Node_Desc,"Outputs UVs located on the radiation from the center.
+You can specify how many images are arranged in one round and the rotation angle.","中央から放射上に配置されたUVを出力します。
+一周で画像が何枚配置されるか、や回転の角度を設定できます。"
+,,
+ConvertParam_Name,Convert to parameter,"パラメーターに変換 "
 ,,
 Error_SameNode,Error_SameNode,×　同じノードには接続できません。
 Error_SamePin,Error_SamePin,×　同じピンには接続できません。

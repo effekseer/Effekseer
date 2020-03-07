@@ -94,13 +94,25 @@ void Library::MakeGroups()
 			continue;
 		}
 
-		if (Root->Groups.count(content->Group[0]) == 0)
+		bool found = false;
+
+		for (auto& group : Root->Groups)
 		{
-			Root->Groups[content->Group[0]] = std::make_shared<LibraryContentGroup>();
-			Root->Groups[content->Group[0]]->Name = content->Group[0];
+			if (group->Name == content->Group[0])
+			{
+				group->Contents.push_back(content);
+				found = true;
+				break;
+			}
 		}
 
-		Root->Groups[content->Group[0]]->Contents.push_back(content);
+		if (!found)
+		{
+			auto group = std::make_shared<LibraryContentGroup>();
+			group->Name = content->Group[0];
+			group->Contents.push_back(content);
+			Root->Groups.push_back(group);
+		}
 	}
 }
 

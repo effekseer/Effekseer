@@ -930,11 +930,11 @@ void Editor::UpdatePopup()
 		{
 			for (auto group : library->Root->Groups)
 			{
-				auto& groupName = StringContainer::GetValue((group.first + "_Name").c_str(), group.first.c_str());
+				auto& groupName = StringContainer::GetValue((group->Name + "_Name").c_str(), group->Name.c_str());
 
 				if (ImGui::BeginMenu(groupName.c_str()))
 				{
-					for (auto content : group.second->Contents)
+					for (auto content : group->Contents)
 					{
 						if (!isShown(content))
 						{
@@ -963,7 +963,7 @@ void Editor::UpdatePopup()
 		{
 			for (auto group : library->Root->Groups)
 			{
-				for (auto content : group.second->Contents)
+				for (auto content : group->Contents)
 				{
 					if (!isShown(content))
 					{
