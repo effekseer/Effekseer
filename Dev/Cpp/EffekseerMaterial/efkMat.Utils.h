@@ -29,8 +29,8 @@ std::string GetConstantTextureName(int64_t guid);
 
 inline std::string ResolvePath(const std::string& path)
 {
-#if defined(__WIN32)
-	return Replace(path, "¥¥", "/");
+#if defined(_WIN32)
+	return Replace(path, "\\", "/");
 #elif defined(__APPLE__)
 	return NFDtoNFC(path);
 #else
@@ -40,8 +40,8 @@ inline std::string ResolvePath(const std::string& path)
 
 inline std::string ToNativePath(const std::string& path)
 {
-#if defined(__WIN32)
-	return Replace(path, "/", "¥¥");
+#if defined(_WIN32)
+	return Replace(path, "/", "\\");
 #elif defined(__APPLE__)
 	return NFCtoNFD(path);
 #else
