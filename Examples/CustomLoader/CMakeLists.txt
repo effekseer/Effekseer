@@ -17,8 +17,7 @@ target_link_libraries(
     Effekseer
     EffekseerRendererGL
     Example_Utils
-    debug "${GLFW3_LIB_DEBUG}"
-    optimized "${GLFW3_LIB_RELEASE}"
+    ${EFK_EXAMPLES_GLFW}
 )
 
 target_link_directories(

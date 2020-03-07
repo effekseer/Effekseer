@@ -47,8 +47,6 @@ robocopy Dev\release\resources\ %RDIR%\Tool\resources\. /s
 
 echo Copy runtime
 mkdir %RDIR_R%\RuntimeSample\
-mkdir %RDIR_R%\RuntimeSample\lib
-mkdir %RDIR_R%\RuntimeSample\include
 
 mkdir %RDIR_R%\src
 mkdir %RDIR_R%\src\include
@@ -93,33 +91,7 @@ mkdir %RDIR_R%\src\EffekseerMaterialCompiler
 robocopy Dev\Cpp\EffekseerMaterialCompiler %RDIR_R%\src\EffekseerMaterialCompiler *.h *.cpp CMakeLists.txt /S
 
 echo Samples for runtimes
-robocopy Release\RuntimeSample %RDIR_R%\RuntimeSample\ *.h *.cpp *.filters *.vcxproj *.fx *.efk *.wav *.png *.sln /S
-rmdir %RDIR_R%\RuntimeSample\include /S /Q
-rmdir %RDIR_R%\RuntimeSample\lib /S /Q
-
-mkdir %RDIR_R%\RuntimeSample\include
-mkdir %RDIR_R%\RuntimeSample\lib
-
-copy Dev\Cpp\Effekseer\Effekseer.h %RDIR_R%\RuntimeSample\include\.
-copy Dev\Cpp\EffekseerRendererDX9\EffekseerRendererDX9.h %RDIR_R%\RuntimeSample\include\.
-copy Dev\Cpp\EffekseerRendererDX11\EffekseerRendererDX11.h %RDIR_R%\RuntimeSample\include\.
-copy Dev\Cpp\EffekseerRendererGL\EffekseerRendererGL.h %RDIR_R%\RuntimeSample\include\.
-copy Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h %RDIR_R%\RuntimeSample\include\.
-copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR_R%\RuntimeSample\include\.
-
-copy Dev\Cpp\lib\x86\Effekseer.Debug.lib %RDIR_R%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\x86\EffekseerRendererDX9.Debug.lib %RDIR_R%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\x86\EffekseerRendererDX11.Debug.lib %RDIR_R%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\x86\EffekseerRendererGL.Debug.lib %RDIR_R%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\x86\EffekseerSoundXAudio2.Debug.lib %RDIR_R%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\x86\EffekseerSoundAL.Debug.lib %RDIR_R%\RuntimeSample\lib\.
-
-copy Dev\Cpp\lib\x86\Effekseer.Release.lib %RDIR_R%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\x86\EffekseerRendererDX9.Release.lib %RDIR_R%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\x86\EffekseerRendererDX11.Release.lib %RDIR_R%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\x86\EffekseerRendererGL.Release.lib %RDIR_R%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\x86\EffekseerSoundXAudio2.Release.lib %RDIR_R%\RuntimeSample\lib\.
-copy Dev\Cpp\lib\x86\EffekseerSoundAL.Release.lib %RDIR_R%\RuntimeSample\lib\.
+robocopy Examples %RDIR_R%\RuntimeSample\ *.h *.cpp *.txt *.fx *.efk *.wav *.png /S
 
 copy Dev\Cpp\CMakeLists.txt %RDIR_R%\src\.
 
@@ -244,5 +216,6 @@ copy Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h %RDIR_R%\Compiled\inc
 copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR_R%\Compiled\include\.
 
 copy Release\CMakeLists.txt %RDIR_R%\.
+robocopy Downloads\glfw %RDIR_R%\RuntimeSample\Utils\glfw\. /S
 
 pause

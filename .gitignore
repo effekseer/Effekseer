@@ -36,7 +36,6 @@ build/
 CMakeFiles/
 
 Debug*/
-Release/RuntimeSample/lib/*.lib
 Dev/release/*.exe
 Dev/release/*.lib
 Dev/release/*.dll
