@@ -300,11 +300,12 @@ namespace Effekseer.GUI.Dock
 		{
 			var flag = swig.TreeNodeFlags.OpenOnArrow | swig.TreeNodeFlags.OpenOnDoubleClick | swig.TreeNodeFlags.DefaultOpen;
 
-			if (Manager.NativeManager.TreeNodeEx(treeNode.ParamTreeNode.Node.Name.Value + treeNode.ID, flag))
+			string nodeName = treeNode.ParamTreeNode.Node.Name.Value;
+			if (Manager.NativeManager.TreeNodeEx(nodeName + treeNode.ID, flag))
 			{
 				foreach (var fcurve in treeNode.FCurves)
 				{
-					fcurve.UpdateTree();
+					fcurve.UpdateTree(nodeName);
 				}
 
 				for (int i = 0; i < treeNode.Children.Count; i++)
@@ -1456,14 +1457,16 @@ namespace Effekseer.GUI.Dock
 				return new Tuple35<Data.Value.IFCurve, FCurveProperty>(null, null);
 			}
 
-			public void UpdateTree()
+			public void UpdateTree(string nodeName)
 			{
 
 				for(int i = 0; i < properties.Length; i++)
 				{
 					var value = this.fcurves[i].GetValue(Manager.Viewer.Current);
 
-					if (Manager.NativeManager.Selectable(Name + " : " + names[i] + " (" + value + ")", properties[i].IsShown, swig.SelectableFlags.AllowDoubleClick))
+					string labelName = Name + " : " + names[i] + " (" + value + ")";
+					string labelID = "###FCurveLabel_" + nodeName + "_" + Name + "_" + names[i];
+					if (Manager.NativeManager.Selectable(labelName + labelID, properties[i].IsShown, swig.SelectableFlags.AllowDoubleClick))
 					{
 						if(Manager.NativeManager.IsMouseDoubleClicked(0))
 						{
