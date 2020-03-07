@@ -38,6 +38,8 @@ class EditorContent
 private:
 	Editor* editor_ = nullptr;
 	std::string path_;
+	std::string name_;
+
 	std::shared_ptr<Material> material_;
 	ed::EditorContext* editorContext_;
 	bool hasStorageRef_ = false;

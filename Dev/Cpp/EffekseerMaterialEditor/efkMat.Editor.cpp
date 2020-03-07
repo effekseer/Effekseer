@@ -231,15 +231,17 @@ void EditorContent::SaveAs(const char* path)
 
 bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 {
+	// replace back slash into slash
+	auto rpath = StringHelper::Replace(std::string(path), std::string("\\"), std::string("/"));
 
 	char16_t path16[260];
-	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)path);
+	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)rpath.c_str());
 
 	FILE* fp = nullptr;
 #ifdef _WIN32
 	_wfopen_s(&fp, (const wchar_t*)path16, L"rb");
 #else
-	fp = fopen(path, "rb");
+	fp = fopen(rpath.c_str(), "rb");
 #endif
 	if (fp == nullptr)
 	{
@@ -257,9 +259,9 @@ bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 	fread(data.data(), 1, data.size(), fp);
 	fclose(fp);
 
-	material_->Load(data, library, path);
+	material_->Load(data, library, rpath.c_str());
 
-	UpdatePath(path);
+	UpdatePath(rpath.c_str());
 
 	ClearIsChanged();
 	return true;
@@ -301,6 +303,12 @@ void EditorContent::UpdatePath(const char* path)
 	path_ = p;
 	material_->SetPath(path_);
 
+	// get name
+	{
+		auto it = path_.find_last_of('/');
+		name_ = (it != path_.npos) ? path_.substr(it + 1) : path_;
+	}
+
 	if (path_ != "" && editor_->keyValueFileStorage_ != nullptr)
 	{
 		editor_->keyValueFileStorage_->Lock();
@@ -328,9 +336,7 @@ std::string EditorContent::GetName()
 
 	if (path_ != "")
 	{
-		auto it = path_.find_last_of('/');
-		std::string name = (it != path_.npos) ? path_.substr(it + 1) : path_;
-
+		std::string name = name_;
 		if (isChanged)
 		{
 			name += " *";
@@ -724,7 +730,7 @@ void Editor::UpdateNodes()
 				isGenerated = true;
 				node->UserObj = std::make_shared<EffekseerMaterial::NodeUserDataObject>();
 			}
-			
+
 			auto uobj = (EffekseerMaterial::NodeUserDataObject*)node->UserObj.get();
 
 			if (uobj->GetPreview() == nullptr)

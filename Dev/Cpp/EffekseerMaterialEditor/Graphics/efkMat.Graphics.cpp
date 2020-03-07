@@ -398,8 +398,8 @@ bool Preview::CompileShader(std::string& vs,
 	VS = vs;
 	PS = ps;
 
-	std::cout << "Compile Shader" << std::endl;
-	std::cout << PS << std::endl;
+	// std::cout << "Compile Shader" << std::endl;
+	// std::cout << PS << std::endl;
 
 	ar::SafeDelete(shader);
 	ar::SafeDelete(constantBuffer);
