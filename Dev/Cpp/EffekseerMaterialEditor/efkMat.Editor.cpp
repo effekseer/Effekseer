@@ -231,14 +231,10 @@ void EditorContent::SaveAs(const char* path)
 
 bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 {
-	// replace back slash into slash
-	auto rpath = StringHelper::Replace(std::string(path), std::string("\\"), std::string("/"));
-
-	char16_t path16[260];
-	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)rpath.c_str());
-
 	FILE* fp = nullptr;
 #ifdef _WIN32
+	char16_t path16[260];
+	Effekseer::ConvertUtf8ToUtf16((int16_t*)path16, 260, (const int8_t*)path);
 	_wfopen_s(&fp, (const wchar_t*)path16, L"rb");
 #else
 	fp = fopen(rpath.c_str(), "rb");
@@ -259,9 +255,9 @@ bool EditorContent::Load(const char* path, std::shared_ptr<Library> library)
 	fread(data.data(), 1, data.size(), fp);
 	fclose(fp);
 
-	material_->Load(data, library, rpath.c_str());
+	material_->Load(data, library, path);
 
-	UpdatePath(rpath.c_str());
+	UpdatePath(path);
 
 	ClearIsChanged();
 	return true;
