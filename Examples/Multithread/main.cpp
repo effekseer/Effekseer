@@ -22,16 +22,6 @@
 #include <EffekseerRendererDX9.h>
 #include <EffekseerSoundXAudio2.h>
 
-#if _DEBUG
-#pragma comment(lib, "VS2015/Debug/Effekseer.lib" )
-#pragma comment(lib, "VS2015/Debug/EffekseerRendererDX9.lib" )
-#pragma comment(lib, "VS2015/Debug/EffekseerSoundXAudio2.lib" )
-#else
-#pragma comment(lib, "VS2015/Release/Effekseer.lib" )
-#pragma comment(lib, "VS2015/Release/EffekseerRendererDX9.lib" )
-#pragma comment(lib, "VS2015/Release/EffekseerSoundXAudio2.lib" )
-#endif
-
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -321,7 +311,7 @@ int main(int argc, char **argv)
 		::Effekseer::Matrix44().LookAtRH( ::Effekseer::Vector3D( 10.0f, 5.0f, 20.0f ), ::Effekseer::Vector3D( 0.0f, 0.0f, 0.0f ), ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
 	
 	// エフェクトの読込
-	g_effect = Effekseer::Effect::Create( g_manager, (const EFK_CHAR*)L"test.efk" );
+	g_effect = Effekseer::Effect::Create( g_manager, EFK_EXAMPLE_ASSETS_DIR_U16 u"test.efk" );
 
 	// スレッド生成
 	g_thread = std::thread([]() -> void { UpdateAsync(nullptr); });
