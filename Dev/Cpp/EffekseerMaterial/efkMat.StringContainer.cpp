@@ -64,4 +64,6 @@ bool StringContainer::LoadFromJsonStr(const char* json_str)
 	return true;
 }
 
+void StringContainer::Clear() { values.clear(); }
+
 } // namespace EffekseerMaterial

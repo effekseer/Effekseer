@@ -42,6 +42,7 @@ namespace Effekseer
 
 		static bool is_loop = false;
 
+		static Language language;
 		/*
 		public static IViewer Viewer
 		{
@@ -58,8 +59,14 @@ namespace Effekseer
 
 		public static Language Language
 		{
-			get;
-			private set;
+			get { return language; }
+			set { 
+				language = value; 
+				if(OnLanguageChanged != null)
+				{
+					OnLanguageChanged(language);
+				}
+			}
 		}
 
 		public static Data.NodeRoot Root
@@ -307,6 +314,11 @@ namespace Effekseer
 		/// 読込後イベント
 		/// </summary>
 		public static event EventHandler OnReload;
+
+		/// <summary>
+		/// (Experimental) Called when language is changed
+		/// </summary>
+		public static Action<Language> OnLanguageChanged;
 
 		static Core()
 		{

@@ -138,19 +138,11 @@ namespace Effekseer
 
 			if (gui)
 			{
-				{
-					var appDirectory = GUI.Manager.GetEntryDirectory();
-					if (Core.Language == Language.Japanese)
-					{
-						var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_ja.txt");
-						Resources.LoadLanguageFile(fullPath);
-					}
-					if (Core.Language == Language.English)
-					{
-						var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_en.txt");
-						Resources.LoadLanguageFile(fullPath);
-					}
-				}
+				ChangeLanguage();
+
+#if DEBUG
+				Core.OnLanguageChanged += (lang) => { ChangeLanguage(); };
+#endif
 
 				// Failed to compile script
 				if (Core.ExportScripts.Count == 0)
@@ -187,6 +179,7 @@ namespace Effekseer
                 }
 
                 
+
 
 				System.OperatingSystem os = System.Environment.OSVersion;
 				swig.DeviceType deviceType = swig.DeviceType.DirectX11;
@@ -264,6 +257,21 @@ namespace Effekseer
 			}
 
 			Core.Dispose();
+		}
+
+		private static void ChangeLanguage()
+		{
+			var appDirectory = GUI.Manager.GetEntryDirectory();
+			if (Core.Language == Language.Japanese)
+			{
+				var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_ja.txt");
+				Resources.LoadLanguageFile(fullPath);
+			}
+			if (Core.Language == Language.English)
+			{
+				var fullPath = Path.Combine(appDirectory, "resources/languages/effekseer_en.txt");
+				Resources.LoadLanguageFile(fullPath);
+			}
 		}
 
 		static void Core_OnOutputMessage(string obj)

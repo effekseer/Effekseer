@@ -356,7 +356,36 @@ namespace Effekseer.GUI.Menu
 
 				this.Controls.Add(menu);
 			}
+
+#if DEBUG
+			{
+				{
+					var menu = new Menu("Lang(Debug)");
+
+					menu.Controls.Add(create_menu_item_from_commands(ChangeLanguageJapanese));
+					menu.Controls.Add(create_menu_item_from_commands(ChangeLanguageEnglish));
+					this.Controls.Add(menu);
+				}
+			}
+#endif
 		}
+#if DEBUG
+		[Name(value = "Jp")]
+		static public bool ChangeLanguageJapanese()
+		{
+			Core.Language = Language.Japanese;
+			return true;
+		}
+#endif
+
+#if DEBUG
+		[Name(value = "En")]
+		static public bool ChangeLanguageEnglish()
+		{
+			Core.Language = Language.Japanese;
+			return true;
+		}
+#endif
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{

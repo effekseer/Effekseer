@@ -156,6 +156,37 @@ void GLFLW_CloseCallback(GLFWwindow* w)
 	}
 }
 
+void ChangeLanguage(Effekseer::SystemLanguage language)
+{
+
+	FILE* fp = nullptr;
+
+	if (language == Effekseer::SystemLanguage::Japanese)
+	{
+		auto path = GetExecutingDirectory() + "resources/languages/effekseer_material_ja.json";
+		fp = fopen(path.c_str(), "rb");
+	}
+	else
+	{
+		auto path = GetExecutingDirectory() + "resources/languages/effekseer_material_en.json";
+		fp = fopen(path.c_str(), "rb");
+	}
+
+	if (fp != nullptr)
+	{
+		fseek(fp, 0, SEEK_END);
+		auto size = ftell(fp);
+		fseek(fp, 0, SEEK_SET);
+		std::vector<char> data;
+		data.resize(size);
+		fread(data.data(), size, 1, fp);
+		fclose(fp);
+
+		EffekseerMaterial::StringContainer::Clear();
+		EffekseerMaterial::StringContainer::LoadFromJsonStr(data.data());
+	}
+}
+
 int mainLoop(int argc, char* argv[])
 {
 	bool ipcMode = false;
@@ -271,29 +302,7 @@ int mainLoop(int argc, char* argv[])
 	std::string imguiConfigPath = GetExecutingDirectory() + "imgui.material.ini";
 	ImGui::GetIO().IniFilename = imguiConfigPath.c_str();
 
-	FILE* fp = nullptr;
-
-	if (config->Language == Effekseer::SystemLanguage::Japanese)
-	{
-		fp = fopen("resources/languages/effekseer_material_ja.json", "rb");
-	}
-	else
-	{
-		fp = fopen("resources/languages/effekseer_material_en.json", "rb");
-	}
-
-	if (fp != nullptr)
-	{
-		fseek(fp, 0, SEEK_END);
-		auto size = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
-		std::vector<char> data;
-		data.resize(size);
-		fread(data.data(), size, 1, fp);
-		fclose(fp);
-
-		EffekseerMaterial::StringContainer::LoadFromJsonStr(data.data());
-	}
+	ChangeLanguage(config->Language);
 
 	editor = std::make_shared<EffekseerMaterial::Editor>(graphics);
 
@@ -461,6 +470,20 @@ int mainLoop(int argc, char* argv[])
 					if (ImGui::MenuItem("DebugWindow"))
 					{
 						g_showDebugWindow = true;
+					}
+
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Language"))
+				{
+					if (ImGui::MenuItem("Japanese"))
+					{
+						ChangeLanguage(Effekseer::SystemLanguage::Japanese);
+					}
+					else if (ImGui::MenuItem("English"))
+					{
+						ChangeLanguage(Effekseer::SystemLanguage::English);
 					}
 
 					ImGui::EndMenu();

@@ -124,6 +124,7 @@ namespace Effekseer
 
 		public static void LoadLanguageFile(string path)
 		{
+			keyToStrings.Clear();
 			var lines = System.IO.File.ReadAllLines(path);
 
 			foreach(var line in lines)
