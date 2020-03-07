@@ -41,6 +41,9 @@ if(WIN32)
     add_subdirectory(CustomBinary)
     add_subdirectory(Distortion)
     add_subdirectory(Multithread)
+    add_subdirectory(NetworkServer)
+    add_subdirectory(NetworkClient)
+    
 endif()
 
 add_subdirectory(OpenGL)

@@ -21,15 +21,6 @@
 #include <EffekseerRendererDX9.h>
 #include <EffekseerSoundXAudio2.h>
 
-#if _DEBUG
-#pragma comment(lib, "VS2015/Debug/Effekseer.lib" )
-#pragma comment(lib, "VS2015/Debug/EffekseerRendererDX9.lib" )
-#pragma comment(lib, "VS2015/Debug/EffekseerSoundXAudio2.lib" )
-#else
-#pragma comment(lib, "VS2015/Release/Effekseer.lib" )
-#pragma comment(lib, "VS2015/Release/EffekseerRendererDX9.lib" )
-#pragma comment(lib, "VS2015/Release/EffekseerSoundXAudio2.lib" )
-#endif
 //----------------------------------------------------------------------------------
 //
 //----------------------------------------------------------------------------------
@@ -39,6 +30,8 @@ static int g_window_height = 600;
 static ::Effekseer::Manager*			g_manager = NULL;
 static ::EffekseerRenderer::Renderer*	g_renderer = NULL;
 static ::EffekseerSound::Sound*			g_sound = NULL;
+static ::Effekseer::Effect*				g_effect = NULL;
+static ::Effekseer::Handle				g_handle = -1;
 static ::Effekseer::Vector3D			g_position;
 
 static LPDIRECT3D9						g_d3d = NULL;
@@ -46,7 +39,7 @@ static LPDIRECT3DDEVICE9				g_d3d_device = NULL;
 static IXAudio2*						g_xa2 = NULL;
 static IXAudio2MasteringVoice*			g_xa2_master = NULL;
 
-static ::Effekseer::Client*				g_client = NULL;
+static ::Effekseer::Server*				g_server = NULL;
 
 static int32_t							g_timer = 0;
 
@@ -151,14 +144,25 @@ void MainLoop()
 		}
 		else
 		{
+			// サーバーの更新を行う。
+			g_server->Update();
+
 			if( g_timer % 120 == 0 )
 			{
-				g_client->Reload( g_manager, u"test_reload.efk", u"test" );
+				// エフェクトの停止
+				g_manager->StopEffect( g_handle );
+
+				// エフェクトの再生
+				g_handle = g_manager->Play( g_effect, 0, 0, 0 );
 			}
+
+			// エフェクトの移動処理を行う。
+			g_manager->AddLocation( g_handle, ::Effekseer::Vector3D( 0.2f, 0.0f, 0.0f ) );
 
 			// エフェクトの更新処理を行う。
 			g_manager->Update();
-		
+			
+			
 			g_d3d_device->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0 );
 			g_d3d_device->BeginScene();
 
@@ -242,7 +246,6 @@ int main(int argc, char **argv)
 	GetDirectoryName(current_path, argv[0]);
 	SetCurrentDirectoryA(current_path);
 #endif
-
 	InitWindow();
 
 	// 描画用インスタンスの生成
@@ -272,16 +275,36 @@ int main(int argc, char **argv)
 	// 独自拡張可能、現在はファイルから読み込んでいる。
 	g_manager->SetSoundLoader( g_sound->CreateSoundLoader() );
 
-	// クライアントの生成
-	g_client = Effekseer::Client::Create();
+	// サーバーの生成
+	g_server = Effekseer::Server::Create();
 
-	// クライアントをポート60000で接続
-	g_client->Start( "127.0.0.1", 60000 );
+	// サーバーをポート60000で開始
+	g_server->Start( 60000 );
+	
+	// 視点位置を確定
+	g_position = ::Effekseer::Vector3D( 10.0f, 5.0f, 20.0f );
+
+	// 投影行列を設定
+	g_renderer->SetProjectionMatrix(
+		::Effekseer::Matrix44().PerspectiveFovRH( 90.0f / 180.0f * 3.14f, (float)g_window_width / (float)g_window_height, 1.0f, 50.0f ) );
+
+	// カメラ行列を設定
+	g_renderer->SetCameraMatrix(
+		::Effekseer::Matrix44().LookAtRH( g_position, ::Effekseer::Vector3D( 0.0f, 0.0f, 0.0f ), ::Effekseer::Vector3D( 0.0f, 1.0f, 0.0f ) ) );
+	
+	// エフェクトの読込
+	g_effect = Effekseer::Effect::Create( g_manager, EFK_EXAMPLE_ASSETS_DIR_U16 u"test.efk" );
+
+	// 編集元のファイルがtest.efkprojであるとし、エフェクトをtestという名称で登録
+	g_server->Register( u"test", g_effect );
 
 	MainLoop();
 
-	// クライアントの破棄
-	ES_SAFE_DELETE( g_client );
+	// エフェクトの破棄
+	ES_SAFE_RELEASE( g_effect );
+
+	// サーバーの破棄
+	ES_SAFE_DELETE( g_server );
 
 	// 先にエフェクト管理用インスタンスを破棄
 	g_manager->Destroy();
