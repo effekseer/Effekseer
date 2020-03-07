@@ -39,6 +39,7 @@ if(WIN32)
 
     add_subdirectory(Culling)
     add_subdirectory(CustomBinary)
+    add_subdirectory(Distortion)
 endif()
 
 add_subdirectory(OpenGL)
