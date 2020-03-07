@@ -1460,21 +1460,26 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::Rotator)
 	{
-		auto time = GenerateTempName();
+		auto angle = GenerateTempName();
+		auto center = GenerateTempName();
 		auto uv = GenerateTempName();
 
 		ret << GetTypeName(ValueType::Float2) << " " << uv << " = "
 			<< (node->Inputs[0].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[0]) : GetUVName(0)) << ";" << std::endl;
 
-		ret << GetTypeName(ValueType::Float1) << " " << time << " = "
-			<< (node->Inputs[1].IsConnected ? GetInputArg(ValueType::Float1, node->Inputs[1]) : GetTimeName()) << ";" << std::endl;
+		ret << GetTypeName(ValueType::Float2) << " " << center << " = "
+			<< (node->Inputs[1].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[1]) : GetInputArg(ValueType::Float2, {0.5f, 0.5f})) << ";"
+			<< std::endl;
 
-		auto centerArg = compiler->AddConstant(ValueType::Float2, node->Target->Properties[0]->Floats);
-		auto speedArg = compiler->AddConstant(ValueType::Float1, node->Target->Properties[1]->Floats);
+		ret << GetTypeName(ValueType::Float1) << " " << angle << " = "
+			<< (node->Inputs[2].IsConnected ? GetInputArg(ValueType::Float1, node->Inputs[2]) :  GetInputArg(ValueType::Float1, 0.0f)) << ";" << std::endl;
+
+		auto centerArg = compiler->AddVariable(ValueType::Float2, center);
+		auto speedArg = compiler->AddConstant(3.141592f * 2.0f);
 		auto uvArg = compiler->AddVariable(ValueType::Float2, uv);
-		auto timeArg = compiler->AddVariable(ValueType::Float1, time);
-		auto sinArg = compiler->Sin(compiler->Mul(speedArg, timeArg));
-		auto cosArg = compiler->Cos(compiler->Mul(speedArg, timeArg));
+		auto angleArg = compiler->AddVariable(ValueType::Float1, angle);
+		auto sinArg = compiler->Sin(compiler->Mul(speedArg, angleArg));
+		auto cosArg = compiler->Cos(compiler->Mul(speedArg, angleArg));
 		auto matUArg = compiler->AppendVector(cosArg, compiler->Subtract(compiler->AddConstant(0.0f), sinArg));
 		auto matLArg = compiler->AppendVector(sinArg, cosArg);
 		auto resultUArg = compiler->Dot(matUArg, compiler->Subtract(uvArg, centerArg));

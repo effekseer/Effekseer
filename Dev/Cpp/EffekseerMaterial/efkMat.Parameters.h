@@ -1607,28 +1607,20 @@ public:
 		output->Type = ValueType::Float2;
 		OutputPins.push_back(output);
 
-		auto exponentPin = std::make_shared<PinParameter>();
-		exponentPin->Name = "Coordinate";
-		exponentPin->Type = ValueType::Float2;
-		InputPins.push_back(exponentPin);
+		auto uvPin = std::make_shared<PinParameter>();
+		uvPin->Name = "UV";
+		uvPin->Type = ValueType::Float2;
+		InputPins.push_back(uvPin);
 
-		auto baseReflectFractionPin = std::make_shared<PinParameter>();
-		baseReflectFractionPin->Name = "Time";
-		baseReflectFractionPin->Type = ValueType::Float1;
-		InputPins.push_back(baseReflectFractionPin);
+		auto centerPin = std::make_shared<PinParameter>();
+		centerPin->Name = "RotationCenter";
+		centerPin->Type = ValueType::Float2;
+		InputPins.push_back(centerPin);
 
-		auto val1 = std::make_shared<NodePropertyParameter>();
-		val1->Name = "Center";
-		val1->Type = ValueType::Float2;
-		val1->DefaultValues[0] = 0.5f;
-		val1->DefaultValues[1] = 0.5f;
-		Properties.push_back(val1);
-
-		auto val2 = std::make_shared<NodePropertyParameter>();
-		val2->Name = "Speed";
-		val2->Type = ValueType::Float1;
-		val2->DefaultValues[0] = 0.25f;
-		Properties.push_back(val2);
+		auto anglePin = std::make_shared<PinParameter>();
+		anglePin->Name = "RotationAngle";
+		anglePin->Type = ValueType::Float1;
+		InputPins.push_back(anglePin);
 	}
 };
 

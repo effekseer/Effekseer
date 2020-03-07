@@ -1,3 +1,4 @@
+#if defined(__APPLE__)
 #import <Foundation/Foundation.h>
 #include "efkMat.Utils.h"
 
@@ -24,3 +25,4 @@ std::string NFDtoNFC(const std::string& v)
 }
 
 } // namespace EffekseerMaterial
+#endif
