@@ -5,14 +5,6 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "winmm.lib")
 
-#if _DEBUG
-#pragma comment(lib, "VS2015/Debug/Effekseer.lib")
-#pragma comment(lib, "VS2015/Debug/EffekseerRendererGL.lib")
-#else
-#pragma comment(lib, "VS2015/Release/Effekseer.lib")
-#pragma comment(lib, "VS2015/Release/EffekseerRendererGL.lib")
-#endif
-
 #include <Wingdi.h>
 
 #endif

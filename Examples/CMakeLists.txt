@@ -36,7 +36,9 @@ if(WIN32)
     add_subdirectory(DirectX9)
     add_subdirectory(DirectX11)
     add_subdirectory(DirectX12)
+
     add_subdirectory(Culling)
+    add_subdirectory(CustomBinary)
 endif()
 
 add_subdirectory(OpenGL)
