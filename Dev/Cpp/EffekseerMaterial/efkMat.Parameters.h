@@ -738,6 +738,7 @@ public:
 		auto edge = std::make_shared<PinParameter>();
 		edge->Name = "Edge";
 		edge->Type = ValueType::Float1;
+		edge->DefaultValues[0] = 0.5f;
 		InputPins.push_back(edge);
 
 		auto value = std::make_shared<PinParameter>();
@@ -886,6 +887,7 @@ public:
 		auto paramExp = std::make_shared<NodePropertyParameter>();
 		paramExp->Name = "Exp";
 		paramExp->Type = ValueType::Float1;
+		paramExp->DefaultValues[0] = 2.0f;
 		Properties.push_back(paramExp);
 	}
 

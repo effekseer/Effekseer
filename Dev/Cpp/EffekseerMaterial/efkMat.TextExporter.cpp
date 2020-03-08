@@ -221,10 +221,10 @@ public:
 	int32_t Pow(int32_t id, int32_t base, const std::string& name = "")
 	{
 		auto type = GetType(id);
-		assert(GetType(base) == ValueType::Float1);
 
 		auto selfID = AddVariable(type, name);
-		ExportVariable(selfID, "pow(" + GetName(id) + "," + GetName(base) + ")");
+		auto masked = ComponentMask(base, {true, false, false, false});
+		ExportVariable(selfID, "pow(" + GetName(id) + "," + GetNameWithCast(masked, type) + ")");
 		return selfID;
 	}
 
@@ -344,7 +344,7 @@ public:
 		auto type = static_cast<ValueType>(static_cast<int>(ValueType::Float1) + elmCount - 1);
 		auto selfID = AddVariable(type, name);
 
-		str_ << exporter_->GetTypeName(type) << " " << GetName(selfID) << "=" << GetName(id) << ".";
+		str_ << exporter_->GetTypeName(type) << " " << GetName(selfID) << "=" << GetNameWithCast(id, ValueType::Float4) << ".";
 
 		if (mask[0])
 			str_ << "x";
@@ -1068,11 +1068,8 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::Step)
 	{
-		assert(node->Inputs[0].Type == ValueType::Float1);
-		assert(node->Inputs[1].Type == ValueType::Float1);
-
 		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= min(1.0,ceil("
-			<< GetInputArg(node->Outputs[0].Type, node->Inputs[1]) << "-" << GetInputArg(node->Outputs[0].Type, node->Inputs[0]) << "));"
+			<< GetInputArg(ValueType::Float1, node->Inputs[1]) << "-" << GetInputArg(ValueType::Float1, node->Inputs[0]) << "));"
 			<< std::endl;
 	}
 
@@ -1103,11 +1100,31 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 
 	if (node->Target->Parameter->Type == NodeType::Power)
 	{
-		assert(node->Inputs[1].Type == ValueType::Float1);
+		int baseArg = 0;
+		int expArg = 0;
 
-		ret << GetTypeName(node->Outputs[0].Type) << " " << node->Outputs[0].Name << "= pow("
-			<< GetInputArg(node->Outputs[0].Type, node->Inputs[0]) << ","
-			<< exportInputOrProp(node->Inputs[0].Type, node->Inputs[1], node->Target->Properties[0]) << ");" << std::endl;
+		if (node->Inputs[0].IsConnected)
+		{
+			baseArg = compiler->AddVariable(node->Inputs[0].Type, node->Inputs[0].Name);
+		}
+		else
+		{
+			baseArg = compiler->AddConstant(0.0f);
+		}
+
+		if (node->Inputs[1].IsConnected)
+		{
+			expArg = compiler->AddVariable(node->Inputs[1].Type, node->Inputs[1].Name);
+		}
+		else
+		{
+			expArg = compiler->AddConstant(node->Target->Properties[0]->Floats[0]);
+		}
+
+		compiler->Pow(baseArg, expArg, node->Outputs[0].Name);
+
+		ret << compiler->Str();
+		compiler->Clear();
 	}
 
 	if (node->Target->Parameter->Type == NodeType::SquareRoot)
@@ -1468,11 +1485,13 @@ std::string TextExporter::ExportNode(std::shared_ptr<TextExporterNode> node)
 			<< (node->Inputs[0].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[0]) : GetUVName(0)) << ";" << std::endl;
 
 		ret << GetTypeName(ValueType::Float2) << " " << center << " = "
-			<< (node->Inputs[1].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[1]) : GetInputArg(ValueType::Float2, {0.5f, 0.5f})) << ";"
-			<< std::endl;
+			<< (node->Inputs[1].IsConnected ? GetInputArg(ValueType::Float2, node->Inputs[1])
+											: GetInputArg(ValueType::Float2, {0.5f, 0.5f}))
+			<< ";" << std::endl;
 
 		ret << GetTypeName(ValueType::Float1) << " " << angle << " = "
-			<< (node->Inputs[2].IsConnected ? GetInputArg(ValueType::Float1, node->Inputs[2]) :  GetInputArg(ValueType::Float1, 0.0f)) << ";" << std::endl;
+			<< (node->Inputs[2].IsConnected ? GetInputArg(ValueType::Float1, node->Inputs[2]) : GetInputArg(ValueType::Float1, 0.0f)) << ";"
+			<< std::endl;
 
 		auto centerArg = compiler->AddVariable(ValueType::Float2, center);
 		auto speedArg = compiler->AddConstant(3.141592f * 2.0f);
