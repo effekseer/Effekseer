@@ -43,7 +43,7 @@ namespace EffekseerRenderer
 		uint8_t*						m_ringBufferData;
 
 		efkRibbonNodeParam					innstancesNodeParam;
-		std::vector<efkRibbonInstanceParam>	instances;
+		Effekseer::CustomAlignedVector<efkRibbonInstanceParam> instances;
 		SplineGenerator spline_left;
 		SplineGenerator spline_right;
 

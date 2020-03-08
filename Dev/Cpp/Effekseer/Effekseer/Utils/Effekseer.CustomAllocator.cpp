@@ -11,9 +11,33 @@ void EFK_STDCALL InternalFree(void* p, unsigned int size)
 	delete[] pData;
 }
 
+void* EFK_STDCALL InternalAlignedMalloc(unsigned int size, unsigned int alignement)
+{
+#ifdef _MSC_VER
+	return _mm_malloc(size, alignement);
+#else
+	void* ptr = nullptr;
+	posix_memalign(&ptr, alignement, size);
+	return ptr;
+#endif
+}
+
+void EFK_STDCALL InternalAlignedFree(void* p, unsigned int size)
+{
+#ifdef _MSC_VER
+	_mm_free(p);
+#else
+	return free(p);
+#endif
+}
+
 MallocFunc mallocFunc_ = InternalMalloc;
 
 FreeFunc freeFunc_ = InternalFree;
+
+AlignedMallocFunc alignedMallocFunc_ = InternalAlignedMalloc;
+
+AlignedFreeFunc alignedFreeFunc_ = InternalAlignedFree;
 
 MallocFunc GetMallocFunc() { return mallocFunc_; }
 
@@ -22,5 +46,13 @@ void SetMallocFunc(MallocFunc func) { mallocFunc_ = func; }
 FreeFunc GetFreeFunc() { return freeFunc_; }
 
 void SetFreeFunc(FreeFunc func) { freeFunc_ = func; }
+
+AlignedMallocFunc GetAlignedMallocFunc() { return alignedMallocFunc_; }
+
+void SetAlignedMallocFunc(AlignedMallocFunc func) { alignedMallocFunc_ = func; }
+
+AlignedFreeFunc GetAlignedFreeFunc() { return alignedFreeFunc_; }
+
+void SetAlignedFreeFunc(AlignedFreeFunc func) { alignedFreeFunc_ = func; }
 
 } // namespace Effekseer

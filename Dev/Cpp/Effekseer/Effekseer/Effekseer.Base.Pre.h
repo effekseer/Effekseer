@@ -89,19 +89,29 @@ class Model;
 typedef	int	Handle;
 
 /**
-	@brief	メモリ確保関数
+	@brief	Memory Allocation function
 */
-typedef void* ( EFK_STDCALL *MallocFunc ) ( unsigned int size );
+typedef void*(EFK_STDCALL* MallocFunc)(unsigned int size);
 
 /**
-	@brief	メモリ破棄関数
+	@brief	Memory Free function
 */
-typedef	void ( EFK_STDCALL *FreeFunc ) ( void* p, unsigned int size );
+typedef void(EFK_STDCALL* FreeFunc)(void* p, unsigned int size);
 
 /**
-	@brief	ランダム関数
+	@brief	AlignedMemory Allocation function
 */
-typedef	int ( EFK_STDCALL *RandFunc ) (void);
+typedef void*(EFK_STDCALL* AlignedMallocFunc)(unsigned int size, unsigned int alignment);
+
+/**
+	@brief	AlignedMemory Free function
+*/
+typedef void(EFK_STDCALL* AlignedFreeFunc)(void* p, unsigned int size);
+
+/**
+	@brief	Random Function
+*/
+typedef int(EFK_STDCALL* RandFunc)(void);
 
 /**
 	@brief	エフェクトのインスタンス破棄時のコールバックイベント

@@ -41,7 +41,7 @@ namespace EffekseerRenderer
 		uint8_t*						m_ringBufferData;
 
 		efkTrackNodeParam					innstancesNodeParam;
-		std::vector<efkTrackInstanceParam>	instances;
+		Effekseer::CustomAlignedVector<efkTrackInstanceParam> instances;
 		SplineGenerator spline;
 
 		int32_t vertexCount_ = 0;

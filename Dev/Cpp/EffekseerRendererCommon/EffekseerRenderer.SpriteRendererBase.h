@@ -46,7 +46,7 @@ protected:
 		efkSpriteInstanceParam	Value;
 	};
 
-	std::vector<KeyValue>				instances;
+	Effekseer::CustomAlignedVector<KeyValue> instances;
 	int32_t vertexCount_ = 0;
 	int32_t stride_ = 0;
 	int32_t customData1Count_ = 0;
