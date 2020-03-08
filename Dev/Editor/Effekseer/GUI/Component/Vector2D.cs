@@ -10,6 +10,7 @@ namespace Effekseer.GUI.Component
 	{
 		string id = "";
 		string id_c = "";
+		string id_reset = "";
 		public string Label { get; set; } = string.Empty;
 
 		public string Description { get; set; } = string.Empty;
@@ -54,6 +55,8 @@ namespace Effekseer.GUI.Component
 			}
 
 			id = "###" + Manager.GetUniqueID().ToString();
+			id_c = "###" + Manager.GetUniqueID().ToString();
+			id_reset = "###" + Manager.GetUniqueID().ToString();
 		}
 
 		public void SetBinding(object o)
@@ -131,7 +134,7 @@ namespace Effekseer.GUI.Component
 
 			if (Manager.NativeManager.BeginPopupContextItem(id_c))
 			{
-				Functions.ShowReset(binding);
+				Functions.ShowReset(binding, id_reset);
 
 				Manager.NativeManager.EndPopup();
 

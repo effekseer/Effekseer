@@ -23,9 +23,9 @@ namespace Effekseer.GUI.Component
 			return Manager.NativeManager.IsItemHovered() && Manager.NativeManager.GetHoveredIDTimer() > 0.25f;
 		}
 
-		public static void ShowReset(Data.IResettableValue value)
+		public static void ShowReset(Data.IResettableValue value, string id)
 		{
-			if (Manager.NativeManager.Button(Resources.GetString("ResetParam_Name")))
+			if (Manager.NativeManager.Button(Resources.GetString("ResetParam_Name") + id))
 			{
 				value.ResetValue();
 			}
