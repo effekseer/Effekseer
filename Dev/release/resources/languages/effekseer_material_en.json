@@ -140,7 +140,7 @@
   "CustomData1_Node_Desc": "Outputs externally specified parameters.\nThis parameter can be set differently for each particle.\nThe summary and details specified in the parameters are displayed in Effekseer and external tools.",
   "CustomData2_Node_Name": "CustomData2",
   "CustomData2_Node_Desc": "Outputs externally specified parameters.\nThis parameter can be set differently for each particle.\nThe summary and details specified in the parameters are displayed in Effekseer and external tools.",
-  "Others_Name": "Others",
+  "Advanced_Name": "Advanced",
   "Fresnel_Node_Name": "Fresnel",
   "Fresnel_Node_Desc": "The larger the surface direction is from the front, the larger the value is output.\nYou can specify the intensity in the properties.\n",
   "Rotator_Node_Name": "Rotator",

@@ -231,7 +231,7 @@ The summary and details specified in the parameters are displayed in Effekseer a
 このパラメーターはパーティクルごとに異なる値を設定できます。
 パラメーターに設定された概要と詳細はEffekseerや外部のツールに表示されます。"
 ,,
-Others_Name,Others,その他
+Advanced_Name,Advanced,応用
 ,,
 Fresnel_Node_Name,Fresnel,フレネル
 Fresnel_Node_Desc,"The larger the surface direction is from the front, the larger the value is output.

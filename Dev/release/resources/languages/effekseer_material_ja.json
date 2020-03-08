@@ -140,7 +140,7 @@
   "CustomData1_Node_Desc": "外部から設定されたパラメーターを出力します。\nこのパラメーターはパーティクルごとに異なる値を設定できます。\nパラメーターに設定された概要と詳細はEffekseerや外部のツールに表示されます。",
   "CustomData2_Node_Name": "カスタムデータ2",
   "CustomData2_Node_Desc": "外部から設定されたパラメーターを出力します。\nこのパラメーターはパーティクルごとに異なる値を設定できます。\nパラメーターに設定された概要と詳細はEffekseerや外部のツールに表示されます。",
-  "Others_Name": "その他",
+  "Advanced_Name": "応用",
   "Fresnel_Node_Name": "フレネル",
   "Fresnel_Node_Desc": "面の向きが正面から離れるほど、大きな値を出力します。\nプロパティで強度を設定できます。",
   "Rotator_Node_Name": "回転",

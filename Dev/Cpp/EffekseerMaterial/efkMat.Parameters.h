@@ -1562,7 +1562,7 @@ public:
 	{
 		Type = NodeType::Fresnel;
 		TypeName = "Fresnel";
-		Group = std::vector<std::string>{"Others"};
+		Group = std::vector<std::string>{"Advanced"};
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -1600,7 +1600,7 @@ public:
 	{
 		Type = NodeType::Rotator;
 		TypeName = "Rotator";
-		Group = std::vector<std::string>{"Others"};
+		Group = std::vector<std::string>{"Advanced"};
 
 		auto output = std::make_shared<PinParameter>();
 		output->Name = "Output";
@@ -1631,7 +1631,7 @@ public:
 	{
 		Type = NodeType::PolarCoords;
 		TypeName = "PolarCoords";
-		Group = std::vector<std::string>{"Others"};
+		Group = std::vector<std::string>{"Advanced"};
 
 		auto tilePin = std::make_shared<PinParameter>();
 		tilePin->Name = "Tile";
