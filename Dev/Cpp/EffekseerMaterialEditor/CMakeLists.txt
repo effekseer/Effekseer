@@ -117,6 +117,23 @@ target_link_libraries(
     optimized "${LIBPNG_LIB_RELEASE}"
 )
 
+if(USE_LIBPNG_LOADER)
+    target_link_directories(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
+    )
+
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        debug "${ZLIB_LIB_DEBUG}"
+        optimized "${ZLIB_LIB_RELEASE}"
+        debug "${LIBPNG_LIB_DEBUG}"
+	    optimized "${LIBPNG_LIB_RELEASE}"
+	)
+endif()
+
 if (WIN32)
 
 target_link_libraries(

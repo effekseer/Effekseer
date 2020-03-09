@@ -13,12 +13,19 @@ option(BUILD_VIEWER "Build viewer" OFF)
 option(BUILD_EDITOR "Build editor" OFF)
 option(BUILD_TEST "Build test" OFF)
 option(BUILD_EXAMPLES "Build examples" ON)
+option(BUILD_VERSION16 "is built as version1.6" OFF)
+option(BUILD_UNITYPLUGIN "is built as unity plugin" OFF)
 option(FROM_CI "from ci" OFF)
 option(SANITIZE_ENABLED "is sanitizer enabled" OFF)
+option(USE_LIBPNG_LOADER "use libpng in an internal loader (if it builds viewer except windows, it becomes on)" OFF)
 
-option(BUILD_VERSION16 "is build as version1.6" OFF)
+if (BUILD_VIEWER)
+    set(USE_LIBPNG_LOADER ON)
+endif()
 
-option(BUILD_UNITYPLUGIN "for unity plugin" OFF)
+if(USE_LIBPNG_LOADER)
+    add_definitions(-D__EFFEKSEER_USE_LIBPNG__)
+endif()
 
 if(SANITIZE_ENABLED)
     set(CMAKE_CXX_FLAGS " -fsanitize=undefined,address" ${CMAKE_CXX_FLAGS})
@@ -76,6 +83,14 @@ if(BUILD_VIEWER)
     list(APPEND EFK_THIRDPARTY_INCLUDES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/include)
     list(APPEND EFK_THIRDPARTY_LIBRARY_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/Install/zlib/lib)
     
+    if(MSVC)
+        set(ZLIB_LIB_DEBUG "zlibstaticd")
+        set(ZLIB_LIB_RELEASE "zlibstatic")
+    elseif(BUILD_WITH_POSTFIX)
+        set(ZLIB_LIB_DEBUG "z")
+        set(ZLIB_LIB_RELEASE "z")
+    endif()
+
     # libpng
     ExternalProject_Add(
         ExternalProject_libpng

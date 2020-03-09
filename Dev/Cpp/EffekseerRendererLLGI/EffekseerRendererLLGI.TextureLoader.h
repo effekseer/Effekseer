@@ -5,6 +5,8 @@
 
 #include "EffekseerRendererLLGI.DeviceObject.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
+#include "../EffekseerRendererCommon/EffekseerRenderer.PngTextureLoader.h"
+
 #include <LLGI.Graphics.h>
 #include <LLGI.Texture.h>
 
@@ -18,6 +20,7 @@ private:
 
 	::Effekseer::FileInterface* m_fileInterface;
 	::Effekseer::DefaultFileInterface m_defaultFileInterface;
+	::EffekseerRenderer::PngTextureLoader pngTextureLoader_;
 
 public:
 	TextureLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface = NULL);

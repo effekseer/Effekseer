@@ -1,5 +1,7 @@
 ﻿cmake_minimum_required (VERSION 3.0.0)
 
+project(Example_OpenGL)
+
 add_executable(Example_OpenGL main.cpp)
 
 target_include_directories(
@@ -34,9 +36,6 @@ if(NOT WIN32)
         PRIVATE
         ${CMAKE_THREAD_LIBS_INIT}
         ${OPENGL_gl_LIBRARY}
-        debug "${LIBPNG_LIB_DEBUG}"
-        optimized "${LIBPNG_LIB_RELEASE}"
-        z
     )
 endif()
 
@@ -54,4 +53,23 @@ if(APPLE)
         ${CORE_FOUNDATION_FRAMEWORK}
         ${CORE_VIDEO_FRAMEWORK}
     )
+endif()
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "Examples") 
+
+if(USE_LIBPNG_LOADER)
+    target_link_directories(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
+    )
+
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        debug "${ZLIB_LIB_DEBUG}"
+        optimized "${ZLIB_LIB_RELEASE}"
+        debug "${LIBPNG_LIB_DEBUG}"
+	    optimized "${LIBPNG_LIB_RELEASE}"
+	)
 endif()

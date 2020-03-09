@@ -1,5 +1,7 @@
 ﻿cmake_minimum_required (VERSION 3.0.0)
 
+project(Example_Utils)
+
 set(srcs Window.cpp;Window.cpp)
 
 if(WIN32)
@@ -11,3 +13,5 @@ else()
 endif()
 
 add_library(Example_Utils STATIC ${srcs})
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "Examples") 

@@ -3,9 +3,6 @@
 #include "EffekseerRendererLLGI.TextureLoader.h"
 #include "EffekseerRendererLLGI.RendererImplemented.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "../3rdParty/stb/stb_image.h"
-
 namespace EffekseerRendererLLGI
 {
 
@@ -18,9 +15,15 @@ TextureLoader::TextureLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileIn
 	{
 		m_fileInterface = &m_defaultFileInterface;
 	}
+
+	pngTextureLoader_.Initialize();
 }
 
-TextureLoader::~TextureLoader() { ES_SAFE_RELEASE(graphicsDevice_); }
+TextureLoader::~TextureLoader()
+{
+	ES_SAFE_RELEASE(graphicsDevice_);
+	pngTextureLoader_.Finalize();
+}
 
 Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::TextureType textureType)
 {
@@ -34,65 +37,12 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 		char* data_texture = new char[size_texture];
 		reader->Read(data_texture, size_texture);
 
-		unsigned char* pixels;
-		int width;
-		int height;
-		int bpp;
-
-		pixels = (uint8_t*)stbi_load_from_memory((stbi_uc const*)data_texture, size_texture, &width, &height, &bpp, 0);
-
-		if (width > 0)
+		if (pngTextureLoader_.Load(data_texture, size_texture, false))
 		{
 			LLGI::TextureInitializationParameter texParam;
-			texParam.Size = LLGI::Vec2I(width, height);
+			texParam.Size = LLGI::Vec2I(pngTextureLoader_.GetWidth(), pngTextureLoader_.GetHeight());
 			auto texture = graphicsDevice_->GetGraphics()->CreateTexture(texParam);
 			auto buf = texture->Lock();
-
-			if (bpp == 4)
-			{
-				memcpy(buf, pixels, width * height * 4);
-			}
-			else if (bpp == 2)
-			{
-				// Gray+Alpha
-				for (int h = 0; h < height; h++)
-				{
-					for (int w = 0; w < width; w++)
-					{
-						((uint8_t*)buf)[(w + h * width) * 4 + 0] = pixels[(w + h * width) * 2 + 0];
-						((uint8_t*)buf)[(w + h * width) * 4 + 1] = pixels[(w + h * width) * 2 + 0];
-						((uint8_t*)buf)[(w + h * width) * 4 + 2] = pixels[(w + h * width) * 2 + 0];
-						((uint8_t*)buf)[(w + h * width) * 4 + 3] = pixels[(w + h * width) * 2 + 1];
-					}
-				}
-			}
-			else if (bpp == 1)
-			{
-				// Gray
-				for (int h = 0; h < height; h++)
-				{
-					for (int w = 0; w < width; w++)
-					{
-						((uint8_t*)buf)[(w + h * width) * 4 + 0] = pixels[(w + h * width) * 2 + 0];
-						((uint8_t*)buf)[(w + h * width) * 4 + 1] = pixels[(w + h * width) * 2 + 0];
-						((uint8_t*)buf)[(w + h * width) * 4 + 2] = pixels[(w + h * width) * 2 + 0];
-						((uint8_t*)buf)[(w + h * width) * 4 + 3] = 255;
-					}
-				}
-			}
-			else
-			{
-				for (int h = 0; h < height; h++)
-				{
-					for (int w = 0; w < width; w++)
-					{
-						((uint8_t*)buf)[(w + h * width) * 4 + 0] = pixels[(w + h * width) * 3 + 0];
-						((uint8_t*)buf)[(w + h * width) * 4 + 1] = pixels[(w + h * width) * 3 + 1];
-						((uint8_t*)buf)[(w + h * width) * 4 + 2] = pixels[(w + h * width) * 3 + 2];
-						((uint8_t*)buf)[(w + h * width) * 4 + 3] = 255;
-					}
-				}
-			}
 
 			texture->Unlock();
 
@@ -100,13 +50,12 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 			textureData->UserPtr = texture;
 			textureData->UserID = 0;
 			textureData->TextureFormat = Effekseer::TextureFormatType::ABGR8;
-			textureData->Width = width;
-			textureData->Height = height;
+			textureData->Width = pngTextureLoader_.GetWidth();
+			textureData->Height = pngTextureLoader_.GetHeight();
 		}
 
 		delete[] data_texture;
-		stbi_image_free(pixels);
-		return textureData;
+		return nullptr;
 	}
 
 	return nullptr;
