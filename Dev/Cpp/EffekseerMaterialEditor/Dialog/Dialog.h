@@ -37,19 +37,25 @@ public:
 
 	bool Update() override
 	{
+		const float windowWidth = ImGui::GetTextLineHeight() * 12.0f;
+		ImGui::SetNextWindowSize(ImVec2(windowWidth, 0));
+		ImGui::SetNextWindowPosCenter();
+
 		bool open = true;
-		if (ImGui::BeginPopupModal(GetID(), &open))
+		if (ImGui::BeginPopupModal(GetID(), &open, ImGuiWindowFlags_NoResize))
 		{
 			ImGui::Text(StringContainer::GetValue("Starting", "Starting").c_str());
 			ImGui::Separator();
 
-			if (ImGui::Button(StringContainer::GetValue("Starting_New", "Starting_New").c_str()))
+			const float buttonWidth = ImGui::GetContentRegionAvail().x;
+
+			if (ImGui::Button(StringContainer::GetValue("Starting_New", "Starting_New").c_str(), ImVec2(buttonWidth, 0)))
 			{
 				content_->New();
 				open = false;
 			}
 
-			if (ImGui::Button(StringContainer::GetValue("Starting_Open", "Starting_Open").c_str()))
+			if (ImGui::Button(StringContainer::GetValue("Starting_Open", "Starting_Open").c_str(), ImVec2(buttonWidth, 0)))
 			{
 				if (content_->Load())
 				{
@@ -87,12 +93,15 @@ public:
 		if (ImGui::BeginPopupModal(GetID(), &open, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			auto message = StringContainer::GetValue("ConfirmSaveChanged", "[{0}] has been changed. Do you want to save?");
-			message = Replace(message, "{0}", content_->GetPath());
+			message = Replace(message, "{0}", content_->GetName());
 
 			ImGui::Text(message.c_str());
 			ImGui::Separator();
+			
+			const float buttonWidth = (ImGui::GetContentRegionAvail().x - 
+				ImGui::GetStyle().ItemSpacing.x * 2.0f) / 3.0f;
 
-			if (ImGui::Button("Yes"))
+			if (ImGui::Button("Yes", ImVec2(buttonWidth, 0)))
 			{
 				if (content_->Save())
 				{
@@ -107,7 +116,7 @@ public:
 
 			ImGui::SameLine();
 
-			if (ImGui::Button("No"))
+			if (ImGui::Button("No", ImVec2(buttonWidth, 0)))
 			{
 				content_->IsClosing = true;
 				open = false;
@@ -120,7 +129,7 @@ public:
 			}
 
 			ImGui::SameLine();
-			if (ImGui::Button("Cancel"))
+			if (ImGui::Button("Cancel", ImVec2(buttonWidth, 0)))
 			{
 				content_->IsClosing = false;
 				open = false;
