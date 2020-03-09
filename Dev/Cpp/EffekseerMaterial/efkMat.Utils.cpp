@@ -25,9 +25,10 @@ std::string Replace(std::string v, std::string pre, std::string past)
 	return ret;
 }
 
-std::string EspcapeUserParamName(const char* name) {
+std::string EspcapeUserParamName(const char* name)
+{
 
-	auto name_ = std::string(name); 
+	auto name_ = std::string(name);
 	auto prefix = std::string("_efk_");
 	if (name_.size() < prefix.size())
 		return name_;
@@ -41,5 +42,34 @@ std::string EspcapeUserParamName(const char* name) {
 }
 
 std::string GetConstantTextureName(int64_t guid) { return std::string("_efk_CTexture_GUID_") + std::to_string(guid); }
+
+bool IsValidName(const char* name)
+{
+	if (name[0] == 0)
+		return false;
+
+	if (isdigit(name[0]))
+		return false;
+
+	if (name[0] == '_')
+		return false;
+
+	int32_t i = 0;
+	while (true)
+	{
+
+		if (name[i] == 0)
+			break;
+
+		if (!isdigit(name[i]) && !isalpha(name[i]) && name[i] != '_')
+		{
+			return false;
+		}
+
+		i++;
+	}
+
+	return true;
+}
 
 } // namespace EffekseerMaterial
