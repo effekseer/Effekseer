@@ -397,7 +397,7 @@ nfdresult_t NFD_OpenDialog( const char *filterList,
     }    
 
     // Show the dialog.
-    result = fileOpenDialog->Show(NULL);
+    result = fileOpenDialog->Show(GetActiveWindow());
     if ( SUCCEEDED(result) )
     {
         // Get the file name
@@ -500,7 +500,7 @@ nfdresult_t NFD_OpenDialogMultiple( const nfdchar_t *filterList,
     }
  
     // Show the dialog.
-    result = fileOpenDialog->Show(NULL);
+    result = fileOpenDialog->Show(GetActiveWindow());
     if ( SUCCEEDED(result) )
     {
         IShellItemArray *shellItems;
@@ -577,7 +577,7 @@ nfdresult_t NFD_SaveDialog( const nfdchar_t *filterList,
     }
 
     // Show the dialog.
-    result = fileSaveDialog->Show(NULL);
+    result = fileSaveDialog->Show(GetActiveWindow());
     if ( SUCCEEDED(result) )
     {
         // Get the file name
@@ -715,7 +715,7 @@ nfdresult_t NFD_PickFolder(const nfdchar_t *defaultPath,
     }
 
     // Show the dialog to the user
-    const HRESULT result = pFileDialog->Show(NULL);
+    const HRESULT result = pFileDialog->Show(GetActiveWindow());
     if (result == HRESULT_FROM_WIN32(ERROR_CANCELLED))
     {
         return NFD_CANCEL;
