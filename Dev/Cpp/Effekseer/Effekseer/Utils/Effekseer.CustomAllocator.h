@@ -109,7 +109,7 @@ template <class T> struct CustomAlignedAllocator
 
 	template <class U> CustomAlignedAllocator(const CustomAlignedAllocator<U>&) {}
 
-	T* allocate(std::size_t n) { return reinterpret_cast<T*>(GetAlignedMallocFunc()(sizeof(T) * n)); }
+	T* allocate(std::size_t n) { return reinterpret_cast<T*>(GetAlignedMallocFunc()(sizeof(T) * n, 16)); }
 	void deallocate(T* p, std::size_t n) { GetAlignedFreeFunc()(p, sizeof(T) * n); }
 };
 
