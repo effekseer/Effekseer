@@ -1,6 +1,8 @@
 ﻿
 cmake_minimum_required(VERSION 3.10)
 
+project(Test)
+
 set(effekseer_test_src
     graphics_gl.cpp
     main.cpp
@@ -135,8 +137,6 @@ target_link_libraries(
     ${common_lib}
     glfw3
     OpenSoundMixer
-    png
-    z
 )
 endif()
 
@@ -157,3 +157,20 @@ else()
 endif()
 
 FilterFolder("${effekseer_test_src}")
+
+if(USE_LIBPNG_LOADER)
+    target_link_directories(
+        ${PROJECT_NAME}
+        PRIVATE
+        ${EFK_THIRDPARTY_LIBRARY_DIRECTORIES}
+    )
+
+    target_link_libraries(
+        ${PROJECT_NAME}
+        debug "${ZLIB_LIB_DEBUG}"
+        optimized "${ZLIB_LIB_RELEASE}"
+        debug "${LIBPNG_LIB_DEBUG}"
+	    optimized "${LIBPNG_LIB_RELEASE}"
+	)
+endif()
+

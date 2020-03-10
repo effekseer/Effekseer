@@ -151,9 +151,16 @@ target_link_libraries(
 	optimized "${GD_LIB_RELEASE}"
 	debug "${LIBPNG_LIB_DEBUG}"
 	optimized "${LIBPNG_LIB_RELEASE}"
+	debug "${ZLIB_LIB_DEBUG}"
+	optimized "${ZLIB_LIB_RELEASE}"
 )
 
-add_dependencies(Viewer ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glfw ExternalProject_OpenSoundMixer)
+add_dependencies(Viewer 
+	ExternalProject_zlib 
+	ExternalProject_libpng 
+	ExternalProject_libgd 
+	ExternalProject_glfw 
+	ExternalProject_OpenSoundMixer)
 
 if(NOT APPLE)
     add_dependencies(Viewer ExternalProject_glew)
@@ -200,7 +207,6 @@ elseif(APPLE)
         EffekseerSoundOSMixer
         IPC
         OpenSoundMixer
-        z
         ${OpenAL_LIBRARY}
         "-framework OpenAL"
         ${CMAKE_THREAD_LIBS_INIT}
@@ -239,7 +245,6 @@ target_link_libraries(
 	EffekseerRendererGL
 	EffekseerSoundOSMixer
 	IPC
-	z
 	dl
 	OpenSoundMixer
 	${OPENGL_LIBRARY}

@@ -17,8 +17,8 @@
 
 #define Z_SOLO
 #include <png.h>
-#include <pngstruct.h>
-#include <pnginfo.h>
+//#include <pngstruct.h>
+//#include <pnginfo.h>
 
 #endif
 

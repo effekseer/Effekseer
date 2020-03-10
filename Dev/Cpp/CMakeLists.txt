@@ -1,6 +1,3 @@
-# Limit in Debug and Release
-set(CMAKE_CONFIGURATION_TYPES Debug Release CACHE TYPE INTERNAL FORCE )
-
 # The project's name
 project(Effekseer)
 
@@ -159,7 +156,9 @@ if(BUILD_VIEWER)
 	add_subdirectory("3rdParty/AltseedRHI")
     set(BUILD_TEST ${BUILD_TEST_TEMP})
 
-    if(NOT APPLE)
+    if(APPLE)
+        add_dependencies(AltseedRHI ExternalProject_zlib ExternalProject_libpng) 
+    else()
         add_dependencies(AltseedRHI ExternalProject_glew)
     endif()
     
