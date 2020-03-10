@@ -155,7 +155,12 @@ target_link_libraries(
 	optimized "${ZLIB_LIB_RELEASE}"
 )
 
-add_dependencies(Viewer ExternalProject_zlib ExternalProject_libpng ExternalProject_libgd ExternalProject_glfw ExternalProject_OpenSoundMixer)
+add_dependencies(Viewer 
+	ExternalProject_zlib 
+	ExternalProject_libpng 
+	ExternalProject_libgd 
+	ExternalProject_glfw 
+	ExternalProject_OpenSoundMixer)
 
 if(NOT APPLE)
     add_dependencies(Viewer ExternalProject_glew)

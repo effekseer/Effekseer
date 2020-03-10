@@ -43,6 +43,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/../Effe
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PublicHeader}")
 add_dependencies(${PROJECT_NAME} Effekseer)
 
+if(USE_LIBPNG_LOADER AND USE_INTERNAL_LOADER)
+    add_dependencies(${PROJECT_NAME} ExternalProject_zlib ExternalProject_libpng) 
+endif()
+
 #--------------------
 # Install
 
