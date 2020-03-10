@@ -49,4 +49,6 @@ inline std::string ToNativePath(const std::string& path)
 #endif
 }
 
+bool IsValidName(const char* name);
+
 } // namespace EffekseerMaterial

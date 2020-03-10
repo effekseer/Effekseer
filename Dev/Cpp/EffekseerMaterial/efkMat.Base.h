@@ -52,6 +52,8 @@ enum class WarningType
 	WrongInputType,
 	WrongProperty,
 	DifferentSampler,
+	InvalidName,
+	SameName,
 };
 
 enum class ValueType

@@ -832,7 +832,7 @@ void Material::LoadFromStrInternal(
 				OutputPin = "RGBA";
 			}
 		}
-		
+
 		auto InputPinIndex = inputNode->GetInputPinIndex(InputPin);
 		auto OutputPinIndex = outputNode->GetOutputPinIndex(OutputPin);
 
@@ -1095,6 +1095,7 @@ std::shared_ptr<Node> Material::CreateNode(std::shared_ptr<NodeParameter> parame
 	{
 		auto np = std::make_shared<NodeProperty>();
 		np->Floats = parameter->Properties[i]->DefaultValues;
+		np->Str = parameter->Properties[i]->DefaultStr;
 		np->Parent = node;
 
 		node->Properties.push_back(np);
@@ -1544,6 +1545,8 @@ void Material::MakeContentDirty(std::shared_ptr<Node> node)
 			MakeContentDirty(c->Parent.lock());
 		}
 	}
+
+	UpdateWarnings();
 }
 
 void Material::ClearContentDirty(std::shared_ptr<Node> node) { node->isContentDirtied = false; }
@@ -1552,7 +1555,21 @@ void Material::UpdateWarnings()
 {
 	for (auto& node : nodes_)
 	{
-		node->CurrentWarning = node->Parameter->GetWarning(this->shared_from_this(), node);
+		bool found = false;
+		for (auto component : node->Parameter->BehaviorComponents)
+		{
+			if (component->IsGetWarningInherited)
+			{
+				node->CurrentWarning = component->GetWarning(this->shared_from_this(), node);
+				found = true;
+				break;
+			}
+		}
+
+		if (!found)
+		{
+			node->CurrentWarning = node->Parameter->GetWarning(this->shared_from_this(), node);
+		}
 	}
 }
 

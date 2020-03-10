@@ -83,9 +83,9 @@ std::string NodeParameterBehaviorComponentMask::GetHeader(std::shared_ptr<Materi
 	return ret.str();
 }
 
-std::string NodeParameterBehaviorComponentName::GetHeader(std::shared_ptr<Material> material,
-														  std::shared_ptr<NodeParameter> parameter,
-														  std::shared_ptr<Node> node) const
+std::string NodeParameterBehaviorComponentParameter::GetHeader(std::shared_ptr<Material> material,
+															   std::shared_ptr<NodeParameter> parameter,
+															   std::shared_ptr<Node> node) const
 {
 	std::ostringstream ret;
 
@@ -97,6 +97,34 @@ std::string NodeParameterBehaviorComponentName::GetHeader(std::shared_ptr<Materi
 	ret << ")";
 
 	return ret.str();
+}
+
+WarningType NodeParameterBehaviorComponentParameter::GetWarning(std::shared_ptr<Material> material, std::shared_ptr<Node> node) const
+{
+	assert(node->Parameter->Properties[0]->Name == "Name");
+
+	if (!IsValidName(node->Properties[0]->Str.c_str()))
+	{
+		return WarningType::InvalidName;
+	}
+
+	for (auto& n : material->GetNodes())
+	{
+		if (node == n)
+			continue;
+
+		if (n->Parameter->Type == NodeType::Parameter1 || n->Parameter->Type == NodeType::Parameter2 ||
+			n->Parameter->Type == NodeType::Parameter3 || n->Parameter->Type == NodeType::Parameter4 ||
+			n->Parameter->Type == NodeType::TextureObjectParameter)
+		{
+			if (node->Properties[0]->Str == n->Properties[0]->Str)
+			{
+				return WarningType::SameName;
+			}
+		}
+	}
+
+	return WarningType::None;
 }
 
 std::string NodeParameterBehaviorConstantName::GetHeader(std::shared_ptr<Material> material,
@@ -260,6 +288,7 @@ WarningType NodeParameter::GetWarningSampler(std::shared_ptr<Material> material,
 	{
 		assert(0);
 	}
+
 	return WarningType::None;
 }
 
