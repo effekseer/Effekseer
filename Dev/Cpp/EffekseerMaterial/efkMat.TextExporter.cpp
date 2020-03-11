@@ -445,7 +445,6 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 				if (node->Parameter->Type == NodeType::TextureObject)
 				{
-					auto paramName = GetConstantTextureName(node->GUID);
 					auto path = node->Properties[0]->Str;
 
 					std::shared_ptr<TextExporterTexture> extractedTexture;
@@ -457,7 +456,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 					else
 					{
 						extractedTexture = std::make_shared<TextExporterTexture>();
-						extractedTexture->Name = paramName;
+						extractedTexture->IsInternal = true;
 						extractedTexture->DefaultPath = path;
 						extractedTexture->IsParam = false;
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
@@ -598,8 +597,6 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 
 				if (tePin.Type == ValueType::Texture)
 				{
-					auto paramName = std::string();
-
 					if (node->Parameter->Type == NodeType::SampleTexture)
 					{
 						path = node->Properties[0]->Str;
@@ -618,7 +615,7 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 					else
 					{
 						extractedTexture = std::make_shared<TextExporterTexture>();
-						extractedTexture->Name = paramName;
+						extractedTexture->IsInternal = true;
 						extractedTexture->DefaultPath = path;
 						extractedTexture->Type = material->FindTexture(path.c_str())->Type;
 						extractedTexture->GUID = node->GUID;
@@ -652,13 +649,31 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	auto outputExportedNode = node2exportedNode[outputNode];
 
 	// Assign texture index
+	std::unordered_set<std::string> usedName;
+
 	{
+		int32_t textureCount = 0;
 		int id = 0;
 
-		for (auto& extractedTexture : extractedTextures)
+		for (auto& extracted : extractedTextures)
 		{
-			extractedTexture.second->UniformName = "efk_texture_" + std::to_string(extractedTexture.first);
-			extractedTexture.second->Index = id;
+			extracted.second->UniformName = "efk_texture_" + std::to_string(extracted.first);
+
+			if (!IsValidName(extracted.second->Name.c_str()) || usedName.count(extracted.second->Name) > 0)
+			{
+				if (extracted.second->IsInternal)
+				{
+					extracted.second->Name = "_InternalTexture_" + std::to_string(textureCount);
+					textureCount++;
+				}
+				else
+				{
+					extracted.second->Name = extracted.second->UniformName;
+				}
+			}
+
+			usedName.insert(extracted.second->Name);
+			extracted.second->Index = id;
 			id++;
 		}
 	}
@@ -667,10 +682,17 @@ TextExporterResult TextExporter::Export(std::shared_ptr<Material> material, std:
 	{
 		int32_t offset = 0;
 		int32_t ind = 0;
-		for (auto& extractedUniform : extractedUniforms)
+		for (auto& extracted : extractedUniforms)
 		{
-			extractedUniform.second->UniformName = "efk_uniform_" + std::to_string(extractedUniform.first);
-			extractedUniform.second->Offset = offset;
+			extracted.second->UniformName = "efk_uniform_" + std::to_string(extracted.first);
+
+			if (!IsValidName(extracted.second->Name.c_str()) || usedName.count(extracted.second->Name) > 0)
+			{
+				extracted.second->Name = extracted.second->UniformName;
+			}
+			usedName.insert(extracted.second->Name);
+
+			extracted.second->Offset = offset;
 			offset += sizeof(float) * 4;
 			ind += 1;
 		}

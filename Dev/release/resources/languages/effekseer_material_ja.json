@@ -160,5 +160,7 @@
   "Starting_Open": "マテリアルを開く",
   "Warning_WrongInputType": "入力の型が無効です。",
   "Warning_WrongProperty": "プロパティが無効です。",
-  "Warning_DifferentSampler": "同じ画像に異なるサンプラが\n設定されています。"
+  "Warning_DifferentSampler": "同じ画像に異なるサンプラが\n設定されています。",
+  "Warning_SameName": "同じ名前のノードが存在します。",
+  "Warning_InvalidName": "無効な名前です。\n(ヘルプを読んでください。)"
 }

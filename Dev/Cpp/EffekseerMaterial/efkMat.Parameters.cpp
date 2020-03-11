@@ -22,7 +22,7 @@ ValueType InferOutputTypeInAppendVector(const std::vector<ValueType>& inputTypes
 {
 	int counter = 0;
 
-	auto count = std::min(4, GetElementCount(inputTypes[0]) + GetElementCount(inputTypes[0]));
+	auto count = std::min(4, GetElementCount(inputTypes[0]) + GetElementCount(inputTypes[1]));
 
 	return static_cast<ValueType>(static_cast<int>(ValueType::Float1) + count - 1);
 }

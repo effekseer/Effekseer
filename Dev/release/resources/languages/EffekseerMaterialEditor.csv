@@ -274,3 +274,7 @@ Warning_WrongProperty,A propery is invalid,プロパティが無効です。
 Warning_DifferentSampler,"Different samplers are 
 assigned in a same image.","同じ画像に異なるサンプラが
 設定されています。"
+Warning_SameName,A node with the same name exists.,同じ名前のノードが存在します。
+Warning_InvalidName,"The name is invalid. 
+(Please read the help.)","無効な名前です。
+(ヘルプを読んでください。)"

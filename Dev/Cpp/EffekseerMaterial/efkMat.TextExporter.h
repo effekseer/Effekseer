@@ -29,6 +29,7 @@ struct TextExporterTexture
 {
 	std::string Name;
 	std::string UniformName;
+	bool IsInternal = false;
 	int32_t Index;
 	std::string DefaultPath;
 	bool IsParam = false;

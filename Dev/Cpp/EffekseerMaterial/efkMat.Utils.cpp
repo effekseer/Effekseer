@@ -41,7 +41,7 @@ std::string EspcapeUserParamName(const char* name)
 	return name;
 }
 
-std::string GetConstantTextureName(int64_t guid) { return std::string("_efk_CTexture_GUID_") + std::to_string(guid); }
+std::string GetConstantTextureName(int64_t guid) { return std::string("_ConstantTexture_") + std::to_string(guid); }
 
 bool IsValidName(const char* name)
 {

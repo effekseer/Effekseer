@@ -160,5 +160,7 @@
   "Starting_Open": "Open a material",
   "Warning_WrongInputType": "An input type is invalid",
   "Warning_WrongProperty": "A propery is invalid",
-  "Warning_DifferentSampler": "Different samplers are \nassigned in a same image."
+  "Warning_DifferentSampler": "Different samplers are \nassigned in a same image.",
+  "Warning_SameName": "A node with the same name exists.",
+  "Warning_InvalidName": "The name is invalid. \n(Please read the help.)"
 }
