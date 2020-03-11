@@ -78,8 +78,7 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 	}
 	break;
 	case PNG_COLOR_TYPE_GRAY:
-		png_set_expand_gray_1_2_4_to_8(png);
-		pixelBytes = 3;
+		pixelBytes = 1;
 		break;
 	case PNG_COLOR_TYPE_GRAY_ALPHA:
 		png_set_gray_to_rgb(png);
@@ -119,6 +118,21 @@ bool PngTextureLoader::Load(void* data, int32_t size, bool rev)
 	if (pixelBytes == 4)
 	{
 		memcpy(imagedst_, image, textureWidth * textureHeight * 4);
+	}
+	else if (pixelBytes == 1)
+	{
+		for (int32_t y = 0; y < textureHeight; y++)
+		{
+			for (int32_t x = 0; x < textureWidth; x++)
+			{
+				auto src = (x + y * textureWidth) * 1;
+				auto dst = (x + y * textureWidth) * 4;
+				imagedst_[dst + 0] = image[src + 0];
+				imagedst_[dst + 1] = image[src + 0];
+				imagedst_[dst + 2] = image[src + 0];
+				imagedst_[dst + 3] = 255;
+			}
+		}
 	}
 	else
 	{
