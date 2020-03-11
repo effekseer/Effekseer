@@ -54,19 +54,12 @@ bool Texture::Validate()
 {
 	Invalidate();
 
-	std::vector<uint8_t> buffer;
+	auto path16 = Effekseer::utf8_to_utf16(path_);
 
-	std::ifstream fin(path_, std::ios::in | std::ios::binary);
-	if (fin.bad())
-		return false;
-	if (fin.fail())
-		return false;
-
-	while (!fin.eof())
+	auto file = Effekseer::IO::GetInstance()->LoadFile(path16.c_str());
+	if (file == nullptr)
 	{
-		uint8_t b;
-		fin.read((char*)&b, 1);
-		buffer.push_back(b);
+		return nullptr;
 	}
 
 	texture_ = ar::Texture2D::Create(graphics_->GetManager());
@@ -75,7 +68,7 @@ bool Texture::Validate()
 		return false;
 	}
 
-	if (!texture_->Initialize(graphics_->GetManager(), buffer.data(), buffer.size(), false, false))
+	if (!texture_->Initialize(graphics_->GetManager(), file->GetData(), file->GetSize(), false, false))
 	{
 		Invalidate();
 		return false;
@@ -105,19 +98,6 @@ uint64_t Texture::GetInternal()
 
 std::shared_ptr<Texture> Texture::Load(std::shared_ptr<Graphics> graphics, const char* path)
 {
-	std::vector<uint8_t> buffer;
-
-	auto path16 = Effekseer::utf8_to_utf16(path);
-
-	auto file = Effekseer::IO::GetInstance()->LoadFile(path16.c_str());
-	if (file == nullptr)
-	{
-		return nullptr;
-	}
-
-	buffer.resize(file->GetSize());
-	memcpy(buffer.data(), file->GetData(), buffer.size());
-
 	auto obj = std::make_shared<Texture>();
 
 	obj->graphics_ = graphics;
