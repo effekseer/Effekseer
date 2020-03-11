@@ -25,7 +25,7 @@ Compiler Options are Multithread debug for Debug build and Multithread for Relea
 -src
 This directory contains source code of the runtime.
 
--RuntimeSample
+-Examples
 This directory contains embedding samples of the runtime.
 
 -Help
@@ -55,7 +55,7 @@ VisualStudio2015、2017に対応しています。
 -src
 ランタイムのソースコードが保存されています。
 
--RuntimeSample
+-Examples
 ランタイムを組み込んだサンプルが保存されています。
 
 -Help
