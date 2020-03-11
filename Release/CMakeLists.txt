@@ -62,6 +62,6 @@ set(EFK_RUNTIME_ROOT ${CMAKE_CURRENT_LIST_DIR}/src)
 add_subdirectory(src)
 
 if (BUILD_EXAMPLES)
-    add_subdirectory(RuntimeSample/Utils/glfw)
-    add_subdirectory(RuntimeSample)
+    add_subdirectory(Examples/Utils/glfw)
+    add_subdirectory(Examples)
 endif()

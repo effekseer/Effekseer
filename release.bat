@@ -46,7 +46,7 @@ robocopy Dev\release\resources\ %RDIR%\Tool\resources\. /s
 
 
 echo Copy runtime
-mkdir %RDIR_R%\RuntimeSample\
+mkdir %RDIR_R%\Examples\
 
 mkdir %RDIR_R%\src
 mkdir %RDIR_R%\src\include
@@ -90,8 +90,11 @@ robocopy Dev\Cpp\EffekseerSoundDSound %RDIR_R%\src\EffekseerSoundDSound *.h *.cp
 mkdir %RDIR_R%\src\EffekseerMaterialCompiler
 robocopy Dev\Cpp\EffekseerMaterialCompiler %RDIR_R%\src\EffekseerMaterialCompiler *.h *.cpp CMakeLists.txt /S
 
+mkdir %RDIR_R%\src\3rdParty\stb_effekseer
+robocopy Dev\Cpp\3rdParty\stb_effekseer %RDIR_R%\src\3rdParty\stb_effekseer *.h
+
 echo Samples for runtimes
-robocopy Examples %RDIR_R%\RuntimeSample\ *.h *.cpp *.txt *.fx *.efk *.wav *.png /S
+robocopy Examples %RDIR_R%\Examples\ *.h *.cpp *.txt *.fx *.efk *.wav *.png /S
 
 copy Dev\Cpp\CMakeLists.txt %RDIR_R%\src\.
 
@@ -216,7 +219,7 @@ copy Dev\Cpp\EffekseerSoundXAudio2\EffekseerSoundXAudio2.h %RDIR_R%\Compiled\inc
 copy Dev\Cpp\EffekseerSoundAL\EffekseerSoundAL.h %RDIR_R%\Compiled\include\.
 
 copy Release\CMakeLists.txt %RDIR_R%\.
-robocopy Downloads\glfw %RDIR_R%\RuntimeSample\Utils\glfw\. /S
+robocopy Downloads\glfw %RDIR_R%\Examples\Utils\glfw\. /S
 copy Release\build_msvc2017.bat %RDIR_R%\build_msvc2017.bat
 copy Release\build_msvc2019.bat %RDIR_R%\build_msvc2019.bat
 

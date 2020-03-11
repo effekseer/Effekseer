@@ -45,10 +45,6 @@ Examples are compiled along with libs.
 
 Examples are containted in Examples directory.
 
-OldExampls are old examples.
-
-Its are left because some examples are not migrated into new examples. These cannot be compiled. 
-
 ### CustomLoader
 
 A sample to customize how to load files.
