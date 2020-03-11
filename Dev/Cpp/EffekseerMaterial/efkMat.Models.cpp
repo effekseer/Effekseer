@@ -150,7 +150,22 @@ public:
 
 	virtual ~ChangeStringCommand() = default;
 
-	void Execute() override { prop_->Str = newValue_; }
+	void Execute() override
+	{
+		prop_->Str = newValue_;
+
+		auto parent = prop_->Parent.lock();
+
+		if (parent != nullptr)
+		{
+			auto parentMaterial = parent->Parent.lock();
+
+			if (parentMaterial != nullptr)
+			{
+				parentMaterial->MakeContentDirty(parent);
+			}
+		}
+	}
 
 	void Unexecute() override
 	{
