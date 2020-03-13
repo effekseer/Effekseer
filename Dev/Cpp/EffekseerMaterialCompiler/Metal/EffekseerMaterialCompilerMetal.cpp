@@ -47,6 +47,25 @@ static char* material_common_define = R"(
 #pragma clang diagnostic ignored "-Wparentheses-equality"
 using namespace metal;
 
+#define FRAC frac
+#define LERP mix
+
+float MOD(float v) {
+    return fmod(v, 1.0);
+}
+
+float2 MOD(float2 v) {
+    return fmod(v, float2(1.0,1.0));
+}
+
+float3 MOD(float3 v) {
+    return fmod(v, float3(1.0,1.0,1.0));
+}
+
+float4 MOD(float4 v) {
+    return fmod(v, float4(1.0,1.0,1.0,1.0));
+}
+
 )";
 
 static const char g_material_model_vs_src_pre[] =
@@ -424,7 +443,7 @@ static const char g_material_fs_src_suf2_lit[] =
     float3 diffuse = calcDirectionalLightDiffuseColor(baseColor, pixelNormalDir, lightDirection.xyz, ambientOcclusion);
     float3 specular = lightColor.xyz * lightScale * calcLightingGGX(worldNormal, viewDir, lightDirection.xyz, roughness, 0.9);
 
-    float4 Output =  float4(metallic * specular + (1.0 - metallic) * diffuse + lightAmbientColor.xyz, opacity);
+    float4 Output =  float4(metallic * specular + (1.0 - metallic) * diffuse + baseColor * lightAmbientColor.xyz * ambientOcclusion, opacity);
     Output.xyz = Output.xyz + emissive.xyz;
 
     if(opacityMask <= 0.0) discard_fragment();
