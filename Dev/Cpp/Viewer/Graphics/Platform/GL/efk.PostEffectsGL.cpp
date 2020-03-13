@@ -297,6 +297,8 @@ void main() {
 		state.DepthWrite = false;
 		state.DepthTest = false;
 		state.CullingType = CullingType::Double;
+		state.TextureFilterTypes[0] = TextureFilterType::Linear;
+		state.TextureWrapTypes[0] = TextureWrapType::Clamp;
 		renderer->GetRenderState()->Update(false);
 		renderer->SetRenderMode(RenderMode::Normal);
 
@@ -323,7 +325,7 @@ void main() {
 			GLuint textures[1];
 			textures[0] = (i == 0) ?
 				(GLuint)extractBuffer->GetViewID() : 
-				(GLuint)lowresBuffers[0][i - i]->GetViewID();
+				(GLuint)lowresBuffers[0][i - 1]->GetViewID();
 			blitter.Blit(shaderCopy.get(), vaoCopy.get(), 1, textures, 
 				nullptr, 0, lowresBuffers[0][i].get());
 		}
@@ -394,8 +396,8 @@ void main() {
 
 		// Create low-resolution buffers
 		for (int i = 0; i < BlurBuffers; i++) {
-			int32_t bufferWidth  = std::max(1, (width  + 1) / 2);
-			int32_t bufferHeight = std::max(1, (height + 1) / 2);
+			int32_t bufferWidth  = width;
+			int32_t bufferHeight = height;
 			for (int j = 0; j < BlurIterations; j++) {
 				bufferWidth  = std::max(1, (bufferWidth  + 1) / 2);
 				bufferHeight = std::max(1, (bufferHeight + 1) / 2);
