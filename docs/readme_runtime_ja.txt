@@ -23,22 +23,13 @@ subdirectoryとして、Effekseerを追加することで使用できます。
 
 ### Cmakeを使用していないプロジェクトに組み込む場合
 
-VisualStudio の場合、バッチファイルを実行することでライブラリをビルドできます。
-ビルドされたライブラリファイル (.lib) は、install フォルダ内に作成されます。
-(Visual Studio 2019 の場合、バッチファイルは build_msvc2019.bat、install フォルダは install_msvc2019 です)
-
-#### プロジェクトの生成
-
 環境に応じてbatやshファイルを実行します。
 
-#### コンパイル
+install フォルダが作成され、その中にインクルードファイルとライブラリファイルが生成されます。
 
-生成されたプロジェクトを開き、コンパイルします。
+例えば Visual Studio 2019 の場合、バッチファイルは build_msvc2019.bat、install フォルダは install_msvc2019 です。
 
-VisualStudioの場合、xxxにライブラリ(.lib)が生成されます。
-XCodeの場合、xxxにアーカイブ(.a)が生成されます。
-
-それらをリンクしつつ、Effekseerのヘッダーファイルをインクルードすることで使用できます。
+これらをリンクすることで、Effekseer を使用できます。
 
 ## サンプル
 
