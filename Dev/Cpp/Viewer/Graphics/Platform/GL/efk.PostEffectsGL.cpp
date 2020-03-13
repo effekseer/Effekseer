@@ -78,13 +78,13 @@ void main() {
 	ivec2 size = textureSize(u_Texture0, 0);
 	float div = float(size.x);
 
-	vec4 color = TEX2D(u_Texture0, v_TexCoord) * 0.312500;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(-5.5 / div, 0)) * 0.015625;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(-3.5 / div, 0)) * 0.093750;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(-1.5 / div, 0)) * 0.234375;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(+1.5 / div, 0)) * 0.234375;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(+3.5 / div, 0)) * 0.093750;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(+5.5 / div, 0)) * 0.015625;
+	vec4 color = TEX2D(u_Texture0, v_TexCoord) * 0.223067435;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(-5.152032242 / div, 0)) * 0.005291685;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(-3.250912787 / div, 0)) * 0.072975516;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(-1.384912144 / div, 0)) * 0.310199082;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(+1.384912144 / div, 0)) * 0.310199082;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(+3.250912787 / div, 0)) * 0.072975516;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(+5.152032242 / div, 0)) * 0.005291685;
 
 	FRAGCOLOR = vec4(color.rgb, 1.0);
 }
@@ -99,13 +99,13 @@ void main() {
 	ivec2 size = textureSize(u_Texture0, 0);
 	float div = float(size.y);
 
-	vec4 color = TEX2D(u_Texture0, v_TexCoord) * 0.312500;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -5.5 / div)) * 0.015625;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -3.5 / div)) * 0.093750;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -1.5 / div)) * 0.234375;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +1.5 / div)) * 0.234375;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +3.5 / div)) * 0.093750;
-	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +5.5 / div)) * 0.015625;
+	vec4 color = TEX2D(u_Texture0, v_TexCoord) * 0.223067435;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -5.152032242 / div)) * 0.005291685;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -3.250912787 / div)) * 0.072975516;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, -1.384912144 / div)) * 0.310199082;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +1.384912144 / div)) * 0.310199082;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +3.250912787 / div)) * 0.072975516;
+	color += TEX2D(u_Texture0, v_TexCoord + vec2(0.0, +5.152032242 / div)) * 0.005291685;
 
 	FRAGCOLOR = vec4(color.rgb, 1.0);
 }
