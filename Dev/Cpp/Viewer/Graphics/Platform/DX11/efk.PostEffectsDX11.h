@@ -41,7 +41,7 @@ namespace efk
 		static const int BlurIterations = 4;
 
 		std::unique_ptr<EffekseerRendererDX11::Shader> shaderExtract;
-		std::unique_ptr<EffekseerRendererDX11::Shader> shaderCopy;
+		std::unique_ptr<EffekseerRendererDX11::Shader> shaderDownsample;
 		std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlend;
 		std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlurH;
 		std::unique_ptr<EffekseerRendererDX11::Shader> shaderBlurV;

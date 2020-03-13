@@ -25,6 +25,12 @@ namespace efk
 #include "Shader/efk.GraphicsDX11.PostFX_Extract_PS.h"
 	}
 
+	namespace PostFX_Downsample_PS
+	{
+		static
+#include "Shader/efk.GraphicsDX11.PostFX_Downsample_PS.h"
+	}
+
 	namespace PostFX_Blend_PS
 	{
 		static
@@ -166,11 +172,11 @@ namespace efk
 		shaderExtract->SetPixelConstantBufferSize(sizeof(float) * 8);
 		shaderExtract->SetPixelRegisterCount(2);
 
-		// Copy shader
-		shaderCopy.reset(Shader::Create(renderer,
+		// Downsample shader
+		shaderDownsample.reset(Shader::Create(renderer,
 			PostFX_Basic_VS::g_VS, sizeof(PostFX_Basic_VS::g_VS),
-			PostFX_Copy_PS::g_PS, sizeof(PostFX_Copy_PS::g_PS),
-			"Bloom copy", PostFx_ShaderDecl, 2));
+			PostFX_Downsample_PS::g_PS, sizeof(PostFX_Downsample_PS::g_PS),
+			"Bloom downsample", PostFx_ShaderDecl, 2));
 
 		// Blend shader
 		shaderBlend.reset(Shader::Create(renderer,
@@ -235,7 +241,7 @@ namespace efk
 			textures[0] = (i == 0) ?
 				(ID3D11ShaderResourceView*)extractBuffer->GetViewID() : 
 				(ID3D11ShaderResourceView*)lowresBuffers[0][i - 1]->GetViewID();
-			blitter.Blit(shaderCopy.get(), 1, textures, nullptr, 0, lowresBuffers[0][i].get());
+			blitter.Blit(shaderDownsample.get(), 1, textures, nullptr, 0, lowresBuffers[0][i].get());
 		}
 
 		// Horizontal gaussian blur pass

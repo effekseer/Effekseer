@@ -44,13 +44,13 @@ namespace efk
 		BlitterGL blitter;
 
 		std::unique_ptr<EffekseerRendererGL::Shader> shaderExtract;
-		std::unique_ptr<EffekseerRendererGL::Shader> shaderCopy;
+		std::unique_ptr<EffekseerRendererGL::Shader> shaderDownsample;
 		std::unique_ptr<EffekseerRendererGL::Shader> shaderBlend;
 		std::unique_ptr<EffekseerRendererGL::Shader> shaderBlurH;
 		std::unique_ptr<EffekseerRendererGL::Shader> shaderBlurV;
 
 		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoExtract;
-		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoCopy;
+		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoDownsample;
 		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoBlend;
 		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoBlurH;
 		std::unique_ptr<EffekseerRendererGL::VertexArray> vaoBlurV;

@@ -50,6 +50,23 @@ void main() {
 }
 )";
 
+static const char g_downsample_fs_src[] =
+R"(
+IN vec2 v_TexCoord;
+uniform sampler2D u_Texture0;
+const vec4 gain = vec4(0.25, 0.5, 1.0, 2.0);
+void main() {
+	ivec2 size = textureSize(u_Texture0, 0);
+	vec2 scale = vec2(1.0 / size.x, 1.0 / size.y);
+	vec4 c0 = TEX2D(u_Texture0, v_TexCoord + vec2(-0.5, -0.5) * scale);
+	vec4 c1 = TEX2D(u_Texture0, v_TexCoord + vec2(+0.5, -0.5) * scale);
+	vec4 c2 = TEX2D(u_Texture0, v_TexCoord + vec2(-0.5, +0.5) * scale);
+	vec4 c3 = TEX2D(u_Texture0, v_TexCoord + vec2(+0.5, +0.5) * scale);
+	FRAGCOLOR = (c0 + c1 + c2 + c3) * 0.25;
+}
+)";
+
+
 static const char g_blend_fs_src[] =
 R"(
 IN vec2 v_TexCoord;
@@ -223,14 +240,14 @@ void main() {
 		shaderExtract->AddPixelConstantLayout(CONSTANT_TYPE_VECTOR4, 
 			shaderExtract->GetUniformId("u_Intensity"), 16);
 
-		// Copy shader
-		shaderCopy.reset(Shader::Create(renderer,
+		// Downsample shader
+		shaderDownsample.reset(Shader::Create(renderer,
 			g_basic_vs_src, sizeof(g_basic_vs_src),
-			g_copy_fs_src, sizeof(g_copy_fs_src),
-			"Bloom copy"));
-		shaderCopy->GetAttribIdList(2, BlitterGL::shaderAttributes);
-		shaderCopy->SetVertexSize(sizeof(BlitterGL::Vertex));
-		shaderCopy->SetTextureSlot(0, shaderCopy->GetUniformId("u_Texture0"));
+			g_downsample_fs_src, sizeof(g_downsample_fs_src),
+			"Bloom downsample"));
+		shaderDownsample->GetAttribIdList(2, BlitterGL::shaderAttributes);
+		shaderDownsample->SetVertexSize(sizeof(BlitterGL::Vertex));
+		shaderDownsample->SetTextureSlot(0, shaderDownsample->GetUniformId("u_Texture0"));
 
 		// Blend shader
 		shaderBlend.reset(Shader::Create(renderer,
@@ -264,7 +281,7 @@ void main() {
 
 		// Setup VAOs
 		vaoExtract = blitter.CreateVAO(shaderExtract.get());
-		vaoCopy = blitter.CreateVAO(shaderCopy.get());
+		vaoDownsample = blitter.CreateVAO(shaderDownsample.get());
 		vaoBlend = blitter.CreateVAO(shaderBlend.get());
 		vaoBlurH = blitter.CreateVAO(shaderBlurH.get());
 		vaoBlurV = blitter.CreateVAO(shaderBlurV.get());
@@ -326,7 +343,7 @@ void main() {
 			textures[0] = (i == 0) ?
 				(GLuint)extractBuffer->GetViewID() : 
 				(GLuint)lowresBuffers[0][i - 1]->GetViewID();
-			blitter.Blit(shaderCopy.get(), vaoCopy.get(), 1, textures, 
+			blitter.Blit(shaderDownsample.get(), vaoDownsample.get(), 1, textures, 
 				nullptr, 0, lowresBuffers[0][i].get());
 		}
 
