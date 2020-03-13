@@ -36,7 +36,7 @@ namespace Effekseer.GUI.Dock
 			Read();
 
 			Icon = Images.GetIcon("PanelDynamicParameter");
-			TabToolTip = Resources.GetString("DynamicParameter");
+			TabToolTip = Resources.GetString("DynamicParameter_Name");
 		}
 
 		private void Input_OnChanged(object sender, ChangedValueEventArgs e)
