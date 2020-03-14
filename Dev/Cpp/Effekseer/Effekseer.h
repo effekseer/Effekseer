@@ -1471,6 +1471,9 @@ class FileInterface
 {
 private:
 public:
+	FileInterface() = default;
+	virtual ~FileInterface() = default;
+
 	virtual FileReader* OpenRead(const EFK_CHAR* path) = 0;
 
 	/**
