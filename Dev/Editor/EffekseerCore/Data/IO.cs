@@ -304,9 +304,13 @@ namespace Effekseer.Data
 			var e = doc.CreateElement(element_name);
 			for (int i = 0; i < collection.Values.Count; i++)
 			{
+				var name = collection.Values[i].GetType().Name;
 				// a node must be generated
-				var e_node = SaveToElement(doc, collection.Values[i].GetType().Name, collection.Values[i], true);
-				e.AppendChild(e_node);
+				var e_node = SaveToElement(doc, name, collection.Values[i], true);
+				if (e_node != null)
+				{
+					e.AppendChild(e_node);
+				}
 			}
 
 			return e;
@@ -1046,7 +1050,7 @@ namespace Effekseer.Data
 			for (var i = 0; i < e.ChildNodes.Count; i++)
 			{
 				var e_child = e.ChildNodes[i] as XmlElement;
-				var element = new DynamicEquation(DynamicEquation.DefaultName, collection);
+				var element = new DynamicEquation(collection);
 				LoadFromElement(e_child, element, isClip);
 				collection.Values.Add(element);
 			}

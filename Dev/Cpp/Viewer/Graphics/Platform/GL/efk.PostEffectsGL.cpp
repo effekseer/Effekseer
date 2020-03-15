@@ -74,12 +74,11 @@ uniform sampler2D u_Texture0;
 uniform sampler2D u_Texture1;
 uniform sampler2D u_Texture2;
 uniform sampler2D u_Texture3;
-const vec4 gain = vec4(0.25, 0.5, 1.0, 2.0);
 void main() {
-	vec3 c0 = TEX2D(u_Texture0, v_TexCoord).rgb * gain.x;
-	vec3 c1 = TEX2D(u_Texture1, v_TexCoord).rgb * gain.y;
-	vec3 c2 = TEX2D(u_Texture2, v_TexCoord).rgb * gain.z;
-	vec3 c3 = TEX2D(u_Texture3, v_TexCoord).rgb * gain.w;
+	vec3 c0 = TEX2D(u_Texture0, v_TexCoord).rgb;
+	vec3 c1 = TEX2D(u_Texture1, v_TexCoord).rgb;
+	vec3 c2 = TEX2D(u_Texture2, v_TexCoord).rgb;
+	vec3 c3 = TEX2D(u_Texture3, v_TexCoord).rgb;
 	FRAGCOLOR = vec4(c0 + c1 + c2 + c3, 1.0);
 }
 )";
