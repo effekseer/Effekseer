@@ -304,7 +304,8 @@ namespace Effekseer.Data
 			var e = doc.CreateElement(element_name);
 			for (int i = 0; i < collection.Values.Count; i++)
 			{
-				var e_node = SaveToElement(doc, collection.Values[i].GetType().Name, collection.Values[i], isClip);
+				// a node must be generated
+				var e_node = SaveToElement(doc, collection.Values[i].GetType().Name, collection.Values[i], true);
 				e.AppendChild(e_node);
 			}
 
