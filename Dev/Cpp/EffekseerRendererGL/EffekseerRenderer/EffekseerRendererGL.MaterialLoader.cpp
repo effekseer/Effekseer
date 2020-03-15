@@ -440,7 +440,10 @@ MaterialLoader ::~MaterialLoader()
 	else
 	{
 		Effekseer::Material material;
-		material.Load((const uint8_t*)data, size);
+		if (!material.Load((const uint8_t*)data, size))
+		{
+			std::cout << "Error : Invalid material is loaded." << std::endl; 
+		}
 		auto compiler = ::Effekseer::CreateUniqueReference(new Effekseer::MaterialCompilerGL());
 		auto binary = ::Effekseer::CreateUniqueReference(compiler->Compile(&material));
 

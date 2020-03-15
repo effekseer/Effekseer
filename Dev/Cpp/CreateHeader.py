@@ -103,6 +103,7 @@ effekseerRendererDX12Header.output('EffekseerRendererDX12/EffekseerRendererDX12.
 
 effekseerRendererGLHeader = CreateHeader()
 effekseerRendererGLHeader.readLines('EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Base.Pre.h')
+effekseerRendererGLHeader.readLines('EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.DeviceObjectCollection.h')
 effekseerRendererGLHeader.readLines('EffekseerRendererCommon/EffekseerRenderer.Renderer.h')
 effekseerRendererGLHeader.readLines('EffekseerRendererGL/EffekseerRenderer/EffekseerRendererGL.Renderer.h')
 effekseerRendererGLHeader.output('EffekseerRendererGL/EffekseerRendererGL.h')
