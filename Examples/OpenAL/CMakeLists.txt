@@ -25,8 +25,7 @@ if(OpenAL_FOUND)
         EffekseerRendererGL
         EffekseerSoundAL
         Example_Utils
-        debug "${GLFW3_LIB_DEBUG}"
-        optimized "${GLFW3_LIB_RELEASE}"
+        ${EFK_EXAMPLES_GLFW}
         ${OPENAL_LIBRARY}
     )
 
