@@ -6,7 +6,16 @@
 #include "EffekseerRendererGL.Renderer.h"
 #include "EffekseerRendererGL.GLExtension.h"
 
-#if _WIN32
+#ifdef __ANDROID__
+
+#ifdef __ANDROID__DEBUG__
+#include "android/log.h"
+#define LOG(s) __android_log_print(ANDROID_LOG_DEBUG, "Tag", "%s", s)
+#else
+#define LOG(s) printf("%s", s)
+#endif
+
+#elif defined(_WIN32)
 #include <windows.h>
 #define LOG(s)	OutputDebugStringA(s)
 #else
