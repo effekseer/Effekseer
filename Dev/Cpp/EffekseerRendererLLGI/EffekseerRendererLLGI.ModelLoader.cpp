@@ -1,6 +1,4 @@
 ﻿
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
-
 #include "EffekseerRendererLLGI.ModelLoader.h"
 #include "EffekseerRendererLLGI.Renderer.h"
 #include <memory>
@@ -116,4 +114,3 @@ void ModelLoader::Unload(void* data)
 
 } // namespace EffekseerRendererLLGI
 
-#endif // __EFFEKSEER_RENDERER_INTERNAL_LOADER__

@@ -36,11 +36,7 @@ namespace EffekseerRendererLLGI
 
 ::Effekseer::ModelLoader* CreateModelLoader(GraphicsDevice* graphicsDevice, ::Effekseer::FileInterface* fileInterface)
 {
-#ifdef __EFFEKSEER_RENDERER_INTERNAL_LOADER__
 	return new ModelLoader(graphicsDevice, fileInterface);
-#else
-	return NULL;
-#endif
 }
 
 void GraphicsDevice::Register(DeviceObject* device) { deviceObjects_.insert(device); }
