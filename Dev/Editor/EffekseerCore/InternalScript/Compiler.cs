@@ -213,6 +213,11 @@ namespace Effekseer.InternalScript
 			valid.Add("@3");
 			valid.Add("@4");
 
+			valid.Add("@In0");
+			valid.Add("@In1");
+			valid.Add("@In2");
+			valid.Add("@In3");
+
 			valid.Add("@GTime");
 
 			valid.Add("@P.x");
@@ -230,6 +235,11 @@ namespace Effekseer.InternalScript
 			if (label == "@2") return 1 + 0x1000;
 			if (label == "@3") return 2 + 0x1000;
 			if (label == "@4") return 3 + 0x1000;
+
+			if (label == "@In0") return 0 + 0x1000;
+			if (label == "@In1") return 1 + 0x1000;
+			if (label == "@In2") return 2 + 0x1000;
+			if (label == "@In3") return 3 + 0x1000;
 
 			if (label == "@GTime") return 0 + 0x1000 + 0x100;
 

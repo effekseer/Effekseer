@@ -468,12 +468,17 @@ namespace Effekseer.InternalScript
 			RootTable.Tables.Add("@P", new Attribute(localParam));
 
 			var outputParam = new SymbolTable();
-			outputParam.Tables.Add("x", new Attribute(generatePredefined("@P.x")));
-			outputParam.Tables.Add("y", new Attribute(generatePredefined("@P.y")));
-			outputParam.Tables.Add("z", new Attribute(generatePredefined("@P.z")));
-			outputParam.Tables.Add("w", new Attribute(generatePredefined("@P.w")));
+			outputParam.Tables.Add("x", new Attribute(generatePredefined("@O.x")));
+			outputParam.Tables.Add("y", new Attribute(generatePredefined("@O.y")));
+			outputParam.Tables.Add("z", new Attribute(generatePredefined("@O.z")));
+			outputParam.Tables.Add("w", new Attribute(generatePredefined("@O.w")));
 
 			RootTable.Tables.Add("@O", new Attribute(outputParam));
+
+			RootTable.Tables.Add("@In0", new Attribute(generatePredefined("@In0")));
+			RootTable.Tables.Add("@In1", new Attribute(generatePredefined("@In1")));
+			RootTable.Tables.Add("@In2", new Attribute(generatePredefined("@In2")));
+			RootTable.Tables.Add("@In3", new Attribute(generatePredefined("@In3")));
 
 			foreach (var expression in expressions)
 			{
