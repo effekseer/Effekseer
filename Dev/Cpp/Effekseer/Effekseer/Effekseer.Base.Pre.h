@@ -516,6 +516,9 @@ public:
 class IRandObject
 {
 public:
+	IRandObject() = default;
+	virtual ~IRandObject() = default;
+
 	virtual float GetRand() = 0;
 
 	virtual float GetRand(float min_, float max_) = 0;
@@ -561,8 +564,9 @@ enum class RendererMaterialType : int32_t
 	@brief	\~english	Material data
 			\~japanese	マテリアルデータ
 */
-struct MaterialData
+class MaterialData
 {
+public:
 	ShadingModelType ShadingModel = ShadingModelType::Lit;
 	bool IsSimpleVertex = false;
 	bool IsRefractionRequired = false;
@@ -575,6 +579,9 @@ struct MaterialData
 	void* ModelUserPtr = nullptr;
 	void* RefractionUserPtr = nullptr;
 	void* RefractionModelUserPtr = nullptr;
+
+	MaterialData() = default;
+	virtual ~MaterialData() = default;
 };
 
 /**
