@@ -443,10 +443,10 @@ namespace Effekseer.InternalScript
 		{
 			RootTable = new SymbolTable();
 
-			Func<string, Value> generatePredefined = (name) =>
+			Func<string, Value> generatePredefined = (source) =>
 			{
 				var v = new Value();
-				var generator = new NodePredefined(name);
+				var generator = new NodePredefined(source);
 				generator.Outputs.Add(v);
 				v.Generator = generator;
 				return v;
@@ -468,10 +468,10 @@ namespace Effekseer.InternalScript
 			RootTable.Tables.Add("@P", new Attribute(localParam));
 
 			var outputParam = new SymbolTable();
-			outputParam.Tables.Add("x", new Attribute(generatePredefined("@O.x")));
-			outputParam.Tables.Add("y", new Attribute(generatePredefined("@O.y")));
-			outputParam.Tables.Add("z", new Attribute(generatePredefined("@O.z")));
-			outputParam.Tables.Add("w", new Attribute(generatePredefined("@O.w")));
+			outputParam.Tables.Add("x", new Attribute(generatePredefined("@P.x")));
+			outputParam.Tables.Add("y", new Attribute(generatePredefined("@P.y")));
+			outputParam.Tables.Add("z", new Attribute(generatePredefined("@P.z")));
+			outputParam.Tables.Add("w", new Attribute(generatePredefined("@P.w")));
 
 			RootTable.Tables.Add("@O", new Attribute(outputParam));
 
