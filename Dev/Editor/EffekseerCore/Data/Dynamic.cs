@@ -95,7 +95,7 @@ namespace Effekseer.Data
 				EditableValue v = new EditableValue();
 
 				v.Value = values[i].Input;
-				v.Title = (i + 1).ToString();
+				v.Title = (i).ToString();
 				v.IsUndoEnabled = false;
 				ret.Add(v);
 			}
