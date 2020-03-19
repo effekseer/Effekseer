@@ -665,7 +665,7 @@ void Editor::UpdateNodes()
 		{
 			if (node->Parameter->Type != NodeType::Output)
 				continue;
-			if (!node->GetIsDirtied())
+			if (!node->GetIsDirtied() && !isSelectedDirty_)
 				continue;
 
 			std::vector<std::shared_ptr<TextExporterUniform>> uniforms;
@@ -1818,11 +1818,13 @@ void Editor::UpdateNode(std::shared_ptr<Node> node)
 
 void Editor::UpdateLink(std::shared_ptr<Link> link) { ed::Link(link->GUID, link->InputPin->GUID, link->OutputPin->GUID); }
 
-bool Editor::GetIsSelectedDirtyAndClear()
+bool Editor::GetIsSelectedDirty()
 {
 	auto ret = isSelectedDirty_;
 	isSelectedDirty_ = false;
 	return ret;
 }
+
+void Editor::ClearDirtiedSelectedFlags() { isSelectedDirty_ = false; }
 
 } // namespace EffekseerMaterial

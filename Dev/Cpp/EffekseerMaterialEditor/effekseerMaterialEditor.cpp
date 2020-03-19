@@ -515,7 +515,9 @@ int mainLoop(int argc, char* argv[])
 			{
 				if (ImGui::BeginTabBar("###MainTab"))
 				{
-					bool isSelectedNow = editor->GetIsSelectedDirtyAndClear();
+					bool isSelectedNow = editor->GetIsSelectedDirty();
+
+					editor->ClearDirtiedSelectedFlags();
 
 					for (size_t i = 0; i < editor->GetContents().size(); i++)
 					{

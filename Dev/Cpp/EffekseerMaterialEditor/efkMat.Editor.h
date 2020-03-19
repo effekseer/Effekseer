@@ -163,8 +163,16 @@ public:
 	std::vector<std::shared_ptr<EditorContent>> GetContents() { return contents_; }
 
 	int32_t GetSelectedContentIndex() const { return selectedContentInd_; }
-	void SelectContent(int32_t index) { selectedContentInd_ = index; }
+	void SelectContent(int32_t index) {
+		if (selectedContentInd_ == index)
+			return;
 
-	bool GetIsSelectedDirtyAndClear();
+		selectedContentInd_ = index;
+		isSelectedDirty_ = true;
+	}
+
+	bool GetIsSelectedDirty();
+
+	void ClearDirtiedSelectedFlags();
 };
 } // namespace EffekseerMaterial
