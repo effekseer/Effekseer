@@ -1415,7 +1415,23 @@ void Instance::CalculateMatrix( float deltaFrame )
 		}
 
 		// update local fields
-		auto currentLocalPosition = localPosition + modifyWithNoise_;
+		Vec3f currentLocalPosition;
+
+		if (m_pEffectNode->GenerationLocation.EffectsRotation)
+		{
+			// the center of force field depends Spawn method
+			// It should be used a result of past frame
+			auto location = Mat43f::Translation(localPosition);
+			location *= m_GenerationLocation;
+			currentLocalPosition = location.GetTranslation();
+		}
+		else
+		{
+			currentLocalPosition = localPosition;
+		}
+
+		currentLocalPosition += modifyWithNoise_;
+
 		for (const auto& field : m_pEffectNode->LocalForceFields)
 		{
 			if (field.Turbulence != nullptr)
@@ -1425,7 +1441,6 @@ void Instance::CalculateMatrix( float deltaFrame )
 			}
 
 		}
-		localPosition += modifyWithNoise_;
 
 		/* 描画部分の更新 */
 		m_pEffectNode->UpdateRenderedInstance( *this, m_pManager );
@@ -1451,13 +1466,22 @@ void Instance::CalculateMatrix( float deltaFrame )
 			MatRot = Mat43f::Identity;
 		}
 
-		// 行列の更新
-		m_GlobalMatrix43 = Mat43f::SRT( localScaling, MatRot, localPosition );
-		assert(m_GlobalMatrix43.IsValid());
-
-		if( m_pEffectNode->GenerationLocation.EffectsRotation )
+		// Update matrix
+		if (m_pEffectNode->GenerationLocation.EffectsRotation)
 		{
+			m_GlobalMatrix43 = Mat43f::SRT(localScaling, MatRot, localPosition);
+			assert(m_GlobalMatrix43.IsValid());
+
 			m_GlobalMatrix43 *= m_GenerationLocation;
+			assert(m_GlobalMatrix43.IsValid());
+
+			m_GlobalMatrix43 *= Mat43f::Translation(modifyWithNoise_);
+		}
+		else
+		{
+			localPosition += modifyWithNoise_;
+
+			m_GlobalMatrix43 = Mat43f::SRT(localScaling, MatRot, localPosition);
 			assert(m_GlobalMatrix43.IsValid());
 		}
 
