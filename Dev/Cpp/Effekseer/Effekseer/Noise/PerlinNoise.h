@@ -74,6 +74,30 @@ private:
 		return this->MakeGrad(hashnum & 15, x, y, z);
 	}
 
+	float MakeGradFast(const Pint hashnum, const float u, const float v) const noexcept
+	{
+		union {
+			float f;
+			uint32_t i;
+		} u_bits, v_bits;
+
+		u_bits.f = u;
+		v_bits.f = v;
+
+		u_bits.i ^= (hashnum & 1) << 31;
+		v_bits.i ^= (hashnum & 2) << 30;
+
+		return u_bits.f + v_bits.f;
+	}
+	float MakeGradFast(const Pint hashnum, const float x, const float y, const float z) const noexcept
+	{
+		return this->MakeGradFast(hashnum, hashnum < 8 ? x : y, hashnum < 4 ? y : hashnum == 12 || hashnum == 14 ? x : z);
+	}
+	float GetGradFast(const Pint hashnum, const float x, const float y, const float z) const noexcept
+	{
+		return this->MakeGradFast(hashnum & 15, x, y, z);
+	}
+
 public:
 	float SetNoise(float x, float y, float z) const noexcept
 	{
@@ -122,14 +146,14 @@ public:
 		const std::size_t b1{static_cast<std::size_t>(this->p[b0] + z_int)};
 		const std::size_t b2{static_cast<std::size_t>(this->p[b0 + 1] + z_int)};
 
-		const auto v111 = this->GetGrad(this->p[a1], x, y, z);
-		const auto v011 = this->GetGrad(this->p[b1], x - 1, y, z);
-		const auto v101 = this->GetGrad(this->p[a2], x, y - 1, z);
-		const auto v001 = this->GetGrad(this->p[b2], x - 1, y - 1, z);
-		const auto v110 = this->GetGrad(this->p[a1 + 1], x, y, z - 1);
-		const auto v010 = this->GetGrad(this->p[b1 + 1], x - 1, y, z - 1);
-		const auto v100 = this->GetGrad(this->p[a2 + 1], x, y - 1, z - 1);
-		const auto v000 = this->GetGrad(this->p[b2 + 1], x - 1, y - 1, z - 1);
+		const auto v111 = this->GetGradFast(this->p[a1], x, y, z);
+		const auto v011 = this->GetGradFast(this->p[b1], x - 1, y, z);
+		const auto v101 = this->GetGradFast(this->p[a2], x, y - 1, z);
+		const auto v001 = this->GetGradFast(this->p[b2], x - 1, y - 1, z);
+		const auto v110 = this->GetGradFast(this->p[a1 + 1], x, y, z - 1);
+		const auto v010 = this->GetGradFast(this->p[b1 + 1], x - 1, y, z - 1);
+		const auto v100 = this->GetGradFast(this->p[a2 + 1], x, y - 1, z - 1);
+		const auto v000 = this->GetGradFast(this->p[b2 + 1], x - 1, y - 1, z - 1);
 
 		const auto v11 = this->GetLerp(u, v111, v011);
 		const auto v01 = this->GetLerp(u, v101, v001);
