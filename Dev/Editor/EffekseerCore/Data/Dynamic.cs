@@ -151,7 +151,7 @@ namespace Effekseer.Data
 
 			var value = new DynamicEquation(this);
 			value.Name.SetValue("New Expression");
-			value.Code.SetValue("@O.x = @1");
+			value.Code.SetValue("@O.x = @In0\n@O.y = @In1");
 			new_value.Add(value);
 
 			var cmd = new Command.DelegateCommand(
