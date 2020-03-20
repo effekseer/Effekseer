@@ -10,7 +10,7 @@ target_include_directories(
     ${EFK_RUNTIME_ROOT}/Effekseer
     ${EFK_RUNTIME_ROOT}/EffekseerRendererDX12
     ${EFK_RUNTIME_ROOT}/EffekseerSoundXAudio2
-	../../Dev/Cpp/3rdParty/LLGI/src/
+    ${EFK_RUNTIME_ROOT}/3rdParty/LLGI/src/
     ../Utils
 )
 
@@ -18,7 +18,7 @@ target_link_libraries(
     Example_DirectX12
     PRIVATE
     Effekseer
-	LLGI
+    LLGI
     EffekseerRendererDX12
     EffekseerSoundXAudio2
     Example_Utils
