@@ -44,6 +44,8 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 			auto texture = graphicsDevice_->GetGraphics()->CreateTexture(texParam);
 			auto buf = texture->Lock();
 
+			memcpy(buf, pngTextureLoader_.GetData().data(), pngTextureLoader_.GetWidth() * pngTextureLoader_.GetHeight() * 4);
+
 			texture->Unlock();
 
 			textureData = new Effekseer::TextureData();
@@ -55,7 +57,7 @@ Effekseer::TextureData* TextureLoader::Load(const EFK_CHAR* path, ::Effekseer::T
 		}
 
 		delete[] data_texture;
-		return nullptr;
+		return textureData;
 	}
 
 	return nullptr;
