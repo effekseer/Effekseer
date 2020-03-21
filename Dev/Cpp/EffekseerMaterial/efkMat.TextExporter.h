@@ -92,6 +92,9 @@ class TextExporter
 	friend class TextCompiler;
 
 public:
+	TextExporter() = default;
+	virtual ~TextExporter() = default;
+
 	TextExporterResult Export(std::shared_ptr<Material> material, std::shared_ptr<Node> outputNode, std::string suffix = "");
 
 protected:
