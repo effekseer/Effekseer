@@ -42,28 +42,17 @@ static void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& res
 namespace Metal
 {
 
-static char* material_common_define = R"(
+static const char* material_common_define = R"(mtlcode
 #include <metal_stdlib>
 #pragma clang diagnostic ignored "-Wparentheses-equality"
 using namespace metal;
 
-#define FRAC frac
+#define FRAC fract
 #define LERP mix
 
-float MOD(float v) {
-    return fmod(v, 1.0);
-}
-
-float2 MOD(float2 v) {
-    return fmod(v, float2(1.0,1.0));
-}
-
-float3 MOD(float3 v) {
-    return fmod(v, float3(1.0,1.0,1.0));
-}
-
-float4 MOD(float4 v) {
-    return fmod(v, float4(1.0,1.0,1.0,1.0));
+template <typename T1, typename T2>
+inline auto MOD(T1 x, T2 y) -> decltype(x - y * floor(x/y)) {
+    return x - y * floor(x/y);
 }
 
 )";
@@ -648,14 +637,14 @@ void ExportMain(
         if (material->GetCustomData1Count() > 0)
         {
             maincode << GetType(material->GetCustomData1Count()) + " customData1 = ";
-            maincode << (isSprite? "i.atCustomData1;\n" : "u.customData1;\n");
+            maincode << (isSprite? "i.atCustomData1" : "u.customData1") + GetElement(material->GetCustomData1Count()) + ";\n";
             maincode << "o.v_CustomData1 = customData1" + GetElement(material->GetCustomData1Count()) + ";\n";
         }
 
         if (material->GetCustomData2Count() > 0)
         {
             maincode << GetType(material->GetCustomData2Count()) + " customData2 = ";
-            maincode << (isSprite? "i.atCustomData2;\n" : "u.customData2;\n");
+            maincode << (isSprite? "i.atCustomData2" : "u.customData2") + GetElement(material->GetCustomData2Count()) + ";\n";
             maincode << "o.v_CustomData2 = customData2" + GetElement(material->GetCustomData2Count()) + ";\n";
         }
 

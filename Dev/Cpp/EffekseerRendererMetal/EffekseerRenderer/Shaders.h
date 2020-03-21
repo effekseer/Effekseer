@@ -391,11 +391,17 @@ const char g_model_texture_vs_src[] = R"(mtlcode
 using namespace metal;
 struct ShaderInput1 {
   float4 a_Position [[attribute(0)]];
-  float4 a_TexCoord [[attribute(1)]];
-  float4 a_Color [[attribute(2)]];
+  float4 a_Normal [[attribute(1)]];
+  float4 a_Binormal [[attribute(2)]];
+  float4 a_Tangent [[attribute(3)]];
+  float4 a_TexCoord [[attribute(4)]];
+  float4 a_Color [[attribute(5)]];
 };
 struct ShaderOutput1 {
   float4 gl_Position [[position]];
+  float4 v_Normal;
+  float4 v_Binormal;
+  float4 v_Tangent;
   float4 v_TexCoord;
   float4 v_Color;
 };
@@ -426,6 +432,9 @@ const char g_model_texture_fs_src[] = R"(mtlcode
 #pragma clang diagnostic ignored "-Wparentheses-equality"
 using namespace metal;
 struct ShaderInput2 {
+  float4 v_Normal;
+  float4 v_Binormal;
+  float4 v_Tangent;
   float4 v_TexCoord;
   float4 v_Color;
 };
