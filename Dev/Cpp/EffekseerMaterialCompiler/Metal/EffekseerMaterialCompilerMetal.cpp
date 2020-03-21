@@ -42,7 +42,7 @@ static void Serialize(std::vector<uint8_t>& dst, const LLGI::CompilerResult& res
 namespace Metal
 {
 
-static const char* material_common_define = R"(mtlcode
+static const char* material_common_define = R"(
 #include <metal_stdlib>
 #pragma clang diagnostic ignored "-Wparentheses-equality"
 using namespace metal;
