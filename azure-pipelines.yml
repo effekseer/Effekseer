@@ -21,11 +21,10 @@ jobs:
           ArtifactName: 'Windows'
           publishLocation: 'Container'
 
-      - task: PowerShell@2
+      - task: BatchScript@1
         inputs:
-          targetType: 'inline'
-          script: |
-            call release_runtime.bat
+          filename: 'release_runtime.bat'
+
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: 'EffekseerRuntime150'
