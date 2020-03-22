@@ -37,7 +37,9 @@ Development
 
 ### Branch
 
-* master 1.5(WIP)
+* master 1.6(WIP)
+
+* [1.5x](https://github.com/effekseer/Effekseer/tree/15x)
 
 * [1.4x](https://github.com/effekseer/Effekseer/tree/14x)
 
@@ -66,16 +68,11 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 
 # RoadMap
 
-## 1.5
-
-- Node material
-- Bloom Postprocess in Editor
-- Dynamically changing parameters of Effect from a runtime
+- I'm planning.
 
 ## OnGoing
 
 - Support Metal
-- Support DirectX12
 - Support Vulkan
 
 [BackendRepository](https://github.com/altseed/LLGI)
@@ -91,7 +88,6 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 
 ## Medium
 - Add model exporters for 3D modeling softwares
-- HDR Color
 
 ## Hard
 
@@ -99,7 +95,6 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 
 ## Others
 - New method of rotation to match Z and moving direction.
-- Turbulence noise ( https://ics.media/entry/10921 )
 
 # For contributor
 
@@ -107,7 +102,7 @@ issues、TrelloとTODOを読んでください。常時、機能追加、バグ�
 
 * Windows
 
-Visual Studio 2015 are required.
+Visual Studio 2017 are required.
 
 Open ```release.bat```
 
