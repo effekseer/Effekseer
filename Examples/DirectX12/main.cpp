@@ -314,6 +314,8 @@ bool BeginFrame()
 	context->commandList->Begin();
 	context->commandList->BeginRenderPass(
 		context->platform->GetCurrentScreen(color, true, false)); // TODO: isDepthClear is false, because it fails with dx12.
+
+	return true;
 }
 
 void EndFrame()
