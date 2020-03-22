@@ -21,6 +21,17 @@ jobs:
           ArtifactName: 'Windows'
           publishLocation: 'Container'
 
+      - task: Bash@3
+        inputs:
+          targetType: 'inline'
+          script: |
+            release_runtime.bat
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'EffekseerRuntime150'
+          ArtifactName: 'EffekseerRuntime150'
+          publishLocation: 'Container'
+
   - job: MacOS
     pool:
       vmImage: 'macOS-10.14'
