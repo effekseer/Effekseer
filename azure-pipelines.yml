@@ -31,6 +31,17 @@ jobs:
           ArtifactName: 'EffekseerRuntime150'
           publishLocation: 'Container'
 
+      - task: BatchScript@1
+        inputs:
+          filename: 'release_tool.bat'
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'Effekseer150Win'
+          ArtifactName: 'Effekseer150Win'
+          publishLocation: 'Container'
+
+
   - job: MacOS
     pool:
       vmImage: 'macOS-10.14'
