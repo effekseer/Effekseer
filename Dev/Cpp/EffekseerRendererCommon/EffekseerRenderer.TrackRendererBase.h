@@ -569,6 +569,8 @@ namespace EffekseerRenderer
 					::Effekseer::Vec3f R;
 					::Effekseer::Vec3f U;
 
+					// It can be optimized because X is only not zero.
+					/*
 					U = axis;
 
 					F = ::Effekseer::Vec3f(m_renderer->GetCameraFrontDirection()).Normalize();
@@ -584,6 +586,23 @@ namespace EffekseerRenderer
 					vl.Pos = ToStruct(::Effekseer::Vec3f::Transform(vl.Pos, mat_rot));
 					vm.Pos = ToStruct(::Effekseer::Vec3f::Transform(vm.Pos, mat_rot));
 					vr.Pos = ToStruct(::Effekseer::Vec3f::Transform(vr.Pos,mat_rot));
+					*/
+
+					U = axis;
+					F = m_renderer->GetCameraFrontDirection();
+					R = ::Effekseer::Vec3f::Cross(U, F).Normalize();
+
+					assert(vl.Pos.Y == 0.0f);
+					assert(vr.Pos.Y == 0.0f);
+					assert(vl.Pos.Z == 0.0f);
+					assert(vr.Pos.Z == 0.0f);
+					assert(vm.Pos.X == 0.0f);
+					assert(vm.Pos.Y == 0.0f);
+					assert(vm.Pos.Z == 0.0f);
+
+					vl.Pos = ToStruct(-R * vl.Pos.X + pos);
+					vm.Pos = ToStruct(pos);
+					vr.Pos = ToStruct(-R * vr.Pos.X + pos);
 
 					if (vertexType == VertexType::Distortion)
 					{
