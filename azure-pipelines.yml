@@ -25,7 +25,7 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
-            release_runtime.bat
+            call release_runtime.bat
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: 'EffekseerRuntime150'
