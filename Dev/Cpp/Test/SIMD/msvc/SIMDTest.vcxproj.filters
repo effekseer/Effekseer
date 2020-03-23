@@ -78,5 +78,17 @@
     <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Vec3f.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_Gen.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_NEON.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_SSE.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

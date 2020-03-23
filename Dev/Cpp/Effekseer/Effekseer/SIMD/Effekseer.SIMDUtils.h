@@ -7,6 +7,8 @@
 #include "../Effekseer.Vector3D.h"
 #include "../Effekseer.Matrix43.h"
 #include "../Effekseer.Matrix44.h"
+#include "Effekseer.SIMD4f.h"
+#include "Effekseer.SIMD4i.h"
 #include "Effekseer.Vec2f.h"
 #include "Effekseer.Vec3f.h"
 #include "Effekseer.Mat43f.h"

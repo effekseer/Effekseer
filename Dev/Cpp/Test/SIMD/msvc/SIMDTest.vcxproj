@@ -26,7 +26,10 @@
     <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Mat43f.cpp" />
     <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Mat44f.cpp" />
     <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMDUtils.cpp" />
-    <ClCompile Include="..\SIMDTest.cpp" />
+    <ClCompile Include="..\SIMDTest.cpp">
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Effekseer\Effekseer\Effekseer.Math.h" />
@@ -40,6 +43,10 @@
     <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4f_Gen.h" />
     <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4f_NEON.h" />
     <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4f_SSE.h" />
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i.h" />
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_Gen.h" />
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_NEON.h" />
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_SSE.h" />
     <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMDUtils.h" />
     <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Vec2f.h" />
     <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Vec3f.h" />
@@ -118,7 +125,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\..\Effekseer\Effekseer\SIMD</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Effekseer\Effekseer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,7 +141,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\..\Effekseer\Effekseer\SIMD</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Effekseer\Effekseer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,7 +159,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\..\Effekseer\Effekseer\SIMD</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Effekseer\Effekseer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -172,7 +179,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\..\Effekseer\Effekseer\SIMD</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Effekseer\Effekseer</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

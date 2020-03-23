@@ -26,6 +26,8 @@ inline float Rsqrt(float x)
 	return x;
 }
 
+struct SIMD4i;
+
 /**
 	@brief	simd class for sse
 */
@@ -51,6 +53,12 @@ struct alignas(16) SIMD4f
 	void SetZ(float i) { s = Swizzle<2,1,0,3>(_mm_move_ss(Swizzle<2,1,0,3>(s).s, _mm_set_ss(i))).s; }
 	void SetW(float i) { s = Swizzle<3,1,2,0>(_mm_move_ss(Swizzle<3,1,2,0>(s).s, _mm_set_ss(i))).s; }
 
+	template <size_t LANE>
+	SIMD4f Dup() { return _mm_shuffle_ps(s, s, _MM_SHUFFLE(LANE, LANE, LANE, LANE)); }
+
+	SIMD4i Convert4i() const;
+	SIMD4i Cast4i() const;
+
 	SIMD4f& operator+=(const SIMD4f& rhs) { s = _mm_add_ps(s, rhs.s); return *this; }
 	SIMD4f& operator-=(const SIMD4f& rhs) { s = _mm_sub_ps(s, rhs.s); return *this; }
 	SIMD4f& operator*=(const SIMD4f& rhs) { s = _mm_mul_ps(s, rhs.s); return *this; }
@@ -73,6 +81,8 @@ struct alignas(16) SIMD4f
 	static SIMD4f Abs(const SIMD4f& in);
 	static SIMD4f Min(const SIMD4f& lhs, const SIMD4f& rhs);
 	static SIMD4f Max(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f Floor(const SIMD4f& in);
+	static SIMD4f Ceil(const SIMD4f& in);
 	static SIMD4f MulAdd(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
 	static SIMD4f MulSub(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
 
@@ -91,6 +101,7 @@ struct alignas(16) SIMD4f
 	template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 	static SIMD4f Mask();
 	static uint32_t MoveMask(const SIMD4f& in);
+	static SIMD4f Select(const SIMD4f& mask, const SIMD4f& sel1, const SIMD4f& sel2);
 	static SIMD4f Equal(const SIMD4f& lhs, const SIMD4f& rhs);
 	static SIMD4f NotEqual(const SIMD4f& lhs, const SIMD4f& rhs);
 	static SIMD4f LessThan(const SIMD4f& lhs, const SIMD4f& rhs);
@@ -101,6 +112,23 @@ struct alignas(16) SIMD4f
 	static SIMD4f IsZero(const SIMD4f& in, float epsilon = DefaultEpsilon);
 	static void Transpose(SIMD4f& s0, SIMD4f& s1, SIMD4f& s2, SIMD4f& s3);
 };
+
+} // namespace Effekseer
+
+#include "Effekseer.SIMD4i.h"
+
+namespace Effekseer
+{
+
+inline SIMD4i SIMD4f::Convert4i() const
+{
+	return _mm_cvtps_epi32(s);
+}
+
+inline SIMD4i SIMD4f::Cast4i() const
+{
+	return _mm_castps_si128(s);
+}
 
 inline SIMD4f operator+(const SIMD4f& lhs, const SIMD4f& rhs)
 {
@@ -140,6 +168,11 @@ inline SIMD4f operator&(const SIMD4f& lhs, const SIMD4f& rhs)
 inline SIMD4f operator|(const SIMD4f& lhs, const SIMD4f& rhs)
 {
 	return SIMD4f{_mm_or_ps(lhs.s, rhs.s)};
+}
+
+inline SIMD4f operator^(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	return SIMD4f{_mm_xor_ps(lhs.s, rhs.s)};
 }
 
 inline bool operator==(const SIMD4f& lhs, const SIMD4f& rhs)
@@ -234,6 +267,24 @@ inline SIMD4f SIMD4f::Max(const SIMD4f& lhs, const SIMD4f& rhs)
 	return SIMD4f{_mm_max_ps(lhs.s, rhs.s)};
 }
 
+inline SIMD4f SIMD4f::Floor(const SIMD4f& in)
+{
+	__m128i in_i = _mm_cvttps_epi32(in.s);
+	__m128 result = _mm_cvtepi32_ps(in_i);
+	__m128 larger = _mm_cmpgt_ps(result, in.s);
+	larger = _mm_cvtepi32_ps(_mm_castps_si128(larger));
+	return _mm_add_ps(result, larger);
+}
+
+inline SIMD4f SIMD4f::Ceil(const SIMD4f& in)
+{
+	__m128i in_i = _mm_cvttps_epi32(in.s);
+	__m128 result = _mm_cvtepi32_ps(in_i);
+	__m128 smaller = _mm_cmplt_ps(result, in.s);
+	smaller = _mm_cvtepi32_ps(_mm_castps_si128(smaller));
+	return _mm_sub_ps(result, smaller);
+}
+
 inline SIMD4f SIMD4f::MulAdd(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
 {
 #ifdef __AVX2__
@@ -316,6 +367,11 @@ inline SIMD4f SIMD4f::Mask()
 inline uint32_t SIMD4f::MoveMask(const SIMD4f& in)
 {
 	return (uint32_t)_mm_movemask_ps(in.s);
+}
+
+inline SIMD4f SIMD4f::Select(const SIMD4f& mask, const SIMD4f& sel1, const SIMD4f& sel2)
+{
+	return _mm_or_ps(_mm_and_ps(mask.s, sel1.s), _mm_andnot_ps(mask.s, sel2.s));
 }
 
 inline SIMD4f SIMD4f::Equal(const SIMD4f& lhs, const SIMD4f& rhs)

@@ -21,6 +21,8 @@ inline float Rsqrt(float x)
 	return 1.0f / sqrt(x);
 }
 
+struct SIMD4i;
+
 /**
  @brief    simd class for sse
  */
@@ -68,6 +70,8 @@ struct alignas(16) SIMD4f
 	static SIMD4f Abs(const SIMD4f& in);
 	static SIMD4f Min(const SIMD4f& lhs, const SIMD4f& rhs);
 	static SIMD4f Max(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f Floor(const SIMD4f& in);
+	static SIMD4f Ceil(const SIMD4f& in);
 	static SIMD4f MulAdd(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
 	static SIMD4f MulSub(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
 	
@@ -100,6 +104,13 @@ private:
 	static SIMD4f SwizzleYZX(const SIMD4f& in);
 	static SIMD4f SwizzleZXY(const SIMD4f& in);
 };
+
+} // namespace Effekseer
+
+#include "Effekseer.SIMD4i.h"
+
+namespace Effekseer
+{
 
 inline SIMD4f operator+(const SIMD4f& lhs, const SIMD4f& rhs)
 {
@@ -152,6 +163,13 @@ inline SIMD4f operator|(const SIMD4f& lhs, const SIMD4f& rhs)
 	uint32x4_t lhsi = vreinterpretq_u32_f32(lhs.s);
 	uint32x4_t rhsi = vreinterpretq_u32_f32(rhs.s);
 	return vreinterpretq_f32_u32(vorrq_u32(lhsi, rhsi));
+}
+
+inline SIMD4f operator^(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	uint32x4_t lhsi = vreinterpretq_u32_f32(lhs.s);
+	uint32x4_t rhsi = vreinterpretq_u32_f32(rhs.s);
+	return vreinterpretq_f32_u32(veorq_u32(lhsi, rhsi));
 }
 
 inline bool operator==(const SIMD4f& lhs, const SIMD4f& rhs)
@@ -254,6 +272,32 @@ inline SIMD4f SIMD4f::Min(const SIMD4f& lhs, const SIMD4f& rhs)
 inline SIMD4f SIMD4f::Max(const SIMD4f& lhs, const SIMD4f& rhs)
 {
 	return vmaxq_f32(lhs.s, rhs.s);
+}
+
+inline SIMD4f SIMD4f::Floor(const SIMD4f& in)
+{
+#if defined(_M_ARM64) || __aarch64__
+	return vrndmq_f32(in.s);
+#else
+	int32x4_t in_i = vcvtq_s32_f32(in.s);
+	float32x4_t result = vcvtq_f32_s32(in_i);
+	float32x4_t larger = vcgtq_f32(result, in.s);
+	larger = vcvtq_f32_s32(larger);
+	return vaddq_f32(result, larger);
+#endif
+}
+
+inline SIMD4f SIMD4f::Ceil(const SIMD4f& in)
+{
+#if defined(_M_ARM64) || __aarch64__
+	return vrndpq_f32(in.s);
+#else
+	int32x4_t in_i = vcvtq_s32_f32(in.s);
+	float32x4_t result = vcvtq_f32_s32(in_i);
+	float32x4_t smaller = vcltq_f32(result, in.s);
+	smaller = vcvtq_f32_s32(smaller);
+	return vsubq_f32(result, smaller);
+#endif
 }
 
 inline SIMD4f SIMD4f::MulAdd(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
