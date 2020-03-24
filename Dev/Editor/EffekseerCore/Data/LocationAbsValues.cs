@@ -5,15 +5,158 @@ using System.Text;
 
 namespace Effekseer.Data
 {
+	public enum ForceFieldFalloffType
+	{
+		None,
+		Sphere,
+		Tube,
+		Cone,
+	}
+
+	public class ForceFieldFalloff
+	{
+		[Selector(ID = 11)]
+		public Value.Enum<ForceFieldFalloffType> Type { get; set; }
+
+		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Sphere)]
+		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Tube)]
+		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Cone)]
+		public Value.Float Power { get; private set; }
+
+		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Sphere)]
+		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Tube)]
+		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Cone)]
+
+		public Value.Float MaxDistance { get; private set; }
+
+
+		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Sphere)]
+		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Tube)]
+		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Cone)]
+
+		public Value.Float MinDistance { get; private set; }
+
+		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Tube)]
+		[IO(Export = true)]
+		public ForceFieldFalloffTube Tube { get; private set; }
+
+		[Selected(ID = 11, Value = (int)ForceFieldFalloffType.Cone)]
+		[IO(Export = true)]
+		public ForceFieldFalloffCone Cone { get; private set; }
+
+		public ForceFieldFalloff()
+		{
+			Type = new Value.Enum<ForceFieldFalloffType>(ForceFieldFalloffType.None);
+
+			Power = new Value.Float(1.0f);
+
+			MaxDistance = new Value.Float();
+
+			MinDistance = new Value.Float();
+
+			Tube = new ForceFieldFalloffTube();
+
+			Cone = new ForceFieldFalloffCone();
+		}
+	}
+
+	public class ForceFieldFalloffTube
+	{
+		public Value.Float RadiusPower { get; private set; }
+
+		public Value.Float MaxRadius { get; private set; }
+
+		public Value.Float MinRadius { get; private set; }
+
+		public ForceFieldFalloffTube()
+		{
+			RadiusPower = new Value.Float();
+
+			MaxRadius = new Value.Float();
+
+			MinRadius = new Value.Float();
+		}
+	}
+
+	public class ForceFieldFalloffCone
+	{
+		public Value.Float AnglePower { get; private set; }
+
+		public Value.Float MaxAngle { get; private set; }
+
+		public Value.Float MinAngle { get; private set; }
+
+		public ForceFieldFalloffCone()
+		{
+			AnglePower = new Value.Float();
+
+			MaxAngle = new Value.Float();
+
+			MinAngle = new Value.Float();
+		}
+	}
+
 	public enum LocalForceFieldType
 	{
 		[Name(value = "無し", language = Language.Japanese)]
 		[Name(value = "None", language = Language.English)]
 		None = 0,
 
+		Force = 2,
+		Wind = 3,
+		Vortex = 4,
+		Maginetic = 5,
+
 		[Name(value = "乱流", language = Language.Japanese)]
 		[Name(value = "Turbulence", language = Language.English)]
 		Turbulence = 1,
+
+		Drag = 7,
+	}
+
+	public class ForceFieldWind
+	{
+		public ForceFieldWind()
+		{
+		}
+	}
+
+	public class ForceFieldVortex
+	{
+		public ForceFieldVortex()
+		{
+		}
+	}
+
+	public class ForceFieldMaginetic
+	{
+		public ForceFieldMaginetic()
+		{
+		}
+	}
+
+	public class ForceFieldCharge
+	{
+		public ForceFieldCharge()
+		{
+		}
+	}
+
+	public class ForceFieldDrag
+	{
+		public ForceFieldDrag()
+		{
+		}
+	}
+
+	public class ForceFieldForce
+	{
+		public Value.Boolean Gravitation { get; private set; }
+
+		public ForceFieldForce()
+		{
+			Gravitation = new Value.Boolean(false);
+		}
 	}
 
 	public class LocalForceFieldTurbulence
@@ -59,6 +202,63 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Force)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Wind)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Vortex)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Maginetic)]
+		// [Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Drag)]
+		public Value.Float Power { get; private set; }
+
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Force)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Wind)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Vortex)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Maginetic)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Drag)]
+
+		public Value.Vector3D Position { get; private set; }
+
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Force)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Wind)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Vortex)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Maginetic)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Drag)]
+
+		public Value.Vector3D Rotation { get; private set; }
+
+		[IO(Export = true)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Force)]
+		public ForceFieldForce Force
+		{
+			get;
+			private set;
+		}
+
+		[IO(Export = true)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Wind)]
+		public ForceFieldWind Wind
+		{
+			get;
+			private set;
+		}
+
+		[IO(Export = true)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Vortex)]
+		public ForceFieldWind Vortex
+		{
+			get;
+			private set;
+		}
+
+		[IO(Export = true)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Maginetic)]
+		public ForceFieldMaginetic Maginetic
+		{
+			get;
+			private set;
+		}
+
 		[IO(Export = true)]
 		[Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
 		public LocalForceFieldTurbulence Turbulence
@@ -67,12 +267,40 @@ namespace Effekseer.Data
 			private set;
 		}
 
+		[IO(Export = true)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Drag)]
+		public ForceFieldDrag Drag
+		{
+			get;
+			private set;
+		}
+
+		[IO(Export = true)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Force)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Wind)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Vortex)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Maginetic)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Turbulence)]
+		[Selected(ID = 10, Value = (int)LocalForceFieldType.Drag)]
+		public ForceFieldFalloff Falloff { get; private set; }
+
 		int number = 1;
 		public LocalForceField(int number)
 		{
 			this.number = number;
 			Type = new Value.Enum<LocalForceFieldType>();
+			Power = new Value.Float(1.0f);
+			Position = new Value.Vector3D();
+			Rotation = new Value.Vector3D();
+
+			Force = new ForceFieldForce();
+			Wind = new ForceFieldWind();
+			Vortex = new ForceFieldWind();
+			Maginetic = new ForceFieldMaginetic();
 			Turbulence = new LocalForceFieldTurbulence();
+			Drag = new ForceFieldDrag();
+
+			Falloff = new ForceFieldFalloff();
 		}
 
 		public EditableValue[] GetValues()
@@ -101,7 +329,19 @@ namespace Effekseer.Data
 			ev.SelfSelectorID = 10;
 			ret.Add(ev);
 
+			ret.Add(EditableValue.Create(Position, this.GetType().GetProperty("Position")));
+			ret.Add(EditableValue.Create(Rotation, this.GetType().GetProperty("Rotation")));
+			ret.Add(EditableValue.Create(Power, this.GetType().GetProperty("Power")));
+
+			ret.Add(EditableValue.Create(Force, this.GetType().GetProperty("Force")));
+			ret.Add(EditableValue.Create(Wind, this.GetType().GetProperty("Wind")));
+			ret.Add(EditableValue.Create(Vortex, this.GetType().GetProperty("Vortex")));
+			ret.Add(EditableValue.Create(Maginetic, this.GetType().GetProperty("Maginetic")));
 			ret.Add(EditableValue.Create(Turbulence, this.GetType().GetProperty("Turbulence")));
+			ret.Add(EditableValue.Create(Drag, this.GetType().GetProperty("Drag")));
+
+			ret.Add(EditableValue.Create(Falloff, this.GetType().GetProperty("Falloff")));
+
 			return ret.ToArray();
 		}
 
@@ -199,7 +439,7 @@ namespace Effekseer.Data
 				Gravity = new Value.Vector3D(0, 0, 0);
 			}
 		}
-		
+
 		public class AttractiveForceParamater
 		{
 			[Name(language = Language.Japanese, value = "引力")]
@@ -211,7 +451,7 @@ namespace Effekseer.Data
 				get;
 				private set;
 			}
-			
+
 			[Name(language = Language.Japanese, value = "制御")]
 			[Description(language = Language.Japanese, value = "移動方向をターゲット方向へ補正量")]
 			[Name(language = Language.English, value = "Resistance")]
@@ -221,7 +461,7 @@ namespace Effekseer.Data
 				get;
 				private set;
 			}
-			
+
 			[Name(language = Language.Japanese, value = "最小範囲")]
 			[Description(language = Language.Japanese, value = "この範囲以内では引力がフルに掛かります")]
 			[Name(language = Language.English, value = "Minimum Range")]
@@ -250,7 +490,7 @@ namespace Effekseer.Data
 				MaxRange = new Value.Float(0.0f, 1000.0f, 0.0f, 1.0f);
 			}
 		}
-	
+
 		public enum ParamaterType : int
 		{
 			[Name(value = "無し", language = Language.Japanese)]

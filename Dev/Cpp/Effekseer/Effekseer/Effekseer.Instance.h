@@ -24,6 +24,7 @@
 #include "Effekseer.EffectNodeRing.h"
 #include "Effekseer.EffectNodeSprite.h"
 #include "Effekseer.EffectNodeTrack.h"
+#include "ForceField/ForceFields.h"
 
 //----------------------------------------------------------------------------------
 //
@@ -33,7 +34,8 @@ namespace Effekseer
 
 struct InstanceCustomData
 {
-	union {
+	union
+	{
 		struct
 		{
 			Vec2f start;
@@ -104,16 +106,20 @@ public:
 	Vec3f m_GlobalRevisionLocation;
 	Vec3f m_GlobalRevisionVelocity;
 
+#ifdef OLD_LF
 	//! for noise
 	Vec3f modifyWithNoise_;
-
+#else
+	LocalForceFieldInstance localForceField_;
+#endif
 	// Color for binding
 	Color ColorInheritance;
 
 	// Parent color
 	Color ColorParent;
 
-	union {
+	union
+	{
 		struct
 		{
 			Vec3f location;
@@ -139,7 +145,8 @@ public:
 
 	} translation_values;
 
-	union {
+	union
+	{
 		struct
 		{
 			Vec3f rotation;
@@ -163,7 +170,8 @@ public:
 			float rotation;
 			Vec3f axis;
 
-			union {
+			union
+			{
 				struct
 				{
 					float rotation;
@@ -186,7 +194,8 @@ public:
 
 	} rotation_values;
 
-	union {
+	union
+	{
 		struct
 		{
 			Vec3f scale;
@@ -226,7 +235,8 @@ public:
 	} scaling_values;
 
 	// 描画
-	union {
+	union
+	{
 		EffectNodeSprite::InstanceValues sprite;
 		EffectNodeRibbon::InstanceValues ribbon;
 		EffectNodeRing::InstanceValues ring;
@@ -235,7 +245,8 @@ public:
 	} rendererValues;
 
 	// 音
-	union {
+	union
+	{
 		int32_t delay;
 	} soundValues;
 
@@ -324,7 +335,8 @@ public:
 #ifdef __EFFEKSEER_BUILD_VERSION16__
 	float m_flipbookIndexAndNextRate;
 
-	union {
+	union
+	{
 		struct
 		{
 		} fixed;
