@@ -1233,14 +1233,19 @@ namespace efk
 		}
 	}
 
+	void GUIManager::Indent(float indent_w)
+	{
+		ImGui::Indent(indent_w);
+	}
+
 	void GUIManager::Spacing()
 	{
 		ImGui::Spacing();
 	}
 
-	void GUIManager::SameLine()
+	void GUIManager::SameLine(float offset_from_start_x, float spacing)
 	{
-		ImGui::SameLine();
+		ImGui::SameLine(offset_from_start_x, spacing);
 	}
 
 	void GUIManager::BeginGroup()

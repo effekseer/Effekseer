@@ -64,6 +64,7 @@
 #endif
 
 const float DistanceBase = 15.0f;
+const float OrthoScaleBase = 16.0f;
 const float ZoomDistanceFactor = 1.125f;
 const float MaxZoom = 40.0f;
 const float MinZoom = -40.0f;
@@ -71,7 +72,6 @@ const float MinZoom = -40.0f;
 static float g_RotX = 30.0f;
 static float g_RotY = -30.0f;
 static Effekseer::Vector3D g_lightDirection = Effekseer::Vector3D(1, 1, 1);
-static float g_Distance = DistanceBase;
 static float g_Zoom = 0.0f;
 const float PI = 3.14159265f;
 
@@ -270,7 +270,16 @@ void GenerateExportedImageWithBlendAndAdd(std::vector<Effekseer::Color>& pixelsB
 void SetZoom(float zoom)
 {
 	g_Zoom = Effekseer::Max(MinZoom, Effekseer::Min(MaxZoom, zoom));
-	g_Distance = DistanceBase * powf(ZoomDistanceFactor, g_Zoom);
+}
+
+float GetDistance()
+{
+	return DistanceBase * powf(ZoomDistanceFactor, g_Zoom);
+}
+
+float GetOrthoScale()
+{
+	return OrthoScaleBase / powf(ZoomDistanceFactor, g_Zoom);
 }
 
 ViewerParamater::ViewerParamater()
@@ -294,6 +303,7 @@ ViewerParamater::ViewerParamater()
 
 	, Distortion(DistortionType::Current)
 	, RenderingMode(RenderMode::Normal)
+	, ViewerMode(ViewMode::_3D)
 
 {
 }
@@ -680,7 +690,7 @@ bool Native::UpdateWindow()
 	assert(g_manager != NULL);
 	assert(g_renderer != NULL);
 
-	::Effekseer::Vector3D position(0, 0, g_Distance);
+	::Effekseer::Vector3D position(0, 0, GetDistance());
 	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
 	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
 
@@ -723,6 +733,8 @@ bool Native::UpdateWindow()
 
 		drawParameter.CameraPosition = position;
 	}
+
+	g_renderer->SetOrthographicScale(GetOrthoScale());
 
 	g_sound->SetListener(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 	g_sound->Update();
@@ -1450,7 +1462,7 @@ bool Native::Record(RecordingParameter& recordingParameter)
 
 	g_renderer->IsBackgroundTranslucent = recordingParameter.Transparence == TransparenceType::Original;
 
-	::Effekseer::Vector3D position(0, 0, g_Distance);
+	::Effekseer::Vector3D position(0, 0, GetDistance());
 	::Effekseer::Matrix43 mat, mat_rot_x, mat_rot_y;
 	mat_rot_x.RotationX(-g_RotX / 180.0f * PI);
 	mat_rot_y.RotationY(-g_RotY / 180.0f * PI);
@@ -1462,6 +1474,8 @@ bool Native::Record(RecordingParameter& recordingParameter)
 
 	g_renderer->GetRenderer()->SetCameraMatrix(
 		::Effekseer::Matrix44().LookAtRH(position, g_focus_position, ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f)));
+
+	g_renderer->SetOrthographicScale(GetOrthoScale());
 
 	StopEffect();
 
@@ -1588,7 +1602,7 @@ ViewerParamater Native::GetViewerParamater()
 	paramater.FocusZ = g_focus_position.Z;
 	paramater.AngleX = g_RotX;
 	paramater.AngleY = g_RotY;
-	paramater.Distance = g_Distance;
+	paramater.Distance = GetDistance();
 	paramater.RendersGuide = g_renderer->RendersGuide;
 	paramater.RateOfMagnification = g_renderer->RateOfMagnification;
 

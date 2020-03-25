@@ -254,6 +254,16 @@ public class ViewerParamater : global::System.IDisposable {
     } 
   }
 
+  public ViewMode ViewerMode {
+    set {
+      EffekseerNativePINVOKE.ViewerParamater_ViewerMode_set(swigCPtr, (int)value);
+    } 
+    get {
+      ViewMode ret = (ViewMode)EffekseerNativePINVOKE.ViewerParamater_ViewerMode_get(swigCPtr);
+      return ret;
+    } 
+  }
+
   public ViewerParamater() : this(EffekseerNativePINVOKE.new_ViewerParamater(), true) {
   }
 

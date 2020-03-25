@@ -421,8 +421,9 @@ namespace efk
 
 		void HiddenSeparator(float thicknessDraw, float thicknessItem);
 
+		void Indent(float indent_w);
 		void Spacing();
-		void SameLine();
+		void SameLine(float offset_from_start_x = 0.0f, float spacing = -1.0f);
 
 		void BeginGroup();
 		void EndGroup();

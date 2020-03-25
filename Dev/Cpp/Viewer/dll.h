@@ -30,6 +30,12 @@ enum class RenderMode
 	Wireframe,
 };
 
+enum class ViewMode
+{
+	_3D,
+	_2D,
+};
+
 class ViewerParamater
 {
 public:
@@ -56,6 +62,7 @@ public:
 
 	DistortionType Distortion;
 	RenderMode RenderingMode;
+	ViewMode ViewerMode;
 
 	ViewerParamater();
 };

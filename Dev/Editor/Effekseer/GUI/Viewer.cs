@@ -366,6 +366,15 @@ namespace Effekseer.GUI
 			native.SetViewerParamater(param);
 		}
 
+		public void SetViewMode(int viewMode)
+		{
+			var param = native.GetViewerParamater();
+
+			param.ViewerMode = (swig.ViewMode)viewMode;
+
+			native.SetViewerParamater(param);
+		}
+
 		public void SetIsRightHand(bool value)
 		{
 			native.SetIsRightHand(value);
@@ -417,6 +426,8 @@ namespace Effekseer.GUI
 				return false;
 			}
 
+			Core.Option.ViewerMode.OnChanged += ViewMode_OnChanged;
+
 			Bloom_OnChanged(null, null);
 			Core.Environment.PostEffect.BloomSwitch.OnChanged += Bloom_OnChanged;
 			Core.Environment.PostEffect.Bloom.Intensity.OnChanged += Bloom_OnChanged;
@@ -442,7 +453,9 @@ namespace Effekseer.GUI
 			
 			Core.Environment.PostEffect.TonemapSelector.OnChanged -= Tonemap_OnChanged;
 			Core.Environment.PostEffect.TonemapReinhard.Exposure.OnChanged -= Tonemap_OnChanged;
-			
+
+			Core.Option.ViewerMode.OnChanged -= ViewMode_OnChanged;
+
 			native.DestroyWindow();
 		}
 
@@ -669,6 +682,7 @@ namespace Effekseer.GUI
 
 			SetDistortionType((int)Core.Option.DistortionType.Value);
 			SetRenderMode((int)Core.Option.RenderingMode.Value);
+			SetViewMode((int)Core.Option.ViewerMode.Value);
 
 			if (Core.Culling.Type.Value == Data.EffectCullingValues.ParamaterType.Sphere)
 			{
@@ -797,7 +811,44 @@ namespace Effekseer.GUI
 			}
 		}
 
-		
+
+		private void ViewMode_OnChanged(object sender, ChangedValueEventArgs e)
+		{
+			var viewerMode = (Data.OptionValues.ViewMode)e.Value;
+			if (viewerMode == Data.OptionValues.ViewMode._3D)
+			{
+				var param = Manager.Viewer.GetViewerParamater();
+				param.ViewerMode = (swig.ViewMode)viewerMode;
+				param.IsPerspective = true;
+				param.IsOrthographic = false;
+				param.FocusX = 0.0f;
+				param.FocusY = 0.0f;
+				param.FocusZ = 0.0f;
+				param.AngleX = 30.0f;
+				param.AngleY = -30.0f;
+				Manager.Viewer.SetViewerParamater(param);
+				Core.Option.IsXYGridShown.Value = false;
+				Core.Option.IsXZGridShown.Value = true;
+				Core.Option.IsYZGridShown.Value = false;
+			}
+			else if (viewerMode == Data.OptionValues.ViewMode._2D)
+			{
+				var param = Manager.Viewer.GetViewerParamater();
+				param.ViewerMode = (swig.ViewMode)viewerMode;
+				param.IsPerspective = false;
+				param.IsOrthographic = true;
+				param.FocusX = 0.0f;
+				param.FocusY = 0.0f;
+				param.FocusZ = 0.0f;
+				param.AngleX = 0.0f;
+				param.AngleY = 0.0f;
+				Manager.Viewer.SetViewerParamater(param);
+				Core.Option.IsXYGridShown.Value = true;
+				Core.Option.IsXZGridShown.Value = false;
+				Core.Option.IsYZGridShown.Value = false;
+			}
+		}
+
 		private void Bloom_OnChanged(object sender, ChangedValueEventArgs e)
 		{
 			bool enabled = Core.Environment.PostEffect.BloomSwitch.Value == Data.EnvironmentPostEffectValues.EffectSwitch.On;

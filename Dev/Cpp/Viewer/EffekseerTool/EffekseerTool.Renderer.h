@@ -45,6 +45,7 @@ private:
 	int32_t				m_windowWidth = 0;
 	int32_t				m_windowHeight = 0;
 	int32_t				m_squareMaxCount;
+	float				m_orthoScale = 1.0f;
 
 	eProjectionType		m_projection;
 
@@ -139,6 +140,11 @@ public:
 		@brief	射影行列設定
 	*/
 	void SetOrthographic( int width, int height );
+
+	/**
+		@brief	射影行列設定
+	*/
+	void SetOrthographicScale( float scale );
 
 	/**
 		@brief	Orthographic表示の拡大率

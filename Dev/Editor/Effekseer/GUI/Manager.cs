@@ -524,7 +524,14 @@ namespace Effekseer.GUI
 					var dx = mousePos.X - mousePos_pre.X;
 					var dy = mousePos.Y - mousePos_pre.Y;
 
-					Viewer.Slide(dx / 30.0f, dy / 30.0f);
+					if (Core.Option.ViewerMode.Value == Data.OptionValues.ViewMode._3D)
+					{
+						Viewer.Slide(dx / 30.0f, dy / 30.0f);
+					}
+					else if (Core.Option.ViewerMode.Value == Data.OptionValues.ViewMode._2D)
+					{
+						Viewer.Slide(dx / 16.0f, dy / 16.0f);
+					}
 				}
 				else if (NativeManager.GetMouseWheel() != 0)
 				{
@@ -541,7 +548,14 @@ namespace Effekseer.GUI
 					var dx = mousePos.X - mousePos_pre.X;
 					var dy = mousePos.Y - mousePos_pre.Y;
 
-					Viewer.Rotate(dx, dy);
+					if (Core.Option.ViewerMode.Value == Data.OptionValues.ViewMode._3D)
+					{
+						Viewer.Rotate(dx, dy);
+					}
+					else if (Core.Option.ViewerMode.Value == Data.OptionValues.ViewMode._2D)
+					{
+						Viewer.Slide(dx / 16.0f, dy / 16.0f);
+					}
 				}
 			}
 

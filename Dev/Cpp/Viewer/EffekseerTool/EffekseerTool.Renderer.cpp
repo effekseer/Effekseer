@@ -268,22 +268,29 @@ void Renderer::SetOrthographic(int width, int height)
 {
 	::Effekseer::Matrix44 proj;
 
-	auto scale = 16.0f;
-
 	if (IsRightHand)
 	{
 		// Right hand coordinate
 		proj.OrthographicRH(
-			(float)width / scale / RateOfMagnification, (float)height / scale / RateOfMagnification, ClippingStart, ClippingEnd);
+			(float)width / m_orthoScale / RateOfMagnification, 
+			(float)height / m_orthoScale / RateOfMagnification, 
+			ClippingStart, ClippingEnd);
 	}
 	else
 	{
 		// Left hand coordinate
 		proj.OrthographicLH(
-			(float)width / scale / RateOfMagnification, (float)height / scale / RateOfMagnification, ClippingStart, ClippingEnd);
+			(float)width / m_orthoScale / RateOfMagnification, 
+			(float)height / m_orthoScale / RateOfMagnification, 
+			ClippingStart, ClippingEnd);
 	}
 
 	m_renderer->SetProjectionMatrix(proj);
+}
+
+void Renderer::SetOrthographicScale( float scale )
+{
+	m_orthoScale = scale;
 }
 
 bool Renderer::Resize( int width, int height )
