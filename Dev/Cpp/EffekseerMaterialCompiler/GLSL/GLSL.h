@@ -2,6 +2,7 @@
 #pragma once
 
 #include <iostream>
+#undef min
 
 namespace Effekseer
 {
@@ -14,6 +15,9 @@ static char* material_common_define_450 = R"(
 #define lowp
 #define mediump
 #define highp
+#define IN in
+#define OUT out
+
 )";
 
 static char* material_common_define_not_450 = R"(
@@ -513,6 +517,8 @@ struct ShaderData
 
 class ShaderGenerator
 {
+	bool useUniformBlock_ = false;
+
 	std::string Replace(std::string target, std::string from_, std::string to_)
 	{
 		std::string::size_type Pos(target.find(from_));
@@ -561,7 +567,17 @@ class ShaderGenerator
 		maincode << "uniform " << GetType(type) << " " << name << ";" << std::endl;
 	}
 
-	void ExportTexture(std::ostringstream& maincode, const char* name) { maincode << "uniform sampler2D " << name << ";" << std::endl; }
+	void ExportTexture(std::ostringstream& maincode, const char* name, int bind)
+	{
+		if (useUniformBlock_)
+		{
+			maincode << "layout(binding = " << (bind + 1) << ") uniform sampler2D " << name << ";" << std::endl;
+		}
+		else
+		{
+			maincode << "uniform sampler2D " << name << ";" << std::endl;
+		}
+	}
 
 	void ExportHeader(std::ostringstream& maincode, Material* material, int stage, bool isSprite, bool isOutputDefined, bool is450)
 	{
@@ -580,7 +596,7 @@ class ShaderGenerator
 		{
 			maincode << material_common_vs_define;
 		}
-		else if (stage == 0)
+		else if (stage == 1)
 		{
 			maincode << material_common_fs_define;
 		}
@@ -608,10 +624,11 @@ class ShaderGenerator
 			maincode << g_material_fs_src_pre;
 		}
 
-		if (isOutputDefined)
+		if (isOutputDefined && stage == 1)
 		{
 			maincode << "#define FRAGCOLOR out_flagColor" << std::endl;
-			maincode << "layout(location = 0) out vec4 out_flagColor" << std::endl;
+			maincode << "layout(location = 0) out vec4 out_flagColor;" << std::endl;
+			maincode << std::endl;
 		}
 	}
 
@@ -731,9 +748,15 @@ class ShaderGenerator
 	}
 
 public:
-	ShaderData GenerateShader(
-		Material* material, MaterialShaderType shaderType, int32_t maximumTextureCount, bool useUniformBlock, bool isOutputDefined, bool is450)
+	ShaderData GenerateShader(Material* material,
+							  MaterialShaderType shaderType,
+							  int32_t maximumTextureCount,
+							  bool useUniformBlock,
+							  bool isOutputDefined,
+							  bool is450)
 	{
+		useUniformBlock_ = useUniformBlock;
+
 		bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
 		bool isRefrection = material->GetHasRefraction() &&
 							(shaderType == MaterialShaderType::Refraction || shaderType == MaterialShaderType::RefractionModel);
@@ -753,12 +776,12 @@ public:
 				auto textureIndex = material->GetTextureIndex(i);
 				auto textureName = material->GetTextureName(i);
 
-				ExportTexture(maincode, textureName);
+				ExportTexture(maincode, textureName, i);
 			}
 
 			for (size_t i = actualTextureCount; i < actualTextureCount + 1; i++)
 			{
-				ExportTexture(maincode, "background");
+				ExportTexture(maincode, "background", i);
 			}
 
 			// Uniform block begin
