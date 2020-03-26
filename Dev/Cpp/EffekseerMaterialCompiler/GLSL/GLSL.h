@@ -592,13 +592,17 @@ class ShaderGenerator
 
 		maincode << material_common_define;
 
-		if (stage == 0)
+		// Adhoc
+		if (is450)
 		{
-			maincode << material_common_vs_define;
-		}
-		else if (stage == 1)
-		{
-			maincode << material_common_fs_define;
+			if (stage == 0)
+			{
+				maincode << material_common_vs_define;
+			}
+			else if (stage == 1)
+			{
+				maincode << material_common_fs_define;
+			}
 		}
 
 		if (stage == 0)

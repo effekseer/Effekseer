@@ -3,14 +3,17 @@
 
 #include "../3rdParty/LLGI/src/Vulkan/LLGI.CompilerVulkan.h"
 
-#undef min
+#include "../EffekseerMaterialCompiler/GLSL/GLSL.h"
 
+#undef min
 namespace Effekseer
 {
 
 namespace Vulkan
 {	
-static char* material_common_define = R"(
+	/*
+
+	static char* material_common_define = R"(
 #version 450
 #define MOD mod
 #define FRAC fract
@@ -783,13 +786,8 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
 	return shaderData;
 }
-
+*/
 } // namespace Vulkan
-
-
-
-
-
 
 
 
@@ -923,7 +921,11 @@ CompiledMaterialBinary* MaterialCompilerVulkan::Compile(Material* material, int3
 	};
 
 	auto saveBinary = [&material, &binary, &convertToVectorVS, &convertToVectorPS, &maximumTextureCount](MaterialShaderType type) {
-		auto shader = Vulkan::GenerateShader(material, type, maximumTextureCount);
+		
+		GLSL::ShaderGenerator generator;
+		auto shader = generator.GenerateShader(material, type, maximumTextureCount, true, true, true);
+
+		//auto shader = Vulkan::GenerateShader(material, type, maximumTextureCount);
 		binary->SetVertexShaderData(type, convertToVectorVS(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVectorPS(shader.CodePS));
 	};
