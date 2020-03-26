@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\Effekseer.Matrix44.cpp">
+      <Filter>Effekseer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\Effekseer.Vector2D.cpp">
+      <Filter>Effekseer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\Effekseer.Vector3D.cpp">
+      <Filter>Effekseer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\Effekseer.Matrix43.cpp">
+      <Filter>Effekseer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TurbulenceTest.cpp" />
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMDUtils.cpp">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Mat43f.cpp">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Mat44f.cpp">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\Noise\PerlinNoise.cpp">
+      <Filter>Effekseer\Noise</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Effekseer\Effekseer\Noise\CurlNoise.cpp">
+      <Filter>Effekseer\Noise</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Effekseer">
+      <UniqueIdentifier>{869f8efa-7d9b-43f4-8272-fc58e5ab55ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effekseer\SIMD">
+      <UniqueIdentifier>{4b070897-f0e5-4e12-86d7-bc953681cd94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effekseer\Noise">
+      <UniqueIdentifier>{adf2a71f-c252-45f1-81b9-6ebec5c520d8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\Effekseer.Matrix43.h">
+      <Filter>Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\Effekseer.Matrix44.h">
+      <Filter>Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\Effekseer.Vector2D.h">
+      <Filter>Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\Effekseer.Vector3D.h">
+      <Filter>Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\Effekseer.Math.h">
+      <Filter>Effekseer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4f_SSE.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMDUtils.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Vec2f.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Vec3f.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Vec4f.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Mat43f.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.Mat44f.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4f.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4f_Gen.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4f_NEON.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\Noise\PerlinNoise.h">
+      <Filter>Effekseer\Noise</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\Noise\CurlNoise.h">
+      <Filter>Effekseer\Noise</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_Gen.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_NEON.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i_SSE.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
