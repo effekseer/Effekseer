@@ -2,11 +2,13 @@
 
 #include <iostream>
 
+#include "../GLSL/GLSL.h"
+
 namespace Effekseer
 {
 namespace GL
 {
-
+/*
 static char* material_common_define = R"(
 #define MOD mod
 #define FRAC fract
@@ -778,7 +780,7 @@ ShaderData GenerateShader(Material* material, MaterialShaderType shaderType, int
 
 	return shaderData;
 }
-
+*/
 } // namespace GL
 
 } // namespace Effekseer
@@ -833,7 +835,9 @@ CompiledMaterialBinary* MaterialCompilerGL::Compile(Material* material, int32_t 
 	};
 
 	auto saveBinary = [&material, &binary, &convertToVector, &maximumTextureCount](MaterialShaderType type) {
-		auto shader = GL::GenerateShader(material, type, maximumTextureCount);
+
+		GLSL::ShaderGenerator generator;
+		auto shader = generator.GenerateShader(material, type, maximumTextureCount, false, false, false);
 		binary->SetVertexShaderData(type, convertToVector(shader.CodeVS));
 		binary->SetPixelShaderData(type, convertToVector(shader.CodePS));
 	};
