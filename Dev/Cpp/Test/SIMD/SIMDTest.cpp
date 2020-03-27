@@ -156,6 +156,13 @@ void test_SIMD4f()
 		ASSERT(a.Dup<2>() == SIMD4f(3, 3, 3, 3));
 		ASSERT(a.Dup<3>() == SIMD4f(4, 4, 4, 4));
 	}
+
+	{
+		SIMD4f a(1, 2, 3, 4), b(4, 3, 2, 1);
+		SIMD4f mask = SIMD4f::LessThan(a, b);
+		SIMD4f ret = SIMD4f::Select(mask, a, b);
+		ASSERT(ret == SIMD4f(1, 2, 2, 1));
+	}
 }
 
 void test_Vec2f()
