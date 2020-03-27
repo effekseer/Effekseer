@@ -1,12 +1,10 @@
 
 #ifndef __EFFEKSEER_SIMD4I_NEON_H__
 #define __EFFEKSEER_SIMD4I_NEON_H__
-#if defined(__ARM_NEON__) || defined(__ARM_NEON)
 
-#include <stdint.h>
-#include <math.h>
-#include <arm_neon.h>
-#include "../Effekseer.Math.h"
+#include "Effekseer.SIMDType.h"
+
+#if defined(EFK_SIMD_NEON)
 
 namespace Effekseer
 {
@@ -263,7 +261,12 @@ inline SIMD4i SIMD4i::MulSubLane(const SIMD4i& a, const SIMD4i& b, const SIMD4i&
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 inline SIMD4i SIMD4i::Mask()
 {
-	return vdupq_n_u32(0xffffffff);
+	static_assert(X >= 2, "indexX is must be set 0 or 1.");
+	static_assert(Y >= 2, "indexY is must be set 0 or 1.");
+	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
+	static_assert(W >= 2, "indexW is must be set 0 or 1.");
+	const uint32_t in[4] = {0xffffffff * indexX, 0xffffffff * indexY, 0xffffffff * indexZ, 0xffffffff * indexW}
+	return vld1q_u32(in);
 }
 
 inline uint32_t SIMD4i::MoveMask(const SIMD4i& in)

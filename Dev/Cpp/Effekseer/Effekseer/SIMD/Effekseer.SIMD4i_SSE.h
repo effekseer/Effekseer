@@ -2,15 +2,9 @@
 #ifndef __EFFEKSEER_SIMD4I_SSE_H__
 #define __EFFEKSEER_SIMD4I_SSE_H__
 
-#if (defined(_M_AMD64) || defined(_M_X64)) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) || defined(__SSE__)
+#include "Effekseer.SIMDType.h"
 
-#include <stdint.h>
-#ifdef _MSC_VER
-#include <intrin.h>
-#else
-#include <x86intrin.h>
-#endif
-#include "../Effekseer.Math.h"
+#if defined(EFK_SIMD_SSE2)
 
 namespace Effekseer
 {
@@ -216,7 +210,7 @@ inline SIMD4i SIMD4i::SetZero()
 
 inline SIMD4i SIMD4i::Abs(const SIMD4i& in)
 {
-#ifdef __SSSE3__
+#if defined(EFK_SIMD_SSSE3)
 	return _mm_abs_epi32(in.s);
 #else
 	__m128i sign = _mm_srai_epi32(in.s, 31);
@@ -226,12 +220,22 @@ inline SIMD4i SIMD4i::Abs(const SIMD4i& in)
 
 inline SIMD4i SIMD4i::Min(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-	return SIMD4i{_mm_min_epi32(lhs.s, rhs.s)};
+#if defined(EFK_SIMD_SSE4_1)
+	return _mm_min_epi32(lhs.s, rhs.s);
+#else
+	__m128i mask = _mm_cmplt_epi32(lhs.s, rhs.s);
+	return _mm_or_si128(_mm_and_si128(mask, lhs.s), _mm_andnot_si128(mask, rhs.s));
+#endif
 }
 
 inline SIMD4i SIMD4i::Max(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-	return SIMD4i{_mm_max_epi32(lhs.s, rhs.s)};
+#if defined(EFK_SIMD_SSE4_1)
+	return _mm_max_epi32(lhs.s, rhs.s);
+#else
+	__m128i mask = _mm_cmpgt_epi32(lhs.s, rhs.s);
+	return _mm_or_si128(_mm_and_si128(mask, lhs.s), _mm_andnot_si128(mask, rhs.s));
+#endif
 }
 
 inline SIMD4i SIMD4i::MulAdd(const SIMD4i& a, const SIMD4i& b, const SIMD4i& c)
@@ -296,6 +300,10 @@ inline SIMD4i Effekseer::SIMD4i::ShiftRA(const SIMD4i& lhs)
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 inline SIMD4i SIMD4i::Mask()
 {
+	static_assert(X >= 2, "indexX is must be set 0 or 1.");
+	static_assert(Y >= 2, "indexY is must be set 0 or 1.");
+	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
+	static_assert(W >= 2, "indexW is must be set 0 or 1.");
 	return _mm_setr_epi32(
 		(int)(0xffffffff * X), 
 		(int)(0xffffffff * Y), 

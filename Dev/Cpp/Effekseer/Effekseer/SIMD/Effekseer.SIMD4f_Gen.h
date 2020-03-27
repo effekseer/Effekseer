@@ -1,16 +1,12 @@
-﻿
-#ifndef __EFFEKSEER_SIMD4F_GEN_H__
+﻿#ifndef __EFFEKSEER_SIMD4F_GEN_H__
 #define __EFFEKSEER_SIMD4F_GEN_H__
 
-//#if defined(__ARM_NEON__) || defined(__ARM_NEON)
-//// not arm
-//#elif (defined(_M_AMD64) || defined(_M_X64)) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) || defined(__SSE__)
-//// not x86
-//#else
+#include "Effekseer.SIMDType.h"
 
-#include <stdint.h>
+#if defined(EFK_SIMD_GEN)
+
+#include <cstring>
 #include <algorithm>
-#include "../Effekseer.Math.h"
 
 namespace Effekseer
 {
@@ -513,6 +509,10 @@ SIMD4f SIMD4f::Swizzle(const SIMD4f& in)
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 SIMD4f SIMD4f::Mask()
 {
+	static_assert(X >= 2, "indexX is must be set 0 or 1.");
+	static_assert(Y >= 2, "indexY is must be set 0 or 1.");
+	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
+	static_assert(W >= 2, "indexW is must be set 0 or 1.");
 	SIMD4f ret;
 	ret.vu[0] = 0xffffffff * X;
 	ret.vu[1] = 0xffffffff * Y;
@@ -628,6 +628,6 @@ inline void SIMD4f::Transpose(SIMD4f& s0, SIMD4f& s1, SIMD4f& s2, SIMD4f& s3)
 
 } // namespace Effekseer
 
-//#endif
+#endif
 
 #endif // __EFFEKSEER_SIMD4F_GEN_H__

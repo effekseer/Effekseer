@@ -1,16 +1,9 @@
-﻿
-#ifndef __EFFEKSEER_SIMD4F_SSE_H__
+﻿#ifndef __EFFEKSEER_SIMD4F_SSE_H__
 #define __EFFEKSEER_SIMD4F_SSE_H__
 
-#if (defined(_M_AMD64) || defined(_M_X64)) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) || defined(__SSE__)
+#include "Effekseer.SIMDType.h"
 
-#include <stdint.h>
-#ifdef _MSC_VER
-#include <intrin.h>
-#else
-#include <x86intrin.h>
-#endif
-#include "../Effekseer.Math.h"
+#if defined(EFK_SIMD_SSE2)
 
 namespace Effekseer
 {
@@ -357,6 +350,10 @@ inline SIMD4f SIMD4f::Cross3(const SIMD4f& lhs, const SIMD4f& rhs)
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 inline SIMD4f SIMD4f::Mask()
 {
+	static_assert(X >= 2, "indexX is must be set 0 or 1.");
+	static_assert(Y >= 2, "indexY is must be set 0 or 1.");
+	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
+	static_assert(W >= 2, "indexW is must be set 0 or 1.");
 	return _mm_setr_epi32(
 		(int)(0xffffffff * X), 
 		(int)(0xffffffff * Y), 

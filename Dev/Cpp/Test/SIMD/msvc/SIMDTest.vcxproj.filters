@@ -90,5 +90,8 @@
     <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMD4i.h">
       <Filter>Effekseer\SIMD</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Effekseer\Effekseer\SIMD\Effekseer.SIMDType.h">
+      <Filter>Effekseer\SIMD</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
