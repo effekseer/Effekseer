@@ -148,6 +148,14 @@ void test_SIMD4f()
 		SIMD4f a(1, 2, 3, 4);
 		ASSERT(a.Convert4i() == SIMD4i(1, 2, 3, 4));
 	}
+	
+	{
+		SIMD4f a(1, 2, 3, 4);
+		ASSERT(a.Dup<0>() == SIMD4f(1, 1, 1, 1));
+		ASSERT(a.Dup<1>() == SIMD4f(2, 2, 2, 2));
+		ASSERT(a.Dup<2>() == SIMD4f(3, 3, 3, 3));
+		ASSERT(a.Dup<3>() == SIMD4f(4, 4, 4, 4));
+	}
 }
 
 void test_Vec2f()
