@@ -1,4 +1,4 @@
-﻿
+
 #ifndef __EFFEKSEER_SIMD4I_SSE_H__
 #define __EFFEKSEER_SIMD4I_SSE_H__
 
@@ -39,12 +39,12 @@ struct alignas(16) SIMD4i
 	SIMD4f Convert4f() const;
 	SIMD4f Cast4f() const;
 
-	SIMD4i& operator+=(const SIMD4i& rhs) { s = _mm_add_epi32(s, rhs.s); return *this; }
-	SIMD4i& operator-=(const SIMD4i& rhs) { s = _mm_sub_epi32(s, rhs.s); return *this; }
-	SIMD4i& operator*=(const SIMD4i& rhs) { s = _mm_mul_epi32(s, rhs.s); return *this; }
-	SIMD4i& operator*=(int32_t rhs) { s = _mm_mul_epi32(s, _mm_set1_epi32(rhs)); return *this; }
-	SIMD4i& operator/=(const SIMD4i& rhs) { s = _mm_div_epi32(s, rhs.s); return *this; }
-	SIMD4i& operator/=(int32_t rhs) { s = _mm_div_epi32(s, _mm_set1_epi32(rhs)); return *this; }
+	SIMD4i& operator+=(const SIMD4i& rhs);
+	SIMD4i& operator-=(const SIMD4i& rhs);
+	SIMD4i& operator*=(const SIMD4i& rhs);
+	SIMD4i& operator*=(int32_t rhs);
+	SIMD4i& operator/=(const SIMD4i& rhs);
+	SIMD4i& operator/=(int32_t rhs);
 
 	static SIMD4i Load2(const void* mem);
 	static void Store2(void* mem, const SIMD4i& i);
@@ -118,22 +118,54 @@ inline SIMD4i operator-(const SIMD4i& lhs, const SIMD4i& rhs)
 
 inline SIMD4i operator*(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-	return SIMD4i{_mm_mullo_epi32(lhs.s, rhs.s)};
+#if EFK_SIMD_SSE4_1
+	return _mm_mullo_epi32(lhs.s, rhs.s);
+#else
+	__m128i tmp1 = _mm_mul_epu32(lhs.s, rhs.s);
+	__m128i tmp2 = _mm_mul_epu32(_mm_srli_si128(lhs.s, 4), _mm_srli_si128(rhs.s, 4));
+	return _mm_unpacklo_epi32(
+		_mm_shuffle_epi32(tmp1, _MM_SHUFFLE(0,0,2,0)),
+		_mm_shuffle_epi32(tmp2, _MM_SHUFFLE(0,0,2,0)));
+#endif
 }
 
 inline SIMD4i operator*(const SIMD4i& lhs, int32_t rhs)
 {
-	return SIMD4i{_mm_mullo_epi32(lhs.s, _mm_set1_epi32(rhs))};
+#if EFK_SIMD_SSE4_1
+	return _mm_mullo_epi32(lhs.s, rhs.s);
+#else
+	__m128i tmp1 = _mm_mul_epu32(lhs.s, _mm_set1_epi32(rhs));
+	__m128i tmp2 = _mm_mul_epu32(_mm_srli_si128(lhs.s, 4), _mm_set1_epi32(rhs));
+	return _mm_unpacklo_epi32(
+		_mm_shuffle_epi32(tmp1, _MM_SHUFFLE(0,0,2,0)),
+		_mm_shuffle_epi32(tmp2, _MM_SHUFFLE(0,0,2,0)));
+#endif
 }
 
 inline SIMD4i operator/(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-	return SIMD4i{_mm_div_epi32(lhs.s, rhs.s)};
+#if defined(_MSC_VER)
+	return _mm_div_epi32(lhs.s, rhs.s);
+#else
+	return SIMD4i(
+		lhs.GetX() * rhs.GetX(),
+		lhs.GetY() * rhs.GetY(),
+		lhs.GetZ() * rhs.GetZ(),
+		lhs.GetW() * rhs.GetW());
+#endif
 }
 
 inline SIMD4i operator/(const SIMD4i& lhs, int32_t rhs)
 {
-	return SIMD4i{_mm_div_epi32(lhs.s, _mm_set1_epi32(rhs))};
+#if defined(_MSC_VER)
+	return _mm_div_epi32(lhs.s, _mm_set1_epi32(rhs));
+#else
+	return SIMD4i(
+		lhs.GetX() * rhs,
+		lhs.GetY() * rhs,
+		lhs.GetZ() * rhs,
+		lhs.GetW() * rhs);
+#endif
 }
 
 inline SIMD4i operator&(const SIMD4i& lhs, const SIMD4i& rhs)
@@ -160,6 +192,13 @@ inline bool operator!=(const SIMD4i& lhs, const SIMD4i& rhs)
 {
 	return SIMD4i::MoveMask(SIMD4i::Equal(lhs, rhs)) != 0xf;
 }
+
+inline SIMD4i& SIMD4i::operator+=(const SIMD4i& rhs) { return *this = *this + rhs; }
+inline SIMD4i& SIMD4i::operator-=(const SIMD4i& rhs) { return *this = *this - rhs; }
+inline SIMD4i& SIMD4i::operator*=(const SIMD4i& rhs) { return *this = *this * rhs; }
+inline SIMD4i& SIMD4i::operator*=(int32_t rhs) { return *this = *this * rhs; }
+inline SIMD4i& SIMD4i::operator/=(const SIMD4i& rhs) { return *this = *this / rhs; }
+inline SIMD4i& SIMD4i::operator/=(int32_t rhs) { return *this = *this / rhs; }
 
 inline SIMD4i SIMD4i::Load2(const void* mem)
 {
@@ -240,33 +279,33 @@ inline SIMD4i SIMD4i::Max(const SIMD4i& lhs, const SIMD4i& rhs)
 
 inline SIMD4i SIMD4i::MulAdd(const SIMD4i& a, const SIMD4i& b, const SIMD4i& c)
 {
-	return SIMD4i{_mm_add_epi32(a.s, _mm_mullo_epi32(b.s, c.s))};
+	return a + b * c;
 }
 
 inline SIMD4i SIMD4i::MulSub(const SIMD4i& a, const SIMD4i& b, const SIMD4i& c)
 {
-	return SIMD4i{_mm_sub_epi32(a.s, _mm_mullo_epi32(b.s, c.s))};
+	return a - b * c;
 }
 
 template<size_t LANE>
 SIMD4i SIMD4i::MulLane(const SIMD4i& lhs, const SIMD4i& rhs)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
-	return SIMD4i{_mm_mullo_epi32(lhs.s, _mm_shuffle_epi32(rhs.s, _MM_SHUFFLE(LANE, LANE, LANE, LANE)))};
+	return lhs * SIMD4i::Swizzle<LANE,LANE,LANE,LANE>(rhs);
 }
 
 template<size_t LANE>
 SIMD4i SIMD4i::MulAddLane(const SIMD4i& a, const SIMD4i& b, const SIMD4i& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
-	return SIMD4i{_mm_add_epi32(a.s, _mm_mullo_epi32(b.s, _mm_shuffle_epi32(c.s, _MM_SHUFFLE(LANE, LANE, LANE, LANE))))};
+	return a + b * SIMD4i::Swizzle<LANE,LANE,LANE,LANE>(c);
 }
 
 template<size_t LANE>
 SIMD4i SIMD4i::MulSubLane(const SIMD4i& a, const SIMD4i& b, const SIMD4i& c)
 {
 	static_assert(LANE < 4, "LANE is must be less than 4.");
-	return SIMD4i{_mm_sub_epi32(a.s, _mm_mullo_epi32(b.s, _mm_shuffle_epi32(c.s, _MM_SHUFFLE(LANE, LANE, LANE, LANE))))};
+	return a - b * SIMD4i::Swizzle<LANE,LANE,LANE,LANE>(c);
 }
 
 template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
