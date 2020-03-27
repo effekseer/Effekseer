@@ -45,6 +45,9 @@ struct alignas(16) SIMD4f
 	void SetZ(float i) { s = vsetq_lane_f32(i, s, 2); }
 	void SetW(float i) { s = vsetq_lane_f32(i, s, 3); }
 	
+	template <size_t LANE>
+	SIMD4f Dup();
+	
 	SIMD4i Convert4i() const;
 	SIMD4i Cast4i() const;
 	
@@ -90,6 +93,7 @@ struct alignas(16) SIMD4f
 	template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 	static SIMD4f Mask();
 	static uint32_t MoveMask(const SIMD4f& in);
+	static SIMD4f Select(const SIMD4f& mask, const SIMD4f& sel1, const SIMD4f& sel2);
 	static SIMD4f Equal(const SIMD4f& lhs, const SIMD4f& rhs);
 	static SIMD4f NotEqual(const SIMD4f& lhs, const SIMD4f& rhs);
 	static SIMD4f LessThan(const SIMD4f& lhs, const SIMD4f& rhs);
@@ -112,6 +116,14 @@ private:
 namespace Effekseer
 {
 
+template <size_t LANE>
+SIMD4f SIMD4f::Dup()
+{
+	return (LANE < 2) ?
+		vdupq_lane_f32(vget_low_f32(s), LANE) :
+		vdupq_lane_f32(vget_high_f32(s), LANE & 1);
+}
+	
 inline SIMD4i SIMD4f::Convert4i() const
 {
 	return vcvtq_s32_f32(s);
@@ -383,6 +395,12 @@ inline uint32_t SIMD4f::MoveMask(const SIMD4f& in)
 	uint16_t u16[4];
 	vst1_u16(u16, u16x4);
 	return (u16[0] & 1) | (u16[1] & 2) | (u16[2] & 4) | (u16[3] & 8);
+}
+
+inline SIMD4f SIMD4f::Select(const SIMD4f& mask, const SIMD4f& sel1, const SIMD4f& sel2)
+{
+	uint32x4_t maski = vreinterpretq_u32_f32(mask.s);
+	return vbslq_f32(maski, sel1.s, sel2.s);
 }
 
 inline SIMD4f SIMD4f::Equal(const SIMD4f& lhs, const SIMD4f& rhs)
