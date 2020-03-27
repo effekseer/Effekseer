@@ -16,8 +16,8 @@ void Test_Turbulence()
 	printf("Turbulence Test\n");
 
 	CurlNoise noise(0);
-	noise.Octave = 1.0f;
-	noise.Scale = 1.0f;
+	noise.Octave = 1;
+	noise.Scale = 1;
 
 	Vec3f position{0.0f, 0.0f, 0.0f};
 	for (uint32_t iteration = 0; iteration < IterationCount; iteration++) {
