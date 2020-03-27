@@ -35,6 +35,9 @@ struct alignas(16) SIMD4i
 	void SetZ(int32_t i) { s = vsetq_lane_s32(i, s, 2); }
 	void SetW(int32_t i) { s = vsetq_lane_s32(i, s, 3); }
 	
+	SIMD4f Convert4f() const;
+	SIMD4f Cast4f() const;
+	
 	SIMD4i& operator+=(const SIMD4i& rhs);
 	SIMD4i& operator-=(const SIMD4i& rhs);
 	SIMD4i& operator*=(const SIMD4i& rhs);
@@ -65,6 +68,13 @@ struct alignas(16) SIMD4i
 	template <uint32_t indexX, uint32_t indexY, uint32_t indexZ, uint32_t indexW>
 	static SIMD4i Swizzle(const SIMD4i& v);
 	
+	template <int COUNT>
+	static SIMD4i ShiftL(const SIMD4i& in);
+	template <int COUNT>
+	static SIMD4i ShiftR(const SIMD4i& in);
+	template <int COUNT>
+	static SIMD4i ShiftRA(const SIMD4i& in);
+	
 	template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 	static SIMD4i Mask();
 	static uint32_t MoveMask(const SIMD4i& in);
@@ -90,6 +100,16 @@ private:
 namespace Effekseer
 {
 
+inline SIMD4f SIMD4i::Convert4f() const
+{
+	return vcvtq_f32_s32(s);
+}
+
+inline SIMD4f SIMD4i::Cast4f() const
+{
+	return vreinterpretq_f32_s32(s);
+}
+
 inline SIMD4i operator+(const SIMD4i& lhs, const SIMD4i& rhs)
 {
 	return vaddq_s32(lhs.s, rhs.s);
@@ -112,15 +132,14 @@ inline SIMD4i operator*(const SIMD4i& lhs, int32_t rhs)
 
 inline SIMD4i operator/(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-#if defined(_M_ARM64) || __aarch64__
+#if defined(EFK_NEON_ARM64)
 	return vdivq_s32(lhs.s, rhs.s);
 #else
-	int32x4_t recp = vrecpeq_s32(rhs.s);
-	int32x4_t s = vrecpsq_s32(recp, rhs.s);
-	recp = vmulq_s32(s, recp);
-	s = vrecpsq_s32(recp, rhs.s);
-	recp = vmulq_s32(s, recp);
-	return vmulq_s32(lhs.s, recp);
+	return SIMD4i(
+		lhs.GetX() / rhs.GetX(),
+		lhs.GetY() / rhs.GetY(),
+		lhs.GetZ() / rhs.GetZ(),
+		lhs.GetW() / rhs.GetW());
 #endif
 }
 
@@ -258,6 +277,24 @@ inline SIMD4i SIMD4i::MulSubLane(const SIMD4i& a, const SIMD4i& b, const SIMD4i&
 //	static_assert(indexW < 4, "indexW is must be less than 4.");
 //}
 
+template <int COUNT>
+inline SIMD4i Effekseer::SIMD4i::ShiftL(const SIMD4i& lhs)
+{
+	return vreinterpretq_s32_u32(vshlq_n_u32(vreinterpretq_u32_s32(lhs.s), COUNT));
+}
+
+template <int COUNT>
+inline SIMD4i Effekseer::SIMD4i::ShiftR(const SIMD4i& lhs)
+{
+	return vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(lhs.s), COUNT));
+}
+
+template <int COUNT>
+inline SIMD4i Effekseer::SIMD4i::ShiftRA(const SIMD4i& lhs)
+{
+	return vshrq_n_s32(lhs.s, COUNT);
+}
+
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 inline SIMD4i SIMD4i::Mask()
 {
@@ -265,7 +302,7 @@ inline SIMD4i SIMD4i::Mask()
 	static_assert(Y >= 2, "indexY is must be set 0 or 1.");
 	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
 	static_assert(W >= 2, "indexW is must be set 0 or 1.");
-	const uint32_t in[4] = {0xffffffff * indexX, 0xffffffff * indexY, 0xffffffff * indexZ, 0xffffffff * indexW}
+	const uint32_t in[4] = {0xffffffff * X, 0xffffffff * Y, 0xffffffff * Z, 0xffffffff * W};
 	return vld1q_u32(in);
 }
 

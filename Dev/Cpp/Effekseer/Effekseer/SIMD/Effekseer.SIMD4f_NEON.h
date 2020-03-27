@@ -45,6 +45,9 @@ struct alignas(16) SIMD4f
 	void SetZ(float i) { s = vsetq_lane_f32(i, s, 2); }
 	void SetW(float i) { s = vsetq_lane_f32(i, s, 3); }
 	
+	SIMD4i Convert4i() const;
+	SIMD4i Cast4i() const;
+	
 	SIMD4f& operator+=(const SIMD4f& rhs);
 	SIMD4f& operator-=(const SIMD4f& rhs);
 	SIMD4f& operator*=(const SIMD4f& rhs);
@@ -108,6 +111,16 @@ private:
 
 namespace Effekseer
 {
+
+inline SIMD4i SIMD4f::Convert4i() const
+{
+	return vcvtq_s32_f32(s);
+}
+
+inline SIMD4i SIMD4f::Cast4i() const
+{
+	return vreinterpretq_s32_f32(s);
+}
 
 inline SIMD4f operator+(const SIMD4f& lhs, const SIMD4f& rhs)
 {
@@ -360,7 +373,7 @@ inline SIMD4f SIMD4f::Mask()
 	static_assert(Y >= 2, "indexY is must be set 0 or 1.");
 	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
 	static_assert(W >= 2, "indexW is must be set 0 or 1.");
-	const uint32_t in[4] = {0xffffffff * indexX, 0xffffffff * indexY, 0xffffffff * indexZ, 0xffffffff * indexW}
+	const uint32_t in[4] = {0xffffffff * X, 0xffffffff * Y, 0xffffffff * Z, 0xffffffff * W};
 	return vld1q_f32((const float*)in);
 }
 

@@ -138,6 +138,16 @@ void test_SIMD4f()
 		SIMD4f testret = SIMD4f(1.0f, 0.70710678118654752440084436210485f, 0.57735026918962576450914878050195f, 0.5f);
 		ASSERT(SIMD4f::MoveMask(SIMD4f::NearEqual(ret, testret, 1e-3f)) == 0xf);
 	}
+	
+	{
+		SIMD4f a(1, 2, 3, 4);
+		ASSERT(a == a.Convert4i().Convert4f());
+	}
+	
+	{
+		SIMD4f a(1, 2, 3, 4);
+		ASSERT(a.Convert4i() == SIMD4i(1, 2, 3, 4));
+	}
 }
 
 void test_Vec2f()
@@ -458,6 +468,11 @@ void test_SIMD4i()
 	{
 		SIMD4i a(1, 2, 3, 4);
 		ASSERT(a == a.Convert4f().Convert4i());
+	}
+	
+	{
+		SIMD4i a(1, 2, 3, 4);
+		ASSERT(a.Convert4f() == SIMD4f(1.0f, 2.0f, 3.0f, 4.0f));
 	}
 }
 
