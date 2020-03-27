@@ -54,8 +54,6 @@ struct alignas(16) SIMD4i
 	static void Store4(void* mem, const SIMD4i& i);
 
 	static SIMD4i SetZero();
-	static SIMD4i Sqrt(const SIMD4i& in);
-	static SIMD4i Rsqrt(const SIMD4i& in);
 	static SIMD4i Abs(const SIMD4i& in);
 	static SIMD4i Min(const SIMD4i& lhs, const SIMD4i& rhs);
 	static SIMD4i Max(const SIMD4i& lhs, const SIMD4i& rhs);
@@ -118,7 +116,7 @@ inline SIMD4i operator-(const SIMD4i& lhs, const SIMD4i& rhs)
 
 inline SIMD4i operator*(const SIMD4i& lhs, const SIMD4i& rhs)
 {
-#if EFK_SIMD_SSE4_1
+#if defined(EFK_SIMD_SSE4_1)
 	return _mm_mullo_epi32(lhs.s, rhs.s);
 #else
 	__m128i tmp1 = _mm_mul_epu32(lhs.s, rhs.s);
@@ -131,8 +129,8 @@ inline SIMD4i operator*(const SIMD4i& lhs, const SIMD4i& rhs)
 
 inline SIMD4i operator*(const SIMD4i& lhs, int32_t rhs)
 {
-#if EFK_SIMD_SSE4_1
-	return _mm_mullo_epi32(lhs.s, rhs.s);
+#if defined(EFK_SIMD_SSE4_1)
+	return _mm_mullo_epi32(lhs.s, _mm_set1_epi32(rhs));
 #else
 	__m128i tmp1 = _mm_mul_epu32(lhs.s, _mm_set1_epi32(rhs));
 	__m128i tmp2 = _mm_mul_epu32(_mm_srli_si128(lhs.s, 4), _mm_set1_epi32(rhs));
