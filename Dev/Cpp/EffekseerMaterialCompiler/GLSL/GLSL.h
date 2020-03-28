@@ -518,6 +518,8 @@ struct ShaderData
 class ShaderGenerator
 {
 	bool useUniformBlock_ = false;
+	bool useSet_ = false;
+	int32_t textuerBindingOffset_ = 0;
 
 	std::string Replace(std::string target, std::string from_, std::string to_)
 	{
@@ -567,11 +569,19 @@ class ShaderGenerator
 		maincode << "uniform " << GetType(type) << " " << name << ";" << std::endl;
 	}
 
-	void ExportTexture(std::ostringstream& maincode, const char* name, int bind)
+	void ExportTexture(std::ostringstream& maincode, const char* name, int bind, int stage)
 	{
 		if (useUniformBlock_)
 		{
-			maincode << "layout(binding = " << (bind + 1) << ") uniform sampler2D " << name << ";" << std::endl;
+			if (useSet_)
+			{
+				maincode << "layout(set = " << stage << " binding = " << (bind + textuerBindingOffset_) << ") uniform sampler2D " << name
+						 << ";" << std::endl;
+			}
+			else
+			{
+				maincode << "layout(binding = " << (bind + textuerBindingOffset_) << ") uniform sampler2D " << name << ";" << std::endl;
+			}
 		}
 		else
 		{
@@ -757,9 +767,13 @@ public:
 							  int32_t maximumTextureCount,
 							  bool useUniformBlock,
 							  bool isOutputDefined,
-							  bool is450)
+							  bool is450,
+							  bool useSet,
+							  bool textureBindingOffset)
 	{
 		useUniformBlock_ = useUniformBlock;
+		useSet_ = useSet;
+		textuerBindingOffset_ = textuerBindingOffset_;
 
 		bool isSprite = shaderType == MaterialShaderType::Standard || shaderType == MaterialShaderType::Refraction;
 		bool isRefrection = material->GetHasRefraction() &&
@@ -780,24 +794,38 @@ public:
 				auto textureIndex = material->GetTextureIndex(i);
 				auto textureName = material->GetTextureName(i);
 
-				ExportTexture(maincode, textureName, i);
+				ExportTexture(maincode, textureName, i, stage);
 			}
 
 			for (size_t i = actualTextureCount; i < actualTextureCount + 1; i++)
 			{
-				ExportTexture(maincode, "background", i);
+				ExportTexture(maincode, "background", i, stage);
 			}
 
 			// Uniform block begin
 			if (useUniformBlock)
 			{
-				if (stage == 0)
+				if (useSet_)
 				{
-					maincode << "layout(set = 0, binding = 0) uniform Block {" << std::endl;
+					if (stage == 0)
+					{
+						maincode << "layout(set = 0, binding = 0) uniform Block {" << std::endl;
+					}
+					else if (stage == 1)
+					{
+						maincode << "layout(set = 1, binding = 0) uniform Block {" << std::endl;
+					}
 				}
-				else if (stage == 1)
+				else
 				{
-					maincode << "layout(set = 1, binding = 0) uniform Block {" << std::endl;
+					if (stage == 0)
+					{
+						maincode << "layout(binding = 0) uniform Block {" << std::endl;
+					}
+					else if (stage == 1)
+					{
+						maincode << "layout(binding = 0) uniform Block {" << std::endl;
+					}
 				}
 			}
 
