@@ -19,6 +19,8 @@ option(FROM_CI "from ci" OFF)
 option(SANITIZE_ENABLED "is sanitizer enabled" OFF)
 option(USE_LIBPNG_LOADER "use libpng in an internal loader (if it builds viewer except windows, it becomes on)" OFF)
 
+option(BUILD_VULKAN "Build vulkan modules" OFF)
+
 if (BUILD_VIEWER)
     set(USE_LIBPNG_LOADER ON)
 endif()
@@ -30,6 +32,13 @@ endif()
 if(SANITIZE_ENABLED)
     set(CMAKE_CXX_FLAGS " -fsanitize=undefined,address" ${CMAKE_CXX_FLAGS})
 endif()
+
+# find_package(Vulkan)
+# if (Vulkan_FOUND)
+#     set(BUILD_VULKAN ON)
+# else()
+#     set(BUILD_VULKAN OFF)
+# endif()
 
 if (WIN32 AND NOT FROM_CI)
     set(BUILD_DX12 ON)

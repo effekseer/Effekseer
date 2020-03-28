@@ -31,6 +31,8 @@ if(MSVC OR APPLE)
         DEBUG_POSTFIX ".Debug")
 endif()
 
+set_property(TARGET EffekseerMaterialCompilerGL PROPERTY FOLDER "Compiler") 
+
 # Metal (Metal is a code as binary)
 
 add_library(
@@ -63,6 +65,8 @@ if(MSVC OR APPLE)
         DEBUG_POSTFIX ".Debug")
 endif()
 
+set_property(TARGET EffekseerMaterialCompilerMetal PROPERTY FOLDER "Compiler") 
+
 if(WIN32)
     add_library(
         EffekseerMaterialCompilerDX11
@@ -90,6 +94,7 @@ if(WIN32)
     set_target_properties(EffekseerMaterialCompilerDX11
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
+    set_property(TARGET EffekseerMaterialCompilerDX11 PROPERTY FOLDER "Compiler") 
 
     add_library(
         EffekseerMaterialCompilerDX9
@@ -117,7 +122,7 @@ if(WIN32)
     set_target_properties(EffekseerMaterialCompilerDX9
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
-
+    set_property(TARGET EffekseerMaterialCompilerDX9 PROPERTY FOLDER "Compiler") 
 endif()
 
 if(WIN32 AND BUILD_DX12)
@@ -149,5 +154,57 @@ if(WIN32 AND BUILD_DX12)
         PROPERTIES
         DEBUG_POSTFIX ".Debug")
 
+    set_property(TARGET EffekseerMaterialCompilerDX12 PROPERTY FOLDER "Compiler") 
 endif()
 
+if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/Switch")
+    add_library(
+        EffekseerMaterialCompilerSwitch
+        SHARED
+        Switch/EffekseerMaterialCompilerSwitch.h
+        Switch/EffekseerMaterialCompilerSwitch.cpp
+    )
+
+    target_compile_definitions(EffekseerMaterialCompilerSwitch PRIVATE __SHARED_OBJECT__=1)
+
+    set_target_properties(
+        EffekseerMaterialCompilerSwitch
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+    )
+
+    set_target_properties(EffekseerMaterialCompilerSwitch
+        PROPERTIES
+        DEBUG_POSTFIX ".Debug")
+
+    set_property(TARGET EffekseerMaterialCompilerSwitch PROPERTY FOLDER "Compiler") 
+endif()
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/Dev/Cpp/EffekseerMaterialCompiler/PS4/")
+    add_library(
+        EffekseerMaterialCompilerPS4
+        SHARED
+        PS4/EffekseerMaterialCompilerPS4.h
+        PS4/EffekseerMaterialCompilerPS4.cpp
+    )
+
+    target_compile_definitions(EffekseerMaterialCompilerPS4 PRIVATE __SHARED_OBJECT__=1)
+
+    set_target_properties(
+        EffekseerMaterialCompilerPS4
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Dev/release/tools/"
+    )
+
+    set_target_properties(EffekseerMaterialCompilerPS4
+        PROPERTIES
+        DEBUG_POSTFIX ".Debug")
+
+    set_property(TARGET EffekseerMaterialCompilerPS4 PROPERTY FOLDER "Compiler") 
+endif()
