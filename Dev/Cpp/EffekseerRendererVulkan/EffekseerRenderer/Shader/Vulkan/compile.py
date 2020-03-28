@@ -2,25 +2,21 @@ import sys
 import subprocess
 
 files = [
-    "model.frag",
-    "model.vert",
-    "model_distortion_no_texture.frag",
     "model_distortion.frag",
     "model_distortion.vert",
-    "model_l.frag",
-    "model_l.vert",
-    "model_ln.frag",
-    "model_ln.vert",
-    "model_lt.frag",
-    "model_lt.vert",
+
     "model_ltn.frag",
     "model_ltn.vert",
+
     "model_t.frag",
     "model_t.vert",
-    "standard_distortion_no_texture.frag",
+
+    "standard_lighting.frag",
+    "standard_lighting.vert",
+
     "standard_distortion.frag",
     "standard_distortion.vert",
-    "standard_no_texture.frag",
+
     "standard.frag",
     "standard.vert",
 ]

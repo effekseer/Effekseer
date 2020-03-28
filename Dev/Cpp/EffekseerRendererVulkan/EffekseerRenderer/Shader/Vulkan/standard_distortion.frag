@@ -7,8 +7,8 @@ layout(location = 2) in vec4 vaPos;
 layout(location = 3) in vec4 vaPosR;
 layout(location = 4) in vec4 vaPosU;
 
-layout(set = 1, binding = 0) uniform sampler2D uTexture0;
-layout(set = 1, binding = 1) uniform sampler2D uBackTexture0;
+layout(set = 1, binding = 1) uniform sampler2D uTexture0;
+layout(set = 1, binding = 2) uniform sampler2D uBackTexture0;
 
 layout(set = 1, binding = 0) uniform Block 
 {

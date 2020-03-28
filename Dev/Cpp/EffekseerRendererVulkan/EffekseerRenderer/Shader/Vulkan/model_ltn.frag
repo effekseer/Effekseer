@@ -25,27 +25,15 @@ layout(location = 0) out vec4 o_Color;
 
 void main()
 {
-	vec4 diffuse = vec4(1.0);
-	if (LightingEnable && NormalMapEnable)
+	o_Color = v_Color * texture(ColorTexture, v_TexCoord.xy);
+
+	if (LightingEnable)
 	{
 		vec3 texNormal = (texture(NormalTexture, v_TexCoord.xy).xyz - 0.5) * 2.0;
 		mat3 normalMatrix = mat3(v_Tangent.xyz, v_Binormal.xyz, v_Normal.xyz );
 		vec3 localNormal = normalize( normalMatrix * texNormal );
-		diffuse = vec4(max(0.0, dot(localNormal, LightDirection.xyz)));
-	}
-	if (TextureEnable)
-	{
-		o_Color = v_Color * texture(ColorTexture, v_TexCoord.xy);
-		o_Color.xyz = o_Color.xyz * diffuse.xyz;
-	} else
-	{
-		o_Color = v_Color;
-		o_Color.xyz = o_Color.xyz * diffuse.xyz;
-	}
-  
-	if (LightingEnable)
-	{
-		o_Color.xyz = o_Color.xyz + LightAmbient.xyz;
+		float diffuse = max(0.0, dot(localNormal, LightDirection.xyz));
+		o_Color.xyz = o_Color.xyz * (LightColor.xyz * diffuse + LightAmbient.xyz);
 	}
 }
 
