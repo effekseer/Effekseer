@@ -32,6 +32,10 @@ target_link_libraries(
     EffekseerRendererVulkan
     debug glfw3d
     optimized glfw3
+    debug "${ZLIB_LIB_DEBUG}"
+    optimized "${ZLIB_LIB_RELEASE}"
+    debug "${LIBPNG_LIB_DEBUG}"
+	optimized "${LIBPNG_LIB_RELEASE}"
 )
 
 
