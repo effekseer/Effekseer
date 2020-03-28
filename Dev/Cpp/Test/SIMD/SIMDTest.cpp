@@ -1,10 +1,12 @@
 #include <cassert>
 #include "SIMD/Effekseer.SIMD4f.h"
+#include "SIMD/Effekseer.SIMD4i.h"
 #include "SIMD/Effekseer.Vec2f.h"
 #include "SIMD/Effekseer.Vec3f.h"
 #include "SIMD/Effekseer.Vec4f.h"
 #include "SIMD/Effekseer.Mat43f.h"
 #include "SIMD/Effekseer.Mat44f.h"
+#include "SIMD/Effekseer.SIMDUtils.h"
 #include "Effekseer.Vector2D.h"
 #include "Effekseer.Vector3D.h"
 #include "Effekseer.Matrix43.h"
@@ -133,8 +135,33 @@ void test_SIMD4f()
 	{
 		SIMD4f a(1, 2, 3, 4);
 		SIMD4f ret = SIMD4f::Rsqrt(a);
-		SIMD4f testret = SIMD4f(1.0f, 0.70710678118654752440084436210485f, 0.57735026918962576450914878050195, 0.5f);
+		SIMD4f testret = SIMD4f(1.0f, 0.70710678118654752440084436210485f, 0.57735026918962576450914878050195f, 0.5f);
 		ASSERT(SIMD4f::MoveMask(SIMD4f::NearEqual(ret, testret, 1e-3f)) == 0xf);
+	}
+	
+	{
+		SIMD4f a(1, 2, 3, 4);
+		ASSERT(a == a.Convert4i().Convert4f());
+	}
+	
+	{
+		SIMD4f a(1, 2, 3, 4);
+		ASSERT(a.Convert4i() == SIMD4i(1, 2, 3, 4));
+	}
+	
+	{
+		SIMD4f a(1, 2, 3, 4);
+		ASSERT(a.Dup<0>() == SIMD4f(1, 1, 1, 1));
+		ASSERT(a.Dup<1>() == SIMD4f(2, 2, 2, 2));
+		ASSERT(a.Dup<2>() == SIMD4f(3, 3, 3, 3));
+		ASSERT(a.Dup<3>() == SIMD4f(4, 4, 4, 4));
+	}
+
+	{
+		SIMD4f a(1, 2, 3, 4), b(4, 3, 2, 1);
+		SIMD4f mask = SIMD4f::LessThan(a, b);
+		SIMD4f ret = SIMD4f::Select(mask, a, b);
+		ASSERT(ret == SIMD4f(1, 2, 2, 1));
 	}
 }
 
@@ -327,6 +354,143 @@ void test_Mat44f()
 	}
 }
 
+void test_SIMD4i()
+{
+	{
+		int32_t a[4] = {1, 2, 3, 4};
+		SIMD4i ret = SIMD4i::Load4(a);
+		ASSERT(ret == SIMD4i(1, 2, 3, 4));
+	}
+	{
+		SIMD4i a(1, 2, 3, 4);
+		int32_t ret[4];
+		SIMD4i::Store4(ret, a);
+		ASSERT(ret[0] == 1.0f && ret[1] == 2.0f && ret[2] == 3.0f && ret[3] == 4.0f);
+	}
+	{
+		SIMD4i a;
+		a.SetX(5);
+		a.SetY(6);
+		a.SetZ(7);
+		a.SetW(8);
+		ASSERT(a == SIMD4i(5, 6, 7, 8));
+	}
+	{
+		SIMD4i a(3, 4, 5, 6);
+		int32_t x = a.GetX();
+		int32_t y = a.GetY();
+		int32_t z = a.GetZ();
+		int32_t w = a.GetW();
+		ASSERT(x == 3.0f && y == 4.0f && z == 5.0f && w == 6.0f);
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4), b(5, 6, 7, 8);
+		SIMD4i ret = a + b;
+		ASSERT(ret == SIMD4i(6, 8, 10, 12));
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4), b(5, 6, 7, 8);
+		SIMD4i ret = a - b;
+		ASSERT(ret == SIMD4i(-4, -4, -4, -4));
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4), b(5, 6, 7, 8);
+		SIMD4i ret = a * b;
+		ASSERT(ret == SIMD4i(5, 12, 21, 32));
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4);
+		SIMD4i ret = a * 5;
+		ASSERT(ret == SIMD4i(5, 10, 15, 20));
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4), b(5, 6, 7, 8), c(9, 10, 11, 12);
+		SIMD4i ret = SIMD4i::MulAdd(a, b, c);
+		ASSERT(ret == SIMD4i(46, 62, 80, 100));
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4), b(5, 6, 7, 8), c(9, 10, 11, 12);
+		SIMD4i ret = SIMD4i::MulSub(a, b, c);
+		ASSERT(ret == SIMD4i(-44, -58, -74, -92));
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4), b(5, 6, 7, 8);
+		ASSERT(SIMD4i::MulLane<0>(a, b) == SIMD4i(5, 10, 15, 20));
+		ASSERT(SIMD4i::MulLane<1>(a, b) == SIMD4i(6, 12, 18, 24));
+		ASSERT(SIMD4i::MulLane<2>(a, b) == SIMD4i(7, 14, 21, 28));
+		ASSERT(SIMD4i::MulLane<3>(a, b) == SIMD4i(8, 16, 24, 32));
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4), b(5, 6, 7, 8);
+		ASSERT(SIMD4i::MulAddLane<0>(SIMD4i(3), a, b) == SIMD4i( 8, 13, 18, 23));
+		ASSERT(SIMD4i::MulAddLane<1>(SIMD4i(3), a, b) == SIMD4i( 9, 15, 21, 27));
+		ASSERT(SIMD4i::MulAddLane<2>(SIMD4i(3), a, b) == SIMD4i(10, 17, 24, 31));
+		ASSERT(SIMD4i::MulAddLane<3>(SIMD4i(3), a, b) == SIMD4i(11, 19, 27, 35));
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4), b(5, 6, 7, 8);
+		ASSERT(SIMD4i::MulSubLane<0>(SIMD4i(30), a, b) == SIMD4i(25, 20, 15, 10));
+		ASSERT(SIMD4i::MulSubLane<1>(SIMD4i(30), a, b) == SIMD4i(24, 18, 12,  6));
+		ASSERT(SIMD4i::MulSubLane<2>(SIMD4i(30), a, b) == SIMD4i(23, 16,  9,  2));
+		ASSERT(SIMD4i::MulSubLane<3>(SIMD4i(30), a, b) == SIMD4i(22, 14,  6, -2));
+	}
+
+	{
+		SIMD4i a(1, -2, 3, -4);
+		SIMD4i ret = SIMD4i::Abs(a);
+		ASSERT(ret == SIMD4i(1, 2, 3, 4));
+	}
+
+	{
+		SIMD4i a(1, 5, 3, 7), b(4, 8, 2, 6);
+		SIMD4i ret = SIMD4i::Min(a, b);
+		ASSERT(ret == SIMD4i(1, 5, 2, 6));
+	}
+
+	{
+		SIMD4i a(1, 5, 3, 7), b(4, 8, 2, 6);
+		SIMD4i ret = SIMD4i::Max(a, b);
+		ASSERT(ret == SIMD4i(4, 8, 3, 7));
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4);
+		SIMD4i ret = SIMD4i::ShiftL<1>(a);
+		ASSERT(ret == SIMD4i(2, 4, 6, 8));
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4);
+		SIMD4i ret = SIMD4i::ShiftR<1>(a);
+		ASSERT(ret == SIMD4i(0, 1, 1, 2));
+	}
+
+	{
+		SIMD4i a(-4, -3, 2, 1);
+		SIMD4i ret = SIMD4i::ShiftRA<1>(a);
+		ASSERT(ret == SIMD4i(-2, -2, 1, 0));
+	}
+
+	{
+		SIMD4i a(1, 2, 3, 4);
+		ASSERT(a == a.Convert4f().Convert4i());
+	}
+	
+	{
+		SIMD4i a(1, 2, 3, 4);
+		ASSERT(a.Convert4f() == SIMD4f(1.0f, 2.0f, 3.0f, 4.0f));
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	test_SIMD4f();
@@ -335,6 +499,7 @@ int main(int argc, char *argv[])
 	test_Vec4f();
 	test_Mat43f();
 	test_Mat44f();
+	test_SIMD4i();
 
 	return 0;
 }

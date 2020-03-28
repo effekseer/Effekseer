@@ -1,12 +1,9 @@
-
 #ifndef __EFFEKSEER_SIMD4F_NEON_H__
 #define __EFFEKSEER_SIMD4F_NEON_H__
-#if defined(__ARM_NEON__) || defined(__ARM_NEON)
 
-#include <stdint.h>
-#include <math.h>
-#include <arm_neon.h>
-#include "../Effekseer.Math.h"
+#include "Effekseer.SIMDType.h"
+
+#if defined(EFK_SIMD_NEON)
 
 namespace Effekseer
 {
@@ -20,6 +17,8 @@ inline float Rsqrt(float x)
 {
 	return 1.0f / sqrt(x);
 }
+
+struct SIMD4i;
 
 /**
  @brief    simd class for sse
@@ -46,6 +45,12 @@ struct alignas(16) SIMD4f
 	void SetZ(float i) { s = vsetq_lane_f32(i, s, 2); }
 	void SetW(float i) { s = vsetq_lane_f32(i, s, 3); }
 	
+	template <size_t LANE>
+	SIMD4f Dup();
+	
+	SIMD4i Convert4i() const;
+	SIMD4i Cast4i() const;
+	
 	SIMD4f& operator+=(const SIMD4f& rhs);
 	SIMD4f& operator-=(const SIMD4f& rhs);
 	SIMD4f& operator*=(const SIMD4f& rhs);
@@ -68,6 +73,8 @@ struct alignas(16) SIMD4f
 	static SIMD4f Abs(const SIMD4f& in);
 	static SIMD4f Min(const SIMD4f& lhs, const SIMD4f& rhs);
 	static SIMD4f Max(const SIMD4f& lhs, const SIMD4f& rhs);
+	static SIMD4f Floor(const SIMD4f& in);
+	static SIMD4f Ceil(const SIMD4f& in);
 	static SIMD4f MulAdd(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
 	static SIMD4f MulSub(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c);
 	
@@ -86,6 +93,7 @@ struct alignas(16) SIMD4f
 	template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 	static SIMD4f Mask();
 	static uint32_t MoveMask(const SIMD4f& in);
+	static SIMD4f Select(const SIMD4f& mask, const SIMD4f& sel1, const SIMD4f& sel2);
 	static SIMD4f Equal(const SIMD4f& lhs, const SIMD4f& rhs);
 	static SIMD4f NotEqual(const SIMD4f& lhs, const SIMD4f& rhs);
 	static SIMD4f LessThan(const SIMD4f& lhs, const SIMD4f& rhs);
@@ -100,6 +108,31 @@ private:
 	static SIMD4f SwizzleYZX(const SIMD4f& in);
 	static SIMD4f SwizzleZXY(const SIMD4f& in);
 };
+
+} // namespace Effekseer
+
+#include "Effekseer.SIMD4i.h"
+
+namespace Effekseer
+{
+
+template <size_t LANE>
+SIMD4f SIMD4f::Dup()
+{
+	return (LANE < 2) ?
+		vdupq_lane_f32(vget_low_f32(s), LANE) :
+		vdupq_lane_f32(vget_high_f32(s), LANE & 1);
+}
+	
+inline SIMD4i SIMD4f::Convert4i() const
+{
+	return vcvtq_s32_f32(s);
+}
+
+inline SIMD4i SIMD4f::Cast4i() const
+{
+	return vreinterpretq_s32_f32(s);
+}
 
 inline SIMD4f operator+(const SIMD4f& lhs, const SIMD4f& rhs)
 {
@@ -152,6 +185,13 @@ inline SIMD4f operator|(const SIMD4f& lhs, const SIMD4f& rhs)
 	uint32x4_t lhsi = vreinterpretq_u32_f32(lhs.s);
 	uint32x4_t rhsi = vreinterpretq_u32_f32(rhs.s);
 	return vreinterpretq_f32_u32(vorrq_u32(lhsi, rhsi));
+}
+
+inline SIMD4f operator^(const SIMD4f& lhs, const SIMD4f& rhs)
+{
+	uint32x4_t lhsi = vreinterpretq_u32_f32(lhs.s);
+	uint32x4_t rhsi = vreinterpretq_u32_f32(rhs.s);
+	return vreinterpretq_f32_u32(veorq_u32(lhsi, rhsi));
 }
 
 inline bool operator==(const SIMD4f& lhs, const SIMD4f& rhs)
@@ -256,6 +296,32 @@ inline SIMD4f SIMD4f::Max(const SIMD4f& lhs, const SIMD4f& rhs)
 	return vmaxq_f32(lhs.s, rhs.s);
 }
 
+inline SIMD4f SIMD4f::Floor(const SIMD4f& in)
+{
+#if defined(_M_ARM64) || __aarch64__
+	return vrndmq_f32(in.s);
+#else
+	int32x4_t in_i = vcvtq_s32_f32(in.s);
+	float32x4_t result = vcvtq_f32_s32(in_i);
+	float32x4_t larger = vcgtq_f32(result, in.s);
+	larger = vcvtq_f32_s32(larger);
+	return vaddq_f32(result, larger);
+#endif
+}
+
+inline SIMD4f SIMD4f::Ceil(const SIMD4f& in)
+{
+#if defined(_M_ARM64) || __aarch64__
+	return vrndpq_f32(in.s);
+#else
+	int32x4_t in_i = vcvtq_s32_f32(in.s);
+	float32x4_t result = vcvtq_f32_s32(in_i);
+	float32x4_t smaller = vcltq_f32(result, in.s);
+	smaller = vcvtq_f32_s32(smaller);
+	return vsubq_f32(result, smaller);
+#endif
+}
+
 inline SIMD4f SIMD4f::MulAdd(const SIMD4f& a, const SIMD4f& b, const SIMD4f& c)
 {
 	return vmlaq_f32(a.s, b.s, c.s);
@@ -315,7 +381,12 @@ inline SIMD4f SIMD4f::Cross3(const SIMD4f& lhs, const SIMD4f& rhs)
 template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
 inline SIMD4f SIMD4f::Mask()
 {
-	return vdupq_n_u32(0xffffffff);
+	static_assert(X >= 2, "indexX is must be set 0 or 1.");
+	static_assert(Y >= 2, "indexY is must be set 0 or 1.");
+	static_assert(Z >= 2, "indexZ is must be set 0 or 1.");
+	static_assert(W >= 2, "indexW is must be set 0 or 1.");
+	const uint32_t in[4] = {0xffffffff * X, 0xffffffff * Y, 0xffffffff * Z, 0xffffffff * W};
+	return vld1q_f32((const float*)in);
 }
 
 inline uint32_t SIMD4f::MoveMask(const SIMD4f& in)
@@ -324,6 +395,12 @@ inline uint32_t SIMD4f::MoveMask(const SIMD4f& in)
 	uint16_t u16[4];
 	vst1_u16(u16, u16x4);
 	return (u16[0] & 1) | (u16[1] & 2) | (u16[2] & 4) | (u16[3] & 8);
+}
+
+inline SIMD4f SIMD4f::Select(const SIMD4f& mask, const SIMD4f& sel1, const SIMD4f& sel2)
+{
+	uint32x4_t maski = vreinterpretq_u32_f32(mask.s);
+	return vbslq_f32(maski, sel1.s, sel2.s);
 }
 
 inline SIMD4f SIMD4f::Equal(const SIMD4f& lhs, const SIMD4f& rhs)

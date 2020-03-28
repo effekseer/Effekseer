@@ -1,6 +1,8 @@
 #ifndef __EFFEKSEER_CURL_NOISE_H__
 #define __EFFEKSEER_CURL_NOISE_H__
 
+#include "../SIMD/Effekseer.SIMD4f.h"
+#include "../SIMD/Effekseer.SIMD4i.h"
 #include "../SIMD/Effekseer.Vec3f.h"
 #include "PerlinNoise.h"
 
@@ -32,19 +34,19 @@ public:
 
 		auto noise_x = [this](Vec3f v) -> Vec3f {
 			return Vec3f(0.0f,
-						 ynoise_.OctaveNoise(Octave, v.GetX(), v.GetY(), v.GetZ()),
-						 znoise_.OctaveNoise(Octave, v.GetX(), v.GetY(), v.GetZ()));
+						 ynoise_.OctaveNoise(Octave, v),
+						 znoise_.OctaveNoise(Octave, v));
 		};
 
 		auto noise_y = [this](Vec3f v) -> Vec3f {
-			return Vec3f(xnoise_.OctaveNoise(Octave, v.GetX(), v.GetY(), v.GetZ()),
+			return Vec3f(xnoise_.OctaveNoise(Octave, v),
 						 0.0f,
-						 znoise_.OctaveNoise(Octave, v.GetX(), v.GetY(), v.GetZ()));
+						 znoise_.OctaveNoise(Octave, v));
 		};
 
 		auto noise_z = [this](Vec3f v) -> Vec3f {
-			return Vec3f(xnoise_.OctaveNoise(Octave, v.GetX(), v.GetY(), v.GetZ()),
-						 ynoise_.OctaveNoise(Octave, v.GetX(), v.GetY(), v.GetZ()),
+			return Vec3f(xnoise_.OctaveNoise(Octave, v),
+						 ynoise_.OctaveNoise(Octave, v),
 						 0.0f);
 		};
 

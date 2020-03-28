@@ -1,0 +1,387 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6EA10A8E23D2D7320050422F /* SIMDTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA10A8D23D2D7320050422F /* SIMDTest.cpp */; };
+		6EA10ABA242DEFF40050422F /* Effekseer.Vector2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA10AB2242DEFF30050422F /* Effekseer.Vector2D.cpp */; };
+		6EA10ABB242DEFF40050422F /* Effekseer.Vector3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA10AB3242DEFF30050422F /* Effekseer.Vector3D.cpp */; };
+		6EA10ABC242DEFF40050422F /* Effekseer.Matrix43.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA10AB5242DEFF30050422F /* Effekseer.Matrix43.cpp */; };
+		6EA10ABD242DEFF40050422F /* Effekseer.Matrix44.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA10AB7242DEFF40050422F /* Effekseer.Matrix44.cpp */; };
+		6EA10AD2242DF00C0050422F /* Effekseer.Mat44f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA10AC2242DF00B0050422F /* Effekseer.Mat44f.cpp */; };
+		6EA10AD4242DF00C0050422F /* Effekseer.SIMDUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA10ACA242DF00B0050422F /* Effekseer.SIMDUtils.cpp */; };
+		6EA10AD5242DF00C0050422F /* Effekseer.Mat43f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA10ACC242DF00C0050422F /* Effekseer.Mat43f.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		6EA10A4323D2CF8C0050422F /* SIMDTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SIMDTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EA10A5423D2CF8E0050422F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6EA10A8D23D2D7320050422F /* SIMDTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SIMDTest.cpp; path = ../../SIMDTest.cpp; sourceTree = "<group>"; };
+		6EA10AB1242DEFF30050422F /* Effekseer.Vector2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.Vector2D.h; path = ../../../../Effekseer/Effekseer/Effekseer.Vector2D.h; sourceTree = "<group>"; };
+		6EA10AB2242DEFF30050422F /* Effekseer.Vector2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Effekseer.Vector2D.cpp; path = ../../../../Effekseer/Effekseer/Effekseer.Vector2D.cpp; sourceTree = "<group>"; };
+		6EA10AB3242DEFF30050422F /* Effekseer.Vector3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Effekseer.Vector3D.cpp; path = ../../../../Effekseer/Effekseer/Effekseer.Vector3D.cpp; sourceTree = "<group>"; };
+		6EA10AB4242DEFF30050422F /* Effekseer.Matrix44.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.Matrix44.h; path = ../../../../Effekseer/Effekseer/Effekseer.Matrix44.h; sourceTree = "<group>"; };
+		6EA10AB5242DEFF30050422F /* Effekseer.Matrix43.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Effekseer.Matrix43.cpp; path = ../../../../Effekseer/Effekseer/Effekseer.Matrix43.cpp; sourceTree = "<group>"; };
+		6EA10AB6242DEFF30050422F /* Effekseer.Math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.Math.h; path = ../../../../Effekseer/Effekseer/Effekseer.Math.h; sourceTree = "<group>"; };
+		6EA10AB7242DEFF40050422F /* Effekseer.Matrix44.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Effekseer.Matrix44.cpp; path = ../../../../Effekseer/Effekseer/Effekseer.Matrix44.cpp; sourceTree = "<group>"; };
+		6EA10AB8242DEFF40050422F /* Effekseer.Matrix43.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.Matrix43.h; path = ../../../../Effekseer/Effekseer/Effekseer.Matrix43.h; sourceTree = "<group>"; };
+		6EA10AB9242DEFF40050422F /* Effekseer.Vector3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.Vector3D.h; path = ../../../../Effekseer/Effekseer/Effekseer.Vector3D.h; sourceTree = "<group>"; };
+		6EA10ABF242DF00B0050422F /* Effekseer.SIMDUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.SIMDUtils.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.SIMDUtils.h; sourceTree = "<group>"; };
+		6EA10AC0242DF00B0050422F /* Effekseer.Mat43f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.Mat43f.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.Mat43f.h; sourceTree = "<group>"; };
+		6EA10AC1242DF00B0050422F /* Effekseer.Vec2f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.Vec2f.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.Vec2f.h; sourceTree = "<group>"; };
+		6EA10AC2242DF00B0050422F /* Effekseer.Mat44f.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Effekseer.Mat44f.cpp; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.Mat44f.cpp; sourceTree = "<group>"; };
+		6EA10AC3242DF00B0050422F /* Effekseer.SIMD4i.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.SIMD4i.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.SIMD4i.h; sourceTree = "<group>"; };
+		6EA10AC4242DF00B0050422F /* Effekseer.Mat44f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.Mat44f.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.Mat44f.h; sourceTree = "<group>"; };
+		6EA10AC5242DF00B0050422F /* Effekseer.SIMD4f_Gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.SIMD4f_Gen.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.SIMD4f_Gen.h; sourceTree = "<group>"; };
+		6EA10AC6242DF00B0050422F /* Effekseer.SIMD4f_NEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.SIMD4f_NEON.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.SIMD4f_NEON.h; sourceTree = "<group>"; };
+		6EA10AC8242DF00B0050422F /* Effekseer.SIMDType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.SIMDType.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.SIMDType.h; sourceTree = "<group>"; };
+		6EA10AC9242DF00B0050422F /* Effekseer.SIMD4i_NEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.SIMD4i_NEON.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.SIMD4i_NEON.h; sourceTree = "<group>"; };
+		6EA10ACA242DF00B0050422F /* Effekseer.SIMDUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Effekseer.SIMDUtils.cpp; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.SIMDUtils.cpp; sourceTree = "<group>"; };
+		6EA10ACB242DF00C0050422F /* Effekseer.Vec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.Vec4f.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.Vec4f.h; sourceTree = "<group>"; };
+		6EA10ACC242DF00C0050422F /* Effekseer.Mat43f.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Effekseer.Mat43f.cpp; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.Mat43f.cpp; sourceTree = "<group>"; };
+		6EA10ACD242DF00C0050422F /* Effekseer.SIMD4i_Gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.SIMD4i_Gen.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.SIMD4i_Gen.h; sourceTree = "<group>"; };
+		6EA10ACE242DF00C0050422F /* Effekseer.SIMD4f_SSE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.SIMD4f_SSE.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.SIMD4f_SSE.h; sourceTree = "<group>"; };
+		6EA10ACF242DF00C0050422F /* Effekseer.SIMD4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.SIMD4f.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.SIMD4f.h; sourceTree = "<group>"; };
+		6EA10AD0242DF00C0050422F /* Effekseer.Vec3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.Vec3f.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.Vec3f.h; sourceTree = "<group>"; };
+		6EA10AD1242DF00C0050422F /* Effekseer.SIMD4i_SSE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effekseer.SIMD4i_SSE.h; path = ../../../../Effekseer/Effekseer/SIMD/Effekseer.SIMD4i_SSE.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6EA10A4023D2CF8B0050422F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6EA10A3A23D2CF8B0050422F = {
+			isa = PBXGroup;
+			children = (
+				6EA10A4523D2CF8C0050422F /* SIMDTest */,
+				6EA10A4423D2CF8C0050422F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6EA10A4423D2CF8C0050422F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6EA10A4323D2CF8C0050422F /* SIMDTest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6EA10A4523D2CF8C0050422F /* SIMDTest */ = {
+			isa = PBXGroup;
+			children = (
+				6EA10AB0242DEFAD0050422F /* Effekseer */,
+				6EA10A8D23D2D7320050422F /* SIMDTest.cpp */,
+				6EA10A5423D2CF8E0050422F /* Info.plist */,
+			);
+			path = SIMDTest;
+			sourceTree = "<group>";
+		};
+		6EA10AB0242DEFAD0050422F /* Effekseer */ = {
+			isa = PBXGroup;
+			children = (
+				6EA10ABE242DEFFB0050422F /* SIMD */,
+				6EA10AB6242DEFF30050422F /* Effekseer.Math.h */,
+				6EA10AB5242DEFF30050422F /* Effekseer.Matrix43.cpp */,
+				6EA10AB8242DEFF40050422F /* Effekseer.Matrix43.h */,
+				6EA10AB7242DEFF40050422F /* Effekseer.Matrix44.cpp */,
+				6EA10AB4242DEFF30050422F /* Effekseer.Matrix44.h */,
+				6EA10AB2242DEFF30050422F /* Effekseer.Vector2D.cpp */,
+				6EA10AB1242DEFF30050422F /* Effekseer.Vector2D.h */,
+				6EA10AB3242DEFF30050422F /* Effekseer.Vector3D.cpp */,
+				6EA10AB9242DEFF40050422F /* Effekseer.Vector3D.h */,
+			);
+			name = Effekseer;
+			sourceTree = "<group>";
+		};
+		6EA10ABE242DEFFB0050422F /* SIMD */ = {
+			isa = PBXGroup;
+			children = (
+				6EA10ACC242DF00C0050422F /* Effekseer.Mat43f.cpp */,
+				6EA10AC0242DF00B0050422F /* Effekseer.Mat43f.h */,
+				6EA10AC2242DF00B0050422F /* Effekseer.Mat44f.cpp */,
+				6EA10AC4242DF00B0050422F /* Effekseer.Mat44f.h */,
+				6EA10AC5242DF00B0050422F /* Effekseer.SIMD4f_Gen.h */,
+				6EA10AC6242DF00B0050422F /* Effekseer.SIMD4f_NEON.h */,
+				6EA10ACE242DF00C0050422F /* Effekseer.SIMD4f_SSE.h */,
+				6EA10ACF242DF00C0050422F /* Effekseer.SIMD4f.h */,
+				6EA10ACD242DF00C0050422F /* Effekseer.SIMD4i_Gen.h */,
+				6EA10AC9242DF00B0050422F /* Effekseer.SIMD4i_NEON.h */,
+				6EA10AD1242DF00C0050422F /* Effekseer.SIMD4i_SSE.h */,
+				6EA10AC3242DF00B0050422F /* Effekseer.SIMD4i.h */,
+				6EA10AC8242DF00B0050422F /* Effekseer.SIMDType.h */,
+				6EA10ACA242DF00B0050422F /* Effekseer.SIMDUtils.cpp */,
+				6EA10ABF242DF00B0050422F /* Effekseer.SIMDUtils.h */,
+				6EA10AC1242DF00B0050422F /* Effekseer.Vec2f.h */,
+				6EA10AD0242DF00C0050422F /* Effekseer.Vec3f.h */,
+				6EA10ACB242DF00C0050422F /* Effekseer.Vec4f.h */,
+			);
+			name = SIMD;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6EA10A4223D2CF8B0050422F /* SIMDTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6EA10A5923D2CF8E0050422F /* Build configuration list for PBXNativeTarget "SIMDTest" */;
+			buildPhases = (
+				6EA10A3F23D2CF8B0050422F /* Sources */,
+				6EA10A4023D2CF8B0050422F /* Frameworks */,
+				6EA10A4123D2CF8B0050422F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SIMDTest;
+			productName = SIMDTest;
+			productReference = 6EA10A4323D2CF8C0050422F /* SIMDTest.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6EA10A3B23D2CF8B0050422F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1030;
+				ORGANIZATIONNAME = effekseer;
+				TargetAttributes = {
+					6EA10A4223D2CF8B0050422F = {
+						CreatedOnToolsVersion = 10.3;
+					};
+				};
+			};
+			buildConfigurationList = 6EA10A3E23D2CF8B0050422F /* Build configuration list for PBXProject "SIMDTest" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 6EA10A3A23D2CF8B0050422F;
+			productRefGroup = 6EA10A4423D2CF8C0050422F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6EA10A4223D2CF8B0050422F /* SIMDTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6EA10A4123D2CF8B0050422F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6EA10A3F23D2CF8B0050422F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6EA10AD5242DF00C0050422F /* Effekseer.Mat43f.cpp in Sources */,
+				6EA10ABA242DEFF40050422F /* Effekseer.Vector2D.cpp in Sources */,
+				6EA10AD2242DF00C0050422F /* Effekseer.Mat44f.cpp in Sources */,
+				6EA10A8E23D2D7320050422F /* SIMDTest.cpp in Sources */,
+				6EA10AD4242DF00C0050422F /* Effekseer.SIMDUtils.cpp in Sources */,
+				6EA10ABD242DEFF40050422F /* Effekseer.Matrix44.cpp in Sources */,
+				6EA10ABB242DEFF40050422F /* Effekseer.Vector3D.cpp in Sources */,
+				6EA10ABC242DEFF40050422F /* Effekseer.Matrix43.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6EA10A5723D2CF8E0050422F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		6EA10A5823D2CF8E0050422F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6EA10A5A23D2CF8E0050422F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 24PWLPKPNP;
+				INFOPLIST_FILE = SIMDTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.effekseer.SIMDTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../../Effekseer/Effekseer";
+			};
+			name = Debug;
+		};
+		6EA10A5B23D2CF8E0050422F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 24PWLPKPNP;
+				INFOPLIST_FILE = SIMDTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.effekseer.SIMDTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../../Effekseer/Effekseer";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6EA10A3E23D2CF8B0050422F /* Build configuration list for PBXProject "SIMDTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6EA10A5723D2CF8E0050422F /* Debug */,
+				6EA10A5823D2CF8E0050422F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6EA10A5923D2CF8E0050422F /* Build configuration list for PBXNativeTarget "SIMDTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6EA10A5A23D2CF8E0050422F /* Debug */,
+				6EA10A5B23D2CF8E0050422F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6EA10A3B23D2CF8B0050422F /* Project object */;
+}
