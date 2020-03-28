@@ -37,11 +37,11 @@ bool CompiledMaterialGenerator::Initialize(const char* directory)
 		path += name.second;
 
 #ifdef _WIN32
-	#ifdef _DEBUG
+#ifdef _DEBUG
 		path += ".Debug.dll";
-	#else
+#else
 		path += ".dll";
-	#endif
+#endif
 #elif defined(__APPLE__)
 		path += ".dylib";
 #else
@@ -139,15 +139,19 @@ bool CompiledMaterialGenerator::Compile(const char* dstPath, const char* srcPath
 		compile_and_store(Effekseer::MaterialShaderType::Refraction, vsRefractionStandardBinary, psRefractionStandardBinary);
 		compile_and_store(Effekseer::MaterialShaderType::RefractionModel, vsRefractionModelBinary, psRefractionModelBinary);
 
-		cm.UpdateData(vsStandardBinary,
-					  psStandardBinary,
-					  vsModelBinary,
-					  psModelBinary,
-					  vsRefractionStandardBinary,
-					  psRefractionStandardBinary,
-					  vsRefractionModelBinary,
-					  psRefractionModelBinary,
-					  dll.first);
+		if (vsStandardBinary.size() > 0 && psStandardBinary.size() > 0 && vsModelBinary.size() > 0 && psModelBinary.size() > 0)
+		{
+			cm.UpdateData(vsStandardBinary,
+						  psStandardBinary,
+						  vsModelBinary,
+						  psModelBinary,
+						  vsRefractionStandardBinary,
+						  psRefractionStandardBinary,
+						  vsRefractionModelBinary,
+						  psRefractionModelBinary,
+						  dll.first);
+		
+		}
 
 		compiler->Release();
 	}

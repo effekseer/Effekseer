@@ -1,9 +1,24 @@
 
+/**
+@note
+Refeence https://github.com/unitycoder/UnityBuiltinShaders/blob/master/CGIncludes/HLSLSupport.cginc
+*/
+
 static char* material_common_define = R"(
 #define MOD fmod
 #define FRAC frac
 #define LERP lerp
-)";
+)"
+
+#if defined(_PSSL)
+R"(
+#define SV_POSITION S_POSITION
+#define cbuffer ConstantBuffer
+#define SV_Target S_TARGET_OUTPUT
+#define SampleLevel SampleLOD
+)"
+#endif
+;
 
 static char* material_common_vs_functions = R"()"
 
@@ -322,7 +337,7 @@ struct PS_Input
 {
 )"
 
-#if defined(_DIRECTX11) || defined(_DIRECTX12)
+#if defined(_DIRECTX11) || defined(_DIRECTX12) || defined(_PSSL)
 								 R"(
 	float4 Position		: SV_POSITION;
 )"
@@ -341,8 +356,8 @@ R"(
 };
 )"
 
-#if defined(_DIRECTX9) || defined(_DIRECTX11)
-R"(
+#if defined(_DIRECTX9) || defined(_DIRECTX11) || defined(_PSSL)
+								 R"(
 cbuffer PSConstantBuffer : register(b0) {
 )";
 
