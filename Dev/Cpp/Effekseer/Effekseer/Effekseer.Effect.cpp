@@ -369,6 +369,12 @@ bool EffectImplemented::LoadBody(const uint8_t* data, int32_t size, float mag)
 
 	binaryReader.Read(m_version);
 
+	// too new version
+	if (m_version > SupportBinaryVersion)
+	{
+		return false;
+	}
+
 	// Image
 	binaryReader.Read(m_ImageCount, 0, elementCountMax);
 

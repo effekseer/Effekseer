@@ -82,6 +82,7 @@ MaterialLoader ::~MaterialLoader() {
 	}
 
 	// code file
+	if (materialCompiler_ != nullptr)
 	{
 		std::unique_ptr<Effekseer::FileReader> reader(fileInterface_->OpenRead(path));
 

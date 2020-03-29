@@ -36,8 +36,10 @@ bool EfkEfcFactory::OnLoading(Effect* effect, const void* data, int32_t size, fl
 
 		if (memcmp(&chunk, "BIN_", 4) == 0)
 		{
-			return LoadBody(
-				effect, reinterpret_cast<const uint8_t*>(data) + binaryReader.GetOffset(), chunkSize, magnification, materialPath);
+			if (LoadBody(effect, reinterpret_cast<const uint8_t*>(data) + binaryReader.GetOffset(), chunkSize, magnification, materialPath))
+			{
+				return true;
+			}
 		}
 
 		binaryReader.AddOffset(chunkSize);

@@ -541,10 +541,6 @@ int32_t RendererImplemented::GetSquareMaxCount() const { return m_squareMaxCount
 
 ::Effekseer::MaterialLoader* RendererImplemented::CreateMaterialLoader(::Effekseer::FileInterface* fileInterface)
 {
-
-	if (materialCompiler_ == nullptr)
-		return nullptr;
-
 	return new MaterialLoader(graphicsDevice_, fileInterface, platformType_, materialCompiler_);
 }
 

@@ -317,7 +317,7 @@ namespace Effekseer.IO
 
 			// binary data
 			var binaryExporter = new Binary.Exporter();
-			var binaryData = binaryExporter.Export(1);  // TODO change magnification
+			var binaryDataLatest = binaryExporter.Export(1, Binary.ExporterVersion.Latest);  // TODO change magnification
 
 			// info data
 			byte[] infoData = null;
@@ -358,7 +358,15 @@ namespace Effekseer.IO
 			var chunk = new Chunk();
 			chunk.AddChunk("INFO", infoData);
 			chunk.AddChunk("EDIT", Compress(editorData));
-			chunk.AddChunk("BIN_", binaryData);
+			chunk.AddChunk("BIN_", binaryDataLatest);
+
+			// fallback
+			if(Binary.ExporterVersion.Latest > Binary.ExporterVersion.Ver1500)
+			{
+				var binaryExporterFallback = new Binary.Exporter();
+				var binaryDataFallback = binaryExporterFallback.Export(1, Binary.ExporterVersion.Ver1500);
+				chunk.AddChunk("BIN_", binaryDataFallback);
+			}
 
 			var chunkData = chunk.Save();
 

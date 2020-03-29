@@ -7,23 +7,20 @@ using Effekseer.Utl;
 
 namespace Effekseer.Binary
 {
+	public enum ExporterVersion
+	{
+		Ver1500 = 1500,
+		Ver1600 = 1600,
+
+#if __EFFEKSEER_BUILD_VERSION16__
+		Latest = 1600,
+#else
+		Latest = 1500,
+#endif
+	}
+
 	public class Exporter
 	{
-		/// <summary>
-		/// Binary version
-		/// </summary>
-		/// <remarks>
-		/// Version15
-		/// Material
-		/// Version14
-		/// Support dynamic parameter
-		/// </remarks>
-#if __EFFEKSEER_BUILD_VERSION16__
-		const int Version = 1600;
-#else
-		const int Version = 1500;
-#endif
-
 		public HashSet<string> UsedTextures = new HashSet<string>();
 
 		public HashSet<string> UsedNormalTextures = new HashSet<string>();
@@ -37,21 +34,21 @@ namespace Effekseer.Binary
 		public HashSet<string> Materials = new HashSet<string>();
 
 		/// <summary>
-		/// エフェクトデータの出力
+		/// Export effect data
 		/// </summary>
 		/// <returns></returns>
-		public byte[] Export(float magnification = 1.0f)
+		public byte[] Export(float magnification = 1.0f, ExporterVersion exporterVersion = ExporterVersion.Latest)
 		{
 			List<byte[]> data = new List<byte[]>();
 
 			// ヘッダ
 			data.Add(Encoding.UTF8.GetBytes("SKFE"));
 
-			// バージョン
-			data.Add(BitConverter.GetBytes(Version));
+			// Version
+			data.Add(BitConverter.GetBytes((int)exporterVersion));
 
 			// reset texture names
-            UsedTextures = new HashSet<string>();
+			UsedTextures = new HashSet<string>();
 
 			UsedNormalTextures = new HashSet<string>();
 
@@ -619,20 +616,17 @@ namespace Effekseer.Binary
 				node_data.Add(BitConverter.GetBytes(n.DepthValues.IsScaleChangedDependingOnDepthOffset.Value ? 1 : 0));
 				node_data.Add(BitConverter.GetBytes(n.DepthValues.IsDepthOffsetChangedDependingOnParticleScale.Value ? 1 : 0));
 
-				if (Version >= 15)
+				node_data.Add(((float)n.DepthValues.SuppressionOfScalingByDepth.Value).GetBytes());
+
+				if (n.DepthValues.DepthClipping.Infinite)
 				{
-					node_data.Add(((float)n.DepthValues.SuppressionOfScalingByDepth.Value).GetBytes());
-
-					if (n.DepthValues.DepthClipping.Infinite)
-					{
-						node_data.Add((float.MaxValue).GetBytes());
-					}
-					else
-					{
-						node_data.Add(((float)n.DepthValues.DepthClipping.Value.Value).GetBytes());
-					}
+					node_data.Add((float.MaxValue).GetBytes());
 				}
-
+				else
+				{
+					node_data.Add(((float)n.DepthValues.DepthClipping.Value.Value).GetBytes());
+				}
+				
 				node_data.Add(((int)n.DepthValues.ZSort.Value).GetBytes());
 				node_data.Add(n.DepthValues.DrawingPriority.Value.GetBytes());
 				node_data.Add(n.DepthValues.SoftParticle.Value.GetBytes());

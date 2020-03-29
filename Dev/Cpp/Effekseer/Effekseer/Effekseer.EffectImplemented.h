@@ -95,6 +95,12 @@ class EffectImplemented : public Effect, public ReferenceObject
 	friend class EffectFactory;
 	friend class Instance;
 
+	#ifdef __EFFEKSEER_BUILD_VERSION16__
+	static const int32_t SupportBinaryVersion = 1600;
+#else
+	static const int32_t SupportBinaryVersion = 1500;
+	#endif
+
 protected:
 	ManagerImplemented* m_pManager;
 
