@@ -43,7 +43,7 @@ jobs:
 
 
 jobs:
-  - job: Windows
+  - job: Windows_x86
     pool:
       vmImage: 'vs2017-win2016'
     steps:
