@@ -60,7 +60,7 @@ jobs:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: 'Effekseer150Win_x86'
+          PathtoPublish: 'Effekseer150Win'
           ArtifactName: 'Effekseer150Win_x86'
           publishLocation: 'Container'
 
